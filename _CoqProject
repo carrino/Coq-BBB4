@@ -1,0 +1,7 @@
+-Q theories BBB4
+
+theories/BBB4_Statement.v
+theories/CTape.v
+theories/Checkers/Cycle.v
+theories/Machines/Cycle_Examples.v
+theories/Tests/Cycle_Corruption.v
