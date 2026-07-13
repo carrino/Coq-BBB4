@@ -48,6 +48,22 @@ The Phase 0/1 vertical slice is in place:
   `1RB1LD_1LC0LD_1RC1RA_0LB0RA` (anchor 2,487,033, period 17,620,
   reach 91): `vm_compute` re-simulates the 2.5M-step prefix and the
   guarded lap in ~15 s and the machine is proved to never quasihalt.
+- `theories/Closure.v` — the generic covering-abstraction / liveness
+  engine behind the whole n-gram / RepWL never-QH family: closed
+  abstract sets give non-halting and per-step coverage
+  (`closure_invariant`); per-state liveness is proved by *rank
+  certificates* (an infinite q-avoiding run would project to a
+  rank-strictly-decreasing abstract walk — `rank_find`), which is
+  equivalent to the C verifier's SCC acyclicity but nearly
+  graph-theory-free in Coq.  Closure search and rank computation are
+  untrusted; only the closedness and rank-decrease *checks* carry
+  proofs.  Silent (never-visited) states are skipped soundly, matching
+  the upstream `neverqh_rwlsilent` convention.
+- `theories/Checkers/ExactClosure.v` — the engine's simplest
+  instance (exact normalized configurations): decides in-place
+  cyclers and blank-trail translated cyclers with *no* cycle
+  parameters at all, and validates the engine for the n-gram / RepWL
+  instances to come.
 - `theories/Tests/*_Corruption.v` — negative controls in the BBB
   corruption-test tradition: mutated periods, sides, claims, states
   and last-visit indices are all rejected.
@@ -65,7 +81,10 @@ make
 
 ## Next
 
-Per SCOPING.md: the closure/liveness framework (n-gram / RepWL
-covering abstractions, SCC liveness, ranking rules) that carries
-~2,800 of the decided holdouts, and the certificate-table toolchain
-to ingest the BBB harness's committed `.cert` files.
+Per SCOPING.md: instantiate the closure engine with the n-gram CPS
+and RepWL abstractions (the coarse node types + successor functions
+whose covering proofs plug into `Closure.v` as-is), matching the C
+prover's semantics so the committed `(t, n)` / `(t, L, T)`
+certificates verify directly; then the ranking-measure rules (a)/(b)
+as refinements of the same rank argument, and the certificate-table
+toolchain to ingest the BBB harness's `.cert` files in bulk.
