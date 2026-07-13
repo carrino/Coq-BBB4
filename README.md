@@ -30,17 +30,30 @@ The Phase 0/1 vertical slice is in place:
   head-relative configuration equality): `cycle_check_neverqh` and
   `cycle_check_qh`, each with a soundness theorem, closed by
   `vm_compute` per machine.
-- `theories/Machines/Cycle_Examples.v` — end-to-end theorems for two
-  concrete enumerated machines: `1RB0LC_0LA0LC_0LD0RD_1LA---` never
-  quasihalts (state level); `1RB0LC_0LA0LC_0LD1RA_1LA---` is a
-  non-halting quasihalter whose state D is last visited at
-  configuration index 4.
-- `theories/Tests/Cycle_Corruption.v` — negative controls in the BBB
-  corruption-test tradition: mutated periods, claims, states and
-  last-visit indices are all rejected.
+- `theories/GTape.v` — guarded (walled) configurations: runs that
+  provably depend only on a bounded window of the left half-tape,
+  denoting a *family* of abstract configurations (one per unknown
+  rest below the wall).  `gsteps_lift`/`gmatch_lift` are the
+  translated-cycle induction.
+- `theories/Mirror.v` — left/right machine symmetry; all
+  quasihalting properties transfer, so checkers are written
+  one-sided and side-L certificates run on the mirrored machine.
+- `theories/Checkers/TCycler.v` — the translated-cycler checker
+  (the harness's `tcycler` certificate, parameters `(anchor_step,
+  period_steps, reach)`), never-QH and exact-last-visit QH variants,
+  with soundness theorems and mirrored corollaries.
+- `theories/Machines/Cycle_Examples.v`,
+  `theories/Machines/TCycler_Examples.v` — end-to-end theorems for
+  five concrete machines, including the BBB README's worked example
+  `1RB1LD_1LC0LD_1RC1RA_0LB0RA` (anchor 2,487,033, period 17,620,
+  reach 91): `vm_compute` re-simulates the 2.5M-step prefix and the
+  guarded lap in ~15 s and the machine is proved to never quasihalt.
+- `theories/Tests/*_Corruption.v` — negative controls in the BBB
+  corruption-test tradition: mutated periods, sides, claims, states
+  and last-visit indices are all rejected.
 
 Axiom footprint: `functional_extensionality_dep` only (as in
-Coq-BB5).
+Coq-BB5).  Full build: ~25 s.
 
 ## Build
 
@@ -52,8 +65,7 @@ make
 
 ## Next
 
-Per SCOPING.md: the `tcycler` (translated cycler) checker — the
-most-reused induction in the development — then the closure/liveness
-framework (n-gram / RepWL / ranking rules) that carries ~2,800 of the
-decided holdouts, and the certificate-table toolchain to ingest the
-BBB harness's committed `.cert` files.
+Per SCOPING.md: the closure/liveness framework (n-gram / RepWL
+covering abstractions, SCC liveness, ranking rules) that carries
+~2,800 of the decided holdouts, and the certificate-table toolchain
+to ingest the BBB harness's committed `.cert` files.

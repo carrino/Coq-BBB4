@@ -2,6 +2,11 @@
 
 theories/BBB4_Statement.v
 theories/CTape.v
+theories/GTape.v
+theories/Mirror.v
 theories/Checkers/Cycle.v
+theories/Checkers/TCycler.v
 theories/Machines/Cycle_Examples.v
+theories/Machines/TCycler_Examples.v
 theories/Tests/Cycle_Corruption.v
+theories/Tests/TCycler_Corruption.v
