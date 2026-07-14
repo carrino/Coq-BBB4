@@ -14,7 +14,9 @@ architecture.
 
 ## Current state
 
-The Phase 0/1 vertical slice is in place:
+The Phase 0/1 vertical slice and the core of the Phase 2
+closure/liveness framework (n-gram instance, ranking rules,
+`positive`-encoding performance layer) are in place:
 
 - `theories/BBB4_Statement.v` — the (4,2) machine model
   (head-relative functional tape, `step`/`stepn`) and the
@@ -50,6 +52,13 @@ The Phase 0/1 vertical slice is in place:
   `1RB1LD_1LC0LD_1RC1RA_0LB0RA` (anchor 2,487,033, period 17,620,
   reach 91): `vm_compute` re-simulates the 2.5M-step prefix and the
   guarded lap in ~15 s and the machine is proved to never quasihalt.
+- `theories/PosEnc.v` — the `positive`-encoding performance layer
+  (the Coq-BB5 playbook): self-delimiting bit encoders composing
+  into an injective configuration encoding `cconf_enc`, plus
+  Patricia-trie sets (`MSetPositive`) and `nat` tables
+  (`FMapPositive`) keyed by encodings.  The one trusted fact is
+  `pset_of_mem` (trie hit over an injectively encoded list ⇒ list
+  membership); everything else is representation.
 - `theories/Closure.v` — the generic covering-abstraction / liveness
   engine behind the whole n-gram / RepWL never-QH family: closed
   abstract sets give non-halting and per-step coverage
@@ -59,8 +68,12 @@ The Phase 0/1 vertical slice is in place:
   equivalent to the C verifier's SCC acyclicity but nearly
   graph-theory-free in Coq.  Closure search and rank computation are
   untrusted; only the closedness and rank-decrease *checks* carry
-  proofs.  Silent (never-visited) states are skipped soundly, matching
-  the upstream `neverqh_rwlsilent` convention.
+  proofs.  All membership the engine performs is trie lookup keyed
+  by `a_enc`, and the untrusted ranks come from reverse-topological
+  peeling (depth-many passes on acyclic subgraphs, immediate bail-out
+  on cyclic ones) instead of blind Bellman iteration.  Silent
+  (never-visited) states are skipped soundly, matching the upstream
+  `neverqh_rwlsilent` convention.
 - `theories/Checkers/ExactClosure.v` — the engine's simplest
   instance (exact normalized configurations): decides in-place
   cyclers and blank-trail translated cyclers with *no* cycle
@@ -74,15 +87,22 @@ The Phase 0/1 vertical slice is in place:
   window to its set.  The gram sets are found by an untrusted
   two-level fixpoint mirroring the C prover, then everything is
   re-checked against the final sets.  Certificate-compatible with
-  upstream `(t, n)` parameters (representation is list-based for
-  now, so large-`n` certificates await the `positive`-encoding
-  performance pass).
+  upstream `(t, n)` parameters.  Gram sets are tries keyed by the
+  window encoding and certificate rank/potential tables compile to
+  `PositiveMap`s once per component, so large-`n` certificates
+  verify: `theories/Machines/Sample_LexCert_N5.v` re-proves the
+  README sample machine at n = 5 — a 2,264-context closure with a
+  generated ranking certificate (`tools/gen_lex_cert.py`, now
+  self-contained over `tools/lex_prover.py`) — in ~5 s, where the
+  list-based representation took ~3 min on the same table, and
+  plain-acyclicity probes that took 165 s answer in under a
+  second.
 - `theories/Tests/*_Corruption.v` — negative controls in the BBB
   corruption-test tradition: mutated periods, sides, claims, states
   and last-visit indices are all rejected.
 
 Axiom footprint: `functional_extensionality_dep` only (as in
-Coq-BB5).  Full build: ~25 s.
+Coq-BB5).  Full build: ~30 s (including the n = 5 certificate).
 
 ## Build
 
@@ -94,10 +114,11 @@ make
 
 ## Next
 
-Per SCOPING.md: the RepWL block-closure instance; the
-ranking-measure rules (a)/(b) as refinements of the engine's rank
-argument (these carry `neverqh_rank`'s 2,611 machines); the
-`positive`-encoding performance pass (PositiveMap sets, as in
-Coq-BB5) so large-`n` committed certificates verify; and the
-certificate-table toolchain to ingest the BBB harness's `.cert`
-files in bulk.
+Per SCOPING.md: the certificate-table toolchain to ingest the BBB
+harness's `.cert` files in bulk (the ranking rules and the
+`positive`-encoding pass they needed are done, so `neverqh_ngram` /
+`neverqh_rank` certificates can now land wholesale); the RepWL
+block-closure instance (`neverqh_rwl*`, sharing the same engine and
+encodings); and the wrapped quiet-state QH certificates
+(`wrapctl` / `wrapfar` / `wrapngram`, the `M'_q` construction
+reusing the closure machinery).

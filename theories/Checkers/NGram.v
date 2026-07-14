@@ -30,10 +30,20 @@
     sets, plus a seed check ([ng_seed_ok]) that the configuration at
     step [t] is covered.  With plain-acyclicity liveness (the
     engine's ranks), this is certificate-compatible with upstream
-    [neverqh_ngram]'s [(t, n)] parameters. *)
+    [neverqh_ngram]'s [(t, n)] parameters.
+
+    Representation ([PosEnc]): gram sets are Patricia tries keyed by
+    the window encoding [syms_enc], and the engine's node identity is
+    [cconf_enc] -- every membership test the closure performs is a
+    trie lookup, so large-[n] certificates (gram sets of size up to
+    2^n) check without the quadratic list scans of the first cut.
+    Note the abstraction needs no injectivity for the gram sets:
+    [ng_covers] is *defined* through [gmem], so any computable set
+    would be sound -- injectivity is only load-bearing for the
+    engine's node pool. *)
 
 From Coq Require Import Arith Lia Bool List ZArith.
-From BBB4 Require Import BBB4_Statement CTape Closure.
+From BBB4 Require Import BBB4_Statement CTape PosEnc Closure.
 From BBB4.Checkers Require Import Cycle ExactClosure.
 Import ListNotations.
 
@@ -88,17 +98,21 @@ Proof.
     + apply IHn. lia.
 Qed.
 
-(** ** Gram sets *)
+(** ** Gram sets: tries of window encodings *)
 
-Definition gmem (w : list Sym) (s : list (list Sym)) : bool :=
-  existsb (syms_eqb w) s.
+Definition gset : Type := PositiveSet.t.
 
-Definition gadd (g : list Sym) (s : list (list Sym)) : list (list Sym) :=
-  if gmem g s then s else g :: s.
+Definition gempty : gset := PositiveSet.empty.
+
+Definition gmem (w : list Sym) (s : gset) : bool :=
+  PositiveSet.mem (syms_enc w) s.
+
+Definition gadd (g : list Sym) (s : gset) : gset :=
+  PositiveSet.add (syms_enc g) s.
 
 (** ** The abstraction *)
 
-Definition ng_covers (n : nat) (lset rset : list (list Sym))
+Definition ng_covers (n : nat) (lset rset : gset)
     (a : cconf) (c : ExecState) : Prop :=
   let '(q, (lw, s, rw)) := a in
   fst c = q /\
@@ -113,19 +127,19 @@ Definition ng_covers (n : nat) (lset rset : list (list Sym))
     whole-hypothesis [cbv] reductions, so the membership lemmas below
     can target their exact shape. *)
 
-Definition ng_brR (rset : list (list Sym)) (q' : St) (w : Sym)
+Definition ng_brR (rset : gset) (q' : St) (w : Sym)
     (lw rw : list Sym) (x : Sym) : list cconf :=
   if gmem (tl rw ++ [x]) rset
   then [(q', (w :: removelast lw, chd rw, tl rw ++ [x]))]
   else [].
 
-Definition ng_brL (lset : list (list Sym)) (q' : St) (w : Sym)
+Definition ng_brL (lset : gset) (q' : St) (w : Sym)
     (lw rw : list Sym) (x : Sym) : list cconf :=
   if gmem (tl lw ++ [x]) lset
   then [(q', (tl lw ++ [x], chd lw, w :: removelast rw))]
   else [].
 
-Definition ng_succs (tm : TM) (lset rset : list (list Sym))
+Definition ng_succs (tm : TM) (lset rset : gset)
     (a : cconf) : option (list cconf) :=
   let '(q, (lw, s, rw)) := a in
   match tm q s with
@@ -296,7 +310,7 @@ Definition ng_start (n : nat) (cc : cconf) : cconf :=
   (q, (win (lift_side l) 0 n, h, win (lift_side r) 0 n)).
 
 Definition seed_ok_side (n : nat) (l : list Sym)
-    (set : list (list Sym)) : bool :=
+    (set : gset) : bool :=
   forallb (fun d => gmem (win (lift_side l) d n) set)
           (seq 1 (length l + 1)).
 
@@ -313,7 +327,7 @@ Proof.
     apply H. apply in_seq. lia.
 Qed.
 
-Definition ng_seed_ok (n : nat) (lset rset : list (list Sym))
+Definition ng_seed_ok (n : nat) (lset rset : gset)
     (cc : cconf) : bool :=
   let '(q, (l, h, r)) := cc in
   seed_ok_side n l lset && seed_ok_side n r rset.
@@ -334,25 +348,28 @@ Qed.
 Definition ng_seed_side (n : nat) (l : list Sym) : list (list Sym) :=
   map (fun d => win (lift_side l) d n) (seq 1 (length l + 1)).
 
-Definition gadds (gs : list (list Sym)) (s : list (list Sym))
-  : list (list Sym) := fold_left (fun acc g => gadd g acc) gs s.
+Definition gadds (gs : list (list Sym)) (s : gset) : gset :=
+  fold_left (fun acc g => gadd g acc) gs s.
 
 (** Explore reachable contexts under fixed sets, skipping (rather
     than failing on) contexts whose successors are blocked -- their
-    donations feed the next round. *)
-Fixpoint ng_explore (tm : TM) (n : nat) (lset rset : list (list Sym))
-    (fuel : nat) (seen todo : list cconf) : list cconf :=
+    donations feed the next round.  [sp] mirrors [seen] as a trie of
+    [cconf_enc] keys. *)
+Fixpoint ng_explore (tm : TM) (lset rset : gset)
+    (fuel : nat) (seen : list cconf) (sp : PositiveSet.t)
+    (todo : list cconf) : list cconf :=
   match fuel with
   | 0 => seen
   | S f =>
       match todo with
       | [] => seen
       | a :: todo' =>
-          if mem cconf cconf_eqb a seen
-          then ng_explore tm n lset rset f seen todo'
-          else match ng_succs tm lset rset a with
-               | None => ng_explore tm n lset rset f (a :: seen) todo'
-               | Some l => ng_explore tm n lset rset f (a :: seen)
+          if pset_mem cconf cconf_enc a sp
+          then ng_explore tm lset rset f seen sp todo'
+          else let sp' := pset_add cconf cconf_enc a sp in
+               match ng_succs tm lset rset a with
+               | None => ng_explore tm lset rset f (a :: seen) sp' todo'
+               | Some l => ng_explore tm lset rset f (a :: seen) sp'
                                       (l ++ todo')
                end
       end
@@ -369,13 +386,12 @@ Definition ng_harvest (tm : TM) (a : cconf)
   | None => ([], [])
   end.
 
-Fixpoint ng_grow (tm : TM) (n : nat) (a0 : cconf) (fuel rounds : nat)
-    (lset rset : list (list Sym))
-  : (list (list Sym) * list (list Sym)) :=
+Fixpoint ng_grow (tm : TM) (a0 : cconf) (fuel rounds : nat)
+    (lset rset : gset) : (gset * gset) :=
   match rounds with
   | 0 => (lset, rset)
   | S k =>
-      let ctxs := ng_explore tm n lset rset fuel [] [a0] in
+      let ctxs := ng_explore tm lset rset fuel [] PositiveSet.empty [a0] in
       let sets' :=
         fold_left (fun p a =>
                      let '(ls, rs) := p in
@@ -383,9 +399,10 @@ Fixpoint ng_grow (tm : TM) (n : nat) (a0 : cconf) (fuel rounds : nat)
                      (gadds hl ls, gadds hr rs))
                   ctxs (lset, rset) in
       let '(lset', rset') := sets' in
-      if (length lset' =? length lset) && (length rset' =? length rset)
+      if (PositiveSet.cardinal lset' =? PositiveSet.cardinal lset)
+         && (PositiveSet.cardinal rset' =? PositiveSet.cardinal rset)
       then (lset, rset)
-      else ng_grow tm n a0 fuel k lset' rset'
+      else ng_grow tm a0 fuel k lset' rset'
   end.
 
 (** ** The checker *)
@@ -395,12 +412,12 @@ Definition ngram_check_neverqh (tm : TM) (n t fuel rounds : nat) : bool :=
   match csteps tm t c0 with
   | Some cc =>
       let '(q, (l, h, r)) := cc in
-      let lset0 := gadds (ng_seed_side n l) [] in
-      let rset0 := gadds (ng_seed_side n r) [] in
+      let lset0 := gadds (ng_seed_side n l) gempty in
+      let rset0 := gadds (ng_seed_side n r) gempty in
       let a0 := ng_start n cc in
-      let '(lset, rset) := ng_grow tm n a0 fuel rounds lset0 rset0 in
+      let '(lset, rset) := ng_grow tm a0 fuel rounds lset0 rset0 in
       ng_seed_ok n lset rset cc &&
-      closure_check_neverqh tm cconf cconf_eqb ec_state
+      closure_check_neverqh tm cconf cconf_enc ec_state
         (ng_succs tm lset rset) t fuel a0
   | None => false
   end.
@@ -418,10 +435,10 @@ Proof.
   end.
   cbv beta iota zeta in H.
   apply andb_prop in H as [Hseed Hcheck].
-  apply (closure_check_neverqh_sound tm cconf cconf_eqb ec_state
+  apply (closure_check_neverqh_sound tm cconf cconf_enc ec_state
            (ng_succs tm lset rset) (ng_covers n lset rset)) in Hcheck;
     [assumption | | | |].
-  - exact cconf_eqb_sound.
+  - exact cconf_enc_inj.
   - intros a c Hc. eapply ng_covers_state; eauto.
   - intros a c Hc. apply ng_succs_sound; assumption.
   - intros ct' Hct'. rewrite Et in Hct'. injection Hct' as <-.
@@ -514,18 +531,24 @@ Inductive ngcomp : Type :=
 | NgMeas (m : ngmeas) (K : nat) (phi : list (cconf * nat))
          (gate : list cconf).
 
-Definition lookup_nat (tbl : list (cconf * nat)) (a : cconf) : nat :=
-  match find (fun p => cconf_eqb a (fst p)) tbl with
-  | Some p => snd p
-  | None => 0
-  end.
+(** Certificate tables stay lists of [(context, value)] pairs in the
+    generated [.v] files; the denotation compiles each into a
+    [PositiveMap]/[PositiveSet] ONCE (the [let] is strict under
+    [vm_compute], so the trie is shared across every edge lookup).
+    The values need no soundness story: [lex_ok] re-checks every
+    edge against whatever function comes out. *)
 
 Definition ng_comp_denote (tm : TM) (c : ngcomp) : lexcomp cconf :=
   match c with
-  | NgRank phi => LexRank cconf (lookup_nat phi)
+  | NgRank phi =>
+      let pm := pmap_of cconf cconf_enc phi in
+      LexRank cconf (pmap_get cconf cconf_enc pm)
   | NgMeas m K phi gate =>
-      LexMeas cconf (ngm_val m) (ngm_delta tm m) K (lookup_nat phi)
-              (fun a => mem cconf cconf_eqb a gate)
+      let pm := pmap_of cconf cconf_enc phi in
+      let gs := pset_of cconf cconf_enc gate in
+      LexMeas cconf (ngm_val m) (ngm_delta tm m) K
+              (pmap_get cconf cconf_enc pm)
+              (fun a => pset_mem cconf cconf_enc a gs)
   end.
 
 Definition ngram_check_neverqh_lex (tm : TM) (n t fuel rounds : nat)
@@ -534,12 +557,12 @@ Definition ngram_check_neverqh_lex (tm : TM) (n t fuel rounds : nat)
   match csteps tm t c0 with
   | Some cc =>
       let '(q, (l, h, r)) := cc in
-      let lset0 := gadds (ng_seed_side n l) [] in
-      let rset0 := gadds (ng_seed_side n r) [] in
+      let lset0 := gadds (ng_seed_side n l) gempty in
+      let rset0 := gadds (ng_seed_side n r) gempty in
       let a0 := ng_start n cc in
-      let '(lset, rset) := ng_grow tm n a0 fuel rounds lset0 rset0 in
+      let '(lset, rset) := ng_grow tm a0 fuel rounds lset0 rset0 in
       ng_seed_ok n lset rset cc &&
-      closure_check_neverqh_lex tm cconf cconf_eqb ec_state
+      closure_check_neverqh_lex tm cconf cconf_enc ec_state
         (ng_succs tm lset rset) t fuel a0
         (fun q => map (ng_comp_denote tm) (cert q))
   | None => false
@@ -559,10 +582,10 @@ Proof.
   end.
   cbv beta iota zeta in H.
   apply andb_prop in H as [Hseed Hcheck].
-  apply (closure_check_neverqh_lex_sound tm cconf cconf_eqb ec_state
+  apply (closure_check_neverqh_lex_sound tm cconf cconf_enc ec_state
            (ng_succs tm lset rset) (ng_covers n lset rset)) in Hcheck;
     [assumption | | | | |].
-  - exact cconf_eqb_sound.
+  - exact cconf_enc_inj.
   - intros a c Hc. eapply ng_covers_state; eauto.
   - intros a c Hc. apply ng_succs_sound; assumption.
   - intros ct' Hct'. rewrite Et in Hct'. injection Hct' as <-.

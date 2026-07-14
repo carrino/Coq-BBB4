@@ -36,7 +36,7 @@ Print Assumptions tm_tc_neverqh_never_quasihalts_ngram.
 Print Assumptions tm_ex_neverqh_never_quasihalts_ngram.
 
 (* Ranking-rule negatives: the flagship needs a genuine certificate. *)
-From BBB4.Machines Require Import Sample_LexCert.
+From BBB4.Machines Require Import Sample_LexCert Sample_LexCert_N5.
 
 Example lex_reject_empty :
   ngram_check_neverqh_lex (mirror_tm tm_bbb_sample) 2 0 5000 16
@@ -52,3 +52,4 @@ Example lex_reject_swapped :
 Proof. vm_compute. reflexivity. Qed.
 
 Print Assumptions tm_bbb_sample_never_quasihalts_rank.
+Print Assumptions tm_bbb_sample_never_quasihalts_rank_n5.
