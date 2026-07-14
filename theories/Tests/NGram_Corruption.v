@@ -34,3 +34,21 @@ Proof. vm_compute. reflexivity. Qed.
 
 Print Assumptions tm_tc_neverqh_never_quasihalts_ngram.
 Print Assumptions tm_ex_neverqh_never_quasihalts_ngram.
+
+(* Ranking-rule negatives: the flagship needs a genuine certificate. *)
+From BBB4.Machines Require Import Sample_LexCert.
+
+Example lex_reject_empty :
+  ngram_check_neverqh_lex (mirror_tm tm_bbb_sample) 2 0 5000 16
+    (fun _ => nil) = false.
+Proof. vm_compute. reflexivity. Qed.
+
+Example lex_reject_swapped :
+  ngram_check_neverqh_lex (mirror_tm tm_bbb_sample) 2 0 5000 16
+    (fun q => match q with
+              | StA => cert_B | StB => cert_A
+              | StC => cert_D | StD => cert_C
+              end) = false.
+Proof. vm_compute. reflexivity. Qed.
+
+Print Assumptions tm_bbb_sample_never_quasihalts_rank.

@@ -217,3 +217,39 @@ Proof.
   rewrite (lpad_eqb_lift _ _ Hl), (lpad_eqb_lift _ _ Hr).
   reflexivity.
 Qed.
+
+(** ** Blank-start runs are computable *)
+
+Lemma cstep_lift_rev : forall tm cc c',
+  step tm (lift cc) = Some c' ->
+  exists cc', cstep tm cc = Some cc' /\ lift cc' = c'.
+Proof.
+  intros tm cc c' H.
+  destruct (cstep tm cc) as [cc'|] eqn:E.
+  - exists cc'. split; [reflexivity|].
+    pose proof (cstep_lift _ _ _ E) as H2. congruence.
+  - exfalso. destruct cc as [q [[l h] r]].
+    unfold cstep in E. unfold step in H; simpl in H.
+    destruct (tm q h); discriminate.
+Qed.
+
+Lemma stepn_csteps : forall tm m c,
+  stepn tm m InitES = Some c ->
+  exists cc, csteps tm m c0 = Some cc /\ lift cc = c.
+Proof.
+  induction m; intros c H.
+  - simpl in H. injection H as <-.
+    exists c0. split; [reflexivity | apply lift_c0].
+  - replace (S m) with (m + 1) in H by lia.
+    rewrite stepn_add in H.
+    destruct (stepn tm m InitES) as [cm|] eqn:Em; [|discriminate].
+    destruct (IHm cm eq_refl) as (ccm & Hccm & Hlift).
+    cbn [stepn] in H.
+    destruct (step tm cm) as [c1|] eqn:Estep; [|discriminate].
+    injection H as <-.
+    rewrite <- Hlift in Estep.
+    destruct (cstep_lift_rev tm ccm c1 Estep) as (cc' & Hcc' & Hl').
+    exists cc'. split; [|assumption].
+    replace (S m) with (m + 1) by lia.
+    rewrite csteps_add, Hccm, csteps_1. assumption.
+Qed.

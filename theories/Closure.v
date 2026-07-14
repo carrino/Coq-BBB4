@@ -39,7 +39,7 @@
     the upstream [neverqh_rwlsilent] convention (a never-visited
     state does not witness quasihalting). *)
 
-From Coq Require Import Arith Lia Bool List.
+From Coq Require Import Arith Lia Bool List ZArith.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Checkers Require Import Cycle.
 Import ListNotations.
@@ -299,6 +299,293 @@ Section ClosureEngine.
                 (S (compute_ranks Sl q aM)) aM cM M)
       as (n & Hn & Hv); try assumption; try lia.
     exists n. split; [| assumption].
+    assert (N <= M) by (unfold M; lia). lia.
+  Qed.
+
+
+  (** ** Lexicographic liveness: the ranking rules (a)/(b)
+
+      The upstream rank procedure (docs/neverqh.md "Ranking
+      liveness") deletes strictly-decreasing edges of nonincreasing
+      measures (rule a) and SCCs whose every cycle strictly
+      decreases a measure (rule b, via Bellman-Ford).  Its runs
+      compile to LEXICOGRAPHIC certificates: an ordered list of
+      components, each either a node rank or a measure with a scale
+      [K], node potentials [phi] (the Bellman-Ford certificate) and
+      an SCC gate; every q-avoiding edge must strictly decrease some
+      component while non-increasing all earlier ones.  The tracked
+      value of a measure component on the concrete (computable) run
+      is [K * measure + phi] when gated, [0] outside the gate -- a
+      natural number, so an infinite q-avoiding run would give an
+      infinite lexicographically decreasing sequence of nat tuples:
+      impossible.  Checking is per-edge and local; no SCC or graph
+      theory enters the proofs. *)
+
+  Inductive lexcomp : Type :=
+  | LexRank (phi : A -> nat)
+  | LexMeas (mval : cconf -> nat) (mdelta : A -> A -> Z)
+            (K : nat) (phi : A -> nat) (gate : A -> bool).
+
+  Definition comp_eval (comp : lexcomp) (a : A) (cc : cconf) : nat :=
+    match comp with
+    | LexRank phi => phi a
+    | LexMeas mval _ K phi gate =>
+        if gate a then K * mval cc + phi a else 0
+    end.
+
+  Definition comp_strict (comp : lexcomp) (a a' : A) : bool :=
+    match comp with
+    | LexRank phi => phi a' <? phi a
+    | LexMeas _ md K phi gate =>
+        gate a && gate a' &&
+        (Z.of_nat K * md a a' + Z.of_nat (phi a') - Z.of_nat (phi a)
+           <=? -1)%Z
+    end.
+
+  Definition comp_noninc (comp : lexcomp) (a a' : A) : bool :=
+    match comp with
+    | LexRank phi => phi a' <=? phi a
+    | LexMeas _ md K phi gate =>
+        negb (gate a')
+        || (gate a && gate a' &&
+            (Z.of_nat K * md a a' + Z.of_nat (phi a') - Z.of_nat (phi a)
+               <=? 0)%Z)
+    end.
+
+  Fixpoint lex_edge_ok (comps : list lexcomp) (a a' : A) : bool :=
+    match comps with
+    | [] => false
+    | comp :: rest =>
+        comp_strict comp a a'
+        || (comp_noninc comp a a' && lex_edge_ok rest a a')
+    end.
+
+  Definition lex_ok (Sl : list A) (q : St) (comps : list lexcomp) : bool :=
+    forallb (fun a =>
+      if st_eqb (a_state a) q then true
+      else match succs a with
+           | Some l => forallb (fun a' =>
+                         st_eqb (a_state a') q || lex_edge_ok comps a a') l
+           | None => false
+           end) Sl.
+
+  Definition lex_tuple (comps : list lexcomp) (a : A) (cc : cconf)
+    : list nat := map (fun comp => comp_eval comp a cc) comps.
+
+  Definition closure_check_neverqh_lex (t fuel : nat) (a0 : A)
+      (cert : St -> list lexcomp) : bool :=
+    match csteps tm t c0 with
+    | Some ct =>
+        match close fuel [] [a0] with
+        | Some Sl =>
+            closed_b Sl && mem a0 Sl &&
+            forallb (fun q =>
+              implb (cvisits tm c0 t q
+                     || existsb (fun a => st_eqb (a_state a) q) Sl)
+                    (lex_ok Sl q (cert q))) all_St
+        | None => false
+        end
+    | None => false
+    end.
+
+  (** *** Well-foundedness of the lexicographic order *)
+
+  Fixpoint lexlt (xs ys : list nat) : Prop :=
+    match xs, ys with
+    | x :: xs', y :: ys' =>
+        (x < y /\ length xs' = length ys') \/ (x = y /\ lexlt xs' ys')
+    | _, _ => False
+    end.
+
+  Lemma lexlt_length : forall xs ys, lexlt xs ys -> length xs = length ys.
+  Proof.
+    induction xs as [|x xs' IH]; intros [|y ys'] H; simpl in *;
+      try contradiction.
+    destruct H as [[_ Hl] | [_ Hl]]; [lia | rewrite (IH _ Hl); lia].
+  Qed.
+
+  Lemma lexlt_wf_len : forall k xs, length xs = k -> Acc lexlt xs.
+  Proof.
+    induction k as [|k IHk]; intros xs Hk.
+    - destruct xs; [|discriminate].
+      constructor. intros ys Hys. destruct ys; simpl in Hys; contradiction.
+    - destruct xs as [|x t]; [discriminate|].
+      injection Hk as Hk.
+      revert t Hk.
+      induction x as [x IHx] using lt_wf_ind.
+      intros t Hk.
+      pose proof (IHk t Hk) as Hacc.
+      revert Hk.
+      induction Hacc as [t Hacc IHt].
+      intros Hk.
+      constructor. intros ys Hys.
+      destruct ys as [|y t']; simpl in Hys; [contradiction|].
+      destruct Hys as [[Hlt Hlen] | [-> Hl]].
+      + apply (IHx y Hlt t'). congruence.
+      + apply IHt; [exact Hl|].
+        rewrite (lexlt_length _ _ Hl). exact Hk.
+  Qed.
+
+  (** *** Soundness of the lexicographic liveness check *)
+
+  Definition comp_exact (comp : lexcomp) : Prop :=
+    match comp with
+    | LexRank _ => True
+    | LexMeas mval md _ _ _ =>
+        forall a cc a' cc' l,
+          covers a (lift cc) -> covers a' (lift cc') ->
+          cstep tm cc = Some cc' ->
+          succs a = Some l -> In a' l ->
+          Z.of_nat (mval cc') = (Z.of_nat (mval cc) + md a a')%Z
+    end.
+
+  Lemma lex_edge_decrease : forall comps a cc a' cc' l,
+    Forall comp_exact comps ->
+    covers a (lift cc) -> covers a' (lift cc') ->
+    cstep tm cc = Some cc' ->
+    succs a = Some l -> In a' l ->
+    lex_edge_ok comps a a' = true ->
+    lexlt (lex_tuple comps a' cc') (lex_tuple comps a cc).
+  Proof.
+    induction comps as [|comp rest IH];
+      intros a cc a' cc' l Hex Hca Hca' Hstep Es HInl He; simpl in He;
+      [discriminate|].
+    inversion Hex as [|? ? Hex1 Hexr]; subst.
+    assert (Hlen : length (lex_tuple rest a' cc')
+                   = length (lex_tuple rest a cc)).
+    { unfold lex_tuple. rewrite !map_length. reflexivity. }
+    apply orb_prop in He as [Hs | He].
+    - (* head strictly decreases *)
+      left. split; [|exact Hlen].
+      destruct comp as [phi | mval md K phi gate]; simpl in Hs |- *.
+      + apply Nat.ltb_lt in Hs. exact Hs.
+      + apply andb_prop in Hs as [Hg Hz].
+        apply andb_prop in Hg as [Hga Hga'].
+        rewrite Hga, Hga'.
+        apply Z.leb_le in Hz.
+        pose proof (Hex1 a cc a' cc' l Hca Hca' Hstep Es HInl) as Hd.
+        lia.
+    - apply andb_prop in He as [Hni He].
+      assert (Hle : comp_eval comp a' cc' <= comp_eval comp a cc).
+      { destruct comp as [phi | mval md K phi gate]; simpl in Hni |- *.
+        - apply Nat.leb_le in Hni. exact Hni.
+        - apply orb_prop in Hni as [Hng | Hni].
+          + rewrite negb_true_iff in Hng. rewrite Hng. lia.
+          + apply andb_prop in Hni as [Hg Hz].
+            apply andb_prop in Hg as [Hga Hga'].
+            rewrite Hga, Hga'.
+            apply Z.leb_le in Hz.
+            pose proof (Hex1 a cc a' cc' l Hca Hca' Hstep Es HInl) as Hd.
+            lia. }
+      destruct (Nat.lt_ge_cases (comp_eval comp a' cc')
+                                (comp_eval comp a cc)) as [Hlt | Hge].
+      + left. split; [exact Hlt | exact Hlen].
+      + right. split; [lia|].
+        eapply IH; eauto.
+  Qed.
+
+  Lemma lex_find : forall Sl q comps,
+    closed_b Sl = true ->
+    lex_ok Sl q comps = true ->
+    Forall comp_exact comps ->
+    forall tuple, Acc lexlt tuple ->
+    forall a cc m,
+    tuple = lex_tuple comps a cc ->
+    In a Sl -> covers a (lift cc) ->
+    stepn tm m InitES = Some (lift cc) ->
+    exists n', m <= n' /\ VisitsAt tm q n'.
+  Proof.
+    intros Sl q comps Hcl Hok Hex tuple Hacc.
+    induction Hacc as [tuple Hacc IH].
+    intros a cc m -> HIn Hcov Hm.
+    destruct (st_eqb (a_state a) q) eqn:Eq.
+    - apply st_eqb_spec in Eq.
+      exists m. split; [lia|].
+      exists (lift cc). split; [assumption|].
+      rewrite <- (covers_state a (lift cc) Hcov). assumption.
+    - destruct (closed_step Sl a (lift cc) Hcl HIn Hcov)
+        as (c' & l & a' & Hstep & Es & HInl & HIn' & Hcov').
+      destruct (cstep_lift_rev tm cc c' Hstep) as (cc' & Hcc' & Hlift).
+      subst c'.
+      assert (Hm' : stepn tm (S m) InitES = Some (lift cc')).
+      { replace (S m) with (m + 1) by lia.
+        rewrite stepn_add, Hm. cbn [stepn]. rewrite Hstep. reflexivity. }
+      destruct (st_eqb (a_state a') q) eqn:Eq'.
+      + apply st_eqb_spec in Eq'.
+        exists (S m). split; [lia|].
+        exists (lift cc'). split; [assumption|].
+        rewrite <- (covers_state a' _ Hcov'). assumption.
+      + assert (He : lex_edge_ok comps a a' = true).
+        { unfold lex_ok in Hok. rewrite forallb_forall in Hok.
+          specialize (Hok a HIn). rewrite Eq, Es in Hok.
+          rewrite forallb_forall in Hok.
+          specialize (Hok a' HInl). rewrite Eq' in Hok.
+          simpl in Hok. assumption. }
+      destruct (IH (lex_tuple comps a' cc')
+                  (lex_edge_decrease comps a cc a' cc' l Hex Hcov Hcov'
+                     Hcc' Es HInl He)
+                  a' cc' (S m) eq_refl HIn' Hcov' Hm')
+        as (n' & Hn' & Hv).
+      exists n'. split; [lia | assumption].
+  Qed.
+
+  Theorem closure_check_neverqh_lex_sound : forall t fuel a0 cert,
+    (forall ct, csteps tm t c0 = Some ct -> covers a0 (lift ct)) ->
+    (forall q, Forall comp_exact (cert q)) ->
+    closure_check_neverqh_lex t fuel a0 cert = true ->
+    NeverQuasiHaltsSt tm.
+  Proof.
+    intros t fuel a0 cert Hstart Hcert H.
+    unfold closure_check_neverqh_lex in H.
+    destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
+    destruct (close fuel [] [a0]) as [Sl|]; [|discriminate].
+    apply andb_prop in H as [H Hq].
+    apply andb_prop in H as [Hcl Hin].
+    apply mem_In in Hin.
+    pose proof (Hstart ct eq_refl) as Hcov0.
+    assert (Hct : stepn tm t InitES = Some (lift ct)).
+    { rewrite <- lift_c0. apply csteps_lift; assumption. }
+    intros q Hvq N.
+    assert (Hro : lex_ok Sl q (cert q) = true).
+    { rewrite forallb_forall in Hq.
+      specialize (Hq q (all_St_complete q)).
+      destruct Hvq as (n0 & cn & Hcn & Hqn).
+      assert (Hprem : cvisits tm c0 t q
+                      || existsb (fun a => st_eqb (a_state a) q) Sl = true).
+      { destruct (le_lt_dec t n0) as [Hge | Hlt].
+        - apply orb_true_intro; right.
+          destruct (closure_invariant Sl Hcl a0 (lift ct)
+                      Hin Hcov0 (n0 - t)) as (c' & a' & Hst & HIn' & Hcov').
+          assert (Hc' : stepn tm n0 InitES = Some c').
+          { replace n0 with (t + (n0 - t)) by lia.
+            rewrite stepn_add, Hct. assumption. }
+          rewrite Hc' in Hcn. injection Hcn as <-.
+          apply existsb_exists. exists a'.
+          split; [assumption|].
+          apply st_eqb_spec. rewrite (covers_state a' c' Hcov'). assumption.
+        - apply orb_true_intro; left.
+          destruct (csteps_prefix tm n0 t c0 ct) as (cn' & Hcn' & _);
+            [lia | exact Et |].
+          assert (Hl : stepn tm n0 InitES = Some (lift cn')).
+          { rewrite <- lift_c0. apply csteps_lift; assumption. }
+          rewrite Hl in Hcn. injection Hcn as <-.
+          eapply cvisits_complete; [exact Hlt | exact Hcn' | exact Hqn]. }
+      rewrite Hprem in Hq.
+      destruct (lex_ok Sl q (cert q)); [reflexivity | discriminate]. }
+    set (M := Nat.max N t).
+    destruct (closure_invariant Sl Hcl a0 (lift ct)
+                Hin Hcov0 (M - t)) as (cM & aM & HstM & HInM & HcovM).
+    assert (HM : stepn tm M InitES = Some cM).
+    { replace M with (t + (M - t)) by (unfold M; lia).
+      rewrite stepn_add, Hct. assumption. }
+    destruct (stepn_csteps tm M cM HM) as (ccM & HccM & HliftM).
+    rewrite <- HliftM in HcovM, HM.
+    destruct (lex_find Sl q (cert q) Hcl Hro (Hcert q)
+                (lex_tuple (cert q) aM ccM)
+                (lexlt_wf_len (length (lex_tuple (cert q) aM ccM)) _ eq_refl)
+                aM ccM M eq_refl HInM HcovM HM)
+      as (n' & Hn' & Hv).
+    exists n'. split; [| assumption].
     assert (N <= M) by (unfold M; lia). lia.
   Qed.
 

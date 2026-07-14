@@ -32,7 +32,7 @@
     engine's ranks), this is certificate-compatible with upstream
     [neverqh_ngram]'s [(t, n)] parameters. *)
 
-From Coq Require Import Arith Lia Bool List.
+From Coq Require Import Arith Lia Bool List ZArith.
 From BBB4 Require Import BBB4_Statement CTape Closure.
 From BBB4.Checkers Require Import Cycle ExactClosure.
 Import ListNotations.
@@ -426,4 +426,150 @@ Proof.
   - intros a c Hc. apply ng_succs_sound; assumption.
   - intros ct' Hct'. rewrite Et in Hct'. injection Hct' as <-.
     apply ng_start_covers. exact Hseed.
+Qed.
+
+(** ** Ranking measures: counts of nonblank cells
+
+    The canonical rank-rule measures (docs/neverqh.md): the number of
+    1s on the whole tape / strictly left / strictly right of the
+    head.  Values are computed on the computable configuration;
+    deltas are read off the abstract context (the write, the old
+    head, and the nearest cell of the approached window). *)
+
+Fixpoint count1 (l : list Sym) : nat :=
+  match l with
+  | [] => 0
+  | S1 :: t => S (count1 t)
+  | S0 :: t => count1 t
+  end.
+
+Definition zc1 (s : Sym) : Z := match s with S1 => 1%Z | S0 => 0%Z end.
+Definition nc1 (s : Sym) : nat := match s with S1 => 1 | S0 => 0 end.
+
+Lemma count1_cons : forall x t, count1 (x :: t) = nc1 x + count1 t.
+Proof. destruct x; reflexivity. Qed.
+
+Lemma count1_ctl : forall r,
+  Z.of_nat (count1 (ctl r)) = (Z.of_nat (count1 r) - zc1 (chd r))%Z.
+Proof.
+  destruct r as [|x t]; [reflexivity|].
+  destruct x; cbn [count1 ctl chd zc1]; lia.
+Qed.
+
+Inductive ngmeas : Type := MAll | MLeft | MRight.
+
+Definition ngm_val (m : ngmeas) (cc : cconf) : nat :=
+  let '(q, (l, h, r)) := cc in
+  match m with
+  | MAll => count1 l + nc1 h + count1 r
+  | MLeft => count1 l
+  | MRight => count1 r
+  end.
+
+Definition ngm_delta (tm : TM) (m : ngmeas) (a a' : cconf) : Z :=
+  let '(q, (lw, s, rw)) := a in
+  match tm q s with
+  | None => 0%Z
+  | Some tr =>
+      match m, t_dir tr with
+      | MAll, _ => (zc1 (t_write tr) - zc1 s)%Z
+      | MLeft, DR => zc1 (t_write tr)
+      | MLeft, DL => (- zc1 (chd lw))%Z
+      | MRight, DR => (- zc1 (chd rw))%Z
+      | MRight, DL => zc1 (t_write tr)
+      end
+  end.
+
+Lemma ngm_exact : forall tm n lset rset m a cc a' cc',
+  1 <= n ->
+  ng_covers n lset rset a (lift cc) ->
+  cstep tm cc = Some cc' ->
+  Z.of_nat (ngm_val m cc') = (Z.of_nat (ngm_val m cc) + ngm_delta tm m a a')%Z.
+Proof.
+  intros tm n lset rset m [q [[lw s] rw]] [qc [[l h] r]] a' cc' Hn Hcov Hstep.
+  destruct Hcov as (Hq & Hh & Hlw & Hrw & _).
+  simpl in Hq, Hh. subst qc h lw rw.
+  cbn [snd t_left t_right t_head lift lift_tape] in *.
+  destruct n as [|k]; [lia|].
+  unfold cstep in Hstep.
+  destruct (tm q s) as [tr|] eqn:Etr; [|discriminate].
+  injection Hstep as <-.
+  assert (Hcl : chd (win (lift_side l) 0 (S k)) = chd l).
+  { rewrite win_chd. symmetry. apply lift_side_hd. }
+  assert (Hcr : chd (win (lift_side r) 0 (S k)) = chd r).
+  { rewrite win_chd. symmetry. apply lift_side_hd. }
+  unfold ngm_delta. rewrite Etr.
+  destruct (t_dir tr) eqn:Ed; destruct m; cbn [ngm_val ctape_move];
+    rewrite ?Hcl, ?Hcr;
+    destruct l as [|x1 t1]; destruct r as [|x2 t2];
+    destruct (t_write tr); destruct s;
+    try destruct x1; try destruct x2;
+    cbn [count1 nc1 zc1 ctl chd]; lia.
+Qed.
+
+(** ** Certificate syntax and denotation *)
+
+Inductive ngcomp : Type :=
+| NgRank (phi : list (cconf * nat))
+| NgMeas (m : ngmeas) (K : nat) (phi : list (cconf * nat))
+         (gate : list cconf).
+
+Definition lookup_nat (tbl : list (cconf * nat)) (a : cconf) : nat :=
+  match find (fun p => cconf_eqb a (fst p)) tbl with
+  | Some p => snd p
+  | None => 0
+  end.
+
+Definition ng_comp_denote (tm : TM) (c : ngcomp) : lexcomp cconf :=
+  match c with
+  | NgRank phi => LexRank cconf (lookup_nat phi)
+  | NgMeas m K phi gate =>
+      LexMeas cconf (ngm_val m) (ngm_delta tm m) K (lookup_nat phi)
+              (fun a => mem cconf cconf_eqb a gate)
+  end.
+
+Definition ngram_check_neverqh_lex (tm : TM) (n t fuel rounds : nat)
+    (cert : St -> list ngcomp) : bool :=
+  (1 <=? n) &&
+  match csteps tm t c0 with
+  | Some cc =>
+      let '(q, (l, h, r)) := cc in
+      let lset0 := gadds (ng_seed_side n l) [] in
+      let rset0 := gadds (ng_seed_side n r) [] in
+      let a0 := ng_start n cc in
+      let '(lset, rset) := ng_grow tm n a0 fuel rounds lset0 rset0 in
+      ng_seed_ok n lset rset cc &&
+      closure_check_neverqh_lex tm cconf cconf_eqb ec_state
+        (ng_succs tm lset rset) t fuel a0
+        (fun q => map (ng_comp_denote tm) (cert q))
+  | None => false
+  end.
+
+Theorem ngram_check_neverqh_lex_sound : forall tm n t fuel rounds cert,
+  ngram_check_neverqh_lex tm n t fuel rounds cert = true ->
+  NeverQuasiHaltsSt tm.
+Proof.
+  intros tm n t fuel rounds cert H.
+  unfold ngram_check_neverqh_lex in H.
+  apply andb_prop in H as [Hn H].
+  apply Nat.leb_le in Hn.
+  destruct (csteps tm t c0) as [[q [[l h] r]]|] eqn:Et; [|discriminate].
+  match type of H with
+  | (let '(_, _) := ?G in _) = true => destruct G as [lset rset] eqn:Eg
+  end.
+  cbv beta iota zeta in H.
+  apply andb_prop in H as [Hseed Hcheck].
+  apply (closure_check_neverqh_lex_sound tm cconf cconf_eqb ec_state
+           (ng_succs tm lset rset) (ng_covers n lset rset)) in Hcheck;
+    [assumption | | | | |].
+  - exact cconf_eqb_sound.
+  - intros a c Hc. eapply ng_covers_state; eauto.
+  - intros a c Hc. apply ng_succs_sound; assumption.
+  - intros ct' Hct'. rewrite Et in Hct'. injection Hct' as <-.
+    apply ng_start_covers. exact Hseed.
+  - intros q0. apply Forall_forall. intros comp Hin.
+    apply in_map_iff in Hin. destruct Hin as (c & <- & _).
+    destruct c as [phi | m K phi gate]; simpl; [exact I|].
+    intros a cc a' cc' sl Hca Hca' Hstep Es HInl.
+    eapply ngm_exact; eauto.
 Qed.

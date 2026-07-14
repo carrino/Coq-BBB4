@@ -13,6 +13,7 @@ theories/Machines/Cycle_Examples.v
 theories/Machines/TCycler_Examples.v
 theories/Machines/Closure_Examples.v
 theories/Machines/NGram_Examples.v
+theories/Machines/Sample_LexCert.v
 theories/Tests/Cycle_Corruption.v
 theories/Tests/TCycler_Corruption.v
 theories/Tests/Closure_Corruption.v
