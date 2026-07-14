@@ -7,10 +7,13 @@ theories/Mirror.v
 theories/Checkers/Cycle.v
 theories/Closure.v
 theories/Checkers/ExactClosure.v
+theories/Checkers/NGram.v
 theories/Checkers/TCycler.v
 theories/Machines/Cycle_Examples.v
 theories/Machines/TCycler_Examples.v
 theories/Machines/Closure_Examples.v
+theories/Machines/NGram_Examples.v
 theories/Tests/Cycle_Corruption.v
 theories/Tests/TCycler_Corruption.v
 theories/Tests/Closure_Corruption.v
+theories/Tests/NGram_Corruption.v

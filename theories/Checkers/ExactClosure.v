@@ -103,24 +103,32 @@ Definition ec_succs (tm : TM) (a : cconf) : option (list cconf) :=
 Definition ec_state (a : cconf) : St := fst a.
 
 Definition exact_closure_check_neverqh (tm : TM) (t fuel : nat) : bool :=
-  closure_check_neverqh tm cconf cconf_eqb ec_state (ec_succs tm) norm t fuel.
+  match csteps tm t c0 with
+  | Some ct =>
+      closure_check_neverqh tm cconf cconf_eqb ec_state (ec_succs tm)
+        t fuel (norm ct)
+  | None => false
+  end.
 
 Theorem exact_closure_check_neverqh_sound : forall tm t fuel,
   exact_closure_check_neverqh tm t fuel = true -> NeverQuasiHaltsSt tm.
 Proof.
   intros tm t fuel H.
+  unfold exact_closure_check_neverqh in H.
+  destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
   apply (closure_check_neverqh_sound tm cconf cconf_eqb ec_state
-           (ec_succs tm) norm (fun a c => lift a = c)) in H;
+           (ec_succs tm) (fun a c => lift a = c)) in H;
     [assumption | | | |].
   - exact cconf_eqb_sound.
   - (* covers_state *)
     intros a c Hc. subst c. reflexivity.
-  - (* mk_start_covers *)
-    intros cc. apply norm_lift.
   - (* succs_sound *)
     intros a c Hc. subst c. unfold ec_succs.
     destruct (cstep tm a) as [c'|] eqn:E.
     + rewrite (cstep_lift _ _ _ E).
       exists (norm c'). split; [left; reflexivity | apply norm_lift].
     + exact I.
+  - (* start covers *)
+    intros ct' Hct'. rewrite Et in Hct'. injection Hct' as <-.
+    apply norm_lift.
 Qed.

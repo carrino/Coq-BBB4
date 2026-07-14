@@ -64,6 +64,17 @@ The Phase 0/1 vertical slice is in place:
   cyclers and blank-trail translated cyclers with *no* cycle
   parameters at all, and validates the engine for the n-gram / RepWL
   instances to come.
+- `theories/Checkers/NGram.v` — the n-gram CPS instance (the
+  harness's `neverqh_ngram` certificate): contexts carry the n cells
+  each side of the head; two gram sets over-approximate the deeper
+  tape (every half-tape window at depth ≥ 1); moves consume a
+  depth-1 gram on the approached side and donate the departed side's
+  window to its set.  The gram sets are found by an untrusted
+  two-level fixpoint mirroring the C prover, then everything is
+  re-checked against the final sets.  Certificate-compatible with
+  upstream `(t, n)` parameters (representation is list-based for
+  now, so large-`n` certificates await the `positive`-encoding
+  performance pass).
 - `theories/Tests/*_Corruption.v` — negative controls in the BBB
   corruption-test tradition: mutated periods, sides, claims, states
   and last-visit indices are all rejected.
@@ -81,10 +92,10 @@ make
 
 ## Next
 
-Per SCOPING.md: instantiate the closure engine with the n-gram CPS
-and RepWL abstractions (the coarse node types + successor functions
-whose covering proofs plug into `Closure.v` as-is), matching the C
-prover's semantics so the committed `(t, n)` / `(t, L, T)`
-certificates verify directly; then the ranking-measure rules (a)/(b)
-as refinements of the same rank argument, and the certificate-table
-toolchain to ingest the BBB harness's `.cert` files in bulk.
+Per SCOPING.md: the RepWL block-closure instance; the
+ranking-measure rules (a)/(b) as refinements of the engine's rank
+argument (these carry `neverqh_rank`'s 2,611 machines); the
+`positive`-encoding performance pass (PositiveMap sets, as in
+Coq-BB5) so large-`n` committed certificates verify; and the
+certificate-table toolchain to ingest the BBB harness's `.cert`
+files in bulk.

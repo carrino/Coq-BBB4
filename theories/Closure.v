@@ -51,7 +51,6 @@ Section ClosureEngine.
   Variable a_eqb : A -> A -> bool.
   Variable a_state : A -> St.
   Variable succs : A -> option (list A).
-  Variable mk_start : cconf -> A.
 
   (** ** Computational layer *)
 
@@ -132,12 +131,12 @@ Section ClosureEngine.
 
   (** ** The checker *)
 
-  Definition closure_check_neverqh (t fuel : nat) : bool :=
+  Definition closure_check_neverqh (t fuel : nat) (a0 : A) : bool :=
     match csteps tm t c0 with
     | Some ct =>
-        match close fuel [] [mk_start ct] with
+        match close fuel [] [a0] with
         | Some Sl =>
-            closed_b Sl && mem (mk_start ct) Sl &&
+            closed_b Sl && mem a0 Sl &&
             forallb (fun q =>
               implb (cvisits tm c0 t q
                      || existsb (fun a => st_eqb (a_state a) q) Sl)
@@ -152,7 +151,6 @@ Section ClosureEngine.
   Variable covers : A -> ExecState -> Prop.
   Hypothesis a_eqb_sound : forall x y, a_eqb x y = true -> x = y.
   Hypothesis covers_state : forall a c, covers a c -> a_state a = fst c.
-  Hypothesis mk_start_covers : forall cc, covers (mk_start cc) (lift cc).
   Hypothesis succs_sound : forall a c, covers a c ->
     match succs a, step tm c with
     | Some l, Some c' => exists a', In a' l /\ covers a' c'
@@ -247,16 +245,17 @@ Section ClosureEngine.
         exists n. split; [lia | assumption].
   Qed.
 
-  Theorem closure_check_neverqh_sound : forall t fuel,
-    closure_check_neverqh t fuel = true -> NeverQuasiHaltsSt tm.
+  Theorem closure_check_neverqh_sound : forall t fuel a0,
+    (forall ct, csteps tm t c0 = Some ct -> covers a0 (lift ct)) ->
+    closure_check_neverqh t fuel a0 = true -> NeverQuasiHaltsSt tm.
   Proof.
-    intros t fuel H. unfold closure_check_neverqh in H.
+    intros t fuel a0 Hstart H. unfold closure_check_neverqh in H.
     destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
-    destruct (close fuel [] [mk_start ct]) as [Sl|]; [|discriminate].
+    destruct (close fuel [] [a0]) as [Sl|]; [|discriminate].
     apply andb_prop in H as [H Hq].
     apply andb_prop in H as [Hcl Hin].
     apply mem_In in Hin.
-    pose proof (mk_start_covers ct) as Hcov0.
+    pose proof (Hstart ct eq_refl) as Hcov0.
     assert (Hct : stepn tm t InitES = Some (lift ct)).
     { rewrite <- lift_c0. apply csteps_lift; assumption. }
     intros q Hvq N.
@@ -270,7 +269,7 @@ Section ClosureEngine.
       { destruct (le_lt_dec t n0) as [Hge | Hlt].
         - (* visited at or after t: some closure node has state q *)
           apply orb_true_intro; right.
-          destruct (closure_invariant Sl Hcl (mk_start ct) (lift ct)
+          destruct (closure_invariant Sl Hcl a0 (lift ct)
                       Hin Hcov0 (n0 - t)) as (c' & a' & Hst & HIn' & Hcov').
           assert (Hc' : stepn tm n0 InitES = Some c').
           { replace n0 with (t + (n0 - t)) by lia.
@@ -291,7 +290,7 @@ Section ClosureEngine.
         [reflexivity | discriminate]. }
     (* fetch the covered configuration at index max N t and search *)
     set (M := Nat.max N t).
-    destruct (closure_invariant Sl Hcl (mk_start ct) (lift ct)
+    destruct (closure_invariant Sl Hcl a0 (lift ct)
                 Hin Hcov0 (M - t)) as (cM & aM & HstM & HInM & HcovM).
     assert (HM : stepn tm M InitES = Some cM).
     { replace M with (t + (M - t)) by (unfold M; lia).
