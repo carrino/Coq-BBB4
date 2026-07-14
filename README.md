@@ -25,6 +25,8 @@ The Phase 0/1 vertical slice is in place:
 - `theories/CTape.v` — computable list-tape configurations, the
   `lift` denotation into the abstract model, step commutation, and
   decidable configuration equality up to blank padding.
+- `theories/Checkers/Halt.v` — halting machines quasihalt trivially
+  (the harness's `halt` certificate).
 - `theories/Checkers/Cycle.v` — the first verified checker
   (the harness's `inplace` certificate, generalized to
   head-relative configuration equality): `cycle_check_neverqh` and
