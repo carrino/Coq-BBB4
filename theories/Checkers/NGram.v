@@ -30,10 +30,20 @@
     sets, plus a seed check ([ng_seed_ok]) that the configuration at
     step [t] is covered.  With plain-acyclicity liveness (the
     engine's ranks), this is certificate-compatible with upstream
-    [neverqh_ngram]'s [(t, n)] parameters. *)
+    [neverqh_ngram]'s [(t, n)] parameters.
+
+    Representation ([PosEnc]): gram sets are Patricia tries keyed by
+    the window encoding [syms_enc], and the engine's node identity is
+    [cconf_enc] -- every membership test the closure performs is a
+    trie lookup, so large-[n] certificates (gram sets of size up to
+    2^n) check without the quadratic list scans of the first cut.
+    Note the abstraction needs no injectivity for the gram sets:
+    [ng_covers] is *defined* through [gmem], so any computable set
+    would be sound -- injectivity is only load-bearing for the
+    engine's node pool. *)
 
 From Coq Require Import Arith Lia Bool List ZArith.
-From BBB4 Require Import BBB4_Statement CTape Closure.
+From BBB4 Require Import BBB4_Statement CTape PosEnc PattCount Closure.
 From BBB4.Checkers Require Import Cycle ExactClosure.
 Import ListNotations.
 
@@ -88,17 +98,21 @@ Proof.
     + apply IHn. lia.
 Qed.
 
-(** ** Gram sets *)
+(** ** Gram sets: tries of window encodings *)
 
-Definition gmem (w : list Sym) (s : list (list Sym)) : bool :=
-  existsb (syms_eqb w) s.
+Definition gset : Type := PositiveSet.t.
 
-Definition gadd (g : list Sym) (s : list (list Sym)) : list (list Sym) :=
-  if gmem g s then s else g :: s.
+Definition gempty : gset := PositiveSet.empty.
+
+Definition gmem (w : list Sym) (s : gset) : bool :=
+  PositiveSet.mem (syms_enc w) s.
+
+Definition gadd (g : list Sym) (s : gset) : gset :=
+  PositiveSet.add (syms_enc g) s.
 
 (** ** The abstraction *)
 
-Definition ng_covers (n : nat) (lset rset : list (list Sym))
+Definition ng_covers (n : nat) (lset rset : gset)
     (a : cconf) (c : ExecState) : Prop :=
   let '(q, (lw, s, rw)) := a in
   fst c = q /\
@@ -113,19 +127,19 @@ Definition ng_covers (n : nat) (lset rset : list (list Sym))
     whole-hypothesis [cbv] reductions, so the membership lemmas below
     can target their exact shape. *)
 
-Definition ng_brR (rset : list (list Sym)) (q' : St) (w : Sym)
+Definition ng_brR (rset : gset) (q' : St) (w : Sym)
     (lw rw : list Sym) (x : Sym) : list cconf :=
   if gmem (tl rw ++ [x]) rset
   then [(q', (w :: removelast lw, chd rw, tl rw ++ [x]))]
   else [].
 
-Definition ng_brL (lset : list (list Sym)) (q' : St) (w : Sym)
+Definition ng_brL (lset : gset) (q' : St) (w : Sym)
     (lw rw : list Sym) (x : Sym) : list cconf :=
   if gmem (tl lw ++ [x]) lset
   then [(q', (tl lw ++ [x], chd lw, w :: removelast rw))]
   else [].
 
-Definition ng_succs (tm : TM) (lset rset : list (list Sym))
+Definition ng_succs (tm : TM) (lset rset : gset)
     (a : cconf) : option (list cconf) :=
   let '(q, (lw, s, rw)) := a in
   match tm q s with
@@ -296,7 +310,7 @@ Definition ng_start (n : nat) (cc : cconf) : cconf :=
   (q, (win (lift_side l) 0 n, h, win (lift_side r) 0 n)).
 
 Definition seed_ok_side (n : nat) (l : list Sym)
-    (set : list (list Sym)) : bool :=
+    (set : gset) : bool :=
   forallb (fun d => gmem (win (lift_side l) d n) set)
           (seq 1 (length l + 1)).
 
@@ -313,7 +327,7 @@ Proof.
     apply H. apply in_seq. lia.
 Qed.
 
-Definition ng_seed_ok (n : nat) (lset rset : list (list Sym))
+Definition ng_seed_ok (n : nat) (lset rset : gset)
     (cc : cconf) : bool :=
   let '(q, (l, h, r)) := cc in
   seed_ok_side n l lset && seed_ok_side n r rset.
@@ -334,25 +348,28 @@ Qed.
 Definition ng_seed_side (n : nat) (l : list Sym) : list (list Sym) :=
   map (fun d => win (lift_side l) d n) (seq 1 (length l + 1)).
 
-Definition gadds (gs : list (list Sym)) (s : list (list Sym))
-  : list (list Sym) := fold_left (fun acc g => gadd g acc) gs s.
+Definition gadds (gs : list (list Sym)) (s : gset) : gset :=
+  fold_left (fun acc g => gadd g acc) gs s.
 
 (** Explore reachable contexts under fixed sets, skipping (rather
     than failing on) contexts whose successors are blocked -- their
-    donations feed the next round. *)
-Fixpoint ng_explore (tm : TM) (n : nat) (lset rset : list (list Sym))
-    (fuel : nat) (seen todo : list cconf) : list cconf :=
+    donations feed the next round.  [sp] mirrors [seen] as a trie of
+    [cconf_enc] keys. *)
+Fixpoint ng_explore (tm : TM) (lset rset : gset)
+    (fuel : nat) (seen : list cconf) (sp : PositiveSet.t)
+    (todo : list cconf) : list cconf :=
   match fuel with
   | 0 => seen
   | S f =>
       match todo with
       | [] => seen
       | a :: todo' =>
-          if mem cconf cconf_eqb a seen
-          then ng_explore tm n lset rset f seen todo'
-          else match ng_succs tm lset rset a with
-               | None => ng_explore tm n lset rset f (a :: seen) todo'
-               | Some l => ng_explore tm n lset rset f (a :: seen)
+          if pset_mem cconf cconf_enc a sp
+          then ng_explore tm lset rset f seen sp todo'
+          else let sp' := pset_add cconf cconf_enc a sp in
+               match ng_succs tm lset rset a with
+               | None => ng_explore tm lset rset f (a :: seen) sp' todo'
+               | Some l => ng_explore tm lset rset f (a :: seen) sp'
                                       (l ++ todo')
                end
       end
@@ -369,13 +386,12 @@ Definition ng_harvest (tm : TM) (a : cconf)
   | None => ([], [])
   end.
 
-Fixpoint ng_grow (tm : TM) (n : nat) (a0 : cconf) (fuel rounds : nat)
-    (lset rset : list (list Sym))
-  : (list (list Sym) * list (list Sym)) :=
+Fixpoint ng_grow (tm : TM) (a0 : cconf) (fuel rounds : nat)
+    (lset rset : gset) : (gset * gset) :=
   match rounds with
   | 0 => (lset, rset)
   | S k =>
-      let ctxs := ng_explore tm n lset rset fuel [] [a0] in
+      let ctxs := ng_explore tm lset rset fuel [] PositiveSet.empty [a0] in
       let sets' :=
         fold_left (fun p a =>
                      let '(ls, rs) := p in
@@ -383,9 +399,10 @@ Fixpoint ng_grow (tm : TM) (n : nat) (a0 : cconf) (fuel rounds : nat)
                      (gadds hl ls, gadds hr rs))
                   ctxs (lset, rset) in
       let '(lset', rset') := sets' in
-      if (length lset' =? length lset) && (length rset' =? length rset)
+      if (PositiveSet.cardinal lset' =? PositiveSet.cardinal lset)
+         && (PositiveSet.cardinal rset' =? PositiveSet.cardinal rset)
       then (lset, rset)
-      else ng_grow tm n a0 fuel k lset' rset'
+      else ng_grow tm a0 fuel k lset' rset'
   end.
 
 (** ** The checker *)
@@ -395,12 +412,12 @@ Definition ngram_check_neverqh (tm : TM) (n t fuel rounds : nat) : bool :=
   match csteps tm t c0 with
   | Some cc =>
       let '(q, (l, h, r)) := cc in
-      let lset0 := gadds (ng_seed_side n l) [] in
-      let rset0 := gadds (ng_seed_side n r) [] in
+      let lset0 := gadds (ng_seed_side n l) gempty in
+      let rset0 := gadds (ng_seed_side n r) gempty in
       let a0 := ng_start n cc in
-      let '(lset, rset) := ng_grow tm n a0 fuel rounds lset0 rset0 in
+      let '(lset, rset) := ng_grow tm a0 fuel rounds lset0 rset0 in
       ng_seed_ok n lset rset cc &&
-      closure_check_neverqh tm cconf cconf_eqb ec_state
+      closure_check_neverqh tm cconf cconf_enc ec_state
         (ng_succs tm lset rset) t fuel a0
   | None => false
   end.
@@ -418,10 +435,10 @@ Proof.
   end.
   cbv beta iota zeta in H.
   apply andb_prop in H as [Hseed Hcheck].
-  apply (closure_check_neverqh_sound tm cconf cconf_eqb ec_state
+  apply (closure_check_neverqh_sound tm cconf cconf_enc ec_state
            (ng_succs tm lset rset) (ng_covers n lset rset)) in Hcheck;
     [assumption | | | |].
-  - exact cconf_eqb_sound.
+  - exact cconf_enc_inj.
   - intros a c Hc. eapply ng_covers_state; eauto.
   - intros a c Hc. apply ng_succs_sound; assumption.
   - intros ct' Hct'. rewrite Et in Hct'. injection Hct' as <-.
@@ -507,25 +524,342 @@ Proof.
     cbn [count1 nc1 zc1 ctl chd]; lia.
 Qed.
 
+(** ** Pattern measures: the full [rkv_delta] vocabulary
+
+    The C verifier's rank measures (src/verify.c, [rkv_delta]) are
+    *pattern counts*: a word [p] over the alphabet (containing at
+    least one nonblank) counted over the whole tape ([RgA]) or over
+    the half-tape strictly left/right of the head ([RgL]/[RgR]).
+    The [ngmeas] measures above are the special case [p = [S1]].
+
+    Values are counted on the computable configuration's text padded
+    with [|p|-1] blanks on the open ends, so occurrences straddling
+    the written region are counted exactly once.  Deltas are read off
+    the abstract context alone:
+
+    - a step rewrites one interior cell of the whole-tape text, so
+      the [RgA] delta is the count difference over the fixed
+      [2|p|-1]-cell window around the head ([occ_update]);
+    - a step pushes/pops one cell at the near end of each half-tape,
+      so the [RgL]/[RgR] deltas are prefix-occurrence indicators.
+      Left-of-head counts use the *reversed* pattern against the
+      nearest-first left list, keeping every half-tape edit at the
+      head of a list.
+
+    Window-coverage constraints (checked by [pm_ok], weaker than the
+    C verifier's): [|p| - 1 <= n] for [RgA], [|p| <= n] for L/R. *)
+
+Inductive ngreg : Type := RgA | RgL | RgR.
+
+Definition pm_pad (p : list Sym) : list Sym := repeat S0 (length p - 1).
+
+Definition pm_val (p : list Sym) (rg : ngreg) (cc : cconf) : nat :=
+  let '(_, (l, h, r)) := cc in
+  match rg with
+  | RgA => occ p (pm_pad p ++ rev l ++ h :: (r ++ pm_pad p))
+  | RgL => occ (rev p) (l ++ pm_pad p)
+  | RgR => occ p (r ++ pm_pad p)
+  end.
+
+Definition zind (b : bool) : Z := if b then 1%Z else 0%Z.
+
+Definition pm_delta (tm : TM) (p : list Sym) (rg : ngreg)
+    (a a' : cconf) : Z :=
+  let '(q, (lw, s, rw)) := a in
+  match tm q s with
+  | None => 0%Z
+  | Some tr =>
+      let w := t_write tr in
+      let p1 := length p - 1 in
+      match rg, t_dir tr with
+      | RgA, _ =>
+          (Z.of_nat (occ p (rev (firstn p1 lw) ++ w :: firstn p1 rw))
+           - Z.of_nat (occ p (rev (firstn p1 lw) ++ s :: firstn p1 rw)))%Z
+      | RgL, DR => zind (syms_eqb (rev p) (w :: firstn p1 lw))
+      | RgL, DL => (- zind (syms_eqb (rev p) (firstn (length p) lw)))%Z
+      | RgR, DR => (- zind (syms_eqb p (firstn (length p) rw)))%Z
+      | RgR, DL => zind (syms_eqb p (w :: firstn p1 rw))
+      end
+  end.
+
+(** *** Windows of lifted sides vs. padded lists *)
+
+Lemma win_firstn : forall f k d n,
+  k <= n -> firstn k (win f d n) = win f d k.
+Proof.
+  intros f k. induction k as [|k IH]; intros d n H.
+  - reflexivity.
+  - destruct n as [|n']; [lia|].
+    rewrite !win_cons. simpl firstn. f_equal. apply IH. lia.
+Qed.
+
+Lemma firstn_lift : forall l j k,
+  k <= length l + j ->
+  firstn k (l ++ repeat S0 j) = win (lift_side l) 0 k.
+Proof.
+  induction l as [|x l' IH]; intros j k H; simpl in H.
+  - simpl app. rewrite pc_firstn_repeat, Nat.min_l by lia.
+    symmetry. apply win_blank. simpl. lia.
+  - destruct k as [|k'].
+    + reflexivity.
+    + simpl app. simpl firstn.
+      rewrite IH by lia.
+      rewrite lift_side_cons, win_cons, win_push_S.
+      reflexivity.
+Qed.
+
+Lemma firstn_lift_win : forall l j k n,
+  k <= n -> k <= length l + j ->
+  firstn k (l ++ repeat S0 j) = firstn k (win (lift_side l) 0 n).
+Proof.
+  intros. rewrite firstn_lift, win_firstn by assumption. reflexivity.
+Qed.
+
+(** *** Half-tape edits *)
+
+Lemma occ_side_push : forall p u x n,
+  1 <= length p -> length p <= n ->
+  occ p ((x :: u) ++ pm_pad p)
+  = (if syms_eqb p (x :: firstn (length p - 1) (win (lift_side u) 0 n))
+     then 1 else 0)
+    + occ p (u ++ pm_pad p).
+Proof.
+  intros p u x n H1 Hn.
+  simpl app. rewrite occ_cons. unfold prefix_eqb.
+  rewrite firstn_S_pred by assumption.
+  unfold pm_pad.
+  rewrite (firstn_lift_win u (length p - 1) (length p - 1) n) by lia.
+  reflexivity.
+Qed.
+
+Lemma occ_side_pop : forall p u n,
+  In S1 p -> length p <= n ->
+  occ p (u ++ pm_pad p)
+  = (if syms_eqb p (firstn (length p) (win (lift_side u) 0 n))
+     then 1 else 0)
+    + occ p (ctl u ++ pm_pad p).
+Proof.
+  intros p u n H1 Hn.
+  assert (Hlen : 1 <= length p)
+    by (destruct p; [destruct H1 | simpl; lia]).
+  destruct u as [|c u'].
+  - cbn [ctl]. rewrite win_blank by (simpl; lia).
+    rewrite pc_firstn_repeat, Nat.min_l by lia.
+    rewrite syms_eqb_repeat_S0 by assumption.
+    reflexivity.
+  - cbn [ctl]. simpl app. rewrite occ_cons. unfold prefix_eqb, pm_pad.
+    change (c :: u' ++ repeat S0 (length p - 1))
+      with ((c :: u') ++ repeat S0 (length p - 1)).
+    rewrite (firstn_lift_win (c :: u') (length p - 1) (length p) n)
+      by (simpl; lia).
+    reflexivity.
+Qed.
+
+(** *** Whole-tape cell rewrite *)
+
+Lemma occ_full_update : forall p l s w r n,
+  length p - 1 <= n ->
+  occ p (pm_pad p ++ rev l ++ w :: (r ++ pm_pad p))
+    + occ p (rev (firstn (length p - 1) (win (lift_side l) 0 n))
+             ++ s :: firstn (length p - 1) (win (lift_side r) 0 n))
+  = occ p (pm_pad p ++ rev l ++ s :: (r ++ pm_pad p))
+    + occ p (rev (firstn (length p - 1) (win (lift_side l) 0 n))
+             ++ w :: firstn (length p - 1) (win (lift_side r) 0 n)).
+Proof.
+  intros p l s w r n Hn.
+  assert (HmidW : firstn (length p - 1) (l ++ pm_pad p)
+                  = firstn (length p - 1) (win (lift_side l) 0 n)).
+  { unfold pm_pad. apply firstn_lift_win; lia. }
+  assert (HfpW : firstn (length p - 1) (r ++ pm_pad p)
+                 = firstn (length p - 1) (win (lift_side r) 0 n)).
+  { unfold pm_pad. apply firstn_lift_win; lia. }
+  rewrite <- HmidW, <- HfpW.
+  assert (Hsplit : pm_pad p ++ rev l
+                   = rev (skipn (length p - 1) (l ++ pm_pad p))
+                     ++ rev (firstn (length p - 1) (l ++ pm_pad p))).
+  { rewrite <- rev_app_distr, firstn_skipn, rev_app_distr.
+    f_equal. unfold pm_pad. symmetry. apply pc_rev_repeat. }
+  rewrite !app_assoc, Hsplit, <- !app_assoc.
+  apply occ_update.
+  rewrite rev_length, firstn_length, app_length.
+  unfold pm_pad. rewrite repeat_length. lia.
+Qed.
+
+(** *** Normalizing the stepped whole-tape text *)
+
+Local Ltac app_norm :=
+  repeat first [rewrite <- app_assoc | progress simpl app].
+
+Lemma normA_push : forall p l w r,
+  In S1 p ->
+  occ p (pm_pad p ++ rev (w :: l) ++ chd r :: (ctl r ++ pm_pad p))
+  = occ p (pm_pad p ++ rev l ++ w :: (r ++ pm_pad p)).
+Proof.
+  intros p l w r H1.
+  destruct r as [|c r']; cbn [chd ctl rev]; unfold pm_pad.
+  - transitivity
+      (occ p ((repeat S0 (length p - 1) ++ rev l ++ [w])
+              ++ repeat S0 (length p - 1) ++ [S0])).
+    { f_equal. app_norm.
+      rewrite (pc_repeat_shift S0 (length p - 1)). reflexivity. }
+    rewrite occ_app_blank by assumption.
+    f_equal. app_norm. reflexivity.
+  - f_equal. app_norm. reflexivity.
+Qed.
+
+Lemma normA_pop : forall p l w r,
+  In S1 p ->
+  occ p (pm_pad p ++ rev (ctl l) ++ chd l :: ((w :: r) ++ pm_pad p))
+  = occ p (pm_pad p ++ rev l ++ w :: (r ++ pm_pad p)).
+Proof.
+  intros p l w r H1.
+  destruct l as [|c l']; cbn [chd ctl rev]; unfold pm_pad.
+  - transitivity
+      (occ p (S0 :: (repeat S0 (length p - 1)
+                     ++ w :: r ++ repeat S0 (length p - 1)))).
+    { f_equal. app_norm.
+      rewrite pad_rotate. reflexivity. }
+    rewrite occ_cons_blank;
+      [| assumption
+       | apply (firstn_pad_app (length p - 1)
+                               (w :: r ++ repeat S0 (length p - 1)))].
+    reflexivity.
+  - f_equal. app_norm. reflexivity.
+Qed.
+
+Lemma pm_pad_rev : forall p, pm_pad (rev p) = pm_pad p.
+Proof.
+  intros p. unfold pm_pad. rewrite rev_length. reflexivity.
+Qed.
+
+(** *** Exactness *)
+
+Lemma pm_exact : forall tm n lset rset p rg a cc a' cc',
+  In S1 p ->
+  (match rg with RgA => length p - 1 <= n | _ => length p <= n end) ->
+  ng_covers n lset rset a (lift cc) ->
+  cstep tm cc = Some cc' ->
+  Z.of_nat (pm_val p rg cc')
+  = (Z.of_nat (pm_val p rg cc) + pm_delta tm p rg a a')%Z.
+Proof.
+  intros tm n lset rset p rg [q [[lw s] rw]] [qc [[l h] r]] a' cc'
+         Hp Hbound Hcov Hstep.
+  assert (Hlen : 1 <= length p)
+    by (destruct p; [destruct Hp | simpl; lia]).
+  assert (Hprev : In S1 (rev p)) by (apply in_rev in Hp; exact Hp).
+  destruct Hcov as (Hq & Hh & Hlw & Hrw & _).
+  simpl in Hq, Hh. subst qc h lw rw.
+  cbn [snd t_left t_right t_head lift lift_tape] in *.
+  unfold cstep in Hstep.
+  destruct (tm q s) as [tr|] eqn:Etr; [|discriminate].
+  injection Hstep as <-.
+  unfold pm_delta. rewrite Etr.
+  destruct (t_dir tr) eqn:Ed; destruct rg; cbn [pm_val ctape_move].
+  - (* DL, RgA *)
+    rewrite normA_pop by assumption.
+    pose proof (occ_full_update p l s (t_write tr) r n Hbound) as HU.
+    lia.
+  - (* DL, RgL *)
+    rewrite <- (pm_pad_rev p).
+    rewrite (occ_side_pop (rev p) l n Hprev)
+      by (rewrite rev_length; assumption).
+    rewrite rev_length.
+    destruct (syms_eqb (rev p)
+                (firstn (length p) (win (lift_side l) 0 n)));
+      cbn [zind]; lia.
+  - (* DL, RgR *)
+    rewrite (occ_side_push p r (t_write tr) n Hlen Hbound).
+    destruct (syms_eqb p
+                (t_write tr
+                 :: firstn (length p - 1) (win (lift_side r) 0 n)));
+      cbn [zind]; lia.
+  - (* DR, RgA *)
+    rewrite normA_push by assumption.
+    pose proof (occ_full_update p l s (t_write tr) r n Hbound) as HU.
+    lia.
+  - (* DR, RgL *)
+    rewrite <- (pm_pad_rev p).
+    rewrite (occ_side_push (rev p) l (t_write tr) n)
+      by (rewrite rev_length; assumption).
+    rewrite rev_length.
+    destruct (syms_eqb (rev p)
+                (t_write tr
+                 :: firstn (length p - 1) (win (lift_side l) 0 n)));
+      cbn [zind]; lia.
+  - (* DR, RgR *)
+    rewrite (occ_side_pop p r n Hp Hbound).
+    destruct (syms_eqb p (firstn (length p) (win (lift_side r) 0 n)));
+      cbn [zind]; lia.
+Qed.
+
 (** ** Certificate syntax and denotation *)
 
 Inductive ngcomp : Type :=
 | NgRank (phi : list (cconf * nat))
 | NgMeas (m : ngmeas) (K : nat) (phi : list (cconf * nat))
-         (gate : list cconf).
+         (gate : list cconf)
+| NgRankE (phi : list (positive * nat))
+| NgPattE (p : list Sym) (rg : ngreg) (K : nat)
+          (phi : list (positive * nat)) (gate : list positive).
 
-Definition lookup_nat (tbl : list (cconf * nat)) (a : cconf) : nat :=
-  match find (fun p => cconf_eqb a (fst p)) tbl with
-  | Some p => snd p
+(** Certificate tables stay lists of [(context, value)] pairs in the
+    generated [.v] files; the denotation compiles each into a
+    [PositiveMap]/[PositiveSet] ONCE (the [let] is strict under
+    [vm_compute], so the trie is shared across every edge lookup).
+    The values need no soundness story: [lex_ok] re-checks every
+    edge against whatever function comes out. *)
+
+(** Encoded-key tables: bulk-generated certificates carry
+    [cconf_enc]-encoded keys directly (a [positive] literal is ~5x
+    smaller than a context term).  The data is untrusted -- the
+    engine re-checks every edge against whatever function comes out
+    -- so no correspondence between the emitted keys and real
+    contexts needs proving; a wrong key merely fails the check. *)
+
+Definition pmape_of (tbl : list (positive * nat)) : PositiveMap.tree nat :=
+  fold_left (fun m e => PositiveMap.add (fst e) (snd e) m) tbl
+            (PositiveMap.empty nat).
+
+Definition pmape_get (m : PositiveMap.tree nat) (a : cconf) : nat :=
+  match PositiveMap.find (cconf_enc a) m with
+  | Some v => v
   | None => 0
   end.
 
-Definition ng_comp_denote (tm : TM) (c : ngcomp) : lexcomp cconf :=
+Definition psete_of (l : list positive) : PositiveSet.t :=
+  fold_left (fun s x => PositiveSet.add x s) l PositiveSet.empty.
+
+(** The pattern-measure side conditions, checked computationally
+    (a failing pattern denotes a sound no-op component). *)
+Definition pm_ok (n : nat) (p : list Sym) (rg : ngreg) : bool :=
+  existsb (fun x => sym_eqb x S1) p &&
+  match rg with
+  | RgA => length p - 1 <=? n
+  | _ => length p <=? n
+  end.
+
+Definition ng_comp_denote (tm : TM) (n : nat) (c : ngcomp) : lexcomp cconf :=
   match c with
-  | NgRank phi => LexRank cconf (lookup_nat phi)
+  | NgRank phi =>
+      let pm := pmap_of cconf cconf_enc phi in
+      LexRank cconf (pmap_get cconf cconf_enc pm)
   | NgMeas m K phi gate =>
-      LexMeas cconf (ngm_val m) (ngm_delta tm m) K (lookup_nat phi)
-              (fun a => mem cconf cconf_eqb a gate)
+      let pm := pmap_of cconf cconf_enc phi in
+      let gs := pset_of cconf cconf_enc gate in
+      LexMeas cconf (ngm_val m) (ngm_delta tm m) K
+              (pmap_get cconf cconf_enc pm)
+              (fun a => pset_mem cconf cconf_enc a gs)
+  | NgRankE phi =>
+      let pm := pmape_of phi in
+      LexRank cconf (pmape_get pm)
+  | NgPattE p rg K phi gate =>
+      if pm_ok n p rg then
+        let pm := pmape_of phi in
+        let gs := psete_of gate in
+        LexMeas cconf (pm_val p rg) (pm_delta tm p rg) K
+                (pmape_get pm)
+                (fun a => PositiveSet.mem (cconf_enc a) gs)
+      else LexRank cconf (fun _ => 0)
   end.
 
 Definition ngram_check_neverqh_lex (tm : TM) (n t fuel rounds : nat)
@@ -534,14 +868,14 @@ Definition ngram_check_neverqh_lex (tm : TM) (n t fuel rounds : nat)
   match csteps tm t c0 with
   | Some cc =>
       let '(q, (l, h, r)) := cc in
-      let lset0 := gadds (ng_seed_side n l) [] in
-      let rset0 := gadds (ng_seed_side n r) [] in
+      let lset0 := gadds (ng_seed_side n l) gempty in
+      let rset0 := gadds (ng_seed_side n r) gempty in
       let a0 := ng_start n cc in
-      let '(lset, rset) := ng_grow tm n a0 fuel rounds lset0 rset0 in
+      let '(lset, rset) := ng_grow tm a0 fuel rounds lset0 rset0 in
       ng_seed_ok n lset rset cc &&
-      closure_check_neverqh_lex tm cconf cconf_eqb ec_state
+      closure_check_neverqh_lex tm cconf cconf_enc ec_state
         (ng_succs tm lset rset) t fuel a0
-        (fun q => map (ng_comp_denote tm) (cert q))
+        (fun q => map (ng_comp_denote tm n) (cert q))
   | None => false
   end.
 
@@ -559,17 +893,26 @@ Proof.
   end.
   cbv beta iota zeta in H.
   apply andb_prop in H as [Hseed Hcheck].
-  apply (closure_check_neverqh_lex_sound tm cconf cconf_eqb ec_state
+  apply (closure_check_neverqh_lex_sound tm cconf cconf_enc ec_state
            (ng_succs tm lset rset) (ng_covers n lset rset)) in Hcheck;
     [assumption | | | | |].
-  - exact cconf_eqb_sound.
+  - exact cconf_enc_inj.
   - intros a c Hc. eapply ng_covers_state; eauto.
   - intros a c Hc. apply ng_succs_sound; assumption.
   - intros ct' Hct'. rewrite Et in Hct'. injection Hct' as <-.
     apply ng_start_covers. exact Hseed.
   - intros q0. apply Forall_forall. intros comp Hin.
     apply in_map_iff in Hin. destruct Hin as (c & <- & _).
-    destruct c as [phi | m K phi gate]; simpl; [exact I|].
-    intros a cc a' cc' sl Hca Hca' Hstep Es HInl.
-    eapply ngm_exact; eauto.
+    destruct c as [phi | m K phi gate | phi | pp rg K phi gate]; simpl.
+    + exact I.
+    + intros a cc a' cc' sl Hca Hca' Hstep Es HInl.
+      eapply ngm_exact; eauto.
+    + exact I.
+    + destruct (pm_ok n pp rg) eqn:Epm; [|exact I].
+      apply andb_prop in Epm as [He Hb].
+      intros a cc a' cc' sl Hca Hca' Hstep Es HInl.
+      eapply pm_exact; eauto.
+      * apply existsb_exists in He as (x & Hx & Hx1).
+        apply sym_eqb_spec in Hx1. subst x. assumption.
+      * destruct rg; apply Nat.leb_le; assumption.
 Qed.

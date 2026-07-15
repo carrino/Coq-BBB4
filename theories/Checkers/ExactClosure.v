@@ -14,7 +14,7 @@
     successor function. *)
 
 From Coq Require Import Arith Lia Bool List.
-From BBB4 Require Import BBB4_Statement CTape Closure.
+From BBB4 Require Import BBB4_Statement CTape PosEnc Closure.
 Import ListNotations.
 
 (** ** Canonical configurations *)
@@ -59,40 +59,10 @@ Proof.
   rewrite !strip_lift. reflexivity.
 Qed.
 
-(** ** Structural equality on configurations *)
+(** ** The instance
 
-Fixpoint syms_eqb (a b : list Sym) : bool :=
-  match a, b with
-  | [], [] => true
-  | x :: a', y :: b' => sym_eqb x y && syms_eqb a' b'
-  | _, _ => false
-  end.
-
-Lemma syms_eqb_sound : forall a b, syms_eqb a b = true -> a = b.
-Proof.
-  induction a as [|x a' IH]; intros [|y b'] H; simpl in H;
-    try reflexivity; try discriminate.
-  apply andb_prop in H as [H1 H2].
-  apply sym_eqb_spec in H1. apply IH in H2. subst. reflexivity.
-Qed.
-
-Definition cconf_eqb (c1 c2 : cconf) : bool :=
-  let '(q1, (l1, h1, r1)) := c1 in
-  let '(q2, (l2, h2, r2)) := c2 in
-  st_eqb q1 q2 && sym_eqb h1 h2 && syms_eqb l1 l2 && syms_eqb r1 r2.
-
-Lemma cconf_eqb_sound : forall c1 c2, cconf_eqb c1 c2 = true -> c1 = c2.
-Proof.
-  intros [q1 [[l1 h1] r1]] [q2 [[l2 h2] r2]] H; simpl in H.
-  apply andb_prop in H as [H Hr].
-  apply andb_prop in H as [H Hl].
-  apply andb_prop in H as [Hq Hh].
-  apply st_eqb_spec in Hq. apply sym_eqb_spec in Hh.
-  apply syms_eqb_sound in Hl. apply syms_eqb_sound in Hr.
-  subst. reflexivity.
-Qed.
-
-(** ** The instance *)
+    Node identity is the injective [positive] encoding [cconf_enc]
+    from [PosEnc]; the engine's tries are keyed by it. *)
 
 Definition ec_succs (tm : TM) (a : cconf) : option (list cconf) :=
   match cstep tm a with
@@ -105,7 +75,7 @@ Definition ec_state (a : cconf) : St := fst a.
 Definition exact_closure_check_neverqh (tm : TM) (t fuel : nat) : bool :=
   match csteps tm t c0 with
   | Some ct =>
-      closure_check_neverqh tm cconf cconf_eqb ec_state (ec_succs tm)
+      closure_check_neverqh tm cconf cconf_enc ec_state (ec_succs tm)
         t fuel (norm ct)
   | None => false
   end.
@@ -116,10 +86,10 @@ Proof.
   intros tm t fuel H.
   unfold exact_closure_check_neverqh in H.
   destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
-  apply (closure_check_neverqh_sound tm cconf cconf_eqb ec_state
+  apply (closure_check_neverqh_sound tm cconf cconf_enc ec_state
            (ec_succs tm) (fun a c => lift a = c)) in H;
     [assumption | | | |].
-  - exact cconf_eqb_sound.
+  - exact cconf_enc_inj.
   - (* covers_state *)
     intros a c Hc. subst c. reflexivity.
   - (* succs_sound *)

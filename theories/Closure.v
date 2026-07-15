@@ -25,13 +25,16 @@
        upstream ranking rules (a)/(b) are refinements of exactly this
        argument.
 
-    Nodes must be CANONICAL: [a_eqb] is boolean equality that implies
-    term equality ([a_eqb_sound]), so instances normalize their
-    representations (strip padding, sort sets, or encode to
-    [positive]).  Everything search-like (the worklist [close], the
-    Bellman-style [compute_ranks]) is UNTRUSTED: the checker re-checks
-    closedness and rank decrease explicitly, and only those checks
-    carry proofs.
+    Nodes must be CANONICAL: [a_enc] is an injective [positive]
+    encoding ([a_enc_inj]), so instances normalize their
+    representations (strip padding) before encoding.  All set
+    membership is Patricia-trie lookup on encodings ([PosEnc]): the
+    checker re-builds the trie of the candidate list once ([pset_of])
+    and [pset_of_mem] turns trie hits back into list membership, the
+    only direction soundness needs.  Everything search-like (the
+    worklist [close], the Bellman-style [compute_ranks]) is
+    UNTRUSTED: the checker re-checks closedness and rank decrease
+    explicitly, and only those checks carry proofs.
 
     Silent states come out for free: the engine skips liveness for
     states visited neither in the simulated prefix nor anywhere in
@@ -40,7 +43,7 @@
     state does not witness quasihalting). *)
 
 From Coq Require Import Arith Lia Bool List ZArith.
-From BBB4 Require Import BBB4_Statement CTape.
+From BBB4 Require Import BBB4_Statement CTape PosEnc.
 From BBB4.Checkers Require Import Cycle.
 Import ListNotations.
 
@@ -48,38 +51,47 @@ Section ClosureEngine.
 
   Variable tm : TM.
   Variable A : Type.
-  Variable a_eqb : A -> A -> bool.
+  Variable a_enc : A -> positive.
   Variable a_state : A -> St.
   Variable succs : A -> option (list A).
 
   (** ** Computational layer *)
 
-  Definition mem (a : A) (l : list A) : bool := existsb (a_eqb a) l.
+  (** Trie of a candidate list's encodings; membership through it.
+      [mem a Sl] rebuilds the trie, so it is for one-shot checks
+      only -- the per-successor checks below take a prebuilt pool. *)
+  Definition apool (Sl : list A) : PositiveSet.t := pset_of A a_enc Sl.
+
+  Definition mem (a : A) (Sl : list A) : bool :=
+    pset_mem A a_enc a (apool Sl).
 
   (** Worklist closure search.  Untrusted: the result is re-checked
-      by [closed_b]. *)
-  Fixpoint close (fuel : nat) (seen todo : list A) : option (list A) :=
+      by [closed_b].  [sp] mirrors [seen] as a trie. *)
+  Fixpoint close (fuel : nat) (seen : list A) (sp : PositiveSet.t)
+      (todo : list A) : option (list A) :=
     match fuel with
     | 0 => None
     | S f =>
         match todo with
         | [] => Some seen
         | a :: todo' =>
-            if mem a seen then close f seen todo'
+            if pset_mem A a_enc a sp then close f seen sp todo'
             else match succs a with
                  | None => None
-                 | Some l => close f (a :: seen) (l ++ todo')
+                 | Some l =>
+                     close f (a :: seen) (pset_add A a_enc a sp) (l ++ todo')
                  end
         end
     end.
 
-  Definition node_ok (Sl : list A) (a : A) : bool :=
+  Definition node_ok (sp : PositiveSet.t) (a : A) : bool :=
     match succs a with
-    | Some l => forallb (fun a' => mem a' Sl) l
+    | Some l => forallb (fun a' => pset_mem A a_enc a' sp) l
     | None => false
     end.
 
-  Definition closed_b (Sl : list A) : bool := forallb (node_ok Sl) Sl.
+  Definition closed_b (Sl : list A) : bool :=
+    forallb (node_ok (apool Sl)) Sl.
 
   Definition edge_ok (q : St) (rnk : A -> nat) (a a' : A) : bool :=
     implb (negb (st_eqb (a_state a') q)) (rnk a' <? rnk a).
@@ -92,17 +104,20 @@ Section ClosureEngine.
            | None => false
            end) Sl.
 
-  (** Untrusted longest-path rank computation: Bellman-style
-      iteration on the q-avoiding subgraph.  Converges within
-      [length Sl] passes when that subgraph is acyclic; produces
-      values [rank_ok] rejects otherwise (no valid rank exists on a
-      cyclic subgraph, so garbage is harmless). *)
+  (** Untrusted longest-path rank computation, by reverse-topological
+      *peeling* of the q-avoiding subgraph: a pass assigns
+      [1 + max (succ ranks)] to every remaining node all of whose
+      q-avoiding successors are already ranked, so ranks strictly
+      decrease along every assigned q-avoiding edge by construction.
+      Acyclic subgraphs finish in depth-many passes; on a cyclic one
+      a pass eventually assigns nothing and we stop immediately,
+      leaving the cycle's nodes at the default rank 0, which
+      [rank_ok] rejects (no valid rank exists there, so bailing out
+      fast loses nothing).  Ranks live in a [PositiveMap] keyed by
+      node encoding. *)
 
-  Definition lookup_rank (r : list (A * nat)) (a : A) : nat :=
-    match find (fun p => a_eqb a (fst p)) r with
-    | Some p => snd p
-    | None => 0
-    end.
+  Definition lookup_rank (r : PositiveMap.tree nat) (a : A) : nat :=
+    pmap_get A a_enc r a.
 
   Definition nonq_succs (q : St) (a : A) : list A :=
     match succs a with
@@ -110,31 +125,46 @@ Section ClosureEngine.
     | None => []
     end.
 
-  Definition rank_pass (Sl : list A) (q : St) (r : list (A * nat))
-    : list (A * nat) :=
-    map (fun a =>
-      (a, match nonq_succs q a with
-          | [] => 0
-          | l => S (fold_left Nat.max (map (lookup_rank r) l) 0)
-          end)) Sl.
+  Definition ranked (r : PositiveMap.tree nat) (a : A) : bool :=
+    match PositiveMap.find (a_enc a) r with
+    | Some _ => true
+    | None => false
+    end.
 
-  Fixpoint rank_iter (k : nat) (Sl : list A) (q : St)
-    (r : list (A * nat)) : list (A * nat) :=
-    match k with
-    | 0 => r
-    | S k' => rank_iter k' Sl q (rank_pass Sl q r)
+  (** One pass: peel every ready node; collect the rest (reversed --
+      order is irrelevant) and whether anything was peeled. *)
+  Definition peel_pass (q : St) (st : PositiveMap.tree nat * list A * bool)
+      (rem : list A) : PositiveMap.tree nat * list A * bool :=
+    fold_left (fun '(r, stuck, prog) a =>
+      let sl := nonq_succs q a in
+      if forallb (ranked r) sl
+      then (PositiveMap.add (a_enc a)
+              (match sl with
+               | [] => 0
+               | _ => S (fold_left Nat.max (map (lookup_rank r) sl) 0)
+               end) r, stuck, true)
+      else (r, a :: stuck, prog)) rem st.
+
+  Fixpoint peel_iter (k : nat) (q : St) (r : PositiveMap.tree nat)
+      (rem : list A) : PositiveMap.tree nat :=
+    match k, rem with
+    | 0, _ | _, [] => r
+    | S k', _ =>
+        let '(r', stuck, prog) := peel_pass q (r, [], false) rem in
+        if prog then peel_iter k' q r' stuck else r'
     end.
 
   Definition compute_ranks (Sl : list A) (q : St) : A -> nat :=
-    lookup_rank (rank_iter (S (length Sl)) Sl q
-                           (map (fun a => (a, 0)) Sl)).
+    lookup_rank
+      (peel_iter (S (length Sl)) q (PositiveMap.empty nat)
+         (filter (fun a => negb (st_eqb (a_state a) q)) Sl)).
 
   (** ** The checker *)
 
   Definition closure_check_neverqh (t fuel : nat) (a0 : A) : bool :=
     match csteps tm t c0 with
     | Some ct =>
-        match close fuel [] [a0] with
+        match close fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
             closed_b Sl && mem a0 Sl &&
             forallb (fun q =>
@@ -149,7 +179,7 @@ Section ClosureEngine.
   (** ** Logical layer *)
 
   Variable covers : A -> ExecState -> Prop.
-  Hypothesis a_eqb_sound : forall x y, a_eqb x y = true -> x = y.
+  Hypothesis a_enc_inj : forall x y, a_enc x = a_enc y -> x = y.
   Hypothesis covers_state : forall a c, covers a c -> a_state a = fst c.
   Hypothesis succs_sound : forall a c, covers a c ->
     match succs a, step tm c with
@@ -160,10 +190,8 @@ Section ClosureEngine.
 
   Lemma mem_In : forall a Sl, mem a Sl = true -> In a Sl.
   Proof.
-    intros a Sl Hm. unfold mem in Hm.
-    apply existsb_exists in Hm.
-    destruct Hm as (y & Hy & Heq).
-    apply a_eqb_sound in Heq. subst. assumption.
+    intros a Sl Hm.
+    exact (pset_of_mem A a_enc a_enc_inj a Sl Hm).
   Qed.
 
   (** One covered concrete step inside a closed set. *)
@@ -173,7 +201,7 @@ Section ClosureEngine.
       In a' l /\ In a' Sl /\ covers a' c'.
   Proof.
     intros Sl a c Hcl HIn Hcov.
-    assert (Hnode : node_ok Sl a = true).
+    assert (Hnode : node_ok (apool Sl) a = true).
     { unfold closed_b in Hcl. rewrite forallb_forall in Hcl. auto. }
     unfold node_ok in Hnode.
     destruct (succs a) as [l|] eqn:Es; [|discriminate].
@@ -183,7 +211,7 @@ Section ClosureEngine.
     rewrite forallb_forall in Hnode.
     exists c', l, a'.
     repeat split; try assumption.
-    apply mem_In. auto.
+    apply mem_In. unfold mem. auto.
   Qed.
 
   Lemma closure_invariant : forall Sl,
@@ -251,7 +279,7 @@ Section ClosureEngine.
   Proof.
     intros t fuel a0 Hstart H. unfold closure_check_neverqh in H.
     destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
-    destruct (close fuel [] [a0]) as [Sl|]; [|discriminate].
+    destruct (close fuel [] PositiveSet.empty [a0]) as [Sl|]; [|discriminate].
     apply andb_prop in H as [H Hq].
     apply andb_prop in H as [Hcl Hin].
     apply mem_In in Hin.
@@ -376,7 +404,7 @@ Section ClosureEngine.
       (cert : St -> list lexcomp) : bool :=
     match csteps tm t c0 with
     | Some ct =>
-        match close fuel [] [a0] with
+        match close fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
             closed_b Sl && mem a0 Sl &&
             forallb (fun q =>
@@ -538,7 +566,7 @@ Section ClosureEngine.
     intros t fuel a0 cert Hstart Hcert H.
     unfold closure_check_neverqh_lex in H.
     destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
-    destruct (close fuel [] [a0]) as [Sl|]; [|discriminate].
+    destruct (close fuel [] PositiveSet.empty [a0]) as [Sl|]; [|discriminate].
     apply andb_prop in H as [H Hq].
     apply andb_prop in H as [Hcl Hin].
     apply mem_In in Hin.
