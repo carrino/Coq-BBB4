@@ -96,6 +96,67 @@ Of the 3,713 BBB(4) holdouts (`BBB4_holdouts_3713.txt` in the BBB repo):
   each other on the 15 GB box; the N-fuel front end removed the
   pressure (~1 GB each).
 
+## Scope B: the full BBB(4) census, the Coq-BB5 way (AGREED PLAN)
+
+The non-holdout complement (the "easy" machines) has NO upstream
+certificates -- the holdout list is the output of external,
+unformalized deciders -- so a genuine BBB(4) theorem re-decides the
+whole (4,2) TNF space in Coq.  Do it exactly like Coq-BB5's census
+(read `Coq-BB5/CoqBB5/BB5/README.md` "Proof structure" first):
+
+- **Store nothing per machine.**  BB5 enumerates 181,385,789
+  machines as ONE in-Coq computation: a `SearchQueue` over the TNF
+  tree (`BB5_TNF_Enumeration.v`), each popped machine run through
+  `decider_all` (verified decider FUNCTIONS with generic
+  parameters, `BB5_Deciders_Pipeline.v`); nonhalt = leaf, halt =
+  push children; the whole walk is `Eval native_compute in
+  (Nat.iter 200 q_suc q_0)`.  The theorem is a queue invariant
+  (`SearchQueue_WF`), so no machine is ever named or stored.  A
+  separate OCaml extraction reproduces the list as CSV if wanted.
+- **The economics**: 96.7% of BB5's machines fall to "Loops" (a
+  bounded step-simulator with cycle detection), 6M to NGramCPS with
+  small generic parameters; only 8,032 machines get hardcoded
+  per-machine parameters, 30 get certificates, 13 get hand proofs.
+  At OUR scale (BB4 = 858,909 TNF machines, no hardcoded params, no
+  sporadics) the whole census compiles in ~30 s with coq-native.
+- **The port**: lift `TNF.v` + `SearchQueue` from
+  `Coq-BB5/CoqBB5/BB4/`; replace the halting decider contract with
+  a quasihalting one (SCOPING §4 `BBBDecider`:
+  `Result_NeverQH | Result_QH score | Result_Unknown`); pipeline =
+  (1) bounded cycle/tcycler detection [Loops tier], (2) the n-gram
+  closure with IN-COQ rank search [see below], (3) fallthrough to
+  the holdout list, which is exactly the analogue of BB5's
+  hardcoded+sporadic tail and is already 84.5% done here.
+- **New lemmas needed**: the "don't-care completion" argument (TNF
+  enumerates machines with undefined transitions once; a
+  never-fired transition cannot affect QH status or score -- the
+  quasihalting analogue of `CountHaltTrans_0_NonHalt`), and the QH
+  score bookkeeping on the halting side of the tree.
+- **First move next session (cheap, decisive)**: run the Python
+  ladder (cycle -> tcycler -> ngram/rank) over the full (4,2)
+  enumeration to measure what the generic tiers kill under
+  QUASIHALTING (nobody has measured this; the standard censuses
+  stop at halting).  That sizes the Coq sweep before any port work.
+
+### Kill the million lines of tables while we're at it
+
+99.3% of this repo's lines (1.50M of 1.52M) are generated
+certificate tables (`Bulk_*.v`): per-context rank/potential/gate
+data for 3,136 machines.  The hand-written development is ~11k
+lines.  BB5 ships no such tables because its deciders SEARCH inside
+Coq rather than check external data.  We can retrofit: the engine
+already computes plain acyclicity ranks in-Coq (`compute_ranks` in
+`Closure.v`); implementing the full rank PROCEDURE (SCC peeling,
+measure candidate selection over the pattern vocabulary, Bellman
+potentials -- exactly what `tools/bulk_prover.py` does in Python)
+as an untrusted in-Coq function would shrink every bulk entry to a
+one-line `(machine, n, t)` tuple and delete the tables.  Costs:
+~1k lines of (untrusted, proof-free) search code + compile time for
+the in-Coq search -- with coq-native at (4,2) scale, likely fine.
+This is also a PREREQUISITE-quality piece for the census pipeline
+(tier 2 above needs exactly this search as a decider function), so
+build it once, use it in both places.
+
 ## Next moves, by coverage-per-effort
 
 1. **Fuel/drift rules (79)**: build the record/extent substrate
