@@ -64,15 +64,17 @@ compute" below).
 
 ## The big compute (finish this first)
 
-STATUS at session end: the pipeline is VALIDATED -- the 64k-pop probe
-returns `(32, 0, [])` (zero Unknowns; earlier probes caught a
-false-record bug in `scan_records0`, fixed by reading the move
-direction off the transition).  The four per-subtree walks
-(`Run_Split.v` / `q_sub`) were LAUNCHED in parallel at session end,
+STATUS: the v1 pipeline (no rank tier, D = 232,439) was validated at
+zero Unknowns over 64k pops (earlier probes caught a false-record
+bug in `scan_records0`, fixed by reading the move direction off the
+transition; the 0RA/1RA subtrees closed `(0,0,[])`).  The session
+then moved to v2 (rank tier + D = 56,039) rather than paying the v1
+Qed: re-validate with the same 64k-pop probe (expect `(32, 0, [])`),
+then launch the four per-subtree walks (`Run_Split.v` / `q_sub`)
 logging to `census_probes/sub_{0RA,1RA,0RB,1RB}.log` (gitignored);
-each should print `sub_probe_X = (0, 0, [])`.  Measured pace: ~6.8
-ms/pop native => ~5.9 h for the 1RB subtree, ~1.6 h for 0RB, seconds
-for 0RA/1RA.
+each should print `sub_probe_X = (0, 0, [])`.  v1 pace: ~6.8 ms/pop
+native => ~5.9 h for the 1RB subtree, ~1.6 h for 0RB, seconds for
+0RA/1RA; v2 adds the rank tier's cost on ngram-failing machines.
 
 When the logs show (0, 0, []) for all four:
 
@@ -98,24 +100,43 @@ coqc has no native_compute.  Everything compiles under Coq 8.18.
 The probe .v files are one-liners over `Run_Split.q_sub`; see
 `census_probes/` logs for the exact form used.
 
-## Then: shrink the deferred list (the measured path)
+## The rank tier (BUILT this session) and what remains
 
-The 228k residue exists because plain-acyclicity ranks
-(`compute_ranks`) are the only liveness rule in the generic n-gram
-tier.  Measured on a 300-sample of the residue: **the rank rules
-(a)/(b) with just the three count-of-1 measures kill 85.7% at n=3,
-t<=1024** (bulk_prover.py `decide(m, n, {})`), 88.7% with the full
-pattern vocabulary; of the rest, ~1/5 are QH-with-long-transient
-machines, the rest RepWL/irules-class.  So:
+`Census/RankSearch.v` implements the rules-(a)/(b) search in-Coq
+(untrusted: SCC decomposition, condensation ranks, Bellman-Ford
+potentials over the three count-of-1s measures) feeding the EXISTING
+verified `ngram_check_neverqh_lex`; wired as the pipeline's last
+tier (rungs n=3, t in {0,64,256,1024}).  Validated per-machine
+against bulk_prover.py -- which surfaced a real overclaim in the
+PYTHON side: `bulk_prover.decide` demands liveness only for states
+present in the closure, so machines whose quiet states vanish from
+it (visited once, never again -- genuine quasihalters like
+`1RB---_1LC1LD_1RB1LD_1LC0LC`) were wrongly "killed".  The Coq
+checker requires prefix-visited states too and rejects; the v2
+deferred sweep (`tools/sweep_rank_residue.py`, `decide_strict`)
+mirrors the checker's exact premise.
 
-1. **Implement the rank-rule search in-Coq** (untrusted, feeding the
-   existing verified lex checkers -- exactly the NEXT_SESSION "kill
-   the tables" item, now doubly motivated): D shrinks ~24k + holdouts.
-2. The remaining ~24k join the holdouts as the census-hard tail and
-   fall to the existing roadmap (rwlrank/fuel/drift/irules checkers).
-3. Wrap-QH-style transient quasihalters need a QH-classification tier
-   (cycle_check_qh/tcycler_check_qh already exist and are wired-ready;
-   the pipeline currently returns R_Leaf without classifying).
+Measured on the full 228,726 residue: **rank kills 176,400
+(77.1%)**; the loose rate was ~86.6%, so ~21.7k of the remainder are
+prefix-quiet QUASIHALTERS (wrap-class).  v2 deferred list D_census =
+3,713 holdouts + 52,326 residue = **56,039 machines**.
+
+Next tiers, in measured order:
+
+1. **QH-classification tier** (~22k machines): the machine's quiet
+   state vanishes from the n-gram closure -- exactly the wrap
+   construction (`Checkers/Wrap.v` exists for certs; a generic
+   census tier needs the in-Coq wrap search: redirect the quiet
+   state's transitions to halt, run the ngram closure on the wrapped
+   machine, conclude R_Leaf via NonHalt + QHBound... the leaf lemma
+   needs the last-visit bound, which the prefix simulation gives).
+2. The remaining ~30k rank-resistant never-QH machines: higher-n
+   rank rungs (n=4,5 add a few percent), the full pattern-measure
+   vocabulary (NgPattE already checkable), then the roadmap checkers
+   (rwlrank/fuel/drift/irules) which also absorb holdout certs.
+3. Upstream is <10 open holdouts (user report, 2026-07-15); the Coq
+   checker gaps (irules/rwlrank/fuel/drift/counters) are what absorb
+   the certificate types as they land.
 
 ## Gotchas discovered (do not re-learn these)
 
