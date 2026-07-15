@@ -83,6 +83,11 @@ theories/Machines/Bulk/TCyc_02.v
 theories/Machines/Bulk/TCyc_03.v
 theories/Machines/Bulk/TCyc_04.v
 theories/Machines/Bulk/Bulk_R01.v
+theories/Machines/Bulk/Bulk_R02.v
+theories/Machines/Bulk/Bulk_R03.v
+theories/Machines/Bulk/Bulk_R04.v
+theories/Machines/Bulk/Bulk_R05.v
+theories/Machines/Bulk/Bulk_R06.v
 theories/Machines/Bulk/Wrap_01.v
 theories/Tests/Bulk_Corruption.v
 theories/Tests/Wrap_Corruption.v
