@@ -64,34 +64,39 @@ compute" below).
 
 ## The big compute (finish this first)
 
-The census theorem needs one computation:
+STATUS at session end: the pipeline is VALIDATED -- the 64k-pop probe
+returns `(32, 0, [])` (zero Unknowns; earlier probes caught a
+false-record bug in `scan_records0`, fixed by reading the move
+direction off the transition).  The four per-subtree walks
+(`Run_Split.v` / `q_sub`) were LAUNCHED in parallel at session end,
+logging to `census_probes/sub_{0RA,1RA,0RB,1RB}.log` (gitignored);
+each should print `sub_probe_X = (0, 0, [])`.  Measured pace: ~6.8
+ms/pop native => ~5.9 h for the 1RB subtree, ~1.6 h for 0RB, seconds
+for 0RA/1RA.
 
-    Lemma q_census_empty : Nat.iter 700 q_suc q_0 = ([], []).
-    Proof. native_cast_no_check (eq_refl (@nil TNF_Node, @nil TNF_Node)). Qed.
+When the logs show (0, 0, []) for all four:
 
-Run the PROBE first (counts + encoded samples of any leftovers,
-`theories/Census/Census_Compute.v` has it commented):
+1. `theories/Census/Census_Compute_Split.v` is ready as written --
+   compile it (each Qed replays its subtree through the kernel's
+   native conversion, so budget the same hours again; split the four
+   lemmas into four files for parallel make if desired).
+2. `Print Assumptions census_decided` must show only
+   functional_extensionality_dep.
+3. Add Census_Compute_Split.v to _CoqProject (or keep it a manual
+   `make census`-style target) and update this file.
 
-    let q := Nat.iter 700 q_suc q_0 in
-    (length (fst q), length (snd q), map (fun x => tm_enc (node_tm x)) (firstn 5 (snd q)))
+If a log shows leftovers instead: decode the printed tm_enc keys
+with `tools/dec_tm_enc.py`, classify them with
+`tools/census_ladder.c --machines`, fix the tier divergence or add
+them to the residue file, regenerate Deferred_*, recompile, relaunch
+(this loop converged after one iteration this session -- the
+false-record fix).
 
-- If (0, 0, []): uncomment the lemma + theorem, compile (the Qed
-  reruns the native computation once), `Print Assumptions` must show
-  only functional_extensionality_dep.
-- If leftovers: they are machines the C ladder killed but the Coq
-  pipeline missed (tier mismatch).  Decode the printed `tm_enc`
-  values (tools/gen_deferred.py's slot code, base 17), fix or add
-  them to the residue file, regenerate Deferred_*, recompile, rerun.
-- Timing: measure with `Nat.iter 4` first.  The scans were rebuilt
-  for native speed (rolling-hash keys, one mulmod/step, 2 TC
-  candidates/side, single record walk for both sides); if a full run
-  still exceeds a few hours, split the enumeration at depth 2 into
-  per-subtree files compiled in parallel (BB5's
-  TNF_Enumeration_Roots trick) -- `census_from_empty` already takes
-  the iterate count as a parameter, so per-subtree variants are easy.
-- coq-native lives in the opam switch `census`
-  (`eval $(opam env --switch=census)`, OPAMROOT=/root/.opam); apt's
-  coqc has no native_compute.  Everything compiles under 8.18.
+Environment: coq-native lives in the opam switch `census`
+(`OPAMROOT=/root/.opam`, `eval $(opam env --switch=census)`); apt's
+coqc has no native_compute.  Everything compiles under Coq 8.18.
+The probe .v files are one-liners over `Run_Split.q_sub`; see
+`census_probes/` logs for the exact form used.
 
 ## Then: shrink the deferred list (the measured path)
 

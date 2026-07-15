@@ -12,3 +12,4 @@ Makefile.coq.conf
 .coq-native/
 tools/census_ladder
 tools/__pycache__/
+census_probes/
