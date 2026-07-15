@@ -1,28 +1,3 @@
--Q theories BBB4
-
-theories/BBB4_Statement.v
-theories/CTape.v
-theories/PosEnc.v
-theories/PattCount.v
-theories/GTape.v
-theories/Mirror.v
-theories/Checkers/Halt.v
-theories/Checkers/Cycle.v
-theories/Closure.v
-theories/Checkers/ExactClosure.v
-theories/Checkers/NGram.v
-theories/Checkers/TCycler.v
-theories/Machines/Cycle_Examples.v
-theories/Machines/Halt_Examples.v
-theories/Machines/TCycler_Examples.v
-theories/Machines/Closure_Examples.v
-theories/Machines/NGram_Examples.v
-theories/Machines/Sample_LexCert.v
-theories/Machines/Sample_LexCert_N5.v
-theories/Tests/Cycle_Corruption.v
-theories/Tests/TCycler_Corruption.v
-theories/Tests/Closure_Corruption.v
-theories/Tests/NGram_Corruption.v
 theories/Machines/Bulk/Bulk_001.v
 theories/Machines/Bulk/Bulk_002.v
 theories/Machines/Bulk/Bulk_003.v
@@ -76,4 +51,3 @@ theories/Machines/Bulk/Bulk_050.v
 theories/Machines/Bulk/Bulk_051.v
 theories/Machines/Bulk/Bulk_052.v
 theories/Machines/Bulk/Bulk_053.v
-theories/Tests/Bulk_Corruption.v
