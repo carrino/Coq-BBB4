@@ -9,3 +9,6 @@ Makefile.coq.conf
 .lia.cache
 .nia.cache
 .Makefile.coq.d
+.coq-native/
+tools/census_ladder
+tools/__pycache__/

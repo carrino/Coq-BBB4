@@ -1,0 +1,583 @@
+(** * Census/Decide: the quasihalting decider pipeline for the census.
+
+    The Loops-tier + n-gram-tier + deferred-lookup pipeline run on
+    every node of the TNF tree (NEXT_SESSION.md "Scope B"), built the
+    repo way: UNTRUSTED in-Coq searches propose parameters, verified
+    checkers re-derive everything.
+
+    Tiers, in order:
+
+    - halt search ([find_halt], verified): the machine reached its
+      undefined transition -> [R_Halt] (the tree expands there);
+
+    - in-place cycle ([scan_cycle] untrusted -> [cycle_leaf_check]
+      verified): head-relative configuration repeats; gives [NonHalt]
+      and [QHBound n1] (any eventually-quiet state made its last visit
+      before the cycle started) -> [R_Leaf];
+
+    - translated cycle ([tc_candidates]/[tc_measure_W] untrusted ->
+      [tcycler_leaf_check] verified, both sides via [mirror_tm]): the
+      guarded-window lap argument of Checkers/TCycler.v, reduced to
+      the census contract [NonHalt /\ QHBound n1] -> [R_Leaf];
+
+    - n-gram CPS ladder ([ngram_check_neverqh], the existing fully
+      generic verified decider): -> [R_NeverQH];
+
+    - deferred lookup: machine is in the explicit deferred list
+      (holdout list + measured hard residue) -> [R_Deferred].
+
+    Everything else falls to [R_Unknown] and would sit in the queue's
+    back list -- the census closes only if that never happens. *)
+
+From Coq Require Import Arith Lia Bool List NArith PArith ZArith.
+From Coq Require Import FSets.FMapPositive.
+From Coq Require Import FunctionalExtensionality.
+From BBB4 Require Import BBB4_Statement CTape GTape Mirror PosEnc.
+From BBB4.Checkers Require Import Cycle TCycler NGram.
+From BBB4.Census Require Import TNF_QH.
+Import ListNotations.
+
+Set Default Goal Selector "!".
+
+(** ** Tier H: verified halt search *)
+
+Fixpoint find_halt (tm : TM) (gas k : nat) (c : cconf)
+  : option (nat * St * Sym) :=
+  match gas with
+  | 0 => None
+  | S g =>
+      match cstep tm c with
+      | Some c' => find_halt tm g (S k) c'
+      | None => let '(q, (l, h, r)) := c in Some (k, q, h)
+      end
+  end.
+
+Lemma cstep_none : forall tm q l h r,
+  cstep tm (q, (l, h, r)) = None -> tm q h = None.
+Proof.
+  intros tm q l h r H. unfold cstep in H.
+  destruct (tm q h) as [tr|]; [discriminate | reflexivity].
+Qed.
+
+Lemma find_halt_sound : forall tm gas k c n s i,
+  csteps tm k c0 = Some c ->
+  find_halt tm gas k c = Some (n, s, i) ->
+  exists tp, stepn tm n InitES = Some (s, tp) /\ t_head tp = i /\ tm s i = None.
+Proof.
+  intros tm.
+  induction gas; intros k c n s i Hk H; simpl in H; [discriminate|].
+  destruct (cstep tm c) as [c'|] eqn:E.
+  - apply (IHgas (S k) c'); [|assumption].
+    replace (S k) with (k + 1) by lia.
+    rewrite csteps_add, Hk, csteps_1. exact E.
+  - destruct c as [q [[l h] r]].
+    injection H as <- <- <-.
+    exists (lift_tape (l, h, r)).
+    pose proof (csteps_lift tm k c0 (q, (l, h, r)) Hk) as Hl.
+    rewrite lift_c0 in Hl.
+    split; [exact Hl|].
+    split; [reflexivity|].
+    exact (cstep_none tm q l h r E).
+Qed.
+
+(** ** Tier C: in-place (head-relative) cycles *)
+
+Definition cycle_leaf_check (tm : TM) (n1 p : nat) : bool :=
+  (0 <? p) &&
+  match csteps tm n1 c0, csteps tm (n1 + p) c0 with
+  | Some a, Some b => ceqb a b
+  | _, _ => false
+  end.
+
+(** visits at or after the cycle start recur forever, so any
+    eventually-quiet state was last seen strictly before [n1] *)
+Lemma cycle_qhbound : forall tm n1 p E,
+  0 < p ->
+  stepn tm n1 InitES = Some E ->
+  stepn tm p E = Some E ->
+  QHBound n1 tm.
+Proof.
+  intros tm n1 p E Hp H1 Hloop q s [Hvis Hq].
+  destruct (le_lt_dec n1 s) as [Hge | Hlt]; [| lia].
+  exfalso.
+  destruct Hvis as (c & Hc & Hqc).
+  apply (Hq (s + p)); [lia|].
+  exists c. split; [| exact Hqc].
+  (* the configuration at s recurs at s + p: fold through the loop *)
+  replace (s + p) with (n1 + (p + (s - n1))) by lia.
+  rewrite stepn_add, H1.
+  change (stepn tm (p + (s - n1)) E = Some c).
+  rewrite stepn_add, Hloop.
+  change (stepn tm (s - n1) E = Some c).
+  replace s with (n1 + (s - n1)) in Hc by lia.
+  rewrite stepn_add, H1 in Hc.
+  exact Hc.
+Qed.
+
+Lemma cycle_leaf_check_sound : forall tm n1 p,
+  cycle_leaf_check tm n1 p = true ->
+  NonHalt tm /\ QHBound n1 tm.
+Proof.
+  intros tm n1 p H.
+  unfold cycle_leaf_check in H.
+  apply andb_prop in H as [Hp H].
+  apply Nat.ltb_lt in Hp.
+  destruct (csteps tm n1 c0) as [a|] eqn:Ea; [|discriminate].
+  destruct (csteps tm (n1 + p) c0) as [b|] eqn:Eb; [|discriminate].
+  apply ceqb_lift in H.
+  pose proof (csteps_lift tm n1 c0 a Ea) as Ha.
+  pose proof (csteps_lift tm (n1 + p) c0 b Eb) as Hb.
+  rewrite lift_c0 in Ha, Hb.
+  rewrite <- H in Hb.
+  assert (Hloop : stepn tm p (lift a) = Some (lift a)).
+  { rewrite stepn_add, Ha in Hb. exact Hb. }
+  split.
+  - exact (cycle_nonhalt tm n1 p (lift a) Hp Ha Hloop).
+  - exact (cycle_qhbound tm n1 p (lift a) Hp Ha Hloop).
+Qed.
+
+(** ** Tier T: translated cycles (guarded-window laps) *)
+
+Definition tcycler_leaf_check (tm : TM) (n1 P W : nat) : bool :=
+  (0 <? P) &&
+  match csteps tm n1 c0 with
+  | Some (q1, (l1, h1, r1)) =>
+      let g1 : cconf := (q1, (firstn_pad W l1, h1, r1)) in
+      match gsteps tm P g1 with
+      | Some g2 => gmatch g1 g2
+      | None => false
+      end
+  | None => false
+  end.
+
+Lemma tcycler_leaf_check_sound : forall tm n1 P W,
+  tcycler_leaf_check tm n1 P W = true ->
+  NonHalt tm /\ QHBound n1 tm.
+Proof.
+  intros tm n1 P W H.
+  unfold tcycler_leaf_check in H.
+  apply andb_prop in H as [Hp H].
+  apply Nat.ltb_lt in Hp.
+  destruct (csteps tm n1 c0) as [[q1 [[l1 h1] r1]]|] eqn:E1; [|discriminate].
+  destruct (gsteps tm P (q1, (firstn_pad W l1, h1, r1))) as [g2|] eqn:E2;
+    [|discriminate].
+  pose proof (anchor_instance tm n1 W q1 l1 h1 r1 E1) as HA.
+  set (g1 := (q1, (firstn_pad W l1, h1, r1)) : cconf) in *.
+  set (rho0 := fun n => nthb l1 (n + W)) in *.
+  split.
+  - (* non-halting, exactly as in tcycler_check_qh_sound *)
+    intros n HN.
+    destruct (le_lt_dec n1 n) as [Hge | Hlt].
+    + destruct (tcycler_fold tm n1 P g1 g2 rho0 Hp HA E2 H n Hge)
+        as (i & gi & rho & Hi & Hgi & Hfold).
+      rewrite Hfold in HN. discriminate.
+    + destruct (csteps_prefix tm n n1 c0 (q1, (l1, h1, r1)))
+        as (cm & Hcm & _); [lia | exact E1 |].
+      assert (Hl : stepn tm n InitES = Some (lift cm)).
+      { rewrite <- lift_c0. apply csteps_lift; assumption. }
+      rewrite Hl in HN. discriminate.
+  - (* any quiet state was last visited before the anchor *)
+    intros q s [Hvis Hq].
+    destruct (le_lt_dec n1 s) as [Hge | Hlt]; [| lia].
+    exfalso.
+    destruct Hvis as (c & Hc & Hqc).
+    destruct (tcycler_fold tm n1 P g1 g2 rho0 Hp HA E2 H s Hge)
+      as (i & gi & rho & Hi & Hgi & Hfold).
+    rewrite Hfold in Hc. injection Hc as <-.
+    (* pump the window occurrence one lap past s *)
+    destruct (tcycler_laps tm n1 P g1 g2 rho0 HA E2 H (S s)) as [rho' Hrho'].
+    apply (Hq (n1 + (S s) * P + i)); [nia|].
+    exists (glift rho' gi).
+    split.
+    + replace (n1 + (S s) * P + i) with ((n1 + (S s) * P) + i) by lia.
+      rewrite stepn_add, Hrho'.
+      apply gsteps_lift; exact Hgi.
+    + rewrite glift_state.
+      rewrite glift_state in Hqc. exact Hqc.
+Qed.
+
+Corollary tcycler_leaf_check_sound_L : forall tm n1 P W,
+  tcycler_leaf_check (mirror_tm tm) n1 P W = true ->
+  NonHalt tm /\ QHBound n1 tm.
+Proof.
+  intros tm n1 P W H.
+  destruct (tcycler_leaf_check_sound (mirror_tm tm) n1 P W H) as [Hnh Hb].
+  split.
+  - apply mirror_nonhalt; exact Hnh.
+  - apply qhbound_mirror; exact Hb.
+Qed.
+
+(** ** Untrusted searches
+
+    These only propose (n1, p) / (n1, P, W) candidates; the verified
+    checkers above re-derive everything, so nothing here needs (or
+    has) a proof. *)
+
+(** rolling hash of the head-relative tape: [hrel] tracks
+    (sum over 1-cells j of r^(j - head)) mod M, so equal head-relative
+    configurations (what [ceqb] compares, padding-blind) share keys.
+    A write toggles the head cell (+/- r^0 = 1); a head move rescales
+    by r or its inverse.  M = 2^31 - 1; hashRinv * hashR = 1 mod M. *)
+Definition hashM : N := 2147483647%N.
+Definition hashR : N := 1234577%N.
+Definition hashRinv : N := 1020407710%N.
+
+Definition sym1 (s : Sym) : N := match s with S0 => 0 | S1 => 1 end.
+
+Definition scan_key (q : St) (h : Sym) (hrel : N) : positive :=
+  N.succ_pos ((N.of_nat (St_to_nat q) * 2 + sym1 h) * hashM + hrel).
+
+(** in-place-cycle scan: walk [gas] steps keeping a hash-keyed map of
+    seen configurations (one slot per key; a key hit is confirmed by
+    [ceqb] and otherwise overwritten, so hash collisions can only delay
+    detection, never fake it -- and the verified [cycle_leaf_check]
+    re-derives everything anyway).  Returns the first exact
+    head-relative repeat (n1, p). *)
+Fixpoint scan_cycle0 (tm : TM) (gas k : nat) (c : cconf) (hrel : N)
+    (seen : PositiveMap.tree (nat * cconf))
+  : option (nat * nat) :=
+  match gas with
+  | 0 => None
+  | S g =>
+      let '(q, (l, h, r)) := c in
+      let key := scan_key q h hrel in
+      let step_on :=
+        fun (seen' : PositiveMap.tree (nat * cconf)) =>
+        match tm q h with
+        | None => None
+        | Some tr =>
+            match cstep tm c with
+            | None => None
+            | Some c' =>
+                let hrel1 :=
+                  match h, t_write tr with
+                  | S0, S1 => ((hrel + 1) mod hashM)%N
+                  | S1, S0 => ((hrel + (hashM - 1)) mod hashM)%N
+                  | _, _ => hrel
+                  end in
+                let hrel2 :=
+                  match t_dir tr with
+                  | DR => ((hrel1 * hashRinv) mod hashM)%N
+                  | DL => ((hrel1 * hashR) mod hashM)%N
+                  end in
+                scan_cycle0 tm g (S k) c' hrel2 seen'
+            end
+        end in
+      match PositiveMap.find key seen with
+      | Some (k0, c0') =>
+          if ceqb c0' c then Some (k0, k - k0)
+          else step_on (PositiveMap.add key (k, c) seen)
+      | None => step_on (PositiveMap.add key (k, c) seen)
+      end
+  end.
+
+Definition scan_cycle (tm : TM) (gas : nat) : option (nat * nat) :=
+  scan_cycle0 tm gas 0 c0 0%N (PositiveMap.empty _).
+
+(** record log: configuration indices (and states) where the head
+    stands on never-visited ground, per side *)
+Fixpoint scan_records0 (tm : TM) (gas k : nat) (c : cconf)
+    (accR accL : list (nat * St))
+  : list (nat * St) * list (nat * St) :=
+  match gas with
+  | 0 => (accR, accL)
+  | S g =>
+      match cstep tm c with
+      | None => (accR, accL)
+      | Some c' =>
+          let '(q, (l, h, r)) := c in
+          let '(q', (l', h', r')) := c' in
+          let recR := match r, l' with
+                      | [], _ :: _ => true | _, _ => false end in
+          let recL := match l, r' with
+                      | [], _ :: _ => true | _, _ => false end in
+          scan_records0 tm g (S k) c'
+            (if recR then (S k, q') :: accR else accR)
+            (if recL then (S k, q') :: accL else accL)
+      end
+  end.
+
+Definition scan_records (tm : TM) (gas : nat)
+  : list (nat * St) * list (nat * St) :=
+  scan_records0 tm gas 0 c0 [] [].
+
+(** the canonical anchor pairs: for each of the two newest records,
+    its nearest earlier same-state record.  Verified re-checks are the
+    expensive part, so at most 2 candidates per side; the C measurement
+    tool uses the same rule. *)
+Fixpoint first_same (q : St) (l : list (nat * St)) : option nat :=
+  match l with
+  | [] => None
+  | (a, qa) :: t => if st_eqb qa q then Some a else first_same q t
+  end.
+
+Definition tc_pairs (recs : list (nat * St)) : list (nat * nat) :=
+  match recs with
+  | (b1, q1) :: t1 =>
+      (match first_same q1 t1 with
+       | Some a => [(a, b1 - a)] | None => [] end) ++
+      (match t1 with
+       | (b2, q2) :: t2 =>
+           match first_same q2 t2 with
+           | Some a => [(a, b2 - a)] | None => [] end
+       | [] => [] end)
+  | [] => []
+  end.
+
+(** measure the lap's excursion below the anchor head: walk [P] steps
+    from the configuration at [n1], tracking max depth below start *)
+Fixpoint lap_depth0 (tm : TM) (p : nat) (c : cconf) (cur maxd : Z) : Z :=
+  match p with
+  | 0 => maxd
+  | S p' =>
+      let '(q, (l, h, r)) := c in
+      match tm q h with
+      | None => maxd
+      | Some tr =>
+          match cstep tm c with
+          | None => maxd
+          | Some c' =>
+              let cur' := match t_dir tr with
+                          | DL => (cur + 1)%Z
+                          | DR => (cur - 1)%Z
+                          end in
+              lap_depth0 tm p' c' cur' (Z.max maxd cur')
+          end
+      end
+  end.
+
+Definition tc_measure_W (tm : TM) (n1 P : nat) : nat :=
+  match csteps tm n1 c0 with
+  | Some c => Z.to_nat (lap_depth0 tm P c 0 0)
+  | None => 0
+  end.
+
+(** ** Deferred lookup *)
+
+Definition dir_eqb (a b : Dir) : bool :=
+  match a, b with DL, DL | DR, DR => true | _, _ => false end.
+
+Lemma dir_eqb_eq : forall a b, dir_eqb a b = true -> a = b.
+Proof. intros [] []; simpl; congruence. Qed.
+
+Definition otrans_eqb (a b : option Trans) : bool :=
+  match a, b with
+  | None, None => true
+  | Some x, Some y =>
+      sym_eqb (t_write x) (t_write y) &&
+      dir_eqb (t_dir x) (t_dir y) &&
+      st_eqb (t_next x) (t_next y)
+  | _, _ => false
+  end.
+
+Lemma otrans_eqb_eq : forall a b, otrans_eqb a b = true -> a = b.
+Proof.
+  intros [x|] [y|] H; simpl in H; try discriminate; [|reflexivity].
+  apply andb_prop in H as [H H3].
+  apply andb_prop in H as [H1 H2].
+  apply sym_eqb_spec in H1. apply dir_eqb_eq in H2. apply st_eqb_spec in H3.
+  destruct x, y; simpl in *; congruence.
+Qed.
+
+Definition tm_eqb (a b : TM) : bool :=
+  otrans_eqb (a StA S0) (b StA S0) && otrans_eqb (a StA S1) (b StA S1) &&
+  otrans_eqb (a StB S0) (b StB S0) && otrans_eqb (a StB S1) (b StB S1) &&
+  otrans_eqb (a StC S0) (b StC S0) && otrans_eqb (a StC S1) (b StC S1) &&
+  otrans_eqb (a StD S0) (b StD S0) && otrans_eqb (a StD S1) (b StD S1).
+
+Lemma tm_eqb_eq : forall a b, tm_eqb a b = true -> a = b.
+Proof.
+  intros a b H.
+  unfold tm_eqb in H.
+  repeat (apply andb_prop in H as [H ?]).
+  apply functional_extensionality; intro q.
+  apply functional_extensionality; intro s.
+  destruct q, s; apply otrans_eqb_eq; assumption.
+Qed.
+
+Definition slot_code (o : option Trans) : N :=
+  match o with
+  | None => 0
+  | Some tr =>
+      (1 + (match t_write tr with S0 => 0 | S1 => 1 end) +
+       2 * (match t_dir tr with DL => 0 | DR => 1 end) +
+       4 * N.of_nat (St_to_nat (t_next tr)))%N
+  end.
+
+Definition tm_enc (tm : TM) : positive :=
+  N.succ_pos
+    (fold_left (fun acc o => (17 * acc + slot_code o)%N)
+       [tm StA S0; tm StA S1; tm StB S0; tm StB S1;
+        tm StC S0; tm StC S1; tm StD S0; tm StD S1] 0%N).
+
+Definition DeferredMap : Type := PositiveMap.tree TM.
+
+Definition dmap_of (D : list TM) : DeferredMap :=
+  fold_right (fun h m => PositiveMap.add (tm_enc h) h m)
+             (PositiveMap.empty TM) D.
+
+Lemma dmap_of_In : forall D k h,
+  PositiveMap.find k (dmap_of D) = Some h -> In h D.
+Proof.
+  induction D as [| h0 D IH]; intros k h H; simpl in H.
+  - rewrite PositiveMap.gempty in H. discriminate.
+  - destruct (Pos.eq_dec k (tm_enc h0)) as [-> | Hne].
+    + rewrite PositiveMap.gss in H. injection H as <-. left; reflexivity.
+    + rewrite PositiveMap.gso in H by exact Hne.
+      right. exact (IH k h H).
+Qed.
+
+Definition deferred_lookup (dm : DeferredMap) (tm : TM) : bool :=
+  match PositiveMap.find (tm_enc tm) dm with
+  | Some h => tm_eqb tm h
+  | None => false
+  end.
+
+Lemma deferred_lookup_In : forall D tm,
+  deferred_lookup (dmap_of D) tm = true -> In tm D.
+Proof.
+  intros D tm H.
+  unfold deferred_lookup in H.
+  destruct (PositiveMap.find (tm_enc tm) (dmap_of D)) as [h|] eqn:E;
+    [|discriminate].
+  apply tm_eqb_eq in H. rewrite H.
+  exact (dmap_of_In D (tm_enc tm) h E).
+Qed.
+
+(** ** The pipeline *)
+
+Section Pipeline.
+
+Variable B : nat.              (** global score bound *)
+Variable D : list TM.          (** the deferred list *)
+
+Variable halt_gas : nat.       (** gas for the halt search *)
+Variable loop_gas : nat.       (** gas for the cycle/record scans *)
+Variable ng_fuel : nat.        (** worklist fuel for the n-gram closures *)
+Variable ng_rounds : nat.      (** growth rounds for the n-gram sets *)
+Variable ng_rungs : list (nat * nat).   (** (window n, prefix t) ladder *)
+
+Definition try_tc_cands (tm : TM) (mirrored : bool)
+    (cands : list (nat * nat)) : bool :=
+  existsb (fun '(n1, P) =>
+    (n1 <=? B) &&
+    tcycler_leaf_check tm n1 P (tc_measure_W tm n1 P)) cands.
+
+Fixpoint try_ngram (rungs : list (nat * nat)) (tm : TM) : QHResult :=
+  match rungs with
+  | [] => R_Unknown
+  | (n, t) :: rest =>
+      if ngram_check_neverqh tm n t ng_fuel ng_rounds
+      then R_NeverQH
+      else try_ngram rest tm
+  end.
+
+Definition decide_easy (dm : DeferredMap) (tm : TM) : QHResult :=
+  (* tier H: halting *)
+  match find_halt tm halt_gas 0 c0 with
+  | Some (n, s, i) => if S n <=? B then R_Halt s i else R_Unknown
+  | None =>
+  (* tier C: in-place cycles *)
+  let cyc :=
+    match scan_cycle tm loop_gas with
+    | Some (n1, p) => (n1 <=? B) && cycle_leaf_check tm n1 p
+    | None => false
+    end in
+  if cyc then R_Leaf else
+  (* tier T: translated cycles.  One record walk serves both sides:
+     the mirror machine's right records are the left records (same
+     steps and states), so its candidates come from [recL]. *)
+  let '(recR, recL) := scan_records tm loop_gas in
+  if try_tc_cands tm false (tc_pairs recR) then R_Leaf else
+  if try_tc_cands (mirror_tm tm) true (tc_pairs recL) then R_Leaf else
+  (* tier D first: deferred machines skip the (expensive, failing)
+     n-gram ladder -- the deferred list is measured to be exactly the
+     ladder's residue plus the holdouts *)
+  if deferred_lookup dm tm then R_Deferred else
+  (* tier N: n-gram ladder *)
+  try_ngram ng_rungs tm
+  end.
+
+(** *** Soundness *)
+
+Lemma try_tc_cands_sound : forall tm cands,
+  try_tc_cands tm false cands = true ->
+  NonHalt tm /\ QHBound B tm.
+Proof.
+  intros tm cands H.
+  unfold try_tc_cands in H.
+  apply existsb_exists in H.
+  destruct H as ([n1 P] & _ & H).
+  apply andb_prop in H as [Hb H].
+  apply Nat.leb_le in Hb.
+  destruct (tcycler_leaf_check_sound tm n1 P _ H) as [Hnh Hq].
+  split; [exact Hnh|].
+  exact (qhbound_mono n1 B tm Hb Hq).
+Qed.
+
+Lemma try_tc_cands_sound_L : forall tm cands,
+  try_tc_cands (mirror_tm tm) true cands = true ->
+  NonHalt tm /\ QHBound B tm.
+Proof.
+  intros tm cands H.
+  unfold try_tc_cands in H.
+  apply existsb_exists in H.
+  destruct H as ([n1 P] & _ & H).
+  apply andb_prop in H as [Hb H].
+  apply Nat.leb_le in Hb.
+  destruct (tcycler_leaf_check_sound_L tm n1 P _ H) as [Hnh Hq].
+  split; [exact Hnh|].
+  exact (qhbound_mono n1 B tm Hb Hq).
+Qed.
+
+Lemma try_ngram_cases : forall rungs tm,
+  (try_ngram rungs tm = R_NeverQH /\ NeverQuasiHaltsSt tm) \/
+  try_ngram rungs tm = R_Unknown.
+Proof.
+  induction rungs as [| [n t] rest IH]; intros tm; simpl.
+  - right; reflexivity.
+  - destruct (ngram_check_neverqh tm n t ng_fuel ng_rounds) eqn:E.
+    + left. split; [reflexivity|].
+      exact (ngram_check_neverqh_sound tm n t ng_fuel ng_rounds E).
+    + exact (IH tm).
+Qed.
+
+Theorem decide_easy_WF :
+  QHDecider_WF B D (decide_easy (dmap_of D)).
+Proof.
+  intro tm.
+  unfold decide_easy.
+  destruct (find_halt tm halt_gas 0 c0) as [[[n s] i]|] eqn:Eh.
+  { (* halt tier *)
+    destruct (S n <=? B) eqn:EB; [|exact I].
+    apply Nat.leb_le in EB.
+    destruct (find_halt_sound tm halt_gas 0 c0 n s i (eq_refl) Eh)
+      as (tp & Hst & Hhd & Hnone).
+    exists n, tp. auto. }
+  (* cycle tier *)
+  destruct (match scan_cycle tm loop_gas with
+            | Some (n1, p) => (n1 <=? B) && cycle_leaf_check tm n1 p
+            | None => false
+            end) eqn:Ec.
+  { destruct (scan_cycle tm loop_gas) as [[n1 p]|]; [|discriminate].
+    apply andb_prop in Ec as [Hb Hc].
+    apply Nat.leb_le in Hb.
+    destruct (cycle_leaf_check_sound tm n1 p Hc) as [Hnh Hq].
+    split; [exact Hnh|].
+    exact (qhbound_mono n1 B tm Hb Hq). }
+  destruct (scan_records tm loop_gas) as [recR recL].
+  (* tc tier, right then mirrored left *)
+  destruct (try_tc_cands tm false (tc_pairs recR)) eqn:Et.
+  { exact (try_tc_cands_sound tm (tc_pairs recR) Et). }
+  destruct (try_tc_cands (mirror_tm tm) true (tc_pairs recL)) eqn:Em.
+  { exact (try_tc_cands_sound_L tm (tc_pairs recL) Em). }
+  (* deferred tier *)
+  destruct (deferred_lookup (dmap_of D) tm) eqn:Ed.
+  { apply deferred_lookup_In; exact Ed. }
+  (* ngram tier *)
+  destruct (try_ngram_cases ng_rungs tm) as [[En Hn] | En]; rewrite En.
+  - exact Hn.
+  - exact I.
+Qed.
+
+End Pipeline.
