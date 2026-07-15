@@ -36,14 +36,19 @@ Definition B_census : nat := 2000.
 Definition ng_rungs_census : list (nat * nat) :=
   [(2, 100); (3, 200); (4, 400); (6, 800)].
 
+(** the rank-rules tier's ladder (mirrored by
+    tools/sweep_rank_residue.py, which generates the deferred list) *)
+Definition rank_rungs_census : list (nat * nat) :=
+  [(3, 0); (3, 64); (3, 256); (3, 1024)].
+
 Definition decider : QHDecider :=
   decide_easy B_census 130 512 200000 512 ng_rungs_census
-              (dmap_of D_census).
+              rank_rungs_census (dmap_of D_census).
 
 Lemma decider_WF : QHDecider_WF B_census D_census decider.
 Proof.
   exact (decide_easy_WF B_census D_census 130 512 200000 512
-           ng_rungs_census).
+           ng_rungs_census rank_rungs_census).
 Qed.
 
 (** ** The root and its symmetrized first level *)

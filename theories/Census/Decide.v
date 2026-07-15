@@ -34,7 +34,7 @@ From Coq Require Import FSets.FMapPositive.
 From Coq Require Import FunctionalExtensionality.
 From BBB4 Require Import BBB4_Statement CTape GTape Mirror PosEnc.
 From BBB4.Checkers Require Import Cycle TCycler NGram.
-From BBB4.Census Require Import TNF_QH.
+From BBB4.Census Require Import TNF_QH RankSearch.
 Import ListNotations.
 
 Set Default Goal Selector "!".
@@ -464,6 +464,7 @@ Variable loop_gas : nat.       (** gas for the cycle/record scans *)
 Variable ng_fuel : nat.        (** worklist fuel for the n-gram closures *)
 Variable ng_rounds : nat.      (** growth rounds for the n-gram sets *)
 Variable ng_rungs : list (nat * nat).   (** (window n, prefix t) ladder *)
+Variable rank_rungs : list (nat * nat). (** ladder for the rank-rules tier *)
 
 Definition try_tc_cands (tm : TM) (mirrored : bool)
     (cands : list (nat * nat)) : bool :=
@@ -478,6 +479,15 @@ Fixpoint try_ngram (rungs : list (nat * nat)) (tm : TM) : QHResult :=
       if ngram_check_neverqh tm n t ng_fuel ng_rounds
       then R_NeverQH
       else try_ngram rest tm
+  end.
+
+Fixpoint try_rank (rungs : list (nat * nat)) (tm : TM) : QHResult :=
+  match rungs with
+  | [] => R_Unknown
+  | (n, t) :: rest =>
+      if rank_tier tm n t ng_fuel ng_rounds
+      then R_NeverQH
+      else try_rank rest tm
   end.
 
 Definition decide_easy (dm : DeferredMap) (tm : TM) : QHResult :=
@@ -502,8 +512,11 @@ Definition decide_easy (dm : DeferredMap) (tm : TM) : QHResult :=
      n-gram ladder -- the deferred list is measured to be exactly the
      ladder's residue plus the holdouts *)
   if deferred_lookup dm tm then R_Deferred else
-  (* tier N: n-gram ladder *)
-  try_ngram ng_rungs tm
+  (* tier N: n-gram ladder, then tier R: the ranking rules (a)/(b) *)
+  match try_ngram ng_rungs tm with
+  | R_NeverQH => R_NeverQH
+  | _ => try_rank rank_rungs tm
+  end
   end.
 
 (** *** Soundness *)
@@ -550,6 +563,18 @@ Proof.
     + exact (IH tm).
 Qed.
 
+Lemma try_rank_cases : forall rungs tm,
+  (try_rank rungs tm = R_NeverQH /\ NeverQuasiHaltsSt tm) \/
+  try_rank rungs tm = R_Unknown.
+Proof.
+  induction rungs as [| [n t] rest IH]; intros tm; simpl.
+  - right; reflexivity.
+  - destruct (rank_tier tm n t ng_fuel ng_rounds) eqn:E.
+    + left. split; [reflexivity|].
+      exact (rank_tier_sound tm n t ng_fuel ng_rounds E).
+    + exact (IH tm).
+Qed.
+
 Theorem decide_easy_WF :
   QHDecider_WF B D (decide_easy (dmap_of D)).
 Proof.
@@ -582,10 +607,12 @@ Proof.
   (* deferred tier *)
   destruct (deferred_lookup (dmap_of D) tm) eqn:Ed.
   { apply deferred_lookup_In; exact Ed. }
-  (* ngram tier *)
+  (* ngram then rank tiers *)
   destruct (try_ngram_cases ng_rungs tm) as [[En Hn] | En]; rewrite En.
   - exact Hn.
-  - exact I.
+  - destruct (try_rank_cases rank_rungs tm) as [[Er Hr] | Er]; rewrite Er.
+    + exact Hr.
+    + exact I.
 Qed.
 
 End Pipeline.

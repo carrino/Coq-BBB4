@@ -8,7 +8,7 @@
 From Coq Require Import Arith Bool List.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Checkers Require Import NGram.
-From BBB4.Census Require Import TNF_QH Decide Deferred_Defs.
+From BBB4.Census Require Import TNF_QH Decide Deferred_Defs RankSearch.
 Import ListNotations.
 
 Definition T (w : Sym) (d : Dir) (n : St) := Some (mkTrans w d n).
@@ -92,23 +92,50 @@ Example row_decode :
                      tN; tN; tN; tN]) qh1 = true.
 Proof. vm_compute. reflexivity. Qed.
 
+(** ** The rank tier
+
+    [qh1] quasihalts (state A goes quiet after index 0), so the rank
+    tier -- which proves NEVER-quasihalting -- must reject it: the
+    checker requires liveness certificates for every prefix-visited
+    state, exactly the premise a looser search could miss. *)
+
+Example rank_rejects_qh : rank_tier qh1 3 4 10000 64 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+Example rank_rejects_halting :
+  rank_tier (fun _ _ => None) 3 0 1000 16 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* a residue-class machine the ranking rules genuinely kill
+   (validated against tools/bulk_prover.py) *)
+Definition rankm : TM :=
+  mk8 (T S1 DR StB) (T S0 DL StC) (T S0 DL StA) (T S0 DR StD)
+      (T S1 DL StA) (T S1 DL StB) (T S1 DR StC) (T S1 DL StA).
+Example rank_kills :
+  rank_tier rankm 3 0 200000 512 = true.
+Proof. vm_compute. reflexivity. Qed.
+
 (** ** Pipeline classification on knowns *)
 
 Definition rungs_t : list (nat * nat) := [(2, 100); (3, 200)].
+Definition rrungs_t : list (nat * nat) := [(3, 0)].
 
 Example pipe_halt :
-  decide_easy 2000 130 1030 200000 512 rungs_t (dmap_of [])
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t (dmap_of [])
     (fun _ _ => None) = R_Halt StA S0.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_spin :
-  decide_easy 2000 130 1030 200000 512 rungs_t (dmap_of []) spin0 = R_Leaf.
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t (dmap_of [])
+    spin0 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_runner :
-  decide_easy 2000 130 1030 200000 512 rungs_t (dmap_of []) run1 = R_Leaf.
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t (dmap_of [])
+    run1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_qh_leaf :
-  decide_easy 2000 130 1030 200000 512 rungs_t (dmap_of []) qh1 = R_Leaf.
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t (dmap_of [])
+    qh1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
