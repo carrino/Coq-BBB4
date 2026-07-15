@@ -41,11 +41,16 @@ def main():
                 if l.strip()]
     hset = set(holdouts)
     manifest = {}
-    with open(os.path.join(HERE, "bulk_manifest.tsv")) as f:
-        next(f)
-        for line in f:
-            parts = line.rstrip("\n").split("\t")
-            manifest[parts[0]] = parts[1]
+    for mfname in ("bulk_manifest.tsv", "tcyc_manifest.tsv",
+                   "bulkr_manifest.tsv"):
+        path = os.path.join(HERE, mfname)
+        if not os.path.exists(path):
+            continue
+        with open(path) as f:
+            next(f)
+            for line in f:
+                parts = line.rstrip("\n").split("\t")
+                manifest[parts[0]] = parts[1]
     stray = [m for m in manifest if m not in hset]
     if stray:
         print("ERROR: %d proven machines NOT on the holdout list:" % len(stray))

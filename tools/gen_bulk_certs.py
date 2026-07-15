@@ -120,13 +120,14 @@ def sanitize(mtext):
     return mtext.replace("---", "XXX")
 
 
-def emit_machine(idx, mtext, n, t, comps_by_state, nseen, rounds):
+def emit_machine(idx, mtext, n, t, comps_by_state, nseen, rounds,
+                 name_tag="bulk"):
     """rounds must bound the *donation-gated* Coq ng_grow iteration
     count: each non-final round adds at least one gram, and the Coq
     sets stay inside the Python fixpoint, so |lset|+|rset|+slack is
     sound (the Python round count is NOT: gated growth is slower)."""
-    name = "tm_bulk_%05d" % idx
-    cname = "cert_bulk_%05d" % idx
+    name = "tm_%s_%05d" % (name_tag, idx)
+    cname = "cert_%s_%05d" % (name_tag, idx)
     fuel = 8 * nseen + 64
     out = []
     out.append("(** %s: n=%d t=%d contexts=%d *)" % (mtext, n, t, nseen))
@@ -171,12 +172,46 @@ def work(path):
     return (mtext, n, (t, len(seen), comps, coq_rounds))
 
 
+def work_extra(arg):
+    mtext, n = arg
+    r = bp.decide(mtext, n, {})
+    if r is None:
+        return (mtext, n, None)
+    t, seen, lset, rset, comps, _rounds = r
+    coq_rounds = len(lset) + len(rset) + 4
+    return (mtext, n, (t, len(seen), comps, coq_rounds))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--batch", type=int, default=50)
     ap.add_argument("--only", type=str, default="")
+    ap.add_argument("--extra", type=str, default="",
+                    help="TSV of machine<TAB>n hits to board (emits "
+                         "Bulk_R files with a separate manifest)")
     args = ap.parse_args()
+
+    prefix, idx0 = "Bulk_%03d.v", 0
+    mname, vlist = "bulk_manifest.tsv", "bulk_vfiles.txt"
+    if args.extra:
+        extra = [(l.split("\t")[0], int(l.split("\t")[1]))
+                 for l in open(args.extra) if l.strip()]
+        prefix = "Bulk_R%02d.v"
+        mname, vlist = "bulkr_manifest.tsv", "bulkr_vfiles.txt"
+        os.makedirs(OUTDIR, exist_ok=True)
+        results = []
+        failures = []
+        with Pool(4) as pool:
+            for mtext, n, r in pool.imap(work_extra, extra, chunksize=4):
+                if r is None:
+                    failures.append(mtext)
+                else:
+                    results.append((mtext, n, r))
+        results.sort(key=lambda x: x[0])
+        emit_all(results, failures, args.batch, prefix, mname, vlist,
+                 name_tag="bulkr")
+        return
 
     files = collect_machines()
     if args.only:
@@ -196,28 +231,34 @@ def main():
                 results.append((mtext, n, r))
     # deterministic order by machine text
     results.sort(key=lambda x: x[0])
+    emit_all(results, failures, args.batch, prefix, mname, vlist,
+             name_tag="bulk")
+
+
+def emit_all(results, failures, batch_size, prefix, mname, vlist, name_tag):
 
     manifest = []
     vfiles = []
-    for b0 in range(0, len(results), args.batch):
-        batch = results[b0:b0 + args.batch]
-        bno = b0 // args.batch + 1
-        fname = "Bulk_%03d.v" % bno
+    for b0 in range(0, len(results), batch_size):
+        batch = results[b0:b0 + batch_size]
+        bno = b0 // batch_size + 1
+        fname = prefix % bno
         chunks = [HEADER]
         for j, (mtext, n, (t, nseen, comps, rounds)) in enumerate(batch):
             idx = b0 + j + 1
-            text, thm = emit_machine(idx, mtext, n, t, comps, nseen, rounds)
+            text, thm = emit_machine(idx, mtext, n, t, comps, nseen, rounds,
+                                     name_tag)
             chunks.append(text)
             manifest.append((mtext, thm, "theories/Machines/Bulk/" + fname,
                              n, t, nseen))
         open(os.path.join(OUTDIR, fname), "w").write("\n\n".join(chunks) + "\n")
         vfiles.append("theories/Machines/Bulk/" + fname)
 
-    with open(os.path.join(HERE, "bulk_manifest.tsv"), "w") as mf:
+    with open(os.path.join(HERE, mname), "w") as mf:
         mf.write("machine\ttheorem\tfile\tn\tt\tcontexts\n")
         for row in manifest:
             mf.write("\t".join(str(x) for x in row) + "\n")
-    with open(os.path.join(HERE, "bulk_vfiles.txt"), "w") as vf:
+    with open(os.path.join(HERE, vlist), "w") as vf:
         vf.write("\n".join(vfiles) + "\n")
     print("emitted %d machines into %d files; %d failures"
           % (len(results), len(vfiles), len(failures)))

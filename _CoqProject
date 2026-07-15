@@ -12,6 +12,7 @@ theories/Closure.v
 theories/Checkers/ExactClosure.v
 theories/Checkers/NGram.v
 theories/Checkers/TCycler.v
+theories/Checkers/TCyclerN.v
 theories/Machines/Cycle_Examples.v
 theories/Machines/Halt_Examples.v
 theories/Machines/TCycler_Examples.v
@@ -76,4 +77,9 @@ theories/Machines/Bulk/Bulk_050.v
 theories/Machines/Bulk/Bulk_051.v
 theories/Machines/Bulk/Bulk_052.v
 theories/Machines/Bulk/Bulk_053.v
+theories/Machines/Bulk/TCyc_01.v
+theories/Machines/Bulk/TCyc_02.v
+theories/Machines/Bulk/TCyc_03.v
+theories/Machines/Bulk/TCyc_04.v
+theories/Machines/Bulk/Bulk_R01.v
 theories/Tests/Bulk_Corruption.v
