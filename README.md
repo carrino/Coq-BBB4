@@ -151,9 +151,23 @@ closure/liveness framework (n-gram instance, ranking rules,
   adds pattern-measure negative controls (tampered pattern/region,
   all-blank and over-long patterns, retargeting).
 
+- `theories/Checkers/Wrap.v` + `theories/Machines/Bulk/Wrap_01.v` —
+  **the first quasihalting theorems**: the harness's wrapped
+  quiet-state construction.  `tm_wrap tm q` redirects state `q` to
+  halt; a halt-free n-gram closure of the *wrapped* machine from the
+  *real* machine's step-`t` configuration proves `q` is never
+  visited after `t` (a `q`-configuration has no wrapped successor,
+  and off `q` the two machines agree step for step, `wrap_agree`).
+  No liveness argument at all — closedness (`closure_invariant`)
+  suffices, so all 18 upstream `wrapctl`/`wrapfar` machines board on
+  the n-gram abstraction without their RepWL/DFA machinery.  Per
+  machine: `NonHalt tm /\ QuietAfter tm q s /\ QuasiHaltsSt tm` with
+  the exact last-visit index `s`.
+
 Axiom footprint: `functional_extensionality_dep` only (as in
-Coq-BB5).  Full build: ~6 min on 4 cores (53 generated bulk files
-of ~12 s each dominate; the core library is ~30 s).
+Coq-BB5).  Full build: ~10 min on 4 cores (53 generated bulk files
+of ~12 s each dominate; the core library is ~30 s; the 309M-step
+tcycler outlier ~40 min on its own core).
 
 ## Build
 
@@ -165,20 +179,18 @@ make
 
 ## Coverage
 
-Of the 3,713 BBB(4) holdouts: **2,632 have a Coq theorem** (this
-repo), 18 are open upstream, and 1,063 have C certificates awaiting
-their checkers, by type: `irules` 772, `neverqh_rwlrank`/`rwl`/
-`rwlsilent` 126, `neverqh_fuel` 62, `tcycler` 40, `neverqh_drift`
-17, wrap/bouncer QH certs ~130, counter certs 22.  Run
+Of the 3,713 BBB(4) holdouts: **2,710 have a Coq theorem** (2,692
+never-QH + 18 QH with exact last-visit scores), 18 are open
+upstream, and 985 have C certificates awaiting their checkers, by
+type: `irules` 772, `neverqh_rwlrank` 106, `neverqh_fuel` 62,
+`neverqh_drift` 17, `bouncer` 6, counter certs 22.  Run
 `BBB_REPO=... python3 tools/check_coverage.py` for the live table.
 
 ## Next
 
-The cheapest remaining wins, in order: bulk `tcycler` tables (the
-checker exists; 40 machines are pure data), the fuel/drift rules
-(c2)/(c3) on the existing engine (+79), the RepWL block-closure
-instance (`neverqh_rwl*`, +126, sharing the engine and encodings),
-the wrapped quiet-state QH certificates (`wrapctl`/`wrapfar`/
-`wrapngram`, the `M'_q` construction reusing the closure
-machinery), and the irules engine (772 machines, the largest
-single block, per SCOPING §5 phase 4).
+Per NEXT_SESSION.md, by coverage-per-effort: the fuel/drift rules
+(c2)/(c3) on the existing engine (+79; build the record/extent
+substrate first), the RepWL block-closure instance with the five
+rank measures (`neverqh_rwlrank`, +106), the irules engine (772
+machines, the largest single block, per SCOPING §5 phase 4), and
+the 22 counter machines as busycoq-style individual proofs.

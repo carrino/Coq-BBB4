@@ -41,8 +41,9 @@ def main():
                 if l.strip()]
     hset = set(holdouts)
     manifest = {}
+    qh_count = 0
     for mfname in ("bulk_manifest.tsv", "tcyc_manifest.tsv",
-                   "bulkr_manifest.tsv"):
+                   "bulkr_manifest.tsv", "wrap_manifest.tsv"):
         path = os.path.join(HERE, mfname)
         if not os.path.exists(path):
             continue
@@ -51,6 +52,8 @@ def main():
             for line in f:
                 parts = line.rstrip("\n").split("\t")
                 manifest[parts[0]] = parts[1]
+                if mfname == "wrap_manifest.tsv":
+                    qh_count += 1
     stray = [m for m in manifest if m not in hset]
     if stray:
         print("ERROR: %d proven machines NOT on the holdout list:" % len(stray))
@@ -67,7 +70,8 @@ def main():
         remaining[tuple(sorted(types[m]))] += 1
 
     print("holdout list:          %5d" % len(holdouts))
-    print("Coq-proven (never-QH): %5d" % len(manifest))
+    print("Coq-proven:            %5d  (%d never-QH, %d QH with exact score)"
+          % (len(manifest), len(manifest) - qh_count, qh_count))
     print("open upstream:         %5d" % len(open_machines))
     print("C-certified, no Coq:   %5d"
           % (len(holdouts) - len(manifest) - len(open_machines)))
