@@ -282,24 +282,32 @@ Fixpoint scan_records0 (tm : TM) (gas k : nat) (c : cconf)
   match gas with
   | 0 => (accR, accL)
   | S g =>
-      match cstep tm c with
+      let '(q, (l, h, r)) := c in
+      match tm q h with
       | None => (accR, accL)
-      | Some c' =>
-          let '(q, (l, h, r)) := c in
-          let '(q', (l', h', r')) := c' in
-          let recR := match r, l' with
-                      | [], _ :: _ => true | _, _ => false end in
-          let recL := match l, r' with
-                      | [], _ :: _ => true | _, _ => false end in
-          scan_records0 tm g (S k) c'
-            (if recR then (S k, q') :: accR else accR)
-            (if recL then (S k, q') :: accL else accL)
+      | Some tr =>
+          match cstep tm c with
+          | None => (accR, accL)
+          | Some c' =>
+              (* a record = stepping OFF the visited extent: a right
+                 move from the right edge (r = []), symmetrically left *)
+              let recR := match t_dir tr, r with
+                          | DR, [] => true | _, _ => false end in
+              let recL := match t_dir tr, l with
+                          | DL, [] => true | _, _ => false end in
+              scan_records0 tm g (S k) c'
+                (if recR then (S k, fst c') :: accR else accR)
+                (if recL then (S k, fst c') :: accL else accL)
+          end
       end
   end.
 
+(** the blank start configuration is itself on virgin ground, so it
+    counts as a record on both sides (the C measurement tool seeds the
+    same baseline entry) *)
 Definition scan_records (tm : TM) (gas : nat)
   : list (nat * St) * list (nat * St) :=
-  scan_records0 tm gas 0 c0 [] [].
+  scan_records0 tm gas 0 c0 [(0, StA)] [(0, StA)].
 
 (** the canonical anchor pairs: for each of the two newest records,
     its nearest earlier same-state record.  Verified re-checks are the
