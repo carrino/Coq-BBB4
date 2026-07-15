@@ -172,9 +172,14 @@ def work(path):
     return (mtext, n, (t, len(seen), comps, coq_rounds))
 
 
+EXTRA_CANDS = [((1, 1), 'A'), ((1, 1), 'L'), ((1, 1), 'R'),
+               ((1, 0), 'A'), ((1, 0), 'L'), ((1, 0), 'R'),
+               ((0, 1), 'A'), ((0, 1), 'L'), ((0, 1), 'R')]
+
+
 def work_extra(arg):
     mtext, n = arg
-    r = bp.decide(mtext, n, {})
+    r = bp.decide(mtext, n, {qi: EXTRA_CANDS for qi in range(4)})
     if r is None:
         return (mtext, n, None)
     t, seen, lset, rset, comps, _rounds = r

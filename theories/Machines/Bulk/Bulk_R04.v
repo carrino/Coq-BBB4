@@ -13,17 +13,17 @@ Import ListNotations.
 
 
 
-(** 1RB1LA_0RC0RD_1LA1RC_1LD0LA: n=2 t=0 contexts=82 *)
+(** 1RB0RC_0LC0RB_1RA1LD_0LC0LA: n=2 t=0 contexts=50 *)
 
 Definition tm_bulkr_00151 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S0 DR StC)
-  | StB, S1 => Some (mkTrans S0 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DL StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S0 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S0 DL StC)
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 
@@ -31,1911 +31,486 @@ Definition cert_bulkr_00151 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 1);
-     (9533%positive, 3);
+    [(9518%positive, 2);
+     (9529%positive, 5);
      (9534%positive, 1);
-     (9579%positive, 2);
-     (9582%positive, 1);
-     (9593%positive, 1);
-     (9597%positive, 3);
+     (9577%positive, 1);
+     (9582%positive, 4);
+     (9593%positive, 2);
+     (9597%positive, 2);
      (9598%positive, 1);
-     (10041%positive, 2);
-     (10043%positive, 1);
-     (10045%positive, 1);
-     (10046%positive, 2);
-     (10091%positive, 2);
-     (10094%positive, 2);
+     (10027%positive, 1);
+     (10041%positive, 4);
+     (10043%positive, 3);
+     (10089%positive, 1);
+     (10091%positive, 1);
      (10105%positive, 2);
-     (10107%positive, 1);
-     (10109%positive, 1);
-     (10110%positive, 2);
-     (11577%positive, 1);
-     (11581%positive, 3);
+     (10107%positive, 2);
+     (11566%positive, 2);
+     (11577%positive, 5);
      (11582%positive, 1);
-     (11627%positive, 2);
-     (11630%positive, 1);
-     (11641%positive, 1);
-     (11645%positive, 3);
-     (11646%positive, 1);
-     (12089%positive, 6);
-     (12091%positive, 1);
-     (12093%positive, 1);
-     (12094%positive, 4);
-     (12139%positive, 2);
-     (12142%positive, 5);
-     (12153%positive, 6);
-     (12155%positive, 1);
-     (12157%positive, 1);
-     (12158%positive, 3)];
-   NgPattE [S1] RgR 1
+     (11625%positive, 1);
+     (11630%positive, 3);
+     (11641%positive, 2);
+     (11645%positive, 2);
+     (11646%positive, 1)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12158%positive];
+    [10043%positive;
+     11630%positive];
    NgRankE
-    [(9529%positive, 1);
-     (9533%positive, 3);
+    [(9518%positive, 2);
+     (9529%positive, 6);
      (9534%positive, 1);
-     (9579%positive, 2);
-     (9582%positive, 1);
-     (9593%positive, 1);
-     (9597%positive, 3);
+     (9577%positive, 1);
+     (9582%positive, 5);
+     (9593%positive, 2);
+     (9597%positive, 2);
      (9598%positive, 1);
-     (10041%positive, 2);
-     (10043%positive, 1);
-     (10045%positive, 1);
-     (10046%positive, 2);
-     (10091%positive, 2);
-     (10094%positive, 2);
+     (10027%positive, 1);
+     (10041%positive, 4);
+     (10043%positive, 4);
+     (10089%positive, 1);
+     (10091%positive, 1);
      (10105%positive, 2);
-     (10107%positive, 1);
-     (10109%positive, 1);
-     (10110%positive, 2);
-     (11577%positive, 1);
-     (11581%positive, 3);
+     (10107%positive, 2);
+     (11566%positive, 2);
+     (11577%positive, 6);
      (11582%positive, 1);
-     (11627%positive, 2);
-     (11630%positive, 1);
-     (11641%positive, 1);
-     (11645%positive, 3);
-     (11646%positive, 1);
-     (12089%positive, 6);
-     (12091%positive, 1);
-     (12093%positive, 1);
-     (12094%positive, 4);
-     (12139%positive, 2);
-     (12142%positive, 5);
-     (12153%positive, 6);
-     (12155%positive, 1);
-     (12157%positive, 1);
-     (12158%positive, 3)]]
+     (11625%positive, 1);
+     (11630%positive, 3);
+     (11641%positive, 2);
+     (11645%positive, 2);
+     (11646%positive, 1)]]
   | StB =>
   [NgRankE
-    [(9530%positive, 2);
-     (9534%positive, 6);
+    [(9518%positive, 3);
+     (9530%positive, 1);
+     (9532%positive, 2);
+     (9534%positive, 2);
      (9578%positive, 1);
-     (9579%positive, 8);
-     (9582%positive, 3);
-     (9583%positive, 1);
-     (9594%positive, 5);
-     (9598%positive, 6);
-     (10028%positive, 1);
-     (10042%positive, 2);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 7);
-     (10090%positive, 1);
-     (10091%positive, 8);
-     (10092%positive, 1);
-     (10094%positive, 7);
+     (9582%positive, 10);
+     (9594%positive, 1);
+     (9598%positive, 7);
+     (10026%positive, 4);
+     (10027%positive, 2);
+     (10031%positive, 1);
+     (10043%positive, 9);
+     (10047%positive, 6);
+     (10090%positive, 3);
+     (10091%positive, 2);
      (10095%positive, 1);
-     (10106%positive, 4);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11578%positive, 2);
-     (11580%positive, 2);
-     (11582%positive, 5);
+     (10107%positive, 8);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 5);
+     (11566%positive, 3);
+     (11578%positive, 1);
+     (11580%positive, 3);
+     (11582%positive, 2);
      (11626%positive, 1);
-     (11627%positive, 8);
-     (11628%positive, 1);
-     (11630%positive, 3);
-     (11631%positive, 1);
-     (11642%positive, 5);
-     (11644%positive, 5);
-     (11646%positive, 5);
-     (12076%positive, 1);
-     (12079%positive, 1);
-     (12090%positive, 2);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 9);
-     (12095%positive, 2);
-     (12138%positive, 1);
-     (12139%positive, 8);
-     (12140%positive, 1);
-     (12142%positive, 10);
-     (12143%positive, 1);
-     (12154%positive, 4);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 8);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (11628%positive, 5);
+     (11630%positive, 9);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 7)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+    [10090%positive;
+     11580%positive];
+   NgPattE [S1; S0] RgL 1
     []
-    [12158%positive];
+    [10043%positive;
+     11630%positive];
    NgRankE
-    [(9530%positive, 2);
-     (9534%positive, 6);
+    [(9518%positive, 3);
+     (9530%positive, 1);
+     (9532%positive, 2);
+     (9534%positive, 2);
      (9578%positive, 1);
-     (9579%positive, 8);
-     (9582%positive, 3);
-     (9583%positive, 1);
-     (9594%positive, 5);
-     (9598%positive, 6);
-     (10028%positive, 1);
-     (10042%positive, 2);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 7);
-     (10090%positive, 1);
-     (10091%positive, 8);
-     (10092%positive, 1);
-     (10094%positive, 7);
+     (9582%positive, 12);
+     (9594%positive, 1);
+     (9598%positive, 8);
+     (10026%positive, 5);
+     (10027%positive, 2);
+     (10031%positive, 1);
+     (10043%positive, 11);
+     (10047%positive, 7);
+     (10090%positive, 3);
+     (10091%positive, 2);
      (10095%positive, 1);
-     (10106%positive, 4);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11578%positive, 2);
-     (11580%positive, 2);
-     (11582%positive, 5);
+     (10107%positive, 9);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 6);
+     (11566%positive, 3);
+     (11578%positive, 1);
+     (11580%positive, 4);
+     (11582%positive, 2);
      (11626%positive, 1);
-     (11627%positive, 8);
-     (11628%positive, 1);
-     (11630%positive, 3);
-     (11631%positive, 1);
-     (11642%positive, 5);
-     (11644%positive, 5);
-     (11646%positive, 5);
-     (12076%positive, 1);
-     (12079%positive, 1);
-     (12090%positive, 2);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 9);
-     (12095%positive, 2);
-     (12138%positive, 1);
-     (12139%positive, 8);
-     (12140%positive, 1);
-     (12142%positive, 10);
-     (12143%positive, 1);
-     (12154%positive, 4);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 8);
-     (12159%positive, 6)]]
+     (11628%positive, 6);
+     (11630%positive, 10);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 8)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
      (9528%positive, 1);
-     (9533%positive, 11);
-     (9579%positive, 11);
-     (9583%positive, 2);
      (9592%positive, 1);
-     (9597%positive, 11);
-     (10024%positive, 11);
-     (10028%positive, 5);
-     (10040%positive, 11);
-     (10043%positive, 3);
-     (10044%positive, 6);
-     (10045%positive, 3);
-     (10088%positive, 11);
-     (10091%positive, 11);
-     (10092%positive, 5);
+     (9597%positive, 1);
+     (10031%positive, 2);
+     (10040%positive, 2);
+     (10047%positive, 1);
      (10095%positive, 2);
-     (10104%positive, 11);
-     (10107%positive, 11);
-     (10108%positive, 8);
-     (10109%positive, 3);
-     (11560%positive, 1);
-     (11564%positive, 11);
-     (11576%positive, 1);
-     (11580%positive, 6);
-     (11581%positive, 11);
-     (11624%positive, 1);
-     (11627%positive, 11);
-     (11628%positive, 11);
-     (11631%positive, 2);
-     (11640%positive, 1);
-     (11644%positive, 9);
-     (11645%positive, 11);
-     (12072%positive, 4);
-     (12076%positive, 5);
-     (12079%positive, 2);
-     (12088%positive, 4);
-     (12091%positive, 3);
-     (12092%positive, 6);
-     (12093%positive, 3);
-     (12095%positive, 11);
-     (12136%positive, 4);
-     (12139%positive, 11);
-     (12140%positive, 5);
-     (12143%positive, 2);
-     (12152%positive, 4);
-     (12155%positive, 11);
-     (12156%positive, 7);
-     (12157%positive, 3);
-     (12159%positive, 10)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgL 60
-    [(9533%positive, 2);
-     (9579%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 63);
-     (10040%positive, 63);
-     (10088%positive, 63);
-     (10091%positive, 1);
-     (10104%positive, 63);
-     (11564%positive, 64);
-     (11581%positive, 2);
-     (11627%positive, 1);
-     (11628%positive, 64);
-     (11645%positive, 2);
-     (12095%positive, 59);
-     (12139%positive, 1)]
-    [9533%positive;
-     9579%positive;
-     9597%positive;
-     10024%positive;
-     10040%positive;
-     10088%positive;
-     10091%positive;
-     10104%positive;
-     10107%positive;
-     11564%positive;
-     11581%positive;
-     11627%positive;
-     11628%positive;
-     11645%positive;
-     12095%positive;
-     12139%positive;
-     12155%positive];
-   NgRankE
-    [(9512%positive, 1);
-     (9528%positive, 1);
-     (9579%positive, 4);
-     (9583%positive, 2);
-     (9592%positive, 1);
-     (10028%positive, 5);
-     (10043%positive, 3);
-     (10044%positive, 6);
-     (10045%positive, 3);
-     (10091%positive, 4);
-     (10092%positive, 5);
-     (10095%positive, 2);
-     (10107%positive, 11);
-     (10108%positive, 8);
-     (10109%positive, 3);
+     (10104%positive, 2);
+     (10111%positive, 1);
      (11560%positive, 1);
      (11576%positive, 1);
-     (11580%positive, 6);
      (11624%positive, 1);
-     (11627%positive, 4);
-     (11631%positive, 2);
      (11640%positive, 1);
-     (11644%positive, 9);
-     (12072%positive, 4);
-     (12076%positive, 5);
-     (12079%positive, 2);
-     (12088%positive, 4);
-     (12091%positive, 3);
-     (12092%positive, 6);
-     (12093%positive, 3);
-     (12136%positive, 4);
-     (12139%positive, 4);
-     (12140%positive, 5);
-     (12143%positive, 2);
-     (12152%positive, 4);
-     (12155%positive, 11);
-     (12156%positive, 7);
-     (12157%positive, 3);
-     (12159%positive, 10)]]
+     (11645%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 4);
-     (9528%positive, 4);
-     (9529%positive, 3);
+    [(9512%positive, 2);
+     (9528%positive, 2);
+     (9529%positive, 1);
      (9530%positive, 3);
-     (9534%positive, 7);
-     (9578%positive, 2);
-     (9582%positive, 4);
-     (9592%positive, 4);
-     (9593%positive, 3);
-     (9594%positive, 6);
-     (9598%positive, 7);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10040%positive, 1);
-     (10041%positive, 5);
-     (10042%positive, 3);
-     (10044%positive, 3);
-     (10046%positive, 8);
-     (10088%positive, 1);
-     (10090%positive, 2);
-     (10092%positive, 2);
-     (10094%positive, 8);
-     (10104%positive, 1);
-     (10105%positive, 5);
-     (10106%positive, 5);
-     (10108%positive, 5);
-     (10110%positive, 8);
-     (11560%positive, 13);
-     (11564%positive, 2);
-     (11576%positive, 13);
-     (11577%positive, 3);
-     (11578%positive, 3);
-     (11580%positive, 3);
-     (11582%positive, 6);
-     (11624%positive, 13);
-     (11626%positive, 2);
-     (11628%positive, 2);
-     (11630%positive, 4);
-     (11640%positive, 13);
-     (11641%positive, 3);
+     (9532%positive, 9);
+     (9577%positive, 4);
+     (9578%positive, 3);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9594%positive, 3);
+     (9597%positive, 5);
+     (10026%positive, 11);
+     (10040%positive, 7);
+     (10041%positive, 1);
+     (10089%positive, 6);
+     (10090%positive, 10);
+     (10104%positive, 6);
+     (10105%positive, 1);
+     (11560%positive, 2);
+     (11562%positive, 8);
+     (11564%positive, 12);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11578%positive, 6);
+     (11580%positive, 10);
+     (11624%positive, 2);
+     (11625%positive, 4);
+     (11626%positive, 8);
+     (11628%positive, 12);
+     (11640%positive, 2);
+     (11641%positive, 1);
      (11642%positive, 6);
-     (11644%positive, 6);
-     (11646%positive, 6);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12089%positive, 12);
-     (12090%positive, 3);
-     (12092%positive, 3);
-     (12094%positive, 10);
-     (12136%positive, 1);
-     (12138%positive, 2);
-     (12140%positive, 2);
-     (12142%positive, 11);
-     (12152%positive, 1);
-     (12153%positive, 12);
-     (12154%positive, 5);
-     (12156%positive, 4);
-     (12158%positive, 9)];
-   NgPattE [S1] RgL 1
+     (11644%positive, 11);
+     (11645%positive, 6)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+    [10089%positive;
+     10104%positive;
+     11578%positive;
+     11642%positive;
+     11645%positive];
+   NgPattE [S1; S0] RgR 1
     []
-    [12158%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9528%positive, 4);
-     (9529%positive, 3);
+    [(9512%positive, 2);
+     (9528%positive, 2);
+     (9529%positive, 1);
      (9530%positive, 3);
-     (9534%positive, 7);
-     (9578%positive, 2);
-     (9582%positive, 4);
-     (9592%positive, 4);
-     (9593%positive, 3);
-     (9594%positive, 6);
-     (9598%positive, 7);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10040%positive, 1);
-     (10041%positive, 5);
-     (10042%positive, 3);
-     (10044%positive, 3);
-     (10046%positive, 8);
-     (10088%positive, 1);
-     (10090%positive, 2);
-     (10092%positive, 2);
-     (10094%positive, 8);
-     (10104%positive, 1);
-     (10105%positive, 5);
-     (10106%positive, 5);
-     (10108%positive, 5);
-     (10110%positive, 8);
-     (11560%positive, 13);
-     (11564%positive, 2);
-     (11576%positive, 13);
-     (11577%positive, 3);
-     (11578%positive, 3);
-     (11580%positive, 3);
-     (11582%positive, 6);
-     (11624%positive, 13);
-     (11626%positive, 2);
-     (11628%positive, 2);
-     (11630%positive, 4);
-     (11640%positive, 13);
-     (11641%positive, 3);
-     (11642%positive, 6);
-     (11644%positive, 6);
-     (11646%positive, 6);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12089%positive, 12);
-     (12090%positive, 3);
-     (12092%positive, 3);
-     (12094%positive, 10);
-     (12136%positive, 1);
-     (12138%positive, 2);
-     (12140%positive, 2);
-     (12142%positive, 11);
-     (12152%positive, 1);
-     (12153%positive, 12);
-     (12154%positive, 5);
-     (12156%positive, 4);
-     (12158%positive, 9)]]
+     (9532%positive, 12);
+     (9577%positive, 4);
+     (9578%positive, 3);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9594%positive, 3);
+     (9597%positive, 5);
+     (10026%positive, 15);
+     (10040%positive, 10);
+     (10041%positive, 1);
+     (10089%positive, 8);
+     (10090%positive, 13);
+     (10104%positive, 6);
+     (10105%positive, 1);
+     (11560%positive, 2);
+     (11562%positive, 11);
+     (11564%positive, 16);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11578%positive, 7);
+     (11580%positive, 14);
+     (11624%positive, 2);
+     (11625%positive, 4);
+     (11626%positive, 11);
+     (11628%positive, 16);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11642%positive, 7);
+     (11644%positive, 14);
+     (11645%positive, 9)]]
   end.
 
-Theorem nqh_1RB1LA_0RC0RD_1LA1RC_1LD0LA : NeverQuasiHaltsSt tm_bulkr_00151.
+Theorem nqh_1RB0RC_0LC0RB_1RA1LD_0LC0LA : NeverQuasiHaltsSt tm_bulkr_00151.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 720 12 cert_bulkr_00151).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 464 11 cert_bulkr_00151).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_0RC0RD_1LC0LA_1RC1RD: n=3 t=0 contexts=280 *)
+(** 1RB0RC_0LC0RB_1RA1LD_0RB0LA: n=2 t=0 contexts=58 *)
 
 Definition tm_bulkr_00152 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S0 DR StC)
-  | StB, S1 => Some (mkTrans S0 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StC)
-  | StC, S1 => Some (mkTrans S0 DL StA)
-  | StD, S0 => Some (mkTrans S1 DR StC)
-  | StD, S1 => Some (mkTrans S1 DR StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S0 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S0 DR StB)
+  | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 
 Definition cert_bulkr_00152 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(152761%positive, 3);
-     (152810%positive, 2);
-     (152815%positive, 3);
-     (152826%positive, 1);
-     (152827%positive, 2);
-     (152829%positive, 3);
-     (152831%positive, 3);
-     (153018%positive, 1);
-     (153019%positive, 2);
-     (153023%positive, 3);
-     (153066%positive, 2);
-     (153067%positive, 2);
-     (153071%positive, 3);
-     (153081%positive, 3);
-     (153082%positive, 1);
-     (153083%positive, 2);
-     (153085%positive, 3);
-     (153087%positive, 3);
-     (154810%positive, 1);
-     (154813%positive, 4);
-     (154859%positive, 1);
-     (154863%positive, 4);
-     (154873%positive, 1);
-     (154874%positive, 1);
-     (154875%positive, 1);
-     (154877%positive, 4);
-     (154879%positive, 4);
-     (155066%positive, 1);
-     (155067%positive, 1);
-     (155071%positive, 4);
-     (155114%positive, 2);
-     (155115%positive, 1);
-     (155119%positive, 4);
-     (155129%positive, 1);
-     (155130%positive, 1);
-     (155131%positive, 1);
-     (155133%positive, 4);
-     (155135%positive, 4);
-     (160957%positive, 2);
-     (161002%positive, 2);
-     (161007%positive, 2);
-     (161018%positive, 1);
-     (161019%positive, 2);
-     (161021%positive, 2);
-     (161023%positive, 2);
-     (161210%positive, 1);
-     (161211%positive, 2);
-     (161215%positive, 2);
-     (161258%positive, 2);
-     (161259%positive, 2);
-     (161263%positive, 2);
-     (161273%positive, 3);
-     (161274%positive, 1);
-     (161275%positive, 2);
-     (161277%positive, 2);
-     (161279%positive, 2);
-     (163001%positive, 1);
-     (163005%positive, 5);
-     (163051%positive, 1);
-     (163055%positive, 5);
-     (163065%positive, 1);
-     (163066%positive, 1);
-     (163067%positive, 1);
-     (163069%positive, 5);
-     (163071%positive, 5);
-     (163258%positive, 1);
-     (163259%positive, 1);
-     (163263%positive, 5);
-     (163306%positive, 2);
-     (163307%positive, 1);
-     (163311%positive, 5);
-     (163321%positive, 1);
-     (163322%positive, 1);
-     (163323%positive, 1);
-     (163325%positive, 5);
-     (163327%positive, 5);
-     (185529%positive, 3);
-     (185578%positive, 2);
-     (185583%positive, 3);
-     (185594%positive, 1);
-     (185595%positive, 2);
-     (185597%positive, 3);
-     (185599%positive, 3);
-     (185786%positive, 1);
-     (185787%positive, 2);
-     (185791%positive, 3);
-     (185834%positive, 2);
-     (185835%positive, 2);
-     (185839%positive, 3);
-     (185849%positive, 3);
-     (185850%positive, 1);
-     (185851%positive, 2);
-     (185853%positive, 3);
-     (185855%positive, 3);
-     (187578%positive, 1);
-     (187581%positive, 3);
-     (187627%positive, 1);
-     (187631%positive, 3);
-     (187641%positive, 1);
-     (187642%positive, 1);
-     (187643%positive, 1);
-     (187645%positive, 3);
-     (187647%positive, 3);
-     (187834%positive, 1);
-     (187835%positive, 1);
-     (187839%positive, 3);
-     (187882%positive, 2);
-     (187883%positive, 1);
-     (187887%positive, 3);
-     (187897%positive, 1);
-     (187898%positive, 1);
-     (187899%positive, 1);
-     (187901%positive, 3);
-     (187903%positive, 3);
-     (193725%positive, 2);
-     (193770%positive, 2);
-     (193775%positive, 2);
-     (193786%positive, 1);
-     (193787%positive, 2);
-     (193789%positive, 2);
-     (193791%positive, 2);
-     (193978%positive, 1);
-     (193979%positive, 2);
-     (193983%positive, 2);
-     (194026%positive, 2);
-     (194027%positive, 2);
-     (194031%positive, 2);
-     (194041%positive, 3);
-     (194042%positive, 1);
-     (194043%positive, 2);
-     (194045%positive, 2);
-     (194047%positive, 2);
-     (195769%positive, 1);
-     (195773%positive, 10);
-     (195819%positive, 1);
-     (195823%positive, 9);
-     (195833%positive, 1);
-     (195834%positive, 1);
-     (195835%positive, 1);
-     (195837%positive, 10);
-     (195839%positive, 7);
-     (196026%positive, 1);
-     (196027%positive, 1);
-     (196031%positive, 8);
-     (196074%positive, 2);
-     (196075%positive, 1);
-     (196079%positive, 9);
-     (196089%positive, 1);
-     (196090%positive, 1);
-     (196091%positive, 1);
-     (196093%positive, 10);
-     (196095%positive, 6)];
-   NgPattE [S1] RgR 1
-    []
-    [196095%positive];
-   NgRankE
-    [(152761%positive, 3);
-     (152810%positive, 2);
-     (152815%positive, 3);
-     (152826%positive, 1);
-     (152827%positive, 2);
-     (152829%positive, 3);
-     (152831%positive, 3);
-     (153018%positive, 1);
-     (153019%positive, 2);
-     (153023%positive, 3);
-     (153066%positive, 2);
-     (153067%positive, 2);
-     (153071%positive, 3);
-     (153081%positive, 3);
-     (153082%positive, 1);
-     (153083%positive, 2);
-     (153085%positive, 3);
-     (153087%positive, 3);
-     (154810%positive, 1);
-     (154813%positive, 4);
-     (154859%positive, 1);
-     (154863%positive, 4);
-     (154873%positive, 1);
-     (154874%positive, 1);
-     (154875%positive, 1);
-     (154877%positive, 4);
-     (154879%positive, 4);
-     (155066%positive, 1);
-     (155067%positive, 1);
-     (155071%positive, 4);
-     (155114%positive, 2);
-     (155115%positive, 1);
-     (155119%positive, 4);
-     (155129%positive, 1);
-     (155130%positive, 1);
-     (155131%positive, 1);
-     (155133%positive, 4);
-     (155135%positive, 4);
-     (160957%positive, 2);
-     (161002%positive, 2);
-     (161007%positive, 2);
-     (161018%positive, 1);
-     (161019%positive, 2);
-     (161021%positive, 2);
-     (161023%positive, 2);
-     (161210%positive, 1);
-     (161211%positive, 2);
-     (161215%positive, 2);
-     (161258%positive, 2);
-     (161259%positive, 2);
-     (161263%positive, 2);
-     (161273%positive, 3);
-     (161274%positive, 1);
-     (161275%positive, 2);
-     (161277%positive, 2);
-     (161279%positive, 2);
-     (163001%positive, 1);
-     (163005%positive, 5);
-     (163051%positive, 1);
-     (163055%positive, 5);
-     (163065%positive, 1);
-     (163066%positive, 1);
-     (163067%positive, 1);
-     (163069%positive, 5);
-     (163071%positive, 5);
-     (163258%positive, 1);
-     (163259%positive, 1);
-     (163263%positive, 5);
-     (163306%positive, 2);
-     (163307%positive, 1);
-     (163311%positive, 5);
-     (163321%positive, 1);
-     (163322%positive, 1);
-     (163323%positive, 1);
-     (163325%positive, 5);
-     (163327%positive, 5);
-     (185529%positive, 3);
-     (185578%positive, 2);
-     (185583%positive, 3);
-     (185594%positive, 1);
-     (185595%positive, 2);
-     (185597%positive, 3);
-     (185599%positive, 3);
-     (185786%positive, 1);
-     (185787%positive, 2);
-     (185791%positive, 3);
-     (185834%positive, 2);
-     (185835%positive, 2);
-     (185839%positive, 3);
-     (185849%positive, 3);
-     (185850%positive, 1);
-     (185851%positive, 2);
-     (185853%positive, 3);
-     (185855%positive, 3);
-     (187578%positive, 1);
-     (187581%positive, 3);
-     (187627%positive, 1);
-     (187631%positive, 3);
-     (187641%positive, 1);
-     (187642%positive, 1);
-     (187643%positive, 1);
-     (187645%positive, 3);
-     (187647%positive, 3);
-     (187834%positive, 1);
-     (187835%positive, 1);
-     (187839%positive, 3);
-     (187882%positive, 2);
-     (187883%positive, 1);
-     (187887%positive, 3);
-     (187897%positive, 1);
-     (187898%positive, 1);
-     (187899%positive, 1);
-     (187901%positive, 3);
-     (187903%positive, 3);
-     (193725%positive, 2);
-     (193770%positive, 2);
-     (193775%positive, 2);
-     (193786%positive, 1);
-     (193787%positive, 2);
-     (193789%positive, 2);
-     (193791%positive, 2);
-     (193978%positive, 1);
-     (193979%positive, 2);
-     (193983%positive, 2);
-     (194026%positive, 2);
-     (194027%positive, 2);
-     (194031%positive, 2);
-     (194041%positive, 3);
-     (194042%positive, 1);
-     (194043%positive, 2);
-     (194045%positive, 2);
-     (194047%positive, 2);
-     (195769%positive, 1);
-     (195773%positive, 10);
-     (195819%positive, 1);
-     (195823%positive, 9);
-     (195833%positive, 1);
-     (195834%positive, 1);
-     (195835%positive, 1);
-     (195837%positive, 10);
-     (195839%positive, 7);
-     (196026%positive, 1);
-     (196027%positive, 1);
-     (196031%positive, 8);
-     (196074%positive, 2);
-     (196075%positive, 1);
-     (196079%positive, 9);
-     (196089%positive, 1);
-     (196090%positive, 1);
-     (196091%positive, 1);
-     (196093%positive, 10);
-     (196095%positive, 6)]]
+    [(9513%positive, 1);
+     (9517%positive, 2);
+     (9518%positive, 4);
+     (9529%positive, 5);
+     (9534%positive, 1);
+     (9577%positive, 1);
+     (9581%positive, 2);
+     (9582%positive, 4);
+     (9593%positive, 2);
+     (9597%positive, 2);
+     (9598%positive, 1);
+     (10025%positive, 1);
+     (10027%positive, 3);
+     (10041%positive, 5);
+     (10043%positive, 3);
+     (10089%positive, 1);
+     (10091%positive, 3);
+     (10105%positive, 2);
+     (10107%positive, 3);
+     (11561%positive, 1);
+     (11565%positive, 2);
+     (11566%positive, 4);
+     (11577%positive, 5);
+     (11582%positive, 1);
+     (11625%positive, 1);
+     (11629%positive, 2);
+     (11630%positive, 4);
+     (11641%positive, 2);
+     (11645%positive, 2);
+     (11646%positive, 1)]]
   | StB =>
   [NgRankE
-    [(152764%positive, 2);
-     (152810%positive, 3);
-     (152812%positive, 1);
-     (152815%positive, 5);
-     (152826%positive, 3);
-     (152827%positive, 10);
-     (152828%positive, 3);
-     (152830%positive, 3);
-     (152831%positive, 11);
-     (153018%positive, 2);
-     (153019%positive, 4);
-     (153020%positive, 2);
-     (153022%positive, 2);
-     (153023%positive, 11);
-     (153066%positive, 10);
-     (153067%positive, 3);
-     (153068%positive, 1);
-     (153070%positive, 1);
-     (153071%positive, 5);
-     (153082%positive, 9);
-     (153083%positive, 10);
-     (153084%positive, 7);
-     (153086%positive, 8);
-     (153087%positive, 11);
-     (154796%positive, 1);
-     (154810%positive, 2);
-     (154812%positive, 2);
-     (154814%positive, 2);
-     (154859%positive, 3);
-     (154860%positive, 1);
-     (154862%positive, 1);
-     (154863%positive, 12);
-     (154874%positive, 3);
-     (154875%positive, 9);
-     (154876%positive, 3);
-     (154878%positive, 3);
-     (154879%positive, 12);
-     (155066%positive, 2);
-     (155067%positive, 4);
-     (155068%positive, 2);
-     (155070%positive, 2);
-     (155071%positive, 12);
-     (155114%positive, 10);
-     (155115%positive, 3);
-     (155116%positive, 1);
-     (155118%positive, 1);
-     (155119%positive, 12);
-     (155130%positive, 9);
-     (155131%positive, 9);
-     (155132%positive, 6);
-     (155134%positive, 8);
-     (155135%positive, 12);
-     (160940%positive, 1);
-     (160956%positive, 2);
-     (161002%positive, 3);
-     (161004%positive, 1);
-     (161007%positive, 5);
-     (161018%positive, 3);
-     (161019%positive, 10);
-     (161020%positive, 3);
-     (161022%positive, 3);
-     (161023%positive, 10);
-     (161210%positive, 2);
-     (161211%positive, 4);
-     (161212%positive, 2);
-     (161214%positive, 2);
-     (161215%positive, 10);
-     (161258%positive, 10);
-     (161259%positive, 3);
-     (161260%positive, 1);
-     (161262%positive, 1);
-     (161263%positive, 5);
-     (161274%positive, 9);
-     (161275%positive, 10);
-     (161276%positive, 7);
-     (161278%positive, 8);
-     (161279%positive, 10);
-     (162988%positive, 1);
-     (162990%positive, 1);
-     (163004%positive, 2);
-     (163006%positive, 2);
-     (163051%positive, 3);
-     (163052%positive, 1);
-     (163054%positive, 1);
-     (163055%positive, 13);
-     (163066%positive, 3);
-     (163067%positive, 9);
-     (163068%positive, 3);
-     (163070%positive, 3);
-     (163071%positive, 13);
-     (163258%positive, 2);
-     (163259%positive, 4);
-     (163260%positive, 2);
-     (163262%positive, 2);
-     (163263%positive, 13);
-     (163306%positive, 10);
-     (163307%positive, 3);
-     (163308%positive, 1);
-     (163310%positive, 1);
-     (163311%positive, 13);
-     (163322%positive, 9);
-     (163323%positive, 9);
-     (163324%positive, 5);
-     (163326%positive, 8);
-     (163327%positive, 13);
-     (185532%positive, 2);
-     (185578%positive, 3);
-     (185580%positive, 1);
-     (185583%positive, 5);
-     (185594%positive, 3);
-     (185595%positive, 10);
-     (185596%positive, 3);
-     (185598%positive, 3);
-     (185599%positive, 11);
-     (185786%positive, 2);
-     (185787%positive, 4);
-     (185788%positive, 2);
-     (185790%positive, 2);
-     (185791%positive, 11);
-     (185834%positive, 10);
-     (185835%positive, 3);
-     (185836%positive, 1);
-     (185838%positive, 1);
-     (185839%positive, 5);
-     (185850%positive, 9);
-     (185851%positive, 10);
-     (185852%positive, 7);
-     (185854%positive, 8);
-     (185855%positive, 11);
-     (187564%positive, 1);
-     (187578%positive, 2);
-     (187580%positive, 2);
-     (187582%positive, 2);
-     (187627%positive, 3);
-     (187628%positive, 1);
-     (187630%positive, 1);
-     (187631%positive, 11);
-     (187642%positive, 3);
-     (187643%positive, 9);
-     (187644%positive, 3);
-     (187646%positive, 3);
-     (187647%positive, 11);
-     (187834%positive, 2);
-     (187835%positive, 4);
-     (187836%positive, 2);
-     (187838%positive, 2);
-     (187839%positive, 11);
-     (187882%positive, 10);
-     (187883%positive, 3);
-     (187884%positive, 1);
-     (187886%positive, 1);
-     (187887%positive, 11);
-     (187898%positive, 9);
-     (187899%positive, 9);
-     (187900%positive, 6);
-     (187902%positive, 8);
-     (187903%positive, 11);
-     (193708%positive, 1);
-     (193724%positive, 2);
-     (193770%positive, 3);
-     (193772%positive, 1);
-     (193775%positive, 5);
-     (193786%positive, 3);
-     (193787%positive, 10);
-     (193788%positive, 3);
-     (193790%positive, 3);
-     (193791%positive, 10);
-     (193978%positive, 2);
-     (193979%positive, 4);
-     (193980%positive, 2);
-     (193982%positive, 2);
-     (193983%positive, 10);
-     (194026%positive, 10);
-     (194027%positive, 3);
-     (194028%positive, 1);
-     (194030%positive, 1);
-     (194031%positive, 5);
-     (194042%positive, 9);
-     (194043%positive, 10);
-     (194044%positive, 7);
-     (194046%positive, 8);
-     (194047%positive, 10);
-     (195756%positive, 1);
-     (195772%positive, 2);
-     (195774%positive, 2);
-     (195819%positive, 3);
-     (195820%positive, 1);
-     (195822%positive, 1);
-     (195823%positive, 17);
-     (195834%positive, 3);
-     (195835%positive, 9);
-     (195836%positive, 3);
-     (195838%positive, 3);
-     (195839%positive, 15);
-     (196026%positive, 2);
-     (196027%positive, 4);
-     (196028%positive, 2);
-     (196030%positive, 2);
-     (196031%positive, 16);
-     (196074%positive, 10);
-     (196075%positive, 3);
-     (196076%positive, 1);
-     (196078%positive, 1);
-     (196079%positive, 17);
-     (196090%positive, 9);
-     (196091%positive, 9);
-     (196092%positive, 4);
-     (196094%positive, 8);
-     (196095%positive, 14)];
-   NgPattE [S1] RgL 1
+    [(9514%positive, 1);
+     (9518%positive, 1);
+     (9530%positive, 1);
+     (9532%positive, 2);
+     (9534%positive, 2);
+     (9578%positive, 1);
+     (9582%positive, 1);
+     (9594%positive, 1);
+     (9598%positive, 7);
+     (10026%positive, 4);
+     (10031%positive, 1);
+     (10047%positive, 6);
+     (10090%positive, 3);
+     (10095%positive, 1);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 5);
+     (11566%positive, 1);
+     (11578%positive, 1);
+     (11580%positive, 3);
+     (11582%positive, 2);
+     (11626%positive, 1);
+     (11628%positive, 5);
+     (11630%positive, 1);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 7)];
+   NgPattE [S1; S0] RgR 1
     []
-    [196092%positive];
-   NgPattE [S1] RgR 1
-    []
-    [196095%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(152764%positive, 2);
-     (152810%positive, 3);
-     (152812%positive, 1);
-     (152815%positive, 5);
-     (152826%positive, 3);
-     (152827%positive, 10);
-     (152828%positive, 3);
-     (152830%positive, 3);
-     (152831%positive, 11);
-     (153018%positive, 2);
-     (153019%positive, 4);
-     (153020%positive, 2);
-     (153022%positive, 2);
-     (153023%positive, 11);
-     (153066%positive, 10);
-     (153067%positive, 3);
-     (153068%positive, 1);
-     (153070%positive, 1);
-     (153071%positive, 5);
-     (153082%positive, 9);
-     (153083%positive, 10);
-     (153084%positive, 7);
-     (153086%positive, 8);
-     (153087%positive, 11);
-     (154796%positive, 1);
-     (154810%positive, 2);
-     (154812%positive, 2);
-     (154814%positive, 2);
-     (154859%positive, 3);
-     (154860%positive, 1);
-     (154862%positive, 1);
-     (154863%positive, 12);
-     (154874%positive, 3);
-     (154875%positive, 9);
-     (154876%positive, 3);
-     (154878%positive, 3);
-     (154879%positive, 12);
-     (155066%positive, 2);
-     (155067%positive, 4);
-     (155068%positive, 2);
-     (155070%positive, 2);
-     (155071%positive, 12);
-     (155114%positive, 10);
-     (155115%positive, 3);
-     (155116%positive, 1);
-     (155118%positive, 1);
-     (155119%positive, 12);
-     (155130%positive, 9);
-     (155131%positive, 9);
-     (155132%positive, 6);
-     (155134%positive, 8);
-     (155135%positive, 12);
-     (160940%positive, 1);
-     (160956%positive, 2);
-     (161002%positive, 3);
-     (161004%positive, 1);
-     (161007%positive, 5);
-     (161018%positive, 3);
-     (161019%positive, 10);
-     (161020%positive, 3);
-     (161022%positive, 3);
-     (161023%positive, 10);
-     (161210%positive, 2);
-     (161211%positive, 4);
-     (161212%positive, 2);
-     (161214%positive, 2);
-     (161215%positive, 10);
-     (161258%positive, 10);
-     (161259%positive, 3);
-     (161260%positive, 1);
-     (161262%positive, 1);
-     (161263%positive, 5);
-     (161274%positive, 9);
-     (161275%positive, 10);
-     (161276%positive, 7);
-     (161278%positive, 8);
-     (161279%positive, 10);
-     (162988%positive, 1);
-     (162990%positive, 1);
-     (163004%positive, 2);
-     (163006%positive, 2);
-     (163051%positive, 3);
-     (163052%positive, 1);
-     (163054%positive, 1);
-     (163055%positive, 13);
-     (163066%positive, 3);
-     (163067%positive, 9);
-     (163068%positive, 3);
-     (163070%positive, 3);
-     (163071%positive, 13);
-     (163258%positive, 2);
-     (163259%positive, 4);
-     (163260%positive, 2);
-     (163262%positive, 2);
-     (163263%positive, 13);
-     (163306%positive, 10);
-     (163307%positive, 3);
-     (163308%positive, 1);
-     (163310%positive, 1);
-     (163311%positive, 13);
-     (163322%positive, 9);
-     (163323%positive, 9);
-     (163324%positive, 5);
-     (163326%positive, 8);
-     (163327%positive, 13);
-     (185532%positive, 2);
-     (185578%positive, 3);
-     (185580%positive, 1);
-     (185583%positive, 5);
-     (185594%positive, 3);
-     (185595%positive, 10);
-     (185596%positive, 3);
-     (185598%positive, 3);
-     (185599%positive, 11);
-     (185786%positive, 2);
-     (185787%positive, 4);
-     (185788%positive, 2);
-     (185790%positive, 2);
-     (185791%positive, 11);
-     (185834%positive, 10);
-     (185835%positive, 3);
-     (185836%positive, 1);
-     (185838%positive, 1);
-     (185839%positive, 5);
-     (185850%positive, 9);
-     (185851%positive, 10);
-     (185852%positive, 7);
-     (185854%positive, 8);
-     (185855%positive, 11);
-     (187564%positive, 1);
-     (187578%positive, 2);
-     (187580%positive, 2);
-     (187582%positive, 2);
-     (187627%positive, 3);
-     (187628%positive, 1);
-     (187630%positive, 1);
-     (187631%positive, 11);
-     (187642%positive, 3);
-     (187643%positive, 9);
-     (187644%positive, 3);
-     (187646%positive, 3);
-     (187647%positive, 11);
-     (187834%positive, 2);
-     (187835%positive, 4);
-     (187836%positive, 2);
-     (187838%positive, 2);
-     (187839%positive, 11);
-     (187882%positive, 10);
-     (187883%positive, 3);
-     (187884%positive, 1);
-     (187886%positive, 1);
-     (187887%positive, 11);
-     (187898%positive, 9);
-     (187899%positive, 9);
-     (187900%positive, 6);
-     (187902%positive, 8);
-     (187903%positive, 11);
-     (193708%positive, 1);
-     (193724%positive, 2);
-     (193770%positive, 3);
-     (193772%positive, 1);
-     (193775%positive, 5);
-     (193786%positive, 3);
-     (193787%positive, 10);
-     (193788%positive, 3);
-     (193790%positive, 3);
-     (193791%positive, 10);
-     (193978%positive, 2);
-     (193979%positive, 4);
-     (193980%positive, 2);
-     (193982%positive, 2);
-     (193983%positive, 10);
-     (194026%positive, 10);
-     (194027%positive, 3);
-     (194028%positive, 1);
-     (194030%positive, 1);
-     (194031%positive, 5);
-     (194042%positive, 9);
-     (194043%positive, 10);
-     (194044%positive, 7);
-     (194046%positive, 8);
-     (194047%positive, 10);
-     (195756%positive, 1);
-     (195772%positive, 2);
-     (195774%positive, 2);
-     (195819%positive, 3);
-     (195820%positive, 1);
-     (195822%positive, 1);
-     (195823%positive, 17);
-     (195834%positive, 3);
-     (195835%positive, 9);
-     (195836%positive, 3);
-     (195838%positive, 3);
-     (195839%positive, 15);
-     (196026%positive, 2);
-     (196027%positive, 4);
-     (196028%positive, 2);
-     (196030%positive, 2);
-     (196031%positive, 16);
-     (196074%positive, 10);
-     (196075%positive, 3);
-     (196076%positive, 1);
-     (196078%positive, 1);
-     (196079%positive, 17);
-     (196090%positive, 9);
-     (196091%positive, 9);
-     (196092%positive, 4);
-     (196094%positive, 8);
-     (196095%positive, 14)]]
+    [(9514%positive, 1);
+     (9518%positive, 1);
+     (9530%positive, 1);
+     (9532%positive, 2);
+     (9534%positive, 2);
+     (9578%positive, 1);
+     (9582%positive, 1);
+     (9594%positive, 1);
+     (9598%positive, 8);
+     (10026%positive, 5);
+     (10031%positive, 1);
+     (10047%positive, 7);
+     (10090%positive, 3);
+     (10095%positive, 1);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 6);
+     (11566%positive, 1);
+     (11578%positive, 1);
+     (11580%positive, 4);
+     (11582%positive, 2);
+     (11626%positive, 1);
+     (11628%positive, 6);
+     (11630%positive, 1);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 8)]]
   | StC =>
   [NgRankE
-    [(152744%positive, 1);
-     (152764%positive, 5);
-     (152812%positive, 3);
-     (152815%positive, 1);
-     (152824%positive, 1);
-     (152828%positive, 12);
-     (152829%positive, 1);
-     (152831%positive, 1);
-     (153020%positive, 5);
-     (153023%positive, 1);
-     (153068%positive, 3);
-     (153071%positive, 1);
-     (153080%positive, 1);
-     (153084%positive, 16);
-     (153085%positive, 1);
-     (153087%positive, 1);
-     (154796%positive, 4);
-     (154808%positive, 2);
-     (154812%positive, 11);
-     (154813%positive, 2);
-     (154860%positive, 4);
-     (154863%positive, 2);
-     (154872%positive, 2);
-     (154876%positive, 12);
-     (154877%positive, 2);
-     (154879%positive, 2);
-     (155064%positive, 2);
-     (155068%positive, 11);
-     (155071%positive, 2);
-     (155116%positive, 4);
-     (155119%positive, 2);
-     (155128%positive, 2);
-     (155132%positive, 15);
-     (155133%positive, 2);
-     (155135%positive, 2);
-     (160940%positive, 3);
-     (160952%positive, 1);
-     (160956%positive, 5);
-     (160957%positive, 1);
-     (161004%positive, 3);
-     (161007%positive, 1);
-     (161016%positive, 1);
-     (161020%positive, 12);
-     (161021%positive, 1);
-     (161023%positive, 1);
-     (161208%positive, 1);
-     (161212%positive, 5);
-     (161215%positive, 1);
-     (161260%positive, 3);
-     (161263%positive, 1);
-     (161272%positive, 1);
-     (161276%positive, 16);
-     (161277%positive, 1);
-     (161279%positive, 1);
-     (162984%positive, 3);
-     (162988%positive, 10);
-     (163000%positive, 3);
-     (163004%positive, 11);
-     (163005%positive, 3);
-     (163052%positive, 10);
-     (163055%positive, 3);
-     (163064%positive, 3);
-     (163068%positive, 12);
-     (163069%positive, 3);
-     (163071%positive, 3);
-     (163256%positive, 3);
-     (163260%positive, 11);
-     (163263%positive, 3);
-     (163308%positive, 10);
-     (163311%positive, 3);
-     (163320%positive, 3);
-     (163324%positive, 14);
-     (163325%positive, 3);
-     (163327%positive, 3);
-     (185532%positive, 5);
-     (185580%positive, 3);
-     (185583%positive, 1);
-     (185592%positive, 1);
-     (185596%positive, 12);
-     (185597%positive, 1);
-     (185599%positive, 1);
-     (185788%positive, 5);
-     (185791%positive, 1);
-     (185836%positive, 3);
-     (185839%positive, 1);
-     (185848%positive, 1);
-     (185852%positive, 16);
-     (185853%positive, 1);
-     (185855%positive, 1);
-     (187560%positive, 2);
-     (187564%positive, 4);
-     (187576%positive, 2);
-     (187580%positive, 11);
-     (187581%positive, 2);
-     (187628%positive, 4);
-     (187631%positive, 2);
-     (187640%positive, 2);
-     (187644%positive, 12);
-     (187645%positive, 2);
-     (187647%positive, 2);
-     (187832%positive, 2);
-     (187836%positive, 11);
-     (187839%positive, 2);
-     (187884%positive, 4);
-     (187887%positive, 2);
-     (187896%positive, 2);
-     (187900%positive, 15);
-     (187901%positive, 2);
-     (187903%positive, 2);
-     (193704%positive, 1);
-     (193708%positive, 3);
-     (193720%positive, 1);
-     (193724%positive, 5);
-     (193725%positive, 1);
-     (193772%positive, 3);
-     (193775%positive, 1);
-     (193784%positive, 1);
-     (193788%positive, 12);
-     (193789%positive, 1);
-     (193791%positive, 1);
-     (193976%positive, 1);
-     (193980%positive, 5);
-     (193983%positive, 1);
-     (194028%positive, 3);
-     (194031%positive, 1);
-     (194040%positive, 1);
-     (194044%positive, 16);
-     (194045%positive, 1);
-     (194047%positive, 1);
-     (195752%positive, 9);
-     (195756%positive, 10);
-     (195768%positive, 9);
-     (195772%positive, 11);
-     (195773%positive, 8);
-     (195820%positive, 10);
-     (195823%positive, 7);
-     (195832%positive, 9);
-     (195836%positive, 12);
-     (195837%positive, 8);
-     (195839%positive, 5);
-     (196024%positive, 9);
-     (196028%positive, 11);
-     (196031%positive, 6);
-     (196076%positive, 10);
-     (196079%positive, 7);
-     (196088%positive, 9);
-     (196092%positive, 13);
-     (196093%positive, 8);
-     (196095%positive, 4)];
-   NgPattE [S1] RgR 1
-    []
-    [196095%positive];
-   NgPattE [S1] RgL 1
-    []
-    [196092%positive];
-   NgRankE
-    [(152744%positive, 1);
-     (152764%positive, 5);
-     (152812%positive, 3);
-     (152815%positive, 1);
-     (152824%positive, 1);
-     (152828%positive, 12);
-     (152829%positive, 1);
-     (152831%positive, 1);
-     (153020%positive, 5);
-     (153023%positive, 1);
-     (153068%positive, 3);
-     (153071%positive, 1);
-     (153080%positive, 1);
-     (153084%positive, 16);
-     (153085%positive, 1);
-     (153087%positive, 1);
-     (154796%positive, 4);
-     (154808%positive, 2);
-     (154812%positive, 11);
-     (154813%positive, 2);
-     (154860%positive, 4);
-     (154863%positive, 2);
-     (154872%positive, 2);
-     (154876%positive, 12);
-     (154877%positive, 2);
-     (154879%positive, 2);
-     (155064%positive, 2);
-     (155068%positive, 11);
-     (155071%positive, 2);
-     (155116%positive, 4);
-     (155119%positive, 2);
-     (155128%positive, 2);
-     (155132%positive, 15);
-     (155133%positive, 2);
-     (155135%positive, 2);
-     (160940%positive, 3);
-     (160952%positive, 1);
-     (160956%positive, 5);
-     (160957%positive, 1);
-     (161004%positive, 3);
-     (161007%positive, 1);
-     (161016%positive, 1);
-     (161020%positive, 12);
-     (161021%positive, 1);
-     (161023%positive, 1);
-     (161208%positive, 1);
-     (161212%positive, 5);
-     (161215%positive, 1);
-     (161260%positive, 3);
-     (161263%positive, 1);
-     (161272%positive, 1);
-     (161276%positive, 16);
-     (161277%positive, 1);
-     (161279%positive, 1);
-     (162984%positive, 3);
-     (162988%positive, 10);
-     (163000%positive, 3);
-     (163004%positive, 11);
-     (163005%positive, 3);
-     (163052%positive, 10);
-     (163055%positive, 3);
-     (163064%positive, 3);
-     (163068%positive, 12);
-     (163069%positive, 3);
-     (163071%positive, 3);
-     (163256%positive, 3);
-     (163260%positive, 11);
-     (163263%positive, 3);
-     (163308%positive, 10);
-     (163311%positive, 3);
-     (163320%positive, 3);
-     (163324%positive, 14);
-     (163325%positive, 3);
-     (163327%positive, 3);
-     (185532%positive, 5);
-     (185580%positive, 3);
-     (185583%positive, 1);
-     (185592%positive, 1);
-     (185596%positive, 12);
-     (185597%positive, 1);
-     (185599%positive, 1);
-     (185788%positive, 5);
-     (185791%positive, 1);
-     (185836%positive, 3);
-     (185839%positive, 1);
-     (185848%positive, 1);
-     (185852%positive, 16);
-     (185853%positive, 1);
-     (185855%positive, 1);
-     (187560%positive, 2);
-     (187564%positive, 4);
-     (187576%positive, 2);
-     (187580%positive, 11);
-     (187581%positive, 2);
-     (187628%positive, 4);
-     (187631%positive, 2);
-     (187640%positive, 2);
-     (187644%positive, 12);
-     (187645%positive, 2);
-     (187647%positive, 2);
-     (187832%positive, 2);
-     (187836%positive, 11);
-     (187839%positive, 2);
-     (187884%positive, 4);
-     (187887%positive, 2);
-     (187896%positive, 2);
-     (187900%positive, 15);
-     (187901%positive, 2);
-     (187903%positive, 2);
-     (193704%positive, 1);
-     (193708%positive, 3);
-     (193720%positive, 1);
-     (193724%positive, 5);
-     (193725%positive, 1);
-     (193772%positive, 3);
-     (193775%positive, 1);
-     (193784%positive, 1);
-     (193788%positive, 12);
-     (193789%positive, 1);
-     (193791%positive, 1);
-     (193976%positive, 1);
-     (193980%positive, 5);
-     (193983%positive, 1);
-     (194028%positive, 3);
-     (194031%positive, 1);
-     (194040%positive, 1);
-     (194044%positive, 16);
-     (194045%positive, 1);
-     (194047%positive, 1);
-     (195752%positive, 9);
-     (195756%positive, 10);
-     (195768%positive, 9);
-     (195772%positive, 11);
-     (195773%positive, 8);
-     (195820%positive, 10);
-     (195823%positive, 7);
-     (195832%positive, 9);
-     (195836%positive, 12);
-     (195837%positive, 8);
-     (195839%positive, 5);
-     (196024%positive, 9);
-     (196028%positive, 11);
-     (196031%positive, 6);
-     (196076%positive, 10);
-     (196079%positive, 7);
-     (196088%positive, 9);
-     (196092%positive, 13);
-     (196093%positive, 8);
-     (196095%positive, 4)]]
+    [(9512%positive, 1);
+     (9517%positive, 1);
+     (9528%positive, 1);
+     (9581%positive, 1);
+     (9592%positive, 1);
+     (9597%positive, 1);
+     (10027%positive, 2);
+     (10031%positive, 2);
+     (10040%positive, 2);
+     (10043%positive, 2);
+     (10047%positive, 1);
+     (10091%positive, 2);
+     (10095%positive, 2);
+     (10104%positive, 2);
+     (10107%positive, 2);
+     (10111%positive, 1);
+     (11560%positive, 1);
+     (11565%positive, 1);
+     (11576%positive, 1);
+     (11624%positive, 1);
+     (11629%positive, 1);
+     (11640%positive, 1);
+     (11645%positive, 1)]]
   | StD =>
   [NgRankE
-    [(152744%positive, 29);
-     (152761%positive, 28);
-     (152764%positive, 3);
-     (152810%positive, 27);
-     (152812%positive, 2);
-     (152824%positive, 13);
-     (152826%positive, 4);
-     (152828%positive, 4);
-     (152830%positive, 4);
-     (153018%positive, 18);
-     (153020%positive, 3);
-     (153022%positive, 3);
-     (153066%positive, 11);
-     (153068%positive, 2);
-     (153070%positive, 14);
-     (153080%positive, 13);
-     (153081%positive, 12);
-     (153082%positive, 10);
-     (153084%positive, 8);
-     (153086%positive, 9);
-     (154796%positive, 2);
-     (154808%positive, 1);
-     (154810%positive, 26);
-     (154812%positive, 3);
-     (154814%positive, 3);
-     (154860%positive, 2);
-     (154862%positive, 17);
-     (154872%positive, 1);
-     (154873%positive, 15);
-     (154874%positive, 4);
-     (154876%positive, 4);
-     (154878%positive, 4);
-     (155064%positive, 1);
-     (155066%positive, 23);
-     (155068%positive, 3);
-     (155070%positive, 3);
-     (155114%positive, 11);
-     (155116%positive, 2);
-     (155118%positive, 17);
-     (155128%positive, 1);
-     (155129%positive, 15);
-     (155130%positive, 10);
-     (155132%positive, 7);
-     (155134%positive, 9);
-     (160940%positive, 2);
-     (160952%positive, 16);
-     (160956%positive, 3);
-     (161002%positive, 27);
-     (161004%positive, 2);
-     (161016%positive, 16);
-     (161018%positive, 4);
-     (161020%positive, 4);
-     (161022%positive, 4);
-     (161208%positive, 16);
-     (161210%positive, 18);
-     (161212%positive, 3);
-     (161214%positive, 3);
-     (161258%positive, 11);
-     (161260%positive, 2);
-     (161262%positive, 14);
-     (161272%positive, 16);
-     (161273%positive, 12);
-     (161274%positive, 10);
-     (161276%positive, 8);
-     (161278%positive, 9);
-     (162984%positive, 1);
-     (162988%positive, 2);
-     (162990%positive, 25);
-     (163000%positive, 1);
-     (163001%positive, 18);
-     (163004%positive, 3);
-     (163006%positive, 3);
-     (163052%positive, 2);
-     (163054%positive, 22);
-     (163064%positive, 1);
-     (163065%positive, 18);
-     (163066%positive, 4);
-     (163068%positive, 4);
-     (163070%positive, 4);
-     (163256%positive, 1);
-     (163258%positive, 23);
-     (163260%positive, 3);
-     (163262%positive, 3);
-     (163306%positive, 11);
-     (163308%positive, 2);
-     (163310%positive, 19);
-     (163320%positive, 1);
-     (163321%positive, 18);
-     (163322%positive, 10);
-     (163324%positive, 6);
-     (163326%positive, 9);
-     (185529%positive, 28);
-     (185532%positive, 3);
-     (185578%positive, 27);
-     (185580%positive, 2);
-     (185592%positive, 13);
-     (185594%positive, 4);
-     (185596%positive, 4);
-     (185598%positive, 4);
-     (185786%positive, 18);
-     (185788%positive, 3);
-     (185790%positive, 3);
-     (185834%positive, 11);
-     (185836%positive, 2);
-     (185838%positive, 14);
-     (185848%positive, 13);
-     (185849%positive, 12);
-     (185850%positive, 10);
-     (185852%positive, 8);
-     (185854%positive, 9);
-     (187560%positive, 1);
-     (187564%positive, 2);
-     (187576%positive, 1);
-     (187578%positive, 26);
-     (187580%positive, 3);
-     (187582%positive, 3);
-     (187628%positive, 2);
-     (187630%positive, 17);
-     (187640%positive, 1);
-     (187641%positive, 15);
-     (187642%positive, 4);
-     (187644%positive, 4);
-     (187646%positive, 4);
-     (187832%positive, 1);
-     (187834%positive, 23);
-     (187836%positive, 3);
-     (187838%positive, 3);
-     (187882%positive, 11);
-     (187884%positive, 2);
-     (187886%positive, 17);
-     (187896%positive, 1);
-     (187897%positive, 15);
-     (187898%positive, 10);
-     (187900%positive, 7);
-     (187902%positive, 9);
-     (193704%positive, 24);
-     (193708%positive, 2);
-     (193720%positive, 21);
-     (193724%positive, 3);
-     (193770%positive, 27);
-     (193772%positive, 2);
-     (193784%positive, 19);
-     (193786%positive, 4);
-     (193788%positive, 4);
-     (193790%positive, 4);
-     (193976%positive, 21);
-     (193978%positive, 18);
-     (193980%positive, 3);
-     (193982%positive, 3);
-     (194026%positive, 11);
-     (194028%positive, 2);
-     (194030%positive, 14);
-     (194040%positive, 19);
-     (194041%positive, 12);
-     (194042%positive, 10);
-     (194044%positive, 8);
-     (194046%positive, 9);
-     (195752%positive, 1);
-     (195756%positive, 2);
-     (195768%positive, 1);
-     (195769%positive, 23);
-     (195772%positive, 3);
-     (195774%positive, 3);
-     (195820%positive, 2);
-     (195822%positive, 22);
-     (195832%positive, 1);
-     (195833%positive, 20);
-     (195834%positive, 4);
-     (195836%positive, 4);
-     (195838%positive, 4);
-     (196024%positive, 1);
-     (196026%positive, 23);
-     (196028%positive, 3);
-     (196030%positive, 3);
-     (196074%positive, 11);
-     (196076%positive, 2);
-     (196078%positive, 19);
-     (196088%positive, 1);
-     (196089%positive, 19);
-     (196090%positive, 10);
-     (196092%positive, 5);
-     (196094%positive, 9)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 2);
+     (9513%positive, 4);
+     (9514%positive, 3);
+     (9517%positive, 5);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9530%positive, 3);
+     (9532%positive, 9);
+     (9577%positive, 4);
+     (9578%positive, 3);
+     (9581%positive, 5);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9594%positive, 3);
+     (9597%positive, 5);
+     (10025%positive, 9);
+     (10026%positive, 11);
+     (10040%positive, 7);
+     (10041%positive, 1);
+     (10089%positive, 6);
+     (10090%positive, 10);
+     (10104%positive, 6);
+     (10105%positive, 1);
+     (11560%positive, 2);
+     (11561%positive, 4);
+     (11562%positive, 8);
+     (11564%positive, 12);
+     (11565%positive, 10);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11578%positive, 6);
+     (11580%positive, 10);
+     (11624%positive, 2);
+     (11625%positive, 4);
+     (11626%positive, 8);
+     (11628%positive, 12);
+     (11629%positive, 10);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11642%positive, 6);
+     (11644%positive, 11);
+     (11645%positive, 6)];
+   NgPattE [S1; S0] RgA 1
     []
-    [196092%positive];
-   NgPattE [S1] RgR 1
+    [10089%positive;
+     10104%positive;
+     11578%positive;
+     11642%positive;
+     11645%positive];
+   NgPattE [S1; S0] RgR 1
     []
-    [163310%positive;
-     193784%positive;
-     194040%positive;
-     196078%positive;
-     196089%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(152744%positive, 30);
-     (152761%positive, 29);
-     (152764%positive, 3);
-     (152810%positive, 28);
-     (152812%positive, 2);
-     (152824%positive, 13);
-     (152826%positive, 4);
-     (152828%positive, 4);
-     (152830%positive, 4);
-     (153018%positive, 18);
-     (153020%positive, 3);
-     (153022%positive, 3);
-     (153066%positive, 11);
-     (153068%positive, 2);
-     (153070%positive, 14);
-     (153080%positive, 13);
-     (153081%positive, 12);
-     (153082%positive, 10);
-     (153084%positive, 8);
-     (153086%positive, 9);
-     (154796%positive, 2);
-     (154808%positive, 1);
-     (154810%positive, 27);
-     (154812%positive, 3);
-     (154814%positive, 3);
-     (154860%positive, 2);
-     (154862%positive, 17);
-     (154872%positive, 1);
-     (154873%positive, 15);
-     (154874%positive, 4);
-     (154876%positive, 4);
-     (154878%positive, 4);
-     (155064%positive, 1);
-     (155066%positive, 24);
-     (155068%positive, 3);
-     (155070%positive, 3);
-     (155114%positive, 11);
-     (155116%positive, 2);
-     (155118%positive, 17);
-     (155128%positive, 1);
-     (155129%positive, 15);
-     (155130%positive, 10);
-     (155132%positive, 7);
-     (155134%positive, 9);
-     (160940%positive, 2);
-     (160952%positive, 16);
-     (160956%positive, 3);
-     (161002%positive, 28);
-     (161004%positive, 2);
-     (161016%positive, 16);
-     (161018%positive, 4);
-     (161020%positive, 4);
-     (161022%positive, 4);
-     (161208%positive, 16);
-     (161210%positive, 18);
-     (161212%positive, 3);
-     (161214%positive, 3);
-     (161258%positive, 11);
-     (161260%positive, 2);
-     (161262%positive, 14);
-     (161272%positive, 16);
-     (161273%positive, 12);
-     (161274%positive, 10);
-     (161276%positive, 8);
-     (161278%positive, 9);
-     (162984%positive, 1);
-     (162988%positive, 2);
-     (162990%positive, 26);
-     (163000%positive, 1);
-     (163001%positive, 18);
-     (163004%positive, 3);
-     (163006%positive, 3);
-     (163052%positive, 2);
-     (163054%positive, 23);
-     (163064%positive, 1);
-     (163065%positive, 18);
-     (163066%positive, 4);
-     (163068%positive, 4);
-     (163070%positive, 4);
-     (163256%positive, 1);
-     (163258%positive, 24);
-     (163260%positive, 3);
-     (163262%positive, 3);
-     (163306%positive, 11);
-     (163308%positive, 2);
-     (163310%positive, 20);
-     (163320%positive, 1);
-     (163321%positive, 18);
-     (163322%positive, 10);
-     (163324%positive, 6);
-     (163326%positive, 9);
-     (185529%positive, 29);
-     (185532%positive, 3);
-     (185578%positive, 28);
-     (185580%positive, 2);
-     (185592%positive, 13);
-     (185594%positive, 4);
-     (185596%positive, 4);
-     (185598%positive, 4);
-     (185786%positive, 18);
-     (185788%positive, 3);
-     (185790%positive, 3);
-     (185834%positive, 11);
-     (185836%positive, 2);
-     (185838%positive, 14);
-     (185848%positive, 13);
-     (185849%positive, 12);
-     (185850%positive, 10);
-     (185852%positive, 8);
-     (185854%positive, 9);
-     (187560%positive, 1);
-     (187564%positive, 2);
-     (187576%positive, 1);
-     (187578%positive, 27);
-     (187580%positive, 3);
-     (187582%positive, 3);
-     (187628%positive, 2);
-     (187630%positive, 17);
-     (187640%positive, 1);
-     (187641%positive, 15);
-     (187642%positive, 4);
-     (187644%positive, 4);
-     (187646%positive, 4);
-     (187832%positive, 1);
-     (187834%positive, 24);
-     (187836%positive, 3);
-     (187838%positive, 3);
-     (187882%positive, 11);
-     (187884%positive, 2);
-     (187886%positive, 17);
-     (187896%positive, 1);
-     (187897%positive, 15);
-     (187898%positive, 10);
-     (187900%positive, 7);
-     (187902%positive, 9);
-     (193704%positive, 25);
-     (193708%positive, 2);
-     (193720%positive, 22);
-     (193724%positive, 3);
-     (193770%positive, 28);
-     (193772%positive, 2);
-     (193784%positive, 19);
-     (193786%positive, 4);
-     (193788%positive, 4);
-     (193790%positive, 4);
-     (193976%positive, 22);
-     (193978%positive, 18);
-     (193980%positive, 3);
-     (193982%positive, 3);
-     (194026%positive, 11);
-     (194028%positive, 2);
-     (194030%positive, 14);
-     (194040%positive, 19);
-     (194041%positive, 12);
-     (194042%positive, 10);
-     (194044%positive, 8);
-     (194046%positive, 9);
-     (195752%positive, 1);
-     (195756%positive, 2);
-     (195768%positive, 1);
-     (195769%positive, 24);
-     (195772%positive, 3);
-     (195774%positive, 3);
-     (195820%positive, 2);
-     (195822%positive, 23);
-     (195832%positive, 1);
-     (195833%positive, 21);
-     (195834%positive, 4);
-     (195836%positive, 4);
-     (195838%positive, 4);
-     (196024%positive, 1);
-     (196026%positive, 24);
-     (196028%positive, 3);
-     (196030%positive, 3);
-     (196074%positive, 11);
-     (196076%positive, 2);
-     (196078%positive, 20);
-     (196088%positive, 1);
-     (196090%positive, 10);
-     (196092%positive, 5);
-     (196094%positive, 9)]]
+    [(9512%positive, 2);
+     (9513%positive, 4);
+     (9514%positive, 3);
+     (9517%positive, 5);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9530%positive, 3);
+     (9532%positive, 12);
+     (9577%positive, 4);
+     (9578%positive, 3);
+     (9581%positive, 5);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9594%positive, 3);
+     (9597%positive, 5);
+     (10025%positive, 12);
+     (10026%positive, 15);
+     (10040%positive, 10);
+     (10041%positive, 1);
+     (10089%positive, 8);
+     (10090%positive, 13);
+     (10104%positive, 6);
+     (10105%positive, 1);
+     (11560%positive, 2);
+     (11561%positive, 4);
+     (11562%positive, 11);
+     (11564%positive, 16);
+     (11565%positive, 13);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11578%positive, 7);
+     (11580%positive, 14);
+     (11624%positive, 2);
+     (11625%positive, 4);
+     (11626%positive, 11);
+     (11628%positive, 16);
+     (11629%positive, 13);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11642%positive, 7);
+     (11644%positive, 14);
+     (11645%positive, 9)]]
   end.
 
-Theorem nqh_1RB1LA_0RC0RD_1LC0LA_1RC1RD : NeverQuasiHaltsSt tm_bulkr_00152.
+Theorem nqh_1RB0RC_0LC0RB_1RA1LD_0RB0LA : NeverQuasiHaltsSt tm_bulkr_00152.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 3 0 2304 19 cert_bulkr_00152).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 528 11 cert_bulkr_00152).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_0RC1LD_1RD1RB_0LB0LA: n=2 t=0 contexts=75 *)
+(** 1RB0RC_0LC0RB_1RA1LD_1LA0LA: n=2 t=0 contexts=89 *)
 
 Definition tm_bulkr_00153 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S0 DR StC)
-  | StB, S1 => Some (mkTrans S1 DL StD)
-  | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S1 DR StB)
-  | StD, S0 => Some (mkTrans S0 DL StB)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S0 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 
@@ -1943,408 +518,526 @@ Definition cert_bulkr_00153 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9517%positive, 4);
-     (9529%positive, 9);
-     (9531%positive, 7);
-     (9533%positive, 1);
-     (9578%positive, 8);
-     (9581%positive, 6);
-     (9582%positive, 10);
-     (9597%positive, 1);
-     (10026%positive, 1);
-     (10027%positive, 3);
-     (10041%positive, 11);
-     (10043%positive, 5);
-     (10045%positive, 1);
-     (10090%positive, 1);
-     (10091%positive, 3);
-     (10094%positive, 2);
-     (10105%positive, 12);
-     (10107%positive, 2);
-     (10109%positive, 1);
-     (11561%positive, 2);
-     (11565%positive, 4);
+    [(9513%positive, 1);
+     (9517%positive, 2);
+     (9518%positive, 1);
+     (9529%positive, 2);
+     (9534%positive, 1);
+     (9577%positive, 1);
+     (9581%positive, 2);
+     (9582%positive, 1);
+     (9593%positive, 2);
+     (9597%positive, 2);
+     (9598%positive, 1);
+     (10025%positive, 1);
+     (10029%positive, 3);
+     (10030%positive, 1);
+     (10041%positive, 2);
+     (10045%positive, 3);
+     (10089%positive, 1);
+     (10093%positive, 3);
+     (10094%positive, 1);
+     (10105%positive, 2);
+     (10109%positive, 3);
+     (11561%positive, 1);
+     (11565%positive, 2);
+     (11566%positive, 1);
      (11577%positive, 2);
-     (11579%positive, 7);
-     (11581%positive, 1);
-     (11625%positive, 2);
-     (11626%positive, 7);
-     (11629%positive, 5);
-     (11630%positive, 11);
+     (11582%positive, 1);
+     (11625%positive, 1);
+     (11629%positive, 2);
+     (11630%positive, 1);
      (11641%positive, 2);
-     (11645%positive, 1);
-     (12074%positive, 1);
-     (12089%positive, 3);
-     (12091%positive, 6);
-     (12093%positive, 1);
-     (12138%positive, 1);
-     (12142%positive, 2);
-     (12153%positive, 3);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+     (11645%positive, 2);
+     (11646%positive, 1);
+     (12073%positive, 1);
+     (12077%positive, 4);
+     (12078%positive, 1);
+     (12089%positive, 2);
+     (12093%positive, 6);
+     (12137%positive, 1);
+     (12141%positive, 5);
+     (12142%positive, 1);
+     (12153%positive, 2);
+     (12157%positive, 6)];
+   NgPattE [S1; S1] RgA 1
     []
-    [10043%positive;
-     11629%positive];
-   NgPattE [S1] RgR 1
-    []
-    [10041%positive;
-     11630%positive];
+    [12077%positive];
    NgRankE
-    [(9517%positive, 4);
-     (9529%positive, 9);
-     (9531%positive, 7);
-     (9533%positive, 1);
-     (9578%positive, 8);
-     (9581%positive, 6);
-     (9582%positive, 10);
-     (9597%positive, 1);
-     (10026%positive, 1);
-     (10027%positive, 3);
-     (10041%positive, 11);
-     (10043%positive, 5);
-     (10045%positive, 1);
-     (10090%positive, 1);
-     (10091%positive, 3);
-     (10094%positive, 2);
-     (10105%positive, 13);
-     (10107%positive, 2);
-     (10109%positive, 1);
-     (11561%positive, 2);
-     (11565%positive, 4);
+    [(9513%positive, 1);
+     (9517%positive, 2);
+     (9518%positive, 1);
+     (9529%positive, 2);
+     (9534%positive, 1);
+     (9577%positive, 1);
+     (9581%positive, 2);
+     (9582%positive, 1);
+     (9593%positive, 2);
+     (9597%positive, 2);
+     (9598%positive, 1);
+     (10025%positive, 1);
+     (10029%positive, 3);
+     (10030%positive, 1);
+     (10041%positive, 2);
+     (10045%positive, 3);
+     (10089%positive, 1);
+     (10093%positive, 3);
+     (10094%positive, 1);
+     (10105%positive, 2);
+     (10109%positive, 3);
+     (11561%positive, 1);
+     (11565%positive, 2);
+     (11566%positive, 1);
      (11577%positive, 2);
-     (11579%positive, 7);
-     (11581%positive, 1);
-     (11625%positive, 2);
-     (11626%positive, 8);
-     (11629%positive, 6);
-     (11630%positive, 12);
+     (11582%positive, 1);
+     (11625%positive, 1);
+     (11629%positive, 2);
+     (11630%positive, 1);
      (11641%positive, 2);
-     (11645%positive, 1);
-     (12074%positive, 1);
-     (12089%positive, 3);
-     (12091%positive, 7);
-     (12093%positive, 1);
-     (12138%positive, 1);
-     (12142%positive, 2);
-     (12153%positive, 3);
-     (12157%positive, 1)]]
+     (11645%positive, 2);
+     (11646%positive, 1);
+     (12073%positive, 1);
+     (12077%positive, 4);
+     (12078%positive, 1);
+     (12089%positive, 2);
+     (12093%positive, 6);
+     (12137%positive, 1);
+     (12141%positive, 5);
+     (12142%positive, 1);
+     (12153%positive, 2);
+     (12157%positive, 6)]]
   | StB =>
   [NgRankE
-    [(9516%positive, 1);
-     (9535%positive, 2);
+    [(9514%positive, 1);
+     (9518%positive, 2);
+     (9530%positive, 1);
+     (9532%positive, 2);
+     (9534%positive, 2);
      (9578%positive, 1);
-     (9580%positive, 1);
-     (10026%positive, 3);
-     (10028%positive, 1);
+     (9582%positive, 7);
+     (9594%positive, 1);
+     (9598%positive, 14);
+     (10026%positive, 11);
+     (10027%positive, 1);
+     (10030%positive, 2);
      (10031%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
-     (10090%positive, 3);
-     (10092%positive, 1);
+     (10043%positive, 4);
+     (10044%positive, 8);
+     (10047%positive, 13);
+     (10090%positive, 10);
+     (10091%positive, 1);
+     (10094%positive, 5);
      (10095%positive, 1);
-     (10108%positive, 4);
-     (10111%positive, 6);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11583%positive, 2);
+     (10107%positive, 6);
+     (10111%positive, 12);
+     (11562%positive, 1);
+     (11564%positive, 12);
+     (11566%positive, 2);
+     (11578%positive, 1);
+     (11580%positive, 10);
+     (11582%positive, 2);
      (11626%positive, 1);
-     (11628%positive, 1);
-     (11644%positive, 5);
-     (12074%positive, 3);
-     (12076%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 2);
-     (12138%positive, 3);
-     (12140%positive, 1);
-     (12143%positive, 1);
-     (12156%positive, 3);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (11628%positive, 12);
+     (11630%positive, 7);
+     (11642%positive, 1);
+     (11644%positive, 11);
+     (11646%positive, 14);
+     (12074%positive, 9);
+     (12075%positive, 1);
+     (12076%positive, 3);
+     (12078%positive, 2);
+     (12091%positive, 4);
+     (12092%positive, 5);
+     (12138%positive, 9);
+     (12139%positive, 1);
+     (12140%positive, 3);
+     (12142%positive, 5);
+     (12155%positive, 5);
+     (12156%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
+    [10094%positive;
+     12092%positive;
+     12142%positive;
+     12155%positive;
+     12156%positive];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9516%positive, 1);
-     (9535%positive, 2);
+    [(9514%positive, 1);
+     (9518%positive, 2);
+     (9530%positive, 1);
+     (9532%positive, 2);
+     (9534%positive, 2);
      (9578%positive, 1);
-     (9580%positive, 1);
-     (10026%positive, 3);
-     (10028%positive, 1);
+     (9582%positive, 8);
+     (9594%positive, 1);
+     (9598%positive, 15);
+     (10026%positive, 12);
+     (10027%positive, 1);
+     (10030%positive, 2);
      (10031%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
+     (10043%positive, 4);
+     (10044%positive, 9);
+     (10047%positive, 14);
      (10090%positive, 3);
-     (10092%positive, 1);
+     (10091%positive, 1);
+     (10094%positive, 5);
      (10095%positive, 1);
-     (10108%positive, 4);
-     (10111%positive, 6);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11583%positive, 2);
+     (10107%positive, 7);
+     (10111%positive, 12);
+     (11562%positive, 1);
+     (11564%positive, 13);
+     (11566%positive, 2);
+     (11578%positive, 1);
+     (11580%positive, 11);
+     (11582%positive, 2);
      (11626%positive, 1);
-     (11628%positive, 1);
-     (11644%positive, 5);
-     (12074%positive, 3);
-     (12076%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 2);
-     (12138%positive, 3);
-     (12140%positive, 1);
-     (12143%positive, 1);
-     (12156%positive, 3);
-     (12159%positive, 6)]]
+     (11628%positive, 13);
+     (11630%positive, 8);
+     (11642%positive, 1);
+     (11644%positive, 11);
+     (11646%positive, 15);
+     (12074%positive, 10);
+     (12075%positive, 1);
+     (12076%positive, 3);
+     (12078%positive, 2);
+     (12091%positive, 4);
+     (12092%positive, 6);
+     (12138%positive, 10);
+     (12139%positive, 1);
+     (12140%positive, 3);
+     (12142%positive, 5);
+     (12156%positive, 6)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9516%positive, 5);
-     (9517%positive, 2);
-     (9531%positive, 10);
-     (9533%positive, 3);
-     (9535%positive, 8);
-     (9580%positive, 7);
-     (9581%positive, 9);
-     (9597%positive, 6);
-     (10024%positive, 4);
-     (10027%positive, 1);
-     (10028%positive, 5);
+     (9517%positive, 1);
+     (9528%positive, 1);
+     (9581%positive, 1);
+     (9592%positive, 1);
+     (9597%positive, 1);
+     (10027%positive, 7);
+     (10029%positive, 2);
      (10031%positive, 2);
-     (10040%positive, 6);
-     (10043%positive, 8);
-     (10044%positive, 6);
-     (10045%positive, 3);
-     (10047%positive, 6);
-     (10088%positive, 4);
-     (10091%positive, 1);
-     (10092%positive, 6);
+     (10040%positive, 2);
+     (10043%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 1);
+     (10091%positive, 7);
+     (10093%positive, 2);
      (10095%positive, 2);
-     (10104%positive, 6);
-     (10107%positive, 7);
-     (10108%positive, 6);
-     (10109%positive, 6);
-     (10111%positive, 6);
+     (10104%positive, 2);
+     (10107%positive, 1);
+     (10109%positive, 2);
+     (10111%positive, 1);
      (11560%positive, 1);
-     (11564%positive, 5);
-     (11565%positive, 2);
+     (11565%positive, 1);
      (11576%positive, 1);
-     (11579%positive, 10);
-     (11580%positive, 6);
-     (11581%positive, 3);
-     (11583%positive, 8);
      (11624%positive, 1);
-     (11628%positive, 6);
-     (11629%positive, 8);
+     (11629%positive, 1);
      (11640%positive, 1);
-     (11644%positive, 6);
-     (11645%positive, 6);
-     (12072%positive, 4);
-     (12076%positive, 5);
-     (12079%positive, 2);
+     (11645%positive, 1);
+     (12072%positive, 6);
+     (12075%positive, 7);
+     (12077%positive, 3);
      (12088%positive, 6);
-     (12091%positive, 9);
-     (12092%positive, 6);
-     (12093%positive, 3);
-     (12095%positive, 6);
-     (12136%positive, 4);
-     (12140%positive, 6);
-     (12143%positive, 2);
+     (12091%positive, 1);
+     (12093%positive, 5);
+     (12136%positive, 6);
+     (12139%positive, 7);
+     (12141%positive, 4);
      (12152%positive, 6);
-     (12156%positive, 6);
-     (12157%positive, 6);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 67
-    [(10040%positive, 68);
-     (10044%positive, 69);
-     (10047%positive, 66);
-     (10092%positive, 69);
-     (10104%positive, 68);
-     (10108%positive, 69);
-     (10111%positive, 66);
-     (11580%positive, 69);
-     (11628%positive, 69);
-     (11644%positive, 69);
-     (12088%positive, 68);
-     (12092%positive, 69);
-     (12095%positive, 66);
-     (12140%positive, 69);
-     (12152%positive, 68);
-     (12156%positive, 69);
-     (12159%positive, 66)]
-    [9597%positive;
-     10040%positive;
-     10044%positive;
-     10047%positive;
-     10092%positive;
-     10104%positive;
-     10108%positive;
-     10109%positive;
-     10111%positive;
-     11580%positive;
-     11628%positive;
-     11644%positive;
-     11645%positive;
-     12088%positive;
-     12092%positive;
-     12095%positive;
-     12140%positive;
-     12152%positive;
-     12156%positive;
-     12157%positive;
-     12159%positive];
-   NgPattE [S1] RgL 1
+     (12155%positive, 1);
+     (12157%positive, 5)];
+   NgPattE [S1; S1] RgA 1
     []
-    [10043%positive;
-     11629%positive];
+    [12077%positive];
    NgRankE
     [(9512%positive, 1);
-     (9516%positive, 5);
-     (9517%positive, 2);
-     (9531%positive, 6);
-     (9533%positive, 3);
-     (9535%positive, 6);
-     (9580%positive, 1);
-     (9581%positive, 5);
-     (10024%positive, 4);
-     (10027%positive, 1);
-     (10028%positive, 5);
+     (9517%positive, 1);
+     (9528%positive, 1);
+     (9581%positive, 1);
+     (9592%positive, 1);
+     (9597%positive, 1);
+     (10027%positive, 7);
+     (10029%positive, 2);
      (10031%positive, 2);
-     (10043%positive, 3);
-     (10044%positive, 6);
-     (10045%positive, 3);
-     (10047%positive, 6);
-     (10088%positive, 4);
-     (10091%positive, 1);
+     (10040%positive, 2);
+     (10043%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 1);
+     (10091%positive, 7);
+     (10093%positive, 2);
      (10095%positive, 2);
-     (10107%positive, 4);
+     (10104%positive, 2);
+     (10107%positive, 1);
+     (10109%positive, 2);
+     (10111%positive, 1);
      (11560%positive, 1);
-     (11564%positive, 5);
-     (11565%positive, 2);
+     (11565%positive, 1);
      (11576%positive, 1);
-     (11579%positive, 6);
-     (11580%positive, 6);
-     (11581%positive, 3);
-     (11583%positive, 6);
      (11624%positive, 1);
-     (11629%positive, 5);
+     (11629%positive, 1);
      (11640%positive, 1);
-     (12072%positive, 4);
-     (12076%positive, 5);
-     (12079%positive, 2);
-     (12091%positive, 6);
-     (12092%positive, 6);
-     (12093%positive, 3);
-     (12095%positive, 6);
-     (12136%positive, 4);
-     (12143%positive, 2)]]
+     (11645%positive, 1);
+     (12072%positive, 6);
+     (12075%positive, 7);
+     (12077%positive, 3);
+     (12088%positive, 6);
+     (12091%positive, 1);
+     (12093%positive, 5);
+     (12136%positive, 6);
+     (12139%positive, 7);
+     (12141%positive, 4);
+     (12152%positive, 6);
+     (12155%positive, 1);
+     (12157%positive, 5)]]
   | StD =>
   [NgRankE
     [(9512%positive, 2);
-     (9516%positive, 2);
+     (9513%positive, 4);
+     (9514%positive, 3);
+     (9517%positive, 5);
+     (9528%positive, 2);
      (9529%positive, 1);
-     (9580%positive, 2);
-     (9582%positive, 2);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10040%positive, 1);
-     (10041%positive, 3);
-     (10044%positive, 3);
-     (10088%positive, 1);
-     (10092%positive, 2);
-     (10094%positive, 1);
-     (10104%positive, 1);
-     (10105%positive, 4);
-     (10108%positive, 5);
-     (11560%positive, 4);
-     (11561%positive, 1);
-     (11564%positive, 2);
-     (11576%positive, 5);
+     (9530%positive, 3);
+     (9532%positive, 7);
+     (9577%positive, 4);
+     (9578%positive, 3);
+     (9581%positive, 5);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9594%positive, 3);
+     (9597%positive, 5);
+     (10025%positive, 6);
+     (10026%positive, 9);
+     (10029%positive, 6);
+     (10040%positive, 6);
+     (10041%positive, 1);
+     (10044%positive, 1);
+     (10045%positive, 7);
+     (10089%positive, 6);
+     (10090%positive, 8);
+     (10093%positive, 6);
+     (10104%positive, 6);
+     (10105%positive, 1);
+     (10109%positive, 6);
+     (11560%positive, 2);
+     (11561%positive, 4);
+     (11562%positive, 6);
+     (11564%positive, 10);
+     (11565%positive, 6);
+     (11576%positive, 2);
      (11577%positive, 1);
-     (11580%positive, 3);
-     (11624%positive, 4);
-     (11625%positive, 1);
-     (11628%positive, 2);
-     (11630%positive, 3);
-     (11640%positive, 5);
+     (11578%positive, 6);
+     (11580%positive, 8);
+     (11624%positive, 2);
+     (11625%positive, 4);
+     (11626%positive, 6);
+     (11628%positive, 10);
+     (11629%positive, 6);
+     (11640%positive, 2);
      (11641%positive, 1);
-     (11644%positive, 6);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12089%positive, 2);
-     (12092%positive, 3);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 1);
-     (12152%positive, 1);
-     (12153%positive, 2);
-     (12156%positive, 4)];
-   NgPattE [S1] RgL 1
+     (11642%positive, 6);
+     (11644%positive, 9);
+     (11645%positive, 6);
+     (12072%positive, 8);
+     (12073%positive, 6);
+     (12074%positive, 2);
+     (12076%positive, 1);
+     (12077%positive, 6);
+     (12088%positive, 6);
+     (12089%positive, 1);
+     (12092%positive, 1);
+     (12093%positive, 7);
+     (12136%positive, 8);
+     (12137%positive, 6);
+     (12138%positive, 2);
+     (12140%positive, 1);
+     (12141%positive, 6);
+     (12152%positive, 6);
+     (12153%positive, 1);
+     (12156%positive, 1);
+     (12157%positive, 6)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+    [10025%positive;
+     10029%positive;
+     10040%positive;
+     10089%positive;
+     10093%positive;
+     10104%positive;
+     10109%positive;
+     11562%positive;
+     11565%positive;
+     11578%positive;
+     11626%positive;
+     11629%positive;
+     11642%positive;
+     11645%positive;
+     12073%positive;
+     12077%positive;
+     12088%positive;
+     12137%positive;
+     12141%positive;
+     12152%positive;
+     12157%positive];
+   NgPattE [S1; S0] RgR 1
     []
-    [10041%positive;
-     11630%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
     [(9512%positive, 2);
-     (9516%positive, 2);
+     (9513%positive, 4);
+     (9514%positive, 3);
+     (9517%positive, 5);
+     (9528%positive, 2);
      (9529%positive, 1);
-     (9580%positive, 2);
-     (9582%positive, 2);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10040%positive, 1);
-     (10041%positive, 3);
-     (10044%positive, 3);
-     (10088%positive, 1);
-     (10092%positive, 2);
-     (10094%positive, 1);
-     (10104%positive, 1);
-     (10105%positive, 5);
-     (10108%positive, 5);
-     (11560%positive, 4);
-     (11561%positive, 1);
-     (11564%positive, 2);
-     (11576%positive, 6);
+     (9530%positive, 3);
+     (9532%positive, 9);
+     (9577%positive, 4);
+     (9578%positive, 3);
+     (9581%positive, 5);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9594%positive, 3);
+     (9597%positive, 5);
+     (10025%positive, 9);
+     (10026%positive, 12);
+     (10029%positive, 11);
+     (10040%positive, 7);
+     (10041%positive, 1);
+     (10044%positive, 1);
+     (10045%positive, 11);
+     (10089%positive, 6);
+     (10090%positive, 10);
+     (10093%positive, 11);
+     (10104%positive, 6);
+     (10105%positive, 1);
+     (10109%positive, 11);
+     (11560%positive, 2);
+     (11561%positive, 4);
+     (11562%positive, 8);
+     (11564%positive, 13);
+     (11565%positive, 10);
+     (11576%positive, 2);
      (11577%positive, 1);
-     (11580%positive, 3);
-     (11624%positive, 4);
-     (11625%positive, 1);
-     (11628%positive, 2);
-     (11630%positive, 4);
-     (11640%positive, 6);
+     (11578%positive, 6);
+     (11580%positive, 11);
+     (11624%positive, 2);
+     (11625%positive, 4);
+     (11626%positive, 8);
+     (11628%positive, 13);
+     (11629%positive, 10);
+     (11640%positive, 2);
      (11641%positive, 1);
-     (11644%positive, 6);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12089%positive, 2);
-     (12092%positive, 3);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 1);
-     (12152%positive, 1);
-     (12153%positive, 2);
-     (12156%positive, 4)]]
+     (11642%positive, 6);
+     (11644%positive, 11);
+     (11645%positive, 6);
+     (12072%positive, 13);
+     (12073%positive, 9);
+     (12074%positive, 2);
+     (12076%positive, 1);
+     (12089%positive, 1);
+     (12092%positive, 1);
+     (12093%positive, 12);
+     (12136%positive, 13);
+     (12137%positive, 6);
+     (12138%positive, 2);
+     (12140%positive, 1);
+     (12153%positive, 1);
+     (12156%positive, 1)];
+   NgPattE [S1; S0] RgA 1
+    []
+    [10089%positive;
+     10104%positive;
+     11578%positive;
+     11642%positive;
+     11645%positive;
+     12137%positive];
+   NgRankE
+    [(9512%positive, 2);
+     (9513%positive, 4);
+     (9514%positive, 3);
+     (9517%positive, 5);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9530%positive, 3);
+     (9532%positive, 12);
+     (9577%positive, 4);
+     (9578%positive, 3);
+     (9581%positive, 5);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9594%positive, 3);
+     (9597%positive, 5);
+     (10025%positive, 12);
+     (10026%positive, 15);
+     (10029%positive, 14);
+     (10040%positive, 10);
+     (10041%positive, 1);
+     (10044%positive, 1);
+     (10045%positive, 14);
+     (10089%positive, 8);
+     (10090%positive, 13);
+     (10093%positive, 14);
+     (10104%positive, 6);
+     (10105%positive, 1);
+     (10109%positive, 14);
+     (11560%positive, 2);
+     (11561%positive, 4);
+     (11562%positive, 11);
+     (11564%positive, 16);
+     (11565%positive, 13);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11578%positive, 7);
+     (11580%positive, 14);
+     (11624%positive, 2);
+     (11625%positive, 4);
+     (11626%positive, 11);
+     (11628%positive, 16);
+     (11629%positive, 13);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11642%positive, 7);
+     (11644%positive, 14);
+     (11645%positive, 9);
+     (12072%positive, 16);
+     (12073%positive, 12);
+     (12074%positive, 2);
+     (12076%positive, 1);
+     (12089%positive, 1);
+     (12092%positive, 1);
+     (12093%positive, 15);
+     (12136%positive, 16);
+     (12137%positive, 8);
+     (12138%positive, 2);
+     (12140%positive, 1);
+     (12153%positive, 1);
+     (12156%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_0RC1LD_1RD1RB_0LB0LA : NeverQuasiHaltsSt tm_bulkr_00153.
+Theorem nqh_1RB0RC_0LC0RB_1RA1LD_1LA0LA : NeverQuasiHaltsSt tm_bulkr_00153.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 664 12 cert_bulkr_00153).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 776 12 cert_bulkr_00153).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_0RC1RB_1LC0LD_0RA0LA: n=2 t=0 contexts=66 *)
+(** 1RB0RC_0LC0RB_1RA1LD_1RD0LA: n=2 t=0 contexts=58 *)
 
 Definition tm_bulkr_00154 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S0 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DL StC)
-  | StC, S1 => Some (mkTrans S0 DL StD)
-  | StD, S0 => Some (mkTrans S0 DR StA)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S0 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S1 DR StD)
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 
@@ -2352,373 +1045,246 @@ Definition cert_bulkr_00154 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 5);
-     (9578%positive, 3);
-     (9582%positive, 1);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (10041%positive, 2);
-     (10042%positive, 2);
-     (10045%positive, 6);
-     (10090%positive, 3);
-     (10094%positive, 1);
+    [(9518%positive, 2);
+     (9529%positive, 3);
+     (9534%positive, 1);
+     (9577%positive, 1);
+     (9582%positive, 2);
+     (9593%positive, 2);
+     (9597%positive, 2);
+     (9598%positive, 1);
+     (10027%positive, 1);
+     (10041%positive, 3);
+     (10043%positive, 1);
+     (10089%positive, 1);
+     (10091%positive, 1);
      (10105%positive, 2);
-     (10106%positive, 2);
-     (10109%positive, 6);
-     (11577%positive, 4);
-     (11581%positive, 3);
-     (11626%positive, 3);
-     (11630%positive, 1);
-     (11641%positive, 4);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12090%positive, 2);
-     (12093%positive, 8);
-     (12094%positive, 1);
-     (12138%positive, 3);
-     (12142%positive, 1);
-     (12153%positive, 2);
-     (12154%positive, 2);
-     (12157%positive, 7);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
-    []
-    [12157%positive];
-   NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 5);
-     (9578%positive, 3);
-     (9582%positive, 1);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (10041%positive, 2);
-     (10042%positive, 2);
-     (10045%positive, 6);
-     (10090%positive, 3);
-     (10094%positive, 1);
-     (10105%positive, 2);
-     (10106%positive, 2);
-     (10109%positive, 6);
-     (11577%positive, 4);
-     (11581%positive, 3);
-     (11626%positive, 3);
-     (11630%positive, 1);
-     (11641%positive, 4);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12090%positive, 2);
-     (12093%positive, 8);
-     (12094%positive, 1);
-     (12138%positive, 3);
-     (12142%positive, 1);
-     (12153%positive, 2);
-     (12154%positive, 2);
-     (12157%positive, 7);
-     (12158%positive, 1)]]
+     (10107%positive, 1);
+     (11566%positive, 2);
+     (11577%positive, 3);
+     (11582%positive, 1);
+     (11625%positive, 1);
+     (11630%positive, 2);
+     (11641%positive, 2);
+     (11645%positive, 2);
+     (11646%positive, 1)]]
   | StB =>
   [NgRankE
-    [(9516%positive, 1);
-     (9531%positive, 1);
+    [(9514%positive, 1);
+     (9516%positive, 2);
+     (9518%positive, 5);
+     (9530%positive, 1);
      (9532%positive, 2);
-     (9578%positive, 9);
-     (9580%positive, 1);
-     (9582%positive, 2);
-     (9595%positive, 1);
-     (9596%positive, 5);
-     (10028%positive, 1);
-     (10042%positive, 3);
-     (10044%positive, 2);
-     (10090%positive, 9);
-     (10092%positive, 1);
-     (10094%positive, 2);
-     (10106%positive, 8);
-     (10108%positive, 4);
-     (11563%positive, 1);
-     (11567%positive, 1);
-     (11579%positive, 1);
-     (11583%positive, 2);
-     (11626%positive, 9);
-     (11627%positive, 1);
-     (11630%positive, 2);
-     (11631%positive, 1);
-     (11643%positive, 1);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 3);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12138%positive, 9);
-     (12140%positive, 1);
-     (12142%positive, 2);
-     (12154%positive, 8);
-     (12156%positive, 3);
-     (12158%positive, 7)];
-   NgPattE [S1] RgL 1
+     (9534%positive, 2);
+     (9535%positive, 3);
+     (9578%positive, 1);
+     (9580%positive, 2);
+     (9582%positive, 5);
+     (9594%positive, 1);
+     (9596%positive, 2);
+     (9598%positive, 7);
+     (9599%positive, 3);
+     (10026%positive, 4);
+     (10027%positive, 4);
+     (10031%positive, 1);
+     (10043%positive, 4);
+     (10047%positive, 6);
+     (10090%positive, 3);
+     (10091%positive, 4);
+     (10095%positive, 1);
+     (10107%positive, 4);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 5);
+     (11566%positive, 5);
+     (11578%positive, 1);
+     (11580%positive, 3);
+     (11582%positive, 2);
+     (11583%positive, 3);
+     (11626%positive, 1);
+     (11628%positive, 5);
+     (11630%positive, 5);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 7);
+     (11647%positive, 3)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9516%positive, 1);
-     (9531%positive, 1);
+    [(9514%positive, 1);
+     (9516%positive, 2);
+     (9518%positive, 5);
+     (9530%positive, 1);
      (9532%positive, 2);
-     (9578%positive, 9);
-     (9580%positive, 1);
-     (9582%positive, 2);
-     (9595%positive, 1);
-     (9596%positive, 5);
-     (10028%positive, 1);
-     (10042%positive, 3);
-     (10044%positive, 2);
-     (10090%positive, 9);
-     (10092%positive, 1);
-     (10094%positive, 2);
-     (10106%positive, 8);
-     (10108%positive, 4);
-     (11563%positive, 1);
-     (11567%positive, 1);
-     (11579%positive, 1);
-     (11583%positive, 2);
-     (11626%positive, 9);
-     (11627%positive, 1);
-     (11630%positive, 2);
-     (11631%positive, 1);
-     (11643%positive, 1);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 3);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12138%positive, 9);
-     (12140%positive, 1);
-     (12142%positive, 2);
-     (12154%positive, 8);
-     (12156%positive, 3);
-     (12158%positive, 7)]]
+     (9534%positive, 2);
+     (9535%positive, 3);
+     (9578%positive, 1);
+     (9580%positive, 2);
+     (9582%positive, 5);
+     (9594%positive, 1);
+     (9596%positive, 2);
+     (9598%positive, 8);
+     (9599%positive, 3);
+     (10026%positive, 5);
+     (10027%positive, 4);
+     (10031%positive, 1);
+     (10043%positive, 4);
+     (10047%positive, 7);
+     (10090%positive, 3);
+     (10091%positive, 4);
+     (10095%positive, 1);
+     (10107%positive, 4);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 6);
+     (11566%positive, 5);
+     (11578%positive, 1);
+     (11580%positive, 4);
+     (11582%positive, 2);
+     (11583%positive, 3);
+     (11626%positive, 1);
+     (11628%positive, 6);
+     (11630%positive, 5);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 8);
+     (11647%positive, 3)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9516%positive, 3);
      (9528%positive, 1);
-     (9531%positive, 2);
-     (9532%positive, 7);
-     (9533%positive, 1);
-     (9576%positive, 1);
-     (9580%positive, 3);
+     (9535%positive, 1);
      (9592%positive, 1);
-     (9595%positive, 2);
-     (9596%positive, 10);
      (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
+     (9599%positive, 1);
+     (10027%positive, 2);
+     (10031%positive, 2);
      (10040%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 5);
+     (10043%positive, 2);
+     (10047%positive, 1);
+     (10091%positive, 2);
+     (10095%positive, 2);
      (10104%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11563%positive, 6);
-     (11567%positive, 2);
-     (11579%positive, 6);
-     (11581%positive, 1);
-     (11583%positive, 4);
+     (10107%positive, 2);
+     (10111%positive, 1);
+     (11560%positive, 1);
+     (11576%positive, 1);
+     (11583%positive, 1);
      (11624%positive, 1);
-     (11627%positive, 6);
-     (11631%positive, 2);
-     (11643%positive, 6);
+     (11640%positive, 1);
      (11645%positive, 1);
-     (11647%positive, 11);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12088%positive, 4);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12136%positive, 5);
-     (12140%positive, 5);
-     (12152%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)];
-   NgPattE [S1] RgR 1
-    []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgRankE
-    [(9512%positive, 1);
-     (9516%positive, 3);
-     (9528%positive, 1);
-     (9531%positive, 2);
-     (9532%positive, 7);
-     (9533%positive, 1);
-     (9576%positive, 1);
-     (9580%positive, 3);
-     (9592%positive, 1);
-     (9595%positive, 2);
-     (9596%positive, 10);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10040%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 5);
-     (10104%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11563%positive, 6);
-     (11567%positive, 2);
-     (11579%positive, 6);
-     (11581%positive, 1);
-     (11583%positive, 4);
-     (11624%positive, 1);
-     (11627%positive, 6);
-     (11631%positive, 2);
-     (11643%positive, 6);
-     (11645%positive, 1);
-     (11647%positive, 11);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12088%positive, 4);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12136%positive, 5);
-     (12140%positive, 5);
-     (12152%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)]]
+     (11647%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 4);
-     (9516%positive, 6);
-     (9528%positive, 4);
-     (9529%positive, 3);
-     (9532%positive, 10);
-     (9533%positive, 4);
-     (9576%positive, 4);
-     (9578%positive, 2);
-     (9580%positive, 6);
-     (9592%positive, 4);
-     (9593%positive, 3);
-     (9596%positive, 13);
-     (9597%positive, 4);
-     (10024%positive, 5);
-     (10028%positive, 9);
-     (10040%positive, 5);
+    [(9512%positive, 2);
+     (9514%positive, 3);
+     (9516%positive, 9);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9530%positive, 3);
+     (9532%positive, 9);
+     (9577%positive, 4);
+     (9578%positive, 3);
+     (9580%positive, 9);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9594%positive, 3);
+     (9596%positive, 9);
+     (9597%positive, 5);
+     (10026%positive, 11);
+     (10040%positive, 7);
      (10041%positive, 1);
-     (10042%positive, 1);
-     (10044%positive, 10);
-     (10045%positive, 5);
-     (10088%positive, 5);
-     (10090%positive, 2);
-     (10092%positive, 8);
-     (10104%positive, 5);
+     (10089%positive, 6);
+     (10090%positive, 10);
+     (10104%positive, 6);
      (10105%positive, 1);
-     (10106%positive, 1);
-     (10108%positive, 12);
-     (10109%positive, 5);
-     (11577%positive, 3);
-     (11581%positive, 2);
+     (11560%positive, 2);
+     (11562%positive, 8);
+     (11564%positive, 12);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11578%positive, 6);
+     (11580%positive, 10);
      (11624%positive, 2);
-     (11626%positive, 2);
-     (11641%positive, 3);
-     (11645%positive, 2);
-     (12072%positive, 8);
-     (12076%positive, 9);
-     (12088%positive, 7);
-     (12089%positive, 1);
-     (12090%positive, 1);
-     (12092%positive, 10);
-     (12093%positive, 7);
-     (12136%positive, 8);
-     (12138%positive, 2);
-     (12140%positive, 8);
-     (12152%positive, 7);
-     (12153%positive, 1);
-     (12154%positive, 1);
-     (12156%positive, 11);
-     (12157%positive, 6)];
-   NgPattE [S1] RgR 1
+     (11625%positive, 4);
+     (11626%positive, 8);
+     (11628%positive, 12);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11642%positive, 6);
+     (11644%positive, 11);
+     (11645%positive, 6)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
+    [10089%positive;
+     10104%positive;
+     11578%positive;
+     11642%positive;
+     11645%positive];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9516%positive, 6);
-     (9528%positive, 4);
-     (9529%positive, 3);
-     (9532%positive, 10);
-     (9533%positive, 4);
-     (9576%positive, 4);
-     (9578%positive, 2);
-     (9580%positive, 6);
-     (9592%positive, 4);
-     (9593%positive, 3);
-     (9596%positive, 13);
-     (9597%positive, 4);
-     (10024%positive, 5);
-     (10028%positive, 9);
-     (10040%positive, 5);
+    [(9512%positive, 2);
+     (9514%positive, 3);
+     (9516%positive, 12);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9530%positive, 3);
+     (9532%positive, 12);
+     (9577%positive, 4);
+     (9578%positive, 3);
+     (9580%positive, 12);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9594%positive, 3);
+     (9596%positive, 12);
+     (9597%positive, 5);
+     (10026%positive, 15);
+     (10040%positive, 10);
      (10041%positive, 1);
-     (10042%positive, 1);
-     (10044%positive, 10);
-     (10045%positive, 5);
-     (10088%positive, 5);
-     (10090%positive, 2);
-     (10092%positive, 8);
-     (10104%positive, 5);
+     (10089%positive, 8);
+     (10090%positive, 13);
+     (10104%positive, 6);
      (10105%positive, 1);
-     (10106%positive, 1);
-     (10108%positive, 12);
-     (10109%positive, 5);
-     (11577%positive, 3);
-     (11581%positive, 2);
+     (11560%positive, 2);
+     (11562%positive, 11);
+     (11564%positive, 16);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11578%positive, 7);
+     (11580%positive, 14);
      (11624%positive, 2);
-     (11626%positive, 2);
-     (11641%positive, 3);
-     (11645%positive, 2);
-     (12072%positive, 8);
-     (12076%positive, 9);
-     (12088%positive, 7);
-     (12089%positive, 1);
-     (12090%positive, 1);
-     (12092%positive, 10);
-     (12093%positive, 7);
-     (12136%positive, 8);
-     (12138%positive, 2);
-     (12140%positive, 8);
-     (12152%positive, 7);
-     (12153%positive, 1);
-     (12154%positive, 1);
-     (12156%positive, 11);
-     (12157%positive, 6)]]
+     (11625%positive, 4);
+     (11626%positive, 11);
+     (11628%positive, 16);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11642%positive, 7);
+     (11644%positive, 14);
+     (11645%positive, 9)]]
   end.
 
-Theorem nqh_1RB1LA_0RC1RB_1LC0LD_0RA0LA : NeverQuasiHaltsSt tm_bulkr_00154.
+Theorem nqh_1RB0RC_0LC0RB_1RA1LD_1RD0LA : NeverQuasiHaltsSt tm_bulkr_00154.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 592 12 cert_bulkr_00154).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 528 11 cert_bulkr_00154).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_0RC1RB_1LC0LD_1LA0LA: n=2 t=0 contexts=49 *)
+(** 1RB0RC_0LC0RD_1RA1LD_0LC0LA: n=2 t=0 contexts=49 *)
 
 Definition tm_bulkr_00155 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S0 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DL StC)
-  | StC, S1 => Some (mkTrans S0 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S0 DR StD)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S0 DL StC)
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 
@@ -2726,917 +1292,860 @@ Definition cert_bulkr_00155 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 5);
-     (9578%positive, 3);
-     (9582%positive, 1);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (10042%positive, 2);
-     (10045%positive, 6);
-     (10090%positive, 3);
-     (10094%positive, 1);
+    [(9518%positive, 2);
+     (9529%positive, 5);
+     (9534%positive, 1);
+     (9579%positive, 1);
+     (9582%positive, 4);
+     (9593%positive, 2);
+     (9597%positive, 2);
+     (9598%positive, 1);
+     (10027%positive, 1);
+     (10041%positive, 4);
+     (10043%positive, 3);
+     (10091%positive, 1);
      (10105%positive, 2);
-     (10106%positive, 2);
-     (10109%positive, 6);
-     (11577%positive, 4);
-     (11581%positive, 3);
-     (11626%positive, 3);
-     (11630%positive, 1);
-     (11641%positive, 4);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12090%positive, 2);
-     (12093%positive, 8);
-     (12094%positive, 1);
-     (12138%positive, 3);
-     (12142%positive, 1);
-     (12153%positive, 2);
-     (12154%positive, 2);
-     (12157%positive, 7);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+     (10107%positive, 2);
+     (11566%positive, 2);
+     (11577%positive, 5);
+     (11582%positive, 1);
+     (11627%positive, 1);
+     (11630%positive, 3);
+     (11641%positive, 2);
+     (11645%positive, 2);
+     (11646%positive, 1)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12157%positive];
+    [10043%positive;
+     11630%positive];
    NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 5);
-     (9578%positive, 3);
-     (9582%positive, 1);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (10042%positive, 2);
-     (10045%positive, 6);
-     (10090%positive, 3);
-     (10094%positive, 1);
+    [(9518%positive, 2);
+     (9529%positive, 6);
+     (9534%positive, 1);
+     (9579%positive, 1);
+     (9582%positive, 5);
+     (9593%positive, 2);
+     (9597%positive, 2);
+     (9598%positive, 1);
+     (10027%positive, 1);
+     (10041%positive, 4);
+     (10043%positive, 4);
+     (10091%positive, 1);
      (10105%positive, 2);
-     (10106%positive, 2);
-     (10109%positive, 6);
-     (11577%positive, 4);
-     (11581%positive, 3);
-     (11626%positive, 3);
-     (11630%positive, 1);
-     (11641%positive, 4);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12090%positive, 2);
-     (12093%positive, 8);
-     (12094%positive, 1);
-     (12138%positive, 3);
-     (12142%positive, 1);
-     (12153%positive, 2);
-     (12154%positive, 2);
-     (12157%positive, 7);
-     (12158%positive, 1)]]
+     (10107%positive, 2);
+     (11566%positive, 2);
+     (11577%positive, 6);
+     (11582%positive, 1);
+     (11627%positive, 1);
+     (11630%positive, 3);
+     (11641%positive, 2);
+     (11645%positive, 2);
+     (11646%positive, 1)]]
   | StB =>
   [NgRankE
-    [(9516%positive, 1);
-     (9531%positive, 2);
+    [(9518%positive, 3);
+     (9530%positive, 1);
      (9532%positive, 2);
-     (9578%positive, 9);
-     (9582%positive, 6);
-     (9595%positive, 5);
-     (9596%positive, 5);
-     (10028%positive, 1);
-     (10042%positive, 3);
-     (10044%positive, 2);
-     (10090%positive, 9);
-     (10094%positive, 6);
-     (10106%positive, 8);
-     (10108%positive, 4);
-     (11563%positive, 1);
-     (11567%positive, 1);
-     (11579%positive, 2);
-     (11583%positive, 2);
-     (11626%positive, 9);
-     (11630%positive, 6);
-     (11643%positive, 5);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 3);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12138%positive, 9);
-     (12142%positive, 6);
-     (12154%positive, 8);
-     (12156%positive, 3);
-     (12158%positive, 7)];
-   NgPattE [S1] RgL 1
+     (9534%positive, 2);
+     (9578%positive, 1);
+     (9579%positive, 2);
+     (9582%positive, 10);
+     (9594%positive, 1);
+     (9598%positive, 7);
+     (10026%positive, 4);
+     (10027%positive, 2);
+     (10031%positive, 1);
+     (10043%positive, 9);
+     (10047%positive, 6);
+     (10090%positive, 3);
+     (10091%positive, 2);
+     (10095%positive, 1);
+     (10107%positive, 8);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 5);
+     (11566%positive, 3);
+     (11578%positive, 1);
+     (11580%positive, 3);
+     (11582%positive, 2);
+     (11626%positive, 1);
+     (11627%positive, 2);
+     (11628%positive, 5);
+     (11630%positive, 9);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 7)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
+    [10090%positive;
+     11580%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10043%positive;
+     11630%positive];
    NgRankE
-    [(9516%positive, 1);
-     (9531%positive, 2);
+    [(9518%positive, 3);
+     (9530%positive, 1);
      (9532%positive, 2);
-     (9578%positive, 9);
-     (9582%positive, 6);
-     (9595%positive, 5);
-     (9596%positive, 5);
-     (10028%positive, 1);
-     (10042%positive, 3);
-     (10044%positive, 2);
-     (10090%positive, 9);
-     (10094%positive, 6);
-     (10106%positive, 8);
-     (10108%positive, 4);
-     (11563%positive, 1);
-     (11567%positive, 1);
-     (11579%positive, 2);
-     (11583%positive, 2);
-     (11626%positive, 9);
-     (11630%positive, 6);
-     (11643%positive, 5);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 3);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12138%positive, 9);
-     (12142%positive, 6);
-     (12154%positive, 8);
-     (12156%positive, 3);
-     (12158%positive, 7)]]
+     (9534%positive, 2);
+     (9578%positive, 1);
+     (9579%positive, 2);
+     (9582%positive, 12);
+     (9594%positive, 1);
+     (9598%positive, 8);
+     (10026%positive, 5);
+     (10027%positive, 2);
+     (10031%positive, 1);
+     (10043%positive, 11);
+     (10047%positive, 7);
+     (10090%positive, 3);
+     (10091%positive, 2);
+     (10095%positive, 1);
+     (10107%positive, 9);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 6);
+     (11566%positive, 3);
+     (11578%positive, 1);
+     (11580%positive, 4);
+     (11582%positive, 2);
+     (11626%positive, 1);
+     (11627%positive, 2);
+     (11628%positive, 6);
+     (11630%positive, 10);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 8)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9516%positive, 3);
-     (9531%positive, 7);
-     (9532%positive, 7);
-     (9533%positive, 1);
-     (9595%positive, 10);
-     (9596%positive, 10);
+     (9528%positive, 1);
+     (9592%positive, 1);
      (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11563%positive, 3);
-     (11567%positive, 2);
-     (11579%positive, 7);
-     (11581%positive, 1);
-     (11583%positive, 4);
-     (11643%positive, 10);
-     (11645%positive, 1);
-     (11647%positive, 11);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)];
-   NgPattE [S1] RgR 1
-    []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgRankE
-    [(9512%positive, 1);
-     (9516%positive, 3);
-     (9531%positive, 7);
-     (9532%positive, 7);
-     (9533%positive, 1);
-     (9595%positive, 10);
-     (9596%positive, 10);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11563%positive, 3);
-     (11567%positive, 2);
-     (11579%positive, 7);
-     (11581%positive, 1);
-     (11583%positive, 4);
-     (11643%positive, 10);
-     (11645%positive, 1);
-     (11647%positive, 11);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)]]
+     (10031%positive, 2);
+     (10040%positive, 2);
+     (10047%positive, 1);
+     (10095%positive, 2);
+     (10104%positive, 2);
+     (10111%positive, 1);
+     (11560%positive, 1);
+     (11576%positive, 1);
+     (11624%positive, 1);
+     (11640%positive, 1);
+     (11645%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 4);
-     (9516%positive, 6);
-     (9529%positive, 3);
-     (9532%positive, 10);
-     (9533%positive, 4);
-     (9578%positive, 2);
-     (9593%positive, 3);
-     (9596%positive, 13);
-     (9597%positive, 4);
-     (10024%positive, 5);
-     (10028%positive, 9);
-     (10042%positive, 1);
-     (10044%positive, 10);
-     (10045%positive, 5);
-     (10090%positive, 2);
+    [(9512%positive, 2);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9530%positive, 3);
+     (9532%positive, 4);
+     (9578%positive, 3);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9594%positive, 3);
+     (10026%positive, 6);
+     (10040%positive, 1);
+     (10041%positive, 1);
+     (10090%positive, 5);
+     (10104%positive, 1);
      (10105%positive, 1);
-     (10106%positive, 1);
-     (10108%positive, 12);
-     (10109%positive, 5);
-     (11577%positive, 3);
-     (11581%positive, 2);
+     (11560%positive, 2);
+     (11562%positive, 2);
+     (11564%positive, 7);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11578%positive, 2);
+     (11580%positive, 5);
+     (11624%positive, 2);
      (11626%positive, 2);
-     (11641%positive, 3);
-     (11645%positive, 2);
-     (12072%positive, 8);
-     (12076%positive, 9);
-     (12090%positive, 1);
-     (12092%positive, 10);
-     (12093%positive, 7);
-     (12138%positive, 2);
-     (12153%positive, 1);
-     (12154%positive, 1);
-     (12156%positive, 11);
-     (12157%positive, 6)];
-   NgPattE [S1] RgR 1
+     (11628%positive, 7);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11642%positive, 2);
+     (11644%positive, 6)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9516%positive, 6);
-     (9529%positive, 3);
-     (9532%positive, 10);
-     (9533%positive, 4);
-     (9578%positive, 2);
-     (9593%positive, 3);
-     (9596%positive, 13);
-     (9597%positive, 4);
-     (10024%positive, 5);
-     (10028%positive, 9);
-     (10042%positive, 1);
-     (10044%positive, 10);
-     (10045%positive, 5);
-     (10090%positive, 2);
+    [(9512%positive, 2);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9530%positive, 3);
+     (9532%positive, 4);
+     (9578%positive, 3);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9594%positive, 3);
+     (10026%positive, 7);
+     (10040%positive, 1);
+     (10041%positive, 1);
+     (10090%positive, 5);
+     (10104%positive, 1);
      (10105%positive, 1);
-     (10106%positive, 1);
-     (10108%positive, 12);
-     (10109%positive, 5);
-     (11577%positive, 3);
-     (11581%positive, 2);
+     (11560%positive, 2);
+     (11562%positive, 2);
+     (11564%positive, 8);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11578%positive, 2);
+     (11580%positive, 6);
+     (11624%positive, 2);
      (11626%positive, 2);
-     (11641%positive, 3);
-     (11645%positive, 2);
-     (12072%positive, 8);
-     (12076%positive, 9);
-     (12090%positive, 1);
-     (12092%positive, 10);
-     (12093%positive, 7);
-     (12138%positive, 2);
-     (12153%positive, 1);
-     (12154%positive, 1);
-     (12156%positive, 11);
-     (12157%positive, 6)]]
+     (11628%positive, 8);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11642%positive, 2);
+     (11644%positive, 6)]]
   end.
 
-Theorem nqh_1RB1LA_0RC1RB_1LC0LD_1LA0LA : NeverQuasiHaltsSt tm_bulkr_00155.
+Theorem nqh_1RB0RC_0LC0RD_1RA1LD_0LC0LA : NeverQuasiHaltsSt tm_bulkr_00155.
 Proof.
   apply (ngram_check_neverqh_lex_sound _ 2 0 456 11 cert_bulkr_00155).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_0RC1RB_1LC0LD_1LA1RC: n=2 t=0 contexts=46 *)
+(** 1RB0RC_0LC1LD_1RA1LB_1LB0LA: n=2 t=0 contexts=68 *)
 
 Definition tm_bulkr_00156 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S0 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DL StC)
-  | StC, S1 => Some (mkTrans S0 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S1 DR StC)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DL StD)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StB)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 
 Definition cert_bulkr_00156 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 7);
-     (9533%positive, 8);
-     (9578%positive, 6);
-     (9582%positive, 1);
-     (9593%positive, 7);
-     (9597%positive, 8);
-     (10042%positive, 2);
-     (10045%positive, 9);
-     (10090%positive, 6);
-     (10094%positive, 1);
-     (10105%positive, 2);
-     (10106%positive, 5);
-     (10109%positive, 9);
-     (11567%positive, 3);
-     (11577%positive, 7);
-     (11581%positive, 3);
-     (11583%positive, 5);
-     (11626%positive, 6);
-     (11630%positive, 1);
-     (11641%positive, 7);
-     (11645%positive, 3);
-     (11647%positive, 5);
-     (12078%positive, 1);
-     (12090%positive, 2);
-     (12093%positive, 11);
-     (12094%positive, 4);
-     (12138%positive, 6);
-     (12142%positive, 1);
-     (12153%positive, 2);
-     (12154%positive, 5);
-     (12157%positive, 10);
-     (12158%positive, 5)];
-   NgPattE [S1] RgL 39
-    [(11583%positive, 40);
-     (11647%positive, 40);
-     (12158%positive, 38)]
-    [10106%positive;
-     11583%positive;
-     11647%positive;
-     12154%positive;
-     12158%positive];
-   NgPattE [S1] RgR 1
+    [(9518%positive, 2);
+     (9529%positive, 5);
+     (9534%positive, 4);
+     (9582%positive, 4);
+     (9593%positive, 5);
+     (9597%positive, 1);
+     (9598%positive, 2);
+     (10025%positive, 1);
+     (10029%positive, 3);
+     (10041%positive, 3);
+     (10045%positive, 1);
+     (10089%positive, 1);
+     (10093%positive, 3);
+     (10094%positive, 4);
+     (10105%positive, 3);
+     (10109%positive, 1);
+     (11566%positive, 2);
+     (11577%positive, 5);
+     (11582%positive, 3);
+     (11630%positive, 3);
+     (11641%positive, 5);
+     (11645%positive, 1);
+     (11646%positive, 2);
+     (12073%positive, 1);
+     (12075%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 3);
+     (12091%positive, 3);
+     (12093%positive, 1);
+     (12137%positive, 1);
+     (12139%positive, 3);
+     (12141%positive, 3);
+     (12142%positive, 4);
+     (12153%positive, 3);
+     (12155%positive, 2);
+     (12157%positive, 1)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
+    [10029%positive;
+     10041%positive;
+     10093%positive;
+     10105%positive;
+     11582%positive;
+     11630%positive;
+     12077%positive;
+     12089%positive;
+     12091%positive;
+     12139%positive;
+     12141%positive;
+     12153%positive];
    NgRankE
-    [(9529%positive, 7);
-     (9533%positive, 8);
-     (9578%positive, 6);
-     (9582%positive, 1);
-     (9593%positive, 7);
-     (9597%positive, 8);
-     (10042%positive, 2);
-     (10045%positive, 9);
-     (10090%positive, 6);
-     (10094%positive, 1);
-     (10105%positive, 2);
-     (10106%positive, 5);
-     (10109%positive, 9);
-     (11567%positive, 3);
+    [(9518%positive, 2);
+     (9529%positive, 6);
+     (9534%positive, 10);
+     (9582%positive, 5);
+     (9593%positive, 11);
+     (9597%positive, 1);
+     (9598%positive, 2);
+     (10025%positive, 1);
+     (10029%positive, 7);
+     (10041%positive, 4);
+     (10045%positive, 1);
+     (10089%positive, 1);
+     (10093%positive, 9);
+     (10094%positive, 6);
+     (10105%positive, 3);
+     (10109%positive, 1);
+     (11566%positive, 2);
+     (11577%positive, 6);
+     (11582%positive, 10);
+     (11630%positive, 4);
+     (11641%positive, 11);
+     (11645%positive, 1);
+     (11646%positive, 2);
+     (12073%positive, 1);
+     (12075%positive, 2);
+     (12077%positive, 7);
+     (12089%positive, 5);
+     (12091%positive, 8);
+     (12093%positive, 1);
+     (12137%positive, 1);
+     (12139%positive, 6);
+     (12141%positive, 8);
+     (12142%positive, 6);
+     (12153%positive, 3);
+     (12155%positive, 2);
+     (12157%positive, 1)];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10041%positive;
+     11630%positive];
+   NgPattE [S1; S0] RgA 1
+    []
+    [12091%positive;
+     12141%positive];
+   NgRankE
+    [(9518%positive, 2);
+     (9529%positive, 7);
+     (9534%positive, 10);
+     (9582%positive, 6);
+     (9593%positive, 11);
+     (9597%positive, 1);
+     (9598%positive, 2);
+     (10025%positive, 1);
+     (10029%positive, 7);
+     (10041%positive, 5);
+     (10045%positive, 1);
+     (10089%positive, 1);
+     (10093%positive, 9);
+     (10094%positive, 6);
+     (10105%positive, 3);
+     (10109%positive, 1);
+     (11566%positive, 2);
      (11577%positive, 7);
-     (11581%positive, 3);
-     (11626%positive, 6);
-     (11630%positive, 1);
-     (11641%positive, 7);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12090%positive, 2);
-     (12093%positive, 11);
-     (12094%positive, 4);
-     (12138%positive, 6);
-     (12142%positive, 1);
-     (12153%positive, 2);
-     (12154%positive, 5);
-     (12157%positive, 10)]]
+     (11582%positive, 10);
+     (11630%positive, 4);
+     (11641%positive, 11);
+     (11645%positive, 1);
+     (11646%positive, 2);
+     (12073%positive, 1);
+     (12075%positive, 2);
+     (12077%positive, 7);
+     (12089%positive, 5);
+     (12091%positive, 8);
+     (12093%positive, 1);
+     (12137%positive, 1);
+     (12139%positive, 6);
+     (12141%positive, 9);
+     (12142%positive, 6);
+     (12153%positive, 3);
+     (12155%positive, 2);
+     (12157%positive, 1)]]
   | StB =>
   [NgRankE
-    [(9531%positive, 2);
-     (9578%positive, 7);
-     (9582%positive, 6);
-     (9595%positive, 5);
-     (10028%positive, 1);
-     (10042%positive, 3);
-     (10044%positive, 2);
-     (10090%positive, 7);
-     (10094%positive, 6);
-     (10106%positive, 6);
-     (10108%positive, 4);
-     (11563%positive, 1);
-     (11567%positive, 4);
-     (11579%positive, 2);
-     (11583%positive, 6);
-     (11626%positive, 7);
-     (11630%positive, 6);
-     (11643%positive, 5);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 3);
-     (12092%positive, 2);
-     (12094%positive, 5);
-     (12138%positive, 7);
-     (12142%positive, 6);
-     (12154%positive, 6);
-     (12156%positive, 3);
-     (12158%positive, 6)];
-   NgPattE [S1] RgL 1
+    [(9532%positive, 2);
+     (9578%positive, 1);
+     (10026%positive, 4);
+     (10044%positive, 1);
+     (10047%positive, 6);
+     (10090%positive, 3);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 5);
+     (11578%positive, 1);
+     (11580%positive, 3);
+     (11626%positive, 1);
+     (11628%positive, 5);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (12074%positive, 2);
+     (12079%positive, 1);
+     (12092%positive, 1);
+     (12095%positive, 6);
+     (12138%positive, 2);
+     (12143%positive, 1);
+     (12159%positive, 5)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgL 34
-    [(11583%positive, 35);
-     (11647%positive, 35);
-     (12158%positive, 33)]
-    [10106%positive;
-     11583%positive;
-     11647%positive;
-     12154%positive;
-     12158%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9531%positive, 2);
-     (9578%positive, 7);
-     (9582%positive, 6);
-     (9595%positive, 5);
-     (10028%positive, 1);
-     (10042%positive, 3);
-     (10044%positive, 2);
-     (10090%positive, 7);
-     (10094%positive, 6);
-     (10106%positive, 6);
-     (10108%positive, 4);
-     (11563%positive, 1);
-     (11567%positive, 4);
-     (11579%positive, 2);
-     (11626%positive, 7);
-     (11630%positive, 6);
-     (11643%positive, 5);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 3);
-     (12092%positive, 2);
-     (12094%positive, 5);
-     (12138%positive, 7);
-     (12142%positive, 6);
-     (12154%positive, 6);
-     (12156%positive, 3)]]
+    [(9532%positive, 2);
+     (9578%positive, 1);
+     (10026%positive, 5);
+     (10044%positive, 1);
+     (10047%positive, 7);
+     (10090%positive, 3);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 6);
+     (11578%positive, 1);
+     (11580%positive, 4);
+     (11626%positive, 1);
+     (11628%positive, 6);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (12074%positive, 2);
+     (12079%positive, 1);
+     (12092%positive, 1);
+     (12095%positive, 7);
+     (12138%positive, 2);
+     (12143%positive, 1);
+     (12159%positive, 5)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9531%positive, 7);
-     (9533%positive, 1);
-     (9595%positive, 10);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
+     (9528%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 2);
+     (10040%positive, 3);
+     (10045%positive, 3);
+     (10047%positive, 1);
+     (10093%positive, 6);
+     (10104%positive, 3);
      (10109%positive, 2);
-     (11563%positive, 3);
-     (11579%positive, 7);
-     (11581%positive, 1);
-     (11643%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)];
-   NgPattE [S1] RgR 1
+     (10111%positive, 1);
+     (11560%positive, 1);
+     (11576%positive, 1);
+     (11624%positive, 1);
+     (11640%positive, 1);
+     (11645%positive, 2);
+     (12075%positive, 1);
+     (12077%positive, 2);
+     (12079%positive, 2);
+     (12088%positive, 3);
+     (12091%positive, 5);
+     (12093%positive, 3);
+     (12095%positive, 1);
+     (12139%positive, 1);
+     (12141%positive, 5);
+     (12143%positive, 2);
+     (12152%positive, 3);
+     (12155%positive, 4);
+     (12157%positive, 2);
+     (12159%positive, 1)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12091%positive;
+     12141%positive];
    NgRankE
     [(9512%positive, 1);
-     (9531%positive, 7);
-     (9533%positive, 1);
-     (9595%positive, 10);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
+     (9528%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 2);
+     (10040%positive, 3);
+     (10045%positive, 3);
+     (10047%positive, 1);
+     (10093%positive, 5);
+     (10104%positive, 3);
      (10109%positive, 2);
-     (11563%positive, 3);
-     (11579%positive, 7);
-     (11581%positive, 1);
-     (11643%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)]]
+     (10111%positive, 1);
+     (11560%positive, 1);
+     (11576%positive, 1);
+     (11624%positive, 1);
+     (11640%positive, 1);
+     (11645%positive, 2);
+     (12075%positive, 1);
+     (12077%positive, 2);
+     (12079%positive, 2);
+     (12088%positive, 3);
+     (12091%positive, 3);
+     (12093%positive, 3);
+     (12095%positive, 1);
+     (12139%positive, 1);
+     (12141%positive, 5);
+     (12143%positive, 2);
+     (12152%positive, 3);
+     (12155%positive, 4);
+     (12157%positive, 2);
+     (12159%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9533%positive, 4);
-     (9578%positive, 2);
-     (9593%positive, 3);
-     (9597%positive, 4);
-     (10024%positive, 5);
-     (10028%positive, 9);
-     (10042%positive, 1);
-     (10044%positive, 10);
-     (10045%positive, 5);
-     (10090%positive, 2);
-     (10105%positive, 1);
-     (10106%positive, 1);
-     (10108%positive, 12);
-     (10109%positive, 5);
-     (11577%positive, 3);
-     (11581%positive, 2);
+    [(9512%positive, 8);
+     (9518%positive, 4);
+     (9528%positive, 3);
+     (9529%positive, 7);
+     (9532%positive, 5);
+     (9534%positive, 1);
+     (9578%positive, 4);
+     (9582%positive, 6);
+     (9593%positive, 2);
+     (9598%positive, 1);
+     (10025%positive, 3);
+     (10026%positive, 11);
+     (10040%positive, 1);
+     (10041%positive, 5);
+     (10044%positive, 7);
+     (10089%positive, 3);
+     (10090%positive, 10);
+     (10094%positive, 7);
+     (10104%positive, 1);
+     (10105%positive, 2);
+     (11560%positive, 7);
+     (11562%positive, 2);
+     (11564%positive, 12);
+     (11566%positive, 4);
+     (11576%positive, 3);
+     (11577%positive, 7);
+     (11578%positive, 2);
+     (11580%positive, 10);
+     (11582%positive, 1);
+     (11624%positive, 7);
      (11626%positive, 2);
-     (11641%positive, 3);
-     (11645%positive, 2);
-     (12072%positive, 8);
-     (12076%positive, 9);
-     (12090%positive, 1);
-     (12092%positive, 10);
-     (12093%positive, 7);
-     (12138%positive, 2);
-     (12153%positive, 1);
-     (12154%positive, 1);
-     (12156%positive, 11);
-     (12157%positive, 6)];
-   NgPattE [S1] RgR 1
+     (11628%positive, 12);
+     (11630%positive, 5);
+     (11640%positive, 3);
+     (11641%positive, 2);
+     (11642%positive, 2);
+     (11644%positive, 11);
+     (11646%positive, 1);
+     (12073%positive, 3);
+     (12074%positive, 9);
+     (12088%positive, 1);
+     (12089%positive, 6);
+     (12092%positive, 8);
+     (12137%positive, 3);
+     (12138%positive, 9);
+     (12142%positive, 7);
+     (12152%positive, 1);
+     (12153%positive, 2)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
+    [10041%positive;
+     11630%positive];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9533%positive, 4);
-     (9578%positive, 2);
-     (9593%positive, 3);
-     (9597%positive, 4);
-     (10024%positive, 5);
-     (10028%positive, 9);
-     (10042%positive, 1);
-     (10044%positive, 10);
-     (10045%positive, 5);
-     (10090%positive, 2);
-     (10105%positive, 1);
-     (10106%positive, 1);
-     (10108%positive, 12);
-     (10109%positive, 5);
-     (11577%positive, 3);
-     (11581%positive, 2);
+    [(9512%positive, 8);
+     (9518%positive, 4);
+     (9528%positive, 3);
+     (9529%positive, 7);
+     (9532%positive, 5);
+     (9534%positive, 1);
+     (9578%positive, 4);
+     (9582%positive, 6);
+     (9593%positive, 2);
+     (9598%positive, 1);
+     (10025%positive, 3);
+     (10026%positive, 10);
+     (10040%positive, 1);
+     (10041%positive, 5);
+     (10044%positive, 7);
+     (10089%positive, 3);
+     (10090%positive, 6);
+     (10094%positive, 6);
+     (10104%positive, 1);
+     (10105%positive, 2);
+     (11560%positive, 6);
+     (11562%positive, 2);
+     (11564%positive, 11);
+     (11566%positive, 4);
+     (11576%positive, 3);
+     (11577%positive, 7);
+     (11578%positive, 2);
+     (11580%positive, 9);
+     (11582%positive, 1);
+     (11624%positive, 6);
      (11626%positive, 2);
-     (11641%positive, 3);
-     (11645%positive, 2);
-     (12072%positive, 8);
-     (12076%positive, 9);
-     (12090%positive, 1);
-     (12092%positive, 10);
-     (12093%positive, 7);
-     (12138%positive, 2);
-     (12153%positive, 1);
-     (12154%positive, 1);
-     (12156%positive, 11);
-     (12157%positive, 6)]]
+     (11628%positive, 11);
+     (11630%positive, 3);
+     (11640%positive, 3);
+     (11641%positive, 2);
+     (11642%positive, 2);
+     (11644%positive, 9);
+     (11646%positive, 1);
+     (12073%positive, 3);
+     (12074%positive, 8);
+     (12088%positive, 1);
+     (12089%positive, 5);
+     (12092%positive, 7);
+     (12137%positive, 3);
+     (12138%positive, 8);
+     (12142%positive, 6);
+     (12152%positive, 1);
+     (12153%positive, 2)]]
   end.
 
-Theorem nqh_1RB1LA_0RC1RB_1LC0LD_1LA1RC : NeverQuasiHaltsSt tm_bulkr_00156.
+Theorem nqh_1RB0RC_0LC1LD_1RA1LB_1LB0LA : NeverQuasiHaltsSt tm_bulkr_00156.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 432 11 cert_bulkr_00156).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 608 12 cert_bulkr_00156).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_0RC1RB_1LC0LD_1RA0LA: n=2 t=0 contexts=55 *)
+(** 1RB0RC_0LC1RA_1LD1RC_1RB1LD: n=2 t=0 contexts=39 *)
 
 Definition tm_bulkr_00157 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S0 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DL StC)
-  | StC, S1 => Some (mkTrans S0 DL StD)
-  | StD, S0 => Some (mkTrans S1 DR StA)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StC)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 
 Definition cert_bulkr_00157 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 5);
-     (9578%positive, 3);
-     (9582%positive, 1);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (10042%positive, 2);
-     (10045%positive, 6);
-     (10090%positive, 3);
-     (10094%positive, 1);
-     (10105%positive, 2);
-     (10106%positive, 2);
-     (10109%positive, 6);
-     (11577%positive, 4);
-     (11581%positive, 3);
-     (11626%positive, 3);
-     (11630%positive, 1);
-     (11641%positive, 4);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12090%positive, 2);
-     (12093%positive, 8);
-     (12094%positive, 1);
-     (12138%positive, 3);
-     (12142%positive, 1);
-     (12153%positive, 2);
-     (12154%positive, 2);
-     (12157%positive, 7);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+    [(9518%positive, 4);
+     (9529%positive, 5);
+     (9530%positive, 3);
+     (9534%positive, 7);
+     (9578%positive, 2);
+     (9582%positive, 4);
+     (9593%positive, 8);
+     (9594%positive, 6);
+     (9598%positive, 7);
+     (10031%positive, 2);
+     (10043%positive, 1);
+     (10046%positive, 8);
+     (10047%positive, 3);
+     (10094%positive, 8);
+     (10095%positive, 2);
+     (10107%positive, 1);
+     (10110%positive, 8);
+     (10111%positive, 5);
+     (12075%positive, 1);
+     (12079%positive, 2);
+     (12091%positive, 1);
+     (12094%positive, 10);
+     (12095%positive, 3);
+     (12139%positive, 1);
+     (12142%positive, 11);
+     (12143%positive, 2);
+     (12155%positive, 1);
+     (12158%positive, 9);
+     (12159%positive, 4)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
    NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 5);
-     (9578%positive, 3);
-     (9582%positive, 1);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (10042%positive, 2);
-     (10045%positive, 6);
-     (10090%positive, 3);
-     (10094%positive, 1);
-     (10105%positive, 2);
-     (10106%positive, 2);
-     (10109%positive, 6);
-     (11577%positive, 4);
-     (11581%positive, 3);
-     (11626%positive, 3);
-     (11630%positive, 1);
-     (11641%positive, 4);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12090%positive, 2);
-     (12093%positive, 8);
-     (12094%positive, 1);
-     (12138%positive, 3);
-     (12142%positive, 1);
-     (12153%positive, 2);
-     (12154%positive, 2);
-     (12157%positive, 7);
-     (12158%positive, 1)]]
+    [(9518%positive, 4);
+     (9529%positive, 5);
+     (9530%positive, 3);
+     (9534%positive, 7);
+     (9578%positive, 2);
+     (9582%positive, 4);
+     (9593%positive, 8);
+     (9594%positive, 6);
+     (9598%positive, 7);
+     (10031%positive, 2);
+     (10043%positive, 1);
+     (10046%positive, 8);
+     (10047%positive, 3);
+     (10094%positive, 8);
+     (10095%positive, 2);
+     (10107%positive, 1);
+     (10110%positive, 8);
+     (10111%positive, 5);
+     (12075%positive, 1);
+     (12079%positive, 2);
+     (12091%positive, 1);
+     (12094%positive, 10);
+     (12095%positive, 3);
+     (12139%positive, 1);
+     (12142%positive, 11);
+     (12143%positive, 2);
+     (12155%positive, 1);
+     (12158%positive, 9);
+     (12159%positive, 4)]]
   | StB =>
   [NgRankE
-    [(9516%positive, 1);
-     (9531%positive, 1);
-     (9532%positive, 2);
-     (9578%positive, 9);
-     (9582%positive, 2);
-     (9595%positive, 1);
-     (9596%positive, 5);
-     (10028%positive, 1);
-     (10042%positive, 3);
-     (10044%positive, 2);
-     (10090%positive, 9);
-     (10094%positive, 2);
-     (10106%positive, 8);
+    [(9518%positive, 3);
+     (9530%positive, 2);
+     (9534%positive, 6);
+     (9578%positive, 1);
+     (9582%positive, 3);
+     (9594%positive, 5);
+     (9596%positive, 2);
+     (9598%positive, 6);
+     (10031%positive, 1);
+     (10046%positive, 7);
+     (10047%positive, 2);
+     (10094%positive, 7);
+     (10095%positive, 1);
      (10108%positive, 4);
-     (11563%positive, 1);
-     (11567%positive, 1);
-     (11579%positive, 1);
-     (11583%positive, 2);
-     (11626%positive, 9);
-     (11630%positive, 2);
-     (11643%positive, 1);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 3);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12138%positive, 9);
-     (12142%positive, 2);
-     (12154%positive, 8);
-     (12156%positive, 3);
-     (12158%positive, 7)];
-   NgPattE [S1] RgL 1
+     (10110%positive, 7);
+     (10111%positive, 4);
+     (12079%positive, 1);
+     (12094%positive, 9);
+     (12095%positive, 2);
+     (12142%positive, 10);
+     (12143%positive, 1);
+     (12156%positive, 11);
+     (12158%positive, 8);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
    NgRankE
-    [(9516%positive, 1);
-     (9531%positive, 1);
-     (9532%positive, 2);
-     (9578%positive, 9);
-     (9582%positive, 2);
-     (9595%positive, 1);
-     (9596%positive, 5);
-     (10028%positive, 1);
-     (10042%positive, 3);
-     (10044%positive, 2);
-     (10090%positive, 9);
-     (10094%positive, 2);
-     (10106%positive, 8);
+    [(9518%positive, 3);
+     (9530%positive, 2);
+     (9534%positive, 6);
+     (9578%positive, 1);
+     (9582%positive, 3);
+     (9594%positive, 5);
+     (9596%positive, 2);
+     (9598%positive, 6);
+     (10031%positive, 1);
+     (10046%positive, 7);
+     (10047%positive, 2);
+     (10094%positive, 7);
+     (10095%positive, 1);
      (10108%positive, 4);
-     (11563%positive, 1);
-     (11567%positive, 1);
-     (11579%positive, 1);
-     (11583%positive, 2);
-     (11626%positive, 9);
-     (11630%positive, 2);
-     (11643%positive, 1);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 3);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12138%positive, 9);
-     (12142%positive, 2);
-     (12154%positive, 8);
-     (12156%positive, 3);
-     (12158%positive, 7)]]
+     (10110%positive, 7);
+     (10111%positive, 4);
+     (12079%positive, 1);
+     (12094%positive, 9);
+     (12095%positive, 2);
+     (12142%positive, 10);
+     (12143%positive, 1);
+     (12156%positive, 11);
+     (12158%positive, 8);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9516%positive, 3);
-     (9531%positive, 2);
-     (9532%positive, 7);
-     (9533%positive, 1);
      (9592%positive, 1);
-     (9595%positive, 2);
-     (9596%positive, 10);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10040%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10104%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11563%positive, 5);
-     (11567%positive, 2);
-     (11579%positive, 5);
-     (11581%positive, 1);
-     (11583%positive, 4);
-     (11640%positive, 1);
-     (11643%positive, 5);
-     (11645%positive, 1);
-     (11647%positive, 11);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12088%positive, 4);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12152%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)];
-   NgPattE [S1] RgR 1
+     (9597%positive, 2);
+     (10031%positive, 3);
+     (10043%positive, 3);
+     (10045%positive, 1);
+     (10047%positive, 4);
+     (10095%positive, 3);
+     (10107%positive, 3);
+     (10109%positive, 1);
+     (10111%positive, 6);
+     (12075%positive, 2);
+     (12079%positive, 3);
+     (12091%positive, 2);
+     (12093%positive, 1);
+     (12095%positive, 4);
+     (12139%positive, 2);
+     (12143%positive, 3);
+     (12155%positive, 2);
+     (12157%positive, 1);
+     (12159%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9516%positive, 3);
-     (9531%positive, 2);
-     (9532%positive, 7);
-     (9533%positive, 1);
      (9592%positive, 1);
-     (9595%positive, 2);
-     (9596%positive, 10);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10040%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10104%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11563%positive, 5);
-     (11567%positive, 2);
-     (11579%positive, 5);
-     (11581%positive, 1);
-     (11583%positive, 4);
-     (11640%positive, 1);
-     (11643%positive, 5);
-     (11645%positive, 1);
-     (11647%positive, 11);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12088%positive, 4);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12152%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)]]
+     (9597%positive, 2);
+     (10031%positive, 3);
+     (10043%positive, 3);
+     (10045%positive, 1);
+     (10047%positive, 4);
+     (10095%positive, 3);
+     (10107%positive, 3);
+     (10109%positive, 1);
+     (10111%positive, 6);
+     (12075%positive, 2);
+     (12079%positive, 3);
+     (12091%positive, 2);
+     (12093%positive, 1);
+     (12095%positive, 4);
+     (12139%positive, 2);
+     (12143%positive, 3);
+     (12155%positive, 2);
+     (12157%positive, 1);
+     (12159%positive, 5)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 4);
-     (9516%positive, 6);
-     (9529%positive, 3);
-     (9532%positive, 10);
-     (9533%positive, 4);
-     (9578%positive, 2);
-     (9592%positive, 4);
-     (9593%positive, 3);
-     (9596%positive, 13);
+    [(9512%positive, 3);
+     (9518%positive, 1);
+     (9529%positive, 2);
+     (9534%positive, 1);
+     (9582%positive, 1);
+     (9592%positive, 3);
+     (9593%positive, 2);
+     (9596%positive, 1);
      (9597%positive, 4);
-     (10024%positive, 5);
-     (10028%positive, 9);
-     (10040%positive, 5);
-     (10042%positive, 1);
-     (10044%positive, 10);
-     (10045%positive, 5);
-     (10090%positive, 2);
-     (10104%positive, 5);
-     (10105%positive, 1);
-     (10106%positive, 1);
-     (10108%positive, 12);
-     (10109%positive, 5);
-     (11577%positive, 3);
-     (11581%positive, 2);
-     (11626%positive, 2);
-     (11640%positive, 2);
-     (11641%positive, 3);
-     (11645%positive, 2);
-     (12072%positive, 8);
-     (12076%positive, 9);
-     (12088%positive, 7);
-     (12090%positive, 1);
-     (12092%positive, 10);
+     (9598%positive, 1);
+     (10045%positive, 2);
+     (10046%positive, 2);
+     (10094%positive, 2);
+     (10108%positive, 2);
+     (10109%positive, 2);
+     (10110%positive, 2);
      (12093%positive, 7);
-     (12138%positive, 2);
-     (12152%positive, 7);
-     (12153%positive, 1);
-     (12154%positive, 1);
-     (12156%positive, 11);
-     (12157%positive, 6)];
-   NgPattE [S1] RgR 1
+     (12094%positive, 4);
+     (12142%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 7);
+     (12158%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9516%positive, 6);
-     (9529%positive, 3);
-     (9532%positive, 10);
-     (9533%positive, 4);
-     (9578%positive, 2);
-     (9592%positive, 4);
-     (9593%positive, 3);
-     (9596%positive, 13);
+    [(9512%positive, 3);
+     (9518%positive, 1);
+     (9529%positive, 2);
+     (9534%positive, 1);
+     (9582%positive, 1);
+     (9592%positive, 3);
+     (9593%positive, 2);
+     (9596%positive, 1);
      (9597%positive, 4);
-     (10024%positive, 5);
-     (10028%positive, 9);
-     (10040%positive, 5);
-     (10042%positive, 1);
-     (10044%positive, 10);
-     (10045%positive, 5);
-     (10090%positive, 2);
-     (10104%positive, 5);
-     (10105%positive, 1);
-     (10106%positive, 1);
-     (10108%positive, 12);
-     (10109%positive, 5);
-     (11577%positive, 3);
-     (11581%positive, 2);
-     (11626%positive, 2);
-     (11640%positive, 2);
-     (11641%positive, 3);
-     (11645%positive, 2);
-     (12072%positive, 8);
-     (12076%positive, 9);
-     (12088%positive, 7);
-     (12090%positive, 1);
-     (12092%positive, 10);
+     (9598%positive, 1);
+     (10045%positive, 2);
+     (10046%positive, 2);
+     (10094%positive, 2);
+     (10108%positive, 2);
+     (10109%positive, 2);
+     (10110%positive, 2);
      (12093%positive, 7);
-     (12138%positive, 2);
-     (12152%positive, 7);
-     (12153%positive, 1);
-     (12154%positive, 1);
-     (12156%positive, 11);
-     (12157%positive, 6)]]
+     (12094%positive, 4);
+     (12142%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 7);
+     (12158%positive, 3)]]
   end.
 
-Theorem nqh_1RB1LA_0RC1RB_1LC0LD_1RA0LA : NeverQuasiHaltsSt tm_bulkr_00157.
+Theorem nqh_1RB0RC_0LC1RA_1LD1RC_1RB1LD : NeverQuasiHaltsSt tm_bulkr_00157.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 504 11 cert_bulkr_00157).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 376 11 cert_bulkr_00157).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_0RC1RB_1LC0LD_1RB0LA: n=3 t=0 contexts=113 *)
+(** 1RB0RC_0LC1RA_1RA1LD_0LC0LA: n=2 t=0 contexts=45 *)
 
 Definition tm_bulkr_00158 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S0 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DL StC)
-  | StC, S1 => Some (mkTrans S0 DL StD)
-  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S0 DL StC)
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 
@@ -3644,881 +2153,456 @@ Definition cert_bulkr_00158 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(152761%positive, 20);
-     (152765%positive, 5);
-     (152810%positive, 19);
-     (152825%positive, 4);
-     (152827%positive, 5);
-     (152829%positive, 5);
-     (153066%positive, 3);
-     (153070%positive, 6);
-     (153081%positive, 4);
-     (153083%positive, 5);
-     (153085%positive, 5);
-     (154810%positive, 18);
-     (154813%positive, 6);
-     (154862%positive, 9);
-     (154873%positive, 7);
-     (154874%positive, 2);
-     (154877%positive, 6);
-     (155118%positive, 9);
-     (155129%positive, 7);
-     (155130%positive, 2);
-     (155133%positive, 6);
-     (160955%positive, 8);
-     (161019%positive, 8);
-     (161275%positive, 8);
-     (162990%positive, 17);
-     (163001%positive, 10);
-     (163005%positive, 14);
-     (163006%positive, 1);
-     (163050%positive, 19);
-     (163054%positive, 14);
-     (163065%positive, 10);
-     (163069%positive, 14);
-     (163070%positive, 1);
-     (163306%positive, 3);
-     (163310%positive, 11);
-     (163321%positive, 10);
-     (163325%positive, 14);
-     (163326%positive, 1);
-     (185529%positive, 20);
-     (185533%positive, 5);
-     (185578%positive, 19);
-     (185593%positive, 4);
-     (185595%positive, 5);
-     (185597%positive, 5);
-     (185834%positive, 3);
-     (185838%positive, 6);
-     (185849%positive, 4);
-     (185851%positive, 5);
-     (185853%positive, 5);
-     (187578%positive, 18);
-     (187581%positive, 13);
-     (187630%positive, 9);
-     (187641%positive, 7);
-     (187642%positive, 2);
-     (187645%positive, 13);
-     (187886%positive, 9);
-     (187897%positive, 7);
-     (187898%positive, 2);
-     (187901%positive, 13);
-     (193707%positive, 16);
-     (193721%positive, 20);
-     (193723%positive, 13);
-     (193770%positive, 19);
-     (193785%positive, 4);
-     (193787%positive, 11);
-     (193789%positive, 12);
-     (194026%positive, 3);
-     (194030%positive, 6);
-     (194041%positive, 4);
-     (194043%positive, 11);
-     (194045%positive, 12);
-     (195758%positive, 17);
-     (195769%positive, 15);
-     (195770%positive, 18);
-     (195773%positive, 17);
-     (195774%positive, 1);
-     (195818%positive, 19);
-     (195822%positive, 14);
-     (195833%positive, 12);
-     (195834%positive, 2);
-     (195837%positive, 16);
-     (195838%positive, 1);
-     (196074%positive, 3);
-     (196078%positive, 11);
-     (196089%positive, 11);
-     (196090%positive, 2);
-     (196093%positive, 15);
-     (196094%positive, 1)];
-   NgPattE [S1] RgR 1
+    [(9518%positive, 2);
+     (9529%positive, 5);
+     (9534%positive, 1);
+     (9582%positive, 4);
+     (9593%positive, 2);
+     (9598%positive, 1);
+     (10027%positive, 1);
+     (10041%positive, 4);
+     (10043%positive, 3);
+     (10091%positive, 1);
+     (10105%positive, 2);
+     (10107%positive, 2);
+     (11566%positive, 2);
+     (11577%positive, 5);
+     (11582%positive, 1);
+     (11630%positive, 3);
+     (11641%positive, 2);
+     (11646%positive, 1)];
+   NgPattE [S1; S0] RgL 1
     []
-    [163310%positive;
-     193787%positive;
-     194043%positive;
-     196078%positive;
-     196089%positive];
-   NgPattE [S1] RgR 1
-    []
-    [196093%positive];
+    [10043%positive;
+     11630%positive];
    NgRankE
-    [(152761%positive, 21);
-     (152765%positive, 5);
-     (152810%positive, 20);
-     (152825%positive, 4);
-     (152827%positive, 5);
-     (152829%positive, 5);
-     (153066%positive, 3);
-     (153070%positive, 6);
-     (153081%positive, 4);
-     (153083%positive, 5);
-     (153085%positive, 5);
-     (154810%positive, 19);
-     (154813%positive, 6);
-     (154862%positive, 9);
-     (154873%positive, 7);
-     (154874%positive, 2);
-     (154877%positive, 6);
-     (155118%positive, 9);
-     (155129%positive, 7);
-     (155130%positive, 2);
-     (155133%positive, 6);
-     (160955%positive, 8);
-     (161019%positive, 8);
-     (161275%positive, 8);
-     (162990%positive, 18);
-     (163001%positive, 10);
-     (163005%positive, 13);
-     (163006%positive, 1);
-     (163050%positive, 20);
-     (163054%positive, 15);
-     (163065%positive, 10);
-     (163069%positive, 13);
-     (163070%positive, 1);
-     (163306%positive, 3);
-     (163310%positive, 12);
-     (163321%positive, 10);
-     (163325%positive, 13);
-     (163326%positive, 1);
-     (185529%positive, 21);
-     (185533%positive, 5);
-     (185578%positive, 20);
-     (185593%positive, 4);
-     (185595%positive, 5);
-     (185597%positive, 5);
-     (185834%positive, 3);
-     (185838%positive, 6);
-     (185849%positive, 4);
-     (185851%positive, 5);
-     (185853%positive, 5);
-     (187578%positive, 19);
-     (187581%positive, 12);
-     (187630%positive, 9);
-     (187641%positive, 7);
-     (187642%positive, 2);
-     (187645%positive, 12);
-     (187886%positive, 9);
-     (187897%positive, 7);
-     (187898%positive, 2);
-     (187901%positive, 12);
-     (193707%positive, 17);
-     (193721%positive, 21);
-     (193723%positive, 14);
-     (193770%positive, 20);
-     (193785%positive, 4);
-     (193787%positive, 11);
-     (193789%positive, 11);
-     (194026%positive, 3);
-     (194030%positive, 6);
-     (194041%positive, 4);
-     (194043%positive, 11);
-     (194045%positive, 11);
-     (195758%positive, 18);
-     (195769%positive, 16);
-     (195770%positive, 19);
-     (195773%positive, 16);
-     (195774%positive, 1);
-     (195818%positive, 20);
-     (195822%positive, 15);
-     (195833%positive, 13);
-     (195834%positive, 2);
-     (195837%positive, 15);
-     (195838%positive, 1);
-     (196074%positive, 3);
-     (196078%positive, 12);
-     (196090%positive, 2);
-     (196093%positive, 14);
-     (196094%positive, 1)]]
+    [(9518%positive, 2);
+     (9529%positive, 6);
+     (9534%positive, 1);
+     (9582%positive, 5);
+     (9593%positive, 2);
+     (9598%positive, 1);
+     (10027%positive, 1);
+     (10041%positive, 4);
+     (10043%positive, 4);
+     (10091%positive, 1);
+     (10105%positive, 2);
+     (10107%positive, 2);
+     (11566%positive, 2);
+     (11577%positive, 6);
+     (11582%positive, 1);
+     (11630%positive, 3);
+     (11641%positive, 2);
+     (11646%positive, 1)]]
   | StB =>
   [NgRankE
-    [(152810%positive, 3);
-     (153066%positive, 11);
-     (153070%positive, 1);
-     (154796%positive, 1);
-     (154810%positive, 2);
-     (154812%positive, 2);
-     (154862%positive, 1);
-     (154874%positive, 3);
-     (154876%positive, 3);
-     (155118%positive, 1);
-     (155130%positive, 10);
-     (155132%positive, 6);
-     (162988%positive, 1);
-     (162990%positive, 1);
-     (163004%positive, 2);
-     (163006%positive, 2);
-     (163050%positive, 3);
-     (163054%positive, 1);
-     (163068%positive, 3);
-     (163070%positive, 3);
-     (163306%positive, 11);
-     (163310%positive, 1);
-     (163324%positive, 5);
-     (163326%positive, 9);
-     (185516%positive, 1);
-     (185532%positive, 2);
-     (185578%positive, 3);
-     (185596%positive, 3);
-     (185834%positive, 11);
-     (185838%positive, 1);
-     (185852%positive, 7);
-     (187578%positive, 2);
-     (187630%positive, 1);
-     (187642%positive, 3);
-     (187886%positive, 1);
-     (187898%positive, 10);
-     (193711%positive, 1);
-     (193727%positive, 2);
-     (193770%positive, 3);
-     (193791%positive, 3);
-     (194026%positive, 11);
-     (194030%positive, 1);
-     (194047%positive, 8);
-     (195756%positive, 1);
-     (195758%positive, 1);
-     (195770%positive, 2);
-     (195772%positive, 2);
-     (195774%positive, 2);
-     (195818%positive, 3);
-     (195822%positive, 1);
-     (195834%positive, 3);
-     (195836%positive, 3);
-     (195838%positive, 3);
-     (196074%positive, 11);
-     (196078%positive, 1);
-     (196090%positive, 10);
-     (196092%positive, 4);
-     (196094%positive, 9)];
-   NgPattE [S1] RgL 1
+    [(9518%positive, 3);
+     (9532%positive, 2);
+     (9534%positive, 2);
+     (9578%positive, 1);
+     (9582%positive, 10);
+     (9598%positive, 7);
+     (10026%positive, 4);
+     (10027%positive, 2);
+     (10031%positive, 1);
+     (10043%positive, 9);
+     (10047%positive, 6);
+     (10090%positive, 3);
+     (10091%positive, 2);
+     (10095%positive, 1);
+     (10107%positive, 8);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 5);
+     (11566%positive, 3);
+     (11578%positive, 1);
+     (11580%positive, 3);
+     (11582%positive, 2);
+     (11626%positive, 1);
+     (11628%positive, 5);
+     (11630%positive, 9);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 7)];
+   NgPattE [S1; S0] RgR 1
     []
-    [196092%positive];
+    [10090%positive;
+     11580%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10043%positive;
+     11630%positive];
    NgRankE
-    [(152810%positive, 3);
-     (153066%positive, 11);
-     (153070%positive, 1);
-     (154796%positive, 1);
-     (154810%positive, 2);
-     (154812%positive, 2);
-     (154862%positive, 1);
-     (154874%positive, 3);
-     (154876%positive, 3);
-     (155118%positive, 1);
-     (155130%positive, 10);
-     (155132%positive, 6);
-     (162988%positive, 1);
-     (162990%positive, 1);
-     (163004%positive, 2);
-     (163006%positive, 2);
-     (163050%positive, 3);
-     (163054%positive, 1);
-     (163068%positive, 3);
-     (163070%positive, 3);
-     (163306%positive, 11);
-     (163310%positive, 1);
-     (163324%positive, 5);
-     (163326%positive, 9);
-     (185516%positive, 1);
-     (185532%positive, 2);
-     (185578%positive, 3);
-     (185596%positive, 3);
-     (185834%positive, 11);
-     (185838%positive, 1);
-     (185852%positive, 7);
-     (187578%positive, 2);
-     (187630%positive, 1);
-     (187642%positive, 3);
-     (187886%positive, 1);
-     (187898%positive, 10);
-     (193711%positive, 1);
-     (193727%positive, 2);
-     (193770%positive, 3);
-     (193791%positive, 3);
-     (194026%positive, 11);
-     (194030%positive, 1);
-     (194047%positive, 8);
-     (195756%positive, 1);
-     (195758%positive, 1);
-     (195770%positive, 2);
-     (195772%positive, 2);
-     (195774%positive, 2);
-     (195818%positive, 3);
-     (195822%positive, 1);
-     (195834%positive, 3);
-     (195836%positive, 3);
-     (195838%positive, 3);
-     (196074%positive, 11);
-     (196078%positive, 1);
-     (196090%positive, 10);
-     (196092%positive, 4);
-     (196094%positive, 9)]]
+    [(9518%positive, 3);
+     (9532%positive, 2);
+     (9534%positive, 2);
+     (9578%positive, 1);
+     (9582%positive, 12);
+     (9598%positive, 8);
+     (10026%positive, 5);
+     (10027%positive, 2);
+     (10031%positive, 1);
+     (10043%positive, 11);
+     (10047%positive, 7);
+     (10090%positive, 3);
+     (10091%positive, 2);
+     (10095%positive, 1);
+     (10107%positive, 9);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 6);
+     (11566%positive, 3);
+     (11578%positive, 1);
+     (11580%positive, 4);
+     (11582%positive, 2);
+     (11626%positive, 1);
+     (11628%positive, 6);
+     (11630%positive, 10);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 8)]]
   | StC =>
   [NgRankE
-    [(152744%positive, 1);
-     (152765%positive, 1);
-     (152827%positive, 1);
-     (152829%positive, 1);
-     (153083%positive, 1);
-     (153085%positive, 1);
-     (154792%positive, 2);
-     (154796%positive, 4);
-     (154812%positive, 9);
-     (154813%positive, 2);
-     (154876%positive, 10);
-     (154877%positive, 2);
-     (155132%positive, 13);
-     (155133%positive, 2);
-     (160955%positive, 1);
-     (161019%positive, 1);
-     (161275%positive, 1);
-     (162984%positive, 3);
-     (162988%positive, 8);
-     (163004%positive, 9);
-     (163005%positive, 3);
-     (163068%positive, 10);
-     (163069%positive, 3);
-     (163324%positive, 12);
-     (163325%positive, 3);
-     (185512%positive, 1);
-     (185516%positive, 3);
-     (185532%positive, 5);
-     (185533%positive, 1);
-     (185595%positive, 1);
-     (185596%positive, 10);
-     (185597%positive, 1);
-     (185851%positive, 1);
-     (185852%positive, 14);
-     (185853%positive, 1);
-     (187581%positive, 2);
-     (187645%positive, 2);
-     (187901%positive, 2);
-     (193707%positive, 1);
-     (193711%positive, 2);
-     (193723%positive, 1);
-     (193727%positive, 4);
-     (193787%positive, 1);
-     (193789%positive, 1);
-     (193791%positive, 6);
-     (194043%positive, 1);
-     (194045%positive, 1);
-     (194047%positive, 15);
-     (195752%positive, 7);
-     (195756%positive, 8);
-     (195772%positive, 9);
-     (195773%positive, 6);
-     (195836%positive, 10);
-     (195837%positive, 5);
-     (196092%positive, 11);
-     (196093%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9592%positive, 1);
+     (9597%positive, 2);
+     (10031%positive, 2);
+     (10040%positive, 4);
+     (10047%positive, 1);
+     (10095%positive, 2);
+     (10104%positive, 3);
+     (10111%positive, 1);
+     (11560%positive, 1);
+     (11576%positive, 1);
+     (11624%positive, 1);
+     (11640%positive, 1);
+     (11645%positive, 3)];
+   NgPattE [S1; S0] RgA 1
     []
-    [196093%positive];
-   NgPattE [S1] RgL 1
-    []
-    [196092%positive];
+    [10104%positive;
+     11645%positive];
    NgRankE
-    [(152744%positive, 1);
-     (152765%positive, 1);
-     (152827%positive, 1);
-     (152829%positive, 1);
-     (153083%positive, 1);
-     (153085%positive, 1);
-     (154792%positive, 2);
-     (154796%positive, 4);
-     (154812%positive, 9);
-     (154813%positive, 2);
-     (154876%positive, 10);
-     (154877%positive, 2);
-     (155132%positive, 13);
-     (155133%positive, 2);
-     (160955%positive, 1);
-     (161019%positive, 1);
-     (161275%positive, 1);
-     (162984%positive, 3);
-     (162988%positive, 8);
-     (163004%positive, 9);
-     (163005%positive, 3);
-     (163068%positive, 10);
-     (163069%positive, 3);
-     (163324%positive, 12);
-     (163325%positive, 3);
-     (185512%positive, 1);
-     (185516%positive, 3);
-     (185532%positive, 5);
-     (185533%positive, 1);
-     (185595%positive, 1);
-     (185596%positive, 10);
-     (185597%positive, 1);
-     (185851%positive, 1);
-     (185852%positive, 14);
-     (185853%positive, 1);
-     (187581%positive, 2);
-     (187645%positive, 2);
-     (187901%positive, 2);
-     (193707%positive, 1);
-     (193711%positive, 2);
-     (193723%positive, 1);
-     (193727%positive, 4);
-     (193787%positive, 1);
-     (193789%positive, 1);
-     (193791%positive, 6);
-     (194043%positive, 1);
-     (194045%positive, 1);
-     (194047%positive, 15);
-     (195752%positive, 7);
-     (195756%positive, 8);
-     (195772%positive, 9);
-     (195773%positive, 6);
-     (195836%positive, 10);
-     (195837%positive, 5);
-     (196092%positive, 11);
-     (196093%positive, 4)]]
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9592%positive, 1);
+     (9597%positive, 2);
+     (10031%positive, 2);
+     (10040%positive, 5);
+     (10047%positive, 1);
+     (10095%positive, 2);
+     (10104%positive, 3);
+     (10111%positive, 1);
+     (11560%positive, 1);
+     (11576%positive, 1);
+     (11624%positive, 1);
+     (11640%positive, 1);
+     (11645%positive, 4)]]
   | StD =>
   [NgRankE
-    [(152744%positive, 4);
-     (152761%positive, 3);
-     (152765%positive, 4);
-     (152810%positive, 2);
-     (152825%positive, 3);
-     (152829%positive, 4);
-     (153066%positive, 2);
-     (153081%positive, 3);
-     (153085%positive, 4);
-     (154792%positive, 5);
-     (154796%positive, 7);
-     (154810%positive, 1);
-     (154812%positive, 12);
-     (154813%positive, 5);
-     (154873%positive, 1);
-     (154874%positive, 1);
-     (154876%positive, 13);
-     (154877%positive, 5);
-     (155129%positive, 1);
-     (155130%positive, 1);
-     (155132%positive, 16);
-     (155133%positive, 5);
-     (162984%positive, 6);
-     (162988%positive, 11);
-     (163001%positive, 1);
-     (163004%positive, 12);
-     (163005%positive, 6);
-     (163050%positive, 2);
-     (163065%positive, 1);
-     (163068%positive, 13);
-     (163069%positive, 6);
-     (163306%positive, 2);
-     (163321%positive, 1);
-     (163324%positive, 15);
-     (163325%positive, 6);
-     (185512%positive, 4);
-     (185516%positive, 6);
-     (185529%positive, 3);
-     (185532%positive, 8);
-     (185533%positive, 4);
-     (185578%positive, 2);
-     (185593%positive, 3);
-     (185596%positive, 13);
-     (185597%positive, 4);
-     (185834%positive, 2);
-     (185849%positive, 3);
-     (185852%positive, 17);
-     (185853%positive, 4);
-     (187578%positive, 1);
-     (187581%positive, 3);
-     (187641%positive, 1);
-     (187642%positive, 1);
-     (187645%positive, 3);
-     (187897%positive, 1);
-     (187898%positive, 1);
-     (187901%positive, 3);
-     (193721%positive, 3);
-     (193770%positive, 2);
-     (193785%positive, 3);
-     (193789%positive, 2);
-     (194026%positive, 2);
-     (194041%positive, 3);
-     (194045%positive, 2);
-     (195752%positive, 10);
-     (195756%positive, 11);
-     (195769%positive, 1);
-     (195770%positive, 1);
-     (195772%positive, 12);
-     (195773%positive, 9);
-     (195818%positive, 2);
-     (195833%positive, 1);
-     (195834%positive, 1);
-     (195836%positive, 13);
-     (195837%positive, 8);
-     (196074%positive, 2);
-     (196089%positive, 1);
-     (196090%positive, 1);
-     (196092%positive, 14);
-     (196093%positive, 7)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 2);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 7);
+     (9578%positive, 3);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 3);
+     (10026%positive, 9);
+     (10040%positive, 5);
+     (10041%positive, 1);
+     (10090%positive, 8);
+     (10104%positive, 4);
+     (10105%positive, 1);
+     (11560%positive, 2);
+     (11562%positive, 6);
+     (11564%positive, 10);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11578%positive, 5);
+     (11580%positive, 8);
+     (11624%positive, 2);
+     (11626%positive, 6);
+     (11628%positive, 10);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11642%positive, 5);
+     (11644%positive, 9);
+     (11645%positive, 4)];
+   NgPattE [S1; S0] RgA 1
     []
-    [196093%positive];
-   NgPattE [S1] RgL 1
+    [10104%positive;
+     11645%positive];
+   NgPattE [S1; S0] RgR 1
     []
-    [196092%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(152744%positive, 4);
-     (152761%positive, 3);
-     (152765%positive, 4);
-     (152810%positive, 2);
-     (152825%positive, 3);
-     (152829%positive, 4);
-     (153066%positive, 2);
-     (153081%positive, 3);
-     (153085%positive, 4);
-     (154792%positive, 5);
-     (154796%positive, 7);
-     (154810%positive, 1);
-     (154812%positive, 12);
-     (154813%positive, 5);
-     (154873%positive, 1);
-     (154874%positive, 1);
-     (154876%positive, 13);
-     (154877%positive, 5);
-     (155129%positive, 1);
-     (155130%positive, 1);
-     (155132%positive, 16);
-     (155133%positive, 5);
-     (162984%positive, 6);
-     (162988%positive, 11);
-     (163001%positive, 1);
-     (163004%positive, 12);
-     (163005%positive, 6);
-     (163050%positive, 2);
-     (163065%positive, 1);
-     (163068%positive, 13);
-     (163069%positive, 6);
-     (163306%positive, 2);
-     (163321%positive, 1);
-     (163324%positive, 15);
-     (163325%positive, 6);
-     (185512%positive, 4);
-     (185516%positive, 6);
-     (185529%positive, 3);
-     (185532%positive, 8);
-     (185533%positive, 4);
-     (185578%positive, 2);
-     (185593%positive, 3);
-     (185596%positive, 13);
-     (185597%positive, 4);
-     (185834%positive, 2);
-     (185849%positive, 3);
-     (185852%positive, 17);
-     (185853%positive, 4);
-     (187578%positive, 1);
-     (187581%positive, 3);
-     (187641%positive, 1);
-     (187642%positive, 1);
-     (187645%positive, 3);
-     (187897%positive, 1);
-     (187898%positive, 1);
-     (187901%positive, 3);
-     (193721%positive, 3);
-     (193770%positive, 2);
-     (193785%positive, 3);
-     (193789%positive, 2);
-     (194026%positive, 2);
-     (194041%positive, 3);
-     (194045%positive, 2);
-     (195752%positive, 10);
-     (195756%positive, 11);
-     (195769%positive, 1);
-     (195770%positive, 1);
-     (195772%positive, 12);
-     (195773%positive, 9);
-     (195818%positive, 2);
-     (195833%positive, 1);
-     (195834%positive, 1);
-     (195836%positive, 13);
-     (195837%positive, 8);
-     (196074%positive, 2);
-     (196089%positive, 1);
-     (196090%positive, 1);
-     (196092%positive, 14);
-     (196093%positive, 7)]]
+    [(9512%positive, 2);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 8);
+     (9578%positive, 3);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 3);
+     (10026%positive, 11);
+     (10040%positive, 6);
+     (10041%positive, 1);
+     (10090%positive, 9);
+     (10104%positive, 4);
+     (10105%positive, 1);
+     (11560%positive, 2);
+     (11562%positive, 7);
+     (11564%positive, 12);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11578%positive, 5);
+     (11580%positive, 10);
+     (11624%positive, 2);
+     (11626%positive, 7);
+     (11628%positive, 12);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11642%positive, 5);
+     (11644%positive, 10);
+     (11645%positive, 5)]]
   end.
 
-Theorem nqh_1RB1LA_0RC1RB_1LC0LD_1RB0LA : NeverQuasiHaltsSt tm_bulkr_00158.
+Theorem nqh_1RB0RC_0LC1RA_1RA1LD_0LC0LA : NeverQuasiHaltsSt tm_bulkr_00158.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 3 0 968 15 cert_bulkr_00158).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 424 11 cert_bulkr_00158).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_0RC1RC_1LA0RD_0LB1RD: n=2 t=0 contexts=43 *)
+(** 1RB0RC_0LC1RA_1RA1LD_0RB0LA: n=2 t=0 contexts=46 *)
 
 Definition tm_bulkr_00159 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S0 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StC)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S0 DL StB)
-  | StD, S1 => Some (mkTrans S1 DR StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S0 DR StB)
+  | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 
 Definition cert_bulkr_00159 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9517%positive, 1);
-     (9529%positive, 1);
-     (9531%positive, 2);
-     (9533%positive, 1);
-     (9535%positive, 3);
-     (9579%positive, 2);
-     (9581%positive, 1);
-     (9583%positive, 3);
-     (9593%positive, 1);
-     (9595%positive, 2);
-     (9597%positive, 1);
-     (9598%positive, 3);
-     (9599%positive, 3);
-     (10045%positive, 4);
-     (10047%positive, 4);
-     (10095%positive, 4);
-     (10109%positive, 4);
-     (10110%positive, 4);
-     (10111%positive, 4);
-     (12093%positive, 9);
-     (12095%positive, 6);
-     (12143%positive, 7);
-     (12157%positive, 9);
-     (12158%positive, 8);
-     (12159%positive, 5)];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
-   NgRankE
-    [(9517%positive, 1);
-     (9529%positive, 1);
-     (9531%positive, 2);
-     (9533%positive, 1);
-     (9535%positive, 3);
-     (9579%positive, 2);
-     (9581%positive, 1);
-     (9583%positive, 3);
-     (9593%positive, 1);
-     (9595%positive, 2);
-     (9597%positive, 1);
-     (9598%positive, 3);
-     (9599%positive, 3);
-     (10045%positive, 4);
-     (10047%positive, 4);
-     (10095%positive, 4);
-     (10109%positive, 4);
-     (10110%positive, 4);
-     (10111%positive, 4);
-     (12093%positive, 9);
-     (12095%positive, 6);
-     (12143%positive, 7);
-     (12157%positive, 9);
-     (12158%positive, 8);
-     (12159%positive, 5)]]
+    [(9518%positive, 2);
+     (9529%positive, 3);
+     (9534%positive, 1);
+     (9582%positive, 2);
+     (9593%positive, 2);
+     (9598%positive, 1);
+     (10027%positive, 1);
+     (10041%positive, 3);
+     (10043%positive, 1);
+     (10091%positive, 1);
+     (10105%positive, 2);
+     (10107%positive, 1);
+     (11566%positive, 2);
+     (11577%positive, 3);
+     (11582%positive, 1);
+     (11630%positive, 2);
+     (11641%positive, 2);
+     (11646%positive, 1)]]
   | StB =>
   [NgRankE
-    [(9530%positive, 2);
-     (9535%positive, 1);
+    [(9518%positive, 1);
+     (9532%positive, 2);
+     (9534%positive, 2);
      (9578%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 5);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
-     (10092%positive, 1);
-     (10095%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 4);
-     (12140%positive, 1);
-     (12143%positive, 5);
-     (12156%positive, 3);
-     (12158%positive, 6);
-     (12159%positive, 3)];
-   NgPattE [S1] RgL 1
+     (9582%positive, 1);
+     (9598%positive, 7);
+     (10026%positive, 4);
+     (10031%positive, 1);
+     (10047%positive, 6);
+     (10090%positive, 3);
+     (10095%positive, 1);
+     (10111%positive, 5);
+     (11564%positive, 5);
+     (11566%positive, 1);
+     (11580%positive, 3);
+     (11582%positive, 2);
+     (11626%positive, 1);
+     (11628%positive, 5);
+     (11630%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 7)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9530%positive, 2);
-     (9535%positive, 1);
+    [(9518%positive, 1);
+     (9532%positive, 2);
+     (9534%positive, 2);
      (9578%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 5);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
-     (10092%positive, 1);
-     (10095%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 4);
-     (12140%positive, 1);
-     (12143%positive, 5);
-     (12156%positive, 3);
-     (12158%positive, 6);
-     (12159%positive, 3)]]
+     (9582%positive, 1);
+     (9598%positive, 8);
+     (10026%positive, 5);
+     (10031%positive, 1);
+     (10047%positive, 7);
+     (10090%positive, 3);
+     (10095%positive, 1);
+     (10111%positive, 5);
+     (11564%positive, 6);
+     (11566%positive, 1);
+     (11580%positive, 4);
+     (11582%positive, 2);
+     (11626%positive, 1);
+     (11628%positive, 6);
+     (11630%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 8)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9531%positive, 1);
-     (9535%positive, 2);
-     (9579%positive, 1);
-     (9583%positive, 2);
-     (9595%positive, 1);
-     (9599%positive, 2);
-     (10028%positive, 2);
-     (10040%positive, 1);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10104%positive, 1);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)];
-   NgPattE [S1] RgL 1
+     (9517%positive, 2);
+     (9528%positive, 1);
+     (9581%positive, 2);
+     (9592%positive, 1);
+     (9597%positive, 2);
+     (10027%positive, 6);
+     (10031%positive, 2);
+     (10040%positive, 4);
+     (10043%positive, 6);
+     (10047%positive, 1);
+     (10091%positive, 6);
+     (10095%positive, 2);
+     (10104%positive, 3);
+     (10107%positive, 6);
+     (10111%positive, 1);
+     (11560%positive, 1);
+     (11565%positive, 5);
+     (11576%positive, 1);
+     (11624%positive, 1);
+     (11629%positive, 5);
+     (11640%positive, 1);
+     (11645%positive, 3)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
+    [10104%positive;
+     11645%positive];
    NgRankE
     [(9512%positive, 1);
-     (9531%positive, 1);
-     (9535%positive, 2);
-     (9579%positive, 1);
-     (9583%positive, 2);
-     (9595%positive, 1);
-     (9599%positive, 2);
-     (10028%positive, 2);
-     (10040%positive, 1);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10104%positive, 1);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)]]
+     (9517%positive, 2);
+     (9528%positive, 1);
+     (9581%positive, 2);
+     (9592%positive, 1);
+     (9597%positive, 2);
+     (10027%positive, 7);
+     (10031%positive, 2);
+     (10040%positive, 5);
+     (10043%positive, 7);
+     (10047%positive, 1);
+     (10091%positive, 7);
+     (10095%positive, 2);
+     (10104%positive, 3);
+     (10107%positive, 7);
+     (10111%positive, 1);
+     (11560%positive, 1);
+     (11565%positive, 6);
+     (11576%positive, 1);
+     (11624%positive, 1);
+     (11629%positive, 6);
+     (11640%positive, 1);
+     (11645%positive, 4)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 12);
-     (9517%positive, 5);
-     (9529%positive, 11);
-     (9530%positive, 4);
-     (9533%positive, 8);
-     (9578%positive, 10);
-     (9581%positive, 5);
-     (9593%positive, 11);
-     (9594%positive, 7);
-     (9597%positive, 8);
-     (10028%positive, 3);
-     (10040%positive, 9);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10104%positive, 9);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 2);
+     (9517%positive, 3);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 7);
+     (9578%positive, 3);
+     (9581%positive, 3);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 3);
+     (10026%positive, 9);
+     (10040%positive, 5);
+     (10041%positive, 1);
+     (10090%positive, 8);
+     (10104%positive, 4);
+     (10105%positive, 1);
+     (11560%positive, 2);
+     (11564%positive, 10);
+     (11565%positive, 6);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11580%positive, 8);
+     (11624%positive, 2);
+     (11626%positive, 6);
+     (11628%positive, 10);
+     (11629%positive, 6);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11644%positive, 9);
+     (11645%positive, 4)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12156%positive];
+    [10104%positive;
+     11645%positive];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9512%positive, 12);
-     (9517%positive, 5);
-     (9529%positive, 11);
-     (9530%positive, 4);
-     (9533%positive, 8);
-     (9578%positive, 10);
-     (9581%positive, 5);
-     (9593%positive, 11);
-     (9594%positive, 7);
-     (9597%positive, 8);
-     (10028%positive, 3);
-     (10040%positive, 9);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10104%positive, 9);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)]]
+    [(9512%positive, 2);
+     (9517%positive, 3);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 8);
+     (9578%positive, 3);
+     (9581%positive, 3);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 3);
+     (10026%positive, 11);
+     (10040%positive, 6);
+     (10041%positive, 1);
+     (10090%positive, 9);
+     (10104%positive, 4);
+     (10105%positive, 1);
+     (11560%positive, 2);
+     (11564%positive, 12);
+     (11565%positive, 7);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11580%positive, 10);
+     (11624%positive, 2);
+     (11626%positive, 7);
+     (11628%positive, 12);
+     (11629%positive, 7);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11644%positive, 10);
+     (11645%positive, 5)]]
   end.
 
-Theorem nqh_1RB1LA_0RC1RC_1LA0RD_0LB1RD : NeverQuasiHaltsSt tm_bulkr_00159.
+Theorem nqh_1RB0RC_0LC1RA_1RA1LD_0RB0LA : NeverQuasiHaltsSt tm_bulkr_00159.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 408 11 cert_bulkr_00159).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 432 11 cert_bulkr_00159).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LA0RC_1RD1RC_1LD0LA: n=2 t=0 contexts=87 *)
+(** 1RB0RC_0LC1RA_1RA1LD_1RD0LA: n=2 t=0 contexts=51 *)
 
 Definition tm_bulkr_00160 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StA)
-  | StB, S1 => Some (mkTrans S0 DR StC)
-  | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DL StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S1 DR StD)
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 
@@ -4526,3367 +2610,4554 @@ Definition cert_bulkr_00160 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9530%positive, 2);
-     (9531%positive, 1);
-     (9533%positive, 3);
-     (9534%positive, 3);
-     (9578%positive, 2);
-     (9582%positive, 3);
-     (9594%positive, 2);
-     (9595%positive, 1);
-     (9597%positive, 3);
-     (9598%positive, 3);
-     (10042%positive, 1);
+    [(9518%positive, 2);
+     (9529%positive, 3);
+     (9534%positive, 1);
+     (9582%positive, 2);
+     (9593%positive, 2);
+     (9598%positive, 1);
+     (10027%positive, 1);
+     (10041%positive, 3);
      (10043%positive, 1);
-     (10045%positive, 4);
-     (10046%positive, 4);
-     (10090%positive, 1);
-     (10094%positive, 4);
-     (10106%positive, 1);
+     (10091%positive, 1);
+     (10105%positive, 2);
      (10107%positive, 1);
-     (10109%positive, 4);
-     (10110%positive, 4);
-     (11578%positive, 2);
-     (11579%positive, 1);
-     (11581%positive, 2);
-     (11582%positive, 2);
-     (11626%positive, 2);
+     (11566%positive, 2);
+     (11577%positive, 3);
+     (11582%positive, 1);
      (11630%positive, 2);
-     (11642%positive, 2);
-     (11643%positive, 1);
-     (11645%positive, 2);
-     (11646%positive, 2);
-     (12090%positive, 1);
-     (12091%positive, 1);
-     (12093%positive, 8);
-     (12094%positive, 6);
-     (12138%positive, 1);
-     (12142%positive, 7);
-     (12154%positive, 1);
-     (12155%positive, 1);
-     (12157%positive, 8);
-     (12158%positive, 5)];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
-   NgRankE
-    [(9530%positive, 2);
-     (9531%positive, 1);
-     (9533%positive, 3);
-     (9534%positive, 3);
-     (9578%positive, 2);
-     (9582%positive, 3);
-     (9594%positive, 2);
-     (9595%positive, 1);
-     (9597%positive, 3);
-     (9598%positive, 3);
-     (10042%positive, 1);
-     (10043%positive, 1);
-     (10045%positive, 4);
-     (10046%positive, 4);
-     (10090%positive, 1);
-     (10094%positive, 4);
-     (10106%positive, 1);
-     (10107%positive, 1);
-     (10109%positive, 4);
-     (10110%positive, 4);
-     (11578%positive, 2);
-     (11579%positive, 1);
-     (11581%positive, 2);
-     (11582%positive, 2);
-     (11626%positive, 2);
-     (11630%positive, 2);
-     (11642%positive, 2);
-     (11643%positive, 1);
-     (11645%positive, 2);
-     (11646%positive, 2);
-     (12090%positive, 1);
-     (12091%positive, 1);
-     (12093%positive, 8);
-     (12094%positive, 6);
-     (12138%positive, 1);
-     (12142%positive, 7);
-     (12154%positive, 1);
-     (12155%positive, 1);
-     (12157%positive, 8);
-     (12158%positive, 5)]]
+     (11641%positive, 2);
+     (11646%positive, 1)]]
   | StB =>
   [NgRankE
-    [(9516%positive, 1);
-     (9530%positive, 8);
-     (9531%positive, 2);
+    [(9514%positive, 1);
+     (9516%positive, 2);
+     (9518%positive, 5);
      (9532%positive, 2);
-     (9534%positive, 9);
-     (9535%positive, 2);
-     (9578%positive, 3);
-     (9580%positive, 1);
-     (9582%positive, 9);
-     (9594%positive, 8);
-     (9595%positive, 7);
-     (9596%positive, 5);
-     (9598%positive, 9);
-     (9599%positive, 6);
-     (10028%positive, 1);
+     (9534%positive, 2);
+     (9535%positive, 3);
+     (9578%positive, 1);
+     (9580%positive, 2);
+     (9582%positive, 5);
+     (9596%positive, 2);
+     (9598%positive, 7);
+     (9599%positive, 3);
+     (10026%positive, 4);
+     (10027%positive, 4);
      (10031%positive, 1);
-     (10042%positive, 7);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 10);
-     (10047%positive, 2);
+     (10043%positive, 4);
+     (10047%positive, 6);
      (10090%positive, 3);
-     (10092%positive, 1);
-     (10094%positive, 10);
+     (10091%positive, 4);
      (10095%positive, 1);
-     (10106%positive, 7);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 10);
-     (10111%positive, 6);
-     (11564%positive, 1);
-     (11578%positive, 8);
-     (11579%positive, 2);
-     (11580%positive, 2);
-     (11582%positive, 8);
-     (11583%positive, 2);
-     (11626%positive, 3);
-     (11628%positive, 1);
-     (11630%positive, 8);
-     (11642%positive, 8);
-     (11643%positive, 7);
-     (11644%positive, 5);
-     (11646%positive, 8);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12079%positive, 1);
-     (12090%positive, 7);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 12);
-     (12095%positive, 2);
-     (12138%positive, 3);
-     (12140%positive, 1);
-     (12142%positive, 13);
-     (12143%positive, 1);
-     (12154%positive, 7);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 11);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (10107%positive, 4);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 5);
+     (11566%positive, 5);
+     (11580%positive, 3);
+     (11582%positive, 2);
+     (11583%positive, 3);
+     (11626%positive, 1);
+     (11628%positive, 5);
+     (11630%positive, 5);
+     (11644%positive, 4);
+     (11646%positive, 7);
+     (11647%positive, 3)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9516%positive, 1);
-     (9530%positive, 8);
-     (9531%positive, 2);
+    [(9514%positive, 1);
+     (9516%positive, 2);
+     (9518%positive, 5);
      (9532%positive, 2);
-     (9534%positive, 9);
-     (9535%positive, 2);
-     (9578%positive, 3);
-     (9580%positive, 1);
-     (9582%positive, 9);
-     (9594%positive, 8);
-     (9595%positive, 7);
-     (9596%positive, 5);
-     (9598%positive, 9);
-     (9599%positive, 6);
-     (10028%positive, 1);
+     (9534%positive, 2);
+     (9535%positive, 3);
+     (9578%positive, 1);
+     (9580%positive, 2);
+     (9582%positive, 5);
+     (9596%positive, 2);
+     (9598%positive, 8);
+     (9599%positive, 3);
+     (10026%positive, 5);
+     (10027%positive, 4);
      (10031%positive, 1);
-     (10042%positive, 7);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 10);
-     (10047%positive, 2);
+     (10043%positive, 4);
+     (10047%positive, 7);
      (10090%positive, 3);
-     (10092%positive, 1);
-     (10094%positive, 10);
+     (10091%positive, 4);
      (10095%positive, 1);
-     (10106%positive, 7);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 10);
-     (10111%positive, 6);
-     (11564%positive, 1);
-     (11578%positive, 8);
-     (11579%positive, 2);
-     (11580%positive, 2);
-     (11582%positive, 8);
-     (11583%positive, 2);
-     (11626%positive, 3);
-     (11628%positive, 1);
-     (11630%positive, 8);
-     (11642%positive, 8);
-     (11643%positive, 7);
-     (11644%positive, 5);
+     (10107%positive, 4);
+     (10111%positive, 5);
+     (11562%positive, 1);
+     (11564%positive, 6);
+     (11566%positive, 5);
+     (11580%positive, 4);
+     (11582%positive, 2);
+     (11583%positive, 3);
+     (11626%positive, 1);
+     (11628%positive, 6);
+     (11630%positive, 5);
+     (11644%positive, 4);
      (11646%positive, 8);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12079%positive, 1);
-     (12090%positive, 7);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 12);
-     (12095%positive, 2);
-     (12138%positive, 3);
-     (12140%positive, 1);
-     (12142%positive, 13);
-     (12143%positive, 1);
-     (12154%positive, 7);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 11);
-     (12159%positive, 6)]]
+     (11647%positive, 3)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 4);
-     (9516%positive, 2);
-     (9529%positive, 3);
-     (9531%positive, 8);
-     (9532%positive, 3);
-     (9535%positive, 3);
-     (9580%positive, 2);
-     (9595%positive, 8);
-     (9596%positive, 6);
-     (9599%positive, 7);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10031%positive, 5);
-     (10040%positive, 1);
-     (10041%positive, 3);
-     (10043%positive, 8);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10088%positive, 1);
-     (10092%positive, 2);
-     (10095%positive, 7);
-     (10104%positive, 1);
-     (10105%positive, 5);
-     (10107%positive, 8);
-     (10108%positive, 5);
-     (10111%positive, 7);
-     (11560%positive, 4);
-     (11564%positive, 2);
-     (11576%positive, 6);
-     (11577%positive, 3);
-     (11579%positive, 8);
-     (11580%positive, 3);
-     (11583%positive, 3);
-     (11624%positive, 4);
-     (11628%positive, 2);
-     (11640%positive, 6);
-     (11643%positive, 8);
-     (11644%positive, 6);
-     (11647%positive, 7);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12079%positive, 5);
-     (12088%positive, 1);
-     (12089%positive, 3);
-     (12091%positive, 8);
-     (12092%positive, 3);
-     (12095%positive, 3);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 7);
-     (12152%positive, 1);
-     (12153%positive, 5);
-     (12155%positive, 8);
-     (12156%positive, 4);
-     (12159%positive, 7)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9535%positive, 1);
+     (9592%positive, 1);
+     (9597%positive, 2);
+     (9599%positive, 1);
+     (10027%positive, 2);
+     (10031%positive, 2);
+     (10040%positive, 4);
+     (10043%positive, 2);
+     (10047%positive, 1);
+     (10091%positive, 2);
+     (10095%positive, 2);
+     (10104%positive, 3);
+     (10107%positive, 2);
+     (10111%positive, 1);
+     (11560%positive, 1);
+     (11576%positive, 1);
+     (11583%positive, 1);
+     (11624%positive, 1);
+     (11640%positive, 1);
+     (11645%positive, 3);
+     (11647%positive, 1)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12156%positive];
+    [10104%positive;
+     11645%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9516%positive, 2);
-     (9529%positive, 3);
-     (9531%positive, 8);
-     (9532%positive, 3);
-     (9535%positive, 3);
-     (9580%positive, 2);
-     (9595%positive, 8);
-     (9596%positive, 6);
-     (9599%positive, 7);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10031%positive, 5);
-     (10040%positive, 1);
-     (10041%positive, 3);
-     (10043%positive, 8);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10088%positive, 1);
-     (10092%positive, 2);
-     (10095%positive, 7);
-     (10104%positive, 1);
-     (10105%positive, 5);
-     (10107%positive, 8);
-     (10108%positive, 5);
-     (10111%positive, 7);
-     (11560%positive, 4);
-     (11564%positive, 2);
-     (11576%positive, 6);
-     (11577%positive, 3);
-     (11579%positive, 8);
-     (11580%positive, 3);
-     (11583%positive, 3);
-     (11624%positive, 4);
-     (11628%positive, 2);
-     (11640%positive, 6);
-     (11643%positive, 8);
-     (11644%positive, 6);
-     (11647%positive, 7);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12079%positive, 5);
-     (12088%positive, 1);
-     (12089%positive, 3);
-     (12091%positive, 8);
-     (12092%positive, 3);
-     (12095%positive, 3);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 7);
-     (12152%positive, 1);
-     (12153%positive, 5);
-     (12155%positive, 8);
-     (12156%positive, 4);
-     (12159%positive, 7)]]
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9535%positive, 1);
+     (9592%positive, 1);
+     (9597%positive, 2);
+     (9599%positive, 1);
+     (10027%positive, 2);
+     (10031%positive, 2);
+     (10040%positive, 5);
+     (10043%positive, 2);
+     (10047%positive, 1);
+     (10091%positive, 2);
+     (10095%positive, 2);
+     (10104%positive, 3);
+     (10107%positive, 2);
+     (10111%positive, 1);
+     (11560%positive, 1);
+     (11576%positive, 1);
+     (11583%positive, 1);
+     (11624%positive, 1);
+     (11640%positive, 1);
+     (11645%positive, 4);
+     (11647%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 10);
-     (9516%positive, 3);
-     (9529%positive, 9);
-     (9532%positive, 9);
-     (9533%positive, 1);
-     (9534%positive, 1);
-     (9580%positive, 3);
-     (9582%positive, 1);
-     (9596%positive, 12);
-     (9597%positive, 1);
-     (9598%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 8);
-     (10040%positive, 2);
-     (10041%positive, 9);
-     (10044%positive, 9);
-     (10045%positive, 2);
-     (10046%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 8);
-     (10094%positive, 2);
-     (10104%positive, 2);
-     (10105%positive, 11);
-     (10108%positive, 11);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (11560%positive, 10);
-     (11564%positive, 3);
-     (11576%positive, 12);
-     (11577%positive, 9);
-     (11580%positive, 9);
-     (11581%positive, 1);
-     (11582%positive, 1);
-     (11624%positive, 10);
-     (11628%positive, 3);
-     (11630%positive, 1);
-     (11640%positive, 12);
-     (11644%positive, 12);
-     (11645%positive, 1);
-     (11646%positive, 1);
-     (12072%positive, 7);
-     (12076%positive, 8);
-     (12088%positive, 7);
-     (12089%positive, 9);
-     (12092%positive, 9);
-     (12093%positive, 6);
-     (12094%positive, 4);
-     (12136%positive, 7);
-     (12140%positive, 8);
-     (12142%positive, 5);
-     (12152%positive, 7);
-     (12153%positive, 11);
-     (12156%positive, 10);
-     (12157%positive, 6);
-     (12158%positive, 3)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 2);
+     (9514%positive, 3);
+     (9516%positive, 7);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 7);
+     (9578%positive, 3);
+     (9580%positive, 7);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9596%positive, 7);
+     (9597%positive, 3);
+     (10026%positive, 9);
+     (10040%positive, 5);
+     (10041%positive, 1);
+     (10090%positive, 8);
+     (10104%positive, 4);
+     (10105%positive, 1);
+     (11560%positive, 2);
+     (11562%positive, 6);
+     (11564%positive, 10);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11580%positive, 8);
+     (11624%positive, 2);
+     (11626%positive, 6);
+     (11628%positive, 10);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11644%positive, 9);
+     (11645%positive, 4)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12158%positive];
-   NgPattE [S1] RgL 1
+    [10104%positive;
+     11645%positive];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9512%positive, 10);
-     (9516%positive, 3);
-     (9529%positive, 9);
-     (9532%positive, 9);
-     (9533%positive, 1);
-     (9534%positive, 1);
-     (9580%positive, 3);
-     (9582%positive, 1);
-     (9596%positive, 12);
-     (9597%positive, 1);
-     (9598%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 8);
-     (10040%positive, 2);
-     (10041%positive, 9);
-     (10044%positive, 9);
-     (10045%positive, 2);
-     (10046%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 8);
-     (10094%positive, 2);
-     (10104%positive, 2);
-     (10105%positive, 11);
-     (10108%positive, 11);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (11560%positive, 10);
-     (11564%positive, 3);
-     (11576%positive, 12);
-     (11577%positive, 9);
-     (11580%positive, 9);
-     (11581%positive, 1);
-     (11582%positive, 1);
-     (11624%positive, 10);
-     (11628%positive, 3);
-     (11630%positive, 1);
-     (11640%positive, 12);
-     (11644%positive, 12);
-     (11645%positive, 1);
-     (11646%positive, 1);
-     (12072%positive, 7);
-     (12076%positive, 8);
-     (12088%positive, 7);
-     (12089%positive, 9);
-     (12092%positive, 9);
-     (12093%positive, 6);
-     (12094%positive, 4);
-     (12136%positive, 7);
-     (12140%positive, 8);
-     (12142%positive, 5);
-     (12152%positive, 7);
-     (12153%positive, 11);
-     (12156%positive, 10);
-     (12157%positive, 6);
-     (12158%positive, 3)]]
+    [(9512%positive, 2);
+     (9514%positive, 3);
+     (9516%positive, 8);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 8);
+     (9578%positive, 3);
+     (9580%positive, 8);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9596%positive, 8);
+     (9597%positive, 3);
+     (10026%positive, 11);
+     (10040%positive, 6);
+     (10041%positive, 1);
+     (10090%positive, 9);
+     (10104%positive, 4);
+     (10105%positive, 1);
+     (11560%positive, 2);
+     (11562%positive, 7);
+     (11564%positive, 12);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11580%positive, 10);
+     (11624%positive, 2);
+     (11626%positive, 7);
+     (11628%positive, 12);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11644%positive, 10);
+     (11645%positive, 5)]]
   end.
 
-Theorem nqh_1RB1LA_1LA0RC_1RD1RC_1LD0LA : NeverQuasiHaltsSt tm_bulkr_00160.
+Theorem nqh_1RB0RC_0LC1RA_1RA1LD_1RD0LA : NeverQuasiHaltsSt tm_bulkr_00160.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 760 12 cert_bulkr_00160).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 472 11 cert_bulkr_00160).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LA1RC_0RD0LB_0LB1RD: n=2 t=0 contexts=44 *)
+(** 1RB0RC_0RC0LD_1LB1RC_0LA1LD: n=2 t=0 contexts=92 *)
 
 Definition tm_bulkr_00161 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StA)
-  | StB, S1 => Some (mkTrans S1 DR StC)
-  | StC, S0 => Some (mkTrans S0 DR StD)
-  | StC, S1 => Some (mkTrans S0 DL StB)
-  | StD, S0 => Some (mkTrans S0 DL StB)
-  | StD, S1 => Some (mkTrans S1 DR StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S0 DR StC)
+  | StB, S1 => Some (mkTrans S0 DL StD)
+  | StC, S0 => Some (mkTrans S1 DL StB)
+  | StC, S1 => Some (mkTrans S1 DR StC)
+  | StD, S0 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 
 Definition cert_bulkr_00161 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9517%positive, 3);
+    [(9514%positive, 5);
+     (9518%positive, 3);
+     (9529%positive, 6);
      (9530%positive, 2);
-     (9531%positive, 4);
-     (9533%positive, 3);
-     (9535%positive, 5);
-     (9579%positive, 1);
-     (9581%positive, 3);
-     (9583%positive, 5);
-     (9594%positive, 2);
-     (9595%positive, 4);
-     (9597%positive, 3);
-     (9598%positive, 4);
-     (9599%positive, 5);
-     (10045%positive, 5);
-     (10047%positive, 6);
-     (10095%positive, 6);
-     (10106%positive, 6);
-     (10109%positive, 5);
-     (10110%positive, 12);
-     (10111%positive, 6);
-     (11581%positive, 11);
-     (11645%positive, 11);
-     (12093%positive, 13);
-     (12095%positive, 8);
-     (12143%positive, 9);
-     (12154%positive, 10);
-     (12157%positive, 13);
-     (12158%positive, 12);
-     (12159%positive, 7)];
-   NgPattE [S1] RgR 1
+     (9534%positive, 8);
+     (9578%positive, 5);
+     (9582%positive, 3);
+     (9593%positive, 6);
+     (9594%positive, 7);
+     (9598%positive, 8);
+     (10025%positive, 4);
+     (10026%positive, 14);
+     (10029%positive, 1);
+     (10030%positive, 9);
+     (10031%positive, 1);
+     (10041%positive, 4);
+     (10042%positive, 2);
+     (10045%positive, 2);
+     (10046%positive, 9);
+     (10047%positive, 2);
+     (10089%positive, 4);
+     (10090%positive, 14);
+     (10093%positive, 1);
+     (10094%positive, 9);
+     (10095%positive, 1);
+     (10105%positive, 4);
+     (10106%positive, 7);
+     (10109%positive, 6);
+     (10110%positive, 9);
+     (10111%positive, 4);
+     (11562%positive, 5);
+     (11566%positive, 3);
+     (11567%positive, 1);
+     (11577%positive, 15);
+     (11578%positive, 2);
+     (11582%positive, 8);
+     (11583%positive, 2);
+     (11626%positive, 5);
+     (11630%positive, 3);
+     (11631%positive, 1);
+     (11641%positive, 15);
+     (11642%positive, 7);
+     (11646%positive, 8);
+     (11647%positive, 5);
+     (12073%positive, 13);
+     (12074%positive, 14);
+     (12077%positive, 1);
+     (12078%positive, 12);
+     (12079%positive, 1);
+     (12089%positive, 13);
+     (12090%positive, 2);
+     (12093%positive, 2);
+     (12094%positive, 11);
+     (12095%positive, 2);
+     (12137%positive, 13);
+     (12138%positive, 14);
+     (12141%positive, 1);
+     (12142%positive, 12);
+     (12143%positive, 1);
+     (12153%positive, 13);
+     (12154%positive, 7);
+     (12157%positive, 6);
+     (12158%positive, 10);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
     [12159%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
    NgRankE
-    [(9517%positive, 3);
+    [(9514%positive, 5);
+     (9518%positive, 3);
+     (9529%positive, 6);
      (9530%positive, 2);
-     (9531%positive, 4);
-     (9533%positive, 3);
-     (9535%positive, 5);
-     (9579%positive, 1);
-     (9581%positive, 3);
-     (9583%positive, 5);
-     (9594%positive, 2);
-     (9595%positive, 4);
-     (9597%positive, 3);
-     (9598%positive, 4);
-     (9599%positive, 5);
-     (10045%positive, 5);
-     (10047%positive, 6);
-     (10095%positive, 6);
-     (10106%positive, 6);
-     (10109%positive, 5);
-     (10110%positive, 12);
-     (10111%positive, 6);
-     (11581%positive, 11);
-     (11645%positive, 11);
-     (12093%positive, 13);
-     (12095%positive, 8);
-     (12143%positive, 9);
-     (12154%positive, 10);
-     (12157%positive, 13);
-     (12158%positive, 12);
-     (12159%positive, 7)]]
+     (9534%positive, 8);
+     (9578%positive, 5);
+     (9582%positive, 3);
+     (9593%positive, 6);
+     (9594%positive, 7);
+     (9598%positive, 8);
+     (10025%positive, 4);
+     (10026%positive, 14);
+     (10029%positive, 1);
+     (10030%positive, 9);
+     (10031%positive, 1);
+     (10041%positive, 4);
+     (10042%positive, 2);
+     (10045%positive, 2);
+     (10046%positive, 9);
+     (10047%positive, 2);
+     (10089%positive, 4);
+     (10090%positive, 14);
+     (10093%positive, 1);
+     (10094%positive, 9);
+     (10095%positive, 1);
+     (10105%positive, 4);
+     (10106%positive, 7);
+     (10109%positive, 6);
+     (10110%positive, 9);
+     (10111%positive, 4);
+     (11562%positive, 5);
+     (11566%positive, 3);
+     (11567%positive, 1);
+     (11577%positive, 15);
+     (11578%positive, 2);
+     (11582%positive, 8);
+     (11583%positive, 2);
+     (11626%positive, 5);
+     (11630%positive, 3);
+     (11631%positive, 1);
+     (11641%positive, 15);
+     (11642%positive, 7);
+     (11646%positive, 8);
+     (11647%positive, 5);
+     (12073%positive, 13);
+     (12074%positive, 14);
+     (12077%positive, 1);
+     (12078%positive, 12);
+     (12079%positive, 1);
+     (12089%positive, 13);
+     (12090%positive, 2);
+     (12093%positive, 2);
+     (12094%positive, 11);
+     (12095%positive, 2);
+     (12137%positive, 13);
+     (12138%positive, 14);
+     (12141%positive, 1);
+     (12142%positive, 12);
+     (12143%positive, 1);
+     (12153%positive, 13);
+     (12154%positive, 7);
+     (12157%positive, 6);
+     (12158%positive, 10);
+     (12159%positive, 3)]]
   | StB =>
   [NgRankE
-    [(9530%positive, 1);
-     (9535%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 1);
-     (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
-     (10092%positive, 1);
-     (10095%positive, 2);
-     (10106%positive, 2);
-     (10108%positive, 4);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
+    [(9516%positive, 1);
+     (9518%positive, 1);
+     (9532%positive, 1);
+     (9534%positive, 1);
+     (9580%positive, 1);
+     (9582%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 1);
+     (10027%positive, 1);
+     (10030%positive, 2);
+     (10031%positive, 2);
+     (10043%positive, 2);
+     (10046%positive, 2);
+     (10047%positive, 4);
+     (10091%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 3);
+     (10107%positive, 2);
+     (10110%positive, 2);
+     (10111%positive, 6);
+     (11563%positive, 1);
+     (11564%positive, 1);
+     (11566%positive, 1);
+     (11567%positive, 2);
+     (11579%positive, 2);
+     (11580%positive, 1);
+     (11582%positive, 1);
+     (11583%positive, 4);
+     (11627%positive, 1);
+     (11628%positive, 1);
+     (11630%positive, 1);
+     (11631%positive, 3);
+     (11643%positive, 2);
+     (11644%positive, 1);
+     (11646%positive, 1);
+     (11647%positive, 7);
+     (12075%positive, 1);
+     (12078%positive, 5);
+     (12079%positive, 2);
+     (12091%positive, 2);
+     (12094%positive, 4);
      (12095%positive, 4);
-     (12140%positive, 1);
-     (12143%positive, 5);
-     (12154%positive, 6);
-     (12156%positive, 3);
-     (12159%positive, 3)];
-   NgPattE [S1] RgL 1
+     (12139%positive, 1);
+     (12142%positive, 5);
+     (12143%positive, 3);
+     (12155%positive, 2);
+     (12158%positive, 3);
+     (12159%positive, 5)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+    [12158%positive];
+   NgPattE [S1; S1] RgL 1
     []
     [12159%positive];
    NgRankE
-    [(9530%positive, 1);
-     (9535%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 1);
-     (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
-     (10092%positive, 1);
-     (10095%positive, 2);
-     (10106%positive, 2);
-     (10108%positive, 4);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
+    [(9516%positive, 1);
+     (9518%positive, 1);
+     (9532%positive, 1);
+     (9534%positive, 1);
+     (9580%positive, 1);
+     (9582%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 1);
+     (10027%positive, 1);
+     (10030%positive, 2);
+     (10031%positive, 2);
+     (10043%positive, 2);
+     (10046%positive, 2);
+     (10047%positive, 4);
+     (10091%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 3);
+     (10107%positive, 2);
+     (10110%positive, 2);
+     (10111%positive, 6);
+     (11563%positive, 1);
+     (11564%positive, 1);
+     (11566%positive, 1);
+     (11567%positive, 2);
+     (11579%positive, 2);
+     (11580%positive, 1);
+     (11582%positive, 1);
+     (11583%positive, 4);
+     (11627%positive, 1);
+     (11628%positive, 1);
+     (11630%positive, 1);
+     (11631%positive, 3);
+     (11643%positive, 2);
+     (11644%positive, 1);
+     (11646%positive, 1);
+     (11647%positive, 7);
+     (12075%positive, 1);
+     (12078%positive, 5);
+     (12079%positive, 2);
+     (12091%positive, 2);
+     (12094%positive, 4);
      (12095%positive, 4);
-     (12140%positive, 1);
-     (12143%positive, 5);
-     (12154%positive, 6);
-     (12156%positive, 3);
-     (12159%positive, 3)]]
+     (12139%positive, 1);
+     (12142%positive, 5);
+     (12143%positive, 3);
+     (12155%positive, 2);
+     (12158%positive, 3);
+     (12159%positive, 5)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 1);
-     (9535%positive, 2);
-     (9579%positive, 7);
-     (9583%positive, 2);
-     (9593%positive, 6);
-     (9595%positive, 1);
-     (9599%positive, 2);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9576%positive, 1);
+     (9592%positive, 1);
+     (10027%positive, 2);
+     (10029%positive, 3);
+     (10031%positive, 3);
+     (10043%positive, 1);
+     (10045%positive, 4);
+     (10047%positive, 4);
+     (10091%positive, 2);
+     (10093%positive, 2);
+     (10095%positive, 2);
+     (10107%positive, 1);
+     (10109%positive, 8);
+     (10111%positive, 6);
+     (11560%positive, 1);
+     (11563%positive, 2);
+     (11567%positive, 3);
+     (11576%positive, 1);
+     (11579%positive, 1);
+     (11583%positive, 4);
+     (11624%positive, 1);
+     (11627%positive, 2);
+     (11631%positive, 2);
+     (11640%positive, 1);
+     (11643%positive, 1);
+     (11647%positive, 7);
+     (12075%positive, 2);
+     (12077%positive, 3);
+     (12079%positive, 3);
+     (12091%positive, 1);
+     (12093%positive, 4);
+     (12095%positive, 4);
+     (12139%positive, 2);
+     (12141%positive, 2);
+     (12143%positive, 2);
+     (12155%positive, 1);
+     (12157%positive, 8);
+     (12159%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
     [12159%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 1);
-     (9535%positive, 2);
-     (9579%positive, 7);
-     (9583%positive, 2);
-     (9593%positive, 6);
-     (9595%positive, 1);
-     (9599%positive, 2);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)]]
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9576%positive, 1);
+     (9592%positive, 1);
+     (10027%positive, 2);
+     (10029%positive, 3);
+     (10031%positive, 3);
+     (10043%positive, 1);
+     (10045%positive, 4);
+     (10047%positive, 4);
+     (10091%positive, 2);
+     (10093%positive, 2);
+     (10095%positive, 2);
+     (10107%positive, 1);
+     (10109%positive, 8);
+     (10111%positive, 6);
+     (11560%positive, 1);
+     (11563%positive, 2);
+     (11567%positive, 3);
+     (11576%positive, 1);
+     (11579%positive, 1);
+     (11583%positive, 4);
+     (11624%positive, 1);
+     (11627%positive, 2);
+     (11631%positive, 2);
+     (11640%positive, 1);
+     (11643%positive, 1);
+     (11647%positive, 7);
+     (12075%positive, 2);
+     (12077%positive, 3);
+     (12079%positive, 3);
+     (12091%positive, 1);
+     (12093%positive, 4);
+     (12095%positive, 4);
+     (12139%positive, 2);
+     (12141%positive, 2);
+     (12143%positive, 2);
+     (12155%positive, 1);
+     (12157%positive, 8);
+     (12159%positive, 5)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 7);
-     (9517%positive, 1);
-     (9529%positive, 6);
-     (9533%positive, 1);
-     (9581%positive, 1);
-     (9593%positive, 9);
-     (9597%positive, 1);
+    [(9512%positive, 10);
+     (9514%positive, 4);
+     (9516%positive, 5);
+     (9518%positive, 2);
+     (9528%positive, 10);
+     (9529%positive, 5);
+     (9530%positive, 1);
+     (9532%positive, 5);
+     (9534%positive, 2);
+     (9576%positive, 10);
+     (9578%positive, 4);
+     (9580%positive, 5);
+     (9582%positive, 2);
+     (9592%positive, 10);
+     (9593%positive, 5);
+     (9594%positive, 1);
+     (9596%positive, 5);
      (9598%positive, 2);
-     (10028%positive, 5);
-     (10044%positive, 6);
-     (10045%positive, 3);
-     (10092%positive, 5);
-     (10108%positive, 8);
-     (10109%positive, 3);
-     (10110%positive, 2);
-     (11581%positive, 1);
-     (11645%positive, 1);
-     (12072%positive, 4);
-     (12076%positive, 5);
-     (12088%positive, 4);
-     (12092%positive, 6);
-     (12093%positive, 3);
-     (12136%positive, 4);
-     (12140%positive, 5);
-     (12152%positive, 4);
-     (12156%positive, 7);
-     (12157%positive, 3);
-     (12158%positive, 2)];
-   NgPattE [S1] RgL 1
+     (10025%positive, 3);
+     (10026%positive, 8);
+     (10030%positive, 3);
+     (10041%positive, 3);
+     (10042%positive, 1);
+     (10046%positive, 3);
+     (10089%positive, 3);
+     (10090%positive, 8);
+     (10094%positive, 3);
+     (10105%positive, 3);
+     (10106%positive, 1);
+     (10110%positive, 3);
+     (11560%positive, 8);
+     (11562%positive, 4);
+     (11564%positive, 9);
+     (11566%positive, 2);
+     (11576%positive, 8);
+     (11577%positive, 9);
+     (11578%positive, 1);
+     (11580%positive, 9);
+     (11582%positive, 2);
+     (11624%positive, 8);
+     (11626%positive, 4);
+     (11628%positive, 9);
+     (11630%positive, 2);
+     (11640%positive, 8);
+     (11641%positive, 9);
+     (11642%positive, 1);
+     (11644%positive, 9);
+     (11646%positive, 2);
+     (12073%positive, 7);
+     (12074%positive, 8);
+     (12078%positive, 6);
+     (12089%positive, 7);
+     (12090%positive, 1);
+     (12094%positive, 5);
+     (12137%positive, 7);
+     (12138%positive, 8);
+     (12142%positive, 6);
+     (12153%positive, 7);
+     (12154%positive, 1);
+     (12158%positive, 4)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(9512%positive, 7);
-     (9517%positive, 1);
-     (9529%positive, 6);
-     (9533%positive, 1);
-     (9581%positive, 1);
-     (9593%positive, 9);
-     (9597%positive, 1);
+    [(9512%positive, 10);
+     (9514%positive, 4);
+     (9516%positive, 5);
+     (9518%positive, 2);
+     (9528%positive, 10);
+     (9529%positive, 5);
+     (9530%positive, 1);
+     (9532%positive, 5);
+     (9534%positive, 2);
+     (9576%positive, 10);
+     (9578%positive, 4);
+     (9580%positive, 5);
+     (9582%positive, 2);
+     (9592%positive, 10);
+     (9593%positive, 5);
+     (9594%positive, 1);
+     (9596%positive, 5);
      (9598%positive, 2);
-     (10028%positive, 5);
-     (10044%positive, 6);
-     (10045%positive, 3);
-     (10092%positive, 5);
-     (10108%positive, 8);
-     (10109%positive, 3);
-     (10110%positive, 2);
-     (11581%positive, 1);
-     (11645%positive, 1);
-     (12072%positive, 4);
-     (12076%positive, 5);
-     (12088%positive, 4);
-     (12092%positive, 6);
-     (12093%positive, 3);
-     (12136%positive, 4);
-     (12140%positive, 5);
-     (12152%positive, 4);
-     (12156%positive, 7);
-     (12157%positive, 3);
-     (12158%positive, 2)]]
+     (10025%positive, 3);
+     (10026%positive, 8);
+     (10030%positive, 3);
+     (10041%positive, 3);
+     (10042%positive, 1);
+     (10046%positive, 3);
+     (10089%positive, 3);
+     (10090%positive, 8);
+     (10094%positive, 3);
+     (10105%positive, 3);
+     (10106%positive, 1);
+     (10110%positive, 3);
+     (11560%positive, 8);
+     (11562%positive, 4);
+     (11564%positive, 9);
+     (11566%positive, 2);
+     (11576%positive, 8);
+     (11577%positive, 9);
+     (11578%positive, 1);
+     (11580%positive, 9);
+     (11582%positive, 2);
+     (11624%positive, 8);
+     (11626%positive, 4);
+     (11628%positive, 9);
+     (11630%positive, 2);
+     (11640%positive, 8);
+     (11641%positive, 9);
+     (11642%positive, 1);
+     (11644%positive, 9);
+     (11646%positive, 2);
+     (12073%positive, 7);
+     (12074%positive, 8);
+     (12078%positive, 6);
+     (12089%positive, 7);
+     (12090%positive, 1);
+     (12094%positive, 5);
+     (12137%positive, 7);
+     (12138%positive, 8);
+     (12142%positive, 6);
+     (12153%positive, 7);
+     (12154%positive, 1);
+     (12158%positive, 4)]]
   end.
 
-Theorem nqh_1RB1LA_1LA1RC_0RD0LB_0LB1RD : NeverQuasiHaltsSt tm_bulkr_00161.
+Theorem nqh_1RB0RC_0RC0LD_1LB1RC_0LA1LD : NeverQuasiHaltsSt tm_bulkr_00161.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 416 11 cert_bulkr_00161).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 800 12 cert_bulkr_00161).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LA1RC_0RD0LD_0LB1RD: n=2 t=0 contexts=48 *)
+(** 1RB0RC_1LC0LD_1RA0LB_1LB1LC: n=2 t=0 contexts=70 *)
 
 Definition tm_bulkr_00162 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StA)
-  | StB, S1 => Some (mkTrans S1 DR StC)
-  | StC, S0 => Some (mkTrans S0 DR StD)
-  | StC, S1 => Some (mkTrans S0 DL StD)
-  | StD, S0 => Some (mkTrans S0 DL StB)
-  | StD, S1 => Some (mkTrans S1 DR StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S0 DL StD)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S0 DL StB)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 
 Definition cert_bulkr_00162 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9517%positive, 3);
-     (9530%positive, 2);
-     (9531%positive, 4);
-     (9533%positive, 3);
-     (9535%positive, 5);
-     (9579%positive, 1);
-     (9581%positive, 3);
-     (9583%positive, 5);
-     (9594%positive, 2);
-     (9595%positive, 4);
-     (9597%positive, 3);
-     (9598%positive, 6);
-     (9599%positive, 5);
-     (10045%positive, 7);
-     (10047%positive, 6);
-     (10095%positive, 6);
-     (10106%positive, 6);
-     (10107%positive, 12);
-     (10109%positive, 7);
-     (10110%positive, 14);
-     (10111%positive, 6);
-     (11581%positive, 11);
-     (11583%positive, 13);
-     (11645%positive, 11);
-     (11647%positive, 13);
-     (12093%positive, 15);
-     (12095%positive, 8);
-     (12143%positive, 9);
-     (12154%positive, 10);
-     (12155%positive, 12);
-     (12157%positive, 15);
-     (12158%positive, 14);
-     (12159%positive, 7)];
-   NgPattE [S1] RgR 1
+    [(9515%positive, 2);
+     (9519%positive, 1);
+     (9529%positive, 4);
+     (9531%positive, 3);
+     (9535%positive, 3);
+     (9579%positive, 3);
+     (9582%positive, 5);
+     (9583%positive, 1);
+     (9593%positive, 4);
+     (9595%positive, 3);
+     (9597%positive, 4);
+     (9599%positive, 3);
+     (10025%positive, 1);
+     (10029%positive, 3);
+     (10030%positive, 2);
+     (10041%positive, 3);
+     (10045%positive, 2);
+     (10046%positive, 3);
+     (10089%positive, 1);
+     (10093%positive, 3);
+     (10094%positive, 3);
+     (10105%positive, 3);
+     (10109%positive, 3);
+     (10110%positive, 3);
+     (11561%positive, 1);
+     (11563%positive, 2);
+     (11565%positive, 3);
+     (11567%positive, 1);
+     (11577%positive, 3);
+     (11579%positive, 3);
+     (11581%positive, 2);
+     (11583%positive, 3);
+     (11625%positive, 1);
+     (11627%positive, 3);
+     (11629%positive, 3);
+     (11630%positive, 5);
+     (11631%positive, 1);
+     (11641%positive, 3);
+     (11643%positive, 3);
+     (11645%positive, 3);
+     (11647%positive, 3);
+     (12078%positive, 2);
+     (12094%positive, 3);
+     (12142%positive, 3);
+     (12153%positive, 4);
+     (12157%positive, 4);
+     (12158%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12159%positive];
+    [9531%positive;
+     9535%positive;
+     9579%positive;
+     9595%positive;
+     9599%positive;
+     10029%positive;
+     10041%positive;
+     10046%positive;
+     10093%positive;
+     10094%positive;
+     10105%positive;
+     10109%positive;
+     10110%positive;
+     11565%positive;
+     11577%positive;
+     11579%positive;
+     11583%positive;
+     11627%positive;
+     11629%positive;
+     11641%positive;
+     11643%positive;
+     11645%positive;
+     11647%positive;
+     12094%positive;
+     12142%positive;
+     12158%positive];
    NgRankE
-    [(9517%positive, 3);
-     (9530%positive, 2);
-     (9531%positive, 4);
-     (9533%positive, 3);
-     (9535%positive, 5);
-     (9579%positive, 1);
-     (9581%positive, 3);
-     (9583%positive, 5);
-     (9594%positive, 2);
-     (9595%positive, 4);
-     (9597%positive, 3);
-     (9598%positive, 6);
-     (9599%positive, 5);
-     (10045%positive, 7);
-     (10047%positive, 6);
-     (10095%positive, 6);
-     (10106%positive, 6);
-     (10107%positive, 12);
-     (10109%positive, 7);
-     (10110%positive, 14);
-     (10111%positive, 6);
-     (11581%positive, 11);
-     (11583%positive, 13);
-     (11645%positive, 11);
-     (11647%positive, 13);
-     (12093%positive, 15);
-     (12095%positive, 8);
-     (12143%positive, 9);
-     (12154%positive, 10);
-     (12155%positive, 12);
-     (12157%positive, 15);
-     (12158%positive, 14);
-     (12159%positive, 7)]]
+    [(9515%positive, 2);
+     (9519%positive, 1);
+     (9529%positive, 4);
+     (9531%positive, 9);
+     (9535%positive, 4);
+     (9579%positive, 6);
+     (9582%positive, 13);
+     (9583%positive, 1);
+     (9593%positive, 12);
+     (9595%positive, 3);
+     (9597%positive, 5);
+     (10025%positive, 1);
+     (10029%positive, 7);
+     (10030%positive, 2);
+     (10041%positive, 5);
+     (10045%positive, 2);
+     (10046%positive, 11);
+     (10089%positive, 1);
+     (10093%positive, 8);
+     (10094%positive, 3);
+     (10110%positive, 3);
+     (11561%positive, 1);
+     (11563%positive, 2);
+     (11565%positive, 7);
+     (11567%positive, 1);
+     (11577%positive, 3);
+     (11579%positive, 8);
+     (11581%positive, 2);
+     (11583%positive, 4);
+     (11625%positive, 1);
+     (11627%positive, 6);
+     (11629%positive, 10);
+     (11630%positive, 13);
+     (11631%positive, 1);
+     (11643%positive, 3);
+     (12078%positive, 2);
+     (12094%positive, 11);
+     (12142%positive, 4);
+     (12153%positive, 12);
+     (12157%positive, 5);
+     (12158%positive, 3)];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10094%positive;
+     11577%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10093%positive;
+     11579%positive];
+   NgRankE
+    [(9515%positive, 2);
+     (9519%positive, 1);
+     (9529%positive, 3);
+     (9531%positive, 8);
+     (9535%positive, 3);
+     (9579%positive, 6);
+     (9582%positive, 12);
+     (9583%positive, 1);
+     (9593%positive, 11);
+     (9595%positive, 3);
+     (9597%positive, 4);
+     (10025%positive, 1);
+     (10029%positive, 7);
+     (10030%positive, 2);
+     (10041%positive, 5);
+     (10045%positive, 2);
+     (10046%positive, 10);
+     (10089%positive, 1);
+     (10093%positive, 4);
+     (10094%positive, 1);
+     (10110%positive, 3);
+     (11561%positive, 1);
+     (11563%positive, 2);
+     (11565%positive, 7);
+     (11567%positive, 1);
+     (11577%positive, 3);
+     (11579%positive, 8);
+     (11581%positive, 2);
+     (11583%positive, 3);
+     (11625%positive, 1);
+     (11627%positive, 6);
+     (11629%positive, 9);
+     (11630%positive, 12);
+     (11631%positive, 1);
+     (11643%positive, 3);
+     (12078%positive, 2);
+     (12094%positive, 10);
+     (12142%positive, 4);
+     (12153%positive, 11);
+     (12157%positive, 4);
+     (12158%positive, 3)]]
   | StB =>
   [NgRankE
-    [(9530%positive, 1);
+    [(9519%positive, 5);
+     (9532%positive, 2);
      (9535%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 1);
-     (9598%positive, 2);
+     (9578%positive, 1);
+     (9583%positive, 6);
+     (9596%positive, 2);
      (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
-     (10092%positive, 1);
-     (10095%positive, 2);
-     (10106%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
+     (10026%positive, 4);
+     (10042%positive, 5);
+     (10044%positive, 1);
+     (10090%positive, 3);
+     (10106%positive, 5);
+     (10108%positive, 1);
+     (11567%positive, 5);
+     (11580%positive, 3);
      (11583%positive, 1);
+     (11626%positive, 1);
+     (11631%positive, 6);
+     (11644%positive, 4);
      (11647%positive, 1);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 4);
-     (12140%positive, 1);
-     (12143%positive, 5);
-     (12154%positive, 6);
-     (12156%positive, 3);
-     (12158%positive, 2);
-     (12159%positive, 3)];
-   NgPattE [S1] RgL 1
+     (12074%positive, 2);
+     (12090%positive, 2);
+     (12092%positive, 1);
+     (12138%positive, 2);
+     (12154%positive, 2);
+     (12156%positive, 1)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9530%positive, 1);
+    [(9519%positive, 6);
+     (9532%positive, 2);
      (9535%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 1);
-     (9598%positive, 2);
+     (9578%positive, 1);
+     (9583%positive, 6);
+     (9596%positive, 2);
      (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
-     (10092%positive, 1);
-     (10095%positive, 2);
-     (10106%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
+     (10026%positive, 5);
+     (10042%positive, 5);
+     (10044%positive, 1);
+     (10090%positive, 3);
+     (10106%positive, 5);
+     (10108%positive, 1);
+     (11567%positive, 6);
+     (11580%positive, 4);
      (11583%positive, 1);
+     (11626%positive, 1);
+     (11631%positive, 6);
+     (11644%positive, 4);
      (11647%positive, 1);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 4);
-     (12140%positive, 1);
-     (12143%positive, 5);
-     (12154%positive, 6);
-     (12156%positive, 3);
-     (12158%positive, 2);
-     (12159%positive, 3)]]
+     (12074%positive, 2);
+     (12090%positive, 2);
+     (12092%positive, 1);
+     (12138%positive, 2);
+     (12154%positive, 2);
+     (12156%positive, 1)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 1);
-     (9535%positive, 2);
-     (9579%positive, 7);
-     (9583%positive, 2);
-     (9593%positive, 6);
-     (9595%positive, 1);
-     (9599%positive, 2);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10107%positive, 1);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (11583%positive, 2);
-     (11647%positive, 2);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12155%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 1);
+     (9515%positive, 1);
+     (9528%positive, 1);
+     (9531%positive, 4);
+     (9579%positive, 1);
+     (9595%positive, 2);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10040%positive, 2);
+     (10045%positive, 1);
+     (10093%positive, 3);
+     (10109%positive, 1);
+     (11563%positive, 1);
+     (11565%positive, 2);
+     (11576%positive, 1);
+     (11579%positive, 3);
+     (11581%positive, 1);
+     (11627%positive, 1);
+     (11629%positive, 5);
+     (11643%positive, 2);
+     (11645%positive, 1);
+     (12088%positive, 2);
+     (12157%positive, 1)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
+    [10093%positive;
+     11579%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 1);
-     (9535%positive, 2);
-     (9579%positive, 7);
-     (9583%positive, 2);
-     (9593%positive, 6);
-     (9595%positive, 1);
-     (9599%positive, 2);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10107%positive, 1);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (11583%positive, 2);
-     (11647%positive, 2);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12155%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)]]
+    [(9512%positive, 1);
+     (9515%positive, 1);
+     (9528%positive, 1);
+     (9531%positive, 4);
+     (9579%positive, 1);
+     (9595%positive, 2);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10040%positive, 2);
+     (10045%positive, 1);
+     (10093%positive, 3);
+     (10109%positive, 1);
+     (11563%positive, 1);
+     (11565%positive, 2);
+     (11576%positive, 1);
+     (11579%positive, 4);
+     (11581%positive, 1);
+     (11627%positive, 1);
+     (11629%positive, 5);
+     (11643%positive, 2);
+     (11645%positive, 1);
+     (12088%positive, 2);
+     (12157%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 5);
-     (9517%positive, 1);
-     (9529%positive, 4);
-     (9533%positive, 1);
-     (9581%positive, 1);
-     (9593%positive, 7);
-     (9597%positive, 1);
-     (10028%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (11581%positive, 1);
-     (11645%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 7);
+     (9528%positive, 3);
+     (9529%positive, 6);
+     (9532%positive, 5);
+     (9578%positive, 4);
+     (9582%positive, 6);
+     (9593%positive, 2);
+     (9596%positive, 5);
+     (10025%positive, 8);
+     (10026%positive, 6);
+     (10030%positive, 6);
+     (10040%positive, 1);
+     (10041%positive, 8);
+     (10042%positive, 6);
+     (10044%positive, 6);
+     (10046%positive, 1);
+     (10089%positive, 9);
+     (10090%positive, 6);
+     (10094%positive, 6);
+     (10105%positive, 2);
+     (10106%positive, 6);
+     (10108%positive, 7);
+     (10110%positive, 1);
+     (11561%positive, 6);
+     (11576%positive, 3);
+     (11577%positive, 6);
+     (11580%positive, 6);
+     (11625%positive, 6);
+     (11626%positive, 2);
+     (11630%positive, 6);
+     (11641%positive, 2);
+     (11644%positive, 6);
+     (12074%positive, 7);
+     (12078%positive, 7);
+     (12088%positive, 1);
+     (12090%positive, 8);
+     (12092%positive, 6);
+     (12094%positive, 1);
+     (12138%positive, 6);
+     (12142%positive, 6);
+     (12153%positive, 2);
+     (12154%positive, 8);
+     (12156%positive, 7);
+     (12158%positive, 1)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [9529%positive;
+     9582%positive;
+     10026%positive;
+     10030%positive;
+     10042%positive;
+     10044%positive;
+     10090%positive;
+     10094%positive;
+     10106%positive;
+     11561%positive;
+     11577%positive;
+     11580%positive;
+     11625%positive;
+     11630%positive;
+     11644%positive;
+     12092%positive;
+     12138%positive;
+     12142%positive];
    NgRankE
-    [(9512%positive, 5);
-     (9517%positive, 1);
-     (9529%positive, 4);
-     (9533%positive, 1);
-     (9581%positive, 1);
-     (9593%positive, 7);
-     (9597%positive, 1);
-     (10028%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (11581%positive, 1);
-     (11645%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)]]
+    [(9512%positive, 13);
+     (9528%positive, 3);
+     (9529%positive, 12);
+     (9532%positive, 5);
+     (9578%positive, 4);
+     (9582%positive, 13);
+     (9593%positive, 2);
+     (9596%positive, 5);
+     (10025%positive, 16);
+     (10026%positive, 7);
+     (10030%positive, 10);
+     (10040%positive, 1);
+     (10041%positive, 13);
+     (10042%positive, 8);
+     (10044%positive, 14);
+     (10046%positive, 1);
+     (10089%positive, 16);
+     (10090%positive, 6);
+     (10094%positive, 11);
+     (10105%positive, 2);
+     (10106%positive, 8);
+     (10108%positive, 14);
+     (10110%positive, 1);
+     (11561%positive, 8);
+     (11576%positive, 3);
+     (11577%positive, 11);
+     (11580%positive, 6);
+     (11625%positive, 9);
+     (11626%positive, 2);
+     (11630%positive, 13);
+     (11641%positive, 2);
+     (11644%positive, 7);
+     (12074%positive, 15);
+     (12078%positive, 10);
+     (12088%positive, 1);
+     (12090%positive, 15);
+     (12094%positive, 1);
+     (12142%positive, 12);
+     (12153%positive, 2);
+     (12154%positive, 15);
+     (12156%positive, 13);
+     (12158%positive, 1)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10090%positive;
+     11580%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10094%positive;
+     11577%positive];
+   NgRankE
+    [(9512%positive, 12);
+     (9528%positive, 3);
+     (9529%positive, 11);
+     (9532%positive, 5);
+     (9578%positive, 4);
+     (9582%positive, 12);
+     (9593%positive, 2);
+     (9596%positive, 5);
+     (10025%positive, 15);
+     (10026%positive, 8);
+     (10030%positive, 10);
+     (10040%positive, 1);
+     (10041%positive, 13);
+     (10042%positive, 8);
+     (10044%positive, 13);
+     (10046%positive, 1);
+     (10089%positive, 15);
+     (10090%positive, 6);
+     (10094%positive, 3);
+     (10105%positive, 2);
+     (10106%positive, 8);
+     (10108%positive, 13);
+     (10110%positive, 1);
+     (11561%positive, 9);
+     (11576%positive, 3);
+     (11577%positive, 11);
+     (11580%positive, 7);
+     (11625%positive, 9);
+     (11626%positive, 2);
+     (11630%positive, 12);
+     (11641%positive, 2);
+     (11644%positive, 7);
+     (12074%positive, 14);
+     (12078%positive, 10);
+     (12088%positive, 1);
+     (12090%positive, 14);
+     (12094%positive, 1);
+     (12142%positive, 12);
+     (12153%positive, 2);
+     (12154%positive, 14);
+     (12156%positive, 13);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1LA1RC_0RD0LD_0LB1RD : NeverQuasiHaltsSt tm_bulkr_00162.
+Theorem nqh_1RB0RC_1LC0LD_1RA0LB_1LB1LC : NeverQuasiHaltsSt tm_bulkr_00162.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 448 11 cert_bulkr_00162).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 624 12 cert_bulkr_00162).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LA1RC_0RD0RD_0LB1RD: n=2 t=0 contexts=40 *)
+(** 1RB0RC_1LC0RA_1LD0LB_1RD1RA: n=2 t=0 contexts=83 *)
 
 Definition tm_bulkr_00163 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StA)
-  | StB, S1 => Some (mkTrans S1 DR StC)
-  | StC, S0 => Some (mkTrans S0 DR StD)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S0 DL StB)
-  | StD, S1 => Some (mkTrans S1 DR StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S0 DR StA)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S0 DL StB)
+  | StD, S0 => Some (mkTrans S1 DR StD)
+  | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 
 Definition cert_bulkr_00163 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9517%positive, 3);
-     (9530%positive, 2);
-     (9531%positive, 4);
-     (9533%positive, 3);
-     (9535%positive, 5);
-     (9579%positive, 1);
-     (9581%positive, 3);
-     (9583%positive, 5);
-     (9594%positive, 2);
-     (9595%positive, 4);
-     (9597%positive, 3);
-     (9598%positive, 2);
-     (9599%positive, 5);
-     (10045%positive, 3);
-     (10047%positive, 6);
-     (10095%positive, 6);
-     (10109%positive, 3);
-     (10110%positive, 6);
-     (10111%positive, 6);
-     (12093%positive, 11);
-     (12095%positive, 8);
-     (12143%positive, 9);
-     (12157%positive, 11);
-     (12158%positive, 10);
-     (12159%positive, 7)];
-   NgPattE [S1] RgR 1
+    [(9513%positive, 3);
+     (9514%positive, 2);
+     (9518%positive, 4);
+     (9529%positive, 6);
+     (9577%positive, 2);
+     (9578%positive, 2);
+     (9582%positive, 7);
+     (9593%positive, 2);
+     (10026%positive, 2);
+     (10027%positive, 1);
+     (10030%positive, 4);
+     (10041%positive, 7);
+     (10042%positive, 1);
+     (10043%positive, 1);
+     (10046%positive, 1);
+     (10090%positive, 2);
+     (10091%positive, 1);
+     (10094%positive, 5);
+     (10105%positive, 2);
+     (10106%positive, 1);
+     (10107%positive, 1);
+     (10110%positive, 1);
+     (11561%positive, 3);
+     (11562%positive, 2);
+     (11566%positive, 4);
+     (11577%positive, 5);
+     (11625%positive, 2);
+     (11626%positive, 2);
+     (11630%positive, 7);
+     (11641%positive, 2);
+     (12074%positive, 2);
+     (12075%positive, 1);
+     (12078%positive, 4);
+     (12089%positive, 7);
+     (12091%positive, 1);
+     (12094%positive, 1);
+     (12138%positive, 2);
+     (12139%positive, 1);
+     (12142%positive, 6);
+     (12153%positive, 2);
+     (12155%positive, 1);
+     (12158%positive, 1)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12159%positive];
+    [10094%positive;
+     11577%positive];
    NgRankE
-    [(9517%positive, 3);
-     (9530%positive, 2);
-     (9531%positive, 4);
-     (9533%positive, 3);
-     (9535%positive, 5);
-     (9579%positive, 1);
-     (9581%positive, 3);
-     (9583%positive, 5);
-     (9594%positive, 2);
-     (9595%positive, 4);
-     (9597%positive, 3);
-     (9598%positive, 2);
-     (9599%positive, 5);
-     (10045%positive, 3);
-     (10047%positive, 6);
-     (10095%positive, 6);
-     (10109%positive, 3);
-     (10110%positive, 6);
-     (10111%positive, 6);
-     (12093%positive, 11);
-     (12095%positive, 8);
-     (12143%positive, 9);
-     (12157%positive, 11);
-     (12158%positive, 10);
-     (12159%positive, 7)]]
+    [(9513%positive, 3);
+     (9514%positive, 2);
+     (9518%positive, 4);
+     (9529%positive, 5);
+     (9577%positive, 2);
+     (9578%positive, 2);
+     (9582%positive, 6);
+     (9593%positive, 2);
+     (10026%positive, 2);
+     (10027%positive, 1);
+     (10030%positive, 4);
+     (10041%positive, 7);
+     (10042%positive, 1);
+     (10043%positive, 1);
+     (10046%positive, 1);
+     (10090%positive, 2);
+     (10091%positive, 1);
+     (10094%positive, 3);
+     (10105%positive, 2);
+     (10106%positive, 1);
+     (10107%positive, 1);
+     (10110%positive, 1);
+     (11561%positive, 3);
+     (11562%positive, 2);
+     (11566%positive, 4);
+     (11577%positive, 5);
+     (11625%positive, 2);
+     (11626%positive, 2);
+     (11630%positive, 6);
+     (11641%positive, 2);
+     (12074%positive, 2);
+     (12075%positive, 1);
+     (12078%positive, 4);
+     (12089%positive, 7);
+     (12091%positive, 1);
+     (12094%positive, 1);
+     (12138%positive, 2);
+     (12139%positive, 1);
+     (12142%positive, 6);
+     (12153%positive, 2);
+     (12155%positive, 1);
+     (12158%positive, 1)]]
   | StB =>
   [NgRankE
-    [(9530%positive, 1);
+    [(9514%positive, 3);
      (9535%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 1);
-     (9598%positive, 1);
+     (9578%positive, 3);
+     (9580%positive, 4);
+     (9596%positive, 4);
      (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
+     (10026%positive, 8);
+     (10027%positive, 2);
+     (10042%positive, 3);
+     (10043%positive, 2);
+     (10044%positive, 1);
+     (10047%positive, 6);
+     (10090%positive, 5);
+     (10091%positive, 2);
      (10092%positive, 1);
-     (10095%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 4);
+     (10106%positive, 3);
+     (10107%positive, 2);
+     (10108%positive, 1);
+     (10111%positive, 5);
+     (11562%positive, 3);
+     (11583%positive, 1);
+     (11626%positive, 3);
+     (11628%positive, 9);
+     (11644%positive, 5);
+     (11647%positive, 1);
+     (12074%positive, 8);
+     (12075%positive, 7);
+     (12079%positive, 2);
+     (12091%positive, 5);
+     (12092%positive, 1);
+     (12095%positive, 2);
+     (12138%positive, 5);
+     (12139%positive, 7);
      (12140%positive, 1);
-     (12143%positive, 5);
-     (12156%positive, 3);
-     (12158%positive, 6);
-     (12159%positive, 3)];
-   NgPattE [S1] RgL 1
+     (12143%positive, 2);
+     (12155%positive, 5);
+     (12156%positive, 1);
+     (12159%positive, 2)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
+    [10090%positive;
+     10111%positive;
+     11644%positive;
+     12091%positive;
+     12138%positive;
+     12155%positive];
    NgRankE
-    [(9530%positive, 1);
+    [(9514%positive, 3);
      (9535%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 1);
-     (9598%positive, 1);
+     (9578%positive, 3);
+     (9580%positive, 4);
+     (9596%positive, 4);
      (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
+     (10026%positive, 8);
+     (10027%positive, 2);
+     (10042%positive, 3);
+     (10043%positive, 2);
+     (10044%positive, 1);
+     (10047%positive, 6);
+     (10090%positive, 4);
+     (10091%positive, 2);
      (10092%positive, 1);
-     (10095%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 4);
+     (10106%positive, 3);
+     (10107%positive, 2);
+     (10108%positive, 1);
+     (10111%positive, 6);
+     (11562%positive, 3);
+     (11583%positive, 1);
+     (11626%positive, 3);
+     (11628%positive, 9);
+     (11644%positive, 5);
+     (11647%positive, 1);
+     (12074%positive, 8);
+     (12075%positive, 7);
+     (12079%positive, 2);
+     (12091%positive, 3);
+     (12092%positive, 1);
+     (12095%positive, 2);
+     (12138%positive, 4);
+     (12139%positive, 7);
      (12140%positive, 1);
-     (12143%positive, 5);
-     (12156%positive, 3);
-     (12158%positive, 6);
-     (12159%positive, 3)]]
+     (12143%positive, 2);
+     (12155%positive, 3);
+     (12156%positive, 1);
+     (12159%positive, 2)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 1);
+    [(9512%positive, 1);
+     (9533%positive, 2);
      (9535%positive, 2);
-     (9579%positive, 7);
-     (9583%positive, 2);
-     (9593%positive, 6);
-     (9595%positive, 1);
+     (9576%positive, 1);
+     (9592%positive, 1);
+     (9597%positive, 2);
      (9599%positive, 2);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)];
-   NgPattE [S1] RgL 1
+     (10024%positive, 4);
+     (10027%positive, 7);
+     (10043%positive, 7);
+     (10045%positive, 1);
+     (10047%positive, 1);
+     (10088%positive, 3);
+     (10091%positive, 7);
+     (10104%positive, 5);
+     (10107%positive, 7);
+     (10109%positive, 1);
+     (10111%positive, 1);
+     (11565%positive, 5);
+     (11581%positive, 3);
+     (11583%positive, 6);
+     (11624%positive, 1);
+     (11629%positive, 5);
+     (11640%positive, 1);
+     (11645%positive, 4);
+     (11647%positive, 6);
+     (12072%positive, 2);
+     (12075%positive, 2);
+     (12079%positive, 1);
+     (12091%positive, 2);
+     (12093%positive, 1);
+     (12095%positive, 1);
+     (12136%positive, 2);
+     (12139%positive, 2);
+     (12143%positive, 1);
+     (12152%positive, 2);
+     (12155%positive, 2);
+     (12157%positive, 1);
+     (12159%positive, 1)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
+    [10088%positive;
+     11581%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 1);
+    [(9512%positive, 1);
+     (9533%positive, 2);
      (9535%positive, 2);
-     (9579%positive, 7);
-     (9583%positive, 2);
-     (9593%positive, 6);
-     (9595%positive, 1);
+     (9576%positive, 1);
+     (9592%positive, 1);
+     (9597%positive, 2);
      (9599%positive, 2);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)]]
+     (10024%positive, 5);
+     (10027%positive, 7);
+     (10043%positive, 7);
+     (10045%positive, 1);
+     (10047%positive, 1);
+     (10088%positive, 3);
+     (10091%positive, 7);
+     (10104%positive, 5);
+     (10107%positive, 7);
+     (10109%positive, 1);
+     (10111%positive, 1);
+     (11565%positive, 6);
+     (11581%positive, 4);
+     (11583%positive, 6);
+     (11624%positive, 1);
+     (11629%positive, 6);
+     (11640%positive, 1);
+     (11645%positive, 4);
+     (11647%positive, 6);
+     (12072%positive, 2);
+     (12075%positive, 2);
+     (12079%positive, 1);
+     (12091%positive, 2);
+     (12093%positive, 1);
+     (12095%positive, 1);
+     (12136%positive, 2);
+     (12139%positive, 2);
+     (12143%positive, 1);
+     (12152%positive, 2);
+     (12155%positive, 2);
+     (12157%positive, 1);
+     (12159%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 5);
-     (9517%positive, 1);
-     (9529%positive, 4);
-     (9533%positive, 1);
-     (9581%positive, 1);
+    [(9512%positive, 7);
+     (9513%positive, 1);
+     (9518%positive, 2);
+     (9529%positive, 6);
+     (9533%positive, 6);
+     (9576%positive, 6);
+     (9577%positive, 1);
+     (9580%positive, 1);
+     (9582%positive, 8);
+     (9592%positive, 8);
      (9593%positive, 7);
-     (9597%positive, 1);
-     (10028%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
+     (9596%positive, 1);
+     (9597%positive, 7);
+     (10024%positive, 6);
+     (10030%positive, 2);
+     (10041%positive, 6);
+     (10044%positive, 9);
+     (10045%positive, 2);
+     (10046%positive, 6);
+     (10088%positive, 6);
      (10092%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
+     (10094%positive, 6);
+     (10104%positive, 8);
+     (10105%positive, 8);
+     (10108%positive, 9);
+     (10109%positive, 2);
+     (10110%positive, 6);
+     (11561%positive, 1);
+     (11565%positive, 6);
+     (11566%positive, 2);
+     (11577%positive, 6);
+     (11581%positive, 6);
+     (11624%positive, 6);
+     (11625%positive, 1);
+     (11628%positive, 1);
+     (11629%positive, 6);
+     (11630%positive, 8);
+     (11640%positive, 9);
+     (11641%positive, 6);
+     (11644%positive, 1);
+     (11645%positive, 6);
+     (12072%positive, 5);
+     (12078%positive, 2);
+     (12089%positive, 6);
+     (12092%positive, 7);
+     (12093%positive, 4);
+     (12094%positive, 7);
+     (12136%positive, 5);
      (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+     (12142%positive, 6);
+     (12152%positive, 5);
+     (12153%positive, 8);
+     (12156%positive, 7);
+     (12157%positive, 4);
+     (12158%positive, 7)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
+    [9529%positive;
+     9533%positive;
+     9576%positive;
+     10024%positive;
+     10041%positive;
+     10046%positive;
+     10088%positive;
+     10094%positive;
+     10110%positive;
+     11565%positive;
+     11577%positive;
+     11581%positive;
+     11624%positive;
+     11629%positive;
+     11641%positive;
+     11645%positive;
+     12089%positive;
+     12142%positive];
    NgRankE
     [(9512%positive, 5);
-     (9517%positive, 1);
+     (9513%positive, 1);
+     (9518%positive, 2);
      (9529%positive, 4);
-     (9533%positive, 1);
-     (9581%positive, 1);
-     (9593%positive, 7);
-     (9597%positive, 1);
-     (10028%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
+     (9533%positive, 7);
+     (9576%positive, 5);
+     (9577%positive, 1);
+     (9580%positive, 1);
+     (9582%positive, 13);
+     (9592%positive, 13);
+     (9593%positive, 12);
+     (9596%positive, 1);
+     (9597%positive, 7);
+     (10024%positive, 9);
+     (10030%positive, 2);
+     (10041%positive, 5);
+     (10044%positive, 14);
+     (10045%positive, 2);
+     (10046%positive, 11);
+     (10088%positive, 8);
      (10092%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
+     (10094%positive, 3);
+     (10104%positive, 10);
+     (10105%positive, 12);
+     (10108%positive, 14);
+     (10109%positive, 2);
+     (11561%positive, 1);
+     (11565%positive, 10);
+     (11566%positive, 2);
+     (11577%positive, 3);
+     (11581%positive, 8);
+     (11624%positive, 6);
+     (11625%positive, 1);
+     (11628%positive, 1);
+     (11629%positive, 10);
+     (11630%positive, 13);
+     (11640%positive, 13);
+     (11644%positive, 1);
+     (11645%positive, 9);
+     (12072%positive, 5);
+     (12078%positive, 2);
+     (12089%positive, 5);
+     (12092%positive, 5);
+     (12093%positive, 4);
+     (12094%positive, 11);
+     (12136%positive, 5);
      (12140%positive, 3);
-     (12152%positive, 2);
+     (12142%positive, 4);
+     (12152%positive, 5);
+     (12153%positive, 12);
      (12156%positive, 5);
-     (12157%positive, 1)]]
+     (12157%positive, 4);
+     (12158%positive, 10)];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10094%positive;
+     11577%positive];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10088%positive;
+     11581%positive];
+   NgRankE
+    [(9512%positive, 4);
+     (9513%positive, 1);
+     (9518%positive, 2);
+     (9529%positive, 3);
+     (9533%positive, 7);
+     (9576%positive, 4);
+     (9577%positive, 1);
+     (9580%positive, 1);
+     (9582%positive, 14);
+     (9592%positive, 14);
+     (9593%positive, 13);
+     (9596%positive, 1);
+     (9597%positive, 7);
+     (10024%positive, 10);
+     (10030%positive, 2);
+     (10041%positive, 5);
+     (10044%positive, 15);
+     (10045%positive, 2);
+     (10046%positive, 12);
+     (10088%positive, 8);
+     (10092%positive, 3);
+     (10094%positive, 1);
+     (10104%positive, 10);
+     (10105%positive, 13);
+     (10108%positive, 15);
+     (10109%positive, 2);
+     (11561%positive, 1);
+     (11565%positive, 11);
+     (11566%positive, 2);
+     (11577%positive, 3);
+     (11581%positive, 9);
+     (11624%positive, 6);
+     (11625%positive, 1);
+     (11628%positive, 1);
+     (11629%positive, 11);
+     (11630%positive, 14);
+     (11640%positive, 14);
+     (11644%positive, 1);
+     (11645%positive, 9);
+     (12072%positive, 5);
+     (12078%positive, 2);
+     (12089%positive, 5);
+     (12092%positive, 5);
+     (12093%positive, 4);
+     (12094%positive, 12);
+     (12136%positive, 5);
+     (12140%positive, 3);
+     (12142%positive, 4);
+     (12152%positive, 5);
+     (12153%positive, 13);
+     (12156%positive, 5);
+     (12157%positive, 4);
+     (12158%positive, 10)]]
   end.
 
-Theorem nqh_1RB1LA_1LA1RC_0RD0RD_0LB1RD : NeverQuasiHaltsSt tm_bulkr_00163.
+Theorem nqh_1RB0RC_1LC0RA_1LD0LB_1RD1RA : NeverQuasiHaltsSt tm_bulkr_00163.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 384 11 cert_bulkr_00163).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 728 12 cert_bulkr_00163).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LA1RC_1LA0RD_0LB1RD: n=2 t=0 contexts=40 *)
+(** 1RB0RC_1LC0RA_1RA0LD_1LC1LA: n=2 t=0 contexts=73 *)
 
 Definition tm_bulkr_00164 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StA)
-  | StB, S1 => Some (mkTrans S1 DR StC)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S0 DL StB)
-  | StD, S1 => Some (mkTrans S1 DR StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S0 DR StA)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S0 DL StD)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 
 Definition cert_bulkr_00164 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9517%positive, 1);
-     (9531%positive, 2);
-     (9533%positive, 1);
-     (9535%positive, 3);
+    [(9515%positive, 1);
+     (9518%positive, 2);
+     (9529%positive, 4);
+     (9531%positive, 4);
      (9579%positive, 1);
-     (9581%positive, 1);
-     (9583%positive, 3);
+     (9582%positive, 5);
+     (9593%positive, 2);
      (9595%positive, 2);
-     (9597%positive, 1);
-     (9598%positive, 2);
-     (9599%positive, 3);
-     (10045%positive, 3);
-     (10047%positive, 4);
-     (10095%positive, 4);
-     (10109%positive, 3);
-     (10110%positive, 4);
-     (10111%positive, 4);
-     (12093%positive, 9);
-     (12095%positive, 6);
-     (12143%positive, 7);
-     (12157%positive, 9);
-     (12158%positive, 8);
-     (12159%positive, 5)];
-   NgPattE [S1] RgR 1
+     (10030%positive, 2);
+     (10041%positive, 5);
+     (10046%positive, 1);
+     (10094%positive, 3);
+     (10105%positive, 2);
+     (10110%positive, 1);
+     (11563%positive, 1);
+     (11566%positive, 2);
+     (11577%positive, 4);
+     (11579%positive, 3);
+     (11627%positive, 1);
+     (11630%positive, 5);
+     (11641%positive, 2);
+     (11643%positive, 2);
+     (12078%positive, 2);
+     (12089%positive, 5);
+     (12094%positive, 1);
+     (12142%positive, 4);
+     (12153%positive, 2);
+     (12158%positive, 1)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12159%positive];
+    [10094%positive;
+     11579%positive];
    NgRankE
-    [(9517%positive, 1);
-     (9531%positive, 2);
-     (9533%positive, 1);
-     (9535%positive, 3);
+    [(9515%positive, 1);
+     (9518%positive, 2);
+     (9529%positive, 4);
+     (9531%positive, 4);
      (9579%positive, 1);
-     (9581%positive, 1);
-     (9583%positive, 3);
+     (9582%positive, 5);
+     (9593%positive, 2);
      (9595%positive, 2);
-     (9597%positive, 1);
-     (9598%positive, 2);
-     (9599%positive, 3);
-     (10045%positive, 3);
-     (10047%positive, 4);
-     (10095%positive, 4);
-     (10109%positive, 3);
-     (10110%positive, 4);
-     (10111%positive, 4);
-     (12093%positive, 9);
-     (12095%positive, 6);
-     (12143%positive, 7);
-     (12157%positive, 9);
-     (12158%positive, 8);
-     (12159%positive, 5)]]
+     (10030%positive, 2);
+     (10041%positive, 6);
+     (10046%positive, 1);
+     (10094%positive, 3);
+     (10105%positive, 2);
+     (10110%positive, 1);
+     (11563%positive, 1);
+     (11566%positive, 2);
+     (11577%positive, 4);
+     (11579%positive, 4);
+     (11627%positive, 1);
+     (11630%positive, 5);
+     (11641%positive, 2);
+     (11643%positive, 2);
+     (12078%positive, 2);
+     (12089%positive, 6);
+     (12094%positive, 1);
+     (12142%positive, 5);
+     (12153%positive, 2);
+     (12158%positive, 1)]]
   | StB =>
   [NgRankE
-    [(9530%positive, 2);
-     (9535%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 5);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
-     (10092%positive, 1);
-     (10095%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 4);
-     (12140%positive, 1);
-     (12143%positive, 5);
-     (12156%positive, 3);
-     (12158%positive, 6);
-     (12159%positive, 3)];
-   NgPattE [S1] RgL 1
+    [(9514%positive, 1);
+     (9515%positive, 3);
+     (9518%positive, 3);
+     (9531%positive, 3);
+     (9532%positive, 2);
+     (9578%positive, 1);
+     (9579%positive, 3);
+     (9580%positive, 2);
+     (9582%positive, 3);
+     (9595%positive, 3);
+     (9596%positive, 2);
+     (10026%positive, 3);
+     (10028%positive, 3);
+     (10030%positive, 3);
+     (10042%positive, 3);
+     (10044%positive, 3);
+     (10046%positive, 2);
+     (10090%positive, 3);
+     (10092%positive, 3);
+     (10094%positive, 3);
+     (10106%positive, 3);
+     (10108%positive, 3);
+     (10110%positive, 3);
+     (11562%positive, 1);
+     (11563%positive, 3);
+     (11566%positive, 3);
+     (11567%positive, 1);
+     (11579%positive, 3);
+     (11580%positive, 3);
+     (11583%positive, 3);
+     (11626%positive, 1);
+     (11627%positive, 3);
+     (11628%positive, 5);
+     (11630%positive, 3);
+     (11631%positive, 1);
+     (11643%positive, 3);
+     (11644%positive, 3);
+     (11647%positive, 3);
+     (12074%positive, 4);
+     (12078%positive, 4);
+     (12092%positive, 3);
+     (12094%positive, 2);
+     (12138%positive, 3);
+     (12140%positive, 5);
+     (12142%positive, 3);
+     (12158%positive, 4)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
+    [9515%positive;
+     9518%positive;
+     9531%positive;
+     9579%positive;
+     9582%positive;
+     9595%positive;
+     10026%positive;
+     10028%positive;
+     10030%positive;
+     10042%positive;
+     10044%positive;
+     10090%positive;
+     10092%positive;
+     10094%positive;
+     10106%positive;
+     10108%positive;
+     10110%positive;
+     11563%positive;
+     11566%positive;
+     11579%positive;
+     11580%positive;
+     11583%positive;
+     11627%positive;
+     11630%positive;
+     11643%positive;
+     11644%positive;
+     11647%positive;
+     12092%positive;
+     12138%positive;
+     12142%positive];
    NgRankE
-    [(9530%positive, 2);
-     (9535%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 5);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
-     (10092%positive, 1);
-     (10095%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 4);
-     (12140%positive, 1);
-     (12143%positive, 5);
-     (12156%positive, 3);
-     (12158%positive, 6);
-     (12159%positive, 3)]]
+    [(9514%positive, 1);
+     (9515%positive, 5);
+     (9518%positive, 7);
+     (9531%positive, 10);
+     (9532%positive, 2);
+     (9578%positive, 1);
+     (9579%positive, 6);
+     (9580%positive, 2);
+     (9582%positive, 10);
+     (9595%positive, 10);
+     (9596%positive, 2);
+     (10026%positive, 4);
+     (10028%positive, 8);
+     (10030%positive, 7);
+     (10042%positive, 5);
+     (10044%positive, 10);
+     (10046%positive, 2);
+     (10090%positive, 3);
+     (10092%positive, 8);
+     (10094%positive, 10);
+     (10106%positive, 5);
+     (10108%positive, 10);
+     (10110%positive, 10);
+     (11562%positive, 1);
+     (11563%positive, 5);
+     (11566%positive, 7);
+     (11567%positive, 1);
+     (11579%positive, 10);
+     (11580%positive, 3);
+     (11583%positive, 9);
+     (11626%positive, 1);
+     (11627%positive, 6);
+     (11628%positive, 12);
+     (11630%positive, 10);
+     (11631%positive, 1);
+     (11643%positive, 10);
+     (11644%positive, 4);
+     (11647%positive, 10);
+     (12074%positive, 11);
+     (12078%positive, 7);
+     (12094%positive, 2);
+     (12140%positive, 8);
+     (12142%positive, 11);
+     (12158%positive, 11)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10090%positive;
+     11580%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [9531%positive;
+     9582%positive;
+     9595%positive;
+     10044%positive;
+     10094%positive;
+     10108%positive;
+     10110%positive;
+     11579%positive;
+     11630%positive;
+     11643%positive;
+     11647%positive];
+   NgRankE
+    [(9514%positive, 1);
+     (9515%positive, 6);
+     (9518%positive, 7);
+     (9531%positive, 9);
+     (9532%positive, 2);
+     (9578%positive, 1);
+     (9579%positive, 6);
+     (9580%positive, 2);
+     (9582%positive, 10);
+     (9595%positive, 3);
+     (9596%positive, 2);
+     (10026%positive, 5);
+     (10028%positive, 8);
+     (10030%positive, 7);
+     (10042%positive, 5);
+     (10044%positive, 11);
+     (10046%positive, 2);
+     (10090%positive, 3);
+     (10092%positive, 8);
+     (10094%positive, 8);
+     (10106%positive, 5);
+     (10108%positive, 11);
+     (10110%positive, 10);
+     (11562%positive, 1);
+     (11563%positive, 6);
+     (11566%positive, 7);
+     (11567%positive, 1);
+     (11579%positive, 8);
+     (11580%positive, 4);
+     (11583%positive, 9);
+     (11626%positive, 1);
+     (11627%positive, 6);
+     (11628%positive, 13);
+     (11630%positive, 10);
+     (11631%positive, 1);
+     (11643%positive, 3);
+     (11644%positive, 4);
+     (12074%positive, 12);
+     (12078%positive, 7);
+     (12094%positive, 2);
+     (12140%positive, 8);
+     (12142%positive, 9);
+     (12158%positive, 10)];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10094%positive;
+     11579%positive];
+   NgRankE
+    [(9514%positive, 1);
+     (9515%positive, 6);
+     (9518%positive, 7);
+     (9531%positive, 8);
+     (9532%positive, 2);
+     (9578%positive, 1);
+     (9579%positive, 6);
+     (9580%positive, 2);
+     (9582%positive, 9);
+     (9595%positive, 3);
+     (9596%positive, 2);
+     (10026%positive, 5);
+     (10028%positive, 8);
+     (10030%positive, 7);
+     (10042%positive, 5);
+     (10044%positive, 10);
+     (10046%positive, 2);
+     (10090%positive, 3);
+     (10092%positive, 8);
+     (10094%positive, 4);
+     (10106%positive, 5);
+     (10108%positive, 10);
+     (10110%positive, 10);
+     (11562%positive, 1);
+     (11563%positive, 6);
+     (11566%positive, 7);
+     (11567%positive, 1);
+     (11579%positive, 8);
+     (11580%positive, 4);
+     (11583%positive, 9);
+     (11626%positive, 1);
+     (11627%positive, 6);
+     (11628%positive, 12);
+     (11630%positive, 9);
+     (11631%positive, 1);
+     (11643%positive, 3);
+     (11644%positive, 4);
+     (12074%positive, 11);
+     (12078%positive, 7);
+     (12094%positive, 2);
+     (12140%positive, 8);
+     (12142%positive, 9);
+     (12158%positive, 10)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 1);
-     (9535%positive, 2);
-     (9579%positive, 7);
-     (9583%positive, 2);
-     (9593%positive, 6);
-     (9595%positive, 1);
-     (9599%positive, 2);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9533%positive, 2);
+     (9576%positive, 1);
+     (9597%positive, 2);
+     (10024%positive, 4);
+     (10040%positive, 5);
+     (10045%positive, 1);
+     (10088%positive, 3);
+     (10104%positive, 5);
+     (10109%positive, 1);
+     (11567%positive, 5);
+     (11576%positive, 1);
+     (11581%positive, 3);
+     (11583%positive, 1);
+     (11624%positive, 1);
+     (11631%positive, 6);
+     (11645%positive, 4);
+     (11647%positive, 1);
+     (12088%positive, 2);
+     (12093%positive, 1);
+     (12136%positive, 2);
+     (12157%positive, 1)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
+    [10088%positive;
+     11581%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 1);
-     (9535%positive, 2);
-     (9579%positive, 7);
-     (9583%positive, 2);
-     (9593%positive, 6);
-     (9595%positive, 1);
-     (9599%positive, 2);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)]]
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9533%positive, 2);
+     (9576%positive, 1);
+     (9597%positive, 2);
+     (10024%positive, 5);
+     (10040%positive, 5);
+     (10045%positive, 1);
+     (10088%positive, 3);
+     (10104%positive, 5);
+     (10109%positive, 1);
+     (11567%positive, 6);
+     (11576%positive, 1);
+     (11581%positive, 4);
+     (11583%positive, 1);
+     (11624%positive, 1);
+     (11631%positive, 6);
+     (11645%positive, 4);
+     (11647%positive, 1);
+     (12088%positive, 2);
+     (12093%positive, 1);
+     (12136%positive, 2);
+     (12157%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 5);
-     (9517%positive, 5);
-     (9529%positive, 4);
-     (9530%positive, 4);
-     (9533%positive, 8);
-     (9581%positive, 5);
-     (9593%positive, 7);
-     (9594%positive, 7);
-     (9597%positive, 8);
-     (10028%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 2);
+     (9514%positive, 3);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 4);
+     (9533%positive, 3);
+     (9576%positive, 2);
+     (9578%positive, 3);
+     (9580%positive, 4);
+     (9593%positive, 1);
+     (9596%positive, 5);
+     (9597%positive, 3);
+     (10024%positive, 5);
+     (10026%positive, 4);
+     (10028%positive, 1);
+     (10040%positive, 4);
+     (10041%positive, 1);
+     (10042%positive, 6);
+     (10044%positive, 1);
+     (10045%positive, 4);
+     (10088%positive, 4);
+     (10090%positive, 4);
+     (10092%positive, 1);
+     (10104%positive, 5);
+     (10105%positive, 1);
+     (10106%positive, 6);
+     (10108%positive, 1);
+     (10109%positive, 4);
+     (11562%positive, 4);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11580%positive, 4);
+     (11581%positive, 4);
+     (11624%positive, 2);
+     (11626%positive, 4);
+     (11628%positive, 4);
+     (11641%positive, 1);
+     (11644%positive, 5);
+     (11645%positive, 4);
+     (12074%positive, 2);
+     (12088%positive, 4);
+     (12089%positive, 1);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12136%positive, 4);
+     (12138%positive, 2);
+     (12140%positive, 1);
+     (12153%positive, 1);
+     (12157%positive, 2)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [9532%positive;
+     9580%positive;
+     10026%positive;
+     10040%positive;
+     10045%positive;
+     10088%positive;
+     10090%positive;
+     10109%positive;
+     11562%positive;
+     11580%positive;
+     11581%positive;
+     11626%positive;
+     11628%positive;
+     11645%positive;
+     12088%positive;
+     12136%positive];
    NgRankE
-    [(9512%positive, 5);
-     (9517%positive, 5);
-     (9529%positive, 4);
-     (9530%positive, 4);
-     (9533%positive, 8);
-     (9581%positive, 5);
-     (9593%positive, 7);
-     (9594%positive, 7);
-     (9597%positive, 8);
-     (10028%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)]]
+    [(9512%positive, 2);
+     (9514%positive, 3);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 8);
+     (9533%positive, 3);
+     (9576%positive, 2);
+     (9578%positive, 3);
+     (9580%positive, 8);
+     (9593%positive, 1);
+     (9596%positive, 8);
+     (9597%positive, 3);
+     (10024%positive, 5);
+     (10026%positive, 10);
+     (10028%positive, 1);
+     (10040%positive, 6);
+     (10041%positive, 1);
+     (10042%positive, 11);
+     (10044%positive, 1);
+     (10045%positive, 12);
+     (10088%positive, 4);
+     (10090%positive, 9);
+     (10092%positive, 1);
+     (10104%positive, 6);
+     (10105%positive, 1);
+     (10106%positive, 11);
+     (10108%positive, 1);
+     (10109%positive, 12);
+     (11562%positive, 7);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11580%positive, 9);
+     (11581%positive, 4);
+     (11624%positive, 2);
+     (11626%positive, 7);
+     (11628%positive, 11);
+     (11641%positive, 1);
+     (11644%positive, 10);
+     (11645%positive, 5);
+     (12074%positive, 2);
+     (12088%positive, 3);
+     (12089%positive, 1);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12136%positive, 3);
+     (12138%positive, 2);
+     (12140%positive, 1);
+     (12153%positive, 1);
+     (12157%positive, 2)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10088%positive;
+     11581%positive];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10090%positive;
+     11580%positive];
+   NgRankE
+    [(9512%positive, 2);
+     (9514%positive, 3);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 8);
+     (9533%positive, 3);
+     (9576%positive, 2);
+     (9578%positive, 3);
+     (9580%positive, 8);
+     (9593%positive, 1);
+     (9596%positive, 8);
+     (9597%positive, 3);
+     (10024%positive, 6);
+     (10026%positive, 11);
+     (10028%positive, 1);
+     (10040%positive, 6);
+     (10041%positive, 1);
+     (10042%positive, 11);
+     (10044%positive, 1);
+     (10045%positive, 13);
+     (10088%positive, 4);
+     (10090%positive, 9);
+     (10092%positive, 1);
+     (10104%positive, 6);
+     (10105%positive, 1);
+     (10106%positive, 11);
+     (10108%positive, 1);
+     (10109%positive, 13);
+     (11562%positive, 7);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11580%positive, 10);
+     (11581%positive, 5);
+     (11624%positive, 2);
+     (11626%positive, 7);
+     (11628%positive, 12);
+     (11641%positive, 1);
+     (11644%positive, 10);
+     (11645%positive, 5);
+     (12074%positive, 2);
+     (12088%positive, 3);
+     (12089%positive, 1);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12136%positive, 3);
+     (12138%positive, 2);
+     (12140%positive, 1);
+     (12153%positive, 1);
+     (12157%positive, 2)]]
   end.
 
-Theorem nqh_1RB1LA_1LA1RC_1LA0RD_0LB1RD : NeverQuasiHaltsSt tm_bulkr_00164.
+Theorem nqh_1RB0RC_1LC0RA_1RA0LD_1LC1LA : NeverQuasiHaltsSt tm_bulkr_00164.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 384 11 cert_bulkr_00164).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 648 12 cert_bulkr_00164).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LA1RC_1LB0RD_0LB1RD: n=2 t=0 contexts=43 *)
+(** 1RB0RC_1LC1LD_1RA0LB_1RB1LB: n=2 t=0 contexts=72 *)
 
 Definition tm_bulkr_00165 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StA)
-  | StB, S1 => Some (mkTrans S1 DR StC)
-  | StC, S0 => Some (mkTrans S1 DL StB)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S0 DL StB)
-  | StD, S1 => Some (mkTrans S1 DR StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DL StD)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S0 DL StB)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 
 Definition cert_bulkr_00165 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9517%positive, 5);
-     (9530%positive, 4);
-     (9531%positive, 6);
-     (9533%positive, 5);
-     (9534%positive, 2);
-     (9535%positive, 7);
-     (9579%positive, 1);
-     (9581%positive, 5);
-     (9583%positive, 7);
-     (9594%positive, 4);
-     (9595%positive, 6);
-     (9597%positive, 5);
-     (9598%positive, 2);
-     (9599%positive, 7);
-     (10029%positive, 3);
+    [(9529%positive, 4);
+     (9533%positive, 3);
+     (9582%positive, 5);
+     (9593%positive, 4);
+     (9597%positive, 3);
+     (10027%positive, 3);
+     (10030%positive, 2);
+     (10031%positive, 2);
+     (10043%positive, 3);
      (10045%positive, 3);
-     (10047%positive, 8);
-     (10093%positive, 3);
-     (10095%positive, 8);
+     (10046%positive, 3);
+     (10047%positive, 3);
+     (10091%positive, 3);
+     (10094%positive, 3);
+     (10095%positive, 3);
+     (10105%positive, 4);
+     (10107%positive, 3);
      (10109%positive, 3);
-     (10110%positive, 8);
-     (10111%positive, 8);
-     (12093%positive, 13);
-     (12095%positive, 10);
-     (12143%positive, 11);
-     (12157%positive, 13);
-     (12158%positive, 12);
-     (12159%positive, 9)];
-   NgPattE [S1] RgR 1
+     (10110%positive, 3);
+     (10111%positive, 3);
+     (11561%positive, 1);
+     (11565%positive, 3);
+     (11577%positive, 3);
+     (11581%positive, 3);
+     (11625%positive, 1);
+     (11629%positive, 3);
+     (11630%positive, 5);
+     (11641%positive, 3);
+     (11645%positive, 3);
+     (12073%positive, 1);
+     (12075%positive, 3);
+     (12077%positive, 3);
+     (12078%positive, 2);
+     (12079%positive, 2);
+     (12089%positive, 3);
+     (12091%positive, 3);
+     (12093%positive, 3);
+     (12094%positive, 3);
+     (12095%positive, 3);
+     (12137%positive, 1);
+     (12139%positive, 3);
+     (12141%positive, 3);
+     (12142%positive, 3);
+     (12143%positive, 3);
+     (12153%positive, 3);
+     (12155%positive, 3);
+     (12157%positive, 3);
+     (12158%positive, 3);
+     (12159%positive, 3)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12159%positive];
+    [9533%positive;
+     9597%positive;
+     10027%positive;
+     10043%positive;
+     10045%positive;
+     10046%positive;
+     10047%positive;
+     10091%positive;
+     10094%positive;
+     10095%positive;
+     10107%positive;
+     10109%positive;
+     10110%positive;
+     10111%positive;
+     11565%positive;
+     11577%positive;
+     11581%positive;
+     11629%positive;
+     11641%positive;
+     11645%positive;
+     12075%positive;
+     12077%positive;
+     12089%positive;
+     12091%positive;
+     12093%positive;
+     12094%positive;
+     12095%positive;
+     12139%positive;
+     12141%positive;
+     12142%positive;
+     12143%positive;
+     12153%positive;
+     12155%positive;
+     12157%positive;
+     12158%positive;
+     12159%positive];
    NgRankE
-    [(9517%positive, 5);
-     (9530%positive, 4);
-     (9531%positive, 6);
-     (9533%positive, 5);
-     (9534%positive, 2);
-     (9535%positive, 7);
-     (9579%positive, 1);
-     (9581%positive, 5);
-     (9583%positive, 7);
-     (9594%positive, 4);
-     (9595%positive, 6);
-     (9597%positive, 5);
-     (9598%positive, 2);
-     (9599%positive, 7);
-     (10029%positive, 3);
+    [(9529%positive, 3);
+     (9533%positive, 3);
+     (9582%positive, 12);
+     (9593%positive, 11);
+     (9597%positive, 9);
+     (10027%positive, 4);
+     (10030%positive, 2);
+     (10031%positive, 2);
+     (10043%positive, 10);
      (10045%positive, 3);
-     (10047%positive, 8);
-     (10093%positive, 3);
-     (10095%positive, 8);
-     (10109%positive, 3);
-     (10110%positive, 8);
+     (10046%positive, 6);
+     (10047%positive, 6);
+     (10091%positive, 4);
+     (10105%positive, 11);
+     (10107%positive, 10);
+     (10109%positive, 8);
+     (10110%positive, 10);
      (10111%positive, 8);
-     (12093%positive, 13);
-     (12095%positive, 10);
-     (12143%positive, 11);
-     (12157%positive, 13);
-     (12158%positive, 12);
-     (12159%positive, 9)]]
+     (11561%positive, 1);
+     (11565%positive, 5);
+     (11577%positive, 3);
+     (11581%positive, 3);
+     (11625%positive, 1);
+     (11630%positive, 12);
+     (11641%positive, 11);
+     (11645%positive, 9);
+     (12073%positive, 1);
+     (12075%positive, 4);
+     (12077%positive, 5);
+     (12078%positive, 2);
+     (12079%positive, 2);
+     (12089%positive, 3);
+     (12091%positive, 9);
+     (12093%positive, 3);
+     (12094%positive, 6);
+     (12095%positive, 6);
+     (12137%positive, 1);
+     (12139%positive, 4);
+     (12153%positive, 11);
+     (12155%positive, 9);
+     (12157%positive, 7);
+     (12158%positive, 10);
+     (12159%positive, 7)];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12157%positive;
+     12159%positive];
+   NgRankE
+    [(9529%positive, 3);
+     (9533%positive, 3);
+     (9582%positive, 12);
+     (9593%positive, 11);
+     (9597%positive, 9);
+     (10027%positive, 4);
+     (10030%positive, 2);
+     (10031%positive, 2);
+     (10043%positive, 10);
+     (10045%positive, 3);
+     (10046%positive, 6);
+     (10047%positive, 6);
+     (10091%positive, 4);
+     (10105%positive, 11);
+     (10107%positive, 10);
+     (10109%positive, 7);
+     (10110%positive, 10);
+     (10111%positive, 8);
+     (11561%positive, 1);
+     (11565%positive, 5);
+     (11577%positive, 3);
+     (11581%positive, 3);
+     (11625%positive, 1);
+     (11630%positive, 12);
+     (11641%positive, 11);
+     (11645%positive, 9);
+     (12073%positive, 1);
+     (12075%positive, 4);
+     (12077%positive, 5);
+     (12078%positive, 2);
+     (12079%positive, 2);
+     (12089%positive, 3);
+     (12091%positive, 8);
+     (12093%positive, 3);
+     (12094%positive, 6);
+     (12095%positive, 6);
+     (12137%positive, 1);
+     (12139%positive, 4);
+     (12153%positive, 11);
+     (12155%positive, 8);
+     (12157%positive, 7);
+     (12158%positive, 10);
+     (12159%positive, 4)]]
   | StB =>
   [NgRankE
-    [(9534%positive, 1);
-     (9535%positive, 1);
-     (9583%positive, 1);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
-     (10092%positive, 1);
-     (10095%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 4);
-     (12140%positive, 1);
-     (12143%positive, 5);
-     (12156%positive, 3);
-     (12158%positive, 6);
-     (12159%positive, 3)];
-   NgPattE [S1] RgL 1
+    [(9532%positive, 2);
+     (9578%positive, 1);
+     (9596%positive, 2);
+     (10026%positive, 4);
+     (10042%positive, 5);
+     (10044%positive, 1);
+     (10090%positive, 3);
+     (10106%positive, 5);
+     (10108%positive, 1);
+     (11580%positive, 3);
+     (11626%positive, 1);
+     (11644%positive, 4);
+     (12074%positive, 2);
+     (12090%positive, 2);
+     (12092%positive, 1);
+     (12138%positive, 2);
+     (12154%positive, 2);
+     (12156%positive, 1)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9534%positive, 1);
-     (9535%positive, 1);
-     (9583%positive, 1);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 2);
-     (10092%positive, 1);
-     (10095%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 4);
-     (12140%positive, 1);
-     (12143%positive, 5);
-     (12156%positive, 3);
-     (12158%positive, 6);
-     (12159%positive, 3)]]
+    [(9532%positive, 2);
+     (9578%positive, 1);
+     (9596%positive, 2);
+     (10026%positive, 5);
+     (10042%positive, 5);
+     (10044%positive, 1);
+     (10090%positive, 3);
+     (10106%positive, 5);
+     (10108%positive, 1);
+     (11580%positive, 4);
+     (11626%positive, 1);
+     (11644%positive, 4);
+     (12074%positive, 2);
+     (12090%positive, 2);
+     (12092%positive, 1);
+     (12138%positive, 2);
+     (12154%positive, 2);
+     (12156%positive, 1)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 1);
-     (9535%positive, 2);
-     (9579%positive, 7);
-     (9583%positive, 2);
-     (9593%positive, 6);
-     (9595%positive, 1);
-     (9599%positive, 2);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9533%positive, 2);
+     (9597%positive, 7);
+     (10027%positive, 3);
+     (10031%positive, 1);
+     (10040%positive, 8);
+     (10043%positive, 8);
+     (10045%positive, 2);
+     (10047%positive, 6);
+     (10091%positive, 3);
+     (10095%positive, 1);
+     (10107%positive, 8);
+     (10109%positive, 5);
+     (10111%positive, 6);
+     (11565%positive, 4);
+     (11576%positive, 1);
+     (11581%positive, 2);
+     (11629%positive, 9);
+     (11645%positive, 7);
+     (12075%positive, 3);
+     (12077%positive, 4);
+     (12079%positive, 1);
+     (12088%positive, 6);
+     (12091%positive, 5);
+     (12093%positive, 2);
      (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)];
-   NgPattE [S1] RgL 1
+     (12139%positive, 3);
+     (12141%positive, 5);
+     (12143%positive, 1);
+     (12155%positive, 5);
+     (12157%positive, 5);
+     (12159%positive, 5)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
+    [10109%positive;
+     12091%positive;
+     12095%positive;
+     12141%positive;
+     12155%positive;
+     12157%positive;
+     12159%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 1);
-     (9535%positive, 2);
-     (9579%positive, 7);
-     (9583%positive, 2);
-     (9593%positive, 6);
-     (9595%positive, 1);
-     (9599%positive, 2);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10092%positive, 2);
-     (10095%positive, 3);
-     (10108%positive, 5);
-     (10111%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9533%positive, 2);
+     (9597%positive, 8);
+     (10027%positive, 3);
+     (10031%positive, 1);
+     (10040%positive, 9);
+     (10043%positive, 9);
+     (10045%positive, 2);
+     (10047%positive, 5);
+     (10091%positive, 3);
+     (10095%positive, 1);
+     (10107%positive, 9);
+     (10109%positive, 7);
+     (10111%positive, 7);
+     (11565%positive, 4);
+     (11576%positive, 1);
+     (11581%positive, 2);
+     (11629%positive, 10);
+     (11645%positive, 8);
+     (12075%positive, 3);
+     (12077%positive, 4);
+     (12079%positive, 1);
+     (12088%positive, 8);
+     (12093%positive, 2);
      (12095%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 4)]]
+     (12139%positive, 3);
+     (12141%positive, 1);
+     (12143%positive, 1);
+     (12157%positive, 6);
+     (12159%positive, 6)];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12157%positive;
+     12159%positive];
+   NgRankE
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9533%positive, 2);
+     (9597%positive, 8);
+     (10027%positive, 3);
+     (10031%positive, 1);
+     (10040%positive, 9);
+     (10043%positive, 9);
+     (10045%positive, 2);
+     (10047%positive, 5);
+     (10091%positive, 3);
+     (10095%positive, 1);
+     (10107%positive, 9);
+     (10109%positive, 6);
+     (10111%positive, 7);
+     (11565%positive, 4);
+     (11576%positive, 1);
+     (11581%positive, 2);
+     (11629%positive, 10);
+     (11645%positive, 8);
+     (12075%positive, 3);
+     (12077%positive, 4);
+     (12079%positive, 1);
+     (12088%positive, 7);
+     (12093%positive, 2);
+     (12095%positive, 5);
+     (12139%positive, 3);
+     (12141%positive, 1);
+     (12143%positive, 1);
+     (12157%positive, 6);
+     (12159%positive, 3)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 5);
-     (9517%positive, 3);
-     (9529%positive, 4);
-     (9530%positive, 2);
-     (9533%positive, 3);
-     (9581%positive, 3);
-     (9593%positive, 7);
-     (9594%positive, 2);
-     (9597%positive, 3);
-     (10028%positive, 3);
-     (10029%positive, 1);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10093%positive, 1);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 7);
+     (9528%positive, 3);
+     (9529%positive, 6);
+     (9532%positive, 5);
+     (9578%positive, 4);
+     (9582%positive, 6);
+     (9593%positive, 2);
+     (9596%positive, 5);
+     (10026%positive, 6);
+     (10030%positive, 6);
+     (10040%positive, 1);
+     (10042%positive, 6);
+     (10044%positive, 6);
+     (10046%positive, 1);
+     (10090%positive, 6);
+     (10094%positive, 6);
+     (10105%positive, 2);
+     (10106%positive, 6);
+     (10108%positive, 7);
+     (10110%positive, 1);
+     (11561%positive, 6);
+     (11576%positive, 3);
+     (11577%positive, 6);
+     (11580%positive, 6);
+     (11625%positive, 6);
+     (11626%positive, 2);
+     (11630%positive, 6);
+     (11641%positive, 2);
+     (11644%positive, 6);
+     (12073%positive, 8);
+     (12074%positive, 7);
+     (12078%positive, 7);
+     (12088%positive, 1);
+     (12089%positive, 8);
+     (12090%positive, 8);
+     (12092%positive, 6);
+     (12094%positive, 1);
+     (12137%positive, 9);
+     (12138%positive, 6);
+     (12142%positive, 6);
+     (12153%positive, 2);
+     (12154%positive, 8);
+     (12156%positive, 7);
+     (12158%positive, 1)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [9529%positive;
+     9582%positive;
+     10026%positive;
+     10030%positive;
+     10042%positive;
+     10044%positive;
+     10090%positive;
+     10094%positive;
+     10106%positive;
+     11561%positive;
+     11577%positive;
+     11580%positive;
+     11625%positive;
+     11630%positive;
+     11644%positive;
+     12092%positive;
+     12138%positive;
+     12142%positive];
    NgRankE
-    [(9512%positive, 5);
-     (9517%positive, 3);
-     (9529%positive, 4);
-     (9530%positive, 2);
-     (9533%positive, 3);
-     (9581%positive, 3);
-     (9593%positive, 7);
-     (9594%positive, 2);
-     (9597%positive, 3);
-     (10028%positive, 3);
-     (10029%positive, 1);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10093%positive, 1);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)]]
+    [(9512%positive, 13);
+     (9528%positive, 3);
+     (9529%positive, 12);
+     (9532%positive, 5);
+     (9578%positive, 4);
+     (9582%positive, 13);
+     (9593%positive, 2);
+     (9596%positive, 5);
+     (10026%positive, 7);
+     (10030%positive, 10);
+     (10040%positive, 1);
+     (10042%positive, 8);
+     (10044%positive, 14);
+     (10046%positive, 1);
+     (10090%positive, 6);
+     (10094%positive, 11);
+     (10105%positive, 2);
+     (10106%positive, 8);
+     (10108%positive, 14);
+     (10110%positive, 1);
+     (11561%positive, 8);
+     (11576%positive, 3);
+     (11577%positive, 11);
+     (11580%positive, 6);
+     (11625%positive, 9);
+     (11626%positive, 2);
+     (11630%positive, 13);
+     (11641%positive, 2);
+     (11644%positive, 7);
+     (12073%positive, 16);
+     (12074%positive, 15);
+     (12078%positive, 10);
+     (12088%positive, 1);
+     (12089%positive, 13);
+     (12090%positive, 15);
+     (12094%positive, 1);
+     (12137%positive, 16);
+     (12142%positive, 12);
+     (12153%positive, 2);
+     (12154%positive, 15);
+     (12156%positive, 13);
+     (12158%positive, 1)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10090%positive;
+     11580%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10094%positive;
+     11577%positive];
+   NgRankE
+    [(9512%positive, 12);
+     (9528%positive, 3);
+     (9529%positive, 11);
+     (9532%positive, 5);
+     (9578%positive, 4);
+     (9582%positive, 12);
+     (9593%positive, 2);
+     (9596%positive, 5);
+     (10026%positive, 8);
+     (10030%positive, 10);
+     (10040%positive, 1);
+     (10042%positive, 8);
+     (10044%positive, 13);
+     (10046%positive, 1);
+     (10090%positive, 6);
+     (10094%positive, 3);
+     (10105%positive, 2);
+     (10106%positive, 8);
+     (10108%positive, 13);
+     (10110%positive, 1);
+     (11561%positive, 9);
+     (11576%positive, 3);
+     (11577%positive, 11);
+     (11580%positive, 7);
+     (11625%positive, 9);
+     (11626%positive, 2);
+     (11630%positive, 12);
+     (11641%positive, 2);
+     (11644%positive, 7);
+     (12073%positive, 15);
+     (12074%positive, 14);
+     (12078%positive, 10);
+     (12088%positive, 1);
+     (12089%positive, 13);
+     (12090%positive, 14);
+     (12094%positive, 1);
+     (12137%positive, 15);
+     (12142%positive, 12);
+     (12153%positive, 2);
+     (12154%positive, 14);
+     (12156%positive, 13);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1LA1RC_1LB0RD_0LB1RD : NeverQuasiHaltsSt tm_bulkr_00165.
+Theorem nqh_1RB0RC_1LC1LD_1RA0LB_1RB1LB : NeverQuasiHaltsSt tm_bulkr_00165.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 408 11 cert_bulkr_00165).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 640 12 cert_bulkr_00165).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LA1RC_1RA0RD_1LA1RD: n=2 t=0 contexts=39 *)
+(** 1RB0RC_1LC1RA_1LD1RC_1RB1LD: n=2 t=0 contexts=39 *)
 
 Definition tm_bulkr_00166 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StA)
-  | StB, S1 => Some (mkTrans S1 DR StC)
-  | StC, S0 => Some (mkTrans S1 DR StA)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S1 DR StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StC)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 
 Definition cert_bulkr_00166 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9535%positive, 1);
-     (9583%positive, 1);
-     (9597%positive, 1);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10045%positive, 2);
-     (10047%positive, 2);
+    [(9529%positive, 9);
+     (9530%positive, 3);
+     (9534%positive, 7);
+     (9578%positive, 2);
+     (9582%positive, 4);
+     (9593%positive, 9);
+     (9594%positive, 6);
+     (9598%positive, 7);
+     (10030%positive, 8);
+     (10031%positive, 2);
+     (10043%positive, 1);
+     (10046%positive, 8);
+     (10047%positive, 3);
+     (10094%positive, 8);
      (10095%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12093%positive, 7);
-     (12095%positive, 4);
-     (12143%positive, 5);
-     (12157%positive, 7);
-     (12158%positive, 6);
-     (12159%positive, 3)];
-   NgPattE [S1] RgR 1
+     (10107%positive, 1);
+     (10110%positive, 8);
+     (10111%positive, 5);
+     (12075%positive, 1);
+     (12079%positive, 2);
+     (12091%positive, 1);
+     (12094%positive, 10);
+     (12095%positive, 3);
+     (12139%positive, 1);
+     (12142%positive, 11);
+     (12143%positive, 2);
+     (12155%positive, 1);
+     (12158%positive, 9);
+     (12159%positive, 4)];
+   NgPattE [S1; S1] RgL 1
     []
     [12159%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
    NgRankE
-    [(9535%positive, 1);
-     (9583%positive, 1);
-     (9597%positive, 1);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10045%positive, 2);
-     (10047%positive, 2);
+    [(9529%positive, 9);
+     (9530%positive, 3);
+     (9534%positive, 7);
+     (9578%positive, 2);
+     (9582%positive, 4);
+     (9593%positive, 9);
+     (9594%positive, 6);
+     (9598%positive, 7);
+     (10030%positive, 8);
+     (10031%positive, 2);
+     (10043%positive, 1);
+     (10046%positive, 8);
+     (10047%positive, 3);
+     (10094%positive, 8);
      (10095%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12093%positive, 7);
-     (12095%positive, 4);
-     (12143%positive, 5);
-     (12157%positive, 7);
-     (12158%positive, 6);
-     (12159%positive, 3)]]
+     (10107%positive, 1);
+     (10110%positive, 8);
+     (10111%positive, 5);
+     (12075%positive, 1);
+     (12079%positive, 2);
+     (12091%positive, 1);
+     (12094%positive, 10);
+     (12095%positive, 3);
+     (12139%positive, 1);
+     (12142%positive, 11);
+     (12143%positive, 2);
+     (12155%positive, 1);
+     (12158%positive, 9);
+     (12159%positive, 4)]]
   | StB =>
   [NgRankE
-    [(9531%positive, 2);
-     (9535%positive, 6);
-     (9579%positive, 1);
-     (9583%positive, 3);
-     (9594%positive, 1);
-     (9595%positive, 5);
-     (9598%positive, 2);
-     (9599%positive, 6);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 7);
-     (10092%positive, 1);
-     (10095%positive, 7);
+    [(9530%positive, 2);
+     (9534%positive, 6);
+     (9578%positive, 1);
+     (9582%positive, 3);
+     (9594%positive, 5);
+     (9596%positive, 2);
+     (9598%positive, 6);
+     (10030%positive, 7);
+     (10031%positive, 1);
+     (10046%positive, 7);
+     (10047%positive, 2);
+     (10094%positive, 7);
+     (10095%positive, 1);
      (10108%positive, 4);
-     (10110%positive, 4);
-     (10111%positive, 7);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 9);
-     (12140%positive, 1);
-     (12143%positive, 10);
-     (12156%positive, 3);
-     (12158%positive, 11);
-     (12159%positive, 8)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+     (10110%positive, 7);
+     (10111%positive, 4);
+     (12079%positive, 1);
+     (12094%positive, 9);
+     (12095%positive, 2);
+     (12142%positive, 10);
+     (12143%positive, 1);
+     (12156%positive, 11);
+     (12158%positive, 8);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
     [12159%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
    NgRankE
-    [(9531%positive, 2);
-     (9535%positive, 6);
-     (9579%positive, 1);
-     (9583%positive, 3);
-     (9594%positive, 1);
-     (9595%positive, 5);
-     (9598%positive, 2);
-     (9599%positive, 6);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 7);
-     (10092%positive, 1);
-     (10095%positive, 7);
+    [(9530%positive, 2);
+     (9534%positive, 6);
+     (9578%positive, 1);
+     (9582%positive, 3);
+     (9594%positive, 5);
+     (9596%positive, 2);
+     (9598%positive, 6);
+     (10030%positive, 7);
+     (10031%positive, 1);
+     (10046%positive, 7);
+     (10047%positive, 2);
+     (10094%positive, 7);
+     (10095%positive, 1);
      (10108%positive, 4);
-     (10110%positive, 4);
-     (10111%positive, 7);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 9);
-     (12140%positive, 1);
-     (12143%positive, 10);
-     (12156%positive, 3);
-     (12158%positive, 11);
-     (12159%positive, 8)]]
+     (10110%positive, 7);
+     (10111%positive, 4);
+     (12079%positive, 1);
+     (12094%positive, 9);
+     (12095%positive, 2);
+     (12142%positive, 10);
+     (12143%positive, 1);
+     (12156%positive, 11);
+     (12158%positive, 8);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 3);
-     (9535%positive, 7);
-     (9579%positive, 2);
-     (9583%positive, 4);
-     (9592%positive, 7);
-     (9593%positive, 6);
-     (9595%positive, 6);
-     (9599%positive, 7);
-     (10028%positive, 2);
-     (10040%positive, 1);
-     (10044%positive, 3);
-     (10047%positive, 8);
-     (10092%positive, 2);
-     (10095%positive, 8);
-     (10104%positive, 1);
-     (10108%positive, 5);
-     (10111%positive, 8);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 10);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 11);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 9)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 1);
+     (9592%positive, 1);
+     (9597%positive, 2);
+     (10031%positive, 3);
+     (10043%positive, 3);
+     (10045%positive, 1);
+     (10047%positive, 4);
+     (10095%positive, 3);
+     (10107%positive, 3);
+     (10109%positive, 1);
+     (10111%positive, 6);
+     (12075%positive, 2);
+     (12079%positive, 3);
+     (12091%positive, 2);
+     (12093%positive, 1);
+     (12095%positive, 4);
+     (12139%positive, 2);
+     (12143%positive, 3);
+     (12155%positive, 2);
+     (12157%positive, 1);
+     (12159%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
     [12159%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 3);
-     (9535%positive, 7);
-     (9579%positive, 2);
-     (9583%positive, 4);
-     (9592%positive, 7);
-     (9593%positive, 6);
-     (9595%positive, 6);
-     (9599%positive, 7);
-     (10028%positive, 2);
-     (10040%positive, 1);
-     (10044%positive, 3);
-     (10047%positive, 8);
-     (10092%positive, 2);
-     (10095%positive, 8);
-     (10104%positive, 1);
-     (10108%positive, 5);
-     (10111%positive, 8);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 10);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 11);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 9)]]
+    [(9512%positive, 1);
+     (9592%positive, 1);
+     (9597%positive, 2);
+     (10031%positive, 3);
+     (10043%positive, 3);
+     (10045%positive, 1);
+     (10047%positive, 4);
+     (10095%positive, 3);
+     (10107%positive, 3);
+     (10109%positive, 1);
+     (10111%positive, 6);
+     (12075%positive, 2);
+     (12079%positive, 3);
+     (12091%positive, 2);
+     (12093%positive, 1);
+     (12095%positive, 4);
+     (12139%positive, 2);
+     (12143%positive, 3);
+     (12155%positive, 2);
+     (12157%positive, 1);
+     (12159%positive, 5)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 5);
-     (9529%positive, 4);
-     (9592%positive, 8);
-     (9593%positive, 7);
-     (9594%positive, 9);
-     (9597%positive, 10);
-     (10028%positive, 3);
-     (10040%positive, 11);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10104%positive, 11);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 4);
+     (9529%positive, 3);
+     (9534%positive, 1);
+     (9582%positive, 1);
+     (9592%positive, 4);
+     (9593%positive, 3);
+     (9596%positive, 1);
+     (9597%positive, 5);
+     (9598%positive, 1);
+     (10030%positive, 2);
+     (10045%positive, 2);
+     (10046%positive, 2);
+     (10094%positive, 2);
+     (10108%positive, 2);
+     (10109%positive, 2);
+     (10110%positive, 2);
+     (12093%positive, 7);
+     (12094%positive, 4);
+     (12142%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 7);
+     (12158%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(9512%positive, 5);
-     (9529%positive, 4);
-     (9592%positive, 8);
-     (9593%positive, 7);
-     (9594%positive, 9);
-     (9597%positive, 10);
-     (10028%positive, 3);
-     (10040%positive, 11);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10104%positive, 11);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)]]
+    [(9512%positive, 4);
+     (9529%positive, 3);
+     (9534%positive, 1);
+     (9582%positive, 1);
+     (9592%positive, 4);
+     (9593%positive, 3);
+     (9596%positive, 1);
+     (9597%positive, 5);
+     (9598%positive, 1);
+     (10030%positive, 2);
+     (10045%positive, 2);
+     (10046%positive, 2);
+     (10094%positive, 2);
+     (10108%positive, 2);
+     (10109%positive, 2);
+     (10110%positive, 2);
+     (12093%positive, 7);
+     (12094%positive, 4);
+     (12142%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 7);
+     (12158%positive, 3)]]
   end.
 
-Theorem nqh_1RB1LA_1LA1RC_1RA0RD_1LA1RD : NeverQuasiHaltsSt tm_bulkr_00166.
+Theorem nqh_1RB0RC_1LC1RA_1LD1RC_1RB1LD : NeverQuasiHaltsSt tm_bulkr_00166.
 Proof.
   apply (ngram_check_neverqh_lex_sound _ 2 0 376 11 cert_bulkr_00166).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LA1RC_1RB0RD_0LC1RD: n=2 t=0 contexts=42 *)
+(** 1RB0RC_1LC1RD_1LA0LB_0RB0RC: n=3 t=0 contexts=75 *)
 
 Definition tm_bulkr_00167 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StA)
-  | StB, S1 => Some (mkTrans S1 DR StC)
-  | StC, S0 => Some (mkTrans S1 DR StB)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S0 DL StC)
-  | StD, S1 => Some (mkTrans S1 DR StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S0 DL StB)
+  | StD, S0 => Some (mkTrans S0 DR StB)
+  | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 
 Definition cert_bulkr_00167 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9514%positive, 1);
-     (9515%positive, 2);
-     (9518%positive, 3);
-     (9530%positive, 1);
-     (9531%positive, 4);
-     (9534%positive, 3);
-     (9535%positive, 5);
-     (9578%positive, 1);
-     (9579%positive, 2);
-     (9582%positive, 3);
-     (9583%positive, 5);
-     (9594%positive, 1);
-     (9595%positive, 4);
-     (9598%positive, 3);
-     (9599%positive, 5);
-     (10045%positive, 4);
-     (10047%positive, 6);
-     (10095%positive, 6);
-     (10109%positive, 4);
-     (10110%positive, 6);
-     (10111%positive, 6);
-     (12093%positive, 11);
-     (12095%positive, 8);
-     (12143%positive, 9);
-     (12157%positive, 11);
-     (12158%positive, 10);
-     (12159%positive, 7)];
-   NgPattE [S1] RgR 1
+    [(152761%positive, 3);
+     (152809%positive, 1);
+     (152813%positive, 3);
+     (152831%positive, 1);
+     (153019%positive, 2);
+     (153065%positive, 1);
+     (153069%positive, 3);
+     (153083%positive, 2);
+     (153085%positive, 3);
+     (153087%positive, 1);
+     (154798%positive, 2);
+     (154811%positive, 4);
+     (154813%positive, 2);
+     (154862%positive, 13);
+     (154875%positive, 4);
+     (155054%positive, 2);
+     (155067%positive, 4);
+     (155118%positive, 11);
+     (155131%positive, 4);
+     (155133%positive, 2);
+     (160937%positive, 1);
+     (160941%positive, 7);
+     (160953%positive, 3);
+     (160957%positive, 8);
+     (161001%positive, 1);
+     (161005%positive, 5);
+     (161017%positive, 9);
+     (161021%positive, 8);
+     (161023%positive, 1);
+     (161209%positive, 12);
+     (161213%positive, 8);
+     (161257%positive, 1);
+     (161261%positive, 6);
+     (161273%positive, 10);
+     (161277%positive, 8);
+     (161279%positive, 1);
+     (187566%positive, 2);
+     (187579%positive, 6);
+     (187581%positive, 2);
+     (187582%positive, 8);
+     (187630%positive, 12);
+     (187643%positive, 7);
+     (187646%positive, 9);
+     (187822%positive, 2);
+     (187835%positive, 5);
+     (187838%positive, 7);
+     (187886%positive, 11);
+     (187899%positive, 7);
+     (187901%positive, 2);
+     (187902%positive, 9)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12159%positive];
+    [161005%positive;
+     187835%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [161209%positive;
+     187630%positive];
    NgRankE
-    [(9514%positive, 1);
-     (9515%positive, 2);
-     (9518%positive, 3);
-     (9530%positive, 1);
-     (9531%positive, 4);
-     (9534%positive, 3);
-     (9535%positive, 5);
-     (9578%positive, 1);
-     (9579%positive, 2);
-     (9582%positive, 3);
-     (9583%positive, 5);
-     (9594%positive, 1);
-     (9595%positive, 4);
-     (9598%positive, 3);
-     (9599%positive, 5);
-     (10045%positive, 4);
-     (10047%positive, 6);
-     (10095%positive, 6);
-     (10109%positive, 4);
-     (10110%positive, 6);
-     (10111%positive, 6);
-     (12093%positive, 11);
-     (12095%positive, 8);
-     (12143%positive, 9);
-     (12157%positive, 11);
-     (12158%positive, 10);
-     (12159%positive, 7)]]
+    [(152761%positive, 3);
+     (152809%positive, 1);
+     (152813%positive, 3);
+     (152831%positive, 1);
+     (153019%positive, 2);
+     (153065%positive, 1);
+     (153069%positive, 3);
+     (153083%positive, 2);
+     (153085%positive, 3);
+     (153087%positive, 1);
+     (154798%positive, 2);
+     (154811%positive, 4);
+     (154813%positive, 2);
+     (154862%positive, 12);
+     (154875%positive, 4);
+     (155054%positive, 2);
+     (155067%positive, 4);
+     (155118%positive, 10);
+     (155131%positive, 4);
+     (155133%positive, 2);
+     (160937%positive, 1);
+     (160941%positive, 7);
+     (160953%positive, 3);
+     (160957%positive, 7);
+     (161001%positive, 1);
+     (161005%positive, 5);
+     (161017%positive, 9);
+     (161021%positive, 7);
+     (161023%positive, 1);
+     (161209%positive, 11);
+     (161213%positive, 7);
+     (161257%positive, 1);
+     (161261%positive, 5);
+     (161273%positive, 9);
+     (161277%positive, 7);
+     (161279%positive, 1);
+     (187566%positive, 2);
+     (187579%positive, 6);
+     (187581%positive, 2);
+     (187582%positive, 8);
+     (187630%positive, 4);
+     (187643%positive, 6);
+     (187646%positive, 8);
+     (187822%positive, 2);
+     (187838%positive, 6);
+     (187886%positive, 10);
+     (187899%positive, 6);
+     (187901%positive, 2);
+     (187902%positive, 8)]]
   | StB =>
   [NgRankE
-    [(9515%positive, 1);
-     (9518%positive, 2);
-     (9531%positive, 3);
-     (9534%positive, 2);
-     (9535%positive, 4);
-     (9579%positive, 1);
-     (9582%positive, 2);
-     (9583%positive, 4);
-     (9595%positive, 3);
-     (9598%positive, 2);
-     (9599%positive, 4);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 5);
-     (10092%positive, 1);
-     (10095%positive, 5);
-     (10108%positive, 4);
-     (10110%positive, 5);
-     (10111%positive, 5);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 7);
-     (12140%positive, 1);
-     (12143%positive, 8);
-     (12156%positive, 3);
-     (12158%positive, 9);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
-   NgRankE
-    [(9515%positive, 1);
-     (9518%positive, 2);
-     (9531%positive, 3);
-     (9534%positive, 2);
-     (9535%positive, 4);
-     (9579%positive, 1);
-     (9582%positive, 2);
-     (9583%positive, 4);
-     (9595%positive, 3);
-     (9598%positive, 2);
-     (9599%positive, 4);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 5);
-     (10092%positive, 1);
-     (10095%positive, 5);
-     (10108%positive, 4);
-     (10110%positive, 5);
-     (10111%positive, 5);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 7);
-     (12140%positive, 1);
-     (12143%positive, 8);
-     (12156%positive, 3);
-     (12158%positive, 9);
-     (12159%positive, 6)]]
+    [(152831%positive, 2);
+     (153066%positive, 1);
+     (153087%positive, 2);
+     (154810%positive, 2);
+     (154874%positive, 2);
+     (155066%positive, 2);
+     (155114%positive, 1);
+     (155130%positive, 2);
+     (161023%positive, 2);
+     (161279%positive, 2);
+     (162988%positive, 1);
+     (163004%positive, 1);
+     (163052%positive, 1);
+     (163068%positive, 1);
+     (163260%positive, 1);
+     (163308%positive, 1);
+     (163324%positive, 1);
+     (187562%positive, 1);
+     (187578%positive, 2);
+     (187642%positive, 2);
+     (187834%positive, 2);
+     (187882%positive, 1);
+     (187898%positive, 2)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9535%positive, 1);
-     (9583%positive, 1);
-     (9593%positive, 6);
-     (9599%positive, 1);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 2);
-     (10092%positive, 2);
-     (10095%positive, 2);
-     (10108%positive, 5);
-     (10111%positive, 2);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 4);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 5);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 3)];
-   NgPattE [S1] RgL 1
+    [(152744%positive, 1);
+     (152813%positive, 2);
+     (153019%positive, 1);
+     (153069%positive, 2);
+     (153083%positive, 1);
+     (153085%positive, 2);
+     (154811%positive, 3);
+     (154813%positive, 1);
+     (154872%positive, 3);
+     (154875%positive, 3);
+     (155067%positive, 3);
+     (155128%positive, 3);
+     (155131%positive, 3);
+     (155133%positive, 1);
+     (160941%positive, 6);
+     (160957%positive, 7);
+     (161005%positive, 4);
+     (161021%positive, 7);
+     (161213%positive, 7);
+     (161261%positive, 5);
+     (161277%positive, 7);
+     (162984%positive, 2);
+     (163064%positive, 2);
+     (163320%positive, 2);
+     (187579%positive, 5);
+     (187581%positive, 1);
+     (187643%positive, 6);
+     (187835%positive, 4);
+     (187899%positive, 6);
+     (187901%positive, 1)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12159%positive];
+    [161005%positive;
+     187835%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9535%positive, 1);
-     (9583%positive, 1);
-     (9593%positive, 6);
-     (9599%positive, 1);
-     (10028%positive, 2);
-     (10044%positive, 3);
-     (10047%positive, 2);
-     (10092%positive, 2);
-     (10095%positive, 2);
-     (10108%positive, 5);
-     (10111%positive, 2);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 4);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 5);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 3)]]
+    [(152744%positive, 1);
+     (152813%positive, 2);
+     (153019%positive, 1);
+     (153069%positive, 2);
+     (153083%positive, 1);
+     (153085%positive, 2);
+     (154811%positive, 3);
+     (154813%positive, 1);
+     (154872%positive, 3);
+     (154875%positive, 3);
+     (155067%positive, 3);
+     (155128%positive, 3);
+     (155131%positive, 3);
+     (155133%positive, 1);
+     (160941%positive, 6);
+     (160957%positive, 6);
+     (161005%positive, 4);
+     (161021%positive, 6);
+     (161213%positive, 6);
+     (161261%positive, 4);
+     (161277%positive, 6);
+     (162984%positive, 2);
+     (163064%positive, 2);
+     (163320%positive, 2);
+     (187579%positive, 5);
+     (187581%positive, 1);
+     (187643%positive, 5);
+     (187899%positive, 5);
+     (187901%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 5);
-     (9514%positive, 5);
-     (9529%positive, 4);
-     (9530%positive, 8);
-     (9578%positive, 5);
-     (9593%positive, 7);
-     (9594%positive, 8);
-     (10028%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+    [(152744%positive, 6);
+     (152761%positive, 5);
+     (152809%positive, 13);
+     (153065%positive, 10);
+     (153066%positive, 2);
+     (154798%positive, 4);
+     (154810%positive, 6);
+     (154862%positive, 7);
+     (154872%positive, 1);
+     (154874%positive, 9);
+     (155054%positive, 11);
+     (155066%positive, 12);
+     (155114%positive, 2);
+     (155118%positive, 3);
+     (155128%positive, 1);
+     (155130%positive, 5);
+     (160937%positive, 3);
+     (160953%positive, 5);
+     (161001%positive, 11);
+     (161017%positive, 2);
+     (161209%positive, 6);
+     (161257%positive, 10);
+     (161273%positive, 2);
+     (162984%positive, 1);
+     (162988%positive, 5);
+     (163004%positive, 8);
+     (163052%positive, 11);
+     (163064%positive, 1);
+     (163068%positive, 4);
+     (163260%positive, 8);
+     (163308%positive, 11);
+     (163320%positive, 1);
+     (163324%positive, 4);
+     (187562%positive, 2);
+     (187566%positive, 4);
+     (187578%positive, 6);
+     (187582%positive, 1);
+     (187630%positive, 6);
+     (187642%positive, 9);
+     (187646%positive, 1);
+     (187822%positive, 11);
+     (187834%positive, 11);
+     (187838%positive, 1);
+     (187882%positive, 2);
+     (187886%positive, 3);
+     (187898%positive, 5);
+     (187902%positive, 1)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12156%positive];
+    [161209%positive;
+     187630%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [155054%positive;
+     161001%positive;
+     163052%positive;
+     163308%positive;
+     187822%positive;
+     187834%positive];
    NgRankE
-    [(9512%positive, 5);
-     (9514%positive, 5);
-     (9529%positive, 4);
-     (9530%positive, 8);
-     (9578%positive, 5);
-     (9593%positive, 7);
-     (9594%positive, 8);
-     (10028%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)]]
+    [(152744%positive, 6);
+     (152761%positive, 5);
+     (152809%positive, 15);
+     (153065%positive, 11);
+     (153066%positive, 2);
+     (154798%positive, 4);
+     (154810%positive, 6);
+     (154862%positive, 8);
+     (154872%positive, 1);
+     (154874%positive, 10);
+     (155054%positive, 12);
+     (155066%positive, 14);
+     (155114%positive, 2);
+     (155118%positive, 3);
+     (155128%positive, 1);
+     (155130%positive, 5);
+     (160937%positive, 3);
+     (160953%positive, 5);
+     (161001%positive, 7);
+     (161017%positive, 2);
+     (161209%positive, 7);
+     (161257%positive, 11);
+     (161273%positive, 2);
+     (162984%positive, 1);
+     (162988%positive, 5);
+     (163004%positive, 9);
+     (163052%positive, 13);
+     (163064%positive, 1);
+     (163068%positive, 4);
+     (163260%positive, 9);
+     (163308%positive, 13);
+     (163320%positive, 1);
+     (163324%positive, 4);
+     (187562%positive, 2);
+     (187566%positive, 4);
+     (187578%positive, 6);
+     (187582%positive, 1);
+     (187630%positive, 6);
+     (187642%positive, 10);
+     (187646%positive, 1);
+     (187822%positive, 12);
+     (187834%positive, 14);
+     (187838%positive, 1);
+     (187882%positive, 2);
+     (187886%positive, 3);
+     (187898%positive, 5);
+     (187902%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1LA1RC_1RB0RD_0LC1RD : NeverQuasiHaltsSt tm_bulkr_00167.
+Theorem nqh_1RB0RC_1LC1RD_1LA0LB_0RB0RC : NeverQuasiHaltsSt tm_bulkr_00167.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 400 11 cert_bulkr_00167).
+  apply (ngram_check_neverqh_lex_sound _ 3 0 664 15 cert_bulkr_00167).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LA1RC_1RB0RD_1LA1RD: n=2 t=0 contexts=38 *)
+(** 1RB0RC_1LC1RD_1RA0LB_1LB1LD: n=2 t=0 contexts=71 *)
 
 Definition tm_bulkr_00168 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StA)
-  | StB, S1 => Some (mkTrans S1 DR StC)
-  | StC, S0 => Some (mkTrans S1 DR StB)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S1 DR StD)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S0 DL StB)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 
 Definition cert_bulkr_00168 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9535%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 1);
-     (9597%positive, 2);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10045%positive, 2);
-     (10047%positive, 2);
-     (10095%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12093%positive, 7);
-     (12095%positive, 4);
-     (12143%positive, 5);
-     (12157%positive, 7);
-     (12158%positive, 6);
+    [(9529%positive, 4);
+     (9582%positive, 5);
+     (9593%positive, 4);
+     (9595%positive, 6);
+     (9597%positive, 7);
+     (9599%positive, 4);
+     (10030%positive, 2);
+     (10043%positive, 3);
+     (10045%positive, 5);
+     (10046%positive, 3);
+     (10047%positive, 3);
+     (10094%positive, 3);
+     (10105%positive, 4);
+     (10107%positive, 3);
+     (10109%positive, 5);
+     (10110%positive, 3);
+     (10111%positive, 3);
+     (11561%positive, 1);
+     (11565%positive, 3);
+     (11577%positive, 3);
+     (11581%positive, 3);
+     (11625%positive, 1);
+     (11629%positive, 3);
+     (11630%positive, 5);
+     (11641%positive, 3);
+     (11643%positive, 6);
+     (11645%positive, 3);
+     (11647%positive, 4);
+     (12073%positive, 1);
+     (12075%positive, 2);
+     (12077%positive, 3);
+     (12078%positive, 2);
+     (12079%positive, 3);
+     (12089%positive, 3);
+     (12091%positive, 3);
+     (12093%positive, 3);
+     (12094%positive, 3);
+     (12095%positive, 3);
+     (12137%positive, 1);
+     (12139%positive, 3);
+     (12141%positive, 3);
+     (12142%positive, 3);
+     (12143%positive, 3);
+     (12153%positive, 3);
+     (12155%positive, 3);
+     (12157%positive, 3);
+     (12158%positive, 3);
      (12159%positive, 3)];
-   NgPattE [S1] RgR 1
+   NgPattE [S1; S0] RgL 1
+    []
+    [10043%positive;
+     10046%positive;
+     10047%positive;
+     10094%positive;
+     10107%positive;
+     10110%positive;
+     10111%positive;
+     11565%positive;
+     11577%positive;
+     11581%positive;
+     11629%positive;
+     11641%positive;
+     11645%positive;
+     12077%positive;
+     12079%positive;
+     12089%positive;
+     12091%positive;
+     12093%positive;
+     12094%positive;
+     12095%positive;
+     12139%positive;
+     12141%positive;
+     12142%positive;
+     12143%positive;
+     12153%positive;
+     12155%positive;
+     12157%positive;
+     12158%positive;
+     12159%positive];
+   NgRankE
+    [(9529%positive, 3);
+     (9582%positive, 12);
+     (9593%positive, 11);
+     (9595%positive, 9);
+     (9597%positive, 10);
+     (9599%positive, 7);
+     (10030%positive, 2);
+     (10043%positive, 6);
+     (10045%positive, 8);
+     (10046%positive, 8);
+     (10047%positive, 4);
+     (10105%positive, 11);
+     (10107%positive, 8);
+     (10109%positive, 8);
+     (10110%positive, 10);
+     (10111%positive, 6);
+     (11561%positive, 1);
+     (11565%positive, 7);
+     (11577%positive, 3);
+     (11581%positive, 9);
+     (11625%positive, 1);
+     (11629%positive, 7);
+     (11630%positive, 12);
+     (11641%positive, 11);
+     (11643%positive, 9);
+     (11645%positive, 9);
+     (11647%positive, 7);
+     (12073%positive, 1);
+     (12075%positive, 2);
+     (12077%positive, 5);
+     (12078%positive, 2);
+     (12079%positive, 3);
+     (12089%positive, 3);
+     (12091%positive, 6);
+     (12093%positive, 7);
+     (12094%positive, 8);
+     (12095%positive, 4);
+     (12137%positive, 1);
+     (12141%positive, 5);
+     (12153%positive, 11);
+     (12155%positive, 8);
+     (12157%positive, 7);
+     (12158%positive, 10);
+     (12159%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
     [12159%positive];
    NgRankE
-    [(9535%positive, 1);
-     (9583%positive, 1);
-     (9594%positive, 1);
-     (9597%positive, 2);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10045%positive, 2);
-     (10047%positive, 2);
-     (10095%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (10111%positive, 2);
+    [(9529%positive, 3);
+     (9582%positive, 12);
+     (9593%positive, 11);
+     (9595%positive, 9);
+     (9597%positive, 10);
+     (9599%positive, 7);
+     (10030%positive, 2);
+     (10043%positive, 6);
+     (10045%positive, 8);
+     (10046%positive, 8);
+     (10047%positive, 4);
+     (10105%positive, 11);
+     (10107%positive, 8);
+     (10109%positive, 8);
+     (10110%positive, 10);
+     (10111%positive, 6);
+     (11561%positive, 1);
+     (11565%positive, 7);
+     (11577%positive, 3);
+     (11581%positive, 9);
+     (11625%positive, 1);
+     (11629%positive, 7);
+     (11630%positive, 12);
+     (11641%positive, 11);
+     (11643%positive, 9);
+     (11645%positive, 9);
+     (11647%positive, 7);
+     (12073%positive, 1);
+     (12075%positive, 2);
+     (12077%positive, 5);
+     (12078%positive, 2);
+     (12079%positive, 3);
+     (12089%positive, 3);
+     (12091%positive, 6);
      (12093%positive, 7);
+     (12094%positive, 8);
      (12095%positive, 4);
-     (12143%positive, 5);
+     (12137%positive, 1);
+     (12141%positive, 5);
+     (12153%positive, 11);
+     (12155%positive, 8);
      (12157%positive, 7);
-     (12158%positive, 6);
-     (12159%positive, 3)]]
+     (12158%positive, 10);
+     (12159%positive, 5)]]
   | StB =>
   [NgRankE
-    [(9531%positive, 2);
-     (9535%positive, 6);
-     (9579%positive, 1);
-     (9583%positive, 3);
-     (9595%positive, 5);
-     (9598%positive, 2);
-     (9599%positive, 6);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 7);
-     (10092%positive, 1);
-     (10095%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 4);
-     (10111%positive, 7);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 9);
-     (12140%positive, 1);
-     (12143%positive, 10);
-     (12156%positive, 3);
-     (12158%positive, 11);
-     (12159%positive, 8)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+    [(9532%positive, 2);
+     (9578%positive, 1);
+     (9596%positive, 2);
+     (9599%positive, 5);
+     (10026%positive, 4);
+     (10042%positive, 5);
+     (10044%positive, 1);
+     (10047%positive, 2);
+     (10090%positive, 3);
+     (10106%positive, 5);
+     (10108%positive, 1);
+     (10111%positive, 4);
+     (11580%positive, 3);
+     (11626%positive, 1);
+     (11644%positive, 4);
+     (11647%positive, 5);
+     (12074%positive, 2);
+     (12079%positive, 1);
+     (12090%positive, 2);
+     (12092%positive, 1);
+     (12095%positive, 2);
+     (12138%positive, 2);
+     (12143%positive, 1);
+     (12154%positive, 2);
+     (12156%positive, 1);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
     [12159%positive];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10090%positive;
+     11580%positive];
    NgRankE
-    [(9531%positive, 2);
-     (9535%positive, 6);
-     (9579%positive, 1);
-     (9583%positive, 3);
-     (9595%positive, 5);
-     (9598%positive, 2);
-     (9599%positive, 6);
-     (10028%positive, 1);
-     (10044%positive, 2);
-     (10047%positive, 7);
-     (10092%positive, 1);
-     (10095%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 4);
-     (10111%positive, 7);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12095%positive, 9);
-     (12140%positive, 1);
-     (12143%positive, 10);
-     (12156%positive, 3);
-     (12158%positive, 11);
-     (12159%positive, 8)]]
+    [(9532%positive, 2);
+     (9578%positive, 1);
+     (9596%positive, 2);
+     (9599%positive, 5);
+     (10026%positive, 5);
+     (10042%positive, 5);
+     (10044%positive, 1);
+     (10047%positive, 2);
+     (10090%positive, 3);
+     (10106%positive, 5);
+     (10108%positive, 1);
+     (10111%positive, 4);
+     (11580%positive, 4);
+     (11626%positive, 1);
+     (11644%positive, 4);
+     (11647%positive, 5);
+     (12074%positive, 2);
+     (12079%positive, 1);
+     (12090%positive, 2);
+     (12092%positive, 1);
+     (12095%positive, 2);
+     (12138%positive, 2);
+     (12143%positive, 1);
+     (12154%positive, 2);
+     (12156%positive, 1);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 3);
-     (9535%positive, 7);
-     (9579%positive, 2);
-     (9583%positive, 4);
-     (9593%positive, 6);
+    [(9512%positive, 1);
+     (9528%positive, 1);
      (9595%positive, 6);
-     (9599%positive, 7);
-     (10028%positive, 2);
-     (10040%positive, 1);
-     (10044%positive, 3);
-     (10047%positive, 8);
-     (10092%positive, 2);
-     (10095%positive, 8);
-     (10104%positive, 1);
-     (10108%positive, 5);
-     (10111%positive, 8);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 10);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 11);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 9)];
-   NgPattE [S1] RgL 1
+     (9597%positive, 7);
+     (9599%positive, 4);
+     (10040%positive, 8);
+     (10043%positive, 4);
+     (10045%positive, 5);
+     (10047%positive, 3);
+     (10107%positive, 4);
+     (10109%positive, 5);
+     (10111%positive, 3);
+     (11565%positive, 5);
+     (11576%positive, 1);
+     (11581%positive, 5);
+     (11629%positive, 5);
+     (11643%positive, 6);
+     (11645%positive, 5);
+     (11647%positive, 4);
+     (12075%positive, 1);
+     (12077%positive, 3);
+     (12079%positive, 2);
+     (12088%positive, 6);
+     (12091%positive, 3);
+     (12093%positive, 3);
+     (12095%positive, 3);
+     (12139%positive, 1);
+     (12141%positive, 3);
+     (12143%positive, 3);
+     (12155%positive, 3);
+     (12157%positive, 3);
+     (12159%positive, 3)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+    [10047%positive;
+     10111%positive;
+     12077%positive;
+     12091%positive;
+     12093%positive;
+     12095%positive;
+     12141%positive;
+     12143%positive;
+     12155%positive;
+     12157%positive;
+     12159%positive];
+   NgRankE
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9595%positive, 8);
+     (9597%positive, 9);
+     (9599%positive, 6);
+     (10040%positive, 10);
+     (10043%positive, 5);
+     (10045%positive, 7);
+     (10047%positive, 3);
+     (10107%positive, 7);
+     (10109%positive, 7);
+     (10111%positive, 5);
+     (11565%positive, 6);
+     (11576%positive, 1);
+     (11581%positive, 8);
+     (11629%positive, 6);
+     (11643%positive, 8);
+     (11645%positive, 8);
+     (11647%positive, 6);
+     (12075%positive, 1);
+     (12077%positive, 4);
+     (12079%positive, 2);
+     (12088%positive, 8);
+     (12093%positive, 6);
+     (12095%positive, 3);
+     (12139%positive, 1);
+     (12141%positive, 4);
+     (12143%positive, 1);
+     (12157%positive, 6);
+     (12159%positive, 4)];
+   NgPattE [S1; S1] RgL 1
     []
     [12159%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9529%positive, 3);
-     (9531%positive, 3);
-     (9535%positive, 7);
-     (9579%positive, 2);
-     (9583%positive, 4);
-     (9593%positive, 6);
-     (9595%positive, 6);
-     (9599%positive, 7);
-     (10028%positive, 2);
-     (10040%positive, 1);
-     (10044%positive, 3);
-     (10047%positive, 8);
-     (10092%positive, 2);
-     (10095%positive, 8);
-     (10104%positive, 1);
-     (10108%positive, 5);
-     (10111%positive, 8);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12095%positive, 10);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 11);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12159%positive, 9)]]
+    [(9512%positive, 1);
+     (9528%positive, 1);
+     (9595%positive, 8);
+     (9597%positive, 9);
+     (9599%positive, 6);
+     (10040%positive, 10);
+     (10043%positive, 5);
+     (10045%positive, 7);
+     (10047%positive, 3);
+     (10107%positive, 7);
+     (10109%positive, 7);
+     (10111%positive, 5);
+     (11565%positive, 6);
+     (11576%positive, 1);
+     (11581%positive, 8);
+     (11629%positive, 6);
+     (11643%positive, 8);
+     (11645%positive, 8);
+     (11647%positive, 6);
+     (12075%positive, 1);
+     (12077%positive, 4);
+     (12079%positive, 2);
+     (12088%positive, 8);
+     (12093%positive, 6);
+     (12095%positive, 3);
+     (12139%positive, 1);
+     (12141%positive, 4);
+     (12143%positive, 1);
+     (12157%positive, 6);
+     (12159%positive, 4)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 5);
-     (9529%positive, 4);
-     (9593%positive, 7);
-     (9594%positive, 8);
-     (9597%positive, 9);
-     (10028%positive, 3);
-     (10040%positive, 10);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10104%positive, 10);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 7);
+     (9528%positive, 3);
+     (9529%positive, 6);
+     (9532%positive, 5);
+     (9578%positive, 4);
+     (9582%positive, 6);
+     (9593%positive, 2);
+     (9596%positive, 5);
+     (10026%positive, 6);
+     (10030%positive, 6);
+     (10040%positive, 1);
+     (10042%positive, 6);
+     (10044%positive, 6);
+     (10046%positive, 1);
+     (10090%positive, 6);
+     (10094%positive, 6);
+     (10105%positive, 2);
+     (10106%positive, 6);
+     (10108%positive, 7);
+     (10110%positive, 1);
+     (11561%positive, 6);
+     (11576%positive, 3);
+     (11577%positive, 6);
+     (11580%positive, 6);
+     (11625%positive, 6);
+     (11626%positive, 2);
+     (11630%positive, 6);
+     (11641%positive, 2);
+     (11644%positive, 6);
+     (12073%positive, 8);
+     (12074%positive, 7);
+     (12078%positive, 7);
+     (12088%positive, 1);
+     (12089%positive, 8);
+     (12090%positive, 8);
+     (12092%positive, 6);
+     (12094%positive, 1);
+     (12137%positive, 9);
+     (12138%positive, 6);
+     (12142%positive, 6);
+     (12153%positive, 2);
+     (12154%positive, 8);
+     (12156%positive, 7);
+     (12158%positive, 1)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [9529%positive;
+     9582%positive;
+     10026%positive;
+     10030%positive;
+     10042%positive;
+     10044%positive;
+     10090%positive;
+     10094%positive;
+     10106%positive;
+     11561%positive;
+     11577%positive;
+     11580%positive;
+     11625%positive;
+     11630%positive;
+     11644%positive;
+     12092%positive;
+     12138%positive;
+     12142%positive];
    NgRankE
-    [(9512%positive, 5);
-     (9529%positive, 4);
-     (9593%positive, 7);
-     (9594%positive, 8);
-     (9597%positive, 9);
-     (10028%positive, 3);
-     (10040%positive, 10);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10104%positive, 10);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)]]
+    [(9512%positive, 13);
+     (9528%positive, 3);
+     (9529%positive, 12);
+     (9532%positive, 5);
+     (9578%positive, 4);
+     (9582%positive, 13);
+     (9593%positive, 2);
+     (9596%positive, 5);
+     (10026%positive, 7);
+     (10030%positive, 10);
+     (10040%positive, 1);
+     (10042%positive, 8);
+     (10044%positive, 14);
+     (10046%positive, 1);
+     (10090%positive, 6);
+     (10094%positive, 11);
+     (10105%positive, 2);
+     (10106%positive, 8);
+     (10108%positive, 14);
+     (10110%positive, 1);
+     (11561%positive, 8);
+     (11576%positive, 3);
+     (11577%positive, 11);
+     (11580%positive, 6);
+     (11625%positive, 9);
+     (11626%positive, 2);
+     (11630%positive, 13);
+     (11641%positive, 2);
+     (11644%positive, 7);
+     (12073%positive, 16);
+     (12074%positive, 15);
+     (12078%positive, 10);
+     (12088%positive, 1);
+     (12089%positive, 13);
+     (12090%positive, 15);
+     (12094%positive, 1);
+     (12137%positive, 16);
+     (12142%positive, 12);
+     (12153%positive, 2);
+     (12154%positive, 15);
+     (12156%positive, 13);
+     (12158%positive, 1)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10090%positive;
+     11580%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10094%positive;
+     11577%positive];
+   NgRankE
+    [(9512%positive, 12);
+     (9528%positive, 3);
+     (9529%positive, 11);
+     (9532%positive, 5);
+     (9578%positive, 4);
+     (9582%positive, 12);
+     (9593%positive, 2);
+     (9596%positive, 5);
+     (10026%positive, 8);
+     (10030%positive, 10);
+     (10040%positive, 1);
+     (10042%positive, 8);
+     (10044%positive, 13);
+     (10046%positive, 1);
+     (10090%positive, 6);
+     (10094%positive, 3);
+     (10105%positive, 2);
+     (10106%positive, 8);
+     (10108%positive, 13);
+     (10110%positive, 1);
+     (11561%positive, 9);
+     (11576%positive, 3);
+     (11577%positive, 11);
+     (11580%positive, 7);
+     (11625%positive, 9);
+     (11626%positive, 2);
+     (11630%positive, 12);
+     (11641%positive, 2);
+     (11644%positive, 7);
+     (12073%positive, 15);
+     (12074%positive, 14);
+     (12078%positive, 10);
+     (12088%positive, 1);
+     (12089%positive, 13);
+     (12090%positive, 14);
+     (12094%positive, 1);
+     (12137%positive, 15);
+     (12142%positive, 12);
+     (12153%positive, 2);
+     (12154%positive, 14);
+     (12156%positive, 13);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1LA1RC_1RB0RD_1LA1RD : NeverQuasiHaltsSt tm_bulkr_00168.
+Theorem nqh_1RB0RC_1LC1RD_1RA0LB_1LB1LD : NeverQuasiHaltsSt tm_bulkr_00168.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 368 11 cert_bulkr_00168).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 632 12 cert_bulkr_00168).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC0RC_1RD1RC_1LD0LA: n=2 t=0 contexts=89 *)
+(** 1RB0RC_1RC0LA_0LD1LC_1RA1LA: n=2 t=0 contexts=65 *)
 
 Definition tm_bulkr_00169 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S0 DR StC)
-  | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DL StD)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S0 DL StA)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 
 Definition cert_bulkr_00169 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 5);
-     (9530%positive, 2);
-     (9531%positive, 1);
-     (9533%positive, 3);
-     (9534%positive, 3);
-     (9578%positive, 2);
-     (9582%positive, 3);
-     (9594%positive, 2);
-     (9595%positive, 1);
-     (9597%positive, 3);
-     (9598%positive, 3);
-     (10030%positive, 4);
-     (10041%positive, 8);
+    [(9514%positive, 1);
+     (9518%positive, 2);
+     (9529%positive, 2);
+     (9578%positive, 1);
+     (9582%positive, 2);
+     (9593%positive, 2);
+     (9594%positive, 1);
+     (9598%positive, 6);
+     (10026%positive, 1);
      (10042%positive, 1);
-     (10043%positive, 1);
-     (10045%positive, 4);
-     (10046%positive, 4);
+     (10046%positive, 3);
      (10090%positive, 1);
-     (10094%positive, 4);
      (10105%positive, 7);
      (10106%positive, 1);
-     (10107%positive, 1);
-     (10109%positive, 4);
-     (10110%positive, 4);
-     (11577%positive, 5);
-     (11578%positive, 2);
-     (11579%positive, 1);
-     (11581%positive, 2);
-     (11582%positive, 2);
-     (11626%positive, 2);
+     (10110%positive, 5);
+     (11562%positive, 1);
+     (11566%positive, 2);
+     (11577%positive, 2);
+     (11626%positive, 1);
      (11630%positive, 2);
-     (11642%positive, 2);
-     (11643%positive, 1);
-     (11645%positive, 2);
-     (11646%positive, 2);
-     (12078%positive, 7);
-     (12089%positive, 8);
-     (12090%positive, 1);
-     (12091%positive, 1);
-     (12093%positive, 8);
-     (12094%positive, 6);
+     (11641%positive, 2);
+     (11642%positive, 1);
+     (11646%positive, 6);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12094%positive, 3);
      (12138%positive, 1);
-     (12142%positive, 7);
-     (12153%positive, 7);
+     (12153%positive, 6);
      (12154%positive, 1);
-     (12155%positive, 1);
-     (12157%positive, 8);
-     (12158%positive, 5)];
-   NgPattE [S1] RgR 1
+     (12158%positive, 4)];
+   NgPattE [S1; S1] RgL 1
     []
     [12158%positive];
    NgRankE
-    [(9529%positive, 5);
-     (9530%positive, 2);
-     (9531%positive, 1);
-     (9533%positive, 3);
-     (9534%positive, 3);
-     (9578%positive, 2);
-     (9582%positive, 3);
-     (9594%positive, 2);
-     (9595%positive, 1);
-     (9597%positive, 3);
-     (9598%positive, 3);
-     (10030%positive, 4);
-     (10041%positive, 8);
+    [(9514%positive, 1);
+     (9518%positive, 2);
+     (9529%positive, 2);
+     (9578%positive, 1);
+     (9582%positive, 2);
+     (9593%positive, 2);
+     (9594%positive, 1);
+     (9598%positive, 6);
+     (10026%positive, 1);
      (10042%positive, 1);
-     (10043%positive, 1);
-     (10045%positive, 4);
-     (10046%positive, 4);
+     (10046%positive, 3);
      (10090%positive, 1);
-     (10094%positive, 4);
      (10105%positive, 7);
      (10106%positive, 1);
-     (10107%positive, 1);
-     (10109%positive, 4);
-     (10110%positive, 4);
-     (11577%positive, 5);
-     (11578%positive, 2);
-     (11579%positive, 1);
-     (11581%positive, 2);
-     (11582%positive, 2);
-     (11626%positive, 2);
+     (10110%positive, 5);
+     (11562%positive, 1);
+     (11566%positive, 2);
+     (11577%positive, 2);
+     (11626%positive, 1);
      (11630%positive, 2);
-     (11642%positive, 2);
-     (11643%positive, 1);
-     (11645%positive, 2);
-     (11646%positive, 2);
-     (12078%positive, 7);
-     (12089%positive, 8);
-     (12090%positive, 1);
-     (12091%positive, 1);
-     (12093%positive, 8);
-     (12094%positive, 6);
+     (11641%positive, 2);
+     (11642%positive, 1);
+     (11646%positive, 6);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12094%positive, 3);
      (12138%positive, 1);
-     (12142%positive, 7);
-     (12153%positive, 7);
+     (12153%positive, 6);
      (12154%positive, 1);
-     (12155%positive, 1);
-     (12157%positive, 8);
-     (12158%positive, 5)]]
+     (12158%positive, 4)]]
   | StB =>
   [NgRankE
-    [(9516%positive, 1);
-     (9530%positive, 8);
-     (9531%positive, 2);
-     (9532%positive, 2);
-     (9534%positive, 9);
-     (9535%positive, 2);
-     (9578%positive, 3);
-     (9580%positive, 1);
-     (9582%positive, 9);
+    [(9514%positive, 2);
+     (9515%positive, 1);
+     (9516%positive, 3);
+     (9518%positive, 3);
+     (9531%positive, 1);
+     (9532%positive, 3);
+     (9535%positive, 5);
+     (9578%positive, 2);
+     (9582%positive, 6);
      (9594%positive, 8);
-     (9595%positive, 7);
-     (9596%positive, 5);
-     (9598%positive, 9);
-     (9599%positive, 6);
-     (10028%positive, 1);
-     (10030%positive, 10);
-     (10031%positive, 1);
-     (10042%positive, 7);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 10);
-     (10047%positive, 2);
-     (10090%positive, 3);
-     (10092%positive, 1);
-     (10094%positive, 10);
-     (10095%positive, 1);
-     (10106%positive, 7);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 10);
-     (10111%positive, 6);
-     (11564%positive, 1);
-     (11578%positive, 8);
-     (11579%positive, 2);
-     (11580%positive, 2);
-     (11582%positive, 8);
-     (11583%positive, 2);
-     (11626%positive, 3);
-     (11628%positive, 1);
-     (11630%positive, 8);
+     (9595%positive, 1);
+     (9596%positive, 3);
+     (9598%positive, 7);
+     (9599%positive, 7);
+     (10026%positive, 2);
+     (10028%positive, 4);
+     (10042%positive, 2);
+     (10044%positive, 6);
+     (10046%positive, 4);
+     (10090%positive, 2);
+     (10106%positive, 6);
+     (10108%positive, 6);
+     (10110%positive, 6);
+     (11562%positive, 2);
+     (11563%positive, 1);
+     (11566%positive, 3);
+     (11567%positive, 1);
+     (11579%positive, 1);
+     (11580%positive, 3);
+     (11583%positive, 5);
+     (11626%positive, 2);
+     (11630%positive, 6);
      (11642%positive, 8);
-     (11643%positive, 7);
-     (11644%positive, 5);
-     (11646%positive, 8);
+     (11643%positive, 1);
+     (11644%positive, 3);
+     (11646%positive, 7);
      (11647%positive, 6);
-     (12076%positive, 1);
-     (12078%positive, 13);
-     (12079%positive, 1);
-     (12090%positive, 7);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 12);
-     (12095%positive, 2);
-     (12138%positive, 3);
-     (12140%positive, 1);
-     (12142%positive, 13);
-     (12143%positive, 1);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12094%positive, 4);
+     (12138%positive, 2);
      (12154%positive, 7);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 11);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (12158%positive, 5)];
+   NgPattE [S1; S1] RgA 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+    [9582%positive;
+     10044%positive;
+     10106%positive;
+     10108%positive;
+     11630%positive;
+     11647%positive];
+   NgPattE [S1; S1] RgL 1
     []
     [12158%positive];
    NgRankE
-    [(9516%positive, 1);
-     (9530%positive, 8);
-     (9531%positive, 2);
-     (9532%positive, 2);
-     (9534%positive, 9);
-     (9535%positive, 2);
-     (9578%positive, 3);
-     (9580%positive, 1);
-     (9582%positive, 9);
-     (9594%positive, 8);
-     (9595%positive, 7);
-     (9596%positive, 5);
-     (9598%positive, 9);
-     (9599%positive, 6);
-     (10028%positive, 1);
-     (10030%positive, 10);
-     (10031%positive, 1);
-     (10042%positive, 7);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 10);
-     (10047%positive, 2);
-     (10090%positive, 3);
-     (10092%positive, 1);
-     (10094%positive, 10);
-     (10095%positive, 1);
-     (10106%positive, 7);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 10);
-     (10111%positive, 6);
-     (11564%positive, 1);
-     (11578%positive, 8);
-     (11579%positive, 2);
-     (11580%positive, 2);
-     (11582%positive, 8);
-     (11583%positive, 2);
-     (11626%positive, 3);
-     (11628%positive, 1);
-     (11630%positive, 8);
-     (11642%positive, 8);
-     (11643%positive, 7);
-     (11644%positive, 5);
-     (11646%positive, 8);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12078%positive, 13);
-     (12079%positive, 1);
-     (12090%positive, 7);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 12);
-     (12095%positive, 2);
-     (12138%positive, 3);
-     (12140%positive, 1);
-     (12142%positive, 13);
-     (12143%positive, 1);
-     (12154%positive, 7);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 11);
-     (12159%positive, 6)]]
+    [(9514%positive, 2);
+     (9515%positive, 1);
+     (9516%positive, 3);
+     (9518%positive, 3);
+     (9531%positive, 1);
+     (9532%positive, 3);
+     (9535%positive, 5);
+     (9578%positive, 2);
+     (9582%positive, 7);
+     (9594%positive, 6);
+     (9595%positive, 1);
+     (9596%positive, 3);
+     (9598%positive, 7);
+     (9599%positive, 1);
+     (10026%positive, 2);
+     (10028%positive, 4);
+     (10042%positive, 2);
+     (10046%positive, 4);
+     (10090%positive, 2);
+     (10106%positive, 6);
+     (10110%positive, 6);
+     (11562%positive, 2);
+     (11563%positive, 1);
+     (11566%positive, 3);
+     (11567%positive, 1);
+     (11579%positive, 1);
+     (11580%positive, 3);
+     (11583%positive, 5);
+     (11626%positive, 2);
+     (11630%positive, 7);
+     (11642%positive, 6);
+     (11643%positive, 1);
+     (11644%positive, 3);
+     (11646%positive, 7);
+     (11647%positive, 1);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12154%positive, 6);
+     (12158%positive, 5)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9516%positive, 2);
-     (9531%positive, 3);
-     (9532%positive, 3);
-     (9535%positive, 3);
-     (9580%positive, 2);
-     (9595%positive, 8);
-     (9596%positive, 6);
-     (9599%positive, 7);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10031%positive, 2);
-     (10040%positive, 1);
-     (10043%positive, 3);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10088%positive, 1);
-     (10092%positive, 2);
-     (10095%positive, 2);
-     (10104%positive, 1);
-     (10107%positive, 8);
-     (10108%positive, 5);
-     (10111%positive, 7);
-     (11560%positive, 1);
-     (11564%positive, 2);
+     (9515%positive, 2);
+     (9528%positive, 1);
+     (9531%positive, 2);
+     (9533%positive, 1);
+     (9535%positive, 1);
+     (9592%positive, 1);
+     (9595%positive, 2);
+     (9597%positive, 1);
+     (9599%positive, 1);
+     (10024%positive, 2);
+     (10040%positive, 2);
+     (10104%positive, 2);
+     (10109%positive, 1);
+     (11563%positive, 3);
+     (11567%positive, 3);
      (11576%positive, 1);
      (11579%positive, 3);
-     (11580%positive, 3);
-     (11583%positive, 3);
-     (11624%positive, 1);
-     (11628%positive, 2);
+     (11581%positive, 1);
+     (11583%positive, 1);
      (11640%positive, 1);
-     (11643%positive, 8);
-     (11644%positive, 6);
-     (11647%positive, 7);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12079%positive, 2);
-     (12088%positive, 1);
-     (12091%positive, 3);
-     (12092%positive, 3);
-     (12095%positive, 3);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 2);
-     (12152%positive, 1);
-     (12155%positive, 8);
-     (12156%positive, 4);
-     (12159%positive, 7)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgRankE
-    [(9512%positive, 1);
-     (9516%positive, 2);
-     (9531%positive, 3);
-     (9532%positive, 3);
-     (9535%positive, 3);
-     (9580%positive, 2);
-     (9595%positive, 8);
-     (9596%positive, 6);
-     (9599%positive, 7);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10031%positive, 2);
-     (10040%positive, 1);
-     (10043%positive, 3);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10088%positive, 1);
-     (10092%positive, 2);
-     (10095%positive, 2);
-     (10104%positive, 1);
-     (10107%positive, 8);
-     (10108%positive, 5);
-     (10111%positive, 7);
-     (11560%positive, 1);
-     (11564%positive, 2);
-     (11576%positive, 1);
-     (11579%positive, 3);
-     (11580%positive, 3);
-     (11583%positive, 3);
-     (11624%positive, 1);
-     (11628%positive, 2);
-     (11640%positive, 1);
-     (11643%positive, 8);
-     (11644%positive, 6);
-     (11647%positive, 7);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12079%positive, 2);
-     (12088%positive, 1);
-     (12091%positive, 3);
-     (12092%positive, 3);
-     (12095%positive, 3);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 2);
-     (12152%positive, 1);
-     (12155%positive, 8);
-     (12156%positive, 4);
-     (12159%positive, 7)]]
+     (11643%positive, 3);
+     (11645%positive, 1);
+     (11647%positive, 1);
+     (12088%positive, 2);
+     (12152%positive, 2);
+     (12157%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 4);
-     (9516%positive, 3);
-     (9529%positive, 3);
-     (9532%positive, 9);
-     (9533%positive, 1);
-     (9534%positive, 1);
-     (9580%positive, 3);
+    [(9512%positive, 2);
+     (9516%positive, 1);
+     (9518%positive, 1);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 1);
+     (9533%positive, 2);
      (9582%positive, 1);
-     (9596%positive, 12);
-     (9597%positive, 1);
-     (9598%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 8);
-     (10030%positive, 2);
-     (10040%positive, 2);
-     (10041%positive, 6);
-     (10044%positive, 9);
-     (10045%positive, 2);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9596%positive, 1);
+     (9597%positive, 2);
+     (9598%positive, 5);
+     (10024%positive, 3);
+     (10028%positive, 2);
+     (10040%positive, 3);
+     (10044%positive, 2);
      (10046%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 8);
-     (10094%positive, 2);
-     (10104%positive, 2);
-     (10105%positive, 5);
-     (10108%positive, 11);
+     (10104%positive, 3);
+     (10105%positive, 6);
+     (10108%positive, 2);
      (10109%positive, 2);
-     (10110%positive, 2);
-     (11560%positive, 7);
-     (11564%positive, 3);
-     (11576%positive, 6);
-     (11577%positive, 3);
-     (11580%positive, 9);
-     (11581%positive, 1);
-     (11582%positive, 1);
-     (11624%positive, 7);
-     (11628%positive, 3);
+     (10110%positive, 4);
+     (11566%positive, 1);
+     (11576%positive, 7);
+     (11577%positive, 1);
+     (11580%positive, 1);
+     (11581%positive, 2);
      (11630%positive, 1);
-     (11640%positive, 6);
-     (11644%positive, 12);
-     (11645%positive, 1);
-     (11646%positive, 1);
-     (12072%positive, 7);
-     (12076%positive, 8);
-     (12078%positive, 5);
-     (12088%positive, 7);
-     (12089%positive, 6);
-     (12092%positive, 9);
-     (12093%positive, 6);
-     (12094%positive, 4);
-     (12136%positive, 7);
-     (12140%positive, 8);
-     (12142%positive, 5);
-     (12152%positive, 7);
+     (11640%positive, 7);
+     (11641%positive, 1);
+     (11644%positive, 1);
+     (11645%positive, 2);
+     (11646%positive, 5);
+     (12078%positive, 1);
+     (12088%positive, 3);
+     (12094%positive, 2);
+     (12152%positive, 3);
      (12153%positive, 5);
-     (12156%positive, 10);
-     (12157%positive, 6);
+     (12157%positive, 2);
      (12158%positive, 3)];
-   NgPattE [S1] RgR 1
+   NgPattE [S1; S1] RgL 1
     []
     [12158%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
    NgRankE
-    [(9512%positive, 4);
-     (9516%positive, 3);
-     (9529%positive, 3);
-     (9532%positive, 9);
-     (9533%positive, 1);
-     (9534%positive, 1);
-     (9580%positive, 3);
+    [(9512%positive, 2);
+     (9516%positive, 1);
+     (9518%positive, 1);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 1);
+     (9533%positive, 2);
      (9582%positive, 1);
-     (9596%positive, 12);
-     (9597%positive, 1);
-     (9598%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 8);
-     (10030%positive, 2);
-     (10040%positive, 2);
-     (10041%positive, 6);
-     (10044%positive, 9);
-     (10045%positive, 2);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9596%positive, 1);
+     (9597%positive, 2);
+     (9598%positive, 5);
+     (10024%positive, 3);
+     (10028%positive, 2);
+     (10040%positive, 3);
+     (10044%positive, 2);
      (10046%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 8);
-     (10094%positive, 2);
-     (10104%positive, 2);
-     (10105%positive, 5);
-     (10108%positive, 11);
+     (10104%positive, 3);
+     (10105%positive, 6);
+     (10108%positive, 2);
      (10109%positive, 2);
-     (10110%positive, 2);
-     (11560%positive, 7);
-     (11564%positive, 3);
-     (11576%positive, 6);
-     (11577%positive, 3);
-     (11580%positive, 9);
-     (11581%positive, 1);
-     (11582%positive, 1);
-     (11624%positive, 7);
-     (11628%positive, 3);
+     (10110%positive, 4);
+     (11566%positive, 1);
+     (11576%positive, 7);
+     (11577%positive, 1);
+     (11580%positive, 1);
+     (11581%positive, 2);
      (11630%positive, 1);
-     (11640%positive, 6);
-     (11644%positive, 12);
-     (11645%positive, 1);
-     (11646%positive, 1);
-     (12072%positive, 7);
-     (12076%positive, 8);
-     (12078%positive, 5);
-     (12088%positive, 7);
-     (12089%positive, 6);
-     (12092%positive, 9);
-     (12093%positive, 6);
-     (12094%positive, 4);
-     (12136%positive, 7);
-     (12140%positive, 8);
-     (12142%positive, 5);
-     (12152%positive, 7);
+     (11640%positive, 7);
+     (11641%positive, 1);
+     (11644%positive, 1);
+     (11645%positive, 2);
+     (11646%positive, 5);
+     (12078%positive, 1);
+     (12088%positive, 3);
+     (12094%positive, 2);
+     (12152%positive, 3);
      (12153%positive, 5);
-     (12156%positive, 10);
-     (12157%positive, 6);
+     (12157%positive, 2);
      (12158%positive, 3)]]
   end.
 
-Theorem nqh_1RB1LA_1LC0RC_1RD1RC_1LD0LA : NeverQuasiHaltsSt tm_bulkr_00169.
+Theorem nqh_1RB0RC_1RC0LA_0LD1LC_1RA1LA : NeverQuasiHaltsSt tm_bulkr_00169.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 776 12 cert_bulkr_00169).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 584 11 cert_bulkr_00169).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC0RD_0LB1RC_1LD0LA: n=2 t=0 contexts=60 *)
+(** 1RB0RC_1RC0RA_1LD0LD_1LA1LD: n=2 t=0 contexts=79 *)
 
 Definition tm_bulkr_00170 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S0 DR StD)
-  | StC, S0 => Some (mkTrans S0 DL StB)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DL StD)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S0 DR StA)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S0 DL StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 
 Definition cert_bulkr_00170 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 7);
-     (9533%positive, 3);
-     (9534%positive, 5);
-     (9579%positive, 2);
-     (9593%positive, 7);
-     (9594%positive, 4);
-     (9597%positive, 3);
-     (9598%positive, 5);
-     (10030%positive, 6);
-     (10041%positive, 10);
-     (10043%positive, 1);
-     (10045%positive, 1);
-     (10046%positive, 6);
-     (10091%positive, 2);
-     (10105%positive, 9);
+    [(9514%positive, 1);
+     (9518%positive, 1);
+     (9529%positive, 6);
+     (9535%positive, 2);
+     (9582%positive, 1);
+     (9594%positive, 5);
+     (9598%positive, 6);
+     (9599%positive, 5);
+     (10026%positive, 1);
+     (10030%positive, 1);
+     (10031%positive, 1);
+     (10041%positive, 7);
+     (10047%positive, 2);
+     (10094%positive, 1);
+     (10095%positive, 1);
      (10106%positive, 4);
-     (10107%positive, 1);
      (10110%positive, 6);
-     (11577%positive, 7);
-     (11581%positive, 3);
-     (11582%positive, 5);
-     (11627%positive, 2);
-     (11641%positive, 7);
-     (11642%positive, 4);
-     (11645%positive, 3);
-     (11646%positive, 5);
-     (12078%positive, 9);
-     (12089%positive, 10);
-     (12091%positive, 1);
-     (12093%positive, 1);
-     (12094%positive, 8);
-     (12139%positive, 2);
-     (12153%positive, 9);
+     (10111%positive, 4);
+     (11562%positive, 1);
+     (11566%positive, 1);
+     (11577%positive, 5);
+     (11583%positive, 2);
+     (11630%positive, 1);
+     (11642%positive, 5);
+     (11646%positive, 6);
+     (11647%positive, 5);
+     (12074%positive, 1);
+     (12078%positive, 1);
+     (12079%positive, 1);
+     (12089%positive, 7);
+     (12095%positive, 2);
+     (12142%positive, 1);
+     (12143%positive, 1);
      (12154%positive, 4);
-     (12155%positive, 1);
-     (12158%positive, 7)];
-   NgPattE [S1] RgR 1
+     (12158%positive, 6);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12158%positive];
+    [12159%positive];
    NgRankE
-    [(9529%positive, 7);
-     (9533%positive, 3);
-     (9534%positive, 5);
-     (9579%positive, 2);
-     (9593%positive, 7);
-     (9594%positive, 4);
-     (9597%positive, 3);
-     (9598%positive, 5);
-     (10030%positive, 6);
-     (10041%positive, 10);
-     (10043%positive, 1);
-     (10045%positive, 1);
-     (10046%positive, 6);
-     (10091%positive, 2);
-     (10105%positive, 9);
+    [(9514%positive, 1);
+     (9518%positive, 1);
+     (9529%positive, 6);
+     (9535%positive, 2);
+     (9582%positive, 1);
+     (9594%positive, 5);
+     (9598%positive, 6);
+     (9599%positive, 5);
+     (10026%positive, 1);
+     (10030%positive, 1);
+     (10031%positive, 1);
+     (10041%positive, 7);
+     (10047%positive, 2);
+     (10094%positive, 1);
+     (10095%positive, 1);
      (10106%positive, 4);
-     (10107%positive, 1);
      (10110%positive, 6);
-     (11577%positive, 7);
-     (11581%positive, 3);
-     (11582%positive, 5);
-     (11627%positive, 2);
-     (11641%positive, 7);
-     (11642%positive, 4);
-     (11645%positive, 3);
-     (11646%positive, 5);
-     (12078%positive, 9);
-     (12089%positive, 10);
-     (12091%positive, 1);
-     (12093%positive, 1);
-     (12094%positive, 8);
-     (12139%positive, 2);
-     (12153%positive, 9);
+     (10111%positive, 4);
+     (11562%positive, 1);
+     (11566%positive, 1);
+     (11577%positive, 5);
+     (11583%positive, 2);
+     (11630%positive, 1);
+     (11642%positive, 5);
+     (11646%positive, 6);
+     (11647%positive, 5);
+     (12074%positive, 1);
+     (12078%positive, 1);
+     (12079%positive, 1);
+     (12089%positive, 7);
+     (12095%positive, 2);
+     (12142%positive, 1);
+     (12143%positive, 1);
      (12154%positive, 4);
-     (12155%positive, 1);
-     (12158%positive, 7)]]
+     (12158%positive, 6);
+     (12159%positive, 3)]]
   | StB =>
   [NgRankE
-    [(9534%positive, 1);
-     (9579%positive, 8);
-     (9583%positive, 1);
-     (9598%positive, 1);
-     (10028%positive, 1);
+    [(9514%positive, 2);
+     (9515%positive, 1);
+     (9518%positive, 2);
+     (9531%positive, 4);
+     (9535%positive, 11);
+     (9579%positive, 1);
+     (9580%positive, 3);
+     (9582%positive, 5);
+     (9594%positive, 14);
+     (9595%positive, 5);
+     (9598%positive, 15);
+     (9599%positive, 14);
+     (10026%positive, 2);
+     (10027%positive, 1);
+     (10028%positive, 3);
      (10030%positive, 2);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10091%positive, 8);
-     (10095%positive, 1);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11582%positive, 1);
-     (11627%positive, 8);
-     (11631%positive, 1);
-     (11644%positive, 5);
-     (11646%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 5);
-     (12079%positive, 1);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 4);
-     (12095%positive, 2);
-     (12139%positive, 8);
-     (12143%positive, 1);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 3);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (10031%positive, 2);
+     (10044%positive, 5);
+     (10047%positive, 11);
+     (10091%positive, 1);
+     (10092%positive, 3);
+     (10094%positive, 7);
+     (10095%positive, 10);
+     (10106%positive, 13);
+     (10108%positive, 5);
+     (10110%positive, 15);
+     (10111%positive, 13);
+     (11562%positive, 2);
+     (11563%positive, 1);
+     (11566%positive, 2);
+     (11579%positive, 4);
+     (11583%positive, 11);
+     (11627%positive, 1);
+     (11628%positive, 3);
+     (11630%positive, 5);
+     (11642%positive, 14);
+     (11643%positive, 6);
+     (11646%positive, 15);
+     (11647%positive, 14);
+     (12074%positive, 2);
+     (12075%positive, 1);
+     (12076%positive, 3);
+     (12078%positive, 2);
+     (12079%positive, 2);
+     (12091%positive, 4);
+     (12092%positive, 8);
+     (12095%positive, 11);
+     (12139%positive, 1);
+     (12140%positive, 3);
+     (12142%positive, 7);
+     (12143%positive, 10);
+     (12154%positive, 13);
+     (12155%positive, 9);
+     (12156%positive, 8);
+     (12158%positive, 15);
+     (12159%positive, 12)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+    [9582%positive;
+     9595%positive;
+     10044%positive;
+     10108%positive;
+     11630%positive];
+   NgPattE [S1; S1] RgL 1
     []
-    [12158%positive];
+    [12159%positive];
    NgRankE
-    [(9534%positive, 1);
-     (9579%positive, 8);
-     (9583%positive, 1);
-     (9598%positive, 1);
-     (10028%positive, 1);
+    [(9514%positive, 2);
+     (9515%positive, 1);
+     (9518%positive, 2);
+     (9531%positive, 4);
+     (9535%positive, 12);
+     (9579%positive, 1);
+     (9580%positive, 3);
+     (9582%positive, 5);
+     (9594%positive, 15);
+     (9598%positive, 16);
+     (9599%positive, 15);
+     (10026%positive, 2);
+     (10027%positive, 1);
+     (10028%positive, 3);
      (10030%positive, 2);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10091%positive, 8);
-     (10095%positive, 1);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 2);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11582%positive, 1);
-     (11627%positive, 8);
-     (11631%positive, 1);
-     (11644%positive, 5);
-     (11646%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 5);
-     (12079%positive, 1);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 4);
-     (12095%positive, 2);
-     (12139%positive, 8);
-     (12143%positive, 1);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 3);
-     (12159%positive, 6)]]
+     (10031%positive, 2);
+     (10044%positive, 6);
+     (10047%positive, 12);
+     (10091%positive, 1);
+     (10092%positive, 3);
+     (10094%positive, 8);
+     (10095%positive, 11);
+     (10106%positive, 14);
+     (10108%positive, 6);
+     (10110%positive, 16);
+     (10111%positive, 14);
+     (11562%positive, 2);
+     (11563%positive, 1);
+     (11566%positive, 2);
+     (11579%positive, 4);
+     (11583%positive, 12);
+     (11627%positive, 1);
+     (11628%positive, 3);
+     (11630%positive, 5);
+     (11642%positive, 15);
+     (11643%positive, 7);
+     (11646%positive, 16);
+     (11647%positive, 15);
+     (12074%positive, 2);
+     (12075%positive, 1);
+     (12076%positive, 3);
+     (12078%positive, 2);
+     (12079%positive, 2);
+     (12091%positive, 4);
+     (12092%positive, 9);
+     (12095%positive, 12);
+     (12139%positive, 1);
+     (12140%positive, 3);
+     (12142%positive, 8);
+     (12143%positive, 11);
+     (12154%positive, 14);
+     (12155%positive, 10);
+     (12156%positive, 9);
+     (12158%positive, 16);
+     (12159%positive, 13)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9528%positive, 1);
-     (9533%positive, 11);
-     (9579%positive, 11);
-     (9583%positive, 2);
-     (9592%positive, 1);
-     (9597%positive, 12);
-     (10024%positive, 11);
-     (10028%positive, 5);
-     (10043%positive, 3);
-     (10044%positive, 6);
-     (10045%positive, 3);
-     (10091%positive, 11);
+     (9515%positive, 5);
+     (9531%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 5);
+     (9576%positive, 1);
+     (9579%positive, 6);
+     (9595%positive, 1);
+     (9597%positive, 2);
+     (9599%positive, 8);
+     (10024%positive, 4);
+     (10027%positive, 3);
+     (10031%positive, 4);
+     (10040%positive, 5);
+     (10045%positive, 1);
+     (10047%positive, 5);
+     (10088%positive, 3);
+     (10091%positive, 3);
      (10095%positive, 2);
-     (10107%positive, 11);
-     (10108%positive, 8);
-     (11560%positive, 1);
-     (11564%positive, 11);
-     (11576%positive, 1);
-     (11580%positive, 6);
-     (11581%positive, 11);
-     (11627%positive, 11);
-     (11631%positive, 2);
-     (11640%positive, 1);
-     (11644%positive, 9);
-     (11645%positive, 12);
-     (12072%positive, 4);
-     (12076%positive, 5);
-     (12079%positive, 2);
-     (12091%positive, 3);
-     (12092%positive, 6);
-     (12093%positive, 3);
-     (12095%positive, 11);
-     (12139%positive, 11);
+     (10104%positive, 5);
+     (10109%positive, 1);
+     (10111%positive, 7);
+     (11563%positive, 5);
+     (11579%positive, 1);
+     (11581%positive, 3);
+     (11583%positive, 5);
+     (11624%positive, 1);
+     (11627%positive, 6);
+     (11643%positive, 1);
+     (11645%positive, 4);
+     (11647%positive, 8);
+     (12072%positive, 2);
+     (12075%positive, 3);
+     (12079%positive, 4);
+     (12088%positive, 2);
+     (12091%positive, 1);
+     (12093%positive, 1);
+     (12095%positive, 5);
+     (12136%positive, 2);
+     (12139%positive, 3);
      (12143%positive, 2);
-     (12155%positive, 11);
-     (12156%positive, 7);
-     (12159%positive, 10)];
-   NgPattE [S1] RgL 1
+     (12152%positive, 2);
+     (12155%positive, 1);
+     (12157%positive, 1);
+     (12159%positive, 6)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgL 48
-    [(9533%positive, 2);
-     (9579%positive, 1);
-     (10024%positive, 51);
-     (10091%positive, 1);
-     (11564%positive, 52);
-     (11581%positive, 2);
-     (11627%positive, 1);
-     (12095%positive, 47);
-     (12139%positive, 1)]
-    [9533%positive;
-     9579%positive;
-     10024%positive;
-     10091%positive;
-     10107%positive;
-     11564%positive;
-     11581%positive;
-     11627%positive;
-     12095%positive;
-     12139%positive;
-     12155%positive];
+    [10088%positive;
+     11581%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9528%positive, 1);
-     (9579%positive, 4);
-     (9583%positive, 2);
-     (9592%positive, 1);
-     (9597%positive, 5);
-     (10028%positive, 5);
-     (10043%positive, 3);
-     (10044%positive, 6);
-     (10045%positive, 3);
-     (10091%positive, 4);
+     (9515%positive, 6);
+     (9531%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 5);
+     (9576%positive, 1);
+     (9579%positive, 6);
+     (9595%positive, 1);
+     (9597%positive, 2);
+     (9599%positive, 8);
+     (10024%positive, 5);
+     (10027%positive, 3);
+     (10031%positive, 4);
+     (10040%positive, 5);
+     (10045%positive, 1);
+     (10047%positive, 5);
+     (10088%positive, 3);
+     (10091%positive, 3);
      (10095%positive, 2);
-     (10107%positive, 11);
-     (10108%positive, 8);
-     (11560%positive, 1);
-     (11576%positive, 1);
-     (11580%positive, 6);
-     (11627%positive, 4);
-     (11631%positive, 2);
-     (11640%positive, 1);
-     (11644%positive, 9);
-     (11645%positive, 5);
-     (12072%positive, 4);
-     (12076%positive, 5);
-     (12079%positive, 2);
-     (12091%positive, 3);
-     (12092%positive, 6);
-     (12093%positive, 3);
-     (12139%positive, 4);
+     (10104%positive, 5);
+     (10109%positive, 1);
+     (10111%positive, 7);
+     (11563%positive, 6);
+     (11579%positive, 1);
+     (11581%positive, 4);
+     (11583%positive, 5);
+     (11624%positive, 1);
+     (11627%positive, 6);
+     (11643%positive, 1);
+     (11645%positive, 4);
+     (11647%positive, 8);
+     (12072%positive, 2);
+     (12075%positive, 3);
+     (12079%positive, 4);
+     (12088%positive, 2);
+     (12091%positive, 1);
+     (12093%positive, 1);
+     (12095%positive, 5);
+     (12136%positive, 2);
+     (12139%positive, 3);
      (12143%positive, 2);
-     (12155%positive, 11);
-     (12156%positive, 7);
-     (12159%positive, 10)]]
+     (12152%positive, 2);
+     (12155%positive, 1);
+     (12157%positive, 1);
+     (12159%positive, 6)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 5);
-     (9528%positive, 5);
-     (9529%positive, 4);
-     (9534%positive, 2);
-     (9592%positive, 5);
-     (9593%positive, 4);
-     (9594%positive, 1);
-     (9598%positive, 2);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10030%positive, 3);
-     (10041%positive, 7);
-     (10044%positive, 3);
-     (10046%positive, 3);
-     (10105%positive, 6);
-     (10106%positive, 1);
-     (10108%positive, 5);
-     (10110%positive, 3);
-     (11560%positive, 8);
-     (11564%positive, 2);
-     (11576%positive, 7);
-     (11577%positive, 4);
-     (11580%positive, 3);
-     (11582%positive, 2);
-     (11640%positive, 7);
-     (11641%positive, 4);
-     (11642%positive, 1);
-     (11644%positive, 6);
-     (11646%positive, 2);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12078%positive, 6);
-     (12089%positive, 7);
-     (12092%positive, 3);
-     (12094%positive, 5);
-     (12153%positive, 6);
-     (12154%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 4)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 2);
+     (9529%positive, 1);
+     (9533%positive, 3);
+     (9576%positive, 2);
+     (9580%positive, 1);
+     (9597%positive, 3);
+     (10024%positive, 5);
+     (10028%positive, 1);
+     (10040%positive, 6);
+     (10041%positive, 1);
+     (10044%positive, 1);
+     (10045%positive, 2);
+     (10088%positive, 4);
+     (10092%positive, 1);
+     (10104%positive, 6);
+     (10108%positive, 1);
+     (10109%positive, 2);
+     (11577%positive, 1);
+     (11581%positive, 4);
+     (11624%positive, 2);
+     (11628%positive, 1);
+     (11645%positive, 5);
+     (12072%positive, 3);
+     (12076%positive, 1);
+     (12088%positive, 3);
+     (12089%positive, 1);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12136%positive, 3);
+     (12140%positive, 1);
+     (12152%positive, 3);
+     (12156%positive, 1);
+     (12157%positive, 2)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
+    [10088%positive;
+     11581%positive];
    NgRankE
-    [(9512%positive, 5);
-     (9528%positive, 5);
-     (9529%positive, 4);
-     (9534%positive, 2);
-     (9592%positive, 5);
-     (9593%positive, 4);
-     (9594%positive, 1);
-     (9598%positive, 2);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10030%positive, 3);
-     (10041%positive, 7);
-     (10044%positive, 3);
-     (10046%positive, 3);
-     (10105%positive, 6);
-     (10106%positive, 1);
-     (10108%positive, 5);
-     (10110%positive, 3);
-     (11560%positive, 8);
-     (11564%positive, 2);
-     (11576%positive, 7);
-     (11577%positive, 4);
-     (11580%positive, 3);
-     (11582%positive, 2);
-     (11640%positive, 7);
-     (11641%positive, 4);
-     (11642%positive, 1);
-     (11644%positive, 6);
-     (11646%positive, 2);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12078%positive, 6);
-     (12089%positive, 7);
-     (12092%positive, 3);
-     (12094%positive, 5);
-     (12153%positive, 6);
-     (12154%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 4)]]
+    [(9512%positive, 2);
+     (9529%positive, 1);
+     (9533%positive, 3);
+     (9576%positive, 2);
+     (9580%positive, 1);
+     (9597%positive, 3);
+     (10024%positive, 6);
+     (10028%positive, 1);
+     (10040%positive, 6);
+     (10041%positive, 1);
+     (10044%positive, 1);
+     (10045%positive, 2);
+     (10088%positive, 4);
+     (10092%positive, 1);
+     (10104%positive, 6);
+     (10108%positive, 1);
+     (10109%positive, 2);
+     (11577%positive, 1);
+     (11581%positive, 5);
+     (11624%positive, 2);
+     (11628%positive, 1);
+     (11645%positive, 5);
+     (12072%positive, 3);
+     (12076%positive, 1);
+     (12088%positive, 3);
+     (12089%positive, 1);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12136%positive, 3);
+     (12140%positive, 1);
+     (12152%positive, 3);
+     (12156%positive, 1);
+     (12157%positive, 2)]]
   end.
 
-Theorem nqh_1RB1LA_1LC0RD_0LB1RC_1LD0LA : NeverQuasiHaltsSt tm_bulkr_00170.
+Theorem nqh_1RB0RC_1RC0RA_1LD0LD_1LA1LD : NeverQuasiHaltsSt tm_bulkr_00170.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 544 11 cert_bulkr_00170).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 696 12 cert_bulkr_00170).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_---1LD_0RA0LA: n=2 t=0 contexts=39 *)
+(** 1RB0RC_1RC1LB_1LD1RC_0LB0LA: n=2 t=0 contexts=47 *)
 
 Definition tm_bulkr_00171 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => None
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S0 DR StA)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StC)
+  | StD, S0 => Some (mkTrans S0 DL StB)
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 
@@ -7895,2743 +7166,3049 @@ Definition cert_bulkr_00171 (q : St) : list ngcomp :=
   | StA =>
   [NgRankE
     [(9529%positive, 2);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
+     (9534%positive, 2);
+     (9594%positive, 1);
+     (9598%positive, 2);
+     (10025%positive, 3);
+     (10026%positive, 4);
+     (10029%positive, 7);
+     (10041%positive, 3);
+     (10042%positive, 1);
+     (10045%positive, 8);
+     (10046%positive, 3);
+     (10090%positive, 13);
+     (10106%positive, 1);
+     (10109%positive, 10);
+     (10110%positive, 3);
+     (11561%positive, 2);
+     (11565%positive, 4);
      (11577%positive, 2);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+     (11581%positive, 8);
+     (11582%positive, 2);
+     (11642%positive, 1);
+     (11645%positive, 11);
+     (11646%positive, 2);
+     (12073%positive, 6);
+     (12074%positive, 4);
+     (12075%positive, 3);
+     (12077%positive, 7);
+     (12089%positive, 5);
+     (12090%positive, 1);
+     (12091%positive, 5);
+     (12093%positive, 8);
+     (12094%positive, 5);
+     (12138%positive, 13);
+     (12154%positive, 1);
+     (12155%positive, 12);
+     (12157%positive, 9);
+     (12158%positive, 4)];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
    NgRankE
     [(9529%positive, 2);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
+     (9534%positive, 2);
+     (9594%positive, 1);
+     (9598%positive, 2);
+     (10025%positive, 3);
+     (10026%positive, 4);
+     (10029%positive, 7);
+     (10041%positive, 3);
+     (10042%positive, 1);
+     (10045%positive, 8);
+     (10046%positive, 3);
+     (10090%positive, 13);
+     (10106%positive, 1);
+     (10109%positive, 10);
+     (10110%positive, 3);
+     (11561%positive, 2);
+     (11565%positive, 4);
      (11577%positive, 2);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+     (11581%positive, 8);
+     (11582%positive, 2);
+     (11642%positive, 1);
+     (11645%positive, 11);
+     (11646%positive, 2);
+     (12073%positive, 6);
+     (12074%positive, 4);
+     (12075%positive, 3);
+     (12077%positive, 7);
+     (12089%positive, 5);
+     (12090%positive, 1);
+     (12091%positive, 5);
+     (12093%positive, 8);
+     (12094%positive, 5);
+     (12138%positive, 13);
+     (12154%positive, 1);
+     (12155%positive, 12);
+     (12157%positive, 9);
+     (12158%positive, 4)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 3);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
+    [(9534%positive, 5);
+     (9594%positive, 4);
+     (9598%positive, 5);
+     (10026%positive, 1);
+     (10042%positive, 2);
+     (10046%positive, 6);
+     (10047%positive, 3);
+     (10090%positive, 1);
+     (10106%positive, 4);
+     (10110%positive, 6);
+     (10111%positive, 3);
+     (11564%positive, 2);
      (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 2);
-     (12076%positive, 1);
-     (12078%positive, 3);
+     (11582%positive, 5);
+     (11642%positive, 4);
+     (11644%positive, 2);
+     (11646%positive, 5);
+     (12074%positive, 1);
      (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
+     (12090%positive, 2);
+     (12094%positive, 8);
+     (12095%positive, 3);
+     (12138%positive, 1);
+     (12154%positive, 4);
      (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 3);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
+    [(9534%positive, 5);
+     (9594%positive, 4);
+     (9598%positive, 5);
+     (10026%positive, 1);
+     (10042%positive, 2);
+     (10046%positive, 6);
+     (10047%positive, 3);
+     (10090%positive, 1);
+     (10106%positive, 4);
+     (10110%positive, 6);
+     (10111%positive, 3);
+     (11564%positive, 2);
      (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 2);
-     (12076%positive, 1);
-     (12078%positive, 3);
+     (11582%positive, 5);
+     (11642%positive, 4);
+     (11644%positive, 2);
+     (11646%positive, 5);
+     (12074%positive, 1);
      (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
+     (12090%positive, 2);
+     (12094%positive, 8);
+     (12095%positive, 3);
+     (12138%positive, 1);
+     (12154%positive, 4);
      (12158%positive, 7);
-     (12159%positive, 6)]]
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
+     (10029%positive, 1);
      (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
+     (10047%positive, 1);
+     (10109%positive, 4);
+     (10111%positive, 1);
      (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 7);
-     (12076%positive, 6);
+     (11565%positive, 1);
+     (11581%positive, 2);
+     (11645%positive, 5);
+     (12075%positive, 1);
+     (12077%positive, 1);
      (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
+     (12091%positive, 2);
+     (12093%positive, 2);
+     (12095%positive, 1);
+     (12155%positive, 6);
      (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (12159%positive, 1)];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
+     (10029%positive, 1);
      (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
+     (10047%positive, 1);
+     (10109%positive, 4);
+     (10111%positive, 1);
      (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 7);
-     (12076%positive, 6);
+     (11565%positive, 1);
+     (11581%positive, 2);
+     (11645%positive, 5);
+     (12075%positive, 1);
+     (12077%positive, 1);
      (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
+     (12091%positive, 2);
+     (12093%positive, 2);
+     (12095%positive, 1);
+     (12155%positive, 6);
      (12157%positive, 3);
-     (12159%positive, 11)]]
+     (12159%positive, 1)]]
   | StD =>
   [NgRankE
     [(9512%positive, 2);
      (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
+     (9534%positive, 1);
+     (9598%positive, 1);
+     (10025%positive, 2);
+     (10029%positive, 6);
+     (10041%positive, 2);
+     (10045%positive, 7);
+     (10046%positive, 2);
+     (10109%positive, 9);
+     (10110%positive, 2);
+     (11560%positive, 5);
+     (11561%positive, 1);
+     (11564%positive, 1);
+     (11565%positive, 3);
      (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+     (11580%positive, 1);
+     (11581%positive, 7);
+     (11582%positive, 1);
+     (11644%positive, 1);
+     (11645%positive, 10);
+     (11646%positive, 1);
+     (12073%positive, 5);
+     (12077%positive, 6);
+     (12089%positive, 4);
+     (12093%positive, 7);
+     (12094%positive, 4);
+     (12157%positive, 8);
+     (12158%positive, 3)];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
    NgRankE
     [(9512%positive, 2);
      (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
+     (9534%positive, 1);
+     (9598%positive, 1);
+     (10025%positive, 2);
+     (10029%positive, 6);
+     (10041%positive, 2);
+     (10045%positive, 7);
+     (10046%positive, 2);
+     (10109%positive, 9);
+     (10110%positive, 2);
+     (11560%positive, 5);
+     (11561%positive, 1);
+     (11564%positive, 1);
+     (11565%positive, 3);
      (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+     (11580%positive, 1);
+     (11581%positive, 7);
+     (11582%positive, 1);
+     (11644%positive, 1);
+     (11645%positive, 10);
+     (11646%positive, 1);
+     (12073%positive, 5);
+     (12077%positive, 6);
+     (12089%positive, 4);
+     (12093%positive, 7);
+     (12094%positive, 4);
+     (12157%positive, 8);
+     (12158%positive, 3)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_XXX1LD_0RA0LA : NeverQuasiHaltsSt tm_bulkr_00171.
+Theorem nqh_1RB0RC_1RC1LB_1LD1RC_0LB0LA : NeverQuasiHaltsSt tm_bulkr_00171.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 376 11 cert_bulkr_00171).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 440 11 cert_bulkr_00171).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_---1LD_0RB0LA: n=2 t=0 contexts=41 *)
+(** 1RB0RC_1RC1RA_1LD1RC_1RB1LD: n=2 t=0 contexts=38 *)
 
 Definition tm_bulkr_00172 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => None
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S0 DR StB)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StC)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 
 Definition cert_bulkr_00172 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 10);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10029%positive, 4);
-     (10030%positive, 9);
-     (10041%positive, 10);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 10);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 8);
-     (12077%positive, 7);
-     (12078%positive, 9);
-     (12089%positive, 10);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+    [(9529%positive, 7);
+     (9530%positive, 3);
+     (9534%positive, 7);
+     (9578%positive, 2);
+     (9582%positive, 4);
+     (9593%positive, 7);
+     (9594%positive, 6);
+     (9598%positive, 7);
+     (10031%positive, 2);
+     (10043%positive, 1);
+     (10046%positive, 8);
+     (10047%positive, 3);
+     (10094%positive, 8);
+     (10095%positive, 2);
+     (10107%positive, 1);
+     (10110%positive, 8);
+     (10111%positive, 5);
+     (12075%positive, 1);
+     (12079%positive, 2);
+     (12091%positive, 1);
+     (12094%positive, 10);
+     (12095%positive, 3);
+     (12139%positive, 1);
+     (12142%positive, 11);
+     (12143%positive, 2);
+     (12155%positive, 1);
+     (12158%positive, 9);
+     (12159%positive, 4)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
    NgRankE
-    [(9529%positive, 10);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10029%positive, 4);
-     (10030%positive, 9);
-     (10041%positive, 10);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 10);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 8);
-     (12077%positive, 7);
-     (12078%positive, 9);
-     (12089%positive, 10);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+    [(9529%positive, 7);
+     (9530%positive, 3);
+     (9534%positive, 7);
+     (9578%positive, 2);
+     (9582%positive, 4);
+     (9593%positive, 7);
+     (9594%positive, 6);
+     (9598%positive, 7);
+     (10031%positive, 2);
+     (10043%positive, 1);
+     (10046%positive, 8);
+     (10047%positive, 3);
+     (10094%positive, 8);
+     (10095%positive, 2);
+     (10107%positive, 1);
+     (10110%positive, 8);
+     (10111%positive, 5);
+     (12075%positive, 1);
+     (12079%positive, 2);
+     (12091%positive, 1);
+     (12094%positive, 10);
+     (12095%positive, 3);
+     (12139%positive, 1);
+     (12142%positive, 11);
+     (12143%positive, 2);
+     (12155%positive, 1);
+     (12158%positive, 9);
+     (12159%positive, 4)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
+    [(9530%positive, 2);
+     (9534%positive, 6);
+     (9578%positive, 1);
+     (9582%positive, 3);
+     (9594%positive, 5);
+     (9596%positive, 2);
+     (9598%positive, 6);
+     (10031%positive, 1);
+     (10046%positive, 7);
+     (10047%positive, 2);
+     (10094%positive, 7);
+     (10095%positive, 1);
      (10108%positive, 4);
      (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12076%positive, 1);
-     (12078%positive, 1);
+     (10111%positive, 4);
      (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
+     (12094%positive, 9);
      (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (12142%positive, 10);
+     (12143%positive, 1);
+     (12156%positive, 11);
+     (12158%positive, 8);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
+    [(9530%positive, 2);
+     (9534%positive, 6);
+     (9578%positive, 1);
+     (9582%positive, 3);
+     (9594%positive, 5);
+     (9596%positive, 2);
+     (9598%positive, 6);
+     (10031%positive, 1);
+     (10046%positive, 7);
+     (10047%positive, 2);
+     (10094%positive, 7);
+     (10095%positive, 1);
      (10108%positive, 4);
      (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12076%positive, 1);
-     (12078%positive, 1);
+     (10111%positive, 4);
      (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
+     (12094%positive, 9);
      (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+     (12142%positive, 10);
+     (12143%positive, 1);
+     (12156%positive, 11);
+     (12158%positive, 8);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10029%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 6);
-     (12076%positive, 6);
-     (12077%positive, 5);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
+     (9592%positive, 1);
+     (9597%positive, 2);
+     (10031%positive, 3);
+     (10043%positive, 3);
+     (10045%positive, 1);
+     (10047%positive, 4);
+     (10095%positive, 3);
+     (10107%positive, 3);
+     (10109%positive, 1);
+     (10111%positive, 6);
+     (12075%positive, 2);
+     (12079%positive, 3);
+     (12091%positive, 2);
+     (12093%positive, 1);
      (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (12139%positive, 2);
+     (12143%positive, 3);
+     (12155%positive, 2);
+     (12157%positive, 1);
+     (12159%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10029%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 6);
-     (12076%positive, 6);
-     (12077%positive, 5);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
+     (9592%positive, 1);
+     (9597%positive, 2);
+     (10031%positive, 3);
+     (10043%positive, 3);
+     (10045%positive, 1);
+     (10047%positive, 4);
+     (10095%positive, 3);
+     (10107%positive, 3);
+     (10109%positive, 1);
+     (10111%positive, 6);
+     (12075%positive, 2);
+     (12079%positive, 3);
+     (12091%positive, 2);
+     (12093%positive, 1);
      (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (12139%positive, 2);
+     (12143%positive, 3);
+     (12155%positive, 2);
+     (12157%positive, 1);
+     (12159%positive, 5)]]
   | StD =>
   [NgRankE
     [(9512%positive, 2);
      (9529%positive, 1);
-     (9533%positive, 2);
+     (9534%positive, 1);
+     (9582%positive, 1);
+     (9592%positive, 2);
      (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10029%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12077%positive, 6);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+     (9596%positive, 1);
+     (9597%positive, 3);
+     (9598%positive, 1);
+     (10045%positive, 2);
+     (10046%positive, 2);
+     (10094%positive, 2);
+     (10108%positive, 2);
+     (10109%positive, 2);
+     (10110%positive, 2);
+     (12093%positive, 7);
+     (12094%positive, 4);
+     (12142%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 7);
+     (12158%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12158%positive];
    NgRankE
     [(9512%positive, 2);
      (9529%positive, 1);
-     (9533%positive, 2);
+     (9534%positive, 1);
+     (9582%positive, 1);
+     (9592%positive, 2);
      (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10029%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12077%positive, 6);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+     (9596%positive, 1);
+     (9597%positive, 3);
+     (9598%positive, 1);
+     (10045%positive, 2);
+     (10046%positive, 2);
+     (10094%positive, 2);
+     (10108%positive, 2);
+     (10109%positive, 2);
+     (10110%positive, 2);
+     (12093%positive, 7);
+     (12094%positive, 4);
+     (12142%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 7);
+     (12158%positive, 3)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_XXX1LD_0RB0LA : NeverQuasiHaltsSt tm_bulkr_00172.
+Theorem nqh_1RB0RC_1RC1RA_1LD1RC_1RB1LD : NeverQuasiHaltsSt tm_bulkr_00172.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 392 11 cert_bulkr_00172).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 368 11 cert_bulkr_00172).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_---1LD_1LA0LA: n=2 t=0 contexts=39 *)
+(** 1RB0RC_1RC1RB_0LD1LC_1RA1LA: n=2 t=0 contexts=43 *)
 
 Definition tm_bulkr_00173 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StA, S1 => Some (mkTrans S0 DR StC)
+  | StB, S0 => Some (mkTrans S1 DR StC)
   | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => None
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 
 Definition cert_bulkr_00173 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 2);
+    [(9518%positive, 2);
+     (9529%positive, 2);
      (9533%positive, 3);
+     (9582%positive, 2);
      (9593%positive, 2);
+     (9594%positive, 1);
      (9597%positive, 3);
-     (10030%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
+     (9598%positive, 6);
+     (10026%positive, 1);
+     (10042%positive, 1);
+     (10046%positive, 3);
+     (10105%positive, 7);
+     (10106%positive, 1);
+     (10109%positive, 9);
+     (10110%positive, 5);
+     (11566%positive, 2);
      (11577%positive, 2);
-     (11581%positive, 3);
+     (11581%positive, 8);
+     (11630%positive, 2);
      (11641%positive, 2);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+     (11642%positive, 1);
+     (11645%positive, 8);
+     (11646%positive, 6);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12094%positive, 3);
+     (12153%positive, 6);
+     (12154%positive, 1);
+     (12157%positive, 10);
+     (12158%positive, 4)];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
+   NgPattE [S1; S1] RgR 1
     []
     [12157%positive];
    NgRankE
-    [(9529%positive, 2);
+    [(9518%positive, 2);
+     (9529%positive, 2);
      (9533%positive, 3);
+     (9582%positive, 2);
      (9593%positive, 2);
+     (9594%positive, 1);
      (9597%positive, 3);
-     (10030%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
+     (9598%positive, 6);
+     (10026%positive, 1);
+     (10042%positive, 1);
+     (10046%positive, 3);
+     (10105%positive, 7);
+     (10106%positive, 1);
+     (10109%positive, 9);
+     (10110%positive, 5);
+     (11566%positive, 2);
      (11577%positive, 2);
-     (11581%positive, 3);
+     (11581%positive, 8);
+     (11630%positive, 2);
      (11641%positive, 2);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+     (11642%positive, 1);
+     (11645%positive, 8);
+     (11646%positive, 6);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12094%positive, 3);
+     (12153%positive, 6);
+     (12154%positive, 1);
+     (12157%positive, 10);
+     (12158%positive, 4)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+    [(9518%positive, 3);
+     (9535%positive, 5);
+     (9582%positive, 6);
+     (9594%positive, 8);
+     (9598%positive, 7);
+     (9599%positive, 7);
+     (10026%positive, 2);
+     (10028%positive, 4);
+     (10042%positive, 2);
+     (10044%positive, 6);
+     (10046%positive, 4);
+     (10106%positive, 6);
+     (10108%positive, 6);
+     (10110%positive, 6);
+     (11563%positive, 1);
+     (11566%positive, 3);
+     (11567%positive, 1);
+     (11583%positive, 5);
+     (11630%positive, 6);
+     (11642%positive, 8);
+     (11646%positive, 7);
+     (11647%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12094%positive, 4);
+     (12154%positive, 7);
+     (12158%positive, 5)];
+   NgPattE [S1; S1] RgA 1
     []
-    [12156%positive];
+    [9582%positive;
+     10044%positive;
+     10106%positive;
+     10108%positive;
+     11630%positive;
+     11647%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+    [(9518%positive, 3);
+     (9535%positive, 5);
+     (9582%positive, 7);
+     (9594%positive, 6);
+     (9598%positive, 7);
+     (9599%positive, 1);
+     (10026%positive, 2);
+     (10028%positive, 4);
+     (10042%positive, 2);
+     (10046%positive, 4);
+     (10106%positive, 6);
+     (10110%positive, 6);
+     (11563%positive, 1);
+     (11566%positive, 3);
+     (11567%positive, 1);
+     (11583%positive, 5);
+     (11630%positive, 7);
+     (11642%positive, 6);
+     (11646%positive, 7);
+     (11647%positive, 1);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12094%positive, 4);
+     (12154%positive, 6);
+     (12158%positive, 5)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
      (9533%positive, 1);
+     (9535%positive, 1);
      (9597%positive, 1);
+     (9599%positive, 1);
      (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
+     (10040%positive, 2);
      (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
+     (11563%positive, 5);
+     (11567%positive, 3);
      (11581%positive, 1);
-     (11644%positive, 10);
+     (11583%positive, 1);
      (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 6);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (11647%positive, 1);
+     (12088%positive, 4);
+     (12157%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
     [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
    NgRankE
     [(9512%positive, 1);
      (9533%positive, 1);
+     (9535%positive, 1);
      (9597%positive, 1);
+     (9599%positive, 1);
      (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
+     (10040%positive, 2);
      (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
+     (11563%positive, 5);
+     (11567%positive, 3);
      (11581%positive, 1);
-     (11644%positive, 10);
+     (11583%positive, 1);
      (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 6);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (11647%positive, 1);
+     (12088%positive, 4);
+     (12157%positive, 3)]]
   | StD =>
   [NgRankE
     [(9512%positive, 2);
+     (9518%positive, 1);
      (9529%positive, 1);
      (9533%positive, 2);
+     (9582%positive, 1);
      (9593%positive, 1);
      (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
+     (9598%positive, 5);
+     (10024%positive, 8);
+     (10028%positive, 2);
+     (10040%positive, 8);
+     (10044%positive, 2);
+     (10046%positive, 2);
+     (10105%positive, 6);
+     (10108%positive, 2);
+     (10109%positive, 8);
+     (10110%positive, 4);
+     (11566%positive, 1);
      (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
+     (11581%positive, 7);
+     (11630%positive, 1);
      (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+     (11645%positive, 7);
+     (11646%positive, 5);
+     (12078%positive, 1);
+     (12088%positive, 10);
+     (12094%positive, 2);
+     (12153%positive, 5);
+     (12157%positive, 9);
+     (12158%positive, 3)];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
+   NgPattE [S1; S1] RgR 1
     []
     [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
    NgRankE
     [(9512%positive, 2);
+     (9518%positive, 1);
      (9529%positive, 1);
      (9533%positive, 2);
+     (9582%positive, 1);
      (9593%positive, 1);
      (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
+     (9598%positive, 5);
+     (10024%positive, 8);
+     (10028%positive, 2);
+     (10040%positive, 8);
+     (10044%positive, 2);
+     (10046%positive, 2);
+     (10105%positive, 6);
+     (10108%positive, 2);
+     (10109%positive, 8);
+     (10110%positive, 4);
+     (11566%positive, 1);
      (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
+     (11581%positive, 7);
+     (11630%positive, 1);
      (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+     (11645%positive, 7);
+     (11646%positive, 5);
+     (12078%positive, 1);
+     (12088%positive, 10);
+     (12094%positive, 2);
+     (12153%positive, 5);
+     (12157%positive, 9);
+     (12158%positive, 3)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_XXX1LD_1LA0LA : NeverQuasiHaltsSt tm_bulkr_00173.
+Theorem nqh_1RB0RC_1RC1RB_0LD1LC_1RA1LA : NeverQuasiHaltsSt tm_bulkr_00173.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 376 11 cert_bulkr_00173).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 408 11 cert_bulkr_00173).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_---1LD_1RA0LA: n=2 t=0 contexts=39 *)
+(** 1RB0RD_0LC0LD_0RB1LC_1RA1RD: n=2 t=0 contexts=62 *)
 
 Definition tm_bulkr_00174 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => None
-  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S0 DL StD)
+  | StC, S0 => Some (mkTrans S0 DR StB)
+  | StC, S1 => Some (mkTrans S1 DL StC)
   | StD, S0 => Some (mkTrans S1 DR StA)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00174 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 2);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 2);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+    [(9517%positive, 1);
+     (9518%positive, 3);
+     (9529%positive, 4);
+     (9534%positive, 4);
+     (9535%positive, 1);
+     (9581%positive, 1);
+     (9582%positive, 3);
+     (9583%positive, 1);
+     (9593%positive, 8);
+     (9597%positive, 2);
+     (9598%positive, 7);
+     (9599%positive, 1);
+     (10026%positive, 2);
+     (10029%positive, 1);
+     (10030%positive, 3);
+     (10042%positive, 2);
+     (10046%positive, 4);
+     (10047%positive, 2);
+     (10090%positive, 2);
+     (10093%positive, 1);
+     (10094%positive, 3);
+     (10095%positive, 2);
+     (10106%positive, 2);
+     (10109%positive, 2);
+     (10110%positive, 6);
+     (10111%positive, 2);
+     (11583%positive, 1);
+     (11647%positive, 1);
+     (12074%positive, 2);
+     (12077%positive, 1);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12094%positive, 4);
+     (12095%positive, 4);
+     (12138%positive, 2);
+     (12141%positive, 1);
+     (12142%positive, 3);
+     (12143%positive, 5);
+     (12154%positive, 2);
+     (12157%positive, 2);
+     (12158%positive, 5);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(9529%positive, 2);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 2);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+    [(9517%positive, 1);
+     (9518%positive, 3);
+     (9529%positive, 4);
+     (9534%positive, 4);
+     (9535%positive, 1);
+     (9581%positive, 1);
+     (9582%positive, 3);
+     (9583%positive, 1);
+     (9593%positive, 8);
+     (9597%positive, 2);
+     (9598%positive, 7);
+     (9599%positive, 1);
+     (10026%positive, 2);
+     (10029%positive, 1);
+     (10030%positive, 3);
+     (10042%positive, 2);
+     (10046%positive, 4);
+     (10047%positive, 2);
+     (10090%positive, 2);
+     (10093%positive, 1);
+     (10094%positive, 3);
+     (10095%positive, 2);
+     (10106%positive, 2);
+     (10109%positive, 2);
+     (10110%positive, 6);
+     (10111%positive, 2);
+     (11583%positive, 1);
+     (11647%positive, 1);
+     (12074%positive, 2);
+     (12077%positive, 1);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12094%positive, 4);
+     (12095%positive, 4);
+     (12138%positive, 2);
+     (12141%positive, 1);
+     (12142%positive, 3);
+     (12143%positive, 5);
+     (12154%positive, 2);
+     (12157%positive, 2);
+     (12158%positive, 5);
+     (12159%positive, 3)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 4);
-     (10044%positive, 2);
+    [(9515%positive, 1);
+     (9518%positive, 1);
+     (9531%positive, 1);
+     (9534%positive, 2);
+     (9535%positive, 2);
+     (9579%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 2);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9598%positive, 5);
+     (9599%positive, 2);
+     (10030%positive, 1);
      (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 3);
-     (12076%positive, 1);
-     (12078%positive, 4);
-     (12079%positive, 1);
-     (12092%positive, 2);
+     (10047%positive, 3);
+     (10094%positive, 1);
+     (10095%positive, 3);
+     (10107%positive, 3);
+     (10108%positive, 3);
+     (10110%positive, 4);
+     (10111%positive, 3);
+     (11563%positive, 1);
+     (11579%positive, 1);
+     (11583%positive, 9);
+     (11627%positive, 1);
+     (11643%positive, 1);
+     (11647%positive, 9);
+     (12078%positive, 1);
      (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (12095%positive, 5);
+     (12142%positive, 1);
+     (12143%positive, 6);
+     (12155%positive, 8);
+     (12156%positive, 7);
+     (12158%positive, 3);
+     (12159%positive, 4)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 4);
-     (10044%positive, 2);
+    [(9515%positive, 1);
+     (9518%positive, 1);
+     (9531%positive, 1);
+     (9534%positive, 2);
+     (9535%positive, 2);
+     (9579%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 2);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9598%positive, 5);
+     (9599%positive, 2);
+     (10030%positive, 1);
      (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 3);
-     (12076%positive, 1);
-     (12078%positive, 4);
-     (12079%positive, 1);
-     (12092%positive, 2);
+     (10047%positive, 3);
+     (10094%positive, 1);
+     (10095%positive, 3);
+     (10107%positive, 3);
+     (10108%positive, 3);
+     (10110%positive, 4);
+     (10111%positive, 3);
+     (11563%positive, 1);
+     (11579%positive, 1);
+     (11583%positive, 9);
+     (11627%positive, 1);
+     (11643%positive, 1);
+     (11647%positive, 9);
+     (12078%positive, 1);
      (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+     (12095%positive, 5);
+     (12142%positive, 1);
+     (12143%positive, 6);
+     (12155%positive, 8);
+     (12156%positive, 7);
+     (12158%positive, 3);
+     (12159%positive, 4)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 8);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
+     (9515%positive, 2);
+     (9517%positive, 3);
+     (9528%positive, 1);
+     (9531%positive, 2);
+     (9535%positive, 3);
+     (9579%positive, 2);
+     (9581%positive, 3);
+     (9583%positive, 3);
+     (9592%positive, 1);
+     (9595%positive, 2);
+     (9596%positive, 3);
+     (9597%positive, 4);
+     (9599%positive, 3);
+     (10029%positive, 14);
+     (10040%positive, 5);
+     (10047%positive, 4);
+     (10093%positive, 14);
+     (10095%positive, 4);
+     (10104%positive, 5);
+     (10107%positive, 4);
+     (10108%positive, 4);
+     (10109%positive, 11);
+     (10111%positive, 4);
+     (11563%positive, 13);
+     (11579%positive, 13);
+     (11583%positive, 10);
+     (11627%positive, 13);
+     (11643%positive, 13);
+     (11647%positive, 10);
+     (12077%positive, 14);
+     (12088%positive, 12);
+     (12095%positive, 6);
+     (12141%positive, 14);
+     (12143%positive, 7);
+     (12152%positive, 12);
+     (12155%positive, 9);
      (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (12157%positive, 11);
+     (12159%positive, 5)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 8);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
+     (9515%positive, 2);
+     (9517%positive, 3);
+     (9528%positive, 1);
+     (9531%positive, 2);
+     (9535%positive, 3);
+     (9579%positive, 2);
+     (9581%positive, 3);
+     (9583%positive, 3);
+     (9592%positive, 1);
+     (9595%positive, 2);
+     (9596%positive, 3);
+     (9597%positive, 4);
+     (9599%positive, 3);
+     (10029%positive, 14);
+     (10040%positive, 5);
+     (10047%positive, 4);
+     (10093%positive, 14);
+     (10095%positive, 4);
+     (10104%positive, 5);
+     (10107%positive, 4);
+     (10108%positive, 4);
+     (10109%positive, 11);
+     (10111%positive, 4);
+     (11563%positive, 13);
+     (11579%positive, 13);
+     (11583%positive, 10);
+     (11627%positive, 13);
+     (11643%positive, 13);
+     (11647%positive, 10);
+     (12077%positive, 14);
+     (12088%positive, 12);
+     (12095%positive, 6);
+     (12141%positive, 14);
+     (12143%positive, 7);
+     (12152%positive, 12);
+     (12155%positive, 9);
      (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (12157%positive, 11);
+     (12159%positive, 5)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 4);
+     (9518%positive, 2);
+     (9528%positive, 8);
+     (9529%positive, 3);
+     (9534%positive, 3);
+     (9582%positive, 2);
+     (9592%positive, 8);
+     (9593%positive, 7);
+     (9598%positive, 6);
+     (10026%positive, 1);
+     (10030%positive, 2);
+     (10040%positive, 1);
+     (10042%positive, 1);
+     (10046%positive, 3);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10104%positive, 1);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12088%positive, 1);
+     (12090%positive, 1);
+     (12094%positive, 3);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12152%positive, 1);
+     (12154%positive, 1);
+     (12158%positive, 4)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(9512%positive, 4);
+     (9518%positive, 2);
+     (9528%positive, 8);
+     (9529%positive, 3);
+     (9534%positive, 3);
+     (9582%positive, 2);
+     (9592%positive, 8);
+     (9593%positive, 7);
+     (9598%positive, 6);
+     (10026%positive, 1);
+     (10030%positive, 2);
+     (10040%positive, 1);
+     (10042%positive, 1);
+     (10046%positive, 3);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10104%positive, 1);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12088%positive, 1);
+     (12090%positive, 1);
+     (12094%positive, 3);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12152%positive, 1);
+     (12154%positive, 1);
+     (12158%positive, 4)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_XXX1LD_1RA0LA : NeverQuasiHaltsSt tm_bulkr_00174.
+Theorem nqh_1RB0RD_0LC0LD_0RB1LC_1RA1RD : NeverQuasiHaltsSt tm_bulkr_00174.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 376 11 cert_bulkr_00174).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 560 11 cert_bulkr_00174).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_---1LD_1RB0LA: n=2 t=0 contexts=39 *)
+(** 1RB0RD_0LC0RA_1LA1LC_1LD1LB: n=3 t=0 contexts=80 *)
 
 Definition tm_bulkr_00175 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => None
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S1 DR StB)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S0 DR StA)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DL StD)
+  | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 
 Definition cert_bulkr_00175 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 9);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 8);
-     (10041%positive, 9);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 9);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 7);
-     (12078%positive, 8);
-     (12089%positive, 9);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
-    []
-    [12157%positive];
-   NgRankE
-    [(9529%positive, 9);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 8);
-     (10041%positive, 9);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 9);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 7);
-     (12078%positive, 8);
-     (12089%positive, 9);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+    [(152750%positive, 1);
+     (152761%positive, 2);
+     (152814%positive, 1);
+     (153003%positive, 6);
+     (153007%positive, 2);
+     (153017%positive, 2);
+     (154799%positive, 2);
+     (154857%positive, 1);
+     (154859%positive, 5);
+     (155051%positive, 6);
+     (155055%positive, 2);
+     (160943%positive, 2);
+     (161199%positive, 2);
+     (162985%positive, 1);
+     (163003%positive, 3);
+     (163049%positive, 1);
+     (163051%positive, 5);
+     (163243%positive, 6);
+     (163247%positive, 2);
+     (163259%positive, 4);
+     (187561%positive, 1);
+     (187567%positive, 2);
+     (187625%positive, 1);
+     (187819%positive, 6);
+     (187823%positive, 2);
+     (193710%positive, 1);
+     (193711%positive, 2);
+     (193774%positive, 1);
+     (193967%positive, 2);
+     (195753%positive, 1);
+     (195759%positive, 2);
+     (195769%positive, 2);
+     (195771%positive, 3);
+     (195817%positive, 1);
+     (195819%positive, 5);
+     (195823%positive, 3);
+     (196011%positive, 6);
+     (196015%positive, 2);
+     (196025%positive, 2);
+     (196027%positive, 4)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12076%positive, 1);
-     (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12076%positive, 1);
-     (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+    [(152750%positive, 2);
+     (152812%positive, 4);
+     (152814%positive, 3);
+     (153003%positive, 3);
+     (154794%positive, 1);
+     (154810%positive, 2);
+     (154859%positive, 2);
+     (154860%positive, 1);
+     (155051%positive, 3);
+     (155066%positive, 2);
+     (160938%positive, 1);
+     (160954%positive, 2);
+     (161004%positive, 4);
+     (161210%positive, 2);
+     (162988%positive, 1);
+     (163003%positive, 1);
+     (163051%positive, 2);
+     (163052%positive, 1);
+     (163243%positive, 3);
+     (163259%positive, 1);
+     (187562%positive, 1);
+     (187564%positive, 1);
+     (187578%positive, 2);
+     (187628%positive, 1);
+     (187819%positive, 3);
+     (187834%positive, 2);
+     (193706%positive, 1);
+     (193710%positive, 2);
+     (193722%positive, 2);
+     (193772%positive, 4);
+     (193774%positive, 3);
+     (193978%positive, 2);
+     (195771%positive, 1);
+     (195819%positive, 2);
+     (195820%positive, 1);
+     (196011%positive, 3);
+     (196027%positive, 1)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+    [(152744%positive, 1);
+     (152808%positive, 1);
+     (152812%positive, 5);
+     (153003%positive, 4);
+     (153007%positive, 1);
+     (153021%positive, 2);
+     (154799%positive, 1);
+     (154813%positive, 6);
+     (154856%positive, 3);
+     (154859%positive, 3);
+     (154860%positive, 2);
+     (155051%positive, 4);
+     (155055%positive, 1);
+     (155069%positive, 6);
+     (160943%positive, 1);
+     (160957%positive, 10);
+     (161004%positive, 5);
+     (161199%positive, 1);
+     (161213%positive, 9);
+     (162984%positive, 7);
+     (162988%positive, 2);
+     (163003%positive, 2);
+     (163048%positive, 7);
+     (163051%positive, 3);
+     (163052%positive, 2);
+     (163243%positive, 4);
+     (163247%positive, 1);
+     (163259%positive, 2);
+     (163261%positive, 3);
+     (187560%positive, 11);
+     (187564%positive, 2);
+     (187567%positive, 1);
+     (187581%positive, 6);
+     (187624%positive, 9);
+     (187628%positive, 2);
+     (187819%positive, 4);
+     (187823%positive, 1);
+     (187837%positive, 6);
+     (193711%positive, 1);
+     (193725%positive, 8);
+     (193772%positive, 5);
+     (193967%positive, 1);
+     (193981%positive, 8);
+     (195759%positive, 1);
+     (195771%positive, 2);
+     (195816%positive, 4);
+     (195819%positive, 3);
+     (195820%positive, 2);
+     (195823%positive, 1);
+     (196011%positive, 4);
+     (196015%positive, 1);
+     (196027%positive, 2);
+     (196029%positive, 3)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [161213%positive;
+     187624%positive];
    NgRankE
-    [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+    [(152744%positive, 1);
+     (152808%positive, 1);
+     (152812%positive, 5);
+     (153003%positive, 4);
+     (153007%positive, 1);
+     (153021%positive, 2);
+     (154799%positive, 1);
+     (154813%positive, 6);
+     (154856%positive, 3);
+     (154859%positive, 3);
+     (154860%positive, 2);
+     (155051%positive, 4);
+     (155055%positive, 1);
+     (155069%positive, 6);
+     (160943%positive, 1);
+     (160957%positive, 10);
+     (161004%positive, 5);
+     (161199%positive, 1);
+     (161213%positive, 10);
+     (162984%positive, 7);
+     (162988%positive, 2);
+     (163003%positive, 2);
+     (163048%positive, 7);
+     (163051%positive, 3);
+     (163052%positive, 2);
+     (163243%positive, 4);
+     (163247%positive, 1);
+     (163259%positive, 2);
+     (163261%positive, 3);
+     (187560%positive, 11);
+     (187564%positive, 2);
+     (187567%positive, 1);
+     (187581%positive, 6);
+     (187624%positive, 9);
+     (187628%positive, 2);
+     (187819%positive, 4);
+     (187823%positive, 1);
+     (187837%positive, 6);
+     (193711%positive, 1);
+     (193725%positive, 8);
+     (193772%positive, 5);
+     (193967%positive, 1);
+     (193981%positive, 8);
+     (195759%positive, 1);
+     (195771%positive, 2);
+     (195816%positive, 4);
+     (195819%positive, 3);
+     (195820%positive, 2);
+     (195823%positive, 1);
+     (196011%positive, 4);
+     (196015%positive, 1);
+     (196027%positive, 2);
+     (196029%positive, 3)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(152744%positive, 6);
+     (152750%positive, 4);
+     (152761%positive, 5);
+     (152808%positive, 4);
+     (152814%positive, 2);
+     (153017%positive, 3);
+     (153021%positive, 5);
+     (154794%positive, 3);
+     (154810%positive, 1);
+     (154813%positive, 1);
+     (154856%positive, 6);
+     (154857%positive, 2);
+     (155066%positive, 1);
+     (155069%positive, 1);
+     (160938%positive, 10);
+     (160954%positive, 1);
+     (160957%positive, 8);
+     (161210%positive, 1);
+     (161213%positive, 7);
+     (162984%positive, 2);
+     (162985%positive, 11);
+     (163048%positive, 2);
+     (163049%positive, 2);
+     (163261%positive, 1);
+     (187560%positive, 9);
+     (187561%positive, 11);
+     (187562%positive, 3);
+     (187578%positive, 1);
+     (187581%positive, 1);
+     (187624%positive, 7);
+     (187625%positive, 2);
+     (187834%positive, 1);
+     (187837%positive, 1);
+     (193706%positive, 10);
+     (193710%positive, 4);
+     (193722%positive, 1);
+     (193725%positive, 3);
+     (193774%positive, 2);
+     (193978%positive, 1);
+     (193981%positive, 3);
+     (195753%positive, 11);
+     (195769%positive, 5);
+     (195816%positive, 2);
+     (195817%positive, 2);
+     (196025%positive, 3);
+     (196029%positive, 1)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [161213%positive;
+     187624%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(152744%positive, 6);
+     (152750%positive, 4);
+     (152761%positive, 5);
+     (152808%positive, 4);
+     (152814%positive, 2);
+     (153017%positive, 3);
+     (153021%positive, 5);
+     (154794%positive, 3);
+     (154810%positive, 1);
+     (154813%positive, 1);
+     (154856%positive, 6);
+     (154857%positive, 2);
+     (155066%positive, 1);
+     (155069%positive, 1);
+     (160938%positive, 9);
+     (160954%positive, 1);
+     (160957%positive, 7);
+     (161210%positive, 1);
+     (161213%positive, 7);
+     (162984%positive, 2);
+     (162985%positive, 10);
+     (163048%positive, 2);
+     (163049%positive, 2);
+     (163261%positive, 1);
+     (187560%positive, 8);
+     (187561%positive, 10);
+     (187562%positive, 3);
+     (187578%positive, 1);
+     (187581%positive, 1);
+     (187624%positive, 4);
+     (187625%positive, 2);
+     (187834%positive, 1);
+     (187837%positive, 1);
+     (193706%positive, 9);
+     (193710%positive, 4);
+     (193722%positive, 1);
+     (193725%positive, 3);
+     (193774%positive, 2);
+     (193978%positive, 1);
+     (193981%positive, 3);
+     (195753%positive, 10);
+     (195769%positive, 5);
+     (195816%positive, 2);
+     (195817%positive, 2);
+     (196025%positive, 3);
+     (196029%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_XXX1LD_1RB0LA : NeverQuasiHaltsSt tm_bulkr_00175.
+Theorem nqh_1RB0RD_0LC0RA_1LA1LC_1LD1LB : NeverQuasiHaltsSt tm_bulkr_00175.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 376 11 cert_bulkr_00175).
+  apply (ngram_check_neverqh_lex_sound _ 3 0 704 15 cert_bulkr_00175).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_0LA0LD_0RA0RB: n=2 t=0 contexts=46 *)
+(** 1RB0RD_0LC1RA_1RB1LC_0LB1RD: n=2 t=0 contexts=48 *)
 
 Definition tm_bulkr_00176 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StD)
-  | StD, S0 => Some (mkTrans S0 DR StA)
-  | StD, S1 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DR StB)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S0 DL StB)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00176 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 2);
-     (9533%positive, 5);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (10025%positive, 1);
-     (10030%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 6);
+    [(9518%positive, 2);
+     (9529%positive, 3);
+     (9531%positive, 1);
+     (9534%positive, 3);
+     (9535%positive, 2);
+     (9579%positive, 8);
+     (9582%positive, 2);
+     (9583%positive, 2);
+     (9593%positive, 7);
+     (9595%positive, 1);
+     (9598%positive, 6);
+     (9599%positive, 2);
+     (10026%positive, 1);
+     (10030%positive, 2);
+     (10042%positive, 1);
      (10046%positive, 3);
-     (10089%positive, 1);
-     (10105%positive, 4);
-     (10109%positive, 6);
-     (10110%positive, 3);
-     (11567%positive, 2);
-     (11577%positive, 2);
-     (11581%positive, 5);
-     (11583%positive, 2);
-     (11641%positive, 4);
-     (11645%positive, 5);
-     (11647%positive, 2);
-     (12073%positive, 1);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12093%positive, 8);
+     (10047%positive, 3);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 3);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (10111%positive, 3);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12090%positive, 1);
      (12094%positive, 3);
-     (12137%positive, 1);
-     (12153%positive, 4);
-     (12157%positive, 7);
-     (12158%positive, 3)];
-   NgPattE [S1] RgR 1
+     (12095%positive, 5);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 6);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 4)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(9529%positive, 2);
-     (9533%positive, 5);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (10025%positive, 1);
-     (10030%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 6);
+    [(9518%positive, 2);
+     (9529%positive, 3);
+     (9531%positive, 1);
+     (9534%positive, 3);
+     (9535%positive, 2);
+     (9579%positive, 8);
+     (9582%positive, 2);
+     (9583%positive, 2);
+     (9593%positive, 7);
+     (9595%positive, 1);
+     (9598%positive, 6);
+     (9599%positive, 2);
+     (10026%positive, 1);
+     (10030%positive, 2);
+     (10042%positive, 1);
      (10046%positive, 3);
-     (10089%positive, 1);
-     (10105%positive, 4);
-     (10109%positive, 6);
-     (10110%positive, 3);
-     (11567%positive, 2);
-     (11577%positive, 2);
-     (11581%positive, 5);
-     (11583%positive, 2);
-     (11641%positive, 4);
-     (11645%positive, 5);
-     (11647%positive, 2);
-     (12073%positive, 1);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12093%positive, 8);
+     (10047%positive, 3);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 3);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (10111%positive, 3);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12090%positive, 1);
      (12094%positive, 3);
-     (12137%positive, 1);
-     (12153%positive, 4);
-     (12157%positive, 7);
-     (12158%positive, 3)]]
+     (12095%positive, 5);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 6);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 4)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 1);
-     (10108%positive, 4);
-     (10110%positive, 1);
-     (11563%positive, 1);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 1);
-     (12154%positive, 6);
-     (12156%positive, 3);
-     (12158%positive, 1)];
-   NgPattE [S1] RgL 1
+    [(9518%positive, 1);
+     (9534%positive, 2);
+     (9535%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 5);
+     (9599%positive, 1);
+     (10030%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 2);
+     (10094%positive, 1);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 4);
+     (10111%positive, 2);
+     (12078%positive, 1);
+     (12094%positive, 2);
+     (12095%positive, 4);
+     (12142%positive, 1);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 3);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 1);
-     (10108%positive, 4);
-     (10110%positive, 1);
-     (11563%positive, 1);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 1);
-     (12154%positive, 6);
-     (12156%positive, 3);
-     (12158%positive, 1)]]
+    [(9518%positive, 1);
+     (9534%positive, 2);
+     (9535%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 5);
+     (9599%positive, 1);
+     (10030%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 2);
+     (10094%positive, 1);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 4);
+     (10111%positive, 2);
+     (12078%positive, 1);
+     (12094%positive, 2);
+     (12095%positive, 4);
+     (12142%positive, 1);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 3);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11563%positive, 6);
-     (11564%positive, 3);
-     (11567%positive, 1);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11583%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (11647%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)];
-   NgPattE [S1] RgR 1
+     (9517%positive, 2);
+     (9528%positive, 1);
+     (9531%positive, 3);
+     (9533%positive, 2);
+     (9535%positive, 4);
+     (9579%positive, 1);
+     (9581%positive, 2);
+     (9583%positive, 4);
+     (9592%positive, 1);
+     (9595%positive, 3);
+     (9596%positive, 2);
+     (9597%positive, 2);
+     (9599%positive, 4);
+     (10045%positive, 3);
+     (10047%positive, 5);
+     (10095%positive, 5);
+     (10108%positive, 5);
+     (10109%positive, 3);
+     (10111%positive, 5);
+     (12093%positive, 10);
+     (12095%positive, 7);
+     (12143%positive, 8);
+     (12156%positive, 9);
+     (12157%positive, 10);
+     (12159%positive, 6)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11563%positive, 6);
-     (11564%positive, 3);
-     (11567%positive, 1);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11583%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (11647%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)]]
+     (9517%positive, 2);
+     (9528%positive, 1);
+     (9531%positive, 3);
+     (9533%positive, 2);
+     (9535%positive, 4);
+     (9579%positive, 1);
+     (9581%positive, 2);
+     (9583%positive, 4);
+     (9592%positive, 1);
+     (9595%positive, 3);
+     (9596%positive, 2);
+     (9597%positive, 2);
+     (9599%positive, 4);
+     (10045%positive, 3);
+     (10047%positive, 5);
+     (10095%positive, 5);
+     (10108%positive, 5);
+     (10109%positive, 3);
+     (10111%positive, 5);
+     (12093%positive, 10);
+     (12095%positive, 7);
+     (12143%positive, 8);
+     (12156%positive, 9);
+     (12157%positive, 10);
+     (12159%positive, 6)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10025%positive, 4);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10089%positive, 13);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 4);
-     (12074%positive, 3);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12090%positive, 5);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12137%positive, 13);
-     (12153%positive, 1);
-     (12154%positive, 12);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 14);
+     (9517%positive, 10);
+     (9518%positive, 12);
+     (9528%positive, 9);
+     (9529%positive, 13);
+     (9533%positive, 10);
+     (9534%positive, 4);
+     (9581%positive, 10);
+     (9582%positive, 12);
+     (9592%positive, 9);
+     (9593%positive, 8);
+     (9597%positive, 10);
+     (9598%positive, 7);
+     (10026%positive, 11);
+     (10030%positive, 3);
+     (10042%positive, 11);
+     (10045%positive, 1);
+     (10046%positive, 4);
+     (10090%positive, 11);
+     (10094%positive, 3);
+     (10106%positive, 11);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10025%positive, 4);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10089%positive, 13);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 4);
-     (12074%positive, 3);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12090%positive, 5);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12137%positive, 13);
-     (12153%positive, 1);
-     (12154%positive, 12);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(9512%positive, 14);
+     (9517%positive, 10);
+     (9518%positive, 12);
+     (9528%positive, 9);
+     (9529%positive, 13);
+     (9533%positive, 10);
+     (9534%positive, 4);
+     (9581%positive, 10);
+     (9582%positive, 12);
+     (9592%positive, 9);
+     (9593%positive, 8);
+     (9597%positive, 10);
+     (9598%positive, 7);
+     (10026%positive, 11);
+     (10030%positive, 3);
+     (10042%positive, 11);
+     (10045%positive, 1);
+     (10046%positive, 4);
+     (10090%positive, 11);
+     (10094%positive, 3);
+     (10106%positive, 11);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_0LA0LD_0RA0RB : NeverQuasiHaltsSt tm_bulkr_00176.
+Theorem nqh_1RB0RD_0LC1RA_1RB1LC_0LB1RD : NeverQuasiHaltsSt tm_bulkr_00176.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 432 11 cert_bulkr_00176).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 448 11 cert_bulkr_00176).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_0LA0LD_1RA0RB: n=2 t=0 contexts=48 *)
+(** 1RB0RD_0LC1RA_1RB1LC_0RB1RD: n=2 t=0 contexts=51 *)
 
 Definition tm_bulkr_00177 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StD)
-  | StD, S0 => Some (mkTrans S1 DR StA)
-  | StD, S1 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DR StB)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S0 DR StB)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00177 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 2);
-     (9533%positive, 5);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (10025%positive, 1);
-     (10030%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 6);
+    [(9513%positive, 5);
+     (9514%positive, 4);
+     (9518%positive, 2);
+     (9529%positive, 3);
+     (9530%positive, 8);
+     (9531%positive, 10);
+     (9534%positive, 3);
+     (9535%positive, 11);
+     (9577%positive, 9);
+     (9578%positive, 4);
+     (9579%positive, 6);
+     (9582%positive, 2);
+     (9583%positive, 11);
+     (9593%positive, 7);
+     (9594%positive, 8);
+     (9595%positive, 10);
+     (9598%positive, 6);
+     (9599%positive, 11);
+     (10026%positive, 1);
+     (10030%positive, 2);
+     (10042%positive, 1);
      (10046%positive, 3);
-     (10089%positive, 1);
-     (10105%positive, 4);
-     (10109%positive, 6);
-     (10110%positive, 3);
-     (11567%positive, 2);
-     (11577%positive, 2);
-     (11581%positive, 5);
-     (11583%positive, 2);
-     (11641%positive, 4);
-     (11645%positive, 5);
-     (11647%positive, 2);
-     (12073%positive, 1);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12093%positive, 8);
+     (10047%positive, 12);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 12);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (10111%positive, 12);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12090%positive, 1);
      (12094%positive, 3);
-     (12137%positive, 1);
-     (12153%positive, 4);
-     (12157%positive, 7);
-     (12158%positive, 3)];
-   NgPattE [S1] RgR 1
+     (12095%positive, 14);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 15);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 13)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
+    [12158%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
    NgRankE
-    [(9529%positive, 2);
-     (9533%positive, 5);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (10025%positive, 1);
-     (10030%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 6);
+    [(9513%positive, 5);
+     (9514%positive, 4);
+     (9518%positive, 2);
+     (9529%positive, 3);
+     (9530%positive, 8);
+     (9531%positive, 10);
+     (9534%positive, 3);
+     (9535%positive, 11);
+     (9577%positive, 9);
+     (9578%positive, 4);
+     (9579%positive, 6);
+     (9582%positive, 2);
+     (9583%positive, 11);
+     (9593%positive, 7);
+     (9594%positive, 8);
+     (9595%positive, 10);
+     (9598%positive, 6);
+     (9599%positive, 11);
+     (10026%positive, 1);
+     (10030%positive, 2);
+     (10042%positive, 1);
      (10046%positive, 3);
-     (10089%positive, 1);
-     (10105%positive, 4);
-     (10109%positive, 6);
-     (10110%positive, 3);
-     (11567%positive, 2);
-     (11577%positive, 2);
-     (11581%positive, 5);
-     (11583%positive, 2);
-     (11641%positive, 4);
-     (11645%positive, 5);
-     (11647%positive, 2);
-     (12073%positive, 1);
-     (12078%positive, 1);
-     (12089%positive, 2);
-     (12093%positive, 8);
+     (10047%positive, 12);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 12);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (10111%positive, 12);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12090%positive, 1);
      (12094%positive, 3);
-     (12137%positive, 1);
-     (12153%positive, 4);
-     (12157%positive, 7);
-     (12158%positive, 3)]]
+     (12095%positive, 14);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 15);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 13)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 1);
-     (10108%positive, 4);
-     (10110%positive, 1);
-     (11563%positive, 1);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 1);
-     (12154%positive, 6);
-     (12156%positive, 3);
-     (12158%positive, 1)];
-   NgPattE [S1] RgL 1
+    [(9518%positive, 1);
+     (9534%positive, 2);
+     (9535%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 5);
+     (9599%positive, 1);
+     (10030%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 2);
+     (10094%positive, 1);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 4);
+     (10111%positive, 2);
+     (12078%positive, 1);
+     (12094%positive, 2);
+     (12095%positive, 4);
+     (12142%positive, 1);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 3);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 1);
-     (10108%positive, 4);
-     (10110%positive, 1);
-     (11563%positive, 1);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12090%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 1);
-     (12154%positive, 6);
-     (12156%positive, 3);
-     (12158%positive, 1)]]
+    [(9518%positive, 1);
+     (9534%positive, 2);
+     (9535%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 5);
+     (9599%positive, 1);
+     (10030%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 2);
+     (10094%positive, 1);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 4);
+     (10111%positive, 2);
+     (12078%positive, 1);
+     (12094%positive, 2);
+     (12095%positive, 4);
+     (12142%positive, 1);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 3);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10040%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11563%positive, 5);
-     (11564%positive, 3);
-     (11567%positive, 1);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11583%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (11647%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12088%positive, 4);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)];
-   NgPattE [S1] RgR 1
+     (9531%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 2);
+     (9592%positive, 1);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9597%positive, 2);
+     (9599%positive, 2);
+     (10045%positive, 3);
+     (10047%positive, 3);
+     (10095%positive, 3);
+     (10108%positive, 3);
+     (10109%positive, 3);
+     (10111%positive, 3);
+     (12093%positive, 8);
+     (12095%positive, 5);
+     (12143%positive, 6);
+     (12156%positive, 7);
+     (12157%positive, 8);
+     (12159%positive, 4)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10040%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11563%positive, 5);
-     (11564%positive, 3);
-     (11567%positive, 1);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11583%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (11647%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12088%positive, 4);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3)]]
+     (9531%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 2);
+     (9592%positive, 1);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9597%positive, 2);
+     (9599%positive, 2);
+     (10045%positive, 3);
+     (10047%positive, 3);
+     (10095%positive, 3);
+     (10108%positive, 3);
+     (10109%positive, 3);
+     (10111%positive, 3);
+     (12093%positive, 8);
+     (12095%positive, 5);
+     (12143%positive, 6);
+     (12156%positive, 7);
+     (12157%positive, 8);
+     (12159%positive, 4)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10025%positive, 4);
-     (10028%positive, 7);
-     (10040%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10089%positive, 13);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 4);
-     (12074%positive, 3);
-     (12076%positive, 7);
-     (12088%positive, 5);
-     (12089%positive, 1);
-     (12090%positive, 5);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12137%positive, 13);
-     (12153%positive, 1);
-     (12154%positive, 12);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 14);
+     (9513%positive, 15);
+     (9514%positive, 14);
+     (9518%positive, 12);
+     (9529%positive, 13);
+     (9530%positive, 9);
+     (9533%positive, 10);
+     (9534%positive, 4);
+     (9577%positive, 10);
+     (9578%positive, 14);
+     (9582%positive, 12);
+     (9592%positive, 9);
+     (9593%positive, 8);
+     (9594%positive, 9);
+     (9597%positive, 10);
+     (9598%positive, 7);
+     (10026%positive, 11);
+     (10030%positive, 3);
+     (10042%positive, 11);
+     (10045%positive, 1);
+     (10046%positive, 4);
+     (10090%positive, 11);
+     (10094%positive, 3);
+     (10106%positive, 11);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10025%positive, 4);
-     (10028%positive, 7);
-     (10040%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10089%positive, 13);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 4);
-     (12074%positive, 3);
-     (12076%positive, 7);
-     (12088%positive, 5);
-     (12089%positive, 1);
-     (12090%positive, 5);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12137%positive, 13);
-     (12153%positive, 1);
-     (12154%positive, 12);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(9512%positive, 14);
+     (9513%positive, 15);
+     (9514%positive, 14);
+     (9518%positive, 12);
+     (9529%positive, 13);
+     (9530%positive, 9);
+     (9533%positive, 10);
+     (9534%positive, 4);
+     (9577%positive, 10);
+     (9578%positive, 14);
+     (9582%positive, 12);
+     (9592%positive, 9);
+     (9593%positive, 8);
+     (9594%positive, 9);
+     (9597%positive, 10);
+     (9598%positive, 7);
+     (10026%positive, 11);
+     (10030%positive, 3);
+     (10042%positive, 11);
+     (10045%positive, 1);
+     (10046%positive, 4);
+     (10090%positive, 11);
+     (10094%positive, 3);
+     (10106%positive, 11);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_0LA0LD_1RA0RB : NeverQuasiHaltsSt tm_bulkr_00177.
+Theorem nqh_1RB0RD_0LC1RA_1RB1LC_0RB1RD : NeverQuasiHaltsSt tm_bulkr_00177.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 448 11 cert_bulkr_00177).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 472 11 cert_bulkr_00177).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_0LA0LD_1RD0RB: n=2 t=0 contexts=80 *)
+(** 1RB0RD_0LC1RA_1RB1LC_1LC1RD: n=2 t=0 contexts=45 *)
 
 Definition tm_bulkr_00178 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StD)
-  | StD, S0 => Some (mkTrans S1 DR StD)
-  | StD, S1 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DR StB)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00178 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 11);
-     (9533%positive, 5);
-     (9577%positive, 1);
-     (9581%positive, 11);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (9599%positive, 2);
-     (10025%positive, 1);
-     (10030%positive, 11);
-     (10041%positive, 11);
-     (10043%positive, 3);
-     (10045%positive, 6);
-     (10046%positive, 3);
-     (10089%positive, 1);
-     (10093%positive, 6);
-     (10094%positive, 11);
-     (10105%positive, 4);
-     (10107%positive, 3);
-     (10109%positive, 6);
-     (10110%positive, 3);
-     (10111%positive, 11);
-     (11563%positive, 11);
-     (11567%positive, 2);
-     (11577%positive, 11);
-     (11579%positive, 11);
-     (11581%positive, 5);
-     (11583%positive, 2);
-     (11625%positive, 1);
-     (11627%positive, 11);
-     (11629%positive, 11);
-     (11631%positive, 2);
-     (11641%positive, 4);
-     (11643%positive, 11);
-     (11645%positive, 5);
-     (11647%positive, 2);
-     (12073%positive, 1);
-     (12078%positive, 11);
-     (12089%positive, 11);
-     (12091%positive, 11);
-     (12093%positive, 8);
-     (12094%positive, 3);
-     (12137%positive, 1);
-     (12141%positive, 9);
-     (12142%positive, 11);
-     (12153%positive, 4);
-     (12155%positive, 11);
-     (12157%positive, 7);
-     (12158%positive, 3);
-     (12159%positive, 10)];
-   NgPattE [S1] RgR 1
-    []
-    [12157%positive];
-   NgPattE [S1] RgR 57
-    [(9529%positive, 60);
-     (9581%positive, 61);
+    [(9518%positive, 2);
+     (9529%positive, 3);
+     (9531%positive, 3);
+     (9534%positive, 3);
+     (9535%positive, 7);
+     (9579%positive, 2);
+     (9582%positive, 2);
+     (9583%positive, 4);
+     (9593%positive, 7);
+     (9595%positive, 6);
+     (9598%positive, 6);
+     (9599%positive, 7);
+     (10026%positive, 1);
      (10030%positive, 2);
-     (10041%positive, 60);
-     (10094%positive, 2);
-     (10111%positive, 56);
-     (11563%positive, 1);
-     (11577%positive, 60);
-     (11579%positive, 1);
-     (11627%positive, 1);
-     (11629%positive, 61);
-     (11643%positive, 1);
-     (12078%positive, 2);
-     (12089%positive, 60);
-     (12142%positive, 2)]
-    [9529%positive;
-     9581%positive;
-     10030%positive;
-     10041%positive;
-     10094%positive;
-     10111%positive;
-     11563%positive;
-     11577%positive;
-     11579%positive;
-     11627%positive;
-     11629%positive;
-     11643%positive;
-     12078%positive;
-     12089%positive;
-     12091%positive;
-     12142%positive;
-     12155%positive];
-   NgRankE
-    [(9533%positive, 5);
-     (9577%positive, 1);
-     (9593%positive, 4);
-     (9597%positive, 5);
-     (9599%positive, 2);
-     (10025%positive, 1);
-     (10043%positive, 3);
-     (10045%positive, 6);
+     (10042%positive, 1);
      (10046%positive, 3);
-     (10089%positive, 1);
-     (10093%positive, 6);
-     (10105%positive, 4);
-     (10107%positive, 3);
-     (10109%positive, 6);
-     (10110%positive, 3);
-     (11563%positive, 4);
-     (11567%positive, 2);
-     (11579%positive, 4);
-     (11581%positive, 5);
-     (11583%positive, 2);
-     (11625%positive, 1);
-     (11627%positive, 4);
-     (11631%positive, 2);
-     (11641%positive, 4);
-     (11643%positive, 4);
-     (11645%positive, 5);
-     (11647%positive, 2);
-     (12073%positive, 1);
-     (12091%positive, 11);
-     (12093%positive, 8);
+     (10047%positive, 8);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 8);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (10111%positive, 8);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12090%positive, 1);
      (12094%positive, 3);
-     (12137%positive, 1);
-     (12141%positive, 9);
-     (12153%positive, 4);
-     (12155%positive, 11);
-     (12157%positive, 7);
-     (12158%positive, 3);
-     (12159%positive, 10)]]
+     (12095%positive, 10);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 11);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 9)];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9518%positive, 2);
+     (9529%positive, 3);
+     (9531%positive, 3);
+     (9534%positive, 3);
+     (9535%positive, 7);
+     (9579%positive, 2);
+     (9582%positive, 2);
+     (9583%positive, 4);
+     (9593%positive, 7);
+     (9595%positive, 6);
+     (9598%positive, 6);
+     (9599%positive, 7);
+     (10026%positive, 1);
+     (10030%positive, 2);
+     (10042%positive, 1);
+     (10046%positive, 3);
+     (10047%positive, 8);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 8);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (10111%positive, 8);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12090%positive, 1);
+     (12094%positive, 3);
+     (12095%positive, 10);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 11);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 9)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 3);
-     (10042%positive, 2);
-     (10043%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 1);
-     (10092%positive, 1);
-     (10094%positive, 3);
-     (10106%positive, 6);
-     (10107%positive, 1);
+    [(9518%positive, 1);
+     (9531%positive, 2);
+     (9534%positive, 2);
+     (9535%positive, 6);
+     (9579%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 3);
+     (9595%positive, 5);
+     (9596%positive, 2);
+     (9598%positive, 5);
+     (9599%positive, 6);
+     (10030%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 7);
+     (10094%positive, 1);
+     (10095%positive, 7);
      (10108%positive, 4);
-     (10110%positive, 1);
-     (11563%positive, 2);
-     (11564%positive, 1);
-     (11579%positive, 2);
-     (11580%positive, 2);
-     (11627%positive, 2);
-     (11628%positive, 1);
-     (11643%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 3);
-     (12090%positive, 2);
-     (12091%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 1);
-     (12138%positive, 1);
-     (12140%positive, 1);
-     (12142%positive, 3);
-     (12154%positive, 6);
-     (12155%positive, 1);
-     (12156%positive, 3);
-     (12158%positive, 1)];
-   NgPattE [S1] RgL 1
+     (10110%positive, 4);
+     (10111%positive, 7);
+     (12078%positive, 1);
+     (12094%positive, 2);
+     (12095%positive, 9);
+     (12142%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
+     (12158%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
+    [12158%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 3);
-     (10042%positive, 2);
-     (10043%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 1);
-     (10092%positive, 1);
-     (10094%positive, 3);
-     (10106%positive, 6);
-     (10107%positive, 1);
+    [(9518%positive, 1);
+     (9531%positive, 2);
+     (9534%positive, 2);
+     (9535%positive, 6);
+     (9579%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 3);
+     (9595%positive, 5);
+     (9596%positive, 2);
+     (9598%positive, 5);
+     (9599%positive, 6);
+     (10030%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 7);
+     (10094%positive, 1);
+     (10095%positive, 7);
      (10108%positive, 4);
-     (10110%positive, 1);
-     (11563%positive, 2);
-     (11564%positive, 1);
-     (11579%positive, 2);
-     (11580%positive, 2);
-     (11627%positive, 2);
-     (11628%positive, 1);
-     (11643%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 3);
-     (12090%positive, 2);
-     (12091%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 1);
-     (12138%positive, 1);
-     (12140%positive, 1);
-     (12142%positive, 3);
-     (12154%positive, 6);
-     (12155%positive, 1);
-     (12156%positive, 3);
-     (12158%positive, 1)]]
+     (10110%positive, 4);
+     (10111%positive, 7);
+     (12078%positive, 1);
+     (12094%positive, 2);
+     (12095%positive, 9);
+     (12142%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
+     (12158%positive, 3);
+     (12159%positive, 8)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9581%positive, 1);
-     (9597%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 1);
+     (9583%positive, 1);
+     (9592%positive, 1);
+     (9596%positive, 1);
+     (9597%positive, 2);
      (9599%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10040%positive, 2);
-     (10043%positive, 2);
-     (10044%positive, 7);
      (10045%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 5);
-     (10093%positive, 2);
-     (10104%positive, 2);
-     (10107%positive, 2);
-     (10108%positive, 9);
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
      (10109%positive, 2);
      (10111%positive, 2);
-     (11560%positive, 1);
-     (11563%positive, 8);
-     (11564%positive, 3);
-     (11567%positive, 1);
-     (11576%positive, 1);
-     (11579%positive, 8);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11583%positive, 1);
-     (11624%positive, 1);
-     (11627%positive, 8);
-     (11628%positive, 3);
-     (11629%positive, 1);
-     (11631%positive, 1);
-     (11640%positive, 1);
-     (11643%positive, 8);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (11647%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12088%positive, 4);
-     (12091%positive, 7);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12136%positive, 5);
-     (12140%positive, 5);
-     (12141%positive, 5);
-     (12152%positive, 4);
-     (12155%positive, 7);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 6)];
-   NgPattE [S1] RgR 1
+     (12093%positive, 7);
+     (12095%positive, 4);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 7);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9581%positive, 1);
-     (9597%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 1);
+     (9583%positive, 1);
+     (9592%positive, 1);
+     (9596%positive, 1);
+     (9597%positive, 2);
      (9599%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10040%positive, 2);
-     (10043%positive, 2);
-     (10044%positive, 7);
      (10045%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 5);
-     (10093%positive, 2);
-     (10104%positive, 2);
-     (10107%positive, 2);
-     (10108%positive, 9);
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
      (10109%positive, 2);
      (10111%positive, 2);
-     (11560%positive, 1);
-     (11563%positive, 8);
-     (11564%positive, 3);
-     (11567%positive, 1);
-     (11576%positive, 1);
-     (11579%positive, 8);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11583%positive, 1);
-     (11624%positive, 1);
-     (11627%positive, 8);
-     (11628%positive, 3);
-     (11629%positive, 1);
-     (11631%positive, 1);
-     (11640%positive, 1);
-     (11643%positive, 8);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (11647%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12088%positive, 4);
-     (12091%positive, 7);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12136%positive, 5);
-     (12140%positive, 5);
-     (12141%positive, 5);
-     (12152%positive, 4);
-     (12155%positive, 7);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 6)]]
+     (12093%positive, 7);
+     (12095%positive, 4);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 7);
+     (12159%positive, 3)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9577%positive, 13);
-     (9581%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10025%positive, 4);
-     (10028%positive, 7);
-     (10040%positive, 3);
-     (10041%positive, 1);
-     (10042%positive, 5);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10088%positive, 3);
-     (10089%positive, 13);
-     (10092%positive, 6);
-     (10093%positive, 3);
-     (10104%positive, 3);
-     (10105%positive, 1);
-     (10106%positive, 12);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11576%positive, 2);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11624%positive, 2);
-     (11625%positive, 13);
-     (11628%positive, 4);
-     (11629%positive, 2);
-     (11640%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 4);
-     (12074%positive, 3);
-     (12076%positive, 7);
-     (12088%positive, 5);
-     (12089%positive, 1);
-     (12090%positive, 5);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12136%positive, 6);
-     (12137%positive, 13);
-     (12138%positive, 3);
-     (12140%positive, 6);
-     (12141%positive, 6);
-     (12152%positive, 5);
-     (12153%positive, 1);
-     (12154%positive, 12);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 14);
+     (9518%positive, 12);
+     (9529%positive, 13);
+     (9533%positive, 10);
+     (9534%positive, 4);
+     (9582%positive, 12);
+     (9592%positive, 9);
+     (9593%positive, 8);
+     (9597%positive, 10);
+     (9598%positive, 7);
+     (10026%positive, 11);
+     (10030%positive, 3);
+     (10042%positive, 11);
+     (10045%positive, 1);
+     (10046%positive, 4);
+     (10090%positive, 11);
+     (10094%positive, 3);
+     (10106%positive, 11);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9577%positive, 13);
-     (9581%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10025%positive, 4);
-     (10028%positive, 7);
-     (10040%positive, 3);
-     (10041%positive, 1);
-     (10042%positive, 5);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10088%positive, 3);
-     (10089%positive, 13);
-     (10092%positive, 6);
-     (10093%positive, 3);
-     (10104%positive, 3);
-     (10105%positive, 1);
-     (10106%positive, 12);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11576%positive, 2);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11624%positive, 2);
-     (11625%positive, 13);
-     (11628%positive, 4);
-     (11629%positive, 2);
-     (11640%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 4);
-     (12074%positive, 3);
-     (12076%positive, 7);
-     (12088%positive, 5);
-     (12089%positive, 1);
-     (12090%positive, 5);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12136%positive, 6);
-     (12137%positive, 13);
-     (12138%positive, 3);
-     (12140%positive, 6);
-     (12141%positive, 6);
-     (12152%positive, 5);
-     (12153%positive, 1);
-     (12154%positive, 12);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(9512%positive, 14);
+     (9518%positive, 12);
+     (9529%positive, 13);
+     (9533%positive, 10);
+     (9534%positive, 4);
+     (9582%positive, 12);
+     (9592%positive, 9);
+     (9593%positive, 8);
+     (9597%positive, 10);
+     (9598%positive, 7);
+     (10026%positive, 11);
+     (10030%positive, 3);
+     (10042%positive, 11);
+     (10045%positive, 1);
+     (10046%positive, 4);
+     (10090%positive, 11);
+     (10094%positive, 3);
+     (10106%positive, 11);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_0LA0LD_1RD0RB : NeverQuasiHaltsSt tm_bulkr_00178.
+Theorem nqh_1RB0RD_0LC1RA_1RB1LC_1LC1RD : NeverQuasiHaltsSt tm_bulkr_00178.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 704 12 cert_bulkr_00178).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 424 11 cert_bulkr_00178).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_0RA1LD_0LC0LA: n=2 t=0 contexts=40 *)
+(** 1RB0RD_0LC1RA_1RB1LC_1RB1RD: n=2 t=0 contexts=45 *)
 
 Definition tm_bulkr_00179 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DR StA)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S0 DL StC)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DR StB)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00179 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 3);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
+    [(9518%positive, 2);
+     (9529%positive, 3);
+     (9531%positive, 8);
+     (9534%positive, 3);
+     (9535%positive, 9);
+     (9579%positive, 4);
+     (9582%positive, 2);
+     (9583%positive, 9);
+     (9593%positive, 7);
+     (9595%positive, 8);
+     (9598%positive, 6);
+     (9599%positive, 9);
+     (10026%positive, 1);
      (10030%positive, 2);
-     (10041%positive, 3);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 3);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 1);
+     (10042%positive, 1);
+     (10046%positive, 3);
+     (10047%positive, 10);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 10);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (10111%positive, 10);
+     (12074%positive, 1);
      (12078%positive, 2);
-     (12089%positive, 3);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+     (12090%positive, 1);
+     (12094%positive, 3);
+     (12095%positive, 12);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 13);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 11)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
+    [12158%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
    NgRankE
-    [(9529%positive, 3);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
+    [(9518%positive, 2);
+     (9529%positive, 3);
+     (9531%positive, 8);
+     (9534%positive, 3);
+     (9535%positive, 9);
+     (9579%positive, 4);
+     (9582%positive, 2);
+     (9583%positive, 9);
+     (9593%positive, 7);
+     (9595%positive, 8);
+     (9598%positive, 6);
+     (9599%positive, 9);
+     (10026%positive, 1);
      (10030%positive, 2);
-     (10041%positive, 3);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 3);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 1);
+     (10042%positive, 1);
+     (10046%positive, 3);
+     (10047%positive, 10);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 10);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (10111%positive, 10);
+     (12074%positive, 1);
      (12078%positive, 2);
-     (12089%positive, 3);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+     (12090%positive, 1);
+     (12094%positive, 3);
+     (12095%positive, 12);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 13);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 11)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 3);
-     (10044%positive, 2);
+    [(9518%positive, 1);
+     (9534%positive, 2);
+     (9535%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 5);
+     (9599%positive, 1);
+     (10030%positive, 1);
      (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11562%positive, 1);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 2);
-     (12076%positive, 1);
-     (12078%positive, 3);
-     (12079%positive, 1);
-     (12092%positive, 2);
+     (10047%positive, 2);
+     (10094%positive, 1);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 4);
+     (10111%positive, 2);
+     (12078%positive, 1);
      (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (12095%positive, 4);
+     (12142%positive, 1);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 3);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 3);
-     (10044%positive, 2);
+    [(9518%positive, 1);
+     (9534%positive, 2);
+     (9535%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 5);
+     (9599%positive, 1);
+     (10030%positive, 1);
      (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11562%positive, 1);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 2);
-     (12076%positive, 1);
-     (12078%positive, 3);
-     (12079%positive, 1);
-     (12092%positive, 2);
+     (10047%positive, 2);
+     (10094%positive, 1);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 4);
+     (10111%positive, 2);
+     (12078%positive, 1);
      (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+     (12095%positive, 4);
+     (12142%positive, 1);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 3);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (9531%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 2);
+     (9592%positive, 1);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9597%positive, 2);
+     (9599%positive, 2);
+     (10045%positive, 3);
+     (10047%positive, 3);
+     (10095%positive, 3);
+     (10108%positive, 3);
+     (10109%positive, 3);
+     (10111%positive, 3);
+     (12093%positive, 8);
+     (12095%positive, 5);
+     (12143%positive, 6);
+     (12156%positive, 7);
+     (12157%positive, 8);
+     (12159%positive, 4)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (9531%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 2);
+     (9592%positive, 1);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9597%positive, 2);
+     (9599%positive, 2);
+     (10045%positive, 3);
+     (10047%positive, 3);
+     (10095%positive, 3);
+     (10108%positive, 3);
+     (10109%positive, 3);
+     (10111%positive, 3);
+     (12093%positive, 8);
+     (12095%positive, 5);
+     (12143%positive, 6);
+     (12156%positive, 7);
+     (12157%positive, 8);
+     (12159%positive, 4)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11562%positive, 7);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 14);
+     (9518%positive, 12);
+     (9529%positive, 13);
+     (9533%positive, 10);
+     (9534%positive, 4);
+     (9582%positive, 12);
+     (9592%positive, 9);
+     (9593%positive, 8);
+     (9597%positive, 10);
+     (9598%positive, 7);
+     (10026%positive, 11);
+     (10030%positive, 3);
+     (10042%positive, 11);
+     (10045%positive, 1);
+     (10046%positive, 4);
+     (10090%positive, 11);
+     (10094%positive, 3);
+     (10106%positive, 11);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11562%positive, 7);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(9512%positive, 14);
+     (9518%positive, 12);
+     (9529%positive, 13);
+     (9533%positive, 10);
+     (9534%positive, 4);
+     (9582%positive, 12);
+     (9592%positive, 9);
+     (9593%positive, 8);
+     (9597%positive, 10);
+     (9598%positive, 7);
+     (10026%positive, 11);
+     (10030%positive, 3);
+     (10042%positive, 11);
+     (10045%positive, 1);
+     (10046%positive, 4);
+     (10090%positive, 11);
+     (10094%positive, 3);
+     (10106%positive, 11);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_0RA1LD_0LC0LA : NeverQuasiHaltsSt tm_bulkr_00179.
+Theorem nqh_1RB0RD_0LC1RA_1RB1LC_1RB1RD : NeverQuasiHaltsSt tm_bulkr_00179.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 384 11 cert_bulkr_00179).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 424 11 cert_bulkr_00179).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_0RA1LD_1LB0LA: n=2 t=0 contexts=41 *)
+(** 1RB0RD_0RC0LB_1LD1RA_1LB0LC: n=2 t=0 contexts=76 *)
 
 Definition tm_bulkr_00180 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DR StA)
-  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S0 DR StC)
+  | StB, S1 => Some (mkTrans S0 DL StB)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
   | StD, S0 => Some (mkTrans S1 DL StB)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 
 Definition cert_bulkr_00180 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 3);
-     (10041%positive, 4);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 4);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
+    [(9513%positive, 4);
+     (9514%positive, 3);
+     (9517%positive, 5);
+     (9529%positive, 6);
+     (9530%positive, 9);
+     (9533%positive, 6);
+     (9577%positive, 4);
+     (9578%positive, 6);
+     (9579%positive, 2);
+     (9581%positive, 6);
+     (9583%positive, 10);
+     (9593%positive, 6);
+     (9594%positive, 2);
+     (9597%positive, 6);
+     (10026%positive, 3);
+     (10027%positive, 2);
+     (10031%positive, 7);
+     (10041%positive, 1);
+     (10043%positive, 6);
+     (10047%positive, 1);
+     (10090%positive, 6);
+     (10091%positive, 2);
+     (10095%positive, 8);
+     (10105%positive, 1);
+     (10107%positive, 6);
+     (10109%positive, 7);
+     (10111%positive, 1);
+     (11561%positive, 4);
+     (11562%positive, 3);
+     (11565%positive, 5);
+     (11577%positive, 6);
+     (11578%positive, 8);
+     (11581%positive, 6);
+     (11625%positive, 4);
+     (11626%positive, 6);
+     (11627%positive, 2);
+     (11629%positive, 6);
+     (11631%positive, 10);
+     (11641%positive, 6);
+     (11642%positive, 2);
+     (11645%positive, 6);
      (12073%positive, 1);
+     (12074%positive, 3);
      (12075%positive, 2);
-     (12078%positive, 3);
-     (12089%positive, 4);
+     (12077%positive, 5);
+     (12089%positive, 1);
+     (12091%positive, 6);
      (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+     (12137%positive, 1);
+     (12138%positive, 6);
+     (12139%positive, 2);
+     (12141%positive, 6);
+     (12143%positive, 9);
+     (12153%positive, 1);
+     (12155%positive, 6);
+     (12157%positive, 6)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
+    [9529%positive;
+     9533%positive;
+     9578%positive;
+     9581%positive;
+     9593%positive;
+     9597%positive;
+     10043%positive;
+     10090%positive;
+     10107%positive;
+     11577%positive;
+     11581%positive;
+     11626%positive;
+     11629%positive;
+     11641%positive;
+     11645%positive;
+     12091%positive;
+     12093%positive;
+     12138%positive;
+     12141%positive;
+     12155%positive;
+     12157%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10095%positive;
+     11578%positive];
    NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 3);
-     (10041%positive, 4);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 4);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
+    [(9513%positive, 4);
+     (9514%positive, 3);
+     (9517%positive, 5);
+     (9529%positive, 9);
+     (9530%positive, 10);
+     (9533%positive, 11);
+     (9577%positive, 4);
+     (9578%positive, 8);
+     (9579%positive, 2);
+     (9581%positive, 10);
+     (9583%positive, 11);
+     (9593%positive, 9);
+     (9594%positive, 2);
+     (10026%positive, 3);
+     (10027%positive, 2);
+     (10031%positive, 9);
+     (10041%positive, 1);
+     (10043%positive, 7);
+     (10047%positive, 1);
+     (10090%positive, 6);
+     (10091%positive, 2);
+     (10095%positive, 3);
+     (10105%positive, 1);
+     (10109%positive, 12);
+     (10111%positive, 1);
+     (11561%positive, 4);
+     (11562%positive, 3);
+     (11565%positive, 5);
+     (11577%positive, 6);
+     (11578%positive, 10);
+     (11581%positive, 11);
+     (11625%positive, 4);
+     (11626%positive, 8);
+     (11627%positive, 2);
+     (11629%positive, 10);
+     (11631%positive, 11);
+     (11641%positive, 6);
+     (11642%positive, 2);
      (12073%positive, 1);
+     (12074%positive, 3);
      (12075%positive, 2);
-     (12078%positive, 3);
-     (12089%positive, 4);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+     (12077%positive, 5);
+     (12089%positive, 1);
+     (12091%positive, 6);
+     (12093%positive, 11);
+     (12137%positive, 1);
+     (12138%positive, 6);
+     (12139%positive, 2);
+     (12141%positive, 6);
+     (12143%positive, 11);
+     (12153%positive, 1)];
+   NgPattE [S1; S0] RgA 1
+    []
+    [10090%positive;
+     11577%positive;
+     11641%positive;
+     12091%positive;
+     12138%positive;
+     12141%positive];
+   NgRankE
+    [(9513%positive, 4);
+     (9514%positive, 3);
+     (9517%positive, 5);
+     (9529%positive, 12);
+     (9530%positive, 13);
+     (9533%positive, 14);
+     (9577%positive, 4);
+     (9578%positive, 11);
+     (9579%positive, 2);
+     (9581%positive, 13);
+     (9583%positive, 14);
+     (9593%positive, 12);
+     (9594%positive, 2);
+     (10026%positive, 3);
+     (10027%positive, 2);
+     (10031%positive, 12);
+     (10041%positive, 1);
+     (10043%positive, 10);
+     (10047%positive, 1);
+     (10090%positive, 7);
+     (10091%positive, 2);
+     (10095%positive, 3);
+     (10105%positive, 1);
+     (10109%positive, 15);
+     (10111%positive, 1);
+     (11561%positive, 4);
+     (11562%positive, 3);
+     (11565%positive, 5);
+     (11577%positive, 8);
+     (11578%positive, 13);
+     (11581%positive, 14);
+     (11625%positive, 4);
+     (11626%positive, 11);
+     (11627%positive, 2);
+     (11629%positive, 13);
+     (11631%positive, 14);
+     (11641%positive, 8);
+     (11642%positive, 2);
+     (12073%positive, 1);
+     (12074%positive, 3);
+     (12075%positive, 2);
+     (12077%positive, 5);
+     (12089%positive, 1);
+     (12091%positive, 6);
+     (12093%positive, 14);
+     (12137%positive, 1);
+     (12138%positive, 7);
+     (12139%positive, 2);
+     (12141%positive, 9);
+     (12143%positive, 14);
+     (12153%positive, 1)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 2);
-     (12076%positive, 1);
-     (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+    [(9514%positive, 1);
+     (9530%positive, 5);
+     (9532%positive, 1);
+     (9578%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 6);
+     (9594%positive, 3);
+     (10026%positive, 1);
+     (10030%positive, 2);
+     (10031%positive, 2);
+     (10044%positive, 7);
+     (10047%positive, 2);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 4);
+     (10111%positive, 2);
+     (11562%positive, 1);
+     (11566%positive, 1);
+     (11578%positive, 4);
+     (11580%positive, 1);
+     (11582%positive, 1);
+     (11626%positive, 1);
+     (11630%positive, 1);
+     (11631%positive, 6);
+     (11642%positive, 3);
+     (11646%positive, 1);
+     (12074%positive, 1);
+     (12078%positive, 8);
+     (12092%positive, 6);
+     (12138%positive, 1);
+     (12142%positive, 8);
+     (12143%positive, 5)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12156%positive];
+    [10095%positive;
+     11578%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 2);
-     (12076%positive, 1);
-     (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+    [(9514%positive, 1);
+     (9530%positive, 5);
+     (9532%positive, 1);
+     (9578%positive, 1);
+     (9582%positive, 1);
+     (9583%positive, 6);
+     (9594%positive, 3);
+     (10026%positive, 1);
+     (10030%positive, 2);
+     (10031%positive, 2);
+     (10044%positive, 7);
+     (10047%positive, 2);
+     (10090%positive, 1);
+     (10094%positive, 2);
+     (10095%positive, 4);
+     (10111%positive, 2);
+     (11562%positive, 1);
+     (11566%positive, 1);
+     (11578%positive, 5);
+     (11580%positive, 1);
+     (11582%positive, 1);
+     (11626%positive, 1);
+     (11630%positive, 1);
+     (11631%positive, 6);
+     (11642%positive, 3);
+     (11646%positive, 1);
+     (12074%positive, 1);
+     (12078%positive, 8);
+     (12092%positive, 7);
+     (12138%positive, 1);
+     (12142%positive, 8);
+     (12143%positive, 6)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
+     (9517%positive, 1);
+     (9528%positive, 1);
+     (9532%positive, 2);
+     (9533%positive, 2);
+     (9579%positive, 1);
+     (9581%positive, 1);
+     (9597%positive, 3);
+     (10027%positive, 1);
+     (10040%positive, 5);
+     (10043%positive, 2);
+     (10044%positive, 1);
+     (10091%positive, 1);
+     (10104%positive, 5);
+     (10107%positive, 6);
+     (10109%positive, 5);
+     (11565%positive, 1);
+     (11576%positive, 1);
+     (11580%positive, 2);
+     (11581%positive, 2);
+     (11627%positive, 1);
+     (11629%positive, 1);
+     (11645%positive, 4);
      (12075%positive, 1);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (12077%positive, 1);
+     (12088%positive, 6);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12139%positive, 1);
+     (12141%positive, 1);
+     (12152%positive, 6);
+     (12155%positive, 6);
+     (12157%positive, 5)];
+   NgPattE [S1; S1] RgA 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [9597%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
+     (9517%positive, 1);
+     (9528%positive, 1);
+     (9532%positive, 2);
+     (9533%positive, 2);
+     (9579%positive, 1);
+     (9581%positive, 1);
+     (9597%positive, 3);
+     (10027%positive, 1);
+     (10040%positive, 5);
+     (10043%positive, 2);
+     (10044%positive, 1);
+     (10091%positive, 1);
+     (10104%positive, 5);
+     (10107%positive, 6);
+     (10109%positive, 5);
+     (11565%positive, 1);
+     (11576%positive, 1);
+     (11580%positive, 2);
+     (11581%positive, 2);
+     (11627%positive, 1);
+     (11629%positive, 1);
+     (11645%positive, 4);
      (12075%positive, 1);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (12077%positive, 1);
+     (12088%positive, 6);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12139%positive, 1);
+     (12141%positive, 1);
+     (12152%positive, 6);
+     (12155%positive, 6);
+     (12157%positive, 5)]]
   | StD =>
   [NgRankE
     [(9512%positive, 2);
+     (9513%positive, 1);
+     (9517%positive, 2);
+     (9528%positive, 2);
      (9529%positive, 1);
-     (9533%positive, 2);
+     (9533%positive, 3);
+     (9577%positive, 1);
+     (9581%positive, 2);
+     (9582%positive, 9);
      (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
+     (9597%positive, 4);
+     (10030%positive, 1);
+     (10040%positive, 6);
+     (10041%positive, 10);
+     (10094%positive, 1);
+     (10104%positive, 6);
+     (10105%positive, 9);
+     (10109%positive, 6);
+     (11561%positive, 1);
+     (11565%positive, 2);
+     (11566%positive, 8);
+     (11576%positive, 9);
      (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
+     (11581%positive, 3);
+     (11582%positive, 8);
+     (11625%positive, 1);
+     (11629%positive, 2);
+     (11630%positive, 8);
      (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 9);
-     (12074%positive, 8);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+     (11645%positive, 5);
+     (11646%positive, 8);
+     (12073%positive, 2);
+     (12077%positive, 2);
+     (12078%positive, 1);
+     (12088%positive, 7);
+     (12089%positive, 2);
+     (12093%positive, 3);
+     (12137%positive, 2);
+     (12141%positive, 2);
+     (12142%positive, 1);
+     (12152%positive, 7);
+     (12153%positive, 2);
+     (12157%positive, 6)];
+   NgPattE [S1; S1] RgA 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
+    [9597%positive];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
+    [9582%positive;
+     10105%positive;
+     11576%positive];
    NgRankE
     [(9512%positive, 2);
+     (9513%positive, 1);
+     (9517%positive, 2);
+     (9528%positive, 2);
      (9529%positive, 1);
-     (9533%positive, 2);
+     (9533%positive, 3);
+     (9577%positive, 1);
+     (9581%positive, 2);
+     (9582%positive, 11);
      (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
+     (9597%positive, 4);
+     (10030%positive, 1);
+     (10040%positive, 6);
+     (10041%positive, 12);
+     (10094%positive, 1);
+     (10104%positive, 6);
+     (10105%positive, 9);
+     (10109%positive, 6);
+     (11561%positive, 1);
+     (11565%positive, 2);
+     (11566%positive, 8);
+     (11576%positive, 10);
      (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
+     (11581%positive, 3);
+     (11582%positive, 8);
+     (11625%positive, 1);
+     (11629%positive, 2);
+     (11630%positive, 8);
      (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 9);
-     (12074%positive, 8);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+     (11645%positive, 5);
+     (11646%positive, 8);
+     (12073%positive, 2);
+     (12077%positive, 2);
+     (12078%positive, 1);
+     (12088%positive, 7);
+     (12089%positive, 2);
+     (12093%positive, 3);
+     (12137%positive, 2);
+     (12141%positive, 2);
+     (12142%positive, 1);
+     (12152%positive, 7);
+     (12153%positive, 2);
+     (12157%positive, 6)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_0RA1LD_1LB0LA : NeverQuasiHaltsSt tm_bulkr_00180.
+Theorem nqh_1RB0RD_0RC0LB_1LD1RA_1LB0LC : NeverQuasiHaltsSt tm_bulkr_00180.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 392 11 cert_bulkr_00180).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 672 12 cert_bulkr_00180).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_0RA1LD_1LC0LA: n=2 t=0 contexts=40 *)
+(** 1RB0RD_0RC1RA_1LD1RB_1LB0LC: n=2 t=0 contexts=65 *)
 
 Definition tm_bulkr_00181 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DR StA)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StC)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S0 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StB)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 
 Definition cert_bulkr_00181 (q : St) : list ngcomp :=
@@ -10639,5106 +10216,6947 @@ Definition cert_bulkr_00181 (q : St) : list ngcomp :=
   | StA =>
   [NgRankE
     [(9529%positive, 3);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 2);
-     (10041%positive, 3);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
+     (9530%positive, 11);
+     (9578%positive, 2);
+     (9579%positive, 7);
+     (9582%positive, 4);
+     (9583%positive, 12);
+     (9593%positive, 3);
+     (9594%positive, 9);
+     (10027%positive, 3);
+     (10030%positive, 1);
+     (10031%positive, 5);
+     (10041%positive, 5);
+     (10043%positive, 1);
+     (10047%positive, 7);
+     (10090%positive, 2);
+     (10091%positive, 3);
+     (10094%positive, 1);
+     (10095%positive, 10);
+     (10105%positive, 6);
+     (10107%positive, 1);
+     (10111%positive, 8);
+     (11562%positive, 4);
+     (11566%positive, 6);
      (11577%positive, 3);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 1);
-     (12078%positive, 2);
-     (12089%positive, 3);
-     (12093%positive, 6);
-     (12094%positive, 1);
+     (11578%positive, 10);
+     (11582%positive, 7);
+     (11626%positive, 2);
+     (11627%positive, 7);
+     (11630%positive, 5);
+     (11631%positive, 12);
+     (11641%positive, 3);
+     (11642%positive, 9);
+     (11646%positive, 7);
+     (12073%positive, 2);
+     (12078%positive, 1);
+     (12089%positive, 2);
+     (12091%positive, 1);
+     (12137%positive, 2);
+     (12138%positive, 2);
+     (12139%positive, 3);
+     (12142%positive, 1);
+     (12143%positive, 11);
      (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+     (12155%positive, 1)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12157%positive];
+    [10041%positive;
+     11630%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10095%positive;
+     11578%positive];
    NgRankE
     [(9529%positive, 3);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 2);
-     (10041%positive, 3);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
+     (9530%positive, 12);
+     (9578%positive, 2);
+     (9579%positive, 8);
+     (9582%positive, 4);
+     (9583%positive, 13);
+     (9593%positive, 3);
+     (9594%positive, 10);
+     (10027%positive, 3);
+     (10030%positive, 1);
+     (10031%positive, 5);
+     (10041%positive, 5);
+     (10043%positive, 1);
+     (10047%positive, 7);
+     (10090%positive, 2);
+     (10091%positive, 3);
+     (10094%positive, 1);
+     (10095%positive, 11);
+     (10105%positive, 7);
+     (10107%positive, 1);
+     (10111%positive, 9);
+     (11562%positive, 4);
+     (11566%positive, 6);
      (11577%positive, 3);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 1);
-     (12078%positive, 2);
-     (12089%positive, 3);
-     (12093%positive, 6);
-     (12094%positive, 1);
+     (11578%positive, 12);
+     (11582%positive, 8);
+     (11626%positive, 2);
+     (11627%positive, 8);
+     (11630%positive, 6);
+     (11631%positive, 13);
+     (11641%positive, 3);
+     (11642%positive, 10);
+     (11646%positive, 8);
+     (12073%positive, 2);
+     (12078%positive, 1);
+     (12089%positive, 2);
+     (12091%positive, 1);
+     (12137%positive, 2);
+     (12138%positive, 2);
+     (12139%positive, 3);
+     (12142%positive, 1);
+     (12143%positive, 13);
      (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+     (12155%positive, 1)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 4);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 2);
-     (12075%positive, 3);
-     (12076%positive, 1);
-     (12078%positive, 4);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+    [(9530%positive, 4);
+     (9578%positive, 1);
+     (9583%positive, 5);
+     (9594%positive, 2);
+     (9596%positive, 1);
+     (10031%positive, 2);
+     (10044%positive, 6);
+     (10047%positive, 1);
+     (10090%positive, 1);
+     (10095%positive, 3);
+     (10108%positive, 6);
+     (10111%positive, 1);
+     (11562%positive, 1);
+     (11578%positive, 3);
+     (11626%positive, 1);
+     (11631%positive, 5);
+     (11642%positive, 2);
+     (11644%positive, 1);
+     (12092%positive, 5);
+     (12138%positive, 1);
+     (12143%positive, 4);
+     (12156%positive, 5)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12156%positive];
+    [10095%positive;
+     11578%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 4);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 2);
-     (12075%positive, 3);
-     (12076%positive, 1);
-     (12078%positive, 4);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+    [(9530%positive, 4);
+     (9578%positive, 1);
+     (9583%positive, 5);
+     (9594%positive, 2);
+     (9596%positive, 1);
+     (10031%positive, 2);
+     (10044%positive, 6);
+     (10047%positive, 1);
+     (10090%positive, 1);
+     (10095%positive, 3);
+     (10108%positive, 6);
+     (10111%positive, 1);
+     (11562%positive, 1);
+     (11578%positive, 4);
+     (11626%positive, 1);
+     (11631%positive, 5);
+     (11642%positive, 2);
+     (11644%positive, 1);
+     (12092%positive, 6);
+     (12138%positive, 1);
+     (12143%positive, 5);
+     (12156%positive, 6)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (9533%positive, 2);
+     (9579%positive, 1);
+     (9592%positive, 1);
+     (9596%positive, 2);
+     (9597%positive, 2);
+     (10027%positive, 1);
+     (10043%positive, 3);
+     (10044%positive, 1);
+     (10045%positive, 3);
+     (10091%positive, 1);
+     (10104%positive, 5);
+     (10107%positive, 3);
+     (10108%positive, 1);
+     (10109%positive, 3);
+     (11581%positive, 6);
+     (11627%positive, 1);
+     (11640%positive, 1);
+     (11644%positive, 2);
+     (11645%positive, 5);
+     (12077%positive, 2);
+     (12091%positive, 3);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12139%positive, 1);
+     (12141%positive, 2);
+     (12152%positive, 4);
+     (12155%positive, 3);
+     (12156%positive, 1);
+     (12157%positive, 2)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [10104%positive;
+     11645%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (9533%positive, 2);
+     (9579%positive, 1);
+     (9592%positive, 1);
+     (9596%positive, 2);
+     (9597%positive, 2);
+     (10027%positive, 1);
+     (10043%positive, 3);
+     (10044%positive, 1);
+     (10045%positive, 3);
+     (10091%positive, 1);
+     (10104%positive, 3);
+     (10107%positive, 3);
+     (10108%positive, 1);
+     (10109%positive, 3);
+     (11581%positive, 5);
+     (11627%positive, 1);
+     (11640%positive, 1);
+     (11644%positive, 2);
+     (11645%positive, 5);
+     (12077%positive, 2);
+     (12091%positive, 3);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12139%positive, 1);
+     (12141%positive, 2);
+     (12152%positive, 4);
+     (12155%positive, 3);
+     (12156%positive, 1);
+     (12157%positive, 2)]]
   | StD =>
   [NgRankE
     [(9512%positive, 2);
      (9529%positive, 1);
-     (9533%positive, 2);
+     (9533%positive, 3);
+     (9582%positive, 2);
+     (9592%positive, 2);
      (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
+     (9597%positive, 3);
+     (10030%positive, 4);
+     (10041%positive, 3);
+     (10045%positive, 1);
+     (10094%positive, 3);
+     (10104%positive, 3);
+     (10105%positive, 3);
+     (10109%positive, 1);
+     (11566%positive, 4);
      (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
+     (11581%positive, 3);
+     (11582%positive, 4);
+     (11630%positive, 3);
+     (11640%positive, 3);
      (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12074%positive, 8);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+     (11645%positive, 3);
+     (11646%positive, 4);
+     (12073%positive, 5);
+     (12077%positive, 1);
+     (12078%positive, 2);
+     (12089%positive, 3);
+     (12093%positive, 1);
+     (12137%positive, 5);
+     (12141%positive, 1);
+     (12142%positive, 2);
+     (12152%positive, 2);
+     (12153%positive, 3);
+     (12157%positive, 1)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [9533%positive;
+     9597%positive;
+     10041%positive;
+     10094%positive;
+     10104%positive;
+     10105%positive;
+     11581%positive;
+     11630%positive;
+     11640%positive;
+     11645%positive;
+     12089%positive;
+     12153%positive];
    NgRankE
     [(9512%positive, 2);
      (9529%positive, 1);
-     (9533%positive, 2);
+     (9533%positive, 7);
+     (9582%positive, 2);
+     (9592%positive, 2);
      (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
+     (9597%positive, 7);
+     (10030%positive, 10);
+     (10041%positive, 4);
+     (10045%positive, 1);
+     (10094%positive, 10);
+     (10104%positive, 8);
+     (10105%positive, 5);
+     (10109%positive, 1);
+     (11566%positive, 5);
      (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
+     (11581%positive, 9);
+     (11582%positive, 6);
+     (11630%positive, 4);
+     (11640%positive, 6);
      (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12074%positive, 8);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+     (11645%positive, 8);
+     (11646%positive, 6);
+     (12073%positive, 11);
+     (12077%positive, 1);
+     (12078%positive, 2);
+     (12089%positive, 3);
+     (12093%positive, 1);
+     (12137%positive, 11);
+     (12141%positive, 1);
+     (12142%positive, 2);
+     (12152%positive, 2);
+     (12153%positive, 3);
+     (12157%positive, 1)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10041%positive;
+     11630%positive];
+   NgPattE [S1; S0] RgA 1
+    []
+    [10104%positive;
+     11645%positive];
+   NgRankE
+    [(9512%positive, 2);
+     (9529%positive, 1);
+     (9533%positive, 7);
+     (9582%positive, 2);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 7);
+     (10030%positive, 10);
+     (10041%positive, 3);
+     (10045%positive, 1);
+     (10094%positive, 10);
+     (10104%positive, 8);
+     (10105%positive, 5);
+     (10109%positive, 1);
+     (11566%positive, 4);
+     (11577%positive, 1);
+     (11581%positive, 9);
+     (11582%positive, 6);
+     (11630%positive, 4);
+     (11640%positive, 6);
+     (11641%positive, 1);
+     (11645%positive, 9);
+     (11646%positive, 6);
+     (12073%positive, 11);
+     (12077%positive, 1);
+     (12078%positive, 2);
+     (12089%positive, 3);
+     (12093%positive, 1);
+     (12137%positive, 11);
+     (12141%positive, 1);
+     (12142%positive, 2);
+     (12152%positive, 2);
+     (12153%positive, 3);
+     (12157%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_0RA1LD_1LC0LA : NeverQuasiHaltsSt tm_bulkr_00181.
+Theorem nqh_1RB0RD_0RC1RA_1LD1RB_1LB0LC : NeverQuasiHaltsSt tm_bulkr_00181.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 384 11 cert_bulkr_00181).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 584 12 cert_bulkr_00181).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_0RB1LD_0LC0LA: n=2 t=0 contexts=45 *)
+(** 1RB0RD_1LB0LC_1RA1LC_1RB1RD: n=2 t=0 contexts=85 *)
 
 Definition tm_bulkr_00182 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DR StB)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S0 DL StC)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S1 DL StB)
+  | StB, S1 => Some (mkTrans S0 DL StC)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00182 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 13);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10025%positive, 9);
-     (10029%positive, 4);
-     (10030%positive, 12);
-     (10041%positive, 13);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11562%positive, 10);
-     (11577%positive, 13);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12073%positive, 9);
-     (12074%positive, 8);
-     (12075%positive, 11);
-     (12077%positive, 7);
-     (12078%positive, 12);
-     (12089%positive, 13);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+    [(9518%positive, 1);
+     (9529%positive, 2);
+     (9531%positive, 8);
+     (9533%positive, 2);
+     (9534%positive, 2);
+     (9535%positive, 9);
+     (9579%positive, 3);
+     (9582%positive, 1);
+     (9583%positive, 9);
+     (9593%positive, 7);
+     (9595%positive, 8);
+     (9597%positive, 6);
+     (9598%positive, 5);
+     (9599%positive, 9);
+     (10029%positive, 1);
+     (10030%positive, 1);
+     (10041%positive, 2);
+     (10043%positive, 7);
+     (10045%positive, 2);
+     (10046%positive, 2);
+     (10047%positive, 10);
+     (10091%positive, 3);
+     (10093%positive, 1);
+     (10094%positive, 1);
+     (10095%positive, 10);
+     (10105%positive, 7);
+     (10107%positive, 7);
+     (10109%positive, 6);
+     (10110%positive, 4);
+     (10111%positive, 10);
+     (11566%positive, 1);
+     (11577%positive, 2);
+     (11579%positive, 8);
+     (11581%positive, 2);
+     (11582%positive, 2);
+     (11583%positive, 8);
+     (11627%positive, 3);
+     (11630%positive, 1);
+     (11631%positive, 8);
+     (11641%positive, 7);
+     (11643%positive, 8);
+     (11645%positive, 6);
+     (11646%positive, 5);
+     (11647%positive, 8);
+     (12077%positive, 1);
+     (12078%positive, 1);
+     (12089%positive, 2);
+     (12091%positive, 7);
+     (12093%positive, 2);
+     (12094%positive, 2);
+     (12095%positive, 12);
+     (12139%positive, 3);
+     (12141%positive, 1);
+     (12142%positive, 1);
+     (12143%positive, 13);
+     (12153%positive, 7);
+     (12155%positive, 7);
+     (12157%positive, 6);
+     (12158%positive, 3);
+     (12159%positive, 11)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
+    [12158%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
    NgRankE
-    [(9529%positive, 13);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10025%positive, 9);
-     (10029%positive, 4);
-     (10030%positive, 12);
-     (10041%positive, 13);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11562%positive, 10);
-     (11577%positive, 13);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12073%positive, 9);
-     (12074%positive, 8);
-     (12075%positive, 11);
-     (12077%positive, 7);
-     (12078%positive, 12);
-     (12089%positive, 13);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+    [(9518%positive, 1);
+     (9529%positive, 2);
+     (9531%positive, 8);
+     (9533%positive, 2);
+     (9534%positive, 2);
+     (9535%positive, 9);
+     (9579%positive, 3);
+     (9582%positive, 1);
+     (9583%positive, 9);
+     (9593%positive, 7);
+     (9595%positive, 8);
+     (9597%positive, 6);
+     (9598%positive, 5);
+     (9599%positive, 9);
+     (10029%positive, 1);
+     (10030%positive, 1);
+     (10041%positive, 2);
+     (10043%positive, 7);
+     (10045%positive, 2);
+     (10046%positive, 2);
+     (10047%positive, 10);
+     (10091%positive, 3);
+     (10093%positive, 1);
+     (10094%positive, 1);
+     (10095%positive, 10);
+     (10105%positive, 7);
+     (10107%positive, 7);
+     (10109%positive, 6);
+     (10110%positive, 4);
+     (10111%positive, 10);
+     (11566%positive, 1);
+     (11577%positive, 2);
+     (11579%positive, 8);
+     (11581%positive, 2);
+     (11582%positive, 2);
+     (11583%positive, 8);
+     (11627%positive, 3);
+     (11630%positive, 1);
+     (11631%positive, 8);
+     (11641%positive, 7);
+     (11643%positive, 8);
+     (11645%positive, 6);
+     (11646%positive, 5);
+     (11647%positive, 8);
+     (12077%positive, 1);
+     (12078%positive, 1);
+     (12089%positive, 2);
+     (12091%positive, 7);
+     (12093%positive, 2);
+     (12094%positive, 2);
+     (12095%positive, 12);
+     (12139%positive, 3);
+     (12141%positive, 1);
+     (12142%positive, 1);
+     (12143%positive, 13);
+     (12153%positive, 7);
+     (12155%positive, 7);
+     (12157%positive, 6);
+     (12158%positive, 3);
+     (12159%positive, 11)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
+    [(9518%positive, 3);
+     (9532%positive, 1);
+     (9534%positive, 9);
+     (9535%positive, 1);
+     (9582%positive, 3);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 12);
+     (9599%positive, 1);
+     (10026%positive, 2);
+     (10030%positive, 8);
+     (10042%positive, 2);
      (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (10046%positive, 9);
+     (10047%positive, 2);
+     (10090%positive, 2);
+     (10094%positive, 8);
+     (10095%positive, 2);
+     (10106%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 11);
+     (10111%positive, 2);
+     (11562%positive, 1);
+     (11566%positive, 3);
+     (11578%positive, 1);
+     (11580%positive, 1);
+     (11582%positive, 9);
+     (11583%positive, 1);
+     (11626%positive, 1);
+     (11630%positive, 3);
+     (11631%positive, 1);
+     (11642%positive, 1);
+     (11644%positive, 1);
+     (11646%positive, 12);
+     (11647%positive, 1);
+     (12074%positive, 7);
+     (12078%positive, 8);
+     (12090%positive, 7);
+     (12092%positive, 6);
+     (12094%positive, 9);
+     (12095%positive, 4);
+     (12138%positive, 7);
+     (12142%positive, 8);
+     (12143%positive, 5);
+     (12154%positive, 7);
+     (12156%positive, 6);
+     (12158%positive, 10);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
+    [(9518%positive, 3);
+     (9532%positive, 1);
+     (9534%positive, 9);
+     (9535%positive, 1);
+     (9582%positive, 3);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 12);
+     (9599%positive, 1);
+     (10026%positive, 2);
+     (10030%positive, 8);
+     (10042%positive, 2);
      (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+     (10046%positive, 9);
+     (10047%positive, 2);
+     (10090%positive, 2);
+     (10094%positive, 8);
+     (10095%positive, 2);
+     (10106%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 11);
+     (10111%positive, 2);
+     (11562%positive, 1);
+     (11566%positive, 3);
+     (11578%positive, 1);
+     (11580%positive, 1);
+     (11582%positive, 9);
+     (11583%positive, 1);
+     (11626%positive, 1);
+     (11630%positive, 3);
+     (11631%positive, 1);
+     (11642%positive, 1);
+     (11644%positive, 1);
+     (11646%positive, 12);
+     (11647%positive, 1);
+     (12074%positive, 7);
+     (12078%positive, 8);
+     (12090%positive, 7);
+     (12092%positive, 6);
+     (12094%positive, 9);
+     (12095%positive, 4);
+     (12138%positive, 7);
+     (12142%positive, 8);
+     (12143%positive, 5);
+     (12154%positive, 7);
+     (12156%positive, 6);
+     (12158%positive, 10);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10029%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12077%positive, 5);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
+    [(9512%positive, 2);
+     (9529%positive, 1);
+     (9531%positive, 2);
+     (9532%positive, 3);
+     (9535%positive, 3);
+     (9579%positive, 2);
+     (9583%positive, 3);
+     (9593%positive, 1);
+     (9595%positive, 2);
+     (9596%positive, 3);
+     (9599%positive, 3);
+     (10040%positive, 1);
+     (10041%positive, 1);
+     (10043%positive, 1);
+     (10044%positive, 4);
+     (10047%positive, 4);
+     (10091%positive, 1);
+     (10095%positive, 4);
+     (10104%positive, 1);
+     (10105%positive, 1);
+     (10107%positive, 1);
+     (10108%positive, 4);
+     (10111%positive, 4);
+     (11577%positive, 1);
+     (11579%positive, 2);
+     (11580%positive, 2);
+     (11583%positive, 2);
+     (11627%positive, 2);
+     (11631%positive, 2);
+     (11641%positive, 1);
+     (11643%positive, 2);
+     (11644%positive, 2);
+     (11647%positive, 2);
+     (12088%positive, 1);
+     (12089%positive, 1);
+     (12091%positive, 1);
+     (12092%positive, 8);
+     (12095%positive, 6);
+     (12139%positive, 1);
+     (12143%positive, 7);
+     (12152%positive, 1);
+     (12153%positive, 1);
+     (12155%positive, 1);
      (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (12159%positive, 5)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12159%positive];
    NgRankE
-    [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10029%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12077%positive, 5);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
+    [(9512%positive, 2);
+     (9529%positive, 1);
+     (9531%positive, 2);
+     (9532%positive, 3);
+     (9535%positive, 3);
+     (9579%positive, 2);
+     (9583%positive, 3);
+     (9593%positive, 1);
+     (9595%positive, 2);
+     (9596%positive, 3);
+     (9599%positive, 3);
+     (10040%positive, 1);
+     (10041%positive, 1);
+     (10043%positive, 1);
+     (10044%positive, 4);
+     (10047%positive, 4);
+     (10091%positive, 1);
+     (10095%positive, 4);
+     (10104%positive, 1);
+     (10105%positive, 1);
+     (10107%positive, 1);
+     (10108%positive, 4);
+     (10111%positive, 4);
+     (11577%positive, 1);
+     (11579%positive, 2);
+     (11580%positive, 2);
+     (11583%positive, 2);
+     (11627%positive, 2);
+     (11631%positive, 2);
+     (11641%positive, 1);
+     (11643%positive, 2);
+     (11644%positive, 2);
+     (11647%positive, 2);
+     (12088%positive, 1);
+     (12089%positive, 1);
+     (12091%positive, 1);
+     (12092%positive, 8);
+     (12095%positive, 6);
+     (12139%positive, 1);
+     (12143%positive, 7);
+     (12152%positive, 1);
+     (12153%positive, 1);
+     (12155%positive, 1);
      (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (12159%positive, 5)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10025%positive, 8);
-     (10028%positive, 7);
-     (10029%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
+    [(9512%positive, 12);
+     (9518%positive, 2);
+     (9529%positive, 11);
+     (9533%positive, 3);
+     (9534%positive, 3);
+     (9582%positive, 2);
+     (9593%positive, 8);
+     (9597%positive, 7);
+     (9598%positive, 6);
+     (10026%positive, 1);
+     (10029%positive, 10);
+     (10030%positive, 2);
+     (10040%positive, 8);
+     (10041%positive, 11);
+     (10042%positive, 1);
      (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
+     (10046%positive, 3);
+     (10090%positive, 1);
+     (10093%positive, 10);
+     (10094%positive, 2);
+     (10104%positive, 8);
+     (10105%positive, 8);
+     (10106%positive, 1);
+     (10109%positive, 7);
+     (10110%positive, 5);
      (11562%positive, 9);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 8);
-     (12074%positive, 7);
-     (12076%positive, 7);
-     (12077%positive, 6);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+     (11566%positive, 2);
+     (11577%positive, 11);
+     (11578%positive, 9);
+     (11581%positive, 3);
+     (11582%positive, 3);
+     (11626%positive, 9);
+     (11630%positive, 2);
+     (11641%positive, 8);
+     (11642%positive, 9);
+     (11645%positive, 7);
+     (11646%positive, 6);
+     (12074%positive, 1);
+     (12077%positive, 10);
+     (12078%positive, 2);
+     (12088%positive, 8);
+     (12089%positive, 11);
+     (12090%positive, 1);
+     (12093%positive, 3);
+     (12094%positive, 3);
+     (12138%positive, 1);
+     (12141%positive, 10);
+     (12142%positive, 2);
+     (12152%positive, 8);
+     (12153%positive, 8);
+     (12154%positive, 1);
+     (12157%positive, 7);
+     (12158%positive, 4)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10025%positive, 8);
-     (10028%positive, 7);
-     (10029%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
+    [(9512%positive, 12);
+     (9518%positive, 2);
+     (9529%positive, 11);
+     (9533%positive, 3);
+     (9534%positive, 3);
+     (9582%positive, 2);
+     (9593%positive, 8);
+     (9597%positive, 7);
+     (9598%positive, 6);
+     (10026%positive, 1);
+     (10029%positive, 10);
+     (10030%positive, 2);
+     (10040%positive, 8);
+     (10041%positive, 11);
+     (10042%positive, 1);
      (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
+     (10046%positive, 3);
+     (10090%positive, 1);
+     (10093%positive, 10);
+     (10094%positive, 2);
+     (10104%positive, 8);
+     (10105%positive, 8);
+     (10106%positive, 1);
+     (10109%positive, 7);
+     (10110%positive, 5);
      (11562%positive, 9);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 8);
-     (12074%positive, 7);
-     (12076%positive, 7);
-     (12077%positive, 6);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+     (11566%positive, 2);
+     (11577%positive, 11);
+     (11578%positive, 9);
+     (11581%positive, 3);
+     (11582%positive, 3);
+     (11626%positive, 9);
+     (11630%positive, 2);
+     (11641%positive, 8);
+     (11642%positive, 9);
+     (11645%positive, 7);
+     (11646%positive, 6);
+     (12074%positive, 1);
+     (12077%positive, 10);
+     (12078%positive, 2);
+     (12088%positive, 8);
+     (12089%positive, 11);
+     (12090%positive, 1);
+     (12093%positive, 3);
+     (12094%positive, 3);
+     (12138%positive, 1);
+     (12141%positive, 10);
+     (12142%positive, 2);
+     (12152%positive, 8);
+     (12153%positive, 8);
+     (12154%positive, 1);
+     (12157%positive, 7);
+     (12158%positive, 4)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_0RB1LD_0LC0LA : NeverQuasiHaltsSt tm_bulkr_00182.
+Theorem nqh_1RB0RD_1LB0LC_1RA1LC_1RB1RD : NeverQuasiHaltsSt tm_bulkr_00182.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 424 11 cert_bulkr_00182).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 744 12 cert_bulkr_00182).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_0RB1LD_1LB0LA: n=2 t=0 contexts=43 *)
+(** 1RB0RD_1LB1LC_1LD0LA_1RA0LC: n=2 t=0 contexts=82 *)
 
 Definition tm_bulkr_00183 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DR StB)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StB)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S1 DL StB)
+  | StB, S1 => Some (mkTrans S1 DL StC)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S0 DL StA)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 
 Definition cert_bulkr_00183 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 12);
-     (9533%positive, 3);
+    [(9529%positive, 7);
+     (9530%positive, 4);
+     (9583%positive, 5);
      (9593%positive, 2);
-     (9597%positive, 3);
-     (10029%positive, 4);
-     (10030%positive, 11);
-     (10041%positive, 12);
-     (10045%positive, 4);
-     (10046%positive, 1);
+     (9594%positive, 2);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10031%positive, 2);
+     (10041%positive, 7);
+     (10045%positive, 1);
+     (10047%positive, 1);
+     (10093%positive, 6);
+     (10095%positive, 3);
      (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 12);
-     (11581%positive, 3);
+     (10109%positive, 1);
+     (10111%positive, 1);
+     (11562%positive, 1);
+     (11577%positive, 7);
+     (11578%positive, 3);
+     (11626%positive, 1);
+     (11631%positive, 5);
      (11641%positive, 2);
-     (11645%positive, 3);
-     (12073%positive, 9);
-     (12074%positive, 8);
-     (12075%positive, 10);
-     (12077%positive, 7);
-     (12078%positive, 11);
-     (12089%positive, 12);
-     (12093%positive, 6);
-     (12094%positive, 1);
+     (11642%positive, 2);
+     (11645%positive, 1);
+     (12074%positive, 1);
+     (12077%positive, 2);
+     (12079%positive, 2);
+     (12089%positive, 7);
+     (12090%positive, 5);
+     (12093%positive, 1);
+     (12095%positive, 1);
+     (12138%positive, 1);
+     (12141%positive, 6);
+     (12143%positive, 4);
      (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12159%positive, 1)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12157%positive];
+    [10095%positive;
+     11578%positive];
    NgRankE
-    [(9529%positive, 12);
-     (9533%positive, 3);
+    [(9529%positive, 8);
+     (9530%positive, 4);
+     (9583%positive, 5);
      (9593%positive, 2);
-     (9597%positive, 3);
-     (10029%positive, 4);
-     (10030%positive, 11);
-     (10041%positive, 12);
-     (10045%positive, 4);
-     (10046%positive, 1);
+     (9594%positive, 2);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10031%positive, 2);
+     (10041%positive, 8);
+     (10045%positive, 1);
+     (10047%positive, 1);
+     (10093%positive, 7);
+     (10095%positive, 3);
      (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 12);
-     (11581%positive, 3);
+     (10109%positive, 1);
+     (10111%positive, 1);
+     (11562%positive, 1);
+     (11577%positive, 8);
+     (11578%positive, 4);
+     (11626%positive, 1);
+     (11631%positive, 5);
      (11641%positive, 2);
-     (11645%positive, 3);
-     (12073%positive, 9);
-     (12074%positive, 8);
-     (12075%positive, 10);
-     (12077%positive, 7);
-     (12078%positive, 11);
-     (12089%positive, 12);
-     (12093%positive, 6);
-     (12094%positive, 1);
+     (11642%positive, 2);
+     (11645%positive, 1);
+     (12074%positive, 1);
+     (12077%positive, 2);
+     (12079%positive, 2);
+     (12089%positive, 8);
+     (12090%positive, 6);
+     (12093%positive, 1);
+     (12095%positive, 1);
+     (12138%positive, 1);
+     (12141%positive, 7);
+     (12143%positive, 5);
      (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12159%positive, 1)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
+    [(9515%positive, 1);
+     (9516%positive, 2);
+     (9530%positive, 6);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9580%positive, 2);
+     (9583%positive, 6);
+     (9594%positive, 5);
+     (9596%positive, 2);
+     (10027%positive, 6);
+     (10031%positive, 6);
+     (10043%positive, 6);
+     (10044%positive, 6);
+     (10046%positive, 9);
+     (10047%positive, 2);
+     (10091%positive, 6);
+     (10095%positive, 6);
+     (10107%positive, 6);
+     (10108%positive, 7);
      (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12076%positive, 1);
+     (10111%positive, 4);
+     (11562%positive, 6);
+     (11563%positive, 1);
+     (11564%positive, 8);
+     (11566%positive, 1);
+     (11578%positive, 6);
+     (11580%positive, 6);
+     (11582%positive, 3);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11628%positive, 8);
+     (11630%positive, 1);
+     (11631%positive, 6);
+     (11642%positive, 5);
+     (11644%positive, 6);
+     (11646%positive, 3);
+     (12074%positive, 8);
+     (12075%positive, 7);
      (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
+     (12079%positive, 7);
+     (12090%positive, 8);
+     (12091%positive, 8);
+     (12092%positive, 6);
+     (12094%positive, 9);
      (12095%positive, 2);
-     (12156%positive, 3);
+     (12138%positive, 9);
+     (12139%positive, 6);
+     (12142%positive, 1);
+     (12143%positive, 6);
+     (12154%positive, 5);
+     (12155%positive, 8);
+     (12156%positive, 7);
      (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (12159%positive, 4)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [9530%positive;
+     9583%positive;
+     10027%positive;
+     10031%positive;
+     10043%positive;
+     10044%positive;
+     10091%positive;
+     10095%positive;
+     10107%positive;
+     11562%positive;
+     11578%positive;
+     11580%positive;
+     11626%positive;
+     11631%positive;
+     11644%positive;
+     12092%positive;
+     12139%positive;
+     12143%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12076%positive, 1);
+    [(9515%positive, 1);
+     (9516%positive, 2);
+     (9530%positive, 9);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9580%positive, 2);
+     (9583%positive, 10);
+     (9594%positive, 5);
+     (9596%positive, 2);
+     (10027%positive, 4);
+     (10031%positive, 7);
+     (10043%positive, 5);
+     (10044%positive, 11);
+     (10046%positive, 14);
+     (10047%positive, 2);
+     (10091%positive, 3);
+     (10095%positive, 8);
+     (10107%positive, 5);
+     (10108%positive, 11);
+     (10110%positive, 5);
+     (10111%positive, 4);
+     (11562%positive, 5);
+     (11563%positive, 1);
+     (11564%positive, 13);
+     (11566%positive, 1);
+     (11578%positive, 8);
+     (11580%positive, 3);
+     (11582%positive, 3);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11628%positive, 13);
+     (11630%positive, 1);
+     (11631%positive, 10);
+     (11642%positive, 5);
+     (11644%positive, 4);
+     (11646%positive, 3);
+     (12074%positive, 13);
+     (12075%positive, 12);
      (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
+     (12079%positive, 7);
+     (12090%positive, 10);
+     (12091%positive, 12);
+     (12094%positive, 14);
      (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+     (12138%positive, 13);
+     (12142%positive, 1);
+     (12143%positive, 9);
+     (12154%positive, 5);
+     (12155%positive, 12);
+     (12156%positive, 10);
+     (12158%positive, 5);
+     (12159%positive, 4)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10091%positive;
+     11580%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10095%positive;
+     11578%positive];
+   NgRankE
+    [(9515%positive, 1);
+     (9516%positive, 2);
+     (9530%positive, 8);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9580%positive, 2);
+     (9583%positive, 9);
+     (9594%positive, 5);
+     (9596%positive, 2);
+     (10027%positive, 5);
+     (10031%positive, 7);
+     (10043%positive, 5);
+     (10044%positive, 10);
+     (10046%positive, 13);
+     (10047%positive, 2);
+     (10091%positive, 3);
+     (10095%positive, 6);
+     (10107%positive, 5);
+     (10108%positive, 10);
+     (10110%positive, 5);
+     (10111%positive, 4);
+     (11562%positive, 6);
+     (11563%positive, 1);
+     (11564%positive, 12);
+     (11566%positive, 1);
+     (11578%positive, 8);
+     (11580%positive, 4);
+     (11582%positive, 3);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11628%positive, 12);
+     (11630%positive, 1);
+     (11631%positive, 9);
+     (11642%positive, 5);
+     (11644%positive, 4);
+     (11646%positive, 3);
+     (12074%positive, 12);
+     (12075%positive, 11);
+     (12078%positive, 1);
+     (12079%positive, 7);
+     (12090%positive, 10);
+     (12091%positive, 11);
+     (12094%positive, 13);
+     (12095%positive, 2);
+     (12138%positive, 12);
+     (12142%positive, 1);
+     (12143%positive, 9);
+     (12154%positive, 5);
+     (12155%positive, 11);
+     (12156%positive, 10);
+     (12158%positive, 5);
+     (12159%positive, 4)]]
   | StC =>
   [NgRankE
-    [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10029%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 6);
-     (12077%positive, 5);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 2);
+     (9515%positive, 3);
+     (9516%positive, 4);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 4);
+     (9576%positive, 2);
+     (9579%positive, 3);
+     (9580%positive, 4);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9596%positive, 4);
+     (10027%positive, 6);
+     (10040%positive, 1);
+     (10041%positive, 1);
+     (10043%positive, 7);
+     (10044%positive, 1);
+     (10091%positive, 5);
+     (10105%positive, 1);
+     (10107%positive, 7);
+     (10108%positive, 1);
+     (11560%positive, 2);
+     (11563%positive, 2);
+     (11564%positive, 7);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11580%positive, 5);
+     (11624%positive, 2);
+     (11627%positive, 2);
+     (11628%positive, 7);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11644%positive, 6);
+     (12075%positive, 2);
+     (12088%positive, 1);
+     (12089%positive, 1);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12139%positive, 2);
+     (12153%positive, 1);
+     (12155%positive, 2);
+     (12156%positive, 1)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [10091%positive;
+     11580%positive];
    NgRankE
-    [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10029%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 6);
-     (12077%positive, 5);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+    [(9512%positive, 2);
+     (9515%positive, 3);
+     (9516%positive, 4);
+     (9528%positive, 2);
+     (9529%positive, 1);
+     (9532%positive, 4);
+     (9576%positive, 2);
+     (9579%positive, 3);
+     (9580%positive, 4);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9596%positive, 4);
+     (10027%positive, 7);
+     (10040%positive, 1);
+     (10041%positive, 1);
+     (10043%positive, 7);
+     (10044%positive, 1);
+     (10091%positive, 5);
+     (10105%positive, 1);
+     (10107%positive, 7);
+     (10108%positive, 1);
+     (11560%positive, 2);
+     (11563%positive, 2);
+     (11564%positive, 8);
+     (11576%positive, 2);
+     (11577%positive, 1);
+     (11580%positive, 6);
+     (11624%positive, 2);
+     (11627%positive, 2);
+     (11628%positive, 8);
+     (11640%positive, 2);
+     (11641%positive, 1);
+     (11644%positive, 6);
+     (12075%positive, 2);
+     (12088%positive, 1);
+     (12089%positive, 1);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12139%positive, 2);
+     (12153%positive, 1);
+     (12155%positive, 2);
+     (12156%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
+    [(9512%positive, 3);
+     (9528%positive, 8);
+     (9529%positive, 2);
+     (9576%positive, 3);
+     (9592%positive, 8);
+     (9593%positive, 7);
      (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10029%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
+     (10029%positive, 1);
+     (10040%positive, 3);
+     (10041%positive, 2);
+     (10045%positive, 6);
+     (10046%positive, 1);
+     (10093%positive, 1);
+     (10105%positive, 5);
+     (10109%positive, 2);
+     (10110%positive, 1);
+     (11560%positive, 3);
+     (11566%positive, 4);
+     (11576%positive, 5);
+     (11577%positive, 2);
+     (11582%positive, 1);
+     (11624%positive, 3);
+     (11630%positive, 9);
+     (11640%positive, 5);
+     (11641%positive, 7);
      (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 8);
-     (12074%positive, 7);
-     (12076%positive, 7);
-     (12077%positive, 6);
-     (12089%positive, 1);
-     (12092%positive, 8);
+     (11646%positive, 1);
+     (12077%positive, 1);
+     (12078%positive, 4);
+     (12088%positive, 3);
+     (12089%positive, 2);
      (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+     (12094%positive, 1);
+     (12141%positive, 1);
+     (12142%positive, 5);
+     (12153%positive, 5);
+     (12157%positive, 2);
+     (12158%positive, 1)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [10105%positive;
+     11576%positive;
+     11640%positive;
+     12093%positive;
+     12142%positive;
+     12153%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
+    [(9512%positive, 3);
+     (9528%positive, 8);
+     (9529%positive, 2);
+     (9576%positive, 3);
+     (9592%positive, 8);
+     (9593%positive, 7);
      (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10029%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
+     (10029%positive, 1);
+     (10040%positive, 3);
+     (10041%positive, 2);
+     (10045%positive, 6);
+     (10046%positive, 1);
+     (10093%positive, 1);
+     (10105%positive, 3);
+     (10109%positive, 2);
+     (10110%positive, 1);
+     (11560%positive, 3);
+     (11566%positive, 4);
+     (11576%positive, 4);
+     (11577%positive, 2);
+     (11582%positive, 1);
+     (11624%positive, 3);
+     (11630%positive, 9);
+     (11640%positive, 4);
+     (11641%positive, 7);
      (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 8);
-     (12074%positive, 7);
-     (12076%positive, 7);
-     (12077%positive, 6);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+     (11646%positive, 1);
+     (12077%positive, 1);
+     (12078%positive, 4);
+     (12088%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 6);
+     (12094%positive, 1);
+     (12141%positive, 1);
+     (12142%positive, 5);
+     (12153%positive, 3);
+     (12157%positive, 2);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_0RB1LD_1LB0LA : NeverQuasiHaltsSt tm_bulkr_00183.
+Theorem nqh_1RB0RD_1LB1LC_1LD0LA_1RA0LC : NeverQuasiHaltsSt tm_bulkr_00183.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 408 11 cert_bulkr_00183).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 720 12 cert_bulkr_00183).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_0RB1LD_1LC0LA: n=2 t=0 contexts=42 *)
+(** 1RB0RD_1LC0LC_1LD1LC_1RA0RB: n=2 t=0 contexts=81 *)
 
 Definition tm_bulkr_00184 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DR StB)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StC)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StB, S1 => Some (mkTrans S0 DL StC)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 
 Definition cert_bulkr_00184 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 11);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10029%positive, 4);
-     (10030%positive, 10);
-     (10041%positive, 11);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
+    [(9513%positive, 2);
+     (9514%positive, 1);
+     (9517%positive, 2);
+     (9529%positive, 11);
+     (9530%positive, 4);
+     (9534%positive, 11);
+     (9578%positive, 1);
+     (9581%positive, 5);
+     (9583%positive, 3);
+     (9593%positive, 14);
+     (9594%positive, 5);
+     (9597%positive, 15);
+     (9598%positive, 14);
+     (10025%positive, 2);
+     (10026%positive, 1);
+     (10029%positive, 2);
+     (10030%positive, 2);
+     (10031%positive, 3);
+     (10046%positive, 11);
+     (10047%positive, 5);
+     (10090%positive, 1);
+     (10093%positive, 7);
+     (10094%positive, 10);
+     (10095%positive, 3);
+     (10105%positive, 13);
+     (10109%positive, 15);
+     (10110%positive, 13);
+     (10111%positive, 5);
+     (11561%positive, 2);
+     (11562%positive, 1);
+     (11565%positive, 2);
      (11577%positive, 11);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12074%positive, 8);
-     (12075%positive, 9);
-     (12077%positive, 7);
-     (12078%positive, 10);
-     (12089%positive, 11);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+     (11578%positive, 4);
+     (11582%positive, 11);
+     (11626%positive, 1);
+     (11629%positive, 5);
+     (11631%positive, 3);
+     (11641%positive, 14);
+     (11642%positive, 6);
+     (11645%positive, 15);
+     (11646%positive, 14);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 2);
+     (12078%positive, 2);
+     (12079%positive, 3);
+     (12090%positive, 4);
+     (12094%positive, 11);
+     (12095%positive, 8);
+     (12138%positive, 1);
+     (12141%positive, 7);
+     (12142%positive, 10);
+     (12143%positive, 3);
+     (12153%positive, 13);
+     (12154%positive, 9);
+     (12157%positive, 15);
+     (12158%positive, 12);
+     (12159%positive, 8)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
+    [9581%positive;
+     9594%positive;
+     10047%positive;
+     10111%positive;
+     11629%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(9529%positive, 11);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10029%positive, 4);
-     (10030%positive, 10);
-     (10041%positive, 11);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 11);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12074%positive, 8);
-     (12075%positive, 9);
-     (12077%positive, 7);
-     (12078%positive, 10);
-     (12089%positive, 11);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+    [(9513%positive, 2);
+     (9514%positive, 1);
+     (9517%positive, 2);
+     (9529%positive, 12);
+     (9530%positive, 4);
+     (9534%positive, 12);
+     (9578%positive, 1);
+     (9581%positive, 5);
+     (9583%positive, 3);
+     (9593%positive, 15);
+     (9597%positive, 16);
+     (9598%positive, 15);
+     (10025%positive, 2);
+     (10026%positive, 1);
+     (10029%positive, 2);
+     (10030%positive, 2);
+     (10031%positive, 3);
+     (10046%positive, 12);
+     (10047%positive, 6);
+     (10090%positive, 1);
+     (10093%positive, 8);
+     (10094%positive, 11);
+     (10095%positive, 3);
+     (10105%positive, 14);
+     (10109%positive, 16);
+     (10110%positive, 14);
+     (10111%positive, 6);
+     (11561%positive, 2);
+     (11562%positive, 1);
+     (11565%positive, 2);
+     (11577%positive, 12);
+     (11578%positive, 4);
+     (11582%positive, 12);
+     (11626%positive, 1);
+     (11629%positive, 5);
+     (11631%positive, 3);
+     (11641%positive, 15);
+     (11642%positive, 7);
+     (11645%positive, 16);
+     (11646%positive, 15);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 2);
+     (12078%positive, 2);
+     (12079%positive, 3);
+     (12090%positive, 4);
+     (12094%positive, 12);
+     (12095%positive, 9);
+     (12138%positive, 1);
+     (12141%positive, 8);
+     (12142%positive, 11);
+     (12143%positive, 3);
+     (12153%positive, 14);
+     (12154%positive, 10);
+     (12157%positive, 16);
+     (12158%positive, 13);
+     (12159%positive, 9)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
+    [(9514%positive, 5);
+     (9530%positive, 1);
+     (9532%positive, 2);
+     (9534%positive, 5);
+     (9578%positive, 6);
+     (9579%positive, 1);
+     (9594%positive, 1);
+     (9596%positive, 2);
+     (9598%positive, 8);
+     (10026%positive, 3);
+     (10027%positive, 4);
+     (10030%positive, 4);
+     (10043%positive, 5);
+     (10044%positive, 1);
+     (10046%positive, 5);
+     (10090%positive, 3);
+     (10091%positive, 3);
+     (10094%positive, 2);
+     (10107%positive, 5);
+     (10108%positive, 1);
      (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (11562%positive, 5);
+     (11578%positive, 1);
+     (11580%positive, 3);
+     (11582%positive, 5);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 8);
+     (12074%positive, 3);
+     (12075%positive, 2);
+     (12078%positive, 4);
+     (12090%positive, 1);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12094%positive, 5);
+     (12138%positive, 3);
+     (12139%positive, 2);
+     (12142%positive, 2);
+     (12154%positive, 1);
+     (12155%positive, 2);
+     (12156%positive, 1);
+     (12158%positive, 6)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
+    [10091%positive;
+     11580%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
+    [(9514%positive, 6);
+     (9530%positive, 1);
+     (9532%positive, 2);
+     (9534%positive, 5);
+     (9578%positive, 6);
+     (9579%positive, 1);
+     (9594%positive, 1);
+     (9596%positive, 2);
+     (9598%positive, 8);
+     (10026%positive, 3);
+     (10027%positive, 5);
+     (10030%positive, 4);
+     (10043%positive, 5);
+     (10044%positive, 1);
+     (10046%positive, 5);
+     (10090%positive, 3);
+     (10091%positive, 3);
+     (10094%positive, 2);
+     (10107%positive, 5);
+     (10108%positive, 1);
      (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+     (11562%positive, 6);
+     (11578%positive, 1);
+     (11580%positive, 4);
+     (11582%positive, 5);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11642%positive, 1);
+     (11644%positive, 4);
+     (11646%positive, 8);
+     (12074%positive, 3);
+     (12075%positive, 2);
+     (12078%positive, 4);
+     (12090%positive, 1);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12094%positive, 5);
+     (12138%positive, 3);
+     (12139%positive, 2);
+     (12142%positive, 2);
+     (12154%positive, 1);
+     (12155%positive, 2);
+     (12156%positive, 1);
+     (12158%positive, 6)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10029%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12077%positive, 5);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (9528%positive, 1);
+     (9532%positive, 3);
+     (9579%positive, 2);
+     (9583%positive, 1);
+     (9596%positive, 3);
+     (10027%positive, 5);
+     (10031%positive, 1);
+     (10040%positive, 1);
+     (10043%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 1);
+     (10091%positive, 4);
+     (10095%positive, 1);
+     (10107%positive, 6);
+     (10108%positive, 2);
+     (10111%positive, 1);
+     (11576%positive, 1);
+     (11580%positive, 4);
+     (11627%positive, 2);
+     (11631%positive, 1);
+     (11644%positive, 5);
+     (12075%positive, 3);
+     (12079%positive, 1);
+     (12088%positive, 1);
+     (12091%positive, 3);
+     (12092%positive, 2);
+     (12095%positive, 1);
+     (12139%positive, 3);
+     (12143%positive, 1);
+     (12155%positive, 3);
+     (12156%positive, 2);
+     (12159%positive, 1)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [10091%positive;
+     11580%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10029%positive, 2);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12077%positive, 5);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (9528%positive, 1);
+     (9532%positive, 3);
+     (9579%positive, 2);
+     (9583%positive, 1);
+     (9596%positive, 3);
+     (10027%positive, 6);
+     (10031%positive, 1);
+     (10040%positive, 1);
+     (10043%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 1);
+     (10091%positive, 4);
+     (10095%positive, 1);
+     (10107%positive, 6);
+     (10108%positive, 2);
+     (10111%positive, 1);
+     (11576%positive, 1);
+     (11580%positive, 5);
+     (11627%positive, 2);
+     (11631%positive, 1);
+     (11644%positive, 5);
+     (12075%positive, 3);
+     (12079%positive, 1);
+     (12088%positive, 1);
+     (12091%positive, 3);
+     (12092%positive, 2);
+     (12095%positive, 1);
+     (12139%positive, 3);
+     (12143%positive, 1);
+     (12155%positive, 3);
+     (12156%positive, 2);
+     (12159%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10029%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12074%positive, 7);
-     (12076%positive, 7);
-     (12077%positive, 6);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 3);
+     (9513%positive, 1);
+     (9517%positive, 1);
+     (9528%positive, 6);
+     (9529%positive, 2);
+     (9534%positive, 2);
+     (9581%positive, 1);
+     (9593%positive, 5);
+     (9597%positive, 6);
+     (9598%positive, 5);
+     (10025%positive, 1);
+     (10029%positive, 1);
+     (10030%positive, 1);
+     (10040%positive, 7);
+     (10046%positive, 2);
+     (10093%positive, 1);
+     (10094%positive, 1);
+     (10105%positive, 4);
+     (10109%positive, 6);
+     (10110%positive, 4);
+     (11561%positive, 1);
+     (11565%positive, 1);
+     (11576%positive, 5);
+     (11577%positive, 2);
+     (11582%positive, 2);
+     (11629%positive, 1);
+     (11641%positive, 5);
+     (11645%positive, 6);
+     (11646%positive, 5);
+     (12073%positive, 1);
+     (12077%positive, 1);
+     (12078%positive, 1);
+     (12088%positive, 7);
+     (12094%positive, 2);
+     (12141%positive, 1);
+     (12142%positive, 1);
+     (12153%positive, 4);
+     (12157%positive, 6);
+     (12158%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10029%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12074%positive, 7);
-     (12076%positive, 7);
-     (12077%positive, 6);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(9512%positive, 3);
+     (9513%positive, 1);
+     (9517%positive, 1);
+     (9528%positive, 6);
+     (9529%positive, 2);
+     (9534%positive, 2);
+     (9581%positive, 1);
+     (9593%positive, 5);
+     (9597%positive, 6);
+     (9598%positive, 5);
+     (10025%positive, 1);
+     (10029%positive, 1);
+     (10030%positive, 1);
+     (10040%positive, 7);
+     (10046%positive, 2);
+     (10093%positive, 1);
+     (10094%positive, 1);
+     (10105%positive, 4);
+     (10109%positive, 6);
+     (10110%positive, 4);
+     (11561%positive, 1);
+     (11565%positive, 1);
+     (11576%positive, 5);
+     (11577%positive, 2);
+     (11582%positive, 2);
+     (11629%positive, 1);
+     (11641%positive, 5);
+     (11645%positive, 6);
+     (11646%positive, 5);
+     (12073%positive, 1);
+     (12077%positive, 1);
+     (12078%positive, 1);
+     (12088%positive, 7);
+     (12094%positive, 2);
+     (12141%positive, 1);
+     (12142%positive, 1);
+     (12153%positive, 4);
+     (12157%positive, 6);
+     (12158%positive, 3)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_0RB1LD_1LC0LA : NeverQuasiHaltsSt tm_bulkr_00184.
+Theorem nqh_1RB0RD_1LC0LC_1LD1LC_1RA0RB : NeverQuasiHaltsSt tm_bulkr_00184.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 400 11 cert_bulkr_00184).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 712 12 cert_bulkr_00184).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_1LA1LD_1LB0LA: n=2 t=0 contexts=41 *)
+(** 1RB0RD_1LC0RA_1LA0LB_1RA1RB: n=2 t=0 contexts=70 *)
 
 Definition tm_bulkr_00185 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StB, S1 => Some (mkTrans S0 DR StA)
   | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StB)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StC, S1 => Some (mkTrans S0 DL StB)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 
 Definition cert_bulkr_00185 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 3);
+    [(9519%positive, 5);
+     (9529%positive, 4);
+     (9583%positive, 5);
      (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 3);
-     (10041%positive, 4);
-     (10045%positive, 4);
+     (10030%positive, 2);
+     (10031%positive, 1);
+     (10041%positive, 5);
      (10046%positive, 1);
+     (10094%positive, 3);
+     (10095%positive, 1);
      (10105%positive, 2);
-     (10109%positive, 4);
      (10110%positive, 1);
-     (11577%positive, 4);
-     (11581%positive, 3);
+     (11561%positive, 1);
+     (11567%positive, 6);
+     (11577%positive, 3);
+     (11625%positive, 1);
+     (11631%positive, 6);
      (11641%positive, 2);
-     (11645%positive, 3);
-     (12073%positive, 1);
-     (12075%positive, 2);
-     (12078%positive, 3);
-     (12089%positive, 4);
-     (12093%positive, 6);
+     (12078%positive, 2);
+     (12079%positive, 1);
+     (12089%positive, 5);
      (12094%positive, 1);
+     (12142%positive, 4);
+     (12143%positive, 1);
      (12153%positive, 2);
-     (12157%positive, 5);
      (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+   NgPattE [S1; S0] RgL 1
     []
-    [12157%positive];
+    [10094%positive;
+     11577%positive];
    NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 3);
+    [(9519%positive, 5);
+     (9529%positive, 4);
+     (9583%positive, 5);
      (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 3);
-     (10041%positive, 4);
-     (10045%positive, 4);
+     (10030%positive, 2);
+     (10031%positive, 1);
+     (10041%positive, 6);
      (10046%positive, 1);
+     (10094%positive, 3);
+     (10095%positive, 1);
      (10105%positive, 2);
-     (10109%positive, 4);
      (10110%positive, 1);
+     (11561%positive, 1);
+     (11567%positive, 7);
      (11577%positive, 4);
-     (11581%positive, 3);
+     (11625%positive, 1);
+     (11631%positive, 7);
      (11641%positive, 2);
-     (11645%positive, 3);
-     (12073%positive, 1);
-     (12075%positive, 2);
-     (12078%positive, 3);
-     (12089%positive, 4);
-     (12093%positive, 6);
+     (12078%positive, 2);
+     (12079%positive, 1);
+     (12089%positive, 6);
      (12094%positive, 1);
+     (12142%positive, 5);
+     (12143%positive, 1);
      (12153%positive, 2);
-     (12157%positive, 5);
      (12158%positive, 1)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 1);
+    [(9515%positive, 1);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9580%positive, 2);
+     (10026%positive, 1);
+     (10027%positive, 4);
+     (10042%positive, 2);
+     (10044%positive, 1);
+     (10090%positive, 1);
+     (10091%positive, 3);
+     (10092%positive, 1);
+     (10106%positive, 2);
+     (11563%positive, 1);
+     (11580%positive, 3);
+     (11627%positive, 1);
+     (11628%positive, 5);
+     (12075%positive, 2);
      (12076%positive, 1);
-     (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (12092%positive, 1);
+     (12139%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 1)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
+    [10091%positive;
+     11580%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 1);
+    [(9515%positive, 1);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9580%positive, 2);
+     (10026%positive, 1);
+     (10027%positive, 5);
+     (10042%positive, 2);
+     (10044%positive, 1);
+     (10090%positive, 1);
+     (10091%positive, 3);
+     (10092%positive, 1);
+     (10106%positive, 2);
+     (11563%positive, 1);
+     (11580%positive, 4);
+     (11627%positive, 1);
+     (11628%positive, 6);
+     (12075%positive, 2);
      (12076%positive, 1);
-     (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+     (12092%positive, 1);
+     (12139%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 1)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (9515%positive, 2);
+     (9519%positive, 1);
+     (9528%positive, 1);
+     (9532%positive, 3);
+     (9533%positive, 2);
+     (9576%positive, 1);
+     (9579%positive, 2);
+     (9580%positive, 3);
+     (9583%positive, 1);
+     (9597%positive, 2);
+     (10024%positive, 4);
+     (10027%positive, 3);
+     (10031%positive, 3);
+     (10040%positive, 3);
+     (10044%positive, 2);
+     (10045%positive, 3);
+     (10088%positive, 3);
+     (10091%positive, 3);
+     (10092%positive, 2);
+     (10095%positive, 3);
+     (10109%positive, 3);
+     (11563%positive, 3);
+     (11565%positive, 5);
+     (11567%positive, 1);
+     (11576%positive, 1);
+     (11580%positive, 3);
+     (11581%positive, 3);
+     (11624%positive, 1);
+     (11627%positive, 3);
+     (11628%positive, 3);
+     (11629%positive, 5);
+     (11631%positive, 1);
+     (11645%positive, 3);
+     (12072%positive, 4);
+     (12075%positive, 3);
+     (12076%positive, 4);
+     (12079%positive, 3);
+     (12088%positive, 3);
+     (12092%positive, 3);
+     (12093%positive, 3);
+     (12136%positive, 3);
+     (12139%positive, 3);
+     (12140%positive, 3);
+     (12143%positive, 3);
+     (12152%positive, 4);
+     (12156%positive, 4);
+     (12157%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [9532%positive;
+     9580%positive;
+     10027%positive;
+     10031%positive;
+     10040%positive;
+     10045%positive;
+     10088%positive;
+     10091%positive;
+     10095%positive;
+     10109%positive;
+     11563%positive;
+     11580%positive;
+     11581%positive;
+     11627%positive;
+     11628%positive;
+     11645%positive;
+     12075%positive;
+     12079%positive;
+     12088%positive;
+     12092%positive;
+     12093%positive;
+     12136%positive;
+     12139%positive;
+     12140%positive;
+     12143%positive;
+     12157%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 1);
+     (9515%positive, 2);
+     (9519%positive, 1);
+     (9528%positive, 1);
+     (9532%positive, 7);
+     (9533%positive, 2);
+     (9576%positive, 1);
+     (9579%positive, 2);
+     (9580%positive, 7);
+     (9583%positive, 1);
+     (9597%positive, 2);
+     (10024%positive, 4);
+     (10027%positive, 9);
+     (10031%positive, 4);
+     (10040%positive, 5);
+     (10044%positive, 2);
+     (10045%positive, 11);
+     (10088%positive, 3);
+     (10091%positive, 8);
+     (10092%positive, 2);
+     (10095%positive, 4);
+     (10109%positive, 11);
+     (11563%positive, 6);
+     (11565%positive, 13);
+     (11567%positive, 1);
+     (11576%positive, 1);
+     (11580%positive, 8);
+     (11581%positive, 3);
+     (11624%positive, 1);
+     (11627%positive, 6);
+     (11628%positive, 10);
+     (11629%positive, 13);
+     (11631%positive, 1);
+     (11645%positive, 4);
+     (12072%positive, 12);
+     (12075%positive, 3);
+     (12076%positive, 5);
+     (12093%positive, 3);
+     (12139%positive, 3);
+     (12152%positive, 12);
+     (12156%positive, 5);
+     (12157%positive, 3)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10088%positive;
+     11581%positive];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10091%positive;
+     11580%positive];
+   NgRankE
+    [(9512%positive, 1);
+     (9515%positive, 2);
+     (9519%positive, 1);
+     (9528%positive, 1);
+     (9532%positive, 7);
+     (9533%positive, 2);
+     (9576%positive, 1);
+     (9579%positive, 2);
+     (9580%positive, 7);
+     (9583%positive, 1);
+     (9597%positive, 2);
+     (10024%positive, 5);
+     (10027%positive, 10);
+     (10031%positive, 5);
+     (10040%positive, 5);
+     (10044%positive, 2);
+     (10045%positive, 12);
+     (10088%positive, 3);
+     (10091%positive, 8);
+     (10092%positive, 2);
+     (10095%positive, 5);
+     (10109%positive, 12);
+     (11563%positive, 6);
+     (11565%positive, 14);
+     (11567%positive, 1);
+     (11576%positive, 1);
+     (11580%positive, 9);
+     (11581%positive, 4);
+     (11624%positive, 1);
+     (11627%positive, 6);
+     (11628%positive, 11);
+     (11629%positive, 14);
+     (11631%positive, 1);
+     (11645%positive, 4);
+     (12072%positive, 13);
+     (12075%positive, 3);
      (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (12093%positive, 3);
+     (12139%positive, 3);
+     (12152%positive, 13);
+     (12156%positive, 6);
+     (12157%positive, 3)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 8);
-     (12074%positive, 7);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 7);
+     (9528%positive, 8);
+     (9529%positive, 6);
+     (9533%positive, 6);
+     (9576%positive, 6);
+     (9593%positive, 7);
+     (9597%positive, 7);
+     (10024%positive, 6);
+     (10026%positive, 3);
+     (10030%positive, 5);
+     (10040%positive, 8);
+     (10041%positive, 6);
+     (10042%positive, 1);
+     (10045%positive, 1);
+     (10046%positive, 6);
+     (10088%positive, 6);
+     (10090%positive, 3);
+     (10094%positive, 6);
+     (10105%positive, 8);
+     (10106%positive, 1);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (11561%positive, 4);
+     (11565%positive, 6);
+     (11576%positive, 9);
+     (11577%positive, 6);
+     (11581%positive, 6);
+     (11624%positive, 6);
+     (11625%positive, 2);
+     (11629%positive, 6);
+     (11641%positive, 6);
+     (11645%positive, 6);
+     (12072%positive, 2);
+     (12078%positive, 5);
+     (12088%positive, 2);
+     (12089%positive, 6);
+     (12093%positive, 1);
+     (12094%positive, 7);
+     (12136%positive, 2);
+     (12142%positive, 6);
+     (12152%positive, 2);
+     (12153%positive, 8);
+     (12157%positive, 1);
+     (12158%positive, 7)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [9529%positive;
+     9533%positive;
+     9576%positive;
+     10024%positive;
+     10041%positive;
+     10046%positive;
+     10088%positive;
+     10094%positive;
+     10110%positive;
+     11565%positive;
+     11577%positive;
+     11581%positive;
+     11624%positive;
+     11629%positive;
+     11641%positive;
+     11645%positive;
+     12089%positive;
+     12142%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 8);
-     (12074%positive, 7);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(9512%positive, 8);
+     (9528%positive, 16);
+     (9529%positive, 7);
+     (9533%positive, 10);
+     (9576%positive, 8);
+     (9593%positive, 15);
+     (9597%positive, 10);
+     (10024%positive, 12);
+     (10026%positive, 3);
+     (10030%positive, 5);
+     (10040%positive, 13);
+     (10041%positive, 8);
+     (10042%positive, 1);
+     (10045%positive, 1);
+     (10046%positive, 14);
+     (10088%positive, 11);
+     (10090%positive, 3);
+     (10094%positive, 6);
+     (10105%positive, 15);
+     (10106%positive, 1);
+     (10109%positive, 1);
+     (11561%positive, 4);
+     (11565%positive, 13);
+     (11576%positive, 16);
+     (11577%positive, 6);
+     (11581%positive, 11);
+     (11624%positive, 9);
+     (11625%positive, 2);
+     (11629%positive, 13);
+     (11645%positive, 12);
+     (12072%positive, 2);
+     (12078%positive, 5);
+     (12088%positive, 2);
+     (12089%positive, 8);
+     (12093%positive, 1);
+     (12094%positive, 14);
+     (12136%positive, 2);
+     (12142%positive, 7);
+     (12152%positive, 2);
+     (12153%positive, 15);
+     (12157%positive, 1);
+     (12158%positive, 13)];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10094%positive;
+     11577%positive];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10088%positive;
+     11581%positive];
+   NgRankE
+    [(9512%positive, 7);
+     (9528%positive, 17);
+     (9529%positive, 6);
+     (9533%positive, 10);
+     (9576%positive, 7);
+     (9593%positive, 16);
+     (9597%positive, 10);
+     (10024%positive, 13);
+     (10026%positive, 3);
+     (10030%positive, 5);
+     (10040%positive, 13);
+     (10041%positive, 8);
+     (10042%positive, 1);
+     (10045%positive, 1);
+     (10046%positive, 15);
+     (10088%positive, 11);
+     (10090%positive, 3);
+     (10094%positive, 1);
+     (10105%positive, 16);
+     (10106%positive, 1);
+     (10109%positive, 1);
+     (11561%positive, 4);
+     (11565%positive, 14);
+     (11576%positive, 17);
+     (11577%positive, 6);
+     (11581%positive, 12);
+     (11624%positive, 9);
+     (11625%positive, 2);
+     (11629%positive, 14);
+     (11645%positive, 12);
+     (12072%positive, 2);
+     (12078%positive, 5);
+     (12088%positive, 2);
+     (12089%positive, 8);
+     (12093%positive, 1);
+     (12094%positive, 15);
+     (12136%positive, 2);
+     (12142%positive, 7);
+     (12152%positive, 2);
+     (12153%positive, 16);
+     (12157%positive, 1);
+     (12158%positive, 13)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_1LA1LD_1LB0LA : NeverQuasiHaltsSt tm_bulkr_00185.
+Theorem nqh_1RB0RD_1LC0RA_1LA0LB_1RA1RB : NeverQuasiHaltsSt tm_bulkr_00185.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 392 11 cert_bulkr_00185).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 624 12 cert_bulkr_00185).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_1LA1LD_1LC0LA: n=2 t=0 contexts=40 *)
+(** 1RB0RD_1LC0RA_1RD0LB_0LA1RC: n=2 t=0 contexts=84 *)
 
 Definition tm_bulkr_00186 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StC)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StB, S1 => Some (mkTrans S0 DR StA)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S0 DL StB)
+  | StD, S0 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 
 Definition cert_bulkr_00186 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 3);
-     (9533%positive, 3);
+    [(9519%positive, 2);
+     (9529%positive, 10);
+     (9530%positive, 1);
+     (9534%positive, 1);
+     (9535%positive, 2);
      (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 2);
-     (10041%positive, 3);
-     (10045%positive, 4);
+     (9594%positive, 1);
+     (9598%positive, 1);
+     (9599%positive, 2);
+     (10026%positive, 6);
+     (10030%positive, 8);
+     (10031%positive, 2);
+     (10041%positive, 11);
+     (10042%positive, 5);
      (10046%positive, 1);
+     (10090%positive, 6);
+     (10094%positive, 9);
      (10105%positive, 2);
-     (10109%positive, 4);
+     (10106%positive, 4);
      (10110%positive, 1);
-     (11577%positive, 3);
-     (11581%positive, 3);
+     (10111%positive, 2);
+     (11561%positive, 7);
+     (11567%positive, 6);
+     (11577%positive, 9);
+     (11578%positive, 1);
+     (11582%positive, 1);
+     (11583%positive, 5);
+     (11625%positive, 6);
      (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 1);
-     (12078%positive, 2);
-     (12089%positive, 3);
-     (12093%positive, 6);
+     (11642%positive, 1);
+     (11646%positive, 1);
+     (11647%positive, 4);
+     (12078%positive, 8);
+     (12079%positive, 2);
+     (12089%positive, 11);
+     (12090%positive, 3);
      (12094%positive, 1);
+     (12142%positive, 10);
      (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+     (12154%positive, 3);
+     (12158%positive, 1);
+     (12159%positive, 2)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12157%positive];
+    [10106%positive;
+     11647%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10094%positive;
+     11577%positive];
    NgRankE
-    [(9529%positive, 3);
-     (9533%positive, 3);
+    [(9519%positive, 2);
+     (9529%positive, 8);
+     (9530%positive, 1);
+     (9534%positive, 1);
+     (9535%positive, 2);
      (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 2);
-     (10041%positive, 3);
-     (10045%positive, 4);
+     (9594%positive, 1);
+     (9598%positive, 1);
+     (9599%positive, 2);
+     (10026%positive, 5);
+     (10030%positive, 7);
+     (10031%positive, 2);
+     (10041%positive, 10);
+     (10042%positive, 5);
      (10046%positive, 1);
+     (10090%positive, 5);
+     (10094%positive, 3);
      (10105%positive, 2);
-     (10109%positive, 4);
+     (10106%positive, 3);
      (10110%positive, 1);
-     (11577%positive, 3);
-     (11581%positive, 3);
+     (10111%positive, 2);
+     (11561%positive, 6);
+     (11567%positive, 6);
+     (11577%positive, 8);
+     (11578%positive, 1);
+     (11582%positive, 1);
+     (11583%positive, 4);
+     (11625%positive, 6);
      (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 1);
-     (12078%positive, 2);
-     (12089%positive, 3);
-     (12093%positive, 6);
+     (11642%positive, 1);
+     (11646%positive, 1);
+     (11647%positive, 4);
+     (12078%positive, 7);
+     (12079%positive, 2);
+     (12089%positive, 10);
+     (12090%positive, 3);
      (12094%positive, 1);
+     (12142%positive, 9);
      (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+     (12154%positive, 3);
+     (12158%positive, 1);
+     (12159%positive, 2)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 3);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
+    [(9515%positive, 1);
+     (9519%positive, 5);
+     (9530%positive, 4);
+     (9532%positive, 2);
+     (9535%positive, 5);
+     (9579%positive, 1);
+     (9580%positive, 2);
+     (9594%positive, 4);
+     (9595%positive, 3);
+     (9596%positive, 2);
+     (9599%positive, 5);
+     (10026%positive, 8);
+     (10027%positive, 1);
+     (10031%positive, 1);
+     (10042%positive, 7);
+     (10090%positive, 8);
+     (10091%positive, 1);
+     (10092%positive, 9);
+     (10106%positive, 6);
+     (10107%positive, 3);
+     (10111%positive, 1);
+     (11563%positive, 1);
+     (11567%positive, 8);
+     (11578%positive, 4);
      (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 1);
-     (12075%positive, 2);
-     (12076%positive, 1);
-     (12078%positive, 3);
+     (11583%positive, 7);
+     (11627%positive, 1);
+     (11628%positive, 2);
+     (11642%positive, 4);
+     (11643%positive, 3);
+     (11644%positive, 2);
+     (11647%positive, 6);
+     (12075%positive, 1);
      (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (12090%positive, 2);
+     (12139%positive, 1);
+     (12140%positive, 2);
+     (12154%positive, 2);
+     (12155%positive, 3);
+     (12159%positive, 1)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12156%positive];
+    [10106%positive;
+     11647%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 3);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
+    [(9515%positive, 1);
+     (9519%positive, 5);
+     (9530%positive, 4);
+     (9532%positive, 2);
+     (9535%positive, 5);
+     (9579%positive, 1);
+     (9580%positive, 2);
+     (9594%positive, 4);
+     (9595%positive, 3);
+     (9596%positive, 2);
+     (9599%positive, 5);
+     (10026%positive, 8);
+     (10027%positive, 1);
+     (10031%positive, 1);
+     (10042%positive, 8);
+     (10090%positive, 8);
+     (10091%positive, 1);
+     (10092%positive, 10);
+     (10106%positive, 6);
+     (10107%positive, 3);
+     (10111%positive, 1);
+     (11563%positive, 1);
+     (11567%positive, 9);
+     (11578%positive, 4);
      (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 1);
-     (12075%positive, 2);
-     (12076%positive, 1);
-     (12078%positive, 3);
+     (11583%positive, 7);
+     (11627%positive, 1);
+     (11628%positive, 2);
+     (11642%positive, 4);
+     (11643%positive, 3);
+     (11644%positive, 2);
+     (11647%positive, 7);
+     (12075%positive, 1);
      (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+     (12090%positive, 2);
+     (12139%positive, 1);
+     (12140%positive, 2);
+     (12154%positive, 2);
+     (12155%positive, 3);
+     (12159%positive, 1)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
+     (9515%positive, 2);
+     (9517%positive, 2);
+     (9528%positive, 1);
+     (9532%positive, 3);
+     (9533%positive, 2);
+     (9576%positive, 1);
+     (9579%positive, 2);
+     (9580%positive, 3);
+     (9581%positive, 2);
+     (9592%positive, 1);
+     (9595%positive, 4);
+     (9596%positive, 3);
+     (9597%positive, 2);
+     (10024%positive, 7);
+     (10027%positive, 2);
+     (10045%positive, 4);
+     (10088%positive, 6);
+     (10091%positive, 2);
+     (10092%positive, 1);
+     (10107%positive, 4);
      (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
+     (11563%positive, 2);
+     (11565%positive, 8);
+     (11576%positive, 1);
+     (11580%positive, 3);
+     (11581%positive, 6);
+     (11624%positive, 1);
+     (11627%positive, 2);
+     (11628%positive, 3);
+     (11629%positive, 8);
+     (11640%positive, 1);
+     (11643%positive, 4);
+     (11644%positive, 3);
+     (11645%positive, 7);
      (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (12075%positive, 2);
+     (12093%positive, 2);
+     (12136%positive, 5);
+     (12139%positive, 2);
+     (12140%positive, 1);
+     (12155%positive, 4)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [10088%positive;
+     11581%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
+     (9515%positive, 2);
+     (9517%positive, 2);
+     (9528%positive, 1);
+     (9532%positive, 3);
+     (9533%positive, 2);
+     (9576%positive, 1);
+     (9579%positive, 2);
+     (9580%positive, 3);
+     (9581%positive, 2);
+     (9592%positive, 1);
+     (9595%positive, 4);
+     (9596%positive, 3);
+     (9597%positive, 2);
+     (10024%positive, 7);
+     (10027%positive, 2);
+     (10045%positive, 4);
+     (10088%positive, 3);
+     (10091%positive, 2);
+     (10092%positive, 1);
+     (10107%positive, 4);
      (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
+     (11563%positive, 2);
+     (11565%positive, 8);
+     (11576%positive, 1);
+     (11580%positive, 3);
+     (11581%positive, 6);
+     (11624%positive, 1);
+     (11627%positive, 2);
+     (11628%positive, 3);
+     (11629%positive, 8);
+     (11640%positive, 1);
+     (11643%positive, 4);
+     (11644%positive, 3);
+     (11645%positive, 6);
      (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (12075%positive, 2);
+     (12093%positive, 2);
+     (12136%positive, 5);
+     (12139%positive, 2);
+     (12140%positive, 1);
+     (12155%positive, 4)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
+    [(9512%positive, 4);
+     (9517%positive, 5);
+     (9528%positive, 5);
+     (9529%positive, 3);
+     (9533%positive, 3);
+     (9534%positive, 6);
+     (9576%positive, 3);
+     (9581%positive, 5);
+     (9592%positive, 5);
+     (9593%positive, 4);
+     (9597%positive, 4);
+     (9598%positive, 5);
      (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12074%positive, 7);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+     (10030%positive, 2);
+     (10041%positive, 3);
+     (10045%positive, 1);
+     (10046%positive, 3);
+     (10088%positive, 3);
+     (10094%positive, 3);
+     (10105%positive, 5);
+     (10110%positive, 3);
+     (11560%positive, 4);
+     (11561%positive, 1);
+     (11565%positive, 3);
+     (11576%positive, 6);
+     (11577%positive, 3);
+     (11581%positive, 3);
+     (11582%positive, 6);
+     (11624%positive, 3);
+     (11625%positive, 1);
+     (11629%positive, 3);
+     (11640%positive, 6);
+     (11641%positive, 3);
+     (11645%positive, 3);
+     (11646%positive, 5);
+     (12072%positive, 2);
+     (12078%positive, 2);
+     (12089%positive, 3);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12136%positive, 2);
+     (12142%positive, 3);
+     (12153%positive, 5);
+     (12158%positive, 4)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [9529%positive;
+     9533%positive;
+     9576%positive;
+     10024%positive;
+     10041%positive;
+     10046%positive;
+     10088%positive;
+     10094%positive;
+     10110%positive;
+     11565%positive;
+     11577%positive;
+     11581%positive;
+     11624%positive;
+     11629%positive;
+     11641%positive;
+     11645%positive;
+     12089%positive;
+     12142%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12074%positive, 7);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(9512%positive, 5);
+     (9517%positive, 7);
+     (9528%positive, 13);
+     (9529%positive, 4);
+     (9533%positive, 7);
+     (9534%positive, 8);
+     (9576%positive, 5);
+     (9581%positive, 7);
+     (9592%positive, 13);
+     (9593%positive, 12);
+     (9597%positive, 7);
+     (9598%positive, 8);
+     (10024%positive, 9);
+     (10030%positive, 2);
+     (10041%positive, 5);
+     (10045%positive, 1);
+     (10046%positive, 11);
+     (10088%positive, 8);
+     (10094%positive, 3);
+     (10105%positive, 12);
+     (11560%positive, 6);
+     (11561%positive, 1);
+     (11565%positive, 10);
+     (11576%positive, 13);
+     (11577%positive, 3);
+     (11581%positive, 8);
+     (11582%positive, 8);
+     (11624%positive, 6);
+     (11625%positive, 1);
+     (11629%positive, 10);
+     (11640%positive, 13);
+     (11645%positive, 9);
+     (11646%positive, 8);
+     (12072%positive, 2);
+     (12078%positive, 2);
+     (12089%positive, 5);
+     (12093%positive, 1);
+     (12094%positive, 11);
+     (12136%positive, 2);
+     (12142%positive, 4);
+     (12153%positive, 12);
+     (12158%positive, 10)];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10094%positive;
+     11577%positive];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10088%positive;
+     11581%positive];
+   NgRankE
+    [(9512%positive, 4);
+     (9517%positive, 7);
+     (9528%positive, 14);
+     (9529%positive, 3);
+     (9533%positive, 7);
+     (9534%positive, 8);
+     (9576%positive, 4);
+     (9581%positive, 7);
+     (9592%positive, 14);
+     (9593%positive, 13);
+     (9597%positive, 7);
+     (9598%positive, 8);
+     (10024%positive, 10);
+     (10030%positive, 2);
+     (10041%positive, 5);
+     (10045%positive, 1);
+     (10046%positive, 12);
+     (10088%positive, 8);
+     (10094%positive, 1);
+     (10105%positive, 13);
+     (11560%positive, 6);
+     (11561%positive, 1);
+     (11565%positive, 11);
+     (11576%positive, 14);
+     (11577%positive, 3);
+     (11581%positive, 9);
+     (11582%positive, 8);
+     (11624%positive, 6);
+     (11625%positive, 1);
+     (11629%positive, 11);
+     (11640%positive, 14);
+     (11645%positive, 9);
+     (11646%positive, 8);
+     (12072%positive, 2);
+     (12078%positive, 2);
+     (12089%positive, 5);
+     (12093%positive, 1);
+     (12094%positive, 12);
+     (12136%positive, 2);
+     (12142%positive, 4);
+     (12153%positive, 13);
+     (12158%positive, 10)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_1LA1LD_1LC0LA : NeverQuasiHaltsSt tm_bulkr_00186.
+Theorem nqh_1RB0RD_1LC0RA_1RD0LB_0LA1RC : NeverQuasiHaltsSt tm_bulkr_00186.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 384 11 cert_bulkr_00186).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 736 12 cert_bulkr_00186).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_1RA1LD_0LC0LA: n=2 t=0 contexts=42 *)
+(** 1RB0RD_1LC1LB_0RD1RC_1LA1RA: n=2 t=0 contexts=41 *)
 
 Definition tm_bulkr_00187 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DR StA)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S0 DL StC)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S0 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StC)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StA)
   end.
 
 Definition cert_bulkr_00187 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 3);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 2);
-     (10041%positive, 3);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 3);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 1);
-     (12078%positive, 2);
-     (12089%positive, 3);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+    [(9529%positive, 4);
+     (9534%positive, 2);
+     (9593%positive, 4);
+     (9594%positive, 1);
+     (9597%positive, 12);
+     (9598%positive, 2);
+     (10030%positive, 3);
+     (10045%positive, 9);
+     (10046%positive, 3);
+     (10094%positive, 3);
+     (10109%positive, 11);
+     (10110%positive, 3);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 3);
+     (12078%positive, 6);
+     (12089%positive, 7);
+     (12090%positive, 1);
+     (12093%positive, 9);
+     (12094%positive, 5);
+     (12137%positive, 2);
+     (12138%positive, 1);
+     (12141%positive, 8);
+     (12142%positive, 6);
+     (12153%positive, 6);
+     (12154%positive, 1);
+     (12157%positive, 10);
+     (12158%positive, 4)];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
    NgRankE
-    [(9529%positive, 3);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 2);
-     (10041%positive, 3);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 3);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 1);
-     (12078%positive, 2);
-     (12089%positive, 3);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+    [(9529%positive, 4);
+     (9534%positive, 2);
+     (9593%positive, 4);
+     (9594%positive, 1);
+     (9597%positive, 12);
+     (9598%positive, 2);
+     (10030%positive, 3);
+     (10045%positive, 9);
+     (10046%positive, 3);
+     (10094%positive, 3);
+     (10109%positive, 11);
+     (10110%positive, 3);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 3);
+     (12078%positive, 6);
+     (12089%positive, 7);
+     (12090%positive, 1);
+     (12093%positive, 9);
+     (12094%positive, 5);
+     (12137%positive, 2);
+     (12138%positive, 1);
+     (12141%positive, 8);
+     (12142%positive, 6);
+     (12153%positive, 6);
+     (12154%positive, 1);
+     (12157%positive, 10);
+     (12158%positive, 4)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 3);
+    [(9532%positive, 2);
+     (9534%positive, 3);
+     (9579%positive, 1);
+     (9583%positive, 1);
+     (9594%positive, 2);
+     (9598%positive, 3);
+     (10030%positive, 4);
+     (10031%positive, 3);
      (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11562%positive, 1);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 2);
-     (12076%positive, 1);
-     (12078%positive, 3);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (10046%positive, 4);
+     (10094%positive, 4);
+     (10095%positive, 3);
+     (10110%positive, 4);
+     (12074%positive, 6);
+     (12078%positive, 7);
+     (12079%positive, 5);
+     (12090%positive, 5);
+     (12092%positive, 4);
+     (12094%positive, 6);
+     (12138%positive, 6);
+     (12142%positive, 7);
+     (12143%positive, 4);
+     (12154%positive, 5);
+     (12158%positive, 5)];
+   NgPattE [S1; S1] RgA 1
     []
-    [12156%positive];
+    [12092%positive;
+     12143%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 3);
+    [(9532%positive, 2);
+     (9534%positive, 3);
+     (9579%positive, 1);
+     (9583%positive, 1);
+     (9594%positive, 2);
+     (9598%positive, 3);
+     (10030%positive, 4);
+     (10031%positive, 3);
      (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11562%positive, 1);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 2);
-     (12076%positive, 1);
-     (12078%positive, 3);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+     (10046%positive, 4);
+     (10094%positive, 4);
+     (10095%positive, 3);
+     (10110%positive, 4);
+     (12074%positive, 6);
+     (12078%positive, 7);
+     (12079%positive, 5);
+     (12090%positive, 6);
+     (12092%positive, 4);
+     (12094%positive, 6);
+     (12138%positive, 6);
+     (12142%positive, 7);
+     (12143%positive, 5);
+     (12154%positive, 6);
+     (12158%positive, 5)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10040%positive, 2);
-     (10044%positive, 7);
+     (9528%positive, 1);
+     (9532%positive, 8);
+     (9579%positive, 7);
+     (9583%positive, 2);
+     (9597%positive, 5);
+     (10031%positive, 9);
+     (10040%positive, 6);
+     (10044%positive, 3);
      (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12088%positive, 4);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (10095%positive, 9);
+     (10104%positive, 6);
+     (10109%positive, 4);
+     (12077%positive, 1);
+     (12079%positive, 11);
+     (12092%positive, 10);
+     (12093%positive, 2);
+     (12141%positive, 1);
+     (12143%positive, 10);
+     (12157%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
-   NgPattE [S1] RgL 1
+   NgPattE [S1; S1] RgA 1
     []
-    [12156%positive];
+    [12092%positive;
+     12143%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10040%positive, 2);
-     (10044%positive, 7);
+     (9528%positive, 1);
+     (9532%positive, 8);
+     (9579%positive, 7);
+     (9583%positive, 2);
+     (9597%positive, 5);
+     (10031%positive, 9);
+     (10040%positive, 6);
+     (10044%positive, 3);
      (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12088%positive, 4);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (10095%positive, 9);
+     (10104%positive, 6);
+     (10109%positive, 4);
+     (12077%positive, 1);
+     (12079%positive, 11);
+     (12092%positive, 10);
+     (12093%positive, 2);
+     (12141%positive, 1);
+     (12143%positive, 11);
+     (12157%positive, 3)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10040%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11562%positive, 6);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12088%positive, 5);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 4);
+     (9528%positive, 4);
+     (9529%positive, 3);
+     (9534%positive, 1);
+     (9593%positive, 3);
+     (9597%positive, 11);
+     (9598%positive, 1);
+     (10030%positive, 2);
+     (10040%positive, 12);
+     (10045%positive, 8);
+     (10046%positive, 2);
+     (10094%positive, 2);
+     (10104%positive, 12);
+     (10109%positive, 10);
+     (10110%positive, 2);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12078%positive, 5);
+     (12089%positive, 6);
+     (12093%positive, 8);
+     (12094%positive, 4);
+     (12137%positive, 1);
+     (12141%positive, 7);
+     (12142%positive, 5);
+     (12153%positive, 5);
+     (12157%positive, 9);
+     (12158%positive, 3)];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12158%positive];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10040%positive, 3);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11562%positive, 6);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12088%positive, 5);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(9512%positive, 4);
+     (9528%positive, 4);
+     (9529%positive, 3);
+     (9534%positive, 1);
+     (9593%positive, 3);
+     (9597%positive, 11);
+     (9598%positive, 1);
+     (10030%positive, 2);
+     (10040%positive, 12);
+     (10045%positive, 8);
+     (10046%positive, 2);
+     (10094%positive, 2);
+     (10104%positive, 12);
+     (10109%positive, 10);
+     (10110%positive, 2);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12078%positive, 5);
+     (12089%positive, 6);
+     (12093%positive, 8);
+     (12094%positive, 4);
+     (12137%positive, 1);
+     (12141%positive, 7);
+     (12142%positive, 5);
+     (12153%positive, 5);
+     (12157%positive, 9);
+     (12158%positive, 3)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_1RA1LD_0LC0LA : NeverQuasiHaltsSt tm_bulkr_00187.
+Theorem nqh_1RB0RD_1LC1LB_0RD1RC_1LA1RA : NeverQuasiHaltsSt tm_bulkr_00187.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 400 11 cert_bulkr_00187).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 392 11 cert_bulkr_00187).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_1RA1LD_1LB0LA: n=2 t=0 contexts=41 *)
+(** 1RB0RD_1LC1LB_1LD1LB_1RA0LC: n=2 t=0 contexts=77 *)
 
 Definition tm_bulkr_00188 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DR StA)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StB)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DL StB)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 
 Definition cert_bulkr_00188 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 3);
-     (10041%positive, 4);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 4);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12073%positive, 1);
-     (12075%positive, 2);
+    [(9529%positive, 5);
+     (9530%positive, 4);
+     (9583%positive, 5);
+     (9593%positive, 5);
+     (9594%positive, 4);
+     (9597%positive, 4);
+     (10025%positive, 2);
+     (10029%positive, 3);
+     (10030%positive, 4);
+     (10031%positive, 2);
+     (10041%positive, 3);
+     (10045%positive, 3);
+     (10046%positive, 4);
+     (10047%positive, 3);
+     (10089%positive, 3);
+     (10093%positive, 3);
+     (10094%positive, 4);
+     (10095%positive, 3);
+     (10105%positive, 3);
+     (10109%positive, 3);
+     (10110%positive, 4);
+     (10111%positive, 3);
+     (11562%positive, 1);
+     (11566%positive, 3);
+     (11577%positive, 5);
+     (11578%positive, 3);
+     (11582%positive, 3);
+     (11626%positive, 1);
+     (11630%positive, 3);
+     (11631%positive, 5);
+     (11641%positive, 5);
+     (11642%positive, 3);
+     (11645%positive, 4);
+     (11646%positive, 3);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 3);
      (12078%positive, 3);
-     (12089%positive, 4);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+     (12079%positive, 2);
+     (12089%positive, 3);
+     (12090%positive, 3);
+     (12093%positive, 3);
+     (12094%positive, 3);
+     (12095%positive, 3);
+     (12137%positive, 3);
+     (12138%positive, 1);
+     (12141%positive, 3);
+     (12142%positive, 3);
+     (12143%positive, 3);
+     (12153%positive, 3);
+     (12154%positive, 3);
+     (12157%positive, 3);
+     (12158%positive, 3);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
+    [10029%positive;
+     10041%positive;
+     10045%positive;
+     10047%positive;
+     10089%positive;
+     10093%positive;
+     10095%positive;
+     10105%positive;
+     10109%positive;
+     10111%positive;
+     11566%positive;
+     11578%positive;
+     11582%positive;
+     11630%positive;
+     11642%positive;
+     11646%positive;
+     12077%positive;
+     12078%positive;
+     12089%positive;
+     12090%positive;
+     12093%positive;
+     12094%positive;
+     12095%positive;
+     12137%positive;
+     12141%positive;
+     12142%positive;
+     12143%positive;
+     12153%positive;
+     12154%positive;
+     12157%positive;
+     12158%positive;
+     12159%positive];
    NgRankE
-    [(9529%positive, 4);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 3);
-     (10041%positive, 4);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 4);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12073%positive, 1);
-     (12075%positive, 2);
-     (12078%positive, 3);
-     (12089%positive, 4);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+    [(9529%positive, 10);
+     (9530%positive, 4);
+     (9583%positive, 13);
+     (9593%positive, 12);
+     (9594%positive, 12);
+     (9597%positive, 11);
+     (10025%positive, 2);
+     (10029%positive, 7);
+     (10030%positive, 7);
+     (10031%positive, 2);
+     (10041%positive, 9);
+     (10045%positive, 10);
+     (10046%positive, 10);
+     (10047%positive, 11);
+     (10089%positive, 6);
+     (10093%positive, 9);
+     (10094%positive, 9);
+     (10095%positive, 3);
+     (10110%positive, 11);
+     (11562%positive, 1);
+     (11566%positive, 7);
+     (11577%positive, 10);
+     (11578%positive, 3);
+     (11582%positive, 10);
+     (11626%positive, 1);
+     (11630%positive, 10);
+     (11631%positive, 13);
+     (11641%positive, 12);
+     (11645%positive, 11);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 7);
+     (12078%positive, 7);
+     (12079%positive, 2);
+     (12089%positive, 8);
+     (12090%positive, 5);
+     (12093%positive, 10);
+     (12094%positive, 10);
+     (12095%positive, 11);
+     (12137%positive, 6);
+     (12138%positive, 1);
+     (12141%positive, 9);
+     (12142%positive, 8);
+     (12143%positive, 4)];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10095%positive;
+     11578%positive];
+   NgPattE [S1; S0] RgA 1
+    []
+    [12089%positive;
+     12142%positive];
+   NgRankE
+    [(9529%positive, 10);
+     (9530%positive, 3);
+     (9583%positive, 14);
+     (9593%positive, 12);
+     (9594%positive, 13);
+     (9597%positive, 11);
+     (10025%positive, 2);
+     (10029%positive, 7);
+     (10030%positive, 7);
+     (10031%positive, 2);
+     (10041%positive, 10);
+     (10045%positive, 10);
+     (10046%positive, 10);
+     (10047%positive, 12);
+     (10089%positive, 6);
+     (10093%positive, 9);
+     (10094%positive, 9);
+     (10095%positive, 1);
+     (10110%positive, 11);
+     (11562%positive, 1);
+     (11566%positive, 7);
+     (11577%positive, 10);
+     (11578%positive, 3);
+     (11582%positive, 10);
+     (11626%positive, 1);
+     (11630%positive, 11);
+     (11631%positive, 14);
+     (11641%positive, 12);
+     (11645%positive, 11);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 7);
+     (12078%positive, 7);
+     (12079%positive, 2);
+     (12089%positive, 8);
+     (12090%positive, 5);
+     (12093%positive, 10);
+     (12094%positive, 10);
+     (12095%positive, 12);
+     (12137%positive, 6);
+     (12138%positive, 1);
+     (12141%positive, 9);
+     (12142%positive, 9);
+     (12143%positive, 4)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
+    [(9530%positive, 3);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 3);
+     (9594%positive, 2);
+     (9596%positive, 2);
+     (10027%positive, 3);
+     (10031%positive, 3);
+     (10043%positive, 3);
+     (10044%positive, 3);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 3);
+     (10107%positive, 3);
      (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 3);
-     (12076%positive, 1);
-     (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (10111%positive, 1);
+     (11562%positive, 3);
+     (11578%positive, 3);
+     (11580%positive, 3);
+     (11626%positive, 3);
+     (11627%positive, 1);
+     (11631%positive, 3);
+     (11642%positive, 2);
+     (11644%positive, 3);
+     (12074%positive, 5);
+     (12075%positive, 4);
+     (12079%positive, 4);
+     (12090%positive, 5);
+     (12091%positive, 5);
+     (12092%positive, 3);
+     (12095%positive, 1);
+     (12138%positive, 6);
+     (12139%positive, 3);
+     (12143%positive, 3);
+     (12154%positive, 2);
+     (12155%positive, 5);
+     (12156%positive, 4);
+     (12159%positive, 1)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [9530%positive;
+     9583%positive;
+     10027%positive;
+     10031%positive;
+     10043%positive;
+     10044%positive;
+     10091%positive;
+     10095%positive;
+     10107%positive;
+     11562%positive;
+     11578%positive;
+     11580%positive;
+     11626%positive;
+     11631%positive;
+     11644%positive;
+     12092%positive;
+     12139%positive;
+     12143%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 3);
-     (12076%positive, 1);
-     (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+    [(9530%positive, 9);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 10);
+     (9594%positive, 2);
+     (9596%positive, 2);
+     (10027%positive, 4);
+     (10031%positive, 7);
+     (10043%positive, 5);
+     (10044%positive, 11);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 8);
+     (10107%positive, 5);
+     (10108%positive, 11);
+     (10111%positive, 1);
+     (11562%positive, 5);
+     (11578%positive, 8);
+     (11580%positive, 3);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11631%positive, 10);
+     (11642%positive, 2);
+     (11644%positive, 4);
+     (12074%positive, 13);
+     (12075%positive, 12);
+     (12079%positive, 7);
+     (12090%positive, 10);
+     (12091%positive, 12);
+     (12095%positive, 1);
+     (12138%positive, 13);
+     (12143%positive, 9);
+     (12154%positive, 2);
+     (12155%positive, 12);
+     (12156%positive, 10);
+     (12159%positive, 1)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10091%positive;
+     11580%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10095%positive;
+     11578%positive];
+   NgRankE
+    [(9530%positive, 8);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 9);
+     (9594%positive, 2);
+     (9596%positive, 2);
+     (10027%positive, 5);
+     (10031%positive, 7);
+     (10043%positive, 5);
+     (10044%positive, 10);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 3);
+     (10107%positive, 5);
+     (10108%positive, 10);
+     (10111%positive, 1);
+     (11562%positive, 6);
+     (11578%positive, 8);
+     (11580%positive, 4);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11631%positive, 9);
+     (11642%positive, 2);
+     (11644%positive, 4);
+     (12074%positive, 12);
+     (12075%positive, 11);
+     (12079%positive, 7);
+     (12090%positive, 10);
+     (12091%positive, 11);
+     (12095%positive, 1);
+     (12138%positive, 12);
+     (12143%positive, 9);
+     (12154%positive, 2);
+     (12155%positive, 11);
+     (12156%positive, 10);
+     (12159%positive, 1)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
+     (9528%positive, 1);
+     (9532%positive, 8);
+     (9579%positive, 2);
+     (9596%positive, 8);
+     (9597%positive, 5);
+     (10027%positive, 10);
+     (10029%positive, 1);
+     (10040%positive, 6);
+     (10043%positive, 11);
+     (10044%positive, 1);
      (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
+     (10091%positive, 9);
+     (10093%positive, 1);
+     (10107%positive, 11);
+     (10108%positive, 1);
+     (10109%positive, 4);
+     (11576%positive, 1);
+     (11580%positive, 9);
+     (11627%positive, 7);
      (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (11645%positive, 5);
+     (12075%positive, 2);
+     (12077%positive, 1);
+     (12088%positive, 5);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12139%positive, 2);
+     (12141%positive, 1);
+     (12155%positive, 2);
+     (12156%positive, 1);
+     (12157%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
-   NgPattE [S1] RgL 1
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
+    [10091%positive;
+     11580%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
+     (9528%positive, 1);
+     (9532%positive, 8);
+     (9579%positive, 2);
+     (9596%positive, 8);
+     (9597%positive, 5);
+     (10027%positive, 11);
+     (10029%positive, 1);
+     (10040%positive, 6);
+     (10043%positive, 11);
+     (10044%positive, 1);
      (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
+     (10091%positive, 9);
+     (10093%positive, 1);
+     (10107%positive, 11);
+     (10108%positive, 1);
+     (10109%positive, 4);
+     (11576%positive, 1);
+     (11580%positive, 10);
+     (11627%positive, 7);
      (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (11645%positive, 5);
+     (12075%positive, 2);
+     (12077%positive, 1);
+     (12088%positive, 5);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12139%positive, 2);
+     (12141%positive, 1);
+     (12155%positive, 2);
+     (12156%positive, 1);
+     (12157%positive, 3)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 10);
-     (12074%positive, 9);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 6);
+     (9528%positive, 6);
+     (9529%positive, 5);
+     (9593%positive, 5);
+     (9597%positive, 5);
+     (10025%positive, 1);
+     (10029%positive, 2);
+     (10030%positive, 2);
+     (10040%positive, 6);
+     (10041%positive, 4);
+     (10045%positive, 4);
+     (10046%positive, 4);
+     (10089%positive, 1);
+     (10093%positive, 4);
+     (10094%positive, 4);
+     (10105%positive, 4);
+     (10109%positive, 4);
+     (10110%positive, 4);
+     (11566%positive, 2);
+     (11576%positive, 5);
+     (11577%positive, 5);
+     (11582%positive, 5);
+     (11630%positive, 5);
+     (11641%positive, 5);
+     (11645%positive, 5);
+     (11646%positive, 5);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12078%positive, 2);
+     (12088%positive, 5);
+     (12089%positive, 3);
+     (12093%positive, 3);
+     (12094%positive, 3);
+     (12137%positive, 1);
+     (12141%positive, 3);
+     (12142%positive, 3);
+     (12153%positive, 3);
+     (12157%positive, 3);
+     (12158%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12089%positive;
+     12093%positive;
+     12094%positive;
+     12141%positive;
+     12142%positive;
+     12153%positive;
+     12157%positive;
+     12158%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 10);
-     (12074%positive, 9);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
+    [(9512%positive, 6);
+     (9528%positive, 8);
+     (9529%positive, 5);
+     (9593%positive, 7);
+     (9597%positive, 7);
+     (10025%positive, 1);
+     (10029%positive, 2);
+     (10030%positive, 2);
+     (10040%positive, 8);
+     (10041%positive, 4);
+     (10045%positive, 5);
+     (10046%positive, 5);
+     (10089%positive, 1);
+     (10093%positive, 4);
+     (10094%positive, 4);
+     (10105%positive, 6);
+     (10109%positive, 6);
+     (10110%positive, 6);
+     (11566%positive, 2);
+     (11576%positive, 7);
+     (11577%positive, 5);
+     (11582%positive, 5);
+     (11630%positive, 7);
+     (11641%positive, 7);
+     (11645%positive, 7);
+     (11646%positive, 7);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12078%positive, 2);
+     (12088%positive, 7);
+     (12089%positive, 3);
      (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+     (12094%positive, 5);
+     (12137%positive, 1);
+     (12141%positive, 4);
+     (12142%positive, 3)];
+   NgPattE [S1; S0] RgA 1
+    []
+    [12089%positive;
+     12142%positive];
+   NgRankE
+    [(9512%positive, 6);
+     (9528%positive, 8);
+     (9529%positive, 5);
+     (9593%positive, 7);
+     (9597%positive, 7);
+     (10025%positive, 1);
+     (10029%positive, 2);
+     (10030%positive, 2);
+     (10040%positive, 8);
+     (10041%positive, 5);
+     (10045%positive, 5);
+     (10046%positive, 5);
+     (10089%positive, 1);
+     (10093%positive, 4);
+     (10094%positive, 4);
+     (10105%positive, 6);
+     (10109%positive, 6);
+     (10110%positive, 6);
+     (11566%positive, 2);
+     (11576%positive, 7);
+     (11577%positive, 5);
+     (11582%positive, 5);
+     (11630%positive, 7);
+     (11641%positive, 7);
+     (11645%positive, 7);
+     (11646%positive, 7);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12078%positive, 2);
+     (12088%positive, 7);
+     (12089%positive, 3);
+     (12093%positive, 5);
+     (12094%positive, 5);
+     (12137%positive, 1);
+     (12141%positive, 4);
+     (12142%positive, 4)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_1RA1LD_1LB0LA : NeverQuasiHaltsSt tm_bulkr_00188.
+Theorem nqh_1RB0RD_1LC1LB_1LD1LB_1RA0LC : NeverQuasiHaltsSt tm_bulkr_00188.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 392 11 cert_bulkr_00188).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 680 12 cert_bulkr_00188).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_1RA1LD_1LC0LA: n=2 t=0 contexts=40 *)
+(** 1RB0RD_1LC1LB_1LD1RB_1RA0LC: n=2 t=0 contexts=77 *)
 
 Definition tm_bulkr_00189 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DR StA)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StC)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StB)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 
 Definition cert_bulkr_00189 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 3);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 2);
+    [(9529%positive, 7);
+     (9530%positive, 4);
+     (9533%positive, 5);
+     (9583%positive, 5);
+     (9593%positive, 6);
+     (9594%positive, 4);
+     (9597%positive, 4);
+     (10029%positive, 4);
+     (10030%positive, 6);
+     (10031%positive, 2);
      (10041%positive, 3);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 3);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 1);
-     (12078%positive, 2);
+     (10045%positive, 3);
+     (10046%positive, 5);
+     (10047%positive, 3);
+     (10093%positive, 4);
+     (10094%positive, 6);
+     (10095%positive, 3);
+     (10105%positive, 3);
+     (10109%positive, 3);
+     (10110%positive, 5);
+     (10111%positive, 3);
+     (11562%positive, 1);
+     (11566%positive, 3);
+     (11577%positive, 7);
+     (11578%positive, 3);
+     (11581%positive, 5);
+     (11582%positive, 3);
+     (11626%positive, 1);
+     (11630%positive, 3);
+     (11631%positive, 5);
+     (11641%positive, 6);
+     (11642%positive, 3);
+     (11645%positive, 4);
+     (11646%positive, 3);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 3);
+     (12078%positive, 3);
+     (12079%positive, 2);
      (12089%positive, 3);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
+     (12090%positive, 3);
+     (12093%positive, 3);
+     (12094%positive, 3);
+     (12095%positive, 3);
+     (12137%positive, 3);
+     (12138%positive, 1);
+     (12141%positive, 3);
+     (12142%positive, 3);
+     (12143%positive, 3);
+     (12153%positive, 3);
+     (12154%positive, 3);
+     (12157%positive, 3);
+     (12158%positive, 3);
+     (12159%positive, 3)];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10041%positive;
+     10045%positive;
+     10047%positive;
+     10095%positive;
+     10105%positive;
+     10109%positive;
+     10111%positive;
+     11566%positive;
+     11578%positive;
+     11582%positive;
+     11630%positive;
+     11642%positive;
+     11646%positive;
+     12077%positive;
+     12078%positive;
+     12089%positive;
+     12090%positive;
+     12093%positive;
+     12094%positive;
+     12095%positive;
+     12137%positive;
+     12141%positive;
+     12142%positive;
+     12143%positive;
+     12153%positive;
+     12154%positive;
+     12157%positive;
+     12158%positive;
+     12159%positive];
+   NgRankE
+    [(9529%positive, 12);
+     (9530%positive, 3);
+     (9533%positive, 10);
+     (9583%positive, 12);
+     (9593%positive, 9);
+     (9594%positive, 11);
+     (9597%positive, 7);
+     (10029%positive, 3);
+     (10030%positive, 11);
+     (10031%positive, 2);
+     (10041%positive, 6);
+     (10045%positive, 4);
+     (10046%positive, 8);
+     (10047%positive, 8);
+     (10093%positive, 9);
+     (10094%positive, 11);
+     (10105%positive, 8);
+     (10109%positive, 6);
+     (10110%positive, 8);
+     (10111%positive, 10);
+     (11562%positive, 1);
+     (11566%positive, 7);
+     (11577%positive, 12);
+     (11578%positive, 3);
+     (11581%positive, 10);
+     (11582%positive, 9);
+     (11626%positive, 1);
+     (11630%positive, 7);
+     (11631%positive, 12);
+     (11641%positive, 9);
+     (11642%positive, 11);
+     (11645%positive, 7);
+     (11646%positive, 9);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 3);
+     (12078%positive, 5);
+     (12079%positive, 2);
+     (12089%positive, 6);
+     (12090%positive, 3);
+     (12093%positive, 4);
+     (12094%positive, 7);
+     (12095%positive, 8);
+     (12138%positive, 1);
+     (12142%positive, 5);
+     (12153%positive, 8);
+     (12154%positive, 11);
      (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+     (12158%positive, 7);
+     (12159%positive, 10)];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
    NgRankE
-    [(9529%positive, 3);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 2);
-     (10041%positive, 3);
+    [(9529%positive, 12);
+     (9530%positive, 3);
+     (9533%positive, 10);
+     (9583%positive, 12);
+     (9593%positive, 9);
+     (9594%positive, 11);
+     (9597%positive, 7);
+     (10029%positive, 3);
+     (10030%positive, 11);
+     (10031%positive, 2);
+     (10041%positive, 6);
      (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 3);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12075%positive, 1);
-     (12078%positive, 2);
-     (12089%positive, 3);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
+     (10046%positive, 8);
+     (10047%positive, 8);
+     (10093%positive, 9);
+     (10094%positive, 11);
+     (10105%positive, 8);
+     (10109%positive, 6);
+     (10110%positive, 8);
+     (10111%positive, 10);
+     (11562%positive, 1);
+     (11566%positive, 7);
+     (11577%positive, 12);
+     (11578%positive, 3);
+     (11581%positive, 10);
+     (11582%positive, 9);
+     (11626%positive, 1);
+     (11630%positive, 7);
+     (11631%positive, 12);
+     (11641%positive, 9);
+     (11642%positive, 11);
+     (11645%positive, 7);
+     (11646%positive, 9);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 3);
+     (12078%positive, 5);
+     (12079%positive, 2);
+     (12089%positive, 6);
+     (12090%positive, 3);
+     (12093%positive, 4);
+     (12094%positive, 7);
+     (12095%positive, 8);
+     (12138%positive, 1);
+     (12142%positive, 5);
+     (12153%positive, 8);
+     (12154%positive, 11);
      (12157%positive, 5);
-     (12158%positive, 1)]]
+     (12158%positive, 7);
+     (12159%positive, 10)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 5);
-     (10044%positive, 2);
-     (10046%positive, 2);
+    [(9530%positive, 3);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 3);
+     (9594%positive, 2);
+     (9596%positive, 2);
+     (10027%positive, 3);
+     (10031%positive, 3);
+     (10043%positive, 3);
+     (10044%positive, 3);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 3);
+     (10107%positive, 3);
      (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 3);
+     (10111%positive, 1);
+     (11562%positive, 3);
+     (11578%positive, 3);
+     (11580%positive, 3);
+     (11626%positive, 3);
+     (11627%positive, 1);
+     (11631%positive, 3);
+     (11642%positive, 2);
+     (11644%positive, 3);
+     (12074%positive, 5);
      (12075%positive, 4);
-     (12076%positive, 1);
-     (12078%positive, 5);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (12079%positive, 4);
+     (12090%positive, 5);
+     (12091%positive, 5);
+     (12092%positive, 3);
+     (12095%positive, 1);
+     (12138%positive, 6);
+     (12139%positive, 3);
+     (12143%positive, 3);
+     (12154%positive, 2);
+     (12155%positive, 5);
+     (12156%positive, 4);
+     (12159%positive, 1)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [9530%positive;
+     9583%positive;
+     10027%positive;
+     10031%positive;
+     10043%positive;
+     10044%positive;
+     10091%positive;
+     10095%positive;
+     10107%positive;
+     11562%positive;
+     11578%positive;
+     11580%positive;
+     11626%positive;
+     11631%positive;
+     11644%positive;
+     12092%positive;
+     12139%positive;
+     12143%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 5);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12074%positive, 3);
-     (12075%positive, 4);
-     (12076%positive, 1);
-     (12078%positive, 5);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+    [(9530%positive, 9);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 10);
+     (9594%positive, 2);
+     (9596%positive, 2);
+     (10027%positive, 4);
+     (10031%positive, 7);
+     (10043%positive, 5);
+     (10044%positive, 11);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 8);
+     (10107%positive, 5);
+     (10108%positive, 11);
+     (10111%positive, 1);
+     (11562%positive, 5);
+     (11578%positive, 8);
+     (11580%positive, 3);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11631%positive, 10);
+     (11642%positive, 2);
+     (11644%positive, 4);
+     (12074%positive, 13);
+     (12075%positive, 12);
+     (12079%positive, 7);
+     (12090%positive, 10);
+     (12091%positive, 12);
+     (12095%positive, 1);
+     (12138%positive, 13);
+     (12143%positive, 9);
+     (12154%positive, 2);
+     (12155%positive, 12);
+     (12156%positive, 10);
+     (12159%positive, 1)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10091%positive;
+     11580%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10095%positive;
+     11578%positive];
+   NgRankE
+    [(9530%positive, 8);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 9);
+     (9594%positive, 2);
+     (9596%positive, 2);
+     (10027%positive, 5);
+     (10031%positive, 7);
+     (10043%positive, 5);
+     (10044%positive, 10);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 3);
+     (10107%positive, 5);
+     (10108%positive, 10);
+     (10111%positive, 1);
+     (11562%positive, 6);
+     (11578%positive, 8);
+     (11580%positive, 4);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11631%positive, 9);
+     (11642%positive, 2);
+     (11644%positive, 4);
+     (12074%positive, 12);
+     (12075%positive, 11);
+     (12079%positive, 7);
+     (12090%positive, 10);
+     (12091%positive, 11);
+     (12095%positive, 1);
+     (12138%positive, 12);
+     (12143%positive, 9);
+     (12154%positive, 2);
+     (12155%positive, 11);
+     (12156%positive, 10);
+     (12159%positive, 1)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
+     (9528%positive, 1);
+     (9532%positive, 8);
+     (9533%positive, 2);
+     (9579%positive, 2);
+     (9596%positive, 8);
+     (9597%positive, 5);
+     (10027%positive, 10);
+     (10029%positive, 1);
+     (10040%positive, 6);
+     (10043%positive, 11);
+     (10044%positive, 1);
      (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
+     (10091%positive, 9);
+     (10093%positive, 1);
+     (10107%positive, 11);
+     (10108%positive, 1);
+     (10109%positive, 4);
+     (11576%positive, 1);
+     (11580%positive, 9);
+     (11581%positive, 2);
+     (11627%positive, 7);
      (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (11645%positive, 5);
+     (12075%positive, 2);
+     (12077%positive, 1);
+     (12088%positive, 5);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12139%positive, 2);
+     (12141%positive, 1);
+     (12155%positive, 2);
+     (12156%positive, 1);
+     (12157%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
-   NgPattE [S1] RgL 1
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
+    [10091%positive;
+     11580%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
+     (9528%positive, 1);
+     (9532%positive, 8);
+     (9533%positive, 2);
+     (9579%positive, 2);
+     (9596%positive, 8);
+     (9597%positive, 5);
+     (10027%positive, 11);
+     (10029%positive, 1);
+     (10040%positive, 6);
+     (10043%positive, 11);
+     (10044%positive, 1);
      (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
+     (10091%positive, 9);
+     (10093%positive, 1);
+     (10107%positive, 11);
+     (10108%positive, 1);
+     (10109%positive, 4);
+     (11576%positive, 1);
+     (11580%positive, 10);
+     (11581%positive, 2);
+     (11627%positive, 7);
      (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (11645%positive, 5);
+     (12075%positive, 2);
+     (12077%positive, 1);
+     (12088%positive, 5);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12093%positive, 2);
+     (12139%positive, 2);
+     (12141%positive, 1);
+     (12155%positive, 2);
+     (12156%positive, 1);
+     (12157%positive, 3)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
+    [(9512%positive, 8);
+     (9528%positive, 7);
+     (9529%positive, 7);
+     (9533%positive, 5);
+     (9593%positive, 6);
+     (9597%positive, 4);
+     (10029%positive, 2);
+     (10030%positive, 6);
+     (10040%positive, 5);
+     (10041%positive, 4);
      (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
+     (10046%positive, 5);
+     (10093%positive, 4);
+     (10094%positive, 6);
+     (10105%positive, 4);
      (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12074%positive, 9);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+     (10110%positive, 5);
+     (11566%positive, 5);
+     (11576%positive, 5);
+     (11577%positive, 7);
+     (11581%positive, 5);
+     (11582%positive, 5);
+     (11630%positive, 5);
+     (11641%positive, 6);
+     (11645%positive, 4);
+     (11646%positive, 5);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12078%positive, 3);
+     (12088%positive, 4);
+     (12089%positive, 3);
+     (12093%positive, 3);
+     (12094%positive, 3);
+     (12137%positive, 1);
+     (12141%positive, 3);
+     (12142%positive, 3);
+     (12153%positive, 3);
+     (12157%positive, 3);
+     (12158%positive, 3)];
+   NgPattE [S1; S0] RgA 1
+    []
+    [10045%positive;
+     10109%positive;
+     12078%positive;
+     12089%positive;
+     12093%positive;
+     12094%positive;
+     12141%positive;
+     12142%positive;
+     12153%positive;
+     12157%positive;
+     12158%positive];
+   NgRankE
+    [(9512%positive, 6);
+     (9528%positive, 9);
+     (9529%positive, 5);
+     (9533%positive, 3);
+     (9593%positive, 8);
+     (9597%positive, 6);
+     (10029%positive, 2);
+     (10030%positive, 4);
+     (10040%positive, 7);
+     (10041%positive, 5);
+     (10045%positive, 3);
+     (10046%positive, 7);
+     (10093%positive, 1);
+     (10094%positive, 4);
+     (10105%positive, 7);
+     (10109%positive, 5);
+     (10110%positive, 7);
+     (11566%positive, 6);
+     (11576%positive, 8);
+     (11577%positive, 5);
+     (11581%positive, 3);
+     (11582%positive, 8);
+     (11630%positive, 6);
+     (11641%positive, 8);
+     (11645%positive, 6);
+     (11646%positive, 8);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12078%positive, 4);
+     (12088%positive, 6);
+     (12093%positive, 3);
+     (12094%positive, 6);
+     (12137%positive, 1);
+     (12141%positive, 1);
+     (12142%positive, 4);
+     (12157%positive, 4);
+     (12158%positive, 6)];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
+    [(9512%positive, 6);
+     (9528%positive, 9);
+     (9529%positive, 5);
+     (9533%positive, 3);
+     (9593%positive, 8);
+     (9597%positive, 6);
+     (10029%positive, 2);
+     (10030%positive, 4);
+     (10040%positive, 7);
+     (10041%positive, 5);
      (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12074%positive, 9);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+     (10046%positive, 7);
+     (10093%positive, 1);
+     (10094%positive, 4);
+     (10105%positive, 7);
+     (10109%positive, 5);
+     (10110%positive, 7);
+     (11566%positive, 6);
+     (11576%positive, 8);
+     (11577%positive, 5);
+     (11581%positive, 3);
+     (11582%positive, 8);
+     (11630%positive, 6);
+     (11641%positive, 8);
+     (11645%positive, 6);
+     (11646%positive, 8);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12078%positive, 4);
+     (12088%positive, 6);
+     (12093%positive, 3);
+     (12094%positive, 6);
+     (12137%positive, 1);
+     (12141%positive, 1);
+     (12142%positive, 4);
+     (12157%positive, 4);
+     (12158%positive, 6)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_1RA1LD_1LC0LA : NeverQuasiHaltsSt tm_bulkr_00189.
+Theorem nqh_1RB0RD_1LC1LB_1LD1RB_1RA0LC : NeverQuasiHaltsSt tm_bulkr_00189.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 384 11 cert_bulkr_00189).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 680 12 cert_bulkr_00189).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_1RB1LD_1LB0LA: n=2 t=0 contexts=41 *)
+(** 1RB0RD_1LC1LD_1LD1LB_1RA0LC: n=2 t=0 contexts=77 *)
 
 Definition tm_bulkr_00190 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DR StB)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StB)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StB, S1 => Some (mkTrans S1 DL StD)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DL StB)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 
 Definition cert_bulkr_00190 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 11);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 10);
-     (10041%positive, 11);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 11);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12073%positive, 8);
-     (12074%positive, 7);
-     (12075%positive, 9);
-     (12078%positive, 10);
-     (12089%positive, 11);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+    [(9529%positive, 5);
+     (9530%positive, 4);
+     (9583%positive, 5);
+     (9593%positive, 5);
+     (9594%positive, 4);
+     (9597%positive, 4);
+     (10025%positive, 2);
+     (10029%positive, 1);
+     (10030%positive, 4);
+     (10031%positive, 2);
+     (10041%positive, 3);
+     (10045%positive, 3);
+     (10046%positive, 2);
+     (10047%positive, 3);
+     (10089%positive, 3);
+     (10093%positive, 1);
+     (10094%positive, 4);
+     (10095%positive, 3);
+     (10105%positive, 3);
+     (10109%positive, 3);
+     (10110%positive, 4);
+     (10111%positive, 3);
+     (11562%positive, 1);
+     (11566%positive, 3);
+     (11577%positive, 5);
+     (11578%positive, 3);
+     (11582%positive, 2);
+     (11626%positive, 1);
+     (11630%positive, 3);
+     (11631%positive, 5);
+     (11641%positive, 5);
+     (11642%positive, 3);
+     (11645%positive, 4);
+     (11646%positive, 3);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 1);
+     (12078%positive, 3);
+     (12079%positive, 2);
+     (12089%positive, 3);
+     (12090%positive, 3);
+     (12093%positive, 3);
+     (12094%positive, 2);
+     (12095%positive, 3);
+     (12137%positive, 3);
+     (12138%positive, 1);
+     (12141%positive, 1);
+     (12142%positive, 3);
+     (12143%positive, 3);
+     (12153%positive, 3);
+     (12154%positive, 3);
+     (12157%positive, 3);
+     (12158%positive, 3);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
+    [10041%positive;
+     10045%positive;
+     10047%positive;
+     10089%positive;
+     10095%positive;
+     10105%positive;
+     10109%positive;
+     10111%positive;
+     11566%positive;
+     11578%positive;
+     11630%positive;
+     11642%positive;
+     11646%positive;
+     12078%positive;
+     12089%positive;
+     12090%positive;
+     12093%positive;
+     12095%positive;
+     12137%positive;
+     12142%positive;
+     12143%positive;
+     12153%positive;
+     12154%positive;
+     12157%positive;
+     12158%positive;
+     12159%positive];
    NgRankE
-    [(9529%positive, 11);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 10);
-     (10041%positive, 11);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 11);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12073%positive, 8);
-     (12074%positive, 7);
-     (12075%positive, 9);
-     (12078%positive, 10);
-     (12089%positive, 11);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+    [(9529%positive, 10);
+     (9530%positive, 4);
+     (9583%positive, 13);
+     (9593%positive, 7);
+     (9594%positive, 12);
+     (9597%positive, 12);
+     (10025%positive, 2);
+     (10029%positive, 1);
+     (10030%positive, 7);
+     (10031%positive, 2);
+     (10041%positive, 9);
+     (10045%positive, 5);
+     (10046%positive, 2);
+     (10047%positive, 11);
+     (10089%positive, 6);
+     (10093%positive, 1);
+     (10094%positive, 9);
+     (10095%positive, 3);
+     (10105%positive, 3);
+     (10110%positive, 6);
+     (10111%positive, 3);
+     (11562%positive, 1);
+     (11566%positive, 7);
+     (11577%positive, 10);
+     (11578%positive, 3);
+     (11582%positive, 2);
+     (11626%positive, 1);
+     (11630%positive, 10);
+     (11631%positive, 13);
+     (11641%positive, 7);
+     (11645%positive, 12);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 1);
+     (12078%positive, 7);
+     (12079%positive, 2);
+     (12089%positive, 8);
+     (12090%positive, 5);
+     (12093%positive, 5);
+     (12094%positive, 2);
+     (12095%positive, 11);
+     (12137%positive, 6);
+     (12138%positive, 1);
+     (12141%positive, 1);
+     (12142%positive, 8);
+     (12143%positive, 4);
+     (12153%positive, 3);
+     (12159%positive, 3)];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10095%positive;
+     11578%positive];
+   NgPattE [S1; S0] RgA 1
+    []
+    [12089%positive;
+     12142%positive];
+   NgRankE
+    [(9529%positive, 10);
+     (9530%positive, 3);
+     (9583%positive, 14);
+     (9593%positive, 7);
+     (9594%positive, 13);
+     (9597%positive, 13);
+     (10025%positive, 2);
+     (10029%positive, 1);
+     (10030%positive, 7);
+     (10031%positive, 2);
+     (10041%positive, 10);
+     (10045%positive, 5);
+     (10046%positive, 2);
+     (10047%positive, 12);
+     (10089%positive, 6);
+     (10093%positive, 1);
+     (10094%positive, 9);
+     (10095%positive, 1);
+     (10105%positive, 3);
+     (10110%positive, 6);
+     (10111%positive, 3);
+     (11562%positive, 1);
+     (11566%positive, 7);
+     (11577%positive, 10);
+     (11578%positive, 3);
+     (11582%positive, 2);
+     (11626%positive, 1);
+     (11630%positive, 11);
+     (11631%positive, 14);
+     (11641%positive, 7);
+     (11645%positive, 13);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 1);
+     (12078%positive, 7);
+     (12079%positive, 2);
+     (12089%positive, 8);
+     (12090%positive, 5);
+     (12093%positive, 5);
+     (12094%positive, 2);
+     (12095%positive, 12);
+     (12137%positive, 6);
+     (12138%positive, 1);
+     (12141%positive, 1);
+     (12142%positive, 9);
+     (12143%positive, 4);
+     (12153%positive, 3);
+     (12159%positive, 3)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
+    [(9530%positive, 3);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 3);
+     (9594%positive, 2);
+     (9596%positive, 2);
+     (10027%positive, 3);
+     (10031%positive, 3);
+     (10043%positive, 3);
+     (10044%positive, 3);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 3);
+     (10107%positive, 3);
      (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12076%positive, 1);
-     (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (10111%positive, 1);
+     (11562%positive, 3);
+     (11578%positive, 3);
+     (11580%positive, 3);
+     (11626%positive, 3);
+     (11627%positive, 1);
+     (11631%positive, 3);
+     (11642%positive, 2);
+     (11644%positive, 3);
+     (12074%positive, 5);
+     (12075%positive, 4);
+     (12079%positive, 4);
+     (12090%positive, 5);
+     (12091%positive, 5);
+     (12092%positive, 3);
+     (12095%positive, 1);
+     (12138%positive, 6);
+     (12139%positive, 3);
+     (12143%positive, 3);
+     (12154%positive, 2);
+     (12155%positive, 5);
+     (12156%positive, 4);
+     (12159%positive, 1)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [9530%positive;
+     9583%positive;
+     10027%positive;
+     10031%positive;
+     10043%positive;
+     10044%positive;
+     10091%positive;
+     10095%positive;
+     10107%positive;
+     11562%positive;
+     11578%positive;
+     11580%positive;
+     11626%positive;
+     11631%positive;
+     11644%positive;
+     12092%positive;
+     12139%positive;
+     12143%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 1);
-     (10044%positive, 2);
-     (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12076%positive, 1);
-     (12078%positive, 1);
-     (12079%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
-     (12159%positive, 6)]]
+    [(9530%positive, 9);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 10);
+     (9594%positive, 2);
+     (9596%positive, 2);
+     (10027%positive, 4);
+     (10031%positive, 7);
+     (10043%positive, 5);
+     (10044%positive, 11);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 8);
+     (10107%positive, 5);
+     (10108%positive, 11);
+     (10111%positive, 1);
+     (11562%positive, 5);
+     (11578%positive, 8);
+     (11580%positive, 3);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11631%positive, 10);
+     (11642%positive, 2);
+     (11644%positive, 4);
+     (12074%positive, 13);
+     (12075%positive, 12);
+     (12079%positive, 7);
+     (12090%positive, 10);
+     (12091%positive, 12);
+     (12095%positive, 1);
+     (12138%positive, 13);
+     (12143%positive, 9);
+     (12154%positive, 2);
+     (12155%positive, 12);
+     (12156%positive, 10);
+     (12159%positive, 1)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10091%positive;
+     11580%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10095%positive;
+     11578%positive];
+   NgRankE
+    [(9530%positive, 8);
+     (9532%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 9);
+     (9594%positive, 2);
+     (9596%positive, 2);
+     (10027%positive, 5);
+     (10031%positive, 7);
+     (10043%positive, 5);
+     (10044%positive, 10);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 3);
+     (10107%positive, 5);
+     (10108%positive, 10);
+     (10111%positive, 1);
+     (11562%positive, 6);
+     (11578%positive, 8);
+     (11580%positive, 4);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11631%positive, 9);
+     (11642%positive, 2);
+     (11644%positive, 4);
+     (12074%positive, 12);
+     (12075%positive, 11);
+     (12079%positive, 7);
+     (12090%positive, 10);
+     (12091%positive, 11);
+     (12095%positive, 1);
+     (12138%positive, 12);
+     (12143%positive, 9);
+     (12154%positive, 2);
+     (12155%positive, 11);
+     (12156%positive, 10);
+     (12159%positive, 1)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
+     (9528%positive, 1);
+     (9532%positive, 4);
+     (9579%positive, 2);
+     (9596%positive, 4);
      (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
+     (10027%positive, 6);
+     (10029%positive, 3);
+     (10040%positive, 2);
+     (10043%positive, 7);
+     (10044%positive, 1);
+     (10045%positive, 1);
+     (10091%positive, 5);
+     (10093%positive, 3);
+     (10107%positive, 7);
+     (10108%positive, 1);
+     (10109%positive, 1);
+     (11576%positive, 1);
+     (11580%positive, 5);
+     (11627%positive, 3);
+     (11644%positive, 6);
      (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (12075%positive, 2);
+     (12077%positive, 3);
+     (12088%positive, 2);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12093%positive, 1);
+     (12139%positive, 2);
+     (12141%positive, 3);
+     (12155%positive, 2);
+     (12156%positive, 1);
+     (12157%positive, 1)];
+   NgPattE [S1; S0] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [10091%positive;
+     11580%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
+     (9528%positive, 1);
+     (9532%positive, 4);
+     (9579%positive, 2);
+     (9596%positive, 4);
      (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
+     (10027%positive, 7);
+     (10029%positive, 3);
+     (10040%positive, 2);
+     (10043%positive, 7);
+     (10044%positive, 1);
+     (10045%positive, 1);
+     (10091%positive, 5);
+     (10093%positive, 3);
+     (10107%positive, 7);
+     (10108%positive, 1);
+     (10109%positive, 1);
+     (11576%positive, 1);
+     (11580%positive, 6);
+     (11627%positive, 3);
+     (11644%positive, 6);
      (11645%positive, 1);
-     (12072%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (12075%positive, 2);
+     (12077%positive, 3);
+     (12088%positive, 2);
+     (12091%positive, 2);
+     (12092%positive, 1);
+     (12093%positive, 1);
+     (12139%positive, 2);
+     (12141%positive, 3);
+     (12155%positive, 2);
+     (12156%positive, 1);
+     (12157%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 7);
-     (12074%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 6);
+     (9528%positive, 3);
+     (9529%positive, 5);
+     (9593%positive, 2);
+     (10025%positive, 1);
+     (10030%positive, 2);
+     (10040%positive, 1);
+     (10041%positive, 4);
+     (10046%positive, 1);
+     (10089%positive, 1);
+     (10094%positive, 4);
+     (10105%positive, 2);
+     (10110%positive, 1);
+     (11566%positive, 2);
+     (11576%positive, 3);
+     (11577%positive, 5);
+     (11582%positive, 1);
+     (11630%positive, 5);
+     (11641%positive, 2);
+     (11646%positive, 1);
+     (12073%positive, 1);
+     (12078%positive, 2);
+     (12088%positive, 1);
+     (12089%positive, 3);
+     (12094%positive, 1);
+     (12137%positive, 1);
+     (12142%positive, 3);
+     (12153%positive, 2);
+     (12158%positive, 1)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12089%positive;
+     12142%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12073%positive, 7);
-     (12074%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(9512%positive, 6);
+     (9528%positive, 3);
+     (9529%positive, 5);
+     (9593%positive, 2);
+     (10025%positive, 1);
+     (10030%positive, 2);
+     (10040%positive, 1);
+     (10041%positive, 5);
+     (10046%positive, 1);
+     (10089%positive, 1);
+     (10094%positive, 4);
+     (10105%positive, 2);
+     (10110%positive, 1);
+     (11566%positive, 2);
+     (11576%positive, 3);
+     (11577%positive, 5);
+     (11582%positive, 1);
+     (11630%positive, 6);
+     (11641%positive, 2);
+     (11646%positive, 1);
+     (12073%positive, 1);
+     (12078%positive, 2);
+     (12088%positive, 1);
+     (12089%positive, 3);
+     (12094%positive, 1);
+     (12137%positive, 1);
+     (12142%positive, 4);
+     (12153%positive, 2);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_1RB1LD_1LB0LA : NeverQuasiHaltsSt tm_bulkr_00190.
+Theorem nqh_1RB0RD_1LC1LD_1LD1LB_1RA0LC : NeverQuasiHaltsSt tm_bulkr_00190.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 392 11 cert_bulkr_00190).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 680 12 cert_bulkr_00190).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RB_1RB1LD_1LC0LA: n=2 t=0 contexts=40 *)
+(** 1RB0RD_1LC1RA_1RB1LC_0LA1RD: n=2 t=0 contexts=41 *)
 
 Definition tm_bulkr_00191 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StB, S1 => Some (mkTrans S1 DR StA)
   | StC, S0 => Some (mkTrans S1 DR StB)
-  | StC, S1 => Some (mkTrans S1 DL StD)
-  | StD, S0 => Some (mkTrans S1 DL StC)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00191 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 10);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 9);
-     (10041%positive, 10);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 10);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12074%positive, 7);
-     (12075%positive, 8);
-     (12078%positive, 9);
-     (12089%positive, 10);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)];
-   NgPattE [S1] RgR 1
+    [(9529%positive, 3);
+     (9535%positive, 1);
+     (9583%positive, 1);
+     (9593%positive, 6);
+     (9599%positive, 1);
+     (10030%positive, 2);
+     (10046%positive, 3);
+     (10047%positive, 2);
+     (10094%positive, 2);
+     (10095%positive, 2);
+     (10110%positive, 5);
+     (10111%positive, 2);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12090%positive, 1);
+     (12094%positive, 3);
+     (12095%positive, 4);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 5);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(9529%positive, 10);
-     (9533%positive, 3);
-     (9593%positive, 2);
-     (9597%positive, 3);
-     (10030%positive, 9);
-     (10041%positive, 10);
-     (10045%positive, 4);
-     (10046%positive, 1);
-     (10105%positive, 2);
-     (10109%positive, 4);
-     (10110%positive, 1);
-     (11577%positive, 10);
-     (11581%positive, 3);
-     (11641%positive, 2);
-     (11645%positive, 3);
-     (12074%positive, 7);
-     (12075%positive, 8);
-     (12078%positive, 9);
-     (12089%positive, 10);
-     (12093%positive, 6);
-     (12094%positive, 1);
-     (12153%positive, 2);
-     (12157%positive, 5);
-     (12158%positive, 1)]]
+    [(9529%positive, 3);
+     (9535%positive, 1);
+     (9583%positive, 1);
+     (9593%positive, 6);
+     (9599%positive, 1);
+     (10030%positive, 2);
+     (10046%positive, 3);
+     (10047%positive, 2);
+     (10094%positive, 2);
+     (10095%positive, 2);
+     (10110%positive, 5);
+     (10111%positive, 2);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12090%positive, 1);
+     (12094%positive, 3);
+     (12095%positive, 4);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 5);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 3)]]
   | StB =>
   [NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
+    [(9515%positive, 1);
+     (9516%positive, 2);
+     (9531%positive, 3);
+     (9532%positive, 2);
+     (9535%positive, 4);
+     (9579%positive, 1);
+     (9580%positive, 2);
+     (9583%positive, 4);
+     (9595%positive, 3);
+     (9596%positive, 2);
+     (9599%positive, 4);
+     (10030%positive, 1);
      (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12079%positive, 1);
-     (12092%positive, 2);
+     (10047%positive, 5);
+     (10094%positive, 1);
+     (10095%positive, 5);
+     (10108%positive, 5);
+     (10110%positive, 4);
+     (10111%positive, 5);
+     (12078%positive, 1);
      (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
+     (12095%positive, 7);
+     (12142%positive, 1);
+     (12143%positive, 8);
+     (12156%positive, 9);
+     (12158%positive, 3);
      (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12158%positive];
    NgRankE
-    [(10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
+    [(9515%positive, 1);
+     (9516%positive, 2);
+     (9531%positive, 3);
+     (9532%positive, 2);
+     (9535%positive, 4);
+     (9579%positive, 1);
+     (9580%positive, 2);
+     (9583%positive, 4);
+     (9595%positive, 3);
+     (9596%positive, 2);
+     (9599%positive, 4);
+     (10030%positive, 1);
      (10046%positive, 2);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11644%positive, 5);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12078%positive, 2);
-     (12079%positive, 1);
-     (12092%positive, 2);
+     (10047%positive, 5);
+     (10094%positive, 1);
+     (10095%positive, 5);
+     (10108%positive, 5);
+     (10110%positive, 4);
+     (10111%positive, 5);
+     (12078%positive, 1);
      (12094%positive, 2);
-     (12095%positive, 2);
-     (12156%positive, 3);
-     (12158%positive, 7);
+     (12095%positive, 7);
+     (12142%positive, 1);
+     (12143%positive, 8);
+     (12156%positive, 9);
+     (12158%positive, 3);
      (12159%positive, 6)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)];
-   NgPattE [S1] RgR 1
+     (9515%positive, 2);
+     (9516%positive, 3);
+     (9528%positive, 1);
+     (9531%positive, 4);
+     (9532%positive, 3);
+     (9535%positive, 5);
+     (9576%positive, 1);
+     (9579%positive, 2);
+     (9580%positive, 3);
+     (9583%positive, 5);
+     (9592%positive, 1);
+     (9595%positive, 4);
+     (9596%positive, 3);
+     (9599%positive, 5);
+     (10045%positive, 4);
+     (10047%positive, 6);
+     (10095%positive, 6);
+     (10108%positive, 6);
+     (10109%positive, 4);
+     (10111%positive, 6);
+     (12093%positive, 11);
+     (12095%positive, 8);
+     (12143%positive, 9);
+     (12156%positive, 10);
+     (12157%positive, 11);
+     (12159%positive, 7)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9533%positive, 1);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10044%positive, 7);
-     (10045%positive, 2);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (12072%positive, 5);
-     (12076%positive, 6);
-     (12079%positive, 2);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12156%positive, 8);
-     (12157%positive, 3);
-     (12159%positive, 11)]]
+     (9515%positive, 2);
+     (9516%positive, 3);
+     (9528%positive, 1);
+     (9531%positive, 4);
+     (9532%positive, 3);
+     (9535%positive, 5);
+     (9576%positive, 1);
+     (9579%positive, 2);
+     (9580%positive, 3);
+     (9583%positive, 5);
+     (9592%positive, 1);
+     (9595%positive, 4);
+     (9596%positive, 3);
+     (9599%positive, 5);
+     (10045%positive, 4);
+     (10047%positive, 6);
+     (10095%positive, 6);
+     (10108%positive, 6);
+     (10109%positive, 4);
+     (10111%positive, 6);
+     (12093%positive, 11);
+     (12095%positive, 8);
+     (12143%positive, 9);
+     (12156%positive, 10);
+     (12157%positive, 11);
+     (12159%positive, 7)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12074%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 5);
+     (9528%positive, 8);
+     (9529%positive, 4);
+     (9576%positive, 5);
+     (9592%positive, 8);
+     (9593%positive, 7);
+     (10030%positive, 3);
+     (10045%positive, 1);
+     (10046%positive, 4);
+     (10094%positive, 3);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12158%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9529%positive, 1);
-     (9533%positive, 2);
-     (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12074%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+    [(9512%positive, 5);
+     (9528%positive, 8);
+     (9529%positive, 4);
+     (9576%positive, 5);
+     (9592%positive, 8);
+     (9593%positive, 7);
+     (10030%positive, 3);
+     (10045%positive, 1);
+     (10046%positive, 4);
+     (10094%positive, 3);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RB_1RB1LD_1LC0LA : NeverQuasiHaltsSt tm_bulkr_00191.
+Theorem nqh_1RB0RD_1LC1RA_1RB1LC_0LA1RD : NeverQuasiHaltsSt tm_bulkr_00191.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 384 11 cert_bulkr_00191).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 392 11 cert_bulkr_00191).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RD_0LB1RC_1LA0RC: n=2 t=0 contexts=41 *)
+(** 1RB0RD_1LC1RA_1RB1LC_1LC1RD: n=2 t=0 contexts=38 *)
 
 Definition tm_bulkr_00192 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S0 DL StB)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S0 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DR StB)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00192 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9517%positive, 1);
-     (9529%positive, 5);
-     (9530%positive, 2);
-     (9533%positive, 1);
-     (9534%positive, 3);
-     (9578%positive, 6);
-     (9581%positive, 1);
-     (9582%positive, 3);
-     (9593%positive, 5);
-     (9594%positive, 2);
-     (9597%positive, 1);
-     (9598%positive, 3);
+    [(9529%positive, 3);
+     (9531%positive, 3);
+     (9535%positive, 7);
+     (9579%positive, 2);
+     (9583%positive, 4);
+     (9593%positive, 6);
+     (9595%positive, 6);
      (9599%positive, 7);
-     (10030%positive, 4);
-     (10045%positive, 8);
-     (10046%positive, 4);
-     (10094%positive, 4);
-     (10109%positive, 8);
-     (10110%positive, 4);
-     (10111%positive, 4);
-     (12093%positive, 9);
-     (12094%positive, 6);
-     (12142%positive, 7);
-     (12157%positive, 9);
-     (12158%positive, 5);
-     (12159%positive, 8)];
-   NgPattE [S1] RgR 1
+     (10030%positive, 2);
+     (10042%positive, 1);
+     (10046%positive, 3);
+     (10047%positive, 8);
+     (10094%positive, 2);
+     (10095%positive, 8);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (10111%positive, 8);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12090%positive, 1);
+     (12094%positive, 3);
+     (12095%positive, 10);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 11);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 9)];
+   NgPattE [S1; S1] RgL 1
     []
     [12158%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
    NgRankE
-    [(9517%positive, 1);
-     (9529%positive, 5);
-     (9530%positive, 2);
-     (9533%positive, 1);
-     (9534%positive, 3);
-     (9578%positive, 6);
-     (9581%positive, 1);
-     (9582%positive, 3);
-     (9593%positive, 5);
-     (9594%positive, 2);
-     (9597%positive, 1);
-     (9598%positive, 3);
+    [(9529%positive, 3);
+     (9531%positive, 3);
+     (9535%positive, 7);
+     (9579%positive, 2);
+     (9583%positive, 4);
+     (9593%positive, 6);
+     (9595%positive, 6);
      (9599%positive, 7);
-     (10030%positive, 4);
-     (10045%positive, 8);
-     (10046%positive, 4);
-     (10094%positive, 4);
-     (10109%positive, 8);
-     (10110%positive, 4);
-     (10111%positive, 4);
-     (12093%positive, 9);
-     (12094%positive, 6);
-     (12142%positive, 7);
-     (12157%positive, 9);
-     (12158%positive, 5);
-     (12159%positive, 8)]]
+     (10030%positive, 2);
+     (10042%positive, 1);
+     (10046%positive, 3);
+     (10047%positive, 8);
+     (10094%positive, 2);
+     (10095%positive, 8);
+     (10106%positive, 1);
+     (10110%positive, 5);
+     (10111%positive, 8);
+     (12074%positive, 1);
+     (12078%positive, 2);
+     (12090%positive, 1);
+     (12094%positive, 3);
+     (12095%positive, 10);
+     (12138%positive, 1);
+     (12142%positive, 2);
+     (12143%positive, 11);
+     (12154%positive, 1);
+     (12158%positive, 4);
+     (12159%positive, 9)]]
   | StB =>
   [NgRankE
     [(9531%positive, 2);
-     (9534%positive, 1);
-     (9582%positive, 1);
+     (9535%positive, 6);
+     (9579%positive, 1);
+     (9583%positive, 3);
      (9595%positive, 5);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
+     (9596%positive, 2);
+     (9599%positive, 6);
+     (10030%positive, 1);
      (10046%positive, 2);
-     (10092%positive, 1);
-     (10094%positive, 2);
+     (10047%positive, 7);
+     (10094%positive, 1);
+     (10095%positive, 7);
      (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 4);
-     (12140%positive, 1);
-     (12142%positive, 5);
-     (12156%positive, 3);
+     (10110%positive, 4);
+     (10111%positive, 7);
+     (12078%positive, 1);
+     (12094%positive, 2);
+     (12095%positive, 9);
+     (12142%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
      (12158%positive, 3);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+     (12159%positive, 8)];
+   NgPattE [S1; S1] RgL 1
     []
     [12158%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
    NgRankE
     [(9531%positive, 2);
-     (9534%positive, 1);
-     (9582%positive, 1);
+     (9535%positive, 6);
+     (9579%positive, 1);
+     (9583%positive, 3);
      (9595%positive, 5);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10028%positive, 1);
-     (10030%positive, 2);
-     (10044%positive, 2);
+     (9596%positive, 2);
+     (9599%positive, 6);
+     (10030%positive, 1);
      (10046%positive, 2);
-     (10092%positive, 1);
-     (10094%positive, 2);
+     (10047%positive, 7);
+     (10094%positive, 1);
+     (10095%positive, 7);
      (10108%positive, 4);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 4);
-     (12140%positive, 1);
-     (12142%positive, 5);
-     (12156%positive, 3);
+     (10110%positive, 4);
+     (10111%positive, 7);
+     (12078%positive, 1);
+     (12094%positive, 2);
+     (12095%positive, 9);
+     (12142%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
      (12158%positive, 3);
-     (12159%positive, 6)]]
+     (12159%positive, 8)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9517%positive, 5);
-     (9531%positive, 4);
-     (9533%positive, 8);
-     (9581%positive, 5);
-     (9595%positive, 7);
-     (9597%positive, 8);
-     (10028%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+     (9535%positive, 1);
+     (9583%positive, 1);
+     (9592%positive, 1);
+     (9596%positive, 1);
+     (9597%positive, 2);
+     (9599%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10109%positive, 2);
+     (10111%positive, 2);
+     (12093%positive, 7);
+     (12095%positive, 4);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 7);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9517%positive, 5);
-     (9531%positive, 4);
-     (9533%positive, 8);
-     (9581%positive, 5);
-     (9595%positive, 7);
-     (9597%positive, 8);
-     (10028%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)]]
+     (9535%positive, 1);
+     (9583%positive, 1);
+     (9592%positive, 1);
+     (9596%positive, 1);
+     (9597%positive, 2);
+     (9599%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10109%positive, 2);
+     (10111%positive, 2);
+     (12093%positive, 7);
+     (12095%positive, 4);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 7);
+     (12159%positive, 3)]]
   | StD =>
   [NgRankE
     [(9512%positive, 5);
      (9529%positive, 4);
-     (9530%positive, 1);
-     (9534%positive, 2);
-     (9578%positive, 5);
-     (9582%positive, 2);
-     (9593%positive, 4);
-     (9594%positive, 1);
-     (9598%positive, 2);
-     (10028%positive, 2);
+     (9592%positive, 8);
+     (9593%positive, 7);
+     (9597%positive, 9);
      (10030%positive, 3);
-     (10044%positive, 3);
-     (10046%positive, 3);
-     (10092%positive, 2);
+     (10042%positive, 10);
+     (10045%positive, 1);
+     (10046%positive, 4);
      (10094%positive, 3);
-     (10108%positive, 5);
-     (10110%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12094%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 4)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+     (10106%positive, 10);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)];
+   NgPattE [S1; S1] RgL 1
     []
     [12158%positive];
    NgRankE
     [(9512%positive, 5);
      (9529%positive, 4);
-     (9530%positive, 1);
-     (9534%positive, 2);
-     (9578%positive, 5);
-     (9582%positive, 2);
-     (9593%positive, 4);
-     (9594%positive, 1);
-     (9598%positive, 2);
-     (10028%positive, 2);
+     (9592%positive, 8);
+     (9593%positive, 7);
+     (9597%positive, 9);
      (10030%positive, 3);
-     (10044%positive, 3);
-     (10046%positive, 3);
-     (10092%positive, 2);
+     (10042%positive, 10);
+     (10045%positive, 1);
+     (10046%positive, 4);
      (10094%positive, 3);
-     (10108%positive, 5);
-     (10110%positive, 3);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12094%positive, 5);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 6);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 4)]]
+     (10106%positive, 10);
+     (10109%positive, 1);
+     (10110%positive, 6);
+     (12074%positive, 2);
+     (12078%positive, 3);
+     (12090%positive, 2);
+     (12093%positive, 1);
+     (12094%positive, 4);
+     (12138%positive, 2);
+     (12142%positive, 3);
+     (12154%positive, 2);
+     (12157%positive, 1);
+     (12158%positive, 5)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RD_0LB1RC_1LA0RC : NeverQuasiHaltsSt tm_bulkr_00192.
+Theorem nqh_1RB0RD_1LC1RA_1RB1LC_1LC1RD : NeverQuasiHaltsSt tm_bulkr_00192.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 392 11 cert_bulkr_00192).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 368 11 cert_bulkr_00192).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RD_1LA1RC_0RB0RC: n=2 t=0 contexts=41 *)
+(** 1RB0RD_1LC1RD_1LD1LB_1RA0LC: n=2 t=0 contexts=91 *)
 
 Definition tm_bulkr_00193 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
   | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S0 DR StB)
-  | StD, S1 => Some (mkTrans S0 DR StC)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DL StB)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 
 Definition cert_bulkr_00193 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 3);
-     (9534%positive, 1);
-     (9577%positive, 1);
-     (9582%positive, 1);
-     (9595%positive, 2);
-     (9597%positive, 3);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10030%positive, 2);
-     (10045%positive, 2);
-     (10046%positive, 2);
-     (10094%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12093%positive, 7);
-     (12094%positive, 4);
-     (12142%positive, 5);
-     (12157%positive, 7);
+    [(9518%positive, 3);
+     (9529%positive, 5);
+     (9530%positive, 4);
+     (9534%positive, 3);
+     (9535%positive, 3);
+     (9582%positive, 3);
+     (9583%positive, 5);
+     (9593%positive, 5);
+     (9594%positive, 4);
+     (9597%positive, 1);
+     (9598%positive, 3);
+     (9599%positive, 3);
+     (10025%positive, 2);
+     (10029%positive, 3);
+     (10030%positive, 4);
+     (10031%positive, 2);
+     (10041%positive, 3);
+     (10045%positive, 3);
+     (10046%positive, 4);
+     (10047%positive, 3);
+     (10089%positive, 3);
+     (10093%positive, 3);
+     (10094%positive, 4);
+     (10095%positive, 3);
+     (10105%positive, 3);
+     (10109%positive, 3);
+     (10110%positive, 4);
+     (10111%positive, 3);
+     (11562%positive, 1);
+     (11566%positive, 3);
+     (11577%positive, 5);
+     (11578%positive, 3);
+     (11582%positive, 3);
+     (11583%positive, 3);
+     (11626%positive, 1);
+     (11630%positive, 3);
+     (11631%positive, 5);
+     (11641%positive, 5);
+     (11642%positive, 3);
+     (11645%positive, 1);
+     (11646%positive, 3);
+     (11647%positive, 3);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 3);
+     (12078%positive, 3);
+     (12079%positive, 2);
+     (12089%positive, 3);
+     (12090%positive, 3);
+     (12093%positive, 3);
+     (12094%positive, 3);
+     (12095%positive, 3);
+     (12137%positive, 3);
+     (12138%positive, 1);
+     (12141%positive, 3);
+     (12142%positive, 3);
+     (12143%positive, 3);
+     (12153%positive, 3);
+     (12154%positive, 3);
+     (12157%positive, 3);
      (12158%positive, 3);
-     (12159%positive, 6)];
-   NgPattE [S1] RgR 1
+     (12159%positive, 3)];
+   NgPattE [S1; S0] RgL 1
     []
-    [12158%positive];
+    [9518%positive;
+     9534%positive;
+     9535%positive;
+     9582%positive;
+     9598%positive;
+     9599%positive;
+     10029%positive;
+     10041%positive;
+     10045%positive;
+     10047%positive;
+     10089%positive;
+     10093%positive;
+     10095%positive;
+     10105%positive;
+     10109%positive;
+     10111%positive;
+     11566%positive;
+     11578%positive;
+     11582%positive;
+     11583%positive;
+     11630%positive;
+     11642%positive;
+     11646%positive;
+     11647%positive;
+     12077%positive;
+     12078%positive;
+     12089%positive;
+     12090%positive;
+     12093%positive;
+     12094%positive;
+     12095%positive;
+     12137%positive;
+     12141%positive;
+     12142%positive;
+     12143%positive;
+     12153%positive;
+     12154%positive;
+     12157%positive;
+     12158%positive;
+     12159%positive];
    NgRankE
-    [(9529%positive, 3);
-     (9534%positive, 1);
-     (9577%positive, 1);
-     (9582%positive, 1);
-     (9595%positive, 2);
-     (9597%positive, 3);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10030%positive, 2);
-     (10045%positive, 2);
-     (10046%positive, 2);
-     (10094%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12093%positive, 7);
-     (12094%positive, 4);
-     (12142%positive, 5);
-     (12157%positive, 7);
-     (12158%positive, 3);
-     (12159%positive, 6)]]
+    [(9518%positive, 3);
+     (9529%positive, 14);
+     (9530%positive, 3);
+     (9534%positive, 6);
+     (9535%positive, 4);
+     (9583%positive, 11);
+     (9593%positive, 12);
+     (9594%positive, 10);
+     (9597%positive, 1);
+     (9598%positive, 7);
+     (9599%positive, 7);
+     (10025%positive, 2);
+     (10029%positive, 5);
+     (10030%positive, 3);
+     (10031%positive, 2);
+     (10041%positive, 4);
+     (10045%positive, 7);
+     (10046%positive, 6);
+     (10047%positive, 4);
+     (10093%positive, 5);
+     (10094%positive, 13);
+     (10105%positive, 12);
+     (10109%positive, 7);
+     (10110%positive, 11);
+     (10111%positive, 9);
+     (11562%positive, 1);
+     (11566%positive, 3);
+     (11577%positive, 14);
+     (11578%positive, 3);
+     (11582%positive, 6);
+     (11583%positive, 4);
+     (11626%positive, 1);
+     (11631%positive, 11);
+     (11641%positive, 12);
+     (11642%positive, 10);
+     (11645%positive, 1);
+     (11646%positive, 8);
+     (11647%positive, 7);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 5);
+     (12078%positive, 3);
+     (12079%positive, 2);
+     (12089%positive, 4);
+     (12090%positive, 3);
+     (12093%positive, 10);
+     (12094%positive, 6);
+     (12095%positive, 4);
+     (12138%positive, 1);
+     (12141%positive, 5);
+     (12153%positive, 12);
+     (12154%positive, 10);
+     (12157%positive, 10);
+     (12158%positive, 11);
+     (12159%positive, 9)];
+   NgPattE [S1; S1] RgA 1
+    []
+    [9598%positive;
+     9599%positive;
+     10045%positive;
+     10109%positive;
+     11647%positive];
+   NgRankE
+    [(9518%positive, 3);
+     (9529%positive, 15);
+     (9530%positive, 3);
+     (9534%positive, 6);
+     (9535%positive, 4);
+     (9583%positive, 12);
+     (9593%positive, 13);
+     (9594%positive, 11);
+     (9597%positive, 1);
+     (9598%positive, 9);
+     (9599%positive, 7);
+     (10025%positive, 2);
+     (10029%positive, 5);
+     (10030%positive, 3);
+     (10031%positive, 2);
+     (10041%positive, 4);
+     (10045%positive, 8);
+     (10046%positive, 6);
+     (10047%positive, 4);
+     (10093%positive, 5);
+     (10094%positive, 14);
+     (10105%positive, 13);
+     (10109%positive, 8);
+     (10110%positive, 12);
+     (10111%positive, 10);
+     (11562%positive, 1);
+     (11566%positive, 3);
+     (11577%positive, 15);
+     (11578%positive, 3);
+     (11582%positive, 6);
+     (11583%positive, 4);
+     (11626%positive, 1);
+     (11631%positive, 12);
+     (11641%positive, 13);
+     (11642%positive, 11);
+     (11645%positive, 1);
+     (11646%positive, 9);
+     (11647%positive, 7);
+     (12073%positive, 2);
+     (12074%positive, 1);
+     (12077%positive, 5);
+     (12078%positive, 3);
+     (12079%positive, 2);
+     (12089%positive, 4);
+     (12090%positive, 3);
+     (12093%positive, 11);
+     (12094%positive, 6);
+     (12095%positive, 4);
+     (12138%positive, 1);
+     (12141%positive, 5);
+     (12153%positive, 13);
+     (12154%positive, 11);
+     (12157%positive, 11);
+     (12158%positive, 12);
+     (12159%positive, 10)]]
   | StB =>
   [NgRankE
-    [(9530%positive, 2);
-     (9534%positive, 6);
-     (9578%positive, 1);
-     (9582%positive, 3);
-     (9594%positive, 5);
-     (9598%positive, 6);
-     (9599%positive, 2);
-     (10028%positive, 1);
-     (10030%positive, 7);
-     (10042%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 7);
-     (10092%positive, 1);
-     (10094%positive, 7);
-     (10106%positive, 4);
+    [(9530%positive, 3);
+     (9532%positive, 2);
+     (9535%positive, 1);
+     (9579%positive, 1);
+     (9583%positive, 3);
+     (9594%positive, 2);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9599%positive, 1);
+     (10027%positive, 3);
+     (10031%positive, 3);
+     (10043%positive, 3);
+     (10044%positive, 3);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 3);
+     (10107%positive, 3);
      (10108%positive, 4);
-     (10110%positive, 7);
-     (10111%positive, 4);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 9);
-     (12140%positive, 1);
-     (12142%positive, 10);
-     (12156%positive, 3);
-     (12158%positive, 8);
-     (12159%positive, 11)];
-   NgPattE [S1] RgL 1
+     (10111%positive, 1);
+     (11562%positive, 3);
+     (11578%positive, 3);
+     (11580%positive, 3);
+     (11583%positive, 1);
+     (11626%positive, 3);
+     (11627%positive, 1);
+     (11631%positive, 3);
+     (11642%positive, 2);
+     (11643%positive, 1);
+     (11644%positive, 3);
+     (11647%positive, 1);
+     (12074%positive, 5);
+     (12075%positive, 4);
+     (12079%positive, 4);
+     (12090%positive, 5);
+     (12091%positive, 5);
+     (12092%positive, 3);
+     (12095%positive, 1);
+     (12138%positive, 6);
+     (12139%positive, 3);
+     (12143%positive, 3);
+     (12154%positive, 2);
+     (12155%positive, 5);
+     (12156%positive, 4);
+     (12159%positive, 1)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
+    [9530%positive;
+     9583%positive;
+     10027%positive;
+     10031%positive;
+     10043%positive;
+     10044%positive;
+     10091%positive;
+     10095%positive;
+     10107%positive;
+     11562%positive;
+     11578%positive;
+     11580%positive;
+     11626%positive;
+     11631%positive;
+     11644%positive;
+     12092%positive;
+     12139%positive;
+     12143%positive];
    NgRankE
-    [(9530%positive, 2);
-     (9534%positive, 6);
-     (9578%positive, 1);
-     (9582%positive, 3);
-     (9594%positive, 5);
-     (9598%positive, 6);
-     (9599%positive, 2);
-     (10028%positive, 1);
-     (10030%positive, 7);
-     (10042%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 7);
-     (10092%positive, 1);
-     (10094%positive, 7);
-     (10106%positive, 4);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (10111%positive, 4);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 9);
-     (12140%positive, 1);
-     (12142%positive, 10);
-     (12156%positive, 3);
-     (12158%positive, 8);
-     (12159%positive, 11)]]
+    [(9530%positive, 9);
+     (9532%positive, 2);
+     (9535%positive, 1);
+     (9579%positive, 1);
+     (9583%positive, 10);
+     (9594%positive, 2);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9599%positive, 1);
+     (10027%positive, 4);
+     (10031%positive, 7);
+     (10043%positive, 5);
+     (10044%positive, 11);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 8);
+     (10107%positive, 5);
+     (10108%positive, 11);
+     (10111%positive, 1);
+     (11562%positive, 5);
+     (11578%positive, 8);
+     (11580%positive, 3);
+     (11583%positive, 1);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11631%positive, 10);
+     (11642%positive, 2);
+     (11643%positive, 1);
+     (11644%positive, 4);
+     (11647%positive, 1);
+     (12074%positive, 13);
+     (12075%positive, 12);
+     (12079%positive, 7);
+     (12090%positive, 10);
+     (12091%positive, 12);
+     (12095%positive, 1);
+     (12138%positive, 13);
+     (12143%positive, 9);
+     (12154%positive, 2);
+     (12155%positive, 12);
+     (12156%positive, 10);
+     (12159%positive, 1)];
+   NgPattE [S1; S0] RgR 1
+    []
+    [10091%positive;
+     11580%positive];
+   NgPattE [S1; S0] RgL 1
+    []
+    [10095%positive;
+     11578%positive];
+   NgRankE
+    [(9530%positive, 8);
+     (9532%positive, 2);
+     (9535%positive, 1);
+     (9579%positive, 1);
+     (9583%positive, 9);
+     (9594%positive, 2);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9599%positive, 1);
+     (10027%positive, 5);
+     (10031%positive, 7);
+     (10043%positive, 5);
+     (10044%positive, 10);
+     (10047%positive, 1);
+     (10091%positive, 3);
+     (10095%positive, 3);
+     (10107%positive, 5);
+     (10108%positive, 10);
+     (10111%positive, 1);
+     (11562%positive, 6);
+     (11578%positive, 8);
+     (11580%positive, 4);
+     (11583%positive, 1);
+     (11626%positive, 6);
+     (11627%positive, 1);
+     (11631%positive, 9);
+     (11642%positive, 2);
+     (11643%positive, 1);
+     (11644%positive, 4);
+     (11647%positive, 1);
+     (12074%positive, 12);
+     (12075%positive, 11);
+     (12079%positive, 7);
+     (12090%positive, 10);
+     (12091%positive, 11);
+     (12095%positive, 1);
+     (12138%positive, 12);
+     (12143%positive, 9);
+     (12154%positive, 2);
+     (12155%positive, 11);
+     (12156%positive, 10);
+     (12159%positive, 1)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9595%positive, 1);
-     (9597%positive, 2);
-     (10028%positive, 3);
+     (9528%positive, 1);
+     (9532%positive, 3);
+     (9579%positive, 2);
+     (9592%positive, 1);
+     (9595%positive, 2);
+     (9596%positive, 3);
+     (9597%positive, 3);
+     (10027%positive, 4);
+     (10029%positive, 1);
      (10040%positive, 3);
-     (10044%positive, 4);
+     (10043%positive, 4);
+     (10044%positive, 1);
      (10045%positive, 1);
-     (10092%positive, 3);
+     (10091%positive, 3);
+     (10093%positive, 1);
      (10104%positive, 3);
-     (10108%positive, 6);
+     (10107%positive, 3);
+     (10108%positive, 1);
      (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
+     (11576%positive, 1);
+     (11580%positive, 3);
+     (11627%positive, 3);
+     (11640%positive, 1);
+     (11643%positive, 3);
+     (11644%positive, 3);
+     (11645%positive, 3);
+     (12075%positive, 2);
+     (12077%positive, 1);
      (12088%positive, 2);
-     (12092%positive, 4);
+     (12091%positive, 2);
+     (12092%positive, 1);
      (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
+     (12139%positive, 2);
+     (12141%positive, 1);
      (12152%positive, 2);
-     (12156%positive, 5);
+     (12155%positive, 2);
+     (12156%positive, 1);
      (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+   NgPattE [S1; S0] RgR 1
     []
-    [12156%positive];
+    [9532%positive;
+     9596%positive;
+     9597%positive;
+     10040%positive;
+     10091%positive;
+     10104%positive;
+     10107%positive;
+     11580%positive;
+     11627%positive;
+     11643%positive;
+     11644%positive;
+     11645%positive];
    NgRankE
     [(9512%positive, 1);
-     (9595%positive, 1);
-     (9597%positive, 2);
-     (10028%positive, 3);
-     (10040%positive, 3);
-     (10044%positive, 4);
+     (9528%positive, 1);
+     (9532%positive, 4);
+     (9579%positive, 2);
+     (9592%positive, 1);
+     (9595%positive, 2);
+     (9596%positive, 4);
+     (9597%positive, 4);
+     (10027%positive, 5);
+     (10029%positive, 1);
+     (10043%positive, 5);
+     (10044%positive, 1);
      (10045%positive, 1);
-     (10092%positive, 3);
-     (10104%positive, 3);
-     (10108%positive, 6);
+     (10093%positive, 1);
+     (10108%positive, 1);
      (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
+     (11576%positive, 1);
+     (11580%positive, 3);
+     (11627%positive, 3);
+     (11640%positive, 1);
+     (11643%positive, 3);
+     (11644%positive, 3);
+     (11645%positive, 3);
+     (12075%positive, 2);
+     (12077%positive, 1);
      (12088%positive, 2);
-     (12092%positive, 4);
+     (12091%positive, 2);
+     (12092%positive, 1);
      (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
+     (12139%positive, 2);
+     (12141%positive, 1);
      (12152%positive, 2);
-     (12156%positive, 5);
+     (12155%positive, 2);
+     (12156%positive, 1);
      (12157%positive, 1)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 10);
-     (9529%positive, 9);
-     (9530%positive, 3);
-     (9534%positive, 7);
-     (9577%positive, 6);
-     (9578%positive, 2);
-     (9582%positive, 4);
-     (9594%positive, 6);
-     (9598%positive, 7);
-     (10028%positive, 2);
-     (10030%positive, 8);
+    [(9512%positive, 6);
+     (9518%positive, 2);
+     (9528%positive, 3);
+     (9529%positive, 5);
+     (9534%positive, 1);
+     (9582%positive, 5);
+     (9592%positive, 3);
+     (9593%positive, 2);
+     (9598%positive, 1);
+     (10025%positive, 1);
+     (10030%positive, 2);
      (10040%positive, 1);
-     (10042%positive, 3);
-     (10044%positive, 3);
-     (10046%positive, 8);
-     (10092%positive, 2);
-     (10094%positive, 8);
+     (10041%positive, 4);
+     (10046%positive, 1);
+     (10089%positive, 1);
+     (10094%positive, 4);
      (10104%positive, 1);
-     (10106%positive, 5);
-     (10108%positive, 5);
-     (10110%positive, 8);
-     (12072%positive, 1);
-     (12076%positive, 2);
+     (10105%positive, 2);
+     (10110%positive, 1);
+     (11566%positive, 2);
+     (11576%positive, 3);
+     (11577%positive, 5);
+     (11582%positive, 1);
+     (11630%positive, 5);
+     (11640%positive, 3);
+     (11641%positive, 2);
+     (11646%positive, 1);
+     (12073%positive, 1);
+     (12078%positive, 2);
      (12088%positive, 1);
-     (12092%positive, 3);
-     (12094%positive, 10);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 11);
+     (12089%positive, 3);
+     (12094%positive, 1);
+     (12137%positive, 1);
+     (12142%positive, 3);
      (12152%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 9)];
-   NgPattE [S1] RgL 1
+     (12153%positive, 2);
+     (12158%positive, 1)];
+   NgPattE [S1; S0] RgA 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
+    [12089%positive;
+     12142%positive];
    NgRankE
-    [(9512%positive, 10);
-     (9529%positive, 9);
-     (9530%positive, 3);
-     (9534%positive, 7);
-     (9577%positive, 6);
-     (9578%positive, 2);
-     (9582%positive, 4);
-     (9594%positive, 6);
-     (9598%positive, 7);
-     (10028%positive, 2);
-     (10030%positive, 8);
+    [(9512%positive, 6);
+     (9518%positive, 2);
+     (9528%positive, 3);
+     (9529%positive, 5);
+     (9534%positive, 1);
+     (9582%positive, 6);
+     (9592%positive, 3);
+     (9593%positive, 2);
+     (9598%positive, 1);
+     (10025%positive, 1);
+     (10030%positive, 2);
      (10040%positive, 1);
-     (10042%positive, 3);
-     (10044%positive, 3);
-     (10046%positive, 8);
-     (10092%positive, 2);
-     (10094%positive, 8);
+     (10041%positive, 5);
+     (10046%positive, 1);
+     (10089%positive, 1);
+     (10094%positive, 4);
      (10104%positive, 1);
-     (10106%positive, 5);
-     (10108%positive, 5);
-     (10110%positive, 8);
-     (12072%positive, 1);
-     (12076%positive, 2);
+     (10105%positive, 2);
+     (10110%positive, 1);
+     (11566%positive, 2);
+     (11576%positive, 3);
+     (11577%positive, 5);
+     (11582%positive, 1);
+     (11630%positive, 6);
+     (11640%positive, 3);
+     (11641%positive, 2);
+     (11646%positive, 1);
+     (12073%positive, 1);
+     (12078%positive, 2);
      (12088%positive, 1);
-     (12092%positive, 3);
-     (12094%positive, 10);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 11);
+     (12089%positive, 3);
+     (12094%positive, 1);
+     (12137%positive, 1);
+     (12142%positive, 4);
      (12152%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 9)]]
+     (12153%positive, 2);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RD_1LA1RC_0RB0RC : NeverQuasiHaltsSt tm_bulkr_00193.
+Theorem nqh_1RB0RD_1LC1RD_1LD1LB_1RA0LC : NeverQuasiHaltsSt tm_bulkr_00193.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 392 11 cert_bulkr_00193).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 792 12 cert_bulkr_00193).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RD_1LA1RC_1RA0RC: n=2 t=0 contexts=40 *)
+(** 1RB0RD_1RC1LB_0LB1RA_0LA1RD: n=2 t=0 contexts=44 *)
 
 Definition tm_bulkr_00194 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DR StA)
-  | StD, S1 => Some (mkTrans S0 DR StC)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S0 DL StB)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00194 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 3);
-     (9534%positive, 1);
-     (9582%positive, 1);
-     (9593%positive, 3);
-     (9597%positive, 1);
-     (9598%positive, 1);
+    [(9529%positive, 8);
+     (9533%positive, 3);
+     (9535%positive, 1);
+     (9583%positive, 1);
+     (9593%positive, 8);
+     (9594%positive, 7);
+     (9597%positive, 6);
      (9599%positive, 1);
-     (10030%positive, 2);
-     (10045%positive, 2);
-     (10046%positive, 2);
-     (10094%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
+     (10029%positive, 2);
+     (10045%positive, 3);
+     (10047%positive, 2);
+     (10093%positive, 2);
+     (10095%positive, 2);
+     (10109%positive, 5);
      (10111%positive, 2);
-     (12093%positive, 7);
-     (12094%positive, 4);
-     (12142%positive, 5);
-     (12157%positive, 7);
-     (12158%positive, 3);
-     (12159%positive, 6)];
-   NgPattE [S1] RgR 1
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 4);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 5);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12158%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12157%positive];
    NgRankE
-    [(9529%positive, 3);
-     (9534%positive, 1);
-     (9582%positive, 1);
-     (9593%positive, 3);
-     (9597%positive, 1);
-     (9598%positive, 1);
+    [(9529%positive, 8);
+     (9533%positive, 3);
+     (9535%positive, 1);
+     (9583%positive, 1);
+     (9593%positive, 8);
+     (9594%positive, 7);
+     (9597%positive, 6);
      (9599%positive, 1);
-     (10030%positive, 2);
-     (10045%positive, 2);
-     (10046%positive, 2);
-     (10094%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
+     (10029%positive, 2);
+     (10045%positive, 3);
+     (10047%positive, 2);
+     (10093%positive, 2);
+     (10095%positive, 2);
+     (10109%positive, 5);
      (10111%positive, 2);
-     (12093%positive, 7);
-     (12094%positive, 4);
-     (12142%positive, 5);
-     (12157%positive, 7);
-     (12158%positive, 3);
-     (12159%positive, 6)]]
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 4);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 5);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 3)]]
   | StB =>
   [NgRankE
-    [(9530%positive, 2);
-     (9534%positive, 6);
-     (9578%positive, 1);
-     (9582%positive, 3);
-     (9594%positive, 5);
-     (9595%positive, 1);
-     (9598%positive, 6);
-     (9599%positive, 2);
-     (10028%positive, 1);
-     (10030%positive, 7);
-     (10044%positive, 2);
-     (10046%positive, 7);
-     (10092%positive, 1);
-     (10094%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (10111%positive, 4);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 9);
-     (12140%positive, 1);
-     (12142%positive, 10);
-     (12156%positive, 3);
-     (12158%positive, 8);
-     (12159%positive, 11)];
-   NgPattE [S1] RgL 1
+    [(9515%positive, 1);
+     (9516%positive, 2);
+     (9531%positive, 3);
+     (9532%positive, 2);
+     (9535%positive, 4);
+     (9579%positive, 1);
+     (9580%positive, 2);
+     (9583%positive, 4);
+     (9595%positive, 3);
+     (9596%positive, 2);
+     (9599%positive, 4);
+     (10046%positive, 3);
+     (10047%positive, 5);
+     (10095%positive, 5);
+     (10108%positive, 5);
+     (10110%positive, 3);
+     (10111%positive, 5);
+     (12094%positive, 10);
+     (12095%positive, 7);
+     (12143%positive, 8);
+     (12156%positive, 9);
+     (12158%positive, 10);
+     (12159%positive, 6)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
+    [12159%positive];
    NgRankE
-    [(9530%positive, 2);
-     (9534%positive, 6);
-     (9578%positive, 1);
-     (9582%positive, 3);
-     (9594%positive, 5);
-     (9595%positive, 1);
-     (9598%positive, 6);
-     (9599%positive, 2);
-     (10028%positive, 1);
-     (10030%positive, 7);
-     (10044%positive, 2);
-     (10046%positive, 7);
-     (10092%positive, 1);
-     (10094%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (10111%positive, 4);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 9);
-     (12140%positive, 1);
-     (12142%positive, 10);
-     (12156%positive, 3);
-     (12158%positive, 8);
-     (12159%positive, 11)]]
+    [(9515%positive, 1);
+     (9516%positive, 2);
+     (9531%positive, 3);
+     (9532%positive, 2);
+     (9535%positive, 4);
+     (9579%positive, 1);
+     (9580%positive, 2);
+     (9583%positive, 4);
+     (9595%positive, 3);
+     (9596%positive, 2);
+     (9599%positive, 4);
+     (10046%positive, 3);
+     (10047%positive, 5);
+     (10095%positive, 5);
+     (10108%positive, 5);
+     (10110%positive, 3);
+     (10111%positive, 5);
+     (12094%positive, 10);
+     (12095%positive, 7);
+     (12143%positive, 8);
+     (12156%positive, 9);
+     (12158%positive, 10);
+     (12159%positive, 6)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
+     (9515%positive, 2);
+     (9516%positive, 3);
+     (9528%positive, 1);
+     (9531%positive, 4);
+     (9532%positive, 3);
+     (9533%positive, 2);
+     (9535%positive, 5);
+     (9576%positive, 1);
+     (9579%positive, 2);
+     (9580%positive, 3);
+     (9583%positive, 5);
      (9592%positive, 1);
-     (9595%positive, 2);
-     (9597%positive, 3);
-     (10028%positive, 3);
-     (10040%positive, 4);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10104%positive, 4);
+     (9595%positive, 4);
+     (9596%positive, 3);
+     (9597%positive, 5);
+     (9599%positive, 5);
+     (10029%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 6);
+     (10093%positive, 1);
+     (10095%positive, 6);
      (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+     (10109%positive, 4);
+     (10111%positive, 6);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 8);
+     (12141%positive, 1);
+     (12143%positive, 9);
+     (12156%positive, 10);
+     (12157%positive, 3);
+     (12159%positive, 7)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12157%positive];
    NgRankE
     [(9512%positive, 1);
+     (9515%positive, 2);
+     (9516%positive, 3);
+     (9528%positive, 1);
+     (9531%positive, 4);
+     (9532%positive, 3);
+     (9533%positive, 2);
+     (9535%positive, 5);
+     (9576%positive, 1);
+     (9579%positive, 2);
+     (9580%positive, 3);
+     (9583%positive, 5);
      (9592%positive, 1);
-     (9595%positive, 2);
-     (9597%positive, 3);
-     (10028%positive, 3);
-     (10040%positive, 4);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10104%positive, 4);
+     (9595%positive, 4);
+     (9596%positive, 3);
+     (9597%positive, 5);
+     (9599%positive, 5);
+     (10029%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 6);
+     (10093%positive, 1);
+     (10095%positive, 6);
      (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)]]
+     (10109%positive, 4);
+     (10111%positive, 6);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 8);
+     (12141%positive, 1);
+     (12143%positive, 9);
+     (12156%positive, 10);
+     (12157%positive, 3);
+     (12159%positive, 7)]]
   | StD =>
   [NgRankE
     [(9512%positive, 10);
+     (9528%positive, 10);
      (9529%positive, 9);
-     (9530%positive, 3);
-     (9534%positive, 7);
-     (9578%positive, 2);
-     (9582%positive, 4);
+     (9533%positive, 4);
+     (9576%positive, 10);
      (9592%positive, 10);
      (9593%positive, 9);
-     (9594%positive, 6);
-     (9598%positive, 7);
-     (10028%positive, 2);
-     (10030%positive, 8);
-     (10040%positive, 1);
-     (10044%positive, 3);
-     (10046%positive, 8);
-     (10092%positive, 2);
-     (10094%positive, 8);
-     (10104%positive, 1);
-     (10108%positive, 5);
-     (10110%positive, 8);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12094%positive, 10);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 11);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 9)];
-   NgPattE [S1] RgL 1
+     (9594%positive, 8);
+     (9597%positive, 7);
+     (10029%positive, 3);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10093%positive, 3);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
+    [12157%positive];
    NgRankE
     [(9512%positive, 10);
+     (9528%positive, 10);
      (9529%positive, 9);
-     (9530%positive, 3);
-     (9534%positive, 7);
-     (9578%positive, 2);
-     (9582%positive, 4);
+     (9533%positive, 4);
+     (9576%positive, 10);
      (9592%positive, 10);
      (9593%positive, 9);
-     (9594%positive, 6);
-     (9598%positive, 7);
-     (10028%positive, 2);
-     (10030%positive, 8);
-     (10040%positive, 1);
-     (10044%positive, 3);
-     (10046%positive, 8);
-     (10092%positive, 2);
-     (10094%positive, 8);
-     (10104%positive, 1);
-     (10108%positive, 5);
-     (10110%positive, 8);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12094%positive, 10);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 11);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 9)]]
+     (9594%positive, 8);
+     (9597%positive, 7);
+     (10029%positive, 3);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10093%positive, 3);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RD_1LA1RC_1RA0RC : NeverQuasiHaltsSt tm_bulkr_00194.
+Theorem nqh_1RB0RD_1RC1LB_0LB1RA_0LA1RD : NeverQuasiHaltsSt tm_bulkr_00194.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 384 11 cert_bulkr_00194).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 416 11 cert_bulkr_00194).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1LC1RD_1LA1RC_1RB0RC: n=2 t=0 contexts=39 *)
+(** 1RB0RD_1RC1LB_0LB1RA_0RC1RD: n=2 t=0 contexts=51 *)
 
 Definition tm_bulkr_00195 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DR StB)
-  | StD, S1 => Some (mkTrans S0 DR StC)
+  | StA, S1 => Some (mkTrans S0 DR StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S0 DL StB)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S0 DR StC)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00195 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 3);
-     (9534%positive, 1);
-     (9582%positive, 1);
-     (9593%positive, 3);
-     (9595%positive, 4);
-     (9597%positive, 5);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10030%positive, 2);
-     (10045%positive, 2);
-     (10046%positive, 2);
-     (10094%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12093%positive, 7);
-     (12094%positive, 4);
-     (12142%positive, 5);
-     (12157%positive, 7);
-     (12158%positive, 3);
-     (12159%positive, 6)];
-   NgPattE [S1] RgR 1
+    [(9513%positive, 4);
+     (9514%positive, 5);
+     (9517%positive, 2);
+     (9529%positive, 8);
+     (9530%positive, 3);
+     (9531%positive, 10);
+     (9533%positive, 3);
+     (9535%positive, 11);
+     (9577%positive, 4);
+     (9578%positive, 9);
+     (9579%positive, 6);
+     (9581%positive, 2);
+     (9583%positive, 11);
+     (9593%positive, 8);
+     (9594%positive, 7);
+     (9595%positive, 10);
+     (9597%positive, 6);
+     (9599%positive, 11);
+     (10025%positive, 1);
+     (10029%positive, 2);
+     (10041%positive, 1);
+     (10045%positive, 3);
+     (10047%positive, 12);
+     (10089%positive, 1);
+     (10093%positive, 2);
+     (10095%positive, 12);
+     (10105%positive, 1);
+     (10109%positive, 5);
+     (10111%positive, 12);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 14);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 15);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 13)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12158%positive];
+    [12157%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
    NgRankE
-    [(9529%positive, 3);
-     (9534%positive, 1);
-     (9582%positive, 1);
-     (9593%positive, 3);
-     (9595%positive, 4);
-     (9597%positive, 5);
-     (9598%positive, 1);
-     (9599%positive, 1);
-     (10030%positive, 2);
-     (10045%positive, 2);
-     (10046%positive, 2);
-     (10094%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (12093%positive, 7);
-     (12094%positive, 4);
-     (12142%positive, 5);
-     (12157%positive, 7);
-     (12158%positive, 3);
-     (12159%positive, 6)]]
+    [(9513%positive, 4);
+     (9514%positive, 5);
+     (9517%positive, 2);
+     (9529%positive, 8);
+     (9530%positive, 3);
+     (9531%positive, 10);
+     (9533%positive, 3);
+     (9535%positive, 11);
+     (9577%positive, 4);
+     (9578%positive, 9);
+     (9579%positive, 6);
+     (9581%positive, 2);
+     (9583%positive, 11);
+     (9593%positive, 8);
+     (9594%positive, 7);
+     (9595%positive, 10);
+     (9597%positive, 6);
+     (9599%positive, 11);
+     (10025%positive, 1);
+     (10029%positive, 2);
+     (10041%positive, 1);
+     (10045%positive, 3);
+     (10047%positive, 12);
+     (10089%positive, 1);
+     (10093%positive, 2);
+     (10095%positive, 12);
+     (10105%positive, 1);
+     (10109%positive, 5);
+     (10111%positive, 12);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 14);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 15);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 13)]]
   | StB =>
   [NgRankE
-    [(9530%positive, 2);
-     (9534%positive, 6);
-     (9578%positive, 1);
-     (9582%positive, 3);
-     (9594%positive, 5);
-     (9598%positive, 6);
+    [(9531%positive, 1);
+     (9534%positive, 1);
+     (9535%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 2);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9598%positive, 1);
      (9599%positive, 2);
-     (10028%positive, 1);
-     (10030%positive, 7);
-     (10044%positive, 2);
-     (10046%positive, 7);
-     (10092%positive, 1);
-     (10094%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (10111%positive, 4);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 9);
-     (12140%positive, 1);
-     (12142%positive, 10);
-     (12156%positive, 3);
+     (10046%positive, 3);
+     (10047%positive, 3);
+     (10095%positive, 3);
+     (10108%positive, 3);
+     (10110%positive, 3);
+     (10111%positive, 3);
+     (12094%positive, 8);
+     (12095%positive, 5);
+     (12143%positive, 6);
+     (12156%positive, 7);
      (12158%positive, 8);
-     (12159%positive, 11)];
-   NgPattE [S1] RgL 1
+     (12159%positive, 4)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
+    [12159%positive];
    NgRankE
-    [(9530%positive, 2);
-     (9534%positive, 6);
-     (9578%positive, 1);
-     (9582%positive, 3);
-     (9594%positive, 5);
-     (9598%positive, 6);
+    [(9531%positive, 1);
+     (9534%positive, 1);
+     (9535%positive, 2);
+     (9579%positive, 1);
+     (9583%positive, 2);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9598%positive, 1);
      (9599%positive, 2);
-     (10028%positive, 1);
-     (10030%positive, 7);
-     (10044%positive, 2);
-     (10046%positive, 7);
-     (10092%positive, 1);
-     (10094%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 7);
-     (10111%positive, 4);
-     (12076%positive, 1);
-     (12092%positive, 2);
-     (12094%positive, 9);
-     (12140%positive, 1);
-     (12142%positive, 10);
-     (12156%positive, 3);
+     (10046%positive, 3);
+     (10047%positive, 3);
+     (10095%positive, 3);
+     (10108%positive, 3);
+     (10110%positive, 3);
+     (10111%positive, 3);
+     (12094%positive, 8);
+     (12095%positive, 5);
+     (12143%positive, 6);
+     (12156%positive, 7);
      (12158%positive, 8);
-     (12159%positive, 11)]]
+     (12159%positive, 4)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9595%positive, 1);
-     (9597%positive, 2);
-     (10028%positive, 3);
-     (10040%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10104%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+     (9517%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 1);
+     (9581%positive, 1);
+     (9583%positive, 1);
+     (9592%positive, 1);
+     (9596%positive, 1);
+     (9597%positive, 5);
+     (9599%positive, 1);
+     (10029%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 2);
+     (10093%positive, 1);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10109%positive, 4);
+     (10111%positive, 2);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 4);
+     (12141%positive, 1);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 3);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12157%positive];
    NgRankE
     [(9512%positive, 1);
-     (9595%positive, 1);
-     (9597%positive, 2);
-     (10028%positive, 3);
-     (10040%positive, 3);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10092%positive, 3);
-     (10104%positive, 3);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12156%positive, 5);
-     (12157%positive, 1)]]
+     (9517%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 1);
+     (9581%positive, 1);
+     (9583%positive, 1);
+     (9592%positive, 1);
+     (9596%positive, 1);
+     (9597%positive, 5);
+     (9599%positive, 1);
+     (10029%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 2);
+     (10093%positive, 1);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10109%positive, 4);
+     (10111%positive, 2);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 4);
+     (12141%positive, 1);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 3);
+     (12159%positive, 3)]]
   | StD =>
   [NgRankE
     [(9512%positive, 10);
+     (9513%positive, 15);
+     (9514%positive, 16);
+     (9517%positive, 13);
      (9529%positive, 9);
-     (9530%positive, 3);
-     (9534%positive, 7);
-     (9578%positive, 2);
-     (9582%positive, 4);
+     (9530%positive, 14);
+     (9533%positive, 4);
+     (9534%positive, 11);
+     (9577%positive, 15);
+     (9578%positive, 10);
+     (9581%positive, 13);
+     (9592%positive, 10);
      (9593%positive, 9);
-     (9594%positive, 6);
-     (9598%positive, 7);
-     (10028%positive, 2);
-     (10030%positive, 8);
-     (10040%positive, 1);
-     (10044%positive, 3);
-     (10046%positive, 8);
-     (10092%positive, 2);
-     (10094%positive, 8);
-     (10104%positive, 1);
-     (10108%positive, 5);
-     (10110%positive, 8);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12094%positive, 10);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 11);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 9)];
-   NgPattE [S1] RgL 1
+     (9594%positive, 8);
+     (9597%positive, 7);
+     (9598%positive, 11);
+     (10025%positive, 12);
+     (10029%positive, 3);
+     (10041%positive, 12);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10089%positive, 12);
+     (10093%positive, 3);
+     (10105%positive, 12);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
+    [12157%positive];
    NgRankE
     [(9512%positive, 10);
+     (9513%positive, 15);
+     (9514%positive, 16);
+     (9517%positive, 13);
      (9529%positive, 9);
-     (9530%positive, 3);
-     (9534%positive, 7);
-     (9578%positive, 2);
-     (9582%positive, 4);
+     (9530%positive, 14);
+     (9533%positive, 4);
+     (9534%positive, 11);
+     (9577%positive, 15);
+     (9578%positive, 10);
+     (9581%positive, 13);
+     (9592%positive, 10);
      (9593%positive, 9);
-     (9594%positive, 6);
-     (9598%positive, 7);
-     (10028%positive, 2);
-     (10030%positive, 8);
-     (10040%positive, 1);
-     (10044%positive, 3);
-     (10046%positive, 8);
-     (10092%positive, 2);
-     (10094%positive, 8);
-     (10104%positive, 1);
-     (10108%positive, 5);
-     (10110%positive, 8);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12088%positive, 1);
-     (12092%positive, 3);
-     (12094%positive, 10);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 11);
-     (12152%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 9)]]
+     (9594%positive, 8);
+     (9597%positive, 7);
+     (9598%positive, 11);
+     (10025%positive, 12);
+     (10029%positive, 3);
+     (10041%positive, 12);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10089%positive, 12);
+     (10093%positive, 3);
+     (10105%positive, 12);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1LC1RD_1LA1RC_1RB0RC : NeverQuasiHaltsSt tm_bulkr_00195.
+Theorem nqh_1RB0RD_1RC1LB_0LB1RA_0RC1RD : NeverQuasiHaltsSt tm_bulkr_00195.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 376 11 cert_bulkr_00195).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 472 11 cert_bulkr_00195).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1RC0RC_1RD0LD_0LA0RD: n=2 t=0 contexts=96 *)
+(** 1RB0RD_1RC1LB_0LB1RA_1LB1RD: n=2 t=0 contexts=41 *)
 
 Definition tm_bulkr_00196 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S0 DR StC)
-  | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S0 DL StD)
-  | StD, S0 => Some (mkTrans S0 DL StA)
-  | StD, S1 => Some (mkTrans S0 DR StD)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S0 DL StB)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00196 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9519%positive, 1);
-     (9529%positive, 2);
-     (9533%positive, 2);
-     (9535%positive, 1);
-     (9578%positive, 1);
-     (9582%positive, 1);
-     (9583%positive, 1);
-     (9593%positive, 2);
-     (9594%positive, 1);
-     (9597%positive, 2);
-     (9598%positive, 2);
-     (9599%positive, 1);
-     (10031%positive, 2);
-     (10041%positive, 3);
-     (10045%positive, 2);
-     (10047%positive, 2);
-     (10090%positive, 2);
-     (10094%positive, 1);
-     (10095%positive, 2);
-     (10105%positive, 3);
-     (10106%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (11567%positive, 1);
-     (11577%positive, 7);
-     (11581%positive, 7);
-     (11583%positive, 1);
-     (11626%positive, 1);
-     (11630%positive, 1);
-     (11631%positive, 1);
-     (11641%positive, 7);
-     (11642%positive, 1);
-     (11645%positive, 7);
-     (11646%positive, 2);
-     (11647%positive, 1);
-     (12079%positive, 3);
-     (12089%positive, 3);
-     (12093%positive, 2);
-     (12095%positive, 5);
-     (12138%positive, 6);
-     (12142%positive, 1);
-     (12143%positive, 4);
-     (12153%positive, 3);
-     (12154%positive, 6);
-     (12157%positive, 2);
-     (12158%positive, 2);
-     (12159%positive, 5)];
-   NgPattE [S1] RgA 1
+    [(9529%positive, 8);
+     (9531%positive, 3);
+     (9533%positive, 3);
+     (9535%positive, 7);
+     (9579%positive, 2);
+     (9583%positive, 4);
+     (9593%positive, 8);
+     (9594%positive, 7);
+     (9595%positive, 6);
+     (9597%positive, 6);
+     (9599%positive, 7);
+     (10029%positive, 2);
+     (10041%positive, 1);
+     (10045%positive, 3);
+     (10047%positive, 8);
+     (10093%positive, 2);
+     (10095%positive, 8);
+     (10105%positive, 1);
+     (10109%positive, 5);
+     (10111%positive, 8);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 10);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 11);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 9)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12079%positive];
+    [12157%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
    NgRankE
-    [(9519%positive, 1);
-     (9529%positive, 2);
-     (9533%positive, 2);
-     (9535%positive, 1);
-     (9578%positive, 1);
-     (9582%positive, 1);
-     (9583%positive, 1);
-     (9593%positive, 2);
-     (9594%positive, 1);
-     (9597%positive, 2);
-     (9598%positive, 2);
-     (9599%positive, 1);
-     (10031%positive, 2);
-     (10041%positive, 3);
-     (10045%positive, 2);
-     (10047%positive, 2);
-     (10090%positive, 2);
-     (10094%positive, 1);
-     (10095%positive, 2);
-     (10105%positive, 3);
-     (10106%positive, 2);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (10111%positive, 2);
-     (11567%positive, 1);
-     (11577%positive, 7);
-     (11581%positive, 7);
-     (11583%positive, 1);
-     (11626%positive, 1);
-     (11630%positive, 1);
-     (11631%positive, 1);
-     (11641%positive, 7);
-     (11642%positive, 1);
-     (11645%positive, 7);
-     (11646%positive, 2);
-     (11647%positive, 1);
-     (12079%positive, 3);
-     (12089%positive, 3);
-     (12093%positive, 2);
-     (12095%positive, 5);
-     (12138%positive, 6);
-     (12142%positive, 1);
-     (12143%positive, 4);
-     (12153%positive, 3);
-     (12154%positive, 6);
-     (12157%positive, 2);
-     (12158%positive, 2);
-     (12159%positive, 5)]]
+    [(9529%positive, 8);
+     (9531%positive, 3);
+     (9533%positive, 3);
+     (9535%positive, 7);
+     (9579%positive, 2);
+     (9583%positive, 4);
+     (9593%positive, 8);
+     (9594%positive, 7);
+     (9595%positive, 6);
+     (9597%positive, 6);
+     (9599%positive, 7);
+     (10029%positive, 2);
+     (10041%positive, 1);
+     (10045%positive, 3);
+     (10047%positive, 8);
+     (10093%positive, 2);
+     (10095%positive, 8);
+     (10105%positive, 1);
+     (10109%positive, 5);
+     (10111%positive, 8);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 10);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 11);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 9)]]
   | StB =>
   [NgRankE
-    [(9515%positive, 1);
-     (9516%positive, 1);
-     (9519%positive, 2);
-     (9531%positive, 2);
-     (9532%positive, 2);
-     (9535%positive, 2);
-     (9578%positive, 3);
-     (9579%positive, 1);
-     (9580%positive, 1);
-     (9582%positive, 7);
-     (9583%positive, 2);
-     (9594%positive, 7);
-     (9595%positive, 6);
-     (9596%positive, 5);
-     (9598%positive, 3);
-     (9599%positive, 2);
-     (10027%positive, 1);
-     (10028%positive, 1);
-     (10031%positive, 3);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10047%positive, 3);
-     (10090%positive, 3);
-     (10091%positive, 1);
-     (10092%positive, 1);
-     (10094%positive, 7);
-     (10095%positive, 3);
-     (10106%positive, 3);
-     (10107%positive, 6);
-     (10108%positive, 4);
-     (10110%positive, 3);
-     (10111%positive, 3);
-     (11563%positive, 1);
-     (11564%positive, 1);
-     (11567%positive, 2);
-     (11579%positive, 2);
-     (11580%positive, 2);
-     (11583%positive, 2);
-     (11626%positive, 3);
-     (11627%positive, 1);
-     (11628%positive, 1);
-     (11630%positive, 7);
-     (11631%positive, 2);
-     (11642%positive, 7);
-     (11643%positive, 6);
-     (11644%positive, 5);
-     (11646%positive, 3);
-     (11647%positive, 2);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12079%positive, 4);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12095%positive, 6);
-     (12138%positive, 7);
-     (12139%positive, 1);
-     (12140%positive, 1);
-     (12142%positive, 7);
+    [(9535%positive, 1);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 1);
+     (9599%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 2);
+     (10111%positive, 2);
+     (12094%positive, 7);
+     (12095%positive, 4);
      (12143%positive, 5);
-     (12154%positive, 7);
-     (12155%positive, 6);
-     (12156%positive, 3);
-     (12158%positive, 3);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (12156%positive, 6);
+     (12158%positive, 7);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgA 1
-    []
-    [12079%positive];
+    [12159%positive];
    NgRankE
-    [(9515%positive, 1);
-     (9516%positive, 1);
-     (9519%positive, 2);
-     (9531%positive, 2);
-     (9532%positive, 2);
-     (9535%positive, 2);
-     (9578%positive, 3);
-     (9579%positive, 1);
-     (9580%positive, 1);
-     (9582%positive, 7);
-     (9583%positive, 2);
-     (9594%positive, 7);
-     (9595%positive, 6);
-     (9596%positive, 5);
-     (9598%positive, 3);
-     (9599%positive, 2);
-     (10027%positive, 1);
-     (10028%positive, 1);
-     (10031%positive, 3);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10047%positive, 3);
-     (10090%positive, 3);
-     (10091%positive, 1);
-     (10092%positive, 1);
-     (10094%positive, 7);
-     (10095%positive, 3);
-     (10106%positive, 3);
-     (10107%positive, 6);
-     (10108%positive, 4);
-     (10110%positive, 3);
-     (10111%positive, 3);
-     (11563%positive, 1);
-     (11564%positive, 1);
-     (11567%positive, 2);
-     (11579%positive, 2);
-     (11580%positive, 2);
-     (11583%positive, 2);
-     (11626%positive, 3);
-     (11627%positive, 1);
-     (11628%positive, 1);
-     (11630%positive, 7);
-     (11631%positive, 2);
-     (11642%positive, 7);
-     (11643%positive, 6);
-     (11644%positive, 5);
-     (11646%positive, 3);
-     (11647%positive, 2);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12079%positive, 4);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12095%positive, 6);
-     (12138%positive, 7);
-     (12139%positive, 1);
-     (12140%positive, 1);
-     (12142%positive, 7);
+    [(9535%positive, 1);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 1);
+     (9599%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 2);
+     (10111%positive, 2);
+     (12094%positive, 7);
+     (12095%positive, 4);
      (12143%positive, 5);
-     (12154%positive, 7);
-     (12155%positive, 6);
-     (12156%positive, 3);
-     (12158%positive, 3);
-     (12159%positive, 6)]]
+     (12156%positive, 6);
+     (12158%positive, 7);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9515%positive, 2);
-     (9516%positive, 2);
-     (9519%positive, 3);
-     (9528%positive, 1);
-     (9531%positive, 3);
-     (9532%positive, 3);
-     (9535%positive, 3);
-     (9576%positive, 1);
-     (9579%positive, 2);
-     (9580%positive, 2);
+     (9531%positive, 2);
+     (9533%positive, 2);
+     (9535%positive, 6);
+     (9579%positive, 1);
      (9583%positive, 3);
      (9592%positive, 1);
-     (9595%positive, 7);
-     (9596%positive, 6);
-     (9599%positive, 3);
-     (10024%positive, 1);
-     (10027%positive, 2);
-     (10028%positive, 2);
-     (10031%positive, 4);
-     (10040%positive, 1);
-     (10043%positive, 3);
-     (10044%positive, 3);
-     (10047%positive, 4);
-     (10088%positive, 1);
-     (10091%positive, 2);
-     (10092%positive, 2);
-     (10095%positive, 4);
-     (10104%positive, 1);
-     (10107%positive, 7);
-     (10108%positive, 5);
-     (10111%positive, 4);
-     (11560%positive, 1);
-     (11563%positive, 2);
-     (11564%positive, 2);
-     (11567%positive, 3);
-     (11576%positive, 1);
-     (11579%positive, 3);
-     (11580%positive, 3);
-     (11583%positive, 3);
-     (11624%positive, 1);
-     (11627%positive, 2);
-     (11628%positive, 2);
-     (11631%positive, 3);
-     (11640%positive, 1);
-     (11643%positive, 7);
-     (11644%positive, 6);
-     (11647%positive, 3);
-     (12072%positive, 1);
-     (12075%positive, 2);
-     (12076%positive, 2);
-     (12079%positive, 5);
-     (12088%positive, 1);
-     (12091%positive, 3);
-     (12092%positive, 3);
-     (12095%positive, 7);
-     (12136%positive, 1);
-     (12139%positive, 2);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12155%positive, 7);
-     (12156%positive, 4);
-     (12159%positive, 7)];
-   NgPattE [S1] RgL 1
+     (9595%positive, 5);
+     (9596%positive, 2);
+     (9597%positive, 5);
+     (9599%positive, 6);
+     (10029%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 7);
+     (10093%positive, 1);
+     (10095%positive, 7);
+     (10108%positive, 4);
+     (10109%positive, 4);
+     (10111%positive, 7);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 9);
+     (12141%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
+     (12157%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
-   NgPattE [S1] RgA 1
+    [12157%positive];
+   NgPattE [S1; S1] RgR 1
     []
-    [12079%positive];
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9515%positive, 2);
-     (9516%positive, 2);
-     (9519%positive, 3);
-     (9528%positive, 1);
-     (9531%positive, 3);
-     (9532%positive, 3);
-     (9535%positive, 3);
-     (9576%positive, 1);
-     (9579%positive, 2);
-     (9580%positive, 2);
+     (9531%positive, 2);
+     (9533%positive, 2);
+     (9535%positive, 6);
+     (9579%positive, 1);
      (9583%positive, 3);
      (9592%positive, 1);
-     (9595%positive, 7);
-     (9596%positive, 6);
-     (9599%positive, 3);
-     (10024%positive, 1);
-     (10027%positive, 2);
-     (10028%positive, 2);
-     (10031%positive, 4);
-     (10040%positive, 1);
-     (10043%positive, 3);
-     (10044%positive, 3);
-     (10047%positive, 4);
-     (10088%positive, 1);
-     (10091%positive, 2);
-     (10092%positive, 2);
-     (10095%positive, 4);
-     (10104%positive, 1);
-     (10107%positive, 7);
-     (10108%positive, 5);
-     (10111%positive, 4);
-     (11560%positive, 1);
-     (11563%positive, 2);
-     (11564%positive, 2);
-     (11567%positive, 3);
-     (11576%positive, 1);
-     (11579%positive, 3);
-     (11580%positive, 3);
-     (11583%positive, 3);
-     (11624%positive, 1);
-     (11627%positive, 2);
-     (11628%positive, 2);
-     (11631%positive, 3);
-     (11640%positive, 1);
-     (11643%positive, 7);
-     (11644%positive, 6);
-     (11647%positive, 3);
-     (12072%positive, 1);
-     (12075%positive, 2);
-     (12076%positive, 2);
-     (12079%positive, 5);
-     (12088%positive, 1);
-     (12091%positive, 3);
-     (12092%positive, 3);
-     (12095%positive, 7);
-     (12136%positive, 1);
-     (12139%positive, 2);
-     (12140%positive, 2);
-     (12143%positive, 6);
-     (12152%positive, 1);
-     (12155%positive, 7);
-     (12156%positive, 4);
-     (12159%positive, 7)]]
+     (9595%positive, 5);
+     (9596%positive, 2);
+     (9597%positive, 5);
+     (9599%positive, 6);
+     (10029%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 7);
+     (10093%positive, 1);
+     (10095%positive, 7);
+     (10108%positive, 4);
+     (10109%positive, 4);
+     (10111%positive, 7);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 9);
+     (12141%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
+     (12157%positive, 3);
+     (12159%positive, 8)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9516%positive, 3);
-     (9528%positive, 2);
-     (9529%positive, 1);
-     (9532%positive, 4);
-     (9533%positive, 1);
-     (9576%positive, 2);
-     (9580%positive, 3);
-     (9592%positive, 2);
-     (9593%positive, 1);
-     (9596%positive, 7);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 3);
-     (10040%positive, 2);
-     (10041%positive, 1);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10088%positive, 2);
-     (10092%positive, 3);
-     (10104%positive, 2);
-     (10105%positive, 1);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (11560%positive, 2);
-     (11564%positive, 3);
-     (11576%positive, 2);
-     (11577%positive, 1);
-     (11580%positive, 4);
-     (11581%positive, 1);
-     (11624%positive, 2);
-     (11628%positive, 3);
-     (11640%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 7);
-     (11645%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12089%positive, 1);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12153%positive, 1);
-     (12156%positive, 5);
-     (12157%positive, 1)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 10);
+     (9529%positive, 9);
+     (9533%positive, 4);
+     (9592%positive, 10);
+     (9593%positive, 9);
+     (9594%positive, 8);
+     (9597%positive, 7);
+     (9598%positive, 11);
+     (10029%positive, 3);
+     (10041%positive, 12);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10093%positive, 3);
+     (10105%positive, 12);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
+    [12157%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9516%positive, 3);
-     (9528%positive, 2);
-     (9529%positive, 1);
-     (9532%positive, 4);
-     (9533%positive, 1);
-     (9576%positive, 2);
-     (9580%positive, 3);
-     (9592%positive, 2);
-     (9593%positive, 1);
-     (9596%positive, 7);
-     (9597%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 3);
-     (10040%positive, 2);
-     (10041%positive, 1);
-     (10044%positive, 4);
-     (10045%positive, 1);
-     (10088%positive, 2);
-     (10092%positive, 3);
-     (10104%positive, 2);
-     (10105%positive, 1);
-     (10108%positive, 6);
-     (10109%positive, 1);
-     (11560%positive, 2);
-     (11564%positive, 3);
-     (11576%positive, 2);
-     (11577%positive, 1);
-     (11580%positive, 4);
-     (11581%positive, 1);
-     (11624%positive, 2);
-     (11628%positive, 3);
-     (11640%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 7);
-     (11645%positive, 1);
-     (12072%positive, 2);
-     (12076%positive, 3);
-     (12088%positive, 2);
-     (12089%positive, 1);
-     (12092%positive, 4);
-     (12093%positive, 1);
-     (12136%positive, 2);
-     (12140%positive, 3);
-     (12152%positive, 2);
-     (12153%positive, 1);
-     (12156%positive, 5);
-     (12157%positive, 1)]]
+    [(9512%positive, 10);
+     (9529%positive, 9);
+     (9533%positive, 4);
+     (9592%positive, 10);
+     (9593%positive, 9);
+     (9594%positive, 8);
+     (9597%positive, 7);
+     (9598%positive, 11);
+     (10029%positive, 3);
+     (10041%positive, 12);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10093%positive, 3);
+     (10105%positive, 12);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1RC0RC_1RD0LD_0LA0RD : NeverQuasiHaltsSt tm_bulkr_00196.
+Theorem nqh_1RB0RD_1RC1LB_0LB1RA_1LB1RD : NeverQuasiHaltsSt tm_bulkr_00196.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 832 12 cert_bulkr_00196).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 392 11 cert_bulkr_00196).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1RC0RC_1RD1RC_1LD0LA: n=2 t=0 contexts=87 *)
+(** 1RB0RD_1RC1LB_0LB1RA_1RC1RD: n=2 t=0 contexts=47 *)
 
 Definition tm_bulkr_00197 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S0 DR StC)
-  | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DL StD)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S0 DL StB)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DR StC)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00197 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 3);
-     (9530%positive, 2);
-     (9531%positive, 1);
+    [(9517%positive, 2);
+     (9529%positive, 8);
+     (9530%positive, 3);
+     (9531%positive, 8);
      (9533%positive, 3);
-     (9534%positive, 3);
-     (9578%positive, 2);
-     (9582%positive, 3);
-     (9594%positive, 2);
-     (9595%positive, 1);
-     (9597%positive, 3);
-     (9598%positive, 3);
-     (10041%positive, 4);
-     (10042%positive, 1);
-     (10043%positive, 1);
-     (10045%positive, 4);
-     (10046%positive, 4);
-     (10090%positive, 1);
-     (10094%positive, 4);
-     (10105%positive, 4);
-     (10106%positive, 1);
-     (10107%positive, 1);
-     (10109%positive, 4);
-     (10110%positive, 4);
-     (11577%positive, 2);
-     (11578%positive, 2);
-     (11579%positive, 1);
-     (11581%positive, 2);
-     (11582%positive, 2);
-     (11626%positive, 2);
-     (11630%positive, 2);
-     (11642%positive, 2);
-     (11643%positive, 1);
-     (11645%positive, 2);
-     (11646%positive, 2);
-     (12089%positive, 6);
-     (12090%positive, 1);
-     (12091%positive, 1);
-     (12093%positive, 8);
-     (12094%positive, 6);
-     (12138%positive, 1);
-     (12142%positive, 7);
-     (12153%positive, 6);
-     (12154%positive, 1);
-     (12155%positive, 1);
-     (12157%positive, 8);
-     (12158%positive, 5)];
-   NgPattE [S1] RgR 1
+     (9535%positive, 9);
+     (9579%positive, 4);
+     (9581%positive, 2);
+     (9583%positive, 9);
+     (9593%positive, 8);
+     (9594%positive, 7);
+     (9595%positive, 8);
+     (9597%positive, 6);
+     (9599%positive, 9);
+     (10025%positive, 1);
+     (10029%positive, 2);
+     (10041%positive, 1);
+     (10045%positive, 3);
+     (10047%positive, 10);
+     (10089%positive, 1);
+     (10093%positive, 2);
+     (10095%positive, 10);
+     (10105%positive, 1);
+     (10109%positive, 5);
+     (10111%positive, 10);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 12);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 13);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 11)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12158%positive];
+    [12157%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
    NgRankE
-    [(9529%positive, 3);
-     (9530%positive, 2);
-     (9531%positive, 1);
+    [(9517%positive, 2);
+     (9529%positive, 8);
+     (9530%positive, 3);
+     (9531%positive, 8);
      (9533%positive, 3);
-     (9534%positive, 3);
-     (9578%positive, 2);
-     (9582%positive, 3);
-     (9594%positive, 2);
-     (9595%positive, 1);
-     (9597%positive, 3);
-     (9598%positive, 3);
-     (10041%positive, 4);
-     (10042%positive, 1);
-     (10043%positive, 1);
-     (10045%positive, 4);
-     (10046%positive, 4);
-     (10090%positive, 1);
-     (10094%positive, 4);
-     (10105%positive, 4);
-     (10106%positive, 1);
-     (10107%positive, 1);
-     (10109%positive, 4);
-     (10110%positive, 4);
-     (11577%positive, 2);
-     (11578%positive, 2);
-     (11579%positive, 1);
-     (11581%positive, 2);
-     (11582%positive, 2);
-     (11626%positive, 2);
-     (11630%positive, 2);
-     (11642%positive, 2);
-     (11643%positive, 1);
-     (11645%positive, 2);
-     (11646%positive, 2);
-     (12089%positive, 6);
-     (12090%positive, 1);
-     (12091%positive, 1);
-     (12093%positive, 8);
-     (12094%positive, 6);
-     (12138%positive, 1);
-     (12142%positive, 7);
-     (12153%positive, 6);
-     (12154%positive, 1);
-     (12155%positive, 1);
-     (12157%positive, 8);
-     (12158%positive, 5)]]
+     (9535%positive, 9);
+     (9579%positive, 4);
+     (9581%positive, 2);
+     (9583%positive, 9);
+     (9593%positive, 8);
+     (9594%positive, 7);
+     (9595%positive, 8);
+     (9597%positive, 6);
+     (9599%positive, 9);
+     (10025%positive, 1);
+     (10029%positive, 2);
+     (10041%positive, 1);
+     (10045%positive, 3);
+     (10047%positive, 10);
+     (10089%positive, 1);
+     (10093%positive, 2);
+     (10095%positive, 10);
+     (10105%positive, 1);
+     (10109%positive, 5);
+     (10111%positive, 10);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 12);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 13);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 11)]]
   | StB =>
   [NgRankE
-    [(9516%positive, 1);
-     (9530%positive, 8);
-     (9531%positive, 2);
-     (9532%positive, 2);
-     (9534%positive, 9);
+    [(9531%positive, 1);
+     (9534%positive, 1);
      (9535%positive, 2);
-     (9578%positive, 3);
-     (9580%positive, 1);
-     (9582%positive, 9);
-     (9594%positive, 8);
-     (9595%positive, 7);
-     (9596%positive, 5);
-     (9598%positive, 9);
-     (9599%positive, 6);
-     (10028%positive, 1);
-     (10031%positive, 1);
-     (10042%positive, 7);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 10);
-     (10047%positive, 2);
-     (10090%positive, 3);
-     (10092%positive, 1);
-     (10094%positive, 10);
-     (10095%positive, 1);
-     (10106%positive, 7);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 10);
-     (10111%positive, 6);
-     (11564%positive, 1);
-     (11578%positive, 8);
-     (11579%positive, 2);
-     (11580%positive, 2);
-     (11582%positive, 8);
-     (11583%positive, 2);
-     (11626%positive, 3);
-     (11628%positive, 1);
-     (11630%positive, 8);
-     (11642%positive, 8);
-     (11643%positive, 7);
-     (11644%positive, 5);
-     (11646%positive, 8);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12079%positive, 1);
-     (12090%positive, 7);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 12);
-     (12095%positive, 2);
-     (12138%positive, 3);
-     (12140%positive, 1);
-     (12142%positive, 13);
-     (12143%positive, 1);
-     (12154%positive, 7);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 11);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (9579%positive, 1);
+     (9583%positive, 2);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9598%positive, 1);
+     (9599%positive, 2);
+     (10046%positive, 3);
+     (10047%positive, 3);
+     (10095%positive, 3);
+     (10108%positive, 3);
+     (10110%positive, 3);
+     (10111%positive, 3);
+     (12094%positive, 8);
+     (12095%positive, 5);
+     (12143%positive, 6);
+     (12156%positive, 7);
+     (12158%positive, 8);
+     (12159%positive, 4)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
+    [12159%positive];
    NgRankE
-    [(9516%positive, 1);
-     (9530%positive, 8);
-     (9531%positive, 2);
-     (9532%positive, 2);
-     (9534%positive, 9);
+    [(9531%positive, 1);
+     (9534%positive, 1);
      (9535%positive, 2);
-     (9578%positive, 3);
-     (9580%positive, 1);
-     (9582%positive, 9);
-     (9594%positive, 8);
-     (9595%positive, 7);
-     (9596%positive, 5);
-     (9598%positive, 9);
-     (9599%positive, 6);
-     (10028%positive, 1);
-     (10031%positive, 1);
-     (10042%positive, 7);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10046%positive, 10);
-     (10047%positive, 2);
-     (10090%positive, 3);
-     (10092%positive, 1);
-     (10094%positive, 10);
-     (10095%positive, 1);
-     (10106%positive, 7);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 10);
-     (10111%positive, 6);
-     (11564%positive, 1);
-     (11578%positive, 8);
-     (11579%positive, 2);
-     (11580%positive, 2);
-     (11582%positive, 8);
-     (11583%positive, 2);
-     (11626%positive, 3);
-     (11628%positive, 1);
-     (11630%positive, 8);
-     (11642%positive, 8);
-     (11643%positive, 7);
-     (11644%positive, 5);
-     (11646%positive, 8);
-     (11647%positive, 6);
-     (12076%positive, 1);
-     (12079%positive, 1);
-     (12090%positive, 7);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12094%positive, 12);
-     (12095%positive, 2);
-     (12138%positive, 3);
-     (12140%positive, 1);
-     (12142%positive, 13);
-     (12143%positive, 1);
-     (12154%positive, 7);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 11);
-     (12159%positive, 6)]]
+     (9579%positive, 1);
+     (9583%positive, 2);
+     (9595%positive, 1);
+     (9596%positive, 2);
+     (9598%positive, 1);
+     (9599%positive, 2);
+     (10046%positive, 3);
+     (10047%positive, 3);
+     (10095%positive, 3);
+     (10108%positive, 3);
+     (10110%positive, 3);
+     (10111%positive, 3);
+     (12094%positive, 8);
+     (12095%positive, 5);
+     (12143%positive, 6);
+     (12156%positive, 7);
+     (12158%positive, 8);
+     (12159%positive, 4)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9516%positive, 2);
-     (9531%positive, 3);
-     (9532%positive, 3);
-     (9535%positive, 3);
-     (9580%positive, 2);
-     (9595%positive, 8);
-     (9596%positive, 6);
-     (9599%positive, 7);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10031%positive, 2);
-     (10040%positive, 1);
-     (10043%positive, 3);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10088%positive, 1);
-     (10092%positive, 2);
+     (9517%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 1);
+     (9581%positive, 1);
+     (9583%positive, 1);
+     (9592%positive, 1);
+     (9596%positive, 1);
+     (9597%positive, 5);
+     (9599%positive, 1);
+     (10029%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 2);
+     (10093%positive, 1);
      (10095%positive, 2);
-     (10104%positive, 1);
-     (10107%positive, 8);
-     (10108%positive, 5);
-     (10111%positive, 7);
-     (11560%positive, 1);
-     (11564%positive, 2);
-     (11576%positive, 1);
-     (11579%positive, 3);
-     (11580%positive, 3);
-     (11583%positive, 3);
-     (11624%positive, 1);
-     (11628%positive, 2);
-     (11640%positive, 1);
-     (11643%positive, 8);
-     (11644%positive, 6);
-     (11647%positive, 7);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12079%positive, 2);
-     (12088%positive, 1);
-     (12091%positive, 3);
-     (12092%positive, 3);
-     (12095%positive, 3);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 2);
-     (12152%positive, 1);
-     (12155%positive, 8);
-     (12156%positive, 4);
-     (12159%positive, 7)];
-   NgPattE [S1] RgL 1
+     (10108%positive, 2);
+     (10109%positive, 4);
+     (10111%positive, 2);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 4);
+     (12141%positive, 1);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 3);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
+    [12159%positive];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12157%positive];
    NgRankE
     [(9512%positive, 1);
-     (9516%positive, 2);
-     (9531%positive, 3);
-     (9532%positive, 3);
-     (9535%positive, 3);
-     (9580%positive, 2);
-     (9595%positive, 8);
-     (9596%positive, 6);
-     (9599%positive, 7);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10031%positive, 2);
-     (10040%positive, 1);
-     (10043%positive, 3);
-     (10044%positive, 3);
-     (10047%positive, 3);
-     (10088%positive, 1);
-     (10092%positive, 2);
+     (9517%positive, 1);
+     (9533%positive, 2);
+     (9535%positive, 1);
+     (9581%positive, 1);
+     (9583%positive, 1);
+     (9592%positive, 1);
+     (9596%positive, 1);
+     (9597%positive, 5);
+     (9599%positive, 1);
+     (10029%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 2);
+     (10093%positive, 1);
      (10095%positive, 2);
-     (10104%positive, 1);
-     (10107%positive, 8);
-     (10108%positive, 5);
-     (10111%positive, 7);
-     (11560%positive, 1);
-     (11564%positive, 2);
-     (11576%positive, 1);
-     (11579%positive, 3);
-     (11580%positive, 3);
-     (11583%positive, 3);
-     (11624%positive, 1);
-     (11628%positive, 2);
-     (11640%positive, 1);
-     (11643%positive, 8);
-     (11644%positive, 6);
-     (11647%positive, 7);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12079%positive, 2);
-     (12088%positive, 1);
-     (12091%positive, 3);
-     (12092%positive, 3);
-     (12095%positive, 3);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12143%positive, 2);
-     (12152%positive, 1);
-     (12155%positive, 8);
-     (12156%positive, 4);
-     (12159%positive, 7)]]
+     (10108%positive, 2);
+     (10109%positive, 4);
+     (10111%positive, 2);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 4);
+     (12141%positive, 1);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12157%positive, 3);
+     (12159%positive, 3)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 2);
-     (9516%positive, 3);
-     (9529%positive, 1);
-     (9532%positive, 9);
-     (9533%positive, 1);
-     (9534%positive, 1);
-     (9580%positive, 3);
-     (9582%positive, 1);
-     (9596%positive, 12);
-     (9597%positive, 1);
-     (9598%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 8);
-     (10040%positive, 2);
-     (10041%positive, 2);
-     (10044%positive, 9);
-     (10045%positive, 2);
-     (10046%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 8);
-     (10094%positive, 2);
-     (10104%positive, 2);
-     (10105%positive, 2);
-     (10108%positive, 11);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (11560%positive, 5);
-     (11564%positive, 3);
-     (11576%positive, 5);
-     (11577%positive, 1);
-     (11580%positive, 9);
-     (11581%positive, 1);
-     (11582%positive, 1);
-     (11624%positive, 5);
-     (11628%positive, 3);
-     (11630%positive, 1);
-     (11640%positive, 5);
-     (11644%positive, 12);
-     (11645%positive, 1);
-     (11646%positive, 1);
-     (12072%positive, 7);
-     (12076%positive, 8);
-     (12088%positive, 7);
-     (12089%positive, 4);
-     (12092%positive, 9);
-     (12093%positive, 6);
-     (12094%positive, 4);
-     (12136%positive, 7);
-     (12140%positive, 8);
-     (12142%positive, 5);
-     (12152%positive, 7);
-     (12153%positive, 4);
-     (12156%positive, 10);
-     (12157%positive, 6);
-     (12158%positive, 3)];
-   NgPattE [S1] RgR 1
+    [(9512%positive, 10);
+     (9517%positive, 13);
+     (9529%positive, 9);
+     (9530%positive, 14);
+     (9533%positive, 4);
+     (9534%positive, 11);
+     (9581%positive, 13);
+     (9592%positive, 10);
+     (9593%positive, 9);
+     (9594%positive, 8);
+     (9597%positive, 7);
+     (9598%positive, 11);
+     (10025%positive, 12);
+     (10029%positive, 3);
+     (10041%positive, 12);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10089%positive, 12);
+     (10093%positive, 3);
+     (10105%positive, 12);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12158%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
+    [12157%positive];
    NgRankE
-    [(9512%positive, 2);
-     (9516%positive, 3);
-     (9529%positive, 1);
-     (9532%positive, 9);
-     (9533%positive, 1);
-     (9534%positive, 1);
-     (9580%positive, 3);
-     (9582%positive, 1);
-     (9596%positive, 12);
-     (9597%positive, 1);
-     (9598%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 8);
-     (10040%positive, 2);
-     (10041%positive, 2);
-     (10044%positive, 9);
-     (10045%positive, 2);
-     (10046%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 8);
-     (10094%positive, 2);
-     (10104%positive, 2);
-     (10105%positive, 2);
-     (10108%positive, 11);
-     (10109%positive, 2);
-     (10110%positive, 2);
-     (11560%positive, 5);
-     (11564%positive, 3);
-     (11576%positive, 5);
-     (11577%positive, 1);
-     (11580%positive, 9);
-     (11581%positive, 1);
-     (11582%positive, 1);
-     (11624%positive, 5);
-     (11628%positive, 3);
-     (11630%positive, 1);
-     (11640%positive, 5);
-     (11644%positive, 12);
-     (11645%positive, 1);
-     (11646%positive, 1);
-     (12072%positive, 7);
-     (12076%positive, 8);
-     (12088%positive, 7);
-     (12089%positive, 4);
-     (12092%positive, 9);
-     (12093%positive, 6);
-     (12094%positive, 4);
-     (12136%positive, 7);
-     (12140%positive, 8);
-     (12142%positive, 5);
-     (12152%positive, 7);
-     (12153%positive, 4);
-     (12156%positive, 10);
-     (12157%positive, 6);
-     (12158%positive, 3)]]
+    [(9512%positive, 10);
+     (9517%positive, 13);
+     (9529%positive, 9);
+     (9530%positive, 14);
+     (9533%positive, 4);
+     (9534%positive, 11);
+     (9581%positive, 13);
+     (9592%positive, 10);
+     (9593%positive, 9);
+     (9594%positive, 8);
+     (9597%positive, 7);
+     (9598%positive, 11);
+     (10025%positive, 12);
+     (10029%positive, 3);
+     (10041%positive, 12);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10089%positive, 12);
+     (10093%positive, 3);
+     (10105%positive, 12);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1RC0RC_1RD1RC_1LD0LA : NeverQuasiHaltsSt tm_bulkr_00197.
+Theorem nqh_1RB0RD_1RC1LB_0LB1RA_1RC1RD : NeverQuasiHaltsSt tm_bulkr_00197.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 760 12 cert_bulkr_00197).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 440 11 cert_bulkr_00197).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1RC0RD_0LB1RC_1LD0LA: n=2 t=0 contexts=54 *)
+(** 1RB0RD_1RC1LB_0LD1RA_1LB1RD: n=2 t=0 contexts=39 *)
 
 Definition tm_bulkr_00198 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S0 DR StD)
-  | StC, S0 => Some (mkTrans S0 DL StB)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DL StD)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00198 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 5);
-     (9533%positive, 3);
+    [(9529%positive, 9);
+     (9531%positive, 3);
+     (9535%positive, 7);
      (9579%positive, 2);
-     (9593%positive, 5);
-     (9594%positive, 4);
-     (9597%positive, 3);
-     (9598%positive, 5);
-     (10041%positive, 6);
-     (10043%positive, 1);
-     (10045%positive, 1);
-     (10091%positive, 2);
-     (10105%positive, 6);
-     (10106%positive, 4);
-     (10107%positive, 1);
-     (10110%positive, 6);
-     (11577%positive, 5);
-     (11581%positive, 3);
-     (11627%positive, 2);
-     (11641%positive, 5);
-     (11642%positive, 4);
-     (11645%positive, 3);
-     (11646%positive, 5);
-     (12089%positive, 8);
-     (12091%positive, 1);
-     (12093%positive, 1);
-     (12139%positive, 2);
-     (12153%positive, 8);
-     (12154%positive, 4);
-     (12155%positive, 1);
-     (12158%positive, 7)];
-   NgPattE [S1] RgR 1
+     (9583%positive, 4);
+     (9593%positive, 9);
+     (9594%positive, 8);
+     (9595%positive, 6);
+     (9599%positive, 7);
+     (10029%positive, 2);
+     (10041%positive, 1);
+     (10045%positive, 3);
+     (10047%positive, 8);
+     (10093%positive, 2);
+     (10095%positive, 8);
+     (10105%positive, 1);
+     (10109%positive, 5);
+     (10111%positive, 8);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 10);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 11);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 9)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12158%positive];
+    [12157%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
    NgRankE
-    [(9529%positive, 5);
-     (9533%positive, 3);
+    [(9529%positive, 9);
+     (9531%positive, 3);
+     (9535%positive, 7);
      (9579%positive, 2);
-     (9593%positive, 5);
-     (9594%positive, 4);
-     (9597%positive, 3);
-     (9598%positive, 5);
-     (10041%positive, 6);
-     (10043%positive, 1);
-     (10045%positive, 1);
-     (10091%positive, 2);
-     (10105%positive, 6);
-     (10106%positive, 4);
-     (10107%positive, 1);
-     (10110%positive, 6);
-     (11577%positive, 5);
-     (11581%positive, 3);
-     (11627%positive, 2);
-     (11641%positive, 5);
-     (11642%positive, 4);
-     (11645%positive, 3);
-     (11646%positive, 5);
-     (12089%positive, 8);
-     (12091%positive, 1);
-     (12093%positive, 1);
-     (12139%positive, 2);
-     (12153%positive, 8);
-     (12154%positive, 4);
-     (12155%positive, 1);
-     (12158%positive, 7)]]
+     (9583%positive, 4);
+     (9593%positive, 9);
+     (9594%positive, 8);
+     (9595%positive, 6);
+     (9599%positive, 7);
+     (10029%positive, 2);
+     (10041%positive, 1);
+     (10045%positive, 3);
+     (10047%positive, 8);
+     (10093%positive, 2);
+     (10095%positive, 8);
+     (10105%positive, 1);
+     (10109%positive, 5);
+     (10111%positive, 8);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 10);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 11);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 9)]]
   | StB =>
   [NgRankE
-    [(9579%positive, 8);
+    [(9535%positive, 1);
      (9583%positive, 1);
+     (9594%positive, 2);
+     (9596%positive, 1);
      (9598%positive, 1);
-     (10028%positive, 1);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10091%positive, 8);
-     (10095%positive, 1);
-     (10107%positive, 7);
-     (10108%positive, 4);
+     (9599%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
      (10110%positive, 2);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11627%positive, 8);
-     (11631%positive, 1);
-     (11644%positive, 5);
-     (11646%positive, 1);
-     (12076%positive, 1);
-     (12079%positive, 1);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12095%positive, 2);
-     (12139%positive, 8);
-     (12143%positive, 1);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 3);
-     (12159%positive, 6)];
-   NgPattE [S1] RgL 1
+     (10111%positive, 2);
+     (12094%positive, 7);
+     (12095%positive, 4);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 7);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
+    [12159%positive];
    NgRankE
-    [(9579%positive, 8);
+    [(9535%positive, 1);
      (9583%positive, 1);
+     (9594%positive, 2);
+     (9596%positive, 1);
      (9598%positive, 1);
-     (10028%positive, 1);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10091%positive, 8);
-     (10095%positive, 1);
-     (10107%positive, 7);
-     (10108%positive, 4);
+     (9599%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
      (10110%positive, 2);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11627%positive, 8);
-     (11631%positive, 1);
-     (11644%positive, 5);
-     (11646%positive, 1);
-     (12076%positive, 1);
-     (12079%positive, 1);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12095%positive, 2);
-     (12139%positive, 8);
-     (12143%positive, 1);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 3);
-     (12159%positive, 6)]]
+     (10111%positive, 2);
+     (12094%positive, 7);
+     (12095%positive, 4);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 7);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9528%positive, 1);
-     (9533%positive, 11);
-     (9579%positive, 11);
-     (9583%positive, 2);
-     (9592%positive, 1);
-     (9597%positive, 12);
-     (10024%positive, 11);
-     (10028%positive, 5);
-     (10043%positive, 3);
-     (10044%positive, 6);
-     (10045%positive, 3);
-     (10091%positive, 11);
-     (10095%positive, 2);
-     (10107%positive, 11);
-     (10108%positive, 8);
-     (11560%positive, 1);
-     (11564%positive, 11);
-     (11576%positive, 1);
-     (11580%positive, 6);
-     (11581%positive, 11);
-     (11627%positive, 11);
-     (11631%positive, 2);
-     (11640%positive, 1);
-     (11644%positive, 9);
-     (11645%positive, 12);
-     (12072%positive, 4);
-     (12076%positive, 5);
-     (12079%positive, 2);
-     (12091%positive, 3);
-     (12092%positive, 6);
-     (12093%positive, 3);
-     (12095%positive, 11);
-     (12139%positive, 11);
-     (12143%positive, 2);
-     (12155%positive, 11);
-     (12156%positive, 7);
-     (12159%positive, 10)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgL 48
-    [(9533%positive, 2);
+     (9531%positive, 2);
+     (9535%positive, 6);
      (9579%positive, 1);
-     (10024%positive, 51);
-     (10091%positive, 1);
-     (11564%positive, 52);
-     (11581%positive, 2);
-     (11627%positive, 1);
-     (12095%positive, 47);
-     (12139%positive, 1)]
-    [9533%positive;
-     9579%positive;
-     10024%positive;
-     10091%positive;
-     10107%positive;
-     11564%positive;
-     11581%positive;
-     11627%positive;
-     12095%positive;
-     12139%positive;
-     12155%positive];
+     (9583%positive, 3);
+     (9592%positive, 1);
+     (9595%positive, 5);
+     (9596%positive, 2);
+     (9599%positive, 6);
+     (10029%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 7);
+     (10093%positive, 1);
+     (10095%positive, 7);
+     (10108%positive, 4);
+     (10109%positive, 4);
+     (10111%positive, 7);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 9);
+     (12141%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
+     (12157%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12157%positive];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9528%positive, 1);
-     (9579%positive, 4);
-     (9583%positive, 2);
+     (9531%positive, 2);
+     (9535%positive, 6);
+     (9579%positive, 1);
+     (9583%positive, 3);
      (9592%positive, 1);
-     (9597%positive, 5);
-     (10028%positive, 5);
-     (10043%positive, 3);
-     (10044%positive, 6);
-     (10045%positive, 3);
-     (10091%positive, 4);
-     (10095%positive, 2);
-     (10107%positive, 11);
-     (10108%positive, 8);
-     (11560%positive, 1);
-     (11576%positive, 1);
-     (11580%positive, 6);
-     (11627%positive, 4);
-     (11631%positive, 2);
-     (11640%positive, 1);
-     (11644%positive, 9);
-     (11645%positive, 5);
-     (12072%positive, 4);
-     (12076%positive, 5);
-     (12079%positive, 2);
-     (12091%positive, 3);
-     (12092%positive, 6);
-     (12093%positive, 3);
-     (12139%positive, 4);
-     (12143%positive, 2);
-     (12155%positive, 11);
-     (12156%positive, 7);
-     (12159%positive, 10)]]
+     (9595%positive, 5);
+     (9596%positive, 2);
+     (9599%positive, 6);
+     (10029%positive, 1);
+     (10045%positive, 2);
+     (10047%positive, 7);
+     (10093%positive, 1);
+     (10095%positive, 7);
+     (10108%positive, 4);
+     (10109%positive, 4);
+     (10111%positive, 7);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 9);
+     (12141%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
+     (12157%positive, 3);
+     (12159%positive, 8)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 3);
-     (9528%positive, 3);
-     (9529%positive, 2);
-     (9592%positive, 3);
-     (9593%positive, 2);
-     (9594%positive, 1);
-     (9598%positive, 2);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10041%positive, 3);
-     (10044%positive, 3);
-     (10105%positive, 3);
-     (10106%positive, 1);
-     (10108%positive, 5);
-     (10110%positive, 3);
-     (11560%positive, 6);
-     (11564%positive, 2);
-     (11576%positive, 6);
-     (11577%positive, 2);
-     (11580%positive, 3);
-     (11640%positive, 6);
-     (11641%positive, 2);
-     (11642%positive, 1);
-     (11644%positive, 6);
-     (11646%positive, 2);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12089%positive, 5);
-     (12092%positive, 3);
-     (12153%positive, 5);
-     (12154%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 4)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 2);
+     (9529%positive, 1);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9598%positive, 3);
+     (10029%positive, 3);
+     (10041%positive, 4);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10093%positive, 3);
+     (10105%positive, 4);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
-   NgPattE [S1] RgR 1
-    []
-    [12158%positive];
+    [12157%positive];
    NgRankE
-    [(9512%positive, 3);
-     (9528%positive, 3);
-     (9529%positive, 2);
-     (9592%positive, 3);
-     (9593%positive, 2);
-     (9594%positive, 1);
-     (9598%positive, 2);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10041%positive, 3);
-     (10044%positive, 3);
-     (10105%positive, 3);
-     (10106%positive, 1);
-     (10108%positive, 5);
-     (10110%positive, 3);
-     (11560%positive, 6);
-     (11564%positive, 2);
-     (11576%positive, 6);
-     (11577%positive, 2);
-     (11580%positive, 3);
-     (11640%positive, 6);
-     (11641%positive, 2);
-     (11642%positive, 1);
-     (11644%positive, 6);
-     (11646%positive, 2);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12089%positive, 5);
-     (12092%positive, 3);
-     (12153%positive, 5);
-     (12154%positive, 1);
-     (12156%positive, 4);
-     (12158%positive, 4)]]
+    [(9512%positive, 2);
+     (9529%positive, 1);
+     (9592%positive, 2);
+     (9593%positive, 1);
+     (9598%positive, 3);
+     (10029%positive, 3);
+     (10041%positive, 4);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10093%positive, 3);
+     (10105%positive, 4);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1RC0RD_0LB1RC_1LD0LA : NeverQuasiHaltsSt tm_bulkr_00198.
+Theorem nqh_1RB0RD_1RC1LB_0LD1RA_1LB1RD : NeverQuasiHaltsSt tm_bulkr_00198.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 496 11 cert_bulkr_00198).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 376 11 cert_bulkr_00198).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1RC0RD_1LC0LA_1RC1RD: n=2 t=0 contexts=87 *)
+(** 1RB0RD_1RC1LB_1LB1RA_1LB1RD: n=2 t=0 contexts=39 *)
 
 Definition tm_bulkr_00199 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S0 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StC)
-  | StC, S1 => Some (mkTrans S0 DL StA)
-  | StD, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S1 DL StB)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StB)
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
@@ -15746,839 +17164,472 @@ Definition cert_bulkr_00199 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 2);
-     (9530%positive, 1);
-     (9531%positive, 2);
-     (9533%positive, 3);
-     (9535%positive, 3);
+    [(9529%positive, 7);
+     (9531%positive, 3);
+     (9535%positive, 7);
      (9579%positive, 2);
-     (9583%positive, 3);
-     (9594%positive, 1);
-     (9595%positive, 2);
-     (9597%positive, 3);
-     (9599%positive, 3);
+     (9583%positive, 4);
+     (9593%positive, 7);
+     (9594%positive, 6);
+     (9595%positive, 6);
+     (9599%positive, 7);
+     (10029%positive, 2);
      (10041%positive, 1);
-     (10042%positive, 1);
-     (10043%positive, 1);
-     (10045%positive, 4);
-     (10047%positive, 4);
-     (10091%positive, 1);
-     (10095%positive, 4);
+     (10045%positive, 3);
+     (10047%positive, 8);
+     (10093%positive, 2);
+     (10095%positive, 8);
      (10105%positive, 1);
-     (10106%positive, 1);
-     (10107%positive, 1);
-     (10109%positive, 4);
-     (10111%positive, 4);
-     (11577%positive, 2);
-     (11578%positive, 1);
-     (11579%positive, 2);
-     (11581%positive, 2);
-     (11583%positive, 2);
-     (11627%positive, 2);
-     (11631%positive, 2);
-     (11642%positive, 1);
-     (11643%positive, 2);
-     (11645%positive, 2);
-     (11647%positive, 2);
+     (10109%positive, 5);
+     (10111%positive, 8);
+     (12073%positive, 1);
+     (12077%positive, 2);
      (12089%positive, 1);
-     (12090%positive, 1);
-     (12091%positive, 1);
-     (12093%positive, 8);
-     (12095%positive, 6);
-     (12139%positive, 1);
-     (12143%positive, 7);
+     (12093%positive, 3);
+     (12095%positive, 10);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 11);
      (12153%positive, 1);
-     (12154%positive, 1);
-     (12155%positive, 1);
-     (12157%positive, 8);
-     (12159%positive, 5)];
-   NgPattE [S1] RgR 1
+     (12157%positive, 4);
+     (12159%positive, 9)];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12157%positive];
+   NgPattE [S1; S1] RgR 1
     []
     [12159%positive];
    NgRankE
-    [(9529%positive, 2);
-     (9530%positive, 1);
-     (9531%positive, 2);
-     (9533%positive, 3);
-     (9535%positive, 3);
+    [(9529%positive, 7);
+     (9531%positive, 3);
+     (9535%positive, 7);
      (9579%positive, 2);
-     (9583%positive, 3);
-     (9594%positive, 1);
-     (9595%positive, 2);
-     (9597%positive, 3);
-     (9599%positive, 3);
+     (9583%positive, 4);
+     (9593%positive, 7);
+     (9594%positive, 6);
+     (9595%positive, 6);
+     (9599%positive, 7);
+     (10029%positive, 2);
      (10041%positive, 1);
-     (10042%positive, 1);
-     (10043%positive, 1);
-     (10045%positive, 4);
-     (10047%positive, 4);
-     (10091%positive, 1);
-     (10095%positive, 4);
+     (10045%positive, 3);
+     (10047%positive, 8);
+     (10093%positive, 2);
+     (10095%positive, 8);
      (10105%positive, 1);
-     (10106%positive, 1);
-     (10107%positive, 1);
-     (10109%positive, 4);
-     (10111%positive, 4);
-     (11577%positive, 2);
-     (11578%positive, 1);
-     (11579%positive, 2);
-     (11581%positive, 2);
-     (11583%positive, 2);
-     (11627%positive, 2);
-     (11631%positive, 2);
-     (11642%positive, 1);
-     (11643%positive, 2);
-     (11645%positive, 2);
-     (11647%positive, 2);
+     (10109%positive, 5);
+     (10111%positive, 8);
+     (12073%positive, 1);
+     (12077%positive, 2);
      (12089%positive, 1);
-     (12090%positive, 1);
-     (12091%positive, 1);
-     (12093%positive, 8);
-     (12095%positive, 6);
-     (12139%positive, 1);
-     (12143%positive, 7);
+     (12093%positive, 3);
+     (12095%positive, 10);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 11);
      (12153%positive, 1);
-     (12154%positive, 1);
-     (12155%positive, 1);
-     (12157%positive, 8);
-     (12159%positive, 5)]]
+     (12157%positive, 4);
+     (12159%positive, 9)]]
   | StB =>
   [NgRankE
-    [(9516%positive, 1);
-     (9530%positive, 2);
-     (9531%positive, 8);
-     (9532%positive, 2);
-     (9534%positive, 2);
-     (9535%positive, 9);
-     (9579%positive, 3);
-     (9580%positive, 1);
-     (9583%positive, 9);
-     (9594%positive, 7);
-     (9595%positive, 8);
-     (9596%positive, 5);
-     (9598%positive, 6);
-     (9599%positive, 9);
-     (10028%positive, 1);
-     (10030%positive, 1);
-     (10042%positive, 2);
-     (10043%positive, 7);
-     (10044%positive, 2);
+    [(9535%positive, 1);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 1);
+     (9599%positive, 1);
      (10046%positive, 2);
-     (10047%positive, 10);
-     (10091%positive, 3);
-     (10092%positive, 1);
-     (10094%positive, 1);
-     (10095%positive, 10);
-     (10106%positive, 7);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 6);
-     (10111%positive, 10);
-     (11564%positive, 1);
-     (11578%positive, 2);
-     (11579%positive, 8);
-     (11580%positive, 2);
-     (11582%positive, 2);
-     (11583%positive, 8);
-     (11627%positive, 3);
-     (11628%positive, 1);
-     (11631%positive, 8);
-     (11642%positive, 7);
-     (11643%positive, 8);
-     (11644%positive, 5);
-     (11646%positive, 6);
-     (11647%positive, 8);
-     (12076%positive, 1);
-     (12078%positive, 1);
-     (12090%positive, 2);
-     (12091%positive, 7);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 12);
-     (12139%positive, 3);
-     (12140%positive, 1);
-     (12142%positive, 1);
-     (12143%positive, 13);
-     (12154%positive, 7);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 6);
-     (12159%positive, 11)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgR 1
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 2);
+     (10111%positive, 2);
+     (12094%positive, 7);
+     (12095%positive, 4);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 7);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
     []
     [12159%positive];
    NgRankE
-    [(9516%positive, 1);
-     (9530%positive, 2);
-     (9531%positive, 8);
-     (9532%positive, 2);
-     (9534%positive, 2);
-     (9535%positive, 9);
-     (9579%positive, 3);
-     (9580%positive, 1);
-     (9583%positive, 9);
-     (9594%positive, 7);
-     (9595%positive, 8);
-     (9596%positive, 5);
-     (9598%positive, 6);
-     (9599%positive, 9);
-     (10028%positive, 1);
-     (10030%positive, 1);
-     (10042%positive, 2);
-     (10043%positive, 7);
-     (10044%positive, 2);
+    [(9535%positive, 1);
+     (9583%positive, 1);
+     (9596%positive, 1);
+     (9598%positive, 1);
+     (9599%positive, 1);
      (10046%positive, 2);
-     (10047%positive, 10);
-     (10091%positive, 3);
-     (10092%positive, 1);
-     (10094%positive, 1);
-     (10095%positive, 10);
-     (10106%positive, 7);
-     (10107%positive, 7);
-     (10108%positive, 4);
-     (10110%positive, 6);
-     (10111%positive, 10);
-     (11564%positive, 1);
-     (11578%positive, 2);
-     (11579%positive, 8);
-     (11580%positive, 2);
-     (11582%positive, 2);
-     (11583%positive, 8);
-     (11627%positive, 3);
-     (11628%positive, 1);
-     (11631%positive, 8);
-     (11642%positive, 7);
-     (11643%positive, 8);
-     (11644%positive, 5);
-     (11646%positive, 6);
-     (11647%positive, 8);
-     (12076%positive, 1);
-     (12078%positive, 1);
-     (12090%positive, 2);
-     (12091%positive, 7);
-     (12092%positive, 2);
-     (12094%positive, 2);
-     (12095%positive, 12);
-     (12139%positive, 3);
-     (12140%positive, 1);
-     (12142%positive, 1);
-     (12143%positive, 13);
-     (12154%positive, 7);
-     (12155%positive, 7);
-     (12156%positive, 3);
-     (12158%positive, 6);
-     (12159%positive, 11)]]
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 2);
+     (10111%positive, 2);
+     (12094%positive, 7);
+     (12095%positive, 4);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 7);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9516%positive, 3);
-     (9532%positive, 9);
-     (9533%positive, 1);
-     (9535%positive, 1);
-     (9580%positive, 3);
-     (9583%positive, 1);
-     (9596%positive, 12);
-     (9597%positive, 1);
-     (9599%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 8);
-     (10040%positive, 2);
-     (10044%positive, 9);
+     (9531%positive, 2);
+     (9535%positive, 6);
+     (9579%positive, 1);
+     (9583%positive, 3);
+     (9592%positive, 1);
+     (9595%positive, 5);
+     (9596%positive, 2);
+     (9599%positive, 6);
+     (10029%positive, 1);
      (10045%positive, 2);
-     (10047%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 8);
-     (10095%positive, 2);
-     (10104%positive, 2);
-     (10108%positive, 11);
-     (10109%positive, 2);
-     (10111%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11576%positive, 1);
-     (11580%positive, 9);
-     (11581%positive, 1);
-     (11583%positive, 1);
-     (11624%positive, 1);
-     (11628%positive, 3);
-     (11631%positive, 1);
-     (11640%positive, 1);
-     (11644%positive, 12);
-     (11645%positive, 1);
-     (11647%positive, 1);
-     (12072%positive, 7);
-     (12076%positive, 8);
-     (12088%positive, 7);
-     (12092%positive, 9);
-     (12093%positive, 6);
-     (12095%positive, 4);
-     (12136%positive, 7);
-     (12140%positive, 8);
-     (12143%positive, 5);
-     (12152%positive, 7);
-     (12156%positive, 10);
-     (12157%positive, 6);
-     (12159%positive, 3)];
-   NgPattE [S1] RgR 1
+     (10047%positive, 7);
+     (10093%positive, 1);
+     (10095%positive, 7);
+     (10108%positive, 4);
+     (10109%positive, 4);
+     (10111%positive, 7);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 9);
+     (12141%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
+     (12157%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1; S1] RgL 1
+    []
+    [12157%positive];
+   NgPattE [S1; S1] RgR 1
     []
     [12159%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
    NgRankE
     [(9512%positive, 1);
-     (9516%positive, 3);
-     (9532%positive, 9);
-     (9533%positive, 1);
-     (9535%positive, 1);
-     (9580%positive, 3);
-     (9583%positive, 1);
-     (9596%positive, 12);
-     (9597%positive, 1);
-     (9599%positive, 1);
-     (10024%positive, 2);
-     (10028%positive, 8);
-     (10040%positive, 2);
-     (10044%positive, 9);
+     (9531%positive, 2);
+     (9535%positive, 6);
+     (9579%positive, 1);
+     (9583%positive, 3);
+     (9592%positive, 1);
+     (9595%positive, 5);
+     (9596%positive, 2);
+     (9599%positive, 6);
+     (10029%positive, 1);
      (10045%positive, 2);
-     (10047%positive, 2);
-     (10088%positive, 2);
-     (10092%positive, 8);
-     (10095%positive, 2);
-     (10104%positive, 2);
-     (10108%positive, 11);
-     (10109%positive, 2);
-     (10111%positive, 2);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11576%positive, 1);
-     (11580%positive, 9);
-     (11581%positive, 1);
-     (11583%positive, 1);
-     (11624%positive, 1);
-     (11628%positive, 3);
-     (11631%positive, 1);
-     (11640%positive, 1);
-     (11644%positive, 12);
-     (11645%positive, 1);
-     (11647%positive, 1);
-     (12072%positive, 7);
-     (12076%positive, 8);
-     (12088%positive, 7);
-     (12092%positive, 9);
-     (12093%positive, 6);
-     (12095%positive, 4);
-     (12136%positive, 7);
-     (12140%positive, 8);
-     (12143%positive, 5);
-     (12152%positive, 7);
-     (12156%positive, 10);
-     (12157%positive, 6);
-     (12159%positive, 3)]]
+     (10047%positive, 7);
+     (10093%positive, 1);
+     (10095%positive, 7);
+     (10108%positive, 4);
+     (10109%positive, 4);
+     (10111%positive, 7);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 9);
+     (12141%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
+     (12157%positive, 3);
+     (12159%positive, 8)]]
   | StD =>
   [NgRankE
-    [(9512%positive, 10);
-     (9516%positive, 2);
-     (9529%positive, 9);
-     (9530%positive, 11);
-     (9532%positive, 3);
-     (9534%positive, 3);
-     (9580%positive, 2);
-     (9594%positive, 8);
-     (9596%positive, 6);
-     (9598%positive, 7);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10030%positive, 10);
-     (10040%positive, 1);
-     (10041%positive, 8);
-     (10042%positive, 11);
-     (10044%positive, 3);
-     (10046%positive, 3);
-     (10088%positive, 1);
-     (10092%positive, 2);
-     (10094%positive, 10);
-     (10104%positive, 1);
-     (10105%positive, 8);
-     (10106%positive, 8);
-     (10108%positive, 5);
-     (10110%positive, 7);
-     (11560%positive, 9);
-     (11564%positive, 2);
-     (11576%positive, 9);
-     (11577%positive, 9);
-     (11578%positive, 11);
-     (11580%positive, 3);
-     (11582%positive, 3);
-     (11624%positive, 9);
-     (11628%positive, 2);
-     (11640%positive, 9);
-     (11642%positive, 8);
-     (11644%positive, 6);
-     (11646%positive, 7);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12078%positive, 10);
-     (12088%positive, 1);
-     (12089%positive, 8);
-     (12090%positive, 11);
-     (12092%positive, 3);
-     (12094%positive, 3);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 10);
-     (12152%positive, 1);
-     (12153%positive, 8);
-     (12154%positive, 8);
-     (12156%positive, 4);
-     (12158%positive, 7)];
-   NgPattE [S1] RgL 1
+    [(9512%positive, 9);
+     (9529%positive, 8);
+     (9592%positive, 9);
+     (9593%positive, 8);
+     (9594%positive, 7);
+     (9598%positive, 10);
+     (10029%positive, 3);
+     (10041%positive, 11);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10093%positive, 3);
+     (10105%positive, 11);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)];
+   NgPattE [S1; S1] RgL 1
     []
-    [12156%positive];
+    [12157%positive];
    NgRankE
-    [(9512%positive, 10);
-     (9516%positive, 2);
-     (9529%positive, 9);
-     (9530%positive, 11);
-     (9532%positive, 3);
-     (9534%positive, 3);
-     (9580%positive, 2);
-     (9594%positive, 8);
-     (9596%positive, 6);
-     (9598%positive, 7);
-     (10024%positive, 1);
-     (10028%positive, 2);
-     (10030%positive, 10);
-     (10040%positive, 1);
-     (10041%positive, 8);
-     (10042%positive, 11);
-     (10044%positive, 3);
-     (10046%positive, 3);
-     (10088%positive, 1);
-     (10092%positive, 2);
-     (10094%positive, 10);
-     (10104%positive, 1);
-     (10105%positive, 8);
-     (10106%positive, 8);
-     (10108%positive, 5);
-     (10110%positive, 7);
-     (11560%positive, 9);
-     (11564%positive, 2);
-     (11576%positive, 9);
-     (11577%positive, 9);
-     (11578%positive, 11);
-     (11580%positive, 3);
-     (11582%positive, 3);
-     (11624%positive, 9);
-     (11628%positive, 2);
-     (11640%positive, 9);
-     (11642%positive, 8);
-     (11644%positive, 6);
-     (11646%positive, 7);
-     (12072%positive, 1);
-     (12076%positive, 2);
-     (12078%positive, 10);
-     (12088%positive, 1);
-     (12089%positive, 8);
-     (12090%positive, 11);
-     (12092%positive, 3);
-     (12094%positive, 3);
-     (12136%positive, 1);
-     (12140%positive, 2);
-     (12142%positive, 10);
-     (12152%positive, 1);
-     (12153%positive, 8);
-     (12154%positive, 8);
-     (12156%positive, 4);
-     (12158%positive, 7)]]
+    [(9512%positive, 9);
+     (9529%positive, 8);
+     (9592%positive, 9);
+     (9593%positive, 8);
+     (9594%positive, 7);
+     (9598%positive, 10);
+     (10029%positive, 3);
+     (10041%positive, 11);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10093%positive, 3);
+     (10105%positive, 11);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1RC0RD_1LC0LA_1RC1RD : NeverQuasiHaltsSt tm_bulkr_00199.
+Theorem nqh_1RB0RD_1RC1LB_1LB1RA_1LB1RD : NeverQuasiHaltsSt tm_bulkr_00199.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 760 12 cert_bulkr_00199).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 376 11 cert_bulkr_00199).
   vm_compute. reflexivity.
 Qed.
 
-(** 1RB1LA_1RC1RB_0LD0RD_0LA1LD: n=2 t=0 contexts=64 *)
+(** 1RB0RD_1RC1LB_1LD1RA_1LB1RD: n=2 t=0 contexts=39 *)
 
 Definition tm_bulkr_00200 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S1 DR StB)
-  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StA, S1 => Some (mkTrans S0 DR StD)
   | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DL StD)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S0 DL StA)
-  | StD, S1 => Some (mkTrans S1 DL StD)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 
 Definition cert_bulkr_00200 (q : St) : list ngcomp :=
   match q with
   | StA =>
   [NgRankE
-    [(9529%positive, 7);
-     (9533%positive, 8);
-     (9535%positive, 2);
-     (9583%positive, 1);
-     (9593%positive, 7);
-     (9594%positive, 6);
-     (9597%positive, 8);
-     (9598%positive, 1);
-     (9599%positive, 5);
-     (10031%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 9);
-     (10047%positive, 2);
-     (10095%positive, 1);
-     (10105%positive, 2);
-     (10106%positive, 6);
-     (10109%positive, 9);
-     (10110%positive, 2);
-     (10111%positive, 4);
-     (11577%positive, 7);
-     (11581%positive, 4);
-     (11583%positive, 2);
-     (11631%positive, 1);
-     (11641%positive, 7);
-     (11642%positive, 6);
-     (11645%positive, 4);
-     (11646%positive, 1);
-     (11647%positive, 5);
-     (12079%positive, 1);
-     (12089%positive, 3);
-     (12093%positive, 11);
-     (12095%positive, 2);
-     (12143%positive, 1);
-     (12153%positive, 3);
-     (12154%positive, 6);
-     (12157%positive, 10);
-     (12158%positive, 2);
-     (12159%positive, 3)];
-   NgPattE [S1] RgL 1
-    []
-    [12159%positive];
-   NgPattE [S1] RgR 1
+    [(9529%positive, 10);
+     (9531%positive, 3);
+     (9535%positive, 7);
+     (9579%positive, 2);
+     (9583%positive, 4);
+     (9593%positive, 10);
+     (9594%positive, 9);
+     (9595%positive, 6);
+     (9599%positive, 7);
+     (10029%positive, 2);
+     (10041%positive, 1);
+     (10045%positive, 3);
+     (10047%positive, 8);
+     (10093%positive, 2);
+     (10095%positive, 8);
+     (10105%positive, 1);
+     (10109%positive, 5);
+     (10111%positive, 8);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 10);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 11);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 9)];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
-   NgRankE
-    [(9529%positive, 7);
-     (9533%positive, 8);
-     (9535%positive, 2);
-     (9583%positive, 1);
-     (9593%positive, 7);
-     (9594%positive, 6);
-     (9597%positive, 8);
-     (9598%positive, 1);
-     (9599%positive, 5);
-     (10031%positive, 1);
-     (10041%positive, 2);
-     (10045%positive, 9);
-     (10047%positive, 2);
-     (10095%positive, 1);
-     (10105%positive, 2);
-     (10106%positive, 6);
-     (10109%positive, 9);
-     (10110%positive, 2);
-     (10111%positive, 4);
-     (11577%positive, 7);
-     (11581%positive, 4);
-     (11583%positive, 2);
-     (11631%positive, 1);
-     (11641%positive, 7);
-     (11642%positive, 6);
-     (11645%positive, 4);
-     (11646%positive, 1);
-     (11647%positive, 5);
-     (12079%positive, 1);
-     (12089%positive, 3);
-     (12093%positive, 11);
-     (12095%positive, 2);
-     (12143%positive, 1);
-     (12153%positive, 3);
-     (12154%positive, 6);
-     (12157%positive, 10);
-     (12158%positive, 2);
-     (12159%positive, 3)]]
-  | StB =>
-  [NgRankE
-    [(9535%positive, 3);
-     (9579%positive, 1);
-     (9583%positive, 7);
-     (9594%positive, 7);
-     (9598%positive, 2);
-     (9599%positive, 6);
-     (10028%positive, 1);
-     (10031%positive, 2);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10047%positive, 3);
-     (10091%positive, 1);
-     (10095%positive, 7);
-     (10106%positive, 7);
-     (10107%positive, 6);
-     (10108%positive, 4);
-     (10110%positive, 8);
-     (10111%positive, 5);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11583%positive, 3);
-     (11627%positive, 1);
-     (11631%positive, 7);
-     (11642%positive, 7);
-     (11644%positive, 5);
-     (11646%positive, 2);
-     (11647%positive, 6);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12079%positive, 2);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12095%positive, 3);
-     (12139%positive, 1);
-     (12143%positive, 7);
-     (12154%positive, 7);
-     (12155%positive, 6);
-     (12156%positive, 3);
-     (12158%positive, 8);
-     (12159%positive, 4)];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgL 1
+   NgPattE [S1; S1] RgR 1
     []
     [12159%positive];
    NgRankE
-    [(9535%positive, 3);
-     (9579%positive, 1);
-     (9583%positive, 7);
-     (9594%positive, 7);
-     (9598%positive, 2);
-     (9599%positive, 6);
-     (10028%positive, 1);
-     (10031%positive, 2);
-     (10043%positive, 2);
-     (10044%positive, 2);
-     (10047%positive, 3);
-     (10091%positive, 1);
-     (10095%positive, 7);
-     (10106%positive, 7);
-     (10107%positive, 6);
-     (10108%positive, 4);
-     (10110%positive, 8);
-     (10111%positive, 5);
-     (11564%positive, 1);
-     (11580%positive, 2);
-     (11583%positive, 3);
-     (11627%positive, 1);
-     (11631%positive, 7);
-     (11642%positive, 7);
-     (11644%positive, 5);
-     (11646%positive, 2);
-     (11647%positive, 6);
-     (12075%positive, 1);
-     (12076%positive, 1);
-     (12079%positive, 2);
-     (12091%positive, 2);
-     (12092%positive, 2);
-     (12095%positive, 3);
-     (12139%positive, 1);
-     (12143%positive, 7);
-     (12154%positive, 7);
-     (12155%positive, 6);
-     (12156%positive, 3);
-     (12158%positive, 8);
-     (12159%positive, 4)]]
+    [(9529%positive, 10);
+     (9531%positive, 3);
+     (9535%positive, 7);
+     (9579%positive, 2);
+     (9583%positive, 4);
+     (9593%positive, 10);
+     (9594%positive, 9);
+     (9595%positive, 6);
+     (9599%positive, 7);
+     (10029%positive, 2);
+     (10041%positive, 1);
+     (10045%positive, 3);
+     (10047%positive, 8);
+     (10093%positive, 2);
+     (10095%positive, 8);
+     (10105%positive, 1);
+     (10109%positive, 5);
+     (10111%positive, 8);
+     (12073%positive, 1);
+     (12077%positive, 2);
+     (12089%positive, 1);
+     (12093%positive, 3);
+     (12095%positive, 10);
+     (12137%positive, 1);
+     (12141%positive, 2);
+     (12143%positive, 11);
+     (12153%positive, 1);
+     (12157%positive, 4);
+     (12159%positive, 9)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9583%positive, 1);
+     (9594%positive, 3);
+     (9596%positive, 1);
+     (9598%positive, 1);
+     (9599%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 2);
+     (10111%positive, 2);
+     (12094%positive, 7);
+     (12095%positive, 4);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 7);
+     (12159%positive, 3)];
+   NgPattE [S1; S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9583%positive, 1);
+     (9594%positive, 3);
+     (9596%positive, 1);
+     (9598%positive, 1);
+     (9599%positive, 1);
+     (10046%positive, 2);
+     (10047%positive, 2);
+     (10095%positive, 2);
+     (10108%positive, 2);
+     (10110%positive, 2);
+     (10111%positive, 2);
+     (12094%positive, 7);
+     (12095%positive, 4);
+     (12143%positive, 5);
+     (12156%positive, 6);
+     (12158%positive, 7);
+     (12159%positive, 3)]]
   | StC =>
   [NgRankE
     [(9512%positive, 1);
-     (9528%positive, 1);
-     (9533%positive, 1);
-     (9535%positive, 4);
-     (9579%positive, 2);
-     (9583%positive, 12);
+     (9531%positive, 2);
+     (9535%positive, 6);
+     (9579%positive, 1);
+     (9583%positive, 3);
      (9592%positive, 1);
-     (9597%positive, 1);
-     (9599%positive, 7);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10031%positive, 3);
-     (10043%positive, 4);
-     (10044%positive, 7);
+     (9595%positive, 5);
+     (9596%positive, 2);
+     (9599%positive, 6);
+     (10029%positive, 1);
      (10045%positive, 2);
-     (10047%positive, 4);
-     (10091%positive, 2);
-     (10095%positive, 12);
-     (10107%positive, 11);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (10111%positive, 6);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11576%positive, 1);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11583%positive, 4);
-     (11627%positive, 2);
-     (11631%positive, 12);
-     (11640%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (11647%positive, 7);
-     (12072%positive, 5);
-     (12075%positive, 2);
-     (12076%positive, 6);
-     (12079%positive, 3);
-     (12091%positive, 4);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12139%positive, 2);
-     (12143%positive, 12);
-     (12155%positive, 11);
-     (12156%positive, 8);
+     (10047%positive, 7);
+     (10093%positive, 1);
+     (10095%positive, 7);
+     (10108%positive, 4);
+     (10109%positive, 4);
+     (10111%positive, 7);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 9);
+     (12141%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
      (12157%positive, 3);
-     (12159%positive, 5)];
-   NgPattE [S1] RgR 1
+     (12159%positive, 8)];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
-   NgPattE [S1] RgL 1
+   NgPattE [S1; S1] RgR 1
     []
     [12159%positive];
    NgRankE
     [(9512%positive, 1);
-     (9528%positive, 1);
-     (9533%positive, 1);
-     (9535%positive, 4);
-     (9579%positive, 2);
-     (9583%positive, 12);
+     (9531%positive, 2);
+     (9535%positive, 6);
+     (9579%positive, 1);
+     (9583%positive, 3);
      (9592%positive, 1);
-     (9597%positive, 1);
-     (9599%positive, 7);
-     (10024%positive, 2);
-     (10028%positive, 6);
-     (10031%positive, 3);
-     (10043%positive, 4);
-     (10044%positive, 7);
+     (9595%positive, 5);
+     (9596%positive, 2);
+     (9599%positive, 6);
+     (10029%positive, 1);
      (10045%positive, 2);
-     (10047%positive, 4);
-     (10091%positive, 2);
-     (10095%positive, 12);
-     (10107%positive, 11);
-     (10108%positive, 9);
-     (10109%positive, 2);
-     (10111%positive, 6);
-     (11560%positive, 1);
-     (11564%positive, 3);
-     (11576%positive, 1);
-     (11580%positive, 7);
-     (11581%positive, 1);
-     (11583%positive, 4);
-     (11627%positive, 2);
-     (11631%positive, 12);
-     (11640%positive, 1);
-     (11644%positive, 10);
-     (11645%positive, 1);
-     (11647%positive, 7);
-     (12072%positive, 5);
-     (12075%positive, 2);
-     (12076%positive, 6);
-     (12079%positive, 3);
-     (12091%positive, 4);
-     (12092%positive, 7);
-     (12093%positive, 4);
-     (12095%positive, 4);
-     (12139%positive, 2);
-     (12143%positive, 12);
-     (12155%positive, 11);
-     (12156%positive, 8);
+     (10047%positive, 7);
+     (10093%positive, 1);
+     (10095%positive, 7);
+     (10108%positive, 4);
+     (10109%positive, 4);
+     (10111%positive, 7);
+     (12077%positive, 1);
+     (12093%positive, 2);
+     (12095%positive, 9);
+     (12141%positive, 1);
+     (12143%positive, 10);
+     (12156%positive, 11);
      (12157%positive, 3);
-     (12159%positive, 5)]]
+     (12159%positive, 8)]]
   | StD =>
   [NgRankE
     [(9512%positive, 2);
-     (9528%positive, 2);
      (9529%positive, 1);
-     (9533%positive, 2);
      (9592%positive, 2);
      (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11576%positive, 2);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11640%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)];
-   NgPattE [S1] RgR 1
+     (9598%positive, 3);
+     (10029%positive, 3);
+     (10041%positive, 4);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10093%positive, 3);
+     (10105%positive, 4);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)];
+   NgPattE [S1; S1] RgL 1
     []
     [12157%positive];
-   NgPattE [S1] RgL 1
-    []
-    [12156%positive];
    NgRankE
     [(9512%positive, 2);
-     (9528%positive, 2);
      (9529%positive, 1);
-     (9533%positive, 2);
      (9592%positive, 2);
      (9593%positive, 1);
-     (9597%positive, 2);
-     (10024%positive, 3);
-     (10028%positive, 7);
-     (10041%positive, 1);
-     (10044%positive, 8);
-     (10045%positive, 3);
-     (10105%positive, 1);
-     (10108%positive, 10);
-     (10109%positive, 3);
-     (11560%positive, 2);
-     (11564%positive, 4);
-     (11576%positive, 2);
-     (11577%positive, 1);
-     (11580%positive, 8);
-     (11581%positive, 2);
-     (11640%positive, 2);
-     (11641%positive, 1);
-     (11644%positive, 11);
-     (11645%positive, 2);
-     (12072%positive, 6);
-     (12076%positive, 7);
-     (12089%positive, 1);
-     (12092%positive, 8);
-     (12093%positive, 5);
-     (12153%positive, 1);
-     (12156%positive, 9);
-     (12157%positive, 4)]]
+     (9598%positive, 3);
+     (10029%positive, 3);
+     (10041%positive, 4);
+     (10045%positive, 4);
+     (10046%positive, 1);
+     (10093%positive, 3);
+     (10105%positive, 4);
+     (10109%positive, 6);
+     (10110%positive, 1);
+     (12073%positive, 2);
+     (12077%positive, 3);
+     (12089%positive, 2);
+     (12093%positive, 4);
+     (12094%positive, 1);
+     (12137%positive, 2);
+     (12141%positive, 3);
+     (12153%positive, 2);
+     (12157%positive, 5);
+     (12158%positive, 1)]]
   end.
 
-Theorem nqh_1RB1LA_1RC1RB_0LD0RD_0LA1LD : NeverQuasiHaltsSt tm_bulkr_00200.
+Theorem nqh_1RB0RD_1RC1LB_1LD1RA_1LB1RD : NeverQuasiHaltsSt tm_bulkr_00200.
 Proof.
-  apply (ngram_check_neverqh_lex_sound _ 2 0 576 11 cert_bulkr_00200).
+  apply (ngram_check_neverqh_lex_sound _ 2 0 376 11 cert_bulkr_00200).
   vm_compute. reflexivity.
 Qed.

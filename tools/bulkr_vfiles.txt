@@ -4,3 +4,6 @@ theories/Machines/Bulk/Bulk_R03.v
 theories/Machines/Bulk/Bulk_R04.v
 theories/Machines/Bulk/Bulk_R05.v
 theories/Machines/Bulk/Bulk_R06.v
+theories/Machines/Bulk/Bulk_R07.v
+theories/Machines/Bulk/Bulk_R08.v
+theories/Machines/Bulk/Bulk_R09.v
