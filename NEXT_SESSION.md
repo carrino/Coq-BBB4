@@ -23,8 +23,9 @@ compute" below).
   n-gram CPS ladder 196,595 / holdouts reached 3,708 of 3,713
   (the other 5 are ngram-easy and already have Bulk theorems here) /
   residue 228,726.
-- **Deferred list** `D_census` = 3,713 holdouts + 228,726 residue =
-  232,439 machines (generated tables `Census/Deferred_*.v`).
+- **Deferred list** `D_census` = 3,713 holdouts + 52,326 residue =
+  56,039 machines (generated tables `Census/Deferred_*.v`; the rank
+  tier shrank the raw 228,726 tier residue by 77.1%).
 - Previous sessions' 3,136 holdout theorems stand unchanged.
 
 ## What was built this session
@@ -76,16 +77,19 @@ each should print `sub_probe_X = (0, 0, [])`.  v1 pace: ~6.8 ms/pop
 native => ~5.9 h for the 1RB subtree, ~1.6 h for 0RB, seconds for
 0RA/1RA; v2 adds the rank tier's cost on ngram-failing machines.
 
-When the logs show (0, 0, []) for all four:
+The certification layer is the generated
+`theories/Census/Compute/` directory (tools/gen_gsplit.py): 24
+per-grandchild Qed files (the two xRB subtrees split at B0 into 12
+each, composed by Run_Split.child_from_grandchildren) compiled in
+parallel, plus Census_Theorem.v assembling
 
-1. `theories/Census/Census_Compute_Split.v` is ready as written --
-   compile it (each Qed replays its subtree through the kernel's
-   native conversion, so budget the same hours again; split the four
-   lemmas into four files for parallel make if desired).
-2. `Print Assumptions census_decided` must show only
-   functional_extensionality_dep.
-3. Add Census_Compute_Split.v to _CoqProject (or keep it a manual
-   `make census`-style target) and update this file.
+    census_decided : forall tm, QHBound B_census tm \/ Deferred D_census tm
+
+`Print Assumptions census_decided` must show only
+functional_extensionality_dep.  The fleet was LAUNCHED at session
+end (logs census_probes/G_*.log, progress qed_progress.txt); when
+all 24 are OK, compile Census_Theorem.v (seconds for the two leaf
+subtrees + assembly).
 
 If a log shows leftovers instead: decode the printed tm_enc keys
 with `tools/dec_tm_enc.py`, classify them with
