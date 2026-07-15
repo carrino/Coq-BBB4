@@ -125,22 +125,65 @@ Measured on the full 228,726 residue: **rank kills 176,400
 prefix-quiet QUASIHALTERS (wrap-class).  v2 deferred list D_census =
 3,713 holdouts + 52,326 residue = **56,039 machines**.
 
-Next tiers, in measured order:
+## Next session: shrink the deferred list (52,326 residue + holdouts)
 
-1. **QH-classification tier** (~22k machines): the machine's quiet
-   state vanishes from the n-gram closure -- exactly the wrap
-   construction (`Checkers/Wrap.v` exists for certs; a generic
-   census tier needs the in-Coq wrap search: redirect the quiet
-   state's transitions to halt, run the ngram closure on the wrapped
-   machine, conclude R_Leaf via NonHalt + QHBound... the leaf lemma
-   needs the last-visit bound, which the prefix simulation gives).
-2. The remaining ~30k rank-resistant never-QH machines: higher-n
-   rank rungs (n=4,5 add a few percent), the full pattern-measure
-   vocabulary (NgPattE already checkable), then the roadmap checkers
-   (rwlrank/fuel/drift/irules) which also absorb holdout certs.
-3. Upstream is <10 open holdouts (user report, 2026-07-15); the Coq
-   checker gaps (irules/rwlrank/fuel/drift/counters) are what absorb
-   the certificate types as they land.
+Work items in measured coverage-per-effort order.  The loop for each
+tier is mechanized: add the tier to `decide_easy` + its WF case,
+mirror it in the residue sweep tool, regenerate `Deferred_*`
+(`tools/gen_deferred.py`; the current residue = the committed
+Deferred rows minus the holdout list, or re-derive with
+census_ladder + the sweep), re-validate with the 64k-pop probe
+(expect `(32, 0, [])`), then `make census` (~2-3 h wall at the
+grandchild split).  Batch tiers into ONE regeneration + one
+certification.
+
+1. **Wrap tier, ~21.7k machines (the measured prefix-quiet
+   quasihalters).**  These have a state visited in the simulated
+   prefix that vanishes from the n-gram closure -- the machine
+   quasihalts and no never-QH tier can take them.  The wrap
+   construction exists verified for certificates
+   (`Checkers/Wrap.v`: `tm_wrap` halt-redirect + `wrap_agree`
+   transfers immortality and q-freeness back); the census needs the
+   generic search: detect the quiet-state candidate q from the
+   prefix/closure state sets (the rank tier already computes both),
+   run the existing wrapped-closure check at the same (n, t) rungs,
+   and return R_Leaf via NonHalt + QHBound (q's last visit is in the
+   prefix; the other states' liveness is NOT needed for QHBound --
+   only quiet states bound scores, and any OTHER quiet state's last
+   visit is also <= t if it too vanishes... careful: conclude
+   QHBound only from what the wrapped closure gives -- q never fires
+   after t and the run never halts, so every QuietAfter witness sits
+   at index < t + (closure liveness of the others is irrelevant to
+   the BOUND, revisit the exact leaf lemma).  Expect the same
+   pipeline shape as rank_tier: search + existing checker.
+2. **Pattern-vocabulary rank (cheap add-on, ~3-6k):** generalize
+   RankSearch's candidate measures from the three `ngmeas` counts to
+   the `NgPattE` pattern measures (pm_delta is verified; the search
+   loop is measure-agnostic -- add candidate enumeration with
+   `pm_ok` coverage limits) and add n=4 rungs.  Mirror in
+   sweep_rank_residue (bulk_prover already speaks patterns).
+3. **RepWL tier (the remaining ~25-30k are mostly this class):**
+   port Coq-BB5's `Decider_RepWL.v` closure construction as a second
+   instance of the `Closure.v` engine (SCOPING phase 2's rwl block),
+   plain-acyclicity liveness first (the engine's `compute_ranks`
+   works for any instance), rwlrank measures later.  This is the
+   biggest single block and also the prerequisite for the 106
+   rwlrank holdout certs.
+4. **Holdout absorption** (independent track): upstream is <10 open
+   (user report, 2026-07-15).  The checker gaps that absorb the
+   remaining certificate types: irules (352), rwlrank (106),
+   fuel/drift (79), counters (22) -- SCOPING phases 2b-5.  Each
+   holdout theorem also lets its machine leave the deferred list
+   at the NEXT regeneration (deferred entries with Coq theorems can
+   be dropped once a "proven machines" tier exists -- a
+   PositiveMap of the Bulk/Wrap theorem machines returning
+   R_NeverQH/R_QH, trivially WF from the existing per-machine
+   theorems).
+
+Nothing from the certification run itself needs checking in beyond
+what is committed: the G_*.vo/logs are gitignored artifacts
+(re-derivable by `make census`), and the residue list is recoverable
+from the committed Deferred tables minus the holdout file.
 
 ## Gotchas discovered (do not re-learn these)
 

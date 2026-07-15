@@ -10,8 +10,10 @@ clean:
 
 .PHONY: all clean
 
-# The census computation (heavy: one full enumeration run at Qed).
-# Needs native_compute: eval $(opam env --switch=census) first.
+# The census certification: 24 per-grandchild subtree enumerations
+# (parallel; each Qed is one native_compute walk) + the assembled
+# theorem.  Needs native_compute: eval $(opam env --switch=census).
 census: all
-	coqc -Q theories BBB4 theories/Census/Census_Compute.v
+	ls theories/Census/Compute/G_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
+	coqc -Q theories BBB4 theories/Census/Compute/Census_Theorem.v
 .PHONY: census
