@@ -43,7 +43,7 @@
     state does not witness quasihalting). *)
 
 From Coq Require Import Arith Lia Bool List ZArith.
-From BBB4 Require Import BBB4_Statement CTape PosEnc.
+From BBB4 Require Import BBB4_Statement CTape PosEnc Records.
 From BBB4.Checkers Require Import Cycle.
 Import ListNotations.
 
@@ -615,6 +615,194 @@ Section ClosureEngine.
       as (n' & Hn' & Hv).
     exists n'. split; [| assumption].
     assert (N <= M) by (unfold M; lia). lia.
+  Qed.
+
+  (** ** Runner liveness: the fuel rule (c2)
+
+      What the rank / lex measures leave undecided is dominated by
+      *runner* SCCs (neverqh.md "Fuel-refined rank"): every alive
+      intra-SCC edge moves the head the same way and every context
+      holds fuel on that side.  Such an SCC cannot carry the
+      infinitely-often set of a run: confined to it the head is
+      monotone, so it crosses every cell ahead and the sided nonblank
+      count drains to 0 -- contradicting "fuel >= 1 everywhere".
+
+      This is a genuinely different liveness mechanism from a rank
+      (no measure decreases per step over blank tape), and it stands
+      on [Records]: the head-relative model's right window is a nat
+      bounded by the step index ([extent_le_steps]) that a rightward
+      step strictly shrinks ([step_right_shrinks]), while "fuel >= 1"
+      keeps it positive -- an impossible infinite descent.
+
+      The two node-level facts the abstraction must supply are taken
+      as parameters here (the fuel-refined n-gram instance provides
+      them: the head symbol pins the transition direction, and the
+      tracked capped right-count >= 1 witnesses a right nonblank).
+      Left-runners are handled by the [Mirror] machine transfer, so
+      only the right case is proved. *)
+
+  Variable node_moves_right : A -> bool.
+  Variable node_rfuel_ge1 : A -> bool.
+  Hypothesis node_moves_right_sound : forall a c,
+    node_moves_right a = true -> covers a c -> steps_right tm c.
+  Hypothesis node_rfuel_ge1_sound : forall a c,
+    node_rfuel_ge1 a = true -> covers a c -> has_right_nonblank (snd c).
+
+  (** Every q-avoiding closure node moves right and holds right fuel. *)
+  Definition runner_ok (Sl : list A) (q : St) : bool :=
+    forallb (fun a =>
+      if st_eqb (a_state a) q then true
+      else node_moves_right a && node_rfuel_ge1 a) Sl.
+
+  (** The record-argument descent: from a covered config whose right
+      window is [R], a run that keeps avoiding [q] visits [q] within
+      [R] steps -- each avoided step is a right move that shrinks the
+      window, and fuel keeps it positive, so it cannot avoid [q]
+      longer than the window is wide. *)
+  Lemma runner_find_aux : forall Sl q,
+    closed_b Sl = true -> runner_ok Sl q = true ->
+    forall r a c m R, right_bounded (snd c) R -> R < r ->
+    In a Sl -> covers a c ->
+    stepn tm m InitES = Some c ->
+    exists n, m <= n /\ VisitsAt tm q n.
+  Proof.
+    intros Sl q Hcl Hok.
+    induction r as [|r IH]; intros a c m R HR Hr HIn Hcov Hm; [lia|].
+    destruct (st_eqb (a_state a) q) eqn:Eq.
+    - (* the covered node itself is a q-visit *)
+      apply st_eqb_spec in Eq.
+      exists m. split; [lia|].
+      exists c. split; [assumption|].
+      rewrite <- (covers_state a c Hcov). assumption.
+    - (* q avoided here: runner_ok forces the two node checks *)
+      assert (Hmr : node_moves_right a && node_rfuel_ge1 a = true).
+      { unfold runner_ok in Hok. rewrite forallb_forall in Hok.
+        specialize (Hok a HIn). rewrite Eq in Hok. exact Hok. }
+      apply andb_prop in Hmr as [Hmv Hfu].
+      assert (Hnb : has_right_nonblank (snd c))
+        by (apply (node_rfuel_ge1_sound a c Hfu Hcov)).
+      assert (HR1 : 1 <= R) by (apply (has_right_nonblank_window_pos _ _ HR Hnb)).
+      assert (Hsr : steps_right tm c)
+        by (apply (node_moves_right_sound a c Hmv Hcov)).
+      destruct (closed_step Sl a c Hcl HIn Hcov)
+        as (c' & l & a' & Hstep & Es & HInl & HIn' & Hcov').
+      destruct c as [qc tpc]. destruct c' as [qc' tpc'].
+      unfold steps_right in Hsr. simpl in Hsr.
+      assert (HR' : right_bounded tpc' (Nat.pred R)).
+      { apply (step_right_shrinks tm qc tpc qc' tpc' R Hstep Hsr HR). }
+      assert (Hm' : stepn tm (S m) InitES = Some (qc', tpc')).
+      { replace (S m) with (m + 1) by lia.
+        rewrite stepn_add, Hm. cbn [stepn]. rewrite Hstep. reflexivity. }
+      destruct (IH a' (qc', tpc') (S m) (Nat.pred R) HR')
+        as (n & Hn & Hv); [lia | assumption .. |].
+      exists n. split; [lia | assumption].
+  Qed.
+
+  Lemma runner_find : forall Sl q,
+    closed_b Sl = true -> runner_ok Sl q = true ->
+    forall a c m, In a Sl -> covers a c ->
+    stepn tm m InitES = Some c ->
+    exists n, m <= n /\ VisitsAt tm q n.
+  Proof.
+    intros Sl q Hcl Hok a c m HIn Hcov Hm.
+    destruct (extent_le_steps tm m c Hm) as [HR _].
+    apply (runner_find_aux Sl q Hcl Hok (S m) a c m m HR
+             (Nat.lt_succ_diag_r m) HIn Hcov Hm).
+  Qed.
+
+  (** ** The combined fuel checker
+
+      Each visited state is discharged by EITHER a lex-rank
+      certificate (rules (a)/(b)) OR the runner rule (c2) -- exactly
+      the mix the upstream [neverqh_fuel] procedure produces (rank
+      measures peel most states; the surviving runner SCCs fall to
+      (c2)).  The closure itself is unchanged; only the per-state
+      liveness gate gains the runner alternative. *)
+
+  Definition state_live_ok (Sl : list A) (cert : St -> list lexcomp)
+      (q : St) : bool :=
+    lex_ok Sl q (cert q) || runner_ok Sl q.
+
+  Definition closure_check_neverqh_fuel (t fuel : nat) (a0 : A)
+      (cert : St -> list lexcomp) : bool :=
+    match csteps tm t c0 with
+    | Some ct =>
+        match close fuel [] PositiveSet.empty [a0] with
+        | Some Sl =>
+            closed_b Sl && mem a0 Sl &&
+            forallb (fun q =>
+              implb (cvisits tm c0 t q
+                     || existsb (fun a => st_eqb (a_state a) q) Sl)
+                    (state_live_ok Sl cert q)) all_St
+        | None => false
+        end
+    | None => false
+    end.
+
+  Theorem closure_check_neverqh_fuel_sound : forall t fuel a0 cert,
+    (forall ct, csteps tm t c0 = Some ct -> covers a0 (lift ct)) ->
+    (forall q, Forall comp_exact (cert q)) ->
+    closure_check_neverqh_fuel t fuel a0 cert = true ->
+    NeverQuasiHaltsSt tm.
+  Proof.
+    intros t fuel a0 cert Hstart Hcert H.
+    unfold closure_check_neverqh_fuel in H.
+    destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
+    destruct (close fuel [] PositiveSet.empty [a0]) as [Sl|]; [|discriminate].
+    apply andb_prop in H as [H Hq].
+    apply andb_prop in H as [Hcl Hin].
+    apply mem_In in Hin.
+    pose proof (Hstart ct eq_refl) as Hcov0.
+    assert (Hct : stepn tm t InitES = Some (lift ct)).
+    { rewrite <- lift_c0. apply csteps_lift; assumption. }
+    intros q Hvq N.
+    assert (Hlive : state_live_ok Sl cert q = true).
+    { rewrite forallb_forall in Hq.
+      specialize (Hq q (all_St_complete q)).
+      destruct Hvq as (n0 & cn & Hcn & Hqn).
+      assert (Hprem : cvisits tm c0 t q
+                      || existsb (fun a => st_eqb (a_state a) q) Sl = true).
+      { destruct (le_lt_dec t n0) as [Hge | Hlt].
+        - apply orb_true_intro; right.
+          destruct (closure_invariant Sl Hcl a0 (lift ct)
+                      Hin Hcov0 (n0 - t)) as (c' & a' & Hst & HIn' & Hcov').
+          assert (Hc' : stepn tm n0 InitES = Some c').
+          { replace n0 with (t + (n0 - t)) by lia.
+            rewrite stepn_add, Hct. assumption. }
+          rewrite Hc' in Hcn. injection Hcn as <-.
+          apply existsb_exists. exists a'.
+          split; [assumption|].
+          apply st_eqb_spec. rewrite (covers_state a' c' Hcov'). assumption.
+        - apply orb_true_intro; left.
+          destruct (csteps_prefix tm n0 t c0 ct) as (cn' & Hcn' & _);
+            [lia | exact Et |].
+          assert (Hl : stepn tm n0 InitES = Some (lift cn')).
+          { rewrite <- lift_c0. apply csteps_lift; assumption. }
+          rewrite Hl in Hcn. injection Hcn as <-.
+          eapply cvisits_complete; [exact Hlt | exact Hcn' | exact Hqn]. }
+      rewrite Hprem in Hq.
+      destruct (state_live_ok Sl cert q); [reflexivity | discriminate]. }
+    set (M := Nat.max N t).
+    destruct (closure_invariant Sl Hcl a0 (lift ct)
+                Hin Hcov0 (M - t)) as (cM & aM & HstM & HInM & HcovM).
+    assert (HM : stepn tm M InitES = Some cM).
+    { replace M with (t + (M - t)) by (unfold M; lia).
+      rewrite stepn_add, Hct. assumption. }
+    assert (HNM : N <= M) by (unfold M; lia).
+    unfold state_live_ok in Hlive. apply orb_true_iff in Hlive as [Hlex | Hrun].
+    - (* discharged by the lex-rank certificate *)
+      destruct (stepn_csteps tm M cM HM) as (ccM & HccM & HliftM).
+      rewrite <- HliftM in HcovM, HM.
+      destruct (lex_find Sl q (cert q) Hcl Hlex (Hcert q)
+                  (lex_tuple (cert q) aM ccM)
+                  (lexlt_wf_len (length (lex_tuple (cert q) aM ccM)) _ eq_refl)
+                  aM ccM M eq_refl HInM HcovM HM)
+        as (n' & Hn' & Hv).
+      exists n'. split; [lia | assumption].
+    - (* discharged by the runner rule (c2) *)
+      destruct (runner_find Sl q Hcl Hrun aM cM M HInM HcovM HM)
+        as (n' & Hn' & Hv).
+      exists n'. split; [lia | assumption].
   Qed.
 
 End ClosureEngine.

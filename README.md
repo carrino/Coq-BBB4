@@ -87,7 +87,19 @@ closure/liveness framework (n-gram instance, ranking rules,
   peeling (depth-many passes on acyclic subgraphs, immediate bail-out
   on cyclic ones) instead of blind Bellman iteration.  Silent
   (never-visited) states are skipped soundly, matching the upstream
-  `neverqh_rwlsilent` convention.
+  `neverqh_rwlsilent` convention.  The engine also carries the
+  **runner rule (c2)** (`neverqh_fuel`, on top of `Records.v`):
+  `runner_find` proves a state recurs when every one of its
+  q-avoiding closure nodes both moves the head right and holds a
+  right nonblank — the right window (a nat bounded by the step
+  index) strictly shrinks on each avoided step yet fuel keeps it
+  positive, an impossible descent.  `closure_check_neverqh_fuel`
+  discharges each visited state by EITHER a lex-rank certificate OR
+  the runner rule — the mix the upstream fuel procedure produces —
+  and is parametric over two node predicates (`moves_right`,
+  `rfuel_ge1`) that the fuel-refined abstraction supplies; the
+  existing lex/rank instances are untouched (axiom footprint stays
+  `functional_extensionality_dep`).
 - `theories/Checkers/ExactClosure.v` — the engine's simplest
   instance (exact normalized configurations): decides in-place
   cyclers and blank-trail translated cyclers with *no* cycle
@@ -206,12 +218,18 @@ type: `irules` 352, `neverqh_rwlrank` 106, `neverqh_fuel` 62,
 ## Next
 
 Per NEXT_SESSION.md, by coverage-per-effort: the fuel/drift rules
-(c2)/(c3) on the existing engine (+79) — the record/extent
-substrate they stand on is now built (`theories/Records.v`), so what
-remains is the fuel-refined abstraction (n-gram context paired with
-the capped sided nonblank classes {0,1,>=2}, the class-0-with-a-
-nonblank-in-window prune, and the sided-count delta) and wiring rule
-(c2) to `run_right_exhausts`; then the RepWL block-closure instance
-with the five rank measures (`neverqh_rwlrank`, +106), the irules
-engine (772 machines, the largest single block, per SCOPING §5 phase
-4), and the 22 counter machines as busycoq-style individual proofs.
+(c2)/(c3) on the existing engine (+79).  The liveness side is now
+built and verified: `Records.v` (the record/extent substrate) and
+the runner rule (c2) + combined `closure_check_neverqh_fuel` in
+`Closure.v`.  What remains to LAND the fuel machines is the one
+missing piece — the fuel-refined abstraction that supplies the two
+node predicates: an n-gram context paired with the capped sided
+nonblank classes {0,1,>=2}, `succs` propagating the class by the
+sided-count delta (with the cap's conservative branch), the
+class-0-with-a-nonblank-in-window prune, and `covers` pinning each
+class to the true capped count (so `rfuel_ge1` is sound off-window).
+Then: rule (c3) drift (the same substrate, +17), the RepWL
+block-closure instance with the five rank measures
+(`neverqh_rwlrank`, +106), the irules engine (352, the largest
+single block, per SCOPING §5 phase 4), and the ~42 counter machines
+as busycoq-style individual proofs.

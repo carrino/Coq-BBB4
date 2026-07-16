@@ -226,3 +226,25 @@ Qed.
 Lemma right_bounded_0_blank : forall tp j,
   right_bounded tp 0 -> t_right tp j = S0.
 Proof. intros tp j H. apply H. lia. Qed.
+
+(** ** The fuel invariant, semantically
+
+    "Right fuel >= 1" means the right half-tape carries at least one
+    nonblank cell.  It is exactly what an empty right window
+    contradicts, so it cannot survive a right-runner (rule (c2)). *)
+
+Definition has_right_nonblank (tp : Tape) : Prop :=
+  exists j, t_right tp j <> S0.
+
+Lemma right_bounded_0_no_nonblank : forall tp,
+  right_bounded tp 0 -> ~ has_right_nonblank tp.
+Proof. intros tp H [j Hj]. apply Hj. apply H. lia. Qed.
+
+(** Contrapositive form used by the liveness argument: a nonblank on
+    the right forces a nonzero right window. *)
+Lemma has_right_nonblank_window_pos : forall tp R,
+  right_bounded tp R -> has_right_nonblank tp -> 1 <= R.
+Proof.
+  intros tp R HR Hnb. destruct R as [|R']; [|lia].
+  exfalso. apply (right_bounded_0_no_nonblank tp HR Hnb).
+Qed.
