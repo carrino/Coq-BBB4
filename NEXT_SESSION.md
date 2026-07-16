@@ -575,3 +575,49 @@ suffice (parameter -> infinity liveness) with wider unit tables.  The
 bounce-style MeasureGlue composition is now available for any family
 whose macro lap chains an inner counter (tower is the likely
 customer: its cert type suggests nested doubling).
+
+## Fuel track: what it takes to board the 62 neverqh_fuel holdouts
+
+This session built the generator (`tools/gen_fuel_certs.py`) and
+established that the in-window subset is EMPTY -- the deferral is
+structural, not a search failure.  Facts to build on
+(`tools/fuel_deferred.tsv` has all 62 rows):
+
+- **The in-window runner disjunct cannot fire on real machines.**
+  `runner_ok Sl q` needs every non-q closure node to move right with
+  a nonblank in its right WINDOW.  But a blank-start closure always
+  contains a context just past the last window nonblank (the (1,0)
+  right-window shifts to (0,g), and g=0 is always seeded), and that
+  context either sits in state q or refutes `fnode_rfuel_ge1`.
+  Equivalently: any fueled right-moving abstract cycle consumes a
+  window nonblank per lap (cells leave the right window only through
+  the head), so rule (b) with the 1/R measure already kills it --
+  in-window fuel is subsumed by lex, which is why anything it could
+  board was boarded by the bulk rank sessions long ago.
+- **All 62 residues are uniform-direction, off-window runner SCCs**
+  (54 left / 8 right, no machine mixes residue directions, no mixed
+  SCCs).  So sidedness is fully handled by `mirror_never_qh`; the
+  window is the only gap.
+- **Two pieces are needed, both engine work** (Fuel.v/FuelClass.v
+  were read-only this session):
+  1. the refined context `cconf * fclass * fclass` promised in
+     Fuel.v's header: `finc`/`fdec` (proved sound in FuelClass.v)
+     track the classes per step, `fnode_rfuel_ge1` reads `fc_ge1`
+     off the tracked class, `fc_tag` extends the injective encoding;
+  2. a per-SCC (c2) gate: `state_live_ok = lex_ok || runner_ok` is
+     whole-closure, but the q-avoiding graph keeps opposite-moving
+     transient nodes, so even with classes the disjunct stays false.
+     verify.c applies (c2) per SCC inside the rank-peel loop (see the
+     neverqh_fuel comment at verify.c:15096 and rule (c2) at ~4245).
+     Note `runner_find` (Closure.v) assumes the node set is CLOSED
+     (`closed_b`), which an SCC is not -- the per-SCC soundness
+     argument must confine the run to the SCC first (the
+     infinitely-often set of a q-avoiding run lies in one SCC), so
+     this is a new lemma, not a restatement.
+- `tools/gen_fuel_certs.py` is ready to re-point once that checker
+  exists: `fuel_decide` already computes per-state lex/runner splits
+  and the emission/manifest path is exercised end to end
+  (`Tests/FuelBatch_Corruption.v` pins the positive control to the
+  committed `Fuel_Examples` numbers).  Swap the Python `runner_ok`
+  mirror for the refined per-SCC rule and update the emitted `apply`
+  line, and the 62 should follow.
