@@ -379,3 +379,93 @@ hard way); discriminate them at 7 steps.
 - Step-count formulas are never needed in Coq (the lap `n` is an
   existential); do not waste time deriving them beyond executor
   sanity checks.
+
+---
+
+# Counters track, session B (interleave/exp/bounce) -- 2026-07-16
+
+Parallel to session A (gray/double/blockdbl/mono2), own files only:
+`theories/Counters/{ILCounter,ExpCounter,BounceCounter,MeasureGlue}.v`,
+`theories/Machines/Counters/{Interleave_18,Interleave_35,Exp_2,Exp_4,
+Exp_12,Bounce_8,Bounce_33}.v`, `theories/Tests/CountersB_Corruption.v`,
+`tools/counters/lap{18,35,2,4,12,8,33}.py`; the `_CoqProject` block is
+marked `# --- counters track: session B ---`.
+
+## Boarded: 7 machines (13 total with session A's 6 baseline)
+
+| family | status |
+|---|---|
+| interleave_counter (2) | **COMPLETE**: #18, #35 (`Interleave_18/35.v`) |
+| exp_counter (3) | **COMPLETE**: #2, #4, #12 (`Exp_2/4/12.v`) |
+| bounce_counter (2) | **COMPLETE**: #8, #33 (`Bounce_8/33.v`, via MeasureGlue) |
+
+All `nqh_<bbchallenge text> : NeverQuasiHaltsSt`, `Print Assumptions`
+= `functional_extensionality_dep` only, manifest rows appended.
+
+## What was built
+
+- `ILCounter.v`: the interleaved counter encoding `Ip` (rev of E(n),
+  LSB-first, one `S1` pad per bit), cview decomposition lemmas, and
+  `pair_fold`.  #18/#35 share the anchor
+  `D(n) = E(n) (110)^(2n) 1` and a two-sweep lap through the mid
+  shape `E(n+1) 010 (110)^(2n) 1`; the increment carries on sweep 1,
+  sweep 2 rewrites `010` locally.  Laps end exactly (no lift slack).
+- `ExpCounter.v`: the stride-3 marker encodings -- zeros-first `Tp`
+  and marker-first `Gp` -- with cview lemmas emitting the exact
+  `rep`-block shapes the stride cycles and zeroing runs consume, plus
+  `rep1_fold`/`ones_fold_S`/`rep_tpl`.  #2 (side R, moff 1: the two
+  sides carry on ALTERNATE laps -- case over both cview's), #4
+  (side L, moff 0: one cview drives both sides), #12 (sym: markers
+  both sides).
+- `MeasureGlue.v` -- THE NEW CLOSER (bounce): `mrun` composes a
+  measure-decreasing abstract recurrence of EXACT micro laps
+  (invariant-guarded; terminal up to lift) into one csteps run by
+  strong induction on the measure.  The macro family then steps
+  p -> succ p and plain LapGlue closes never-QH: unboundedness from
+  the macro index, per-lap finiteness from the measure.
+- `BounceCounter.v`: digit words `Dw` (00/11 pairs), carry view
+  `bview`, measure `cval` (value of the complement, LSB-first;
+  `cval_step`: each increment decrements it by EXACTLY 1),
+  comb rotations `comb_rot0/1`, run folds.
+- `Bounce_8/33.v`: macro anchors `D(k) = 1^m 0^z`; macro lap =
+  boot-in half sweep + `mrun` over the double-sweeps + terminal
+  settle from the all-ones word.  KEY DISCOVERY: the double-sweep is
+  a CELL-UNIFORM binary increment
+  `Sc a (1^j 0 x) -> Sc (a+1) (0^j 1 x)` -- the C verifier's
+  interior/overflow split is pure decode (the flipped top digit
+  merges with the accumulator AS CELLS), so a fixed-length bool word
+  carries the whole macro lap with no case analysis, and the
+  invariant is just the conservation law
+  `S (fst x) + cval (snd x) = const(k)`.  Validated k=2..9 (#8, 510
+  double-sweeps) and k=2..8 (#33) against raw.
+
+## Trap catalog additions (session B)
+
+- **The `apply`-unification unfolds double-`S` reps**: `apply phU1`
+  against `S1 :: rep u (S (S a)) ++ X` leaves the residual evar in a
+  half-unfolded `fix`-form that later `rewrite`s can't match.  Insert
+  an explicit `change` exposing the cons cells
+  (`S1 :: S0 :: S1 :: rep u (S a) ++ X`) BEFORE the apply; folds like
+  `ones_fold3` also want their explicit instance (`rewrite
+  (ones_fold3 a)`).
+- **`rewrite <- rep_dbl` is ambiguous** when both `rep [S0] (2*t)`
+  and `rep [S1] (2*P)` are present -- give the instance explicitly.
+- **exp #2's two sides carry on alternate laps** (moff 1): destruct
+  BOTH `cview p` and `cview (Pos.succ p)`; the impossible
+  overflow+overflow branch still closes (the algebra composes, no
+  contradiction needed).
+- **Bounce sweep-B entry is comb-rotated**: the collapse absorbs the
+  mid marker `0` + first block `1` as one more `[S0;S1]` unit
+  (`comb_rot1`); the executor frames catch this automatically.
+
+## Next machine
+
+The counters residue after both sessions: session A's queue
+(gray #19, double, blockdbl, mono2 -- see its section above) and then
+the hard tail wave(6) wave4(1) tower(4) xd(3) fractal(2).  For the
+tail, start with **wave**: read `results/counter*.cert` types `wave_counter`
+and `verify_wave_counter` in BBB/src/verify.c; expect LapGlue to
+suffice (parameter -> infinity liveness) with wider unit tables.  The
+bounce-style MeasureGlue composition is now available for any family
+whose macro lap chains an inner counter (tower is the likely
+customer: its cert type suggests nested doubling).

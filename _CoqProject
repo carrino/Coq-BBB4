@@ -152,3 +152,4 @@ theories/Counters/MeasureGlue.v
 theories/Counters/BounceCounter.v
 theories/Machines/Counters/Bounce_8.v
 theories/Machines/Counters/Bounce_33.v
+theories/Tests/CountersB_Corruption.v
