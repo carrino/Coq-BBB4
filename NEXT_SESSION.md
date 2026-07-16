@@ -1,11 +1,16 @@
 # Next session: start here
 
-State as of 2026-07-15 (branch `claude/easy-machines-bb5-strategy-8pz2fn`).
-This session built Scope B's skeleton end-to-end: the BB5-style TNF
-census over the full (4,2) space, refounded on quasihalting, with the
-generic tiers verified and measured.  The queue-emptying computation
-is the only piece that may still be running/landing (see "The big
-compute" below).
+State as of 2026-07-16 (branch `claude/easy-machines-bb5-strategy-8pz2fn`).
+**THE CENSUS IS CERTIFIED**: `Census_Theorem.census_decided :
+forall tm, QHBound B_census tm \/ Deferred D_census tm` is Qed through
+the kernel, `Print Assumptions` = `functional_extensionality_dep`
+only.  Scope B stands end-to-end: the BB5-style TNF census over the
+full (4,2) space, refounded on quasihalting, generic tiers verified,
+computation certified (see "The big compute" below for the layer
+layout).  In parallel the holdout-porting session built + verified
+the wrap/QHBound tiers and measured them over the census residue
+(item 1 of the shrink plan below) -- the next census regeneration can
+drop the 20,568 wrap-caught machines from `D_census`.
 
 ## Scoreboard
 
@@ -63,40 +68,35 @@ compute" below).
    a halting machine, deferred lookup misses, pipeline classification
    on knowns.
 
-## The big compute (finish this first)
+## The big compute (DONE -- certified 2026-07-16)
 
-STATUS: the v1 pipeline (no rank tier, D = 232,439) was validated at
-zero Unknowns over 64k pops (earlier probes caught a false-record
-bug in `scan_records0`, fixed by reading the move direction off the
-transition; the 0RA/1RA subtrees closed `(0,0,[])`).  The session
-then moved to v2 (rank tier + D = 56,039) rather than paying the v1
-Qed: re-validate with the same 64k-pop probe (expect `(32, 0, [])`),
-then launch the four per-subtree walks (`Run_Split.v` / `q_sub`)
-logging to `census_probes/sub_{0RA,1RA,0RB,1RB}.log` (gitignored);
-each should print `sub_probe_X = (0, 0, [])`.  v1 pace: ~6.8 ms/pop
-native => ~5.9 h for the 1RB subtree, ~1.6 h for 0RB, seconds for
-0RA/1RA; v2 adds the rank tier's cost on ngram-failing machines.
+`census_decided` is Qed with the expected axiom footprint.  The
+certification layer under `theories/Census/Compute/`:
 
-The certification layer is the generated
-`theories/Census/Compute/` directory (tools/gen_gsplit.py): 24
-per-grandchild Qed files (the two xRB subtrees split at B0 into 12
-each, composed by Run_Split.child_from_grandchildren) compiled in
-parallel, plus Census_Theorem.v assembling
+- 24 per-grandchild Qed files `G_*.v` (tools/gen_gsplit.py; the two
+  xRB subtrees split at B0 into 12 each, composed by
+  `Run_Split.child_from_grandchildren`), each Qed one native queue
+  walk (`Nat.iter 700 q_suc ... = ([],[])`).
+- The A0=1RB, B0=1LC grandchild is the largest single walk (>2.5 h;
+  it outlived the remote container's reclaim window repeatedly), so
+  it is split ONCE MORE: `Census/Run_Split2.v` expands its machine at
+  the undefined C1 slot (index 2, pointer StD, all 16 fills
+  admissible) and `tools/gen_ggsplit.py` emits the 16 `GG_1LC_*.v`
+  walk units plus the assembling `G_1RB_1LC.v` (same lemma names as
+  the monolithic version, so Census_Theorem.v is untouched).  Every
+  unit lands in <= ~10 min, making certification robust to compute
+  interruptions.
+- `make census` drives the whole layer order (Run_Split, Run_Split2,
+  GG units, G units, theorem); ~2-3 h wall on 4 cores under the
+  native switch.
 
-    census_decided : forall tm, QHBound B_census tm \/ Deferred D_census tm
-
-`Print Assumptions census_decided` must show only
-functional_extensionality_dep.  The fleet was LAUNCHED at session
-end (logs census_probes/G_*.log, progress qed_progress.txt); when
-all 24 are OK, compile Census_Theorem.v (seconds for the two leaf
-subtrees + assembly).
-
-If a log shows leftovers instead: decode the printed tm_enc keys
-with `tools/dec_tm_enc.py`, classify them with
-`tools/census_ladder.c --machines`, fix the tier divergence or add
-them to the residue file, regenerate Deferred_*, recompile, relaunch
-(this loop converged after one iteration this session -- the
-false-record fix).
+Re-running from scratch re-derives everything; the per-unit
+logs/progress live in `census_probes/` (gitignored).  If a future
+regeneration's log shows leftovers: decode the printed tm_enc keys
+with `tools/dec_tm_enc.py`, classify with `tools/census_ladder.c
+--machines`, fix the tier divergence or extend the residue, and
+regenerate (this loop converged after one iteration -- the
+false-record fix in `scan_records0`).
 
 Environment: coq-native lives in the opam switch `census`
 (`OPAMROOT=/root/.opam`, `eval $(opam env --switch=census)`); apt's
