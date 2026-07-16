@@ -169,3 +169,4 @@ theories/Machines/IRules_Batch_05.v
 theories/Machines/IRules_Batch_06.v
 theories/Machines/IRules_Batch_07.v
 theories/Machines/IRules_Batch_08.v
+theories/Tests/IRulesBatch_Corruption.v
