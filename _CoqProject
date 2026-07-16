@@ -158,3 +158,15 @@ theories/Counters/BounceCounter.v
 theories/Machines/Counters/Bounce_8.v
 theories/Machines/Counters/Bounce_33.v
 theories/Tests/CountersB_Corruption.v
+
+# --- irules mass-board ---
+theories/Machines/IRules_Batch_00.v
+theories/Machines/IRules_Batch_01.v
+theories/Machines/IRules_Batch_02.v
+theories/Machines/IRules_Batch_03.v
+theories/Machines/IRules_Batch_04.v
+theories/Machines/IRules_Batch_05.v
+theories/Machines/IRules_Batch_06.v
+theories/Machines/IRules_Batch_07.v
+theories/Machines/IRules_Batch_08.v
+theories/Tests/IRulesBatch_Corruption.v
