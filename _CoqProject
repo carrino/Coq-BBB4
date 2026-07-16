@@ -16,6 +16,7 @@ theories/Checkers/NGram.v
 theories/Checkers/TCycler.v
 theories/Checkers/TCyclerN.v
 theories/Checkers/Wrap.v
+theories/Checkers/Fuel.v
 theories/Census/TNF_QH.v
 theories/Census/RankSearch.v
 theories/Census/Decide.v
@@ -112,3 +113,4 @@ theories/Machines/Bulk/Bulk_R09.v
 theories/Machines/Bulk/Wrap_01.v
 theories/Tests/Bulk_Corruption.v
 theories/Tests/Wrap_Corruption.v
+theories/Tests/Fuel_Examples.v

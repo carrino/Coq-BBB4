@@ -192,6 +192,32 @@ closure/liveness framework (n-gram instance, ranking rules,
   the n-gram abstraction without their RepWL/DFA machinery.  Per
   machine: `NonHalt tm /\ QuietAfter tm q s /\ QuasiHaltsSt tm` with
   the exact last-visit index `s`.
+- `theories/Checkers/FuelClass.v` — the capped sided-count *classes*
+  for the fuel refinement, as a verified lower bound (`F0` no info /
+  `F1` >= 1 / `F2` >= 2, all rule (c2) reads).  Unlike the exact
+  capped count, a lower bound makes each per-move update a
+  deterministic constructive function: `finc_sound` (a deposited
+  write raises the class), `fdec_sound` (a crossed cell lowers it),
+  `fc_ge1_sound` (>= 1 witnesses a nonblank).  Sound by construction
+  (a lower-bound class covers any config with at least that many
+  nonblanks), no axioms.
+- `theories/Checkers/Fuel.v` + `theories/Tests/Fuel_Examples.v` —
+  **the `neverqh_fuel` checker (rule (c2))**: instantiates the
+  engine's `closure_check_neverqh_fuel` on the existing n-gram
+  abstraction, so the full rank/pattern measure vocabulary and its
+  exactness proofs carry over verbatim and each visited state is
+  discharged by *either* a lex-rank certificate *or* the runner rule.
+  The two runner node facts are read off the context: the head
+  symbol pins the move direction (`fnode_moves_right`), and a
+  nonblank in the right window witnesses right fuel
+  (`fnode_rfuel_ge1`) — so this discharges runner SCCs whose fuel
+  stays within `n` cells; the `FuelClass` classes are the drop-in for
+  beyond-window fuel.  `ngram_check_neverqh_fuel_sound` has axiom
+  footprint `functional_extensionality_dep`; `Fuel_Examples` re-proves
+  a committed bulk machine through it end to end (`vm_compute`),
+  confirming the checker subsumes the pure lex checker.  Landing the
+  62 upstream machines next needs the untrusted prover to emit their
+  runner-mode certificates.
 
 Axiom footprint: `functional_extensionality_dep` only (as in
 Coq-BB5).  Full build: ~10 min on 4 cores (53 generated bulk files
