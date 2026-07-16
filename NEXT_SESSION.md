@@ -169,11 +169,24 @@ certification.
    works for any instance), rwlrank measures later.  This is the
    biggest single block and also the prerequisite for the 106
    rwlrank holdout certs.
-4. **Holdout absorption** (independent track): upstream is <10 open
-   (user report, 2026-07-15).  The checker gaps that absorb the
-   remaining certificate types: irules (352), rwlrank (106),
-   fuel/drift (79), counters (22) -- SCOPING phases 2b-5.  Each
-   holdout theorem also lets its machine leave the deferred list
+4. **Holdout absorption** (independent track): upstream is down to
+   ONE open machine (`1RB0RB_1LC1RC_0RA1LD_1RC0LD`, the residue-3
+   nested/mixed tower; `check_coverage.py`, 2026-07-16).  The
+   checker gaps that absorb the remaining certificate types: irules
+   (352), rwlrank (106 incl. 9 rwlrank+wrapngram), fuel (62), drift
+   (17), and ~42 counter machines (the BBB residue-3 sprint boarded
+   many more counters than the old 22) -- SCOPING phases 2b-5.
+   **The fuel/drift record substrate is now built**
+   (`theories/Records.v`, axiom-free): `right_bounded`/`left_bounded`
+   side windows, growth <=1 per step, toward-move shrinks, and
+   `run_right_exhausts` (a right-runner confined R steps => right
+   half-tape blank -- the record argument for rule (c2)).  Next for
+   fuel: define the refined abstraction (n-gram context + capped
+   sided nonblank classes {0,1,>=2}, the class-0-with-nonblank-in-
+   window prune, the sided-count delta off the window) as a new
+   instance, then discharge runner SCCs by wiring the confined run to
+   `run_right_exhausts` (left-runners via `Mirror`).  Each holdout
+   theorem also lets its machine leave the deferred list
    at the NEXT regeneration (deferred entries with Coq theorems can
    be dropped once a "proven machines" tier exists -- a
    PositiveMap of the Bulk/Wrap theorem machines returning

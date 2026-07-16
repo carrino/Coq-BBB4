@@ -5,6 +5,7 @@ theories/CTape.v
 theories/PosEnc.v
 theories/PattCount.v
 theories/GTape.v
+theories/Records.v
 theories/Mirror.v
 theories/Checkers/Halt.v
 theories/Checkers/Cycle.v

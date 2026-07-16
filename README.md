@@ -42,6 +42,20 @@ closure/liveness framework (n-gram instance, ranking rules,
 - `theories/Mirror.v` — left/right machine symmetry; all
   quasihalting properties transfer, so checkers are written
   one-sided and side-L certificates run on the mirrored machine.
+- `theories/Records.v` — the record/extent substrate (SCOPING §4)
+  the fuel/drift rules (c2)/(c3) stand on, proved once on the bare
+  `step`/`stepn` semantics with **no axioms**: on each side of the
+  head the nonblank cells lie inside a bounded window
+  (`right_bounded`/`left_bounded`), a step grows each window by at
+  most one, and a step *toward* a side shrinks that side's window.
+  Consequences: `extent_le_steps` (after `n` steps from the blank
+  tape every cell at offset `n` or beyond is blank) and
+  `run_right_exhausts` — a run confined to a right-moving runner for
+  `R` steps drives the right window to 0, i.e. the whole right
+  half-tape blank.  That last fact is the record argument that makes
+  a "fuel >= 1 on the movement side, forever" invariant impossible,
+  so rule (c2) can discharge runner SCCs; the left-runner case rides
+  the `Mirror` transfer.
 - `theories/Checkers/TCycler.v` — the translated-cycler checker
   (the harness's `tcycler` certificate, parameters `(anchor_step,
   period_steps, reach)`), never-QH and exact-last-visit QH variants,
@@ -192,8 +206,12 @@ type: `irules` 352, `neverqh_rwlrank` 106, `neverqh_fuel` 62,
 ## Next
 
 Per NEXT_SESSION.md, by coverage-per-effort: the fuel/drift rules
-(c2)/(c3) on the existing engine (+79; build the record/extent
-substrate first), the RepWL block-closure instance with the five
-rank measures (`neverqh_rwlrank`, +106), the irules engine (772
-machines, the largest single block, per SCOPING §5 phase 4), and
-the 22 counter machines as busycoq-style individual proofs.
+(c2)/(c3) on the existing engine (+79) — the record/extent
+substrate they stand on is now built (`theories/Records.v`), so what
+remains is the fuel-refined abstraction (n-gram context paired with
+the capped sided nonblank classes {0,1,>=2}, the class-0-with-a-
+nonblank-in-window prune, and the sided-count delta) and wiring rule
+(c2) to `run_right_exhausts`; then the RepWL block-closure instance
+with the five rank measures (`neverqh_rwlrank`, +106), the irules
+engine (772 machines, the largest single block, per SCOPING §5 phase
+4), and the 22 counter machines as busycoq-style individual proofs.
