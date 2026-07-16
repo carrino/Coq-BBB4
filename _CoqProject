@@ -10,6 +10,7 @@ theories/Mirror.v
 theories/Checkers/Halt.v
 theories/Checkers/Cycle.v
 theories/Closure.v
+theories/Checkers/FuelClass.v
 theories/Checkers/ExactClosure.v
 theories/Checkers/NGram.v
 theories/Checkers/TCycler.v
