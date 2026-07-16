@@ -139,3 +139,8 @@ theories/Machines/Counters/Spacer_16.v
 theories/Machines/Counters/Spacer_22.v
 theories/Machines/Counters/Spacer_23.v
 theories/Tests/Counters_Corruption.v
+
+# --- counters track: session B ---
+theories/Counters/ILCounter.v
+theories/Machines/Counters/Interleave_18.v
+theories/Machines/Counters/Interleave_35.v
