@@ -176,17 +176,31 @@ certification.
    (352), rwlrank (106 incl. 9 rwlrank+wrapngram), fuel (62), drift
    (17), and ~42 counter machines (the BBB residue-3 sprint boarded
    many more counters than the old 22) -- SCOPING phases 2b-5.
-   **The fuel/drift record substrate is now built**
-   (`theories/Records.v`, axiom-free): `right_bounded`/`left_bounded`
-   side windows, growth <=1 per step, toward-move shrinks, and
-   `run_right_exhausts` (a right-runner confined R steps => right
-   half-tape blank -- the record argument for rule (c2)).  Next for
-   fuel: define the refined abstraction (n-gram context + capped
-   sided nonblank classes {0,1,>=2}, the class-0-with-nonblank-in-
-   window prune, the sided-count delta off the window) as a new
-   instance, then discharge runner SCCs by wiring the confined run to
-   `run_right_exhausts` (left-runners via `Mirror`).  Each holdout
-   theorem also lets its machine leave the deferred list
+   **The fuel checker (rule c2) is now BUILT and verified**, axiom
+   footprint `functional_extensionality_dep`:
+   - `theories/Records.v` -- record/extent substrate (side windows,
+     growth <=1/step, toward-move shrinks, `run_right_exhausts`).
+   - `theories/Closure.v` -- `runner_find` (the record argument as a
+     per-state liveness lemma) + `closure_check_neverqh_fuel`
+     (`lex_ok || runner_ok` per visited state) + soundness.
+   - `theories/Checkers/FuelClass.v` -- capped sided-count lower-bound
+     classes with `finc_sound`/`fdec_sound` (the beyond-window
+     upgrade's delta core).
+   - `theories/Checkers/Fuel.v` -- `ngram_check_neverqh_fuel` on the
+     n-gram abstraction (reuses the full measure vocabulary; runner
+     fuel read from the window), `Tests/Fuel_Examples.v` validates it
+     end-to-end (subsumes the lex checker on a real bulk machine).
+   REMAINING to land the 62 machines: the untrusted prover must emit
+   runner-mode certs -- adapt `tools/bulk_prover.py` to detect the
+   runner SCCs (states the rank measures leave undischarged, whose
+   nodes all move one direction with in-window fuel), emit them as
+   the runner-gated states, and `tools/gen_bulk_certs.py` to write
+   `apply (ngram_check_neverqh_fuel_sound ...)`.  For beyond-window
+   fuel machines, swap `cconf` for the `cconf * fclass * fclass`
+   refined context (FuelClass) and read `rfuel_ge1` off the tracked
+   class; the Closure-side soundness path is unchanged.  Then rule
+   (c3) drift rides the same substrate (+17).  Each holdout theorem
+   also lets its machine leave the deferred list
    at the NEXT regeneration (deferred entries with Coq theorems can
    be dropped once a "proven machines" tier exists -- a
    PositiveMap of the Bulk/Wrap theorem machines returning
