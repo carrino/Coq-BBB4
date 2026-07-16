@@ -799,16 +799,46 @@ contract).
   `arrival_info` implement the exactness argument's witness bits).
   Rules (a)/(b) with the cert measures discharge EVERY state of all
   106 rwlrank holdouts at t=0; largest closure 13,994 abstract
-  configs (fine for vm_compute).  Remaining for the Coq half: the
-  denotation relation (concretize items with existential counts for
-  capped ones), `succs_sound` (single-step covering, the fold/merge
-  normalization preserving denotation), injective positive encoding
-  of the variable-length config, the five measure exactness lemmas
-  (values on cconf: N/* reuse `ngm_val`; 0/l,0/r need an
-  interior-blank counting function + the writes-never-touch-witness
-  lemma), then the engine instantiation is free
-  (`closure_check_neverqh_lex` shape) and the emitter is a
-  `gen_fuel_certs.py` fork.
+  configs (fine for vm_compute).  Coq progress (all Qed, committed): denotation
+  (items_den/side_den), the symmetric step, rw_succs_sound,
+  injective encoding (rconf_enc_inj), seed (chunk/rle +
+  rw_seed_covers), and the wf layer (item_wf, rw_covers',
+  rw_succs_sound').  REMAINING, with the design pinned:
+
+  1. STRENGTHEN item_wf to [w <> [] /\ 1 <= c /\ (cap -> 2 <= c)]
+     with [2 <= T] threaded through the checker (certs all have
+     T in {2,3}).  Reason: the interior measures' "nonblank beyond"
+     bit counts a first item's word when [2 <= c || cap]; a
+     c=1-capped item admits k=1 vs k>=2 expansions that differ in
+     the bit, so no per-node delta is exact -- cap must imply >= 2.
+     Preservation: merge gives c1 = min (S c0) T >= 2 when c1 = T
+     or cap0 (c0 >= 2); new items are (w,1,false) since T >= 2.
+  2. Measures: values on cconf -- countnb (1s) and ibc (interior
+     blanks: cell = S0 with a nonblank strictly farther in the
+     list); rwmeas := RwNA|RwNL|RwNR|RwZL|RwZR.  Deltas on the node
+     via arr_s2 (arrival cell: buffer head, else first item word's
+     head, else S0), arr_nbb (beyond-arrival bit: rest-of-buffer ||
+     items_nb, else tl w0 || (2<=c||cap)&&nonblank w0 || items_nb
+     rest), dep_nbb (departed side: whole old side).  Exactness
+     correspondences: arr_s2 = chd of the concrete side (wf: k >= 1
+     and w0 nonempty make expansions start with w0); blankness of a
+     side <-> word_blank buffer && ~items_nb items (wf makes every
+     item contribute >= 1 copy, so items_nb is exact both ways);
+     ibc equations ibc(w::l) and ibc(ctl l) are definitional.
+  3. Checker: rwcomp := RwRankE (phi : list (positive*nat)) |
+     RwMeasE (m : rwmeas) (K : nat) phi (gate : list positive),
+     denote to LexMeas rconf (rw_mval m) (fun a _ => rw_delta tm m a)
+     with rconf_enc keys; instantiate closure_check_neverqh_lex with
+     rw_succs/rw_covers'/rconf_enc/rw_state, seed rw_seed L T at
+     csteps t; params (L T t fuel).  Gate 1 <= L, 2 <= T.
+  4. Python: align repwl_prover.py's seed to the Coq chunk/rle of
+     the CTAPE lists (sim with explicit (l,h,r) lists, not a tape
+     dict), mirror rw_delta/arr_* exactly, re-run the 106 survey,
+     then fork the emitter (gen_repwl_certs.py) emitting
+     RwRankE/RwMeasE tables keyed by rconf_enc + the
+     `apply (rw_check_neverqh_sound ...)` theorems, batch as
+     Machines/RepWL_Batch_*.v, corruption tests, manifest
+     repwl_manifest.tsv wired into check_coverage.
 - **Session 2**: wire the checker into the census `decide_easy` as a
   tier, sweep the 31,758 wrap-survivor residue with the Python
   mirror to measure the kill rate, regenerate `Deferred_*`, re-run
