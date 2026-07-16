@@ -84,9 +84,9 @@ def rruns(d):
     for i in sorted(d):
         sym, kind, a, b = d[i]
         if kind == "C":
-            out.append("(%s, RC %d)" % (SY[sym], a))
+            out.append("(%s, RC (%d))" % (SY[sym], a))
         else:
-            out.append("(%s, RV (%d) %d)" % (SY[sym], a, b))
+            out.append("(%s, RV (%d) (%d))" % (SY[sym], a, b))
     return "[" + "; ".join(out) + "]"
 
 
@@ -98,7 +98,7 @@ def cert_coq(c, name):
                      % (ST[r["st"]], SY[str(r["hs"])],
                         rruns(r["L"]), rruns(r["R"])))
     return ("Definition %s : IRCert := mkIRCert\n"
-            "  %d%%nat %d %d %d %d %s %s\n  %s\n  %s\n  [%s].\n"
+            "  %d%%nat (%d) (%d) (%d) (%d) %s %s\n  %s\n  %s\n  [%s].\n"
             % (name, c["anchor_step"], c["k0"], c["kmin"],
                c["meta_a"], c["meta_b"],
                ST[c["tpl_state"]], SY[str(c["tpl_hsym"])],
@@ -130,9 +130,10 @@ def main():
                     continue
                 f.write(tm_coq(c["machine"], "tm_%04d" % n))
                 f.write(cert_coq(c, "cert_%04d" % n))
-                f.write('Eval vm_compute in ("%s",\n'
-                        '  irules_check_neverqh tm_%04d cert_%04d'
-                        ' 300000%%nat).\n' % (c["machine"], n, n))
+                f.write("(* %s *)\n"
+                        "Eval vm_compute in (%d,\n"
+                        "  irules_check_neverqh tm_%04d cert_%04d"
+                        " 300000%%nat)%%nat.\n" % (c["machine"], n, n, n))
         return
     c = parse_cert(sys.argv[1])
     print(HEADER)
