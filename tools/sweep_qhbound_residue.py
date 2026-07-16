@@ -208,6 +208,7 @@ def main():
         HERE, "wrap_residue_caught.tsv")
     outdir = sys.argv[2] if len(sys.argv) > 2 else HERE
     nproc = int(sys.argv[3]) if len(sys.argv) > 3 else 4
+    os.makedirs(outdir, exist_ok=True)
     machines = []
     with open(caught_tsv) as f:
         next(f)
