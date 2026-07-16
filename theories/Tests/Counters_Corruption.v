@@ -1,0 +1,245 @@
+(** * Counters_Corruption: negative controls for the counter track.
+
+    BBB corruption-test tradition: every computable ingredient of the
+    counter proofs must REJECT mutated inputs.  The counter lap
+    proofs rest on three kinds of checked computation --
+
+    - windowed unit runs ([wsteps] closed by [reflexivity]): a wall
+      that is too small, a wrong period, or a wrong claimed exit
+      configuration must fail;
+    - machine identity: a one-transition mutant of #10 must break
+      the unit runs that exercise that transition;
+    - the bootstrap anchor ([ceqb] against [Cc]): a wrong anchor
+      index must be rejected.
+
+    Everything here is decided by [vm_compute]/[discriminate]; a
+    regression that made any of these pass would be a soundness
+    alarm, not a convenience. *)
+
+From Coq Require Import Arith Bool List PArith.
+From BBB4 Require Import BBB4_Statement CTape.
+From BBB4.Counters Require Import WTape MonoCounter.
+From BBB4.Machines.Counters Require Import Mono_10.
+Import ListNotations.
+
+(** ** Wall discipline: runs that need cells beyond the window fail *)
+
+(** U5 (the left-edge turnaround) steps onto blank cells left of the
+    wall: with the left wall ON it must die, not fabricate blanks. *)
+Example wall_U5_left : wsteps true true tm_10 7 (StC, ([S1; S0; S1], S1, []))
+                       = None.
+Proof. reflexivity. Qed.
+
+(** U9 (the overflow carry stop) runs off the right end: with the
+    right wall ON it must die. *)
+Example wall_U9_right : wsteps true true tm_10 5 (StB, ([], S1, []))
+                        = None.
+Proof. reflexivity. Qed.
+
+(** U11 pops one cell of the left window; an empty left window dies. *)
+Example wall_U11_left : wsteps true true tm_10 7 (StB, ([], S1, [S0; S0]))
+                        = None.
+Proof. reflexivity. Qed.
+
+(** ** Unit-run mutations: wrong period or wrong exit are rejected *)
+
+(** The comb crossing takes exactly 5 steps: at period 4 the run is
+    mid-cycle, not back at a boundary in state B. *)
+Example U2_wrong_period :
+  wsteps true true tm_10 4 (StB, ([], S1, [S1; S0; S1]))
+  <> Some (StB, ([S1; S1; S0], S1, [])).
+Proof. discriminate. Qed.
+
+(** The crossing deposits 011 (nearest-first 110), not 101. *)
+Example U2_wrong_exit :
+  wsteps true true tm_10 5 (StB, ([], S1, [S1; S0; S1]))
+  <> Some (StB, ([S1; S0; S1], S1, [])).
+Proof. discriminate. Qed.
+
+(** The carry cycle flips the bit it consumes: claiming it preserves
+    the pair is rejected. *)
+Example U6_wrong_exit :
+  wsteps true true tm_10 4 (StB, ([], S1, [S0; S1]))
+  <> Some (StB, ([S0; S1], S1, [])).
+Proof. discriminate. Qed.
+
+(** ** Machine mutations break the units that fire the changed rule *)
+
+(** #10 with D1 -> 1LB instead of 1LC (the prototype's falsify
+    control "mutant D1"): the leftward comb crossing uses D1. *)
+Definition tm_10_mutD1 : TM := fun q s =>
+  match q, s with
+  | StD, S1 => mk S1 DL StB
+  | _, _ => tm_10 q s
+  end.
+
+Example mutD1_breaks_U4 :
+  wsteps true true tm_10_mutD1 5 (StC, ([S1; S0; S1], S1, []))
+  <> Some (StC, ([], S1, [S1; S0; S1])).
+Proof. discriminate. Qed.
+
+(** #10 with A0 -> 1LB (the prototype's "mutant A0"): the rightward
+    comb crossing fires A0 at its last step. *)
+Definition tm_10_mutA0 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => mk S1 DL StB
+  | _, _ => tm_10 q s
+  end.
+
+Example mutA0_breaks_U2 :
+  wsteps true true tm_10_mutA0 5 (StB, ([], S1, [S1; S0; S1]))
+  <> Some (StB, ([S1; S1; S0], S1, [])).
+Proof. discriminate. Qed.
+
+(** Both mutants also miss the bootstrap anchor. *)
+Example mutD1_breaks_boot :
+  match csteps tm_10_mutD1 101 c0 with
+  | Some c => ceqb c (Cc 2)
+  | None => false
+  end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** Anchor mutations *)
+
+(** The 101-step bootstrap lands on C(2), not C(3). *)
+Example boot_wrong_anchor :
+  match csteps tm_10 101 c0 with
+  | Some c => ceqb c (Cc 3)
+  | None => false
+  end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** The anchor family is rigid: C(2) with a mutated comb cell is not
+    padding-equal to the bootstrap configuration. *)
+Example boot_wrong_comb :
+  match csteps tm_10 101 c0 with
+  | Some c => ceqb c (StC, ([], S1,
+                            rep [S1; S1; S0] 1 ++ S1 :: S0 :: Wp 2))
+  | None => false
+  end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** Carry-view sanity: the two shapes are mutually exclusive *)
+
+(** 5 = 101b has an interior carry (one low 1, rest 2), not the
+    overflow shape. *)
+Example cview_5 : cview 5 = (1, Some 1%positive).
+Proof. reflexivity. Qed.
+
+Example cview_7_overflow : cview 7 = (3, None).
+Proof. reflexivity. Qed.
+
+(** The working-area decomposition rejects a wrong carry count:
+    W(5) starts 01 (bit 0 set), not 00. *)
+Example W5_not_carry0 : forall w, Wp 5 <> S0 :: S0 :: w.
+Proof. intros w H. discriminate H. Qed.
+
+(** ** The other mono machines' ingredients also reject mutations *)
+
+From BBB4.Machines.Counters Require Import Mono_26 Mono_31.
+
+(** #26 with C1 -> 1LB instead of 1LA: breaks the left crossing. *)
+Definition tm_26_mutC1 : TM := fun q s =>
+  match q, s with
+  | StC, S1 => mk S1 DL StB
+  | _, _ => tm_26 q s
+  end.
+
+Example mutC1_breaks_U4_26 :
+  wsteps true true tm_26_mutC1 5 (StC, ([S1; S0; S1], S1, []))
+  <> Some (StC, ([], S1, [S1; S0; S1])).
+Proof. discriminate. Qed.
+
+Example boot_26_wrong_anchor :
+  match csteps tm_26 102 c0 with
+  | Some c => ceqb c (Mono_26.Cc 3)
+  | None => false
+  end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** #31 with B0 -> 1RD instead of 1RC: breaks the right crossing. *)
+Definition tm_31_mutB0 : TM := fun q s =>
+  match q, s with
+  | StB, S0 => mk S1 DR StD
+  | _, _ => tm_31 q s
+  end.
+
+Example mutB0_breaks_U2_31 :
+  wsteps true true tm_31_mutB0 3 (StB, ([], S1, [S0; S1; S1]))
+  <> Some (StB, ([S1; S1; S0], S1, [])).
+Proof. discriminate. Qed.
+
+(** #31's overflow stop needs the right edge: walled it dies. *)
+Example wall_U8v_31 : wsteps true true tm_31 3 (StC, ([], S1, []))
+                      = None.
+Proof. reflexivity. Qed.
+
+Example boot_31_wrong_anchor :
+  match csteps tm_31 56 c0 with
+  | Some c => ceqb c (Mono_31.Cc 3)
+  | None => false
+  end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** The spacer family's ingredients reject mutations too *)
+
+From BBB4.Machines.Counters Require Import Spacer_16.
+
+(** #16 with D0 -> 0LC instead of 0LB: breaks the transcription
+    cycle (its walk-back fires D0). *)
+Definition tm_16_mutD0 : TM := fun q s =>
+  match q, s with
+  | StD, S0 => mk S0 DL StC
+  | _, _ => tm_16 q s
+  end.
+
+Example mutD0_breaks_U3_16 :
+  wsteps true true tm_16_mutD0 5 (StD, ([S1; S0], S0, []))
+  <> Some (StD, ([S1], S0, [S1])).
+Proof. discriminate. Qed.
+
+(** The transcription's marker discipline: without the marker cell
+    in the window the cycle dies on the wall. *)
+Example wall_U3_16 : wsteps true true tm_16 5 (StD, ([S0], S0, []))
+                     = None.
+Proof. reflexivity. Qed.
+
+(** The overflow stop needs the left edge: walled it dies. *)
+Example wall_U8_16 : wsteps true true tm_16 3 (StB, ([S1], S1, [S1]))
+                     = None.
+Proof. reflexivity. Qed.
+
+Example boot_16_wrong_anchor :
+  match csteps tm_16 100 c0 with
+  | Some c => ceqb c (Spacer_16.Cc 3)
+  | None => false
+  end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** The contiguous encoding rejects a wrong carry count: B(5) = 101
+    starts with a set bit. *)
+Example B5_head : Bp 5 = S1 :: [S0; S1].
+Proof. reflexivity. Qed.
+
+(** ** The spacer twins: the one-transition difference is detected *)
+
+From BBB4.Machines.Counters Require Import Spacer_22 Spacer_23.
+
+(** #22 and #23 differ only in D0; the separator rebuild fires it,
+    so each machine's rebuild unit fails on the other's shape. *)
+Example twins_differ_U10 :
+  wsteps true true tm_23 7 (StB, ([S0; S0; S0], S0, []))
+  <> Some (StB, ([S1; S1], S1, [S1])).
+Proof. discriminate. Qed.
+
+Example twins_differ_U10' :
+  wsteps true true tm_22 7 (StB, ([S0; S0; S0], S0, []))
+  <> Some (StD, ([S1; S1], S1, [S1])).
+Proof. discriminate. Qed.
+
+Example boot_22_wrong_anchor :
+  match csteps tm_22 78 c0 with
+  | Some c => ceqb c (Spacer_22.Cc 2)
+  | None => false
+  end = false.
+Proof. vm_compute. reflexivity. Qed.

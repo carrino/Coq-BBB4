@@ -269,3 +269,24 @@ block-closure instance with the five rank measures
 (`neverqh_rwlrank`, +106), the irules engine (352, the largest
 single block, per SCOPING §5 phase 4), and the ~42 counter machines
 as busycoq-style individual proofs.
+
+## Counters track (individual proofs)
+
+The ~40 counter-machine holdouts (SCOPING section 5 phase 5) are
+being boarded as busycoq-style individual proofs, natively in the
+BBB4 statement world: `theories/Counters/` carries the windowed-run
+toolkit (`WTape.v`: walled `wsteps`, transport into `csteps`, the
+`cycR`/`cycL`/`cycLW` repetition cycles), the never-quasihalting
+closer (`LapGlue.v`: bootstrap + lap + visit witnesses), and the
+shared counter encodings (`MonoCounter.v`).  Each machine's lap is
+decomposed into ~15 windowed unit runs (closed by `reflexivity`)
+chained through the cycles, with the binary increment's carry read
+off a `positive` view; the decomposition is first validated
+differentially against the raw simulator by the untrusted executors
+in `tools/counters/`.  Boarded so far: the full `mono_counter`
+family (#10 #26 #31) and the full `spacer_counter` family
+(#16 #22 #23) -- 6 machines, each
+`nqh_<machine text> : NeverQuasiHaltsSt`, axiom footprint
+`functional_extensionality_dep` only, tracked in
+`tools/counters_manifest.tsv`.  Status and the per-machine recipe:
+the counters section of NEXT_SESSION.md.
