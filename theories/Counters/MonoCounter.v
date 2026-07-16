@@ -361,3 +361,124 @@ Lemma cross_ret2 : forall m X,
 Proof.
   intros. rewrite cross_ret. reflexivity.
 Qed.
+
+(** ** Snoc folds: absorbing one trailing unit into a repetition *)
+
+Lemma rep_snoc2 : forall (x y : Sym) k X,
+  rep [x; y] k ++ x :: y :: X = rep [x; y] (S k) ++ X.
+Proof.
+  induction k; intros; cbn [rep app].
+  - reflexivity.
+  - now rewrite IHk.
+Qed.
+
+Lemma rep_snoc3 : forall (x y z : Sym) k X,
+  rep [x; y; z] k ++ x :: y :: z :: X = rep [x; y; z] (S k) ++ X.
+Proof.
+  induction k; intros; cbn [rep app].
+  - reflexivity.
+  - now rewrite IHk.
+Qed.
+
+(** ** The interleaved-marker encoding (mono2_counter family)
+
+    #38/#39 keep the counter as p = a+1 with markers 1 at even cells
+    and the bits of v = p - 2^k at odd cells (LSB first), ending at
+    the top marker.  Same [cview], new decomposition lemmas. *)
+
+Fixpoint Wm2 (p : positive) : list Sym :=
+  match p with
+  | xH => [S1]
+  | xO q => S1 :: S0 :: Wm2 q
+  | xI q => S1 :: S1 :: Wm2 q
+  end.
+
+Lemma Wm2_head : forall p, exists w, Wm2 p = S1 :: w.
+Proof. destruct p; simpl; eauto. Qed.
+
+Lemma Wm2_some : forall p j q, cview p = (j, Some q) ->
+  Wm2 p = rep [S1; S1] j ++ S1 :: S0 :: Wm2 q /\
+  Wm2 (Pos.succ p) = rep [S1; S0] j ++ S1 :: S1 :: Wm2 q.
+Proof.
+  induction p; intros j q H; simpl in H.
+  - destruct (cview p) as [j' r] eqn:E.
+    inversion H; subst j r.
+    destruct (IHp j' q eq_refl) as (H1 & H2).
+    split; simpl.
+    + rewrite H1. reflexivity.
+    + rewrite H2. reflexivity.
+  - inversion H; subst j q. split; reflexivity.
+  - discriminate.
+Qed.
+
+Lemma Wm2_none : forall p j, cview p = (S j, None) ->
+  Wm2 p = rep [S1; S1] j ++ [S1] /\
+  Wm2 (Pos.succ p) = rep [S1; S0] (S j) ++ [S1].
+Proof.
+  induction p; intros j H; simpl in H.
+  - destruct (cview p) as [j' r] eqn:E.
+    inversion H; subst.
+    destruct j as [| j''].
+    + exfalso.
+      destruct p as [x|x|]; simpl in E;
+        [destruct (cview x); discriminate | discriminate | discriminate].
+    + destruct (IHp j'' eq_refl) as (H1 & H2).
+      split; simpl.
+      * rewrite H1. reflexivity.
+      * rewrite H2. reflexivity.
+  - discriminate.
+  - inversion H; subst. split; reflexivity.
+Qed.
+
+(** A marker run slides across the leading 1 of the area beyond. *)
+Lemma ones2_slide : forall k Y,
+  rep [S1; S1] k ++ S1 :: Y = S1 :: rep [S1; S1] k ++ Y.
+Proof.
+  induction k; intros; cbn [rep app].
+  - reflexivity.
+  - now rewrite IHk.
+Qed.
+
+(** ** More comb-boundary rotations (mono2 sweeps) *)
+
+(** The 011-comb behind its leading pair: 11 (011)^k X = (110)^k 11 X. *)
+Lemma rot_cross2 : forall k X,
+  S1 :: S1 :: rep [S0; S1; S1] k ++ X
+  = rep [S1; S1; S0] k ++ S1 :: S1 :: X.
+Proof.
+  induction k; intros; cbn [rep app].
+  - reflexivity.
+  - now rewrite IHk.
+Qed.
+
+(** The crossed 101-comb behind its leading pair, read leftward. *)
+Lemma rot_cross3 : forall k X,
+  S0 :: S1 :: rep [S1; S0; S1] k ++ X
+  = rep [S0; S1; S1] k ++ S0 :: S1 :: X.
+Proof.
+  induction k; intros; cbn [rep app].
+  - reflexivity.
+  - now rewrite IHk.
+Qed.
+
+(** The deposited return run rotates back into comb phase. *)
+Lemma rot_ret : forall k X,
+  S1 :: rep [S0; S1] k ++ X = rep [S1; S0] k ++ S1 :: X.
+Proof.
+  induction k; intros; cbn [rep app].
+  - reflexivity.
+  - now rewrite IHk.
+Qed.
+
+(** Definitional head exposures (targeted [cbn] substitutes). *)
+Lemma rep011_expose : forall k X,
+  rep [S0; S1; S1] (S k) ++ X = S0 :: S1 :: S1 :: rep [S0; S1; S1] k ++ X.
+Proof. reflexivity. Qed.
+
+Lemma rep101_expose : forall k X,
+  rep [S1; S0; S1] (S k) ++ X = S1 :: S0 :: S1 :: rep [S1; S0; S1] k ++ X.
+Proof. reflexivity. Qed.
+
+Lemma rep110_expose : forall k X,
+  rep [S1; S1; S0] (S k) ++ X = S1 :: S1 :: S0 :: rep [S1; S1; S0] k ++ X.
+Proof. reflexivity. Qed.
