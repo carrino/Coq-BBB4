@@ -308,6 +308,23 @@ seven are `nqh_<machine text> : NeverQuasiHaltsSt`, axiom footprint
 `functional_extensionality_dep` only, rows in
 `tools/counters_manifest.tsv`, executors `tools/counters/lap{18,35,2,4,12,8,33}.py`.
 
+<!-- --- irules mass-board --- -->
+
+## IRules mass-board
+
+The irules block is now largely landed: **250** of the 352
+irules-typed holdouts are boarded in
+`theories/Machines/IRules_Batch_00.v`..`IRules_Batch_08.v` (TM +
+`IRCert` literal + one `vm_compute` through
+`irules_check_neverqh_sound`, fuel 300000, plus a `_nonhalt`
+corollary each; manifest `tools/irules_manifest.tsv`).  Negative
+controls live in `theories/Tests/IRulesBatch_Corruption.v`.  The
+remaining 102 irules certs use post-v1 format features (multi-step
+decrements, v6 block rules, ...) the verified engine does not model
+yet -- see `tools/irules_deferred.tsv` and the NEXT_SESSION
+irules append.  Coq-proven coverage after this block: **3,402 /
+3,713**.
+
 ### Fuel track (neverqh_fuel mass-board)
 
 The full family of 62 upstream `neverqh_fuel` holdouts is boarded:

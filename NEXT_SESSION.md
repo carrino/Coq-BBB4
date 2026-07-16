@@ -576,6 +576,150 @@ bounce-style MeasureGlue composition is now available for any family
 whose macro lap chains an inner counter (tower is the likely
 customer: its cert type suggests nested doubling).
 
+<!-- --- irules mass-board --- -->
+
+## IRules mass-board (this session)
+
+Boarded **250** of the 352 irules-typed holdouts:
+`theories/Machines/IRules_Batch_00.v` .. `IRules_Batch_08.v`, each
+machine = TM + `IRCert` literal + `_never_quasihalts` (via
+`irules_check_neverqh_sound`, fuel 300000, `vm_compute`) +
+`_nonhalt` corollary.  Manifest: `tools/irules_manifest.tsv` (250
+rows), wired into `tools/check_coverage.py`.  Negative controls:
+`theories/Tests/IRulesBatch_Corruption.v` (mutant TM -> `false`;
+perturbed meta map / wrong anchor -> `<> true`; meta-map control at
+fuel 2000 with the genuine cert shown passing at that same fuel,
+because a corrupted map burns unbounded memory at fuel 300000).
+`Print Assumptions` on 5 sampled theorems across batches:
+`functional_extensionality_dep` only.
+
+**Coverage: 3152 -> 3402 Coq-proven (+250).**
+
+### Deferred: 102 machines the v1 Coq engine cannot board
+
+Full list with per-machine reasons: `tools/irules_deferred.tsv`.
+None are the anticipated >10M-step-anchor cases -- all 352 anchors
+fit the flat checker.  Instead these certs use post-v1 format
+features the verified engine does not model:
+
+- 44: v6 certs needing `blk`,`rulepfx` (block-encoded rules)
+- 38: v3 certs with decrement delta -2 (v1 supports -1 only)
+-  6: v7 certs needing `rulepfx`,`rulerunm`
+-  6: v3 certs needing `blk`
+-  4: v3 certs with decrement delta -3
+-  3: v3, d=-1 only, but v1 bound reasoning fails (probed incl.
+  kmin/lb bumps)
+-  1: v4 cert needing `mmrow`,`nvar`,`tplrunmv`
+
+Next session: extend the engine (multi-decrement first -- 42
+machines for one feature) or port the v6 block-rule layer.
+Machine strings:
+
+```
+1RB---_0LC0LB_1RC0RD_1LB1LA
+1RB---_0RC0RB_1LD0LA_1LD1LB
+1RB0LA_0RC0RB_1LC1LD_0RA0RB
+1RB0LC_0LC0LB_1RC1RD_1LA0LB
+1RB0LC_0LC0LB_1RC1RD_1LA0LD
+1RB0LC_1LA0LD_1RC1RB_0LC0LD
+1RB0LD_0LC0LB_0LD1LC_1RD1RA
+1RB0LD_1LC0LB_0RA0LD_1RD1RB
+1RB0LD_1LC0LB_0RA1LC_1RD1RB
+1RB0RA_0RC1LD_1LC0LA_0RC0RD
+1RB0RA_0RC1LD_1LC0LA_0RD0RB
+1RB0RB_0RC1LD_1LC0LD_1RB0RA
+1RB0RC_0LC0LB_0LD1LC_1RD1RA
+1RB0RC_0RC0RB_1LC1LD_1RA0RB
+1RB0RC_0RC1RB_0RD0RC_1LD1LA
+1RB0RD_0LC0RC_1LC1LA_0RC0RD
+1RB0RD_0RC0RB_1LC0LA_0RA0RB
+1RB0RD_0RC0RB_1LC0LA_0RB---
+1RB0RD_0RC0RB_1LC0LA_0RD0RB
+1RB0RD_0RC0RB_1LC0LA_1RD1LB
+1RB0RD_0RC0RC_1LC1LA_0RC0RD
+1RB0RD_0RC1LA_1LC0LA_0RA0RB
+1RB0RD_0RC1LA_1LC0LA_0RB0RB
+1RB0RD_0RC1LA_1LC0LA_0RD0RB
+1RB0RD_0RC1LA_1LC0LA_1LA0RB
+1RB0RD_0RC1LA_1LC0LA_1RB0RB
+1RB0RD_0RC1LD_1LC0LA_0RD0RB
+1RB0RD_1LB0RC_1LC1LA_0RC0RD
+1RB0RD_1LC0LB_1RA1LC_1LC0LC
+1RB0RD_1RC0RB_0LA0RD_1LD1LB
+1RB0RD_1RC0RB_0LA1RC_1LD1LB
+1RB1LA_0LC0LB_1RC1RD_1LA0LB
+1RB1LA_0LC0LB_1RC1RD_1LA0LD
+1RB1LA_1LA0LC_0LD0LC_1RD1RB
+1RB1LC_0RC0RB_1LD0LA_0RA1LB
+1RB1LD_0RC1RB_1LC1LA_0RB0RD
+1RB1RA_0RC0RB_1LC1LD_1RA0RB
+1RB1RA_0RC0RB_1LD0RA_1LD1LB
+1RB1RA_0RC1LD_1LC0LA_0RD0RB
+1RB1RB_0LC0LB_0LD1LC_1RD1RA
+1RB1RD_0RC0RB_1LC0LA_1LA1LB
+1RB1RD_0RC0RB_1LC0LA_1LB---
+1RB1RD_0RC0RB_1LC0LA_1LD0RB
+1RB1RD_0RC0RD_1LC0LA_0RB1LD
+1RB1RD_0RC1LD_1LC0LA_0RD0RB
+1RB---_1RC1RA_1LD0RB_1LB0LC
+1RB0LC_0LA1RA_1LA0RD_1LD1RC
+1RB0LC_1LA1RA_1LA0RD_1LD1RC
+1RB0LC_1RC0RA_1LA1LD_1LC---
+1RB0LD_0LC1RA_1LC1RD_1LA0RC
+1RB0LD_0LC1RD_0RD1LC_1RB1LA
+1RB0LD_0LC1RD_1LA1LC_1RB1LA
+1RB0LD_0LC1RD_1LD1LC_1RB1LA
+1RB0LD_0LC1RD_1RA1LC_1RB1LA
+1RB0LD_0LC1RD_1RB1LC_1RB1LA
+1RB0LD_0RC1RA_1LC1RD_1LA0RC
+1RB0LD_1LC0RA_0LD1LB_1RD1LA
+1RB0LD_1LC0RA_0RA0LB_1RD1RC
+1RB0LD_1LC0RA_0RB1LB_1RD1LA
+1RB0LD_1LC0RA_0RD1LB_1RD1LA
+1RB0LD_1LC0RA_1RB1LB_1RD1LA
+1RB0LD_1LC0RA_1RD1LB_1RD1LA
+1RB0LD_1LC1RA_1LC1RD_1LA0RC
+1RB0LD_1LC1RD_0RD1LC_1RB1LA
+1RB0LD_1LC1RD_1LA1LC_1RB1LA
+1RB0LD_1LC1RD_1LD1LC_1RB1LA
+1RB0LD_1LC1RD_1RA1LC_1RB1LA
+1RB0LD_1LC1RD_1RB1LC_1RB1LA
+1RB0RC_1LC1LD_1RA0LB_1LB---
+1RB0RD_1LC1LB_1RD0LB_0RD1RA
+1RB1LA_0LA1RC_1RB1LD_1RB0LC
+1RB1LA_1LA1RC_1RB1LD_1RB0LC
+1RB1LA_1RC0LD_0LA1RD_1RC1LB
+1RB1LA_1RC0LD_1LA1RD_1RC1LB
+1RB1LB_1LA0RC_1RB0LD_1RD1LC
+1RB1LC_0LC1RB_1LA1RD_1LA0RC
+1RB1LC_1LA1RB_1LA1RD_1LA0RC
+1RB1LC_1RC1RB_1LA1RD_1LA0RC
+1RB1LD_0LC1RA_0RA1LC_1RB0LA
+1RB1LD_0LC1RA_1LA1LC_1RB0LA
+1RB1LD_0LC1RA_1LD1LC_1RB0LA
+1RB1LD_0LC1RA_1RB1LC_1RB0LA
+1RB1LD_0LC1RA_1RD1LC_1RB0LA
+1RB1LD_1LC1RA_0RA1LC_1RB0LA
+1RB1LD_1LC1RA_1LA1LC_1RB0LA
+1RB1LD_1LC1RA_1LD1LC_1RB0LA
+1RB1LD_1LC1RA_1RB1LC_1RB0LA
+1RB1LD_1LC1RA_1RD1LC_1RB0LA
+1RB1LD_1LC1RB_1LA0RD_1LA1RC
+1RB1LD_1RC1RB_1LA0RD_1LA1RC
+1RB1RA_0RC0RB_1LC1LD_0RA0LA
+1RB1RA_1LC0RB_1LB1LD_0RA1RB
+1RB1RA_1LC0RB_1LB1LD_1RA1RB
+1RB1RA_1LC0RD_0RA1LD_1LC1RB
+1RB1RA_1LC0RD_1RA1LD_1LC1RB
+1RB1RA_1LC1RD_0RA1LB_1LC0RB
+1RB1RA_1LC1RD_1RA1LB_1LC0RB
+1RB1RC_0LA1RB_1LD0RC_1LC1LA
+1RB1RC_1RC1RB_1LD0RC_1LC1LA
+1RB1RD_1LC0RA_1LA0LB_1RA---
+1RB1RD_1LC1RB_1LD1LA_1LC0RD
+1RB1RD_1RC1RB_1LD1LA_1LC0RD
+```
+
 ## Fuel track: DONE (62/62 boarded)
 
 The scoping above was executed in the follow-up session: the class
@@ -613,3 +757,36 @@ per-SCC Bellman-Ford drift certificate; the record argument changes
 motion), so [runner_find]'s window induction needs a drift variant,
 but the FuelSCC edge-gate/descent skeleton and the FuelWide class
 plumbing should carry over.
+
+## Next: the RepWL port (two sessions)
+
+Highest-leverage block left, paying on both ledgers: the 106
+`neverqh_rwlrank` holdouts AND the ~25-30k RepWL-class machines that
+dominate the 52,326-machine census residue.  Derisked by three
+existing artifacts: Coq-BB5 ships a BB4-flavored `Decider_RepWL.v`
+(1,320 lines, `../Coq-BB5/CoqBB5/BB4/Deciders/`, with the
+`RepW_match`/`RepWL_match` concretization relations and the closed-set
+construction proved); the `Closure.v` engine is generic over the
+abstraction (plug in context type + injective enc + `succs`/`covers`
+and ranks, the lex gate, and the FuelSCC runner gate all come free);
+and the rwlrank measure vocabulary is small and documented
+(`../BBB/docs/neverqh.md`: `N/A,N/L,N/R` block counts + `0/l,0/r`
+interior blank counts, with exact per-node deltas -- the `comp_exact`
+contract).
+
+- **Session 1** (fuel-session shape): `Checkers/RepWL.v` instance +
+  measure vocabulary + exactness lemmas, Python mirror forked from
+  the fuel generator, differential-validate the 106 certs
+  (`../BBB/results/certs_rwlrank`, params `block`/`threshold` per
+  cert), board as `Machines/RepWL_Batch_*.v` with corruption tests.
+  Two design risks to settle on day one: the tape-model impedance
+  (Coq-BB5 is directional head-between-cells; BBB4 is head-on-cell
+  `nat -> Sym` sides -- re-derive `covers`/`succs_sound` locally, do
+  not transcribe), and the single-step contract (`succs_sound` is one
+  concrete step to one covered successor, so the RepWL step relation
+  must peel the front word at symbol granularity, no macro-jumps).
+- **Session 2**: wire the checker into the census `decide_easy` as a
+  tier, sweep the 31,758 wrap-survivor residue with the Python
+  mirror to measure the kill rate, regenerate `Deferred_*`, re-run
+  `make census` (native switch, 2-3h wall).  Kept separate so
+  session 1 never blocks on the census rebuild loop.
