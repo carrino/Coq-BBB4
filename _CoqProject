@@ -117,3 +117,8 @@ theories/Tests/Fuel_Examples.v
 theories/Tests/Residue_Wrap_Probe.v
 theories/Tests/QHB_Probe.v
 theories/Tests/QHB_Lex_Probe.v
+# --- counters track ---
+theories/Counters/WTape.v
+theories/Counters/LapGlue.v
+theories/Machines/Counters/Mono_10.v
+theories/Tests/Counters_Corruption.v
