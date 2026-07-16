@@ -785,6 +785,30 @@ contract).
   not transcribe), and the single-step contract (`succs_sound` is one
   concrete step to one covered successor, so the RepWL step relation
   must peel the front word at symbol granularity, no macro-jumps).
+
+  **SESSION 1 STARTED -- design validated, prover built, 106/106
+  catch-rate measured.**  `tools/repwl_prover.py` is the executable
+  design spec for `Checkers/RepWL.v` (its docstring pins the context
+  shape, step, and normalization): head-on-cell configs
+  `(q, hp, buf, litems, ritems)` with whole-block buffers
+  (|buf| in {L, 2L, 3L}), symmetric nearest-first item lists (left
+  words stored mirror-image so both sides run one code path),
+  fold-on-|buf|=3L with RLE merge saturating at T, cap-branch on pop
+  (mirror of verify.c `wg_succ`, re-expressed symmetrically), the
+  five documented measures with per-node deltas (`rdelta` /
+  `arrival_info` implement the exactness argument's witness bits).
+  Rules (a)/(b) with the cert measures discharge EVERY state of all
+  106 rwlrank holdouts at t=0; largest closure 13,994 abstract
+  configs (fine for vm_compute).  Remaining for the Coq half: the
+  denotation relation (concretize items with existential counts for
+  capped ones), `succs_sound` (single-step covering, the fold/merge
+  normalization preserving denotation), injective positive encoding
+  of the variable-length config, the five measure exactness lemmas
+  (values on cconf: N/* reuse `ngm_val`; 0/l,0/r need an
+  interior-blank counting function + the writes-never-touch-witness
+  lemma), then the engine instantiation is free
+  (`closure_check_neverqh_lex` shape) and the emitter is a
+  `gen_fuel_certs.py` fork.
 - **Session 2**: wire the checker into the census `decide_easy` as a
   tier, sweep the 31,758 wrap-survivor residue with the Python
   mirror to measure the kill rate, regenerate `Deferred_*`, re-run
