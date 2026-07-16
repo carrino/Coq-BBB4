@@ -290,3 +290,20 @@ family (#10 #26 #31) and the full `spacer_counter` family
 `functional_extensionality_dep` only, tracked in
 `tools/counters_manifest.tsv`.  Status and the per-machine recipe:
 the counters section of NEXT_SESSION.md.
+
+### Counters track, session B (interleave / exp / bounce)
+
+Seven more machines boarded by the parallel session-B sprint, own
+files only (`ILCounter.v`, `ExpCounter.v`, `BounceCounter.v`,
+`MeasureGlue.v`; `Machines/Counters/{Interleave,Exp,Bounce}_*.v`;
+`Tests/CountersB_Corruption.v`): the full `interleave_counter`
+family (#18 #35), the full `exp_counter` family (#2 #4 #12), and the
+full `bounce_counter` family (#8 #33).  Bounce is the family whose
+liveness needs a well-founded measure: `MeasureGlue.mrun` composes a
+measure-decreasing recurrence of exact micro laps (the nested
+working-area binary counter, measure = the complement value of the
+digit word) into each macro lap D(k) -> D(k+1), and
+`LapGlue.glue_neverqh` closes over the macro family as usual.  All
+seven are `nqh_<machine text> : NeverQuasiHaltsSt`, axiom footprint
+`functional_extensionality_dep` only, rows in
+`tools/counters_manifest.tsv`, executors `tools/counters/lap{18,35,2,4,12,8,33}.py`.

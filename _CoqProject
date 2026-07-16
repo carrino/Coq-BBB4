@@ -145,3 +145,16 @@ theories/Machines/Counters/Gray_19.v
 theories/Machines/Counters/Mono2_38.v
 theories/Machines/Counters/Mono2_39.v
 theories/Tests/CountersA_Corruption.v
+# --- counters track: session B ---
+theories/Counters/ILCounter.v
+theories/Counters/ExpCounter.v
+theories/Machines/Counters/Interleave_18.v
+theories/Machines/Counters/Interleave_35.v
+theories/Machines/Counters/Exp_2.v
+theories/Machines/Counters/Exp_4.v
+theories/Machines/Counters/Exp_12.v
+theories/Counters/MeasureGlue.v
+theories/Counters/BounceCounter.v
+theories/Machines/Counters/Bounce_8.v
+theories/Machines/Counters/Bounce_33.v
+theories/Tests/CountersB_Corruption.v
