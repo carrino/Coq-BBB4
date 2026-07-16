@@ -271,3 +271,103 @@ from the committed Deferred tables minus the holdout file.
 - `make` stays green; axiom footprint stays
   `functional_extensionality_dep` only (check with
   `Print Assumptions`).
+
+---
+
+# Counters track (individual proofs) -- session 2026-07-16
+
+State of the SCOPING section 5 phase 5 "individual proofs" track
+(branch `claude/coq-bbb4-counter-proofs-3yx9bj`).  Own files only:
+`theories/Counters/`, `theories/Machines/Counters/`,
+`theories/Tests/Counters_Corruption.v`, `tools/counters*`; the
+`_CoqProject` block is marked `# --- counters track ---`.
+
+## Boarded: 4 of 39 counter machines
+
+| family | status |
+|---|---|
+| mono_counter (3) | **COMPLETE**: #10, #26, #31 (`Mono_10/26/31.v`) |
+| spacer_counter (3) | 1 of 3: #16 (`Spacer_16.v`); **NEXT: #22** then #23 |
+| gray(1) double(4) blockdbl(3) mono2(2) interleave(2) exp(3) bounce(2) | not started, in that order (bounce needs the well-founded measure -- see its family notes upstream) |
+| wave(6) wave4(1) tower(4) xd(3) fractal(2) | hard tail, budget separately |
+
+Every theorem is `nqh_<bbchallenge text> : NeverQuasiHaltsSt tm_*`,
+`Print Assumptions` = `functional_extensionality_dep` only, listed in
+`tools/counters_manifest.tsv` (wired into `check_coverage.py`;
+coverage now 3140/3713).
+
+## The architecture that landed (native route -- decided over busycoq)
+
+- `theories/Counters/WTape.v`: two-sided windowed runs (`wsteps`
+  with per-side wall/blank-materialize modes), the transport lemma
+  into `csteps`, repetition cycles `cycR`/`cycL`/`cycLW` (the last
+  carries a fixed marker window -- spacer transcription), and the
+  `rep` algebra (`rep_shift`, `rep_rot`, `rep_slide`, `rep_dbl`,
+  `rep_add`).
+- `theories/Counters/LapGlue.v`: `glue_neverqh` -- bootstrap +
+  per-anchor lap (up to `lift`, for the overflow trailing blank) +
+  per-anchor all-state visit witnesses => `NeverQuasiHaltsSt`.
+- `theories/Counters/MonoCounter.v`: counter encodings over
+  `positive` (`Wp` odd-cell, `Bp` contiguous), the carry view
+  `cview` with decomposition lemmas for both encodings, and the
+  mono-family comb-alignment/final-area rewrites.
+- Per machine: ~15 unit runs (each `Proof. reflexivity. Qed.` on
+  `wsteps`), transported phase lemmas in cons-normal form, and a
+  linear `eapply csteps_chain` lap script with `rep`-algebra
+  junction rewrites, split by `cview` case (interior carry j /
+  overflow 2^j-1).
+
+busycoq route rejected after the #10 prototype: it would add the
+stream-world port PLUS a new quasihalting-aware translation (a fresh
+trust surface) and the carry case analysis stays manual either way;
+our unit runs are one-line reflexivity checks, so busycoq's Ltac
+advantage evaporates.
+
+## The per-machine recipe (tools/counters/, ~2-4h per machine)
+
+1. `trace.py` the lap macro-structure (sweeps, turnarounds);
+2. write `lapNN.py` against `executor.py` (combinators mirror the
+   Coq lemmas 1:1; wall discipline asserted; units auto-derived);
+3. `python3 lapNN.py 300` must print ALL OK (differential vs raw:
+   step counts + configs + next-anchor, all carry shapes);
+4. transcribe: unit dump -> unit lemmas; chain -> lap script; small
+   probes give the bootstrap step count and visit offsets;
+5. corruption tests (mutant machine breaks a unit, wall-discipline
+   `= None` checks, wrong boot anchor `ceqb = false`);
+6. manifest row + `_CoqProject` line + `make` + `Print Assumptions`.
+
+## Next machine: #22 spacer (1RB1LA_1LC0RB_0LA0LD_1RA0RB)
+
+voff -1 (anchor counter m = a-1: use `Cc p` with spacer
+`2*to_nat p + 4`), zoff 2, edge B, boot a0=2 => p0 = 1... CAREFUL:
+with voff=-1 the anchor counter at bootstrap is m = 1, so p0 = 1 and
+the lap premise becomes `(1 <= p)%positive`; re-derive the spacer
+arithmetic before copying #16's `replace` lines.  #23 differs from
+#22 only in D0 (1RA vs 1RD) -- expect identical skeletons, possibly
+even identical unit tables (compare the dumps).
+
+## Trap catalog (do not re-learn)
+
+- **Comb units are rotations**: the crossing consumes `[1;0;1]`
+  even though the comb is written `(110)^a` -- pick the boundary
+  where the 5-step excursion stays inside the unit and prove the
+  `rot_*` fold by 3-line induction (`induction k; cbn [rep app];
+  now rewrite IHk`).
+- **Overflow laps may end one trailing blank long** (mono) or
+  exactly (spacer #16): state the lap up to `lift` and use
+  `lift_app_blank` only where the executor says so.
+- **Evars vs case analysis**: `destruct j` must happen BEFORE
+  `do 2 eexists` when the two carry branches produce different
+  final configurations (Mono_31 lesson).
+- **`cbn [rep app]` over-unfolds**: it will expand EVERY
+  S-headed `rep` in the goal, wrecking later pattern matches; use
+  definitional fold lemmas (`Proof. reflexivity. Qed.`) as targeted
+  rewrites instead (`spacer_fold`, `ones_fold`, ... in Spacer_16).
+- **`rewrite` needs app-forms**: a bare `rep [S1] j` tail won't
+  match `... ++ X` patterns -- keep `_nil` fold variants around.
+- **Anchor conventions**: the executor's `raw_lap` event detector
+  IS the spec of `Cc` -- keep them in lockstep or the differential
+  test lies to you.
+- Step-count formulas are never needed in Coq (the lap `n` is an
+  existential); do not waste time deriving them beyond executor
+  sanity checks.
