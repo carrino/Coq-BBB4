@@ -148,18 +148,23 @@ certification.
    is a committed 120-machine sample).  **The 31,758 survivors
    (`tools/wrap_residue_survivors.txt`) are the residue's hard never-QH
    core -- the meat.**
-   REMAINING to fold these into the census (drop them from D_census):
-   the per-machine theorem gives `QuasiHaltsSt` but the census
-   contract needs `QHBound B` (EVERY quiet state's last visit <= B,
-   not just the wrapped q).  The clean tier: seed at config(t), build
-   the wrapped closure (halt-free => NonHalt after t + q quiet), AND
-   run the engine's rank liveness (`Closure.rank_ok`) over that
-   closure for every non-q state -- if they all recur, the only quiet
-   states are q and states that vanished by t, so `QHBound (S t)`
-   holds.  I.e. `ngram_check_quiet`'s closure + the never-QH liveness
-   layer on the SAME wrapped closure; return `R_QH` (already in the
-   `QHResult` type).  Then regenerate `Deferred_*` over the survivors
-   and re-`make census`.
+   **The QHBound tier is now BUILT and verified** (`ngram_check_qhbound`
+   / `ngram_check_qhbound_sound` in `Checkers/Wrap.v`, axiom footprint
+   `functional_extensionality_dep`): the wrapped closure PLUS the
+   engine's plain-acyclicity rank liveness (`Closure.live_ok` /
+   `rank_reach` / `live_appears_recur`, added to `Closure.v`) gives the
+   full census decision `NonHalt /\ QHBound (S t) /\ QuasiHaltsSt`.
+   Measured (`tools/sweep_qhbound_residue.py`): the plain-acyclicity
+   gate decides **~24% of the 20,568** wrap machines now (`n<=6`);
+   `theories/Tests/QHB_Probe.v` verifies 150 through `vm_compute`.
+   REMAINING:
+   (a) the other ~76% have wrapped closures whose recurrent part is not
+   a single all-states cycle -- swap `live_ok`'s plain `compute_ranks`
+   for the LEX/measure liveness (`lex_ok` + the pattern vocabulary,
+   already verified for the never-QH tier) to lift them; and
+   (b) wire `ngram_check_qhbound_sound` into the census `decide_easy`
+   as an `R_QH` tier, regenerate `Deferred_*` over the machines it
+   leaves, and re-`make census` (needs the native switch).
 2. **Pattern-vocabulary rank (cheap add-on, ~3-6k):** generalize
    RankSearch's candidate measures from the three `ngmeas` counts to
    the `NgPattE` pattern measures (pm_delta is verified; the search

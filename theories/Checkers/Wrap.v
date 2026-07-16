@@ -21,7 +21,7 @@
 
 From Coq Require Import Arith Lia Bool List ZArith.
 From BBB4 Require Import BBB4_Statement CTape PosEnc Closure.
-From BBB4.Checkers Require Import Cycle NGram.
+From BBB4.Checkers Require Import Cycle ExactClosure NGram.
 Import ListNotations.
 
 (** ** The halt-redirect machine *)
@@ -204,5 +204,173 @@ Proof.
       rewrite <- Heq in HN.
       exact (Him (m - t) HN).
   - split; [exact Hvis | exact Hquiet].
+  - eapply quiet_after_qh. split; [exact Hvis | exact Hquiet].
+Qed.
+
+(** ** QHBound tier: bounding EVERY quiet state (census contract)
+
+    [ngram_check_quiet] proves the wrapped state [q] quiet, i.e.
+    [QuasiHaltsSt].  The census contract needs [QHBound B]: EVERY
+    eventually-quiet state made its last visit by [B].  Adding the
+    engine's rank liveness ([live_ok]) over the SAME wrapped closure
+    supplies it: every state that appears in the closure recurs
+    forever (so it is not quiet), and states that do not appear are
+    never visited after [t] (last visit <= t) -- so every quiet state's
+    last visit is <= t, and [QHBound (S t)] holds.  Returns the full
+    census-grade decision [NonHalt /\ QHBound (S t) /\ QuasiHaltsSt]. *)
+
+Definition wrap_closed_live (tmw : TM) (lset rset : gset)
+    (fuel : nat) (a0 : cconf) : bool :=
+  match close cconf cconf_enc (ng_succs tmw lset rset)
+              fuel [] PositiveSet.empty [a0] with
+  | Some Sl =>
+      closed_b cconf cconf_enc (ng_succs tmw lset rset) Sl &&
+      mem cconf cconf_enc a0 Sl &&
+      live_ok cconf cconf_enc ec_state (ng_succs tmw lset rset) Sl
+  | None => false
+  end.
+
+Definition ngram_check_qhbound (tm : TM) (q : St)
+    (s n t fuel rounds : nat) : bool :=
+  (1 <=? n) && (s <? t) &&
+  match csteps tm t c0, csteps tm s c0 with
+  | Some ct, Some cs =>
+      st_eqb (fst cs) q &&
+      match cstep tm cs with
+      | Some cs1 => negb (cvisits tm cs1 (t - s) q)
+      | None => false
+      end &&
+      let tmw := tm_wrap tm q in
+      let '(q1, (l, h, r)) := ct in
+      let lset0 := gadds (ng_seed_side n l) gempty in
+      let rset0 := gadds (ng_seed_side n r) gempty in
+      let a0 := ng_start n ct in
+      let '(lset, rset) := ng_grow tmw a0 fuel rounds lset0 rset0 in
+      ng_seed_ok n lset rset ct &&
+      wrap_closed_live tmw lset rset fuel a0
+  | _, _ => false
+  end.
+
+(** The middle conjunct IS [QHBound (S t) tm] (Census/TNF_QH.v defines
+    [QHBound B tm := forall q s, QuietAfter tm q s -> S s <= B]); it is
+    stated unfolded here so the checker stays in the Checkers layer,
+    below the census. *)
+Theorem ngram_check_qhbound_sound : forall tm q s n t fuel rounds,
+  ngram_check_qhbound tm q s n t fuel rounds = true ->
+  NonHalt tm
+  /\ (forall q' s', QuietAfter tm q' s' -> S s' <= S t)
+  /\ QuasiHaltsSt tm.
+Proof.
+  intros tm q s n t fuel rounds H.
+  unfold ngram_check_qhbound in H.
+  apply andb_prop in H as [H Hrest].
+  apply andb_prop in H as [Hn Hst].
+  apply Nat.leb_le in Hn. apply Nat.ltb_lt in Hst.
+  destruct (csteps tm t c0) as [ct|] eqn:Ect; [|discriminate].
+  destruct (csteps tm s c0) as [cs|] eqn:Ecs; [|discriminate].
+  apply andb_prop in Hrest as [H Hcl].
+  apply andb_prop in H as [Hqs Hnv].
+  apply st_eqb_spec in Hqs.
+  destruct (cstep tm cs) as [cs1|] eqn:Ecs1; [|discriminate].
+  apply negb_true_iff in Hnv.
+  destruct ct as [q1 [[l h] r]] eqn:Ectc.
+  match type of Hcl with
+  | (let '(_, _) := ?G in _) = true => destruct G as [lset rset] eqn:Eg
+  end.
+  cbv beta iota zeta in Hcl.
+  apply andb_prop in Hcl as [Hseed Hwc].
+  rewrite <- Ectc in *.
+  set (tmw := tm_wrap tm q) in *.
+  unfold wrap_closed_live in Hwc.
+  destruct (close cconf cconf_enc (ng_succs tmw lset rset)
+                  fuel [] PositiveSet.empty [ng_start n ct])
+    as [Sl|] eqn:Ecl; [|discriminate].
+  apply andb_prop in Hwc as [Hwc Hlive].
+  apply andb_prop in Hwc as [Hclb Hmem].
+  apply mem_In in Hmem; [|exact cconf_enc_inj].
+  assert (Hcov0 : ng_covers n lset rset (ng_start n ct) (lift ct)).
+  { apply ng_start_covers. subst ct. exact Hseed. }
+  (* instance premises reused throughout *)
+  set (SS := fun a c Hc => ng_succs_sound tmw n lset rset a c Hn Hc).
+  set (CST := fun a c (Hc : ng_covers n lset rset a c) =>
+                ng_covers_state n lset rset a c Hc).
+  assert (Him : forall k, stepn tmw k (lift ct) <> None).
+  { intros k HN.
+    destruct (closure_invariant tmw cconf cconf_enc
+                (ng_succs tmw lset rset) (ng_covers n lset rset)
+                cconf_enc_inj SS
+                Sl Hclb (ng_start n ct) (lift ct) Hmem Hcov0 k)
+      as (c' & a' & Hst' & _ & _).
+    congruence. }
+  assert (Ecs1' : csteps tm (s + 1) c0 = Some cs1).
+  { rewrite csteps_add, Ecs, csteps_1. exact Ecs1. }
+  assert (Hstept : stepn tm t InitES = Some (lift ct)).
+  { rewrite <- lift_c0. apply csteps_lift. exact Ect. }
+  assert (Hquiet : forall m, s < m -> ~ VisitsAt tm q m).
+  { intros m Hm (c & Hc & Hcq).
+    destruct (stepn_csteps tm m c) as (cc & Hcc & Hlift); [exact Hc|].
+    assert (Hccq : fst cc = q).
+    { rewrite <- (lift_state cc), Hlift. exact Hcq. }
+    destruct (le_lt_dec m t) as [Hle | Hgt].
+    - replace m with ((s + 1) + (m - s - 1)) in Hcc by lia.
+      rewrite csteps_add, Ecs1' in Hcc.
+      rewrite (cvisits_complete tm (t - s) cs1 q (m - s - 1) cc)
+        in Hnv; [discriminate | lia | exact Hcc | exact Hccq].
+    - replace m with (t + (m - t)) in Hcc by lia.
+      rewrite csteps_add, Ect in Hcc.
+      apply csteps_lift in Hcc.
+      destruct (wrap_agree tm q (lift ct) Him (m - t)) as [_ Hqfree].
+      apply (Hqfree (lift cc)); [exact Hcc|].
+      rewrite lift_state. exact Hccq. }
+  assert (Hvis : VisitsAt tm q s).
+  { exists (lift cs). split.
+    - rewrite <- lift_c0. apply csteps_lift. exact Ecs.
+    - rewrite lift_state. exact Hqs. }
+  assert (HNonHalt : NonHalt tm).
+  { intros m HN.
+    destruct (le_lt_dec m t) as [Hle | Hgt].
+    + destruct (csteps_prefix tm m t c0 ct Hle Ect) as (cm & Hcm & _).
+      apply csteps_lift in Hcm. rewrite lift_c0 in Hcm. congruence.
+    + replace m with (t + (m - t)) in HN by lia.
+      rewrite stepn_add, Hstept in HN.
+      destruct (wrap_agree tm q (lift ct) Him (m - t)) as [Heq _].
+      rewrite <- Heq in HN.
+      exact (Him (m - t) HN). }
+  split; [exact HNonHalt | split].
+  - (* QHBound (S t): every quiet state's last visit is <= t *)
+    intros q'' s'' [Hvis'' Hlast''].
+    apply le_n_S.
+    destruct (le_lt_dec s'' t) as [Hle | Hgt]; [exact Hle | exfalso].
+    (* s'' > t: the quiet state is visited after t, hence recurs *)
+    destruct Hvis'' as (c & Hc & Hcq).
+    destruct (stepn_csteps tm s'' c) as (cc & Hcc & Hlift); [exact Hc|].
+    assert (Hccq : fst cc = q'').
+    { rewrite <- (lift_state cc), Hlift. exact Hcq. }
+    (* map the step-s'' config into the wrapped run from lift ct *)
+    assert (Hcw : stepn tm (s'' - t) (lift ct) = Some (lift cc)).
+    { replace s'' with (t + (s'' - t)) in Hc by lia.
+      rewrite stepn_add, Hstept in Hc. rewrite Hc, Hlift. reflexivity. }
+    assert (Hwrun : stepn tmw (s'' - t) (lift ct) = Some (lift cc)).
+    { destruct (wrap_agree tm q (lift ct) Him (s'' - t)) as [Heq _].
+      transitivity (stepn tm (s'' - t) (lift ct)); [exact Heq | exact Hcw]. }
+    assert (Happ : appears cconf ec_state Sl q'' = true).
+    { rewrite <- Hccq. rewrite <- (lift_state cc).
+      apply (live_visited_appears tmw cconf cconf_enc ec_state
+               (ng_succs tmw lset rset) (ng_covers n lset rset)
+               cconf_enc_inj CST SS
+               Sl (ng_start n ct) (lift ct) Hclb Hmem Hcov0
+               (s'' - t) (lift cc) Hwrun). }
+    (* it therefore recurs: pick a visit strictly after s'' *)
+    destruct (live_appears_recur tmw cconf cconf_enc ec_state
+                (ng_succs tmw lset rset) (ng_covers n lset rset)
+                cconf_enc_inj CST SS
+                Sl (ng_start n ct) (lift ct) q'' Hclb Hlive Hmem Hcov0 Happ
+                (S s'' - t)) as (k & c' & Hk & Hstepk & Hqk).
+    assert (Hstm : stepn tm k (lift ct) = Some c').
+    { destruct (wrap_agree tm q (lift ct) Him k) as [Heqk _].
+      rewrite <- Heqk. exact Hstepk. }
+    apply (Hlast'' (t + k)); [lia|].
+    exists c'. split; [| exact Hqk].
+    rewrite stepn_add, Hstept. exact Hstm.
   - eapply quiet_after_qh. split; [exact Hvis | exact Hquiet].
 Qed.

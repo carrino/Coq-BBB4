@@ -191,7 +191,17 @@ closure/liveness framework (n-gram instance, ranking rules,
   suffices, so all 18 upstream `wrapctl`/`wrapfar` machines board on
   the n-gram abstraction without their RepWL/DFA machinery.  Per
   machine: `NonHalt tm /\ QuietAfter tm q s /\ QuasiHaltsSt tm` with
-  the exact last-visit index `s`.
+  the exact last-visit index `s`.  A second checker
+  `ngram_check_qhbound` (same file) delivers the **census-grade**
+  decision `NonHalt /\ QHBound (S t) /\ QuasiHaltsSt`: it adds the
+  engine's plain-acyclicity rank liveness (`Closure.live_ok`) over the
+  SAME wrapped closure, so every state that appears recurs (`rank_reach`
+  + `live_appears_recur`) and every quiet state's last visit is `<= t`
+  -- exactly the `QHBound` the census contract wants, from which the
+  20,568 wrap-decidable residue machines can leave `D_census` (the
+  plain-acyclicity gate catches ~24% now; the rest want measure-based
+  liveness).  `theories/Tests/QHB_Probe.v` proves 150 residue machines
+  this way under `vm_compute`.
 - `theories/Checkers/FuelClass.v` — the capped sided-count *classes*
   for the fuel refinement, as a verified lower bound (`F0` no info /
   `F1` >= 1 / `F2` >= 2, all rule (c2) reads).  Unlike the exact

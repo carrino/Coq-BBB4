@@ -273,6 +273,91 @@ Section ClosureEngine.
         exists n. split; [lia | assumption].
   Qed.
 
+  (** *** Reachability of [q] from a covered configuration
+
+      Like [rank_find] but blank-tape-free: from ANY covered [c] the
+      run reaches state [q] within [rnk a] steps.  This is the local
+      liveness fact the wrapped-closure QHBound tier needs -- its run
+      starts at the simulated configuration, not [InitES]. *)
+  Lemma rank_reach : forall Sl q rnk,
+    closed_b Sl = true -> rank_ok Sl q rnk = true ->
+    forall r a c, rnk a < r -> In a Sl -> covers a c ->
+    exists j c', stepn tm j c = Some c' /\ fst c' = q.
+  Proof.
+    intros Sl q rnk Hcl Hro.
+    induction r as [|r IH]; intros a c Hr HIn Hcov; [lia|].
+    destruct (st_eqb (a_state a) q) eqn:Eq.
+    - apply st_eqb_spec in Eq.
+      exists 0, c. split; [reflexivity|].
+      rewrite <- (covers_state a c Hcov). exact Eq.
+    - destruct (closed_step Sl a c Hcl HIn Hcov)
+        as (c' & l & a' & Hstep & Es & HInl & HIn' & Hcov').
+      destruct (st_eqb (a_state a') q) eqn:Eq'.
+      + apply st_eqb_spec in Eq'.
+        exists 1, c'. split.
+        * cbn [stepn]. rewrite Hstep. reflexivity.
+        * rewrite <- (covers_state a' c' Hcov'). exact Eq'.
+      + assert (Hlt : rnk a' < rnk a).
+        { unfold rank_ok in Hro. rewrite forallb_forall in Hro.
+          specialize (Hro a HIn). rewrite Eq, Es in Hro.
+          rewrite forallb_forall in Hro. specialize (Hro a' HInl).
+          unfold edge_ok in Hro. rewrite Eq' in Hro. simpl in Hro.
+          apply Nat.ltb_lt. exact Hro. }
+        destruct (IH a' c' ltac:(lia) HIn' Hcov') as (j & c'' & Hsteps & Hq).
+        exists (S j), c''. split; [| exact Hq].
+        cbn [stepn]. rewrite Hstep. exact Hsteps.
+  Qed.
+
+  (** *** The QHBound liveness gate
+
+      Every state that APPEARS as some closure node's state carries a
+      rank certificate.  On a covered run each appearing state then
+      recurs (so it is never quiet), while non-appearing states are
+      never visited -- the split the wrapped-closure QHBound tier needs
+      to bound every quiet state's last visit. *)
+  Definition appears (Sl : list A) (q' : St) : bool :=
+    existsb (fun a => st_eqb (a_state a) q') Sl.
+
+  Definition live_ok (Sl : list A) : bool :=
+    forallb (fun q' =>
+      implb (appears Sl q') (rank_ok Sl q' (compute_ranks Sl q'))) all_St.
+
+  (** From a covered start, any visited state appears in the closure. *)
+  Lemma live_visited_appears : forall Sl a0 c0',
+    closed_b Sl = true -> In a0 Sl -> covers a0 c0' ->
+    forall k c', stepn tm k c0' = Some c' -> appears Sl (fst c') = true.
+  Proof.
+    intros Sl a0 c0' Hcl HIn Hcov k c' Hk.
+    destruct (closure_invariant Sl Hcl a0 c0' HIn Hcov k)
+      as (c'' & a'' & Hst & HIn'' & Hcov'').
+    rewrite Hk in Hst. injection Hst as <-.
+    unfold appears. apply existsb_exists. exists a''.
+    split; [exact HIn'' |].
+    apply st_eqb_spec. apply (covers_state a'' c' Hcov'').
+  Qed.
+
+  (** An appearing state recurs: visited at arbitrarily large indices. *)
+  Lemma live_appears_recur : forall Sl a0 c0' q',
+    closed_b Sl = true -> live_ok Sl = true ->
+    In a0 Sl -> covers a0 c0' ->
+    appears Sl q' = true ->
+    forall N, exists k c', N <= k /\ stepn tm k c0' = Some c' /\ fst c' = q'.
+  Proof.
+    intros Sl a0 c0' q' Hcl Hlive HIn Hcov Happ N.
+    assert (Hro : rank_ok Sl q' (compute_ranks Sl q') = true).
+    { unfold live_ok in Hlive. rewrite forallb_forall in Hlive.
+      specialize (Hlive q' (all_St_complete q')).
+      rewrite Happ in Hlive. exact Hlive. }
+    destruct (closure_invariant Sl Hcl a0 c0' HIn Hcov N)
+      as (cN & aN & HstN & HInN & HcovN).
+    destruct (rank_reach Sl q' (compute_ranks Sl q') Hcl Hro
+                (S (compute_ranks Sl q' aN)) aN cN
+                (Nat.lt_succ_diag_r _) HInN HcovN)
+      as (j & c' & Hj & Hq).
+    exists (N + j), c'. split; [lia|]. split; [| exact Hq].
+    rewrite stepn_add, HstN. exact Hj.
+  Qed.
+
   Theorem closure_check_neverqh_sound : forall t fuel a0,
     (forall ct, csteps tm t c0 = Some ct -> covers a0 (lift ct)) ->
     closure_check_neverqh t fuel a0 = true -> NeverQuasiHaltsSt tm.
