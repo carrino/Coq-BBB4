@@ -380,6 +380,111 @@ hard way); discriminate them at 7 steps.
   existential); do not waste time deriving them beyond executor
   sanity checks.
 
+## Counters track, session A (2026-07-16): gray + mono2 boarded
+
+(Marked append; supersedes the table above.)  Boarded: **9 of 39**.
+
+| family | status |
+|---|---|
+| mono_counter (3) | COMPLETE: #10, #26, #31 |
+| spacer_counter (3) | COMPLETE: #16, #22, #23 |
+| gray_counter (1) | **COMPLETE: #19 (`Gray_19.v`)** |
+| mono2_counter (2) | **COMPLETE: #38, #39 (`Mono2_38/39.v`)** |
+| double(4) blockdbl(3) interleave(2) exp(3) bounce(2) | not started; session A scoped double+blockdbl, session B interleave/exp/bounce |
+| wave(6) wave4(1) tower(4) xd(3) fractal(2) | hard tail, budget separately |
+
+Coverage after this session: 3145/3713.  All three new theorems are
+`nqh_<text>` with `Print Assumptions` = `functional_extensionality_dep`
+only; negative controls live in `theories/Tests/CountersA_Corruption.v`
+(new file, session A's own -- session B uses its own test file).
+
+### What landed (all in the MonoCounter session-A appendix)
+
+- Gray encoding `Wg` (3-cell slots of G(p) = p xor p>>1): the increment
+  flips slot j = fst (cview p), so `Wg_some`/`Wg_none` follow the
+  `cview_some_W` pattern verbatim.  #19's lap: FIVE flows (even
+  set/clear, interior set/clear, overflow), one turnaround each.
+- Interleaved-marker encoding `Wm2` (mono2): `Wm2_some/none`, again
+  same skeleton.  #39 = one sweep/lap, #38 = two sweeps/lap (comb_step
+  2); the twins share A/B/D rows, so their unit tables coincide up to
+  the C-row units.
+- New rep algebra: `rep_dblu`, `rep_trip`, `rep_snoc2/3`, `rot_cross2/3`,
+  `rot_ret`, `ones2_slide`, `cross_ret/cross_ret2`, `comb_even/odd`,
+  `comb_refold`, and definitional `rep011/101/110_expose` (targeted
+  substitutes for `cbn [rep]`, per the over-unfolding trap).
+
+### New traps (session A)
+
+- **rewrite needs concrete rotations**: `rep_rot`'s `u ++ [x]` pattern
+  never matches literal `rep [S0;S1] j` -- state the machine's exact
+  rotation as its own induction lemma (`rot_ret` etc.), 3 lines each.
+- **Evars vs side conditions**: in `split; [| split; [| lia]]` the
+  `lia`/`reflexivity` fire BEFORE the csteps chain instantiates the
+  evars -- prove the chain first, side goals after (Mono_10 bullet
+  order, not inline brackets).
+- **`destruct (cview p) eqn:` rewrites the IH too**: apply the IH via
+  `eq_refl` (the file's established `cview_some_W` pattern), not via
+  the destructed hypothesis.
+- `injection` recurses through `S` -- `(S j', o) = (S j, Some q)`
+  yields `j' = j` directly; a second injection is "Nothing to inject".
+- Head-exposure hypotheses (`Wm2_head q = S1 :: wq`): rewrite them
+  globally BEFORE starting the chain; mid-chain `rewrite <- Hwq`
+  fails once deposits shadow the head.
+
+### Doubling families (double #9/#30/#32/#37, blockdbl #11/#13/#28):
+### reconnaissance done, NOT started -- read before coding
+
+`tools/counters/trace_dbl.py` probes all seven: synthetic anchors are
+validated (each reaches the next anchor with the cert recurrences).
+Anchor cconfs (head-side per cert `acc_side`):
+
+- #30: `(B, 1^t ++ (011)^k-rev ++ [0;1], 0, [])`, k=2^j-1, t=3j+4;
+- #9:  gen comb (10), no prefix, kg=2^j-1, acc 3j (unary, side R);
+- #32: gen comb (110), prefix 1, kg=2^j, spacer-acc 0^(3+2j) then 1;
+- #37: side L (acc left), legacy comb, t=1+3j;
+- #11/#13: solid 1^m 0 1^t, m=3*2^(j-1)+{1,0}, t=2j-1;
+- #28: side L, 1 0^z 1^m, m=4*2^(j-1)-1, z=2j.
+
+These laps are O(k^2): a NESTED loop of per-unit mini-sweeps (#30
+j=2,3,4: 431/1447/5207 steps).  The toolkit handles every inner phase
+(the #30 wiggle-clear is a textbook `cycLW` unit
+`(B,([1;1],1,[])) -> (B,([1],1,[0]))`, collapse/spread are 3-step
+cycL/cycR with u=[1;1;0], w=[1;0;1] and back), BUT:
+
+- the OUTER loop needs a new closer: `creach tm c c' := exists n,
+  csteps tm n c = Some c'` with refl/trans/csteps lemmas and
+  `creach_iter : (forall i, i < k -> creach (f i) (f (S i))) ->
+  creach (f 0) (f k)`; the lap lemma then chains boundary phases
+  around `creach_iter` and recovers `0 < n` from a nonempty prefix
+  phase.  The mid-config family `f i` must be read off the executor,
+  not derived by hand: my hand-derived #30 step model was 2x short --
+  the acc is re-shuttled EVERY mini-lap (the per-lap fill triples are
+  re-cleared by the next wiggle), so wiggle counts grow ~3/lap.
+- the executor needs a `cycLW` combinator (lap16.py inlined one
+  manually; a reusable `cycLW(ex, cfg, lwlen, ulen, P, k, name)`
+  helper that mirrors `WTape.cycLW` -- unit `(q,(lw++u,h,[])) ->
+  (q,(lw,h,w))` -- was drafted and works; put it in executor.py or
+  per-lap files).
+- derive the mini-lap phase list with a DbgExec subclass that prints
+  the cfg after every combinator (see the mono2 session: two dumps at
+  consecutive j pin down every list shape and count).
+
+**Next machine: #30** (canonical double_counter).  Known #30 phase
+inventory (validated against the raw trace, counts NOT yet final):
+`UTe (B,([],0,[]))->3,br=F->(B,([1],1,[1]))` edge turn block;
+wiggle `cycLW` as above (mini-lap 1 clears the whole acc, t reps);
+junction `UJ (B,([1;0],1,[]))->2->(D,([],0,[1;0]))`;
+collapse `UC (D,([1;1;0],0,[]))->3->(D,([],0,[1;0;1]))` + an edge
+variant eating into the old prefix; prefix turns `UP` (3 steps
+mini-lap 1, 4-5 steps steady, shapes differ); spread
+`US (B,([],0,[1;1;0]))->3->(B,([1;0;1],0,[]))`; per-lap fill triples
+`(B0 w1, C0 w1, D1 keep)` = cycR u=[0;1;0]-ish, and a final fill
+pass ending in a br=F edge unit.  Seeds: each mini-lap's UJ keeps a
+1 (spaced 3), UTe's third 1 is the top seed.  After #30: #9 (gen
+comb (10), fewest turns/lap: 2 per mini-lap), then #37, #32, then
+blockdbl #13/#11 (solid blocks, (B1,D1)-conversion cycles), #28
+(side L).  Budget one machine per ~2-3h; the creach scaffolding is
+shared after the first.
 ---
 
 # Counters track, session B (interleave/exp/bounce) -- 2026-07-16
@@ -391,7 +496,7 @@ Exp_12,Bounce_8,Bounce_33}.v`, `theories/Tests/CountersB_Corruption.v`,
 `tools/counters/lap{18,35,2,4,12,8,33}.py`; the `_CoqProject` block is
 marked `# --- counters track: session B ---`.
 
-## Boarded: 7 machines (13 total with session A's 6 baseline)
+## Boarded: 7 machines (16 of 39 total with session A's 9 -- see its section above)
 
 | family | status |
 |---|---|
@@ -460,9 +565,10 @@ All `nqh_<bbchallenge text> : NeverQuasiHaltsSt`, `Print Assumptions`
 
 ## Next machine
 
-The counters residue after both sessions: session A's queue
-(gray #19, double, blockdbl, mono2 -- see its section above) and then
-the hard tail wave(6) wave4(1) tower(4) xd(3) fractal(2).  For the
+The counters residue after both sessions: session A's remaining
+queue (double(4) starting at #30, then blockdbl(3) -- see its
+section above) and then the hard tail wave(6) wave4(1) tower(4)
+xd(3) fractal(2).  For the
 tail, start with **wave**: read `results/counter*.cert` types `wave_counter`
 and `verify_wave_counter` in BBB/src/verify.c; expect LapGlue to
 suffice (parameter -> infinity liveness) with wider unit tables.  The
