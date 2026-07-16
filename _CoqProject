@@ -161,4 +161,5 @@ theories/Tests/CountersB_Corruption.v
 
 # --- irules mass-board ---
 theories/Machines/IRules_Batch_00.v
+theories/Machines/IRules_Batch_01.v
 theories/Machines/IRules_Batch_02.v
