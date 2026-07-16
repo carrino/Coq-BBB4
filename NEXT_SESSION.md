@@ -165,16 +165,20 @@ certification.
    `tools/gen_qhbound_wrap.py` (plain, from `qhbound_caught.tsv`),
    `tools/gen_qhbound_lex.py` (lex, from `qhbound_survivors`);
    committed probes `Tests/QHB_Probe.v` (150 plain) and
-   `Tests/QHB_Lex_Probe.v` (lex-only machines).  Measured on a small
-   sample the lex gate lifts ~13% of the plain-gate survivors with
-   just the count-of-1s measures -- offer the digram/pattern
-   candidates (as `Bulk_R` did) to push further.
+   `Tests/QHB_Lex_Probe.v` (lex-only machines).
+   **FULL MEASUREMENT (committed artifacts): of the 20,568 wrap-QH
+   machines, 5,307 are QHBound-decidable by the plain gate NOW
+   (`tools/qhbound_caught.tsv`; a 100-machine RANDOM sample verified
+   through Coq, 0 failures) and 15,261 need the measure gate
+   (`tools/qhbound_survivors.txt`; a small-sample lex sweep with just
+   the count-of-1s measures lifts ~13% -- offer the digram/pattern
+   candidates as `Bulk_R` did to push further).**
    REMAINING:
-   (a) run gen_qhbound_wrap over the full `qhbound_caught.tsv` (the
-   plain gate holds ~24% of the 20,568) and check the tables in as
-   `Machines/Bulk/QHBWrap_*.v`;
+   (a) run gen_qhbound_wrap over the full `tools/qhbound_caught.tsv`
+   and check the tables in as `Machines/Bulk/QHBWrap_*.v` (~90 files
+   at 60/file; each compiles in seconds);
    (b) strengthen the lex sweep (pattern vocabulary, larger n) over
-   the survivors;
+   `tools/qhbound_survivors.txt` and emit via gen_qhbound_lex;
    (c) wire `ngram_check_qhbound(_lex)_sound` into the census
    `decide_easy` as an `R_QH` tier, regenerate `Deferred_*` over what
    remains, and re-`make census` (needs the native switch).
