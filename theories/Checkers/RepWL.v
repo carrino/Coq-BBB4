@@ -738,3 +738,145 @@ Proof.
       rewrite nthb_padw, nthb_firstn by assumption.
       reflexivity.
 Qed.
+
+(** ** Well-formed items
+
+    The measure deltas below read "some nonblank strictly beyond"
+    bits off the item lists; those bits are exact only when every
+    item denotes at least one copy of a nonempty word.  All
+    checker-constructed configurations satisfy this ([rw_seed_wf],
+    [rw_succs_wf]), so the engine's covers relation is the
+    conjunction [rw_covers'] below. *)
+
+Definition item_wf (it : ritem) : Prop :=
+  1 <= it_c it /\ it_w it <> [].
+
+Definition rw_wf (a : rconf) : Prop :=
+  let '(_, (li, _, _, _, ri)) := a in
+  Forall item_wf li /\ Forall item_wf ri.
+
+Definition rw_covers' (a : rconf) (c : ExecState) : Prop :=
+  rw_covers a c /\ rw_wf a.
+
+Lemma push_item_wf : forall T w items,
+  1 <= T -> w <> [] -> Forall item_wf items ->
+  Forall item_wf (push_item T w items).
+Proof.
+  intros T w items HT Hw Hwf.
+  unfold push_item.
+  destruct items as [| [w0 c0 cap0] rest].
+  - destruct (word_blank w); constructor;
+      [split; simpl; [lia | exact Hw] | constructor].
+  - inversion Hwf as [| ? ? Hit Hrest]; subst.
+    destruct Hit as [Hc Hw0]; simpl in Hc, Hw0.
+    destruct (syms_eqb w0 w).
+    + constructor; [| exact Hrest].
+      split; cbn -[Nat.min]; [apply Nat.min_glb; lia | exact Hw0].
+    + constructor; [split; simpl; [lia | exact Hw] |].
+      constructor; [split; simpl; [lia | exact Hw0] | exact Hrest].
+Qed.
+
+Lemma pop_item_wf : forall L items ps,
+  pop_item L items = Some ps ->
+  Forall item_wf items ->
+  forall wd items', In (wd, items') ps -> Forall item_wf items'.
+Proof.
+  intros L items ps Hpop Hwf wd items' HIn.
+  destruct items as [| [w0 c0 cap0] rest].
+  - simpl in Hpop. injection Hpop as <-.
+    destruct HIn as [E | []]. injection E as <- <-. constructor.
+  - simpl in Hpop.
+    destruct w0 as [|y w0']; [discriminate|].
+    destruct c0 as [|c0']; [discriminate|].
+    injection Hpop as <-.
+    inversion Hwf as [| ? ? Hit Hrest]; subst.
+    assert (Hdec : Forall item_wf
+              (match c0' with
+               | 0 => rest
+               | S _ => mkItem (y :: w0') c0' false :: rest
+               end)).
+    { destruct c0' as [|c0'']; [exact Hrest|].
+      constructor; [split; simpl; [lia | discriminate] | exact Hrest]. }
+    destruct cap0.
+    + destruct HIn as [E | [E | []]]; injection E as <- <-.
+      * constructor; [exact Hit | exact Hrest].
+      * exact Hdec.
+    + destruct HIn as [E | []]. injection E as <- <-. exact Hdec.
+Qed.
+
+Lemma rw_succs_wf : forall tm L T a sl a',
+  1 <= L -> 1 <= T ->
+  rw_wf a ->
+  rw_succs tm L T a = Some sl ->
+  In a' sl ->
+  rw_wf a'.
+Proof.
+  intros tm L T [q [[[[li lb] h] rb] ri]] sl a' HL HT [Hli Hri] Hs HIn.
+  unfold rw_succs in Hs.
+  destruct (tm q h) as [tr|]; [|discriminate].
+  destruct (t_dir tr).
+  - (* DL *)
+    destruct lb as [|x lb'].
+    + destruct (3 * L <=? length (t_write tr :: rb)) eqn:Ef.
+      * destruct (pop_item L li) as [ps|] eqn:Ep; [|discriminate].
+        injection Hs as <-.
+        apply in_map_iff in HIn as ((wd & li2) & E & HInp).
+        subst a'. simpl.
+        split.
+        -- exact (pop_item_wf L li ps Ep Hli wd li2 HInp).
+        -- apply push_item_wf; [exact HT | | exact Hri].
+           apply Nat.leb_le in Ef.
+           intro Hcontra.
+           pose proof (f_equal (@length Sym) Hcontra) as Hlen.
+           rewrite skipn_length in Hlen.
+           destruct L as [|L']; [lia | simpl in Ef, Hlen; lia].
+      * destruct (pop_item L li) as [ps|] eqn:Ep; [|discriminate].
+        injection Hs as <-.
+        apply in_map_iff in HIn as ((wd & li2) & E & HInp).
+        subst a'. simpl.
+        split; [exact (pop_item_wf L li ps Ep Hli wd li2 HInp) | exact Hri].
+    + injection Hs as <-.
+      destruct HIn as [E | []]. subst a'. simpl.
+      split; [exact Hli | exact Hri].
+  - (* DR *)
+    destruct rb as [|x rb'].
+    + destruct (3 * L <=? length (t_write tr :: lb)) eqn:Ef.
+      * destruct (pop_item L ri) as [ps|] eqn:Ep; [|discriminate].
+        injection Hs as <-.
+        apply in_map_iff in HIn as ((wd & ri2) & E & HInp).
+        subst a'. simpl.
+        split.
+        -- apply push_item_wf; [exact HT | | exact Hli].
+           apply Nat.leb_le in Ef.
+           intro Hcontra.
+           pose proof (f_equal (@length Sym) Hcontra) as Hlen.
+           rewrite skipn_length in Hlen.
+           destruct L as [|L']; [lia | simpl in Ef, Hlen; lia].
+        -- exact (pop_item_wf L ri ps Ep Hri wd ri2 HInp).
+      * destruct (pop_item L ri) as [ps|] eqn:Ep; [|discriminate].
+        injection Hs as <-.
+        apply in_map_iff in HIn as ((wd & ri2) & E & HInp).
+        subst a'. simpl.
+        split; [exact Hli | exact (pop_item_wf L ri ps Ep Hri wd ri2 HInp)].
+    + injection Hs as <-.
+      destruct HIn as [E | []]. subst a'. simpl.
+      split; [exact Hli | exact Hri].
+Qed.
+
+Lemma rw_succs_sound' : forall tm L T a c,
+  1 <= L -> 1 <= T ->
+  rw_covers' a c ->
+  match rw_succs tm L T a, step tm c with
+  | Some l, Some c' => exists a', In a' l /\ rw_covers' a' c'
+  | Some _, None => False
+  | None, _ => True
+  end.
+Proof.
+  intros tm L T a c HL HT [Hcov Hwf].
+  pose proof (rw_succs_sound tm L T a c HL Hcov) as H.
+  destruct (rw_succs tm L T a) as [sl|] eqn:Hs; [| exact I].
+  destruct (step tm c) as [c'|]; [| exact H].
+  destruct H as (a' & HIn & Hcov').
+  exists a'. split; [exact HIn|].
+  split; [exact Hcov' | exact (rw_succs_wf tm L T a sl a' HL HT Hwf Hs HIn)].
+Qed.
