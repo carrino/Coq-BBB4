@@ -308,29 +308,43 @@ seven are `nqh_<machine text> : NeverQuasiHaltsSt`, axiom footprint
 `functional_extensionality_dep` only, rows in
 `tools/counters_manifest.tsv`, executors `tools/counters/lap{18,35,2,4,12,8,33}.py`.
 
-### Fuel track (neverqh_fuel mass-board session)
+### Fuel track (neverqh_fuel mass-board)
 
-`tools/gen_fuel_certs.py` (fork of `gen_bulk_certs.py`) is the
-`neverqh_fuel` boarding generator: per visited state it tries the lex
-procedure first (the cert's `rank_q` measures + defaults + an
-exhaustive window-legal pattern pool), falls back to the runner rule
-(c2) by mirroring `Closure.v`'s `runner_ok` exactly, routes
-left-runners through `mirror_never_qh`, and emits
-`ngram_check_neverqh_fuel_sound` applications plus `NonHalt`
-corollaries, with rows in `tools/fuel_manifest.tsv` (wired into
-`tools/check_coverage.py`).
+The full family of 62 upstream `neverqh_fuel` holdouts is boarded:
+`nqh_<machine> : NeverQuasiHaltsSt` + `nonhalt_<machine>` corollaries
+in `theories/Machines/Fuel_Batch_{01,02,03}.v`, axiom footprint
+`functional_extensionality_dep` only, rows in
+`tools/fuel_manifest.tsv`.
 
-Outcome of the boarding attempt: **0 of the 62 fuel holdouts land on
-the merged in-window checker; all 62 defer as `offwindow-fuel`**
-(`tools/fuel_deferred.tsv`, one row per machine with the per-state
-stuck-SCC detail).  After exhaustive rules-(a)/(b) peeling (window
-ladder n..n+2, t ladder to 500000, both orientations) every residue
-is a uniform-direction runner SCC -- 54 machines left-running, 8
-right-running, none mixed -- whose movement-side window is blank:
-the fuel these certificates rely on sits BEYOND the n-gram window,
-i.e. exactly the `FuelClass.v` refinement that is not yet wired to a
-checker.  Negative controls: `theories/Tests/FuelBatch_Corruption.v`
-(the generator's re-derived parameters for the `Fuel_Examples` smoke
-machine as the positive control -- digit-identical to the committed
-proof -- and mutant transition / wrong runner marking / gutted rank
-table / starved budget corruptions all computing `false`).
+The boarding took an engine extension (two NEW checker files; the
+merged Fuel.v/FuelClass.v/Closure.v are untouched):
+
+- `theories/Checkers/FuelSCC.v` -- the per-SCC runner rule (c2)
+  integrated into the lexicographic gate: every q-avoiding edge is
+  lex-good OR internal to an untrusted "runner gate" whose nodes all
+  move right with fuel, with every lex component non-increasing
+  across it.  Soundness: the lex tuple never increases along a
+  q-avoiding run, so by well-foundedness lex-good edges stop; the
+  confined tail then drives the right window to zero against the
+  fuel invariant (outer `Acc lexlt` induction + inner window-bound
+  induction; `lexle` threads the bookkeeping).
+- `theories/Checkers/FuelWide.v` -- the class-refined instance
+  promised by Fuel.v's header: contexts `cconf * (fclass * fclass)`
+  with the FuelClass lower-bound classes, deterministic per-step
+  class updates (`finc` the write behind the move, `fdec` the
+  crossed window cell), runner fuel read window-OR-class, exact
+  capped seed classes from the anchor configuration, refined-key
+  certificate tables.
+
+The in-window checker alone provably boards NONE of the 62 (the
+previous session's result, kept in `tools/fuel_deferred.tsv` history:
+every residue was a uniform-direction runner SCC with blank
+movement-side windows -- in-window fuel is subsumed by lex).  The
+generator `tools/gen_fuel_certs.py` searches with the exact Python
+mirror of the refined checker (classes, per-SCC kills, the
+`fw_edge_ok` gate), differential-validates every state's certificate
+out of Coq, and emits the batches; 62/62 land, 54 via the
+`mirror_never_qh` transfer (left-runners), 8 direct.  Negative
+controls: `theories/Tests/FuelBatch_Corruption.v` (both checkers:
+transition mutants, wrong runner-state markings -- erased and swapped
+gates -- gutted rank tables, starved budgets, all computing `false`).

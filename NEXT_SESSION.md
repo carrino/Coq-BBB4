@@ -576,48 +576,40 @@ bounce-style MeasureGlue composition is now available for any family
 whose macro lap chains an inner counter (tower is the likely
 customer: its cert type suggests nested doubling).
 
-## Fuel track: what it takes to board the 62 neverqh_fuel holdouts
+## Fuel track: DONE (62/62 boarded)
 
-This session built the generator (`tools/gen_fuel_certs.py`) and
-established that the in-window subset is EMPTY -- the deferral is
-structural, not a search failure.  Facts to build on
-(`tools/fuel_deferred.tsv` has all 62 rows):
+The scoping above was executed in the follow-up session: the class
+refinement AND the per-SCC gate both landed as new files
+(`Checkers/FuelSCC.v`, `Checkers/FuelWide.v`; Fuel.v / FuelClass.v /
+Closure.v untouched), and all 62 `neverqh_fuel` holdouts are proved
+(`Machines/Fuel_Batch_{01,02,03}.v`, manifest
+`tools/fuel_manifest.tsv`, coverage 3152 -> 3214).  Key design notes
+for reuse:
 
-- **The in-window runner disjunct cannot fire on real machines.**
-  `runner_ok Sl q` needs every non-q closure node to move right with
-  a nonblank in its right WINDOW.  But a blank-start closure always
-  contains a context just past the last window nonblank (the (1,0)
-  right-window shifts to (0,g), and g=0 is always seeded), and that
-  context either sits in state q or refutes `fnode_rfuel_ge1`.
-  Equivalently: any fueled right-moving abstract cycle consumes a
-  window nonblank per lap (cells leave the right window only through
-  the head), so rule (b) with the 1/R measure already kills it --
-  in-window fuel is subsumed by lex, which is why anything it could
-  board was boarded by the bulk rank sessions long ago.
-- **All 62 residues are uniform-direction, off-window runner SCCs**
-  (54 left / 8 right, no machine mixes residue directions, no mixed
-  SCCs).  So sidedness is fully handled by `mirror_never_qh`; the
-  window is the only gap.
-- **Two pieces are needed, both engine work** (Fuel.v/FuelClass.v
-  were read-only this session):
-  1. the refined context `cconf * fclass * fclass` promised in
-     Fuel.v's header: `finc`/`fdec` (proved sound in FuelClass.v)
-     track the classes per step, `fnode_rfuel_ge1` reads `fc_ge1`
-     off the tracked class, `fc_tag` extends the injective encoding;
-  2. a per-SCC (c2) gate: `state_live_ok = lex_ok || runner_ok` is
-     whole-closure, but the q-avoiding graph keeps opposite-moving
-     transient nodes, so even with classes the disjunct stays false.
-     verify.c applies (c2) per SCC inside the rank-peel loop (see the
-     neverqh_fuel comment at verify.c:15096 and rule (c2) at ~4245).
-     Note `runner_find` (Closure.v) assumes the node set is CLOSED
-     (`closed_b`), which an SCC is not -- the per-SCC soundness
-     argument must confine the run to the SCC first (the
-     infinitely-often set of a q-avoiding run lies in one SCC), so
-     this is a new lemma, not a restatement.
-- `tools/gen_fuel_certs.py` is ready to re-point once that checker
-  exists: `fuel_decide` already computes per-state lex/runner splits
-  and the emission/manifest path is exercised end to end
-  (`Tests/FuelBatch_Corruption.v` pins the positive control to the
-  committed `Fuel_Examples` numbers).  Swap the Python `runner_ok`
-  mirror for the refined per-SCC rule and update the emitted `apply`
-  line, and the 62 should follow.
+- **The runner rule as a lex disjunct, not a peeling stage.**
+  [fscc_edge_ok] = lex-good OR gate-internal-with-every-component-
+  non-increasing.  The emitted certificates keep gate edges
+  "equal" at every component (rank components are computed over the
+  peeling graph PLUS gate edges; rule-(a) components have delta <= 0
+  on residue edges by construction; later measure gates never touch
+  gate nodes since a gate is a full SCC).  The descent proof then
+  needs no peeling-sequence induction: outer well-founded induction
+  on the lex tuple, inner induction on the right-window bound.
+- **Lower-bound classes suffice.**  The C verifier's exact capped
+  counts (with the disjunctive cap split) were not needed: FuelClass
+  F0/F1/F2 lower bounds with deterministic finc/fdec transitions
+  catch all 62, because the runner SCCs cross only window-blank
+  cells (classes constant around the cycles).
+- **The refined instance is plumbing, not proofs.**  fw_succs pairs
+  the base ng_succs branches with ONE class update read off the
+  window; finc_sound/fdec_sound close the covering obligations.
+  Anyone adding another context refinement should copy that shape.
+
+Possible next customer of FuelSCC: the 17 `neverqh_drift` holdouts
+(rule (c3), net-drift SCCs with fuel on the drift side, verify.c
+~4300).  The gate check would swap "every node moves right" for a
+per-SCC Bellman-Ford drift certificate; the record argument changes
+(records via strictly-positive net displacement instead of monotone
+motion), so [runner_find]'s window induction needs a drift variant,
+but the FuelSCC edge-gate/descent skeleton and the FuelWide class
+plumbing should carry over.

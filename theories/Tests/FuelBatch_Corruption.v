@@ -21,9 +21,10 @@
     classes (see tools/fuel_deferred.tsv and NEXT_SESSION.md). *)
 
 From Coq Require Import List.
-From BBB4 Require Import BBB4_Statement CTape.
-From BBB4.Checkers Require Import NGram Fuel.
+From BBB4 Require Import BBB4_Statement CTape Mirror.
+From BBB4.Checkers Require Import NGram Fuel FuelWide.
 From BBB4.Machines.Bulk Require Import Bulk_001.
+From BBB4.Machines Require Import Fuel_Batch_01.
 Import ListNotations.
 
 (* The genuine parameters pass: the positive control the mutations
@@ -75,4 +76,60 @@ Proof. vm_compute. reflexivity. Qed.
    the checker fails closed rather than trusting the certificate. *)
 Example fuel_reject_starved :
   ngram_check_neverqh_fuel tm_bulk_00001 2 0 1 11 cert_bulk_00001 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** The class-refined per-SCC checker (FuelWide / FuelSCC)
+
+    Test subject: tm_fuel_00001 = 1RB---_0RC0RB_1LC0LD_1RA0LD, the
+    first boarded neverqh_fuel holdout -- a left-runner, so the
+    checker runs on the MIRRORED machine (exactly as the committed
+    theorem does) with runner gates on states A, B, D and a lex
+    certificate on C. *)
+
+(* The genuine parameters pass (the boarded theorem relies on it). *)
+Example fuelw_accept_genuine :
+  ngram_check_neverqh_fuelw (mirror_tm tm_fuel_00001) 2 0 1320 12
+    cert_fuel_00001 = true.
+Proof. vm_compute. reflexivity. Qed.
+
+(* One-transition mutant (StD,S0: 1RA -> 1LA in the base machine):
+   the refined closure diverges from the certificate's world. *)
+Definition tm_fw_mutant : TM := fun q s =>
+  match q, s with
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | q, s => tm_fuel_00001 q s
+  end.
+Example fuelw_reject_mutant :
+  ngram_check_neverqh_fuelw (mirror_tm tm_fw_mutant) 2 0 1320 12
+    cert_fuel_00001 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* Wrong runner-state marking, direction 1: erasing the runner gates
+   leaves the runner SCCs' edges with no discharge. *)
+Example fuelw_reject_no_gate :
+  ngram_check_neverqh_fuelw (mirror_tm tm_fuel_00001) 2 0 1320 12
+    (fun q => (fst (cert_fuel_00001 q), [])) = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* Wrong runner-state marking, direction 2: certificates swapped
+   between a runner state (A) and the lex state (C). *)
+Example fuelw_reject_swapped :
+  ngram_check_neverqh_fuelw (mirror_tm tm_fuel_00001) 2 0 1320 12
+    (fun q => cert_fuel_00001
+                (match q with StA => StC | StC => StA | q => q end))
+  = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* Wrong measure certificate: gutting every rank table breaks the
+   lex components the runner gates lean on. *)
+Example fuelw_reject_gutted :
+  ngram_check_neverqh_fuelw (mirror_tm tm_fuel_00001) 2 0 1320 12
+    (fun q => (map gut_rank (fst (cert_fuel_00001 q)),
+               snd (cert_fuel_00001 q))) = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* Starved closure budget fails closed. *)
+Example fuelw_reject_starved :
+  ngram_check_neverqh_fuelw (mirror_tm tm_fuel_00001) 2 0 1 12
+    cert_fuel_00001 = false.
 Proof. vm_compute. reflexivity. Qed.

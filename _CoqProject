@@ -160,4 +160,9 @@ theories/Machines/Counters/Bounce_33.v
 theories/Tests/CountersB_Corruption.v
 
 # --- fuel mass-board ---
+theories/Checkers/FuelSCC.v
+theories/Checkers/FuelWide.v
+theories/Machines/Fuel_Batch_01.v
+theories/Machines/Fuel_Batch_02.v
+theories/Machines/Fuel_Batch_03.v
 theories/Tests/FuelBatch_Corruption.v
