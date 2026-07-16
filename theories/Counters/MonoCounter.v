@@ -470,6 +470,43 @@ Proof.
   - now rewrite IHk.
 Qed.
 
+(** ** Reachability closure (doubling families)
+
+    The double/blockdbl laps are nested loops: an OUTER iteration of
+    per-unit mini-sweeps whose phase counts vary with the iteration
+    index.  [creach] packages "reachable in some number of steps" so
+    the outer loop closes by plain induction over a mid-configuration
+    family; the lap lemma recovers [0 < n] from a nonempty prefix
+    phase chained in front. *)
+
+Definition creach (tm : TM) (c c' : cconf) : Prop :=
+  exists n, csteps tm n c = Some c'.
+
+Lemma creach_refl : forall tm c, creach tm c c.
+Proof. intros. exists 0. reflexivity. Qed.
+
+Lemma creach_csteps : forall tm n c c',
+  csteps tm n c = Some c' -> creach tm c c'.
+Proof. intros tm n c c' H. exists n. exact H. Qed.
+
+Lemma creach_trans : forall tm c1 c2 c3,
+  creach tm c1 c2 -> creach tm c2 c3 -> creach tm c1 c3.
+Proof.
+  intros tm c1 c2 c3 (n1 & H1) (n2 & H2).
+  exists (n1 + n2). eapply csteps_chain; eauto.
+Qed.
+
+Lemma creach_iter : forall tm (f : nat -> cconf) k,
+  (forall i, i < k -> creach tm (f i) (f (S i))) ->
+  creach tm (f 0) (f k).
+Proof.
+  intros tm f k H. induction k as [| k IH].
+  - apply creach_refl.
+  - eapply creach_trans.
+    + apply IH. intros i Hi. apply H. lia.
+    + apply H. lia.
+Qed.
+
 (** Definitional head exposures (targeted [cbn] substitutes). *)
 Lemma rep011_expose : forall k X,
   rep [S0; S1; S1] (S k) ++ X = S0 :: S1 :: S1 :: rep [S0; S1; S1] k ++ X.
