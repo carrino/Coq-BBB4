@@ -749,7 +749,7 @@ Qed.
     conjunction [rw_covers'] below. *)
 
 Definition item_wf (it : ritem) : Prop :=
-  1 <= it_c it /\ it_w it <> [].
+  1 <= it_c it /\ (it_cap it = true -> 2 <= it_c it) /\ it_w it <> [].
 
 Definition rw_wf (a : rconf) : Prop :=
   let '(_, (li, _, _, _, ri)) := a in
@@ -758,22 +758,48 @@ Definition rw_wf (a : rconf) : Prop :=
 Definition rw_covers' (a : rconf) (c : ExecState) : Prop :=
   rw_covers a c /\ rw_wf a.
 
+Lemma newitem_wf : forall T w,
+  2 <= T -> w <> [] -> item_wf (mkItem w 1 (1 =? T)).
+Proof.
+  intros T w HT Hw.
+  split; [simpl; lia|].
+  split; [| exact Hw].
+  cbn [it_cap it_c].
+  destruct (1 =? T) eqn:E1; [apply Nat.eqb_eq in E1; lia|].
+  intro Hc; discriminate Hc.
+Qed.
+
+Lemma merge_wf : forall T c0 cap0,
+  2 <= T -> 1 <= c0 -> (cap0 = true -> 2 <= c0) ->
+  1 <= Nat.min (S c0) T /\
+  (cap0 || (Nat.min (S c0) T =? T) = true -> 2 <= Nat.min (S c0) T).
+Proof.
+  intros T c0 cap0 HT Hc Hcap.
+  split.
+  - apply Nat.min_glb; lia.
+  - intro Hor. apply orb_prop in Hor as [Hc0 | He].
+    + specialize (Hcap Hc0). apply Nat.min_glb; lia.
+    + apply Nat.eqb_eq in He. lia.
+Qed.
+
 Lemma push_item_wf : forall T w items,
-  1 <= T -> w <> [] -> Forall item_wf items ->
+  2 <= T -> w <> [] -> Forall item_wf items ->
   Forall item_wf (push_item T w items).
 Proof.
   intros T w items HT Hw Hwf.
   unfold push_item.
   destruct items as [| [w0 c0 cap0] rest].
   - destruct (word_blank w); constructor;
-      [split; simpl; [lia | exact Hw] | constructor].
+      [apply newitem_wf; assumption | constructor].
   - inversion Hwf as [| ? ? Hit Hrest]; subst.
-    destruct Hit as [Hc Hw0]; simpl in Hc, Hw0.
+    destruct Hit as (Hc & Hcap & Hw0); simpl in Hc, Hcap, Hw0.
     destruct (syms_eqb w0 w).
     + constructor; [| exact Hrest].
-      split; cbn -[Nat.min]; [apply Nat.min_glb; lia | exact Hw0].
-    + constructor; [split; simpl; [lia | exact Hw] |].
-      constructor; [split; simpl; [lia | exact Hw0] | exact Hrest].
+      destruct (merge_wf T c0 cap0 HT Hc Hcap) as [H1 H2].
+      split; [exact H1 | split; [exact H2 | exact Hw0]].
+    + constructor; [apply newitem_wf; assumption |].
+      constructor; [| exact Hrest].
+      split; [exact Hc | split; [exact Hcap | exact Hw0]].
 Qed.
 
 Lemma pop_item_wf : forall L items ps,
@@ -796,7 +822,9 @@ Proof.
                | S _ => mkItem (y :: w0') c0' false :: rest
                end)).
     { destruct c0' as [|c0'']; [exact Hrest|].
-      constructor; [split; simpl; [lia | discriminate] | exact Hrest]. }
+      constructor; [| exact Hrest].
+      split; [simpl; lia |].
+      split; [simpl; intro Hb; discriminate | discriminate]. }
     destruct cap0.
     + destruct HIn as [E | [E | []]]; injection E as <- <-.
       * constructor; [exact Hit | exact Hrest].
@@ -805,7 +833,7 @@ Proof.
 Qed.
 
 Lemma rw_succs_wf : forall tm L T a sl a',
-  1 <= L -> 1 <= T ->
+  1 <= L -> 2 <= T ->
   rw_wf a ->
   rw_succs tm L T a = Some sl ->
   In a' sl ->
@@ -864,7 +892,7 @@ Proof.
 Qed.
 
 Lemma rw_succs_sound' : forall tm L T a c,
-  1 <= L -> 1 <= T ->
+  1 <= L -> 2 <= T ->
   rw_covers' a c ->
   match rw_succs tm L T a, step tm c with
   | Some l, Some c' => exists a', In a' l /\ rw_covers' a' c'
@@ -879,4 +907,160 @@ Proof.
   destruct H as (a' & HIn & Hcov').
   exists a'. split; [exact HIn|].
   split; [exact Hcov' | exact (rw_succs_wf tm L T a sl a' HL HT Hwf Hs HIn)].
+Qed.
+
+(** ** Measures: values on the computable configuration, deltas on
+    the node (docs/neverqh.md "RepWL ranking liveness") *)
+
+Fixpoint countnb (l : list Sym) : nat :=
+  match l with
+  | [] => 0
+  | S1 :: t => S (countnb t)
+  | S0 :: t => countnb t
+  end.
+
+(** Interior blanks: blank cells with a nonblank strictly farther
+    out on the same side. *)
+Fixpoint ibc (l : list Sym) : nat :=
+  match l with
+  | [] => 0
+  | x :: t =>
+      (if sym_eqb x S0 && negb (word_blank t) then 1 else 0) + ibc t
+  end.
+
+Definition zc (s : Sym) : nat := match s with S1 => 1 | S0 => 0 end.
+Definition zcz (s : Sym) : Z := match s with S1 => 1%Z | S0 => 0%Z end.
+Definition zi (b : bool) : Z := if b then 1%Z else 0%Z.
+
+Lemma countnb_cons : forall x t, countnb (x :: t) = zc x + countnb t.
+Proof. destruct x; reflexivity. Qed.
+
+Lemma countnb_hd : forall r, countnb r = zc (chd r) + countnb (ctl r).
+Proof. destruct r as [|x t]; [reflexivity | destruct x; reflexivity]. Qed.
+
+Lemma ibc_cons : forall x t,
+  ibc (x :: t) = (if sym_eqb x S0 && negb (word_blank t) then 1 else 0)
+                 + ibc t.
+Proof. reflexivity. Qed.
+
+Lemma ibc_hd : forall r,
+  ibc r = (if sym_eqb (chd r) S0 && negb (word_blank (ctl r))
+           then 1 else 0) + ibc (ctl r).
+Proof. destruct r as [|x t]; reflexivity. Qed.
+
+Lemma chd_nthb : forall l, chd l = nthb l 0.
+Proof. destruct l; reflexivity. Qed.
+
+Lemma ctl_nthb : forall l i, nthb (ctl l) i = nthb l (S i).
+Proof. destruct l as [|x t]; intros [|i]; reflexivity. Qed.
+
+(** *** Blankness correspondences *)
+
+Lemma word_blank_app : forall a b,
+  word_blank (a ++ b) = word_blank a && word_blank b.
+Proof. intros. unfold word_blank. apply forallb_app. Qed.
+
+Lemma wrep_blank : forall w k,
+  word_blank w = true -> word_blank (wrep w k) = true.
+Proof.
+  intros w k Hw. induction k as [|k IH]; [reflexivity|].
+  rewrite wrep_S, word_blank_app, Hw, IH. reflexivity.
+Qed.
+
+Lemma word_nonblank_ex : forall w,
+  word_blank w = false -> exists j, j < length w /\ nthb w j = S1.
+Proof.
+  induction w as [|x t IH]; intro H; [discriminate|].
+  unfold word_blank in H; simpl in H.
+  apply andb_false_iff in H as [Hx | Ht].
+  - exists 0. split; [simpl; lia|].
+    destruct x; [discriminate | reflexivity].
+  - destruct (IH Ht) as (j & Hj & Hs).
+    exists (S j). split; [simpl; lia | exact Hs].
+Qed.
+
+Lemma all_blank_word : forall l,
+  (forall i, nthb l i = S0) -> word_blank l = true.
+Proof.
+  induction l as [|x t IH]; intro H; [reflexivity|].
+  unfold word_blank; simpl.
+  apply andb_true_intro. split.
+  - specialize (H 0). unfold nthb in H; simpl in H.
+    rewrite H. reflexivity.
+  - apply IH. intro i. exact (H (S i)).
+Qed.
+
+Definition items_nb (items : list ritem) : bool :=
+  existsb (fun it => negb (word_blank (it_w it))) items.
+
+Lemma items_nb_false : forall items ext,
+  items_nb items = false -> items_den items ext ->
+  forall i, nthb ext i = S0.
+Proof.
+  intros items ext Hnb Hden.
+  induction Hden as [| w c cap k rest ext0 Hk Hden IH]; intro i.
+  - apply nthb_nil.
+  - unfold items_nb in Hnb; simpl in Hnb.
+    apply orb_false_iff in Hnb as [Hw Hrest].
+    apply negb_false_iff in Hw. simpl in Hw.
+    destruct (le_lt_dec (length (wrep w k)) i) as [Hge | Hlt].
+    + rewrite nthb_app_r by assumption. apply IH. exact Hrest.
+    + rewrite nthb_app_l by assumption.
+      apply word_blank_nthb. apply wrep_blank. exact Hw.
+Qed.
+
+Lemma items_nb_true : forall items ext,
+  items_nb items = true -> Forall item_wf items -> items_den items ext ->
+  exists i, nthb ext i = S1.
+Proof.
+  intros items ext Hnb Hwf Hden.
+  induction Hden as [| w c cap k rest ext0 Hk Hden IH].
+  - discriminate.
+  - inversion Hwf as [| ? ? Hit Hrest]; subst.
+    destruct Hit as (Hc & _ & _); simpl in Hc.
+    unfold items_nb in Hnb; simpl in Hnb.
+    apply orb_true_iff in Hnb as [Hw | Hr].
+    + apply negb_true_iff in Hw. simpl in Hw.
+      destruct (word_nonblank_ex w Hw) as (j & Hj & Hs).
+      assert (Hk1 : 1 <= k) by (destruct cap; lia).
+      destruct k as [|k']; [lia|].
+      exists j.
+      rewrite wrep_S, <- app_assoc.
+      rewrite nthb_app_l by assumption.
+      exact Hs.
+    + destruct (IH Hr Hrest) as (i & Hs).
+      exists (length (wrep w k) + i).
+      rewrite nthb_app_r by lia.
+      replace (length (wrep w k) + i - length (wrep w k)) with i by lia.
+      exact Hs.
+Qed.
+
+(** A covered concrete side list is blank iff both the buffer and
+    the item words are. *)
+Lemma side_blank : forall b items ext (cl : list Sym),
+  Forall item_wf items -> items_den items ext ->
+  (forall i, nthb cl i = nthb (b ++ ext) i) ->
+  word_blank cl = word_blank b && negb (items_nb items).
+Proof.
+  intros b items ext cl Hwf Hden Hpt.
+  destruct (word_blank b) eqn:Hb; simpl.
+  - destruct (items_nb items) eqn:Hnb; simpl.
+    + destruct (items_nb_true items ext Hnb Hwf Hden) as (i & Hs).
+      destruct (word_blank cl) eqn:Hcl; [| reflexivity].
+      pose proof (word_blank_nthb cl Hcl (length b + i)) as H0.
+      rewrite Hpt, nthb_app_r in H0 by lia.
+      replace (length b + i - length b) with i in H0 by lia.
+      congruence.
+    + apply all_blank_word. intro i.
+      rewrite Hpt.
+      destruct (le_lt_dec (length b) i) as [Hge | Hlt].
+      * rewrite nthb_app_r by assumption.
+        apply (items_nb_false items ext Hnb Hden).
+      * rewrite nthb_app_l by assumption.
+        apply word_blank_nthb. exact Hb.
+  - destruct (word_nonblank_ex b Hb) as (j & Hj & Hs).
+    destruct (word_blank cl) eqn:Hcl; [| reflexivity].
+    pose proof (word_blank_nthb cl Hcl j) as H0.
+    rewrite Hpt, nthb_app_l in H0 by assumption.
+    congruence.
 Qed.
