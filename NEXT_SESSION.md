@@ -137,25 +137,51 @@ census_ladder + the sweep), re-validate with the 64k-pop probe
 grandchild split).  Batch tiers into ONE regeneration + one
 certification.
 
-1. **Wrap tier, ~21.7k machines (the measured prefix-quiet
-   quasihalters).**  These have a state visited in the simulated
-   prefix that vanishes from the n-gram closure -- the machine
-   quasihalts and no never-QH tier can take them.  The wrap
-   construction exists verified for certificates
-   (`Checkers/Wrap.v`: `tm_wrap` halt-redirect + `wrap_agree`
-   transfers immortality and q-freeness back); the census needs the
-   generic search: detect the quiet-state candidate q from the
-   prefix/closure state sets (the rank tier already computes both),
-   run the existing wrapped-closure check at the same (n, t) rungs,
-   and return R_Leaf via NonHalt + QHBound (q's last visit is in the
-   prefix; the other states' liveness is NOT needed for QHBound --
-   only quiet states bound scores, and any OTHER quiet state's last
-   visit is also <= t if it too vanishes... careful: conclude
-   QHBound only from what the wrapped closure gives -- q never fires
-   after t and the run never halts, so every QuietAfter witness sits
-   at index < t + (closure liveness of the others is irrelevant to
-   the BOUND, revisit the exact leaf lemma).  Expect the same
-   pipeline shape as rank_tier: search + existing checker.
+1. **Wrap tier -- MEASURED: 20,568 of the 52,326 residue (39%) are
+   prefix-quiet quasihalters** (`tools/sweep_wrap_residue.py`;
+   confirms the ~21.7k estimate).  Each is a genuine quasihalter with
+   a Coq-checked `NonHalt /\ QuietAfter q s /\ QuasiHaltsSt` via the
+   EXISTING verified `ngram_check_quiet` (Wrap.v) -- validated on 414
+   random machines through `vm_compute`, 0 failures, and
+   `tools/gen_residue_wrap.py` regenerates the theorems from
+   `tools/wrap_residue_caught.tsv` (`theories/Tests/Residue_Wrap_Probe.v`
+   is a committed 120-machine sample).  **The 31,758 survivors
+   (`tools/wrap_residue_survivors.txt`) are the residue's hard never-QH
+   core -- the meat.**
+   **The QHBound tier is now BUILT and verified** (`ngram_check_qhbound`
+   / `ngram_check_qhbound_sound` in `Checkers/Wrap.v`, axiom footprint
+   `functional_extensionality_dep`): the wrapped closure PLUS the
+   engine's plain-acyclicity rank liveness (`Closure.live_ok` /
+   `rank_reach` / `live_appears_recur`, added to `Closure.v`) gives the
+   full census decision `NonHalt /\ QHBound (S t) /\ QuasiHaltsSt`.
+   Measured (`tools/sweep_qhbound_residue.py`): the plain-acyclicity
+   gate decides **~24% of the 20,568** wrap machines now (`n<=6`);
+   `theories/Tests/QHB_Probe.v` verifies 150 through `vm_compute`.
+   **The lex-gated variant is ALSO built** (`ngram_check_qhbound_lex`
+   + `_sound`; `Closure.v` gains `lex_reach` / `closure_invariant_c` /
+   `live_lex_ok` / `live_appears_recur_lex`): each appearing state is
+   discharged by plain acyclicity OR an `NgRankE`/`NgPattE` measure
+   certificate over the wrapped closure.  Tools:
+   `tools/gen_qhbound_wrap.py` (plain, from `qhbound_caught.tsv`),
+   `tools/gen_qhbound_lex.py` (lex, from `qhbound_survivors`);
+   committed probes `Tests/QHB_Probe.v` (150 plain) and
+   `Tests/QHB_Lex_Probe.v` (lex-only machines).
+   **FULL MEASUREMENT (committed artifacts): of the 20,568 wrap-QH
+   machines, 5,307 are QHBound-decidable by the plain gate NOW
+   (`tools/qhbound_caught.tsv`; a 100-machine RANDOM sample verified
+   through Coq, 0 failures) and 15,261 need the measure gate
+   (`tools/qhbound_survivors.txt`; a small-sample lex sweep with just
+   the count-of-1s measures lifts ~13% -- offer the digram/pattern
+   candidates as `Bulk_R` did to push further).**
+   REMAINING:
+   (a) run gen_qhbound_wrap over the full `tools/qhbound_caught.tsv`
+   and check the tables in as `Machines/Bulk/QHBWrap_*.v` (~90 files
+   at 60/file; each compiles in seconds);
+   (b) strengthen the lex sweep (pattern vocabulary, larger n) over
+   `tools/qhbound_survivors.txt` and emit via gen_qhbound_lex;
+   (c) wire `ngram_check_qhbound(_lex)_sound` into the census
+   `decide_easy` as an `R_QH` tier, regenerate `Deferred_*` over what
+   remains, and re-`make census` (needs the native switch).
 2. **Pattern-vocabulary rank (cheap add-on, ~3-6k):** generalize
    RankSearch's candidate measures from the three `ngmeas` counts to
    the `NgPattE` pattern measures (pm_delta is verified; the search
@@ -169,11 +195,38 @@ certification.
    works for any instance), rwlrank measures later.  This is the
    biggest single block and also the prerequisite for the 106
    rwlrank holdout certs.
-4. **Holdout absorption** (independent track): upstream is <10 open
-   (user report, 2026-07-15).  The checker gaps that absorb the
-   remaining certificate types: irules (352), rwlrank (106),
-   fuel/drift (79), counters (22) -- SCOPING phases 2b-5.  Each
-   holdout theorem also lets its machine leave the deferred list
+4. **Holdout absorption** (independent track): upstream is down to
+   ONE open machine (`1RB0RB_1LC1RC_0RA1LD_1RC0LD`, the residue-3
+   nested/mixed tower; `check_coverage.py`, 2026-07-16).  The
+   checker gaps that absorb the remaining certificate types: irules
+   (352), rwlrank (106 incl. 9 rwlrank+wrapngram), fuel (62), drift
+   (17), and ~42 counter machines (the BBB residue-3 sprint boarded
+   many more counters than the old 22) -- SCOPING phases 2b-5.
+   **The fuel checker (rule c2) is now BUILT and verified**, axiom
+   footprint `functional_extensionality_dep`:
+   - `theories/Records.v` -- record/extent substrate (side windows,
+     growth <=1/step, toward-move shrinks, `run_right_exhausts`).
+   - `theories/Closure.v` -- `runner_find` (the record argument as a
+     per-state liveness lemma) + `closure_check_neverqh_fuel`
+     (`lex_ok || runner_ok` per visited state) + soundness.
+   - `theories/Checkers/FuelClass.v` -- capped sided-count lower-bound
+     classes with `finc_sound`/`fdec_sound` (the beyond-window
+     upgrade's delta core).
+   - `theories/Checkers/Fuel.v` -- `ngram_check_neverqh_fuel` on the
+     n-gram abstraction (reuses the full measure vocabulary; runner
+     fuel read from the window), `Tests/Fuel_Examples.v` validates it
+     end-to-end (subsumes the lex checker on a real bulk machine).
+   REMAINING to land the 62 machines: the untrusted prover must emit
+   runner-mode certs -- adapt `tools/bulk_prover.py` to detect the
+   runner SCCs (states the rank measures leave undischarged, whose
+   nodes all move one direction with in-window fuel), emit them as
+   the runner-gated states, and `tools/gen_bulk_certs.py` to write
+   `apply (ngram_check_neverqh_fuel_sound ...)`.  For beyond-window
+   fuel machines, swap `cconf` for the `cconf * fclass * fclass`
+   refined context (FuelClass) and read `rfuel_ge1` off the tracked
+   class; the Closure-side soundness path is unchanged.  Then rule
+   (c3) drift rides the same substrate (+17).  Each holdout theorem
+   also lets its machine leave the deferred list
    at the NEXT regeneration (deferred entries with Coq theorems can
    be dropped once a "proven machines" tier exists -- a
    PositiveMap of the Bulk/Wrap theorem machines returning
