@@ -180,3 +180,43 @@ Example boot_31_wrong_anchor :
   | None => false
   end = false.
 Proof. vm_compute. reflexivity. Qed.
+
+(** ** The spacer family's ingredients reject mutations too *)
+
+From BBB4.Machines.Counters Require Import Spacer_16.
+
+(** #16 with D0 -> 0LC instead of 0LB: breaks the transcription
+    cycle (its walk-back fires D0). *)
+Definition tm_16_mutD0 : TM := fun q s =>
+  match q, s with
+  | StD, S0 => mk S0 DL StC
+  | _, _ => tm_16 q s
+  end.
+
+Example mutD0_breaks_U3_16 :
+  wsteps true true tm_16_mutD0 5 (StD, ([S1; S0], S0, []))
+  <> Some (StD, ([S1], S0, [S1])).
+Proof. discriminate. Qed.
+
+(** The transcription's marker discipline: without the marker cell
+    in the window the cycle dies on the wall. *)
+Example wall_U3_16 : wsteps true true tm_16 5 (StD, ([S0], S0, []))
+                     = None.
+Proof. reflexivity. Qed.
+
+(** The overflow stop needs the left edge: walled it dies. *)
+Example wall_U8_16 : wsteps true true tm_16 3 (StB, ([S1], S1, [S1]))
+                     = None.
+Proof. reflexivity. Qed.
+
+Example boot_16_wrong_anchor :
+  match csteps tm_16 100 c0 with
+  | Some c => ceqb c (Spacer_16.Cc 3)
+  | None => false
+  end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** The contiguous encoding rejects a wrong carry count: B(5) = 101
+    starts with a set bit. *)
+Example B5_head : Bp 5 = S1 :: [S0; S1].
+Proof. reflexivity. Qed.

@@ -206,6 +206,31 @@ Proof.
     reflexivity.
 Qed.
 
+(** Leftward with a carried marker: one unit run consumes [u] from
+    under a fixed left window [lw] (which it may traverse and must
+    restore), keeping a fixed right window [rw] and depositing [w]
+    below it. *)
+Lemma cycLW : forall tm P q h lw u rw w,
+  wsteps true true tm P (q, (lw ++ u, h, rw)) = Some (q, (lw, h, rw ++ w)) ->
+  forall k L R,
+  csteps tm (P * k) (q, (lw ++ rep u k ++ L, h, rw ++ R)) =
+  Some (q, (lw ++ L, h, rw ++ rep w k ++ R)).
+Proof.
+  intros tm P q h lw u rw w Hu.
+  induction k; intros L R.
+  - rewrite Nat.mul_0_r. reflexivity.
+  - replace (P * S k) with (P + P * k) by lia.
+    rewrite csteps_add.
+    simpl rep. rewrite <- app_assoc.
+    pose proof (wsteps_frame tm P q (lw ++ u) h rw q lw h (rw ++ w)
+                  (rep u k ++ L) R Hu) as Hstep;
+      rewrite <- !app_assoc in Hstep.
+    rewrite Hstep, IHk.
+    assert (Hsh : rep w k ++ w ++ R = w ++ rep w k ++ R).
+    { rewrite app_assoc, rep_shift, <- app_assoc. reflexivity. }
+    rewrite Hsh, <- app_assoc. reflexivity.
+Qed.
+
 (** Leftward: one unit run consumes [u] from the left list under a
     fixed right window [rw], depositing [w] below [rw]. *)
 Lemma cycL : forall tm P q h u rw w,

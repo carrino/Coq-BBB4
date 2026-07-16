@@ -142,3 +142,46 @@ Proof.
   cbn [app].
   reflexivity.
 Qed.
+
+(** ** The contiguous binary encoding (spacer_counter family)
+
+    The spacer counters keep the counter as plain binary -- one cell
+    per bit, LSB nearest the working side -- instead of the odd-cell
+    encoding [Wp].  Same [cview], new decomposition lemmas. *)
+
+Fixpoint Bp (p : positive) : list Sym :=
+  match p with
+  | xH => [S1]
+  | xO q => S0 :: Bp q
+  | xI q => S1 :: Bp q
+  end.
+
+Lemma cview_some_B : forall p j q, cview p = (j, Some q) ->
+  Bp p = rep [S1] j ++ S0 :: Bp q /\
+  Bp (Pos.succ p) = rep [S0] j ++ S1 :: Bp q.
+Proof.
+  induction p; intros j q H; simpl in H.
+  - destruct (cview p) as [j' r] eqn:E.
+    inversion H; subst j r.
+    destruct (IHp j' q eq_refl) as (H1 & H2).
+    split; simpl.
+    + rewrite H1. reflexivity.
+    + rewrite H2. reflexivity.
+  - inversion H; subst j q. split; reflexivity.
+  - discriminate.
+Qed.
+
+Lemma cview_none_B : forall p j, cview p = (j, None) ->
+  Bp p = rep [S1] j /\
+  Bp (Pos.succ p) = rep [S0] j ++ [S1].
+Proof.
+  induction p; intros j H; simpl in H.
+  - destruct (cview p) as [j' r] eqn:E.
+    inversion H; subst j r.
+    destruct (IHp j' eq_refl) as (H1 & H2).
+    split; simpl.
+    + rewrite H1. reflexivity.
+    + rewrite H2. reflexivity.
+  - discriminate.
+  - inversion H; subst j. split; reflexivity.
+Qed.

@@ -124,4 +124,5 @@ theories/Counters/MonoCounter.v
 theories/Machines/Counters/Mono_10.v
 theories/Machines/Counters/Mono_26.v
 theories/Machines/Counters/Mono_31.v
+theories/Machines/Counters/Spacer_16.v
 theories/Tests/Counters_Corruption.v
