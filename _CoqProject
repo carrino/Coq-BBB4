@@ -139,3 +139,9 @@ theories/Machines/Counters/Spacer_16.v
 theories/Machines/Counters/Spacer_22.v
 theories/Machines/Counters/Spacer_23.v
 theories/Tests/Counters_Corruption.v
+
+# --- counters track: session A ---
+theories/Machines/Counters/Gray_19.v
+theories/Machines/Counters/Mono2_38.v
+theories/Machines/Counters/Mono2_39.v
+theories/Tests/CountersA_Corruption.v
