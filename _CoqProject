@@ -117,6 +117,17 @@ theories/Tests/Fuel_Examples.v
 theories/Tests/Residue_Wrap_Probe.v
 theories/Tests/QHB_Probe.v
 theories/Tests/QHB_Lex_Probe.v
+
+# --- IRules (inductive-rules geometric sweepers, v1) -- added by the
+# --- irules formalization branch; keep as a trailing block for merges.
+theories/Checkers/IRules/Expr.v
+theories/Checkers/IRules/RLE.v
+theories/Checkers/IRules/Engine.v
+theories/Checkers/IRules/Rules.v
+theories/Checkers/IRules/Meta.v
+theories/Machines/IRules_Examples.v
+theories/Tests/IRules_Corruption.v
+
 # --- counters track ---
 theories/Counters/WTape.v
 theories/Counters/LapGlue.v
