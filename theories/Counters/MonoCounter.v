@@ -185,3 +185,179 @@ Proof.
   - discriminate.
   - inversion H; subst j. split; reflexivity.
 Qed.
+
+(* --- counters track: session A appendix ------------------------- *)
+
+(** ** More repetition algebra (unit-width changes)
+
+    The gray/double families cross a comb with one unit width and
+    deposit another; these fold a repetition between unit sizes. *)
+
+Lemma rep_dblu : forall (u : list Sym) k, rep (u ++ u) k = rep u (2 * k).
+Proof.
+  induction k; simpl.
+  - reflexivity.
+  - rewrite IHk.
+    replace (k + S (k + 0)) with (S (2 * k)) by lia.
+    simpl. rewrite app_assoc. reflexivity.
+Qed.
+
+Lemma rep_trip : forall (x : Sym) k, rep [x; x; x] k = rep [x] (3 * k).
+Proof.
+  induction k; simpl.
+  - reflexivity.
+  - rewrite IHk.
+    replace (k + S (k + S (k + 0))) with (S (S (3 * k))) by lia.
+    reflexivity.
+Qed.
+
+(** ** The Gray-code slot encoding (gray_counter family)
+
+    #19 stores its counter as a GRAY code right of the comb: slot i
+    (3 cells [bit; 0; 0], LSB first) holds bit i of G(p) = p xor
+    (p >> 1), trimmed at the top marker.  Since bit i of G is
+    (bit i of p) xor (bit i+1 of p), the encoding recurses with a
+    one-bit lookahead ([oddb]).  The increment p -> p+1 flips exactly
+    bit j of G where j = fst (cview p) -- the SAME carry view as the
+    binary families -- and the decomposition lemmas below expose the
+    flip slot for the interior and overflow shapes. *)
+
+Definition oddb (p : positive) : bool :=
+  match p with xO _ => false | _ => true end.
+
+Fixpoint Wg (p : positive) : list Sym :=
+  match p with
+  | xH => [S1]
+  | xO q => (if oddb q then S1 else S0) :: S0 :: S0 :: Wg q
+  | xI q => (if oddb q then S0 else S1) :: S0 :: S0 :: Wg q
+  end.
+
+(** Definitional equations, kept as rewrite handles so the proofs
+    below never [simpl] a stuck [Wg]. *)
+Lemma Wg_xO : forall p,
+  Wg (xO p) = (if oddb p then S1 else S0) :: S0 :: S0 :: Wg p.
+Proof. reflexivity. Qed.
+
+Lemma Wg_xI : forall p,
+  Wg (xI p) = (if oddb p then S0 else S1) :: S0 :: S0 :: Wg p.
+Proof. reflexivity. Qed.
+
+Lemma succ_xI : forall p, Pos.succ (xI p) = xO (Pos.succ p).
+Proof. reflexivity. Qed.
+
+(** Interior carry: p = 1^(j+1) 0 q in low-bit order.  Slots 0..j-1
+    are clear, slot j is the marker the head finds, slot j+1 is the
+    flip (its pre/post values are the heads of [Wg (xO q)] /
+    [Wg (xI q)]), and everything above is untouched. *)
+Lemma Wg_some : forall p j q, cview p = (S j, Some q) ->
+  Wg p = rep [S0; S0; S0] j ++ S1 :: S0 :: S0 :: Wg (xO q) /\
+  Wg (Pos.succ p) = rep [S0; S0; S0] j ++ S1 :: S0 :: S0 :: Wg (xI q).
+Proof.
+  induction p as [p IHp | p IHp |]; intros j q H; simpl in H.
+  - (* p' = xI p *)
+    destruct (cview p) as [j' o] eqn:Er.
+    injection H as Hj ->. subst j.
+    destruct j' as [| j''].
+    + (* the marker slot: p = xO q *)
+      assert (p = xO q) as ->.
+      { destruct p as [x|x|]; simpl in Er.
+        - destruct (cview x); discriminate.
+        - now injection Er as ->.
+        - discriminate. }
+      split; reflexivity.
+    + (* below the marker: p = xI x *)
+      destruct (IHp j'' q eq_refl) as (H1 & H2).
+      assert (exists x, p = xI x) as (x & ->).
+      { destruct p as [x|x|]; simpl in Er; eauto; discriminate. }
+      split.
+      * rewrite Wg_xI. cbn [oddb].
+        rewrite H1. reflexivity.
+      * rewrite !succ_xI. rewrite Wg_xO. cbn [oddb].
+        rewrite succ_xI in H2.
+        rewrite H2. reflexivity.
+  - discriminate.
+  - discriminate.
+Qed.
+
+(** Overflow: p = 2^(j+1) - 1, G(p) = 2^j.  The head finds the top
+    marker at slot j and the flip EXTENDS the code: slot j stays set
+    and a new top marker appears at slot j+1. *)
+Lemma Wg_none : forall p j, cview p = (S j, None) ->
+  Wg p = rep [S0; S0; S0] j ++ [S1] /\
+  Wg (Pos.succ p) = rep [S0; S0; S0] j ++ [S1; S0; S0; S1].
+Proof.
+  induction p as [p IHp | p IHp |]; intros j H; simpl in H.
+  - destruct (cview p) as [j' o] eqn:Er.
+    injection H as Hj ->. subst j.
+    destruct j' as [| j''].
+    + (* cview p = (0, None) is impossible *)
+      exfalso.
+      destruct p as [x|x|]; simpl in Er.
+      * destruct (cview x); discriminate.
+      * discriminate.
+      * discriminate.
+    + destruct (IHp j'' eq_refl) as (H1 & H2).
+      assert (p = xH \/ exists x, p = xI x) as [-> | (x & ->)].
+      { destruct p as [x|x|]; simpl in Er; eauto. discriminate. }
+      * simpl in Er. injection Er as <-.
+        split; reflexivity.
+      * split.
+        -- rewrite Wg_xI. cbn [oddb].
+           rewrite H1. reflexivity.
+        -- rewrite !succ_xI. rewrite Wg_xO. cbn [oddb].
+           rewrite succ_xI in H2.
+           rewrite H2. reflexivity.
+  - discriminate.
+  - injection H as <-. split; reflexivity.
+Qed.
+
+(** ** Gray comb alignment (the (10)-comb, crossed two units at a
+    time, and the flip-write refolds) *)
+
+Lemma comb_even : forall c X,
+  rep [S1; S0] (2 * c) ++ X = rep [S1; S0; S1; S0] c ++ X.
+Proof.
+  intros. rewrite <- rep_dblu. reflexivity.
+Qed.
+
+Lemma comb_odd : forall c X,
+  rep [S1; S0] (2 * c + 1) ++ X
+  = rep [S1; S0; S1; S0] c ++ S1 :: S0 :: X.
+Proof.
+  intros.
+  rewrite rep_add, <- rep_dblu, <- app_assoc.
+  reflexivity.
+Qed.
+
+(** After the return sweep, the deposited (01)-run refolds with the
+    turnaround cells into the one-longer comb. *)
+Lemma comb_refold : forall k X,
+  S1 :: S0 :: S1 :: rep [S0; S1] k ++ S0 :: X
+  = rep [S1; S0] (k + 2) ++ X.
+Proof.
+  intros k X. induction k as [| k IH].
+  - reflexivity.
+  - replace (S k + 2) with (S (k + 2)) by lia.
+    cbn [rep app] in *.
+    now rewrite IH.
+Qed.
+
+(** The crossing deposit read back as return-sweep units. *)
+Lemma cross_ret : forall m X,
+  rep [S0; S1; S0; S1] (S m) ++ X
+  = S0 :: rep [S1; S0] (S (2 * m)) ++ S1 :: X.
+Proof.
+  intros m X. induction m as [| m IH].
+  - reflexivity.
+  - replace (2 * S m) with (S (S (2 * m))) by lia.
+    cbn [rep app] in *.
+    now rewrite IH.
+Qed.
+
+(** Variant absorbing the leading return cell (odd-comb laps). *)
+Lemma cross_ret2 : forall m X,
+  S1 :: rep [S0; S1; S0; S1] (S m) ++ X
+  = rep [S1; S0] (S (S (2 * m))) ++ S1 :: X.
+Proof.
+  intros. rewrite cross_ret. reflexivity.
+Qed.
