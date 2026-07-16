@@ -120,5 +120,8 @@ theories/Tests/QHB_Lex_Probe.v
 # --- counters track ---
 theories/Counters/WTape.v
 theories/Counters/LapGlue.v
+theories/Counters/MonoCounter.v
 theories/Machines/Counters/Mono_10.v
+theories/Machines/Counters/Mono_26.v
+theories/Machines/Counters/Mono_31.v
 theories/Tests/Counters_Corruption.v

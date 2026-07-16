@@ -18,7 +18,7 @@
 
 From Coq Require Import Arith Bool List PArith.
 From BBB4 Require Import BBB4_Statement CTape.
-From BBB4.Counters Require Import WTape.
+From BBB4.Counters Require Import WTape MonoCounter.
 From BBB4.Machines.Counters Require Import Mono_10.
 Import ListNotations.
 
@@ -133,3 +133,50 @@ Proof. reflexivity. Qed.
     W(5) starts 01 (bit 0 set), not 00. *)
 Example W5_not_carry0 : forall w, Wp 5 <> S0 :: S0 :: w.
 Proof. intros w H. discriminate H. Qed.
+
+(** ** The other mono machines' ingredients also reject mutations *)
+
+From BBB4.Machines.Counters Require Import Mono_26 Mono_31.
+
+(** #26 with C1 -> 1LB instead of 1LA: breaks the left crossing. *)
+Definition tm_26_mutC1 : TM := fun q s =>
+  match q, s with
+  | StC, S1 => mk S1 DL StB
+  | _, _ => tm_26 q s
+  end.
+
+Example mutC1_breaks_U4_26 :
+  wsteps true true tm_26_mutC1 5 (StC, ([S1; S0; S1], S1, []))
+  <> Some (StC, ([], S1, [S1; S0; S1])).
+Proof. discriminate. Qed.
+
+Example boot_26_wrong_anchor :
+  match csteps tm_26 102 c0 with
+  | Some c => ceqb c (Mono_26.Cc 3)
+  | None => false
+  end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** #31 with B0 -> 1RD instead of 1RC: breaks the right crossing. *)
+Definition tm_31_mutB0 : TM := fun q s =>
+  match q, s with
+  | StB, S0 => mk S1 DR StD
+  | _, _ => tm_31 q s
+  end.
+
+Example mutB0_breaks_U2_31 :
+  wsteps true true tm_31_mutB0 3 (StB, ([], S1, [S0; S1; S1]))
+  <> Some (StB, ([S1; S1; S0], S1, [])).
+Proof. discriminate. Qed.
+
+(** #31's overflow stop needs the right edge: walled it dies. *)
+Example wall_U8v_31 : wsteps true true tm_31 3 (StC, ([], S1, []))
+                      = None.
+Proof. reflexivity. Qed.
+
+Example boot_31_wrong_anchor :
+  match csteps tm_31 56 c0 with
+  | Some c => ceqb c (Mono_31.Cc 3)
+  | None => false
+  end = false.
+Proof. vm_compute. reflexivity. Qed.
