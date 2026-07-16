@@ -142,5 +142,9 @@ theories/Tests/Counters_Corruption.v
 
 # --- counters track: session B ---
 theories/Counters/ILCounter.v
+theories/Counters/ExpCounter.v
 theories/Machines/Counters/Interleave_18.v
 theories/Machines/Counters/Interleave_35.v
+theories/Machines/Counters/Exp_2.v
+theories/Machines/Counters/Exp_4.v
+theories/Machines/Counters/Exp_12.v
