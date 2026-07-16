@@ -282,19 +282,19 @@ State of the SCOPING section 5 phase 5 "individual proofs" track
 `theories/Tests/Counters_Corruption.v`, `tools/counters*`; the
 `_CoqProject` block is marked `# --- counters track ---`.
 
-## Boarded: 4 of 39 counter machines
+## Boarded: 6 of 39 counter machines
 
 | family | status |
 |---|---|
 | mono_counter (3) | **COMPLETE**: #10, #26, #31 (`Mono_10/26/31.v`) |
-| spacer_counter (3) | 1 of 3: #16 (`Spacer_16.v`); **NEXT: #22** then #23 |
+| spacer_counter (3) | **COMPLETE**: #16, #22, #23 (`Spacer_16/22/23.v`) |
 | gray(1) double(4) blockdbl(3) mono2(2) interleave(2) exp(3) bounce(2) | not started, in that order (bounce needs the well-founded measure -- see its family notes upstream) |
 | wave(6) wave4(1) tower(4) xd(3) fractal(2) | hard tail, budget separately |
 
 Every theorem is `nqh_<bbchallenge text> : NeverQuasiHaltsSt tm_*`,
 `Print Assumptions` = `functional_extensionality_dep` only, listed in
 `tools/counters_manifest.tsv` (wired into `check_coverage.py`;
-coverage now 3140/3713).
+coverage now 3142/3713).
 
 ## The architecture that landed (native route -- decided over busycoq)
 
@@ -336,15 +336,23 @@ advantage evaporates.
    `= None` checks, wrong boot anchor `ceqb = false`);
 6. manifest row + `_CoqProject` line + `make` + `Print Assumptions`.
 
-## Next machine: #22 spacer (1RB1LA_1LC0RB_0LA0LD_1RA0RB)
+## Next machine: #19 gray_counter (results/counter19.cert)
 
-voff -1 (anchor counter m = a-1: use `Cc p` with spacer
-`2*to_nat p + 4`), zoff 2, edge B, boot a0=2 => p0 = 1... CAREFUL:
-with voff=-1 the anchor counter at bootstrap is m = 1, so p0 = 1 and
-the lap premise becomes `(1 <= p)%positive`; re-derive the spacer
-arithmetic before copying #16's `replace` lines.  #23 differs from
-#22 only in D0 (1RA vs 1RD) -- expect identical skeletons, possibly
-even identical unit tables (compare the dumps).
+The only gray machine; read its cert + `verify_gray_counter` in
+BBB/src/verify.c for the encoding, then run the recipe.  After it:
+double_counter (#30 + 3 more per check_coverage), blockdbl, mono2,
+interleave, exp, bounce (well-founded measure -- LapGlue may need a
+second closer whose laps shrink a secondary quantity; design against
+the C verifier's bounce obligations before coding).
+
+Session-2 notes on the spacer twins (#22/#23, voff=-1): p0 = 1, the
+lap runs from every positive (`Pos2Nat.is_pos` + one destruct level
+instead of two); #23's separator rebuild is 8 steps exiting through
+D and deposits its own spacer zero, so its final fold ends
+`rewrite HBs, rep_slide` where #16/#22 use the [1]-shuttle +
+`rep_add` fusion.  The twins CONVERGE after 8 steps -- a corruption
+example claiming their 8-step runs differ is false (learned the
+hard way); discriminate them at 7 steps.
 
 ## Trap catalog (do not re-learn)
 

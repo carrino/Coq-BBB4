@@ -284,7 +284,8 @@ chained through the cycles, with the binary increment's carry read
 off a `positive` view; the decomposition is first validated
 differentially against the raw simulator by the untrusted executors
 in `tools/counters/`.  Boarded so far: the full `mono_counter`
-family (#10 #26 #31) and `spacer_counter` #16 -- 4 machines, each
+family (#10 #26 #31) and the full `spacer_counter` family
+(#16 #22 #23) -- 6 machines, each
 `nqh_<machine text> : NeverQuasiHaltsSt`, axiom footprint
 `functional_extensionality_dep` only, tracked in
 `tools/counters_manifest.tsv`.  Status and the per-machine recipe:

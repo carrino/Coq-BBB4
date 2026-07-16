@@ -220,3 +220,26 @@ Proof. vm_compute. reflexivity. Qed.
     starts with a set bit. *)
 Example B5_head : Bp 5 = S1 :: [S0; S1].
 Proof. reflexivity. Qed.
+
+(** ** The spacer twins: the one-transition difference is detected *)
+
+From BBB4.Machines.Counters Require Import Spacer_22 Spacer_23.
+
+(** #22 and #23 differ only in D0; the separator rebuild fires it,
+    so each machine's rebuild unit fails on the other's shape. *)
+Example twins_differ_U10 :
+  wsteps true true tm_23 7 (StB, ([S0; S0; S0], S0, []))
+  <> Some (StB, ([S1; S1], S1, [S1])).
+Proof. discriminate. Qed.
+
+Example twins_differ_U10' :
+  wsteps true true tm_22 7 (StB, ([S0; S0; S0], S0, []))
+  <> Some (StD, ([S1; S1], S1, [S1])).
+Proof. discriminate. Qed.
+
+Example boot_22_wrong_anchor :
+  match csteps tm_22 78 c0 with
+  | Some c => ceqb c (Spacer_22.Cc 2)
+  | None => false
+  end = false.
+Proof. vm_compute. reflexivity. Qed.
