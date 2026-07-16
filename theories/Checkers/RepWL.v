@@ -471,3 +471,270 @@ Proof.
       * exists ext. split; [exact Hden|].
         intro i. unfold tail_side. rewrite Hf. reflexivity.
 Qed.
+
+(** ** Injective encoding (self-delimiting bit streams, PosEnc style) *)
+
+Fixpoint nat_app (n : nat) (p : positive) : positive :=
+  match n with
+  | 0 => xO p
+  | S m => xI (nat_app m p)
+  end.
+
+Lemma nat_app_inj : forall n m p q,
+  nat_app n p = nat_app m q -> n = m /\ p = q.
+Proof.
+  induction n as [|n IH]; intros [|m] p q H; simpl in H;
+    try discriminate.
+  - split; congruence.
+  - injection H as H. destruct (IH m p q H). split; congruence.
+Qed.
+
+Definition bool_app (b : bool) (p : positive) : positive :=
+  if b then xI p else xO p.
+
+Lemma bool_app_inj : forall a b p q,
+  bool_app a p = bool_app b q -> a = b /\ p = q.
+Proof.
+  destruct a, b; simpl; intros p q H; split; congruence.
+Qed.
+
+Definition item_app (it : ritem) (p : positive) : positive :=
+  syms_app (it_w it) (nat_app (it_c it) (bool_app (it_cap it) p)).
+
+Lemma item_app_inj : forall a b p q,
+  item_app a p = item_app b q -> a = b /\ p = q.
+Proof.
+  intros [wa ca capa] [wb cb capb] p q H.
+  unfold item_app in H; simpl in H.
+  apply syms_app_inj in H as [Hw H].
+  apply nat_app_inj in H as [Hc H].
+  apply bool_app_inj in H as [Hcap Hp].
+  split; congruence.
+Qed.
+
+Fixpoint items_app (l : list ritem) (p : positive) : positive :=
+  match l with
+  | [] => xO p
+  | it :: t => xI (item_app it (items_app t p))
+  end.
+
+Lemma items_app_inj : forall l1 l2 p q,
+  items_app l1 p = items_app l2 q -> l1 = l2 /\ p = q.
+Proof.
+  induction l1 as [|a t1 IH]; intros [|b t2] p q H; simpl in H;
+    try discriminate.
+  - split; congruence.
+  - injection H as H.
+    apply item_app_inj in H as [Hab H].
+    destruct (IH t2 p q H).
+    split; congruence.
+Qed.
+
+Definition rconf_enc (a : rconf) : positive :=
+  let '(q, (li, lb, h, rb, ri)) := a in
+  st_app q (sym_app h (syms_app lb (syms_app rb
+    (items_app li (items_app ri xH))))).
+
+Lemma rconf_enc_inj : forall a b, rconf_enc a = rconf_enc b -> a = b.
+Proof.
+  intros [q1 [[[[li1 lb1] h1] rb1] ri1]] [q2 [[[[li2 lb2] h2] rb2] ri2]] H.
+  unfold rconf_enc in H.
+  apply st_app_inj in H as [Hq H].
+  apply sym_app_inj in H as [Hh H].
+  apply syms_app_inj in H as [Hlb H].
+  apply syms_app_inj in H as [Hrb H].
+  apply items_app_inj in H as [Hli H].
+  apply items_app_inj in H as [Hri _].
+  congruence.
+Qed.
+
+(** ** Seeding: blocking the computable configuration at step t *)
+
+Definition padw (L : nat) (w : list Sym) : list Sym :=
+  w ++ repeat S0 (L - length w).
+
+Lemma padw_length : forall L w, length w <= L -> length (padw L w) = L.
+Proof.
+  intros L w H. unfold padw. rewrite app_length, repeat_length. lia.
+Qed.
+
+Lemma nthb_padw : forall L w i, nthb (padw L w) i = nthb w i.
+Proof.
+  intros L w i. unfold padw.
+  destruct (le_lt_dec (length w) i) as [Hge | Hlt].
+  - rewrite nthb_app_r by assumption.
+    unfold nthb at 2. rewrite nth_overflow by assumption.
+    exact (nthb_blank (L - length w) (i - length w)).
+  - rewrite nthb_app_l by assumption. reflexivity.
+Qed.
+
+Fixpoint chunk_go (gas L : nat) (l : list Sym) : list (list Sym) :=
+  match gas, l with
+  | _, [] => []
+  | 0, _ => []
+  | S g, _ => padw L (firstn L l) :: chunk_go g L (skipn L l)
+  end.
+
+Definition chunk (L : nat) (l : list Sym) : list (list Sym) :=
+  chunk_go (length l) L l.
+
+Lemma nthb_skipn : forall (l : list Sym) n i,
+  nthb (skipn n l) i = nthb l (n + i).
+Proof.
+  induction l as [|x l IH]; intros [|n] i; simpl; try reflexivity.
+  - destruct i; reflexivity.
+  - apply IH.
+Qed.
+
+Lemma nthb_firstn : forall (l : list Sym) n i,
+  i < n -> nthb (firstn n l) i = nthb l i.
+Proof.
+  induction l as [|x l IH]; intros [|n] [|i] H; simpl;
+    try reflexivity; try lia.
+  apply IH. lia.
+Qed.
+
+Lemma chunk_go_nthb : forall gas L l,
+  1 <= L -> length l <= gas ->
+  forall i, nthb (concat (chunk_go gas L l)) i = nthb l i.
+Proof.
+  induction gas as [|g IH]; intros L l HL Hlen i.
+  - destruct l; simpl; [destruct i; reflexivity | simpl in Hlen; lia].
+  - destruct l as [|x l']; [destruct i; reflexivity|].
+    cbn [chunk_go concat].
+    destruct (le_lt_dec L i) as [Hge | Hlt].
+    + rewrite nthb_app_r
+        by (rewrite padw_length by (apply firstn_le_length); assumption).
+      rewrite padw_length by apply firstn_le_length.
+      rewrite IH; [| assumption |].
+      * rewrite nthb_skipn. f_equal. lia.
+      * rewrite skipn_length.
+        destruct L as [|L']; [lia|].
+        simpl in Hlen; simpl. lia.
+    + rewrite nthb_app_l
+        by (rewrite padw_length by (apply firstn_le_length); assumption).
+      rewrite nthb_padw. apply nthb_firstn. assumption.
+Qed.
+
+(** Run-length encode a nearest-first block list, counts saturating
+    at [T], blank blocks adjacent to the blank infinity absorbed. *)
+Fixpoint rle (T : nat) (blocks : list (list Sym)) : list ritem :=
+  match blocks with
+  | [] => []
+  | b :: rest =>
+      match rle T rest with
+      | [] => if word_blank b then [] else [mkItem b 1 (1 =? T)]
+      | mkItem w0 c0 cap0 :: tl0 =>
+          if syms_eqb w0 b
+          then let c1 := Nat.min (S c0) T in
+               mkItem w0 c1 (cap0 || (c1 =? T)) :: tl0
+          else mkItem b 1 (1 =? T) :: mkItem w0 c0 cap0 :: tl0
+      end
+  end.
+
+Lemma nthb_app_pointwise : forall (b x y : list Sym),
+  (forall j, nthb x j = nthb y j) ->
+  forall i, nthb (b ++ x) i = nthb (b ++ y) i.
+Proof.
+  intros b x y H i.
+  destruct (le_lt_dec (length b) i) as [Hge | Hlt].
+  - rewrite !nthb_app_r by assumption. apply H.
+  - rewrite !nthb_app_l by assumption. reflexivity.
+Qed.
+
+Lemma rle_den : forall T blocks,
+  exists ext, items_den (rle T blocks) ext /\
+  forall i, nthb (concat blocks) i = nthb ext i.
+Proof.
+  intros T. induction blocks as [|b rest IH].
+  - exists []. split; [constructor | intro i; reflexivity].
+  - destruct IH as (ext0 & Hden0 & Hpt0).
+    cbn [rle concat].
+    destruct (rle T rest) as [| [w0 c0 cap0] tl0] eqn:Er.
+    + inversion Hden0; subst ext0.
+      destruct (word_blank b) eqn:Eb.
+      * exists []. split; [constructor|].
+        intro i.
+        destruct (le_lt_dec (length b) i) as [Hge | Hlt].
+        -- rewrite nthb_app_r by assumption. rewrite Hpt0.
+           rewrite !nthb_nil. reflexivity.
+        -- rewrite nthb_app_l by assumption.
+           rewrite (word_blank_nthb b Eb).
+           rewrite nthb_nil. reflexivity.
+      * exists (wrep b 1 ++ []).
+        split.
+        -- apply (items_den_cons b 1 (1 =? T) 1 [] []);
+             [destruct (1 =? T); [lia | reflexivity] | constructor].
+        -- intro i. unfold wrep; cbn [concat repeat].
+           rewrite !app_nil_r.
+           destruct (le_lt_dec (length b) i) as [Hge | Hlt].
+           ++ rewrite nthb_app_r by assumption. rewrite Hpt0, nthb_nil.
+              unfold nthb; rewrite nth_overflow by assumption.
+              reflexivity.
+           ++ rewrite nthb_app_l by assumption. reflexivity.
+    + inversion Hden0 as [| w c cap k rest' ext1 Hk Hrest]; subst.
+      destruct (syms_eqb w0 b) eqn:Ew.
+      * apply syms_eqb_spec in Ew. subst b.
+        exists (wrep w0 (S k) ++ ext1).
+        split.
+        -- apply (items_den_cons w0 (Nat.min (S c0) T)
+                    (cap0 || (Nat.min (S c0) T =? T)) (S k) tl0 ext1);
+             [| exact Hrest].
+           destruct cap0; cbn -[Nat.min].
+           ++ pose proof (Nat.le_min_l (S c0) T). lia.
+           ++ destruct (Nat.min (S c0) T =? T) eqn:Ec; cbn -[Nat.min].
+              ** pose proof (Nat.le_min_l (S c0) T). lia.
+              ** apply Nat.eqb_neq in Ec.
+                 destruct (Nat.min_dec (S c0) T) as [Em | Em]; lia.
+        -- intro i. rewrite wrep_S, <- app_assoc.
+           apply nthb_app_pointwise. exact Hpt0.
+      * exists (wrep b 1 ++ (wrep w0 k ++ ext1)).
+        split.
+        -- apply (items_den_cons b 1 (1 =? T) 1
+                    (mkItem w0 c0 cap0 :: tl0) (wrep w0 k ++ ext1));
+             [destruct (1 =? T); [lia | reflexivity] |].
+           apply (items_den_cons w0 c0 cap0 k tl0 ext1);
+             [exact Hk | exact Hrest].
+        -- intro i. unfold wrep at 1; cbn [concat repeat].
+           rewrite app_nil_r.
+           apply nthb_app_pointwise. exact Hpt0.
+Qed.
+
+(** The seed context and its covering. *)
+Definition rw_seed (L T : nat) (cc : cconf) : rconf :=
+  let '(q, (l, h, r)) := cc in
+  (q, (rle T (chunk L l), [], h,
+       padw (L - 1) (firstn (L - 1) r),
+       rle T (chunk L (skipn (L - 1) r)))).
+
+Lemma rw_seed_covers : forall L T cc,
+  1 <= L ->
+  rw_covers (rw_seed L T cc) (lift cc).
+Proof.
+  intros L T [q [[l h] r]] HL.
+  cbn [rw_seed rw_covers lift lift_tape fst snd t_left t_right t_head].
+  repeat split.
+  - (* left side *)
+    destruct (rle_den T (chunk L l)) as (ext & Hden & Hpt).
+    exists ext. split; [exact Hden|].
+    intro i. cbn [app].
+    rewrite <- Hpt.
+    unfold chunk. rewrite chunk_go_nthb by (assumption || lia).
+    reflexivity.
+  - (* right side *)
+    destruct (rle_den T (chunk L (skipn (L - 1) r)))
+      as (ext & Hden & Hpt).
+    exists ext. split; [exact Hden|].
+    intro i.
+    destruct (le_lt_dec (L - 1) i) as [Hge | Hlt].
+    + rewrite nthb_app_r
+        by (rewrite padw_length by apply firstn_le_length; assumption).
+      rewrite padw_length by apply firstn_le_length.
+      rewrite <- Hpt.
+      unfold chunk. rewrite chunk_go_nthb by (assumption || lia).
+      rewrite nthb_skipn. unfold lift_side. f_equal. lia.
+    + rewrite nthb_app_l
+        by (rewrite padw_length by apply firstn_le_length; assumption).
+      rewrite nthb_padw, nthb_firstn by assumption.
+      reflexivity.
+Qed.
