@@ -255,6 +255,44 @@ Definition ngram_check_qhbound (tm : TM) (q : St)
     [QHBound B tm := forall q s, QuietAfter tm q s -> S s <= B]); it is
     stated unfolded here so the checker stays in the Checkers layer,
     below the census. *)
+(** Lex-gated variant: each appearing state is discharged by plain
+    acyclicity OR a lexicographic certificate (the full [ngcomp]
+    measure vocabulary of the never-QH tier), lifting the wrapped
+    closures whose recurrent part needs a measure argument. *)
+Definition wrap_closed_live_lex (tm : TM) (n : nat)
+    (tmw : TM) (lset rset : gset)
+    (fuel : nat) (a0 : cconf) (cert : St -> list ngcomp) : bool :=
+  match close cconf cconf_enc (ng_succs tmw lset rset)
+              fuel [] PositiveSet.empty [a0] with
+  | Some Sl =>
+      closed_b cconf cconf_enc (ng_succs tmw lset rset) Sl &&
+      mem cconf cconf_enc a0 Sl &&
+      live_lex_ok cconf cconf_enc ec_state (ng_succs tmw lset rset) Sl
+        (fun q' => map (ng_comp_denote tmw n) (cert q'))
+  | None => false
+  end.
+
+Definition ngram_check_qhbound_lex (tm : TM) (q : St)
+    (s n t fuel rounds : nat) (cert : St -> list ngcomp) : bool :=
+  (1 <=? n) && (s <? t) &&
+  match csteps tm t c0, csteps tm s c0 with
+  | Some ct, Some cs =>
+      st_eqb (fst cs) q &&
+      match cstep tm cs with
+      | Some cs1 => negb (cvisits tm cs1 (t - s) q)
+      | None => false
+      end &&
+      let tmw := tm_wrap tm q in
+      let '(q1, (l, h, r)) := ct in
+      let lset0 := gadds (ng_seed_side n l) gempty in
+      let rset0 := gadds (ng_seed_side n r) gempty in
+      let a0 := ng_start n ct in
+      let '(lset, rset) := ng_grow tmw a0 fuel rounds lset0 rset0 in
+      ng_seed_ok n lset rset ct &&
+      wrap_closed_live_lex tm n tmw lset rset fuel a0 cert
+  | _, _ => false
+  end.
+
 Theorem ngram_check_qhbound_sound : forall tm q s n t fuel rounds,
   ngram_check_qhbound tm q s n t fuel rounds = true ->
   NonHalt tm
@@ -366,6 +404,142 @@ Proof.
                 cconf_enc_inj CST SS
                 Sl (ng_start n ct) (lift ct) q'' Hclb Hlive Hmem Hcov0 Happ
                 (S s'' - t)) as (k & c' & Hk & Hstepk & Hqk).
+    assert (Hstm : stepn tm k (lift ct) = Some c').
+    { destruct (wrap_agree tm q (lift ct) Him k) as [Heqk _].
+      rewrite <- Heqk. exact Hstepk. }
+    apply (Hlast'' (t + k)); [lia|].
+    exists c'. split; [| exact Hqk].
+    rewrite stepn_add, Hstept. exact Hstm.
+  - eapply quiet_after_qh. split; [exact Hvis | exact Hquiet].
+Qed.
+
+Theorem ngram_check_qhbound_lex_sound : forall tm q s n t fuel rounds cert,
+  ngram_check_qhbound_lex tm q s n t fuel rounds cert = true ->
+  NonHalt tm
+  /\ (forall q' s', QuietAfter tm q' s' -> S s' <= S t)
+  /\ QuasiHaltsSt tm.
+Proof.
+  intros tm q s n t fuel rounds cert H.
+  unfold ngram_check_qhbound_lex in H.
+  apply andb_prop in H as [H Hrest].
+  apply andb_prop in H as [Hn Hst].
+  apply Nat.leb_le in Hn. apply Nat.ltb_lt in Hst.
+  destruct (csteps tm t c0) as [ct|] eqn:Ect; [|discriminate].
+  destruct (csteps tm s c0) as [cs|] eqn:Ecs; [|discriminate].
+  apply andb_prop in Hrest as [H Hcl].
+  apply andb_prop in H as [Hqs Hnv].
+  apply st_eqb_spec in Hqs.
+  destruct (cstep tm cs) as [cs1|] eqn:Ecs1; [|discriminate].
+  apply negb_true_iff in Hnv.
+  destruct ct as [q1 [[l h] r]] eqn:Ectc.
+  match type of Hcl with
+  | (let '(_, _) := ?G in _) = true => destruct G as [lset rset] eqn:Eg
+  end.
+  cbv beta iota zeta in Hcl.
+  apply andb_prop in Hcl as [Hseed Hwc].
+  rewrite <- Ectc in *.
+  set (tmw := tm_wrap tm q) in *.
+  unfold wrap_closed_live_lex in Hwc.
+  destruct (close cconf cconf_enc (ng_succs tmw lset rset)
+                  fuel [] PositiveSet.empty [ng_start n ct])
+    as [Sl|] eqn:Ecl; [|discriminate].
+  apply andb_prop in Hwc as [Hwc Hlive].
+  apply andb_prop in Hwc as [Hclb Hmem].
+  apply mem_In in Hmem; [|exact cconf_enc_inj].
+  assert (Hcov0 : ng_covers n lset rset (ng_start n ct) (lift ct)).
+  { apply ng_start_covers. subst ct. exact Hseed. }
+  set (SS := fun a c Hc => ng_succs_sound tmw n lset rset a c Hn Hc).
+  set (CST := fun a c (Hc : ng_covers n lset rset a c) =>
+                ng_covers_state n lset rset a c Hc).
+  (* the denoted certificate components are exact for the WRAPPED
+     machine (the measure lemmas are generic in the machine) *)
+  assert (Hexd : forall q0,
+    Forall (comp_exact tmw cconf (ng_succs tmw lset rset)
+              (ng_covers n lset rset))
+           (map (ng_comp_denote tmw n) (cert q0))).
+  { intros q0. apply Forall_forall. intros comp Hin.
+    apply in_map_iff in Hin. destruct Hin as (c & <- & _).
+    destruct c as [phi | m K phi gate | phi | pp rg K phi gate]; simpl.
+    - exact I.
+    - intros a cc a' cc' sl Hca Hca' Hstep Es HInl.
+      eapply ngm_exact; eauto.
+    - exact I.
+    - destruct (pm_ok n pp rg) eqn:Epm; [|exact I].
+      apply andb_prop in Epm as [He Hb].
+      intros a cc a' cc' sl Hca Hca' Hstep Es HInl.
+      eapply pm_exact; eauto.
+      + apply existsb_exists in He as (x & Hx & Hx1).
+        apply sym_eqb_spec in Hx1. subst x. assumption.
+      + destruct rg; apply Nat.leb_le; assumption. }
+  assert (Him : forall k, stepn tmw k (lift ct) <> None).
+  { intros k HN.
+    destruct (closure_invariant tmw cconf cconf_enc
+                (ng_succs tmw lset rset) (ng_covers n lset rset)
+                cconf_enc_inj SS
+                Sl Hclb (ng_start n ct) (lift ct) Hmem Hcov0 k)
+      as (c' & a' & Hst' & _ & _).
+    congruence. }
+  assert (Ecs1' : csteps tm (s + 1) c0 = Some cs1).
+  { rewrite csteps_add, Ecs, csteps_1. exact Ecs1. }
+  assert (Hstept : stepn tm t InitES = Some (lift ct)).
+  { rewrite <- lift_c0. apply csteps_lift. exact Ect. }
+  assert (Hquiet : forall m, s < m -> ~ VisitsAt tm q m).
+  { intros m Hm (c & Hc & Hcq).
+    destruct (stepn_csteps tm m c) as (cc & Hcc & Hlift); [exact Hc|].
+    assert (Hccq : fst cc = q).
+    { rewrite <- (lift_state cc), Hlift. exact Hcq. }
+    destruct (le_lt_dec m t) as [Hle | Hgt].
+    - replace m with ((s + 1) + (m - s - 1)) in Hcc by lia.
+      rewrite csteps_add, Ecs1' in Hcc.
+      rewrite (cvisits_complete tm (t - s) cs1 q (m - s - 1) cc)
+        in Hnv; [discriminate | lia | exact Hcc | exact Hccq].
+    - replace m with (t + (m - t)) in Hcc by lia.
+      rewrite csteps_add, Ect in Hcc.
+      apply csteps_lift in Hcc.
+      destruct (wrap_agree tm q (lift ct) Him (m - t)) as [_ Hqfree].
+      apply (Hqfree (lift cc)); [exact Hcc|].
+      rewrite lift_state. exact Hccq. }
+  assert (Hvis : VisitsAt tm q s).
+  { exists (lift cs). split.
+    - rewrite <- lift_c0. apply csteps_lift. exact Ecs.
+    - rewrite lift_state. exact Hqs. }
+  assert (HNonHalt : NonHalt tm).
+  { intros m HN.
+    destruct (le_lt_dec m t) as [Hle | Hgt].
+    + destruct (csteps_prefix tm m t c0 ct Hle Ect) as (cm & Hcm & _).
+      apply csteps_lift in Hcm. rewrite lift_c0 in Hcm. congruence.
+    + replace m with (t + (m - t)) in HN by lia.
+      rewrite stepn_add, Hstept in HN.
+      destruct (wrap_agree tm q (lift ct) Him (m - t)) as [Heq _].
+      rewrite <- Heq in HN.
+      exact (Him (m - t) HN). }
+  split; [exact HNonHalt | split].
+  - intros q'' s'' [Hvis'' Hlast''].
+    apply le_n_S.
+    destruct (le_lt_dec s'' t) as [Hle | Hgt]; [exact Hle | exfalso].
+    destruct Hvis'' as (c & Hc & Hcq).
+    destruct (stepn_csteps tm s'' c) as (cc & Hcc & Hlift); [exact Hc|].
+    assert (Hccq : fst cc = q'').
+    { rewrite <- (lift_state cc), Hlift. exact Hcq. }
+    assert (Hcw : stepn tm (s'' - t) (lift ct) = Some (lift cc)).
+    { replace s'' with (t + (s'' - t)) in Hc by lia.
+      rewrite stepn_add, Hstept in Hc. rewrite Hc, Hlift. reflexivity. }
+    assert (Hwrun : stepn tmw (s'' - t) (lift ct) = Some (lift cc)).
+    { destruct (wrap_agree tm q (lift ct) Him (s'' - t)) as [Heq _].
+      transitivity (stepn tm (s'' - t) (lift ct)); [exact Heq | exact Hcw]. }
+    assert (Happ : appears cconf ec_state Sl q'' = true).
+    { rewrite <- Hccq. rewrite <- (lift_state cc).
+      apply (live_visited_appears tmw cconf cconf_enc ec_state
+               (ng_succs tmw lset rset) (ng_covers n lset rset)
+               cconf_enc_inj CST SS
+               Sl (ng_start n ct) (lift ct) Hclb Hmem Hcov0
+               (s'' - t) (lift cc) Hwrun). }
+    destruct (live_appears_recur_lex tmw cconf cconf_enc ec_state
+                (ng_succs tmw lset rset) (ng_covers n lset rset)
+                cconf_enc_inj CST SS
+                Sl (fun q0 => map (ng_comp_denote tmw n) (cert q0))
+                (ng_start n ct) ct q'' Hclb (Hexd q'') Hlive Hmem Hcov0
+                Happ (S s'' - t)) as (k & c' & Hk & Hstepk & Hqk).
     assert (Hstm : stepn tm k (lift ct) = Some c').
     { destruct (wrap_agree tm q (lift ct) Him k) as [Heqk _].
       rewrite <- Heqk. exact Hstepk. }

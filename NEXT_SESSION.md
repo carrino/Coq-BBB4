@@ -157,14 +157,27 @@ certification.
    Measured (`tools/sweep_qhbound_residue.py`): the plain-acyclicity
    gate decides **~24% of the 20,568** wrap machines now (`n<=6`);
    `theories/Tests/QHB_Probe.v` verifies 150 through `vm_compute`.
+   **The lex-gated variant is ALSO built** (`ngram_check_qhbound_lex`
+   + `_sound`; `Closure.v` gains `lex_reach` / `closure_invariant_c` /
+   `live_lex_ok` / `live_appears_recur_lex`): each appearing state is
+   discharged by plain acyclicity OR an `NgRankE`/`NgPattE` measure
+   certificate over the wrapped closure.  Tools:
+   `tools/gen_qhbound_wrap.py` (plain, from `qhbound_caught.tsv`),
+   `tools/gen_qhbound_lex.py` (lex, from `qhbound_survivors`);
+   committed probes `Tests/QHB_Probe.v` (150 plain) and
+   `Tests/QHB_Lex_Probe.v` (lex-only machines).  Measured on a small
+   sample the lex gate lifts ~13% of the plain-gate survivors with
+   just the count-of-1s measures -- offer the digram/pattern
+   candidates (as `Bulk_R` did) to push further.
    REMAINING:
-   (a) the other ~76% have wrapped closures whose recurrent part is not
-   a single all-states cycle -- swap `live_ok`'s plain `compute_ranks`
-   for the LEX/measure liveness (`lex_ok` + the pattern vocabulary,
-   already verified for the never-QH tier) to lift them; and
-   (b) wire `ngram_check_qhbound_sound` into the census `decide_easy`
-   as an `R_QH` tier, regenerate `Deferred_*` over the machines it
-   leaves, and re-`make census` (needs the native switch).
+   (a) run gen_qhbound_wrap over the full `qhbound_caught.tsv` (the
+   plain gate holds ~24% of the 20,568) and check the tables in as
+   `Machines/Bulk/QHBWrap_*.v`;
+   (b) strengthen the lex sweep (pattern vocabulary, larger n) over
+   the survivors;
+   (c) wire `ngram_check_qhbound(_lex)_sound` into the census
+   `decide_easy` as an `R_QH` tier, regenerate `Deferred_*` over what
+   remains, and re-`make census` (needs the native switch).
 2. **Pattern-vocabulary rank (cheap add-on, ~3-6k):** generalize
    RankSearch's candidate measures from the three `ngmeas` counts to
    the `NgPattE` pattern measures (pm_delta is verified; the search
