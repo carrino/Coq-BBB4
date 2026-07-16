@@ -137,25 +137,29 @@ census_ladder + the sweep), re-validate with the 64k-pop probe
 grandchild split).  Batch tiers into ONE regeneration + one
 certification.
 
-1. **Wrap tier, ~21.7k machines (the measured prefix-quiet
-   quasihalters).**  These have a state visited in the simulated
-   prefix that vanishes from the n-gram closure -- the machine
-   quasihalts and no never-QH tier can take them.  The wrap
-   construction exists verified for certificates
-   (`Checkers/Wrap.v`: `tm_wrap` halt-redirect + `wrap_agree`
-   transfers immortality and q-freeness back); the census needs the
-   generic search: detect the quiet-state candidate q from the
-   prefix/closure state sets (the rank tier already computes both),
-   run the existing wrapped-closure check at the same (n, t) rungs,
-   and return R_Leaf via NonHalt + QHBound (q's last visit is in the
-   prefix; the other states' liveness is NOT needed for QHBound --
-   only quiet states bound scores, and any OTHER quiet state's last
-   visit is also <= t if it too vanishes... careful: conclude
-   QHBound only from what the wrapped closure gives -- q never fires
-   after t and the run never halts, so every QuietAfter witness sits
-   at index < t + (closure liveness of the others is irrelevant to
-   the BOUND, revisit the exact leaf lemma).  Expect the same
-   pipeline shape as rank_tier: search + existing checker.
+1. **Wrap tier -- MEASURED: 20,568 of the 52,326 residue (39%) are
+   prefix-quiet quasihalters** (`tools/sweep_wrap_residue.py`;
+   confirms the ~21.7k estimate).  Each is a genuine quasihalter with
+   a Coq-checked `NonHalt /\ QuietAfter q s /\ QuasiHaltsSt` via the
+   EXISTING verified `ngram_check_quiet` (Wrap.v) -- validated on 414
+   random machines through `vm_compute`, 0 failures, and
+   `tools/gen_residue_wrap.py` regenerates the theorems from
+   `tools/wrap_residue_caught.tsv` (`theories/Tests/Residue_Wrap_Probe.v`
+   is a committed 120-machine sample).  **The 31,758 survivors
+   (`tools/wrap_residue_survivors.txt`) are the residue's hard never-QH
+   core -- the meat.**
+   REMAINING to fold these into the census (drop them from D_census):
+   the per-machine theorem gives `QuasiHaltsSt` but the census
+   contract needs `QHBound B` (EVERY quiet state's last visit <= B,
+   not just the wrapped q).  The clean tier: seed at config(t), build
+   the wrapped closure (halt-free => NonHalt after t + q quiet), AND
+   run the engine's rank liveness (`Closure.rank_ok`) over that
+   closure for every non-q state -- if they all recur, the only quiet
+   states are q and states that vanished by t, so `QHBound (S t)`
+   holds.  I.e. `ngram_check_quiet`'s closure + the never-QH liveness
+   layer on the SAME wrapped closure; return `R_QH` (already in the
+   `QHResult` type).  Then regenerate `Deferred_*` over the survivors
+   and re-`make census`.
 2. **Pattern-vocabulary rank (cheap add-on, ~3-6k):** generalize
    RankSearch's candidate measures from the three `ngmeas` counts to
    the `NgPattE` pattern measures (pm_delta is verified; the search

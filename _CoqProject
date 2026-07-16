@@ -114,3 +114,4 @@ theories/Machines/Bulk/Wrap_01.v
 theories/Tests/Bulk_Corruption.v
 theories/Tests/Wrap_Corruption.v
 theories/Tests/Fuel_Examples.v
+theories/Tests/Residue_Wrap_Probe.v
