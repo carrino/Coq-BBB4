@@ -205,3 +205,4 @@ theories/Tests/IRulesKBatch_Corruption.v
 
 # --- irules block-run track ---
 theories/Checkers/IRules/EngineK.v
+theories/Checkers/IRules/RulesBlk.v
