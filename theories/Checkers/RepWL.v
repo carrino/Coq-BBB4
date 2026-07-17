@@ -1185,3 +1185,238 @@ Proof.
     rewrite (side_blank b' items ext (ctl cl) Hwf Hden Hct).
     destruct (word_blank b'), (items_nb items); reflexivity.
 Qed.
+
+(** *** The five measures *)
+
+Inductive rwmeas : Type := RwNA | RwNL | RwNR | RwZL | RwZR.
+
+Definition rw_mval (m : rwmeas) (cc : cconf) : nat :=
+  let '(_, (l, h, r)) := cc in
+  match m with
+  | RwNA => countnb l + zc h + countnb r
+  | RwNL => countnb l
+  | RwNR => countnb r
+  | RwZL => ibc l
+  | RwZR => ibc r
+  end.
+
+Definition rw_delta (tm : TM) (m : rwmeas) (a : rconf) : Z :=
+  let '(q, (li, lb, h, rb, ri)) := a in
+  match tm q h with
+  | None => 0%Z
+  | Some tr =>
+      let w := t_write tr in
+      match m, t_dir tr with
+      | RwNA, _ => (zcz w - zcz h)%Z
+      | RwNL, DR => zcz w
+      | RwNL, DL => (- zcz (arr_s2 lb li))%Z
+      | RwNR, DL => zcz w
+      | RwNR, DR => (- zcz (arr_s2 rb ri))%Z
+      | RwZL, DR => zi (sym_eqb w S0 && dep_nbb lb li)
+      | RwZL, DL =>
+          (- zi (sym_eqb (arr_s2 lb li) S0 && arr_nbb lb li))%Z
+      | RwZR, DL => zi (sym_eqb w S0 && dep_nbb rb ri)
+      | RwZR, DR =>
+          (- zi (sym_eqb (arr_s2 rb ri) S0 && arr_nbb rb ri))%Z
+      end
+  end.
+
+Lemma zc_z : forall s, Z.of_nat (zc s) = zcz s.
+Proof. destruct s; reflexivity. Qed.
+
+Lemma rw_meas_exact : forall tm m a cc cc',
+  rw_covers' a (lift cc) ->
+  cstep tm cc = Some cc' ->
+  Z.of_nat (rw_mval m cc')
+  = (Z.of_nat (rw_mval m cc) + rw_delta tm m a)%Z.
+Proof.
+  intros tm m [q [[[[li lb] h] rb] ri]] [qc [[l hc] r]] cc'
+         [Hcov Hwf] Hstep.
+  destruct Hwf as [HwfL HwfR].
+  destruct Hcov as (Hq & Hh & HL & HR).
+  cbn [lift lift_tape fst snd t_head t_left t_right] in Hq, Hh, HL, HR.
+  subst qc hc.
+  destruct HL as (extL & HdenL & HfL).
+  destruct HR as (extR & HdenR & HfR).
+  assert (HptL : forall i, nthb l i = nthb (lb ++ extL) i)
+    by (intro i; exact (HfL i)).
+  assert (HptR : forall i, nthb r i = nthb (rb ++ extR) i)
+    by (intro i; exact (HfR i)).
+  unfold cstep in Hstep.
+  destruct (tm q h) as [tr|] eqn:Etr; [| discriminate].
+  injection Hstep as <-.
+  unfold rw_delta. rewrite Etr.
+  destruct (t_dir tr) eqn:Ed; destruct m; cbn [ctape_move rw_mval].
+  - (* DL, RwNA *)
+    pose proof (countnb_hd l) as E1.
+    pose proof (countnb_cons (t_write tr) r) as E2.
+    pose proof (zc_z (t_write tr)) as E3.
+    pose proof (zc_z h) as E4.
+    pose proof (zc_z (chd l)) as E5.
+    lia.
+  - (* DL, RwNL *)
+    rewrite (arr_s2_eq lb li extL l HwfL HdenL HptL).
+    pose proof (countnb_hd l) as E1.
+    pose proof (zc_z (chd l)) as E2.
+    lia.
+  - (* DL, RwNR *)
+    pose proof (countnb_cons (t_write tr) r) as E1.
+    pose proof (zc_z (t_write tr)) as E2.
+    lia.
+  - (* DL, RwZL *)
+    rewrite (arr_s2_eq lb li extL l HwfL HdenL HptL).
+    rewrite (arr_nbb_eq lb li extL l HwfL HdenL HptL).
+    rewrite (ibc_hd l).
+    destruct (sym_eqb (chd l) S0), (word_blank (ctl l));
+      cbn [andb negb zi]; lia.
+  - (* DL, RwZR *)
+    rewrite (dep_nbb_eq rb ri extR r HwfR HdenR HptR).
+    rewrite ibc_cons.
+    destruct (sym_eqb (t_write tr) S0), (word_blank r);
+      cbn [andb negb zi]; lia.
+  - (* DR, RwNA *)
+    pose proof (countnb_cons (t_write tr) l) as E1.
+    pose proof (countnb_hd r) as E2.
+    pose proof (zc_z (t_write tr)) as E3.
+    pose proof (zc_z h) as E4.
+    pose proof (zc_z (chd r)) as E5.
+    lia.
+  - (* DR, RwNL *)
+    pose proof (countnb_cons (t_write tr) l) as E1.
+    pose proof (zc_z (t_write tr)) as E2.
+    lia.
+  - (* DR, RwNR *)
+    rewrite (arr_s2_eq rb ri extR r HwfR HdenR HptR).
+    pose proof (countnb_hd r) as E1.
+    pose proof (zc_z (chd r)) as E2.
+    lia.
+  - (* DR, RwZL *)
+    rewrite (dep_nbb_eq lb li extL l HwfL HdenL HptL).
+    rewrite ibc_cons.
+    destruct (sym_eqb (t_write tr) S0), (word_blank l);
+      cbn [andb negb zi]; lia.
+  - (* DR, RwZR *)
+    rewrite (arr_s2_eq rb ri extR r HwfR HdenR HptR).
+    rewrite (arr_nbb_eq rb ri extR r HwfR HdenR HptR).
+    rewrite (ibc_hd r).
+    destruct (sym_eqb (chd r) S0), (word_blank (ctl r));
+      cbn [andb negb zi]; lia.
+Qed.
+
+(** ** Seed well-formedness *)
+
+Lemma chunk_ne : forall gas L l,
+  1 <= L -> Forall (fun b : list Sym => b <> []) (chunk_go gas L l).
+Proof.
+  induction gas as [|g IH]; intros L l HL.
+  - destruct l; constructor.
+  - destruct l as [|x l']; [constructor|].
+    cbn [chunk_go].
+    constructor; [| apply IH; exact HL].
+    intro Hc.
+    pose proof (f_equal (@length Sym) Hc) as Hlen.
+    rewrite padw_length in Hlen by apply firstn_le_length.
+    simpl in Hlen. lia.
+Qed.
+
+Lemma rle_wf : forall T blocks,
+  2 <= T -> Forall (fun b : list Sym => b <> []) blocks ->
+  Forall item_wf (rle T blocks).
+Proof.
+  intros T blocks HT Hne.
+  induction blocks as [|b rest IH]; [constructor|].
+  inversion Hne as [| ? ? Hb Hrest]; subst.
+  specialize (IH Hrest).
+  cbn [rle].
+  destruct (rle T rest) as [| [w0 c0 cap0] tl0].
+  - destruct (word_blank b); [constructor|].
+    constructor; [apply newitem_wf; assumption | constructor].
+  - inversion IH as [| ? ? Hit Htl]; subst.
+    destruct Hit as (Hc & Hcap & Hw); simpl in Hc, Hcap, Hw.
+    destruct (syms_eqb w0 b).
+    + constructor; [| exact Htl].
+      destruct (merge_wf T c0 cap0 HT Hc Hcap) as [H1 H2].
+      split; [exact H1 | split; [exact H2 | exact Hw]].
+    + constructor; [apply newitem_wf; assumption |].
+      constructor; [| exact Htl].
+      split; [exact Hc | split; [exact Hcap | exact Hw]].
+Qed.
+
+Lemma rw_seed_wf : forall L T cc,
+  1 <= L -> 2 <= T -> rw_wf (rw_seed L T cc).
+Proof.
+  intros L T [q [[l h] r]] HL HT.
+  cbn [rw_seed rw_wf].
+  split; apply rle_wf; try assumption; apply chunk_ne; assumption.
+Qed.
+
+(** ** Certificate syntax, denotation, the checker *)
+
+Inductive rwcomp : Type :=
+| RwRankE (phi : list (positive * nat))
+| RwMeasE (m : rwmeas) (K : nat) (phi : list (positive * nat))
+          (gate : list positive).
+
+Definition rpm_of (tbl : list (positive * nat)) : PositiveMap.tree nat :=
+  fold_left (fun mp e => PositiveMap.add (fst e) (snd e) mp) tbl
+            (PositiveMap.empty nat).
+
+Definition rpm_get (mp : PositiveMap.tree nat) (a : rconf) : nat :=
+  match PositiveMap.find (rconf_enc a) mp with
+  | Some v => v
+  | None => 0
+  end.
+
+Definition rps_of (l : list positive) : PositiveSet.t :=
+  fold_left (fun s x => PositiveSet.add x s) l PositiveSet.empty.
+
+Definition rw_comp_denote (tm : TM) (c : rwcomp) : lexcomp rconf :=
+  match c with
+  | RwRankE phi =>
+      let pm := rpm_of phi in
+      LexRank rconf (rpm_get pm)
+  | RwMeasE m K phi gate =>
+      let pm := rpm_of phi in
+      let gs := rps_of gate in
+      LexMeas rconf (rw_mval m) (fun a a' => rw_delta tm m a) K
+              (rpm_get pm)
+              (fun a => PositiveSet.mem (rconf_enc a) gs)
+  end.
+
+Definition rw_check_neverqh (tm : TM) (L T t fuel : nat)
+    (cert : St -> list rwcomp) : bool :=
+  (1 <=? L) && (2 <=? T) &&
+  match csteps tm t c0 with
+  | Some cc =>
+      closure_check_neverqh_lex tm rconf rconf_enc rw_state
+        (rw_succs tm L T) t fuel (rw_seed L T cc)
+        (fun q => map (rw_comp_denote tm) (cert q))
+  | None => false
+  end.
+
+Theorem rw_check_neverqh_sound : forall tm L T t fuel cert,
+  rw_check_neverqh tm L T t fuel cert = true ->
+  NeverQuasiHaltsSt tm.
+Proof.
+  intros tm L T t fuel cert H.
+  unfold rw_check_neverqh in H.
+  apply andb_prop in H as [Hg H].
+  apply andb_prop in Hg as [HL HT].
+  apply Nat.leb_le in HL. apply Nat.leb_le in HT.
+  destruct (csteps tm t c0) as [cc|] eqn:Et; [| discriminate].
+  apply (closure_check_neverqh_lex_sound tm rconf rconf_enc rw_state
+           (rw_succs tm L T) rw_covers') in H;
+    [assumption | | | | |].
+  - exact rconf_enc_inj.
+  - intros a c [Hc _]. eapply rw_covers_state; eauto.
+  - intros a c Hc. apply rw_succs_sound'; assumption.
+  - intros ct' Hct'. rewrite Et in Hct'. injection Hct' as <-.
+    split; [apply rw_seed_covers; assumption |
+            apply rw_seed_wf; assumption].
+  - intros q. apply Forall_forall. intros comp Hin.
+    apply in_map_iff in Hin. destruct Hin as (c & <- & _).
+    destruct c as [phi | m K phi gate]; simpl.
+    + exact I.
+    + intros a cc0 a' cc0' sl Hca Hca' Hstep Es HInl.
+      exact (rw_meas_exact tm m a cc0 cc0' Hca Hstep).
+Qed.
