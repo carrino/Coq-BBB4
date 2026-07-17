@@ -33,9 +33,12 @@ import repwl_prover as rp
 
 # t = 0 only: the full 16-rung grid measured ZERO catches at t > 0
 # over the first ~750 machines while quadrupling the per-miss cost,
-# so the census ladder ships without prefix rungs.
+# so the census ladder ships without prefix rungs.  The cap mirrors
+# the census rw_fuel budget (8192 >= 2*4000 + 1); every catch so far
+# sits under 1,700 nodes, while completed-but-failing closures near a
+# larger cap dominate the sweep cost.
 RUNGS = [(2, 2, 0), (2, 3, 0), (3, 2, 0), (4, 2, 0)]
-CAP = 15000
+CAP = 4000
 
 
 def try_rung(tbl, L, T, t):
