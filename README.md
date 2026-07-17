@@ -498,7 +498,7 @@ and rule-in-rule dependency reordered / dropped, all computing
 `false`).
 
 <!-- --- irules block-run track --- -->
-## IRules block-run engine (Phase 1 engine, green foundation)
+## IRules block-run checker (Phase 1: 5 of 6 v3-blk boarded)
 
 `theories/Checkers/IRules/EngineK.v` forks the v1 IRules engine so a
 run's symbol may be a BLOCK id `>= 2` drawn from the certificate's
@@ -512,8 +512,9 @@ The block-hop crux (`hop_sim`/`hop_one_reach`/`hop_copies`/`bhop_reach`)
 replays one copy of a block as a zipper (each step one `cstep`), then
 crosses all `e` copies by induction.  The design is mirrored (and
 differentially validated vs `bin/verify` on 651 certs, no false
-positives) by `tools/irulesblk_prover.py`.  Boarding the 6 v3-blk (then
-44 v6 blk+rulepfx) holdouts is deferred to the canonical re-blocking +
-cell-stream-equality + Rules/Meta forks + batches -- see
-`NEXT_SESSION.md`, "irules BLOCK-RUN + RULE-PREFIX track".
+positives) by `tools/irulesblk_prover.py`.  The full vertical (EngineK -> RulesBlk -> MetaBlk) boards 5 of the 6
+v3-blk holdouts through `irulesblk_check_neverqh` (`vm_compute`),
+`functional_extensionality_dep` only; the 14-block monster (partial
+absorb) and the 44 v6 blk+rulepfx holdouts are deferred -- see
+`NEXT_SESSION.md`, "irules BLOCK-RUN track".
 <!-- --- end irules block-run track --- -->
