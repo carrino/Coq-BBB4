@@ -937,3 +937,114 @@ all 504 rules across the 428 v1 certs -- no false positives.  (The 3
 `d=-1 only, but v1 engine bound reasoning fails` rows of
 `irules_deferred.tsv` remain out of scope -- a genuine bound-tightening
 gap, not a decrement or rule-in-rule blocker.)
+
+<!-- --- irules block-run track (added by the block/rule-prefix session) --- -->
+## irules BLOCK-RUN + RULE-PREFIX track (Phase 1 engine landed green)
+
+Target: the 50 irules holdouts whose certs use block runs -- the 6
+tagged `v3 cert, needs blk` (`irules_deferred.tsv`) and the 44 tagged
+`v6 cert, needs blk,rulepfx`.  A run's symbol may be a BLOCK id `>= 2`
+(`blk <id> <cells>`); a run `(B, e)` denotes `e` copies of `B`'s cell
+sequence, not `e` copies of one symbol -- the CRUX.
+
+### Delivered this session (all green, `functional_extensionality_dep` only)
+
+1. **`tools/irulesblk_prover.py`** -- faithful Python model of the v3
+   block machinery of `../BBB/src/verify.c` (iv_step block-hop/peel,
+   iv_hop_sim, iv_reblock_side/iv_absorb_side, iv_streams_eq), forked
+   from `irulesk_prover.py`.  Block-aware denotation `bdside` carrying
+   the cert's untrusted block table.  **Differentially validated vs
+   `bin/verify`** (`cc -O3 -std=c11 -o bin/verify src/verify.c`):
+   428 v1 certs + 217 certs_modclass + the 6 v3-blk all agree, ZERO
+   false positives; corruption-tested.  **Minimal-mechanism finding
+   (`--mech`)**: all four of block-hop, block-peel, canonical
+   re-blocking, cell-stream end equality (plus `bdside`) are required
+   -- none reducible.  The 5 simple v3-blk certs (blk 01/10, single
+   delta +-2 rule) need streams_eq for the meta end-match; the 14-block
+   monster `1RB0RD_1LC1LB_1RD0LB_0RD1RA` needs hop+reblock but not
+   streams.  hop/peel counts over the 6: 4 use hops only, 2 also peel.
+
+2. **`theories/Checkers/IRules/EngineK.v`** -- the block symbolic engine,
+   fully sound against `bdside tbl` (parametric in the UNTRUSTED table;
+   soundness holds for any table):
+   - `bdside`/`bpush`/`bmerge_adj`/`btrim_blanks` + denotation lemmas
+     (run symbols over `nat`: 0=S0, 1=S1, `>=2` block id);
+   - `beng_cross`/`beng_step` = concrete head step + chain hops + block
+     PEEL + block HOP, with `beng_cross_sound`/`beng_step_sound`
+     (`Reach tm F n (bsem ..) (bsem ..)`), reusing `Engine`'s concrete
+     tape / chain-crossing lemmas verbatim;
+   - the block HOP crux: `hop_sim` (bounded one-copy replay as a zipper,
+     each step one `cstep`), `hop_one_reach` (one copy = a Reach both
+     directions), `hop_copies` (S m copies compose), `bhop_result`
+     (one-copy replay + primitive-root reduction + table lookup +
+     re-verify `nreps (tbl nsym) factor = hout`), `bhop_reach`
+     (packages the hop as one `blsem -> blsem` Reach).
+   Wired into `_CoqProject` under `# --- irules block-run track ---`.
+
+### Remaining to BOARD the 6 (Phase 1 completion) -- NOT yet done
+
+The engine STEP is sound; boarding needs the DRIVER + end-match + the
+Rules/Meta forks + batches.  Precise plan (each a green commit):
+
+A. **Canonical re-blocking** `breblock` (mirror `iv_reblock_side` +
+   `iv_absorb_side`, EngineK.v): re-encode the concrete single-cell
+   near-prefix into block runs after every op.  Soundness is pure
+   denotation preservation: prove `lift_side (bdside tbl nu (breblock
+   rs)) = lift_side (bdside tbl nu rs)`.  Make it preservation-BY-
+   VERIFICATION (re-encode via a mirror of `iv_enc_side`, then verify
+   the constant re-encoding denotes the same cells with `lsym_eqb`;
+   else return the input unchanged) so the lemma is unconditional.
+   NEEDED by all 6.
+
+B. **Cell-stream end equality** `bstreams_eq lo xa xb : bool` (mirror
+   `iv_streams_eq`) with soundness `bstreams_eq lo xa xb = true ->
+   bge lo nu -> lift_side (bdside tbl nu xa) = lift_side (bdside tbl nu
+   xb)` (sound-but-incomplete; a periodic cell-stream walk with residue
+   bulk moves).  NEEDED by the 5 simple certs' meta end-match.
+
+C. **Replay driver** `breplayK` = loop {try rules; else beng_step;
+   then breblock}, mirroring `RulesK.replayK` but on `BCfg`/`beng_step`.
+   Soundness composes `beng_step_sound` + rule-application Reach +
+   `breblock` denotation-preservation into one `Reach` over the cycle.
+
+D. **`RulesBlk.v`** -- fork `RulesK` (ruleK_apply is symbol-matching so
+   REUSABLE verbatim; only its `appK_side_den*`/`ruleK_apply_sound`
+   denotation lemmas must be RE-STATED against `bdside tbl` -- the
+   syntax is unchanged, only a run's meaning changed).  `check_rulesBlk`
+   validates rules via `breplayK` from rule-start to rule-end (strict
+   or `bstreams_eq`).
+
+E. **`MetaBlk.v`** -- fork `Meta`/`MetaK`: block templates
+   (`tpl_cfg`/`want_cfg`/`want_shift` re-derived against `bdside`), the
+   anchor re-sim (`bdside_const k0` for the anchor tape), state coverage,
+   meta induction.  `irulesblk_check_neverqh` + soundness.
+
+F. **Batches + tests + wiring**: `tools/gen_irulesblk_certs.py` emits
+   `theories/Machines/IRulesBlk_Batch_*.v` (TRANSCRIBE the `blk` table
+   too), `theories/Tests/IRulesBlkBatch_Corruption.v` (transition mutant;
+   corrupted block-table entry; hop pointed at a near-side-exit/ratchet
+   that must fall back to peel; re-blocking that would change the
+   denotation; cell-stream end-match on non-equal tapes -- all false).
+   `tools/irulesblk_manifest.tsv` + ONE tuple in `check_coverage.py`.
+   Expect 3629 -> up to 3635.  Build IRules batches `-j1`/`-j2` (OOMs
+   at `-j4`).
+
+### Phase 2 (rulepfx, the 44 v6) -- deferred, on top of Phase 1
+
+Add prefix matching to the applier (a `rulepfx` side matches only the
+first `r->nl` near-head runs and splices the untouched rest back; a
+non-prefix side keeps exact-count matching and must not be a sentinel
+side) + sentinel sides to the engine (a prefix rule's OWN validation
+treats its prefix sides as opaque; the engine hard-fails if the head
+would step past the declared runs -- `beng_step`'s `[] ->` branch must
+fail when `sent[side]`).  Check whether the 44 need v6 `rmdok`
+(a binding drain leaving remainder `rmd = (e-lb) mod d`, ending at
+`lb+rmd-d`); the survival check already covers it, only the drop-to-0
+condition changes in a forked `find_binding`/`appK_side`.  The Python
+model already has `rulepfx`/`rmdok` scaffolding
+(`tools/irulesblk_prover.py`, `appK_side prefix=`, sentinel in
+`eng_step`); differential-validate the 44 vs `bin/verify` first, then
+the Coq `RulesBlkPfx.v`/`MetaBlkPfx.v` + `IRulesBlkPfx_Batch_*.v`.
+Machines whose certs ALSO need `rulerunm`/`mmrow`/`nvar` are out of
+scope (none among the 44 are known to; re-check per cert).
+<!-- --- end irules block-run track --- -->
