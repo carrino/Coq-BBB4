@@ -292,7 +292,12 @@ Lemma bdside_app : forall tbl nu a b,
 Proof. intros. unfold bdside. apply flat_map_app. Qed.
 
 (** The engine crossing loop (fuel-bounded: block peel grows [app]). *)
-Fixpoint beng_cross (tm : TM) (tbl : BTbl) (lo : list Z) (q : St)
+(** The crossing loop is parameterised by an untrusted hop oracle
+    [hopf q mv s = Some (nsym, factor, F)] (instantiated with
+    [bhop_result] by [beng_step]); its results are re-validated by
+    [beng_cross_sound]'s [Hhopf] premise, discharged by [bhop_reach]. *)
+Fixpoint beng_cross (tm : TM) (tbl : BTbl) (lo : list Z)
+    (hopf : St -> Dir -> BSym -> option (BSym * nat * list Tr)) (q : St)
     (mv : Dir) (fuel : nat) (app dep : list BRun)
   : option (list BRun * list BRun * Sym * list Tr) :=
   match fuel with
@@ -303,13 +308,29 @@ Fixpoint beng_cross (tm : TM) (tbl : BTbl) (lo : list Z) (q : St)
         if chainable tm q S0 mv then None else Some ([], dep, S0, [])
     | (s, e) :: rest =>
         if (2 <=? length (tbl s))%nat then
-          (* block run: peel one copy (hop is handled by [beng_step]) *)
-          match (if eeqb e (econst 1) then Some rest
-                 else if expr_ge lo e 2 then Some ((s, eaddc e (-1)) :: rest)
-                 else None) with
-          | None => None
-          | Some tl => beng_cross tm tbl lo q mv fuel'
-                         (peel_cells tbl s ++ tl) dep
+          match hopf q mv s with
+          | Some (nsym, factor, hF) =>
+              (* block hop: cross all copies in one op *)
+              if expr_ge lo e 1 then
+                match bpush lo nsym
+                        (eaddmul (econst 0) (Z.of_nat factor) e) dep with
+                | Some dep' =>
+                    match beng_cross tm tbl lo hopf q mv fuel' rest dep' with
+                    | Some (app', dep'', h, F) => Some (app', dep'', h, hF ++ F)
+                    | None => None
+                    end
+                | None => None
+                end
+              else None
+          | None =>
+              (* no hop: peel one copy *)
+              match (if eeqb e (econst 1) then Some rest
+                     else if expr_ge lo e 2
+                          then Some ((s, eaddc e (-1)) :: rest) else None) with
+              | None => None
+              | Some tl => beng_cross tm tbl lo hopf q mv fuel'
+                             (peel_cells tbl s ++ tl) dep
+              end
           end
         else if (length (tbl s) =? 1)%nat then
           let c := bcell tbl s in
@@ -319,7 +340,7 @@ Fixpoint beng_cross (tm : TM) (tbl : BTbl) (lo : list Z) (q : St)
                 if expr_ge lo e 1 then
                   match bpush lo (sym_to_nat (t_write tr)) e dep with
                   | Some dep' =>
-                      match beng_cross tm tbl lo q mv fuel' rest dep' with
+                      match beng_cross tm tbl lo hopf q mv fuel' rest dep' with
                       | Some (app', dep'', h, F) =>
                           Some (app', dep'', h, (q, c) :: F)
                       | None => None
@@ -371,16 +392,24 @@ Proof.
     rewrite Hc, nreps_S, app_assoc. reflexivity.
 Qed.
 
-Lemma beng_cross_sound : forall tm tbl lo fuel q mv app dep app' dep' h F,
+Lemma beng_cross_sound : forall tm tbl lo hopf,
   raw_ok tbl ->
-  beng_cross tm tbl lo q mv fuel app dep = Some (app', dep', h, F) ->
+  (forall nu q mv s nsym factor hF e rest dep dep',
+     bge lo nu -> hopf q mv s = Some (nsym, factor, hF) ->
+     expr_ge lo e 1 = true ->
+     bpush lo nsym (eaddmul (econst 0) (Z.of_nat factor) e) dep = Some dep' ->
+     Reach tm hF (cnt nu e * length hF)
+       (blsem tbl nu q mv dep ((s, e) :: rest))
+       (blsem tbl nu q mv dep' rest)) ->
+  forall fuel q mv app dep app' dep' h F,
+  beng_cross tm tbl lo hopf q mv fuel app dep = Some (app', dep', h, F) ->
   forall nu, bge lo nu ->
   exists n,
     Reach tm F n (blsem tbl nu q mv dep app)
                  (bsem tbl nu (bassemble q h mv dep' app')).
 Proof.
-  intros tm tbl lo fuel.
-  induction fuel as [|fuel IH]; intros q mv app dep app' dep' h F Hraw H nu Hb;
+  intros tm tbl lo hopf Hraw Hhopf fuel.
+  induction fuel as [|fuel IH]; intros q mv app dep app' dep' h F H nu Hb;
     [cbn [beng_cross] in H; discriminate|].
   cbn [beng_cross] in H.
   destruct app as [|[s e] rest].
@@ -395,22 +424,37 @@ Proof.
         [rewrite blsem_concrete_L | rewrite blsem_concrete_R]; reflexivity. }
     setoid_rewrite Heq. apply Reach_refl.
   - destruct (2 <=? length (tbl s))%nat eqn:Hblk.
-    + (* block run: peel one copy *)
-      remember (if eeqb e (econst 1) then Some rest
-                else if expr_ge lo e 2 then Some ((s, eaddc e (-1)) :: rest)
-                else None) as opt eqn:Hopt.
-      destruct opt as [tl|].
-      2:{ cbn iota in H. discriminate H. }
-      cbn iota in H.
-      destruct (IH q mv (peel_cells tbl s ++ tl) dep app' dep' h F Hraw H
-                  nu Hb) as (n & HR).
-      exists n.
-      assert (Heq : blsem tbl nu q mv dep (peel_cells tbl s ++ tl) =
-                    blsem tbl nu q mv dep ((s, e) :: rest)).
-      { unfold blsem.
-        rewrite (bdside_peel_eq tbl lo nu s e rest tl Hraw Hb Hblk
-                   (eq_sym Hopt)). reflexivity. }
-      rewrite Heq in HR. exact HR.
+    + (* block run *)
+      destruct (hopf q mv s) as [[[nsym factor] hF0]|] eqn:Hhf.
+      * (* block hop: cross all copies *)
+        cbn iota in H.
+        destruct (expr_ge lo e 1) eqn:Hge1; cbn iota in H; [|discriminate].
+        destruct (bpush lo nsym (eaddmul (econst 0) (Z.of_nat factor) e) dep)
+          as [dep'0|] eqn:Hpush; cbn iota in H; [|discriminate].
+        destruct (beng_cross tm tbl lo hopf q mv fuel rest dep'0)
+          as [[[[a d] hh] F0]|] eqn:Hrec; cbn iota in H; [|discriminate].
+        injection H as <- <- <- <-.
+        destruct (IH q mv rest dep'0 a d hh F0 Hrec nu Hb) as (n2 & HR2).
+        pose proof (Hhopf nu q mv s nsym factor hF0 e rest dep dep'0
+                      Hb Hhf Hge1 Hpush) as HR1.
+        exists (cnt nu e * length hF0 + n2)%nat.
+        exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+      * (* no hop: peel one copy *)
+        remember (if eeqb e (econst 1) then Some rest
+                  else if expr_ge lo e 2 then Some ((s, eaddc e (-1)) :: rest)
+                  else None) as opt eqn:Hopt.
+        destruct opt as [tl|].
+        2:{ cbn iota in H. discriminate H. }
+        cbn iota in H.
+        destruct (IH q mv (peel_cells tbl s ++ tl) dep app' dep' h F H
+                    nu Hb) as (n & HR).
+        exists n.
+        assert (Heq : blsem tbl nu q mv dep (peel_cells tbl s ++ tl) =
+                      blsem tbl nu q mv dep ((s, e) :: rest)).
+        { unfold blsem.
+          rewrite (bdside_peel_eq tbl lo nu s e rest tl Hraw Hb Hblk
+                     (eq_sym Hopt)). reflexivity. }
+        rewrite Heq in HR. exact HR.
     + destruct (length (tbl s) =? 1)%nat eqn:Hlen1; [|discriminate].
       apply Nat.eqb_eq in Hlen1.
       set (c := bcell tbl s) in *.
@@ -423,10 +467,10 @@ Proof.
         destruct (expr_ge lo e 1) eqn:Hge; [|discriminate].
         destruct (bpush lo (sym_to_nat (t_write tr)) e dep) as [depP|]
           eqn:Hpush; [|discriminate].
-        destruct (beng_cross tm tbl lo q mv fuel rest depP)
+        destruct (beng_cross tm tbl lo hopf q mv fuel rest depP)
           as [[[[appX depX] hX] FX]|] eqn:Hrec; [|discriminate].
         injection H as <- <- <- <-.
-        destruct (IH q mv rest depP appX depX hX FX Hraw Hrec nu Hb)
+        destruct (IH q mv rest depP appX depX hX FX Hrec nu Hb)
           as (n2 & HR2).
         pose proof (expr_ge_sound lo e 1 nu Hge Hb) as He1.
         assert (Hsplit : exists n0, cnt nu e = S n0).
@@ -521,98 +565,6 @@ Proof.
 Qed.
 
 (** One engine op: the concrete step plus its chain hops / block peels. *)
-Definition beng_step (tm : TM) (tbl : BTbl) (lo : list Z) (fuel : nat)
-    (c : BCfg) : option (BCfg * list Tr) :=
-  match tm (b_st c) (b_hs c) with
-  | None => None
-  | Some tr =>
-      let q1 := t_next tr in
-      let '(dep0, app0) :=
-        match t_dir tr with
-        | DR => (b_L c, b_R c)
-        | DL => (b_R c, b_L c)
-        end in
-      match bpush lo (sym_to_nat (t_write tr)) (econst 1) dep0 with
-      | None => None
-      | Some dep =>
-          match beng_cross tm tbl lo q1 (t_dir tr) fuel app0 dep with
-          | Some (app', dep', h, F) =>
-              Some (bassemble q1 h (t_dir tr) dep' app',
-                    (b_st c, b_hs c) :: F)
-          | None => None
-          end
-      end
-  end.
-
-Theorem beng_step_sound : forall tm tbl lo fuel c c' F,
-  raw_ok tbl ->
-  beng_step tm tbl lo fuel c = Some (c', F) ->
-  forall nu, bge lo nu ->
-  exists n, (1 <= n)%nat /\ Reach tm F n (bsem tbl nu c) (bsem tbl nu c').
-Proof.
-  intros tm tbl lo fuel c c' F Hraw H nu Hb.
-  unfold beng_step in H.
-  destruct (tm (b_st c) (b_hs c)) as [tr|] eqn:Htr; [|discriminate].
-  pose proof Hraw as [Hr0 Hr1].
-  assert (Hdep_gen : forall dep0 dep,
-    bpush lo (sym_to_nat (t_write tr)) (econst 1) dep0 = Some dep ->
-    lift_side (bdside tbl nu dep) =
-    push_side (t_write tr) (lift_side (bdside tbl nu dep0))).
-  { intros dep0 dep Hpush.
-    rewrite (bpush_den tbl lo (sym_to_nat (t_write tr)) (econst 1) dep0 dep
-               nu Hraw Hpush Hb).
-    rewrite (raw_tbl_sym_to_nat tbl (t_write tr) Hraw).
-    change (cnt nu (econst 1)) with 1%nat. rewrite nreps_1.
-    change ([t_write tr] ++ bdside tbl nu dep0)
-      with (t_write tr :: bdside tbl nu dep0).
-    apply lift_side_cons. }
-  destruct (t_dir tr) eqn:Hdir.
-  - (* DL: departed side is R *)
-    destruct (bpush lo (sym_to_nat (t_write tr)) (econst 1) (b_R c)) as [dep|]
-      eqn:Hpush; [|discriminate].
-    destruct (beng_cross tm tbl lo (t_next tr) DL fuel (b_L c) dep)
-      as [[[[app' dep'] h] F']|] eqn:Hcr; [|discriminate].
-    injection H as <- <-.
-    destruct (beng_cross_sound tm tbl lo fuel (t_next tr) DL (b_L c) dep
-                app' dep' h F' Hraw Hcr nu Hb) as (n2 & HR2).
-    pose proof (Hdep_gen (b_R c) dep Hpush) as Hdep.
-    assert (Hstep : step tm (bsem tbl nu c) =
-                    Some (blsem tbl nu (t_next tr) DL dep (b_L c))).
-    { unfold bsem, bdcfg. rewrite lift_cc.
-      unfold step. cbn [t_head fst snd]. rewrite Htr, Hdir.
-      unfold blsem, tape_move. rewrite Hdep. reflexivity. }
-    assert (HR1 : Reach tm [(b_st c, b_hs c)] 1 (bsem tbl nu c)
-                    (blsem tbl nu (t_next tr) DL dep (b_L c))).
-    { pose proof (Reach_one tm _ _ Hstep) as HRo.
-      replace (trans_of (bsem tbl nu c)) with (b_st c, b_hs c) in HRo;
-        [exact HRo | reflexivity]. }
-    exists (1 + n2)%nat. split; [lia|].
-    change ((b_st c, b_hs c) :: F') with ([(b_st c, b_hs c)] ++ F').
-    exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
-  - (* DR: departed side is L *)
-    destruct (bpush lo (sym_to_nat (t_write tr)) (econst 1) (b_L c)) as [dep|]
-      eqn:Hpush; [|discriminate].
-    destruct (beng_cross tm tbl lo (t_next tr) DR fuel (b_R c) dep)
-      as [[[[app' dep'] h] F']|] eqn:Hcr; [|discriminate].
-    injection H as <- <-.
-    destruct (beng_cross_sound tm tbl lo fuel (t_next tr) DR (b_R c) dep
-                app' dep' h F' Hraw Hcr nu Hb) as (n2 & HR2).
-    pose proof (Hdep_gen (b_L c) dep Hpush) as Hdep.
-    assert (Hstep : step tm (bsem tbl nu c) =
-                    Some (blsem tbl nu (t_next tr) DR dep (b_R c))).
-    { unfold bsem, bdcfg. rewrite lift_cc.
-      unfold step. cbn [t_head fst snd]. rewrite Htr, Hdir.
-      unfold blsem, tape_move. rewrite Hdep. reflexivity. }
-    assert (HR1 : Reach tm [(b_st c, b_hs c)] 1 (bsem tbl nu c)
-                    (blsem tbl nu (t_next tr) DR dep (b_R c))).
-    { pose proof (Reach_one tm _ _ Hstep) as HRo.
-      replace (trans_of (bsem tbl nu c)) with (b_st c, b_hs c) in HRo;
-        [exact HRo | reflexivity]. }
-    exists (1 + n2)%nat. split; [lia|].
-    change ((b_st c, b_hs c) :: F') with ([(b_st c, b_hs c)] ++ F').
-    exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
-Qed.
-
 (** ** Block hop: the bounded one-copy concrete replay.
 
     Modeled as a zipper over the block cells: [LW] are the cells to the
@@ -990,4 +942,112 @@ Proof.
     rewrite (cnt_factor nu factor e ltac:(lia)), Hm0.
     rewrite nreps_mul, Hveq. reflexivity. }
   rewrite <- Hdep'. exact HC.
+Qed.
+
+(** ** The full engine op with block hops, and its soundness *)
+
+Definition beng_step (tm : TM) (tbl : BTbl)
+    (blks : list (nat * list Sym)) (lo : list Z) (fuel : nat)
+    (c : BCfg) : option (BCfg * list Tr) :=
+  match tm (b_st c) (b_hs c) with
+  | None => None
+  | Some tr =>
+      let q1 := t_next tr in
+      let '(dep0, app0) :=
+        match t_dir tr with
+        | DR => (b_L c, b_R c)
+        | DL => (b_R c, b_L c)
+        end in
+      match bpush lo (sym_to_nat (t_write tr)) (econst 1) dep0 with
+      | None => None
+      | Some dep =>
+          match beng_cross tm tbl lo (bhop_result tm tbl blks)
+                  q1 (t_dir tr) fuel app0 dep with
+          | Some (app', dep', h, F) =>
+              Some (bassemble q1 h (t_dir tr) dep' app',
+                    (b_st c, b_hs c) :: F)
+          | None => None
+          end
+      end
+  end.
+
+Theorem beng_step_sound : forall tm tbl blks lo fuel c c' F,
+  raw_ok tbl ->
+  beng_step tm tbl blks lo fuel c = Some (c', F) ->
+  forall nu, bge lo nu ->
+  exists n, (1 <= n)%nat /\ Reach tm F n (bsem tbl nu c) (bsem tbl nu c').
+Proof.
+  intros tm tbl blks lo fuel c c' F Hraw H nu Hb.
+  unfold beng_step in H.
+  destruct (tm (b_st c) (b_hs c)) as [tr|] eqn:Htr; [|discriminate].
+  pose proof Hraw as [Hr0 Hr1].
+  assert (Hhopf : forall nu' q mv s nsym factor hF e rest dep dep',
+     bge lo nu' -> bhop_result tm tbl blks q mv s = Some (nsym, factor, hF) ->
+     expr_ge lo e 1 = true ->
+     bpush lo nsym (eaddmul (econst 0) (Z.of_nat factor) e) dep = Some dep' ->
+     Reach tm hF (cnt nu' e * length hF)
+       (blsem tbl nu' q mv dep ((s, e) :: rest))
+       (blsem tbl nu' q mv dep' rest)).
+  { intros. eapply bhop_reach; eauto. }
+  assert (Hdep_gen : forall dep0 dep,
+    bpush lo (sym_to_nat (t_write tr)) (econst 1) dep0 = Some dep ->
+    lift_side (bdside tbl nu dep) =
+    push_side (t_write tr) (lift_side (bdside tbl nu dep0))).
+  { intros dep0 dep Hpush.
+    rewrite (bpush_den tbl lo (sym_to_nat (t_write tr)) (econst 1) dep0 dep
+               nu Hraw Hpush Hb).
+    rewrite (raw_tbl_sym_to_nat tbl (t_write tr) Hraw).
+    change (cnt nu (econst 1)) with 1%nat. rewrite nreps_1.
+    change ([t_write tr] ++ bdside tbl nu dep0)
+      with (t_write tr :: bdside tbl nu dep0).
+    apply lift_side_cons. }
+  destruct (t_dir tr) eqn:Hdir.
+  - (* DL: departed side is R *)
+    destruct (bpush lo (sym_to_nat (t_write tr)) (econst 1) (b_R c)) as [dep|]
+      eqn:Hpush; [|discriminate].
+    destruct (beng_cross tm tbl lo (bhop_result tm tbl blks)
+                (t_next tr) DL fuel (b_L c) dep)
+      as [[[[app' dep'] h] F']|] eqn:Hcr; [|discriminate].
+    injection H as <- <-.
+    destruct (beng_cross_sound tm tbl lo (bhop_result tm tbl blks) Hraw Hhopf
+                fuel (t_next tr) DL (b_L c) dep app' dep' h F' Hcr nu Hb)
+      as (n2 & HR2).
+    pose proof (Hdep_gen (b_R c) dep Hpush) as Hdep.
+    assert (Hstep : step tm (bsem tbl nu c) =
+                    Some (blsem tbl nu (t_next tr) DL dep (b_L c))).
+    { unfold bsem, bdcfg. rewrite lift_cc.
+      unfold step. cbn [t_head fst snd]. rewrite Htr, Hdir.
+      unfold blsem, tape_move. rewrite Hdep. reflexivity. }
+    assert (HR1 : Reach tm [(b_st c, b_hs c)] 1 (bsem tbl nu c)
+                    (blsem tbl nu (t_next tr) DL dep (b_L c))).
+    { pose proof (Reach_one tm _ _ Hstep) as HRo.
+      replace (trans_of (bsem tbl nu c)) with (b_st c, b_hs c) in HRo;
+        [exact HRo | reflexivity]. }
+    exists (1 + n2)%nat. split; [lia|].
+    change ((b_st c, b_hs c) :: F') with ([(b_st c, b_hs c)] ++ F').
+    exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+  - (* DR: departed side is L *)
+    destruct (bpush lo (sym_to_nat (t_write tr)) (econst 1) (b_L c)) as [dep|]
+      eqn:Hpush; [|discriminate].
+    destruct (beng_cross tm tbl lo (bhop_result tm tbl blks)
+                (t_next tr) DR fuel (b_R c) dep)
+      as [[[[app' dep'] h] F']|] eqn:Hcr; [|discriminate].
+    injection H as <- <-.
+    destruct (beng_cross_sound tm tbl lo (bhop_result tm tbl blks) Hraw Hhopf
+                fuel (t_next tr) DR (b_R c) dep app' dep' h F' Hcr nu Hb)
+      as (n2 & HR2).
+    pose proof (Hdep_gen (b_L c) dep Hpush) as Hdep.
+    assert (Hstep : step tm (bsem tbl nu c) =
+                    Some (blsem tbl nu (t_next tr) DR dep (b_R c))).
+    { unfold bsem, bdcfg. rewrite lift_cc.
+      unfold step. cbn [t_head fst snd]. rewrite Htr, Hdir.
+      unfold blsem, tape_move. rewrite Hdep. reflexivity. }
+    assert (HR1 : Reach tm [(b_st c, b_hs c)] 1 (bsem tbl nu c)
+                    (blsem tbl nu (t_next tr) DR dep (b_R c))).
+    { pose proof (Reach_one tm _ _ Hstep) as HRo.
+      replace (trans_of (bsem tbl nu c)) with (b_st c, b_hs c) in HRo;
+        [exact HRo | reflexivity]. }
+    exists (1 + n2)%nat. split; [lia|].
+    change ((b_st c, b_hs c) :: F') with ([(b_st c, b_hs c)] ++ F').
+    exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
 Qed.
