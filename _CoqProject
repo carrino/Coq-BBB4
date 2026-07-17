@@ -186,3 +186,8 @@ theories/Machines/RepWL_Batch_02.v
 theories/Machines/RepWL_Batch_03.v
 theories/Machines/RepWL_Batch_04.v
 theories/Tests/RepWLBatch_Corruption.v
+
+# --- drift track ---
+theories/Checkers/Drift.v
+theories/Machines/Drift_Batch_01.v
+theories/Tests/DriftBatch_Corruption.v

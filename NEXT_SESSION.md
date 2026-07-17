@@ -860,3 +860,32 @@ contract).
   mirror to measure the kill rate, regenerate `Deferred_*`, re-run
   `make census` (native switch, 2-3h wall).  Kept separate so
   session 1 never blocks on the census rebuild loop.
+
+<!-- --- drift track --- -->
+## Drift track (this session): the 17 neverqh_drift holdouts are boarded
+
+Rule (c3) is formalized (`theories/Checkers/Drift.v`,
+`ngram_check_neverqh_driftw_sound`) and all 17 upstream
+`neverqh_drift` machines have theorems in
+`theories/Machines/Drift_Batch_01.v` (coverage 3,570 -> 3,587; the
+`neverqh_drift` line is gone from `check_coverage.py`'s remaining
+table).  Key facts for future sessions:
+
+- The descent generalizes FuelSCC's window induction to the measure
+  `W * R + phi a` with untrusted Bellman-Ford potentials; fuel is
+  needed only at TOWARD-moving gate nodes (weaker than verify.c's
+  all-intra-active premise), and the record argument is not used
+  directly -- the window bound of Records.v already carries it.
+- Two disjoint per-state gates (R and L drift) are REQUIRED: two of
+  the 17 have a single state with opposite-drifting stuck SCCs, so
+  the FuelSCC mirror-orientation trick cannot work.  Disjointness
+  makes at most one budget live per node (`dbudget`), keeping the
+  descent one nat induction.
+- `tools/drift_prover.py` mirrors the checker (dw_procedure +
+  dw_state_check); `tools/gen_drift_certs.py --dry-run` re-measures
+  the catch.  All 17 land at n=2 t=0 in seconds; deferral mechanism
+  (tools/drift_deferred.tsv) exists but is empty.
+- The drift gate strictly subsumes the (c2) runner gate (a uniform
+  fueled right-mover SCC has trivially feasible potentials), so new
+  fuel-shaped SCCs can also be discharged by this checker if a
+  future track wants one engine instead of two.
