@@ -191,3 +191,12 @@ theories/Tests/RepWLBatch_Corruption.v
 theories/Checkers/Drift.v
 theories/Machines/Drift_Batch_01.v
 theories/Tests/DriftBatch_Corruption.v
+
+# --- irules multi-decrement track ---
+theories/Checkers/IRules/RulesK.v
+theories/Checkers/IRules/MetaK.v
+theories/Machines/IRulesK_Batch_01.v
+theories/Machines/IRulesK_Batch_02.v
+theories/Machines/IRulesK_Batch_03.v
+theories/Machines/IRulesK_Batch_04.v
+theories/Tests/IRulesKBatch_Corruption.v
