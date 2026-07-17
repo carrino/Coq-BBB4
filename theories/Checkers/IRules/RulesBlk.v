@@ -727,3 +727,111 @@ Proof.
   apply (check_rulesBlk_aux_sound tm tbl blks cfuel fuel rules [] vrules Hraw H).
   intros r F [].
 Qed.
+
+(** ** Cell-stream end equality (sound, incomplete)
+
+    A sound-but-simpler alternative to the C verifier's periodic
+    stream walk that covers the block track's end-match need: expand
+    every CONSTANT-count block run to its cells and coalesce adjacent
+    equal-symbol runs; two run lists denoting the same cells then agree
+    structurally.  Sound: [bstreams_eq] true implies equal [bdside]. *)
+
+Definition eis_const (e : Expr) : bool := cf_zeros (e_cf e).
+
+Lemma eis_const_cnt : forall e nu1 nu2,
+  eis_const e = true -> cnt nu1 e = cnt nu2 e.
+Proof.
+  intros e nu1 nu2 H. unfold cnt, eval.
+  rewrite !(cf_zeros_dot _ _ 0 H). reflexivity.
+Qed.
+
+Definition blk_expand (tbl : BTbl) (s : BSym) (n : nat) : list BRun :=
+  concat (repeat (peel_cells tbl s) n).
+
+Lemma bdside_blk_expand : forall tbl nu s n,
+  raw_ok tbl -> bdside tbl nu (blk_expand tbl s n) = nreps (tbl s) n.
+Proof.
+  intros tbl nu s n Hraw. unfold blk_expand.
+  induction n as [|n IH]; [reflexivity|].
+  simpl repeat. cbn [concat].
+  rewrite bdside_app, (bdside_peel_cells tbl nu s Hraw), IH, nreps_S.
+  reflexivity.
+Qed.
+
+Fixpoint bexpand_const (tbl : BTbl) (rs : list BRun) : list BRun :=
+  match rs with
+  | [] => []
+  | (s, e) :: t =>
+      if (2 <=? length (tbl s))%nat && eis_const e
+      then blk_expand tbl s (Z.to_nat (e_c0 e)) ++ bexpand_const tbl t
+      else (s, e) :: bexpand_const tbl t
+  end.
+
+Lemma bexpand_const_den : forall tbl rs nu,
+  raw_ok tbl -> bdside tbl nu (bexpand_const tbl rs) = bdside tbl nu rs.
+Proof.
+  induction rs as [|[s e] t IH]; intros nu Hraw; [reflexivity|].
+  cbn [bexpand_const].
+  destruct ((2 <=? length (tbl s))%nat && eis_const e) eqn:Hc.
+  - apply andb_prop in Hc as [_ Hconst].
+    rewrite bdside_app, (bdside_blk_expand tbl nu s _ Hraw), IH by assumption.
+    rewrite bdside_cons. f_equal. f_equal.
+    unfold cnt. f_equal. unfold eval.
+    rewrite (cf_zeros_dot _ nu 0 Hconst). lia.
+  - rewrite !bdside_cons, IH by assumption. reflexivity.
+Qed.
+
+Definition bcanon_rle (tbl : BTbl) (lo : list Z) (rs : list BRun)
+  : list BRun :=
+  match bmerge_adj lo (bexpand_const tbl rs) with
+  | Some r => r
+  | None => bexpand_const tbl rs
+  end.
+
+Lemma bcanon_rle_den : forall tbl lo rs nu,
+  raw_ok tbl -> bge lo nu ->
+  bdside tbl nu (bcanon_rle tbl lo rs) = bdside tbl nu rs.
+Proof.
+  intros tbl lo rs nu Hraw Hb. unfold bcanon_rle.
+  destruct (bmerge_adj lo (bexpand_const tbl rs)) as [r|] eqn:Hm.
+  - rewrite (bmerge_adj_den tbl lo _ r nu Hm Hb), bexpand_const_den by assumption.
+    reflexivity.
+  - rewrite bexpand_const_den by assumption. reflexivity.
+Qed.
+
+Definition bstreams_eq (tbl : BTbl) (lo : list Z) (xa xb : list BRun) : bool :=
+  bruns_eqb (bcanon_rle tbl lo xa) (bcanon_rle tbl lo xb).
+
+Lemma bstreams_eq_sound : forall tbl lo xa xb nu,
+  raw_ok tbl -> bge lo nu ->
+  bstreams_eq tbl lo xa xb = true ->
+  bdside tbl nu xa = bdside tbl nu xb.
+Proof.
+  intros tbl lo xa xb nu Hraw Hb H. unfold bstreams_eq in H.
+  rewrite <- (bcanon_rle_den tbl lo xa nu Hraw Hb).
+  rewrite <- (bcanon_rle_den tbl lo xb nu Hraw Hb).
+  apply (bruns_eqb_den tbl _ _ nu H).
+Qed.
+
+(** End-match: strict, or provable cell-stream equality of both sides. *)
+Definition bend_eqb (tbl : BTbl) (lo : list Z) (c want : BCfg) : bool :=
+  bscfg_eqb c want ||
+  (st_eqb (b_st c) (b_st want) && sym_eqb (b_hs c) (b_hs want) &&
+   bstreams_eq tbl lo (b_L c) (b_L want) &&
+   bstreams_eq tbl lo (b_R c) (b_R want)).
+
+Lemma bend_eqb_bsem : forall tbl lo c want nu,
+  raw_ok tbl -> bge lo nu ->
+  bend_eqb tbl lo c want = true -> bsem tbl nu c = bsem tbl nu want.
+Proof.
+  intros tbl lo c want nu Hraw Hb H. unfold bend_eqb in H.
+  apply orb_prop in H as [H | H].
+  - apply (bscfg_eqb_bsem tbl _ _ nu H).
+  - apply andb_prop in H as [H HR].
+    apply andb_prop in H as [H HL].
+    apply andb_prop in H as [Hst Hhs].
+    apply st_eqb_spec in Hst. apply sym_eqb_spec in Hhs.
+    unfold bsem, bdcfg. rewrite Hst, Hhs.
+    rewrite (bstreams_eq_sound tbl lo _ _ nu Hraw Hb HL).
+    rewrite (bstreams_eq_sound tbl lo _ _ nu Hraw Hb HR). reflexivity.
+Qed.
