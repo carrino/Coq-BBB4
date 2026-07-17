@@ -548,185 +548,6 @@ Proof.
   exact HRch.
 Qed.
 
-(** ** The meta-cycle replay with the block engine
-
-    A fork of [RulesK.replayK]: [try_rulesBlk] fires [ruleBlk_apply];
-    the engine op is [beng_step] (block hops), parameterised by the
-    table [tbl], the lookup list [blks], and a per-op cross fuel. *)
-
-Fixpoint try_rulesBlk (lo : list Z) (rules : list (BRule * list Tr))
-    (c : BCfg) : option (BCfg * list Tr) :=
-  match rules with
-  | [] => None
-  | (r, F) :: rest =>
-      match ruleBlk_apply lo r c with
-      | Some c' => Some (c', F)
-      | None => try_rulesBlk lo rest c
-      end
-  end.
-
-Fixpoint breplayK (tm : TM) (tbl : BTbl) (blks : list (nat * list Sym))
-    (lo : list Z) (cfuel : nat) (rules : list (BRule * list Tr))
-    (endt : BCfg -> bool) (fuel : nat) (stepped : bool) (c : BCfg)
-  : option (BCfg * list Tr) :=
-  match fuel with
-  | O => None
-  | S fuel' =>
-      if stepped && endt c then Some (c, [])
-      else
-        match try_rulesBlk lo rules c with
-        | Some (c', F) =>
-            match breplayK tm tbl blks lo cfuel rules endt fuel' stepped c' with
-            | Some (cend, F') => Some (cend, F ++ F')
-            | None => None
-            end
-        | None =>
-            match beng_step tm tbl blks lo cfuel c with
-            | Some (c', F) =>
-                match breplayK tm tbl blks lo cfuel rules endt fuel' true c' with
-                | Some (cend, F') => Some (cend, F ++ F')
-                | None => None
-                end
-            | None => None
-            end
-        end
-  end.
-
-Lemma breplayK_sound : forall tm tbl blks lo cfuel rules endt fuel stepped
-                               c cend F,
-  raw_ok tbl ->
-  breplayK tm tbl blks lo cfuel rules endt fuel stepped c = Some (cend, F) ->
-  forall nu, bge lo nu ->
-  (forall r Fr c1 c2, In (r, Fr) rules -> ruleBlk_apply lo r c1 = Some c2 ->
-     exists n, (1 <= n)%nat /\ Reach tm Fr n (bsem tbl nu c1) (bsem tbl nu c2)) ->
-  endt cend = true /\
-  exists n, Reach tm F n (bsem tbl nu c) (bsem tbl nu cend) /\
-            (stepped = false -> (1 <= n)%nat).
-Proof.
-  intros tm tbl blks lo cfuel rules endt fuel.
-  induction fuel as [|fuel IH]; intros stepped c cend F Hraw H nu Hb
-    Happ; simpl in H; [discriminate|].
-  destruct (stepped && endt c) eqn:Hend.
-  - injection H as <- <-.
-    apply andb_prop in Hend as [Hst Hendc].
-    split; [exact Hendc|].
-    exists O. split; [apply Reach_refl|].
-    intro Hf; rewrite Hf in Hst; discriminate.
-  - destruct (try_rulesBlk lo rules c) as [[c' Fr]|] eqn:Htry.
-    + destruct (breplayK tm tbl blks lo cfuel rules endt fuel stepped c')
-        as [[cend' F']|] eqn:Hrec; [|discriminate].
-      injection H as <- <-.
-      destruct (IH stepped c' cend' F' Hraw Hrec nu Hb Happ)
-        as (Hende & n2 & HR2 & _).
-      assert (Hget : exists r0, In (r0, Fr) rules /\
-                     ruleBlk_apply lo r0 c = Some c').
-      { clear -Htry. induction rules as [|[r0 F0] rest IHr];
-          simpl in Htry; [discriminate|].
-        destruct (ruleBlk_apply lo r0 c) eqn:Ha.
-        - injection Htry as <- <-. exists r0. split; [left|]; auto.
-        - destruct (IHr Htry) as (r1 & Hin & Ha1).
-          exists r1. split; [right|]; assumption. }
-      destruct Hget as (r0 & Hin & Ha).
-      destruct (Happ r0 Fr c c' Hin Ha) as (n1 & Hn1 & HR1).
-      split; [exact Hende|].
-      exists (n1 + n2)%nat. split.
-      * exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
-      * intro; lia.
-    + destruct (beng_step tm tbl blks lo cfuel c) as [[c' Fe]|] eqn:Hstep;
-        [|discriminate].
-      destruct (breplayK tm tbl blks lo cfuel rules endt fuel true c')
-        as [[cend' F']|] eqn:Hrec; [|discriminate].
-      injection H as <- <-.
-      destruct (IH true c' cend' F' Hraw Hrec nu Hb Happ)
-        as (Hende & n2 & HR2 & _).
-      destruct (beng_step_sound tm tbl blks lo cfuel c c' Fe Hraw Hstep nu Hb)
-        as (n1 & Hn1 & HR1).
-      split; [exact Hende|].
-      exists (n1 + n2)%nat. split.
-      * exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
-      * intro; lia.
-Qed.
-
-(** ** Rule validation with rule-in-rule application (one level) *)
-
-Definition bruleBlk_check (tm : TM) (tbl : BTbl)
-    (blks : list (nat * list Sym)) (cfuel fuel : nat)
-    (prior : list (BRule * list Tr)) (r : BRule) : option (list Tr) :=
-  match breplayK tm tbl blks (brule_lbs r) cfuel prior
-          (fun c => bscfg_eqb c (brule_end_cfg r))
-          fuel false (brule_start_cfg r) with
-  | Some (_, F) => Some F
-  | None => None
-  end.
-
-Lemma bruleBlk_check_sound : forall tm tbl blks cfuel fuel prior r F,
-  raw_ok tbl ->
-  (forall r' F', In (r', F') prior -> brule_sem tm tbl r' F') ->
-  bruleBlk_check tm tbl blks cfuel fuel prior r = Some F ->
-  brule_sem tm tbl r F.
-Proof.
-  intros tm tbl blks cfuel fuel prior r F Hraw Hprior H u Hu.
-  unfold bruleBlk_check in H.
-  destruct (breplayK tm tbl blks (brule_lbs r) cfuel prior
-              (fun c => bscfg_eqb c (brule_end_cfg r))
-              fuel false (brule_start_cfg r)) as [[cend F']|] eqn:Hrep;
-    [|discriminate].
-  injection H as <-.
-  destruct (breplayK_sound tm tbl blks (brule_lbs r) cfuel prior _ fuel false
-              (brule_start_cfg r) cend F' Hraw Hrep u Hu
-              (fun r0 Fr c1 c2 Hin Happ =>
-                 ruleBlk_apply_sound tm tbl (brule_lbs r) r0 Fr c1 c2 Hraw Happ
-                   (Hprior r0 Fr Hin) u Hu))
-    as (Hend & n & HR & Hpos).
-  exists n. split; [apply Hpos; reflexivity|].
-  rewrite <- (bscfg_eqb_bsem tbl cend (brule_end_cfg r) u Hend). exact HR.
-Qed.
-
-Fixpoint check_rulesBlk_aux (tm : TM) (tbl : BTbl)
-    (blks : list (nat * list Sym)) (cfuel fuel : nat)
-    (acc : list (BRule * list Tr)) (rules : list BRule)
-  : option (list (BRule * list Tr)) :=
-  match rules with
-  | [] => Some acc
-  | r :: rest =>
-      match bruleBlk_check tm tbl blks cfuel fuel acc r with
-      | Some F => check_rulesBlk_aux tm tbl blks cfuel fuel (acc ++ [(r, F)]) rest
-      | None => None
-      end
-  end.
-
-Definition check_rulesBlk (tm : TM) (tbl : BTbl)
-    (blks : list (nat * list Sym)) (cfuel fuel : nat) (rules : list BRule)
-  : option (list (BRule * list Tr)) :=
-  check_rulesBlk_aux tm tbl blks cfuel fuel [] rules.
-
-Lemma check_rulesBlk_aux_sound : forall tm tbl blks cfuel fuel rules acc vrules,
-  raw_ok tbl ->
-  check_rulesBlk_aux tm tbl blks cfuel fuel acc rules = Some vrules ->
-  (forall r F, In (r, F) acc -> brule_sem tm tbl r F) ->
-  forall r F, In (r, F) vrules -> brule_sem tm tbl r F.
-Proof.
-  intros tm tbl blks cfuel fuel rules. induction rules as [|r0 rest IH];
-    intros acc vrules Hraw H Hacc; simpl in H.
-  - injection H as <-. exact Hacc.
-  - destruct (bruleBlk_check tm tbl blks cfuel fuel acc r0) as [F0|] eqn:Hc;
-      [|discriminate].
-    apply (IH (acc ++ [(r0, F0)]) vrules Hraw H).
-    intros r F Hin. apply in_app_or in Hin as [Hin | Hin].
-    + apply Hacc; exact Hin.
-    + destruct Hin as [Heq | []]. injection Heq as <- <-.
-      exact (bruleBlk_check_sound tm tbl blks cfuel fuel acc r0 F0 Hraw Hacc Hc).
-Qed.
-
-Theorem check_rulesBlk_sound : forall tm tbl blks cfuel fuel rules vrules,
-  raw_ok tbl ->
-  check_rulesBlk tm tbl blks cfuel fuel rules = Some vrules ->
-  forall r F, In (r, F) vrules -> brule_sem tm tbl r F.
-Proof.
-  intros tm tbl blks cfuel fuel rules vrules Hraw H.
-  apply (check_rulesBlk_aux_sound tm tbl blks cfuel fuel rules [] vrules Hraw H).
-  intros r F [].
-Qed.
 
 (** ** Cell-stream end equality (sound, incomplete)
 
@@ -834,4 +655,393 @@ Proof.
     unfold bsem, bdcfg. rewrite Hst, Hhs.
     rewrite (bstreams_eq_sound tbl lo _ _ nu Hraw Hb HL).
     rewrite (bstreams_eq_sound tbl lo _ _ nu Hraw Hb HR). reflexivity.
+Qed.
+
+(** ** Canonical re-blocking (UNTRUSTED candidate, verified by bstreams)
+
+    Mirror of the C verifier's iv_reblock_side: re-encode the concrete
+    single-cell constant near-prefix into block runs via the prover's
+    greedy factorisation.  The result is UNTRUSTED -- it is accepted only
+    after [bstreams_eq] re-verifies it denotes the same cells, so
+    soundness never depends on the factorisation being correct. *)
+
+(* leading copies of word [w] (length L>=1) in [buf] *)
+Fixpoint lead_reps (w buf : list Sym) (L fuel : nat) : nat :=
+  match fuel with
+  | O => O
+  | S fu =>
+      if (L <=? length buf)%nat && lsym_eqb w (firstn L buf)
+      then S (lead_reps w (skipn L buf) L fu)
+      else O
+  end.
+
+(* try block lengths L=2..8 at the front of buf; return (blockid, L, reps)
+   for the first L giving a primitive word repeating with reps*L >= 16 *)
+Fixpoint benc_try (blks : list (nat * list Sym)) (buf : list Sym)
+    (L : nat) : option (nat * nat * nat) :=
+  match L with
+  | O => None
+  | S L' =>
+      match benc_try blks buf L' with
+      | Some r => Some r        (* smaller L already found: keep it *)
+      | None =>
+          if (2 <=? L)%nat && (L + L <=? length buf)%nat &&
+             (prim_root_len (firstn L buf) =? L)%nat
+          then
+            let w := firstn L buf in
+            let reps := lead_reps w buf L (length buf) in
+            if (2 <=? reps)%nat && (16 <=? reps * L)%nat
+            then let id := blk_find blks w in
+                 if (2 <=? id)%nat then Some (id, L, reps) else None
+            else None
+          else None
+      end
+  end.
+
+Fixpoint benc_side (blks : list (nat * list Sym)) (buf : list Sym)
+    (fuel : nat) : list BRun :=
+  match fuel with
+  | O => []
+  | S fu =>
+      match buf with
+      | [] => []
+      | s :: _ =>
+          match benc_try blks buf 8 with
+          | Some (id, L, reps) =>
+              (id, econst (Z.of_nat reps)) :: benc_side blks (skipn (reps * L) buf) fu
+          | None =>
+              let r := lead_reps [s] buf 1 (length buf) in
+              (sym_to_nat s, econst (Z.of_nat r)) :: benc_side blks (skipn r buf) fu
+          end
+      end
+  end.
+
+(* split off the maximal constant single-cell prefix as concrete cells *)
+Fixpoint bconst_prefix (tbl : BTbl) (rs : list BRun) : (list Sym * list BRun) :=
+  match rs with
+  | (s, e) :: t =>
+      if (length (tbl s) =? 1)%nat && eis_const e && (0 <=? e_c0 e) then
+        let '(cells, rest) := bconst_prefix tbl t in
+        (repeat (bcell tbl s) (Z.to_nat (e_c0 e)) ++ cells, rest)
+      else ([], rs)
+  | [] => ([], [])
+  end.
+
+Definition breblock_side (tbl : BTbl) (blks : list (nat * list Sym))
+    (lo : list Z) (rs : list BRun) : list BRun :=
+  let '(cells, rest) := bconst_prefix tbl rs in
+  if (16 <=? length cells)%nat then
+    let cand := benc_side blks cells (length cells) ++ rest in
+    if bstreams_eq tbl lo cand rs then cand else rs
+  else rs.
+
+Lemma breblock_side_den : forall tbl blks lo rs nu,
+  raw_ok tbl -> bge lo nu ->
+  bdside tbl nu (breblock_side tbl blks lo rs) = bdside tbl nu rs.
+Proof.
+  intros tbl blks lo rs nu Hraw Hb. unfold breblock_side.
+  destruct (bconst_prefix tbl rs) as [cells rest] eqn:Hpre.
+  destruct (16 <=? length cells)%nat; [|reflexivity].
+  destruct (bstreams_eq tbl lo (benc_side blks cells (length cells) ++ rest) rs)
+    eqn:Hv; [|reflexivity].
+  exact (bstreams_eq_sound tbl lo _ _ nu Hraw Hb Hv).
+Qed.
+
+(** ** Whole-copy absorb (proven denotation-preserving)
+
+    Fold a complete concrete single-cell copy of block [B] sitting
+    immediately before the first block run [(B, e)] into that run,
+    yielding [(B, e+1)] -- mirror of the C verifier's whole-copy
+    [iv_absorb_side].  Proven denotation-preserving directly (the copy's
+    cells re-express one more period of the block, using [expr_ge lo e 0]
+    so the count increments soundly for every [nu >= lo]). *)
+
+Fixpoint babsorb_go (lo : list Z) (tbl : BTbl) (acc rs : list BRun)
+  : option (list BRun) :=
+  match rs with
+  | [] => None
+  | (s, e) :: rest =>
+      if (2 <=? length (tbl s))%nat then
+        (if (length (tbl s) <=? length acc)%nat && expr_ge lo e 0 &&
+            bruns_eqb (skipn (length acc - length (tbl s)) acc)
+                      (peel_cells tbl s)
+         then Some (firstn (length acc - length (tbl s)) acc
+                    ++ (s, eaddc e 1) :: rest)
+         else None)
+      else babsorb_go lo tbl (acc ++ [(s, e)]) rest
+  end.
+
+Lemma cnt_succ : forall nu e,
+  0 <= eval nu e -> cnt nu (eaddc e 1) = S (cnt nu e).
+Proof.
+  intros nu e He. unfold cnt. rewrite eval_eaddc. lia.
+Qed.
+
+Lemma babsorb_go_den : forall tbl lo rs acc rs' nu,
+  raw_ok tbl -> bge lo nu ->
+  babsorb_go lo tbl acc rs = Some rs' ->
+  bdside tbl nu rs' = bdside tbl nu (acc ++ rs).
+Proof.
+  intros tbl lo rs. induction rs as [|[s e] rest IH];
+    intros acc rs' nu Hraw Hb H; cbn [babsorb_go] in H; [discriminate|].
+  destruct (2 <=? length (tbl s))%nat eqn:Hblk.
+  - destruct ((length (tbl s) <=? length acc)%nat && expr_ge lo e 0 &&
+              bruns_eqb (skipn (length acc - length (tbl s)) acc)
+                        (peel_cells tbl s)) eqn:Hcond; [|discriminate].
+    injection H as <-.
+    apply andb_prop in Hcond as [Hcond Hbr].
+    apply andb_prop in Hcond as [Hlen Hge0].
+    apply Nat.leb_le in Hlen.
+    set (L := length (tbl s)) in *.
+    (* the last L runs of acc denote one copy of the block's cells *)
+    assert (Hacc : bdside tbl nu acc =
+                   bdside tbl nu (firstn (length acc - L) acc) ++ tbl s).
+    { transitivity (bdside tbl nu (firstn (length acc - L) acc
+                                   ++ skipn (length acc - L) acc)).
+      - rewrite firstn_skipn. reflexivity.
+      - rewrite bdside_app. f_equal.
+        rewrite (bruns_eqb_den tbl _ _ nu Hbr).
+        apply (bdside_peel_cells tbl nu s Hraw). }
+    rewrite (bdside_app tbl nu (firstn (length acc - L) acc)), bdside_cons.
+    rewrite (cnt_succ nu e (expr_ge_sound lo e 0 nu Hge0 Hb)), nreps_S.
+    rewrite (bdside_app tbl nu acc), bdside_cons, Hacc.
+    rewrite <- !app_assoc. reflexivity.
+  - specialize (IH (acc ++ [(s, e)]) rs' nu Hraw Hb H).
+    rewrite IH, <- app_assoc. reflexivity.
+Qed.
+
+Fixpoint babsorb_iter (lo : list Z) (tbl : BTbl) (fuel : nat)
+    (rs : list BRun) : list BRun :=
+  match fuel with
+  | O => rs
+  | S fu =>
+      match babsorb_go lo tbl [] rs with
+      | Some rs' => babsorb_iter lo tbl fu rs'
+      | None => rs
+      end
+  end.
+
+Lemma babsorb_iter_den : forall tbl lo fuel rs nu,
+  raw_ok tbl -> bge lo nu ->
+  bdside tbl nu (babsorb_iter lo tbl fuel rs) = bdside tbl nu rs.
+Proof.
+  intros tbl lo fuel. induction fuel as [|fuel IH]; intros rs nu Hraw Hb;
+    [reflexivity|].
+  cbn [babsorb_iter].
+  destruct (babsorb_go lo tbl [] rs) as [rs'|] eqn:Hgo; [|reflexivity].
+  rewrite (IH rs' nu Hraw Hb).
+  rewrite (babsorb_go_den tbl lo rs [] rs' nu Hraw Hb Hgo). reflexivity.
+Qed.
+
+(** ** The driver canonicalization: re-block then absorb, both sides *)
+
+Definition bcanon_side (lo : list Z) (tbl : BTbl)
+    (blks : list (nat * list Sym)) (rs : list BRun) : list BRun :=
+  babsorb_iter lo tbl (length rs) (breblock_side tbl blks lo rs).
+
+Lemma bcanon_side_den : forall lo tbl blks rs nu,
+  raw_ok tbl -> bge lo nu ->
+  bdside tbl nu (bcanon_side lo tbl blks rs) = bdside tbl nu rs.
+Proof.
+  intros lo tbl blks rs nu Hraw Hb. unfold bcanon_side.
+  rewrite (babsorb_iter_den tbl lo _ _ nu Hraw Hb).
+  apply (breblock_side_den tbl blks lo rs nu Hraw Hb).
+Qed.
+
+Definition bcanon (lo : list Z) (tbl : BTbl)
+    (blks : list (nat * list Sym)) (c : BCfg) : BCfg :=
+  mkBCfg (b_st c) (b_hs c)
+         (bcanon_side lo tbl blks (b_L c))
+         (bcanon_side lo tbl blks (b_R c)).
+
+Lemma bcanon_bsem : forall lo tbl blks c nu,
+  raw_ok tbl -> bge lo nu ->
+  bsem tbl nu (bcanon lo tbl blks c) = bsem tbl nu c.
+Proof.
+  intros lo tbl blks c nu Hraw Hb. unfold bcanon, bsem, bdcfg.
+  cbn [b_st b_hs b_L b_R].
+  rewrite !(bcanon_side_den lo tbl blks _ nu Hraw Hb). reflexivity.
+Qed.
+
+(** ** The meta-cycle replay with the block engine
+
+    A fork of [RulesK.replayK]: [try_rulesBlk] fires [ruleBlk_apply];
+    the engine op is [beng_step] (block hops), parameterised by the
+    table [tbl], the lookup list [blks], and a per-op cross fuel. *)
+
+Fixpoint try_rulesBlk (lo : list Z) (rules : list (BRule * list Tr))
+    (c : BCfg) : option (BCfg * list Tr) :=
+  match rules with
+  | [] => None
+  | (r, F) :: rest =>
+      match ruleBlk_apply lo r c with
+      | Some c' => Some (c', F)
+      | None => try_rulesBlk lo rest c
+      end
+  end.
+
+Fixpoint breplayK (tm : TM) (tbl : BTbl) (blks : list (nat * list Sym))
+    (lo : list Z) (cfuel : nat) (rules : list (BRule * list Tr))
+    (endt : BCfg -> bool) (fuel : nat) (stepped : bool) (c : BCfg)
+  : option (BCfg * list Tr) :=
+  match fuel with
+  | O => None
+  | S fuel' =>
+      if stepped && endt c then Some (c, [])
+      else
+        match try_rulesBlk lo rules c with
+        | Some (c', F) =>
+            match breplayK tm tbl blks lo cfuel rules endt fuel' stepped c' with
+            | Some (cend, F') => Some (cend, F ++ F')
+            | None => None
+            end
+        | None =>
+            match beng_step tm tbl blks lo cfuel c with
+            | Some (c', F) =>
+                match breplayK tm tbl blks lo cfuel rules endt fuel' true
+                        (bcanon lo tbl blks c') with
+                | Some (cend, F') => Some (cend, F ++ F')
+                | None => None
+                end
+            | None => None
+            end
+        end
+  end.
+
+Lemma breplayK_sound : forall tm tbl blks lo cfuel rules endt fuel stepped
+                               c cend F,
+  raw_ok tbl ->
+  breplayK tm tbl blks lo cfuel rules endt fuel stepped c = Some (cend, F) ->
+  forall nu, bge lo nu ->
+  (forall r Fr c1 c2, In (r, Fr) rules -> ruleBlk_apply lo r c1 = Some c2 ->
+     exists n, (1 <= n)%nat /\ Reach tm Fr n (bsem tbl nu c1) (bsem tbl nu c2)) ->
+  endt cend = true /\
+  exists n, Reach tm F n (bsem tbl nu c) (bsem tbl nu cend) /\
+            (stepped = false -> (1 <= n)%nat).
+Proof.
+  intros tm tbl blks lo cfuel rules endt fuel.
+  induction fuel as [|fuel IH]; intros stepped c cend F Hraw H nu Hb
+    Happ; simpl in H; [discriminate|].
+  destruct (stepped && endt c) eqn:Hend.
+  - injection H as <- <-.
+    apply andb_prop in Hend as [Hst Hendc].
+    split; [exact Hendc|].
+    exists O. split; [apply Reach_refl|].
+    intro Hf; rewrite Hf in Hst; discriminate.
+  - destruct (try_rulesBlk lo rules c) as [[c' Fr]|] eqn:Htry.
+    + destruct (breplayK tm tbl blks lo cfuel rules endt fuel stepped c')
+        as [[cend' F']|] eqn:Hrec; [|discriminate].
+      injection H as <- <-.
+      destruct (IH stepped c' cend' F' Hraw Hrec nu Hb Happ)
+        as (Hende & n2 & HR2 & _).
+      assert (Hget : exists r0, In (r0, Fr) rules /\
+                     ruleBlk_apply lo r0 c = Some c').
+      { clear -Htry. induction rules as [|[r0 F0] rest IHr];
+          simpl in Htry; [discriminate|].
+        destruct (ruleBlk_apply lo r0 c) eqn:Ha.
+        - injection Htry as <- <-. exists r0. split; [left|]; auto.
+        - destruct (IHr Htry) as (r1 & Hin & Ha1).
+          exists r1. split; [right|]; assumption. }
+      destruct Hget as (r0 & Hin & Ha).
+      destruct (Happ r0 Fr c c' Hin Ha) as (n1 & Hn1 & HR1).
+      split; [exact Hende|].
+      exists (n1 + n2)%nat. split.
+      * exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+      * intro; lia.
+    + destruct (beng_step tm tbl blks lo cfuel c) as [[c' Fe]|] eqn:Hstep;
+        [|discriminate].
+      destruct (breplayK tm tbl blks lo cfuel rules endt fuel true
+                  (bcanon lo tbl blks c'))
+        as [[cend' F']|] eqn:Hrec; [|discriminate].
+      injection H as <- <-.
+      destruct (IH true (bcanon lo tbl blks c') cend' F' Hraw Hrec nu Hb Happ)
+        as (Hende & n2 & HR2 & _).
+      destruct (beng_step_sound tm tbl blks lo cfuel c c' Fe Hraw Hstep nu Hb)
+        as (n1 & Hn1 & HR1).
+      rewrite <- (bcanon_bsem lo tbl blks c' nu Hraw Hb) in HR1.
+      split; [exact Hende|].
+      exists (n1 + n2)%nat. split.
+      * exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+      * intro; lia.
+Qed.
+
+(** ** Rule validation with rule-in-rule application (one level) *)
+
+Definition bruleBlk_check (tm : TM) (tbl : BTbl)
+    (blks : list (nat * list Sym)) (cfuel fuel : nat)
+    (prior : list (BRule * list Tr)) (r : BRule) : option (list Tr) :=
+  match breplayK tm tbl blks (brule_lbs r) cfuel prior
+          (fun c => bscfg_eqb c (brule_end_cfg r))
+          fuel false (brule_start_cfg r) with
+  | Some (_, F) => Some F
+  | None => None
+  end.
+
+Lemma bruleBlk_check_sound : forall tm tbl blks cfuel fuel prior r F,
+  raw_ok tbl ->
+  (forall r' F', In (r', F') prior -> brule_sem tm tbl r' F') ->
+  bruleBlk_check tm tbl blks cfuel fuel prior r = Some F ->
+  brule_sem tm tbl r F.
+Proof.
+  intros tm tbl blks cfuel fuel prior r F Hraw Hprior H u Hu.
+  unfold bruleBlk_check in H.
+  destruct (breplayK tm tbl blks (brule_lbs r) cfuel prior
+              (fun c => bscfg_eqb c (brule_end_cfg r))
+              fuel false (brule_start_cfg r)) as [[cend F']|] eqn:Hrep;
+    [|discriminate].
+  injection H as <-.
+  destruct (breplayK_sound tm tbl blks (brule_lbs r) cfuel prior _ fuel false
+              (brule_start_cfg r) cend F' Hraw Hrep u Hu
+              (fun r0 Fr c1 c2 Hin Happ =>
+                 ruleBlk_apply_sound tm tbl (brule_lbs r) r0 Fr c1 c2 Hraw Happ
+                   (Hprior r0 Fr Hin) u Hu))
+    as (Hend & n & HR & Hpos).
+  exists n. split; [apply Hpos; reflexivity|].
+  rewrite <- (bscfg_eqb_bsem tbl cend (brule_end_cfg r) u Hend). exact HR.
+Qed.
+
+Fixpoint check_rulesBlk_aux (tm : TM) (tbl : BTbl)
+    (blks : list (nat * list Sym)) (cfuel fuel : nat)
+    (acc : list (BRule * list Tr)) (rules : list BRule)
+  : option (list (BRule * list Tr)) :=
+  match rules with
+  | [] => Some acc
+  | r :: rest =>
+      match bruleBlk_check tm tbl blks cfuel fuel acc r with
+      | Some F => check_rulesBlk_aux tm tbl blks cfuel fuel (acc ++ [(r, F)]) rest
+      | None => None
+      end
+  end.
+
+Definition check_rulesBlk (tm : TM) (tbl : BTbl)
+    (blks : list (nat * list Sym)) (cfuel fuel : nat) (rules : list BRule)
+  : option (list (BRule * list Tr)) :=
+  check_rulesBlk_aux tm tbl blks cfuel fuel [] rules.
+
+Lemma check_rulesBlk_aux_sound : forall tm tbl blks cfuel fuel rules acc vrules,
+  raw_ok tbl ->
+  check_rulesBlk_aux tm tbl blks cfuel fuel acc rules = Some vrules ->
+  (forall r F, In (r, F) acc -> brule_sem tm tbl r F) ->
+  forall r F, In (r, F) vrules -> brule_sem tm tbl r F.
+Proof.
+  intros tm tbl blks cfuel fuel rules. induction rules as [|r0 rest IH];
+    intros acc vrules Hraw H Hacc; simpl in H.
+  - injection H as <-. exact Hacc.
+  - destruct (bruleBlk_check tm tbl blks cfuel fuel acc r0) as [F0|] eqn:Hc;
+      [|discriminate].
+    apply (IH (acc ++ [(r0, F0)]) vrules Hraw H).
+    intros r F Hin. apply in_app_or in Hin as [Hin | Hin].
+    + apply Hacc; exact Hin.
+    + destruct Hin as [Heq | []]. injection Heq as <- <-.
+      exact (bruleBlk_check_sound tm tbl blks cfuel fuel acc r0 F0 Hraw Hacc Hc).
+Qed.
+
+Theorem check_rulesBlk_sound : forall tm tbl blks cfuel fuel rules vrules,
+  raw_ok tbl ->
+  check_rulesBlk tm tbl blks cfuel fuel rules = Some vrules ->
+  forall r F, In (r, F) vrules -> brule_sem tm tbl r F.
+Proof.
+  intros tm tbl blks cfuel fuel rules vrules Hraw H.
+  apply (check_rulesBlk_aux_sound tm tbl blks cfuel fuel rules [] vrules Hraw H).
+  intros r F [].
 Qed.
