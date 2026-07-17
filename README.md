@@ -441,3 +441,55 @@ mutant, erased gates, zeroed potentials, swapped gate sides, merged
 gates — disjointness is checked — zeroed scale W, demotion to the
 FuelWide rule-(c2) checker, empty certificate, starved budget, all
 computing `false`).
+
+<!-- --- irules multi-decrement track --- -->
+### IRules multi-decrement track (general step-size decrements)
+
+32 of the 42 `certs_modclass` v3 irules holdouts whose blocker was the
+decrement step size are boarded: `irk_<machine>_never_quasihalts :
+NeverQuasiHaltsSt` + `irk_<machine>_nonhalt` corollaries in
+`theories/Machines/IRulesK_Batch_{01..04}.v`, rows in
+`tools/irulesk_manifest.tsv`, coverage 3587 -> 3619, axiom footprint
+`functional_extensionality_dep` only.
+
+The v1 rule applier (`theories/Checkers/IRules/Rules.v`,
+`rule_apply` / `find_dec`) fires a rule whose one decrementing run
+drains at step `d = -1` (`find_dec` hardcodes `d =? -1`).  The checker
+`theories/Checkers/IRules/RulesK.v` (`ruleK_apply_sound`) +
+`MetaK.v` (`irulesk_check_neverqh_sound`) generalises this to any
+negative constant delta with the v3 binding-run semantics of
+`../BBB/docs/irules2.md` "Multi-decrement rules, general step sizes":
+the application count `R = (e_j - lb_j)/d_j + 1` is an exact affine
+expression from a binding run `j` whose `d_j` divides `e_j - lb_j`,
+and every decrementing run must survive `R` rounds.  The binding
+search (`find_binding`) is UNTRUSTED — the guard `expr_ge lo Rex 1`
+and `appK_side`'s per-run survival re-check (`e + d*Rex >= lb + d`,
+the last-round minimum) carry soundness for ANY count, so the proof
+never reasons about the division.  Output is uniform (`e -> e + d*Rex`,
+drop a decrement reaching the constant 0); with a single `-1`
+decrement it reduces to the v1 semantics.  The whole file reuses the
+v1 rule type and denotation machinery (`vvals`, `rstart`/`rend`,
+`rule_sem`, `scfg_eqb`) and edits none of
+`Expr`/`RLE`/`Engine`/`Rules`/`Meta`; rule validation carries no
+rule-in-rule dependencies here, so `MetaK` reuses `Meta.check_rules`
+and the anchor/coverage checks unchanged.
+
+`tools/irulesk_prover.py` is the untrusted Python mirror (a faithful
+port of the symbolic engine + the binding-run applier; it validates
+all 504 rules across the 428 v1 certs, and its 32 accepts are a subset
+of the C verifier's accepts — no false positives).
+`tools/gen_irulesk_certs.py` re-validates each machine through that
+mirror before emitting the batch.  Negative controls:
+`theories/Tests/IRulesKBatch_Corruption.v` (binding run at a
+non-dividing run, `lb` below the step so the drain goes negative,
+survive-R-rounds over-count, transition mutant, delta demoted to `-1`,
+all computing `false`).
+
+The remaining 10 of the 42 are deferred (see `NEXT_SESSION.md`): each
+is tagged `[-2]` but ALSO needs a v3 ENGINE feature (block-level chain
+hop / canonical re-blocking) in a decrement rule's validation — the
+head crosses a symbolic-count run via a multi-step ratcheting maneuver
+that the v1 engine peels cell-by-cell, growing the run list without
+bound so it never recurs to the fixed end shape.  Fixing them needs a
+new engine op, out of scope for a track built on the unmodified
+`Engine.v`.

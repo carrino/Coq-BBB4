@@ -889,3 +889,57 @@ table).  Key facts for future sessions:
   fueled right-mover SCC has trivially feasible potentials), so new
   fuel-shaped SCCs can also be discharged by this checker if a
   future track wants one engine instead of two.
+
+<!-- --- irules multi-decrement track --- -->
+## IRules multi-decrement track (general step-size decrements)
+
+Boarded 32 of the 42 `certs_modclass` v3 irules holdouts tagged
+"decrement delta(s) [-2]/[-3] (v1 engine supports -1 only)"
+(`tools/irules_deferred.tsv`).  Coverage 3587 -> 3619
+(`irulesk_manifest.tsv` wired into `check_coverage.py`).  Checker
+`theories/Checkers/IRules/RulesK.v` + `MetaK.v`, both
+`functional_extensionality_dep` only; the v1 `Engine`/`RLE`/`Expr`/
+`Rules`/`Meta` are untouched.  Build the batches at `-j1`/`-j2` (this
+container OOMs compiling IRules batches at `-j4`); each machine's
+`vm_compute` runs a ~1-2.8M-step concrete anchor re-simulation (~4 s).
+
+Design note (for a future engine track): `find_binding` (the
+binding-run selection) is UNTRUSTED.  Soundness comes only from the
+guard `expr_ge lo Rex 1` plus `appK_side`'s per-decrement survival
+re-check `e + d*Rex >= lb + d` (the run's minimum over the R rounds is
+its last-round value).  So the R-fold application is sound for ANY
+`Rex`; the division/binding search only has to produce the `Rex` that
+lands the drained run exactly, and the proof never mentions it.  This
+kept `ruleK_apply_sound` a line-for-line generalisation of
+`Rules.rule_apply_sound` (same induction on R, reusing `vvals` /
+`rstart` / `rend` / `rule_sem`).
+
+### Deferred: 10 of the 42 (out of scope — need a v3 engine op)
+
+Each is tagged `[-2]` but ALSO needs a v3 ENGINE feature (block-level
+chain hop / canonical re-blocking) in a decrement rule's VALIDATION,
+not just the decrement applier.  In the failing rule's engine replay
+the head must cross a symbolic-count run (count `k`, `k-1`, ...) via a
+multi-step ratcheting maneuver; the v1 engine peels one cell per op,
+so the shed cells grow the run list without bound and it never recurs
+to the fixed end shape (verified: raising fresh-variable bounds only
+moves the shortfall, never closes).  These need a new engine op in a
+fork of `Engine.v`, which this track may not edit.  Differentially
+confirmed against the C verifier (`bin/verify` accepts all 42 via its
+`g->hops`/`iv_absorb`; `tools/irulesk_prover.py`, a faithful v1-engine
+port, accepts exactly the 32 — a subset, no false positives).
+
+    1RB0RA_0RC1LD_1LC0LA_0RD0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
+    1RB0RB_0RC1LD_1LC0LD_1RB0RA   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
+    1RB0RD_0RC1LA_1LC0LA_0RA0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
+    1RB0RD_0RC1LA_1LC0LA_0RB0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
+    1RB0RD_0RC1LA_1LC0LA_0RD0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
+    1RB0RD_0RC1LA_1LC0LA_1LA0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
+    1RB0RD_0RC1LA_1LC0LA_1RB0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
+    1RB0RD_0RC1LD_1LC0LA_0RD0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
+    1RB0RD_1LC0LB_1RA1LC_1LC0LC   rule 1 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
+    1RB1LC_0RC0RB_1LD0LA_0RA1LB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
+
+(The 3 `d=-1 only, but v1 engine bound reasoning fails` rows of
+`irules_deferred.tsv` were never in this track's scope and did not
+fall out free.  All 4 `[-3]` machines boarded.)
