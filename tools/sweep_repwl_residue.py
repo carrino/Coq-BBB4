@@ -31,10 +31,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import repwl_prover as rp
 
-RUNGS = [(2, 2, 0), (2, 3, 0), (3, 2, 0), (4, 2, 0),
-         (2, 2, 64), (2, 3, 64), (3, 2, 64), (4, 2, 64),
-         (2, 2, 256), (2, 3, 256), (3, 2, 256), (4, 2, 256),
-         (2, 2, 1024), (2, 3, 1024), (3, 2, 1024), (4, 2, 1024)]
+# t = 0 only: the full 16-rung grid measured ZERO catches at t > 0
+# over the first ~750 machines while quadrupling the per-miss cost,
+# so the census ladder ships without prefix rungs.
+RUNGS = [(2, 2, 0), (2, 3, 0), (3, 2, 0), (4, 2, 0)]
 CAP = 15000
 
 

@@ -50,14 +50,15 @@ Definition qhb_rungs_census : list (nat * nat) :=
    (4, 64); (4, 256); (4, 1024)].
 
 (** the RepWL tier's (L, T, t) ladder (mirrored by
-    tools/sweep_repwl_residue.py) *)
+    tools/sweep_repwl_residue.py): t = 0 only -- the 16-rung grid
+    measured zero catches at t > 0 -- in measured yield order, so
+    late-rung machines pay as few diverging-closure fuel burns as
+    possible.  The fuel is the walk's per-rung cost bound; it covers
+    every kept catch's closure (pops <= 2 * nodes + 1). *)
 Definition rw_rungs_census : list (nat * nat * nat) :=
-  [(2, 2, 0); (2, 2, 64); (2, 2, 256); (2, 2, 1024);
-   (2, 3, 0); (2, 3, 64); (2, 3, 256); (2, 3, 1024);
-   (3, 2, 0); (3, 2, 64); (3, 2, 256); (3, 2, 1024);
-   (4, 2, 0); (4, 2, 64); (4, 2, 256); (4, 2, 1024)].
+  [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0)].
 
-Definition rw_fuel_census : nat := 200000.
+Definition rw_fuel_census : nat := 8192.
 
 Definition decider : QHDecider :=
   decide_easy B_census 130 512 200000 512 ng_rungs_census
