@@ -399,3 +399,45 @@ configurations.  Negative controls:
 `theories/Tests/RepWLBatch_Corruption.v` (transition mutant, swapped
 certificates, gutted rank tables, empty certificate, starved budget,
 and the out-of-gate parameters L=0 / T=1, all computing `false`).
+<!-- --- drift track --- -->
+### Drift track (`neverqh_drift` mass-board)
+
+All 17 upstream `neverqh_drift` holdouts are boarded:
+`nqh_<machine> : NeverQuasiHaltsSt` + `nonhalt_<machine>` corollaries
+in `theories/Machines/Drift_Batch_01.v`, rows in
+`tools/drift_manifest.tsv`, axiom footprint
+`functional_extensionality_dep` only.
+
+The checker is `theories/Checkers/Drift.v`
+(`ngram_check_neverqh_driftw_sound`): rule (c3) — a stuck SCC in
+which every cycle has strictly positive net head displacement toward
+one side, and every context moving TOWARD that side holds fuel there,
+cannot confine a run — integrated into the FuelSCC-style lex gate on
+the class-refined FuelWide contexts, which are reused unchanged.  The
+runner gate becomes a DRIFT gate carrying untrusted per-node
+potentials `phi` and a scale `W` (`phi a' + 1 <= phi a + W` on
+toward-moving sources, `phi a' + W + 1 <= phi a` on away-moving ones:
+telescoping forces `W * net >= cycle length`, i.e. net-positive
+cycles; the generator finds `phi` by Bellman-Ford, the checker only
+re-checks edges).  The descent replaces FuelSCC's window induction by
+the natural measure `W * R + phi a` — a fueled toward-move shrinks
+the Records.v window bound exactly, an away-move's potential pays for
+the window growth — so fuel is only demanded of toward-moving gate
+nodes, strictly weaker than the C rule's premise.
+
+There are TWO disjoint gates per state (one per drift side), which is
+load-bearing: `1RB1LC_1LC0RB_1RD0LC_0RD1LA` (q=B) and
+`1RB1LD_1LC0RB_0LC1RA_1LA0LD` have single states whose stuck SCCs
+drift opposite ways, so no machine-level mirror orientation works.
+Disjointness collapses the two descent budgets into one selector
+(`dbudget`), keeping the proof structurally FuelSCC's.
+
+`tools/drift_prover.py` is the untrusted Python mirror (two-sided
+per-SCC kill + `dw_state_check`, the faithful edge-by-edge mirror of
+`drift_state_ok`); `tools/gen_drift_certs.py` emits the batch.  All
+17 land at n=2 t=0, largest closure 195 refined contexts.  Negative
+controls: `theories/Tests/DriftBatch_Corruption.v` (transition
+mutant, erased gates, zeroed potentials, swapped gate sides, merged
+gates — disjointness is checked — zeroed scale W, demotion to the
+FuelWide rule-(c2) checker, empty certificate, starved budget, all
+computing `false`).

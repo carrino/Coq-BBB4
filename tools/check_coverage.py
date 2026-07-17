@@ -45,7 +45,8 @@ def main():
     for mfname in ("bulk_manifest.tsv", "tcyc_manifest.tsv",
                    "bulkr_manifest.tsv", "wrap_manifest.tsv",
                    "counters_manifest.tsv", "fuel_manifest.tsv",
-                   "irules_manifest.tsv", "repwl_manifest.tsv"):
+                   "irules_manifest.tsv", "repwl_manifest.tsv",
+                   "drift_manifest.tsv"):
         path = os.path.join(HERE, mfname)
         if not os.path.exists(path):
             continue
