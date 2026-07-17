@@ -207,3 +207,5 @@ theories/Tests/IRulesKBatch_Corruption.v
 theories/Checkers/IRules/EngineK.v
 theories/Checkers/IRules/RulesBlk.v
 theories/Checkers/IRules/MetaBlk.v
+theories/Machines/IRulesBlk_Batch_01.v
+theories/Tests/IRulesBlkBatch_Corruption.v

@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""Transcribe v3 block-run irules certificates into Coq IRulesBlk batches.
+
+Each machine emits: the TM, a [BIRCert] literal straight from its
+certificate (block table + template + rules), the [NeverQuasiHaltsSt]
+theorem closed by [irulesblk_check_neverqh_sound] (MetaBlk) + [vm_compute],
+and the [NonHalt] corollary.  Certificates are untrusted search output;
+every claim is re-checked by the verified block IRules engine
+(theories/Checkers/IRules/EngineK.v + RulesBlk.v + MetaBlk.v).
+
+Usage: gen_irulesblk_certs.py OUT.v NAME CERT [CERT ...]
+"""
+import sys, os
+
+ST = {"A": "StA", "B": "StB", "C": "StC", "D": "StD"}
+SYM = {0: "S0", 1: "S1"}
+DIRW = {"R": "DR", "L": "DL"}
+CFUEL = 200000
+FUEL = 300000
+
+
+def parse_cert(path):
+    c = {"tplL": {}, "tplR": {}, "rules": {}, "blk": {}}
+    for ln in open(path):
+        p = ln.split()
+        if not p:
+            continue
+        k = p[0]
+        if k in ("anchor_step", "k0", "kmin", "meta_a", "meta_b",
+                 "tpl_hsym", "nrules"):
+            c[k] = int(p[1])
+        elif k == "bbbcert":  c["ver"] = p[1]
+        elif k == "machine":  c["machine"] = p[1]
+        elif k == "type":     c["type"] = p[1]
+        elif k == "tpl_state": c["tpl_state"] = p[1]
+        elif k == "blk":
+            c["blk"][int(p[1])] = [int(x) for x in p[2]]
+        elif k == "tplrun":
+            side, idx, sym, al, be = p[1], int(p[2]), int(p[3]), int(p[4]), int(p[5])
+            c["tplL" if side == "L" else "tplR"][idx] = (sym, al, be)
+        elif k == "rule":
+            ridx = int(p[1])
+            c["rules"][ridx] = {"st": p[2], "hs": int(p[3]), "L": {}, "R": {}}
+        elif k == "rulerun":
+            ridx, side, idx, sym = int(p[1]), p[2], int(p[3]), int(p[4])
+            r = c["rules"][ridx]
+            if p[5] == "C":
+                r[side][idx] = (sym, ("C", int(p[6])))
+            else:
+                r[side][idx] = (sym, ("V", int(p[6]), int(p[7])))
+    return c
+
+
+def cname(machine):
+    return machine.replace("-", "X")
+
+
+def emit_tm(machine):
+    groups = machine.split("_")
+    out = []
+    for qi, g in enumerate(groups):
+        st = "ABCD"[qi]
+        for si in range(2):
+            t = g[3 * si:3 * si + 3]
+            key = f"  | St{st}, S{si} => "
+            if t == "---":
+                out.append(key + "None")
+            else:
+                out.append(key + f"mk S{t[0]} {DIRW[t[1]]} {ST[t[2]]}")
+    return "\n".join(out)
+
+
+def zlit(v):
+    return f"({v})"
+
+
+def emit_blks(blk):
+    if not blk:
+        return "[]"
+    entries = []
+    for i in sorted(blk):
+        cells = "; ".join(SYM[x] for x in blk[i])
+        entries.append(f"({i}%nat, [{cells}])")
+    return "[" + ";\n   ".join(entries) + "]"
+
+
+def emit_tpl(d):
+    runs = [d[i] for i in sorted(d)]
+    if not runs:
+        return "[]"
+    parts = [f"({s}%nat, {zlit(al)}, {zlit(be)})" for (s, al, be) in runs]
+    return "[" + "; ".join(parts) + "]"
+
+
+def emit_rcnt(rc):
+    if rc[0] == "C":
+        return f"RC {zlit(rc[1])}"
+    return f"RV {zlit(rc[1])} {zlit(rc[2])}"
+
+
+def emit_rule_side(d):
+    runs = [d[i] for i in sorted(d)]
+    parts = [f"({s}%nat, {emit_rcnt(rc)})" for (s, rc) in runs]
+    return "[" + "; ".join(parts) + "]"
+
+
+def emit_rules(rules):
+    if not rules:
+        return "[]"
+    out = []
+    for i in sorted(rules):
+        rd = rules[i]
+        out.append(f"mkBRule {ST[rd['st']]} S{rd['hs']} "
+                   f"{emit_rule_side(rd['L'])} {emit_rule_side(rd['R'])}")
+    return "[" + ";\n   ".join(out) + "]"
+
+
+def emit_machine(path):
+    c = parse_cert(path)
+    m = c["machine"]
+    nm = cname(m)
+    tm = emit_tm(m)
+    a, b = c["meta_a"], c["meta_b"]
+    s = []
+    s.append(f"(** ** {m}: anchor {c['anchor_step']}, k0 {c['k0']}, "
+             f"map k -> {a}*k+{b}, {len(c['rules'])} rule(s), "
+             f"{len(c['blk'])} block(s) *)")
+    s.append(f"Definition tmb_{nm} : TM := fun q s =>")
+    s.append("  match q, s with")
+    s.append(tm)
+    s.append("  end.")
+    s.append(f"Definition certb_{nm} : BIRCert := mkBIRCert")
+    s.append(f"  {c['anchor_step']}%nat {zlit(c['k0'])} {zlit(c['kmin'])} "
+             f"{zlit(a)} {zlit(b)} {ST[c['tpl_state']]} S{c['tpl_hsym']}")
+    s.append(f"  {emit_blks(c['blk'])}")
+    s.append(f"  {emit_tpl(c['tplL'])}")
+    s.append(f"  {emit_tpl(c['tplR'])}")
+    s.append(f"  {emit_rules(c['rules'])}.")
+    s.append(f"Theorem irb_{nm}_never_quasihalts : "
+             f"NeverQuasiHaltsSt tmb_{nm}.")
+    s.append("Proof.")
+    s.append(f"  apply (irulesblk_check_neverqh_sound tmb_{nm} certb_{nm} "
+             f"{CFUEL} {FUEL}).")
+    s.append("  vm_compute. reflexivity.")
+    s.append("Qed.")
+    s.append(f"Theorem irb_{nm}_nonhalt : NonHalt tmb_{nm}.")
+    s.append(f"Proof. apply never_qh_nonhalt, irb_{nm}_never_quasihalts. Qed.")
+    return "\n".join(s), nm
+
+
+HEADER = '''(** GENERATED by tools/gen_irulesblk_certs.py -- DO NOT EDIT.
+
+    Block-run inductive-rules machines from the BBB harness's v3
+    certificate set.  Per machine: the TM, the [BIRCert] literal
+    (block table + template + rules) straight from its certificate, the
+    [NeverQuasiHaltsSt] theorem closed by [irulesblk_check_neverqh_sound]
+    (MetaBlk) + [vm_compute], and the [NonHalt] corollary.  The
+    certificates are untrusted search output; every claim is re-checked
+    by the verified block IRules engine
+    (theories/Checkers/IRules/EngineK.v + RulesBlk.v + MetaBlk.v). *)
+
+From Coq Require Import ZArith List.
+From BBB4 Require Import BBB4_Statement CTape.
+From BBB4.Checkers Require Import Cycle.
+From BBB4.Checkers.IRules Require Import Expr RLE Engine Rules Meta RulesK
+     EngineK RulesBlk MetaBlk.
+Import ListNotations.
+Open Scope Z_scope.
+Definition mk (w : Sym) (d : Dir) (n : St) : option Trans :=
+  Some (mkTrans w d n).
+'''
+
+
+def main():
+    out, name = sys.argv[1], sys.argv[2]
+    certs = sys.argv[3:]
+    blocks = []
+    names = []
+    for p in certs:
+        body, nm = emit_machine(p)
+        blocks.append(body)
+        names.append(nm)
+    with open(out, "w") as f:
+        f.write(HEADER + "\n")
+        f.write("\n\n".join(blocks) + "\n")
+    print(f"wrote {out}: {len(names)} machines", file=sys.stderr)
+    for nm in names:
+        print(nm)
+
+
+if __name__ == "__main__":
+    main()
