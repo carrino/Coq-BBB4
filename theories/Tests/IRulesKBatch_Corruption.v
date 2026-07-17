@@ -37,7 +37,14 @@
       breaks rule 0's validation.
     - [delta_demoted_rejected]: demoting the -2 drain to -1 (the v1
       engine's only step size) no longer matches the machine's genuine
-      two-step decrement. *)
+      two-step decrement.
+
+    Rule-in-rule controls (base [1RB0RA_0RC1LD_1LC0LA_0RD0RB], whose
+    rule 2's proof applies the already-validated rule 1): [rir_rules_ok]
+    validates the three rules in dependency order; [rir_reordered_rejected]
+    and [rir_dropdep_rejected] show that a dependent rule validated before
+    (or without) its dependency cannot close -- rule-in-rule is
+    load-bearing. *)
 
 From Coq Require Import ZArith List.
 From BBB4 Require Import BBB4_Statement CTape.
@@ -144,4 +151,49 @@ Definition cert_demoted : IRCert := mkIRCert
 
 Lemma delta_demoted_rejected :
   irulesk_check_neverqh tm_good cert_demoted 2000 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** Rule-in-rule application (one level)
+
+    Base: [1RB0RA_0RC1LD_1LC0LA_0RD0RB] (boarded), whose rule 2's proof
+    APPLIES the already-validated rule 1 (a -1 drain).  Validating it in
+    dependency order succeeds; putting the dependent rule before its
+    dependency, or dropping the dependency, leaves rule 2's replay with
+    no rule to apply -- it ratchets and never closes. *)
+
+Definition tm_rir : TM := fun q s =>
+  match q, s with
+  | StA, S0 => mk S1 DR StB | StA, S1 => mk S0 DR StA
+  | StB, S0 => mk S0 DR StC | StB, S1 => mk S1 DL StD
+  | StC, S0 => mk S1 DL StC | StC, S1 => mk S0 DL StA
+  | StD, S0 => mk S0 DR StD | StD, S1 => mk S0 DR StB
+  end.
+
+Definition rir_r0 : Rule := mkRule StB S0 [(S1, RV (1) (1))] [(S1, RV (-1) (2))].
+Definition rir_r1 : Rule :=
+  mkRule StD S1 [(S0, RV (1) (1)); (S1, RV (0) (1))] [(S1, RV (-1) (2))].
+Definition rir_r2 : Rule :=            (* depends on rir_r1 *)
+  mkRule StC S0 [(S0, RV (4) (1)); (S1, RV (-2) (3))] [].
+
+Definition rules_ok (tm : TM) (fuel : nat) (rs : list Rule) : bool :=
+  match check_rulesK tm fuel rs with Some _ => true | None => false end.
+
+Lemma rir_rules_ok : rules_ok tm_rir 2000 [rir_r0; rir_r1; rir_r2] = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma rir_reordered_rejected :
+  rules_ok tm_rir 2000 [rir_r0; rir_r2; rir_r1] = false.
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma rir_dropdep_rejected :
+  rules_ok tm_rir 2000 [rir_r0; rir_r2] = false.
+Proof. vm_compute. reflexivity. Qed.
+
+Definition cert_rir : IRCert := mkIRCert
+  2796170%nat (1023) (1) (2) (1) StA S0
+  []
+  [(S0, 0, 1); (S1, 2, 0)]
+  [rir_r0; rir_r1; rir_r2].
+
+Lemma rir_good_accepted : irulesk_check_neverqh tm_rir cert_rir 300000 = true.
 Proof. vm_compute. reflexivity. Qed.

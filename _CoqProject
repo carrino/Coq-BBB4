@@ -199,4 +199,6 @@ theories/Machines/IRulesK_Batch_01.v
 theories/Machines/IRulesK_Batch_02.v
 theories/Machines/IRulesK_Batch_03.v
 theories/Machines/IRulesK_Batch_04.v
+theories/Machines/IRulesK_Batch_05.v
+theories/Machines/IRulesK_Batch_06.v
 theories/Tests/IRulesKBatch_Corruption.v

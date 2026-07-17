@@ -893,9 +893,9 @@ table).  Key facts for future sessions:
 <!-- --- irules multi-decrement track --- -->
 ## IRules multi-decrement track (general step-size decrements)
 
-Boarded 32 of the 42 `certs_modclass` v3 irules holdouts tagged
+Boarded ALL 42 of the `certs_modclass` v3 irules holdouts tagged
 "decrement delta(s) [-2]/[-3] (v1 engine supports -1 only)"
-(`tools/irules_deferred.tsv`).  Coverage 3587 -> 3619
+(`tools/irules_deferred.tsv`).  Coverage 3587 -> 3629
 (`irulesk_manifest.tsv` wired into `check_coverage.py`).  Checker
 `theories/Checkers/IRules/RulesK.v` + `MetaK.v`, both
 `functional_extensionality_dep` only; the v1 `Engine`/`RLE`/`Expr`/
@@ -903,43 +903,37 @@ Boarded 32 of the 42 `certs_modclass` v3 irules holdouts tagged
 container OOMs compiling IRules batches at `-j4`); each machine's
 `vm_compute` runs a ~1-2.8M-step concrete anchor re-simulation (~4 s).
 
-Design note (for a future engine track): `find_binding` (the
-binding-run selection) is UNTRUSTED.  Soundness comes only from the
-guard `expr_ge lo Rex 1` plus `appK_side`'s per-decrement survival
-re-check `e + d*Rex >= lb + d` (the run's minimum over the R rounds is
-its last-round value).  So the R-fold application is sound for ANY
-`Rex`; the division/binding search only has to produce the `Rex` that
-lands the drained run exactly, and the proof never mentions it.  This
-kept `ruleK_apply_sound` a line-for-line generalisation of
-`Rules.rule_apply_sound` (same induction on R, reusing `vvals` /
-`rstart` / `rend` / `rule_sem`).
+Two mechanisms, both reusing the same applier:
 
-### Deferred: 10 of the 42 (out of scope — need a v3 engine op)
+1. General step-size decrements.  `find_binding` (the binding-run
+   selection) is UNTRUSTED.  Soundness comes only from the guard
+   `expr_ge lo Rex 1` plus `appK_side`'s per-decrement survival re-check
+   `e + d*Rex >= lb + d` (the run's minimum over the R rounds is its
+   last-round value).  So the R-fold application is sound for ANY `Rex`;
+   the division/binding search only has to produce the `Rex` that lands
+   the drained run exactly, and the proof never mentions it.  This kept
+   `ruleK_apply_sound` a line-for-line generalisation of
+   `Rules.rule_apply_sound` (same induction on R, reusing `vvals` /
+   `rstart` / `rend` / `rule_sem`).
 
-Each is tagged `[-2]` but ALSO needs a v3 ENGINE feature (block-level
-chain hop / canonical re-blocking) in a decrement rule's VALIDATION,
-not just the decrement applier.  In the failing rule's engine replay
-the head must cross a symbolic-count run (count `k`, `k-1`, ...) via a
-multi-step ratcheting maneuver; the v1 engine peels one cell per op,
-so the shed cells grow the run list without bound and it never recurs
-to the fixed end shape (verified: raising fresh-variable bounds only
-moves the shortfall, never closes).  These need a new engine op in a
-fork of `Engine.v`, which this track may not edit.  Differentially
-confirmed against the C verifier (`bin/verify` accepts all 42 via its
-`g->hops`/`iv_absorb`; `tools/irulesk_prover.py`, a faithful v1-engine
-port, accepts exactly the 32 — a subset, no false positives).
+2. Rule-in-rule application (one level).  Ten of the 42 have a rule
+   whose proof applies an already-validated lower-index rule; without it
+   the replay ratchets over a symbolic-count run (the head crosses it
+   via a multi-step maneuver the engine peels cell-by-cell -- verified
+   by instrumenting the C verifier: rule 2 of
+   `1RB0RA_0RC1LD_1LC0LA_0RD0RB` applies rule 1 at op 5).  This is NOT a
+   new engine op: `check_rulesK` validates rules in index order and
+   threads the already-validated ones into each rule's replay via
+   `ruleK_check`, reusing `ruleK_apply`; `check_rulesK_sound` discharges
+   `replayK_sound`'s per-rule Reach obligation with `ruleK_apply_sound`,
+   so the dependency (strictly lower index) is well-founded.  The
+   corruption tests show it is load-bearing (a dependent rule validated
+   before/without its dependency fails).
 
-    1RB0RA_0RC1LD_1LC0LA_0RD0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
-    1RB0RB_0RC1LD_1LC0LD_1RB0RA   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
-    1RB0RD_0RC1LA_1LC0LA_0RA0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
-    1RB0RD_0RC1LA_1LC0LA_0RB0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
-    1RB0RD_0RC1LA_1LC0LA_0RD0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
-    1RB0RD_0RC1LA_1LC0LA_1LA0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
-    1RB0RD_0RC1LA_1LC0LA_1RB0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
-    1RB0RD_0RC1LD_1LC0LA_0RD0RB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
-    1RB0RD_1LC0LB_1RA1LC_1LC0LC   rule 1 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
-    1RB1LC_0RC0RB_1LD0LA_0RA1LB   rule 2 (-2): symbolic-run cross, v1 engine peels -> unbounded run list
-
-(The 3 `d=-1 only, but v1 engine bound reasoning fails` rows of
-`irules_deferred.tsv` were never in this track's scope and did not
-fall out free.  All 4 `[-3]` machines boarded.)
+Differentially confirmed against the C verifier: `bin/verify` accepts
+all 42; `tools/irulesk_prover.py` (faithful mirror: engine port +
+binding-run applier + rule-in-rule) accepts the same 42 and validates
+all 504 rules across the 428 v1 certs -- no false positives.  (The 3
+`d=-1 only, but v1 engine bound reasoning fails` rows of
+`irules_deferred.tsv` remain out of scope -- a genuine bound-tightening
+gap, not a decrement or rule-in-rule blocker.)

@@ -615,3 +615,88 @@ Qed.
 
 (** Sanity: [Print Assumptions] of the soundness theorem. *)
 (* Print Assumptions ruleK_apply_sound. *)
+
+(** ** Rule validation with rule-in-rule application (one level)
+
+    Validating rule [r] replays it from the fresh-variable start, and
+    may apply ALREADY-VALIDATED rules [prior] (of lower index) just as
+    the meta replay applies rules -- an applied rule's fired set folds
+    into [r]'s.  This is BBB docs/irules2.md "Rule-in-rule application
+    (one level)": the dependencies are recorded in index order and
+    validated first, so [r]'s soundness rests only on lower-index
+    rules' soundness.  A single rule with no applicable dependency
+    replays through the engine alone, identical to [Rules.rule_check].
+    Soundness reuses [ruleK_apply_sound] to discharge [replayK_sound]'s
+    per-rule Reach obligation. *)
+
+Definition ruleK_check (tm : TM) (fuel : nat)
+    (prior : list (Rule * list Tr)) (r : Rule) : option (list Tr) :=
+  match replayK tm (rule_lbs r) prior
+          (fun c => scfg_eqb c (rule_end_cfg r))
+          fuel false (rule_start_cfg r) with
+  | Some (_, F) => Some F
+  | None => None
+  end.
+
+Lemma ruleK_check_sound : forall tm fuel prior r F,
+  (forall r' F', In (r', F') prior -> rule_sem tm r' F') ->
+  ruleK_check tm fuel prior r = Some F -> rule_sem tm r F.
+Proof.
+  intros tm fuel prior r F Hprior H u Hu.
+  unfold ruleK_check in H.
+  destruct (replayK tm (rule_lbs r) prior
+              (fun c => scfg_eqb c (rule_end_cfg r))
+              fuel false (rule_start_cfg r)) as [[cend F']|] eqn:Hrep;
+    [|discriminate].
+  injection H as <-.
+  destruct (replayK_sound tm (rule_lbs r) prior _ fuel false
+              (rule_start_cfg r) cend F' Hrep u Hu
+              (fun r0 Fr c1 c2 Hin Happ =>
+                 ruleK_apply_sound tm (rule_lbs r) r0 Fr c1 c2 Happ
+                   (Hprior r0 Fr Hin) u Hu))
+    as (Hend & n & HR & Hpos).
+  exists n. split; [apply Hpos; reflexivity|].
+  rewrite <- (scfg_eqb_asem cend (rule_end_cfg r) u Hend). exact HR.
+Qed.
+
+Fixpoint check_rulesK_aux (tm : TM) (fuel : nat)
+    (acc : list (Rule * list Tr)) (rules : list Rule)
+  : option (list (Rule * list Tr)) :=
+  match rules with
+  | [] => Some acc
+  | r :: rest =>
+      match ruleK_check tm fuel acc r with
+      | Some F => check_rulesK_aux tm fuel (acc ++ [(r, F)]) rest
+      | None => None
+      end
+  end.
+
+Definition check_rulesK (tm : TM) (fuel : nat) (rules : list Rule)
+  : option (list (Rule * list Tr)) :=
+  check_rulesK_aux tm fuel [] rules.
+
+Lemma check_rulesK_aux_sound : forall tm fuel rules acc vrules,
+  check_rulesK_aux tm fuel acc rules = Some vrules ->
+  (forall r F, In (r, F) acc -> rule_sem tm r F) ->
+  forall r F, In (r, F) vrules -> rule_sem tm r F.
+Proof.
+  intros tm fuel rules. induction rules as [|r0 rest IH];
+    intros acc vrules H Hacc; simpl in H.
+  - injection H as <-. exact Hacc.
+  - destruct (ruleK_check tm fuel acc r0) as [F0|] eqn:Hc;
+      [|discriminate].
+    apply (IH (acc ++ [(r0, F0)]) vrules H).
+    intros r F Hin. apply in_app_or in Hin as [Hin | Hin].
+    + apply Hacc; exact Hin.
+    + destruct Hin as [Heq | []]. injection Heq as <- <-.
+      exact (ruleK_check_sound tm fuel acc r0 F0 Hacc Hc).
+Qed.
+
+Theorem check_rulesK_sound : forall tm fuel rules vrules,
+  check_rulesK tm fuel rules = Some vrules ->
+  forall r F, In (r, F) vrules -> rule_sem tm r F.
+Proof.
+  intros tm fuel rules vrules H.
+  apply (check_rulesK_aux_sound tm fuel rules [] vrules H).
+  intros r F [].
+Qed.

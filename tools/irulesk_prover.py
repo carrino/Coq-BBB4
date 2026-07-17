@@ -419,17 +419,20 @@ def replayK(tm, lo, rules, endt, fuel, stepped, c):
         stepped = True
     return None
 
-def rule_check(tm, fuel, r):
+def rule_check(tm, fuel, prior, r):
+    # rule-in-rule (one level): validating rule r may apply the
+    # already-validated rules `prior` (lower index), exactly as the
+    # meta replay applies rules.  An applied rule's fired set folds in.
     start = rule_start_cfg(r)
     end = rule_end_cfg(r)
-    res = replayK(tm, rule_lbs(r), [], (lambda cc: scfg_eqb(cc, end)),
+    res = replayK(tm, rule_lbs(r), prior, (lambda cc: scfg_eqb(cc, end)),
                   fuel, False, start)
     return None if res is None else res[1]
 
 def check_rules(tm, fuel, rules):
     out = []
     for r in rules:
-        F = rule_check(tm, fuel, r)
+        F = rule_check(tm, fuel, out, r)   # out = validated rules of lower index
         if F is None:
             return None
         out.append((r, F))

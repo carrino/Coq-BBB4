@@ -9,15 +9,17 @@
     - the certificate record [IRCert] and its templates
       ([tpl_cfg]/[want_cfg]) and the one-cycle denotation shift
       ([want_shift]);
-    - rule VALIDATION ([check_rules]): the rules of a decrement
-      certificate carry no rule-in-rule dependencies, so validation is
-      a pure engine replay ([rule_check], rules = []) -- identical to
-      v1, hence [Meta.check_rules] and [check_rules_sound] apply as is;
     - the anchor re-simulation and the state-coverage check.
 
-    Only the meta replay and its soundness differ, and there only by
-    the applier.  With a single -1 decrement [replayK] reduces to
-    [Rules.replay] and this checker to [Meta.irules_check_neverqh].
+    Rule VALIDATION uses [RulesK.check_rulesK], NOT [Meta.check_rules]:
+    a decrement certificate MAY carry rule-in-rule dependencies (a
+    later rule's proof applies an already-validated earlier rule -- BBB
+    docs/irules2.md "Rule-in-rule application"), which the v1
+    [Meta.check_rules] (rules = []) cannot replay.  The meta replay and
+    both validations run the general step-size applier ([replayK] /
+    [ruleK_apply]).  With a single -1 decrement and no dependency
+    [replayK] reduces to [Rules.replay] and this checker to
+    [Meta.irules_check_neverqh].
 
     [Print Assumptions irulesk_check_neverqh_sound] is
     [functional_extensionality_dep] only. *)
@@ -36,7 +38,7 @@ Definition irulesk_check_neverqh (tm : TM) (cert : IRCert) (fuel : nat)
   (0 <=? c_kmin cert) && (c_kmin cert <=? c_k0 cert) &&
   (0 <=? c_a cert) &&
   (c_kmin cert <=? c_a cert * c_kmin cert + c_b cert) &&
-  match check_rules tm fuel (c_rules cert) with
+  match check_rulesK tm fuel (c_rules cert) with
   | None => false
   | Some rules =>
       match replayK tm [c_kmin cert] rules
@@ -71,7 +73,7 @@ Proof.
   apply andb_prop in H as [H Ha0].
   apply andb_prop in H as [Hk0 Hkk].
   apply Z.leb_le in Hk0, Hkk, Ha0, Hinward.
-  destruct (check_rules tm fuel (c_rules cert)) as [rules|] eqn:Hcr;
+  destruct (check_rulesK tm fuel (c_rules cert)) as [rules|] eqn:Hcr;
     [|discriminate].
   destruct (replayK tm [c_kmin cert] rules
               (fun c => scfg_eqb c (want_cfg cert))
@@ -108,7 +110,7 @@ Proof.
       as (Hend & n & HR & Hpos).
     { intros r Fr c1 c2 Hin Happ.
       exact (ruleK_apply_sound tm [c_kmin cert] r Fr c1 c2 Happ
-               (check_rules_sound tm fuel _ _ Hcr r Fr Hin)
+               (check_rulesK_sound tm fuel _ _ Hcr r Fr Hin)
                (fun _ => K) Hb). }
     exists n. split; [apply Hpos; reflexivity|].
     setoid_rewrite (scfg_eqb_asem cend (want_cfg cert)

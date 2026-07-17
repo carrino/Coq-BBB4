@@ -68,6 +68,60 @@ Qed.
 Theorem irk_1RB0RA_0RC1LD_1LC0LA_0RC0RD_nonhalt : NonHalt tmk_1RB0RA_0RC1LD_1LC0LA_0RC0RD.
 Proof. apply never_qh_nonhalt, irk_1RB0RA_0RC1LD_1LC0LA_0RC0RD_never_quasihalts. Qed.
 
+(** ** 1RB0RA_0RC1LD_1LC0LA_0RD0RB: anchor 2796170, k0 1023, map k -> 2*k+1, 3 rule(s) *)
+Definition tmk_1RB0RA_0RC1LD_1LC0LA_0RD0RB : TM := fun q s =>
+  match q, s with
+  | StA, S0 => mk S1 DR StB
+  | StA, S1 => mk S0 DR StA
+  | StB, S0 => mk S0 DR StC
+  | StB, S1 => mk S1 DL StD
+  | StC, S0 => mk S1 DL StC
+  | StC, S1 => mk S0 DL StA
+  | StD, S0 => mk S0 DR StD
+  | StD, S1 => mk S0 DR StB
+  end.
+Definition certk_1RB0RA_0RC1LD_1LC0LA_0RD0RB : IRCert := mkIRCert
+  2796170%nat (1023) (1) (2) (1) StA S0
+  []
+  [(S0, 0, 1); (S1, 2, 0)]
+  [mkRule StB S0 [(S1, RV (1) (1))] [(S1, RV (-1) (2))];
+   mkRule StD S1 [(S0, RV (1) (1)); (S1, RV (0) (1))] [(S1, RV (-1) (2))];
+   mkRule StC S0 [(S0, RV (4) (1)); (S1, RV (-2) (3))] []].
+Theorem irk_1RB0RA_0RC1LD_1LC0LA_0RD0RB_never_quasihalts : NeverQuasiHaltsSt tmk_1RB0RA_0RC1LD_1LC0LA_0RD0RB.
+Proof.
+  apply (irulesk_check_neverqh_sound tmk_1RB0RA_0RC1LD_1LC0LA_0RD0RB certk_1RB0RA_0RC1LD_1LC0LA_0RD0RB 300000).
+  vm_compute. reflexivity.
+Qed.
+Theorem irk_1RB0RA_0RC1LD_1LC0LA_0RD0RB_nonhalt : NonHalt tmk_1RB0RA_0RC1LD_1LC0LA_0RD0RB.
+Proof. apply never_qh_nonhalt, irk_1RB0RA_0RC1LD_1LC0LA_0RD0RB_never_quasihalts. Qed.
+
+(** ** 1RB0RB_0RC1LD_1LC0LD_1RB0RA: anchor 1042485, k0 511, map k -> 2*k+1, 3 rule(s) *)
+Definition tmk_1RB0RB_0RC1LD_1LC0LD_1RB0RA : TM := fun q s =>
+  match q, s with
+  | StA, S0 => mk S1 DR StB
+  | StA, S1 => mk S0 DR StB
+  | StB, S0 => mk S0 DR StC
+  | StB, S1 => mk S1 DL StD
+  | StC, S0 => mk S1 DL StC
+  | StC, S1 => mk S0 DL StD
+  | StD, S0 => mk S1 DR StB
+  | StD, S1 => mk S0 DR StA
+  end.
+Definition certk_1RB0RB_0RC1LD_1LC0LD_1RB0RA : IRCert := mkIRCert
+  1042485%nat (511) (2) (2) (1) StD S0
+  []
+  [(S0, 0, 1); (S1, 2, 0)]
+  [mkRule StB S0 [(S1, RV (1) (1))] [(S1, RV (-1) (2))];
+   mkRule StD S1 [(S0, RV (1) (1)); (S1, RV (0) (1))] [(S1, RV (-1) (3))];
+   mkRule StC S0 [(S0, RV (4) (2)); (S1, RV (-2) (3))] []].
+Theorem irk_1RB0RB_0RC1LD_1LC0LD_1RB0RA_never_quasihalts : NeverQuasiHaltsSt tmk_1RB0RB_0RC1LD_1LC0LD_1RB0RA.
+Proof.
+  apply (irulesk_check_neverqh_sound tmk_1RB0RB_0RC1LD_1LC0LD_1RB0RA certk_1RB0RB_0RC1LD_1LC0LD_1RB0RA 300000).
+  vm_compute. reflexivity.
+Qed.
+Theorem irk_1RB0RB_0RC1LD_1LC0LD_1RB0RA_nonhalt : NonHalt tmk_1RB0RB_0RC1LD_1LC0LD_1RB0RA.
+Proof. apply never_qh_nonhalt, irk_1RB0RB_0RC1LD_1LC0LD_1RB0RA_never_quasihalts. Qed.
+
 (** ** 1RB0RC_0LC0LB_0LD1LC_1RD1RA: anchor 2106310, k0 1023, map k -> 2*k+1, 1 rule(s) *)
 Definition tmk_1RB0RC_0LC0LB_0LD1LC_1RD1RA : TM := fun q s =>
   match q, s with
@@ -169,55 +223,3 @@ Proof.
 Qed.
 Theorem irk_1RB0RD_0LC0RC_1LC1LA_0RC0RD_nonhalt : NonHalt tmk_1RB0RD_0LC0RC_1LC1LA_0RC0RD.
 Proof. apply never_qh_nonhalt, irk_1RB0RD_0LC0RC_1LC1LA_0RC0RD_never_quasihalts. Qed.
-
-(** ** 1RB0RD_0RC0RB_1LC0LA_0RA0RB: anchor 1404188, k0 1023, map k -> 2*k+1, 2 rule(s) *)
-Definition tmk_1RB0RD_0RC0RB_1LC0LA_0RA0RB : TM := fun q s =>
-  match q, s with
-  | StA, S0 => mk S1 DR StB
-  | StA, S1 => mk S0 DR StD
-  | StB, S0 => mk S0 DR StC
-  | StB, S1 => mk S0 DR StB
-  | StC, S0 => mk S1 DL StC
-  | StC, S1 => mk S0 DL StA
-  | StD, S0 => mk S0 DR StA
-  | StD, S1 => mk S0 DR StB
-  end.
-Definition certk_1RB0RD_0RC0RB_1LC0LA_0RA0RB : IRCert := mkIRCert
-  1404188%nat (1023) (2) (2) (1) StA S0
-  []
-  [(S0, 0, 1); (S1, 2, 0)]
-  [mkRule StB S0 [(S1, RV (1) (1))] [(S1, RV (-1) (2))];
-   mkRule StC S0 [(S0, RV (4) (2)); (S1, RV (-2) (3))] []].
-Theorem irk_1RB0RD_0RC0RB_1LC0LA_0RA0RB_never_quasihalts : NeverQuasiHaltsSt tmk_1RB0RD_0RC0RB_1LC0LA_0RA0RB.
-Proof.
-  apply (irulesk_check_neverqh_sound tmk_1RB0RD_0RC0RB_1LC0LA_0RA0RB certk_1RB0RD_0RC0RB_1LC0LA_0RA0RB 300000).
-  vm_compute. reflexivity.
-Qed.
-Theorem irk_1RB0RD_0RC0RB_1LC0LA_0RA0RB_nonhalt : NonHalt tmk_1RB0RD_0RC0RB_1LC0LA_0RA0RB.
-Proof. apply never_qh_nonhalt, irk_1RB0RD_0RC0RB_1LC0LA_0RA0RB_never_quasihalts. Qed.
-
-(** ** 1RB0RD_0RC0RB_1LC0LA_0RB---: anchor 1404188, k0 1023, map k -> 2*k+1, 2 rule(s) *)
-Definition tmk_1RB0RD_0RC0RB_1LC0LA_0RBXXX : TM := fun q s =>
-  match q, s with
-  | StA, S0 => mk S1 DR StB
-  | StA, S1 => mk S0 DR StD
-  | StB, S0 => mk S0 DR StC
-  | StB, S1 => mk S0 DR StB
-  | StC, S0 => mk S1 DL StC
-  | StC, S1 => mk S0 DL StA
-  | StD, S0 => mk S0 DR StB
-  | StD, S1 => None
-  end.
-Definition certk_1RB0RD_0RC0RB_1LC0LA_0RBXXX : IRCert := mkIRCert
-  1404188%nat (1023) (1) (2) (1) StA S0
-  []
-  [(S0, 0, 1); (S1, 2, 0)]
-  [mkRule StB S0 [(S1, RV (1) (1))] [(S1, RV (-1) (2))];
-   mkRule StC S0 [(S0, RV (4) (1)); (S1, RV (-2) (3))] []].
-Theorem irk_1RB0RD_0RC0RB_1LC0LA_0RBXXX_never_quasihalts : NeverQuasiHaltsSt tmk_1RB0RD_0RC0RB_1LC0LA_0RBXXX.
-Proof.
-  apply (irulesk_check_neverqh_sound tmk_1RB0RD_0RC0RB_1LC0LA_0RBXXX certk_1RB0RD_0RC0RB_1LC0LA_0RBXXX 300000).
-  vm_compute. reflexivity.
-Qed.
-Theorem irk_1RB0RD_0RC0RB_1LC0LA_0RBXXX_nonhalt : NonHalt tmk_1RB0RD_0RC0RB_1LC0LA_0RBXXX.
-Proof. apply never_qh_nonhalt, irk_1RB0RD_0RC0RB_1LC0LA_0RBXXX_never_quasihalts. Qed.

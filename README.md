@@ -445,11 +445,11 @@ computing `false`).
 <!-- --- irules multi-decrement track --- -->
 ### IRules multi-decrement track (general step-size decrements)
 
-32 of the 42 `certs_modclass` v3 irules holdouts whose blocker was the
+All 42 `certs_modclass` v3 irules holdouts whose blocker was the
 decrement step size are boarded: `irk_<machine>_never_quasihalts :
 NeverQuasiHaltsSt` + `irk_<machine>_nonhalt` corollaries in
-`theories/Machines/IRulesK_Batch_{01..04}.v`, rows in
-`tools/irulesk_manifest.tsv`, coverage 3587 -> 3619, axiom footprint
+`theories/Machines/IRulesK_Batch_{01..06}.v`, rows in
+`tools/irulesk_manifest.tsv`, coverage 3587 -> 3629, axiom footprint
 `functional_extensionality_dep` only.
 
 The v1 rule applier (`theories/Checkers/IRules/Rules.v`,
@@ -470,26 +470,29 @@ drop a decrement reaching the constant 0); with a single `-1`
 decrement it reduces to the v1 semantics.  The whole file reuses the
 v1 rule type and denotation machinery (`vvals`, `rstart`/`rend`,
 `rule_sem`, `scfg_eqb`) and edits none of
-`Expr`/`RLE`/`Engine`/`Rules`/`Meta`; rule validation carries no
-rule-in-rule dependencies here, so `MetaK` reuses `Meta.check_rules`
-and the anchor/coverage checks unchanged.
+`Expr`/`RLE`/`Engine`/`Rules`/`Meta`.
+
+Ten of the 42 also need **rule-in-rule application** (BBB
+`docs/irules2.md` "Rule-in-rule application, one level"): a later
+rule's proof applies an already-validated earlier rule.  Without it
+that rule's replay ratchets over a symbolic-count run and never closes
+(the head crosses it via a multi-step maneuver the engine peels
+cell-by-cell).  This is NOT a new engine op — it reuses `ruleK_apply`.
+`RulesK.check_rulesK` validates the rules in index order, threading the
+already-validated ones (of lower index) into each rule's replay via
+`ruleK_check`; `check_rulesK_sound` is a direct induction discharging
+`replayK_sound`'s per-rule Reach obligation with `ruleK_apply_sound`.
+`MetaK` runs `check_rulesK` (not `Meta.check_rules`); the anchor and
+coverage checks are still reused from `Meta` unchanged.
 
 `tools/irulesk_prover.py` is the untrusted Python mirror (a faithful
-port of the symbolic engine + the binding-run applier; it validates
-all 504 rules across the 428 v1 certs, and its 32 accepts are a subset
-of the C verifier's accepts — no false positives).
+port of the symbolic engine + the binding-run applier + rule-in-rule
+validation; it validates all 504 rules across the 428 v1 certs, and its
+42 accepts equal the C verifier's accepts — no false positives).
 `tools/gen_irulesk_certs.py` re-validates each machine through that
 mirror before emitting the batch.  Negative controls:
 `theories/Tests/IRulesKBatch_Corruption.v` (binding run at a
 non-dividing run, `lb` below the step so the drain goes negative,
 survive-R-rounds over-count, transition mutant, delta demoted to `-1`,
-all computing `false`).
-
-The remaining 10 of the 42 are deferred (see `NEXT_SESSION.md`): each
-is tagged `[-2]` but ALSO needs a v3 ENGINE feature (block-level chain
-hop / canonical re-blocking) in a decrement rule's validation — the
-head crosses a symbolic-count run via a multi-step ratcheting maneuver
-that the v1 engine peels cell-by-cell, growing the run list without
-bound so it never recurs to the fixed end shape.  Fixing them needs a
-new engine op, out of scope for a track built on the unmodified
-`Engine.v`.
+and rule-in-rule dependency reordered / dropped, all computing
+`false`).
