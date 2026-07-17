@@ -1064,3 +1064,124 @@ Proof.
     rewrite Hpt, nthb_app_l in H0 by assumption.
     congruence.
 Qed.
+
+(** *** The arrival cell and the two witness bits, read off a side *)
+
+Definition arr_s2 (b : list Sym) (items : list ritem) : Sym :=
+  match b with
+  | x :: _ => x
+  | [] => match items with
+          | it :: _ => hd S0 (it_w it)
+          | [] => S0
+          end
+  end.
+
+Definition arr_nbb (b : list Sym) (items : list ritem) : bool :=
+  match b with
+  | _ :: b' => negb (word_blank b') || items_nb items
+  | [] => match items with
+          | it :: rest =>
+              negb (word_blank (tl (it_w it)))
+              || ((2 <=? it_c it) || it_cap it)
+                 && negb (word_blank (it_w it))
+              || items_nb rest
+          | [] => false
+          end
+  end.
+
+Definition dep_nbb (b : list Sym) (items : list ritem) : bool :=
+  negb (word_blank b) || items_nb items.
+
+Lemma wrep_blank_pos : forall w k,
+  1 <= k -> word_blank (wrep w k) = word_blank w.
+Proof.
+  intros w k Hk. destruct k as [|k]; [lia|].
+  clear Hk. induction k as [|k IH].
+  - unfold wrep; simpl. rewrite app_nil_r. reflexivity.
+  - rewrite wrep_S, word_blank_app, IH.
+    destruct (word_blank w); reflexivity.
+Qed.
+
+Lemma dep_nbb_eq : forall b items ext (cl : list Sym),
+  Forall item_wf items -> items_den items ext ->
+  (forall i, nthb cl i = nthb (b ++ ext) i) ->
+  dep_nbb b items = negb (word_blank cl).
+Proof.
+  intros b items ext cl Hwf Hden Hpt.
+  unfold dep_nbb.
+  rewrite (side_blank b items ext cl Hwf Hden Hpt).
+  destruct (word_blank b), (items_nb items); reflexivity.
+Qed.
+
+Lemma arr_s2_eq : forall b items ext (cl : list Sym),
+  Forall item_wf items -> items_den items ext ->
+  (forall i, nthb cl i = nthb (b ++ ext) i) ->
+  arr_s2 b items = chd cl.
+Proof.
+  intros b items ext cl Hwf Hden Hpt.
+  rewrite chd_nthb, Hpt.
+  destruct b as [|x b']; [| reflexivity].
+  cbn [app].
+  destruct items as [| [w c cap] rest].
+  - inversion Hden; subst. reflexivity.
+  - inversion Hden as [| ? ? ? k ? ext0 Hk Hrest]; subst.
+    inversion Hwf as [| ? ? Hit _]; subst.
+    destruct Hit as (Hc & _ & Hw); simpl in Hc, Hw.
+    assert (Hk1 : 1 <= k) by (destruct cap; lia).
+    destruct k as [|k']; [lia|].
+    rewrite wrep_S, <- app_assoc.
+    destruct w as [|y w']; [congruence | reflexivity].
+Qed.
+
+Lemma arr_nbb_eq : forall b items ext (cl : list Sym),
+  Forall item_wf items -> items_den items ext ->
+  (forall i, nthb cl i = nthb (b ++ ext) i) ->
+  arr_nbb b items = negb (word_blank (ctl cl)).
+Proof.
+  intros b items ext cl Hwf Hden Hpt.
+  assert (Hpt' : forall i, nthb (ctl cl) i = nthb cl (S i))
+    by (intro i; apply ctl_nthb).
+  destruct b as [|x b'].
+  - cbn [app] in Hpt.
+    destruct items as [| [w c cap] rest].
+    + inversion Hden; subst.
+      cbn [arr_nbb].
+      assert (Hbl : word_blank (ctl cl) = true).
+      { apply all_blank_word. intro i.
+        rewrite Hpt', Hpt. apply nthb_nil. }
+      rewrite Hbl. reflexivity.
+    + inversion Hden as [| ? ? ? k ? ext0 Hk Hrest]; subst.
+      inversion Hwf as [| ? ? Hit Hwfr]; subst.
+      destruct Hit as (Hc & Hcap & Hw); simpl in Hc, Hcap, Hw.
+      assert (Hk1 : 1 <= k) by (destruct cap; lia).
+      destruct k as [|k']; [lia|].
+      destruct w as [|y w']; [congruence|].
+      cbn [arr_nbb it_w it_c it_cap tl].
+      assert (Hct : forall i,
+        nthb (ctl cl) i = nthb ((w' ++ wrep (y :: w') k') ++ ext0) i).
+      { intro i. rewrite Hpt', Hpt.
+        rewrite wrep_S, <- app_assoc.
+        cbn [app]. rewrite <- app_assoc. reflexivity. }
+      rewrite (side_blank (w' ++ wrep (y :: w') k') rest ext0 (ctl cl)
+                 Hwfr Hrest Hct).
+      rewrite word_blank_app.
+      destruct ((2 <=? c) || cap) eqn:Hbit.
+      * assert (Hk2 : 1 <= k').
+        { apply orb_prop in Hbit as [H2 | Hcp].
+          - apply Nat.leb_le in H2. destruct cap; lia.
+          - specialize (Hcap Hcp). subst cap. lia. }
+        rewrite (wrep_blank_pos (y :: w') k' Hk2).
+        destruct (word_blank w'), (word_blank (y :: w')),
+                 (items_nb rest); reflexivity.
+      * assert (Hk0 : k' = 0).
+        { apply orb_false_iff in Hbit as [H2 Hcp].
+          apply Nat.leb_gt in H2. subst cap. lia. }
+        subst k'.
+        rewrite wrep_0.
+        destruct (word_blank w'), (items_nb rest); reflexivity.
+  - cbn [arr_nbb].
+    assert (Hct : forall i, nthb (ctl cl) i = nthb (b' ++ ext) i).
+    { intro i. rewrite Hpt', Hpt. reflexivity. }
+    rewrite (side_blank b' items ext (ctl cl) Hwf Hden Hct).
+    destruct (word_blank b'), (items_nb items); reflexivity.
+Qed.
