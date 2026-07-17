@@ -41,14 +41,34 @@ Definition ng_rungs_census : list (nat * nat) :=
 Definition rank_rungs_census : list (nat * nat) :=
   [(3, 0); (3, 64); (3, 256); (3, 1024)].
 
+(** the wrapped-QHBound tiers' ladder (mirrored by
+    tools/sweep_qhbound_residue.py and tools/sweep_qhbound_lex.py;
+    the measured catches all live at n <= 4, t <= 1024) *)
+Definition qhb_rungs_census : list (nat * nat) :=
+  [(2, 64); (2, 256); (2, 1024);
+   (3, 64); (3, 256); (3, 1024);
+   (4, 64); (4, 256); (4, 1024)].
+
+(** the RepWL tier's (L, T, t) ladder (mirrored by
+    tools/sweep_repwl_residue.py) *)
+Definition rw_rungs_census : list (nat * nat * nat) :=
+  [(2, 2, 0); (2, 2, 64); (2, 2, 256); (2, 2, 1024);
+   (2, 3, 0); (2, 3, 64); (2, 3, 256); (2, 3, 1024);
+   (3, 2, 0); (3, 2, 64); (3, 2, 256); (3, 2, 1024);
+   (4, 2, 0); (4, 2, 64); (4, 2, 256); (4, 2, 1024)].
+
+Definition rw_fuel_census : nat := 200000.
+
 Definition decider : QHDecider :=
   decide_easy B_census 130 512 200000 512 ng_rungs_census
-              rank_rungs_census (dmap_of D_census).
+              rank_rungs_census qhb_rungs_census rw_rungs_census
+              rw_fuel_census (dmap_of D_census).
 
 Lemma decider_WF : QHDecider_WF B_census D_census decider.
 Proof.
   exact (decide_easy_WF B_census D_census 130 512 200000 512
-           ng_rungs_census rank_rungs_census).
+           ng_rungs_census rank_rungs_census qhb_rungs_census
+           rw_rungs_census rw_fuel_census).
 Qed.
 
 (** ** The root and its symmetrized first level *)

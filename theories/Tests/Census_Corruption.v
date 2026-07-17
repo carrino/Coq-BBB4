@@ -121,21 +121,21 @@ Definition rungs_t : list (nat * nat) := [(2, 100); (3, 200)].
 Definition rrungs_t : list (nat * nat) := [(3, 0)].
 
 Example pipe_halt :
-  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t (dmap_of [])
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
     (fun _ _ => None) = R_Halt StA S0.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_spin :
-  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t (dmap_of [])
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
     spin0 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_runner :
-  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t (dmap_of [])
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
     run1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_qh_leaf :
-  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t (dmap_of [])
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
     qh1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.

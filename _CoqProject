@@ -19,6 +19,7 @@ theories/Checkers/Wrap.v
 theories/Checkers/Fuel.v
 theories/Census/TNF_QH.v
 theories/Census/RankSearch.v
+theories/Census/RepWLSearch.v
 theories/Census/Decide.v
 theories/Census/Deferred_Defs.v
 theories/Census/Deferred_00.v
