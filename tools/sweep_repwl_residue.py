@@ -3,18 +3,23 @@
 
 The 31,758 machines of tools/wrap_residue_survivors.txt are the
 census residue's hard never-QH core (wrap-QH machines excluded).  The
-planned census RepWL tier is parameter-closed: fixed (L, T) block /
-threshold rungs, prefix rungs t, and the in-Coq rules-(a)/(b) search
-over the five built-in measures (no per-machine certificates).  This
-sweep mirrors that tier exactly through tools/repwl_prover.decide
-(the Python mirror of Checkers/RepWL.v) with per_state = {} -- a
-machine counts as caught only if the built-in measure vocabulary
-discharges every state, which is what the in-Coq search can find.
+planned census RepWL tier is parameter-closed: fixed (L, T, t) block /
+threshold / prefix rungs and the in-Coq rules-(a)/(b) search over the
+five built-in measures (no per-machine certificates).  This sweep
+mirrors that tier exactly through tools/repwl_prover.py (the Python
+mirror of Checkers/RepWL.v) with per_state = {} -- a machine counts
+as caught only if the built-in measure vocabulary discharges every
+state, which is what the in-Coq search can find.
 
-Writes repwl_residue_caught.tsv (machine, L, T, t, nseen) and
-repwl_residue_survivors.txt, plus a per-rung kill histogram on
-stdout.  Machines whose closure exceeds the node cap at every rung
-are survivors (the census walk cannot afford unbounded closures).
+The node cap mirrors the census tier's closure fuel budget: the walk
+pays up to [fuel] pops per FAILING rung, so catches needing closures
+beyond the cap are not worth their walk cost and stay deferred.
+Rungs run t=0 across the (L, T) grid first (cheapest, and measured to
+carry most of the yield), then the t > 0 variants; the recorded
+first-catch rung feeds the census ladder's ordering.
+
+Results stream to the output TSV as they arrive (crash-safe); re-runs
+resume past already-swept machines.
 
 Usage: sweep_repwl_residue.py [SURVIVORS_TXT] [OUT_DIR] [NPROC]
 """
@@ -26,39 +31,34 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import repwl_prover as rp
 
-# (L, T) rungs in measured coverage-per-cost order; t rungs mirror the
-# rank tier's ladder (Census/Run.v rank_rungs_census).
-RUNGS = ((2, 2), (2, 3), (3, 2), (4, 2))
-T_CANDS = (0, 64, 256, 1024)
-CAP = 50000
+RUNGS = [(2, 2, 0), (2, 3, 0), (3, 2, 0), (4, 2, 0),
+         (2, 2, 64), (2, 3, 64), (3, 2, 64), (4, 2, 64),
+         (2, 2, 256), (2, 3, 256), (3, 2, 256), (4, 2, 256),
+         (2, 2, 1024), (2, 3, 1024), (3, 2, 1024), (4, 2, 1024)]
+CAP = 15000
 
 
-def try_rung(tbl, L, T):
-    for t in T_CANDS:
-        r = rp.build_closure(tbl, L, T, t, cap=CAP)
-        if r is None:
-            continue
-        a0, seen = r
-        adj = {a: rp.rw_succs(tbl, L, T, a) for a in seen}
-        states = sorted({a[0] for a in seen} | rp.warmup_states(tbl, t))
-        ok = True
-        for qq in states:
-            comps = rp.procedure(tbl, seen, adj, qq, rp.MEAS)
-            if comps is None or not rp.lex_check(tbl, adj, seen, qq, comps):
-                ok = False
-                break
-        if ok:
-            return t, len(seen)
-    return None
+def try_rung(tbl, L, T, t):
+    r = rp.build_closure(tbl, L, T, t, cap=CAP)
+    if r is None:
+        return None
+    a0, seen = r
+    adj = {a: rp.rw_succs(tbl, L, T, a) for a in seen}
+    states = sorted({a[0] for a in seen} | rp.warmup_states(tbl, t))
+    for qq in states:
+        comps = rp.procedure(tbl, seen, adj, qq, rp.MEAS)
+        if comps is None or not rp.lex_check(tbl, adj, seen, qq, comps):
+            return None
+    return len(seen)
 
 
 def work(m):
     try:
         tbl = rp.parse(m)
-        for (L, T) in RUNGS:
-            r = try_rung(tbl, L, T)
-            if r is not None:
-                return (m, L, T, r[0], r[1])
+        for (L, T, t) in RUNGS:
+            ns = try_rung(tbl, L, T, t)
+            if ns is not None:
+                return (m, L, T, t, ns)
         return (m, None, None, None, None)
     except Exception as e:
         return (m, "ERR", repr(e), None, None)
@@ -69,44 +69,34 @@ def main():
         HERE, "wrap_residue_survivors.txt")
     outdir = sys.argv[2] if len(sys.argv) > 2 else HERE
     nproc = int(sys.argv[3]) if len(sys.argv) > 3 else 4
-    limit = int(sys.argv[4]) if len(sys.argv) > 4 else 0
-    machines = [l.strip() for l in open(src) if l.strip()]
-    if limit:
-        machines = machines[:limit]
-    caught = []
-    survivors = []
-    errs = []
-    hist = {}
-    with mp.Pool(nproc) as pool:
+    out_path = os.path.join(outdir, "repwl_sweep_stream.tsv")
+    done = set()
+    if os.path.exists(out_path):
+        with open(out_path) as f:
+            for line in f:
+                if line.strip():
+                    done.add(line.split("\t")[0])
+    machines = [l.strip() for l in open(src)
+                if l.strip() and l.strip() not in done]
+    print(f"sweeping {len(machines)} (skipping {len(done)} done)",
+          flush=True)
+    ncaught = 0
+    with open(out_path, "a") as out, mp.Pool(nproc) as pool:
         for i, r in enumerate(pool.imap_unordered(work, machines,
-                                                  chunksize=8)):
-            m = r[0]
-            if r[1] is None:
-                survivors.append(m)
-            elif r[1] == "ERR":
-                errs.append((m, r[2]))
-                survivors.append(m)
+                                                  chunksize=4)):
+            m, L, T, t, ns = r
+            if L is None:
+                out.write(f"{m}\tmiss\t\t\t\n")
+            elif L == "ERR":
+                out.write(f"{m}\terr\t{T}\t\t\n")
             else:
-                caught.append(r)
-                hist[(r[1], r[2], r[3])] = hist.get((r[1], r[2], r[3]), 0) + 1
-            if (i + 1) % 2000 == 0:
-                print(f"{i+1}/{len(machines)} caught={len(caught)} "
-                      f"survive={len(survivors)}", flush=True)
-    caught.sort()
-    survivors.sort()
-    with open(os.path.join(outdir, "repwl_residue_caught.tsv"), "w") as f:
-        f.write("machine\tL\tT\tt\tnseen\n")
-        for m, L, T, t, ns in caught:
-            f.write(f"{m}\t{L}\t{T}\t{t}\t{ns}\n")
-    open(os.path.join(outdir, "repwl_residue_survivors.txt"), "w").write(
-        "\n".join(survivors) + ("\n" if survivors else ""))
-    print("rung histogram (L,T,t -> kills):")
-    for k in sorted(hist):
-        print(f"  {k}: {hist[k]}")
-    for m, e in errs[:20]:
-        print(f"ERR {m}: {e}")
-    print(f"DONE total={len(machines)} caught={len(caught)} "
-          f"survivors={len(survivors)} errs={len(errs)}")
+                ncaught += 1
+                out.write(f"{m}\thit\t{L},{T},{t}\t{ns}\t\n")
+            out.flush()
+            if (i + 1) % 1000 == 0:
+                print(f"{i+1}/{len(machines)} caught={ncaught}", flush=True)
+    print(f"DONE swept={len(machines)} caught_this_run={ncaught}",
+          flush=True)
 
 
 if __name__ == "__main__":

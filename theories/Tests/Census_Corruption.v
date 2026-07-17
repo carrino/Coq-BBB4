@@ -8,7 +8,8 @@
 From Coq Require Import Arith Bool List.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Checkers Require Import NGram.
-From BBB4.Census Require Import TNF_QH Decide Deferred_Defs RankSearch.
+From BBB4.Census Require Import TNF_QH Decide Deferred_Defs RankSearch
+  RepWLSearch.
 Import ListNotations.
 
 Definition T (w : Sym) (d : Dir) (n : St) := Some (mkTrans w d n).
@@ -138,4 +139,70 @@ Proof. vm_compute. reflexivity. Qed.
 Example pipe_qh_leaf :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
     qh1 = R_Leaf.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** The wrapped-QHBound and RepWL tiers *)
+
+(* 0RB---_0LC---_0LD1LC_1RC1LD: wrap-QH, plain acyclicity gate
+   (tools/qhbound_caught.tsv row 1: quiet B, s=1, n=2, t=64) *)
+Definition qhbm : TM :=
+  mk8 (T S0 DR StB) None (T S0 DL StC) None
+      (T S0 DL StD) (T S1 DL StC) (T S1 DR StC) (T S1 DL StD).
+
+(* 0RB---_0LC---_1LD1RC_1RC1LD: wrap-QH, needs the lex gate
+   (tools/qhbound_lex_caught.tsv row 1: quiet B, s=1, n=2, t=64) *)
+Definition qlxm : TM :=
+  mk8 (T S0 DR StB) None (T S0 DL StC) None
+      (T S1 DL StD) (T S1 DR StC) (T S1 DR StC) (T S1 DL StD).
+
+(* 0RB---_0LC0RD_1RD1LB_1RB1LA: never-QH residue-core machine the
+   RepWL tier decides at (L,T,t) = (2,2,0)
+   (tools/repwl_residue_caught.tsv) *)
+Definition rwm : TM :=
+  mk8 (T S0 DR StB) None (T S0 DL StC) (T S0 DR StD)
+      (T S1 DR StD) (T S1 DL StB) (T S1 DR StB) (T S1 DL StA).
+
+Definition qhb_rungs_t : list (nat * nat) := [(2, 64)].
+Definition rw_rungs_t : list (nat * nat * nat) := [(2, 2, 0)].
+
+(* the tiers catch their machines *)
+Example qhb_catches : try_qhb 2000 200000 512 qhb_rungs_t qhbm = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Example qhb_lex_catches : try_qhb 2000 200000 512 qhb_rungs_t qlxm = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Example rw_catches : rw_tier rwm 2 2 0 200000 = true.
+Proof. vm_compute. reflexivity. Qed.
+
+(* a quasihalter must never pass the never-QH RepWL tier (small fuel:
+   the abstraction diverges on it, so the closure is fuel-bounded) *)
+Example rw_rejects_qh : rw_tier qhbm 2 2 0 2000 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* a halting machine must fail the RepWL closure *)
+Example rw_rejects_halt : rw_tier (fun _ _ => None) 2 2 0 2000 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* tampered parameters must fail the checker's gates (1 <= L, 2 <= T) *)
+Example rw_gate_L : rw_tier rwm 0 2 0 2000 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+Example rw_gate_T : rw_tier rwm 2 1 0 2000 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* a never-QH machine must never pass the quasihalting QHBound tier *)
+Example qhb_rejects_neverqh :
+  try_qhb 2000 200000 512 qhb_rungs_t rwm = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* pipeline classification with the new ladders live *)
+Example pipe_qhb :
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
+    rw_rungs_t 2000 (dmap_of []) qhbm = R_QH.
+Proof. vm_compute. reflexivity. Qed.
+
+Example pipe_rw :
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
+    rw_rungs_t 2000 (dmap_of []) rwm = R_NeverQH.
 Proof. vm_compute. reflexivity. Qed.
