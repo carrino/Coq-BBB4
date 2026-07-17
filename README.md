@@ -324,3 +324,78 @@ decrements, v6 block rules, ...) the verified engine does not model
 yet -- see `tools/irules_deferred.tsv` and the NEXT_SESSION
 irules append.  Coq-proven coverage after this block: **3,402 /
 3,713**.
+
+### Fuel track (neverqh_fuel mass-board)
+
+The full family of 62 upstream `neverqh_fuel` holdouts is boarded:
+`nqh_<machine> : NeverQuasiHaltsSt` + `nonhalt_<machine>` corollaries
+in `theories/Machines/Fuel_Batch_{01,02,03}.v`, axiom footprint
+`functional_extensionality_dep` only, rows in
+`tools/fuel_manifest.tsv`.
+
+The boarding took an engine extension (two NEW checker files; the
+merged Fuel.v/FuelClass.v/Closure.v are untouched):
+
+- `theories/Checkers/FuelSCC.v` -- the per-SCC runner rule (c2)
+  integrated into the lexicographic gate: every q-avoiding edge is
+  lex-good OR internal to an untrusted "runner gate" whose nodes all
+  move right with fuel, with every lex component non-increasing
+  across it.  Soundness: the lex tuple never increases along a
+  q-avoiding run, so by well-foundedness lex-good edges stop; the
+  confined tail then drives the right window to zero against the
+  fuel invariant (outer `Acc lexlt` induction + inner window-bound
+  induction; `lexle` threads the bookkeeping).
+- `theories/Checkers/FuelWide.v` -- the class-refined instance
+  promised by Fuel.v's header: contexts `cconf * (fclass * fclass)`
+  with the FuelClass lower-bound classes, deterministic per-step
+  class updates (`finc` the write behind the move, `fdec` the
+  crossed window cell), runner fuel read window-OR-class, exact
+  capped seed classes from the anchor configuration, refined-key
+  certificate tables.
+
+The in-window checker alone provably boards NONE of the 62 (the
+previous session's result, kept in `tools/fuel_deferred.tsv` history:
+every residue was a uniform-direction runner SCC with blank
+movement-side windows -- in-window fuel is subsumed by lex).  The
+generator `tools/gen_fuel_certs.py` searches with the exact Python
+mirror of the refined checker (classes, per-SCC kills, the
+`fw_edge_ok` gate), differential-validates every state's certificate
+out of Coq, and emits the batches; 62/62 land, 54 via the
+`mirror_never_qh` transfer (left-runners), 8 direct.  Negative
+controls: `theories/Tests/FuelBatch_Corruption.v` (both checkers:
+transition mutants, wrong runner-state markings -- erased and swapped
+gates -- gutted rank tables, starved budgets, all computing `false`).
+
+
+### RepWL track (neverqh_rwlrank mass-board)
+
+The full family of 106 upstream `neverqh_rwlrank` holdouts is
+boarded: `nqh_<machine> : NeverQuasiHaltsSt` + `nonhalt_<machine>`
+corollaries in `theories/Machines/RepWL_Batch_{01..04}.v`, rows in
+`tools/repwl_manifest.tsv`, axiom footprint
+`functional_extensionality_dep` only.
+
+The checker is a NEW `Closure.v` engine instance,
+`theories/Checkers/RepWL.v` (`rw_check_neverqh_sound`): whole-tape
+repeated-word-list configurations -- a whole-block buffer around the
+head plus run-length item lists with counts capped at a threshold T
+("T or more") -- with a symmetric single-step relation (fold the
+departed-end block on buffer overflow with a saturating merge, pop
+the arrival side's nearest item with a cap branch), an item-list
+denotation with existential counts for capped items, and the five
+documented measures (N/A, N/L, N/R nonblank counts; 0/l, 0/r
+interior blank counts) whose per-node deltas are proved exact: the
+arrival cell and the "nonblank strictly beyond" witness bits are
+determined by the node because well-formedness forces capped counts
+>= 2 (hence the checker's 2 <= T gate).  No untrusted gram sets --
+the abstraction is self-contained, so certificates are just per-state
+lexicographic component tables over `rconf_enc` keys.
+
+`tools/repwl_prover.py` is the exact Python mirror (seed, step,
+encoding, component semantics); `tools/gen_repwl_certs.py` emits the
+batches.  All 106 land at t=0 with the cert-declared (block,
+threshold) parameters; largest closure 13,994 abstract
+configurations.  Negative controls:
+`theories/Tests/RepWLBatch_Corruption.v` (transition mutant, swapped
+certificates, gutted rank tables, empty certificate, starved budget,
+and the out-of-gate parameters L=0 / T=1, all computing `false`).

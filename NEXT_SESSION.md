@@ -719,3 +719,144 @@ Machine strings:
 1RB1RD_1LC1RB_1LD1LA_1LC0RD
 1RB1RD_1RC1RB_1LD1LA_1LC0RD
 ```
+
+## Fuel track: DONE (62/62 boarded)
+
+The scoping above was executed in the follow-up session: the class
+refinement AND the per-SCC gate both landed as new files
+(`Checkers/FuelSCC.v`, `Checkers/FuelWide.v`; Fuel.v / FuelClass.v /
+Closure.v untouched), and all 62 `neverqh_fuel` holdouts are proved
+(`Machines/Fuel_Batch_{01,02,03}.v`, manifest
+`tools/fuel_manifest.tsv`, coverage 3152 -> 3214).  Key design notes
+for reuse:
+
+- **The runner rule as a lex disjunct, not a peeling stage.**
+  [fscc_edge_ok] = lex-good OR gate-internal-with-every-component-
+  non-increasing.  The emitted certificates keep gate edges
+  "equal" at every component (rank components are computed over the
+  peeling graph PLUS gate edges; rule-(a) components have delta <= 0
+  on residue edges by construction; later measure gates never touch
+  gate nodes since a gate is a full SCC).  The descent proof then
+  needs no peeling-sequence induction: outer well-founded induction
+  on the lex tuple, inner induction on the right-window bound.
+- **Lower-bound classes suffice.**  The C verifier's exact capped
+  counts (with the disjunctive cap split) were not needed: FuelClass
+  F0/F1/F2 lower bounds with deterministic finc/fdec transitions
+  catch all 62, because the runner SCCs cross only window-blank
+  cells (classes constant around the cycles).
+- **The refined instance is plumbing, not proofs.**  fw_succs pairs
+  the base ng_succs branches with ONE class update read off the
+  window; finc_sound/fdec_sound close the covering obligations.
+  Anyone adding another context refinement should copy that shape.
+
+Possible next customer of FuelSCC: the 17 `neverqh_drift` holdouts
+(rule (c3), net-drift SCCs with fuel on the drift side, verify.c
+~4300).  The gate check would swap "every node moves right" for a
+per-SCC Bellman-Ford drift certificate; the record argument changes
+(records via strictly-positive net displacement instead of monotone
+motion), so [runner_find]'s window induction needs a drift variant,
+but the FuelSCC edge-gate/descent skeleton and the FuelWide class
+plumbing should carry over.
+
+## RepWL session 1: DONE (106/106 boarded)
+
+`Checkers/RepWL.v` is complete and sound (`rw_check_neverqh_sound`,
+functional_extensionality_dep only) and all 106 `neverqh_rwlrank`
+holdouts are proved (`Machines/RepWL_Batch_{01..04}.v`,
+`tools/repwl_manifest.tsv`; coverage 3464 -> 3570 of 3713, the
+rwlrank family cleared).  What remains of the original two-session
+plan is SESSION 2 ONLY: wire `rw_check_neverqh` into the census
+`decide_easy` as a tier (plus the wrap/QHBound tier), sweep the
+31,758 wrap-survivor residue with `tools/repwl_prover.py` to measure
+the kill rate, regenerate `Deferred_*`, and re-run `make census`
+once for both tiers.  Remaining holdout families after this board:
+102 irules-deferred, 17 neverqh_drift (FuelSCC gate + a (c3) drift
+descent variant), the counters tail (wave 6, tower 4, xd 3, ...),
+and the 1 upstream-open machine.
+
+## Next: the RepWL port (two sessions)
+
+Highest-leverage block left, paying on both ledgers: the 106
+`neverqh_rwlrank` holdouts AND the ~25-30k RepWL-class machines that
+dominate the 52,326-machine census residue.  Derisked by three
+existing artifacts: Coq-BB5 ships a BB4-flavored `Decider_RepWL.v`
+(1,320 lines, `../Coq-BB5/CoqBB5/BB4/Deciders/`, with the
+`RepW_match`/`RepWL_match` concretization relations and the closed-set
+construction proved); the `Closure.v` engine is generic over the
+abstraction (plug in context type + injective enc + `succs`/`covers`
+and ranks, the lex gate, and the FuelSCC runner gate all come free);
+and the rwlrank measure vocabulary is small and documented
+(`../BBB/docs/neverqh.md`: `N/A,N/L,N/R` block counts + `0/l,0/r`
+interior blank counts, with exact per-node deltas -- the `comp_exact`
+contract).
+
+- **Session 1** (fuel-session shape): `Checkers/RepWL.v` instance +
+  measure vocabulary + exactness lemmas, Python mirror forked from
+  the fuel generator, differential-validate the 106 certs
+  (`../BBB/results/certs_rwlrank`, params `block`/`threshold` per
+  cert), board as `Machines/RepWL_Batch_*.v` with corruption tests.
+  Two design risks to settle on day one: the tape-model impedance
+  (Coq-BB5 is directional head-between-cells; BBB4 is head-on-cell
+  `nat -> Sym` sides -- re-derive `covers`/`succs_sound` locally, do
+  not transcribe), and the single-step contract (`succs_sound` is one
+  concrete step to one covered successor, so the RepWL step relation
+  must peel the front word at symbol granularity, no macro-jumps).
+
+  **SESSION 1 STARTED -- design validated, prover built, 106/106
+  catch-rate measured.**  `tools/repwl_prover.py` is the executable
+  design spec for `Checkers/RepWL.v` (its docstring pins the context
+  shape, step, and normalization): head-on-cell configs
+  `(q, hp, buf, litems, ritems)` with whole-block buffers
+  (|buf| in {L, 2L, 3L}), symmetric nearest-first item lists (left
+  words stored mirror-image so both sides run one code path),
+  fold-on-|buf|=3L with RLE merge saturating at T, cap-branch on pop
+  (mirror of verify.c `wg_succ`, re-expressed symmetrically), the
+  five documented measures with per-node deltas (`rdelta` /
+  `arrival_info` implement the exactness argument's witness bits).
+  Rules (a)/(b) with the cert measures discharge EVERY state of all
+  106 rwlrank holdouts at t=0; largest closure 13,994 abstract
+  configs (fine for vm_compute).  Coq progress (all Qed, committed): denotation
+  (items_den/side_den), the symmetric step, rw_succs_sound,
+  injective encoding (rconf_enc_inj), seed (chunk/rle +
+  rw_seed_covers), and the wf layer (item_wf, rw_covers',
+  rw_succs_sound').  REMAINING, with the design pinned:
+
+  1. STRENGTHEN item_wf to [w <> [] /\ 1 <= c /\ (cap -> 2 <= c)]
+     with [2 <= T] threaded through the checker (certs all have
+     T in {2,3}).  Reason: the interior measures' "nonblank beyond"
+     bit counts a first item's word when [2 <= c || cap]; a
+     c=1-capped item admits k=1 vs k>=2 expansions that differ in
+     the bit, so no per-node delta is exact -- cap must imply >= 2.
+     Preservation: merge gives c1 = min (S c0) T >= 2 when c1 = T
+     or cap0 (c0 >= 2); new items are (w,1,false) since T >= 2.
+  2. Measures: values on cconf -- countnb (1s) and ibc (interior
+     blanks: cell = S0 with a nonblank strictly farther in the
+     list); rwmeas := RwNA|RwNL|RwNR|RwZL|RwZR.  Deltas on the node
+     via arr_s2 (arrival cell: buffer head, else first item word's
+     head, else S0), arr_nbb (beyond-arrival bit: rest-of-buffer ||
+     items_nb, else tl w0 || (2<=c||cap)&&nonblank w0 || items_nb
+     rest), dep_nbb (departed side: whole old side).  Exactness
+     correspondences: arr_s2 = chd of the concrete side (wf: k >= 1
+     and w0 nonempty make expansions start with w0); blankness of a
+     side <-> word_blank buffer && ~items_nb items (wf makes every
+     item contribute >= 1 copy, so items_nb is exact both ways);
+     ibc equations ibc(w::l) and ibc(ctl l) are definitional.
+  3. Checker: rwcomp := RwRankE (phi : list (positive*nat)) |
+     RwMeasE (m : rwmeas) (K : nat) phi (gate : list positive),
+     denote to LexMeas rconf (rw_mval m) (fun a _ => rw_delta tm m a)
+     with rconf_enc keys; instantiate closure_check_neverqh_lex with
+     rw_succs/rw_covers'/rconf_enc/rw_state, seed rw_seed L T at
+     csteps t; params (L T t fuel).  Gate 1 <= L, 2 <= T.
+  4. Python: align repwl_prover.py's seed to the Coq chunk/rle of
+     the CTAPE lists (sim with explicit (l,h,r) lists, not a tape
+     dict), mirror rw_delta/arr_* exactly, re-run the 106 survey,
+     then fork the emitter (gen_repwl_certs.py) emitting
+     RwRankE/RwMeasE tables keyed by rconf_enc + the
+     `apply (rw_check_neverqh_sound ...)` theorems, batch as
+     Machines/RepWL_Batch_*.v, corruption tests, manifest
+     repwl_manifest.tsv wired into check_coverage.
+- **Session 2**: wire the checker into the census `decide_easy` as a
+  tier, sweep the 31,758 wrap-survivor residue with the Python
+  mirror to measure the kill rate, regenerate `Deferred_*`, re-run
+  `make census` (native switch, 2-3h wall).  Kept separate so
+  session 1 never blocks on the census rebuild loop.

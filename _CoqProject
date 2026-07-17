@@ -170,3 +170,19 @@ theories/Machines/IRules_Batch_06.v
 theories/Machines/IRules_Batch_07.v
 theories/Machines/IRules_Batch_08.v
 theories/Tests/IRulesBatch_Corruption.v
+
+# --- fuel mass-board ---
+theories/Checkers/FuelSCC.v
+theories/Checkers/FuelWide.v
+theories/Machines/Fuel_Batch_01.v
+theories/Machines/Fuel_Batch_02.v
+theories/Machines/Fuel_Batch_03.v
+theories/Tests/FuelBatch_Corruption.v
+
+# --- repwl track ---
+theories/Checkers/RepWL.v
+theories/Machines/RepWL_Batch_01.v
+theories/Machines/RepWL_Batch_02.v
+theories/Machines/RepWL_Batch_03.v
+theories/Machines/RepWL_Batch_04.v
+theories/Tests/RepWLBatch_Corruption.v
