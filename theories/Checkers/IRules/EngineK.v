@@ -836,3 +836,158 @@ Proof.
       with (length hF + S m * length hF)%nat by (cbn [Nat.mul]; lia).
     exact HRc.
 Qed.
+
+(** ** Resolving a block hop: primitive-root reduction + table lookup *)
+
+Lemma nreps_mul : forall l a b, nreps l (a * b) = nreps (nreps l a) b.
+Proof.
+  intros l a b. induction b as [|b IH].
+  - rewrite Nat.mul_0_r. reflexivity.
+  - rewrite (nreps_S (nreps l a)), <- IH.
+    replace (a * S b)%nat with (a + a * b)%nat by lia.
+    rewrite nreps_add. reflexivity.
+Qed.
+
+Lemma cnt_factor : forall nu factor e,
+  0 <= eval nu e ->
+  cnt nu (eaddmul (econst 0) (Z.of_nat factor) e) = (factor * cnt nu e)%nat.
+Proof.
+  intros nu factor e He. unfold cnt.
+  rewrite eval_eaddmul, eval_econst.
+  rewrite Z.add_0_l, Z2Nat.inj_mul; [| lia | lia].
+  rewrite Nat2Z.id. reflexivity.
+Qed.
+
+Fixpoint lsym_eqb (a b : list Sym) : bool :=
+  match a, b with
+  | [], [] => true
+  | x :: a', y :: b' => sym_eqb x y && lsym_eqb a' b'
+  | _, _ => false
+  end.
+
+Lemma lsym_eqb_eq : forall a b, lsym_eqb a b = true -> a = b.
+Proof.
+  induction a as [|x a IH]; intros [|y b] H; simpl in H;
+    try discriminate; [reflexivity|].
+  apply andb_prop in H as [Hx Hab].
+  apply sym_eqb_spec in Hx; subst. rewrite (IH b Hab). reflexivity.
+Qed.
+
+Fixpoint blk_find (blks : list (nat * list Sym)) (w : list Sym) : nat :=
+  match blks with
+  | [] => O
+  | (i, cs) :: t => if lsym_eqb cs w then i else blk_find t w
+  end.
+
+Definition is_root (w : list Sym) (p : nat) : bool :=
+  andb (negb (Nat.eqb p 0))
+       (lsym_eqb w (nreps (firstn p w) (Nat.div (length w) p))).
+
+Fixpoint find_root (w : list Sym) (p fuel : nat) : nat :=
+  match fuel with
+  | O => length w
+  | S f =>
+      if (p <? length w)%nat then
+        (if andb (Nat.eqb (Nat.modulo (length w) p) 0) (is_root w p)
+         then p else find_root w (S p) f)
+      else length w
+  end.
+
+Definition prim_root_len (w : list Sym) : nat := find_root w 1 (length w).
+
+(** The hop op the engine performs at a block run [(s, _)]: replay one
+    copy from the block's near cell, primitive-root-reduce the exited
+    cells, resolve the root to a block id, and re-verify that the id's
+    cells (from the trusted-only-for-soundness table [tbl]) reproduce
+    the exited word.  Returns the departed block id, its multiplicity
+    factor per crossed copy, and the fired transitions. *)
+Definition bhop_result (tm : TM) (tbl : BTbl) (blks : list (nat * list Sym))
+    (q : St) (mv : Dir) (s : BSym) : option (BSym * nat * list Tr) :=
+  match tbl s with
+  | [] => None
+  | c :: cs =>
+      match hop_sim tm q mv 1024 q [] c cs with
+      | None => None
+      | Some (hout, hF) =>
+          let root := prim_root_len hout in
+          let factor := Nat.div (length hout) root in
+          let nsym := if Nat.eqb root 1
+                      then sym_to_nat (hd S0 hout)
+                      else blk_find blks (firstn root hout) in
+          if andb (lsym_eqb (nreps (tbl nsym) factor) hout)
+                  (Nat.leb 1 factor)
+          then Some (nsym, factor, hF) else None
+      end
+  end.
+
+Lemma blsem_blk : forall tbl nu q mv dep app,
+  blsem tbl nu q mv dep app =
+  lift (blk_cfg mv q (bdside tbl nu app) (bdside tbl nu dep)).
+Proof.
+  intros. destruct mv;
+    [rewrite blsem_concrete_L | rewrite blsem_concrete_R]; reflexivity.
+Qed.
+
+Lemma blk_cfg_lift_cong : forall mv q ahead b1 b2,
+  lift_side b1 = lift_side b2 ->
+  lift (blk_cfg mv q ahead b1) = lift (blk_cfg mv q ahead b2).
+Proof.
+  intros mv q ahead b1 b2 H.
+  destruct mv; unfold blk_cfg, lift, lift_tape; simpl; rewrite H; reflexivity.
+Qed.
+
+Lemma bhop_result_spec : forall tm tbl blks q mv s nsym factor hF,
+  bhop_result tm tbl blks q mv s = Some (nsym, factor, hF) ->
+  exists hout, tbl s <> [] /\
+    hop_sim tm q mv 1024 q [] (chd (tbl s)) (ctl (tbl s)) = Some (hout, hF) /\
+    nreps (tbl nsym) factor = hout.
+Proof.
+  intros tm tbl blks q mv s nsym factor hF H.
+  unfold bhop_result in H.
+  destruct (tbl s) as [|c cs] eqn:Hcells; [discriminate|].
+  destruct (hop_sim tm q mv 1024 q [] c cs) as [[hout hF0]|] eqn:Hsim;
+    [|discriminate].
+  cbn zeta in H.
+  match type of H with
+  | (if ?b then _ else _) = _ => destruct b eqn:Hverify
+  end; cbn iota in H; [|discriminate].
+  injection H as Hnsym Hfactor HhF.
+  apply andb_prop in Hverify as [Hveq _].
+  apply lsym_eqb_eq in Hveq.
+  exists hout. split; [discriminate|]. split.
+  - simpl chd. simpl ctl. rewrite <- HhF. exact Hsim.
+  - rewrite <- Hnsym, <- Hfactor. exact Hveq.
+Qed.
+
+Lemma bhop_reach : forall tm tbl blks lo q mv s e rest dep nsym factor hF dep' nu,
+  raw_ok tbl -> bge lo nu ->
+  bhop_result tm tbl blks q mv s = Some (nsym, factor, hF) ->
+  expr_ge lo e 1 = true ->
+  bpush lo nsym (eaddmul (econst 0) (Z.of_nat factor) e) dep = Some dep' ->
+  Reach tm hF (cnt nu e * length hF)
+    (blsem tbl nu q mv dep ((s, e) :: rest))
+    (blsem tbl nu q mv dep' rest).
+Proof.
+  intros tm tbl blks lo q mv s e rest dep nsym factor hF dep' nu
+    Hraw Hb Hhop Hge1 Hpush.
+  destruct (bhop_result_spec tm tbl blks q mv s nsym factor hF Hhop)
+    as (hout & Hne & Hsim & Hveq).
+  pose proof (expr_ge_sound lo e 1 nu Hge1 Hb) as He1.
+  assert (Hce : exists m0, cnt nu e = S m0).
+  { unfold cnt. exists (Z.to_nat (eval nu e) - 1)%nat. lia. }
+  destruct Hce as [m0 Hm0].
+  pose proof (hop_copies tm q mv 1024 (tbl s) hout hF Hne Hsim m0
+                (bdside tbl nu dep) (bdside tbl nu rest)) as HC.
+  rewrite (blsem_blk tbl nu q mv dep ((s, e) :: rest)).
+  rewrite (blsem_blk tbl nu q mv dep' rest).
+  rewrite bdside_cons, Hm0.
+  assert (Hdep' : lift (blk_cfg mv q (bdside tbl nu rest)
+                          (nreps hout (S m0) ++ bdside tbl nu dep)) =
+                  lift (blk_cfg mv q (bdside tbl nu rest) (bdside tbl nu dep'))).
+  { apply blk_cfg_lift_cong.
+    rewrite (bpush_den tbl lo nsym (eaddmul (econst 0) (Z.of_nat factor) e)
+               dep dep' nu Hraw Hpush Hb).
+    rewrite (cnt_factor nu factor e ltac:(lia)), Hm0.
+    rewrite nreps_mul, Hveq. reflexivity. }
+  rewrite <- Hdep'. exact HC.
+Qed.
