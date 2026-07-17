@@ -181,3 +181,8 @@ theories/Tests/FuelBatch_Corruption.v
 
 # --- repwl track ---
 theories/Checkers/RepWL.v
+theories/Machines/RepWL_Batch_01.v
+theories/Machines/RepWL_Batch_02.v
+theories/Machines/RepWL_Batch_03.v
+theories/Machines/RepWL_Batch_04.v
+theories/Tests/RepWLBatch_Corruption.v

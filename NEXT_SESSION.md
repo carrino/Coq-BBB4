@@ -758,6 +758,22 @@ motion), so [runner_find]'s window induction needs a drift variant,
 but the FuelSCC edge-gate/descent skeleton and the FuelWide class
 plumbing should carry over.
 
+## RepWL session 1: DONE (106/106 boarded)
+
+`Checkers/RepWL.v` is complete and sound (`rw_check_neverqh_sound`,
+functional_extensionality_dep only) and all 106 `neverqh_rwlrank`
+holdouts are proved (`Machines/RepWL_Batch_{01..04}.v`,
+`tools/repwl_manifest.tsv`; coverage 3464 -> 3570 of 3713, the
+rwlrank family cleared).  What remains of the original two-session
+plan is SESSION 2 ONLY: wire `rw_check_neverqh` into the census
+`decide_easy` as a tier (plus the wrap/QHBound tier), sweep the
+31,758 wrap-survivor residue with `tools/repwl_prover.py` to measure
+the kill rate, regenerate `Deferred_*`, and re-run `make census`
+once for both tiers.  Remaining holdout families after this board:
+102 irules-deferred, 17 neverqh_drift (FuelSCC gate + a (c3) drift
+descent variant), the counters tail (wave 6, tower 4, xd 3, ...),
+and the 1 upstream-open machine.
+
 ## Next: the RepWL port (two sessions)
 
 Highest-leverage block left, paying on both ledgers: the 106
