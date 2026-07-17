@@ -612,3 +612,227 @@ Proof.
     change ((b_st c, b_hs c) :: F') with ([(b_st c, b_hs c)] ++ F').
     exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
 Qed.
+
+(** ** Block hop: the bounded one-copy concrete replay.
+
+    Modeled as a zipper over the block cells: [LW] are the cells to the
+    left of the head (nearest first, already rewritten), [HD] the head
+    cell, [RW] the cells to its right (still to visit).  The head enters
+    at the near cell in state [q0] moving [mv]; a [mv]-step goes deeper
+    (consumes [RW], pushes to [LW]); the opposite step goes back (consumes
+    [LW]); exiting the near side ([LW = []] on a back-step) fails
+    (ratcheting), exiting the far side ([RW = []] on a [mv]-step) succeeds
+    iff the state is back to [q0].  Each replay step is exactly one
+    [cstep], so the correspondence to [csteps] is immediate. *)
+
+Definition opp (d : Dir) : Dir := match d with DL => DR | DR => DL end.
+
+Definition zip_cfg (mv : Dir) (st : St) (LW : list Sym) (HD : Sym)
+    (RW D X : list Sym) : cconf :=
+  match mv with
+  | DR => (st, (LW ++ D, HD, RW ++ X))
+  | DL => (st, (RW ++ X, HD, LW ++ D))
+  end.
+
+Definition exit_cfg (mv : Dir) (st : St) (dcells D X : list Sym) : cconf :=
+  match mv with
+  | DR => (st, (dcells ++ D, chd X, ctl X))
+  | DL => (st, (ctl X, chd X, dcells ++ D))
+  end.
+
+Lemma zip_step_deeper : forall tm mv st HD w st' LW r RW' D X,
+  tm st HD = Some (mkTrans w mv st') ->
+  cstep tm (zip_cfg mv st LW HD (r :: RW') D X) =
+  Some (zip_cfg mv st' (w :: LW) r RW' D X).
+Proof.
+  intros tm mv st HD w st' LW r RW' D X Htr.
+  destruct mv; unfold zip_cfg, cstep; rewrite Htr; reflexivity.
+Qed.
+
+Lemma zip_step_back : forall tm mv st HD w st' l LW' RW D X,
+  tm st HD = Some (mkTrans w (opp mv) st') ->
+  cstep tm (zip_cfg mv st (l :: LW') HD RW D X) =
+  Some (zip_cfg mv st' LW' l (w :: RW) D X).
+Proof.
+  intros tm mv st HD w st' l LW' RW D X Htr.
+  destruct mv; unfold zip_cfg, cstep; rewrite Htr; reflexivity.
+Qed.
+
+Lemma zip_step_exit : forall tm mv st HD w st' LW D X,
+  tm st HD = Some (mkTrans w mv st') ->
+  cstep tm (zip_cfg mv st LW HD [] D X) =
+  Some (exit_cfg mv st' (w :: LW) D X).
+Proof.
+  intros tm mv st HD w st' LW D X Htr.
+  destruct mv; unfold zip_cfg, exit_cfg, cstep; rewrite Htr; reflexivity.
+Qed.
+
+Fixpoint hop_sim (tm : TM) (q0 : St) (mv : Dir) (fuel : nat)
+    (st : St) (LW : list Sym) (HD : Sym) (RW : list Sym)
+  : option (list Sym * list Tr) :=
+  match fuel with
+  | O => None
+  | S fu =>
+      match tm st HD with
+      | None => None
+      | Some tr =>
+          if dir_eqb (t_dir tr) mv then
+            match RW with
+            | [] => if st_eqb (t_next tr) q0
+                    then Some (t_write tr :: LW, [(st, HD)]) else None
+            | r :: RW' =>
+                match hop_sim tm q0 mv fu (t_next tr)
+                        (t_write tr :: LW) r RW' with
+                | Some (hout, F) => Some (hout, (st, HD) :: F)
+                | None => None
+                end
+            end
+          else
+            match LW with
+            | [] => None
+            | l :: LW' =>
+                match hop_sim tm q0 mv fu (t_next tr)
+                        LW' l (t_write tr :: RW) with
+                | Some (hout, F) => Some (hout, (st, HD) :: F)
+                | None => None
+                end
+            end
+      end
+  end.
+
+(** One copy: the zipper replay is a [Reach] from the entry to the
+    far-exit configuration, on any surrounding tape [D], [X]. *)
+Lemma hop_one_reach : forall tm q0 mv fuel st LW HD RW hout hF,
+  hop_sim tm q0 mv fuel st LW HD RW = Some (hout, hF) ->
+  forall D X,
+    Reach tm hF (length hF) (lift (zip_cfg mv st LW HD RW D X))
+                            (lift (exit_cfg mv q0 hout D X)).
+Proof.
+  intros tm q0 mv fuel. induction fuel as [|fuel IH];
+    intros st LW HD RW hout hF H D X; [discriminate|].
+  cbn [hop_sim] in H.
+  destruct (tm st HD) as [[w d st']|] eqn:Htr;
+    cbn [t_write t_dir t_next] in H; [|discriminate].
+  destruct (dir_eqb d mv) eqn:Hd.
+  - apply dir_eqb_spec in Hd; subst d.
+    destruct RW as [|r RW'].
+    + (* far exit *)
+      destruct (st_eqb st' q0) eqn:Hq; cbn iota in H; [|discriminate].
+      apply st_eqb_spec in Hq; subst st'.
+      injection H as <- <-. cbn [length].
+      pose proof (zip_step_exit tm mv st HD w q0 LW D X Htr) as Hstep.
+      apply cstep_lift in Hstep.
+      assert (Htrans : trans_of (lift (zip_cfg mv st LW HD [] D X)) = (st, HD)).
+      { destruct mv; reflexivity. }
+      pose proof (Reach_one tm _ _ Hstep) as HR.
+      rewrite Htrans in HR. exact HR.
+    + (* deeper *)
+      destruct (hop_sim tm q0 mv fuel st' (w :: LW) r RW')
+        as [[hout1 hF1]|] eqn:Hrec; cbn iota in H; [|discriminate].
+      injection H as <- <-.
+      pose proof (IH st' (w :: LW) r RW' hout1 hF1 Hrec D X) as HR2.
+      pose proof (zip_step_deeper tm mv st HD w st' LW r RW' D X Htr) as Hstep.
+      apply cstep_lift in Hstep.
+      assert (Htrans : trans_of (lift (zip_cfg mv st LW HD (r :: RW') D X))
+                       = (st, HD)) by (destruct mv; reflexivity).
+      pose proof (Reach_one tm _ _ Hstep) as HR1.
+      rewrite Htrans in HR1.
+      cbn [length].
+      change ((st, HD) :: hF1) with ([(st, HD)] ++ hF1).
+      replace (S (length hF1)) with (1 + length hF1)%nat by lia.
+      exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+  - (* back step: t_dir = opp mv *)
+    assert (Hopp : d = opp mv).
+    { destruct d, mv; simpl in Hd; try discriminate; reflexivity. }
+    subst d.
+    destruct LW as [|l LW']; [discriminate|].
+    destruct (hop_sim tm q0 mv fuel st' LW' l (w :: RW))
+      as [[hout1 hF1]|] eqn:Hrec; cbn iota in H; [|discriminate].
+    injection H as <- <-.
+    pose proof (IH st' LW' l (w :: RW) hout1 hF1 Hrec D X) as HR2.
+    pose proof (zip_step_back tm mv st HD w st' l LW' RW D X Htr) as Hstep.
+    apply cstep_lift in Hstep.
+    assert (Htrans : trans_of (lift (zip_cfg mv st (l :: LW') HD RW D X))
+                     = (st, HD)) by (destruct mv; reflexivity).
+    pose proof (Reach_one tm _ _ Hstep) as HR1.
+    rewrite Htrans in HR1.
+    cbn [length].
+    change ((st, HD) :: hF1) with ([(st, HD)] ++ hF1).
+    replace (S (length hF1)) with (1 + length hF1)%nat by lia.
+    exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+Qed.
+
+Lemma Reach_mem : forall tm F1 F2 n a b,
+  (forall t, In t F1 <-> In t F2) -> Reach tm F1 n a b -> Reach tm F2 n a b.
+Proof.
+  intros tm F1 F2 n a b Hiff (Hs & Hc & Hx).
+  split; [exact Hs|]. split.
+  - intros m Hm. destruct (Hc m Hm) as (cm & Hcm & Hin).
+    exists cm. split; [exact Hcm | apply Hiff; exact Hin].
+  - intros t Ht. apply Hx, Hiff, Ht.
+Qed.
+
+Lemma Reach_app_same : forall tm F n a b,
+  Reach tm (F ++ F) n a b -> Reach tm F n a b.
+Proof.
+  intros tm F n a b HR.
+  apply (Reach_mem tm (F ++ F) F); [|exact HR].
+  intro t. split; intro Hin.
+  - apply in_app_or in Hin; tauto.
+  - apply in_or_app; auto.
+Qed.
+
+Definition blk_cfg (mv : Dir) (q0 : St) (ahead behind : list Sym) : cconf :=
+  match mv with
+  | DR => (q0, (behind, chd ahead, ctl ahead))
+  | DL => (q0, (ctl ahead, chd ahead, behind))
+  end.
+
+Lemma zip_start_blk : forall mv q0 cells D X,
+  cells <> [] ->
+  zip_cfg mv q0 [] (chd cells) (ctl cells) D X = blk_cfg mv q0 (cells ++ X) D.
+Proof.
+  intros mv q0 cells D X Hne.
+  destruct cells as [|c cs]; [contradiction|].
+  destruct mv; reflexivity.
+Qed.
+
+Lemma exit_blk : forall mv q0 hout D X,
+  exit_cfg mv q0 hout D X = blk_cfg mv q0 X (hout ++ D).
+Proof. intros mv q0 hout D X. destruct mv; reflexivity. Qed.
+
+Lemma hop_copies : forall tm q0 mv fuel cells hout hF,
+  cells <> [] ->
+  hop_sim tm q0 mv fuel q0 [] (chd cells) (ctl cells) = Some (hout, hF) ->
+  forall m D X,
+    Reach tm hF (S m * length hF)
+      (lift (blk_cfg mv q0 (nreps cells (S m) ++ X) D))
+      (lift (blk_cfg mv q0 X (nreps hout (S m) ++ D))).
+Proof.
+  intros tm q0 mv fuel cells hout hF Hne Hhop m.
+  induction m as [|m IH]; intros D X.
+  - (* one copy *)
+    cbn [Nat.mul]. rewrite Nat.add_0_r, !nreps_1.
+    pose proof (hop_one_reach tm q0 mv fuel q0 [] (chd cells) (ctl cells)
+                  hout hF Hhop D X) as HR1.
+    rewrite (zip_start_blk mv q0 cells D X Hne) in HR1.
+    rewrite exit_blk in HR1. exact HR1.
+  - (* one copy, then S m more *)
+    pose proof (hop_one_reach tm q0 mv fuel q0 [] (chd cells) (ctl cells)
+                  hout hF Hhop D (nreps cells (S m) ++ X)) as HR1.
+    rewrite (zip_start_blk mv q0 cells D (nreps cells (S m) ++ X) Hne) in HR1.
+    rewrite exit_blk in HR1.
+    specialize (IH (hout ++ D) X).
+    pose proof (Reach_compose _ _ _ _ _ _ _ _ HR1 IH) as HRc.
+    apply Reach_app_same in HRc.
+    replace (nreps cells (S (S m)) ++ X)
+      with (cells ++ (nreps cells (S m) ++ X))
+      by (rewrite nreps_S, app_assoc; reflexivity).
+    replace (nreps hout (S (S m)) ++ D)
+      with (nreps hout (S m) ++ (hout ++ D)).
+    2:{ replace (S (S m)) with (S m + 1)%nat by lia.
+        rewrite nreps_add, nreps_1, <- app_assoc. reflexivity. }
+    replace (S (S m) * length hF)%nat
+      with (length hF + S m * length hF)%nat by (cbn [Nat.mul]; lia).
+    exact HRc.
+Qed.
