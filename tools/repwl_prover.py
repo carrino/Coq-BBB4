@@ -1,36 +1,18 @@
 #!/usr/bin/env python3
 """Untrusted RepWL rank prover for neverqh_rwlrank certificates --
-and the executable DESIGN SPEC for the planned Checkers/RepWL.v.
+the exact Python mirror of theories/Checkers/RepWL.v.
 
-Abstract configuration (head-on-cell, sides symmetric):
+Abstract configuration, mirroring the Coq [rconf] shape:
 
-    (q, hp, buf, litems, ritems)
+    (q, li, lb, h, rb, ri)
 
-  - buf: tuple of Sym cells, |buf| in {L, 2L, 3L} (whole blocks), the
-    head at index hp;
-  - litems/ritems: tuples of items (word, cnt, capped), NEAREST item
-    first; a left word's cells are stored NEAREST-FIRST (mirror
-    image), a right word's in tape order (nearest first) -- the two
-    sides run the same code;
-  - an item denotes word^cnt exactly if not capped, word^k for any
-    k >= cnt if capped (cnt == T);
-  - trailing blank infinity is implicit (a blank block folding into
-    an empty list is absorbed).
-
-Step (mirror of BBB/src/verify.c wg_succ, re-expressed symmetrically):
-write at hp, move; if the head walks off the buffer: fold one block
-from the departed end into that side's item list when |buf| = 3L
-(merge into the nearest item if the word matches, count saturating
-at T; blank block + empty list is absorbed), then pop the arrival
-side's nearest item (blank block if the list is empty) and
-materialize it; popping a capped item branches two ways (count was
-exactly T -> cnt T-1 uncapped; count was > T -> item unchanged).
-
-The rank procedure and measure vocabulary follow
-BBB/docs/neverqh.md "RepWL ranking liveness": N/A, N/L, N/R
-(nonblank counts, whole/left/right) and 0/l, 0/r (interior blank
-counts) -- deltas are exact per node because both cap branches share
-the physical step and witness bits never depend on capped counts.
+with [lb]/[rb] the buffer cells nearest-first around the head and
+[li]/[ri] the item lists (word, cnt, capped), nearest item first,
+left words stored nearest-first (mirror image).  The step, the seed
+(ctape-list chunk + right-fold rle), the encoding, and the component
+semantics (comp_strict/comp_noninc/lex_edge_ok over the five
+measures) all mirror the Coq definitions bit for bit, so a
+certificate found here verifies under [rw_check_neverqh_sound].
 
 Everything here is UNTRUSTED: the Coq checker re-derives the closure
 and re-checks every edge; this module only has to FIND certificates.
@@ -39,8 +21,9 @@ and re-checks every edge; this module only has to FIND certificates.
 import sys
 sys.setrecursionlimit(1000000)
 
-MAX_ITEMS = 240
 CAP_NODES = 400000
+
+MEAS = ['N/A', 'N/L', 'N/R', '0/l', '0/r']
 
 
 def parse(m):
@@ -72,134 +55,134 @@ def parse_cert(path):
     return mtext, L, T, per_state
 
 
-def sim_tape(tbl, t):
-    tape = {}
-    pos = 0
-    q = 0
+# ---- ctape simulation (mirror of CTape.csteps) ----
+
+def csteps(tbl, t):
+    """t steps from ([],0,[]); returns (q, l, h, r) as lists, or None
+    on halt.  Mirrors cstep/ctape_move."""
+    q, l, h, r = 0, [], 0, []
     for _ in range(t):
-        tr = tbl[(q, tape.get(pos, 0))]
+        tr = tbl[(q, h)]
         if tr is None:
             return None
-        w, d, nq = tr
-        tape[pos] = w
-        pos += 1 if d == 'R' else -1
-        q = nq
-    return tape, pos, q
-
-
-def rle(blocks, T):
-    """Blocks (nearest-first) -> items with counts capped at T."""
-    items = []
-    for b in blocks:
-        if items and items[-1][0] == b:
-            w, c, cap = items[-1]
-            if c < T:
-                items[-1] = (w, c + 1, c + 1 == T)
-            else:
-                items[-1] = (w, T, True)
+        w, d, q2 = tr
+        if d == 'R':
+            l = [w] + l
+            h = r[0] if r else 0
+            r = r[1:]
         else:
-            items.append((b, 1, 1 == T))
-    # strip the far-end blank-infinity blocks
-    blank = tuple([0] * len(blocks[0])) if blocks else None
-    while items and items[-1][0] == blank and not items[-1][2]:
-        items.pop()
-    return tuple(items)
+            h2 = l[0] if l else 0
+            l = l[1:]
+            r = [w] + r
+            h = h2
+        q = q2
+    return q, l, h, r
+
+
+# ---- seed (mirror of chunk_go / rle / rw_seed) ----
+
+def padw(L, w):
+    return tuple(w) + (0,) * (L - len(w))
+
+
+def chunk(L, l):
+    out = []
+    l = list(l)
+    while l:
+        out.append(padw(L, l[:L]))
+        l = l[L:]
+    return out
+
+
+def rle(T, blocks):
+    """Right fold: process the far end first (mirror of Coq rle)."""
+    out = []
+    for b in reversed(blocks):
+        if not out:
+            if all(x == 0 for x in b):
+                continue
+            out = [(b, 1, 1 == T)]
+        else:
+            w0, c0, cap0 = out[0]
+            if w0 == b:
+                c1 = min(c0 + 1, T)
+                out[0] = (w0, c1, cap0 or c1 == T)
+            else:
+                out.insert(0, (b, 1, 1 == T))
+    return tuple(out)
 
 
 def seed(tbl, L, T, t):
-    """Abstract the configuration at step t: buffer = the L cells
-    from the head rightward, sides blocked outward from it."""
-    r = sim_tape(tbl, t)
-    if r is None:
+    cs = csteps(tbl, t)
+    if cs is None:
         return None
-    tape, pos, q = r
-    lo = min([pos] + list(tape))
-    hi = max([pos] + list(tape))
-    buf = tuple(tape.get(pos + i, 0) for i in range(L))
-    lblocks = []
-    p = pos - 1
-    while p >= lo - L:
-        lblocks.append(tuple(tape.get(p - i, 0) for i in range(L)))
-        p -= L
-    rblocks = []
-    p = pos + L
-    while p <= hi + L:
-        rblocks.append(tuple(tape.get(p + i, 0) for i in range(L)))
-        p += L
-    return (q, 0, buf, rle(lblocks, T), rle(rblocks, T))
+    q, l, h, r = cs
+    return (q, rle(T, chunk(L, l)), (), h,
+            padw(L - 1, r[:L - 1]), rle(T, chunk(L, r[L - 1:])))
 
 
-def push_item(items, word, T, blank):
-    """Fold one departed block into a side list (nearest end)."""
+# ---- the step (mirror of push_item / pop_item / rw_succs) ----
+
+def word_blank(w):
+    return all(x == 0 for x in w)
+
+
+def push_item(T, w, items):
     if not items:
-        return (items if word == blank
-                else ((word, 1, 1 == T),))
+        return () if word_blank(w) else ((w, 1, 1 == T),)
     w0, c0, cap0 = items[0]
-    if w0 == word:
+    if w0 == w:
         c1 = min(c0 + 1, T)
-        return ((w0, c1, c1 == T),) + items[1:]
-    if len(items) >= MAX_ITEMS:
-        return None
-    return ((word, 1, 1 == T),) + items
+        return ((w0, c1, cap0 or c1 == T),) + items[1:]
+    return ((w, 1, 1 == T),) + items
 
 
-def pop_item(items, T, blank):
-    """Pop the nearest item: [(word, rest-items)] -- two entries on a
-    cap branch."""
+def pop_item(L, items):
+    """None = fail closed (zero count / empty word)."""
     if not items:
-        return [(blank, items)]
+        return [(tuple([0] * L), ())]
     w0, c0, cap0 = items[0]
+    if not w0 or c0 == 0:
+        return None
+    dec = items[1:] if c0 == 1 else ((w0, c0 - 1, False),) + items[1:]
     if cap0:
-        out = [(w0, items)]  # count was > T: unchanged
-        if T - 1 >= 1:
-            out.append((w0, ((w0, T - 1, False),) + items[1:]))
-        else:
-            out.append((w0, items[1:]))
-        return out
-    if c0 > 1:
-        return [(w0, ((w0, c0 - 1, False),) + items[1:])]
-    return [(w0, items[1:])]
+        return [(w0, items), (w0, dec)]
+    return [(w0, dec)]
 
 
-def succs(tbl, L, T, a):
-    """Abstract successors (1 or 2), or None on halt, or 'OVER'."""
-    q, hp, buf, li, ri = a
-    s = buf[hp]
-    tr = tbl[(q, s)]
+def rw_succs(tbl, L, T, a):
+    """Successor list, or None on halt/fail-closed."""
+    q, li, lb, h, rb, ri = a
+    tr = tbl[(q, h)]
     if tr is None:
         return None
     w, d, q2 = tr
-    buf = buf[:hp] + (w,) + buf[hp + 1:]
-    hp += 1 if d == 'R' else -1
-    if 0 <= hp < len(buf):
-        return [(q2, hp, buf, li, ri)]
-    blank = tuple([0] * L)
-    side_right = hp >= 0
-    if len(buf) == 3 * L:
-        # fold the departed-end block
-        if side_right:
-            word = tuple(reversed(buf[:L]))  # left words nearest-first
-            li2 = push_item(li, word, T, blank)
-            if li2 is None:
-                return 'OVER'
-            buf = buf[L:]
-            hp -= L
-            li = li2
+    if d == 'R':
+        if rb:
+            return [(q2, li, (w,) + lb, rb[0], rb[1:], ri)]
+        lb1 = (w,) + lb
+        if 3 * L <= len(lb1):
+            lb2 = lb1[:2 * L]
+            li2 = push_item(T, lb1[2 * L:], li)
         else:
-            word = buf[-L:]
-            ri2 = push_item(ri, word, T, blank)
-            if ri2 is None:
-                return 'OVER'
-            buf = buf[:-L]
-            ri = ri2
-    out = []
-    if side_right:
-        for word, ri2 in pop_item(ri, T, blank):
-            out.append((q2, len(buf), buf + word, li, ri2))
+            lb2, li2 = lb1, li
+        ps = pop_item(L, ri)
+        if ps is None:
+            return None
+        return [(q2, li2, lb2, wd[0], wd[1:], ri2) for wd, ri2 in ps]
     else:
-        for word, li2 in pop_item(li, T, blank):
-            out.append((q2, L - 1, tuple(reversed(word)) + buf, li2, ri))
-    return out
+        if lb:
+            return [(q2, li, lb[1:], lb[0], (w,) + rb, ri)]
+        rb1 = (w,) + rb
+        if 3 * L <= len(rb1):
+            rb2 = rb1[:2 * L]
+            ri2 = push_item(T, rb1[2 * L:], ri)
+        else:
+            rb2, ri2 = rb1, ri
+        ps = pop_item(L, li)
+        if ps is None:
+            return None
+        return [(q2, li2, wd[1:], wd[0], rb2, ri2) for wd, li2 in ps]
 
 
 def build_closure(tbl, L, T, t, cap=CAP_NODES):
@@ -215,92 +198,176 @@ def build_closure(tbl, L, T, t, cap=CAP_NODES):
         seen.add(a)
         if len(seen) > cap:
             return None
-        sl = succs(tbl, L, T, a)
-        if sl is None or sl == 'OVER':
+        sl = rw_succs(tbl, L, T, a)
+        if sl is None:
             return None
         todo.extend(sl)
     return a0, seen
 
 
-# ---- measures: exact per-node deltas (docs/neverqh.md) ----
+# ---- encoding (mirror of rconf_enc) ----
 
-def zc(x):
-    return 1 if x == 1 else 0
-
-
-def side_nonblank_items(items):
-    return any(any(c != 0 for c in w) for (w, _c, _cap) in items)
-
-
-def arrival_info(tbl, L, a):
-    """The arrival cell s2 and the nonblank-beyond bit, plus the
-    departed-cell nonblank-beyond bit, for the step out of a."""
-    q, hp, buf, li, ri = a
-    s = buf[hp]
-    w, d, _ = tbl[(q, s)]
-    if d == 'R':
-        if hp + 1 < len(buf):
-            s2 = buf[hp + 1]
-            nbb = any(zc(x) for x in buf[hp + 2:]) or side_nonblank_items(ri)
-        elif not ri:
-            s2, nbb = 0, 0
-        else:
-            w0, c0, cap0 = ri[0]
-            s2 = w0[0]
-            nb = any(zc(x) for x in w0[1:])
-            if c0 >= 2 or cap0:
-                nb = nb or any(zc(x) for x in w0)
-            nbb = nb or side_nonblank_items(ri[1:])
-        # departed cell = written w at old head; beyond = old left side
-        dep_beyond = any(zc(x) for x in buf[:hp]) or side_nonblank_items(li)
-        return s2, int(bool(nbb)), int(bool(dep_beyond))
-    else:
-        if hp - 1 >= 0:
-            s2 = buf[hp - 1]
-            nbb = any(zc(x) for x in buf[:hp - 1]) or side_nonblank_items(li)
-        elif not li:
-            s2, nbb = 0, 0
-        else:
-            w0, c0, cap0 = li[0]
-            s2 = w0[0]  # left words nearest-first
-            nb = any(zc(x) for x in w0[1:])
-            if c0 >= 2 or cap0:
-                nb = nb or any(zc(x) for x in w0)
-            nbb = nb or side_nonblank_items(li[1:])
-        dep_beyond = (any(zc(x) for x in buf[hp + 1:])
-                      or side_nonblank_items(ri))
-        return s2, int(bool(nbb)), int(bool(dep_beyond))
+def syms_app(l, p):
+    p = 2 * p
+    for x in reversed(l):
+        p = 2 * (2 * p + x) + 1
+    return p
 
 
-def rdelta(tbl, L, meas, a):
-    """Per-node delta of measure meas in {'N/A','N/L','N/R','0/l','0/r'}."""
-    q, hp, buf, li, ri = a
-    s = buf[hp]
-    w, d, _ = tbl[(q, s)]
-    s2, nbb, depb = arrival_info(tbl, L, a)
-    if meas == 'N/A':
-        return zc(w) - zc(s)
-    if meas == 'N/L':
-        return zc(w) if d == 'R' else -zc(s2)
-    if meas == 'N/R':
-        return zc(w) if d == 'L' else -zc(s2)
-    if meas == '0/l':
+def nat_app(n, p):
+    p = 2 * p
+    for _ in range(n):
+        p = 2 * p + 1
+    return p
+
+
+def bool_app(b, p):
+    return 2 * p + (1 if b else 0)
+
+
+def item_app(it, p):
+    w, c, cap = it
+    return syms_app(w, nat_app(c, bool_app(cap, p)))
+
+
+def items_app(items, p):
+    p = 2 * p
+    for it in reversed(items):
+        p = 2 * item_app(it, p) + 1
+    return p
+
+
+ST_TAG = {0: 0, 1: 1, 2: 2, 3: 3}
+
+
+def st_app(q, p):
+    return 4 * p + q
+
+
+def rconf_enc(a):
+    q, li, lb, h, rb, ri = a
+    p = items_app(ri, 1)
+    p = items_app(li, p)
+    p = syms_app(rb, p)
+    p = syms_app(lb, p)
+    p = 2 * p + h
+    return st_app(q, p)
+
+
+# ---- measures (mirror of arr_s2 / arr_nbb / dep_nbb / rw_delta) ----
+
+def items_nb(items):
+    return any(not word_blank(w) for (w, _c, _cap) in items)
+
+
+def arr_s2(b, items):
+    if b:
+        return b[0]
+    if items:
+        w = items[0][0]
+        return w[0] if w else 0
+    return 0
+
+
+def arr_nbb(b, items):
+    if b:
+        return (not word_blank(b[1:])) or items_nb(items)
+    if not items:
+        return False
+    w, c, cap = items[0]
+    return ((not word_blank(w[1:]))
+            or ((c >= 2 or cap) and not word_blank(w))
+            or items_nb(items[1:]))
+
+
+def dep_nbb(b, items):
+    return (not word_blank(b)) or items_nb(items)
+
+
+def rw_delta(tbl, m, a):
+    q, li, lb, h, rb, ri = a
+    w, d, _ = tbl[(q, h)]
+    if m == 'N/A':
+        return w - h
+    if m == 'N/L':
+        return w if d == 'R' else -arr_s2(lb, li)
+    if m == 'N/R':
+        return w if d == 'L' else -arr_s2(rb, ri)
+    if m == '0/l':
         if d == 'R':
-            return (1 if (w == 0 and depb) else 0)
-        return -(1 if (s2 == 0 and nbb) else 0)
-    if meas == '0/r':
+            return 1 if (w == 0 and dep_nbb(lb, li)) else 0
+        return -(1 if (arr_s2(lb, li) == 0 and arr_nbb(lb, li)) else 0)
+    if m == '0/r':
         if d == 'L':
-            return (1 if (w == 0 and depb) else 0)
-        return -(1 if (s2 == 0 and nbb) else 0)
-    raise ValueError(meas)
+            return 1 if (w == 0 and dep_nbb(rb, ri)) else 0
+        return -(1 if (arr_s2(rb, ri) == 0 and arr_nbb(rb, ri)) else 0)
+    raise ValueError(m)
 
 
-ALL_MEAS = ['N/A', 'N/L', 'N/R', '0/l', '0/r']
+# ---- component semantics (mirror of comp_strict / comp_noninc) ----
+# comps: ("rank", {a: v}) | ("meas", m, K, {a: v}, gateset)
+
+def comp_strict(tbl, comp, fa, fb):
+    if comp[0] == "rank":
+        r = comp[1]
+        return r.get(fb, 0) < r.get(fa, 0)
+    _, m, K, phi, gate = comp
+    if fa not in gate or fb not in gate:
+        return False
+    return K * rw_delta(tbl, m, fa) + phi.get(fb, 0) - phi.get(fa, 0) <= -1
 
 
-def sccs(nodes, adj):
+def comp_noninc(tbl, comp, fa, fb):
+    if comp[0] == "rank":
+        r = comp[1]
+        return r.get(fb, 0) <= r.get(fa, 0)
+    _, m, K, phi, gate = comp
+    if fb not in gate:
+        return True
+    if fa not in gate:
+        return False
+    return K * rw_delta(tbl, m, fa) + phi.get(fb, 0) - phi.get(fa, 0) <= 0
+
+
+def lex_edge_ok(tbl, comps, fa, fb):
+    for comp in comps:
+        if comp_strict(tbl, comp, fa, fb):
+            return True
+        if not comp_noninc(tbl, comp, fa, fb):
+            return False
+    return False
+
+
+def warmup_states(tbl, t):
+    q, l, h, r = 0, [], 0, []
+    out = set()
+    for _ in range(t):
+        out.add(q)
+        w, d, q2 = tbl[(q, h)]
+        if d == 'R':
+            l, h, r = [w] + l, (r[0] if r else 0), r[1:]
+        else:
+            l, h, r = l[1:], (l[0] if l else 0), [w] + r
+        q = q2
+    return out
+
+
+def lex_check(tbl, adj, seen, qq, comps):
+    """Mirror of the engine's lex_ok over the q-avoiding graph."""
+    for fa in seen:
+        if fa[0] == qq:
+            continue
+        for fb in adj[fa]:
+            if fb[0] == qq:
+                continue
+            if not lex_edge_ok(tbl, comps, fa, fb):
+                return False
+    return True
+
+
+def sccs(nodes, adjf):
     import bulk_prover as bp
-    return bp.sccs(nodes, adj)
+    return bp.sccs(nodes, adjf)
 
 
 def bellman(nodes, edges):
@@ -308,13 +375,13 @@ def bellman(nodes, edges):
     return bp.bellman_potentials(nodes, edges)
 
 
-def procedure(tbl, L, T, seen, adjmap, qq, cands):
+def procedure(tbl, seen, adj, qq, cands):
     """Rules (a)/(b) over the q-avoiding graph; comps or None."""
     nodes = [a for a in seen if a[0] != qq]
     Kc = len(nodes) + 2
     alive = {}
     for a in nodes:
-        for b in adjmap[a]:
+        for b in adj[a]:
             if b[0] != qq:
                 alive[(a, b)] = True
     comps = []
@@ -357,7 +424,7 @@ def procedure(tbl, L, T, seen, adjmap, qq, cands):
             intra = [(u, v) for (u, v) in alive if u in cs and v in cs]
             done = False
             for m in cands:
-                ds = {e: rdelta(tbl, L, m, e[0]) for e in intra}
+                ds = {e: rw_delta(tbl, m, e[0]) for e in intra}
                 if (all(x <= 0 for x in ds.values())
                         and any(x < 0 for x in ds.values())):
                     comps.append(("meas", m, 1, {v: 0 for v in c}, cs))
@@ -370,7 +437,7 @@ def procedure(tbl, L, T, seen, adjmap, qq, cands):
             if done:
                 continue
             for m in cands:
-                W = [(u, v, Kc * rdelta(tbl, L, m, u) + 1)
+                W = [(u, v, Kc * rw_delta(tbl, m, u) + 1)
                      for (u, v) in intra]
                 phi = bellman(list(cs), W)
                 if phi is not None:
@@ -385,33 +452,25 @@ def procedure(tbl, L, T, seen, adjmap, qq, cands):
 
 
 def decide(mtext, L, T, per_state,
-           t_cands=(0, 64, 256, 1024, 4096, 16384, 65536, 262144, 500000)):
+           t_cands=(0, 64, 256, 1024, 4096, 16384, 65536)):
     tbl = parse(mtext)
     for t in t_cands:
         r = build_closure(tbl, L, T, t)
         if r is None:
             continue
         a0, seen = r
-        adjmap = {}
-        bad = False
-        for a in seen:
-            sl = succs(tbl, L, T, a)
-            if sl is None or sl == 'OVER':
-                bad = True
-                break
-            adjmap[a] = sl
-        if bad:
-            continue
-        states = sorted({a[0] for a in seen})
+        adj = {a: rw_succs(tbl, L, T, a) for a in seen}
+        states = sorted({a[0] for a in seen} | warmup_states(tbl, t))
         comps_by_state = {}
         ok = True
         for qq in states:
-            cands = list(dict.fromkeys(per_state.get(qq, []) + ALL_MEAS))
-            comps = procedure(tbl, L, T, seen, adjmap, qq, cands)
-            if comps is None:
+            cands = list(dict.fromkeys(per_state.get(qq, []) + MEAS))
+            comps = procedure(tbl, seen, adj, qq, cands)
+            if comps is None or not lex_check(tbl, adj, seen, qq, comps):
                 ok = False
                 break
             comps_by_state[qq] = comps
         if ok:
-            return {"t": t, "nseen": len(seen), "comps": comps_by_state}
+            return {"t": t, "nseen": len(seen), "a0": a0,
+                    "comps": comps_by_state}
     return None
