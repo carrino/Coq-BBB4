@@ -19,7 +19,9 @@ clean:
 census: all
 	coqc -Q theories BBB4 theories/Census/Run_Split.v
 	coqc -Q theories BBB4 theories/Census/Run_Split2.v
+	ls theories/Census/Run_Split_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
 	ls theories/Census/Compute/GG_1LC_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
+	ls theories/Census/Compute/GGH_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
 	ls theories/Census/Compute/G_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
 	coqc -Q theories BBB4 theories/Census/Compute/Census_Theorem.v
 .PHONY: census
