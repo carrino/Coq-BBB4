@@ -399,3 +399,122 @@ configurations.  Negative controls:
 `theories/Tests/RepWLBatch_Corruption.v` (transition mutant, swapped
 certificates, gutted rank tables, empty certificate, starved budget,
 and the out-of-gate parameters L=0 / T=1, all computing `false`).
+<!-- --- drift track --- -->
+### Drift track (`neverqh_drift` mass-board)
+
+All 17 upstream `neverqh_drift` holdouts are boarded:
+`nqh_<machine> : NeverQuasiHaltsSt` + `nonhalt_<machine>` corollaries
+in `theories/Machines/Drift_Batch_01.v`, rows in
+`tools/drift_manifest.tsv`, axiom footprint
+`functional_extensionality_dep` only.
+
+The checker is `theories/Checkers/Drift.v`
+(`ngram_check_neverqh_driftw_sound`): rule (c3) — a stuck SCC in
+which every cycle has strictly positive net head displacement toward
+one side, and every context moving TOWARD that side holds fuel there,
+cannot confine a run — integrated into the FuelSCC-style lex gate on
+the class-refined FuelWide contexts, which are reused unchanged.  The
+runner gate becomes a DRIFT gate carrying untrusted per-node
+potentials `phi` and a scale `W` (`phi a' + 1 <= phi a + W` on
+toward-moving sources, `phi a' + W + 1 <= phi a` on away-moving ones:
+telescoping forces `W * net >= cycle length`, i.e. net-positive
+cycles; the generator finds `phi` by Bellman-Ford, the checker only
+re-checks edges).  The descent replaces FuelSCC's window induction by
+the natural measure `W * R + phi a` — a fueled toward-move shrinks
+the Records.v window bound exactly, an away-move's potential pays for
+the window growth — so fuel is only demanded of toward-moving gate
+nodes, strictly weaker than the C rule's premise.
+
+There are TWO disjoint gates per state (one per drift side), which is
+load-bearing: `1RB1LC_1LC0RB_1RD0LC_0RD1LA` (q=B) and
+`1RB1LD_1LC0RB_0LC1RA_1LA0LD` have single states whose stuck SCCs
+drift opposite ways, so no machine-level mirror orientation works.
+Disjointness collapses the two descent budgets into one selector
+(`dbudget`), keeping the proof structurally FuelSCC's.
+
+`tools/drift_prover.py` is the untrusted Python mirror (two-sided
+per-SCC kill + `dw_state_check`, the faithful edge-by-edge mirror of
+`drift_state_ok`); `tools/gen_drift_certs.py` emits the batch.  All
+17 land at n=2 t=0, largest closure 195 refined contexts.  Negative
+controls: `theories/Tests/DriftBatch_Corruption.v` (transition
+mutant, erased gates, zeroed potentials, swapped gate sides, merged
+gates — disjointness is checked — zeroed scale W, demotion to the
+FuelWide rule-(c2) checker, empty certificate, starved budget, all
+computing `false`).
+
+<!-- --- irules multi-decrement track --- -->
+### IRules multi-decrement track (general step-size decrements)
+
+All 42 `certs_modclass` v3 irules holdouts whose blocker was the
+decrement step size are boarded: `irk_<machine>_never_quasihalts :
+NeverQuasiHaltsSt` + `irk_<machine>_nonhalt` corollaries in
+`theories/Machines/IRulesK_Batch_{01..06}.v`, rows in
+`tools/irulesk_manifest.tsv`, coverage 3587 -> 3629, axiom footprint
+`functional_extensionality_dep` only.
+
+The v1 rule applier (`theories/Checkers/IRules/Rules.v`,
+`rule_apply` / `find_dec`) fires a rule whose one decrementing run
+drains at step `d = -1` (`find_dec` hardcodes `d =? -1`).  The checker
+`theories/Checkers/IRules/RulesK.v` (`ruleK_apply_sound`) +
+`MetaK.v` (`irulesk_check_neverqh_sound`) generalises this to any
+negative constant delta with the v3 binding-run semantics of
+`../BBB/docs/irules2.md` "Multi-decrement rules, general step sizes":
+the application count `R = (e_j - lb_j)/d_j + 1` is an exact affine
+expression from a binding run `j` whose `d_j` divides `e_j - lb_j`,
+and every decrementing run must survive `R` rounds.  The binding
+search (`find_binding`) is UNTRUSTED — the guard `expr_ge lo Rex 1`
+and `appK_side`'s per-run survival re-check (`e + d*Rex >= lb + d`,
+the last-round minimum) carry soundness for ANY count, so the proof
+never reasons about the division.  Output is uniform (`e -> e + d*Rex`,
+drop a decrement reaching the constant 0); with a single `-1`
+decrement it reduces to the v1 semantics.  The whole file reuses the
+v1 rule type and denotation machinery (`vvals`, `rstart`/`rend`,
+`rule_sem`, `scfg_eqb`) and edits none of
+`Expr`/`RLE`/`Engine`/`Rules`/`Meta`.
+
+Ten of the 42 also need **rule-in-rule application** (BBB
+`docs/irules2.md` "Rule-in-rule application, one level"): a later
+rule's proof applies an already-validated earlier rule.  Without it
+that rule's replay ratchets over a symbolic-count run and never closes
+(the head crosses it via a multi-step maneuver the engine peels
+cell-by-cell).  This is NOT a new engine op — it reuses `ruleK_apply`.
+`RulesK.check_rulesK` validates the rules in index order, threading the
+already-validated ones (of lower index) into each rule's replay via
+`ruleK_check`; `check_rulesK_sound` is a direct induction discharging
+`replayK_sound`'s per-rule Reach obligation with `ruleK_apply_sound`.
+`MetaK` runs `check_rulesK` (not `Meta.check_rules`); the anchor and
+coverage checks are still reused from `Meta` unchanged.
+
+`tools/irulesk_prover.py` is the untrusted Python mirror (a faithful
+port of the symbolic engine + the binding-run applier + rule-in-rule
+validation; it validates all 504 rules across the 428 v1 certs, and its
+42 accepts equal the C verifier's accepts — no false positives).
+`tools/gen_irulesk_certs.py` re-validates each machine through that
+mirror before emitting the batch.  Negative controls:
+`theories/Tests/IRulesKBatch_Corruption.v` (binding run at a
+non-dividing run, `lb` below the step so the drain goes negative,
+survive-R-rounds over-count, transition mutant, delta demoted to `-1`,
+and rule-in-rule dependency reordered / dropped, all computing
+`false`).
+
+<!-- --- irules block-run track --- -->
+## IRules block-run checker (Phase 1: 5 of 6 v3-blk boarded)
+
+`theories/Checkers/IRules/EngineK.v` forks the v1 IRules engine so a
+run's symbol may be a BLOCK id `>= 2` drawn from the certificate's
+untrusted block table (`blk <id> <cells>`): a run `(B, e)` denotes `e`
+copies of `B`'s cell sequence.  The block denotation `bdside tbl` is
+parametric in the table (soundness holds for ANY table), reducing to
+`RLE.dside` on raw-only sides.  `beng_step`/`beng_step_sound` prove one
+engine op -- concrete head step + chain hops + block PEEL + block HOP --
+is a `Reach` against `bdside tbl`, `functional_extensionality_dep` only.
+The block-hop crux (`hop_sim`/`hop_one_reach`/`hop_copies`/`bhop_reach`)
+replays one copy of a block as a zipper (each step one `cstep`), then
+crosses all `e` copies by induction.  The design is mirrored (and
+differentially validated vs `bin/verify` on 651 certs, no false
+positives) by `tools/irulesblk_prover.py`.  The full vertical (EngineK -> RulesBlk -> MetaBlk) boards 5 of the 6
+v3-blk holdouts through `irulesblk_check_neverqh` (`vm_compute`),
+`functional_extensionality_dep` only; the 14-block monster (partial
+absorb) and the 44 v6 blk+rulepfx holdouts are deferred -- see
+`NEXT_SESSION.md`, "irules BLOCK-RUN track".
+<!-- --- end irules block-run track --- -->

@@ -917,3 +917,152 @@ If splitting a future regeneration's heavies: add rows to
 `gen_gsplit_heavy.HEAVY` (the (A0,B0,w,w2,d2,nx2) tuples), regenerate,
 wire the Makefile globs.  If a sub-walk itself exceeds the window, split
 it again (same tool, one level deeper).
+<!-- --- drift track --- -->
+## Drift track (this session): the 17 neverqh_drift holdouts are boarded
+
+Rule (c3) is formalized (`theories/Checkers/Drift.v`,
+`ngram_check_neverqh_driftw_sound`) and all 17 upstream
+`neverqh_drift` machines have theorems in
+`theories/Machines/Drift_Batch_01.v` (coverage 3,570 -> 3,587; the
+`neverqh_drift` line is gone from `check_coverage.py`'s remaining
+table).  Key facts for future sessions:
+
+- The descent generalizes FuelSCC's window induction to the measure
+  `W * R + phi a` with untrusted Bellman-Ford potentials; fuel is
+  needed only at TOWARD-moving gate nodes (weaker than verify.c's
+  all-intra-active premise), and the record argument is not used
+  directly -- the window bound of Records.v already carries it.
+- Two disjoint per-state gates (R and L drift) are REQUIRED: two of
+  the 17 have a single state with opposite-drifting stuck SCCs, so
+  the FuelSCC mirror-orientation trick cannot work.  Disjointness
+  makes at most one budget live per node (`dbudget`), keeping the
+  descent one nat induction.
+- `tools/drift_prover.py` mirrors the checker (dw_procedure +
+  dw_state_check); `tools/gen_drift_certs.py --dry-run` re-measures
+  the catch.  All 17 land at n=2 t=0 in seconds; deferral mechanism
+  (tools/drift_deferred.tsv) exists but is empty.
+- The drift gate strictly subsumes the (c2) runner gate (a uniform
+  fueled right-mover SCC has trivially feasible potentials), so new
+  fuel-shaped SCCs can also be discharged by this checker if a
+  future track wants one engine instead of two.
+
+<!-- --- irules multi-decrement track --- -->
+## IRules multi-decrement track (general step-size decrements)
+
+Boarded ALL 42 of the `certs_modclass` v3 irules holdouts tagged
+"decrement delta(s) [-2]/[-3] (v1 engine supports -1 only)"
+(`tools/irules_deferred.tsv`).  Coverage 3587 -> 3629
+(`irulesk_manifest.tsv` wired into `check_coverage.py`).  Checker
+`theories/Checkers/IRules/RulesK.v` + `MetaK.v`, both
+`functional_extensionality_dep` only; the v1 `Engine`/`RLE`/`Expr`/
+`Rules`/`Meta` are untouched.  Build the batches at `-j1`/`-j2` (this
+container OOMs compiling IRules batches at `-j4`); each machine's
+`vm_compute` runs a ~1-2.8M-step concrete anchor re-simulation (~4 s).
+
+Two mechanisms, both reusing the same applier:
+
+1. General step-size decrements.  `find_binding` (the binding-run
+   selection) is UNTRUSTED.  Soundness comes only from the guard
+   `expr_ge lo Rex 1` plus `appK_side`'s per-decrement survival re-check
+   `e + d*Rex >= lb + d` (the run's minimum over the R rounds is its
+   last-round value).  So the R-fold application is sound for ANY `Rex`;
+   the division/binding search only has to produce the `Rex` that lands
+   the drained run exactly, and the proof never mentions it.  This kept
+   `ruleK_apply_sound` a line-for-line generalisation of
+   `Rules.rule_apply_sound` (same induction on R, reusing `vvals` /
+   `rstart` / `rend` / `rule_sem`).
+
+2. Rule-in-rule application (one level).  Ten of the 42 have a rule
+   whose proof applies an already-validated lower-index rule; without it
+   the replay ratchets over a symbolic-count run (the head crosses it
+   via a multi-step maneuver the engine peels cell-by-cell -- verified
+   by instrumenting the C verifier: rule 2 of
+   `1RB0RA_0RC1LD_1LC0LA_0RD0RB` applies rule 1 at op 5).  This is NOT a
+   new engine op: `check_rulesK` validates rules in index order and
+   threads the already-validated ones into each rule's replay via
+   `ruleK_check`, reusing `ruleK_apply`; `check_rulesK_sound` discharges
+   `replayK_sound`'s per-rule Reach obligation with `ruleK_apply_sound`,
+   so the dependency (strictly lower index) is well-founded.  The
+   corruption tests show it is load-bearing (a dependent rule validated
+   before/without its dependency fails).
+
+Differentially confirmed against the C verifier: `bin/verify` accepts
+all 42; `tools/irulesk_prover.py` (faithful mirror: engine port +
+binding-run applier + rule-in-rule) accepts the same 42 and validates
+all 504 rules across the 428 v1 certs -- no false positives.  (The 3
+`d=-1 only, but v1 engine bound reasoning fails` rows of
+`irules_deferred.tsv` remain out of scope -- a genuine bound-tightening
+gap, not a decrement or rule-in-rule blocker.)
+
+<!-- --- irules block-run track (added by the block/rule-prefix session) --- -->
+## irules BLOCK-RUN track -- Phase 1 LANDED (5 boarded, 3629 -> 3633)
+
+Target: the 50 irules holdouts whose certs use block runs -- the 6 tagged
+`v3 cert, needs blk` (Phase 1) and the 44 tagged `v6 cert, needs
+blk,rulepfx` (Phase 2).  A run's symbol may be a BLOCK id `>= 2`
+(`blk <id> <cells>`); a run `(B, e)` denotes `e` copies of `B`'s cell
+sequence, not `e` copies of one symbol -- the CRUX.
+
+### Landed this session (all green, `functional_extensionality_dep` only)
+
+The full block checker vertical is built, sound, and BOARDS 5 of the 6
+v3-blk holdouts through the actual Coq checker (`vm_compute`):
+
+- **`theories/Checkers/IRules/EngineK.v`** -- the block symbolic engine
+  against `bdside tbl` (parametric in the UNTRUSTED table): `bdside` /
+  push / merge / trim; `beng_step` = concrete step + chain hops + block
+  PEEL + block HOP, `beng_step_sound` a `Reach`.  Block-HOP crux:
+  `hop_sim` (one-copy zipper replay, each step one `cstep`) ->
+  `hop_one_reach` -> `hop_copies` -> `bhop_result` (replay + primitive-
+  root reduce + table lookup + re-verify) -> `bhop_reach`.
+- **`theories/Checkers/IRules/RulesBlk.v`** -- `ruleBlk_apply` +
+  `ruleBlk_apply_sound`, rule-in-rule `check_rulesBlk`, driver
+  `breplayK`, sound cell-stream end-equality `bstreams_eq` (expand
+  constant block runs + `merge_adj` + structural compare -> exact
+  `bdside` equality), and the driver canonicalization `bcanon` =
+  re-block (`breblock_side`, untrusted greedy re-encode VERIFIED by
+  `bstreams_eq`) + whole-copy `babsorb` (proven denotation-preserving).
+- **`theories/Checkers/IRules/MetaBlk.v`** -- `irulesblk_check_neverqh`
+  (block table via `mk_tbl`, `raw_ok` by construction; templates,
+  anchor re-sim, state coverage; end-match strict-or-`bstreams_eq`) and
+  `irulesblk_check_neverqh_sound : ... -> NeverQuasiHaltsSt`.
+- **`theories/Machines/IRulesBlk_Batch_01.v`** -- 5 boarded machines;
+  **`theories/Tests/IRulesBlkBatch_Corruption.v`** -- negative controls
+  (honest true; transition / block-table / rule-delta / meta-a / meta-b
+  mutants all `false`).  `tools/gen_irulesblk_certs.py`,
+  `tools/irulesblk_manifest.tsv`, one `check_coverage.py` tuple,
+  marked `_CoqProject` block.  (`tools/irulesblk_prover.py` was the
+  de-risking scaffold: it measured the minimal mechanism set and diffed
+  against `bin/verify`; the ground truth is `bin/verify` + the Coq
+  checker.)
+
+### Deferred: the 6th v3-blk (partial absorb)
+
+`1RB0RD_1LC1LB_1RD0LB_0RD1RA` (14 blocks, 6 rules) is the ONLY v3-blk not
+boarded: its `iv_absorb_side` does a PARTIAL (symbolic-remainder) absorb
+(2 firings) -- folding part of a symbolic block run's leading copy into a
+neighbour -- which the current whole-copy `babsorb` does not do (it needs
+`expr_ge` on a symbolic remainder and a split of a symbolic count).  Plan:
+extend `babsorb` with the partial case (mirror `iv_absorb_side`'s
+`partial` branch: when `t >= need+1` and the run's `iex_min >= need+2`,
+take `need+1` cells and leave the run decremented), proven the same way
+(`bge lo nu` + `expr_ge` gives the denotation split).  It needs no
+`bstreams_eq` (strict end-match -- confirmed by the Python `--mech`
+measurement).  Then add it to `IRulesBlk_Batch_01.v`.
+
+### Phase 2 (rulepfx, the 44 v6) -- deferred, on top of Phase 1
+
+Add prefix matching to the applier (a `rulepfx` side matches only the
+first `r->nl` near-head runs and splices the untouched rest back; a
+non-prefix side keeps exact-count matching and must not be a sentinel
+side) + sentinel sides to the engine (a prefix rule's OWN validation
+treats its prefix sides as opaque; `beng_step`'s `[] ->` branch must fail
+when `sent[side]`, so the proof reads only the declared runs).  Check
+whether the 44 need v6 `rmdok` (a binding drain leaving remainder
+`rmd = (e-lb) mod d`, ending at `lb+rmd-d`); the survival check already
+covers it, only the drop-to-0 condition changes in a forked
+`find_binding`/`appBlk_side`.  Fork `RulesBlkPfx.v` / `MetaBlkPfx.v` +
+`IRulesBlkPfx_Batch_*.v` + corruption tests; differential-validate the 44
+vs `bin/verify` first.  Machines whose certs ALSO need
+`rulerunm`/`mmrow`/`nvar` are out of scope (re-check per cert).
+<!-- --- end irules block-run track --- -->
