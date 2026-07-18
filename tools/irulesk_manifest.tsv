@@ -41,3 +41,6 @@ machine	theorem	file	anchor	k0	kmin	meta	nrules	decr_deltas
 1RB1RD_0RC0RB_1LC0LA_1LA1LB	irk_1RB1RD_0RC0RB_1LC0LA_1LA1LB_never_quasihalts	theories/Machines/IRulesK_Batch_05.v	1408240	1023	1	2*k+1	2	-2,-1
 1RB1RD_0RC0RB_1LC0LA_1LB---	irk_1RB1RD_0RC0RB_1LC0LA_1LBXXX_never_quasihalts	theories/Machines/IRulesK_Batch_06.v	1406214	1023	1	2*k+1	2	-2,-1
 1RB1RD_0RC0RB_1LC0LA_1LD0RB	irk_1RB1RD_0RC0RB_1LC0LA_1LD0RB_never_quasihalts	theories/Machines/IRulesK_Batch_06.v	1406214	1023	1	2*k+1	2	-2,-1
+1RB1RD_0RC0RD_1LC0LA_0RB1LD	irk_1RB1RD_0RC0RD_1LC0LA_0RB1LD_never_quasihalts	theories/Machines/IRulesK_Batch_07.v	3976226	2730	3	4*k+2	3	-1
+1RB1RD_0RC1LD_1LC0LA_0RD0RB	irk_1RB1RD_0RC1LD_1LC0LA_0RD0RB_never_quasihalts	theories/Machines/IRulesK_Batch_07.v	3585047	2186	3	3*k+2	3	-1
+1RB1RA_0RC1LD_1LC0LA_0RD0RB	irk_1RB1RA_0RC1LD_1LC0LA_0RD0RB_never_quasihalts	theories/Machines/IRulesK_Batch_07.v	3589391	2186	3	3*k+2	3	-1

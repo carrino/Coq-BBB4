@@ -933,10 +933,18 @@ Two mechanisms, both reusing the same applier:
 Differentially confirmed against the C verifier: `bin/verify` accepts
 all 42; `tools/irulesk_prover.py` (faithful mirror: engine port +
 binding-run applier + rule-in-rule) accepts the same 42 and validates
-all 504 rules across the 428 v1 certs -- no false positives.  (The 3
-`d=-1 only, but v1 engine bound reasoning fails` rows of
-`irules_deferred.tsv` remain out of scope -- a genuine bound-tightening
-gap, not a decrement or rule-in-rule blocker.)
+all 504 rules across the 428 v1 certs -- no false positives.
+
+UPDATE (this session): the 3 `d=-1 only, but v1 engine bound reasoning
+fails` rows are NOT actually out of scope -- that note was about the v1
+`Rules`/`Meta` engine.  The general-delta `RulesK` engine's per-decrement
+survival re-check discharges all three (`1RB1RD_0RC0RD_1LC0LA_0RB1LD`,
+`1RB1RD_0RC1LD_1LC0LA_0RD0RB`, `1RB1RA_0RC1LD_1LC0LA_0RD0RB`); the mirror
+passes them and the Coq checker closes each by `vm_compute` (~24 s anchor
+re-sim).  Boarded as `Machines/IRulesK_Batch_07.v` (no checker change --
+same `irulesk_check_neverqh_sound`), manifest rows appended.  Coverage
+3635 -> 3638.  The only remaining irules blockers are the 44 v6 `rulepfx`
++ 6 v7 (`rulepfx`,`rulerunm`) and the 1 v4 `certs_geom` machine.
 
 <!-- --- irules block-run track (added by the block/rule-prefix session) --- -->
 ## irules BLOCK-RUN track -- Phase 1 LANDED (6 boarded, 3629 -> 3634)
