@@ -202,3 +202,10 @@ theories/Machines/IRulesK_Batch_04.v
 theories/Machines/IRulesK_Batch_05.v
 theories/Machines/IRulesK_Batch_06.v
 theories/Tests/IRulesKBatch_Corruption.v
+
+# --- irules block-run track ---
+theories/Checkers/IRules/EngineK.v
+theories/Checkers/IRules/RulesBlk.v
+theories/Checkers/IRules/MetaBlk.v
+theories/Machines/IRulesBlk_Batch_01.v
+theories/Tests/IRulesBlkBatch_Corruption.v

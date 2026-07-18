@@ -937,3 +937,76 @@ all 504 rules across the 428 v1 certs -- no false positives.  (The 3
 `d=-1 only, but v1 engine bound reasoning fails` rows of
 `irules_deferred.tsv` remain out of scope -- a genuine bound-tightening
 gap, not a decrement or rule-in-rule blocker.)
+
+<!-- --- irules block-run track (added by the block/rule-prefix session) --- -->
+## irules BLOCK-RUN track -- Phase 1 LANDED (5 boarded, 3629 -> 3633)
+
+Target: the 50 irules holdouts whose certs use block runs -- the 6 tagged
+`v3 cert, needs blk` (Phase 1) and the 44 tagged `v6 cert, needs
+blk,rulepfx` (Phase 2).  A run's symbol may be a BLOCK id `>= 2`
+(`blk <id> <cells>`); a run `(B, e)` denotes `e` copies of `B`'s cell
+sequence, not `e` copies of one symbol -- the CRUX.
+
+### Landed this session (all green, `functional_extensionality_dep` only)
+
+The full block checker vertical is built, sound, and BOARDS 5 of the 6
+v3-blk holdouts through the actual Coq checker (`vm_compute`):
+
+- **`theories/Checkers/IRules/EngineK.v`** -- the block symbolic engine
+  against `bdside tbl` (parametric in the UNTRUSTED table): `bdside` /
+  push / merge / trim; `beng_step` = concrete step + chain hops + block
+  PEEL + block HOP, `beng_step_sound` a `Reach`.  Block-HOP crux:
+  `hop_sim` (one-copy zipper replay, each step one `cstep`) ->
+  `hop_one_reach` -> `hop_copies` -> `bhop_result` (replay + primitive-
+  root reduce + table lookup + re-verify) -> `bhop_reach`.
+- **`theories/Checkers/IRules/RulesBlk.v`** -- `ruleBlk_apply` +
+  `ruleBlk_apply_sound`, rule-in-rule `check_rulesBlk`, driver
+  `breplayK`, sound cell-stream end-equality `bstreams_eq` (expand
+  constant block runs + `merge_adj` + structural compare -> exact
+  `bdside` equality), and the driver canonicalization `bcanon` =
+  re-block (`breblock_side`, untrusted greedy re-encode VERIFIED by
+  `bstreams_eq`) + whole-copy `babsorb` (proven denotation-preserving).
+- **`theories/Checkers/IRules/MetaBlk.v`** -- `irulesblk_check_neverqh`
+  (block table via `mk_tbl`, `raw_ok` by construction; templates,
+  anchor re-sim, state coverage; end-match strict-or-`bstreams_eq`) and
+  `irulesblk_check_neverqh_sound : ... -> NeverQuasiHaltsSt`.
+- **`theories/Machines/IRulesBlk_Batch_01.v`** -- 5 boarded machines;
+  **`theories/Tests/IRulesBlkBatch_Corruption.v`** -- negative controls
+  (honest true; transition / block-table / rule-delta / meta-a / meta-b
+  mutants all `false`).  `tools/gen_irulesblk_certs.py`,
+  `tools/irulesblk_manifest.tsv`, one `check_coverage.py` tuple,
+  marked `_CoqProject` block.  (`tools/irulesblk_prover.py` was the
+  de-risking scaffold: it measured the minimal mechanism set and diffed
+  against `bin/verify`; the ground truth is `bin/verify` + the Coq
+  checker.)
+
+### Deferred: the 6th v3-blk (partial absorb)
+
+`1RB0RD_1LC1LB_1RD0LB_0RD1RA` (14 blocks, 6 rules) is the ONLY v3-blk not
+boarded: its `iv_absorb_side` does a PARTIAL (symbolic-remainder) absorb
+(2 firings) -- folding part of a symbolic block run's leading copy into a
+neighbour -- which the current whole-copy `babsorb` does not do (it needs
+`expr_ge` on a symbolic remainder and a split of a symbolic count).  Plan:
+extend `babsorb` with the partial case (mirror `iv_absorb_side`'s
+`partial` branch: when `t >= need+1` and the run's `iex_min >= need+2`,
+take `need+1` cells and leave the run decremented), proven the same way
+(`bge lo nu` + `expr_ge` gives the denotation split).  It needs no
+`bstreams_eq` (strict end-match -- confirmed by the Python `--mech`
+measurement).  Then add it to `IRulesBlk_Batch_01.v`.
+
+### Phase 2 (rulepfx, the 44 v6) -- deferred, on top of Phase 1
+
+Add prefix matching to the applier (a `rulepfx` side matches only the
+first `r->nl` near-head runs and splices the untouched rest back; a
+non-prefix side keeps exact-count matching and must not be a sentinel
+side) + sentinel sides to the engine (a prefix rule's OWN validation
+treats its prefix sides as opaque; `beng_step`'s `[] ->` branch must fail
+when `sent[side]`, so the proof reads only the declared runs).  Check
+whether the 44 need v6 `rmdok` (a binding drain leaving remainder
+`rmd = (e-lb) mod d`, ending at `lb+rmd-d`); the survival check already
+covers it, only the drop-to-0 condition changes in a forked
+`find_binding`/`appBlk_side`.  Fork `RulesBlkPfx.v` / `MetaBlkPfx.v` +
+`IRulesBlkPfx_Batch_*.v` + corruption tests; differential-validate the 44
+vs `bin/verify` first.  Machines whose certs ALSO need
+`rulerunm`/`mmrow`/`nvar` are out of scope (re-check per cert).
+<!-- --- end irules block-run track --- -->
