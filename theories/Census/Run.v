@@ -24,7 +24,8 @@
 From Coq Require Import Arith Lia Bool List.
 From Coq Require Import FunctionalExtensionality.
 From BBB4 Require Import BBB4_Statement Mirror.
-From BBB4.Census Require Import TNF_QH Decide Deferred_Defs Deferred_Data.
+From BBB4.Census Require Import TNF_QH Decide Deferred_Defs Deferred_Data
+  Proven_Data.
 Import ListNotations.
 
 Set Default Goal Selector "!".
@@ -42,12 +43,28 @@ Definition rank_rungs_census : list (nat * nat) :=
   [(3, 0); (3, 64); (3, 256); (3, 1024)].
 
 (** the wrapped-QHBound tiers' ladder (mirrored by
-    tools/sweep_qhbound_residue.py and tools/sweep_qhbound_lex.py;
-    the measured catches all live at n <= 4, t <= 1024) *)
+    tools/sweep_qhbound_residue.py and tools/sweep_qhbound_lex.py, and,
+    for the larger-prefix extension, by measure_B/run_sweep.py).
+
+    The first nine rungs (n <= 4, t <= 1024) were the original vocabulary.
+    Lever B extends the prefix depth: an all-survivor sweep of the 9,775
+    wrap-QH machines found 2,533 more caught by the SAME rank + count-lex
+    gates at larger prefixes -- t in {1280, 1536, 1999} for n in {2, 3, 4}
+    (per-rung yield 1545/156/4, 188/13/3, 607/16 -- (4,1999) caught none),
+    plus a single machine at (6, 1999).  Every added rung keeps
+    S t <= B_census = 2000, so t = 1999 is the deepest legal prefix; the
+    n=5,6 and t=4096 probes the sweep also ran caught nothing usable under
+    that bound and are omitted.  Rungs are a Section variable of the
+    pipeline, so extending the list needs no soundness re-proof: try_qhb's
+    per-rung [S t <=? B] gate rejects any illegal prefix. *)
 Definition qhb_rungs_census : list (nat * nat) :=
   [(2, 64); (2, 256); (2, 1024);
    (3, 64); (3, 256); (3, 1024);
-   (4, 64); (4, 256); (4, 1024)].
+   (4, 64); (4, 256); (4, 1024);
+   (2, 1280); (3, 1280); (4, 1280);
+   (2, 1536); (3, 1536); (4, 1536);
+   (2, 1999); (3, 1999);
+   (6, 1999)].
 
 (** the RepWL tier's (L, T, t) ladder (mirrored by
     tools/sweep_repwl_residue.py): t = 0 only -- the 16-rung grid
@@ -60,16 +77,21 @@ Definition rw_rungs_census : list (nat * nat * nat) :=
 
 Definition rw_fuel_census : nat := 8192.
 
+(** the proven-machines map, built once from [proven_list] (mirrors how
+    [dmap_of D_census] is applied inside [decider]); a hit is decided
+    R_NeverQH by [proven_all]'s [Forall NeverQuasiHaltsSt] certificate. *)
+Definition pmap : DeferredMap := dmap_of proven_list.
+
 Definition decider : QHDecider :=
   decide_easy B_census 130 512 200000 512 ng_rungs_census
               rank_rungs_census qhb_rungs_census rw_rungs_census
-              rw_fuel_census (dmap_of D_census).
+              rw_fuel_census pmap (dmap_of D_census).
 
 Lemma decider_WF : QHDecider_WF B_census D_census decider.
 Proof.
   exact (decide_easy_WF B_census D_census 130 512 200000 512
            ng_rungs_census rank_rungs_census qhb_rungs_census
-           rw_rungs_census rw_fuel_census).
+           rw_rungs_census rw_fuel_census proven_list proven_all).
 Qed.
 
 (** ** The root and its symmetrized first level *)

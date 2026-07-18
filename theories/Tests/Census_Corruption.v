@@ -123,21 +123,25 @@ Definition rrungs_t : list (nat * nat) := [(3, 0)].
 
 Example pipe_halt :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
+    (dmap_of [])
     (fun _ _ => None) = R_Halt StA S0.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_spin :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
+    (dmap_of [])
     spin0 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_runner :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
+    (dmap_of [])
     run1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_qh_leaf :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
+    (dmap_of [])
     qh1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
@@ -199,10 +203,63 @@ Proof. vm_compute. reflexivity. Qed.
 (* pipeline classification with the new ladders live *)
 Example pipe_qhb :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) qhbm = R_QH.
+    rw_rungs_t 2000 (dmap_of []) (dmap_of []) qhbm = R_QH.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_rw :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) rwm = R_NeverQH.
+    rw_rungs_t 2000 (dmap_of []) (dmap_of []) rwm = R_NeverQH.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** Proven-machines tier (lever A)
+
+    [proven_lookup] answers only for machines actually in the list, and
+    the [tm_enc] key + [tm_eqb] re-check makes it machine-exact: a
+    one-transition mutation of a proven machine is rejected.  A weakened
+    lookup (dropping the [tm_eqb] guard, or hashing too coarsely) would
+    flip one of these [false]s and let an unproven machine be reported
+    NeverQuasiHaltsSt without a theorem. *)
+
+(* provm = 1RB0LA_0LB0RC_1LD0RD_1LA1LB, a Bulk-proven holdout
+   (theories/Machines/Bulk/Bulk_001.v : nqh_1RB0LA_0LB0RC_1LD0RD_1LA1LB) *)
+Definition provm : TM :=
+  mk8 (T S1 DR StB) (T S0 DL StA) (T S0 DL StB) (T S0 DR StC)
+      (T S1 DL StD) (T S0 DR StD) (T S1 DL StA) (T S1 DL StB).
+
+(* the genuine member is found *)
+Example proven_hit : proven_lookup (dmap_of [provm]) provm = true.
+Proof. vm_compute. reflexivity. Qed.
+
+(* a residue survivor (tools/repwl_residue_survivors.txt line 1,
+   0RB---_0LC0RA_0LD---_1RA1LC) is NOT in the proven list *)
+Definition surv1 : TM :=
+  mk8 (T S0 DR StB) None (T S0 DL StC) (T S0 DR StA)
+      (T S0 DL StD) None (T S1 DR StA) (T S1 DL StC).
+Example proven_miss_survivor : proven_lookup (dmap_of [provm]) surv1 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* mutating one transition (D1: 1LB -> 1LC) must break the lookup *)
+Definition provm_mut : TM :=
+  mk8 (T S1 DR StB) (T S0 DL StA) (T S0 DL StB) (T S0 DR StC)
+      (T S1 DL StD) (T S0 DR StD) (T S1 DL StA) (T S1 DL StC).
+Example proven_miss_mutant : proven_lookup (dmap_of [provm]) provm_mut = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** Lever B: the extended QHBound ladder still REJECTS non-quasihalters
+
+    The larger-prefix rungs (t up to 1999, kept under B = 2000) must not
+    let the wrapped-QHBound tier claim a never-quasihalting or a halting
+    machine as R_QH.  [try_qhb]'s soundness forbids it; these controls
+    would fail if a deeper rung's gate were loosened. *)
+Definition qhb_rungs_new : list (nat * nat) :=
+  [(2, 1280); (2, 1536); (2, 1999)].
+
+(* rwm is repwl-decided never-QH (rw_catches, above): never a quasihalter *)
+Example qhb_new_rejects_neverqh :
+  try_qhb 2000 200000 512 qhb_rungs_new rwm = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* a halting machine is never a prefix-quiet quasihalter *)
+Example qhb_new_rejects_halt :
+  try_qhb 2000 200000 512 qhb_rungs_new (fun _ _ => None) = false.
 Proof. vm_compute. reflexivity. Qed.
