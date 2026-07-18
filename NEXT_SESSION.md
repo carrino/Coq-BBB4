@@ -860,3 +860,60 @@ contract).
   mirror to measure the kill rate, regenerate `Deferred_*`, re-run
   `make census` (native switch, 2-3h wall).  Kept separate so
   session 1 never blocks on the census rebuild loop.
+
+<!-- --- census verified-tiers wiring session (2026-07-18) --- -->
+
+# Census verified-tiers session: D_census 56,039 -> 19,735
+
+Wired the two new verified tiers into the census `decide_easy` and
+regenerated the deferred list.  Branch `claude/census-verified-tiers-
+wire-e51w4e` (PR #11).
+
+## What shrank the deferred list
+
+The 52,326-machine residue was cut by 36,304 at census-walk time by
+three parameter-closed tiers (no per-machine certs in the walk):
+
+- **wrapped QHBound, plain acyclicity** (`ngram_check_qhbound`, tier Q):
+  5,307 prefix-quiet quasihalters -> R_QH.
+- **wrapped QHBound, lex gate** (`ngram_check_qhbound_lex` + in-Coq
+  RankSearch certs): 5,486 more -> R_QH.
+- **RepWL** (`rw_tier` in `Census/RepWLSearch.v` -> the verified
+  `rw_check_neverqh`, tier W): 25,511 never-QH core machines -> R_NeverQH.
+  Ladder (`rw_rungs_census`) is t=0 only, (L,T) in {(2,2),(3,2),(4,2),
+  (2,3)}, `rw_fuel` 8192 (the 16-rung grid measured ZERO catches at t>0;
+  closure sizes p50 185 / p99 1,010 / max 3,963, all under the fuel).
+
+New residue 16,022 = 9,775 wrap-QH survivors (need a stronger measure/
+pattern QHBound gate) + 6,247 never-QH survivors (need rwlrank measures
+or bigger rungs).  D_census = 3,713 holdouts + 16,022 = **19,735**.
+
+Sweep mirrors / artifacts (untrusted): `tools/sweep_qhbound_lex.py`,
+`tools/sweep_repwl_residue.py`, `tools/finish_repwl_sweep.py`,
+`tools/regen_residue.py` (reproduces Deferred_* from the committed
+`*_caught.tsv` + `wrap_residue_survivors.txt`); validation probes
+`tools/gen_tier_probe.py` (94/94 qhb + 40/40 rw machines pass through
+the Coq checkers via vm_compute); corruption tests in
+`Tests/Census_Corruption.v`.
+
+## GOTCHA: the tiers made the census walk ~100x slower per machine
+
+Newly-undeferred machines now run the full ngram->rank->qhb->rw ladder
+(~46ms/pop vs ~0.1ms with the old fat deferred list).  The residue-heavy
+1RB/0RB grandchild subtrees became **>2.5h single native_compute walks**
+-- longer than the remote container's ~2h preemption window, so they
+never certified monolithically (watched it restart 5x).
+
+FIX (this session): generalize Run_Split2 to a **great-grandchild
+split** of the 7 heavy grandchildren (1RB_0LC/0RC/1LA/1LB/1RC,
+0RB_1LC/1RC).  `tools/gen_gsplit_heavy.py` expands each grandchild's
+first undefined transition into its 12/16 fills (node_expand_spec),
+emitting `Census/Run_Split_<tag>.v` + 104 `Compute/GGH_<tag>_*.v`
+sub-walks (few min each) + replacement `Compute/G_<tag>.v`.  `make
+census` order updated.  Result: every walk unit fits the window and is
+resumable (skips done .vo), so restarts cost only in-flight sub-walks.
+
+If splitting a future regeneration's heavies: add rows to
+`gen_gsplit_heavy.HEAVY` (the (A0,B0,w,w2,d2,nx2) tuples), regenerate,
+wire the Makefile globs.  If a sub-walk itself exceeds the window, split
+it again (same tool, one level deeper).
