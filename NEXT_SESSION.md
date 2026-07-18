@@ -939,7 +939,7 @@ all 504 rules across the 428 v1 certs -- no false positives.  (The 3
 gap, not a decrement or rule-in-rule blocker.)
 
 <!-- --- irules block-run track (added by the block/rule-prefix session) --- -->
-## irules BLOCK-RUN track -- Phase 1 LANDED (5 boarded, 3629 -> 3633)
+## irules BLOCK-RUN track -- Phase 1 LANDED (6 boarded, 3629 -> 3634)
 
 Target: the 50 irules holdouts whose certs use block runs -- the 6 tagged
 `v3 cert, needs blk` (Phase 1) and the 44 tagged `v6 cert, needs
@@ -980,19 +980,39 @@ v3-blk holdouts through the actual Coq checker (`vm_compute`):
   against `bin/verify`; the ground truth is `bin/verify` + the Coq
   checker.)
 
-### Deferred: the 6th v3-blk (partial absorb)
+### LANDED: the 6th v3-blk (partial absorb) -- 3633 -> 3634
 
-`1RB0RD_1LC1LB_1RD0LB_0RD1RA` (14 blocks, 6 rules) is the ONLY v3-blk not
-boarded: its `iv_absorb_side` does a PARTIAL (symbolic-remainder) absorb
-(2 firings) -- folding part of a symbolic block run's leading copy into a
-neighbour -- which the current whole-copy `babsorb` does not do (it needs
-`expr_ge` on a symbolic remainder and a split of a symbolic count).  Plan:
-extend `babsorb` with the partial case (mirror `iv_absorb_side`'s
-`partial` branch: when `t >= need+1` and the run's `iex_min >= need+2`,
-take `need+1` cells and leave the run decremented), proven the same way
-(`bge lo nu` + `expr_ge` gives the denotation split).  It needs no
-`bstreams_eq` (strict end-match -- confirmed by the Python `--mech`
-measurement).  Then add it to `IRulesBlk_Batch_01.v`.
+`1RB0RD_1LC1LB_1RD0LB_0RD1RA` (14 blocks, 6 rules, anchor 9,999,528) is
+now boarded.  Its `iv_absorb_side` does PARTIAL (symbolic-remainder)
+absorbs -- a single-cell run contributes only PART of its cells (`need+1`)
+to complete a block copy and stays, decremented, rather than the whole
+copy sitting as separate count-1 runs.  Instrumenting `bin/verify`
+(`DBG_ABSORB`) showed this machine's partials are on CONST runs
+(e.g. block 7 `10111`: a `1x3` run gives 1 leading cell, leaving `1x2`).
+
+Formalized in `RulesBlk.v` with an UNTRUSTED-candidate + re-verify design
+(same philosophy as `breblock_side`), so the peel logic never enters the
+trust surface:
+
+- `bpeel_rev tbl budget rrs` -- untrusted: peel `budget = length (tbl s)`
+  concrete cells off the RIGHT of `acc` (= FRONT of `rev acc`), consuming
+  single-cell const runs, decrementing the leftmost touched run.
+- `babsorb_partial lo tbl acc s e rest` -- proposes `new_acc := rev (bpeel_rev ...)`,
+  then GATES on `expr_ge lo e 0 && bstreams_eq tbl lo acc (new_acc ++ peel_cells tbl s)`
+  (i.e. `acc` denotes `new_acc` followed by exactly one block copy), and
+  returns `new_acc ++ (s, e+1) :: rest`.
+- `babsorb_partial_den` -- soundness: `bstreams_eq_sound` gives
+  `bdside acc = bdside new_acc ++ tbl s`; the symbolic block-run `+1`
+  rides the same `cnt_succ` + `nreps_S` fold as the whole-copy case.
+  A wrong peel just fails the `bstreams_eq` re-check -> no absorb (sound).
+- Wired as the `else` branch of `babsorb_go` at a block run (whole-copy
+  fast path unchanged, so the other 5 machines are untouched); `bcanon`,
+  `babsorb_iter`, the driver, and `MetaBlk` need no change.
+
+Negative control: `theories/Tests/IRulesBlkPartial_Corruption.v` (block-7
+cells mutated -> checker `= false` at rule validation, 1.3 s).  Axiom
+footprint `functional_extensionality_dep` only; `check_coverage` now 3634.
+All 6 v3-blk holdouts boarded; Phase 2 (44 v6 `rulepfx`) is the next block.
 
 ### Phase 2 (rulepfx, the 44 v6) -- deferred, on top of Phase 1
 

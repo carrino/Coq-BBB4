@@ -756,6 +756,55 @@ Qed.
     cells re-express one more period of the block, using [expr_ge lo e 0]
     so the count increments soundly for every [nu >= lo]). *)
 
+(** ** Partial (symbolic-remainder) absorb
+
+    The C verifier's [iv_absorb_side] also folds a block copy whose
+    leading cells come from only PART of a single-cell run's count
+    (const [cv > t] or symbolic with [iex_min >= need+2]): it takes
+    [need+1] cells to finish the copy and leaves that run DECREMENTED,
+    rather than requiring the whole copy to sit as separate count-1 runs.
+    We model this uniformly and soundly: propose an UNTRUSTED leftover
+    [new_acc] (peel exactly [L = length (tbl s)] concrete cells off the
+    right of [acc], decrementing the leftmost touched single-cell run),
+    then re-verify [bstreams_eq tbl lo acc (new_acc ++ peel_cells tbl s)]
+    -- i.e. [acc] denotes [new_acc] followed by exactly one block copy.
+    Soundness never depends on the peel being correct (a wrong [new_acc]
+    just fails the re-check); the block-run count increment rides the
+    same [expr_ge lo e 0] + [nreps_S] fold as the whole-copy case. *)
+
+(* Untrusted: peel [budget] concrete cells off the FRONT of a reversed
+   run list [rrs] (= the RIGHT end of [acc]), consuming single-cell
+   constant runs; the leftmost touched run is decremented if only part
+   of its cells are taken.  Returns the reversed leftover, or None. *)
+Fixpoint bpeel_rev (tbl : BTbl) (budget : nat) (rrs : list BRun)
+  : option (list BRun) :=
+  match budget with
+  | O => Some rrs
+  | S _ =>
+      match rrs with
+      | [] => None
+      | (s, e) :: t =>
+          if (length (tbl s) =? 1)%nat && eis_const e && (0 <=? e_c0 e) then
+            let c := Z.to_nat (e_c0 e) in
+            if (c <=? budget)%nat then bpeel_rev tbl (budget - c) t
+            else Some ((s, eaddc e (- Z.of_nat budget)) :: t)
+          else None
+      end
+  end.
+
+Definition babsorb_partial (lo : list Z) (tbl : BTbl)
+    (acc : list BRun) (s : BSym) (e : Expr) (rest : list BRun)
+  : option (list BRun) :=
+  match bpeel_rev tbl (length (tbl s)) (rev acc) with
+  | Some rrleft =>
+      let new_acc := rev rrleft in
+      if expr_ge lo e 0 &&
+         bstreams_eq tbl lo acc (new_acc ++ peel_cells tbl s)
+      then Some (new_acc ++ (s, eaddc e 1) :: rest)
+      else None
+  | None => None
+  end.
+
 Fixpoint babsorb_go (lo : list Z) (tbl : BTbl) (acc rs : list BRun)
   : option (list BRun) :=
   match rs with
@@ -767,7 +816,7 @@ Fixpoint babsorb_go (lo : list Z) (tbl : BTbl) (acc rs : list BRun)
                       (peel_cells tbl s)
          then Some (firstn (length acc - length (tbl s)) acc
                     ++ (s, eaddc e 1) :: rest)
-         else None)
+         else babsorb_partial lo tbl acc s e rest)
       else babsorb_go lo tbl (acc ++ [(s, e)]) rest
   end.
 
@@ -775,6 +824,31 @@ Lemma cnt_succ : forall nu e,
   0 <= eval nu e -> cnt nu (eaddc e 1) = S (cnt nu e).
 Proof.
   intros nu e He. unfold cnt. rewrite eval_eaddc. lia.
+Qed.
+
+Lemma babsorb_partial_den : forall lo tbl acc s e rest rs' nu,
+  raw_ok tbl -> bge lo nu ->
+  babsorb_partial lo tbl acc s e rest = Some rs' ->
+  bdside tbl nu rs' = bdside tbl nu (acc ++ (s, e) :: rest).
+Proof.
+  intros lo tbl acc s e rest rs' nu Hraw Hb H.
+  unfold babsorb_partial in H.
+  destruct (bpeel_rev tbl (length (tbl s)) (rev acc)) as [rrleft|] eqn:Hpeel;
+    [|discriminate].
+  set (new_acc := rev rrleft) in *.
+  destruct (expr_ge lo e 0 &&
+            bstreams_eq tbl lo acc (new_acc ++ peel_cells tbl s)) eqn:Hcond;
+    [|discriminate].
+  injection H as <-.
+  apply andb_prop in Hcond as [Hge0 Hstr].
+  assert (Hacc : bdside tbl nu acc = bdside tbl nu new_acc ++ tbl s).
+  { rewrite (bstreams_eq_sound tbl lo acc (new_acc ++ peel_cells tbl s)
+                              nu Hraw Hb Hstr).
+    rewrite bdside_app, (bdside_peel_cells tbl nu s Hraw). reflexivity. }
+  rewrite (bdside_app tbl nu new_acc), bdside_cons.
+  rewrite (cnt_succ nu e (expr_ge_sound lo e 0 nu Hge0 Hb)), nreps_S.
+  rewrite (bdside_app tbl nu acc), bdside_cons, Hacc.
+  rewrite <- !app_assoc. reflexivity.
 Qed.
 
 Lemma babsorb_go_den : forall tbl lo rs acc rs' nu,
@@ -787,7 +861,8 @@ Proof.
   destruct (2 <=? length (tbl s))%nat eqn:Hblk.
   - destruct ((length (tbl s) <=? length acc)%nat && expr_ge lo e 0 &&
               bruns_eqb (skipn (length acc - length (tbl s)) acc)
-                        (peel_cells tbl s)) eqn:Hcond; [|discriminate].
+                        (peel_cells tbl s)) eqn:Hcond;
+      [|exact (babsorb_partial_den lo tbl acc s e rest rs' nu Hraw Hb H)].
     injection H as <-.
     apply andb_prop in Hcond as [Hcond Hbr].
     apply andb_prop in Hcond as [Hlen Hge0].

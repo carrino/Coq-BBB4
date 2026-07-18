@@ -154,3 +154,46 @@ Proof.
 Qed.
 Theorem irb_1RB1RD_1LC0RA_1LA0LB_1RAXXX_nonhalt : NonHalt tmb_1RB1RD_1LC0RA_1LA0LB_1RAXXX.
 Proof. apply never_qh_nonhalt, irb_1RB1RD_1LC0RA_1LA0LB_1RAXXX_never_quasihalts. Qed.
+
+(** ** 1RB0RD_1LC1LB_1RD0LB_0RD1RA: anchor 9999528, k0 572, map k -> 1*k+2, 6 rule(s), 13 block(s) *)
+Definition tmb_1RB0RD_1LC1LB_1RD0LB_0RD1RA : TM := fun q s =>
+  match q, s with
+  | StA, S0 => mk S1 DR StB
+  | StA, S1 => mk S0 DR StD
+  | StB, S0 => mk S1 DL StC
+  | StB, S1 => mk S1 DL StB
+  | StC, S0 => mk S1 DR StD
+  | StC, S1 => mk S0 DL StB
+  | StD, S0 => mk S0 DR StD
+  | StD, S1 => mk S1 DR StA
+  end.
+Definition certb_1RB0RD_1LC1LB_1RD0LB_0RD1RA : BIRCert := mkBIRCert
+  9999528%nat (572) (6) (1) (2) StC S0
+  [(2%nat, [S1; S0; S1; S0; S1; S0; S1; S1]);
+   (3%nat, [S0; S1; S0; S1; S0; S1; S1; S1]);
+   (4%nat, [S0; S1]);
+   (5%nat, [S0; S1; S1; S1]);
+   (6%nat, [S1; S1; S1; S0; S1; S1; S1]);
+   (7%nat, [S1; S0; S1; S1; S1]);
+   (8%nat, [S1; S0; S1; S1; S1; S1; S1]);
+   (9%nat, [S0; S1; S1; S1; S1; S1; S1]);
+   (10%nat, [S0; S1; S0; S1; S0; S1; S0]);
+   (11%nat, [S1; S1; S1; S1; S1; S0; S1]);
+   (12%nat, [S1; S0; S0; S1; S0; S1; S0]);
+   (13%nat, [S1; S0]);
+   (14%nat, [S1; S1; S1; S1; S1; S1; S0])]
+  []
+  [(1%nat, (0), (2)); (0%nat, (0), (1)); (1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (0), (14)); (9%nat, (1), (0)); (1%nat, (0), (5)); (0%nat, (0), (1)); (1%nat, (0), (1)); (0%nat, (0), (1)); (7%nat, (1), (1)); (1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (0), (3)); (0%nat, (0), (1)); (1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (0), (1)); (0%nat, (0), (1)); (1%nat, (0), (5)); (0%nat, (0), (1)); (1%nat, (0), (1))]
+  [mkBRule StB S0 [(1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (10%nat, RV (-1) (2)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (2)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (4))] [(11%nat, RV (1) (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (4)); (0%nat, RC (1)); (7%nat, RV (0) (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (5)); (0%nat, RC (1)); (1%nat, RC (1))];
+   mkBRule StB S0 [(1%nat, RC (1)); (0%nat, RC (1)); (12%nat, RV (-1) (2)); (1%nat, RC (1)); (0%nat, RC (2)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (2)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (2))] [(11%nat, RV (1) (1)); (1%nat, RC (2)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (7%nat, RV (0) (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (5)); (0%nat, RC (1)); (1%nat, RC (1))];
+   mkBRule StB S0 [(12%nat, RV (-1) (2)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (2)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (4))] [(9%nat, RV (1) (1)); (1%nat, RC (5)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (7%nat, RV (0) (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (5)); (0%nat, RC (1)); (1%nat, RC (1))];
+   mkBRule StB S0 [(1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (10%nat, RV (-1) (2)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (2)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (2))] [(11%nat, RV (1) (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (4)); (0%nat, RC (1)); (7%nat, RV (0) (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (5)); (0%nat, RC (1)); (1%nat, RC (1))];
+   mkBRule StB S0 [(1%nat, RC (1)); (0%nat, RC (1)); (12%nat, RV (-1) (2)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (2)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (4))] [(11%nat, RV (1) (1)); (1%nat, RC (2)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (7%nat, RV (0) (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (5)); (0%nat, RC (1)); (1%nat, RC (1))];
+   mkBRule StB S0 [(12%nat, RV (-1) (2)); (1%nat, RC (1)); (0%nat, RC (2)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (2)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (2))] [(9%nat, RV (1) (1)); (1%nat, RC (5)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (7%nat, RV (0) (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (3)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (1)); (0%nat, RC (1)); (1%nat, RC (5)); (0%nat, RC (1)); (1%nat, RC (1))]].
+Theorem irb_1RB0RD_1LC1LB_1RD0LB_0RD1RA_never_quasihalts : NeverQuasiHaltsSt tmb_1RB0RD_1LC1LB_1RD0LB_0RD1RA.
+Proof.
+  apply (irulesblk_check_neverqh_sound tmb_1RB0RD_1LC1LB_1RD0LB_0RD1RA certb_1RB0RD_1LC1LB_1RD0LB_0RD1RA 200000 300000).
+  vm_compute. reflexivity.
+Qed.
+Theorem irb_1RB0RD_1LC1LB_1RD0LB_0RD1RA_nonhalt : NonHalt tmb_1RB0RD_1LC1LB_1RD0LB_0RD1RA.
+Proof. apply never_qh_nonhalt, irb_1RB0RD_1LC1LB_1RD0LB_0RD1RA_never_quasihalts. Qed.
