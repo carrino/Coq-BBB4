@@ -24,7 +24,18 @@
       generic verified decider): -> [R_NeverQH];
 
     - deferred lookup: machine is in the explicit deferred list
-      (holdout list + measured hard residue) -> [R_Deferred].
+      (holdout list + measured hard residue) -> [R_Deferred];
+
+    - ranking rules ladder ([rank_tier]) -> [R_NeverQH];
+
+    - wrapped QHBound ladder ([ngram_check_qhbound] plain acyclicity,
+      then [ngram_check_qhbound_lex] with the in-Coq RankSearch
+      certificates, both behind an untrusted quiet-candidate filter):
+      prefix-quiet quasihalters -> [R_QH];
+
+    - RepWL ladder ([rw_tier]: block-list abstraction closure + the
+      in-Coq RepWLSearch rules-(a)/(b) certificates through the
+      verified [rw_check_neverqh]) -> [R_NeverQH].
 
     Everything else falls to [R_Unknown] and would sit in the queue's
     back list -- the census closes only if that never happens. *)
@@ -33,8 +44,8 @@ From Coq Require Import Arith Lia Bool List NArith PArith ZArith.
 From Coq Require Import FSets.FMapPositive.
 From Coq Require Import FunctionalExtensionality.
 From BBB4 Require Import BBB4_Statement CTape GTape Mirror PosEnc.
-From BBB4.Checkers Require Import Cycle TCycler NGram.
-From BBB4.Census Require Import TNF_QH RankSearch.
+From BBB4.Checkers Require Import Cycle TCycler NGram Wrap RepWL.
+From BBB4.Census Require Import TNF_QH RankSearch RepWLSearch.
 Import ListNotations.
 
 Set Default Goal Selector "!".
@@ -360,6 +371,21 @@ Definition tc_measure_W (tm : TM) (n1 P : nat) : nat :=
   | None => 0
   end.
 
+(** last visit of [q] among the configurations at offsets
+    [k .. k + gas - 1] (untrusted: the QHBound checkers re-verify
+    the returned index) *)
+Fixpoint last_visit (tm : TM) (gas : nat) (c : cconf) (k : nat)
+    (q : St) (best : option nat) : option nat :=
+  match gas with
+  | 0 => best
+  | S g =>
+      let best' := if st_eqb (fst c) q then Some k else best in
+      match cstep tm c with
+      | None => best'
+      | Some c' => last_visit tm g c' (S k) q best'
+      end
+  end.
+
 (** ** Deferred lookup *)
 
 Definition dir_eqb (a b : Dir) : bool :=
@@ -465,6 +491,11 @@ Variable ng_fuel : nat.        (** worklist fuel for the n-gram closures *)
 Variable ng_rounds : nat.      (** growth rounds for the n-gram sets *)
 Variable ng_rungs : list (nat * nat).   (** (window n, prefix t) ladder *)
 Variable rank_rungs : list (nat * nat). (** ladder for the rank-rules tier *)
+Variable qhb_rungs : list (nat * nat).  (** (window n, prefix t) ladder for
+                                            the wrapped-QHBound tiers *)
+Variable rw_rungs : list (nat * nat * nat). (** (block L, threshold T,
+                                            prefix t) ladder, RepWL tier *)
+Variable rw_fuel : nat.                 (** closure fuel for the RepWL tier *)
 
 Definition try_tc_cands (tm : TM) (mirrored : bool)
     (cands : list (nat * nat)) : bool :=
@@ -490,6 +521,72 @@ Fixpoint try_rank (rungs : list (nat * nat)) (tm : TM) : QHResult :=
       else try_rank rest tm
   end.
 
+(** *** Tier Q: wrapped QHBound (prefix-quiet quasihalters)
+
+    Mirrored by tools/sweep_qhbound_residue.py (plain acyclicity) and
+    tools/sweep_qhbound_lex.py (the RankSearch-certified lex gate).
+    An untrusted candidate filter guards the ladders: [q] is worth
+    trying only if its last visit inside a window of 4x the largest
+    prefix rung still lies under that rung -- a genuinely caught
+    quiet state is never visited after its [s < t <= qhb_tmax], so
+    the filter cannot lose a machine the ladder would catch, and on
+    never-quasihalting machines every recurring state fails it. *)
+
+Definition qhb_tmax : nat :=
+  fold_left Nat.max (map snd qhb_rungs) 0.
+
+Definition qh_candidate (tm : TM) (q : St) : bool :=
+  match last_visit tm (4 * qhb_tmax) c0 0 q None with
+  | Some s => s <? qhb_tmax
+  | None => false
+  end.
+
+Definition try_qhb_at (tm : TM) (q : St) (nt : nat * nat) : bool :=
+  let '(n, t) := nt in
+  (S t <=? B) &&
+  match last_visit tm t c0 0 q None with
+  | Some s => ngram_check_qhbound tm q s n t ng_fuel ng_rounds
+  | None => false
+  end.
+
+Definition try_qhb_lex_at (tm : TM) (q : St) (nt : nat * nat) : bool :=
+  let '(n, t) := nt in
+  (S t <=? B) &&
+  match last_visit tm t c0 0 q None with
+  | None => false
+  | Some s =>
+      match csteps tm t c0 with
+      | None => false
+      | Some ct =>
+          let tmw := tm_wrap tm q in
+          let '(q1, (l, h, r)) := ct in
+          let lset0 := gadds (ng_seed_side n l) gempty in
+          let rset0 := gadds (ng_seed_side n r) gempty in
+          let a0 := ng_start n ct in
+          let '(lset, rset) :=
+            ng_grow tmw a0 ng_fuel ng_rounds lset0 rset0 in
+          let closure :=
+            ng_explore tmw lset rset ng_fuel [] PositiveSet.empty [a0] in
+          ngram_check_qhbound_lex tm q s n t ng_fuel ng_rounds
+            (fun q' => rank_procedure tmw lset rset closure q')
+      end
+  end.
+
+Definition try_qhb (tm : TM) : bool :=
+  existsb (fun q =>
+      existsb (try_qhb_at tm q) qhb_rungs
+      || existsb (try_qhb_lex_at tm q) qhb_rungs)
+    (filter (qh_candidate tm) all_St).
+
+(** *** Tier W: RepWL block-list abstraction
+
+    Mirrored by tools/sweep_repwl_residue.py; parameter-closed --
+    the certificates come from the in-Coq RepWLSearch, never from
+    per-machine tables. *)
+
+Definition try_rw (tm : TM) : bool :=
+  existsb (fun '(L, T, t) => rw_tier tm L T t rw_fuel) rw_rungs.
+
 Definition decide_easy (dm : DeferredMap) (tm : TM) : QHResult :=
   (* tier H: halting *)
   match find_halt tm halt_gas 0 c0 with
@@ -512,10 +609,18 @@ Definition decide_easy (dm : DeferredMap) (tm : TM) : QHResult :=
      n-gram ladder -- the deferred list is measured to be exactly the
      ladder's residue plus the holdouts *)
   if deferred_lookup dm tm then R_Deferred else
-  (* tier N: n-gram ladder, then tier R: the ranking rules (a)/(b) *)
+  (* tier N: n-gram ladder, then tier R: the ranking rules (a)/(b),
+     then tier Q: wrapped QHBound, then tier W: RepWL *)
   match try_ngram ng_rungs tm with
   | R_NeverQH => R_NeverQH
-  | _ => try_rank rank_rungs tm
+  | _ =>
+      match try_rank rank_rungs tm with
+      | R_NeverQH => R_NeverQH
+      | _ =>
+          if try_qhb tm then R_QH
+          else if try_rw tm then R_NeverQH
+          else R_Unknown
+      end
   end
   end.
 
@@ -575,6 +680,51 @@ Proof.
     + exact (IH tm).
 Qed.
 
+Lemma try_qhb_sound : forall tm,
+  try_qhb tm = true ->
+  NonHalt tm /\ QHBound B tm /\ QuasiHaltsSt tm.
+Proof.
+  intros tm H.
+  unfold try_qhb in H.
+  apply existsb_exists in H.
+  destruct H as (q & _ & H).
+  apply orb_prop in H; destruct H as [H | H];
+    apply existsb_exists in H;
+    destruct H as ([n t] & _ & H);
+    unfold try_qhb_at, try_qhb_lex_at in H;
+    apply andb_prop in H as [HB H];
+    apply Nat.leb_le in HB.
+  - (* plain acyclicity gate *)
+    destruct (last_visit tm t c0 0 q None) as [s|]; [|discriminate].
+    destruct (ngram_check_qhbound_sound tm q s n t ng_fuel ng_rounds H)
+      as (Hnh & Hqb & Hqh).
+    split; [exact Hnh|].
+    split; [|exact Hqh].
+    exact (qhbound_mono (S t) B tm HB Hqb).
+  - (* lex gate *)
+    destruct (last_visit tm t c0 0 q None) as [s|]; [|discriminate].
+    destruct (csteps tm t c0) as [[q1 [[l h] r]]|] eqn:Ect; [|discriminate].
+    match type of H with
+    | (let '(_, _) := ?G in _) = true => destruct G as [lset rset]
+    end.
+    cbv beta iota zeta in H.
+    destruct (ngram_check_qhbound_lex_sound tm q s n t ng_fuel ng_rounds
+                _ H) as (Hnh & Hqb & Hqh).
+    split; [exact Hnh|].
+    split; [|exact Hqh].
+    exact (qhbound_mono (S t) B tm HB Hqb).
+Qed.
+
+Lemma try_rw_sound : forall tm,
+  try_rw tm = true -> NeverQuasiHaltsSt tm.
+Proof.
+  intros tm H.
+  unfold try_rw in H.
+  apply existsb_exists in H.
+  destruct H as ([[L T] t] & _ & H).
+  exact (rw_tier_sound tm L T t rw_fuel H).
+Qed.
+
 Theorem decide_easy_WF :
   QHDecider_WF B D (decide_easy (dmap_of D)).
 Proof.
@@ -607,12 +757,16 @@ Proof.
   (* deferred tier *)
   destruct (deferred_lookup (dmap_of D) tm) eqn:Ed.
   { apply deferred_lookup_In; exact Ed. }
-  (* ngram then rank tiers *)
+  (* ngram, rank, wrapped-QHBound, RepWL tiers *)
   destruct (try_ngram_cases ng_rungs tm) as [[En Hn] | En]; rewrite En.
   - exact Hn.
   - destruct (try_rank_cases rank_rungs tm) as [[Er Hr] | Er]; rewrite Er.
     + exact Hr.
-    + exact I.
+    + destruct (try_qhb tm) eqn:Eq.
+      * exact (try_qhb_sound tm Eq).
+      * destruct (try_rw tm) eqn:Ew.
+        -- exact (try_rw_sound tm Ew).
+        -- exact I.
 Qed.
 
 End Pipeline.
