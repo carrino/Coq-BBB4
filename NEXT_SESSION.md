@@ -865,6 +865,12 @@ contract).
 
 # Census verified-tiers session: D_census 56,039 -> 19,735
 
+**CERTIFIED 2026-07-18**: `census_decided : forall tm, QHBound B_census
+tm \/ Deferred D_census tm` is Qed through the kernel with the new
+tiers and the 19,735-machine deferred list; `Print Assumptions` =
+`functional_extensionality_dep` only.  Merged with main (disjoint
+drift/irules tracks; only NEXT_SESSION needed a keep-both resolve).
+
 Wired the two new verified tiers into the census `decide_easy` and
 regenerated the deferred list.  Branch `claude/census-verified-tiers-
 wire-e51w4e` (PR #11).
