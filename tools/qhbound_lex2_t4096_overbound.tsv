@@ -1,0 +1,34 @@
+# INFORMATIONAL: 29 wrap-QH machines caught by the extended lex sweep ONLY at
+# t=4096, which violates S t <= B_census = 2000. They exceed B_census and STAY
+# DEFERRED (they are members of tools/qhbound_lex2_survivors.txt, not the
+# lever-B drop list tools/qhbound_lex2_caught.tsv). Not consumed by regen_residue.py.
+machine	quiet_state	n	t	gate	ms	closure_size
+0RB---_0LC0LC_0RD1LB_1LC1RD	A	2	4096	count-lex	23	32
+0RB---_0LC0RB_1RD1LC_0LD1RB	A	2	4096	count-lex	56	47
+0RB---_0RC0LB_1LD1RC_0RD1LB	A	2	4096	count-lex	31	47
+0RB---_0RC0RC_0LD1RB_1RC1LD	A	2	4096	count-lex	18	32
+0RB---_1LC1RB_0RC1LD_0RB0LD	A	2	4096	count-lex	32	47
+0RB---_1LC1RB_1LD0LD_0RB0LC	A	2	4096	count-lex	30	46
+0RB---_1RC1LB_0LC1RD_0LB0RD	A	2	4096	count-lex	24	47
+0RB---_1RC1LB_1RD0RD_0LB0RC	A	2	4096	count-lex	25	46
+1RB---_0LB1RC_0LD0RC_1RB1LD	A	2	4096	count-lex	21	47
+1RB---_0LC0LC_0RD1LB_1LC1RD	A	2	4096	count-lex	35	32
+1RB---_0LC0RB_1RD1LC_0LD1RB	A	2	4096	count-lex	33	47
+1RB---_0RC0LB_1LD1RC_0RD1LB	A	2	4096	count-lex	25	80
+1RB---_0RC0LD_1LD1RC_1LB0LB	A	2	4096	count-lex	26	46
+1RB---_0RC0RC_0LD1RB_1RC1LD	A	2	4096	count-lex	22	32
+1RB---_0RC0RD_1LC0LD_1RB1LB	A	2	4096	rank	16	41
+1RB---_1LC0LB_0LD1LC_1RD1RB	A	2	4096	count-lex	55	26
+1RB---_1LC0LC_0RD1LB_1LC1RD	A	2	4096	count-lex	25	32
+1RB---_1LC0LC_1RD1LD_1RC0LB	A	4	4096	rank	48	25
+1RB---_1LC0RB_0LD1LD_0RD1RB	A	2	4096	count-lex	27	36
+1RB---_1LC0RC_1RD1RB_1LD0LB	A	2	4096	rank	11	34
+1RB---_1LC0RD_0RB1RC_1LD1RB	A	3	4096	rank	46	34
+1RB---_1LC1LC_0RD0LB_1LB1RD	A	2	4096	count-lex	24	38
+1RB---_1LC1RB_0RB1LD_0RB0LC	A	2	4096	count-lex	49	41
+1RB---_1LC1RB_0RB1LD_1LC0LC	A	2	4096	count-lex	35	32
+1RB---_1RC1LB_0LB1RD_0LB0RC	A	2	4096	count-lex	40	41
+1RB---_1RC1LB_0LC1RD_0LB0RD	A	2	4096	count-lex	31	47
+1RB---_1RC1LC_0RD0RB_1LD0LB	A	2	4096	rank	16	41
+1RB---_1RC1LD_0LB1RB_0RC0LD	A	2	4096	count-lex	34	39
+1RB---_1RC1RB_1LD1LB_0RB0LD	A	2	4096	count-lex	41	48

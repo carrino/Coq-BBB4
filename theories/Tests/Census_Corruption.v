@@ -263,3 +263,35 @@ Proof. vm_compute. reflexivity. Qed.
 Example qhb_new_rejects_halt :
   try_qhb 2000 200000 512 qhb_rungs_new (fun _ _ => None) = false.
 Proof. vm_compute. reflexivity. Qed.
+
+(** ** Lever C: the extended RepWL ladder still REJECTS a wrong-class machine
+
+    The block-width extension adds rungs (5, 2, 0), (7, 2, 0), (6, 2, 0) to
+    the RepWL never-quasihalting ladder (Run.v's [rw_rungs_census]).  The
+    wider rungs must not let [try_rw] certify a machine that is NOT never-
+    quasihalting: neither a genuine QUASIHALTER, nor a never-QH residue
+    SURVIVOR whose block-list search fails to produce a certificate.
+    [try_rw]'s soundness ([try_rw_sound]: every rung re-derived by
+    [rw_check_neverqh], the closure fail-closed on divergence) forbids both;
+    these controls would flip to [true] if a wider rung's closure guard or
+    its search-certificate check were weakened. *)
+
+(* the extended ladder, identical to Run.v's [rw_rungs_census]; kept inline
+   so this negative-control file stays independent of the regenerated tables *)
+Definition rw_rungs_ext : list (nat * nat * nat) :=
+  [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0);
+   (5, 2, 0); (7, 2, 0); (6, 2, 0)].
+
+(* [qhbm] (above) is a genuine wrapped-QHBound quasihalter; the extended
+   never-QH ladder must reject it -- every rung, the new ones included *)
+Example rwext_rejects_qh : try_rw rw_rungs_ext 2000 qhbm = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* survivor 0RB---_0LC0RA_0LD---_1RA1LC (tools/repwl2_survivors.txt): a
+   never-QH residue machine the RepWL search cannot certify even at the wider
+   rungs -- it must stay non-R_NeverQH, i.e. [try_rw] = false *)
+Definition surv_repwl : TM :=
+  mk8 (T S0 DR StB) None (T S0 DL StC) (T S0 DR StA)
+      (T S0 DL StD) None (T S1 DR StA) (T S1 DL StC).
+Example rwext_rejects_survivor : try_rw rw_rungs_ext 2000 surv_repwl = false.
+Proof. vm_compute. reflexivity. Qed.

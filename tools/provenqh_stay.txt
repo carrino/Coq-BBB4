@@ -1,0 +1,4 @@
+# The 2 proven-QH holdouts that MUST STAY deferred (probe-confirmed they do
+# NOT leave via tier Q under the census bound): kept in D_census.
+1RB---_1LC0LB_0RC0LD_1RD1RB
+1RB---_1RC0RB_0LC0RD_1LD1LB

@@ -67,13 +67,33 @@ Definition qhb_rungs_census : list (nat * nat) :=
    (6, 1999)].
 
 (** the RepWL tier's (L, T, t) ladder (mirrored by
-    tools/sweep_repwl_residue.py): t = 0 only -- the 16-rung grid
-    measured zero catches at t > 0 -- in measured yield order, so
-    late-rung machines pay as few diverging-closure fuel burns as
-    possible.  The fuel is the walk's per-rung cost bound; it covers
-    every kept catch's closure (pops <= 2 * nodes + 1). *)
+    tools/sweep_repwl_residue.py for the first four rungs and by
+    tools/sweep_repwl2.py for the block-width extension): t = 0 only --
+    the 16-rung grid measured zero catches at t > 0 -- in measured
+    yield order, so late-rung machines pay as few diverging-closure
+    fuel burns as possible.  The fuel is the walk's per-rung cost
+    bound; it covers every kept catch's closure (pops <= 2 * nodes + 1).
+
+    Lever C extends the block width: an all-survivor sweep of the 6,247
+    never-QH residue machines (tools/repwl2_caught.tsv) found 592 more
+    caught by the SAME rules (a)/(b) over the five built-in measures at
+    wider blocks -- rungs (5, 2, 0), (6, 2, 0), (7, 2, 0), per-rung
+    yield 223 / 273 / 96, disjoint.  (6, 2, 0) is placed LAST because it
+    is the only expensive-diverging new rung; a machine caught at
+    (5, 2, 0) or (7, 2, 0) never pays the diverging (6, 2, 0) closure.
+    Measured zero marginal yield at T >= 3 / T = 4 and at 2x/4x fuel, so
+    neither the threshold nor the fuel is raised; no new measure kind is
+    needed (the 5 built-ins discharge all 592: 400 plain-rank rule (a),
+    192 measure-lex rule (b)).  Rungs are a Section variable, so
+    extending the list needs no soundness re-proof.
+
+    The fuel is TIGHT: the largest kept catch closes in 7947 nodes /
+    8145 pops (fuel need 8146); rw_fuel_census = 8192 leaves 46 pops of
+    headroom, so any catch needing more stays deferred rather than
+    silently raising the bound. *)
 Definition rw_rungs_census : list (nat * nat * nat) :=
-  [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0)].
+  [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0);
+   (5, 2, 0); (7, 2, 0); (6, 2, 0)].
 
 Definition rw_fuel_census : nat := 8192.
 
