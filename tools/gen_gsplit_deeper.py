@@ -114,6 +114,25 @@ def spec_for(unit):
       declemma: the lemma name the monolithic unit proves
     """
     parts = unit.split('_')
+    if unit.startswith('GGGH_'):
+        # a sub-walk of another unit U with fill F: GGGH_<U>_<F>.
+        # Recurse to get U's machine + hole, then add the F fill.
+        rest = unit[len('GGGH_'):]
+        U, F = rest.rsplit('_', 1)
+        sU = spec_for(U)
+        _, quU, suU, _ = simulate(sU['trans'])      # U's hole
+        w = SYMN['S' + F[0]]
+        d = 'L' if F[1] == 'L' else 'R'
+        nx = {'A': 0, 'B': 1, 'C': 2, 'D': 3}[F[2]]
+        trans = dict(sU['trans'])
+        trans[(quU, suU)] = (w, d, nx)              # the gggchild fill
+        pptr = ptr_after(sU['pptr'], nx)            # gggchild_<U> pointer
+        parent = f"gggchild_{U} {SYM[w]} {DIRC[d]} {STC[nx]}"
+        parentWF = f"gggchild_{U}_WF {SYM[w]} {DIRC[d]} {STC[nx]} eq_refl"
+        imp = f"Run_Split_{U}"
+        decl = f"gggh_{U}_{F}_decided"
+        return dict(trans=trans, parent=parent, parentWF=parentWF,
+                    pptr=pptr, imp=imp, declemma=decl)
     if unit.startswith('GGH_'):
         # GGH_<A0>_<B0>_<ft>
         a0, b0, ft = parts[1], parts[2], parts[3]
