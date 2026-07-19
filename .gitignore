@@ -15,3 +15,4 @@ tools/__pycache__/
 census_probes/
 *.v.split
 tools/repwl_sweep_stream.tsv
+*.clog
