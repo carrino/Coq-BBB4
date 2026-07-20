@@ -26,6 +26,18 @@ esac
 
 log() { echo "[$(date +%H:%M:%S)] $*"; }
 
+# compile a fast (non-walk) file with retries -- covers/replacements can
+# transiently OOM under P=2 memory pressure; retry when the peer grinder
+# moves to a lighter unit. Returns 0 on success.
+compile_retry() {
+  local f="$1" i
+  for i in 1 2 3 4 5; do
+    coqc -Q theories BBB4 "$f" >/dev/null 2>&1 && { sync; return 0; }
+    sleep $((i*8))
+  done
+  return 1
+}
+
 # preserve generated .v files (+ theorem) against reclaim; keep tree clean.
 snapshot() {
   [ "$DOCOMMIT" = "1" ] || return 0
@@ -42,14 +54,14 @@ snapshot() {
 finish_split() {
   local U="$1" depth="$2"
   [ -f "theories/Census/Run_Split_${U}.vo" ] || \
-    coqc -Q theories BBB4 "theories/Census/Run_Split_${U}.v" >/dev/null 2>&1 || \
+    compile_retry "theories/Census/Run_Split_${U}.v" || \
     { log "COVERFAIL $U"; return 1; }
   local sf su
   for sf in theories/Census/Compute/GGGH_${U}_*.v; do
     su="$(basename "$sf" .v)"
     process_unit "$su" "$((depth+1))" || { log "SUBFAIL $su"; return 1; }
   done
-  coqc -Q theories BBB4 "theories/Census/Compute/${U}.v" >/dev/null 2>&1 \
+  compile_retry "theories/Census/Compute/${U}.v" \
     || { log "REPLFAIL $U"; return 1; }
   log "ASSEMBLED $U"
   return 0
