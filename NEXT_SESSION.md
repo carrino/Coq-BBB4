@@ -1178,3 +1178,48 @@ monolith units is resumable (.vo-skip). Native switch: OPAMROOT=/root/.opam,
 eval $(opam env --switch=census) -- rebuild from apt if the switch is missing
 (~1h; the switch survived this session's restarts on /home persistent disk).
 <!-- --- end census D-shrink session --- -->
+
+## FINAL CLOSEOUT (2026-07-20, session end)
+Decision: **stop the census walk; close out the sound, committed work; do NOT
+merge as a certified shrink.** After days wedged on the native_compute walk under
+a container that preempts every few-to-30 min, the ~7h walk (16 GG_1LC heavies +
+~5 heavy GGH units, ~25-30 min EACH even at the light 19,735 rungs -- confirmed
+this session) could not be driven to a green `Census_Theorem.vo` here. This is an
+ENVIRONMENT limit, not a proof problem.
+
+### What IS done, verified, and committed (HEAD aac7c1b)
+- `make` (base build): **GREEN**, exit 0. Builds Run.v, the 16,115 Deferred
+  tables, Proven_Data (proven tier + `proven_all` certificate), Decide.v, and the
+  corruption test suite `theories/Tests/Census_Corruption.v` (negative tests pass
+  -> the checkers correctly REJECT tampered certs).
+- `Print Assumptions` = `functional_extensionality_dep` ONLY for all three
+  soundness lemmas: `proven_all` (the 3,620 dropped machines genuinely never
+  quasi-halt), `decider_WF` (decider soundness), `census_from_empty` (IF the walk
+  empties the queue THEN the census theorem holds).
+- The shrink 19,735 -> 16,115 is **sound by construction**: the 3,620 machines
+  leave `D_census` *because* the proven tier now decides them R_NeverQH, justified
+  by the axiom-clean `proven_all` certificate. The corruption tests guard the
+  checker against being weakened to fake this.
+
+### What is NOT done
+- `make census` (the native_compute walk producing `Census_Theorem.vo`) did NOT
+  complete. So the unconditional `census_decided` theorem at D_census = 16,115 is
+  **not established on this branch**. The branch proves the setup is sound and the
+  theorem follows IF the walk closes; it does not (here) demonstrate closure.
+
+### DO NOT MERGE until verified
+Merging now would present an unverified shrink as certified. To finish: run
+`make census` on a STABLE host with native_compute (real Linux / WSL2, >=16GB RAM,
+no preemption; ~7h at -P4, faster at higher -j). When it is green with
+`Print Assumptions Census_Theorem.census_decided = functional_extensionality_dep`
+only, it is a certified 16,115 census and can merge. No .v file needs to change --
+it is purely a compute run on the already-committed tree.
+
+### Why it wedged (for the record)
+Walk cost ~ (machines per subtree) x (per-machine pipeline incl. ~19,735-entry map
+lookups). Heavy subtrees are inherently ~25-30 min single-threaded (NORMAL: the
+original 19,735 census was documented "~7h at -P4"). The blocker was purely that
+no reliable ~30-min window was available, and parallelism OOMs on the 16GB/4-core
+container (2 heavy units ~13GB, 4 >16GB). A 64GB / higher-core host removes both
+constraints at once and would finish in 1-2h.
+<!-- --- end final closeout --- -->
