@@ -105,11 +105,35 @@ process_unit() {
     if [ $frc -eq 0 ]; then log "OK $U (fallback $((SECONDS-fs))s)"; return 0; fi
     log "FALLBACK_HEAVY $U rc=$frc $((SECONDS-fs))s"; return 1
   fi
+  # cover FIRST, before overwriting the monolith, so a cover OOM (some
+  # families nest deeper and OOM the cover at lower depth) is recoverable:
+  # keep the monolith and fallback-compile it to completion.
   cp "$T/Run_Split_${U}.v" theories/Census/ || return 1
+  if ! compile_retry "theories/Census/Run_Split_${U}.v"; then
+    log "COVEROOM $U (d$depth) -> fallback ${FALLBACK}s"
+    rm -f theories/Census/Run_Split_${U}.v theories/Census/Run_Split_${U}.vo \
+          theories/Census/Run_Split_${U}.glob theories/Census/Run_Split_${U}.vos \
+          theories/Census/Run_Split_${U}.vok
+    rm -rf "$T"
+    local cs=$SECONDS
+    timeout -s KILL "$FALLBACK" coqc -Q theories BBB4 "$vf" >/dev/null 2>&1
+    local crc=$?; sync
+    if [ $crc -eq 0 ]; then log "OK $U (cover-fallback $((SECONDS-cs))s)"; return 0; fi
+    log "FALLBACK_HEAVY $U rc=$crc $((SECONDS-cs))s"; return 1
+  fi
+  # cover OK -> place children + replacement (overwrites monolith), finish
   cp "$T/GGGH_${U}_"*.v theories/Census/Compute/ || return 1
+  local subs=() sf
+  for sf in "$T/GGGH_${U}_"*.v; do subs+=("$(basename "$sf" .v)"); done
   cp "$T/${U}.v" theories/Census/Compute/ || return 1   # replacement overwrites
   rm -rf "$T"
-  finish_split "$U" "$depth"; return $?
+  local su
+  for su in "${subs[@]}"; do
+    process_unit "$su" "$((depth+1))" || { log "SUBFAIL $su"; return 1; }
+  done
+  compile_retry "theories/Census/Compute/${U}.v" || { log "REPLFAIL $U"; return 1; }
+  log "ASSEMBLED $U"
+  return 0
 }
 
 log "=== GRIND start CAP=${CAP} SET=${SET} COMMIT=${DOCOMMIT} ==="
