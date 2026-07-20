@@ -12,13 +12,23 @@ eval $(opam env --switch=census)
 S=/tmp/claude-0/-home-user/2b01b1ad-6519-5466-986f-cbc04a643004/scratchpad
 GEN=tools/gen_gsplit_deeper.py
 CAP="${1:-180}"
-FALLBACK="${2:-2400}"   # large cap for units with no valid split point
+FALLBACK="${2:-3000}"   # large cap: units unsplittable or too deep to split
+SPLITDEPTH="${3:-3}"    # cover lemmas OOM at depth>=4; split only depth<3,
+                        # fallback-compile deeper heavy units to completion
+SET="${4:-all}"         # top-level unit partition: gg | ggh | all
+DOCOMMIT="${5:-1}"      # 1=auto-commit snapshots (primary); 0=skip (secondary)
 DEPTHCAP=12
+case "$SET" in
+  gg)  TOPGLOB="theories/Census/Compute/GG_1LC_*.v" ;;
+  ggh) TOPGLOB="theories/Census/Compute/GGH_*.v" ;;
+  *)   TOPGLOB="theories/Census/Compute/GG_1LC_*.v theories/Census/Compute/GGH_*.v" ;;
+esac
 
 log() { echo "[$(date +%H:%M:%S)] $*"; }
 
 # preserve generated .v files (+ theorem) against reclaim; keep tree clean.
 snapshot() {
+  [ "$DOCOMMIT" = "1" ] || return 0
   git add -A theories/Census/ >/dev/null 2>&1
   git diff --cached --quiet 2>&1 && return 0   # nothing new
   git commit -q -m "census grind snapshot: $1" >/dev/null 2>&1
@@ -61,6 +71,15 @@ process_unit() {
   local rc=$?; sync
   if [ $rc -eq 0 ]; then log "OK $U $((SECONDS-s))s"; return 0; fi
   if [ $rc -ne 124 ] && [ $rc -ne 137 ]; then log "FAIL $U rc=$rc"; return 2; fi
+  # too deep to split (cover lemma OOMs at depth>=4): run to completion
+  if [ "$depth" -ge "$SPLITDEPTH" ]; then
+    log "MAXDEPTH $U (d$depth) -> fallback ${FALLBACK}s"
+    local ds=$SECONDS
+    timeout -s KILL "$FALLBACK" coqc -Q theories BBB4 "$vf" >/dev/null 2>&1
+    local drc=$?; sync
+    if [ $drc -eq 0 ]; then log "OK $U (fallback $((SECONDS-ds))s)"; return 0; fi
+    log "FALLBACK_HEAVY $U rc=$drc $((SECONDS-ds))s"; return 1
+  fi
   # too heavy -> generate split, then finish it
   log "SPLIT $U (d$depth, ${CAP}s cap hit)"
   local T="$S/gtmp_${U}"
@@ -81,14 +100,17 @@ process_unit() {
   finish_split "$U" "$depth"; return $?
 }
 
-log "=== GRIND start CAP=${CAP} ==="
-for f in theories/Census/Compute/GG_1LC_*.v theories/Census/Compute/GGH_*.v; do
+log "=== GRIND start CAP=${CAP} SET=${SET} COMMIT=${DOCOMMIT} ==="
+for f in $TOPGLOB; do
   U="$(basename "$f" .v)"
   case "$U" in GGGH_*) continue;; esac
   process_unit "$U" 0 || { log "GRIND_FAIL $U"; snapshot "fail-state $U"; exit 1; }
   snapshot "$U done"
 done
-log "GRIND_WALKS_DONE"
+log "GRIND_WALKS_DONE ($SET)"
+# partition runs (gg/ggh) stop after their walks; only a full 'all' run
+# does the G_ assemblies + theorem (needs BOTH partitions' walks banked).
+[ "$SET" != "all" ] && { log "PARTITION_DONE ($SET)"; exit 0; }
 for f in theories/Census/Compute/G_*.v; do
   U="$(basename "$f" .v)"
   [ -f "theories/Census/Compute/${U}.vo" ] && continue
