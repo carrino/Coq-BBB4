@@ -103,6 +103,30 @@ def main():
         new_holdouts = sorted(holdouts)
         new_residue = sorted(residue)
         print("[legacy] no drops applied")
+    elif "--proven-only" in flags:
+        # PROVEN-ONLY: drop ONLY the 3,620 proven never-QH holdouts (lever A);
+        # keep the B/C residue catches (qhb-lex, RepWL) and the 16 provenQH
+        # DEFERRED, so the census walk stays LIGHT (deferred-lookup skip, not
+        # the expensive in-walk ladder).  D_census = 93 holdouts + 16,022
+        # residue = 16,115.  See the 2026-07-19/20 post-mortem: the full
+        # 12,974 shrink's in-walk tiers make the native_compute walk
+        # hours-long per subtree and cannot certify under container preemption.
+        proven = txt(os.path.join(HERE, "proven_dropped.txt"))
+        assert len(proven) == 3620, len(proven)
+        stray = proven - holdouts
+        assert not stray, ("proven_dropped not in holdouts", len(stray))
+        assert not (STAY & proven), "stay-QH machine in proven drop list"
+        new_holdouts = sorted(holdouts - proven)
+        new_residue = sorted(residue)               # B/C stay deferred
+        assert len(new_holdouts) == 93, len(new_holdouts)
+        assert len(new_residue) == 16022, len(new_residue)
+        newset = set(new_holdouts) | set(new_residue)
+        assert len(newset) == 16115, len(newset)
+        assert newset == old - proven, "new set != old minus proven"
+        assert STAY <= newset, "stay-QH machine lost"
+        print(f"[proven-only] {len(new_holdouts)} holdouts + "
+              f"{len(new_residue)} residue = {len(newset)} "
+              f"(dropped {len(proven)} proven; B/C + provenQH kept deferred)")
     else:
         # --- stage (2): subtract the four lever drop-lists ---
         proven = txt(os.path.join(HERE, "proven_dropped.txt"))
