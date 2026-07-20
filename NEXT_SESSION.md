@@ -1100,3 +1100,81 @@ covers it, only the drop-to-0 condition changes in a forked
 vs `bin/verify` first.  Machines whose certs ALSO need
 `rulerunm`/`mmrow`/`nvar` are out of scope (re-check per cert).
 <!-- --- end irules block-run track --- -->
+
+<!-- --- census D-shrink session (2026-07-19/20): proven tier + B/C grind post-mortem --- -->
+
+# Census D_census shrink (2026-07-19/20): proven tier LANDED; B/C in-walk grind ABANDONED
+
+## TL;DR / the one lesson
+**Shrink D_census by PROVING machines (they drop out via the zero-cost proven
+tier), NOT by un-deferring machines into expensive in-walk tiers.** The latter
+makes the census native_compute walk hours-long per subtree, which CANNOT
+certify in a container that preempts every few min-30min. Measure the per-unit
+walk time BEFORE committing to any lever that un-defers into an in-walk tier.
+
+## What worked and is banked (committed + pushed)
+- **Proven-machines tier (lever A): -3,620, ZERO walk cost.** `Census/Proven_00..07.v`
+  + `Proven_Data.v` (tools/gen_proven.py), `proven_lookup` in Decide.v before the
+  deferred tier, WF via `Forall NeverQuasiHaltsSt` over the batch theorems. This is
+  the compounding conveyor belt: any machine that ever gets an individual Coq
+  theorem drops out of D_census for free at the next regen.
+- **Measurement of all three levers** (parallel opus sweeps): A proven audit
+  (3,620 usable), B qhb-lex over 9,775 wrap-QH survivors (2,533 catch, larger
+  prefix rungs), C RepWL over 6,247 never-QH survivors (592 catch, (5/6/7,2,0)).
+- **Recon roadmap** (tools/recon_20260719/): FAR post-mortem (SKIP -- safety-only,
+  liveness-dead despite 100% nonhalt coverage), re-root normalization bridge
+  (~1,300 more via one small lemma; residue is 9,917 distinct upstream-solved
+  machines), irules Phase 2 differentially validated (-50 holdouts).
+- **Deep-split tooling** (tools/gen_gsplit_deeper.py, tools/census_grind.sh):
+  recursive great-great-grandchild splitter + self-splitting resumable grinder.
+  Correct and reusable IF a STABLE long-lived compute env is ever available.
+
+## The wild goose chase -- DO NOT REPEAT here
+Levers B (qhb-lex, +2,533) and C (RepWL, +592) un-defer machines that then run the
+full ngram->rank->qhb->rw ladder DURING the census walk (~46ms+/pop, vs ~0.1ms for
+a deferred-lookup skip). This made the residue-heavy grandchild subtrees
+(1RB_1LC, 0RB_1LC, ...) into MULTI-HOUR single native_compute walks. Deep-splitting
+them (recursive node_expand) makes units smaller, but those subtrees are so large
+(GG_1LC_0LB alone: 331+ sub-walks, not done after 8h; est. 6,000-10,000 total
+sub-walks) that the full 12,974 grind is **1-2 WEEKS**. And the container preempts
+every few min-30min, so hours-long units NEVER complete -- confirmed stalled
+(+5 .vo in 1.5h). Structurally impossible in this environment.
+The SCOPING instructions warned exactly this ("a lever that recovers few machines
+at high walk-cost may not be worth the cert-time tax"). B/C were that.
+
+## THE RIGHT WAY to shrink D_census (do this going forward)
+1. **Keep the census walk LIGHT.** Deferred list stays fat enough that every
+   subtree walk is "few min" and fits a container window (the 19,735 cert had this;
+   it certified in 2-3h with the great-grandchild split, units "few min each").
+2. **Shrink only via per-machine PROOFS + the proven tier.** Prove a machine
+   (holdout cert or residue cert), add it to the proven table, regen Deferred to
+   drop it. Walk cost unchanged (fast proven lookup). This is the sustainable loop.
+3. **Next levers, all proof-producing (proven-tier-cheap):**
+   - Re-root bridge (~1,300): `neverqh_reroot`/`qhbound_reroot` (~20-30 line
+     StA-variant of visits_swap/quiet_swap) + a reroot table. tools/recon_20260719/
+     BRIDGE.md + reroot_mapping.tsv. Also gives free de-dup (12,897 rows = 9,917
+     distinct) and ~1,295 <=3-state-core reductions.
+   - irules Phase 2 (-50 holdouts): fork RulesBlkPfx/MetaBlkPfx. PHASE2_DESIGN.md.
+   - Bouncer/segment checker (residue mass lever): verified checker over upstream
+     certs_bouncer period_records+segments -> per-machine certs -> proven tier.
+     (Bouncers are common here; reference in bbchallenge-deciders + BB5 project.)
+4. **Do NOT re-enable the qhb-lex/RepWL in-walk tiers (B/C)** unless a stable,
+   long-lived native_compute environment is available. Their tables (Deferred at
+   12,974, sweeps, gen_gsplit_deeper) are committed for that scenario only.
+
+## This session's actual deliverable: proven-only cert (D_census 16,115)
+Pivoted from 12,974 (abandoned) to proven-only: **D_census = 16,115 = 93 holdouts
++ 16,022 residue** -- drop ONLY the 3,620 proven-nqh machines; B/C residue and the
+16 provenQH stay deferred. Walk is LIGHT (B/C deferred, monolith units "few min
+each"), so it certifies within container windows via .vo-skip resume. The B/C
+rungs stay wired in Run.v but are dead code (their machines are deferred, caught
+before the rungs fire). [status filled at cert completion]
+
+## Env note (container instability, 2026-07-20)
+The container preempted every few min to ~30min during this session (vs stable
+1.5h+ earlier). Any long native_compute (the census walk, or heavy grind units)
+must be resumable and window-sized. The census `all`/`census-resume` path with
+monolith units is resumable (.vo-skip). Native switch: OPAMROOT=/root/.opam,
+eval $(opam env --switch=census) -- rebuild from apt if the switch is missing
+(~1h; the switch survived this session's restarts on /home persistent disk).
+<!-- --- end census D-shrink session --- -->
