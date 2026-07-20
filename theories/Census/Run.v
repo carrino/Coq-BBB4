@@ -57,14 +57,18 @@ Definition rank_rungs_census : list (nat * nat) :=
     that bound and are omitted.  Rungs are a Section variable of the
     pipeline, so extending the list needs no soundness re-proof: try_qhb's
     per-rung [S t <=? B] gate rejects any illegal prefix. *)
+(** PROVEN-ONLY (D_census 16,115): reverted to the original 19,735 rungs.
+    Lever B's extended prefix rungs (t=1280/1536/1999) were tried on every
+    machine reaching the qhb tier IN-WALK and made the census walk far
+    heavier (GG_1LC units ~9min -> >1h) -- unsustainable under container
+    preemption.  The lever-B machines stay DEFERRED (in the 16,115 list),
+    caught by deferred_lookup before the rungs, so the walk is the light
+    19,735 walk.  (Re-add the extended rungs only with a stable long-lived
+    compute env; see NEXT_SESSION post-mortem.) *)
 Definition qhb_rungs_census : list (nat * nat) :=
   [(2, 64); (2, 256); (2, 1024);
    (3, 64); (3, 256); (3, 1024);
-   (4, 64); (4, 256); (4, 1024);
-   (2, 1280); (3, 1280); (4, 1280);
-   (2, 1536); (3, 1536); (4, 1536);
-   (2, 1999); (3, 1999);
-   (6, 1999)].
+   (4, 64); (4, 256); (4, 1024)].
 
 (** the RepWL tier's (L, T, t) ladder (mirrored by
     tools/sweep_repwl_residue.py for the first four rungs and by
@@ -91,9 +95,11 @@ Definition qhb_rungs_census : list (nat * nat) :=
     8145 pops (fuel need 8146); rw_fuel_census = 8192 leaves 46 pops of
     headroom, so any catch needing more stays deferred rather than
     silently raising the bound. *)
+(** PROVEN-ONLY: reverted to the original 19,735 four rungs (lever C's
+    wider blocks (5/6/7,2,0) also load the walk; its machines stay
+    deferred). *)
 Definition rw_rungs_census : list (nat * nat * nat) :=
-  [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0);
-   (5, 2, 0); (7, 2, 0); (6, 2, 0)].
+  [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0)].
 
 Definition rw_fuel_census : nat := 8192.
 
