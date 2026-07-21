@@ -29,11 +29,17 @@ This sweep turns that into numbers.
   (`tools/gen_residue_wrap.py`) + checker (`theories/Checkers/Wrap.v`,
   `ngram_check_quiet_sound`) are already landed. That is 6,858 reps / **7,976
   census machines** boardable with zero new Coq.
-- **listC splits three ways** on a representative sample (§4): a solid
-  boardable-neverQH fraction (NGram/Fuel/Drift/RepWL/IRules checkers), a
-  comparable QH-decidable-but-not-yet-boardable fraction (irules-QH,
-  wraprwl/wrapfar/wrapctl, bouncer — need a quiet-checker over the tighter
-  closures, or an irules-QH corollary), and a hard uncaught remainder.
+- **listC splits three ways** on a representative sample (§4, 400 reps,
+  state-level, all certs verify PASS): **26.2% boardable never-QH** now
+  (NGram/IRules), **18.0% actually state-QH** but mis-parked (needs one new
+  quiet-checker), **55.8% uncaught** at modest budgets.
+- **Headline projection (§5):** run provers → existing checkers → proven tier
+  boards **≈ 9,472 / 16,022 (59%)** with **zero new Coq**; **one** added lemma
+  (§6) lifts it to **≈ 10,519 (66%)**. Hard residue ≈ 3,648 (23%); the 1,854
+  (12%) ≤3-state core is the bridge's.
+- **The single highest-value new checker is the irules-QH corollary** (or,
+  equivalently, a RepWL-quiet checker): each boards **71/72** of the state-QH
+  reps. A **bouncer** checker is worthless here (uniquely unlocks **0**).
 
 ---
 
@@ -129,34 +135,180 @@ Per-machine: `results_per_machine_1000.tsv`.
 ## 4. Representative listC sample (400 reps, seed 20260721)
 
 Start-state-abandoned here: ~0.8% (representative). This measures the genuine
-never-QH core. Per-machine: `suppl_results_400.tsv`.
+never-QH core. Verdicts are classified at the **STATE level** (the census /
+BBB beeping notion) — derived from each verified cert's per-transition
+`claim_trans` classification, not the transition-level `claim_qh` flag.
+Per-machine: `suppl_state_results.tsv` (state-level, authoritative) and
+`suppl_results_400.tsv` (transition-level).
 
-<!-- REPR_UNION_TABLE -->
+**Catch-rate table (state level).** All 371 emitted certs verify PASS; **0
+state-verdict contradictions** across provers (transition-level `claim_qh T`
+next to state-level `claim_qh_state F` is a level distinction, not a conflict).
 
-Per-prover raw catches (each on the 400):
-`irules 142 (64 neverQH + 78 QH)`, `ngram-rank <RANKN> neverQH`,
-`rwlrank 71 QH (wraprwl)`, `wrapfar 51 QH`, `bouncer 25 QH`,
-`wrapctl 11 QH`, `ngram-quiet 4 QH (the abandoned ones)`. fuel/drift not run
-to completion on the 400 (they refine rank; census weight is marginal —
-62 fuel + 17 drift vs 2,611 rank).
+| bucket | reps /400 | rep % | census-mult /538 | route → checker | landed? |
+|---|---|---|---|---|---|
+| **(a) state-neverQH — boardable** | **105** | **26.2%** | **126** | 67 `neverqh_rank`→`NGram.v`; 38 `irules`(claim_qh_state F)→`IRules/Meta*` | **YES** |
+| (a) state-QH — boardable | 4 | 1.0% | 4 | `wrapngram`→`Wrap.v ngram_check_quiet_sound` | YES |
+| **(b) state-QH — caught, NO checker** | **68** | **17.0%** | **91** | 67 `wraprwl` (RepWL closure) + 1 `wrapfar` (DFA) | **no** |
+| **(c) uncaught** | **223** | **55.8%** | **317** | — (modest budgets) | — |
+| caught, any | 177 | 44.2% | 221 | | |
 
-**Surprise:** a large share of the "never-QH core" (listC) is actually
-**QH-decidable** — irules alone proves 78/400 ≈ 20% of listC quasihalting
-with an exact bound, and rwlrank/wrapfar/bouncer confirm more. These are
-sound (verify PASS) QHBound verdicts that the *ngram*-quiet wrap sweep
-missed (their closure does not close under the ngram abstraction at the swept
-n,t — which is exactly why they landed in listC). They are decided but **not
-yet boardable**: no landed quiet-checker exists for the RepWL/DFA closures,
-and the irules Coq checker is neverQH-only.
+Per-prover raw catches (each on the 400): `irules 142` (transition-level
+64 nQH + 78 QH; state-level it is the winning nQH cert for 38 and a state-QH
+witness for 71), `ngram-rank 67 neverQH`, `rwlrank 71 state-QH (wraprwl)`,
+`wrapfar 51`, `bouncer 25`, `wrapctl 11`, `ngram-quiet 4` (the abandoned ones).
+fuel/drift were not run to completion on the 400 (they refine rank; census
+weight is marginal — 62 fuel + 17 drift vs 2,611 rank — so the boardable-nQH
+figure is a mild under-count).
+
+**Surprise 1 — the never-QH "core" is ~18% actually QH.** 72/400 listC reps
+are provably **state-QH** (a state goes quiet), i.e. mis-parked: the census's
+*ngram*-quiet wrap sweep missed them because their closure does not close
+under the ngram abstraction at the swept n,t (exactly why they fell to listC),
+but the **RepWL** block closure (`rwlrank`) does close and witnesses the quiet
+state on **71/72** of them. They are sound QHBound verdicts (verify PASS) that
+are simply not yet *boardable* — the only landed quiet-checker is the ngram
+one in `Wrap.v`.
+
+**Surprise 2 — bouncer adds nothing to the residue.** Every one of bouncer's
+25 catches is already a state-QH machine caught by `wraprwl`; bouncer uniquely
+decides **0** otherwise-uncaught reps. Unlike the BBB(4) hard core, a bouncer
+Coq checker would not shrink this residue.
+
+**Surprise 3 — the primary (lexicographic) sample is a trap.** Its 34 listC
+reps are 41% start-state-abandoned (global 0.8%); its "catches" are trivial
+QH-score-1 verdicts. Only the representative sample reflects the real core.
 
 ---
 
 ## 5. Projection to the full deduped residue
 
-<!-- PROJECTION_TABLE -->
+Population (deduped, with re-root multiplicities): 12,133 distinct reps →
+16,022 census machines. 4-state reps carry the census-machine multiplicity
+(avg 1.24×); the ≤3-state core is handled by the separate bridge plan.
+
+Rates for listB are **measured** (966/966 = 100%, verified). Rates for listC
+are the **mult-weighted** representative-sample rates from §4 (nQH+wrapngram
+boardable 24.2%, state-QH-need-checker 16.9%, uncaught 58.9%) applied to the
+6,192 listC census machines.
+
+| tier | census machines | % of 16,022 | route | checker |
+|---|---|---|---|---|
+| 4-state listB (QHBound) | **7,976** | 49.8% | ngram-quiet → `Wrap.v` | **LANDED** (emitter `gen_residue_wrap.py`) |
+| 4-state listC state-nQH + wrapngram | **~1,496** | 9.3% | ngram-rank / irules-nQH → `NGram.v` / `IRules/Meta*` | **LANDED** |
+| **▸ boardable TODAY, existing checkers** | **≈ 9,472** | **59.1%** | | — |
+| 4-state listC state-QH (mis-parked) | ~1,047 | 6.5% | rwlrank(`wraprwl`) / wrapfar → **ONE new quiet-checker** | needs 1 checker |
+| 4-state listC uncaught (hard) | ~3,648 | 22.8% | resists modest budgets | none / new methods |
+| ≤3-state core | 1,854 | 11.6% | **bridge plan** (separate) | out of scope |
+
+Rep-level (distinct proofs to emit): listB 6,858 · listC-nQH+wrapngram ~1,252 ·
+listC state-QH need-checker ~781 · listC uncaught ~2,562 · ≤3-state 680.
+
+**Headline.** Running the BBB provers and routing through the **already-landed**
+checkers boards ≈ **9,472 / 16,022 (59%)** of the residue with **zero new Coq**
+— dominated by listB's 7,976 QHBound machines. **One** additional checker (§6)
+lifts that to ≈ **10,519 (66%)**. The genuinely hard residue is ≈ 3,648 (23%),
+plus the 1,854 (12%) ≤3-state core the bridge already owns.
+
+**Caveats on the projection.** (i) listC's 58.9% "uncaught" is at *modest*
+budgets (irules 2·10⁵ steps, ngram max-n≤8, no fuel/drift, no high-n wrap
+sweep); fuel/drift + bigger budgets would recover a few more points of nQH.
+(ii) The representative sample is n=400 (listC), seed 20260721 — the boardable
+and state-QH fractions carry a ±~4-point sampling band. (iii) listB=100% is not
+extrapolation but the *definition* of listB (the ngram-quiet-caught set),
+independently confirmed 966/966.
 
 ---
 
 ## 6. Recommended mass-run shape & next-session implementation plan
 
-<!-- PLAN -->
+The prover pass itself is cheap: ngram-quiet is **36 ms/machine** (listB),
+irules ~**2 s/machine** at 2·10⁵ steps, ngram-rank the slow one (~seconds,
+closure-bound). A full 4-state residue sweep (11,453 reps) is a few hours on
+2 nice workers — negligible next to the Coq compile. Sequence by payoff:
+
+### Step 1 — listB mass-board (7,976 machines, biggest win, ZERO new Coq)
+
+The emitter **already exists**: `tools/gen_residue_wrap.py` consumes the wrap
+sweep's `caught.tsv` and emits, per machine, `NonHalt ∧ QuietAfter ∧
+QuasiHaltsSt` via `Wrap.v` `ngram_check_quiet_sound`. Just run it over all
+listB (dedup to the 6,858 4-state reps).
+
+- **Closures are tiny**: `caught.tsv` shows n=2 for 99% (n=3/4 for ~260), and
+  t=64 for 99% (t=1024 for 17). vm_compute is a DFA-product over a few-hundred
+  contexts → **≈ 0.3–1 s/machine**, no OOM.
+- **Batch size 100/file** (small closures tolerate big files unlike irules) →
+  ~69 files, or match the landed wrap-manifest granularity.
+- **Compile budget**: ~6,858 × ≤1 s ≈ **≤ 2 h single-thread, ~30–60 min at
+  -j2**. This alone takes census coverage of the residue from 0 → ~50%.
+
+### Step 2 — listC state-neverQH (~1,252 reps, existing checkers)
+
+Fork the landed never-QH emitters over the reps that carry a `neverqh_rank`
+or `irules` (claim_qh_state F) cert:
+
+- `neverqh_rank` share (~2/3, ~840 reps) → the NGram rank emitter
+  (`gen_proven.py` path, `NGram.v`), ngram_n≈5, **~2–8 s/machine**.
+- `irules` share (~1/3, ~410 reps) → `gen_irules.py` / `gen_irulesk_certs.py`
+  (`IRules/Meta*`), fuel 300000 vm_compute — **batches of 10/file, -j2 only**
+  (the container OOMs IRules at -j4/fuel 3·10⁵), ~10–40 s/machine.
+- Compile budget: ~**2–4 h** (irules-dominated). Run fuel/drift first on the
+  §4 uncaught to recover the marginal nQH the modest sweep missed.
+
+### Step 3 — the ONE new checker (unlocks ~1,047, lifts 59%→66%)
+
+Two candidates **tie at 71/72 (99%) of state-QH** — pick by proof economy:
+
+1. **irules-QH corollary  ⟵ RECOMMENDED.** Extend the landed IRules Meta
+   (`Checkers/IRules/Meta.v` / `MetaK.v`) with the *dual* extraction lemma:
+   from the SAME faithful forward-behavior model the checker already builds,
+   conclude `QuasiHaltsSt` (with the silent state as witness) when the model
+   shows a state's transitions all non-firing past the anchor — instead of the
+   `NeverQuasiHalts` conclusion when all stay live. Reuses the whole landed
+   engine + faithfulness proof; only the final property lemma is new. This is
+   the smallest new trust surface and is exactly the Discord-provenance point
+   (one inductive model → QH *or* neverQH). Boards **71/72** state-QH.
+2. **RepWL-quiet checker** (equivalent alternative). Add `rw_check_quiet_sound`
+   to `Checkers/RepWL.v` — a fork of `Wrap.v ngram_check_quiet_sound` onto the
+   RepWL whole-tape block closure (which already has `rw_check_neverqh_sound`).
+   Boards the **67 `wraprwl`** reps; the lone `wrapfar`-only rep needs a DFA
+   variant, so this route tops out at 67/72 without a second checker.
+
+Then re-emit the ~781 state-QH reps through the new checker (irules batch
+shape, 10/file, -j2).
+
+**Do NOT build:** a **bouncer** checker (uniquely unlocks **0** residue reps —
+all its catches are already `wraprwl` state-QH), or standalone **CTL/DFA-quiet**
+checkers (11 / 1 reps). Their BBB(4)-hard-core value does not carry to the
+census residue.
+
+### Step 4 — the hard residue (~3,648, ~23%)
+
+The 55.8% uncaught resists modest budgets. Cheapest next probes, in order:
+finish **fuel/drift** on the full listC sweep; raise the **ngram wrap sweep n**
+(some listC state-QH may then close under ngram → board via the *existing*
+`Wrap.v` with no new checker); escalate **irules** steps/fuel. Expect single-
+digit-percent recovery each; the deep core likely needs the tighter
+reachability abstractions already flagged in `docs/groups.md`.
+
+### Bottom line
+
+| action | machines | new Coq | when |
+|---|---|---|---|
+| run `gen_residue_wrap.py` over listB | 7,976 | none | now |
+| fork nQH emitters over listC-nQH | ~1,496 | none | now |
+| **irules-QH corollary** + re-emit | ~1,047 | **1 lemma** | next |
+| hard residue | ~3,648 | new methods | later |
+| ≤3-state core | 1,854 | bridge plan | (owned) |
+
+Boardable **today with zero new Coq: ≈ 9,472 / 16,022 (59%)**; **+1 lemma →
+≈ 10,519 (66%)**.
+
+---
+
+*Artifacts (all committed): `sample_1000*.{txt,tsv}`,
+`results_per_machine_1000.tsv`, `suppl_listC_400.{txt,tsv}`,
+`suppl_results_400.tsv` (transition-level), `suppl_state_results.tsv`
+(state-level, authoritative), `analyze_*.py`, `run_*.sh`; certs under
+`BBB/results/certs_residue_sample/` (primary 1000 + `suppl/` 400, all verify
+PASS). No `theories/**` touched, no Coq compiled, no existing tool modified.*
