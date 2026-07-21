@@ -2023,8 +2023,21 @@ poff-general; do NOT `rewrite Nat.add_0_r`, just apply it with poff=1.
   the cheapest kind of sibling -- look for A<->D (or other 2-cycle)
   relabellings before writing a machine from scratch.
 
-### #7 `1RB0LC_1LA1RD_1LA1LC_0RD1RB` (edge A, side L, poff 1) -- NOT a clone;
-### board via `Mirror.mirror_never_qh`. FULL recon done, transcription open.
+### #7 BOARDED (2026-07-21 cont. 5) `nqh_1RB0LC_1LA1RD_1LA1LC_0RD1RB`
+`Wave_7.v`, axiom-clean (functional_extensionality_dep only), corruption
+tests + manifest + _CoqProject landed. Boarded through the side-R mirror as
+planned below; boot=42. The reverse-encode bridge was NOT a fight -- it is
+`bridge_l` verbatim with `relaid -> relaid7` (only `relaid7_b`'s `[c]` base
+case bumps to `rep[S1](S(c-b))`). Two extra findings beyond the recon:
+(1) the FT lands in the DEPOSIT-state B, but interior blocks are entered in
+the CONTINUE-state D, so there are TWO cross lemmas `cross_run7B`/`cross_run7`
+(start B / start D). (2) state C never appears in the frontier gadget (the
+FT is a single `A0/1L>B`), so `vis`'s C-witness cannot be shallow -- reach it
+via the deposit turnaround (`reach_C7 = FT + cross + wave_L7 + one A1/0R>C`).
+All 6 clean-tier wave machines (#17/#27/#36/#7 here; #6/#24 remain the hard
+4-step-0-writing pair; #15 wave4) -- FOUR now boarded.
+
+### (original #7 recon, retained) board via `Mirror.mirror_never_qh`.
 Side L, so use `theories/Mirror.v`: prove `NeverQuasiHaltsSt (mirror_tm
 tm_7)` then `apply mirror_never_qh`. The side-R machine to board is
   **`mirror_tm tm_7 = 1LB0RC_1RA1LD_1RA1RC_0LD1LB`** (flip every dir L<->R;
