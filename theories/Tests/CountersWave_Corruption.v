@@ -18,9 +18,9 @@
     alarm. *)
 
 From Coq Require Import Arith Bool List PArith.
-From BBB4 Require Import BBB4_Statement CTape.
+From BBB4 Require Import BBB4_Statement CTape Mirror.
 From BBB4.Counters Require Import WTape WaveCounter.
-From BBB4.Machines.Counters Require Import Wave_17 Wave_27 Wave_36.
+From BBB4.Machines.Counters Require Import Wave_17 Wave_27 Wave_36 Wave_7.
 Import ListNotations.
 
 (** ** Wall discipline *)
@@ -194,4 +194,60 @@ Example boot_wrong_index_36 : match csteps tm_36 49 CTape.c0 with
                               | Some c => ceqb c (Cf36 [4; 2; 1])
                               | None => false
                               end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** #7 (1RB0LC_1LA1RD_1LA1LC_0RD1RB, side L, poff 1) -- boarded via the
+    mirror machine [tm_7m]; edge A, cross pair B/D, 1-step FT, C-sweep return.
+
+    First: the mirror is genuine. *)
+Example mirror_is_tm_7m : mirror_tm tm_7 = tm_7m.
+Proof. exact mirror_ok. Qed.
+
+(** The genuine 1-step FT [A0/1L>B] reads the frontier top (left). *)
+Example ok_FT_7 : wsteps false true tm_7m 1 (StA, ([S1], S0, [])) = Some (StB, ([], S1, [S1])).
+Proof. reflexivity. Qed.
+
+(** The return terminal [C0/1R>A] digs the right blank; right wall ON kills it. *)
+Example wall_term_right_7 : wsteps true true tm_7m 1 (StC, ([S1], S0, [])) = None.
+Proof. reflexivity. Qed.
+Example ok_term_7 : wsteps true false tm_7m 1 (StC, ([S1], S0, [])) = Some (StA, ([S1; S1], S0, [])).
+Proof. reflexivity. Qed.
+
+(** The spawn crosses the lead into the LEFT blank; left wall ON kills at [D1]. *)
+Example wall_spawn_left_7 : wsteps true true tm_7m 2 (StD, ([S1], S0, [S1])) = None.
+Proof. reflexivity. Qed.
+
+(** tm_7m with [B1] re-routed to StC instead of StD: the B/D cross is destroyed. *)
+Definition tm_7m_mut : TM := fun q s =>
+  match q, s with
+  | StA, S0 => mk S1 DL StB | StA, S1 => mk S0 DR StC
+  | StB, S0 => mk S1 DR StA | StB, S1 => mk S1 DL StC  (* was StD *)
+  | StC, S0 => mk S1 DR StA | StC, S1 => mk S1 DR StC
+  | StD, S0 => mk S0 DL StD | StD, S1 => mk S1 DL StB
+  end.
+
+Example ok_crosspair_7 : wsteps true true tm_7m 2 (StB, ([S1; S1], S1, []))
+                       = Some (StB, ([], S1, [S1; S1])).
+Proof. reflexivity. Qed.
+
+Example mut_crosspair_7 : wsteps true true tm_7m_mut 2 (StB, ([S1; S1], S1, []))
+                        <> Some (StB, ([], S1, [S1; S1])).
+Proof. vm_compute. discriminate. Qed.
+
+Example boot_anchor_distinct_7 : ceqb (Cf7 [4; 2; 1]) (Cf7 [5; 3; 1]) = false.
+Proof. reflexivity. Qed.
+
+Example boot_not_next_7 : ceqb (Cf7 [4; 2; 1]) (Cf7 (nextf 1 [4; 2; 1])) = false.
+Proof. reflexivity. Qed.
+
+Example boot_reaches_7 : match csteps tm_7m 42 CTape.c0 with
+                         | Some c => ceqb c (Cf7 [4; 2; 1])
+                         | None => false
+                         end = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Example boot_wrong_index_7 : match csteps tm_7m 41 CTape.c0 with
+                             | Some c => ceqb c (Cf7 [4; 2; 1])
+                             | None => false
+                             end = false.
 Proof. vm_compute. reflexivity. Qed.
