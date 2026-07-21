@@ -1615,3 +1615,112 @@ The ONLY genuinely hard piece left is P2 (the shared parity-safety
 `Inv`). #27/#36/#7 have the identical shape with their own unit tables
 (design appendix above); #6/#24 have 4-step 0-writing cross cycles.
 <!-- end wave track confirmed units -->
+
+<!-- double track -->
+
+# Counters track, DOUBLE session (2026-07-21): #30 recon complete, CReach landed
+
+Own files: `theories/Counters/CReach.v` (+ planned `DblCounter.v`,
+`theories/Machines/Counters/Double_*.v`, `theories/Tests/CountersDbl_Corruption.v`,
+`tools/counters/{recon30,probe30,lap30}.py`); `_CoqProject` block
+`# --- counters track: double ---` (appended at the very end, after wave).
+
+## LANDED this session
+
+- **`CReach.v`** -- the required new closer, axiom-clean (`Print
+  Assumptions creach_iter` = *Closed under the global context*, no
+  functional_extensionality even). `creach`/`creach_refl`/
+  `creach_csteps`/`creach_trans`/`creach_iter` EXACTLY as the recon
+  specified, plus two glue helpers the double laps will want:
+  `creach_pos` (recover `0 < n` from a positive prefix run) and
+  `creach_lap` (package the whole thing into the `LapGlue.Hlap`
+  existential up to `lift`). **creach_iter's shape matched the recon's
+  expectation verbatim** -- it is byte-identical to the copy session A
+  already appended to `MonoCounter.v` (lines 473-521). The double
+  machine files should import `CReach`, NOT `MonoCounter`, to avoid a
+  duplicate-`creach` ambiguity (keep the rep-algebra they need --
+  `rep011/101/110_expose` etc. -- local to `DblCounter.v`).
+- **`recon30.py`** (lap segmenter, RLE at every turnaround) and
+  **`probe30.py`** (unit prober). Both validated: step counts
+  **431 / 1447 / 5207** for j=2/3/4 reproduce the recon's numbers
+  EXACTLY; DONE decodes as D(j+1) = `1 0 (110)^(2k+1) 1^(t+3)` for
+  j=2,3.
+
+## #30 fully reconnoitred (NOT yet transcribed to Coq)
+
+Anchor (confirmed against `verify.c` `dc_build_D`, side R):
+`D(j) = (StB, (rep [S1] t ++ rep [S0;S1;S1] k ++ [S0;S1], S0, []))`,
+head on the blank one cell right of the frontier, k=2^j-1, t=3j+4.
+Index it for LapGlue via `Cf p := D30 (S (Pos.to_nat p))`, p0=1 -> j=2.
+
+**Unit inventory CONFIRMED** (probe30.py, all against the real tm_30
+`1RB1LD_1RC0LA_1RD0RD_1LB1RB`):
+- `UTe` edge turn, br=F: `(B,([],0,[])) -3-> (B,([1],1,[1]))`.
+- `wig` wiggle = **`cycL(u=[S1], rw=[], w=[S0], P=3)`**: the unit is
+  `(A,([S1],1,[])) -3-> (A,([],1,[S0]))` -- one accumulator 1 becomes
+  one 0 shuttled right. (The recon's `(B,([1;1],1,[]))` guess WALLS;
+  the real wiggle is this A-state cycL.)
+- `UJ` junction: `(B,([S1;S0],1,[])) -2-> (D,([],0,[S1;S0]))`.
+- `UC` collapse: `(D,([S1;S1;S0],0,[])) -3-> (D,([],0,[S1;S0;S1]))`
+  (leftward comb cycle, |delta|=3).
+- `US` spread: `(B,([],0,[S1;S1;S0])) -3-> (B,([S1;S0;S1],0,[]))`
+  (rightward comb cycle, |delta|=3).
+
+**THE CRUX -- the right region is a base-4 mixed-radix counter with
+carries that CHANGE LENGTH.** This is why the hand model was 2x short
+and why a flat `cycR`/`cycL` lap does NOT close it. After the initial
+wiggle the accumulator is `0^(t+1) 1` (a **conserved budget of t+2
+cells**). The outer loop then does k+1 comb-doubling steps; between
+left-edge turnarounds the right region is partitioned into chunks
+`0^z 1` with **z in {2,5,8,11} = 2 + 3*digit, digit in {0,1,2,3}**,
+`#chunks = m-2` where the comb is `(110)^m 11`. Chronological left-edge
+turns for j=2 (comb m, digit list LSB-at-left):
+
+```
+ A@-1  m=3  [3]         B@-3  m=4  [0,2]
+ A@-4  m=4  [1,1]       B@-6  m=5  [0,0,1]
+ A@-7  m=5  [2,0]       B@-9  m=6  [0,1,0]
+ A@-10 m=6  [1,0,0]     B@-12 m=7  [0,0,0,0]  <- overflow
+```
+
+The FINAL B-turn is the clean overflow `(0^2 1)^(k+1)` (all digits 0),
+which the closing spread collapses into the new accumulator `1^(t+3)`
+and re-emits the `1 0` frontier prefix -- giving D(j+1) exactly (no
+lift slack observed; DONE ends on a blank with r=[]). The digit
+transitions are NOT plain binary increment (lengths change: `[1,1]`->
+`[0,0,1]`, `[0,0,1]`->`[2,0]`); they must be **read off the executor**,
+not derived (mission's warning). This counter is richer than the
+`cview` binary carry the mono/spacer families use.
+
+## Transcription plan for the next session (the real work, ~1 full session)
+
+1. Finish **`lap30.py`**: an OUTER python loop over the k+1 doubling
+   steps, each = collapse `cycL`(UC) over the comb + a spread `cycR`
+   handling ONE digit increment on the right + the A/B edge turns +
+   the re-wiggle. The differential (`python3 lap30.py 300` = ALL OK
+   across j and both parities) is the gate; use a DbgExec dumping the
+   cfg after every combinator to pin the per-digit mid-config.
+2. `DblCounter.v`: the anchor `D30`, a `positive`- or `nat`-indexed
+   right-region counter type (base-4 digits `0^2 1`.. with the carry
+   rule from step 1), its cview-analogue decomposition lemmas, and
+   the comb rep-algebra (`rep [S0;S1;S1]` rotations).
+3. `Double_30.v`: units as `wsteps` reflexivity lemmas, transported
+   phases, the OUTER lap via `creach_iter` over the digit-counter
+   family (likely a NESTED creach_iter: outer over comb units, inner
+   over the digit carry), boundary phases (`UTe` prefix -> gives the
+   `0<n` via `creach_pos`; overflow-collapse suffix), then
+   `creach_lap` -> `glue_neverqh`. Boot (~vm_compute to D(2)) + visits.
+4. Corruption tests in `CountersDbl_Corruption.v` (new file), manifest
+   row, compile, `Print Assumptions` = functional_extensionality_dep.
+
+**Assessment:** #30 is a genuinely hard parametric proof -- larger
+than any landed counter machine -- because its "doubling" is a
+length-changing mixed-radix counter, not a fixed-unit translated
+cycle (the C verifier sidesteps this by only raw-checking j=2..8;
+Coq cannot). The closer + full recon are done and de-risk it; the
+counter-carry modeling is the remaining multi-hour piece. #9 (recon
+says "fewest turns/lap: 2 per mini-lap", gen comb (10)) is likely a
+gentler first FULL board than #30 -- consider reordering to #9 first
+to validate the creach_iter lap shape on an easier counter, then
+return to #30.
+<!-- end double track -->
