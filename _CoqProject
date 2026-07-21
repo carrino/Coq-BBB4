@@ -238,3 +238,6 @@ theories/Tests/IRulesBlkPfxBatch_Corruption.v
 
 # --- counters track: wave ---
 theories/Counters/WaveCounter.v
+
+# --- counters track: double ---
+theories/Counters/CReach.v
