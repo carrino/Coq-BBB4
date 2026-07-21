@@ -1,0 +1,35 @@
+rep	assigned_prover	checker	hit_ngram_rank	hit_ngram_fuel	hit_ngram_drift	hit_rwlrank	hit_irules	hit_bouncer	hit_quietfar	hit_quietctl	hit_quietseg
+1RB---_0LB1RC_0RD---_1LB0RC	quietfar	none							1		
+1RB---_0LB1RC_1LB0RD_0RC---	quietfar	none							1		
+1RB---_0LB1RC_1LD1RA_0RA0LD	UNCAUGHT										
+1RB---_0LC0LA_1LB1RD_1LC0RD	UNCAUGHT										
+1RB---_0LC0LB_1RC1RD_1LB---	rwlrank	RepWL/rwlrank				1	1	1		1	
+1RB---_0LC0LB_1RD1LB_1RC---	rwlrank	RepWL/rwlrank				1	1				
+1RB---_0LC0LD_1RC1LB_---0LB	rwlrank	RepWL/rwlrank				1	1				
+1RB---_0LC0RB_0LD1LC_1RA1RD	UNCAUGHT										
+1RB---_0LC0RB_1LC1LD_1RB---	rwlrank	RepWL/rwlrank				1	1	1	1	1	
+1RB---_0LC0RB_1LD1LA_0RC1LC	UNCAUGHT										
+1RB---_0LC0RB_1LD1LA_1RB1LC	UNCAUGHT										
+1RB---_0LC0RB_1RB1LD_1LC---	UNCAUGHT										
+1RB---_0LC0RD_0LD1LC_1RA0RB	UNCAUGHT										
+1RB---_0LC0RD_1LA1LC_0LA0RB	UNCAUGHT										
+1RB---_0LC0RD_1RD1LC_0LA1RB	UNCAUGHT										
+1RB---_0LC1LD_0RC1LA_1RC0LD	ngram_fuel	fuel(c2)		1	1						
+1RB---_0LC1RA_0LD0RB_1LA1LC	UNCAUGHT										
+1RB---_0LC1RA_1LD1RC_0RA0LD	UNCAUGHT										
+1RB---_0LC1RB_1LA1LD_1LC0RB	UNCAUGHT										
+1RB---_0LC1RB_1LD0RB_1LA1LC	UNCAUGHT										
+1RB---_0LC1RB_1RD1LC_1RA0RB	irules	irules					1				
+1RB---_0LC1RC_0LD0RC_1LA1LD	UNCAUGHT										
+1RB---_0LC1RC_0RC1LD_1LA0LD	UNCAUGHT										
+1RB---_0LC1RD_---1LD_1RB0LC	rwlrank	RepWL/rwlrank				1	1	1			
+1RB---_0LC1RD_1LA1LC_0LA0RD	UNCAUGHT										
+1RB---_0RC---_1LD0RB_0LD1RB	quietfar	none							1		
+1RB---_0RC0LB_1LB1RD_1RC---	UNCAUGHT										
+1RB---_0RC0LB_1RD---_1LB1RC	UNCAUGHT										
+1RB---_0RC0RB_1LC1LD_1RB---	rwlrank	RepWL/rwlrank				1	1	1		1	
+1RB---_0RC0RB_1LD1LA_1LC1RB	rwlrank	RepWL/rwlrank				1	1				
+1RB---_0RC0RB_1LD1RB_1LC---	rwlrank	RepWL/rwlrank				1	1				
+1RB---_0RC0RD_1LC1RB_---0RB	rwlrank	RepWL/rwlrank				1	1				
+1RB---_0RC1LD_1LA1RD_1LB0RC	rwlrank	RepWL/rwlrank				1	1	1			
+1RB---_0RC1RB_1LC0LD_0RA0LC	UNCAUGHT										
