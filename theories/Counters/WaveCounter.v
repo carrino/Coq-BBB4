@@ -26,6 +26,7 @@
 
 From Coq Require Import Arith Lia List Bool.
 From BBB4 Require Import BBB4_Statement CTape.
+From BBB4.Counters Require Import WTape.
 Import ListNotations.
 
 Section WaveGlue.
@@ -222,4 +223,49 @@ Proof.
   intros poff b0 r (Hf & _ & _). simpl in Hf.
   apply carry_ok_of_par.
   destruct (Nat.odd (b0 + poff)), (pbits r); simpl in *; congruence.
+Qed.
+
+(** * Reachability closure (for the nested per-pass laps).
+
+    A wave pass is a NESTED fold (a leftward carry wave + a rightward
+    reconstruction), so -- like the doubling families -- the per-machine
+    [Hlap] is built from a reachability preorder rather than one
+    parametric [csteps].  [creach] and its fold [creach_iter] are the
+    outer-loop closer; [creach_lap] packages a [creach] with a positive
+    prefix into the [wglue] / [LapGlue] [Hlap] existential. *)
+
+Definition wreach (tm : TM) (c c' : cconf) : Prop :=
+  exists n, csteps tm n c = Some c'.
+
+Lemma wreach_refl : forall tm c, wreach tm c c.
+Proof. intros. exists 0. reflexivity. Qed.
+
+Lemma wreach_csteps : forall tm n c c', csteps tm n c = Some c' -> wreach tm c c'.
+Proof. intros tm n c c' H. exists n. exact H. Qed.
+
+Lemma wreach_trans : forall tm c1 c2 c3,
+  wreach tm c1 c2 -> wreach tm c2 c3 -> wreach tm c1 c3.
+Proof.
+  intros tm c1 c2 c3 (n1 & H1) (n2 & H2).
+  exists (n1 + n2). eapply csteps_chain; eauto.
+Qed.
+
+Lemma wreach_iter : forall tm (f : nat -> cconf) k,
+  (forall i, i < k -> wreach tm (f i) (f (S i))) ->
+  wreach tm (f 0) (f k).
+Proof.
+  intros tm f k H. induction k as [| k IH].
+  - apply wreach_refl.
+  - eapply wreach_trans; [apply IH; intros i Hi; apply H; lia | apply H; lia].
+Qed.
+
+(** Package a positive-prefix [wreach] into the [Hlap] existential
+    (goal reached up to blank padding [lift]). *)
+Lemma wreach_lap : forall tm n c c1 cnext,
+  csteps tm n c = Some c1 -> 0 < n -> wreach tm c1 cnext ->
+  exists m c', csteps tm m c = Some c' /\ lift c' = lift cnext /\ 0 < m.
+Proof.
+  intros tm n c c1 cnext Hpre Hn (n2 & Hr).
+  exists (n + n2), cnext.
+  split; [eapply csteps_chain; eauto | split; [reflexivity | lia]].
 Qed.
