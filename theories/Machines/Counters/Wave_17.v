@@ -61,3 +61,43 @@ Proof.
       rewrite app_assoc, <- rep_add.
       replace (S k' + 2) with (S (S (S k'))) by lia. reflexivity.
 Qed.
+
+(** ** The block-word encoding *)
+
+Fixpoint wbody (front : list nat) : list Sym :=
+  match front with
+  | [] => [S1]
+  | b :: r => rep [S1] b ++ S0 :: wbody r
+  end.
+
+Definition Cf17 (front : list nat) : cconf := (StD, (wbody front, S0, [])).
+
+(** ** Generic phase units (all reflexivity via [wsteps] + transport) *)
+
+(** Frontier turnaround: never reads the left, materialises blanks right. *)
+Lemma ph_FT : forall L, csteps tm_17 3 (StD, (L, S0, [])) = Some (StB, (S1 :: L, S1, [S0])).
+Proof.
+  intro L.
+  pose proof (wsteps_frame_r tm_17 3 StD [] S0 [] StB [S1] S1 [S0] L) as H.
+  cbn [app] in H. apply H. reflexivity.
+Qed.
+
+(** Separator-continue: at a separator [S0] in state B, step onto the next
+    block's top one, still in state B. *)
+Lemma ph_sepB : forall rest R,
+  csteps tm_17 1 (StB, (S1 :: rest, S0, R)) = Some (StB, (rest, S1, S0 :: R)).
+Proof.
+  intros rest R.
+  pose proof (wsteps_frame tm_17 1 StB [S1] S0 [] StB [] S1 [S0] rest R) as H.
+  cbn [app] in H. apply H. reflexivity.
+Qed.
+
+(** Deposit: at a separator [S0] in state C with a swept one on the right,
+    write [S1] (grow the block) and turn to a rightward sweep in A. *)
+Lemma ph_dep : forall X R,
+  csteps tm_17 1 (StC, (X, S0, S1 :: R)) = Some (StA, (S1 :: X, S1, R)).
+Proof.
+  intros X R.
+  pose proof (wsteps_frame tm_17 1 StC [] S0 [S1] StA [S1] S1 [] X R) as H.
+  cbn [app] in H. apply H. reflexivity.
+Qed.
