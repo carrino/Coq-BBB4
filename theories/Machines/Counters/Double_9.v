@@ -26,7 +26,7 @@
 
 From Coq Require Import Arith Lia Bool List PArith.
 From BBB4 Require Import BBB4_Statement CTape.
-From BBB4.Counters Require Import WTape LapGlue.
+From BBB4.Counters Require Import WTape LapGlue DblCounter CReach.
 Import ListNotations.
 
 Definition mk (w : Sym) (d : Dir) (n : St) : option Trans :=
@@ -131,3 +131,162 @@ Proof.
   - exists 3. eexists. split; [apply phUvC | reflexivity].
   - exists 0. eexists. split; reflexivity.
 Qed.
+
+(** ** Comb algebra: [(1 0)] pairs regroup into 4-cell spread units. *)
+
+Lemma rep4_10 : forall k, rep [S1; S0] (2 * k) = rep [S1; S0; S1; S0] k.
+Proof.
+  induction k.
+  - reflexivity.
+  - replace (2 * S k) with (S (S (2 * k))) by lia.
+    cbn [rep]. rewrite IHk. reflexivity.
+Qed.
+
+Lemma rep4_01 : forall k, rep [S0; S1] (2 * k) = rep [S0; S1; S0; S1] k.
+Proof.
+  induction k.
+  - reflexivity.
+  - replace (2 * S k) with (S (S (2 * k))) by lia.
+    cbn [rep]. rewrite IHk. reflexivity.
+Qed.
+
+(** ** The mini-lap unit runs (windowed, each by [reflexivity]) *)
+
+(** Spread (rightward, entry [A] head [S0] = the frontier blank): two
+    comb units are crossed in 4 steps, the frontier fills. *)
+Lemma Uspr9 : wsteps true true tm_9 4 (StA, ([], S0, [S1; S0; S1; S0]))
+              = Some (StA, ([S0; S1; S0; S1], S0, [])).
+Proof. reflexivity. Qed.
+
+(** Materialize: the left-edge blank turns into the new comb prefix. *)
+Lemma Umat9 : wsteps false true tm_9 2 (StA, ([], S1, []))
+              = Some (StA, ([], S0, [S1; S0])).
+Proof. reflexivity. Qed.
+
+(** Enter (even case): frontier fill + clear the leftover comb 1. *)
+Lemma Uenter9 : wsteps true true tm_9 2 (StA, ([], S0, [S1; S0]))
+                = Some (StD, ([S0; S1], S0, [])).
+Proof. reflexivity. Qed.
+
+(** D-fill: one empty slot cell filled per step (rightward). *)
+Lemma UDf9 : wsteps true true tm_9 1 (StD, ([], S0, [S0]))
+             = Some (StD, ([S1], S0, [])).
+Proof. reflexivity. Qed.
+
+(** Flip approach at the marker: [D0 D1 A0 B0] reach the flip cell. *)
+Lemma Ufapp1 : wsteps true true tm_9 4 (StD, ([], S0, [S1; S0; S0; S1]))
+               = Some (StC, ([S1; S1; S0; S1], S1, [])).
+Proof. reflexivity. Qed.
+
+Lemma Ufapp0 : wsteps true true tm_9 4 (StD, ([], S0, [S1; S0; S0; S0]))
+               = Some (StC, ([S1; S1; S0; S1], S0, [])).
+Proof. reflexivity. Qed.
+
+(** Flip prefix (clear / set), 4 steps, into the D-fill 1-run. *)
+Lemma UfpreC : wsteps true true tm_9 4 (StC, ([S1; S1; S0; S1], S1, []))
+               = Some (StA, ([], S1, [S1; S0; S0; S0])).
+Proof. reflexivity. Qed.
+
+Lemma UfpreS : wsteps true true tm_9 4 (StC, ([S1; S1; S0; S1], S0, []))
+               = Some (StA, ([], S1, [S1; S0; S0; S1])).
+Proof. reflexivity. Qed.
+
+(** D-fill clear boundary: [A1] then the [C1] clear cycle, then [C1 C0]. *)
+Lemma UdA1 : wsteps true true tm_9 1 (StA, ([S1], S1, []))
+             = Some (StC, ([], S1, [S0])).
+Proof. reflexivity. Qed.
+
+Lemma UDclr : wsteps true true tm_9 1 (StC, ([S1], S1, []))
+              = Some (StC, ([], S1, [S0])).
+Proof. reflexivity. Qed.
+
+Lemma UdC1C0 : wsteps true true tm_9 2 (StC, ([S0; S1], S1, []))
+              = Some (StA, ([], S1, [S1; S0])).
+Proof. reflexivity. Qed.
+
+(** Odd flip at slot 0 (both slot-0 bit values), 6 steps. *)
+Lemma UflipO0 : wsteps true true tm_9 6 (StA, ([S0; S1], S0, [S0; S0; S0; S0]))
+                = Some (StA, ([], S1, [S1; S0; S0; S1; S0; S0])).
+Proof. reflexivity. Qed.
+
+Lemma UflipO1 : wsteps true true tm_9 6 (StA, ([S0; S1], S0, [S0; S1; S0; S0]))
+                = Some (StA, ([], S1, [S1; S0; S0; S0; S0; S0])).
+Proof. reflexivity. Qed.
+
+(** ** Transported phases *)
+
+(** Spread over [2*k] comb units (entry [A] head [S0]). *)
+Lemma phSpr9 : forall k L R,
+  csteps tm_9 (4 * k) (StA, (L, S0, rep [S1; S0] (2 * k) ++ R))
+  = Some (StA, (rep [S0; S1] (2 * k) ++ L, S0, R)).
+Proof.
+  intros. rewrite rep4_10, rep4_01.
+  exact (cycR _ _ _ _ _ _ Uspr9 k L R).
+Qed.
+
+(** D-fill over [k] empty cells (entry [D] head [S0]). *)
+Lemma phDf9 : forall k L R,
+  csteps tm_9 k (StD, (L, S0, rep [S0] k ++ R))
+  = Some (StD, (rep [S1] k ++ L, S0, R)).
+Proof.
+  intros. pose proof (cycR _ _ _ _ _ _ UDf9 k L R) as H.
+  rewrite Nat.mul_1_l in H. exact H.
+Qed.
+
+(** D-fill 1-run clear over [k] cells (entry [C] head [S1]). *)
+Lemma phDclr9 : forall k L R,
+  csteps tm_9 k (StC, (rep [S1] k ++ L, S1, R))
+  = Some (StC, (L, S1, rep [S0] k ++ R)).
+Proof.
+  intros. pose proof (cycL _ _ _ _ _ _ _ UDclr k L R) as H.
+  rewrite Nat.mul_1_l in H. cbn [app] in H. exact H.
+Qed.
+
+Lemma phMat9 : forall R,
+  csteps tm_9 2 (StA, ([], S1, R)) = Some (StA, ([], S0, [S1; S0] ++ R)).
+Proof. intros. exact (wsteps_frame_l _ _ _ _ _ _ _ _ _ _ R Umat9). Qed.
+
+Lemma phEnter9 : forall L R,
+  csteps tm_9 2 (StA, (L, S0, [S1; S0] ++ R))
+  = Some (StD, ([S0; S1] ++ L, S0, R)).
+Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R Uenter9). Qed.
+
+Lemma phFapp1 : forall L R,
+  csteps tm_9 4 (StD, (L, S0, [S1; S0; S0; S1] ++ R))
+  = Some (StC, ([S1; S1; S0; S1] ++ L, S1, R)).
+Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R Ufapp1). Qed.
+
+Lemma phFapp0 : forall L R,
+  csteps tm_9 4 (StD, (L, S0, [S1; S0; S0; S0] ++ R))
+  = Some (StC, ([S1; S1; S0; S1] ++ L, S0, R)).
+Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R Ufapp0). Qed.
+
+Lemma phFpreC : forall L R,
+  csteps tm_9 4 (StC, ([S1; S1; S0; S1] ++ L, S1, R))
+  = Some (StA, (L, S1, [S1; S0; S0; S0] ++ R)).
+Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R UfpreC). Qed.
+
+Lemma phFpreS : forall L R,
+  csteps tm_9 4 (StC, ([S1; S1; S0; S1] ++ L, S0, R))
+  = Some (StA, (L, S1, [S1; S0; S0; S1] ++ R)).
+Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R UfpreS). Qed.
+
+Lemma phdA1 : forall L R,
+  csteps tm_9 1 (StA, ([S1] ++ L, S1, R))
+  = Some (StC, (L, S1, [S0] ++ R)).
+Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R UdA1). Qed.
+
+Lemma phdC1C0 : forall L R,
+  csteps tm_9 2 (StC, ([S0; S1] ++ L, S1, R))
+  = Some (StA, (L, S1, [S1; S0] ++ R)).
+Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R UdC1C0). Qed.
+
+Lemma phFlipO0 : forall L R,
+  csteps tm_9 6 (StA, ([S0; S1] ++ L, S0, [S0; S0; S0; S0] ++ R))
+  = Some (StA, (L, S1, [S1; S0; S0; S1; S0; S0] ++ R)).
+Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R UflipO0). Qed.
+
+Lemma phFlipO1 : forall L R,
+  csteps tm_9 6 (StA, ([S0; S1] ++ L, S0, [S0; S1; S0; S0] ++ R))
+  = Some (StA, (L, S1, [S1; S0; S0; S0; S0; S0] ++ R)).
+Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R UflipO1). Qed.
