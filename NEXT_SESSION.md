@@ -82,10 +82,15 @@ walk produced the committed `.vo`, and editing the census forces a re-walk.
 
 ## 3. The long-tail roadmap
 
-### Scoreboard (2026-07-21 late, authoritative — README's coverage table is STALE)
-- **3,688 / 3,713 holdouts have a committed Coq theorem** (3,670
-  `NeverQuasiHaltsSt` + 18 QH-with-exact-score). **25 unproven** (24
-  C-certified-only: 23 counters + 1 v4 irules; plus 1 upstream-open).
+### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
+- **3,693 / 3,713 holdouts have a committed Coq theorem** (3,675
+  `NeverQuasiHaltsSt` + 18 QH-with-exact-score). **20 unproven** (19
+  C-certified-only: tower 4, double 3, blockdbl 3, xd 3, wave 2 (#6/#24),
+  fractal 2, wave4 1, v4 irules 1; plus 1 upstream-open). Boarded this
+  session: 50 irules Phase 2 + wave #17/#27/#36/#7 + double #9 (+55).
+  Residue burn-down measured: see tools/recon_20260721_sweep/SWEEP.md
+  (59% boardable today, 66% with the irules-QH corollary, bouncer
+  checker measured WORTHLESS -- cancel FAR_DESIGN item 3).
 - **`D_census` = 16,065 = 43 deferred holdouts (18 wrap-QH + 25 unproven) +
   16,022 residue** (9,775 wrap-QH survivors + 6,247 never-QH survivors).
   REGENERATED but NOT yet re-certified: the last certified census is the
