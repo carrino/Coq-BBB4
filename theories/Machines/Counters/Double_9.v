@@ -290,3 +290,191 @@ Lemma phFlipO1 : forall L R,
   csteps tm_9 6 (StA, ([S0; S1] ++ L, S0, [S0; S1; S0; S0] ++ R))
   = Some (StA, (L, S1, [S1; S0; S0; S0; S0; S0] ++ R)).
 Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R UflipO1). Qed.
+
+(** ** The mini-lap: one gray-decrement step (creach). *)
+
+Definition g9 (j n w : nat) : cconf :=
+  (StA, ([], S0, rep [S1; S0] n ++ grr w j)).
+
+(* comb split/fold helpers *)
+Lemma rep_split1 : forall (u : list Sym) a,
+  rep u (2 * S a) = u ++ rep u (2 * a + 1).
+Proof. intros. replace (2 * S a) with (S (2 * a + 1)) by lia. reflexivity. Qed.
+
+Lemma rep_fold1 : forall (u : list Sym) a,
+  rep u (2 * a + 1) ++ u = rep u (2 * S a).
+Proof.
+  intros. rewrite rep_shift.
+  replace (2 * S a) with (S (2 * a + 1)) by lia. reflexivity.
+Qed.
+
+Lemma minilap9_odd : forall j' n q,
+  0 < n -> Nat.even n = true ->
+  creach tm_9 (g9 (S j') n (S (2 * q))) (g9 (S j') (S n) (2 * q)).
+Proof.
+  intros j' n q Hn Hne.
+  apply Nat.even_spec in Hne. destruct Hne as [cc Hcc].
+  destruct cc as [| m]; [lia |].
+  subst n. clear Hn.
+  unfold g9.
+  destruct (grr_odd q j') as [Godd Gev].
+  rewrite Godd, Gev.
+  set (TAIL := slotsf (gbn q j') ++ [S1]).
+  eapply creach_csteps.
+  (* Phase 1: spread over the whole comb *)
+  eapply csteps_chain.
+  { apply (phSpr9 (S m)). }
+  rewrite app_nil_r.
+  rewrite (rep_split1 [S0; S1] m).
+  (* now L = [S0;S1] ++ rep[S0;S1](2m+1); flip on the slot-0 bit *)
+  destruct (Nat.odd q) eqn:Hq; cbn [negb].
+  - (* odd q = true: slot0 bit S0 (set to S1) -> phFlipO0 *)
+    eapply csteps_chain.
+    { apply (phFlipO0 (rep [S0; S1] (2 * m + 1)) TAIL). }
+    (* Phase 3: collapse *)
+    rewrite <- (app_nil_r (rep [S0; S1] (2 * m + 1))).
+    eapply csteps_chain.
+    { apply (phUcol (2 * m + 1) []). }
+    (* fold rep[S1;S0](2m+1) ++ [S1;S0] and materialize *)
+    change ([S1;S0;S0;S1;S0;S0] ++ TAIL)
+      with ([S1;S0] ++ ([S0;S1;S0;S0] ++ TAIL)).
+    rewrite (app_assoc (rep [S1;S0] (2*m+1)) [S1;S0]).
+    rewrite (rep_fold1 [S1;S0] m).
+    apply phMat9.
+  - (* odd q = false: slot0 bit S1 (clear to S0) -> phFlipO1 *)
+    eapply csteps_chain.
+    { apply (phFlipO1 (rep [S0; S1] (2 * m + 1)) TAIL). }
+    rewrite <- (app_nil_r (rep [S0; S1] (2 * m + 1))).
+    eapply csteps_chain.
+    { apply (phUcol (2 * m + 1) []). }
+    change ([S1;S0;S0;S0;S0;S0] ++ TAIL)
+      with ([S1;S0] ++ ([S0;S0;S0;S0] ++ TAIL)).
+    rewrite (app_assoc (rep [S1;S0] (2*m+1)) [S1;S0]).
+    rewrite (rep_fold1 [S1;S0] m).
+    apply phMat9.
+Qed.
+
+Lemma rep_snoc : forall (u : list Sym) k, rep u (S k) = rep u k ++ u.
+Proof. intros. cbn [rep]. symmetry. apply rep_shift. Qed.
+
+Lemma rep000 : forall k, rep [S0; S0; S0] k = rep [S0] (3 * k).
+Proof.
+  induction k.
+  - reflexivity.
+  - replace (3 * S k) with (S (S (S (3 * k)))) by lia.
+    cbn [rep]. rewrite IHk. reflexivity.
+Qed.
+
+Lemma grr_even_df : forall r u j, Nat.odd u = true ->
+  grr (2 ^ S r * u) (S r + S j)
+  = rep [S0] (S (3 * r)) ++ S1 :: S0 :: S0
+      :: (if Nat.odd (Nat.div2 u) then S0 else S1) :: S0 :: S0
+      :: slotsf (gbn (Nat.div2 u) j) ++ [S1].
+Proof.
+  intros r u j Hu. rewrite grr_even_flip by exact Hu.
+  rewrite rep000. reflexivity.
+Qed.
+
+Lemma even_fold : forall cc r (X : list Sym),
+  [S1; S0] ++ (rep [S1; S0] (2 * cc) ++ [S1; S0] ++ rep [S0] (3 * r) ++ [S0] ++ X)
+  = rep [S1; S0] (S (S (2 * cc))) ++ S0 :: rep [S0] (3 * r) ++ X.
+Proof.
+  intros cc r X.
+  rewrite (app_assoc (rep [S1;S0] (2*cc)) [S1;S0]).
+  rewrite <- (rep_snoc [S1;S0] (2*cc)).
+  rewrite (app_assoc [S1;S0] (rep [S1;S0] (S (2*cc)))).
+  change ([S1;S0] ++ rep [S1;S0] (S (2*cc))) with (rep [S1;S0] (S (S (2*cc)))).
+  f_equal. symmetry. apply rep_slide.
+Qed.
+
+Lemma minilap9_even : forall r j'' n u,
+  0 < n -> Nat.odd n = true -> Nat.odd u = true ->
+  creach tm_9 (g9 (S r + S j'') n (2 ^ S r * u))
+              (g9 (S r + S j'') (S n) (2 ^ S r * u - 1)).
+Proof.
+  intros r j'' n u Hn Hnodd Hu.
+  set (cc := Nat.div2 n).
+  assert (Hnc : n = S (2 * cc)).
+  { unfold cc. rewrite (Nat.div2_odd n) at 1. rewrite Hnodd. cbn [Nat.b2n]. lia. }
+  set (FB := Nat.odd (Nat.div2 u)).
+  set (MTAIL := slotsf (gbn (Nat.div2 u) j'') ++ [S1]).
+  unfold g9.
+  rewrite grr_even_df by exact Hu.
+  rewrite (grr_even_pred r u j'' Hu).
+  fold FB MTAIL.
+  rewrite Hnc.
+  (* comb: rep[S1;S0](S(2cc)) = rep[S1;S0](2cc) ++ [S1;S0] *)
+  rewrite (rep_snoc [S1; S0] (2 * cc)).
+  rewrite <- app_assoc.
+  eapply creach_csteps.
+  (* Phase 1: spread over 2cc units *)
+  eapply csteps_chain.
+  { apply (phSpr9 cc []). }
+  rewrite app_nil_r.
+  (* Phase 2: enter (frontier + clear leftover comb) *)
+  eapply csteps_chain.
+  { apply phEnter9. }
+  (* Phase 3: D-fill *)
+  eapply csteps_chain.
+  { apply (phDf9 (S (3 * r))). }
+  destruct FB eqn:HFB.
+  - (* FB = true: flip cell S0 (set) *)
+    eapply csteps_chain. { apply phFapp0. }
+    eapply csteps_chain. { apply phFpreS. }
+    eapply csteps_chain. { apply phdA1. }
+    eapply csteps_chain. { apply (phDclr9 (3 * r)). }
+    eapply csteps_chain. { apply phdC1C0. }
+    rewrite <- (app_nil_r (rep [S0; S1] (2 * cc))).
+    eapply csteps_chain. { apply (phUcol (2 * cc) []). }
+    rewrite rep000. rewrite <- even_fold. apply phMat9.
+  - (* FB = false: flip cell S1 (clear) *)
+    eapply csteps_chain. { apply phFapp1. }
+    eapply csteps_chain. { apply phFpreC. }
+    eapply csteps_chain. { apply phdA1. }
+    eapply csteps_chain. { apply (phDclr9 (3 * r)). }
+    eapply csteps_chain. { apply phdC1C0. }
+    rewrite <- (app_nil_r (rep [S0; S1] (2 * cc))).
+    eapply csteps_chain. { apply (phUcol (2 * cc) []). }
+    rewrite rep000. rewrite <- even_fold. apply phMat9.
+Qed.
+
+Lemma minilap9 : forall j n w,
+  0 < n -> 0 < w -> w < 2 ^ j -> Nat.odd (n + w) = true ->
+  creach tm_9 (g9 j n w) (g9 j (S n) (w - 1)).
+Proof.
+  intros j n w Hn Hw Hwj Hpar.
+  destruct (factor2 w Hw) as (r & u & Hu & Hwru).
+  destruct r as [| r'].
+  - (* w = u odd *)
+    rewrite Nat.pow_0_r, Nat.mul_1_l in Hwru.
+    destruct j as [| j']; [cbn in Hwj; lia |].
+    set (q := Nat.div2 u).
+    assert (Hw2 : w = S (2 * q)).
+    { subst w. unfold q. rewrite (Nat.div2_odd u) at 1. rewrite Hu.
+      cbn [Nat.b2n]. lia. }
+    assert (Hne : Nat.even n = true).
+    { rewrite Nat.odd_add in Hpar. rewrite Hw2 in Hpar.
+      rewrite Nat.odd_succ in Hpar.
+      replace (Nat.even (2 * q)) with true in Hpar
+        by (symmetry; rewrite Nat.even_mul; reflexivity).
+      rewrite xorb_true_r in Hpar. apply negb_true_iff in Hpar.
+      rewrite <- Nat.negb_odd. rewrite Hpar. reflexivity. }
+    rewrite Hw2. replace (S (2 * q) - 1) with (2 * q) by lia.
+    apply minilap9_odd; assumption.
+  - (* w = 2^(S r') * u, even *)
+    assert (Hle : 2 ^ S r' <= w).
+    { rewrite Hwru. assert (1 <= u) by (destruct u; [discriminate Hu | lia]).
+      assert (2 ^ S r' <> 0) by (apply Nat.pow_nonzero; lia). nia. }
+    assert (Hlt : S r' < j).
+    { destruct (le_lt_dec j (S r')) as [Hc | Hc]; [| exact Hc].
+      assert (2 ^ j <= 2 ^ S r') by (apply Nat.pow_le_mono_r; lia). lia. }
+    assert (Hj : exists j'', j = S r' + S j'') by (exists (j - S (S r')); lia).
+    destruct Hj as (j'' & Hj). subst j.
+    assert (Hno : Nat.odd n = true).
+    { rewrite Nat.odd_add in Hpar.
+      assert (Hwe : Nat.odd w = false).
+      { rewrite Hwru, Nat.pow_succ_r', <- Nat.mul_assoc, Nat.odd_mul.
+        reflexivity. }
+      rewrite Hwe, xorb_false_r in Hpar. exact Hpar. }
+    rewrite Hwru. apply minilap9_even; assumption.
+Qed.
