@@ -82,12 +82,21 @@ walk produced the committed `.vo`, and editing the census forces a re-walk.
 
 ## 3. The long-tail roadmap
 
-### Scoreboard (2026-07-21, authoritative — README's coverage table is STALE)
-- **3,638 / 3,713 holdouts have a committed Coq theorem** (3,620
-  `NeverQuasiHaltsSt` + 18 QH-with-exact-score). **75 unproven** (74
-  C-certified-only + 1 upstream-open).
-- **`D_census` = 16,115 = 93 deferred holdouts (18 wrap-QH + 75 unproven) +
+### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
+- **3,693 / 3,713 holdouts have a committed Coq theorem** (3,675
+  `NeverQuasiHaltsSt` + 18 QH-with-exact-score). **20 unproven** (19
+  C-certified-only: tower 4, double 3, blockdbl 3, xd 3, wave 2 (#6/#24),
+  fractal 2, wave4 1, v4 irules 1; plus 1 upstream-open). Boarded this
+  session: 50 irules Phase 2 + wave #17/#27/#36/#7 + double #9 (+55).
+  Residue burn-down measured: see tools/recon_20260721_sweep/SWEEP.md
+  (59% boardable today, 66% with the irules-QH corollary, bouncer
+  checker measured WORTHLESS -- cancel FAR_DESIGN item 3).
+- **`D_census` = 16,065 = 43 deferred holdouts (18 wrap-QH + 25 unproven) +
   16,022 residue** (9,775 wrap-QH survivors + 6,247 never-QH survivors).
+  REGENERATED but NOT yet re-certified: the last certified census is the
+  committed 16,115 `.vo`; `census_cache --check` correctly reports the
+  input mismatch. Run `make census-verify` + `census_cache --update` on
+  stable hardware to certify 16,065.
 - Only `1RB0RB_1LC1RC_0RA1LD_1RC0LD` (the "residue-3 nested/mixed tower") has
   **no known proof anywhere**. Everything else is grind-able.
 
@@ -106,13 +115,9 @@ to drop them. 3. Re-run `make census` on stable hardware (Class 2) → new lower
 `D_census`, certified.
 
 ### Work items, by leverage (all Class 1 unless noted)
-1. **irules Phase 2 — v6 `rulepfx` + v7 `rulerunm` (50 machines).**
-   Designed + differentially validated (44+6 pass `bin/verify` and the
-   extended mirror), NOT yet coded. Fork `RulesBlkPfx.v`/`MetaBlkPfx.v` on the
-   landed block engine (prefix match + constant-remainder drain; v7 adds a
-   residue-lattice run constructor). Mirror
-   `tools/recon_20260719/irulesblkpfx_prover_ext.py`; fork map
-   `PHASE2_DESIGN.md:157-219`. ~2-3 sessions. Highest-confidence tail block.
+1. **irules Phase 2 — DONE 2026-07-21 (see the "irules Phase 2 LANDED"
+   section below): all 50 boarded, proven tier at 3,670, D_census
+   regenerated to 16,065 (re-cert on stable hardware pending).**
 2. **Re-root bridge (~1,300 residue machines).** `BRIDGE.md`. A `*_reroot`
    lemma family (~20-30 lines, StA-variant of `visits_swap`/`quiet_swap`) +
    per-machine ≤4-step `reflexivity` re-roots the census-only first-write-0
@@ -1242,6 +1247,73 @@ covers it, only the drop-to-0 condition changes in a forked
 `IRulesBlkPfx_Batch_*.v` + corruption tests; differential-validate the 44
 vs `bin/verify` first.  Machines whose certs ALSO need
 `rulerunm`/`mmrow`/`nvar` are out of scope (re-check per cert).
+<!-- --- irules block-prefix track (phase 2) --- -->
+## irules Phase 2 LANDED (2026-07-21): all 50 boarded, coverage 3,688, D_census 16,065
+
+The 44 v6 (`rulepfx`+`rmdok`) + 6 v7 (`rulerunm`) holdouts are boarded
+through a verified checker; only the 1 v4 `mmrow` machine remains of the
+irules family. Files (all `functional_extensionality_dep` only):
+
+- **`Checkers/IRules/EngineKS.v`** — sentinel-aware fork of the block
+  engine ([EngineK] untouched). THE design idea: soundness is stated
+  against the SUFFIX-EXTENDED semantics `bsemX` (each side denotes its
+  runs ++ an arbitrary opaque cell suffix, `[]` forced on non-sentinel
+  sides), so a validated prefix rule's `Reach` holds for EVERY
+  continuation of its opaque sides — exactly what splice-back
+  application needs. `bpushS` keeps a blank pushed onto an empty
+  sentinel side as CONTENT (mirror of `iv_rebuild_side`); the
+  app-exhausted branch hard-fails on sentinels.
+- **`Checkers/IRules/RulesBlkPfx.v`** — `BRuleP` prefix rules over
+  `BC/BV/BVm` run counts. `appBlkPfx_side` decomposes (proved:
+  `appBlkPfx_decomp`) into an EXACT application on the matched
+  near-head runs + spliced rest, so the Phase-1 denotation-lemma
+  structure carries over; the `BVm` residue-lattice case rides a
+  `latt_ok` guard checked in the applier (exact division available by
+  inversion). `rmdok` needed ONLY an untrusted `find_bindingP` fork —
+  the applier's per-decrement survival re-check makes any `Rex` sound,
+  so the remainder logic carries zero proof weight. The whole-rule-on-
+  sentinel-side guard (`pfx || ~sent`) is enforced and load-bearing in
+  `ruleBlkPfx_apply_sound` (the `YL/YR` instantiation needs it).
+- **`Checkers/IRules/MetaBlkPfx.v`** — the checker; scalar meta layer
+  identical to MetaBlk; meta replay runs sentinel-free with `bsemX_nil`
+  recovering `bsem`.
+- **`Machines/IRulesBlkPfx_Batch_01..05.v`** (10/file, emitter
+  `tools/gen_irulesblkpfx_certs.py`, manifest
+  `tools/irulesblkpfx_manifest.tsv`, wired into check_coverage) and
+  **`Tests/IRulesBlkPfxBatch_Corruption.v`** (honest controls pass at
+  fuel 3000; REJECTED at the same fuel: pfx flag flip, rmdok lb shift,
+  block-table cell, meta map v6+v7, sentinel read-past = deleting a
+  LOAD-BEARING drain run from a prefix side, lattice delta).
+
+### Measured lenience classes (soundness-preserving; document, don't "fix")
+- Tampers that make the lattice run STRUCTURALLY dead (`res`/`mod`
+  violating the parse-time constraints verify.c enforces) are ACCEPTED:
+  the dead rule self-validates or the meta replay routes around it with
+  cheap symbolic engine steps, and everything actually verified stays
+  true. Same class as PHASE2_DESIGN §6's non-minimal-`lb` gap.
+- Deleting a trailing NON-load-bearing prefix run yields a valid
+  GENERALIZED rule (its content joins the opaque rest) — accepted.
+
+### Conveyor-belt step done (proven tier) -- base `make` GREEN with the new tables
+`tools/proven_map.tsv` is now COMMITTED (reconstructed from the
+manifests; reproduction test: its 3,620-row subset regenerates the
+committed `Proven_*.v` byte-identically — the audit's file/theorem
+picks and (file, theorem) sort are exactly recoverable). Regenerated at
+3,670; `proven_dropped.txt` extended; `regen_residue.py --proven-only`
+asserts now 3670/43/16065. `Deferred_*` regenerated: **D_census =
+16,065**. Census re-cert = stable-hardware (`make census-verify` +
+`tools/census_cache.py --update`).
+
+### Environment note (2 preemptions this session)
+The container was FULLY re-provisioned twice (repo re-cloned at origin,
+/root and /tmp wiped, uncommitted work LOST). Rules that saved the
+session: commit+push after EVERY artifact; and **apt now ships Coq
+8.18.0 on Ubuntu 24.04 (`apt-get install coq`, ~2 min)** — exactly our
+pin, vm_compute-capable (no native_compute, fine for everything except
+the census walk). Use apt coq for container sessions; the opam census
+switch is only needed on the stable box.
+<!-- --- end irules block-prefix track --- -->
+
 <!-- --- end irules block-run track --- -->
 
 <!-- --- census D-shrink session (2026-07-19/20): proven tier + B/C grind post-mortem --- -->
@@ -1376,3 +1448,714 @@ no reliable ~30-min window was available, and parallelism OOMs on the 16GB/4-cor
 container (2 heavy units ~13GB, 4 >16GB). A 64GB / higher-core host removes both
 constraints at once and would finish in 1-2h.
 <!-- --- end final closeout --- -->
+
+<!-- wave track -->
+# Counters wave track (2026-07-21): recon + closer landed; per-pass proof is the open work
+
+Files (own): `theories/Counters/WaveCounter.v` (closer, COMPILES, axiom-clean),
+`tools/counters/trace_wave.py` (recon tracer, validated). `_CoqProject`
+block `# --- counters track: wave ---`. Targets: 6 wave_counter certs
+(counter6/7/17/24/27/36) + 1 wave4_counter (#15).
+
+## KEY FINDING: the playbook's "LapGlue suffices" is WRONG for wave.
+
+The wave machines are PARITY-WAVE ODOMETERS, not single `positive`
+counters. The event config is a variable-length BLOCK WORD
+
+    1^{B_0} 0 1^{B_1} 0 ... 0 1^{B_m}   (single-0 separators),
+
+head one cell past the frontier at the edge state (side R; mirror for
+side L). `B_0` = lead, `B_m` = frontier. One pass = one event-to-event
+run, rule (parities only, exactly verify.c `wc_expected`):
+  - `out = B; out[m] += 1` (frontier increments EVERY pass);
+  - scan `i = m-1 .. 0`, `par = B[i+1] + (poff if i==m-1 else 0)`;
+    first ODD -> `out[i] += 1`, class `t = m-i` (wave depth), or `t=0`
+    (LEAD-STOP) if `i==0`;
+  - if no odd interior block and `B_0==1`: SPAWN (insert length-1 block
+    after the lead), class -1; if `B_0 != 1`: UNDEFINED (-2).
+
+The vector GROWS in length (spawns) and values (unbounded), and the
+carry depth is unbounded, so a pass is a NESTED translated cycle -- NOT
+one parametric run. `LapGlue` (positive + `Pos.succ`) cannot index it.
+
+## The closer that IS right: `WaveCounter.wglue_neverqh` (LANDED).
+
+Generalizes `LapGlue` to anchors indexed by an arbitrary state type `A`
+advanced by a TOTAL successor `nextA` under a PRESERVED invariant `Inv`:
+  - `Inv a0`, `Inv a -> Inv (nextA a)`;
+  - `Hboot`: blank ->* `lift (Cf a0)`;
+  - `Hlap`: `Inv a -> Cf a ->^{>=1} Cf (nextA a)` (up to `lift`);
+  - `Hvis`: `Inv a -> every state reachable from Cf a`.
+Then `NeverQuasiHaltsSt`. Proof = `LapGlue.glue_reach` with
+`Nat.iter k nextA a0` as the k-th anchor. Compiles; `Print Assumptions`
+= `functional_extensionality_dep` only. This is the whole outer layer;
+it is DONE. The three hypotheses are the remaining work.
+
+## The abstract state and the three proof obligations.
+
+Take `A := list positive` (block vector, all entries >= 1, LSB=lead...
+actually lead-first). `nextA := wc_expected` (parity odometer). `Cf B` =
+the block-word tape above. `a0` = the boot vector (per cert
+`boot_vector`, e.g. `[1;1;2;4]`). Then:
+
+- **P2 (Inv preserved; MACHINE-INDEPENDENT, hard math).** `Inv` must
+  exclude LEAD-STOP (t=0) and bad SPAWN (-2) so `nextA` stays in the
+  event family. This IS verify.c `wc_parity_schema` + `wc_bootstrap`'s
+  abstract chain: the parity word `e_i = B_i mod 2` evolves as an
+  odometer `R` (flip `e_m`; flip `e_{i*-1}`, `i*` = highest set), and
+  the safety is a RECURSIVE identity `R;R = R'` one level down (verify.c
+  lines ~9544-9712). Candidate `Inv`: "B_0 = 1 AND the parity word is
+  reachable from a canonical spawn word", proved preserved by the
+  R;R=R' pairing induction. This is the single hardest sub-proof and is
+  SHARED by all 6 machines -- do it once. (Alternatively: a weaker `Inv`
+  that is obviously preserved and obviously forbids i*=1 -- OPEN whether
+  one exists; the parities genuinely require the odometer argument.)
+
+- **P1 (Hlap; PER-MACHINE, hard).** From `Cf B` reach `Cf (nextA B)`.
+  Decomposition (validated for all 6 via `trace_wave.py`, and per-machine
+  micro-gadgets extracted -- see table): FRONTIER-TURNAROUND (fixed ~2-3
+  steps, frontier += 1, reverse to inward sweep) ++ LEFTWARD WAVE (cross
+  blocks m, m-1, ... as translated cycles until the parity STOP) ++
+  DEPOSIT+turnaround ++ RIGHTWARD RETURN (cross blocks back to frontier).
+  The leftward wave is a FOLD over a variable-length sublist of the block
+  vector, each block crossed by a 2-state (clean tier) or 4-state (hard
+  tier) alternating cycle = a `WTape.cycL`/`cycR` application over the
+  1-run; the SEPARATOR arrival STATE encodes the running parity and
+  selects continue-vs-deposit. Needs: a `creach_iter`-style induction
+  over the crossed blocks (cf. MonoCounter `creach`), plus the
+  block-length translated cycles. This is the double/blockdbl nested-loop
+  pattern one level richer.
+
+- **P3 (Hvis; PER-MACHINE, easy).** Every state visited each pass:
+  finite `wsteps` reflexivity witnesses off `Cf B`, as in Spacer_16
+  `vis_16`. From the fired-transition traces every pass fires >=7 of 8
+  transitions; a single class-1 + class-2 pass covers all 8.
+
+## Per-machine gadget tables (from validated micro-traces, transitions
+## written `state sym / write dir > next`).
+
+Difficulty tiers by the leftward cross-cycle:
+
+- **#17** `1RB0RD_0LB1LC_1RA1LB_1RA1RD` edge D, side R, poff 0, boot
+  [1;1;2;3]. EASIEST. FT=`D0/1R>A A0/1R>B B0/0L>B`; cross-pair=`B1/1L>C
+  C1/1L>B` (cycL unit u=[1;1], state B); sep-continue=`B0/0L>B`;
+  deposit=`C0/1R>A`; return unit=`D1/1R>D` (D-sweep), sep-on-return=
+  `D0/1R>A A1/0R>D`. Arrive-at-sep in C => DEPOSIT (odd run), in B =>
+  CONTINUE (even). Start here.
+- **#27** `1RB1LC_1LC0RD_0LC1LA_1RB1RD` edge D, side R, poff 1, boot
+  [1;1;2;4]. FT=`D0/1R>B B0/1L>C`; cross-pair=`C1/1L>A A1/1L>C`;
+  sep-continue=`C0/0L>C`; deposit=`A0/1R>B`; return=`B1/0R>D`/`D1/1R>D`,
+  sep=`D0/1R>B B1/0R>D`.
+- **#36** `1RB1RA_1LC0RA_0LC1LD_1RB1LC` edge A, side R, poff 1, boot
+  [1;1;2;4]. FT=`A0/1R>B B0/1L>C`; cross-pair=`C1/1L>D D1/1L>C`;
+  sep=`C0/0L>C`; deposit=`D0/1R>B`; return=`B1/0R>A`/`A1/1R>A`,
+  sep=`A0/1R>B B1/0R>A`.
+- **#7** `1RB0LC_1LA1RD_1LA1LC_0RD1RB` edge A, side L, poff 1, boot
+  [1;1;2;4]. MIRROR (frontier on the LEFT, inward = rightward).
+  FT=`A0/1R>B B1/1R>D`; cross-pair=`D1/1R>B B1/1R>D`; sep=`D0/0R>D`;
+  deposit=`B0/1L>A A1/0L>C`; return=`C1/1L>C`, sep=`C0/1L>A A1/0L>C`.
+- **#6** `1RB0LB_0LB0RC_1LD1RC_1LA1RB` edge C, side R, poff 1, boot
+  [1;1;2;4]. HARD: 4-step cross cycle `C0/1L>D D0/1L>A A1/0L>B B1/0R>C`
+  that WRITES 0s (the run is re-encoded during the cross); return is a
+  `C1/1R>C` sweep. Budget separately.
+- **#24** `1RB1LA_1RC1LD_1LD0RD_0RD0LA` edge A, side L, poff 1, boot
+  [1;1;2;4]. HARD (mirror of the #6-class): 3-4 step cross cycle
+  `A0/1R>B B0/1R>C C1/0R>D D1/0L>A` writing 0s. Budget separately.
+
+## #15 wave4_counter `1RB0RC_0LC1LB_0LD1LC_1RD0RA` (edge C, boot [1;4;2]):
+separate `verify_wave4_counter` (verify.c ~10462) -- read it before
+coding; likely a base-4 variant of the same odometer. Do last.
+
+## Recommended plan for the next wave session.
+1. Build `tools/counters/lapwave17.py` (fork lap16.py): symbolic pass for
+   #17 via `Exec.cycL`/`cycR` combinators + explicit FT/deposit/return
+   `conc` units + a Python fold over the crossed blocks; `python3
+   lapwave17.py 40` must match raw (differential over classes 1/2/3/spawn
+   and depths to ~6). This pins the exact unit windows/walls for Coq.
+2. `theories/Counters/WaveCounter.v`: add the block encoding `Wv : list
+   positive -> list Sym` + decomposition lemmas (cross-fold, parity
+   split). Keep machine-independent parts here.
+3. P2 once (parity-safety `Inv`), P1+P3 per machine starting at #17.
+4. Corruption tests `theories/Tests/CountersWave_Corruption.v` (NEW).
+   Manifest rows in `tools/counters_manifest.tsv` (append only).
+
+Budget: P2 is ~1 session (the recursive parity induction); #17 P1 ~1
+session; #27/#36/#7 faster once #17's fold is generic; #6/#24/#15 hard,
+budget separately. The abstract odometer is IDENTICAL across all 6
+(same boot orbit) -- only the micro-gadget tables differ, so P2 and the
+fold skeleton are shared.
+<!-- end wave track -->
+
+## #17 units CONFIRMED in Coq (2026-07-21, via `Compute` on `tm17`).
+
+The block encoding is FRONTIER-FIRST: `Cf B = (edge, (l, S0, []))` with
+`l = 1^{B_m} ++ 0 :: 1^{B_{m-1}} ++ 0 :: ... ++ 0 :: 1^{B_0}` (nearest
+block = frontier), head on the trailing separator, right blank (side R).
+Every intended unit run computes cleanly as `wsteps ... = Some ...`
+(direct `Proof. reflexivity. Qed.` transcription), and the whole cls1
+pass is ONE windowed run landing EXACTLY on the next event (no lift
+slack). tm17 = `1RB0RD_0LB1LC_1RA1LB_1RA1RD`. Confirmed:
+
+  - FT (br=false, 3): `(D,(1^n, S0, [])) -> (B,(1^(n+1), S1, [S0]))`
+    (D0/1R>A A0/1R>B B0/0L>B; frontier + scratch, turns to left B-sweep).
+  - cross-pair cycL unit (2): `(B,([S1;S1], S1, [])) -> (B,([], S1,
+    [S1;S1]))`  (u=[S1;S1], w=[S1;S1]; use `WTape.cycL`).
+  - odd-tail (1): `(B,([S1], S1, [])) -> (C,([], S1, [S1]))`.
+  - sep-continue B0 (1): `(B,([S1], S0, R)) -> (B,([], S1, S0::R))`
+    (even parity: push sep right, enter next block still in B).
+  - deposit C0;A1 (2): `(C,([S0], S0, [S1;S1])) -> (D,([S0;S1;S0], S1,
+    []))` (odd parity STOP: write 1 at sep, turn to rightward D-sweep).
+  - D-return sep (2): `(D,([], S0, [S1;S1])) -> (D,([S0;S1], S1, []))`.
+  - D-return over ones: `D1/1R>D`, one step per cell.
+  - FULL cls1 pass (br=false, 14): `Cf([1,1,2,3]) -> Cf([1,1,3,4])`,
+    exact -- `wsteps true false tm17 14 (D,([S1;S1;S1;S0;S1;S1;S0;S1;S0;
+    S1],S0,[])) = Some (D,([S1;S1;S1;S1;S0;S1;S1;S1;S0;S1;S0;S1],S0,[]))`.
+
+So P1 for #17 is: state these as unit lemmas, then a lap lemma that
+(a) FT, (b) folds cross-pair over even blocks to the parity stop
+(the arrival-state B/C = block-length parity is the whole selector),
+(c) deposits, (d) folds the D-return back to the frontier event. The
+fold is over the block sublist crossed = `creach_iter`/cycL induction.
+The ONLY genuinely hard piece left is P2 (the shared parity-safety
+`Inv`). #27/#36/#7 have the identical shape with their own unit tables
+(design appendix above); #6/#24 have 4-step 0-writing cross cycles.
+<!-- end wave track confirmed units -->
+
+<!-- double track -->
+
+# Counters track, DOUBLE session (2026-07-21): #30 recon complete, CReach landed
+
+Own files: `theories/Counters/CReach.v` (+ planned `DblCounter.v`,
+`theories/Machines/Counters/Double_*.v`, `theories/Tests/CountersDbl_Corruption.v`,
+`tools/counters/{recon30,probe30,lap30}.py`); `_CoqProject` block
+`# --- counters track: double ---` (appended at the very end, after wave).
+
+## LANDED this session
+
+- **`CReach.v`** -- the required new closer, axiom-clean (`Print
+  Assumptions creach_iter` = *Closed under the global context*, no
+  functional_extensionality even). `creach`/`creach_refl`/
+  `creach_csteps`/`creach_trans`/`creach_iter` EXACTLY as the recon
+  specified, plus two glue helpers the double laps will want:
+  `creach_pos` (recover `0 < n` from a positive prefix run) and
+  `creach_lap` (package the whole thing into the `LapGlue.Hlap`
+  existential up to `lift`). **creach_iter's shape matched the recon's
+  expectation verbatim** -- it is byte-identical to the copy session A
+  already appended to `MonoCounter.v` (lines 473-521). The double
+  machine files should import `CReach`, NOT `MonoCounter`, to avoid a
+  duplicate-`creach` ambiguity (keep the rep-algebra they need --
+  `rep011/101/110_expose` etc. -- local to `DblCounter.v`).
+- **`recon30.py`** (lap segmenter, RLE at every turnaround) and
+  **`probe30.py`** (unit prober). Both validated: step counts
+  **431 / 1447 / 5207** for j=2/3/4 reproduce the recon's numbers
+  EXACTLY; DONE decodes as D(j+1) = `1 0 (110)^(2k+1) 1^(t+3)` for
+  j=2,3.
+
+## #30 fully reconnoitred (NOT yet transcribed to Coq)
+
+Anchor (confirmed against `verify.c` `dc_build_D`, side R):
+`D(j) = (StB, (rep [S1] t ++ rep [S0;S1;S1] k ++ [S0;S1], S0, []))`,
+head on the blank one cell right of the frontier, k=2^j-1, t=3j+4.
+Index it for LapGlue via `Cf p := D30 (S (Pos.to_nat p))`, p0=1 -> j=2.
+
+**Unit inventory CONFIRMED** (probe30.py, all against the real tm_30
+`1RB1LD_1RC0LA_1RD0RD_1LB1RB`):
+- `UTe` edge turn, br=F: `(B,([],0,[])) -3-> (B,([1],1,[1]))`.
+- `wig` wiggle = **`cycL(u=[S1], rw=[], w=[S0], P=3)`**: the unit is
+  `(A,([S1],1,[])) -3-> (A,([],1,[S0]))` -- one accumulator 1 becomes
+  one 0 shuttled right. (The recon's `(B,([1;1],1,[]))` guess WALLS;
+  the real wiggle is this A-state cycL.)
+- `UJ` junction: `(B,([S1;S0],1,[])) -2-> (D,([],0,[S1;S0]))`.
+- `UC` collapse: `(D,([S1;S1;S0],0,[])) -3-> (D,([],0,[S1;S0;S1]))`
+  (leftward comb cycle, |delta|=3).
+- `US` spread: `(B,([],0,[S1;S1;S0])) -3-> (B,([S1;S0;S1],0,[]))`
+  (rightward comb cycle, |delta|=3).
+
+**THE CRUX -- the right region is a base-4 mixed-radix counter with
+carries that CHANGE LENGTH.** This is why the hand model was 2x short
+and why a flat `cycR`/`cycL` lap does NOT close it. After the initial
+wiggle the accumulator is `0^(t+1) 1` (a **conserved budget of t+2
+cells**). The outer loop then does k+1 comb-doubling steps; between
+left-edge turnarounds the right region is partitioned into chunks
+`0^z 1` with **z in {2,5,8,11} = 2 + 3*digit, digit in {0,1,2,3}**,
+`#chunks = m-2` where the comb is `(110)^m 11`. Chronological left-edge
+turns for j=2 (comb m, digit list LSB-at-left):
+
+```
+ A@-1  m=3  [3]         B@-3  m=4  [0,2]
+ A@-4  m=4  [1,1]       B@-6  m=5  [0,0,1]
+ A@-7  m=5  [2,0]       B@-9  m=6  [0,1,0]
+ A@-10 m=6  [1,0,0]     B@-12 m=7  [0,0,0,0]  <- overflow
+```
+
+The FINAL B-turn is the clean overflow `(0^2 1)^(k+1)` (all digits 0),
+which the closing spread collapses into the new accumulator `1^(t+3)`
+and re-emits the `1 0` frontier prefix -- giving D(j+1) exactly (no
+lift slack observed; DONE ends on a blank with r=[]). The digit
+transitions are NOT plain binary increment (lengths change: `[1,1]`->
+`[0,0,1]`, `[0,0,1]`->`[2,0]`); they must be **read off the executor**,
+not derived (mission's warning). This counter is richer than the
+`cview` binary carry the mono/spacer families use.
+
+## Transcription plan for the next session (the real work, ~1 full session)
+
+1. Finish **`lap30.py`**: an OUTER python loop over the k+1 doubling
+   steps, each = collapse `cycL`(UC) over the comb + a spread `cycR`
+   handling ONE digit increment on the right + the A/B edge turns +
+   the re-wiggle. The differential (`python3 lap30.py 300` = ALL OK
+   across j and both parities) is the gate; use a DbgExec dumping the
+   cfg after every combinator to pin the per-digit mid-config.
+2. `DblCounter.v`: the anchor `D30`, a `positive`- or `nat`-indexed
+   right-region counter type (base-4 digits `0^2 1`.. with the carry
+   rule from step 1), its cview-analogue decomposition lemmas, and
+   the comb rep-algebra (`rep [S0;S1;S1]` rotations).
+3. `Double_30.v`: units as `wsteps` reflexivity lemmas, transported
+   phases, the OUTER lap via `creach_iter` over the digit-counter
+   family (likely a NESTED creach_iter: outer over comb units, inner
+   over the digit carry), boundary phases (`UTe` prefix -> gives the
+   `0<n` via `creach_pos`; overflow-collapse suffix), then
+   `creach_lap` -> `glue_neverqh`. Boot (~vm_compute to D(2)) + visits.
+4. Corruption tests in `CountersDbl_Corruption.v` (new file), manifest
+   row, compile, `Print Assumptions` = functional_extensionality_dep.
+
+**Assessment:** #30 is a genuinely hard parametric proof -- larger
+than any landed counter machine -- because its "doubling" is a
+length-changing mixed-radix counter, not a fixed-unit translated
+cycle (the C verifier sidesteps this by only raw-checking j=2..8;
+Coq cannot). The closer + full recon are done and de-risk it; the
+counter-carry modeling is the remaining multi-hour piece. #9 (recon
+says "fewest turns/lap: 2 per mini-lap", gen comb (10)) is likely a
+gentler first FULL board than #30 -- consider reordering to #9 first
+to validate the creach_iter lap shape on an easier counter, then
+return to #30.
+<!-- end double track -->
+
+## Wave P2 LANDED + #17 P1 in progress (2026-07-21 cont.)
+
+**P2 DONE, axiom-clean** (`theories/Counters/WaveCounter.v`): the abstract
+parity odometer `nextf`/`carry` (= verify.c `wc_expected`, Compute-validated),
+`WInv poff front := fp poff front = false /\ Forall (>=1) front /\ front<>[]`
+(even popcount of the effective parity word), `WInv_preserved` and
+`WInv_no_leadstop` (both "Closed under the global context" -- ZERO axioms).
+Key math: each pass flips exactly 2 parity bits so even-popcount is invariant;
+lead-stop needs the odd word `0..01`, excluded. Unifies both poff via the
+effective frontier bit; lead is dropped (implicit 1) so bad-spawn is impossible.
+Also added to WaveCounter: `wreach`/`wreach_iter`/`wreach_lap` (reachability
+closer for the nested folds).
+
+**#17 P1 crux DONE** (`theories/Machines/Counters/Wave_17.v`): `tm_17` +
+`cross_run` -- crossing a run of ones leftward, `csteps tm_17 (S k)
+(StB,(rep[S1]k++S0::rest,S1,R)) = Some (stB k,(rest,S0,rep[S1](S k)++R))`,
+`stB k = if even k then StC else StB` (exit state = run parity: C=deposit,
+B=continue). Well-founded 2-step induction. Compiles axiom-clean.
+
+**Remaining for #17 (the two folds).** Confirmed phase units (all `wsteps`/
+`csteps` reflexivity, from Compute on tm_17):
+  - FT (br=false, 3): `csteps 3 (StD,(L,S0,[])) = Some(StB,(S1::L,S1,[S0]))`
+    -- generic in L (never reads left); prove via `wsteps_frame_r` of the
+    empty-window unit `wsteps true false tm_17 3 (StD,([],S0,[])) =
+    Some(StB,([S1],S1,[S0]))`.
+  - sep-continue B0 (1): `(StB,([S1],S0,R)) -> (StB,([],S1,S0::R))` -- wait,
+    at a separator head=S0 in state B: `csteps 1 (StB,(rest,S0,R)) =
+    Some(StB,(?,hd rest,S0::R))`; actually the head after cross_run is S0 and
+    state B => step B0/0L>B moves left onto next block: `(StB,(S1::rest,S0,R))
+    -> (StB,(rest,S1,S0::R))` then cross the next run in state B head S1.
+  - deposit C0 (1): `(StC,(X,S0,S1::R)) -> (StA,(S1::X,S1,R))`.
+  - return: A1/0R>D (1) then D-sweep. D over a one: `(StD,(L,S1,R))->
+    (StD,(S1::L,chd R,ctl R))`; return separator D0;A1: at a swept 0
+    `(StD,(L,S0,S1::R)) -> ...`. The rightward return re-lays each block; it
+    is a `cycR`-style fold over the swept region (state D), mirroring the
+    leftward fold.
+  - deposit turnaround (cls1 example, front [3;2;1]->[4;3;1]): the leftward
+    wave = FT ++ cross_run(S b0) at the frontier; if exit StC (odd b0) deposit
+    immediately; else B0-continue then cross_run(a-1) per block until StC.
+    Full cls1 = 14 steps, cls2 = 24 steps, both land EXACTLY on Cf(nextf).
+
+Structure to finish: a recursive `wave_L` (mirrors `carry`: cross frontier,
+then while exit=B do B0-continue+cross_run, until exit=C deposit; produces the
+deposit-turnaround config with crossed blocks mirrored onto r) via `wreach`,
+then a recursive `return_R` (state-D rightward fold consuming r, re-laying the
+event) via `wreach_iter`/`cycR`; the lap cases on `WInv_no_leadstop`. Then
+`boot_17` (Compute, ~? steps to Cf [3;2;1] i.e. boot front [3;2;1]),
+`vis_17` (finite wsteps witnesses per state), instantiate `wglue_neverqh` with
+`A := list nat`, `nextA := nextf 0`, `Inv := WInv 0`, `Cf := Cf17`, `a0 :=
+[3;2;1]`. #27/#36/#7 reuse the same skeleton with their gadget tables; #6/#24
+have 4-step 0-writing cross cycles (harder cross_run).
+<!-- end wave P2+P1 note -->
+
+## UPDATE (2026-07-21, same session): #9 is a GRAY-CODE double_counter -- lap9.py ALL OK
+
+`#9` (1RB0LC_1RC0RD_1LA0LC_1RD0RA, edge D) was reconnoitred fully and
+its mid-config family VALIDATED (`tools/counters/lap9.py 90` = ALL OK,
+j=2..6; totals 125/445/1661/6397/25085 match raw).
+
+Anchor `D9(j) = (10)^kg 1^acc`, head on the rightmost 1, state D;
+kg=2^j-1, acc=3j.  cconf:
+`(StD, (rep [S1] (acc-1) ++ rep [S0;S1] kg, S1, []))`.
+Doubling kg->2kg+1, acc->acc+3.
+
+**KEY: the doubling drives a GRAY-CODE counter** (NOT a base-4
+mixed-radix odometer like #30 -- #9 is genuinely gentler).  The i-th
+left-edge turnaround config (state A, head on the new left blank) is
+
+  f_i = (StA, ([], S0, rep [S1;S0] (kg+1+i) ++ gray_region(kg-i, j)))
+  gray_region(v,j) = [S0] ++ concat_{s<j} [bit_s(G(v)); S0; S0] ++ [S1]
+  G(v) = v xor (v>>1)  (reflected Gray code)
+
+Consecutive f_i differ by EXACTLY ONE gray-bit flip (verified Gray
+property: for j=3 the counter is G(7..0) = 4,5,7,6,2,3,1,0, each a
+single-bit change).  The comb grows one unit per step (kg+1+i), the
+Gray counter counts DOWN from G(kg) to G(0)=0 over kg steps, and the
+final all-zero state's spread reforms `D9(j+1)` exactly.
+
+**This is STRUCTURALLY the landed gray_counter #19 (`Gray_19.v`).**
+#19's anchor `(StC,([],S0, rep [S1;S0](p+2) ++ S0::Wg p))` is the same
+shape as f_i (comb `rep [S1;S0]` + `S0::`gray-slots).  Differences to
+handle in `Double_9.v`:
+  1. #9's mini-lap is one gray-code step but the MACRO lap chains `kg`
+     of them -> `CReach.creach_iter` over the mini-lap (this is why
+     #9 needs the closer; #19 is a single parametric lap).
+  2. #9 DECREMENTS the Gray counter (Wg(w) -> Wg(w-1)); the flip bit
+     for w->w-1 is `fst (cview (w-1))` (trailing 1s of w-1 = trailing
+     0s of w).  Use `Wg_some`/`Wg_none` with before=Wg(succ p),
+     after=Wg(p) (roles swapped vs #19).
+  3. Fixed width j: the high zero-slots above the flip are INERT
+     context R in each mini-lap (head turns at the flip), so no
+     fixed-width machinery is needed -- frame them as R.
+  4. Comb-doubling boundaries: a poke prefix D9(j) -> f_0 (the
+     nonempty `0<n` prefix for `creach_lap`) and a final spread
+     f_kg -> D9(j+1).
+
+CONFIRMED unit runs (probe9.py; all vs the real tm_9):
+  - collapse (leftward): `cycL(u=[S0;S1], w=[S1;S0], P=2)`:
+    `(A,([S0;S1],1,[])) -2-> (A,([],1,[S1;S0]))`.
+  - spread (rightward): `cycR(u=[S0;S1;S0;S1], w=[S1;S0;S1;S0], P=4)`:
+    `(B,([],1,[S0;S1;S0;S1])) -4-> (B,([S1;S0;S1;S0],1,[]))`
+    (2 comb units per cycle -> comb-parity split like #19's
+    comb_even/comb_odd + Gray_19's U2).
+  - poke edge unit: `(D,([],1,[])) ...` (D1=0RA, the doubling start).
+  - gray flip: the cview-slot flip, a bounded C/A/B push exactly as
+    Gray_19's phU3e/phU4s/phU5s family (different write table).
+
+Transcription is a Gray_19-scale proof wrapped in one `creach_iter`.
+Files staged: `tools/counters/{recon9,probe9,lap9}.py` (committed).
+Recommended next: build `theories/Counters/DblCounter.v` (fixed-width
+gray decomposition OR reuse `MonoCounter.Wg` with inert high context)
++ `theories/Machines/Counters/Double_9.v` per the Gray_19 template,
+importing `CReach` (qualified, to avoid the MonoCounter creach clash)
++ `MonoCounter` (for Wg/cview) + `WTape`/`LapGlue`.  #37 (side L,
+t=1+3j) is the likely next Gray-code sibling; #30/#32 are the harder
+base-4 odometers.
+
+### #9 foundation LANDED (compiling): theories/Machines/Counters/Double_9.v
+
+A machine-checked WIP foundation compiles standalone
+(`coqc -Q theories BBB4 theories/Machines/Counters/Double_9.v`, EXIT 0;
+NOT yet in _CoqProject / manifest -- no theorem yet):
+  - `tm_9`, anchor `D9(j) = (StD,(rep[S1](3j-1)++rep[S0;S1](2^j-1),S1,[]))`;
+  - comb units `Ucol` (collapse cycL u=[S0;S1] w=[S1;S0] P=2) and
+    `Uspr` (spread cycR u=[S0;S1;S0;S1] w=[S1;S0;S1;S0] P=4) + their
+    transported phases `phUcol`/`phUspr`;
+  - right-edge visit units `UvA/UvB/UvC` + `phUv*`, and `vis_9`
+    (every state reached from any D9(j) at offset 0/1/2/3) -- DONE;
+  - `boot_9` (blank -> D9(2) in 47 steps, vm_compute) -- DONE.
+Only `lap_9` (the creach_iter over the gray mini-laps + poke prefix +
+final spread) and the `nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA` theorem remain;
+`vis_9`+`boot_9` already satisfy two of the three `glue_neverqh`
+premises.  Next session: build the gray decomposition (fixed-width
+`WgF` or `MonoCounter.Wg` with inert high context), prove one mini-lap
+(Gray_19.v lap_19 template, decrement direction), wrap in creach_iter,
+add poke/final, then wire into _CoqProject/manifest.
+
+## Wave #17: wave_L LANDED; return_R fully mapped (2026-07-21 cont. 2)
+
+`Wave_17.v` now has (all compile, axiom-clean): tm_17, cross_run, wbody/Cf17,
+ph_FT/ph_sepB/ph_dep/ph_spawn, and **wave_L** -- the leftward carry-wave fold
+(mirrors `carry`): crosses even blocks (run onto r via cross_run), deposits at
+the first odd block (ph_dep), or spawns past the lead (ph_spawn); `outL`/`outR`
+give the deposit-turnaround `(StA, (outL po blocks, S1, outR po blocks R))`.
+Threads `carry_ok` (no lead-stop, from P2) + Forall>=1 + R-starts-S1.
+
+**return_R -- the ONLY remaining proof piece, fully mapped.** From the
+deposit-turnaround sweep RIGHT (state D) to `Cf17 (nextf 0 front)`. Trajectory
+verified by Compute (front [4;3;1] -> [5;3;2], deposit-turnaround `(StA, (1^2 0
+1, S1, 1^2 0 1^6 0))` -> 10 steps -> `Cf17 [5;3;2] = (StD, (1^5 0 1^3 0 1^2 0 1,
+S0, []))`). Per-block units:
+  - start: `A1/0R>D` -- the deposit-block top S1 becomes a separator (StA->StD).
+  - run cross: `cycR` D unit `(StD,([],S1,[S1])) -> (StD,([S1],S1,[]))` re-lays
+    a swept run (head stays S1).
+  - separator BORROW gadget `D0/1R>A ; A1/0R>D` at each swept 0: `(StD,(L,S0,
+    S1::R)) -> ... -> (StD,(S0::S1::L, ?, R))`, moving one 1 across the boundary.
+The net re-lay: the frontier mirror `1^{S(S b0)}` becomes the correct new
+frontier `1^{S b0}` (the FT scratch is removed) and each crossed block's mirror
+is restored to its value; cls1 (deposit right after frontier) is just
+`A1 + cycR` (no interior seps), so start there. Then glue:
+`lap_17 := FT + cross_run(S b0) + wave_L + return_R`, and
+`nqh_1RB0RD_0LB1LC_1RA1LB_1RA1RD` via wglue_neverqh (A:=list nat, nextA:=nextf
+0, Inv:=WInv 0, Cf:=Cf17, a0:=[3;2;1]). boot: `csteps ~? c0 = Cf17 [3;2;1]`
+(Compute); vis: finite wsteps per state. #27/#36/#7 clone the skeleton.
+<!-- end wave #17 wave_L note -->
+
+### #9 progress (2026-07-21 cont.): gray decomposition layer COMPLETE, axiom-clean
+
+`theories/Counters/DblCounter.v` now fully carries the gray algebra the
+mini-lap consumes (chunks 1/1b/1c, all `Closed under the global
+context`, in `_CoqProject` double block):
+  - encoding `gbn`/`slotsf`/`grr` (validated vs lap9.py gray_region);
+  - head bits `gbn_even_hd`/`gbn_odd_hd`;
+  - odd flip `grr_odd` (w odd: flip at slot 0, tail shared with w-1);
+  - even marker+flip `grr_even_marker`/`grr_even_flip` (value side) and
+    `gbn_pred_marker`/`grr_even_pred` (predecessor side): for w even
+    = 2^(S r)*u (u odd), BOTH grr(w) and grr(w-1) =
+    `S0 :: rep[S0;S0;S0] r ++ S1::S0::S0 :: FLIP::S0::S0 :: TAIL`, same
+    marker run + TAIL, only FLIP toggles -- the reflected-Gray
+    one-bit-change, proven structurally (no xor algebra);
+  - `factor2`: every 0<w = 2^r*u (u odd) -- bridges the family index
+    kg-i into the two cases.
+
+**REMAINING to land #9** (the mini-lap phase assembly + wrapper --
+NOT the gray algebra, which is done):
+1. Extract the tm_9 phase units for the gray region (Double_9.v already
+   has the comb units Ucol/Uspr): the odd-flip 3-step push
+   (A0;B0;C0 over slot0 `0,0,0`, turning left), the even D-fill cycR
+   over `rep[S0;S0;S0] r` up to the marker, the marker-clear + flip
+   push (2 sub-cases on `Nat.odd(Nat.div2 u)` = clear/set flip), and
+   the collapse cycL + edge-materialize.  Build a combinator mini-lap
+   (lap9.py-style `conc`/`cycR`/`cycL`) to emit them, differential
+   against raw.  Traced phase order (w=7, odd): edge-turn(1) ->
+   spread cycR(comb) -> flip push(3) -> collapse cycL(comb) ->
+   edge-materialize.  The flip writes `1,1,1` into slot0 and the
+   COLLAPSE rewrites the extra cells back (slot0 -> `1,0,0`) -- the
+   flip/collapse interaction is the one delicate bit to get exact.
+2. The mini-lap `creach (f i) (f (S i))`: f i = the framed anchor
+   `(StA, ([], S0, rep [S1;S0] (kg+1+i) ++ grr (kg-i) j))`.  Case
+   `w = kg-i` via `factor2`: r=0 -> grr_odd; r=S _ -> grr_even_flip
+   /grr_even_pred, sub-case `Nat.odd(Nat.div2 u)`.  Chain
+   phUspr(cycR) + D-fill + flip + phUcol(cycL) with rep-algebra
+   junctions (comb parity split like Gray_19 comb_even/comb_odd).
+3. `CReach.creach_iter` over i<kg -> creach (f 0)(f kg); poke prefix
+   `creach (D9 j) (f 0)` (gives 0<n via `CReach.creach_pos`), final
+   spread `creach (f kg)(D9(S j))`; `CReach.creach_lap` -> the
+   `LapGlue.Hlap` shape -> `lap_9`.  Then
+   `glue_neverqh tm_9 (fun p => D9 (S (Pos.to_nat p))) 1` with
+   `boot_9`/`vis_9` -> `nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA`.
+4. Corruption test + manifest row + wire Double_9.v into _CoqProject.
+
+The hard conceptual piece (the fixed-width reflected-Gray decrement
+decomposition) is DONE and reusable for #37.  What's left is the
+Gray_19-style mechanical phase transcription for tm_9's unit table.
+
+## Wave #17 FULLY BOARDED (2026-07-21 cont. 3) -- first wave theorem
+
+`nqh_1RB0RD_0LB1LC_1RA1LB_1RA1RD : NeverQuasiHaltsSt tm_17` is landed,
+axiom-clean (functional_extensionality_dep only), with corruption tests
+(`theories/Tests/CountersWave_Corruption.v`), manifest row, and _CoqProject
+entry. The full proof stack (all in `Wave_17.v` + machine-independent
+`WaveCounter.v`):
+  - P2: `WInv`/`WInv_preserved`/`WInv_no_leadstop` (even-popcount parity safety).
+  - closer: `wglue_neverqh` (nextA-indexed) + `wreach`/`wreach_iter`/`wreach_lap`.
+  - `cross_run` (parity-alternating leftward run cross), phase units
+    `ph_FT`/`ph_sepB`/`ph_dep`/`ph_spawn`.
+  - `wave_L` (leftward carry-wave fold, mirrors `carry`; outputs `outL`/`outR`).
+  - `Dsweep`/`run_to_sep`/`return_R` (rightward reconstruction; `relaid` with
+    the odometer borrow via the borrow-accumulator `relaid_b`).
+  - bridge: `bcs`/`dsuffix` (outR = sw(bcs), outL = wbody(dsuffix)) + the
+    telescoping `bridge_l` identity, landing exactly on `Cf17(nextf 0 front)`.
+  - `boot_17` (Compute, 49 steps), `vis_17` (finite wsteps witnesses).
+
+### Recipe for #27/#36/#7 (clean tier) -- clone Wave_17.v
+The machinery is now a template. Per machine: swap `tm_NN`, the poff (WInv poff,
+nextf poff, a0), and the per-machine gadget tables (design appendix above):
+  - #27 D/R/poff1: FT=`D0/1R>B B0/1L>C`, cross-pair=`C1/1L>A A1/1L>C`,
+    sep=`C0/0L>C`, deposit=`A0/1R>B`, return=`B1/0R>D`/`D1/1R>D`, retsep=`D0/1R>B B1/0R>D`.
+  - #36 A/R/poff1, #7 A/L/poff1 (mirror): tables in the design appendix.
+KEY poff=1 deltas from #17 (poff=0): the frontier-cross exit parity uses
+`odd(b0+1)` (the FT already flips it), so `cross_run`'s [stB] and the wave_L
+entry `po := Nat.odd (b0 + poff)` change; `WInv_no_leadstop`'s `Nat.add_0_r`
+becomes a general `poff`. The 2-state cross cycle (C<->A for #27, C<->D for
+#36) replaces #17's B<->C but proves identically. #6/#24 (4-step 0-writing
+cross) are the hard pair -- budget separately. wave4 #15: separate verifier.
+<!-- end wave #17 boarded note -->
+
+## Wave #27 + #36 BOARDED; #7 fully reconnoitred (2026-07-21 cont. 4, CLEAN tier)
+
+Two more wave theorems landed, axiom-clean (functional_extensionality_dep
+only), each with corruption tests (`CountersWave_Corruption.v`), manifest
+row, `_CoqProject` entry:
+  - **#27** `nqh_1RB1LC_1LC0RD_0LC1LA_1RB1RD : NeverQuasiHaltsSt tm_27`
+    (`theories/Machines/Counters/Wave_27.v`), edge D, poff 1, a0=[4;2;1],
+    boot 50.
+  - **#36** `nqh_1RB1RA_1LC0RA_0LC1LD_1RB1LC : NeverQuasiHaltsSt tm_36`
+    (`Wave_36.v`), edge A, poff 1, a0=[4;2;1], boot 50.
+Recon/probe scripts: `tools/counters/probe27.py` (step-level cconf
+simulator; `trace_wave.py` already validates all 6 orbits).
+`WaveCounter.v` needed **NO change** -- `WInv_no_leadstop` is already
+poff-general; do NOT `rewrite Nat.add_0_r`, just apply it with poff=1.
+
+### Template deltas actually discovered (beyond the design-appendix guess)
+- **poff=1 frontier parity.** After the FT crosses the frontier run, the
+  exit state selects deposit/continue by `Nat.odd (b0+poff)`. In Coq:
+  `stC k := if Nat.even k then <deposit> else <continue>`, and the frontier
+  cross uses `cross_run k` with `k = b0` (NOT `S b0` -- see FT below); then
+  `stC b0 = if Nat.odd(b0+1) then <deposit> else <continue>` via
+  `unfold stC; replace (b0+1) with (S b0) by lia; rewrite Nat.odd_succ`.
+  wave_L is entered with `po := Nat.odd (b0+1)`, and `WInv_no_leadstop 1 b0
+  r0` gives `carry_ok (Nat.odd(b0+1)) r0 = true` directly.
+- **FT scratch = 1 (not 0) => the frontier-swept run has NO trailing
+  separator.** #17's FT (3 steps, B0/0L>B) writes a `S0` scratch, so its
+  swept frontier is `sw [S(S b0)] = rep[S1](S(S b0)) ++ [S0]`. #27's FT is
+  **2 steps** `D0/1R>B B0/1L>C`, generic in L (D0's written 1 becomes the
+  head, B0 lays a `S1` scratch): `ph_FT27 : csteps tm 2 (StD,(L,S0,[])) =
+  Some (StC,(L,S1,[S1]))`. After `cross_run27 k=b0`, the right is
+  `rep[S1](S b0) ++ [S1] = rep[S1](S(S b0))` -- a bare run, no `[S0]`. So
+  #17's `sw` is replaced by **`sw27`** (last run bare):
+    `sw27 [] = [] | sw27 [c] = rep[S1] c | sw27 (c::rest) = rep[S1] c ++ S0::sw27 rest`
+  with the one-line helper `sw27_slide : sw27 (S c::rest) = S1 :: sw27 (c::rest)`
+  (proof `intros c [|c2 rest]; reflexivity`). The return needs a terminal
+  **`run_to_end27`** (walk the deepest run off into the blank via
+  `Dsweep_blank27`) alongside `run_to_sep27` (interior runs). Everything
+  else -- `relaid`/`relaid_b`/`dec1`/`bcs`/`dsuffix`/`bridge_l`/`outR_sw27`
+  (a trivially adapted `outR_sw`, needs `base<>[]`) -- is byte-identical to
+  #17. The full lap lands EXACTLY on `Cf27(nextf 1 front)` (no lift slack);
+  cls1=14 steps, cls2=24, spawn(cls-1)=40, all Compute-checked.
+- **#36 = #27 under the state relabelling A<->D.** #36's gadget table is
+  #27's with StA and StD exchanged (edge D->A, deposit A->D, sweep D->A,
+  cross C/A->C/D). `Wave_36.v` is literally `Wave_27.v` run through
+  `sed -e s/StA/@X@/ -e s/StD/StA/ -e s/@X@/StD/` then `s/27/36/`, with the
+  header/theorem-name/spec-string fixed by hand and **vis offsets swapped**
+  (StA<->StD branches of `destruct q`: #36 is StA->0, StB->1, StC->2,
+  StD->3). tm and all proofs transcribe verbatim; boot is still 50. This is
+  the cheapest kind of sibling -- look for A<->D (or other 2-cycle)
+  relabellings before writing a machine from scratch.
+
+### #7 BOARDED (2026-07-21 cont. 5) `nqh_1RB0LC_1LA1RD_1LA1LC_0RD1RB`
+`Wave_7.v`, axiom-clean (functional_extensionality_dep only), corruption
+tests + manifest + _CoqProject landed. Boarded through the side-R mirror as
+planned below; boot=42. The reverse-encode bridge was NOT a fight -- it is
+`bridge_l` verbatim with `relaid -> relaid7` (only `relaid7_b`'s `[c]` base
+case bumps to `rep[S1](S(c-b))`). Two extra findings beyond the recon:
+(1) the FT lands in the DEPOSIT-state B, but interior blocks are entered in
+the CONTINUE-state D, so there are TWO cross lemmas `cross_run7B`/`cross_run7`
+(start B / start D). (2) state C never appears in the frontier gadget (the
+FT is a single `A0/1L>B`), so `vis`'s C-witness cannot be shallow -- reach it
+via the deposit turnaround (`reach_C7 = FT + cross + wave_L7 + one A1/0R>C`).
+All 6 clean-tier wave machines (#17/#27/#36/#7 here; #6/#24 remain the hard
+4-step-0-writing pair; #15 wave4) -- FOUR now boarded.
+
+### (original #7 recon, retained) board via `Mirror.mirror_never_qh`.
+Side L, so use `theories/Mirror.v`: prove `NeverQuasiHaltsSt (mirror_tm
+tm_7)` then `apply mirror_never_qh`. The side-R machine to board is
+  **`mirror_tm tm_7 = 1LB0RC_1RA1LD_1RA1RC_0LD1LB`** (flip every dir L<->R;
+  keep write+next). It IS a side-R wave odometer, edge A, poff 1,
+  a0=[4;2;1], SAME abstract orbit (`nextf 1`/`WInv 1`), Compute-validated:
+  cls1=12 steps, cls2=22, spawn=38, all land on `Cf(nextf 1 front)` exactly
+  (probe: `scratchpad/probe7m.py`, reproduce it). Gadget table (side R):
+    - FT **1 step** `A0/1L>B` (writes the +1 increment, moves straight onto
+      the frontier top in B, scratch `[S1]` on the right). Swept frontier
+      after the cross is `rep[S1](S b0)` -- i.e. `S b0`, **one less than #27's
+      `S(S b0)`**, because this FT adds only the increment.
+    - cross-pair `B1/1L>D D1/1L>B` (states B/D, start B); `stB7 k = if even k
+      then StA else StB`... i.e. deposit exit A, continue exit B.
+    - sep-continue `B0/0L>B`? -- recheck; the cross is leftward like #27.
+    - deposit `B0/1R>A` (leaves head `S1`, state A -- like #27's extra head).
+    - return: sweep `C1/1R>C`, start `A1/0R>C`, retsep `C0/1R>A A1/0R>C`,
+      **terminal `C0/1R>A` WRITES A ONE** (materialise-and-write) landing in
+      the edge state A -- so the deepest run GAINS one at the walk-off.
+- **THE DIVERGENCE (why #7 is not a #27 sed):** #27's return DECREMENTS the
+  deepest (frontier) run by 1 (removing the FT's extra scratch: swept
+  `S(S b0)` -> new frontier `S b0`, via `relaid`'s `relaid_b` borrow whose
+  net is deepest-1/nearest+1). #7's FT adds only 1, so the swept frontier is
+  already `S b0` = the correct new frontier, AND the terminal `C0` writes the
+  cell back -- so **#7's return conserves every run count**. Its `relaid7`
+  is a clean REVERSE-and-encode (frontier becomes nearest, all values
+  unchanged): `relaid7 [c0;..;cn] = rep[S1] cn ++ S0 :: .. ++ S0 :: rep[S1] c0`.
+  The concrete return still SHIFTS separators (retsep `C0/1R>A A1/0R>C`
+  borrows one from the next run), but nearest+1 (deposit head) and deepest-0
+  (no scratch) net to no change. So `return_R7` + its bridge must be
+  RE-DERIVED (not the `relaid_b`/`bridge_l` copy): sw7=sw27 (last bare) is
+  reusable, but `bcs7`/`relaid7`/`bridge7` differ (no `dec1` on the base;
+  the base is `[S b0]` not `[S(S b0)]`). Est. ~1/2 the #27 effort once the
+  reverse-encode bridge identity is stated. cross_run7 (B/D), ph_FT7 (1
+  step), the units, wave_L7, and vis (edge A: A->0,B->1,...) transcribe like
+  #27/#36. Then wrap: `Theorem nqh_1RB0LC_1LA1RD_1LA1LC_0RD1RB : ... := 
+  mirror_never_qh tm_7 <proof of NeverQuasiHaltsSt (mirror_tm tm_7)>` (note
+  `mirror_tm tm_7` must be DEFINITIONALLY the boarded machine; state its TM
+  literally and prove `mirror_tm tm_7 = tm_7m` by `reflexivity`, or board
+  `tm_7m` and show `mirror_tm tm_7 = tm_7m`).
+
+### New traps for the catalog (wave clean tier)
+- **`repeat constructor; lia` OVER-APPLIES** on `Forall (>=1) [S(S b0)]`: it
+  runs `constructor` into the `le` goal and mangles it. Use
+  `constructor; [lia | constructor]` (Forall_cons then Forall_nil), exactly
+  as #17 does. Bit me on the first #27 compile.
+- **FT genericity depends on the scratch not being read.** #27's 2-step FT
+  is generic in `L` ONLY because B0 pops the very `S1` that D0 pushed (never
+  reaches into L). Prove it with `wsteps_frame_r ... reflexivity` with
+  `l=l'=[]` (so `l'++L = L`, left literally unchanged). If a machine's FT
+  reads L, this breaks -- check by Compute first.
+- **`vis` reflexivity survives stuck `chd/ctl`.** For symbolic `p=b0::r0`,
+  `csteps k (Cf p)` reduces to `Some (q, <stuck tape>)`; `eexists; split;
+  reflexivity` still closes `fst c = q` because `fst (q,_) = q`. Max useful
+  depth is 3 (all four states appear in the first frontier gadget).
+- **Mirror machines: swept-frontier count = `S b0` when the FT is 1-step
+  (scratch-1), `S(S b0)` when 2/3-step.** Determines whether `relaid`
+  decrements. Always Compute the full cls1+cls2 pass to pin it; do not
+  assume the #27 dec applies.
+<!-- end wave #27/#36 boarded, #7 recon note -->
+
+### #9 COMPLETE (2026-07-21 cont.): nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA landed
+
+`theories/Machines/Counters/Double_9.v` now carries the full proof
+(`Print Assumptions nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA` =
+`functional_extensionality_dep` ONLY).  Wired into `_CoqProject`
+(double block) + `tools/counters_manifest.tsv`;
+`theories/Tests/CountersDbl_Corruption.v` is the negative-control file.
+double_counter family: **#9 done (1 of 4)**; #30/#32/#37 remain.
+
+Structure that landed (all phase counts read off an executor
+decomposition validated j=2..7, both parities, all sub-cases -- the
+minilap/poke/final decomposers, never hand-counted):
+  - `minilap9 : creach tm_9 (g9 j n w) (g9 j (S n) (w-1))` -- the gray
+    decrement.  Cases via `DblCounter.factor2`: **odd w** (r=0) is a
+    slot-0 flip (`phFlipO0/1`, cased on the slot bit); **even w**
+    (r=S _) is a D-fill to the marker (`phDf9`), a flip approach
+    (`phFapp0/1`), and a period-3 "dirty collapse" that clears the
+    D-fill 1-run (`phdA1` + `phDclr9 (drun-1)` + `phdC1C0`), cased on
+    `Nat.odd (Nat.div2 u)` (SET fb=0 / CLEAR fb=1; both 3R+4 steps,
+    shared tail).  Then the flat comb collapse (`phUcol`) + `phMat9`.
+  - macro lap: `poke9` (D9 j -> f_0, the 0<n prefix; reuses
+    phdA1/phDclr9/phdC1C0/phUcol/phMat9 + new phPokein/phPseed),
+    `iter9` (`CReach.creach_iter` over the kg mini-laps), `final9`
+    (f_kg -> D9(S j) via phSpr9/phEnter9/phDf9/phFin, gray value 0),
+    `macro9` (`CReach.creach_pos` assembles it with 0<m).
+  - helpers: `grr_kg`/`grr_zero` (gray region of 2^j-1 / of 0),
+    `gbn_allones`, `even_fold`/`poke_fold` (comb regroup + rep_shift),
+    `rep4_10/01`, `rep000`, `rep_snoc`.
+
+New traps for the catalog:
+  - **`replace X at 1` mis-targets when X's SUBTERMS recur** (poke9):
+    `replace (2^S j') with (S(S(2^S j'-2)))` clobbered the `2^S j'`
+    inside the sibling `2^S j'-2`.  Fix: `set (b := 2^S j'-2)` FIRST
+    (opaque), prove `2^S j' = S(S b)`, then folds can't leak.
+  - **Last phase: `apply phMat9` directly, NOT via `csteps_chain`.**
+    Wrapping the final phase in `eapply csteps_chain` leaves a second
+    goal `csteps ?n2 out = Some target` whose `?n2` reflexivity can't
+    instantiate (the fix is stuck on the evar).  Close the chain by
+    applying the terminal phase lemma so it unifies `?n := 2`.
+  - **`cbn [gbn]` leaves `Nat.div2 0` stuck** (div2 not in the delta
+    set) -> the recursive `gbn (Nat.div2 0) j` won't match `gbn 0 j`
+    for a rewrite; use `simpl` for the all-zero/all-one gbn folds.
+  - **`cycL` takes 7 explicit args before the unit** (tm P q h u rw w);
+    `cycL _ _ _ _ _ _ Ucol` (6 underscores) errors "expected list Sym".
+  - **The even leftward collapse is a period-3 cycle** over the
+    D-fill/marker/flip 3-cell slots (`[A1,C1,C0]`), distinct from the
+    period-2 comb collapse (`phUcol`); the D-fill 1-run is the only
+    length-varying part -> `cycL(u=[S1], C h1, k=drun-1)` sandwiched by
+    fixed concs.  Both flip sub-cases are 3R+4 steps, shared tail.
+  - **executor `conc` with `lwin=None` captures the whole L**, so
+    `record` reports "unit varies" across j even when the decomposition
+    is correct -- a recording artifact; the raw differential is the
+    real gate.
+
+#37 (side L Gray sibling) reuses the DblCounter gray algebra + this
+mini-lap skeleton verbatim (decrement direction, inert high context).

@@ -224,3 +224,28 @@ theories/Checkers/IRules/MetaBlk.v
 theories/Machines/IRulesBlk_Batch_01.v
 theories/Tests/IRulesBlkBatch_Corruption.v
 theories/Tests/IRulesBlkPartial_Corruption.v
+
+# --- irules block-prefix track (phase 2: v6 rulepfx+rmdok, v7 rulerunm) ---
+theories/Checkers/IRules/EngineKS.v
+theories/Checkers/IRules/RulesBlkPfx.v
+theories/Checkers/IRules/MetaBlkPfx.v
+theories/Machines/IRulesBlkPfx_Batch_01.v
+theories/Machines/IRulesBlkPfx_Batch_02.v
+theories/Machines/IRulesBlkPfx_Batch_03.v
+theories/Machines/IRulesBlkPfx_Batch_04.v
+theories/Machines/IRulesBlkPfx_Batch_05.v
+theories/Tests/IRulesBlkPfxBatch_Corruption.v
+
+# --- counters track: wave ---
+theories/Counters/WaveCounter.v
+theories/Machines/Counters/Wave_17.v
+theories/Machines/Counters/Wave_27.v
+theories/Machines/Counters/Wave_36.v
+theories/Machines/Counters/Wave_7.v
+theories/Tests/CountersWave_Corruption.v
+
+# --- counters track: double ---
+theories/Counters/CReach.v
+theories/Counters/DblCounter.v
+theories/Machines/Counters/Double_9.v
+theories/Tests/CountersDbl_Corruption.v

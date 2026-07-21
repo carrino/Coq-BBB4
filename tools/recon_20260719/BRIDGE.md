@@ -213,3 +213,116 @@ Ranked by yield-per-effort, all resting on the single `*_reroot` lemma family:
 structural payoff that the residue is now 9,917 distinct and provably ⊂ upstream-solved.
 The big remainder (~9,400 distinct 4-state) stays a tier-strengthening problem, now
 de-duplicated and with a certainty that every one of them is decidable.
+
+---
+
+## Re-validation vs the 16,022 residue (2026-07-21)
+
+UNTRUSTED re-measurement (no proof claims).  Driver
+`tools/recon_20260719/reroot_measure_16022.py` re-ran the **unchanged**
+`reroot_mapper.py` over the current `tools/census_residue.txt` (16,022) and
+reconstructed list B/C exactly the way `tools/regen_residue.py` builds the
+residue:
+
+    B (wrap-QH survivors)  = wrap_residue_caught − qhbound_caught − qhbound_lex_caught  = 9,775
+    C (never-QH survivors) = wrap_residue_survivors − repwl_residue_caught             = 6,247
+    residue = B ⊎ C = 16,022   (asserted disjoint; ⊎ == census_residue.txt)
+
+**Fidelity check first.** Restricted to the 12,897 machines shared with the old
+mapping, this pipeline reproduces the old recon **byte-for-byte: 0 diffs on
+upstream_tnf / mode / nstates_after / upstream_status** (cert=107, holdout=6,
+distinct=9,917, core-reducible=1,301). The only per-row label that moved is
+`list` on 29 rows — the old "over-bound caught_t4096" class, which the new
+residue folds into B/C (all 29 are still present). So every number below is a
+like-for-like re-measurement, not a methodology drift.
+
+### The single structural surprise: the new residue is a STRICT SUPERSET of the old
+
+    new (16,022)  ⊇  old (12,897),   old∖new = 0,   new∖old = 3,125
+    new∖old  ==  qhbound_lex2_caught (2,533, list B)  ⊎  repwl2_caught (592, list C)   [exact]
+
+The 16,022 is the **pre-shrink** residue: it re-defers exactly the 3,125
+machines that the extended QHBound-lex2 (lever B) and RepWL2 (lever C) ladders
+had decided in the old 12,974-shrink. **No machine left the residue**, so every
+old bridge conclusion is preserved verbatim and the bridge simply gains coverage
+over the 3,125 newcomers.
+
+Newcomer profile (3,125): mode {direct1 2,044, reroot 1,081}; **0 cert-boardable,
+0 holdout** (⇒ the 113 per-machine matches are byte-stable, all inherited from
+the old set); **553 are ≤3-state core-reducible** — and all 553 come from the
+2,533 qhbound_lex2 (B) side; the 592 repwl2 (C) side adds **0** core-reducible.
+
+### Old-claim vs re-validated counts
+
+| metric | OLD (12,897) | NEW (16,022) | note |
+|---|---|---|---|
+| residue size | 12,897 | **16,022** | new ⊃ old, +3,125 |
+| list B wrap-QH / C never-QH | 7,213 / 5,655 (+29 caught) | **9,775 / 6,247** | caught folded into B/C |
+| mode direct1 / reroot | 9,192 / 3,705 | **11,236 / 4,786** | |
+| unmapped (never1, no upstream rep) | 0 | **0** | every row maps |
+| **≤3-state core-reducible** | 1,301 *(BRIDGE hdr said ~1,295)* | **1,854** | +553, all from newcomers |
+|  — reroot(3) / reroot(2) / direct1(3) | 1,270 / 16 / 15 | 1,800 / 34 / 20 | |
+|  — distinct ≤3-state cores | 513 | **680** | = small-decision table size |
+| **upstream cert-boardable (9 checker families)** | 107 | **107** | identical set + family split |
+| upstream holdout ("both stuck") | 6 | **6** | identical |
+| **distinct upstream reps (dedup)** | 9,917 | **12,133** | |
+|  — 4 / 3 / 2-state | 9,404 / 511 / 2 | 11,453 / 676 / 4 | |
+| dedup riders (rows − distinct) | 2,980 | **3,889** | dedup factor 1.32× |
+| 4-state reroot landing on a direct1 row | 2,138 (C 1,514 / B 624) | **2,645 (C 1,589 / B 1,056)** | free co-decides |
+
+Cert-family split (identical old↔new, cert-first precedence over the 3,713
+holdout list — many holdouts now carry a per-machine cert): certs_rank 51,
+certs_irules 18, certs_modclass 13, certs_v6res90 8, certs_rwlsilent 6 (list B),
+certs_fuel 4, certs_drift 4, certs_v7res46 2, certs_neverqh 1 = **107**. All 107
+`.cert` paths verified present under `/home/user/BBB/results/` (see
+`cert_board_16022.tsv`, exists=1 on every row). Scanning **all 19** cert families
+(not just the 9 boardable) adds **0** further matches.
+
+Which machines changed class: **none that matter to the bridge.** The 113
+cert/holdout machines are byte-identical to the old recon; the 3,125 newcomers
+are all `status=none` (raw tier-strength residue). The bridge is measurement-
+stable across the residue regen.
+
+### Implementation shopping list (what the next session should board)
+
+Lemma family (one, per BRIDGE §4 — StA-variant of `visits_swap`/`quiet_swap`,
+TNF_QH.v:264-333, ~20-30 lines each + a per-machine ≤4-step prefix `reflexivity`):
+- **`qhbound_reroot`** — list B (wrap-QH): transfers `QHBound`/`R_QH`/`NonHalt`/
+  `QuasiHaltsSt` across the first-1-write re-root (quiet prefix state ⊎ shifted u).
+- **`neverqh_reroot`** — list C (never-QH): transfers `NeverQuasiHaltsSt`
+  (drop-0 ⇒ `Visited m = π(Visited u)`, recurrence via `visits_swap` + t* shift).
+- moves (ii) first-visit relabel `TM_swap`, (iii) `mirror_tm`, (iv) don't-care
+  `qhbound_le`/`nonhalt_le` completion are **already proved** — reuse verbatim.
+
+Tables to generate (all `tools/`-side, all `vm_compute`/reflexivity checkable):
+1. **Small-core decision table — 680 rows** (distinct ≤3-state 1RB cores; up from
+   513). Every ≤3-state (4,2) machine is trivially decided (BB(2,2)/BB(3,2)
+   closed). Boards **1,854 residue machines** via `qhbound_reroot`/`neverqh_reroot`.
+   Source column: `reroot_mapping_16022.tsv` rows with `nstates_after ≤ 3`.
+2. **Cert-board table — 107 rows** (`cert_board_16022.tsv`): census machine →
+   4-state (or 3-state rwlsilent) 1RB core → existing census checker family. Re-run
+   the *census's own* rank/irules/modclass/fuel/drift/neverqh/rwlsilent decider on
+   the clean core, transfer via `neverqh_reroot` (101 never-QH 4-state) or
+   `qhbound_reroot` (the 6 rwlsilent 3-state, which also sit inside table 1).
+3. **Dedup wiring** (no new decider): make any tier that decides a 1RB rep
+   auto-decide its 0RB re-root twin — **2,645** 4-state re-roots ride a direct1
+   residue row for free, and the residue is **12,133 distinct** not 16,022, so
+   every downstream tier-kill counts **1.32×**.
+
+Expected **D_census** shrink from the bridge's cheap levers (tables 1+2, one
+session):
+- table 1 (small-core): **1,854** machines (was ~1,301)
+- table 2 cert-only (the 101 4-state certs; the 6 rwlsilent overlap table 1):
+  **+101**
+- **combined ≈ 1,955 residue machines** decided by the re-root lever alone
+  (was ≈ 1,402), taking 16,022 → ~14,067 residue, before any tier strengthening.
+- Plus the structural payoff: the residue is now **12,133 distinct** and every
+  row provably re-roots into upstream's solved region (0 machines new to upstream).
+
+Recommended next-session order (yield-per-effort, all on the one lemma family):
+**(1)** land `qhbound_reroot`/`neverqh_reroot` + the **680-row small-core table**
+(≈1,854 machines, lowest effort, biggest single mass); **(2)** wire **dedup**
+(free, multiplies every later kill 1.32×); **(3)** the **107-row cert-board**
+(≈101 net, reuses existing census checkers); **(4)** the remaining ~11,453 distinct
+4-state 1RB reps stay a tier-strengthening problem (RepWL block / rank vocab /
+wrap-lex per NEXT_SESSION.md), now de-duplicated and certified decidable.

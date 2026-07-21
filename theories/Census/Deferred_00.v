@@ -2021,13 +2021,7 @@ Definition rows_00_004 : list (list (option Trans)) := [
 [t0RB;t0LA;t1RC;t1LB;t1LA;t0RD;t0LB;t1RD];
 [t0RB;t0LA;t1RC;t1LB;t1LA;t1LD;t0LB;t1RD];
 [t0RB;t0LA;t1RC;t1LB;t1LA;t1RD;t0LB;t0RC];
-[t0RB;t0LA;t1RC;t1LB;t1LA;t1RD;t0LB;t1RD];
-[t0RB;t0LA;t1RC;t1LB;t1LA;t1RD;t1LB;t0RB];
-[t0RB;t0LA;t1RC;t1LB;t1LA;t1RD;t1LB;t0RD];
-[t0RB;t0LA;t1RC;t1LB;t1LA;t1RD;t1LB;t1RC];
-[t0RB;t0LA;t1RC;t1LB;t1RD;t1LD;t1LA;t0LB];
-[t0RB;t0LA;t1RC;t1LB;t1RD;t1RB;t1LA;t0RD];
-[t0RB;t0LA;t1RC;t1LC;t0LC;t1RD;t1LA;t0RD]
+[t0RB;t0LA;t1RC;t1LB;t1LA;t1RD;t0LB;t1RD]
 ].
 
 Definition rows_00 : list (list (option Trans)) :=

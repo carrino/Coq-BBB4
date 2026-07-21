@@ -2,6 +2,17 @@
 *.vos
 *.vok
 *.glob
+
+# Census .vo cache: the committed + hash-guarded census .vo bundle
+# (tools/census_cache.py).  Un-ignore ONLY the committed census .vo so a
+# regenerated census (make census-verify) shows up in git status.  Every other
+# *.vo stays ignored as a build artifact -- crucially the census dir's OWN base
+# .vo (Run/Decide/Deferred_*/Proven_*/TNF_QH/RankSearch/RepWLSearch), which are
+# NOT committed and would otherwise appear as untracked noise after a build; the
+# committed .vo directly under theories/Census/ are exactly the Run_Split* units.
+# All of theories/Census/Compute/*.vo are committed walk units.
+!theories/Census/Run_Split*.vo
+!theories/Census/Compute/*.vo
 *.aux
 .*.aux
 Makefile.coq
@@ -16,3 +27,5 @@ census_probes/
 *.v.split
 tools/repwl_sweep_stream.tsv
 *.clog
+base_build.log
+__pycache__/
