@@ -1,5 +1,12 @@
 # Coq-BBB4
 
+> **Contributors / agents: read the PLAYBOOK at the top of `NEXT_SESSION.md`
+> before starting census or proof work** — it covers the compute discipline
+> (heavy `native_compute` runs on stable hardware, never the preempting
+> container), the committed-census cache, and the long-tail roadmap. The
+> coverage numbers lower in *this* README are STALE; `NEXT_SESSION.md` +
+> `tools/check_coverage.py` are authoritative.
+
 A Coq formalization of the Beeping Busy Beaver BBB(4) results
 produced by the [BBB harness](https://github.com/carrino/BBB):
 machine-checked proofs of never-quasihalting / quasihalting (with
