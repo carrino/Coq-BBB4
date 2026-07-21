@@ -28,3 +28,4 @@ census_probes/
 tools/repwl_sweep_stream.tsv
 *.clog
 base_build.log
+__pycache__/

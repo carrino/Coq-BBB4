@@ -112,16 +112,16 @@ def main():
         # 12,974 shrink's in-walk tiers make the native_compute walk
         # hours-long per subtree and cannot certify under container preemption.
         proven = txt(os.path.join(HERE, "proven_dropped.txt"))
-        assert len(proven) == 3620, len(proven)
+        assert len(proven) == 3670, len(proven)
         stray = proven - holdouts
         assert not stray, ("proven_dropped not in holdouts", len(stray))
         assert not (STAY & proven), "stay-QH machine in proven drop list"
         new_holdouts = sorted(holdouts - proven)
         new_residue = sorted(residue)               # B/C stay deferred
-        assert len(new_holdouts) == 93, len(new_holdouts)
+        assert len(new_holdouts) == 43, len(new_holdouts)
         assert len(new_residue) == 16022, len(new_residue)
         newset = set(new_holdouts) | set(new_residue)
-        assert len(newset) == 16115, len(newset)
+        assert len(newset) == 16065, len(newset)
         assert newset == old - proven, "new set != old minus proven"
         assert STAY <= newset, "stay-QH machine lost"
         print(f"[proven-only] {len(new_holdouts)} holdouts + "
