@@ -2097,3 +2097,60 @@ tm_7)` then `apply mirror_never_qh`. The side-R machine to board is
   decrements. Always Compute the full cls1+cls2 pass to pin it; do not
   assume the #27 dec applies.
 <!-- end wave #27/#36 boarded, #7 recon note -->
+
+### #9 COMPLETE (2026-07-21 cont.): nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA landed
+
+`theories/Machines/Counters/Double_9.v` now carries the full proof
+(`Print Assumptions nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA` =
+`functional_extensionality_dep` ONLY).  Wired into `_CoqProject`
+(double block) + `tools/counters_manifest.tsv`;
+`theories/Tests/CountersDbl_Corruption.v` is the negative-control file.
+double_counter family: **#9 done (1 of 4)**; #30/#32/#37 remain.
+
+Structure that landed (all phase counts read off an executor
+decomposition validated j=2..7, both parities, all sub-cases -- the
+minilap/poke/final decomposers, never hand-counted):
+  - `minilap9 : creach tm_9 (g9 j n w) (g9 j (S n) (w-1))` -- the gray
+    decrement.  Cases via `DblCounter.factor2`: **odd w** (r=0) is a
+    slot-0 flip (`phFlipO0/1`, cased on the slot bit); **even w**
+    (r=S _) is a D-fill to the marker (`phDf9`), a flip approach
+    (`phFapp0/1`), and a period-3 "dirty collapse" that clears the
+    D-fill 1-run (`phdA1` + `phDclr9 (drun-1)` + `phdC1C0`), cased on
+    `Nat.odd (Nat.div2 u)` (SET fb=0 / CLEAR fb=1; both 3R+4 steps,
+    shared tail).  Then the flat comb collapse (`phUcol`) + `phMat9`.
+  - macro lap: `poke9` (D9 j -> f_0, the 0<n prefix; reuses
+    phdA1/phDclr9/phdC1C0/phUcol/phMat9 + new phPokein/phPseed),
+    `iter9` (`CReach.creach_iter` over the kg mini-laps), `final9`
+    (f_kg -> D9(S j) via phSpr9/phEnter9/phDf9/phFin, gray value 0),
+    `macro9` (`CReach.creach_pos` assembles it with 0<m).
+  - helpers: `grr_kg`/`grr_zero` (gray region of 2^j-1 / of 0),
+    `gbn_allones`, `even_fold`/`poke_fold` (comb regroup + rep_shift),
+    `rep4_10/01`, `rep000`, `rep_snoc`.
+
+New traps for the catalog:
+  - **`replace X at 1` mis-targets when X's SUBTERMS recur** (poke9):
+    `replace (2^S j') with (S(S(2^S j'-2)))` clobbered the `2^S j'`
+    inside the sibling `2^S j'-2`.  Fix: `set (b := 2^S j'-2)` FIRST
+    (opaque), prove `2^S j' = S(S b)`, then folds can't leak.
+  - **Last phase: `apply phMat9` directly, NOT via `csteps_chain`.**
+    Wrapping the final phase in `eapply csteps_chain` leaves a second
+    goal `csteps ?n2 out = Some target` whose `?n2` reflexivity can't
+    instantiate (the fix is stuck on the evar).  Close the chain by
+    applying the terminal phase lemma so it unifies `?n := 2`.
+  - **`cbn [gbn]` leaves `Nat.div2 0` stuck** (div2 not in the delta
+    set) -> the recursive `gbn (Nat.div2 0) j` won't match `gbn 0 j`
+    for a rewrite; use `simpl` for the all-zero/all-one gbn folds.
+  - **`cycL` takes 7 explicit args before the unit** (tm P q h u rw w);
+    `cycL _ _ _ _ _ _ Ucol` (6 underscores) errors "expected list Sym".
+  - **The even leftward collapse is a period-3 cycle** over the
+    D-fill/marker/flip 3-cell slots (`[A1,C1,C0]`), distinct from the
+    period-2 comb collapse (`phUcol`); the D-fill 1-run is the only
+    length-varying part -> `cycL(u=[S1], C h1, k=drun-1)` sandwiched by
+    fixed concs.  Both flip sub-cases are 3R+4 steps, shared tail.
+  - **executor `conc` with `lwin=None` captures the whole L**, so
+    `record` reports "unit varies" across j even when the decomposition
+    is correct -- a recording artifact; the raw differential is the
+    real gate.
+
+#37 (side L Gray sibling) reuses the DblCounter gray algebra + this
+mini-lap skeleton verbatim (decrement direction, inert high context).
