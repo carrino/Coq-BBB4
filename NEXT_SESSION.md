@@ -1939,3 +1939,35 @@ NOT the gray algebra, which is done):
 The hard conceptual piece (the fixed-width reflected-Gray decrement
 decomposition) is DONE and reusable for #37.  What's left is the
 Gray_19-style mechanical phase transcription for tm_9's unit table.
+
+## Wave #17 FULLY BOARDED (2026-07-21 cont. 3) -- first wave theorem
+
+`nqh_1RB0RD_0LB1LC_1RA1LB_1RA1RD : NeverQuasiHaltsSt tm_17` is landed,
+axiom-clean (functional_extensionality_dep only), with corruption tests
+(`theories/Tests/CountersWave_Corruption.v`), manifest row, and _CoqProject
+entry. The full proof stack (all in `Wave_17.v` + machine-independent
+`WaveCounter.v`):
+  - P2: `WInv`/`WInv_preserved`/`WInv_no_leadstop` (even-popcount parity safety).
+  - closer: `wglue_neverqh` (nextA-indexed) + `wreach`/`wreach_iter`/`wreach_lap`.
+  - `cross_run` (parity-alternating leftward run cross), phase units
+    `ph_FT`/`ph_sepB`/`ph_dep`/`ph_spawn`.
+  - `wave_L` (leftward carry-wave fold, mirrors `carry`; outputs `outL`/`outR`).
+  - `Dsweep`/`run_to_sep`/`return_R` (rightward reconstruction; `relaid` with
+    the odometer borrow via the borrow-accumulator `relaid_b`).
+  - bridge: `bcs`/`dsuffix` (outR = sw(bcs), outL = wbody(dsuffix)) + the
+    telescoping `bridge_l` identity, landing exactly on `Cf17(nextf 0 front)`.
+  - `boot_17` (Compute, 49 steps), `vis_17` (finite wsteps witnesses).
+
+### Recipe for #27/#36/#7 (clean tier) -- clone Wave_17.v
+The machinery is now a template. Per machine: swap `tm_NN`, the poff (WInv poff,
+nextf poff, a0), and the per-machine gadget tables (design appendix above):
+  - #27 D/R/poff1: FT=`D0/1R>B B0/1L>C`, cross-pair=`C1/1L>A A1/1L>C`,
+    sep=`C0/0L>C`, deposit=`A0/1R>B`, return=`B1/0R>D`/`D1/1R>D`, retsep=`D0/1R>B B1/0R>D`.
+  - #36 A/R/poff1, #7 A/L/poff1 (mirror): tables in the design appendix.
+KEY poff=1 deltas from #17 (poff=0): the frontier-cross exit parity uses
+`odd(b0+1)` (the FT already flips it), so `cross_run`'s [stB] and the wave_L
+entry `po := Nat.odd (b0 + poff)` change; `WInv_no_leadstop`'s `Nat.add_0_r`
+becomes a general `poff`. The 2-state cross cycle (C<->A for #27, C<->D for
+#36) replaces #17's B<->C but proves identically. #6/#24 (4-step 0-writing
+cross) are the hard pair -- budget separately. wave4 #15: separate verifier.
+<!-- end wave #17 boarded note -->
