@@ -47,7 +47,7 @@ def main():
                    "counters_manifest.tsv", "fuel_manifest.tsv",
                    "irules_manifest.tsv", "repwl_manifest.tsv",
                    "drift_manifest.tsv", "irulesk_manifest.tsv",
-                   "irulesblk_manifest.tsv"):
+                   "irulesblk_manifest.tsv", "irulesblkpfx_manifest.tsv"):
         path = os.path.join(HERE, mfname)
         if not os.path.exists(path):
             continue
