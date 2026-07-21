@@ -58,6 +58,25 @@ Fixpoint tzf (fuel w : nat) : nat :=
   | S f => if Nat.odd w then 0 else S (tzf f (Nat.div2 w))
   end.
 
+(** Every positive [w] factors as [2^r * u] with [u] odd -- the bridge
+    the mini-lap uses to case a counter value [kg - i] into the
+    odd-flip ([r = 0]) and even-marker ([r = S _]) shapes above. *)
+Lemma factor2 : forall w, 0 < w ->
+  exists r u, Nat.odd u = true /\ w = 2 ^ r * u.
+Proof.
+  induction w as [w IH] using (well_founded_induction lt_wf).
+  intros Hw.
+  destruct (Nat.Even_or_Odd w) as [He | Ho].
+  - destruct He as [q Hq]. subst w.
+    assert (Hq0 : 0 < q) by lia.
+    destruct (IH q ltac:(lia) Hq0) as (r & u & Hu & ->).
+    exists (S r), u. split; [exact Hu |].
+    rewrite (Nat.pow_succ_r' 2 r). lia.
+  - exists 0, w. split.
+    + apply Nat.odd_spec. exact Ho.
+    + rewrite Nat.pow_0_r. lia.
+Qed.
+
 (** ** Sanity (validated against tools/counters/lap9.py gray_region) *)
 
 Example gbn_6 : gbn 6 3 = [true; false; true]. Proof. reflexivity. Qed.
