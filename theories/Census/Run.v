@@ -25,7 +25,7 @@ From Coq Require Import Arith Lia Bool List.
 From Coq Require Import FunctionalExtensionality.
 From BBB4 Require Import BBB4_Statement Mirror.
 From BBB4.Census Require Import TNF_QH Decide Deferred_Defs Deferred_Data
-  Proven_Data.
+  Proven_Data ProvenQH_Data.
 Import ListNotations.
 
 Set Default Goal Selector "!".
@@ -108,16 +108,22 @@ Definition rw_fuel_census : nat := 8192.
     R_NeverQH by [proven_all]'s [Forall NeverQuasiHaltsSt] certificate. *)
 Definition pmap : DeferredMap := dmap_of proven_list.
 
+(** the proven-QH map, built once from [provenqh_list] (the R_QH sibling of
+    [pmap]); a hit is decided R_QH by [provenqh_all]'s [Forall (NonHalt /\
+    QHBound B_census /\ QuasiHaltsSt)] certificate. *)
+Definition qhmap : DeferredMap := dmap_of provenqh_list.
+
 Definition decider : QHDecider :=
   decide_easy B_census 130 512 200000 512 ng_rungs_census
               rank_rungs_census qhb_rungs_census rw_rungs_census
-              rw_fuel_census pmap (dmap_of D_census).
+              rw_fuel_census pmap qhmap (dmap_of D_census).
 
 Lemma decider_WF : QHDecider_WF B_census D_census decider.
 Proof.
   exact (decide_easy_WF B_census D_census 130 512 200000 512
            ng_rungs_census rank_rungs_census qhb_rungs_census
-           rw_rungs_census rw_fuel_census proven_list proven_all).
+           rw_rungs_census rw_fuel_census proven_list proven_all
+           provenqh_list provenqh_all).
 Qed.
 
 (** ** The root and its symmetrized first level *)
