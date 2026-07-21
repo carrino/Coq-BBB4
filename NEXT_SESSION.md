@@ -77,8 +77,8 @@ walk produced the committed `.vo`, and editing the census forces a re-walk.
   only. (Not an axiom shortcut — the committed `.vo` ARE genuine walk output.)
 - **Size:** small → plain git commit; fat → git-LFS / release asset restored
   by a SessionStart hook. Decide after the first green walk measures it.
-- Status: to be wired once the current walk goes green (see PR #16 / branch
-  `claude/d-census-shrinking-7amyyl`).
+- Status: census **CERTIFIED green on stable hardware 2026-07-21** (Print
+  Assumptions clean); the `.vo`-commit mechanism itself is still to be wired.
 
 ## 3. The long-tail roadmap
 
@@ -1321,6 +1321,16 @@ monolith units is resumable (.vo-skip). Native switch: OPAMROOT=/root/.opam,
 eval $(opam env --switch=census) -- rebuild from apt if the switch is missing
 (~1h; the switch survived this session's restarts on /home persistent disk).
 <!-- --- end census D-shrink session --- -->
+
+## ✅ CERTIFIED 2026-07-21
+`make census` completed **GREEN on a stable WSL2 host (16 cores / 56 GB)**:
+all 144 walk units + `Census_Theorem.vo` built, and `Print Assumptions
+census_decided = functional_extensionality_dep` only. **D_census = 16,115 is
+certified** — `census_decided : forall tm, QHBound 2000 tm \/ Deferred
+D_census tm` closes through the kernel, axiom-clean. Every unit compiling also
+confirms the 16,115 deferred list is COMPLETE (no machine escapes the bound
+and the list). The "verification pending / DO NOT MERGE" caveat below is
+RESOLVED; PR #16 is mergeable. (Original closeout retained for history.)
 
 ## FINAL CLOSEOUT (2026-07-20, session end)
 Decision: **stop the census walk; close out the sound, committed work; do NOT
