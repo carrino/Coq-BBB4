@@ -362,7 +362,8 @@ Proof.
     + destruct Hrest as (Hge & o & Ha & Hout).
       destruct (IH mt o Ha) as (m1 & rest & o1 & Hm & Ho & Hex & Hnil).
       subst mt.
-      assert (Hrun : appBlkPfx_side false lo Rex ((s, BV d lb) :: rt)
+      assert (Hrun : appBlkPfx_side false lo Rex
+                       (((s, BV d lb) : BRRunP) :: rt)
                        ((s, e) :: m1) =
                      match (if (0 <=? d) then false else
                             eeqb (eaddmul e d Rex) (econst 0)) with
@@ -396,7 +397,8 @@ Proof.
     + destruct Hrest as (Hlat & Hge & o & Ha & Hout).
       destruct (IH mt o Ha) as (m1 & rest & o1 & Hm & Ho & Hex & Hnil).
       subst mt.
-      assert (Hrun : appBlkPfx_side false lo Rex ((s, BVm d lb md rs) :: rt)
+      assert (Hrun : appBlkPfx_side false lo Rex
+                       (((s, BVm d lb md rs) : BRRunP) :: rt)
                        ((s, e) :: m1) =
                      match (if (0 <=? d) then false else
                             eeqb (eaddmul e d Rex) (econst 0)) with
@@ -791,6 +793,7 @@ Proof.
   unfold ruleBlkPfx_apply in H.
   destruct (brp_pfx r) as [pL pR] eqn:Hpfx.
   destruct sent as [sL sR]. simpl in HXL, HXR.
+  cbv beta iota in H.
   destruct (st_eqb (b_st c) (brp_st r) && sym_eqb (b_hs c) (brp_hs r) &&
             (pL || negb sL) && (pR || negb sR)) eqn:Hguard; [|discriminate].
   apply andb_prop in Hguard as [Hguard HpsR].
@@ -820,11 +823,13 @@ Proof.
   assert (HYL : fst (brp_pfx r) = false -> YL = []).
   { rewrite Hpfx. simpl. intro HpL. subst pL.
     unfold YL. rewrite (HnilL eq_refl).
-    simpl in HpsL. rewrite (HXL HpsL). reflexivity. }
+    simpl in HpsL. apply negb_true_iff in HpsL.
+    rewrite (HXL HpsL). reflexivity. }
   assert (HYR : snd (brp_pfx r) = false -> YR = []).
   { rewrite Hpfx. simpl. intro HpR. subst pR.
     unfold YR. rewrite (HnilR eq_refl).
-    simpl in HpsR. rewrite (HXR HpsR). reflexivity. }
+    simpl in HpsR. apply negb_true_iff in HpsR.
+    rewrite (HXR HpsR). reflexivity. }
   pose (VL := fun j => bvvalsP nu j (brp_L r) mL1).
   pose (VR := fun j => bvvalsP nu j (brp_R r) mR1).
   pose (U := fun j (i : nat) => nth i (VL j ++ VR j) 1).

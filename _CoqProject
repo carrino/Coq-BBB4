@@ -224,3 +224,8 @@ theories/Checkers/IRules/MetaBlk.v
 theories/Machines/IRulesBlk_Batch_01.v
 theories/Tests/IRulesBlkBatch_Corruption.v
 theories/Tests/IRulesBlkPartial_Corruption.v
+
+# --- irules block-prefix track (phase 2: v6 rulepfx+rmdok, v7 rulerunm) ---
+theories/Checkers/IRules/EngineKS.v
+theories/Checkers/IRules/RulesBlkPfx.v
+theories/Checkers/IRules/MetaBlkPfx.v
