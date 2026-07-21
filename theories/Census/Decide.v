@@ -478,6 +478,17 @@ Proof.
   exact (dmap_of_In D (tm_enc tm) h E).
 Qed.
 
+(** The proven-machines tier reuses exactly the deferred map machinery
+    (same [DeferredMap], [dmap_of], [tm_enc] + [tm_eqb] re-check); only
+    the pipeline's response to a hit differs (R_NeverQH, not R_Deferred),
+    justified by a [Forall NeverQuasiHaltsSt] certificate on the list. *)
+Definition proven_lookup (pm : DeferredMap) (tm : TM) : bool :=
+  deferred_lookup pm tm.
+
+Lemma proven_lookup_In : forall P tm,
+  proven_lookup (dmap_of P) tm = true -> In tm P.
+Proof. exact deferred_lookup_In. Qed.
+
 (** ** The pipeline *)
 
 Section Pipeline.
@@ -496,6 +507,8 @@ Variable qhb_rungs : list (nat * nat).  (** (window n, prefix t) ladder for
 Variable rw_rungs : list (nat * nat * nat). (** (block L, threshold T,
                                             prefix t) ladder, RepWL tier *)
 Variable rw_fuel : nat.                 (** closure fuel for the RepWL tier *)
+Variable Prov : list TM.       (** the proven never-quasihalting list *)
+Hypothesis HP : Forall NeverQuasiHaltsSt Prov. (** its in-Coq certificate *)
 
 Definition try_tc_cands (tm : TM) (mirrored : bool)
     (cands : list (nat * nat)) : bool :=
@@ -587,7 +600,7 @@ Definition try_qhb (tm : TM) : bool :=
 Definition try_rw (tm : TM) : bool :=
   existsb (fun '(L, T, t) => rw_tier tm L T t rw_fuel) rw_rungs.
 
-Definition decide_easy (dm : DeferredMap) (tm : TM) : QHResult :=
+Definition decide_easy (pm dm : DeferredMap) (tm : TM) : QHResult :=
   (* tier H: halting *)
   match find_halt tm halt_gas 0 c0 with
   | Some (n, s, i) => if S n <=? B then R_Halt s i else R_Unknown
@@ -605,6 +618,10 @@ Definition decide_easy (dm : DeferredMap) (tm : TM) : QHResult :=
   let '(recR, recL) := scan_records tm loop_gas in
   if try_tc_cands tm false (tc_pairs recR) then R_Leaf else
   if try_tc_cands (mirror_tm tm) true (tc_pairs recL) then R_Leaf else
+  (* tier P: machines with a committed [NeverQuasiHaltsSt] theorem
+     (the proven list); a hit is decided directly, ahead of the
+     deferred fallthrough, so it never enters the deferred queue *)
+  if deferred_lookup pm tm then R_NeverQH else
   (* tier D first: deferred machines skip the (expensive, failing)
      n-gram ladder -- the deferred list is measured to be exactly the
      ladder's residue plus the holdouts *)
@@ -726,7 +743,7 @@ Proof.
 Qed.
 
 Theorem decide_easy_WF :
-  QHDecider_WF B D (decide_easy (dmap_of D)).
+  QHDecider_WF B D (decide_easy (dmap_of Prov) (dmap_of D)).
 Proof.
   intro tm.
   unfold decide_easy.
@@ -754,6 +771,10 @@ Proof.
   { exact (try_tc_cands_sound tm (tc_pairs recR) Et). }
   destruct (try_tc_cands (mirror_tm tm) true (tc_pairs recL)) eqn:Em.
   { exact (try_tc_cands_sound_L tm (tc_pairs recL) Em). }
+  (* proven tier: a hit is never-quasihalting by the [Forall] cert *)
+  destruct (deferred_lookup (dmap_of Prov) tm) eqn:Ep.
+  { rewrite Forall_forall in HP.
+    apply HP. apply deferred_lookup_In; exact Ep. }
   (* deferred tier *)
   destruct (deferred_lookup (dmap_of D) tm) eqn:Ed.
   { apply deferred_lookup_In; exact Ed. }

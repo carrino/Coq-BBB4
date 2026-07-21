@@ -1,3 +1,146 @@
+# PLAYBOOK — read this first, before any census/proof work
+
+_Written 2026-07-21 after a ~3-day slog that was almost entirely wasted
+fighting the compute ENVIRONMENT, not the math. Its whole purpose is to keep
+the next session from repeating that. Read all three parts, then the dated
+history below._
+
+## 0. TL;DR
+- The math is cheap; the **native_compute census walk is the only expensive
+  thing**, and this remote **container CANNOT run it** — it preempts every
+  few-to-30 min, and heavy census subtrees are ~25-30 min of *unbroken*
+  `native_compute` (not resumable mid-unit). Do not try to out-engineer this.
+- So: **heavy native_compute runs on STABLE hardware** (real Linux / WSL2,
+  ≥16 GB RAM, no preemption; ~1-2h at high `-j`), and the **built census
+  `.vo` are committed + hash-guarded** so every container session builds ON
+  TOP of a pre-verified census instead of re-deriving it.
+- **Proving more machines is container-safe and fast** (per-machine
+  `vm_compute`/`reflexivity`). **Re-certifying the census** (after moving
+  machines Deferred→proven) is the expensive step — batch it, run it on the
+  box, keep it LIGHT via the proven tier.
+
+## 1. Compute / build discipline (the hard-won rules)
+
+**Rule 1 — Classify every task container-safe vs needs-the-box FIRST.**
+- CONTAINER-SAFE (do it here): per-machine `NeverQuasiHaltsSt` proofs
+  (`vm_compute`/small `native_compute`, seconds-to-minutes each), checker
+  development, sweeps, tooling, docs, and `make` (the base build, ~10 min).
+- NEEDS STABLE HARDWARE (never grind here): the full census walk
+  (`make census`), or ANY single `coqc` unit projected to run longer than one
+  container window (~15-30 min). Unbroken `native_compute`, not resumable
+  mid-unit.
+
+**Rule 2 — Decide "this needs the box" on minute one, not day three.**
+The 07-19/20 session tried to beat preemption with deep-splitting, grinders,
+and parallel partitions; ALL lost to restarts (~1-2 WEEKS projected,
+"structurally impossible in this environment"). If a unit won't fit a
+window, it goes to the box. Full stop.
+
+**Rule 3 — Cache/commit the expensive artifacts; build on top (Part 2).**
+Native `.vo` load fine across machines with the SAME arch + Coq 8.18 +
+OCaml 4.14 (this container and a WSL2 x86_64 box match).
+
+**Rule 4 — Keep the census walk LIGHT; NEVER un-defer into in-walk tiers.**
+The load-bearing lesson: shrink `D_census` by PROVING machines (they drop out
+via the zero-cost proven tier at regen), NOT by strengthening the in-walk
+qhb-lex/RepWL tiers (levers B/C). In-walk tiers made the walk ~100x slower
+per pop (~46 ms vs ~0.1 ms) → residue-heavy subtrees became >2.5h single
+walks. Their tables (Deferred@12,974, gen_gsplit_deeper, DEEP_SPLIT_PLAN.md)
+are committed but DEAD unless a stable long-lived native env appears.
+
+**Env:** `export OPAMROOT=/root/.opam; eval $(opam env --switch=census)`
+(OCaml 4.14.2 + Coq 8.18.0 + coq-native; apt's coqc has NO native_compute).
+On a fresh box: `opam init` → `opam switch create census 4.14.2` →
+`opam install coq.8.18.0 coq-native` (~30-40 min). Build on the native Linux
+FS (`~/…`), **NEVER on `/mnt/c/…`** — the Windows-drive bridge breaks/slows
+`native_compute`. Axiom footprint stays `functional_extensionality_dep` only;
+everything in `tools/` is UNTRUSTED; every checker feature gets corruption
+tests that MUST fail.
+
+## 2. The committed-census mechanism (pay the walk ONCE)
+
+Goal: a fresh container never re-walks, but the proof stays honest — a real
+walk produced the committed `.vo`, and editing the census forces a re-walk.
+
+- **Commit the census `.vo` bundle** on the branch: `Census_Theorem.vo` + the
+  144 `theories/Census/Compute/{GG_1LC,GGH,G}_*.vo` + the base census `.vo`
+  they need (`Run.vo`, `Decide.vo`, `Deferred_*.vo`, `Proven_*.vo`,
+  `Run_Split*.vo`) + matching `.coq-native/*.cmxs`.
+- **`CENSUS_VO_HASH`** — a committed hash of the census `.v` INPUTS. A setup
+  step compares it to the working tree: MATCH → `touch` the `.vo` newest so
+  `make` skips the walk (container builds instantly); MISMATCH → warn
+  "census edited — re-walk on stable hardware" (the only wall, and it's
+  deliberate).
+- **`make census-verify`** — force-delete the census `.vo` and re-walk from
+  source. The CORRECTNESS phase; run on the box or a timed CI runner.
+  `Print Assumptions census_decided` must be `functional_extensionality_dep`
+  only. (Not an axiom shortcut — the committed `.vo` ARE genuine walk output.)
+- **Size:** small → plain git commit; fat → git-LFS / release asset restored
+  by a SessionStart hook. Decide after the first green walk measures it.
+- Status: census **CERTIFIED green on stable hardware 2026-07-21** (Print
+  Assumptions clean); the `.vo`-commit mechanism itself is still to be wired.
+
+## 3. The long-tail roadmap
+
+### Scoreboard (2026-07-21, authoritative — README's coverage table is STALE)
+- **3,638 / 3,713 holdouts have a committed Coq theorem** (3,620
+  `NeverQuasiHaltsSt` + 18 QH-with-exact-score). **75 unproven** (74
+  C-certified-only + 1 upstream-open).
+- **`D_census` = 16,115 = 93 deferred holdouts (18 wrap-QH + 75 unproven) +
+  16,022 residue** (9,775 wrap-QH survivors + 6,247 never-QH survivors).
+- Only `1RB0RB_1LC1RC_0RA1LD_1RC0LD` (the "residue-3 nested/mixed tower") has
+  **no known proof anywhere**. Everything else is grind-able.
+
+### The distinction that governs order
+- **CLASS 1 — pure per-machine proofs (container-safe, fast):** every item
+  below except the final re-cert. Board them HERE.
+- **CLASS 2 — census re-certification (stable hardware):** after a batch, regen
+  `Deferred_*` to drop the newly-proven machines, re-run `make census` on the
+  box. Kept LIGHT by the proven tier (dropped machines add ZERO walk cost).
+  **Batch Class-1 work so Class-2 is paid rarely.**
+
+### The sustainable loop
+1. Prove machines (Class 1, container). 2. Add to the proven table
+(`gen_proven.py`) → regen `Deferred_*` (`regen_residue.py`/`gen_deferred.py`)
+to drop them. 3. Re-run `make census` on stable hardware (Class 2) → new lower
+`D_census`, certified.
+
+### Work items, by leverage (all Class 1 unless noted)
+1. **irules Phase 2 — v6 `rulepfx` + v7 `rulerunm` (50 machines).**
+   Designed + differentially validated (44+6 pass `bin/verify` and the
+   extended mirror), NOT yet coded. Fork `RulesBlkPfx.v`/`MetaBlkPfx.v` on the
+   landed block engine (prefix match + constant-remainder drain; v7 adds a
+   residue-lattice run constructor). Mirror
+   `tools/recon_20260719/irulesblkpfx_prover_ext.py`; fork map
+   `PHASE2_DESIGN.md:157-219`. ~2-3 sessions. Highest-confidence tail block.
+2. **Re-root bridge (~1,300 residue machines).** `BRIDGE.md`. A `*_reroot`
+   lemma family (~20-30 lines, StA-variant of `visits_swap`/`quiet_swap`) +
+   per-machine ≤4-step `reflexivity` re-roots the census-only first-write-0
+   machines onto upstream `1RB` cores: ~1,295 reduce to ≤3-state cores
+   (trivially decided), ~107 cert-boardable, dedups 12,897→9,917 rows. Big
+   residue-mass lever, cheap proof. (Recon ran on the old 12,974 residue —
+   re-validate counts against the 16,022.)
+3. **Bouncer / segment checker (residue mass lever).**
+   `FAR_DESIGN.md:172-186`. Verified checker over upstream `certs_bouncer`
+   (`period_records` + `segments`) → per-machine certs → proven tier. New
+   checker SHAPE (step-template induction), 2-4 sessions. The right big lever
+   for the never-QH residue.
+4. **Counter tail (23 machines):** wave 6, tower 4, double 4, blockdbl 3,
+   xd 3, fractal 2, wave4 1. busycoq-style individual proofs via
+   `LapGlue`/`MeasureGlue`; `double` needs a new `creach_iter` O(k²) closer.
+   Hard, one-at-a-time; inventory `NEXT_SESSION.md:436-487`.
+5. **Residue-gate strengthening (lower priority, TRAP-ADJACENT):** wrap-QH
+   survivors (9,775) → stronger measure/pattern QHBound-lex gate; never-QH
+   survivors (6,247) → rwlrank / bigger RepWL rungs. Do these by PROVING the
+   machines individually (Class 1, drop via proven tier), NOT as in-walk tiers
+   (that is the Rule-4 trap).
+6. **DEFER / SKIP:** irules v4 `mmrow` (1, orthogonal matrix-meta proof,
+   shared by zero others); FAR tier (100% non-halt but liveness-dead
+   0-3/60 — do not build); `1RB0RB_1LC1RC_0RA1LD_1RC0LD` (no known proof —
+   last / upstream).
+
+---
+
 # Next session: start here
 
 State as of 2026-07-16 (branch `claude/easy-machines-bb5-strategy-8pz2fn`).
@@ -1100,3 +1243,136 @@ covers it, only the drop-to-0 condition changes in a forked
 vs `bin/verify` first.  Machines whose certs ALSO need
 `rulerunm`/`mmrow`/`nvar` are out of scope (re-check per cert).
 <!-- --- end irules block-run track --- -->
+
+<!-- --- census D-shrink session (2026-07-19/20): proven tier + B/C grind post-mortem --- -->
+
+# Census D_census shrink (2026-07-19/20): proven tier LANDED; B/C in-walk grind ABANDONED
+
+## TL;DR / the one lesson
+**Shrink D_census by PROVING machines (they drop out via the zero-cost proven
+tier), NOT by un-deferring machines into expensive in-walk tiers.** The latter
+makes the census native_compute walk hours-long per subtree, which CANNOT
+certify in a container that preempts every few min-30min. Measure the per-unit
+walk time BEFORE committing to any lever that un-defers into an in-walk tier.
+
+## What worked and is banked (committed + pushed)
+- **Proven-machines tier (lever A): -3,620, ZERO walk cost.** `Census/Proven_00..07.v`
+  + `Proven_Data.v` (tools/gen_proven.py), `proven_lookup` in Decide.v before the
+  deferred tier, WF via `Forall NeverQuasiHaltsSt` over the batch theorems. This is
+  the compounding conveyor belt: any machine that ever gets an individual Coq
+  theorem drops out of D_census for free at the next regen.
+- **Measurement of all three levers** (parallel opus sweeps): A proven audit
+  (3,620 usable), B qhb-lex over 9,775 wrap-QH survivors (2,533 catch, larger
+  prefix rungs), C RepWL over 6,247 never-QH survivors (592 catch, (5/6/7,2,0)).
+- **Recon roadmap** (tools/recon_20260719/): FAR post-mortem (SKIP -- safety-only,
+  liveness-dead despite 100% nonhalt coverage), re-root normalization bridge
+  (~1,300 more via one small lemma; residue is 9,917 distinct upstream-solved
+  machines), irules Phase 2 differentially validated (-50 holdouts).
+- **Deep-split tooling** (tools/gen_gsplit_deeper.py, tools/census_grind.sh):
+  recursive great-great-grandchild splitter + self-splitting resumable grinder.
+  Correct and reusable IF a STABLE long-lived compute env is ever available.
+
+## The wild goose chase -- DO NOT REPEAT here
+Levers B (qhb-lex, +2,533) and C (RepWL, +592) un-defer machines that then run the
+full ngram->rank->qhb->rw ladder DURING the census walk (~46ms+/pop, vs ~0.1ms for
+a deferred-lookup skip). This made the residue-heavy grandchild subtrees
+(1RB_1LC, 0RB_1LC, ...) into MULTI-HOUR single native_compute walks. Deep-splitting
+them (recursive node_expand) makes units smaller, but those subtrees are so large
+(GG_1LC_0LB alone: 331+ sub-walks, not done after 8h; est. 6,000-10,000 total
+sub-walks) that the full 12,974 grind is **1-2 WEEKS**. And the container preempts
+every few min-30min, so hours-long units NEVER complete -- confirmed stalled
+(+5 .vo in 1.5h). Structurally impossible in this environment.
+The SCOPING instructions warned exactly this ("a lever that recovers few machines
+at high walk-cost may not be worth the cert-time tax"). B/C were that.
+
+## THE RIGHT WAY to shrink D_census (do this going forward)
+1. **Keep the census walk LIGHT.** Deferred list stays fat enough that every
+   subtree walk is "few min" and fits a container window (the 19,735 cert had this;
+   it certified in 2-3h with the great-grandchild split, units "few min each").
+2. **Shrink only via per-machine PROOFS + the proven tier.** Prove a machine
+   (holdout cert or residue cert), add it to the proven table, regen Deferred to
+   drop it. Walk cost unchanged (fast proven lookup). This is the sustainable loop.
+3. **Next levers, all proof-producing (proven-tier-cheap):**
+   - Re-root bridge (~1,300): `neverqh_reroot`/`qhbound_reroot` (~20-30 line
+     StA-variant of visits_swap/quiet_swap) + a reroot table. tools/recon_20260719/
+     BRIDGE.md + reroot_mapping.tsv. Also gives free de-dup (12,897 rows = 9,917
+     distinct) and ~1,295 <=3-state-core reductions.
+   - irules Phase 2 (-50 holdouts): fork RulesBlkPfx/MetaBlkPfx. PHASE2_DESIGN.md.
+   - Bouncer/segment checker (residue mass lever): verified checker over upstream
+     certs_bouncer period_records+segments -> per-machine certs -> proven tier.
+     (Bouncers are common here; reference in bbchallenge-deciders + BB5 project.)
+4. **Do NOT re-enable the qhb-lex/RepWL in-walk tiers (B/C)** unless a stable,
+   long-lived native_compute environment is available. Their tables (Deferred at
+   12,974, sweeps, gen_gsplit_deeper) are committed for that scenario only.
+
+## This session's actual deliverable: proven-only cert (D_census 16,115)
+Pivoted from 12,974 (abandoned) to proven-only: **D_census = 16,115 = 93 holdouts
++ 16,022 residue** -- drop ONLY the 3,620 proven-nqh machines; B/C residue and the
+16 provenQH stay deferred. Walk is LIGHT (B/C deferred, monolith units "few min
+each"), so it certifies within container windows via .vo-skip resume. The B/C
+rungs stay wired in Run.v but are dead code (their machines are deferred, caught
+before the rungs fire). [status filled at cert completion]
+
+## Env note (container instability, 2026-07-20)
+The container preempted every few min to ~30min during this session (vs stable
+1.5h+ earlier). Any long native_compute (the census walk, or heavy grind units)
+must be resumable and window-sized. The census `all`/`census-resume` path with
+monolith units is resumable (.vo-skip). Native switch: OPAMROOT=/root/.opam,
+eval $(opam env --switch=census) -- rebuild from apt if the switch is missing
+(~1h; the switch survived this session's restarts on /home persistent disk).
+<!-- --- end census D-shrink session --- -->
+
+## ✅ CERTIFIED 2026-07-21
+`make census` completed **GREEN on a stable WSL2 host (16 cores / 56 GB)**:
+all 144 walk units + `Census_Theorem.vo` built, and `Print Assumptions
+census_decided = functional_extensionality_dep` only. **D_census = 16,115 is
+certified** — `census_decided : forall tm, QHBound 2000 tm \/ Deferred
+D_census tm` closes through the kernel, axiom-clean. Every unit compiling also
+confirms the 16,115 deferred list is COMPLETE (no machine escapes the bound
+and the list). The "verification pending / DO NOT MERGE" caveat below is
+RESOLVED; PR #16 is mergeable. (Original closeout retained for history.)
+
+## FINAL CLOSEOUT (2026-07-20, session end)
+Decision: **stop the census walk; close out the sound, committed work; do NOT
+merge as a certified shrink.** After days wedged on the native_compute walk under
+a container that preempts every few-to-30 min, the ~7h walk (16 GG_1LC heavies +
+~5 heavy GGH units, ~25-30 min EACH even at the light 19,735 rungs -- confirmed
+this session) could not be driven to a green `Census_Theorem.vo` here. This is an
+ENVIRONMENT limit, not a proof problem.
+
+### What IS done, verified, and committed (HEAD aac7c1b)
+- `make` (base build): **GREEN**, exit 0. Builds Run.v, the 16,115 Deferred
+  tables, Proven_Data (proven tier + `proven_all` certificate), Decide.v, and the
+  corruption test suite `theories/Tests/Census_Corruption.v` (negative tests pass
+  -> the checkers correctly REJECT tampered certs).
+- `Print Assumptions` = `functional_extensionality_dep` ONLY for all three
+  soundness lemmas: `proven_all` (the 3,620 dropped machines genuinely never
+  quasi-halt), `decider_WF` (decider soundness), `census_from_empty` (IF the walk
+  empties the queue THEN the census theorem holds).
+- The shrink 19,735 -> 16,115 is **sound by construction**: the 3,620 machines
+  leave `D_census` *because* the proven tier now decides them R_NeverQH, justified
+  by the axiom-clean `proven_all` certificate. The corruption tests guard the
+  checker against being weakened to fake this.
+
+### What is NOT done
+- `make census` (the native_compute walk producing `Census_Theorem.vo`) did NOT
+  complete. So the unconditional `census_decided` theorem at D_census = 16,115 is
+  **not established on this branch**. The branch proves the setup is sound and the
+  theorem follows IF the walk closes; it does not (here) demonstrate closure.
+
+### DO NOT MERGE until verified
+Merging now would present an unverified shrink as certified. To finish: run
+`make census` on a STABLE host with native_compute (real Linux / WSL2, >=16GB RAM,
+no preemption; ~7h at -P4, faster at higher -j). When it is green with
+`Print Assumptions Census_Theorem.census_decided = functional_extensionality_dep`
+only, it is a certified 16,115 census and can merge. No .v file needs to change --
+it is purely a compute run on the already-committed tree.
+
+### Why it wedged (for the record)
+Walk cost ~ (machines per subtree) x (per-machine pipeline incl. ~19,735-entry map
+lookups). Heavy subtrees are inherently ~25-30 min single-threaded (NORMAL: the
+original 19,735 census was documented "~7h at -P4"). The blocker was purely that
+no reliable ~30-min window was available, and parallelism OOMs on the 16GB/4-core
+container (2 heavy units ~13GB, 4 >16GB). A 64GB / higher-core host removes both
+constraints at once and would finish in 1-2h.
+<!-- --- end final closeout --- -->
