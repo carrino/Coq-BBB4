@@ -155,3 +155,105 @@ Proof.
       * exact Hr.
       * intro Hodd. exists (rep [S1] b' ++ S0 :: R). reflexivity.
 Qed.
+
+(** ** The rightward reconstruction sweep (return_R fold).
+
+    [sw cs] is the swept region (run-lengths [cs], deepest-first, each
+    followed by a single separator).  The return sweeps right in state D:
+    [run_to_sep] re-lays a run up to its separator (an A1 start plus a D1
+    sweep, [Dsweep]), then a D0/A1 gadget FILLS the separator (the swept
+    run gains one) and BORROWS one from the next run (its first 1 becomes
+    the new separator).  Net over [cs]: the deepest run +1 (restoring the
+    deposit-eaten block), the frontier -1 (removing the FT scratch), the
+    interior unchanged -- captured by [relaid]. *)
+
+Lemma repS1_slide : forall k L, rep [S1] k ++ S1 :: L = rep [S1] (S k) ++ L.
+Proof. intros. symmetry. change (rep [S1] (S k)) with (S1 :: rep [S1] k). apply rep_slide. Qed.
+
+Lemma Dsweep : forall k L R,
+  csteps tm_17 (S k) (StD, (L, S1, rep [S1] k ++ S0 :: R))
+  = Some (StD, (rep [S1] (S k) ++ L, S0, R)).
+Proof.
+  induction k as [|k IH]; intros L R.
+  - reflexivity.
+  - change (rep [S1] (S k) ++ S0 :: R) with (S1 :: (rep [S1] k ++ S0 :: R)).
+    eapply csteps_chain with (n1:=1) (n2:=S k)
+      (c1 := (StD, (S1 :: L, S1, rep [S1] k ++ S0 :: R))).
+    + reflexivity.
+    + rewrite (IH (S1 :: L) R), repS1_slide. reflexivity.
+Qed.
+
+Lemma run_to_sep : forall c L R,
+  wreach tm_17 (StA, (L, S1, rep [S1] c ++ S0 :: R)) (StD, (rep [S1] c ++ S0 :: L, S0, R)).
+Proof.
+  intros [|c] L R.
+  - apply wreach_csteps with (n:=1). reflexivity.
+  - eapply wreach_trans.
+    + apply wreach_csteps with (n:=1).
+      instantiate (1 := (StD, (S0 :: L, S1, rep [S1] c ++ S0 :: R))). reflexivity.
+    + apply wreach_csteps with (n := S c). apply Dsweep.
+Qed.
+
+Fixpoint sw (cs : list nat) : list Sym :=
+  match cs with [] => [] | c :: r => rep [S1] c ++ S0 :: sw r end.
+Definition dec1 (cs : list nat) : list nat :=
+  match cs with [] => [] | c :: r => pred c :: r end.
+Fixpoint relaid_b (b : nat) (cs : list nat) : list Sym :=
+  match cs with
+  | [] => []
+  | [c] => rep [S1] (c - b)
+  | c :: rest => relaid_b 1 rest ++ S0 :: rep [S1] (S (c - b))
+  end.
+Definition relaid (cs : list nat) : list Sym := relaid_b 0 cs.
+
+Lemma relaid_b_dec : forall b cs, relaid_b (S b) cs = relaid_b b (dec1 cs).
+Proof.
+  intros b cs. destruct cs as [|c [|c2 rest']]; simpl; try reflexivity;
+    replace (c - S b) with (pred c - b) by lia; reflexivity.
+Qed.
+
+Lemma relaid_dec : forall c rest, rest <> [] ->
+  relaid (c :: rest) = relaid (dec1 rest) ++ S0 :: rep [S1] (S c).
+Proof.
+  intros c rest Hne. unfold relaid.
+  destruct rest as [|c2 rest']; [congruence|].
+  simpl relaid_b. rewrite Nat.sub_0_r.
+  f_equal. f_equal. apply (relaid_b_dec 0 (c2 :: rest')).
+Qed.
+
+Lemma return_R_aux : forall n cs L,
+  length cs <= n -> cs <> [] -> Forall (fun c => 1 <= c) (tl cs) ->
+  wreach tm_17 (StA, (L, S1, sw cs)) (StD, (relaid cs ++ S0 :: L, S0, [])).
+Proof.
+  induction n as [|n IH]; intros cs L Hlen Hne Htl.
+  - destruct cs; [congruence | simpl in Hlen; lia].
+  - destruct cs as [|c rest]; [congruence|].
+    destruct rest as [|c2 rest'].
+    + simpl sw. unfold relaid; simpl relaid_b. rewrite Nat.sub_0_r.
+      pose proof (run_to_sep c L []) as H. simpl in H. exact H.
+    + inversion Htl as [|? ? Hc2 Htl2]; subst.
+      destruct c2 as [|c2']; [lia|].
+      rewrite (relaid_dec c (S c2' :: rest') ltac:(discriminate)).
+      eapply wreach_trans.
+      { apply (run_to_sep c L (sw (S c2' :: rest'))). }
+      eapply wreach_trans.
+      { apply wreach_csteps with (n:=1).
+        simpl sw.
+        change (rep [S1] (S c2') ++ S0 :: sw rest') with (S1 :: (rep [S1] c2' ++ S0 :: sw rest')).
+        instantiate (1 := (StA, (S1 :: rep [S1] c ++ S0 :: L, S1, rep [S1] c2' ++ S0 :: sw rest'))).
+        reflexivity. }
+      replace (S1 :: rep [S1] c ++ S0 :: L) with (rep [S1] (S c) ++ S0 :: L)
+        by (change (rep [S1] (S c)) with (S1 :: rep [S1] c); reflexivity).
+      replace (rep [S1] c2' ++ S0 :: sw rest') with (sw (c2' :: rest')) by reflexivity.
+      change (dec1 (S c2' :: rest')) with (c2' :: rest').
+      rewrite <- app_assoc. cbn [app].
+      apply (IH (c2' :: rest')).
+      * simpl in Hlen |- *; lia.
+      * discriminate.
+      * exact Htl2.
+Qed.
+
+Lemma return_R : forall cs L,
+  cs <> [] -> Forall (fun c => 1 <= c) (tl cs) ->
+  wreach tm_17 (StA, (L, S1, sw cs)) (StD, (relaid cs ++ S0 :: L, S0, [])).
+Proof. intros cs L. apply (return_R_aux (length cs) cs L). apply le_n. Qed.
