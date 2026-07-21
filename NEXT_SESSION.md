@@ -82,12 +82,16 @@ walk produced the committed `.vo`, and editing the census forces a re-walk.
 
 ## 3. The long-tail roadmap
 
-### Scoreboard (2026-07-21, authoritative — README's coverage table is STALE)
-- **3,638 / 3,713 holdouts have a committed Coq theorem** (3,620
-  `NeverQuasiHaltsSt` + 18 QH-with-exact-score). **75 unproven** (74
-  C-certified-only + 1 upstream-open).
-- **`D_census` = 16,115 = 93 deferred holdouts (18 wrap-QH + 75 unproven) +
+### Scoreboard (2026-07-21 late, authoritative — README's coverage table is STALE)
+- **3,688 / 3,713 holdouts have a committed Coq theorem** (3,670
+  `NeverQuasiHaltsSt` + 18 QH-with-exact-score). **25 unproven** (24
+  C-certified-only: 23 counters + 1 v4 irules; plus 1 upstream-open).
+- **`D_census` = 16,065 = 43 deferred holdouts (18 wrap-QH + 25 unproven) +
   16,022 residue** (9,775 wrap-QH survivors + 6,247 never-QH survivors).
+  REGENERATED but NOT yet re-certified: the last certified census is the
+  committed 16,115 `.vo`; `census_cache --check` correctly reports the
+  input mismatch. Run `make census-verify` + `census_cache --update` on
+  stable hardware to certify 16,065.
 - Only `1RB0RB_1LC1RC_0RA1LD_1RC0LD` (the "residue-3 nested/mixed tower") has
   **no known proof anywhere**. Everything else is grind-able.
 
@@ -106,13 +110,9 @@ to drop them. 3. Re-run `make census` on stable hardware (Class 2) → new lower
 `D_census`, certified.
 
 ### Work items, by leverage (all Class 1 unless noted)
-1. **irules Phase 2 — v6 `rulepfx` + v7 `rulerunm` (50 machines).**
-   Designed + differentially validated (44+6 pass `bin/verify` and the
-   extended mirror), NOT yet coded. Fork `RulesBlkPfx.v`/`MetaBlkPfx.v` on the
-   landed block engine (prefix match + constant-remainder drain; v7 adds a
-   residue-lattice run constructor). Mirror
-   `tools/recon_20260719/irulesblkpfx_prover_ext.py`; fork map
-   `PHASE2_DESIGN.md:157-219`. ~2-3 sessions. Highest-confidence tail block.
+1. **irules Phase 2 — DONE 2026-07-21 (see the "irules Phase 2 LANDED"
+   section below): all 50 boarded, proven tier at 3,670, D_census
+   regenerated to 16,065 (re-cert on stable hardware pending).**
 2. **Re-root bridge (~1,300 residue machines).** `BRIDGE.md`. A `*_reroot`
    lemma family (~20-30 lines, StA-variant of `visits_swap`/`quiet_swap`) +
    per-machine ≤4-step `reflexivity` re-roots the census-only first-write-0
@@ -1242,6 +1242,73 @@ covers it, only the drop-to-0 condition changes in a forked
 `IRulesBlkPfx_Batch_*.v` + corruption tests; differential-validate the 44
 vs `bin/verify` first.  Machines whose certs ALSO need
 `rulerunm`/`mmrow`/`nvar` are out of scope (re-check per cert).
+<!-- --- irules block-prefix track (phase 2) --- -->
+## irules Phase 2 LANDED (2026-07-21): all 50 boarded, coverage 3,688, D_census 16,065
+
+The 44 v6 (`rulepfx`+`rmdok`) + 6 v7 (`rulerunm`) holdouts are boarded
+through a verified checker; only the 1 v4 `mmrow` machine remains of the
+irules family. Files (all `functional_extensionality_dep` only):
+
+- **`Checkers/IRules/EngineKS.v`** — sentinel-aware fork of the block
+  engine ([EngineK] untouched). THE design idea: soundness is stated
+  against the SUFFIX-EXTENDED semantics `bsemX` (each side denotes its
+  runs ++ an arbitrary opaque cell suffix, `[]` forced on non-sentinel
+  sides), so a validated prefix rule's `Reach` holds for EVERY
+  continuation of its opaque sides — exactly what splice-back
+  application needs. `bpushS` keeps a blank pushed onto an empty
+  sentinel side as CONTENT (mirror of `iv_rebuild_side`); the
+  app-exhausted branch hard-fails on sentinels.
+- **`Checkers/IRules/RulesBlkPfx.v`** — `BRuleP` prefix rules over
+  `BC/BV/BVm` run counts. `appBlkPfx_side` decomposes (proved:
+  `appBlkPfx_decomp`) into an EXACT application on the matched
+  near-head runs + spliced rest, so the Phase-1 denotation-lemma
+  structure carries over; the `BVm` residue-lattice case rides a
+  `latt_ok` guard checked in the applier (exact division available by
+  inversion). `rmdok` needed ONLY an untrusted `find_bindingP` fork —
+  the applier's per-decrement survival re-check makes any `Rex` sound,
+  so the remainder logic carries zero proof weight. The whole-rule-on-
+  sentinel-side guard (`pfx || ~sent`) is enforced and load-bearing in
+  `ruleBlkPfx_apply_sound` (the `YL/YR` instantiation needs it).
+- **`Checkers/IRules/MetaBlkPfx.v`** — the checker; scalar meta layer
+  identical to MetaBlk; meta replay runs sentinel-free with `bsemX_nil`
+  recovering `bsem`.
+- **`Machines/IRulesBlkPfx_Batch_01..05.v`** (10/file, emitter
+  `tools/gen_irulesblkpfx_certs.py`, manifest
+  `tools/irulesblkpfx_manifest.tsv`, wired into check_coverage) and
+  **`Tests/IRulesBlkPfxBatch_Corruption.v`** (honest controls pass at
+  fuel 3000; REJECTED at the same fuel: pfx flag flip, rmdok lb shift,
+  block-table cell, meta map v6+v7, sentinel read-past = deleting a
+  LOAD-BEARING drain run from a prefix side, lattice delta).
+
+### Measured lenience classes (soundness-preserving; document, don't "fix")
+- Tampers that make the lattice run STRUCTURALLY dead (`res`/`mod`
+  violating the parse-time constraints verify.c enforces) are ACCEPTED:
+  the dead rule self-validates or the meta replay routes around it with
+  cheap symbolic engine steps, and everything actually verified stays
+  true. Same class as PHASE2_DESIGN §6's non-minimal-`lb` gap.
+- Deleting a trailing NON-load-bearing prefix run yields a valid
+  GENERALIZED rule (its content joins the opaque rest) — accepted.
+
+### Conveyor-belt step done (proven tier)
+`tools/proven_map.tsv` is now COMMITTED (reconstructed from the
+manifests; reproduction test: its 3,620-row subset regenerates the
+committed `Proven_*.v` byte-identically — the audit's file/theorem
+picks and (file, theorem) sort are exactly recoverable). Regenerated at
+3,670; `proven_dropped.txt` extended; `regen_residue.py --proven-only`
+asserts now 3670/43/16065. `Deferred_*` regenerated: **D_census =
+16,065**. Census re-cert = stable-hardware (`make census-verify` +
+`tools/census_cache.py --update`).
+
+### Environment note (2 preemptions this session)
+The container was FULLY re-provisioned twice (repo re-cloned at origin,
+/root and /tmp wiped, uncommitted work LOST). Rules that saved the
+session: commit+push after EVERY artifact; and **apt now ships Coq
+8.18.0 on Ubuntu 24.04 (`apt-get install coq`, ~2 min)** — exactly our
+pin, vm_compute-capable (no native_compute, fine for everything except
+the census walk). Use apt coq for container sessions; the opam census
+switch is only needed on the stable box.
+<!-- --- end irules block-prefix track --- -->
+
 <!-- --- end irules block-run track --- -->
 
 <!-- --- census D-shrink session (2026-07-19/20): proven tier + B/C grind post-mortem --- -->
@@ -1376,3 +1443,140 @@ no reliable ~30-min window was available, and parallelism OOMs on the 16GB/4-cor
 container (2 heavy units ~13GB, 4 >16GB). A 64GB / higher-core host removes both
 constraints at once and would finish in 1-2h.
 <!-- --- end final closeout --- -->
+
+<!-- wave track -->
+# Counters wave track (2026-07-21): recon + closer landed; per-pass proof is the open work
+
+Files (own): `theories/Counters/WaveCounter.v` (closer, COMPILES, axiom-clean),
+`tools/counters/trace_wave.py` (recon tracer, validated). `_CoqProject`
+block `# --- counters track: wave ---`. Targets: 6 wave_counter certs
+(counter6/7/17/24/27/36) + 1 wave4_counter (#15).
+
+## KEY FINDING: the playbook's "LapGlue suffices" is WRONG for wave.
+
+The wave machines are PARITY-WAVE ODOMETERS, not single `positive`
+counters. The event config is a variable-length BLOCK WORD
+
+    1^{B_0} 0 1^{B_1} 0 ... 0 1^{B_m}   (single-0 separators),
+
+head one cell past the frontier at the edge state (side R; mirror for
+side L). `B_0` = lead, `B_m` = frontier. One pass = one event-to-event
+run, rule (parities only, exactly verify.c `wc_expected`):
+  - `out = B; out[m] += 1` (frontier increments EVERY pass);
+  - scan `i = m-1 .. 0`, `par = B[i+1] + (poff if i==m-1 else 0)`;
+    first ODD -> `out[i] += 1`, class `t = m-i` (wave depth), or `t=0`
+    (LEAD-STOP) if `i==0`;
+  - if no odd interior block and `B_0==1`: SPAWN (insert length-1 block
+    after the lead), class -1; if `B_0 != 1`: UNDEFINED (-2).
+
+The vector GROWS in length (spawns) and values (unbounded), and the
+carry depth is unbounded, so a pass is a NESTED translated cycle -- NOT
+one parametric run. `LapGlue` (positive + `Pos.succ`) cannot index it.
+
+## The closer that IS right: `WaveCounter.wglue_neverqh` (LANDED).
+
+Generalizes `LapGlue` to anchors indexed by an arbitrary state type `A`
+advanced by a TOTAL successor `nextA` under a PRESERVED invariant `Inv`:
+  - `Inv a0`, `Inv a -> Inv (nextA a)`;
+  - `Hboot`: blank ->* `lift (Cf a0)`;
+  - `Hlap`: `Inv a -> Cf a ->^{>=1} Cf (nextA a)` (up to `lift`);
+  - `Hvis`: `Inv a -> every state reachable from Cf a`.
+Then `NeverQuasiHaltsSt`. Proof = `LapGlue.glue_reach` with
+`Nat.iter k nextA a0` as the k-th anchor. Compiles; `Print Assumptions`
+= `functional_extensionality_dep` only. This is the whole outer layer;
+it is DONE. The three hypotheses are the remaining work.
+
+## The abstract state and the three proof obligations.
+
+Take `A := list positive` (block vector, all entries >= 1, LSB=lead...
+actually lead-first). `nextA := wc_expected` (parity odometer). `Cf B` =
+the block-word tape above. `a0` = the boot vector (per cert
+`boot_vector`, e.g. `[1;1;2;4]`). Then:
+
+- **P2 (Inv preserved; MACHINE-INDEPENDENT, hard math).** `Inv` must
+  exclude LEAD-STOP (t=0) and bad SPAWN (-2) so `nextA` stays in the
+  event family. This IS verify.c `wc_parity_schema` + `wc_bootstrap`'s
+  abstract chain: the parity word `e_i = B_i mod 2` evolves as an
+  odometer `R` (flip `e_m`; flip `e_{i*-1}`, `i*` = highest set), and
+  the safety is a RECURSIVE identity `R;R = R'` one level down (verify.c
+  lines ~9544-9712). Candidate `Inv`: "B_0 = 1 AND the parity word is
+  reachable from a canonical spawn word", proved preserved by the
+  R;R=R' pairing induction. This is the single hardest sub-proof and is
+  SHARED by all 6 machines -- do it once. (Alternatively: a weaker `Inv`
+  that is obviously preserved and obviously forbids i*=1 -- OPEN whether
+  one exists; the parities genuinely require the odometer argument.)
+
+- **P1 (Hlap; PER-MACHINE, hard).** From `Cf B` reach `Cf (nextA B)`.
+  Decomposition (validated for all 6 via `trace_wave.py`, and per-machine
+  micro-gadgets extracted -- see table): FRONTIER-TURNAROUND (fixed ~2-3
+  steps, frontier += 1, reverse to inward sweep) ++ LEFTWARD WAVE (cross
+  blocks m, m-1, ... as translated cycles until the parity STOP) ++
+  DEPOSIT+turnaround ++ RIGHTWARD RETURN (cross blocks back to frontier).
+  The leftward wave is a FOLD over a variable-length sublist of the block
+  vector, each block crossed by a 2-state (clean tier) or 4-state (hard
+  tier) alternating cycle = a `WTape.cycL`/`cycR` application over the
+  1-run; the SEPARATOR arrival STATE encodes the running parity and
+  selects continue-vs-deposit. Needs: a `creach_iter`-style induction
+  over the crossed blocks (cf. MonoCounter `creach`), plus the
+  block-length translated cycles. This is the double/blockdbl nested-loop
+  pattern one level richer.
+
+- **P3 (Hvis; PER-MACHINE, easy).** Every state visited each pass:
+  finite `wsteps` reflexivity witnesses off `Cf B`, as in Spacer_16
+  `vis_16`. From the fired-transition traces every pass fires >=7 of 8
+  transitions; a single class-1 + class-2 pass covers all 8.
+
+## Per-machine gadget tables (from validated micro-traces, transitions
+## written `state sym / write dir > next`).
+
+Difficulty tiers by the leftward cross-cycle:
+
+- **#17** `1RB0RD_0LB1LC_1RA1LB_1RA1RD` edge D, side R, poff 0, boot
+  [1;1;2;3]. EASIEST. FT=`D0/1R>A A0/1R>B B0/0L>B`; cross-pair=`B1/1L>C
+  C1/1L>B` (cycL unit u=[1;1], state B); sep-continue=`B0/0L>B`;
+  deposit=`C0/1R>A`; return unit=`D1/1R>D` (D-sweep), sep-on-return=
+  `D0/1R>A A1/0R>D`. Arrive-at-sep in C => DEPOSIT (odd run), in B =>
+  CONTINUE (even). Start here.
+- **#27** `1RB1LC_1LC0RD_0LC1LA_1RB1RD` edge D, side R, poff 1, boot
+  [1;1;2;4]. FT=`D0/1R>B B0/1L>C`; cross-pair=`C1/1L>A A1/1L>C`;
+  sep-continue=`C0/0L>C`; deposit=`A0/1R>B`; return=`B1/0R>D`/`D1/1R>D`,
+  sep=`D0/1R>B B1/0R>D`.
+- **#36** `1RB1RA_1LC0RA_0LC1LD_1RB1LC` edge A, side R, poff 1, boot
+  [1;1;2;4]. FT=`A0/1R>B B0/1L>C`; cross-pair=`C1/1L>D D1/1L>C`;
+  sep=`C0/0L>C`; deposit=`D0/1R>B`; return=`B1/0R>A`/`A1/1R>A`,
+  sep=`A0/1R>B B1/0R>A`.
+- **#7** `1RB0LC_1LA1RD_1LA1LC_0RD1RB` edge A, side L, poff 1, boot
+  [1;1;2;4]. MIRROR (frontier on the LEFT, inward = rightward).
+  FT=`A0/1R>B B1/1R>D`; cross-pair=`D1/1R>B B1/1R>D`; sep=`D0/0R>D`;
+  deposit=`B0/1L>A A1/0L>C`; return=`C1/1L>C`, sep=`C0/1L>A A1/0L>C`.
+- **#6** `1RB0LB_0LB0RC_1LD1RC_1LA1RB` edge C, side R, poff 1, boot
+  [1;1;2;4]. HARD: 4-step cross cycle `C0/1L>D D0/1L>A A1/0L>B B1/0R>C`
+  that WRITES 0s (the run is re-encoded during the cross); return is a
+  `C1/1R>C` sweep. Budget separately.
+- **#24** `1RB1LA_1RC1LD_1LD0RD_0RD0LA` edge A, side L, poff 1, boot
+  [1;1;2;4]. HARD (mirror of the #6-class): 3-4 step cross cycle
+  `A0/1R>B B0/1R>C C1/0R>D D1/0L>A` writing 0s. Budget separately.
+
+## #15 wave4_counter `1RB0RC_0LC1LB_0LD1LC_1RD0RA` (edge C, boot [1;4;2]):
+separate `verify_wave4_counter` (verify.c ~10462) -- read it before
+coding; likely a base-4 variant of the same odometer. Do last.
+
+## Recommended plan for the next wave session.
+1. Build `tools/counters/lapwave17.py` (fork lap16.py): symbolic pass for
+   #17 via `Exec.cycL`/`cycR` combinators + explicit FT/deposit/return
+   `conc` units + a Python fold over the crossed blocks; `python3
+   lapwave17.py 40` must match raw (differential over classes 1/2/3/spawn
+   and depths to ~6). This pins the exact unit windows/walls for Coq.
+2. `theories/Counters/WaveCounter.v`: add the block encoding `Wv : list
+   positive -> list Sym` + decomposition lemmas (cross-fold, parity
+   split). Keep machine-independent parts here.
+3. P2 once (parity-safety `Inv`), P1+P3 per machine starting at #17.
+4. Corruption tests `theories/Tests/CountersWave_Corruption.v` (NEW).
+   Manifest rows in `tools/counters_manifest.tsv` (append only).
+
+Budget: P2 is ~1 session (the recursive parity induction); #17 P1 ~1
+session; #27/#36/#7 faster once #17's fold is generic; #6/#24/#15 hard,
+budget separately. The abstract odometer is IDENTICAL across all 6
+(same boot orbit) -- only the micro-gadget tables differ, so P2 and the
+fold skeleton are shared.
+<!-- end wave track -->
