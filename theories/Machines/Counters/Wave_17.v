@@ -257,3 +257,160 @@ Lemma return_R : forall cs L,
   cs <> [] -> Forall (fun c => 1 <= c) (tl cs) ->
   wreach tm_17 (StA, (L, S1, sw cs)) (StD, (relaid cs ++ S0 :: L, S0, [])).
 Proof. intros cs L. apply (return_R_aux (length cs) cs L). apply le_n. Qed.
+
+(** ** The wave/return bridge, boot, visits, and the theorem.
+
+    [bcs]/[dsuffix] connect the leftward wave's output ([outL]/[outR]) to
+    the return's input ([sw]/[relaid]): the swept region is [sw (bcs ...)]
+    and the deposit-turnaround left list is [wbody (dsuffix ...)].
+    [bridge_l] is the telescoping identity that makes the return re-lay
+    exactly onto [wbody (nextf 0 front)]. *)
+
+Fixpoint bcs (po:bool) (blocks:list nat) (base:list nat) : list nat :=
+  match blocks with
+  | [] => 0 :: base
+  | b :: r => if po then dec1 base else bcs (Nat.odd b) r (b :: base)
+  end.
+(* dsuffix: the deposit-and-below suffix (outL = wbody dsuffix). *)
+Fixpoint dsuffix (po:bool) (blocks:list nat) : list nat :=
+  match blocks with
+  | [] => []
+  | b :: r => if po then S b :: r else dsuffix (Nat.odd b) r
+  end.
+
+Lemma outL_wbody : forall blocks po, outL po blocks = wbody (dsuffix po blocks).
+Proof.
+  induction blocks as [|b r IH]; intros po; [reflexivity|].
+  simpl. destruct po; [reflexivity | apply IH].
+Qed.
+
+Lemma outR_sw : forall blocks po base,
+  Forall (fun x => 1 <= x) blocks -> Forall (fun x => 1 <= x) base ->
+  outR po blocks (sw base) = sw (bcs po blocks base).
+Proof.
+  induction blocks as [|b r IH]; intros po base Hbl Hb.
+  - reflexivity.
+  - inversion Hbl as [|? ? Hb1 Hr]; subst. simpl. destruct po.
+    + destruct base as [|c base']; [reflexivity|].
+      inversion Hb; subst. destruct c as [|c']; [lia|]. reflexivity.
+    + change (rep [S1] b ++ S0 :: sw base) with (sw (b :: base)).
+      apply IH; [exact Hr | constructor; assumption].
+Qed.
+
+Lemma bridge_l : forall blocks po base,
+  Forall (fun x => 1 <= x) blocks -> carry_ok po blocks = true ->
+  base <> [] -> Forall (fun x => 1 <= x) base ->
+  relaid (bcs po blocks base) ++ S0 :: wbody (dsuffix po blocks)
+  = relaid (dec1 base) ++ S0 :: wbody (carry po blocks).
+Proof.
+  induction blocks as [|b r IH]; intros po base Hbl Hok Hne Hb.
+  - destruct po; simpl in Hok; [discriminate|].
+    simpl bcs. simpl dsuffix. simpl carry.
+    rewrite (relaid_dec 0 base Hne), <- app_assoc.
+    cbn [rep app wbody]. reflexivity.
+  - inversion Hbl as [|? ? Hb1 Hr]; subst.
+    destruct po.
+    + reflexivity.
+    + destruct b as [|b']; [lia|].
+      cbn [bcs dsuffix carry carry_ok] in Hok |- *.
+      rewrite (IH (Nat.odd (S b')) (S b' :: base) Hr Hok ltac:(discriminate)
+                  (Forall_cons _ Hb1 Hb)).
+      change (dec1 (S b' :: base)) with (b' :: base).
+      rewrite (relaid_dec b' base Hne).
+      cbn [wbody]. rewrite <- !app_assoc. reflexivity.
+Qed.
+
+Lemma bcs_nonnil : forall blocks po base, base <> [] -> bcs po blocks base <> [].
+Proof.
+  induction blocks as [|b r IH]; intros po base Hne; [discriminate|].
+  simpl. destruct po.
+  - destruct base; [congruence | discriminate].
+  - apply IH. discriminate.
+Qed.
+Lemma bcs_tl_pos : forall blocks po base,
+  Forall (fun x => 1 <= x) blocks -> Forall (fun x => 1 <= x) base -> base <> [] ->
+  Forall (fun c => 1 <= c) (tl (bcs po blocks base)).
+Proof.
+  induction blocks as [|b r IH]; intros po base Hbl Hbase Hne.
+  - simpl. exact Hbase.
+  - inversion Hbl as [|? ? Hb1 Hr]; subst. simpl. destruct po.
+    + destruct base as [|c base']; [congruence|]. simpl. inversion Hbase; assumption.
+    + apply IH; [assumption | constructor; assumption | discriminate].
+Qed.
+
+
+(* ---- assembly ---- *)
+Lemma post_FT_eq : forall b0 r0,
+  S1 :: wbody (b0 :: r0) = rep [S1] (S b0) ++ S0 :: wbody r0.
+Proof. intros. reflexivity. Qed.
+
+Lemma nqh_lap : forall front, WInv 0 front ->
+  exists n c', csteps tm_17 n (Cf17 front) = Some c' /\
+               lift c' = lift (Cf17 (nextf 0 front)) /\ 0 < n.
+Proof.
+  intros front (Hfp & Hpos & Hne).
+  destruct front as [|b0 r0]; [congruence|].
+  assert (Hr0 : Forall (fun x => 1 <= x) r0) by (inversion Hpos; assumption).
+  assert (Hok : carry_ok (Nat.odd b0) r0 = true).
+  { pose proof (WInv_no_leadstop 0 b0 r0 (conj Hfp (conj Hpos Hne))) as H.
+    rewrite Nat.add_0_r in H. exact H. }
+  eapply wreach_lap with (n := 3) (c1 := (StB, (S1 :: wbody (b0 :: r0), S1, [S0]))).
+  - apply ph_FT.
+  - lia.
+  - rewrite post_FT_eq.
+    eapply wreach_trans.
+    { apply wreach_csteps with (n := S (S b0)). apply cross_run. }
+    replace (stB (S b0)) with (if Nat.odd b0 then StC else StB);
+      [| unfold stB; rewrite Nat.even_succ; destruct (Nat.odd b0); reflexivity].
+    eapply wreach_trans.
+    { change (rep [S1] (S (S b0)) ++ [S0]) with (sw [S (S b0)]).
+      apply (wave_L r0 (Nat.odd b0) (sw [S (S b0)])).
+      - exact Hok.
+      - exact Hr0.
+      - intro Hodd. exists (rep [S1] (S b0) ++ [S0]). reflexivity. }
+    rewrite (outR_sw r0 (Nat.odd b0) [S (S b0)] Hr0 ltac:(constructor; [lia | constructor])).
+    eapply wreach_trans.
+    { apply (return_R (bcs (Nat.odd b0) r0 [S (S b0)]) (outL (Nat.odd b0) r0)).
+      - apply bcs_nonnil. discriminate.
+      - apply bcs_tl_pos; [exact Hr0 | constructor; [lia | constructor] | discriminate]. }
+    rewrite outL_wbody.
+    rewrite (bridge_l r0 (Nat.odd b0) [S (S b0)] Hr0 Hok ltac:(discriminate)
+                      ltac:(constructor; [lia | constructor])).
+    change (dec1 [S (S b0)]) with [S b0].
+    change (relaid [S b0]) with (rep [S1] (S b0)).
+    replace (rep [S1] (S b0) ++ S0 :: wbody (carry (Nat.odd b0) r0))
+      with (wbody (nextf 0 (b0 :: r0))).
+    2:{ unfold nextf. rewrite Nat.add_0_r. reflexivity. }
+    apply wreach_refl.
+Qed.
+
+Lemma boot_17 : exists t0, stepn tm_17 t0 InitES = Some (lift (Cf17 [3;2;1])).
+Proof.
+  exists 49.
+  assert (H : match csteps tm_17 49 CTape.c0 with
+              | Some c => ceqb c (Cf17 [3;2;1]) | None => false end = true)
+    by (vm_compute; reflexivity).
+  destruct (csteps tm_17 49 CTape.c0) as [c|] eqn:E; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.
+Qed.
+
+Lemma vis_17 : forall p q, WInv 0 p ->
+  exists k c, csteps tm_17 k (Cf17 p) = Some c /\ fst c = q.
+Proof.
+  intros p q (Hfp & Hpos & Hne). destruct p as [|b0 r0]; [congruence|].
+  destruct q.
+  - exists 1. eexists. split; reflexivity.
+  - exists 2. eexists. split; reflexivity.
+  - exists 4. eexists. split; reflexivity.
+  - exists 0. eexists. split; reflexivity.
+Qed.
+
+Theorem nqh_1RB0RD_0LB1LC_1RA1LB_1RA1RD : NeverQuasiHaltsSt tm_17.
+Proof.
+  apply (wglue_neverqh tm_17 (list nat) (nextf 0) (WInv 0) Cf17 [3;2;1]).
+  - split; [reflexivity | split; [repeat constructor; lia | discriminate]].
+  - intros a Ha. apply WInv_preserved; exact Ha.
+  - exact boot_17.
+  - exact nqh_lap.
+  - exact vis_17.
+Qed.
