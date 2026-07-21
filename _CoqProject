@@ -247,3 +247,5 @@ theories/Tests/CountersWave_Corruption.v
 # --- counters track: double ---
 theories/Counters/CReach.v
 theories/Counters/DblCounter.v
+theories/Machines/Counters/Double_9.v
+theories/Tests/CountersDbl_Corruption.v
