@@ -478,3 +478,190 @@ Proof.
       rewrite Hwe, xorb_false_r in Hpar. exact Hpar. }
     rewrite Hwru. apply minilap9_even; assumption.
 Qed.
+
+(** ** The macro lap: poke prefix + creach_iter + final spread. *)
+
+(** grr of the all-ones counter [2^j - 1]: a single marker at slot j-1. *)
+Lemma gbn_allones : forall j',
+  gbn (2 ^ S j' - 1) (S j') = repeat false j' ++ [true].
+Proof.
+  induction j' as [| k IH].
+  - reflexivity.
+  - assert (Hq : 2 ^ S (S k) - 1 = S (2 * (2 ^ S k - 1))).
+    { rewrite (Nat.pow_succ_r' 2 (S k)).
+      assert (0 < 2 ^ S k) by (apply Nat.neq_0_lt_0, Nat.pow_nonzero; lia). lia. }
+    rewrite Hq. rewrite gbn_odd_hd.
+    assert (Hoq : Nat.odd (2 ^ S k - 1) = true).
+    { assert (He : Nat.even (2 ^ S k) = true)
+        by (rewrite (Nat.pow_succ_r' 2 k), Nat.even_mul; reflexivity).
+      assert (0 < 2 ^ S k) by (apply Nat.neq_0_lt_0, Nat.pow_nonzero; lia).
+      rewrite <- Nat.negb_odd in He. apply negb_true_iff in He.
+      replace (2 ^ S k) with (S (2 ^ S k - 1)) in He by lia.
+      rewrite Nat.odd_succ, <- Nat.negb_odd in He.
+      apply negb_false_iff in He. exact He. }
+    rewrite Hoq. cbn [negb]. rewrite IH. reflexivity.
+Qed.
+
+Lemma grr_kg : forall j',
+  grr (2 ^ S j' - 1) (S j')
+  = rep [S0] (S (3 * j')) ++ [S1; S0; S0; S1].
+Proof.
+  intros j'. unfold grr. rewrite gbn_allones.
+  rewrite slotsf_app, slotsf_repeat_false. cbn [slotsf].
+  rewrite rep000, <- app_assoc. reflexivity.
+Qed.
+
+(** New poke units. *)
+Lemma Upokein : wsteps true false tm_9 3 (StD, ([], S1, []))
+                = Some (StC, ([S1; S1; S0], S0, [])).
+Proof. reflexivity. Qed.
+
+Lemma Upseed : wsteps true true tm_9 4 (StC, ([S1; S1; S0; S1], S0, []))
+               = Some (StA, ([], S1, [S1; S0; S0; S1])).
+Proof. reflexivity. Qed.
+
+Lemma Ufin : wsteps true false tm_9 1 (StD, ([], S0, [S1]))
+             = Some (StD, ([S1], S1, [])).
+Proof. reflexivity. Qed.
+
+Lemma phPokein : forall L,
+  csteps tm_9 3 (StD, (L, S1, [])) = Some (StC, ([S1; S1; S0] ++ L, S0, [])).
+Proof. intros. exact (wsteps_frame_r _ _ _ _ _ _ _ _ _ _ L Upokein). Qed.
+
+Lemma phPseed : forall M R,
+  csteps tm_9 4 (StC, ([S1; S1; S0; S1] ++ M, S0, R))
+  = Some (StA, (M, S1, [S1; S0; S0; S1] ++ R)).
+Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ M R Upseed). Qed.
+
+Lemma phFin : forall L,
+  csteps tm_9 1 (StD, (L, S0, [S1])) = Some (StD, ([S1] ++ L, S1, [])).
+Proof. intros. exact (wsteps_frame_r _ _ _ _ _ _ _ _ _ _ L Ufin). Qed.
+
+Lemma grr_zero : forall j, grr 0 j = rep [S0] (S (3 * j)) ++ [S1].
+Proof.
+  intros j. unfold grr.
+  assert (Hg : gbn 0 j = repeat false j).
+  { clear. induction j; [reflexivity | simpl; rewrite IHj; reflexivity]. }
+  rewrite Hg, slotsf_repeat_false, rep000. reflexivity.
+Qed.
+
+Lemma poke_fold : forall b a,
+  [S1;S0] ++ rep [S1;S0] b ++ [S1;S0] ++ rep [S0] a ++ [S0;S1;S0;S0;S1]
+  = rep [S1;S0] (S (S b)) ++ rep [S0] (S a) ++ [S1;S0;S0;S1].
+Proof.
+  intros b a.
+  rewrite (app_assoc (rep [S1;S0] b) [S1;S0]).
+  rewrite <- (rep_snoc [S1;S0] b).
+  rewrite (app_assoc [S1;S0] (rep [S1;S0] (S b))).
+  change ([S1;S0] ++ rep [S1;S0] (S b)) with (rep [S1;S0] (S (S b))).
+  f_equal.
+  rewrite (rep_snoc [S0] a). rewrite <- app_assoc. reflexivity.
+Qed.
+
+Lemma poke9 : forall j, 1 <= j ->
+  exists n, csteps tm_9 n (D9 j) = Some (g9 j (2 ^ j) (2 ^ j - 1)) /\ 0 < n.
+Proof.
+  intros j Hj. destruct j as [| j']; [lia |].
+  assert (Hp2 : 2 <= 2 ^ S j').
+  { rewrite Nat.pow_succ_r'.
+    assert (0 < 2 ^ j') by (apply Nat.neq_0_lt_0, Nat.pow_nonzero; lia). lia. }
+  set (b := 2 ^ S j' - 2).
+  assert (Hb : 2 ^ S j' = S (S b)) by (unfold b; lia).
+  unfold D9, g9.
+  rewrite grr_kg, Hb.
+  replace (3 * S j' - 1) with (S (S (3 * j'))) by lia.
+  replace (S (S b) - 1) with (S b) by lia.
+  eexists. split.
+  - eapply csteps_chain. { apply phPokein. }
+    eapply csteps_chain. { apply phPseed. }
+    eapply csteps_chain. { apply phdA1. }
+    eapply csteps_chain. { apply (phDclr9 (3 * j')). }
+    change (rep [S0;S1] (S b)) with ([S0;S1] ++ rep [S0;S1] b).
+    eapply csteps_chain. { apply phdC1C0. }
+    rewrite <- (app_nil_r (rep [S0;S1] b)).
+    eapply csteps_chain. { apply (phUcol b []). }
+    rewrite <- (poke_fold b (3 * j')).
+    apply phMat9.
+  - lia.
+Qed.
+
+Lemma odd_pow2_pred : forall k, Nat.odd (2 ^ S k - 1) = true.
+Proof.
+  intros k.
+  assert (He : Nat.even (2 ^ S k) = true)
+    by (rewrite (Nat.pow_succ_r' 2 k), Nat.even_mul; reflexivity).
+  assert (0 < 2 ^ S k) by (apply Nat.neq_0_lt_0, Nat.pow_nonzero; lia).
+  rewrite <- Nat.negb_odd in He. apply negb_true_iff in He.
+  replace (2 ^ S k) with (S (2 ^ S k - 1)) in He by lia.
+  rewrite Nat.odd_succ, <- Nat.negb_odd in He.
+  apply negb_false_iff in He. exact He.
+Qed.
+
+Lemma final9 : forall j, 1 <= j ->
+  creach tm_9 (g9 j (2 ^ S j - 1) 0) (D9 (S j)).
+Proof.
+  intros j Hj.
+  assert (Hp : 0 < 2 ^ j) by (apply Nat.neq_0_lt_0, Nat.pow_nonzero; lia).
+  unfold g9, D9. rewrite grr_zero.
+  replace (2 ^ S j - 1) with (S (2 * (2 ^ j - 1))) by (rewrite Nat.pow_succ_r'; lia).
+  replace (3 * S j - 1) with (S (S (3 * j))) by lia.
+  rewrite (rep_snoc [S1; S0] (2 * (2 ^ j - 1))).
+  rewrite <- app_assoc.
+  eapply creach_csteps.
+  eapply csteps_chain. { apply (phSpr9 (2 ^ j - 1) []). }
+  rewrite app_nil_r.
+  eapply csteps_chain. { apply phEnter9. }
+  eapply csteps_chain. { apply (phDf9 (S (3 * j))). }
+  apply phFin.
+Qed.
+
+Lemma iter9 : forall j, 1 <= j ->
+  creach tm_9 (g9 j (2 ^ j) (2 ^ j - 1)) (g9 j (2 ^ S j - 1) 0).
+Proof.
+  intros j Hj.
+  assert (Hp : 0 < 2 ^ j) by (apply Nat.neq_0_lt_0, Nat.pow_nonzero; lia).
+  pose (F := fun i => g9 j (2 ^ j + i) (2 ^ j - 1 - i)).
+  assert (Hstep : forall i, i < 2 ^ j - 1 -> creach tm_9 (F i) (F (S i))).
+  { intros i Hi. unfold F.
+    replace (2 ^ j + S i) with (S (2 ^ j + i)) by lia.
+    replace (2 ^ j - 1 - S i) with (2 ^ j - 1 - i - 1) by lia.
+    apply minilap9.
+    - lia.
+    - lia.
+    - lia.
+    - replace (2 ^ j + i + (2 ^ j - 1 - i)) with (2 ^ S j - 1)
+        by (rewrite Nat.pow_succ_r'; lia).
+      apply odd_pow2_pred. }
+  pose proof (creach_iter tm_9 F (2 ^ j - 1) Hstep) as Hit.
+  unfold F in Hit.
+  replace (2 ^ j + 0) with (2 ^ j) in Hit by lia.
+  replace (2 ^ j - 1 - 0) with (2 ^ j - 1) in Hit by lia.
+  replace (2 ^ j + (2 ^ j - 1)) with (2 ^ S j - 1) in Hit
+    by (rewrite Nat.pow_succ_r'; lia).
+  replace (2 ^ j - 1 - (2 ^ j - 1)) with 0 in Hit by lia.
+  exact Hit.
+Qed.
+
+Lemma macro9 : forall j, 1 <= j ->
+  exists m, csteps tm_9 m (D9 j) = Some (D9 (S j)) /\ 0 < m.
+Proof.
+  intros j Hj.
+  destruct (poke9 j Hj) as (Np & Hpoke & HNp).
+  assert (Hreach : creach tm_9 (g9 j (2 ^ j) (2 ^ j - 1)) (D9 (S j))).
+  { eapply creach_trans; [apply (iter9 j Hj) | apply (final9 j Hj)]. }
+  destruct (creach_pos tm_9 Np (D9 j) (g9 j (2 ^ j) (2 ^ j - 1)) (D9 (S j))
+              Hpoke HNp Hreach) as (m & Hm & Hpos).
+  exists m. split; assumption.
+Qed.
+
+Theorem nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA : NeverQuasiHaltsSt tm_9.
+Proof.
+  apply (glue_neverqh tm_9 (fun p => D9 (S (Pos.to_nat p))) 1).
+  - change (S (Pos.to_nat 1)) with 2. exact boot_9.
+  - intros p _.
+    destruct (macro9 (S (Pos.to_nat p)) (le_n_S _ _ (Nat.le_0_l _)))
+      as (m & Hm & Hpos).
+    exists m, (D9 (S (S (Pos.to_nat p)))). split; [exact Hm | split; [| exact Hpos]].
+    rewrite Pos2Nat.inj_succ. reflexivity.
+  - intros p q _. apply vis_9.
+Qed.
