@@ -1580,3 +1580,38 @@ budget separately. The abstract odometer is IDENTICAL across all 6
 (same boot orbit) -- only the micro-gadget tables differ, so P2 and the
 fold skeleton are shared.
 <!-- end wave track -->
+
+## #17 units CONFIRMED in Coq (2026-07-21, via `Compute` on `tm17`).
+
+The block encoding is FRONTIER-FIRST: `Cf B = (edge, (l, S0, []))` with
+`l = 1^{B_m} ++ 0 :: 1^{B_{m-1}} ++ 0 :: ... ++ 0 :: 1^{B_0}` (nearest
+block = frontier), head on the trailing separator, right blank (side R).
+Every intended unit run computes cleanly as `wsteps ... = Some ...`
+(direct `Proof. reflexivity. Qed.` transcription), and the whole cls1
+pass is ONE windowed run landing EXACTLY on the next event (no lift
+slack). tm17 = `1RB0RD_0LB1LC_1RA1LB_1RA1RD`. Confirmed:
+
+  - FT (br=false, 3): `(D,(1^n, S0, [])) -> (B,(1^(n+1), S1, [S0]))`
+    (D0/1R>A A0/1R>B B0/0L>B; frontier + scratch, turns to left B-sweep).
+  - cross-pair cycL unit (2): `(B,([S1;S1], S1, [])) -> (B,([], S1,
+    [S1;S1]))`  (u=[S1;S1], w=[S1;S1]; use `WTape.cycL`).
+  - odd-tail (1): `(B,([S1], S1, [])) -> (C,([], S1, [S1]))`.
+  - sep-continue B0 (1): `(B,([S1], S0, R)) -> (B,([], S1, S0::R))`
+    (even parity: push sep right, enter next block still in B).
+  - deposit C0;A1 (2): `(C,([S0], S0, [S1;S1])) -> (D,([S0;S1;S0], S1,
+    []))` (odd parity STOP: write 1 at sep, turn to rightward D-sweep).
+  - D-return sep (2): `(D,([], S0, [S1;S1])) -> (D,([S0;S1], S1, []))`.
+  - D-return over ones: `D1/1R>D`, one step per cell.
+  - FULL cls1 pass (br=false, 14): `Cf([1,1,2,3]) -> Cf([1,1,3,4])`,
+    exact -- `wsteps true false tm17 14 (D,([S1;S1;S1;S0;S1;S1;S0;S1;S0;
+    S1],S0,[])) = Some (D,([S1;S1;S1;S1;S0;S1;S1;S1;S0;S1;S0;S1],S0,[]))`.
+
+So P1 for #17 is: state these as unit lemmas, then a lap lemma that
+(a) FT, (b) folds cross-pair over even blocks to the parity stop
+(the arrival-state B/C = block-length parity is the whole selector),
+(c) deposits, (d) folds the D-return back to the frontier event. The
+fold is over the block sublist crossed = `creach_iter`/cycL induction.
+The ONLY genuinely hard piece left is P2 (the shared parity-safety
+`Inv`). #27/#36/#7 have the identical shape with their own unit tables
+(design appendix above); #6/#24 have 4-step 0-writing cross cycles.
+<!-- end wave track confirmed units -->
