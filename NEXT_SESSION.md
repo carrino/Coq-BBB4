@@ -1971,3 +1971,116 @@ becomes a general `poff`. The 2-state cross cycle (C<->A for #27, C<->D for
 #36) replaces #17's B<->C but proves identically. #6/#24 (4-step 0-writing
 cross) are the hard pair -- budget separately. wave4 #15: separate verifier.
 <!-- end wave #17 boarded note -->
+
+## Wave #27 + #36 BOARDED; #7 fully reconnoitred (2026-07-21 cont. 4, CLEAN tier)
+
+Two more wave theorems landed, axiom-clean (functional_extensionality_dep
+only), each with corruption tests (`CountersWave_Corruption.v`), manifest
+row, `_CoqProject` entry:
+  - **#27** `nqh_1RB1LC_1LC0RD_0LC1LA_1RB1RD : NeverQuasiHaltsSt tm_27`
+    (`theories/Machines/Counters/Wave_27.v`), edge D, poff 1, a0=[4;2;1],
+    boot 50.
+  - **#36** `nqh_1RB1RA_1LC0RA_0LC1LD_1RB1LC : NeverQuasiHaltsSt tm_36`
+    (`Wave_36.v`), edge A, poff 1, a0=[4;2;1], boot 50.
+Recon/probe scripts: `tools/counters/probe27.py` (step-level cconf
+simulator; `trace_wave.py` already validates all 6 orbits).
+`WaveCounter.v` needed **NO change** -- `WInv_no_leadstop` is already
+poff-general; do NOT `rewrite Nat.add_0_r`, just apply it with poff=1.
+
+### Template deltas actually discovered (beyond the design-appendix guess)
+- **poff=1 frontier parity.** After the FT crosses the frontier run, the
+  exit state selects deposit/continue by `Nat.odd (b0+poff)`. In Coq:
+  `stC k := if Nat.even k then <deposit> else <continue>`, and the frontier
+  cross uses `cross_run k` with `k = b0` (NOT `S b0` -- see FT below); then
+  `stC b0 = if Nat.odd(b0+1) then <deposit> else <continue>` via
+  `unfold stC; replace (b0+1) with (S b0) by lia; rewrite Nat.odd_succ`.
+  wave_L is entered with `po := Nat.odd (b0+1)`, and `WInv_no_leadstop 1 b0
+  r0` gives `carry_ok (Nat.odd(b0+1)) r0 = true` directly.
+- **FT scratch = 1 (not 0) => the frontier-swept run has NO trailing
+  separator.** #17's FT (3 steps, B0/0L>B) writes a `S0` scratch, so its
+  swept frontier is `sw [S(S b0)] = rep[S1](S(S b0)) ++ [S0]`. #27's FT is
+  **2 steps** `D0/1R>B B0/1L>C`, generic in L (D0's written 1 becomes the
+  head, B0 lays a `S1` scratch): `ph_FT27 : csteps tm 2 (StD,(L,S0,[])) =
+  Some (StC,(L,S1,[S1]))`. After `cross_run27 k=b0`, the right is
+  `rep[S1](S b0) ++ [S1] = rep[S1](S(S b0))` -- a bare run, no `[S0]`. So
+  #17's `sw` is replaced by **`sw27`** (last run bare):
+    `sw27 [] = [] | sw27 [c] = rep[S1] c | sw27 (c::rest) = rep[S1] c ++ S0::sw27 rest`
+  with the one-line helper `sw27_slide : sw27 (S c::rest) = S1 :: sw27 (c::rest)`
+  (proof `intros c [|c2 rest]; reflexivity`). The return needs a terminal
+  **`run_to_end27`** (walk the deepest run off into the blank via
+  `Dsweep_blank27`) alongside `run_to_sep27` (interior runs). Everything
+  else -- `relaid`/`relaid_b`/`dec1`/`bcs`/`dsuffix`/`bridge_l`/`outR_sw27`
+  (a trivially adapted `outR_sw`, needs `base<>[]`) -- is byte-identical to
+  #17. The full lap lands EXACTLY on `Cf27(nextf 1 front)` (no lift slack);
+  cls1=14 steps, cls2=24, spawn(cls-1)=40, all Compute-checked.
+- **#36 = #27 under the state relabelling A<->D.** #36's gadget table is
+  #27's with StA and StD exchanged (edge D->A, deposit A->D, sweep D->A,
+  cross C/A->C/D). `Wave_36.v` is literally `Wave_27.v` run through
+  `sed -e s/StA/@X@/ -e s/StD/StA/ -e s/@X@/StD/` then `s/27/36/`, with the
+  header/theorem-name/spec-string fixed by hand and **vis offsets swapped**
+  (StA<->StD branches of `destruct q`: #36 is StA->0, StB->1, StC->2,
+  StD->3). tm and all proofs transcribe verbatim; boot is still 50. This is
+  the cheapest kind of sibling -- look for A<->D (or other 2-cycle)
+  relabellings before writing a machine from scratch.
+
+### #7 `1RB0LC_1LA1RD_1LA1LC_0RD1RB` (edge A, side L, poff 1) -- NOT a clone;
+### board via `Mirror.mirror_never_qh`. FULL recon done, transcription open.
+Side L, so use `theories/Mirror.v`: prove `NeverQuasiHaltsSt (mirror_tm
+tm_7)` then `apply mirror_never_qh`. The side-R machine to board is
+  **`mirror_tm tm_7 = 1LB0RC_1RA1LD_1RA1RC_0LD1LB`** (flip every dir L<->R;
+  keep write+next). It IS a side-R wave odometer, edge A, poff 1,
+  a0=[4;2;1], SAME abstract orbit (`nextf 1`/`WInv 1`), Compute-validated:
+  cls1=12 steps, cls2=22, spawn=38, all land on `Cf(nextf 1 front)` exactly
+  (probe: `scratchpad/probe7m.py`, reproduce it). Gadget table (side R):
+    - FT **1 step** `A0/1L>B` (writes the +1 increment, moves straight onto
+      the frontier top in B, scratch `[S1]` on the right). Swept frontier
+      after the cross is `rep[S1](S b0)` -- i.e. `S b0`, **one less than #27's
+      `S(S b0)`**, because this FT adds only the increment.
+    - cross-pair `B1/1L>D D1/1L>B` (states B/D, start B); `stB7 k = if even k
+      then StA else StB`... i.e. deposit exit A, continue exit B.
+    - sep-continue `B0/0L>B`? -- recheck; the cross is leftward like #27.
+    - deposit `B0/1R>A` (leaves head `S1`, state A -- like #27's extra head).
+    - return: sweep `C1/1R>C`, start `A1/0R>C`, retsep `C0/1R>A A1/0R>C`,
+      **terminal `C0/1R>A` WRITES A ONE** (materialise-and-write) landing in
+      the edge state A -- so the deepest run GAINS one at the walk-off.
+- **THE DIVERGENCE (why #7 is not a #27 sed):** #27's return DECREMENTS the
+  deepest (frontier) run by 1 (removing the FT's extra scratch: swept
+  `S(S b0)` -> new frontier `S b0`, via `relaid`'s `relaid_b` borrow whose
+  net is deepest-1/nearest+1). #7's FT adds only 1, so the swept frontier is
+  already `S b0` = the correct new frontier, AND the terminal `C0` writes the
+  cell back -- so **#7's return conserves every run count**. Its `relaid7`
+  is a clean REVERSE-and-encode (frontier becomes nearest, all values
+  unchanged): `relaid7 [c0;..;cn] = rep[S1] cn ++ S0 :: .. ++ S0 :: rep[S1] c0`.
+  The concrete return still SHIFTS separators (retsep `C0/1R>A A1/0R>C`
+  borrows one from the next run), but nearest+1 (deposit head) and deepest-0
+  (no scratch) net to no change. So `return_R7` + its bridge must be
+  RE-DERIVED (not the `relaid_b`/`bridge_l` copy): sw7=sw27 (last bare) is
+  reusable, but `bcs7`/`relaid7`/`bridge7` differ (no `dec1` on the base;
+  the base is `[S b0]` not `[S(S b0)]`). Est. ~1/2 the #27 effort once the
+  reverse-encode bridge identity is stated. cross_run7 (B/D), ph_FT7 (1
+  step), the units, wave_L7, and vis (edge A: A->0,B->1,...) transcribe like
+  #27/#36. Then wrap: `Theorem nqh_1RB0LC_1LA1RD_1LA1LC_0RD1RB : ... := 
+  mirror_never_qh tm_7 <proof of NeverQuasiHaltsSt (mirror_tm tm_7)>` (note
+  `mirror_tm tm_7` must be DEFINITIONALLY the boarded machine; state its TM
+  literally and prove `mirror_tm tm_7 = tm_7m` by `reflexivity`, or board
+  `tm_7m` and show `mirror_tm tm_7 = tm_7m`).
+
+### New traps for the catalog (wave clean tier)
+- **`repeat constructor; lia` OVER-APPLIES** on `Forall (>=1) [S(S b0)]`: it
+  runs `constructor` into the `le` goal and mangles it. Use
+  `constructor; [lia | constructor]` (Forall_cons then Forall_nil), exactly
+  as #17 does. Bit me on the first #27 compile.
+- **FT genericity depends on the scratch not being read.** #27's 2-step FT
+  is generic in `L` ONLY because B0 pops the very `S1` that D0 pushed (never
+  reaches into L). Prove it with `wsteps_frame_r ... reflexivity` with
+  `l=l'=[]` (so `l'++L = L`, left literally unchanged). If a machine's FT
+  reads L, this breaks -- check by Compute first.
+- **`vis` reflexivity survives stuck `chd/ctl`.** For symbolic `p=b0::r0`,
+  `csteps k (Cf p)` reduces to `Some (q, <stuck tape>)`; `eexists; split;
+  reflexivity` still closes `fst c = q` because `fst (q,_) = q`. Max useful
+  depth is 3 (all four states appear in the first frontier gadget).
+- **Mirror machines: swept-frontier count = `S b0` when the FT is 1-step
+  (scratch-1), `S(S b0)` when 2/3-step.** Determines whether `relaid`
+  decrements. Always Compute the full cls1+cls2 pass to pin it; do not
+  assume the #27 dec applies.
+<!-- end wave #27/#36 boarded, #7 recon note -->
