@@ -1861,3 +1861,32 @@ premises.  Next session: build the gray decomposition (fixed-width
 `WgF` or `MonoCounter.Wg` with inert high context), prove one mini-lap
 (Gray_19.v lap_19 template, decrement direction), wrap in creach_iter,
 add poke/final, then wire into _CoqProject/manifest.
+
+## Wave #17: wave_L LANDED; return_R fully mapped (2026-07-21 cont. 2)
+
+`Wave_17.v` now has (all compile, axiom-clean): tm_17, cross_run, wbody/Cf17,
+ph_FT/ph_sepB/ph_dep/ph_spawn, and **wave_L** -- the leftward carry-wave fold
+(mirrors `carry`): crosses even blocks (run onto r via cross_run), deposits at
+the first odd block (ph_dep), or spawns past the lead (ph_spawn); `outL`/`outR`
+give the deposit-turnaround `(StA, (outL po blocks, S1, outR po blocks R))`.
+Threads `carry_ok` (no lead-stop, from P2) + Forall>=1 + R-starts-S1.
+
+**return_R -- the ONLY remaining proof piece, fully mapped.** From the
+deposit-turnaround sweep RIGHT (state D) to `Cf17 (nextf 0 front)`. Trajectory
+verified by Compute (front [4;3;1] -> [5;3;2], deposit-turnaround `(StA, (1^2 0
+1, S1, 1^2 0 1^6 0))` -> 10 steps -> `Cf17 [5;3;2] = (StD, (1^5 0 1^3 0 1^2 0 1,
+S0, []))`). Per-block units:
+  - start: `A1/0R>D` -- the deposit-block top S1 becomes a separator (StA->StD).
+  - run cross: `cycR` D unit `(StD,([],S1,[S1])) -> (StD,([S1],S1,[]))` re-lays
+    a swept run (head stays S1).
+  - separator BORROW gadget `D0/1R>A ; A1/0R>D` at each swept 0: `(StD,(L,S0,
+    S1::R)) -> ... -> (StD,(S0::S1::L, ?, R))`, moving one 1 across the boundary.
+The net re-lay: the frontier mirror `1^{S(S b0)}` becomes the correct new
+frontier `1^{S b0}` (the FT scratch is removed) and each crossed block's mirror
+is restored to its value; cls1 (deposit right after frontier) is just
+`A1 + cycR` (no interior seps), so start there. Then glue:
+`lap_17 := FT + cross_run(S b0) + wave_L + return_R`, and
+`nqh_1RB0RD_0LB1LC_1RA1LB_1RA1RD` via wglue_neverqh (A:=list nat, nextA:=nextf
+0, Inv:=WInv 0, Cf:=Cf17, a0:=[3;2;1]). boot: `csteps ~? c0 = Cf17 [3;2;1]`
+(Compute); vis: finite wsteps per state. #27/#36/#7 clone the skeleton.
+<!-- end wave #17 wave_L note -->
