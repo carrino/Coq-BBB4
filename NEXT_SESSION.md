@@ -1777,3 +1777,67 @@ event) via `wreach_iter`/`cycR`; the lap cases on `WInv_no_leadstop`. Then
 [3;2;1]`. #27/#36/#7 reuse the same skeleton with their gadget tables; #6/#24
 have 4-step 0-writing cross cycles (harder cross_run).
 <!-- end wave P2+P1 note -->
+
+## UPDATE (2026-07-21, same session): #9 is a GRAY-CODE double_counter -- lap9.py ALL OK
+
+`#9` (1RB0LC_1RC0RD_1LA0LC_1RD0RA, edge D) was reconnoitred fully and
+its mid-config family VALIDATED (`tools/counters/lap9.py 90` = ALL OK,
+j=2..6; totals 125/445/1661/6397/25085 match raw).
+
+Anchor `D9(j) = (10)^kg 1^acc`, head on the rightmost 1, state D;
+kg=2^j-1, acc=3j.  cconf:
+`(StD, (rep [S1] (acc-1) ++ rep [S0;S1] kg, S1, []))`.
+Doubling kg->2kg+1, acc->acc+3.
+
+**KEY: the doubling drives a GRAY-CODE counter** (NOT a base-4
+mixed-radix odometer like #30 -- #9 is genuinely gentler).  The i-th
+left-edge turnaround config (state A, head on the new left blank) is
+
+  f_i = (StA, ([], S0, rep [S1;S0] (kg+1+i) ++ gray_region(kg-i, j)))
+  gray_region(v,j) = [S0] ++ concat_{s<j} [bit_s(G(v)); S0; S0] ++ [S1]
+  G(v) = v xor (v>>1)  (reflected Gray code)
+
+Consecutive f_i differ by EXACTLY ONE gray-bit flip (verified Gray
+property: for j=3 the counter is G(7..0) = 4,5,7,6,2,3,1,0, each a
+single-bit change).  The comb grows one unit per step (kg+1+i), the
+Gray counter counts DOWN from G(kg) to G(0)=0 over kg steps, and the
+final all-zero state's spread reforms `D9(j+1)` exactly.
+
+**This is STRUCTURALLY the landed gray_counter #19 (`Gray_19.v`).**
+#19's anchor `(StC,([],S0, rep [S1;S0](p+2) ++ S0::Wg p))` is the same
+shape as f_i (comb `rep [S1;S0]` + `S0::`gray-slots).  Differences to
+handle in `Double_9.v`:
+  1. #9's mini-lap is one gray-code step but the MACRO lap chains `kg`
+     of them -> `CReach.creach_iter` over the mini-lap (this is why
+     #9 needs the closer; #19 is a single parametric lap).
+  2. #9 DECREMENTS the Gray counter (Wg(w) -> Wg(w-1)); the flip bit
+     for w->w-1 is `fst (cview (w-1))` (trailing 1s of w-1 = trailing
+     0s of w).  Use `Wg_some`/`Wg_none` with before=Wg(succ p),
+     after=Wg(p) (roles swapped vs #19).
+  3. Fixed width j: the high zero-slots above the flip are INERT
+     context R in each mini-lap (head turns at the flip), so no
+     fixed-width machinery is needed -- frame them as R.
+  4. Comb-doubling boundaries: a poke prefix D9(j) -> f_0 (the
+     nonempty `0<n` prefix for `creach_lap`) and a final spread
+     f_kg -> D9(j+1).
+
+CONFIRMED unit runs (probe9.py; all vs the real tm_9):
+  - collapse (leftward): `cycL(u=[S0;S1], w=[S1;S0], P=2)`:
+    `(A,([S0;S1],1,[])) -2-> (A,([],1,[S1;S0]))`.
+  - spread (rightward): `cycR(u=[S0;S1;S0;S1], w=[S1;S0;S1;S0], P=4)`:
+    `(B,([],1,[S0;S1;S0;S1])) -4-> (B,([S1;S0;S1;S0],1,[]))`
+    (2 comb units per cycle -> comb-parity split like #19's
+    comb_even/comb_odd + Gray_19's U2).
+  - poke edge unit: `(D,([],1,[])) ...` (D1=0RA, the doubling start).
+  - gray flip: the cview-slot flip, a bounded C/A/B push exactly as
+    Gray_19's phU3e/phU4s/phU5s family (different write table).
+
+Transcription is a Gray_19-scale proof wrapped in one `creach_iter`.
+Files staged: `tools/counters/{recon9,probe9,lap9}.py` (committed).
+Recommended next: build `theories/Counters/DblCounter.v` (fixed-width
+gray decomposition OR reuse `MonoCounter.Wg` with inert high context)
++ `theories/Machines/Counters/Double_9.v` per the Gray_19 template,
+importing `CReach` (qualified, to avoid the MonoCounter creach clash)
++ `MonoCounter` (for Wg/cview) + `WTape`/`LapGlue`.  #37 (side L,
+t=1+3j) is the likely next Gray-code sibling; #30/#32 are the harder
+base-4 odometers.
