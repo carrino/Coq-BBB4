@@ -24,7 +24,7 @@
     [LapGlue.glue_reach] with [Nat.iter k nextA a0] in place of the
     positive anchor.  No axioms. *)
 
-From Coq Require Import Arith Lia List.
+From Coq Require Import Arith Lia List Bool.
 From BBB4 Require Import BBB4_Statement CTape.
 Import ListNotations.
 
@@ -82,3 +82,144 @@ Proof.
 Qed.
 
 End WaveGlue.
+
+(** * The abstract parity odometer and its safety invariant (P2).
+
+    The wave state is the block vector; we drop the LEAD block (always 1)
+    and carry the FRONTIER-FIRST list of the non-lead blocks
+    [front = [B_m; B_{m-1}; ...; B_1]] (all >= 1).  One pass increments
+    the frontier (head) and propagates a parity carry: the carry deposits
+    +1 at the block just LEAD-ward of the first "effective-odd" block
+    (the frontier's parity is read with the machine's [poff] offset),
+    or -- if every block is effective-even -- SPAWNS a new length-1 block
+    (append [1]).  [nextf] is exactly verify.c's [wc_expected] on this
+    representation (validated by [Compute] against the raw orbit).
+
+    The SAFETY the family needs (verify.c [wc_parity_schema]): the carry
+    never runs past the lead (LEAD-STOP) and every spawn keeps the lead
+    at 1.  In this representation lead=1 is implicit, so bad-spawn cannot
+    occur; and LEAD-STOP is the carry depositing off the end of [front].
+    The invariant that forbids it: the EFFECTIVE PARITY WORD has an EVEN
+    number of set bits ([fp = false]).  Each pass flips exactly two parity
+    bits (frontier + deposit), so even-popcount is preserved; and a
+    lead-stop word is [0..0 1] (odd popcount), hence excluded.  This is
+    machine-independent -- proved once for all six wave machines. *)
+
+(** XOR of block parities. *)
+Fixpoint pbits (l : list nat) : bool :=
+  match l with [] => false | x :: r => xorb (Nat.odd x) (pbits r) end.
+
+(** Carry propagation from the frontier: [po] = "the previous block was
+    effective-odd, deposit here".  [[] , true] is the (unreachable under
+    the invariant) LEAD-STOP; [[] , false] is the SPAWN. *)
+Fixpoint carry (po : bool) (blocks : list nat) : list nat :=
+  match blocks with
+  | [] => if po then [] else [1]
+  | b :: r => if po then S b :: r else b :: carry (Nat.odd b) r
+  end.
+
+(** One abstract pass: increment the frontier, propagate the carry. *)
+Definition nextf (poff : nat) (front : list nat) : list nat :=
+  match front with
+  | [] => []
+  | b0 :: r => S b0 :: carry (Nat.odd (b0 + poff)) r
+  end.
+
+(** The effective parity word's popcount parity (frontier read with poff). *)
+Definition fp (poff : nat) (front : list nat) : bool :=
+  match front with [] => false | b :: r => xorb (Nat.odd (b + poff)) (pbits r) end.
+
+Lemma odd_Spoff : forall b0 poff,
+  Nat.odd (S b0 + poff) = negb (Nat.odd (b0 + poff)).
+Proof. intros. rewrite Nat.add_succ_l, Nat.odd_succ, Nat.negb_odd. reflexivity. Qed.
+
+Lemma pbits_true_step : forall blocks, pbits blocks = true ->
+  pbits (carry true blocks) = false /\ blocks <> [].
+Proof.
+  intros [|b r] H; simpl in H; [discriminate|].
+  split; [|discriminate]. simpl. rewrite Nat.odd_succ, <- Nat.negb_odd.
+  destruct (Nat.odd b), (pbits r); simpl in *; congruence.
+Qed.
+
+Lemma pbits_false_step : forall blocks, pbits blocks = false ->
+  pbits (carry false blocks) = true.
+Proof.
+  induction blocks as [|b r IH]; intros H; [reflexivity|].
+  simpl in H. simpl. destruct (Nat.odd b) eqn:Eb.
+  - assert (pbits r = true) by (destruct (pbits r); simpl in H; congruence).
+    destruct (pbits_true_step r H0) as [Hc _]. simpl. rewrite Hc. reflexivity.
+  - assert (pbits r = false) by (destruct (pbits r); simpl in H; congruence).
+    rewrite (IH H0). reflexivity.
+Qed.
+
+(** The core preservation: even effective-popcount is a pass invariant. *)
+Lemma fp_preserved : forall poff front,
+  fp poff front = false -> fp poff (nextf poff front) = false.
+Proof.
+  intros poff [|b0 r] H; [reflexivity|].
+  simpl in H. unfold nextf, fp. rewrite odd_Spoff.
+  destruct (Nat.odd (b0 + poff)) eqn:E0; simpl.
+  - assert (Hr : pbits r = true) by (destruct (pbits r); simpl in H; congruence).
+    destruct (pbits_true_step r Hr) as [Hc _]. rewrite Hc. reflexivity.
+  - assert (Hr : pbits r = false) by (destruct (pbits r); simpl in H; congruence).
+    rewrite (pbits_false_step r Hr). reflexivity.
+Qed.
+
+(** Wellformedness (every block >= 1) is preserved. *)
+Lemma carry_pos : forall po blocks, Forall (fun x => 1 <= x) blocks ->
+  Forall (fun x => 1 <= x) (carry po blocks).
+Proof.
+  intros po blocks; revert po; induction blocks as [|b r IH]; intros po H.
+  - destruct po; simpl; [constructor | repeat constructor; lia].
+  - inversion H; subst. destruct po; simpl.
+    + constructor; [lia | assumption].
+    + constructor; [assumption | apply IH; assumption].
+Qed.
+
+Lemma nextf_pos : forall poff front, Forall (fun x => 1 <= x) front ->
+  Forall (fun x => 1 <= x) (nextf poff front).
+Proof.
+  intros poff [|b0 r] H; [constructor|].
+  inversion H; subst. simpl. constructor; [lia | apply carry_pos; assumption].
+Qed.
+
+Lemma nextf_nonnil : forall poff front, front <> [] -> nextf poff front <> [].
+Proof. intros poff [|b0 r] H; [congruence|]. simpl. discriminate. Qed.
+
+(** The safety invariant. *)
+Definition WInv (poff : nat) (front : list nat) : Prop :=
+  fp poff front = false /\ Forall (fun x => 1 <= x) front /\ front <> [].
+
+Theorem WInv_preserved : forall poff front,
+  WInv poff front -> WInv poff (nextf poff front).
+Proof.
+  intros poff front (Hf & Hp & Hn). repeat split.
+  - apply fp_preserved; assumption.
+  - apply nextf_pos; assumption.
+  - apply nextf_nonnil; assumption.
+Qed.
+
+(** Explicit "never lead-stops": [carry_ok] is [false] exactly when the
+    carry would deposit past the lead; the invariant rules it out. *)
+Fixpoint carry_ok (po : bool) (blocks : list nat) : bool :=
+  match blocks with
+  | [] => negb po
+  | b :: r => if po then true else carry_ok (Nat.odd b) r
+  end.
+
+Lemma carry_ok_of_par : forall blocks po,
+  po = pbits blocks -> carry_ok po blocks = true.
+Proof.
+  induction blocks as [|b r IH]; intros po H; simpl in *.
+  - subst; reflexivity.
+  - destruct po; [reflexivity|]. apply IH.
+    destruct (Nat.odd b), (pbits r); simpl in *; congruence.
+Qed.
+
+Theorem WInv_no_leadstop : forall poff b0 r,
+  WInv poff (b0 :: r) -> carry_ok (Nat.odd (b0 + poff)) r = true.
+Proof.
+  intros poff b0 r (Hf & _ & _). simpl in Hf.
+  apply carry_ok_of_par.
+  destruct (Nat.odd (b0 + poff)), (pbits r); simpl in *; congruence.
+Qed.
