@@ -166,3 +166,68 @@ Proof.
   rewrite slotsf_app, slotsf_repeat_false. cbn [slotsf].
   rewrite <- app_assoc. reflexivity.
 Qed.
+
+(** The predecessor of an even value: SAME marker run and tail, only
+    the flip slot toggles (reflected Gray changes exactly one bit). *)
+Lemma gbn_pred_marker : forall r u j, Nat.odd u = true ->
+  gbn (2 ^ S r * u - 1) (S r + S j)
+  = repeat false r ++ true :: Nat.odd (Nat.div2 u) :: gbn (Nat.div2 u) j.
+Proof.
+  induction r as [| r IH]; intros u j Hu.
+  - rewrite Nat.pow_1_r.
+    set (m := Nat.div2 u).
+    assert (Hu2 : u = S (2 * m)).
+    { unfold m. rewrite (Nat.div2_odd u) at 1. rewrite Hu. cbn [Nat.b2n]. lia. }
+    replace (2 * u - 1) with (S (2 * (2 * m))) by (rewrite Hu2; lia).
+    replace (S 0 + S j) with (S (S j)) by lia.
+    rewrite gbn_odd_hd.
+    rewrite (Nat.odd_mul 2 m). cbn [Nat.odd Nat.even negb].
+    rewrite gbn_even_hd.
+    replace (Nat.div2 u) with m by reflexivity.
+    cbn [repeat app]. reflexivity.
+  - assert (Hpow : 2 ^ S (S r) * u = 2 * (2 ^ S r * u)).
+    { rewrite (Nat.pow_succ_r' 2 (S r)). lia. }
+    assert (Hu0 : u <> 0) by (intro Hc; subst; discriminate Hu).
+    assert (HM : 1 <= 2 ^ S r * u).
+    { assert (2 ^ S r <> 0) by (apply Nat.pow_nonzero; lia). nia. }
+    assert (Hodd : Nat.odd (2 ^ S r * u - 1) = true).
+    { assert (He : Nat.even (2 ^ S r * u) = true).
+      { rewrite Nat.even_mul.
+        replace (Nat.even (2 ^ S r)) with true;
+          [reflexivity
+          | symmetry; rewrite (Nat.pow_succ_r' 2 r), Nat.even_mul; reflexivity]. }
+      rewrite <- Nat.negb_odd in He. apply negb_true_iff in He.
+      replace (2 ^ S r * u) with (S (2 ^ S r * u - 1)) in He by lia.
+      rewrite Nat.odd_succ, <- Nat.negb_odd in He.
+      apply negb_false_iff in He. exact He. }
+    replace (2 ^ S (S r) * u - 1) with (S (2 * (2 ^ S r * u - 1)))
+      by (rewrite Hpow; lia).
+    replace (S (S r) + S j) with (S (S r + S j)) by lia.
+    rewrite gbn_odd_hd, Hodd. cbn [negb].
+    rewrite IH by exact Hu.
+    cbn [repeat app]. reflexivity.
+Qed.
+
+Lemma grr_even_pred : forall r u j, Nat.odd u = true ->
+  grr (2 ^ S r * u - 1) (S r + S j)
+    = S0 :: rep [S0; S0; S0] r ++ S1 :: S0 :: S0
+         :: (if Nat.odd (Nat.div2 u) then S1 else S0) :: S0 :: S0
+         :: slotsf (gbn (Nat.div2 u) j) ++ [S1].
+Proof.
+  intros r u j Hu. unfold grr. rewrite gbn_pred_marker by exact Hu.
+  rewrite slotsf_app, slotsf_repeat_false. cbn [slotsf].
+  rewrite <- app_assoc. reflexivity.
+Qed.
+
+(** Companion for [grr_even_marker]: expose the flip cell of the
+    successor side too, so the mini-lap sees both flip values. *)
+Lemma grr_even_flip : forall r u j, Nat.odd u = true ->
+  grr (2 ^ S r * u) (S r + S j)
+    = S0 :: rep [S0; S0; S0] r ++ S1 :: S0 :: S0
+         :: (if Nat.odd (Nat.div2 u) then S0 else S1) :: S0 :: S0
+         :: slotsf (gbn (Nat.div2 u) j) ++ [S1].
+Proof.
+  intros r u j Hu. rewrite grr_even_marker by exact Hu.
+  cbn [gbn]. rewrite Hu, xorb_true_l. cbn [slotsf].
+  destruct (Nat.odd (Nat.div2 u)); reflexivity.
+Qed.
