@@ -1890,3 +1890,52 @@ is restored to its value; cls1 (deposit right after frontier) is just
 0, Inv:=WInv 0, Cf:=Cf17, a0:=[3;2;1]). boot: `csteps ~? c0 = Cf17 [3;2;1]`
 (Compute); vis: finite wsteps per state. #27/#36/#7 clone the skeleton.
 <!-- end wave #17 wave_L note -->
+
+### #9 progress (2026-07-21 cont.): gray decomposition layer COMPLETE, axiom-clean
+
+`theories/Counters/DblCounter.v` now fully carries the gray algebra the
+mini-lap consumes (chunks 1/1b/1c, all `Closed under the global
+context`, in `_CoqProject` double block):
+  - encoding `gbn`/`slotsf`/`grr` (validated vs lap9.py gray_region);
+  - head bits `gbn_even_hd`/`gbn_odd_hd`;
+  - odd flip `grr_odd` (w odd: flip at slot 0, tail shared with w-1);
+  - even marker+flip `grr_even_marker`/`grr_even_flip` (value side) and
+    `gbn_pred_marker`/`grr_even_pred` (predecessor side): for w even
+    = 2^(S r)*u (u odd), BOTH grr(w) and grr(w-1) =
+    `S0 :: rep[S0;S0;S0] r ++ S1::S0::S0 :: FLIP::S0::S0 :: TAIL`, same
+    marker run + TAIL, only FLIP toggles -- the reflected-Gray
+    one-bit-change, proven structurally (no xor algebra);
+  - `factor2`: every 0<w = 2^r*u (u odd) -- bridges the family index
+    kg-i into the two cases.
+
+**REMAINING to land #9** (the mini-lap phase assembly + wrapper --
+NOT the gray algebra, which is done):
+1. Extract the tm_9 phase units for the gray region (Double_9.v already
+   has the comb units Ucol/Uspr): the odd-flip 3-step push
+   (A0;B0;C0 over slot0 `0,0,0`, turning left), the even D-fill cycR
+   over `rep[S0;S0;S0] r` up to the marker, the marker-clear + flip
+   push (2 sub-cases on `Nat.odd(Nat.div2 u)` = clear/set flip), and
+   the collapse cycL + edge-materialize.  Build a combinator mini-lap
+   (lap9.py-style `conc`/`cycR`/`cycL`) to emit them, differential
+   against raw.  Traced phase order (w=7, odd): edge-turn(1) ->
+   spread cycR(comb) -> flip push(3) -> collapse cycL(comb) ->
+   edge-materialize.  The flip writes `1,1,1` into slot0 and the
+   COLLAPSE rewrites the extra cells back (slot0 -> `1,0,0`) -- the
+   flip/collapse interaction is the one delicate bit to get exact.
+2. The mini-lap `creach (f i) (f (S i))`: f i = the framed anchor
+   `(StA, ([], S0, rep [S1;S0] (kg+1+i) ++ grr (kg-i) j))`.  Case
+   `w = kg-i` via `factor2`: r=0 -> grr_odd; r=S _ -> grr_even_flip
+   /grr_even_pred, sub-case `Nat.odd(Nat.div2 u)`.  Chain
+   phUspr(cycR) + D-fill + flip + phUcol(cycL) with rep-algebra
+   junctions (comb parity split like Gray_19 comb_even/comb_odd).
+3. `CReach.creach_iter` over i<kg -> creach (f 0)(f kg); poke prefix
+   `creach (D9 j) (f 0)` (gives 0<n via `CReach.creach_pos`), final
+   spread `creach (f kg)(D9(S j))`; `CReach.creach_lap` -> the
+   `LapGlue.Hlap` shape -> `lap_9`.  Then
+   `glue_neverqh tm_9 (fun p => D9 (S (Pos.to_nat p))) 1` with
+   `boot_9`/`vis_9` -> `nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA`.
+4. Corruption test + manifest row + wire Double_9.v into _CoqProject.
+
+The hard conceptual piece (the fixed-width reflected-Gray decrement
+decomposition) is DONE and reusable for #37.  What's left is the
+Gray_19-style mechanical phase transcription for tm_9's unit table.
