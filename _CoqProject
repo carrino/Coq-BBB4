@@ -240,6 +240,7 @@ theories/Tests/IRulesBlkPfxBatch_Corruption.v
 theories/Counters/WaveCounter.v
 theories/Machines/Counters/Wave_17.v
 theories/Machines/Counters/Wave_27.v
+theories/Machines/Counters/Wave_36.v
 theories/Tests/CountersWave_Corruption.v
 
 # --- counters track: double ---
