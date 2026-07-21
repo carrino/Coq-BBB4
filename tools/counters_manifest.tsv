@@ -16,3 +16,4 @@ machine	theorem	file
 1RB0LC_1LC0RB_1RD1LA_0LA1RB	nqh_1RB0LC_1LC0RB_1RD1LA_0LA1RB	theories/Machines/Counters/Bounce_8.v
 1RB1LD_1RC0RB_1LA1RB_0LD0LA	nqh_1RB1LD_1RC0RB_1LA1RB_0LD0LA	theories/Machines/Counters/Bounce_33.v
 1RB0RD_0LB1LC_1RA1LB_1RA1RD	nqh_1RB0RD_0LB1LC_1RA1LB_1RA1RD	theories/Machines/Counters/Wave_17.v
+1RB1LC_1LC0RD_0LC1LA_1RB1RD	nqh_1RB1LC_1LC0RD_0LC1LA_1RB1RD	theories/Machines/Counters/Wave_27.v

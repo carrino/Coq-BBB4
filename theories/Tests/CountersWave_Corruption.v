@@ -20,7 +20,7 @@
 From Coq Require Import Arith Bool List PArith.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Counters Require Import WTape WaveCounter.
-From BBB4.Machines.Counters Require Import Wave_17.
+From BBB4.Machines.Counters Require Import Wave_17 Wave_27.
 Import ListNotations.
 
 (** ** Wall discipline *)
@@ -85,4 +85,63 @@ Example boot_wrong_index : match csteps tm_17 48 CTape.c0 with
                            | Some c => ceqb c (Cf17 [3; 2; 1])
                            | None => false
                            end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** #27 (1RB1LC_1LC0RD_0LC1LA_1RB1RD, poff 1) -- same controls.
+
+    The #27 FT is a 2-step [D0/1R>B B0/1L>C] digging the right blank; the
+    spawn digs the left blank at the [C1] step; the leftward cross is the
+    C/A pair. *)
+
+(** FT writes into the right blank; with the right wall ON it dies. *)
+Example wall_FT_right_27 : wsteps true true tm_27 1 (StD, ([S1], S0, [])) = None.
+Proof. reflexivity. Qed.
+
+(** The genuine FT (right wall OFF) succeeds. *)
+Example ok_FT_27 : wsteps true false tm_27 2 (StD, ([], S0, [])) = Some (StC, ([], S1, [S1])).
+Proof. reflexivity. Qed.
+
+(** The spawn crosses the lead into the LEFT blank; with the left wall ON
+    it dies at the [C1] step that pops the empty left list. *)
+Example wall_spawn_left_27 : wsteps true true tm_27 1 (StC, ([], S1, [S0])) = None.
+Proof. reflexivity. Qed.
+
+(** tm_27 with [C1] re-routed to StD instead of StA: the C/A alternation
+    of [cross_run27] is destroyed. *)
+Definition tm_27_mut : TM := fun q s =>
+  match q, s with
+  | StA, S0 => mk S1 DR StB | StA, S1 => mk S1 DL StC
+  | StB, S0 => mk S1 DL StC | StB, S1 => mk S0 DR StD
+  | StC, S0 => mk S0 DL StC | StC, S1 => mk S1 DL StD  (* was StA *)
+  | StD, S0 => mk S1 DR StB | StD, S1 => mk S1 DR StD
+  end.
+
+(** The genuine cross-pair unit (C/A). *)
+Example ok_crosspair_27 : wsteps true true tm_27 2 (StC, ([S1; S1], S1, []))
+                        = Some (StC, ([], S1, [S1; S1])).
+Proof. reflexivity. Qed.
+
+(** The mutant does NOT realise it. *)
+Example mut_crosspair_27 : wsteps true true tm_27_mut 2 (StC, ([S1; S1], S1, []))
+                         <> Some (StC, ([], S1, [S1; S1])).
+Proof. vm_compute. discriminate. Qed.
+
+(** Distinct #27 anchors are distinguished by [ceqb]; the boot config is
+    not the next event; the boot reaches [Cf27 [4;2;1]] at 50 steps only. *)
+Example boot_anchor_distinct_27 : ceqb (Cf27 [4; 2; 1]) (Cf27 [5; 3; 1]) = false.
+Proof. reflexivity. Qed.
+
+Example boot_not_next_27 : ceqb (Cf27 [4; 2; 1]) (Cf27 (nextf 1 [4; 2; 1])) = false.
+Proof. reflexivity. Qed.
+
+Example boot_reaches_27 : match csteps tm_27 50 CTape.c0 with
+                          | Some c => ceqb c (Cf27 [4; 2; 1])
+                          | None => false
+                          end = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Example boot_wrong_index_27 : match csteps tm_27 49 CTape.c0 with
+                              | Some c => ceqb c (Cf27 [4; 2; 1])
+                              | None => false
+                              end = false.
 Proof. vm_compute. reflexivity. Qed.
