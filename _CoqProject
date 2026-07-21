@@ -242,3 +242,4 @@ theories/Machines/Counters/Wave_17.v
 
 # --- counters track: double ---
 theories/Counters/CReach.v
+theories/Counters/DblCounter.v
