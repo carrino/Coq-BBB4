@@ -1841,3 +1841,23 @@ importing `CReach` (qualified, to avoid the MonoCounter creach clash)
 + `MonoCounter` (for Wg/cview) + `WTape`/`LapGlue`.  #37 (side L,
 t=1+3j) is the likely next Gray-code sibling; #30/#32 are the harder
 base-4 odometers.
+
+### #9 foundation LANDED (compiling): theories/Machines/Counters/Double_9.v
+
+A machine-checked WIP foundation compiles standalone
+(`coqc -Q theories BBB4 theories/Machines/Counters/Double_9.v`, EXIT 0;
+NOT yet in _CoqProject / manifest -- no theorem yet):
+  - `tm_9`, anchor `D9(j) = (StD,(rep[S1](3j-1)++rep[S0;S1](2^j-1),S1,[]))`;
+  - comb units `Ucol` (collapse cycL u=[S0;S1] w=[S1;S0] P=2) and
+    `Uspr` (spread cycR u=[S0;S1;S0;S1] w=[S1;S0;S1;S0] P=4) + their
+    transported phases `phUcol`/`phUspr`;
+  - right-edge visit units `UvA/UvB/UvC` + `phUv*`, and `vis_9`
+    (every state reached from any D9(j) at offset 0/1/2/3) -- DONE;
+  - `boot_9` (blank -> D9(2) in 47 steps, vm_compute) -- DONE.
+Only `lap_9` (the creach_iter over the gray mini-laps + poke prefix +
+final spread) and the `nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA` theorem remain;
+`vis_9`+`boot_9` already satisfy two of the three `glue_neverqh`
+premises.  Next session: build the gray decomposition (fixed-width
+`WgF` or `MonoCounter.Wg` with inert high context), prove one mini-lap
+(Gray_19.v lap_19 template, decrement direction), wrap in creach_iter,
+add poke/final, then wire into _CoqProject/manifest.
