@@ -1289,7 +1289,7 @@ irules family. Files (all `functional_extensionality_dep` only):
 - Deleting a trailing NON-load-bearing prefix run yields a valid
   GENERALIZED rule (its content joins the opaque rest) — accepted.
 
-### Conveyor-belt step done (proven tier)
+### Conveyor-belt step done (proven tier) -- base `make` GREEN with the new tables
 `tools/proven_map.tsv` is now COMMITTED (reconstructed from the
 manifests; reproduction test: its 3,620-row subset regenerates the
 committed `Proven_*.v` byte-identically — the audit's file/theorem
