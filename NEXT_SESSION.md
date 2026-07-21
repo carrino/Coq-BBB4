@@ -1724,3 +1724,56 @@ gentler first FULL board than #30 -- consider reordering to #9 first
 to validate the creach_iter lap shape on an easier counter, then
 return to #30.
 <!-- end double track -->
+
+## Wave P2 LANDED + #17 P1 in progress (2026-07-21 cont.)
+
+**P2 DONE, axiom-clean** (`theories/Counters/WaveCounter.v`): the abstract
+parity odometer `nextf`/`carry` (= verify.c `wc_expected`, Compute-validated),
+`WInv poff front := fp poff front = false /\ Forall (>=1) front /\ front<>[]`
+(even popcount of the effective parity word), `WInv_preserved` and
+`WInv_no_leadstop` (both "Closed under the global context" -- ZERO axioms).
+Key math: each pass flips exactly 2 parity bits so even-popcount is invariant;
+lead-stop needs the odd word `0..01`, excluded. Unifies both poff via the
+effective frontier bit; lead is dropped (implicit 1) so bad-spawn is impossible.
+Also added to WaveCounter: `wreach`/`wreach_iter`/`wreach_lap` (reachability
+closer for the nested folds).
+
+**#17 P1 crux DONE** (`theories/Machines/Counters/Wave_17.v`): `tm_17` +
+`cross_run` -- crossing a run of ones leftward, `csteps tm_17 (S k)
+(StB,(rep[S1]k++S0::rest,S1,R)) = Some (stB k,(rest,S0,rep[S1](S k)++R))`,
+`stB k = if even k then StC else StB` (exit state = run parity: C=deposit,
+B=continue). Well-founded 2-step induction. Compiles axiom-clean.
+
+**Remaining for #17 (the two folds).** Confirmed phase units (all `wsteps`/
+`csteps` reflexivity, from Compute on tm_17):
+  - FT (br=false, 3): `csteps 3 (StD,(L,S0,[])) = Some(StB,(S1::L,S1,[S0]))`
+    -- generic in L (never reads left); prove via `wsteps_frame_r` of the
+    empty-window unit `wsteps true false tm_17 3 (StD,([],S0,[])) =
+    Some(StB,([S1],S1,[S0]))`.
+  - sep-continue B0 (1): `(StB,([S1],S0,R)) -> (StB,([],S1,S0::R))` -- wait,
+    at a separator head=S0 in state B: `csteps 1 (StB,(rest,S0,R)) =
+    Some(StB,(?,hd rest,S0::R))`; actually the head after cross_run is S0 and
+    state B => step B0/0L>B moves left onto next block: `(StB,(S1::rest,S0,R))
+    -> (StB,(rest,S1,S0::R))` then cross the next run in state B head S1.
+  - deposit C0 (1): `(StC,(X,S0,S1::R)) -> (StA,(S1::X,S1,R))`.
+  - return: A1/0R>D (1) then D-sweep. D over a one: `(StD,(L,S1,R))->
+    (StD,(S1::L,chd R,ctl R))`; return separator D0;A1: at a swept 0
+    `(StD,(L,S0,S1::R)) -> ...`. The rightward return re-lays each block; it
+    is a `cycR`-style fold over the swept region (state D), mirroring the
+    leftward fold.
+  - deposit turnaround (cls1 example, front [3;2;1]->[4;3;1]): the leftward
+    wave = FT ++ cross_run(S b0) at the frontier; if exit StC (odd b0) deposit
+    immediately; else B0-continue then cross_run(a-1) per block until StC.
+    Full cls1 = 14 steps, cls2 = 24 steps, both land EXACTLY on Cf(nextf).
+
+Structure to finish: a recursive `wave_L` (mirrors `carry`: cross frontier,
+then while exit=B do B0-continue+cross_run, until exit=C deposit; produces the
+deposit-turnaround config with crossed blocks mirrored onto r) via `wreach`,
+then a recursive `return_R` (state-D rightward fold consuming r, re-laying the
+event) via `wreach_iter`/`cycR`; the lap cases on `WInv_no_leadstop`. Then
+`boot_17` (Compute, ~? steps to Cf [3;2;1] i.e. boot front [3;2;1]),
+`vis_17` (finite wsteps witnesses per state), instantiate `wglue_neverqh` with
+`A := list nat`, `nextA := nextf 0`, `Inv := WInv 0`, `Cf := Cf17`, `a0 :=
+[3;2;1]`. #27/#36/#7 reuse the same skeleton with their gadget tables; #6/#24
+have 4-step 0-writing cross cycles (harder cross_run).
+<!-- end wave P2+P1 note -->
