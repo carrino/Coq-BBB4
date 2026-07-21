@@ -101,3 +101,57 @@ Proof.
   pose proof (wsteps_frame tm_17 1 StC [] S0 [S1] StA [S1] S1 [] X R) as H.
   cbn [app] in H. apply H. reflexivity.
 Qed.
+
+(** Spawn: at the lead's separator the head crosses the lead into the left
+    blank and deposits a new leftmost block. *)
+Lemma ph_spawn : forall R,
+  csteps tm_17 3 (StB, ([S1], S0, R)) = Some (StA, ([S1], S1, S0 :: R)).
+Proof. reflexivity. Qed.
+
+(** ** The leftward carry wave (fold, mirrors [carry]).
+
+    [outL]/[outR] give the deposit-turnaround config (state A, ready to
+    sweep right).  [po] tracks "deposit here" as in [carry]; the wave
+    crosses even blocks (run onto the right), deposits at the first odd
+    block, or spawns past the lead. *)
+Fixpoint outL (po : bool) (blocks : list nat) : list Sym :=
+  match blocks with
+  | [] => [S1]
+  | b :: r => if po then S1 :: wbody (b :: r) else outL (Nat.odd b) r
+  end.
+
+Fixpoint outR (po : bool) (blocks : list nat) (R : list Sym) : list Sym :=
+  match blocks with
+  | [] => S0 :: R
+  | b :: r => if po then tl R else outR (Nat.odd b) r (rep [S1] b ++ S0 :: R)
+  end.
+
+Lemma wave_L : forall blocks po R,
+  carry_ok po blocks = true ->
+  Forall (fun x => 1 <= x) blocks ->
+  (po = true -> exists R', R = S1 :: R') ->
+  wreach tm_17 (if po then StC else StB, (wbody blocks, S0, R))
+              (StA, (outL po blocks, S1, outR po blocks R)).
+Proof.
+  induction blocks as [|b r IH]; intros po R Hok Hpos HR.
+  - destruct po; simpl in Hok; [discriminate|].
+    simpl. apply wreach_csteps with (n := 3). apply ph_spawn.
+  - inversion Hpos as [|? ? Hb Hr]; subst.
+    destruct po.
+    + destruct (HR eq_refl) as (R' & ->). simpl.
+      apply wreach_csteps with (n := 1). apply ph_dep.
+    + simpl in Hok |- *.
+      destruct b as [|b']; [lia|].
+      eapply wreach_trans.
+      { apply wreach_csteps with (n := 1).
+        change (wbody (S b' :: r)) with (S1 :: (rep [S1] b' ++ S0 :: wbody r)).
+        apply ph_sepB. }
+      eapply wreach_trans.
+      { apply wreach_csteps with (n := S b'). apply cross_run. }
+      replace (stB b') with (if Nat.odd (S b') then StC else StB);
+        [| unfold stB; rewrite Nat.odd_succ; reflexivity].
+      cbn [outL outR]. apply IH.
+      * exact Hok.
+      * exact Hr.
+      * intro Hodd. exists (rep [S1] b' ++ S0 :: R). reflexivity.
+Qed.
