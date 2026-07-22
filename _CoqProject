@@ -182,6 +182,13 @@ theories/Census/ProvenQH_64.v
 theories/Census/ProvenQH_65.v
 theories/Census/ProvenQH_Data.v
 # --- end proven-QH tier ---
+# --- re-root QH tier: list-B 0RB residue boarded R_QH via qh_reroot ---
+theories/Census/RerootQH_00.v
+theories/Census/RerootQH_01.v
+theories/Census/RerootQH_02.v
+theories/Census/RerootQH_03.v
+theories/Census/RerootQH_Data.v
+# --- end re-root QH tier ---
 theories/Census/Run.v
 theories/Tests/Census_Corruption.v
 theories/Tests/Reroot_Corruption.v

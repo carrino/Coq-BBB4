@@ -5,22 +5,6 @@ From BBB4.Census Require Import Deferred_Defs.
 Import ListNotations.
 
 Definition rows_07_000 : list (list (option Trans)) := [
-[t1RB;t1LD;t1LC;t0RB;t0LD;t1RA;t1LD;t1RB];
-[t1RB;t1LD;t1LC;t0RB;t0RA;t0LC;t0LD;t0LC];
-[t1RB;t1LD;t1LC;t0RB;t0RA;t0LC;t0LD;t1RB];
-[t1RB;t1LD;t1LC;t0RB;t0RA;t0LC;t1RD;t1RA];
-[t1RB;t1LD;t1LC;t0RB;t0RA;t1LA;t0LD;t0RA];
-[t1RB;t1LD;t1LC;t0RB;t0RA;t1RA;t0LD;t0LC];
-[t1RB;t1LD;t1LC;t0RB;t0RA;t1RA;t0LD;t1RB];
-[t1RB;t1LD;t1LC;t0RB;t0RA;t1RB;t0LD;t0LC];
-[t1RB;t1LD;t1LC;t0RB;t0RA;t1RB;t0LD;t1RB];
-[t1RB;t1LD;t1LC;t0RB;t0RC;t0LD;t1LA;tN];
-[t1RB;t1LD;t1LC;t0RB;t1LD;t1RA;t0LD;t1RB];
-[t1RB;t1LD;t1LC;t0RB;t1LD;t1RA;t1LD;t1RB];
-[t1RB;t1LD;t1LC;t0RB;t1RA;t1LA;t0LD;t0RA];
-[t1RB;t1LD;t1LC;t0RB;t1RC;t1LA;t0LC;t0LD];
-[t1RB;t1LD;t1LC;t0RC;t0LA;t1RC;t1LA;t0RC];
-[t1RB;t1LD;t1LC;t0RC;t0LD;t0RB;t1LA;tN];
 [t1RB;t1LD;t1LC;t0RC;t0LD;t0RC;t1LA;tN];
 [t1RB;t1LD;t1LC;t0RC;t0LD;t1RC;t1LA;t0RC];
 [t1RB;t1LD;t1LC;t0RC;t1LA;t0LD;t0LC;t0RB];
@@ -504,9 +488,7 @@ Definition rows_07_000 : list (list (option Trans)) := [
 [t1RB;t1RB;t1RC;t1LB;t0LB;t1RD;t0LA;t0RC];
 [t1RB;t1RB;t1RC;t1LB;t0LB;t1RD;t1LA;t0RC];
 [t1RB;t1RB;t1RC;t1LB;t1LA;t0RD;t0LB;t1RD];
-[t1RB;t1RB;t1RC;t1LB;t1LA;t1RD;t0LB;t0RC]
-].
-Definition rows_07_001 : list (list (option Trans)) := [
+[t1RB;t1RB;t1RC;t1LB;t1LA;t1RD;t0LB;t0RC];
 [t1RB;t1RB;t1RC;t1LB;t1LA;t1RD;t1LB;t0RB];
 [t1RB;t1RB;t1RC;t1LB;t1LA;t1RD;t1LB;t1RC];
 [t1RB;t1RB;t1RC;t1LB;t1LB;t1RD;t0LA;t1RC];
@@ -522,7 +504,9 @@ Definition rows_07_001 : list (list (option Trans)) := [
 [t1RB;t1RC;t0LA;tN;t0RD;t0RC;t1LD;t1RC];
 [t1RB;t1RC;t0LA;tN;t1LC;t1RD;t0RC;t0RD];
 [t1RB;t1RC;t0LA;tN;t1LC;t1RD;t1LC;t0RD];
-[t1RB;t1RC;t0LA;tN;t1LD;t0RA;t0RA;t1LC];
+[t1RB;t1RC;t0LA;tN;t1LD;t0RA;t0RA;t1LC]
+].
+Definition rows_07_001 : list (list (option Trans)) := [
 [t1RB;t1RC;t0LA;tN;t1LD;t0RA;t1RD;t1LC];
 [t1RB;t1RC;t0LA;tN;t1LD;t0RC;t0LD;t1RC];
 [t1RB;t1RC;t0LA;tN;t1LD;t0RC;t1LD;t1RC];
@@ -1006,9 +990,7 @@ Definition rows_07_001 : list (list (option Trans)) := [
 [t1RB;t1RD;t1LB;t1LC;t1RD;t1LC;t1LC;t1RA];
 [t1RB;t1RD;t1LB;t1RC;t0RA;t1LC;t1RA;t0LC];
 [t1RB;t1RD;t1LB;t1RC;t0RA;t1LD;t1LC;t0RA];
-[t1RB;t1RD;t1LB;t1RC;t0RC;t1LD;t1LA;t0LD]
-].
-Definition rows_07_002 : list (list (option Trans)) := [
+[t1RB;t1RD;t1LB;t1RC;t0RC;t1LD;t1LA;t0LD];
 [t1RB;t1RD;t1LB;t1RC;t0RD;t1LC;t1RA;t0LC];
 [t1RB;t1RD;t1LB;t1RC;t1RA;t1LC;t1LC;t0RC];
 [t1RB;t1RD;t1LB;t1RC;t1RA;t1LC;t1LC;t1RA];
@@ -1024,7 +1006,9 @@ Definition rows_07_002 : list (list (option Trans)) := [
 [t1RB;t1RD;t1LC;tN;t1RA;t1LC;t1LC;t0RC];
 [t1RB;t1RD;t1LC;tN;t1RA;t1LC;t1LC;t1RA];
 [t1RB;t1RD;t1LC;tN;t1RC;t1LD;t1LC;t0RA];
-[t1RB;t1RD;t1LC;tN;t1RD;t1LC;t1LC;t1RA];
+[t1RB;t1RD;t1LC;tN;t1RD;t1LC;t1LC;t1RA]
+].
+Definition rows_07_002 : list (list (option Trans)) := [
 [t1RB;t1RD;t1LC;t0LA;t0RA;t0LC;t1RA;tN];
 [t1RB;t1RD;t1LC;t0LA;t0RB;t1LA;t0RD;t0LC];
 [t1RB;t1RD;t1LC;t0LA;t0RD;t0LC;t1LA;t0RB];

@@ -156,6 +156,45 @@ def main():
               f"residue = {len(newset)} (dropped {len(proven)} proven + "
               f"{len(pq_hold)} provenqh-holdout + {len(pq_res)} provenqh-residue "
               f"= {len(proven) + len(pqmap)} total)")
+    elif "--reroot" in flags:
+        # PROVEN + PROVEN-QH + RE-ROOT: everything the --provenqh mode drops
+        # (identical asserts, preserved verbatim), PLUS the committed R_QH
+        # RE-ROOT tier (Census/RerootQH_Data.v = reroot_qh_list): list-B 0RB
+        # residue machines boarded R_QH by qh_reroot through a tiny never-QH
+        # core.  Each has a committed in-Coq theorem the decider returns
+        # directly, so it leaves D_census at ZERO walk cost.  The re-root drop
+        # set is read from tools/reroot_boarded.txt; it lands ENTIRELY in the
+        # residue and is disjoint from the proven/provenQH drops.
+        proven = txt(os.path.join(HERE, "proven_dropped.txt"))
+        assert len(proven) == 3670, len(proven)
+        assert not (proven - holdouts), "proven_dropped not in holdouts"
+        assert not (STAY & proven), "stay-QH machine in proven drop list"
+        pqmap = tsv_col0(os.path.join(HERE, "provenqh_map.tsv"))
+        pq_hold = pqmap & holdouts
+        pq_res = pqmap & residue
+        stray = pqmap - holdouts - residue
+        assert not stray, ("provenqh_map machine outside holdouts+residue",
+                           len(stray), sorted(stray)[:3])
+        assert not (pq_hold & proven), "provenqh holdout overlaps proven drop"
+        assert not (STAY & pqmap), "a stay-QH machine boarded the R_QH tier"
+        # the re-root tier (new)
+        reroot = txt(os.path.join(HERE, "reroot_boarded.txt"))
+        rr_stray = reroot - residue
+        assert not rr_stray, ("reroot machine outside residue",
+                              len(rr_stray), sorted(rr_stray)[:3])
+        assert not (reroot & pqmap), "reroot overlaps provenQH drop"
+        assert not (reroot & proven), "reroot overlaps proven drop"
+        assert not (STAY & reroot), "a stay-QH machine boarded the re-root tier"
+        new_holdouts = sorted(holdouts - proven - pq_hold)
+        new_residue = sorted(residue - pq_res - reroot)
+        newset = set(new_holdouts) | set(new_residue)
+        assert newset == old - proven - pqmap - reroot, "new set != old minus drops"
+        assert STAY <= newset, "stay-QH machine lost"
+        print(f"[reroot] {len(new_holdouts)} holdouts + {len(new_residue)} "
+              f"residue = {len(newset)} (dropped {len(proven)} proven + "
+              f"{len(pq_hold)} provenqh-holdout + {len(pq_res)} provenqh-residue "
+              f"+ {len(reroot)} reroot = "
+              f"{len(proven) + len(pqmap) + len(reroot)} total)")
     else:
         # --- stage (2): subtract the four lever drop-lists ---
         proven = txt(os.path.join(HERE, "proven_dropped.txt"))
