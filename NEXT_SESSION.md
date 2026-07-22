@@ -146,6 +146,89 @@ to drop them. 3. Re-run `make census` on stable hardware (Class 2) → new lower
 
 ---
 
+## provenQH tier LANDED (2026-07-22, branch claude/coq-bbb4-harvest-wave-1-rkqdnm)
+
+The **R_QH sibling of the proven tier** — the theorem shape the whole
+harvest boards through. Machines with a committed census-grade quasihalting
+theorem (`NonHalt /\ QHBound B /\ QuasiHaltsSt`) now leave `D_census` by a
+direct PositiveMap lookup returning `R_QH`, at ZERO walk cost — same
+conveyor-belt mechanism as the proven (R_NeverQH) tier.
+
+**Landed + pushed (base `make` green on every tier file; commits on the
+branch):**
+- `Census/Decide.v`: section vars `ProvQH` + `HPQ`
+  (`Forall (fun tm => NonHalt tm /\ QHBound B tm /\ QuasiHaltsSt tm)`);
+  `decide_easy` takes the `qm` map, looked up ahead of the deferred
+  fallthrough, returning `R_QH`; `decide_easy_WF` discharges it from `HPQ`.
+- `Machines/QHBoard/QHB_XX.v`: per-machine census-grade QHBound theorems,
+  closed by `ngram_check_qhbound_sound` (PLAIN gate) or
+  `ngram_check_qhbound_lex_sound` (LEX gate), `vm_compute`.
+- `Census/ProvenQH_XX.v` + `ProvenQH_Data.v`: `provenqh_list` + its
+  `Forall` cert `provenqh_all`, wired into `Run.v`'s `decider`/`decider_WF`.
+- `Tests/Census_Corruption.v`: proven-QH tier controls (exact lookup:
+  hit / mutant-miss / nonmember-miss; and the earned-verdict guard —
+  `R_QH` only with the map entry, `R_Unknown` absent).
+- `tools/gen_provenqh.py`: the emitter (PLAIN then LEX per machine).
+- `tools/regen_residue.py --provenqh`: drops the boarded machines
+  (proven + provenqh, split holdout/residue via `provenqh_map.tsv`) from
+  `D_census`. Asserted; honest at any scale.
+
+**THE LOAD-BEARING BUG (do not re-introduce):** the census `R_QH` contract
+needs `QHBound` (every quiet state bounded), which is STRICTER than the
+wrap sweep's `QuasiHaltsSt` (one state quiet). So listB is NOT 100%
+boardable to the census contract — it must re-pass the *QHBound* checker
+(plain acyclicity or lex liveness). And the FIRST emitter reused
+`sweep_qhbound_residue.wrapped_closure`, which does **not grow** the n-gram
+sets (no `lset |= newl`) and so under-approximates the real Coq `ng_grow`
+→ it closed for the holdouts but caught **0%** of listB. Fix = grow the
+sets to a fixpoint (as `gen_residue_wrap.closure_sizes` does); `gen_provenqh`
+now does this + full pattern-measure vocabulary. After the fix: holdouts
+16/18 (= the known `provenqh_dropped` set; the 2 `provenqh_stay` genuinely
+don't board), listB **~86%** caught (t<=1024<B_census, so the `S t -> 2000`
+lift is sound; ~57% plain gate, ~43% lex).
+
+**State at hand-off (FULL listB LANDED):** the tier boards **6,517
+machines** = 16 holdouts + **6,501 of the 7,976 four-state listB residue
+machines (81.5%)** -- 4,699 plain gate, 1,818 lex gate. `Deferred_*`
+regenerated via `regen_residue.py --provenqh`: **D_census = 9,548** (27
+holdouts + 9,521 residue), down from 16,065; base `make` green,
+`Print Assumptions provenqh_all`/`decider_WF` = `functional_extensionality_dep`
+only. The 1,475 uncaught listB (`tools/provenqh_uncaught.txt`) resist the
+QHBound gates at n<=4, t<=1024 (t is capped at 1999 by B_census=2000, so
+t=4096 is out; n=5,6 might recover a few -- low priority). Census re-cert
+(the native walk re-certifying `census_decided` at D_census=9,548) is
+PARKED for the box -- only the `Deferred_*` tables changed among census
+`.v` inputs.
+
+**Compile tax (measured, the key scaling constraint):** `QHB_XX.v` ~3s /
+100 machines; `ProvenQH_XX.v` ~30s / 100 machines (the `Forall` assembly,
+dominated by Coq elaborating 100 large hypotheses, NOT `lia`). Base `make`
+itself is dominated by the unchanged IRules fuel-3e5 `vm_compute` batches
+(~5.5 GB each, -j2 max per the OOM rule, ~30-40 min cold). So: the batch
+layer builds ONCE (its `.vo` persist), then tier iterations are fast
+incremental builds. Board listB in ~2k-machine chunks (~20 `ProvenQH`
+files ≈ 10 min compile), commit each (chunk-commit discipline; the emitter
+is deterministic so chunks are byte-stable and `make` skips built ones).
+If full-scale-in-one-build is wanted, first speed up the `ProvenQH` Forall
+(e.g. per-machine `census_qh` lemmas in the QHB file + one nested
+`Forall_cons` term — untested).
+
+**Next (steps 1+2+4 for provenQH are DONE; D_census 16,065 -> 9,548):**
+to reach the ~6,200 target, the two remaining independent tracks:
+(3) **re-root bridge** (`BRIDGE.md`; ~1,854 machines) -- the
+`qhbound_reroot`/`neverqh_reroot` lemma family + the 680-core vm_compute
+table + dedup + 107 cert-boards. Independent; good as a parallel Opus
+agent. (4) **listC state-nQH** (~1,496 census) -- these get
+`NeverQuasiHaltsSt` theorems via the EXISTING NGram-rank / irules
+checkers and join the **proven (R_NeverQH) tier** (not provenQH): fork
+the `gen_proven`/`gen_bulk_certs` path over the `neverqh_rank` /
+`irules claim_qh_state F` reps (SWEEP.md §4-6), then extend
+`proven_dropped.txt` + `regen_residue.py`. Both land the same
+proven/provenqh-tier way (per-machine theorem -> drop at regen, zero walk
+cost). Emitter uncaught list: `tools/provenqh_uncaught.txt`.
+
+---
+
 # Next session: start here
 
 State as of 2026-07-16 (branch `claude/easy-machines-bb5-strategy-8pz2fn`).

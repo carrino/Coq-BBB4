@@ -509,6 +509,12 @@ Variable rw_rungs : list (nat * nat * nat). (** (block L, threshold T,
 Variable rw_fuel : nat.                 (** closure fuel for the RepWL tier *)
 Variable Prov : list TM.       (** the proven never-quasihalting list *)
 Hypothesis HP : Forall NeverQuasiHaltsSt Prov. (** its in-Coq certificate *)
+Variable ProvQH : list TM.     (** the proven census-grade QUASIHALTING list *)
+(** its in-Coq certificate: each machine is non-halting, has every quiet
+    state's last visit bounded by [B] ([QHBound B]), and quasihalts.  This
+    is exactly the [R_QH] contract, so a lookup hit discharges it directly. *)
+Hypothesis HPQ :
+  Forall (fun tm => NonHalt tm /\ QHBound B tm /\ QuasiHaltsSt tm) ProvQH.
 
 Definition try_tc_cands (tm : TM) (mirrored : bool)
     (cands : list (nat * nat)) : bool :=
@@ -600,7 +606,7 @@ Definition try_qhb (tm : TM) : bool :=
 Definition try_rw (tm : TM) : bool :=
   existsb (fun '(L, T, t) => rw_tier tm L T t rw_fuel) rw_rungs.
 
-Definition decide_easy (pm dm : DeferredMap) (tm : TM) : QHResult :=
+Definition decide_easy (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
   (* tier H: halting *)
   match find_halt tm halt_gas 0 c0 with
   | Some (n, s, i) => if S n <=? B then R_Halt s i else R_Unknown
@@ -622,6 +628,10 @@ Definition decide_easy (pm dm : DeferredMap) (tm : TM) : QHResult :=
      (the proven list); a hit is decided directly, ahead of the
      deferred fallthrough, so it never enters the deferred queue *)
   if deferred_lookup pm tm then R_NeverQH else
+  (* tier PQ: machines with a committed census-grade quasihalting theorem
+     (the proven-QH list); a hit is decided R_QH directly, ahead of the
+     deferred fallthrough, so it never enters the deferred queue *)
+  if deferred_lookup qm tm then R_QH else
   (* tier D first: deferred machines skip the (expensive, failing)
      n-gram ladder -- the deferred list is measured to be exactly the
      ladder's residue plus the holdouts *)
@@ -743,7 +753,8 @@ Proof.
 Qed.
 
 Theorem decide_easy_WF :
-  QHDecider_WF B D (decide_easy (dmap_of Prov) (dmap_of D)).
+  QHDecider_WF B D
+    (decide_easy (dmap_of Prov) (dmap_of ProvQH) (dmap_of D)).
 Proof.
   intro tm.
   unfold decide_easy.
@@ -775,6 +786,11 @@ Proof.
   destruct (deferred_lookup (dmap_of Prov) tm) eqn:Ep.
   { rewrite Forall_forall in HP.
     apply HP. apply deferred_lookup_In; exact Ep. }
+  (* proven-QH tier: a hit is census-grade quasihalting by its [Forall]
+     cert (NonHalt /\ QHBound B /\ QuasiHaltsSt = exactly the R_QH contract) *)
+  destruct (deferred_lookup (dmap_of ProvQH) tm) eqn:Epq.
+  { rewrite Forall_forall in HPQ.
+    apply HPQ. apply deferred_lookup_In; exact Epq. }
   (* deferred tier *)
   destruct (deferred_lookup (dmap_of D) tm) eqn:Ed.
   { apply deferred_lookup_In; exact Ed. }

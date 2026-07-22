@@ -123,25 +123,25 @@ Definition rrungs_t : list (nat * nat) := [(3, 0)].
 
 Example pipe_halt :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
-    (dmap_of [])
+    (dmap_of []) (dmap_of [])
     (fun _ _ => None) = R_Halt StA S0.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_spin :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
-    (dmap_of [])
+    (dmap_of []) (dmap_of [])
     spin0 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_runner :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
-    (dmap_of [])
+    (dmap_of []) (dmap_of [])
     run1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_qh_leaf :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
-    (dmap_of [])
+    (dmap_of []) (dmap_of [])
     qh1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
@@ -203,12 +203,12 @@ Proof. vm_compute. reflexivity. Qed.
 (* pipeline classification with the new ladders live *)
 Example pipe_qhb :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) (dmap_of []) qhbm = R_QH.
+    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) qhbm = R_QH.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_rw :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) (dmap_of []) rwm = R_NeverQH.
+    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) rwm = R_NeverQH.
 Proof. vm_compute. reflexivity. Qed.
 
 (** ** Proven-machines tier (lever A)
@@ -243,6 +243,53 @@ Definition provm_mut : TM :=
   mk8 (T S1 DR StB) (T S0 DL StA) (T S0 DL StB) (T S0 DR StC)
       (T S1 DL StD) (T S0 DR StD) (T S1 DL StA) (T S1 DL StC).
 Example proven_miss_mutant : proven_lookup (dmap_of [provm]) provm_mut = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** Proven-QH tier (lever A, R_QH sibling)
+
+    The [qhmap] lookup (Run.v) is the [pmap] machinery reused (tm_enc key +
+    tm_eqb re-check), so it is machine-exact: only a machine whose [tm_enc]
+    key AND full transition table match a proven-QH list member is answered
+    R_QH.  The R_QH verdict is EARNED by that member's committed
+    [NonHalt /\ QHBound B /\ QuasiHaltsSt] theorem (see ProvenQH_Data's
+    [provenqh_all]); the pipeline never fabricates it -- the SAME machine,
+    absent from the map, is not reported R_QH.  A weakened lookup would flip
+    one of these controls. *)
+
+(* qhm = 1RB---_0LC0LC_1RC0RD_1LB1RD, a proven-QH holdout
+   (theories/Machines/QHBoard/QHB_00.v : qhb_00001, lex gate) *)
+Definition qhm : TM :=
+  mk8 (T S1 DR StB) None (T S0 DL StC) (T S0 DL StC)
+      (T S1 DR StC) (T S0 DR StD) (T S1 DL StB) (T S1 DR StD).
+
+(* the genuine member is found *)
+Example provenqh_hit : deferred_lookup (dmap_of [qhm]) qhm = true.
+Proof. vm_compute. reflexivity. Qed.
+
+(* a machine not in the list is not answered *)
+Example provenqh_miss_nonmember : deferred_lookup (dmap_of [qhm]) spin0 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* mutating one transition (D1: 1RD -> 1LD) must break the lookup *)
+Definition qhm_mut : TM :=
+  mk8 (T S1 DR StB) None (T S0 DL StC) (T S0 DL StC)
+      (T S1 DR StC) (T S0 DR StD) (T S1 DL StB) (T S1 DL StD).
+Example provenqh_miss_mutant : deferred_lookup (dmap_of [qhm]) qhm_mut = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(* end-to-end: with qhm in the proven-QH map (the 2nd map slot), the pipeline
+   reports R_QH -- the tier fires ahead of the deferred fallthrough *)
+Example pipe_provenqh :
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0
+    (dmap_of []) (dmap_of [qhm]) (dmap_of []) qhm = R_QH.
+Proof. vm_compute. reflexivity. Qed.
+
+(* the SAME machine, ABSENT from the proven-QH map, is NOT reported R_QH by
+   the lookup tier: with empty ladders it falls through to R_Unknown.  So the
+   R_QH verdict is carried by the committed theorem, never by the pipeline *)
+Example pipe_provenqh_absent :
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0
+    (dmap_of []) (dmap_of []) (dmap_of []) qhm = R_Unknown.
 Proof. vm_compute. reflexivity. Qed.
 
 (** ** Lever B: the extended QHBound ladder still REJECTS non-quasihalters
