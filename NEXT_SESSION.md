@@ -146,6 +146,76 @@ to drop them. 3. Re-run `make census` on stable hardware (Class 2) → new lower
 
 ---
 
+## provenQH tier LANDED (2026-07-22, branch claude/coq-bbb4-harvest-wave-1-rkqdnm)
+
+The **R_QH sibling of the proven tier** — the theorem shape the whole
+harvest boards through. Machines with a committed census-grade quasihalting
+theorem (`NonHalt /\ QHBound B /\ QuasiHaltsSt`) now leave `D_census` by a
+direct PositiveMap lookup returning `R_QH`, at ZERO walk cost — same
+conveyor-belt mechanism as the proven (R_NeverQH) tier.
+
+**Landed + pushed (base `make` green on every tier file; commits on the
+branch):**
+- `Census/Decide.v`: section vars `ProvQH` + `HPQ`
+  (`Forall (fun tm => NonHalt tm /\ QHBound B tm /\ QuasiHaltsSt tm)`);
+  `decide_easy` takes the `qm` map, looked up ahead of the deferred
+  fallthrough, returning `R_QH`; `decide_easy_WF` discharges it from `HPQ`.
+- `Machines/QHBoard/QHB_XX.v`: per-machine census-grade QHBound theorems,
+  closed by `ngram_check_qhbound_sound` (PLAIN gate) or
+  `ngram_check_qhbound_lex_sound` (LEX gate), `vm_compute`.
+- `Census/ProvenQH_XX.v` + `ProvenQH_Data.v`: `provenqh_list` + its
+  `Forall` cert `provenqh_all`, wired into `Run.v`'s `decider`/`decider_WF`.
+- `Tests/Census_Corruption.v`: proven-QH tier controls (exact lookup:
+  hit / mutant-miss / nonmember-miss; and the earned-verdict guard —
+  `R_QH` only with the map entry, `R_Unknown` absent).
+- `tools/gen_provenqh.py`: the emitter (PLAIN then LEX per machine).
+- `tools/regen_residue.py --provenqh`: drops the boarded machines
+  (proven + provenqh, split holdout/residue via `provenqh_map.tsv`) from
+  `D_census`. Asserted; honest at any scale.
+
+**THE LOAD-BEARING BUG (do not re-introduce):** the census `R_QH` contract
+needs `QHBound` (every quiet state bounded), which is STRICTER than the
+wrap sweep's `QuasiHaltsSt` (one state quiet). So listB is NOT 100%
+boardable to the census contract — it must re-pass the *QHBound* checker
+(plain acyclicity or lex liveness). And the FIRST emitter reused
+`sweep_qhbound_residue.wrapped_closure`, which does **not grow** the n-gram
+sets (no `lset |= newl`) and so under-approximates the real Coq `ng_grow`
+→ it closed for the holdouts but caught **0%** of listB. Fix = grow the
+sets to a fixpoint (as `gen_residue_wrap.closure_sizes` does); `gen_provenqh`
+now does this + full pattern-measure vocabulary. After the fix: holdouts
+16/18 (= the known `provenqh_dropped` set; the 2 `provenqh_stay` genuinely
+don't board), listB **~86%** caught (t<=1024<B_census, so the `S t -> 2000`
+lift is sound; ~57% plain gate, ~43% lex).
+
+**State at hand-off:** pilot committed = 16 holdouts + first 500 listB =
+449 boarded. `regen_residue.py --provenqh` verified to shrink `D_census`
+16,065 -> 15,616 for the pilot. Full listB = 7,976 machines (all in
+`census_residue.txt`); list extracted via `reroot_mapping_16022.tsv`
+col `list==B` & `nstates_after==4`.
+
+**Compile tax (measured, the key scaling constraint):** `QHB_XX.v` ~3s /
+100 machines; `ProvenQH_XX.v` ~30s / 100 machines (the `Forall` assembly,
+dominated by Coq elaborating 100 large hypotheses, NOT `lia`). Base `make`
+itself is dominated by the unchanged IRules fuel-3e5 `vm_compute` batches
+(~5.5 GB each, -j2 max per the OOM rule, ~30-40 min cold). So: the batch
+layer builds ONCE (its `.vo` persist), then tier iterations are fast
+incremental builds. Board listB in ~2k-machine chunks (~20 `ProvenQH`
+files ≈ 10 min compile), commit each (chunk-commit discipline; the emitter
+is deterministic so chunks are byte-stable and `make` skips built ones).
+If full-scale-in-one-build is wanted, first speed up the `ProvenQH` Forall
+(e.g. per-machine `census_qh` lemmas in the QHB file + one nested
+`Forall_cons` term — untested).
+
+**Next:** (1) scale listB to full via `gen_provenqh` over
+`hold_sorted + listB_sorted`, chunk-committing; (2) `regen_residue.py
+--provenqh` + regen `Deferred_*`, base `make` green, commit (census
+re-cert parked for the box); (3) step 3 re-root bridge is still open
+(BRIDGE.md; ~1,854 machines, independent); (4) listC state-nQH (~1,496,
+existing NGram/IRules checkers). Emitter uncaught lists:
+`tools/provenqh_uncaught.txt`.
+
+---
+
 # Next session: start here
 
 State as of 2026-07-16 (branch `claude/easy-machines-bb5-strategy-8pz2fn`).
