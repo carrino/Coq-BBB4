@@ -21,6 +21,7 @@ theories/Census/TNF_QH.v
 theories/Census/RankSearch.v
 theories/Census/RepWLSearch.v
 theories/Census/Decide.v
+theories/Census/Reroot.v
 theories/Census/Deferred_Defs.v
 theories/Census/Deferred_00.v
 theories/Census/Deferred_01.v
@@ -183,6 +184,7 @@ theories/Census/ProvenQH_Data.v
 # --- end proven-QH tier ---
 theories/Census/Run.v
 theories/Tests/Census_Corruption.v
+theories/Tests/Reroot_Corruption.v
 theories/Machines/Cycle_Examples.v
 theories/Machines/Halt_Examples.v
 theories/Machines/TCycler_Examples.v
