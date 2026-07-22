@@ -2,7 +2,7 @@
 
     The census deferred list: the 27 BBB(4) holdouts
     plus the measured hard residue of the generic tiers
-    (9413 machines total). *)
+    (9364 machines total). *)
 From Coq Require Import List.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Census Require Import Deferred_Defs Deferred_00 Deferred_01 Deferred_02 Deferred_03 Deferred_04 Deferred_05 Deferred_06 Deferred_07.

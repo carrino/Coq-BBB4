@@ -5,49 +5,6 @@ From BBB4.Census Require Import Deferred_Defs.
 Import ListNotations.
 
 Definition rows_01_000 : list (list (option Trans)) := [
-[t0RB;tN;t1RC;t0LD;t0LB;t0RB;t1RB;t1LB];
-[t0RB;tN;t1RC;t0LD;t0LB;t1RB;t1LB;t0RB];
-[t0RB;tN;t1RC;t0LD;t0LB;t1RB;t1RB;t1LB];
-[t0RB;tN;t1RC;t0LD;t0LB;t1RC;t1LB;t1LD];
-[t0RB;tN;t1RC;t0LD;t0LB;t1RD;t1LB;t0RD];
-[t0RB;tN;t1RC;t0LD;t0LD;t0RB;t1LB;t1LD];
-[t0RB;tN;t1RC;t0LD;t0LD;t0RD;t0LB;t1LB];
-[t0RB;tN;t1RC;t0LD;t0LD;t1RB;tN;t1LB];
-[t0RB;tN;t1RC;t0LD;t0LD;t1RC;t0LB;t1LB];
-[t0RB;tN;t1RC;t0LD;t0LD;t1RD;t1LB;t0RD];
-[t0RB;tN;t1RC;t0LD;t0RD;tN;t1LD;t0LB];
-[t0RB;tN;t1RC;t0LD;t0RD;t0RC;t1LD;t1RB];
-[t0RB;tN;t1RC;t0LD;t0RD;t1LD;t1LB;t0LB];
-[t0RB;tN;t1RC;t0LD;t0RD;t1RB;t0LD;t1LB];
-[t0RB;tN;t1RC;t0LD;t0RD;t1RD;t1LB;t0LB];
-[t0RB;tN;t1RC;t0LD;t0RD;t1RD;t1LB;t0RC];
-[t0RB;tN;t1RC;t0LD;t0RD;t1RD;t1LB;t0RD];
-[t0RB;tN;t1RC;t0LD;t0RD;t1RD;t1LB;t1RC];
-[t0RB;tN;t1RC;t0LD;t1LB;t0RB;t1LB;tN];
-[t0RB;tN;t1RC;t0LD;t1LB;t0RB;t1RD;t0RC];
-[t0RB;tN;t1RC;t0LD;t1LB;t0RB;t1RD;t1LB];
-[t0RB;tN;t1RC;t0LD;t1LB;t0RB;t1RD;t1RB];
-[t0RB;tN;t1RC;t0LD;t1LB;t0RD;t1LB;t0LB];
-[t0RB;tN;t1RC;t0LD;t1LB;t0RD;t1LB;t1LD];
-[t0RB;tN;t1RC;t0LD;t1LB;t0RD;t1LB;t1RA];
-[t0RB;tN;t1RC;t0LD;t1LB;t0RD;t1LC;t0RB];
-[t0RB;tN;t1RC;t0LD;t1LB;t0RD;t1LC;t1LB];
-[t0RB;tN;t1RC;t0LD;t1LB;t0RD;t1RB;t0LB];
-[t0RB;tN;t1RC;t0LD;t1LB;t0RD;t1RB;t0LC];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RB;t0RB;t0LB];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RB;t0RB;t0LD];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RB;t0RB;t0RD];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RB;t0RB;t1LD];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RB;t0RC;t1LD];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RB;t1LB;t1LB];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RB;t1RD;t1LB];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RC;t0LC;t0LB];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RC;t0RB;t0LD];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RC;t0RB;t1LD];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RC;t0RC;t0RD];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RC;t0RC;t1RD];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RC;t1LB;t1LD];
-[t0RB;tN;t1RC;t0LD;t1LB;t1RD;t1LB;t0RD];
 [t0RB;tN;t1RC;t0LD;t1LB;t1RD;t1LC;t0LB];
 [t0RB;tN;t1RC;t0LD;t1LB;t1RD;t1LC;t0RD];
 [t0RB;tN;t1RC;t0LD;t1LB;t1RD;t1RB;t0LB];
@@ -504,9 +461,7 @@ Definition rows_01_000 : list (list (option Trans)) := [
 [t0RB;tN;t1RC;t1RC;t1LD;t1RB;t1LB;t1LD];
 [t0RB;tN;t1RC;t1RC;t1LD;t1RC;t0RB;t1LD];
 [t0RB;tN;t1RC;t1RD;t0LC;t1LA;t1LC;t0RD];
-[t0RB;tN;t1RC;t1RD;t0LC;t1LD;t1RB;t0LD]
-].
-Definition rows_01_001 : list (list (option Trans)) := [
+[t0RB;tN;t1RC;t1RD;t0LC;t1LD;t1RB;t0LD];
 [t0RB;tN;t1RC;t1RD;t0RD;t1LC;t1LB;t1RB];
 [t0RB;tN;t1RC;t1RD;t1LB;t0RB;t0LC;t1LD];
 [t0RB;tN;t1RC;t1RD;t1LB;t1LC;t0RC;t0RD];
@@ -549,7 +504,9 @@ Definition rows_01_001 : list (list (option Trans)) := [
 [t0RB;t0LA;t1LA;t1RC;t0LD;t0RC;t1LD;t1RB];
 [t0RB;t0LA;t1LA;t1RC;t0LD;t1RB;t0RC;t1LD];
 [t0RB;t0LA;t1LA;t1RC;t0RD;t1RB;t1LB;tN];
-[t0RB;t0LA;t1LA;t1RC;t0RD;t1RC;t1LB;tN];
+[t0RB;t0LA;t1LA;t1RC;t0RD;t1RC;t1LB;tN]
+].
+Definition rows_01_001 : list (list (option Trans)) := [
 [t0RB;t0LA;t1LA;t1RC;t0RD;t1RD;t1LB;t0LB];
 [t0RB;t0LA;t1LA;t1RC;t0RD;t1RD;t1LB;t1RB];
 [t0RB;t0LA;t1LA;t1RC;t0RD;t1RD;t1LB;t1RC];
@@ -1006,9 +963,7 @@ Definition rows_01_001 : list (list (option Trans)) := [
 [t0RB;t0LD;t1LC;t0RA;t0LD;t1RA;t1RD;t0LC];
 [t0RB;t0LD;t1LC;t0RA;t1RD;t1LB;t0LC;t0RD];
 [t0RB;t0LD;t1LC;t0RB;t1LD;t1RC;t0RC;t1LA];
-[t0RB;t0LD;t1LC;t0RC;t1LA;t1RD;t1RC;t0LA]
-].
-Definition rows_01_002 : list (list (option Trans)) := [
+[t0RB;t0LD;t1LC;t0RC;t1LA;t1RD;t1RC;t0LA];
 [t0RB;t0LD;t1LC;t0RD;t1LA;t1RD;t1RD;t1RC];
 [t0RB;t0LD;t1LC;t1LA;t1RB;t0RC;t1RC;t1LD];
 [t0RB;t0LD;t1LC;t1LC;t1LD;t1RC;t0RC;t1LA];
@@ -1051,7 +1006,9 @@ Definition rows_01_002 : list (list (option Trans)) := [
 [t0RB;t0LD;t1RC;t0LD;t1LA;t1RB;t0RB;t1LD];
 [t0RB;t0LD;t1RC;t0LD;t1LD;t1RC;t0RC;t1LA];
 [t0RB;t0LD;t1RC;t0RB;t1RD;t1RB;t1LA;t0RC];
-[t0RB;t0LD;t1RC;t0RC;t1LD;t1RD;t1RB;t1LA];
+[t0RB;t0LD;t1RC;t0RC;t1LD;t1RD;t1RB;t1LA]
+].
+Definition rows_01_002 : list (list (option Trans)) := [
 [t0RB;t0LD;t1RC;t1LA;t1LA;t1RB;t1LB;t0LB];
 [t0RB;t0LD;t1RC;t1LA;t1LC;t1RB;t1LB;t0LB];
 [t0RB;t0LD;t1RC;t1LB;t0LA;t1RD;t1LB;t0RB];
@@ -1185,7 +1142,44 @@ Definition rows_01_002 : list (list (option Trans)) := [
 [t0RB;t0RD;t0LC;tN;t1RD;t1LC;t0LC;t1RA];
 [t0RB;t0RD;t0LC;t1RD;t1RB;t1LC;t0LA;t0RB];
 [t0RB;t0RD;t1LA;t0LC;t1RD;t1LC;t0LC;t1RA];
-[t0RB;t0RD;t1LA;t1LC;t1RA;t1LD;t1LD;t1LC]
+[t0RB;t0RD;t1LA;t1LC;t1RA;t1LD;t1LD;t1LC];
+[t0RB;t0RD;t1LA;t1RC;t1LC;t1RA;t0RC;t0RA];
+[t0RB;t0RD;t1LA;t1RC;t1LC;t1RA;t0RC;t0RD];
+[t0RB;t0RD;t1LA;t1RC;t1LC;t1RA;t1LC;t0RD];
+[t0RB;t0RD;t1LA;t1RC;t1LD;t0RD;t1RB;t1LD];
+[t0RB;t0RD;t1LA;t1RC;t1LD;t1RB;t1RB;t1LD];
+[t0RB;t0RD;t1LA;t1RC;t1RD;t1LC;t0LC;t1RA];
+[t0RB;t0RD;t1LC;tN;t1RA;t1LB;t0LB;t0RA];
+[t0RB;t0RD;t1LC;tN;t1RA;t1LB;t0LB;t0RD];
+[t0RB;t0RD;t1LC;tN;t1RA;t1LD;t1LB;t0RA];
+[t0RB;t0RD;t1LC;tN;t1RA;t1LD;t1LD;t1LC];
+[t0RB;t0RD;t1LC;t0LB;t1RA;t0LC;t1RB;t1RA];
+[t0RB;t0RD;t1LC;t0LD;t1RD;t0RA;t1LB;t0RC];
+[t0RB;t0RD;t1LC;t0RA;t0LD;t1RA;t1RD;t0LC];
+[t0RB;t0RD;t1LC;t0RA;t1RD;t1LB;t0LC;t0RD];
+[t0RB;t0RD;t1LC;t0RD;t1RA;t1LB;t0LB;t1RD];
+[t0RB;t0RD;t1LC;t1RA;t0LD;t1RA;t1RD;t0LC];
+[t0RB;t0RD;t1LC;t1RB;t0RA;t1LD;t1RB;t0LB];
+[t0RB;t0RD;t1LC;t1RB;t0RA;t1LD;t1RB;t1LC];
+[t0RB;t0RD;t1LC;t1RB;t1RA;t0LC;t1LB;t0LC];
+[t0RB;t0RD;t1LC;t1RB;t1RA;t0LC;t1LD;t0LC];
+[t0RB;t0RD;t1RC;tN;t1LC;t1RA;t0RC;t0RA];
+[t0RB;t0RD;t1RC;tN;t1LC;t1RA;t0RC;t0RD];
+[t0RB;t0RD;t1RC;tN;t1LC;t1RA;t1LC;t0RD];
+[t0RB;t0RD;t1RC;tN;t1LD;t1RB;t0LD;t0LA];
+[t0RB;t0RD;t1RC;tN;t1RD;t1LC;t0LC;t1RA];
+[t0RB;t0RD;t1RC;t0LA;t1LB;t1RB;t0LD;t0LA];
+[t0RB;t0RD;t1RC;t0LA;t1LD;t1RB;t0RC;t0LD];
+[t0RB;t0RD;t1RC;t0LD;t1LD;t0RC;t1LA;t1LB];
+[t0RB;t0RD;t1RC;t1LA;t1LD;t1RB;t0RC;t0LD];
+[t0RB;t0RD;t1RC;t1LB;t0LA;t1RD;t1LB;t0RB];
+[t0RB;t0RD;t1RC;t1LB;t0LA;t1RD;t1LB;t1RC];
+[t0RB;t0RD;t1RC;t1LB;t1LA;t1RD;t0LB;t0RC];
+[t0RB;t0RD;t1RC;t1LD;t1LA;t0RD;t1LD;t1LB];
+[t0RB;t0RD;t1RC;t1LD;t1LB;t1RC;t0RA;t1LB];
+[t0RB;t0RD;t1RC;t1LD;t1LC;t1RB;t0LD;t0LA];
+[t0RB;t0RD;t1RC;t1RA;t1LB;t0LC;t1LC;t1RD];
+[t0RB;t0RD;t1RC;t1RB;t1LA;t1LC;t0LC;t1RD]
 ].
 
 Definition rows_01 : list (list (option Trans)) :=

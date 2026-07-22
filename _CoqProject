@@ -187,6 +187,7 @@ theories/Census/RerootQH_00.v
 theories/Census/RerootQH_01.v
 theories/Census/RerootQH_02.v
 theories/Census/RerootQH_03.v
+theories/Census/RerootQH_04.v
 theories/Census/RerootQH_Data.v
 # --- end re-root QH tier ---
 theories/Census/Run.v

@@ -6,11 +6,11 @@
     the proven-QH tier (Run.v) as extra R_QH lookup members. *)
 From Coq Require Import List.
 From BBB4 Require Import BBB4_Statement.
-From BBB4.Census Require Import TNF_QH RerootQH_00 RerootQH_01 RerootQH_02 RerootQH_03.
+From BBB4.Census Require Import TNF_QH RerootQH_00 RerootQH_01 RerootQH_02 RerootQH_03 RerootQH_04.
 Import ListNotations.
 
 Definition reroot_qh_list : list TM :=
-  rerootqh_00 ++ rerootqh_01 ++ rerootqh_02 ++ rerootqh_03.
+  rerootqh_00 ++ rerootqh_01 ++ rerootqh_02 ++ rerootqh_03 ++ rerootqh_04.
 
 Lemma reroot_qh_all :
   Forall (fun tm => NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm)
@@ -20,5 +20,6 @@ Proof.
   apply Forall_app; split; [exact rerootqh_00_all|].
   apply Forall_app; split; [exact rerootqh_01_all|].
   apply Forall_app; split; [exact rerootqh_02_all|].
-  exact rerootqh_03_all.
+  apply Forall_app; split; [exact rerootqh_03_all|].
+  exact rerootqh_04_all.
 Qed.
