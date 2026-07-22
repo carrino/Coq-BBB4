@@ -7,21 +7,88 @@
     lookup tier (ahead of the deferred fallthrough). *)
 From Coq Require Import List.
 From BBB4 Require Import BBB4_Statement.
-From BBB4.Census Require Import TNF_QH.
-From BBB4.Census Require Import ProvenQH_00 ProvenQH_01 ProvenQH_02 ProvenQH_03 ProvenQH_04.
+From BBB4.Census Require Import TNF_QH ProvenQH_Pred.
+From BBB4.Census Require Import ProvenQH_00 ProvenQH_01 ProvenQH_02 ProvenQH_03 ProvenQH_04 ProvenQH_05 ProvenQH_06 ProvenQH_07 ProvenQH_08 ProvenQH_09 ProvenQH_10 ProvenQH_11 ProvenQH_12 ProvenQH_13 ProvenQH_14 ProvenQH_15 ProvenQH_16 ProvenQH_17 ProvenQH_18 ProvenQH_19 ProvenQH_20 ProvenQH_21 ProvenQH_22 ProvenQH_23 ProvenQH_24 ProvenQH_25 ProvenQH_26 ProvenQH_27 ProvenQH_28 ProvenQH_29 ProvenQH_30 ProvenQH_31 ProvenQH_32 ProvenQH_33 ProvenQH_34 ProvenQH_35 ProvenQH_36 ProvenQH_37 ProvenQH_38 ProvenQH_39 ProvenQH_40 ProvenQH_41 ProvenQH_42 ProvenQH_43 ProvenQH_44 ProvenQH_45 ProvenQH_46 ProvenQH_47 ProvenQH_48 ProvenQH_49 ProvenQH_50 ProvenQH_51 ProvenQH_52 ProvenQH_53 ProvenQH_54 ProvenQH_55 ProvenQH_56 ProvenQH_57 ProvenQH_58 ProvenQH_59 ProvenQH_60 ProvenQH_61 ProvenQH_62 ProvenQH_63 ProvenQH_64 ProvenQH_65.
 Import ListNotations.
 
 Definition provenqh_list : list TM :=
-  provenqh_00 ++ provenqh_01 ++ provenqh_02 ++ provenqh_03 ++ provenqh_04.
+  provenqh_00 ++ provenqh_01 ++ provenqh_02 ++ provenqh_03 ++ provenqh_04 ++ provenqh_05 ++ provenqh_06 ++ provenqh_07 ++ provenqh_08 ++ provenqh_09 ++ provenqh_10 ++ provenqh_11 ++ provenqh_12 ++ provenqh_13 ++ provenqh_14 ++ provenqh_15 ++ provenqh_16 ++ provenqh_17 ++ provenqh_18 ++ provenqh_19 ++ provenqh_20 ++ provenqh_21 ++ provenqh_22 ++ provenqh_23 ++ provenqh_24 ++ provenqh_25 ++ provenqh_26 ++ provenqh_27 ++ provenqh_28 ++ provenqh_29 ++ provenqh_30 ++ provenqh_31 ++ provenqh_32 ++ provenqh_33 ++ provenqh_34 ++ provenqh_35 ++ provenqh_36 ++ provenqh_37 ++ provenqh_38 ++ provenqh_39 ++ provenqh_40 ++ provenqh_41 ++ provenqh_42 ++ provenqh_43 ++ provenqh_44 ++ provenqh_45 ++ provenqh_46 ++ provenqh_47 ++ provenqh_48 ++ provenqh_49 ++ provenqh_50 ++ provenqh_51 ++ provenqh_52 ++ provenqh_53 ++ provenqh_54 ++ provenqh_55 ++ provenqh_56 ++ provenqh_57 ++ provenqh_58 ++ provenqh_59 ++ provenqh_60 ++ provenqh_61 ++ provenqh_62 ++ provenqh_63 ++ provenqh_64 ++ provenqh_65.
 
-Lemma provenqh_all :
-  Forall (fun tm => NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm)
-         provenqh_list.
+(* folded [census_qh] form -- proved fast per chunk *)
+Lemma provenqh_all_cqh : Forall census_qh provenqh_list.
 Proof.
   unfold provenqh_list.
   apply Forall_app; split; [exact provenqh_00_qh|].
   apply Forall_app; split; [exact provenqh_01_qh|].
   apply Forall_app; split; [exact provenqh_02_qh|].
   apply Forall_app; split; [exact provenqh_03_qh|].
-  exact provenqh_04_qh.
+  apply Forall_app; split; [exact provenqh_04_qh|].
+  apply Forall_app; split; [exact provenqh_05_qh|].
+  apply Forall_app; split; [exact provenqh_06_qh|].
+  apply Forall_app; split; [exact provenqh_07_qh|].
+  apply Forall_app; split; [exact provenqh_08_qh|].
+  apply Forall_app; split; [exact provenqh_09_qh|].
+  apply Forall_app; split; [exact provenqh_10_qh|].
+  apply Forall_app; split; [exact provenqh_11_qh|].
+  apply Forall_app; split; [exact provenqh_12_qh|].
+  apply Forall_app; split; [exact provenqh_13_qh|].
+  apply Forall_app; split; [exact provenqh_14_qh|].
+  apply Forall_app; split; [exact provenqh_15_qh|].
+  apply Forall_app; split; [exact provenqh_16_qh|].
+  apply Forall_app; split; [exact provenqh_17_qh|].
+  apply Forall_app; split; [exact provenqh_18_qh|].
+  apply Forall_app; split; [exact provenqh_19_qh|].
+  apply Forall_app; split; [exact provenqh_20_qh|].
+  apply Forall_app; split; [exact provenqh_21_qh|].
+  apply Forall_app; split; [exact provenqh_22_qh|].
+  apply Forall_app; split; [exact provenqh_23_qh|].
+  apply Forall_app; split; [exact provenqh_24_qh|].
+  apply Forall_app; split; [exact provenqh_25_qh|].
+  apply Forall_app; split; [exact provenqh_26_qh|].
+  apply Forall_app; split; [exact provenqh_27_qh|].
+  apply Forall_app; split; [exact provenqh_28_qh|].
+  apply Forall_app; split; [exact provenqh_29_qh|].
+  apply Forall_app; split; [exact provenqh_30_qh|].
+  apply Forall_app; split; [exact provenqh_31_qh|].
+  apply Forall_app; split; [exact provenqh_32_qh|].
+  apply Forall_app; split; [exact provenqh_33_qh|].
+  apply Forall_app; split; [exact provenqh_34_qh|].
+  apply Forall_app; split; [exact provenqh_35_qh|].
+  apply Forall_app; split; [exact provenqh_36_qh|].
+  apply Forall_app; split; [exact provenqh_37_qh|].
+  apply Forall_app; split; [exact provenqh_38_qh|].
+  apply Forall_app; split; [exact provenqh_39_qh|].
+  apply Forall_app; split; [exact provenqh_40_qh|].
+  apply Forall_app; split; [exact provenqh_41_qh|].
+  apply Forall_app; split; [exact provenqh_42_qh|].
+  apply Forall_app; split; [exact provenqh_43_qh|].
+  apply Forall_app; split; [exact provenqh_44_qh|].
+  apply Forall_app; split; [exact provenqh_45_qh|].
+  apply Forall_app; split; [exact provenqh_46_qh|].
+  apply Forall_app; split; [exact provenqh_47_qh|].
+  apply Forall_app; split; [exact provenqh_48_qh|].
+  apply Forall_app; split; [exact provenqh_49_qh|].
+  apply Forall_app; split; [exact provenqh_50_qh|].
+  apply Forall_app; split; [exact provenqh_51_qh|].
+  apply Forall_app; split; [exact provenqh_52_qh|].
+  apply Forall_app; split; [exact provenqh_53_qh|].
+  apply Forall_app; split; [exact provenqh_54_qh|].
+  apply Forall_app; split; [exact provenqh_55_qh|].
+  apply Forall_app; split; [exact provenqh_56_qh|].
+  apply Forall_app; split; [exact provenqh_57_qh|].
+  apply Forall_app; split; [exact provenqh_58_qh|].
+  apply Forall_app; split; [exact provenqh_59_qh|].
+  apply Forall_app; split; [exact provenqh_60_qh|].
+  apply Forall_app; split; [exact provenqh_61_qh|].
+  apply Forall_app; split; [exact provenqh_62_qh|].
+  apply Forall_app; split; [exact provenqh_63_qh|].
+  apply Forall_app; split; [exact provenqh_64_qh|].
+  exact provenqh_65_qh.
 Qed.
+
+(* unfolded form Run.v's decider expects: one conversion of the
+   named predicate to the QHBound triple over the whole list *)
+Lemma provenqh_all :
+  Forall (fun tm => NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm)
+         provenqh_list.
+Proof. exact provenqh_all_cqh. Qed.

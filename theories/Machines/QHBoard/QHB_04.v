@@ -5210,3 +5210,4216 @@ Proof.
   apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 184 10 cert_qhb_00449).
   vm_compute. reflexivity.
 Qed.
+
+(** 0RB1LA_1LC1RB_1RD1LA_0RB1LD: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00450 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DL StA)
+  | StD, S0 => Some (mkTrans S0 DR StB)
+  | StD, S1 => Some (mkTrans S1 DL StD)
+  end.
+
+Definition cert_qhb_00450 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00450 :
+  NonHalt tm_qhb_00450
+  /\ (forall q' s', QuietAfter tm_qhb_00450 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00450.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 184 10 cert_qhb_00450).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1LA_0RC1LD: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00451 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DL StA)
+  | StD, S0 => Some (mkTrans S0 DR StC)
+  | StD, S1 => Some (mkTrans S1 DL StD)
+  end.
+
+Definition cert_qhb_00451 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00451 :
+  NonHalt tm_qhb_00451
+  /\ (forall q' s', QuietAfter tm_qhb_00451 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00451.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 184 10 cert_qhb_00451).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1LA_1LA0RC: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00452 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DL StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StC)
+  end.
+
+Definition cert_qhb_00452 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00452 :
+  NonHalt tm_qhb_00452
+  /\ (forall q' s', QuietAfter tm_qhb_00452 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00452.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 232 11 cert_qhb_00452).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1LA_1LA0RD: quiet D s=4; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00453 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DL StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Definition cert_qhb_00453 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00453 :
+  NonHalt tm_qhb_00453
+  /\ (forall q' s', QuietAfter tm_qhb_00453 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00453.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 4 2 64 232 11 cert_qhb_00453).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1LA_1LB0RC: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00454 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DL StA)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S0 DR StC)
+  end.
+
+Definition cert_qhb_00454 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00454 :
+  NonHalt tm_qhb_00454
+  /\ (forall q' s', QuietAfter tm_qhb_00454 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00454.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 232 11 cert_qhb_00454).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1LA_1LC0RC: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00455 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DL StA)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S0 DR StC)
+  end.
+
+Definition cert_qhb_00455 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00455 :
+  NonHalt tm_qhb_00455
+  /\ (forall q' s', QuietAfter tm_qhb_00455 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00455.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 232 11 cert_qhb_00455).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1LA_1RB0LD: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00456 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DL StA)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S0 DL StD)
+  end.
+
+Definition cert_qhb_00456 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00456 :
+  NonHalt tm_qhb_00456
+  /\ (forall q' s', QuietAfter tm_qhb_00456 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00456.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 184 10 cert_qhb_00456).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1LA_1RB0RD: quiet D s=4; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00457 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DL StA)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Definition cert_qhb_00457 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10046%positive, 2);
+     (10110%positive, 4);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00457 :
+  NonHalt tm_qhb_00457
+  /\ (forall q' s', QuietAfter tm_qhb_00457 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00457.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 4 2 64 232 11 cert_qhb_00457).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_---0LA: quiet D s=3; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00458 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => None
+  | StD, S1 => Some (mkTrans S0 DL StA)
+  end.
+
+Definition cert_qhb_00458 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00458 :
+  NonHalt tm_qhb_00458
+  /\ (forall q' s', QuietAfter tm_qhb_00458 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00458.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 3 2 64 208 10 cert_qhb_00458).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_---0LB: quiet D s=3; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00459 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => None
+  | StD, S1 => Some (mkTrans S0 DL StB)
+  end.
+
+Definition cert_qhb_00459 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00459 :
+  NonHalt tm_qhb_00459
+  /\ (forall q' s', QuietAfter tm_qhb_00459 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00459.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 3 2 64 208 10 cert_qhb_00459).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_0LA0RC: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00460 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StC)
+  end.
+
+Definition cert_qhb_00460 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00460 :
+  NonHalt tm_qhb_00460
+  /\ (forall q' s', QuietAfter tm_qhb_00460 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00460.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 256 11 cert_qhb_00460).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_0LB0RC: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00461 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S0 DL StB)
+  | StD, S1 => Some (mkTrans S0 DR StC)
+  end.
+
+Definition cert_qhb_00461 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00461 :
+  NonHalt tm_qhb_00461
+  /\ (forall q' s', QuietAfter tm_qhb_00461 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00461.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 256 11 cert_qhb_00461).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_0LB0RD: quiet D s=4; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00462 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S0 DL StB)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Definition cert_qhb_00462 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00462 :
+  NonHalt tm_qhb_00462
+  /\ (forall q' s', QuietAfter tm_qhb_00462 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00462.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 4 2 64 208 10 cert_qhb_00462).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_0LC1LD: quiet D s=7; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00463 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S0 DL StC)
+  | StD, S1 => Some (mkTrans S1 DL StD)
+  end.
+
+Definition cert_qhb_00463 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00463 :
+  NonHalt tm_qhb_00463
+  /\ (forall q' s', QuietAfter tm_qhb_00463 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00463.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 7 2 64 256 11 cert_qhb_00463).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_0RC1LD: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00464 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S0 DR StC)
+  | StD, S1 => Some (mkTrans S1 DL StD)
+  end.
+
+Definition cert_qhb_00464 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00464 :
+  NonHalt tm_qhb_00464
+  /\ (forall q' s', QuietAfter tm_qhb_00464 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00464.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 208 10 cert_qhb_00464).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_1LA0LD: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00465 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DL StD)
+  end.
+
+Definition cert_qhb_00465 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00465 :
+  NonHalt tm_qhb_00465
+  /\ (forall q' s', QuietAfter tm_qhb_00465 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00465.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 208 10 cert_qhb_00465).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_1LA0RD: quiet D s=4; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00466 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Definition cert_qhb_00466 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00466 :
+  NonHalt tm_qhb_00466
+  /\ (forall q' s', QuietAfter tm_qhb_00466 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00466.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 4 2 64 256 11 cert_qhb_00466).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_1LC0RC: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00467 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S0 DR StC)
+  end.
+
+Definition cert_qhb_00467 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00467 :
+  NonHalt tm_qhb_00467
+  /\ (forall q' s', QuietAfter tm_qhb_00467 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00467.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 256 11 cert_qhb_00467).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_1RB0LD: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00468 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S0 DL StD)
+  end.
+
+Definition cert_qhb_00468 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00468 :
+  NonHalt tm_qhb_00468
+  /\ (forall q' s', QuietAfter tm_qhb_00468 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00468.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 208 10 cert_qhb_00468).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_1RB0RD: quiet D s=4; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00469 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Definition cert_qhb_00469 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10093%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12141%positive, 6);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12140%positive, 1);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10093%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12088%positive, 6);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12136%positive, 6);
+     (12140%positive, 7);
+     (12141%positive, 5);
+     (12152%positive, 6);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00469 :
+  NonHalt tm_qhb_00469
+  /\ (forall q' s', QuietAfter tm_qhb_00469 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00469.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 4 2 64 256 11 cert_qhb_00469).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RB_1RD1RA_1RB1RC: quiet D s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00470 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S1 DR StC)
+  end.
+
+Definition cert_qhb_00470 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgRankE
+    [(9533%positive, 2);
+     (9593%positive, 1);
+     (9597%positive, 2);
+     (10029%positive, 3);
+     (10045%positive, 3);
+     (10109%positive, 3);
+     (12077%positive, 6);
+     (12093%positive, 5);
+     (12157%positive, 4)]]
+  | StB =>
+  [NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9596%positive, 5);
+     (10044%positive, 2);
+     (10046%positive, 6);
+     (10108%positive, 4);
+     (10110%positive, 6);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12156%positive, 3)]]
+  | StC =>
+  [NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12157%positive];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(9533%positive, 1);
+     (9596%positive, 11);
+     (9597%positive, 1);
+     (10029%positive, 2);
+     (10044%positive, 8);
+     (10045%positive, 2);
+     (10108%positive, 10);
+     (10109%positive, 2);
+     (12072%positive, 6);
+     (12076%positive, 7);
+     (12077%positive, 5);
+     (12092%positive, 8);
+     (12093%positive, 4);
+     (12156%positive, 9);
+     (12157%positive, 3)]]
+  | StD =>
+  []
+  end.
+
+Theorem qhb_00470 :
+  NonHalt tm_qhb_00470
+  /\ (forall q' s', QuietAfter tm_qhb_00470 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00470.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StD 5 2 64 208 10 cert_qhb_00470).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RC_1RA0RD_1LB1RD: quiet A s=5; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00471 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StC)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S0 DR StD)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Theorem qhb_00471 :
+  NonHalt tm_qhb_00471
+  /\ (forall q' s', QuietAfter tm_qhb_00471 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00471.
+Proof.
+  apply (ngram_check_qhbound_sound _ StA 5 2 64 176 10).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RC_1RA1LD_1RB0LD: quiet A s=5; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00472 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StC)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S0 DL StD)
+  end.
+
+Theorem qhb_00472 :
+  NonHalt tm_qhb_00472
+  /\ (forall q' s', QuietAfter tm_qhb_00472 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00472.
+Proof.
+  apply (ngram_check_qhbound_sound _ StA 5 2 64 176 10).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0LD---_1LA0RD: quiet C s=2; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00473 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => None
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00473 :
+  NonHalt tm_qhb_00473
+  /\ (forall q' s', QuietAfter tm_qhb_00473 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00473.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 2 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RA---_1LA1RD: quiet C s=2; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00474 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StA)
+  | StC, S1 => None
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00474 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00474 :
+  NonHalt tm_qhb_00474
+  /\ (forall q' s', QuietAfter tm_qhb_00474 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00474.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 2 2 64 184 10 cert_qhb_00474).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RA1LD_1RB0LD: quiet A s=4; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00475 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S0 DL StD)
+  end.
+
+Theorem qhb_00475 :
+  NonHalt tm_qhb_00475
+  /\ (forall q' s', QuietAfter tm_qhb_00475 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00475.
+Proof.
+  apply (ngram_check_qhbound_sound _ StA 4 2 64 176 10).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RB---_1LA0RD: quiet C s=2; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00476 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StB)
+  | StC, S1 => None
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00476 :
+  NonHalt tm_qhb_00476
+  /\ (forall q' s', QuietAfter tm_qhb_00476 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00476.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 2 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RB---_1LA1RD: quiet C s=2; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00477 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StB)
+  | StC, S1 => None
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00477 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00477 :
+  NonHalt tm_qhb_00477
+  /\ (forall q' s', QuietAfter tm_qhb_00477 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00477.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 2 2 64 184 10 cert_qhb_00477).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RC0LD_1LA0RD: quiet C s=3; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00478 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S0 DL StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00478 :
+  NonHalt tm_qhb_00478
+  /\ (forall q' s', QuietAfter tm_qhb_00478 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00478.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 3 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RC0LD_1LA1RD: quiet C s=3; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00479 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S0 DL StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00479 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00479 :
+  NonHalt tm_qhb_00479
+  /\ (forall q' s', QuietAfter tm_qhb_00479 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00479.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 3 2 64 184 10 cert_qhb_00479).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RC0RD_1LA0RD: quiet C s=3; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00480 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S0 DR StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00480 :
+  NonHalt tm_qhb_00480
+  /\ (forall q' s', QuietAfter tm_qhb_00480 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00480.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 3 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RC0RD_1LA1RD: quiet C s=3; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00481 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S0 DR StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00481 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00481 :
+  NonHalt tm_qhb_00481
+  /\ (forall q' s', QuietAfter tm_qhb_00481 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00481.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 3 2 64 184 10 cert_qhb_00481).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RC1LA_1LA1RD: quiet C s=3; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00482 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S1 DL StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00482 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00482 :
+  NonHalt tm_qhb_00482
+  /\ (forall q' s', QuietAfter tm_qhb_00482 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00482.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 3 2 64 184 10 cert_qhb_00482).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RC1LD_1LA0RD: quiet C s=3; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00483 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00483 :
+  NonHalt tm_qhb_00483
+  /\ (forall q' s', QuietAfter tm_qhb_00483 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00483.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 3 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RC1LD_1LA1RD: quiet C s=3; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00484 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00484 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00484 :
+  NonHalt tm_qhb_00484
+  /\ (forall q' s', QuietAfter tm_qhb_00484 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00484.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 3 2 64 184 10 cert_qhb_00484).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RC1RB_1LA0RD: quiet C s=5; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00485 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S1 DR StB)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00485 :
+  NonHalt tm_qhb_00485
+  /\ (forall q' s', QuietAfter tm_qhb_00485 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00485.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 5 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RC1RB_1LA1RD: quiet C s=5; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00486 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S1 DR StB)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00486 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00486 :
+  NonHalt tm_qhb_00486
+  /\ (forall q' s', QuietAfter tm_qhb_00486 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00486.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 5 2 64 184 10 cert_qhb_00486).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RC1RD_1LA0RD: quiet C s=3; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00487 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S1 DR StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00487 :
+  NonHalt tm_qhb_00487
+  /\ (forall q' s', QuietAfter tm_qhb_00487 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00487.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 3 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RC1RD_1LA1RD: quiet C s=3; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00488 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S1 DR StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00488 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00488 :
+  NonHalt tm_qhb_00488
+  /\ (forall q' s', QuietAfter tm_qhb_00488 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00488.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 3 2 64 184 10 cert_qhb_00488).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RD---_1LA0RD: quiet C s=2; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00489 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StD)
+  | StC, S1 => None
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00489 :
+  NonHalt tm_qhb_00489
+  /\ (forall q' s', QuietAfter tm_qhb_00489 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00489.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 2 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_0RD---_1LA1RD: quiet C s=2; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00490 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DR StD)
+  | StC, S1 => None
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00490 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00490 :
+  NonHalt tm_qhb_00490
+  /\ (forall q' s', QuietAfter tm_qhb_00490 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00490.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 2 2 64 184 10 cert_qhb_00490).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_1LA---_1LA0RD: quiet C s=2; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00491 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => None
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00491 :
+  NonHalt tm_qhb_00491
+  /\ (forall q' s', QuietAfter tm_qhb_00491 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00491.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 2 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_1LD---_1LA0RD: quiet C s=2; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00492 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => None
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00492 :
+  NonHalt tm_qhb_00492
+  /\ (forall q' s', QuietAfter tm_qhb_00492 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00492.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 2 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_1RA---_1LA0RD: quiet C s=2; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00493 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => None
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00493 :
+  NonHalt tm_qhb_00493
+  /\ (forall q' s', QuietAfter tm_qhb_00493 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00493.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 2 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_1RA---_1LA1RD: quiet C s=2; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00494 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => None
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00494 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00494 :
+  NonHalt tm_qhb_00494
+  /\ (forall q' s', QuietAfter tm_qhb_00494 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00494.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 2 2 64 184 10 cert_qhb_00494).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_1RC0LA_1LA0RD: quiet C s=3; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00495 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DR StC)
+  | StC, S1 => Some (mkTrans S0 DL StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00495 :
+  NonHalt tm_qhb_00495
+  /\ (forall q' s', QuietAfter tm_qhb_00495 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00495.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 3 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_1RC0LA_1LA1RD: quiet C s=3; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00496 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DR StC)
+  | StC, S1 => Some (mkTrans S0 DL StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00496 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00496 :
+  NonHalt tm_qhb_00496
+  /\ (forall q' s', QuietAfter tm_qhb_00496 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00496.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 3 2 64 184 10 cert_qhb_00496).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_1RC0LB_1LA0RD: quiet C s=3; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00497 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DR StC)
+  | StC, S1 => Some (mkTrans S0 DL StB)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00497 :
+  NonHalt tm_qhb_00497
+  /\ (forall q' s', QuietAfter tm_qhb_00497 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00497.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 3 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_1RC0LB_1LA1RD: quiet C s=3; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00498 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DR StC)
+  | StC, S1 => Some (mkTrans S0 DL StB)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00498 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00498 :
+  NonHalt tm_qhb_00498
+  /\ (forall q' s', QuietAfter tm_qhb_00498 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00498.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 3 2 64 184 10 cert_qhb_00498).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_1RC0LD_1LA0RD: quiet C s=3; PLAIN QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00499 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DR StC)
+  | StC, S1 => Some (mkTrans S0 DL StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+
+Theorem qhb_00499 :
+  NonHalt tm_qhb_00499
+  /\ (forall q' s', QuietAfter tm_qhb_00499 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00499.
+Proof.
+  apply (ngram_check_qhbound_sound _ StC 3 2 64 160 9).
+  vm_compute. reflexivity.
+Qed.
+
+(** 0RB1LA_1LC1RD_1RC0LD_1LA1RD: quiet C s=3; LEX QHBound 64 (n=2 t=64) *)
+
+Definition tm_qhb_00500 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S1 DL StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DR StC)
+  | StC, S1 => Some (mkTrans S0 DL StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
+  end.
+
+Definition cert_qhb_00500 (q : St) : list ngcomp :=
+  match q with
+  | StA =>
+  [NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 1);
+     (9599%positive, 1);
+     (10029%positive, 2);
+     (10047%positive, 2);
+     (10111%positive, 2);
+     (12077%positive, 5);
+     (12095%positive, 4);
+     (12159%positive, 3)]]
+  | StB =>
+  [NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgPattE [S1] RgR 1
+    []
+    [12159%positive];
+   NgRankE
+    [(9535%positive, 6);
+     (9595%positive, 5);
+     (9599%positive, 6);
+     (10044%positive, 2);
+     (10047%positive, 7);
+     (10108%positive, 4);
+     (10111%positive, 7);
+     (12076%positive, 1);
+     (12092%positive, 2);
+     (12095%positive, 9);
+     (12156%positive, 3);
+     (12159%positive, 8)]]
+  | StC =>
+  []
+  | StD =>
+  [NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)];
+   NgPattE [S1] RgL 1
+    []
+    [12156%positive];
+   NgRankE
+    [(10044%positive, 3);
+     (10108%positive, 5);
+     (12072%positive, 1);
+     (12076%positive, 2);
+     (12092%positive, 3);
+     (12156%positive, 4)]]
+  end.
+
+Theorem qhb_00500 :
+  NonHalt tm_qhb_00500
+  /\ (forall q' s', QuietAfter tm_qhb_00500 q' s' -> S s' <= S 64)
+  /\ QuasiHaltsSt tm_qhb_00500.
+Proof.
+  apply (ngram_check_qhbound_lex_sound _ StC 3 2 64 184 10 cert_qhb_00500).
+  vm_compute. reflexivity.
+Qed.
