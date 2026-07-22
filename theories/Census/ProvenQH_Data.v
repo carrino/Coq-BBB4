@@ -8,16 +8,20 @@
 From Coq Require Import List.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Census Require Import TNF_QH.
-From BBB4.Census Require Import ProvenQH_00.
+From BBB4.Census Require Import ProvenQH_00 ProvenQH_01 ProvenQH_02 ProvenQH_03 ProvenQH_04.
 Import ListNotations.
 
 Definition provenqh_list : list TM :=
-  provenqh_00.
+  provenqh_00 ++ provenqh_01 ++ provenqh_02 ++ provenqh_03 ++ provenqh_04.
 
 Lemma provenqh_all :
   Forall (fun tm => NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm)
          provenqh_list.
 Proof.
   unfold provenqh_list.
-  exact provenqh_00_qh.
+  apply Forall_app; split; [exact provenqh_00_qh|].
+  apply Forall_app; split; [exact provenqh_01_qh|].
+  apply Forall_app; split; [exact provenqh_02_qh|].
+  apply Forall_app; split; [exact provenqh_03_qh|].
+  exact provenqh_04_qh.
 Qed.

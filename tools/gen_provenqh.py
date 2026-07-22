@@ -33,6 +33,7 @@ script.
 Usage: gen_provenqh.py PARAMS_TXT [PER_FILE] [LIMIT] [JOBS]
   PARAMS_TXT: one machine string per line ('#' comments skipped).
 """
+import itertools
 import os
 import sys
 from multiprocessing import Pool
@@ -43,9 +44,157 @@ sys.path.insert(0, HERE)
 import bulk_prover as bp            # noqa: E402
 import gen_bulk_certs as gb         # noqa: E402
 import sweep_qhbound_residue as sq  # noqa: E402
-import gen_qhbound_lex as gl        # noqa: E402
 
 B_PQ = 2000  # census score bound (B_census); every emitted t stays < B_PQ
+
+# richer lex search than gen_qhbound_lex (count-of-1s only): the full
+# pattern-measure vocabulary, count-of-1s FIRST so easy machines keep small
+# certs and only the hard ones reach for patterns.
+_CAND_CACHE = {}
+
+
+def rich_cands(n):
+    if n in _CAND_CACHE:
+        return _CAND_CACHE[n]
+    cands = [c for c in bp.DEFAULT_MEASURES if bp.meas_ok(c[0], c[1], n)]
+    seen = set(cands)
+    for reg in ('A', 'L', 'R'):
+        maxlen = n + 1 if reg == 'A' else n
+        for L in range(1, maxlen + 1):
+            for bits in itertools.product((0, 1), repeat=L):
+                if 1 not in bits:
+                    continue
+                key = (bits, reg)
+                if key in seen or not bp.meas_ok(bits, reg, n):
+                    continue
+                seen.add(key)
+                cands.append(key)
+    _CAND_CACHE[n] = cands
+    return cands
+
+
+def grown_closure(tbl, qq, n, t, cap=200000):
+    """The wrapped n-gram closure with the sets GROWN to a fixpoint --
+    mirrors the Coq checker's [ng_grow] (theories/Checkers/Wrap.v).  This
+    is what gen_residue_wrap.closure_sizes computes; sweep_qhbound_residue's
+    non-growing variant under-approximates and fails on machines that need
+    growth (e.g. most of listB).  Returns (seen, lset, rset, tw) or None."""
+    tape = {}
+    pos = 0
+    q = 0
+    for _ in range(t):
+        tr = tbl[(q, tape.get(pos, 0))]
+        if tr is None:
+            return None
+        w, d, nq = tr
+        tape[pos] = w
+        pos += 1 if d == "R" else -1
+        q = nq
+    if q == qq:
+        return None
+    tw = dict(tbl)
+    tw[(qq, 0)] = None
+    tw[(qq, 1)] = None
+    minp = min([pos] + list(tape))
+    maxp = max([pos] + list(tape))
+    Lf = lambda i: tape.get(pos - 1 - i, 0)
+    Rf = lambda i: tape.get(pos + 1 + i, 0)
+    win = lambda f, d: tuple(f(d + i) for i in range(n))
+    depth = max(pos - minp, maxp - pos) + n + 2
+    lset = {win(Lf, d) for d in range(1, depth)}
+    rset = {win(Rf, d) for d in range(1, depth)}
+    a0 = (q, tape.get(pos, 0), win(Lf, 0), win(Rf, 0))
+    for _ in range(400):
+        seen = set()
+        todo = [a0]
+        while todo:
+            a = todo.pop()
+            if a in seen:
+                continue
+            seen.add(a)
+            if len(seen) > cap:
+                return None
+            q1, s1, lw, rw = a
+            tr = tw[(q1, s1)]
+            if tr is None:
+                continue
+            w, d, q2 = tr
+            if d == "R":
+                for x in (0, 1):
+                    rw2 = rw[1:] + (x,)
+                    if rw2 in rset:
+                        todo.append((q2, rw[0], (w,) + lw[:-1], rw2))
+            else:
+                for x in (0, 1):
+                    lw2 = lw[1:] + (x,)
+                    if lw2 in lset:
+                        todo.append((q2, lw[0], lw2, (w,) + rw[:-1]))
+        newl = {a[2] for a in seen if tw[(a[0], a[1])] and tw[(a[0], a[1])][1] == "R"}
+        newr = {a[3] for a in seen if tw[(a[0], a[1])] and tw[(a[0], a[1])][1] == "L"}
+        if newl <= lset and newr <= rset:
+            # qq must not recur (else the wrapped machine halts inside the
+            # closure -- not a bounded quiet state)
+            if any(a[0] == qq for a in seen):
+                return None
+            return seen, lset, rset, tw
+        lset |= newl
+        rset |= newr
+    return None
+
+
+def find_lex_rich(m, cand_n=(2, 3, 4), cand_t=(64, 256, 1024)):
+    """gen_qhbound_lex.find_lex, but growing-closure + full pattern vocab."""
+    tbl = bp.parse(m)
+    tape = {}
+    pos = 0
+    q = 0
+    vis = set()
+    for _ in range(1024):
+        vis.add(q)
+        tr = tbl[(q, tape.get(pos, 0))]
+        if tr is None:
+            break
+        w, d, nq = tr
+        tape[pos] = w
+        pos += 1 if d == 'R' else -1
+        q = nq
+    for qq in sorted(vis, key=lambda x: (x == 0, x)):
+        for n in cand_n:
+            cands = rich_cands(n)
+            for t in cand_t:
+                r = grown_closure(tbl, qq, n, t)
+                if r is None:
+                    continue
+                seen, lset, rset, tw = r
+                comps_by_state = {}
+                ok = True
+                for qq2 in set(a[0] for a in seen):
+                    comps = bp.procedure(tw, n, seen, lset, rset, qq2, cands)
+                    if comps is None:
+                        ok = False
+                        break
+                    good, _ = bp.lex_check(tw, n, seen, lset, rset, qq2, comps)
+                    if not good:
+                        ok = False
+                        break
+                    comps_by_state[qq2] = comps
+                if not ok:
+                    continue
+                tp = {}
+                p = 0
+                qc = 0
+                s = None
+                for i in range(t):
+                    if qc == qq:
+                        s = i
+                    w, d, nq = tbl[(qc, tp.get(p, 0))]
+                    tp[p] = w
+                    p += 1 if d == 'R' else -1
+                    qc = nq
+                if s is None or s >= t:
+                    continue
+                return qq, s, n, t, seen, lset, rset, comps_by_state
+    return None
 
 MACH_HEADER = """(** GENERATED by tools/gen_provenqh.py -- DO NOT EDIT.
 
@@ -62,23 +211,68 @@ Import ListNotations.
 """
 
 
+def _last_visit(tbl, qq, t):
+    """last-visit index of state qq strictly before step t, or None."""
+    tp = {}
+    p = 0
+    qc = 0
+    s = None
+    for i in range(t):
+        if qc == qq:
+            s = i
+        w, d, nq = tbl[(qc, tp.get(p, 0))]
+        tp[p] = w
+        p += 1 if d == 'R' else -1
+        qc = nq
+    return s if (s is not None and s < t) else None
+
+
+def find_plain(m, cand_n=(2, 3, 4), cand_t=(64, 256, 1024)):
+    """PLAIN acyclicity gate over the GROWING closure."""
+    tbl = bp.parse(m)
+    tape = {}
+    pos = 0
+    q = 0
+    vis = set()
+    for _ in range(1024):
+        vis.add(q)
+        tr = tbl[(q, tape.get(pos, 0))]
+        if tr is None:
+            break
+        w, d, nq = tr
+        tape[pos] = w
+        pos += 1 if d == 'R' else -1
+        q = nq
+    for qq in sorted(vis, key=lambda x: (x == 0, x)):
+        for n in cand_n:
+            for t in cand_t:
+                r = grown_closure(tbl, qq, n, t)
+                if r is None:
+                    continue
+                if not sq.live_ok(*r):
+                    continue
+                s = _last_visit(tbl, qq, t)
+                if s is None:
+                    continue
+                seen, lset, rset, tw = r
+                return qq, s, n, t, seen, lset, rset
+    return None
+
+
 def find_cert(m):
     """Return a dict describing a QHBound cert for machine m, or None.
 
     PLAIN: {gate:'plain', m, qq, s, n, t, fuel, rounds}
     LEX:   {gate:'lex',   m, qq, s, n, t, fuel, rounds, comps_by_state}
     """
-    # PLAIN gate
-    r = sq.find_qhbound(m)
+    # PLAIN gate (growing closure)
+    r = find_plain(m)
     if r is not None:
-        qq, s, n, t = r
-        wc = sq.wrapped_closure(bp.parse(m), qq, n, t)
-        if wc is not None:
-            seen, lset, rset, tw = wc
-            return dict(gate='plain', m=m, qq=qq, s=s, n=n, t=t,
-                        fuel=8 * len(seen) + 64, rounds=len(lset) + len(rset) + 4)
-    # LEX gate
-    lr = gl.find_lex(m)
+        qq, s, n, t, seen, lset, rset = r
+        return dict(gate='plain', m=m, qq=qq, s=s, n=n, t=t,
+                    fuel=8 * len(seen) + 64, rounds=len(lset) + len(rset) + 4)
+    # LEX gate (full pattern vocabulary)
+    lr = find_lex_rich(m)
     if lr is not None:
         qq, s, n, t, seen, lset, rset, comps_by_state = lr
         return dict(gate='lex', m=m, qq=qq, s=s, n=n, t=t,
@@ -166,7 +360,9 @@ def emit_data_chunk(fidx, rows):
          "         provenqh_%s." % tag,
          "Proof.",
          "  unfold provenqh_%s." % tag]
-    for gi, _ in rows:
+    for gi, _c in rows:
+        # lift the per-machine [S s' <= S t] bound to [QHBound B_PQ]
+        # (sound: every t < B_PQ, so S t <= B_PQ)
         L += ["  apply Forall_cons;",
               "    [ destruct qhb_%05d as (Hnh & Hqb & Hqh);" % gi,
               "      split; [exact Hnh | split;",
