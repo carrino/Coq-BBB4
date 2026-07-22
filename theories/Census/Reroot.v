@@ -125,6 +125,15 @@ Proof.
   exact Hstep.
 Qed.
 
+(** a state reached (with a blank tape) at prefix step [j] is visited --
+    the [Visited] witness the list-B quiet-state obligation needs *)
+Lemma visited_prefix : forall m qz j,
+  prefix_ok m qz j = true -> Visited m qz.
+Proof.
+  intros m qz j H. exists j, (qz, snd InitES).
+  split; [apply prefix_ok_sound; exact H | reflexivity].
+Qed.
+
 (** ** The re-root step relation
 
     [es_swap StA qs] sends [InitES] to [(qs, snd InitES)] -- the prefix
@@ -262,4 +271,109 @@ Proof.
       apply (HN' (n - t)); [lia|].
       apply (proj2 (visitsat_reroot m qs t q' (n - t) Hpre)).
       replace (t + (n - t)) with n by lia. exact Hv.
+Qed.
+
+(** ** Quasihalting transfer via a NEVER-QH core (the list-B small cores)
+
+    The census's list-B re-roots do NOT have a quasihalting core -- the
+    re-root [TM_swap StA q* m] is a small machine that RECURS FOREVER
+    among its live states ([NeverQuasiHaltsSt], provable by the census's
+    own generic checkers on the tiny core).  [m] itself quasihalts
+    because its DROPPED prefix states are quiet: they are visited once in
+    the blank prefix and their re-root image is a SILENT (never-reached)
+    state of the core.  Silence is certified by a reachable-state
+    closure ([reach_closed]): a boolean-predicate [S] with [S StA] that
+    is closed under the core's transitions contains every state the core
+    ever visits, so a state outside [S] is never visited. *)
+
+(** the boolean closure condition on a state set [P] *)
+Definition closed_b (tm : TM) (P : St -> bool) : bool :=
+  forallb (fun q =>
+    forallb (fun s =>
+      match tm q s with
+      | Some tr => if P q then P (t_next tr) else true
+      | None => true
+      end) [S0; S1]) [StA; StB; StC; StD].
+
+Lemma closed_b_sound : forall tm P q s tr,
+  closed_b tm P = true ->
+  P q = true -> tm q s = Some tr -> P (t_next tr) = true.
+Proof.
+  intros tm P q s tr Hcl Hq Htr.
+  unfold closed_b in Hcl.
+  rewrite forallb_forall in Hcl.
+  specialize (Hcl q (all_St_complete q)).
+  rewrite forallb_forall in Hcl.
+  assert (Hs : In s [S0; S1]) by (destruct s; simpl; auto).
+  specialize (Hcl s Hs).
+  rewrite Htr, Hq in Hcl. exact Hcl.
+Qed.
+
+(** every state the machine visits lies in a closed set containing [StA] *)
+Lemma reach_closed : forall tm P,
+  P StA = true ->
+  closed_b tm P = true ->
+  forall n c, stepn tm n InitES = Some c -> P (fst c) = true.
+Proof.
+  intros tm P HSA Hcl n.
+  induction n as [|n IH]; intros c Hc.
+  - simpl in Hc. injection Hc as <-. exact HSA.
+  - rewrite <- Nat.add_1_r, stepn_add in Hc.
+    destruct (stepn tm n InitES) as [c'|] eqn:Ec'; [|discriminate].
+    specialize (IH c' eq_refl).
+    destruct c' as [q tp]. simpl in IH. simpl in Hc.
+    destruct (tm q (t_head tp)) as [tr|] eqn:Etr; [|discriminate].
+    injection Hc as <-. simpl.
+    exact (closed_b_sound tm P q (t_head tp) tr Hcl IH Etr).
+Qed.
+
+(** a state outside the closure is never visited *)
+Lemma reach_silent : forall tm P q,
+  P StA = true ->
+  closed_b tm P = true ->
+  P q = false ->
+  ~ Visited tm q.
+Proof.
+  intros tm P q HSA Hcl Hq (n & c & Hc & Hqc).
+  pose proof (reach_closed tm P HSA Hcl n c Hc) as H.
+  rewrite Hqc, Hq in H. discriminate.
+Qed.
+
+(** the list-B transfer: never-QH core + a silent-image visited state
+    give [m]'s census-grade quasihalting triple, bound [t] (the prefix
+    length -- every quiet state of [m] is a prefix state, last visit
+    [< t]). *)
+Lemma qh_reroot : forall m qs t (P : St -> bool) qz,
+  stepn m t InitES = Some (qs, snd InitES) ->
+  NeverQuasiHaltsSt (TM_swap StA qs m) ->
+  P StA = true ->
+  closed_b (TM_swap StA qs m) P = true ->
+  P (St_swap StA qs qz) = false ->
+  Visited m qz ->
+  NonHalt m /\ QHBound t m /\ QuasiHaltsSt m.
+Proof.
+  intros m qs t P qz Hpre Hcore HSA Hcl Hsil Hvz.
+  assert (Hnhc : NonHalt (TM_swap StA qs m)) by (apply never_qh_nonhalt; exact Hcore).
+  split; [exact (nonhalt_reroot m qs t Hpre Hnhc)|].
+  split.
+  - (* QHBound t m: any state visited at >= t recurs (core never-QH), so
+       is not quiet; hence every quiet state is a prefix state, last < t *)
+    intros q s [Hvis Hlast].
+    destruct (le_lt_dec t s) as [Hle | Hlt]; [| lia]. exfalso.
+    set (q' := St_swap StA qs q).
+    assert (Hvc : Visited (TM_swap StA qs m) q').
+    { exists (s - t). apply (proj2 (visitsat_reroot m qs t q' (s - t) Hpre)).
+      unfold q'. rewrite St_swap_swap.
+      replace (t + (s - t)) with s by lia. exact Hvis. }
+    destruct (Hcore q' Hvc (S (s - t))) as (n' & Hn' & Hvn').
+    apply (visitsat_reroot m qs t q' n' Hpre) in Hvn'.
+    unfold q' in Hvn'. rewrite St_swap_swap in Hvn'.
+    apply (Hlast (t + n')); [lia | exact Hvn'].
+  - (* QuasiHaltsSt m: qz is visited but quiet from t (its core-image is silent) *)
+    exists qz. split; [exact Hvz|].
+    exists t. intros n Hn Hv.
+    apply (reach_silent (TM_swap StA qs m) P (St_swap StA qs qz) HSA Hcl Hsil).
+    exists (n - t).
+    apply (proj2 (visitsat_reroot m qs t (St_swap StA qs qz) (n - t) Hpre)).
+    rewrite St_swap_swap. replace (t + (n - t)) with n by lia. exact Hv.
 Qed.

@@ -90,3 +90,33 @@ Proof. vm_compute. reflexivity. Qed.
 (* only the trivial [t*=0] blank start is accepted *)
 Example halt0_start_ok : prefix_ok halt0 StA 0 = true.
 Proof. vm_compute. reflexivity. Qed.
+
+(** ** The reachable-state closure gate (list-B quiet-state obligation)
+
+    [qh_reroot] certifies a re-root's silent state -- the pre-image of
+    [m]'s quiet prefix state -- through a boolean closure [closed_b]:
+    the claimed state set must contain [StA] and be closed under every
+    live transition, else a "silent" state might actually be reachable
+    (and recur, making [m] never-QH, not QH).  [core1] below is the
+    re-root of a genuine list-B census machine; its live states are
+    {A, C} and {B, D} are silent. *)
+Definition core1 : TM := row_to_tm [t1RC; t1LA; t0LC; tN; t0LA; t1RC; t0RB; tN].
+Definition Sac : St -> bool := fun q => match q with StA | StC => true | _ => false end.
+Definition Sa  : St -> bool := fun q => match q with StA => true | _ => false end.
+
+(* the genuine {A,C} set is closed *)
+Example closed_genuine : closed_b core1 Sac = true.
+Proof. vm_compute. reflexivity. Qed.
+(* {A} alone is NOT closed (A0 -> C escapes), so it is rejected: a checker
+   that used it could wrongly declare C silent *)
+Example closed_not_closed : closed_b core1 Sa = false.
+Proof. vm_compute. reflexivity. Qed.
+(* the FULL set is trivially closed but proves nothing silent *)
+Example closed_full :
+  closed_b core1 (fun _ => true) = true.
+Proof. vm_compute. reflexivity. Qed.
+(* the silent states really are outside the genuine closed set, the LIVE
+   ones inside -- so only B, D can be certified quiet, never A or C *)
+Example silent_membership :
+  (Sac StA, Sac StB, Sac StC, Sac StD) = (true, false, true, false).
+Proof. vm_compute. reflexivity. Qed.
