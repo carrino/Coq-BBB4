@@ -127,6 +127,35 @@ def main():
         print(f"[proven-only] {len(new_holdouts)} holdouts + "
               f"{len(new_residue)} residue = {len(newset)} "
               f"(dropped {len(proven)} proven; B/C + provenQH kept deferred)")
+    elif "--provenqh" in flags:
+        # PROVEN + PROVEN-QH: the committed R_NeverQH proven tier (3,670) AND
+        # the committed R_QH proven-QH tier (Census/ProvenQH_Data.v).  Every
+        # dropped machine has a committed in-Coq theorem the census decider
+        # returns directly (proven -> R_NeverQH, provenqh -> R_QH), so it
+        # leaves D_census at ZERO walk cost.  The proven-QH drop set is read
+        # from tools/provenqh_map.tsv (= provenqh_list) and split into the
+        # holdout-side and residue-side machines it actually contains.
+        proven = txt(os.path.join(HERE, "proven_dropped.txt"))
+        assert len(proven) == 3670, len(proven)
+        assert not (proven - holdouts), "proven_dropped not in holdouts"
+        assert not (STAY & proven), "stay-QH machine in proven drop list"
+        pqmap = tsv_col0(os.path.join(HERE, "provenqh_map.tsv"))
+        pq_hold = pqmap & holdouts
+        pq_res = pqmap & residue
+        stray = pqmap - holdouts - residue
+        assert not stray, ("provenqh_map machine outside holdouts+residue",
+                           len(stray), sorted(stray)[:3])
+        assert not (pq_hold & proven), "provenqh holdout overlaps proven drop"
+        assert not (STAY & pqmap), "a stay-QH machine boarded the R_QH tier"
+        new_holdouts = sorted(holdouts - proven - pq_hold)
+        new_residue = sorted(residue - pq_res)
+        newset = set(new_holdouts) | set(new_residue)
+        assert newset == old - proven - pqmap, "new set != old minus drops"
+        assert STAY <= newset, "stay-QH machine lost"
+        print(f"[provenqh] {len(new_holdouts)} holdouts + {len(new_residue)} "
+              f"residue = {len(newset)} (dropped {len(proven)} proven + "
+              f"{len(pq_hold)} provenqh-holdout + {len(pq_res)} provenqh-residue "
+              f"= {len(proven) + len(pqmap)} total)")
     else:
         # --- stage (2): subtract the four lever drop-lists ---
         proven = txt(os.path.join(HERE, "proven_dropped.txt"))
