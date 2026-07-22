@@ -261,6 +261,57 @@ Every file compiles under `coqc -Q theories BBB4`; `Print Assumptions` =
 
 ---
 
+## wave-3 residue STAGED (2026-07-22, branch claude/coq-bbb4-wave-3-harvest-jha79p)
+
+**The irules-QH corollary landed (SWEEP §6 step 3 — the single
+highest-value new checker) + 2,053 more list-C machines proved and
+Coq-validated, STAGED not wired** (census_cache --check reports the
+pre-wave-2 hash mismatch: the wave-2 wire + re-cert had not landed on
+this branch, so census inputs stayed FROZEN; wave-2's 2,109 staged
+machines are also still unwired here).  Full recipe:
+**`docs/IRULESQH_WAVE3.md`**; the wire follow-up is mechanized as
+**`tools/wire_wave3.py --box`** (wires wave-2 AND wave-3, regen via
+`regen_residue.py --wave3`, all set asserts there).
+
+- **The new checker (the one new trust surface):** the dual extraction
+  lemma over the landed IRules engines — from the same faithful
+  forward-behavior model, a prefix-visited state with no transition in
+  the meta-cycle's fired set is silent from the anchor on ⇒
+  `QuasiHaltsSt`; F-states recur ⇒ never quiet; a score-window pass
+  (`[min B anchor, anchor)` clean of non-F states) ⇒ `QHBound B`.
+  Files `theories/Checkers/IRules/MetaQH.v` (v1) and
+  `MetaBlkPfxQH.v` (v3/v5/v6/v7 — what the residue actually has; 0 of
+  the harvest certs are v1).  Axiom footprint
+  `functional_extensionality_dep` only.  Corruption tests
+  `theories/Tests/IRulesQH_Corruption.v` (never-QH machine rejected for
+  EVERY witness on both engines; halter rejected; live witness
+  rejected; window gate load-bearing: B=2000 accepts / B=100 refuses a
+  machine quieting at ~1459).
+- **Track 1 — list-C state-QH → R_QH: 1,090 machines** (the SWEEP §5
+  ~1,047 projection, beaten).  `bin/irules --max-steps 2e5` over the
+  5,656 unboarded list-C residue; 1,090 certs show a quiet state
+  (max last visit 1,459 < 2000 — ALL board `QHBound 2000`, zero
+  skipped).  Emitter `tools/gen_irulesqh_certs.py` → files
+  `theories/Machines/IRulesQHStage/IQHStage_00..10.v`, manifest
+  `tools/irulesqh_manifest.tsv`.
+- **Track 2 — list-C never-QH (IRules share) → R_NeverQH: 963
+  machines** (the ~560 projection, beaten).  Same sweep's all-live
+  certs through the LANDED `irulesblkpfx_check_neverqh_sound` (no new
+  trust surface).  Emitter `tools/gen_irulesnqh_stage.py` → files
+  `theories/Machines/ListCStage2/LCS2_00..09.v`, manifest
+  `tools/irulesnqh_manifest.tsv`.
+- **Compile tax measured:** ~1 s/machine, ~80–170 s per 100-machine
+  file, memory small — the "~8 GB, 10/file" rule was for the 50 deep
+  Phase-2 holdout certs, NOT these shallow residue certs.
+- **After the combined wave-2+3 wire + regen + re-cert:**
+  `D_census 9,364 − 1,518 (RRStage) − 591 (LCStage) − 1,090 (IQHStage)
+  − 963 (LCS2) = 5,202`.  (The remaining list-C uncaught ≈ 2,600 +
+  wrap-B remainder are SWEEP §6 step-4 territory; ~1,475 listB
+  QHBound-uncaught in `tools/provenqh_uncaught.txt` stay the marginal
+  n=5/6 item.)
+
+---
+
 # Next session: start here
 
 State as of 2026-07-16 (branch `claude/easy-machines-bb5-strategy-8pz2fn`).
