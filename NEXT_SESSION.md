@@ -229,6 +229,38 @@ cost). Emitter uncaught list: `tools/provenqh_uncaught.txt`.
 
 ---
 
+## wave-2 residue STAGED (2026-07-22, branch claude/coq-bbb4-residue-wave-2-5vnmxc)
+
+**2,109 more machines proved + Coq-validated, STAGED but NOT wired** (the
+census re-cert was running on the box at `D_census = 9,364`, so no census
+`.v` input was touched and `regen_residue.py` was NOT run).  Full
+wire+regen recipe: **`docs/REROOT_LISTC_STAGE.md`** (the batched box
+FOLLOW-UP).  Both land the zero-walk-cost conveyor-belt way (per-machine
+theorem → drop at regen).
+
+- **Track 1 — re-root untapped cores → R_QH: 1,518 machines.**
+  `tools/gen_reroot.py --staged` adds base-checker recipes (RankSearch
+  `rank_tier` n=3 boards 1,437; `rw_tier` 77; `rank_tier` n=4 4) for the
+  `qh_reroot` never-QH core premise the wave-1 `rw_tier`-only recipe missed
+  (184/1,742 → +1,518).  Files `theories/Machines/RerootStage/RRStage_00..15.v`;
+  corruption test `theories/Tests/RerootStage_Corruption.v`; manifest
+  `tools/reroot_stage_manifest.tsv`; 80 residual in
+  `tools/reroot_stage_uncaught.txt` (40 no-recipe + 40 no-`closed_b`-silent-state).
+- **Track 2 — listC never-QH → R_NeverQH: 591 machines.**
+  `tools/gen_listc_stage.py` (fork of `gen_bulk_certs`) over the 6,247 list-C
+  residue; shuffled full sweep decided 599 (9.6%), **8 dropped by the Coq
+  ngram-lex re-check**, 591 Coq-verified.  Files
+  `theories/Machines/ListCStage/LCStage_00..11.v`; manifest
+  `tools/listc_stage_manifest.tsv`; verified set `tools/listc_caught.tsv`.
+  The IRules-only listC share (~1/3 of boardable, SWEEP §4) is a further
+  follow-up (heavy fuel-3e5 batches).
+
+Every file compiles under `coqc -Q theories BBB4`; `Print Assumptions` =
+`functional_extensionality_dep` only.  After wiring+regen+re-cert:
+`D_census 9,364 → ~7,255` (1,518 list-B ⊎ 591 list-C, disjoint, all in residue).
+
+---
+
 # Next session: start here
 
 State as of 2026-07-16 (branch `claude/easy-machines-bb5-strategy-8pz2fn`).
