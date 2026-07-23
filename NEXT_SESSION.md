@@ -308,12 +308,24 @@ machines are also still unwired here).  Full recipe:
 - **Compile tax measured:** ~1 s/machine, ~80–170 s per 100-machine
   file, memory small — the "~8 GB, 10/file" rule was for the 50 deep
   Phase-2 holdout certs, NOT these shallow residue certs.
-- **After the combined wave-2+3 wire + regen + re-cert:**
-  `D_census 9,364 − 1,518 (RRStage) − 591 (LCStage) − 1,090 (IQHStage)
-  − 810 (LCS2) = 5,355`.  (The remaining list-C uncaught ≈ 2,750
-  incl. the 153 engine-gap refusals + wrap-B remainder are SWEEP §6
-  step-4 territory; ~1,475 listB QHBound-uncaught in
-  `tools/provenqh_uncaught.txt` stay the marginal n=5/6 item.)
+- **SWEEP step 4 RUN (same session): +199 more** — the ngram-rank
+  ladder at n≤8/t=5e6 over the 3,756 unboarded caught 199 (ALL at
+  n∈{5..8}, past wave-2's n≤4), staged `LCStage_12..15.v` via the
+  landed NGram lex checker (zero new Coq).  irules at 1e6 steps
+  found ZERO new machines — only re-certs of the engine-gap set, and
+  the 18 rank didn't also catch were refused AGAIN: the v5
+  rule-replay gap is structural, not budget-bound.  108 of the 153
+  engine-gap machines board via rank; **45 remain**
+  (`tools/irulesnqh_refused.txt`, annotated) — the cheapest next lever
+  is the MetaBlkPfx v5 rule-replay extension (+45 guaranteed, certs
+  in hand).
+- **After the combined wave-2+3+step-4 wire + regen + re-cert:**
+  `D_census 9,364 − 1,518 (RRStage) − 591+199 (LCStage) − 1,090
+  (IQHStage) − 810 (LCS2) = 5,156`.  (The remaining list-C uncaught =
+  3,557 incl. the 45 engine-gap + wrap-B remainder; fuel/drift
+  variants and docs/groups.md abstractions are the step-4 leftovers;
+  ~1,475 listB QHBound-uncaught in `tools/provenqh_uncaught.txt` stay
+  the marginal n=5/6 item.)
 - **Box ops note:** `make _census-walk` is now RESUMABLE (per-unit
   skip-if-`.vo`) and defaults to `WALK_JOBS=2` — `-P4 native_compute`
   OOM-killed a 16 GB box (signal 9) on the GG_1LC layer.

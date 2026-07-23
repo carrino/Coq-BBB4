@@ -98,8 +98,34 @@ emitters only transcribe.
 **Sweep totals:** 5,656 machines swept, 2,053 certs (36.3%): 1,090
 state-QH (all board) + 963 state-never-QH (810 board after the Coq
 oracle), zero contradictions, zero unclassifiable.
-After the combined wave-2+3 wire: `D_census 9,364 − 1,518 − 591 −
-1,090 − 810 = 5,355`.
+
+## SWEEP §6 step 4 — the hard-residue probes (same session)
+
+Over the 3,756 still-unboarded list-C machines:
+
+- **ngram-rank at n≤8, t=5e6** (`bin/quietngram --neverqh --rank`):
+  **199 catches, all at n∈{5..8}** — exactly the "raise the n" probe;
+  wave-2's ladder stopped at n≤4.  All 199 re-derived by the python
+  prover and staged through the LANDED
+  `ngram_check_neverqh_lex_sound` as
+  `theories/Machines/ListCStage/LCStage_12..15.v` (append mode,
+  manifest rows appended).  **+199 machines, zero new Coq.**
+- **irules at 1e6 steps** (5× budget, half the pool incl. all 153
+  engine-gap machines): 53 certs, **every one a re-cert of an
+  engine-gap machine, zero new machines** — and the 18 whose machines
+  rank did not also catch were REFUSED by the Coq engine again.  The
+  v5 rule-replay gap is structural, not budget-bound; the second half
+  of the pool was therefore not swept (`bin/irules` finds nothing new
+  there at any budget short of an engine extension).  Of the 153
+  engine-gap machines, **108 board via the rank catches above; 45
+  remain** (`tools/irulesnqh_refused.txt`, annotated).
+
+After the combined wave-2+3+step-4 wire: `D_census 9,364 − 1,518 −
+591 − 1,090 − 810 − 199 = 5,156`.  The remaining unboarded list-C
+core is 3,557 (incl. the 45 engine-gap); next levers, in measured
+order: the MetaBlkPfx v5 rule-replay extension (+45 guaranteed, certs
+in hand), fuel/drift ngram variants, and the `docs/groups.md` tighter
+abstractions.
 
 Compile cost (measured, apt coqc 8.18, vm_compute): **~1 s/machine**,
 ~80 s per 100-machine file, memory far below the Phase-2 fuel-3e5
