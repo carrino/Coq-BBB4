@@ -329,11 +329,26 @@ def mode_update():
     return 0
 
 
+def mode_print_hash():
+    """Print the CURRENT census input hash (no comparison, no side effects).
+    Used by the Makefile's walk-stamp to decide whether census .vo on disk
+    were produced by walking THIS tree (resume) or must be quarantined
+    (committed cache of an older tree / differently-wired leftovers)."""
+    try:
+        digest, _ = compute_hash()
+    except RuntimeError as e:
+        sys.stderr.write(str(e) + "\n")
+        return 1
+    print(digest)
+    return 0
+
+
 def main(argv):
-    modes = {"--check": mode_check, "--touch": mode_touch, "--update": mode_update}
+    modes = {"--check": mode_check, "--touch": mode_touch,
+             "--update": mode_update, "--print-hash": mode_print_hash}
     if len(argv) != 1 or argv[0] not in modes:
         sys.stderr.write(
-            "usage: census_cache.py (--check | --touch | --update)\n"
+            "usage: census_cache.py (--check | --touch | --update | --print-hash)\n"
             "  --check   compare tree against committed CENSUS_VO_HASH + .vo presence\n"
             "  --touch   touch committed census .vo newest (after --check passes)\n"
             "  --update  rewrite CENSUS_VO_HASH (after a green re-walk)\n"
