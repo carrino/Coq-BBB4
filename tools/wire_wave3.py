@@ -178,21 +178,26 @@ def rewrite_proven_data(lc, lcs2):
 
 
 def extend_coqproject(rr, lc, lcs2, iqh):
+    """Per-line idempotent: appends whatever is missing (a re-run after a
+    partial wire adds only the absent lines, never duplicates)."""
     path = os.path.join(ROOT, "_CoqProject")
-    src = open(path).read()
+    src_lines = {l.strip() for l in open(path)}
     marker = "# --- wave-2/3 staged residue proofs (wired) ---"
-    if marker in src:
-        print("_CoqProject already has the wired block; skipping")
+    want = ["theories/Checkers/IRules/MetaQH.v",
+            "theories/Checkers/IRules/MetaBlkPfxQH.v"]
+    want += ["theories/Machines/RerootStage/%s.v" % m for m in rr]
+    want += ["theories/Machines/ListCStage/%s.v" % m for m in lc]
+    want += ["theories/Machines/ListCStage2/%s.v" % m for m in lcs2]
+    want += ["theories/Machines/IRulesQHStage/%s.v" % m for m in iqh]
+    want += ["theories/Tests/RerootStage_Corruption.v",
+             "theories/Tests/IRulesQH_Corruption.v"]
+    missing = [w for w in want if w not in src_lines]
+    if not missing:
+        print("_CoqProject already complete; skipping")
         return
-    block = [marker]
-    block += ["theories/Machines/RerootStage/%s.v" % m for m in rr]
-    block += ["theories/Machines/ListCStage/%s.v" % m for m in lc]
-    block += ["theories/Machines/ListCStage2/%s.v" % m for m in lcs2]
-    block += ["theories/Machines/IRulesQHStage/%s.v" % m for m in iqh]
-    block += ["theories/Tests/RerootStage_Corruption.v",
-              "theories/Tests/IRulesQH_Corruption.v"]
+    block = ([] if marker in src_lines else [marker]) + missing
     open(path, "a").write("\n" + "\n".join(block) + "\n")
-    print("extended _CoqProject (+%d files)" % (len(block) - 1))
+    print("extended _CoqProject (+%d files)" % len(missing))
 
 
 def main():
