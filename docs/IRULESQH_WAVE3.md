@@ -84,13 +84,22 @@ emitters only transcribe.
 - Per machine: `nqh_n3_NNNNN : NeverQuasiHaltsSt tm_n3_NNNNN` via the
   LANDED `irulesblkpfx_check_neverqh_sound` (MetaBlkPfx) — **no new
   trust surface**; corruption coverage is the landed Phase-2 engine's.
-- **Yield: 963 machines** (`LCS2_00..09.v`; SWEEP §4 projected ~560 —
-  beaten, the bigger budget over the full 5,656 recovered more).
+- **Yield: 810 machines** (`LCS2_00..08.v`; SWEEP §4 projected ~560 —
+  beaten).  The untrusted sweep produced 963 never-QH certs; a full
+  Coq-oracle pass (`Eval vm_compute` of the landed checker per cert)
+  REFUSED 152 and one v7 cert stalled rule validation (>30 min,
+  dropped) — the C `bin/verify` passes all of them, i.e. they exercise
+  a rule-replay corner the landed Phase-2 Coq engine does not cover.
+  The refused set is recorded in **`tools/irulesnqh_refused.txt`**
+  (153 machines, mostly v5; a future engine extension can recover
+  them).  Kernel-refused certs were never trusted and never boarded —
+  the same discipline as wave-2's 8 ngram drops.
 
 **Sweep totals:** 5,656 machines swept, 2,053 certs (36.3%): 1,090
-state-QH + 963 state-never-QH, zero contradictions, zero unclassifiable.
+state-QH (all board) + 963 state-never-QH (810 board after the Coq
+oracle), zero contradictions, zero unclassifiable.
 After the combined wave-2+3 wire: `D_census 9,364 − 1,518 − 591 −
-1,090 − 963 = 5,202`.
+1,090 − 810 = 5,355`.
 
 Compile cost (measured, apt coqc 8.18, vm_compute): **~1 s/machine**,
 ~80 s per 100-machine file, memory far below the Phase-2 fuel-3e5

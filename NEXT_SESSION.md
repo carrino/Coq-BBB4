@@ -294,21 +294,31 @@ machines are also still unwired here).  Full recipe:
   skipped).  Emitter `tools/gen_irulesqh_certs.py` → files
   `theories/Machines/IRulesQHStage/IQHStage_00..10.v`, manifest
   `tools/irulesqh_manifest.tsv`.
-- **Track 2 — list-C never-QH (IRules share) → R_NeverQH: 963
+- **Track 2 — list-C never-QH (IRules share) → R_NeverQH: 810
   machines** (the ~560 projection, beaten).  Same sweep's all-live
   certs through the LANDED `irulesblkpfx_check_neverqh_sound` (no new
   trust surface).  Emitter `tools/gen_irulesnqh_stage.py` → files
-  `theories/Machines/ListCStage2/LCS2_00..09.v`, manifest
-  `tools/irulesnqh_manifest.tsv`.
+  `theories/Machines/ListCStage2/LCS2_00..08.v`, manifest
+  `tools/irulesnqh_manifest.tsv`.  **NOTE the attrition:** the sweep
+  produced 963 never-QH certs; a full Coq-oracle pass refused 152 (+1
+  v7 validation stall) — `bin/verify` passes them but the landed
+  Phase-2 rule replay doesn't cover their corner (mostly v5).  List:
+  `tools/irulesnqh_refused.txt`; a future engine extension recovers
+  them.  Kernel-refused = never boarded (wave-2 discipline).
 - **Compile tax measured:** ~1 s/machine, ~80–170 s per 100-machine
   file, memory small — the "~8 GB, 10/file" rule was for the 50 deep
   Phase-2 holdout certs, NOT these shallow residue certs.
 - **After the combined wave-2+3 wire + regen + re-cert:**
   `D_census 9,364 − 1,518 (RRStage) − 591 (LCStage) − 1,090 (IQHStage)
-  − 963 (LCS2) = 5,202`.  (The remaining list-C uncaught ≈ 2,600 +
-  wrap-B remainder are SWEEP §6 step-4 territory; ~1,475 listB
-  QHBound-uncaught in `tools/provenqh_uncaught.txt` stay the marginal
-  n=5/6 item.)
+  − 810 (LCS2) = 5,355`.  (The remaining list-C uncaught ≈ 2,750
+  incl. the 153 engine-gap refusals + wrap-B remainder are SWEEP §6
+  step-4 territory; ~1,475 listB QHBound-uncaught in
+  `tools/provenqh_uncaught.txt` stay the marginal n=5/6 item.)
+- **Box ops note:** `make _census-walk` is now RESUMABLE (per-unit
+  skip-if-`.vo`) and defaults to `WALK_JOBS=2` — `-P4 native_compute`
+  OOM-killed a 16 GB box (signal 9) on the GG_1LC layer.
+  `census-verify` remains the only destructive target (delete-first =
+  the full from-source honesty pass).
 
 ---
 
