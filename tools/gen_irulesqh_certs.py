@@ -24,6 +24,9 @@ Forall iqh iqhstage_NN] ([iqh] is definitionally the qhmap tier
 predicate).
 
 Usage: gen_irulesqh_certs.py OUTDIR MANIFEST.tsv CHUNKSIZE CERT [CERT ...]
+       [--chunk0 N] [--idx0 N] [--append]   (stage MORE machines after a
+       committed wave: first new file number, first new machine index,
+       append manifest rows instead of rewriting)
 """
 import sys, os, re, importlib.util
 
@@ -119,12 +122,22 @@ def emit_machine(path, idx):
 
 
 def main():
-    outdir, manifest, chunk = sys.argv[1], sys.argv[2], int(sys.argv[3])
-    certs = sys.argv[4:]
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    outdir, manifest, chunk = args[0], args[1], int(args[2])
+    certs = args[3:]
+    def _optval(name, default):
+        if name in sys.argv:
+            return int(sys.argv[sys.argv.index(name) + 1])
+        return default
+    chunk0 = _optval("--chunk0", 0)
+    idx0 = _optval("--idx0", 0)
+    append = "--append" in sys.argv
+    if chunk0 or idx0:
+        certs = [c for c in certs if not c.isdigit()]
     os.makedirs(outdir, exist_ok=True)
     emitted = []          # (machine, nm, qz, last, anchor, ver)
     skipped = []
-    idx = 0
+    idx = idx0
     blocks = []
     for p in certs:
         r, (m, status) = emit_machine(p, idx)
@@ -141,7 +154,7 @@ def main():
     nfiles = 0
     rows = []
     for ci in range(0, len(blocks), chunk):
-        nn = "%02d" % nfiles
+        nn = "%02d" % (chunk0 + nfiles)
         chunk_blocks = blocks[ci:ci + chunk]
         chunk_names = [e[1] for e in emitted[ci:ci + chunk]]
         fn = os.path.join(outdir, "IQHStage_%s.v" % nn)
@@ -162,9 +175,10 @@ def main():
             rows.append((e[0], "cqh_%s" % e[1], "IQHStage_%s.v" % nn,
                          e[2], str(e[3]), str(e[4]), e[5]))
         nfiles += 1
-    with open(manifest, "w") as f:
-        f.write("machine\ttheorem\tfile\tquiet_state\tlast_visit\t"
-                "anchor\tcert_ver\n")
+    with open(manifest, "a" if append else "w") as f:
+        if not append:
+            f.write("machine\ttheorem\tfile\tquiet_state\tlast_visit\t"
+                    "anchor\tcert_ver\n")
         for r in rows:
             f.write("\t".join(r) + "\n")
     sys.stderr.write("emitted %d machines into %d files; skipped %d\n"
