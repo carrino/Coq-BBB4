@@ -44,6 +44,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 CENSUS = os.path.join(ROOT, "theories", "Census")
 
+# regen_residue.py's stage 1 rebuilds the PRE-SHRINK deferred set from
+# scratch and therefore needs the FULL 3,713-machine BBB4 holdout list --
+# NOT tools/census_holdouts_kept.txt, which regen itself overwrites with
+# the currently-kept holdouts (e.g. 27 after the provenqh wire) and which
+# therefore fails the len==3713 assert on any already-shrunk tree.
+BBB = os.environ.get("BBB_REPO", os.path.join(ROOT, "..", "BBB"))
+HOLDOUTS_3713 = os.path.join(BBB, "BBB4_holdouts_3713.txt")
+
 
 def staged_files(subdir, prefix):
     d = os.path.join(ROOT, "theories", "Machines", subdir)
@@ -225,10 +233,12 @@ def main():
     rewrite_proven_data(lc, lcs2)
     extend_coqproject(rr, lc, lcs2, iqh)
 
+    if not os.path.exists(HOLDOUTS_3713):
+        sys.exit("REFUSING: full holdout list not found at %s -- set "
+                 "BBB_REPO to the BBB harness checkout" % HOLDOUTS_3713)
     subprocess.run(
         [sys.executable, os.path.join(HERE, "regen_residue.py"),
-         os.path.join(HERE, "census_holdouts_kept.txt"), CENSUS,
-         "--wave3"],
+         HOLDOUTS_3713, CENSUS, "--wave3"],
         check=True)
     print("\nWIRED.  Now: make census-verify on the box; check "
           "Print Assumptions census_decided; census_cache.py --update; "
