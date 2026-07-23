@@ -73,6 +73,12 @@ def main():
     ap.add_argument("--batch", type=int, default=50)
     ap.add_argument("--out", default=OUTDIR_DEFAULT)
     ap.add_argument("--procs", type=int, default=4)
+    ap.add_argument("--chunk0", type=int, default=0,
+                    help="first chunk number (append after a committed wave)")
+    ap.add_argument("--idx0", type=int, default=0,
+                    help="first machine index (append mode)")
+    ap.add_argument("--append", action="store_true",
+                    help="append manifest rows instead of rewriting")
     args = ap.parse_args()
 
     pairs = []
@@ -100,13 +106,13 @@ def main():
     for b0 in range(0, len(results), args.batch):
         batch = results[b0:b0 + args.batch]
         bno = b0 // args.batch
-        nn = "%02d" % bno
+        nn = "%02d" % (args.chunk0 + bno)
         name = "LCStage_%s" % nn
         chunk_names.append(name)
         chunks = [HEADER.format(nn=nn, cnt=len(batch))]
         thms = []
         for j, (mtext, n, (t, nseen, comps, rounds)) in enumerate(batch):
-            idx = b0 + j
+            idx = args.idx0 + b0 + j
             text, thm = gbc.emit_machine(idx, mtext, n, t, comps, nseen, rounds,
                                          name_tag="lc")
             chunks.append(text)
@@ -129,8 +135,9 @@ def main():
             "\n\n".join(chunks) + "\n")
 
     mpath = os.path.join(HERE, "listc_stage_manifest.tsv")
-    with open(mpath, "w") as mf:
-        mf.write("machine\ttheorem\tfile\ttier\tn\tt\tcontexts\n")
+    with open(mpath, "a" if args.append else "w") as mf:
+        if not args.append:
+            mf.write("machine\ttheorem\tfile\ttier\tn\tt\tcontexts\n")
         for row in manifest:
             mf.write("\t".join(str(x) for x in row) + "\n")
     print("staged %d machines into %d files; %d prover-misses; manifest %s"

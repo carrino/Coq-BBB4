@@ -26,14 +26,26 @@ clean:
 
 # The raw walk recipe, factored out so `census' (cache-miss) and
 # `census-verify' (forced) share the exact same commands.  Internal target.
+#
+# RESUMABLE: each unit is skipped when its .vo already exists, so a walk
+# that dies mid-layer (OOM, preemption) continues where it stopped instead
+# of redoing finished units.  `census-verify' still deletes every census
+# .vo FIRST, so a verify walk is always a full from-source walk -- the
+# honesty property is unchanged.
+#
+# WALK_JOBS defaults to 2: four parallel native_compute units OOM-killed a
+# 16 GB box on the GG_1LC layer (signal 9, 2026-07-22).  Override with
+# `make census-verify WALK_JOBS=4' only if RAM headroom is confirmed.
+WALK_JOBS ?= 2
+
 _census-walk:
-	coqc -Q theories BBB4 theories/Census/Run_Split.v
-	coqc -Q theories BBB4 theories/Census/Run_Split2.v
-	ls theories/Census/Run_Split_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
-	ls theories/Census/Compute/GG_1LC_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
-	ls theories/Census/Compute/GGH_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
-	ls theories/Census/Compute/G_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
-	coqc -Q theories BBB4 theories/Census/Compute/Census_Theorem.v
+	[ -f theories/Census/Run_Split.vo ] || coqc -Q theories BBB4 theories/Census/Run_Split.v
+	[ -f theories/Census/Run_Split2.vo ] || coqc -Q theories BBB4 theories/Census/Run_Split2.v
+	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | xargs -r -P$(WALK_JOBS) -I{} coqc -Q theories BBB4 {}
+	ls theories/Census/Compute/GG_1LC_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | xargs -r -P$(WALK_JOBS) -I{} coqc -Q theories BBB4 {}
+	ls theories/Census/Compute/GGH_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | xargs -r -P$(WALK_JOBS) -I{} coqc -Q theories BBB4 {}
+	ls theories/Census/Compute/G_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | xargs -r -P$(WALK_JOBS) -I{} coqc -Q theories BBB4 {}
+	[ -f theories/Census/Compute/Census_Theorem.vo ] || coqc -Q theories BBB4 theories/Census/Compute/Census_Theorem.v
 .PHONY: _census-walk
 
 # Guarded census: skip the walk when the committed .vo already certify this
@@ -66,8 +78,13 @@ census-cache:
 # Makefile.coq's control.  After a green walk, refresh + commit the cache.
 census-verify: all
 	@echo ">>> census-verify: FORCE RE-WALK from source (STABLE hardware only) <<<"
-	rm -f theories/Census/Run_Split*.vo theories/Census/Run_Split*.glob
-	rm -f theories/Census/Compute/*.vo theories/Census/Compute/*.glob
+	@echo ">>> current census .vo are BACKED UP (not deleted) -- see below <<<"
+	@bdir="census_probes/vo-backup-$$(date +%Y%m%d-%H%M%S)"; \
+	  mkdir -p "$$bdir"; \
+	  mv -f theories/Census/Run_Split*.vo theories/Census/Run_Split*.glob "$$bdir"/ 2>/dev/null; \
+	  mv -f theories/Census/Compute/*.vo theories/Census/Compute/*.glob "$$bdir"/ 2>/dev/null; \
+	  echo ">>> previous walk artifacts moved to $$bdir"; \
+	  echo ">>> restore with: mv $$bdir/Run_Split* theories/Census/; mv $$bdir/*.vo $$bdir/*.glob theories/Census/Compute/ 2>/dev/null"
 	$(MAKE) _census-walk
 	@echo "------------------------------------------------------------"
 	@echo "RE-WALK COMPLETE.  Confirm the census is HONEST, then refresh the cache:"
@@ -78,15 +95,11 @@ census-verify: all
 	@echo "------------------------------------------------------------"
 .PHONY: census-verify
 
-# Resume-friendly census: skips any unit whose .vo already exists, in
-# dependency order (base modules -> heavy-grandchild modules -> walks ->
-# assemblies -> theorem).  Use this to pick up an interrupted `make
-# census` without recompiling finished walks.
+# Resume an interrupted walk: NEVER deletes anything; skips every unit
+# whose .vo already exists and continues in dependency order.  This is
+# the target to reach for after an OOM kill, a preemption, or a Ctrl-C
+# -- and it is a no-op on a finished walk.  (Same recipe as the guarded
+# walk; parallelism via WALK_JOBS, default 2.)
 census-resume: all
-	[ -f theories/Census/Run_Split.vo ]  || coqc -Q theories BBB4 theories/Census/Run_Split.v
-	[ -f theories/Census/Run_Split2.vo ] || coqc -Q theories BBB4 theories/Census/Run_Split2.v
-	for f in theories/Census/Run_Split_*.v; do [ -f $${f}o ] || coqc -Q theories BBB4 $$f; done
-	for f in theories/Census/Compute/GG_1LC_*.v theories/Census/Compute/GGH_*.v; do [ -f $${f}o ] || echo $$f; done | xargs -r -P4 -I{} coqc -Q theories BBB4 {}
-	for f in theories/Census/Compute/G_*.v; do [ -f $${f}o ] || echo $$f; done | xargs -r -P4 -I{} coqc -Q theories BBB4 {}
-	coqc -Q theories BBB4 theories/Census/Compute/Census_Theorem.v
+	$(MAKE) _census-walk
 .PHONY: census-resume
