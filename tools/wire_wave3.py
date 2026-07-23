@@ -49,8 +49,13 @@ CENSUS = os.path.join(ROOT, "theories", "Census")
 # NOT tools/census_holdouts_kept.txt, which regen itself overwrites with
 # the currently-kept holdouts (e.g. 27 after the provenqh wire) and which
 # therefore fails the len==3713 assert on any already-shrunk tree.
-BBB = os.environ.get("BBB_REPO", os.path.join(ROOT, "..", "BBB"))
-HOLDOUTS_3713 = os.path.join(BBB, "BBB4_holdouts_3713.txt")
+# The list is VENDORED (byte-identical copy of the BBB harness's
+# BBB4_holdouts_3713.txt) so wiring needs no sibling checkout; set
+# BBB_REPO to prefer an upstream checkout's copy instead.
+HOLDOUTS_3713 = os.path.join(HERE, "BBB4_holdouts_3713.txt")
+if "BBB_REPO" in os.environ:
+    HOLDOUTS_3713 = os.path.join(os.environ["BBB_REPO"],
+                                 "BBB4_holdouts_3713.txt")
 
 
 def staged_files(subdir, prefix):
