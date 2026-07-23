@@ -26,14 +26,26 @@ clean:
 
 # The raw walk recipe, factored out so `census' (cache-miss) and
 # `census-verify' (forced) share the exact same commands.  Internal target.
+#
+# RESUMABLE: each unit is skipped when its .vo already exists, so a walk
+# that dies mid-layer (OOM, preemption) continues where it stopped instead
+# of redoing finished units.  `census-verify' still deletes every census
+# .vo FIRST, so a verify walk is always a full from-source walk -- the
+# honesty property is unchanged.
+#
+# WALK_JOBS defaults to 2: four parallel native_compute units OOM-killed a
+# 16 GB box on the GG_1LC layer (signal 9, 2026-07-22).  Override with
+# `make census-verify WALK_JOBS=4' only if RAM headroom is confirmed.
+WALK_JOBS ?= 2
+
 _census-walk:
-	coqc -Q theories BBB4 theories/Census/Run_Split.v
-	coqc -Q theories BBB4 theories/Census/Run_Split2.v
-	ls theories/Census/Run_Split_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
-	ls theories/Census/Compute/GG_1LC_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
-	ls theories/Census/Compute/GGH_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
-	ls theories/Census/Compute/G_*.v | xargs -P4 -I{} coqc -Q theories BBB4 {}
-	coqc -Q theories BBB4 theories/Census/Compute/Census_Theorem.v
+	[ -f theories/Census/Run_Split.vo ] || coqc -Q theories BBB4 theories/Census/Run_Split.v
+	[ -f theories/Census/Run_Split2.vo ] || coqc -Q theories BBB4 theories/Census/Run_Split2.v
+	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | xargs -r -P$(WALK_JOBS) -I{} coqc -Q theories BBB4 {}
+	ls theories/Census/Compute/GG_1LC_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | xargs -r -P$(WALK_JOBS) -I{} coqc -Q theories BBB4 {}
+	ls theories/Census/Compute/GGH_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | xargs -r -P$(WALK_JOBS) -I{} coqc -Q theories BBB4 {}
+	ls theories/Census/Compute/G_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | xargs -r -P$(WALK_JOBS) -I{} coqc -Q theories BBB4 {}
+	[ -f theories/Census/Compute/Census_Theorem.vo ] || coqc -Q theories BBB4 theories/Census/Compute/Census_Theorem.v
 .PHONY: _census-walk
 
 # Guarded census: skip the walk when the committed .vo already certify this
