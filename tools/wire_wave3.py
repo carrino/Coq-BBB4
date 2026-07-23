@@ -92,7 +92,7 @@ def rewrite_rerootqh_data(rr, iqh):
         "",
         "    The census R_QH lookup tier data: the wave-1 re-root boards",
         "    (rerootqh_00..04), the wave-2 staged re-root boards",
-        "    (Machines/RerootStage/RRStage_*), and the wave-3 irules-QH",
+        "    (the Machines/RerootStage batches), and the wave-3 irules-QH",
         "    boards (Machines/IRulesQHStage/IQHStage_*, via",
         "    Checkers/IRules/MetaBlkPfxQH.v).  Composed with the",
         "    proven-QH tier (Run.v) as extra R_QH lookup members. *)",
@@ -146,7 +146,7 @@ def rewrite_proven_data(lc, lcs2):
         "    The census proven (R_NeverQH) lookup tier data: the boarded",
         "    holdout theorems (Proven_00..07) plus the wave-2/3 staged",
         "    list-C never-QH boards",
-        "    (Machines/ListCStage/LCStage_*, Machines/ListCStage2/LCS2_*). *)",
+        "    (the Machines/ListCStage and Machines/ListCStage2 batches). *)",
         "From Coq Require Import List.",
         "From BBB4 Require Import BBB4_Statement.",
         "From BBB4.Census Require Import "
