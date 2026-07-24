@@ -639,3 +639,125 @@ Proof.
     + rewrite Hpr. reflexivity.
     + apply hng_start_covers. exact Hseed.
 Qed.
+
+(** ** Lexicographic liveness: count measures over the augmented closure
+
+    The measure VALUE reads the plain computable config; the DELTA is read
+    off the node's bit projection.  [comp_exact] reduces to an [ng_start]
+    form of [NGram.ngm_exact] via [hproj a = ng_start n cc]. *)
+
+Lemma hbit_nthb_map : forall l i, nthb (map hbit l) i = hbit (hnthb l i).
+Proof.
+  induction l as [|x l IH]; intros i.
+  - destruct i; reflexivity.
+  - destruct i; [reflexivity | apply IH].
+Qed.
+
+Lemma map_hbit_hwin : forall l d n,
+  map hbit (hwin (hlift_side l) d n) = win (lift_side (map hbit l)) d n.
+Proof.
+  intros l d n. unfold hwin, win. rewrite map_map. apply map_ext. intro i.
+  unfold hlift_side, lift_side. symmetry. apply hbit_nthb_map.
+Qed.
+
+Lemma hproj_eq_ngstart : forall n lset rset a hc cc,
+  hng_covers n lset rset a hc -> lift (hproj hc) = lift cc ->
+  hproj a = ng_start n cc.
+Proof.
+  intros n lset rset [q [[Lw s] Rw]] [qc [[l h] r]] [cq [[cl ch] cr]] Hcov Hlift.
+  destruct Hcov as (Hq & Hh & HLw & HRw & _). simpl in Hq, Hh. subst qc. subst s.
+  unfold lift, hproj, lift_tape, hproj_side in Hlift.
+  injection Hlift as HqE HlE HhE HrE.
+  subst cq. subst ch.
+  cbn [hproj hproj_side ng_start]. subst Lw. subst Rw.
+  rewrite !map_hbit_hwin, HlE, HrE. reflexivity.
+Qed.
+
+Lemma ngm_start_exact : forall tm n m cc cc' a',
+  1 <= n -> cstep tm cc = Some cc' ->
+  Z.of_nat (ngm_val m cc')
+  = (Z.of_nat (ngm_val m cc) + ngm_delta tm m (ng_start n cc) a')%Z.
+Proof.
+  intros tm n m [q [[l h] r]] cc' a' Hn Hstep.
+  destruct n as [|kk]; [lia|].
+  cbn [ng_start].
+  unfold cstep in Hstep. destruct (tm q h) as [tr|] eqn:Etr; [|discriminate].
+  injection Hstep as <-.
+  assert (Hcl : chd (win (lift_side l) 0 (S kk)) = chd l).
+  { rewrite win_chd. symmetry. apply lift_side_hd. }
+  assert (Hcr : chd (win (lift_side r) 0 (S kk)) = chd r).
+  { rewrite win_chd. symmetry. apply lift_side_hd. }
+  unfold ngm_delta. rewrite Etr.
+  destruct (t_dir tr) eqn:Ed; destruct m; cbn [ngm_val ctape_move];
+    rewrite ?Hcl, ?Hcr;
+    destruct l as [|x1 t1]; destruct r as [|x2 t2];
+    destruct (t_write tr); destruct h;
+    try destruct x1; try destruct x2;
+    cbn [count1 nc1 zc1 ctl chd]; lia.
+Qed.
+
+(** ** The lex never-QH checker (count measures, phase-dependent potentials)
+
+    Certificate components are keyed by the FULL augmented node
+    ([hctx_enc]) -- so potentials/gates are phase-dependent, the liveness
+    granularity history buys.  A [HMeas] count measure discharges the
+    counter tail (pilot: [lex-Left]); [HRank] is a phase-dependent rank. *)
+
+Definition hpmape_get (m : PositiveMap.tree nat) (a : hcconf) : nat :=
+  match PositiveMap.find (hctx_enc a) m with Some v => v | None => 0 end.
+
+Definition hpsete_mem (gate : list positive) (a : hcconf) : bool :=
+  PositiveSet.mem (hctx_enc a) (psete_of gate).
+
+Inductive hcomp : Type :=
+| HRank (phi : list (positive * nat))
+| HMeas (m : ngmeas) (K : nat) (phi : list (positive * nat)) (gate : list positive).
+
+Definition hcomp_denote (tm : TM) (c : hcomp) : lexcomp hcconf :=
+  match c with
+  | HRank phi => LexRank hcconf (hpmape_get (pmape_of phi))
+  | HMeas m K phi gate =>
+      LexMeas hcconf (ngm_val m) (fun a a' => ngm_delta tm m (hproj a) (hproj a'))
+              K (hpmape_get (pmape_of phi)) (hpsete_mem gate)
+  end.
+
+Definition ngramhist_check_neverqh_lex (tm : TM) (k n t fuel : nat)
+    (lset rset : hgset) (cert : St -> list hcomp) : bool :=
+  (1 <=? n) &&
+  match hcsteps tm k t hcconf0 with
+  | Some hct =>
+      hseed_ok n lset rset hct &&
+      closure_check_neverqh_lex tm hcconf hctx_enc ha_state
+        (hng_succs tm k n lset rset) t fuel (hng_start n hct)
+        (fun q => map (hcomp_denote tm) (cert q))
+  | None => false
+  end.
+
+Theorem ngramhist_check_neverqh_lex_sound : forall tm k n t fuel lset rset cert,
+  ngramhist_check_neverqh_lex tm k n t fuel lset rset cert = true ->
+  NeverQuasiHaltsSt tm.
+Proof.
+  intros tm k n t fuel lset rset cert H.
+  unfold ngramhist_check_neverqh_lex in H.
+  apply andb_prop in H as [Hn H].
+  apply Nat.leb_le in Hn.
+  destruct (hcsteps tm k t hcconf0) as [hct|] eqn:Eht; [|discriminate].
+  apply andb_prop in H as [Hseed Hcheck].
+  apply (closure_check_neverqh_lex_sound tm hcconf hctx_enc ha_state
+           (hng_succs tm k n lset rset) (hcovers n lset rset)) in Hcheck;
+    [assumption | | | | |].
+  - exact hctx_enc_inj.
+  - intros a c Hc. eapply hcovers_state; eauto.
+  - intros a c Hc. apply hng_succs_sound; assumption.
+  - intros ct' Hct'.
+    pose proof (hcsteps_proj tm k t hcconf0 hct Eht) as Hpr.
+    rewrite hproj_hcconf0 in Hpr. rewrite Hct' in Hpr. injection Hpr as Hpr.
+    exists hct. split; [rewrite Hpr; reflexivity | apply hng_start_covers; exact Hseed].
+  - intros q0. apply Forall_forall. intros comp Hin.
+    apply in_map_iff in Hin. destruct Hin as (c & <- & _).
+    destruct c as [phi | m K phi gate]; simpl.
+    + exact I.
+    + intros a cc a' cc' sl (hc & Hlift & Hcov) Hca' Hstep Es HInl.
+      rewrite (hproj_eq_ngstart n lset rset a hc cc Hcov Hlift).
+      apply ngm_start_exact; [exact Hn | exact Hstep].
+Qed.
