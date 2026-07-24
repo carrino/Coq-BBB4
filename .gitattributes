@@ -1,0 +1,5 @@
+# Proof artifacts are BINARY -- no line-ending normalization, ever.
+*.vo binary
+*.vos binary
+*.vok binary
+*.cmxs binary
