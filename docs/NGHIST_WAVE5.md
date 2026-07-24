@@ -112,13 +112,95 @@ Axiom footprint: `functional_extensionality_dep` only (per file class,
 `Print Assumptions`).  Everything in `tools/` is untrusted; the kernel
 re-checks every emitted certificate; kernel-refused certs are never boarded.
 
-## 4. Harvest, yields, oracle provenance
-_(filled in as the harvest runs — see `tools/nghstage_manifest.tsv`.)_
+### Files (all compile, all `functional_extensionality_dep` only)
+- `theories/Checkers/NGramHist.v` — the never-QH checker.  Exports:
+  `hcstep_proj` (the simulation), `hng_succs_sound_some` (closure
+  refinement), `ngramhist_check_neverqh` + `_sound` (rank gate),
+  `ngramhist_check_neverqh_lex` + `_sound` (lex gate, phase-dependent count
+  measures via the `hcomp` cert type), and `ngramhist_closed` + `_sound`
+  (safety-only ⇒ `NonHalt`, for the trap controls).
+- `theories/Checkers/NGramHistWrap.v` — `ngramhist_check_qhbound_lex` +
+  `_sound` ⇒ `NonHalt /\ QHBound (S t) /\ QuasiHaltsSt` (the R_QH tier),
+  a fork of `Wrap.v` over the augmented instance.
+- `theories/Tests/NGramHist_Corruption.v` — the four MUST-fail controls,
+  all kernel-verified (see §2's safety!=liveness note): `ctl_plain_misses`
+  + `ctl_hist_boards` (feature load-bearing), `qh_closes`+`qh_rejected`
+  (the trap), `halt_rejected`, `mut_rejected`.
+- `tools/nghist/nghist_prove.py` — UNTRUSTED prover: grows the gram sets to
+  a fixpoint (mirroring `hng_succs`), computes phase-dependent count-measure
+  lex certs (Bellman-Ford potentials), emits staged Coq.  It also enforces
+  the never-QH obligation over PREFIX-visited states (a bug the kernel
+  caught: without it the prover boarded a quasihalter, which `vm_compute`
+  then rejected — the safety!=liveness trap in miniature).
 
-## 5. Wire / regen note
+**End-to-end validation:** `coqc … vm_compute` proves `NeverQuasiHaltsSt`
+for real residue counters that plain n-gram cannot close (e.g.
+`0RB---_0LC0RA_0LD---_1RA1LC`, 33 augmented contexts), `Print Assumptions`
+clean.  The kernel re-checks every cert; a mismatch (prover claims, kernel
+rejects) is recorded and never boarded.
+
+## 4. Harvest — `theories/Machines/NGHStage/`
+
+Sweep of the unboarded census residue (`tools/census_residue.txt`, 5,129;
+minus the staged-not-wired v5/v5b manifests) with
+`tools/nghist/harvest_sweep.py` (≤2 nice workers, `history=2` then `4`,
+`gram=2`).  Emitter: staged files 100/machines-per-file, per-file
+`Forall NeverQuasiHaltsSt`, manifest `tools/nghstage_manifest.tsv`
+(`machine,theorem,file,k,n,t,fuel,nctx`).  Every file is
+`coqc -Q theories BBB4`-validated (a 100-machine file ≈ 70 s `vm_compute`)
+and committed on landing.
+
+Measured never-QH yield ≈ **10 %** of the residue swept (the honest rate
+AFTER quasihalters are correctly rejected — the pre-fix 36 % included
+mis-boarded quasihalters the kernel would refuse).  The rejected majority is
+dominated by genuine quasihalters (a state quiet after the transient), which
+route to the QHBound/wrap variant (`NGramHistWrap.v`) as R_QH facts, not
+never-QH — exactly the listB/listC mix the design anticipated.  Both shapes
+feed the Assembly `Forall`; they live in separate files.  Final counts:
+`tools/nghstage_manifest.tsv`.
+
+Oracle provenance (`tools/nghist/residue_provenance.csv`, from
+`BB4_verified_enumeration.csv`): of the residue machines that match mxdys'
+table by string, the never-QH-boarded ones concentrate in the
+`NGRAM_CPS_IMPL1_params_2_2_2_1600` (history-augmented) column — the machines
+plain n-gram genuinely could not close.
+
+## 5. Wire / regen — the two routes (wire is OPTIONAL now)
+
 The staged `theories/Machines/NGHStage/*.v` accumulate toward the `Forall`
-over the frozen 5,156 `D_census` list (`tools/census_holdouts_kept.txt` +
-`tools/census_residue.txt`).  Two routes exist: (a) the Assembly.v `Forall`
-path needs **no** census walk (the staged per-file `Forall`s compose directly);
-(b) the legacy wire+regen path (`regen_residue.py`) drops boarded machines
-from `Deferred_*` and re-certifies on stable hardware.  Wave-6 uses route (a).
+over the frozen 5,156 `D_census` list = `tools/census_holdouts_kept.txt` (27)
++ `tools/census_residue.txt` (5,129), materialized as `Deferred_*.v`.  A
+`theories/Census/Assembly.v` file does not yet exist on any branch; wave-6
+produces the per-file `Forall`s that a closeout `Assembly.v` composes.
+
+- **Route A — Assembly `Forall` (no census walk).**  Each NGHStage file
+  proves `Forall NeverQuasiHaltsSt ngh_NN` (and the wrap files
+  `Forall (fun tm => NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm)
+  nghw_NN`).  A future `Census/Assembly.v` `app`-chains these per-file
+  `Forall`s (+ the wave-2/3/4 stage `Forall`s) into one
+  `Forall boarded D_census`, entirely by kernel term composition — **no
+  `native_compute` census walk, no stable-hardware step.**  This is the
+  route wave-6 uses; it keeps `CENSUS_VO_HASH` MATCH (no census `.v` input
+  touched) and the census `.vo` frozen.
+- **Route B — legacy wire + regen (stable hardware).**
+  `tools/regen_residue.py` drops the boarded machines from the `Deferred_*`
+  tables (shrinking `D_census`) and `make census-verify` re-certifies the
+  native walk.  This CHANGES a census input (`Deferred_*`) so
+  `census_cache.py --check` goes MISMATCH until the box re-walks.  Not
+  needed for the Assembly path; documented for parity with waves 2/3.
+
+**Dedup** (so NGHStage never re-boards): the sweep subtracts, from
+`census_residue.txt`, the staged-not-wired manifests
+(`listc_v5_manifest.tsv`, `listc_v5b_manifest.tsv`; and, against the wave-4
+branch, `listc_stage3_manifest.tsv` + `provenqh_stage_manifest.tsv`).  The
+wired boards are already absent from `census_residue.txt`.
+
+## 6. Follow-ups
+- QHBound/wrap harvest: `NGramHistWrap.v` is landed and axiom-clean; the
+  prover's wrap-cert emitter (find the quiet state, wrap, close, cert) is the
+  next tooling step to harvest the quasihalter tail into `NGHWStage/`.
+- Pattern measures: the lex cert currently uses count measures (`ngmeas`);
+  the `NgPattE` pattern-measure vocabulary (`pm_exact`) would recover the
+  "liveness lags closure" tail the single count measure misses.
+- History escalation: the sweep tries `history=2,4`; the oracle shows a
+  small `history=6,8` tail — raise `PARAMS` if the yield plateaus.
