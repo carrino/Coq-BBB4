@@ -377,12 +377,18 @@ theories/Tests/IRulesBlkPartial_Corruption.v
 theories/Checkers/IRules/EngineKS.v
 theories/Checkers/IRules/RulesBlkPfx.v
 theories/Checkers/IRules/MetaBlkPfx.v
+theories/Checkers/IRules/StreamEq.v
+theories/Checkers/IRules/MetaBlkPfxV5.v
+theories/Checkers/IRules/Reblock.v
+theories/Checkers/IRules/MetaBlkPfxV5b.v
 theories/Machines/IRulesBlkPfx_Batch_01.v
 theories/Machines/IRulesBlkPfx_Batch_02.v
 theories/Machines/IRulesBlkPfx_Batch_03.v
 theories/Machines/IRulesBlkPfx_Batch_04.v
 theories/Machines/IRulesBlkPfx_Batch_05.v
 theories/Tests/IRulesBlkPfxBatch_Corruption.v
+theories/Tests/IRulesV5_Corruption.v
+theories/Tests/IRulesV5b_Corruption.v
 
 # --- counters track: wave ---
 theories/Counters/WaveCounter.v
