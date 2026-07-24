@@ -62,22 +62,16 @@ def load_params():
 ORACLE = load_params()
 
 def nqh_plan(m):
-    """List of (k,n,t,fuel) to try for never-QH, oracle-first then escalation."""
-    plans = []
+    """List of (k,n,t,fuel) to try for never-QH, oracle-first then escalation.
+    Kept lean (few combos) so the full-residue sweep completes in ~1 container
+    window; grow() dominates cost per combo."""
     if m in ORACLE:
         h, g, gas = ORACLE[m]
         k = max(1, h)
         fuel = max(20000, gas * 20)
-        for t in (20, 40, 80, 150):
-            plans.append((k, g, t, fuel))
-        # a slightly richer fallback on the oracle machine
-        for t in (40, 150):
-            plans.append((max(k, 2), max(g, 2), t, fuel))
-    else:
-        for (k, n) in ((2, 2), (4, 2), (2, 3), (4, 3)):
-            for t in (40, 150):
-                plans.append((k, n, t, 20000))
-    return plans
+        return [(k, g, 40, fuel), (max(k, 2), max(g, 2), 40, fuel),
+                (max(k, 2), max(g, 2), 150, fuel)]
+    return [(2, 2, 40, 20000), (4, 2, 40, 20000), (2, 3, 150, 20000)]
 
 def qh_plan(m):
     plans = []
@@ -180,6 +174,86 @@ def qh_pass():
                 sys.stderr.write("  %d/%d, %d boardable\n" % (i + 1, len(rem), ok))
     sys.stderr.write("DONE R_QH %d/%d\n" % (ok, len(rem)))
 
+NQH_OUTDIR = ROOT + "/theories/Machines/NGHStage"
+NQH_MANI = ROOT + "/tools/nghstage_manifest.tsv"
+QH_OUTDIR = ROOT + "/theories/Machines/NGHWStage"
+QH_MANI = ROOT + "/tools/nghwstage_manifest.tsv"
+
+def emit_nqh(start_fi=5, start_idx=500):
+    """Emit the never-QH sweep results into NEW continuing files (NGH_05..),
+    theorem/def/list names offset by start_idx so nothing clashes with wave-6.
+    Appends to the manifest."""
+    rows = [l.rstrip('\n').split('\t') for l in
+            open(ROOT + "/tools/nghist/oracle_nqh_results.tsv") if l.strip()]
+    # skip machines already boarded (safety)
+    b = boarded()
+    rows = [r for r in rows if r[0] not in b]
+    man = open(NQH_MANI, 'a')
+    per = 100
+    nfiles = (len(rows) + per - 1) // per
+    for fi in range(nfiles):
+        chunk = rows[fi*per:(fi+1)*per]
+        gfi = start_fi + fi
+        fname = "NGH_%02d" % gfi
+        body = [P.HEADER]
+        thms = []
+        for j, row in enumerate(chunk):
+            m, k, n, t, fuel, nctx = row
+            r = P.prove(m, int(k), int(n), int(t), int(fuel))
+            idx = start_idx + fi*per + j
+            nm = '%05d' % idx
+            btext, thm = P.emit(m, r, idx)
+            body.append(btext)
+            thms.append((thm, 'tm_h_' + nm))
+            man.write("%s\t%s\t%s.v\t%s\t%s\t%s\t%s\t%s\n" % (m, thm, fname, k, n, t, fuel, nctx))
+        lst = "ngh_%02d" % gfi
+        body.append('Definition {} : list TM :=\n  [{}].'.format(
+            lst, ';\n   '.join(tm for _, tm in thms)))
+        term = "Forall_nil NeverQuasiHaltsSt"
+        for thm, _ in reversed(thms):
+            term = "Forall_cons _ {} ({})".format(thm, term)
+        body.append('Lemma {}_nqh : Forall NeverQuasiHaltsSt {}.'.format(lst, lst))
+        body.append('Proof. unfold {}. exact ({}). Qed.'.format(lst, term))
+        open(NQH_OUTDIR + "/" + fname + ".v", 'w').write('\n\n'.join(body) + '\n')
+        sys.stderr.write("wrote %s (%d machines)\n" % (fname, len(chunk)))
+    man.close()
+
+def emit_qh(start_fi=6, start_idx=600):
+    rows = [l.rstrip('\n').split('\t') for l in
+            open(ROOT + "/tools/nghist/oracle_qh_results.tsv") if l.strip()]
+    b = boarded()
+    rows = [r for r in rows if r[0] not in b]
+    man = open(QH_MANI, 'a')
+    per = 100
+    nfiles = (len(rows) + per - 1) // per
+    for fi in range(nfiles):
+        chunk = rows[fi*per:(fi+1)*per]
+        gfi = start_fi + fi
+        fname = "NGHW_%02d" % gfi
+        body = [P.HEADER_QH]
+        thms = []
+        for j, row in enumerate(chunk):
+            m, qst, s, k, n, t, fuel, nctx = row
+            r = P.prove_qh(m, int(k), int(n), int(fuel))
+            idx = start_idx + fi*per + j
+            nm = '%05d' % idx
+            btext, thm, tmn = P.emit_qh(m, r, idx)
+            body.append(btext)
+            thms.append((thm, tmn))
+            man.write("%s\t%s\t%s.v\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (
+                m, thm, fname, qst, s, k, n, t, fuel, nctx))
+        lst = "nghw_%02d" % gfi
+        body.append('Definition {} : list TM :=\n  [{}].'.format(
+            lst, ';\n   '.join(tm for _, tm in thms)))
+        term = "Forall_nil iqh"
+        for thm, _ in reversed(thms):
+            term = "Forall_cons _ {} ({})".format(thm, term)
+        body.append('Lemma {}_all : Forall iqh {}.'.format(lst, lst))
+        body.append('Proof. unfold {}. exact ({}). Qed.'.format(lst, term))
+        open(QH_OUTDIR + "/" + fname + ".v", 'w').write('\n\n'.join(body) + '\n')
+        sys.stderr.write("wrote %s (%d machines)\n" % (fname, len(chunk)))
+    man.close()
+
 if __name__ == '__main__':
     cmd = sys.argv[1]
     if cmd == 'probe':
@@ -188,3 +262,7 @@ if __name__ == '__main__':
         nqh_pass()
     elif cmd == 'qh':
         qh_pass()
+    elif cmd == 'emit_nqh':
+        emit_nqh()
+    elif cmd == 'emit_qh':
+        emit_qh()

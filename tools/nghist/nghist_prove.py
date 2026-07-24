@@ -214,6 +214,7 @@ def pm_delta(tm, p, rg, a):
 # pattern vocabulary tried after rank + count measures fail
 PATTERNS=[[1,1],[1,1,1]]
 LEX_MAXNODES=260   # cap the expensive lex search to keep the sweep fast
+CERT_MAXNODES=420  # skip the whole measure search on huge q-avoiding subgraphs
 
 def bellman_phi_w(nodes, ew, N):
     """Like bellman_phi but with edge weights precomputed (ew = (a,b,weight),
@@ -300,6 +301,10 @@ def cert_for_state(tm,seen,edges,q,K=None,n=2):
     if rk is not None:
         return [('HRank',rk)]
     if K is None: K=len(seen)+2
+    # Bellman-Ford is O(N*E); skip the measure search on huge q-avoiding
+    # subgraphs (they essentially never discharge and dominate sweep cost).
+    if len(nodes) > CERT_MAXNODES:
+        return None
     cands=meas_cands(tm,n)
     edges_all=[(a,b) for a in nodes for b in adj[a]]
     # single measure strict on all edges (wave-6 behaviour, no regression)

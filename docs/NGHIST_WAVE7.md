@@ -72,3 +72,59 @@ is absent.  The mapping is exact and behaviour-defined (relabel-invariant), so
 
 The Coq kernel re-checks every emitted certificate via `vm_compute`; these
 tools only pick which params to try.
+
+## 3. Move 3 -- HPatt pattern measures + lex-tuple synthesis (LANDED)
+
+The unboarded targetable machines all CLOSE at oracle params but FAIL the
+single count/rank liveness measures (a state recurs but no 1-count measure
+strictly decreases on its q-avoiding subgraph).  Two additions fix this, both
+kernel-checked, `functional_extensionality_dep` only:
+
+- `theories/Checkers/NGramHist.v`: `HPatt (p rg K phi gate)` on `hcomp` -- a
+  pattern measure over `hsym` (the `NgPattE` fork).  `pm_val`/`pm_delta`/
+  `pm_ok` are reused verbatim from `NGram`; the sole new obligation
+  `pm_start_exact` (the `ng_start` form of `NGram.pm_exact`) is proved by
+  self-seeding `ng_start_covers` with the config's own windows.
+  `hcomp_denote` gains the `n` param for the `pm_ok` guard.
+- `theories/Tests/NGramHist_Corruption.v`: `ctl_hpatt_boards` (a pattern-ONLY
+  cert boards never-QH) + `hpatt_mut_rejected` (MUST-fail: `[S1;S1]->[S0;S0]`,
+  no S1 => `pm_ok` false => sound no-op => the lex check rejects).  Axiom-free.
+- `tools/nghist/nghist_prove.py`: `pm_delta` over the bit projection + a greedy
+  **lexicographic ranking** (`lex_synth`) combining count and pattern measures.
+  The wave-6 single-measure path is preserved (no regression); lex TUPLES are
+  the real unlock -- one state discharged by several measures in lex order.
+
+## 4. Move 2 -- the oracle-driven re-sweep (LANDED)
+
+`tools/nghist/oracle_sweep.py` sweeps the 4,129 unboarded residue machines
+(per-machine oracle params for the <=7-transition targetable ones, escalation
+for the full-8).  With the lex-tuple prover it boards **242 new never-QH
+machines** that wave-6's single-measure sweep could not
+(`theories/Machines/NGHStage/NGH_05..07.v`, `Forall NeverQuasiHaltsSt`,
+100/file, every file `coqc`-validated, `functional_extensionality_dep` only;
+`tools/nghstage_manifest.tsv` extended to 676).  The yield is concentrated in
+the full-8 machines (the targetable <=7 ones close at oracle params but are the
+genuinely-hard never-QH tail).  The R_QH re-sweep on the never-QH failures
+yields ~0 (1 in 1,800): those failures are not quasihalters -- their states all
+recur, so they need richer liveness, not the wrap variant.
+
+## 5. Stretch -- `theories/Census/Assembly.v` (LANDED)
+
+Route A composition (no census walk): app-chains the NGHStage
+`Forall NeverQuasiHaltsSt` (676) and NGHWStage `Forall iqh` (530) per-file
+`Forall`s into one `Forall boarded boarded_all` over 1,206 machines, via a
+common `boarded tm := NeverQuasiHaltsSt tm \/ (NonHalt /\ QHBound 2000 /\
+QuasiHaltsSt)`.  `Print Assumptions boarded_all_boarded` =
+`functional_extensionality_dep` only.  A closeout extends it with the wave-7
+R_QH files (none this wave) and the wave-2/3/4 stage `Forall`s (their branch),
+then relates `boarded_all` to the frozen `D_census` list.
+
+## 6. The residual open core
+
+After wave-7, ~3,650 residue machines remain unboarded by NGramHist.  These
+are the machines where even the lex-tuple of count+pattern measures over the
+augmented closure does not discharge liveness -- the genuine never-QH tail.
+The `1RB0RB_1LC1RC_0RA1LD_1RC0LD`-class (mxdys' exact-model claim fails: no
+finite model at any params) sits here.  Next levers: richer `HPatt` patterns in
+`lex_synth`, higher history (`k=6,8` from the oracle's small tail), and a
+per-state lex search that mixes gates (not just the whole q-avoiding set).

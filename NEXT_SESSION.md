@@ -334,6 +334,56 @@ machines are also still unwired here).  Full recipe:
 
 ---
 
+## wave-7 NGramHist ORACLE-DRIVE LANDED (2026-07-24, branch claude/ngramhist-oracle-wave-7-yo7hub)
+
+Continues wave-6 (PR #25).  Three moves + the TNF finding.
+
+**THE TNF FINDING (corrects the wave-6 hand-off hypothesis).**  The hand-off
+assumed the 3,594 residue machines that don't string-match
+`BB4_verified_enumeration.csv` are "the same machines under a different TNF
+relabeling".  MEASURED FALSE: mxdys' CSV has **ZERO full machines** -- every
+row has >=1 undefined transition (bbchallenge cnt>=1 pruning; the enumeration
+space is machines using <= 2n-1 = 7 of the 8 transitions).  A machine that uses
+all 8 is OUTSIDE that space (its TNF ancestor is a HALT node), absent under all
+48 state-perm x mirror symmetries.  So the residue splits **1,535 targetable**
+(<=7 transitions, map to nonhalt NGRAM_CPS_* with exact params) vs **3,594
+full-8** (no oracle row); holdouts split 114 vs 3,599.  Tooling:
+`tools/nghist/tnf_canon.py` + `oracle_lookup.py` (`reached_canon`, `oracle_of`,
+`params_for`) + `oracle_params.csv` (the 1,486 targetable residue machines).
+Full writeup: **`docs/NGHIST_WAVE7.md`**.
+
+**Move 1 -- oracle lookup: DONE, committed.**  Every <=7-transition machine
+maps to mxdys' decider+params.  BUT the targetable machines mostly CLOSE at
+oracle params yet FAIL liveness (they are the genuinely-hard never-QH tail);
+yield came from the full-8 machines instead (see Move 2).
+
+**Move 3 -- HPatt pattern measures + lex-tuple synthesis: DONE, committed.**
+- Checker (`NGramHist.v`, funext-only): `HPatt (p rg K phi gate)` on `hcomp`
+  (pattern measure over `hsym`, the `NgPattE` fork); the new obligation
+  `pm_start_exact` (ng_start form of `NGram.pm_exact`) proved by self-seeding
+  `ng_start_covers`.  `hcomp_denote` gained the `n` param (pm_ok guard); wrap
+  threaded.  `NGramHist_Corruption.v`: `ctl_hpatt_boards` (pattern-ONLY cert
+  boards) + `hpatt_mut_rejected` (MUST-fail: `[S1;S1]->[S0;S0]` => pm_ok false
+  => no-op => rejected).  Both axiom-free.
+- Untrusted prover (`nghist_prove.py`): `pm_delta` over the bit projection +
+  greedy **lexicographic ranking** (`lex_synth`) combining count + pattern
+  measures.  The wave-6 single-measure path is preserved (no regression); lex
+  TUPLES are the actual unlock for the "liveness lags closure" tail (one state
+  needing several measures in lex order).  Kernel-verified end to end.
+
+**Move 2 -- oracle-drive + re-sweep: IN PROGRESS.**  `oracle_sweep.py`
+(per-machine oracle params for targetable, escalation for full-8).  The
+lex-tuple prover boards ~15-23% of the previously-stuck full-8 residue that
+wave-6's single-measure sweep missed.  Continuing files NGH_05.. / NGHW_06..,
+per-file `Forall`, coqc-validated, manifests extended.  [update on land]
+
+**Stretch -- `theories/Census/Assembly.v`: scaffolded.**  App-chains the
+NGHStage `Forall NeverQuasiHaltsSt` + NGHWStage `Forall iqh` into one
+`Forall boarded boarded_all` (route A, no walk), via a common `boarded` =
+never-QH \/ bounded-quasihalter.  Extend with wave-7 files + waves 2/3/4.
+
+---
+
 ## wave-6 NGramHist LANDED (2026-07-24, branch claude/ngramhist-closeout-wave6-ci4h3w)
 
 **The gap plain n-gram left: history augmentation.**  mxdys' BB4 pipeline
