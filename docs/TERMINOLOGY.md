@@ -100,10 +100,12 @@ snapshot from 2026-07-06 (pre-harvest) — read the residual off the Coq census
   **HALTING** BB4 pipeline: per-machine `(status, decider, params)` for all
   858,909 machines. A *proxy* for "an exact model exists" (halting is easier
   than quasihalting); use it for closure targeting, not as the last word.
-- **BBB repo `results/certs_*`** — mxdys/BBB's actual **quasihalting**
-  decisions (decider + witness) for the machines he decided. The more direct
-  oracle for the residue: it names the quiet state / the measure he used, and
-  is a second independent check on every board.
+- **BBB repo `results/certs_*`** — OUR OWN (carrino/bbb) per-machine
+  quasihalting certs from the **holdout** grind (rank/irules/rwlrank/fuel/
+  drift/... — this project's engines, not mxdys'). CORRECTED 2026-07-24:
+  these cover holdouts only — measured **zero** overlap with the unboarded
+  residue — so they are NOT a residue oracle; their value for the residue is
+  the *engines* behind them (irules, RepWL), not the cert files.
 
 ## The two fronts (and the discipline)
 
