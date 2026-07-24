@@ -1,21 +1,24 @@
 (** * ILCM_1RB0LD0LC1RA1LC1RD0RB1LD: 1RB0LD_0LC1RA_1LC1RD_0RB1LD -- right-growth interleaved counter via Mirror.
 
-    Comb-free interleaved binary counter growing on the RIGHT, so the
+    A comb-free interleaved binary counter growing on the RIGHT, so the
     [Interleave_TGT.v] lap does not apply directly.  Its mirror
     (1LB0RD_0RC1LA_1RC1LD_0LB1RD) is the same counter grown LEFTward, carrying the
-    [JpCounter] anchor
+    [JpCounter] anchor family
 
         Cc p = (StD, (Jp p ++ [S0], S0, []))
 
-    and the template's single-sweep lap (prologue; leftward carry ripple over
-    the low set pairs; interior stop / overflow stop off the deep-left edge;
-    rightward return; close at the frontier).  [Mirror.mirror_never_qh] then
-    transfers [NeverQuasiHaltsSt] from the mirror back to the machine.
+    (the counter nearest-first on the left, the fixed cap [S0] parked
+    below its most significant end, blank head, empty right side) and the
+    template's single-sweep lap: prologue; leftward carry ripple over the low
+    set pairs; interior stop, or overflow stop off the deep-left edge through
+    the cap; rightward return; close at the frontier.
+    [Mirror.mirror_never_qh] transfers [NeverQuasiHaltsSt] from the mirror
+    back to the machine.
 
     Auto-emitted by tools/counters/emit_mirror.py (UNTRUSTED -- every line
     below is re-checked by the Coq kernel).  Phase lengths
-    P1=1 RIP=2 STPI=2 STPO=8 RET=1 FIN=1;
-    bootstrap 13 steps to Cc 1.
+    P1=1 RIP=2 STPI=2 STPO=8 RET=1 (width 1)
+    FIN=1; bootstrap 13 steps to Cc 1.
 
     Axiom footprint: [functional_extensionality_dep] only. *)
 From Coq Require Import Arith Lia Bool List PArith Wellfounded
@@ -49,6 +52,15 @@ Qed.
 
 Definition Cc_1RB0LD0LC1RA1LC1RD0RB1LD (p : positive) : cconf := (StD, (Jp p ++ [S0], S0, [])).
 
+(* --- the two anchor-closing identities (interior / overflow) --- *)
+Lemma clsI_1RB0LD0LC1RA1LC1RD0RB1LD : forall j Y,
+  S1 :: rep [S1] (2*j) ++ S0 :: S1 :: (Y ++ [S0])
+  = (rep [S1;S1] j ++ S1 :: S0 :: S1 :: Y) ++ [S0].
+Proof. intros. rewrite rep_dbl, rep_slide, <- app_assoc. reflexivity. Qed.
+Lemma clsO_1RB0LD0LC1RA1LC1RD0RB1LD : forall j',
+  S1 :: rep [S1] (2*(S j')) ++ [S0] = (rep [S1;S1] (S j') ++ [S1]) ++ [S0].
+Proof. intros. rewrite rep_dbl, rep_slide, <- app_assoc. reflexivity. Qed.
+
 (* --- the lap unit windows (derived by simulation, closed by reflexivity) --- *)
 Lemma U_P1_1RB0LD0LC1RA1LC1RD0RB1LD : wsteps true true tmm_1RB0LD0LC1RA1LC1RD0RB1LD 1 (StD,([S1],S0,[]))
   = Some (StB,([],S1,[S0])). Proof. reflexivity. Qed.
@@ -57,7 +69,7 @@ Lemma U_RIP_1RB0LD0LC1RA1LC1RD0RB1LD : wsteps true true tmm_1RB0LD0LC1RA1LC1RD0R
 Lemma U_STPI_1RB0LD0LC1RA1LC1RD0RB1LD : wsteps true true tmm_1RB0LD0LC1RA1LC1RD0RB1LD 2 (StB,([S1;S1],S1,[]))
   = Some (StD,([S0;S1],S1,[])). Proof. reflexivity. Qed.
 Lemma U_STPO_1RB0LD0LC1RA1LC1RD0RB1LD : wsteps false true tmm_1RB0LD0LC1RA1LC1RD0RB1LD 8 (StB,([S0],S1,[]))
-  = Some (StD,([S0],S1,[S1;S1])). Proof. reflexivity. Qed.
+  = Some (StD,([S0],S1,[S1; S1])). Proof. reflexivity. Qed.
 Lemma U_RET_1RB0LD0LC1RA1LC1RD0RB1LD : wsteps true true tmm_1RB0LD0LC1RA1LC1RD0RB1LD 1 (StD,([],S1,[S1]))
   = Some (StD,([S1],S1,[])). Proof. reflexivity. Qed.
 Lemma U_FIN_1RB0LD0LC1RA1LC1RD0RB1LD : wsteps true true tmm_1RB0LD0LC1RA1LC1RD0RB1LD 1 (StD,([],S1,[S0]))
@@ -76,7 +88,8 @@ Lemma phSTPI_1RB0LD0LC1RA1LC1RD0RB1LD : forall L R,
   csteps tmm_1RB0LD0LC1RA1LC1RD0RB1LD 2 (StB,(S1::S1::L,S1,R)) = Some (StD,(S0::S1::L,S1,R)).
 Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R U_STPI_1RB0LD0LC1RA1LC1RD0RB1LD). Qed.
 Lemma phSTPO_1RB0LD0LC1RA1LC1RD0RB1LD : forall R,
-  csteps tmm_1RB0LD0LC1RA1LC1RD0RB1LD 8 (StB,([S0],S1,R)) = Some (StD,([S0],S1,S1::S1::R)).
+  csteps tmm_1RB0LD0LC1RA1LC1RD0RB1LD 8 (StB,([S0],S1,R))
+  = Some (StD,([S0],S1,S1 :: S1 :: R)).
 Proof. intros. exact (wsteps_frame_l _ _ _ _ _ _ _ _ _ _ R U_STPO_1RB0LD0LC1RA1LC1RD0RB1LD). Qed.
 Lemma phRET_1RB0LD0LC1RA1LC1RD0RB1LD : forall k L R,
   csteps tmm_1RB0LD0LC1RA1LC1RD0RB1LD (1*k) (StD,(L,S1,rep [S1] k ++ R))
@@ -107,8 +120,7 @@ Proof.
       rewrite rep_dbl.
       eapply csteps_chain. { apply (phRET_1RB0LD0LC1RA1LC1RD0RB1LD (2*j)). }
       apply phFIN_1RB0LD0LC1RA1LC1RD0RB1LD.
-    + rewrite HJs, Hiq, rep_dbl. cbn [Nat.mul].
-      rewrite rep_slide, <- !app_assoc. reflexivity.
+    + rewrite HJs, Hiq, <- clsI_1RB0LD0LC1RA1LC1RD0RB1LD. reflexivity.
     + lia.
   - destruct j as [|j'].
     { exfalso. destruct p; simpl in Ecv;
@@ -124,8 +136,7 @@ Proof.
       rewrite rep_dbl.
       eapply csteps_chain. { apply (phRET_1RB0LD0LC1RA1LC1RD0RB1LD (2*(S j'))). }
       apply phFIN_1RB0LD0LC1RA1LC1RD0RB1LD.
-    + rewrite HJs, rep_dbl. cbn [Nat.mul].
-      rewrite rep_slide, <- !app_assoc. reflexivity.
+    + rewrite HJs, <- clsO_1RB0LD0LC1RA1LC1RD0RB1LD. reflexivity.
     + lia.
 Qed.
 
@@ -217,7 +228,9 @@ Proof.
 Qed.
 
 Theorem nqh_1RB0LD0LC1RA1LC1RD0RB1LD : NeverQuasiHaltsSt tm_1RB0LD0LC1RA1LC1RD0RB1LD.
-Proof. apply (mirror_never_qh tm_1RB0LD0LC1RA1LC1RD0RB1LD). rewrite mirror_ok_1RB0LD0LC1RA1LC1RD0RB1LD. exact nqhm_1RB0LD0LC1RA1LC1RD0RB1LD. Qed.
+Proof.
+  apply (mirror_never_qh tm_1RB0LD0LC1RA1LC1RD0RB1LD). rewrite mirror_ok_1RB0LD0LC1RA1LC1RD0RB1LD. exact nqhm_1RB0LD0LC1RA1LC1RD0RB1LD.
+Qed.
 
 Theorem nonhalt_1RB0LD0LC1RA1LC1RD0RB1LD : NonHalt tm_1RB0LD0LC1RA1LC1RD0RB1LD.
 Proof. apply never_qh_nonhalt, nqh_1RB0LD0LC1RA1LC1RD0RB1LD. Qed.
