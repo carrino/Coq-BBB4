@@ -13,6 +13,7 @@ theories/Closure.v
 theories/Checkers/FuelClass.v
 theories/Checkers/ExactClosure.v
 theories/Checkers/NGram.v
+theories/Checkers/NGramHist.v
 theories/Checkers/TCycler.v
 theories/Checkers/TCyclerN.v
 theories/Checkers/Wrap.v
