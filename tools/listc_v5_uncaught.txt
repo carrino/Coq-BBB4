@@ -1,13 +1,12 @@
-# v5-gap machines NOT boarded by EITHER v5 (end-match) or v5b (re-block): 9
-# these need iv_absorb_side (absorb completed block copies into a following
-# block run) beyond iv_reblock_side, or a genuine beng_stepS extension for
-# the variable-block hop. bin/verify passes them. See docs/V5GAP_STAGE.md.
+# v5-gap machines NOT boarded by ANY sound Coq checker: 1
+# The 8 former scalar entries are now boarded by the v5c checker (block-hop
+# closure + multi-run cell-stream end-match; the engine is UNCHANGED) --
+# theories/Machines/ListCV5Stage/LCV5C_00..01.v, manifest
+# tools/listc_v5c_manifest.tsv.
+# The single remaining machine is the matrix-meta cert (v7, meta_a=0
+# meta_b=0, a rulerunm lattice run): the scalar a*k+b meta layer that
+# MetaBlkPfx and all forks reuse does not cover the matrix meta-map ("0 of
+# the Phase-2 certs use the matrix meta-map").  Closing it needs the matrix
+# meta layer ported -- a separate feature, orthogonal to the v5 gap.
+# bin/verify passes it.  See docs/V5GAP_STAGE.md.
 0RB0LA_1LC1LD_1RD0RD_1LA0RC
-1RB0LC_0LB1RC_1RD1LA_1LA0RC
-1RB0LC_1LC1RC_1RD1LA_1LA0RC
-1RB0LD_1RC0RD_1LA1LC_1LA1RB
-1RB0LD_1RC1RB_1LA0RD_1RC1LA
-1RB0LD_1RC1RD_1LA0RD_1RC1LA
-1RB1LB_1LC0RD_0LC1LA_0LB1RA
-1RB1LD_1RC0LD_1LA0RD_1LB1RC
-1RB1RB_1RC1LD_1LD0RB_1RA0LB
