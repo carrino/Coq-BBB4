@@ -123,6 +123,38 @@ Fix (this branch):
   block) with its own soundness proof -- the largest remaining engine
   surface.
 
+  Investigated in depth (this session); the crossing is a full symbolic
+  zipper and needs several composed pieces, each necessary but jointly
+  still insufficient in the measured cases:
+  (a) BLOCK-HOP CLOSURE -- the head crosses a block cleanly but the output
+      word is a rotation of a declared block not itself in the table
+      (e.g. crossing b10=[S1;S1;S1;S1;S0] in StC yields [S0;S1;S1;S0;S1],
+      a rotation of b7), so `bhop_result`'s `blk_find` misses.  Fix:
+      augment `cp_blks` with the hop-closure (untrusted; soundness holds
+      for any table).  Measured: the closure is small (often +1 block) and
+      terminates.
+  (b) PEEL WITH COUNT>=1 -- when a block does NOT hop cleanly (bounces off
+      its first cell, e.g. b6=[S0;S1;S1;S1;S1] with StC,S0->DR reversing),
+      `beng_crossS` must peel one copy and let the head stop at the bounce;
+      the landed guard requires the run count `>= 2`, but these runs are
+      `k - c` with value 1 at kmin.  Relaxing to `expr_ge lo e 1` (sound:
+      `cnt e >= 1` still splits the denotation) advances the replay one
+      more copy.
+  (c) The residual: after (a)+(b) the same run reaches count `k - c` = 0
+      at kmin (empty for one k, non-empty above) -- a genuine
+      empty-vs-nonempty case split the one-directional `beng_crossS`
+      cannot make.  Flooring the meta-replay `lo` at `k0` (sound -- the
+      tiling only uses the cycle for `k >= k0`, and `k0 >> kmin`) makes
+      such runs provably non-empty, but the measured configs still stall
+      afterward: the head genuinely enters a block and returns to the
+      departed side, which the current one-pass crossing cannot represent.
+  The clean fix is to replace `beng_crossS` with a general bounded
+  symbolic zipper (mirror of the C `iv_step` inner loop) that lets the
+  head cross AND bounce back, returning "did not cross" -- then compose
+  (a) block-closure + this zipper.  That is a core-engine rewrite with its
+  own soundness proof (the largest single piece of the whole v5 gap) and
+  is left for a dedicated session.
+
 ## Files (this branch)
 
 | file | role | axioms |
