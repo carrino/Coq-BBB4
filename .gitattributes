@@ -1,0 +1,10 @@
+# Proof artifacts are BINARY -- no line-ending normalization, ever.
+*.vo binary
+*.vos binary
+*.vok binary
+*.cmxs binary
+
+# All text stays LF in the worktree on every platform: census_cache.py
+# hashes on-disk bytes of the .v inputs, so CRLF checkouts would falsely
+# invalidate CENSUS_VO_HASH.
+* text=auto eol=lf

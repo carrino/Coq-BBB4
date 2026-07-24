@@ -44,6 +44,19 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 CENSUS = os.path.join(ROOT, "theories", "Census")
 
+# regen_residue.py's stage 1 rebuilds the PRE-SHRINK deferred set from
+# scratch and therefore needs the FULL 3,713-machine BBB4 holdout list --
+# NOT tools/census_holdouts_kept.txt, which regen itself overwrites with
+# the currently-kept holdouts (e.g. 27 after the provenqh wire) and which
+# therefore fails the len==3713 assert on any already-shrunk tree.
+# The list is VENDORED (byte-identical copy of the BBB harness's
+# BBB4_holdouts_3713.txt) so wiring needs no sibling checkout; set
+# BBB_REPO to prefer an upstream checkout's copy instead.
+HOLDOUTS_3713 = os.path.join(HERE, "BBB4_holdouts_3713.txt")
+if "BBB_REPO" in os.environ:
+    HOLDOUTS_3713 = os.path.join(os.environ["BBB_REPO"],
+                                 "BBB4_holdouts_3713.txt")
+
 
 def staged_files(subdir, prefix):
     d = os.path.join(ROOT, "theories", "Machines", subdir)
@@ -79,7 +92,7 @@ def rewrite_rerootqh_data(rr, iqh):
         "",
         "    The census R_QH lookup tier data: the wave-1 re-root boards",
         "    (rerootqh_00..04), the wave-2 staged re-root boards",
-        "    (Machines/RerootStage/RRStage_*), and the wave-3 irules-QH",
+        "    (the Machines/RerootStage batches), and the wave-3 irules-QH",
         "    boards (Machines/IRulesQHStage/IQHStage_*, via",
         "    Checkers/IRules/MetaBlkPfxQH.v).  Composed with the",
         "    proven-QH tier (Run.v) as extra R_QH lookup members. *)",
@@ -133,7 +146,7 @@ def rewrite_proven_data(lc, lcs2):
         "    The census proven (R_NeverQH) lookup tier data: the boarded",
         "    holdout theorems (Proven_00..07) plus the wave-2/3 staged",
         "    list-C never-QH boards",
-        "    (Machines/ListCStage/LCStage_*, Machines/ListCStage2/LCS2_*). *)",
+        "    (the Machines/ListCStage and Machines/ListCStage2 batches). *)",
         "From Coq Require Import List.",
         "From BBB4 Require Import BBB4_Statement.",
         "From BBB4.Census Require Import "
@@ -165,21 +178,26 @@ def rewrite_proven_data(lc, lcs2):
 
 
 def extend_coqproject(rr, lc, lcs2, iqh):
+    """Per-line idempotent: appends whatever is missing (a re-run after a
+    partial wire adds only the absent lines, never duplicates)."""
     path = os.path.join(ROOT, "_CoqProject")
-    src = open(path).read()
+    src_lines = {l.strip() for l in open(path)}
     marker = "# --- wave-2/3 staged residue proofs (wired) ---"
-    if marker in src:
-        print("_CoqProject already has the wired block; skipping")
+    want = ["theories/Checkers/IRules/MetaQH.v",
+            "theories/Checkers/IRules/MetaBlkPfxQH.v"]
+    want += ["theories/Machines/RerootStage/%s.v" % m for m in rr]
+    want += ["theories/Machines/ListCStage/%s.v" % m for m in lc]
+    want += ["theories/Machines/ListCStage2/%s.v" % m for m in lcs2]
+    want += ["theories/Machines/IRulesQHStage/%s.v" % m for m in iqh]
+    want += ["theories/Tests/RerootStage_Corruption.v",
+             "theories/Tests/IRulesQH_Corruption.v"]
+    missing = [w for w in want if w not in src_lines]
+    if not missing:
+        print("_CoqProject already complete; skipping")
         return
-    block = [marker]
-    block += ["theories/Machines/RerootStage/%s.v" % m for m in rr]
-    block += ["theories/Machines/ListCStage/%s.v" % m for m in lc]
-    block += ["theories/Machines/ListCStage2/%s.v" % m for m in lcs2]
-    block += ["theories/Machines/IRulesQHStage/%s.v" % m for m in iqh]
-    block += ["theories/Tests/RerootStage_Corruption.v",
-              "theories/Tests/IRulesQH_Corruption.v"]
+    block = ([] if marker in src_lines else [marker]) + missing
     open(path, "a").write("\n" + "\n".join(block) + "\n")
-    print("extended _CoqProject (+%d files)" % (len(block) - 1))
+    print("extended _CoqProject (+%d files)" % len(missing))
 
 
 def main():
@@ -225,10 +243,12 @@ def main():
     rewrite_proven_data(lc, lcs2)
     extend_coqproject(rr, lc, lcs2, iqh)
 
+    if not os.path.exists(HOLDOUTS_3713):
+        sys.exit("REFUSING: full holdout list not found at %s -- set "
+                 "BBB_REPO to the BBB harness checkout" % HOLDOUTS_3713)
     subprocess.run(
         [sys.executable, os.path.join(HERE, "regen_residue.py"),
-         os.path.join(HERE, "census_holdouts_kept.txt"), CENSUS,
-         "--wave3"],
+         HOLDOUTS_3713, CENSUS, "--wave3"],
         check=True)
     print("\nWIRED.  Now: make census-verify on the box; check "
           "Print Assumptions census_decided; census_cache.py --update; "

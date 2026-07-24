@@ -38,7 +38,32 @@ clean:
 # `make census-verify WALK_JOBS=4' only if RAM headroom is confirmed.
 WALK_JOBS ?= 2
 
-_census-walk:
+# Walk-stamp: census .vo on disk are trustworthy walk output ONLY if they
+# were produced by walking the CURRENT census inputs (a crash-resume).
+# .vo restored by git (the committed cache of an OLDER tree) or left over
+# from a differently-wired tree satisfy a bare existence check and made the
+# resumable walk silently no-op (discovered 2026-07-23: a fresh checkout's
+# committed .vo "completed" the walk instantly; loading them then failed
+# with "inconsistent assumptions" -- the kernel catches it, but the walk
+# must not skip).  Before walking, quarantine any census .vo whose stamp
+# does not match the current input hash.
+_census-prepare:
+	@H=$$(python3 tools/census_cache.py --print-hash); \
+	 S=census_probes/walk-stamp; mkdir -p census_probes; \
+	 if [ ! -f $$S ] || [ "$$(cat $$S)" != "$$H" ]; then \
+	   bdir="census_probes/vo-quarantine-$$(date +%Y%m%d-%H%M%S)"; \
+	   mkdir -p "$$bdir"; \
+	   mv -f theories/Census/Run_Split*.vo theories/Census/Run_Split*.glob "$$bdir"/ 2>/dev/null || true; \
+	   mv -f theories/Census/Compute/*.vo theories/Census/Compute/*.glob "$$bdir"/ 2>/dev/null || true; \
+	   echo "$$H" > $$S; \
+	   echo ">>> census .vo on disk were NOT produced by walking this tree"; \
+	   echo ">>> quarantined to $$bdir -- walking from source"; \
+	 else \
+	   echo ">>> walk-stamp matches this tree -- resuming, finished units kept"; \
+	 fi
+.PHONY: _census-prepare
+
+_census-walk: _census-prepare
 	[ -f theories/Census/Run_Split.vo ] || coqc -Q theories BBB4 theories/Census/Run_Split.v
 	[ -f theories/Census/Run_Split2.vo ] || coqc -Q theories BBB4 theories/Census/Run_Split2.v
 	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | xargs -r -P$(WALK_JOBS) -I{} coqc -Q theories BBB4 {}
