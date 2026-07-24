@@ -166,19 +166,41 @@ exist. The steps, cheapest-leverage first:
    `Census/Assembly.v` — **no native_compute census walk, `D_census`
    unchanged.** That closes the residue front.
 
-**Try the shortcut first.** If the hammer (next section) works, steps 4–5 —
-the expensive per-machine measure search and oracle targeting — mostly
-evaporate: one uniform determinism lemma boards the bulk, and only genuinely
-non-determinizing machines fall through to the measure/oracle path. So the
-rational order is: cheap full sweep (1–3) to knock down the count, **the
-out-degree-vs-history probe** to decide whether to build the hammer, then
-either the hammer or the measure/oracle grind for whatever remains.
+**The shortcut was tried and is dead.** The hammer probe (next section) ran
+2026-07-24: NO machine determinizes at any bounded history — the measure/
+oracle grind (steps 4–5) is the real path. The failure-mode diagnostic says
+step 4 (measure vocabulary) is where ~85 % of the remaining gap sits.
 
-## HYPOTHESIS — "the hammer" (a uniform residue-killer, not yet built)
+## REFUTED — "the hammer" (measured 2026-07-24, wave-8; do not rebuild)
 
-We would like one uniform procedure that clears the whole residue without
-per-machine measure search. The current best candidate, marked clearly as a
-**hypothesis to test, not a result**:
+**The decisive experiment was run and the hypothesis is FALSE.**
+`tools/nghist/hammer_probe.py` swept history k ∈ {2,4,6,8,12} × gram
+n ∈ {2,3,4} × seed t ∈ {150,600} over a stratified 300-machine sample of the
+unboarded residue (100 oracle-targetable + 200 full-8), measuring both
+whole-closure out-degree and the load-bearing weaker condition (a
+deterministic ρ-trajectory from the seed node under LEAN gram sets — seed
+windows + trajectory donations only). Result: **0/300 machines determinize at
+ANY grid point**; every failure is BRANCH (far-cell ambiguity), and the
+branch position creeps by +2 per +2 of k — the ambiguity sits a fixed
+distance beyond the history horizon. Even the wave-6-boarded pilot counter
+(`0RB---_0LC0RA_0LD---_1RA1LC`, 26/33 nodes out-degree 1) never reaches a ρ.
+
+The structural reason: cells of a uniform tape block written by the same
+sweep carry IDENTICAL truncated histories, so position within a block is
+indistinguishable at any bounded k — the block boundary's far cell stays
+ambiguous forever. The pilot's "out-degree ≈1" was the misleading average;
+the ~7 branching nodes per machine are block boundaries, incurable by
+history. mxdys' "models the forward behavior exactly" therefore operates at
+his deciders' RULE level (macro-step / repeated-word structure), not at the
+per-cell level of this abstraction. **Conclusion: skip the determinism
+lemma; the measure/oracle path (steps 4–5 above) stays necessary.** The
+2026-07-24 failure-mode diagnostic (`tools/nghist/fail_diag.py`, 400
+unboarded machines) shows where that effort goes: 85 % close fine but fail
+the liveness measure search (NOMEAS — the vocabulary/lex-synthesis gap),
+11 % are prefix-quiet quasihalters (wrap route), 3 % exceed the search
+caps, <1 % genuinely fail to close.
+
+The original hypothesis, kept for the record:
 
 Because the residue is mxdys-exact, don't *search* for a lex certificate —
 make the augmented closure **deterministic** (out-degree exactly 1: history
