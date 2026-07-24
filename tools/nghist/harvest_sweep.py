@@ -14,7 +14,7 @@ RES=ROOT+"/tools/census_residue.txt"
 OUTDIR=ROOT+"/theories/Machines/NGHStage"
 MANI=ROOT+"/tools/nghstage_manifest.tsv"
 RESULTS="/home/user/Coq-BBB4/tools/nghist/sweep_results.tsv"
-PARAMS=[(2,2,40,120000),(4,2,40,120000)]   # (k,n,t,fuel) escalation
+PARAMS=[(2,2,40,20000),(4,2,40,20000)]   # (k,n,t,fuel) escalation
 MAXCTX=1200
 
 def col0(path, hdr=False):

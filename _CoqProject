@@ -465,3 +465,7 @@ theories/Machines/IRulesQHStage/IQHStage_10.v
 theories/Tests/RerootStage_Corruption.v
 theories/Tests/IRulesQH_Corruption.v
 theories/Machines/NGHStage/NGH_00.v
+theories/Machines/NGHStage/NGH_01.v
+theories/Machines/NGHStage/NGH_02.v
+theories/Machines/NGHStage/NGH_03.v
+theories/Machines/NGHStage/NGH_04.v
