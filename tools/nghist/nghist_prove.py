@@ -186,10 +186,112 @@ def try_rank(nodes, adj):
         phi[a]=0 if not adj[a] else 1+max(phi[b] for b in adj[a])
     return phi
 
-def cert_for_state(tm,seen,edges,q,K=None):
+# ---------------- pattern measures (mirrors NGram.pm_delta over hbit) ----------------
+def occ(p, text):
+    """Count contiguous occurrences of list p in list text."""
+    lp=len(p)
+    return sum(1 for i in range(len(text)-lp+1) if text[i:i+lp]==p)
+
+def pm_delta(tm, p, rg, a):
+    """Mirror NGram.pm_delta on the BIT projection of the augmented node a.
+    p is a list of bits (>=1 one); rg in {'A','L','R'}.  Reads the source
+    node only (a')-independent, exactly like the Coq denote)."""
+    q,(lw,s,rw)=a
+    plw=[bit(x) for x in lw]; ps=bit(s); prw=[bit(x) for x in rw]
+    tr=tm[q][ps]
+    if tr is None: return 0
+    w=tr[0]; d=tr[1]; p1=len(p)-1
+    if rg=='A':
+        left=list(reversed(plw[:p1]))
+        return occ(p, left+[w]+prw[:p1]) - occ(p, left+[ps]+prw[:p1])
+    if rg=='L':
+        if d=='R': return 1 if list(reversed(p))==[w]+plw[:p1] else 0
+        return -(1 if list(reversed(p))==plw[:len(p)] else 0)
+    # rg=='R'
+    if d=='R': return -(1 if p==prw[:len(p)] else 0)
+    return 1 if p==[w]+prw[:p1] else 0
+
+# pattern vocabulary tried after rank + count measures fail
+PATTERNS=[[1,1],[1,1,1]]
+LEX_MAXNODES=260   # cap the expensive lex search to keep the sweep fast
+
+def bellman_phi_w(nodes, ew, N):
+    """Like bellman_phi but with edge weights precomputed (ew = (a,b,weight),
+    weight already = -1-K*delta).  Returns phi>=0 (nats) or None on a negative
+    cycle (= the strict system is infeasible)."""
+    return bellman_noninc_w(nodes, ew, N)
+
+def bellman_noninc_w(nodes, ew, N):
+    """phi>=0 (nats) with phi[b]-phi[a] <= w for every precomputed edge (a,b,w)
+    -- the NON-increasing system -- or None if a negative cycle forbids it."""
+    phi={a:0 for a in nodes}
+    for it in range(N+1):
+        changed=False
+        for (a,b,w) in ew:
+            if phi[a]+w < phi[b]:
+                phi[b]=phi[a]+w; changed=True
+                if it==N: return None
+        if not changed: break
+    mn=min(phi.values()) if phi else 0
+    return {a:phi[a]-mn for a in nodes}
+
+def meas_cands(tm, n):
+    """Candidate measures: count measures first, then pattern measures whose
+    window fits n (pm_ok: RgA needs len(p)-1<=n, RgL/RgR need len(p)<=n)."""
+    cands=[('HMeas',m,(lambda a,mm=m: ngm_delta(tm,mm,a))) for m in ('Left','Right','All')]
+    for p in PATTERNS:
+        for rg in ('A','L','R'):
+            if rg=='A':
+                if len(p)-1>n: continue
+            else:
+                if len(p)>n: continue
+            cands.append(('HPatt',(p,rg),(lambda a,pp=p,rr=rg: pm_delta(tm,pp,rr,a))))
+    return cands
+
+def _mk(kind,param,K,phi,nodes):
+    if kind=='HMeas': return ('HMeas',param,K,phi,set(nodes))
+    p,rg=param; return ('HPatt',p,rg,K,phi,set(nodes))
+
+def lex_synth(cands, nodes, edges_all, K):
+    """Greedy lexicographic ranking.  At each round, for each candidate measure
+    try (a) a STRICT ranking of ALL still-uncovered edges (the wave-6 single-
+    measure solver, weight -1-K*d); if that closes, one component finishes it.
+    Otherwise (b) a NON-INCREASING phi (weight -K*d) whose strict edges (slack
+    >=1) are removed.  Each component gates on the whole q-avoiding node set, so
+    an earlier component is non-increasing on every edge a later one discharges
+    -- exactly Closure.lex_edge_ok's requirement.  Returns [(kind,param,phi)]
+    or None.  Per-node deltas are precomputed once per candidate."""
+    if len(nodes) > LEX_MAXNODES:
+        return None
+    N=len(nodes)
+    # precompute delta value at each node, per candidate
+    dv=[(kind,param,{a:dfn(a) for a in nodes}) for (kind,param,dfn) in cands]
+    remaining=set(edges_all); comps=[]; guard=0
+    while remaining:
+        guard+=1
+        if guard>len(cands)+3: return None
+        progressed=False
+        for kind,param,dm in dv:
+            phi=bellman_phi_w(nodes,[(a,b,-1-K*dm[a]) for (a,b) in remaining],N)
+            if phi is not None:
+                comps.append((kind,param,phi)); remaining=set(); progressed=True; break
+        if not remaining: break
+        if not progressed:
+            for kind,param,dm in dv:
+                phi=bellman_noninc_w(nodes,[(a,b,-K*dm[a]) for (a,b) in remaining],N)
+                if phi is None: continue
+                strict=set((a,b) for (a,b) in remaining if K*dm[a]+phi[b]-phi[a] <= -1)
+                if strict:
+                    comps.append((kind,param,phi)); remaining-=strict; progressed=True; break
+        if not progressed: return None
+    return comps
+
+def cert_for_state(tm,seen,edges,q,K=None,n=2):
     """Return a list of hcomp for state q (as python dicts) or None.
-    Tries a plain rank (acyclic) first -- HRank works for lex_ok and
-    live_lex_ok -- then single count measures with Bellman-Ford potentials."""
+    Tries a plain rank (acyclic) first -- HRank -- then a SINGLE count/pattern
+    measure (the wave-6 path, preserved so boarded machines still board), then
+    a lexicographic TUPLE of count/pattern measures for the 'liveness lags
+    closure' tail where one state needs several measures in lex order."""
     nodes=[a for a in seen if a[0]!=q]
     if not nodes: return []              # q-avoiding subgraph empty
     nodeset=set(nodes)
@@ -198,12 +300,18 @@ def cert_for_state(tm,seen,edges,q,K=None):
     if rk is not None:
         return [('HRank',rk)]
     if K is None: K=len(seen)+2
-    for meas in ('Left','Right','All'):
-        ew=[(a,b,ngm_delta(tm,meas,a)) for a in nodes for b in adj[a]]
-        phi=bellman_phi(nodes,ew,K)
+    cands=meas_cands(tm,n)
+    edges_all=[(a,b) for a in nodes for b in adj[a]]
+    # single measure strict on all edges (wave-6 behaviour, no regression)
+    for kind,param,dfn in cands:
+        phi=bellman_phi(nodes,[(a,b,dfn(a)) for (a,b) in edges_all],K)
         if phi is not None:
-            return [('HMeas',meas,K,phi,set(nodes))]
-    return None
+            return [_mk(kind,param,K,phi,nodes)]
+    # lexicographic tuple
+    comps=lex_synth(cands,nodes,edges_all,K)
+    if comps is None:
+        return None
+    return [_mk(kind,param,K,phi,nodes) for (kind,param,phi) in comps]
 
 def visited_states_prefix(tm,k,t):
     """States visited in steps [0,t) from blank.  The never-QH obligation
@@ -239,7 +347,7 @@ def prove(mstr,k,n,t,fuel):
     cert={}
     for q in 'ABCD':
         if q in obliged:
-            c=cert_for_state(tm,seen,edges,q)
+            c=cert_for_state(tm,seen,edges,q,n=n)
             if c is None: return None    # liveness not discharged -> not never-QH
             cert[q]=c
         else:
@@ -297,6 +405,14 @@ def c_cert(cert,name):
                 phil='['+';'.join('({}%positive,{})'.format(hctx_enc(a),v)
                                   for a,v in phi.items())+']'
                 comps.append('HRank {}'.format(phil))
+            elif c[0]=='HPatt':
+                _,p,rg,K,phi,gate=c
+                rg_c={'A':'RgA','L':'RgL','R':'RgR'}[rg]
+                p_c='['+';'.join(c_sym(x) for x in p)+']'
+                phil='['+';'.join('({}%positive,{})'.format(hctx_enc(a),v)
+                                  for a,v in phi.items())+']'
+                gatel='['+';'.join('{}%positive'.format(hctx_enc(a)) for a in gate)+']'
+                comps.append('HPatt {} {} {} {} {}'.format(p_c,rg_c,K,phil,gatel))
         arms.append('  | {} => [{}]'.format(c_st(q),'; '.join(comps)))
     return 'Definition {} (q:St) : list hcomp :=\n  match q with\n{}\n  end.'.format(
         name,'\n'.join(arms))
@@ -413,7 +529,7 @@ def prove_qh(mstr,k,n,fuel,tmax=1900):
         cert={}; ok=True
         for q2 in 'ABCD':
             if q2 in appearing:
-                c=cert_for_state(tmw,seen,edges,q2)
+                c=cert_for_state(tmw,seen,edges,q2,n=n)
                 if c is None: ok=False; break
                 cert[q2]=c
             else: cert[q2]=[]

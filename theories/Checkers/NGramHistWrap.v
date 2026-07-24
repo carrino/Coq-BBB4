@@ -32,7 +32,7 @@ Definition ngramhist_check_qhbound_lex (tm : TM) (q : St) (s k n t fuel : nat)
           closed_b hcconf hctx_enc (hng_succs (tm_wrap tm q) k n lset rset) Sl &&
           mem hcconf hctx_enc (hng_start n hct) Sl &&
           live_lex_ok hcconf hctx_enc ha_state (hng_succs (tm_wrap tm q) k n lset rset) Sl
-            (fun q' => map (hcomp_denote (tm_wrap tm q)) (cert q'))
+            (fun q' => map (hcomp_denote (tm_wrap tm q) n) (cert q'))
       | None => false
       end
   | _, _, _ => false
@@ -76,7 +76,7 @@ Proof.
   assert (Hexd : forall q0,
     Forall (comp_exact tmw hcconf (hng_succs tmw k n lset rset)
               (hcovers n lset rset))
-           (map (hcomp_denote tmw) (cert q0))).
+           (map (hcomp_denote tmw n) (cert q0))).
   { intros q0. apply Forall_forall. intros comp Hin.
     apply in_map_iff in Hin. destruct Hin as (c & <- & _).
     apply hcomp_denote_comp_exact; exact Hn. }
@@ -144,7 +144,7 @@ Proof.
     destruct (live_appears_recur_lex tmw hcconf hctx_enc ha_state
                 (hng_succs tmw k n lset rset) (hcovers n lset rset)
                 hctx_enc_inj CST SS
-                Sl (fun q0 => map (hcomp_denote tmw) (cert q0))
+                Sl (fun q0 => map (hcomp_denote tmw n) (cert q0))
                 (hng_start n hct) ct q'' Hclb (Hexd q'') Hlive Hmem Hcov0
                 Happ (S s'' - t)) as (kk & c' & Hk & Hstepk & Hqk).
     assert (Hstm : stepn tm kk (lift ct) = Some c').

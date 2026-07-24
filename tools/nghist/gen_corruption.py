@@ -12,7 +12,27 @@ import nghist_prove as P
 
 COUNTER="0RB---_0LC0RA_0LD---_1RA1LC"   # closes only WITH history; boards never-QH
 QH     ="1RB---_0LC1LD_1RC1RD_0LB0LD"   # quasihalter: A quiet at step 0
+HPATT  ="0RB0LA_0RC1RC_1LD1RD_1LA1RB"   # boards never-QH via a PATTERN-only cert
 K,N,T,FUEL = 2,2,40,100000
+
+def patt_only_cands(tm, n):
+    """Restrict the prover to HPatt candidates (drop count measures), so the
+    resulting cert is genuinely pattern-load-bearing."""
+    return [c for c in P._orig_meas_cands(tm, n) if c[0] == 'HPatt']
+
+def mutate_first_hpatt(cert):
+    """Return a copy of cert with the FIRST HPatt component's pattern replaced
+    by [S0;S0] -- a pattern with NO S1, so pm_ok fails and the component
+    denotes a sound no-op (never strict).  The lex check must then REJECT."""
+    import copy
+    c2 = copy.deepcopy(cert)
+    for q in 'ABCD':
+        for i, comp in enumerate(c2[q]):
+            if comp[0] == 'HPatt':
+                _, p, rg, Kk, phi, gate = comp
+                c2[q][i] = ('HPatt', [0, 0], rg, Kk, phi, gate)
+                return c2
+    raise AssertionError("no HPatt component to mutate")
 
 def gset_lit(s, drop=None):
     ws = sorted(s)
@@ -26,6 +46,16 @@ def main():
     gq = P.grow(P.decode(QH), K, N, T, FUEL)
     assert gq is not None, "qh grow failed"
     _, lq, rq, _, _ = gq
+
+    # pattern-only cert for the HPatt controls
+    P._orig_meas_cands = P.meas_cands
+    P.meas_cands = patt_only_cands
+    rp = P.prove(HPATT, K, N, T, FUEL)
+    P.meas_cands = P._orig_meas_cands
+    assert rp is not None, "HPatt pattern-only prover failed"
+    assert any(c[0] == 'HPatt' for q in 'ABCD' for c in rp['cert'][q]), \
+        "HPatt cert has no pattern component"
+    rp_mut = mutate_first_hpatt(rp['cert'])
 
     L=[]
     L.append('(* wave-6 NGramHist corruption tests -- MUST-fail controls.')
@@ -50,6 +80,13 @@ def main():
     # --- qh data ---
     L.append('Definition lset_qh : hgset :=\n  '+gset_lit(lq)+'.')
     L.append('Definition rset_qh : hgset :=\n  '+gset_lit(rq)+'.')
+
+    # --- HPatt (pattern-measure) data ---
+    L.append(P.c_tm(rp['tm'], 'tm_patt'))
+    L.append('Definition lset_p : hgset :=\n  '+gset_lit(rp['lset'])+'.')
+    L.append('Definition rset_p : hgset :=\n  '+gset_lit(rp['rset'])+'.')
+    L.append(P.c_cert(rp['cert'], 'cert_p'))
+    L.append(P.c_cert(rp_mut, 'cert_p_mut'))
 
     P_ = dict(k=K,n=N,t=T,fuel=FUEL)
     def ex(name, lhs, val):
@@ -77,6 +114,15 @@ def main():
     L.append('(* --- Control 3: mutated closure (one window dropped) rejected --- *)')
     ex('mut_rejected',
        'ngramhist_check_neverqh_lex tm_counter {k} {n} {t} {fuel} lset_c_mut rset_c cert_c'.format(**P_), 'false')
+
+    L.append('(* --- Control 5: HPatt pattern measure load-bearing + MUST-fail mutation ---')
+    L.append('   cert_p uses ONLY pattern (HPatt) components; the correct one boards,')
+    L.append('   but replacing one pattern [S1;S1] with [S0;S0] (no S1 => pm_ok false =>')
+    L.append('   a sound no-op, never strict) makes the lex check REJECT. *)')
+    ex('ctl_hpatt_boards',
+       'ngramhist_check_neverqh_lex tm_patt {k} {n} {t} {fuel} lset_p rset_p cert_p'.format(**P_), 'true')
+    ex('hpatt_mut_rejected',
+       'ngramhist_check_neverqh_lex tm_patt {k} {n} {t} {fuel} lset_p rset_p cert_p_mut'.format(**P_), 'false')
 
     out = sys.argv[1] if len(sys.argv)>1 else '/dev/stdout'
     open(out,'w').write('\n'.join(L)+'\n')
