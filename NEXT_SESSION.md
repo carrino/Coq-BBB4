@@ -372,11 +372,16 @@ landing.
   via the wrap variant — the genuine quasihalters the never-QH gate rejects.
   Disjoint from never-QH (overlap 0).
 
-**Next:** (1) a `Census/Assembly.v` that `app`-chains the NGHStage +
-NGHWStage (+ waves 2/3/4) `Forall`s into `Forall boarded D_census` — no
-census walk (`docs/NGHIST_WAVE5.md` §5 route A); (2) `NgPattE` pattern
-measures for the "liveness lags closure" tail both harvests miss;
-(3) history=6,8 escalation if the yield plateaus.
+**Next — full residue-completion plan in `docs/TERMINOLOGY.md`
+§"Eliminating the residue".** In brief: (1) a `Census/Assembly.v` that
+`app`-chains the NGHStage + NGHWStage (+ waves 2/3/4) `Forall`s into
+`Forall boarded D_census` — no census walk (`docs/NGHIST_WAVE5.md` §5
+route A); (2) `NgPattE` pattern measures for the "liveness lags closure"
+tail both harvests miss; (3) history=6,8 escalation if the yield plateaus.
+State now: **964 / 5,129 residue boarded, ~4,165 unboarded** — bounded port
+work (every residue machine is mxdys-decided, so a witness exists). Try the
+out-degree-vs-history "hammer" probe (`docs/TERMINOLOGY.md` §hammer) before
+the per-machine measure grind.
 
 ---
 
