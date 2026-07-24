@@ -97,11 +97,13 @@ def hng_succs(tm,k,n,lset,rset,a):
                 out.append((nx,(g, hchd_lw, (w,)+rw[:-1])))
         return out
 
+MAXNODES=2500
+
 def explore(tm,k,n,a0,lset,rset,fuel):
     seen=set([a0]); todo=[a0]; steps=0
     while todo:
         steps+=1
-        if steps>fuel: return None
+        if steps>fuel or len(seen)>MAXNODES: return None
         a=todo.pop()
         sc=hng_succs(tm,k,n,lset,rset,a)
         if sc is None: continue          # stuck: donation feeds next round
@@ -109,7 +111,7 @@ def explore(tm,k,n,a0,lset,rset,fuel):
             if b not in seen: seen.add(b); todo.append(b)
     return seen
 
-def grow(tm,k,n,t,fuel,rounds=400):
+def grow(tm,k,n,t,fuel,rounds=150):
     sd=seed(tm,k,n,t)
     if sd is None: return None
     a0,lset,rset=sd
@@ -178,17 +180,42 @@ def cert_for_state(tm,seen,edges,q,K=None):
             return [('HMeas',meas,K,phi,set(nodes))]
     return None
 
+def visited_states_prefix(tm,k,t):
+    """States visited in steps [0,t) from blank.  The never-QH obligation
+    covers these too: a prefix-visited state that does NOT recur is quiet ->
+    the machine QUASIHALTS (not never-QH).  Missing this is the safety!=
+    liveness trap."""
+    step=make_step(tm,k); left={};right={};head=BLANK;s='A'; vis=set()
+    for _ in range(t):
+        vis.add(s); tr=step(s,head)
+        if tr is None: break
+        nx,d,w=tr
+        if d=='R':
+            nl={0:w}
+            for i,v in left.items(): nl[i+1]=v
+            left=nl; head=right.get(0,BLANK); right={j-1:v for j,v in right.items() if j>=1}
+        else:
+            nr={0:w}
+            for j,v in right.items(): nr[j+1]=v
+            right=nr; head=left.get(0,BLANK); left={i-1:v for i,v in left.items() if i>=1}
+        s=nx
+    vis.add(s); return vis
+
 def prove(mstr,k,n,t,fuel):
     tm=decode(mstr)
     g=grow(tm,k,n,t,fuel)
     if g is None: return None
     a0,lset,rset,seen,edges=g
     appearing=set(a[0] for a in seen)
+    # never-QH obligation: EVERY state visited-in-prefix OR appearing needs a
+    # liveness cert.  A prefix-only state -> q-avoiding subgraph = whole
+    # closure -> cert_for_state fails -> reject (correctly, it's a quasihalter).
+    obliged = appearing | visited_states_prefix(tm,k,t)
     cert={}
     for q in 'ABCD':
-        if q in appearing:
+        if q in obliged:
             c=cert_for_state(tm,seen,edges,q)
-            if c is None: return None    # liveness not discharged
+            if c is None: return None    # liveness not discharged -> not never-QH
             cert[q]=c
         else:
             cert[q]=[]
