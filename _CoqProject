@@ -466,6 +466,17 @@ theories/Machines/IRulesQHStage/IQHStage_07.v
 theories/Machines/IRulesQHStage/IQHStage_08.v
 theories/Machines/IRulesQHStage/IQHStage_09.v
 theories/Machines/IRulesQHStage/IQHStage_10.v
+theories/Machines/IRulesQHStage/IQHStage_11.v
+theories/Machines/IRulesQHStage/IQHStage_12.v
+theories/Machines/IRulesQHStage/IQHStage_13.v
+theories/Machines/IRulesQHStage/IQHStage_14.v
+theories/Machines/IRulesQHStage/IQHStage_15.v
+theories/Machines/IRulesQHStage/IQHStage_16.v
+theories/Machines/IRulesQHStage/IQHStage_17.v
+theories/Machines/IRulesQHStage/IQHStage_18.v
+theories/Machines/IRulesQHStage/IQHStage_19.v
+theories/Machines/IRulesQHStage/IQHStage_20.v
+theories/Machines/IRulesQHStage/IQHStage_21.v
 theories/Tests/RerootStage_Corruption.v
 theories/Tests/IRulesQH_Corruption.v
 theories/Machines/NGHStage/NGH_00.v
