@@ -211,10 +211,18 @@ def pm_delta(tm, p, rg, a):
     if d=='R': return -(1 if p==prw[:len(p)] else 0)
     return 1 if p==[w]+prw[:p1] else 0
 
-# pattern vocabulary tried after rank + count measures fail
-PATTERNS=[[1,1],[1,1,1]]
-LEX_MAXNODES=260   # cap the expensive lex search to keep the sweep fast
-CERT_MAXNODES=420  # skip the whole measure search on huge q-avoiding subgraphs
+# pattern vocabulary tried after rank + count measures fail.  Wave-8 widened
+# it (fail_diag: 85% of the unboarded residue closes but fails the measure
+# search) -- every bit pattern with >=1 one is legal per NGram.pm_ok, and the
+# kernel re-checks every cert, so a wider vocabulary costs sweep time only.
+PATTERNS=[[1,1],[1,1,1],[1,0],[0,1],[1,0,1],[1,1,0],[0,1,1],[1,0,0],[0,0,1],[0,1,0]]
+LEX_MAXNODES=700   # cap the expensive lex search to keep the sweep fast
+CERT_MAXNODES=1000 # skip the whole measure search on huge q-avoiding subgraphs
+import os as _os
+if _os.environ.get('NGH_PATTERNS'):      # e.g. "11,111,10" (bit strings)
+    PATTERNS=[[int(c) for c in w] for w in _os.environ['NGH_PATTERNS'].split(',')]
+LEX_MAXNODES=int(_os.environ.get('NGH_LEX_MAXNODES',LEX_MAXNODES))
+CERT_MAXNODES=int(_os.environ.get('NGH_CERT_MAXNODES',CERT_MAXNODES))
 
 def bellman_phi_w(nodes, ew, N):
     """Like bellman_phi but with edge weights precomputed (ew = (a,b,weight),
