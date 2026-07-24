@@ -165,14 +165,39 @@ def bellman_phi(nodes, edges_w, K):
     mn=min(d.values()) if d else 0
     return {a:d[a]-mn for a in nodes}
 
+def try_rank(nodes, adj):
+    """If the subgraph is acyclic, return a longest-path rank potential
+    (phi strictly decreases along every edge); else None."""
+    col={a:0 for a in nodes}; order=[]
+    for start in nodes:
+        if col[start]: continue
+        stack=[(start,iter(adj[start]))]; col[start]=1
+        while stack:
+            node,it=stack[-1]; adv=False
+            for nb in it:
+                c=col[nb]
+                if c==1: return None      # back-edge => cycle
+                if c==0:
+                    col[nb]=1; stack.append((nb,iter(adj[nb]))); adv=True; break
+            if not adv:
+                col[node]=2; order.append(node); stack.pop()
+    phi={}
+    for a in order:  # post-order: successors resolved first
+        phi[a]=0 if not adj[a] else 1+max(phi[b] for b in adj[a])
+    return phi
+
 def cert_for_state(tm,seen,edges,q,K=None):
-    """Return a list of hcomp for state q (as python dicts) or None."""
+    """Return a list of hcomp for state q (as python dicts) or None.
+    Tries a plain rank (acyclic) first -- HRank works for lex_ok and
+    live_lex_ok -- then single count measures with Bellman-Ford potentials."""
     nodes=[a for a in seen if a[0]!=q]
     if not nodes: return []              # q-avoiding subgraph empty
     nodeset=set(nodes)
     adj={a:[b for b in edges[a] if b in nodeset] for a in nodes}
+    rk=try_rank(nodes,adj)
+    if rk is not None:
+        return [('HRank',rk)]
     if K is None: K=len(seen)+2
-    # try each single count measure with a Bellman-Ford potential
     for meas in ('Left','Right','All'):
         ew=[(a,b,ngm_delta(tm,meas,a)) for a in nodes for b in adj[a]]
         phi=bellman_phi(nodes,ew,K)
@@ -311,3 +336,119 @@ if __name__=='__main__':
     with open(out,'w') as f:
         f.write(HEADER+'\n'+body+'\n')
     sys.stderr.write('OK {} nctx={} -> {}\n'.format(m,res['nctx'],out))
+
+# ================= QHBound / wrap harvest (R_QH tier) =================
+def wrap_tm(tm,q):
+    """tm_wrap: redirect state q to halt (None)."""
+    w={}
+    for st in 'ABCD':
+        w[st]={}
+        for b in (0,1):
+            w[st][b]=None if st==q else tm[st][b]
+    return w
+
+def grow_wrap(ctm, seed_tm, k, n, t, fuel, rounds=150):
+    """Grow the closure of ctm, seeded from seed_tm's step-t config."""
+    sd=seed(seed_tm,k,n,t)
+    if sd is None: return None
+    a0,lset,rset=sd
+    for _ in range(rounds):
+        seen=explore(ctm,k,n,a0,lset,rset,fuel)
+        if seen is None: return None
+        dl=set(); dr=set()
+        for a in seen:
+            q2,(lw,s,rw)=a; tr=ctm[q2][bit(s)]
+            if tr is None: continue
+            if tr[1]=='R': dl.add(lw)
+            else: dr.add(rw)
+        nl=lset|dl; nr=rset|dr
+        if nl==lset and nr==rset:
+            edges={}
+            for a in seen:
+                sc=hng_succs(ctm,k,n,lset,rset,a)
+                if sc is None: return None
+                if any(b not in seen for b in sc): return None
+                edges[a]=sc
+            return a0,lset,rset,seen,edges
+        lset,rset=nl,nr
+    return None
+
+def last_visits(tm,k,T=4000):
+    """last step each state is visited (from blank), or None if halts."""
+    step=make_step(tm,k); left={};right={};head=BLANK;s='A'; last={}
+    for i in range(T):
+        last[s]=i; tr=step(s,head)
+        if tr is None: return None,last
+        nx,d,w=tr
+        if d=='R':
+            nl={0:w}
+            for j,v in left.items(): nl[j+1]=v
+            left=nl; head=right.get(0,BLANK); right={j-1:v for j,v in right.items() if j>=1}
+        else:
+            nr={0:w}
+            for j,v in right.items(): nr[j+1]=v
+            right=nr; head=left.get(0,BLANK); left={j-1:v for j,v in left.items() if j>=1}
+        s=nx
+    last[s]=T; return T,last
+
+def prove_qh(mstr,k,n,fuel,tmax=1900):
+    """Prove the R_QH triple via the wrap variant for some quiet state q.
+    Returns dict(...,q,s,t,...) or None."""
+    tm=decode(mstr)
+    halted,last=last_visits(tm,k)
+    if halted is None: return None          # HALTS within T -> not our tier
+    # candidate quiet states: last visit < tmax, sorted by last-visit
+    cands=sorted((q for q in 'ABCD' if q in last), key=lambda q: last[q])
+    for q in cands:
+        s=last[q]
+        if s>=tmax: continue
+        t=min(s+25, tmax)
+        if not (s<t): continue
+        tmw=wrap_tm(tm,q)
+        g=grow_wrap(tmw,tm,k,n,t,fuel)
+        if g is None: continue
+        a0,lset,rset,seen,edges=g
+        appearing=set(a[0] for a in seen)
+        if q in appearing: continue          # q must be quiet (not recur)
+        cert={}; ok=True
+        for q2 in 'ABCD':
+            if q2 in appearing:
+                c=cert_for_state(tmw,seen,edges,q2)
+                if c is None: ok=False; break
+                cert[q2]=c
+            else: cert[q2]=[]
+        if not ok: continue
+        return dict(tm=tm,tmw=tmw,q=q,s=s,k=k,n=n,t=t,fuel=fuel,
+                    lset=lset,rset=rset,seen=seen,edges=edges,cert=cert,nctx=len(seen))
+    return None
+
+def emit_qh(mstr,res,idx=0):
+    nm='%05d'%idx; tm=res['tm']
+    thm='cqh_h_'+nm
+    body=[]
+    body.append(c_tm(tm,'tmq_h_'+nm))
+    body.append('Definition lsetq_h_'+nm+' : hgset :=\n  '+c_gset(res['lset'])+'.')
+    body.append('Definition rsetq_h_'+nm+' : hgset :=\n  '+c_gset(res['rset'])+'.')
+    body.append(c_cert(res['cert'],'certq_h_'+nm))
+    body.append(
+      'Lemma {thm} : iqh tmq_h_{nm}.\n'
+      'Proof.\n'
+      '  unfold iqh.\n'
+      '  pose proof (ngramhist_check_qhbound_lex_sound tmq_h_{nm} {q} {s} {k} {n} {t} {fuel}\n'
+      '                lsetq_h_{nm} rsetq_h_{nm} certq_h_{nm} ltac:(vm_compute; reflexivity))\n'
+      '    as (Hnh & Hb & Hqh).\n'
+      '  split; [exact Hnh | split;\n'
+      '    [ apply (qhbound_mono (S {t}) 2000 tmq_h_{nm}); [lia | exact Hb] | exact Hqh ] ].\nQed.'.format(
+        thm=thm,nm=nm,q=c_st(res['q']),s=res['s'],k=res['k'],n=res['n'],t=res['t'],fuel=res['fuel']))
+    return '\n\n'.join(body), thm, 'tmq_h_'+nm
+
+HEADER_QH='''(* UNTRUSTED-generated R_QH tier; the Coq kernel re-checks via vm_compute. *)
+From Coq Require Import List ZArith Lia.
+From BBB4 Require Import BBB4_Statement CTape.
+From BBB4.Checkers Require Import NGram NGramHist NGramHistWrap.
+From BBB4.Census Require Import TNF_QH.
+Import ListNotations.
+
+Definition iqh (tm : TM) : Prop :=
+  NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm.
+'''

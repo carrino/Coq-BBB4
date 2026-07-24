@@ -94,5 +94,56 @@ def emit():
     sys.stderr.write("emitted %d files, %d machines\n"%(len(files),len(rows)))
     print('\n'.join(files))
 
+
+# ================= QHBound / wrap harvest =================
+QRESULTS="/home/user/Coq-BBB4/tools/nghist/sweep_qh_results.tsv"
+QOUTDIR=ROOT+"/theories/Machines/NGHWStage"
+QMANI=ROOT+"/tools/nghwstage_manifest.tsv"
+QPARAMS=[(2,2,20000),(4,2,20000)]   # (k,n,fuel)
+
+def try_prove_qh(m):
+    for (k,n,fuel) in QPARAMS:
+        try: r=P.prove_qh(m,k,n,fuel)
+        except Exception: r=None
+        if r is not None and r['nctx']<=MAXCTX:
+            return (m,r['q'],r['s'],k,n,r['t'],fuel,r['nctx'])
+    return None
+
+def sweepqh():
+    tgt,nres,nded=target_list()
+    sys.stderr.write("target=%d\n"%len(tgt))
+    ok=0
+    with open(QRESULTS,'w') as f, ProcessPoolExecutor(max_workers=2) as ex:
+        for i,r in enumerate(ex.map(try_prove_qh, tgt, chunksize=8)):
+            if r:
+                ok+=1
+                f.write("%s\t%s\t%d\t%d\t%d\t%d\t%d\t%d\n"%r)
+            if (i+1)%200==0: f.flush(); sys.stderr.write("  %d/%d, %d boardable\n"%(i+1,len(tgt),ok))
+    sys.stderr.write("DONE %d/%d boardable\n"%(ok,len(tgt)))
+
+def emitqh():
+    rows=[l.rstrip('\n').split('\t') for l in open(QRESULTS) if l.strip()]
+    os.makedirs(QOUTDIR, exist_ok=True)
+    man=open(QMANI,'w'); man.write("machine\ttheorem\tfile\tquiet_state\ts\tk\tn\tt\tfuel\tnctx\n")
+    per=100
+    for fi in range((len(rows)+per-1)//per):
+        chunk=rows[fi*per:(fi+1)*per]; fname="NGHW_%02d"%fi
+        body=[P.HEADER_QH]; thms=[]
+        for j,(m,qst,s,k,n,t,fuel,nctx) in enumerate(chunk):
+            r=P.prove_qh(m,int(k),int(n),int(fuel))
+            idx=fi*per+j; nm='%05d'%idx
+            btext,thm,tmn=P.emit_qh(m,r,idx)
+            body.append(btext); thms.append((thm,tmn))
+            man.write("%s\t%s\t%s.v\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n"%(m,thm,fname,qst,s,k,n,t,fuel,nctx))
+        lst="nghw_%02d"%fi
+        body.append('Definition {} : list TM :=\n  [{}].'.format(lst,';\n   '.join(tm for _,tm in thms)))
+        term="Forall_nil iqh"
+        for thm,_ in reversed(thms): term="Forall_cons _ {} ({})".format(thm,term)
+        body.append('Lemma {}_all : Forall iqh {}.'.format(lst,lst))
+        body.append('Proof. unfold {}. exact ({}). Qed.'.format(lst,term))
+        open(QOUTDIR+"/"+fname+".v",'w').write('\n\n'.join(body)+'\n')
+    man.close(); sys.stderr.write("emitted %d files, %d machines\n"%((len(rows)+per-1)//per,len(rows)))
+
 if __name__=='__main__':
-    (sweep if sys.argv[1]=='sweep' else emit)()
+    m={'sweep':sweep,'emit':emit,'sweepqh':sweepqh,'emitqh':emitqh}
+    m[sys.argv[1]]()

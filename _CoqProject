@@ -469,3 +469,9 @@ theories/Machines/NGHStage/NGH_01.v
 theories/Machines/NGHStage/NGH_02.v
 theories/Machines/NGHStage/NGH_03.v
 theories/Machines/NGHStage/NGH_04.v
+theories/Machines/NGHWStage/NGHW_00.v
+theories/Machines/NGHWStage/NGHW_01.v
+theories/Machines/NGHWStage/NGHW_02.v
+theories/Machines/NGHWStage/NGHW_03.v
+theories/Machines/NGHWStage/NGHW_04.v
+theories/Machines/NGHWStage/NGHW_05.v
