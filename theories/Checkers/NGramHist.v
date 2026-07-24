@@ -696,12 +696,77 @@ Proof.
     cbn [count1 nc1 zc1 ctl chd]; lia.
 Qed.
 
+(** ** Pattern measures over the augmented alphabet (the [NgPattE] fork)
+
+    The count measures ([HMeas]) are the [p = [S1]] special case.  The tail
+    both harvests miss ("liveness lags closure": a state whose wrapped-closure
+    liveness needs a [[S1;S1]]-pattern measure, not a 1-count) needs the full
+    pattern vocabulary.  [pm_val]/[pm_delta]/[pm_ok] are reused VERBATIM from
+    [NGram] -- they read only the bit projection -- so the only new obligation
+    is [pm_start_exact], the [ng_start] form of [NGram.pm_exact].
+
+    [pm_exact] needs a real [ng_covers]; we manufacture one for [ng_start n cc]
+    by SELF-SEEDING [ng_start_covers] with the finite set of [cc]'s own
+    windows ([gadds (ng_seed_side n l) gempty]). *)
+
+Lemma gmem_gadd_same : forall g s, gmem g (gadd g s) = true.
+Proof.
+  intros g s. unfold gmem, gadd.
+  apply PositiveSet.mem_spec, PositiveSet.add_spec. left. reflexivity.
+Qed.
+
+Lemma gmem_gadd_mono : forall g w s,
+  gmem w s = true -> gmem w (gadd g s) = true.
+Proof.
+  intros g w s H. unfold gmem, gadd in *.
+  apply PositiveSet.mem_spec, PositiveSet.add_spec. right.
+  apply PositiveSet.mem_spec. exact H.
+Qed.
+
+Lemma gmem_gadds_intro : forall gs w s,
+  In w gs \/ gmem w s = true -> gmem w (gadds gs s) = true.
+Proof.
+  induction gs as [|g gs IH]; intros w s H; simpl gadds.
+  - destruct H as [H|H]; [destruct H | exact H].
+  - apply IH. destruct H as [Hin | Hm].
+    + destruct Hin as [->|Hin]; [right; apply gmem_gadd_same | left; exact Hin].
+    + right. apply gmem_gadd_mono. exact Hm.
+Qed.
+
+Lemma seed_ok_side_self : forall n l,
+  seed_ok_side n l (gadds (ng_seed_side n l) gempty) = true.
+Proof.
+  intros n l. unfold seed_ok_side. apply forallb_forall. intros d Hd.
+  apply gmem_gadds_intro. left. unfold ng_seed_side.
+  apply in_map_iff. exists d. split; [reflexivity | exact Hd].
+Qed.
+
+(** THE new exactness obligation: pattern-measure change equals the
+    [pm_delta] read off the canonical node [ng_start n cc]. *)
+Lemma pm_start_exact : forall tm n p rg cc cc' a',
+  In S1 p ->
+  (match rg with RgA => length p - 1 <= n | _ => length p <= n end) ->
+  cstep tm cc = Some cc' ->
+  Z.of_nat (pm_val p rg cc')
+  = (Z.of_nat (pm_val p rg cc) + pm_delta tm p rg (ng_start n cc) a')%Z.
+Proof.
+  intros tm n p rg cc cc' a' Hp Hbound Hstep.
+  destruct cc as [q [[l h] r]].
+  apply (pm_exact tm n (gadds (ng_seed_side n l) gempty)
+                        (gadds (ng_seed_side n r) gempty)
+                  p rg (ng_start n (q,(l,h,r))) (q,(l,h,r)) a' cc' Hp Hbound).
+  - apply ng_start_covers. unfold ng_seed_ok.
+    rewrite !seed_ok_side_self. reflexivity.
+  - exact Hstep.
+Qed.
+
 (** ** The lex never-QH checker (count measures, phase-dependent potentials)
 
     Certificate components are keyed by the FULL augmented node
     ([hctx_enc]) -- so potentials/gates are phase-dependent, the liveness
     granularity history buys.  A [HMeas] count measure discharges the
-    counter tail (pilot: [lex-Left]); [HRank] is a phase-dependent rank. *)
+    counter tail (pilot: [lex-Left]); [HRank] is a phase-dependent rank;
+    [HPatt] is a phase-dependent pattern measure ([[S1;S1]] etc.). *)
 
 Definition hpmape_get (m : PositiveMap.tree nat) (a : hcconf) : nat :=
   match PositiveMap.find (hctx_enc a) m with Some v => v | None => 0 end.
@@ -711,14 +776,22 @@ Definition hpsete_mem (gate : list positive) (a : hcconf) : bool :=
 
 Inductive hcomp : Type :=
 | HRank (phi : list (positive * nat))
-| HMeas (m : ngmeas) (K : nat) (phi : list (positive * nat)) (gate : list positive).
+| HMeas (m : ngmeas) (K : nat) (phi : list (positive * nat)) (gate : list positive)
+| HPatt (p : list Sym) (rg : ngreg) (K : nat)
+        (phi : list (positive * nat)) (gate : list positive).
 
-Definition hcomp_denote (tm : TM) (c : hcomp) : lexcomp hcconf :=
+Definition hcomp_denote (tm : TM) (n : nat) (c : hcomp) : lexcomp hcconf :=
   match c with
   | HRank phi => LexRank hcconf (hpmape_get (pmape_of phi))
   | HMeas m K phi gate =>
       LexMeas hcconf (ngm_val m) (fun a a' => ngm_delta tm m (hproj a) (hproj a'))
               K (hpmape_get (pmape_of phi)) (hpsete_mem gate)
+  | HPatt p rg K phi gate =>
+      if pm_ok n p rg then
+        LexMeas hcconf (pm_val p rg)
+                (fun a a' => pm_delta tm p rg (hproj a) (hproj a'))
+                K (hpmape_get (pmape_of phi)) (hpsete_mem gate)
+      else LexRank hcconf (fun _ => 0)
   end.
 
 Definition ngramhist_check_neverqh_lex (tm : TM) (k n t fuel : nat)
@@ -729,7 +802,7 @@ Definition ngramhist_check_neverqh_lex (tm : TM) (k n t fuel : nat)
       hseed_ok n lset rset hct &&
       closure_check_neverqh_lex tm hcconf hctx_enc ha_state
         (hng_succs tm k n lset rset) t fuel (hng_start n hct)
-        (fun q => map (hcomp_denote tm) (cert q))
+        (fun q => map (hcomp_denote tm n) (cert q))
   | None => false
   end.
 
@@ -755,11 +828,20 @@ Proof.
     exists hct. split; [rewrite Hpr; reflexivity | apply hng_start_covers; exact Hseed].
   - intros q0. apply Forall_forall. intros comp Hin.
     apply in_map_iff in Hin. destruct Hin as (c & <- & _).
-    destruct c as [phi | m K phi gate]; simpl.
+    destruct c as [phi | m K phi gate | p rg K phi gate]; simpl.
     + exact I.
     + intros a cc a' cc' sl (hc & Hlift & Hcov) Hca' Hstep Es HInl.
       rewrite (hproj_eq_ngstart n lset rset a hc cc Hcov Hlift).
       apply ngm_start_exact; [exact Hn | exact Hstep].
+    + destruct (pm_ok n p rg) eqn:Epm; [| exact I].
+      apply andb_prop in Epm as [He Hb].
+      intros a cc a' cc' sl (hc & Hlift & Hcov) Hca' Hstep Es HInl.
+      rewrite (hproj_eq_ngstart n lset rset a hc cc Hcov Hlift).
+      apply pm_start_exact.
+      * apply existsb_exists in He as (x & Hx & Hx1).
+        apply sym_eqb_spec in Hx1. subst x. exact Hx.
+      * destruct rg; apply Nat.leb_le; exact Hb.
+      * exact Hstep.
 Qed.
 
 (** ** Safety-only closure (NonHalt), for the safety != liveness controls
@@ -824,11 +906,21 @@ Qed.
 Lemma hcomp_denote_comp_exact : forall tm k n lset rset c,
   1 <= n ->
   comp_exact tm hcconf (hng_succs tm k n lset rset) (hcovers n lset rset)
-             (hcomp_denote tm c).
+             (hcomp_denote tm n c).
 Proof.
-  intros tm k n lset rset c Hn. destruct c as [phi | m K phi gate]; simpl.
+  intros tm k n lset rset c Hn.
+  destruct c as [phi | m K phi gate | p rg K phi gate]; simpl.
   - exact I.
   - intros a cc a' cc' l (hc & Hlift & Hcov) Hca' Hstep Es HInl.
     rewrite (hproj_eq_ngstart n lset rset a hc cc Hcov Hlift).
     apply ngm_start_exact; [exact Hn | exact Hstep].
+  - destruct (pm_ok n p rg) eqn:Epm; [| exact I].
+    apply andb_prop in Epm as [He Hb].
+    intros a cc a' cc' l (hc & Hlift & Hcov) Hca' Hstep Es HInl.
+    rewrite (hproj_eq_ngstart n lset rset a hc cc Hcov Hlift).
+    apply pm_start_exact.
+    + apply existsb_exists in He as (x & Hx & Hx1).
+      apply sym_eqb_spec in Hx1. subst x. exact Hx.
+    + destruct rg; apply Nat.leb_le; exact Hb.
+    + exact Hstep.
 Qed.
