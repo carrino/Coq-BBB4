@@ -818,3 +818,17 @@ Proof.
   - replace m with (t + (m - t)) in HN by lia.
     rewrite stepn_add, Hstept in HN. exact (Him (m - t) HN).
 Qed.
+
+(** Reusable [comp_exact] for the denoted count measures (also over the
+    wrapped machine, since it is generic in [tm]). *)
+Lemma hcomp_denote_comp_exact : forall tm k n lset rset c,
+  1 <= n ->
+  comp_exact tm hcconf (hng_succs tm k n lset rset) (hcovers n lset rset)
+             (hcomp_denote tm c).
+Proof.
+  intros tm k n lset rset c Hn. destruct c as [phi | m K phi gate]; simpl.
+  - exact I.
+  - intros a cc a' cc' l (hc & Hlift & Hcov) Hca' Hstep Es HInl.
+    rewrite (hproj_eq_ngstart n lset rset a hc cc Hcov Hlift).
+    apply ngm_start_exact; [exact Hn | exact Hstep].
+Qed.
