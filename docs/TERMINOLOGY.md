@@ -46,11 +46,27 @@ Verified: `27 + 5,129 = 5,156`; `holdouts ⊆ 3,713`; `residue ∩ 3,713 = ∅`.
 
 The split is by **whose proof failed** — that is what makes it useful:
 - **residue** = "our light census tier failed, but the machine is NOT on
-  mxdys' can't-do list" ⇒ mxdys decided it ⇒ a **strength gap between us and
-  mxdys**, nothing more.
+  mxdys' can't-do list" ⇒ *presumably* mxdys decided it ⇒ a **strength gap
+  between us and mxdys**, nothing more.
 - **holdouts** = "our census tier failed AND it's on mxdys' can't-do list"
   ⇒ both procedures failed, the second being state of the art ⇒ the genuine
   frontier.
+
+**CAVEAT (2026-07-24, wave-8): list-absence is an inference, not a record.**
+The 3,713 list is the ONLY artifact of mxdys' BBB run — the machines that
+didn't make it were never *enumerated as decided* anywhere. "Not on the
+list" = "his deciders ate it" only if his BBB enumeration actually visited
+the machine, and his tree provably differs from ours at the edges (5 of his
+3,713 are not leaves of our tree; ours has 3,995,005 nodes, no cnt-pruning).
+Positive per-machine evidence exists only for the ≤7-transition targetable
+subset (a `nonhalt` row in his *halting* CSV — a safety witness, not a QH
+one); for full-8 residue machines "easy" is a strong prior, not a guarantee.
+Checked 2026-07-24: 0 of the 5,129 residue canonicalize onto a 3,713 entry
+under TNF relabel + mirror (`tnf_canon`), so the split is not hiding
+relabeled holdouts — but a residue machine that resists the full engine
+ladder (wide-vocab NGramHist → RepWL → irules-QH) should be TRIAGED as a
+possible never-enumerated hard machine and promoted to the research track,
+not ground with params forever.
 
 ## mxdys' holdout list (the 3,713) — provenance and meaning
 
@@ -91,7 +107,8 @@ snapshot from 2026-07-06 (pre-harvest) — read the residual off the Coq census
 
 ## The two fronts (and the discipline)
 
-- **Residue → PORT WORK.** mxdys already solved these; we're catching up in
+- **Residue → PORT WORK.** mxdys (presumably) already solved these — see
+  the list-absence CAVEAT above; we're catching up in
   Coq because our in-walk tier is weaker. Bounded, mechanical, high-
   confidence. Wave-6 `NGramHist` (his history-augmented NGramCPS ported to
   Coq + extended to quasihalting) is the tool; it should drive residue → ~0.
@@ -136,8 +153,8 @@ left undischarged. It does **NOT** mean shrinking the 5,156 inside
 
 Where we are: **964 / 5,129 boarded** (wave-6), ~**4,165 residue machines
 still unboarded**. Getting that gap to 0 is bounded, mechanical port work —
-mxdys already decided every one of these, so a witness is guaranteed to
-exist. The steps, cheapest-leverage first:
+mxdys presumably decided every one of these (list-absence CAVEAT above:
+a strong prior, not a guarantee), so a witness is very likely to exist. The steps, cheapest-leverage first:
 
 1. **Full sweep, not a pilot.** Run `tools/nghist/harvest_sweep.py sweep`
    and `sweepqh` over the *entire* residue (the sweep already dedups against
@@ -160,7 +177,8 @@ exist. The steps, cheapest-leverage first:
    `BB4_verified_enumeration.csv` (halting proxy ⇒ an exact model exists) +
    BBB `results/certs_*` (the actual quiet state + measure mxdys used) to
    *set* params / *pick* the measure instead of searching blindly. Because
-   the residue is mxdys-decided, the oracle names a witness for every one.
+   the targetable residue is mxdys-decided (halting side), the oracle names
+   a witness for each of those; full-8 machines have no oracle row.
 6. **Wire the closeout (Route A).** When every residue machine is staged,
    `app`-chain the per-file `Forall`s into `Forall boarded D_census` in a
    `Census/Assembly.v` — **no native_compute census walk, `D_census`
