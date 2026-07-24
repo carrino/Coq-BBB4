@@ -110,14 +110,25 @@ def run_pass(tgt, worker, res_path, fail_path, fmt):
                 sys.stderr.write("  %d/%d, %d boardable\n" % (i + 1, len(rem), ok))
     sys.stderr.write("DONE %d/%d boardable this run\n" % (ok, len(rem)))
 
+def targets():
+    """OS.targets(), optionally restricted to a machine-list file
+    (NGH_TARGETS) -- e.g. the empirical shape split, so the never-QH pass
+    does not burn its timeout rejecting known quasihalters."""
+    tgt = OS.targets()
+    tf = os.environ.get('NGH_TARGETS')
+    if tf:
+        keep = set(l.strip() for l in open(tf) if l.strip())
+        tgt = [m for m in tgt if m in keep]
+    return tgt
+
 def nqh_pass():
-    run_pass(OS.targets(), try_nqh, NQH_RES, NQH_FAIL,
+    run_pass(targets(), try_nqh, NQH_RES, NQH_FAIL,
              "%s\t%d\t%d\t%d\t%d\t%d\n")
 
 def qh_pass():
     # over nqh failures only (both this wave's and machines never nqh-swept)
     caught = done_set(NQH_RES)
-    tgt = [m for m in OS.targets() if m not in caught]
+    tgt = [m for m in targets() if m not in caught]
     run_pass(tgt, try_qh, QH_RES, QH_FAIL,
              "%s\t%s\t%d\t%d\t%d\t%d\t%d\t%d\n")
 
