@@ -252,6 +252,78 @@ def main():
               f"residue = {len(newset)} (dropped {len(proven)} proven + "
               f"{len(pqmap)} provenqh + {len(reroot)} reroot + "
               f"{len(listc)} listc-nqh + {len(iqh)} iqh = {total} total)")
+    elif "--wave4" in flags:
+        # WAVE 4 (subsumes --wave3): everything the --wave3 mode drops
+        # (identical asserts, preserved verbatim), PLUS the wave-4 harvest --
+        # all residue-side, each with a committed in-Coq theorem the census
+        # decider returns directly (ZERO walk cost).  Sources (tools/
+        # manifests, col0), see docs/WAVE4_STAGE.md:
+        #   - provenqh_stage_manifest.tsv -- Task A: list-B QHBound recovery
+        #     at n=5/6 (ProvenQHStage/PQHS_*), boarded R_QH by
+        #     ngram_check_qhbound(_lex)_sound; append [pqhstage_*] to
+        #     [reroot_qh_list] (Census/RerootQH_Data.v).
+        #   - listc_stage3_manifest.tsv -- Task B: list-C never-QH via the
+        #     FUEL/DRIFT checkers (ListCStage3/LCS3_*), boarded R_NeverQH by
+        #     ngram_check_neverqh_fuelw/driftw_sound; append [lcstage3_*] to
+        #     [proven_list] (Census/Proven_Data.v).
+        #   - listc_qh_manifest.tsv (OPTIONAL) -- Task B3: list-C state-QH via
+        #     the high-n ngram-quiet -> Wrap QHBound gate (ProvenQHStage/
+        #     PQHS_LC_*), boarded R_QH; append to [reroot_qh_list].
+        proven = txt(os.path.join(HERE, "proven_dropped.txt"))
+        assert len(proven) == 3670, len(proven)
+        assert not (proven - holdouts), "proven_dropped not in holdouts"
+        assert not (STAY & proven), "stay-QH machine in proven drop list"
+        pqmap = tsv_col0(os.path.join(HERE, "provenqh_map.tsv"))
+        pq_hold = pqmap & holdouts
+        pq_res = pqmap & residue
+        stray = pqmap - holdouts - residue
+        assert not stray, ("provenqh_map machine outside holdouts+residue",
+                           len(stray), sorted(stray)[:3])
+        assert not (pq_hold & proven), "provenqh holdout overlaps proven drop"
+        assert not (STAY & pqmap), "a stay-QH machine boarded the R_QH tier"
+        reroot = txt(os.path.join(HERE, "reroot_boarded.txt"))
+        listc = txt(os.path.join(HERE, "proven_listc_dropped.txt"))
+        iqh = txt(os.path.join(HERE, "iqh_boarded.txt"))
+        # wave-4 additions (all residue-side); B3 manifest optional
+        pqhs = tsv_col0(os.path.join(HERE, "provenqh_stage_manifest.tsv"))
+        lcs3 = tsv_col0(os.path.join(HERE, "listc_stage3_manifest.tsv"))
+        lcqh_path = os.path.join(HERE, "listc_qh_manifest.tsv")
+        lcqh = tsv_col0(lcqh_path) if os.path.exists(lcqh_path) else set()
+        drops = [("reroot_boarded", reroot), ("proven_listc_dropped", listc),
+                 ("iqh_boarded", iqh), ("provenqh_stage", pqhs),
+                 ("listc_stage3", lcs3)]
+        if lcqh:
+            drops.append(("listc_qh", lcqh))
+        for name, d in drops:
+            assert d, (name, "empty drop list")
+            stray = d - residue
+            assert not stray, (name, "machine outside residue",
+                               len(stray), sorted(stray)[:3])
+            assert not (d & pqmap), (name, "overlaps provenQH drop")
+            assert not (d & proven), (name, "overlaps proven drop")
+            assert not (STAY & d), (name, "contains a stay-QH machine")
+            print(f"[wave4] {name}: {len(d)} (all in residue)")
+        for i in range(len(drops)):
+            for j in range(i + 1, len(drops)):
+                inter = drops[i][1] & drops[j][1]
+                assert not inter, (drops[i][0], drops[j][0], len(inter),
+                                   sorted(inter)[:3])
+        res_drop = reroot | listc | iqh | pqhs | lcs3 | lcqh
+        new_holdouts = sorted(holdouts - proven - pq_hold)
+        new_residue = sorted(residue - pq_res - res_drop)
+        newset = set(new_holdouts) | set(new_residue)
+        assert newset == old - proven - pqmap - res_drop, \
+            "new set != old minus drops"
+        assert STAY <= newset, "stay-QH machine lost"
+        w4 = len(pqhs) + len(lcs3) + len(lcqh)
+        total = (len(proven) + len(pqmap) + len(reroot) + len(listc)
+                 + len(iqh) + w4)
+        print(f"[wave4] {len(new_holdouts)} holdouts + {len(new_residue)} "
+              f"residue = {len(newset)} (dropped {len(proven)} proven + "
+              f"{len(pqmap)} provenqh + {len(reroot)} reroot + "
+              f"{len(listc)} listc-nqh + {len(iqh)} iqh + {w4} wave4 "
+              f"[{len(pqhs)} pqhs + {len(lcs3)} lcs3 + {len(lcqh)} lcqh] "
+              f"= {total} total)")
     else:
         # --- stage (2): subtract the four lever drop-lists ---
         proven = txt(os.path.join(HERE, "proven_dropped.txt"))
