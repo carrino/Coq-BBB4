@@ -334,6 +334,52 @@ machines are also still unwired here).  Full recipe:
 
 ---
 
+## wave-6 NGramHist LANDED (2026-07-24, branch claude/ngramhist-closeout-wave6-ci4h3w)
+
+**The gap plain n-gram left: history augmentation.**  mxdys' BB4 pipeline
+decides the whole (4,2) space; our residue tail is ~98% binary counters that
+plain n-gram CANNOT close (the carry chain looks different each pass), but
+mxdys' history-augmented `NGRAM_CPS_IMPL1` (cell = last-`k` `(state,read)`
+records) closes them.  BBB4's `NGram.v` had no history — wave-6 adds it.
+Full design + oracle provenance + pilot: **`docs/NGHIST_WAVE5.md`**.
+
+**The one new trust surface (`theories/Checkers/NGramHist.v`, funext only):**
+the history-augmented n-gram closure as a NEW INSTANCE of `Closure.v` over
+the ORIGINAL machine.  `covers a c := exists hc, lift (hproj hc) = c /\
+hng_covers a hc` (an existential over the augmented config `hcconf`); the
+augmented step `hcstep` projects to `cstep` (`hcstep_proj`, the new
+soundness); the far-cell branch is history-constrained via gram sets over
+`hsym` windows (the closure refinement, `hng_succs_sound_some`).  The
+`Closure.v` liveness gates are **reused verbatim** — never-QH comes from
+`live_lex_ok` over the augmented closure, NOT from closure alone
+(safety!=liveness; a quiet state's early firings sit in the closed set too).
+Both gates landed: `ngramhist_check_neverqh_lex_sound` (never-QH, R_NeverQH)
+and `NGramHistWrap.ngramhist_check_qhbound_lex_sound` (`NonHalt /\ QHBound
+(S t) /\ QuasiHaltsSt`, R_QH).  Corruption tests all pass
+(`theories/Tests/NGramHist_Corruption.v`): quasihalter closed-but-rejected
+(the trap), halter rejected, mutated closure rejected, plain-misses/hist-
+catches.
+
+**Harvest — 964 residue machines boarded (both shapes, kernel-validated):**
+UNTRUSTED prover `tools/nghist/*.py` grows the gram sets and emits phase-
+dependent count/rank lex certs; the kernel re-checks every cert via
+`vm_compute`.  100/file, per-file `Forall`, `coqc`-validated, committed on
+landing.
+- **never-QH: 434** (`theories/Machines/NGHStage/NGH_00..04.v`,
+  `Forall NeverQuasiHaltsSt`, `tools/nghstage_manifest.tsv`).
+- **R_QH: 530** (`theories/Machines/NGHWStage/NGHW_00..05.v`, `Forall iqh` =
+  `NonHalt /\ QHBound 2000 /\ QuasiHaltsSt`, `tools/nghwstage_manifest.tsv`)
+  via the wrap variant — the genuine quasihalters the never-QH gate rejects.
+  Disjoint from never-QH (overlap 0).
+
+**Next:** (1) a `Census/Assembly.v` that `app`-chains the NGHStage +
+NGHWStage (+ waves 2/3/4) `Forall`s into `Forall boarded D_census` — no
+census walk (`docs/NGHIST_WAVE5.md` §5 route A); (2) `NgPattE` pattern
+measures for the "liveness lags closure" tail both harvests miss;
+(3) history=6,8 escalation if the yield plateaus.
+
+---
+
 # Next session: start here
 
 State as of 2026-07-16 (branch `claude/easy-machines-bb5-strategy-8pz2fn`).

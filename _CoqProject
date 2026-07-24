@@ -13,6 +13,8 @@ theories/Closure.v
 theories/Checkers/FuelClass.v
 theories/Checkers/ExactClosure.v
 theories/Checkers/NGram.v
+theories/Checkers/NGramHist.v
+theories/Checkers/NGramHistWrap.v
 theories/Checkers/TCycler.v
 theories/Checkers/TCyclerN.v
 theories/Checkers/Wrap.v
@@ -204,6 +206,7 @@ theories/Tests/Cycle_Corruption.v
 theories/Tests/TCycler_Corruption.v
 theories/Tests/Closure_Corruption.v
 theories/Tests/NGram_Corruption.v
+theories/Tests/NGramHist_Corruption.v
 theories/Machines/Bulk/Bulk_001.v
 theories/Machines/Bulk/Bulk_002.v
 theories/Machines/Bulk/Bulk_003.v
@@ -465,3 +468,14 @@ theories/Machines/IRulesQHStage/IQHStage_09.v
 theories/Machines/IRulesQHStage/IQHStage_10.v
 theories/Tests/RerootStage_Corruption.v
 theories/Tests/IRulesQH_Corruption.v
+theories/Machines/NGHStage/NGH_00.v
+theories/Machines/NGHStage/NGH_01.v
+theories/Machines/NGHStage/NGH_02.v
+theories/Machines/NGHStage/NGH_03.v
+theories/Machines/NGHStage/NGH_04.v
+theories/Machines/NGHWStage/NGHW_00.v
+theories/Machines/NGHWStage/NGHW_01.v
+theories/Machines/NGHWStage/NGHW_02.v
+theories/Machines/NGHWStage/NGHW_03.v
+theories/Machines/NGHWStage/NGHW_04.v
+theories/Machines/NGHWStage/NGHW_05.v
