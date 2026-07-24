@@ -61,7 +61,9 @@ class-refined fuel certificate + `NeverQuasiHaltsSt` via
 `ngram_check_neverqh_fuelw_sound` (`Checkers/FuelWide.v`), plus
 `lcstage3_fuel_NN : list TM` + `Forall NeverQuasiHaltsSt`.
 
-- **Yield: _pending_ — fuel sweep in progress (`LCS3_fuel_00..NN`).**
+- **Yield: 696** (`LCS3_fuel_00..13`) — 706 fuel certs, 10 dropped by the Coq
+  `fw_decide` re-derivation.  ~20% of the whole listC pool on fuel's first pass
+  (fuel/drift had never been swept over listC before, only the BB(4) hard core).
 
 ### B2 — drift (R_NeverQH)  — `--neverqh --rank --drift`
 
@@ -71,7 +73,9 @@ Adapter `tools/gen_listc_stage3.py --mode drift` re-derives via
 `drift_prover.dw_decide` and emits `theories/Machines/ListCStage3/LCS3_drift_NN.v`
 — `NeverQuasiHaltsSt` via `ngram_check_neverqh_driftw_sound` (`Checkers/Drift.v`).
 
-- **Yield: _pending_ — drift sweep queued (`LCS3_drift_00..NN`).**
+- **Yield: 104** (`LCS3_drift_00..02`) — 108 drift certs, 4 dropped by
+  `dw_decide`; disjoint from fuel (0 overlap).  Drift is the smaller
+  complementary yield (it caught the machines fuel's runner-gate couldn't).
 
 ### B3 — high-n ngram-quiet (R_QH)  — state-QH mis-binned into list-C
 
@@ -83,11 +87,43 @@ n ∈ {5,6,7,8} (t ≤ 1024) over the remaining pool; catches emit as
 `theories/Machines/ProvenQHStage/PQHS_LC_NN.v` (RRStage-shaped, predicate
 `pqhs`), manifest `tools/listc_qh_manifest.tsv`.  **Board R_QH** like Task A.
 
-- **Yield: _pending_ — quiet pass queued (`PQHS_LC_00..NN`).**
+- **Yield: 0 / 2,757** (no `PQHS_LC` files).  The pool remaining after
+  fuel+drift is **entirely the never-QH binary-counter family** — there are no
+  state-QH quasihalters left to recover.  This is not a limitation of the
+  search; it is what the residue *is* (see the provenance note below).
 
 Sweep totals and the still-uncaught list-C remainder recorded in
-`tools/listc_stage3_manifest.tsv`, `tools/listc_qh_manifest.tsv`, and
-`tools/listc_wave4_uncaught.txt`.
+`tools/listc_stage3_manifest.tsv` (696 fuel + 104 drift) and
+`tools/listc_qh_uncaught.txt` (2,757).
+
+## Provenance of the resistant residue (wave-4 investigation)
+
+A recon over mxdys' Coq-BB5 `BB4_verified_enumeration.csv` (858,909 (4,2)
+machines → `status,decider`, census-string-native) and a structural pass with
+`bin/harness` established what the ~2,757 machines that resist *every* checker
+(ngram-rank/RepWL/irules/fuel/drift/tcyclers) actually are:
+
+- **~98% are binary counters / odometers** (bounded tape widening
+  logarithmically, tile mutating on every carry — no fixed-window closure
+  captures them); ~2% are bounce-space / long-runway translated cyclers.
+- Every one of them that resolves against mxdys' table (1,420 of our 5,014
+  residue machines) is `nonhalt`, decided **100% by NGramCPS — 0 by Loop,
+  0 by RepWL** — and 85% by the **history-augmented** `NGRAM_CPS_IMPL1`
+  variant, dominantly at tiny params (`history=2, gram=2, gas=1600`).
+- **mxdys' BB4 pipeline is complete (zero undecided).** So the residue is not
+  hard; it is `NGramCPS`-decidable, and BBB4's `NGram.v` simply **lacks the
+  history augmentation** (`Σ_history`: augment each tape cell with the last _k_
+  state/symbol updates) that closes counters.  Fuel/drift are a heavier
+  substitute, which is why they cap out at ~800 boards.
+
+**High-leverage next lever (a separate track, not wave-4):** port
+history-augmented NGramCPS into BBB4 (a `Σ_history` layer on the existing
+`NGram.v`/`ExactClosure.v` closure engine, matching mxdys' `impl1` at
+`len_h = 2..8`).  A finite non-halting closed set yields `NeverQuasiHalts`
+directly (all states recur), so it would clear the counter residue uniformly.
+Targeting oracle: `BB4_verified_enumeration.csv` gives the exact decider+params
+per machine (sha256 `6a4abba…5b5c08`,
+`https://docs.bbchallenge.org/CoqBB5_release_v1.0.0/BB4_verified_enumeration.csv`).
 
 ## Compile / axiom discipline
 
@@ -129,7 +165,10 @@ prior boards), so the concatenated `proven_list` has no name clash.  Task A/B3
 `cpq_*` names are per-chunk unique.
 
 Expected `D_census` after the combined wave-4 wire+regen:
-`5,156 − 20 (PQHS) − |LCS3 fuel+drift| − |PQHS_LC| ` (Task B counts finalized once the sweeps land; projection ≈ 4,850 ± 100).
+`5,156 − 20 (PQHS, Task A) − 696 (LCS3 fuel) − 104 (LCS3 drift) − 0 (PQHS_LC)
+= **4,336**`.  Wave-4 boards **820** residue machines total.  (`regen --wave4`
+recomputes this from the manifests; `--wave4` drops provenqh_stage +
+listc_stage3, and listc_qh only if non-empty — it is empty here.)
 
 ## Reproduce (UNTRUSTED)
 
