@@ -1,7 +1,10 @@
 # v5 rule-replay gap — staging + hand-off
 
 _Written 2026-07-23 (branch `claude/coq-bbb4-v5gap-<suffix>`), a
-standalone parallel track to the wave-4 harvest._
+standalone parallel track to the wave-4 harvest.  Updated 2026-07-24
+(branch `claude/coq-bbb4-v5zipper-crosss-<suffix>`): gap 3 landed --
+8 of the last 9 boarded (v5c), superseding the engine-zipper hypothesis
+with a smaller closure + multi-run end-match fix; see "Gap 3" below._
 
 ## What the "v5 gap" is
 
@@ -20,11 +23,13 @@ grep -v '^#' tools/irulesnqh_refused.txt | grep -v RECOVERED | cut -f1 > tools/v
 
 Diagnosis (fresh certs, `bin/irules --max-steps 200000 --cert-dir
 results/certs_v5gap tools/v5gap.txt`, then `Eval vm_compute` of the
-checker's sub-terms) found the 45 split across **two distinct corners**,
-both in the meta-cycle replay `breplayKP`, neither of which the landed
-Phase-2 engine covers.  Rule validation (`check_rulesBlkP`) and the meta
-replay's *structure* are fine; the anchor re-simulation and coverage are
-fine.  The gaps are downstream.
+checker's sub-terms) found the 45 split across **three distinct corners**
+(gap 1 end-match, gap 2 re-blocking, gap 3 block-hop closure + multi-run
+end-match), all in the meta-cycle replay `breplayKP`, none of which the
+landed Phase-2 engine covered.  Rule validation (`check_rulesBlkP`) and
+the meta replay's *structure* are fine; the anchor re-simulation and
+coverage are fine.  The gaps are downstream.  **Status: 44/45 boarded**
+(20 + 16 + 8); the last is the matrix-meta cert (orthogonal).
 
 ### Gap 1 — the cell-stream end-match (LANDED, 20 boarded)
 
@@ -100,60 +105,92 @@ Fix (this branch):
   manifest `tools/listc_v5b_manifest.tsv`, emitter
   `tools/gen_listc_v5b_stage.py`.
 
-### The last 9 (`tools/listc_v5_uncaught.txt`) -- two remaining frontiers
+### Gap 3 -- the engine crossing (LANDED, 8 boarded)
+
+The remaining 9 split into 8 scalar machines and 1 matrix-meta cert.
+**The 8 scalar machines are now boarded** by the v5c checker
+(`irulesblkpfx_check_neverqh_v5c`), and the fix is NOT the engine "zipper"
+the earlier hand-off (below) hypothesised.  Deep config-by-config
+measurement this session (instrumenting the C `iv_step` / `iv_absorb` and
+`Eval vm_compute`ing the Coq engine side by side) established the real
+cause and a much smaller, cleaner, sound fix.
+
+**What was actually measured (donor `1RB0LC_0LB1RC_1RD1LA_1LA0RC`):**
+
+- The C meta replay runs at `lo = kmin` (verify.c: `g->lo[0] = c->ir_kmin`),
+  the SAME `lo` the Coq replay uses.  So `(c)` k0-flooring below is a red
+  herring -- worse, running at `lo = k0` fabricates counts like `k-117`
+  that are 0 at the bound, which is what made the earlier probe "stall".
+- Both engines PEEL a bouncing block only when its count min `>= 2`
+  (C's `iv_need(e,2)` == Coq's `expr_ge lo e 2`).  Neither ever peels a
+  count-1-at-`lo` run in the passing traces, so `(b)` peel-with-count>=1
+  is also unnecessary.
+- With ONE change -- closing the block table under block-hop outputs so
+  `bhop_result`'s `blk_find` resolves the rotation blocks (piece `(a)`) --
+  the UNCHANGED engine `EngineKS.beng_stepS` tracks the C `iv_step`
+  **byte-for-byte for the entire 137-iteration meta cycle** (verified by
+  normalising both config sequences and `diff`-ing: identical through the
+  last iteration).  So there is no engine gap at all.
+- The ONLY real gap is the END-MATCH.  The cycle closes on a configuration
+  CELL-equal to the shifted template but whose two sides each carry TWO
+  variable-count runs (e.g.
+  `b1^3 . b10^(k+1) . b1^7 . b0 . b1^(1+3k) . b0 . b1^3` vs
+  `b1^7 . b6^(k+1) . b1^3 . b0 . b1^(1+3k) . b0 . b1^3`).
+  `StreamEq.cseq` (`exp1`) handles only ONE variable run, so `bend_eqb2`
+  refuses and the Coq replay runs PAST the cycle end into the next
+  (unrecognised) iteration -- which is where the earlier probe observed
+  `beng_stepS = None`.  The C verifier's `iv_streams_eq` walks the cells
+  symbolically and accepts.
+
+**The v5c fix (two changes, both leave the soundness chain intact):**
+
+- `(a)` BLOCK-HOP CLOSURE -- `BlkClosure.blk_closure` augments the block
+  table with the primitive-root words block hops can produce (e.g.
+  crossing `b10=[S1;S1;S1;S1;S0]` in `StC` yields `[S0;S1;S1;S0;S1]`, the
+  reverse of declared `b9`, which `blk_find` missed).  UNTRUSTED
+  preprocessing: `bhop_result` re-verifies every hop against
+  `mk_tbl blks` (`bhop_result_spec`: `nreps (tbl nsym) factor = hout`),
+  the whole chain is parametric in `blks`, and `mk_tbl_raw` gives
+  `raw_ok` for ANY block list -- so closing the table can only accept
+  MORE crossings, never an unsound one.  Zero new soundness; measured to
+  add ~+1 block and terminate.
+- MULTI-RUN END-MATCH -- `StreamEq2.cseq2` strips the maximal common
+  (syntactically-equal) run prefix and suffix, then applies the proven
+  one-pump `cseq` to the residues.  Stripping identical runs is
+  denotation-preserving, so `cseq2_sound` reduces to `cseq_sound` with two
+  `bdside_app` rewrites (**zero axioms**).  `bend_eqb3 = bend_eqb2 || cseq2`
+  with `bend_eqb3_bsem` (`functional_extensionality_dep` only).
+
+`MetaBlkPfxV5c.irulesblkpfx_check_neverqh_v5c` is a mechanical fork of
+v5b: `blks := blk_closure tm (cp_blks cert) 16`, end-match `bend_eqb3`.
+The engine (`beng_stepS`), the re-blocking replay (`breplayRB`), rule
+validation (`check_rulesRB`) and the anchor/coverage check are all reused
+verbatim.  `Print Assumptions irulesblkpfx_check_neverqh_v5c_sound` =
+`functional_extensionality_dep` only; the checker accepts all 8 at
+`cfuel/fuel = 200000/3000` (the meta cycles are short, so the boards use
+`fuel = 3000`, ~1s each).  Boards: `theories/Machines/ListCV5Stage/
+LCV5C_00..01.v`, manifest `tools/listc_v5c_manifest.tsv`, emitter
+`tools/gen_listc_v5c_stage.py`, corruption `theories/Tests/IRulesV5c_Corruption.v`.
+
+### The last 1 (`tools/listc_v5_uncaught.txt`) -- the matrix meta-map
 
 - 1 matrix-meta cert (`0RB0LA_1LC1LD_1RD0RD_1LA0RC`, v7, `meta_a=0
   meta_b=0`, a `rulerunm` lattice run): the scalar `a*k+b` meta layer that
-  `MetaBlkPfx`/`...V5`/`...V5b` all reuse does not cover the matrix
-  meta-map ("0 of the 50 Phase-2 certs use the matrix meta-map").  Closing
-  it needs the matrix meta layer ported -- a separate feature, orthogonal
-  to the v5 gap.
-- 8 scalar certs need a `beng_stepS` variable-block hop.  Measured (e.g.
-  `1RB0LC_0LB1RC_1RD1LA_1LA0RC`): their rules validate (2/2 with re-block)
-  and BOTH rules fire in the meta replay at the same ops as the C prover
-  (RULE 0 ~op 28, RULE 1 ~op 73), config bounded (nl<=16, nr<=18); then
-  `beng_stepS` returns `None` on a configuration where the head must hop
-  over a VARIABLE-count multi-cell block, which the C `iv_step` summarises
-  but `EngineKS.beng_stepS` (block peel + chain/block hops) does not.
-  Re-block does NOT help here (the stall is after both rules fire, in pure
-  engine stepping); the `iv_absorb_side` variant (absorb completed copies
-  into a following block) was implemented and measured to help NONE of the
-  8, confirming the stall is `beng_stepS`, not canonicalization.  Closing
-  these needs a genuine `beng_stepS` extension (peel/hop a variable-count
-  block) with its own soundness proof -- the largest remaining engine
-  surface.
+  `MetaBlkPfx`/`...V5`/`...V5b`/`...V5c` all reuse does not cover the
+  matrix meta-map ("0 of the Phase-2 certs use the matrix meta-map").
+  Closing it needs the matrix meta layer ported -- a separate feature,
+  orthogonal to the v5 gap.  Left documented as out of scope.
 
-  Investigated in depth (this session); the crossing is a full symbolic
-  zipper and needs several composed pieces, each necessary but jointly
-  still insufficient in the measured cases:
-  (a) BLOCK-HOP CLOSURE -- the head crosses a block cleanly but the output
-      word is a rotation of a declared block not itself in the table
-      (e.g. crossing b10=[S1;S1;S1;S1;S0] in StC yields [S0;S1;S1;S0;S1],
-      a rotation of b7), so `bhop_result`'s `blk_find` misses.  Fix:
-      augment `cp_blks` with the hop-closure (untrusted; soundness holds
-      for any table).  Measured: the closure is small (often +1 block) and
-      terminates.
-  (b) PEEL WITH COUNT>=1 -- when a block does NOT hop cleanly (bounces off
-      its first cell, e.g. b6=[S0;S1;S1;S1;S1] with StC,S0->DR reversing),
-      `beng_crossS` must peel one copy and let the head stop at the bounce;
-      the landed guard requires the run count `>= 2`, but these runs are
-      `k - c` with value 1 at kmin.  Relaxing to `expr_ge lo e 1` (sound:
-      `cnt e >= 1` still splits the denotation) advances the replay one
-      more copy.
-  (c) The residual: after (a)+(b) the same run reaches count `k - c` = 0
-      at kmin (empty for one k, non-empty above) -- a genuine
-      empty-vs-nonempty case split the one-directional `beng_crossS`
-      cannot make.  Flooring the meta-replay `lo` at `k0` (sound -- the
-      tiling only uses the cycle for `k >= k0`, and `k0 >> kmin`) makes
-      such runs provably non-empty, but the measured configs still stall
-      afterward: the head genuinely enters a block and returns to the
-      departed side, which the current one-pass crossing cannot represent.
-  The clean fix is to replace `beng_crossS` with a general bounded
-  symbolic zipper (mirror of the C `iv_step` inner loop) that lets the
-  head cross AND bounce back, returning "did not cross" -- then compose
-  (a) block-closure + this zipper.  That is a core-engine rewrite with its
-  own soundness proof (the largest single piece of the whole v5 gap) and
-  is left for a dedicated session.
+> **Superseded hypothesis (kept for the record).**  The earlier hand-off
+> concluded the 8 needed a general symbolic-zipper rewrite of
+> `beng_crossS` (head crosses AND bounces back), composed with pieces
+> `(a)` block-hop closure, `(b)` peel-with-count>=1, and `(c)`
+> k0-flooring, "each necessary but jointly still insufficient".  The
+> deeper measurement above shows `(b)` and `(c)` are unnecessary (and
+> `(c)` actively harmful), the engine needs NO change, and the "still
+> stalls" observation was the replay running past an unrecognised
+> cell-equal cycle end.  Closure `(a)` + the multi-run end-match is
+> sufficient and sound.
 
 ## Files (this branch)
 
@@ -165,37 +202,42 @@ Fix (this branch):
 | `theories/Checkers/IRules/Reblock.v` | `reblock_side` (untrusted) + verified `breblock_side` + `breblock_cfg_bsemX` (gap-2 trust surface) | `breblock_cfg_bsemX`: none |
 | `theories/Checkers/IRules/MetaBlkPfxV5b.v` | `irulesblkpfx_check_neverqh_v5b` + `_sound` (re-blocking replay) | `functional_extensionality_dep` |
 | `theories/Machines/ListCV5Stage/LCV5B_00..03.v` | the 16 gap-2 boards (`lcv5b_NN` + `Forall NeverQuasiHaltsSt`) | `functional_extensionality_dep` |
-| `theories/Tests/IRulesV5_Corruption.v`, `IRulesV5b_Corruption.v` | MUST-fail negative controls | (Examples) |
-| `tools/gen_listc_v5_stage.py`, `gen_listc_v5b_stage.py` | emitters (v5 / v5b) | — |
-| `tools/listc_v5_manifest.tsv`, `listc_v5b_manifest.tsv` | the 20 + 16 boarded | — |
-| `tools/listc_v5_uncaught.txt` | the 9 still-uncaught (1 matrix-meta + 8 beng_stepS-hop) | — |
+| `theories/Checkers/IRules/BlkClosure.v` | `blk_closure` (untrusted; re-verified by `bhop_result`) | — (no soundness claim) |
+| `theories/Checkers/IRules/StreamEq2.v` | `cseq2` + `cseq2_sound`, `bend_eqb3` + `bend_eqb3_bsem` (gap-3 trust surface) | `cseq2_sound`: none; `bend_eqb3_bsem`: `functional_extensionality_dep` |
+| `theories/Checkers/IRules/MetaBlkPfxV5c.v` | `irulesblkpfx_check_neverqh_v5c` + `_sound` (closed table + multi-run end-match) | `functional_extensionality_dep` |
+| `theories/Machines/ListCV5Stage/LCV5C_00..01.v` | the 8 gap-3 boards (`lcv5c_NN` + `Forall NeverQuasiHaltsSt`) | `functional_extensionality_dep` |
+| `theories/Tests/IRulesV5_Corruption.v`, `IRulesV5b_Corruption.v`, `IRulesV5c_Corruption.v` | MUST-fail negative controls | (Examples) |
+| `tools/gen_listc_v5_stage.py`, `gen_listc_v5b_stage.py`, `gen_listc_v5c_stage.py` | emitters (v5 / v5b / v5c) | — |
+| `tools/listc_v5_manifest.tsv`, `listc_v5b_manifest.tsv`, `listc_v5c_manifest.tsv` | the 20 + 16 + 8 boarded | — |
+| `tools/listc_v5_uncaught.txt` | the 1 still-uncaught (matrix-meta cert) | — |
 | `tools/v5gap.txt` | the derived 45-machine set | — |
 
 The checker files (`StreamEq.v`, `MetaBlkPfxV5.v`, `Reblock.v`,
-`MetaBlkPfxV5b.v`) + the corruption tests are wired into `_CoqProject`
-(base build);
+`MetaBlkPfxV5b.v`, `BlkClosure.v`, `StreamEq2.v`, `MetaBlkPfxV5c.v`) + the
+corruption tests are wired into `_CoqProject` (base build);
 the staged `ListCV5Stage/**` are self-contained and outside the census
 target closure (validate each with `coqc -Q theories BBB4 <file>`), exactly
 like wave-3's `ListCStage2/**`.
 
 ## Wire-in (box follow-up, when the census is next re-certified)
 
-The 36 boards join the **proven (R_NeverQH) tier**, same conveyor belt as
+The 44 boards join the **proven (R_NeverQH) tier**, same conveyor belt as
 wave-2/3 (`docs/IRULESQH_WAVE3.md`, `tools/wire_wave3.py`):
 
-1. Append `lcv5_00..03` + `lcv5b_00..03` to `proven_list`
+1. Append `lcv5_00..03` + `lcv5b_00..03` + `lcv5c_00..01` to `proven_list`
    (`Census/Proven_Data.v`).
 2. Add `theories/Machines/ListCV5Stage/*` to `_CoqProject`.
 3. Extend the drop list (`proven_listc_dropped.txt`) with
-   `tools/listc_v5_manifest.tsv` + `tools/listc_v5b_manifest.tsv`
-   machines; `regen_residue.py` drops them
+   `tools/listc_v5_manifest.tsv` + `tools/listc_v5b_manifest.tsv` +
+   `tools/listc_v5c_manifest.tsv` machines; `regen_residue.py` drops them
    from `D_census` (zero walk cost).
 4. `make census-verify` on stable hardware; `Print Assumptions
    census_decided` must stay `functional_extensionality_dep` only.
 
-Expected `D_census` reduction from this track: **-36** (all in list-C
-residue; 20 gap-1 + 16 gap-2), rising to **-45** once the last 9 land
-(1 matrix-meta + 8 needing a `beng_stepS` variable-block hop).
+Expected `D_census` reduction from this track: **-44** (all in list-C
+residue; 20 gap-1 + 16 gap-2 + 8 gap-3), rising to **-45** once the last
+machine lands (the matrix-meta cert, needing the orthogonal matrix
+meta-map layer).
 
 ## Reproduce (UNTRUSTED)
 
