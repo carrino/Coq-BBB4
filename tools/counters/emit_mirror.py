@@ -731,7 +731,7 @@ def coqc(path, thm, quiet=True):
     if r.returncode:
         return False, (r.stderr or r.stdout)[-4000:]
     mod = os.path.splitext(os.path.basename(path))[0]
-    chk = os.path.join(REPO, 'tools', 'counters', '.axck_%s.v' % mod)
+    chk = os.path.join(REPO, 'tools', 'counters', 'axck_%s.v' % mod)
     with open(chk, 'w') as f:
         f.write("From BBB4.Machines.Counters Require Import %s.\n"
                 "Print Assumptions %s.\n" % (mod, thm))
@@ -746,9 +746,15 @@ def coqc(path, thm, quiet=True):
     if r2.returncode:
         return False, (r2.stderr or r2.stdout)[-4000:]
     ax = r2.stdout.strip()
-    names = set(re.findall(r"^([A-Za-z_][\w'.]*)\s*:", ax, re.M)) - {'Axioms'}
-    ok = names <= {'functional_extensionality_dep'}
-    return ok, ax.replace('\n', ' ')[:300]
+    if ax.startswith('Closed under the global context'):
+        return True, ax
+    names = set()
+    for ln in ax.splitlines():
+        if not ln or ln[0].isspace() or ln.strip() == 'Axioms:':
+            continue
+        names.add(ln.split()[0].rstrip(':').split('.')[-1])
+    ok = bool(names) and names <= {'functional_extensionality_dep'}
+    return ok, ' | '.join(sorted(names)) or ax[:200]
 
 
 def main():
