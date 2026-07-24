@@ -381,6 +381,9 @@ theories/Checkers/IRules/StreamEq.v
 theories/Checkers/IRules/MetaBlkPfxV5.v
 theories/Checkers/IRules/Reblock.v
 theories/Checkers/IRules/MetaBlkPfxV5b.v
+theories/Checkers/IRules/StreamEq2.v
+theories/Checkers/IRules/BlkClosure.v
+theories/Checkers/IRules/MetaBlkPfxV5c.v
 theories/Machines/IRulesBlkPfx_Batch_01.v
 theories/Machines/IRulesBlkPfx_Batch_02.v
 theories/Machines/IRulesBlkPfx_Batch_03.v
