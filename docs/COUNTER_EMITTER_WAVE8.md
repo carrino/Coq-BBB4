@@ -163,3 +163,37 @@ only or the board is rejected. (9) append to `tools/counters_manifest.tsv`.
 - `theories/Counters/{JpCounter,ILCounter,LapGlue,MonoCounter,WTape}.v`.
 - `tools/counters/{lapTGT.py,executor.py}` — the trace/validate stage.
 - `docs/TERMINOLOGY.md` — census/residue/holdout glossary + the refuted hammer.
+
+## 7. THE CHAMPION — `1RB1LD_1RC1RB_1LC1LA_0RC0RD` (and why `boarded` must generalize)
+
+Measured 2026-07-24 (fast C sim, reproducible):
+
+- The tape goes **blank at step 32,779,478**, in state **C**, after spanning
+  ~10,240 cells.
+- From that configuration the machine is a **pure spinout**: the table has
+  `C,0 -> 1LC` (a self-loop), so on the all-blank tape it writes `1` and steps
+  left forever.  Verified over 12M consecutive steps: displacement exactly
+  -1/step, ones exactly +1/step, state C throughout.
+
+So states **A, B, D are visited only up to the blanking step and never again**
+-- this is a genuine quasihalter whose quiet states have last visit
+~32,779,478.  It therefore satisfies `QHBound 32779479` but **FAILS
+`QHBound 2000`**.
+
+**Consequence for the closeout (structural, not a parameter issue):** the
+wave-6 predicate
+
+```
+boarded tm := NeverQuasiHaltsSt tm \/ (NonHalt /\ QHBound 2000 /\ QuasiHaltsSt tm)
+```
+
+cannot cover this machine at any parameter.  `boarded` must generalize to
+`exists B, NonHalt /\ QHBound B /\ QuasiHaltsSt tm` (or carry a per-machine
+bound).  This does NOT touch `census_decided`, which only ever claims
+`QHBound 2000 \/ Deferred D_census` -- the machine is legitimately deferred.
+
+**Proof shape (easy structurally, heavy computationally):** a spinout lemma
+(from an all-blank left side in state C, `C,0 -> 1LC` runs forever -- a short
+induction, giving NonHalt and "only C recurs") plus the finite 32,779,478-step
+prefix establishing the blank+C configuration.  The prefix is a single long
+`native_compute` run => PLAYBOOK Rule 1: stable hardware, not the container.
