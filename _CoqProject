@@ -205,6 +205,7 @@ theories/Tests/Cycle_Corruption.v
 theories/Tests/TCycler_Corruption.v
 theories/Tests/Closure_Corruption.v
 theories/Tests/NGram_Corruption.v
+theories/Tests/NGramHist_Corruption.v
 theories/Machines/Bulk/Bulk_001.v
 theories/Machines/Bulk/Bulk_002.v
 theories/Machines/Bulk/Bulk_003.v
