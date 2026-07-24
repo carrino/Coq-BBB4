@@ -360,19 +360,23 @@ and `NGramHistWrap.ngramhist_check_qhbound_lex_sound` (`NonHalt /\ QHBound
 (the trap), halter rejected, mutated closure rejected, plain-misses/hist-
 catches.
 
-**Harvest (`theories/Machines/NGHStage/`, manifest
-`tools/nghstage_manifest.tsv`):** UNTRUSTED prover `tools/nghist/*.py`
-(grows gram sets, emits phase-dependent count-measure lex certs); the kernel
-re-checks every cert via `vm_compute`.  Measured never-QH yield ~10% of the
-residue (the honest rate; the rejected majority are genuine quasihalters ->
-the wrap/R_QH tier).  100 machines/file, per-file `Forall`, `coqc`-validated,
-committed on landing.
+**Harvest — 964 residue machines boarded (both shapes, kernel-validated):**
+UNTRUSTED prover `tools/nghist/*.py` grows the gram sets and emits phase-
+dependent count/rank lex certs; the kernel re-checks every cert via
+`vm_compute`.  100/file, per-file `Forall`, `coqc`-validated, committed on
+landing.
+- **never-QH: 434** (`theories/Machines/NGHStage/NGH_00..04.v`,
+  `Forall NeverQuasiHaltsSt`, `tools/nghstage_manifest.tsv`).
+- **R_QH: 530** (`theories/Machines/NGHWStage/NGHW_00..05.v`, `Forall iqh` =
+  `NonHalt /\ QHBound 2000 /\ QuasiHaltsSt`, `tools/nghwstage_manifest.tsv`)
+  via the wrap variant — the genuine quasihalters the never-QH gate rejects.
+  Disjoint from never-QH (overlap 0).
 
-**Next:** (1) wrap-cert emitter -> harvest the quasihalter tail into
-`NGHWStage/` via `ngramhist_check_qhbound_lex_sound`; (2) `NgPattE` pattern
-measures for the "liveness lags closure" tail; (3) a `Census/Assembly.v`
-that `app`-chains all stage `Forall`s into `Forall boarded D_census` (no
-census walk — see `docs/NGHIST_WAVE5.md` §5 route A).
+**Next:** (1) a `Census/Assembly.v` that `app`-chains the NGHStage +
+NGHWStage (+ waves 2/3/4) `Forall`s into `Forall boarded D_census` — no
+census walk (`docs/NGHIST_WAVE5.md` §5 route A); (2) `NgPattE` pattern
+measures for the "liveness lags closure" tail both harvests miss;
+(3) history=6,8 escalation if the yield plateaus.
 
 ---
 

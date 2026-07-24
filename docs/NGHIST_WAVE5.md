@@ -150,14 +150,25 @@ minus the staged-not-wired v5/v5b manifests) with
 `coqc -Q theories BBB4`-validated (a 100-machine file ≈ 70 s `vm_compute`)
 and committed on landing.
 
-Measured never-QH yield ≈ **10 %** of the residue swept (the honest rate
-AFTER quasihalters are correctly rejected — the pre-fix 36 % included
-mis-boarded quasihalters the kernel would refuse).  The rejected majority is
-dominated by genuine quasihalters (a state quiet after the transient), which
-route to the QHBound/wrap variant (`NGramHistWrap.v`) as R_QH facts, not
-never-QH — exactly the listB/listC mix the design anticipated.  Both shapes
-feed the Assembly `Forall`; they live in separate files.  Final counts:
-`tools/nghstage_manifest.tsv`.
+**Two harvests, disjoint, both landed and kernel-validated:**
+
+- **never-QH → `theories/Machines/NGHStage/NGH_00..04.v`, 434 machines**
+  (8.5 % of the residue).  `Forall NeverQuasiHaltsSt`.  Manifest
+  `tools/nghstage_manifest.tsv`.  (The honest rate AFTER quasihalters are
+  rejected — the pre-fix 36 % counted mis-boarded quasihalters the kernel
+  refuses; that bug, the prover skipping the prefix-visited obligation, was
+  caught by `vm_compute` and fixed.)
+- **R_QH → `theories/Machines/NGHWStage/NGHW_00..05.v`, 530 machines**
+  (10.4 %) via `NGramHistWrap`.  `Forall iqh` where
+  `iqh tm := NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm`.  Manifest
+  `tools/nghwstage_manifest.tsv`.  These are the genuine quasihalters (a
+  state quiet after the transient) — exactly the listB/listC mix the design
+  anticipated.
+
+**Total: 964 residue machines boarded** (434 + 530, overlap 0), each proof
+`coqc vm_compute`-checked, `functional_extensionality_dep` only.  Both shapes
+feed the Assembly `Forall`; they live in separate directories/files.  Each
+staged file compiles in ≈ 30–70 s.
 
 Oracle provenance (`tools/nghist/residue_provenance.csv`, from
 `BB4_verified_enumeration.csv`): of the residue machines that match mxdys'
@@ -196,11 +207,15 @@ branch, `listc_stage3_manifest.tsv` + `provenqh_stage_manifest.tsv`).  The
 wired boards are already absent from `census_residue.txt`.
 
 ## 6. Follow-ups
-- QHBound/wrap harvest: `NGramHistWrap.v` is landed and axiom-clean; the
-  prover's wrap-cert emitter (find the quiet state, wrap, close, cert) is the
-  next tooling step to harvest the quasihalter tail into `NGHWStage/`.
-- Pattern measures: the lex cert currently uses count measures (`ngmeas`);
-  the `NgPattE` pattern-measure vocabulary (`pm_exact`) would recover the
-  "liveness lags closure" tail the single count measure misses.
-- History escalation: the sweep tries `history=2,4`; the oracle shows a
-  small `history=6,8` tail — raise `PARAMS` if the yield plateaus.
+- **Assembly.v**: `app`-chain the NGHStage `Forall NeverQuasiHaltsSt` and
+  NGHWStage `Forall iqh` (+ waves 2/3/4) into one `Forall boarded D_census`
+  (route A, no walk).  ~964 of 5,129 residue now boarded by this wave.
+- **Pattern measures**: both harvests use count + rank measures; the
+  `NgPattE` pattern-measure vocabulary (`pm_exact`, ~200 lines) would recover
+  the "liveness lags closure" tail the single count measure misses (the
+  handful of residue quasihalters where a state's wrapped-closure liveness
+  needs a `[1;1]`-pattern measure, not a 1-count).
+- **History escalation**: the sweeps try `history=2,4`; the oracle shows a
+  small `history=6,8` tail — raise `PARAMS`/`QPARAMS` if the yield plateaus.
+- **A re-sweep of never-QH with the rank fallback** (added after the first
+  434) may recover a few more acyclic-state machines.
