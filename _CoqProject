@@ -388,6 +388,7 @@ theories/Machines/IRulesBlkPfx_Batch_04.v
 theories/Machines/IRulesBlkPfx_Batch_05.v
 theories/Tests/IRulesBlkPfxBatch_Corruption.v
 theories/Tests/IRulesV5_Corruption.v
+theories/Tests/IRulesV5b_Corruption.v
 
 # --- counters track: wave ---
 theories/Counters/WaveCounter.v
