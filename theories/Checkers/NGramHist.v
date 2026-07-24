@@ -761,3 +761,60 @@ Proof.
       rewrite (hproj_eq_ngstart n lset rset a hc cc Hcov Hlift).
       apply ngm_start_exact; [exact Hn | exact Hstep].
 Qed.
+
+(** ** Safety-only closure (NonHalt), for the safety != liveness controls
+
+    A finite closed augmented set proves NonHalt -- but NOT never-QH.  This
+    exposes the safety half so the corruption tests can exhibit the trap:
+    a genuine quasihalter whose augmented set [ngramhist_closed = true] yet
+    [ngramhist_check_neverqh_lex = false]. *)
+
+Definition ngramhist_closed (tm : TM) (k n t fuel : nat)
+    (lset rset : hgset) : bool :=
+  (1 <=? n) &&
+  match hcsteps tm k t hcconf0 with
+  | Some hct =>
+      hseed_ok n lset rset hct &&
+      match close hcconf hctx_enc (hng_succs tm k n lset rset)
+                  fuel [] PositiveSet.empty [hng_start n hct] with
+      | Some Sl =>
+          closed_b hcconf hctx_enc (hng_succs tm k n lset rset) Sl &&
+          mem hcconf hctx_enc (hng_start n hct) Sl
+      | None => false
+      end
+  | None => false
+  end.
+
+Theorem ngramhist_closed_sound : forall tm k n t fuel lset rset,
+  ngramhist_closed tm k n t fuel lset rset = true -> NonHalt tm.
+Proof.
+  intros tm k n t fuel lset rset H. unfold ngramhist_closed in H.
+  apply andb_prop in H as [Hn H]. apply Nat.leb_le in Hn.
+  destruct (hcsteps tm k t hcconf0) as [hct|] eqn:Eht; [|discriminate].
+  apply andb_prop in H as [Hseed H].
+  destruct (close hcconf hctx_enc (hng_succs tm k n lset rset)
+                  fuel [] PositiveSet.empty [hng_start n hct]) as [Sl|] eqn:Ecl;
+    [|discriminate].
+  apply andb_prop in H as [Hclb Hmem].
+  apply mem_In in Hmem; [| exact hctx_enc_inj].
+  pose proof (hcsteps_proj tm k t hcconf0 hct Eht) as Hpr.
+  rewrite hproj_hcconf0 in Hpr.
+  set (a0 := hng_start n hct) in *.
+  assert (Hcov0 : hcovers n lset rset a0 (lift (hproj hct))).
+  { exists hct. split; [reflexivity | apply hng_start_covers; exact Hseed]. }
+  assert (Him : forall j, stepn tm j (lift (hproj hct)) <> None).
+  { intros j HN.
+    destruct (closure_invariant tm hcconf hctx_enc (hng_succs tm k n lset rset)
+                (hcovers n lset rset) hctx_enc_inj
+                (fun a c Hc => hng_succs_sound tm k n lset rset a c Hn Hc)
+                Sl Hclb a0 (lift (hproj hct)) Hmem Hcov0 j)
+      as (c' & a' & Hst & _ & _). congruence. }
+  assert (Hstept : stepn tm t InitES = Some (lift (hproj hct))).
+  { rewrite <- lift_c0. apply csteps_lift. exact Hpr. }
+  intros m HN.
+  destruct (le_lt_dec m t) as [Hle | Hgt].
+  - destruct (csteps_prefix tm m t c0 (hproj hct) Hle Hpr) as (cm & Hcm & _).
+    apply csteps_lift in Hcm. rewrite lift_c0 in Hcm. congruence.
+  - replace m with (t + (m - t)) in HN by lia.
+    rewrite stepn_add, Hstept in HN. exact (Him (m - t) HN).
+Qed.
