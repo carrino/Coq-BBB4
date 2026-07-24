@@ -311,6 +311,7 @@ theories/Machines/Counters/Mono2_39.v
 theories/Tests/CountersA_Corruption.v
 # --- counters track: session B ---
 theories/Counters/ILCounter.v
+theories/Counters/JpCounter.v
 theories/Counters/ExpCounter.v
 theories/Machines/Counters/Interleave_18.v
 theories/Machines/Counters/Interleave_35.v
