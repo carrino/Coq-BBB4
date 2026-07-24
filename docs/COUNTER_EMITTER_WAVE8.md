@@ -127,6 +127,22 @@ only or the board is rejected. (9) append to `tools/counters_manifest.tsv`.
 4. **WAVE 2** (mirror + variant lemmas), then **WAVE 3** tail routing +
    the `glue_qh` variant for the 298.
 
+## 4b. Dead levers — measured, do NOT retry
+
+- **RepWL over the counter core: DEAD.** Swept 60 random counter-core machines
+  through `tools/repwl_prover.py` at rungs `(L,T) ∈ {2,3,4}×{2,3,4}`, `t=0`,
+  cap 6,000 nodes: **0 closed, 0 caught**.  RepWL's counted-block abstraction
+  cannot finitize a binary counter for the same reason n-gram cannot — the
+  digit pattern differs on every increment, so no finite block set closes.
+  (This closes the "was RepWL ever pointed at today's residue?" question:
+  it was not, and it would not have helped.)
+- **The determinism "hammer": REFUTED** (0/300 determinize at k≤12) — see
+  `docs/TERMINOLOGY.md`.
+- **Wide-vocabulary NGramHist on the counter core: 0/572.**  See
+  `tools/nghist/wave8_nqh_fail.txt`.
+- **The nghist WRAP route on the 298 quasihalting counters: 0 boards.**  They
+  are quasihalting *counters*; they need the counter route's `glue_qh` variant.
+
 ## 5. Non-negotiables (unchanged)
 
 - Everything in `tools/` is UNTRUSTED; the kernel re-checks every board.
