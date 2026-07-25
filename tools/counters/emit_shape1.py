@@ -368,8 +368,8 @@ def validate(spec, E, encf, tail, s, exact_ov, hi=160):
 
 
 # ------------------------------------------------------------- Coq emission --
-HEAD = r'''(** * ILS1_@ID@: lap-shape-1 interleaved binary counter, machine
-    @SPEC@.
+HEAD = r'''(** * ILS1_@ID@: 4-window [Jp] interleaved binary counter, machine
+    @SPEC@ (lap-shape family of tools/counter_lapshapes.tsv ranks 1 and 3).
 
     Auto-emitted by tools/counters/emit_shape1.py (UNTRUSTED emitter; the Coq
     kernel re-checks every line below), cloning the hand-authored reference
