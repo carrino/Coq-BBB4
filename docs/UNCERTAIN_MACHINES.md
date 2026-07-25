@@ -10,8 +10,8 @@ applies.  Ranked by how much rides on the answer._
 ## 1. ~~The wall-inner nest~~ — RESOLVED: mis-set anchor, they are plain counters
 
 **Status: my classification here was WRONG.**  John identified
-`1RB---_1RC1LB_0LB1RD_0RA0RC`, `0RB0RD_1LA1RC_1RD1LC_0LC1RA` and
-`0RB0RD_1RC---_1RD1LC_0LC1RA` as "just a regular counter with a 1 to the
+`1RB---_1RC1LB_0LB1RD_0RA0RC`, `0RB0RD_1LA1RC_1RD1LC_0LC1RA`,
+`0RB0RD_1RC---_1RD1LC_0LC1RA` and `1RB1LA_0LA1RC_0RD0RB_1LB1RA` as "just a regular counter with a 1 to the
 left of each bit, msb on the left".  Verified, and it holds for the whole
 bucket — reading (2) below (mis-set anchor) was the right one.
 
@@ -35,28 +35,47 @@ a doubling cost.  **The lesson is the one already in COUNTER_CLOSEOUT §5
 and WAVE9 §2 — check the anchor variant before believing a verdict — and I
 did not apply it.**
 
-### What actually blocks them (the real, smaller problem)
+### What actually blocks them (small, well-posed)
 
-The counter does not step through every value: the reachable anchors are
-`{1} ∪ [4,7] ∪ [16,31] ∪ [64,127] ∪ …`, i.e. `[2^(2k), 2^(2k+1)-1]`.
-Interior laps are `p -> p+1`, but the overflow is
+The counter skips values.  Decoding each anchor word as pairs `(S1, b_i)`
+nearest-first followed by a `(S1,S1)` terminator:
 
 ```
-  3 -> 8      7 -> 16      15 -> 32      31 -> 64        (2^K-1  ->  2^(K+1))
+  v=  1  word=11              0 bit-pairs   u=0
+  v=  4  word=101011          2 bit-pairs   u=0        v = 2^m + u,
+  v=  7  word=111111          2 bit-pairs   u=3        u = 0 .. 2^m-1
+  v= 16  word=1010101011      4 bit-pairs   u=0
+  v= 31  word=1111111111      4 bit-pairs   u=15
+  v= 64  word=10101010101011  6 bit-pairs   u=0
 ```
 
-— it adds **one more pair** than `Pos.succ` does (`Ip (2^(K+1))` is
-`rep [S1;S0] (K+1) ++ [S1]`, where `Ip (Pos.succ (2^K-1))` would be
-`rep [S1;S0] K ++ [S1]`).  So `glue_neverqh tm Cc p0`, which requires a lap
-`Cc p -> Cc (Pos.succ p)` for EVERY `p`, does not apply on the nose: the
-anchor family needs a reindexing (or a glue variant) whose successor is
-`p+1` inside a block and `2p+2` at a block end.
+So it is a **width-widening binary counter**: `u` counts `0 .. 2^m-1` in the
+ordinary interleaved way (which is why the interior lap is `8+4j` with `j`
+the trailing-ones count — plain `cview`), and on overflow the machine widens
+by TWO bit-pairs and restarts `u` at 0.  In value terms the interior is
+`v -> v+1` and the overflow is `2^K-1 -> 2^(K+1)`, i.e. **the only deviation
+from a textbook counter is the overflow target**: `Pos.succ` would give
+`2^K`, the machine gives `2^(K+1)`.
 
-That is a small, well-posed question — and the one worth your view: is it
-better to reindex the family (enumerate the reachable values) or to add a
-`glue` variant taking a per-p successor function?  Either way it is a
-fraction of the work I thought this bucket needed, and it is affine
-throughout.
+Crucially, `LapGlue.glue_neverqh` is already general in its family — it takes
+`Cf : positive -> cconf` and only ever advances the index with `Pos.succ`;
+nothing requires `Cf` to be "the" numeric encoding.  So **no new glue is
+needed**.  What is needed is an anchor family whose `Pos.succ` matches the
+machine: either
+
+1. an enumeration `h : positive -> positive` of the reachable values (those
+   of odd bit length: `1, 4..7, 16..31, 64..127, …`) with `Cf = anchor ∘ Ip ∘ h`; or
+2. a word fixpoint `Wd : positive -> list Sym` in the style of
+   `ILCounter.Ip` / `JpCounter.Jp`, with its own two-case successor
+   decomposition (interior carry; overflow = widen by two pairs and clear),
+
+plus the matching emitter template.  That is one new `theories/Counters/*.v`
+in the shape of the existing encoding files — real work, but bounded, and
+affine throughout with no nesting anywhere.
+
+**Your call worth having:** (1) or (2)?  (2) looks closer to the existing
+files and avoids reasoning about bit-length, but (1) reuses all of `Ip`'s
+decomposition lemmas unchanged.
 
 ## 2. Wall + exponential overflow — 68 machines (composition, unproven)
 
