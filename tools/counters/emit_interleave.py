@@ -241,6 +241,140 @@ def _tail_for_snaps(snaps, maxt=6, encname='Jp'):
     raise DeriveError("no fixed anchor tail up to length %d" % maxt)
 
 
+def anchor_snaps_all(spec, T=200000, nmax=400):
+    """Every (state, stripped-left) snapshot with a blank head and a blank
+    right side -- all four states in ONE pass, unlike [anchor_scan]."""
+    raw = Raw(spec)
+    cfg = (0, [], 0, [])
+    out = []
+    for _ in range(T):
+        q, l, h, r = cfg
+        if h == 0 and not strip0(r) and l:
+            out.append((q, tuple(strip0(l))))
+            if len(out) >= nmax:
+                break
+        cfg = raw.step(cfg)
+        if cfg is None:
+            break
+    return out
+
+
+def derive_tail_best(spec, encnames=('Jp', 'Ip'), maxt=6, minrun=12):
+    """Anchor search that GROUPS snapshots by (state, encoding, tail) and
+    takes the longest consecutive value-run anywhere in the trace.
+
+    [_tail_for_snaps] (the original) has three defects that make it miss
+    anchors the machine plainly has, measured wave-12 over the residue:
+
+      * it reads the candidate tail off the LAST snapshot only, so one
+        stray final snapshot (mid-overflow, or a different family member)
+        poisons every tail length;
+      * it requires the consecutive run to END at that last snapshot;
+      * its acceptance threshold is a FRACTION of all snapshots, so when a
+        trace mixes several anchor families no single one ever qualifies.
+
+    This version scans all four states in one pass, scores each family by
+    its longest run, and prefers the longest run then the shortest tail.
+    Returns (edge, tail_including_blank, p0, encname)."""
+    snaps = anchor_snaps_all(spec)
+    best = None
+    for enc in encnames:
+        tab = enc_table(enc)
+        by = {}
+        for q, L in snaps:
+            for tl in range(0, maxt + 1):
+                if tl > len(L):
+                    break
+                T0 = L[len(L) - tl:] if tl else ()
+                v = tab.get(L[:len(L) - tl] if tl else L)
+                if v is not None:
+                    by.setdefault((q, T0), []).append(v)
+        for (q, T0), vals in by.items():
+            run = brun = 1
+            start = bstart = vals[0]
+            for k in range(1, len(vals)):
+                if vals[k] == vals[k - 1] + 1:
+                    run += 1
+                else:
+                    run, start = 1, vals[k]
+                if run > brun:
+                    brun, bstart = run, start
+            if brun < minrun:
+                continue
+            cand = (brun, -len(T0), -q, q, T0, enc, bstart)
+            if best is None or cand > best:
+                best = cand
+    if best is None:
+        raise DeriveError('no anchor family with a consecutive run >= %d'
+                          % minrun)
+    _, _, _, q, T0, enc, p0 = best
+    return LAB[q], list(T0) + [0], p0, enc
+
+
+def anchor_snaps_far_all(spec, T=200000, nmax=600, wmax=4):
+    """Like [anchor_snaps_all] but keeps the STRIPPED far word too, so wall
+    machines (whose anchor never has a blank far side) are visible."""
+    raw = Raw(spec)
+    cfg = (0, [], 0, [])
+    out = []
+    for _ in range(T):
+        q, l, h, r = cfg
+        if h == 0 and l:
+            w = tuple(strip0(r))
+            if len(w) <= wmax:
+                out.append((q, tuple(strip0(l)), w))
+                if len(out) >= nmax:
+                    break
+        cfg = raw.step(cfg)
+        if cfg is None:
+            break
+    return out
+
+
+def derive_tail_best_far(spec, encnames=('Jp', 'Ip'), maxt=6, minrun=12,
+                         wmax=4):
+    """[derive_tail_best] with a FIXED non-blank far side allowed.
+
+    Groups snapshots by (state, encoding, tail, far) and scores each family
+    by its longest consecutive value-run.  Blank far is preferred at equal
+    run length, then the shortest tail.  Returns
+    (edge, tail_including_blank, p0, encname, far)."""
+    snaps = anchor_snaps_far_all(spec, wmax=wmax)
+    best = None
+    for enc in encnames:
+        tab = enc_table(enc)
+        by = {}
+        for q, L, w in snaps:
+            for tl in range(0, maxt + 1):
+                if tl > len(L):
+                    break
+                T0 = L[len(L) - tl:] if tl else ()
+                v = tab.get(L[:len(L) - tl] if tl else L)
+                if v is not None:
+                    by.setdefault((q, T0, w), []).append(v)
+        for (q, T0, w), vals in by.items():
+            run = brun = 1
+            start = bstart = vals[0]
+            for k in range(1, len(vals)):
+                if vals[k] == vals[k - 1] + 1:
+                    run += 1
+                else:
+                    run, start = 1, vals[k]
+                if run > brun:
+                    brun, bstart = run, start
+            if brun < minrun:
+                continue
+            cand = (brun, w == (), -len(T0), -len(w), -q, q, T0, w, enc,
+                    bstart)
+            if best is None or cand > best:
+                best = cand
+    if best is None:
+        raise DeriveError('no anchor family (any far) with a run >= %d'
+                          % minrun)
+    _, _, _, _, _, q, T0, w, enc, p0 = best
+    return LAB[q], list(T0) + [0], p0, enc, list(w)
+
+
 def derive_tail_far(spec, edge_hint, maxt=6, encname='Jp', wmax=4):
     """[derive_tail] with a FIXED non-blank far side allowed.
 

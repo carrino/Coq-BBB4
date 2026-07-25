@@ -45,7 +45,7 @@ sys.path.insert(0, HERE)
 
 from executor import Exec, Wall                                    # noqa: E402
 from emit_interleave import (Raw, strip0, LAB, ST, SYM, ENC, parse,  # noqa: E402
-                             DeriveError, derive_tail, mach_id, coq_table,
+                             DeriveError, derive_tail, derive_tail_best, mach_id, coq_table,
                              clist, ccons, cwin)
 from emit_shape4 import conc, cycl, cycr, carry, m_int, nrm          # noqa: E402
 from mirror_common import mirror_spec, mirrorize                     # noqa: E402
@@ -1492,7 +1492,15 @@ def process(spec, do_emit, scratch, force=False, mirror=False):
     if mirror:
         spec = mirror_spec(spec)
     try:
-        edge, tail, p0 = derive_tail(spec, 'A', encname='Ip')
+        try:
+            edge, tail, p0 = derive_tail(spec, 'A', encname='Ip')
+        except DeriveError:
+            edge, tail, p0, _e = derive_tail_best(spec, encnames=('Ip',))
+        if list(tail) != TAIL:
+            try:
+                edge, tail, p0, _e = derive_tail_best(spec, encnames=('Ip',))
+            except DeriveError:
+                pass
         if list(tail) != TAIL:
             raise DeriveError('anchor tail %s is not [1,0] (not flip-shaped)'
                               % tail)

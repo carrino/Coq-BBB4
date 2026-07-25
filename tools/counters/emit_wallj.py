@@ -38,7 +38,7 @@ sys.path.insert(0, HERE)
 
 from executor import Exec, Wall                                    # noqa: E402
 from emit_interleave import (Raw, strip0, LAB, ST, SYM, ENC, parse,  # noqa: E402
-                             DeriveError, derive_tail_far, mach_id,
+                             DeriveError, derive_tail_far, derive_tail_best_far, mach_id,
                              coq_table, clist, ccons, cwin)
 from emit_shape4 import conc, cycl, cycr, m_int, nrm                 # noqa: E402
 from mirror_common import mirror_spec, mirrorize                     # noqa: E402
@@ -589,7 +589,14 @@ def process(spec, do_emit, scratch, force=False, mirror=False):
     if mirror:
         spec = mirror_spec(spec)
     try:
-        edge, tail, p0, far = derive_tail_far(spec, 'A', encname='Jp')
+        try:
+            edge, tail, p0, far = derive_tail_far(spec, 'A',
+                                                  encname='Jp')
+            if list(tail) != TL or not strip0(far):
+                raise DeriveError('retry with the grouped search')
+        except DeriveError:
+            edge, tail, p0, _e, far = derive_tail_best_far(
+                spec, encnames=('Jp',))
         if list(tail) != TL:
             raise DeriveError('anchor tail %s is not [S0]' % tail)
         if not strip0(far):

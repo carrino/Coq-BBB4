@@ -39,7 +39,7 @@ sys.path.insert(0, HERE)
 
 from executor import Exec, Wall                                     # noqa: E402
 from emit_interleave import (Raw, strip0, LAB, ST, SYM, ENC,          # noqa: E402
-                             DeriveError, derive_tail, derive_tail_far,
+                             DeriveError, derive_tail, derive_tail_far, derive_tail_best_far,
                              mach_id, coq_table, clist, ccons, cwin)
 from mirror_common import mirror_spec, mirrorize                       # noqa: E402
 
@@ -707,11 +707,22 @@ def process(spec, fp_edge, do_emit, scratch, force=False, mirror=False):
         spec = mirror_spec(spec)
     global FAR
     try:
-        edge, tail, p0, farw = derive_tail_far(spec, fp_edge, encname='Jp')
-        FAR = list(farw) + [0]
-        E = LAB.index(edge)
+        try:
+            edge, tail, p0, farw = derive_tail_far(spec, fp_edge,
+                                                   encname='Jp')
+            FAR = list(farw) + [0]
+            E = LAB.index(edge)
+            pr = profile(spec, E, ENC['Jp'], tail)
+        except DeriveError:
+            pr = None
+        if pr is None:
+            # grouped search (see emit_interleave.derive_tail_best_far)
+            edge, tail, p0, _e, farw = derive_tail_best_far(
+                spec, encnames=('Jp',))
+            FAR = list(farw) + [0]
+            E = LAB.index(edge)
+            pr = profile(spec, E, ENC['Jp'], tail)
         encf = ENC['Jp']
-        pr = profile(spec, E, encf, tail)
         if pr is None:
             raise DeriveError('laps not affine on both branches')
         ai_fit, ao_fit = pr
