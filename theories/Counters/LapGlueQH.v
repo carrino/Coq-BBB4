@@ -25,7 +25,7 @@
     [CTape]; this file adds none). *)
 
 From Coq Require Import Arith Lia List PArith.
-From BBB4 Require Import BBB4_Statement CTape.
+From BBB4 Require Import BBB4_Statement CTape Mirror.
 From BBB4.Census Require Import TNF_QH.
 Import ListNotations.
 
@@ -157,3 +157,38 @@ Proof.
 Qed.
 
 End GlueQH.
+
+(** ** Mirror transfer for the R_QH triple
+
+    A right-growth counter is proved by running [glue_qh] on the MIRRORED
+    machine (whose counter grows left, matching the template) and transferring
+    back.  [Mirror.v] already carries [mirror_nonhalt] and [mirror_qh]; the
+    [QHBound] transfer needs the [QuietAfter] implication in the OTHER
+    direction from [mirror_quiet_after], which is available because
+    [mirror_visits] is an iff. *)
+
+Lemma quiet_after_to_mirror : forall tm q s,
+  QuietAfter tm q s -> QuietAfter (mirror_tm tm) q s.
+Proof.
+  intros tm q s (Hvis & Hq). split.
+  - apply (proj2 (mirror_visits tm q s)). exact Hvis.
+  - intros n Hn Hv. apply (Hq n Hn).
+    apply (proj1 (mirror_visits tm q n)). exact Hv.
+Qed.
+
+Lemma mirror_qhbound : forall B tm,
+  QHBound B (mirror_tm tm) -> QHBound B tm.
+Proof.
+  intros B tm H q s Hq. apply (H q s), quiet_after_to_mirror, Hq.
+Qed.
+
+(** The full R_QH transfer: prove the triple for [mirror_tm tm], conclude it
+    for [tm]. *)
+Theorem mirror_iqh : forall B tm,
+  NonHalt (mirror_tm tm) /\ QHBound B (mirror_tm tm) /\ QuasiHaltsSt (mirror_tm tm) ->
+  NonHalt tm /\ QHBound B tm /\ QuasiHaltsSt tm.
+Proof.
+  intros B tm (Hnh & Hb & Hqh).
+  split; [exact (mirror_nonhalt tm Hnh) | split;
+    [exact (mirror_qhbound B tm Hb) | exact (mirror_qh tm Hqh)]].
+Qed.
