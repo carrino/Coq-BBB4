@@ -138,6 +138,45 @@ should be the default.
   (ranked, ascending-in-time).  Its Coq template is still `Jp`-only; given §1
   that is no longer the priority it looked like.
 
+## 4b. The external datum: mxdys's inductive decider decides this whole residue
+
+Reported by the project owner (2026-07-25): every machine in this residue is
+decided by mxdys's *inductive* decider, whose stated limit is
+
+> "my inductive decider can only decide a TM when it can model the forward
+> behavior exactly."
+
+That is worth writing down because it lines up exactly with §1 and tells us
+which way to build.
+
+- It is **not in this workspace.**  The `Coq-BB5` checkout here ships
+  `Decider_Loop`, `Decider_NGramCPS`, `Decider_RepWL`, `Verifier_FAR/WFAR` and
+  the halt deciders — no inductive decider.  So it cannot simply be pointed at
+  the residue from here; it would have to be fetched or reimplemented.
+- **"Models the forward behavior exactly" is the same property our route has**
+  and the closure methods do not.  §4b of the wave-8 doc worked out *why* every
+  generic decider bounces off these machines: n-gram, RepWL and rank all
+  manufacture a spurious carry-free cycle because they ABSTRACT the digit
+  pattern, which differs on every increment.  An exact forward model has no
+  such failure mode.  Our lap proofs are exact forward models — that is why
+  they work — so the two approaches agree about what these machines are; ours
+  is just hand-rolled per machine.
+- **It predicts §1's failure is a shape limit, not a hardness limit.**  The 298
+  quasihalting counters are decidable; our template merely cannot express them,
+  because its overflow phase is a FIXED chain and theirs is a `2^j` process
+  (the machine counts the field back down).  An exact forward model that may
+  recurse handles that; a fixed chain cannot.
+
+**Strategic consequence.**  The per-machine template is a good conveyor for the
+affine-lap population and a dead end for the rest.  Rather than widening it
+further, the next big win is a *verified inductive decider* — one closure rule
+whose soundness theorem is proved once and which then decides machines by
+exact forward modelling with an induction on the counter, retiring
+per-machine Coq for the whole class.  Before building it, ask the owner for
+mxdys's implementation: reimplementing from the one-line description above
+would repeat exactly the mistake this project keeps recording (build first,
+check for an existing tool second).
+
 ## 5. Next, in priority order
 
 1. **Finish the `Ip` core sweep.**  `emit_ip.py --list <remaining> --emit`.
