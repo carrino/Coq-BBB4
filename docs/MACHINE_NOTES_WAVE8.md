@@ -151,3 +151,61 @@ parameters already works.**
   `QHBound 32779479` but never `QHBound 2000` — which is why `boarded` was
   generalized to `exists B, QHBound B`.  Full write-up:
   `docs/COUNTER_EMITTER_WAVE8.md` §7.
+
+## Wave-9 human reads (2026-07-25) — the orientation axes and the state-carried bit
+
+Four reads, each overturning an automated conclusion.  Same pattern as the six
+in the log above: the class was never hard, the recognizer was wrong.
+
+- **`1RB1RD_1LC0LB_1RA1LC_0RD1LB`** — human: "right wall and 2 copies of each
+  bit."  Exact.  Anchor `Cc p = (StD, (Dp p, S1, []))`, decode marches
+  1..7,503 with no gaps, both lap branches affine 4+4j.  This is a THIRD
+  encoding (`DpCounter.Dp`, each bit doubled, no marker cells) and it was
+  invisible because every decoder here checks that the marker-parity cells all
+  hold `S1` — in a doubled tape those cells ARE the data.  Boarded:
+  `ILD_1RB1RD_1LC0LB_1RA1LC_0RD1LB.v`.
+
+- **`0RB0RC_1LC1RB_0LD1RA_1RC1LD`** — human: "a 1 to the left of each bit, MSB
+  is on the left."  This named an AXIS, not a machine.  The interleave family
+  has three independent orientation axes — marker before/after its bit in tape
+  order, MSB at which end, counter on which side of the head — and `Ip`/`Jp`
+  are one corner of that cube.  At the correct anchor (marker-left, MSB-left,
+  1-cell wall) the run is 14,553 long and the interior lap is a clean 2+4j.
+  **This machine is in the 298 quasihalting counters that wave-9 had declared
+  unreachable**, and its overflow branch splits on the PARITY of j: odd j is
+  affine (2+4j), even j costs ~4^k.  Half of that class is template-shaped
+  after all.  Sibling in the opposite corner (marker-right, MSB-right):
+  `0RB1LC_1LA1RB_0LD0LA_1LB---`, run 14,542, identical up to a 10-step offset.
+
+- **`1RB0LD_0LC1LA_0RC1LA_1RC0LD`** — human: "wall on the right, msb on the
+  left, normal counter."  A PLAIN binary counter, nothing between the bits —
+  the largest family in `tools/counter_encodings.tsv` (375 `KCOPY1`) and the
+  one with no Coq encoding, because every recognizer was built around a marker
+  cell it does not have.  Now `KpCounter.Kp`, boarded as
+  `ILK_1RB0LD_0LC1LA_0RC1LA_1RC0LD.v`, both branches affine 6+2j.
+  **This one also corrected me**: I had it in the doubled-bit bucket.  A
+  doubled read of its tape decodes consecutively at one anchor, so the scan
+  took it — but only the plain reading makes both branches affine.  A
+  consecutive decode is necessary and nowhere near sufficient; the LAP PROFILE
+  is the arbiter, not the decoder.  The 34 machines where my scan disagreed
+  with `counter_encodings.tsv` should be re-read as plain.
+
+- **`0RB1LC_1LC0LC_0RD1LA_1RD1RB`** — the machine `COUNTER_CLOSEOUT.md` §3
+  records as the only one of the 708 still unread.  Human: "appears to
+  alternate A and C when moving left, which does produce a weird counting
+  behaviour"; earlier, "inverted bits except MSB, which is always 1; MSB on
+  the right."  The alternation is real and is in the table:
+  `A,S1 -> 1LC` and `C,S1 -> 1LA`, so a leftward run of `S1` is swept with the
+  state flipping A/C every cell — the state carries the run length's PARITY.
+  That is the mechanism behind the "field advances by one cell as it counts"
+  observation, and it explains why no fixed `(stride, offset)` read works: the
+  digit boundary moves with the parity, not the tape.
+  **Measured, still open.**  A sweep over marker position x MSB end x side x
+  wall x suffix x inversion, with the anchor STATE left free (so a
+  parity-dependent state would be found), returns no consecutive family at
+  all.  So the barrier is the digit alphabet, not the state — consistent with
+  the closeout's note that 2-cell slots read as a THREE-state digit
+  (`11`->0, `01`/`10`->1, `00`->2) give 2,4,6,8,10,12,14.  Next probe: a
+  base-3 (or parity-shifted binary) digit, not another orientation.
+  `glue_neverqh` takes an arbitrary `Cc p`, so a parity-dependent anchor state
+  is legal if a decode is ever found.

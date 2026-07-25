@@ -44,8 +44,10 @@ sys.path.insert(0, HERE)
 from executor import Exec, Wall  # noqa: E402
 
 LAB = "ABCD"
-ANCHOR_HEADS = (0, 1)   # wave-8: QH counters anchor at head S1 too
-ENC_MODE = 'Jp'         # set per machine from the fingerprint
+# The anchor head symbol, set per machine by process() from the anchor
+# search.  Wave-8 hard-coded S0 here and so could not derive any counter
+# whose frontier cell is S1 (the majority of the quasihalting ones).
+HEAD = 0
 ST = ["StA", "StB", "StC", "StD"]
 SYM = ["S0", "S1"]
 
@@ -100,93 +102,112 @@ class DeriveError(Exception):
 
 
 # --------------------------------------------------------------- the tail ---
-JTAB = {}
+# The anchor family is  Cc p = (edge, (enc p ++ tail, head, []))  with
+#   enc  in {Ip, Jp}          -- ILCounter.Ip / JpCounter.Jp
+#   head in {S0, S1}          -- the frontier cell under the head
+#   tail an arbitrary short suffix READ OFF THE RUN.
+# Wave-8's emitter fixed all three (Jp / S0 / "...++[S0]") and so could not see
+# the counters whose anchor differs in any of them; the search below derives
+# all three from the real run instead.
+
+MAXTAIL = 4
+MAXWALL = 6      # longest far-side wall the anchor search will tolerate
+_ETAB = {}
 
 
-def Ip(m):
-    out = []
-    while m > 1:
-        out += [1, m & 1]
-        m >>= 1
-    return out + [1]
-
-
-ITAB = {}
-
-
-def jp_table(bound=1 << 15):
-    """Encoding table for the ACTIVE encoding (ENC_MODE): Jp or Ip."""
-    if ENC_MODE == 'Ip':
-        if not ITAB:
-            for m in range(1, bound):
-                ITAB[tuple(Ip(m))] = m
-        return ITAB
-    if not JTAB:
+def enc_table(encname, tail, bound=1 << 14):
+    """{tuple(enc m ++ tail): m} for one (encoding, tail) pair."""
+    key = (encname, tuple(tail))
+    d = _ETAB.get(key)
+    if d is None:
+        f = ENC[encname]
+        d = {}
         for m in range(1, bound):
-            JTAB[tuple(Jp(m))] = m
-    return JTAB
+            d[tuple(f(m) + list(tail))] = m
+        _ETAB[key] = d
+    return d
 
 
-def anchor_scan(spec, edge, T=200000, nmax=60):
-    """Anchor snapshots of the real run: (state edge, blank head, blank right)."""
+def anchor_hits(spec, T=200000):
+    """One real run; per (edge, head, enc, tail) key collect (step, value).
+
+    A key fires when the FAR side is blank (after stripping trailing S0 --
+    blank is not the same as empty) and the near side decodes exactly.
+    """
     raw = Raw(spec)
-    E = LAB.index(edge)
     cfg = (0, [], 0, [])
-    out = []
+    keys = [(e, tuple(t)) for e in ENC
+            for tl in range(MAXTAIL + 1)
+            for t in _tails(tl)]
+    hits = {}
     for t in range(T):
         q, l, h, r = cfg
-        if q == E and h in ANCHOR_HEADS and not strip0(r) and l:
-            out.append(tuple(strip0(l)))
-            if len(out) >= nmax:
-                break
+        # The far side does NOT have to be blank.  A counter carrying a WALL --
+        # a small fixed non-blank block on the far side -- has an ordinary
+        # anchor family; every search here that tested `strip0(r) == []` threw
+        # those machines away and reported "no anchor family".  The far side is
+        # derived separately (emit_ip.far_candidates); this only has to find
+        # the (state, head, encoding, tail) key.
+        far = strip0(r)
+        if len(far) <= MAXWALL:
+            near = tuple(strip0(l))
+            if near:
+                for (encname, tail) in keys:
+                    m = enc_table(encname, tail).get(near)
+                    if m is not None and m > 1:
+                        hits.setdefault((LAB[q], h, encname, tail),
+                                        []).append((t, m))
         cfg = raw.step(cfg)
         if cfg is None:
             break
-    return out
+    return hits
 
 
-def derive_tail(spec, edge_hint, maxt=6):
-    """Find this emitter's anchor: a state whose blank-head, blank-right-side
-    snapshots read  Jp p ++ T ++ [S0]  on the left for consecutive p.
-
-    The fingerprint's edge is only a hint -- a machine has several anchor
-    points per lap and the census may report a different one (a data-first
-    reading one cell over), so all four states are tried.
-
-    Returns (edge, tail_including_blank, p0)."""
-    err = None
-    order = [edge_hint] + [c for c in LAB if c != edge_hint]
-    for edge in order:
-        try:
-            return (edge,) + _tail_for(spec, edge, maxt)
-        except DeriveError as e:
-            err = err or e
-    raise err
+def _tails(n):
+    for v in range(1 << n):
+        yield [(v >> i) & 1 for i in range(n)]
 
 
-def _tail_for(spec, edge, maxt=6):
-    snaps = anchor_scan(spec, edge)
-    if len(snaps) < 12:
-        raise DeriveError("only %d anchor snapshots" % len(snaps))
-    tab = jp_table()
-    for tl in range(0, maxt + 1):
-        T0 = snaps[-1][len(snaps[-1]) - tl:] if tl else ()
-        vals = []
-        for L in snaps:
-            if tl and (len(L) < tl or L[len(L) - tl:] != T0):
-                vals.append(None)
-                continue
-            vals.append(tab.get(L[:len(L) - tl] if tl else L))
-        # longest consecutive run ending at the last snapshot
-        i = len(vals) - 1
-        if vals[i] is None:
+def anchor_candidates(spec, edge_hint, minrun=8):
+    """Ranked anchor families (edge, enc, head, tail, p0), best first.
+
+    A family counts only when the machine reaches p+1 AFTER p (the run must
+    ASCEND in time).  Without that check the same tape decodes under both Ip
+    and Jp -- one ascending, one descending -- and sorting the value set makes
+    the descending reading look just as consecutive.
+    """
+    hits = anchor_hits(spec)
+    out = []
+    for (edge, head, encname, tail), evs in hits.items():
+        first = {}
+        for t, m in evs:
+            if m not in first:
+                first[m] = t
+        vs = sorted(first)
+        run, bestrun, startv = 1, 0, None
+        for i in range(1, len(vs)):
+            asc = (vs[i] == vs[i - 1] + 1 and first[vs[i]] > first[vs[i - 1]])
+            if asc:
+                run += 1
+            else:
+                if run > bestrun:
+                    bestrun, startv = run, vs[i - run]
+                run = 1
+        if run > bestrun:
+            bestrun, startv = run, vs[len(vs) - run]
+        if bestrun < minrun:
             continue
-        while i > 0 and vals[i - 1] is not None and vals[i - 1] + 1 == vals[i]:
-            i -= 1
-        if len(vals) - i < max(8, len(vals) // 2):
-            continue
-        return list(T0) + [0], vals[i]
-    raise DeriveError("no fixed anchor tail up to length %d" % maxt)
+        out.append(((bestrun, edge == edge_hint, -len(tail)),
+                    (edge, encname, head, list(tail), startv)))
+    out.sort(key=lambda kv: kv[0], reverse=True)
+    if not out:
+        raise DeriveError("no anchor family (enc x head x tail) in the run")
+    return [v for _, v in out]
+
+
+def derive_tail(spec, edge_hint, maxt=MAXTAIL):
+    """Back-compat single-best entry point."""
+    return anchor_candidates(spec, edge_hint)[0]
 
 
 # ------------------------------------------------------------ raw stepping ---
@@ -219,8 +240,8 @@ def nrm(cfg):
 
 def raw_lap(raw, E, encf, m, tail, maxsteps=400000):
     """Steps of one lap Cc(m) -> Cc(m+1) (match up to blank padding)."""
-    cfg = (E, encf(m) + tail, 0, [])
-    tgt = nrm((E, encf(m + 1) + tail, 0, []))
+    cfg = (E, encf(m) + tail, HEAD, [])
+    tgt = nrm((E, encf(m + 1) + tail, HEAD, []))
     for t in range(1, maxsteps):
         cfg = raw.step(cfg)
         if cfg is None:
@@ -288,7 +309,7 @@ MAXP1, MAXRIP, MAXSTP, MAXRET, MAXFIN = 14, 14, 20, 14, 10
 
 def chain_int(ex, E, encf, m, j, s, tail):
     """Interior chain: P1 . RIP^j . STPI . RET^(2j) . FIN."""
-    cfg = (E, encf(m) + tail, 0, [])
+    cfg = (E, encf(m) + tail, HEAD, [])
     steps = 0
     U = {}
     cfg, U['P1e'], U['P1x'] = conc(ex, cfg, True, True, s['nP1'], s['lwP1'], 0)
@@ -315,7 +336,7 @@ def chain_int(ex, E, encf, m, j, s, tail):
 
 def chain_ov(ex, E, encf, m, j, s, tail):
     """Overflow chain: P1 . RIP^(j-1) . STPO . RET^(|wo|+2(j-1)) . FIN."""
-    cfg = (E, encf(m) + tail, 0, [])
+    cfg = (E, encf(m) + tail, HEAD, [])
     steps = 0
     U = {}
     cfg, U['P1e'], U['P1x'] = conc(ex, cfg, True, True, s['nP1'], s['lwP1'], 0)
@@ -350,8 +371,8 @@ def derive(spec, edge, encname, p0, tail):
     m_ov = (1 << KO) - 1                          # all ones (overflow)
     n_int, _ = raw_lap(raw, E, encf, m_int, tail)
     n_ov, _ = raw_lap(raw, E, encf, m_ov, tail)
-    tgt_int = nrm((E, encf(m_int + 1) + tail, 0, []))
-    tgt_ov = nrm((E, encf(m_ov + 1) + tail, 0, []))
+    tgt_int = nrm((E, encf(m_int + 1) + tail, HEAD, []))
+    tgt_ov = nrm((E, encf(m_ov + 1) + tail, HEAD, []))
 
     sols = []
     for nP1 in range(1, MAXP1 + 1):
@@ -362,7 +383,7 @@ def derive(spec, edge, encname, p0, tail):
                         s0 = dict(nP1=nP1, lwP1=lwP1, nRIP=nRIP, ulen=ulen,
                                   rwR=rwR)
                         try:
-                            cfg = (E, encf(m_int) + tail, 0, [])
+                            cfg = (E, encf(m_int) + tail, HEAD, [])
                             cfg, _, _ = conc(ex, cfg, True, True, nP1, lwP1, 0)
                             cyc_l(ex, cfg, ulen, rwR, nRIP, JI)
                         except (Wall, KeyError, IndexError):
@@ -445,7 +466,7 @@ def validate(spec, s, U, edge, encname, tail, hi=160):
     for m in ms:
         n_sym, cfg_sym, Um = sym_lap(ex, s, E, encf, m, tail)
         n_raw, _ = raw_lap(raw, E, encf, m, tail)
-        tgt = (E, encf(m + 1) + tail, 0, [])
+        tgt = (E, encf(m + 1) + tail, HEAD, [])
         if n_sym != n_raw:
             raise DeriveError("m=%d: sym %d != raw %d steps" % (m, n_sym, n_raw))
         if nrm(cfg_sym) != nrm(tgt):
@@ -550,7 +571,7 @@ def boot_probe(spec, edge, encname, p0, tail, maxT=20000):
     encf = ENC[encname]
     E = LAB.index(edge)
     raw = Raw(spec)
-    tgt = nrm((E, encf(p0) + tail, 0, []))
+    tgt = nrm((E, encf(p0) + tail, HEAD, []))
     cfg = (0, [], 0, [])
     for t in range(maxT):
         if nrm(cfg) == tgt:
@@ -572,7 +593,7 @@ def sym_prefix(spec, E, kmax=3):
     Returns a list indexed by step of (state, left tokens, head, right tokens)
     while no read touches X or the opaque tail; stops early otherwise."""
     tab = parse(spec)
-    q, l, h, r = E, [1, XCELL], 0, []
+    q, l, h, r = E, [1, XCELL], HEAD, []
     out = [(q, list(l), h, list(r))]
     for _ in range(kmax):
         if h in (XCELL,):
@@ -596,7 +617,7 @@ def sym_prefix(spec, E, kmax=3):
 def concrete_prefix(spec, E, left, kmax=12):
     """States along the run from (E,(left,S0,[])) with a real tape."""
     raw = Raw(spec)
-    cfg = (E, list(left), 0, [])
+    cfg = (E, list(left), HEAD, [])
     out = [cfg[0]]
     for _ in range(kmax):
         cfg = raw.step(cfg)
@@ -615,7 +636,7 @@ def deep_probe(spec, s, U, E, encname, tail, kmax=None):
     seenall = {}
     for k in (2, 3, 4, 5, 6):
         m = (1 << k) - 1
-        cfg = (E, encf(m) + tail, 0, [])
+        cfg = (E, encf(m) + tail, HEAD, [])
         cfg, _, _ = conc(ex, cfg, True, True, s['nP1'], s['lwP1'], 0)
         cfg, _, _, _ = cyc_l(ex, cfg, s['ulen'], s['rwR'], s['nRIP'], k - 1)
         seen = {}
@@ -637,7 +658,7 @@ def deep_unit(spec, s, U, E, encname, tail, k):
     ex = Exec(spec)
     encf = ENC[encname]
     m = (1 << 5) - 1
-    cfg = (E, encf(m) + tail, 0, [])
+    cfg = (E, encf(m) + tail, HEAD, [])
     cfg, _, _ = conc(ex, cfg, True, True, s['nP1'], s['lwP1'], 0)
     cfg, _, _, _ = cyc_l(ex, cfg, s['ulen'], s['rwR'], s['nRIP'], 4)
     q, l, h, r = cfg
