@@ -140,6 +140,8 @@ def affine(pts):
         return None
     b = (n1 - n0) // (j1 - j0)
     a = n0 - b * j0
+    if b <= 0 or a + b * js[0] <= 0:
+        return None                  # a lap cannot take <= 0 steps
     if all(n == a + b * j for j, n in p):
         return (a, b)
     return None
@@ -158,8 +160,12 @@ def profile(spec, T=200000):
             if v not in first:
                 first[v] = t
         vs = sorted(first)
-        # longest run of consecutive values
-        laps = [(v, first[v + 1] - first[v]) for v in vs if v + 1 in first]
+        # Consecutive values ONLY where the machine reaches v+1 AFTER v.  The
+        # same tape decodes under both Ip and Jp -- one ascending, one
+        # descending -- so without the time check the descending reading scores
+        # just as well and the affine fit comes back with a NEGATIVE slope.
+        laps = [(v, first[v + 1] - first[v]) for v in vs
+                if v + 1 in first and first[v + 1] > first[v]]
         if len(laps) < 8:
             continue
         inter = [(carry(v)[0], n) for v, n in laps if not carry(v)[1]]

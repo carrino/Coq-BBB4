@@ -42,29 +42,45 @@ test that accepts nothing is worthless:
 | population | sampled | both-branch affine |
 |---|---|---|
 | already-boarded counters (control) | 17 | **17 / 17** — all `Jp`, head `S0`, slope 4 |
-| quasihalting counters (`wave8_qh_missed_machines.txt`) | 40 | **0 / 40** |
+| quasihalting counters (`wave8_qh_missed_machines.txt`) | 40 | **0 / 40** (31 are counters; 11 have an affine INTERIOR) |
 | unboarded never-QH core (`wave8_counters_todo.txt`) | 80 | **15 / 80** |
 
 The control passing 17/17 is what makes the 0/40 meaningful.
 
 ### Why the quasihalting counters fail
 
-Take the exemplar wave-8 named as the anchor-scan witness,
-`0RB---_1LC---_0RC1LD_1RC0LD`.  Its `Ip` anchor is real — confirmed here,
-`Cc p = (StC, (Ip p, S1, []))` with consecutive `p` from 2.  Its interior laps
-are a clean `4 + 4j`.  Its overflow laps are
+Two failure modes, both measured directly from the anchor (not via the
+scorer), and both fatal to a fixed-length overflow chain.
+
+**Both branches super-linear.**  `0RB---_1LC---_0RC1LD_1RC0LD` — the machine
+wave-8 named as the anchor-scan witness.  Its `Ip` anchor is real and is
+confirmed here: `Cc p = (StC, (Ip p, S1, []))`, consecutive `p` from 2.  But
 
 ```
-j  = 2    3    4     5     6
-n  = 32   60   112   212   408
+interior   j = 0   1    2    3        overflow   j = 2   3    4    5
+           n = 6   24   90   348                 n = 56  218  860  3422
 ```
 
-which is `≈ c·2^j`, not affine.  A single-sweep overflow chain cannot model
-that at any encoding, so no amount of `Ip`/`Jp` parameterization reaches it.
-(Structurally: at overflow these machines *count the field back down* rather
-than ripple across it once.)  **Do not re-attempt the 298 through this
-template.**  They need either a nested/recursive lap (the overflow lap is
-itself a counter run) or a different framework entirely.
+both roughly `4^j`.  Nothing about this machine is affine.
+
+**Affine interior, exponential overflow.**  `1RB---_1LC1RB_0LB1RD_1LB0RD`
+(measured on its mirror, where the counter grows left; anchor
+`Cc p = (StC, (Ip p ++ [S1], S1, []))`):
+
+```
+interior   j = 0   1   2    3         overflow   j = 2   3   4    5    6
+           n = 4   8   12   16                   n = 32  60  112  212  408
+```
+
+The interior is a clean `4 + 4j` — which is exactly what wave-8's fingerprint
+measured and why the class looked reachable — but the overflow doubles.
+Structurally, at overflow these machines *count the field back down* instead
+of rippling across it once, so the work is proportional to the counter VALUE,
+not to the number of digits.
+
+A single-sweep overflow chain cannot model either shape at any encoding.
+**Do not re-attempt the 298 through this template.**  They need a lap whose
+overflow branch is itself an induction (see §4b).
 
 ## 2. What the `Ip` unblock actually required
 
