@@ -48,20 +48,23 @@ all-ones tape is rewritten to 101010... by repeated sweeps.  A finite
 window chain cannot express it; glue_neverqh does not care -- it needs one
 existential csteps witness per lap, which an INNER induction provides:
 
-  1. Hand-author ONE board: machine 1RB1LA_0LA1RC_0LD0RB_0LA1RD (shape
-     +AB|-BA|+AB, overflow cost 10*2^j'+4j'+4).  MEASURED (WAVE11 section
-     3): the overflow IS an inner interleaved counter -- the (A, blank-head)
-     snapshots inside the p=15->16 lap count 11010101 -> 11010111 ->
-     11011101 -> ... -> 11111111 with the same anchor discipline.  So:
-     define the inner anchor family Ci, prove inner laps with the SAME
-     cview/window lemmas, compose by the same well-founded induction, and
-     plug the composite in as the outer overflow's existential witness.
-     The interior chain is the ILS4F flip template verbatim.
-  2. Clone across the family (the members are the 'laps not affine'
-     failures of emit_shape4.py over tools/counter_lapshapes.tsv machines).
+  DONE: theories/Machines/Counters/IXP_1RB1LA_0LA1RC_0LD0RB_0LA1RD.v is
+  the hand-authored reference, kernel-verified.  The junctions: inner
+  anchors Cin v = (StA, (Ip v ++ [S1], S0, [S1;S0])); inner laps EXACT and
+  interior-only, reusing the outer RIP/STPI/TRN/RET units (only P1i/FINi
+  are new windows); boot/exit chains affine; composition by the same tovf
+  well-founded induction plus three positive gadgets (pow2, fill,
+  cview_none_shape).  The scratch validator pattern is described in the
+  board header (differential against raw, all chains + composed overflow).
 
-CHECKPOINT: one exponential-overflow board with clean assumptions before
-any emitter work -- the inner-induction junctions have never been written.
+  THE TASK: fork the emitter pattern (emit_shape4.py is closest) to derive
+  the six window chains per machine by exact symbolic replay and clone IXP
+  across the family: the 'laps not affine' pools on both sides (~94 L +
+  ~115 R via --mirror).  Per-machine variation to expect: the inner far
+  word, the P1i/FINi/boot/exit step counts, state roles, and which inner
+  frame offset the wall sits at.
+
+CHECKPOINT: the first 10 emitted IXP boards with clean assumptions.
 
 THEN, in order of measured size (mirror + wall-anchor + NOFIT harvests
 are DONE for everything the current skeletons fit -- WAVE11 section 5):
