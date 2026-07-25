@@ -111,6 +111,7 @@ class DeriveError(Exception):
 # all three from the real run instead.
 
 MAXTAIL = 4
+MAXWALL = 6      # longest far-side wall the anchor search will tolerate
 _ETAB = {}
 
 
@@ -141,7 +142,14 @@ def anchor_hits(spec, T=200000):
     hits = {}
     for t in range(T):
         q, l, h, r = cfg
-        if not strip0(r):
+        # The far side does NOT have to be blank.  A counter carrying a WALL --
+        # a small fixed non-blank block on the far side -- has an ordinary
+        # anchor family; every search here that tested `strip0(r) == []` threw
+        # those machines away and reported "no anchor family".  The far side is
+        # derived separately (emit_ip.far_candidates); this only has to find
+        # the (state, head, encoding, tail) key.
+        far = strip0(r)
+        if len(far) <= MAXWALL:
             near = tuple(strip0(l))
             if near:
                 for (encname, tail) in keys:

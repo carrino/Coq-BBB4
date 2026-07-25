@@ -24,7 +24,8 @@
 
     Axiom footprint: [functional_extensionality_dep] (via CTape.lift). *)
 From Coq Require Import Arith Lia Bool List PArith Wellfounded.
-From BBB4 Require Import BBB4_Statement CTape.
+From BBB4 Require Import BBB4_Statement CTape Mirror.
+From Coq Require Import FunctionalExtensionality.
 From BBB4.Counters Require Import WTape LapGlue MonoCounter ILCounter JpCounter.
 Import ListNotations.
 
@@ -199,7 +200,7 @@ Proof.
     exists 0. eexists. split; reflexivity.
 Qed.
 
-Theorem nqh_1RB0RC_0LA____0LD1RA_1RC1LD : NeverQuasiHaltsSt tm.
+Lemma nqhm_1RB0RC_0LA____0LD1RA_1RC1LD : NeverQuasiHaltsSt tm.
 Proof.
   apply (glue_neverqh tm Cc 2).
   - exact boot_1RB0RC_0LA____0LD1RA_1RC1LD.
@@ -207,5 +208,8 @@ Proof.
   - intros p q _. apply vis_1RB0RC_0LA____0LD1RA_1RC1LD.
 Qed.
 
-Theorem nonhalt_1RB0RC_0LA____0LD1RA_1RC1LD : NonHalt tm.
+Theorem nqh_1RB0RC_0LA____0LD1RA_1RC1LD : NeverQuasiHaltsSt tm_1RB0RC_0LA____0LD1RA_1RC1LD.
+Proof. exact nqhm_1RB0RC_0LA____0LD1RA_1RC1LD. Qed.
+
+Theorem nonhalt_1RB0RC_0LA____0LD1RA_1RC1LD : NonHalt tm_1RB0RC_0LA____0LD1RA_1RC1LD.
 Proof. apply never_qh_nonhalt, nqh_1RB0RC_0LA____0LD1RA_1RC1LD. Qed.

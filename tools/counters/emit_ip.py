@@ -38,8 +38,8 @@ REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
 
 from executor import Exec, Wall                                   # noqa: E402
-from emit_qh import (anchor_candidates, Raw, LAB, ST, SYM, ENC,   # noqa: E402
-                     carry, mach_id, coq_table, DeriveError)
+from emit_qh import (anchor_candidates, Raw, strip0, LAB, ST, SYM,  # noqa: E402
+                     ENC, carry, mach_id, coq_table, DeriveError)
 
 OUTDIR = os.path.join(REPO, 'theories', 'Machines', 'Counters')
 
@@ -54,8 +54,41 @@ def mirror_spec(spec):
             t += e if e == '---' else e[0] + ('L' if e[1] == 'R' else 'R') + e[2]
         out.append(t)
     return '_'.join(out)
-FARS = ([0], [])
+FARS = ([0], [])          # fallback when the run offers nothing
 MAXN = 10
+
+
+def far_candidates(spec, E, encf, head, tail, T=120000, nmax=6):
+    """Far sides READ OFF THE RUN at this anchor, most frequent first.
+
+    Wave-8 and wave-9 both assumed the far side is blank, because the boarded
+    machines are wall-free ("1s between bits, nothing else").  A counter that
+    carries a WALL -- a small fixed non-blank block on the far side -- has a
+    perfectly ordinary anchor family, it just is not blank, and every search
+    that tested `strip0(far) == []` threw it away.  glue_neverqh takes an
+    arbitrary Cc, so a fixed wall costs no new theory: it is simply a longer
+    concrete far side in the anchor and in each phase's frame.
+    """
+    raw = Raw(spec)
+    cfg = (0, [], 0, [])
+    seen = {}
+    tl = list(tail)
+    for _ in range(T):
+        q, l, h, r = cfg
+        if q == E and h == head:
+            near = strip0(l)
+            if len(near) > len(tl) and (not tl or near[len(near) - len(tl):] == tl):
+                body = tuple(near[:len(near) - len(tl)]) if tl else tuple(near)
+                if encf and body:
+                    seen[tuple(strip0(r))] = seen.get(tuple(strip0(r)), 0) + 1
+        cfg = raw.step(cfg)
+        if cfg is None:
+            break
+    out = [list(k) for k, _ in sorted(seen.items(), key=lambda kv: -kv[1])[:nmax]]
+    for f in FARS:
+        if f not in out:
+            out.append(f)
+    return out
 
 
 # ------------------------------------------------------------------ traces ---
@@ -659,7 +692,7 @@ def attempt(spec, do_emit, scratch, mirror=False, ospec=None):
             continue
         E = LAB.index(edge)
         encf = ENC[encname]
-        for far in FARS:
+        for far in far_candidates(spec, E, encf, head, tail):
             pr = profile(spec, E, encf, head, tail, far)
             if pr is None:
                 tried.append('%s/%s far=%s: laps not affine on both branches'

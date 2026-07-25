@@ -683,3 +683,5 @@ theories/Machines/Counters/ILC_1RB1LA_0LA1RC_0RD0RB_0LD1RA.v
 theories/Machines/Counters/ILC_1RB1LA_0LA1RC_1LD0RB_0LA1RD.v
 theories/Machines/Counters/ILC_1RB1LA_0LA1RC_1RD0RB_0LA___.v
 theories/Machines/Counters/ILC_1RB1RB_1RC1LB_0LB1RD_0LA0RC.v
+theories/Counters/DpCounter.v
+theories/Machines/Counters/ILD_1RB1RD_1LC0LB_1RA1LC_0RD1LB.v
