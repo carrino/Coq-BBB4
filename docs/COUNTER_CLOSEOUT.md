@@ -36,7 +36,7 @@ bottleneck — finitization itself is.  A richer measure set cannot help.
 | boarded `ILCM_*.v` (mirror/R route) | 99 | kernel-verified |
 | **growth=L still to board** | **597** | 1 derives today (§4) |
 | boarded this session (RepWL + TCycler) | **44** | 36 `RWL8_*` + 8 `TCyc8_*` |
-| genuinely open in the 708 | **0** | every machine has a known route |
+| genuinely open in the 708 | **0** | every machine has a known route; all 708 now have a diagnosed mechanism (§3) |
 
 Boards landed this session, all `coqc -native-compiler no -Q theories BBB4`
 compiled with `Print Assumptions` = `functional_extensionality_dep` only, and
@@ -118,14 +118,38 @@ lap proof:**
   that stops at the first broken separator reads the body correctly and
   **silently drops the top two bits** — harmless for routing, fatal for a lap
   proof, where the anchor word must carry the packed pair as its own case.
-* **Slot-advancing field.** `0RB1LC_1LC0LC_0RD1LA_1RD1RB` is a counter (inverted,
-  1-separators, no 1-block wall, left boundary pinned at the origin) whose field
-  **advances by one cell as it counts**, so no fixed `(stride, offset)` read
-  works.  Reading each 2-cell slot as a three-state digit (`11`→0, `01`/`10`→1,
-  `00`→2) gives a clean arithmetic progression 2,4,6,8,10,12,14.  Open question:
-  base-3 digit, or binary digit whose read position shifts per carry?  That
-  decides whether the emitter needs a new digit type or just an advancing anchor
-  offset.  **This is the only machine of the 708 still unread.**
+* **Carry-shifted counter — RESOLVED.** `0RB1LC_1LC0LC_0RD1LA_1RD1RB` is a
+  binary counter whose **carry deposits one cell past the standard position**, so
+  the digit frame advances by one per carry event and no fixed `(stride, offset)`
+  read can work.  Read off the transition table (human diagnosis, confirmed
+  directly):
+
+  ```
+  D on 0 -> write 1, move R, stay D     scans right, FILLING 1s behind it
+  D on 1 -> write 1, move R, go B       found a 1, hands off
+  B on 1 -> write 0, move L, go C       deposits the zero
+  ```
+
+  `D` writes `1` on **both** branches, so while scanning for a 1 it converts
+  every 0 it passes into a 1, then steps one further right before `B` writes the
+  0 — the zero lands one cell beyond where the found 1 was.  The bits are
+  inverted except the msb, which sits on the right; the observed counting runs
+  1, 4, 5, 6, 7, 8 (the extra carry inflates the early values).
+
+  This closes the question that was open here: it is **a binary digit whose read
+  position shifts per carry, NOT a base-3 digit**.  Two of my decodes are
+  recorded as wrong for the record: reading each 2-cell slot as a three-state
+  digit gave a clean-looking 2,4,6,8,10,12,14 (it was accidentally tracking the
+  shift, not the value), and "inverted except the msb" gave 39,51,57,63,67 — not
+  consecutive.  No fixed positional read exists, exactly as the mechanism
+  predicts.
+
+  **Consequence for a lap proof:** the anchor cannot be `Cc p` over the value
+  alone.  It must carry the accumulated shift as well — `Cc (p, k)` with `k` the
+  frame offset — or equivalently use a `cview`-analogue that tracks the shift
+  alongside the carry.  That is a new digit *discipline*, not a new digit type,
+  and it is the only machine of the 708 that needs it.  **Every machine of the
+  708 now has a diagnosed mechanism.**
 
 ## 4. Emitter status, measured
 
