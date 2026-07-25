@@ -46,11 +46,27 @@ Verified: `27 + 5,129 = 5,156`; `holdouts ⊆ 3,713`; `residue ∩ 3,713 = ∅`.
 
 The split is by **whose proof failed** — that is what makes it useful:
 - **residue** = "our light census tier failed, but the machine is NOT on
-  mxdys' can't-do list" ⇒ mxdys decided it ⇒ a **strength gap between us and
-  mxdys**, nothing more.
+  mxdys' can't-do list" ⇒ *presumably* mxdys decided it ⇒ a **strength gap
+  between us and mxdys**, nothing more.
 - **holdouts** = "our census tier failed AND it's on mxdys' can't-do list"
   ⇒ both procedures failed, the second being state of the art ⇒ the genuine
   frontier.
+
+**CAVEAT (2026-07-24, wave-8): list-absence is an inference, not a record.**
+The 3,713 list is the ONLY artifact of mxdys' BBB run — the machines that
+didn't make it were never *enumerated as decided* anywhere. "Not on the
+list" = "his deciders ate it" only if his BBB enumeration actually visited
+the machine, and his tree provably differs from ours at the edges (5 of his
+3,713 are not leaves of our tree; ours has 3,995,005 nodes, no cnt-pruning).
+Positive per-machine evidence exists only for the ≤7-transition targetable
+subset (a `nonhalt` row in his *halting* CSV — a safety witness, not a QH
+one); for full-8 residue machines "easy" is a strong prior, not a guarantee.
+Checked 2026-07-24: 0 of the 5,129 residue canonicalize onto a 3,713 entry
+under TNF relabel + mirror (`tnf_canon`), so the split is not hiding
+relabeled holdouts — but a residue machine that resists the full engine
+ladder (wide-vocab NGramHist → RepWL → irules-QH) should be TRIAGED as a
+possible never-enumerated hard machine and promoted to the research track,
+not ground with params forever.
 
 ## mxdys' holdout list (the 3,713) — provenance and meaning
 
@@ -84,14 +100,17 @@ snapshot from 2026-07-06 (pre-harvest) — read the residual off the Coq census
   **HALTING** BB4 pipeline: per-machine `(status, decider, params)` for all
   858,909 machines. A *proxy* for "an exact model exists" (halting is easier
   than quasihalting); use it for closure targeting, not as the last word.
-- **BBB repo `results/certs_*`** — mxdys/BBB's actual **quasihalting**
-  decisions (decider + witness) for the machines he decided. The more direct
-  oracle for the residue: it names the quiet state / the measure he used, and
-  is a second independent check on every board.
+- **BBB repo `results/certs_*`** — OUR OWN (carrino/bbb) per-machine
+  quasihalting certs from the **holdout** grind (rank/irules/rwlrank/fuel/
+  drift/... — this project's engines, not mxdys'). CORRECTED 2026-07-24:
+  these cover holdouts only — measured **zero** overlap with the unboarded
+  residue — so they are NOT a residue oracle; their value for the residue is
+  the *engines* behind them (irules, RepWL), not the cert files.
 
 ## The two fronts (and the discipline)
 
-- **Residue → PORT WORK.** mxdys already solved these; we're catching up in
+- **Residue → PORT WORK.** mxdys (presumably) already solved these — see
+  the list-absence CAVEAT above; we're catching up in
   Coq because our in-walk tier is weaker. Bounded, mechanical, high-
   confidence. Wave-6 `NGramHist` (his history-augmented NGramCPS ported to
   Coq + extended to quasihalting) is the tool; it should drive residue → ~0.
@@ -136,8 +155,8 @@ left undischarged. It does **NOT** mean shrinking the 5,156 inside
 
 Where we are: **964 / 5,129 boarded** (wave-6), ~**4,165 residue machines
 still unboarded**. Getting that gap to 0 is bounded, mechanical port work —
-mxdys already decided every one of these, so a witness is guaranteed to
-exist. The steps, cheapest-leverage first:
+mxdys presumably decided every one of these (list-absence CAVEAT above:
+a strong prior, not a guarantee), so a witness is very likely to exist. The steps, cheapest-leverage first:
 
 1. **Full sweep, not a pilot.** Run `tools/nghist/harvest_sweep.py sweep`
    and `sweepqh` over the *entire* residue (the sweep already dedups against
@@ -160,25 +179,48 @@ exist. The steps, cheapest-leverage first:
    `BB4_verified_enumeration.csv` (halting proxy ⇒ an exact model exists) +
    BBB `results/certs_*` (the actual quiet state + measure mxdys used) to
    *set* params / *pick* the measure instead of searching blindly. Because
-   the residue is mxdys-decided, the oracle names a witness for every one.
+   the targetable residue is mxdys-decided (halting side), the oracle names
+   a witness for each of those; full-8 machines have no oracle row.
 6. **Wire the closeout (Route A).** When every residue machine is staged,
    `app`-chain the per-file `Forall`s into `Forall boarded D_census` in a
    `Census/Assembly.v` — **no native_compute census walk, `D_census`
    unchanged.** That closes the residue front.
 
-**Try the shortcut first.** If the hammer (next section) works, steps 4–5 —
-the expensive per-machine measure search and oracle targeting — mostly
-evaporate: one uniform determinism lemma boards the bulk, and only genuinely
-non-determinizing machines fall through to the measure/oracle path. So the
-rational order is: cheap full sweep (1–3) to knock down the count, **the
-out-degree-vs-history probe** to decide whether to build the hammer, then
-either the hammer or the measure/oracle grind for whatever remains.
+**The shortcut was tried and is dead.** The hammer probe (next section) ran
+2026-07-24: NO machine determinizes at any bounded history — the measure/
+oracle grind (steps 4–5) is the real path. The failure-mode diagnostic says
+step 4 (measure vocabulary) is where ~85 % of the remaining gap sits.
 
-## HYPOTHESIS — "the hammer" (a uniform residue-killer, not yet built)
+## REFUTED — "the hammer" (measured 2026-07-24, wave-8; do not rebuild)
 
-We would like one uniform procedure that clears the whole residue without
-per-machine measure search. The current best candidate, marked clearly as a
-**hypothesis to test, not a result**:
+**The decisive experiment was run and the hypothesis is FALSE.**
+`tools/nghist/hammer_probe.py` swept history k ∈ {2,4,6,8,12} × gram
+n ∈ {2,3,4} × seed t ∈ {150,600} over a stratified 300-machine sample of the
+unboarded residue (100 oracle-targetable + 200 full-8), measuring both
+whole-closure out-degree and the load-bearing weaker condition (a
+deterministic ρ-trajectory from the seed node under LEAN gram sets — seed
+windows + trajectory donations only). Result: **0/300 machines determinize at
+ANY grid point**; every failure is BRANCH (far-cell ambiguity), and the
+branch position creeps by +2 per +2 of k — the ambiguity sits a fixed
+distance beyond the history horizon. Even the wave-6-boarded pilot counter
+(`0RB---_0LC0RA_0LD---_1RA1LC`, 26/33 nodes out-degree 1) never reaches a ρ.
+
+The structural reason: cells of a uniform tape block written by the same
+sweep carry IDENTICAL truncated histories, so position within a block is
+indistinguishable at any bounded k — the block boundary's far cell stays
+ambiguous forever. The pilot's "out-degree ≈1" was the misleading average;
+the ~7 branching nodes per machine are block boundaries, incurable by
+history. mxdys' "models the forward behavior exactly" therefore operates at
+his deciders' RULE level (macro-step / repeated-word structure), not at the
+per-cell level of this abstraction. **Conclusion: skip the determinism
+lemma; the measure/oracle path (steps 4–5 above) stays necessary.** The
+2026-07-24 failure-mode diagnostic (`tools/nghist/fail_diag.py`, 400
+unboarded machines) shows where that effort goes: 85 % close fine but fail
+the liveness measure search (NOMEAS — the vocabulary/lex-synthesis gap),
+11 % are prefix-quiet quasihalters (wrap route), 3 % exceed the search
+caps, <1 % genuinely fail to close.
+
+The original hypothesis, kept for the record:
 
 Because the residue is mxdys-exact, don't *search* for a lex certificate —
 make the augmented closure **deterministic** (out-degree exactly 1: history
