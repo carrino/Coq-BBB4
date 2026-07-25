@@ -26,9 +26,17 @@ entire residue.)
 | √-growth wave/bounce counters | 15 | growing wall + bouncing digit region, extent ∝ √steps | `WaveCounter.v` / `BounceCounter.v` templates, per-machine | template exists, per-machine Coq needed |
 | the champion | 1 | blanks at step 32,779,478 then spins out | `exists B, QHBound B` (quasihalter, not never-QH) | known route, heavy prefix |
 | clean binary counters (1 rare state) | 166 | interleaved binary counter, one log-rare overflow state | wave-8 interleave emitter (`Jp`/`Ip` + `LapGlue`) | emitter owned by another session |
-| carry-woven binary counters (0 rare states) | 515 | same, but the carry rides the main cycle so no rare state exists | same emitter (+ `Spacer` for the run-length flavor) | same |
+| carry-woven binary counters (0 rare states) | 515 | same, but the carry rides the main cycle so no rare state exists | same emitter, with the stride `k` from §"Counter encodings" | same |
 | spinout | 1 | state-D spinout after blank re-entry at step 66,344 | trivially never-QH / `TCycler` degenerate period-1 | yes, needs the period-1 anchor convention |
-| **genuinely open** | **1** | parity-high-bit counter — the whole data field shifts | needs a new field-shift certificate | no |
+| **genuinely open** | **0** | — see §"Zero open machines" — the last candidate was decoded | — | — |
+
+> **UPDATE 2026-07-25 (human reads).** Three machine-by-machine reads from a
+> human on bbchallenge overturned three of this document's conclusions,
+> including the "1 genuinely open" claim — **the residue has ZERO known-open
+> machines.** The corrections are in §"Zero open machines" and
+> §"Counter encodings"; the mechanized form of the insight is
+> `tools/kcopy_classify.py`.  This is the wave-8 lesson for the fourth,
+> fifth and sixth time.
 
 Boarded during this debug: **8 new translated-cycler boards** (`TCyc8_01..08`),
 each `coqc -native-compiler no` compiled with `Print Assumptions` =
@@ -124,12 +132,16 @@ is visible to a fingerprinter.
 - **515 with zero rare states** — identical counters whose carry is **woven into
   the main increment cycle**, so all four states fire ~25% each and there is no
   low-frequency state to hang a rank/measure on. That is *precisely* why they
-  are the "resistant" variety. Extent law is uniform and diagnostic: **+6 cells
-  per 8× steps** (≈ 2 cells per binary digit, interleaved). Two flavors:
-  ~395 dense bit-pattern counters (→ `Jp`/`Ip` interleave emitter) and ~120
-  sparse run-length/spacer counters where the value lives in **gap lengths**,
-  not cell values (→ the boarded `Spacer_16/22/23.v` template). A few show a
-  small fixed companion block on the far side (mild two-sided).
+  are the "resistant" variety. Extent law is uniform and diagnostic: **`3k`
+  cells per 8× steps** for stride `k` — `+6` for the stride-2 majority, `+9` for
+  a stride-3 machine. They differ only in ENCODING, along the stride axis
+  measured in §"Counter encodings" (`SEP2` 51, `KCOPY1` 31, `KCOPY2` 28, `SEP3`
+  3 out of a 120-machine sample); all of them are interleave-emitter targets
+  with `k` as the stride parameter. A few show a small fixed companion block on
+  the far side (mild two-sided).
+  (An earlier revision of this document split off ~120 "sparse
+  run-length/spacer" machines whose value supposedly lived in gap lengths — that
+  subclass was an artifact of misreading oscillating popcount; see Correction 1.)
 
 All 681 are never-quasihalting (the overflow/edge event keeps recurring;
 `blank_reentry` is `None`), and all are `NOCLOSE` for RepWL at every parameter
@@ -151,46 +163,108 @@ runnable generic decider.
   never-QH. Note: the default `warm=60000` in the verifier lands *before* the
   onset and mislabels it — a warmup artifact, not machine behaviour.
 
-## Genuinely open — 1 machine
+## Counter encodings — the stride axis (and three corrections)
 
-`1RB1RC_0LA1LC_0RD0LB_1LB1RD` — the **parity-high-bit counter**. The high bit is
-*whether the data sits in even or odd tape cells*, so the entire field shifts as
-the counter climbs; no fixed interleave anchor decodes it, and (per
-`MACHINE_NOTES_WAVE8.md`) a purpose-built parity-flexible decoder already
-failed. Every route was attacked and refuted in adversarial verification:
-translated cycler (no recurrence even at `find_budget=2M`, `conf=5M`); RepWL
-(18/18 `None` over `L ∈ {16,24,32,48,60,80} × T ∈ {4,6,8}`); quasihalt/`QHBound`
-(simulated to **100,000,000 steps**, `blank_reentry=None`, ones grow
-monotonically, all four states fire heavily — nothing quiet to bound); growth is
-clean log (extent 21@1e4 → 47@1e8), i.e. a genuine unbounded binary counter that
-never quasihalts. Needs a **new field-shift/parity-tracking counter
-certificate**.
+A human read of three individual machines produced the classification axis this
+document was missing. **A residue counter is a binary counter in one of a small
+family of encodings**, parameterized by a stride `k` and whether the `k` cells of
+a digit are identical copies or one data cell plus a constant separator:
 
-Caveat, stated honestly: 491 of the 515 carry-woven counters were not
-individually anchor-decoded, so a minority could be undiscovered field-shift
-siblings of this machine. The eyeball list below includes candidates to rule in
-or out.
+| encoding | meaning | example |
+|---|---|---|
+| `KCOPY1` | plain binary, one cell per bit | 31/120 of the 515 sample |
+| `KCOPY2` | each bit stored **twice** | 28/120 |
+| `KCOPY3` | each bit stored **three times** ("3× wider counter") | `1RB1RC_1LA1RA_0RC1LD_1LB0LD` |
+| `SEP2` | data cell + one constant separator ("counter with **0 between bits**") | 51/120 |
+| `SEP3` | data cell + two separators | 3/120 |
+
+Mechanized as `tools/kcopy_classify.py`: it decodes wall-anchored snapshots and
+requires the decoded integers to be **consecutive**, then re-confirms in a
+**late window at large counter values** (a decode that works at value 6 but
+breaks at 10³ is not a decode). On a 120-machine sample of the 515 cluster:
+**113/120 (94 %) decode as counters** — `SEP2` 51, `KCOPY1` 31, `KCOPY2` 28,
+`SEP3` 3 — every one late-confirmed; 5 `MIXED` + 2 no-wall remain (tool
+limitation, not machine hardness). All of them are therefore the interleave
+emitter's target, with `k` feeding the stride parameter
+`COUNTER_EMITTER_WAVE8.md` §3 WAVE-2 already anticipates.
+
+**Correction 1 — the "sparse run-length / spacer" subclass does not exist.**
+This document previously claimed ~120 of the 515 hold their value in *gap
+lengths* (routing them to the `Spacer` template). Wrong. The exemplar
+`1RB0LD_1LC0RD_0LC1LD_0RB1RA` and its twin `1RB1RC_0LB1LA_0RD1RC_1LB0RC` are
+ordinary counters with a `0` between bits: `SEP2` decodes them to
+497,498,…,502 and 3007,…,3012 respectively. **The analytical error is worth
+recording: popcount OSCILLATES on a counter** (7 = `111` → 3 ones, 8 = `1000` →
+1 one), so the "ones frozen at 8 while a 0-gap grows" observation is exactly
+what a counter looks like — it is not evidence that the value lives in the gaps.
+
+**Correction 2 — stride ≠ 1 is a real and common variant**, not an exotic ~2 %
+tail: 28 + 3 of 120 sampled machines need `k ≥ 2`, plus a confirmed `KCOPY3`.
+Verified independently by the extent law: a stride-`k` counter grows **`3k`
+cells per 8× steps** (`+9` measured for the `KCOPY3` machine vs `+6` for the
+stride-2 bulk).
+
+## Zero open machines
+
+**Correction 3, the big one: `1RB1RC_0LA1LC_0RD0LB_1LB1RD` is NOT open.** It is a
+plain `SEP2` interleaved counter. A *fixed* decode (`k=2`, `off=2`, data cell
+first, LSB nearest the wall, **anchor state A**) yields consecutive integers both
+early (0,1,2,…,7) and in a late window at large values
+(**959,960,961,962,963,964**, and 1959…1964 at a longer horizon — 15/15 unit
+increments with ~11 digits). So the field does **not** shift: the earlier
+"the high bit is whether the data sits in even or odd cells, so the whole field
+shifts" reading (`MACHINE_NOTES_WAVE8.md`, "no route yet") was an artifact of
+decoding at the wrong **anchor**, not a property of the machine. Route: the
+ordinary interleave emitter.
+
+Two things made the old reading stick, both now fixed in the classifier:
+the anchor cell is **not** the tape extreme (the extreme is visited *once*, while
+the real per-lap turnaround sits one or two cells inward — the "wall activity" on
+low-bit increments), and the anchor **state** matters (only state A decodes; the
+most-frequent state at that cell does not).
+
+So **every one of the 708 has a known route.** What remains is codegen and
+per-machine Coq, not open mathematics — consistent with the fact that mxdys's
+inductive decider decides this whole set.
+
+Caveat, stated honestly: 395 of the 515 were not individually decoded (a
+120-machine sample was), and 7 of the 120 sampled did not decode with this crude
+tool. Those 7 + the unsampled remainder are where an undiscovered odd shape
+could still hide.
 
 ## EYEBALL THESE
 
 Prioritized for a human on bbchallenge. The top group is where a human read is
 most likely to pay off.
 
-**Open / suspected-open (highest value)**
+**RESOLVED by human reads — kept as the worked examples (no longer questions)**
 ```
-1RB1RC_0LA1LC_0RD0LB_1LB1RD   confirmed open: parity-high-bit counter, whole data field shifts with the value
-1RB1RC_1LA1RA_0RC1LD_1LB0LD   field-shift sibling candidate: same 1RB1RC edge, wide irregular 0-gaps
-1RB1RC_1LA0LB_1LD0RC_0RA1LB   field-shift sibling candidate: clean interleave, or a parity relative?
+1RB1RC_0LA1LC_0RD0LB_1LB1RD   was "confirmed open"; is SEP2, fixed decode, late values 959..964 => NOT open
+1RB1RC_1LA1RA_0RC1LD_1LB0LD   KCOPY3: each bit in 3 copies, 3x wider counter, right wall (+9 cells / 8x steps)
+1RB1RC_1LA0LB_1LD0RC_0RA1LB   SEP2/KCOPY2: clean duplicated-bit counter, values 4..13 consecutive
+1RB0LD_1LC0RD_0LC1LD_0RB1RA   SEP2: "counter with 0 between bits", wall activity on low-bit increments, late 497..502
+1RB1RC_0LB1LA_0RD1RC_1LB0RC   SEP2: same wall+counter structure, late 3007..3012
 ```
 
-**Carry-woven counters — is the sub-type right?**
+**Carry-woven counters — still worth a check**
 ```
 1RB0LB_1LC1RD_0RB0LC_1RA1LD   canonical dense interleaved counter (de-interleaves to 0,1,2,3 with carry reset)
-1RB0LD_1LC0RD_0LC1LD_0RB1RA   SPARSE: ones frozen at 8, one 0-gap grows 7->11->15 -> Spacer, not bit-pattern
-1RB1RC_0LB1LA_0RD1RC_1LB0RC   mirror twin of the above (run-length subclass comes in mirror pairs)
 1RB0RB_0LC0RA_1LC0LD_1RA1LD   mild two-sided: fixed left block + active right counter (widened-anchor path)
-1RB0LB_1LC1RD_0RD0LC_1RA1LD   value in 0-run LENGTHS; confirm it maps onto boarded Spacer_16/22/23
+1RB0LB_1LC1RD_0RD0LC_1RA1LD   which stride/encoding? (was mislabeled "value in 0-run lengths")
 ```
+**The 7 the classifier could not read (best remaining places to look)**
+```
+0RB1LC_1LC0LC_0RD1LA_1RD1RB   MIXED (wall=L)
+1RB0LB_1LA0LC_0LB0RD_1RD0RC   MIXED (wall=R)
+1RB0LB_1LA0LC_0LB0RD_1RD1LA   MIXED (wall=R)
+1RB0LB_1LA0LC_1LC1RD_0RD1RA   MIXED (wall=L)
+1RB0LB_1LB0LC_0RD1LC_1RD1RA   MIXED (wall=L)
+1RB0LB_1LC1RD_0RB0LC_1RA1LD   no fixed wall found (grows both ways?)
+1RB0LB_1LC1RD_0RD0LC_1RA1LD   no fixed wall found
+```
+These are almost certainly counters in an encoding the reader does not cover
+(a wall of width > 1, a two-sided anchor, or a stride/offset outside the grid) —
+they are listed because a human read has now corrected this analysis six times.
 
 **Clean counters — orientation/stride variants for the emitter**
 ```
