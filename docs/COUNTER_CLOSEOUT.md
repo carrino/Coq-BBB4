@@ -36,7 +36,7 @@ bottleneck — finitization itself is.  A richer measure set cannot help.
 | boarded `ILCM_*.v` (mirror/R route) | 99 | kernel-verified |
 | **growth=L still to board** | **597** | 1 derives today (§4) |
 | boarded this session (RepWL + TCycler) | **44** | 36 `RWL8_*` + 8 `TCyc8_*` |
-| genuinely open in the 708 | **0** | every machine has a known route |
+| genuinely open in the 708 | **0** | every machine has a known route; all 708 now have a diagnosed mechanism (§3) |
 
 Boards landed this session, all `coqc -native-compiler no -Q theories BBB4`
 compiled with `Print Assumptions` = `functional_extensionality_dep` only, and
@@ -118,14 +118,38 @@ lap proof:**
   that stops at the first broken separator reads the body correctly and
   **silently drops the top two bits** — harmless for routing, fatal for a lap
   proof, where the anchor word must carry the packed pair as its own case.
-* **Slot-advancing field.** `0RB1LC_1LC0LC_0RD1LA_1RD1RB` is a counter (inverted,
-  1-separators, no 1-block wall, left boundary pinned at the origin) whose field
-  **advances by one cell as it counts**, so no fixed `(stride, offset)` read
-  works.  Reading each 2-cell slot as a three-state digit (`11`→0, `01`/`10`→1,
-  `00`→2) gives a clean arithmetic progression 2,4,6,8,10,12,14.  Open question:
-  base-3 digit, or binary digit whose read position shifts per carry?  That
-  decides whether the emitter needs a new digit type or just an advancing anchor
-  offset.  **This is the only machine of the 708 still unread.**
+* **Carry-shifted counter — RESOLVED.** `0RB1LC_1LC0LC_0RD1LA_1RD1RB` is a
+  binary counter whose **carry deposits one cell past the standard position**, so
+  the digit frame advances by one per carry event and no fixed `(stride, offset)`
+  read can work.  Read off the transition table (human diagnosis, confirmed
+  directly):
+
+  ```
+  D on 0 -> write 1, move R, stay D     scans right, FILLING 1s behind it
+  D on 1 -> write 1, move R, go B       found a 1, hands off
+  B on 1 -> write 0, move L, go C       deposits the zero
+  ```
+
+  `D` writes `1` on **both** branches, so while scanning for a 1 it converts
+  every 0 it passes into a 1, then steps one further right before `B` writes the
+  0 — the zero lands one cell beyond where the found 1 was.  The bits are
+  inverted except the msb, which sits on the right; the observed counting runs
+  1, 4, 5, 6, 7, 8 (the extra carry inflates the early values).
+
+  This closes the question that was open here: it is **a binary digit whose read
+  position shifts per carry, NOT a base-3 digit**.  Two of my decodes are
+  recorded as wrong for the record: reading each 2-cell slot as a three-state
+  digit gave a clean-looking 2,4,6,8,10,12,14 (it was accidentally tracking the
+  shift, not the value), and "inverted except the msb" gave 39,51,57,63,67 — not
+  consecutive.  No fixed positional read exists, exactly as the mechanism
+  predicts.
+
+  **Consequence for a lap proof:** the anchor cannot be `Cc p` over the value
+  alone.  It must carry the accumulated shift as well — `Cc (p, k)` with `k` the
+  frame offset — or equivalently use a `cview`-analogue that tracks the shift
+  alongside the carry.  That is a new digit *discipline*, not a new digit type,
+  and it is the only machine of the 708 that needs it.  **Every machine of the
+  708 now has a diagnosed mechanism.**
 
 ## 4. Emitter status, measured
 
@@ -183,12 +207,59 @@ same conclusion.
 | wide-vocabulary NGramHist | counter core | 0/572 (pre-existing) |
 | determinism "hammer" | `k ≤ 12` | 0/300 refuted (pre-existing) |
 
+## 5b. Why every parameter widening failed: the template has MORE structure than the laps
+
+Three independent widenings each gained **exactly zero** derives (anchor caps,
+the `Ip` encoding, the ripple unit length `ulen (2,) -> (2,1,3,4)`).  The reason
+is structural and is now measured.  `tools/counters/lapshape.py` traces one
+interior lap from each machine's derived anchor and segments it into monotone
+head-direction phases, signing each phase `(dir, state_in, state_out)`:
+
+| | |
+|---|---|
+| machines with a derivable anchor **and** traceable lap | **243** of 597 |
+| distinct lap shapes | **52** |
+| phase-count distribution | 2 → 47, **3 → 83, 4 → 88**, 5 → 7, 6 → 11, 7 → 4, 8 → 3 |
+
+**Most laps have only 2-4 phases, while the emitted template is a fixed
+six-window chain** (P1, RIP, STPI/STPO, RET, FIN).  A 3-phase lap cannot be
+matched to a 6-window skeleton at *any* setting of its constants, which is
+exactly why widening constants returns 0 every time.
+
+The shapes are strongly concentrated (`tools/counter_lapshapes.tsv`):
+
+```
+  31  -CC|+CD|-DC|+CD        9  -BB|+BD|-DB|+BD
+  29  +AB|-BA|+AB            9  -CA|+AB
+  28  -DD|+DC|-CD|+DC        8  +CD|-DA|+AB
+  25  -DA|+AB                6  +DC|-CD|+DC
+  14  +BC|-CB|+BC            6  +CD|-DC|+CD
+  13  -CC|+CB|-BC|+CB       ...  (52 shapes total)
+  12  +CB|-BC|+CB
+```
+
+**Top 4 shapes = 113 machines; top 12 = 190.**  So the unit of work is *one
+template per lap shape*, and the population is small enough to enumerate.
+
+Nothing in the kernel forces six windows: the Coq side composes an arbitrary
+chain of `wsteps` unit lemmas via `csteps_chain`, framed by `wsteps_frame` /
+`wsteps_frame_l` / `cycL` / `cycR`, and `glue_neverqh` takes the assembled lap as
+a black box.  The six-window count lives **only** in the emitter's template
+string and its skeleton search.
+
 ## 6. The ranked path to done
 
-1. **Lap skeleton — the overflow stop.** 157 machines behind it (109 interior +
-   40 overflow + 8 closure), including all 72 already known to anchor.  Pure
-   Python (`derive`).  Start with `0RB---_1LA1RC_0LD0RB_1RB1LD`: dump its actual
-   lap around an overflow and compare with the assumed STPO window.
+1. **Make the window chain phase-generic** (§5b).  Replace the fixed six-window
+   skeleton with the phase list `lapshape.py` already extracts: emit one
+   `wsteps` unit lemma per discovered phase and frame it by that phase's shape
+   (plain run ⇒ `wsteps_frame`; repeated cycle ⇒ `cycL`/`cycR`).  This is the
+   single change that unlocks all 243 traceable machines instead of one shape at
+   a time, and it needs no new Coq theory — only the emitter's template string
+   and skeleton search, since `csteps_chain` already composes arbitrary chains.
+   Validate against the existing `Interleave_TGT.v` shape first (it must
+   reproduce that board unchanged), then the 31-machine shape 1.
+   *Fallback if that proves hard:* hand-author one template for shape 1
+   (31 machines), clone, then shapes 2-4 (another 82).
 2. **`Ip` template variant — substitutions only, no new theory.** `cview` is
    defined once in `MonoCounter.v` (encoding-independent); `tovf` is a fixpoint
    on `positive` alone; `pair_rot : forall (x y : Sym) j, rep [x;y] j ++ [x] =
@@ -274,3 +345,76 @@ python3 tools/census_cache.py --check                         # must print MATCH
 Manifests: `tools/rwl8_manifest.tsv` (36 RepWL boards, with `L`/`T`/contexts),
 `tools/tcyc8_manifest.tsv` (8 TCycler boards, with side/anchor/period/reach),
 `tools/counter_encodings.tsv` (1,280 machines' measured encodings/anchors).
+
+## 10. Next session — ordered plan
+
+**Step 0 — merge PR #29.** Clean, `main` already merged in, 11 commits, nothing
+pending.  (CI on this repo does not run — GitHub billing — so every board here
+was verified locally: `coqc -native-compiler no` + `Print Assumptions`, and
+`census_cache.py --check` = MATCH before and after each commit.)
+
+**Accounting note that governs the order.** The 44 boards from this session are
+Class-1 work only: they are standalone `NeverQuasiHaltsSt` theorems and are
+**not** in `proven_map.tsv` / `Proven_*.v`, so **`D_census` has not dropped by
+44**.  Folding them in means regenerating `Proven_*`/`Deferred_*` under
+`theories/Census/`, which invalidates `CENSUS_VO_HASH` on purpose and forces
+`make census-verify` on stable hardware (PLAYBOOK Class 2).  So do **not** pay
+the re-walk for 44 machines — batch the counter boards first and pay it once.
+
+**Step 1 — the milestone: hand-author ONE board for lap shape 1.**
+Shape `-CC|+CD|-DC|+CD`, 4 phases, **31 machines**
+(`tools/counter_lapshapes.tsv`, `shape_rank = 1`).  Clone
+`theories/Machines/Counters/Interleave_TGT.v` structurally but with a **4**-window
+chain instead of 6: one `wsteps … = Some …` unit lemma per phase, each framed by
+its shape (plain run ⇒ `wsteps_frame` / `wsteps_frame_l`; repeated cycle ⇒
+`cycL` / `cycR`), chained by `csteps_chain` across the two `cview` branches, then
+`glue_neverqh tm Cc p0 boot lap vis`.
+*Checkpoint:* one new counter board compiles with
+`Print Assumptions` = `functional_extensionality_dep` only.
+*Why this first:* it is the same "template by example" move that produced
+`Interleave_TGT` in the first place, it produces a board immediately, and it
+learns the rep-algebra junction for a non-6-window chain empirically instead of
+guessing it inside a generic emitter.
+
+**Step 2 — clone shape 1 across its 31 machines.**  Fork `emit_interleave.py`,
+substituting the shape-1 window chain; the per-machine anchor parameters are
+already derived (`enc`, `edge`, `tail`, `p0`) and `tools/counter_encodings.tsv`
+carries the encoding.  *Checkpoint:* 31 boards, each kernel-verified.
+
+**Step 3 — shapes 2-4 (+82 machines):** `+AB|-BA|+AB` (29), `-DD|+DC|-CD|+DC`
+(28), `-DA|+AB` (25).  Three and two phases respectively — after step 2 the
+pattern "phase list ⇒ window chain" should be concrete enough to make the
+emitter **phase-generic** (§5b) rather than one template per shape, which then
+covers all 243 traceable machines.
+
+**Step 4 — the two remaining populations,** in this order because both are moot
+until a lap can be fitted: the anchor family with a **non-blank far side**
+(133 machines held against a wall; `glue_neverqh` already accepts an arbitrary
+`Cc p`, so zero new soundness surface), then **more encodings** (306 machines;
+`counter_encodings.tsv` is the input).  The 1,080 growth=R machines ride the
+mirror route around the same lap, so every fix transfers.
+
+**Step 5 — Class 2, on stable hardware, paid ONCE:** add every new board to
+`proven_map.tsv` (`gen_proven.py`), regen `Deferred_*`
+(`gen_deferred.py` / `regen_residue.py`), `make census-verify`,
+confirm `Print Assumptions census_decided` is
+`functional_extensionality_dep` only, then `census_cache.py --update` and commit
+the new `.vo` + hash.  Only this step lowers `D_census`.
+
+**Queued, independent of the above**
+
+* **Resume the paused classifier sweep** — `tools/kcopy_classify.py` covered
+  1,323 of 2,713 open machines before it was stopped to free CPU; it is
+  resumable and worth ~15 min if a complete encoding table is wanted.  Purely
+  diagnostic.
+* **One machine still unread:** `0RB1LC_1LC0LC_0RD1LA_1RD1RB` (§3, slot-advancing
+  field).  The question for a human is whether the slot is a **base-3 digit** or
+  a **binary digit whose read position shifts per carry** — that decides whether
+  the emitter needs a new digit type or just an advancing anchor offset.
+* **The champion** `1RB1LD_1RC1RB_1LC1LA_0RC0RD`: blanks at step 32,779,478 then
+  spins out.  Needs `boarded` generalized to `exists B, QHBound B` (structural,
+  already identified) plus a 32.8M-step prefix — one long `native_compute`, i.e.
+  stable hardware, not this container.
+* **Do not re-run** the levers in §5: three parameter widenings and two
+  existing-decider screens over the recognized counters all returned exactly
+  zero, each with its grid recorded.
