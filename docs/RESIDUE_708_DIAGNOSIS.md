@@ -177,6 +177,7 @@ a digit are identical copies or one data cell plus a constant separator:
 | `KCOPY3` | each bit stored **three times** ("3× wider counter") | `1RB1RC_1LA1RA_0RC1LD_1LB0LD` |
 | `SEP2` | data cell + one constant separator ("counter with **0 between bits**") | 51/120 |
 | `SEP3` | data cell + two separators | 3/120 |
+| `…i` (inverted) | any of the above with the data bit **complemented** (0 = set), separator possibly **1** ("bits inverted with **1s between bits**") — the value then **DESCENDS** | the `JpCounter.v` complement encoding; 3 of the 7 stragglers |
 
 Mechanized as `tools/kcopy_classify.py`: it decodes wall-anchored snapshots and
 requires the decoded integers to be **consecutive**, then re-confirms in a
@@ -228,9 +229,12 @@ per-machine Coq, not open mathematics — consistent with the fact that mxdys's
 inductive decider decides this whole set.
 
 Caveat, stated honestly: 395 of the 515 were not individually decoded (a
-120-machine sample was), and 7 of the 120 sampled did not decode with this crude
-tool. Those 7 + the unsampled remainder are where an undiscovered odd shape
-could still hide.
+120-machine sample was).  Of the 7 in that sample the first version of the tool
+could not read, **6 were resolved** once inverted/descending decoding was added
+(see the eyeball section) and 1 remains — so the sample now stands at 119/120
+decoded.  The unsampled remainder is where an undiscovered odd shape could still
+hide; `SEP3` and the inverted families were both found only after a human
+pointed at a single machine, so more encodings likely exist.
 
 ## EYEBALL THESE
 
@@ -252,19 +256,42 @@ most likely to pay off.
 1RB0RB_0LC0RA_1LC0LD_1RA1LD   mild two-sided: fixed left block + active right counter (widened-anchor path)
 1RB0LB_1LC1RD_0RD0LC_1RA1LD   which stride/encoding? (was mislabeled "value in 0-run lengths")
 ```
-**The 7 the classifier could not read (best remaining places to look)**
+**The 7 stragglers — 6 now RESOLVED** (a human read of the 7th supplied the
+inverted-bit insight that cracked the other 6; all late-confirmed at large
+values):
 ```
-0RB1LC_1LC0LC_0RD1LA_1RD1RB   MIXED (wall=L)
-1RB0LB_1LA0LC_0LB0RD_1RD0RC   MIXED (wall=R)
-1RB0LB_1LA0LC_0LB0RD_1RD1LA   MIXED (wall=R)
-1RB0LB_1LA0LC_1LC1RD_0RD1RA   MIXED (wall=L)
-1RB0LB_1LB0LC_0RD1LC_1RD1RA   MIXED (wall=L)
-1RB0LB_1LC1RD_0RB0LC_1RA1LD   no fixed wall found (grows both ways?)
-1RB0LB_1LC1RD_0RD0LC_1RA1LD   no fixed wall found
+1RB0LB_1LA0LC_0LB0RD_1RD0RC   SEP2i   inverted, k=2 off=3, anchor C, late 3009..3014
+1RB0LB_1LA0LC_0LB0RD_1RD1LA   SEP2i   inverted, k=2 off=2, anchor D, late 3008..3013
+1RB0LB_1LA0LC_1LC1RD_0RD1RA   KCOPY2i inverted 2-copies,  anchor C, late 3008..3013
+1RB0LB_1LB0LC_0RD1LC_1RD1RA   KCOPY2  DESCENDING value,   anchor C, late 1086..1081
+1RB0LB_1LC1RD_0RB0LC_1RA1LD   SEP3    k=3 off=0 dpos=1,   anchor C, late  808..813
+1RB0LB_1LC1RD_0RD0LC_1RA1LD   SEP3    k=3 off=1 dpos=2,   anchor C, late  808..813
 ```
-These are almost certainly counters in an encoding the reader does not cover
-(a wall of width > 1, a two-sided anchor, or a stride/offset outside the grid) —
-they are listed because a human read has now corrected this analysis six times.
+
+**The 1 still unread — `0RB1LC_1LC0LC_0RD1LA_1RD1RB`.** Human read: "a counter,
+no wall on the left, and the bits are inverted with 1s between bits."  Measured
+and consistent with that: the left boundary is pinned at the origin with **no
+1-block wall** (every anchored tape starts `0`), growth is rightward, there is a
+constant `001` right-side marker, and the field is clearly **inverted** (the 0s
+are the set bits and form a structured growing pattern).  What does **not** work
+is any FIXED (stride, offset) read — the 2-cell slots take all four values
+`11`/`01`/`10`/`00`, i.e. the field appears to advance by one cell as it counts.
+Reading each 2-cell slot as a **three-state digit** (`11`→0, `01`/`10`→1,
+`00`→2) does give a clean arithmetic progression:
+
+```
+0100111111001  ->  00 11 11 11  ->   2
+0101101111001  ->  01 10 11 11  ->   4
+0111001111001  ->  11 00 11 11  ->   6
+0100001111001  ->  00 00 11 11  ->   8
+0101111011001  ->  01 11 10 11  ->  10
+0111011011001  ->  11 01 10 11  ->  12
+0100011011001  ->  00 01 10 11  ->  14
+```
+
+so it is a counter (as the human read says) in a **slot-advancing / three-state
+digit** encoding that the fixed-offset reader cannot express — the last genuine
+gap in this classifier, and a tooling gap rather than machine hardness.
 
 **Clean counters — orientation/stride variants for the emitter**
 ```
