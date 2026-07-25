@@ -126,7 +126,7 @@ def main():
     L.append('    in CloseoutFinal.v, which loads the committed census .vo and')
     L.append('    therefore compiles only under the census opam switch (the committed')
     L.append('    .vo are OCaml-toolchain-specific). *)')
-    L.append('From Coq Require Import List.')
+    L.append('From Coq Require Import Bool List.')
     L.append('From BBB4 Require Import BBB4_Statement.')
     L.append('From BBB4.Census Require Import TNF_QH Deferred_Defs Deferred_Data.')
     L.append('From BBB4.Closeout Require Import CloseoutKit %s.' % ' '.join(stage_names))

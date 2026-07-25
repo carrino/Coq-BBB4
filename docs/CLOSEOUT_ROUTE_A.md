@@ -44,6 +44,31 @@ in-tree theorem by PARSING THE TM BODIES — names are not trusted; output
 `frozen_map.tsv` + `frozen_unproven.txt`) and `tools/closeout/gen_stages.py`
 (emits the stage files and the two assembly files).
 
+## Measured (first full build, 2026-07-25)
+
+| | |
+|---|---:|
+| frozen rows with an in-tree theorem | **3,567** |
+| frozen rows still unproven (`remaining_rows`) | **1,589** |
+| stage files | 36 (100 rows each) |
+| stage compile | 2-3 s each, ~90 s wall for all 36 (3 workers) |
+| `Closeout.v` compile (incl. the `vm_compute` split check) | **2 m 12 s** |
+| `Print Assumptions closeout_partial` | `functional_extensionality_dep` only |
+
+`Check closeout_partial` reads
+
+    forall tm, Deferred D_census tm -> boarded tm \/ Deferred D_remaining tm
+
+so the certified statement is now "every deferred machine is settled, except
+these 1,589" — and it re-derives in ~4 minutes after any wave of new boards,
+entirely in a container.
+
+The one-time cost is the board `.vo`: building the 559-file dependency
+closure of the 478 board files took ~85 min at 3 workers.  Six
+`IRules_Batch_*.v` files failed in that parallel build and compile fine
+serially (memory contention, not defects); they are on the `Census/Run.v`
+path and are NOT in the stage closure.
+
 ## The trust story
 
 Everything under `tools/` is untrusted bookkeeping.  The kernel re-checks

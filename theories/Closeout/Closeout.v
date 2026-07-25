@@ -15,7 +15,7 @@
     in CloseoutFinal.v, which loads the committed census .vo and
     therefore compiles only under the census opam switch (the committed
     .vo are OCaml-toolchain-specific). *)
-From Coq Require Import List.
+From Coq Require Import Bool List.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Census Require Import TNF_QH Deferred_Defs Deferred_Data.
 From BBB4.Closeout Require Import CloseoutKit CB_00 CB_01 CB_02 CB_03 CB_04 CB_05 CB_06 CB_07 CB_08 CB_09 CB_10 CB_11 CB_12 CB_13 CB_14 CB_15 CB_16 CB_17 CB_18 CB_19 CB_20 CB_21 CB_22 CB_23 CB_24 CB_25 CB_26 CB_27 CB_28 CB_29 CB_30 CB_31 CB_32 CB_33 CB_34 CB_35.
