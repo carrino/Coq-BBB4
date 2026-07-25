@@ -41,6 +41,7 @@ from executor import Exec, Wall                                     # noqa: E402
 from emit_interleave import (Raw, strip0, LAB, ST, SYM, ENC,          # noqa: E402
                              DeriveError, derive_tail, mach_id, coq_table,
                              clist, ccons, cwin)
+from mirror_common import mirror_spec, mirrorize                       # noqa: E402
 
 OUTDIR = os.path.join(REPO, 'theories', 'Machines', 'Counters')
 MAXN = 16
@@ -1201,8 +1202,12 @@ def print_assumptions(ID, scratch, pref='ILS4'):
     return coqc(chk)
 
 
-def process(spec, do_emit, scratch, force=False, windows=False):
-    res = {'spec': spec, 'ok': False}
+def process(spec, do_emit, scratch, force=False, windows=False,
+            mirror=False):
+    res = {'spec': spec, 'ok': False, 'mirror': mirror}
+    rspec = spec
+    if mirror:
+        spec = mirror_spec(spec)
     try:
         edge, tail, p0 = derive_tail(spec, 'A', encname='Ip')
         E = LAB.index(edge)
@@ -1246,8 +1251,9 @@ def process(spec, do_emit, scratch, force=False, windows=False):
         res['ok'] = True
         res['why'] = 'derived+validated (not emitted)'
         return res
-    ID = mach_id(spec)
-    pref = 'ILS4F' if flip else 'ILS4'
+    ID = mach_id(rspec)
+    pref = ('ILS4FM' if flip else 'ILS4M') if mirror \
+        else ('ILS4F' if flip else 'ILS4')
     path = os.path.join(OUTDIR, '%s_%s.v' % (pref, ID))
     if os.path.exists(path) and not force:
         res['ok'] = True
@@ -1259,7 +1265,9 @@ def process(spec, do_emit, scratch, force=False, windows=False):
                                    deep, fvariant)
         else:
             src = emit_source(spec, E, QP, QR, tail, p0, boot, s, U, deep)
-    except DeriveError as e:
+        if mirror:
+            src = mirrorize(src, rspec, spec)
+    except (DeriveError, RuntimeError) as e:
         res['why'] = 'emit: %s' % e
         return res
     with open(path, 'w') as f:
@@ -1296,6 +1304,7 @@ def main():
     ap.add_argument('specs', nargs='*')
     ap.add_argument('--list')
     ap.add_argument('--emit', action='store_true')
+    ap.add_argument('--mirror', action='store_true')
     ap.add_argument('--windows', action='store_true')
     ap.add_argument('--force', action='store_true')
     ap.add_argument('--json')
@@ -1306,7 +1315,7 @@ def main():
         specs += [x.strip() for x in open(a.list) if x.strip()]
     out = []
     for spec in specs:
-        r = process(spec, a.emit, a.scratch, a.force, a.windows)
+        r = process(spec, a.emit, a.scratch, a.force, a.windows, a.mirror)
         out.append(r)
         extra = ''
         if 'skel' in r:

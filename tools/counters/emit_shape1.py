@@ -41,6 +41,7 @@ from executor import Exec, Wall                                     # noqa: E402
 from emit_interleave import (Raw, strip0, LAB, ST, SYM, ENC,          # noqa: E402
                              DeriveError, derive_tail, mach_id, coq_table,
                              clist, ccons, cwin)
+from mirror_common import mirror_spec, mirrorize                       # noqa: E402
 
 OUTDIR = os.path.join(REPO, 'theories', 'Machines', 'Counters')
 FAR = [0]
@@ -690,16 +691,19 @@ def coqc(path):
     return p.returncode, p.stdout + p.stderr
 
 
-def print_assumptions(ID, scratch):
+def print_assumptions(ID, scratch, pref='ILS1'):
     chk = os.path.join(scratch, 'pa_%s.v' % ID)
     with open(chk, 'w') as f:
-        f.write('From BBB4.Machines.Counters Require Import ILS1_%s.\n'
-                'Print Assumptions nqh_%s.\n' % (ID, ID))
+        f.write('From BBB4.Machines.Counters Require Import %s_%s.\n'
+                'Print Assumptions nqh_%s.\n' % (pref, ID, ID))
     return coqc(chk)
 
 
-def process(spec, fp_edge, do_emit, scratch, force=False):
-    res = {'spec': spec, 'ok': False}
+def process(spec, fp_edge, do_emit, scratch, force=False, mirror=False):
+    res = {'spec': spec, 'ok': False, 'mirror': mirror}
+    rspec = spec
+    if mirror:
+        spec = mirror_spec(spec)
     try:
         edge, tail, p0 = derive_tail(spec, fp_edge, encname='Jp')
         E = LAB.index(edge)
@@ -727,8 +731,9 @@ def process(spec, fp_edge, do_emit, scratch, force=False):
         res['ok'] = True
         res['why'] = 'derived+validated (not emitted)'
         return res
-    ID = mach_id(spec)
-    path = os.path.join(OUTDIR, 'ILS1_%s.v' % ID)
+    ID = mach_id(rspec)
+    pref = 'ILS1M' if mirror else 'ILS1'
+    path = os.path.join(OUTDIR, '%s_%s.v' % (pref, ID))
     if os.path.exists(path) and not force:
         res['ok'] = True
         res['why'] = 'file exists (hand board?) -- skipped emission'
@@ -736,7 +741,9 @@ def process(spec, fp_edge, do_emit, scratch, force=False):
     try:
         src = emit_source(spec, E, tail, p0, boot, s, U, a_i, a_o, exact_ov,
                           X, wdep, deep)
-    except DeriveError as e:
+        if mirror:
+            src = mirrorize(src, rspec, spec)
+    except (DeriveError, RuntimeError) as e:
         res['why'] = 'emit: %s' % e
         return res
     with open(path, 'w') as f:
@@ -748,7 +755,7 @@ def process(spec, fp_edge, do_emit, scratch, force=False):
         res['log'] = out[-2500:]
         os.remove(path)
         return res
-    rc, out = print_assumptions(ID, scratch)
+    rc, out = print_assumptions(ID, scratch, pref)
     names = set()
     inax = False
     for ln in out.splitlines():
@@ -773,6 +780,7 @@ def main():
     ap.add_argument('specs', nargs='*')
     ap.add_argument('--list')
     ap.add_argument('--emit', action='store_true')
+    ap.add_argument('--mirror', action='store_true')
     ap.add_argument('--force', action='store_true')
     ap.add_argument('--json')
     ap.add_argument('--scratch', default='/tmp')
@@ -782,7 +790,7 @@ def main():
         specs += [x.strip() for x in open(a.list) if x.strip()]
     out = []
     for spec in specs:
-        r = process(spec, 'C', a.emit, a.scratch, a.force)
+        r = process(spec, 'C', a.emit, a.scratch, a.force, a.mirror)
         out.append(r)
         extra = ''
         if 'skel' in r:
