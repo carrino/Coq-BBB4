@@ -23,11 +23,22 @@ From BBB4.Machines.NGHWStage Require Import
   NGHW_00 NGHW_01 NGHW_02 NGHW_03 NGHW_04 NGHW_05.
 Import ListNotations.
 
-(** A machine is boarded (removable from [D_census]) if it never quasihalts,
-    or it is a quasihalter with a certified last-visit bound. *)
+(** A machine is boarded (its quasihalting behaviour is settled) if it never
+    quasihalts, or it is a quasihalter with SOME certified last-visit bound.
+
+    The bound is existential on purpose.  [B_census = 2000] is only the
+    strength of the census's in-walk tier -- a deferred machine may be a
+    perfectly well-understood quasihalter whose quiet states simply go quiet
+    late.  The champion [1RB1LD_1RC1RB_1LC1LA_0RC0RD] blanks its tape at step
+    32,779,478 and then spins out in state C, so states A, B, D are quiet with
+    last visit ~32.8M: it satisfies [QHBound 32779479] and can never satisfy
+    [QHBound 2000].  Fixing B at 2000 here would exclude such machines for no
+    mathematical reason; deciding the machine is what matters, not the size of
+    its bound.  (This does not touch [census_decided], which only ever claims
+    [QHBound 2000 \/ Deferred D_census].) *)
 Definition boarded (tm : TM) : Prop :=
   NeverQuasiHaltsSt tm
-  \/ (NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm).
+  \/ (NonHalt tm /\ (exists B, QHBound B tm) /\ QuasiHaltsSt tm).
 
 Lemma nqh_to_boarded : forall l,
   Forall NeverQuasiHaltsSt l -> Forall boarded l.
@@ -36,12 +47,22 @@ Proof.
   intros a Ha. left. exact Ha.
 Qed.
 
+(** The B = 2000 harvests board through the general predicate unchanged. *)
 Lemma iqh_to_boarded : forall l,
   Forall (fun tm => NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm) l ->
   Forall boarded l.
 Proof.
   intros l H. eapply Forall_impl; [| exact H].
-  intros a Ha. right. exact Ha.
+  intros a (Hnh & Hb & Hqh). right. split; [exact Hnh | split; [exists 2000; exact Hb | exact Hqh]].
+Qed.
+
+(** ... and so does any harvest carrying its own per-machine bound. *)
+Lemma iqhB_to_boarded : forall B l,
+  Forall (fun tm => NonHalt tm /\ QHBound B tm /\ QuasiHaltsSt tm) l ->
+  Forall boarded l.
+Proof.
+  intros B l H. eapply Forall_impl; [| exact H].
+  intros a (Hnh & Hb & Hqh). right. split; [exact Hnh | split; [exists B; exact Hb | exact Hqh]].
 Qed.
 
 (** The never-QH boards (wave-6 NGH_00..04 + wave-7 oracle-drive NGH_05..07). *)
