@@ -183,12 +183,59 @@ same conclusion.
 | wide-vocabulary NGramHist | counter core | 0/572 (pre-existing) |
 | determinism "hammer" | `k ≤ 12` | 0/300 refuted (pre-existing) |
 
+## 5b. Why every parameter widening failed: the template has MORE structure than the laps
+
+Three independent widenings each gained **exactly zero** derives (anchor caps,
+the `Ip` encoding, the ripple unit length `ulen (2,) -> (2,1,3,4)`).  The reason
+is structural and is now measured.  `tools/counters/lapshape.py` traces one
+interior lap from each machine's derived anchor and segments it into monotone
+head-direction phases, signing each phase `(dir, state_in, state_out)`:
+
+| | |
+|---|---|
+| machines with a derivable anchor **and** traceable lap | **243** of 597 |
+| distinct lap shapes | **52** |
+| phase-count distribution | 2 → 47, **3 → 83, 4 → 88**, 5 → 7, 6 → 11, 7 → 4, 8 → 3 |
+
+**Most laps have only 2-4 phases, while the emitted template is a fixed
+six-window chain** (P1, RIP, STPI/STPO, RET, FIN).  A 3-phase lap cannot be
+matched to a 6-window skeleton at *any* setting of its constants, which is
+exactly why widening constants returns 0 every time.
+
+The shapes are strongly concentrated (`tools/counter_lapshapes.tsv`):
+
+```
+  31  -CC|+CD|-DC|+CD        9  -BB|+BD|-DB|+BD
+  29  +AB|-BA|+AB            9  -CA|+AB
+  28  -DD|+DC|-CD|+DC        8  +CD|-DA|+AB
+  25  -DA|+AB                6  +DC|-CD|+DC
+  14  +BC|-CB|+BC            6  +CD|-DC|+CD
+  13  -CC|+CB|-BC|+CB       ...  (52 shapes total)
+  12  +CB|-BC|+CB
+```
+
+**Top 4 shapes = 113 machines; top 12 = 190.**  So the unit of work is *one
+template per lap shape*, and the population is small enough to enumerate.
+
+Nothing in the kernel forces six windows: the Coq side composes an arbitrary
+chain of `wsteps` unit lemmas via `csteps_chain`, framed by `wsteps_frame` /
+`wsteps_frame_l` / `cycL` / `cycR`, and `glue_neverqh` takes the assembled lap as
+a black box.  The six-window count lives **only** in the emitter's template
+string and its skeleton search.
+
 ## 6. The ranked path to done
 
-1. **Lap skeleton — the overflow stop.** 157 machines behind it (109 interior +
-   40 overflow + 8 closure), including all 72 already known to anchor.  Pure
-   Python (`derive`).  Start with `0RB---_1LA1RC_0LD0RB_1RB1LD`: dump its actual
-   lap around an overflow and compare with the assumed STPO window.
+1. **Make the window chain phase-generic** (§5b).  Replace the fixed six-window
+   skeleton with the phase list `lapshape.py` already extracts: emit one
+   `wsteps` unit lemma per discovered phase and frame it by that phase's shape
+   (plain run ⇒ `wsteps_frame`; repeated cycle ⇒ `cycL`/`cycR`).  This is the
+   single change that unlocks all 243 traceable machines instead of one shape at
+   a time, and it needs no new Coq theory — only the emitter's template string
+   and skeleton search, since `csteps_chain` already composes arbitrary chains.
+   Validate against the existing `Interleave_TGT.v` shape first (it must
+   reproduce that board unchanged), then the 31-machine shape 1.
+   *Fallback if that proves hard:* hand-author one template for shape 1
+   (31 machines), clone, then shapes 2-4 (another 82).
 2. **`Ip` template variant — substitutions only, no new theory.** `cview` is
    defined once in `MonoCounter.v` (encoding-independent); `tovf` is a fixpoint
    on `positive` alone; `pair_rot : forall (x y : Sym) j, rep [x;y] j ++ [x] =
