@@ -36,3 +36,33 @@ The MINIRUN in the trace covers only the low-pair region (amplitude 2-3
 cells at j = 3), so a fixed-window bounce pair looks plausible; a
 `lap_len` profile over j and a second machine's trace are the next two
 measurements.
+
+---
+
+## Measured yield (wave-12, `emit_wallj.py`) — the Jp wall pool is NOT one shape
+
+The erase/rebuild skeleton above was templated (`emit_wallj.py`, boards
+`WLJ_*`/`WLJM_*`) and swept over the 53 Jp-anchored wall machines the
+full unproven-pool scan found (23 direct + 30 mirror).  **Yield: 1 board.**
+
+| outcome | n | what it means |
+|---|---:|---|
+| boarded | **1** | the exemplar `1RB0LB_1LA0LC_0LB0RD_1RD0RC` |
+| `no Jp-wall interior skeleton` | 26 | same lap profile (`20+4j`), different windows — see below |
+| `shape:` mismatches | 13 | far blank run 0 or 1 (not 2), or the close exits with a left residue |
+| `no Jp-wall overflow stop` | 12 | interior fits, overflow stop differs |
+| anchor tail not `[S0]` | 2 | different anchor |
+
+**The second sub-variant (traced, not templated).**  On
+`0RB1LC_1LA1RB_1LA0RD_0LC1RD` the head stays `S1` (not `S0`) across the lap
+and the polarity is inverted: the "erase" pass deposits **`S1`s**, and the
+rebuild consumes `[S1]` depositing `[S1]` — unit
+`(QD,[],S1,[S1]) -> (QD,[S1],S1,[])`, against my template's
+`(QD,[],S0,[S0]) -> (QD,[S1],S0,[])`.  Same erase/rebuild geometry,
+complementary symbol.  Templating that variant is the obvious next step
+for this pool and should pick up a large share of the 26.
+
+**Do not** conclude from the exemplar that a wall family is one shape — the
+W-Ip pool needed offset variants (see `UNCERTAIN_MACHINES.md` §3) and the
+W-Jp pool needs at least a polarity variant.  Trace two or three members
+before templating, not one.
