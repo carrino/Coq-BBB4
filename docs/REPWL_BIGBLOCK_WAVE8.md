@@ -49,12 +49,23 @@ them.
    The Coq kernel re-derives the closure and re-checks every edge, so a wrong
    untrusted certificate fails to TYPECHECK rather than mis-proving.
 
-## Result — 34 boards, all kernel-verified
+## Result — 36 boards, all kernel-verified
 
 Every `RWL8_*.v` file `coqc -native-compiler no -Q theories BBB4` compiles and
-`Print Assumptions` is `functional_extensionality_dep` only.  All 34 compile
+`Print Assumptions` is `functional_extensionality_dep` only.  All compile
 inside a container window (heaviest: `RWL8_00012`, 12 029-node closure, 160 s).
-All catch at `T=2`; `L` ranges 9–20 (the tape period of each machine).
+All catch at `T=2`; `L` ranges 9–30 (the tape period of each machine).
+
+The initial `repwl_bigblock.py` sweep (`L ≤ 20`) landed 34.  A follow-up
+wider-parameter probe (`L ≤ 40`, `T ≤ 4`, warmup `t`) over the 708 machines
+the first sweep missed caught **2 more** — long-period bouncers that close at
+`L=30` (`RWL8_00035` `1RB0LD_1RC0RB_1LA1RA_1LD1LA`, `RWL8_00036`
+`1RB1LB_1LC0RD_1LA0LC_1RD1RB`) — and returned **NOCLOSE for the other 706**
+with **zero** finitize-but-no-certificate cases.  That last fact is the load-
+bearing diagnosis: for the residue RepWL cannot board, the wall is
+*finitization itself*, never the measure/rank synthesis — so a richer measure
+vocabulary would not help.  The 706 are for other routes (see
+`docs/RESIDUE_708_DIAGNOSIS.md`).
 
 | machine | L | T | contexts | file |
 |---|---|---|---|---|
@@ -90,6 +101,8 @@ All catch at `T=2`; `L` ranges 9–20 (the tape period of each machine).
 | `1RB1RD_1LC0RC_0RD1LD_1RA0LB` | 20 | 2 | 2218 | `RWL8_00032.v` |
 | `1RB0RD_1LC0LC_1RA1LB_0RA0RB` | 16 | 2 | 2905 | `RWL8_00024.v` |
 | `0RB0RC_1RC0RA_1LD0LD_1RB1LC` | 16 | 2 | 2907 | `RWL8_00002.v` |
+| `1RB0LD_1RC0RB_1LA1RA_1LD1LA` | 30 | 2 | 3804 | `RWL8_00035.v` |
+| `1RB1LB_1LC0RD_1LA0LC_1RD1RB` | 30 | 2 | 3877 | `RWL8_00036.v` |
 | `1RB1RC_1LC0RD_0RC0LD_1RA0LA` | 10 | 2 | 9999 | `RWL8_00031.v` |
 | `1RB0LD_0RC0RB_1LD1RA_1LC1LA` | 11 | 2 | 12029 | `RWL8_00012.v` |
 
