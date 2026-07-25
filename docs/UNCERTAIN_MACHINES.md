@@ -1,56 +1,62 @@
 # Machines I am genuinely uncertain about — hand-inspection queue
 
-_Wave-12 session.  Everything else in the current burn-down is either boarded
+_Wave-12 session (§1 corrected after John's reading).  Everything else in the current burn-down is either boarded
 or diagnosed-mechanical; these are the cases where I do NOT trust my own
 classification and where the wave-8/9 rule ("hand-inspection is 11-for-11")
 applies.  Ranked by how much rides on the answer._
 
 ---
 
-## 1. The wall-inner nest — 12 machines (HIGHEST VALUE, most uncertain)
+## 1. ~~The wall-inner nest~~ — RESOLVED: mis-set anchor, they are plain counters
+
+**Status: my classification here was WRONG.**  John identified
+`1RB---_1RC1LB_0LB1RD_0RA0RC`, `0RB0RD_1LA1RC_1RD1LC_0LC1RA` and
+`0RB0RD_1RC---_1RD1LC_0LC1RA` as "just a regular counter with a 1 to the
+left of each bit, msb on the left".  Verified, and it holds for the whole
+bucket — reading (2) below (mis-set anchor) was the right one.
+
+Re-anchored measurement over all 12, uniform with no exceptions:
+
+| | |
+|---|---|
+| anchor | `Cc v = (E, Ip v ++ [S1], S0, [])` — tail `[S1]`, far EMPTY |
+| edge `E` | B / C / A per machine |
+| anchor snapshots in 40k steps | 1356–1365 |
+| interior lap | **affine, `8 + 4j`** on every one of the 12 |
+| overflow `2^K-1 -> ?` | **affine, `4K + 3` steps** (measured 15, 19, 23, 27 for K = 2..5) |
+
+There is **no inner counter and nothing exponential** in these machines.
+What I measured as "three interleaved marches at wall 0 / 2 / 4" was one
+counter seen through an anchor that was two cells too long: `derive_tail`
+returned tail `[S1;S0]` + far `[S0]` (its synthetic blank) instead of the
+true tail `[S1]`, and my overflow probe then searched for a configuration
+the machine never visits, so it ran on far past the real lap and reported
+a doubling cost.  **The lesson is the one already in COUNTER_CLOSEOUT §5
+and WAVE9 §2 — check the anchor variant before believing a verdict — and I
+did not apply it.**
+
+### What actually blocks them (the real, smaller problem)
+
+The counter does not step through every value: the reachable anchors are
+`{1} ∪ [4,7] ∪ [16,31] ∪ [64,127] ∪ …`, i.e. `[2^(2k), 2^(2k+1)-1]`.
+Interior laps are `p -> p+1`, but the overflow is
 
 ```
-0RB0RD_1LA1RC_1RD1LC_0LC1RA        M0RB1LC_1LA1RB_0LD0LA_1RA1LB
-0RB0RD_1RC---_1RD1LC_0LC1RA        M0RB1LC_1LA1RB_0LD0LA_1RA1LD
-1RB---_1RC1LB_0LB1RD_0RA0RC        M1RB0LD_1LC1LB_1LD1RC_0RC1LA
-1RB---_1RC1LB_0LB1RD_1RA0RC        M1RB1LC_0LA0LD_1LD1RC_0RC1LB
-1RB0RD_1RC---_1RD1LC_0LC1RA
-1RB1LA_0LA1RC_0RD0RB_1LB1RA
-1RB1LA_0LA1RC_0RD0RB_1LB1RD
-1RB1RA_1RC1LB_0LB1RD_1LA0RC
+  3 -> 8      7 -> 16      15 -> 32      31 -> 64        (2^K-1  ->  2^(K+1))
 ```
 
-**What I measured.**  On `1RB---_1RC1LB_0LB1RD_0RA0RC` (anchor `Cc p =
-(B, Ip p ++ [S1;S0], S0, [S0])`), inside the K = 4 outer overflow lap the
-blank-head snapshots that decode as `Ip v ++ [S1]` read:
+— it adds **one more pair** than `Pos.succ` does (`Ip (2^(K+1))` is
+`rep [S1;S0] (K+1) ++ [S1]`, where `Ip (Pos.succ (2^K-1))` would be
+`rep [S1;S0] K ++ [S1]`).  So `glue_neverqh tm Cc p0`, which requires a lap
+`Cc p -> Cc (Pos.succ p)` for EVERY `p`, does not apply on the nose: the
+anchor family needs a reindexing (or a glue variant) whose successor is
+`p+1` inside a block and `2p+2` at a block end.
 
-```
-  t= 23  v=32  wall=0        t= 71  v=18  wall=2
-  t= 27  v=16  wall=2        t= 81  v= 9  wall=4
-  t= 37  v= 8  wall=4        t=105  v= 2  wall=8
-  t= 43  v=34  wall=0        t=115  v=40  wall=0
-  t= 47  v=17  wall=2        t=119  v=20  wall=2
-```
-
-Three interleaved marches at once: `v = 32,33,34,…` at wall 0, `v = 16,17,18,…`
-at wall 2, `v = 8,9,10` at wall 4 — each march running at half the rate of the
-one above it, with the far-side wall length growing 0, 2, 4, 8, …
-
-**Why I am uncertain.**  Three readings fit the data and they need different
-machinery:
-
-1. a **two-parameter inner anchor** `Cin (v, wall)` — the wall is a second
-   index and the composition is a double induction;
-2. a **mis-set OUTER anchor**: the `v = 32,33,34,…` march at wall 0 could be
-   the real counter one cell over, in which case the "exponential overflow" is
-   an artifact of reading the tape at the wrong offset and these are ordinary
-   affine machines (this is exactly the wave-9 §2 trap: *check the anchor
-   variant before believing the verdict*);
-3. genuine **three-level recursion** (counter inside counter inside counter),
-   which would be new structure and worth a hand-authored reference board.
-
-I can't separate these from step counts alone, and guessing wrong costs a
-whole template.  This is the one where I'd most want your eye.
+That is a small, well-posed question — and the one worth your view: is it
+better to reindex the family (enumerate the reachable values) or to add a
+`glue` variant taking a per-p successor function?  Either way it is a
+fraction of the work I thought this bucket needed, and it is affine
+throughout.
 
 ## 2. Wall + exponential overflow — 68 machines (composition, unproven)
 
