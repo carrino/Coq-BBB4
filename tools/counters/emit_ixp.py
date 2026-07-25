@@ -164,6 +164,75 @@ def replay_exit(ex, E, Ein, Ff, K, s):
     return cfg, n, U
 
 
+# ----------------------------------------------- V2 (pop-P1) chain replays ---
+def replay_int_v2(ex, E, m, j, s):
+    cfg = (E, Ip(m) + TAIL, 0, list(FAR))
+    U = {}
+    cfg, U['P1'] = conc(ex, cfg, True, True, s['nP1'], 1, 1)
+    cfg, u = cycl(ex, cfg, 1, s['nRIP'], 2 * j)
+    if u:
+        U['RIP'] = u
+    cfg, U['STPI'] = conc(ex, cfg, True, True, s['nSTP'], 1, 0)
+    cfg, U['TRN'] = conc(ex, cfg, True, True, s['nTRN'], 0, 1)
+    cfg, u = cycr(ex, cfg, 2, s['nRET'], j)
+    if u:
+        U['RET'] = u
+    cfg, U['FIN'] = conc(ex, cfg, True, True, s['nFIN'], 0, None)
+    n = (s['nP1'] + s['nRIP'] * 2 * j + s['nSTP'] + s['nTRN']
+         + s['nRET'] * j + s['nFIN'])
+    return cfg, n, U
+
+
+def replay_inner_v2(ex, E, Ein, Ff, v, j, s):
+    cfg = (Ein, Ip(v) + TIN, 0, list(Ff))
+    U = {}
+    cfg, U['P1i'] = conc(ex, cfg, True, True, s['nP1i'], 1, len(Ff))
+    cfg, u = cycl(ex, cfg, 1, s['nRIP'], 2 * j)
+    cfg, U['STPI2'] = conc(ex, cfg, True, True, s['nSTP'], 1, 0)
+    cfg, U['TRN2'] = conc(ex, cfg, True, True, s['nTRN'], 0, 1)
+    cfg, u = cycr(ex, cfg, 2, s['nRET'], j)
+    cfg, U['FINi'] = conc(ex, cfg, True, True, s['nFINi'], 0, None)
+    n = (s['nP1i'] + s['nRIP'] * 2 * j + s['nSTP'] + s['nTRN']
+         + s['nRET'] * j + s['nFINi'])
+    return cfg, n, U
+
+
+def replay_boot_v2(ex, E, jp, s):
+    p = (1 << (jp + 1)) - 1
+    cfg = (E, Ip(p) + TAIL, 0, list(FAR))
+    U = {}
+    cfg, _ = conc(ex, cfg, True, True, s['nP1'], 1, 1)
+    cfg, _ = cycl(ex, cfg, 1, s['nRIP'], 2 * jp + 1)
+    cfg, U['STPO'] = conc(ex, cfg, False, True, s['nSTPO'], None, 0)
+    cfg, _ = cycr(ex, cfg, 2, s['nRET'], jp)
+    cfg, U['FINx'] = conc(ex, cfg, True, True, s['nFINX'], 0, None)
+    n = (s['nP1'] + s['nRIP'] * (2 * jp + 1) + s['nSTPO']
+         + s['nRET'] * jp + s['nFINX'])
+    return cfg, n, U
+
+
+def replay_exit_v2(ex, E, Ein, Ff, K, s):
+    u0 = (1 << K) - 1
+    cfg = (Ein, Ip(u0) + TIN, 0, list(Ff))
+    U = {}
+    cfg, U['P1ie'] = conc(ex, cfg, True, True, s['nP1i'], 1, len(Ff))
+    cfg, _ = cycl(ex, cfg, 1, s['nRIP'], 2 * K - 1)
+    cfg, U['STPOe'] = conc(ex, cfg, False, True, s['nSTPOE'], None, 0)
+    cfg, _ = cycr(ex, cfg, 2, s['nRET'], K)
+    cfg, U['FINe'] = conc(ex, cfg, True, True, s['nFINE'], 0, len(Ff))
+    n = (s['nP1i'] + s['nRIP'] * (2 * K - 1) + s['nSTPOE'] + s['nRET'] * K
+         + s['nFINE'])
+    return cfg, n, U
+
+
+REPLAYS = {
+    'v1': dict(int=replay_int, inner=replay_inner, boot=replay_boot,
+               exit=replay_exit),
+    'v2': dict(int=replay_int_v2, inner=replay_inner_v2, boot=replay_boot_v2,
+               exit=replay_exit_v2),
+}
+
+
 # ------------------------------------------------------------- derivation ----
 def affine2(pts):
     js = sorted(pts)
@@ -212,8 +281,28 @@ def derive_interior(spec, E):
                         continue
                     if n != ints[JI] or cfg != tgt:
                         continue
-                    return s, U
-    raise DeriveError('no flip interior skeleton fits (a=%d b=%d)' % (a, b))
+                    return 'v1', s, U
+    # V2: P1 pops the head-adjacent S1 (intercept has no nRIP term)
+    for nP1 in range(1, 13):
+        for nRIP in range(1, 4):
+            nRET = b - 2 * nRIP
+            if nRET < 1:
+                continue
+            for nSTP in range(1, 15):
+                for nTRN in range(1, 6):
+                    nFIN = a - nP1 - nSTP - nTRN
+                    if nFIN < 1:
+                        continue
+                    s = dict(nP1=nP1, nRIP=nRIP, nRET=nRET, nSTP=nSTP,
+                             nTRN=nTRN, nFIN=nFIN)
+                    try:
+                        cfg, n, U = replay_int_v2(ex, E, m_int(JI), JI, s)
+                    except (Wall, KeyError, IndexError):
+                        continue
+                    if n != ints[JI] or cfg != tgt:
+                        continue
+                    return 'v2', s, U
+    raise DeriveError('no interior skeleton fits (a=%d b=%d)' % (a, b))
 
 
 def check_interior_shapes(E, U):
@@ -237,6 +326,33 @@ def check_interior_shapes(E, U):
     if Te != (QR, (), 1, (1, 1)) or Tx != (QR, (0, 1), 1, ()):
         msgs.append('return %s -> %s not [1;1]->[0;1]' % (Te, Tx))
     if Fe != (QR, (), 1, (1, 0)) or Fx != (E, (1,), 0, (0,)):
+        msgs.append('close %s -> %s' % (Fe, Fx))
+    if QR == Erip:
+        msgs.append('QR collides with Erip')
+    return msgs, Erip, QR
+
+
+def check_interior_shapes_v2(E, U):
+    msgs = []
+    (Pe, Px) = U['P1']
+    (Re, Rx) = U['RIP']
+    (Se, Sx) = U['STPI']
+    (Ne, Nx) = U['TRN']
+    (Te, Tx) = U['RET']
+    (Fe, Fx) = U['FIN']
+    Erip = Px[0]
+    QR = Nx[0]
+    if Pe != (E, (1,), 0, (0,)) or Px != (Erip, (), 1, (0, 0)):
+        msgs.append('P1 %s -> %s not a pop-prologue' % (Pe, Px))
+    if Re != (Erip, (1,), 1, ()) or Rx != (Erip, (), 1, (1,)):
+        msgs.append('ripple %s -> %s' % (Re, Rx))
+    if Se != (Erip, (0,), 1, ()) or Sx != (Erip, (), 0, (1,)):
+        msgs.append('interior stop %s -> %s' % (Se, Sx))
+    if Ne != (Erip, (), 0, (1,)) or Nx != (QR, (1,), 1, ()):
+        msgs.append('turn %s -> %s' % (Ne, Nx))
+    if Te != (QR, (), 1, (1, 1)) or Tx != (QR, (0, 1), 1, ()):
+        msgs.append('return %s -> %s not [1;1]->[0;1]' % (Te, Tx))
+    if Fe != (QR, (), 1, (0, 0)) or Fx != (E, (1,), 0, (0,)):
         msgs.append('close %s -> %s' % (Fe, Fx))
     if QR == Erip:
         msgs.append('QR collides with Erip')
@@ -283,27 +399,28 @@ def find_inner_anchor(spec, E, K=5):
             prev = min(cand)
             times.append(prev)
         if ok:
-            out.append((q, list(far) + [0], times))
+            out.append((q, list(far), times))
     out.sort(key=lambda c: (len(c[1]), c[2][0]))
     return out
 
 
-def derive_inner(spec, E, Ein, Ff, s):
+def derive_inner(spec, variant, E, Ein, Ff, s):
     """nP1i / nFINi for the inner lap (reusing RIP/STPI/TRN/RET)."""
     raw = Raw(spec)
     ex = Exec(spec)
+    rp = REPLAYS[variant]['inner']
     JI = 3
     v = m_int(JI)
     n_raw = raw_to(raw, cin(Ein, v, Ff), cin(Ein, v + 1, Ff))
     if n_raw is None:
-        raise DeriveError('inner lap does not close exactly (v=%d)' % v)
-    rem = n_raw - (s['nRIP'] * (2 * JI + 1) + s['nSTP'] + s['nTRN']
-                   + s['nRET'] * JI)
+        raise DeriveError('inner lap does not close (v=%d)' % v)
+    ripn = 2 * JI + 1 if variant == 'v1' else 2 * JI
+    rem = n_raw - (s['nRIP'] * ripn + s['nSTP'] + s['nTRN'] + s['nRET'] * JI)
     tgt = cin(Ein, v + 1, Ff)
     for nP1i in range(1, rem):
         s2 = dict(s, nP1i=nP1i, nFINi=rem - nP1i)
         try:
-            cfg, n, U = replay_inner(ex, E, Ein, Ff, v, JI, s2)
+            cfg, n, U = rp(ex, E, Ein, Ff, v, JI, s2)
         except (Wall, KeyError, IndexError):
             continue
         if cfg == tgt and n == n_raw:
@@ -311,13 +428,19 @@ def derive_inner(spec, E, Ein, Ff, s):
     raise DeriveError('no inner P1i/FINi split fits (rem=%d)' % rem)
 
 
-def check_inner_shapes(Erip, QR, Ein, Ff, U):
+def check_inner_shapes(variant, Erip, QR, Ein, Ff, U):
     msgs = []
     (Pe, Px) = U['P1i']
     (Fe, Fx) = U['FINi']
-    if Pe != (Ein, (), 0, tuple(Ff)) or Px != (Erip, (), 1, tuple(Ff)):
-        msgs.append('P1i %s -> %s (need (Ein,[],0,Ff)->(Erip,[],1,Ff))'
-                    % (Pe, Px))
+    if variant == 'v1':
+        if Pe != (Ein, (), 0, tuple(Ff)) or Px != (Erip, (), 1, tuple(Ff)):
+            msgs.append('P1i %s -> %s (need (Ein,[],0,Ff)->(Erip,[],1,Ff))'
+                        % (Pe, Px))
+    else:
+        if Pe != (Ein, (1,), 0, tuple(Ff)) \
+                or Px != (Erip, (), 1, tuple([1] + list(Ff))):
+            msgs.append('P1i %s -> %s (need (Ein,[1],0,Ff)->(Erip,[],1,'
+                        '[1]++Ff))' % (Pe, Px))
     if Fe != (QR, (), 1, tuple([1] + list(Ff))):
         msgs.append('FINi entry %s (need (QR,[],1,[1]++Ff))' % (Fe,))
     if Fx != (Ein, (1,), 0, tuple(Ff)):
@@ -325,52 +448,67 @@ def check_inner_shapes(Erip, QR, Ein, Ff, U):
     return msgs
 
 
-def derive_boot(spec, E, Ein, Ff, s):
+def derive_boot(spec, variant, E, Ein, sfar, s):
+    """STPO/FINx split; the exact landing far word becomes Ff."""
     raw = Raw(spec)
     ex = Exec(spec)
+    rp = REPLAYS[variant]['boot']
     jp = 3
-    n_raw = raw_to(raw, cc(E, (1 << (jp + 1)) - 1), cin(Ein, 1 << jp, Ff))
+    n_raw = raw_to(raw, cc(E, (1 << (jp + 1)) - 1),
+                   cin(Ein, 1 << jp, list(sfar) + [0]))
     if n_raw is None:
-        raise DeriveError('boot does not reach Cin(2^jp) exactly')
-    rem = n_raw - (s['nP1'] + s['nRIP'] * (2 * jp + 2)
-                   + s['nRET'] * (jp + 1))
-    tgt = cin(Ein, 1 << jp, Ff)
+        raise DeriveError('boot does not reach Cin(2^jp)')
+    if variant == 'v1':
+        fixed = s['nP1'] + s['nRIP'] * (2 * jp + 2) + s['nRET'] * (jp + 1)
+    else:
+        fixed = s['nP1'] + s['nRIP'] * (2 * jp + 1) + s['nRET'] * jp
+    rem = n_raw - fixed
+    want_l = Ip(1 << jp) + TIN
     for nSTPO in range(1, rem):
         s2 = dict(s, nSTPO=nSTPO, nFINX=rem - nSTPO)
         try:
-            cfg, n, U = replay_boot(ex, E, jp, s2)
+            cfg, n, U = rp(ex, E, jp, s2)
         except (Wall, KeyError, IndexError):
             continue
-        if cfg == tgt and n == n_raw:
-            return s2, U
+        if (n == n_raw and cfg[0] == Ein and cfg[1] == want_l
+                and cfg[2] == 0 and strip0(cfg[3]) == list(sfar)):
+            return s2, U, list(cfg[3])
     raise DeriveError('no boot STPO/FINx split fits (rem=%d)' % rem)
 
 
-def check_boot_shapes(Erip, Ein, QR, Ff, U):
+def check_boot_shapes(variant, Erip, Ein, QR, Ff, U):
     msgs = []
     (Oe, Ox) = U['STPO']
     (Xe, Xx) = U['FINx']
     if Oe != (Erip, (0,), 1, ()) or Ox != (QR, (1,), 1, ()):
         msgs.append('STPO %s -> %s (need (Erip,[0],1,[])->(QR,[1],1,[]))'
                     % (Oe, Ox))
-    if Xe != (QR, (0,), 1, (0,)) or Xx != (Ein, (), 0, tuple(Ff)):
-        msgs.append('FINx %s -> %s (need (QR,[0],1,[0])->(Ein,[],0,Ff))'
-                    % (Xe, Xx))
+    if variant == 'v1':
+        if Xe != (QR, (0,), 1, (0,)) or Xx != (Ein, (), 0, tuple(Ff)):
+            msgs.append('FINx %s -> %s (need (QR,[0],1,[0])->(Ein,[],0,Ff))'
+                        % (Xe, Xx))
+    else:
+        if Xe != (QR, (), 1, tuple([1] + list(Ff))) \
+                or Xx != (Ein, (1,), 0, tuple(Ff)):
+            msgs.append('FINx %s -> %s (need the closed FINi window)'
+                        % (Xe, Xx))
     return msgs
 
 
-def derive_exit(spec, E, Ein, Ff, s):
+def derive_exit(spec, variant, E, Ein, Ff, s):
     raw = Raw(spec)
     ex = Exec(spec)
+    rp = REPLAYS[variant]['exit']
     K = 4
     n_raw, fx = raw_exit_landing(raw, E, Ein, Ff, K)
     if n_raw is None:
         raise DeriveError('exit does not land on Cc(2^K) shape')
-    rem = n_raw - (s['nP1i'] + s['nRIP'] * 2 * K + s['nRET'] * K)
+    ripn = 2 * K if variant == 'v1' else 2 * K - 1
+    rem = n_raw - (s['nP1i'] + s['nRIP'] * ripn + s['nRET'] * K)
     for nSTPOE in range(1, rem):
         s2 = dict(s, nSTPOE=nSTPOE, nFINE=rem - nSTPOE)
         try:
-            cfg, n, U = replay_exit(ex, E, Ein, Ff, K, s2)
+            cfg, n, U = rp(ex, E, Ein, Ff, K, s2)
         except (Wall, KeyError, IndexError):
             continue
         if n != n_raw:
@@ -381,7 +519,7 @@ def derive_exit(spec, E, Ein, Ff, s):
     raise DeriveError('no exit STPOe/FINe split fits (rem=%d)' % rem)
 
 
-def check_exit_shapes(E, Erip, Ein, QR, Ff, Fx, U):
+def check_exit_shapes(variant, E, Erip, Ein, QR, Ff, Fx, U):
     msgs = []
     (Oe, Ox) = U['STPOe']
     (Ge, Gx) = U['FINe']
@@ -391,42 +529,42 @@ def check_exit_shapes(E, Erip, Ein, QR, Ff, Fx, U):
     if Ge != (QR, (), 1, tuple(Ff)) or Gx != (E, (1,), 0, tuple(Fx)):
         msgs.append('FINe %s -> %s (need (QR,[],1,Ff)->(E,[1],0,Fx))'
                     % (Ge, Gx))
-    if list(Fx) not in ([], [0]):
-        msgs.append('exit far %s not in {[],[0]}' % (Fx,))
+    if list(Fx) not in ([], [0], [0, 0]):
+        msgs.append('exit far %s not an understood blank pad' % (Fx,))
     return msgs
 
 
 # -------------------------------------------------------------- validation ---
-def validate_all(spec, E, Ein, Ff, s):
+def validate_all(spec, variant, E, Ein, Ff, s):
     raw = Raw(spec)
     ex = Exec(spec)
-    # interior differential
+    rint = REPLAYS[variant]['int']
+    rinn = REPLAYS[variant]['inner']
+    rboot = REPLAYS[variant]['boot']
+    rexit = REPLAYS[variant]['exit']
     for p in range(2, 200):
         j = j_of(p)
         if p == (1 << j) - 1:
             continue
-        cfg, n, _ = replay_int(ex, E, p, j, s)
+        cfg, n, _ = rint(ex, E, p, j, s)
         if cfg != cc(E, p + 1):
             raise DeriveError('interior p=%d: symbolic misses anchor' % p)
         if raw_to(raw, cc(E, p), cc(E, p + 1)) != n:
             raise DeriveError('interior p=%d: step count mismatch' % p)
-    # inner laps exact
     for v in range(2, 300):
         j = j_of(v)
         if v == (1 << j) - 1:
             continue
-        cfg, n, _ = replay_inner(ex, E, Ein, Ff, v, j, s)
+        cfg, n, _ = rinn(ex, E, Ein, Ff, v, j, s)
         if cfg != cin(Ein, v + 1, Ff):
             raise DeriveError('inner v=%d: symbolic misses anchor' % v)
-    # boot
     for jp in range(0, 8):
-        cfg, n, _ = replay_boot(ex, E, jp, s)
+        cfg, n, _ = rboot(ex, E, jp, s)
         if cfg != cin(Ein, 1 << jp, Ff):
             raise DeriveError('boot jp=%d: misses Cin(2^jp)' % jp)
-    # exit
     fx0 = None
     for K in range(1, 9):
-        cfg, n, _ = replay_exit(ex, E, Ein, Ff, K, s)
+        cfg, n, _ = rexit(ex, E, Ein, Ff, K, s)
         if not (cfg[0] == E and cfg[1] == Ip(1 << K) + [1] and cfg[2] == 0
                 and not strip0(cfg[3])):
             raise DeriveError('exit K=%d: misses landing' % K)
@@ -434,20 +572,16 @@ def validate_all(spec, E, Ein, Ff, s):
             fx0 = list(cfg[3])
         elif list(cfg[3]) != fx0:
             raise DeriveError('exit far varies with K')
-    # composed outer overflow, step-exact vs raw
     for K in range(1, 8):
-        p = (1 << K) - 1
-        n = replay_boot(ex, E, K - 1, s)[1]
+        n = rboot(ex, E, K - 1, s)[1]
         for v in range(1 << (K - 1), (1 << K) - 1):
-            n += replay_inner(ex, E, Ein, Ff, v, j_of(v), s)[1]
-        n += replay_exit(ex, E, Ein, Ff, K, s)[1]
-        r, _ = raw_exit_landing(Raw(spec), E, Ein, Ff, K, maxs=800000)
-        # measure raw from the OUTER anchor, not Cin
+            n += rinn(ex, E, Ein, Ff, v, j_of(v), s)[1]
+        n += rexit(ex, E, Ein, Ff, K, s)[1]
         r = raw_ov(raw, E, K)
         if r != n:
             raise DeriveError('composed overflow K=%d: sym %s != raw %s'
                               % (K, n, r))
-    return True
+    return fx0
 
 
 def raw_ov(raw, E, K, maxs=800000):
@@ -483,19 +617,21 @@ def boot_probe(spec, E, p0, maxT=100000):
 
 
 # ------------------------------------------------------------------ visits ---
-def visit_plan(spec, E, Erip, QR, Ein, Ff, s):
+def visit_plan(spec, variant, E, Erip, QR, Ein, Ff, s):
     """Per-state witness routes.  Returns {q: route-tuple}."""
     ex = Exec(spec)
     tab = parse(spec)
     plan = {E: ('anchor',)}
+    p1win = ([], [0]) if variant == 'v1' else ([1], [0])
+    p1iwin = ([], list(Ff)) if variant == 'v1' else ([1], list(Ff))
     for q in range(4):
         if q in plan:
             continue
         found = None
-        # (a) prefix of the P1 window (uniform in p: reads head + far only)
         for t in range(1, s['nP1']):
             try:
-                o = ex.wsteps(True, True, E, [], 0, list(FAR), t)
+                o = ex.wsteps(True, True, E, list(p1win[0]), 0,
+                              list(p1win[1]), t)
             except Wall:
                 break
             if o[0] == q:
@@ -504,12 +640,10 @@ def visit_plan(spec, E, Erip, QR, Ein, Ff, s):
         if found is None and q == QR:
             found = ('qr',)
         if found is None:
-            # (b') one step past the turn / overflow stop
             e = tab.get((QR, 1))
             if e is not None and e[1] > 0 and e[2] == q:
                 found = ('vc', e[0])
         if found is None:
-            # (c1) prefix of the STPO window (deep overflow route)
             for t in range(1, s['nSTPO']):
                 try:
                     o = ex.wsteps(False, True, Erip, [0], 1, [], t)
@@ -520,10 +654,13 @@ def visit_plan(spec, E, Erip, QR, Ein, Ff, s):
                              (o[0], tuple(o[1]), o[2], tuple(o[3])))
                     break
         if found is None:
-            # (c2) prefix of the FINx window, after the boot RET
             for t in range(1, s['nFINX'] + 1):
                 try:
-                    o = ex.wsteps(True, False, QR, [0], 1, [0], t)
+                    if variant == 'v1':
+                        o = ex.wsteps(True, False, QR, [0], 1, [0], t)
+                    else:
+                        o = ex.wsteps(True, True, QR, [], 1,
+                                      [1] + list(Ff), t)
                 except Wall:
                     break
                 if o[0] == q:
@@ -531,10 +668,10 @@ def visit_plan(spec, E, Erip, QR, Ein, Ff, s):
                              (o[0], tuple(o[1]), o[2], tuple(o[3])))
                     break
         if found is None:
-            # (i) prefix of the P1i window, after the full boot
             for t in range(1, s['nP1i']):
                 try:
-                    o = ex.wsteps(True, True, Ein, [], 0, list(Ff), t)
+                    o = ex.wsteps(True, True, Ein, list(p1iwin[0]), 0,
+                                  list(p1iwin[1]), t)
                 except Wall:
                     break
                 if o[0] == q:
@@ -927,8 +1064,226 @@ DEEP_P1I = r'''      eapply csteps_chain. { apply phSTPO_@ID@. }
       apply phVI@N@_@ID@.'''
 
 
-def render_vis(spec, E, QR, Ein, Ff, s, plan, ex):
+def _mk_head_v2():
+    """The V2 (pop-P1) template: P1/P1i pop the head-adjacent S1, ripple
+    2j / S(2j') / S(2n), FIN closes over [S0;S0], FINx is the closed FINi
+    window.  Constructed from HEAD by asserted textual surgery so the two
+    variants cannot drift silently."""
+    h = HEAD
+    U_P1_A = 'Lemma U_P1_@ID@ : wsteps true true tm @NP1@ (@EDGE@,([],S0,[S0])) = Some (@ERIP@,([],S1,[S0])).'
+    U_P1_B = 'Lemma U_P1_@ID@ : wsteps true true tm @NP1@ (@EDGE@,([S1],S0,[S0])) = Some (@ERIP@,([],S1,[S0;S0])).'
+    U_P1I_A = 'Lemma U_P1i_@ID@ : wsteps true true tm @NP1I@ (@EIN@,([],S0,@FF@)) = Some (@ERIP@,([],S1,@FF@)).'
+    U_P1I_B = 'Lemma U_P1i_@ID@ : wsteps true true tm @NP1I@ (@EIN@,([S1],S0,@FF@)) = Some (@ERIP@,([],S1,@FI@)).'
+    U_FIN_A = 'Lemma U_FIN_@ID@ : wsteps true true tm @NFIN@ (@QR@,([],S1,[S1;S0])) = Some (@EDGE@,([S1],S0,[S0])).'
+    U_FIN_B = 'Lemma U_FIN_@ID@ : wsteps true true tm @NFIN@ (@QR@,([],S1,[S0;S0])) = Some (@EDGE@,([S1],S0,[S0])).'
+    U_FINX_A = 'Lemma U_FINx_@ID@ : wsteps true false tm @NFINX@ (@QR@,([S0],S1,[S0])) = Some (@EIN@,([],S0,@FF@)).'
+    U_FINX_B = 'Lemma U_FINx_@ID@ : wsteps true true tm @NFINX@ (@QR@,([],S1,@FI@)) = Some (@EIN@,([S1],S0,@FF@)).'
+    PH_P1_A = 'Lemma phP1_@ID@ : forall L R, csteps tm @NP1@ (@EDGE@,(L,S0,S0::R)) = Some (@ERIP@,(L,S1,S0::R)).'
+    PH_P1_B = 'Lemma phP1_@ID@ : forall L R, csteps tm @NP1@ (@EDGE@,(S1::L,S0,S0::R)) = Some (@ERIP@,(L,S1,S0::S0::R)).'
+    PH_P1I_A = 'Lemma phP1i_@ID@ : forall L R, csteps tm @NP1I@ (@EIN@,(L,S0,@FFC@R)) = Some (@ERIP@,(L,S1,@FFC@R)).'
+    PH_P1I_B = 'Lemma phP1i_@ID@ : forall L R, csteps tm @NP1I@ (@EIN@,(S1::L,S0,@FFC@R)) = Some (@ERIP@,(L,S1,S1::@FFC@R)).'
+    PH_FIN_A = 'Lemma phFIN_@ID@ : forall L R, csteps tm @NFIN@ (@QR@,(L,S1,S1::S0::R)) = Some (@EDGE@,(S1::L,S0,S0::R)).'
+    PH_FIN_B = 'Lemma phFIN_@ID@ : forall L R, csteps tm @NFIN@ (@QR@,(L,S1,S0::S0::R)) = Some (@EDGE@,(S1::L,S0,S0::R)).'
+    PH_FINX_A = ('Lemma phFINx_@ID@ : forall L, csteps tm @NFINX@ (@QR@,(S0::L,S1,[S0])) = Some (@EIN@,(L,S0,@FF@)).\n'
+                 'Proof. intros. exact (wsteps_frame_r _ _ _ _ _ _ _ _ _ _ L U_FINx_@ID@). Qed.')
+    PH_FINX_B = ('Lemma phFINx_@ID@ : forall L R, csteps tm @NFINX@ (@QR@,(L,S1,S1::@FFC@R)) = Some (@EIN@,(S1::L,S0,@FFC@R)).\n'
+                 'Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R U_FINx_@ID@). Qed.')
+    LAPINT_A = (
+        '    rewrite rep_dbl, <- rep_slide.\n'
+        '    eapply csteps_chain. { apply phP1_@ID@. }\n'
+        '    eapply csteps_chain. { apply (phRIP_@ID@ (S (2*j))). }\n'
+        '    eapply csteps_chain. { apply phSTPI_@ID@. }\n'
+        '    eapply csteps_chain. { apply phTRN_@ID@. }\n'
+        '    change (rep [S1] (S (2*j)) ++ [S0]) with (S1 :: rep [S1] (2*j) ++ [S0]).\n'
+        '    rewrite rep_slide, <- rep_dbl.\n'
+        '    eapply csteps_chain. { apply (phRET_@ID@ j). }\n'
+        '    apply phFIN_@ID@.')
+    LAPINT_B = (
+        '    rewrite rep_dbl, <- rep_slide.\n'
+        '    change (rep [S1] (S (2*j))) with (S1 :: rep [S1] (2*j)). cbn [app].\n'
+        '    eapply csteps_chain. { apply phP1_@ID@. }\n'
+        '    eapply csteps_chain. { apply (phRIP_@ID@ (2*j)). }\n'
+        '    eapply csteps_chain. { apply phSTPI_@ID@. }\n'
+        '    eapply csteps_chain. { apply phTRN_@ID@. }\n'
+        '    rewrite <- rep_dbl.\n'
+        '    eapply csteps_chain. { apply (phRET_@ID@ j). }\n'
+        '    apply phFIN_@ID@.')
+    LAPINN_A = (
+        '    rewrite rep_dbl, <- rep_slide.\n'
+        '    eapply csteps_chain. { apply phP1i_@ID@. }\n'
+        '    eapply csteps_chain. { apply (phRIP_@ID@ (S (2*j))). }\n'
+        '    eapply csteps_chain. { apply phSTPI_@ID@. }\n'
+        '    eapply csteps_chain. { apply phTRN_@ID@. }\n'
+        '    change (rep [S1] (S (2*j)) ++ @FF@) with (S1 :: rep [S1] (2*j) ++ @FF@).\n'
+        '    rewrite rep_slide, <- rep_dbl.\n'
+        '    eapply csteps_chain. { apply (phRET_@ID@ j). }\n'
+        '    apply phFINi_@ID@.')
+    LAPINN_B = (
+        '    rewrite rep_dbl, <- rep_slide.\n'
+        '    change (rep [S1] (S (2*j))) with (S1 :: rep [S1] (2*j)). cbn [app].\n'
+        '    eapply csteps_chain. { apply phP1i_@ID@. }\n'
+        '    eapply csteps_chain. { apply (phRIP_@ID@ (2*j)). }\n'
+        '    eapply csteps_chain. { apply phSTPI_@ID@. }\n'
+        '    eapply csteps_chain. { apply phTRN_@ID@. }\n'
+        '    rewrite <- rep_dbl.\n'
+        '    eapply csteps_chain. { apply (phRET_@ID@ j). }\n'
+        '    apply phFINi_@ID@.')
+    BOOT_A = (
+        '    rewrite rep_dbl, <- !rep_slide.\n'
+        '    eapply csteps_chain. { apply phP1_@ID@. }\n'
+        '    eapply csteps_chain. { apply (phRIP_@ID@ (S (S (2*n)))). }\n'
+        '    eapply csteps_chain. { apply phSTPO_@ID@. }\n'
+        '    change (rep [S1] (S (S (2*n))) ++ [S0]) with (S1 :: S1 :: rep [S1] (2*n) ++ [S0]).\n'
+        '    rewrite <- rep_dbl.\n'
+        '    change (S1 :: S1 :: rep [S1;S1] n ++ [S0]) with (rep [S1;S1] (S n) ++ [S0]).\n'
+        '    eapply csteps_chain. { apply (phRET_@ID@ (S n)). }\n'
+        '    change (rep [S0;S1] (S n) ++ [S1]) with (S0 :: S1 :: rep [S0;S1] n ++ [S1]).\n'
+        '    apply phFINx_@ID@.')
+    BOOT_B = (
+        '    rewrite rep_dbl, <- !rep_slide.\n'
+        '    change (rep [S1] (S (S (2*n)))) with (S1 :: rep [S1] (S (2*n))). cbn [app].\n'
+        '    eapply csteps_chain. { apply phP1_@ID@. }\n'
+        '    eapply csteps_chain. { apply (phRIP_@ID@ (S (2*n))). }\n'
+        '    eapply csteps_chain. { apply phSTPO_@ID@. }\n'
+        '    change (rep [S1] (S (2*n)) ++ [S0;S0]) with (S1 :: rep [S1] (2*n) ++ [S0;S0]).\n'
+        '    rewrite rep_slide, <- rep_dbl.\n'
+        '    eapply csteps_chain. { apply (phRET_@ID@ n). }\n'
+        '    apply phFINx_@ID@.')
+    EXIT_A = (
+        '    rewrite pair_fold, rep_dbl.\n'
+        '    eapply csteps_chain. { apply phP1i_@ID@. }\n'
+        '    eapply csteps_chain. { apply (phRIP_@ID@ (2 * S n)). }\n'
+        '    eapply csteps_chain. { apply phSTPOe_@ID@. }\n'
+        '    rewrite <- rep_dbl.\n'
+        '    eapply csteps_chain. { apply (phRET_@ID@ (S n)). }\n'
+        '    apply phFINe_@ID@.')
+    EXIT_B = (
+        '    rewrite pair_fold, rep_dbl.\n'
+        '    replace (2 * S n) with (S (S (2 * n))) by lia.\n'
+        '    change (rep [S1] (S (S (2 * n)))) with (S1 :: rep [S1] (S (2 * n))). cbn [app].\n'
+        '    eapply csteps_chain. { apply phP1i_@ID@. }\n'
+        '    eapply csteps_chain. { apply (phRIP_@ID@ (S (2 * n))). }\n'
+        '    eapply csteps_chain. { apply phSTPOe_@ID@. }\n'
+        '    rewrite <- rep_slide.\n'
+        '    change (S1 :: rep [S1] (S (2 * n)) ++ @FFC@nil) with (rep [S1] (S (S (2 * n))) ++ @FFC@nil).\n'
+        '    replace (S (S (2 * n))) with (2 * S n) by lia.\n'
+        '    rewrite <- rep_dbl.\n'
+        '    eapply csteps_chain. { apply (phRET_@ID@ (S n)). }\n'
+        '    apply phFINe_@ID@.')
+    for a, b in [(U_P1_A, U_P1_B), (U_P1I_A, U_P1I_B), (U_FIN_A, U_FIN_B),
+                 (U_FINX_A, U_FINX_B), (PH_P1_A, PH_P1_B),
+                 (PH_P1I_A, PH_P1I_B), (PH_FIN_A, PH_FIN_B),
+                 (PH_FINX_A, PH_FINX_B), (LAPINT_A, LAPINT_B),
+                 (LAPINN_A, LAPINN_B), (BOOT_A, BOOT_B), (EXIT_A, EXIT_B)]:
+        assert a in h, 'HEAD_V2 source fragment missing: %r' % a[:70]
+        h = h.replace(a, b)
+    return h
+
+
+HEAD_V2 = _mk_head_v2()
+
+VIS_PREFA_V2 = (
+    '(** @QV@: @T@ steps from the anchor, inside the P1 window (uniform in p). *)\n'
+    'Lemma vis_A@N@_@ID@ : forall p, exists k c, csteps tm k (Cc p) = Some c /\\ fst c = @QV@.\n'
+    'Proof.\n'
+    '  intro p. destruct (Ip_head p) as (w & Hw). unfold Cc_@ID@.\n'
+    '  rewrite Hw. cbn [app]. exists @T@. eexists. split.\n'
+    '  - apply phVA@N@_@ID@.\n'
+    '  - reflexivity.\n'
+    'Qed.\n')
+
+_V2_OV_PREFIX = (
+    '    + rewrite HIp, <- app_assoc. cbn [app].\n'
+    '      rewrite rep_dbl, <- !rep_slide.\n'
+    '      change (rep [S1] (S (S (2*j\')))) with (S1 :: rep [S1] (S (2*j\'))). cbn [app].\n'
+    '      eapply csteps_chain. { apply phP1_@ID@. }\n'
+    '      eapply csteps_chain. { apply (phRIP_@ID@ (S (2*j\'))). }\n')
+
+VIS_QR_V2 = (
+    '(** @QR@ is entered by the turn (interior) and by the overflow stop. *)\n'
+    'Lemma vis_R_@ID@ : forall p, exists k c, csteps tm k (Cc p) = Some c /\\ fst c = @QR@.\n'
+    'Proof.\n'
+    '  intro p. destruct (cview p) as [j oq] eqn:Ecv. destruct oq as [q0|].\n'
+    '  - destruct (cview_some_I p j q0 Ecv) as (HIp & _).\n'
+    '    unfold Cc_@ID@. eexists. eexists. split.\n'
+    '    + rewrite HIp, <- app_assoc. cbn [app].\n'
+    '      rewrite rep_dbl, <- rep_slide.\n'
+    '      change (rep [S1] (S (2*j))) with (S1 :: rep [S1] (2*j)). cbn [app].\n'
+    '      eapply csteps_chain. { apply phP1_@ID@. }\n'
+    '      eapply csteps_chain. { apply (phRIP_@ID@ (2*j)). }\n'
+    '      eapply csteps_chain. { apply phSTPI_@ID@. }\n'
+    '      apply phTRN_@ID@.\n'
+    '    + reflexivity.\n'
+    '  - destruct j as [|j\'].\n'
+    '    { exfalso. destruct p; simpl in Ecv; [destruct (cview p); discriminate|discriminate|discriminate]. }\n'
+    '    destruct (cview_none_I p j\' Ecv) as (HIp & _).\n'
+    '    unfold Cc_@ID@. eexists. eexists. split.\n'
+    + _V2_OV_PREFIX +
+    '      apply phSTPO_@ID@.\n'
+    '    + reflexivity.\n'
+    'Qed.\n')
+
+_V2_DEEP_WRAP = (
+    'Lemma vis_D@N@_@ID@ : forall p, exists k c, csteps tm k (Cc p) = Some c /\\ fst c = @QV@.\n'
+    'Proof.\n'
+    '  intro p; remember (tovf p) as fuel eqn:Ef; revert p Ef.\n'
+    '  induction fuel as [fuel IH] using (well_founded_induction lt_wf); intros p Ef.\n'
+    '  destruct (cview p) as [j oq] eqn:Ecv. destruct oq as [q0|].\n'
+    '  - assert (Hnz : tovf p <> 0).\n'
+    '    { intro H0. destruct (tovf0_allones p H0) as (jj & Hjj). rewrite Hjj in Ecv; discriminate. }\n'
+    '    destruct (lap_int_@ID@ p j q0 Ecv) as (n & c\' & Hrun & Hc\' & _). subst c\'.\n'
+    '    destruct (IH (tovf (Pos.succ p)) (ltac:(rewrite tovf_succ by lia; lia)) (Pos.succ p) eq_refl) as (k & c & Hk & Hq).\n'
+    '    exists (n + k), c. rewrite csteps_add, Hrun. exact (conj Hk Hq).\n'
+    '  - destruct j as [|j\'].\n'
+    '    { exfalso. destruct p; simpl in Ecv; [destruct (cview p); discriminate|discriminate|discriminate]. }\n'
+    '    destruct (cview_none_I p j\' Ecv) as (HIp & _).\n'
+    '    unfold Cc_@ID@. eexists. eexists. split.\n'
+    + _V2_OV_PREFIX +
+    '@DEEPTAC@\n'
+    '    + reflexivity.\n'
+    'Qed.\n')
+
+VIS_DEEP_HEAD_V2 = (
+    '(** @QV@ fires only inside the OVERFLOW machinery; reach an all-ones\n'
+    '    counter by well-founded induction on [tovf] (the interior laps close\n'
+    '    EXACTLY), then run the overflow prefix into the witness window. *)\n'
+    + _V2_DEEP_WRAP)
+
+VIS_VC_V2 = (
+    '(** @QVC@: one step past the overflow stop; every p reduces to an\n'
+    '    overflow anchor by well-founded induction on [tovf]. *)\n'
+    'Lemma phVC_@ID@ : forall x L R, csteps tm 1 (@QR@,(L,S1,x::R)) = Some (@QVC@,(@WVC@::L,x,R)).\n'
+    'Proof. intros. reflexivity. Qed.\n'
+    '\n'
+    + _V2_DEEP_WRAP
+    .replace('vis_D@N@_@ID@', 'vis_VC_@ID@')
+    .replace('@QV@', '@QVC@')
+    .replace('@DEEPTAC@',
+             '      eapply csteps_chain. { apply phSTPO_@ID@. }\n'
+             '      change (rep [S1] (S (2*j\')) ++ [S0;S0]) with (S1 :: rep [S1] (2*j\') ++ [S0;S0]).\n'
+             '      apply phVC_@ID@.'))
+
+DEEP_STPO_V2 = '      apply phVS@N@_@ID@.'
+
+DEEP_FINX_V2 = (
+    '      eapply csteps_chain. { apply phSTPO_@ID@. }\n'
+    '      change (rep [S1] (S (2*j\')) ++ [S0;S0]) with (S1 :: rep [S1] (2*j\') ++ [S0;S0]).\n'
+    '      rewrite rep_slide, <- rep_dbl.\n'
+    '      eapply csteps_chain. { apply (phRET_@ID@ j\'). }\n'
+    '      apply phVX@N@_@ID@.')
+
+DEEP_P1I_V2 = (
+    '      eapply csteps_chain. { apply phSTPO_@ID@. }\n'
+    '      change (rep [S1] (S (2*j\')) ++ [S0;S0]) with (S1 :: rep [S1] (2*j\') ++ [S0;S0]).\n'
+    '      rewrite rep_slide, <- rep_dbl.\n'
+    '      eapply csteps_chain. { apply (phRET_@ID@ j\'). }\n'
+    '      eapply csteps_chain. { apply phFINx_@ID@. }\n'
+    '      apply phVI@N@_@ID@.')
+
+
+def render_vis(variant, spec, E, QR, Ein, Ff, s, plan, ex):
     """Returns (uvis, phvis, lemmas, cases)."""
+    v2 = (variant == 'v2')
     uvis, phvis, lemmas, cases = [], [], [], []
     na = nd = 0
     for q in range(4):
@@ -937,28 +1292,44 @@ def render_vis(spec, E, QR, Ein, Ff, s, plan, ex):
             cases.append('  - (* %s : the anchor state *)\n'
                          '    exists 0. eexists. split; reflexivity.' % ST[q])
         elif kind == 'qr':
-            lemmas.append(VIS_QR)
+            lemmas.append(VIS_QR_V2 if v2 else VIS_QR)
             cases.append('  - apply vis_R_@ID@.')
         elif kind == 'vc':
-            lemmas.append(VIS_VC.replace('@QVC@', ST[q])
+            lemmas.append((VIS_VC_V2 if v2 else VIS_VC)
+                          .replace('@QVC@', ST[q])
                           .replace('@WVC@', SYM[plan[q][1]]))
             cases.append('  - apply vis_VC_@ID@.')
         elif kind == 'prefa':
             na += 1
             t, ext = plan[q][1], plan[q][2]
-            uvis.append(
-                'Lemma U_VA%d_@ID@ : wsteps true true tm %d '
-                '(@EDGE@,([],S0,[S0])) = Some %s. Proof. reflexivity. Qed.'
-                % (na, t, cwin(ext)))
-            phvis.append(
-                'Lemma phVA%d_@ID@ : forall L R, csteps tm %d '
-                '(@EDGE@,(L,S0,S0::R)) = Some (%s,(%s,%s,%s)).\n'
-                'Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ '
-                'L R U_VA%d_@ID@). Qed.'
-                % (na, t, ST[ext[0]], ccons(ext[1], 'L'), SYM[ext[2]],
-                   ccons(ext[3], 'R'), na))
-            lemmas.append(VIS_PREFA.replace('@QV@', ST[q])
-                          .replace('@N@', str(na)).replace('@T@', str(t)))
+            if v2:
+                uvis.append(
+                    'Lemma U_VA%d_@ID@ : wsteps true true tm %d '
+                    '(@EDGE@,([S1],S0,[S0])) = Some %s. '
+                    'Proof. reflexivity. Qed.' % (na, t, cwin(ext)))
+                phvis.append(
+                    'Lemma phVA%d_@ID@ : forall L R, csteps tm %d '
+                    '(@EDGE@,(S1::L,S0,S0::R)) = Some (%s,(%s,%s,%s)).\n'
+                    'Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ '
+                    'L R U_VA%d_@ID@). Qed.'
+                    % (na, t, ST[ext[0]], ccons(ext[1], 'L'), SYM[ext[2]],
+                       ccons(ext[3], 'R'), na))
+                lemmas.append(VIS_PREFA_V2.replace('@QV@', ST[q])
+                              .replace('@N@', str(na)).replace('@T@', str(t)))
+            else:
+                uvis.append(
+                    'Lemma U_VA%d_@ID@ : wsteps true true tm %d '
+                    '(@EDGE@,([],S0,[S0])) = Some %s. Proof. reflexivity. Qed.'
+                    % (na, t, cwin(ext)))
+                phvis.append(
+                    'Lemma phVA%d_@ID@ : forall L R, csteps tm %d '
+                    '(@EDGE@,(L,S0,S0::R)) = Some (%s,(%s,%s,%s)).\n'
+                    'Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ '
+                    'L R U_VA%d_@ID@). Qed.'
+                    % (na, t, ST[ext[0]], ccons(ext[1], 'L'), SYM[ext[2]],
+                       ccons(ext[3], 'R'), na))
+                lemmas.append(VIS_PREFA.replace('@QV@', ST[q])
+                              .replace('@N@', str(na)).replace('@T@', str(t)))
             cases.append('  - apply vis_A%d_@ID@.' % na)
         elif kind in ('stpo', 'finx', 'p1i'):
             nd += 1
@@ -975,34 +1346,61 @@ def render_vis(spec, E, QR, Ein, Ff, s, plan, ex):
                     '_ R U_VS%d_@ID@). Qed.'
                     % (nd, t, ST[ext[0]], clist(ext[1]), SYM[ext[2]],
                        ccons(ext[3], 'R'), nd))
-                tac = DEEP_STPO
+                tac = DEEP_STPO_V2 if v2 else DEEP_STPO
             elif kind == 'finx':
-                uvis.append(
-                    'Lemma U_VX%d_@ID@ : wsteps true false tm %d '
-                    '(@QR@,([S0],S1,[S0])) = Some %s. '
-                    'Proof. reflexivity. Qed.' % (nd, t, cwin(ext)))
-                phvis.append(
-                    'Lemma phVX%d_@ID@ : forall L, csteps tm %d '
-                    '(@QR@,(S0::L,S1,[S0])) = Some (%s,(%s,%s,%s)).\n'
-                    'Proof. intros. exact (wsteps_frame_r _ _ _ _ _ _ _ _ _ '
-                    '_ L U_VX%d_@ID@). Qed.'
-                    % (nd, t, ST[ext[0]], ccons(ext[1], 'L'), SYM[ext[2]],
-                       clist(ext[3]), nd))
-                tac = DEEP_FINX
+                if v2:
+                    uvis.append(
+                        'Lemma U_VX%d_@ID@ : wsteps true true tm %d '
+                        '(@QR@,([],S1,@FI@)) = Some %s. '
+                        'Proof. reflexivity. Qed.' % (nd, t, cwin(ext)))
+                    phvis.append(
+                        'Lemma phVX%d_@ID@ : forall L R, csteps tm %d '
+                        '(@QR@,(L,S1,S1::@FFC@R)) = Some (%s,(%s,%s,%s)).\n'
+                        'Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ '
+                        '_ _ L R U_VX%d_@ID@). Qed.'
+                        % (nd, t, ST[ext[0]], ccons(ext[1], 'L'),
+                           SYM[ext[2]], ccons(ext[3], 'R'), nd))
+                else:
+                    uvis.append(
+                        'Lemma U_VX%d_@ID@ : wsteps true false tm %d '
+                        '(@QR@,([S0],S1,[S0])) = Some %s. '
+                        'Proof. reflexivity. Qed.' % (nd, t, cwin(ext)))
+                    phvis.append(
+                        'Lemma phVX%d_@ID@ : forall L, csteps tm %d '
+                        '(@QR@,(S0::L,S1,[S0])) = Some (%s,(%s,%s,%s)).\n'
+                        'Proof. intros. exact (wsteps_frame_r _ _ _ _ _ _ _ '
+                        '_ _ _ L U_VX%d_@ID@). Qed.'
+                        % (nd, t, ST[ext[0]], ccons(ext[1], 'L'),
+                           SYM[ext[2]], clist(ext[3]), nd))
+                tac = DEEP_FINX_V2 if v2 else DEEP_FINX
             else:
-                uvis.append(
-                    'Lemma U_VI%d_@ID@ : wsteps true true tm %d '
-                    '(@EIN@,([],S0,@FF@)) = Some %s. '
-                    'Proof. reflexivity. Qed.' % (nd, t, cwin(ext)))
-                phvis.append(
-                    'Lemma phVI%d_@ID@ : forall L R, csteps tm %d '
-                    '(@EIN@,(L,S0,@FFC@R)) = Some (%s,(%s,%s,%s)).\n'
-                    'Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ '
-                    'L R U_VI%d_@ID@). Qed.'
-                    % (nd, t, ST[ext[0]], ccons(ext[1], 'L'), SYM[ext[2]],
-                       ccons(ext[3], 'R'), nd))
-                tac = DEEP_P1I
-            lemmas.append(VIS_DEEP_HEAD.replace('@QV@', ST[q])
+                if v2:
+                    uvis.append(
+                        'Lemma U_VI%d_@ID@ : wsteps true true tm %d '
+                        '(@EIN@,([S1],S0,@FF@)) = Some %s. '
+                        'Proof. reflexivity. Qed.' % (nd, t, cwin(ext)))
+                    phvis.append(
+                        'Lemma phVI%d_@ID@ : forall L R, csteps tm %d '
+                        '(@EIN@,(S1::L,S0,@FFC@R)) = Some (%s,(%s,%s,%s)).\n'
+                        'Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ '
+                        '_ _ L R U_VI%d_@ID@). Qed.'
+                        % (nd, t, ST[ext[0]], ccons(ext[1], 'L'),
+                           SYM[ext[2]], ccons(ext[3], 'R'), nd))
+                else:
+                    uvis.append(
+                        'Lemma U_VI%d_@ID@ : wsteps true true tm %d '
+                        '(@EIN@,([],S0,@FF@)) = Some %s. '
+                        'Proof. reflexivity. Qed.' % (nd, t, cwin(ext)))
+                    phvis.append(
+                        'Lemma phVI%d_@ID@ : forall L R, csteps tm %d '
+                        '(@EIN@,(L,S0,@FFC@R)) = Some (%s,(%s,%s,%s)).\n'
+                        'Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ '
+                        '_ _ L R U_VI%d_@ID@). Qed.'
+                        % (nd, t, ST[ext[0]], ccons(ext[1], 'L'),
+                           SYM[ext[2]], ccons(ext[3], 'R'), nd))
+                tac = DEEP_P1I_V2 if v2 else DEEP_P1I
+            lemmas.append((VIS_DEEP_HEAD_V2 if v2 else VIS_DEEP_HEAD)
+                          .replace('@QV@', ST[q])
                           .replace('@N@', str(nd))
                           .replace('@DEEPTAC@', tac.replace('@N@', str(nd))))
             cases.append('  - apply vis_D%d_@ID@.' % nd)
@@ -1011,14 +1409,19 @@ def render_vis(spec, E, QR, Ein, Ff, s, plan, ex):
     return uvis, phvis, lemmas, cases
 
 
-def emit_source(spec, E, Erip, QR, Ein, Ff, Fx, s, plan, p0, boot):
+def emit_source(variant, spec, E, Erip, QR, Ein, Ff, Fx, s, plan, p0,
+                boot):
     ID = mach_id(spec)
     ex = Exec(spec)
-    uvis, phvis, lemmas, cases = render_vis(spec, E, QR, Ein, Ff, s, plan, ex)
+    uvis, phvis, lemmas, cases = render_vis(variant, spec, E, QR, Ein, Ff, s,
+                                            plan, ex)
     if list(Fx) == [0]:
         fxclose = 'reflexivity.'
-    else:
+    elif list(Fx) == []:
         fxclose = 'symmetry. apply (lift_app_blank _ _ _ []).'
+    else:
+        fxclose = ('change [S0;S0] with ([S0] ++ [S0]). '
+                   'rewrite lift_app_blank. reflexivity.')
     sub = {
         '@ID@': ID, '@SPEC@': spec, '@TABLE@': coq_table(spec),
         '@EDGE@': ST[E], '@ERIP@': ST[Erip], '@QR@': ST[QR],
@@ -1039,7 +1442,7 @@ def emit_source(spec, E, Erip, QR, Ein, Ff, Fx, s, plan, p0, boot):
         '@VISLEMMAS@': '\n'.join(lemmas),
         '@VISCASES@': '\n'.join(cases),
     }
-    src = HEAD
+    src = HEAD_V2 if variant == 'v2' else HEAD
     for _ in range(3):
         for k, v in sorted(sub.items(), key=lambda kv: -len(kv[0])):
             src = src.replace(k, v)
@@ -1073,8 +1476,11 @@ def process(spec, do_emit, scratch, force=False, mirror=False):
             raise DeriveError('anchor tail %s is not [1,0] (not flip-shaped)'
                               % tail)
         E = LAB.index(edge)
-        s, U = derive_interior(spec, E)
-        msgs, Erip, QR = check_interior_shapes(E, U)
+        variant, s, U = derive_interior(spec, E)
+        if variant == 'v1':
+            msgs, Erip, QR = check_interior_shapes(E, U)
+        else:
+            msgs, Erip, QR = check_interior_shapes_v2(E, U)
         if msgs:
             raise DeriveError('interior shape: ' + '; '.join(msgs))
         cands = find_inner_anchor(spec, E)
@@ -1082,18 +1488,19 @@ def process(spec, do_emit, scratch, force=False, mirror=False):
             raise DeriveError('no inner anchor decodes in the overflow lap')
         err = None
         done = False
-        for Ein, Ff, _times in cands[:4]:
+        for Ein, sfar, _times in cands[:4]:
             try:
-                s2, U2 = derive_inner(spec, E, Ein, Ff, s)
-                msgs = check_inner_shapes(Erip, QR, Ein, Ff, U2)
-                if msgs:
-                    raise DeriveError('inner shape: ' + '; '.join(msgs))
-                s3, U3 = derive_boot(spec, E, Ein, Ff, s2)
-                msgs = check_boot_shapes(Erip, Ein, QR, Ff, U3)
+                s3, U3, Ff = derive_boot(spec, variant, E, Ein, sfar, s)
+                msgs = check_boot_shapes(variant, Erip, Ein, QR, Ff, U3)
                 if msgs:
                     raise DeriveError('boot shape: ' + '; '.join(msgs))
-                s4, U4, Fx = derive_exit(spec, E, Ein, Ff, s3)
-                msgs = check_exit_shapes(E, Erip, Ein, QR, Ff, Fx, U4)
+                s2, U2 = derive_inner(spec, variant, E, Ein, Ff, s3)
+                msgs = check_inner_shapes(variant, Erip, QR, Ein, Ff, U2)
+                if msgs:
+                    raise DeriveError('inner shape: ' + '; '.join(msgs))
+                s4, U4, Fx = derive_exit(spec, variant, E, Ein, Ff, s2)
+                msgs = check_exit_shapes(variant, E, Erip, Ein, QR, Ff, Fx,
+                                         U4)
                 if msgs:
                     raise DeriveError('exit shape: ' + '; '.join(msgs))
                 done = True
@@ -1102,14 +1509,15 @@ def process(spec, do_emit, scratch, force=False, mirror=False):
                 err = e
         if not done:
             raise err or DeriveError('no inner candidate works')
-        validate_all(spec, E, LAB.index(LAB[Ein]), Ff, s4)
+        validate_all(spec, variant, E, Ein, Ff, s4)
         p0, boot = boot_probe(spec, E, p0)
-        plan = visit_plan(spec, E, Erip, QR, Ein, Ff, s4)
+        plan = visit_plan(spec, variant, E, Erip, QR, Ein, Ff, s4)
     except (DeriveError, Wall, AssertionError, KeyError, IndexError) as e:
         res['why'] = str(e)
         return res
-    res.update({'edge': edge, 'p0': p0, 'boot': boot, 'Erip': LAB[Erip],
-                'QR': LAB[QR], 'Ein': LAB[Ein], 'Ff': list(Ff),
+    res.update({'edge': edge, 'p0': p0, 'boot': boot, 'variant': variant,
+                'Erip': LAB[Erip], 'QR': LAB[QR], 'Ein': LAB[Ein],
+                'Ff': list(Ff), 'Fx': list(Fx),
                 'skel': {k: v for k, v in s4.items()},
                 'plan': {LAB[q]: plan[q][0] for q in plan}})
     if not do_emit:
@@ -1124,8 +1532,8 @@ def process(spec, do_emit, scratch, force=False, mirror=False):
         res['why'] = 'file exists -- skipped emission'
         return res
     try:
-        src = emit_source(spec, E, Erip, QR, Ein, Ff,
-                          res_fx(s4, spec, E, Ein, Ff), s4, plan, p0, boot)
+        src = emit_source(variant, spec, E, Erip, QR, Ein, Ff, Fx, s4, plan,
+                          p0, boot)
         if mirror:
             src = mirrorize(src, rspec, spec)
     except (DeriveError, RuntimeError) as e:
@@ -1160,12 +1568,6 @@ def process(spec, do_emit, scratch, force=False, mirror=False):
     return res
 
 
-def res_fx(s, spec, E, Ein, Ff):
-    ex = Exec(spec)
-    cfg, _, _ = replay_exit(ex, E, Ein, Ff, 4, s)
-    return list(cfg[3])
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('specs', nargs='*')
@@ -1192,9 +1594,9 @@ def main():
         out.append(r)
         extra = ''
         if 'skel' in r:
-            extra = ' E=%s Erip=%s QR=%s Ein=%s Ff=%s skel=%s plan=%s' % (
-                r['edge'], r['Erip'], r['QR'], r['Ein'], r['Ff'], r['skel'],
-                r['plan'])
+            extra = ' %s E=%s Erip=%s QR=%s Ein=%s Ff=%s Fx=%s skel=%s plan=%s' % (
+                r['variant'], r['edge'], r['Erip'], r['QR'], r['Ein'],
+                r['Ff'], r['Fx'], r['skel'], r['plan'])
         print('%s %s %s%s' % ('PASS' if r['ok'] else 'FAIL', spec,
                               r.get('why', ''), extra))
         sys.stdout.flush()
