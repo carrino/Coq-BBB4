@@ -108,6 +108,27 @@ def jp_table(bound=1 << 15):
     return JTAB
 
 
+ETAB = {}
+
+
+def enc_table(encname, bound=1 << 15):
+    """Anchor-word table for an encoding in ENC (Jp complemented, Ip direct).
+
+    Measured 2026-07-25 over the 597 unboarded growth=L counters: trying Ip in
+    addition to Jp derives the anchor for 72 machines that Jp alone reports as
+    'no fixed anchor tail' (378 -> 306).  Those 72 then fail further down, in
+    the lap skeleton ('no overflow stop fits' 3 -> 40, 'no interior skeleton
+    fits' 80 -> 109), so Ip anchors are DERIVED but not yet emittable: the Coq
+    template hardcodes Jp / cview_*_J.  An Ip template variant needs only
+    Jp -> Ip and cview_*_J -> cview_*_I (pair_rot is generic in its symbols,
+    and cview/tovf are encoding-independent), plus a skeleton that fits the Ip
+    overflow stop.  Until that exists, emission stays gated to Jp below."""
+    if encname not in ETAB:
+        f = ENC[encname]
+        ETAB[encname] = {tuple(f(m)): m for m in range(1, bound)}
+    return ETAB[encname]
+
+
 def anchor_scan(spec, edge, T=200000, nmax=60):
     """Anchor snapshots of the real run: (state edge, blank head, blank right)."""
     raw = Raw(spec)
@@ -126,7 +147,7 @@ def anchor_scan(spec, edge, T=200000, nmax=60):
     return out
 
 
-def derive_tail(spec, edge_hint, maxt=6):
+def derive_tail(spec, edge_hint, maxt=6, encname='Jp'):
     """Find this emitter's anchor: a state whose blank-head, blank-right-side
     snapshots read  Jp p ++ T ++ [S0]  on the left for consecutive p.
 
@@ -139,17 +160,17 @@ def derive_tail(spec, edge_hint, maxt=6):
     order = [edge_hint] + [c for c in LAB if c != edge_hint]
     for edge in order:
         try:
-            return (edge,) + _tail_for(spec, edge, maxt)
+            return (edge,) + _tail_for(spec, edge, maxt, encname)
         except DeriveError as e:
             err = err or e
     raise err
 
 
-def _tail_for(spec, edge, maxt=6):
+def _tail_for(spec, edge, maxt=6, encname='Jp'):
     snaps = anchor_scan(spec, edge)
     if len(snaps) < 12:
         raise DeriveError("only %d anchor snapshots" % len(snaps))
-    tab = jp_table()
+    tab = enc_table(encname)
     for tl in range(0, maxt + 1):
         T0 = snaps[-1][len(snaps[-1]) - tl:] if tl else ()
         vals = []
@@ -1061,12 +1082,23 @@ def process(spec, fp, do_emit=True, quiet=False):
         res['why'] = 'growth %s (this emitter targets L)' % r['growth']
         return res
     try:
-        edge, tail, p0 = derive_tail(spec, r['edge'])
-        res['edge'] = edge
-        res['tail'] = tail
-        res['p0'] = p0
-        enc = 'Jp'
-        s, U = derive(spec, edge, enc, p0, tail)
+        last = None
+        for enc in ('Jp', 'Ip'):
+            try:
+                edge, tail, p0 = derive_tail(spec, r['edge'], encname=enc)
+                res['edge'] = edge
+                res['tail'] = tail
+                res['p0'] = p0
+                res['enc'] = enc
+                s, U = derive(spec, edge, enc, p0, tail)
+                break
+            except DeriveError as e:
+                # keep the DEEPEST failure: if Jp cannot even anchor but Ip
+                # anchors and then fails in the skeleton, the skeleton error is
+                # the informative one.
+                last = e
+        else:
+            raise last
         res['skel'] = s
         msgs = shape_check(s, U, enc, edge, tail)
         if msgs:
@@ -1088,6 +1120,15 @@ def process(spec, fp, do_emit=True, quiet=False):
     if not do_emit:
         res['ok'] = True
         res['why'] = 'derived+validated (not emitted)'
+        return res
+    if enc != 'Jp':
+        # The Coq template hardcodes Jp (Cc = Jp p ++ tail, cview_*_J), so an
+        # Ip-anchored machine must NOT be emitted from it: the windows would be
+        # derived under Ip while the emitted anchor says Jp.  The kernel would
+        # reject the file, but emitting a known-broken board is pointless noise.
+        # Lift this gate together with the Ip template variant (see enc_table).
+        res['why'] = ('enc %s derived+validated, but emission needs the %s '
+                      'template variant (not emitted)' % (enc, enc))
         return res
     src = emit_source(spec, dict(r, edge=edge, enc=enc), s, U, plan, boot, tail, p0)
     path = os.path.join(OUTDIR, 'ILC_%s.v' % mach_id(spec))
