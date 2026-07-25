@@ -191,6 +191,76 @@ def _tail_for(spec, edge, maxt=6, encname='Jp'):
     raise DeriveError("no fixed anchor tail up to length %d" % maxt)
 
 
+
+
+# ---------------------------------------------- far-side (wall) anchors ---
+def anchor_scan_far(spec, edge, T=200000, nmax=60, wmax=4):
+    """Anchor snapshots grouped by the STRIPPED far side: state edge, blank
+    head, near side non-empty.  Wall machines hold their counter against a
+    small fixed block on the far side; the blank-far predicate of
+    [anchor_scan] never fires for them (COUNTER_CLOSEOUT.md section 6.3)."""
+    raw = Raw(spec)
+    E = LAB.index(edge)
+    cfg = (0, [], 0, [])
+    groups = {}
+    for t in range(T):
+        q, l, h, r = cfg
+        if q == E and h == 0 and l:
+            w = tuple(strip0(r))
+            if len(w) <= wmax:
+                g = groups.setdefault(w, [])
+                if len(g) < nmax:
+                    g.append(tuple(strip0(l)))
+        cfg = raw.step(cfg)
+        if cfg is None:
+            break
+    return groups
+
+
+def _tail_for_snaps(snaps, maxt=6, encname='Jp'):
+    """The consecutive-decode core of [_tail_for], over given snapshots."""
+    if len(snaps) < 12:
+        raise DeriveError("only %d anchor snapshots" % len(snaps))
+    tab = enc_table(encname)
+    for tl in range(0, maxt + 1):
+        T0 = snaps[-1][len(snaps[-1]) - tl:] if tl else ()
+        vals = []
+        for L in snaps:
+            if tl and (len(L) < tl or L[len(L) - tl:] != T0):
+                vals.append(None)
+                continue
+            vals.append(tab.get(L[:len(L) - tl] if tl else L))
+        i = len(vals) - 1
+        if vals[i] is None:
+            continue
+        while i > 0 and vals[i - 1] is not None and vals[i - 1] + 1 == vals[i]:
+            i -= 1
+        if len(vals) - i < max(8, len(vals) // 2):
+            continue
+        return list(T0) + [0], vals[i]
+    raise DeriveError("no fixed anchor tail up to length %d" % maxt)
+
+
+def derive_tail_far(spec, edge_hint, maxt=6, encname='Jp', wmax=4):
+    """[derive_tail] with a FIXED non-blank far side allowed.
+
+    Returns (edge, tail_including_blank, p0, far_word); far_word == [] is the
+    ordinary blank-far anchor.  Blank far is preferred, then the most
+    populated wall groups."""
+    err = None
+    order = [edge_hint] + [c for c in LAB if c != edge_hint]
+    for edge in order:
+        groups = anchor_scan_far(spec, edge, wmax=wmax)
+        keys = sorted(groups, key=lambda w: (w != (), -len(groups[w])))
+        for w in keys:
+            try:
+                tail, p0 = _tail_for_snaps(groups[w], maxt, encname)
+                return edge, tail, p0, list(w)
+            except DeriveError as e:
+                err = err or e
+    raise err or DeriveError("no anchor with any far side up to %d" % wmax)
+
+
 # ------------------------------------------------------------ raw stepping ---
 class Raw:
     def __init__(self, spec):

@@ -1,0 +1,375 @@
+[
+ {
+  "spec": "0RB1LC_1RC1LD_1LA0RD_0LA1RD",
+  "ok": true,
+  "mirror": false,
+  "edge": "C",
+  "tail": [
+   0,
+   1,
+   0
+  ],
+  "p0": 1,
+  "boot": 52,
+  "far": [
+   1,
+   0,
+   1,
+   1,
+   0
+  ],
+  "skel": {
+   "nRIP": 2,
+   "nRET": 1,
+   "nSTP": 3,
+   "nFIN": 8,
+   "nSTPO": 11
+  },
+  "a_i": 1,
+  "a_o": 3,
+  "exact_ov": true,
+  "X": "A",
+  "QT": "D",
+  "deep": {
+   "B": 6
+  },
+  "nchecked": 163,
+  "file": "/home/user/Coq-BBB4/theories/Machines/Counters/ILS1_0RB1LC_1RC1LD_1LA0RD_0LA1RD.v",
+  "axioms": [
+   "functional_extensionality_dep"
+  ]
+ },
+ {
+  "spec": "1RB0LB_1LA1LC_1LB0RD_0LB1RD",
+  "ok": true,
+  "mirror": false,
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "p0": 1,
+  "boot": 24,
+  "far": [
+   1,
+   0,
+   1,
+   0
+  ],
+  "skel": {
+   "nRIP": 2,
+   "nRET": 1,
+   "nSTP": 3,
+   "nFIN": 8,
+   "nSTPO": 7
+  },
+  "a_i": 1,
+  "a_o": 3,
+  "exact_ov": true,
+  "X": "B",
+  "QT": "D",
+  "deep": {
+   "A": 4
+  },
+  "nchecked": 163,
+  "file": "/home/user/Coq-BBB4/theories/Machines/Counters/ILS1_1RB0LB_1LA1LC_1LB0RD_0LB1RD.v",
+  "axioms": [
+   "functional_extensionality_dep"
+  ]
+ },
+ {
+  "spec": "1RB0LB_1LA1LC_1LB0RD_0LC1RD",
+  "ok": true,
+  "mirror": false,
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "p0": 1,
+  "boot": 21,
+  "far": [
+   0,
+   1,
+   0
+  ],
+  "skel": {
+   "nRIP": 2,
+   "nRET": 1,
+   "nSTP": 3,
+   "nFIN": 4,
+   "nSTPO": 7
+  },
+  "a_i": 1,
+  "a_o": 3,
+  "exact_ov": true,
+  "X": "B",
+  "QT": "D",
+  "deep": {
+   "A": 4
+  },
+  "nchecked": 163,
+  "file": "/home/user/Coq-BBB4/theories/Machines/Counters/ILS1_1RB0LB_1LA1LC_1LB0RD_0LC1RD.v",
+  "axioms": [
+   "functional_extensionality_dep"
+  ]
+ },
+ {
+  "spec": "1RB0LC_1LA1LC_1LB0RD_0LB1RD",
+  "ok": true,
+  "mirror": false,
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "p0": 1,
+  "boot": 30,
+  "far": [
+   1,
+   0,
+   1,
+   0
+  ],
+  "skel": {
+   "nRIP": 2,
+   "nRET": 1,
+   "nSTP": 3,
+   "nFIN": 8,
+   "nSTPO": 7
+  },
+  "a_i": 1,
+  "a_o": 3,
+  "exact_ov": true,
+  "X": "B",
+  "QT": "D",
+  "deep": {
+   "A": 4
+  },
+  "nchecked": 163,
+  "file": "/home/user/Coq-BBB4/theories/Machines/Counters/ILS1_1RB0LC_1LA1LC_1LB0RD_0LB1RD.v",
+  "axioms": [
+   "functional_extensionality_dep"
+  ]
+ },
+ {
+  "spec": "1RB0LC_1LA1LC_1LB0RD_0LC1RD",
+  "ok": true,
+  "mirror": false,
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "p0": 1,
+  "boot": 13,
+  "far": [
+   0,
+   1,
+   0
+  ],
+  "skel": {
+   "nRIP": 2,
+   "nRET": 1,
+   "nSTP": 3,
+   "nFIN": 4,
+   "nSTPO": 7
+  },
+  "a_i": 1,
+  "a_o": 3,
+  "exact_ov": true,
+  "X": "B",
+  "QT": "D",
+  "deep": {
+   "A": 4
+  },
+  "nchecked": 163,
+  "file": "/home/user/Coq-BBB4/theories/Machines/Counters/ILS1_1RB0LC_1LA1LC_1LB0RD_0LC1RD.v",
+  "axioms": [
+   "functional_extensionality_dep"
+  ]
+ },
+ {
+  "spec": "1RB0LC_1LA1LD_0LD1RC_1LB0RC",
+  "ok": true,
+  "mirror": false,
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "p0": 1,
+  "boot": 14,
+  "far": [
+   0,
+   0,
+   1,
+   0
+  ],
+  "skel": {
+   "nRIP": 2,
+   "nRET": 1,
+   "nSTP": 3,
+   "nFIN": 4,
+   "nSTPO": 7
+  },
+  "a_i": 1,
+  "a_o": 3,
+  "exact_ov": true,
+  "X": "B",
+  "QT": "C",
+  "deep": {
+   "A": 4
+  },
+  "nchecked": 163,
+  "file": "/home/user/Coq-BBB4/theories/Machines/Counters/ILS1_1RB0LC_1LA1LD_0LD1RC_1LB0RC.v",
+  "axioms": [
+   "functional_extensionality_dep"
+  ]
+ },
+ {
+  "spec": "1RB1LC_1LA1LD_0LD1RC_1LB0RC",
+  "ok": true,
+  "mirror": false,
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "p0": 1,
+  "boot": 14,
+  "far": [
+   0,
+   1,
+   1,
+   0
+  ],
+  "skel": {
+   "nRIP": 2,
+   "nRET": 1,
+   "nSTP": 3,
+   "nFIN": 4,
+   "nSTPO": 7
+  },
+  "a_i": 1,
+  "a_o": 3,
+  "exact_ov": true,
+  "X": "B",
+  "QT": "C",
+  "deep": {
+   "A": 4
+  },
+  "nchecked": 163,
+  "file": "/home/user/Coq-BBB4/theories/Machines/Counters/ILS1_1RB1LC_1LA1LD_0LD1RC_1LB0RC.v",
+  "axioms": [
+   "functional_extensionality_dep"
+  ]
+ },
+ {
+  "spec": "1RB1LD_0LB1LC_0LD1RC_1LA0RC",
+  "ok": true,
+  "mirror": false,
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "p0": 1,
+  "boot": 12,
+  "far": [
+   0,
+   1,
+   0
+  ],
+  "skel": {
+   "nRIP": 2,
+   "nRET": 1,
+   "nSTP": 3,
+   "nFIN": 4,
+   "nSTPO": 5
+  },
+  "a_i": 1,
+  "a_o": 3,
+  "exact_ov": false,
+  "X": "A",
+  "QT": "C",
+  "deep": {
+   "B": 4
+  },
+  "nchecked": 163,
+  "file": "/home/user/Coq-BBB4/theories/Machines/Counters/ILS1_1RB1LD_0LB1LC_0LD1RC_1LA0RC.v",
+  "axioms": [
+   "functional_extensionality_dep"
+  ]
+ },
+ {
+  "spec": "1RB1LD_1LB1LC_0LD1RC_1LA0RC",
+  "ok": true,
+  "mirror": false,
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "p0": 1,
+  "boot": 12,
+  "far": [
+   0,
+   1,
+   1,
+   0
+  ],
+  "skel": {
+   "nRIP": 2,
+   "nRET": 1,
+   "nSTP": 3,
+   "nFIN": 4,
+   "nSTPO": 5
+  },
+  "a_i": 1,
+  "a_o": 3,
+  "exact_ov": false,
+  "X": "A",
+  "QT": "C",
+  "deep": {
+   "B": 4
+  },
+  "nchecked": 163,
+  "file": "/home/user/Coq-BBB4/theories/Machines/Counters/ILS1_1RB1LD_1LB1LC_0LD1RC_1LA0RC.v",
+  "axioms": [
+   "functional_extensionality_dep"
+  ]
+ },
+ {
+  "spec": "1RB1LD_1LC0RD_0RA1LB_0LC1RD",
+  "ok": true,
+  "mirror": false,
+  "edge": "B",
+  "tail": [
+   0,
+   1,
+   0
+  ],
+  "p0": 1,
+  "boot": 51,
+  "far": [
+   1,
+   0,
+   1,
+   1,
+   0
+  ],
+  "skel": {
+   "nRIP": 2,
+   "nRET": 1,
+   "nSTP": 3,
+   "nFIN": 8,
+   "nSTPO": 11
+  },
+  "a_i": 1,
+  "a_o": 3,
+  "exact_ov": true,
+  "X": "C",
+  "QT": "D",
+  "deep": {
+   "A": 6
+  },
+  "nchecked": 163,
+  "file": "/home/user/Coq-BBB4/theories/Machines/Counters/ILS1_1RB1LD_1LC0RD_0RA1LB_0LC1RD.v",
+  "axioms": [
+   "functional_extensionality_dep"
+  ]
+ }
+]
