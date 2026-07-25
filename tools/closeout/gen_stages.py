@@ -47,6 +47,15 @@ def module_of(vfile):
     return 'BBB4.' + vfile[len('theories/'):-len('.v')].replace('/', '.')
 
 
+def write_if_changed(path, text):
+    """Leave the file (and its mtime) alone when the content is identical, so
+    an unchanged stage does not force a needless recompile."""
+    if os.path.exists(path) and open(path).read() == text:
+        return False
+    open(path, 'w').write(text)
+    return True
+
+
 def main():
     rows = list(csv.reader(open(os.path.join(ROOT, 'tools/closeout/frozen_map.tsv')),
                            delimiter='\t'))[1:]
@@ -55,6 +64,7 @@ def main():
                  open(os.path.join(ROOT, 'tools/closeout/frozen_unproven.txt'))
                  if l.strip()]
 
+    nwrote = 0
     stages = [rows[i:i + CHUNK] for i in range(0, len(rows), CHUNK)]
     stage_names = []
     for si, chunk in enumerate(stages):
@@ -105,7 +115,7 @@ def main():
             chain = 'Forall_cons _ %s (%s)' % (cov, chain)
         L.append('  exact (%s).' % chain)
         L.append('Qed.')
-        open(os.path.join(OUT, name + '.v'), 'w').write('\n'.join(L) + '\n')
+        nwrote += write_if_changed(os.path.join(OUT, name + '.v'), '\n'.join(L) + '\n')
 
     # ---- Closeout.v ----
     L = []
@@ -165,7 +175,7 @@ def main():
     L.append('  exact (deferred_split deferred_rows proven_rows remaining_rows')
     L.append('           census_rows_split proven_rows_covers).')
     L.append('Qed.')
-    open(os.path.join(OUT, 'Closeout.v'), 'w').write('\n'.join(L) + '\n')
+    nwrote += write_if_changed(os.path.join(OUT, 'Closeout.v'), '\n'.join(L) + '\n')
 
     # ---- CloseoutFinal.v (census opam switch only) ----
     L = []
@@ -200,7 +210,7 @@ def main():
     L.append('  destruct (census_decided tm) as [H | H]; [left; exact H | right].')
     L.append('  exact (closeout_partial tm H).')
     L.append('Qed.')
-    open(os.path.join(OUT, 'CloseoutFinal.v'), 'w').write('\n'.join(L) + '\n')
+    nwrote += write_if_changed(os.path.join(OUT, 'CloseoutFinal.v'), '\n'.join(L) + '\n')
 
     # ---- keep the _CoqProject Closeout section in sync ----
     cp = os.path.join(ROOT, '_CoqProject')
@@ -214,9 +224,10 @@ def main():
         lines.append('theories/Closeout/%s.v' % name)
     lines.append('theories/Closeout/Closeout.v')
     lines.append('theories/Closeout/CloseoutFinal.v')
-    open(cp, 'w').write('\n'.join(lines) + '\n')
+    nwrote += write_if_changed(cp, '\n'.join(lines) + '\n')
     print('stages: %d (%d rows) + Closeout.v (%d remaining) + CloseoutFinal.v'
           % (len(stages), len(rows), len(remaining)))
+    print('files rewritten: %d (unchanged files keep their mtime)' % nwrote)
 
 
 if __name__ == '__main__':

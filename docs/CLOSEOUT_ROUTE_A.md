@@ -96,15 +96,31 @@ never edited; `Closeout.v` consumes only the frozen row tables
 
 After a wave of new boards lands (and compiles, with clean assumptions):
 
-    python3 tools/closeout/inventory.py      # remap frozen rows -> theorems
-    python3 tools/closeout/gen_stages.py     # regenerate CB_*, Closeout*, tables
-    # compile: CloseoutKit, CB_00..CB_NN, Closeout  (coqdep order; the board
-    # .vo must exist)
-    python3 tools/census_cache.py --check    # must still say MATCH
+    make closeout
 
-then commit.  `remaining_rows` shrinks; nothing else moves.  On the census
-box (optional, any time): compile `CloseoutFinal.v` under the census switch
-to refresh the end-to-end `census_boarded`.
+which remaps the frozen rows to theorems (`inventory.py`), regenerates the
+stage files and tables (`gen_stages.py`), audits the tables against the
+frozen list (`audit.py`), recompiles `theories/Closeout/`, and re-checks the
+census cache.  `remaining_rows` shrinks by exactly the machines boarded;
+nothing else moves.  Then commit.
+
+`make closeout-status` prints the current scoreboard without rebuilding.
+The generator writes files only when their content changes, so an unchanged
+stage keeps its `.vo` and a re-run costs seconds.
+
+On the census box (optional, any time): compile `CloseoutFinal.v` under the
+census switch to refresh the end-to-end `census_boarded`.
+
+## Two levels of checking
+
+The kernel guarantees the THEOREM.  It does not police whether the tables
+say what the prose claims -- a `remaining_rows` padded with rows that are
+not on the frozen list would still yield a true (if weaker) theorem while
+making the headline count wrong.  `tools/closeout/audit.py` closes that gap
+by re-parsing both generated tables back into machine strings and checking
+that they partition the frozen list exactly: no invented rows, no
+duplicates, no row in both tables, nothing dropped.  It cannot pass
+vacuously -- a failed parse reports every frozen row as unaccounted for.
 
 ## Relation to route B (the census fold-in)
 
