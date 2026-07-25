@@ -268,6 +268,31 @@ values):
 1RB0LB_1LC1RD_0RD0LC_1RA1LD   SEP3    k=3 off=1 dpos=2,   anchor C, late  808..813
 ```
 
+**The `SEP3` pair, in full (human read + measurement).**  Human read of
+`1RB0LB_1LC1RD_0RD0LC_1RA1LD`: *"a counter with 2 zeros between bits; however
+the 2 most significant bits have no gap between them."*  Both halves verified:
+
+* **Body = bit + 2 zeros (stride 3).**  Anchored at state C the tape groups
+  cleanly into `001`/`000` and decodes LSB-first to consecutive integers —
+  **117 of 119** transitions are exactly `+1` (e.g. 40,41,…,48 in one window,
+  0,1,…,13 in another; the 2 non-unit steps are the seams between sample
+  windows).  Independently confirmed by the extent law: **+9 cells per 8× steps
+  = 3 cells per binary digit**, matching stride 3 (the stride-2 majority gives
+  +6).  Same for the sibling `1RB0LB_1LC1RD_0RB0LC_1RA1LD` (+9 per 8×).
+* **The top two bits are adjacent — no 2-zero gap.**  Visible directly: at
+  anchored width 29 the tape ends `10000011`, i.e. two adjacent `1`s, and the
+  pair only shows as `11` when *both* top bits are set (otherwise a lone
+  trailing `1`).  So the field is
+  `[b0 0 0][b1 0 0] … [b_{n-2} b_{n-1}]` — a **special frontier group of two
+  packed bits** on top of a stride-3 body.
+
+Why this matters beyond classification: `tools/kcopy_classify.py` stops at the
+first group whose separators break, which is exactly that frontier pair — so it
+reads the body correctly (hence the consecutive decode) but **silently drops the
+top two bits**.  Harmless for routing; **not** harmless for a Coq lap proof,
+where the anchor word must model the packed frontier pair explicitly as its own
+case.  Any emitter template for these two machines needs that case.
+
 **The 1 still unread — `0RB1LC_1LC0LC_0RD1LA_1RD1RB`.** Human read: "a counter,
 no wall on the left, and the bits are inverted with 1s between bits."  Measured
 and consistent with that: the left boundary is pinned at the origin with **no
