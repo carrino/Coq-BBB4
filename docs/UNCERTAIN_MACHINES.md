@@ -66,11 +66,19 @@ Exemplars (full list: the `overflow laps not affine` rows of
 
 Wall-anchored (so `emit_wall`'s interior fits) but the overflow cost doubles
 (ratio → 2), so they need the IXP inner counter AND the wall in one board.
-My guess is this is just the two templates composed — but it is a guess: if
-the inner counter's own far side moves (as in §1) it is the same nest, not a
-composition.  **Cheap check that would settle it:** run
-`find_inner_anchor` on 2-3 of these and see whether the inner far word is
-constant across the march.  Worth doing before anyone writes the template.
+
+**Measured since (`find_inner_anchor` on three of them): this bucket SPLITS.**
+
+| machine | wall | inner-anchor candidates | reading |
+|---|---|---|---|
+| `0RB0RD_0LC1RD_1RB1LC_0LA0RB` | `[1]` | one, far `[1]` | inner far CONSTANT → a genuine wall × IXP **composition**, mechanical |
+| `0RB1LA_1RC1LB_0LB1RD_0LA0RC` | `[1]` | far `[1,1]`, `[1,1,1]`, … | inner far GROWS → same nest as §1 |
+| `0RB1RC_1LA1LC_0LD0RA_1RA1LD` | `[0,1]` | far `[1,0,1]`, `[1,1,0,1]`, … | inner far GROWS → §1 nest |
+
+So the 68 must be partitioned by that test before any template is written:
+the constant-far members compose the two existing templates; the growing-far
+members are §1 and should wait for your verdict there.  Do NOT template the
+whole bucket as one family.
 
 ## 3. Diagnosed-mechanical (NOT uncertain — listed so they aren't re-derived)
 
@@ -87,9 +95,14 @@ These I am confident about; they need work, not judgement:
   `1RB0LB_1LA0LC_0LB0RD_1RD0RC` (interior `ER^j . ST . RB^k . CL`, 113 values
   checked; overflow with a left-open stop, K = 2..5).  Second wall template,
   fully measured, just not emitted.
-* **Wall count-offsets (172)** — `cR/cT/cRo/cTo` hard-coded to `(2,1,1,0)` in
-  `emit_wall.check_shapes`; the sweep measured `(4,2,3,1)` and `(3,1,2,1)`
-  variants.  Parameterizing the offsets is a few lines.
+* **Wall count-offsets (172)** — `cR/cT/cRo/cTo` are `(2,1,1,0)` in the
+  emitted template; the sweep measured `(4,2,3,1)` and `(3,1,2,1)` members
+  too.  I first assumed this was a gate constant and tried relaxing the
+  check — it is not: the offsets appear in the proof script's `rep` algebra
+  (`replace (2 * S j) with (S (S (2*j)))`, the `pair_fold` count, the
+  `rep_dbl` folds), so each offset family needs its `change`/`replace` lines
+  generated from the constants.  Real work (~20 lines of template macros),
+  still mechanical, no judgement needed.
 * **IXP pop-variant combos (34)**, **far-mutating P1i (6)** — see
   `docs/WAVE12_IXP.md` §3.
 

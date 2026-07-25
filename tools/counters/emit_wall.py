@@ -240,10 +240,10 @@ def check_shapes(E, FW, s, U):
     FX2 = list(Gx[3])
     if FX2 + [0] != list(FW):
         msgs.append('overflow close far %s + blank != wall %s' % (FX2, FW))
-    if s['cR'] != 2 or s['cT'] != 1 or s['cRo'] != 1 or s['cTo'] != 0:
+    if (s['cR'], s['cT'], s['cRo'], s['cTo']) != (2, 1, 1, 0):
         msgs.append('count offsets (cR=%s cT=%s cRo=%s cTo=%s) not the '
-                    'templated (2,1,1,0)' % (s['cR'], s['cT'], s['cRo'],
-                                             s['cTo']))
+                    'templated (2,1,1,0) -- a second wall shape'
+                    % (s['cR'], s['cT'], s['cRo'], s['cTo']))
     return msgs, Erip, QR, P1R, FX2
 
 
