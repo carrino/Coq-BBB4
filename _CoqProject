@@ -488,6 +488,15 @@ theories/Machines/RWL8_00033.v
 theories/Machines/RWL8_00034.v
 theories/Machines/RWL8_00035.v
 theories/Machines/RWL8_00036.v
+# --- translated-cycler tail (existing TCycler decider; 708-residue debug) ---
+theories/Machines/TCyc8_01.v
+theories/Machines/TCyc8_02.v
+theories/Machines/TCyc8_03.v
+theories/Machines/TCyc8_04.v
+theories/Machines/TCyc8_05.v
+theories/Machines/TCyc8_06.v
+theories/Machines/TCyc8_07.v
+theories/Machines/TCyc8_08.v
 theories/Tests/RepWLBatch_Corruption.v
 
 # --- drift track ---
