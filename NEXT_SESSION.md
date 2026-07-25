@@ -80,6 +80,25 @@ walk produced the committed `.vo`, and editing the census forces a re-walk.
 - Status: census **CERTIFIED green on stable hardware 2026-07-21** (Print
   Assumptions clean); the `.vo`-commit mechanism itself is still to be wired.
 
+## 2b. Wave-9 (2026-07-25) — the counter emitter, corrected
+
+Full write-up: `docs/COUNTER_EMITTER_WAVE9.md`.  Two things the wave-8 hand-off
+got wrong, both now measured (`tools/counters/anchor_profile.py`):
+
+- The template needs the lap to be affine in the carry length `j` on BOTH
+  branches (interior AND overflow).  Wave-8 only ever checked the interior.
+  Control: 17/17 already-boarded counters pass both; **0/40 of the 298
+  quasihalting counters do** — their overflow lap grows like `2^j`.  Do NOT
+  re-point the single-sweep template at that list; it is not encoding-blocked.
+- The encoding IS a real blocker, but on the never-QH core: 15/80 of a random
+  sample are template-shaped and 10 of those are `Ip` (~440 / ~290 extrapolated
+  over the 2,328 unboarded).
+
+`tools/counters/emit_ip.py` boards them (12 committed, all recompiled from a
+clean `.vo` state, `functional_extensionality_dep` only).  It also needed the
+anchor HEAD symbol, the anchor TAIL and the anchor's FAR side (a blank *cell*,
+not the empty *list*) to become parameters — the encoding alone was not enough.
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
