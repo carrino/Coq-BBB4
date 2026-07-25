@@ -451,6 +451,41 @@ theories/Machines/RepWL_Batch_01.v
 theories/Machines/RepWL_Batch_02.v
 theories/Machines/RepWL_Batch_03.v
 theories/Machines/RepWL_Batch_04.v
+# --- repwl big-block (wave-8 residue, gen_rwl8_certs.py) ---
+theories/Machines/RWL8_00001.v
+theories/Machines/RWL8_00002.v
+theories/Machines/RWL8_00003.v
+theories/Machines/RWL8_00004.v
+theories/Machines/RWL8_00005.v
+theories/Machines/RWL8_00006.v
+theories/Machines/RWL8_00007.v
+theories/Machines/RWL8_00008.v
+theories/Machines/RWL8_00009.v
+theories/Machines/RWL8_00010.v
+theories/Machines/RWL8_00011.v
+theories/Machines/RWL8_00012.v
+theories/Machines/RWL8_00013.v
+theories/Machines/RWL8_00014.v
+theories/Machines/RWL8_00015.v
+theories/Machines/RWL8_00016.v
+theories/Machines/RWL8_00017.v
+theories/Machines/RWL8_00018.v
+theories/Machines/RWL8_00019.v
+theories/Machines/RWL8_00020.v
+theories/Machines/RWL8_00021.v
+theories/Machines/RWL8_00022.v
+theories/Machines/RWL8_00023.v
+theories/Machines/RWL8_00024.v
+theories/Machines/RWL8_00025.v
+theories/Machines/RWL8_00026.v
+theories/Machines/RWL8_00027.v
+theories/Machines/RWL8_00028.v
+theories/Machines/RWL8_00029.v
+theories/Machines/RWL8_00030.v
+theories/Machines/RWL8_00031.v
+theories/Machines/RWL8_00032.v
+theories/Machines/RWL8_00033.v
+theories/Machines/RWL8_00034.v
 theories/Tests/RepWLBatch_Corruption.v
 
 # --- drift track ---
