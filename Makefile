@@ -128,3 +128,28 @@ census-verify: all
 census-resume: all
 	$(MAKE) _census-walk
 .PHONY: census-resume
+
+# ---------------------------------------------------------------------------
+# The route-A closeout (docs/CLOSEOUT_ROUTE_A.md).  Regenerates the stage
+# files from the current boards and recompiles theories/Closeout/, yielding
+#
+#   closeout_partial : forall tm,
+#     Deferred D_census tm -> boarded tm \/ Deferred D_remaining tm
+#
+# Container-safe: NO census walk, and theories/Census/ is never written.
+# Run it after every wave of new boards; D_remaining shrinks by exactly the
+# machines boarded.  Requires the boards' own .vo to exist already (they are
+# built by `make all`).
+closeout:
+	python3 tools/closeout/inventory.py
+	python3 tools/closeout/gen_stages.py
+	python3 tools/closeout/audit.py
+	coq_makefile -f _CoqProject -o Makefile.coq
+	$(MAKE) -f Makefile.coq theories/Closeout/Closeout.vo
+	python3 tools/census_cache.py --check
+.PHONY: closeout
+
+# Report what the closeout currently certifies, without rebuilding.
+closeout-status:
+	python3 tools/closeout/audit.py
+.PHONY: closeout-status

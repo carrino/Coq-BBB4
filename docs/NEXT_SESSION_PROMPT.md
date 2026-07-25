@@ -36,10 +36,21 @@ ILS4M_*/ILS4FM_* mirror via Mirror.mirror_never_qh; wall anchors via
 derive_tail_far).  Emitters: tools/counters/emit_shape1.py and
 emit_shape4.py (--flip auto, --mirror); each derives windows by exact
 symbolic replay, validates differentially on both cview branches, compiles,
-checks assumptions, deletes on failure.  Of the frozen 5,156 deferred,
-~1,598 machines remain unproven (docs/WAVE11_MIRROR.md section 5); the
-route-A closeout (Assembly.v boarded app-chain vs the FROZEN list, NO
-census walk) is the finish line and is container-safe.
+checks assumptions, deletes on failure.
+
+The route-A closeout is BUILT and kernel-verified (docs/CLOSEOUT_ROUTE_A.md):
+theories/Closeout/ now proves
+
+  closeout_partial : forall tm,
+    Deferred D_census tm -> boarded tm \/ Deferred D_remaining tm
+
+with D_remaining the literal table of frozen rows that still lack a board --
+3,567 of the 5,156 settled, 1,589 remaining, assumptions
+functional_extensionality_dep only.  After a wave of boards lands, rerun
+  python3 tools/closeout/inventory.py && python3 tools/closeout/gen_stages.py
+and recompile theories/Closeout/ (~4 min); D_remaining shrinks by exactly the
+machines you boarded.  At zero it becomes the total closeout.  No census walk
+is involved and theories/Census/ is never touched.
 
 THE TASK -- the EXPONENTIAL-OVERFLOW family (~70-90 machines, the largest
 residue block with a diagnosed mechanism).  Their interior laps are affine
