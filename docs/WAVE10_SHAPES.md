@@ -8,14 +8,15 @@ the do-not-retry list)._
 
 ## 1. Headline
 
-**121 new boards** from two templates, all kernel-verified
+**127 new boards** from three template variants, all kernel-verified
 (`Print Assumptions` = `functional_extensionality_dep` only), zero new
 soundness surface:
 
 | template | emitter | boards | shapes covered |
 |---|---|---:|---|
 | 4-window Jp (`ILS1_*`) | `emit_shape1.py` | **72** | ranks 1, 3, 6 (`-CC|+CB|-BC|+CB`), 8 (`-BB|+BD|-DB|+BD`) |
-| 2-phase Ip (`ILS4_*`) | `emit_shape4.py` | **25** | rank 4 (`-DA|+AB`), 25/25 first try |
+| 2-phase Ip (`ILS4_*`) | `emit_shape4.py` | **31** | rank 4 (`-DA|+AB`) 25/25 first try, plus `-CD|+DA`, `-DB|+BC`, `-CD|+DB` |
+| flip-P1 Ip (`ILS4F_*`) | `emit_shape4.py --flip (auto)` | **24** | the AFFINE members of `+AB|-BA|+AB`, `+CB|-BC|+CB`, `+BC|-CB|+BC`, `+DC|-CD|+DC`, `+CD|-DC|+CD` — two close variants (A eats the last return pair's S0; B, the `+AB` family, a bare `[S1]` deposit) |
 | hand board (in the 72) | — | 1 | the shape-1 reference |
 
 Wave-8/9 predicted "one template per lap shape".  Measured: **one template
@@ -61,7 +62,7 @@ population again, and TEMPLATE-fit follows the overflow, not the signature:
 |---|---|---|---|
 | `-CC|+CD|-DC|+CD` (31), `-DD|+DC|-CD|+DC` (28), `-CC|+CB|-BC|+CB` (13), `-BB|+BD|-DB|+BD` (9) | Jp | affine `a+4j` | **72 boarded** (`ILS1`); 6 stragglers = B-row `1RB` family + 2 walls |
 | `-DA|+AB` (25) | Ip | affine `4j+7`-ish | **25 boarded** (`ILS4`) |
-| `+CB|-BC|+CB` (12) | Ip | affine | templatable: shape-4 chain with a frontier-FLIP P1 (2 steps in the far `[S0]` window), ripple count `2j+1`; NOT YET BUILT |
+| `+CB|-BC|+CB` (12) and the affine members of the flip shapes | Ip | affine | **24 boarded** (`ILS4F`): shape-4 chain with a frontier-FLIP P1 (2 steps in the far `[S0]` window), ripple `2j+1` / `2j'+2` through the wall; 8 residual members have a third close variant (`no flip skeleton`) — stragglers |
 | `+AB|-BA|+AB` (29), `+BC|-CB|+BC` (14), `+DC|-CD|+DC` (6), `-CA|+AB` (9), `+CD|-DA|+AB` (8), `+CD|-DC|+CD` (6)... | Ip | **`~c·2^j' + 4j' + d`** (measured 10·2^j'+4j+4, 8·2^j'+…) | **the exponential-overflow family**: all-ones → 101010 takes a full rewrite pass per position; needs an INNER induction (a sweep lemma), not a window chain |
 
 The exponential overflow is a real structural boundary: no finite window
@@ -83,14 +84,19 @@ deeper, and it gates ~70 machines.
 * Two shape-1/3 machines report `laps not affine` at the derived anchor —
   unprofiled; check their anchor variant before believing the verdict (§2
   rule of WAVE9).
+* **Eight flip-family machines** (`1RB1LA_0LA1RC_0LD0RB_---1RA`,
+  `…_1RA0RC`, `0RB1RB/1RB0RD/1RB1RB_1RC1LB_0LB1RD_0LA0RC`,
+  `0RB1RC/1RB1RC_0LC1RD_1RB1LC_0LA0RB`, `1RB1RC_0LA0RD_1RD1LC_0LC1RB`)
+  fail `no flip skeleton` — a third FIN2/STPO shape; derive-only replay
+  will show the windows in minutes.
 
 ## 5. Scoreboard
 
 | | |
 |---|---|
-| boards this session | **121** (72 `ILS1_*` + 25 `ILS4_*` + 24 shape-3 in the 72... see git log per batch) |
-| running counter-family total in tree | 190 (wave ≤9) + 121 = **311** |
-| of the 243 traceable | 97 boarded, ~12 flip-affine templatable, ~70 exponential-overflow, rest = anchor walls/snapshots |
+| boards this session | **127** (72 `ILS1_*` + 31 `ILS4_*` + 24 `ILS4F_*`) |
+| running counter-family total in tree | 190 (wave ≤9) + 127 = **317** |
+| of the 243 traceable | **127 boarded**; remaining 116 = ~94 exponential-overflow + 16 diagnosed stragglers (8 flip-variant-3, 6 B-row `1RB`, 2 unprofiled) + a few anchor oddities |
 | `D_census` | unchanged (Class-1 boards only; fold-in deferred to stable hardware per §10 step 5) |
 
 All batches: census_cache --check = MATCH before and after every commit;

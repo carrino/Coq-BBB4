@@ -1,123 +1,95 @@
-# Next-session prompt — continue the residue reduction
+# Next-session prompt — continue the residue reduction (post-wave-10)
 
-_Paste the block below into a fresh session.  It is deliberately self-contained:
-it carries the environment facts, the first milestone with concrete machines, the
-verification bar, and the measured do-not-retry list, so the next session does not
-re-derive any of it.  Written 2026-07-25 at the end of the big-block-RepWL /
-residue session (PR #29); the full reasoning behind every line is in
-`docs/COUNTER_CLOSEOUT.md`._
+_Rewritten 2026-07-25 at the end of the shape-template session (branch
+`claude/residue-reduction-4-2-07rtlv`).  That session executed
+`COUNTER_CLOSEOUT.md` §10 steps 1–3 and harvested every AFFINE traceable
+machine; the full record is `docs/WAVE10_SHAPES.md`.  The prompt below is
+paste-ready for a fresh session._
 
 **Before pasting, check two things:**
 
-1. **Scope.** Step 1 writes into `theories/Machines/Counters/`.  A sibling session
-   owned that directory plus `theories/Counters/ILC*` and
-   `tools/counters/emit_*.py` during wave 8.  If it is still active, add a line to
-   the prompt naming which files are theirs.
-2. **Branch.** The prompt says "a new branch off main"; substitute the branch the
-   session is supposed to develop on.
+1. **Scope.**  This writes into `theories/Machines/Counters/` and
+   `tools/counters/`.  If a sibling session owns them, name its files.
+2. **Branch.**  Substitute whatever branch the session should develop on.
 
 ---
 
 ```
-Continue the (4,2) residue reduction in carrino/Coq-BBB4, on a new branch off main
-(PR #29 has merged; its work is in main).
+Continue the (4,2) residue reduction in carrino/Coq-BBB4 (branch off main if
+wave-10 has merged; else off claude/residue-reduction-4-2-07rtlv).
 
-READ FIRST: docs/COUNTER_CLOSEOUT.md — §10 is the ordered plan, §5b is why the
-emitter currently boards almost nothing, §5 is the do-not-retry list, §3 is the
-measured encoding zoo. Then docs/COUNTER_CODEGEN_BLOCKERS.md and
-docs/MACHINE_NOTES_WAVE8.md (the human hand-inspection log).
+READ FIRST: docs/WAVE10_SHAPES.md -- what is boarded and what the remaining
+wall is; docs/COUNTER_CLOSEOUT.md section 5 -- the measured do-not-retry
+list; docs/WAVE9_FINDINGS.md section 3 -- the orientation cube.
 
-ENV: apt coq 8.18.0 is sufficient — `apt-get install -y coq`, then
-`coqc -native-compiler no -Q theories BBB4 <file>`. Do NOT spend 35 minutes on an
-opam bootstrap; nothing here needs native_compute. Build a checker's dependency
-closure by coqdep-ordering its deps and compiling them individually (Makefile's
-`all` would pull in the census).
+ENV: apt coq 8.18.0 -- `apt-get install -y coq`, then
+`coqc -native-compiler no -Q theories BBB4 <file>`.  No opam.  Build a
+checker's dependency closure by coqdep-ordering its deps; never `make all`.
 
-NON-NEGOTIABLE: never touch theories/Census/; `python3 tools/census_cache.py --check`
-must stay MATCH. A board counts only when its file compiles and `Print Assumptions`
-shows functional_extensionality_dep only. Everything under tools/ is UNTRUSTED —
-the kernel re-checks every board, so a wrong constant fails to typecheck.
+NON-NEGOTIABLE: never touch theories/Census/; `python3 tools/census_cache.py
+--check` must stay MATCH.  A board counts only when its file compiles and
+`Print Assumptions` shows functional_extensionality_dep only.  tools/ is
+UNTRUSTED; the kernel re-checks every board.
 
-THE TASK (§10 step 1) — hand-author ONE counter board for lap shape 1, then clone it.
+STATE: 155+ wave-10 boards (ILS1_* Jp 4-window; ILS4_*/ILS4F_* Ip
+2-phase/flip) cover every affine-overflow traceable machine.  The emitters
+are tools/counters/emit_shape1.py and emit_shape4.py (--flip auto);
+each derives windows by exact symbolic replay, validates differentially
+against the raw simulator on both cview branches, compiles, checks
+assumptions, deletes on failure.  Run them derive-only over any machine
+list to see what fits.
 
-Lap shape 1 is `-CC|+CD|-DC|+CD` — 4 phases, 20-step lap, 31 machines, all with
-enc=Jp, edge=C, tail=[0], p0=1. Members: tools/counter_lapshapes.tsv where
-shape_rank == 1. Start with 1RB0RB_1LA1LC_1LB0RD_0LC1RD.
+THE TASK -- the EXPONENTIAL-OVERFLOW family (~70-90 machines, the largest
+residue block with a diagnosed mechanism).  Their interior laps are affine
+and template-shaped, but the overflow 2^k-1 -> 2^k costs ~c*2^k: the
+all-ones tape is rewritten to 101010... by repeated sweeps.  A finite
+window chain cannot express it; glue_neverqh does not care -- it needs one
+existential csteps witness per lap, which an INNER induction provides:
 
-Clone theories/Machines/Counters/Interleave_TGT.v structurally, but with a FOUR-window
-chain instead of six: one `wsteps ... = Some ...` unit lemma per traced phase, each
-framed by its shape (plain run => wsteps_frame / wsteps_frame_l; repeated cycle =>
-cycL / cycR), chained with csteps_chain across the two cview branches, then
-glue_neverqh tm Cc p0 boot lap vis. Get the phase list from
-`python3 tools/counters/lapshape.py`. Nothing in the kernel requires six windows —
-that count lives only in emit_interleave.py's template string and its skeleton
-search. cview (MonoCounter.v) and tovf are encoding-independent, and pair_rot is
-generic in its symbols.
+  1. Hand-author ONE board: machine 1RB1LA_0LA1RC_0LD0RB_0LA1RD (shape
+     +AB|-BA|+AB, overflow cost 10*2^j'+4j'+4).  Trace the overflow with
+     tools/../trace_any.py (in the wave-10 scratch, or rewrite: 20 lines):
+     the sweeps have their own anchor family inside the lap.  Prove a sweep
+     lemma by induction (the same cycL/cycR windows), compose it j' times
+     by a second induction, then close the lap.  The interior chain is the
+     ILS4F flip template verbatim.
+  2. Clone across the family (the members are the 'laps not affine'
+     failures of emit_shape4.py over tools/counter_lapshapes.tsv machines).
 
-CHECKPOINT: one new counter board compiling with clean assumptions. That is the
-milestone — do not build a generic emitter before one board of this shape exists by
-hand, because the rep-algebra junctions for a non-6-window chain have never been
-worked out.
+CHECKPOINT: one exponential-overflow board with clean assumptions before
+any emitter work -- the inner-induction junctions have never been written.
 
-THEN: (2) clone shape 1 across all 31 (anchor params already derived; encodings in
-tools/counter_encodings.tsv); (3) shapes 2-4 = +82 machines (`+AB|-BA|+AB` 29,
-`-DD|+DC|-CD|+DC` 28, `-DA|+AB` 25), then generalize to phase-generic, covering all
-243 traceable machines; (4) then the 133 machines whose anchor needs a non-blank far
-side (they hold the counter against a wall; glue_neverqh already accepts an arbitrary
-Cc p, so zero new soundness surface), then the 306 needing more encodings. The 1,080
-growth=R machines transfer via the mirror route.
+THEN, in order of measured size:
+  (3) the B-row-1RB overflow-return stragglers (6 machines: the overflow
+      return runs in StB while the interior returns in StD; extend
+      emit_shape1.py with a second RET/FIN pair -- mechanical);
+  (4) the 133 wall-anchored machines ('only N anchor snapshots'):
+      glue_neverqh takes an arbitrary Cc p, zero new soundness surface --
+      needs anchor derivation with a non-blank far side (emit_ip.py's
+      far_candidates is the pattern);
+  (5) the 306 machines needing more encodings (tools/counter_encodings.tsv
+      is the input; Kp/Dp exist since wave 9);
+  (6) the 1,080 growth=R machines via the mirror route (emit_mirror.py /
+      Mirror.mirror_never_qh -- every left-side fix transfers).
 
-DO NOT RETRY (each measured, grid recorded in §5): widening the emitter's anchor
-search (tail cap 6->24, scan 200k->3M, nmax 60->240, floor 12->8) = 0 gain; adding
-the Ip encoding alone = 0 new derives; ripple unit ulen (2,)->(2,1,3,4) = 0/85;
-big-block RepWL over the 1,677 recognized counters = 0/1677; TCycler screen over the
-same = 0/1677. The wall is the lap's SHAPE, not any constant.
+DO NOT RETRY (measured, grids in COUNTER_CLOSEOUT.md section 5): emitter
+anchor-search widenings; Ip-encoding-alone; ripple ulen widening; big-block
+RepWL and TCycler over the recognized counters.  ALSO measured in wave 10:
+the lapshape signature does NOT gate templates (one template per
+encoding-side covers every affine shape) and affine-vs-exponential overflow
+splits WITHIN shapes, member by member -- always profile the overflow
+branch before assuming a member fits.
 
-ONE-OFF, LOWEST PRIORITY: 0RB1LC_1LC0LC_0RD1LA_1RD1RB is a carry-shifted counter
-(§3) — D scans right filling 1s (writes 1 on both branches), so the carry's zero
-lands one cell PAST the standard position and the digit frame advances per carry.
-Its anchor must be Cc (p, k) carrying the frame offset k, not Cc p alone. One
-machine; do it last.
+DEFERRED TO STABLE HARDWARE: folding boards into the proven tier
+(gen_proven.py + Deferred regen + make census-verify + census_cache
+--update) -- batch it once, it is the only step that lowers D_census.  Also
+the champion 1RB1LD_1RC1RB_1LC1LA_0RC0RD (needs `exists B, QHBound B` plus
+a 32.8M-step prefix) and the carry-shifted one-off
+0RB1LC_1LC0LC_0RD1LA_1RD1RB (anchor Cc (p, k) with a frame offset).
 
-OPTIONAL, ~15 MIN: resume tools/kcopy_classify.py over the remaining open machines
-(it covered 1,323 of 2,713 and is resumable, skipping completed ones) if a complete
-encoding table is wanted. Purely diagnostic.
+WHEN STUCK ON A CLASS: print a few machine strings and ask the human.
+Hand-inspection is 11-for-11 across waves 8-9.
 
-DEFERRED TO STABLE HARDWARE (not this container): folding boards into the proven tier
-(gen_proven.py + Deferred regen + make census-verify + census_cache --update). This is
-the only step that lowers D_census — batch it, don't pay it per wave. Also the
-champion 1RB1LD_1RC1RB_1LC1LA_0RC0RD (needs `exists B, QHBound B` plus a
-32.8M-step prefix).
-
-WHEN STUCK ON A CLASS: print a few machine strings and ask the human. Hand-inspection
-on bbchallenge out-diagnosed the automated analysis 7 times out of 7 last session, and
-every "this lever is dead" verdict turned out to be a parameter artifact.
-
-Commit + push per validated batch. Name new files so they cannot clash with a
-concurrent session's (last session used RWL8_*/TCyc8_*).
+Commit + push per validated batch.  Name new files so they cannot clash
+with a concurrent session's (wave 10 used ILS1_*/ILS4_*/ILS4F_*).
 ```
-
----
-
-## Why the first milestone is a hand-authored board, not a generic emitter
-
-Three parameter widenings were tried on the emitter last session and each gained
-**exactly zero** derives (§5).  The reason is structural: most laps have 2-4
-phases while the emitted template is a fixed six-window chain, so no setting of
-its constants can fit them (§5b).  The rep-algebra junctions for a non-six-window
-chain have never been worked out in Coq — `Interleave_TGT.v` settled them for the
-six-window shape only.  Hand-authoring one board of shape 1 produces a board
-immediately **and** establishes those junctions empirically; generalising first
-means guessing them inside a code generator, which is how the previous three
-attempts failed.
-
-## The scoreboard the next session inherits
-
-| | |
-|---|---|
-| boards landed in PR #29 | 44 (36 `RWL8_*` RepWL, 8 `TCyc8_*` TCycler) |
-| counter core | 2,480 = 1,738 recognized (658 L / 1,080 R) + 742 residue |
-| counters boarded | 160 (61 `ILC_*` + 99 `ILCM_*`) |
-| growth=L still to board | 597, of which 243 have a traceable lap over 52 shapes |
-| residue machines with no diagnosed mechanism | **0** |
-| `D_census` reduction so far | **none** — the 44 boards are Class-1 only (§10) |
