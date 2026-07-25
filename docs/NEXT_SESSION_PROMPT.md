@@ -31,13 +31,15 @@ NON-NEGOTIABLE: never touch theories/Census/; `python3 tools/census_cache.py
 `Print Assumptions` shows functional_extensionality_dep only.  tools/ is
 UNTRUSTED; the kernel re-checks every board.
 
-STATE: 155+ wave-10 boards (ILS1_* Jp 4-window; ILS4_*/ILS4F_* Ip
-2-phase/flip) cover every affine-overflow traceable machine.  The emitters
-are tools/counters/emit_shape1.py and emit_shape4.py (--flip auto);
-each derives windows by exact symbolic replay, validates differentially
-against the raw simulator on both cview branches, compiles, checks
-assumptions, deletes on failure.  Run them derive-only over any machine
-list to see what fits.
+STATE: 309 wave-10/11 boards (ILS1_*/ILS4_*/ILS4F_* direct; ILS1M_*/
+ILS4M_*/ILS4FM_* mirror via Mirror.mirror_never_qh; wall anchors via
+derive_tail_far).  Emitters: tools/counters/emit_shape1.py and
+emit_shape4.py (--flip auto, --mirror); each derives windows by exact
+symbolic replay, validates differentially on both cview branches, compiles,
+checks assumptions, deletes on failure.  Of the frozen 5,156 deferred,
+~1,598 machines remain unproven (docs/WAVE11_MIRROR.md section 5); the
+route-A closeout (Assembly.v boarded app-chain vs the FROZEN list, NO
+census walk) is the finish line and is container-safe.
 
 THE TASK -- the EXPONENTIAL-OVERFLOW family (~70-90 machines, the largest
 residue block with a diagnosed mechanism).  Their interior laps are affine
@@ -47,30 +49,32 @@ window chain cannot express it; glue_neverqh does not care -- it needs one
 existential csteps witness per lap, which an INNER induction provides:
 
   1. Hand-author ONE board: machine 1RB1LA_0LA1RC_0LD0RB_0LA1RD (shape
-     +AB|-BA|+AB, overflow cost 10*2^j'+4j'+4).  Trace the overflow with
-     tools/../trace_any.py (in the wave-10 scratch, or rewrite: 20 lines):
-     the sweeps have their own anchor family inside the lap.  Prove a sweep
-     lemma by induction (the same cycL/cycR windows), compose it j' times
-     by a second induction, then close the lap.  The interior chain is the
-     ILS4F flip template verbatim.
+     +AB|-BA|+AB, overflow cost 10*2^j'+4j'+4).  MEASURED (WAVE11 section
+     3): the overflow IS an inner interleaved counter -- the (A, blank-head)
+     snapshots inside the p=15->16 lap count 11010101 -> 11010111 ->
+     11011101 -> ... -> 11111111 with the same anchor discipline.  So:
+     define the inner anchor family Ci, prove inner laps with the SAME
+     cview/window lemmas, compose by the same well-founded induction, and
+     plug the composite in as the outer overflow's existential witness.
+     The interior chain is the ILS4F flip template verbatim.
   2. Clone across the family (the members are the 'laps not affine'
      failures of emit_shape4.py over tools/counter_lapshapes.tsv machines).
 
 CHECKPOINT: one exponential-overflow board with clean assumptions before
 any emitter work -- the inner-induction junctions have never been written.
 
-THEN, in order of measured size:
-  (3) the B-row-1RB overflow-return stragglers (6 machines: the overflow
-      return runs in StB while the interior returns in StD; extend
-      emit_shape1.py with a second RET/FIN pair -- mechanical);
-  (4) the 133 wall-anchored machines ('only N anchor snapshots'):
-      glue_neverqh takes an arbitrary Cc p, zero new soundness surface --
-      needs anchor derivation with a non-blank far side (emit_ip.py's
-      far_candidates is the pattern);
-  (5) the 306 machines needing more encodings (tools/counter_encodings.tsv
-      is the input; Kp/Dp exist since wave 9);
-  (6) the 1,080 growth=R machines via the mirror route (emit_mirror.py /
-      Mirror.mirror_never_qh -- every left-side fix transfers).
+THEN, in order of measured size (mirror + wall-anchor + NOFIT harvests
+are DONE for everything the current skeletons fit -- WAVE11 section 5):
+  (3) the wall-LAP skeletons (~300 L+R): far anchors now derive
+      (derive_tail_far) but the laps bounce off the wall with window
+      chains the affine templates lack -- derive their shapes by replay,
+      extend the skeleton search;
+  (4) the B-row-1RB overflow-return stragglers (6) + the flip third-close
+      variant (8): second RET/FIN pair per branch -- mechanical;
+  (5) far-thread emit_shape4.py (Ip side) the way emit_shape1 was done,
+      and re-sweep the pools; wire emit_kp.py emission (Kp, ~33+ machines);
+  (6) the 318 non-core unproven: one triage pass (fingerprint + lapshape),
+      then route by family.
 
 DO NOT RETRY (measured, grids in COUNTER_CLOSEOUT.md section 5): emitter
 anchor-search widenings; Ip-encoding-alone; ripple ulen widening; big-block

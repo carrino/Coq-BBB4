@@ -62,13 +62,20 @@ composite plugged in as the outer overflow's existential witness.
 `glue_neverqh` never sees the difference.  This gates ~209 machines
 (~94 L + ~115 R) and is the next hand-author-one-first milestone.
 
-## 4. Scoreboard after wave 11
+## 4. The NOFIT surprise
+
+Ten of the 336 unproven NOFIT machines — never recognized as counters by
+wave-8 fingerprinting — board DIRECTLY through the far-anchor Jp template
+(one with an 8-step close / 11-step overflow stop; the skeleton search
+absorbs it).  The NOFIT wall is partly a recognizer artifact, again.
+
+## 5. Scoreboard after wave 11
 
 | | |
 |---|---:|
-| boards this session (waves 10+11) | **255** (127 L-side + 128 mirror) |
-| unproven on the frozen 5,156 | 1,780 → **1,652** |
-| proven awaiting route-A closeout | 3,376 → **3,504** |
-| next blocks, ranked | exponential/inner-counter ~209; wall-lap skeletons ~300 (L+R); skeleton misfits ~110; Kp emission (`emit_kp.py`, sibling) ~33+; non-core triage 318 |
+| boards this session (waves 10+11) | **309** (127 L-side + 128 mirror + 44 walls + 10 NOFIT) |
+| unproven on the frozen 5,156 | 1,780 → **~1,598** (dash-machine filename accounting makes this an upper bound) |
+| proven awaiting route-A closeout | 3,376 → **~3,558** |
+| next blocks, ranked | exponential/inner-counter ~209 (§3 — the refined spec); wall-lap skeletons ~300 (L+R); skeleton misfits ~110; Kp emission (`emit_kp.py`, sibling) ~33+; non-core triage 318; route-A closeout assembly (container-safe, any time) |
 
 Census untouched throughout; `census_cache --check` = MATCH at every commit.
