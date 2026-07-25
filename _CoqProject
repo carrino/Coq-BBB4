@@ -295,6 +295,7 @@ theories/Tests/IRules_Corruption.v
 # --- counters track ---
 theories/Counters/WTape.v
 theories/Counters/LapGlue.v
+theories/Counters/LapGlueQH.v
 theories/Counters/MonoCounter.v
 theories/Machines/Counters/Mono_10.v
 theories/Machines/Counters/Mono_26.v
