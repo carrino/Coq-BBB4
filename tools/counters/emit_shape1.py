@@ -39,8 +39,8 @@ sys.path.insert(0, HERE)
 
 from executor import Exec, Wall                                     # noqa: E402
 from emit_interleave import (Raw, strip0, LAB, ST, SYM, ENC,          # noqa: E402
-                             DeriveError, derive_tail, mach_id, coq_table,
-                             clist, ccons, cwin)
+                             DeriveError, derive_tail, derive_tail_far,
+                             mach_id, coq_table, clist, ccons, cwin)
 from mirror_common import mirror_spec, mirrorize                       # noqa: E402
 
 OUTDIR = os.path.join(REPO, 'theories', 'Machines', 'Counters')
@@ -428,7 +428,7 @@ Lemma phSTPO_@ID@ : forall R, csteps tm @NSTPO@ (@EDGE@,(@STPOEL@,S0,R)) = Some 
 Proof. intros. exact (wsteps_frame_l _ _ _ _ _ _ _ _ _ _ R U_STPO_@ID@). Qed.
 Lemma phRET_@ID@ : forall k L R, csteps tm (@NRET@*k) (@QT@,(L,S1,rep [S1] k ++ R)) = Some (@QT@,(rep [S1] k ++ L,S1,R)).
 Proof. intros. exact (cycR _ _ _ _ _ _ U_RET_@ID@ k L R). Qed.
-Lemma phFIN_@ID@ : forall L R, csteps tm @NFIN@ (@QT@,(L,S1,S0::R)) = Some (@EDGE@,(L,S0,S0::R)).
+Lemma phFIN_@ID@ : forall L R, csteps tm @NFIN@ (@QT@,(L,S1,@FARC@R)) = Some (@EDGE@,(L,S0,@FARC@R)).
 Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R U_FIN_@ID@). Qed.
 @PHVDEEP@Lemma phVX_@ID@ : forall L R, csteps tm 1 (@EDGE@,(S1::L,S0,R)) = Some (@QX@,(L,S1,@WDEPC@R)).
 Proof. intros. exact (wsteps_frame _ _ _ _ _ _ _ _ _ _ L R U_VX_@ID@). Qed.
@@ -631,6 +631,7 @@ def emit_source(spec, E, tail, p0, boot, s, U, a_i, a_o, exact_ov,
         '@FINE@': cwin(Fe), '@FINX@': cwin(Fx),
         '@QT@': ST[QT], '@QX@': ST[X],
         '@STPIDL@': ccons(Sx[1], ''), '@STPIDR@': ccons(Sx[3], ''),
+        '@FARC@': ccons(FAR, ''),
         '@STPOEL@': clist(Oe[1]), '@STPOL@': clist(Ox[1]),
         '@STPODR@': ccons(Ox[3], ''),
         '@WDEP@': clist(wdep), '@WDEPC@': ccons(wdep, ''),
@@ -704,8 +705,10 @@ def process(spec, fp_edge, do_emit, scratch, force=False, mirror=False):
     rspec = spec
     if mirror:
         spec = mirror_spec(spec)
+    global FAR
     try:
-        edge, tail, p0 = derive_tail(spec, fp_edge, encname='Jp')
+        edge, tail, p0, farw = derive_tail_far(spec, fp_edge, encname='Jp')
+        FAR = list(farw) + [0]
         E = LAB.index(edge)
         encf = ENC['Jp']
         pr = profile(spec, E, encf, tail)
@@ -723,6 +726,7 @@ def process(spec, fp_edge, do_emit, scratch, force=False, mirror=False):
         res['why'] = str(e)
         return res
     res.update({'edge': edge, 'tail': list(tail), 'p0': p0, 'boot': boot,
+                'far': list(FAR),
                 'skel': s, 'a_i': a_i, 'a_o': a_o, 'exact_ov': exact_ov,
                 'X': LAB[X], 'QT': LAB[U['RET'][0][0]],
                 'deep': {LAB[q]: t for q, (t, _) in deep.items()},
