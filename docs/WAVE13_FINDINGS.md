@@ -133,3 +133,121 @@ bucket, and it is one theorem, not one per machine.
   reconstruct from measurements (`WAVE9_FINDINGS.md` §7 is now closed out).
 * **Widening the ENCODING table to buy boards** — `Kp`/`Dp`/`Mp` added this
   wave for 7 boards total.  The chain search, not the alphabet, is binding.
+
+## 9. Five tape readings, four structural classes — and one hard architectural limit
+
+_Added at the end of wave-13.  John read five machines out of the "no interior
+chain" bucket; every reading converted into a measurement.  Two are mechanical
+fixes to the emitter, two are outside the current model.  Hand-inspection is
+now 20-for-20 across waves 8-13._
+
+### 9a. `j = 0` vs `j >= 1` — mechanical, ~31% of the bucket
+
+`0RB---_1LC1RB_0RB1LD_1LA0LC` — *"msb on the right and a 1 to the right of each
+bit"*, i.e. `Mp`.  The reading CONFIRMED the emitter's anchor and frame
+(snapshots decode as `Mp p ++ [S1]`), which localised the bug precisely: at
+`j = 0` the repeated block vanishes, so the cell to the head's left is
+ambiguous (block's first cell vs `post`'s first cell) and the search stalls
+with no legal move at step 0.
+
+Splitting the interior branch derives both cases immediately:
+
+    j = S j'   [SWin 2; SCycL 2 0; SWin 2; SCycR 2; SWin 2]   4j'+6
+    j = 0      [SWin 2]                                        2
+
+Measured over 100 of the 517: **31 unlock**.  No new soundness surface — the
+glue gains a `destruct j`.
+
+### 9b. Period-`m` traversal (the double-pass carry) — mechanical, ~7% more
+
+`0RB0LA_0LC1RD_0RD1LC_1LA1RB` — *"when doing the carry it alternates B then D;
+the first time it hits with B it just goes back without flipping, then D
+actually flips it."*  A two-pass carry makes the traversal period 2 in the
+CELLS, so the cycle unit is two cells wide while the block unit is one, and
+nothing matches.
+
+Fix: re-index `j = m*i + r` and use `u^m` as the block unit,
+
+    rep u (m*i + r) = rep (u^m) i ++ rep u r
+
+which the EXISTING checker expresses (it is just a different starting
+`sside`).  At `m = 2` both parity classes derive, and the two-pass structure
+is visible in the chain — two `SCycL`/`SCycR` sweeps:
+
+    j = 2i    [SWin 2; SCycL 2 0; SWin 2; SCycR 2; SWin 4;
+               SCycL 2 0; SWin 2; SCycR 2; SWin 2]   8i+12
+    j = 2i+1  [SWin 2; SCycL 2 0; SWin 4; SCycR 2; SWin 2]   4i+8
+
+Measured: **4 more of 60**.  Smaller than the single example suggested.
+
+### 9c. QUADRATIC laps — OUTSIDE the model, and the important one
+
+`0RB0LA_1LA0LC_0RD1LC_1RB1RD`, `0RB0LA_1LA1LC_0RD0LC_1RD1RB`,
+`0RB0LA_1LA0RC_0LD1RC_1RB1LD`, `0RB0LA_1LA1RC_0LD0RC_1LD1RB` — *"doing a carry
+bit actually does many back and forths to get the bit set, so 1110 takes 3 back
+and forths to get 0001."*  A space-time diagram shows the widening zigzag: one
+round trip per carry bit.
+
+All four have the SAME interior lap cost, measured on the raw simulator:
+
+| `j` | 0 | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|---|
+| steps | 2 | 6 | 12 | 20 | 30 | 42 | 56 |
+
+Second differences constant 2, so **`lap(j) = (j+1)(j+2)`**.
+
+**This is a hard architectural limit, not a search weakness.**  `sside` carries
+its count as `a*j+b` and `srun` returns step counts as `ca*j+cb`; both are
+AFFINE in `j` by construction, so a quadratic lap is not expressible and no
+amount of chain search or step-language widening reaches it.  Closing this
+needs one of:
+
+* a quadratic count in the model (`sside` gains a `j^2` coefficient, and
+  `cycL`/`cycR` gain a variant whose repetition count varies per iteration); or
+* a NESTED chain — an inner cycle repeated `j` times whose own length grows
+  with the iteration index.  This is the "three-level recursion" that
+  `WAVE12_FINDINGS.md` §4.1 correctly rejected for the WALL family; it is real
+  here, and the two claims do not conflict.
+
+The wave-12 do-not-retry entry *"assuming affine-vs-exponential overflow is
+uniform within a shape"* now has a sibling: **do not assume the INTERIOR lap
+is affine either.**  `tools/counters/lapshape.py` segments laps by phase but
+never measured cost-vs-`j`; it should.
+
+### 9d. GRAY-CODE counters — a sixth word family, not a sixth digit alphabet
+
+`0RB0LA_0RC1RC_1LD0LD_1LA1RB` — *"some bits seem inverted, or maybe it counts
+up and down before doing a carry."*  Decoded: the tape word is `g(n)`, the
+reflected-binary (Gray) code.
+
+| word | binary | `gray^-1` |
+|---|---:|---:|
+| `11` | 3 | 2 |
+| `011` | 6 | 4 |
+| `101` | 5 | 6 |
+| `0011` | 12 | 8 |
+| `1111` | 15 | 10 |
+
+`gray^-1` runs 2, 4, 6, 8, … — exactly consecutive.  `0RB0LA_1LA1RC_0RD1RD_1LB0LB`
+(*"counts up, then down, then bumps the msb: 8->15->9, then 16->31->17, then
+32"*) is the same thing with a paired step: `gray^-1` = 4,5, 8,9, 12,13, 16,17…
+
+This is NOT a new digit alphabet.  `Ip/Jp/Kp/Dp/Mp` all encode the BINARY
+expansion and share `MonoCounter.cview`; a Gray word is a different function of
+`n` and needs its own decomposition lemmas (a `GpCounter.v`, `cview`-analogue
+included).  The lap itself should then be easy — Gray increment flips exactly
+one bit — but the ANCHOR family and its successor relation are new.
+
+A constant-difference detector found **4 of 35** resistant machines as Gray,
+and it MISSES the paired-step ones (`0RB0LA_1LA1RC_0RD1RD_1LB0LB` decodes as
+Gray but was scored "neither"), so 4 is a floor, not an estimate.  Before
+building `GpCounter.v`, re-run the detector allowing a PERIODIC difference
+pattern rather than a constant one.
+
+### 9e. Ranked consequence
+
+1. Wire 9a + 9b into the emitter (mechanical, no new Coq, ~35% of the 517).
+2. Re-run the Gray detector with periodic differences to size 9d properly.
+3. Decide 9c: quadratic counts vs nested chains.  This is the first thing in
+   five waves that the EXISTING theory genuinely cannot express, so it deserves
+   a design pass rather than an implementation pass.
