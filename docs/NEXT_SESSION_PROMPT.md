@@ -75,14 +75,43 @@ THE TASK -- THE EXPONENTIAL OVERFLOW, AND MEASURE BEFORE TEMPLATING.
   STEP (chain to a second anchor family), not a new count language, and
   LapDecider.v is not touched.
 
-  The build is WAVE14 section 6 route (1), unchanged and now unavoidable:
-  teach LapDecider a NESTED LAP -- an inner anchor family run 2^j times, which
-  is what the overflow physically does (WAVE14 section 2: it counts the whole
-  range again in the shifted frame).  theories/Counters/IXPGadgets.v already
-  carries the positive-arithmetic gadgets a hand-built instance needed
-  (pow2, fill, cview_none_shape), and wave-12 boarded 163 machines of exactly
-  this family BY HAND through it -- so the target shape is known-good, and the
-  job is to make it a checked step rather than a per-machine proof.
+  STAGES A AND B ARE DONE.  Wave-15 left this half-built, and the remaining
+  work is NAMED:
+
+    Stage A (DONE) -- tools/counters/innerfam.py dumps one overflow phase and
+      finds the inner counter inside it.  Measured on 150 machines: 96% have
+      an inner consecutive family; 79% run exactly 2^(K-1)..2^K-1.  The inner
+      ALPHABET differs from the outer on 37% (Alph_10_11_11 -> Ip on 51 of
+      144), which is the real reason emit_ixp.py -- Ip at both levels --
+      derives 0 of this bucket.
+
+    Stage B (DONE) -- theories/Counters/NestedLap.v, 63 lines, and BOTH its
+      lemmas are "Closed under the global context" (zero axioms).
+      Checkers/LapDecider.v is untouched.  theories/Tests/NestedLapRegression.v
+      re-derives the hand-authored IXP_0RB0RB_0LC1RD_1RB1LC_0LA0RB board's
+      overflow branch through the generic theorem -- a regression test against
+      a known-good board.
+
+    Stage C (THE WORK) -- the emitter.  Prototyped in
+      tools/counters/nestboot.py, and the blocker is MEASURED: the EXIT chain
+      derives readily with the existing derive_chain, the BOOT chain does not
+      (1 of 12).  It is NOT a search budget -- (24,64) -> (48,256) -> (64,512)
+      changes nothing.  It is KEY SELECTION: innerfam reports the best-scoring
+      inner key, a machine has 16-27 keys that decode consecutively, and only
+      a particular one is the family the boot can land on.  Enumerating every
+      key instead of ranking takes boot chains from 1 of 5 to 3 of 5, and the
+      keys that work are NEVER the best-scoring one -- they are consistently
+      Ip at a state different from the outer with a short tail, exactly the
+      reference's Cin v = (StC, (Ip v ++ [S1], S0, [S0;S0])).
+
+      START HERE: make nestboot.py enumerate inner keys instead of taking
+      exact[0], then wire boot/inner/exit into an emitter beside
+      emit_lapcert.py.  Then instrument derive_chain on
+      1RB0LD_1RC1RA_1LA0LD_0RA1LD (outer Jp@A), where NO key gives a boot
+      chain -- anchor, inner family and exit are all verified there, so
+      whatever is missing is in the boot's candidate generator.
+
+  Full design, measurements and open questions: docs/NESTED_LAP_PLAN.md.
 
   Run ovfshape.py on your candidate set before templating anything.  The
   interior version of that measurement was missing for five waves and hid a
