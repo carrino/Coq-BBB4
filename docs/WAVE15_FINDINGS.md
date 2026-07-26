@@ -96,6 +96,51 @@ record "RRBA finds nothing"** — it was never run.  If someone wants the number
 the route is the Rust `beaver/` tree (which has its own decider harness) or a
 per-machine `native_compute` under an opam switch, not apt Coq.
 
+### A POSITIVE CONTROL, added after John pushed back
+
+John's objection was the right one: *"these deciders are exactly what solved
+the residue"* — if so, a 1% hit rate means the harness is broken, not the
+deciders.  So the measurement needs a control that can falsify it.  All four
+runs below at `maxT = 1e6` (**ten times** the budget of the sweep above) and a
+25 s cap per machine:
+
+| population | n | decided |
+|---|---:|---:|
+| **machines WE boarded** (frozen rows with a board) | 40 | **19 (48%)** |
+| BBB(4) holdout list (mxdys' own un-decided set) | 39 | **0** |
+| our `D_remaining`, excluding holdouts | 39 | **0** |
+| our `D_remaining`, first 60 rows | 39 | **0** |
+
+**The harness is not broken.**  It decides 48% of the machines we boarded and
+0% of the residue — and 0% of mxdys' own holdout list, which is the expected
+answer there and confirms the rig end to end.  The residue sits on the far
+side of the same capability boundary that produced their holdout list.  The
+headline `12 / 1,176` is if anything generous: at ten times the budget the
+sampled rate is 0.
+
+### Our residue is NOT the BBB(4) holdout list
+
+The prompt for this wave assumed it was (*"the residue is exactly the machines
+this framework excluded"*).  Measured, that is false — the two populations are
+nearly disjoint, and three candidate explanations were each ruled out:
+
+| test | overlap with the 3,713 |
+|---|---:|
+| raw string | 22 / 1,035 |
+| canonicalised under state-swap + mirror (the census orbit) | 22 |
+| holdout as a COMPLETION of a frozen row (`TM_le`) | 22 |
+
+The reason is **normal form**: 354 of our 1,035 rows begin `0RB`, which
+bbchallenge TNF excludes outright — every one of the 3,713 begins `1RB`.  And
+even restricted to `1RB` starts, 681 of ours meet 3,713 of theirs in 22
+machines.  Only **27** of the 3,713 are anywhere in our 5,156-row census at
+all (`tools/census_holdouts_kept.txt`).
+
+So John's reading was right about the CHARACTER of the residue and wrong about
+its IDENTITY: it is the same *kind* of population — machines whose forward
+behaviour the inductive engine cannot model exactly — reached through a
+different enumeration.  Which is exactly why their deciders do not help.
+
 ### Verdict
 
 Gate (i) is small, so per the plan: **their search is tuned for BB(6) shapes
