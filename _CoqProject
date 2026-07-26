@@ -553,6 +553,12 @@ theories/Machines/Counters/Wave_36.v
 theories/Machines/Counters/Wave_7.v
 theories/Machines/Counters/Wave_6.v
 theories/Machines/Counters/Wave_24.v
+
+# --- holdouts boarded by the NGramHist never-QH tier (wave 14) ---
+theories/Machines/NGHHold/NGHHold_00.v
+theories/Machines/NGHHold/NGHHold_01.v
+theories/Machines/NGHHold/NGHHold_02.v
+theories/Machines/NGHHold/NGHHold_03.v
 theories/Tests/CountersWave_Corruption.v
 
 # --- counters track: double ---

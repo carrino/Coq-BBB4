@@ -104,7 +104,7 @@ not the empty *list*) to become parameters — the encoding alone was not enough
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
 holdouts rather than the residue.  Headlines:
 
-- **The 27 are 7 boarded / 20 unproven** (was 5/22).  `#6` and `#24` landed
+- **The 27 are 11 boarded / 16 unproven** (was 5/22).  `#6` and `#24` landed
   (`theories/Machines/Counters/Wave_6.v`, `Wave_24.v`), so **all six
   `wave_counter` machines are now boarded** off the one `WaveCounter.v`
   closer — it needed no change.  `docs/HOLDOUTS_WAVE14.md` §1 has the full
@@ -121,12 +121,20 @@ holdouts rather than the residue.  Headlines:
   substitution, and `Wave_24.v` compiled on the first try.  New tool
   `tools/counters/sibling_scan.py` looks for exactly this.
 - **`sibling_scan.py` found four unproven holdouts that are relabellings of
-  BOARDED machines** — including `1RB0RB_1LC1RC_0RA1LD_1RC0LD`, the one this
-  file has called "no known proof anywhere".  Three siblings are NGramHist
-  boards (`NGHStage/NGH_01.v`), one is `Bounce_33.v`.  Not a proof transport,
-  but direct evidence that these dynamics are inside our engines' reach —
-  which argues against `docs/TERMINOLOGY.md`'s "keep the machinery away from
-  the 27" discipline.  **Run the never-QH engines on the 20.**
+  BOARDED machines**, which said their dynamics are inside our engines'
+  reach.  Acting on that, `tools/nghist/holdout_sweep.py` ran NGramHist over
+  all 20 — and **boarded 4 of them at the CHEAPEST rung (k=2, n=2)**:
+  `theories/Machines/NGHHold/NGHHold_{00..03}.v`.  Those are the whole
+  `xd_counter` family (#1/#25/#29) **and
+  `1RB0RB_1LC1RC_0RA1LD_1RC0LD` — the machine this file has called "no known
+  proof anywhere" for a year.  It now has a kernel-checked
+  NeverQuasiHaltsSt theorem.**
+- **RETIRE the "keep the machinery away from the 27" discipline**
+  (`docs/TERMINOLOGY.md`).  It rested on mxdys' deciders failing at HIS
+  parameters; ours is a different tool.  New rule: sweep the holdouts with
+  every engine at every rung BEFORE hand-writing a parametric proof.  The 16
+  survivors resisted (2,2)/(4,2)/(6,2) never-QH and the R_QH tier; still
+  untried are n=3, k=8, bigger fuel/MAXCTX, RepWL, irules-QH and LapDecider.
 - Two leads CLOSED OFF (do not re-chase): the `1RB---` wrap pair is not just
   wiring (`provenqh_stay.txt` records the QHBound tier probe-failing on
   both), and tower/xd are ~1,500/~1,100-line table interpreters, i.e. a

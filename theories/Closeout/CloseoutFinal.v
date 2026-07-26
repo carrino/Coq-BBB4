@@ -9,7 +9,7 @@
 
     -- every (4,2) machine is a bounded quasihalter, or has its
     quasihalting behaviour settled by a board, or is one of the
-    remaining [remaining_rows] machines (1264 at generation time).
+    remaining [remaining_rows] machines (1260 at generation time).
 
     This file LOADS the committed census .vo, which are
     OCaml-toolchain-specific: compile it on the census box under the

@@ -14,22 +14,22 @@ is the authority on what is actually *boarded*) splits it as:
 
 | status | count | machines |
 |---|---|---|
-| **boarded** | **7** | Wave_7, Wave_17, Wave_24, Wave_27, Wave_36, Wave_6, Double_9 |
-| unproven | 20 | below |
+| **boarded** | **11** | Wave_7, Wave_17, Wave_24, Wave_27, Wave_36, Wave_6, Double_9, NGHHold_00..03 |
+| unproven | 16 | below |
 
-The 20 unproven, by BBB `results/counterN.cert` family:
+The 16 unproven, by BBB `results/counterN.cert` family:
 
 | family | n | machines (cert #) |
 |---|---|---|
 | tower | 4 | #20 `1RB0RD_1LC1LB_1RA0LB_1LC1RA`, #21 `1RB0RD_1LC1LB_1RD0LB_1RD1RA`, #34 `1RB1RA_0LC0RA_1LC1LD_1LA0LC`, #40 `1RB1RD_1LC1LB_1RA0LB_1RD0RC` |
 | double | 3 | #30 `1RB1LD_1RC0LA_1RD0RD_1LB1RB`, #32 `1RB1LD_1RC0RB_1LA0RC_0LD0LA`, #37 `1RB1RB_1RC1LC_1LD0RA_1LB0LB` |
 | blockdbl | 3 | #11 `1RB0LD_1RC0RC_1LA1RB_0LC0LD`, #13 `1RB0RB_1LC1RA_1RA0LD_0LB0LD`, #28 `1RB1LC_1LC1RD_1LA0LC_0RD0RB` |
-| xd | 3 | #1 `1RB0LA_0RC0RD_1LD1RD_1LA1RB`, #25 `1RB1LB_1RC1LD_1LD0RC_0LA0LB`, #29 `1RB1LD_0LC0RB_1RA1LA_0LD0LA` |
+| ~~xd~~ | ~~3~~ 0 | **all three BOARDED this session** (§3a) |
 | fractal | 2 | #3 `1RB0LA_1LC0RD_0LB1LA_0RB1LA`, #5 `1RB0LA_1LC1RD_0LC1LA_0RD0RB` |
 | wave4 | 1 | #15 `1RB0RC_0LC1LB_0LD1LC_1RD0RA` |
 | wrap-QH | 2 | `1RB---_1LC0LB_0RC0LD_1RD1RB`, `1RB---_1RC0RB_0LC0RD_1LD1LB` |
 | v4-irules | 1 | `1RB1RA_0RC0RB_1LC1LD_0RA0LA` |
-| open | 1 | `1RB0RB_1LC1RC_0RA1LD_1RC0LD` |
+| ~~open~~ | ~~1~~ 0 | **BOARDED this session** (§3a) |
 
 **The wave family is now COMPLETE** — all six BBB `wave_counter` certs
 (#6, #7, #17, #24, #27, #36) carry kernel-checked `NeverQuasiHaltsSt`
@@ -133,7 +133,7 @@ lemmas cannot transport but a file-level `sed` can.
 
 ## 3. The relabel-sibling scan — a live lead for four holdouts
 
-Running that heuristic over all 20 unproven holdouts against all 3,908
+Running that heuristic over the 20 then-unproven holdouts against all 3,908
 boarded machines (mirror × all 24 state permutations) found **four hits**:
 
 | unproven holdout | is a relabel of | boarded in |
@@ -157,11 +157,44 @@ is an argument about *his* method at *his* parameters, not about ours at
 ours.  Note especially that the machine documented for a year as having **no
 known proof anywhere** has an NGramHist-boarded relabel sibling.
 
-**Next-session action:** run the never-QH engines directly on the 20 (a
-sweep was started this session — see `tools/nghist/nghist_prove.py:prove`,
-escalating `(k,n,t,fuel)` over `(2,2)…(8,2)`), and if a machine closes, board
-it through the existing `NGHStage` route.  It is cheap, untrusted, and the
-kernel re-checks everything.
+## 3a. …and running the engines on the 20 boarded FOUR of them, including the "open" machine
+
+The sweep predicted by §3 was run (`tools/nghist/holdout_sweep.py sweep`,
+results in `tools/nghist/holdout_results.tsv`).  At the **cheapest**
+parameters — `k=2, n=2, t=40, fuel=20000`, the same rung the residue harvest
+starts at — NGramHist's never-QH tier closes **4 of the 20**:
+
+| holdout | family | contexts | predicted by the sibling scan? |
+|---|---|---|---|
+| `1RB0LA_0RC0RD_1LD1RD_1LA1RB` | xd #1 | 116 | yes |
+| **`1RB0RB_1LC1RC_0RA1LD_1RC0LD`** | **the "open" one** | 239 | yes |
+| `1RB1LB_1RC1LD_1LD0RC_0LA0LB` | xd #25 | 116 | yes |
+| `1RB1LD_0LC0RB_1RA1LA_0LD0LA` | xd #29 | 67 | no — a bonus |
+
+Boards: `theories/Machines/NGHHold/NGHHold_{00,01,02,03}.v`, each a
+`ngramhist_check_neverqh_lex_sound` call closed by `vm_compute`, each
+`Print Assumptions` = `functional_extensionality_dep` only.  Regenerate with
+`holdout_sweep.py emit`.
+
+**`1RB0RB_1LC1RC_0RA1LD_1RC0LD` is the machine `NEXT_SESSION.md` has recorded
+for a year as "the only one with no known proof anywhere".**  It now has a
+kernel-checked `NeverQuasiHaltsSt` theorem.  The whole `xd_counter` family is
+gone too, so BBB's hand-built transducer certs (`xd_arc`/`xd_dfa`, the
+~1,100-line `verify_xd_counter`) never need porting.
+
+**So `TERMINOLOGY.md`'s "keep the machinery away from the 27" discipline is
+retired.**  It rested on "mxdys' deciders failed on these" — a statement
+about *his* method at *his* parameters.  Ours is his NGramCPS extended to
+quasihalting with a lex liveness gate; it is a different tool, and the
+holdout list is an inference rather than a record (that file's own CAVEAT).
+The rule going forward: **sweep the holdouts with every engine at every
+escalation rung BEFORE hand-writing a parametric proof for any of them.**
+
+The 16 survivors resisted `(2,2)`, `(4,2)` and `(6,2)`, and none of them is
+an R_QH/wrap board either (0 hits on that tier).  Still untried on them:
+higher rungs (`n=3`, `k=8`, bigger `MAXCTX`/fuel), `RepWL`, `irules`-QH, and
+`LapDecider`.  Do that first next session — it is hours of untrusted compute,
+not weeks of Coq.
 
 ---
 
@@ -240,8 +273,10 @@ cheap route on it first.
 
 ## 7. Scoreboard
 
-- Holdouts: **27 total, 7 boarded, 20 unproven** (was 5 / 22).
-- Route-A closeout: `proven_rows` 3,890 → **3,892**, `D_remaining` 1,266 →
-  **1,264** (`tools/closeout/inventory.py` then `gen_stages.py`; `CB_07.vo`
-  rebuilt and kernel-green).
+- Holdouts: **27 total, 11 boarded, 16 unproven** (was 5 / 22).
+  Gone this session: the whole wave family (#6, #24), the whole xd family
+  (#1, #25, #29), and the one machine that had no known proof anywhere.
+- Route-A closeout: `proven_rows` 3,890 → **3,896**, `D_remaining` 1,266 →
+  **1,260** (`tools/closeout/inventory.py` then `gen_stages.py`; `CB_07.vo`
+  and `CB_26.vo` rebuilt and kernel-green).
 - `D_census` = 5,156, frozen and unchanged, as always.
