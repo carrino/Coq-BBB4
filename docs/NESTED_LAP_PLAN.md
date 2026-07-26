@@ -292,12 +292,31 @@ correction that turned 0 interior chains into all of them in wave-13.
 
 **The boot has its own SHAPE, and it must be measured.**  Running the
 `ovfshape` question on the boot itself — cost of `Cc(2^K-1) -> Cin(2^(K-1))`
-against `K` — over 41 machines:
+against `K` — `tools/counters/bootshape.py`, over a 150-machine sample
+(139 completed):
 
 | boot degree | count |
 |---|---:|
-| **`AFFINE`** | **31 (76%)** |
-| `EXP` (ratio → 2) | 10 (24%) |
+| **`AFFINE`** | **105 (76%)** |
+| `EXP` (ratio → 2) | 34 (24%) |
+
+(A 41-machine sample gave 31/10 — the same 76%, so this split is solid.)
+
+**And the exponential boot is almost entirely an `Mp` phenomenon:**
+
+| outer alphabet | affine boot | exp boot |
+|---|---:|---:|
+| `Jp` | 63 | 3 |
+| `Alph_10_11_11` | 36 | 0 |
+| `Ip` | 4 | 0 |
+| **`Mp`** | **2** | **31** |
+
+`Mp` is 94% exponential-boot; everything else is 95-100% affine.  So the
+Stage C target population is essentially *`Jp` + `Alph_10_11_11` + `Ip`*, and
+**`Mp` needs its own tape reading before it is templated at all** — its
+overflow phase is doing something structurally different, which is exactly
+the kind of class-level question `WAVE14_FINDINGS.md` says to take to John
+with a `spacetime.py` dump rather than guess at.
 
 Examples: `0RB0LC_1LC1RB_0RD1LA_1RB1RC` boots in `4K+3` steps (15,19,23,27,31)
 and its boot chain DERIVES; `1RB0LD_1LB1LC_1LD1RC_0RC1LA` boots in

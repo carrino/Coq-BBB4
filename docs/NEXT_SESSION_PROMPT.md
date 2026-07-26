@@ -106,8 +106,12 @@ THE TASK -- THE EXPONENTIAL OVERFLOW, AND MEASURE BEFORE TEMPLATING.
 
       AND the boot has its OWN SHAPE, which must be measured like the
       overflow was.  tools/counters/bootshape.py runs the ovfshape question on
-      the boot itself: over 41 machines, 31 (76%) have an AFFINE boot and 10
-      (24%) an EXPONENTIAL one (ratio -> 2).  An exponential boot cannot be
+      the boot itself: over 139 machines, 105 (76%) have an AFFINE boot and
+      34 (24%) an EXPONENTIAL one (ratio -> 2).  THE EXP BOOT IS AN Mp
+      PHENOMENON -- Mp is 2 affine / 31 exp, while Jp is 63/3,
+      Alph_10_11_11 is 36/0 and Ip is 4/0.  So target Jp + Alph_10_11_11 + Ip
+      first, and give Mp its own tape reading (spacetime.py) before
+      templating it at all.  An exponential boot cannot be
       one chain, by the same affineness limit that put these machines in the
       residue -- so the EXP2 bucket splits again:
         affine boot (76%)  -> two-level nested lap is right, failures are a
