@@ -1,0 +1,765 @@
+#!/usr/bin/env python3
+"""UNTRUSTED emitter: lap CERTIFICATES for theories/Checkers/LapDecider.v.
+
+This replaces the five per-machine emitters (emit_shape1/shape4/ixp/wall/wallj)
+with ONE that emits DATA.  Where those emitted a hand-shaped proof script per
+machine -- window lemmas, transported phases, an assembled lap, a bespoke
+[reach_fin2] induction -- this emits two lists of small numbers and lets
+[LapDecider.srun_sound] discharge them, once, for every machine.
+
+Per machine the Coq file now contains exactly:
+  * the TM table and the anchor [Cc p = (E, (Enc p ++ tail, S0, []))];
+  * two [srun ... = Some (..., ca, cb)] facts, closed by [vm_compute];
+  * four ANCHOR GLUE lemmas -- the only per-machine mathematics -- each a
+    [cview] rewrite plus [app_assoc];
+  * boot, visits (via [LapCertGlue.vis_via_ovf]) and the two theorems.
+
+ENCODINGS ARE DIGIT ALPHABETS.  [Ip] and [Jp] differ only in which digit the
+carry writes, so they are two rows of ENCDATA rather than two emitters; the
+encoding is SEARCHED at derive time (emit_interleave.derive_tail_best), never
+hard-coded.
+
+Everything here is untrusted: the Coq kernel re-runs [srun] on every chain.
+
+Usage
+  emit_lapcert.py --list FILE [--emit] [--json OUT] [--jobs N]
+  emit_lapcert.py --spec SPEC [--emit]
+"""
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
+sys.path.insert(0, HERE)
+
+from emit_interleave import (parse, carry, ENC, LAB, ST, SYM,          # noqa: E402
+                             DeriveError, derive_tail_best,
+                             derive_tail_best_far, mach_id, coq_table,
+                             clist)
+from mirror_common import mirror_spec, mirrorize                       # noqa: E402
+import lapcert as LC                                                   # noqa: E402
+
+OUTDIR = os.path.join(REPO, 'theories', 'Machines', 'Counters')
+PREFIX = 'LAPC'
+
+# ---------------------------------------------------------------------------
+# The digit alphabets.  For every encoding E and every p,
+#
+#   interior  (cview p = (j, Some q0)):
+#       E p         = rep uS j ++ sS ++ E q0
+#       E (succ p)  = rep uD j ++ sD ++ E q0
+#   overflow  (cview p = (S j, None)):
+#       E p         = rep uS j ++ so
+#       E (succ p)  = rep uD (S j) ++ so
+#
+# which is exactly ILCounter.cview_some_I/cview_none_I and their Jp twins.
+# ---------------------------------------------------------------------------
+# obS is the overflow SOURCE count offset (E p = rep uS (j+obS) ++ soS); the
+# destination is always rep uD (S j) ++ soD.  Mp/Kp/Dp differ from Ip/Jp only
+# in these rows -- they are digit alphabets, not emitter forks.
+ENCDATA = {
+    'Ip': dict(uS=(1, 1), sS=(1, 0), uD=(1, 0), sD=(1, 1),
+               obS=0, soS=(1,), soD=(1,),
+               mod='ILCounter', some='cview_some_I', none='cview_none_I'),
+    'Jp': dict(uS=(1, 0), sS=(1, 1), uD=(1, 1), sD=(1, 0),
+               obS=0, soS=(1,), soD=(1,),
+               mod='JpCounter', some='cview_some_J', none='cview_none_J'),
+    'Kp': dict(uS=(1,), sS=(0,), uD=(0,), sD=(1,),
+               obS=1, soS=(), soD=(1,),
+               mod='KpCounter', some='cview_some_K', none='cview_none_K'),
+    'Dp': dict(uS=(1, 1), sS=(0, 0), uD=(0, 0), sD=(1, 1),
+               obS=1, soS=(), soD=(1, 1),
+               mod='DpCounter', some='cview_some_D', none='cview_none_D'),
+    'Mp': dict(uS=(1, 1), sS=(0, 1), uD=(0, 1), sD=(1, 1),
+               obS=1, soS=(), soD=(1, 1),
+               mod='MpCounter', some='cview_some_M', none='cview_none_M'),
+}
+
+
+def _Kp(m):
+    out = []
+    while m > 1:
+        out.append(m & 1)
+        m >>= 1
+    return out + [1]
+
+
+def _Dp(m):
+    out = []
+    while m > 1:
+        b = m & 1
+        out += [b, b]
+        m >>= 1
+    return out + [1, 1]
+
+
+def _Mp(m):
+    out = []
+    while m > 1:
+        out += [m & 1, 1]
+        m >>= 1
+    return out + [1, 1]
+
+
+ENC.setdefault('Kp', _Kp)
+ENC.setdefault('Dp', _Dp)
+ENC.setdefault('Mp', _Mp)
+ENCS = ('Ip', 'Jp', 'Kp', 'Dp', 'Mp')
+
+FLAT = ((), (), 0, 0, ())
+Halt_ = LC.Halt
+
+
+def branches(enc, tail):
+    """The four symbolic configurations: start/target of each branch."""
+    d = ENCDATA[enc]
+    tail = tuple(tail)
+    return dict(
+        int_start=(d['uS'], d['sS']),
+        int_end=(d['uD'], d['sD']),
+        ovf_start=(d['uS'], d['so'] + tail),
+        ovf_end=(d['uD'], d['so'] + tail),
+    )
+
+
+def confs(enc, st0, tail, far=()):
+    """[far] is the anchor's FAR side -- empty for a plain counter, a fixed
+    wall for the wall families.  Either way nothing is written beyond it, so
+    the right opaque tail is empty and open-right windows are available."""
+    d = ENCDATA[enc]
+    tail, far = tuple(tail), tuple(far)
+    F = (far, (), 0, 0, ())
+    A0 = (st0, ((), d['uS'], 1, 0, d['sS']), 0, F)
+    A1 = (st0, ((), d['uD'], 1, 0, d['sD']), 0, F)
+    # overflow: E p = rep uS j ++ so, and E (succ p) = rep uD (S j) ++ so,
+    # i.e. uD ++ rep uD j ++ so -- so the target carries uD in its prefix.
+    # When obS >= 1 the overflow block is NEVER empty, so peel one copy into
+    # the prefix: rep uS (S j) = uS ++ rep uS j.  That gives the head a
+    # concrete cell to step onto, which is what the un-peeled form denies it.
+    if d['obS'] >= 1:
+        B0 = (st0, (d['uS'], d['uS'], 1, d['obS'] - 1, d['soS'] + tail), 0, F)
+    else:
+        B0 = (st0, ((), d['uS'], 1, 0, d['soS'] + tail), 0, F)
+    B1 = (st0, ((), d['uD'], 1, 1, d['soD'] + tail), 0, F)
+    return A0, A1, B0, B1
+
+
+# ------------------------------------------------------------- validation ---
+
+def sim(tab, cfg, n):
+    """The REAL machine (both sides open = CTape.cstep) for n steps."""
+    for _ in range(n):
+        cfg = LC.wstep(tab, False, False, cfg)
+    return cfg
+
+
+def eqlift(a, b):
+    """Configurations equal up to blank padding ([CTape.lift])."""
+    return (a[0] == b[0] and a[2] == b[2]
+            and LC.rstrip0(a[1]) == LC.rstrip0(b[1])
+            and LC.rstrip0(a[3]) == LC.rstrip0(b[3]))
+
+
+def validate(tab, st0, encf, tail, far, cost, co, hi=200):
+    """Differentially check both branches against the raw simulator: exact
+    step counts AND exact configurations, on every p in range."""
+    tail, far = tuple(tail), tuple(far)
+    n = 0
+    for p in range(2, hi):
+        j, ov = carry(p)
+        if ov:
+            steps = co[0] * (j - 1) + co[1]
+        else:
+            steps = cost(j)
+        start = (st0, tuple(encf(p)) + tail, 0, far)
+        want = (st0, tuple(encf(p + 1)) + tail, 0, far)
+        got = sim(tab, start, steps)
+        if not eqlift(got, want):
+            return False, 'p=%d %s branch: %d steps -> %r want %r' % (
+                p, 'ovf' if ov else 'int', steps, got, want)
+        n += 1
+    return True, '%d anchors' % n
+
+
+# ------------------------------------------------------------ Coq emission ---
+
+def cstep_str(st):
+    if st[0] == 'SCycL':
+        return 'SCycL %d %d' % (st[1], st[2])
+    return '%s %d' % (st[0], st[1])
+
+
+def cchain(ch):
+    return '[' + '; '.join(cstep_str(s) for s in ch) + ']'
+
+
+def cside(s):
+    pre, u, a, b, post = s
+    return 'mkS %s %s %d %d %s' % (clist(pre), clist(u), a, b, clist(post))
+
+
+def cconf(c):
+    return 'mkC %s (%s) %s (%s)' % (ST[c[0]], cside(c[1]), SYM[c[2]],
+                                    cside(c[3]))
+
+
+NQH_CLOSE = '''Theorem nqh_@ID@ : NeverQuasiHaltsSt tm.
+Proof. apply (glue_neverqh tm Cc @P0@). - exact boot_@ID@. - intros p _. apply lap_@ID@. - intros p q _. apply vis_@ID@. Qed.
+
+Theorem nonhalt_@ID@ : NonHalt tm.
+Proof. apply never_qh_nonhalt, nqh_@ID@. Qed.'''
+
+QH_CLOSE = '''(** StA is TARGETED BY NOTHING, so its only visit is at configuration index
+    0 and the quiet bound is 1 -- weakened to the census tier's 2000. *)
+Definition iqh (tm : TM) : Prop :=
+  NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm.
+
+Theorem iqh_@ID@ : iqh tm.
+Proof.
+  destruct (glue_qh tm Cc @P0@ boot_@ID@ (fun p _ => lap_@ID@ p)
+                    (fun p q _ Hq => vis_@ID@ p q Hq)
+                    (ltac:(intros q b tr Ht; destruct q, b; cbn in Ht;
+                           try discriminate; injection Ht as <-; discriminate)))
+    as (Hn & Hb & Hq).
+  split; [exact Hn | split; [| exact Hq]].
+  apply (qhbound_mono 1 2000); [lia | exact Hb].
+Qed.
+
+Theorem nonhalt_@ID@ : NonHalt tm.
+Proof. apply (proj1 iqh_@ID@). Qed.'''
+
+
+# ---------------------------------------------------------------------------
+# The interior branch, in two shapes.
+#
+# ONE: a single chain covering every j.  Works when the head never has to step
+# into the repeated block's first cell -- otherwise that cell is AMBIGUOUS at
+# j = 0 (the block vanishes and the neighbour is post's first cell instead),
+# and the symbolic run stalls with no legal move.
+#
+# SPLIT: two chains, j = 0 and j = S j'.  In the j = S j' chain one copy of the
+# unit sits in the PREFIX, so the head always has a concrete cell to step onto.
+# Measured wave-13 section 9a: this alone unlocks ~31% of the machines whose
+# single chain fails.  No new soundness surface -- the glue gains a destruct.
+# ---------------------------------------------------------------------------
+
+INT_ONE = r"""Definition A0_@ID@ : sconf := @A0@.
+Definition A1_@ID@ : sconf := @A1@.
+Definition chi_@ID@ : list lstep := @CHI@.
+
+Lemma run_int_@ID@ : srun tm false true chi_@ID@ A0_@ID@ = Some (A1_@ID@, @CAI@, @CBI@).
+Proof. vm_compute. reflexivity. Qed."""
+
+GLUE_ONE = r"""Lemma gsi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  Cc p = cden (@ENC@ q0 ++ @TAIL@) [] j A0_@ID@.
+Proof.
+  intros p j q0 E. destruct (@ENCMOD@.@SOME@ p j q0 E) as (H1 & _).
+  unfold Cc_@ID@, cden, A0_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 0) with j by lia.
+  rewrite H1, <- (app_assoc (rep @US@ j)). reflexivity.
+Qed.
+
+Lemma gei_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  cden (@ENC@ q0 ++ @TAIL@) [] j A1_@ID@ = Cc (Pos.succ p).
+Proof.
+  intros p j q0 E. destruct (@ENCMOD@.@SOME@ p j q0 E) as (_ & H2).
+  unfold Cc_@ID@, cden, A1_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 0) with j by lia.
+  rewrite H2, <- (app_assoc (rep @UD@ j)). reflexivity.
+Qed.
+
+Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  exists n, 0 < n /\ csteps tm n (Cc p) = Some (Cc (Pos.succ p)).
+Proof.
+  intros p j q0 E. exists (@CAI@ * j + @CBI@). split; [lia|].
+  rewrite (gsi_@ID@ p j q0 E).
+  rewrite (srun_sound tm false true chi_@ID@ A0_@ID@ A1_@ID@ @CAI@ @CBI@
+             run_int_@ID@ (@ENC@ q0 ++ @TAIL@) [] j
+             ltac:(discriminate) ltac:(reflexivity)).
+  f_equal. exact (gei_@ID@ p j q0 E).
+Qed."""
+
+INT_SPLIT = r"""(** j = 0: the repeated block is absent, so the whole lap is concrete. *)
+Definition Z0_@ID@ : sconf := @Z0@.
+Definition Z1_@ID@ : sconf := @Z1@.
+Definition chz_@ID@ : list lstep := @CHZ@.
+
+Lemma run_z_@ID@ : srun tm false true chz_@ID@ Z0_@ID@ = Some (Z1_@ID@, @CAZ@, @CBZ@).
+Proof. vm_compute. reflexivity. Qed.
+
+(** j = S j': one copy of the unit sits in the PREFIX, so the head always has
+    a concrete cell to step onto. *)
+Definition P0_@ID@ : sconf := @P0C@.
+Definition P1_@ID@ : sconf := @P1C@.
+Definition chp_@ID@ : list lstep := @CHP@.
+
+Lemma run_p_@ID@ : srun tm false true chp_@ID@ P0_@ID@ = Some (P1_@ID@, @CAP@, @CBP@).
+Proof. vm_compute. reflexivity. Qed."""
+
+GLUE_SPLIT = r"""Lemma gz_@ID@ : forall p q0, cview p = (0, Some q0) ->
+  Cc p = cden (@ENC@ q0 ++ @TAIL@) [] 0 Z0_@ID@ /\
+  cden (@ENC@ q0 ++ @TAIL@) [] 0 Z1_@ID@ = Cc (Pos.succ p).
+Proof.
+  intros p q0 E. destruct (@ENCMOD@.@SOME@ p 0 q0 E) as (H1 & H2).
+  unfold Cc_@ID@, cden, Z0_@ID@, Z1_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  split.
+  - rewrite H1; cbn [rep app]. rewrite <- app_assoc. reflexivity.
+  - rewrite H2; cbn [rep app]. rewrite <- app_assoc. reflexivity.
+Qed.
+
+Lemma gp_@ID@ : forall p j q0, cview p = (S j, Some q0) ->
+  Cc p = cden (@ENC@ q0 ++ @TAIL@) [] j P0_@ID@ /\
+  cden (@ENC@ q0 ++ @TAIL@) [] j P1_@ID@ = Cc (Pos.succ p).
+Proof.
+  intros p j q0 E. destruct (@ENCMOD@.@SOME@ p (S j) q0 E) as (H1 & H2).
+  unfold Cc_@ID@, cden, P0_@ID@, P1_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 0) with j by lia.
+  split.
+  - rewrite H1; cbn [rep app]. rewrite <- !app_assoc. reflexivity.
+  - rewrite H2; cbn [rep app]. rewrite <- !app_assoc. reflexivity.
+Qed.
+
+Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  exists n, 0 < n /\ csteps tm n (Cc p) = Some (Cc (Pos.succ p)).
+Proof.
+  intros p j q0 E. destruct j as [|j'].
+  - destruct (gz_@ID@ p q0 E) as (HA & HB).
+    exists (@CAZ@ * 0 + @CBZ@). split; [lia|].
+    rewrite HA.
+    rewrite (srun_sound tm false true chz_@ID@ Z0_@ID@ Z1_@ID@ @CAZ@ @CBZ@
+               run_z_@ID@ (@ENC@ q0 ++ @TAIL@) [] 0
+               ltac:(discriminate) ltac:(reflexivity)).
+    f_equal. exact HB.
+  - destruct (gp_@ID@ p j' q0 E) as (HA & HB).
+    exists (@CAP@ * j' + @CBP@). split; [lia|].
+    rewrite HA.
+    rewrite (srun_sound tm false true chp_@ID@ P0_@ID@ P1_@ID@ @CAP@ @CBP@
+               run_p_@ID@ (@ENC@ q0 ++ @TAIL@) [] j'
+               ltac:(discriminate) ltac:(reflexivity)).
+    f_equal. exact HB.
+Qed."""
+
+
+HEADER = r'''(** * @PREF@_@ID@: machine @SPEC@, boarded by CERTIFICATE.
+
+    Auto-emitted by tools/counters/emit_lapcert.py (UNTRUSTED emitter; the Coq
+    kernel re-runs the checker on every line below).  Left-growth binary
+    counter under the @ENC@ digit alphabet (@ENCMOD@.v), anchored at
+
+      Cc p = (@ST0@, (@ENC@ p ++ @TAIL@, S0, []))
+
+    The lap is DATA, not a proof script: each branch is a list of steps for
+    [Checkers/LapDecider.v], run by the kernel through [vm_compute] and
+    discharged by the single theorem [srun_sound].
+
+      interior  (cview p = (j, Some q0)):  @NI@ steps
+      overflow  (cview p = (S j, None)):   @NO@ steps
+
+    The interior branch closes EXACTLY (which is what feeds
+    [LapCertGlue.reach_ovf]); the overflow branch closes one blank short of
+    the anchor tail, hence up to [lift].
+
+    Differentially validated against the raw simulator on BOTH branches --
+    step counts AND exact configurations -- for @VAL@.
+    Axiom footprint: [functional_extensionality_dep] (via [CTape.lift]). *)
+From Coq Require Import Arith Lia Bool List PArith Wellfounded.
+From BBB4 Require Import BBB4_Statement CTape.
+From BBB4.Counters Require Import WTape LapGlue LapGlueQH MonoCounter
+                                  JpCounter @ENCMOD@ LapCertGlue.
+From BBB4.Census Require Import TNF_QH.
+From BBB4.Checkers Require Import LapDecider.
+Import ListNotations.
+
+Definition mk_@ID@ (w : Sym) (d : Dir) (n : St) : option Trans := Some (mkTrans w d n).
+Local Notation mk := mk_@ID@.
+
+(** @SPEC@ *)
+Definition tm_@ID@ : TM := fun q s => match q, s with
+@TABLE@ end.
+Local Notation tm := tm_@ID@.
+
+Definition Cc_@ID@ (p : positive) : cconf := (@ST0@, (@ENC@ p ++ @TAIL@, S0, @FAR@)).
+Local Notation Cc := Cc_@ID@.
+
+(** ** The certificate *)
+
+@INTERIOR@
+
+Definition B0_@ID@ : sconf := @B0@.
+Definition B1_@ID@ : sconf := @B1@.
+Definition cho_@ID@ : list lstep := @CHO@.
+
+Lemma run_ovf_@ID@ : srun tm true true cho_@ID@ B0_@ID@ = Some (B1_@ID@, @CAO@, @CBO@).
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** Anchor glue -- the only per-machine mathematics *)
+
+@GLUEI@
+
+Lemma gso_@ID@ : forall p j, cview p = (S j, None) ->
+  Cc p = cden [] [] j B0_@ID@.
+Proof.
+  intros p j E. destruct (@ENCMOD@.@NONE@ p j E) as (H1 & _).
+  unfold Cc_@ID@, cden, B0_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + @OBSP@) with (@CNTP@) by lia.
+  rewrite H1; cbn [rep app]; rewrite <- !app_assoc. reflexivity.
+Qed.
+
+Lemma lbl_@ID@ : forall q l h r, lift (q,(l ++ [S0],h,r)) = lift (q,(l,h,r)).
+Proof. intros. unfold lift; simpl. rewrite lift_side_app_blank. reflexivity. Qed.
+
+Lemma geo_@ID@ : forall p j, cview p = (S j, None) ->
+  lift (cden [] [] j B1_@ID@) = lift (Cc (Pos.succ p)).
+Proof.
+  intros p j E. destruct (@ENCMOD@.@NONE@ p j E) as (_ & H2).
+  assert (HD : cden [] [] j B1_@ID@
+             = (@ST0@, (rep @UD@ (S j) ++ @OVPOST@, S0, @FAR@))).
+  { unfold cden, B1_@ID@, sden, sflat;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+    replace (1 * j + 1) with (S j) by lia.
+    replace (0 * j + 0) with 0 by lia.
+    cbn [rep app]. reflexivity. }
+  assert (HC : Cc (Pos.succ p) = (@ST0@, (@HCLEFT@, S0, @FAR@))).
+  { unfold Cc_@ID@. rewrite H2. rewrite <- !app_assoc. reflexivity. }
+  rewrite HD, HC. @CLOSE@
+Qed.
+
+(** ** The lap *)
+
+Lemma lap_@ID@ : forall p, exists n c',
+  csteps tm n (Cc p) = Some c' /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+Proof.
+  intro p. destruct (cview p) as [j oq] eqn:E. destruct oq as [q0|].
+  - destruct (lapi_@ID@ p j q0 E) as (n & Hn & Hrun).
+    exists n, (Cc (Pos.succ p)).
+    split; [exact Hrun | split; [reflexivity | exact Hn]].
+  - destruct (cview_pos p j E) as (j' & ->).
+    apply (lap_of_run tm Cc true true cho_@ID@ B0_@ID@ B1_@ID@ @CAO@ @CBO@ p j' [] []).
+    + exact run_ovf_@ID@.
+    + reflexivity.
+    + reflexivity.
+    + exact (gso_@ID@ p j' E).
+    + exact (geo_@ID@ p j' E).
+    + lia.
+Qed.
+
+(** ** Bootstrap *)
+
+Lemma boot_@ID@ : exists t0, stepn tm t0 InitES = Some (lift (Cc @P0@)).
+Proof.
+  exists @BOOT@.
+  assert (H : match csteps tm @BOOT@ c0 with
+              | Some c => ceqb c (Cc @P0@) | None => false end = true)
+    by (vm_compute; reflexivity).
+  destruct (csteps tm @BOOT@ c0) as [c|] eqn:E; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.
+Qed.
+
+(** ** Visits
+
+    Every state fires inside the OVERFLOW lap, so one prefix chain per state
+    plus [LapCertGlue.vis_via_ovf] (run interior laps until the counter
+    overflows -- they close exactly) covers every anchor. *)
+
+Lemma viso_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm true true l B0_@ID@ = Some q ->
+  forall p j, cview p = (S j, None) ->
+  exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros l q Hst p j E.
+  apply (vis_of_run tm Cc true true l B0_@ID@ p j [] []);
+    [exact Hst | reflexivity | reflexivity | exact (gso_@ID@ p j E)].
+Qed.
+
+Lemma vis_@ID@ : @VISHYP@ exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  @VISINTRO@.
+  assert (Hi : forall p0 j q0, cview p0 = (j, Some q0) ->
+            exists n, 0 < n /\ csteps tm n (Cc p0) = Some (Cc (Pos.succ p0)))
+    by exact lapi_@ID@.
+  destruct q.
+@VISA@
+@VISITS@
+Qed.
+
+@FINAL@
+'''
+
+
+def boot_probe(tab, st0, encf, tail, far, p0, maxT=200000):
+    """Steps from the blank tape to the anchor at p0 (up to blank padding)."""
+    want = (st0, tuple(encf(p0)) + tuple(tail), 0, tuple(far))
+    cfg = (0, (), 0, ())
+    for t in range(maxT):
+        if eqlift(cfg, want):
+            return t
+        cfg = LC.wstep(tab, False, False, cfg)
+    return None
+
+
+def derive(spec, edge, tail, p0, enc, far=()):
+    tab = parse(spec)
+    st0 = LAB.index(edge)
+    encf = ENC[enc]
+    d = ENCDATA[enc]
+    A0, A1, B0, B1 = confs(enc, st0, tail, far)
+
+    Rr = (tuple(far), (), 0, 0, ())
+    Z0 = (st0, (d['sS'], (), 0, 0, ()), 0, Rr)
+    Z1 = (st0, (d['sD'], (), 0, 0, ()), 0, Rr)
+    P0 = (st0, (d['uS'], d['uS'], 1, 0, d['sS']), 0, Rr)
+    P1 = (st0, (d['uD'], d['uD'], 1, 0, d['sD']), 0, Rr)
+
+    chi = LC.derive_chain(tab, False, True, A0, A1)
+    if chi is not None:
+        mode = 'one'
+        ri = LC.srun(tab, False, True, chi, A0)
+        if ri[2] == 0:
+            raise DeriveError('lap of zero length at j=0')
+        cost = lambda j, c=(ri[1], ri[2]): c[0] * j + c[1]
+        chz = chp = rz = rp = None
+    else:
+        chz = LC.derive_chain(tab, False, True, Z0, Z1)
+        chp = LC.derive_chain(tab, False, True, P0, P1)
+        if chz is None or chp is None:
+            raise DeriveError('no interior chain')
+        mode = 'split'
+        rz = LC.srun(tab, False, True, chz, Z0)
+        rp = LC.srun(tab, False, True, chp, P0)
+        if rz[2] == 0 or rp[2] == 0:
+            raise DeriveError('lap of zero length at j=0')
+        ri = None
+        cost = (lambda j, z=(rz[1], rz[2]), q=(rp[1], rp[2]):
+                z[0] * 0 + z[1] if j == 0 else q[0] * (j - 1) + q[1])
+
+    cho = LC.derive_chain(tab, True, True, B0, B1)
+    if cho is None:
+        raise DeriveError('no overflow chain')
+    ro = LC.srun(tab, True, True, cho, B0)
+    if ro[2] == 0:
+        raise DeriveError('lap of zero length at j=0')
+
+    ok, why = validate(tab, st0, encf, tail, far, cost, (ro[1], ro[2]))
+    if not ok:
+        raise DeriveError('validation: ' + why)
+
+    # StA may genuinely go quiet: these are the residue's QUASIHALTING
+    # counters.  [LapGlueQH.glue_qh] closes them provided nothing targets
+    # StA (then its only visit is at index 0, so the bound is 1) -- far
+    # inside the census tier, and inside the champion's 32.8M prefix.
+    untargeted = all(t is None or t[2] != 0 for t in tab.values())
+    vis, qh = {}, False
+    for q in range(4):
+        pre = LC.reach_state(tab, True, True, B0, cho, q)
+        if pre is None:
+            if q == 0 and untargeted:
+                qh = True
+                continue
+            raise DeriveError('no visit witness for state %s%s' % (
+                LAB[q], '' if q or untargeted else ' (StA is targeted)'))
+        vis[q] = pre
+
+    boot = boot_probe(tab, st0, encf, tail, far, p0)
+    if boot is None:
+        raise DeriveError('no bootstrap to p0=%d' % p0)
+
+    # the overflow close: reached post vs wanted post, up to trailing blanks
+    got = ro[0][1][4]
+    want = tuple(d['soD']) + tuple(tail)
+    if LC.rstrip0(got) != LC.rstrip0(want):
+        raise DeriveError('overflow close mismatch %r vs %r' % (got, want))
+
+    return dict(spec=spec, enc=enc, st0=st0, tail=list(tail),
+                far=list(far), p0=p0, mode=mode,
+                chi=chi, cho=cho, co=(ro[1], ro[2]),
+                ci=((ri[1], ri[2]) if ri else None),
+                chz=chz, chp=chp, Z0=Z0, Z1=Z1, P0=P0, P1=P1,
+                cz=((rz[1], rz[2]) if rz else None),
+                cp=((rp[1], rp[2]) if rp else None),
+                A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, qh=qh, boot=boot,
+                ovpost=list(got), ovwant=list(want), val=why)
+
+
+def render(D):
+    spec = D['spec']
+    ID = mach_id(spec)
+    d = ENCDATA[D['enc']]
+    ovpost, ovwant = tuple(D['ovpost']), tuple(D['ovwant'])
+    body = 'rep %s (S j) ++ %s' % (clist(d['uD']), clist(ovpost))
+    pad = len(ovwant) - len(ovpost)
+    if pad < 0 or ovwant[:len(ovpost)] != ovpost or any(ovwant[len(ovpost):]):
+        raise DeriveError('overflow close %r vs %r' % (ovpost, ovwant))
+    if pad == 0:
+        hcleft, close = body, 'reflexivity.'
+    else:
+        # each surplus cell is one trailing blank, invisible to [lift]
+        hcleft = '(' * pad + body + ''.join(') ++ [S0]' for _ in range(pad))
+        close = 'rewrite !lbl_%s. reflexivity.' % ID
+    vis = []
+    for q in sorted(D['vis']):
+        pre = D['vis'][q]
+        if not pre:
+            vis.append('  - (* %s: the anchor state *)\n'
+                       '    exists 0. eexists. split; reflexivity.' % ST[q])
+        else:
+            vis.append('  - (* %s *)\n'
+                       '    apply (vis_via_ovf tm Cc Hi %s), viso_%s\n'
+                       '      with (l := %s).\n'
+                       '    vm_compute; reflexivity.'
+                       % (ST[q], ST[q], ID, cchain(pre)))
+    reps = {
+        '@PREF@': PREFIX, '@ID@': ID, '@SPEC@': spec, '@ENC@': D['enc'],
+        '@ENCMOD@': d['mod'], '@SOME@': d['some'], '@NONE@': d['none'],
+        '@ST0@': ST[D['st0']], '@TAIL@': clist(D['tail']),
+        '@FAR@': clist(D['far']),
+        '@TABLE@': coq_table(spec),
+        '@B0@': cconf(D['B0']), '@B1@': cconf(D['B1']),
+        '@CHO@': cchain(D['cho']),
+        '@CAO@': str(D['co'][0]), '@CBO@': str(D['co'][1]),
+        '@US@': clist(d['uS']), '@UD@': clist(d['uD']),
+        '@OBSP@': str(d['obS'] - 1 if d['obS'] >= 1 else 0),
+        '@CNTP@': 'j',
+        '@OVPOST@': clist(ovpost), '@HCLEFT@': hcleft,
+        '@CLOSE@': close, '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
+        '@VISHYP@': ('forall p q, q <> StA ->' if D['qh']
+                     else 'forall p q,'),
+        '@VISINTRO@': ('intros p q Hq' if D['qh'] else 'intros p q'),
+        '@VISA@': ('  - (* StA: quiet -- see the closing theorem *)\n'
+                   '    exfalso; exact (Hq eq_refl).' if D['qh'] else ''),
+        '@FINAL@': (QH_CLOSE if D['qh'] else NQH_CLOSE).replace('@ID@', ID)
+                    .replace('@P0@', str(D['p0'])),
+        '@NI@': ('%d*j+%d' % D['ci'] if D['mode'] == 'one'
+                 else 'j=0: %d ; j=S j\': %d*j\'+%d'
+                      % (D['cz'][1], D['cp'][0], D['cp'][1])),
+        '@NO@': '%d*j+%d' % D['co'],
+        '@INTERIOR@': (INT_ONE if D['mode'] == 'one' else INT_SPLIT),
+        '@GLUEI@': (GLUE_ONE if D['mode'] == 'one' else GLUE_SPLIT),
+        '@A0@': cconf(D['A0']), '@A1@': cconf(D['A1']),
+        '@CHI@': cchain(D['chi']) if D['chi'] else '[]',
+        '@CAI@': str(D['ci'][0]) if D['ci'] else '0',
+        '@CBI@': str(D['ci'][1]) if D['ci'] else '0',
+        '@Z0@': cconf(D['Z0']), '@Z1@': cconf(D['Z1']),
+        '@P0C@': cconf(D['P0']), '@P1C@': cconf(D['P1']),
+        '@CHZ@': cchain(D['chz']) if D['chz'] else '[]',
+        '@CHP@': cchain(D['chp']) if D['chp'] else '[]',
+        '@CAZ@': str(D['cz'][0]) if D['cz'] else '0',
+        '@CBZ@': str(D['cz'][1]) if D['cz'] else '0',
+        '@CAP@': str(D['cp'][0]) if D['cp'] else '0',
+        '@CBP@': str(D['cp'][1]) if D['cp'] else '0',
+        '@VAL@': D['val'], '@VISITS@': '\n'.join(vis),
+    }
+    out = HEADER
+    for _ in range(3):          # the INTERIOR/GLUEI blocks themselves hold holes
+        for k, v in reps.items():
+            out = out.replace(k, v)
+    return out
+
+
+def coqc(path):
+    r = subprocess.run(['coqc', '-native-compiler', 'no', '-Q', 'theories',
+                        'BBB4', path], cwd=REPO, capture_output=True, text=True)
+    return r.returncode == 0, (r.stderr or r.stdout)[-1500:]
+
+
+def anchors(spec):
+    """Candidate (edge, tail, p0, enc) anchor families, cheapest first.  The
+    ENCODING IS SEARCHED, never hard-coded -- wave-12's lesson."""
+    out = []
+    for finder in (derive_tail_best, derive_tail_best_far):
+        try:
+            a = finder(spec, encnames=ENCS)
+        except (DeriveError, Halt_):
+            continue
+        except Exception:                                     # noqa: BLE001
+            continue
+        a = tuple(a) + ((),) if len(a) == 4 else tuple(a[:4]) + (tuple(a[4]),)
+        if a[3] in ENCDATA and a not in out:
+            out.append(a)
+    return out
+
+
+def process(spec, do_emit, force=False):
+    """Try the machine directly (counter grows LEFT); if that finds nothing,
+    try its MIRROR and transfer the conclusion back through
+    Mirror.mirror_never_qh -- the wave-9 route, no new theory.  Growth
+    direction is thus searched, not declared."""
+    last = None
+    for mirrored in (False, True):
+        dspec = mirror_spec(spec) if mirrored else spec
+        for (edge, tail, p0, enc, far) in anchors(dspec):
+            try:
+                D = derive(dspec, edge, tail, p0, enc, far)
+            except (DeriveError, Halt_) as e:
+                last = str(e)
+                continue
+            except Exception as e:                            # noqa: BLE001
+                last = '%s: %s' % (type(e).__name__, e)
+                continue
+            tag = enc + ('/mirror' if mirrored else '')
+            if not do_emit:
+                return dict(spec=spec, ok=True, enc=tag,
+                            ni='%d*j+%d' % D['ci'], no='%d*j+%d' % D['co'])
+            path = os.path.join(OUTDIR, '%s_%s.v' % (PREFIX, mach_id(spec)))
+            if os.path.exists(path) and not force:
+                return dict(spec=spec, ok=True, enc=tag, file=path,
+                            skipped=True, ni='%d*j+%d' % D['ci'],
+                            no='%d*j+%d' % D['co'])
+            try:
+                src = render(D)
+                if mirrored:
+                    src = mirrorize(src, spec, dspec)
+            except (DeriveError, RuntimeError) as e:
+                last = str(e)
+                continue
+            open(path, 'w').write(src)
+            ok, log = coqc(os.path.relpath(path, REPO))
+            if not ok:
+                os.remove(path)
+                lg = [l for l in log.strip().splitlines() if l.strip()]
+                last = 'coqc: ' + (lg[-1] if lg else '?')
+                continue
+            return dict(spec=spec, ok=True, enc=tag, file=path,
+                        ni='%d*j+%d' % D['ci'], no='%d*j+%d' % D['co'])
+    return dict(spec=spec, ok=False, why=last or 'no anchor')
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--list')
+    ap.add_argument('--spec')
+    ap.add_argument('--emit', action='store_true')
+    ap.add_argument('--json')
+    ap.add_argument('--limit', type=int, default=0)
+    ap.add_argument('--force', action='store_true')
+    a = ap.parse_args()
+
+    specs = ([a.spec] if a.spec else
+             [l.strip() for l in open(a.list) if l.strip()])
+    if a.limit:
+        specs = specs[:a.limit]
+
+    res, nok = [], 0
+    for i, spec in enumerate(specs):
+        r = process(spec, a.emit, a.force)
+        res.append(r)
+        nok += bool(r['ok'])
+        print('%5d/%d %-40s %s' % (i + 1, len(specs), spec,
+                                   ('OK %s %s %s' % (r['enc'], r['ni'], r['no']))
+                                   if r['ok'] else 'no: %s' % r['why'][:90]),
+              flush=True)
+    print('\n%d / %d derived' % (nok, len(specs)))
+    if a.json:
+        json.dump(res, open(a.json, 'w'), indent=1)
+
+
+if __name__ == '__main__':
+    main()

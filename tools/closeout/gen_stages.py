@@ -56,6 +56,106 @@ def write_if_changed(path, text):
     return True
 
 
+# ---------------------------------------------------------------------------
+# _CoqProject board closure
+#
+# The stage files [Require] one module per proven frozen row.  If a board .v
+# (or one of ITS deps) is not listed in _CoqProject, coq_makefile emits no rule
+# for its .vo and `make closeout` dies with "No rule to make target".  Wave-12
+# lost a day to exactly this: 533 boards -- all of waves 10/11 -- were
+# unlisted.  So the generator now computes the dependency closure of every
+# board it references and adds whatever is missing.
+#
+# theories/Census/ is deliberately EXCLUDED: its Compute/ .vo are committed
+# (OCaml-toolchain-specific) and must never be rebuilt from source.
+# ---------------------------------------------------------------------------
+
+def strip_comments(text):
+    """Remove Coq (* ... *) comments (nesting-aware) so Require-scanning does
+    not trip over prose."""
+    out, depth, i, n = [], 0, 0, len(text)
+    while i < n:
+        if text.startswith('(*', i):
+            depth += 1
+            i += 2
+        elif depth and text.startswith('*)', i):
+            depth -= 1
+            i += 2
+        else:
+            if not depth:
+                out.append(text[i])
+            i += 1
+    return ''.join(out)
+
+
+REQ_RE = None
+
+
+def _req_re():
+    global REQ_RE
+    if REQ_RE is None:
+        import re
+        REQ_RE = re.compile(
+            r'(?:From\s+([\w.]+)\s+)?Require\s+(?:Import\s+|Export\s+)?'
+            r'((?:[\w.]+\s+)*[\w.]+)\s*\.')
+    return REQ_RE
+
+
+def module_index():
+    """logical module name -> repo-relative .v path, for every file under
+    theories/ (Census included, so deps RESOLVE; the caller filters)."""
+    idx = {}
+    for dirpath, _dirs, files in os.walk(os.path.join(ROOT, 'theories')):
+        for f in files:
+            if not f.endswith('.v'):
+                continue
+            full = os.path.join(dirpath, f)
+            rel = os.path.relpath(full, ROOT)
+            idx[module_of(rel)] = rel
+    return idx
+
+
+def deps_of(vpath, idx):
+    """In-tree modules Require'd by ROOT/vpath, resolved against idx."""
+    try:
+        text = strip_comments(open(os.path.join(ROOT, vpath)).read())
+    except OSError:
+        return []
+    # suffix lookup: 'WTape' under 'From BBB4.Counters' -> BBB4.Counters.WTape
+    out = []
+    for prefix, names in _req_re().findall(text):
+        for name in names.split():
+            cands = []
+            if prefix:
+                cands.append(prefix + '.' + name)
+            cands.append(name)
+            if not name.startswith('BBB4.'):
+                cands.append('BBB4.' + name)
+            hit = next((c for c in cands if c in idx), None)
+            if hit is None:
+                # last resort: unique suffix match ('Require BBB4.X.Y' forms)
+                tail = '.' + name.split('.')[-1]
+                sfx = [m for m in idx if m.endswith(tail)]
+                if len(sfx) == 1:
+                    hit = sfx[0]
+            if hit is not None:
+                out.append(idx[hit])
+    return out
+
+
+def board_closure(vfiles):
+    """Transitive in-tree dependency closure of vfiles, minus theories/Census/."""
+    idx = module_index()
+    seen, stack = set(), list(vfiles)
+    while stack:
+        v = stack.pop()
+        if v in seen or v.startswith('theories/Census/'):
+            continue
+        seen.add(v)
+        stack.extend(deps_of(v, idx))
+    return seen
+
+
 def main():
     rows = list(csv.reader(open(os.path.join(ROOT, 'tools/closeout/frozen_map.tsv')),
                            delimiter='\t'))[1:]
@@ -216,6 +316,25 @@ def main():
     cp = os.path.join(ROOT, '_CoqProject')
     lines = [l for l in open(cp).read().splitlines()
              if not l.startswith('theories/Closeout/')]
+
+    # ---- and make sure every board the stages Require has a build rule ----
+    listed = set(l.strip() for l in lines if l.strip().endswith('.v'))
+    need = board_closure(sorted(set(r[2] for r in rows)))
+    missing = sorted(need - listed)
+    if missing:
+        while lines and not lines[-1].strip():
+            lines.pop()
+        lines.append('')
+        lines.append('# board files (+ their deps) added automatically by '
+                     'tools/closeout/gen_stages.py')
+        lines.extend(missing)
+    print('board closure: %d files, %d added to _CoqProject' %
+          (len(need), len(missing)))
+    for m in missing[:10]:
+        print('  + %s' % m)
+    if len(missing) > 10:
+        print('  + ... %d more' % (len(missing) - 10))
+
     while lines and not lines[-1].strip():
         lines.pop()
     lines.append('')
