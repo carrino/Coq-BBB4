@@ -25,11 +25,11 @@ sys.path.insert(0, HERE)
 os.chdir(HERE)
 import nghist_prove as P                                    # noqa: E402
 
-OUT = os.path.join(HERE, 'holdout_results_esc.tsv')
+OUT = os.path.join(HERE, 'holdout_results_esc2.tsv')
 # (k, n, t, fuel) -- the rungs (2,2)/(4,2)/(6,2) are already known to fail.
-PARAMS = [(4, 3, 60, 60000), (6, 3, 80, 120000),
-          (8, 2, 80, 120000), (8, 3, 120, 240000),
-          (12, 2, 150, 400000)]
+PARAMS = [(8, 3, 120, 240000), (12, 3, 150, 400000),
+          (2, 4, 60, 120000), (4, 4, 80, 240000), (6, 4, 120, 400000),
+          (8, 4, 150, 600000)]
 BUDGET = 300          # seconds per (machine, rung)
 
 
@@ -47,7 +47,7 @@ rem = set(open(os.path.join(ROOT, 'tools/closeout/frozen_unproven.txt'))
           .read().split())
 hold = [l.strip() for l in
         open(os.path.join(ROOT, 'tools/census_holdouts_kept.txt')) if l.strip()]
-targets = [h for h in hold if h in rem]
+targets = [h for h in hold if h in rem and not h.startswith('1RB---')]
 
 print("escalating NGramHist over %d surviving holdouts, %d rungs, %ds each"
       % (len(targets), len(PARAMS), BUDGET), flush=True)

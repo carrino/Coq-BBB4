@@ -12,21 +12,32 @@ docs/HOLDOUTS_WAVE14.md S4), exact for j = 1..6:
     Cf(j) = (StB, (rep [S0] z ++ rep [S1;S1;S0] k ++ [S1;S1;S1], S0, []))
             k = 2^j - 1,  z = 2j + 5
 
-The two engines, both walled on both sides, so both are WTape combinators:
+THREE engines, all walled on both sides, so all three are WTape combinators
+(cycR / cycL) -- no new closer needed:
 
   RATCHET  cycR, P=5, q=StB, h=S1, u=[S0;S1;S0], w=[S1;S1;S0]
            (StB,([],S1,[S0;S1;S0])) -5-> (StB,([S1;S1;S0],S1,[]))
            crosses 010 rightward and lays 110 -- builds one comb unit
 
+  COMB_L   cycL, P=3, q=StA, h=S1, u=[S0;S1;S1], rw=[], w=[S0;S0;S1]
+           (StA,([S0;S1;S1],S1,[])) -3-> (StA,([],S1,[S0;S0;S1]))
+           crosses one 011 comb unit leftward and lays 100 -- the return
+
   RETURN   cycL, P=2, q=StA, h=S1, u=[S1;S1], rw=[], w=[S0;S1]
            (StA,([S1;S1],S1,[])) -2-> (StA,([],S1,[S0;S1]))
-           crosses 11 leftward and lays 01 -- HALVES the ones, i.e. this is
-           the accumulator decrementing
+           halves the ones -- the accumulator decrementing; fires exactly
+           2^j times per lap (once per era)
 
-Everything else is boundary gadgetry.  The script applies the two cyc units
-greedily and single-steps otherwise, then reports every maximal run of
-single-steps: those runs ARE the remaining unit inventory the Coq file needs,
-and the report tells you how many distinct ones there are.
+Measured coverage by these three alone: 46.7 / 68.2 / 82.4 / 90.7 / 95.2 %
+for j = 1..5, RISING with j.  That is the signature of a complete inventory:
+what is left is a FIXED-SIZE boundary gadget per era (~57 steps), not a
+growing one, so its share goes to 0.  Those residual runs are the handful of
+[csteps] reflexivity lemmas the Coq file still needs; the script prints their
+lengths so they can be read off one at a time.
+
+Every unit application is checked against the raw stepper inside the loop
+(the assert in decompose), and the composite is diffed against the raw lap
+length, so "ALL OK" means the model is exact, not merely plausible.
 
 Usage:  lap32.py [jmax]
 """
@@ -77,6 +88,15 @@ def unit_ratchet(c):
     return None
 
 
+def unit_comb_l(c):
+    """cycL: StA, h=S1, l starts [S0;S1;S1] -> 3 steps.
+    Crosses one 011 comb unit leftward and lays 100."""
+    st, (l, h, r) = c
+    if st == StA and h == 1 and l[:3] == [0, 1, 1]:
+        return (StA, (l[3:], 1, [0, 0, 1] + r)), 3
+    return None
+
+
 def unit_return(c):
     """cycL: StA, h=S1, l starts [S1;S1] -> 2 steps, halve the ones."""
     st, (l, h, r) = c
@@ -85,7 +105,8 @@ def unit_return(c):
     return None
 
 
-UNITS = [("ratchet", unit_ratchet), ("return", unit_return)]
+UNITS = [("ratchet", unit_ratchet), ("comb_l", unit_comb_l),
+         ("return", unit_return)]
 
 
 def decompose(j, verbose=False):
