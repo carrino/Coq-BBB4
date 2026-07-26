@@ -46,7 +46,10 @@ NON-NEGOTIABLE: never touch theories/Census/; `python3 tools/census_cache.py
 LapCertGlue and LapGlueAbs are axiom-FREE -- keep them that way).  Everything
 under tools/ is UNTRUSTED; the kernel re-checks every board.
 
-STATE: 4,121 of the frozen 5,156 settled (79.9%); D_remaining = 1,035.
+STATE: 4,140 of the frozen 5,156 settled (80.3%); D_remaining = 1,016.
+(Wave-15 boarded 141 of these; a concurrent gram-3 sweep -- PR #37 -- boarded
+19 more.  The failure profile below was measured at D_remaining = 1,035, so
+it is 19 rows stale but the proportions hold.)
 Failure profile over the residue (tools/counters/wall_survey.py):
   510  anchor + interior derive, OVERFLOW fails
   354  anchor derives, INTERIOR fails

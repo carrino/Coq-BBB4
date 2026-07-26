@@ -12,7 +12,7 @@ proposing any further mxdys integration, and §3 before building the
 | | |
 |---|---:|
 | boards this wave | **141** (`LAPC_*`, all through the ONE checker) |
-| `D_remaining` | 1,176 → **1,035** |
+| `D_remaining` | 1,176 → **1,035** (→ 1,016 after merging PR #37's 19) |
 | frozen rows settled | 3,980 → **4,121 / 5,156 (79.9%)** |
 | new Coq | `Counters/LapGlueAbs.v` — axiom-free |
 | board axiom footprint | `functional_extensionality_dep` only (8 sampled + all 141 compiled) |
