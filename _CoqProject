@@ -1269,6 +1269,7 @@ theories/Machines/NGHStage/NGH_06.v
 theories/Machines/NGHStage/NGH_07.v
 theories/Counters/IXPGadgets.v
 
+theories/Checkers/LapDecider.v
 theories/Closeout/CloseoutKit.v
 theories/Closeout/CB_00.v
 theories/Closeout/CB_01.v
