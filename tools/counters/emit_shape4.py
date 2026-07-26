@@ -39,8 +39,8 @@ sys.path.insert(0, HERE)
 
 from executor import Exec, Wall                                     # noqa: E402
 from emit_interleave import (Raw, strip0, LAB, ST, SYM, ENC,          # noqa: E402
-                             DeriveError, derive_tail, mach_id, coq_table,
-                             clist, ccons, cwin)
+                             DeriveError, derive_tail, derive_tail_best,
+                             mach_id, coq_table, clist, ccons, cwin)
 from mirror_common import mirror_spec, mirrorize                       # noqa: E402
 
 OUTDIR = os.path.join(REPO, 'theories', 'Machines', 'Counters')
@@ -1209,10 +1209,22 @@ def process(spec, do_emit, scratch, force=False, windows=False,
     if mirror:
         spec = mirror_spec(spec)
     try:
-        edge, tail, p0 = derive_tail(spec, 'A', encname='Ip')
+        # Primary: the historical anchor search (keeps every prior board
+        # deriving exactly as before).  Fallback: the grouped search, which
+        # finds families the original misses (see derive_tail_best).
+        enc = 'Ip'
+        try:
+            edge, tail, p0 = derive_tail(spec, 'A', encname='Ip')
+            E = LAB.index(edge)
+            pr = profile(spec, E, ENC[enc], tail)
+        except DeriveError:
+            edge, tail, p0, pr = None, None, None, None
+        if pr is None:
+            edge, tail, p0, enc = derive_tail_best(spec, encnames=('Ip',))
+            E = LAB.index(edge)
+            pr = profile(spec, E, ENC[enc], tail)
         E = LAB.index(edge)
-        encf = ENC['Ip']
-        pr = profile(spec, E, encf, tail)
+        encf = ENC[enc]
         if pr is None:
             raise DeriveError('laps not affine on both branches')
         flip = False
