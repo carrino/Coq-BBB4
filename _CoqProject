@@ -1271,6 +1271,7 @@ theories/Counters/IXPGadgets.v
 
 theories/Checkers/LapDecider.v
 theories/Counters/LapCertGlue.v
+theories/Counters/GpCounter.v
 theories/Machines/Counters/LAPC_1RB1LA_1LC1RD_1LB1RA_0LA0RB.v
 
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
@@ -1436,3 +1437,4 @@ theories/Closeout/CB_37.v
 theories/Closeout/CB_38.v
 theories/Closeout/Closeout.v
 theories/Closeout/CloseoutFinal.v
+theories/Machines/Counters/LAPG_0RB0LA_0RC1RC_1LD0LD_1LA1RB.v
