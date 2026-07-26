@@ -1,113 +1,142 @@
-# Next-session prompt — continue the residue reduction (post-wave-10)
+# Next-session prompt — burn down the residue with an EXACT LAP DECIDER
 
-_Rewritten 2026-07-25 at the end of the shape-template session (branch
-`claude/residue-reduction-4-2-07rtlv`).  That session executed
-`COUNTER_CLOSEOUT.md` §10 steps 1–3 and harvested every AFFINE traceable
-machine; the full record is `docs/WAVE10_SHAPES.md`.  The prompt below is
-paste-ready for a fresh session._
+_Rewritten 2026-07-26 at the end of wave-12 (branch
+`claude/residue-reduction-4-2-cont-29bbkn`).  Wave-12 boarded 205 machines with
+per-machine emitters and then measured that the approach has the wrong
+exponent; the full record is `docs/WAVE12_FINDINGS.md`.  Paste-ready below._
 
-**Before pasting, check two things:**
-
-1. **Scope.**  This writes into `theories/Machines/Counters/` and
-   `tools/counters/`.  If a sibling session owns them, name its files.
-2. **Branch.**  Substitute whatever branch the session should develop on.
+**Before pasting, check:** substitute the branch the session should develop on,
+and name any files a concurrent session owns.
 
 ---
 
 ```
-Continue the (4,2) residue reduction in carrino/Coq-BBB4 (branch off main if
-wave-10 has merged; else off claude/residue-reduction-4-2-07rtlv).
+Continue the (4,2) residue reduction in carrino/Coq-BBB4, on a new branch off
+main.
 
-READ FIRST: docs/WAVE10_SHAPES.md -- what is boarded and what the remaining
-wall is; docs/COUNTER_CLOSEOUT.md section 5 -- the measured do-not-retry
-list; docs/WAVE9_FINDINGS.md section 3 -- the orientation cube.
+READ FIRST, in this order:
+  docs/WAVE12_FINDINGS.md   -- what landed, and the four things wave-12 got
+                               WRONG (section 4).  Do not repeat them.
+  docs/WHY_NO_HAMMER.md     -- the measurement that decides the architecture.
+  docs/COUNTER_CLOSEOUT.md sections 0 and 5 -- why counters resist lossy
+                               deciders, and the measured do-not-retry grids.
+  docs/CLOSEOUT_ROUTE_A.md  -- how boards become D_remaining shrinkage.
 
 ENV: apt coq 8.18.0 -- `apt-get install -y coq`, then
-`coqc -native-compiler no -Q theories BBB4 <file>`.  No opam.  Build a
-checker's dependency closure by coqdep-ordering its deps; never `make all`.
+`coqc -native-compiler no -Q theories BBB4 <file>`.  No opam bootstrap.  Build
+a checker's dependency closure by coqdep-ordering its deps and compiling them
+individually; `make all` pulls in the census.
 
 NON-NEGOTIABLE: never touch theories/Census/; `python3 tools/census_cache.py
 --check` must stay MATCH.  A board counts only when its file compiles and
-`Print Assumptions` shows functional_extensionality_dep only.  tools/ is
-UNTRUSTED; the kernel re-checks every board.
+`Print Assumptions` shows functional_extensionality_dep only (LapDecider
+itself is currently axiom-FREE -- keep it that way).  Everything under tools/
+is UNTRUSTED; the kernel re-checks every board.
 
-STATE: 309 wave-10/11 boards (ILS1_*/ILS4_*/ILS4F_* direct; ILS1M_*/
-ILS4M_*/ILS4FM_* mirror via Mirror.mirror_never_qh; wall anchors via
-derive_tail_far).  Emitters: tools/counters/emit_shape1.py and
-emit_shape4.py (--flip auto, --mirror); each derives windows by exact
-symbolic replay, validates differentially on both cview branches, compiles,
-checks assumptions, deletes on failure.
+STATE: 3,771 of the frozen 5,156 settled (73.1%); D_remaining = 1,385.
+The route-A closeout is built and kernel-verified: after a wave of boards,
+run `make closeout` (inventory -> gen_stages -> audit -> compile) and
+D_remaining shrinks by exactly what you boarded.
 
-The route-A closeout is BUILT and kernel-verified (docs/CLOSEOUT_ROUTE_A.md):
-theories/Closeout/ now proves
+WATCH OUT -- a build trap wave-12 hit: `gen_stages.py` syncs only the
+theories/Closeout/ section of _CoqProject.  New board files must be added to
+_CoqProject separately or `make closeout` dies with "No rule to make target".
+Wave-12 found 533 boards unlisted, including all of wave 10/11.  FIRST TASK
+(10 minutes): make gen_stages.py add every board file it references to
+_CoqProject automatically, so this never recurs.
 
-  closeout_partial : forall tm,
-    Deferred D_census tm -> boarded tm \/ Deferred D_remaining tm
+THE TASK -- finish theories/Checkers/LapDecider.v, the exact lap decider.
 
-with D_remaining the literal table of frozen rows that still lack a board --
-3,567 of the 5,156 settled, 1,589 remaining, assumptions
-functional_extensionality_dep only.  After a wave of boards lands, rerun
-  python3 tools/closeout/inventory.py && python3 tools/closeout/gen_stages.py
-and recompile theories/Closeout/ (~4 min); D_remaining shrinks by exactly the
-machines you boarded.  At zero it becomes the total closeout.  No census walk
-is involved and theories/Census/ is never touched.
+  WHY THIS AND NOT ANOTHER EMITTER.  Measured in WHY_NO_HAMMER.md: the
+  NGramHist closure ALWAYS closes but the q-avoiding subgraph the liveness
+  certificate needs stays CYCLIC at every precision (k=2..6, n=2..3), because
+  a counter's carry after ~2^k steps is invisible to any finite window.  So
+  exactness is required -- but waves 8-12 paid one hand-authored theorem per
+  machine (five emitters, ~500 boards against a 1,385 residue) and that is the
+  wrong exponent.  mxdys proves one soundness theorem and every machine costs
+  a run; we must do the same.
 
-THE TASK -- the EXPONENTIAL-OVERFLOW family (~70-90 machines, the largest
-residue block with a diagnosed mechanism).  Their interior laps are affine
-and template-shaped, but the overflow 2^k-1 -> 2^k costs ~c*2^k: the
-all-ones tape is rewritten to 101010... by repeated sweeps.  A finite
-window chain cannot express it; glue_neverqh does not care -- it needs one
-existential csteps witness per lap, which an INNER induction provides:
+  WHAT IS ALREADY THERE (compiles, closed under the global context):
+    - sside := (pre, u, (a,b), post) denoting pre ++ rep u (a*j+b) ++ post,
+      with sden;  this shape covers EVERY lap chain the five emitters derive
+    - sconf + cden
+    - lstep: SWin (framed window) | SCycL | SCycR
+    - scycL_sound / scycR_sound  (WTape.cycL/cycR at affine counts)
+    - LapStep -- the obligation glue_neverqh already consumes
+    - ChainSound + ChainSound_trans/refl
 
-  DONE: theories/Machines/Counters/IXP_1RB1LA_0LA1RC_0LD0RB_0LA1RD.v is
-  the hand-authored reference, kernel-verified.  The junctions: inner
-  anchors Cin v = (StA, (Ip v ++ [S1], S0, [S1;S0])); inner laps EXACT and
-  interior-only, reusing the outer RIP/STPI/TRN/RET units (only P1i/FINi
-  are new windows); boot/exit chains affine; composition by the same tovf
-  well-founded induction plus three positive gadgets (pow2, fill,
-  cview_none_shape).  The scratch validator pattern is described in the
-  board header (differential against raw, all chains + composed overflow).
+  WHAT TO BUILD, in order:
+    1. SWin soundness: the window entry must be concrete, so it frames
+       against wsteps_frame / wsteps_frame_l / wsteps_frame_r off the
+       PREFIXES of both sides.  This is the fiddly one -- do it first.
+    2. A boolean checker `lap_check : TM -> lapcert -> bool` that runs the
+       chain symbolically on both cview branches and verifies it lands on the
+       successor anchor.
+    3. The single soundness theorem
+       `lap_check tm c = true -> LapStep tm (Cf c)`, then compose with boot +
+       visits through glue_neverqh.
+    4. Per-machine cost is then a vm_compute.  Port the five emitters to EMIT
+       CERTIFICATES instead of proof scripts (they already derive exactly this
+       data -- emit_shape1/shape4/ixp/wall/wallj).
 
-  THE TASK: fork the emitter pattern (emit_shape4.py is closest) to derive
-  the six window chains per machine by exact symbolic replay and clone IXP
-  across the family: the 'laps not affine' pools on both sides (~94 L +
-  ~115 R via --mirror).  Per-machine variation to expect: the inner far
-  word, the P1i/FINi/boot/exit step counts, state roles, and which inner
-  frame offset the wall sits at.
+  ENCODINGS ARE DIGIT ALPHABETS, NOT EMITTER FORKS.  Ip/Jp (marker before),
+  Kp (none), Dp (doubled), Mp (marker AFTER -- new in wave-12,
+  theories/Counters/MpCounter.v, 202 residue machines with affine slope-4
+  interiors).  Mp differs from Ip by a ONE-CELL FRAME SHIFT, which is why Ip
+  recognizers half-fire on it.  SEARCH encoding x frame offset x tail at
+  derive time; wave-12 hard-coded them and discovered five encodings one at a
+  time, two of them only because a human read the tape.
 
-CHECKPOINT: the first 10 emitted IXP boards with clean assumptions.
+CHECKPOINT: SWin soundness proved and one existing board (pick an ILS4_* --
+the simplest chain) re-derived as a certificate that lap_check accepts.  That
+proves the architecture end to end before any bulk work.
 
-THEN, in order of measured size (mirror + wall-anchor + NOFIT harvests
-are DONE for everything the current skeletons fit -- WAVE11 section 5):
-  (3) the wall-LAP skeletons (~300 L+R): far anchors now derive
-      (derive_tail_far) but the laps bounce off the wall with window
-      chains the affine templates lack -- derive their shapes by replay,
-      extend the skeleton search;
-  (4) the B-row-1RB overflow-return stragglers (6) + the flip third-close
-      variant (8): second RET/FIN pair per branch -- mechanical;
-  (5) far-thread emit_shape4.py (Ip side) the way emit_shape1 was done,
-      and re-sweep the pools; wire emit_kp.py emission (Kp, ~33+ machines);
-  (6) the 318 non-core unproven: one triage pass (fingerprint + lapshape),
-      then route by family.
+THEN, in order:
+  (2) port emit_shape4 + emit_ixp to certificate emission; re-run over
+      tools/closeout/frozen_unproven.txt and `make closeout`.
+  (3) the widening-counter family (docs/UNCERTAIN_MACHINES.md section 1):
+      counters that skip values (2^K-1 -> 2^(K+1)), so Pos.succ is the wrong
+      successor.  glue_neverqh is ALREADY generic in Cf, so this needs only a
+      reindexed anchor family -- either an enumeration of the odd-bit-length
+      values (reuses every Ip lemma) or a word fixpoint in the ILCounter
+      style.  Default to the enumeration unless the human says otherwise.
+  (4) the 673 machines with NO anchor family at all -- the largest unknown.
+      Triage (triage.py fingerprint + lapshape) before assuming anything;
+      wave-12's section 4.1 mistake was concluding structure from a failing
+      search.
+  (5) the 27 genuine mxdys holdouts (tools/census_holdouts_kept.txt) -- the
+      real endgame, once per-machine cost is a vm_compute.
 
-DO NOT RETRY (measured, grids in COUNTER_CLOSEOUT.md section 5): emitter
-anchor-search widenings; Ip-encoding-alone; ripple ulen widening; big-block
-RepWL and TCycler over the recognized counters.  ALSO measured in wave 10:
-the lapshape signature does NOT gate templates (one template per
-encoding-side covers every affine shape) and affine-vs-exponential overflow
-splits WITHIN shapes, member by member -- always profile the overflow
-branch before assuming a member fits.
+DO NOT RETRY (measured; grids in COUNTER_CLOSEOUT.md section 5 and WAVE12
+section 8): NGramHist/NGramCPS liveness over this residue at any (k,n,t);
+RepWL over the counter core; more per-machine lap emitters; emitter
+anchor-search widenings; Ip-encoding-alone; ripple ulen widening; assuming the
+lapshape signature gates templates; assuming affine-vs-exponential overflow is
+uniform within a shape.
 
-DEFERRED TO STABLE HARDWARE: folding boards into the proven tier
-(gen_proven.py + Deferred regen + make census-verify + census_cache
---update) -- batch it once, it is the only step that lowers D_census.  Also
-the champion 1RB1LD_1RC1RB_1LC1LA_0RC0RD (needs `exists B, QHBound B` plus
-a 32.8M-step prefix) and the carry-shifted one-off
-0RB1LC_1LC0LC_0RD1LA_1RD1RB (anchor Cc (p, k) with a frame offset).
+DO NOT BUILD ON: docs/NGHIST_WAVE7.md section 0 (the "<=7 vs all-8
+transitions, outside mxdys' enumeration" story).  The human says it is bad
+info; there is no separate list of machines mxdys skipped, just the complement
+of the 3,713 holdouts.  Re-derive before relying on it.
+
+DEFERRED TO STABLE HARDWARE: census fold-in (gen_proven.py + Deferred regen +
+make census-verify + census_cache --update) -- batch it once, it is the only
+step that lowers D_census.  Also the champion 1RB1LD_1RC1RB_1LC1LA_0RC0RD
+(needs `exists B, QHBound B` plus a 32.8M-step prefix) and the carry-shifted
+one-off 0RB1LC_1LC0LC_0RD1LA_1RD1RB (anchor Cc (p, k) with a frame offset).
 
 WHEN STUCK ON A CLASS: print a few machine strings and ask the human.
-Hand-inspection is 11-for-11 across waves 8-9.
+Hand-inspection is now 15-for-15 across waves 8-12 -- in wave-12 the human
+correctly diagnosed a mis-set anchor, identified a whole new encoding (Mp)
+from one tape reading, and rejected two of my framings that the measurements
+then confirmed were wrong.  Ask EARLY; it is the highest-yield move available.
 
-Commit + push per validated batch.  Name new files so they cannot clash
-with a concurrent session's (wave 10 used ILS1_*/ILS4_*/ILS4F_*).
+ALSO WORTH DOING ONCE: WAVE9_FINDINGS.md section 7 says "ask mxdys for the
+implementation before rebuilding it".  If mxdys' inductive decider already
+covers bouncers and counters, that is this same checker written and debugged.
+Ask before spending sessions reconstructing it.
+
+Commit + push per validated batch.  Name new files so they cannot clash with a
+concurrent session's (waves 10-12 used ILS1_*/ILS4_*/ILS4F_*, ILS1M_*/ILS4M_*/
+ILS4FM_*, IXP_*/IXPM_*, WLS_*/WLSM_*, WLJ_*).
 ```
