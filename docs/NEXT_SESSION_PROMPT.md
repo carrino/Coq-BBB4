@@ -25,9 +25,14 @@ READ FIRST, in this order:
                                remaining 1,035 are one problem.
   docs/WAVE14_FINDINGS.md   -- section 3 only: the overflow wall is
                                EXPONENTIAL, measured three ways.
+  docs/NESTED_LAP_PLAN.md   -- THE TASK.  Why the count language does NOT
+                               need extending, and the staged build with a
+                               measure-first gate.
   docs/LAPDECIDER.md        -- our checker's design, and why the model is
-                               AFFINE in the carry index.  That affineness is
-                               the binding constraint -- read it as a limit.
+                               AFFINE in the carry index.  Read the affineness
+                               as a fact about one srun, NOT as the binding
+                               constraint -- NESTED_LAP_PLAN section 0
+                               corrects that reading.
   docs/CLOSEOUT_ROUTE_A.md  -- how boards become D_remaining shrinkage.
 
 ENV: apt coq 8.18.0 -- `apt-get install -y coq`, then
@@ -60,6 +65,15 @@ THE TASK -- THE EXPONENTIAL OVERFLOW, AND MEASURE BEFORE TEMPLATING.
   search moves them into the no-overflow bucket, not into a board.  Net,
   ~750 of 1,035 are gated on an overflow that costs Theta(2^j), which `sside`
   (a*j+b) and `srun` (ca*j+cb) cannot represent BY CONSTRUCTION.
+
+  READ docs/NESTED_LAP_PLAN.md FIRST -- it retires the premise that the count
+  language must be extended.  In one line: LapStep only asks for `exists n`,
+  so an exponential lap needs a PROOF that some n works, never a formula for
+  it -- and the 163 existing IXP_* boards already do exactly that, composing
+  an affine boot chain, a well-founded induction to the all-ones fill, and an
+  affine exit chain.  `2^j` is never written down.  So this is ONE NEW CHAIN
+  STEP (chain to a second anchor family), not a new count language, and
+  LapDecider.v is not touched.
 
   The build is WAVE14 section 6 route (1), unchanged and now unavoidable:
   teach LapDecider a NESTED LAP -- an inner anchor family run 2^j times, which
