@@ -261,7 +261,8 @@ Proof.
   unfold Cc_@ID@, cden, A0_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   replace (1 * j + 0) with j by lia.
-  rewrite H1, <- (app_assoc (rep @US@ j)). reflexivity.
+  rewrite H1. first [ rewrite <- (app_assoc (rep @US@ j)); reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
 Qed.
 
 Lemma gei_@ID@ : forall p j q0, cview p = (j, Some q0) ->
@@ -271,7 +272,8 @@ Proof.
   unfold Cc_@ID@, cden, A1_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   replace (1 * j + 0) with j by lia.
-  rewrite H2, <- (app_assoc (rep @UD@ j)). reflexivity.
+  rewrite H2. first [ rewrite <- (app_assoc (rep @UD@ j)); reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
 Qed.
 
 Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
@@ -310,8 +312,10 @@ Proof.
   unfold Cc_@ID@, cden, Z0_@ID@, Z1_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   split.
-  - rewrite H1; cbn [rep app]. rewrite <- app_assoc. reflexivity.
-  - rewrite H2; cbn [rep app]. rewrite <- app_assoc. reflexivity.
+  - rewrite H1; cbn [rep app]. first [ rewrite <- app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+  - rewrite H2; cbn [rep app]. first [ rewrite <- app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
 Qed.
 
 Lemma gp_@ID@ : forall p j q0, cview p = (S j, Some q0) ->
@@ -323,8 +327,10 @@ Proof.
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   replace (1 * j + 0) with j by lia.
   split.
-  - rewrite H1; cbn [rep app]. rewrite <- !app_assoc. reflexivity.
-  - rewrite H2; cbn [rep app]. rewrite <- !app_assoc. reflexivity.
+  - rewrite H1; cbn [rep app]. first [ rewrite <- !app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+  - rewrite H2; cbn [rep app]. first [ rewrite <- !app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
 Qed.
 
 Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
@@ -411,7 +417,8 @@ Proof.
   unfold Cc_@ID@, cden, B0_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   replace (1 * j + @OBSP@) with (@CNTP@) by lia.
-  rewrite H1; cbn [rep app]; rewrite <- !app_assoc. reflexivity.
+  rewrite H1; cbn [rep app]. first [ rewrite <- !app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
 Qed.
 
 Lemma lbl_@ID@ : forall q l h r, lift (q,(l ++ [S0],h,r)) = lift (q,(l,h,r)).
@@ -429,7 +436,9 @@ Proof.
     replace (0 * j + 0) with 0 by lia.
     cbn [rep app]. reflexivity. }
   assert (HC : Cc (Pos.succ p) = (@ST0@, (@HCLEFT@, S0, @FAR@))).
-  { unfold Cc_@ID@. rewrite H2. rewrite <- !app_assoc. reflexivity. }
+  { unfold Cc_@ID@. rewrite H2.
+    first [ rewrite <- !app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ]. }
   rewrite HD, HC. @CLOSE@
 Qed.
 
@@ -687,6 +696,18 @@ def anchors(spec):
     return out
 
 
+def _cost_str(D):
+    """The interior cost, in whichever shape this machine derived.
+
+    The j = 0 split (wave-13 section 9a) leaves [ci] None, so formatting it
+    unconditionally raised TypeError -- OUTSIDE the try, so it killed the
+    whole run at the first split-mode machine rather than skipping it.  Any
+    list containing one boarded nothing after it."""
+    if D['mode'] == 'one':
+        return '%d*j+%d' % D['ci']
+    return "j=0:%d,%d*j'+%d" % (D['cz'][1], D['cp'][0], D['cp'][1])
+
+
 def process(spec, do_emit, force=False):
     """Try the machine directly (counter grows LEFT); if that finds nothing,
     try its MIRROR and transfer the conclusion back through
@@ -707,11 +728,11 @@ def process(spec, do_emit, force=False):
             tag = enc + ('/mirror' if mirrored else '')
             if not do_emit:
                 return dict(spec=spec, ok=True, enc=tag,
-                            ni='%d*j+%d' % D['ci'], no='%d*j+%d' % D['co'])
+                            ni=_cost_str(D), no='%d*j+%d' % D['co'])
             path = os.path.join(OUTDIR, '%s_%s.v' % (PREFIX, mach_id(spec)))
             if os.path.exists(path) and not force:
                 return dict(spec=spec, ok=True, enc=tag, file=path,
-                            skipped=True, ni='%d*j+%d' % D['ci'],
+                            skipped=True, ni=_cost_str(D),
                             no='%d*j+%d' % D['co'])
             try:
                 src = render(D)
@@ -728,7 +749,7 @@ def process(spec, do_emit, force=False):
                 last = 'coqc: ' + (lg[-1] if lg else '?')
                 continue
             return dict(spec=spec, ok=True, enc=tag, file=path,
-                        ni='%d*j+%d' % D['ci'], no='%d*j+%d' % D['co'])
+                        ni=_cost_str(D), no='%d*j+%d' % D['co'])
     return dict(spec=spec, ok=False, why=last or 'no anchor')
 
 
