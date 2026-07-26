@@ -286,13 +286,25 @@ the conclusion.
 `0RB0LD_1RC---_0RD1RC_1LD0LA`, nctx=102.  So the lever DOES reach into the
 residue.
 
-**What is still probably true.** The rate is the open question, and early
-signs are that it is low -- 1/175 (0.6%) against 5/16 on the holdouts.  If it
-settles near that, the practical guidance survives (n=3 will not burn the
-residue down, and the pattern-measure / different-engine route in
-TERMINOLOGY step 4 remains the real lever) even though the reasoning I gave
-for it did not.  Those are separate claims and only the second one has been
-tested.
+**The rate, now MEASURED over complete rungs.**
+
+    rung (2,3)   0 hits / 1217   0.0%
+    rung (4,3)   3 hits / 1244   0.2%      (k=6 still running)
+
+So the lever does reach the residue, and thinly.  0.2% over the whole pool is
+single-digit machines, against 5/16 on the holdouts -- a difference of two
+orders of magnitude, which is a real distinction between the two populations
+even if my explanation for it is not yet earned.  The practical guidance
+survives: n=3 is worth running to completion and boarding, but it will not
+burn the residue down, and TERMINOLOGY step 4's pattern measures plus the
+never-tried engines remain the actual lever.  The MECHANISM (context
+vocabulary vs measure vocabulary) is still an untested story -- it predicts
+this outcome but so would several other explanations.
+
+Boarded from these: `theories/Machines/NGHG3/NGHG3_00..02.v`
+(`0RB0LD_1RC---_0RD1RC_1LD0LA`, `1RB1RD_1LC1RA_0RD0LC_0RB1LA`,
+`1RB---_0RC1RB_1LC0LD_0RA0LC`), all axiom-clean, `D_remaining` 1,255 ->
+1,252.
 
 **The lesson, which is the same one twice.**  Earlier tonight a 0/25 reading
 turned out to be an artifact of alphabetical order.  This is that mistake

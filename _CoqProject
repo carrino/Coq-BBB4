@@ -564,6 +564,11 @@ theories/Machines/NGHHold/NGHHold_05.v
 theories/Machines/NGHHold/NGHHold_06.v
 theories/Machines/NGHHold/NGHHold_07.v
 theories/Machines/NGHHold/NGHHold_08.v
+
+# --- residue boarded by the gram-3 (n=3) re-sweep, wave 14 ---
+theories/Machines/NGHG3/NGHG3_00.v
+theories/Machines/NGHG3/NGHG3_01.v
+theories/Machines/NGHG3/NGHG3_02.v
 theories/Tests/CountersWave_Corruption.v
 
 # --- counters track: double ---

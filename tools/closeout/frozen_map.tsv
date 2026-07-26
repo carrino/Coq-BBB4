@@ -2661,6 +2661,9 @@ machine	kind	vfile	theorem	const
 1RB1LC_1RC0RA_0LD1RA_1LA1LB	nqh	theories/Machines/ListCV5Stage/LCV5_03.v	nqh_v5_00017	tm_v5_00017
 1RB1LD_1RC0RB_1LC0RA_0LA1LC	nqh	theories/Machines/ListCV5Stage/LCV5_03.v	nqh_v5_00018	tm_v5_00018
 1RB1RC_1LC1RD_1LD0LB_0RA1LB	nqh	theories/Machines/ListCV5Stage/LCV5_03.v	nqh_v5_00019	tm_v5_00019
+0RB0LD_1RC---_0RD1RC_1LD0LA	nqh	theories/Machines/NGHG3/NGHG3_00.v	nqh_h_00000	tm_h_00000
+1RB1RD_1LC1RA_0RD0LC_0RB1LA	nqh	theories/Machines/NGHG3/NGHG3_01.v	nqh_h_00000	tm_h_00000
+1RB---_0RC1RB_1LC0LD_0RA0LC	nqh	theories/Machines/NGHG3/NGHG3_02.v	nqh_h_00000	tm_h_00000
 1RB0LA_0RC0RD_1LD1RD_1LA1RB	nqh	theories/Machines/NGHHold/NGHHold_00.v	nqh_h_00000	tm_h_00000
 1RB0RB_1LC1RC_0RA1LD_1RC0LD	nqh	theories/Machines/NGHHold/NGHHold_01.v	nqh_h_00001	tm_h_00001
 1RB1LB_1RC1LD_1LD0RC_0LA0LB	nqh	theories/Machines/NGHHold/NGHHold_02.v	nqh_h_00002	tm_h_00002
