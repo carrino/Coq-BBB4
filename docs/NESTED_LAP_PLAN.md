@@ -290,11 +290,55 @@ which is exactly the hand-authored reference's
 **So the emitter must enumerate inner keys, not rank them** — the same
 correction that turned 0 interior chains into all of them in wave-13.
 
-**Open for the next session:** 2 of 5 still find no boot chain at any key.
-Instrument `derive_chain` on `1RB0LD_1RC1RA_1LA0LD_0RA1LD` (outer `Jp@A`) —
-the anchor, the inner family and the exit are all verified there, so whatever
-is missing is in the boot's candidate generator, and it is the same shape of
-question wave-14 §3 left open for the Gray `_win_candidates`.
+**The boot has its own SHAPE, and it must be measured.**  Running the
+`ovfshape` question on the boot itself — cost of `Cc(2^K-1) -> Cin(2^(K-1))`
+against `K` — over 41 machines:
+
+| boot degree | count |
+|---|---:|
+| **`AFFINE`** | **31 (76%)** |
+| `EXP` (ratio → 2) | 10 (24%) |
+
+Examples: `0RB0LC_1LC1RB_0RD1LA_1RB1RC` boots in `4K+3` steps (15,19,23,27,31)
+and its boot chain DERIVES; `1RB0LD_1LB1LC_1LD1RC_0RC1LA` boots in
+35,63,115,215,411,799 — a second doubling — and no chain can exist for it,
+by the same affineness limit that put these machines in the residue.
+
+So the `EXP2` bucket splits again:
+
+* **affine boot (76%)** — the two-level nested lap is the right model, and a
+  failing boot is a SEARCH gap;
+* **exponential boot (24%)** — either a THREE-level nest, or (more likely) the
+  inner start has been mis-identified and the true inner anchor is reached
+  before the doubling.  `innerfam` requires the decoded values to be exactly
+  `2^(K-1)..2^K-1`, which a subsequence of a longer count also satisfies —
+  so a counter running `1..2^K-1` would be reported EXACT with its start
+  exponentially far into the phase.  **Check that before assuming a third
+  level.**
+
+**Where the affine-boot failures come from, and the next concrete step.**
+`look.py`-style tape dumps show the symbolic inner target is short by the
+trailing cells the probe discarded:
+
+    machine 0RB1LA_1RC0LA_0LD1RB_1LB1LD   (outer Jp@B, affine boot 4K+8)
+      REAL phase start    st=B  L=10101010110   R=e
+      SYMB B0out          rep [1,0] 4 ++ [1,1,0]        <- matches exactly
+      REAL inner anchor   st=B  L=11111111100   R=0
+      SYMB CinS           rep [1,1] 4 ++ [1]            <- 9 cells, real is 11
+
+The opaque tail `X` is universally quantified and must be the SAME at both
+ends of a chain.  At `B0out` the real tape forces `X = []`; the inner anchor
+needs `X = [S0;S0]`.  `innerfam` reports its key after `rstrip0`, so those
+cells are gone by the time the target is built.
+
+**An attempted fix that did NOT work, recorded so it is not repeated.**
+Reading `u` and `post` off the real tape at two consecutive outer indices
+(`Cin` at `j` and `j+1` differ by one block, as `alphabet_infer` does for the
+outer family) and using `rep u j ++ post` with the real far side: **0 of 18**,
+down from 3.  So the inner anchor is NOT of the form `rep u j ++ post` with
+the count equal to the outer `j` — the decomposition assumption is wrong, not
+just the trailing cells.  That is the thing to debug next, and the tape dumps
+above are the place to start.
 
 ### Stage D — emit and close out
 

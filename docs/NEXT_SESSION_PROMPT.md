@@ -104,12 +104,38 @@ THE TASK -- THE EXPONENTIAL OVERFLOW, AND MEASURE BEFORE TEMPLATING.
       Ip at a state different from the outer with a short tail, exactly the
       reference's Cin v = (StC, (Ip v ++ [S1], S0, [S0;S0])).
 
-      START HERE: make nestboot.py enumerate inner keys instead of taking
-      exact[0], then wire boot/inner/exit into an emitter beside
-      emit_lapcert.py.  Then instrument derive_chain on
-      1RB0LD_1RC1RA_1LA0LD_0RA1LD (outer Jp@A), where NO key gives a boot
-      chain -- anchor, inner family and exit are all verified there, so
-      whatever is missing is in the boot's candidate generator.
+      AND the boot has its OWN SHAPE, which must be measured like the
+      overflow was.  tools/counters/bootshape.py runs the ovfshape question on
+      the boot itself: over 41 machines, 31 (76%) have an AFFINE boot and 10
+      (24%) an EXPONENTIAL one (ratio -> 2).  An exponential boot cannot be
+      one chain, by the same affineness limit that put these machines in the
+      residue -- so the EXP2 bucket splits again:
+        affine boot (76%)  -> two-level nested lap is right, failures are a
+                              SEARCH gap;
+        exp boot (24%)     -> either a THREE-level nest, or the inner start is
+                              mis-identified.  innerfam requires the decoded
+                              values to be exactly 2^(K-1)..2^K-1, and a
+                              SUBSEQUENCE of a longer count satisfies that too
+                              -- so a counter running 1..2^K-1 is reported
+                              EXACT with its start exponentially far in.
+                              CHECK THAT before assuming a third level.
+
+      START HERE, on the affine-boot machines.  The symbolic inner target is
+      wrong, and the tape says how.  For 0RB1LA_1RC0LA_0LD1RB_1LB1LD (outer
+      Jp@B, affine boot 4K+8):
+        REAL phase start   st=B L=10101010110 R=e   SYMB B0out matches exactly
+        REAL inner anchor  st=B L=11111111100 R=0   SYMB CinS = rep [1,1] 4 ++
+                                                    [1] -- 9 cells, real is 11
+      The opaque tail X must be the SAME at both ends of a chain; B0out forces
+      X=[] and the inner anchor needs X=[S0;S0].  innerfam reports its key
+      after rstrip0, so those cells are gone.
+
+      DO NOT REPEAT: reading u and post off the real tape at two consecutive
+      outer indices and using rep u j ++ post gave 0 of 18, DOWN from 3.  The
+      inner anchor is not of that form with the count equal to the outer j --
+      the decomposition assumption is wrong, not just the trailing cells.
+      Dump tapes (spacetime.py) at two indices and read the inner anchor's
+      actual shape before templating again.
 
   Full design, measurements and open questions: docs/NESTED_LAP_PLAN.md.
 
