@@ -78,7 +78,54 @@ total ceiling at **~20 of 1,176 (under 2%)**.
    this wave's 141 boards came from a machine it decided.  Two non-overlapping
    small populations — so there is no synergy to harvest either.
 
-### THE DECIDER I TESTED IS NOT THE ONE BUILT FOR OUR SHAPES
+### REASSESSMENT: `Inductive` IS the right engine -- the gap is HINTS, not RRBA
+
+_Added after John re-read the README against the shapes.  It walks back the
+RRBA emphasis of the section below._
+
+Layering, as mxdys states it:
+
+| tool | layering |
+|---|---|
+| **`Inductive`** | "Nested Repeater" compression; **"rules can be nested"** |
+| `RWLAcc` | "hardcoded **two layers**" |
+| `RRBA` | "hardcoded **two layers**" |
+
+`RRBA` and `RWLAcc` are CAPPED AT TWO LAYERS.  `Inductive` is the one with
+unbounded rule nesting -- exactly the rung-2/rung-3 capability
+`docs/RULE_LADDER.md` says we lack -- and a *nested repeater* is literally our
+tape shape (`rep u j` inside an outer structure).
+
+Our machines are SINGLE counters whose overflow re-runs the interior lap, i.e.
+nested rules.  `RRBA`'s advertised class is "sync **BI**-counter" and
+"shift-recursive".  On shape alone `Inductive` is the better match, and the
+section below overweights one RRBA sentence.
+
+**And that makes the hint gap the lead.**  The README line:
+
+> "Nested Repeater by default ... also support Fixed Length Repeater and
+> **Others (requires some hints from human)**"
+
+The default compression already has nested rules and still scores 0 on our
+residue.  The counter representations (`side_binary`, `side_binary_Pos`,
+`side_BL`) are the "Others", and they are HINT-GATED.  Our residue is exactly
+those.  Which fits every number we have:
+
+* `Inductive` decides **48%** of the machines we boarded -- not weak on our
+  general shape;
+* **0%** of the residue *without hints*;
+* the one hint attempt guessed blind (`T0 ∈ {0,50,200,1000}`, 2-cell digits,
+  block size 2) against mxdys' real ones (`T0 = 7450`, 4-cell digits, block
+  size 5).
+
+**Priority: proper hint synthesis for `Inductive`, ahead of RRBA.**  We already
+compute every input -- digit words (`uS`/`uD`), anchor states, tape-edge word,
+and `boot_probe` for the `T0` analogue.  What is missing is deriving them at
+the right BLOCK SIZE: our alphabets are 1-3 cells and mxdys' hints are 4-5,
+which suggests our machines want a coarser macro-block than our anchor search
+uses.  `tools/mxdys/hint.ml` takes `<spec> d0 d1 d1a` and is built.
+
+### THE DECIDER I TESTED IS NOT THE ONE BUILT FOR OUR SHAPES (overweighted -- see above)
 
 John, third push: *"we know the residue is not the Collatz class; we are
 reproducing what mxdys already did."*  He is right, and the README says which
