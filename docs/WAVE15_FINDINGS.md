@@ -141,6 +141,53 @@ its IDENTITY: it is the same *kind* of population — machines whose forward
 behaviour the inductive engine cannot model exactly — reached through a
 different enumeration.  Which is exactly why their deciders do not help.
 
+### THE HINT PATH — which this wave never tested, and which is the live lead
+
+John, twice: *"there is more juice here... this is literally the code that
+caught these."*  He is right that something was missed, and it is this.
+
+**Every config swept above has `ex_rules = []`.**  The project README says the
+counter methods *"require some hints from human"*, and the hint type is
+literally our counter model:
+
+    side_binary_Pos_inc_rule d0 d1 d1a qL qR QL QR :=
+      (forall l r n, l <* d0 <* d1^^n <{{QL}} qL *> r -->+
+                     l <* d1 <* d0^^n <* qR {{QR}}> r) /\ ...
+
+`d1^^n` is our `rep uS j`; `d0` is our `uD`; `d1a` is the tape-edge word.
+**An `ENCDATA` row IS a hint**, and we have 25 of them.  The hint is a SEARCH
+hint, not an axiom — `Config_WF` demands a proof of the rule — so anything
+found this way still has to be re-proved, which is exactly our normal cost.
+
+**Tested, and it did not fire — but the negative is weak.**  Sweeping
+`side_binary_Pos_inc_rule` built from each machine's own measured alphabet,
+over 4 states x 4 states x 3 edge words x `T0 ∈ {0,50,200,1000}` x block size
+= digit length: **0 of 6 machines**.  Then look at what mxdys' own hints
+actually are (`IndSBCv1.v`):
+
+    config_SBC 7450%N 5 A A A A [0] [1] [0;1;0] [1] [0;0;0;1] [0;1;0;1] [0;1;0]
+    config_SBC 5604%N 3 A B A B [0] [1] [0;1;0] [1] [0;0;1;1] [0;0;1;0] [0]
+
+`T0 = 7450` initial concrete steps.  Block size 5 or 3, not 2.  `d0`/`d1` are
+FOUR cells, not two.  Edge words like `[0;1;0]`.  These are hand-found,
+machine-specific parameters — which is what "requires some hints from human"
+means, and why a blind sweep of a small box finds nothing.  **Do not read the
+0/6 as "the hint path fails"; read it as "the hint path was not searched
+properly".**
+
+**This is the live lead, and it is ours to automate.**  Fifteen waves of
+anchor search compute exactly these quantities: the digit words (`uS`/`uD`),
+the anchor states, the tape-edge word, and a bootstrap length (`boot_probe`
+already returns the `T0` analogue).  Nobody has tried synthesising a
+`side_binary_Pos_inc_rule` from our own anchor data and handing it to their
+search.  That is a half-day experiment with `tools/mxdys/hint.ml` (built, and
+it takes `<spec> d0 d1 d1a` on stdin) and it is the first thing that could
+change this wave's answer.
+
+Two caveats to keep the expectation honest: their theorem is still `~halts`,
+so a hit still needs the liveness half; and their own use of hints is a few
+dozen INDIVIDUAL proofs, not a bulk decider run.
+
 ### Verdict
 
 Gate (i) is small, so per the plan: **their search is tuned for BB(6) shapes
