@@ -1,23 +1,34 @@
 #!/usr/bin/env python3
-"""Full n=3 re-sweep of the unboarded residue (UNTRUSTED).
+"""Laddered n=3 re-sweep of the unboarded residue (UNTRUSTED).
 
 harvest_sweep.py swept PARAMS=[(2,2,...),(4,2,...)] and QPARAMS likewise --
-history depth k varied, GRAM ORDER n never.  Wave-14 measured what that costs:
-on the holdout front a pass climbing k to 12 at n=2 boarded ZERO, and a pass
-at n=3 boarded FIVE.  The residue's own measured failure mode agrees --
-fail_diag.py puts ~85% at NOMEAS, i.e. the closure is fine and the liveness
-measure search fails, which is a vocabulary problem that n addresses and k
-does not.
+history depth k varied, GRAM ORDER n never.  Wave-14 measured the cost of
+that blind spot on the holdout front: climbing k to 12 at n=2 boarded ZERO,
+moving to n=3 boarded FIVE.  fail_diag.py already put ~85% of residue
+failures at NOMEAS (closure fine, liveness measure search fails), a
+vocabulary problem that n addresses and k does not.
 
-So: re-run the 1,244 unboarded residue machines at n=3, BOTH tiers
-(never-QH and the R_QH/wrap tier), parallel over cores.
+LADDERED, one rung per pass -- NOT full escalation per machine.  The first
+attempt at this ran a whole 5-rung escalation on each machine and after 16
+minutes with 3 busy workers had completed ZERO of 1,244: slow misses at the
+expensive rungs block every cheap hit behind them.  Running the cheapest rung
+over the WHOLE pool first gets results flowing in minutes and gives an early
+read on the hit rate, which is what actually decides whether to spend the
+compute on the higher rungs at all.
 
-Results are written incrementally so a killed run loses nothing:
-    gram3_nqh.tsv   machine k n t fuel nctx   -> holdout_sweep.py emit format
-    gram3_qh.tsv    machine q s k n t fuel nctx
-Re-running skips machines already present in those files.
+MISSES ARE RECORDED, per rung.  The first version only tracked hits, so a
+preemption would have redone every miss -- and misses are exactly what costs.
+In an ephemeral container that is the difference between resuming and
+restarting.
 
-Usage:  gram3_sweep.py [WORKERS] [BUDGET_SECONDS]
+    gram3_nqh.tsv        machine k n t fuel nctx     (holdout_sweep.py emit format)
+    gram3_qh.tsv         machine q s k n t fuel nctx
+    gram3_miss_<k>_<n>   machines that failed that rung
+
+Usage:  gram3_sweep.py K N [WORKERS] [BUDGET] [--qh]
+        e.g.  gram3_sweep.py 2 3 3 45        cheapest never-QH rung
+              gram3_sweep.py 4 3 3 60        next rung, over rung-1 survivors
+              gram3_sweep.py 2 3 3 45 --qh   the R_QH/wrap tier
 """
 import os
 import signal
@@ -32,9 +43,16 @@ import nghist_prove as P                                    # noqa: E402
 
 NQH_OUT = os.path.join(HERE, 'gram3_nqh.tsv')
 QH_OUT = os.path.join(HERE, 'gram3_qh.tsv')
-NQH_PARAMS = [(2, 3, 60, 60000), (4, 3, 60, 60000), (6, 3, 80, 120000)]
-QH_PARAMS = [(2, 3, 60000), (4, 3, 60000)]
-BUDGET = int(sys.argv[2]) if len(sys.argv) > 2 else 120
+
+K = int(sys.argv[1])
+N = int(sys.argv[2])
+WORKERS = int(sys.argv[3]) if len(sys.argv) > 3 else 3
+BUDGET = int(sys.argv[4]) if len(sys.argv) > 4 else 45
+QH = '--qh' in sys.argv
+TAG = "%dq" % K if QH else str(K)
+MISS_OUT = os.path.join(HERE, 'gram3_miss_%s_%d.txt' % (TAG, N))
+T = 40 + 20 * K
+FUEL = 30000 * K
 
 
 class Timeout(Exception):
@@ -46,75 +64,66 @@ def _alarm(sig, frm):
 
 
 def attempt(m):
-    """Try never-QH at n=3, then the R_QH/wrap tier.  Returns a result row."""
     signal.signal(signal.SIGALRM, _alarm)
-    for (k, n, t, fuel) in NQH_PARAMS:
-        signal.alarm(BUDGET)
-        try:
-            r = P.prove(m, k, n, t, fuel)
-        except Exception:
-            r = None
-        finally:
-            signal.alarm(0)
-        if r:
-            return ('nqh', m, k, n, t, fuel, r['nctx'])
-    for (k, n, fuel) in QH_PARAMS:
-        signal.alarm(BUDGET)
-        try:
-            r = P.prove_qh(m, k, n, fuel)
-        except Exception:
-            r = None
-        finally:
-            signal.alarm(0)
-        if r:
-            return ('qh', m, r['q'], r['s'], k, n, r['t'], fuel, r['nctx'])
-    return ('miss', m)
+    signal.alarm(BUDGET)
+    try:
+        r = P.prove_qh(m, K, N, FUEL) if QH else P.prove(m, K, N, T, FUEL)
+    except Exception:
+        r = None
+    finally:
+        signal.alarm(0)
+    if not r:
+        return ('miss', m)
+    if QH:
+        return ('qh', m, r['q'], r['s'], K, N, r['t'], FUEL, r['nctx'])
+    return ('nqh', m, K, N, T, FUEL, r['nctx'])
 
 
-def done_set(path):
+def col0(path):
     if not os.path.exists(path):
         return set()
-    return set(l.split('\t')[0] for l in open(path) if l.strip())
+    return set(l.split('\t')[0].strip() for l in open(path) if l.strip())
 
 
 def main():
-    workers = int(sys.argv[1]) if len(sys.argv) > 1 else 3
     rem = [l.strip() for l in
            open(os.path.join(ROOT, 'tools/closeout/frozen_unproven.txt')) if l.strip()]
     hold = set(l.strip() for l in
                open(os.path.join(ROOT, 'tools/census_holdouts_kept.txt')) if l.strip())
-    already = done_set(NQH_OUT) | done_set(QH_OUT)
-    targets = [m for m in rem if m not in hold and m not in already]
-    print("gram-3 residue sweep: %d targets (%d already recorded), %d workers, "
-          "%ds budget" % (len(targets), len(already), workers, BUDGET), flush=True)
+    # already decided by ANY rung, plus already tried at THIS rung
+    done = col0(NQH_OUT) | col0(QH_OUT) | col0(MISS_OUT)
+    targets = [m for m in rem if m not in hold and m not in done]
+    print("gram-3 rung k=%d n=%d %s: %d targets (%d already done), %d workers, "
+          "%ds budget, fuel=%d" % (K, N, "R_QH" if QH else "never-QH",
+                                   len(targets), len(done), WORKERS, BUDGET, FUEL),
+          flush=True)
+    if not targets:
+        return
 
-    nqh = open(NQH_OUT, 'a')
-    qh = open(QH_OUT, 'a')
-    nq = nh = miss = 0
-    with ProcessPoolExecutor(max_workers=workers) as ex:
-        futs = {ex.submit(attempt, m): m for m in targets}
+    hit_f = open(QH_OUT if QH else NQH_OUT, 'a')
+    miss_f = open(MISS_OUT, 'a')
+    nhit = nmiss = 0
+    with ProcessPoolExecutor(max_workers=WORKERS) as ex:
+        futs = [ex.submit(attempt, m) for m in targets]
         for i, fut in enumerate(as_completed(futs), 1):
             row = fut.result()
-            if row[0] == 'nqh':
-                nq += 1
-                nqh.write('\t'.join(str(x) for x in row[1:]) + '\n')
-                nqh.flush()
-            elif row[0] == 'qh':
-                nh += 1
-                qh.write('\t'.join(str(x) for x in row[1:]) + '\n')
-                qh.flush()
+            if row[0] == 'miss':
+                nmiss += 1
+                miss_f.write(row[1] + '\n')
+                miss_f.flush()
             else:
-                miss += 1
+                nhit += 1
+                hit_f.write('\t'.join(str(x) for x in row[1:]) + '\n')
+                hit_f.flush()
+                print("  HIT %s" % row[1], flush=True)
             if i % 25 == 0:
-                print("  %d/%d  nqh=%d qh=%d miss=%d  (%.1f%% hit)"
-                      % (i, len(targets), nq, nh, miss,
-                         100.0 * (nq + nh) / i), flush=True)
-    nqh.close()
-    qh.close()
-    tot = nq + nh
-    print("gram-3 residue sweep DONE: %d never-QH + %d R_QH = %d hits / %d "
-          "(%.1f%%)" % (nq, nh, tot, len(targets),
-                        100.0 * tot / max(1, len(targets))), flush=True)
+                print("  %d/%d  hits=%d  (%.1f%%)"
+                      % (i, len(targets), nhit, 100.0 * nhit / i), flush=True)
+    hit_f.close()
+    miss_f.close()
+    print("rung k=%d n=%d %s DONE: %d hits / %d (%.1f%%)"
+          % (K, N, "R_QH" if QH else "never-QH", nhit, len(targets),
+             100.0 * nhit / max(1, len(targets))), flush=True)
 
 
 if __name__ == '__main__':
