@@ -262,7 +262,47 @@ What remains for these 11, in order of expected value:
    plus one transcription plus #28.
 3. **The wrap pair** via the 3-state-core re-root.
 
-## 3c. The n=3 lever does NOT transfer to the residue (measured)
+## 3c. CORRECTED: the n=3 residue verdict was called on the wrong rung
+
+**First conclusion (WRONG, kept for the record).**  The cheapest n=3 rung
+(k=2) over a shuffled sample of the unboarded residue gave 0 hits / 1244 --
+a complete rung, not a sample -- and I concluded the lever does not transfer,
+blaming a conflation: `n` widens the CONTEXT vocabulary while NOMEAS is a
+failure of the MEASURE vocabulary.
+
+**The error.** k=2 was never a test of the hypothesis.  Look at where the
+five holdout hits actually came from:
+
+    (4,3) x2   double #30, double #37
+    (6,3) x3   tower #21, tower #34, tower #40
+
+**Zero at (2,3).**  The rung I ran across the whole residue, and then drew a
+conclusion from, is the one rung that had never produced a hit on the holdout
+front either.  A null there was the expected outcome under BOTH hypotheses,
+so it discriminated nothing.  I had that table in front of me when I wrote
+the conclusion.
+
+**What the ladder then did.** Rung (4,3) hit within its first 175 machines:
+`0RB0LD_1RC---_0RD1RC_1LD0LA`, nctx=102.  So the lever DOES reach into the
+residue.
+
+**What is still probably true.** The rate is the open question, and early
+signs are that it is low -- 1/175 (0.6%) against 5/16 on the holdouts.  If it
+settles near that, the practical guidance survives (n=3 will not burn the
+residue down, and the pattern-measure / different-engine route in
+TERMINOLOGY step 4 remains the real lever) even though the reasoning I gave
+for it did not.  Those are separate claims and only the second one has been
+tested.
+
+**The lesson, which is the same one twice.**  Earlier tonight a 0/25 reading
+turned out to be an artifact of alphabetical order.  This is that mistake
+again at the next level up: a null result is only evidence against a
+hypothesis if the experiment could have produced a positive under it.  Check
+that the rung, sample, or parameter you are testing is one where the effect
+has ALREADY been seen, before treating its absence as refutation.
+
+### The original write-up (superseded)
+
 
 Having found that gram order n=3 boarded 5 holdouts that n=2 could not, the
 obvious move was to re-sweep the 1,244 unboarded residue machines the same
