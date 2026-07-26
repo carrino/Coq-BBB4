@@ -171,7 +171,9 @@ Inductive lstep :=
 | SRotL   (m : nat)
 | SRotR   (m : nat)
 | SUnrotL (m : nat)
-| SUnrotR (m : nat).
+| SUnrotR (m : nat)
+| SFoldL  (m : nat)
+| SFoldR  (m : nat).
 
 (** *** Rotation, as a side transformer
 
@@ -196,6 +198,34 @@ Definition sunrot (m : nat) (s : sside) : option sside :=
   | None => None
   | Some pre' => Some (mkS pre' (v ++ w) (s_a s) (s_b s) (v ++ s_post s))
   end.
+
+(** [SFold m]: absorb [m] copies of the unit sitting at the END of the prefix
+    into the count itself, [(pre'++rep u m, u, (a,b), post) -> (pre', u,
+    (a,b+m), post)].  The rotations move a block BOUNDARY; this moves the
+    block's CONSTANT OFFSET, which no rotation can do -- an overflow anchor
+    is naturally reached as [uD ++ rep uD j ++ ...] but stated by [cview] as
+    [rep uD (S j) ++ ...], and this is the step that reconciles them. *)
+
+Definition sfold (m : nat) (s : sside) : option sside :=
+  match strip_suf (rep (s_u s) m) (s_pre s) with
+  | None => None
+  | Some pre' => Some (mkS pre' (s_u s) (s_a s) (s_b s + m) (s_post s))
+  end.
+
+Lemma sfold_den : forall m s s', sfold m s = Some s' ->
+  forall X j, sden X j s = sden X j s'.
+Proof.
+  unfold sfold; intros m s s' H X j.
+  destruct (strip_suf (rep (s_u s) m) (s_pre s)) as [pre'|] eqn:E;
+    [|discriminate].
+  injection H as <-. apply strip_suf_sound in E.
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  rewrite E, <- (app_assoc pre'). f_equal.
+  replace (s_a s * j + (s_b s + m)) with (m + (s_a s * j + s_b s)) by lia.
+  rewrite (rep_add (s_u s) m (s_a s * j + s_b s)),
+          <- (app_assoc (rep (s_u s) m)).
+  reflexivity.
+Qed.
 
 (** The rotation, once, on the raw denotations. *)
 Lemma rot_side : forall pre v w c post X,
@@ -353,6 +383,16 @@ Definition sstep (tm : TM) (el er : bool) (st : lstep) (c : sconf)
       | Some r' => Some (mkC (c_st c) (c_l c) (c_h c) r', 0, 0)
       | None => None
       end
+  | SFoldL m =>
+      match sfold m (c_l c) with
+      | Some l' => Some (mkC (c_st c) l' (c_h c) (c_r c), 0, 0)
+      | None => None
+      end
+  | SFoldR m =>
+      match sfold m (c_r c) with
+      | Some r' => Some (mkC (c_st c) (c_l c) (c_h c) r', 0, 0)
+      | None => None
+      end
   end.
 
 (** *** SWin soundness
@@ -465,7 +505,7 @@ Theorem sstep_sound : forall tm el er st c c' ca cb,
 Proof.
   intros tm el er st c c' ca cb H XL XR j HL HR.
   destruct c as [q [pl ul al bl sl] h [pr ur ar br sr]].
-  destruct st as [n | n | n | n m | n | m | m | m | m];
+  destruct st as [n | n | n | n m | n | m | m | m | m | m | m];
     cbn [sstep c_st c_l c_h c_r s_pre s_u s_a s_b s_post] in H.
 
   - (* SWin *)
@@ -553,6 +593,18 @@ Proof.
     replace (0 * j + 0) with 0 by lia.
     unfold cden; cbn [c_st c_l c_h c_r].
     now rewrite <- (sunrot_den m _ _ E XR j).
+  - (* SFoldL *)
+    destruct (sfold m (mkS pl ul al bl sl)) as [l'|] eqn:E; [|discriminate].
+    injection H as <- <- <-.
+    replace (0 * j + 0) with 0 by lia.
+    unfold cden; cbn [c_st c_l c_h c_r].
+    now rewrite <- (sfold_den m _ _ E XL j).
+  - (* SFoldR *)
+    destruct (sfold m (mkS pr ur ar br sr)) as [r'|] eqn:E; [|discriminate].
+    injection H as <- <- <-.
+    replace (0 * j + 0) with 0 by lia.
+    unfold cden; cbn [c_st c_l c_h c_r].
+    now rewrite <- (sfold_den m _ _ E XR j).
 Qed.
 
 (** ** Running a chain *)
