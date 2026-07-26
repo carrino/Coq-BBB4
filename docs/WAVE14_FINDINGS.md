@@ -336,6 +336,19 @@ named, measured problems instead of one named problem and a dark bucket.
   records the best outcome per machine, before believing a negative.
 * **Sizing the Gray class off the wave-13 estimate.**  Measured 11 of 1,266.
 
+## 7b. mxdys' deciders are available, and they carry the missing count language
+
+mxdys pointed John at `github.com/ccz181078/busycoq` branch `BB6`
+(`verify/Inductive.v`, `verify/RRBA.v`).  This retires the standing
+do-not-retry entry.  Their top-level theorem is `~halts` only -- there is no
+quasi-halting layer anywhere in that tree -- but the model they build to
+prove it is exposed as first-class rules `multistep_expr a b n` over symbolic
+configurations that carry their state, and the count language `nat_expr`
+includes `nat_mul` and `powsum k x = ((k+2)^x - 1)/(k+1)`, a geometric sum.
+That is exactly §3's wall (`Θ(2^j)`, 496 machines) plus the quadratic (25)
+and base-3/4 (36) families.  Full assessment and a staged plan, with a
+measure-first decision gate, in `docs/MXDYS_DECIDERS_PLAN.md`.
+
 ## 8. Deferred, unchanged
 
 * Census fold-in (route B) — batch once on stable hardware; the only step

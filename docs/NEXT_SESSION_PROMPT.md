@@ -144,7 +144,9 @@ DO NOT RETRY (measured; grids in COUNTER_CLOSEOUT.md section 5, WAVE12 section
     emit_lapcert's reporting path cost 46 finished certificates and looked
     exactly like "the search finds nothing".  Survey with wall_survey.py, which
     keeps the best outcome per machine, before concluding anything is hard.
-  * mxdys' implementation: John reports it is NOT available.  Stop asking.
+  * (RETIRED) "mxdys' implementation is not available" -- it IS:
+    github.com/ccz181078/busycoq tree BB6, verify/Inductive.v and
+    verify/RRBA.v.  See docs/MXDYS_DECIDERS_PLAN.md; START THERE.
 
 ALSO: ovfshape.py measures cost-vs-j on BOTH branches and classifies
 AFFINE / QUAD / EXP2.  Run it before templating anything.  The interior version
