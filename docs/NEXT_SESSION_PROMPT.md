@@ -60,9 +60,10 @@ THE TASK -- the nested lap.
   which is exactly John's reading ("count 8->15, then shift over one with a 1
   in position 2 and count 8->15 again, then shift back"), confirmed in
   absolute tape coordinates.  Flagship 0RB---_0RC0LD_1LD1RC_0LA1LB: interior
-  4j+4, overflow 16*2^j+4j+4.  Over the residue ovfshape.py reads 439
-  AFFINE/EXP2 against 264 AFFINE/AFFINE (partial sweep, ~1,100 of 1,266 --
-  FINISH THIS SWEEP FIRST, it is the number everything else is sized off).
+  4j+4, overflow 16*2^j+4j+4.  Over the whole residue ovfshape.py reads 496
+  AFFINE/EXP2 against 304 AFFINE/AFFINE, 392 with no decodable anchor, 49
+  HIGHER and 25 QUAD.  The exponential class is bigger than everything the
+  affine checker can still reach.
 
   sside carries its count as a*j+b and srun returns ca*j+cb.  Both are affine
   by construction, so this is not a search problem: no chain search, no step
@@ -80,8 +81,8 @@ THE TASK -- the nested lap.
   2. Route the class to wave-12's emit_ixp.py / IXPGadgets.v, which boarded
      163 of exactly this family by hand.  THE CHEAP VERSION WAS TRIED AND
      FAILS: 0 of 12 sampled EXP2 machines derive, because that template is
-     hard-wired to Ip with anchor tail [S1;S0] and the EXP2 bucket is 191 Jp /
-     151 Ip / 97 Mp.  Widening its alphabet is on do-not-retry.
+     hard-wired to Ip with anchor tail [S1;S0] and the EXP2 bucket is 224 Jp /
+     168 Ip / 104 Mp.  Widening its alphabet is on do-not-retry.
 
 THEN, in ranked order (all independent of the above):
 
@@ -95,12 +96,13 @@ THEN, in ranked order (all independent of the above):
       wsteps_frame / cycL / cycR, which today state only their ENDPOINTS.  One
       theorem, not one per machine.
 
-  (2) The QUAD (22) and HIGHER (48) machines -- WAVE13 section 9c's round-trip
+  (2) The QUAD (25) and HIGHER (49) machines -- WAVE13 section 9c's round-trip
       family, lap(j) = (j+1)(j+2).  Same design question as the nested lap: a
       count that is not affine in j.  Solve them together, not separately.
 
-  (3) The 185 with NO anchor family at all.  Triage before assuming anything
-      (wall_survey.py + residue_triage.py + triage.py fingerprint + lapshape).
+  (3) The 185 with NO anchor family at all (392 by the ovfshape decode).
+      Triage before assuming anything (wall_survey.py + residue_triage.py +
+      triage.py fingerprint + lapshape).
 
   (4) The 27 genuine mxdys holdouts (tools/census_holdouts_kept.txt) -- the
       real endgame, and what John actually wants to be working on.

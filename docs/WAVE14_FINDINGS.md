@@ -121,19 +121,20 @@ best outcome across every (mirror, anchor) candidate — over all 1,266:
 | derives completely | 46 |
 
 which reproduces §10a's ~523.  `ovfshape.py` then asks what those overflows
-COST (partial sweep, ~1,100 of 1,266 at time of writing):
+COST (complete sweep, all 1,266):
 
 | interior / overflow degree | count |
 |---|---:|
-| AFFINE / **EXP2** | 439 |
-| — / no decodable anchor | 323 |
-| AFFINE / AFFINE | 264 |
-| HIGHER / HIGHER | 48 |
-| QUAD / QUAD | 22 |
+| AFFINE / **EXP2** | **496** |
+| — / no decodable anchor | 392 |
+| AFFINE / AFFINE | 304 |
+| HIGHER / HIGHER | 49 |
+| QUAD / QUAD | 25 |
 
-**The dominant class of the residue is an exponential overflow**, and it is
-outside the certificate model.  The `AFFINE/AFFINE` machines are the ones the
-existing checker can still reach.
+**The dominant class of the residue is an exponential overflow** — 496 of
+1,266, and outside the certificate model.  The 304 `AFFINE/AFFINE` machines
+are the ones the existing checker can still reach; they are a different
+population, `Kp`-dominated where the `EXP2` bucket is `Jp`-dominated.
 
 ## 4. Three bugs were holding 46 finished certificates
 
@@ -218,13 +219,13 @@ and cheap, but it is not a large class — do not size future work off it.
    **0 of 12** sampled, all with *"no anchor family with a consecutive run
    >= 12"*.  Its template is hard-wired to `Ip` with the anchor tail exactly
    `[S1;S0]` (the wave-12 "flip shape"), and the EXP2 bucket is
-   **191 `Jp` / 151 `Ip` / 97 `Mp`**, so most of it cannot present an `Ip`
+   **224 `Jp` / 168 `Ip` / 104 `Mp`**, so most of it cannot present an `Ip`
    anchor at all.  Widening `emit_ixp`'s alphabet is the move
    `WAVE13_FINDINGS.md` §8 already put on do-not-retry, and it would also
    need the flip-shaped interior to match — so route (1), the nested lap, is
    the real work.  (For contrast the `AFFINE/AFFINE` bucket, which the
-   existing checker can still reach, is **156 `Kp` / 42 `Jp` / 34 `Dp` /
-   32 `Ip`** — a different population entirely.)
+   existing checker can still reach, is **185 `Kp` / 43 `Jp` / 40 `Dp` /
+   36 `Ip`** — a different population entirely.)
 2. **The 157 quasi-halting machines** (WAVE13 §6) are unchanged and still the
    cleanest one-theorem win: the 96 with `StA` targeted need the
    states-visited variant of `wsteps_frame`/`cycL`/`cycR`.  The `mirrorize`
