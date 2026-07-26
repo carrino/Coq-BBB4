@@ -77,6 +77,14 @@ ENCDATA = {
     'Mp': dict(uS=(1, 1), sS=(0, 1), uD=(0, 1), sD=(1, 1),
                obS=1, soS=(), soD=(1, 1),
                mod='MpCounter', some='cview_some_M', none='cview_none_M'),
+    # The BLANK-separated alphabet.  Every other row separates with S1 or
+    # not at all, which is why the anchor search reported "no anchor family"
+    # on this population rather than a shape mismatch.  Added from John's
+    # reading of 1RB0RB_1LC1RA_1RA0LD_0LB0LD; measured to decode 26% of a
+    # 120-machine sample of the no-anchor bucket.
+    'Bp': dict(uS=(0, 1), sS=(0, 0), uD=(0, 0), sD=(0, 1),
+               obS=1, soS=(), soD=(0, 1),
+               mod='BpCounter', some='cview_some_B', none='cview_none_B'),
 }
 
 
@@ -105,10 +113,19 @@ def _Mp(m):
     return out + [1, 1]
 
 
+def _Bp(m):
+    out = []
+    while m:
+        out += [0, m & 1]
+        m >>= 1
+    return out
+
+
 ENC.setdefault('Kp', _Kp)
 ENC.setdefault('Dp', _Dp)
 ENC.setdefault('Mp', _Mp)
-ENCS = ('Ip', 'Jp', 'Kp', 'Dp', 'Mp')
+ENC.setdefault('Bp', _Bp)
+ENCS = ('Ip', 'Jp', 'Kp', 'Dp', 'Mp', 'Bp')
 
 FLAT = ((), (), 0, 0, ())
 Halt_ = LC.Halt

@@ -1455,6 +1455,33 @@ theories/Machines/Counters/LAPG_1RB0RB_1RC0LD_1LA0RC_1LD0LA.v
 theories/Machines/Counters/LAPG_1RB0RB_1RC1LD_0LD0RC_0LA1LA.v
 theories/Machines/Counters/LAPG_1RB1LD_1RC0RC_1LA0LA_0RB0LD.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Counters/BpCounter.v
+theories/Machines/Counters/LAPC_1RB0LC_1LC0LA_1RD1LA_0RD1LC.v
+theories/Machines/Counters/LAPC_1RB0LD_0LC0LA_0RC1LD_1RC1LA.v
+theories/Machines/Counters/LAPC_1RB0LD_1LC0LA_0RC1LD_1RC1LA.v
+theories/Machines/Counters/LAPC_1RB0RD_0LB1RC_1LB1RD_1LA0RC.v
+theories/Machines/Counters/LAPC_1RB0RD_1LC1RD_0LC1RB_1LA0RB.v
+theories/Machines/Counters/LAPC_1RB1RC_1LA0LB_0RD0LA_1LB0RC.v
+theories/Machines/Counters/LAPC_1RB1RC_1LA0LB_0RD0RD_1LB0RC.v
+theories/Machines/Counters/LAPC_1RB1RC_1LA0LB_1RD0RC_1LB1LC.v
+theories/Machines/Counters/LAPC_1RB1RD_1LC0RC_0RB1LD_1LA0LD.v
+theories/Machines/Counters/LAPC_1RB____0LB1RC_0RD____1LB0RC.v
+theories/Machines/Counters/LAPC_1RB____0LB1RC_1LB0RD_0RC___.v
+theories/Machines/Counters/LAPC_1RB____0RC0LC_1LD0RB_0LD1RC.v
+theories/Machines/Counters/LAPC_1RB____0RC0LD_1LD0RB_0LD1RC.v
+theories/Machines/Counters/LAPC_1RB____0RC0RC_1LD0RB_0LD1RC.v
+theories/Machines/Counters/LAPC_1RB____0RC0RD_1LD0RB_0LD1RC.v
+theories/Machines/Counters/LAPC_1RB____0RC1RC_1LD0RB_0LD1RC.v
+theories/Machines/Counters/LAPC_1RB____0RC1RD_1LD0RB_0LD1RC.v
+theories/Machines/Counters/LAPC_1RB____0RC____1LD0RB_0LD1RB.v
+theories/Machines/Counters/LAPC_1RB____1LC0RD_0LC1RB_0RB___.v
+theories/Machines/Counters/LAPC_1RB____1LC0RD_0LC1RD_0RB0LC.v
+theories/Machines/Counters/LAPC_1RB____1LC0RD_0LC1RD_0RB0RB.v
+theories/Machines/Counters/LAPC_1RB____1LC0RD_0LC1RD_0RB0RC.v
+theories/Machines/Counters/LAPC_1RB____1LC0RD_0LC1RD_0RB1RC.v
+theories/Machines/Counters/LAPC_1RB____1LC0RD_0LC1RD_0RB1RD.v
+
 theories/Closeout/CloseoutKit.v
 theories/Closeout/CB_00.v
 theories/Closeout/CB_01.v
