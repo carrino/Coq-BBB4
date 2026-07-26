@@ -89,6 +89,14 @@ inner step is `reach_ovf` instantiated at the INNER family, and `pow2`, `fill`,
 
 Expected: a thin wrapper, not a new induction.
 
+**Stage A amends this:** do NOT phrase the inner run as `Cin v -> Cin (fill v)`
+with `v = pow2 j`.  21% of the measured inner counters run at another octave or
+offset.  Phrase it as `reach_ovf` already does — *run inner interior laps until
+the inner `cview` reports overflow* — and let the exit chain be derived at
+whatever inner value that turns out to be.  `pow2`/`fill` then become a special
+case rather than an assumption, and `cview_none_shape` is still what names the
+landing value.
+
 ### Part 2 — one composition theorem
 
 `theories/Counters/NestedLap.v`:
@@ -138,7 +146,56 @@ The proof is small; the SEARCH is the job.  Per machine:
 **Do not skip Stage A.**  Every wave that templated before measuring is on the
 do-not-retry list.
 
-### Stage A — measure the inner family (hours, no Coq)
+### Stage A — RUN, AND THE GATE PASSES
+
+_Done 2026-07-26 (wave-15).  `tools/counters/innerfam.py`, on a random
+150-machine sample of the 442 `AFFINE`/`EXP2` machines._
+
+Method: take the outer anchor family `emit_lapcert.anchors()` already finds,
+build the all-ones outer anchor `Cc(2^K - 1)` at `K = 6`, simulate forward to
+`Cc(2^K)`, and decode every blank-head configuration in between under every
+alphabet in the zoo at every `(state, tail, far)` split.  An inner counter
+shows up as a key whose decoded values are CONSECUTIVE.
+
+| | |
+|---|---:|
+| overflow phase simulated | **150 / 150** |
+| an inner consecutive family inside it | **144 (96%)** |
+| running exactly `2^(K-1) .. 2^K-1` | **118 (79%)** |
+| consecutive, but a different range/octave | 32 (21%) |
+| no inner family found | 6 (4%) |
+
+**Gate (1) is large: 96%.  Proceed to Stages B-D.**
+
+**The finding that changes the design: the inner alphabet is often NOT the
+outer one.**
+
+| outer -> inner | count |
+|---|---:|
+| `Jp` -> `Jp` | 56 |
+| **`Alph_10_11_11` -> `Ip`** | 51 |
+| `Mp` -> `Mp` | 29 |
+| `Ip` -> `Ip` | 6 |
+| `Mp` -> `Ip` | 2 |
+
+53 of 144 (37%) have inner ≠ outer.  `emit_ixp.py` assumes `Ip` at BOTH
+levels, so it can only ever reach the 6 `Ip -> Ip` machines — which is the
+real reason it derives 0 of this bucket, more specific than "hard-wired to
+`Ip`".  **The emitter must search the inner alphabet independently of the
+outer one.**
+
+**And gate (3) says do not hard-wire `pow2`/`fill`.**  21% of the inner
+counters run at a different octave or offset (e.g. `64..127` where
+`2^(K-1)..2^K-1` would be `32..63`, or `130..191`).  They are still
+CONSECUTIVE, so the induction is unaffected — but Part 1 must not assume the
+inner run starts at `pow2 j` and ends at the all-ones fill.  Use
+`reach_ovf`'s own shape instead: *from the inner anchor wherever the boot
+lands, run interior laps until the inner `cview` reports overflow*, and let
+the exit chain be derived at whatever value that is.  That is strictly more
+general than `pow2`/`fill` and no harder — `reach_ovf` already returns
+`exists j, cview p' = (S j, None)`.
+
+### Stage A (original specification, for reference)
 
 On a sample of ~30 `AFFINE`/`EXP2` machines, spanning `Alph_10_11_11`, `Jp`
 and `Mp`:
@@ -160,6 +217,9 @@ before any Coq is written.  **(3) small is not fatal** but changes Part 1: the
 inner run would terminate at something other than the all-ones fill, and
 `reach_ovf` would need a general stopping predicate rather than `cview ... =
 (S j, None)`.
+
+_(Answered above: (1) = 96%, (2) = all in the zoo but 37% at a DIFFERENT
+alphabet from the outer, (3) = 79%.)_
 
 ### Stage B — the Coq (1 day)
 
