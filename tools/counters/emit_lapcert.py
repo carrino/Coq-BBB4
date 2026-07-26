@@ -127,6 +127,32 @@ ENC.setdefault('Mp', _Mp)
 ENC.setdefault('Bp', _Bp)
 ENCS = ('Ip', 'Jp', 'Kp', 'Dp', 'Mp', 'Bp')
 
+# ---------------------------------------------------------------------------
+# The INFERRED alphabets.  tools/counters/alphabet_infer.py reads a counter's
+# word family off its own tape as a triple (A, B, C) with
+#
+#     E xH = C      E (xO q) = A ++ E q      E (xI q) = B ++ E q
+#
+# which determines the row completely (uS = B, sS = A, uD = A, sD = B,
+# obS = 0, soS = soD = C).  gen_alphabet.py turns each triple into a Coq
+# module whose two decomposition lemmas are PROVED by the same induction as
+# ILCounter's, so a wrong triple fails to compile rather than mis-proving.
+#
+# This is not the "widen the encoding table and hope" that WAVE13 put on
+# do-not-retry: nothing is guessed.  Each row exists because a family was
+# measured on a machine's tape and verified against 100+ consecutive anchor
+# words.
+# ---------------------------------------------------------------------------
+try:
+    import alphabets_gen as _AG                                    # noqa: E402
+    for _k, _row in _AG.ENCROWS.items():
+        ENCDATA.setdefault(_k, _row)
+        ENC.setdefault(_k, _AG.ENCFN[_k])
+    ENCS = ENCS + tuple(k for k in sorted(_AG.ENCROWS) if k not in ENCS)
+except ImportError:                                                # pragma: no cover
+    pass
+
+
 FLAT = ((), (), 0, 0, ())
 Halt_ = LC.Halt
 
@@ -643,7 +669,10 @@ def render(D):
                        '    vm_compute; reflexivity.'
                        % (ST[q], ST[q], ID, cchain(pre)))
     reps = {
-        '@PREF@': PREFIX, '@ID@': ID, '@SPEC@': spec, '@ENC@': D['enc'],
+        '@PREF@': PREFIX, '@ID@': ID, '@SPEC@': spec,
+        # the Coq FIXPOINT name; for the generated alphabets it is Ap_<tag>,
+        # not the ENCDATA key
+        '@ENC@': d.get('fn', D['enc']),
         '@ENCMOD@': d['mod'], '@SOME@': d['some'], '@NONE@': d['none'],
         '@ST0@': ST[D['st0']], '@TAIL@': clist(D['tail']),
         '@FAR@': clist(D['far']),
