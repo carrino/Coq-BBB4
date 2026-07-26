@@ -77,6 +77,14 @@ ENCDATA = {
     'Mp': dict(uS=(1, 1), sS=(0, 1), uD=(0, 1), sD=(1, 1),
                obS=1, soS=(), soD=(1, 1),
                mod='MpCounter', some='cview_some_M', none='cview_none_M'),
+    # The BLANK-separated alphabet.  Every other row separates with S1 or
+    # not at all, which is why the anchor search reported "no anchor family"
+    # on this population rather than a shape mismatch.  Added from John's
+    # reading of 1RB0RB_1LC1RA_1RA0LD_0LB0LD; measured to decode 26% of a
+    # 120-machine sample of the no-anchor bucket.
+    'Bp': dict(uS=(0, 1), sS=(0, 0), uD=(0, 0), sD=(0, 1),
+               obS=1, soS=(), soD=(0, 1),
+               mod='BpCounter', some='cview_some_B', none='cview_none_B'),
 }
 
 
@@ -105,10 +113,45 @@ def _Mp(m):
     return out + [1, 1]
 
 
+def _Bp(m):
+    out = []
+    while m:
+        out += [0, m & 1]
+        m >>= 1
+    return out
+
+
 ENC.setdefault('Kp', _Kp)
 ENC.setdefault('Dp', _Dp)
 ENC.setdefault('Mp', _Mp)
-ENCS = ('Ip', 'Jp', 'Kp', 'Dp', 'Mp')
+ENC.setdefault('Bp', _Bp)
+ENCS = ('Ip', 'Jp', 'Kp', 'Dp', 'Mp', 'Bp')
+
+# ---------------------------------------------------------------------------
+# The INFERRED alphabets.  tools/counters/alphabet_infer.py reads a counter's
+# word family off its own tape as a triple (A, B, C) with
+#
+#     E xH = C      E (xO q) = A ++ E q      E (xI q) = B ++ E q
+#
+# which determines the row completely (uS = B, sS = A, uD = A, sD = B,
+# obS = 0, soS = soD = C).  gen_alphabet.py turns each triple into a Coq
+# module whose two decomposition lemmas are PROVED by the same induction as
+# ILCounter's, so a wrong triple fails to compile rather than mis-proving.
+#
+# This is not the "widen the encoding table and hope" that WAVE13 put on
+# do-not-retry: nothing is guessed.  Each row exists because a family was
+# measured on a machine's tape and verified against 100+ consecutive anchor
+# words.
+# ---------------------------------------------------------------------------
+try:
+    import alphabets_gen as _AG                                    # noqa: E402
+    for _k, _row in _AG.ENCROWS.items():
+        ENCDATA.setdefault(_k, _row)
+        ENC.setdefault(_k, _AG.ENCFN[_k])
+    ENCS = ENCS + tuple(k for k in sorted(_AG.ENCROWS) if k not in ENCS)
+except ImportError:                                                # pragma: no cover
+    pass
+
 
 FLAT = ((), (), 0, 0, ())
 Halt_ = LC.Halt
@@ -261,7 +304,8 @@ Proof.
   unfold Cc_@ID@, cden, A0_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   replace (1 * j + 0) with j by lia.
-  rewrite H1, <- (app_assoc (rep @US@ j)). reflexivity.
+  rewrite H1. first [ rewrite <- (app_assoc (rep @US@ j)); reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
 Qed.
 
 Lemma gei_@ID@ : forall p j q0, cview p = (j, Some q0) ->
@@ -271,7 +315,8 @@ Proof.
   unfold Cc_@ID@, cden, A1_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   replace (1 * j + 0) with j by lia.
-  rewrite H2, <- (app_assoc (rep @UD@ j)). reflexivity.
+  rewrite H2. first [ rewrite <- (app_assoc (rep @UD@ j)); reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
 Qed.
 
 Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
@@ -310,8 +355,10 @@ Proof.
   unfold Cc_@ID@, cden, Z0_@ID@, Z1_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   split.
-  - rewrite H1; cbn [rep app]. rewrite <- app_assoc. reflexivity.
-  - rewrite H2; cbn [rep app]. rewrite <- app_assoc. reflexivity.
+  - rewrite H1; cbn [rep app]. first [ rewrite <- app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+  - rewrite H2; cbn [rep app]. first [ rewrite <- app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
 Qed.
 
 Lemma gp_@ID@ : forall p j q0, cview p = (S j, Some q0) ->
@@ -323,8 +370,10 @@ Proof.
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   replace (1 * j + 0) with j by lia.
   split.
-  - rewrite H1; cbn [rep app]. rewrite <- !app_assoc. reflexivity.
-  - rewrite H2; cbn [rep app]. rewrite <- !app_assoc. reflexivity.
+  - rewrite H1; cbn [rep app]. first [ rewrite <- !app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+  - rewrite H2; cbn [rep app]. first [ rewrite <- !app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
 Qed.
 
 Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
@@ -411,7 +460,8 @@ Proof.
   unfold Cc_@ID@, cden, B0_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   replace (1 * j + @OBSP@) with (@CNTP@) by lia.
-  rewrite H1; cbn [rep app]; rewrite <- !app_assoc. reflexivity.
+  rewrite H1; cbn [rep app]. first [ rewrite <- !app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
 Qed.
 
 Lemma lbl_@ID@ : forall q l h r, lift (q,(l ++ [S0],h,r)) = lift (q,(l,h,r)).
@@ -429,7 +479,9 @@ Proof.
     replace (0 * j + 0) with 0 by lia.
     cbn [rep app]. reflexivity. }
   assert (HC : Cc (Pos.succ p) = (@ST0@, (@HCLEFT@, S0, @FAR@))).
-  { unfold Cc_@ID@. rewrite H2. rewrite <- !app_assoc. reflexivity. }
+  { unfold Cc_@ID@. rewrite H2.
+    first [ rewrite <- !app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ]. }
   rewrite HD, HC. @CLOSE@
 Qed.
 
@@ -617,7 +669,10 @@ def render(D):
                        '    vm_compute; reflexivity.'
                        % (ST[q], ST[q], ID, cchain(pre)))
     reps = {
-        '@PREF@': PREFIX, '@ID@': ID, '@SPEC@': spec, '@ENC@': D['enc'],
+        '@PREF@': PREFIX, '@ID@': ID, '@SPEC@': spec,
+        # the Coq FIXPOINT name; for the generated alphabets it is Ap_<tag>,
+        # not the ENCDATA key
+        '@ENC@': d.get('fn', D['enc']),
         '@ENCMOD@': d['mod'], '@SOME@': d['some'], '@NONE@': d['none'],
         '@ST0@': ST[D['st0']], '@TAIL@': clist(D['tail']),
         '@FAR@': clist(D['far']),
@@ -687,6 +742,18 @@ def anchors(spec):
     return out
 
 
+def _cost_str(D):
+    """The interior cost, in whichever shape this machine derived.
+
+    The j = 0 split (wave-13 section 9a) leaves [ci] None, so formatting it
+    unconditionally raised TypeError -- OUTSIDE the try, so it killed the
+    whole run at the first split-mode machine rather than skipping it.  Any
+    list containing one boarded nothing after it."""
+    if D['mode'] == 'one':
+        return '%d*j+%d' % D['ci']
+    return "j=0:%d,%d*j'+%d" % (D['cz'][1], D['cp'][0], D['cp'][1])
+
+
 def process(spec, do_emit, force=False):
     """Try the machine directly (counter grows LEFT); if that finds nothing,
     try its MIRROR and transfer the conclusion back through
@@ -707,11 +774,11 @@ def process(spec, do_emit, force=False):
             tag = enc + ('/mirror' if mirrored else '')
             if not do_emit:
                 return dict(spec=spec, ok=True, enc=tag,
-                            ni='%d*j+%d' % D['ci'], no='%d*j+%d' % D['co'])
+                            ni=_cost_str(D), no='%d*j+%d' % D['co'])
             path = os.path.join(OUTDIR, '%s_%s.v' % (PREFIX, mach_id(spec)))
             if os.path.exists(path) and not force:
                 return dict(spec=spec, ok=True, enc=tag, file=path,
-                            skipped=True, ni='%d*j+%d' % D['ci'],
+                            skipped=True, ni=_cost_str(D),
                             no='%d*j+%d' % D['co'])
             try:
                 src = render(D)
@@ -728,7 +795,7 @@ def process(spec, do_emit, force=False):
                 last = 'coqc: ' + (lg[-1] if lg else '?')
                 continue
             return dict(spec=spec, ok=True, enc=tag, file=path,
-                        ni='%d*j+%d' % D['ci'], no='%d*j+%d' % D['co'])
+                        ni=_cost_str(D), no='%d*j+%d' % D['co'])
     return dict(spec=spec, ok=False, why=last or 'no anchor')
 
 

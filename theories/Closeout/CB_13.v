@@ -4,711 +4,801 @@ From Coq Require Import List.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Census Require Import Deferred_Defs.
 From BBB4.Closeout Require Import CloseoutKit.
+Require BBB4.Machines.IRulesQHStage.IQHStage_15.
 Require BBB4.Machines.IRulesQHStage.IQHStage_16.
-Require BBB4.Machines.IRulesQHStage.IQHStage_17.
 Import ListNotations.
 
+(* 1RB---_1LC1LC_0LD0LC_1RD1LB *)
+Lemma cov_13_0000 : covers (row_to_tm [t1RB;tN;t1LC;t1LC;t0LD;t0LC;t1RD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_15.tm_w3_01579);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_15.cqh_w3_01579 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1LD_1LB1RD_0RC0RD *)
+Lemma cov_13_0001 : covers (row_to_tm [t1RB;tN;t1LC;t1LD;t1LB;t1RD;t0RC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_15.tm_w3_01580);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_15.cqh_w3_01580 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1LD_1LC1RD_0RD0RB *)
+Lemma cov_13_0002 : covers (row_to_tm [t1RB;tN;t1LC;t1LD;t1LC;t1RD;t0RD;t0RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_15.tm_w3_01581);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_15.cqh_w3_01581 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1LD_1RC0LB_0LC0LD *)
+Lemma cov_13_0003 : covers (row_to_tm [t1RB;tN;t1LC;t1LD;t1RC;t0LB;t0LC;t0LD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_15.tm_w3_01582);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_15.cqh_w3_01582 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1LD_1RC0RB_0LB0LD *)
+Lemma cov_13_0004 : covers (row_to_tm [t1RB;tN;t1LC;t1LD;t1RC;t0RB;t0LB;t0LD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_15.tm_w3_01583);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_15.cqh_w3_01583 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1LD_1RC1LB_0LC0LD *)
+Lemma cov_13_0005 : covers (row_to_tm [t1RB;tN;t1LC;t1LD;t1RC;t1LB;t0LC;t0LD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_15.tm_w3_01584);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_15.cqh_w3_01584 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1LD_1RC1RB_0LC0LD *)
+Lemma cov_13_0006 : covers (row_to_tm [t1RB;tN;t1LC;t1LD;t1RC;t1RB;t0LC;t0LD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_15.tm_w3_01585);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_15.cqh_w3_01585 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1LD_1RC1RB_0RC0LD *)
+Lemma cov_13_0007 : covers (row_to_tm [t1RB;tN;t1LC;t1LD;t1RC;t1RB;t0RC;t0LD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_15.tm_w3_01586);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_15.cqh_w3_01586 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1LD_1RC1RB_1RC0LD *)
+Lemma cov_13_0008 : covers (row_to_tm [t1RB;tN;t1LC;t1LD;t1RC;t1RB;t1RC;t0LD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_15.tm_w3_01587);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_15.cqh_w3_01587 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RB_0LD0LC_1RD0LB *)
+Lemma cov_13_0009 : covers (row_to_tm [t1RB;tN;t1LC;t1RB;t0LD;t0LC;t1RD;t0LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_15.tm_w3_01588);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_15.cqh_w3_01588 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RB_0LD0LC_1RD1LB *)
+Lemma cov_13_0010 : covers (row_to_tm [t1RB;tN;t1LC;t1RB;t0LD;t0LC;t1RD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_15.tm_w3_01589);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_15.cqh_w3_01589 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RB_0RD0LC_1RD1LB *)
+Lemma cov_13_0011 : covers (row_to_tm [t1RB;tN;t1LC;t1RB;t0RD;t0LC;t1RD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01590);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01590 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RB_1RD0LC_1RD0LB *)
+Lemma cov_13_0012 : covers (row_to_tm [t1RB;tN;t1LC;t1RB;t1RD;t0LC;t1RD;t0LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01591);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01591 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RB_1RD0LC_1RD1LB *)
+Lemma cov_13_0013 : covers (row_to_tm [t1RB;tN;t1LC;t1RB;t1RD;t0LC;t1RD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01592);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01592 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RC_1LB1RD_0RC0RD *)
+Lemma cov_13_0014 : covers (row_to_tm [t1RB;tN;t1LC;t1RC;t1LB;t1RD;t0RC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01593);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01593 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_0RB0LC_1LD1RB *)
+Lemma cov_13_0015 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t0RB;t0LC;t1LD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01594);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01594 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_0RB0LC_1RD1RB *)
+Lemma cov_13_0016 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t0RB;t0LC;t1RD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01595);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01595 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LB0RB_0RB0RD *)
+Lemma cov_13_0017 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LB;t0RB;t0RB;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01596);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01596 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LB0RB_0RC0RD *)
+Lemma cov_13_0018 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LB;t0RB;t0RC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01597);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01597 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LB1LD_0RB0RD *)
+Lemma cov_13_0019 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LB;t1LD;t0RB;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01598);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01598 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LB1RB_0RB0RD *)
+Lemma cov_13_0020 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LB;t1RB;t0RB;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01599);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01599 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LB1RB_0RC0RD *)
+Lemma cov_13_0021 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LB;t1RB;t0RC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01600);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01600 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LB1RC_0RC0RD *)
+Lemma cov_13_0022 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LB;t1RC;t0RC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01601);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01601 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LB1RD_0RC0RD *)
+Lemma cov_13_0023 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LB;t1RD;t0RC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01602);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01602 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LC0RB_0RB0RD *)
+Lemma cov_13_0024 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LC;t0RB;t0RB;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01603);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01603 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LC0RB_0RC0RD *)
+Lemma cov_13_0025 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LC;t0RB;t0RC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01604);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01604 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LC1LD_0RB0RD *)
+Lemma cov_13_0026 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LC;t1LD;t0RB;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01605);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01605 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LC1RB_0RB0RD *)
+Lemma cov_13_0027 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LC;t1RB;t0RB;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01606);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01606 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1LC1RB_0RC0RD *)
+Lemma cov_13_0028 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1LC;t1RB;t0RC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01607);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01607 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1LC1RD_1RD0LC_1LD1RB *)
+Lemma cov_13_0029 : covers (row_to_tm [t1RB;tN;t1LC;t1RD;t1RD;t0LC;t1LD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01608);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01608 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC---_0LD0LC_1RD1LC *)
+Lemma cov_13_0030 : covers (row_to_tm [t1RB;tN;t1RC;tN;t0LD;t0LC;t1RD;t1LC]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01609);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01609 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC---_0RD0RC_1LD1RC *)
+Lemma cov_13_0031 : covers (row_to_tm [t1RB;tN;t1RC;tN;t0RD;t0RC;t1LD;t1RC]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01610);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01610 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC---_1LC1RD_0RC0RD *)
+Lemma cov_13_0032 : covers (row_to_tm [t1RB;tN;t1RC;tN;t1LC;t1RD;t0RC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01611);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01611 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC---_1LC1RD_1LC0RD *)
+Lemma cov_13_0033 : covers (row_to_tm [t1RB;tN;t1RC;tN;t1LC;t1RD;t1LC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01612);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01612 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC---_1LD0RC_1LD1RC *)
+Lemma cov_13_0034 : covers (row_to_tm [t1RB;tN;t1RC;tN;t1LD;t0RC;t1LD;t1RC]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01613);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01613 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LB_0LD0LC_1RD1LB *)
+Lemma cov_13_0035 : covers (row_to_tm [t1RB;tN;t1RC;t0LB;t0LD;t0LC;t1RD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01614);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01614 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LB_0LD0RC_1LD1LB *)
+Lemma cov_13_0036 : covers (row_to_tm [t1RB;tN;t1RC;t0LB;t0LD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01615);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01615 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LB_0LD0RC_1RD1LB *)
+Lemma cov_13_0037 : covers (row_to_tm [t1RB;tN;t1RC;t0LB;t0LD;t0RC;t1RD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01616);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01616 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LB_0LD1LB_1RD0LC *)
+Lemma cov_13_0038 : covers (row_to_tm [t1RB;tN;t1RC;t0LB;t0LD;t1LB;t1RD;t0LC]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01617);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01617 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LB_0LD1RD_1RD1LB *)
+Lemma cov_13_0039 : covers (row_to_tm [t1RB;tN;t1RC;t0LB;t0LD;t1RD;t1RD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01618);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01618 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LB_0RD0RC_1LD1LB *)
+Lemma cov_13_0040 : covers (row_to_tm [t1RB;tN;t1RC;t0LB;t0RD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01619);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01619 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LB_1LD0RC_1LC1LB *)
+Lemma cov_13_0041 : covers (row_to_tm [t1RB;tN;t1RC;t0LB;t1LD;t0RC;t1LC;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01620);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01620 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LB_1LD0RC_1LD1LB *)
+Lemma cov_13_0042 : covers (row_to_tm [t1RB;tN;t1RC;t0LB;t1LD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01621);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01621 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LC_0LD0LB_1RD1LB *)
+Lemma cov_13_0043 : covers (row_to_tm [t1RB;tN;t1RC;t0LC;t0LD;t0LB;t1RD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01622);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01622 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LC_0LD0LB_1RD1LC *)
+Lemma cov_13_0044 : covers (row_to_tm [t1RB;tN;t1RC;t0LC;t0LD;t0LB;t1RD;t1LC]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01623);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01623 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LC_0LD0LC_1RD1LB *)
+Lemma cov_13_0045 : covers (row_to_tm [t1RB;tN;t1RC;t0LC;t0LD;t0LC;t1RD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01624);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01624 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LD_0LB0LC_1RD1LC *)
+Lemma cov_13_0046 : covers (row_to_tm [t1RB;tN;t1RC;t0LD;t0LB;t0LC;t1RD;t1LC]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01625);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01625 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LD_0RD0RC_1LD1RB *)
+Lemma cov_13_0047 : covers (row_to_tm [t1RB;tN;t1RC;t0LD;t0RD;t0RC;t1LD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01626);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01626 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0LD_1RD0RC_1LD1LB *)
+Lemma cov_13_0048 : covers (row_to_tm [t1RB;tN;t1RC;t0LD;t1RD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01627);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01627 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RB_0LC0RD_1LD1RB *)
+Lemma cov_13_0049 : covers (row_to_tm [t1RB;tN;t1RC;t0RB;t0LC;t0RD;t1LD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01628);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01628 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RB_0LC1LD_1LD1RB *)
+Lemma cov_13_0050 : covers (row_to_tm [t1RB;tN;t1RC;t0RB;t0LC;t1LD;t1LD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01629);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01629 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RB_0LD0RC_1LD1LB *)
+Lemma cov_13_0051 : covers (row_to_tm [t1RB;tN;t1RC;t0RB;t0LD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01630);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01630 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RB_0RD0RC_1LD1LB *)
+Lemma cov_13_0052 : covers (row_to_tm [t1RB;tN;t1RC;t0RB;t0RD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01631);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01631 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RB_0RD1RB_1LD0LC *)
+Lemma cov_13_0053 : covers (row_to_tm [t1RB;tN;t1RC;t0RB;t0RD;t1RB;t1LD;t0LC]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01632);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01632 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RB_1LC1LD_1LD1RB *)
+Lemma cov_13_0054 : covers (row_to_tm [t1RB;tN;t1RC;t0RB;t1LC;t1LD;t1LD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01633);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01633 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RB_1LD0RC_1LC1LB *)
+Lemma cov_13_0055 : covers (row_to_tm [t1RB;tN;t1RC;t0RB;t1LD;t0RC;t1LC;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01634);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01634 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RB_1LD0RC_1LD1LB *)
+Lemma cov_13_0056 : covers (row_to_tm [t1RB;tN;t1RC;t0RB;t1LD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01635);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01635 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RB_1LD1RB_1LC1LC *)
+Lemma cov_13_0057 : covers (row_to_tm [t1RB;tN;t1RC;t0RB;t1LD;t1RB;t1LC;t1LC]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01636);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01636 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RC_0RD0RB_1LD1RC *)
+Lemma cov_13_0058 : covers (row_to_tm [t1RB;tN;t1RC;t0RC;t0RD;t0RB;t1LD;t1RC]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01637);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01637 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RC_0RD0RC_1LD1RB *)
+Lemma cov_13_0059 : covers (row_to_tm [t1RB;tN;t1RC;t0RC;t0RD;t0RC;t1LD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01638);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01638 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RC_1LD0RC_1LD1RB *)
+Lemma cov_13_0060 : covers (row_to_tm [t1RB;tN;t1RC;t0RC;t1LD;t0RC;t1LD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01639);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01639 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RD_0LB0RC_1LD1LB *)
+Lemma cov_13_0061 : covers (row_to_tm [t1RB;tN;t1RC;t0RD;t0LB;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01640);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01640 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RD_0LB0RC_1LD1RC *)
+Lemma cov_13_0062 : covers (row_to_tm [t1RB;tN;t1RC;t0RD;t0LB;t0RC;t1LD;t1RC]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01641);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01641 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RD_0LD0RC_1LD1LB *)
+Lemma cov_13_0063 : covers (row_to_tm [t1RB;tN;t1RC;t0RD;t0LD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01642);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01642 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RD_0RD0RC_1LD1LB *)
+Lemma cov_13_0064 : covers (row_to_tm [t1RB;tN;t1RC;t0RD;t0RD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01643);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01643 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RD_1LC1RB_0RC0RB *)
+Lemma cov_13_0065 : covers (row_to_tm [t1RB;tN;t1RC;t0RD;t1LC;t1RB;t0RC;t0RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01644);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01644 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RD_1LC1RB_0RC0RD *)
+Lemma cov_13_0066 : covers (row_to_tm [t1RB;tN;t1RC;t0RD;t1LC;t1RB;t0RC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01645);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01645 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RD_1LC1RB_1LC0RD *)
+Lemma cov_13_0067 : covers (row_to_tm [t1RB;tN;t1RC;t0RD;t1LC;t1RB;t1LC;t0RD]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01646);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01646 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RD_1LD0RC_1LC1LB *)
+Lemma cov_13_0068 : covers (row_to_tm [t1RB;tN;t1RC;t0RD;t1LD;t0RC;t1LC;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01647);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01647 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC0RD_1LD0RC_1LD1LB *)
+Lemma cov_13_0069 : covers (row_to_tm [t1RB;tN;t1RC;t0RD;t1LD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01648);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01648 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LB_0LD0RC_1LD1LB *)
+Lemma cov_13_0070 : covers (row_to_tm [t1RB;tN;t1RC;t1LB;t0LD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01649);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01649 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LB_0RD0RC_1LD0RB *)
+Lemma cov_13_0071 : covers (row_to_tm [t1RB;tN;t1RC;t1LB;t0RD;t0RC;t1LD;t0RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01650);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01650 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LB_0RD0RC_1LD1LB *)
+Lemma cov_13_0072 : covers (row_to_tm [t1RB;tN;t1RC;t1LB;t0RD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01651);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01651 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LB_0RD0RC_1LD1RB *)
+Lemma cov_13_0073 : covers (row_to_tm [t1RB;tN;t1RC;t1LB;t0RD;t0RC;t1LD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01652);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01652 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LB_1LD0RC_1LD0RB *)
+Lemma cov_13_0074 : covers (row_to_tm [t1RB;tN;t1RC;t1LB;t1LD;t0RC;t1LD;t0RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01653);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01653 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LB_1LD0RC_1LD1LB *)
+Lemma cov_13_0075 : covers (row_to_tm [t1RB;tN;t1RC;t1LB;t1LD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01654);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01654 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LB_1LD0RC_1LD1RB *)
+Lemma cov_13_0076 : covers (row_to_tm [t1RB;tN;t1RC;t1LB;t1LD;t0RC;t1LD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01655);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01655 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LC_0LD0LC_1RD0LB *)
+Lemma cov_13_0077 : covers (row_to_tm [t1RB;tN;t1RC;t1LC;t0LD;t0LC;t1RD;t0LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01656);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01656 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LC_0LD0LC_1RD1LB *)
+Lemma cov_13_0078 : covers (row_to_tm [t1RB;tN;t1RC;t1LC;t0LD;t0LC;t1RD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01657);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01657 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LC_0RD0RC_1LD1LB *)
+Lemma cov_13_0079 : covers (row_to_tm [t1RB;tN;t1RC;t1LC;t0RD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01658);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01658 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LD_0LB0RC_1LD1LB *)
+Lemma cov_13_0080 : covers (row_to_tm [t1RB;tN;t1RC;t1LD;t0LB;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01659);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01659 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1LD_0LB0RC_1RD1LB *)
+Lemma cov_13_0081 : covers (row_to_tm [t1RB;tN;t1RC;t1LD;t0LB;t0RC;t1RD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01660);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01660 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1RB_0RD0RC_1LD0LB *)
+Lemma cov_13_0082 : covers (row_to_tm [t1RB;tN;t1RC;t1RB;t0RD;t0RC;t1LD;t0LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01661);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01661 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1RB_1LD0RC_1LD0LB *)
+Lemma cov_13_0083 : covers (row_to_tm [t1RB;tN;t1RC;t1RB;t1LD;t0RC;t1LD;t0LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01662);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01662 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1RC_0LD0RC_1LD1LB *)
+Lemma cov_13_0084 : covers (row_to_tm [t1RB;tN;t1RC;t1RC;t0LD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01663);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01663 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1RC_0RD0RC_1LD0RB *)
+Lemma cov_13_0085 : covers (row_to_tm [t1RB;tN;t1RC;t1RC;t0RD;t0RC;t1LD;t0RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01664);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01664 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1RC_0RD0RC_1LD1LB *)
+Lemma cov_13_0086 : covers (row_to_tm [t1RB;tN;t1RC;t1RC;t0RD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01665);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01665 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1RC_0RD0RC_1LD1RB *)
+Lemma cov_13_0087 : covers (row_to_tm [t1RB;tN;t1RC;t1RC;t0RD;t0RC;t1LD;t1RB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01666);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01666 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1RC_1LD0RC_1LC1LB *)
+Lemma cov_13_0088 : covers (row_to_tm [t1RB;tN;t1RC;t1RC;t1LD;t0RC;t1LC;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01667);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01667 | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 1RB---_1RC1RC_1LD0RC_1LD1LB *)
+Lemma cov_13_0089 : covers (row_to_tm [t1RB;tN;t1RC;t1RC;t1LD;t0RC;t1LD;t1LB]).
+Proof.
+  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01668);
+    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01668 | intros q s; destruct q, s; reflexivity].
+Qed.
+
 (* 1RB---_1RC1RD_1LB1LC_0RC0RD *)
-Lemma cov_13_0000 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LB;t1LC;t0RC;t0RD]).
+Lemma cov_13_0090 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LB;t1LC;t0RC;t0RD]).
 Proof.
   apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01669);
     [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01669 | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 1RB---_1RC1RD_1LC0LB_0RB0RD *)
-Lemma cov_13_0001 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t0LB;t0RB;t0RD]).
+Lemma cov_13_0091 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t0LB;t0RB;t0RD]).
 Proof.
   apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01670);
     [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01670 | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 1RB---_1RC1RD_1LC0RB_0RC0RD *)
-Lemma cov_13_0002 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t0RB;t0RC;t0RD]).
+Lemma cov_13_0092 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t0RB;t0RC;t0RD]).
 Proof.
   apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01671);
     [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01671 | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 1RB---_1RC1RD_1LC1LB_0LC0RD *)
-Lemma cov_13_0003 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t1LB;t0LC;t0RD]).
+Lemma cov_13_0093 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t1LB;t0LC;t0RD]).
 Proof.
   apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01672);
     [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01672 | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 1RB---_1RC1RD_1LC1LB_0RC0RD *)
-Lemma cov_13_0004 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t1LB;t0RC;t0RD]).
+Lemma cov_13_0094 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t1LB;t0RC;t0RD]).
 Proof.
   apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01673);
     [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01673 | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 1RB---_1RC1RD_1LC1LB_1LC0RD *)
-Lemma cov_13_0005 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t1LB;t1LC;t0RD]).
+Lemma cov_13_0095 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t1LB;t1LC;t0RD]).
 Proof.
   apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01674);
     [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01674 | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 1RB---_1RC1RD_1LC1RB_0RC0RD *)
-Lemma cov_13_0006 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t1RB;t0RC;t0RD]).
+Lemma cov_13_0096 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LC;t1RB;t0RC;t0RD]).
 Proof.
   apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01675);
     [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01675 | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 1RB---_1RC1RD_1LD1LB_1LC0RD *)
-Lemma cov_13_0007 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LD;t1LB;t1LC;t0RD]).
+Lemma cov_13_0097 : covers (row_to_tm [t1RB;tN;t1RC;t1RD;t1LD;t1LB;t1LC;t0RD]).
 Proof.
   apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01676);
     [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01676 | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 1RB0LB_0LC1LA_1RC1LD_0RB0LD *)
-Lemma cov_13_0008 : covers (row_to_tm [t1RB;t0LB;t0LC;t1LA;t1RC;t1LD;t0RB;t0LD]).
+Lemma cov_13_0098 : covers (row_to_tm [t1RB;t0LB;t0LC;t1LA;t1RC;t1LD;t0RB;t0LD]).
 Proof.
   apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01677);
     [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01677 | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 1RB0LB_1LA0LC_0LD0LC_1RD1LB *)
-Lemma cov_13_0009 : covers (row_to_tm [t1RB;t0LB;t1LA;t0LC;t0LD;t0LC;t1RD;t1LB]).
+Lemma cov_13_0099 : covers (row_to_tm [t1RB;t0LB;t1LA;t0LC;t0LD;t0LC;t1RD;t1LB]).
 Proof.
   apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01678);
     [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01678 | intros q s; destruct q, s; reflexivity].
 Qed.
 
-(* 1RB0LB_1LA0LC_0LD0LC_1RD1LC *)
-Lemma cov_13_0010 : covers (row_to_tm [t1RB;t0LB;t1LA;t0LC;t0LD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01679);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01679 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0LC_1LC1RD_0RC0RD *)
-Lemma cov_13_0011 : covers (row_to_tm [t1RB;t0LB;t1LA;t0LC;t1LC;t1RD;t0RC;t0RD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01680);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01680 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0LC_1LC1RD_1LC0RD *)
-Lemma cov_13_0012 : covers (row_to_tm [t1RB;t0LB;t1LA;t0LC;t1LC;t1RD;t1LC;t0RD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01681);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01681 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0LC_1RC1LD_0LC0LD *)
-Lemma cov_13_0013 : covers (row_to_tm [t1RB;t0LB;t1LA;t0LC;t1RC;t1LD;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01682);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01682 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0LC_1RC1LD_1RC0LD *)
-Lemma cov_13_0014 : covers (row_to_tm [t1RB;t0LB;t1LA;t0LC;t1RC;t1LD;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01683);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01683 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0LC_1RD0LC_1RD1LB *)
-Lemma cov_13_0015 : covers (row_to_tm [t1RB;t0LB;t1LA;t0LC;t1RD;t0LC;t1RD;t1LB]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01684);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01684 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0LC_1RD0LC_1RD1LC *)
-Lemma cov_13_0016 : covers (row_to_tm [t1RB;t0LB;t1LA;t0LC;t1RD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01685);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01685 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0RC_0LD0LC_1RD1LC *)
-Lemma cov_13_0017 : covers (row_to_tm [t1RB;t0LB;t1LA;t0RC;t0LD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01686);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01686 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0RC_0RD0RC_1LD1RC *)
-Lemma cov_13_0018 : covers (row_to_tm [t1RB;t0LB;t1LA;t0RC;t0RD;t0RC;t1LD;t1RC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01687);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01687 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0RC_1LC1RD_0RC0RD *)
-Lemma cov_13_0019 : covers (row_to_tm [t1RB;t0LB;t1LA;t0RC;t1LC;t1RD;t0RC;t0RD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01688);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01688 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0RC_1LC1RD_1LC0RD *)
-Lemma cov_13_0020 : covers (row_to_tm [t1RB;t0LB;t1LA;t0RC;t1LC;t1RD;t1LC;t0RD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_16.tm_w3_01689);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_16.cqh_w3_01689 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0RC_1LD0RC_1LD1RB *)
-Lemma cov_13_0021 : covers (row_to_tm [t1RB;t0LB;t1LA;t0RC;t1LD;t0RC;t1LD;t1RB]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01690);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01690 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0RC_1LD0RC_1LD1RC *)
-Lemma cov_13_0022 : covers (row_to_tm [t1RB;t0LB;t1LA;t0RC;t1LD;t0RC;t1LD;t1RC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01691);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01691 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0RC_1RC1LD_0LC0LD *)
-Lemma cov_13_0023 : covers (row_to_tm [t1RB;t0LB;t1LA;t0RC;t1RC;t1LD;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01692);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01692 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0RC_1RC1LD_1RC0LD *)
-Lemma cov_13_0024 : covers (row_to_tm [t1RB;t0LB;t1LA;t0RC;t1RC;t1LD;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01693);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01693 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA0RC_1RD0LC_1RD1LC *)
-Lemma cov_13_0025 : covers (row_to_tm [t1RB;t0LB;t1LA;t0RC;t1RD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01694);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01694 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1LC_0LD0LC_1RD0LB *)
-Lemma cov_13_0026 : covers (row_to_tm [t1RB;t0LB;t1LA;t1LC;t0LD;t0LC;t1RD;t0LB]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01695);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01695 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1LC_0LD0LC_1RD1LB *)
-Lemma cov_13_0027 : covers (row_to_tm [t1RB;t0LB;t1LA;t1LC;t0LD;t0LC;t1RD;t1LB]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01696);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01696 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1LC_0LD0LC_1RD1LC *)
-Lemma cov_13_0028 : covers (row_to_tm [t1RB;t0LB;t1LA;t1LC;t0LD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01697);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01697 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1LC_0RD0RC_1LD1RC *)
-Lemma cov_13_0029 : covers (row_to_tm [t1RB;t0LB;t1LA;t1LC;t0RD;t0RC;t1LD;t1RC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01698);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01698 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1LC_1LC1RD_0RC0RD *)
-Lemma cov_13_0030 : covers (row_to_tm [t1RB;t0LB;t1LA;t1LC;t1LC;t1RD;t0RC;t0RD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01699);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01699 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1LC_1LC1RD_1LC0RD *)
-Lemma cov_13_0031 : covers (row_to_tm [t1RB;t0LB;t1LA;t1LC;t1LC;t1RD;t1LC;t0RD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01700);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01700 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1LC_1RC1LD_0LC0LD *)
-Lemma cov_13_0032 : covers (row_to_tm [t1RB;t0LB;t1LA;t1LC;t1RC;t1LD;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01701);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01701 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1LC_1RC1LD_1RC0LD *)
-Lemma cov_13_0033 : covers (row_to_tm [t1RB;t0LB;t1LA;t1LC;t1RC;t1LD;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01702);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01702 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1LC_1RD0LC_1RD1LC *)
-Lemma cov_13_0034 : covers (row_to_tm [t1RB;t0LB;t1LA;t1LC;t1RD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01703);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01703 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1RC_0LD0LC_1RD1LC *)
-Lemma cov_13_0035 : covers (row_to_tm [t1RB;t0LB;t1LA;t1RC;t0LD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01704);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01704 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1RC_0RD0RC_1LD0RB *)
-Lemma cov_13_0036 : covers (row_to_tm [t1RB;t0LB;t1LA;t1RC;t0RD;t0RC;t1LD;t0RB]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01705);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01705 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1RC_0RD0RC_1LD1RC *)
-Lemma cov_13_0037 : covers (row_to_tm [t1RB;t0LB;t1LA;t1RC;t0RD;t0RC;t1LD;t1RC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01706);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01706 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1RC_1LC1RD_0RC0RD *)
-Lemma cov_13_0038 : covers (row_to_tm [t1RB;t0LB;t1LA;t1RC;t1LC;t1RD;t0RC;t0RD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01707);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01707 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1RC_1LC1RD_1LC0RD *)
-Lemma cov_13_0039 : covers (row_to_tm [t1RB;t0LB;t1LA;t1RC;t1LC;t1RD;t1LC;t0RD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01708);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01708 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1RC_1LD0RC_1LD1RC *)
-Lemma cov_13_0040 : covers (row_to_tm [t1RB;t0LB;t1LA;t1RC;t1LD;t0RC;t1LD;t1RC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01709);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01709 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1RC_1RC1LD_0LC0LD *)
-Lemma cov_13_0041 : covers (row_to_tm [t1RB;t0LB;t1LA;t1RC;t1RC;t1LD;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01710);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01710 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1RC_1RC1LD_1RC0LD *)
-Lemma cov_13_0042 : covers (row_to_tm [t1RB;t0LB;t1LA;t1RC;t1RC;t1LD;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01711);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01711 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LA1RC_1RD0LC_1RD1LC *)
-Lemma cov_13_0043 : covers (row_to_tm [t1RB;t0LB;t1LA;t1RC;t1RD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01712);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01712 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LB_1LC0LD_0LD0RA_1RD0RB *)
-Lemma cov_13_0044 : covers (row_to_tm [t1RB;t0LB;t1LC;t0LD;t0LD;t0RA;t1RD;t0RB]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01713);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01713 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_0LB1LA_0LD0LC_1RD1LA *)
-Lemma cov_13_0045 : covers (row_to_tm [t1RB;t0LC;t0LB;t1LA;t0LD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01714);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01714 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_0LB1LA_0LD0LC_1RD1LC *)
-Lemma cov_13_0046 : covers (row_to_tm [t1RB;t0LC;t0LB;t1LA;t0LD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01715);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01715 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_0LB1LA_1RC1LD_0LC0LD *)
-Lemma cov_13_0047 : covers (row_to_tm [t1RB;t0LC;t0LB;t1LA;t1RC;t1LD;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01716);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01716 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_0LB1LA_1RC1LD_1RC0LD *)
-Lemma cov_13_0048 : covers (row_to_tm [t1RB;t0LC;t0LB;t1LA;t1RC;t1LD;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01717);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01717 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_0LB1LA_1RD0LC_1RD1LA *)
-Lemma cov_13_0049 : covers (row_to_tm [t1RB;t0LC;t0LB;t1LA;t1RD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01718);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01718 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_0LB1LA_1RD0LC_1RD1LC *)
-Lemma cov_13_0050 : covers (row_to_tm [t1RB;t0LC;t0LB;t1LA;t1RD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01719);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01719 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_0LB1LC_0LD0LC_1RD1LA *)
-Lemma cov_13_0051 : covers (row_to_tm [t1RB;t0LC;t0LB;t1LC;t0LD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01720);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01720 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_0LB1LC_1RD0LC_1RD1LA *)
-Lemma cov_13_0052 : covers (row_to_tm [t1RB;t0LC;t0LB;t1LC;t1RD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01721);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01721 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_0LB1RC_0LD0LC_1RD1LA *)
-Lemma cov_13_0053 : covers (row_to_tm [t1RB;t0LC;t0LB;t1RC;t0LD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01722);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01722 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_0LC1LA_1RC1LD_0RB0LD *)
-Lemma cov_13_0054 : covers (row_to_tm [t1RB;t0LC;t0LC;t1LA;t1RC;t1LD;t0RB;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01723);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01723 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA---_0LD0LC_1RD1LA *)
-Lemma cov_13_0055 : covers (row_to_tm [t1RB;t0LC;t1LA;tN;t0LD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01724);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01724 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA---_0LD0LC_1RD1LC *)
-Lemma cov_13_0056 : covers (row_to_tm [t1RB;t0LC;t1LA;tN;t0LD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01725);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01725 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA---_1RC1LD_0LC0LD *)
-Lemma cov_13_0057 : covers (row_to_tm [t1RB;t0LC;t1LA;tN;t1RC;t1LD;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01726);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01726 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA---_1RC1LD_1RC0LD *)
-Lemma cov_13_0058 : covers (row_to_tm [t1RB;t0LC;t1LA;tN;t1RC;t1LD;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01727);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01727 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA---_1RD0LC_1RD1LA *)
-Lemma cov_13_0059 : covers (row_to_tm [t1RB;t0LC;t1LA;tN;t1RD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01728);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01728 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA---_1RD0LC_1RD1LC *)
-Lemma cov_13_0060 : covers (row_to_tm [t1RB;t0LC;t1LA;tN;t1RD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01729);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01729 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA0LC_0LD0LC_1RD1LB *)
-Lemma cov_13_0061 : covers (row_to_tm [t1RB;t0LC;t1LA;t0LC;t0LD;t0LC;t1RD;t1LB]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01730);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01730 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA0LC_1RD0LC_1RD1LB *)
-Lemma cov_13_0062 : covers (row_to_tm [t1RB;t0LC;t1LA;t0LC;t1RD;t0LC;t1RD;t1LB]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01731);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01731 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA0LD_1RC1LB_0LC0LD *)
-Lemma cov_13_0063 : covers (row_to_tm [t1RB;t0LC;t1LA;t0LD;t1RC;t1LB;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01732);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01732 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA0LD_1RC1LB_1RC0LD *)
-Lemma cov_13_0064 : covers (row_to_tm [t1RB;t0LC;t1LA;t0LD;t1RC;t1LB;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01733);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01733 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA1LC_0LD0LC_1RD0LB *)
-Lemma cov_13_0065 : covers (row_to_tm [t1RB;t0LC;t1LA;t1LC;t0LD;t0LC;t1RD;t0LB]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01734);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01734 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA1LC_0LD0LC_1RD1LB *)
-Lemma cov_13_0066 : covers (row_to_tm [t1RB;t0LC;t1LA;t1LC;t0LD;t0LC;t1RD;t1LB]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01735);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01735 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA1LD_1RC0LB_0LC0LD *)
-Lemma cov_13_0067 : covers (row_to_tm [t1RB;t0LC;t1LA;t1LD;t1RC;t0LB;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01736);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01736 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LA1LD_1RC1LB_0LC0LD *)
-Lemma cov_13_0068 : covers (row_to_tm [t1RB;t0LC;t1LA;t1LD;t1RC;t1LB;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01737);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01737 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB0LC_0LD0LC_1RD1LA *)
-Lemma cov_13_0069 : covers (row_to_tm [t1RB;t0LC;t1LB;t0LC;t0LD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01738);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01738 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB0LC_1RD0LC_1RD1LA *)
-Lemma cov_13_0070 : covers (row_to_tm [t1RB;t0LC;t1LB;t0LC;t1RD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01739);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01739 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1LA_0LD0LC_1RD1LA *)
-Lemma cov_13_0071 : covers (row_to_tm [t1RB;t0LC;t1LB;t1LA;t0LD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01740);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01740 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1LA_0LD0LC_1RD1LC *)
-Lemma cov_13_0072 : covers (row_to_tm [t1RB;t0LC;t1LB;t1LA;t0LD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01741);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01741 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1LA_1RC1LD_0LC0LD *)
-Lemma cov_13_0073 : covers (row_to_tm [t1RB;t0LC;t1LB;t1LA;t1RC;t1LD;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01742);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01742 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1LA_1RC1LD_1RC0LD *)
-Lemma cov_13_0074 : covers (row_to_tm [t1RB;t0LC;t1LB;t1LA;t1RC;t1LD;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01743);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01743 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1LA_1RD0LC_1RD1LA *)
-Lemma cov_13_0075 : covers (row_to_tm [t1RB;t0LC;t1LB;t1LA;t1RD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01744);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01744 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1LA_1RD0LC_1RD1LC *)
-Lemma cov_13_0076 : covers (row_to_tm [t1RB;t0LC;t1LB;t1LA;t1RD;t0LC;t1RD;t1LC]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01745);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01745 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1LC_0LD0LC_1RD1LA *)
-Lemma cov_13_0077 : covers (row_to_tm [t1RB;t0LC;t1LB;t1LC;t0LD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01746);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01746 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1LC_1RD0LC_1RD1LA *)
-Lemma cov_13_0078 : covers (row_to_tm [t1RB;t0LC;t1LB;t1LC;t1RD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01747);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01747 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1RA_1LC1RD_0RC0RD *)
-Lemma cov_13_0079 : covers (row_to_tm [t1RB;t0LC;t1LB;t1RA;t1LC;t1RD;t0RC;t0RD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01748);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01748 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1RA_1LC1RD_1LC0RD *)
-Lemma cov_13_0080 : covers (row_to_tm [t1RB;t0LC;t1LB;t1RA;t1LC;t1RD;t1LC;t0RD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01749);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01749 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1RA_1RC1LD_0LC0LD *)
-Lemma cov_13_0081 : covers (row_to_tm [t1RB;t0LC;t1LB;t1RA;t1RC;t1LD;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01750);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01750 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LB1RA_1RC1LD_1RC0LD *)
-Lemma cov_13_0082 : covers (row_to_tm [t1RB;t0LC;t1LB;t1RA;t1RC;t1LD;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01751);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01751 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LC---_0LD0LC_1RD1LA *)
-Lemma cov_13_0083 : covers (row_to_tm [t1RB;t0LC;t1LC;tN;t0LD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01752);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01752 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1LC---_1RD0LC_1RD1LA *)
-Lemma cov_13_0084 : covers (row_to_tm [t1RB;t0LC;t1LC;tN;t1RD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01753);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01753 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LC_1RC---_0LD0LC_1RD1LA *)
-Lemma cov_13_0085 : covers (row_to_tm [t1RB;t0LC;t1RC;tN;t0LD;t0LC;t1RD;t1LA]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01754);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01754 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LB1LC_1RC1LA_0LC0LD *)
-Lemma cov_13_0086 : covers (row_to_tm [t1RB;t0LD;t0LB;t1LC;t1RC;t1LA;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01755);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01755 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LB1LC_1RC1LA_1RC0LD *)
-Lemma cov_13_0087 : covers (row_to_tm [t1RB;t0LD;t0LB;t1LC;t1RC;t1LA;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01756);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01756 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC0LB_1RC1LD_1RA1LB *)
-Lemma cov_13_0088 : covers (row_to_tm [t1RB;t0LD;t0LC;t0LB;t1RC;t1LD;t1RA;t1LB]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01757);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01757 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC1LA_1RC1LA_0LC0LD *)
-Lemma cov_13_0089 : covers (row_to_tm [t1RB;t0LD;t0LC;t1LA;t1RC;t1LA;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01758);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01758 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC1LA_1RC1LA_1RC0LD *)
-Lemma cov_13_0090 : covers (row_to_tm [t1RB;t0LD;t0LC;t1LA;t1RC;t1LA;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01759);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01759 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC1LA_1RC1LD_0RB0LD *)
-Lemma cov_13_0091 : covers (row_to_tm [t1RB;t0LD;t0LC;t1LA;t1RC;t1LD;t0RB;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01760);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01760 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC1LB_1RC1LA_0LC0LD *)
-Lemma cov_13_0092 : covers (row_to_tm [t1RB;t0LD;t0LC;t1LB;t1RC;t1LA;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01761);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01761 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC1LB_1RC1LA_1RC0LD *)
-Lemma cov_13_0093 : covers (row_to_tm [t1RB;t0LD;t0LC;t1LB;t1RC;t1LA;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01762);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01762 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC1LD_1RC1LA_0LC0LD *)
-Lemma cov_13_0094 : covers (row_to_tm [t1RB;t0LD;t0LC;t1LD;t1RC;t1LA;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01763);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01763 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC1LD_1RC1LA_1RC0LD *)
-Lemma cov_13_0095 : covers (row_to_tm [t1RB;t0LD;t0LC;t1LD;t1RC;t1LA;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01764);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01764 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC1RA_1RC1LA_0LC0LD *)
-Lemma cov_13_0096 : covers (row_to_tm [t1RB;t0LD;t0LC;t1RA;t1RC;t1LA;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01765);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01765 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC1RA_1RC1LA_1RC0LD *)
-Lemma cov_13_0097 : covers (row_to_tm [t1RB;t0LD;t0LC;t1RA;t1RC;t1LA;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01766);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01766 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC1RB_1RC1LA_0LC0LD *)
-Lemma cov_13_0098 : covers (row_to_tm [t1RB;t0LD;t0LC;t1RB;t1RC;t1LA;t0LC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01767);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01767 | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0LC1RB_1RC1LA_1RC0LD *)
-Lemma cov_13_0099 : covers (row_to_tm [t1RB;t0LD;t0LC;t1RB;t1RC;t1LA;t1RC;t0LD]).
-Proof.
-  apply (covers_iqh_at BBB4.Machines.IRulesQHStage.IQHStage_17.tm_w3_01768);
-    [exact BBB4.Machines.IRulesQHStage.IQHStage_17.cqh_w3_01768 | intros q s; destruct q, s; reflexivity].
-Qed.
-
 Definition cbrows_13 : list (list (option Trans)) := [
+  [t1RB;tN;t1LC;t1LC;t0LD;t0LC;t1RD;t1LB];
+  [t1RB;tN;t1LC;t1LD;t1LB;t1RD;t0RC;t0RD];
+  [t1RB;tN;t1LC;t1LD;t1LC;t1RD;t0RD;t0RB];
+  [t1RB;tN;t1LC;t1LD;t1RC;t0LB;t0LC;t0LD];
+  [t1RB;tN;t1LC;t1LD;t1RC;t0RB;t0LB;t0LD];
+  [t1RB;tN;t1LC;t1LD;t1RC;t1LB;t0LC;t0LD];
+  [t1RB;tN;t1LC;t1LD;t1RC;t1RB;t0LC;t0LD];
+  [t1RB;tN;t1LC;t1LD;t1RC;t1RB;t0RC;t0LD];
+  [t1RB;tN;t1LC;t1LD;t1RC;t1RB;t1RC;t0LD];
+  [t1RB;tN;t1LC;t1RB;t0LD;t0LC;t1RD;t0LB];
+  [t1RB;tN;t1LC;t1RB;t0LD;t0LC;t1RD;t1LB];
+  [t1RB;tN;t1LC;t1RB;t0RD;t0LC;t1RD;t1LB];
+  [t1RB;tN;t1LC;t1RB;t1RD;t0LC;t1RD;t0LB];
+  [t1RB;tN;t1LC;t1RB;t1RD;t0LC;t1RD;t1LB];
+  [t1RB;tN;t1LC;t1RC;t1LB;t1RD;t0RC;t0RD];
+  [t1RB;tN;t1LC;t1RD;t0RB;t0LC;t1LD;t1RB];
+  [t1RB;tN;t1LC;t1RD;t0RB;t0LC;t1RD;t1RB];
+  [t1RB;tN;t1LC;t1RD;t1LB;t0RB;t0RB;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1LB;t0RB;t0RC;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1LB;t1LD;t0RB;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1LB;t1RB;t0RB;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1LB;t1RB;t0RC;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1LB;t1RC;t0RC;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1LB;t1RD;t0RC;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1LC;t0RB;t0RB;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1LC;t0RB;t0RC;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1LC;t1LD;t0RB;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1LC;t1RB;t0RB;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1LC;t1RB;t0RC;t0RD];
+  [t1RB;tN;t1LC;t1RD;t1RD;t0LC;t1LD;t1RB];
+  [t1RB;tN;t1RC;tN;t0LD;t0LC;t1RD;t1LC];
+  [t1RB;tN;t1RC;tN;t0RD;t0RC;t1LD;t1RC];
+  [t1RB;tN;t1RC;tN;t1LC;t1RD;t0RC;t0RD];
+  [t1RB;tN;t1RC;tN;t1LC;t1RD;t1LC;t0RD];
+  [t1RB;tN;t1RC;tN;t1LD;t0RC;t1LD;t1RC];
+  [t1RB;tN;t1RC;t0LB;t0LD;t0LC;t1RD;t1LB];
+  [t1RB;tN;t1RC;t0LB;t0LD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t0LB;t0LD;t0RC;t1RD;t1LB];
+  [t1RB;tN;t1RC;t0LB;t0LD;t1LB;t1RD;t0LC];
+  [t1RB;tN;t1RC;t0LB;t0LD;t1RD;t1RD;t1LB];
+  [t1RB;tN;t1RC;t0LB;t0RD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t0LB;t1LD;t0RC;t1LC;t1LB];
+  [t1RB;tN;t1RC;t0LB;t1LD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t0LC;t0LD;t0LB;t1RD;t1LB];
+  [t1RB;tN;t1RC;t0LC;t0LD;t0LB;t1RD;t1LC];
+  [t1RB;tN;t1RC;t0LC;t0LD;t0LC;t1RD;t1LB];
+  [t1RB;tN;t1RC;t0LD;t0LB;t0LC;t1RD;t1LC];
+  [t1RB;tN;t1RC;t0LD;t0RD;t0RC;t1LD;t1RB];
+  [t1RB;tN;t1RC;t0LD;t1RD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t0RB;t0LC;t0RD;t1LD;t1RB];
+  [t1RB;tN;t1RC;t0RB;t0LC;t1LD;t1LD;t1RB];
+  [t1RB;tN;t1RC;t0RB;t0LD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t0RB;t0RD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t0RB;t0RD;t1RB;t1LD;t0LC];
+  [t1RB;tN;t1RC;t0RB;t1LC;t1LD;t1LD;t1RB];
+  [t1RB;tN;t1RC;t0RB;t1LD;t0RC;t1LC;t1LB];
+  [t1RB;tN;t1RC;t0RB;t1LD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t0RB;t1LD;t1RB;t1LC;t1LC];
+  [t1RB;tN;t1RC;t0RC;t0RD;t0RB;t1LD;t1RC];
+  [t1RB;tN;t1RC;t0RC;t0RD;t0RC;t1LD;t1RB];
+  [t1RB;tN;t1RC;t0RC;t1LD;t0RC;t1LD;t1RB];
+  [t1RB;tN;t1RC;t0RD;t0LB;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t0RD;t0LB;t0RC;t1LD;t1RC];
+  [t1RB;tN;t1RC;t0RD;t0LD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t0RD;t0RD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t0RD;t1LC;t1RB;t0RC;t0RB];
+  [t1RB;tN;t1RC;t0RD;t1LC;t1RB;t0RC;t0RD];
+  [t1RB;tN;t1RC;t0RD;t1LC;t1RB;t1LC;t0RD];
+  [t1RB;tN;t1RC;t0RD;t1LD;t0RC;t1LC;t1LB];
+  [t1RB;tN;t1RC;t0RD;t1LD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t1LB;t0LD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t1LB;t0RD;t0RC;t1LD;t0RB];
+  [t1RB;tN;t1RC;t1LB;t0RD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t1LB;t0RD;t0RC;t1LD;t1RB];
+  [t1RB;tN;t1RC;t1LB;t1LD;t0RC;t1LD;t0RB];
+  [t1RB;tN;t1RC;t1LB;t1LD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t1LB;t1LD;t0RC;t1LD;t1RB];
+  [t1RB;tN;t1RC;t1LC;t0LD;t0LC;t1RD;t0LB];
+  [t1RB;tN;t1RC;t1LC;t0LD;t0LC;t1RD;t1LB];
+  [t1RB;tN;t1RC;t1LC;t0RD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t1LD;t0LB;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t1LD;t0LB;t0RC;t1RD;t1LB];
+  [t1RB;tN;t1RC;t1RB;t0RD;t0RC;t1LD;t0LB];
+  [t1RB;tN;t1RC;t1RB;t1LD;t0RC;t1LD;t0LB];
+  [t1RB;tN;t1RC;t1RC;t0LD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t1RC;t0RD;t0RC;t1LD;t0RB];
+  [t1RB;tN;t1RC;t1RC;t0RD;t0RC;t1LD;t1LB];
+  [t1RB;tN;t1RC;t1RC;t0RD;t0RC;t1LD;t1RB];
+  [t1RB;tN;t1RC;t1RC;t1LD;t0RC;t1LC;t1LB];
+  [t1RB;tN;t1RC;t1RC;t1LD;t0RC;t1LD;t1LB];
   [t1RB;tN;t1RC;t1RD;t1LB;t1LC;t0RC;t0RD];
   [t1RB;tN;t1RC;t1RD;t1LC;t0LB;t0RB;t0RD];
   [t1RB;tN;t1RC;t1RD;t1LC;t0RB;t0RC;t0RD];
@@ -718,97 +808,7 @@ Definition cbrows_13 : list (list (option Trans)) := [
   [t1RB;tN;t1RC;t1RD;t1LC;t1RB;t0RC;t0RD];
   [t1RB;tN;t1RC;t1RD;t1LD;t1LB;t1LC;t0RD];
   [t1RB;t0LB;t0LC;t1LA;t1RC;t1LD;t0RB;t0LD];
-  [t1RB;t0LB;t1LA;t0LC;t0LD;t0LC;t1RD;t1LB];
-  [t1RB;t0LB;t1LA;t0LC;t0LD;t0LC;t1RD;t1LC];
-  [t1RB;t0LB;t1LA;t0LC;t1LC;t1RD;t0RC;t0RD];
-  [t1RB;t0LB;t1LA;t0LC;t1LC;t1RD;t1LC;t0RD];
-  [t1RB;t0LB;t1LA;t0LC;t1RC;t1LD;t0LC;t0LD];
-  [t1RB;t0LB;t1LA;t0LC;t1RC;t1LD;t1RC;t0LD];
-  [t1RB;t0LB;t1LA;t0LC;t1RD;t0LC;t1RD;t1LB];
-  [t1RB;t0LB;t1LA;t0LC;t1RD;t0LC;t1RD;t1LC];
-  [t1RB;t0LB;t1LA;t0RC;t0LD;t0LC;t1RD;t1LC];
-  [t1RB;t0LB;t1LA;t0RC;t0RD;t0RC;t1LD;t1RC];
-  [t1RB;t0LB;t1LA;t0RC;t1LC;t1RD;t0RC;t0RD];
-  [t1RB;t0LB;t1LA;t0RC;t1LC;t1RD;t1LC;t0RD];
-  [t1RB;t0LB;t1LA;t0RC;t1LD;t0RC;t1LD;t1RB];
-  [t1RB;t0LB;t1LA;t0RC;t1LD;t0RC;t1LD;t1RC];
-  [t1RB;t0LB;t1LA;t0RC;t1RC;t1LD;t0LC;t0LD];
-  [t1RB;t0LB;t1LA;t0RC;t1RC;t1LD;t1RC;t0LD];
-  [t1RB;t0LB;t1LA;t0RC;t1RD;t0LC;t1RD;t1LC];
-  [t1RB;t0LB;t1LA;t1LC;t0LD;t0LC;t1RD;t0LB];
-  [t1RB;t0LB;t1LA;t1LC;t0LD;t0LC;t1RD;t1LB];
-  [t1RB;t0LB;t1LA;t1LC;t0LD;t0LC;t1RD;t1LC];
-  [t1RB;t0LB;t1LA;t1LC;t0RD;t0RC;t1LD;t1RC];
-  [t1RB;t0LB;t1LA;t1LC;t1LC;t1RD;t0RC;t0RD];
-  [t1RB;t0LB;t1LA;t1LC;t1LC;t1RD;t1LC;t0RD];
-  [t1RB;t0LB;t1LA;t1LC;t1RC;t1LD;t0LC;t0LD];
-  [t1RB;t0LB;t1LA;t1LC;t1RC;t1LD;t1RC;t0LD];
-  [t1RB;t0LB;t1LA;t1LC;t1RD;t0LC;t1RD;t1LC];
-  [t1RB;t0LB;t1LA;t1RC;t0LD;t0LC;t1RD;t1LC];
-  [t1RB;t0LB;t1LA;t1RC;t0RD;t0RC;t1LD;t0RB];
-  [t1RB;t0LB;t1LA;t1RC;t0RD;t0RC;t1LD;t1RC];
-  [t1RB;t0LB;t1LA;t1RC;t1LC;t1RD;t0RC;t0RD];
-  [t1RB;t0LB;t1LA;t1RC;t1LC;t1RD;t1LC;t0RD];
-  [t1RB;t0LB;t1LA;t1RC;t1LD;t0RC;t1LD;t1RC];
-  [t1RB;t0LB;t1LA;t1RC;t1RC;t1LD;t0LC;t0LD];
-  [t1RB;t0LB;t1LA;t1RC;t1RC;t1LD;t1RC;t0LD];
-  [t1RB;t0LB;t1LA;t1RC;t1RD;t0LC;t1RD;t1LC];
-  [t1RB;t0LB;t1LC;t0LD;t0LD;t0RA;t1RD;t0RB];
-  [t1RB;t0LC;t0LB;t1LA;t0LD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t0LB;t1LA;t0LD;t0LC;t1RD;t1LC];
-  [t1RB;t0LC;t0LB;t1LA;t1RC;t1LD;t0LC;t0LD];
-  [t1RB;t0LC;t0LB;t1LA;t1RC;t1LD;t1RC;t0LD];
-  [t1RB;t0LC;t0LB;t1LA;t1RD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t0LB;t1LA;t1RD;t0LC;t1RD;t1LC];
-  [t1RB;t0LC;t0LB;t1LC;t0LD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t0LB;t1LC;t1RD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t0LB;t1RC;t0LD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t0LC;t1LA;t1RC;t1LD;t0RB;t0LD];
-  [t1RB;t0LC;t1LA;tN;t0LD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t1LA;tN;t0LD;t0LC;t1RD;t1LC];
-  [t1RB;t0LC;t1LA;tN;t1RC;t1LD;t0LC;t0LD];
-  [t1RB;t0LC;t1LA;tN;t1RC;t1LD;t1RC;t0LD];
-  [t1RB;t0LC;t1LA;tN;t1RD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t1LA;tN;t1RD;t0LC;t1RD;t1LC];
-  [t1RB;t0LC;t1LA;t0LC;t0LD;t0LC;t1RD;t1LB];
-  [t1RB;t0LC;t1LA;t0LC;t1RD;t0LC;t1RD;t1LB];
-  [t1RB;t0LC;t1LA;t0LD;t1RC;t1LB;t0LC;t0LD];
-  [t1RB;t0LC;t1LA;t0LD;t1RC;t1LB;t1RC;t0LD];
-  [t1RB;t0LC;t1LA;t1LC;t0LD;t0LC;t1RD;t0LB];
-  [t1RB;t0LC;t1LA;t1LC;t0LD;t0LC;t1RD;t1LB];
-  [t1RB;t0LC;t1LA;t1LD;t1RC;t0LB;t0LC;t0LD];
-  [t1RB;t0LC;t1LA;t1LD;t1RC;t1LB;t0LC;t0LD];
-  [t1RB;t0LC;t1LB;t0LC;t0LD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t1LB;t0LC;t1RD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t1LB;t1LA;t0LD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t1LB;t1LA;t0LD;t0LC;t1RD;t1LC];
-  [t1RB;t0LC;t1LB;t1LA;t1RC;t1LD;t0LC;t0LD];
-  [t1RB;t0LC;t1LB;t1LA;t1RC;t1LD;t1RC;t0LD];
-  [t1RB;t0LC;t1LB;t1LA;t1RD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t1LB;t1LA;t1RD;t0LC;t1RD;t1LC];
-  [t1RB;t0LC;t1LB;t1LC;t0LD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t1LB;t1LC;t1RD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t1LB;t1RA;t1LC;t1RD;t0RC;t0RD];
-  [t1RB;t0LC;t1LB;t1RA;t1LC;t1RD;t1LC;t0RD];
-  [t1RB;t0LC;t1LB;t1RA;t1RC;t1LD;t0LC;t0LD];
-  [t1RB;t0LC;t1LB;t1RA;t1RC;t1LD;t1RC;t0LD];
-  [t1RB;t0LC;t1LC;tN;t0LD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t1LC;tN;t1RD;t0LC;t1RD;t1LA];
-  [t1RB;t0LC;t1RC;tN;t0LD;t0LC;t1RD;t1LA];
-  [t1RB;t0LD;t0LB;t1LC;t1RC;t1LA;t0LC;t0LD];
-  [t1RB;t0LD;t0LB;t1LC;t1RC;t1LA;t1RC;t0LD];
-  [t1RB;t0LD;t0LC;t0LB;t1RC;t1LD;t1RA;t1LB];
-  [t1RB;t0LD;t0LC;t1LA;t1RC;t1LA;t0LC;t0LD];
-  [t1RB;t0LD;t0LC;t1LA;t1RC;t1LA;t1RC;t0LD];
-  [t1RB;t0LD;t0LC;t1LA;t1RC;t1LD;t0RB;t0LD];
-  [t1RB;t0LD;t0LC;t1LB;t1RC;t1LA;t0LC;t0LD];
-  [t1RB;t0LD;t0LC;t1LB;t1RC;t1LA;t1RC;t0LD];
-  [t1RB;t0LD;t0LC;t1LD;t1RC;t1LA;t0LC;t0LD];
-  [t1RB;t0LD;t0LC;t1LD;t1RC;t1LA;t1RC;t0LD];
-  [t1RB;t0LD;t0LC;t1RA;t1RC;t1LA;t0LC;t0LD];
-  [t1RB;t0LD;t0LC;t1RA;t1RC;t1LA;t1RC;t0LD];
-  [t1RB;t0LD;t0LC;t1RB;t1RC;t1LA;t0LC;t0LD];
-  [t1RB;t0LD;t0LC;t1RB;t1RC;t1LA;t1RC;t0LD]
+  [t1RB;t0LB;t1LA;t0LC;t0LD;t0LC;t1RD;t1LB]
 ].
 
 Lemma cb_13_covers : Forall covers (map row_to_tm cbrows_13).
