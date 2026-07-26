@@ -228,6 +228,39 @@ parametric proof, larger than any landed counter machine," with a full
 session of banked reconnaissance — without writing any of it.  Same for the
 tower family, whose alternative was porting a 1,500-line table interpreter.
 
+## 3c. The n=3 lever does NOT transfer to the residue (measured)
+
+Having found that gram order n=3 boarded 5 holdouts that n=2 could not, the
+obvious move was to re-sweep the 1,244 unboarded residue machines the same
+way -- `harvest_sweep.py` has the identical n=2 blind spot.  Measured on a
+SHUFFLED (representative) sample at the cheapest n=3 rung:
+
+    0 hits / 100.
+
+That bounds the true rate under ~3%, against 5/16 on the holdouts.  The lever
+does not transfer, and the reason is a conflation in the justification worth
+recording so nobody repeats it:
+
+**The argument was "fail_diag.py puts ~85% of residue failures at NOMEAS --
+closure fine, liveness measure search fails -- and that is a vocabulary
+problem, which n addresses."  Both halves are true and the inference is
+still wrong.**  `n` widens the CONTEXT vocabulary (how much tape
+neighbourhood a node sees).  NOMEAS is a failure of the MEASURE vocabulary
+(which lexicographic components are available to rank the closure).  Those
+are different vocabularies, and this file's own completion plan already said
+so: step 4 of "Eliminating the residue" calls for `NgPattE` PATTERN MEASURES
+and states "this is the residual the blind sweep leaves."
+
+The holdouts that fell to n=3 were counter machines whose closures were
+genuinely context-starved; the residue's blocker is downstream of closure.
+So the residue needs either the pattern-measure vocabulary (TERMINOLOGY step
+4) or a different engine whose liveness argument is not lex-measure-based at
+all -- RepWL, irules-QH, LapDecider, none of which has been run over the
+residue at any parameters.  That is the next lever, not more `n`.
+
+The ladder was left running anyway (k=4 and k=6 at n=3 are already queued and
+cost nothing to finish), but it should be read as confirmation, not hope.
+
 ## 4. blockdbl recon (#11/#13/#28) — the next hand-written family
 
 `tools/counters/probe_bd.py` rebuilds `verify.c`'s model and confirms it for
