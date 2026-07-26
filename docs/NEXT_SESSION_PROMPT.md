@@ -1,11 +1,11 @@
-# Next-session prompt — break the OVERFLOW WALL
+# Next-session prompt — mxdys' deciders
 
-_Rewritten 2026-07-26 at the end of wave-13 (branch
-`claude/lapdecider-residue-reduction-989ggx`, PR #35).  Wave-13 built the exact
-lap checker, made certificate derivation mechanical, and boarded 119 machines —
-then measured that ~523 of the remaining residue fail on ONE thing.  Full
-record: `docs/WAVE13_FINDINGS.md`; design in `docs/LAPDECIDER.md`.  Paste-ready
-below._
+_Rewritten 2026-07-26 at the end of wave-14 (branch
+`claude/residue-reduction-4-2-5syxph`).  Wave-14 boarded 90, measured that the
+overflow wall is EXPONENTIAL rather than a missing encoding, and — at the very
+end — mxdys pointed John at his implementation, which turns out to carry
+exactly the count language we are blocked on.  Full assessment and the staged
+plan: `docs/MXDYS_DECIDERS_PLAN.md`.  Paste-ready below._
 
 **Before pasting, check:** substitute the branch the session should develop on,
 and name any files a concurrent session owns.
@@ -17,14 +17,19 @@ Continue the (4,2) residue reduction in carrino/Coq-BBB4, on a new branch off
 main.
 
 READ FIRST, in this order:
-  docs/WAVE13_FINDINGS.md   -- sections 9 and 10 are the whole brief: five tape
-                               readings, four structural classes, the measured
-                               overflow wall, and the three things wave-13 got
-                               WRONG (section 4).  Do not repeat them.
-  docs/LAPDECIDER.md        -- the checker's design: what each step kind is,
-                               where its soundness comes from, and why the
-                               model is AFFINE in the carry index.
-  docs/WHY_NO_HAMMER.md     -- why exactness is required at all.
+  docs/MXDYS_DECIDERS_PLAN.md -- THE TASK.  mxdys' Inductive/RRBA deciders,
+                               what they do and do not give us, and a staged
+                               plan with a measure-first decision gate.
+  docs/WAVE14_FINDINGS.md   -- sections 2, 3 and 5b: what the overflow wall
+                               actually is (EXPONENTIAL, measured three ways),
+                               why wave-13's section 10c build is retired, and
+                               why inferring the alphabet bought diagnosis
+                               rather than boards.
+  docs/LAPDECIDER.md        -- our checker's design, and why the model is
+                               AFFINE in the carry index.  That affineness is
+                               the binding constraint -- read it as a limit.
+  docs/WHY_NO_HAMMER.md     -- why exactness is required at all, and why the
+                               LIVENESS half is the hard half here.
   docs/CLOSEOUT_ROUTE_A.md  -- how boards become D_remaining shrinkage.
 
 ENV: apt coq 8.18.0 -- `apt-get install -y coq`, then
@@ -32,138 +37,171 @@ ENV: apt coq 8.18.0 -- `apt-get install -y coq`, then
 a checker's dependency closure by coqdep-ordering its deps and compiling them
 individually; `make all` pulls in the census.
 
+mxdys' code is a PUBLIC repo, not one of this session's sources; add_repo
+refuses cross-owner adds, so just clone it:
+  git clone --depth 1 --branch BB6 https://github.com/ccz181078/busycoq.git
+(that works through the agent proxy; it is ~55 MB).
+
 NON-NEGOTIABLE: never touch theories/Census/; `python3 tools/census_cache.py
 --check` must stay MATCH.  A board counts only when its file compiles and
 `Print Assumptions` shows functional_extensionality_dep only (LapDecider and
 LapCertGlue are axiom-FREE -- keep them that way).  Everything under tools/ is
 UNTRUSTED; the kernel re-checks every board.
 
-STATE: 3,890 of the frozen 5,156 settled (75.4%); D_remaining = 1,266.
-Per-machine cost is now a vm_compute:
-  python3 tools/counters/emit_lapcert.py --list FILE --emit
-derives, differentially validates and compiles a board unattended.  24/25
-sampled hand-emitted ILS4_* boards re-derive automatically.  After a wave,
-`make closeout` shrinks D_remaining by exactly what you boarded (the
-Closeout.vo compile needs the ~719-file board .vo closure, ~85 min once).
+STATE: 3,980 of the frozen 5,156 settled (77.2%); D_remaining = 1,176.
+The residue's failure profile, measured over all of it:
+  532  no overflow chain   (the exponential wall)
+  433  no interior chain
+  164  no visit witness    (the quasi-halting bucket)
+   47  no anchor family at all
+Per-machine cost is a vm_compute:
+  python3 tools/counters/emit_lapcert.py --list FILE --emit   (24 alphabets)
+  python3 tools/counters/emit_graycert.py --list FILE --emit  (Gray)
+After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
+exactly what you boarded (the Closeout.vo compile needs the ~719-file board
+.vo closure, ~85 min once).
 
-THE TASK -- the overflow wall.
+THE TASK -- STAGE 0 FIRST, AND IT IS A GATE.
 
-  MEASURED (WAVE13 section 10a).  ~523 machines fail ONLY on the overflow
-  chain: 385 already had an interior chain, and wave-13's new j=0 split added
-  138 more that get past the interior and then die on the msb carry.  Every one
-  is a SINGLE CHAIN away from a board.  Nothing else in the residue has that
-  leverage -- it is >4x the 119 boarded in wave-13.
+  Verified already (docs/MXDYS_DECIDERS_PLAN.md section 1, do not re-derive):
+  their top-level theorem is `~halts` only and there is NO quasi-halting layer
+  anywhere in that tree, so it does not answer our question directly.  But the
+  model they build to prove it is exposed as first-class rules
+  `multistep_expr (a b : config_expr) (n : nat_expr)` where config_expr
+  carries its state Q, and the count language has nat_mul and
+  powsum k x = ((k+2)^x - 1)/(k+1) -- a geometric sum.  powsum 0 = 2^x - 1.
+  That is precisely our wall.  No Axiom, no Admitted; Coq 8.18; the framework
+  is a functor and Individual52.v is 26 lines; their tape (Stream Sym) and
+  ours (nat -> Sym) are isomorphic; verify/Extraction.v gives a native decider.
 
-  THE HYPOTHESIS TO TEST FIRST (WAVE13 section 10b).  John, reading
-  0RB---_0RC0LD_1LD1RC_0LA1LB: "1's to the LEFT of the bits when the msb is
-  even and 1's to the RIGHT when the msb is odd".  That is the Ip/Mp one-cell
-  frame shift, and it would flip EXACTLY at the overflow, since the overflow is
-  the increment that grows the msb.  It predicts precisely what was measured:
-  interior laps keep the bit length fixed so both ends share a frame (they all
-  derive), while an overflow lap has its source and target in DIFFERENT frames
-  -- and emit_lapcert builds B0 and B1 from the SAME ENCDATA row, so such a lap
-  is UNREPRESENTABLE, not merely hard to search for.
+  STAGE 0 (hours, no Coq of ours):
+    1. Write BB42 + Individual42.v (~30 lines, pattern on Individual52.v).
+    2. Build the extracted OCaml decider.
+    3. Run Inductive and RRBA over all 1,176 of
+       tools/closeout/frozen_unproven.txt.
+    4. Report THREE numbers:
+       (i)   how many are decided ~halts at all;
+       (ii)  of those, how many have a rule chain whose configurations cover
+             ALL FOUR states -- for those, liveness is free and they are
+             boards;
+       (iii) how many need a nat_powsum / nat_mul rule (this cross-checks our
+             own ovfshape.py buckets: 496 EXP2, 25 QUAD, 19 EXP4, 17 ~3^j).
 
-  IT IS NOT VERIFIED.  A crude frame classifier was inconclusive (all-ones
-  words satisfy both patterns) and the snapshots caught were all of one
-  bit-length parity.  VERIFY BEFORE BUILDING: decode the anchor words at
-  CONSECUTIVE bit lengths (msb 8 vs msb 16 on one machine) and check the frame
-  actually flips.  Wave-12 section 4.1 and wave-13 section 4 are both about
-  concluding structure from a partial search; do not add a third.
+  DECISION GATE on (ii).  Large -> do Stages 1-3, that is the wave.  Near zero
+  but (i) large -> the chains exist but their endpoints do not cover the
+  states; the work moves INSIDE a rule, which is bigger but still bounded --
+  re-plan before building.  (i) small -> their search is tuned for BB(6)
+  shapes; say so plainly and fall back to the nested lap below.
 
-  IF IT HOLDS, the build is small and LapDecider.v is UNTOUCHED (srun_sound
-  never sees the encoding, only the symbolic sides):
-    1. emit_lapcert learns an overflow branch whose SOURCE and TARGET come from
-       different ENCDATA rows (enc_src / enc_dst).  Both cview_none_* lemmas
-       already exist -- no new Coq for step 1.
-    2. the anchor family becomes frame-alternating: Cc p = (q, (W p ++ tail,
-       S0, far)) with W p chosen by the parity of bitlen p.  One new fixpoint,
-       plus the fact that bitlen is constant across an interior lap and
-       increments at an overflow.
+  STAGE 1 (1-2 days): theories/Bridge/BusyCoqTM.v -- Stream Sym <-> nat -> Sym,
+  their config <-> our cconf, and
+     multistep_csteps : BC.multistep (tr_tm tm) n (tr a) (tr b) ->
+                        csteps tm n a = Some b.
+  Axiom-free apart from the standing functional_extensionality_dep.  This is
+  the only genuinely new mathematics and it is one theorem.
 
-  IF IT DOES NOT HOLD, do not template blind.  Trace two or three overflow laps
-  and ASK -- see WHEN STUCK below.
+  STAGE 2 (2-3 days): theories/Bridge/RulesToLap.v --
+     rules_to_never_qh : chain_valid -> chain_returns_shifted ->
+                         states_covered = true -> NeverQuasiHaltsSt tm
+  built on Stage 1 plus the existing glue_neverqh, and a glue_qh variant for
+  the 164 quasi-halters.  ONE theorem, not one per machine -- same
+  architecture as srun_sound.
+
+  STAGE 3: emit one small .v per machine (TM table, rule chain as data, a
+  vm_compute, the closing theorem), then the usual closeout.
+
+  DECIDE WITH JOHN before vendoring: either bring their code in-tree, or keep
+  it OUT of tree as a search ORACLE and re-prove each rule with our own
+  checker extended by powsum counts.  The second keeps our axiom story and
+  provenance simple; the first is less work.
+
+IF STAGE 0 FAILS, the fallback is unchanged and section 1c of the plan still
+paid for itself: it tells us the count language a nested LapDecider needs is
+`a*j + b` extended by `powsum k` and one multiplication, and that
+side_binary/side_binary_Pos/side_BL are the right tape constructors.  Build
+that into LapDecider rather than inventing a design.
 
 THEN, in ranked order (all independent of the above):
 
-  (1) GRAY-CODE counters (WAVE13 section 9d).  The decomposition is DERIVED and
-      VERIFIED for every p in 2..39, reuses cview verbatim, and is AFFINE:
-        j >= 1:  Gp p = rep [S0] (j-1) ++ [S1] ++ [x]  ++ T
-                 Gp (succ p) = rep [S0] (j-1) ++ [S1] ++ [~x] ++ T
-        j  = 0:  the words differ in cell 0 only
-      So: write theories/Counters/GpCounter.v (Gp plus those two lemmas, proved
-      like cview_some_I by induction on p) and add one ENCDATA row, with the
-      interior split on the extra bit x exactly as section 9a splits on j=0.
-      This is an IMPLEMENTATION pass, not a design pass.
-      Size the class FIRST with tools/counters/residue_triage.py, which accepts
-      a PERIODIC difference pattern -- a constant-difference test scores
-      paired-phase Gray anchors as "none" and undercounts.
+  (1) The 164 QUASI-HALTING machines (WAVE13 section 6).  John: "qh is fine, we
+      just need to know it qh before 32M."  One of its two blockers is gone --
+      mirrorize learned the QH closing shape (WAVE14 section 4.2).  The ones
+      with StA targeted need ONE new fact: "the lap visits only states in S",
+      which needs a states-visited variant of wsteps_frame / cycL / cycR
+      (today they state only their ENDPOINTS).  One theorem, not one per
+      machine.  NOTE: this is the same shape as Stage 2 above -- if you do the
+      bridge, do these with it.
 
-  (2) The ~143 QUASI-HALTING counters (WAVE13 section 6).  John: "qh is fine,
-      we just need to know it qh before 32M."  47 have StA untargeted, so
-      LapGlueQH.glue_qh gives QHBound 1 outright (already wired; blocked in
-      practice on a SECOND quiet state -- StB fires once at index 1 by the same
-      argument -- and on mirrorize not knowing the QH closing shape; both
-      small).  The other 96 need a bound of t0+1 from the boot length, which
-      needs ONE new fact: "the lap visits only states in S".  That is
-      computable from the chain (collect the states of every window sub-step
-      and cycle unit run) but needs a states-visited variant of wsteps_frame /
-      cycL / cycR, which today state only their ENDPOINTS.  One theorem, not
-      one per machine.
+  (2) Two small localized leads (WAVE14 section 3):
+      * 13 PARITY-AFFINE machines are IN model -- affine on each parity class
+        of j (WAVE13 section 9b's two-pass carry).  They need the m=2 re-index
+        (j = 2i+r, block unit u^2).  MEASURED: only 3 of the 13 derive both
+        parity branches with the naive re-index, so this is worth ~3 boards,
+        not 13.  Do not oversize it.
+      * 8 machines whose EXP4-at-a-binary-anchor marks them as GRAY (11 of the
+        19 EXP4 are exactly wave-14's Gray boards).  On
+        0RB0LA_1LA1RC_0RD1RD_1LB0LB the Gp anchor family is present and closes
+        affinely at 4j+8, yet all five symbolic branches fail in derive_chain.
+        Ruled out: tail depth (a 4-way x,y peel does not help) and search
+        budget (depth 24 / nmax 64 against a 12-step lap).  The lap opens by
+        stepping RIGHT into blank tape, so the chain must start with SWinR --
+        instrument _win_candidates on that configuration.
 
-  (3) The QUADRATIC family (WAVE13 section 9c).  Four machines measured with
-      interior lap cost exactly (j+1)(j+2) -- one widening round trip per carry
-      bit.  sside carries its count as a*j+b and srun returns ca*j+cb, both
-      AFFINE by construction, so these are OUTSIDE the model and no chain
-      search reaches them.  Needs either a quadratic count or a nested chain
-      (an inner cycle repeated j times whose own length grows).  This is the
-      first thing in six waves that the existing theory genuinely cannot
-      express, so give it a DESIGN pass before an implementation pass.  It does
-      NOT contradict wave-12 section 4.1, which correctly rejected three-level
-      recursion for the WALL family -- different family, and here it is real.
+  (3) The 47 with NO anchor family at all.  alphabet_infer.py +
+      gen_alphabet.py INFER a counter's word family from its own tape as a
+      triple (A,B,C) and generate the Coq module; 18 families are wired.
 
-  (4) The ~149 with NO anchor family at all.  Triage before assuming anything
-      (residue_triage.py + triage.py fingerprint + lapshape).
-
-  (5) The 27 genuine mxdys holdouts (tools/census_holdouts_kept.txt) -- the
+  (4) The 27 genuine mxdys holdouts (tools/census_holdouts_kept.txt) -- the
       real endgame, and what John actually wants to be working on.
 
 DO NOT RETRY (measured; grids in COUNTER_CLOSEOUT.md section 5, WAVE12 section
-8, WAVE13 sections 4 and 8):
+8, WAVE13 sections 4 and 8, WAVE14 section 7):
   * NGramHist/NGramCPS liveness over this residue at any (k,n,t); RepWL over
-    the counter core; more per-machine lap emitters; emitter anchor-search
-    widenings; Ip-encoding-alone; ripple ulen widening.
-  * Maximal-only window cuts in the chain search -- finds nothing; the search
-    must be target-aware.
+    the counter core; more per-machine lap emitters; ripple ulen widening.
+  * Maximal-only window cuts in the chain search -- must be target-aware.
   * Reaching an anchor's syntactic form by rotations alone -- impossible in
     principle; the constant offset needs SFold.
-  * Widening the ENCODING table hoping for boards -- Kp/Dp/Mp bought 7 total.
-    The chain search, not the alphabet, was binding; now the OVERFLOW is.
+  * Widening the ENCODING table hoping for boards.  Wave-14 INFERRED 18
+    alphabets from the tapes (not guessed) and it bought 9 boards against 234
+    machines decoded.  The alphabet has never been the binding constraint --
+    but the inference is still worth running, for DIAGNOSIS.
   * Peeling the overflow block to fix the wall -- tried, 0 of 385.
-  * mxdys' implementation: John reports it is NOT available.  Stop asking.
-    (WAVE9_FINDINGS.md section 7 is closed out.)
+  * enc_src/enc_dst from two ENCDATA rows to break the overflow wall (WAVE13
+    section 10c).  The wall is the overflow's COST, not its target word.
+  * A HEAD-RELATIVE frame decode as a test of a frame hypothesis:
+    MB(m) ++ [S1] = [S1] ++ MA(m) identically, so the verdict is an artifact of
+    head position.  Use absolute column parity (frame_probe.py, spacetime.py).
+  * Believing a negative from an emitter run that RAISED.  A crash in
+    emit_lapcert's reporting path cost 46 finished certificates and looked
+    exactly like "the search finds nothing".  Survey with wall_survey.py,
+    which keeps the best outcome per machine, before concluding anything.
+  * (RETIRED) "mxdys' implementation is not available."  It IS -- that is this
+    session's task.
 
-ALSO: lapshape.py segments laps by phase but has NEVER measured cost-vs-j.
-That single missing measurement is why a quadratic family sat invisible for
-five waves while searches that could not possibly reach it were widened.
-residue_triage.py now measures it -- run it before templating anything.
+ALSO: ovfshape.py measures cost-vs-j on BOTH branches and classifies
+AFFINE / PARITY-AFFINE / QUAD / EXP2 / EXP3 / EXP4 / HIGHER.  Run it before
+templating anything.  The interior version of that measurement was missing for
+five waves and hid a quadratic family; the overflow version was missing for six
+and hid the exponential one.
+
+WHEN STUCK ON A CLASS: print a few machine strings WITH AN ABSOLUTE-COORDINATE
+TAPE DUMP (tools/counters/spacetime.py) and ask John.  Hand-inspection is
+22-for-22 across waves 8-14.  In wave-14 he corrected the frame measurement
+(which turned out to BE the overflow mechanism) and read a blank-separated
+counter off a tape that no recognizer could see, which became a seventh
+alphabet and 24 boards.  ASK EARLY, ask with a TAPE, and ask about a CLASS not
+a machine: cluster with wall_survey.py or alphabet_infer.py first so one
+reading covers many machines.
 
 DEFERRED TO STABLE HARDWARE: census fold-in (gen_proven.py + Deferred regen +
 make census-verify + census_cache --update) -- batch once, it is the only step
 that lowers D_census.  Also the champion 1RB1LD_1RC1RB_1LC1LA_0RC0RD (needs
 `exists B, QHBound B` plus a 32.8M-step prefix) and the carry-shifted one-off
-0RB1LC_1LC0LC_0RD1LA_1RD1RB (anchor Cc (p, k) with a frame offset).
-
-WHEN STUCK ON A CLASS: print a few machine strings WITH A TAPE DUMP and ask
-John.  Hand-inspection is 20-for-20 across waves 8-13.  In wave-13 alone he
-identified the j=0 frame ambiguity, the two-pass carry, the quadratic
-round-trip family, Gray code (twice, from two different surface descriptions),
-and the alternating frame -- every one converted into a measurement, and two of
-them into structure the automated search provably could not have found.  ASK
-EARLY, ask with a TAPE, and ask about a CLASS not a machine: cluster with
-residue_triage.py first so one reading covers many machines.
+0RB1LC_1LC0LC_0RD1LA_1RD1RB.  The Closeout.vo COMPILE needs the ~719-file
+board .vo closure (~85 min in a fresh container); inventory.py, gen_stages.py
+and audit.py all run in minutes and produce the numbers above.
 
 Commit + push per validated batch.  Name new files so they cannot clash with a
-concurrent session's (waves 10-13 used ILS1_*/ILS4_*/ILS4F_*, ILS1M_*/ILS4M_*/
-ILS4FM_*, IXP_*/IXPM_*, WLS_*/WLSM_*, WLJ_*, LAPC_*).
+concurrent session's (waves 10-14 used ILS1_*/ILS4_*/ILS4F_*, ILS1M_*/ILS4M_*/
+ILS4FM_*, IXP_*/IXPM_*, WLS_*/WLSM_*, WLJ_*, LAPC_*, LAPG_*, Alph_*).
 ```

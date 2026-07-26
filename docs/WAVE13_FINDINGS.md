@@ -296,11 +296,22 @@ already had an interior.
 | interior derives after the §9a split, overflow fails | 138 |
 | **fail ONLY on the overflow** | **~523** |
 
-So ~523 machines — essentially the whole remaining counter residue — are one
-chain away from a board, and that chain is always the msb carry.  Any further
+So ~523 machines (wave-14 re-measures 534) fail on the overflow chain.  They
+are NOT one chain away from a board -- see `WAVE14_FINDINGS.md` section 3 -- but the
+bucket is the right one, and that chain is always the msb carry.  Any further
 tape-reading should be spent there, not on interior laps.
 
 ### 10b. The hypothesis: the FRAME ALTERNATES with msb parity
+
+> **RESOLVED IN WAVE-14 (`docs/WAVE14_FINDINGS.md` section 2).**  The frame
+> does flip, once per msb bump, exactly as John read it -- but it flips
+> *inside the overflow lap*, not between anchors, so it is invisible at the
+> anchor and does NOT make the overflow unrepresentable-by-encoding.  The
+> overflow is a SECOND COUNTING ROUND in the shifted frame, which costs
+> `Theta(2^j)`.  THAT is the wall.  Do not test a frame claim with a
+> head-relative decode: `MB(m) ++ [S1] = [S1] ++ MA(m)` identically, so the
+> answer is an artifact of head position.  Use absolute column parity.
+
 
 John, reading `0RB---_0RC0LD_1LD1RC_0LA1LB`: *"a counter with 1's to the LEFT
 of the bits when the msb is even and 1's to the RIGHT of the bits when the msb
@@ -335,6 +346,15 @@ frame flips.  Wave-12 §4 is the standing warning about concluding structure
 from a partial search.
 
 ### 10c. What it would take
+
+> **RETIRED IN WAVE-14 (`docs/WAVE14_FINDINGS.md` section 3).**  This build
+> would have boarded ZERO.  `enc_src`/`enc_dst` changes which WORD the
+> overflow targets; the wall is how much WORK the overflow does, measured
+> at `16*2^j + 4j + 4` on the flagship and `EXP2` on 439 of the residue.
+> `sside` carries `a*j+b` and `srun` returns `ca*j+cb`, so no encoding row
+> makes an exponential lap affine.  The real build is a NESTED lap --
+> `WAVE10_SHAPES.md` section 3's "inner induction".
+
 
 Small, and inside the existing checker:
 

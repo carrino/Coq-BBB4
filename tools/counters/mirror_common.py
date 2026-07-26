@@ -68,8 +68,8 @@ def mirrorize(src, rspec, mspec):
         r'Proof\. apply never_qh_nonhalt, nqh_%s\. Qed\.'
         % (re.escape(rid), re.escape(rid), re.escape(rid)), re.DOTALL)
     m = pat.search(src)
-    if not m:
-        raise RuntimeError('mirrorize: closing theorems not found')
+    if m is None:
+        return _mirrorize_qh(src, rid)
     new_close = (
         'Theorem nqhm_%s : NeverQuasiHaltsSt tm.\n'
         'Proof. apply (glue_neverqh tm Cc %s).%sQed.\n\n'
@@ -82,6 +82,52 @@ def mirrorize(src, rspec, mspec):
            rid, rid, rid))
     src = pat.sub(lambda _: new_close, src, count=1)
 
+    src = src.replace(
+        'From BBB4 Require Import BBB4_Statement CTape.\n',
+        'From BBB4 Require Import BBB4_Statement CTape Mirror.\n'
+        'From Coq Require Import FunctionalExtensionality.\n')
+    return src
+
+
+# ---------------------------------------------------------------------------
+# The QUASI-HALTING close.
+#
+# WAVE13_FINDINGS.md section 6 records the 47 machines whose StA is targeted
+# by nothing, so [LapGlueQH.glue_qh] bounds its quiet time outright -- and
+# records that they were "blocked in practice on ... mirrorize not knowing the
+# QH closing shape".  This is that shape.  It needs NO new Coq: [mirror_nonhalt]
+# and [mirror_qh] are in Mirror.v and [qhbound_mirror] is already in
+# Census/TNF_QH.v, which every board imports anyway.
+# ---------------------------------------------------------------------------
+
+_QH_PAT = re.compile(
+    r'Theorem iqh_(?P<id>\S+) : iqh tm\.\n'
+    r'Proof\.\n(?P<body>.*?)Qed\.\n\n'
+    r'Theorem nonhalt_(?P=id) : NonHalt tm\.\n'
+    r'Proof\. apply \(proj1 iqh_(?P=id)\)\. Qed\.', re.DOTALL)
+
+
+def _mirrorize_qh(src, rid):
+    m = _QH_PAT.search(src)
+    if not m or m.group('id') != rid:
+        raise RuntimeError('mirrorize: closing theorems not found')
+    new_close = (
+        'Theorem iqhm_%s : iqh tmm_%s.\n'
+        'Proof.\n%sQed.\n\n'
+        '(** Transfer to the REAL machine.  [mirror_nonhalt] and [mirror_qh]\n'
+        '    are Mirror.v; [qhbound_mirror] is Census/TNF_QH.v. *)\n'
+        'Theorem iqh_%s : iqh tm_%s.\n'
+        'Proof.\n'
+        '  destruct iqhm_%s as (Hn & Hb & Hq).\n'
+        '  rewrite <- mirror_ok_%s in Hn, Hb, Hq.\n'
+        '  split; [exact (mirror_nonhalt _ Hn)\n'
+        '         | split; [exact (qhbound_mirror _ _ Hb)\n'
+        '                  | exact (mirror_qh _ Hq)]].\n'
+        'Qed.\n\n'
+        'Theorem nonhalt_%s : NonHalt tm_%s.\n'
+        'Proof. apply (proj1 iqh_%s). Qed.'
+        % (rid, rid, m.group('body'), rid, rid, rid, rid, rid, rid, rid))
+    src = _QH_PAT.sub(lambda _: new_close, src, count=1)
     src = src.replace(
         'From BBB4 Require Import BBB4_Statement CTape.\n',
         'From BBB4 Require Import BBB4_Statement CTape Mirror.\n'
