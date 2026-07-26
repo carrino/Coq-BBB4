@@ -31,6 +31,7 @@ Usage:  gram3_sweep.py K N [WORKERS] [BUDGET] [--qh]
               gram3_sweep.py 2 3 3 45 --qh   the R_QH/wrap tier
 """
 import os
+import random
 import signal
 import sys
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -93,6 +94,14 @@ def main():
     # already decided by ANY rung, plus already tried at THIS rung
     done = col0(NQH_OUT) | col0(QH_OUT) | col0(MISS_OUT)
     targets = [m for m in rem if m not in hold and m not in done]
+    # SHUFFLE (fixed seed, so a resume keeps the same order).  frozen_unproven
+    # is SORTED, so a sequential sweep spends its first hours inside one
+    # structural family and every early progress reading is biased -- the
+    # first 25 machines of the sorted run were all 0RB--- and all missed,
+    # which says nothing about the pool.  The whole point of the cheap rung
+    # is an early READ on the hit rate, and that needs a random order.
+    random.seed(20260726)
+    random.shuffle(targets)
     print("gram-3 rung k=%d n=%d %s: %d targets (%d already done), %d workers, "
           "%ds budget, fuel=%d" % (K, N, "R_QH" if QH else "never-QH",
                                    len(targets), len(done), WORKERS, BUDGET, FUEL),
