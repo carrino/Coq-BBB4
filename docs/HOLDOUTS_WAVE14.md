@@ -1,0 +1,247 @@
+# Wave 14 (2026-07-26) — the 27 holdouts, decomposed; the wave family CLOSED
+
+_First session pointed at the **holdouts** rather than the residue.  Read
+`docs/TERMINOLOGY.md` first for what "holdout" vs "residue" means; this file
+is the holdout-front scoreboard, what landed, and where the next lever is._
+
+---
+
+## 1. The 27, decomposed (this is the map the front was missing)
+
+`tools/census_holdouts_kept.txt` is the live list.  Cross-referencing it
+against `theories/` (and against `tools/closeout/frozen_unproven.txt`, which
+is the authority on what is actually *boarded*) splits it as:
+
+| status | count | machines |
+|---|---|---|
+| **boarded** | **7** | Wave_7, Wave_17, Wave_24, Wave_27, Wave_36, Wave_6, Double_9 |
+| unproven | 20 | below |
+
+The 20 unproven, by BBB `results/counterN.cert` family:
+
+| family | n | machines (cert #) |
+|---|---|---|
+| tower | 4 | #20 `1RB0RD_1LC1LB_1RA0LB_1LC1RA`, #21 `1RB0RD_1LC1LB_1RD0LB_1RD1RA`, #34 `1RB1RA_0LC0RA_1LC1LD_1LA0LC`, #40 `1RB1RD_1LC1LB_1RA0LB_1RD0RC` |
+| double | 3 | #30 `1RB1LD_1RC0LA_1RD0RD_1LB1RB`, #32 `1RB1LD_1RC0RB_1LA0RC_0LD0LA`, #37 `1RB1RB_1RC1LC_1LD0RA_1LB0LB` |
+| blockdbl | 3 | #11 `1RB0LD_1RC0RC_1LA1RB_0LC0LD`, #13 `1RB0RB_1LC1RA_1RA0LD_0LB0LD`, #28 `1RB1LC_1LC1RD_1LA0LC_0RD0RB` |
+| xd | 3 | #1 `1RB0LA_0RC0RD_1LD1RD_1LA1RB`, #25 `1RB1LB_1RC1LD_1LD0RC_0LA0LB`, #29 `1RB1LD_0LC0RB_1RA1LA_0LD0LA` |
+| fractal | 2 | #3 `1RB0LA_1LC0RD_0LB1LA_0RB1LA`, #5 `1RB0LA_1LC1RD_0LC1LA_0RD0RB` |
+| wave4 | 1 | #15 `1RB0RC_0LC1LB_0LD1LC_1RD0RA` |
+| wrap-QH | 2 | `1RB---_1LC0LB_0RC0LD_1RD1RB`, `1RB---_1RC0RB_0LC0RD_1LD1LB` |
+| v4-irules | 1 | `1RB1RA_0RC0RB_1LC1LD_0RA0LA` |
+| open | 1 | `1RB0RB_1LC1RC_0RA1LD_1RC0LD` |
+
+**The wave family is now COMPLETE** — all six BBB `wave_counter` certs
+(#6, #7, #17, #24, #27, #36) carry kernel-checked `NeverQuasiHaltsSt`
+theorems off the single `theories/Counters/WaveCounter.v` closer.
+
+---
+
+## 2. What landed: #6 and #24
+
+`theories/Machines/Counters/Wave_6.v`, `Wave_24.v` — both axiom-clean
+(`Print Assumptions` = `functional_extensionality_dep` only), negative
+controls in `theories/Tests/CountersWave_Corruption.v`, wired into
+`_CoqProject`, `tools/counters_manifest.tsv` and the route-A closeout
+(`CB_07.v`, recompiled green; `D_remaining` 1,266 → 1,264).
+
+These were the pair the wave hand-off flagged as "#6/#24 have 4-step
+0-writing cross cycles (harder `cross_run`)".  `WaveCounter.v` needed **no
+change** — `nextf 1` / `WInv 1` / `WInv_no_leadstop` / `wglue_neverqh` are
+reused verbatim; `tools/counters/trace_wave.py` already confirmed both run
+the #27 orbit exactly.
+
+### The gadget table (from `tools/counters/probe6.py`, validated by `lap6.py`)
+
+```
+FT     5  (StC,(S1::L,S0,[]))          -> (StA,(L,S1,[S1;S1]))
+XC     4  (StA,(S1::c::L,S1,R))        -> (StA,(L,c,S1::S1::R))       cross, 2 cells
+BT     5  (StA,(S0::S1::c::L,S1,R))    -> (StA,(L,c,S1::S1::S0::R))   block transition
+BTe    5  (StA,([S0;S1],S1,R))         -> (StA,([],S0,S1::S1::S0::R)) at the lead = SPAWN
+DEP    1  (StA,(L,S0,R))               -> (StB,(S1::L,chd R,ctl R))
+RS     1  (StB,(L,S1,R))               -> (StC,(S0::L,chd R,ctl R))
+RSW    1  (StC,(L,S1,R))               -> (StC,(S1::L,chd R,ctl R))
+RSEP   3  (StC,(S1::L,S0,R))           -> (StC,(S0::S1::L,chd R,ctl R))
+```
+
+Every one is a **plain `csteps` reflexivity** — `CTape.cstep` already
+materialises blanks via `chd`/`ctl`, so no `wsteps` windowed transport is
+needed anywhere in this file (#17/#27 needed `wsteps_frame_r`).
+
+### Three things that made #6 *easier* than #27, not harder
+
+1. **The return changes nothing.** `C1/1R>C` rewrites a one as a one, and the
+   3-step separator gadget writes 1 at x, 1 at x−1, then 0 back at x.  So the
+   tape after the leftward wave *already is* `wbody (nextf 1 front)` and the
+   return is a pure traversal to the frontier blank.  **No `relaid` /
+   `relaid_b` / `bridge_l` borrow algebra at all** — that is most of
+   `Wave_27.v` deleted.
+2. **The cross is uniform over the whole word,** not per-block: `XC` when the
+   cell below the head is a one, `BT` when it is a separator, stop the moment
+   the head itself lands on a separator.  Concretely that *is*
+   `WaveCounter.carry`: a run entered at offset 0 deposits iff it is even, at
+   offset 1 iff it is odd, and a non-depositing run always hands the next one
+   over at offset 1.
+3. **The parity lives in the stopping position,** not in an exit state, so
+   there is no `stC`-style exit-state function; the two cases fall out of
+   `destruct (Nat.even d)` inside `wave_L6`.
+
+### The one piece of real design: `decp`
+
+`bridge6` is the identity "the wave's own bookkeeping IS `carry`".  It only
+closes if the deposit's decrement is applied to the **newest** laid run —
+which is `base[0]` *only* when the carry stopped immediately.  Hence
+
+```coq
+Definition decp (po : bool) (cs : list nat) := if po then dec1 cs else cs.
+```
+
+and the statement
+
+```coq
+retl (dec1 (wcs po blocks base)) (S0 :: S1 :: dsufL po blocks)
+  = retl (decp po base) (S0 :: wbody (carry po blocks)).
+```
+
+With `decp`, the deposit case, the interior-continue case and the SPAWN all
+close in a single induction; at the top level
+`decp po0 [mat po0 (S b0)] = [S b0]` for **both** parities, which is exactly
+"the frontier ends at `b0+1`".  Getting this wrong is the trap: an
+un-parameterised `dec1 base` works for the even frontier and silently fails
+for the odd one.
+
+### #24 was nearly free — remember this heuristic
+
+`mirror_tm tm_24 = 1LB1RA_1LC1RD_1RD0LD_0LD0RA` is **exactly `tm_6` with the
+states relabelled by `(StA StC)(StB StD)`**.  That bijection *moves the start
+state*, so it is NOT a `TM_swap` transport (the machines really are
+different: boots 71 vs 74, and #24 is none of the 12 mirror/relabel images of
+#6 that fix `StA`) — but every lap lemma transcribes under the substitution.
+`Wave_24.v` was produced by applying it mechanically to `Wave_6.v` and fixing
+three things by hand:
+
+- the machine table + `mirror_ok`;
+- the boot count (71);
+- the `vis` offsets (A,B,C,D ← #6's C,D,A,B = 0,1,5,2).
+
+**It compiled on the first try.**  So: before writing any counter machine
+from scratch, check whether it (or its mirror) is an already-boarded machine
+under *any* state bijection — including ones that move `StA`, which the swap
+lemmas cannot transport but a file-level `sed` can.
+
+---
+
+## 3. The relabel-sibling scan — a live lead for four holdouts
+
+Running that heuristic over all 20 unproven holdouts against all 3,908
+boarded machines (mirror × all 24 state permutations) found **four hits**:
+
+| unproven holdout | is a relabel of | boarded in |
+|---|---|---|
+| #1 `1RB0LA_0RC0RD_1LD1RD_1LA1RB` | `0RB0RC_1LC1RC_1LD1RA_1RA0LD` | `NGHStage/NGH_01.v` |
+| **`1RB0RB_1LC1RC_0RA1LD_1RC0LD`** (the "open" one) | `0RB1LD_1RC0RC_1LA1RA_1RA0LD` | `NGHStage/NGH_01.v` |
+| #25 `1RB1LB_1RC1LD_1LD0RC_0LA0LB` | mirror of `0RB0RC_1LC1RC_1LD1RA_1RA0LD` | `NGHStage/NGH_01.v` |
+| #28 `1RB1LC_1LC1RD_1LA0LC_0RD0RB` | mirror of `1RB1LD_1RC0RB_1LA1RB_0LD0LA` | `Counters/Bounce_33.v` |
+
+All four relabelings move `StA`, so **this is not a proof transport** — the
+boarded theorem is about the same transition table started in a *different*
+state, and `NeverQuasiHaltsSt` is a statement about the blank-tape run from
+`StA`.  What it *is*: direct evidence that these machines' dynamics are
+inside the reach of engines we already have in Coq (NGramHist for three of
+them, the bounce-counter machinery for #28).
+
+This is worth taking seriously **against** `TERMINOLOGY.md`'s standing
+discipline ("point the porting machinery at the residue; keep it away from
+the 27").  That discipline rests on "mxdys' deciders failed on these", which
+is an argument about *his* method at *his* parameters, not about ours at
+ours.  Note especially that the machine documented for a year as having **no
+known proof anywhere** has an NGramHist-boarded relabel sibling.
+
+**Next-session action:** run the never-QH engines directly on the 20 (a
+sweep was started this session — see `tools/nghist/nghist_prove.py:prove`,
+escalating `(k,n,t,fuel)` over `(2,2)…(8,2)`), and if a machine closes, board
+it through the existing `NGHStage` route.  It is cheap, untrusted, and the
+kernel re-checks everything.
+
+---
+
+## 4. blockdbl recon (#11/#13/#28) — the next hand-written family
+
+`tools/counters/probe_bd.py` rebuilds `verify.c`'s model and confirms it for
+j = 2..7:
+
+```
+side R:  D(j) = 1^m 0 1^t,   head on the RIGHTMOST 1, state edge
+side L:  D(j) = 1 0^z 1^m,   head on the LEFTMOST  1, state edge
+m(j) = ma*2^(j-1) + mb,  m -> 2m + mdbl        t(j) = ta*j + tb,  t -> t + ta
+```
+
+| # | machine | edge | side | ma | mb | mdbl | ta | tb |
+|---|---|---|---|---|---|---|---|---|
+| 11 | `1RB0LD_1RC0RC_1LA1RB_0LC0LD` | C | R | 3 | 1 | −1 | 2 | −1 |
+| 13 | `1RB0RB_1LC1RA_1RA0LD_0LB0LD` | B | R | 3 | 0 | 0 | 2 | −1 |
+| 28 | `1RB1LC_1LC1RD_1LA0LC_0RD0RB` | C | L | 4 | −1 | 1 | 2 | 0 |
+
+`probe_bd.py 13 2 7` → all six j exact, all 8 transitions fire, step ratio
+→ 4 (so one lap is Θ(m²)).
+
+**The warning the C verifier hides:** it only re-simulates j ∈ [jmin,jmax]
+raw.  A Coq proof needs the general induction, and the lap is **not** a
+single parametric run — the turnaround count also grows like m², i.e. one lap
+is an *outer* loop of Θ(m) sweeps, each a Θ(m) `cycR`/`cycL` crossing.  So
+blockdbl needs `MeasureGlue`-style nesting like `Bounce_8.v`, not the flat
+`LapGlue` shape.  Budget it as a full family session, and do **#13 first**
+(mdbl = 0, mb = 0 — the cleanest parameters).
+
+Also note #28 already appears in the relabel-sibling table above, so try the
+cheap route on it first.
+
+---
+
+## 5. Two leads that were closed off (do not re-chase)
+
+- **The `1RB---` pair is not free.** Both already carry
+  `NonHalt /\ QuietAfter tm StA 0 /\ QuasiHaltsSt` in
+  `theories/Machines/Bulk/Wrap_01.v` (`tm_wrap_007` and its sibling), so they
+  look like pure wiring.  They are not: boarding needs `QHBound`, and
+  `tools/provenqh_stay.txt` records that the QHBound tier was
+  probe-confirmed to FAIL on both (plain + lex liveness, n ≤ 6, t ≤ 1024, and
+  the t = 4096 extension in `qhbound_lex2_t4096_overbound.tsv`).  The
+  remaining content is a liveness proof that B/C/D never go quiet — i.e. a
+  never-QH argument on the 3-state core `{B,C,D}` that `A0` hands off to
+  (no transition anywhere targets `StA`, which is why A is quiet at index 0).
+  The re-root route (`tools/gen_reroot.py`, `docs/REROOT_LISTC_STAGE.md`) is
+  the right shape for it, not the wrap tier.
+- **tower and xd are not a session.** `verify_tower_counter2` is ~1,500 lines
+  of table interpreter (`tpat`/`shape`/`uphase` rows in the certs) and
+  `verify_xd_counter` ~1,100 (transducer arcs + a DFA).  Porting either as a
+  verified Coq checker boards 4 resp. 3 machines at once and is the right
+  *eventual* lever, but it is a multi-session checker build in the
+  `LapDecider`/`RepWL` shape — not something to start mid-session.
+
+---
+
+## 6. Environment notes (this container)
+
+- **Coq comes from apt**: `apt-get install -y coq` gives exactly 8.18.0
+  (matching `.github/workflows`), no opam switch needed.  It has **no**
+  `native_compute`, which is fine — everything on the holdout front is
+  `vm_compute`/`reflexivity`.  The committed census `.vo` are not loaded by
+  `Closeout.v`, only by `CloseoutFinal.v`.
+- Before building, `git ls-files | grep -E '\.vo$|\.glob$' | xargs touch` so
+  `make` skips the census (`python3 tools/census_cache.py --check` must say
+  MATCH — it did).
+- **`make -j4` OOMs** on the heavy batches (`IRules_Batch_02` alone peaked at
+  ~6.3 GB of the 15 GB box, alongside `TCyc_05` at ~2 GB).  Use `-j2`.
+  Targeted builds are much better anyway:
+  `make -f Makefile.coq theories/Closeout/CB_07.vo -j2`.
+
+---
+
+## 7. Scoreboard
+
+- Holdouts: **27 total, 7 boarded, 20 unproven** (was 5 / 22).
+- Route-A closeout: `proven_rows` 3,890 → **3,892**, `D_remaining` 1,266 →
+  **1,264** (`tools/closeout/inventory.py` then `gen_stages.py`; `CB_07.vo`
+  rebuilt and kernel-green).
+- `D_census` = 5,156, frozen and unchanged, as always.

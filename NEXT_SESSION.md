@@ -99,6 +99,46 @@ clean `.vo` state, `functional_extensionality_dep` only).  It also needed the
 anchor HEAD symbol, the anchor TAIL and the anchor's FAR side (a blank *cell*,
 not the empty *list*) to become parameters — the encoding alone was not enough.
 
+## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
+
+Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
+holdouts rather than the residue.  Headlines:
+
+- **The 27 are 7 boarded / 20 unproven** (was 5/22).  `#6` and `#24` landed
+  (`theories/Machines/Counters/Wave_6.v`, `Wave_24.v`), so **all six
+  `wave_counter` machines are now boarded** off the one `WaveCounter.v`
+  closer — it needed no change.  `docs/HOLDOUTS_WAVE14.md` §1 has the full
+  family decomposition of the remaining 20 (tower 4, double 3, blockdbl 3,
+  xd 3, fractal 2, wave4 1, wrap-QH 2, v4-irules 1, open 1).
+- **#6 was EASIER than #27, not harder**, despite the "4-step 0-writing
+  cross" warning: its rightward return leaves the tape byte-for-byte
+  unchanged, so the whole `relaid`/`bridge_l` borrow algebra disappears.
+  The one piece of real design is `decp` (the deposit decrements the NEWEST
+  laid run, which is `base[0]` only when the carry stopped immediately).
+- **#24 was nearly free:** `mirror_tm tm_24` is `tm_6` with the states
+  relabelled by `(StA StC)(StB StD)`.  That bijection MOVES `StA`, so it is
+  not a `TM_swap` transport — but the file transcribes under the
+  substitution, and `Wave_24.v` compiled on the first try.  New tool
+  `tools/counters/sibling_scan.py` looks for exactly this.
+- **`sibling_scan.py` found four unproven holdouts that are relabellings of
+  BOARDED machines** — including `1RB0RB_1LC1RC_0RA1LD_1RC0LD`, the one this
+  file has called "no known proof anywhere".  Three siblings are NGramHist
+  boards (`NGHStage/NGH_01.v`), one is `Bounce_33.v`.  Not a proof transport,
+  but direct evidence that these dynamics are inside our engines' reach —
+  which argues against `docs/TERMINOLOGY.md`'s "keep the machinery away from
+  the 27" discipline.  **Run the never-QH engines on the 20.**
+- Two leads CLOSED OFF (do not re-chase): the `1RB---` wrap pair is not just
+  wiring (`provenqh_stay.txt` records the QHBound tier probe-failing on
+  both), and tower/xd are ~1,500/~1,100-line table interpreters, i.e. a
+  checker-port project, not a session.
+- blockdbl (#11/#13/#28) reconnoitred (`tools/counters/probe_bd.py`,
+  j = 2..7 exact).  Caution: one lap is Θ(m²) with Θ(m) turnarounds, so it
+  needs `MeasureGlue`-style nesting like `Bounce_8.v`, not flat `LapGlue`.
+  Do #13 first (mdbl = 0, mb = 0).
+- **Env:** apt's `coq` is exactly 8.18.0 and is all the holdout front needs
+  (no `native_compute`).  `make -j4` OOMs on `IRules_Batch_02` (~6.3 GB);
+  use `-j2` or targeted `make -f Makefile.coq <file>.vo`.
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
