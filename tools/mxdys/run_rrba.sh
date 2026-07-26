@@ -63,9 +63,10 @@ ocamlfind ocamlopt -O2 -package coq-core.kernel,unix -linkpkg \
   RRBAX.mli RRBAX.ml rrba_measure.ml -o rrba_measure
 
 say "6/6  the three-way control"
-# A must score HIGH (confirms the rig), B must score ~0 (mxdys' own holdouts),
-# C is the question.  A high C is the result that changes the roadmap.
-for t in A_boarded B_holdout C_residue; do
+# ORDER MATTERS: C is the question, so run it FIRST -- a nonzero C is the
+# headline and you want it in minutes, not after two control lists.  A must
+# then score HIGH (confirms the rig); B should be ~0 (mxdys' own holdouts).
+for t in C_residue A_boarded B_holdout; do
   echo "--- $t ---"
   # args: LIST TIMEOUT NPARAM.  rrba_measure tries NPARAM parameter sets per
   # machine, so wall clock is 40 * NPARAM * TIMEOUT worst case -- at 60s x 10
@@ -79,7 +80,7 @@ for t in A_boarded B_holdout C_residue; do
 done
 
 say "SUMMARY"
-for t in A_boarded B_holdout C_residue; do
+for t in C_residue A_boarded B_holdout; do
   printf '%-12s ' "$t"
   awk -F'\t' '{c[$2]++} END {printf "n=%3d decided=%3d\n", NR, c["NONHALT"]}' "$OUT/rrba_$t.tsv"
 done
