@@ -137,7 +137,13 @@ def confs(enc, st0, tail, far=()):
     A1 = (st0, ((), d['uD'], 1, 0, d['sD']), 0, F)
     # overflow: E p = rep uS j ++ so, and E (succ p) = rep uD (S j) ++ so,
     # i.e. uD ++ rep uD j ++ so -- so the target carries uD in its prefix.
-    B0 = (st0, ((), d['uS'], 1, d['obS'], d['soS'] + tail), 0, F)
+    # When obS >= 1 the overflow block is NEVER empty, so peel one copy into
+    # the prefix: rep uS (S j) = uS ++ rep uS j.  That gives the head a
+    # concrete cell to step onto, which is what the un-peeled form denies it.
+    if d['obS'] >= 1:
+        B0 = (st0, (d['uS'], d['uS'], 1, d['obS'] - 1, d['soS'] + tail), 0, F)
+    else:
+        B0 = (st0, ((), d['uS'], 1, 0, d['soS'] + tail), 0, F)
     B1 = (st0, ((), d['uD'], 1, 1, d['soD'] + tail), 0, F)
     return A0, A1, B0, B1
 
@@ -158,16 +164,17 @@ def eqlift(a, b):
             and LC.rstrip0(a[3]) == LC.rstrip0(b[3]))
 
 
-def validate(tab, st0, encf, tail, far, ci, co, hi=200):
+def validate(tab, st0, encf, tail, far, cost, co, hi=200):
     """Differentially check both branches against the raw simulator: exact
     step counts AND exact configurations, on every p in range."""
     tail, far = tuple(tail), tuple(far)
     n = 0
     for p in range(2, hi):
         j, ov = carry(p)
-        ca, cb = (co if ov else ci)
-        jj = (j - 1) if ov else j
-        steps = ca * jj + cb
+        if ov:
+            steps = co[0] * (j - 1) + co[1]
+        else:
+            steps = cost(j)
         start = (st0, tuple(encf(p)) + tail, 0, far)
         want = (st0, tuple(encf(p + 1)) + tail, 0, far)
         got = sim(tab, start, steps)
@@ -225,6 +232,122 @@ Qed.
 Theorem nonhalt_@ID@ : NonHalt tm.
 Proof. apply (proj1 iqh_@ID@). Qed.'''
 
+
+# ---------------------------------------------------------------------------
+# The interior branch, in two shapes.
+#
+# ONE: a single chain covering every j.  Works when the head never has to step
+# into the repeated block's first cell -- otherwise that cell is AMBIGUOUS at
+# j = 0 (the block vanishes and the neighbour is post's first cell instead),
+# and the symbolic run stalls with no legal move.
+#
+# SPLIT: two chains, j = 0 and j = S j'.  In the j = S j' chain one copy of the
+# unit sits in the PREFIX, so the head always has a concrete cell to step onto.
+# Measured wave-13 section 9a: this alone unlocks ~31% of the machines whose
+# single chain fails.  No new soundness surface -- the glue gains a destruct.
+# ---------------------------------------------------------------------------
+
+INT_ONE = r"""Definition A0_@ID@ : sconf := @A0@.
+Definition A1_@ID@ : sconf := @A1@.
+Definition chi_@ID@ : list lstep := @CHI@.
+
+Lemma run_int_@ID@ : srun tm false true chi_@ID@ A0_@ID@ = Some (A1_@ID@, @CAI@, @CBI@).
+Proof. vm_compute. reflexivity. Qed."""
+
+GLUE_ONE = r"""Lemma gsi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  Cc p = cden (@ENC@ q0 ++ @TAIL@) [] j A0_@ID@.
+Proof.
+  intros p j q0 E. destruct (@ENCMOD@.@SOME@ p j q0 E) as (H1 & _).
+  unfold Cc_@ID@, cden, A0_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 0) with j by lia.
+  rewrite H1, <- (app_assoc (rep @US@ j)). reflexivity.
+Qed.
+
+Lemma gei_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  cden (@ENC@ q0 ++ @TAIL@) [] j A1_@ID@ = Cc (Pos.succ p).
+Proof.
+  intros p j q0 E. destruct (@ENCMOD@.@SOME@ p j q0 E) as (_ & H2).
+  unfold Cc_@ID@, cden, A1_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 0) with j by lia.
+  rewrite H2, <- (app_assoc (rep @UD@ j)). reflexivity.
+Qed.
+
+Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  exists n, 0 < n /\ csteps tm n (Cc p) = Some (Cc (Pos.succ p)).
+Proof.
+  intros p j q0 E. exists (@CAI@ * j + @CBI@). split; [lia|].
+  rewrite (gsi_@ID@ p j q0 E).
+  rewrite (srun_sound tm false true chi_@ID@ A0_@ID@ A1_@ID@ @CAI@ @CBI@
+             run_int_@ID@ (@ENC@ q0 ++ @TAIL@) [] j
+             ltac:(discriminate) ltac:(reflexivity)).
+  f_equal. exact (gei_@ID@ p j q0 E).
+Qed."""
+
+INT_SPLIT = r"""(** j = 0: the repeated block is absent, so the whole lap is concrete. *)
+Definition Z0_@ID@ : sconf := @Z0@.
+Definition Z1_@ID@ : sconf := @Z1@.
+Definition chz_@ID@ : list lstep := @CHZ@.
+
+Lemma run_z_@ID@ : srun tm false true chz_@ID@ Z0_@ID@ = Some (Z1_@ID@, @CAZ@, @CBZ@).
+Proof. vm_compute. reflexivity. Qed.
+
+(** j = S j': one copy of the unit sits in the PREFIX, so the head always has
+    a concrete cell to step onto. *)
+Definition P0_@ID@ : sconf := @P0C@.
+Definition P1_@ID@ : sconf := @P1C@.
+Definition chp_@ID@ : list lstep := @CHP@.
+
+Lemma run_p_@ID@ : srun tm false true chp_@ID@ P0_@ID@ = Some (P1_@ID@, @CAP@, @CBP@).
+Proof. vm_compute. reflexivity. Qed."""
+
+GLUE_SPLIT = r"""Lemma gz_@ID@ : forall p q0, cview p = (0, Some q0) ->
+  Cc p = cden (@ENC@ q0 ++ @TAIL@) [] 0 Z0_@ID@ /\
+  cden (@ENC@ q0 ++ @TAIL@) [] 0 Z1_@ID@ = Cc (Pos.succ p).
+Proof.
+  intros p q0 E. destruct (@ENCMOD@.@SOME@ p 0 q0 E) as (H1 & H2).
+  unfold Cc_@ID@, cden, Z0_@ID@, Z1_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  split.
+  - rewrite H1; cbn [rep app]. rewrite <- app_assoc. reflexivity.
+  - rewrite H2; cbn [rep app]. rewrite <- app_assoc. reflexivity.
+Qed.
+
+Lemma gp_@ID@ : forall p j q0, cview p = (S j, Some q0) ->
+  Cc p = cden (@ENC@ q0 ++ @TAIL@) [] j P0_@ID@ /\
+  cden (@ENC@ q0 ++ @TAIL@) [] j P1_@ID@ = Cc (Pos.succ p).
+Proof.
+  intros p j q0 E. destruct (@ENCMOD@.@SOME@ p (S j) q0 E) as (H1 & H2).
+  unfold Cc_@ID@, cden, P0_@ID@, P1_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 0) with j by lia.
+  split.
+  - rewrite H1; cbn [rep app]. rewrite <- !app_assoc. reflexivity.
+  - rewrite H2; cbn [rep app]. rewrite <- !app_assoc. reflexivity.
+Qed.
+
+Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  exists n, 0 < n /\ csteps tm n (Cc p) = Some (Cc (Pos.succ p)).
+Proof.
+  intros p j q0 E. destruct j as [|j'].
+  - destruct (gz_@ID@ p q0 E) as (HA & HB).
+    exists (@CAZ@ * 0 + @CBZ@). split; [lia|].
+    rewrite HA.
+    rewrite (srun_sound tm false true chz_@ID@ Z0_@ID@ Z1_@ID@ @CAZ@ @CBZ@
+               run_z_@ID@ (@ENC@ q0 ++ @TAIL@) [] 0
+               ltac:(discriminate) ltac:(reflexivity)).
+    f_equal. exact HB.
+  - destruct (gp_@ID@ p j' q0 E) as (HA & HB).
+    exists (@CAP@ * j' + @CBP@). split; [lia|].
+    rewrite HA.
+    rewrite (srun_sound tm false true chp_@ID@ P0_@ID@ P1_@ID@ @CAP@ @CBP@
+               run_p_@ID@ (@ENC@ q0 ++ @TAIL@) [] j'
+               ltac:(discriminate) ltac:(reflexivity)).
+    f_equal. exact HB.
+Qed."""
+
+
 HEADER = r'''(** * @PREF@_@ID@: machine @SPEC@, boarded by CERTIFICATE.
 
     Auto-emitted by tools/counters/emit_lapcert.py (UNTRUSTED emitter; the Coq
@@ -268,12 +391,7 @@ Local Notation Cc := Cc_@ID@.
 
 (** ** The certificate *)
 
-Definition A0_@ID@ : sconf := @A0@.
-Definition A1_@ID@ : sconf := @A1@.
-Definition chi_@ID@ : list lstep := @CHI@.
-
-Lemma run_int_@ID@ : srun tm false true chi_@ID@ A0_@ID@ = Some (A1_@ID@, @CAI@, @CBI@).
-Proof. vm_compute. reflexivity. Qed.
+@INTERIOR@
 
 Definition B0_@ID@ : sconf := @B0@.
 Definition B1_@ID@ : sconf := @B1@.
@@ -284,25 +402,7 @@ Proof. vm_compute. reflexivity. Qed.
 
 (** ** Anchor glue -- the only per-machine mathematics *)
 
-Lemma gsi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
-  Cc p = cden (@ENC@ q0 ++ @TAIL@) [] j A0_@ID@.
-Proof.
-  intros p j q0 E. destruct (@ENCMOD@.@SOME@ p j q0 E) as (H1 & _).
-  unfold Cc_@ID@, cden, A0_@ID@; cbn [c_st c_l c_h c_r].
-  unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * j + 0) with j by lia.
-  rewrite H1, <- (app_assoc (rep @US@ j)). reflexivity.
-Qed.
-
-Lemma gei_@ID@ : forall p j q0, cview p = (j, Some q0) ->
-  cden (@ENC@ q0 ++ @TAIL@) [] j A1_@ID@ = Cc (Pos.succ p).
-Proof.
-  intros p j q0 E. destruct (@ENCMOD@.@SOME@ p j q0 E) as (_ & H2).
-  unfold Cc_@ID@, cden, A1_@ID@; cbn [c_st c_l c_h c_r].
-  unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * j + 0) with j by lia.
-  rewrite H2, <- (app_assoc (rep @UD@ j)). reflexivity.
-Qed.
+@GLUEI@
 
 Lemma gso_@ID@ : forall p j, cview p = (S j, None) ->
   Cc p = cden [] [] j B0_@ID@.
@@ -310,8 +410,8 @@ Proof.
   intros p j E. destruct (@ENCMOD@.@NONE@ p j E) as (H1 & _).
   unfold Cc_@ID@, cden, B0_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * j + @OBS@) with (@CNTS@) by lia.
-  rewrite H1, <- (app_assoc (rep @US@ (@CNTS@))). reflexivity.
+  replace (1 * j + @OBSP@) with (@CNTP@) by lia.
+  rewrite H1; cbn [rep app]; rewrite <- !app_assoc. reflexivity.
 Qed.
 
 Lemma lbl_@ID@ : forall q l h r, lift (q,(l ++ [S0],h,r)) = lift (q,(l,h,r)).
@@ -334,17 +434,6 @@ Proof.
 Qed.
 
 (** ** The lap *)
-
-Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
-  exists n, 0 < n /\ csteps tm n (Cc p) = Some (Cc (Pos.succ p)).
-Proof.
-  intros p j q0 E. exists (@CAI@ * j + @CBI@). split; [lia|].
-  rewrite (gsi_@ID@ p j q0 E).
-  rewrite (srun_sound tm false true chi_@ID@ A0_@ID@ A1_@ID@ @CAI@ @CBI@
-             run_int_@ID@ (@ENC@ q0 ++ @TAIL@) [] j
-             ltac:(discriminate) ltac:(reflexivity)).
-  f_equal. exact (gei_@ID@ p j q0 E).
-Qed.
 
 Lemma lap_@ID@ : forall p, exists n c',
   csteps tm n (Cc p) = Some c' /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
@@ -424,19 +513,42 @@ def derive(spec, edge, tail, p0, enc, far=()):
     d = ENCDATA[enc]
     A0, A1, B0, B1 = confs(enc, st0, tail, far)
 
+    Rr = (tuple(far), (), 0, 0, ())
+    Z0 = (st0, (d['sS'], (), 0, 0, ()), 0, Rr)
+    Z1 = (st0, (d['sD'], (), 0, 0, ()), 0, Rr)
+    P0 = (st0, (d['uS'], d['uS'], 1, 0, d['sS']), 0, Rr)
+    P1 = (st0, (d['uD'], d['uD'], 1, 0, d['sD']), 0, Rr)
+
     chi = LC.derive_chain(tab, False, True, A0, A1)
-    if chi is None:
-        raise DeriveError('no interior chain')
-    ri = LC.srun(tab, False, True, chi, A0)
+    if chi is not None:
+        mode = 'one'
+        ri = LC.srun(tab, False, True, chi, A0)
+        if ri[2] == 0:
+            raise DeriveError('lap of zero length at j=0')
+        cost = lambda j, c=(ri[1], ri[2]): c[0] * j + c[1]
+        chz = chp = rz = rp = None
+    else:
+        chz = LC.derive_chain(tab, False, True, Z0, Z1)
+        chp = LC.derive_chain(tab, False, True, P0, P1)
+        if chz is None or chp is None:
+            raise DeriveError('no interior chain')
+        mode = 'split'
+        rz = LC.srun(tab, False, True, chz, Z0)
+        rp = LC.srun(tab, False, True, chp, P0)
+        if rz[2] == 0 or rp[2] == 0:
+            raise DeriveError('lap of zero length at j=0')
+        ri = None
+        cost = (lambda j, z=(rz[1], rz[2]), q=(rp[1], rp[2]):
+                z[0] * 0 + z[1] if j == 0 else q[0] * (j - 1) + q[1])
+
     cho = LC.derive_chain(tab, True, True, B0, B1)
     if cho is None:
         raise DeriveError('no overflow chain')
     ro = LC.srun(tab, True, True, cho, B0)
-
-    if ri[2] == 0 or ro[2] == 0:
+    if ro[2] == 0:
         raise DeriveError('lap of zero length at j=0')
 
-    ok, why = validate(tab, st0, encf, tail, far, (ri[1], ri[2]), (ro[1], ro[2]))
+    ok, why = validate(tab, st0, encf, tail, far, cost, (ro[1], ro[2]))
     if not ok:
         raise DeriveError('validation: ' + why)
 
@@ -467,8 +579,12 @@ def derive(spec, edge, tail, p0, enc, far=()):
         raise DeriveError('overflow close mismatch %r vs %r' % (got, want))
 
     return dict(spec=spec, enc=enc, st0=st0, tail=list(tail),
-                far=list(far), p0=p0,
-                chi=chi, cho=cho, ci=(ri[1], ri[2]), co=(ro[1], ro[2]),
+                far=list(far), p0=p0, mode=mode,
+                chi=chi, cho=cho, co=(ro[1], ro[2]),
+                ci=((ri[1], ri[2]) if ri else None),
+                chz=chz, chp=chp, Z0=Z0, Z1=Z1, P0=P0, P1=P1,
+                cz=((rz[1], rz[2]) if rz else None),
+                cp=((rp[1], rp[2]) if rp else None),
                 A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, qh=qh, boot=boot,
                 ovpost=list(got), ovwant=list(want), val=why)
 
@@ -506,13 +622,12 @@ def render(D):
         '@ST0@': ST[D['st0']], '@TAIL@': clist(D['tail']),
         '@FAR@': clist(D['far']),
         '@TABLE@': coq_table(spec),
-        '@A0@': cconf(D['A0']), '@A1@': cconf(D['A1']),
         '@B0@': cconf(D['B0']), '@B1@': cconf(D['B1']),
-        '@CHI@': cchain(D['chi']), '@CHO@': cchain(D['cho']),
-        '@CAI@': str(D['ci'][0]), '@CBI@': str(D['ci'][1]),
+        '@CHO@': cchain(D['cho']),
         '@CAO@': str(D['co'][0]), '@CBO@': str(D['co'][1]),
         '@US@': clist(d['uS']), '@UD@': clist(d['uD']),
-        '@OBS@': str(d['obS']), '@CNTS@': 'j' if d['obS'] == 0 else 'S j',
+        '@OBSP@': str(d['obS'] - 1 if d['obS'] >= 1 else 0),
+        '@CNTP@': 'j',
         '@OVPOST@': clist(ovpost), '@HCLEFT@': hcleft,
         '@CLOSE@': close, '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
         '@VISHYP@': ('forall p q, q <> StA ->' if D['qh']
@@ -522,12 +637,30 @@ def render(D):
                    '    exfalso; exact (Hq eq_refl).' if D['qh'] else ''),
         '@FINAL@': (QH_CLOSE if D['qh'] else NQH_CLOSE).replace('@ID@', ID)
                     .replace('@P0@', str(D['p0'])),
-        '@NI@': '%d*j+%d' % D['ci'], '@NO@': '%d*j+%d' % D['co'],
+        '@NI@': ('%d*j+%d' % D['ci'] if D['mode'] == 'one'
+                 else 'j=0: %d ; j=S j\': %d*j\'+%d'
+                      % (D['cz'][1], D['cp'][0], D['cp'][1])),
+        '@NO@': '%d*j+%d' % D['co'],
+        '@INTERIOR@': (INT_ONE if D['mode'] == 'one' else INT_SPLIT),
+        '@GLUEI@': (GLUE_ONE if D['mode'] == 'one' else GLUE_SPLIT),
+        '@A0@': cconf(D['A0']), '@A1@': cconf(D['A1']),
+        '@CHI@': cchain(D['chi']) if D['chi'] else '[]',
+        '@CAI@': str(D['ci'][0]) if D['ci'] else '0',
+        '@CBI@': str(D['ci'][1]) if D['ci'] else '0',
+        '@Z0@': cconf(D['Z0']), '@Z1@': cconf(D['Z1']),
+        '@P0C@': cconf(D['P0']), '@P1C@': cconf(D['P1']),
+        '@CHZ@': cchain(D['chz']) if D['chz'] else '[]',
+        '@CHP@': cchain(D['chp']) if D['chp'] else '[]',
+        '@CAZ@': str(D['cz'][0]) if D['cz'] else '0',
+        '@CBZ@': str(D['cz'][1]) if D['cz'] else '0',
+        '@CAP@': str(D['cp'][0]) if D['cp'] else '0',
+        '@CBP@': str(D['cp'][1]) if D['cp'] else '0',
         '@VAL@': D['val'], '@VISITS@': '\n'.join(vis),
     }
     out = HEADER
-    for k, v in reps.items():
-        out = out.replace(k, v)
+    for _ in range(3):          # the INTERIOR/GLUEI blocks themselves hold holes
+        for k, v in reps.items():
+            out = out.replace(k, v)
     return out
 
 
