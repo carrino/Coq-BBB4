@@ -221,12 +221,27 @@ inner run would terminate at something other than the all-ones fill, and
 _(Answered above: (1) = 96%, (2) = all in the zoo but 37% at a DIFFERENT
 alphabet from the outer, (3) = 79%.)_
 
-### Stage B — the Coq (1 day)
+### Stage B — DONE (wave-15)
 
-Parts 1 and 2.  Axiom-free apart from the standing
-`functional_extensionality_dep`.  Validate by RE-DERIVING one existing `IXP_*`
-board through the new theorem and checking it still compiles — that is a real
-regression test, not a new claim, because those 163 boards are known-good.
+`theories/Counters/NestedLap.v`, and it is smaller than estimated: **63 lines
+of proof**, and `Print Assumptions` on both `inner_to_fill` and
+`nested_overflow` reports **`Closed under the global context`** — zero axioms,
+not even `functional_extensionality_dep`, because neither touches `lift`.
+
+`Checkers/LapDecider.v` is untouched, as designed.
+
+**Validated the way the plan asked.**  `theories/Tests/NestedLapRegression.v`
+re-derives the hand-authored `IXP_0RB0RB_0LC1RD_1RB1LC_0LA0RB` board's
+OVERFLOW branch — the exact statement it proves by hand as `lap_ov_...` —
+through the generic `nested_overflow` instead of its own composition, and it
+compiles with the standing axiom only.  That is a regression test against a
+known-good board, not a new claim.
+
+The remaining hypotheses are exactly the three pieces the emitter must supply:
+
+    Hin    : the inner family's interior lap (ordinary, affine)
+    Hboot  : csteps from the outer overflow anchor to [Cin v0]
+    Hexit  : csteps from [Cin (fill v0)] to the outer successor, up to lift
 
 ### Stage C — the emitter (2-3 days)
 
