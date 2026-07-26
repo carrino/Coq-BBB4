@@ -78,10 +78,34 @@ total ceiling at **~20 of 1,176 (under 2%)**.
    this wave's 141 boards came from a machine it decided.  Two non-overlapping
    small populations — so there is no synergy to harvest either.
 
-### REASSESSMENT: `Inductive` IS the right engine -- the gap is HINTS, not RRBA
+### PROVENANCE, WHICH SETTLES THE "WHICH DECIDER" QUESTION
 
-_Added after John re-read the README against the shapes.  It walks back the
-RRBA emphasis of the section below._
+**mxdys named BOTH.**  His words to John, which are why this wave exists:
+
+> *"see Inductive and RRBA deciders in
+> https://github.com/ccz181078/busycoq/tree/BB6/"*
+
+That is the author of both tools, told what we are trying to do, naming the
+two of them together.  It outranks any argument from README prose about which
+is the better shape match -- and this document contains TWO such arguments,
+made in opposite directions within a day (see the two sections below).  Both
+were over-narrow.  Record the lesson: when the expert has named the tools,
+measure them; do not re-derive the recommendation from documentation.
+
+So the real finding of this wave is not "which decider" but that **neither was
+tested properly**:
+
+| decider | what wave-15 actually did | what it needs |
+|---|---|---|
+| `Inductive` | swept 1,176 machines, 7 configs, **all with `ex_rules = []`** | the counter representations are HINT-GATED; supply `side_binary_Pos_inc_rule` from our own alphabet data |
+| `RRBA` | never ran -- extraction defeated it until the last hour | now extracts (`Unset Extraction AutoInline`); sweep in flight |
+
+Everything below stands as measurement.  The *conclusions* drawn about which
+tool was "the" right one do not.
+
+### The shape argument for `Inductive` (kept, but see the provenance note above)
+
+_Added after John re-read the README against the shapes._
 
 Layering, as mxdys states it:
 
