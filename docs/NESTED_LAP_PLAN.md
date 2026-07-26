@@ -243,10 +243,58 @@ The remaining hypotheses are exactly the three pieces the emitter must supply:
     Hboot  : csteps from the outer overflow anchor to [Cin v0]
     Hexit  : csteps from [Cin (fill v0)] to the outer successor, up to lift
 
-### Stage C — the emitter (2-3 days)
+### Stage C — PROTOTYPED (wave-15); the boot chain is the blocker
 
 Part 3.  Start from `emit_ixp.py` (it already knows the shape) but take the
 inner family from the search rather than the hard-wired `Ip` + `[S1;S0]`.
+
+**What the prototype measured.**  Build the four endpoints — all ordinary
+affine `sside`s in the outer index `j` —
+
+    outer all-ones    rep uS_out (j+obS) ++ soS_out ++ tail_out
+    inner start       rep uD_in  j       ++ soD_in  ++ tail_in     (= E(2^j))
+    inner fill        rep uS_in  j       ++ soD_in  ++ tail_in     (all ones)
+    outer successor   rep uD_out (S j)   ++ soD_out ++ tail_out
+
+and hand each pair to the EXISTING `derive_chain`.  On 12 machines:
+
+* the **exit** chain derives readily (4 of 12 straight away, more with the fix
+  below) — it is an ordinary affine chain and needs nothing new;
+* the **boot** chain is the blocker: 1 of 12.
+
+**It is NOT a search-budget problem.**  Raising `(maxdepth, nmax)` from
+`(24, 64)` to `(48, 256)` and `(64, 512)` changes nothing on any failing
+machine.  The symbolic start/target being handed to the search are wrong, not
+small.
+
+**The cause, and it is the wave-13 §4.1 lesson again.**  `innerfam.py` reports
+the BEST-SCORING inner key, but a machine has ~16-27 keys that decode
+consecutively, and only a particular one is the family the boot can actually
+land on.  Retrying the boot against EVERY detected key instead of the first:
+
+| machine | inner keys | keys giving a boot chain |
+|---|---:|---:|
+| `1RB0LD_1LB1LC_1LD1RC_0RC1LA` | 21 | 3 |
+| `0RB1LC_1LA1RB_1RD0LA_---1LB` | 21 | 3 |
+| `0RB0LC_1LC1RB_0RD1LA_1RB1RC` | 27 | 3 |
+| `1RB0LD_1RC1RA_1LA0LD_0RA1LD` | 16 | 0 |
+| `0RB1LA_1RC0LA_1RD1RB_1LD1RA` | 20 | 0 |
+
+3 of 5, up from 1 of 5 — and the keys that work are never the best-scoring
+one.  They are consistently **`Ip` at a state DIFFERENT from the outer, with a
+short tail** (`Ip@C tail=[S1] far=[S1;S1]`, `Ip@D tail=[S1] far=[S0;S1]`),
+which is exactly the hand-authored reference's
+
+    Cin v = (StC, (Ip v ++ [S1], S0, [S0;S0]))
+
+**So the emitter must enumerate inner keys, not rank them** — the same
+correction that turned 0 interior chains into all of them in wave-13.
+
+**Open for the next session:** 2 of 5 still find no boot chain at any key.
+Instrument `derive_chain` on `1RB0LD_1RC1RA_1LA0LD_0RA1LD` (outer `Jp@A`) —
+the anchor, the inner family and the exit are all verified there, so whatever
+is missing is in the boot's candidate generator, and it is the same shape of
+question wave-14 §3 left open for the Gray `_win_candidates`.
 
 ### Stage D — emit and close out
 

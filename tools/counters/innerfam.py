@@ -93,30 +93,35 @@ def phase_probe(spec, K=6, maxT=400000, maxtail=3):
                     far=list(far), steps=steps, nmid=len(mid), inner=res)
     return None
 
-rows = []
-for line in open(sys.argv[1]):
-    spec = line.strip()
-    if not spec: continue
-    r = None
-    for s in (spec, mirror_spec(spec)):
-        try:
-            r = phase_probe(s)
-        except Exception:
-            r = None
-        if r: break
-    if r is None:
-        print('%s\tNO-OUTER-PHASE' % spec, flush=True); rows.append((spec, None)); continue
-    best = r['inner'][0] if r['inner'] else None
-    print('%s\touter=%s@%s\tsteps=%d\tmid=%d\tinner=%s' % (
-        spec, r['enc'], r['st0'], r['steps'], r['nmid'],
-        ('%s %s n=%d' % (best['key'][0], best['kind'], best['n'])) if best else 'NONE'),
-        flush=True)
-    rows.append((spec, r))
+def main():
+    rows = []
+    for line in open(sys.argv[1]):
+        spec = line.strip()
+        if not spec: continue
+        r = None
+        for s in (spec, mirror_spec(spec)):
+            try:
+                r = phase_probe(s)
+            except Exception:
+                r = None
+            if r: break
+        if r is None:
+            print('%s\tNO-OUTER-PHASE' % spec, flush=True); rows.append((spec, None)); continue
+        best = r['inner'][0] if r['inner'] else None
+        print('%s\touter=%s@%s\tsteps=%d\tmid=%d\tinner=%s' % (
+            spec, r['enc'], r['st0'], r['steps'], r['nmid'],
+            ('%s %s n=%d' % (best['key'][0], best['kind'], best['n'])) if best else 'NONE'),
+            flush=True)
+        rows.append((spec, r))
 
-ok = [r for _, r in rows if r and r['inner']]
-exact = [r for r in ok if any(i['kind'].startswith('EXACT') for i in r['inner'])]
-print('\n=== %d/%d machines: an overflow phase was simulated ===' % (
-    sum(1 for _, r in rows if r), len(rows)))
-print('=== %d have an INNER consecutive family inside it ===' % len(ok))
-print('=== %d of those run EXACTLY 2^(K-1)..2^K-1 (what pow2/fill assume) ===' % len(exact))
-json.dump([{'spec': s, 'r': r} for s, r in rows], open(sys.argv[2], 'w'), indent=1, default=str)
+    ok = [r for _, r in rows if r and r['inner']]
+    exact = [r for r in ok if any(i['kind'].startswith('EXACT') for i in r['inner'])]
+    print('\n=== %d/%d machines: an overflow phase was simulated ===' % (
+        sum(1 for _, r in rows if r), len(rows)))
+    print('=== %d have an INNER consecutive family inside it ===' % len(ok))
+    print('=== %d of those run EXACTLY 2^(K-1)..2^K-1 (what pow2/fill assume) ===' % len(exact))
+    json.dump([{'spec': s, 'r': r} for s, r in rows], open(sys.argv[2], 'w'), indent=1, default=str)
+
+
+if __name__ == '__main__':
+    main()
