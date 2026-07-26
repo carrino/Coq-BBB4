@@ -78,6 +78,28 @@ total ceiling at **~20 of 1,176 (under 2%)**.
    this wave's 141 boards came from a machine it decided.  Two non-overlapping
    small populations — so there is no synergy to harvest either.
 
+### THE DECIDER I TESTED IS NOT THE ONE BUILT FOR OUR SHAPES
+
+John, third push: *"we know the residue is not the Collatz class; we are
+reproducing what mxdys already did."*  He is right, and the README says which
+tool did it — read it against what our residue actually is:
+
+| decider | mxdys' own description of what it decided |
+|---|---|
+| `Inductive` | "Finned", "helix", **SOME OF** bell eats counters, **SOME OF** sync bouncer counters |
+| **`RRBA`** | "shift-recursive" (**counter balanced**, **counter inverting**), **sync bi-counter** (Skelet10) |
+| `RWLAcc` | macro-machine, two hardcoded layers (shift rule, bouncer rule) |
+
+Our residue is ~750 machines whose interior is affine and whose **overflow is
+`Θ(2^j)`** — recursive counters.  That is `RRBA`'s stated class, almost word
+for word.  `Inductive` claims only *some of* the counter families, and
+`Inductive` is the decider this wave measured.
+
+**So the honest headline is not "mxdys' deciders do not fire on our residue".
+It is: the decider designed for our shape class was never run.**  Everything
+in "The numbers" above is a measurement of `Inductive` (plus a 7-machine
+`RWLAcc` sample), and it should be read that way.
+
 ### `RRBA` is the one honest gap
 
 `RRBA` is the decider mxdys describes as handling *shift-recursive* and
