@@ -60,6 +60,30 @@ Per-machine cost is a vm_compute:
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded, in minutes.
 
+FIRST: CHECK FOR RRBA RESULTS in tools/mxdys/results/.  A run was started at
+the end of wave-15 on John's box and its outcome REORDERS everything below.
+RRBA is the decider whose stated class is "shift-recursive (counter balanced,
+counter inverting), sync bi-counter" -- i.e. our residue's shape class -- and
+wave-15 only ever measured Inductive, which its own author says gets "SOME OF"
+the counter families.  Read the three lists as:
+
+  C_residue high  -> THE ROADMAP CHANGES.  RRBA is what eliminated these
+                     machines and the nested lap is us re-deriving it by hand.
+                     Switch to extracting its rule chains: a decided machine
+                     gives a rule loop, the states in that loop's configs are
+                     the ones hit infinitely often (docs/RULE_LADDER.md sec 4),
+                     and LapGlueAbs + the visit-witness machinery already
+                     consume exactly that.  Do NOT keep hand-building Stage C.
+  C_residue ~0
+    and A high    -> the rig works and the residue is beyond RRBA too.  The
+                     ladder build in docs/RULE_LADDER.md is the honest path,
+                     and item (1) below is the near-term boards.
+  A ~0            -> the harness is broken; the C number means nothing.  Do not
+                     record any verdict.
+
+Wave-15's Inductive numbers on the SAME lists, for comparison:
+A_boarded 19/40, B_holdout 0/39, C_residue 0/39.
+
 THE TASK -- THE EXPONENTIAL OVERFLOW, AND MEASURE BEFORE TEMPLATING.
 
   The two big buckets are ONE problem.  WAVE15 section 4 ran ovfshape.py over
