@@ -279,3 +279,75 @@ pattern rather than a constant one.
 3. Decide 9c: quadratic counts vs nested chains.  This is the first thing in
    five waves that the EXISTING theory genuinely cannot express, so it deserves
    a design pass rather than an implementation pass.
+
+## 10. The overflow wall, and the alternating-frame hypothesis
+
+### 10a. The overflow is now the binding constraint — measured
+
+Wiring the `j = 0` split (§9a) moved **138** of the 517 "no interior chain"
+machines past the interior and **0** all the way to a board: every one then
+fails on the OVERFLOW chain.  Peeling the overflow block (`rep uS (S j) =
+uS ++ rep uS j`, unconditional when `obS >= 1`) unlocked **0** of the 385 that
+already had an interior.
+
+| bucket | count |
+|---|---:|
+| interior derives, overflow fails | 385 |
+| interior derives after the §9a split, overflow fails | 138 |
+| **fail ONLY on the overflow** | **~523** |
+
+So ~523 machines — essentially the whole remaining counter residue — are one
+chain away from a board, and that chain is always the msb carry.  Any further
+tape-reading should be spent there, not on interior laps.
+
+### 10b. The hypothesis: the FRAME ALTERNATES with msb parity
+
+John, reading `0RB---_0RC0LD_1LD1RC_0LA1LB`: *"a counter with 1's to the LEFT
+of the bits when the msb is even and 1's to the RIGHT of the bits when the msb
+is odd — when msb is 8 (2^3) it has a 1 to the right, when msb is 16 it has a 1
+to the left."*
+
+Marker-before vs marker-after is exactly the `Ip`/`Mp` one-cell frame shift
+that `WAVE12_FINDINGS.md` §7 identified.  If the frame alternates with the
+parity of the msb exponent, then it flips **precisely at the overflow**, since
+the overflow is the increment `2^k - 1 -> 2^k` that grows the msb.
+
+That would explain the §10a wall exactly and completely:
+
+* the INTERIOR lap keeps the bit length fixed, so both sides of the lap are in
+  the same frame — which is why every interior chain derives;
+* the OVERFLOW lap crosses `2^k - 1 -> 2^k`, so its SOURCE and TARGET are in
+  DIFFERENT frames — and `emit_lapcert` builds `B0` and `B1` from the same
+  `ENCDATA` row, so such a lap is not merely hard to find, it is
+  **unrepresentable**.
+
+It also explains wave-12 §7's observation from the other side: an `Ip`
+recognizer "half-fires" on these because half the anchors really are in the
+`Ip` frame.
+
+**Status: John's reading, not yet independently verified.**  A crude
+frame classifier over that machine's snapshots was inconclusive (its
+state-C words are all-ones prefixes, which satisfy both patterns trivially),
+and the state-A snapshots this session caught were all of ONE bit-length
+parity — consistent with the hypothesis but not a test of it.  **Verify before
+building**: decode the anchor words at CONSECUTIVE bit lengths and check the
+frame flips.  Wave-12 §4 is the standing warning about concluding structure
+from a partial search.
+
+### 10c. What it would take
+
+Small, and inside the existing checker:
+
+1. `emit_lapcert` learns an overflow branch whose SOURCE and TARGET come from
+   different `ENCDATA` rows (`enc_src` / `enc_dst`).  `B0` from `enc_src`'s
+   `cview_none_*`, `B1` from `enc_dst`'s — both lemmas already exist.
+2. The anchor family becomes frame-alternating: `Cc p = (q, (W p ++ tail, S0,
+   far))` with `W p` selected by the parity of `bitlen p`.  This is the only
+   new Coq, and it is one fixpoint plus the fact that `bitlen` is constant
+   across an interior lap and increments at an overflow.
+
+No new soundness surface in `LapDecider.v`: `srun_sound` never sees the
+encoding, only the symbolic sides.
+
+If the hypothesis holds, this is the single highest-value build left — it is
+addressed at ~523 machines, more than four times the 119 boarded this wave.
