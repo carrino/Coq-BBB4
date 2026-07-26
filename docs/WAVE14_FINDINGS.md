@@ -10,10 +10,10 @@ retires the build §10c proposed, and it would have produced zero boards._
 
 | | |
 |---|---:|
-| boards this wave | **57** (46 `LAPC_*` + 11 `LAPG_*`) |
-| `D_remaining` | 1,266 → **1,209** |
-| frozen rows settled | 3,890 → **3,947 / 5,156 (76.6%)** |
-| new Coq | `Counters/GpCounter.v` (axiom-free) |
+| boards this wave | **90** (79 `LAPC_*` + 11 `LAPG_*`) |
+| `D_remaining` | 1,266 → **1,176** |
+| frozen rows settled | 3,890 → **3,980 / 5,156 (77.2%)** |
+| new Coq | `Counters/GpCounter.v`, `Counters/BpCounter.v`, 18 generated `Counters/Alph_*.v` — all axiom-free |
 | board axiom footprint | `functional_extensionality_dep` only |
 | closeout | `audit.py` OK — tables partition the frozen list exactly |
 | census | `census_cache --check` = MATCH at every commit; `theories/Census/` untouched |
@@ -242,6 +242,49 @@ of 1,266.**  §9d called 4 a floor and asked for a periodic-difference
 detector; with a full Gray anchor scan the true figure is 11.  Worth having
 and cheap, but it is not a large class — do not size future work off it.
 
+## 5b. The alphabet does not have to be guessed
+
+Six alphabets had been added one at a time, five of them off a human tape
+reading.  All six have the same shape — a positive recursion with three fixed
+words:
+
+    E xH = C        E (xO q) = A ++ E q        E (xI q) = B ++ E q
+
+and that triple determines an `ENCDATA` row completely:
+
+    interior   E p = rep B j ++ A ++ E q0        ->  uS = B, sS = A
+               E (succ p) = rep A j ++ B ++ E q0 ->  uD = A, sD = B
+    overflow   E p = rep B j ++ C                ->  obS = 0, soS = C
+               E (succ p) = rep A (S j) ++ C     ->  soD = C
+
+`A=[S1;S0] B=[S1;S1] C=[S1]` reproduces the `Ip` row verbatim; `Bp` is
+`A=[S0;S0] B=[S0;S1] C=[S0;S1]`.  So `alphabet_infer.py` reads `(A,B,C)` off
+the machine's own snapshots (`C` is the first word, `A` and `B` the second and
+third with `C` stripped) and verifies the recursion against every remaining
+word; `gen_alphabet.py` turns a triple into a Coq module whose two lemmas are
+the same induction as `ILCounter`'s — **proved, not asserted**, so a wrong
+triple fails to compile.
+
+Measured over the 392 no-anchor machines: **234 (60%) have an inferable
+family, in 18 distinct alphabets, 12 of them new**; the largest covers 59
+machines.  All 18 modules compile, and six of them reproduce
+`Ip`/`Jp`/`Kp`/`Dp`/`Mp`/`Bp` exactly — which is the check that the inference
+is sound rather than curve-fitting.
+
+**This confirms the standing do-not-retry rather than overturning it.**  The
+18 alphabets bought **9 boards**, not 234.  What they bought instead is
+DIAGNOSIS — over the whole residue the failure profile is now
+
+| failure | count |
+|---|---:|
+| no overflow chain (the exponential wall, §3) | 532 |
+| no interior chain | 433 |
+| no visit witness (quasi-halting) | 164 |
+| **no anchor family at all** | **47** |
+
+against 185 with no anchor before.  The residue is now almost entirely two
+named, measured problems instead of one named problem and a dark bucket.
+
 ## 6. What to do next, in order
 
 1. **The exponential overflow is the residue's main class (≈439+ machines)
@@ -276,7 +319,8 @@ and cheap, but it is not a large class — do not size future work off it.
 3. The `QUAD/QUAD` (22) and `HIGHER/HIGHER` (48) machines are the §9c family
    and are also out-of-model.  Same design question as (1) — a count that is
    not affine in `j`.
-4. The 185 with no anchor at all, and the 27 genuine mxdys holdouts.
+4. The **47** (was 185) with no anchor family at all, and the 27 genuine mxdys
+   holdouts.
 
 ## 7. Do-not-retry, added this wave
 

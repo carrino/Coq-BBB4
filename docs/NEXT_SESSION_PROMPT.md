@@ -43,7 +43,7 @@ NON-NEGOTIABLE: never touch theories/Census/; `python3 tools/census_cache.py
 LapCertGlue are axiom-FREE -- keep them that way).  Everything under tools/ is
 UNTRUSTED; the kernel re-checks every board.
 
-STATE: 3,947 of the frozen 5,156 settled (76.6%); D_remaining = 1,209.
+STATE: 3,980 of the frozen 5,156 settled (77.2%); D_remaining = 1,176.
 Per-machine cost is a vm_compute:
   python3 tools/counters/emit_lapcert.py --list FILE --emit    (Ip/Jp/Kp/Dp/Mp)
   python3 tools/counters/emit_graycert.py --list FILE --emit   (Gray)
@@ -112,9 +112,13 @@ THEN, in ranked order (all independent of the above):
       family, lap(j) = (j+1)(j+2).  Same design question as the nested lap: a
       count that is not affine in j.  Solve them together, not separately.
 
-  (3) The 185 with NO anchor family at all (392 by the ovfshape decode).
-      Triage before assuming anything (wall_survey.py + residue_triage.py +
-      triage.py fingerprint + lapshape).
+  (3) The 47 (was 185) with NO anchor family at all.  alphabet_infer.py +
+      gen_alphabet.py INFER a counter's word family from its own tape as a
+      triple (A,B,C) and generate the Coq module; 18 families are already
+      wired.  Run those on the 47 before assuming anything.
+
+  The residue's whole failure profile is now: 532 no overflow chain, 433 no
+  interior chain, 164 no visit witness, 47 no anchor.
 
   (4) The 27 genuine mxdys holdouts (tools/census_holdouts_kept.txt) -- the
       real endgame, and what John actually wants to be working on.
