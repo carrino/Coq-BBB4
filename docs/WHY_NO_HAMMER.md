@@ -8,7 +8,8 @@ and this file records what happened when it was._
 ## The answer: yes there is a hammer, and it cannot work
 
 The NGramHist sweep over the current 1,385-machine residue:
-**0 boardable in the first 200 fresh machines** (850 swept-and-failed total).
+**0 boardable out of 896 machines swept** (the sweep was stopped once the
+mechanism below was measured; 0/896 with no hit is already conclusive).
 That is not a tuning problem.  The mechanism is now measured directly.
 
 ## The mechanism
