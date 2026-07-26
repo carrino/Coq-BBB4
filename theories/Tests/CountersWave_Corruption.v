@@ -20,7 +20,7 @@
 From Coq Require Import Arith Bool List PArith.
 From BBB4 Require Import BBB4_Statement CTape Mirror.
 From BBB4.Counters Require Import WTape WaveCounter.
-From BBB4.Machines.Counters Require Import Wave_17 Wave_27 Wave_36 Wave_7.
+From BBB4.Machines.Counters Require Import Wave_17 Wave_27 Wave_36 Wave_7 Wave_6 Wave_24.
 Import ListNotations.
 
 (** ** Wall discipline *)
@@ -201,7 +201,7 @@ Proof. vm_compute. reflexivity. Qed.
 
     First: the mirror is genuine. *)
 Example mirror_is_tm_7m : mirror_tm tm_7 = tm_7m.
-Proof. exact mirror_ok. Qed.
+Proof. exact BBB4.Machines.Counters.Wave_7.mirror_ok. Qed.
 
 (** The genuine 1-step FT [A0/1L>B] reads the frontier top (left). *)
 Example ok_FT_7 : wsteps false true tm_7m 1 (StA, ([S1], S0, [])) = Some (StB, ([], S1, [S1])).
@@ -248,6 +248,124 @@ Proof. vm_compute. reflexivity. Qed.
 
 Example boot_wrong_index_7 : match csteps tm_7m 41 CTape.c0 with
                              | Some c => ceqb c (Cf7 [4; 2; 1])
+                             | None => false
+                             end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** #6 (1RB0LB_0LB0RC_1LD1RC_1LA1RB): the 4-step 0-writing cross
+
+    #6's frontier turnaround digs into the RIGHT blank (the [B1/0R>C]
+    step) and its lead gadget -- the SPAWN -- digs into the LEFT blank
+    (the closing [D0/1L>A]).  Both must die with the corresponding wall
+    on, and the cross cycle must stop realising its unit when the
+    [C0/1L>D] leg is re-routed. *)
+
+Example wall_FT6_right : wsteps true true tm_6 3 (StC, ([S1], S0, [])) = None.
+Proof. reflexivity. Qed.
+
+Example ok_FT6 : wsteps true false tm_6 5 (StC, ([S1], S0, []))
+               = Some (StA, ([], S1, [S1; S1])).
+Proof. reflexivity. Qed.
+
+Example wall_spawn6_left : wsteps true true tm_6 5 (StA, ([S0; S1], S1, [S1])) = None.
+Proof. reflexivity. Qed.
+
+(** tm_6 with [C0] re-routed to StA instead of StD: the closing leg of
+    the 4-step cross cycle is destroyed. *)
+Definition tm_6_mut : TM := fun q s =>
+  match q, s with
+  | StA, S0 => mk S1 DR StB | StA, S1 => mk S0 DL StB
+  | StB, S0 => mk S0 DL StB | StB, S1 => mk S0 DR StC
+  | StC, S0 => mk S1 DL StA | StC, S1 => mk S1 DR StC  (* was StD *)
+  | StD, S0 => mk S1 DL StA | StD, S1 => mk S1 DR StB
+  end.
+
+Example ok_cross6 : wsteps true true tm_6 4 (StA, ([S1; S1], S1, []))
+                  = Some (StA, ([], S1, [S1; S1])).
+Proof. reflexivity. Qed.
+
+Example mut_cross6 : wsteps true true tm_6_mut 4 (StA, ([S1; S1], S1, []))
+                   <> Some (StA, ([], S1, [S1; S1])).
+Proof. vm_compute. discriminate. Qed.
+
+Example boot_anchor_distinct_6 : ceqb (Cf6 [4; 2; 1]) (Cf6 [5; 3; 1]) = false.
+Proof. reflexivity. Qed.
+
+Example boot_not_next_6 : ceqb (Cf6 [4; 2; 1]) (Cf6 (nextf 1 [4; 2; 1])) = false.
+Proof. reflexivity. Qed.
+
+Example boot_reaches_6 : match csteps tm_6 74 CTape.c0 with
+                         | Some c => ceqb c (Cf6 [4; 2; 1])
+                         | None => false
+                         end = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Example boot_wrong_index_6 : match csteps tm_6 73 CTape.c0 with
+                             | Some c => ceqb c (Cf6 [4; 2; 1])
+                             | None => false
+                             end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** #24 (1RB1LA_1RC1LD_1LD0RD_0RD0LA): the side-L sibling of #6
+
+    Boarded through its mirror [tm_24m], which is [tm_6] relabelled by
+    (StA StC)(StB StD).  The same three controls, relabelled -- plus the
+    mirror discipline itself: the genuine machine must NOT be its own
+    mirror, and must NOT reach the mirror's anchor. *)
+
+Example wall_FT24_right : wsteps true true tm_24m 3 (StA, ([S1], S0, [])) = None.
+Proof. reflexivity. Qed.
+
+Example ok_FT24 : wsteps true false tm_24m 5 (StA, ([S1], S0, []))
+                = Some (StC, ([], S1, [S1; S1])).
+Proof. reflexivity. Qed.
+
+Example wall_spawn24_left : wsteps true true tm_24m 5 (StC, ([S0; S1], S1, [S1])) = None.
+Proof. reflexivity. Qed.
+
+(** tm_24m with [A0] re-routed to StC instead of StB (the image of #6's
+    [C0 : StD -> StA] mutation): the 4-step cross cycle is destroyed. *)
+Definition tm_24m_mut : TM := fun q s =>
+  match q, s with
+  | StA, S0 => mk S1 DL StC | StA, S1 => mk S1 DR StA  (* was StB *)
+  | StB, S0 => mk S1 DL StC | StB, S1 => mk S1 DR StD
+  | StC, S0 => mk S1 DR StD | StC, S1 => mk S0 DL StD
+  | StD, S0 => mk S0 DL StD | StD, S1 => mk S0 DR StA
+  end.
+
+Example ok_cross24 : wsteps true true tm_24m 4 (StC, ([S1; S1], S1, []))
+                   = Some (StC, ([], S1, [S1; S1])).
+Proof. reflexivity. Qed.
+
+Example mut_cross24 : wsteps true true tm_24m_mut 4 (StC, ([S1; S1], S1, []))
+                    <> Some (StC, ([], S1, [S1; S1])).
+Proof. vm_compute. discriminate. Qed.
+
+Example boot_anchor_distinct_24 : ceqb (Cf24 [4; 2; 1]) (Cf24 [5; 3; 1]) = false.
+Proof. reflexivity. Qed.
+
+Example boot_reaches_24 : match csteps tm_24m 71 CTape.c0 with
+                          | Some c => ceqb c (Cf24 [4; 2; 1])
+                          | None => false
+                          end = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Example boot_wrong_index_24 : match csteps tm_24m 70 CTape.c0 with
+                              | Some c => ceqb c (Cf24 [4; 2; 1])
+                              | None => false
+                              end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** Mirror discipline: the genuine side-L machine is NOT the side-R one it
+    is boarded through, and does not reach that machine's anchor. *)
+Example mirror_is_tm_24m : mirror_tm tm_24 = tm_24m.
+Proof. exact BBB4.Machines.Counters.Wave_24.mirror_ok. Qed.
+
+Example mirror_moves_24 : tm_24 StA S0 <> tm_24m StA S0.
+Proof. discriminate. Qed.
+
+Example boot_unmirrored_24 : match csteps tm_24 71 CTape.c0 with
+                             | Some c => ceqb c (Cf24 [4; 2; 1])
                              | None => false
                              end = false.
 Proof. vm_compute. reflexivity. Qed.
