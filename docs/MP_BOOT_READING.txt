@@ -46,7 +46,38 @@ Measured: first anchor at v = 8, 16, 32, 64 for K = 4,5,6,7, at
 t = 61, 113, 213, 409.  The value found is always 2^(K-1) -- the start of the
 LAST octave -- confirming the fragmentation.
 
-=== WHAT IS NOT YET RESOLVED (be honest about this) ===
+=== RESOLVED: THE TERMINATOR WAS ONE CELL SHORT ===
+
+Reading (A,B,C) off the absolute-column picture instead of trusting ENCDATA:
+
+    A = [S0;S1]      (bit 0, with its marker)
+    B = [S1;S1]      (bit 1, with its marker)
+    C = [S0;S1;S1]   (the terminator)
+
+ENCDATA['Mp'] has the SAME A and B but C = soD = [S1;S1] -- ONE CELL SHORT.
+That single missing cell is the whole bug.  Measured over 10 machines of the
+class, boot to the FIRST inner anchor:
+
+  with ENCDATA['Mp']    K=4..7 -> 61, 113, 213, 409     EXP(ratio -> 2)
+  with C=[S0;S1;S1]     K=4..7 -> 21,  25,  29,  33     AFFINE (+4)
+
+Uniform +4 per K on every machine tested, i.e. boot ~ 4K + c.  The 24%
+"exponential boot" bucket is an artifact of a wrong terminator and is now
+EMPTY.
+
+The inner start value is  2^(K-1) + 1  (measured: 17, 33, 65, 129 for
+K = 4,5,6,7), not 2^(K-1).  That is a happy accident for the nested lap:
+2^j + 1 has width j+1, so IXPGadgets.fill(2^j + 1) = 2^(j+1) - 1, the END of
+the range -- so the octave-crossing worry below does NOT arise, and
+NestedLap.nested_overflow applies as-is with v0 = pow2 j + 1.
+
+The induced ENCDATA row (obS = 0, unlike Mp's 1):
+
+    uS = B = [S1;S1]      sS = A = [S0;S1]
+    uD = A = [S0;S1]      sD = B = [S1;S1]
+    obS = 0   soS = soD = C = [S0;S1;S1]
+
+=== SUPERSEDED (kept so the dead end is not re-walked) ===
 
 The hand decode above is trustworthy; the AUTOMATED follow-up is not yet.
 Decoding the same configurations with the Mp row from ENCDATA
@@ -62,7 +93,12 @@ marker-after are the SAME tape at a one-cell offset
 choice, and the frame must be fixed by ABSOLUTE column parity -- which the
 table above does (bits even, markers odd).
 
-=== IMPLICATION FOR THE NESTED LAP ===
+=== IMPLICATION FOR THE NESTED LAP (superseded -- see RESOLVED above) ===
+
+Written before the terminator was corrected.  With v0 = pow2 j + 1 the inner
+run does NOT cross an octave boundary and this concern does not arise.
+The reasoning is kept only because it explains why the wrong terminator
+looked like a third nesting level:
 
 The inner run crosses an octave boundary, so IXPGadgets.fill (all-ones of
 the CURRENT width) stops one octave early: fill(4) = 7, not 15.  The inner

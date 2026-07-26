@@ -314,8 +314,38 @@ against `K` — `tools/counters/bootshape.py`, over a 150-machine sample
 `Mp` is 94% exponential-boot; everything else is 95-100% affine.  So the
 Stage C target population is essentially *`Jp` + `Alph_10_11_11` + `Ip`*.
 
-**And the `Mp` exponential boot is a DETECTOR ARTIFACT, not a machine
-property** — John read the class off the tape and it checks out
+**And the `Mp` exponential boot is GONE — the terminator was one cell
+short.**  John read the class off the tape; re-deriving `(A,B,C)` from the
+absolute-column picture gives `A=[S0;S1] B=[S1;S1] C=[S0;S1;S1]`, where
+`ENCDATA['Mp']` has the same `A`,`B` but `C=[S1;S1]`.  Measured on 10
+machines of the class, boot to the first inner anchor:
+
+| terminator | boot at K=4..7 | degree |
+|---|---|---|
+| `ENCDATA['Mp']`, `C=[S1;S1]` | 61, 113, 213, 409 | **EXP** (ratio → 2) |
+| tape-derived, `C=[S0;S1;S1]` | 21, 25, 29, 33 | **AFFINE (+4)** |
+
+Uniform on every machine tested.  **The 24% "exponential boot" bucket is an
+artifact of a wrong terminator and is now empty** — so essentially the whole
+`AFFINE`/`EXP2` population has an affine boot, and the Stage C target is
+~500 machines rather than ~380.
+
+The inner start is `2^(K-1) + 1` (measured 17, 33, 65, 129), not `2^(K-1)`.
+That is fortunate: `2^j + 1` has width `j+1`, so
+`IXPGadgets.fill (pow2 j + 1) = 2^(j+1) - 1` — the end of the range — and
+`nested_overflow` applies as-is with `v0 = pow2 j + 1`, with no octave
+crossing and no third nesting level.
+
+The induced `ENCDATA` row (note `obS = 0`, unlike `Mp`'s `1`):
+
+    uS = [S1;S1]   sS = [S0;S1]   uD = [S0;S1]   sD = [S1;S1]
+    obS = 0        soS = soD = [S0;S1;S1]
+
+Full derivation and the column table: `docs/MP_BOOT_READING.txt`.
+`tools/counters/mpboot.py` reproduces the measurement.
+
+_(Superseded reading, kept so it is not re-walked: the boot was first thought
+to be a machine property)_ — John read the class off the tape and it checks out
 (`docs/MP_BOOT_READING.txt`):
 
 > *"this is just a counter with 1s to the left of each bit, msb on the left
