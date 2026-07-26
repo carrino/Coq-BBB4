@@ -1,0 +1,85 @@
+=== Mp EXPONENTIAL-BOOT exemplar: 0RB1LC_1LA1RB_1LD0LA_1RD0RB ===
+outer anchor family Mp@A.  boot(K=3..7) = 33, 61, 113, 213, 409  (ratio -> 2)
+For contrast an AFFINE-boot machine boots in 4K+3 steps.
+
+The question: what is the overflow phase doing that DOUBLES the walk to
+the inner anchor?  Two candidates the measurements cannot separate:
+  (a) a THREE-level nest, or
+  (b) the inner counter really starts LOW (near 1) and runs all the way
+      to 2^K-1, so the value 2^(K-1) that innerfam locks onto is reached
+      exponentially late -- innerfam accepts a SUBSEQUENCE of a longer
+      consecutive run as 'exactly 2^(K-1)..2^K-1'.
+
+=== absolute-coordinate spacetime, one overflow phase (K=4) ===
+            col  01234567
+60       A p=0    01101111
+64       A p=-2   01101111
+68       A p=0    01111111
+72       A p=-2   01111111
+76       B p=2    01111111
+80       B p=6    011111110
+84       C p=2    011111011
+88       C p=-2   010101011
+92       B p=0    1010101011
+96       B p=-2   0111101011
+100      B p=2    0111101011
+104      C p=-2   0110111011
+108      B p=-2   0110111011
+112      C p=-2   0111111011
+116      B p=-2   0111111011
+120      B p=2    0111111011
+124      C p=2    0111111111
+128      C p=-2   0110101111
+132      B p=-2   0110101111
+136      C p=-2   0111101111
+140      B p=-2   0111101111
+144      B p=2    0111101111
+148      C p=-2   0110111111
+152      B p=-2   0110111111
+156      C p=-2   0111111111
+160      B p=-2   0111111111
+164      B p=2    0111111111
+168      B p=6    0111111111
+172      A p=4    01111111011
+176      A p=0    01110101011
+180      D p=-4   011010101011
+184      A p=-2   101110101011
+188      B p=-2   011110101011
+192      A p=0    011111101011
+196      A p=-4   001011101011
+200      B p=-2   011011101011
+204      A p=-4   001111101011
+208      B p=-2   011111101011
+212      B p=2    011111101011
+216      A p=0    011110111011
+220      A p=-4   001010111011
+224      B p=-2   011010111011
+228      A p=-4   001110111011
+232      B p=-2   011110111011
+236      A p=0    011111111011
+240      A p=-4   001011111011
+244      B p=-2   011011111011
+248      A p=-4   001111111011
+252      B p=-2   011111111011
+256      B p=2    011111111011
+260      A p=4    011111111111
+264      A p=0    011110101111
+268      A p=-4   001010101111
+272      B p=-2   011010101111
+276      A p=-4   001110101111
+280      B p=-2   011110101111
+284      A p=0    011111101111
+288      A p=-4   001011101111
+292      B p=-2   011011101111
+296      A p=-4   001111101111
+300      B p=-2   011111101111
+304      B p=2    011111101111
+308      A p=0    011110111111
+312      A p=-4   001010111111
+316      B p=-2   011010111111
+320      A p=-4   001110111111
+324      B p=-2   011110111111
+328      A p=0    011111111111
+332      A p=-4   001011111111
+336      B p=-2   011011111111
+340      A p=-4   001111111111
