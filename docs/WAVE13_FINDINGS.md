@@ -233,10 +233,34 @@ reflected-binary (Gray) code.
 32"*) is the same thing with a paired step: `gray^-1` = 4,5, 8,9, 12,13, 16,17…
 
 This is NOT a new digit alphabet.  `Ip/Jp/Kp/Dp/Mp` all encode the BINARY
-expansion and share `MonoCounter.cview`; a Gray word is a different function of
-`n` and needs its own decomposition lemmas (a `GpCounter.v`, `cview`-analogue
-included).  The lap itself should then be easy — Gray increment flips exactly
-one bit — but the ANCHOR family and its successor relation are new.
+expansion; a Gray word is a different function of `n` and needs its own
+`GpCounter.v`.
+
+**But it reuses `cview` verbatim, and it is AFFINE** — corrected after John's
+follow-up reading (*"when it carries the msb it keeps the top 2 bits set: 12 ->
+15 -> 9, then 24 -> 31 -> 17, then 48 -> 63 -> 33"*), which is exactly
+`g(2^k) = 2^k + 2^(k-1)`, i.e. `g(8)=12`, `g(16)=24`, `g(32)=48`.
+
+Writing `Gp p` for the Gray word LSB-first and `j` for `cview`'s carry index
+(the trailing-ones count of `p`), VERIFIED for every `p` in 2..39:
+
+    j >= 1:  Gp p        = rep [S0] (j-1) ++ [S1] ++ [x]  ++ T
+             Gp (succ p) = rep [S0] (j-1) ++ [S1] ++ [~x] ++ T
+    j  = 0:  the two words differ in cell 0 only
+
+One repeated block, one flipped cell, same carry index — so the LAP IS AFFINE
+and the existing `sside`/`srun` model expresses it unchanged.  What is needed
+is only:
+
+  1. `theories/Counters/GpCounter.v`: `Gp` plus those two lemmas, proved the
+     same way as `cview_some_I`/`cview_none_I` (induction on `p`);
+  2. one `ENCDATA` row, with the interior branch split on the extra bit `x`
+     (two sub-cases) exactly as 9a splits on `j = 0`.
+
+So Gray is a NEAR-TERM build, not new theory.  It also means the residue's
+"weird" counters are two quite different things: Gray (affine, in-model) and
+the round-trip family of 9c (quadratic, out-of-model).  Do not conflate them —
+both were sitting in the same "no interior chain" bucket.
 
 A constant-difference detector found **4 of 35** resistant machines as Gray,
 and it MISSES the paired-step ones (`0RB0LA_1LA1RC_0RD1RD_1LB0LB` decodes as
@@ -247,7 +271,11 @@ pattern rather than a constant one.
 ### 9e. Ranked consequence
 
 1. Wire 9a + 9b into the emitter (mechanical, no new Coq, ~35% of the 517).
-2. Re-run the Gray detector with periodic differences to size 9d properly.
+2. Build `GpCounter.v` + the Gray `ENCDATA` row (9d).  The decomposition is
+   verified and affine; this is an implementation pass, not a design pass.
+   Re-run the Gray detector with PERIODIC differences first to size the class —
+   the constant-difference version scores paired-step Gray machines as
+   "neither" and so under-counts.
 3. Decide 9c: quadratic counts vs nested chains.  This is the first thing in
    five waves that the EXISTING theory genuinely cannot express, so it deserves
    a design pass rather than an implementation pass.
