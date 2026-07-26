@@ -67,7 +67,13 @@ say "6/6  the three-way control"
 # C is the question.  A high C is the result that changes the roadmap.
 for t in A_boarded B_holdout C_residue; do
   echo "--- $t ---"
-  ./rrba_measure "$REPO/tools/mxdys/control/$t.txt" 60 > "$OUT/rrba_$t.tsv" 2>&1 || true
+  # args: LIST TIMEOUT NPARAM.  rrba_measure tries NPARAM parameter sets per
+  # machine, so wall clock is 40 * NPARAM * TIMEOUT worst case -- at 60s x 10
+  # that is ~7 h PER LIST.  4 sets x 10 s caps a list at ~27 min and still
+  # covers "s1k6T10000", the setting mxdys uses in 385 of his own RRBA proofs.
+  # Widen only after a first signal: RRBA_TMO=30 RRBA_NP=10 bash ...
+  ./rrba_measure "$REPO/tools/mxdys/control/$t.txt" "${RRBA_TMO:-10}" "${RRBA_NP:-4}" \
+      > "$OUT/rrba_$t.tsv" 2>&1 || true
   awk -F'\t' '{c[$2]++} END {printf "  n=%d  NONHALT=%d  FAIL=%d\n", NR, c["NONHALT"], c["FAIL"]}' \
     "$OUT/rrba_$t.tsv"
 done
