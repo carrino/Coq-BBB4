@@ -14,15 +14,15 @@ is the authority on what is actually *boarded*) splits it as:
 
 | status | count | machines |
 |---|---|---|
-| **boarded** | **11** | Wave_7, Wave_17, Wave_24, Wave_27, Wave_36, Wave_6, Double_9, NGHHold_00..03 |
-| unproven | 16 | below |
+| **boarded** | **16** | Wave_7, Wave_17, Wave_24, Wave_27, Wave_36, Wave_6, Double_9, NGHHold_00..08 |
+| unproven | 11 | below |
 
-The 16 unproven, by BBB `results/counterN.cert` family:
+The 11 unproven, by BBB `results/counterN.cert` family:
 
 | family | n | machines (cert #) |
 |---|---|---|
-| tower | 4 | #20 `1RB0RD_1LC1LB_1RA0LB_1LC1RA`, #21 `1RB0RD_1LC1LB_1RD0LB_1RD1RA`, #34 `1RB1RA_0LC0RA_1LC1LD_1LA0LC`, #40 `1RB1RD_1LC1LB_1RA0LB_1RD0RC` |
-| double | 3 | #30 `1RB1LD_1RC0LA_1RD0RD_1LB1RB`, #32 `1RB1LD_1RC0RB_1LA0RC_0LD0LA`, #37 `1RB1RB_1RC1LC_1LD0RA_1LB0LB` |
+| tower | ~~4~~ 1 | #20 `1RB0RD_1LC1LB_1RA0LB_1LC1RA` (#21/#34/#40 boarded, §3b) |
+| double | ~~3~~ 1 | #32 `1RB1LD_1RC0RB_1LA0RC_0LD0LA` (#30/#37 boarded, §3b) |
 | blockdbl | 3 | #11 `1RB0LD_1RC0RC_1LA1RB_0LC0LD`, #13 `1RB0RB_1LC1RA_1RA0LD_0LB0LD`, #28 `1RB1LC_1LC1RD_1LA0LC_0RD0RB` |
 | ~~xd~~ | ~~3~~ 0 | **all three BOARDED this session** (§3a) |
 | fractal | 2 | #3 `1RB0LA_1LC0RD_0LB1LA_0RB1LA`, #5 `1RB0LA_1LC1RD_0LC1LA_0RD0RB` |
@@ -197,6 +197,36 @@ higher rungs (`n=3`, `k=8`, bigger `MAXCTX`/fuel), `RepWL`, `irules`-QH, and
 not weeks of Coq.
 
 ---
+
+## 3b. The escalation sweep: FIVE more, and n=3 was the axis
+
+`tools/nghist/holdout_escalate.py` over the 16 survivors, rungs
+`(4,3) (6,3) (8,2) (8,3) (12,2)`.  **5 hits / 16**, every one of them at
+**gram order n = 3** — the axis the first pass never touched:
+
+| holdout | family | k, n | contexts |
+|---|---|---|---|
+| `1RB1LD_1RC0LA_1RD0RD_1LB1RB` | **double #30** | 4, 3 | 178 |
+| `1RB1RB_1RC1LC_1LD0RA_1LB0LB` | **double #37** | 4, 3 | 169 |
+| `1RB0RD_1LC1LB_1RD0LB_1RD1RA` | tower #21 | 6, 3 | 246 |
+| `1RB1RA_0LC0RA_1LC1LD_1LA0LC` | tower #34 | 6, 3 | 261 |
+| `1RB1RD_1LC1LB_1RA0LB_1RD0RC` | tower #40 | 6, 3 | 176 |
+
+Boards `NGHHold_04..08`, all `functional_extensionality_dep` only.
+
+**I predicted this would come back empty and was wrong**, on the reasoning
+that "everything so far closed at the cheapest rung, so survivors need a
+different engine, not bigger parameters."  The flaw: the first pass only ever
+varied `k` (history) at `n = 2`.  History and gram order are not
+interchangeable — `n` is how much of the *neighbourhood* each context sees,
+`k` is how far *back* it remembers, and these machines needed width, not
+depth.  Record the lesson as: **sweep the axes independently before
+concluding an engine is exhausted.**
+
+This takes #30 off the board — the machine the recon called "a genuinely hard
+parametric proof, larger than any landed counter machine," with a full
+session of banked reconnaissance — without writing any of it.  Same for the
+tower family, whose alternative was porting a 1,500-line table interpreter.
 
 ## 4. blockdbl recon (#11/#13/#28) — the next hand-written family
 

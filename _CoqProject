@@ -559,6 +559,11 @@ theories/Machines/NGHHold/NGHHold_00.v
 theories/Machines/NGHHold/NGHHold_01.v
 theories/Machines/NGHHold/NGHHold_02.v
 theories/Machines/NGHHold/NGHHold_03.v
+theories/Machines/NGHHold/NGHHold_04.v
+theories/Machines/NGHHold/NGHHold_05.v
+theories/Machines/NGHHold/NGHHold_06.v
+theories/Machines/NGHHold/NGHHold_07.v
+theories/Machines/NGHHold/NGHHold_08.v
 theories/Tests/CountersWave_Corruption.v
 
 # --- counters track: double ---
@@ -1442,5 +1447,6 @@ theories/Closeout/CB_35.v
 theories/Closeout/CB_36.v
 theories/Closeout/CB_37.v
 theories/Closeout/CB_38.v
+theories/Closeout/CB_39.v
 theories/Closeout/Closeout.v
 theories/Closeout/CloseoutFinal.v
