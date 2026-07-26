@@ -229,6 +229,20 @@ blockdbl needs `MeasureGlue`-style nesting like `Bounce_8.v`, not the flat
 Also note #28 already appears in the relabel-sibling table above, so try the
 cheap route on it first.
 
+**#11 and #13 are siblings of each other** (`perm=(2,0,1,3)`, no mirror; the
+relabelling moves `StA`, so it is a transcription rather than a transport --
+the `Wave_6` -> `Wave_24` route).  So blockdbl is really ONE hand proof plus
+one mechanical transcription plus #28, not three jobs.  Checked the same way
+across {double, blockdbl, fractal, tower}: this is the ONLY internal sibling
+pair -- in particular #30/#32/#37 are three genuinely separate proofs, and
+none of them is a relabelling of the boarded `Double_9`.  So "reuses the
+DblCounter gray algebra verbatim" in NEXT_SESSION.md means the ALGEBRA is
+shared, not the file.
+
+That is an argument for doing **blockdbl before double** despite blockdbl
+needing new nesting machinery: 3 machines for ~2 units of work, versus 3
+machines for 3.
+
 ---
 
 ## 5. Two leads that were closed off (do not re-chase)
