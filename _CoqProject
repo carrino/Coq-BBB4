@@ -1270,6 +1270,9 @@ theories/Machines/NGHStage/NGH_07.v
 theories/Counters/IXPGadgets.v
 
 theories/Checkers/LapDecider.v
+theories/Counters/LapCertGlue.v
+theories/Machines/Counters/LAPC_1RB1LA_1LC1RD_1LB1RA_0LA0RB.v
+
 theories/Closeout/CloseoutKit.v
 theories/Closeout/CB_00.v
 theories/Closeout/CB_01.v
