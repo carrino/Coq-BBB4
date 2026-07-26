@@ -96,7 +96,19 @@ THEN, in ranked order (all independent of the above):
       wsteps_frame / cycL / cycR, which today state only their ENDPOINTS.  One
       theorem, not one per machine.
 
-  (2) The QUAD (25) and HIGHER (49) machines -- WAVE13 section 9c's round-trip
+  (1b) TWO SMALL, CONCRETE LEADS, both already localized (WAVE14 section 3):
+      * 13 PARITY-AFFINE machines are IN model -- affine on each parity class
+        of j, which is WAVE13 section 9b's two-pass carry.  They need only the
+        m=2 re-index (j = 2i+r, block unit u^2) wired into the emitter.  No new
+        theory; section 9b's own exemplar is in the set.
+      * 8 machines whose EXP4-at-a-binary-anchor marks them as GRAY (11 of the
+        19 EXP4 are exactly this wave's Gray boards).  On
+        0RB0LA_1LA1RC_0RD1RD_1LB0LB the Gp anchor family is present and closes
+        affinely at 4j+8, yet all five symbolic branches fail in derive_chain.
+        Not the tail depth (a 4-way x,y peel does not help) and not the search
+        budget.  Instrument _win_candidates on that configuration.
+
+  (2) The QUAD (25) and remaining HIGHER (17, mostly ~3^j -- never read) machines -- WAVE13 section 9c's round-trip
       family, lap(j) = (j+1)(j+2).  Same design question as the nested lap: a
       count that is not affine in j.  Solve them together, not separately.
 

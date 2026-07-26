@@ -136,6 +136,49 @@ COST (complete sweep, all 1,266):
 are the ones the existing checker can still reach; they are a different
 population, `Kp`-dominated where the `EXP2` bucket is `Jp`-dominated.
 
+### The `HIGHER` bucket is three things, and one of them is in-model
+
+Re-running `degree()` with parity and base-3/4 tests splits the 49 `HIGHER`
+machines cleanly:
+
+| refined class | count | status |
+|---|---:|---|
+| `EXP4` (cost ~`4^j`) | 19 | **11 are the Gray boards** — see below |
+| `HIGHER` (mostly ~`3^j`) | 17 | never read; no hypothesis |
+| `PARITY-AFFINE` | 13 | **IN model** — §9b's two-pass carry |
+
+* **`PARITY-AFFINE`** is affine on each parity class of `j` separately (e.g.
+  `2j+2` on even `j`, `4j+4` on odd).  That is exactly `WAVE13_FINDINGS.md`
+  §9b's two-pass carry — the traversal period is 2 CELLS while the block unit
+  is 1 — and §9b says the existing checker expresses it after re-indexing
+  `j = 2i + r` with `u^2` as the block unit.  Its exemplar
+  `0RB0LA_0LC1RD_0RD1LC_1LA1RB` is in this set, which confirms the reading.
+  **These 13 need no new theory, only the `m = 2` re-index wired into the
+  emitter.**
+* **`EXP4` is a GRAY SIGNATURE, not a class.**  11 of the 19 are precisely the
+  11 machines boarded through `GpCounter.v` this wave: a Gray word decoded at
+  a BINARY anchor makes the apparent lap cost grow like `4^j`.  So `EXP4` at a
+  binary anchor is a cheap detector for "try the Gray family here", and the 8
+  leftovers are the natural next Gray targets.
+
+### The 8 leftover `EXP4` machines — a localized, unfinished lead
+
+`0RB0LA_1LA1RC_0RD1RD_1LB0LB` is §9d's *second* Gray exemplar ("counts up,
+then down, then bumps the msb: 8->15->9").  Its `Gp p = gray(2p)` anchor
+family **is present and does close, affinely**: at StB on the mirror, the lap
+costs a flat `4j + 8` for every `j` measured, with no `j = 0` split needed.
+`gray_anchors` finds the anchor; all five symbolic branches then fail in
+`derive_chain`.
+
+Diagnosed as far as: the lap immediately steps RIGHT off the anchor into blank
+tape (the machine keeps scratch on the far side), so the chain must open with
+`SWinR`; peeling a second high cell into `post` (a 4-way `x,y` split instead
+of the 2-way `x` split) does **not** help, so it is not the tail depth.  The
+search budget is not the problem either (depth 24, `nmax` 64, against a
+12-step lap).  **Next step: instrument `_win_candidates` on this
+configuration** — the anchor and the lap are both verified correct, so
+whatever it is, it is in the candidate generator, and 8 machines are behind it.
+
 ## 4. Three bugs were holding 46 finished certificates
 
 `wall_survey.py` found 46 machines that derive COMPLETELY — anchor, both

@@ -9,10 +9,12 @@ machines.  This makes it.
 
 Both branches are classified by finite differences of the lap cost:
 
-    AFFINE   d1 constant                       -- inside the certificate model
-    QUAD     d2 constant                       -- outside it (section 9c)
-    EXP2     d2 doubles                        -- outside it, c*2^j + a*j + b
-    HIGHER   neither
+    AFFINE         d1 constant                 -- inside the certificate model
+    PARITY-AFFINE  affine on each parity of j  -- IN model after re-indexing
+                                                  j = 2i+r (section 9b)
+    QUAD           d2 constant                 -- outside it (section 9c)
+    EXP2/3/4       d2 scales by 2 / 3 / 4      -- outside it, c*b^j + a*j + b
+    HIGHER         none of the above
 
 [srun] returns a step count [ca*j + cb] and [sside] carries its count as
 [a*j + b], so ONLY AFFINE is expressible.  A machine whose overflow is EXP2 is
@@ -77,9 +79,25 @@ def degree(pts):
     d2 = [d1[i + 1] - d1[i] for i in range(len(d1) - 1)]
     if len(set(d2)) == 1:
         return 'QUAD', None
-    if len(d2) >= 3 and all(x > 0 for x in d2) and all(
-            d2[i + 1] == 2 * d2[i] for i in range(len(d2) - 1)):
-        return 'EXP2', None
+    if len(d2) >= 3 and all(x > 0 for x in d2):
+        for base, name in ((2, 'EXP2'), (4, 'EXP4'), (3, 'EXP3')):
+            if all(d2[i + 1] == base * d2[i] for i in range(len(d2) - 1)):
+                return name, None
+    # affine on each PARITY class of j: wave-13 section 9b's two-pass carry,
+    # where the traversal period is 2 CELLS while the block unit is 1.  The
+    # existing checker expresses this after re-indexing j = 2i + r, so these
+    # are IN-model and should not be filed with the exponentials.
+    ev = [(j, v) for j, v in pts if j % 2 == 0]
+    od = [(j, v) for j, v in pts if j % 2 == 1]
+
+    def _aff(q):
+        if len(q) < 3:
+            return False
+        d = [q[i + 1][1] - q[i][1] for i in range(len(q) - 1)]
+        return len(set(d)) == 1
+
+    if _aff(ev) and _aff(od):
+        return 'PARITY-AFFINE', None
     return 'HIGHER', None
 
 
