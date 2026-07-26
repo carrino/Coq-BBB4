@@ -1515,6 +1515,8 @@ theories/Machines/Counters/LAPC_1RB____1LC0RD_0LC1RD_0RB0RD.v
 
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 theories/Counters/LapGlueAbs.v
+theories/Counters/NestedLap.v
+theories/Tests/NestedLapRegression.v
 theories/Machines/Counters/LAPC_0RB0LC_1LA1RB_0RC1LD_1RC0LD.v
 theories/Machines/Counters/LAPC_0RB0LC_1LA1RB_1RD0LC_0RD1LC.v
 theories/Machines/Counters/LAPC_0RB0RC_1LA1RB_0LC1RD_1LC0RD.v
