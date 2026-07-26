@@ -229,6 +229,21 @@ blockdbl needs `MeasureGlue`-style nesting like `Bounce_8.v`, not the flat
 Also note #28 already appears in the relabel-sibling table above, so try the
 cheap route on it first.
 
+**ANCHOR TRAP (measured 2026-07-26).**  `verify.c`'s `bd_build_D` puts the
+head ON the rightmost 1 (`pos = x-1`).  The event actually reachable from the
+blank tape has it on the **blank one cell further right**.  Both anchors
+"work" for the C verifier's finite check, but only the second is the orbit,
+and building the first one in Coq sends the run off into a non-recurring
+trajectory.  The orbit for #13, confirmed exact for i = 0..3:
+
+    D(i) = 1^(3*2^i) 0 1^(2i+2),  head on the BLANK past the last 1, StB
+    lap step counts: 34, 106, 358, 1294
+
+Note also the accumulator is `2i+2`, not `verify.c`'s `t = 2j-1` -- same
+`t -> t+2` recurrence, different offset, because the cert's j-indexing starts
+at 2 and its anchor is the shifted one.  Take the anchor from the blank-tape
+run, not from the cert.
+
 **#11 and #13 are siblings of each other** (`perm=(2,0,1,3)`, no mirror; the
 relabelling moves `StA`, so it is a transcription rather than a transport --
 the `Wave_6` -> `Wave_24` route).  So blockdbl is really ONE hand proof plus
