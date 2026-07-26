@@ -288,17 +288,36 @@ residue.
 
 **The rate, now MEASURED over complete rungs.**
 
-    rung (2,3)   0 hits / 1217   0.0%
-    rung (4,3)   3 hits / 1244   0.2%
-    rung (6,3)   5 hits / 925    0.5%   (rung INCOMPLETE -- died at 925/1241)
+LADDER COMPLETE.  Every rung, every machine:
 
-The rate RISES with k: 0.0 -> 0.2 -> 0.5%, exactly mirroring the holdout
-front, where every hit also came from k=4 and k=6 and none from k=2.  So the
-population difference is real but smaller than the first (2,3)-only reading
-suggested, and (6,3) was still finding machines when the run stopped.
-Rung (6,3) has 316 targets left and the R_QH tier has not been run at all;
-both resume with `gram3_sweep.py 6 3 3 150` and `... --qh` (the miss files
-are the resume state).
+    never-QH  (2,3)   0 hits / 1217   0.0%
+    never-QH  (4,3)   3 hits / 1244   0.2%
+    never-QH  (6,3)   5 hits / 1244   0.4%
+    R_QH      (2,3)   0 hits / 1146   0.0%
+    R_QH      (4,3)   0 hits / 1146   0.0%
+    ------------------------------------------
+    TOTAL             8 hits / 1244   0.64%
+
+Three readings worth keeping:
+
+1. **The rate rises with k and then stops.**  0.0 -> 0.2 -> 0.4% across
+   k = 2/4/6, and the 312 machines left over on the (6,3) rung after the
+   interruption gave 0 more.  Same shape as the holdout front, where every
+   hit came from k=4 or k=6 and none from k=2 -- but ~10x lower throughout.
+2. **The R_QH tier is a complete null.**  0 / 1146 at both rungs.  A whole
+   different tier, not another parameter notch, and it found nothing.  That
+   is the strongest single piece of evidence that the residue's blocker is
+   not context width: widening n did essentially nothing for the wrap route
+   either.
+3. **0.64% over the pool is 8 machines.**  All 8 are boarded
+   (`theories/Machines/NGHG3/NGHG3_00..07.v`).  This lever is now exhausted
+   -- do not re-run it.
+
+So the practical conclusion from the retracted section survives on complete
+data: n=3 reaches the residue and does not burn it down.  The MECHANISM
+remains untested, though point 2 above is at least consistent with it.  The
+real levers are still TERMINOLOGY step 4's pattern measures and the engines
+never pointed at either front (RepWL, irules-QH, LapDecider).
 
 So the lever does reach the residue, and thinly.  0.2% over the whole pool is
 single-digit machines, against 5/16 on the holdouts -- a difference of two
