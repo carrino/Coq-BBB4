@@ -312,11 +312,49 @@ against `K` — `tools/counters/bootshape.py`, over a 150-machine sample
 | **`Mp`** | **2** | **31** |
 
 `Mp` is 94% exponential-boot; everything else is 95-100% affine.  So the
-Stage C target population is essentially *`Jp` + `Alph_10_11_11` + `Ip`*, and
-**`Mp` needs its own tape reading before it is templated at all** — its
-overflow phase is doing something structurally different, which is exactly
-the kind of class-level question `WAVE14_FINDINGS.md` says to take to John
-with a `spacetime.py` dump rather than guess at.
+Stage C target population is essentially *`Jp` + `Alph_10_11_11` + `Ip`*.
+
+**And the `Mp` exponential boot is a DETECTOR ARTIFACT, not a machine
+property** — John read the class off the tape and it checks out
+(`docs/MP_BOOT_READING.txt`):
+
+> *"this is just a counter with 1s to the left of each bit, msb on the left
+> and lsb stays in position 1 and msb moves over each time msb carries"*
+
+Decoding one phase in absolute columns confirms it exactly: bits at EVEN
+columns, markers constantly 1 at ODD columns immediately to their left, and
+the counter running **4,5,...,15** at `K=4` — from `2^(K-2)` to `2^K-1`,
+spanning TWO octaves, not `2^(K-1)..2^K-1`.
+
+"The msb moves over each time the msb carries" means the word LENGTHENS at
+each octave boundary.  `innerfam` keys candidate families on
+`(state, tail, far)`, and word length is part of that key — so ONE inner run
+is fragmented into one key per octave, `innerfam` locks onto the LAST
+fragment, and the walk to it includes the whole earlier count.  That is the
+measured `EXP(ratio → 2)`.  Confirmed: the first anchor found is at
+`v = 8, 16, 32, 64` for `K = 4,5,6,7` — always `2^(K-1)`, the start of the
+last octave.
+
+Consequences, in order:
+
+1. **`innerfam`'s key must not include word length** for this class, or the
+   inner family must be detected by absolute column parity rather than by
+   `(tail, far)`.  Wave-14 §7 already warns that marker-before vs
+   marker-after is a one-cell framing choice
+   (`MB(m) ++ [S1] = [S1] ++ MA(m)`), and that a frame claim must be settled
+   in ABSOLUTE columns — which the table in `MP_BOOT_READING.txt` does.
+2. **`fill` stops an octave early.**  The inner run crosses an octave
+   boundary, so `IXPGadgets.fill` (all-ones of the CURRENT width) gives
+   `fill(4) = 7`, not `15`.  The inner level has its own interior lap AND its
+   own overflow (the msb move), i.e. the same two-branch structure as the
+   outer.  `nested_overflow` is stated generically in `Cin` and composes with
+   itself, so no new theory should be needed — but that is a THIRD nesting
+   level in practice and must be measured before it is built.
+3. **Do not template against the tools' current `Mp` reading.**  Decoding the
+   value-4 configuration with `ENCDATA['Mp']` at tail splits 0..3 returns
+   `None`, so the alphabet/offset the tools use does not line up with the
+   structure on the tape.  Re-derive `(A,B,C)` and the anchor offset from the
+   absolute-column picture first.
 
 Examples: `0RB0LC_1LC1RB_0RD1LA_1RB1RC` boots in `4K+3` steps (15,19,23,27,31)
 and its boot chain DERIVES; `1RB0LD_1LB1LC_1LD1RC_0RC1LA` boots in

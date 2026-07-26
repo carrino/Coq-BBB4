@@ -1,4 +1,81 @@
-=== Mp EXPONENTIAL-BOOT exemplar: 0RB1LC_1LA1RB_1LD0LA_1RD0RB ===
+=== Mp EXPONENTIAL-BOOT class: JOHN'S READING, CONFIRMED ===
+
+John, reading the tape (2026-07-26):
+
+  "this is just a counter with 1s to the left of each bit, msb on the left
+   and lsb stays in position 1 and msb moves over each time msb carries"
+
+VERIFIED against 0RB1LC_1LA1RB_1LD0LA_1RD0RB by decoding one overflow phase
+(K=4) in ABSOLUTE columns at the state-A blank-head snapshots:
+
+    col:  -10 -9 -8 -7 -6 -5 -4 -3 -2 -1  0 +1
+  t= 37:    1  1  0  1  0  1  1  1  0  1  0  0
+  t= 39:    1  1  0  1  0  1  1  1  0  1  1  0
+  t= 45:    1  1  0  1  0  1  1  1  1  1  0  0
+  t= 47:    1  1  0  1  0  1  1  1  1  1  1  0
+  t= 61:    1  1  0  1  1  1  0  1  0  1  0  0
+  t= 71:    1  1  0  1  1  1  0  1  1  1  1  0
+  t= 81:    1  1  0  1  1  1  1  1  0  1  0  0
+  t= 91:    1  1  0  1  1  1  1  1  1  1  1  0
+
+  * VARYING columns are -6, -4, -2, 0  -- EVEN.  Those are the bits.
+  * columns -9, -7, -5, -3, -1 are constantly 1 -- ODD.  Those are the
+    markers, each sitting immediately to the LEFT of its bit.  Exactly
+    "1s to the left of each bit".
+  * reading msb-on-the-left off the varying columns:
+        t=37 -> 0100 = 4      t=61 -> 1000 =  8
+        t=39 -> 0101 = 5      t=71 -> 1011 = 11
+        t=45 -> 0110 = 6      t=81 -> 1100 = 12
+        t=47 -> 0111 = 7      t=91 -> 1111 = 15
+
+  So ONE overflow phase runs the counter 4,5,6,...,15 -- from 2^(K-2) to
+  2^K - 1, spanning TWO octaves.  NOT 2^(K-1)..2^K-1.
+
+=== WHY THIS EXPLAINS THE EXPONENTIAL "BOOT" ===
+
+"msb moves over each time msb carries" means the WORD GETS LONGER at each
+octave boundary (4..7 has its msb at col -4, 8..15 at col -6).  innerfam.py
+keys candidate inner families on (state, tail, far), and the word length is
+part of that key -- so a single inner run is FRAGMENTED across one key per
+octave.  innerfam then locks onto the LAST fragment, whose values happen to
+be exactly 2^(K-1)..2^K-1, and the walk to it includes the whole earlier
+count.  That is the measured EXP(ratio -> 2), and it is an artifact of the
+detector, not of the machine.
+
+Measured: first anchor at v = 8, 16, 32, 64 for K = 4,5,6,7, at
+t = 61, 113, 213, 409.  The value found is always 2^(K-1) -- the start of the
+LAST octave -- confirming the fragmentation.
+
+=== WHAT IS NOT YET RESOLVED (be honest about this) ===
+
+The hand decode above is trustworthy; the AUTOMATED follow-up is not yet.
+Decoding the same configurations with the Mp row from ENCDATA
+(A=uD=[S0;S1], B=uS=[S1;S1], C=soD=[S1;S1]) at tail splits 0..3 returns None
+for the value-4 configuration -- so the alphabet/offset the tools use does
+not line up with the structure read off the tape.  Do NOT template against
+the tools' current Mp reading; re-derive the (A,B,C) and the anchor offset
+from the absolute-column picture above first.
+
+Note also WAVE14 section 7's standing warning: marker-before and
+marker-after are the SAME tape at a one-cell offset
+(MB(m) ++ [S1] = [S1] ++ MA(m)), so "Mp" versus "Ip" here is a framing
+choice, and the frame must be fixed by ABSOLUTE column parity -- which the
+table above does (bits even, markers odd).
+
+=== IMPLICATION FOR THE NESTED LAP ===
+
+The inner run crosses an octave boundary, so IXPGadgets.fill (all-ones of
+the CURRENT width) stops one octave early: fill(4) = 7, not 15.  The inner
+level therefore has its own interior lap AND its own overflow (the msb
+move), i.e. it needs the same two-branch treatment as the outer level.
+NestedLap.nested_overflow is stated generically in Cin and composes with
+itself, so this should be reachable without new theory -- but it is a THIRD
+level of nesting in practice, and it should be measured before it is built.
+
+31 of the 34 exponential-boot machines are Mp, so one correct reading here
+covers the class.
+
+
 outer anchor family Mp@A.  boot(K=3..7) = 33, 61, 113, 213, 409  (ratio -> 2)
 For contrast an AFFINE-boot machine boots in 4K+3 steps.
 
@@ -9,6 +86,7 @@ the inner anchor?  Two candidates the measurements cannot separate:
       to 2^K-1, so the value 2^(K-1) that innerfam locks onto is reached
       exponentially late -- innerfam accepts a SUBSEQUENCE of a longer
       consecutive run as 'exactly 2^(K-1)..2^K-1'.
+
 
 === absolute-coordinate spacetime, one overflow phase (K=4) ===
             col  01234567
