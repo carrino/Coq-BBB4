@@ -228,6 +228,40 @@ parametric proof, larger than any landed counter machine," with a full
 session of banked reconnaissance — without writing any of it.  Same for the
 tower family, whose alternative was porting a 1,500-line table interpreter.
 
+## 3d. NGramHist is EXHAUSTED on the 11 survivors (measured -- stop grinding it)
+
+Three passes, recorded so nobody re-runs them:
+
+| pass | rungs | result |
+|---|---|---|
+| 1 | k in {2,4}, n=2 | 4 hits / 20 |
+| 2 | (4,3) (6,3) (8,2) (8,3) (12,2) | 5 hits / 16 |
+| 3 | (8,3) (12,3) (2,4) (4,4) (6,4) (8,4) | **0 hits / 9** |
+
+Pass 3 covered every non-wrap survivor at both higher history AND higher gram
+order, 300s per rung, and found nothing.  Combined with pass 2's five hits at
+n=3, the picture is sharp: machines inside NGramHist's reach fall at MODEST
+parameters, and the ones outside it are not coaxed in by more of either axis.
+
+So the 9 tested survivors -- fractal #3/#5, blockdbl #11/#13/#28, wave4 #15,
+tower #20, double #32, and the v4-irules machine -- are outside this engine,
+full stop.  Do not spend further compute climbing k or n on them.  (The two
+`1RB---` machines were excluded from pass 3: they genuinely quasihalt, so the
+never-QH tier can only ever reject them; they need the QHBound route on their
+3-state core.)
+
+What remains for these 11, in order of expected value:
+
+1. **The untried engines.** RepWL, irules-QH and LapDecider have never been
+   run on the holdouts at any parameters.  Each has a liveness argument of a
+   different shape, which is exactly what an NGramHist exhaustion result
+   argues for.  Cheap, unattended, no Coq.
+2. **The hand track**, where the recon is already banked: #32 has a validated
+   three-unit `cycR`/`cycL` decomposition (`tools/counters/lap32.py`, S3e),
+   and #11/#13 are relabel siblings of each other so blockdbl is one proof
+   plus one transcription plus #28.
+3. **The wrap pair** via the 3-state-core re-root.
+
 ## 3c. The n=3 lever does NOT transfer to the residue (measured)
 
 Having found that gram order n=3 boarded 5 holdouts that n=2 could not, the
