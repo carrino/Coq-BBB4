@@ -149,12 +149,19 @@ THE TASK -- THE EXPONENTIAL OVERFLOW, AND MEASURE BEFORE TEMPLATING.
 
 THEN, in ranked order (all independent of the above):
 
-  (1) The 99 AFFINE/AFFINE machines inside the no-interior bucket.  These are
-      IN MODEL and the search simply fails to find the interior chain, which
-      is the same shape of gap as WAVE13 section 4.1 -- where making the
-      window search target-aware turned 0 chains into all of them.
-      Instrument derive_chain on a few and find out why.  Best
-      boards-per-hour in the residue if it is a real gap.
+  (1) START HERE.  The 141 AFFINE/AFFINE machines -- affine interior AND
+      affine overflow, so fully IN MODEL, no new theory needed.  MEASURED at
+      the end of wave-15: the emitter derives 0 of 141, failing with
+      "no interior chain" on 121 and "no overflow chain" on 20.  ovfshape says
+      the lap is affine; derive_chain cannot find it.  It is a SEARCH gap, on
+      a named population, and it is the same shape as WAVE13 section 4.1 where
+      making the window search target-aware turned 0 chains into all of them.
+      The list regenerates with:
+        python3 tools/counters/ovfshape.py --list tools/closeout/frozen_unproven.txt
+      then take the int=AFFINE ovf=AFFINE rows.  Instrument derive_chain on
+      three of them and find out what it is refusing.  Best boards-per-hour in
+      the residue by a wide margin -- and it was ranked first in the wave-14
+      prompt and skipped, which is why wave-15 boarded only one batch.
 
   (2) The 6 remaining no-visit-witness machines.  Their missing state is
       genuinely LIVE, but fires only in the INTERIOR lap, where

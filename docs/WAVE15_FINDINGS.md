@@ -100,7 +100,25 @@ It is: the decider designed for our shape class was never run.**  Everything
 in "The numbers" above is a measurement of `Inductive` (plus a 7-machine
 `RWLAcc` sample), and it should be read that way.
 
-### `RRBA` is the one honest gap
+### `RRBA` NOW EXTRACTS -- the recipe is solved, the number is not
+
+Late in the wave the extraction was unblocked.  The fix is one flag:
+
+    Unset Extraction AutoInline.
+
+The default inliner explodes on RRBA's functor body -- `coqc` stack-overflows
+at the default stack and runs past 55 minutes with an unlimited one.  With
+auto-inlining off it completes in ~25 min and emits 277 KB of OCaml, and
+`rrba_measure` links against it.  (Do NOT also set `Extraction Conservative
+Types`: it emits erased type arguments OCaml rejects.)
+
+**But RRBA is SLOW** -- it did not finish the 40-machine control in 10 minutes
+even at the smallest parameters in mxdys' own grid.  So the decisive number is
+still missing, and `tools/mxdys/run_rrba.sh` exists to get it on a machine
+with time.  Everything in "The numbers" above remains a measurement of
+`Inductive` only.
+
+### `RRBA` was the one honest gap
 
 `RRBA` is the decider mxdys describes as handling *shift-recursive* and
 *sync bi-counter* shapes, which is the closest description to our residue, so
@@ -329,6 +347,31 @@ unchanged in character from wave-14 §3 and still needing the nested lap.
   unbuilt.)
 * **`emit_graycert.py` for new boards.**  A full run over the 1,035 reports
   `no Gray anchor` on every one; wave-14 took all 11 there are.
+
+## 5b. The in-model bucket is a CONFIRMED search gap -- and it is the target
+
+`ovfshape.py` classifies 141 residue machines as `AFFINE` interior AND
+`AFFINE` overflow: fully inside `LapDecider`'s model, no new theory required.
+Running the emitter over all 141 (with the 25-alphabet zoo, including this
+wave's `Alph_01_11_011`):
+
+| outcome | count |
+|---|---:|
+| boards | **0** |
+| `no interior chain` | 121 |
+| `no overflow chain` | 20 |
+
+So `ovfshape` says the lap is affine and `derive_chain` cannot find it.  That
+is not a model limit and not an alphabet limit — **it is a search gap, now
+confirmed on a named 141-machine population**, and it is the same shape as
+`WAVE13_FINDINGS.md` §4.1, where making the window search target-aware turned
+0 chains into all of them.
+
+This is the highest-value target in the residue: the machines are in model,
+the population is measured, and the fix is one search change rather than a
+theory.  It was ranked first in the wave-14 prompt and skipped in favour of
+the nested lap, which is the wrong order and cost this wave its second batch
+of boards.
 
 ## 6. What to do next, in order
 
