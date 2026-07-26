@@ -254,6 +254,37 @@ none of them is a relabelling of the boarded `Double_9`.  So "reuses the
 DblCounter gray algebra verbatim" in NEXT_SESSION.md means the ALGEBRA is
 shared, not the file.
 
+### #32 reconnoitred (`tools/counters/probe32.py`)
+
+MEASURED anchor, exact for j = 1..6 (again NOT the certificate's -- the
+anchor trap above applies here too):
+
+```coq
+Cf(j) = (StB, (rep [S0] z ++ rep [S1;S1;S0] k ++ [S1;S1;S1], S0, []))
+        k = 2^j - 1,   z = 2j + 5
+```
+
+tape order `1^3 (011)^k 0^z`, head on the blank past the last 0.  Laps
+210 / 710 / 2574 / 9758 / 37950 / 149630, ratio -> 4, so Theta(len^2).
+
+Sweep decomposition (maximal same-direction runs):
+
+```
+B+1:1  A-1:LONG | B+1:3 A-1:1 (B+1:4 A-1:1)^k B+1:3 | A-1:LONG | ...
+```
+
+The inner repeat count is **exactly k** -- a `cycR` unit, 5 steps, net +3 --
+bracketed by entry/exit `B+1:3` gadgets.  But a later group in the SAME lap
+shows `B+1:5` where the first had `B+1:4`: that is the `0^z` accumulator's
+carry firing.  So #32 is a comb ratchet nested inside an odometer, exactly
+#30's shape, and it is in **#30's difficulty class, not #6's** -- flat
+`LapGlue` will not close it.
+
+Do the same measurement for #37 before committing to a shared family lemma;
+and read the carry rule off the executor rather than deriving it (the #30
+recon's digit transitions change LENGTH, and there is no reason to expect
+#32's to be gentler).
+
 That is an argument for doing **blockdbl before double** despite blockdbl
 needing new nesting machinery: 3 machines for ~2 units of work, versus 3
 machines for 3.
