@@ -1,11 +1,11 @@
-# Next-session prompt — mxdys' deciders
+# Next-session prompt — the exponential overflow is the endgame
 
-_Rewritten 2026-07-26 at the end of wave-14 (branch
-`claude/residue-reduction-4-2-5syxph`).  Wave-14 boarded 90, measured that the
-overflow wall is EXPONENTIAL rather than a missing encoding, and — at the very
-end — mxdys pointed John at his implementation, which turns out to carry
-exactly the count language we are blocked on.  Full assessment and the staged
-plan: `docs/MXDYS_DECIDERS_PLAN.md`.  Paste-ready below._
+_Rewritten 2026-07-26 at the end of wave-15 (branch
+`claude/coq-residue-inductive-deciders-bzz3ae`).  Wave-15 ran the mxdys Stage-0
+gate and got a clear NO (12 of 1,176, and `~halts` boards nothing), then took
+the quasi-halting bucket with a much smaller theorem than planned — 141 boards,
+`D_remaining` 1,176 → 1,035.  Full assessment: `docs/WAVE15_FINDINGS.md`.
+Paste-ready below._
 
 **Before pasting, check:** substitute the branch the session should develop on,
 and name any files a concurrent session owns.
@@ -17,154 +17,123 @@ Continue the (4,2) residue reduction in carrino/Coq-BBB4, on a new branch off
 main.
 
 READ FIRST, in this order:
-  docs/MXDYS_DECIDERS_PLAN.md -- THE TASK.  mxdys' Inductive/RRBA deciders,
-                               what they do and do not give us, and a staged
-                               plan with a measure-first decision gate.
-  docs/WAVE14_FINDINGS.md   -- sections 2, 3 and 5b: what the overflow wall
-                               actually is (EXPONENTIAL, measured three ways),
-                               why wave-13's section 10c build is retired, and
-                               why inferring the alphabet bought diagnosis
-                               rather than boards.
+  docs/WAVE15_FINDINGS.md   -- sections 2, 3 and 4.  Section 2 is why mxdys'
+                               deciders are now do-not-retry (measured, not
+                               assumed).  Section 3 is the absorbing-set
+                               closer, which retired a planned multi-day
+                               build.  Section 4 is THE TASK: ~750 of the
+                               remaining 1,035 are one problem.
+  docs/WAVE14_FINDINGS.md   -- section 3 only: the overflow wall is
+                               EXPONENTIAL, measured three ways.
   docs/LAPDECIDER.md        -- our checker's design, and why the model is
                                AFFINE in the carry index.  That affineness is
                                the binding constraint -- read it as a limit.
-  docs/WHY_NO_HAMMER.md     -- why exactness is required at all, and why the
-                               LIVENESS half is the hard half here.
   docs/CLOSEOUT_ROUTE_A.md  -- how boards become D_remaining shrinkage.
 
 ENV: apt coq 8.18.0 -- `apt-get install -y coq`, then
-`coqc -native-compiler no -Q theories BBB4 <file>`.  No opam bootstrap.  Build
-a checker's dependency closure by coqdep-ordering its deps and compiling them
-individually; `make all` pulls in the census.
-
-mxdys' code is a PUBLIC repo, not one of this session's sources; add_repo
-refuses cross-owner adds, so just clone it:
-  git clone --depth 1 --branch BB6 https://github.com/ccz181078/busycoq.git
-(that works through the agent proxy; it is ~55 MB).
+`coqc -native-compiler no -Q theories BBB4 <file>`.  No opam bootstrap.  The
+Counters+Checkers .vo closure is 44 files and builds in ~30 s; `make all`
+pulls in the census, so don't.
 
 NON-NEGOTIABLE: never touch theories/Census/; `python3 tools/census_cache.py
 --check` must stay MATCH.  A board counts only when its file compiles and
-`Print Assumptions` shows functional_extensionality_dep only (LapDecider and
-LapCertGlue are axiom-FREE -- keep them that way).  Everything under tools/ is
-UNTRUSTED; the kernel re-checks every board.
+`Print Assumptions` shows functional_extensionality_dep only (LapDecider,
+LapCertGlue and LapGlueAbs are axiom-FREE -- keep them that way).  Everything
+under tools/ is UNTRUSTED; the kernel re-checks every board.
 
-STATE: 3,980 of the frozen 5,156 settled (77.2%); D_remaining = 1,176.
-The residue's failure profile, measured over all of it:
-  532  no overflow chain   (the exponential wall)
-  433  no interior chain
-  164  no visit witness    (the quasi-halting bucket)
-   47  no anchor family at all
+STATE: 4,121 of the frozen 5,156 settled (79.9%); D_remaining = 1,035.
+Failure profile over the residue (tools/counters/wall_survey.py):
+  510  anchor + interior derive, OVERFLOW fails
+  354  anchor derives, INTERIOR fails
+   21  no anchor family at all
+    6  complete lap, no visit witness
 Per-machine cost is a vm_compute:
   python3 tools/counters/emit_lapcert.py --list FILE --emit   (24 alphabets)
-  python3 tools/counters/emit_graycert.py --list FILE --emit  (Gray)
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
-exactly what you boarded (the Closeout.vo compile needs the ~719-file board
-.vo closure, ~85 min once).
+exactly what you boarded, in minutes.
 
-THE TASK -- STAGE 0 FIRST, AND IT IS A GATE.
+THE TASK -- THE EXPONENTIAL OVERFLOW, AND MEASURE BEFORE TEMPLATING.
 
-  Verified already (docs/MXDYS_DECIDERS_PLAN.md section 1, do not re-derive):
-  their top-level theorem is `~halts` only and there is NO quasi-halting layer
-  anywhere in that tree, so it does not answer our question directly.  But the
-  model they build to prove it is exposed as first-class rules
-  `multistep_expr (a b : config_expr) (n : nat_expr)` where config_expr
-  carries its state Q, and the count language has nat_mul and
-  powsum k x = ((k+2)^x - 1)/(k+1) -- a geometric sum.  powsum 0 = 2^x - 1.
-  That is precisely our wall.  No Axiom, no Admitted; Coq 8.18; the framework
-  is a functor and Individual52.v is 26 lines; their tape (Stream Sym) and
-  ours (nat -> Sym) are isomorphic; verify/Extraction.v gives a native decider.
+  The two big buckets are ONE problem.  WAVE15 section 4 ran ovfshape.py over
+  all 354 "no-interior" machines: 134 are AFFINE interior / EXP2 overflow, so
+  they are not really blocked on the interior at all -- fixing the interior
+  search moves them into the no-overflow bucket, not into a board.  Net,
+  ~750 of 1,035 are gated on an overflow that costs Theta(2^j), which `sside`
+  (a*j+b) and `srun` (ca*j+cb) cannot represent BY CONSTRUCTION.
 
-  STAGE 0 (hours, no Coq of ours):
-    1. Write BB42 + Individual42.v (~30 lines, pattern on Individual52.v).
-    2. Build the extracted OCaml decider.
-    3. Run Inductive and RRBA over all 1,176 of
-       tools/closeout/frozen_unproven.txt.
-    4. Report THREE numbers:
-       (i)   how many are decided ~halts at all;
-       (ii)  of those, how many have a rule chain whose configurations cover
-             ALL FOUR states -- for those, liveness is free and they are
-             boards;
-       (iii) how many need a nat_powsum / nat_mul rule (this cross-checks our
-             own ovfshape.py buckets: 496 EXP2, 25 QUAD, 19 EXP4, 17 ~3^j).
+  The build is WAVE14 section 6 route (1), unchanged and now unavoidable:
+  teach LapDecider a NESTED LAP -- an inner anchor family run 2^j times, which
+  is what the overflow physically does (WAVE14 section 2: it counts the whole
+  range again in the shifted frame).  theories/Counters/IXPGadgets.v already
+  carries the positive-arithmetic gadgets a hand-built instance needed
+  (pow2, fill, cview_none_shape), and wave-12 boarded 163 machines of exactly
+  this family BY HAND through it -- so the target shape is known-good, and the
+  job is to make it a checked step rather than a per-machine proof.
 
-  DECISION GATE on (ii).  Large -> do Stages 1-3, that is the wave.  Near zero
-  but (i) large -> the chains exist but their endpoints do not cover the
-  states; the work moves INSIDE a rule, which is bigger but still bounded --
-  re-plan before building.  (i) small -> their search is tuned for BB(6)
-  shapes; say so plainly and fall back to the nested lap below.
-
-  STAGE 1 (1-2 days): theories/Bridge/BusyCoqTM.v -- Stream Sym <-> nat -> Sym,
-  their config <-> our cconf, and
-     multistep_csteps : BC.multistep (tr_tm tm) n (tr a) (tr b) ->
-                        csteps tm n a = Some b.
-  Axiom-free apart from the standing functional_extensionality_dep.  This is
-  the only genuinely new mathematics and it is one theorem.
-
-  STAGE 2 (2-3 days): theories/Bridge/RulesToLap.v --
-     rules_to_never_qh : chain_valid -> chain_returns_shifted ->
-                         states_covered = true -> NeverQuasiHaltsSt tm
-  built on Stage 1 plus the existing glue_neverqh, and a glue_qh variant for
-  the 164 quasi-halters.  ONE theorem, not one per machine -- same
-  architecture as srun_sound.
-
-  STAGE 3: emit one small .v per machine (TM table, rule chain as data, a
-  vm_compute, the closing theorem), then the usual closeout.
-
-  DECIDE WITH JOHN before vendoring: either bring their code in-tree, or keep
-  it OUT of tree as a search ORACLE and re-prove each rule with our own
-  checker extended by powsum counts.  The second keeps our axiom story and
-  provenance simple; the first is less work.
-
-IF STAGE 0 FAILS, the fallback is unchanged and section 1c of the plan still
-paid for itself: it tells us the count language a nested LapDecider needs is
-`a*j + b` extended by `powsum k` and one multiplication, and that
-side_binary/side_binary_Pos/side_BL are the right tape constructors.  Build
-that into LapDecider rather than inventing a design.
+  Run ovfshape.py on your candidate set before templating anything.  The
+  interior version of that measurement was missing for five waves and hid a
+  quadratic family; the overflow version was missing for six and hid this one.
 
 THEN, in ranked order (all independent of the above):
 
-  (1) The 164 QUASI-HALTING machines (WAVE13 section 6).  John: "qh is fine, we
-      just need to know it qh before 32M."  One of its two blockers is gone --
-      mirrorize learned the QH closing shape (WAVE14 section 4.2).  The ones
-      with StA targeted need ONE new fact: "the lap visits only states in S",
-      which needs a states-visited variant of wsteps_frame / cycL / cycR
-      (today they state only their ENDPOINTS).  One theorem, not one per
-      machine.  NOTE: this is the same shape as Stage 2 above -- if you do the
-      bridge, do these with it.
+  (1) The 99 AFFINE/AFFINE machines inside the no-interior bucket.  These are
+      IN MODEL and the search simply fails to find the interior chain, which
+      is the same shape of gap as WAVE13 section 4.1 -- where making the
+      window search target-aware turned 0 chains into all of them.
+      Instrument derive_chain on a few and find out why.  Best
+      boards-per-hour in the residue if it is a real gap.
 
-  (2) Two small localized leads (WAVE14 section 3):
-      * 13 PARITY-AFFINE machines are IN model -- affine on each parity class
-        of j (WAVE13 section 9b's two-pass carry).  They need the m=2 re-index
-        (j = 2i+r, block unit u^2).  MEASURED: only 3 of the 13 derive both
-        parity branches with the naive re-index, so this is worth ~3 boards,
-        not 13.  Do not oversize it.
-      * 8 machines whose EXP4-at-a-binary-anchor marks them as GRAY (11 of the
-        19 EXP4 are exactly wave-14's Gray boards).  On
-        0RB0LA_1LA1RC_0RD1RD_1LB0LB the Gp anchor family is present and closes
-        affinely at 4j+8, yet all five symbolic branches fail in derive_chain.
-        Ruled out: tail depth (a 4-way x,y peel does not help) and search
-        budget (depth 24 / nmax 64 against a 12-step lap).  The lap opens by
-        stepping RIGHT into blank tape, so the chain must start with SWinR --
-        instrument _win_candidates on that configuration.
+  (2) The 6 remaining no-visit-witness machines.  Their missing state is
+      genuinely LIVE, but fires only in the INTERIOR lap, where
+      LapCertGlue.vis_via_ovf cannot see it.  A vis_via_int dual -- from any
+      anchor, run to an INTERIOR anchor rather than an overflow one -- would
+      catch them.  Small, one theorem, and it is the honest completion of
+      wave-15.
 
-  (3) The 47 with NO anchor family at all.  alphabet_infer.py +
+  (3) 13 PARITY-AFFINE machines are IN model -- affine on each parity class
+      of j.  They need the m=2 re-index (j = 2i+r, block unit u^2).
+      MEASURED in wave-14: only ~3 of the 13 derive both parity branches with
+      the naive re-index, so this is worth ~3 boards.  Do not oversize it.
+
+  (4) The 21 with NO anchor family at all.  alphabet_infer.py +
       gen_alphabet.py INFER a counter's word family from its own tape as a
       triple (A,B,C) and generate the Coq module; 18 families are wired.
 
-  (4) The 27 genuine mxdys holdouts (tools/census_holdouts_kept.txt) -- the
-      real endgame, and what John actually wants to be working on.
+  (5) The 27 genuine mxdys holdouts (tools/census_holdouts_kept.txt, of which
+      22 are still in D_remaining) -- the real endgame, and what John actually
+      wants to be working on.
 
 DO NOT RETRY (measured; grids in COUNTER_CLOSEOUT.md section 5, WAVE12 section
-8, WAVE13 sections 4 and 8, WAVE14 section 7):
+8, WAVE13 sections 4 and 8, WAVE14 section 7, WAVE15 section 5):
+  * mxdys' Inductive and RWLAcc deciders on this residue.  MEASURED in
+    wave-15: Inductive decides 12 of 1,176 at default config and ~1 more per
+    150 under six further configs; RWLAcc 0 of 7.  ZERO of the decided
+    machines used nat_powsum -- the count language we went there for is never
+    exercised, because their search never reaches a generalisable repeater on
+    our machines.  And their top-level theorem is `~halts`, which moves
+    D_remaining by ZERO: even a 100% sweep boards nothing without the Stage
+    1-3 liveness bridge.  Harness kept in tools/mxdys/ if you need it.
+    (RRBA is the one honest GAP -- its extraction stack-overflows coqc and
+    vm_compute does not finish a machine in 9.5 min, so it was never run.  Do
+    not record it as a negative.  If you want the number, use the Rust
+    beaver/ tree or native_compute under an opam switch.)
+  * Building BB42.v / Individual42.v to run their deciders.  Inductive_inf.v
+    instantiates at BBinf (Q := N, Sym := N) and parses our (4,2) strings AS
+    IS.  Also: BBinf.v has two Admitted lemmas, so it is a SEARCH ORACLE and
+    can never be proof-grade.
+  * The "states visited" variant of wsteps_frame/cycL/cycR (WAVE13 section 6)
+    for the quiet-state bucket.  The absorbing-set closure in
+    Counters/LapGlueAbs.v gets 141 of 149 with ONE induction.
+  * emit_graycert.py for new boards -- a full run over the 1,035 reports "no
+    Gray anchor" on every machine; wave-14 took all 11 there are.
   * NGramHist/NGramCPS liveness over this residue at any (k,n,t); RepWL over
     the counter core; more per-machine lap emitters; ripple ulen widening.
   * Maximal-only window cuts in the chain search -- must be target-aware.
   * Reaching an anchor's syntactic form by rotations alone -- impossible in
     principle; the constant offset needs SFold.
   * Widening the ENCODING table hoping for boards.  Wave-14 INFERRED 18
-    alphabets from the tapes (not guessed) and it bought 9 boards against 234
-    machines decoded.  The alphabet has never been the binding constraint --
-    but the inference is still worth running, for DIAGNOSIS.
+    alphabets from the tapes and it bought 9 boards against 234 machines
+    decoded.  The alphabet has never been the binding constraint.
   * Peeling the overflow block to fix the wall -- tried, 0 of 385.
   * enc_src/enc_dst from two ENCDATA rows to break the overflow wall (WAVE13
     section 10c).  The wall is the overflow's COST, not its target word.
@@ -172,17 +141,17 @@ DO NOT RETRY (measured; grids in COUNTER_CLOSEOUT.md section 5, WAVE12 section
     MB(m) ++ [S1] = [S1] ++ MA(m) identically, so the verdict is an artifact of
     head position.  Use absolute column parity (frame_probe.py, spacetime.py).
   * Believing a negative from an emitter run that RAISED.  A crash in
-    emit_lapcert's reporting path cost 46 finished certificates and looked
-    exactly like "the search finds nothing".  Survey with wall_survey.py,
-    which keeps the best outcome per machine, before concluding anything.
-  * (RETIRED) "mxdys' implementation is not available."  It IS -- that is this
-    session's task.
+    emit_lapcert's reporting path once cost 46 finished certificates and
+    looked exactly like "the search finds nothing".  Survey with
+    wall_survey.py, which keeps the best outcome per machine, before
+    concluding anything.
 
-ALSO: ovfshape.py measures cost-vs-j on BOTH branches and classifies
-AFFINE / PARITY-AFFINE / QUAD / EXP2 / EXP3 / EXP4 / HIGHER.  Run it before
-templating anything.  The interior version of that measurement was missing for
-five waves and hid a quadratic family; the overflow version was missing for six
-and hid the exponential one.
+A LESSON WORTH CARRYING (wave-15).  The quiet-state bucket had a planned
+multi-day build attached to it for two waves.  What it actually needed was to
+ask a DIFFERENT question: not "does the lap avoid this state" (a trajectory
+fact, expensive) but "is this state still reachable at all" (a digraph fact,
+one induction).  Before building a soundness layer, check whether the property
+is syntactic.
 
 WHEN STUCK ON A CLASS: print a few machine strings WITH AN ABSOLUTE-COORDINATE
 TAPE DUMP (tools/counters/spacetime.py) and ask John.  Hand-inspection is
@@ -202,6 +171,6 @@ board .vo closure (~85 min in a fresh container); inventory.py, gen_stages.py
 and audit.py all run in minutes and produce the numbers above.
 
 Commit + push per validated batch.  Name new files so they cannot clash with a
-concurrent session's (waves 10-14 used ILS1_*/ILS4_*/ILS4F_*, ILS1M_*/ILS4M_*/
+concurrent session's (waves 10-15 used ILS1_*/ILS4_*/ILS4F_*, ILS1M_*/ILS4M_*/
 ILS4FM_*, IXP_*/IXPM_*, WLS_*/WLSM_*, WLJ_*, LAPC_*, LAPG_*, Alph_*).
 ```
