@@ -19,7 +19,7 @@ by showing the **q-avoiding subgraph** of the closure has no infinite path —
 either it is acyclic (`HRank`) or a count/pattern measure strictly decreases
 along every q-avoiding edge.
 
-Probed on three all-8-transition residue machines across the precision grid:
+Probed on three residue machines across the precision grid:
 
 | machine | k=2,n=2 | k=3,n=2 | k=4,n=3 | k=6,n=3 |
 |---|---|---|---|---|
@@ -48,6 +48,10 @@ NOMEAS (the closure forms with spurious cycles).  Two failure modes, one cause.
 * It **confirms** mxdys' stated condition — an exact forward model is required
   — for the LIVENESS half specifically.  Non-halting is easy here; "every state
   recurs" is what needs exactness.
+* The `<=7` / all-8 "outside mxdys' enumeration" story in `NGHIST_WAVE7.md` §0
+  is NOT relied on here and should be treated as unverified: John (who knows
+  the enumeration conventions) says it is bad info, and nothing in this file
+  depends on it.  The measurement above stands on its own.
 * It **does not** license more per-machine emitters.  `WAVE9_FINDINGS.md` §7 is
   still right: one theorem per machine is the wrong exponent.  Wave-12 built
   five emitters for 205 boards against a 1,385 residue and the trajectory is
