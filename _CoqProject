@@ -569,6 +569,11 @@ theories/Machines/NGHHold/NGHHold_08.v
 theories/Machines/NGHG3/NGHG3_00.v
 theories/Machines/NGHG3/NGHG3_01.v
 theories/Machines/NGHG3/NGHG3_02.v
+theories/Machines/NGHG3/NGHG3_03.v
+theories/Machines/NGHG3/NGHG3_04.v
+theories/Machines/NGHG3/NGHG3_05.v
+theories/Machines/NGHG3/NGHG3_06.v
+theories/Machines/NGHG3/NGHG3_07.v
 theories/Tests/CountersWave_Corruption.v
 
 # --- counters track: double ---

@@ -289,7 +289,16 @@ residue.
 **The rate, now MEASURED over complete rungs.**
 
     rung (2,3)   0 hits / 1217   0.0%
-    rung (4,3)   3 hits / 1244   0.2%      (k=6 still running)
+    rung (4,3)   3 hits / 1244   0.2%
+    rung (6,3)   5 hits / 925    0.5%   (rung INCOMPLETE -- died at 925/1241)
+
+The rate RISES with k: 0.0 -> 0.2 -> 0.5%, exactly mirroring the holdout
+front, where every hit also came from k=4 and k=6 and none from k=2.  So the
+population difference is real but smaller than the first (2,3)-only reading
+suggested, and (6,3) was still finding machines when the run stopped.
+Rung (6,3) has 316 targets left and the R_QH tier has not been run at all;
+both resume with `gram3_sweep.py 6 3 3 150` and `... --qh` (the miss files
+are the resume state).
 
 So the lever does reach the residue, and thinly.  0.2% over the whole pool is
 single-digit machines, against 5/16 on the holdouts -- a difference of two
@@ -301,10 +310,8 @@ never-tried engines remain the actual lever.  The MECHANISM (context
 vocabulary vs measure vocabulary) is still an untested story -- it predicts
 this outcome but so would several other explanations.
 
-Boarded from these: `theories/Machines/NGHG3/NGHG3_00..02.v`
-(`0RB0LD_1RC---_0RD1RC_1LD0LA`, `1RB1RD_1LC1RA_0RD0LC_0RB1LA`,
-`1RB---_0RC1RB_1LC0LD_0RA0LC`), all axiom-clean, `D_remaining` 1,255 ->
-1,252.
+Boarded from these: `theories/Machines/NGHG3/NGHG3_00..07.v`
+(8 machines), all axiom-clean, `D_remaining` 1,255 -> 1,247.
 
 **The lesson, which is the same one twice.**  Earlier tonight a 0/25 reading
 turned out to be an artifact of alphabetical order.  This is that mistake

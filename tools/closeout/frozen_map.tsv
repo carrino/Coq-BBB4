@@ -2664,6 +2664,11 @@ machine	kind	vfile	theorem	const
 0RB0LD_1RC---_0RD1RC_1LD0LA	nqh	theories/Machines/NGHG3/NGHG3_00.v	nqh_h_00000	tm_h_00000
 1RB1RD_1LC1RA_0RD0LC_0RB1LA	nqh	theories/Machines/NGHG3/NGHG3_01.v	nqh_h_00000	tm_h_00000
 1RB---_0RC1RB_1LC0LD_0RA0LC	nqh	theories/Machines/NGHG3/NGHG3_02.v	nqh_h_00000	tm_h_00000
+1RB1RA_0RC0LA_1LC0LD_0RA0LC	nqh	theories/Machines/NGHG3/NGHG3_03.v	nqh_h_00000	tm_h_00000
+0RB0LD_1RC1RB_0RD0LB_1LD0LA	nqh	theories/Machines/NGHG3/NGHG3_04.v	nqh_h_00000	tm_h_00000
+1RB1LC_0RC0LC_1LD1RA_0RA0LD	nqh	theories/Machines/NGHG3/NGHG3_05.v	nqh_h_00000	tm_h_00000
+0RB0LA_1RC1LD_0RD0LD_1LA1RB	nqh	theories/Machines/NGHG3/NGHG3_06.v	nqh_h_00000	tm_h_00000
+1RB0RD_1LC0LC_1RA1LB_0RC0RD	nqh	theories/Machines/NGHG3/NGHG3_07.v	nqh_h_00000	tm_h_00000
 1RB0LA_0RC0RD_1LD1RD_1LA1RB	nqh	theories/Machines/NGHHold/NGHHold_00.v	nqh_h_00000	tm_h_00000
 1RB0RB_1LC1RC_0RA1LD_1RC0LD	nqh	theories/Machines/NGHHold/NGHHold_01.v	nqh_h_00001	tm_h_00001
 1RB1LB_1RC1LD_1LD0RC_0LA0LB	nqh	theories/Machines/NGHHold/NGHHold_02.v	nqh_h_00002	tm_h_00002
