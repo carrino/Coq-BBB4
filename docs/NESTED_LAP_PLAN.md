@@ -374,10 +374,33 @@ reindex and needs its own chain — which is exactly the `j = 0` split
 wave-13 already built for the interior branch (`WAVE13_FINDINGS.md` §9a), so
 the machinery exists.
 
-**This is the next concrete step for Stage C** — and it is worth checking
-whether the same index-shift explains the affine-boot failures in the other
-alphabets, since a chain asked to go from count `j` to count `j` when the
-truth is `j-1` fails exactly the way those did.
+**Tried, and NOT yet validated — do not treat the index-shift as a fix.**
+Building the reindexed pair naively (outer `(a=1,b=1)`, inner `(a=1,b=0)` with
+`B` in the prefix) and handing it to `derive_chain` derives **0 of 12**,
+against **7 of 12** for the un-shifted form.  The arithmetic above is sound —
+`E(2^j+1) = B ++ rep A (j-1) ++ C` is just the positive recursion — so what is
+wrong is the *sside construction*, not the observation that the counts differ
+by one.  Someone should derive the reindexed forms from a tape at two
+consecutive indices rather than by pattern-matching on `ENCDATA`, as the
+earlier `rep u j ++ post` attempt (also 0) should already have taught.
+
+### Two control results, so the credit lands in the right place
+
+* **Key enumeration is what buys boot chains.**  On the 31-machine `Mp`
+  population, enumerating every inner key derives a boot on **7 of 12**
+  sampled, against ~1 of 12 for the best-scoring key alone.
+* **`Alph_01_11_011` does NOT buy boot chains.**  Controlled by deleting the
+  row from the zoo at run time and re-running the same test: **7 of 12 both
+  with and without it**.  Its value is confined to making the boot's SHAPE
+  measurable as `AFFINE` instead of `EXP` — which is what removed a
+  34-machine "needs a third nesting level" bucket — not to making chains
+  derive.  The inner family that actually carries the working boot is usually
+  `Ip`.
+
+So Stage C's state is: **boot chains derive on ~7/12 by key enumeration
+alone**, the remaining failures are not explained, and the two hypotheses
+tried so far (tape-read `rep u j ++ post`, and the naive index-shift) both
+measured WORSE than doing nothing.
 
 _(Superseded reading, kept so it is not re-walked: the boot was first thought
 to be a machine property)_ — John read the class off the tape and it checks out
