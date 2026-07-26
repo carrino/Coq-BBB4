@@ -20,7 +20,7 @@
 From Coq Require Import Arith Bool List PArith.
 From BBB4 Require Import BBB4_Statement CTape Mirror.
 From BBB4.Counters Require Import WTape WaveCounter.
-From BBB4.Machines.Counters Require Import Wave_17 Wave_27 Wave_36 Wave_7.
+From BBB4.Machines.Counters Require Import Wave_17 Wave_27 Wave_36 Wave_7 Wave_6.
 Import ListNotations.
 
 (** ** Wall discipline *)
@@ -248,6 +248,60 @@ Proof. vm_compute. reflexivity. Qed.
 
 Example boot_wrong_index_7 : match csteps tm_7m 41 CTape.c0 with
                              | Some c => ceqb c (Cf7 [4; 2; 1])
+                             | None => false
+                             end = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** ** #6 (1RB0LB_0LB0RC_1LD1RC_1LA1RB): the 4-step 0-writing cross
+
+    #6's frontier turnaround digs into the RIGHT blank (the [B1/0R>C]
+    step) and its lead gadget -- the SPAWN -- digs into the LEFT blank
+    (the closing [D0/1L>A]).  Both must die with the corresponding wall
+    on, and the cross cycle must stop realising its unit when the
+    [C0/1L>D] leg is re-routed. *)
+
+Example wall_FT6_right : wsteps true true tm_6 3 (StC, ([S1], S0, [])) = None.
+Proof. reflexivity. Qed.
+
+Example ok_FT6 : wsteps true false tm_6 5 (StC, ([S1], S0, []))
+               = Some (StA, ([], S1, [S1; S1])).
+Proof. reflexivity. Qed.
+
+Example wall_spawn6_left : wsteps true true tm_6 5 (StA, ([S0; S1], S1, [S1])) = None.
+Proof. reflexivity. Qed.
+
+(** tm_6 with [C0] re-routed to StA instead of StD: the closing leg of
+    the 4-step cross cycle is destroyed. *)
+Definition tm_6_mut : TM := fun q s =>
+  match q, s with
+  | StA, S0 => mk S1 DR StB | StA, S1 => mk S0 DL StB
+  | StB, S0 => mk S0 DL StB | StB, S1 => mk S0 DR StC
+  | StC, S0 => mk S1 DL StA | StC, S1 => mk S1 DR StC  (* was StD *)
+  | StD, S0 => mk S1 DL StA | StD, S1 => mk S1 DR StB
+  end.
+
+Example ok_cross6 : wsteps true true tm_6 4 (StA, ([S1; S1], S1, []))
+                  = Some (StA, ([], S1, [S1; S1])).
+Proof. reflexivity. Qed.
+
+Example mut_cross6 : wsteps true true tm_6_mut 4 (StA, ([S1; S1], S1, []))
+                   <> Some (StA, ([], S1, [S1; S1])).
+Proof. vm_compute. discriminate. Qed.
+
+Example boot_anchor_distinct_6 : ceqb (Cf6 [4; 2; 1]) (Cf6 [5; 3; 1]) = false.
+Proof. reflexivity. Qed.
+
+Example boot_not_next_6 : ceqb (Cf6 [4; 2; 1]) (Cf6 (nextf 1 [4; 2; 1])) = false.
+Proof. reflexivity. Qed.
+
+Example boot_reaches_6 : match csteps tm_6 74 CTape.c0 with
+                         | Some c => ceqb c (Cf6 [4; 2; 1])
+                         | None => false
+                         end = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Example boot_wrong_index_6 : match csteps tm_6 73 CTape.c0 with
+                             | Some c => ceqb c (Cf6 [4; 2; 1])
                              | None => false
                              end = false.
 Proof. vm_compute. reflexivity. Qed.
