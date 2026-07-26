@@ -47,10 +47,33 @@ in `RRBA.v`.
     ocamlfind ocamlopt -O2 -package coq-core.kernel,unix -linkpkg Inductive.mli Inductive.ml measure2.ml -o measure2
     ocamlfind ocamlopt -O2 -package coq-core.kernel,unix -linkpkg RWLX.mli RWLX.ml rwl_measure.ml -o rwl_measure
 
-NOTE on RRBAX.v: extracting the `RRBA BBinf` instantiation stack-overflows
-coqc at the default stack and did not finish in >55 min with an unlimited
-stack; `Recursive Extraction Library RRBA` (RRBALib.v) is the fallback under
-test.  See `docs/STAGE0_MXDYS.md` for status.
+### Extracting RRBA -- SOLVED, and the recipe matters
+
+`RRBA` is the decider whose stated class is "shift-recursive (counter
+balanced, counter inverting), sync bi-counter" -- i.e. our residue's shape
+class.  Extracting it defeated several attempts; the fix is one flag:
+
+    Unset Extraction AutoInline.
+
+The default inliner explodes on RRBA's functor body: `coqc` stack-overflows at
+the default stack, and with `ulimit -s unlimited` it ran >55 minutes without
+finishing.  With auto-inlining off it completes and emits ~291 KB of OCaml.
+(`Recursive Extraction Library RRBA` is NOT a fallback -- it emits only a stub
+of `open` lines, because the functor body does not survive library
+extraction.)
+
+**Do NOT also add `Set Extraction Conservative Types`.**  It makes extraction
+emit erased type arguments that OCaml then rejects -- a nullary `ReflectT`
+applied to `__`, and `PArray.make` applied to three arguments.  Both are
+artifacts of that flag alone.
+
+Build order for the RRBA driver:
+
+    coqc -native-compiler no -Q . BusyCoq -Q ./BigInt BigInt RRBA.v
+    ulimit -s unlimited
+    coqc -native-compiler no -Q . BusyCoq -Q ./BigInt BigInt RRBAX.v   # ~25 min
+    ocamlfind ocamlopt -O2 -package coq-core.kernel,unix -linkpkg \
+      RRBAX.mli RRBAX.ml rrba_measure.ml -o rrba_measure
 
 ## The drivers
 
