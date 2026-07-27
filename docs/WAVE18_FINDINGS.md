@@ -17,7 +17,7 @@ lesson was not spent; it had one more level to give._
 | frozen rows settled | 4,273 → **4,531 / 5,156 (87.9%)**, from 82.9% |
 | new Coq | `Counters/NestedLapLift.v` — additive; `LapDecider.v`, `LapGlue.v`, `LapCertGlue.v`, `NestedLap.v` all untouched |
 | board axiom footprint | `functional_extensionality_dep` only, on all 258 (checked, one `Print Assumptions` per board) |
-| closeout | `audit.py` OK, and **KERNEL-VERIFIED**: `Closeout.vo` + all 45 `CB_*.vo` compile, `closeout_partial` is Qed at `functional_extensionality_dep` only, and `vm_compute` on `List.length remaining_rows` returns the wave's figure |
+| closeout | `audit.py` OK, and **KERNEL-VERIFIED**: `Closeout.vo` + all 45 `CB_*.vo` compile, `closeout_partial` is Qed at `functional_extensionality_dep` only, and `vm_compute` on `List.length remaining_rows` returns **625** |
 | census | `census_cache --check` MATCH at every commit; `theories/Census/` untouched |
 
 ```
@@ -25,8 +25,8 @@ closeout_partial : forall tm, Deferred D_census tm ->
                               boarded tm \/ Deferred D_remaining tm
 ```
 
-is the certified statement, and `D_remaining` is now the wave's own list — so these
-boards are not a tooling claim, they are a kernel one.  (`CloseoutFinal.v`,
+is the certified statement, and `D_remaining` is now the 625-row list — so these
+258 boards are not a tooling claim, they are a kernel one.  (`CloseoutFinal.v`,
 which chains this to `census_decided`, still cannot be built in a container:
 the committed census `.vo` are OCaml 4.14.2 and apt coq here is 4.14.1.  See
 `WAVE16_FINDINGS.md` §4b — it is a toolchain fact, not a proof failure.)

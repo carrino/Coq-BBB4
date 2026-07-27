@@ -427,8 +427,11 @@ rows, whose overflow lap costs `Θ(2^j)` — and produced its first boards.
 - **`D_remaining` 883 → 625; 4,531 / 5,156 = 87.9% settled** (from 82.9%).
   258 `NLAP_*` boards, every one `functional_extensionality_dep` only
   (checked per board), `audit.py` OK, `census_cache --check` MATCH.  The
-  closeout is KERNEL-VERIFIED: `Closeout.vo` + all `CB_*.vo` compile and
-  `closeout_partial` is Qed at `functional_extensionality_dep` only.
+  closeout is KERNEL-VERIFIED: `Closeout.vo` + all 46 `CB_*.vo` compile,
+  `closeout_partial` is Qed at `functional_extensionality_dep` only, and
+  `vm_compute (List.length remaining_rows)` = 625.  (`CloseoutFinal.v` still
+  cannot be built in a container -- OCaml 4.14.2 census `.vo` vs 4.14.1 apt
+  coq; WAVE16 section 4b.)
 - **The blocker was wave-16's acceptance test, one level down.**
   `docs/NESTED_LAP_PLAN.md` had Stage A and Stage B done and Stage C stuck at
   "boot chain 1 of 12, and it is NOT a search budget".  That was true; the
