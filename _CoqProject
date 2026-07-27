@@ -567,6 +567,10 @@ theories/Machines/Counters/WrapBc_R.v
 theories/Machines/Counters/WrapBc_L.v
 theories/Tests/CountersWrapBc_Corruption.v
 
+# --- counters track: the x3 bouncer (the v4-irules holdout) ---
+theories/Machines/Counters/Bnc3.v
+theories/Tests/CountersBnc3_Corruption.v
+
 # --- holdouts boarded by the NGramHist never-QH tier (wave 14) ---
 theories/Machines/NGHHold/NGHHold_00.v
 theories/Machines/NGHHold/NGHHold_01.v
