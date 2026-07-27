@@ -142,12 +142,54 @@ side has no distinct 0-digit and 1-digit, i.e. it is a UNARY bouncer, which
 is exactly the run of 1s of length `3n` measured off its tape.  Consistent
 with it being one of the 27 genuine mxdys holdouts.
 
-## If the shape does not fit
+## SBCv2 is the next target, and its rule table is already validated
 
-The harness generalizes: `SOCv1` (287), `SBCv2` (197) and `BECv1` (132) are
-the same hypothesis-style architecture, so the checker/searcher split reuses
-directly.  One caution already checked -- `SOCv1` is NARROWER, not broader:
-it hardcodes its digit alphabet (`d0 = [0;1]`, `d1 = [1;1]`, `d1a = [1]`) and
-parameterizes only states and a few lists, so it only applies to machines
-whose tape already uses those digits.  `SBCv1` is the one whose twelve words
-are genuinely free.
+`SOCv1` (287) is NARROWER, not broader -- it hardcodes its digit alphabet
+(`d0 = [0;1]`, `d1 = [1;1]`, `d1a = [1]`) and parameterizes only states and a
+few lists, so it only fits machines whose tape already uses those digits.
+
+**`SBCv2` (197) is the one that generalizes the side we fail.**  It discharges
+five rules instead of sixteen, keeps `LInc` -- the left binary counter --
+exactly as SBCv1 has it, and replaces the whole right-hand mark/carry family
+with two ABSTRACT families supplied by the certificate:
+
+    R0 n   = w^n *> tail *> 0^inf                  (a plain run, NO marker)
+    R1 n m = w^m *> mark *> w^n *> tail *> 0^inf   (ONE marker, not two)
+
+    LInc : L n <| r        -->+ L (succ n) |> r     (not_full n)
+    RInc0: l |> R0 n       -->+ l <| R0 (c1+n)      c1 in {1,2}
+    RInc1: l |> R1 (1+n) m -->+ l <| R1 n (1+m)
+    ROv1 : l |> R1 0 m     -->+ l <| R0 (c2+m)      c2 in {1,2}
+    LOv  : ...the overflow...
+
+`RInc0` is a BOUNCER sweep -- grow a run by one or two blocks per pass, no
+marker involved -- where SBCv1 insists on `w10 -> w11 -> w0` two-phase
+marking.  And `RInc1` moves a single marker one block right, where SBCv1
+needs `RL0` and `RL1` in sequence.  `RL1` is precisely the rule our machines
+die on.
+
+The right side decomposes into five LOCAL rules, all checkable with the
+abstract-tail gate this file already implements:
+
+    Rshift : l <* qR {{QR}}> w *> r         -->* l <* w' <* qR {{QR}}> r
+    Rreturn: l <* w' <{{QL}} qL *> r        -->* l <{{QL}} qL *> w *> r
+    Rturn0 : l <* qR {{QR}}> tail *> 0^inf  -->* l <{{QL}} qL *> w^c1 *> tail *> 0^inf
+    Rmark  : l <* qR {{QR}}> mark *> w *> r -->* l <{{QL}} qL *> w *> mark *> r
+    Rov    : l <* qR {{QR}}> mark *> tail *> 0^inf
+                                            -->* l <{{QL}} qL *> w^c2 *> tail *> 0^inf
+
+because `w^n ++ w^c1 = w^(n+c1)`, so `RInc0` is `Rshift`^n, `Rturn0`,
+`Rreturn`^n, and the other two go the same way.
+
+**This decomposition is CHECKED, not conjectured.**  Run against two upstream
+`SBCv2_6x2_solved.v` certificates using `sbcfit`'s `cfg` / `check_rule` /
+`derive_shift` unchanged, all five rules verify on both:
+
+| machine | w' | Rshift | Rreturn | Rturn0 | Rmark | Rov |
+|---|---|---|---|---|---|---|
+| `1RB1RF_0RC0RA_1RD0LE_0LC1RA_1LC1LE_---0RB` | `[0;1]` | OK | OK | OK | OK | OK |
+| `1LB1RE_0LC0RF_1RD0LF_0RA---_0RB1RD_0RA0LF` | `[0;1;1]` | OK | OK | OK | OK | OK |
+
+So building the SBCv2 fitter is a rule-table swap plus an S0 reader, against a
+197-certificate positive control -- not a research question.  `w`, `tail` and
+`mark` are read off the run the same way `w0` and `w10` are here.
