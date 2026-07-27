@@ -151,7 +151,53 @@ holdouts rather than the residue.  Headlines:
   (no `native_compute`).  `make -j4` OOMs on `IRules_Batch_02` (~6.3 GB);
   use `-j2` or targeted `make -f Makefile.coq <file>.vo`.
 
-## 2d. Wave-16 (2026-07-27) — the lap never had to close exactly
+## 2d. Wave-16, HOLDOUTS track (2026-07-27) -- mxdys' S(n) claim, and FOUR holdouts boarded
+
+Full write-up: `docs/HOLDOUTS_MXDYS_SN.md`.  John relayed two claims from
+mxdys about the 11 live holdouts; both were tested.
+
+- **"1RB0LD_1RC0RC_1LA1RB_0LC0LD is bouncer counter, simpler than sync
+  bouncer counter" -- PROVED.**  Sampled at StA on the leftmost visited cell
+  the tape is `1 0^(3v+3) 1 <binary counter of value v>`: a bouncer whose
+  length is affine in the counter's VALUE.  BBB's blockdbl reading (a solid
+  block doubling, `18*4^n + 22*2^n - 2` steps per macro lap, `Theta(2^n)`
+  turnarounds) is what made this look like a MeasureGlue job; the bouncer
+  reading makes ONE SWEEP a complete lap, `12v + 4*carry(v) + 27` steps.
+  The "simpler" is load-bearing: a pair of BLANK cells past the top digit is
+  a digit-0 pair, so overflow and interior carry are the same rule.
+  `theories/Counters/BCtrCounter.v` + `BCtr_11.v`; **#13 transcribes** under
+  `sigma = StA->StC, StB->StA, StC->StB` (checked, `sigma(tm_11) = tm_13`).
+- **The two `1RB---` wrap machines are boarded**, off John's reading ("it
+  keeps bouncing until it finds zero on the right then moves the wall over
+  one... only 3 states, zeros on the way out, 1s on the way back").  They
+  quasihalt (StA fires once; {StB,StC,StD} is closed), so they take the
+  QHBound route via `LapGlueAbs.glue_qh_abs`.  `WrapBouncer.v` +
+  `WrapBc_R.v`/`WrapBc_L.v`.  Their macro block doubles `K -> 2K+1` and the
+  bounce COUNT is explicit in the anchor, so a plain induction replaces the
+  MeasureGlue that the nested counters needed.
+- **mxdys' general S(n) claim holds on 8 of the 11, measured** (table in
+  `HOLDOUTS_MXDYS_SN.md` section 2), including exact closed forms for every
+  transition's usage count.  The 3 misses are a limitation of the SEARCH
+  (it assumes a constant RLE shape word); tower #20's record tape is a word
+  over the blocks `10`/`110`, i.e. a counter in another alphabet, which a
+  fixed shape can never match.  Nothing measured contradicts the claim.
+- **Next board, already reconnoitred:** `1RB1RA_0RC0RB_1LC1LD_0RA0LA` is the
+  same two-level bouncer with `(w, m) -> (w+1, 3m)`, `m = 3^(w+1)`, bounce
+  `mkB (j+1) k -> mkB j (k+1)` in `6k+10` steps and the count explicit.
+  Anchors measured out to `t = 1,307,750,844`.  See section 5.
+
+STATE: holdouts 11 -> 7 unproven; `D_remaining` 1,016 -> 1,012.  Stage
+regeneration + `Closeout.vo` rebuild still to do (they need the full board
+`.vo` closure).
+
+  [MERGE NOTE, added when the two wave-16 tracks were merged.  This track's
+  own closeout run landed at `D_remaining` 1,010 (6 boards), not the 1,012
+  written above.  Both numbers are now superseded: the stage regeneration
+  named here HAS been done, over the MERGED board set, and the joint figure
+  is **884** = 1,016 - 126 (residue track) - 6 (this one).  `audit.py` OK.
+  The `Closeout.vo` rebuild is still outstanding for both tracks.]
+
+## 2e. Wave-16, RESIDUE track (2026-07-27) — the lap never had to close exactly
 
 Full write-up: `docs/WAVE16_FINDINGS.md`.  Took the ranked item (1) of the
 wave-15 prompt (the `AFFINE/AFFINE` bucket, filed as "a CONFIRMED search
@@ -167,7 +213,8 @@ gap") and found **the gap is not in the search**.
   trailing-blank leniency is dead whenever a side carries no rep, because
   `sden_parts` folds everything into `P`) and `_shape_to` (syntactic
   `pre/u/a/b`, and no rotation can delete a blank).
-- **116 boards, `D_remaining` 1,016 -> 900** (4,256/5,156 = 82.5% settled),
+- **126 boards, `D_remaining` 1,016 -> 890** (4,266/5,156 = 82.7% settled;
+  **884 / 82.9% after merging the holdouts track above**),
   all `functional_extensionality_dep` only.  New Coq is one additive file,
   `Counters/LapCertGlueLift.v`: `reach_ovf_lift`/`vis_via_ovf_lift` redo
   `LapCertGlue`'s induction in `stepn`/`lift` space (where

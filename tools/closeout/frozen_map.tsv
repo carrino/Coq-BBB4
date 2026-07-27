@@ -1,4 +1,8 @@
 machine	kind	vfile	theorem	const
+1RB0LD_1RC0RC_1LA1RB_0LC0LD	nqh	theories/Machines/Counters/BCtr_11.v	nqh_1RB0LD_1RC0RC_1LA1RB_0LC0LD	tm_11
+1RB0RB_1LC1RA_1RA0LD_0LB0LD	nqh	theories/Machines/Counters/BCtr_13.v	nqh_1RB0RB_1LC1RA_1RA0LD_0LB0LD	tm_13
+1RB1LC_1LC1RD_1LA0LC_0RD0RB	nqh	theories/Machines/Counters/BCtr_28.v	nqh_1RB1LC_1LC1RD_1LA0LC_0RD0RB	tm_28
+1RB1RA_0RC0RB_1LC1LD_0RA0LA	nqh	theories/Machines/Counters/Bnc3.v	nqh_1RB1RA_0RC0RB_1LC1LD_0RA0LA	tm_v4
 1RB0LC_1RC0RD_1LA0LC_1RD0RA	nqh	theories/Machines/Counters/Double_9.v	nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA	tm_9
 1RB0LD_0RC1LB_1LD1RC_0RC1LA	nqh	theories/Machines/Counters/ILCM_1RB0LD_0RC1LB_1LD1RC_0RC1LA.v	nqh_1RB0LD_0RC1LB_1LD1RC_0RC1LA	tm_1RB0LD_0RC1LB_1LD1RC_0RC1LA
 1RB0RC_0LA0LD_1LD1RC_0RC1LB	nqh	theories/Machines/Counters/ILCM_1RB0RC_0LA0LD_1LD1RC_0RC1LB.v	nqh_1RB0RC_0LA0LD_1LD1RC_0RC1LB	tm_1RB0RC_0LA0LD_1LD1RC_0RC1LB
@@ -1077,6 +1081,8 @@ machine	kind	vfile	theorem	const
 1RB1RA_1LC0RA_0LC1LD_1RB1LC	nqh	theories/Machines/Counters/Wave_36.v	nqh_1RB1RA_1LC0RA_0LC1LD_1RB1LC	tm_36
 1RB0LB_0LB0RC_1LD1RC_1LA1RB	nqh	theories/Machines/Counters/Wave_6.v	nqh_1RB0LB_0LB0RC_1LD1RC_1LA1RB	tm_6
 1RB0LC_1LA1RD_1LA1LC_0RD1RB	nqh	theories/Machines/Counters/Wave_7.v	nqh_1RB0LC_1LA1RD_1LA1LC_0RD1RB	tm_7
+1RB---_1LC0LB_0RC0LD_1RD1RB	iqh	theories/Machines/Counters/WrapBc_L.v	iqh_1RB_1LC0LB_0RC0LD_1RD1RB	tm_wl
+1RB---_1RC0RB_0LC0RD_1LD1LB	iqh	theories/Machines/Counters/WrapBc_R.v	iqh_1RB_1RC0RB_0LC0RD_1LD1LB	tm_wr
 0RB---_1LA1LC_0LD0LC_1RD0LB	iqh	theories/Machines/IRulesQHStage/IQHStage_11.v	cqh_w3_01090	tm_w3_01090
 0RB---_1LA1LC_0LD0LC_1RD1LB	iqh	theories/Machines/IRulesQHStage/IQHStage_11.v	cqh_w3_01091	tm_w3_01091
 0RB---_1LA1LC_0LD0LC_1RD1LC	iqh	theories/Machines/IRulesQHStage/IQHStage_11.v	cqh_w3_01092	tm_w3_01092

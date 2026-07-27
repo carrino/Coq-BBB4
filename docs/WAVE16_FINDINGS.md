@@ -6,12 +6,19 @@ bucket, "a confirmed search gap" — and found the gap is not in the search.
 **Read §2 before touching `derive_chain` again, and §5 before assuming a
 population needs a new theory.**_
 
+_A CONCURRENT session ran a separate wave-16 on the HOLDOUTS front (PR #42,
+`docs/HOLDOUTS_MXDYS_SN.md`, 6 boards); the two are disjoint and were merged.
+**After the merge `D_remaining` is 884**, not the 890 in the scoreboard below
+— 1,016 − 126 here − 6 there, so nothing was lost either way.
+`NEXT_SESSION.md` §2e is this track (RESIDUE) and §2d is that one
+(HOLDOUTS)._
+
 ## 1. Scoreboard
 
 | | |
 |---|---:|
 | boards this wave | **126** (all `LAPC_*`, through the one checker) |
-| `D_remaining` | 1,016 → **890** |
+| `D_remaining` | 1,016 → **890** (→ **884** merged with the holdouts track) |
 | frozen rows settled | 4,140 → **4,266 / 5,156 (82.7%)** |
 | new Coq | `Counters/LapCertGlueLift.v` — additive, axiom footprint unchanged |
 | board axiom footprint | `functional_extensionality_dep` only, on all 126 |
