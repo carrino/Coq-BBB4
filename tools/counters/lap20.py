@@ -92,8 +92,10 @@ The measured facts this file pins, all against the CTape-faithful mirror
   STILL OPEN: the assembly -- an `asm20.py` in the shape of `asm15.py`, i.e.
   replay the lap from these gadgets alone as pure list ops and diff it
   against the raw simulator for every r.  That is the gate the Coq is a
-  transcription of.  Then the invariant on `rest`, and the step count (the
-  long lap costs 36, 56, 52, 72, 68, 84, 84, 124, ... for r = 1,2,3,...).
+  transcription of.  Then the invariant on `rest`, and the step count.  One FULL
+  lap, A-anchor to A-anchor, costs 36, 56, 52, 72, 68, 84, 84, 124, 100, 116,
+  116, 148, ... for r = 0->1, 1->2, ...; the sweep alone is that minus rule
+  A's 10.
   Do NOT write Coq from a sampled check: that is the trap #15 paid for.
 
 UNTRUSTED, like everything under tools/.  Usage: `python3 lap20.py [budget]`.

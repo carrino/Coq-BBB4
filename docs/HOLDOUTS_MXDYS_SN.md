@@ -575,8 +575,9 @@ check out:
   through `chd`/`ctl` rather than as windows.
 
 **What is left:** the ASSEMBLY — which gadget fires where along the block
-word, the invariant on `rest` the sweep needs, and the step count (the long
-lap costs 36, 56, 52, 72, 68, 84, 84, 124, … for `r = 1, 2, 3, …`).  It is
+word, the invariant on `rest` the sweep needs, and the step count.  One FULL lap,
+A-anchor to A-anchor, costs 36, 56, 52, 72, 68, 84, 84, 124, 100, 116, 116,
+148, … for `r = 0→1, 1→2, …`; the sweep alone is that minus rule A's 10.  It is
 #15's job again, one size up.  **Do not write Coq from a sampled check** —
 that is the trap #15 paid for, and #20's sweep has the same
 bounce-and-walk-back shape that made #15's deposit a sweep and not a
