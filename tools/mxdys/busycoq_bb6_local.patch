@@ -1,0 +1,13 @@
+diff --git a/verify/RRBA.v b/verify/RRBA.v
+index 50951cf..69b009d 100644
+--- a/verify/RRBA.v
++++ b/verify/RRBA.v
+@@ -4612,7 +4612,7 @@ match n with
+     ))
+     end)
+   | Call w0 =>
+-    match if is_top then None else Mem.hmap_get w0 st.(mem) with
++    match (if is_top then None else Mem.hmap_get w0 st.(mem)) with
+     | Some v =>
+       if Rule0IdAlloc.get_id v st.(rule0_id) then Some (Some v,st) else None
+     | None =>

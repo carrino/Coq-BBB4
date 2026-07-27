@@ -1,0 +1,199 @@
+=== Mp EXPONENTIAL-BOOT class: JOHN'S READING, CONFIRMED ===
+
+John, reading the tape (2026-07-26):
+
+  "this is just a counter with 1s to the left of each bit, msb on the left
+   and lsb stays in position 1 and msb moves over each time msb carries"
+
+VERIFIED against 0RB1LC_1LA1RB_1LD0LA_1RD0RB by decoding one overflow phase
+(K=4) in ABSOLUTE columns at the state-A blank-head snapshots:
+
+    col:  -10 -9 -8 -7 -6 -5 -4 -3 -2 -1  0 +1
+  t= 37:    1  1  0  1  0  1  1  1  0  1  0  0
+  t= 39:    1  1  0  1  0  1  1  1  0  1  1  0
+  t= 45:    1  1  0  1  0  1  1  1  1  1  0  0
+  t= 47:    1  1  0  1  0  1  1  1  1  1  1  0
+  t= 61:    1  1  0  1  1  1  0  1  0  1  0  0
+  t= 71:    1  1  0  1  1  1  0  1  1  1  1  0
+  t= 81:    1  1  0  1  1  1  1  1  0  1  0  0
+  t= 91:    1  1  0  1  1  1  1  1  1  1  1  0
+
+  * VARYING columns are -6, -4, -2, 0  -- EVEN.  Those are the bits.
+  * columns -9, -7, -5, -3, -1 are constantly 1 -- ODD.  Those are the
+    markers, each sitting immediately to the LEFT of its bit.  Exactly
+    "1s to the left of each bit".
+  * reading msb-on-the-left off the varying columns:
+        t=37 -> 0100 = 4      t=61 -> 1000 =  8
+        t=39 -> 0101 = 5      t=71 -> 1011 = 11
+        t=45 -> 0110 = 6      t=81 -> 1100 = 12
+        t=47 -> 0111 = 7      t=91 -> 1111 = 15
+
+  So ONE overflow phase runs the counter 4,5,6,...,15 -- from 2^(K-2) to
+  2^K - 1, spanning TWO octaves.  NOT 2^(K-1)..2^K-1.
+
+=== WHY THIS EXPLAINS THE EXPONENTIAL "BOOT" ===
+
+"msb moves over each time msb carries" means the WORD GETS LONGER at each
+octave boundary (4..7 has its msb at col -4, 8..15 at col -6).  innerfam.py
+keys candidate inner families on (state, tail, far), and the word length is
+part of that key -- so a single inner run is FRAGMENTED across one key per
+octave.  innerfam then locks onto the LAST fragment, whose values happen to
+be exactly 2^(K-1)..2^K-1, and the walk to it includes the whole earlier
+count.  That is the measured EXP(ratio -> 2), and it is an artifact of the
+detector, not of the machine.
+
+Measured: first anchor at v = 8, 16, 32, 64 for K = 4,5,6,7, at
+t = 61, 113, 213, 409.  The value found is always 2^(K-1) -- the start of the
+LAST octave -- confirming the fragmentation.
+
+=== RESOLVED: THE TERMINATOR WAS ONE CELL SHORT ===
+
+Reading (A,B,C) off the absolute-column picture instead of trusting ENCDATA:
+
+    A = [S0;S1]      (bit 0, with its marker)
+    B = [S1;S1]      (bit 1, with its marker)
+    C = [S0;S1;S1]   (the terminator)
+
+ENCDATA['Mp'] has the SAME A and B but C = soD = [S1;S1] -- ONE CELL SHORT.
+That single missing cell is the whole bug.  Measured over 10 machines of the
+class, boot to the FIRST inner anchor:
+
+  with ENCDATA['Mp']    K=4..7 -> 61, 113, 213, 409     EXP(ratio -> 2)
+  with C=[S0;S1;S1]     K=4..7 -> 21,  25,  29,  33     AFFINE (+4)
+
+Uniform +4 per K on every machine tested, i.e. boot ~ 4K + c.  The 24%
+"exponential boot" bucket is an artifact of a wrong terminator and is now
+EMPTY.
+
+The inner start value is  2^(K-1) + 1  (measured: 17, 33, 65, 129 for
+K = 4,5,6,7), not 2^(K-1).  That is a happy accident for the nested lap:
+2^j + 1 has width j+1, so IXPGadgets.fill(2^j + 1) = 2^(j+1) - 1, the END of
+the range -- so the octave-crossing worry below does NOT arise, and
+NestedLap.nested_overflow applies as-is with v0 = pow2 j + 1.
+
+The induced ENCDATA row (obS = 0, unlike Mp's 1):
+
+    uS = B = [S1;S1]      sS = A = [S0;S1]
+    uD = A = [S0;S1]      sD = B = [S1;S1]
+    obS = 0   soS = soD = C = [S0;S1;S1]
+
+=== SUPERSEDED (kept so the dead end is not re-walked) ===
+
+The hand decode above is trustworthy; the AUTOMATED follow-up is not yet.
+Decoding the same configurations with the Mp row from ENCDATA
+(A=uD=[S0;S1], B=uS=[S1;S1], C=soD=[S1;S1]) at tail splits 0..3 returns None
+for the value-4 configuration -- so the alphabet/offset the tools use does
+not line up with the structure read off the tape.  Do NOT template against
+the tools' current Mp reading; re-derive the (A,B,C) and the anchor offset
+from the absolute-column picture above first.
+
+Note also WAVE14 section 7's standing warning: marker-before and
+marker-after are the SAME tape at a one-cell offset
+(MB(m) ++ [S1] = [S1] ++ MA(m)), so "Mp" versus "Ip" here is a framing
+choice, and the frame must be fixed by ABSOLUTE column parity -- which the
+table above does (bits even, markers odd).
+
+=== IMPLICATION FOR THE NESTED LAP (superseded -- see RESOLVED above) ===
+
+Written before the terminator was corrected.  With v0 = pow2 j + 1 the inner
+run does NOT cross an octave boundary and this concern does not arise.
+The reasoning is kept only because it explains why the wrong terminator
+looked like a third nesting level:
+
+The inner run crosses an octave boundary, so IXPGadgets.fill (all-ones of
+the CURRENT width) stops one octave early: fill(4) = 7, not 15.  The inner
+level therefore has its own interior lap AND its own overflow (the msb
+move), i.e. it needs the same two-branch treatment as the outer level.
+NestedLap.nested_overflow is stated generically in Cin and composes with
+itself, so this should be reachable without new theory -- but it is a THIRD
+level of nesting in practice, and it should be measured before it is built.
+
+31 of the 34 exponential-boot machines are Mp, so one correct reading here
+covers the class.
+
+
+outer anchor family Mp@A.  boot(K=3..7) = 33, 61, 113, 213, 409  (ratio -> 2)
+For contrast an AFFINE-boot machine boots in 4K+3 steps.
+
+The question: what is the overflow phase doing that DOUBLES the walk to
+the inner anchor?  Two candidates the measurements cannot separate:
+  (a) a THREE-level nest, or
+  (b) the inner counter really starts LOW (near 1) and runs all the way
+      to 2^K-1, so the value 2^(K-1) that innerfam locks onto is reached
+      exponentially late -- innerfam accepts a SUBSEQUENCE of a longer
+      consecutive run as 'exactly 2^(K-1)..2^K-1'.
+
+
+=== absolute-coordinate spacetime, one overflow phase (K=4) ===
+            col  01234567
+60       A p=0    01101111
+64       A p=-2   01101111
+68       A p=0    01111111
+72       A p=-2   01111111
+76       B p=2    01111111
+80       B p=6    011111110
+84       C p=2    011111011
+88       C p=-2   010101011
+92       B p=0    1010101011
+96       B p=-2   0111101011
+100      B p=2    0111101011
+104      C p=-2   0110111011
+108      B p=-2   0110111011
+112      C p=-2   0111111011
+116      B p=-2   0111111011
+120      B p=2    0111111011
+124      C p=2    0111111111
+128      C p=-2   0110101111
+132      B p=-2   0110101111
+136      C p=-2   0111101111
+140      B p=-2   0111101111
+144      B p=2    0111101111
+148      C p=-2   0110111111
+152      B p=-2   0110111111
+156      C p=-2   0111111111
+160      B p=-2   0111111111
+164      B p=2    0111111111
+168      B p=6    0111111111
+172      A p=4    01111111011
+176      A p=0    01110101011
+180      D p=-4   011010101011
+184      A p=-2   101110101011
+188      B p=-2   011110101011
+192      A p=0    011111101011
+196      A p=-4   001011101011
+200      B p=-2   011011101011
+204      A p=-4   001111101011
+208      B p=-2   011111101011
+212      B p=2    011111101011
+216      A p=0    011110111011
+220      A p=-4   001010111011
+224      B p=-2   011010111011
+228      A p=-4   001110111011
+232      B p=-2   011110111011
+236      A p=0    011111111011
+240      A p=-4   001011111011
+244      B p=-2   011011111011
+248      A p=-4   001111111011
+252      B p=-2   011111111011
+256      B p=2    011111111011
+260      A p=4    011111111111
+264      A p=0    011110101111
+268      A p=-4   001010101111
+272      B p=-2   011010101111
+276      A p=-4   001110101111
+280      B p=-2   011110101111
+284      A p=0    011111101111
+288      A p=-4   001011101111
+292      B p=-2   011011101111
+296      A p=-4   001111101111
+300      B p=-2   011111101111
+304      B p=2    011111101111
+308      A p=0    011110111111
+312      A p=-4   001010111111
+316      B p=-2   011010111111
+320      A p=-4   001110111111
+324      B p=-2   011110111111
+328      A p=0    011111111111
+332      A p=-4   001011111111
+336      B p=-2   011011111111
+340      A p=-4   001111111111

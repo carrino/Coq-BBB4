@@ -15,6 +15,13 @@ family was inferred on.  UNTRUSTED like everything under tools/.
 """
 
 FAMILIES = [
+    # Read off the tape (docs/MP_BOOT_READING.txt), not inferred from a
+    # blank-tape trajectory: this is the Mp exponential-boot class's real
+    # alphabet.  ENCDATA['Mp'] has the same A and B but a terminator one cell
+    # short ([S1;S1] instead of [S0;S1;S1]), which made the walk into the
+    # inner counter look exponential.  Count is 0 because it was found by a
+    # reading, not by the population scan that produced the others.
+    ([0, 1], [1, 1], [0, 1, 1], 0),   # Alph_01_11_011
     ([1, 0], [1, 1], [1, 1], 59),   # Alph_10_11_11
     ([0, 0], [0, 1], [1], 48),   # Alph_00_01_1
     ([1, 0], [1, 1], [1], 41),   # Alph_10_11_1

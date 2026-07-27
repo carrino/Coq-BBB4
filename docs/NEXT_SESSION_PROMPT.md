@@ -1,11 +1,11 @@
-# Next-session prompt — mxdys' deciders
+# Next-session prompt — the exponential overflow is the endgame
 
-_Rewritten 2026-07-26 at the end of wave-14 (branch
-`claude/residue-reduction-4-2-5syxph`).  Wave-14 boarded 90, measured that the
-overflow wall is EXPONENTIAL rather than a missing encoding, and — at the very
-end — mxdys pointed John at his implementation, which turns out to carry
-exactly the count language we are blocked on.  Full assessment and the staged
-plan: `docs/MXDYS_DECIDERS_PLAN.md`.  Paste-ready below._
+_Rewritten 2026-07-26 at the end of wave-15 (branch
+`claude/coq-residue-inductive-deciders-bzz3ae`).  Wave-15 ran the mxdys Stage-0
+gate and got a clear NO (12 of 1,176, and `~halts` boards nothing), then took
+the quasi-halting bucket with a much smaller theorem than planned — 141 boards,
+`D_remaining` 1,176 → 1,035.  Full assessment: `docs/WAVE15_FINDINGS.md`.
+Paste-ready below._
 
 **Before pasting, check:** substitute the branch the session should develop on,
 and name any files a concurrent session owns.
@@ -17,210 +17,307 @@ Continue the (4,2) residue reduction in carrino/Coq-BBB4, on a new branch off
 main.
 
 READ FIRST, in this order:
-  docs/MXDYS_DECIDERS_PLAN.md -- THE TASK.  mxdys' Inductive/RRBA deciders,
-                               what they do and do not give us, and a staged
-                               plan with a measure-first decision gate.
-  docs/WAVE14_FINDINGS.md   -- sections 2, 3 and 5b: what the overflow wall
-                               actually is (EXPONENTIAL, measured three ways),
-                               why wave-13's section 10c build is retired, and
-                               why inferring the alphabet bought diagnosis
-                               rather than boards.
+  docs/WAVE15_FINDINGS.md   -- sections 2, 3 and 4.  Section 2 is why mxdys'
+                               deciders are now do-not-retry (measured, not
+                               assumed).  Section 3 is the absorbing-set
+                               closer, which retired a planned multi-day
+                               build.  Section 4 is THE TASK: ~750 of the
+                               remaining 1,035 are one problem.
+  docs/WAVE14_FINDINGS.md   -- section 3 only: the overflow wall is
+                               EXPONENTIAL, measured three ways.
+  docs/NESTED_LAP_PLAN.md   -- THE TASK.  Why the count language does NOT
+                               need extending, and the staged build with a
+                               measure-first gate.
   docs/LAPDECIDER.md        -- our checker's design, and why the model is
-                               AFFINE in the carry index.  That affineness is
-                               the binding constraint -- read it as a limit.
-  docs/WHY_NO_HAMMER.md     -- why exactness is required at all, and why the
-                               LIVENESS half is the hard half here.
+                               AFFINE in the carry index.  Read the affineness
+                               as a fact about one srun, NOT as the binding
+                               constraint -- NESTED_LAP_PLAN section 0
+                               corrects that reading.
   docs/CLOSEOUT_ROUTE_A.md  -- how boards become D_remaining shrinkage.
 
 ENV: apt coq 8.18.0 -- `apt-get install -y coq`, then
-`coqc -native-compiler no -Q theories BBB4 <file>`.  No opam bootstrap.  Build
-a checker's dependency closure by coqdep-ordering its deps and compiling them
-individually; `make all` pulls in the census.
-
-mxdys' code is a PUBLIC repo, not one of this session's sources; add_repo
-refuses cross-owner adds, so just clone it:
-  git clone --depth 1 --branch BB6 https://github.com/ccz181078/busycoq.git
-(that works through the agent proxy; it is ~55 MB).
+`coqc -native-compiler no -Q theories BBB4 <file>`.  No opam bootstrap.  The
+Counters+Checkers .vo closure is 44 files and builds in ~30 s; `make all`
+pulls in the census, so don't.
 
 NON-NEGOTIABLE: never touch theories/Census/; `python3 tools/census_cache.py
 --check` must stay MATCH.  A board counts only when its file compiles and
-`Print Assumptions` shows functional_extensionality_dep only (LapDecider and
-LapCertGlue are axiom-FREE -- keep them that way).  Everything under tools/ is
-UNTRUSTED; the kernel re-checks every board.
+`Print Assumptions` shows functional_extensionality_dep only (LapDecider,
+LapCertGlue and LapGlueAbs are axiom-FREE -- keep them that way).  Everything
+under tools/ is UNTRUSTED; the kernel re-checks every board.
 
-STATE: 3,980 of the frozen 5,156 settled (77.2%); D_remaining = 1,176.
-The residue's failure profile, measured over all of it:
-  532  no overflow chain   (the exponential wall)
-  433  no interior chain
-  164  no visit witness    (the quasi-halting bucket)
-   47  no anchor family at all
+STATE: 4,140 of the frozen 5,156 settled (80.3%); D_remaining = 1,016.
+(Wave-15 boarded 141 of these; a concurrent gram-3 sweep -- PR #37 -- boarded
+19 more.  The failure profile below was measured at D_remaining = 1,035, so
+it is 19 rows stale but the proportions hold.)
+Failure profile over the residue (tools/counters/wall_survey.py):
+  510  anchor + interior derive, OVERFLOW fails
+  354  anchor derives, INTERIOR fails
+   21  no anchor family at all
+    6  complete lap, no visit witness
 Per-machine cost is a vm_compute:
   python3 tools/counters/emit_lapcert.py --list FILE --emit   (24 alphabets)
-  python3 tools/counters/emit_graycert.py --list FILE --emit  (Gray)
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
-exactly what you boarded (the Closeout.vo compile needs the ~719-file board
-.vo closure, ~85 min once).
+exactly what you boarded, in minutes.
 
-STAGE 0 IS DONE.  IT WAS RUN 2026-07-26/27; THE GATE CAME BACK ZERO.
-Full write-up and reproduction commands: docs/MXDYS_INDUCTIVE_STAGE0.md.
-Do NOT re-run it, and do NOT start Stage 1 below as written.
+FROM PR #40 (branch claude/coq-bbb4-residue-removal-lt5yac), which ran Stage 0
+independently and agrees with wave-15 on every number.  Three things it adds
+that are NOT in wave-15:
 
-  What was built (both committed on the busycoq mirror, branch
-  claude/coq-bbb4-residue-removal-lt5yac):
-    * The oracle.  The dependency closure of Inductive_inf.v is FIFTEEN files
-      and compiles in 35 s under stock `apt-get install coq` 8.18 -- the
-      README's "~1 month" is for the whole repo and was never our cost.  It
-      instantiates at BBinf (Q = Sym = N), so BB42.v / Individual42.v are NOT
-      needed for measurement, and TM'_from_str parses bbchallenge notation
-      with `---` as halt.
-    * verify/InductiveDump.v -- prints the rule chain, the states carried by
-      every config_expr, and which count-language constructors the proof used.
-      Also separates "step budget exhausted" from "search failed", which the
-      stock binary prints identically as "failed to decide".
+  (a) SOME MACHINES ARE BLOCKED BY THE CENSUS CONSTANT, NOT BY DIFFICULTY.
+      QHBound 2000 is FALSE for any machine that genuinely quasi-halts after
+      step 2000, so no liveness strength can ever take it through that tier.
+      B_census = 2000 is an arbitrary bookkeeping value.  John's fix, and it
+      is free: raise the TARGET predicate to QHBound 32779478 (the champion's
+      score) and prove it only on the DEFERRED machines -- the census itself
+      never changes.  TNF_QH.v already has qhbound_mono and neverqh_qhbound,
+      so it is a three-line corollary over the untouched census_decided;
+      B_census/D_census stay put, CENSUS_VO_HASH stays MATCH, and the walk
+      never re-runs.  NOT YET WRITTEN.  Do this first -- it is small and it
+      unblocks (b).
 
-  HARNESS VALIDATED: 60 machines lifted out of mxdys' own Indv1.v come back
-  60/60 `nonhalting` at his exact settings (default_config, T=100000).
-  Negatives below are real negatives.
+  (b) FOUR BOARDS ALREADY PROVED, ALL STILL UNPROVEN ON MAIN, ALL
+      CONSTANT-BLOCKED.  theories/Counters/BlankTail.v: if after a finite
+      prefix the machine sits in state q with the half-tape AHEAD blank and
+      tm q S0 self-loops to q, it marches across virgin tape forever in one
+      state, so every other state is quiet.  Two-line induction; per machine a
+      TM table plus one vm_compute.
+        QHBound 2512  1RB1RA_0RC1LA_1LC1LD_0RB0RD
+        QHBound 2568  1RB1RA_0RC0RB_0RD1RA_1LD1LB
+        QHBound 2819  1RB1RC_1LC1RD_1RA1LD_0RD0LB   (previous BBB(4) champion)
+        QHBound 66349 1RB0LD_1LC0LA_1LA0LC_1RD1RC   (previous BBB(4) champion)
+      All four compile, functional_extensionality_dep only.  They are PROVED
+      but NOT BOARDED: they need (a), then the closeout wiring.
+      The CHAMPION 1RB1LD_1RC1RB_1LC1LA_0RC0RD is the same shape -- at step
+      32,779,478 its tape is COMPLETELY BLANK and it spins out in state C
+      (C0 -> 1,L,C), which is why it is also the BLB(4) champion: the blanking
+      event and the quiet point are the same event.  It wants the same closer
+      via cstepsN (nat is unary; a 32.8M literal is catastrophic).
+      blanktail_scan.py proves this closer is EXHAUSTED at exactly these five;
+      the period-k generalisation buys nothing (every hit has period 1).
 
-  (ii) IS ZERO, AND IT IS ZERO STRUCTURALLY.  On those 60 machines -- ones his
-  decider DECIDES -- the rule chain's config_expr endpoints carry 1 or 2
-  distinct states, never more, on SIX-state machines.  This is not tuning:
-     check_nonhalt x = match x with
-       | ([],[multistep_lb_expr s1 s2 (nat_var v1)]) => s1 == (0inf,0inf,q0,R)
-  is the ONLY accepted certificate shape -- one proposition naming exactly two
-  configurations.  It cannot mention more.  Our collector also swept every
-  subordinate layer and still found <= 2.  So `vis_via_ovf`-style "read the
-  visit witnesses off the rule endpoints" (MXDYS_DECIDERS_PLAN section 1b)
-  CANNOT WORK.  The exact forward model is real -- mxdys is right that his
-  decider only wins when it models the behaviour exactly -- but the
-  certificate it EMITS is a lossy projection of that model, keeping only what
-  ~halts needs.  The state-visit information exists during the search and is
-  discarded at emission time.
+  (c) THE HINT PATH IS BUILT AND VALIDATED -- this is wave-15's own lead item.
+      busycoq mirror branch claude/coq-bbb4-residue-removal-lt5yac:
+      verify/InductiveDump.v adds --bec/--becpos/--dec/--ov0/--ov1 (words as
+      digit strings, "." = empty; states as letters) plus --initial-steps and
+      --mnc, and a --dump that prints the rule chain and the states each
+      config_expr carries.  VALIDATED by reproducing mxdys' own IndSBCv1.v
+      nonhalt3: hint-free budget-exhausted at 9.15 s, hinted nonhalting in
+      0.067 s with flags = nat_mul + nat_powsum + a counter-side constructor.
+      tools/counters/exrules_check.py is a SOUND rejection filter for the
+      ExtraRules obligation (~2 ms/candidate), validated against two rules
+      mxdys proved with Qed and against a one-state perturbation.
+      exrules_search.py derives candidates from alphabet_infer's (A,B,C) --
+      which IS his (d0,d1,d1a); the bbchallenge wiki's Inductive_Proof_System
+      page documents the same triple as C(d0,d1,dh,n).
+      NOTE the obligations carry NO step count -- they are bare -[tm]->+
+      progress facts, and the powsum cost is synthesised by the ENGINE when it
+      nests them.  Our LapDecider conflates shape and cost (sside carries
+      a*j+b), which is why a Theta(2^j) lap is unstateable for us and not for
+      him.  That is a design lesson, not a bolt-on.
 
-  (i) The hint-free black box decides ~none of the residue: 0/30 on the head
-  sample, and more budget is not the lever (maxT 5e6, 50x, finishes in 142 s
-  and still returns budget-exhausted).  A full-population run is in
-  scratch as full_i.tsv if it matters; it does not change the gate, because
-  (ii) decides the gate on its own.
+MXDYS THREAD: CLOSED except for one live lead.  Do not re-open it blind.
 
-  (iii) The count language IS exercised and IS observable: a hinted counter
-  cert reports flags = nat_mul + nat_powsum + a counter-side tape
-  constructor.  Section 1c of the plan survives intact.
+  mxdys told John "see Inductive and RRBA deciders in
+  github.com/ccz181078/busycoq/tree/BB6/", which is why wave-15 exists.
+  Both are now measured, and the wave's real finding is that NEITHER had been
+  tested in the configuration that matters:
 
-  WHY THE BLACK BOX WAS ALWAYS THE WRONG HALF OF THE TOOL.  mxdys' counter
-  certs are HUMAN-HINTED, not searched: IndSBCv1.v passes a hand-built
-  config_SBC in 106 of 107 lemmas, IndBECv1.v a config_BEC in 100 of 122.
-  The ~6,400 hint-free lemmas (Indv1-7, IndBGAS, HLv1/2) are other shapes.
-  Our residue is counters.  The hint is an `ExtraRules` -- seven constructors
-  of counter increment/decrement rules stated as -[tm]->+ progress facts over
-  (d0, d1, d1a, qL, qR, QL, QR).  THAT IS OUR ANCHOR FAMILY PLUS LAP
-  CERTIFICATE IN HIS NOTATION, and our inferred alphabets map onto it
-  exactly: alphabet_infer.py's (A,B,C) IS his (d0,d1,d1a), and his
-  `const s0 <* d1a` clause IS our overflow-at-the-blank-far-side lap.
-  InductiveDump.v now has --bec/--becpos/--dec/--ov0/--ov1 to drive it;
-  validated by reproducing IndSBCv1.v nonhalt3 (hint-free: budget-exhausted
-  at 9.15 s; hinted: nonhalting in 0.067 s).  Note it still reports
-  nstates=2 there -- even when you HAND it the anchor states, the emitted
-  certificate names only two.
+    RRBA  -- RULED OUT.  Extraction is solved (Unset Extraction AutoInline;
+             recipe in tools/mxdys/README.md).  Run against
+             tools/mxdys/control/D_ixp_family.txt -- 40 of our own IXP_*
+             boards, machines we have PROVED are exponential-overflow
+             interleaved counters, i.e. the residue's exact species -- it
+             FAILS every one, at parameters taken from mxdys' own RRBAv*.v
+             proofs.  Its class is "sync BI-counter"; ours is a SINGLE
+             counter whose overflow re-runs the interior lap.  Different
+             species.  Do not spend more time here.
 
-  THE GATE'S OWN ANSWER, THEREFORE: this is the middle branch -- the chains
-  exist but their endpoints do not cover the states, so the work moves INSIDE
-  a rule.  Bigger, still bounded, and it is OUR theorem, not theirs.  See
-  "THE ONE THEOREM" below, which is now the top of the board.
+    Inductive -- THE LIVE LEAD, and still untested properly.  It decides 48%
+             of the machines we boarded and 0% of the residue, but EVERY
+             wave-15 sweep ran with ex_rules = [].  Its counter
+             representations (side_binary, side_binary_Pos, side_BL) are
+             HINT-GATED -- the README's "Others (requires some hints from
+             human)" -- and our residue is exactly those.  A hint IS an
+             ENCDATA row:
 
-  THE ONE THEOREM -- this is now the whole job, and it is ours.
+               side_binary_Pos_inc_rule d0 d1 d1a qL qR QL QR
+                 where d1^^n is our rep uS j, d0 is our uD, d1a the edge word
 
-  Both open fronts need the SAME missing fact, which is why it is the highest
-  value single piece of work on the board:
+             We compute all of it already.  The one attempt guessed blind
+             (T0 in {0,50,200,1000}, 2-cell digits, block size 2) against
+             mxdys' real parameters (T0=7450, 4-cell digits, block size 5) and
+             got 0 of 6 -- a WEAK negative.  The block-size mismatch is the
+             interesting part: our alphabets are 1-3 cells and his are 4-5,
+             which suggests these machines want a coarser macro-block than our
+             anchor search uses.  tools/mxdys/hint.ml is built and takes
+             <spec> d0 d1 d1a.  Half a day, and it is the only thing that
+             could still make this trove pay.
 
-     "this lap visits only states in S"
+  A STANDING LESSON from this wave, worth more than the deciders: I twice
+  argued from README prose about which tool was "the" right one, in opposite
+  directions within a day, and both times was over-narrow.  When the expert
+  has named the tools, MEASURE them.  And build the control FIRST -- the
+  positive control (48% on boarded machines) is what proved the harness sound
+  and made every later negative worth believing.
 
-  Today wsteps_frame / cycL / cycR state their ENDPOINTS only.  Add a
-  states-visited variant.  It is one theorem, not one per machine, same
-  architecture as srun_sound.  It closes:
-    * the 164 quasi-halters (ranked (1) below) -- that front has wanted
-      exactly this since WAVE13 section 6; and
-    * the liveness half of anything the rule engine gives us, since after
-      Stage 0 we KNOW the liveness cannot come from rule endpoints.
+THE TASK -- THE EXPONENTIAL OVERFLOW, AND MEASURE BEFORE TEMPLATING.
 
-  Do NOT build theories/Bridge/BusyCoqTM.v first.  Its one theorem
-  (multistep_csteps : BC.multistep (tr_tm tm) n (tr a) (tr b) ->
-  csteps tm n a = Some b) is still correct and still eventually wanted, but on
-  its own it buys ZERO while (ii) is zero -- it would import chains whose
-  endpoints name two states.  Bridge second, after the visits theorem exists
-  to consume it.
+  The two big buckets are ONE problem.  WAVE15 section 4 ran ovfshape.py over
+  all 354 "no-interior" machines: 134 are AFFINE interior / EXP2 overflow, so
+  they are not really blocked on the interior at all -- fixing the interior
+  search moves them into the no-overflow bucket, not into a board.  Net,
+  ~750 of 1,035 are gated on an overflow that costs Theta(2^j), which `sside`
+  (a*j+b) and `srun` (ca*j+cb) cannot represent BY CONSTRUCTION.
 
-  VENDORING IS DECIDED BY THE MEASUREMENT: keep their code OUT of tree, as a
-  search ORACLE only.  Two independent reasons, both now established rather
-  than assumed:
-    * BBinf.v carries the tree's only two Admitted lemmas (all_qs_spec,
-      all_syms_spec -- they cannot hold for an unbounded alphabet) and
-      extraction warns about exactly these.  The generic-arity binary can
-      never be load-bearing.  A real BB42 context (45 lines, pattern BB52.v)
-      would be required for anything that is.
-    * The ExtraRules the oracle uses are consumed WITHOUT proof --
-      ExtraRules_WF is a separate obligation discharged per machine by step
-      evaluation.  So every hint has to be re-proved on our side regardless,
-      which is exactly the emit_lapcert.py board we already know how to make.
+  READ docs/NESTED_LAP_PLAN.md FIRST -- it retires the premise that the count
+  language must be extended.  In one line: LapStep only asks for `exists n`,
+  so an exponential lap needs a PROOF that some n works, never a formula for
+  it -- and the 163 existing IXP_* boards already do exactly that, composing
+  an affine boot chain, a well-founded induction to the all-ones fill, and an
+  affine exit chain.  `2^j` is never written down.  So this is ONE NEW CHAIN
+  STEP (chain to a second anchor family), not a new count language, and
+  LapDecider.v is not touched.
 
-  THE PRODUCTIVE USE OF THEIR CODE, concretely:
-    (a) As a DESIGN SPEC for extending LapDecider.  Our lap model is affine
-        (docs/LAPDECIDER.md); the extension needed is `powsum k` plus one
-        multiplication, on the OVERFLOW branch, with the far side pinned to
-        `const s0` exactly as side_binary_Pos_inc_rule's second clause does.
-        This is MXDYS_DECIDERS_PLAN section 5's fallback -- but now with a
-        verified reference implementation to copy instead of a design to
-        invent.  side_binary / side_binary_Pos / side_binary_dec / side_BL are
-        the right tape constructors.
-    (b) As an ORACLE for the counter families, driven by OUR alphabets:
-        alphabet_infer.py -> (A,B,C) -> --becpos/--dec d0 d1 d1a, plus a small
-        grid over qL/qR/QR.  Do not run the hint-free black box again; it is
-        not the mode that decided the counter families in his own tree.
+  STAGES A AND B ARE DONE.  Wave-15 left this half-built, and the remaining
+  work is NAMED:
+
+    Stage A (DONE) -- tools/counters/innerfam.py dumps one overflow phase and
+      finds the inner counter inside it.  Measured on 150 machines: 96% have
+      an inner consecutive family; 79% run exactly 2^(K-1)..2^K-1.  The inner
+      ALPHABET differs from the outer on 37% (Alph_10_11_11 -> Ip on 51 of
+      144), which is the real reason emit_ixp.py -- Ip at both levels --
+      derives 0 of this bucket.
+
+    Stage B (DONE) -- theories/Counters/NestedLap.v, 63 lines, and BOTH its
+      lemmas are "Closed under the global context" (zero axioms).
+      Checkers/LapDecider.v is untouched.  theories/Tests/NestedLapRegression.v
+      re-derives the hand-authored IXP_0RB0RB_0LC1RD_1RB1LC_0LA0RB board's
+      overflow branch through the generic theorem -- a regression test against
+      a known-good board.
+
+    Stage C (THE WORK) -- the emitter.  Prototyped in
+      tools/counters/nestboot.py, and the blocker is MEASURED: the EXIT chain
+      derives readily with the existing derive_chain, the BOOT chain does not
+      (1 of 12).  It is NOT a search budget -- (24,64) -> (48,256) -> (64,512)
+      changes nothing.  It is KEY SELECTION: innerfam reports the best-scoring
+      inner key, a machine has 16-27 keys that decode consecutively, and only
+      a particular one is the family the boot can land on.  Enumerating every
+      key instead of ranking takes boot chains from 1 of 5 to 3 of 5, and the
+      keys that work are NEVER the best-scoring one -- they are consistently
+      Ip at a state different from the outer with a short tail, exactly the
+      reference's Cin v = (StC, (Ip v ++ [S1], S0, [S0;S0])).
+
+      AND the boot has its OWN SHAPE, which must be measured like the
+      overflow was.  tools/counters/bootshape.py runs the ovfshape question on
+      the boot itself: over 139 machines, 105 (76%) have an AFFINE boot and
+      34 (24%) an EXPONENTIAL one (ratio -> 2).  THE EXP BOOT IS AN Mp
+      PHENOMENON -- Mp is 2 affine / 31 exp, while Jp is 63/3,
+      Alph_10_11_11 is 36/0 and Ip is 4/0.  So target Jp + Alph_10_11_11 + Ip
+      first, and give Mp its own tape reading (spacetime.py) before
+      templating it at all.  An exponential boot cannot be
+      one chain, by the same affineness limit that put these machines in the
+      residue -- so the EXP2 bucket splits again:
+        affine boot (76%)  -> two-level nested lap is right, failures are a
+                              SEARCH gap;
+        exp boot (24%)     -> either a THREE-level nest, or the inner start is
+                              mis-identified.  innerfam requires the decoded
+                              values to be exactly 2^(K-1)..2^K-1, and a
+                              SUBSEQUENCE of a longer count satisfies that too
+                              -- so a counter running 1..2^K-1 is reported
+                              EXACT with its start exponentially far in.
+                              CHECK THAT before assuming a third level.
+
+      START HERE, on the affine-boot machines.  The symbolic inner target is
+      wrong, and the tape says how.  For 0RB1LA_1RC0LA_0LD1RB_1LB1LD (outer
+      Jp@B, affine boot 4K+8):
+        REAL phase start   st=B L=10101010110 R=e   SYMB B0out matches exactly
+        REAL inner anchor  st=B L=11111111100 R=0   SYMB CinS = rep [1,1] 4 ++
+                                                    [1] -- 9 cells, real is 11
+      The opaque tail X must be the SAME at both ends of a chain; B0out forces
+      X=[] and the inner anchor needs X=[S0;S0].  innerfam reports its key
+      after rstrip0, so those cells are gone.
+
+      DO NOT REPEAT: reading u and post off the real tape at two consecutive
+      outer indices and using rep u j ++ post gave 0 of 18, DOWN from 3.  The
+      inner anchor is not of that form with the count equal to the outer j --
+      the decomposition assumption is wrong, not just the trailing cells.
+      Dump tapes (spacetime.py) at two indices and read the inner anchor's
+      actual shape before templating again.
+
+  Full design, measurements and open questions: docs/NESTED_LAP_PLAN.md.
+
+  Run ovfshape.py on your candidate set before templating anything.  The
+  interior version of that measurement was missing for five waves and hid a
+  quadratic family; the overflow version was missing for six and hid this one.
 
 THEN, in ranked order (all independent of the above):
 
-  (1) The 164 QUASI-HALTING machines (WAVE13 section 6).  John: "qh is fine, we
-      just need to know it qh before 32M."  One of its two blockers is gone --
-      mirrorize learned the QH closing shape (WAVE14 section 4.2).  The ones
-      with StA targeted need ONE new fact: "the lap visits only states in S",
-      which needs a states-visited variant of wsteps_frame / cycL / cycR
-      (today they state only their ENDPOINTS).  One theorem, not one per
-      machine.  NOTE: this is the same shape as Stage 2 above -- if you do the
-      bridge, do these with it.
+  (1) START HERE.  The 141 AFFINE/AFFINE machines -- affine interior AND
+      affine overflow, so fully IN MODEL, no new theory needed.  MEASURED at
+      the end of wave-15: the emitter derives 0 of 141, failing with
+      "no interior chain" on 121 and "no overflow chain" on 20.  ovfshape says
+      the lap is affine; derive_chain cannot find it.  It is a SEARCH gap, on
+      a named population, and it is the same shape as WAVE13 section 4.1 where
+      making the window search target-aware turned 0 chains into all of them.
+      The list regenerates with:
+        python3 tools/counters/ovfshape.py --list tools/closeout/frozen_unproven.txt
+      then take the int=AFFINE ovf=AFFINE rows.  Instrument derive_chain on
+      three of them and find out what it is refusing.  Best boards-per-hour in
+      the residue by a wide margin -- and it was ranked first in the wave-14
+      prompt and skipped, which is why wave-15 boarded only one batch.
 
-  (2) Two small localized leads (WAVE14 section 3):
-      * 13 PARITY-AFFINE machines are IN model -- affine on each parity class
-        of j (WAVE13 section 9b's two-pass carry).  They need the m=2 re-index
-        (j = 2i+r, block unit u^2).  MEASURED: only 3 of the 13 derive both
-        parity branches with the naive re-index, so this is worth ~3 boards,
-        not 13.  Do not oversize it.
-      * 8 machines whose EXP4-at-a-binary-anchor marks them as GRAY (11 of the
-        19 EXP4 are exactly wave-14's Gray boards).  On
-        0RB0LA_1LA1RC_0RD1RD_1LB0LB the Gp anchor family is present and closes
-        affinely at 4j+8, yet all five symbolic branches fail in derive_chain.
-        Ruled out: tail depth (a 4-way x,y peel does not help) and search
-        budget (depth 24 / nmax 64 against a 12-step lap).  The lap opens by
-        stepping RIGHT into blank tape, so the chain must start with SWinR --
-        instrument _win_candidates on that configuration.
+  (2) The 6 remaining no-visit-witness machines.  Their missing state is
+      genuinely LIVE, but fires only in the INTERIOR lap, where
+      LapCertGlue.vis_via_ovf cannot see it.  A vis_via_int dual -- from any
+      anchor, run to an INTERIOR anchor rather than an overflow one -- would
+      catch them.  Small, one theorem, and it is the honest completion of
+      wave-15.
 
-  (3) The 47 with NO anchor family at all.  alphabet_infer.py +
+  (3) 13 PARITY-AFFINE machines are IN model -- affine on each parity class
+      of j.  They need the m=2 re-index (j = 2i+r, block unit u^2).
+      MEASURED in wave-14: only ~3 of the 13 derive both parity branches with
+      the naive re-index, so this is worth ~3 boards.  Do not oversize it.
+
+  (4) The 21 with NO anchor family at all.  alphabet_infer.py +
       gen_alphabet.py INFER a counter's word family from its own tape as a
       triple (A,B,C) and generate the Coq module; 18 families are wired.
 
-  (4) The 27 genuine mxdys holdouts (tools/census_holdouts_kept.txt) -- the
-      real endgame, and what John actually wants to be working on.
+  (5) The 27 genuine mxdys holdouts (tools/census_holdouts_kept.txt, of which
+      22 are still in D_remaining) -- the real endgame, and what John actually
+      wants to be working on.
 
 DO NOT RETRY (measured; grids in COUNTER_CLOSEOUT.md section 5, WAVE12 section
-8, WAVE13 sections 4 and 8, WAVE14 section 7):
+8, WAVE13 sections 4 and 8, WAVE14 section 7, WAVE15 section 5):
+  * mxdys' Inductive and RWLAcc deciders on this residue.  MEASURED in
+    wave-15: Inductive decides 12 of 1,176 at default config and ~1 more per
+    150 under six further configs; RWLAcc 0 of 7.  ZERO of the decided
+    machines used nat_powsum -- the count language we went there for is never
+    exercised, because their search never reaches a generalisable repeater on
+    our machines.  And their top-level theorem is `~halts`, which moves
+    D_remaining by ZERO: even a 100% sweep boards nothing without the Stage
+    1-3 liveness bridge.  Harness kept in tools/mxdys/ if you need it.
+    (RRBA is the one honest GAP -- its extraction stack-overflows coqc and
+    vm_compute does not finish a machine in 9.5 min, so it was never run.  Do
+    not record it as a negative.  If you want the number, use the Rust
+    beaver/ tree or native_compute under an opam switch.)
+  * Building BB42.v / Individual42.v to run their deciders.  Inductive_inf.v
+    instantiates at BBinf (Q := N, Sym := N) and parses our (4,2) strings AS
+    IS.  Also: BBinf.v has two Admitted lemmas, so it is a SEARCH ORACLE and
+    can never be proof-grade.
+  * The "states visited" variant of wsteps_frame/cycL/cycR (WAVE13 section 6)
+    for the quiet-state bucket.  The absorbing-set closure in
+    Counters/LapGlueAbs.v gets 141 of 149 with ONE induction.
+  * emit_graycert.py for new boards -- a full run over the 1,035 reports "no
+    Gray anchor" on every machine; wave-14 took all 11 there are.
   * NGramHist/NGramCPS liveness over this residue at any (k,n,t); RepWL over
     the counter core; more per-machine lap emitters; ripple ulen widening.
   * Maximal-only window cuts in the chain search -- must be target-aware.
   * Reaching an anchor's syntactic form by rotations alone -- impossible in
     principle; the constant offset needs SFold.
   * Widening the ENCODING table hoping for boards.  Wave-14 INFERRED 18
-    alphabets from the tapes (not guessed) and it bought 9 boards against 234
-    machines decoded.  The alphabet has never been the binding constraint --
-    but the inference is still worth running, for DIAGNOSIS.
+    alphabets from the tapes and it bought 9 boards against 234 machines
+    decoded.  The alphabet has never been the binding constraint.
   * Peeling the overflow block to fix the wall -- tried, 0 of 385.
   * enc_src/enc_dst from two ENCDATA rows to break the overflow wall (WAVE13
     section 10c).  The wall is the overflow's COST, not its target word.
@@ -228,35 +325,17 @@ DO NOT RETRY (measured; grids in COUNTER_CLOSEOUT.md section 5, WAVE12 section
     MB(m) ++ [S1] = [S1] ++ MA(m) identically, so the verdict is an artifact of
     head position.  Use absolute column parity (frame_probe.py, spacetime.py).
   * Believing a negative from an emitter run that RAISED.  A crash in
-    emit_lapcert's reporting path cost 46 finished certificates and looked
-    exactly like "the search finds nothing".  Survey with wall_survey.py,
-    which keeps the best outcome per machine, before concluding anything.
-  * RRBA, at all, for this project.  Its verdict type is a bare bool
-    (decide_loop2 : ... -> bool, spec yields ~halts tm c0) and its record
-    structure is loop1_t := int*int*int*int -- four machine words, no state,
-    no symbolic configuration.  There is nothing to read liveness off of EVEN
-    ON A SUCCESS.  It also targets shift-recursive / sync bi-counter
-    (Skelet10) shapes, not ours.  A session churned on it and got nothing;
-    that is the expected outcome, not bad luck.  Same for RWLAcc
-    (decide_nonhalt T : bool).  UBRRBA is halting-only by its own README.
-    Inductive is the ONLY decider in that suite whose certificate carries a
-    state at all, and it carries at most two.
-  * Running mxdys' hint-FREE extracted decider over the residue hoping for
-    boards.  Measured: 0/30 on the head sample, and his own counter certs do
-    not use that mode either (IndSBCv1 106/107 and IndBECv1 100/122 are
-    hand-hinted).  If you use their engine, drive it with hints.
-  * Raising --maxT to force a decision.  50x (5e6) finishes in 142 s and still
-    returns budget-exhausted.  T is not the binding constraint.
-  * Expecting per-state visit witnesses from ANY certificate that tree emits.
-    See the check_nonhalt shape above -- it is structurally two states.
-  * (RETIRED) "mxdys' implementation is not available."  It IS -- that is this
-    session's task.
+    emit_lapcert's reporting path once cost 46 finished certificates and
+    looked exactly like "the search finds nothing".  Survey with
+    wall_survey.py, which keeps the best outcome per machine, before
+    concluding anything.
 
-ALSO: ovfshape.py measures cost-vs-j on BOTH branches and classifies
-AFFINE / PARITY-AFFINE / QUAD / EXP2 / EXP3 / EXP4 / HIGHER.  Run it before
-templating anything.  The interior version of that measurement was missing for
-five waves and hid a quadratic family; the overflow version was missing for six
-and hid the exponential one.
+A LESSON WORTH CARRYING (wave-15).  The quiet-state bucket had a planned
+multi-day build attached to it for two waves.  What it actually needed was to
+ask a DIFFERENT question: not "does the lap avoid this state" (a trajectory
+fact, expensive) but "is this state still reachable at all" (a digraph fact,
+one induction).  Before building a soundness layer, check whether the property
+is syntactic.
 
 WHEN STUCK ON A CLASS: print a few machine strings WITH AN ABSOLUTE-COORDINATE
 TAPE DUMP (tools/counters/spacetime.py) and ask John.  Hand-inspection is
@@ -276,6 +355,6 @@ board .vo closure (~85 min in a fresh container); inventory.py, gen_stages.py
 and audit.py all run in minutes and produce the numbers above.
 
 Commit + push per validated batch.  Name new files so they cannot clash with a
-concurrent session's (waves 10-14 used ILS1_*/ILS4_*/ILS4F_*, ILS1M_*/ILS4M_*/
+concurrent session's (waves 10-15 used ILS1_*/ILS4_*/ILS4F_*, ILS1M_*/ILS4M_*/
 ILS4FM_*, IXP_*/IXPM_*, WLS_*/WLSM_*, WLJ_*, LAPC_*, LAPG_*, Alph_*).
 ```
