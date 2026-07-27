@@ -238,6 +238,93 @@ Lemma dep2 : forall L R,
   = Some (StC, (S1 :: L, S1, S0 :: S1 :: S1 :: R)).
 Proof. reflexivity. Qed.
 
+(** ** The outward phase
+
+    Each carried block costs [out6^a . carry5]: a block of EVEN length
+    [2a+2] is eaten two cells at a time until two remain, and [carry5] --
+    John's "moves the line 2 left and continues on" -- crosses the stripe and
+    carries.  The deposit block is the first ODD one, which is where the
+    scan stops.  One induction over the carried blocks. *)
+
+Fixpoint owtape (l : list nat) (R : list Sym) : list Sym :=
+  match l with
+  | [] => R
+  | a :: t => repeat S1 (2 * a + 2) ++ S0 :: owtape t R
+  end.
+
+Fixpoint owcost (l : list nat) : nat :=
+  match l with [] => 0 | a :: t => (6 * a + 5) + owcost t end.
+
+Fixpoint owdeb (l : list nat) (M : list Sym) : list Sym :=
+  match l with [] => M | a :: t => owdeb t (S0 :: S1 :: S1 :: lay a M) end.
+
+Lemma outward : forall l M R,
+  csteps tm_15 (owcost l) (StC, (S0 :: M, S0, owtape l R))
+  = Some (StC, (S0 :: owdeb l M, S0, R)).
+Proof.
+  induction l as [|a t IH]; intros M R.
+  - reflexivity.
+  - cbn [owcost owtape owdeb].
+    replace (repeat S1 (2 * a + 2) ++ S0 :: owtape t R)
+       with (repeat S1 (2 * a + 1) ++ S1 :: S0 :: owtape t R)
+       by (replace (2 * a + 2) with (S (2 * a + 1)) by lia;
+           rewrite <- repeat_snoc; reflexivity).
+    replace (6 * a + 5 + owcost t) with (6 * a + (5 + owcost t)) by lia.
+    rewrite csteps_add, out6s.
+    rewrite csteps_add, carry5, IH. reflexivity.
+Qed.
+
+(** ** The return sweep
+
+    After the deposit the head walks back over the debris the outward phase
+    laid, and that walk is ONE structural recursion: [cross7] eats a stripe
+    group [S0 S1 S1], [ret1] eats a single 1, and [exit1] lands on the new
+    left record.  The outward and return phases are therefore SEQUENTIAL
+    inductions over the same shape, not nested ones. *)
+
+Inductive Deb : list Sym -> Prop :=
+| DebN : Deb []
+| Deb1 : forall D, Deb D -> Deb (S1 :: D)
+| DebG : forall D, Deb D -> Deb (S0 :: S1 :: S1 :: D).
+
+Fixpoint bcost (D : list Sym) : nat :=
+  match D with
+  | S0 :: S1 :: S1 :: t => 7 + bcost t
+  | S1 :: t => 1 + bcost t
+  | _ => 1
+  end.
+
+Fixpoint back (D R : list Sym) : list Sym :=
+  match D with
+  | S0 :: S1 :: S1 :: t => back t (S0 :: S1 :: S1 :: R)
+  | S1 :: t => back t (S1 :: R)
+  | _ => S1 :: R
+  end.
+
+(** The debris the outward phase lays is [Deb]-shaped, which is what lets
+    the return sweep consume it. *)
+Lemma lay_Deb : forall a M, Deb M -> Deb (lay a M).
+Proof.
+  induction a as [|a IH]; intros M H; cbn [lay];
+    [exact H | apply Deb1, Deb1, IH, H].
+Qed.
+
+Lemma owdeb_Deb : forall l M, Deb M -> Deb (owdeb l M).
+Proof.
+  induction l as [|a t IH]; intros M H; cbn [owdeb].
+  - exact H.
+  - apply IH, DebG, lay_Deb, H.
+Qed.
+
+Lemma backsweep : forall D, Deb D -> forall R,
+  csteps tm_15 (bcost D) (StC, (D, S1, R)) = Some (StC, ([], S0, back D R)).
+Proof.
+  induction 1 as [|D HD IH|D HD IH]; intro R.
+  - apply exit1.
+  - cbn [bcost back]. rewrite csteps_add, ret1, IH. reflexivity.
+  - cbn [bcost back]. rewrite csteps_add, cross7, IH. reflexivity.
+Qed.
+
 (** ** The abstract state: a positive, and the tape it names *)
 
 Fixpoint wblocks (v : list nat) : list Sym :=
