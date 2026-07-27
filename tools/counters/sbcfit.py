@@ -568,9 +568,16 @@ def search(spec, T=400000, maxdl=2, maxwl=6, maxbl=6, cap=400000,
         for r0, r1 in rotations(d1p):
             c = Cert(zip(FIELDS, [QL, QR, d0, d1, d1p, d1a, d, dp,
                                   w0, w0p, w10, w11, r0, r1, n0, m0]))
-            ok, _ = check_cert(spec, c, initT=T)
+            ok, bad = check_cert(spec, c, initT=T)
             if ok:
                 return c
+            # Which hypothesis a near-miss dies on is the whole diagnostic:
+            # a candidate that reached S0 already looks like a sync bouncer
+            # counter, so the FIRST failing rule names what our machines do
+            # differently from the 416 upstream ones.
+            if dbg is not None and bad:
+                dbg.setdefault('why', {})
+                dbg['why'][bad[0]] = dbg['why'].get(bad[0], 0) + 1
     return None
 
 
@@ -609,8 +616,12 @@ def main():
                     print('%s\tSBCV1\t%s\t%s' % (spec, tag, fmt(c)), flush=True)
                     break
                 if a.debug:
-                    note.append('%s:%s' % (tag, ','.join(
-                        '%s=%d' % kv for kv in sorted(dbg.items()))))
+                    why = dbg.pop('why', {})
+                    note.append('%s:%s%s' % (tag, ','.join(
+                        '%s=%d' % kv for kv in sorted(dbg.items())),
+                        (' why:' + ','.join('%s=%d' % kv for kv in
+                                            sorted(why.items()))) if why
+                        else ''))
             else:
                 print('%s\tFAIL\t%s' % (spec, ' '.join(note)), flush=True)
         print('# %d / %d' % (hits, len(specs)), file=sys.stderr)
