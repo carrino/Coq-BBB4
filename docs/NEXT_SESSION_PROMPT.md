@@ -77,7 +77,40 @@ MXDYS THREAD: CLOSED except for one live lead.  Do not re-open it blind.
              counter whose overflow re-runs the interior lap.  Different
              species.  Do not spend more time here.
 
-    Inductive -- THE LIVE LEAD, and still untested properly.  It decides 48%
+    Inductive -- THE LIVE LEAD, and the wave-15 hint attempt used the WRONG
+             REPRESENTATION, so its 0-of-6 is worthless, not weak.
+
+             Our residue is the SYNC BOUNCER COUNTER class, formalised on
+             wiki.bbchallenge.org/wiki/Inductive_Proof_System:
+
+               C'(2a,2b+1,0) = d0 C'(a,b,0)   C'(2a+1,2b,0) = d1 C'(a,b,0)
+               well-formed when a + b + 1 = 2^n
+               increment: C'(a+1,b,n) -> C'(a,b+1,n)
+               overflow:  C'(0,b,n)   -> C'(2b+1,0,n+1)
+
+             Two complementary counts summing to 2^n - 1, so ONE OVERFLOW
+             COSTS 2^n INCREMENTS -- that is our measured Theta(2^j) overflow
+             and John's "count 8->15, shift, count 8->15 again" in mxdys'
+             notation.  Inductive.v has it as side_binary_dec (THREE nat_exprs
+             = C'(a,b,n)), wired by config_SBC = Sync Bouncer Counter, which
+             supplies an INCREMENT rule AND an OVERFLOW rule plus two state
+             pairs.  wave-15's hint used side_binary_Pos_inc_rule -- a plain
+             binary counter with NO overflow rule.
+
+             DO THIS FIRST.  config_SBC's arguments map onto data
+             emit_lapcert already derives per machine:
+               d0,d1 <- ENCDATA uD/uS ; d1a <- soD ; QL,QR <- interior-lap
+               states ; QL',QR' <- OVERFLOW-lap states ; T0 <- boot_probe.
+             tools/mxdys/hint.ml needs one edit: swap the constructor for the
+             side_binary_dec_inc_rule + side_binary_dec_ov1_rule PAIR and take
+             the state pairs from the two laps instead of sweeping 4x4 blind.
+             Half a day, and it is the only thing that could still make this
+             trove pay.
+
+             (Bell_eats_counter is a DIFFERENT class -- its overflow HALVES
+             the counter -- so do not chase it.)
+
+    Inductive, background -- still untested properly.  It decides 48%
              of the machines we boarded and 0% of the residue, but EVERY
              wave-15 sweep ran with ex_rules = [].  Its counter
              representations (side_binary, side_binary_Pos, side_BL) are

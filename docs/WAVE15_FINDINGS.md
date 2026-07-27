@@ -78,6 +78,68 @@ total ceiling at **~20 of 1,176 (under 2%)**.
    this wave's 141 boards came from a machine it decided.  Two non-overlapping
    small populations — so there is no synergy to harvest either.
 
+### THE HINT WAS THE WRONG REPRESENTATION -- our machines are SYNC BOUNCER COUNTERS
+
+_The most actionable finding of the wave, from the wiki pages John sent at the
+end.  `wiki.bbchallenge.org/wiki/Inductive_Proof_System` gives the formal
+representation, and it is our residue exactly:_
+
+    C'(0,0,0)       = dh 0^inf
+    C'(2a,2b+1,0)   = d0 C'(a,b,0)
+    C'(2a+1,2b,0)   = d1 C'(a,b,0)
+    well-formed when a + b + 1 = 2^n
+
+    increment:  l qR  QR>  C'(a+1,b,n) -> l <QL  qL  C'(a,b+1,n)
+    overflow:   l qR' QR'> C'(0,b,n)   -> l <QL' qL' C'(2b+1,0,n+1)
+
+TWO complementary counts `a`, `b` with `a + b + 1 = 2^n`.  Each increment moves
+one unit from `a` to `b`, so an overflow costs **2^n increments** -- which IS
+our measured `Theta(2^j)` overflow, and it is John's tape reading ("count
+8->15, shift over one, count 8->15 again") in mxdys' own notation.  The
+well-formedness condition is why the cost is exactly a doubling.
+
+`Inductive.v` carries this representation directly:
+
+    side_binary_dec (c : list Sym * list Sym * list Sym) (len n1 n2 : nat_expr)
+
+THREE `nat_expr`s -- `(n, a, b)` -- i.e. `C'(a,b,n)`.  And the config that
+wires it is named for the class:
+
+    Definition config_SBC T0 n QL QR QL' QR' qL qR qL' qR' d0 d1 d1a :=
+      set_ex_rules [ side_binary_dec_inc_rule d0 d1 d1a qL  qR  QL  QR ;
+                     side_binary_dec_ov1_rule d0 d1 d1a d1a qL' qR' QL' QR' ]
+
+`SBC` = **S**ync **B**ouncer **C**ounter, with an INCREMENT rule and an
+OVERFLOW rule, and two state pairs -- one for each lap.
+
+**My hint sweep used `side_binary_Pos_inc_rule`**: a plain binary counter, a
+single count, and NO overflow rule.  I gave the decider the wrong
+representation for machines whose entire difficulty is the overflow.  That,
+not the parameter box, is why it scored 0 of 6 -- and it makes that negative
+worthless rather than weak.
+
+**The corrected experiment, and we already compute every input.**  `config_SBC`
+wants exactly what `emit_lapcert` derives per machine:
+
+| `config_SBC` argument | where ours comes from |
+|---|---|
+| `d0`, `d1` | `ENCDATA` `uD` / `uS` -- the two digit words |
+| `d1a` | the tape-edge word (`soD`) |
+| `QL`, `QR` | the INTERIOR lap's anchor states |
+| `QL'`, `QR'` | the OVERFLOW lap's states -- we derive these separately |
+| `T0` | `boot_probe` |
+| `n` (block size) | our digit length, though see the 4-5 vs 1-3 mismatch below |
+
+`tools/mxdys/hint.ml` needs one edit: swap `Coq_side_binary_Pos_inc_rule` for
+the `side_binary_dec_inc_rule` + `side_binary_dec_ov1_rule` PAIR, and take the
+two state pairs from the two laps instead of sweeping 4x4 blindly.
+
+Two related notes.  `Bell_eats_counter` is a DIFFERENT class -- there the
+overflow *halves* the counter ("the bell eats the lowest digit") -- so it is
+not ours.  And the wiki's sync-bouncer page is a stub with no formalisation;
+the real definition is on the Inductive_Proof_System page, which is why this
+took until the end of the wave to find.
+
 ### PROVENANCE, WHICH SETTLES THE "WHICH DECIDER" QUESTION
 
 **mxdys named BOTH.**  His words to John, which are why this wave exists:
