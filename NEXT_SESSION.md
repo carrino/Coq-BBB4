@@ -99,7 +99,159 @@ clean `.vo` state, `functional_extensionality_dep` only).  It also needed the
 anchor HEAD symbol, the anchor TAIL and the anchor's FAR side (a blank *cell*,
 not the empty *list*) to become parameters — the encoding alone was not enough.
 
-## 2e. Wave-17 (2026-07-27) -- double #32 boarded; the (4,2) holdouts are 4
+## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
+
+Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
+holdouts rather than the residue.  Headlines:
+
+- **The 27 are 16 boarded / 11 unproven** (was 5/22; this line said
+  "11 boarded / 16 unproven" until 2026-07-27 — that was the mid-wave count
+  and it went stale as the rest of the wave landed.  Re-derived against the
+  authority: `census_holdouts_kept.txt` ∩ `closeout/frozen_unproven.txt` = 11,
+  complement = 16, which matches `docs/HOLDOUTS_WAVE14.md` §1).  `#6` and `#24` landed
+  (`theories/Machines/Counters/Wave_6.v`, `Wave_24.v`), so **all six
+  `wave_counter` machines are now boarded** off the one `WaveCounter.v`
+  closer — it needed no change.  `docs/HOLDOUTS_WAVE14.md` §1 has the full
+  family decomposition of the remaining 20 (tower 4, double 3, blockdbl 3,
+  xd 3, fractal 2, wave4 1, wrap-QH 2, v4-irules 1, open 1).
+- **#6 was EASIER than #27, not harder**, despite the "4-step 0-writing
+  cross" warning: its rightward return leaves the tape byte-for-byte
+  unchanged, so the whole `relaid`/`bridge_l` borrow algebra disappears.
+  The one piece of real design is `decp` (the deposit decrements the NEWEST
+  laid run, which is `base[0]` only when the carry stopped immediately).
+- **#24 was nearly free:** `mirror_tm tm_24` is `tm_6` with the states
+  relabelled by `(StA StC)(StB StD)`.  That bijection MOVES `StA`, so it is
+  not a `TM_swap` transport — but the file transcribes under the
+  substitution, and `Wave_24.v` compiled on the first try.  New tool
+  `tools/counters/sibling_scan.py` looks for exactly this.
+- **`sibling_scan.py` found four unproven holdouts that are relabellings of
+  BOARDED machines**, which said their dynamics are inside our engines'
+  reach.  Acting on that, `tools/nghist/holdout_sweep.py` ran NGramHist over
+  all 20 — and **boarded 4 of them at the CHEAPEST rung (k=2, n=2)**:
+  `theories/Machines/NGHHold/NGHHold_{00..03}.v`.  Those are the whole
+  `xd_counter` family (#1/#25/#29) **and
+  `1RB0RB_1LC1RC_0RA1LD_1RC0LD` — the machine this file has called "no known
+  proof anywhere" for a year.  It now has a kernel-checked
+  NeverQuasiHaltsSt theorem.**
+- **[SCOPE, 2026-07-27: the holdouts now have DEDICATED sessions of their own.
+  The rule below stands as a finding, but a RESIDUE session should not act on
+  it -- do not open the holdout front or sweep `census_holdouts_kept.txt`.
+  `docs/NEXT_SESSION_PROMPT.md` is residue-only.]**
+- **RETIRE the "keep the machinery away from the 27" discipline**
+  (`docs/TERMINOLOGY.md`).  It rested on mxdys' deciders failing at HIS
+  parameters; ours is a different tool.  New rule: sweep the holdouts with
+  every engine at every rung BEFORE hand-writing a parametric proof.  The 16
+  survivors resisted (2,2)/(4,2)/(6,2) never-QH and the R_QH tier; still
+  untried are n=3, k=8, bigger fuel/MAXCTX, RepWL, irules-QH and LapDecider.
+- Two leads CLOSED OFF (do not re-chase): the `1RB---` wrap pair is not just
+  wiring (`provenqh_stay.txt` records the QHBound tier probe-failing on
+  both), and tower/xd are ~1,500/~1,100-line table interpreters, i.e. a
+  checker-port project, not a session.
+- blockdbl (#11/#13/#28) reconnoitred (`tools/counters/probe_bd.py`,
+  j = 2..7 exact).  Caution: one lap is Θ(m²) with Θ(m) turnarounds, so it
+  needs `MeasureGlue`-style nesting like `Bounce_8.v`, not flat `LapGlue`.
+  Do #13 first (mdbl = 0, mb = 0).
+- **Env:** apt's `coq` is exactly 8.18.0 and is all the holdout front needs
+  (no `native_compute`).  `make -j4` OOMs on `IRules_Batch_02` (~6.3 GB);
+  use `-j2` or targeted `make -f Makefile.coq <file>.vo`.
+
+## 2d. Wave-16, HOLDOUTS track (2026-07-27) -- mxdys' S(n) claim, and FOUR holdouts boarded
+
+Full write-up: `docs/HOLDOUTS_MXDYS_SN.md`.  John relayed two claims from
+mxdys about the 11 live holdouts; both were tested.
+
+- **"1RB0LD_1RC0RC_1LA1RB_0LC0LD is bouncer counter, simpler than sync
+  bouncer counter" -- PROVED.**  Sampled at StA on the leftmost visited cell
+  the tape is `1 0^(3v+3) 1 <binary counter of value v>`: a bouncer whose
+  length is affine in the counter's VALUE.  BBB's blockdbl reading (a solid
+  block doubling, `18*4^n + 22*2^n - 2` steps per macro lap, `Theta(2^n)`
+  turnarounds) is what made this look like a MeasureGlue job; the bouncer
+  reading makes ONE SWEEP a complete lap, `12v + 4*carry(v) + 27` steps.
+  The "simpler" is load-bearing: a pair of BLANK cells past the top digit is
+  a digit-0 pair, so overflow and interior carry are the same rule.
+  `theories/Counters/BCtrCounter.v` + `BCtr_11.v`; **#13 transcribes** under
+  `sigma = StA->StC, StB->StA, StC->StB` (checked, `sigma(tm_11) = tm_13`).
+- **The two `1RB---` wrap machines are boarded**, off John's reading ("it
+  keeps bouncing until it finds zero on the right then moves the wall over
+  one... only 3 states, zeros on the way out, 1s on the way back").  They
+  quasihalt (StA fires once; {StB,StC,StD} is closed), so they take the
+  QHBound route via `LapGlueAbs.glue_qh_abs`.  `WrapBouncer.v` +
+  `WrapBc_R.v`/`WrapBc_L.v`.  Their macro block doubles `K -> 2K+1` and the
+  bounce COUNT is explicit in the anchor, so a plain induction replaces the
+  MeasureGlue that the nested counters needed.
+- **mxdys' general S(n) claim holds on 8 of the 11, measured** (table in
+  `HOLDOUTS_MXDYS_SN.md` section 2), including exact closed forms for every
+  transition's usage count.  The 3 misses are a limitation of the SEARCH
+  (it assumes a constant RLE shape word); tower #20's record tape is a word
+  over the blocks `10`/`110`, i.e. a counter in another alphabet, which a
+  fixed shape can never match.  Nothing measured contradicts the claim.
+- **Next board, already reconnoitred:** `1RB1RA_0RC0RB_1LC1LD_0RA0LA` is the
+  same two-level bouncer with `(w, m) -> (w+1, 3m)`, `m = 3^(w+1)`, bounce
+  `mkB (j+1) k -> mkB j (k+1)` in `6k+10` steps and the count explicit.
+  Anchors measured out to `t = 1,307,750,844`.  See section 5.
+
+STATE: holdouts 11 -> 7 unproven; `D_remaining` 1,016 -> 1,012.  Stage
+regeneration + `Closeout.vo` rebuild still to do (they need the full board
+`.vo` closure).
+
+  [MERGE NOTE, added when the two wave-16 tracks were merged.  This track's
+  own closeout run landed at `D_remaining` 1,010 (6 boards), not the 1,012
+  written above.  Both numbers are now superseded: the stage regeneration
+  named here HAS been done, over the MERGED board set, and the joint figure
+  is **884** = 1,016 - 126 (residue track) - 6 (this one).  `audit.py` OK.
+  The `Closeout.vo` rebuild is still outstanding for both tracks.]
+
+## 2e. Wave-16, RESIDUE track (2026-07-27) — the lap never had to close exactly
+
+Full write-up: `docs/WAVE16_FINDINGS.md`.  Took the ranked item (1) of the
+wave-15 prompt (the `AFFINE/AFFINE` bucket, filed as "a CONFIRMED search
+gap") and found **the gap is not in the search**.
+
+- `derive_chain` DOES find these chains.  What rejected them was the test for
+  having ARRIVED: the chain lands one trailing blank past the anchor, and
+  `CTape.lift_side l = fun n => nth n l S0` cannot see a trailing blank.
+  `LapDecider.lap_of_run` and `LapGlue`'s `Hlap` **already ask only for a
+  `lift` equality** — the emitted overflow branch already exploited it, and
+  the hand-written `WLS_*` boards use `WTape.lift_app_blank` for exactly this.
+  Two spots were stricter than the theorem: `lapcert.side_eq` (its
+  trailing-blank leniency is dead whenever a side carries no rep, because
+  `sden_parts` folds everything into `P`) and `_shape_to` (syntactic
+  `pre/u/a/b`, and no rotation can delete a blank).
+- **126 boards, `D_remaining` 1,016 -> 890** (4,266/5,156 = 82.7% settled;
+  **884 / 82.9% after merging the holdouts track above**).  The merged
+  closeout is KERNEL-VERIFIED: `Closeout.vo` + all 43 `CB_*.vo` compile and
+  `closeout_partial` is Qed at `functional_extensionality_dep` only.
+  `CloseoutFinal.vo` (the chain to `census_decided`) is NOT buildable in a
+  container -- the committed census `.vo` are OCaml 4.14.2 and apt coq here
+  is 4.14.1, so it is a box job, not a proof failure.  See
+  `docs/WAVE16_FINDINGS.md` section 4b,
+  all `functional_extensionality_dep` only.  New Coq is one additive file,
+  `Counters/LapCertGlueLift.v`: `reach_ovf_lift`/`vis_via_ovf_lift` redo
+  `LapCertGlue`'s induction in `stepn`/`lift` space (where
+  `LapGlue.glue_reach` already chains), and `glue_neverqh_lift` is
+  `glue_neverqh` with the visit premise weakened to what its own proof
+  consumes.  `LapDecider.v`, `LapGlue.v`, `LapCertGlue.v` untouched.
+- The emitter's `lift` flag defaults to FALSE and the exact route is tried
+  first; the lift route is a fallback.  Threading it into `_win_candidates`
+  is load-bearing (the target-aware cuts decide whether the winning cut is
+  offered at all), and `_shape_to` must SCORE rotations rather than accept
+  the first denotational match — otherwise it returns the empty rotation and
+  leaves the rep side misaligned.
+- **DO NOT RETRY on this bucket** (each 0 of 31): depth-aware memo in
+  `derive_chain` (the `seen` set IS depth-blind, and it fires on 29 of 31 —
+  it is still not the blocker), `SFold` at m=3,4, rotation-enabling window
+  cuts, more search budget (`maxdepth=24` is NEVER reached: `dhit=0`,
+  `dmax` 7-21), blank-padding the anchor's `FAR` (1 of 11).
+- `ovfshape` re-run over the current 1,016 gives **175 `AFFINE/AFFINE`**, not
+  the 141 in `WAVE15_FINDINGS.md` §5b; that number no longer reproduces.
+- THE LESSON: when a population is "in model but the search cannot find it",
+  **check what the search is being asked to prove before widening it**.
+  `LapGlue`'s premises are the specification; the emitter's templates are one
+  implementation of them.
+- Also fixed: `BlankTail.v`, `MpCounter.v` and `Alph_01_11_011.v` existed but
+  were absent from `_CoqProject`, so `make` never built them.
+
+## 2f. Wave-17 (2026-07-27) -- double #32 boarded; the (4,2) holdouts are 4
 
 Full write-up: `docs/HOLDOUTS_MXDYS_SN.md` section 5b (kept as measured; the
 board confirmed it verbatim).  `theories/Machines/Counters/Double_32.v`.
@@ -265,97 +417,6 @@ back, giving rule B's 3+1 = 4 per cell).  LEFT TO DO: the deposit and
 carry-continue windows at the turnaround, then the assembly and the Coq.
 `wglue_neverqh` still needs no change.  `HOLDOUTS_MXDYS_SN.md` section 5b has
 the full table and sizes the other three.
-
-## 2d. Wave-16 (2026-07-27) -- mxdys' S(n) claim, and FOUR holdouts boarded
-
-Full write-up: `docs/HOLDOUTS_MXDYS_SN.md`.  John relayed two claims from
-mxdys about the 11 live holdouts; both were tested.
-
-- **"1RB0LD_1RC0RC_1LA1RB_0LC0LD is bouncer counter, simpler than sync
-  bouncer counter" -- PROVED.**  Sampled at StA on the leftmost visited cell
-  the tape is `1 0^(3v+3) 1 <binary counter of value v>`: a bouncer whose
-  length is affine in the counter's VALUE.  BBB's blockdbl reading (a solid
-  block doubling, `18*4^n + 22*2^n - 2` steps per macro lap, `Theta(2^n)`
-  turnarounds) is what made this look like a MeasureGlue job; the bouncer
-  reading makes ONE SWEEP a complete lap, `12v + 4*carry(v) + 27` steps.
-  The "simpler" is load-bearing: a pair of BLANK cells past the top digit is
-  a digit-0 pair, so overflow and interior carry are the same rule.
-  `theories/Counters/BCtrCounter.v` + `BCtr_11.v`; **#13 transcribes** under
-  `sigma = StA->StC, StB->StA, StC->StB` (checked, `sigma(tm_11) = tm_13`).
-- **The two `1RB---` wrap machines are boarded**, off John's reading ("it
-  keeps bouncing until it finds zero on the right then moves the wall over
-  one... only 3 states, zeros on the way out, 1s on the way back").  They
-  quasihalt (StA fires once; {StB,StC,StD} is closed), so they take the
-  QHBound route via `LapGlueAbs.glue_qh_abs`.  `WrapBouncer.v` +
-  `WrapBc_R.v`/`WrapBc_L.v`.  Their macro block doubles `K -> 2K+1` and the
-  bounce COUNT is explicit in the anchor, so a plain induction replaces the
-  MeasureGlue that the nested counters needed.
-- **mxdys' general S(n) claim holds on 8 of the 11, measured** (table in
-  `HOLDOUTS_MXDYS_SN.md` section 2), including exact closed forms for every
-  transition's usage count.  The 3 misses are a limitation of the SEARCH
-  (it assumes a constant RLE shape word); tower #20's record tape is a word
-  over the blocks `10`/`110`, i.e. a counter in another alphabet, which a
-  fixed shape can never match.  Nothing measured contradicts the claim.
-- **Next board, already reconnoitred:** `1RB1RA_0RC0RB_1LC1LD_0RA0LA` is the
-  same two-level bouncer with `(w, m) -> (w+1, 3m)`, `m = 3^(w+1)`, bounce
-  `mkB (j+1) k -> mkB j (k+1)` in `6k+10` steps and the count explicit.
-  Anchors measured out to `t = 1,307,750,844`.  See section 5.
-
-STATE: holdouts 11 -> 7 unproven; `D_remaining` 1,016 -> 1,012.  Stage
-regeneration + `Closeout.vo` rebuild still to do (they need the full board
-`.vo` closure).
-
-## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
-
-Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
-holdouts rather than the residue.  Headlines:
-
-- **The 27 are 16 boarded / 11 unproven** (was 5/22; this line said
-  "11 boarded / 16 unproven" until 2026-07-27 — that was the mid-wave count
-  and it went stale as the rest of the wave landed.  Re-derived against the
-  authority: `census_holdouts_kept.txt` ∩ `closeout/frozen_unproven.txt` = 11,
-  complement = 16, which matches `docs/HOLDOUTS_WAVE14.md` §1).  `#6` and `#24` landed
-  (`theories/Machines/Counters/Wave_6.v`, `Wave_24.v`), so **all six
-  `wave_counter` machines are now boarded** off the one `WaveCounter.v`
-  closer — it needed no change.  `docs/HOLDOUTS_WAVE14.md` §1 has the full
-  family decomposition of the remaining 20 (tower 4, double 3, blockdbl 3,
-  xd 3, fractal 2, wave4 1, wrap-QH 2, v4-irules 1, open 1).
-- **#6 was EASIER than #27, not harder**, despite the "4-step 0-writing
-  cross" warning: its rightward return leaves the tape byte-for-byte
-  unchanged, so the whole `relaid`/`bridge_l` borrow algebra disappears.
-  The one piece of real design is `decp` (the deposit decrements the NEWEST
-  laid run, which is `base[0]` only when the carry stopped immediately).
-- **#24 was nearly free:** `mirror_tm tm_24` is `tm_6` with the states
-  relabelled by `(StA StC)(StB StD)`.  That bijection MOVES `StA`, so it is
-  not a `TM_swap` transport — but the file transcribes under the
-  substitution, and `Wave_24.v` compiled on the first try.  New tool
-  `tools/counters/sibling_scan.py` looks for exactly this.
-- **`sibling_scan.py` found four unproven holdouts that are relabellings of
-  BOARDED machines**, which said their dynamics are inside our engines'
-  reach.  Acting on that, `tools/nghist/holdout_sweep.py` ran NGramHist over
-  all 20 — and **boarded 4 of them at the CHEAPEST rung (k=2, n=2)**:
-  `theories/Machines/NGHHold/NGHHold_{00..03}.v`.  Those are the whole
-  `xd_counter` family (#1/#25/#29) **and
-  `1RB0RB_1LC1RC_0RA1LD_1RC0LD` — the machine this file has called "no known
-  proof anywhere" for a year.  It now has a kernel-checked
-  NeverQuasiHaltsSt theorem.**
-- **RETIRE the "keep the machinery away from the 27" discipline**
-  (`docs/TERMINOLOGY.md`).  It rested on mxdys' deciders failing at HIS
-  parameters; ours is a different tool.  New rule: sweep the holdouts with
-  every engine at every rung BEFORE hand-writing a parametric proof.  The 16
-  survivors resisted (2,2)/(4,2)/(6,2) never-QH and the R_QH tier; still
-  untried are n=3, k=8, bigger fuel/MAXCTX, RepWL, irules-QH and LapDecider.
-- Two leads CLOSED OFF (do not re-chase): the `1RB---` wrap pair is not just
-  wiring (`provenqh_stay.txt` records the QHBound tier probe-failing on
-  both), and tower/xd are ~1,500/~1,100-line table interpreters, i.e. a
-  checker-port project, not a session.
-- blockdbl (#11/#13/#28) reconnoitred (`tools/counters/probe_bd.py`,
-  j = 2..7 exact).  Caution: one lap is Θ(m²) with Θ(m) turnarounds, so it
-  needs `MeasureGlue`-style nesting like `Bounce_8.v`, not flat `LapGlue`.
-  Do #13 first (mdbl = 0, mb = 0).
-- **Env:** apt's `coq` is exactly 8.18.0 and is all the holdout front needs
-  (no `native_compute`).  `make -j4` OOMs on `IRules_Batch_02` (~6.3 GB);
-  use `-j2` or targeted `make -f Makefile.coq <file>.vo`.
 
 ## 3. The long-tail roadmap
 

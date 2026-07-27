@@ -257,6 +257,16 @@ Proof. apply (glue_neverqh tm Cc @P0@). - exact boot_@ID@. - intros p _. apply l
 Theorem nonhalt_@ID@ : NonHalt tm.
 Proof. apply never_qh_nonhalt, nqh_@ID@. Qed.'''
 
+NQH_CLOSE_LIFT = '''(** The interior lap closes only up to [lift] (one trailing blank past the
+    anchor's far side), so the closer is [LapCertGlueLift.glue_neverqh_lift]:
+    [LapGlue.glue_neverqh] with the visit premise in [stepn] space, which is
+    what its own proof consumes. *)
+Theorem nqh_@ID@ : NeverQuasiHaltsSt tm.
+Proof. apply (glue_neverqh_lift tm Cc @P0@). - exact boot_@ID@. - intros p _. apply lap_@ID@. - intros p q _. apply vis_@ID@. Qed.
+
+Theorem nonhalt_@ID@ : NonHalt tm.
+Proof. apply never_qh_nonhalt, nqh_@ID@. Qed.'''
+
 QH_CLOSE = '''(** StA is TARGETED BY NOTHING, so its only visit is at configuration index
     0 and the quiet bound is 1 -- weakened to the census tier's 2000. *)
 Definition iqh (tm : TM) : Prop :=
@@ -357,6 +367,61 @@ Proof.
   f_equal. exact (gei_@ID@ p j q0 E).
 Qed."""
 
+# ---------------------------------------------------------------------------
+# The INTERIOR branch, up to [lift].
+#
+# The lap is complete and in model, but lands one trailing blank past the
+# anchor's far side -- invisible to [lift] ([CTape.lift_side l = fun n =>
+# nth n l S0]), which is all [LapDecider.lap_of_run] and [LapGlue]'s [Hlap]
+# ever ask for.  Only the emitter's EXACT glue ([gei_*] by [reflexivity]) and
+# [LapCertGlue.reach_ovf] (which chains interior laps by cconf equality) want
+# the syntactic form; [Counters/LapCertGlueLift.v] supplies the [lift] twins.
+#
+# The exact route is still preferred whenever it derives -- it is cheaper and
+# it keeps [reach_ovf] available.  This is the fallback.
+# ---------------------------------------------------------------------------
+
+GLUE_ONE_LIFT = r"""Lemma gsi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  Cc p = cden (@ENC@ q0 ++ @TAIL@) [] j A0_@ID@.
+Proof.
+  intros p j q0 E. destruct (@ENCMOD@.@SOME@ p j q0 E) as (H1 & _).
+  unfold Cc_@ID@, cden, A0_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 0) with j by lia.
+  rewrite H1. first [ rewrite <- (app_assoc (rep @US@ j)); reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+Qed.
+
+(** The lap ends on @FARB@ where the anchor has @FAR@ -- one trailing blank,
+    which [lift] cannot see. *)
+Lemma gei_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  lift (cden (@ENC@ q0 ++ @TAIL@) [] j A1_@ID@) = lift (Cc (Pos.succ p)).
+Proof.
+  intros p j q0 E. destruct (@ENCMOD@.@SOME@ p j q0 E) as (_ & H2).
+  unfold Cc_@ID@, cden, A1_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 0) with j by lia.
+  replace (0 * j + 0) with 0 by lia.
+  cbn [rep app]. rewrite ?app_nil_r.
+  change (@FARB@) with (@FARNEST@).
+  rewrite !lift_app_blank.
+  rewrite H2. first [ rewrite <- (app_assoc (rep @UD@ j)); reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+Qed.
+
+Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  exists n c', 0 < n /\ csteps tm n (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)).
+Proof.
+  intros p j q0 E.
+  exists (@CAI@ * j + @CBI@), (cden (@ENC@ q0 ++ @TAIL@) [] j A1_@ID@).
+  split; [lia|]. split; [| exact (gei_@ID@ p j q0 E)].
+  rewrite (gsi_@ID@ p j q0 E).
+  exact (srun_sound tm false true chi_@ID@ A0_@ID@ A1_@ID@ @CAI@ @CBI@
+           run_int_@ID@ (@ENC@ q0 ++ @TAIL@) [] j
+           ltac:(discriminate) ltac:(reflexivity)).
+Qed."""
+
 INT_SPLIT = r"""(** j = 0: the repeated block is absent, so the whole lap is concrete. *)
 Definition Z0_@ID@ : sconf := @Z0@.
 Definition Z1_@ID@ : sconf := @Z1@.
@@ -449,7 +514,7 @@ HEADER = r'''(** * @PREF@_@ID@: machine @SPEC@, boarded by CERTIFICATE.
 From Coq Require Import Arith Lia Bool List PArith Wellfounded.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Counters Require Import WTape LapGlue LapGlueQH LapGlueAbs
-                                  MonoCounter JpCounter @ENCMOD@ LapCertGlue.
+                                  MonoCounter JpCounter @ENCMOD@ LapCertGlue@GLUELIFT@.
 From BBB4.Census Require Import TNF_QH.
 From BBB4.Checkers Require Import LapDecider.
 Import ListNotations.
@@ -499,7 +564,7 @@ Lemma geo_@ID@ : forall p j, cview p = (S j, None) ->
 Proof.
   intros p j E. destruct (@ENCMOD@.@NONE@ p j E) as (_ & H2).
   assert (HD : cden [] [] j B1_@ID@
-             = (@ST0@, (rep @UD@ (S j) ++ @OVPOST@, S0, @FAR@))).
+             = (@ST0@, (rep @UD@ (S j) ++ @OVPOST@, S0, @OVFAR@))).
   { unfold cden, B1_@ID@, sden, sflat;
       cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
     replace (1 * j + 1) with (S j) by lia.
@@ -518,9 +583,7 @@ Lemma lap_@ID@ : forall p, exists n c',
   csteps tm n (Cc p) = Some c' /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
 Proof.
   intro p. destruct (cview p) as [j oq] eqn:E. destruct oq as [q0|].
-  - destruct (lapi_@ID@ p j q0 E) as (n & Hn & Hrun).
-    exists n, (Cc (Pos.succ p)).
-    split; [exact Hrun | split; [reflexivity | exact Hn]].
+@LAPICASE@
   - destruct (cview_pos p j E) as (j' & ->).
     apply (lap_of_run tm Cc true true cho_@ID@ B0_@ID@ B1_@ID@ @CAO@ @CBO@ p j' [] []).
     + exact run_ovf_@ID@.
@@ -559,11 +622,10 @@ Proof.
     [exact Hst | reflexivity | reflexivity | exact (gso_@ID@ p j E)].
 Qed.
 
-Lemma vis_@ID@ : @VISHYP@ exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+@VISIL@Lemma vis_@ID@ : @VISHYP@ @VISCONC@.
 Proof.
   @VISINTRO@.
-  assert (Hi : forall p0 j q0, cview p0 = (j, Some q0) ->
-            exists n, 0 < n /\ csteps tm n (Cc p0) = Some (Cc (Pos.succ p0)))
+  assert (Hi : @VISHI@)
     by exact lapi_@ID@.
   destruct q.
 @VISA@
@@ -632,6 +694,10 @@ def derive(spec, edge, tail, p0, enc, far=()):
     P1 = (st0, (d['uD'], d['uD'], 1, 0, d['sD']), 0, Rr)
 
     chi = LC.derive_chain(tab, False, True, A0, A1)
+    islack = False
+    if chi is None:
+        chz = LC.derive_chain(tab, False, True, Z0, Z1)
+        chp = LC.derive_chain(tab, False, True, P0, P1)
     if chi is not None:
         mode = 'one'
         ri = LC.srun(tab, False, True, chi, A0)
@@ -639,11 +705,30 @@ def derive(spec, edge, tail, p0, enc, far=()):
             raise DeriveError('lap of zero length at j=0')
         cost = lambda j, c=(ri[1], ri[2]): c[0] * j + c[1]
         chz = chp = rz = rp = None
-    else:
-        chz = LC.derive_chain(tab, False, True, Z0, Z1)
-        chp = LC.derive_chain(tab, False, True, P0, P1)
-        if chz is None or chp is None:
+    elif chz is None or chp is None:
+        # LAST RESORT: the single chain up to [lift].  [LapDecider.lap_of_run]
+        # and [LapGlue]'s [Hlap] only ever ask for a [lift] equality, and a
+        # trailing blank is invisible to [lift]; it is the emitter's EXACT
+        # anchor glue -- not the theorem -- that wants the syntactic form.
+        # Rendered through the [lift] route, closed by
+        # [Counters/LapCertGlueLift.v].  Measured wave-16: 0 -> 11 on the
+        # AFFINE/AFFINE bucket, whose laps are in model but end one blank out.
+        chi = LC.derive_chain(tab, False, True, A0, A1, lift=True)
+        if chi is None:
             raise DeriveError('no interior chain')
+        if LC.chain_is_exact(tab, False, True, chi, A0, A1):
+            raise DeriveError('internal: exact chain found only under lift')
+        islack = True
+        mode = 'one'
+        ri = LC.srun(tab, False, True, chi, A0)
+        if ri[2] == 0:
+            raise DeriveError('lap of zero length at j=0')
+        # the reached configuration is what [run_int_*] states, so the board
+        # must name IT, not the canonical anchor form
+        A1 = ri[0]
+        cost = lambda j, c=(ri[1], ri[2]): c[0] * j + c[1]
+        chz = chp = rz = rp = None
+    else:
         mode = 'split'
         rz = LC.srun(tab, False, True, chz, Z0)
         rp = LC.srun(tab, False, True, chp, P0)
@@ -654,8 +739,16 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 z[0] * 0 + z[1] if j == 0 else q[0] * (j - 1) + q[1])
 
     cho = LC.derive_chain(tab, True, True, B0, B1)
+    oslack = False
     if cho is None:
-        raise DeriveError('no overflow chain')
+        # The same trailing blank, on the overflow branch.  This one costs NO
+        # new Coq: [geo_*] already closes the overflow up to [lift] (that is
+        # what [lap_of_run] takes), and [WTape.lift_app_blank] strips a blank
+        # from the RIGHT side -- the glue just has to say so.
+        cho = LC.derive_chain(tab, True, True, B0, B1, lift=True)
+        if cho is None:
+            raise DeriveError('no overflow chain')
+        oslack = True
     ro = LC.srun(tab, True, True, cho, B0)
     if ro[2] == 0:
         raise DeriveError('lap of zero length at j=0')
@@ -669,7 +762,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
     # StA (then its only visit is at index 0, so the bound is 1) -- far
     # inside the census tier, and inside the champion's 32.8M prefix.
     untargeted = all(t is None or t[2] != 0 for t in tab.values())
-    vis, qh, absd, sset = {}, False, None, None
+    vis, visi, qh, absd, sset = {}, {}, False, None, None
     missing = []
     for q in range(4):
         pre = LC.reach_state(tab, True, True, B0, cho, q)
@@ -677,6 +770,21 @@ def derive(spec, edge, tail, p0, enc, far=()):
             missing.append(q)
             continue
         vis[q] = pre
+    if missing and mode == 'one':
+        # A state can be genuinely LIVE and still never fire in the OVERFLOW
+        # lap, which is the only branch [vis_via_ovf] can see.  Look for it in
+        # the INTERIOR chain instead and close through
+        # [LapCertGlueLift.vis_via_int_lift] -- reaching an interior anchor
+        # costs at most ONE lap, because the successor of an all-ones
+        # positive is [xO _] and so always interior.
+        still = []
+        for q in missing:
+            pre = LC.reach_state(tab, False, True, A0, chi, q)
+            if pre is None:
+                still.append(q)
+            else:
+                visi[q] = pre
+        missing = still
     if missing:
         # The lap is complete but some state never fires inside it.  Two
         # closers apply, cheapest first:
@@ -689,7 +797,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
         if missing == [0] and untargeted:
             qh = True
         else:
-            found = absorb_search(tab, sorted(vis))
+            found = absorb_search(tab, sorted(set(vis) | set(visi)))
             if found is None:
                 raise DeriveError('no visit witness for state %s%s' % (
                     LAB[missing[0]],
@@ -713,8 +821,9 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 chz=chz, chp=chp, Z0=Z0, Z1=Z1, P0=P0, P1=P1,
                 cz=((rz[1], rz[2]) if rz else None),
                 cp=((rp[1], rp[2]) if rp else None),
-                A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, qh=qh, boot=boot,
-                absd=absd, sset=sset,
+                A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, visi=visi,
+                qh=qh, boot=boot,
+                absd=absd, sset=sset, islack=islack, oslack=oslack,
                 ovpost=list(got), ovwant=list(want), val=why)
 
 
@@ -732,6 +841,29 @@ def quiet_of(qs):
     return [q for q in range(4) if q not in (qs or [])]
 
 
+VISI_LEMMA = r"""(** A state that fires ONLY inside the interior lap: [vis_via_ovf] runs to an
+    OVERFLOW anchor, so it cannot see one.  This is the interior witness, and
+    [LapCertGlueLift.vis_via_int_lift] carries it to every anchor. *)
+Lemma visi_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm false true l A0_@ID@ = Some q ->
+  forall p j q0, cview p = (j, Some q0) ->
+  exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros l q Hst p j q0 E.
+  apply (vis_of_run tm Cc false true l A0_@ID@ p j (@ENC@ q0 ++ @TAIL@) []);
+    [exact Hst | discriminate | reflexivity | exact (gsi_@ID@ p j q0 E)].
+Qed.
+
+"""
+
+
+def _lift_vis(D):
+    """Is [vis_*] stated in [stepn]/[lift] space?  Only for the plain closer:
+    [glue_neverqh_lift] takes it that way, while [glue_qh]/[glue_qh_abs] want
+    the concrete [csteps] premise and reach it via [vis_csteps_of_lift]."""
+    return bool(D.get('islack')) and not (D['qh'] or D['absd'] is not None)
+
+
 def render(D):
     spec = D['spec']
     ID = mach_id(spec)
@@ -747,6 +879,26 @@ def render(D):
         # each surplus cell is one trailing blank, invisible to [lift]
         hcleft = '(' * pad + body + ''.join(') ++ [S0]' for _ in range(pad))
         close = 'rewrite !lbl_%s. reflexivity.' % ID
+    # the overflow lap can also stop one blank past the anchor's FAR side;
+    # [WTape.lift_app_blank] is that strip on the right
+    def far_slack(side, what):
+        """The reached FAR word, and how many blanks it carries past the
+        anchor's.  [sden] of a rep-free side is [pre ++ post]."""
+        if side[1]:
+            raise DeriveError('%s far slack: unit run on the far side' % what)
+        got, wnt = tuple(side[0]) + tuple(side[4]), tuple(D['far'])
+        n = len(got) - len(wnt)
+        if n < 1 or got != wnt + (0,) * n:
+            raise DeriveError('%s far slack %r vs %r' % (what, got, wnt))
+        # nest so each [lift_app_blank] rewrite peels exactly one blank
+        return got, ('(' * n + clist(wnt)
+                     + ''.join(') ++ [S0]' for _ in range(n)))
+
+    if D.get('oslack'):
+        _, ovfar = far_slack(D['B1'][3], 'overflow')
+        close = 'rewrite !lift_app_blank. ' + close
+    else:
+        ovfar = clist(D['far'])
     # [destruct q] makes FOUR goals, so there must be four bullets in state
     # order -- including one per state the lap never reaches.  (An earlier
     # version prepended a single StA bullet and then listed only the reached
@@ -761,18 +913,78 @@ def render(D):
                 vis.append('  - (* %s: quiet -- see the closing theorem *)\n'
                            '    exfalso; exact (Hq eq_refl).' % ST[q])
             continue
+        if q in D.get('visi', {}):
+            # interior-only: the witness is a prefix of the INTERIOR chain,
+            # carried to every anchor by vis_via_int_lift (which needs the
+            # FULL lap, i.e. lap_*, not just the interior branch)
+            vis.append('  - (* %s: fires only in the interior lap *)\n'
+                       '    apply (vis_csteps_of_lift tm Cc).\n'
+                       '    apply (vis_via_int_lift tm Cc lap_%s %s).\n'
+                       '    intros p1 j1 r1 E1. apply (vis_lift_of_csteps tm Cc).\n'
+                       '    apply (visi_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                       '                   p1 j1 r1 E1).'
+                       % (ST[q], ID, ST[q], ID, cchain(D['visi'][q]), ST[q]))
+            continue
         pre = D['vis'][q]
         if not pre:
             vis.append('  - (* %s: the anchor state *)\n'
                        '    exists 0. eexists. split; reflexivity.' % ST[q])
+        elif D.get('islack'):
+            # the [lift] twin: [vis_via_ovf_lift] chains the interior laps in
+            # [stepn] space, and the per-state witness is the SAME [viso_*]
+            # run pushed through [vis_lift_of_csteps].  When the closer is
+            # [glue_qh]/[glue_qh_abs] -- which have no lift twin and need none
+            # -- [vis_csteps_of_lift] pulls the result back to their concrete
+            # premise.
+            pull = ('' if _lift_vis(D) else
+                    '    apply (vis_csteps_of_lift tm Cc).\n')
+            vis.append('  - (* %s *)\n'
+                       '%s'
+                       '    apply (vis_via_ovf_lift tm Cc Hi %s).\n'
+                       '    intros p1 j1 E1. apply (vis_lift_of_csteps tm Cc).\n'
+                       '    apply (viso_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                       '                   p1 j1 E1).'
+                       % (ST[q], pull, ST[q], ID, cchain(pre), ST[q]))
         else:
             vis.append('  - (* %s *)\n'
                        '    apply (vis_via_ovf tm Cc Hi %s), viso_%s\n'
                        '      with (l := %s).\n'
                        '    vm_compute; reflexivity.'
                        % (ST[q], ST[q], ID, cchain(pre)))
+    islack = bool(D.get('islack'))
+    if islack and D['mode'] != 'one':
+        raise DeriveError('lift route: only mode=one is wired')
+    # [glue_neverqh_lift] takes the visit premise in [stepn] space;
+    # [glue_qh]/[glue_qh_abs] want it concrete and get there through
+    # [vis_csteps_of_lift], so they need no lift twin.
+    lift_vis = _lift_vis(D)
+    if islack:
+        igot, ifarnest = far_slack(D['A1'][3], 'interior')
+        farb, farnest = clist(igot), ifarnest
+    else:
+        farb = farnest = clist(D['far'])
     reps = {
         '@PREF@': PREFIX, '@ID@': ID, '@SPEC@': spec,
+        '@GLUELIFT@': ' LapCertGlueLift' if islack else '',
+        '@FARB@': farb, '@FARNEST@': farnest,
+        '@VISIL@': VISI_LEMMA if D.get('visi') else '',
+        '@LAPICASE@': (
+            '  - destruct (lapi_@ID@ p j q0 E) as (n & c\' & Hn & Hrun & Hlift).\n'
+            '    exists n, c\'. split; [exact Hrun | split; [exact Hlift | exact Hn]].'
+            if islack else
+            '  - destruct (lapi_@ID@ p j q0 E) as (n & Hn & Hrun).\n'
+            '    exists n, (Cc (Pos.succ p)).\n'
+            '    split; [exact Hrun | split; [reflexivity | exact Hn]].'),
+        '@VISCONC@': ('exists k e, stepn tm k (lift (Cc p)) = Some e /\\ fst e = q'
+                      if lift_vis else
+                      'exists k c, csteps tm k (Cc p) = Some c /\\ fst c = q'),
+        '@VISHI@': (
+            'forall p0 j q0, cview p0 = (j, Some q0) ->\n'
+            '            exists n c\', 0 < n /\\ csteps tm n (Cc p0) = Some c\'\n'
+            '                         /\\ lift c\' = lift (Cc (Pos.succ p0))'
+            if islack else
+            'forall p0 j q0, cview p0 = (j, Some q0) ->\n'
+            '            exists n, 0 < n /\\ csteps tm n (Cc p0) = Some (Cc (Pos.succ p0))'),
         # the Coq FIXPOINT name; for the generated alphabets it is Ap_<tag>,
         # not the ENCDATA key
         '@ENC@': d.get('fn', D['enc']),
@@ -786,7 +998,7 @@ def render(D):
         '@US@': clist(d['uS']), '@UD@': clist(d['uD']),
         '@OBSP@': str(d['obS'] - 1 if d['obS'] >= 1 else 0),
         '@CNTP@': 'j',
-        '@OVPOST@': clist(ovpost), '@HCLEFT@': hcleft,
+        '@OVPOST@': clist(ovpost), '@HCLEFT@': hcleft, '@OVFAR@': ovfar,
         '@CLOSE@': close, '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
         '@VISHYP@': ('forall p q, In q %s ->' % slist(D['sset'])
                      if D['absd'] is not None
@@ -796,7 +1008,8 @@ def render(D):
                        if D['qh'] or D['absd'] is not None else 'intros p q'),
         '@VISA@': '',
         '@FINAL@': (ABS_CLOSE if D['absd'] is not None
-                    else QH_CLOSE if D['qh'] else NQH_CLOSE)
+                    else QH_CLOSE if D['qh']
+                    else NQH_CLOSE_LIFT if lift_vis else NQH_CLOSE)
                     .replace('@ID@', ID).replace('@P0@', str(D['p0']))
                     .replace('@SSETC@', slistc(D['sset']))
                     .replace('@SSET@', slist(D['sset']))
@@ -807,7 +1020,8 @@ def render(D):
                       % (D['cz'][1], D['cp'][0], D['cp'][1])),
         '@NO@': '%d*j+%d' % D['co'],
         '@INTERIOR@': (INT_ONE if D['mode'] == 'one' else INT_SPLIT),
-        '@GLUEI@': (GLUE_ONE if D['mode'] == 'one' else GLUE_SPLIT),
+        '@GLUEI@': (GLUE_ONE_LIFT if islack
+                    else GLUE_ONE if D['mode'] == 'one' else GLUE_SPLIT),
         '@A0@': cconf(D['A0']), '@A1@': cconf(D['A1']),
         '@CHI@': cchain(D['chi']) if D['chi'] else '[]',
         '@CAI@': str(D['ci'][0]) if D['ci'] else '0',

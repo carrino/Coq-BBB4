@@ -89,11 +89,25 @@ def rstrip0(t):
     return t[:i]
 
 
-def side_eq(sa, oa, sb, ob):
+def side_eq(sa, oa, sb, ob, lift=False):
     """Do the two sides denote the same half-tape for every j?  With an empty
-    opaque tail, trailing blanks are invisible ([lift])."""
+    opaque tail, trailing blanks are invisible ([lift]).
+
+    [lift=False] is the SYNTACTIC test the emitted board's exact anchor glue
+    needs ([gei_*] closes by [reflexivity]).  Note it only strips [rest]: when
+    the side carries no rep, [sden_parts] folds everything into [P] and the
+    leniency never fires -- which is exactly the end of a lap, where the
+    machine has just written a blank beside the head.
+
+    [lift=True] is the test the THEOREM needs ([LapDecider.lap_of_run] and
+    [LapGlue]'s [Hlap] both ask only for [lift] equality, and
+    [CTape.lift_side l = fun n => nth n l S0] cannot see a trailing blank).
+    A chain accepted only under [lift=True] has to be rendered through the
+    [lift] route -- see [emit_lapcert.GLUE_ONE_LIFT]."""
     Pa, Ua, Ra, _ = sden_parts(sa, oa)
     Pb, Ub, Rb, _ = sden_parts(sb, ob)
+    if lift and not Ua and not Ub and not oa and not ob:
+        return rstrip0(Pa + Ra) == rstrip0(Pb + Rb)
     if (Pa, Ua) != (Pb, Ub):
         return False
     if oa or ob:
@@ -284,15 +298,15 @@ def _rot_candidates(c):
     return out
 
 
-def _match(c, target, el, er):
+def _match(c, target, el, er, lift=False):
     q, L, h, R = c
     tq, tL, th, tR = target
     return (q == tq and h == th
-            and side_eq(L, not el, tL, not el)
-            and side_eq(R, not er, tR, not er))
+            and side_eq(L, not el, tL, not el, lift)
+            and side_eq(R, not er, tR, not er, lift))
 
 
-def _win_candidates(tab, el, er, c, nmax, target=None):
+def _win_candidates(tab, el, er, c, nmax, target=None, lift=False):
     """A walled window is FORCED forward, so most cuts are uninteresting.
     The ones that matter are: the MAXIMAL cut (the wall, where only a cycle
     or a rotation can make progress), any cut that lands on the target, and
@@ -316,7 +330,7 @@ def _win_candidates(tab, el, er, c, nmax, target=None):
             nl = _sflat(xl) if kind == 'SWinL' else _setpre(L, xl)
             nr = _sflat(xr) if kind == 'SWinR' else _setpre(R, xr)
             c2 = (q2, nl, xh, nr)
-            if target is not None and _match(c2, target, el, er):
+            if target is not None and _match(c2, target, el, er, lift):
                 hit.append(k)
             elif k < len(tr) - 1 and _cyc_candidates(tab, el, er, c2, nmax):
                 cyc.append(k)
@@ -326,24 +340,47 @@ def _win_candidates(tab, el, er, c, nmax, target=None):
     return out
 
 
-def _shape_to(c, target, el, er, budget=8):
+def _shape_to(c, target, el, er, budget=8, lift=False):
     """Rotate the reached configuration onto the TARGET's syntactic shape
     (same pre/u/a/b on both sides; [post] may still differ by trailing
-    blanks, which [lift] absorbs).  BFS over the four rotation steps."""
-    def shape(x):
-        return (x[0][0], x[0][1], x[0][2], x[0][3],
-                x[2][0], x[2][1], x[2][2], x[2][3])
+    blanks, which [lift] absorbs).  BFS over the four rotation steps.
 
-    want = shape((target[1], None, target[3]))
+    The acceptance test is PER SIDE, because the two sides fail differently:
+    a side whose unit run is misaligned is fixed by rotating, but no rotation
+    can delete a trailing blank.  Under [lift] we therefore SCORE each config
+    by how many sides reach the target's syntactic shape and take the best --
+    accepting slack only where rotating cannot help.  Scoring rather than
+    accepting the first denotational match matters: the reached config
+    usually already DENOTES the target (that is why the chain got here at
+    all), so a first-match test returns the empty rotation and leaves the rep
+    side misaligned, which the board's glue cannot render."""
+    def sshape(s):
+        return (s[0], s[1], s[2], s[3])
+
+    def score(cur):
+        """2 = both sides in the target's shape (the exact route); 1 = one
+        side, the other merely denoting it; None = not the target at all."""
+        n = 0
+        for i, open_ in ((1, not el), (3, not er)):
+            if sshape(cur[i]) == sshape(target[i]):
+                n += 1
+            elif not (lift and side_eq(cur[i], open_, target[i], open_, True)):
+                return None
+        return n
+
+    best = (None, None)                                   # (score, path)
     seen = {(c[1], c[3])}
     frontier = [(c, [])]
-    for _ in range(budget):
+    for _ in range(budget + 1):
         if not frontier:
             break
         nxt = []
         for cur, path in frontier:
-            if shape((cur[1], None, cur[3])) == want:
+            s = score(cur)
+            if s == 2:
                 return path
+            if s is not None and (best[0] is None or s > best[0]):
+                best = (s, path)
             for st in _rot_candidates(cur):
                 r = sstep(None, el, er, st, cur)
                 if r is None:
@@ -355,13 +392,23 @@ def _shape_to(c, target, el, er, budget=8):
                 seen.add(key)
                 nxt.append((c2, path + [st]))
         frontier = nxt
-    for cur, path in frontier:
-        if shape((cur[1], None, cur[3])) == want:
-            return path
+    return best[1]
+
+
+def chain_is_exact(tab, el, er, chain, c0, target):
+    """Does [chain] land on [target] SYNTACTICALLY (the exact anchor glue), or
+    only up to [lift] (trailing blanks)?  [None] if it lands on neither."""
+    r = srun(tab, el, er, chain, c0)
+    if r is None:
+        return None
+    if _match(r[0], target, el, er, False):
+        return True
+    if _match(r[0], target, el, er, True):
+        return False
     return None
 
 
-def derive_chain(tab, el, er, c0, target, maxdepth=24, nmax=64):
+def derive_chain(tab, el, er, c0, target, maxdepth=24, nmax=64, lift=False):
     """Depth-first search for a chain c0 -> target.  The branching factor is
     tiny: a walled window runs until it is blocked, and at a wall only a
     cycle or a rotation can make progress."""
@@ -374,14 +421,14 @@ def derive_chain(tab, el, er, c0, target, maxdepth=24, nmax=64):
     def go(c, chain, depth):
         if best[0] is not None:
             return
-        if _match(c, target, el, er):
-            fix = _shape_to(c, target, el, er)
+        if _match(c, target, el, er, lift):
+            fix = _shape_to(c, target, el, er, 8, lift)
             if fix is not None:
                 cand = chain + fix
                 c2 = c
                 for st in fix:
                     c2 = sstep(tab, el, er, st, c2)[0]
-                if _match(c2, target, el, er):
+                if _match(c2, target, el, er, lift):
                     best[0] = cand
                     return
         if depth >= maxdepth:
@@ -390,7 +437,7 @@ def derive_chain(tab, el, er, c0, target, maxdepth=24, nmax=64):
         if k in seen:
             return
         seen.add(k)
-        cands = (_win_candidates(tab, el, er, c, nmax, target)
+        cands = (_win_candidates(tab, el, er, c, nmax, target, lift)
                  + _cyc_candidates(tab, el, er, c, nmax)
                  + _rot_candidates(c))
         for st in cands:
