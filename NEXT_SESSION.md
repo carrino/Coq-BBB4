@@ -99,12 +99,55 @@ clean `.vo` state, `functional_extensionality_dep` only).  It also needed the
 anchor HEAD symbol, the anchor TAIL and the anchor's FAR side (a blank *cell*,
 not the empty *list*) to become parameters — the encoding alone was not enough.
 
+## 2d. Wave-16 (2026-07-27) -- mxdys' S(n) claim, and FOUR holdouts boarded
+
+Full write-up: `docs/HOLDOUTS_MXDYS_SN.md`.  John relayed two claims from
+mxdys about the 11 live holdouts; both were tested.
+
+- **"1RB0LD_1RC0RC_1LA1RB_0LC0LD is bouncer counter, simpler than sync
+  bouncer counter" -- PROVED.**  Sampled at StA on the leftmost visited cell
+  the tape is `1 0^(3v+3) 1 <binary counter of value v>`: a bouncer whose
+  length is affine in the counter's VALUE.  BBB's blockdbl reading (a solid
+  block doubling, `18*4^n + 22*2^n - 2` steps per macro lap, `Theta(2^n)`
+  turnarounds) is what made this look like a MeasureGlue job; the bouncer
+  reading makes ONE SWEEP a complete lap, `12v + 4*carry(v) + 27` steps.
+  The "simpler" is load-bearing: a pair of BLANK cells past the top digit is
+  a digit-0 pair, so overflow and interior carry are the same rule.
+  `theories/Counters/BCtrCounter.v` + `BCtr_11.v`; **#13 transcribes** under
+  `sigma = StA->StC, StB->StA, StC->StB` (checked, `sigma(tm_11) = tm_13`).
+- **The two `1RB---` wrap machines are boarded**, off John's reading ("it
+  keeps bouncing until it finds zero on the right then moves the wall over
+  one... only 3 states, zeros on the way out, 1s on the way back").  They
+  quasihalt (StA fires once; {StB,StC,StD} is closed), so they take the
+  QHBound route via `LapGlueAbs.glue_qh_abs`.  `WrapBouncer.v` +
+  `WrapBc_R.v`/`WrapBc_L.v`.  Their macro block doubles `K -> 2K+1` and the
+  bounce COUNT is explicit in the anchor, so a plain induction replaces the
+  MeasureGlue that the nested counters needed.
+- **mxdys' general S(n) claim holds on 8 of the 11, measured** (table in
+  `HOLDOUTS_MXDYS_SN.md` section 2), including exact closed forms for every
+  transition's usage count.  The 3 misses are a limitation of the SEARCH
+  (it assumes a constant RLE shape word); tower #20's record tape is a word
+  over the blocks `10`/`110`, i.e. a counter in another alphabet, which a
+  fixed shape can never match.  Nothing measured contradicts the claim.
+- **Next board, already reconnoitred:** `1RB1RA_0RC0RB_1LC1LD_0RA0LA` is the
+  same two-level bouncer with `(w, m) -> (w+1, 3m)`, `m = 3^(w+1)`, bounce
+  `mkB (j+1) k -> mkB j (k+1)` in `6k+10` steps and the count explicit.
+  Anchors measured out to `t = 1,307,750,844`.  See section 5.
+
+STATE: holdouts 11 -> 7 unproven; `D_remaining` 1,016 -> 1,012.  Stage
+regeneration + `Closeout.vo` rebuild still to do (they need the full board
+`.vo` closure).
+
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
 holdouts rather than the residue.  Headlines:
 
-- **The 27 are 11 boarded / 16 unproven** (was 5/22).  `#6` and `#24` landed
+- **The 27 are 16 boarded / 11 unproven** (was 5/22; this line said
+  "11 boarded / 16 unproven" until 2026-07-27 — that was the mid-wave count
+  and it went stale as the rest of the wave landed.  Re-derived against the
+  authority: `census_holdouts_kept.txt` ∩ `closeout/frozen_unproven.txt` = 11,
+  complement = 16, which matches `docs/HOLDOUTS_WAVE14.md` §1).  `#6` and `#24` landed
   (`theories/Machines/Counters/Wave_6.v`, `Wave_24.v`), so **all six
   `wave_counter` machines are now boarded** off the one `WaveCounter.v`
   closer — it needed no change.  `docs/HOLDOUTS_WAVE14.md` §1 has the full

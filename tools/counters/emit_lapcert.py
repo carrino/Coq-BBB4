@@ -26,6 +26,7 @@ Usage
   emit_lapcert.py --spec SPEC [--emit]
 """
 import argparse
+import collections
 import json
 import os
 import re
@@ -276,6 +277,32 @@ Theorem nonhalt_@ID@ : NonHalt tm.
 Proof. apply (proj1 iqh_@ID@). Qed.'''
 
 
+ABS_CLOSE = '''(** The lap reaches only @SSETC@, which is CLOSED under the table, and the
+    machine is already inside it at configuration index @ABSD@ -- so every state
+    outside made all of its visits before @ABSD@ ([LapGlueAbs.glue_qh_abs]).
+    @QUIETC@ is therefore quiet, with a last visit before @ABSD@; the bound is
+    weakened to the census tier\'s 2000. *)
+Definition iqh (tm : TM) : Prop :=
+  NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm.
+
+Theorem iqh_@ID@ : iqh tm.
+Proof.
+  destruct (glue_qh_abs tm Cc @P0@ @SSET@ @ABSD@
+                    boot_@ID@ (fun p _ => lap_@ID@ p)
+                    (fun p q _ Hq => vis_@ID@ p q Hq)
+                    (closed_b_sound tm @SSET@ ltac:(vm_compute; reflexivity))
+                    ltac:(eexists; split;
+                          [vm_compute; reflexivity | cbn; tauto])
+                    ltac:(cbn; intuition discriminate))
+    as (Hn & Hb & Hq).
+  split; [exact Hn | split; [| exact Hq]].
+  apply (qhbound_mono @ABSD@ 2000); [lia | exact Hb].
+Qed.
+
+Theorem nonhalt_@ID@ : NonHalt tm.
+Proof. apply (proj1 iqh_@ID@). Qed.'''
+
+
 # ---------------------------------------------------------------------------
 # The interior branch, in two shapes.
 #
@@ -421,8 +448,8 @@ HEADER = r'''(** * @PREF@_@ID@: machine @SPEC@, boarded by CERTIFICATE.
     Axiom footprint: [functional_extensionality_dep] (via [CTape.lift]). *)
 From Coq Require Import Arith Lia Bool List PArith Wellfounded.
 From BBB4 Require Import BBB4_Statement CTape.
-From BBB4.Counters Require Import WTape LapGlue LapGlueQH MonoCounter
-                                  JpCounter @ENCMOD@ LapCertGlue.
+From BBB4.Counters Require Import WTape LapGlue LapGlueQH LapGlueAbs
+                                  MonoCounter JpCounter @ENCMOD@ LapCertGlue.
 From BBB4.Census Require Import TNF_QH.
 From BBB4.Checkers Require Import LapDecider.
 Import ListNotations.
@@ -547,6 +574,39 @@ Qed.
 '''
 
 
+def tclosure(tab, q0):
+    """Every state reachable from [q0] in the transition digraph (all
+    symbols, since which one is read is not known syntactically)."""
+    S, work = {q0}, [q0]
+    while work:
+        q = work.pop()
+        for b in (0, 1):
+            t = tab.get((q, b))
+            if t is not None and t[2] not in S:
+                S.add(t[2]); work.append(t[2])
+    return S
+
+
+def absorb_search(tab, have, maxd=64):
+    """Smallest [d] whose reachable closure is covered by the states the lap
+    actually visits ([have]) and excludes StA.
+
+    Soundness note: the closure is an OVER-approximation of the states
+    possible from index [d] on, so a set that passes here really is closed
+    under the table -- which is all [LapGlueAbs.glue_qh_abs] asks.  The Coq
+    side re-checks it with [closed_b]; this search only proposes."""
+    tape, pos, q = collections.defaultdict(int), 0, 0
+    for d in range(maxd):
+        S = tclosure(tab, q)
+        if 0 not in S and S <= set(have):
+            return d, sorted(S)
+        t = tab.get((q, tape[pos]))
+        if t is None:
+            return None
+        tape[pos] = t[0]; pos += t[1]; q = t[2]
+    return None
+
+
 def boot_probe(tab, st0, encf, tail, far, p0, maxT=200000):
     """Steps from the blank tape to the anchor at p0 (up to blank padding)."""
     want = (st0, tuple(encf(p0)) + tuple(tail), 0, tuple(far))
@@ -609,16 +669,32 @@ def derive(spec, edge, tail, p0, enc, far=()):
     # StA (then its only visit is at index 0, so the bound is 1) -- far
     # inside the census tier, and inside the champion's 32.8M prefix.
     untargeted = all(t is None or t[2] != 0 for t in tab.values())
-    vis, qh = {}, False
+    vis, qh, absd, sset = {}, False, None, None
+    missing = []
     for q in range(4):
         pre = LC.reach_state(tab, True, True, B0, cho, q)
         if pre is None:
-            if q == 0 and untargeted:
-                qh = True
-                continue
-            raise DeriveError('no visit witness for state %s%s' % (
-                LAB[q], '' if q or untargeted else ' (StA is targeted)'))
+            missing.append(q)
+            continue
         vis[q] = pre
+    if missing:
+        # The lap is complete but some state never fires inside it.  Two
+        # closers apply, cheapest first:
+        #   glue_qh   -- StA alone is missing AND nothing targets it;
+        #   glue_qh_abs -- the states the lap DOES reach are closed under the
+        #                  table from some index d on, so everything else is
+        #                  quiet before d.  Strictly more general (it is the
+        #                  d>0 case), and it is what settles the machines whose
+        #                  quiet state is targeted during the bootstrap.
+        if missing == [0] and untargeted:
+            qh = True
+        else:
+            found = absorb_search(tab, sorted(vis))
+            if found is None:
+                raise DeriveError('no visit witness for state %s%s' % (
+                    LAB[missing[0]],
+                    '' if missing[0] or untargeted else ' (StA is targeted)'))
+            absd, sset = found
 
     boot = boot_probe(tab, st0, encf, tail, far, p0)
     if boot is None:
@@ -638,7 +714,22 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 cz=((rz[1], rz[2]) if rz else None),
                 cp=((rp[1], rp[2]) if rp else None),
                 A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, qh=qh, boot=boot,
+                absd=absd, sset=sset,
                 ovpost=list(got), ovwant=list(want), val=why)
+
+
+def slist(qs):
+    """A [list St] literal, e.g. [StB; StC; StD]."""
+    return '[' + '; '.join(ST[q] for q in (qs or [])) + ']'
+
+
+def slistc(qs):
+    """The same set, for prose: "StB, StC, StD"."""
+    return ', '.join(ST[q] for q in (qs or [])) or 'nothing'
+
+
+def quiet_of(qs):
+    return [q for q in range(4) if q not in (qs or [])]
 
 
 def render(D):
@@ -656,8 +747,20 @@ def render(D):
         # each surplus cell is one trailing blank, invisible to [lift]
         hcleft = '(' * pad + body + ''.join(') ++ [S0]' for _ in range(pad))
         close = 'rewrite !lbl_%s. reflexivity.' % ID
+    # [destruct q] makes FOUR goals, so there must be four bullets in state
+    # order -- including one per state the lap never reaches.  (An earlier
+    # version prepended a single StA bullet and then listed only the reached
+    # states, which silently misaligns as soon as TWO states are missing.)
     vis = []
-    for q in sorted(D['vis']):
+    for q in range(4):
+        if q not in D['vis']:
+            if D['absd'] is not None:
+                vis.append('  - (* %s: not in the reached set *)\n'
+                           '    exfalso; cbn in Hq; intuition discriminate.' % ST[q])
+            else:
+                vis.append('  - (* %s: quiet -- see the closing theorem *)\n'
+                           '    exfalso; exact (Hq eq_refl).' % ST[q])
+            continue
         pre = D['vis'][q]
         if not pre:
             vis.append('  - (* %s: the anchor state *)\n'
@@ -685,13 +788,20 @@ def render(D):
         '@CNTP@': 'j',
         '@OVPOST@': clist(ovpost), '@HCLEFT@': hcleft,
         '@CLOSE@': close, '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
-        '@VISHYP@': ('forall p q, q <> StA ->' if D['qh']
+        '@VISHYP@': ('forall p q, In q %s ->' % slist(D['sset'])
+                     if D['absd'] is not None
+                     else 'forall p q, q <> StA ->' if D['qh']
                      else 'forall p q,'),
-        '@VISINTRO@': ('intros p q Hq' if D['qh'] else 'intros p q'),
-        '@VISA@': ('  - (* StA: quiet -- see the closing theorem *)\n'
-                   '    exfalso; exact (Hq eq_refl).' if D['qh'] else ''),
-        '@FINAL@': (QH_CLOSE if D['qh'] else NQH_CLOSE).replace('@ID@', ID)
-                    .replace('@P0@', str(D['p0'])),
+        '@VISINTRO@': ('intros p q Hq'
+                       if D['qh'] or D['absd'] is not None else 'intros p q'),
+        '@VISA@': '',
+        '@FINAL@': (ABS_CLOSE if D['absd'] is not None
+                    else QH_CLOSE if D['qh'] else NQH_CLOSE)
+                    .replace('@ID@', ID).replace('@P0@', str(D['p0']))
+                    .replace('@SSETC@', slistc(D['sset']))
+                    .replace('@SSET@', slist(D['sset']))
+                    .replace('@QUIETC@', slistc(quiet_of(D['sset'])))
+                    .replace('@ABSD@', str(D['absd'])),
         '@NI@': ('%d*j+%d' % D['ci'] if D['mode'] == 'one'
                  else 'j=0: %d ; j=S j\': %d*j\'+%d'
                       % (D['cz'][1], D['cp'][0], D['cp'][1])),
