@@ -61,65 +61,121 @@ After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded (the Closeout.vo compile needs the ~719-file board
 .vo closure, ~85 min once).
 
-THE TASK -- STAGE 0 FIRST, AND IT IS A GATE.
+STAGE 0 IS DONE.  IT WAS RUN 2026-07-26/27; THE GATE CAME BACK ZERO.
+Full write-up and reproduction commands: docs/MXDYS_INDUCTIVE_STAGE0.md.
+Do NOT re-run it, and do NOT start Stage 1 below as written.
 
-  Verified already (docs/MXDYS_DECIDERS_PLAN.md section 1, do not re-derive):
-  their top-level theorem is `~halts` only and there is NO quasi-halting layer
-  anywhere in that tree, so it does not answer our question directly.  But the
-  model they build to prove it is exposed as first-class rules
-  `multistep_expr (a b : config_expr) (n : nat_expr)` where config_expr
-  carries its state Q, and the count language has nat_mul and
-  powsum k x = ((k+2)^x - 1)/(k+1) -- a geometric sum.  powsum 0 = 2^x - 1.
-  That is precisely our wall.  No Axiom, no Admitted; Coq 8.18; the framework
-  is a functor and Individual52.v is 26 lines; their tape (Stream Sym) and
-  ours (nat -> Sym) are isomorphic; verify/Extraction.v gives a native decider.
+  What was built (both committed on the busycoq mirror, branch
+  claude/coq-bbb4-residue-removal-lt5yac):
+    * The oracle.  The dependency closure of Inductive_inf.v is FIFTEEN files
+      and compiles in 35 s under stock `apt-get install coq` 8.18 -- the
+      README's "~1 month" is for the whole repo and was never our cost.  It
+      instantiates at BBinf (Q = Sym = N), so BB42.v / Individual42.v are NOT
+      needed for measurement, and TM'_from_str parses bbchallenge notation
+      with `---` as halt.
+    * verify/InductiveDump.v -- prints the rule chain, the states carried by
+      every config_expr, and which count-language constructors the proof used.
+      Also separates "step budget exhausted" from "search failed", which the
+      stock binary prints identically as "failed to decide".
 
-  STAGE 0 (hours, no Coq of ours):
-    1. Write BB42 + Individual42.v (~30 lines, pattern on Individual52.v).
-    2. Build the extracted OCaml decider.
-    3. Run Inductive and RRBA over all 1,176 of
-       tools/closeout/frozen_unproven.txt.
-    4. Report THREE numbers:
-       (i)   how many are decided ~halts at all;
-       (ii)  of those, how many have a rule chain whose configurations cover
-             ALL FOUR states -- for those, liveness is free and they are
-             boards;
-       (iii) how many need a nat_powsum / nat_mul rule (this cross-checks our
-             own ovfshape.py buckets: 496 EXP2, 25 QUAD, 19 EXP4, 17 ~3^j).
+  HARNESS VALIDATED: 60 machines lifted out of mxdys' own Indv1.v come back
+  60/60 `nonhalting` at his exact settings (default_config, T=100000).
+  Negatives below are real negatives.
 
-  DECISION GATE on (ii).  Large -> do Stages 1-3, that is the wave.  Near zero
-  but (i) large -> the chains exist but their endpoints do not cover the
-  states; the work moves INSIDE a rule, which is bigger but still bounded --
-  re-plan before building.  (i) small -> their search is tuned for BB(6)
-  shapes; say so plainly and fall back to the nested lap below.
+  (ii) IS ZERO, AND IT IS ZERO STRUCTURALLY.  On those 60 machines -- ones his
+  decider DECIDES -- the rule chain's config_expr endpoints carry 1 or 2
+  distinct states, never more, on SIX-state machines.  This is not tuning:
+     check_nonhalt x = match x with
+       | ([],[multistep_lb_expr s1 s2 (nat_var v1)]) => s1 == (0inf,0inf,q0,R)
+  is the ONLY accepted certificate shape -- one proposition naming exactly two
+  configurations.  It cannot mention more.  Our collector also swept every
+  subordinate layer and still found <= 2.  So `vis_via_ovf`-style "read the
+  visit witnesses off the rule endpoints" (MXDYS_DECIDERS_PLAN section 1b)
+  CANNOT WORK.  The exact forward model is real -- mxdys is right that his
+  decider only wins when it models the behaviour exactly -- but the
+  certificate it EMITS is a lossy projection of that model, keeping only what
+  ~halts needs.  The state-visit information exists during the search and is
+  discarded at emission time.
 
-  STAGE 1 (1-2 days): theories/Bridge/BusyCoqTM.v -- Stream Sym <-> nat -> Sym,
-  their config <-> our cconf, and
-     multistep_csteps : BC.multistep (tr_tm tm) n (tr a) (tr b) ->
-                        csteps tm n a = Some b.
-  Axiom-free apart from the standing functional_extensionality_dep.  This is
-  the only genuinely new mathematics and it is one theorem.
+  (i) The hint-free black box decides ~none of the residue: 0/30 on the head
+  sample, and more budget is not the lever (maxT 5e6, 50x, finishes in 142 s
+  and still returns budget-exhausted).  A full-population run is in
+  scratch as full_i.tsv if it matters; it does not change the gate, because
+  (ii) decides the gate on its own.
 
-  STAGE 2 (2-3 days): theories/Bridge/RulesToLap.v --
-     rules_to_never_qh : chain_valid -> chain_returns_shifted ->
-                         states_covered = true -> NeverQuasiHaltsSt tm
-  built on Stage 1 plus the existing glue_neverqh, and a glue_qh variant for
-  the 164 quasi-halters.  ONE theorem, not one per machine -- same
-  architecture as srun_sound.
+  (iii) The count language IS exercised and IS observable: a hinted counter
+  cert reports flags = nat_mul + nat_powsum + a counter-side tape
+  constructor.  Section 1c of the plan survives intact.
 
-  STAGE 3: emit one small .v per machine (TM table, rule chain as data, a
-  vm_compute, the closing theorem), then the usual closeout.
+  WHY THE BLACK BOX WAS ALWAYS THE WRONG HALF OF THE TOOL.  mxdys' counter
+  certs are HUMAN-HINTED, not searched: IndSBCv1.v passes a hand-built
+  config_SBC in 106 of 107 lemmas, IndBECv1.v a config_BEC in 100 of 122.
+  The ~6,400 hint-free lemmas (Indv1-7, IndBGAS, HLv1/2) are other shapes.
+  Our residue is counters.  The hint is an `ExtraRules` -- seven constructors
+  of counter increment/decrement rules stated as -[tm]->+ progress facts over
+  (d0, d1, d1a, qL, qR, QL, QR).  THAT IS OUR ANCHOR FAMILY PLUS LAP
+  CERTIFICATE IN HIS NOTATION, and our inferred alphabets map onto it
+  exactly: alphabet_infer.py's (A,B,C) IS his (d0,d1,d1a), and his
+  `const s0 <* d1a` clause IS our overflow-at-the-blank-far-side lap.
+  InductiveDump.v now has --bec/--becpos/--dec/--ov0/--ov1 to drive it;
+  validated by reproducing IndSBCv1.v nonhalt3 (hint-free: budget-exhausted
+  at 9.15 s; hinted: nonhalting in 0.067 s).  Note it still reports
+  nstates=2 there -- even when you HAND it the anchor states, the emitted
+  certificate names only two.
 
-  DECIDE WITH JOHN before vendoring: either bring their code in-tree, or keep
-  it OUT of tree as a search ORACLE and re-prove each rule with our own
-  checker extended by powsum counts.  The second keeps our axiom story and
-  provenance simple; the first is less work.
+  THE GATE'S OWN ANSWER, THEREFORE: this is the middle branch -- the chains
+  exist but their endpoints do not cover the states, so the work moves INSIDE
+  a rule.  Bigger, still bounded, and it is OUR theorem, not theirs.  See
+  "THE ONE THEOREM" below, which is now the top of the board.
 
-IF STAGE 0 FAILS, the fallback is unchanged and section 1c of the plan still
-paid for itself: it tells us the count language a nested LapDecider needs is
-`a*j + b` extended by `powsum k` and one multiplication, and that
-side_binary/side_binary_Pos/side_BL are the right tape constructors.  Build
-that into LapDecider rather than inventing a design.
+  THE ONE THEOREM -- this is now the whole job, and it is ours.
+
+  Both open fronts need the SAME missing fact, which is why it is the highest
+  value single piece of work on the board:
+
+     "this lap visits only states in S"
+
+  Today wsteps_frame / cycL / cycR state their ENDPOINTS only.  Add a
+  states-visited variant.  It is one theorem, not one per machine, same
+  architecture as srun_sound.  It closes:
+    * the 164 quasi-halters (ranked (1) below) -- that front has wanted
+      exactly this since WAVE13 section 6; and
+    * the liveness half of anything the rule engine gives us, since after
+      Stage 0 we KNOW the liveness cannot come from rule endpoints.
+
+  Do NOT build theories/Bridge/BusyCoqTM.v first.  Its one theorem
+  (multistep_csteps : BC.multistep (tr_tm tm) n (tr a) (tr b) ->
+  csteps tm n a = Some b) is still correct and still eventually wanted, but on
+  its own it buys ZERO while (ii) is zero -- it would import chains whose
+  endpoints name two states.  Bridge second, after the visits theorem exists
+  to consume it.
+
+  VENDORING IS DECIDED BY THE MEASUREMENT: keep their code OUT of tree, as a
+  search ORACLE only.  Two independent reasons, both now established rather
+  than assumed:
+    * BBinf.v carries the tree's only two Admitted lemmas (all_qs_spec,
+      all_syms_spec -- they cannot hold for an unbounded alphabet) and
+      extraction warns about exactly these.  The generic-arity binary can
+      never be load-bearing.  A real BB42 context (45 lines, pattern BB52.v)
+      would be required for anything that is.
+    * The ExtraRules the oracle uses are consumed WITHOUT proof --
+      ExtraRules_WF is a separate obligation discharged per machine by step
+      evaluation.  So every hint has to be re-proved on our side regardless,
+      which is exactly the emit_lapcert.py board we already know how to make.
+
+  THE PRODUCTIVE USE OF THEIR CODE, concretely:
+    (a) As a DESIGN SPEC for extending LapDecider.  Our lap model is affine
+        (docs/LAPDECIDER.md); the extension needed is `powsum k` plus one
+        multiplication, on the OVERFLOW branch, with the far side pinned to
+        `const s0` exactly as side_binary_Pos_inc_rule's second clause does.
+        This is MXDYS_DECIDERS_PLAN section 5's fallback -- but now with a
+        verified reference implementation to copy instead of a design to
+        invent.  side_binary / side_binary_Pos / side_binary_dec / side_BL are
+        the right tape constructors.
+    (b) As an ORACLE for the counter families, driven by OUR alphabets:
+        alphabet_infer.py -> (A,B,C) -> --becpos/--dec d0 d1 d1a, plus a small
+        grid over qL/qR/QR.  Do not run the hint-free black box again; it is
+        not the mode that decided the counter families in his own tree.
 
 THEN, in ranked order (all independent of the above):
 
@@ -175,6 +231,24 @@ DO NOT RETRY (measured; grids in COUNTER_CLOSEOUT.md section 5, WAVE12 section
     emit_lapcert's reporting path cost 46 finished certificates and looked
     exactly like "the search finds nothing".  Survey with wall_survey.py,
     which keeps the best outcome per machine, before concluding anything.
+  * RRBA, at all, for this project.  Its verdict type is a bare bool
+    (decide_loop2 : ... -> bool, spec yields ~halts tm c0) and its record
+    structure is loop1_t := int*int*int*int -- four machine words, no state,
+    no symbolic configuration.  There is nothing to read liveness off of EVEN
+    ON A SUCCESS.  It also targets shift-recursive / sync bi-counter
+    (Skelet10) shapes, not ours.  A session churned on it and got nothing;
+    that is the expected outcome, not bad luck.  Same for RWLAcc
+    (decide_nonhalt T : bool).  UBRRBA is halting-only by its own README.
+    Inductive is the ONLY decider in that suite whose certificate carries a
+    state at all, and it carries at most two.
+  * Running mxdys' hint-FREE extracted decider over the residue hoping for
+    boards.  Measured: 0/30 on the head sample, and his own counter certs do
+    not use that mode either (IndSBCv1 106/107 and IndBECv1 100/122 are
+    hand-hinted).  If you use their engine, drive it with hints.
+  * Raising --maxT to force a decision.  50x (5e6) finishes in 142 s and still
+    returns budget-exhausted.  T is not the binding constraint.
+  * Expecting per-state visit witnesses from ANY certificate that tree emits.
+    See the check_nonhalt shape above -- it is structurally two states.
   * (RETIRED) "mxdys' implementation is not available."  It IS -- that is this
     session's task.
 
