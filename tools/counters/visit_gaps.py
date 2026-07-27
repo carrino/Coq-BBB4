@@ -28,9 +28,23 @@ start-up transients do not count:
   GROWING  every state recurs but some gap grows  => never-QH is still likely
            true, but a FIXED window will not see it; needs a lap-relative
            witness
-  QUIET    some state stops occurring entirely    => quasi-halting candidate,
-           the QHBound / LapGlueQH route rather than glue_neverqh
+  QUIET    some state stops occurring entirely    => quasi-halting CANDIDATE
+           ONLY -- see the warning below; confirm with --confirm
   HALT     the machine halted
+
+!! A SINGLE-WINDOW `QUIET` VERDICT IS UNSOUND. !!
+
+A state visited at exponentially spaced times looks quiet at EVERY finite
+window: its gap eventually exceeds T/4, so its last visit falls before the
+3T/4 cutoff no matter how large T is.  Measured on this residue, the
+single-window verdict was wrong for the large majority of the machines it
+flagged -- the tell was a bimodal last-visit distribution with one cluster
+at t <= 64 and another sitting at ~0.55*T, i.e. scaling with the window.
+
+`confirm_quiet` runs TWO window sizes and keeps only states whose last
+visit is the SAME ABSOLUTE STEP in both.  A genuinely quiet state's last
+visit does not move; an exponential-gap state's scales with the window.
+Always use --confirm before believing a QUIET verdict or reporting a count.
 """
 import argparse
 import sys
@@ -95,6 +109,47 @@ def classify(spec, T, nstates=4):
         info['growing'] = [LAB[q] for q in grow]
         return "GROWING", info
     return "BOUNDED", info
+
+
+def last_visits(spec, T, nstates=4):
+    """Last step at which each state occurs within T steps; None if halted."""
+    tab = parse(spec)
+    tape = {}
+    pos, q = 0, 0
+    last = [None] * nstates
+    for _ in range(T):
+        last[q] = _
+        e = tab[(q, tape.get(pos, 0))]
+        if e is None:
+            return None
+        w, d, ns = e
+        tape[pos] = w
+        pos += d
+        q = ns
+    return last
+
+
+def confirm_quiet(spec, T1=400000, T2=4000000, nstates=4):
+    """Two-window test -- the only sound way to call a state quiet here.
+
+    Genuinely quiet: last visit is the SAME ABSOLUTE STEP at T1 and T2.
+    Exponential gap:  last visit SCALES with the window.
+    """
+    a = last_visits(spec, T1, nstates)
+    if a is None:
+        return "HALT", {}
+    b = last_visits(spec, T2, nstates)
+    if b is None:
+        return "HALT", {}
+    quiet = [q for q in range(nstates) if a[q] is not None and b[q] == a[q]]
+    if quiet:
+        return "QUIET", dict(states=[LAB[q] for q in quiet],
+                             B=max(a[q] for q in quiet))
+    moved = [q for q in range(nstates)
+             if a[q] is not None and b[q] != a[q] and a[q] < 3 * T1 // 4]
+    if moved:
+        return "EXPGAP", dict(states=[LAB[q] for q in moved])
+    return "RECUR", {}
 
 
 def anchor_offsets(spec, T, nstates=4):
@@ -163,6 +218,10 @@ def classify_anchor(spec, T, nstates=4):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument('--confirm', action='store_true',
+                    help='two-window test: the only sound way to call a state '
+                         'quiet (a single window cannot tell "stopped" from '
+                         '"recurs at exponentially spaced times")')
     ap.add_argument('--anchor', action='store_true',
                     help='measure anchor-relative offsets (the Hvis statistic) '
                          'instead of visit-to-visit gaps')
@@ -177,7 +236,8 @@ def main():
     worst = collections.Counter()
     for i, s in enumerate(specs):
         try:
-            k, info = (classify_anchor(s, a.T) if a.anchor
+            k, info = (confirm_quiet(s, a.T, 10 * a.T) if a.confirm
+                       else classify_anchor(s, a.T) if a.anchor
                        else classify(s, a.T))
         except Exception as e:                                   # noqa: BLE001
             k, info = "ERROR", {'e': str(e)}
