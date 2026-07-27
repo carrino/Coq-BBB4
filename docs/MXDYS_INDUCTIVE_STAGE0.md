@@ -418,6 +418,52 @@ whether their engine is usable as a rule-discovery oracle for our checker.
 
 ---
 
+## 6b. The 11 remaining holdouts — 2 of them decide `~halts`
+
+`tools/closeout/frozen_unproven.txt` ∩ `tools/census_holdouts_kept.txt` = 11.
+(Of the 27, **16 are boarded and 11 unproven** — `HOLDOUTS_WAVE14.md` §1 has
+this right; `NEXT_SESSION.md` §2c still says "11 boarded / 16 unproven", which
+was true mid-wave-14 and is now stale.)  All 11 got only the base recipe in
+the full-residue run, so they were re-run across 30 configurations at
+`T = 300000`.
+
+**2 of 11 decided `nonhalting`** — and they are the two `wrap-QH` machines,
+which are an exact L/R mirror pair:
+
+```
+1RB---_1LC0LB_0RC0LD_1RD1RB
+  0^inf {A}> 0^inf  -->(>=v1)  (1)^(16*(2^v1 - 1) + 14).0^inf  {D}> 0.1.0^inf
+1RB---_1RC0RB_0LC0RD_1LD1LB
+  0^inf {A}> 0^inf  -->(>=v1)  (1)^(32*(2^v1 - 1) + 30).0^inf <{D}  0.1.0^inf
+```
+
+(`powsum 0 v1 = 2^v1 - 1`; reported `flags=3`, `powsum_k=0`.)  The other 9
+exhausted the budget under all 30 configurations.
+
+Three things about this, in order of importance.
+
+1. **It is NOT a board, and not close to one.**  `~halts` is not `QHBound` and
+   not `NeverQuasiHaltsSt`; `D_remaining` moves by zero.  And `nstates=2` —
+   the certificate names **A and D only**.  For a machine in the *wrap-QH*
+   family, the whole question is whether B and C keep being visited, and the
+   certificate is silent on exactly that.  This is §2 again, on the two
+   machines where it would have mattered most.
+
+2. **It is not a contradiction of the holdout list.**  That list is a *BBB*
+   (quasi-halting) list, not a halting list.  A machine can be provably
+   non-halting while its quasi-halting status is wide open — which is
+   precisely the situation here, and precisely this project's whole problem.
+   If anything it sharpens the reading of "holdout": non-haltingness was never
+   the obstacle for these two.
+
+3. **It invalidates the (i) number in §6 as a ceiling.**  What unlocked both
+   was `--exploop` (`enable_exp_toplevel_loop`), which mxdys' bulk `Indv1.v`
+   recipe does **not** set — and §6 used that recipe faithfully.  This is also
+   the first time in the whole exercise the search reached a `powsum` machine.
+   So `12 / 1157` is a floor, not a ceiling; the residue is being re-run with
+   `--exploop`.  §6's *conclusion* is unaffected, because (ii) is what decides
+   the gate and (ii) does not improve — both new decisions are `nstates=2`.
+
 ## 7. Do-not-retry additions
 
 * **RRBA is the wrong instrument for this project, twice over.**  Its verdict
