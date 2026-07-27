@@ -1,4 +1,4 @@
-# Wave-16 — the lap never had to close exactly; 116 boards, `D_remaining` 1,016 → 900
+# Wave-16 — the lap never had to close exactly; 126 boards, `D_remaining` 1,016 → 890
 
 _Branch `claude/coq-bbb4-next-session-ctox52`, off merged wave-15 + PR #40.
 This wave took the ranked item (1) of the wave-15 prompt — the `AFFINE/AFFINE`
@@ -10,11 +10,11 @@ population needs a new theory.**_
 
 | | |
 |---|---:|
-| boards this wave | **116** (all `LAPC_*`, through the one checker) |
-| `D_remaining` | 1,016 → **900** |
-| frozen rows settled | 4,140 → **4,256 / 5,156 (82.5%)** |
+| boards this wave | **126** (all `LAPC_*`, through the one checker) |
+| `D_remaining` | 1,016 → **890** |
+| frozen rows settled | 4,140 → **4,266 / 5,156 (82.7%)** |
 | new Coq | `Counters/LapCertGlueLift.v` — additive, axiom footprint unchanged |
-| board axiom footprint | `functional_extensionality_dep` only, on all 116 |
+| board axiom footprint | `functional_extensionality_dep` only, on all 126 |
 | closeout | `audit.py` OK — tables still partition the frozen list exactly |
 | census | `census_cache --check` = MATCH at every commit; `theories/Census/` untouched |
 
@@ -52,7 +52,8 @@ that (`geo_*`), and the hand-written `WLS_*` boards discharge it with
 
 The measurement that settles it: with the matcher made faithful to `lift`, the
 emitter goes from **0 to 29** on the bucket, and then from 29 to **116** once
-the same slack is allowed on the overflow branch.
+the same slack is allowed on the overflow branch; §7 items 3 and 4 took it to
+**126**.
 
 ## 3. What was built
 
@@ -123,13 +124,23 @@ Emitter over the whole residue, after the fix:
 
 | outcome | count |
 |---|---:|
-| **boards** | **116** |
+| **boards** | **116**, then **126** with §7 items 3-4 |
 | no overflow chain | 735 |
 | no interior chain | 105 |
 | no anchor | 35 |
-| no visit witness (StA targeted) | 15 |
-| multi-cell far slack (guard) | 7 |
-| lift route under `glue_qh`/`glue_qh_abs` (unwired) | 3 |
+| no visit witness (StA targeted) | 15 — see §6b |
+| multi-cell far slack | 7 — now boarded |
+| lift route under `glue_qh`/`glue_qh_abs` | 3 — now boarded |
+
+Cross-referenced against `ovfshape`, the two big remaining buckets are:
+
+| failure | dominant shape |
+|---|---|
+| no overflow chain (735) | 492 `AFFINE`/`EXP2` (THE TASK), 211 no-anchor, **23 `AFFINE`/`AFFINE`** |
+| no interior chain (105) | 41 `QUAD`, **14 `AFFINE`/`AFFINE`**, 13 `PARITY-AFFINE`, 13 `HIGHER` |
+
+so 37 in-model machines remain unboarded — the smallest named populations
+left, and the natural next check with the question §6 asks.
 
 Regression: of the 376 previously emitted `LAPC_*` boards, **370 re-derive**;
 the 6 that do not fail identically on the pre-change tools.
@@ -162,6 +173,44 @@ theorem since the checker was written. The theorem statement — `lift c' = lift
 Corollary worth carrying: **`LapGlue`'s premises are the specification; the
 emitter's templates are one implementation of them.** When a board will not
 render, check the premise before extending the theory.
+
+## 6b. The 15 "no visit witness" machines are NOT visit-witness machines
+
+Wave-15's prompt, ranked item (2): *"Their missing state is genuinely LIVE,
+but fires only in the INTERIOR lap, where `LapCertGlue.vis_via_ovf` cannot see
+it. A `vis_via_int` dual … would catch them."*
+
+Built the dual — `LapCertGlueLift.vis_via_int_lift`, and it is the easy
+direction: reaching an interior anchor costs at most ONE lap, because
+`cview p = (j, None)` means `p` is all ones and the successor of an all-ones
+positive is `xO _`, whose `cview` is `(0, Some _)` by computation
+(`cview_none_succ`). Wired the emitter to look for the missing state in the
+INTERIOR chain and close through it.
+
+**It fires on none of the 15, because the premise is false.** Simulated all
+15: `StA` is visited 2–3 times and its LAST visit is at step 4–11. It is not
+live at all — these are quasi-halters whose quiet state is `StA`.
+
+So why do they not take the quasi-halting closers?
+
+* `glue_qh` needs `Huntarget` — nothing targets `StA`. Something does: e.g.
+  `1RB1RC_1LC0RB_0LC1RD_0RB1LA` has `D1 -> 1LA`.
+* `glue_qh_abs` needs a state set closed under the table, containing the
+  machine from index `d` on and excluding `StA`. `absorb_search` cannot find
+  one, and cannot in principle: `closed_b` is a **digraph** fact over all
+  symbols, so any set holding `StD` must hold `StA`.
+
+The needed fact is symbol-aware: `StD` never READS `S1` after the boot. That
+is a lap-level invariant, not a digraph one, and it is a real build — but it
+is a different build from the one that was queued, and the queued one was
+measured to be worth zero. The bound would be tiny (`QHBound 12` covers all
+15).
+
+`vis_via_int_lift` is proved, compiled and axiom-clean, and the emitter path
+for it is wired and guarded — it simply has no customer yet. Kept rather than
+reverted because interior-only visits are a real shape the closers could not
+previously express; noted here so the next reader does not mistake it for
+dead weight or re-derive it.
 
 ## 7. What is next
 

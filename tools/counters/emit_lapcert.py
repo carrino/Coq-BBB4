@@ -622,7 +622,7 @@ Proof.
     [exact Hst | reflexivity | reflexivity | exact (gso_@ID@ p j E)].
 Qed.
 
-Lemma vis_@ID@ : @VISHYP@ @VISCONC@.
+@VISIL@Lemma vis_@ID@ : @VISHYP@ @VISCONC@.
 Proof.
   @VISINTRO@.
   assert (Hi : @VISHI@)
@@ -762,7 +762,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
     # StA (then its only visit is at index 0, so the bound is 1) -- far
     # inside the census tier, and inside the champion's 32.8M prefix.
     untargeted = all(t is None or t[2] != 0 for t in tab.values())
-    vis, qh, absd, sset = {}, False, None, None
+    vis, visi, qh, absd, sset = {}, {}, False, None, None
     missing = []
     for q in range(4):
         pre = LC.reach_state(tab, True, True, B0, cho, q)
@@ -770,6 +770,21 @@ def derive(spec, edge, tail, p0, enc, far=()):
             missing.append(q)
             continue
         vis[q] = pre
+    if missing and mode == 'one':
+        # A state can be genuinely LIVE and still never fire in the OVERFLOW
+        # lap, which is the only branch [vis_via_ovf] can see.  Look for it in
+        # the INTERIOR chain instead and close through
+        # [LapCertGlueLift.vis_via_int_lift] -- reaching an interior anchor
+        # costs at most ONE lap, because the successor of an all-ones
+        # positive is [xO _] and so always interior.
+        still = []
+        for q in missing:
+            pre = LC.reach_state(tab, False, True, A0, chi, q)
+            if pre is None:
+                still.append(q)
+            else:
+                visi[q] = pre
+        missing = still
     if missing:
         # The lap is complete but some state never fires inside it.  Two
         # closers apply, cheapest first:
@@ -782,7 +797,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
         if missing == [0] and untargeted:
             qh = True
         else:
-            found = absorb_search(tab, sorted(vis))
+            found = absorb_search(tab, sorted(set(vis) | set(visi)))
             if found is None:
                 raise DeriveError('no visit witness for state %s%s' % (
                     LAB[missing[0]],
@@ -806,7 +821,8 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 chz=chz, chp=chp, Z0=Z0, Z1=Z1, P0=P0, P1=P1,
                 cz=((rz[1], rz[2]) if rz else None),
                 cp=((rp[1], rp[2]) if rp else None),
-                A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, qh=qh, boot=boot,
+                A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, visi=visi,
+                qh=qh, boot=boot,
                 absd=absd, sset=sset, islack=islack, oslack=oslack,
                 ovpost=list(got), ovwant=list(want), val=why)
 
@@ -823,6 +839,22 @@ def slistc(qs):
 
 def quiet_of(qs):
     return [q for q in range(4) if q not in (qs or [])]
+
+
+VISI_LEMMA = r"""(** A state that fires ONLY inside the interior lap: [vis_via_ovf] runs to an
+    OVERFLOW anchor, so it cannot see one.  This is the interior witness, and
+    [LapCertGlueLift.vis_via_int_lift] carries it to every anchor. *)
+Lemma visi_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm false true l A0_@ID@ = Some q ->
+  forall p j q0, cview p = (j, Some q0) ->
+  exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros l q Hst p j q0 E.
+  apply (vis_of_run tm Cc false true l A0_@ID@ p j (@ENC@ q0 ++ @TAIL@) []);
+    [exact Hst | discriminate | reflexivity | exact (gsi_@ID@ p j q0 E)].
+Qed.
+
+"""
 
 
 def _lift_vis(D):
@@ -881,6 +913,18 @@ def render(D):
                 vis.append('  - (* %s: quiet -- see the closing theorem *)\n'
                            '    exfalso; exact (Hq eq_refl).' % ST[q])
             continue
+        if q in D.get('visi', {}):
+            # interior-only: the witness is a prefix of the INTERIOR chain,
+            # carried to every anchor by vis_via_int_lift (which needs the
+            # FULL lap, i.e. lap_*, not just the interior branch)
+            vis.append('  - (* %s: fires only in the interior lap *)\n'
+                       '    apply (vis_csteps_of_lift tm Cc).\n'
+                       '    apply (vis_via_int_lift tm Cc lap_%s %s).\n'
+                       '    intros p1 j1 r1 E1. apply (vis_lift_of_csteps tm Cc).\n'
+                       '    apply (visi_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                       '                   p1 j1 r1 E1).'
+                       % (ST[q], ID, ST[q], ID, cchain(D['visi'][q]), ST[q]))
+            continue
         pre = D['vis'][q]
         if not pre:
             vis.append('  - (* %s: the anchor state *)\n'
@@ -923,6 +967,7 @@ def render(D):
         '@PREF@': PREFIX, '@ID@': ID, '@SPEC@': spec,
         '@GLUELIFT@': ' LapCertGlueLift' if islack else '',
         '@FARB@': farb, '@FARNEST@': farnest,
+        '@VISIL@': VISI_LEMMA if D.get('visi') else '',
         '@LAPICASE@': (
             '  - destruct (lapi_@ID@ p j q0 E) as (n & c\' & Hn & Hrun & Hlift).\n'
             '    exists n, c\'. split; [exact Hrun | split; [exact Hlift | exact Hn]].'

@@ -77,6 +77,53 @@ Qed.
 
 End AnchorReachLift.
 
+(** ** Visits that only fire in the INTERIOR lap
+
+    [LapCertGlue.vis_via_ovf] runs interior laps until the counter overflows
+    and fires there, so it can only see states that occur in the OVERFLOW
+    branch.  A state that fires solely inside the interior lap needs the dual:
+    run to an INTERIOR anchor and fire there.
+
+    The dual is the easier direction, because reaching an interior anchor
+    takes at most ONE lap.  [cview p = (j, None)] says [p] is all ones, and
+    the successor of an all-ones positive is [xO _] — whose [cview] is
+    [(0, Some _)] by computation. *)
+Lemma cview_none_succ : forall p j, cview p = (j, None) ->
+  exists r, Pos.succ p = xO r.
+Proof.
+  destruct p as [p|p|]; cbn; intros j H.
+  - exists (Pos.succ p); reflexivity.
+  - destruct (cview p); discriminate.
+  - exists xH; reflexivity.
+Qed.
+
+Section AnchorReachInt.
+
+Variable tm : TM.
+Variable Cc : positive -> cconf.
+
+(** The FULL lap, both branches -- exactly the board's [lap_*]. *)
+Hypothesis Hlap : forall p, exists n c', csteps tm n (Cc p) = Some c'
+                  /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+
+Lemma vis_via_int_lift : forall q : St,
+  (forall p j q0, cview p = (j, Some q0) ->
+     exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q) ->
+  forall p, exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q.
+Proof.
+  intros q Hq p.
+  destruct (cview p) as [j oq] eqn:E; destruct oq as [q0|].
+  - exact (Hq p j q0 E).
+  - destruct (Hlap p) as (n & c' & Hrun & Hlift & _).
+    destruct (cview_none_succ p j E) as (r & Hr).
+    assert (Hcv : cview (Pos.succ p) = (0, Some r)) by (rewrite Hr; reflexivity).
+    destruct (Hq (Pos.succ p) 0 r Hcv) as (k & e & Hk & He).
+    exists (n + k), e. split; [| exact He].
+    rewrite stepn_add, (csteps_lift _ _ _ _ Hrun), Hlift. exact Hk.
+Qed.
+
+End AnchorReachInt.
+
 (** ** The closer, with the visit premise in [lift] space
 
     [LapGlue.glue_neverqh] asks for [Hvis] as a CONCRETE [csteps] run from
