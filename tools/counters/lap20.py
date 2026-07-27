@@ -69,6 +69,26 @@ The measured facts this file pins, all against the CTape-faithful mirror
      permuted, which is what John's "the head bounces off of the lsb and
      then passes through" describes.
 
+  7. AND HERE IS WHY IT IS "A COUNTER IN ANOTHER ALPHABET".  The return's
+     two units RE-ENCODE a unary run back into the 10/110 alphabet -- they
+     emit exactly one block each, and which block depends only on the run
+     length:
+
+       retB3  (StC,(1 1 0 ++ L, S1, R)) -3-> (StB,(L, S0, 1 1 0 ++ R))
+       retB2  (StC,(1 0   ++ L, S1, R)) -2-> (StB,(L, S0, 1 0   ++ R))
+
+     (both uniform over all 961 (L,R) with |L|,|R| <= 4).  So the outward
+     sweep lays a UNARY run and the return converts it into `b` and `a`
+     blocks.  The block word is not a way of LOOKING at the tape -- it is
+     what the machine literally writes, one block per return unit.  That is
+     the mechanism John's reading names, and it is what makes the leading
+     b-run a counter.
+
+  8. THE LAP'S ENTRY is a uniform 11-step window from the B-type anchor:
+     the first 11 steps of `(StC, ([], S0, 1 0 1 1 1 1 0 ++ T))` have a
+     uniform core for every T (checked |T| <= 6); at 12 the tail is
+     reached, so 11 is the entry's exact length.
+
   STILL OPEN: the assembly -- an `asm20.py` in the shape of `asm15.py`, i.e.
   replay the lap from these gadgets alone as pure list ops and diff it
   against the raw simulator for every r.  That is the gate the Coq is a
@@ -135,6 +155,8 @@ GADGETS = [
     ('cross5 (StC,(L,S0,1101++R))', 5, C, [], S0, [S1, S1, S0, S1]),
     ('ret3   (StB,(110++L,S1,R))', 3, 1, [S1, S1, S0], S1, []),
     ('ret2   (StB,(10++L,S1,R))', 2, 1, [S1, S0], S1, []),
+    ('retB3  (StC,(110++L,S1,R))', 3, C, [S1, S1, S0], S1, []),
+    ('retB2  (StC,(10++L,S1,R))', 2, C, [S1, S0], S1, []),
 ]
 
 
@@ -247,7 +269,7 @@ def main():
 
     e = gadgets()
     print('#20 long-lap gadgets, EXHAUSTIVE over all 961 (L,R) with |L|,|R| <= 4: %s'
-          % ('OK (out5, cross5, ret3, ret2)' if not e else e[0]))
+          % ('OK (out5, cross5, ret3, ret2, retB3, retB2)' if not e else e[0]))
     bad += e
 
     p = pure(allrows)
