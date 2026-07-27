@@ -221,11 +221,41 @@ t     prefix      suffix                t     prefix      suffix
 211   (001)^3     0^6 1^4               581   (001)^6     0 1^6 0^2 1^2
 ```
 
-Two of the three suffix transitions are already trivial rewritings —
-`0 1^m -> 0^(m+2) 1^2` and `0^a 1^2 -> (prefix+1) 1 0^(a-3) 1^2` (both checked
-on every row above).  The third, `1 0^b 1^c -> ...`, is the carry, and it is
-the piece that still needs decoding.  Once it is a rewriting rule the file is
-the same three-phase shape as `BCtr_28.v`.
+**All three suffix rewritings are now decoded, with exact step counts, and
+each is UNIFORM in everything except the comb length `j`.**  Writing the
+config as `(001)^j` followed by a block word:
+
+| rule | rewriting | steps |
+|---|---|---:|
+| R1 | `0 1^m 0^p 1^q X  ->  0^(m+2) 1^2 0^(p-2) 1^q X` | `8j + 2m + 5` |
+| R2 | `0^a 1^2 X  ->  (j+1),  1 0^(a-3) 1^2 X` | `8j + 5` |
+| R3 | `1 0^b 1^c X  ->  0 1^4 0^(b-3) 1^c X` | `8j + 11` |
+
+R2 and R3 are uniform in `a` and `b` as well: their cost is the comb traversal
+`8j` plus a constant, so the head never walks those runs -- it rewrites a
+bounded window near the front and returns.  Only R1 traverses a run (`2m` for
+the `1^m` block).  Checked over `j = 1..4`, `m = 4,6,8`, `a = 6,8,10`,
+`b = 3,5,7`, `c = 2,4,6` and four different tails each.
+
+The micro-cycle is `R1 -> R2 -> R3 -> R1`, with the comb growing by one per
+cycle, so composing the three gives the one-line law
+
+```
+(001)^j 0 1^m 0^p 1^q X  -->+  (001)^(j+1) 0 1^4 0^(m-4) 1^2 0^(p-2) 1^q X
+```
+
+which reproduces the whole measured orbit (j = 2..8 checked term by term),
+including the doubling of the macro anchor as a consequence rather than an
+assumption.
+
+**What remains is Coq, and the closer is free.**  `WaveCounter.wglue_neverqh`
+takes an ARBITRARY anchor type with a total successor and a preserved
+invariant, which is exactly this: `A = (j, block word)`, `nextA` = the
+rewriting above, `Inv` = the shape/size side conditions (`m >= 4`, `p >= 2`,
+`a >= 4`, `b >= 3`).  No closed form for the anchor is needed at any point,
+which is what makes the `Theta(k^2)` macro lap irrelevant.  The per-machine
+work is the comb-traversal induction (`8j`) plus the three bounded-window
+gadgets.
 
 ### wave4 #15 — `1RB0RC_0LC1LB_0LD1LC_1RD0RA`
 
