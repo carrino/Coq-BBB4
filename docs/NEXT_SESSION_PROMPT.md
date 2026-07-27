@@ -1,6 +1,17 @@
 # Next-session prompt — the exponential overflow is the endgame
 
-_Rewritten 2026-07-26 at the end of wave-15 (branch
+_Amended 2026-07-27 at the end of wave-16 (branch
+`claude/coq-bbb4-next-session-ctox52`), which took ranked item (1) below — the
+`AFFINE/AFFINE` bucket, filed as a "CONFIRMED search gap" — and found the gap
+was in the MATCHER, not the search: the lap closes one trailing blank past the
+anchor, which `lift` cannot see and which `LapDecider`/`LapGlue` never asked
+about.  **116 boards, `D_remaining` 1,016 → 900.**  Item (1) is DONE; the
+ranked list below is renumbered accordingly.  Full assessment:
+`docs/WAVE16_FINDINGS.md`, whose §5 is a do-not-retry list for
+`derive_chain` widenings and whose §6 is the lesson.  THE TASK (the
+exponential overflow) is untouched and unchanged._
+
+_Written 2026-07-26 at the end of wave-15 (branch
 `claude/coq-residue-inductive-deciders-bzz3ae`).  Wave-15 ran the mxdys Stage-0
 gate and got a clear NO (12 of 1,176, and `~halts` boards nothing), then took
 the quasi-halting bucket with a much smaller theorem than planned — 141 boards,
@@ -17,6 +28,14 @@ Continue the (4,2) residue reduction in carrino/Coq-BBB4, on a new branch off
 main.
 
 READ FIRST, in this order:
+  docs/WAVE16_FINDINGS.md   -- sections 5 and 6 at minimum.  Section 5 is the
+                               do-not-retry list for derive_chain widenings
+                               (five of them, all measured at 0, including
+                               "more budget").  Section 6 is the lesson:
+                               check what the search is being asked to PROVE
+                               before widening it -- LapGlue's premises are
+                               the specification, the emitter's templates are
+                               one implementation of them.
   docs/WAVE15_FINDINGS.md   -- sections 2, 3 and 4.  Section 2 is why mxdys'
                                deciders are now do-not-retry (measured, not
                                assumed).  Section 3 is the absorbing-set
@@ -46,15 +65,20 @@ NON-NEGOTIABLE: never touch theories/Census/; `python3 tools/census_cache.py
 LapCertGlue and LapGlueAbs are axiom-FREE -- keep them that way).  Everything
 under tools/ is UNTRUSTED; the kernel re-checks every board.
 
-STATE: 4,140 of the frozen 5,156 settled (80.3%); D_remaining = 1,016.
-(Wave-15 boarded 141 of these; a concurrent gram-3 sweep -- PR #37 -- boarded
-19 more.  The failure profile below was measured at D_remaining = 1,035, so
-it is 19 rows stale but the proportions hold.)
-Failure profile over the residue (tools/counters/wall_survey.py):
-  510  anchor + interior derive, OVERFLOW fails
-  354  anchor derives, INTERIOR fails
-   21  no anchor family at all
-    6  complete lap, no visit witness
+STATE: 4,256 of the frozen 5,156 settled (82.5%); D_remaining = 900.
+(Wave-16 boarded 116; wave-15 boarded 141 before that, and PR #37 19 more.)
+Failure profile over the CURRENT residue (emit_lapcert over
+tools/closeout/frozen_unproven.txt, re-measured at the end of wave-16):
+  735  no overflow chain
+  105  no interior chain
+   35  no anchor family at all
+   15  no visit witness (StA is targeted)
+    7  multi-cell far slack -- the wave-16 guard rejects these
+    3  want the wave-16 lift route under glue_qh / glue_qh_abs (unwired)
+ovfshape over the same list: 500 AFFINE/EXP2, 246 no-anchor, 175
+AFFINE/AFFINE, 41 QUAD, 13 PARITY-AFFINE, 13 HIGHER, 28 EXP3/EXP4/other.
+(The AFFINE/AFFINE count is 175, NOT the 141 in WAVE15_FINDINGS section 5b --
+that number no longer reproduces.)
 Per-machine cost is a vm_compute:
   python3 tools/counters/emit_lapcert.py --list FILE --emit   (24 alphabets)
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
@@ -318,21 +342,23 @@ THE TASK -- THE EXPONENTIAL OVERFLOW, AND MEASURE BEFORE TEMPLATING.
 
 THEN, in ranked order (all independent of the above):
 
-  (1) START HERE.  The 141 AFFINE/AFFINE machines -- affine interior AND
-      affine overflow, so fully IN MODEL, no new theory needed.  MEASURED at
-      the end of wave-15: the emitter derives 0 of 141, failing with
-      "no interior chain" on 121 and "no overflow chain" on 20.  ovfshape says
-      the lap is affine; derive_chain cannot find it.  It is a SEARCH gap, on
-      a named population, and it is the same shape as WAVE13 section 4.1 where
-      making the window search target-aware turned 0 chains into all of them.
-      The list regenerates with:
-        python3 tools/counters/ovfshape.py --list tools/closeout/frozen_unproven.txt
-      then take the int=AFFINE ovf=AFFINE rows.  Instrument derive_chain on
-      three of them and find out what it is refusing.  Best boards-per-hour in
-      the residue by a wide margin -- and it was ranked first in the wave-14
-      prompt and skipped, which is why wave-15 boarded only one batch.
+  (1) DONE IN WAVE-16 -- do not re-run it.  The AFFINE/AFFINE bucket was NOT
+      a search gap.  derive_chain finds the chains; the emitter's matcher
+      rejected them for landing one trailing blank past the anchor, which
+      lift cannot see and which LapDecider.lap_of_run / LapGlue's Hlap never
+      asked about.  116 boards.  docs/WAVE16_FINDINGS.md section 5 lists the
+      five derive_chain widenings measured at 0 -- INCLUDING more search
+      budget, since maxdepth=24 is never reached on this population.  Do not
+      spend another wave widening that search.
 
-  (2) The 6 remaining no-visit-witness machines.  Their missing state is
+      The small leftovers, both named and both mechanical:
+        * 7 machines with MULTI-CELL far slack -- generalise the close from a
+          fixed number of lift_app_blank rewrites to ExactClosure.strip_lift.
+        * 3 wanting the lift interior route under glue_qh / glue_qh_abs --
+          each needs the same premise weakening glue_neverqh_lift got, in
+          Counters/LapCertGlueLift.v.
+
+  (2) The 15 no-visit-witness machines.  Their missing state is
       genuinely LIVE, but fires only in the INTERIOR lap, where
       LapCertGlue.vis_via_ovf cannot see it.  A vis_via_int dual -- from any
       anchor, run to an INTERIOR anchor rather than an overflow one -- would

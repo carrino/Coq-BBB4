@@ -151,6 +151,49 @@ holdouts rather than the residue.  Headlines:
   (no `native_compute`).  `make -j4` OOMs on `IRules_Batch_02` (~6.3 GB);
   use `-j2` or targeted `make -f Makefile.coq <file>.vo`.
 
+## 2d. Wave-16 (2026-07-27) — the lap never had to close exactly
+
+Full write-up: `docs/WAVE16_FINDINGS.md`.  Took the ranked item (1) of the
+wave-15 prompt (the `AFFINE/AFFINE` bucket, filed as "a CONFIRMED search
+gap") and found **the gap is not in the search**.
+
+- `derive_chain` DOES find these chains.  What rejected them was the test for
+  having ARRIVED: the chain lands one trailing blank past the anchor, and
+  `CTape.lift_side l = fun n => nth n l S0` cannot see a trailing blank.
+  `LapDecider.lap_of_run` and `LapGlue`'s `Hlap` **already ask only for a
+  `lift` equality** — the emitted overflow branch already exploited it, and
+  the hand-written `WLS_*` boards use `WTape.lift_app_blank` for exactly this.
+  Two spots were stricter than the theorem: `lapcert.side_eq` (its
+  trailing-blank leniency is dead whenever a side carries no rep, because
+  `sden_parts` folds everything into `P`) and `_shape_to` (syntactic
+  `pre/u/a/b`, and no rotation can delete a blank).
+- **116 boards, `D_remaining` 1,016 -> 900** (4,256/5,156 = 82.5% settled),
+  all `functional_extensionality_dep` only.  New Coq is one additive file,
+  `Counters/LapCertGlueLift.v`: `reach_ovf_lift`/`vis_via_ovf_lift` redo
+  `LapCertGlue`'s induction in `stepn`/`lift` space (where
+  `LapGlue.glue_reach` already chains), and `glue_neverqh_lift` is
+  `glue_neverqh` with the visit premise weakened to what its own proof
+  consumes.  `LapDecider.v`, `LapGlue.v`, `LapCertGlue.v` untouched.
+- The emitter's `lift` flag defaults to FALSE and the exact route is tried
+  first; the lift route is a fallback.  Threading it into `_win_candidates`
+  is load-bearing (the target-aware cuts decide whether the winning cut is
+  offered at all), and `_shape_to` must SCORE rotations rather than accept
+  the first denotational match — otherwise it returns the empty rotation and
+  leaves the rep side misaligned.
+- **DO NOT RETRY on this bucket** (each 0 of 31): depth-aware memo in
+  `derive_chain` (the `seen` set IS depth-blind, and it fires on 29 of 31 —
+  it is still not the blocker), `SFold` at m=3,4, rotation-enabling window
+  cuts, more search budget (`maxdepth=24` is NEVER reached: `dhit=0`,
+  `dmax` 7-21), blank-padding the anchor's `FAR` (1 of 11).
+- `ovfshape` re-run over the current 1,016 gives **175 `AFFINE/AFFINE`**, not
+  the 141 in `WAVE15_FINDINGS.md` §5b; that number no longer reproduces.
+- THE LESSON: when a population is "in model but the search cannot find it",
+  **check what the search is being asked to prove before widening it**.
+  `LapGlue`'s premises are the specification; the emitter's templates are one
+  implementation of them.
+- Also fixed: `BlankTail.v`, `MpCounter.v` and `Alph_01_11_011.v` existed but
+  were absent from `_CoqProject`, so `make` never built them.
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)

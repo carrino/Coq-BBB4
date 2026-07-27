@@ -1,0 +1,182 @@
+# Wave-16 — the lap never had to close exactly; 116 boards, `D_remaining` 1,016 → 900
+
+_Branch `claude/coq-bbb4-next-session-ctox52`, off merged wave-15 + PR #40.
+This wave took the ranked item (1) of the wave-15 prompt — the `AFFINE/AFFINE`
+bucket, "a confirmed search gap" — and found the gap is not in the search.
+**Read §2 before touching `derive_chain` again, and §5 before assuming a
+population needs a new theory.**_
+
+## 1. Scoreboard
+
+| | |
+|---|---:|
+| boards this wave | **116** (all `LAPC_*`, through the one checker) |
+| `D_remaining` | 1,016 → **900** |
+| frozen rows settled | 4,140 → **4,256 / 5,156 (82.5%)** |
+| new Coq | `Counters/LapCertGlueLift.v` — additive, axiom footprint unchanged |
+| board axiom footprint | `functional_extensionality_dep` only, on all 116 |
+| closeout | `audit.py` OK — tables still partition the frozen list exactly |
+| census | `census_cache --check` = MATCH at every commit; `theories/Census/` untouched |
+
+`LapDecider.v`, `LapGlue.v` and `LapCertGlue.v` are **untouched**. No existing
+board changes.
+
+## 2. The bucket was never blocked on the chain search
+
+Wave-15 §5b: *"`ovfshape` says the lap is affine and `derive_chain` cannot find
+it… it is a search gap"*, and the wave-14/15 prompts both said to instrument
+`derive_chain` and find what it refuses.
+
+Instrumented, **`derive_chain` finds the chain**. What rejects it is the test
+for having arrived. On `0RB1LA_1RC0LA_0LD1RB_1LA1LD` (Jp, interior `4j+8`) the
+chain `[SCycL 2 0; SWin 4; SCycR 2; SWinR 4]` lands on
+
+```
+reached  q1 h0  L=[|11^(1j+0)|10]  R=[0|^(0j+0)|]
+target   q1 h0  L=[|11^(1j+0)|10]  R=[ |^(0j+0)|]
+```
+
+— one trailing blank, and `CTape.lift_side l = fun n => nth n l S0` cannot see
+it. `LapDecider.lap_of_run` and `LapGlue`'s `Hlap` **both already ask only for
+a `lift` equality**; the emitted *overflow* branch already exploits exactly
+that (`geo_*`), and the hand-written `WLS_*` boards discharge it with
+`WTape.lift_app_blank`. Only two things wanted the syntactic form:
+
+* **`lapcert.side_eq`** strips trailing blanks from `rest` only. When a side
+  carries no rep, `sden_parts` folds everything into `P` and `rest` is empty,
+  so the leniency is dead *precisely* where the whole side is a constant word
+  — which is the end of a lap, right after the machine writes a blank beside
+  the head.
+* **`lapcert._shape_to`** compares `pre/u/a/b` syntactically, so even a lenient
+  match is discarded: no rotation can delete a trailing blank.
+
+The measurement that settles it: with the matcher made faithful to `lift`, the
+emitter goes from **0 to 29** on the bucket, and then from 29 to **116** once
+the same slack is allowed on the overflow branch.
+
+## 3. What was built
+
+### `theories/Counters/LapCertGlueLift.v` (new, additive)
+
+`LapCertGlue.reach_ovf` chains INTERIOR laps by exact `cconf` equality, so an
+interior lap that closes up to `lift` cannot use it. The fix is not a new
+argument, it is the same one moved into `stepn`/`lift` space, where
+`LapGlue.glue_reach` already chains:
+
+* `reach_ovf_lift` — same well-founded induction on `JpCounter.tovf`, chained
+  with `stepn_add` + `csteps_lift` + a rewrite by the lap's own `lift`
+  equality, so the blank slack never accumulates into a term mismatch;
+* `vis_via_ovf_lift` — its `vis_via_ovf` twin;
+* `glue_neverqh_lift` — `LapGlue.glue_neverqh` with the visit premise weakened
+  from a concrete `csteps` run to `stepn` on the lifted anchor. `glue_neverqh`
+  pushes that premise through `csteps_lift` immediately, so the concreteness
+  was never used; `glue_reach` is reused verbatim;
+* `vis_lift_of_csteps` — the one-line bridge that lets a board keep its
+  existing per-state `srun_st` witnesses.
+
+`Print Assumptions` on all four: `functional_extensionality_dep`.
+
+### The emitter
+
+`side_eq` / `_match` / `_shape_to` / `_win_candidates` / `derive_chain` take a
+`lift` flag, **default `False`**. The exact route is tried first and preferred
+— it is cheaper and it keeps `reach_ovf` available — and the lift route runs
+only where the old code raised `no interior chain` / `no overflow chain`.
+
+Threading the flag into `_win_candidates` is load-bearing and was the first
+thing to get wrong: the target-aware window cuts (wave-13 §4.1) decide whether
+the winning cut is ever offered as a candidate at all. With the flag on the
+acceptance test alone, the bucket still derived 0.
+
+`_shape_to` needed more than leniency. Accepting the first **denotational**
+match returns the empty rotation — the reached config already denotes the
+target, that being why the chain got there — leaving the rep side misaligned
+(`post (0,0,1)` against the anchor's `(1,0)`), which the board's glue cannot
+render and which `derive()` then rejected downstream as `overflow close
+mismatch`. It now **scores** each rotation by how many sides reach the
+target's syntactic shape and takes the best, accepting slack only where
+rotating cannot help. With `lift=False` the score is 2 or nothing — the
+shipped behaviour exactly.
+
+The overflow half needed **no new Coq**: `geo_*` already closes up to `lift`,
+so `HD`'s right side becomes `@FAR@ ++ [S0]` and the close gains one
+`rewrite lift_app_blank`.
+
+## 4. Numbers
+
+`ovfshape.py` re-run over all 1,016 (the committed `frozen_unproven.txt`):
+
+| interior / overflow | count |
+|---|---:|
+| `AFFINE`/`EXP2` | 500 |
+| `-`/`no-anchor` | 246 |
+| **`AFFINE`/`AFFINE`** | **175** |
+| `QUAD`/`QUAD` | 41 |
+| `PARITY-AFFINE` | 13 |
+| `HIGHER`/`HIGHER` | 13 |
+| `EXP3` / `EXP4` / `AFFINE`-`HIGHER` | 10 / 9 / 9 |
+
+**The `AFFINE/AFFINE` count is 175, not the 141 wave-15 §5b records.** That
+number no longer reproduces with today's tools; use the rerun.
+
+Emitter over the whole residue, after the fix:
+
+| outcome | count |
+|---|---:|
+| **boards** | **116** |
+| no overflow chain | 735 |
+| no interior chain | 105 |
+| no anchor | 35 |
+| no visit witness (StA targeted) | 15 |
+| multi-cell far slack (guard) | 7 |
+| lift route under `glue_qh`/`glue_qh_abs` (unwired) | 3 |
+
+Regression: of the 376 previously emitted `LAPC_*` boards, **370 re-derive**;
+the 6 that do not fail identically on the pre-change tools.
+
+## 5. DO NOT RETRY (measured this wave, each 0 of 31 on the bucket)
+
+* **A depth-aware memo in `derive_chain`.** The DFS `seen` set is depth-blind,
+  which is a genuine incompleteness and it *fires* — on 29 of 31 machines a
+  config is re-reached at a shallower depth and pruned. It is still not the
+  blocker. Fixing it alone boards nothing.
+* **`SFold` at `m = 3,4`** instead of `m ∈ {1,2}`.
+* **Window cuts that enable a rotation or fold**, by analogy with the
+  cycle-enabling cuts.
+* **More search budget.** `maxdepth = 24` is *never reached* on this
+  population (`dhit = 0` on all 31, `dmax` 7–21). This was never a budget
+  problem — which matches `nestboot`'s (24,64)→(64,512) result.
+* **Blank-padding the anchor's `FAR`** to absorb the slack into the anchor
+  family instead of the matcher: 1 of 11.
+
+## 6. The lesson
+
+Wave-15's standing lesson was *when the expert has named the tools, measure
+them*. The twin of it: **when a population is "in model but the search can't
+find it", check what the search is being asked to prove before widening it.**
+Five widenings of `derive_chain` were tried across waves 13–16; the binding
+constraint was a two-line acceptance test that had been stricter than the
+theorem since the checker was written. The theorem statement — `lift c' = lift
+(Cf (Pos.succ p))`, right there in `LapDecider.LapStep` — said so all along.
+
+Corollary worth carrying: **`LapGlue`'s premises are the specification; the
+emitter's templates are one implementation of them.** When a board will not
+render, check the premise before extending the theory.
+
+## 7. What is next
+
+1. **`no overflow chain`, 735 machines.** Now by far the largest bucket, and
+   500 of the 1,016 are `AFFINE`/`EXP2` — the exponential overflow, i.e. THE
+   TASK of the wave-15 prompt (`docs/NESTED_LAP_PLAN.md`), untouched by this
+   wave. This wave does not change its analysis.
+2. **`no interior chain`, 105.** Worth one instrumented look with the same
+   question this wave asked, on the machines that are *not* `EXP2`.
+3. **The 7 multi-cell far-slack machines.** The guard rejects them rather than
+   emit an unprovable `HD`; a general `strip`-based close (`ExactClosure.
+   strip_lift` rather than a fixed number of `lift_app_blank` rewrites) takes
+   them.
+4. **The 3 wanting the lift interior route under `glue_qh` / `glue_qh_abs`.**
+   Each needs the same weakening `glue_neverqh_lift` got — mechanical, and
+   `LapCertGlueLift.v` is the place.
+5. Unchanged from wave-15: the 15 `no visit witness`, the 13 `PARITY-AFFINE`
+   (~3 boards, do not oversize), the 35 `no anchor`, and the mxdys holdouts.
