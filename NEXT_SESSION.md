@@ -667,12 +667,55 @@ the table with the middle-extractor pattern in `asm20.py`.
 4. Do NOT port BBB's 14-template FSM.  It is TRUE, and it is BBB's route to
    a step-count BOUND, which `NeverQuasiHaltsSt` does not need.
 
-**Then**: `wglue_neverqh` at `a0_20 = (0, [1;0;1;1;1;1])` (`boot20` is
-already proved), corruption controls in `theories/Tests/` in
-`CountersW15_Corruption.v`'s tradition, then `tools/counters_manifest.tsv`,
-`gen_stages.py`, `tools/closeout/audit.py`, and
-`make -f Makefile.coq -j2 theories/Closeout/Closeout.vo` (`-j2`, NOT `-j4`).
-That takes `D_remaining` 882 -> 881 and holdouts 3 -> 2 (fractal #3/#5).
+**THE ABSTRACT SUCCESSOR IS NOW CLOSED FORM AND VALIDATED**
+(`tools/counters/nv20.py`, and the abstract-state section of `Tower_20.v`).
+The state is just the RUN-LENGTH WORD `w` of the anchor's tail -- there is no
+separate lap index, because the leading b-run IS the leading run of 2s
+(`b = 110 = 1^2 0`; `wruns_blks`/`CfW_blks` bridge to the `blks`/`lay`
+machinery already proved).  And
+
+    nv  w           = 2 :: nv0 w              -- the leading 2 is the +1
+    nv0 (n :: t)    = 1^(n/2-1) ++ 2 :: nv0 t                    n EVEN
+    nv0 (n :: [])   = 1^((n-1)/2) ++ [2; 1]                      n ODD
+    nv0 (n::n2::t2) = 1^((n-1)/2) ++ (n2+3) :: t2                n ODD
+
+`nv0` is a STRUCTURAL recursion on the list, so `nv` is total -- no fuel and
+no closed form for the tape is needed for `wglue_neverqh`'s `nextA`.  It
+reproduces the orbit's A-anchor word for all 302 laps reachable in 400,000
+steps AND on 25 synthetic anchors the orbit never visits; Coq's `nv`
+`Compute`s the same chain, `[1;4] -> [2;7] -> [2;2;1;1;1;2;1] -> ...`.
+
+**THE ONE OPEN POINT IS THE INVARIANT, AND IT IS A REAL STEP.**  The lap
+needs the sweep to TURN, i.e. `w` must contain an ODD entry -- beyond the
+tape's end every run has length 0, which is EVEN, so an all-even word sends
+the head rightward for ever.  "Contains an odd" is true on every reachable
+word (3000 laps of `nv` from `a0 = [1;4]`) but is NOT preserved by `nv` on
+arbitrary words, and `nv20.py` records witnesses refuting the three natural
+strengthenings:
+
+    contains an odd            nv [5;1] = [2;1;1;4],  nv that = [2;2;4;4]
+    last entry is 1            nv [3;1] = [2;1;4]
+    last = 1 and the first
+      odd is not 2nd-to-last   nv [1;1;2;3;1] = [2;4;2;3;1]
+
+So `[5;1]` and `[3;1]` are simply not reachable, and the invariant has to say
+why.  This is the analogue of #15's even-popcount discovery -- that one was
+also the session's real idea, not a transcription.  A promising angle: the
+turn copies `t2` (the word beyond the first odd's successor) VERBATIM, and
+the turn-with-nothing-beyond case always appends `[2;1]`, so every reachable
+word's tail is inherited; an invariant phrased on the INHERITED SUFFIX rather
+than on the whole word is the shape to try.
+
+**Then, and only then**: the ride/turn windows and the middle induction
+(mechanical -- ride is `(StC,(M,S0,S1::wruns (n::t))) -(n+3)-> (StC, alt(n/2)
+++ M, S0, S1::wruns t)` with `alt k` the alternating word of length `2k+1`;
+the turn is the four-step `StB` walk-back derived above), then
+`wglue_neverqh` at `w0_20 = [1;4]` (`boot20_W` is already proved), corruption
+controls in `theories/Tests/` in `CountersW15_Corruption.v`'s tradition, then
+`tools/counters_manifest.tsv`, `gen_stages.py`, `tools/closeout/audit.py`,
+and `make -f Makefile.coq -j2 theories/Closeout/Closeout.vo` (`-j2`, NOT
+`-j4`).  That takes `D_remaining` 882 -> 881 and holdouts 3 -> 2
+(fractal #3/#5).
 
 ## 3. The long-tail roadmap
 
