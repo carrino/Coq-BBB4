@@ -171,6 +171,125 @@ the next anchor (`t = 2660..2748` in the w=2→3 cycle).
 (`0^(2n+2) 1^(2^(n+1)-1)`) is a doubling block against a linear wall, i.e.
 the same two-level pattern again.
 
+## 5b. The remaining five, sized
+
+Six of the eleven are boarded (section 2).  What follows is the measured
+state of the other five, in the order they should be attempted.
+
+### double #32 — `1RB1LD_1RC0RB_1LA0RC_0LD0LA`
+
+**The anchor question is settled.**  BBB's cert says the clean event is
+head-on-rightmost-1 with comb count `a = 2^j`, `a -> 2a`, and records that an
+earlier `a = 2^j-1 / a -> 2a+1` guess TIMED OUT.  `tools/counters/lap32.py`
+sits on that timed-out anchor.  Measured in our (mirror) orientation the
+`2^j` family is real, with the head at the LEFTMOST cell in StA:
+
+```
+anchor(k, m) = StA, ([], S0, (001)^k 0 1^m)      head on the first cell
+
+   t        k     m
+   24       1     4
+   85       2     6
+   283      4     8
+   971      8     10
+   3503     16    12
+   13179    32    14
+   50967    64    16
+   200275   128   18
+   793807   256   20
+```
+
+so `k = 2^n` doubles and `m = 2n+4`, exactly BBB's `a -> 2a`, `z -> z+2`.
+One macro lap is `36k^2 + 29k - 4` steps (fitted exactly, n = 0..4) — the
+`Theta(m^2)` quadratic bounce.
+
+**What is NOT yet done, and it is the whole remaining job.**  The lap is
+`Theta(k^2)`, so it needs the same inner-loop treatment as the wrap
+bouncers.  The natural micro-anchor is the LEFT RECORD (head at the leftmost
+cell, StA, reading blank), which occurs every `O(k)` steps — three of them per
+increment of the comb prefix:
+
+```
+t     prefix      suffix                t     prefix      suffix
+24    (001)^1     0 1^4                 240   (001)^4     1 0^3 1^4
+45    (001)^1     0^6 1^2               283   (001)^4     0 1^8
+58    (001)^2     1 0^3 1^2             336   (001)^4     0^10 1^2
+85    (001)^2     0 1^6                 373   (001)^5     1 0^7 1^2
+118   (001)^2     0^8 1^2               424   (001)^5     0 1^4 0^4 1^2
+139   (001)^3     1 0^5 1^2             477   (001)^5     0^6 1^2 0^2 1^2
+174   (001)^3     0 1^4 0^2 1^2         522   (001)^6     1 0^3 1^2 0^2 1^2
+211   (001)^3     0^6 1^4               581   (001)^6     0 1^6 0^2 1^2
+```
+
+Two of the three suffix transitions are already trivial rewritings —
+`0 1^m -> 0^(m+2) 1^2` and `0^a 1^2 -> (prefix+1) 1 0^(a-3) 1^2` (both checked
+on every row above).  The third, `1 0^b 1^c -> ...`, is the carry, and it is
+the piece that still needs decoding.  Once it is a rewriting rule the file is
+the same three-phase shape as `BCtr_28.v`.
+
+### wave4 #15 — `1RB0RC_0LC1LB_0LD1LC_1RD0RA`
+
+Confirmed as the mod-4 wave odometer.  The event config is a block word with
+single-`0` separators and the block vector visibly halves:
+
+```
+t=581   0 1 0 1^16 0 1^8 0 1^4 0 1^2      blocks (16, 8, 4, 2)
+t=591   0 1^2 0 1^17 0 1^8 0 1^4 0 1^2            (17, 8, 4, 2)
+t=677   0 1 0 1^19 0 1^9 0 1^4 0 1^2              (19, 9, 4, 2)
+t=687   0 1^2 0 1^20 0 1^9 0 1^4 0 1^2            (20, 9, 4, 2)
+t=825   0 1 0 1^20 0 1^11 0 1^5 0 1^2             (20, 11, 5, 2)
+```
+
+with the lead alternating `1` / `1^2` — BBB's lead-1/2 micro-period, rule A
+bumping the lead and rule B descending the vector.
+
+**The good news is the glue is free.**  `theories/Counters/WaveCounter.v`'s
+`wglue_neverqh` is ALREADY machine-independent: it takes an arbitrary anchor
+type `A`, a total successor `nextA`, and a preserved invariant `Inv`.  Its
+header even names #15 as a customer.  So the port is two pieces, neither of
+them the glue:
+
+1. the mod-4 arithmetic layer replacing `carry` / `nextf` / `fp` / `pbits` /
+   `WInv` / `carry_ok` (~80 lines; `carry_ok` is the mod-2 form of exactly
+   BBB's mechanised residue-safety leg
+   `pair(pair((0,tail))) = (0, pair tail)`);
+2. the per-machine lap — #15's rules touch 5 cells and fire a fixed 7-of-8
+   set (rule A) or all 8 (rule B), so this is the bulk.
+
+### tower #20 — `1RB0RD_1LC1LB_1RA0LB_1LC1RA`
+
+Not re-measured this session; BBB's decode is complete and is the plan of
+record.  The load-bearing idea is that the trailing region
+`pat ++ (2)^r ++ [1]` has an infinite raw pattern set but factors into a
+CLOSED 14-template FSM over `(template, r)`, `T1..T6 -> U1..U6 -> W1,W2 -> T1`
+with fixed per-transition `(dr, dct, split)`.  Termination is by **rmin
+closure** (`rmin[i] + dr[i] >= rmin[next[i]]`) plus nonnegative comb deltas,
+so there is no reachability leg at all.  In our terms: a finite table plus a
+well-founded argument — a checker port, not a hand proof, and the biggest of
+the five.
+
+### fractal #3 / #5 — `1RB0LA_1LC0RD_0LB1LA_0RB1LA`, `1RB0LA_1LC1RD_0LC1LA_0RD0RB`
+
+The two where **BBB has no proof to port**.  Its own soundness note: legs
+1/2/4/5 are concrete raw re-derivations, but the "for all j" closure rests on
+leg 3, and "the fixed-glue-set check evidences but does not by itself
+mechanise the all-j induction; that full rigor is the parallel Coq
+formalisation."  The scoreboard was never bumped.
+
+What exists to build on: `M(k) = 1^(2^k) 0^(2^k-2) 1`, width `2^(k+1)-1`;
+strong induction on nesting depth, with every sub-call at a strictly lower
+level and every summary applied only where its `>= 2^i` padding is present;
+the run-crossing control alphabet is bounded and CONSTANT across levels (6
+signatures for #5, 4 for #3, identical for k = 3..6); and the crossing
+sequence is self-similar, `seq(k)` containing `seq(k-1)` as a contiguous block
+(twice for #5, once for #3).  Section 2 above independently confirms their
+S(n) — `1^(2^n) 0^(2^n+1)` and `1^(2^n) 0^(2^n)` at StB right-records, every
+transition count C-finite with roots 4 and 3.
+
+In Coq this is `well_founded_induction` on the level with the level-`j`
+summary as the statement.  Hardest of the five, and the only one where
+finishing would be a first rather than a port.
+
 ## 6. Reproducing
 
 ```
