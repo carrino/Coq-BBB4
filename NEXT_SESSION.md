@@ -144,6 +144,89 @@ STATE: (4,2) holdouts 5 -> 4 unproven (`census_holdouts_kept.txt` n
 `D_remaining` 1,010 -> 1,009.  `census_cache --check` MATCH throughout
 (nothing under `theories/Census/` was touched).
 
+**Next: wave4 #15 (`1RB0RC_0LC1LB_0LD1LC_1RD0RA`) -- IN PROGRESS on branch
+`claude/board-double-32-coq-9cdl84`, PR #43.  `theories/Machines/Counters/
+Wave4_15.v` COMPILES; nothing Admitted; no theorem yet, so D_remaining is
+still 1009.**
+
+#15 is a PLAIN BINARY COUNTER, not the mod-4 odometer this file used to
+predict.  John's reading: each bit is a zero-STRIPE's position mod 2, the
+2nd stripe is the LSB, and the parity offset alternates.  Number the stripes
+`z0 = 0` (the anchor's own blank), `z(k+1)` the k-th after it; then
+`bit k = (z(k+1) + k) mod 2`, and the TOP stripe-bit is always 0 -- it is the
+implicit leading 1 of a `positive`.  ONE LAP IS `p -> p+1` with NO exceptions
+(1,493 consecutive laps, p = 2..1495, no gaps; the "spawn" is the carry out
+of the top).  So it takes `LapGlue.glue_neverqh` -- BCtr_28's closer -- with
+NO invariant, and the "~80 line mod-4 arithmetic layer" is ZERO lines.
+
+Sampled at the left record the tape is `1^lead 0 1^v0 0 1^v1 0 ...` and the
+encoding is a structural recursion on the positive:
+
+    pod p = p mod 2
+    venc 2 = [2], venc 3 = [3], venc m = (m + pod (m/2)) :: venc (m/2)
+    lead = 1 + pod p
+
+The lap is binary increment made physical.  `p` EVEN is the no-carry case and
+is a SINGLE 10-step window (`ruleA`) -- constant cost, no induction.  `p` ODD
+is the carry: `entry5 . outward . out6s . deposit . backsweep`.
+
+ALREADY IN THE FILE AND COMPILING:
+  - the machine, 9 single-step joints, 7 gadgets, BOTH deposit cases;
+  - `out6s` / `ret1s` / `bBs` / `lay` sweeps;
+  - `outward` -- one induction over the carried blocks (a carried block has
+    EVEN length 2a+2; `out6^a` eats it two cells at a time until two remain,
+    then `carry5` crosses the stripe.  Cost 6a+5);
+  - `Deb` / `backsweep` -- the return as ONE structural recursion over the
+    debris (`cross7` eats a stripe group, `ret1` a single 1, `exit1` lands on
+    the new left record), plus `lay_Deb`/`owdeb_Deb`, which prove the outward
+    phase lays exactly what the return can consume;
+  - `back_lay` / `back_owdeb` / `bta` -- pure list lemmas pushing `back`
+    through both shapes, so what the debris turns back into needs no machine;
+  - `venc` / `Cf15`, agreeing with the measured vectors on the nose.
+  The KERNEL confirms by vm_compute: boot `csteps tm_15 17 c0 = Cf15 2`;
+  `csteps tm_15 10 (Cf15 p) = Cf15 (p+1)` for p = 2,4,16; and the odd laps
+  at n = 34, 38, 70, 138, 270 for p = 3,5,7,15,31.
+
+WHAT IS LEFT -- one step, then the wiring:
+  1. the composition.  Needs the decomposition
+        wblocks (venc p) = owtape l (repeat S1 (2a+1) ++ S0 :: wblocks rest)
+     -- carried blocks are the EVEN ones, the deposit block is the first ODD
+     one (checked in the mirror: every odd p has one).  Cleanest as an
+     inductive relation `Scan bl l a rest` with two constructors, plus
+     `Scan bl l a rest -> wblocks bl = owtape l (...)` by induction on Scan,
+     and existence `forall p odd, exists l a rest, Scan (venc p) l a rest`.
+     Then the result side: show `back <debris> <tail>` is
+     `repeat S1 (1 + pod (p+1)) ++ S0 :: wblocks (venc (p+1))`, for which the
+     arithmetic fact is
+        venc (xO q)      -> venc (xI q)       : head +1, tail same   (rule A)
+        venc (xI q)      -> venc (xO (q+1))   : head +2 and tail +1 if q even,
+                                                head +0 and tail recurses if q odd
+  2. `LapGlue.glue_neverqh` at p0 = 2, boot (t = 17), visits (all four states
+     occur in the first handful of steps), then corruption tests,
+     `_CoqProject`, `counters_manifest.tsv`, closeout regen, `-j2` build.
+
+TOOLS (all green, run them first): `tools/counters/lap15.py` (rules, step
+counts, gadgets EXHAUSTIVELY over |L|,|R| <= 4, the counter reading, the
+closed form, `venc`) and `tools/counters/asm15.py` (replays the lap from the
+verified gadgets alone as pure list ops and diffs against the raw simulator;
+green for p = 2..1199).
+
+TRAPS PAID FOR ON THIS BRANCH, do not re-learn:
+  - rule B's branch is on the INDEX (`i < last` vs `i = last`), NOT on the
+    residue.  Fitting the reachable orbit alone gives the wrong rule.
+  - A SAMPLED gadget check is not a check.  The deposit passes a 42-context
+    sample and a naive window search and fails the exhaustive check on 496 of
+    961; it is a SWEEP (the bounce walks back over the laid 1s), not a window,
+    and splits into `dep0`/`dep2` by the symbol the bounce lands on.  `dep0`
+    goes through chd/ctl so the spawn is free.
+  - the mod-4 block-vector model and its `WInv4` invariant (earlier commits on
+    this branch) are TRUE but UNNECESSARY.  Do not port them.
+
+STATE: (4,2) holdouts 5 -> 4 unproven (`census_holdouts_kept.txt` n
+`closeout/frozen_unproven.txt`: fractal #3/#5, wave4 #15, tower #20);
+`D_remaining` 1,010 -> 1,009.  `census_cache --check` MATCH throughout
+(nothing under `theories/Census/` was touched).
+
 **Next: wave4 #15 (`1RB0RC_0LC1LB_0LD1LC_1RD0RA`) -- micro-lap already
 MEASURED, not yet transcribed.**  `tools/counters/probe15.py` (mirror) +
 `tools/counters/lap15.py` (checker, green over 1,495 anchors to t = 3e6).

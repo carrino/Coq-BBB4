@@ -325,6 +325,36 @@ Proof.
   - cbn [bcost back]. rewrite csteps_add, cross7, IH. reflexivity.
 Qed.
 
+(** ** What the return sweep reconstructs
+
+    [back] is a pure list computation, so what the debris turns back into is
+    provable without touching the machine.  These two lemmas push [back]
+    through the two shapes the outward phase builds. *)
+
+Lemma back_lay : forall a M R,
+  back (lay a M) R = back M (repeat S1 (2 * a) ++ R).
+Proof.
+  induction a as [|a IH]; intros M R; cbn [lay].
+  - reflexivity.
+  - cbn [back]. rewrite IH. f_equal.
+    replace (2 * S a) with (S (S (2 * a))) by lia.
+    rewrite <- repeat_snoc, <- repeat_snoc. reflexivity.
+Qed.
+
+Fixpoint bta (l : list nat) (R : list Sym) : list Sym :=
+  match l with
+  | [] => R
+  | a :: t => repeat S1 (2 * a) ++ S0 :: S1 :: S1 :: bta t R
+  end.
+
+Lemma back_owdeb : forall l M R,
+  back (owdeb l M) R = back M (bta l R).
+Proof.
+  induction l as [|a t IH]; intros M R; cbn [owdeb bta].
+  - reflexivity.
+  - rewrite IH. cbn [back]. rewrite back_lay. reflexivity.
+Qed.
+
 (** ** The abstract state: a positive, and the tape it names *)
 
 Fixpoint wblocks (v : list nat) : list Sym :=
