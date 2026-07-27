@@ -574,13 +574,45 @@ check out:
   (`B0 = 1LC`, `C1 = 0LB`) read `chd L`, so like #15's they must be stated
   through `chd`/`ctl` rather than as windows.
 
-**What is left:** the ASSEMBLY — which gadget fires where along the block
-word, the invariant on `rest` the sweep needs, and the step count (the long
-lap costs 36, 56, 52, 72, 68, 84, 84, 124, … for `r = 1, 2, 3, …`).  It is
-#15's job again, one size up.  **Do not write Coq from a sampled check** —
-that is the trap #15 paid for, and #20's sweep has the same
-bounce-and-walk-back shape that made #15's deposit a sweep and not a
-window.
+**The assembly is DONE (2026-07-27).**  `tools/counters/asm20.py` replays one
+lap from the verified gadgets alone as pure list ops and diffs it against the
+raw simulator — configuration AND step count AND `r -> r+1` — for every
+anchor reachable in 400,000 steps, plus "no earlier left record occurs inside
+a lap".  Green.  The lap is `entry10 . out5^r . MIDDLE . RETURN`, and two
+further gadgets (checked exhaustively over the 961 contexts) do the
+re-encoding:
+
+```
+rb3   (StC,(1 0 1 ++ L, S1, R)) -3-> (StC,(L, S1, 1 1 0 ++ R))     emits b
+rb2   (StC,(0 1   ++ L, S1, R)) -2-> (StC,(L, S1, 1 0   ++ R))     emits a
+```
+
+The `+1` of the counter is free: after `out5^r` the left list is
+`(101)^r ++ E` with `E = [1;0;1;0;1;1]` the entry debris, and the return
+sweep emits `b^r` then `b, a, b`; emissions prepend and `b ++ a = 1 1 0 1 0`
+is the A-type lead, so the tape comes out as `leadA ++ b^(r+1)`.  **The spare
+`b` in the entry debris IS the increment.**
+
+`theories/Machines/Counters/Tower_20.v` carries all of that in Coq — gadgets,
+`ruleA`, `entry10`, the `out5` sweep, the return sweep as one inductive
+relation (`Rev`/`bk`, split at the middle's debris by `RevP`/`enc`), the whole
+post-middle half of the lap (`lapB_post`), `vis20` and `boot20`.  `Print
+Assumptions` is `functional_extensionality_dep` only.
+
+**What is left is exactly one lemma: the MIDDLE** — the outward sweep on
+`rest` and its turnaround, uniform in the left context, producing a
+`RevP`-shaped debris.  And it is #15's carry again: writing `rest` as
+`1^n1 0 1^n2 0 …`, the head enters on a 1 so the run actually read is
+`n_i + 1`; the sweep rides over the runs with `n_i` EVEN and turns around at
+the first ODD one.  `n1` odd is a constant 8-step window and is half of all
+laps.  The measured table is in `NEXT_SESSION.md` section 2h.  **Do not write
+Coq from a sampled check** — that is the trap #15 paid for.
+
+Two readings that do NOT generalise, both checked this session: the
+`110`/`111110`/`101010` block alphabet parses the sparse "tower" anchors
+(t = 142, 626, 1750) cleanly and ONLY those — the dense A-anchors leave a
+residue — and the `retB3`/`retB2` gadgets recorded in the first recon are not
+the ones that fire (they are the same steps entered one cell earlier).
 
 ### fractal #3 / #5 — `1RB0LA_1LC0RD_0LB1LA_0RB1LA`, `1RB0LA_1LC1RD_0LC1LA_0RD0RB`
 

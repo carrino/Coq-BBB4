@@ -609,6 +609,12 @@ theories/Tests/CountersDbl_Corruption.v
 theories/Machines/Counters/Wave4_15.v
 theories/Tests/CountersW15_Corruption.v
 
+# --- counters track: tower #20, a counter in the alphabet {10, 110} ---
+# Gadget, sweep and re-encoding layers only; the MIDDLE (and hence the
+# NeverQuasiHaltsSt theorem) is not written yet, so this file contributes
+# no row to tools/counters_manifest.tsv and moves no census number.
+theories/Machines/Counters/Tower_20.v
+
 # --- wave-2/3 staged residue proofs (wired) ---
 theories/Checkers/IRules/MetaQH.v
 theories/Checkers/IRules/MetaBlkPfxQH.v
