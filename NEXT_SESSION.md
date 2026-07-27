@@ -417,7 +417,7 @@ carry-continue windows at the turnaround, then the assembly and the Coq.
 `wglue_neverqh` still needs no change.  `HOLDOUTS_MXDYS_SN.md` section 5b has
 the full table and sizes the other three.
 
-## 2g. Wave-18 (2026-07-27) -- wave4 #15 boarded; the (4,2) holdouts are 3
+## 2g. Wave-18, HOLDOUTS track (2026-07-27) -- wave4 #15 boarded, then #3/#5/#20; the (4,2) holdout list CLOSES
 
 Full write-up: `docs/HOLDOUTS_MXDYS_SN.md` section 5b.
 `theories/Machines/Counters/Wave4_15.v` (730 lines),
@@ -795,6 +795,87 @@ controls in `theories/Tests/` in `CountersW15_Corruption.v`'s tradition, then
 and `make -f Makefile.coq -j2 theories/Closeout/Closeout.vo` (`-j2`, NOT
 `-j4`).  That takes `D_remaining` 880 -> 879 and **CLOSES the (4,2) holdout
 list** -- #20 is the last one.
+
+  [MERGE NOTE, added when the two 2026-07-27 tracks were merged.  They are
+  DISJOINT -- the sections above board HOLDOUTS, section 2j boards RESIDUE --
+  and the generated closeout tables were REGENERATED over the union rather
+  than hand-merged, which is the only correct way to resolve a conflict under
+  `theories/Closeout/`.  The joint figure is **D_remaining = 622**; every
+  per-track number above and in 2j is that track's own and is superseded by
+  it.  `audit.py` OK, `census_cache --check` MATCH, and the MERGED closeout is
+  KERNEL-VERIFIED: `Closeout.vo` + all 46 `CB_*.vo` compile, `closeout_partial`
+  is Qed at `functional_extensionality_dep` only, and
+  `vm_compute (List.length remaining_rows)` = 622.]
+
+## 2j. Wave-18, RESIDUE track (2026-07-27) — THE TASK lands: 258 boards
+
+Full write-up: `docs/WAVE18_FINDINGS.md`.  Took **THE TASK** of the wave-15
+and wave-16 prompts — the `AFFINE`/`EXP2` bucket, 500 of the 883 unproven
+rows, whose overflow lap costs `Θ(2^j)` — and produced its first boards.
+
+- **`D_remaining` 883 → 625; 4,531 / 5,156 = 87.9% settled** (from 82.9%).
+  258 `NLAP_*` boards, every one `functional_extensionality_dep` only
+  (checked per board), `audit.py` OK, `census_cache --check` MATCH.  The
+  closeout is KERNEL-VERIFIED: `Closeout.vo` + all 46 `CB_*.vo` compile,
+  `closeout_partial` is Qed at `functional_extensionality_dep` only, and
+  `vm_compute (List.length remaining_rows)` = 625.  (`CloseoutFinal.v` still
+  cannot be built in a container -- OCaml 4.14.2 census `.vo` vs 4.14.1 apt
+  coq; WAVE16 section 4b.)
+- **The blocker was wave-16's acceptance test, one level down.**
+  `docs/NESTED_LAP_PLAN.md` had Stage A and Stage B done and Stage C stuck at
+  "boot chain 1 of 12, and it is NOT a search budget".  That was true; the
+  cause was the line three below it — *"9 cells, real is 11"*, i.e. the chain
+  lands two TRAILING BLANKS past the inner anchor.  `nestboot.py` was written
+  in wave-15 and calls `derive_chain` with the wave-16 flag's `False` default.
+  Measured 2×2 (`tools/counters/nestboot2.py`, 30 machines, boot AND exit):
+  best key + exact joints 5/30, every key + exact 7/30, best key + `lift`
+  9/30, **every key + `lift` 17/30** — and on all 17 the inner family's own
+  interior lap derives too.
+- **New Coq is one additive file**, `Counters/NestedLapLift.v`:
+  `inner_to_fill_lift` (NestedLap's induction in `stepn`/`lift` space, where
+  the `Θ(2^j)` stays inside an `exists n`), `nested_overflow_lift` (pulled
+  back to one `csteps` run by `LapCertGlueLift.stepn_csteps_at`),
+  `vis_via_fill` (a state firing only in the EXIT half is still visited —
+  8 of 30 need it) and `cview_fill_pow2`.  `LapDecider.v`, `LapGlue.v`,
+  `LapCertGlue.v` and `NestedLap.v` are UNTOUCHED, and the nested route is a
+  FALLBACK inside `emit_lapcert.derive`, so no existing board changes
+  (regression: 39 of a 40-board sample re-derive; the one that does not fails
+  identically on the pre-change tools).
+- Emitter `tools/counters/nestcert.py`: inner-family search with keys
+  ENUMERATED not ranked, the three chains, and a differential validation that
+  replays every piece against the raw simulator — including each of the 246
+  inner laps at `j = 2..7`, not just the endpoints.
+- **DO NOT RETRY:** a wider inner-key tail.  `maxtail = 6` finds a family on
+  13 of 40 machines that report "no inner family" at 3 (and `K ∈ {5,6,7}`
+  changes nothing), but re-running the whole 299-machine failure set at 6
+  boards ZERO — the 33 machines it unlocks all fail on the boot or exit chain.
+  Key counts are 0-4, so `maxkeys` was never binding either.
+- **THE LESSON, and it is wave-16's surviving a level of abstraction:** when a
+  fix lands as a **defaulted flag**, grep for every caller of the function,
+  not just the one that motivated it.  Two waves of "the boot is not a search
+  problem" were spent on a call site that had never been revisited.
+- Failure profile after the first 225 (at `D_remaining` = 658): 265 no inner family at `pow2 j`, 211 no overflow
+  phase (the no-anchor bucket), 111 no exit chain, 105 no interior chain
+  (QUAD 41, HIGHER 13, PARITY 13, EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8),
+  28 no anchor, 22 no boot chain, 15 no visit witness, 4 no inner interior.
+- **AND THE TWO CHAIN BUCKETS ARE EXPONENTIAL, NOT SEARCH GAPS** (WAVE18 §4b).
+  Measured the way `ovfshape` measures a lap, at the inner key the emitter
+  actually selects: `no exit chain` is 0 AFFINE / 24 EXP on a 24-machine
+  sample; `no boot chain` is 2 AFFINE / 14 EXP on 22.  No `srun` can express
+  an exponential half, so no `derive_chain` widening can reach them.  What is
+  wrong is the inner family's IDENTIFICATION: an exponential exit says the
+  inner counting does not stop at `fill (pow2 j)`, an exponential boot that it
+  did not start at `pow2 j`.  `NESTED_LAP_PLAN` §3 predicted exactly this
+  ("a SUBSEQUENCE of a longer count satisfies that too").
+- **AND THAT WAS BUILT TOO.**  Splitting the phase at the first inner fill and
+  searching the second half finds a SECOND consecutive family on 11 of 16 --
+  same state, same alphabet, SHIFTED TAIL.  That is mxdys' sync bouncer
+  counter ("count 8->15, shift, count 8->15 again").  It needed ONE new lemma
+  (`Counters/NestedLap2.boot_via_fill`, 12 lines) because
+  `nested_overflow_lift`'s `Hboot` is an ARBITRARY `csteps` run: instantiate
+  at the SECOND family and fold the first count into the boot.  **33 more
+  boards; `D_remaining` 658 -> 625.**  What is left of that bucket is 8 "no
+  shift chain" + 5 "no second exit chain".
 
 ## 3. The long-tail roadmap
 

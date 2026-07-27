@@ -1,5 +1,36 @@
 # Plan: the exponential-overflow (nested lap) decider
 
+> **STATUS 2026-07-27 (wave-18): STAGE C IS DONE AND THE PLAN WORKED.
+> 225 boards, `D_remaining` 883 → 658.**  Full write-up:
+> `docs/WAVE18_FINDINGS.md`.
+>
+> Everything in §§0-2 below is confirmed by the boards.  §3's Stage-C
+> diagnosis is **superseded**, and how it was wrong is the wave's lesson:
+> the boot chain's "1 of 12, and it is NOT a search budget" was correct, and
+> the cause was the sentence three lines under it — *"9 cells, real is 11"*.
+> That is wave-16's trailing blank.  `nestboot.py` predates wave-16 and calls
+> `derive_chain` with the default `lift=False`, the acceptance test wave-16
+> measured to be stricter than the theorem.
+>
+> Measured 2×2 (`tools/counters/nestboot2.py`, 30 machines, boot AND exit):
+>
+> | | exact joints | joints up to `lift` |
+> |---|---:|---:|
+> | best-scoring key (= `nestboot.py`) | 5 / 30 | 9 / 30 |
+> | **every key enumerated** | 7 / 30 | **17 / 30** |
+>
+> The two `lift` joints are in `theories/Counters/NestedLapLift.v`
+> (`inner_to_fill_lift`, `nested_overflow_lift`, plus `vis_via_fill` for the
+> states that fire only in the exit half and `cview_fill_pow2` for the exit
+> glue).  The emitter is `tools/counters/nestcert.py`, wired into
+> `emit_lapcert.derive` as a fallback where the flat overflow chain fails.
+>
+> **The index-shift and `rep u j ++ post` warnings in §3 still stand** — both
+> are still 0, and the remaining 134 `AFFINE`/`EXP2` machines that report
+> "no inner family at `pow2 j`" are exactly the octave/offset population they
+> concern.  See `WAVE18_FINDINGS.md` §5 and §7.
+
+
 _Written 2026-07-26 at the end of wave-15, after reading the 163 existing
 `IXP_*` boards.  **This retires the premise that the count language must be
 extended.** Five waves of notes say the exponential overflow is
