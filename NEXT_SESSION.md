@@ -461,9 +461,18 @@ rows, whose overflow lap costs `Θ(2^j)` — and produced its first boards.
   not just the one that motivated it.  Two waves of "the boot is not a search
   problem" were spent on a call site that had never been revisited.
 - Failure profile at 658: 265 no inner family at `pow2 j`, 211 no overflow
-  phase (the no-anchor bucket), 105 no interior chain (QUAD 41, HIGHER 13,
-  PARITY 13, EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8), 68 no boot chain,
-  65 no exit chain, 28 no anchor, 15 no visit witness, 4 no inner interior.
+  phase (the no-anchor bucket), 111 no exit chain, 105 no interior chain
+  (QUAD 41, HIGHER 13, PARITY 13, EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8),
+  28 no anchor, 22 no boot chain, 15 no visit witness, 4 no inner interior.
+- **AND THE TWO CHAIN BUCKETS ARE EXPONENTIAL, NOT SEARCH GAPS** (WAVE18 §4b).
+  Measured the way `ovfshape` measures a lap, at the inner key the emitter
+  actually selects: `no exit chain` is 0 AFFINE / 24 EXP on a 24-machine
+  sample; `no boot chain` is 2 AFFINE / 14 EXP on 22.  No `srun` can express
+  an exponential half, so no `derive_chain` widening can reach them.  What is
+  wrong is the inner family's IDENTIFICATION: an exponential exit says the
+  inner counting does not stop at `fill (pow2 j)`, an exponential boot that it
+  did not start at `pow2 j`.  `NESTED_LAP_PLAN` §3 predicted exactly this
+  ("a SUBSEQUENCE of a longer count satisfies that too").
 
 ## 3. The long-tail roadmap
 

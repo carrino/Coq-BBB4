@@ -56,6 +56,16 @@ class NestError(Exception):
     """This machine does not take the nested route."""
 
 
+# How far a key got, so a machine is filed under its BEST key's blocker.
+_RANK = {
+    'no boot chain': 0,
+    'no exit chain': 1,
+    'no inner interior chain': 2,
+    'boot of zero length at j=0': 3,
+    'inner lap of zero length at i=0': 3,
+}
+
+
 # --------------------------------------------------------------- the search ---
 
 def decode(word, A, B, C):
@@ -187,13 +197,19 @@ def derive_nested(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, B0, B1,
     keys = inner_keys(tab, ENCDATA, ENCS, st0, encf, tail, far, K)
     if not keys:
         raise NestError('no inner family at pow2 j')
-    last = 'no inner family'
+    # Report the FURTHEST any key got, not the last one tried.  The first
+    # version kept the last, so a machine whose best key derived a boot and
+    # failed on the exit was filed under whatever its final key did -- which
+    # made the failure profile point at the wrong stage.
+    best, last = -1, 'no inner family'
     for key in keys[:maxkeys]:
         try:
             return build(tab, ENCDATA, encf, enc, st0, tail, far, B0, B1, key,
                          ENC)
         except NestError as e:
-            last = str(e)
+            r = _RANK.get(str(e).split(' slack')[0], len(_RANK))
+            if r > best:
+                best, last = r, str(e)
     raise NestError(last)
 
 

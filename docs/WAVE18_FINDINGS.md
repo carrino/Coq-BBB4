@@ -136,7 +136,7 @@ The emitter over the whole 883, cross-referenced against that classification:
 
 | shape | n | boarded | what the rest fail on |
 |---|---:|---:|---|
-| **`AFFINE`/`EXP2`** | 500 | **225 (45%)** | 134 no inner family at `pow2 j`, 66 no boot chain, 65 no exit chain, 8 no interior chain, 2 no inner interior chain |
+| **`AFFINE`/`EXP2`** | 500 | **225 (45%)** | 134 no inner family at `pow2 j`, 111 no exit chain, 20 no boot chain, 8 no interior chain, 2 no inner interior chain |
 | `-`/`no-anchor` | 239 | 0 | 211 "no overflow phase" + 28 "no anchor" — these never had a decodable anchor family; the nested probe just reports it differently |
 | `AFFINE`/`AFFINE` | 52 | 0 | 23 no inner family, 15 no visit witness (StA), 14 no interior chain |
 | `QUAD` / `PARITY` / `HIGHER` / `EXP3` / `EXP4` | 83 | 0 | all on the INTERIOR branch, which this wave does not touch |
@@ -148,12 +148,39 @@ So the residue's failure profile at `D_remaining = 658` is
  265  no inner family at pow2 j  (162 of them AFFINE/EXP2)
  211  no overflow phase          (the no-anchor bucket)
  105  no interior chain          (QUAD 41, HIGHER 13, PARITY 13, EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8)
-  68  no boot chain
-  65  no exit chain
+ 111  no exit chain
   28  no anchor
+  22  no boot chain
   15  no visit witness (StA is targeted)
    4  no inner interior chain
 ```
+
+**Read the boot/exit split with §4b.**  `derive_nested` at first reported the
+LAST key tried rather than the furthest any key got, which filed a machine
+whose best key derived a boot and failed on the exit under "no boot chain".
+The table above is after the fix; the raw numbers from the wave's own sweep
+(68 boot / 65 exit) are the pre-fix ones and should not be quoted.
+
+## 4b. The two remaining chain buckets are EXPONENTIAL, not search gaps
+
+Both were measured the way `ovfshape` measures a lap -- raw step count against
+`K`, at the inner key the emitter actually selects (`tools/counters` probes,
+recorded in `docs/` only, since they answer a one-time question):
+
+| bucket | sampled | AFFINE | EXPONENTIAL (ratio -> 2) |
+|---|---:|---:|---:|
+| `no exit chain` | 24 | **0** | **24** |
+| `no boot chain` | 22 | 2 | 14 (+6 no key at that anchor) |
+
+So no `srun` can express these halves, and no widening of `derive_chain` can
+find one: `sside` carries `a*j + b`.  This is the case
+`NESTED_LAP_PLAN` §3 flags and tells you to check before building a third
+level -- *"`innerfam` requires the decoded values to be exactly
+`2^(K-1)..2^K-1`, and a SUBSEQUENCE of a longer count satisfies that too"*.
+An exponential EXIT says the inner counting is not finished at
+`fill (pow2 j)`; an exponential BOOT says it started before `pow2 j`.  Either
+way the inner family is mis-identified at one end, and that -- not the chain
+search -- is where the next 130 machines are.
 
 ## 5. DO NOT RETRY (measured this wave)
 
@@ -197,10 +224,13 @@ excluded the prototype that most needed it.
    `NESTED_LAP_PLAN`'s index-shift warning: the naive reindex to `v0 =
    pow2 j + 1` needs count `j-1`, which an `sside` (`a*j + b`, `b : nat`)
    cannot carry, and the naive construction measured 0 of 12.
-2. **`no boot chain` (68) / `no exit chain` (65).** These have a family and
-   the other two chains; only one affine chain is missing. Worth ONE
-   instrumented look with wave-16's question — what is the search being asked
-   to prove — before any widening.
+2. **`no exit chain` (111) / `no boot chain` (22).** §4b measured these:
+   the missing half is EXPONENTIAL, so this is NOT a search gap and no
+   `derive_chain` widening can touch it. The inner family is mis-identified at
+   one end — the counting does not start at `pow2 j` (exp boot) or does not
+   stop at `fill (pow2 j)` (exp exit). Fix the identification, or nest
+   `nested_overflow_lift` inside itself (it is stated generically in `Cin`, so
+   it should compose); measure which before building either.
 3. **`no interior chain`, 105.** Unchanged by this wave and now the shape-most
    diverse bucket: `QUAD` 41, `HIGHER` 13, `PARITY-AFFINE` 13, `EXP3` 10,
    `EXP4` 6, `AFFINE/AFFINE` 14, `EXP2` 8. The 41 `QUAD/QUAD` are the largest
