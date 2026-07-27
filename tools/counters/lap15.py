@@ -38,18 +38,32 @@ Measured facts this file checks, over every anchor out to the step budget:
 The TAPE-level pieces are checked too (`gadgets()` below), in the exact form
 Coq will state them:
 
-  8 single-step joints, each uniform in L and R through chd/ctl;
-  ruleA   (StC,([],S0,   S1::S0::S1::R)) -10-> (StC,([],S0, S1::S1::S0::S1::S1::R))
-  entry5  (StC,([],S0,   S1::S1::S0::R))  -5-> (StC,([S0;S0;S1;S1],S0,R))
-  out6    (StC,(S0::L,S0,S1::S1::S1::R))  -6-> (StC,(S0::S1::S1::L,S0,S1::R))
-  ret1    (StC,(S1::L,S1,R))              -1-> (StC,(L,S1,S1::R))
+  ruleA   (StC,([],S0,      S1::S0::S1::R)) -10-> (StC,([],S0,S1::S1::S0::S1::S1::R))
+  entry5  (StC,([],S0,      S1::S1::S0::R))  -5-> (StC,([S0;S0;S1;S1],S0,R))
+  out6    (StC,(S0::L,S0,   S1::S1::S1::R))  -6-> (StC,(S0::S1::S1::L,S0,S1::R))
+  carry5  (StC,(S0::L,S0,   S1::S1::S0::R))  -5-> (StC,(S0::S0::S1::S1::L,S0,R))
+  ret1    (StC,(S1::L,S1,R))                 -1-> (StC,(L,S1,S1::R))
+  cross7  (StC,(S0::S1::S1::L,S1,R))         -7-> (StC,(L,S1,S0::S1::S1::R))
+  exit1   (StC,([],S1,R))                    -1-> (StC,([],S0,S1::R))
 
 Rule A is a SINGLE uniform window -- no induction at all, which is why it is
 constant-cost.  `out6` consumes three 1s and hands one back (net -2 per unit,
 6 steps), so the outward sweep over a run of length 2k+1 is 6k steps and
 leaves exactly one 1 -- and that ODD-length requirement is the tape-level
-reason the invariant is mod 4 rather than mod 2.  `ret1` is the 1-step/cell
-return, giving the 3+1 = 4 steps per cell in rule B's cost.
+reason the invariant is mod 4 rather than mod 2.  `carry5` is John's "2 left
+and it continues on" (it ends on A1 = 0RC, so the scan carries); the deposit
+is his "1 left and it bounces" (A0 = 1RB fills the line and bounces right
+into B).  `ret1` is the 1-step/cell return and `cross7` passes a line through
+untouched, giving rule B's 3+1 = 4 steps per cell.
+
+STILL OPEN -- the DEPOSIT.  It is `C0 . D0^2 . D1 . A0 . B1^k . B0` and the
+`B1^k` walks back over the laid 1s until it meets a 0, so k depends on the
+debris and the deposit is NOT a fixed window: stated as
+`(StC,(S0::L,S0,S1::S0::R)) -8-> (StC,(S1::L,S1,S0::S1::R))` it matches every
+config taken from a real trace, passes a sampled check, passes a naive
+"does the tail pass through" window search -- and fails the EXHAUSTIVE check
+on 496 of 961 contexts.  Prefixing the two debris shapes out6/entry5 actually
+leave does not fix it.  That gadget, and the assembly, are what remain.
 
 UNTRUSTED, like everything under tools/.  Usage: `python3 lap15.py [budget]`.
 """
@@ -170,10 +184,18 @@ def probe_off():
 
 
 def gadgets():
-    """The tape-level windows, each uniform in the surrounding tape."""
-    from probe15 import chd, ctl
-    Ls = [[], [S1], [S0, S1], [S1, S1, S0, S0, S1], [S0, S0, S1, S1, S0, S1]]
-    Rs = [[], [S1], [S0], [S1, S1, S0], [S0, S1, S1, S0, S1], [S1, S0, S1, S1, S0]]
+    """The tape-level windows, EXHAUSTIVELY checked over every (L, R) with
+    |L|, |R| <= 4 -- 961 contexts each, not a spot-check.
+
+    That distinction is not pedantry: `turn8` below (the deposit) passes a
+    sampled check and a naive "does the tail pass through" window search, and
+    fails the exhaustive one on 496 of 961.  Its bounce walks back over the
+    laid 1s until it meets a 0, so its length depends on the debris and it is
+    NOT a fixed window.  Every other piece is genuinely uniform.
+    """
+    import itertools
+    allX = [list(x) for n in range(0, 5)
+            for x in itertools.product([S0, S1], repeat=n)]
     bad = []
 
     def T(n, c):
@@ -184,33 +206,25 @@ def gadgets():
         return c
 
     def chk(nm, n, mk, want):
-        for L in Ls:
-            for R in Rs:
+        for L in allX:
+            for R in allX:
                 if T(n, mk(L, R)) != want(L, R):
-                    bad.append('%s (L=%s R=%s)' % (nm, L, R))
+                    bad.append(nm)
                     return
-    chk('cD', 1, lambda L, R: (C, (L, S0, R)),
-        lambda L, R: (D, (ctl(L), chd(L), [S0] + R)))
-    chk('dR', 1, lambda L, R: (D, (L, S0, R)),
-        lambda L, R: (D, ([S1] + L, chd(R), ctl(R))))
-    chk('dA', 1, lambda L, R: (D, (L, S1, R)),
-        lambda L, R: (A, ([S0] + L, chd(R), ctl(R))))
-    chk('aB', 1, lambda L, R: (A, (L, S0, R)),
-        lambda L, R: (B, ([S1] + L, chd(R), ctl(R))))
-    chk('aC', 1, lambda L, R: (A, (L, S1, R)),
-        lambda L, R: (C, ([S0] + L, chd(R), ctl(R))))
-    chk('bB', 1, lambda L, R: (B, ([S1] + L, S1, R)),
-        lambda L, R: (B, (L, S1, [S1] + R)))
-    chk('bC', 1, lambda L, R: (B, ([S1] + L, S0, R)),
-        lambda L, R: (C, (L, S1, [S0] + R)))
-    chk('ret1', 1, lambda L, R: (C, ([S1] + L, S1, R)),
-        lambda L, R: (C, (L, S1, [S1] + R)))
-    chk('ruleA', 10, lambda L, R: (C, ([], S0, [S1, S0, S1] + R)),
-        lambda L, R: (C, ([], S0, [S1, S1, S0, S1, S1] + R)))
     chk('entry5', 5, lambda L, R: (C, ([], S0, [S1, S1, S0] + R)),
         lambda L, R: (C, ([S0, S0, S1, S1], S0, R)))
     chk('out6', 6, lambda L, R: (C, ([S0] + L, S0, [S1, S1, S1] + R)),
         lambda L, R: (C, ([S0, S1, S1] + L, S0, [S1] + R)))
+    chk('carry5', 5, lambda L, R: (C, ([S0] + L, S0, [S1, S1, S0] + R)),
+        lambda L, R: (C, ([S0, S0, S1, S1] + L, S0, R)))
+    chk('ret1', 1, lambda L, R: (C, ([S1] + L, S1, R)),
+        lambda L, R: (C, (L, S1, [S1] + R)))
+    chk('cross7', 7, lambda L, R: (C, ([S0, S1, S1] + L, S1, R)),
+        lambda L, R: (C, (L, S1, [S0, S1, S1] + R)))
+    chk('exit1', 1, lambda L, R: (C, ([], S1, R)),
+        lambda L, R: (C, ([], S0, [S1] + R)))
+    chk('ruleA', 10, lambda L, R: (C, ([], S0, [S1, S0, S1] + R)),
+        lambda L, R: (C, ([], S0, [S1, S1, S0, S1, S1] + R)))
     return bad
 
 
