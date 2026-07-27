@@ -599,6 +599,7 @@ theories/Tests/CountersWave_Corruption.v
 theories/Counters/CReach.v
 theories/Counters/DblCounter.v
 theories/Machines/Counters/Double_9.v
+theories/Machines/Counters/Double_32.v
 theories/Tests/CountersDbl_Corruption.v
 
 # --- wave-2/3 staged residue proofs (wired) ---
