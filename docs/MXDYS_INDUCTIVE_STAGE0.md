@@ -209,6 +209,43 @@ block size, an `initial_steps` offset, `mnc 4` and `enable_exp_toplevel_loop`
 — i.e. interior rule + overflow rule + framing, exactly the pair our
 `emit_lapcert.py` searches for.
 
+### The obligations carry NO cost — and that is the design lesson
+
+Every one of the seven `ExtraRules_WF` clauses is a bare progress fact:
+
+```coq
+| side_binary_dec_inc_rule d0 d1 d1a qL qR QL QR =>
+  (forall l r n,
+    l <* d0 <* d1^^n <{{QL}} qL *> r  -[ tm ]->+  l <* d1 <* d0^^n <* qR {{QR}}> r)
+| side_binary_dec_ov1_rule d0 d1 d1a d1b qL qR QL QR =>
+  (forall r n,
+    const s0 <* d1a <* d1^^n <{{QL}} qL *> r  -[ tm ]->+
+    const s0 <* d1b <* d0^^(1+n) <* qR {{QR}}> r)
+```
+
+`-[tm]->+` is "one or more steps".  **There is no step count anywhere in a
+hint.**  The hint states a SHAPE; the `nat_expr` cost — including `powsum`, the
+geometric sum — is *synthesised by the engine* when it nests the rule, because
+applying the interior increment `n` times, each expansion itself expanding,
+is what produces the geometric series.
+
+That is a sharper statement of our problem than "extend `LapDecider` with
+`powsum`".  Our checker **conflates shape and cost**: `sside` carries `a*j+b`
+and `srun` returns `ca*j+cb`, so a lap can only be stated together with an
+affine cost, and a lap whose cost is `Θ(2^j)` becomes unstateable —
+`docs/LAPDECIDER.md`'s affineness is a limit on the COST language leaking into
+the SHAPE language.  mxdys pays no such price: one seven-constructor shape
+vocabulary covers his affine, quadratic AND exponential families, because
+shape and cost are separated.
+
+So the design lesson is not "add `powsum` to our count type".  It is
+**separate the lap's shape obligation from its cost** — prove the lap as a
+bare `-->+` progress fact, and let a composition layer derive the count.
+That is a bigger refactor than bolting on `powsum`, but it is the reason his
+interface generalises and ours does not, and it explains why six waves of
+widening the encoding table bought so little: the encoding was never the
+limit, the affine cost coupling was.
+
 Three things follow.
 
 * **The alphabet was never the binding constraint for him either.**  He hands
