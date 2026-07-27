@@ -197,6 +197,96 @@ constant), not new mathematics.
 
 ---
 
+## 4c. THE CHAMPION IS THE SAME SHAPE — and that is the whole endgame
+
+`1RB1LD_1RC1RB_1LC1LA_0RC0RD`, measured directly (60M steps, 31 s):
+
+| state | last visit (config index) | score |
+|---|---:|---:|
+| A | 32,769,237 | 32,769,238 |
+| B | 11,801,813 | 11,801,814 |
+| **D** | **32,779,477** | **32,779,478** |
+| C | still recurring at 60M | — |
+
+So **three states go quiet and only C recurs** — the same "3 quiet, 1
+recurring" class as §4b's four trivial boards.  And its tail is the same
+one-state blank march:
+
+```
+at t = 32,779,478:  state C, head at 10226, reading blank
+                    C0 -> write 1, move L, stay C     (self-loop)
+                    NON-BLANK CELLS ON THE ENTIRE TAPE: 0
+```
+
+**The tape is completely erased.**  C marches left forever across virgin
+blank tape, writing 1s it never re-reads, in one state.  That is why A, B and
+D all go quiet at the same moment, and it is why this machine is
+simultaneously the **BLB(4) (Blanking Beaver) champion** — John confirmed
+this, and the measurement agrees: the tape first blanks at step 32,779,477
+and stays blank through 32,779,478 (D writes a 0 onto an already-blank cell
+before handing to C).  **The blanking event and the quiet point are the same
+event.**  BBB and BLB coincide here for a structural reason, not a
+coincidence.
+
+**Consequence: the champion is provable by the SAME single lemma as §4b.**
+The only difference is prefix length — 32.8M steps instead of 66k, which is a
+compute cost, not a mathematical one.
+
+This pipeline reproduced 66349, 2819 and 32,779,478 independently, all three
+confirmed against John's historical values, so the score convention
+(score = last visit + 1) is validated three ways.
+
+---
+
+## 4d. Raising the predicate is FREE on the census side
+
+John's move, and it is exactly right: change the target predicate to
+`QHBound 32779478` and prove it only on the DEFERRED machines — the census
+itself never changes.
+
+`theories/Census/TNF_QH.v` already has both lemmas needed:
+
+```coq
+Lemma qhbound_mono   : forall B B' tm, B <= B' -> QHBound B tm -> QHBound B' tm.
+Lemma neverqh_qhbound : forall B tm, NeverQuasiHaltsSt tm -> QHBound B tm.
+```
+
+so the whole change is a three-line corollary over the untouched census:
+
+```coq
+Definition B_final := 32779478.
+
+Corollary census_decided_final :
+  forall tm, QHBound B_final tm \/ Deferred D_census tm.
+Proof.
+  intro tm. destruct (census_decided tm) as [H|H].
+  - left. apply (qhbound_mono B_census B_final tm); [lia | exact H].
+  - right. exact H.
+Qed.
+```
+
+`B_census` and `D_census` are untouched, so `CENSUS_VO_HASH` stays MATCH and
+the committed census `.vo` remain valid — **the expensive native_compute walk
+never re-runs**.  And the per-machine obligation WEAKENS, from
+"`NeverQuasiHaltsSt` or `QHBound 2000`" to just `QHBound 32779478`.
+
+**Why 32,779,478 and not 32,779,479.**  `QuietAfter tm q s` has `s` as the
+CONFIGURATION INDEX of the last visit and `QHBound B` requires `S s <= B`,
+i.e. `score <= B`.  The champion's D has `s = 32,779,477`, so `S s =
+32,779,478` and `QHBound 32779478` holds with EQUALITY — tight.  Tightness
+matters because the final claim is `BBB(4) = 32,779,478`, and a loose upper
+bound of 32,779,479 would leave the result a step short.  If an off-by-one
+ever surfaces in the Coq, `qhbound_mono` makes bumping the constant a
+one-line change that invalidates nothing already boarded, so start tight.
+
+**Still to verify before the constant can be trusted:** that no other
+deferred machine scores higher.  §3's max of 66,349 is a max over a 400k
+WINDOW — a machine whose quiet state's last visit lies between 400k and 32.8M
+was classified RECUR and never seen.  A deep scan (35M steps per machine) is
+the outstanding check; see `deepscan` in the session scratch.
+
+---
+
 ## 5. On the census constant
 
 `B_census = 2000` is **arbitrary** — a fixed value chosen to collapse the
