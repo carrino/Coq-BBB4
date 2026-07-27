@@ -133,6 +133,10 @@ holdouts rather than the residue.  Headlines:
   `1RB0RB_1LC1RC_0RA1LD_1RC0LD` — the machine this file has called "no known
   proof anywhere" for a year.  It now has a kernel-checked
   NeverQuasiHaltsSt theorem.**
+- **[SCOPE, 2026-07-27: the holdouts now have DEDICATED sessions of their own.
+  The rule below stands as a finding, but a RESIDUE session should not act on
+  it -- do not open the holdout front or sweep `census_holdouts_kept.txt`.
+  `docs/NEXT_SESSION_PROMPT.md` is residue-only.]**
 - **RETIRE the "keep the machinery away from the 27" discipline**
   (`docs/TERMINOLOGY.md`).  It rested on mxdys' deciders failing at HIS
   parameters; ours is a different tool.  New rule: sweep the holdouts with
