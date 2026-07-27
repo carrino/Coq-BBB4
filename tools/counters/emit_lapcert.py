@@ -42,10 +42,16 @@ from emit_interleave import (parse, carry, ENC, LAB, ST, SYM,          # noqa: E
                              derive_tail_best_far, mach_id, coq_table,
                              clist)
 from mirror_common import mirror_spec, mirrorize                       # noqa: E402
-import lapcert as LC                                                   # noqa: E402
+import lapcert as LC
+import nestcert as NC                                                   # noqa: E402
 
 OUTDIR = os.path.join(REPO, 'theories', 'Machines', 'Counters')
 PREFIX = 'LAPC'
+# Boards whose overflow branch is the NESTED composition get their own prefix,
+# so a wave is legible at a glance (and cannot collide with a concurrent
+# session's files).  inventory.py maps rows to theorems by PARSING THE TM
+# BODIES, so the prefix carries no meaning downstream.
+NEST_PREFIX = 'NLAP'
 
 # ---------------------------------------------------------------------------
 # The digit alphabets.  For every encoding E and every p,
@@ -227,6 +233,26 @@ def validate(tab, st0, encf, tail, far, cost, co, hi=200):
                 p, 'ovf' if ov else 'int', steps, got, want)
         n += 1
     return True, '%d anchors' % n
+
+
+def validate_int(tab, st0, encf, tail, far, cost, hi=200):
+    """The INTERIOR branch alone, against the raw simulator.  Used by the
+    nested route, whose overflow branch is not one chain and is validated
+    piecewise by [nestcert.validate]."""
+    tail, far = tuple(tail), tuple(far)
+    n = 0
+    for p in range(2, hi):
+        j, ov = carry(p)
+        if ov:
+            continue
+        start = (st0, tuple(encf(p)) + tail, 0, far)
+        want = (st0, tuple(encf(p + 1)) + tail, 0, far)
+        got = sim(tab, start, cost(j))
+        if not eqlift(got, want):
+            return False, 'p=%d int branch: %d steps -> %r want %r' % (
+                p, cost(j), got, want)
+        n += 1
+    return True, '%d interior anchors' % n
 
 
 # ------------------------------------------------------------ Coq emission ---
@@ -489,6 +515,21 @@ Proof.
 Qed."""
 
 
+FLAT_OVF_DEFS = r"""Definition cho_@ID@ : list lstep := @CHO@.
+
+Lemma run_ovf_@ID@ : srun tm true true cho_@ID@ B0_@ID@ = Some (B1_@ID@, @CAO@, @CBO@).
+Proof. vm_compute. reflexivity. Qed."""
+
+FLAT_OVF_CASE = r"""  - destruct (cview_pos p j E) as (j' & ->).
+    apply (lap_of_run tm Cc true true cho_@ID@ B0_@ID@ B1_@ID@ @CAO@ @CBO@ p j' [] []).
+    + exact run_ovf_@ID@.
+    + reflexivity.
+    + reflexivity.
+    + exact (gso_@ID@ p j' E).
+    + exact (geo_@ID@ p j' E).
+    + lia."""
+
+
 HEADER = r'''(** * @PREF@_@ID@: machine @SPEC@, boarded by CERTIFICATE.
 
     Auto-emitted by tools/counters/emit_lapcert.py (UNTRUSTED emitter; the Coq
@@ -502,7 +543,7 @@ HEADER = r'''(** * @PREF@_@ID@: machine @SPEC@, boarded by CERTIFICATE.
     discharged by the single theorem [srun_sound].
 
       interior  (cview p = (j, Some q0)):  @NI@ steps
-      overflow  (cview p = (S j, None)):   @NO@ steps
+      overflow  (cview p = (S j, None)):   @NO@
 
     The interior branch closes EXACTLY (which is what feeds
     [LapCertGlue.reach_ovf]); the overflow branch closes one blank short of
@@ -514,7 +555,7 @@ HEADER = r'''(** * @PREF@_@ID@: machine @SPEC@, boarded by CERTIFICATE.
 From Coq Require Import Arith Lia Bool List PArith Wellfounded.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Counters Require Import WTape LapGlue LapGlueQH LapGlueAbs
-                                  MonoCounter JpCounter @ENCMOD@ LapCertGlue@GLUELIFT@.
+                                  MonoCounter JpCounter @ENCMOD@ LapCertGlue@GLUELIFT@@NESTIMPORT@.
 From BBB4.Census Require Import TNF_QH.
 From BBB4.Checkers Require Import LapDecider.
 Import ListNotations.
@@ -536,10 +577,7 @@ Local Notation Cc := Cc_@ID@.
 
 Definition B0_@ID@ : sconf := @B0@.
 Definition B1_@ID@ : sconf := @B1@.
-Definition cho_@ID@ : list lstep := @CHO@.
-
-Lemma run_ovf_@ID@ : srun tm true true cho_@ID@ B0_@ID@ = Some (B1_@ID@, @CAO@, @CBO@).
-Proof. vm_compute. reflexivity. Qed.
+@OVFDEFS@
 
 (** ** Anchor glue -- the only per-machine mathematics *)
 
@@ -577,21 +615,14 @@ Proof.
   rewrite HD, HC. @CLOSE@
 Qed.
 
-(** ** The lap *)
+@NESTGLUE@(** ** The lap *)
 
 Lemma lap_@ID@ : forall p, exists n c',
   csteps tm n (Cc p) = Some c' /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
 Proof.
   intro p. destruct (cview p) as [j oq] eqn:E. destruct oq as [q0|].
 @LAPICASE@
-  - destruct (cview_pos p j E) as (j' & ->).
-    apply (lap_of_run tm Cc true true cho_@ID@ B0_@ID@ B1_@ID@ @CAO@ @CBO@ p j' [] []).
-    + exact run_ovf_@ID@.
-    + reflexivity.
-    + reflexivity.
-    + exact (gso_@ID@ p j' E).
-    + exact (geo_@ID@ p j' E).
-    + lia.
+@OVFCASE@
 Qed.
 
 (** ** Bootstrap *)
@@ -740,22 +771,45 @@ def derive(spec, edge, tail, p0, enc, far=()):
 
     cho = LC.derive_chain(tab, True, True, B0, B1)
     oslack = False
+    nest = None
     if cho is None:
         # The same trailing blank, on the overflow branch.  This one costs NO
         # new Coq: [geo_*] already closes the overflow up to [lift] (that is
         # what [lap_of_run] takes), and [WTape.lift_app_blank] strips a blank
         # from the RIGHT side -- the glue just has to say so.
         cho = LC.derive_chain(tab, True, True, B0, B1, lift=True)
-        if cho is None:
-            raise DeriveError('no overflow chain')
-        oslack = True
-    ro = LC.srun(tab, True, True, cho, B0)
+        oslack = cho is not None
+    if cho is None:
+        # NO single chain covers the overflow, and for 492 of the 883 rows
+        # that is not a search gap: the overflow costs [Theta(2^j)] and an
+        # [srun] returns [ca*j+cb].  It decomposes into boot + an INDUCTION
+        # over the inner counter + exit ([Counters/NestedLapLift.v]); the two
+        # affine halves are ordinary chains and the exponent stays inside an
+        # existential.  See docs/NESTED_LAP_PLAN.md.
+        try:
+            nest = NC.derive_nested(tab, ENCDATA, ENCS, ENC, enc, st0, tail,
+                                    far, B0, B1)
+        except NC.NestError as e:
+            raise DeriveError('no overflow chain (nested: %s)' % e)
+        cho = nest['che']
+        ro = LC.srun(tab, True, True, cho, nest['BE0'])
+    else:
+        ro = LC.srun(tab, True, True, cho, B0)
     if ro[2] == 0:
         raise DeriveError('lap of zero length at j=0')
 
-    ok, why = validate(tab, st0, encf, tail, far, cost, (ro[1], ro[2]))
-    if not ok:
-        raise DeriveError('validation: ' + why)
+    if nest is None:
+        ok, why = validate(tab, st0, encf, tail, far, cost, (ro[1], ro[2]))
+        if not ok:
+            raise DeriveError('validation: ' + why)
+    else:
+        # the flat validate() assumes ONE overflow chain covers the branch;
+        # nestcert.validate replays all three pieces (and every inner lap)
+        ok, why = validate_int(tab, st0, encf, tail, far, cost)
+        if not ok:
+            raise DeriveError('validation: ' + why)
+        why = '%s (interior); %s (nested overflow)' % (why, nest['nval'])
+        oslack = nest['efar'] > 0
 
     # StA may genuinely go quiet: these are the residue's QUASIHALTING
     # counters.  [LapGlueQH.glue_qh] closes them provided nothing targets
@@ -764,8 +818,9 @@ def derive(spec, edge, tail, p0, enc, far=()):
     untargeted = all(t is None or t[2] != 0 for t in tab.values())
     vis, visi, qh, absd, sset = {}, {}, False, None, None
     missing = []
+    chov = nest['chb'] if nest is not None else cho
     for q in range(4):
-        pre = LC.reach_state(tab, True, True, B0, cho, q)
+        pre = LC.reach_state(tab, True, True, B0, chov, q)
         if pre is None:
             missing.append(q)
             continue
@@ -785,6 +840,20 @@ def derive(spec, edge, tail, p0, enc, far=()):
             else:
                 visi[q] = pre
         missing = still
+    visx = {}
+    if missing and nest is not None:
+        # The overflow lap is boot + inner + exit, and [vis_of_run] only sees
+        # a prefix of ONE chain.  Look in the EXIT chain and close through
+        # [NestedLapLift.vis_via_fill], which supplies the exponentially long
+        # middle.  Measured: this is what 8 of 30 sampled machines need.
+        still = []
+        for q in missing:
+            pre = LC.reach_state(tab, True, True, nest['BE0'], nest['che'], q)
+            if pre is None:
+                still.append(q)
+            else:
+                visx[q] = pre
+        missing = still
     if missing:
         # The lap is complete but some state never fires inside it.  Two
         # closers apply, cheapest first:
@@ -797,7 +866,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
         if missing == [0] and untargeted:
             qh = True
         else:
-            found = absorb_search(tab, sorted(set(vis) | set(visi)))
+            found = absorb_search(tab, sorted(set(vis) | set(visi) | set(visx)))
             if found is None:
                 raise DeriveError('no visit witness for state %s%s' % (
                     LAB[missing[0]],
@@ -821,10 +890,10 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 chz=chz, chp=chp, Z0=Z0, Z1=Z1, P0=P0, P1=P1,
                 cz=((rz[1], rz[2]) if rz else None),
                 cp=((rp[1], rp[2]) if rp else None),
-                A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, visi=visi,
+                A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, visi=visi, visx=visx,
                 qh=qh, boot=boot,
                 absd=absd, sset=sset, islack=islack, oslack=oslack,
-                ovpost=list(got), ovwant=list(want), val=why)
+                nest=nest, ovpost=list(got), ovwant=list(want), val=why)
 
 
 def slist(qs):
@@ -905,7 +974,21 @@ def render(D):
     # states, which silently misaligns as soon as TWO states are missing.)
     vis = []
     for q in range(4):
-        if q not in D['vis']:
+        if q in D.get('visx', {}):
+            # the state fires only in the EXIT half of a NESTED overflow;
+            # vis_via_fill supplies the exponentially long middle
+            pull = ('' if _lift_vis(D) else
+                    '    apply (vis_csteps_of_lift tm Cc).\n')
+            vis.append('  - (* %s: fires in the exit half of the overflow *)\n'
+                       '%s'
+                       '    apply (vis_via_ovf_lift tm Cc lapil_%s %s).\n'
+                       '    intros p1 j1 E1.\n'
+                       '    exact (visx_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                       '                   p1 j1 E1).'
+                       % (ST[q], pull, ID, ST[q], ID, cchain(D['visx'][q]),
+                          ST[q]))
+            continue
+        if q not in D['vis'] and q not in D.get('visi', {}):
             if D['absd'] is not None:
                 vis.append('  - (* %s: not in the reached set *)\n'
                            '    exfalso; cbn in Hq; intuition discriminate.' % ST[q])
@@ -963,8 +1046,13 @@ def render(D):
         farb, farnest = clist(igot), ifarnest
     else:
         farb = farnest = clist(D['far'])
+    N = D.get('nest')
     reps = {
-        '@PREF@': PREFIX, '@ID@': ID, '@SPEC@': spec,
+        '@OVFDEFS@': (NC.NEST_DEFS if N else FLAT_OVF_DEFS),
+        '@OVFCASE@': (NC.NEST_OVFCASE if N else FLAT_OVF_CASE),
+        '@NESTGLUE@': (NC.NEST_GLUE + '\n\n' if N else ''),
+        '@NESTIMPORT@': '',
+        '@PREF@': (NEST_PREFIX if N else PREFIX), '@ID@': ID, '@SPEC@': spec,
         '@GLUELIFT@': ' LapCertGlueLift' if islack else '',
         '@FARB@': farb, '@FARNEST@': farnest,
         '@VISIL@': VISI_LEMMA if D.get('visi') else '',
@@ -1018,7 +1106,11 @@ def render(D):
         '@NI@': ('%d*j+%d' % D['ci'] if D['mode'] == 'one'
                  else 'j=0: %d ; j=S j\': %d*j\'+%d'
                       % (D['cz'][1], D['cp'][0], D['cp'][1])),
-        '@NO@': '%d*j+%d' % D['co'],
+        '@NO@': ('boot %d*j+%d, then the inner counter\'s own laps to the\n'
+                 '                                           all-ones fill, then exit %d*j+%d'
+                 % (D['nest']['cb'][0], D['nest']['cb'][1],
+                    D['co'][0], D['co'][1]) if D.get('nest')
+                 else '%d*j+%d steps' % D['co']),
         '@INTERIOR@': (INT_ONE if D['mode'] == 'one' else INT_SPLIT),
         '@GLUEI@': (GLUE_ONE_LIFT if islack
                     else GLUE_ONE if D['mode'] == 'one' else GLUE_SPLIT),
@@ -1036,6 +1128,8 @@ def render(D):
         '@CBP@': str(D['cp'][1]) if D['cp'] else '0',
         '@VAL@': D['val'], '@VISITS@': '\n'.join(vis),
     }
+    if N:
+        reps.update(NC.nest_reps(D, ENCDATA, clist, cconf, cchain, ST, ID))
     out = HEADER
     for _ in range(3):          # the INTERIOR/GLUEI blocks themselves hold holes
         for k, v in reps.items():
@@ -1099,7 +1193,8 @@ def process(spec, do_emit, force=False):
             if not do_emit:
                 return dict(spec=spec, ok=True, enc=tag,
                             ni=_cost_str(D), no='%d*j+%d' % D['co'])
-            path = os.path.join(OUTDIR, '%s_%s.v' % (PREFIX, mach_id(spec)))
+            pref = NEST_PREFIX if D.get('nest') else PREFIX
+            path = os.path.join(OUTDIR, '%s_%s.v' % (pref, mach_id(spec)))
             if os.path.exists(path) and not force:
                 return dict(spec=spec, ok=True, enc=tag, file=path,
                             skipped=True, ni=_cost_str(D),
