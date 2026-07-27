@@ -49,10 +49,32 @@ The measured facts this file pins, all against the CTape-faithful mirror
      joints (B0 = 1LC and C1 = 0LB) read `chd L`, so like #15's they have to
      be stated through chd/ctl rather than as windows.
 
-  STILL OPEN: the assembly -- which gadget fires where along the block word,
-  the invariant on `rest` the sweep needs, and the step count.  Everything
-  above says it is #15's job again, one size up.  Do NOT write Coq from a
-  sampled check: that is the trap #15 paid for.
+  6. WHAT THE TWO SWEEPS ARE, read straight off the transition table
+     (A0=1RB A1=0RD, B0=1LC B1=1LB, C0=1RA C1=0LB, D0=1LC D1=1RA):
+
+       OUTWARD.  StA and StD alternate RIGHTWARD over a run of 1s --
+       A1 = 0RD writes a 0, D1 = 1RA writes a 1 -- so the outward sweep
+       LAYS STRIPES, two cells per two steps.  It ends at a 0: D0 = 1LC
+       turns around into StC, and StC either continues right (C0 = 1RA)
+       or drops into the return (C1 = 0LB).  `out5` and `cross5` above are
+       this alternation packaged over one block.
+
+       RETURN.  StB walks LEFTWARD filling with 1s (B1 = 1LB), and at a 0
+       it writes 1 and hands to StC (B0 = 1LC); StC at a 1 writes 0 and
+       hands back to StB (C1 = 0LB).  So the return RE-STRIPES what the
+       outward sweep laid, one step per cell, and it stops when StC meets
+       a 0 (C0 = 1RA).  `ret3`/`ret2` are this over one block.
+
+     That is #15's outward/return pair with the roles of the states
+     permuted, which is what John's "the head bounces off of the lsb and
+     then passes through" describes.
+
+  STILL OPEN: the assembly -- an `asm20.py` in the shape of `asm15.py`, i.e.
+  replay the lap from these gadgets alone as pure list ops and diff it
+  against the raw simulator for every r.  That is the gate the Coq is a
+  transcription of.  Then the invariant on `rest`, and the step count (the
+  long lap costs 36, 56, 52, 72, 68, 84, 84, 124, ... for r = 1,2,3,...).
+  Do NOT write Coq from a sampled check: that is the trap #15 paid for.
 
 UNTRUSTED, like everything under tools/.  Usage: `python3 lap20.py [budget]`.
 """
