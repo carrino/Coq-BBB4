@@ -5,8 +5,10 @@ apology.  Companion data: `tools/closeout/residue_map.tsv`, one row per
 machine, regenerated with the commands at the bottom._
 
 _**622 rows as of this commit.**  The count moves every wave, so treat the TSV
-as the authority and this prose as a snapshot.  With the (4,2) holdout list
-closed, everything remaining is residue -- there is no second front._
+as the authority and this prose as a snapshot.  621 of them are residue; the
+odd one out is `1RB0RD_1LC1LB_1RA0LB_1LC1RA`, the last (4,2) HOLDOUT (tower
+#20), whose proof layers are in `theories/Machines/Counters/Tower_20.v` but
+which has no top-level theorem yet._
 
 ## What this list is
 

@@ -10,7 +10,9 @@ lesson was not spent; it had one more level to give._
 
 _A CONCURRENT session ran a separate wave-18 on the HOLDOUTS front (PRs #44-#46,
 `docs/HOLDOUTS_FRACTAL.md` and `HOLDOUTS_MXDYS_SN.md` §5b) and **closed the
-(4,2) holdout list**: wave4 #15, fractal #3/#5 and tower #20.  The two tracks
+(4,2) holdout list to ONE**: wave4 #15 and fractal #3/#5 landed; tower #20
+(`1RB0RD_1LC1LB_1RA0LB_1LC1RA`) is NOT boarded -- `Tower_20.v` compiles but
+carries no top-level theorem, so its row stays in `D_remaining`.  The tracks
 are disjoint and were merged.  **After the merge `D_remaining` is 622**, not
 the 625 in the scoreboard below — 883 − 258 here − 3 there.  The generated
 closeout tables were REGENERATED over the union rather than hand-merged, which

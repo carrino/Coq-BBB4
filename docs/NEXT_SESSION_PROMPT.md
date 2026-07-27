@@ -3,15 +3,15 @@
 _Rewritten 2026-07-27 at the end of the wave-18 RESIDUE track (branch
 `claude/coq-bbb4-residude-oy73r4`), which took THE TASK — the exponential
 overflow, the `AFFINE`/`EXP2` bucket, 500 of the 883 — and **boarded 258 of
-them**.  With the concurrent HOLDOUTS track merged (which CLOSED the (4,2)
-holdout list: wave4 #15, fractal #3/#5, tower #20), `D_remaining` is **622**
-and 4,534 of the frozen 5,156 are settled (87.9%).  Full assessment: `docs/WAVE18_FINDINGS.md` — §2 is why it took
+them**.  With the concurrent HOLDOUTS track merged (wave4 #15 and fractal
+#3/#5; tower #20 is the last one still open), `D_remaining` is **622** and
+4,534 of the frozen 5,156 are settled (87.9%).  Full assessment: `docs/WAVE18_FINDINGS.md` — §2 is why it took
 three waves, §4b is the measurement that names the next 130 machines, §5 is
 the one do-not-retry, §6 is the lesson._
 
-_**Scope: the RESIDUE only** — and as of this merge that is not a restriction
-but a description: the (4,2) HOLDOUT list is CLOSED, so the residue is all
-that is left._
+_**Scope: the RESIDUE only.**  One (4,2) holdout is still open -- tower #20,
+`1RB0RD_1LC1LB_1RA0LB_1LC1RA`, whose layers are in `Tower_20.v` but which has
+no theorem yet.  John runs that one; everything else is residue._
 
 **Before pasting, check:** substitute the branch the session should develop
 on, and name any files a concurrent session owns.
@@ -56,9 +56,10 @@ funext-only -- keep them that way).  Everything under tools/ is UNTRUSTED;
 the kernel re-checks every board.
 
 STATE: 4,534 of the frozen 5,156 settled (87.9%); D_remaining = 622.
-THE HOLDOUTS ARE DONE -- the (4,2) holdout list CLOSED on 2026-07-27 (wave4
-#15, fractal #3/#5, tower #20).  Everything left is RESIDUE, and it is all
-yours.
+THE HOLDOUTS ARE DOWN TO ONE: tower #20, 1RB0RD_1LC1LB_1RA0LB_1LC1RA.
+Tower_20.v has its gadget/sweep/re-encoding layers and compiles, but NO
+top-level theorem, so the row is still in D_remaining.  It is not yours --
+John runs it.  Everything else left is RESIDUE.
 
 Failure profile, measured at D_remaining = 625 (i.e. before the 3 holdout
 boards merged in; they are not residue rows and change none of it) by running

@@ -417,7 +417,7 @@ carry-continue windows at the turnaround, then the assembly and the Coq.
 `wglue_neverqh` still needs no change.  `HOLDOUTS_MXDYS_SN.md` section 5b has
 the full table and sizes the other three.
 
-## 2g. Wave-18, HOLDOUTS track (2026-07-27) -- wave4 #15 boarded, then #3/#5/#20; the (4,2) holdout list CLOSES
+## 2g. Wave-18, HOLDOUTS track (2026-07-27) -- wave4 #15 and fractal #3/#5 boarded; tower #20 is the LAST one
 
 Full write-up: `docs/HOLDOUTS_MXDYS_SN.md` section 5b.
 `theories/Machines/Counters/Wave4_15.v` (730 lines),
@@ -797,7 +797,11 @@ and `make -f Makefile.coq -j2 theories/Closeout/Closeout.vo` (`-j2`, NOT
 list** -- #20 is the last one.
 
   [MERGE NOTE, added when the two 2026-07-27 tracks were merged.  They are
-  DISJOINT -- the sections above board HOLDOUTS, section 2j boards RESIDUE --
+  DISJOINT -- the sections above board HOLDOUTS, section 2j boards RESIDUE.
+  NOTE: tower #20 is NOT boarded.  `Tower_20.v` carries the gadget, sweep and
+  re-encoding layers and compiles, but has NO top-level theorem, so
+  `inventory.py` correctly leaves `1RB0RD_1LC1LB_1RA0LB_1LC1RA` in
+  `D_remaining`.  It is the LAST (4,2) holdout.  --
   and the generated closeout tables were REGENERATED over the union rather
   than hand-merged, which is the only correct way to resolve a conflict under
   `theories/Closeout/`.  The joint figure is **D_remaining = 622**; every
