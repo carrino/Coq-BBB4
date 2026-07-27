@@ -47,7 +47,7 @@ transition usage counts** over `S(n) -->+ S(n+1)` are C-finite.
 | `1RB0LA_1LC0RD_0LB1LA_0RB1LA` | fractal #3 | `1^(2^n) 0^(2^n+1)`, StB | ✔ | 9 | no |
 | `1RB0LA_1LC1RD_0LC1LA_0RD0RB` | fractal #5 | `1^(2^n) 0^(2^n)`, StB | ✔ | 9 | no |
 | `1RB1RA_0RC0RB_1LC1LD_0RA0LA` | v4-irules | `1^n 0 1^(3^(n+1))`, StA | ✔ | 9 | yes (`Bnc3.v`) |
-| `1RB0RC_0LC1LB_0LD1LC_1RD0RA` | wave4 #15 | — | search fails | — | no |
+| `1RB0RC_0LC1LB_0LD1LC_1RD0RA` | wave4 #15 | — | search fails | — | yes (`Wave4_15.v`) |
 | `1RB0RD_1LC1LB_1RA0LB_1LC1RA` | tower #20 | — | search fails | — | no |
 | `1RB1LD_1RC0RB_1LA0RC_0LD0LA` | double #32 | — | search fails | — | yes (`Double_32.v`) |
 
@@ -171,12 +171,12 @@ the next anchor (`t = 2660..2748` in the w=2→3 cycle).
 (`0^(2n+2) 1^(2^(n+1)-1)`) is a doubling block against a linear wall, i.e.
 the same two-level pattern again.
 
-## 5b. The remaining four, sized
+## 5b. The remaining three, sized
 
-Seven of the eleven are boarded (section 2).  What follows is the measured
-state of the other four, in the order they should be attempted — preceded by
-#32, kept in full because it is the worked example the remaining four are
-sized against.
+Eight of the eleven are boarded (section 2).  What follows is the measured
+state of the other three, in the order they should be attempted — preceded by
+#32 and wave4 #15, kept in full because they are the worked examples the
+remaining three are sized against.
 
 ### double #32 — `1RB1LD_1RC0RB_1LA0RC_0LD0LA` — **BOARDED**
 
@@ -327,7 +327,15 @@ appear at all.  The negative controls are in
 sweeps, the three rules and the composed lap is `tools/counters/rules32.py`,
 which is `gadgets32.py` one level up.
 
-### wave4 #15 — `1RB0RC_0LC1LB_0LD1LC_1RD0RA`
+### wave4 #15 — `1RB0RC_0LC1LB_0LD1LC_1RD0RA` — **BOARDED**
+
+`theories/Machines/Counters/Wave4_15.v`.  `Print Assumptions
+nqh_1RB0RC_0LC1LB_0LD1LC_1RD0RA` = `functional_extensionality_dep` only.
+Negative controls: `theories/Tests/CountersW15_Corruption.v`.  Everything
+below is the reconnaissance, left as measured — including the mod-4 reading
+that John's counter reading later DISSOLVED, because the sequence is the
+point: the expensive model was true and unnecessary.  The board's own
+summary is at the end of this subsection.
 
 Confirmed as the mod-4 wave odometer.  The event config is a block word with
 single-`0` separators and the block vector visibly halves:
@@ -464,17 +472,115 @@ So `Cf : positive -> cconf` is directly writable, and what remains for the
 board is only the lap lemma `Cf p --> Cf (Pos.succ p)` — where the deposit
 gadget below still has to be stated correctly.
 
+**BOARDED, and the transcription confirmed the counter reading exactly.**
+`Cf15 p = (StC, ([], S0, 1^(1+pod p) 0 <blocks of venc p>))`, the closer is
+`LapGlue.glue_neverqh` at `p0 = 2` with boot `t0 = 17` and NO invariant.
+What the board added over the reconnaissance above:
+
+* **the composition is one inductive relation.**  `Scan bl l a rest bl'`
+  records the carry's walk — `l` the carried (EVEN-length) blocks, `2a+1`
+  the deposit block, `rest` what is beyond — and carries the RESULT vector
+  `bl'` alongside, so `Scan_in` and `Scan_out` are one induction each over
+  the same relation and never have to be linked;
+* **`btail a rest` is the deposit's whole arithmetic**: `+2` here and `+1`
+  on the next block when there is one, else `+1` here and a spawned
+  length-2 block.  That is the carry out of the top — a positive's new
+  leading 1 — and it is why the "spawn" is not a third rule;
+* **`Scan_venc`**, existence plus the fact that the scan's output IS
+  `venc (Pos.succ p)`, is a structural induction on the positive: `xI (xO s)`
+  stops at once and `xI (xI s)` carries one block and recurses;
+* **rule A costs one lemma.**  `venc_bump`: `venc (xO r)` and `venc (xI r)`
+  differ in the head by one, tail identical.  The even lap is then `ruleA`
+  applied once — 10 steps, no induction;
+* **the return sweep needs no second induction.**  `owtape_bta` says `bta`
+  rebuilds exactly what `owtape` ate, so `back_frame` collapses the whole
+  debris in one rewrite;
+* **the trap, pinned in the corruption file.**  On `dep2`'s context six
+  steps land MID-SWEEP in `StB`, with `dep0`'s left list `S0::S1::S1::L`
+  already built — precisely the configuration a window search calls a
+  match.  Eight steps are needed.  The unit mutation `B1 = 1LB -> StC`
+  (the walk-back step, and the only place a 1 is read in `StB`) kills
+  `dep2`, `cross7` and `ruleA` and leaves `out6`, `entry5`, `carry5`,
+  `dep0`, `ret1` and `exit1` intact, which is the sharpest available
+  evidence that the deposit's length really is the walk-back;
+* **`tools/counters/comp15.py`** is the gate for all of the above: it
+  mirrors the composition layer as pure list ops and diffs it against the
+  raw simulator, step count included, plus the check that no earlier anchor
+  occurs inside a lap.
+
 ### tower #20 — `1RB0RD_1LC1LB_1RA0LB_1LC1RA`
 
-Not re-measured this session; BBB's decode is complete and is the plan of
-record.  The load-bearing idea is that the trailing region
+BBB's decode is complete and was the plan of record: the trailing region
 `pat ++ (2)^r ++ [1]` has an infinite raw pattern set but factors into a
 CLOSED 14-template FSM over `(template, r)`, `T1..T6 -> U1..U6 -> W1,W2 -> T1`
 with fixed per-transition `(dr, dct, split)`.  Termination is by **rmin
 closure** (`rmin[i] + dr[i] >= rmin[next[i]]`) plus nonnegative comb deltas,
 so there is no reachability leg at all.  In our terms: a finite table plus a
-well-founded argument — a checker port, not a hand proof, and the biggest of
-the five.
+well-founded argument — a checker port, not a hand proof.
+
+**Measured this session (`tools/counters/probe20.py`, `lap20.py`, all green),
+and it looks a great deal cheaper than that.**  John: its record tape is a
+word over the blocks `10` / `110` — a counter in another alphabet, which is
+why the S(n) shape search misses it — and *"it looks very similar to #15 the
+way the head bounces off of the lsb and then passes through"*.  Both halves
+check out:
+
+* **Same sampling as #15 and #32.**  Read at the LEFT RECORD — head on the
+  leftmost visited cell, `StC`, reading blank, left list empty.  After a
+  3-record boot (t = 4, 18, 28) the anchors settle at t = 50 and from then on
+  STRICTLY ALTERNATE between two leads over the same tail `T`:
+
+  ```
+  A-type   (StC, ([], S0, 1 1 0 1 0     ++ T))
+  B-type   (StC, ([], S0, 1 0 1 1 1 1 0 ++ T))
+  ```
+
+  — #15's alternating lead, verbatim, over 606 anchors.
+* **Rule A is a CONSTANT 10-STEP UNIFORM WINDOW**, `A-type -> B-type`, for
+  every tail — checked over all 511 tails with `|T| <= 8`.  Both left lists
+  are empty, so there is no `L` to quantify over.  That is #15's `ruleA`
+  again: constant cost, no induction, the whole no-carry lap.
+* **John's alphabet confirmed.**  The tape after the lead factors greedily
+  into `110` (`b`) and `10` (`a`).  When the residue is exactly `1` the WHOLE
+  tape is a block word, and those configurations are precisely the sparse
+  "tower" anchors — `t = 142, 626, 1750` give `babbaaab`,
+  `bab^8abaaabb`, `bab^16ababbabbbb`.  That is BBB's `pat ++ (2)^r ++ [1]`
+  with the macro symbol `2 = 110`.
+* **The counter is visible and it is unary in `b`.**  At every A-type anchor
+  the block word after the lead begins with a run of `b`s, and **that run
+  length IS the lap index** — 0, 1, 2, 3, … with no exceptions over the 303
+  A-anchors reachable in 400,000 steps.  So one long lap is `r -> r+1`.
+* **Which means the closer is probably free, exactly as it was for #32.**
+  The abstract state is `(r, rest)`; `WaveCounter.wglue_neverqh` takes an
+  ARBITRARY anchor type with a total successor and a preserved invariant, so
+  no closed form for `rest` — and no 14-template FSM — has to be modelled to
+  get `NeverQuasiHaltsSt`.  The FSM is BBB's route to a step-count bound,
+  which is not what we need.
+
+* **Four gadgets of the long lap are already checked EXHAUSTIVELY** over
+  every `(L,R)` with `|L|,|R| <= 4` (961 contexts — the standard #15's
+  deposit failed on 496 of):
+
+  ```
+  out5    (StC,(L,S0,       1 1 1 0 ++ R)) -5-> (StC,(1 0 1 ++ L, S0, 1 ++ R))
+  cross5  (StC,(L,S0,       1 1 0 1 ++ R)) -5-> (StB,(1 0 1 ++ L, S1, 1 ++ R))
+  ret3    (StB,(1 1 0 ++ L, S1,        R)) -3-> (StB,(L, S0, 1 1 1 ++ R))
+  ret2    (StB,(1 0 ++ L,   S1,        R)) -2-> (StB,(L, S0, 1 1 ++ R))
+  ```
+
+  #15's shape exactly: the outward sweep eats four cells and hands one back
+  (net +3 per five steps), `cross5` is the turnaround into `StB`, and the
+  return is ONE STEP PER CELL, filling with 1s.  The two remaining joints
+  (`B0 = 1LC`, `C1 = 0LB`) read `chd L`, so like #15's they must be stated
+  through `chd`/`ctl` rather than as windows.
+
+**What is left:** the ASSEMBLY — which gadget fires where along the block
+word, the invariant on `rest` the sweep needs, and the step count (the long
+lap costs 36, 56, 52, 72, 68, 84, 84, 124, … for `r = 1, 2, 3, …`).  It is
+#15's job again, one size up.  **Do not write Coq from a sampled check** —
+that is the trap #15 paid for, and #20's sweep has the same
+bounce-and-walk-back shape that made #15's deposit a sweep and not a
+window.
 
 ### fractal #3 / #5 — `1RB0LA_1LC0RD_0LB1LA_0RB1LA`, `1RB0LA_1LC1RD_0LC1LA_0RD0RB`
 
@@ -516,7 +622,11 @@ gcc -O2 -o fast_sn tools/counters/fast_sn.c    # the v4-irules row
 | `tools/counters/gadgets32.py` | differential check for #32's nine step gadgets |
 | `tools/counters/rules32.py` | differential check for #32's sweeps, rules and lap |
 | `tools/counters/probe15.py` | CTape-faithful mirror for wave4 #15 |
-| `tools/counters/lap15.py` | measured micro-lap + safety facts for #15 |
+| `tools/counters/lap15.py` | measured micro-lap, gadgets EXHAUSTIVELY over `|L|,|R| <= 4`, and the counter reading for #15 |
+| `tools/counters/asm15.py` | #15's lap replayed from the verified gadgets alone, diffed against the simulator |
+| `tools/counters/comp15.py` | #15's composition layer (`Scan`/`btail`/`venc`, `back_frame`, the assembled lap) |
+| `tools/counters/probe20.py` | CTape-faithful mirror for tower #20 |
+| `tools/counters/lap20.py` | #20's anchor family, alternating leads, uniform rule A, and the `b`-run counter |
 
 **Budget matters**: a family whose anchors are `Θ(4^n)` apart needs ~4M steps
 to show 8 laps, and the fitter *refuses* to certify without slack — so a

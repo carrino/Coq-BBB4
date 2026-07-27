@@ -296,10 +296,9 @@ STATE: (4,2) holdouts 5 -> 4 unproven (`census_holdouts_kept.txt` n
 `D_remaining` 1,010 -> 1,009.  `census_cache --check` MATCH throughout
 (nothing under `theories/Census/` was touched).
 
-**Next: wave4 #15 (`1RB0RC_0LC1LB_0LD1LC_1RD0RA`) -- IN PROGRESS on branch
-`claude/board-double-32-coq-9cdl84`, PR #43.  `theories/Machines/Counters/
-Wave4_15.v` COMPILES; nothing Admitted; no theorem yet, so D_remaining is
-still 1009.**
+**Next: wave4 #15 (`1RB0RC_0LC1LB_0LD1LC_1RD0RA`) -- DONE in wave-18, see
+section 2g below.  What follows is the wave-17 handoff, kept because its
+reading of the machine is what the board was built from.**
 
 #15 is a PLAIN BINARY COUNTER, not the mod-4 odometer this file used to
 predict.  John's reading: each bit is a zero-STRIPE's position mod 2, the
@@ -417,6 +416,140 @@ back, giving rule B's 3+1 = 4 per cell).  LEFT TO DO: the deposit and
 carry-continue windows at the turnaround, then the assembly and the Coq.
 `wglue_neverqh` still needs no change.  `HOLDOUTS_MXDYS_SN.md` section 5b has
 the full table and sizes the other three.
+
+## 2g. Wave-18 (2026-07-27) -- wave4 #15 boarded; the (4,2) holdouts are 3
+
+Full write-up: `docs/HOLDOUTS_MXDYS_SN.md` section 5b.
+`theories/Machines/Counters/Wave4_15.v` (730 lines),
+`theories/Tests/CountersW15_Corruption.v`.
+
+- **`1RB0RC_0LC1LB_0LD1LC_1RD0RA` (wave4 #15) is a PLAIN BINARY COUNTER.**
+  This file used to predict a "mod-4 wave odometer" and size the board as a
+  port of `WaveCounter`'s parity layer plus ~80 lines of mod-4 arithmetic.
+  John's reading -- each bit is a zero STRIPE's position mod 2, with an
+  alternating offset, `bit k = (z(k+1) + k) mod 2`, and the top stripe-bit
+  the implicit leading 1 of a `positive` -- makes ONE LAP `p -> p+1` with no
+  exceptions.  So the closer is `LapGlue.glue_neverqh` (`BCtr_28`'s), with
+  **NO invariant**, and the mod-4 arithmetic layer is ZERO lines.  The
+  `WInv4` predicate this file recorded is TRUE but UNNECESSARY; it is in the
+  branch history and should not be ported.
+- **The tape is a structural recursion on the positive**, so `Cf15` needs no
+  `2^k` arithmetic and no bit extraction:
+  `venc 2 = [2]`, `venc 3 = [3]`, `venc m = (m + pod (m/2)) :: venc (m/2)`,
+  `lead = 1 + pod m`.
+- **The lap is binary increment made physical.**  `p` EVEN is the no-carry
+  case: a SINGLE 10-step window (`ruleA`), constant cost, no induction.  `p`
+  ODD is the carry, `entry5 . outward . out6s . deposit . backsweep`.
+- **The composition is one inductive relation, `Scan bl l a rest bl'`**, and
+  it carries the RESULT vector alongside the decomposition, so each
+  direction of the lap is ONE induction over the SAME relation:
+  `Scan_in` (`wblocks bl = owtape l (1^(2a+1) 0 wblocks rest)`) and
+  `Scan_out` (`wblocks bl' = owtape l (wblocks (btail a rest))`).  Splitting
+  this into a decomposition relation plus a separate `Bump` relation, and
+  then having to link them, is the detour to avoid.
+  - carried blocks are the EVEN ones, the deposit block is the first ODD one;
+  - `btail a rest` is the deposit's whole arithmetic: `+2` here and `+1` on
+    the next block when there is one, else `+1` here and a SPAWNED length-2
+    block -- which is just the carry out of the top;
+  - `Scan_venc` (the existence, and that the result IS `venc (Pos.succ p)`)
+    is a structural induction on the positive: `xI (xO s)` stops at once
+    (that block is odd) and `xI (xI s)` carries one block and recurses.
+- **Rule A needs one lemma only**: `venc_bump` -- `venc (xO r)` and
+  `venc (xI r)` differ in the HEAD by one, tail identical.  It is also what
+  the `xI (xO s)` branch of `Scan_venc` needs, so it is written once.
+- **The return sweep needs no second induction.**  `owtape_bta`
+  (`S1::S1::bta l Y = owtape l (S1::S1::Y)`) says `bta` rebuilds exactly
+  what `owtape` ate, so `back_frame` turns the whole debris back into the
+  carried blocks in a single rewrite.  Outward and return are SEQUENTIAL
+  inductions over the same shape, never nested.
+- **Trap paid for, and it is the expensive one: A SAMPLED GADGET CHECK IS
+  NOT A CHECK.**  The deposit passes a 42-context sample AND a naive
+  "does the tail pass through" window search, and FAILS the exhaustive
+  check on 496 of 961 contexts.  It is a SWEEP, not a window -- `A0 = 1RB`
+  fills the stripe and bounces right into `StB`, which walks back over the
+  1s just laid -- and it splits into `dep0`/`dep2` by the symbol the bounce
+  lands on.  Check every gadget over ALL `(L,R)` with `|L|,|R| <= 4` before
+  writing it.  `CountersW15_Corruption.v` pins the trap: on `dep2`'s
+  context, six steps land MID-SWEEP in `StB` with `dep0`'s left list
+  already built -- exactly what a window search calls a match.
+- **`dep0` is stated through `chd`/`ctl`, so the SPAWN is free** -- the new
+  stripe past the end of the list is not a separate case.
+- **New Coq trap:** a two-place inductive constructor that must see the SAME
+  term in two argument positions (here `ScanC`'s `(2*b+2)` in both `bl` and
+  `bl'`) will not `apply` when the two are only numerically equal.  `replace`
+  the second into the first's shape, then apply; the `x = 2*b+2` side
+  condition variants (`ScanD'`/`ScanC'`) handle the first.
+- **Method held.**  `tools/counters/lap15.py` (gadgets EXHAUSTIVELY over
+  `|L|,|R| <= 4`) and `tools/counters/asm15.py` (the lap replayed from the
+  verified gadgets alone as pure list ops, diffed against the raw simulator,
+  `p = 2..1199`) were green before any Coq.  `tools/counters/comp15.py` is
+  new: it mirrors the COMPOSITION layer -- `Scan`/`btail`/`venc` arithmetic,
+  `back_frame`, and the assembled lap -- and diffs it against the simulator
+  including the step count and the fact that NO earlier anchor occurs inside
+  a lap.
+
+STATE: (4,2) holdouts 4 -> 3 unproven (`census_holdouts_kept.txt` n
+`closeout/frozen_unproven.txt`: fractal #3/#5, tower #20).  Merged
+origin/main (the wave-16 RESIDUE track, PR #41) before the closeout regen,
+so the number this board moves is `D_remaining` **883 -> 882**, not the
+1,009 -> 1,008 it was against the pre-merge base.  `census_cache --check`
+MATCH throughout (nothing under `theories/Census/` was touched).
+
+**Next: tower #20 (`1RB0RD_1LC1LB_1RA0LB_1LC1RA`) -- RECONNOITRED here, and
+it is much cheaper than BBB's decode suggests.**  `tools/counters/probe20.py`
+(CTape-faithful mirror) and `tools/counters/lap20.py` (the checker) are new
+and green.  John's reading -- "the record tape is a word over the blocks
+`10`/`110`, a counter in another alphabet ... it looks very similar to #15
+the way the head bounces off of the lsb and then passes through" -- checks
+out on both halves:
+
+  - **same sampling as #15/#32**: the LEFT RECORD, `StC`, reading blank, left
+    list empty.  After a 3-record boot (t = 4, 18, 28) the family settles at
+    t = 50 and STRICTLY ALTERNATES between two leads over the same tail `T`:
+    `(StC, ([], S0, 1 1 0 1 0 ++ T))` and `(StC, ([], S0, 1 0 1 1 1 1 0 ++ T))`
+    -- #15's alternating lead verbatim, over 606 anchors;
+  - **rule A is a CONSTANT 10-STEP UNIFORM WINDOW** (A-type -> B-type),
+    checked over all 511 tails with `|T| <= 8`.  Both left lists are empty so
+    there is no `L` to quantify over.  #15's `ruleA` again;
+  - **John's alphabet is right**: the tape after the lead factors greedily
+    into `110` (`b`) and `10` (`a`), and when the residue is exactly `1` the
+    WHOLE tape is a block word -- those are the sparse "tower" anchors
+    (t = 142, 626, 1750: `babbaaab`, `bab^8abaaabb`, `bab^16ababbabbbb`).
+    That is BBB's `pat ++ (2)^r ++ [1]` with the macro symbol `2 = 110`;
+  - **the counter is unary in `b`**: at every A-type anchor the block word
+    begins with a run of `b`s and THAT RUN LENGTH IS THE LAP INDEX --
+    0,1,2,3,... with no exceptions over the 303 A-anchors reachable in
+    400,000 steps.  One long lap is `r -> r+1`.
+
+So the abstract state is `(r, rest)` and the closer should be FREE:
+`WaveCounter.wglue_neverqh` takes an arbitrary anchor type with a total
+successor and a preserved invariant -- the same closer double #32 used.  **No
+closed form for `rest`, and no port of BBB's 14-template FSM, is needed for
+`NeverQuasiHaltsSt`**; that FSM is BBB's route to a step-count BOUND, which
+is not what we need.
+
+  - **four gadgets of the long lap are already EXHAUSTIVELY checked** over
+    every `(L,R)` with `|L|,|R| <= 4` (961 contexts -- the standard #15's
+    deposit failed on 496 of):
+
+        out5    (StC,(L,S0,       1 1 1 0 ++ R)) -5-> (StC,(1 0 1 ++ L, S0, 1 ++ R))
+        cross5  (StC,(L,S0,       1 1 0 1 ++ R)) -5-> (StB,(1 0 1 ++ L, S1, 1 ++ R))
+        ret3    (StB,(1 1 0 ++ L, S1,        R)) -3-> (StB,(L, S0, 1 1 1 ++ R))
+        ret2    (StB,(1 0 ++ L,   S1,        R)) -2-> (StB,(L, S0, 1 1 ++ R))
+
+    -- #15's shape exactly: the outward sweep eats four cells and hands one
+    back (net +3 per five steps), `cross5` is the turnaround into StB, and
+    the return is ONE STEP PER CELL filling with 1s.  The two remaining
+    joints (B0 = 1LC, C1 = 0LB) read `chd L`, so like #15's they have to be
+    stated through chd/ctl rather than as windows.
+
+WHAT IS LEFT is the ASSEMBLY: which gadget fires where along the block word,
+the invariant on `rest` the sweep needs, and the step count (the long lap
+costs 36, 56, 52, 72, 68, 84, 84, 124, ... for r = 1,2,3,...).  It is #15's
+job again, one size up.  **Do NOT write Coq from a sampled check** -- that is
+the trap #15 paid for, and #20's sweep has the same bounce-and-walk-back
+shape that made #15's deposit a SWEEP and not a window.  BBB's decode is in
+`docs/HOLDOUTS_MXDYS_SN.md` section 5b under "tower #20".
 
 ## 3. The long-tail roadmap
 
