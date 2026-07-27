@@ -214,7 +214,13 @@ gap") and found **the gap is not in the search**.
   `sden_parts` folds everything into `P`) and `_shape_to` (syntactic
   `pre/u/a/b`, and no rotation can delete a blank).
 - **126 boards, `D_remaining` 1,016 -> 890** (4,266/5,156 = 82.7% settled;
-  **884 / 82.9% after merging the holdouts track above**),
+  **884 / 82.9% after merging the holdouts track above**).  The merged
+  closeout is KERNEL-VERIFIED: `Closeout.vo` + all 43 `CB_*.vo` compile and
+  `closeout_partial` is Qed at `functional_extensionality_dep` only.
+  `CloseoutFinal.vo` (the chain to `census_decided`) is NOT buildable in a
+  container -- the committed census `.vo` are OCaml 4.14.2 and apt coq here
+  is 4.14.1, so it is a box job, not a proof failure.  See
+  `docs/WAVE16_FINDINGS.md` section 4b,
   all `functional_extensionality_dep` only.  New Coq is one additive file,
   `Counters/LapCertGlueLift.v`: `reach_ovf_lift`/`vis_via_ovf_lift` redo
   `LapCertGlue`'s induction in `stepn`/`lift` space (where

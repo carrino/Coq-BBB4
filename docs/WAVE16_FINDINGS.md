@@ -152,6 +152,40 @@ left, and the natural next check with the question §6 asks.
 Regression: of the 376 previously emitted `LAPC_*` boards, **370 re-derive**;
 the 6 that do not fail identically on the pre-change tools.
 
+## 4b. The closeout is KERNEL-VERIFIED (and one file that cannot be, here)
+
+After the merge, the regenerated tables were re-run through the kernel:
+`Closeout.vo` and all 43 `CB_*.vo` compile, and
+
+```
+closeout_partial : forall tm, Deferred D_census tm ->
+                              boarded tm \/ Deferred D_remaining tm
+```
+
+is **Qed**, `Print Assumptions` = `functional_extensionality_dep` only, with
+`D_remaining` the 884-row list.  That is the claim that had been resting on
+`audit.py`, which is untrusted tooling: every one of the 4,272 proven rows
+really is discharged by a board theorem, and the two tables really do
+partition the deferred list.  426 files, no other error.
+
+**`CloseoutFinal.v` cannot be built in a container, and this is not a proof
+failure.**  It is the file that chains `closeout_partial` to
+`census_decided`, so it loads the committed `Census_Theorem.vo` — and coqc
+refuses:
+
+```
+compiled with OCaml 4.14.2 while this instance of Coq was compiled with
+OCaml 4.14.1
+```
+
+The 145 committed census `.vo` were built on stable hardware under the opam
+`census` switch (OCaml 4.14.2 + Coq 8.18.0 + coq-native); a container has apt
+coq 8.18.0 on OCaml 4.14.1 and no opam at all.  Coq object files do not load
+across OCaml toolchains, so this file is unbuildable here BY CONSTRUCTION and
+always was — it is the same box/container split §0 of the playbook draws, not
+anything a wave introduced.  Building it needs the whole 1,234-file closure
+rebuilt under the census switch, which is a box job.
+
 ## 5. DO NOT RETRY (measured this wave, each 0 of 31 on the bucket)
 
 * **A depth-aware memo in `derive_chain`.** The DFS `seen` set is depth-blind,
