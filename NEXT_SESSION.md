@@ -99,6 +99,173 @@ clean `.vo` state, `functional_extensionality_dep` only).  It also needed the
 anchor HEAD symbol, the anchor TAIL and the anchor's FAR side (a blank *cell*,
 not the empty *list*) to become parameters — the encoding alone was not enough.
 
+## 2e. Wave-17 (2026-07-27) -- double #32 boarded; the (4,2) holdouts are 4
+
+Full write-up: `docs/HOLDOUTS_MXDYS_SN.md` section 5b (kept as measured; the
+board confirmed it verbatim).  `theories/Machines/Counters/Double_32.v`.
+
+- **`1RB1LD_1RC0RB_1LA0RC_0LD0LA` (double #32) is a COMB COUNTER read at the
+  LEFT RECORD.**  BBB's macro anchor is head-on-rightmost-1 with comb count
+  `a = 2^j`, one lap `36k^2 + 29k - 4` steps -- a `Theta(k^2)` bounce, and
+  BBB's notes record an earlier `a = 2^j-1` guess as having TIMED OUT.
+  Sampled instead at the left record (head on the leftmost visited cell,
+  StA, reading blank) the machine is a rewriting system on `(001)^j` +
+  a block word, with three uniform rules R1/R2/R3 costing `8j+2m+5`,
+  `8j+5`, `8j+11`.  One turn of R1;R2;R3 grows the comb by ONE, in
+  `24j + 2m + 29` steps.  **The macro doubling falls out of iterating that;
+  it is never assumed, so the quadratic macro lap is never modelled.**  Same
+  move as blockdbl #11/#13/#28 and the two wrap machines: BBB's macro anchor
+  was the expensive reading and a finer phase makes one sweep a whole lap.
+- **The closer was free.**  `WaveCounter.wglue_neverqh` takes an ARBITRARY
+  anchor type with a total successor and a preserved invariant, which is
+  exactly `(j, block word)`.  No closed form for either component is needed
+  at any point and no new closer was written -- the second board (after the
+  six wave machines) to come off that one file unchanged.
+- **New in the transcription, worth reusing:** carry a repeated tape unit as
+  an ACCUMULATOR fixpoint (`comb j X = (001)^j ++ X`, plus its two phase
+  shifts `outp`/`inp`) instead of `rep u j ++ X`.  Every rewrite then stays
+  in cons form and reduces by `cbn`; the `rep_shift`/`app_assoc` junction
+  plumbing that the earlier counter boards spend real lines on disappears.
+  Cost: three three-line shift lemmas.
+- **Trap paid for (again): `change (csteps tm 1 X) with (Some Y)` leaves an
+  unreduced `match` and the next `rewrite` cannot find its subterm.**  State
+  a one-step lemma and `rewrite` it.  Second trap: `replace (S k) with (1+k)`
+  hits EVERY `S k` in the goal, including the one inside `repeat _ (S k)`
+  that `cbn` then cannot reduce -- `cbn` first, `replace` second.
+- **Method held: nothing was written in Coq until it passed a CTape-faithful
+  Python mirror.**  `tools/counters/gadgets32.py` (the nine gadgets) was
+  green from the previous session; `tools/counters/rules32.py` is new and
+  covers the four sweep inductions, R1/R2/R3 and the composed lap in the
+  exact form the Coq states them, plus a 40-lap orbit replay.  The one thing
+  the traces had wrong on paper: R1/R2 use `rc5^(j-1)`, not `rc5^(j-2)`.
+
+STATE: (4,2) holdouts 5 -> 4 unproven (`census_holdouts_kept.txt` n
+`closeout/frozen_unproven.txt`: fractal #3/#5, wave4 #15, tower #20);
+`D_remaining` 1,010 -> 1,009.  `census_cache --check` MATCH throughout
+(nothing under `theories/Census/` was touched).
+
+**Next: wave4 #15 (`1RB0RC_0LC1LB_0LD1LC_1RD0RA`) -- IN PROGRESS on branch
+`claude/board-double-32-coq-9cdl84`, PR #43.  `theories/Machines/Counters/
+Wave4_15.v` COMPILES; nothing Admitted; no theorem yet, so D_remaining is
+still 1009.**
+
+#15 is a PLAIN BINARY COUNTER, not the mod-4 odometer this file used to
+predict.  John's reading: each bit is a zero-STRIPE's position mod 2, the
+2nd stripe is the LSB, and the parity offset alternates.  Number the stripes
+`z0 = 0` (the anchor's own blank), `z(k+1)` the k-th after it; then
+`bit k = (z(k+1) + k) mod 2`, and the TOP stripe-bit is always 0 -- it is the
+implicit leading 1 of a `positive`.  ONE LAP IS `p -> p+1` with NO exceptions
+(1,493 consecutive laps, p = 2..1495, no gaps; the "spawn" is the carry out
+of the top).  So it takes `LapGlue.glue_neverqh` -- BCtr_28's closer -- with
+NO invariant, and the "~80 line mod-4 arithmetic layer" is ZERO lines.
+
+Sampled at the left record the tape is `1^lead 0 1^v0 0 1^v1 0 ...` and the
+encoding is a structural recursion on the positive:
+
+    pod p = p mod 2
+    venc 2 = [2], venc 3 = [3], venc m = (m + pod (m/2)) :: venc (m/2)
+    lead = 1 + pod p
+
+The lap is binary increment made physical.  `p` EVEN is the no-carry case and
+is a SINGLE 10-step window (`ruleA`) -- constant cost, no induction.  `p` ODD
+is the carry: `entry5 . outward . out6s . deposit . backsweep`.
+
+ALREADY IN THE FILE AND COMPILING:
+  - the machine, 9 single-step joints, 7 gadgets, BOTH deposit cases;
+  - `out6s` / `ret1s` / `bBs` / `lay` sweeps;
+  - `outward` -- one induction over the carried blocks (a carried block has
+    EVEN length 2a+2; `out6^a` eats it two cells at a time until two remain,
+    then `carry5` crosses the stripe.  Cost 6a+5);
+  - `Deb` / `backsweep` -- the return as ONE structural recursion over the
+    debris (`cross7` eats a stripe group, `ret1` a single 1, `exit1` lands on
+    the new left record), plus `lay_Deb`/`owdeb_Deb`, which prove the outward
+    phase lays exactly what the return can consume;
+  - `back_lay` / `back_owdeb` / `bta` -- pure list lemmas pushing `back`
+    through both shapes, so what the debris turns back into needs no machine;
+  - `venc` / `Cf15`, agreeing with the measured vectors on the nose.
+  The KERNEL confirms by vm_compute: boot `csteps tm_15 17 c0 = Cf15 2`;
+  `csteps tm_15 10 (Cf15 p) = Cf15 (p+1)` for p = 2,4,16; and the odd laps
+  at n = 34, 38, 70, 138, 270 for p = 3,5,7,15,31.
+
+WHAT IS LEFT -- one step, then the wiring:
+  1. the composition.  Needs the decomposition
+        wblocks (venc p) = owtape l (repeat S1 (2a+1) ++ S0 :: wblocks rest)
+     -- carried blocks are the EVEN ones, the deposit block is the first ODD
+     one (checked in the mirror: every odd p has one).  Cleanest as an
+     inductive relation `Scan bl l a rest` with two constructors, plus
+     `Scan bl l a rest -> wblocks bl = owtape l (...)` by induction on Scan,
+     and existence `forall p odd, exists l a rest, Scan (venc p) l a rest`.
+     Then the result side: show `back <debris> <tail>` is
+     `repeat S1 (1 + pod (p+1)) ++ S0 :: wblocks (venc (p+1))`, for which the
+     arithmetic fact is
+        venc (xO q)      -> venc (xI q)       : head +1, tail same   (rule A)
+        venc (xI q)      -> venc (xO (q+1))   : head +2 and tail +1 if q even,
+                                                head +0 and tail recurses if q odd
+  2. `LapGlue.glue_neverqh` at p0 = 2, boot (t = 17), visits (all four states
+     occur in the first handful of steps), then corruption tests,
+     `_CoqProject`, `counters_manifest.tsv`, closeout regen, `-j2` build.
+
+TOOLS (all green, run them first): `tools/counters/lap15.py` (rules, step
+counts, gadgets EXHAUSTIVELY over |L|,|R| <= 4, the counter reading, the
+closed form, `venc`) and `tools/counters/asm15.py` (replays the lap from the
+verified gadgets alone as pure list ops and diffs against the raw simulator;
+green for p = 2..1199).
+
+TRAPS PAID FOR ON THIS BRANCH, do not re-learn:
+  - rule B's branch is on the INDEX (`i < last` vs `i = last`), NOT on the
+    residue.  Fitting the reachable orbit alone gives the wrong rule.
+  - A SAMPLED gadget check is not a check.  The deposit passes a 42-context
+    sample and a naive window search and fails the exhaustive check on 496 of
+    961; it is a SWEEP (the bounce walks back over the laid 1s), not a window,
+    and splits into `dep0`/`dep2` by the symbol the bounce lands on.  `dep0`
+    goes through chd/ctl so the spawn is free.
+  - the mod-4 block-vector model and its `WInv4` invariant (earlier commits on
+    this branch) are TRUE but UNNECESSARY.  Do not port them.
+
+STATE: (4,2) holdouts 5 -> 4 unproven (`census_holdouts_kept.txt` n
+`closeout/frozen_unproven.txt`: fractal #3/#5, wave4 #15, tower #20);
+`D_remaining` 1,010 -> 1,009.  `census_cache --check` MATCH throughout
+(nothing under `theories/Census/` was touched).
+
+**Next: wave4 #15 (`1RB0RC_0LC1LB_0LD1LC_1RD0RA`) -- micro-lap already
+MEASURED, not yet transcribed.**  `tools/counters/probe15.py` (mirror) +
+`tools/counters/lap15.py` (checker, green over 1,495 anchors to t = 3e6).
+Same left-record move as #32: `(StC, ([], S0, 1^lead 0 1^v0 0 1^v1 0 ...))`,
+`lead` alternating 1/2, `v` frontier-first.  Rule A (`lead 1->2`) is
+`v[0] += 1` in a CONSTANT 10 steps; rule B (`lead 2->1`) is the mod-4 carry
+-- scan to the least `i` with `v[i] % 4 /= 0`, then `v[i] += 2, v[i+1] += 1`
+in `4*sum(v[0..i]) + 4i + 18`, or at the far end `v[i] += 1` and append `2`
+in `+22`.  All counts exact, 0 mismatches.
+
+**Trap, already paid for: rule B's branch is on the INDEX (`i < last` vs
+`i = last`), NOT on the residue.**  On the reachable orbit residue 1 only
+occurs with `i < last` and residue 3 only with `i = last`, so fitting the
+orbit alone gives "residue 1 -> deposit, residue 3 -> spawn", which is false.
+`[4,3,2]` stops at `i=1` with residue 3 and takes the INTERIOR branch, to
+`[4,5,3]`.  `lap15.py`'s `probe_off()` pins it.
+
+The safety invariant is SETTLED (verified on every anchor, inductive under
+the composite over 2,988 vectors): walk the vector with a running parity bit
+`p`; an even block is `0 mod 4`; an odd block is `1 mod 4` when `p` is even
+and `3 mod 4` when `p` is odd (flipping `p`); the LAST block is `2 mod 4` if
+`p` is odd, `3 mod 4` if `p` is even.  Equivalently -- and this IS `fp` in
+disguise, so the mod-2 layer does port -- the number of odd blocks is odd and
+the odd blocks alternate `1,3,1,3` mod 4.  It gives exactly what rule B
+needs: the scan finds a block that is not `0 mod 4`, and that block is odd.
+An even stop is not a third branch; measured, the machine then leaves the
+anchor family altogether.
+
+The tape gadgets are measured too (`lap15.py` `gadgets()`): eight single-step
+joints uniform through `chd`/`ctl`, plus `ruleA` as a SINGLE 10-step window
+(no induction -- that is why it is constant-cost), `entry5`, `out6`
+(eats three 1s, hands one back: net -2 per unit in 6 steps, so a run of
+length `2k+1` costs `6k` and leaves one 1 -- **that odd-length requirement is
+the tape-level reason the invariant is mod 4**), and `ret1` (1 step/cell
+back, giving rule B's 3+1 = 4 per cell).  LEFT TO DO: the deposit and
+carry-continue windows at the turnaround, then the assembly and the Coq.
+`wglue_neverqh` still needs no change.  `HOLDOUTS_MXDYS_SN.md` section 5b has
+the full table and sizes the other three.
+
 ## 2d. Wave-16 (2026-07-27) -- mxdys' S(n) claim, and FOUR holdouts boarded
 
 Full write-up: `docs/HOLDOUTS_MXDYS_SN.md`.  John relayed two claims from
