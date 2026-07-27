@@ -99,6 +99,57 @@ clean `.vo` state, `functional_extensionality_dep` only).  It also needed the
 anchor HEAD symbol, the anchor TAIL and the anchor's FAR side (a blank *cell*,
 not the empty *list*) to become parameters — the encoding alone was not enough.
 
+## 2e. Wave-17 (2026-07-27) -- double #32 boarded; the (4,2) holdouts are 4
+
+Full write-up: `docs/HOLDOUTS_MXDYS_SN.md` section 5b (kept as measured; the
+board confirmed it verbatim).  `theories/Machines/Counters/Double_32.v`.
+
+- **`1RB1LD_1RC0RB_1LA0RC_0LD0LA` (double #32) is a COMB COUNTER read at the
+  LEFT RECORD.**  BBB's macro anchor is head-on-rightmost-1 with comb count
+  `a = 2^j`, one lap `36k^2 + 29k - 4` steps -- a `Theta(k^2)` bounce, and
+  BBB's notes record an earlier `a = 2^j-1` guess as having TIMED OUT.
+  Sampled instead at the left record (head on the leftmost visited cell,
+  StA, reading blank) the machine is a rewriting system on `(001)^j` +
+  a block word, with three uniform rules R1/R2/R3 costing `8j+2m+5`,
+  `8j+5`, `8j+11`.  One turn of R1;R2;R3 grows the comb by ONE, in
+  `24j + 2m + 29` steps.  **The macro doubling falls out of iterating that;
+  it is never assumed, so the quadratic macro lap is never modelled.**  Same
+  move as blockdbl #11/#13/#28 and the two wrap machines: BBB's macro anchor
+  was the expensive reading and a finer phase makes one sweep a whole lap.
+- **The closer was free.**  `WaveCounter.wglue_neverqh` takes an ARBITRARY
+  anchor type with a total successor and a preserved invariant, which is
+  exactly `(j, block word)`.  No closed form for either component is needed
+  at any point and no new closer was written -- the second board (after the
+  six wave machines) to come off that one file unchanged.
+- **New in the transcription, worth reusing:** carry a repeated tape unit as
+  an ACCUMULATOR fixpoint (`comb j X = (001)^j ++ X`, plus its two phase
+  shifts `outp`/`inp`) instead of `rep u j ++ X`.  Every rewrite then stays
+  in cons form and reduces by `cbn`; the `rep_shift`/`app_assoc` junction
+  plumbing that the earlier counter boards spend real lines on disappears.
+  Cost: three three-line shift lemmas.
+- **Trap paid for (again): `change (csteps tm 1 X) with (Some Y)` leaves an
+  unreduced `match` and the next `rewrite` cannot find its subterm.**  State
+  a one-step lemma and `rewrite` it.  Second trap: `replace (S k) with (1+k)`
+  hits EVERY `S k` in the goal, including the one inside `repeat _ (S k)`
+  that `cbn` then cannot reduce -- `cbn` first, `replace` second.
+- **Method held: nothing was written in Coq until it passed a CTape-faithful
+  Python mirror.**  `tools/counters/gadgets32.py` (the nine gadgets) was
+  green from the previous session; `tools/counters/rules32.py` is new and
+  covers the four sweep inductions, R1/R2/R3 and the composed lap in the
+  exact form the Coq states them, plus a 40-lap orbit replay.  The one thing
+  the traces had wrong on paper: R1/R2 use `rc5^(j-1)`, not `rc5^(j-2)`.
+
+STATE: (4,2) holdouts 5 -> 4 unproven (`census_holdouts_kept.txt` n
+`closeout/frozen_unproven.txt`: fractal #3/#5, wave4 #15, tower #20);
+`D_remaining` 1,010 -> 1,009.  `census_cache --check` MATCH throughout
+(nothing under `theories/Census/` was touched).
+
+**Next: wave4 #15 (`1RB0RC_0LC1LB_0LD1LC_1RD0RA`).**  It is the mod-4 wave
+odometer and `WaveCounter.v`'s header already names it as a customer, so the
+port is the mod-4 arithmetic layer replacing `carry`/`nextf`/`fp`/`pbits`/
+`WInv`/`carry_ok` (~80 lines) plus the per-machine lap.  No new closer there
+either.  `HOLDOUTS_MXDYS_SN.md` section 5b sizes it and the other three.
+
 ## 2d. Wave-16 (2026-07-27) -- mxdys' S(n) claim, and FOUR holdouts boarded
 
 Full write-up: `docs/HOLDOUTS_MXDYS_SN.md`.  John relayed two claims from

@@ -43,13 +43,13 @@ transition usage counts** over `S(n) -->+ S(n+1)` are C-finite.
 | `1RB---_1RC0RB_0LC0RD_1LD1LB` | wrap-QH | `0 1^(2^(n+2)-1)`, StB | ✔ | 8 | **this session** |
 | `1RB0LD_1RC0RC_1LA1RB_0LC0LD` | blockdbl #11 | bouncer counter (§3) | ✔ | 8 | **this session** |
 | `1RB0RB_1LC1RA_1RA0LD_0LB0LD` | blockdbl #13 | bouncer counter (§3) | ✔ | 8 | **this session** |
-| `1RB1LC_1LC1RD_1LA0LC_0RD0RB` | blockdbl #28 | `0^(2n+2) 1^(2^(n+1)-1)`, StC | ✔ | 8 | no |
+| `1RB1LC_1LC1RD_1LA0LC_0RD0RB` | blockdbl #28 | `0^(2n+2) 1^(2^(n+1)-1)`, StC | ✔ | 8 | yes (`BCtr_28.v`) |
 | `1RB0LA_1LC0RD_0LB1LA_0RB1LA` | fractal #3 | `1^(2^n) 0^(2^n+1)`, StB | ✔ | 9 | no |
 | `1RB0LA_1LC1RD_0LC1LA_0RD0RB` | fractal #5 | `1^(2^n) 0^(2^n)`, StB | ✔ | 9 | no |
-| `1RB1RA_0RC0RB_1LC1LD_0RA0LA` | v4-irules | `1^n 0 1^(3^(n+1))`, StA | ✔ | 9 | no |
+| `1RB1RA_0RC0RB_1LC1LD_0RA0LA` | v4-irules | `1^n 0 1^(3^(n+1))`, StA | ✔ | 9 | yes (`Bnc3.v`) |
 | `1RB0RC_0LC1LB_0LD1LC_1RD0RA` | wave4 #15 | — | search fails | — | no |
 | `1RB0RD_1LC1LB_1RA0LB_1LC1RA` | tower #20 | — | search fails | — | no |
-| `1RB1LD_1RC0RB_1LA0RC_0LD0LA` | double #32 | — | search fails | — | no |
+| `1RB1LD_1RC0RB_1LA0RC_0LD0LA` | double #32 | — | search fails | — | yes (`Double_32.v`) |
 
 Two examples of the transition-count fits, verbatim from the tool:
 
@@ -171,12 +171,22 @@ the next anchor (`t = 2660..2748` in the w=2→3 cycle).
 (`0^(2n+2) 1^(2^(n+1)-1)`) is a doubling block against a linear wall, i.e.
 the same two-level pattern again.
 
-## 5b. The remaining five, sized
+## 5b. The remaining four, sized
 
-Six of the eleven are boarded (section 2).  What follows is the measured
-state of the other five, in the order they should be attempted.
+Seven of the eleven are boarded (section 2).  What follows is the measured
+state of the other four, in the order they should be attempted — preceded by
+#32, kept in full because it is the worked example the remaining four are
+sized against.
 
-### double #32 — `1RB1LD_1RC0RB_1LA0RC_0LD0LA`
+### double #32 — `1RB1LD_1RC0RB_1LA0RC_0LD0LA` — **BOARDED**
+
+`theories/Machines/Counters/Double_32.v`.  `Print Assumptions
+nqh_1RB1LD_1RC0RB_1LA0RC_0LD0LA` = `functional_extensionality_dep` only.
+Everything below is the reconnaissance it was written from; it held up
+verbatim, so it is left as measured.  The one correction the transcription
+forced: R1 and R2 traverse `rc5^(j-1)`, not `rc5^(j-2)` — the table's
+`bt4 . rc5^(j-2) . rc5` for R2 is the same thing spelled differently, and
+the step counts were right either way.  R3 really is `rc5^(j-2)`.
 
 **The anchor question is settled.**  BBB's cert says the clean event is
 head-on-rightmost-1 with comb count `a = 2^j`, `a -> 2a`, and records that an
@@ -203,9 +213,8 @@ so `k = 2^n` doubles and `m = 2n+4`, exactly BBB's `a -> 2a`, `z -> z+2`.
 One macro lap is `36k^2 + 29k - 4` steps (fitted exactly, n = 0..4) — the
 `Theta(m^2)` quadratic bounce.
 
-**What is NOT yet done, and it is the whole remaining job.**  The lap is
-`Theta(k^2)`, so it needs the same inner-loop treatment as the wrap
-bouncers.  The natural micro-anchor is the LEFT RECORD (head at the leftmost
+**Why the macro lap never had to be modelled.**  That lap is `Theta(k^2)`,
+so it needs the same inner-loop treatment as the wrap bouncers.  The natural micro-anchor is the LEFT RECORD (head at the leftmost
 cell, StA, reading blank), which occurs every `O(k)` steps — three of them per
 increment of the comb prefix:
 
@@ -282,7 +291,7 @@ R1 = bt4 . rc5^(j-2) . [A0 . b1^(m+1) . B0 . C0]
 
 Nothing outside this list is needed.
 
-**What remains is Coq, and the closer is free.**  `WaveCounter.wglue_neverqh`
+**The closer was free.**  `WaveCounter.wglue_neverqh`
 takes an ARBITRARY anchor type with a total successor and a preserved
 invariant, which is exactly this: `A = (j, block word)`, `nextA` = the
 rewriting above, `Inv` = the shape/size side conditions (`m >= 4`, `p >= 2`,
@@ -305,6 +314,18 @@ where `norm` merges any block with a zero-length `0`-run into the previous
 = wden ((a,b+c) :: t)`).  The invariant that survives it is: `L = (1,m) :: rest`
 with `m` even and `>= 4`, and every block of `rest` having both runs even and
 `>= 2`.  Checked case by case against the four normalisation branches.
+
+**As built.**  The abstract state is `nat * list blk` and `norm` is two
+applications of a one-junction `nrm`, so the four branches above fall out of
+`nrm ((1,4) :: nrm ((m-4,2) :: dec2 rest))` rather than needing a case split
+in the definition.  The comb is carried by three accumulator fixpoints
+(`comb`/`outp`/`inp` = `(001)^j`, `(010)^j`, `(101)^j`, each taking its tail
+as an argument), which keeps every rewrite in cons form — the `rep`-algebra
+junction rewrites that the earlier counter boards spend lines on do not
+appear at all.  The negative controls are in
+`theories/Tests/CountersDbl_Corruption.v`; the differential check for the
+sweeps, the three rules and the composed lap is `tools/counters/rules32.py`,
+which is `gadgets32.py` one level up.
 
 ### wave4 #15 — `1RB0RC_0LC1LB_0LD1LC_1RD0RA`
 
@@ -383,6 +404,9 @@ gcc -O2 -o fast_sn tools/counters/fast_sn.c    # the v4-irules row
 | `tools/counters/sn_scan.py` | record-shape S(n) search over the 11 |
 | `tools/counters/sim.py`, `recs.py` | plain (4,2) simulator + record extraction |
 | `tools/counters/fast_sn.c` | C simulator for the `Θ(9^n)` anchors |
+| `tools/counters/probe32b.py` | CTape-faithful mirror for double #32 |
+| `tools/counters/gadgets32.py` | differential check for #32's nine step gadgets |
+| `tools/counters/rules32.py` | differential check for #32's sweeps, rules and lap |
 
 **Budget matters**: a family whose anchors are `Θ(4^n)` apart needs ~4M steps
 to show 8 laps, and the fitter *refuses* to certify without slack — so a
