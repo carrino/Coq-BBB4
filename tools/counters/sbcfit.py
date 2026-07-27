@@ -101,8 +101,16 @@ def cfg(q, kind, lblocks, rblocks, ltail, rtail, anchor):
             'ltail': ltail, 'rtail': rtail}
 
 
-def check_rule(tab, lhs, rhs, plus=False, maxsteps=200000):
-    """`lhs -->* rhs` (or `-->+`), provable by concrete stepping alone."""
+def check_rule(tab, lhs, rhs, plus=False, maxsteps=4000):
+    """`lhs -->* rhs` (or `-->+`), provable by concrete stepping alone.
+
+    The cap matters for the two rules whose tail is `const 0` (RL2 and
+    L_overflow): those may legitimately leave the written window, so a junk
+    candidate just runs off into blank tape forever.  4000 is a 100x margin --
+    over all 416 upstream certificates the worst rule on any machine is
+    R_reset at 41 steps, L_overflow at 29, everything else <= 16.  Erring low
+    can only cost a hit, never create a false one.
+    """
     q, head = lhs['q'], lhs['head']
     tape = dict(lhs['tape'])
     lo, hi = lhs['lo'], lhs['hi']
