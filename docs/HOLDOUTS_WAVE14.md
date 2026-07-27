@@ -419,6 +419,35 @@ Note also the accumulator is `2i+2`, not `verify.c`'s `t = 2j-1` -- same
 at 2 and its anchor is the shifted one.  Take the anchor from the blank-tape
 run, not from the cert.
 
+### LEAD: #13 may be a bbchallenge "sync bouncer counter"
+
+John's reading, https://wiki.bbchallenge.org/wiki/Sync_bouncer_counter .
+The wiki's defining shape: both a bouncer and a counter on the tape with the
+counter's LOWEST DIGIT ADJACENT to the bouncer; each period the counter is
+incremented and the bouncer completes one period; on overflow the bouncer
+CHANGES STRUCTURE and changes back before the next overflow.
+
+Consistent with what is measured here -- `1^m 0 1^t` is two adjacent regions,
+the oscillation is genuine bouncing (~4.4 steps per turnaround, envelope
+marching +1 per pass), and `m -> 2m` is an overflow-like event.  NOT yet
+tested, and these are the properties that actually define the class:
+
+  - which region is the counter and which the bouncer;
+  - whether exactly one counter increment happens per bouncer period;
+  - whether the bouncer restructures at overflow and restores before the next.
+
+All three are cheap to check: track `lo`/`hi` per step (do NOT infer
+turnarounds from direction flips -- the period-2 oscillation makes that
+measurement collapse, as it did on the first attempt) and count increments
+against bouncer periods across one lap.
+
+**THE ACTIONABLE PART:** that page links a **Rocq proof** of non-halting for
+typical behaviour in this class.  NGramHist is exhausted on #13 (S3d) and the
+whole blockdbl family is open, so an existing Coq proof pattern is worth more
+than any further sweep.  Caveat: the wiki's two examples are 6-state, so the
+class is studied in BB(6) -- the SHAPE may transfer to (4,2) even where the
+proof does not.
+
 **#11 and #13 are siblings of each other** (`perm=(2,0,1,3)`, no mirror; the
 relabelling moves `StA`, so it is a transcription rather than a transport --
 the `Wave_6` -> `Wave_24` route).  So blockdbl is really ONE hand proof plus
