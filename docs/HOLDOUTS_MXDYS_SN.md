@@ -356,6 +356,41 @@ them the glue:
 2. the per-machine lap — #15's rules touch 5 cells and fire a fixed 7-of-8
    set (rule A) or all 8 (rule B), so this is the bulk.
 
+**The micro-lap is now MEASURED** (`tools/counters/lap15.py`, green over 1,495
+anchors out to `t = 3,000,000`).  Same move as #32: sample at the LEFT RECORD
+— head on the leftmost visited cell, `StC`, reading blank, left list empty —
+and the tape is
+
+```
+(StC, ([], S0, 1^lead 0 1^v0 0 1^v1 0 ... 0 1^vn 0))
+```
+
+with `lead` alternating 1/2 and `v` the block vector frontier-first.  Two
+rules alternate, and all three step counts are exact:
+
+| rule | condition | rewriting | steps |
+|---|---|---|---:|
+| A | `lead = 1` | `lead := 2`, `v[0] += 1` | `10` |
+| B1 | `lead = 2`, `i` least with `v[i] % 4 /= 0`, `v[i] % 4 = 1` | `v[i] += 2`, `v[i+1] += 1` | `4*sum(v[0..i]) + 4i + 18` |
+| B3 | same, `v[i] % 4 = 3` | `v[i] += 1`, append `2` | `4*sum(v[0..i]) + 4i + 22` |
+
+Rule B is the mod-4 `carry`: the scan walks until a block is not `0 mod 4`,
+deposits there, and the residue-3 case is the SPAWN (a new length-2 block at
+the far end), exactly as the mod-2 family's all-even case spawns a length-1
+block.  Rule A is constant-cost and touches only the frontier, so **the whole
+`8j`-style traversal cost lives in rule B alone**.
+
+**What the safety invariant has to give**, and the one trap in it: the scan
+must not run off the end, the residue at the stop must never be `2` (that is
+the case that would make the deposit ill-defined), and a residue-3 stop must
+be at the LAST index (so the spawn is always at the far end).  All three hold
+over the measured orbit.  The trap: the invariant is a statement about the
+FIRST nonzero residue only — interior residue 3 *does* occur (the residue
+word `1312` is reachable), it is simply never reached by the scan.  So the
+mod-2 file's `pbits`/`fp` (a global XOR over all blocks) does not port
+directly; the mod-4 predicate has to be prefix-directed.  That is the one
+piece of design left before the lap transcribes.
+
 ### tower #20 — `1RB0RD_1LC1LB_1RA0LB_1LC1RA`
 
 Not re-measured this session; BBB's decode is complete and is the plan of
@@ -407,6 +442,8 @@ gcc -O2 -o fast_sn tools/counters/fast_sn.c    # the v4-irules row
 | `tools/counters/probe32b.py` | CTape-faithful mirror for double #32 |
 | `tools/counters/gadgets32.py` | differential check for #32's nine step gadgets |
 | `tools/counters/rules32.py` | differential check for #32's sweeps, rules and lap |
+| `tools/counters/probe15.py` | CTape-faithful mirror for wave4 #15 |
+| `tools/counters/lap15.py` | measured micro-lap + safety facts for #15 |
 
 **Budget matters**: a family whose anchors are `Θ(4^n)` apart needs ~4M steps
 to show 8 laps, and the fitter *refuses* to certify without slack — so a

@@ -144,11 +144,25 @@ STATE: (4,2) holdouts 5 -> 4 unproven (`census_holdouts_kept.txt` n
 `D_remaining` 1,010 -> 1,009.  `census_cache --check` MATCH throughout
 (nothing under `theories/Census/` was touched).
 
-**Next: wave4 #15 (`1RB0RC_0LC1LB_0LD1LC_1RD0RA`).**  It is the mod-4 wave
-odometer and `WaveCounter.v`'s header already names it as a customer, so the
-port is the mod-4 arithmetic layer replacing `carry`/`nextf`/`fp`/`pbits`/
-`WInv`/`carry_ok` (~80 lines) plus the per-machine lap.  No new closer there
-either.  `HOLDOUTS_MXDYS_SN.md` section 5b sizes it and the other three.
+**Next: wave4 #15 (`1RB0RC_0LC1LB_0LD1LC_1RD0RA`) -- micro-lap already
+MEASURED, not yet transcribed.**  `tools/counters/probe15.py` (mirror) +
+`tools/counters/lap15.py` (checker, green over 1,495 anchors to t = 3e6).
+Same left-record move as #32: `(StC, ([], S0, 1^lead 0 1^v0 0 1^v1 0 ...))`,
+`lead` alternating 1/2, `v` frontier-first.  Rule A (`lead 1->2`) is
+`v[0] += 1` in a CONSTANT 10 steps; rule B (`lead 2->1`) is the mod-4 carry
+-- scan to the least `i` with `v[i] % 4 /= 0`, then `v[i] += 2, v[i+1] += 1`
+in `4*sum(v[0..i]) + 4i + 18`, or on residue 3 `v[i] += 1` and append `2` in
+`+22`.  All three counts exact, 0 mismatches.
+
+What is LEFT is the safety invariant, and it has one trap that stops the
+mod-2 layer porting verbatim: the facts needed are "the scan does not run off
+the end", "the residue at the stop is never 2", "residue 3 only at the last
+index" -- but these are about the FIRST nonzero residue only.  Interior
+residue 3 is reachable (residue word `1312`), so `pbits`/`fp` (a global XOR
+over all blocks) has no direct mod-4 analogue; the predicate has to be
+prefix-directed.  Design that, and the lap transcribes off `lap15.py`.
+`wglue_neverqh` still needs no change.  `HOLDOUTS_MXDYS_SN.md` section 5b has
+the table and sizes the other three.
 
 ## 2d. Wave-16 (2026-07-27) -- mxdys' S(n) claim, and FOUR holdouts boarded
 
