@@ -371,25 +371,56 @@ rules alternate, and all three step counts are exact:
 | rule | condition | rewriting | steps |
 |---|---|---|---:|
 | A | `lead = 1` | `lead := 2`, `v[0] += 1` | `10` |
-| B1 | `lead = 2`, `i` least with `v[i] % 4 /= 0`, `v[i] % 4 = 1` | `v[i] += 2`, `v[i+1] += 1` | `4*sum(v[0..i]) + 4i + 18` |
-| B3 | same, `v[i] % 4 = 3` | `v[i] += 1`, append `2` | `4*sum(v[0..i]) + 4i + 22` |
+| B | `lead = 2`, `i` least with `v[i] % 4 /= 0`, `i < last` | `v[i] += 2`, `v[i+1] += 1` | `4*sum(v[0..i]) + 4i + 18` |
+| B' | same, `i = last` | `v[i] += 1`, append `2` | `4*sum(v[0..i]) + 4i + 22` |
 
-Rule B is the mod-4 `carry`: the scan walks until a block is not `0 mod 4`,
-deposits there, and the residue-3 case is the SPAWN (a new length-2 block at
-the far end), exactly as the mod-2 family's all-even case spawns a length-1
-block.  Rule A is constant-cost and touches only the frontier, so **the whole
+Rule B is the mod-4 `carry`: the scan walks until a block is not `0 mod 4`
+and deposits there; at the far end the deposit is a SPAWN (a new length-2
+block), exactly as the mod-2 family's all-even case spawns a length-1 block.
+Rule A is constant-cost and touches only the frontier, so **the whole
 `8j`-style traversal cost lives in rule B alone**.
 
-**What the safety invariant has to give**, and the one trap in it: the scan
-must not run off the end, the residue at the stop must never be `2` (that is
-the case that would make the deposit ill-defined), and a residue-3 stop must
-be at the LAST index (so the spawn is always at the far end).  All three hold
-over the measured orbit.  The trap: the invariant is a statement about the
-FIRST nonzero residue only — interior residue 3 *does* occur (the residue
-word `1312` is reachable), it is simply never reached by the scan.  So the
-mod-2 file's `pbits`/`fp` (a global XOR over all blocks) does not port
-directly; the mod-4 predicate has to be prefix-directed.  That is the one
-piece of design left before the lap transcribes.
+**Trap, and it cost a wrong rule once:** the branch is on the INDEX
+(`i < last` vs `i = last`), *not* on the residue.  On the reachable orbit
+residue 1 only ever occurs with `i < last` and residue 3 only with
+`i = last`, so fitting the orbit alone suggests "residue 1 → deposit,
+residue 3 → spawn" — which is false.  Probing off-orbit settles it: `[4,3,2]`
+stops at `i = 1` with residue 3 and goes to `[4,5,3]`, the *interior*
+rewriting.  `lap15.py`'s `probe_off()` keeps that pinned.
+
+**The safety invariant is settled too.**  What rule B needs is that the scan
+finds a block that is not `0 mod 4` and that the block it finds is ODD (an
+even stop is not a third branch — measured, the machine then leaves the
+anchor family altogether).  The predicate that gives it, verified on every
+anchor and inductive under the composite over 2,988 vectors:
+
+> walk the vector with a running parity bit `p`.  An even block must be
+> `0 mod 4`; an odd block must be `1 mod 4` when `p` is even and `3 mod 4`
+> when `p` is odd (flipping `p`); the LAST block is `2 mod 4` if `p` is odd
+> and `3 mod 4` if `p` is even.
+
+Equivalently — and this is the mod-2 family's `fp` in disguise — **the number
+of odd blocks is odd**, and the odd blocks read left-to-right alternate
+`1, 3, 1, 3` mod 4.  So `pbits`/`fp` does port after all, once the alternation
+is carried as a running bit rather than a global XOR.
+
+**The tape-level pieces are measured as well** (`lap15.py`'s `gadgets()`):
+eight single-step joints uniform in `L`/`R` through `chd`/`ctl`, plus
+
+```
+ruleA   (StC,([],S0,   S1::S0::S1::R)) -10-> (StC,([],S0, S1::S1::S0::S1::S1::R))
+entry5  (StC,([],S0,   S1::S1::S0::R))  -5-> (StC,([S0;S0;S1;S1],S0,R))
+out6    (StC,(S0::L,S0,S1::S1::S1::R))  -6-> (StC,(S0::S1::S1::L,S0,S1::R))
+ret1    (StC,(S1::L,S1,R))              -1-> (StC,(L,S1,S1::R))
+```
+
+Rule A is a SINGLE uniform window — no induction at all, which is why it is
+constant-cost.  `out6` eats three `1`s and hands one back (net −2 per unit, 6
+steps), so the outward sweep over a run of length `2k+1` is `6k` steps and
+leaves exactly one `1`; **that odd-length requirement is the tape-level reason
+the invariant is mod 4 and not mod 2**.  `ret1` is the 1-step/cell return,
+giving rule B's `3 + 1 = 4` steps per cell.  What is left is the deposit and
+carry-continue windows at the turnaround, then the assembly.
 
 ### tower #20 — `1RB0RD_1LC1LB_1RA0LB_1LC1RA`
 

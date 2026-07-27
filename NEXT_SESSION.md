@@ -151,18 +151,37 @@ Same left-record move as #32: `(StC, ([], S0, 1^lead 0 1^v0 0 1^v1 0 ...))`,
 `lead` alternating 1/2, `v` frontier-first.  Rule A (`lead 1->2`) is
 `v[0] += 1` in a CONSTANT 10 steps; rule B (`lead 2->1`) is the mod-4 carry
 -- scan to the least `i` with `v[i] % 4 /= 0`, then `v[i] += 2, v[i+1] += 1`
-in `4*sum(v[0..i]) + 4i + 18`, or on residue 3 `v[i] += 1` and append `2` in
-`+22`.  All three counts exact, 0 mismatches.
+in `4*sum(v[0..i]) + 4i + 18`, or at the far end `v[i] += 1` and append `2`
+in `+22`.  All counts exact, 0 mismatches.
 
-What is LEFT is the safety invariant, and it has one trap that stops the
-mod-2 layer porting verbatim: the facts needed are "the scan does not run off
-the end", "the residue at the stop is never 2", "residue 3 only at the last
-index" -- but these are about the FIRST nonzero residue only.  Interior
-residue 3 is reachable (residue word `1312`), so `pbits`/`fp` (a global XOR
-over all blocks) has no direct mod-4 analogue; the predicate has to be
-prefix-directed.  Design that, and the lap transcribes off `lap15.py`.
+**Trap, already paid for: rule B's branch is on the INDEX (`i < last` vs
+`i = last`), NOT on the residue.**  On the reachable orbit residue 1 only
+occurs with `i < last` and residue 3 only with `i = last`, so fitting the
+orbit alone gives "residue 1 -> deposit, residue 3 -> spawn", which is false.
+`[4,3,2]` stops at `i=1` with residue 3 and takes the INTERIOR branch, to
+`[4,5,3]`.  `lap15.py`'s `probe_off()` pins it.
+
+The safety invariant is SETTLED (verified on every anchor, inductive under
+the composite over 2,988 vectors): walk the vector with a running parity bit
+`p`; an even block is `0 mod 4`; an odd block is `1 mod 4` when `p` is even
+and `3 mod 4` when `p` is odd (flipping `p`); the LAST block is `2 mod 4` if
+`p` is odd, `3 mod 4` if `p` is even.  Equivalently -- and this IS `fp` in
+disguise, so the mod-2 layer does port -- the number of odd blocks is odd and
+the odd blocks alternate `1,3,1,3` mod 4.  It gives exactly what rule B
+needs: the scan finds a block that is not `0 mod 4`, and that block is odd.
+An even stop is not a third branch; measured, the machine then leaves the
+anchor family altogether.
+
+The tape gadgets are measured too (`lap15.py` `gadgets()`): eight single-step
+joints uniform through `chd`/`ctl`, plus `ruleA` as a SINGLE 10-step window
+(no induction -- that is why it is constant-cost), `entry5`, `out6`
+(eats three 1s, hands one back: net -2 per unit in 6 steps, so a run of
+length `2k+1` costs `6k` and leaves one 1 -- **that odd-length requirement is
+the tape-level reason the invariant is mod 4**), and `ret1` (1 step/cell
+back, giving rule B's 3+1 = 4 per cell).  LEFT TO DO: the deposit and
+carry-continue windows at the turnaround, then the assembly and the Coq.
 `wglue_neverqh` still needs no change.  `HOLDOUTS_MXDYS_SN.md` section 5b has
-the table and sizes the other three.
+the full table and sizes the other three.
 
 ## 2d. Wave-16 (2026-07-27) -- mxdys' S(n) claim, and FOUR holdouts boarded
 

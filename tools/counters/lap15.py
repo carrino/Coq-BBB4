@@ -11,28 +11,45 @@ vector, frontier-first.  Two rules alternate:
 
   A  lead 1 -> 2:  v[0] += 1                                   10 steps
   B  lead 2 -> 1:  let i = least index with v[i] mod 4 /= 0
-       v[i] mod 4 = 1:  v[i] += 2, v[i+1] += 1   4*sum(v[..i]) + 4i + 18
-       v[i] mod 4 = 3:  v[i] += 1, append 2      4*sum(v[..i]) + 4i + 22
+       i < last:  v[i] += 2, v[i+1] += 1         4*sum(v[..i]) + 4i + 18
+       i = last:  v[i] += 1, append 2            4*sum(v[..i]) + 4i + 22
 
 Rule B is the mod-4 analogue of `WaveCounter.carry`: the scan walks the
-vector until it finds a block that is not 0 mod 4, deposits there, and the
-residue-3 case is the SPAWN (a new length-2 block at the far end) exactly as
-the mod-2 family's all-even case spawns a length-1 block.
+vector until it finds a block that is not 0 mod 4 and deposits there; at the
+far end that deposit is a SPAWN (a new length-2 block), exactly as the mod-2
+family's all-even case spawns a length-1 block.
+
+TRAP, paid for once already: the branch is on the INDEX (`i < last` vs
+`i = last`), NOT on the residue.  On the reachable orbit residue 1 only ever
+occurs with `i < last` and residue 3 only with `i = last`, so fitting the
+orbit alone suggests "residue 1 -> deposit, residue 3 -> spawn" -- and that
+is wrong.  Probing off-orbit vectors settles it: `[4,3,2]` stops at `i=1`
+with residue 3 and goes to `[4,5,3]`, the INTERIOR rewriting.  `probe_off()`
+below keeps that honest.
 
 Measured facts this file checks, over every anchor out to the step budget:
 
   * both rules and all three step counts, exactly (0 mismatches to t = 4e5);
   * the scan never runs off the end (some block is /= 0 mod 4);
-  * the residue at the stop is never 2 -- residue 2 is what would make the
-    deposit ill-defined, and it is what the safety invariant has to exclude;
-  * a residue-3 stop is always at the LAST index, so the spawn is always at
-    the far end.
+  * the block at the stop is ODD.  An even stop (residue 2) is what the
+    safety invariant has to exclude -- measured, the machine then leaves the
+    anchor family altogether rather than taking either branch.
 
-Those last three are what the Coq invariant must imply -- the mod-4
-replacement for `pbits`/`fp`/`carry_ok`/`WInv` in `theories/Counters/
-WaveCounter.v`.  NOTE the invariant is a statement about the FIRST nonzero
-residue only: interior residue 3 does occur (e.g. the residue word `1312`),
-it is simply never reached by the scan.
+The TAPE-level pieces are checked too (`gadgets()` below), in the exact form
+Coq will state them:
+
+  8 single-step joints, each uniform in L and R through chd/ctl;
+  ruleA   (StC,([],S0,   S1::S0::S1::R)) -10-> (StC,([],S0, S1::S1::S0::S1::S1::R))
+  entry5  (StC,([],S0,   S1::S1::S0::R))  -5-> (StC,([S0;S0;S1;S1],S0,R))
+  out6    (StC,(S0::L,S0,S1::S1::S1::R))  -6-> (StC,(S0::S1::S1::L,S0,S1::R))
+  ret1    (StC,(S1::L,S1,R))              -1-> (StC,(L,S1,S1::R))
+
+Rule A is a SINGLE uniform window -- no induction at all, which is why it is
+constant-cost.  `out6` consumes three 1s and hands one back (net -2 per unit,
+6 steps), so the outward sweep over a run of length 2k+1 is 6k steps and
+leaves exactly one 1 -- and that ODD-length requirement is the tape-level
+reason the invariant is mod 4 rather than mod 2.  `ret1` is the 1-step/cell
+return, giving the 3+1 = 4 steps per cell in rule B's cost.
 
 UNTRUSTED, like everything under tools/.  Usage: `python3 lap15.py [budget]`.
 """
@@ -84,13 +101,117 @@ def nextA(lead, v):
         return 2, [v[0] + 1] + v[1:], 10
     i, r = stop(v)
     assert i is not None, ('carry ran off the end', v)
-    assert r != 2, ('residue 2 at the stop', v)
+    assert r % 2 == 1, ('the block at the stop is even', v)
     base = 4 * sum(v[:i + 1]) + 4 * i
-    if r == 1:
-        assert i + 1 < len(v), ('residue 1 at the last index', v)
+    if i < len(v) - 1:
         return 1, v[:i] + [v[i] + 2, v[i + 1] + 1] + v[i + 2:], base + 18
-    assert i == len(v) - 1, ('residue 3 away from the last index', v)
     return 1, v[:i] + [v[i] + 1, 2], base + 22
+
+
+def WInv4(v, p=0):
+    """The safety invariant: walk the vector with a running parity bit.
+
+    An even block must be 0 mod 4; an odd block must be 1 mod 4 when the
+    parity so far is even and 3 mod 4 when it is odd; and the LAST block is
+    2 mod 4 if the parity so far is odd, 3 mod 4 if it is even.  Equivalently
+    (and this is the mod-2 family's `fp` in disguise): the number of ODD
+    blocks is ODD, and the odd blocks read left to right alternate 1, 3, 1, 3
+    mod 4.  It implies exactly what rule B needs -- the scan finds a block
+    that is not 0 mod 4, and that block is odd, so the deposit is defined.
+    """
+    if not v:
+        return False
+    for k, x in enumerate(v):
+        if k == len(v) - 1:
+            return x % 4 == (2 if p else 3)
+        if x % 2:
+            if x % 4 != (3 if p else 1):
+                return False
+            p ^= 1
+        elif x % 4 != 0:
+            return False
+    return False
+
+
+def probe_off():
+    """Off-orbit vectors: the branch is the index, and an even stop dies."""
+    def anchor(v):
+        R = [S1, S1, S0]
+        for x in v:
+            R += [S1] * x + [S0]
+        return (C, ([], S0, R))
+
+    def nxt(c, cap=8000):
+        for t in range(1, cap):
+            c = cstep(c)
+            if c is None:
+                return None, None
+            q, (L, h, R) = c
+            if q == C and L == [] and h == S0 and R and R[0] == S1:
+                b = blocks(R)
+                return t, (b[0], b[1:])
+        return None, None
+    bad = []
+    # residue 3 at an INTERIOR stop takes the interior branch, not the spawn
+    for v, want in [([4, 3, 2], [4, 5, 3]), ([3, 4, 2], [5, 5, 2]),
+                    ([8, 3, 2], [8, 5, 3]), ([3, 2], [5, 3]),
+                    ([4, 4, 5], [4, 4, 6, 2]), ([4, 4, 3], [4, 4, 4, 2])]:
+        _, r = nextA(2, v)[0:1], None
+        nl, nv, n = nextA(2, v)
+        t, got = nxt(anchor(v))
+        if got is None or got[1] != want or nv != want or t != n:
+            bad.append('off-orbit %s -> %s (predicted %s, %s steps)' % (v, got, nv, n))
+    # an EVEN stop leaves the anchor family: no next left record at all
+    for v in [[4, 2], [4, 4, 2], [2, 4, 2], [6, 4, 2], [4, 6, 2], [4, 4, 4]]:
+        t, got = nxt(anchor(v))
+        if t is not None:
+            bad.append('even stop %s unexpectedly returned to an anchor' % v)
+    return bad
+
+
+def gadgets():
+    """The tape-level windows, each uniform in the surrounding tape."""
+    from probe15 import chd, ctl
+    Ls = [[], [S1], [S0, S1], [S1, S1, S0, S0, S1], [S0, S0, S1, S1, S0, S1]]
+    Rs = [[], [S1], [S0], [S1, S1, S0], [S0, S1, S1, S0, S1], [S1, S0, S1, S1, S0]]
+    bad = []
+
+    def T(n, c):
+        for _ in range(n):
+            c = cstep(c)
+            if c is None:
+                return None
+        return c
+
+    def chk(nm, n, mk, want):
+        for L in Ls:
+            for R in Rs:
+                if T(n, mk(L, R)) != want(L, R):
+                    bad.append('%s (L=%s R=%s)' % (nm, L, R))
+                    return
+    chk('cD', 1, lambda L, R: (C, (L, S0, R)),
+        lambda L, R: (D, (ctl(L), chd(L), [S0] + R)))
+    chk('dR', 1, lambda L, R: (D, (L, S0, R)),
+        lambda L, R: (D, ([S1] + L, chd(R), ctl(R))))
+    chk('dA', 1, lambda L, R: (D, (L, S1, R)),
+        lambda L, R: (A, ([S0] + L, chd(R), ctl(R))))
+    chk('aB', 1, lambda L, R: (A, (L, S0, R)),
+        lambda L, R: (B, ([S1] + L, chd(R), ctl(R))))
+    chk('aC', 1, lambda L, R: (A, (L, S1, R)),
+        lambda L, R: (C, ([S0] + L, chd(R), ctl(R))))
+    chk('bB', 1, lambda L, R: (B, ([S1] + L, S1, R)),
+        lambda L, R: (B, (L, S1, [S1] + R)))
+    chk('bC', 1, lambda L, R: (B, ([S1] + L, S0, R)),
+        lambda L, R: (C, (L, S1, [S0] + R)))
+    chk('ret1', 1, lambda L, R: (C, ([S1] + L, S1, R)),
+        lambda L, R: (C, (L, S1, [S1] + R)))
+    chk('ruleA', 10, lambda L, R: (C, ([], S0, [S1, S0, S1] + R)),
+        lambda L, R: (C, ([], S0, [S1, S1, S0, S1, S1] + R)))
+    chk('entry5', 5, lambda L, R: (C, ([], S0, [S1, S1, S0] + R)),
+        lambda L, R: (C, ([S0, S0, S1, S1], S0, R)))
+    chk('out6', 6, lambda L, R: (C, ([S0] + L, S0, [S1, S1, S1] + R)),
+        lambda L, R: (C, ([S0, S1, S1] + L, S0, [S1] + R)))
+    return bad
 
 
 def main():
@@ -119,6 +240,19 @@ def main():
     print('#15 micro-lap over %d anchors (t <= %d)' % (len(rows), rows[-1][0]))
     print('  rule-B stops by residue: %s   deepest scan: index %d'
           % (kinds, maxi))
+    for m in bad[:8]:
+        print('  FAIL %s' % m)
+    inv = sum(1 for (t, l, v) in rows if v and WInv4(v if l == 2 else [v[0] + 1] + v[1:]))
+    tot = sum(1 for (t, l, v) in rows if v)
+    print('  invariant WInv4 holds on %d / %d anchors' % (inv, tot))
+    if inv != tot:
+        bad.append('WInv4 does not hold on every anchor')
+    g = gadgets()
+    print('  tape-level gadgets: %s' % ('OK' if not g else 'FAIL ' + ', '.join(g)))
+    bad += g
+    o = probe_off()
+    print('  off-orbit branch/death: %s' % ('OK' if not o else 'FAIL ' + ', '.join(o)))
+    bad += o
     for m in bad[:8]:
         print('  FAIL %s' % m)
     print('#15 lap: %s' % ('OK' if not bad else '%d FAILURES' % len(bad)))
