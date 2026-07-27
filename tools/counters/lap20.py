@@ -34,10 +34,25 @@ The measured facts this file pins, all against the CTape-faithful mirror
      anchor type with a total successor and a preserved invariant), which is
      the closer double #32 used.  No closed form for `rest` is needed.
 
-  STILL OPEN, and it is the whole remaining job: the long lap's tape-level
-  gadgets.  Per the trap #15 paid for, they must be checked EXHAUSTIVELY
-  over every (L,R) with |L|,|R| <= 4 before any Coq is written -- a sampled
-  check is not a check.
+  5. FOUR GADGETS OF THE LONG LAP, each checked EXHAUSTIVELY over every
+     (L,R) with |L|,|R| <= 4 (961 contexts, the standard #15's deposit
+     failed on 496 of):
+
+       out5    (StC,(L,S0,       1 1 1 0 ++ R)) -5-> (StC,(1 0 1 ++ L, S0, 1 ++ R))
+       cross5  (StC,(L,S0,       1 1 0 1 ++ R)) -5-> (StB,(1 0 1 ++ L, S1, 1 ++ R))
+       ret3    (StB,(1 1 0 ++ L, S1,        R)) -3-> (StB,(L, S0, 1 1 1 ++ R))
+       ret2    (StB,(1 0 ++ L,   S1,        R)) -2-> (StB,(L, S0, 1 1 ++ R))
+
+     -- #15's shape exactly: the outward sweep eats four cells and hands one
+     back (net +3 per five steps), `cross5` is the turnaround into StB, and
+     the return is ONE STEP PER CELL filling with 1s.  The two remaining
+     joints (B0 = 1LC and C1 = 0LB) read `chd L`, so like #15's they have to
+     be stated through chd/ctl rather than as windows.
+
+  STILL OPEN: the assembly -- which gadget fires where along the block word,
+  the invariant on `rest` the sweep needs, and the step count.  Everything
+  above says it is #15's job again, one size up.  Do NOT write Coq from a
+  sampled check: that is the trap #15 paid for.
 
 UNTRUSTED, like everything under tools/.  Usage: `python3 lap20.py [budget]`.
 """
@@ -90,6 +105,46 @@ def rule_a():
             want = (C, ([], S0, LEAD_B + T))
             if got != want:
                 bad.append('T=%s' % T)
+    return bad
+
+
+GADGETS = [
+    ('out5   (StC,(L,S0,1110++R))', 5, C, [], S0, [S1, S1, S1, S0]),
+    ('cross5 (StC,(L,S0,1101++R))', 5, C, [], S0, [S1, S1, S0, S1]),
+    ('ret3   (StB,(110++L,S1,R))', 3, 1, [S1, S1, S0], S1, []),
+    ('ret2   (StB,(10++L,S1,R))', 2, 1, [S1, S0], S1, []),
+]
+
+
+def exhaustive(n, q, preL, head, preR, maxlen=4):
+    """Run the window over EVERY (L,R) with |L|,|R| <= maxlen and report
+    whether the context passes through untouched and the core is uniform."""
+    res = set()
+    for kl in range(maxlen + 1):
+        for Lx in itertools.product([S0, S1], repeat=kl):
+            for kr in range(maxlen + 1):
+                for Rx in itertools.product([S0, S1], repeat=kr):
+                    Lx, Rx = list(Lx), list(Rx)
+                    g = csteps(n, (q, (preL + Lx, head, preR + Rx)))
+                    if g is None:
+                        return None, 'dies'
+                    gq, (gL, gh, gR) = g
+                    if kl and gL[-kl:] != Lx:
+                        return None, 'left context consumed'
+                    if kr and gR[-kr:] != Rx:
+                        return None, 'right context consumed'
+                    res.add((gq, tuple(gL[:len(gL) - kl]), gh,
+                             tuple(gR[:len(gR) - kr])))
+    return res, ('uniform' if len(res) == 1 else '%d distinct cores' % len(res))
+
+
+def gadgets():
+    """Every long-lap gadget, over all 961 contexts with |L|,|R| <= 4."""
+    bad = []
+    for (nm, n, q, pl, h, pr) in GADGETS:
+        r, m = exhaustive(n, q, pl, h, pr)
+        if m != 'uniform':
+            bad.append('%s: %s' % (nm, m))
     return bad
 
 
@@ -166,6 +221,11 @@ def main():
     e, runs = counter(rows)
     print('#20 leading b-run = lap index over %d A-anchors: %s'
           % (len(runs), 'OK' if not e else e[0]))
+    bad += e
+
+    e = gadgets()
+    print('#20 long-lap gadgets, EXHAUSTIVE over all 961 (L,R) with |L|,|R| <= 4: %s'
+          % ('OK (out5, cross5, ret3, ret2)' if not e else e[0]))
     bad += e
 
     p = pure(allrows)

@@ -208,13 +208,28 @@ closed form for `rest`, and no port of BBB's 14-template FSM, is needed for
 `NeverQuasiHaltsSt`**; that FSM is BBB's route to a step-count BOUND, which
 is not what we need.
 
-WHAT IS LEFT is the long lap: the `B-type -> A-type` sweep (costs 36, 56, 52,
-72, 68, 84, 84, 124, ... for r = 1,2,3,...) and whatever invariant on `rest`
-it needs.  **Check every gadget EXHAUSTIVELY over all `(L,R)` with
-`|L|,|R| <= 4` before writing any Coq.**  #20's sweep has the same
-bounce-and-walk-back shape that made #15's deposit a SWEEP and not a window,
-and that is the one trap in this family that a sample does not catch.  BBB's
-decode is in `docs/HOLDOUTS_MXDYS_SN.md` section 5b under "tower #20".
+  - **four gadgets of the long lap are already EXHAUSTIVELY checked** over
+    every `(L,R)` with `|L|,|R| <= 4` (961 contexts -- the standard #15's
+    deposit failed on 496 of):
+
+        out5    (StC,(L,S0,       1 1 1 0 ++ R)) -5-> (StC,(1 0 1 ++ L, S0, 1 ++ R))
+        cross5  (StC,(L,S0,       1 1 0 1 ++ R)) -5-> (StB,(1 0 1 ++ L, S1, 1 ++ R))
+        ret3    (StB,(1 1 0 ++ L, S1,        R)) -3-> (StB,(L, S0, 1 1 1 ++ R))
+        ret2    (StB,(1 0 ++ L,   S1,        R)) -2-> (StB,(L, S0, 1 1 ++ R))
+
+    -- #15's shape exactly: the outward sweep eats four cells and hands one
+    back (net +3 per five steps), `cross5` is the turnaround into StB, and
+    the return is ONE STEP PER CELL filling with 1s.  The two remaining
+    joints (B0 = 1LC, C1 = 0LB) read `chd L`, so like #15's they have to be
+    stated through chd/ctl rather than as windows.
+
+WHAT IS LEFT is the ASSEMBLY: which gadget fires where along the block word,
+the invariant on `rest` the sweep needs, and the step count (the long lap
+costs 36, 56, 52, 72, 68, 84, 84, 124, ... for r = 1,2,3,...).  It is #15's
+job again, one size up.  **Do NOT write Coq from a sampled check** -- that is
+the trap #15 paid for, and #20's sweep has the same bounce-and-walk-back
+shape that made #15's deposit a SWEEP and not a window.  BBB's decode is in
+`docs/HOLDOUTS_MXDYS_SN.md` section 5b under "tower #20".
 
 ## 2e. Wave-17 (2026-07-27) -- double #32 boarded; the (4,2) holdouts are 4
 

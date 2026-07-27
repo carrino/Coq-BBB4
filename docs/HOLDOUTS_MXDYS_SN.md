@@ -557,12 +557,29 @@ check out:
   get `NeverQuasiHaltsSt`.  The FSM is BBB's route to a step-count bound,
   which is not what we need.
 
-**What is left, and it is the whole job:** the long lap's tape-level gadgets
-(the `B-type -> A-type` sweep, whose cost grows: 36, 56, 52, 72, 68, 84, 84,
-124, … for `r = 1, 2, 3, …`) and whatever invariant on `rest` the sweep needs.
-**Check every gadget EXHAUSTIVELY over all `(L,R)` with `|L|,|R| <= 4` before
-writing any Coq** — that is the trap #15 paid for, and #20's sweep has the
-same bounce-and-walk-back shape that made #15's deposit a sweep rather than a
+* **Four gadgets of the long lap are already checked EXHAUSTIVELY** over
+  every `(L,R)` with `|L|,|R| <= 4` (961 contexts — the standard #15's
+  deposit failed on 496 of):
+
+  ```
+  out5    (StC,(L,S0,       1 1 1 0 ++ R)) -5-> (StC,(1 0 1 ++ L, S0, 1 ++ R))
+  cross5  (StC,(L,S0,       1 1 0 1 ++ R)) -5-> (StB,(1 0 1 ++ L, S1, 1 ++ R))
+  ret3    (StB,(1 1 0 ++ L, S1,        R)) -3-> (StB,(L, S0, 1 1 1 ++ R))
+  ret2    (StB,(1 0 ++ L,   S1,        R)) -2-> (StB,(L, S0, 1 1 ++ R))
+  ```
+
+  #15's shape exactly: the outward sweep eats four cells and hands one back
+  (net +3 per five steps), `cross5` is the turnaround into `StB`, and the
+  return is ONE STEP PER CELL, filling with 1s.  The two remaining joints
+  (`B0 = 1LC`, `C1 = 0LB`) read `chd L`, so like #15's they must be stated
+  through `chd`/`ctl` rather than as windows.
+
+**What is left:** the ASSEMBLY — which gadget fires where along the block
+word, the invariant on `rest` the sweep needs, and the step count (the long
+lap costs 36, 56, 52, 72, 68, 84, 84, 124, … for `r = 1, 2, 3, …`).  It is
+#15's job again, one size up.  **Do not write Coq from a sampled check** —
+that is the trap #15 paid for, and #20's sweep has the same
+bounce-and-walk-back shape that made #15's deposit a sweep and not a
 window.
 
 ### fractal #3 / #5 — `1RB0LA_1LC0RD_0LB1LA_0RB1LA`, `1RB0LA_1LC1RD_0LC1LA_0RD0RB`
