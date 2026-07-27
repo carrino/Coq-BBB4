@@ -61,9 +61,12 @@ def mirrorize(src, rspec, mspec):
         raise RuntimeError('mirrorize: tm definition block not found')
     src = src.replace(old_tm, new_tm)
 
+    # [glue_neverqh_lift] (LapCertGlueLift.v) is the same closer with the
+    # visit premise in [stepn] space -- used when the interior lap lands one
+    # trailing blank past the anchor.  The mirror transfer is identical.
     pat = re.compile(
         r'Theorem nqh_%s : NeverQuasiHaltsSt tm\.\n'
-        r'Proof\. apply \(glue_neverqh tm Cc (\d+)\)\.(.*?)Qed\.\n\n'
+        r'Proof\. apply \((glue_neverqh(?:_lift)?) tm Cc (\d+)\)\.(.*?)Qed\.\n\n'
         r'Theorem nonhalt_%s : NonHalt tm\.\n'
         r'Proof\. apply never_qh_nonhalt, nqh_%s\. Qed\.'
         % (re.escape(rid), re.escape(rid), re.escape(rid)), re.DOTALL)
@@ -72,13 +75,13 @@ def mirrorize(src, rspec, mspec):
         return _mirrorize_qh(src, rid)
     new_close = (
         'Theorem nqhm_%s : NeverQuasiHaltsSt tm.\n'
-        'Proof. apply (glue_neverqh tm Cc %s).%sQed.\n\n'
+        'Proof. apply (%s tm Cc %s).%sQed.\n\n'
         'Theorem nqh_%s : NeverQuasiHaltsSt tm_%s.\n'
         'Proof. apply (mirror_never_qh tm_%s). rewrite mirror_ok_%s. '
         'exact nqhm_%s. Qed.\n\n'
         'Theorem nonhalt_%s : NonHalt tm_%s.\n'
         'Proof. apply never_qh_nonhalt, nqh_%s. Qed.'
-        % (rid, m.group(1), m.group(2), rid, rid, rid, rid, rid,
+        % (rid, m.group(1), m.group(2), m.group(3), rid, rid, rid, rid, rid,
            rid, rid, rid))
     src = pat.sub(lambda _: new_close, src, count=1)
 

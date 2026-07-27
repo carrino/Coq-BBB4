@@ -267,11 +267,105 @@ def main():
     o = probe_off()
     print('  off-orbit branch/death: %s' % ('OK' if not o else 'FAIL ' + ', '.join(o)))
     bad += o
+    ct = counter()
+    print("  binary-counter reading (p -> p+1, closed-form tape): %s"
+          % ('OK' if not ct else 'FAIL ' + ', '.join(ct[:3])))
+    bad += ct
     for m in bad[:8]:
         print('  FAIL %s' % m)
     print('#15 lap: %s' % ('OK' if not bad else '%d FAILURES' % len(bad)))
     return 1 if bad else 0
 
+
+
+
+# --- John's reading: #15 is a plain BINARY COUNTER -------------------------
+#
+# "each bit is the zero stripe position mod 2.  the 2nd left most stripe is
+#  the lsb ... each stripe changes parity, so reading left to right, 2nd zero
+#  is lsb and the value is position % 2, next zero is 2's and value is
+#  position + 1 % 2, next zero is 4's and value is position % 2"
+#
+# Measured, that is exactly right, and it dissolves the mod-4 layer above.
+# Number the zero stripes z[0] = 0 (the anchor's own blank), z[k+1] the k-th
+# thereafter; then bit k = (z[k+1] + k) % 2 -- equivalently, bit k is 1 iff
+# the number of 1s strictly left of that stripe is EVEN.  The TOP stripe-bit
+# is always 0: it is a sentinel, i.e. the implicit leading 1 of a `positive`.
+# Dropping it,
+#
+#     p  =  2^(width-1)  +  sum of the value bits
+#
+# and ONE LAP IS p -> p+1, with no exceptions: measured over 1493 consecutive
+# laps p runs 2, 3, 4, ..., 1495 with no gaps and no spawn special case (the
+# spawn is just the carry out of the top).  So the abstract state is a
+# `positive` advanced by `Pos.succ` -- LapGlue.glue_neverqh's interface, the
+# same closer BCtr_28 uses -- and NOT WaveCounter.wglue_neverqh.  There is no
+# invariant to preserve and no mod-4 arithmetic layer to port: WInv4 above is
+# true but unnecessary, since "binary increment terminates" is all the carry
+# needs.
+#
+# The tape is a closed form in p.  With k = floor(log2 p) and r = p - 2^k:
+#
+#     lead  =  1 + (p mod 2)
+#     v[j]  =  2^(k-j) + sum_{i>=j} c(i-j) * bit_i(r),  c = 1, 3, 4, 8, 16, ...
+#              (c(0) = 1, c(1) = 3, c(d) = 2^d for d >= 2)
+#     total 1s on the tape  =  2p - 1
+#
+# checked against every anchor out to t = 3e6.
+
+def cf15(p):
+    """The anchor tape (lead, block vector) as a closed form in p."""
+    k = p.bit_length() - 1
+    r = p - (1 << k)
+    c = lambda d: 1 if d == 0 else (3 if d == 1 else 1 << d)
+    v = [(1 << (k - j)) + sum(c(i - j) * ((r >> i) & 1) for i in range(j, k))
+         for j in range(k)]
+    return 1 + (p % 2), v
+
+
+def pos15(lead, v):
+    """The positive a given anchor encodes (inverse of cf15)."""
+    z = [0, 1 + lead]
+    for x in v:
+        z.append(z[-1] + 1 + x)
+    b = [(z[i + 1] + i) % 2 for i in range(len(z) - 1)]
+    return (1 << (len(b) - 1)) + sum(x << i for i, x in enumerate(b[:-1]))
+
+
+def venc(m):
+    """The block vector as a STRUCTURAL RECURSION on the positive -- no 2^k
+    arithmetic, so this transcribes straight to a Coq Fixpoint on positive.
+
+        v(2) = [2],  v(3) = [3]
+        v(m) = (m + (m/2 mod 2)) :: v(m/2)
+        lead = 1 + (m mod 2)
+
+    Checked against every anchor out to t = 3e6.  This is the definition
+    `Cf15 : positive -> cconf` should be built from.
+    """
+    if m in (2, 3):
+        return [m]
+    h = m // 2
+    return [m + (h % 2)] + venc(h)
+
+
+def counter():
+    """p -> p+1 every lap, cf15 reproduces every tape, totals are 2p-1."""
+    bad = []
+    rows = [r for r in anchors(3000000) if r[2]]
+    prev = None
+    for (t, l, v) in rows:
+        p = pos15(l, v)
+        if cf15(p) != (l, v):
+            bad.append('cf15(%d) != %s' % (p, (l, v)))
+        if venc(p) != v or 1 + p % 2 != l:
+            bad.append('venc(%d) != %s' % (p, v))
+        if l + sum(v) != 2 * p - 1:
+            bad.append('total 1s at p=%d is not 2p-1' % p)
+        if prev is not None and p != prev + 1:
+            bad.append('p jumped %d -> %d' % (prev, p))
+        prev = p
+    return bad
 
 if __name__ == '__main__':
     sys.exit(main())
