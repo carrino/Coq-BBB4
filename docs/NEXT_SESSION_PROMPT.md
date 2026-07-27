@@ -61,8 +61,12 @@ After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded, in minutes.
 
 FROM PR #40 (branch claude/coq-bbb4-residue-removal-lt5yac), which ran Stage 0
-independently and agrees with wave-15 on every number.  Three things it adds
-that are NOT in wave-15:
+independently and agrees with wave-15 on every number.  THESE ARE SIDE ITEMS,
+NOT THE WAVE -- "THE TASK" below (the exponential overflow, ~340 machines) is
+the wave, and nothing here competes with it.  (a) is worth doing first only
+because it is measured in HOURS and is a strict prerequisite for (b); (c) is
+the highest-VARIANCE item on the whole board, not the highest-yield, and
+should wait until THE TASK stalls.  Three things wave-15 does not have:
 
   (a) SOME MACHINES ARE BLOCKED BY THE CENSUS CONSTANT, NOT BY DIFFICULTY.
       QHBound 2000 is FALSE for any machine that genuinely quasi-halts after
@@ -75,6 +79,21 @@ that are NOT in wave-15:
       B_census/D_census stay put, CENSUS_VO_HASH stays MATCH, and the walk
       never re-runs.  NOT YET WRITTEN.  Do this first -- it is small and it
       unblocks (b).
+
+      SIZE THIS BUCKET BEFORE ASSUMING IT IS FOUR.  A machine is
+      constant-blocked iff its true score exceeds 2000, and PR #40 found five
+      (2332, 2512, 2568, 2819, 66349) -- but only inside a 400k-step window,
+      so anything scoring between 400k and 32.8M was classified RECUR and
+      never seen.  If the bucket is 5, the corollary is worth 5 boards; if it
+      is 150, it is worth 150, and it is still three lines.  That makes this
+      the cheapest unknown on the board.  The scan is
+      /tmp/.../deepscan.py in the PR #40 session (35M steps/machine, ~1.5 h
+      at 4 workers, paused at 325/1157); it is pure simulation, no Coq.
+      WARNING, and this bit is load-bearing: a single-window "quiet" verdict
+      is UNSOUND -- a state visited at exponentially spaced times looks quiet
+      at every finite window.  Confirm every candidate with the two-window
+      test (tools/counters/visit_gaps.py --confirm) before counting it.  That
+      trap cost PR #40 a retraction from 538 quasi-halters to 217.
 
   (b) FOUR BOARDS ALREADY PROVED, ALL STILL UNPROVEN ON MAIN, ALL
       CONSTANT-BLOCKED.  theories/Counters/BlankTail.v: if after a finite
@@ -96,7 +115,20 @@ that are NOT in wave-15:
       blanktail_scan.py proves this closer is EXHAUSTED at exactly these five;
       the period-k generalisation buys nothing (every hit has period 1).
 
-  (c) THE HINT PATH IS BUILT AND VALIDATED -- this is wave-15's own lead item.
+  (c) THE HINT PATH IS BUILT AND VALIDATED.  Wave-15 names this its lead
+      item; PR #40 does NOT agree it should be run first, and the reason is a
+      number.  Inductive's measured ceiling on our residue is ~20 of 1,176
+      (under 2%) -- but that was measured UNHINTED, and the counter
+      representations are hint-gated, so hints could lift it a lot or not at
+      all.  Nobody knows.  THE TASK below targets ~340 machines with our own
+      machinery and no such uncertainty, so it is the wave.
+      The disagreement is about SIZING, not about doing it: run the hint path
+      as a MEASUREMENT, not as a wave.  30 machines with derived hints, look
+      at the fire rate, THEN decide.  That is cheap (wave-15 costs the whole
+      thing at half a day) and it converts the largest unknown on the board
+      into a number.  What would be wrong is committing a wave to it on the
+      strength of the shape argument alone -- which is exactly the mistake
+      wave-15's own standing lesson, a few lines below, warns about.
       busycoq mirror branch claude/coq-bbb4-residue-removal-lt5yac:
       verify/InductiveDump.v adds --bec/--becpos/--dec/--ov0/--ov1 (words as
       digit strings, "." = empty; states as letters) plus --initial-steps and
