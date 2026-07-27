@@ -564,7 +564,7 @@ Lemma geo_@ID@ : forall p j, cview p = (S j, None) ->
 Proof.
   intros p j E. destruct (@ENCMOD@.@NONE@ p j E) as (_ & H2).
   assert (HD : cden [] [] j B1_@ID@
-             = (@ST0@, (rep @UD@ (S j) ++ @OVPOST@, S0, @FAR@))).
+             = (@ST0@, (rep @UD@ (S j) ++ @OVPOST@, S0, @OVFAR@))).
   { unfold cden, B1_@ID@, sden, sflat;
       cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
     replace (1 * j + 1) with (S j) by lia.
@@ -739,8 +739,16 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 z[0] * 0 + z[1] if j == 0 else q[0] * (j - 1) + q[1])
 
     cho = LC.derive_chain(tab, True, True, B0, B1)
+    oslack = False
     if cho is None:
-        raise DeriveError('no overflow chain')
+        # The same trailing blank, on the overflow branch.  This one costs NO
+        # new Coq: [geo_*] already closes the overflow up to [lift] (that is
+        # what [lap_of_run] takes), and [WTape.lift_app_blank] strips a blank
+        # from the RIGHT side -- the glue just has to say so.
+        cho = LC.derive_chain(tab, True, True, B0, B1, lift=True)
+        if cho is None:
+            raise DeriveError('no overflow chain')
+        oslack = True
     ro = LC.srun(tab, True, True, cho, B0)
     if ro[2] == 0:
         raise DeriveError('lap of zero length at j=0')
@@ -799,7 +807,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 cz=((rz[1], rz[2]) if rz else None),
                 cp=((rp[1], rp[2]) if rp else None),
                 A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, qh=qh, boot=boot,
-                absd=absd, sset=sset, islack=islack,
+                absd=absd, sset=sset, islack=islack, oslack=oslack,
                 ovpost=list(got), ovwant=list(want), val=why)
 
 
@@ -832,6 +840,17 @@ def render(D):
         # each surplus cell is one trailing blank, invisible to [lift]
         hcleft = '(' * pad + body + ''.join(') ++ [S0]' for _ in range(pad))
         close = 'rewrite !lbl_%s. reflexivity.' % ID
+    # the overflow lap can also stop one blank past the anchor's FAR side;
+    # [WTape.lift_app_blank] is that strip on the right
+    if D.get('oslack'):
+        got_far = tuple(D['B1'][3][0])
+        if got_far != tuple(D['far']) + (0,):
+            raise DeriveError('overflow far slack %r vs %r'
+                              % (got_far, tuple(D['far'])))
+        ovfar = '%s ++ [S0]' % clist(D['far'])
+        close = 'rewrite lift_app_blank. ' + close
+    else:
+        ovfar = clist(D['far'])
     # [destruct q] makes FOUR goals, so there must be four bullets in state
     # order -- including one per state the lap never reaches.  (An earlier
     # version prepended a single StA bullet and then listed only the reached
@@ -907,7 +926,7 @@ def render(D):
         '@US@': clist(d['uS']), '@UD@': clist(d['uD']),
         '@OBSP@': str(d['obS'] - 1 if d['obS'] >= 1 else 0),
         '@CNTP@': 'j',
-        '@OVPOST@': clist(ovpost), '@HCLEFT@': hcleft,
+        '@OVPOST@': clist(ovpost), '@HCLEFT@': hcleft, '@OVFAR@': ovfar,
         '@CLOSE@': close, '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
         '@VISHYP@': ('forall p q, In q %s ->' % slist(D['sset'])
                      if D['absd'] is not None

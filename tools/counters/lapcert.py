@@ -345,25 +345,42 @@ def _shape_to(c, target, el, er, budget=8, lift=False):
     (same pre/u/a/b on both sides; [post] may still differ by trailing
     blanks, which [lift] absorbs).  BFS over the four rotation steps.
 
-    Under [lift], a configuration that already DENOTES the target is accepted
-    AS IT STANDS once no rotation reaches the syntactic shape: no rotation can
-    delete a trailing blank, so insisting on the shape is what rejects those
-    chains.  The exact shape is still preferred when it is reachable -- it
-    renders through the cheaper glue."""
-    def shape(x):
-        return (x[0][0], x[0][1], x[0][2], x[0][3],
-                x[2][0], x[2][1], x[2][2], x[2][3])
+    The acceptance test is PER SIDE, because the two sides fail differently:
+    a side whose unit run is misaligned is fixed by rotating, but no rotation
+    can delete a trailing blank.  Under [lift] we therefore SCORE each config
+    by how many sides reach the target's syntactic shape and take the best --
+    accepting slack only where rotating cannot help.  Scoring rather than
+    accepting the first denotational match matters: the reached config
+    usually already DENOTES the target (that is why the chain got here at
+    all), so a first-match test returns the empty rotation and leaves the rep
+    side misaligned, which the board's glue cannot render."""
+    def sshape(s):
+        return (s[0], s[1], s[2], s[3])
 
-    want = shape((target[1], None, target[3]))
+    def score(cur):
+        """2 = both sides in the target's shape (the exact route); 1 = one
+        side, the other merely denoting it; None = not the target at all."""
+        n = 0
+        for i, open_ in ((1, not el), (3, not er)):
+            if sshape(cur[i]) == sshape(target[i]):
+                n += 1
+            elif not (lift and side_eq(cur[i], open_, target[i], open_, True)):
+                return None
+        return n
+
+    best = (None, None)                                   # (score, path)
     seen = {(c[1], c[3])}
     frontier = [(c, [])]
-    for _ in range(budget):
+    for _ in range(budget + 1):
         if not frontier:
             break
         nxt = []
         for cur, path in frontier:
-            if shape((cur[1], None, cur[3])) == want:
+            s = score(cur)
+            if s == 2:
                 return path
+            if s is not None and (best[0] is None or s > best[0]):
+                best = (s, path)
             for st in _rot_candidates(cur):
                 r = sstep(None, el, er, st, cur)
                 if r is None:
@@ -375,12 +392,7 @@ def _shape_to(c, target, el, er, budget=8, lift=False):
                 seen.add(key)
                 nxt.append((c2, path + [st]))
         frontier = nxt
-    for cur, path in frontier:
-        if shape((cur[1], None, cur[3])) == want:
-            return path
-    if lift and _match(c, target, el, er, True):
-        return []
-    return None
+    return best[1]
 
 
 def chain_is_exact(tab, el, er, chain, c0, target):
