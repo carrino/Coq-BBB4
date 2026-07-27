@@ -594,12 +594,15 @@ theories/Machines/NGHG3/NGHG3_05.v
 theories/Machines/NGHG3/NGHG3_06.v
 theories/Machines/NGHG3/NGHG3_07.v
 theories/Tests/CountersWave_Corruption.v
+theories/Tests/CountersFractal_Corruption.v
 
 # --- counters track: double ---
 theories/Counters/CReach.v
 theories/Counters/DblCounter.v
 theories/Machines/Counters/Double_9.v
 theories/Machines/Counters/Double_32.v
+theories/Machines/Counters/Fractal_3.v
+theories/Machines/Counters/Fractal_5.v
 theories/Tests/CountersDbl_Corruption.v
 
 # --- counters track: wave4 #15, a plain binary counter ---

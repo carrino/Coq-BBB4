@@ -14,8 +14,8 @@ is the authority on what is actually *boarded*) splits it as:
 
 | status | count | machines |
 |---|---|---|
-| **boarded** | **16** | Wave_7, Wave_17, Wave_24, Wave_27, Wave_36, Wave_6, Double_9, NGHHold_00..08 |
-| unproven | 11 | below |
+| **boarded** | ~~16~~ **18** | Wave_7, Wave_17, Wave_24, Wave_27, Wave_36, Wave_6, Double_9, NGHHold_00..08, **Fractal_3, Fractal_5** |
+| unproven | ~~11~~ 9 | below |
 
 The 11 unproven, by BBB `results/counterN.cert` family:
 
@@ -25,7 +25,7 @@ The 11 unproven, by BBB `results/counterN.cert` family:
 | double | ~~3~~ 1 | #32 `1RB1LD_1RC0RB_1LA0RC_0LD0LA` (#30/#37 boarded, §3b) |
 | blockdbl | 3 | #11 `1RB0LD_1RC0RC_1LA1RB_0LC0LD`, #13 `1RB0RB_1LC1RA_1RA0LD_0LB0LD`, #28 `1RB1LC_1LC1RD_1LA0LC_0RD0RB` |
 | ~~xd~~ | ~~3~~ 0 | **all three BOARDED this session** (§3a) |
-| fractal | 2 | #3 `1RB0LA_1LC0RD_0LB1LA_0RB1LA`, #5 `1RB0LA_1LC1RD_0LC1LA_0RD0RB` |
+| ~~fractal~~ | ~~2~~ 0 | **both BOARDED** (see `docs/HOLDOUTS_FRACTAL.md`): `theories/Machines/Counters/Fractal_3.v`, `Fractal_5.v` |
 | wave4 | 1 | #15 `1RB0RC_0LC1LB_0LD1LC_1RD0RA` |
 | wrap-QH | 2 | `1RB---_1LC0LB_0RC0LD_1RD1RB`, `1RB---_1RC0RB_0LC0RD_1LD1LB` |
 | v4-irules | 1 | `1RB1RA_0RC0RB_1LC1LD_0RA0LA` |

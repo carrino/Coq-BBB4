@@ -551,6 +551,78 @@ the trap #15 paid for, and #20's sweep has the same bounce-and-walk-back
 shape that made #15's deposit a SWEEP and not a window.  BBB's decode is in
 `docs/HOLDOUTS_MXDYS_SN.md` section 5b under "tower #20".
 
+<!-- --- fractal front CLOSED --- -->
+
+## 2h. Wave-19 (2026-07-27) -- BOTH fractals boarded; the family is CLOSED
+
+Full write-up: `docs/HOLDOUTS_FRACTAL.md`.  The two BBB `fractal` certs
+(#3 `1RB0LA_1LC0RD_0LB1LA_0RB1LA`, #5 `1RB0LA_1LC1RD_0LC1LA_0RD0RB`) --
+the pair for which **BBB had no proof to port** (its own soundness note:
+the all-j closure "evidences but does not by itself mechanise the all-j
+induction; that full rigor is the parallel Coq formalisation") -- now
+carry kernel-checked `NeverQuasiHaltsSt` theorems.
+`theories/Machines/Counters/Fractal_3.v`, `Fractal_5.v`, negative
+controls `theories/Tests/CountersFractal_Corruption.v`, both axiom-clean.
+`D_remaining` **882 -> 880**; the `fractal` family is CLOSED and the
+(4,2) holdouts are **1** (tower #20).
+
+**The decode in one line: both machines are BINARY COUNTERS WHOSE DIGITS
+ARE BLOCKS.**  At every state-`B`-reading-blank the left half-tape is
+
+```
+#5 :  0^z      ++ 1   ++ b_0^1 ++ b_1^2 ++ .. ++ b_{j-1}^(2^(j-1))
+#3 :  0^(2z+2) ++ 1 1 ++ b_0^2 ++ b_1^4 ++ .. ++ b_{j-1}^(2^j)
+```
+
+with `b_*` the binary digits of `z`: digit `i` occupies `2^i` cells
+(`2^(i+1)` for #3).  One macro-step increments `z` and eats one blank on
+the right (two, for #3).  A carry of length `m` is not a gadget -- it IS
+the machine one level down.  That is the fractal, and it is why
+
+```
+#5   anchor (StB, (0^(2^k-1) ++ 1^(2^k), 0, [])) at 2*4^k - 2^k,
+     lap 6*4^k - 2^k
+#3   anchor (StB, (0^(2^k)   ++ 1^(2^k), 0, [])) at 9,31,111,403,...,
+     lap 3*4^k + 4*3^k - 2^k
+```
+
+**Why they were boardable at all:** #3's lap carries a `3^k` term, so NO
+certificate in the repo can express it (`LapDecider`'s `srun` is affine
+in `j`).  `LapGlue`'s lap obligation is
+`exists n, csteps tm n (Cf p) = Some c' /\ ...` -- an existential -- so
+the cost is never written down.  This is `NestedLap.v`'s observation
+("the lap obligation never mentions the cost"), and it generalises well
+past its own family.  **Reach for it whenever a decode produces an exact
+cost the certificate language cannot say.**
+
+**The lever to reuse:** a mutual induction on the LEVEL where one rule
+carries a FREE parameter that never constrains its own hypothesis
+(`E2 q a b`'s `b`, for #5).  That is exactly mxdys' device in busycoq
+`FractalType0.v` TM48 (`P1' n` with free `m`) -- the machine mxdys
+flagged as similar to #5, and its transition table really does line up
+with ours cell for cell.  With the free parameter the induction closes
+with ZERO leftover glue:
+
+```
+SW(2q)  =  SW(q)[low half] ; inc1 ; INC(q) ; SW(q)[high half]
+```
+
+exact in shape AND in step count.  What ports from busycoq is the SHAPE,
+not the text; and we close with `LapGlue.glue_neverqh`
+(`NeverQuasiHaltsSt`), where TM48 closes with
+`sigma_score_unbounded_nonhalt` (non-halting only).
+
+**Try this on tower #20 next.**  Section 2g's handoff says #20 is #15's
+shape one size up; but its record tape is a word over the blocks
+`10`/`110` (section 2d), i.e. a counter in ANOTHER ALPHABET -- which is
+the same sentence as "digits are blocks", one alphabet further out.  The
+`Fractal_3.v` variant (two cells per digit) is already the general shape;
+read #20's record word as digits before writing a table interpreter.
+
+Reproduce every measurement with `python3 tools/counters/fractal_probe.py`
+(all gadgets differentially validated over random left/right frames and
+every level to 2^7 / 2^6; prints `ALL OK`).
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
