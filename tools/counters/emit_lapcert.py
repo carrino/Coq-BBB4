@@ -403,8 +403,8 @@ Proof.
   replace (1 * j + 0) with j by lia.
   replace (0 * j + 0) with 0 by lia.
   cbn [rep app]. rewrite ?app_nil_r.
-  change (@FARB@) with (@FAR@ ++ [S0]).
-  rewrite lift_app_blank.
+  change (@FARB@) with (@FARNEST@).
+  rewrite !lift_app_blank.
   rewrite H2. first [ rewrite <- (app_assoc (rep @UD@ j)); reflexivity
         | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
 Qed.
@@ -825,6 +825,13 @@ def quiet_of(qs):
     return [q for q in range(4) if q not in (qs or [])]
 
 
+def _lift_vis(D):
+    """Is [vis_*] stated in [stepn]/[lift] space?  Only for the plain closer:
+    [glue_neverqh_lift] takes it that way, while [glue_qh]/[glue_qh_abs] want
+    the concrete [csteps] premise and reach it via [vis_csteps_of_lift]."""
+    return bool(D.get('islack')) and not (D['qh'] or D['absd'] is not None)
+
+
 def render(D):
     spec = D['spec']
     ID = mach_id(spec)
@@ -842,13 +849,22 @@ def render(D):
         close = 'rewrite !lbl_%s. reflexivity.' % ID
     # the overflow lap can also stop one blank past the anchor's FAR side;
     # [WTape.lift_app_blank] is that strip on the right
+    def far_slack(side, what):
+        """The reached FAR word, and how many blanks it carries past the
+        anchor's.  [sden] of a rep-free side is [pre ++ post]."""
+        if side[1]:
+            raise DeriveError('%s far slack: unit run on the far side' % what)
+        got, wnt = tuple(side[0]) + tuple(side[4]), tuple(D['far'])
+        n = len(got) - len(wnt)
+        if n < 1 or got != wnt + (0,) * n:
+            raise DeriveError('%s far slack %r vs %r' % (what, got, wnt))
+        # nest so each [lift_app_blank] rewrite peels exactly one blank
+        return got, ('(' * n + clist(wnt)
+                     + ''.join(') ++ [S0]' for _ in range(n)))
+
     if D.get('oslack'):
-        got_far = tuple(D['B1'][3][0])
-        if got_far != tuple(D['far']) + (0,):
-            raise DeriveError('overflow far slack %r vs %r'
-                              % (got_far, tuple(D['far'])))
-        ovfar = '%s ++ [S0]' % clist(D['far'])
-        close = 'rewrite lift_app_blank. ' + close
+        _, ovfar = far_slack(D['B1'][3], 'overflow')
+        close = 'rewrite !lift_app_blank. ' + close
     else:
         ovfar = clist(D['far'])
     # [destruct q] makes FOUR goals, so there must be four bullets in state
@@ -872,13 +888,19 @@ def render(D):
         elif D.get('islack'):
             # the [lift] twin: [vis_via_ovf_lift] chains the interior laps in
             # [stepn] space, and the per-state witness is the SAME [viso_*]
-            # run pushed through [vis_lift_of_csteps].
+            # run pushed through [vis_lift_of_csteps].  When the closer is
+            # [glue_qh]/[glue_qh_abs] -- which have no lift twin and need none
+            # -- [vis_csteps_of_lift] pulls the result back to their concrete
+            # premise.
+            pull = ('' if _lift_vis(D) else
+                    '    apply (vis_csteps_of_lift tm Cc).\n')
             vis.append('  - (* %s *)\n'
+                       '%s'
                        '    apply (vis_via_ovf_lift tm Cc Hi %s).\n'
                        '    intros p1 j1 E1. apply (vis_lift_of_csteps tm Cc).\n'
                        '    apply (viso_%s %s %s ltac:(vm_compute; reflexivity)\n'
                        '                   p1 j1 E1).'
-                       % (ST[q], ST[q], ID, cchain(pre), ST[q]))
+                       % (ST[q], pull, ST[q], ID, cchain(pre), ST[q]))
         else:
             vis.append('  - (* %s *)\n'
                        '    apply (vis_via_ovf tm Cc Hi %s), viso_%s\n'
@@ -886,16 +908,21 @@ def render(D):
                        '    vm_compute; reflexivity.'
                        % (ST[q], ST[q], ID, cchain(pre)))
     islack = bool(D.get('islack'))
-    if islack and (D['mode'] != 'one' or D['qh'] or D['absd'] is not None):
-        # the lift route is wired for the plain closer only; glue_qh /
-        # glue_qh_abs would each need their own [lift] twin, and no machine
-        # has asked for one yet (measured: the whole bucket is NQH/one).
-        raise DeriveError('lift route: only mode=one + glue_neverqh is wired')
-    farb = clist(tuple(D['far']) + (0,))
+    if islack and D['mode'] != 'one':
+        raise DeriveError('lift route: only mode=one is wired')
+    # [glue_neverqh_lift] takes the visit premise in [stepn] space;
+    # [glue_qh]/[glue_qh_abs] want it concrete and get there through
+    # [vis_csteps_of_lift], so they need no lift twin.
+    lift_vis = _lift_vis(D)
+    if islack:
+        igot, ifarnest = far_slack(D['A1'][3], 'interior')
+        farb, farnest = clist(igot), ifarnest
+    else:
+        farb = farnest = clist(D['far'])
     reps = {
         '@PREF@': PREFIX, '@ID@': ID, '@SPEC@': spec,
         '@GLUELIFT@': ' LapCertGlueLift' if islack else '',
-        '@FARB@': farb,
+        '@FARB@': farb, '@FARNEST@': farnest,
         '@LAPICASE@': (
             '  - destruct (lapi_@ID@ p j q0 E) as (n & c\' & Hn & Hrun & Hlift).\n'
             '    exists n, c\'. split; [exact Hrun | split; [exact Hlift | exact Hn]].'
@@ -904,7 +931,7 @@ def render(D):
             '    exists n, (Cc (Pos.succ p)).\n'
             '    split; [exact Hrun | split; [reflexivity | exact Hn]].'),
         '@VISCONC@': ('exists k e, stepn tm k (lift (Cc p)) = Some e /\\ fst e = q'
-                      if islack else
+                      if lift_vis else
                       'exists k c, csteps tm k (Cc p) = Some c /\\ fst c = q'),
         '@VISHI@': (
             'forall p0 j q0, cview p0 = (j, Some q0) ->\n'
@@ -937,7 +964,7 @@ def render(D):
         '@VISA@': '',
         '@FINAL@': (ABS_CLOSE if D['absd'] is not None
                     else QH_CLOSE if D['qh']
-                    else NQH_CLOSE_LIFT if islack else NQH_CLOSE)
+                    else NQH_CLOSE_LIFT if lift_vis else NQH_CLOSE)
                     .replace('@ID@', ID).replace('@P0@', str(D['p0']))
                     .replace('@SSETC@', slistc(D['sset']))
                     .replace('@SSET@', slist(D['sset']))

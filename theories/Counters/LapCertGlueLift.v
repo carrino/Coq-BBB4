@@ -110,3 +110,38 @@ Proof.
   exists k, (lift c). split; [apply csteps_lift; exact Hk |].
   rewrite lift_state; exact Hq.
 Qed.
+
+(** ** …and back again
+
+    [CTape.stepn_csteps] says a blank-start run is computable; the same
+    induction works from ANY concrete configuration, because [cstep] fails
+    exactly where [step] does ([CTape.cstep_lift_rev]).  Consequence, and it
+    is what keeps [glue_qh] / [glue_qh_abs] from needing [lift] twins of their
+    own: a visit witness in [stepn] space can be pulled back to the CONCRETE
+    [csteps] premise those closers ask for.  Only the LAP has to be weakened
+    ([reach_ovf_lift] above), because chaining laps needs the reached
+    configuration to BE the next anchor, not merely to lift to it. *)
+Lemma stepn_csteps_at : forall (tm : TM) m cc e,
+  stepn tm m (lift cc) = Some e ->
+  exists cc', csteps tm m cc = Some cc' /\ lift cc' = e.
+Proof.
+  induction m; intros cc e H.
+  - simpl in H. injection H as <-. exists cc. split; reflexivity.
+  - cbn [stepn] in H.
+    destruct (step tm (lift cc)) as [c1|] eqn:Estep; [|discriminate].
+    destruct (cstep_lift_rev tm cc c1 Estep) as (cc1 & Hcc1 & Hl1).
+    rewrite <- Hl1 in H.
+    destruct (IHm cc1 e H) as (cc' & Hcc' & Hl').
+    exists cc'. split; [| exact Hl'].
+    cbn [csteps]. rewrite Hcc1. exact Hcc'.
+Qed.
+
+Lemma vis_csteps_of_lift : forall (tm : TM) (Cc : positive -> cconf) p q,
+  (exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q) ->
+  exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros tm Cc p q (k & e & Hk & Hq).
+  destruct (stepn_csteps_at tm k (Cc p) e Hk) as (c & Hc & Hl).
+  exists k, c. split; [exact Hc |].
+  rewrite <- lift_state, Hl. exact Hq.
+Qed.
