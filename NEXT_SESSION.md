@@ -222,6 +222,52 @@ STATE: holdouts 11 -> 7 unproven; `D_remaining` 1,016 -> 1,012.  Stage
 regeneration + `Closeout.vo` rebuild still to do (they need the full board
 `.vo` closure).
 
+<!-- --- fractal front CLOSED --- -->
+
+## 2b'. Fractals CLOSED (2026-07-27) -- both, from scratch
+
+Full write-up: `docs/HOLDOUTS_FRACTAL.md`.  The two BBB `fractal` certs
+(#3 `1RB0LA_1LC0RD_0LB1LA_0RB1LA`, #5 `1RB0LA_1LC1RD_0LC1LA_0RD0RB`) --
+the pair for which **BBB had no proof to port** -- now carry
+kernel-checked `NeverQuasiHaltsSt` theorems:
+`theories/Machines/Counters/Fractal_3.v`, `Fractal_5.v`, negative
+controls `theories/Tests/CountersFractal_Corruption.v`, both axiom-clean.
+`D_remaining` **1,009 -> 1,007**; the `fractal` family is CLOSED.
+
+**The decode in one line: both machines are BINARY COUNTERS WHOSE DIGITS
+ARE BLOCKS.**  At every state-`B`-reading-blank the left half-tape is
+
+```
+#5 :  0^z      ++ 1   ++ b_0^1 ++ b_1^2 ++ .. ++ b_{j-1}^(2^(j-1))
+#3 :  0^(2z+2) ++ 1 1 ++ b_0^2 ++ b_1^4 ++ .. ++ b_{j-1}^(2^j)
+```
+
+with `b_*` the binary digits of `z`; one macro-step increments `z` and
+eats one blank on the right (two, for #3).  A carry of length `m` IS the
+machine one level down -- that is the fractal, and it is why the laps
+cost `6*4^k - 2^k` (#5) and `3*4^k + 4*3^k - 2^k` (#3).
+
+**Why they were boardable at all:** `LapGlue`'s lap obligation is
+`exists n, csteps tm n (Cf p) = Some c' /\ ...`.  #3's lap has a `3^k`
+term, so NO certificate in the repo can carry it -- but the existential
+never asks.  This is `NestedLap.v`'s observation ("the lap obligation
+never mentions the cost"), and it generalises past its own family.
+
+**The lever to reuse:** the recursion is a mutual induction on the LEVEL
+with a rule carrying a FREE parameter that never constrains its own
+hypothesis (`E2 q a b`'s `b` for #5) -- the same device as mxdys'
+`P1' n` free `m` in busycoq `FractalType0.v` TM48, which is the machine
+mxdys flagged as similar to #5 (its transition table really does line up
+with ours cell for cell).  With the free parameter the induction closes
+with ZERO leftover glue:
+`SW(2q) = SW(q) ; inc1 ; INC(q) ; SW(q)`, exact in shape AND step count.
+
+**Try this on blockdbl next** (#11/#13/#28): `probe_bd.py`'s `j = 2..7`
+data has the same "one lap is `Theta(m^2)` with `Theta(m)` turnarounds"
+signature that made these two decode, and `Fractal_3.v`'s
+two-cells-per-digit variant is already the general shape.  Reproduce the
+measurements with `python3 tools/counters/fractal_probe.py`.
+
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
@@ -236,7 +282,8 @@ holdouts rather than the residue.  Headlines:
   `wave_counter` machines are now boarded** off the one `WaveCounter.v`
   closer — it needed no change.  `docs/HOLDOUTS_WAVE14.md` §1 has the full
   family decomposition of the remaining 20 (tower 4, double 3, blockdbl 3,
-  xd 3, fractal 2, wave4 1, wrap-QH 2, v4-irules 1, open 1).
+  xd 3, ~~fractal 2~~ fractal 0 (BOARDED 2026-07-27, S2b'), wave4 1,
+  wrap-QH 2, v4-irules 1, open 1).
 - **#6 was EASIER than #27, not harder**, despite the "4-step 0-writing
   cross" warning: its rightward return leaves the tape byte-for-byte
   unchanged, so the whole `relaid`/`bridge_l` borrow algebra disappears.
@@ -280,7 +327,8 @@ holdouts rather than the residue.  Headlines:
 - **3,693 / 3,713 holdouts have a committed Coq theorem** (3,675
   `NeverQuasiHaltsSt` + 18 QH-with-exact-score). **20 unproven** (19
   C-certified-only: tower 4, double 3, blockdbl 3, xd 3, wave 2 (#6/#24),
-  fractal 2, wave4 1, v4 irules 1; plus 1 upstream-open). Boarded this
+  ~~fractal 2~~ 0 (BOARDED, S2b'), wave4 1, v4 irules 1; plus 1
+  upstream-open). Boarded this
   session: 50 irules Phase 2 + wave #17/#27/#36/#7 + double #9 (+55).
   Residue burn-down measured: see tools/recon_20260721_sweep/SWEEP.md
   (59% boardable today, 66% with the irules-QH corollary, bouncer
@@ -325,7 +373,7 @@ to drop them. 3. Re-run `make census` on stable hardware (Class 2) → new lower
    checker SHAPE (step-template induction), 2-4 sessions. The right big lever
    for the never-QH residue.
 4. **Counter tail (23 machines):** wave 6, tower 4, double 4, blockdbl 3,
-   xd 3, fractal 2, wave4 1. busycoq-style individual proofs via
+   xd 3, ~~fractal 2~~ 0 (BOARDED 2026-07-27), wave4 1. busycoq-style individual proofs via
    `LapGlue`/`MeasureGlue`; `double` needs a new `creach_iter` O(k²) closer.
    Hard, one-at-a-time; inventory `NEXT_SESSION.md:436-487`.
 5. **Residue-gate strengthening (lower priority, TRAP-ADJACENT):** wrap-QH
@@ -920,7 +968,7 @@ State of the SCOPING section 5 phase 5 "individual proofs" track
 | mono_counter (3) | **COMPLETE**: #10, #26, #31 (`Mono_10/26/31.v`) |
 | spacer_counter (3) | **COMPLETE**: #16, #22, #23 (`Spacer_16/22/23.v`) |
 | gray(1) double(4) blockdbl(3) mono2(2) interleave(2) exp(3) bounce(2) | not started, in that order (bounce needs the well-founded measure -- see its family notes upstream) |
-| wave(6) wave4(1) tower(4) xd(3) fractal(2) | hard tail, budget separately |
+| wave(6) wave4(1) tower(4) xd(3) ~~fractal(2)~~ | hard tail, budget separately |
 
 Every theorem is `nqh_<bbchallenge text> : NeverQuasiHaltsSt tm_*`,
 `Print Assumptions` = `functional_extensionality_dep` only, listed in
@@ -1022,7 +1070,7 @@ hard way); discriminate them at 7 steps.
 | gray_counter (1) | **COMPLETE: #19 (`Gray_19.v`)** |
 | mono2_counter (2) | **COMPLETE: #38, #39 (`Mono2_38/39.v`)** |
 | double(4) blockdbl(3) interleave(2) exp(3) bounce(2) | not started; session A scoped double+blockdbl, session B interleave/exp/bounce |
-| wave(6) wave4(1) tower(4) xd(3) fractal(2) | hard tail, budget separately |
+| wave(6) wave4(1) tower(4) xd(3) ~~fractal(2)~~ | hard tail, budget separately |
 
 Coverage after this session: 3145/3713.  All three new theorems are
 `nqh_<text>` with `Print Assumptions` = `functional_extensionality_dep`
@@ -1199,7 +1247,7 @@ All `nqh_<bbchallenge text> : NeverQuasiHaltsSt`, `Print Assumptions`
 The counters residue after both sessions: session A's remaining
 queue (double(4) starting at #30, then blockdbl(3) -- see its
 section above) and then the hard tail wave(6) wave4(1) tower(4)
-xd(3) fractal(2).  For the
+xd(3) ~~fractal(2)~~ fractal(0, BOARDED).  For the
 tail, start with **wave**: read `results/counter*.cert` types `wave_counter`
 and `verify_wave_counter` in BBB/src/verify.c; expect LapGlue to
 suffice (parameter -> infinity liveness) with wider unit tables.  The
