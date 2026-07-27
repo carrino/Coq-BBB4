@@ -157,7 +157,7 @@ should wait until THE TASK stalls.  Three things wave-15 does not have:
       number.  Inductive's measured ceiling on our residue is ~20 of 1,176
       (under 2%) -- but that was measured UNHINTED, and the counter
       representations are hint-gated, so hints could lift it a lot or not at
-      all.  Nobody knows.  THE TASK below targets ~340 machines with our own
+      all.  Nobody knows.  THE TASK below targets 492 machines with our own
       machinery and no such uncertainty, so it is the wave.
       The disagreement is about SIZING, not about doing it: run the hint path
       as a MEASUREMENT, not as a wave.  30 machines with derived hints, look
@@ -269,7 +269,8 @@ THE TASK -- THE EXPONENTIAL OVERFLOW, AND MEASURE BEFORE TEMPLATING.
   all 354 "no-interior" machines: 134 are AFFINE interior / EXP2 overflow, so
   they are not really blocked on the interior at all -- fixing the interior
   search moves them into the no-overflow bucket, not into a board.  Net,
-  ~750 of 1,035 are gated on an overflow that costs Theta(2^j), which `sside`
+  ~750 of the then-1,035 are gated on an overflow that costs Theta(2^j)
+  (492 of the current 883, by the wave-16 re-measure), which `sside`
   (a*j+b) and `srun` (ca*j+cb) cannot represent BY CONSTRUCTION.
 
   READ docs/NESTED_LAP_PLAN.md FIRST -- it retires the premise that the count
@@ -359,17 +360,18 @@ THEN, in ranked order (all independent of the above):
       a search gap.  derive_chain finds the chains; the emitter's matcher
       rejected them for landing one trailing blank past the anchor, which
       lift cannot see and which LapDecider.lap_of_run / LapGlue's Hlap never
-      asked about.  116 boards.  docs/WAVE16_FINDINGS.md section 5 lists the
+      asked about.  126 boards.  docs/WAVE16_FINDINGS.md section 5 lists the
       five derive_chain widenings measured at 0 -- INCLUDING more search
       budget, since maxdepth=24 is never reached on this population.  Do not
       spend another wave widening that search.
 
-      The small leftovers, both named and both mechanical:
-        * 7 machines with MULTI-CELL far slack -- generalise the close from a
-          fixed number of lift_app_blank rewrites to ExactClosure.strip_lift.
-        * 3 wanting the lift interior route under glue_qh / glue_qh_abs --
-          each needs the same premise weakening glue_neverqh_lift got, in
-          Counters/LapCertGlueLift.v.
+      Both leftovers it named are now DONE (the 7 multi-cell far slack and
+      the 3 under glue_qh/glue_qh_abs), which is the 116 -> 126.  The second
+      needed no new closer: CTape.cstep_lift_rev already says cstep fails
+      exactly where step does, so vis_csteps_of_lift pulls a stepn-space
+      visit witness back to the concrete premise.  Only the LAP ever needs
+      weakening, because chaining laps needs the reached configuration to BE
+      the next anchor rather than merely lift to it.
 
   (2) THE 37 STILL-IN-MODEL MACHINES -- the smallest named population left,
       and the cheapest.  ovfshape says AFFINE interior AND AFFINE overflow,
@@ -471,8 +473,25 @@ that lowers D_census.  Also the champion 1RB1LD_1RC1RB_1LC1LA_0RC0RD (needs
 0RB1LC_1LC0LC_0RD1LA_1RD1RB.  The Closeout.vo COMPILE needs the ~719-file
 board .vo closure (~85 min in a fresh container); inventory.py, gen_stages.py
 and audit.py all run in minutes and produce the numbers above.
+  CLOSEOUT BUILD, measured in wave-16: the closure is 1,235 files, not 719,
+  and it took ~1h45 in a container that already had 1,100 board .vo (from
+  cold, budget 2.5h+).  Closeout.vo and all 43 CB_*.vo DO build under apt
+  coq, and closeout_partial is Qed at functional_extensionality_dep only --
+  that is the check worth running, and it is what makes audit.py's numbers
+  a proof rather than a tally.  CloseoutFinal.vo CANNOT be built in a
+  container at all: it loads the committed Census_Theorem.vo, which was
+  compiled with OCaml 4.14.2, and apt coq here is 4.14.1 -- Coq object files
+  do not load across OCaml toolchains.  That is a BOX job, not a failure;
+  do not read the missing .vo as a regression.
 
 Commit + push per validated batch.  Name new files so they cannot clash with a
 concurrent session's (waves 10-15 used ILS1_*/ILS4_*/ILS4F_*, ILS1M_*/ILS4M_*/
 ILS4FM_*, IXP_*/IXPM_*, WLS_*/WLSM_*, WLJ_*, LAPC_*, LAPG_*, Alph_*).
+The HOLDOUT sessions run concurrently and own theories/Machines/Counters/
+Double_*.v, Wave_*.v, BCtr_*.v, WrapBc_*.v and Bnc3.v -- do not touch those,
+and expect to merge main mid-wave.  When you do: the closeout tables are
+GENERATED, so resolve conflicts in theories/Closeout/ and
+tools/closeout/frozen_* by re-running inventory.py -> gen_stages.py ->
+audit.py (that order), never by hand-merging rows.  D_remaining should come
+out as exactly yours plus theirs; if it does not, something was lost.
 ```
