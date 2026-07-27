@@ -26,7 +26,7 @@
 From Coq Require Import Arith Bool List PArith.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Counters Require Import BCtrCounter.
-From BBB4.Machines.Counters Require Import BCtr_11 BCtr_13.
+From BBB4.Machines.Counters Require Import BCtr_11 BCtr_13 BCtr_28.
 Import ListNotations.
 
 Definition mkt (w : Sym) (d : Dir) (n : St) : option Trans :=
@@ -168,3 +168,53 @@ Proof. reflexivity. Qed.
 Example real_digit0_same :
   csteps tm_11 2 (StB, ([S1], S0, [S0; S1])) = Some (StA, ([S1], S1, [S1; S1])).
 Proof. reflexivity. Qed.
+
+(** ** #28: the third bouncer counter, other orientation
+
+    Counter on the LEFT, digits [00]/[11], bouncer a run of ONES of
+    length 2v.  One lap is 8v + 4*carry(v) + 10 steps and the bouncer
+    grows by exactly 2 -- both constants are checked here. *)
+
+Example bctr28_boot :
+  match csteps tm_28 10 c0 with
+  | Some c => ceqb c (Cc28 1) | None => false end = true.
+Proof. vm_compute; reflexivity. Qed.
+
+Example bctr28_boot_not_9 :
+  match csteps tm_28 9 c0 with
+  | Some c => ceqb c (Cc28 1) | None => false end = false.
+Proof. vm_compute; reflexivity. Qed.
+
+(** v = 4 (carry 0): 8*4 + 0 + 10 = 42 steps, bouncer 8 -> 10. *)
+Example bctr28_lap_v4 :
+  csteps tm_28 42 (anchor28 [false; false; true])
+  = Some (anchor28 [true; false; true]).
+Proof. vm_compute; reflexivity. Qed.
+
+Example bctr28_lap_v4_not_41 :
+  csteps tm_28 41 (anchor28 [false; false; true])
+  <> Some (anchor28 [true; false; true]).
+Proof. vm_compute. discriminate. Qed.
+
+(** v = 3 (carry 2): 8*3 + 4*2 + 10 = 42 as well.  The carry cost is
+    real: dropping it (34 steps) does not reach the next anchor. *)
+Example bctr28_lap_v3 :
+  csteps tm_28 42 (anchor28 [true; true])
+  = Some (anchor28 [false; false; true]).
+Proof. vm_compute; reflexivity. Qed.
+
+Example bctr28_lap_v3_nocarry :
+  csteps tm_28 34 (anchor28 [true; true])
+  <> Some (anchor28 [false; false; true]).
+Proof. vm_compute. discriminate. Qed.
+
+(** The bouncer must grow by exactly 2, not 1 or 3. *)
+Example bctr28_growth_not_1 :
+  csteps tm_28 42 (anchor28 [false; false; true])
+  <> Some (StA, (encw [true; false; true], S0, repeat S1 9)).
+Proof. vm_compute. discriminate. Qed.
+
+Example bctr28_growth_not_3 :
+  csteps tm_28 42 (anchor28 [false; false; true])
+  <> Some (StA, (encw [true; false; true], S0, repeat S1 11)).
+Proof. vm_compute. discriminate. Qed.

@@ -558,6 +558,7 @@ theories/Machines/Counters/Wave_24.v
 theories/Counters/BCtrCounter.v
 theories/Machines/Counters/BCtr_11.v
 theories/Machines/Counters/BCtr_13.v
+theories/Machines/Counters/BCtr_28.v
 theories/Tests/CountersBCtr_Corruption.v
 
 # --- counters track: wrap bouncer (the two 1RB--- holdouts) ---
