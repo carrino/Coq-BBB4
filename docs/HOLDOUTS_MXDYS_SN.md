@@ -248,6 +248,21 @@ which reproduces the whole measured orbit (j = 2..8 checked term by term),
 including the doubling of the macro anchor as a consequence rather than an
 assumption.
 
+**The two comb gadgets are also measured**, and they are what the `8j` is
+made of -- 5 steps out and 3 steps back per comb block, both uniform in the
+left context and in the tail:
+
+```coq
+rc5 : csteps tm_32 5 (StA, (L, S0, [S1;S0;S1;S0;S0;S1] ++ X))
+      = Some (StA, ([S1;S0;S1] ++ L, S0, [S1;S0;S1] ++ X))
+
+lc3 : csteps tm_32 3 (StA, ([S0;S1;S1] ++ L, S1, X))
+      = Some (StA, (L, S1, [S0;S0;S1] ++ X))
+```
+
+So every one of R1/R2/R3 is: `rc5` iterated `j` times, a bounded window, `lc3`
+iterated `j` times.  Nothing else.
+
 **What remains is Coq, and the closer is free.**  `WaveCounter.wglue_neverqh`
 takes an ARBITRARY anchor type with a total successor and a preserved
 invariant, which is exactly this: `A = (j, block word)`, `nextA` = the
@@ -256,6 +271,21 @@ rewriting above, `Inv` = the shape/size side conditions (`m >= 4`, `p >= 2`,
 which is what makes the `Theta(k^2)` macro lap irrelevant.  The per-machine
 work is the comb-traversal induction (`8j`) plus the three bounded-window
 gadgets.
+
+The abstract state for `wglue_neverqh` can be `(j, L)` with `L` a block word
+`[(a_1,b_1); (a_2,b_2); ...]` denoting `0^a1 1^b1 0^a2 1^b2 ...` and an
+implicit blank tail.  The composed successor is
+
+```
+(j, (1,m) :: (p,q) :: rest)  ->  (S j, norm ((1,4) :: (m-4,2) :: (p-2,q) :: rest))
+(j, [(1,m)])                 ->  (S j, norm [(1,4); (m-4,2)])
+```
+
+where `norm` merges any block with a zero-length `0`-run into the previous
+`1`-run (a denotational identity, since `wden ((a,b) :: (0,c) :: t)
+= wden ((a,b+c) :: t)`).  The invariant that survives it is: `L = (1,m) :: rest`
+with `m` even and `>= 4`, and every block of `rest` having both runs even and
+`>= 2`.  Checked case by case against the four normalisation branches.
 
 ### wave4 #15 — `1RB0RC_0LC1LB_0LD1LC_1RD0RA`
 
