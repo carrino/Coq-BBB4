@@ -1,0 +1,200 @@
+0RB---_0RC0LD_1LD1RC_0LA1LB	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=18,part=153,rc=18,s0=55 why:LR=143,RL1=90
+0RB0LA_1LA0LC_0RD1LC_1RB1RD	FAIL	fwd:lc=36,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=18,s0=0
+0RB0LA_1LA1RC_0RD1RD_1LB0LB	FAIL	fwd:lc=18,part=0,rc=12,s0=0 mir:lc=12,part=0,rc=18,s0=0
+0RB0LA_1LC1RD_0RD1LC_1LA1RB	FAIL	fwd:lc=36,part=0,rc=0,s0=0 mir:lc=18,part=162,rc=18,s0=45 why:LR=183
+0RB0LB_1LC1RD_0RD0LC_1RB1LA	FAIL	fwd:lc=18,part=0,rc=29,s0=0 mir:lc=30,part=288,rc=18,s0=55 why:LR=143,RL1=90
+0RB0LC_1LA1RB_0RD0LA_1RD1LC	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=36,part=90,rc=18,s0=4 why:LR=12
+0RB0LC_1LC1RB_0LD1LA_0RD1RA	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=24,part=117,rc=18,s0=0
+0RB0LC_1LC1RB_0LD1LA_1RC1RA	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=18,part=180,rc=18,s0=0
+0RB0LC_1LC1RB_0RD1LA_1LA1RC	FAIL	fwd:lc=18,part=6,rc=2,s0=0 mir:lc=21,part=150,rc=18,s0=0
+0RB0LC_1LC1RB_0RD1LA_1LC1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=36,part=180,rc=18,s0=62 why:LR=150,RL1=108
+0RB0LC_1LC1RB_1LD1LA_0RD1RB	FAIL	fwd:lc=19,part=0,rc=0,s0=0 mir:lc=21,part=162,rc=19,s0=82 why:LR=230,RL1=120
+0RB0LC_1LC1RB_1RD1LA_1LB0LB	FAIL	fwd:lc=25,part=0,rc=0,s0=0 mir:lc=18,part=216,rc=24,s0=74 why:LR=220,RL1=102
+0RB0LC_1LC1RB_1RD1LA_1LB1LB	FAIL	fwd:lc=25,part=0,rc=0,s0=0 mir:lc=18,part=216,rc=24,s0=74 why:LR=220,RL1=102
+0RB0LC_1LC1RB_1RD1LA_1LC0LA	FAIL	fwd:lc=27,part=0,rc=0,s0=0 mir:lc=18,part=180,rc=26,s0=64 why:LR=186,RL1=90
+0RB0LC_1LC1RB_1RD1LA_1LC1LB	FAIL	fwd:lc=27,part=0,rc=0,s0=0 mir:lc=18,part=180,rc=26,s0=64 why:LR=186,RL1=90
+0RB0LC_1LC1RB_1RD1LA_1LD0RC	FAIL	fwd:lc=21,part=0,rc=2,s0=0 mir:lc=23,part=150,rc=21,s0=0
+0RB0LC_1LC1RB_1RD1LA_1RB0LB	FAIL	fwd:lc=25,part=0,rc=0,s0=0 mir:lc=18,part=216,rc=24,s0=74 why:LR=220,RL1=102
+0RB0LC_1LC1RB_1RD1LA_1RB1LA	FAIL	fwd:lc=25,part=0,rc=0,s0=0 mir:lc=18,part=216,rc=24,s0=74 why:LR=220,RL1=102
+0RB0LC_1LC1RB_1RD1LA_1RB1RC	FAIL	fwd:lc=25,part=0,rc=3,s0=0 mir:lc=21,part=226,rc=24,s0=74 why:LR=220,RL1=102
+0RB0LC_1RC0LC_0RD1LA_1LC1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=18,part=150,rc=18,s0=0
+0RB0LD_0LC1RB_1LD1RC_0RC1LA	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=36,part=180,rc=18,s0=62 why:LR=150,RL1=108
+0RB0LD_1LA1LC_0LD0LC_1RD1RB	FAIL	fwd:lc=34,part=0,rc=18,s0=0 mir:lc=18,part=72,rc=22,s0=0
+0RB0LD_1LC1LC_1LD1RC_0RC1LA	FAIL	fwd:lc=23,part=0,rc=0,s0=0 mir:lc=18,part=162,rc=23,s0=53 why:LR=151,RL1=78
+0RB0LD_1RC1RB_1LD1RC_0RC1LA	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=21,part=130,rc=18,s0=48 why:LR=136,RL1=72
+0RB0RB_1LA1LC_0LD0LC_1RD1RB	FAIL	fwd:lc=37,part=0,rc=18,s0=0 mir:lc=18,part=72,rc=25,s0=0
+0RB0RC_1LC0LC_0LD1RA_1RC1LD	FAIL	fwd:lc=18,part=162,rc=18,s0=59 why:LR=155,RL1=96 mir:lc=18,part=0,rc=0,s0=0
+0RB0RC_1LC1RD_0LD1RA_1RC1LD	FAIL	fwd:lc=18,part=162,rc=26,s0=57 why:LR=166,RL1=81 mir:lc=26,part=0,rc=0,s0=0
+0RB0RD_1LC1RB_1RA0LC_1LD0LC	FAIL	fwd:lc=55,part=3,rc=13,s0=0 mir:lc=31,part=185,rc=54,s0=0
+0RB1LA_0LC1RD_1LD0RB_1RB0LA	FAIL	fwd:lc=27,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=7,s0=0
+0RB1LA_0RC1LB_1RD0LB_1LA1RC	FAIL	fwd:lc=36,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1LA_1LC1RB_0RB1LD_1RA0LC	FAIL	fwd:lc=23,part=0,rc=0,s0=0 mir:lc=18,part=132,rc=18,s0=53 why:LR=151,RL1=78
+0RB1LA_1LC1RD_0RB0LC_1LA1RB	FAIL	fwd:lc=36,part=0,rc=0,s0=0 mir:lc=18,part=162,rc=18,s0=55 why:LR=233
+0RB1LA_1LC1RD_0RD0LC_1LA1RB	FAIL	fwd:lc=36,part=0,rc=0,s0=0 mir:lc=18,part=162,rc=18,s0=45 why:LR=183
+0RB1LA_1LC1RD_1RA1LC_1RB0LA	FAIL	fwd:lc=36,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1LA_1LC1RD_1RD1LD_1RB0LA	FAIL	fwd:lc=21,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=3,s0=0
+0RB1LA_1RC0LA_0LD1RB_1LB1LD	FAIL	fwd:lc=36,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1LA_1RC0LA_0RD1RB_1LD0LB	FAIL	fwd:lc=24,part=0,rc=18,s0=0 mir:lc=30,part=0,rc=6,s0=0
+0RB1LA_1RC0LA_1LD1RB_0LA1LD	FAIL	fwd:lc=36,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1LA_1RC0LA_1LD1RB_1LB1LD	FAIL	fwd:lc=36,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1LA_1RC0LA_1RD1RB_1LB0LA	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1LA_1RC0LA_1RD1RB_1LB1LD	FAIL	fwd:lc=37,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=1,s0=0
+0RB1LA_1RC0LA_1RD1RB_1LD1LA	FAIL	fwd:lc=19,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=1,s0=0
+0RB1LA_1RC1LB_0LA1RD_0LB0RC	FAIL	fwd:lc=19,part=132,rc=26,s0=64 why:LR=186,RL1=90 mir:lc=27,part=0,rc=0,s0=0
+0RB1LA_1RC1RD_1LA---_1RB0LA	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1LA_1RC1RD_1LC1RA_1RB0LA	FAIL	fwd:lc=19,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=1,s0=0
+0RB1LA_1RC1RD_1LD1LB_1RB0LA	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1LB_1LC1RB_0RB1LD_0RA0LC	FAIL	fwd:lc=24,part=0,rc=0,s0=0 mir:lc=18,part=162,rc=24,s0=53 why:LR=151,RL1=78
+0RB1LB_1RC0LD_0LA1RB_0RC1LD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1LC_0LC1RC_1LA0RD_0LA1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=18,s0=0
+0RB1LC_0RC1LD_1LB1RC_0RA0LB	FAIL	fwd:lc=24,part=0,rc=0,s0=0 mir:lc=18,part=162,rc=24,s0=53 why:LR=151,RL1=78
+0RB1LC_1LA1RB_0LD0LA_1LB---	FAIL	fwd:lc=23,part=0,rc=0,s0=0 mir:lc=18,part=132,rc=23,s0=43 why:LR=122,RL1=63
+0RB1LC_1LA1RB_0LD0LA_1RA1LB	FAIL	fwd:lc=29,part=0,rc=0,s0=0 mir:lc=18,part=174,rc=29,s0=76 why:LR=191,RL1=123
+0RB1LC_1LA1RB_0LD0LA_1RD0RB	FAIL	fwd:lc=18,part=0,rc=3,s0=0 mir:lc=21,part=97,rc=18,s0=38 why:LR=112,RL1=54
+0RB1LC_1LA1RB_0RD0LA_1LA1LD	FAIL	fwd:lc=26,part=0,rc=0,s0=0 mir:lc=18,part=162,rc=24,s0=53 why:LR=151,RL1=78
+0RB1LC_1LA1RB_0RD0LA_1RB1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=21,part=130,rc=18,s0=48 why:LR=136,RL1=72
+0RB1LC_1LA1RB_1LD0LA_0RD1RB	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=21,part=171,rc=18,s0=72 why:LR=212,RL1=102
+0RB1LC_1LA1RB_1RD0LA_---1RB	FAIL	fwd:lc=26,part=0,rc=0,s0=0 mir:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84
+0RB1LC_1LA1RB_1RD0LA_1LB1LD	FAIL	fwd:lc=27,part=0,rc=0,s0=0 mir:lc=18,part=135,rc=22,s0=46 why:LR=134,RL1=66
+0RB1LC_1LA1RC_1RB0LD_0RB1LD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1LC_1LC1RB_1LA0RD_0LA1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=36,part=0,rc=18,s0=0
+0RB1LC_1RC0LA_1LA0RD_0LC1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=18,s0=0
+0RB1LC_1RC1RD_0RD0LA_1LA1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=18,part=120,rc=18,s0=0
+0RB1LD_0RC1LB_1LA1RD_1RC0LB	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1LD_1LA1RC_1RB0RC_0LD1LA	FAIL	fwd:lc=27,part=0,rc=21,s0=0 mir:lc=21,part=0,rc=4,s0=0
+0RB1LD_1LC1RB_1LA1RC_0RC0LA	FAIL	fwd:lc=21,part=0,rc=0,s0=0 mir:lc=24,part=114,rc=21,s0=46 why:LR=132,RL1=66
+0RB1LD_1RC1RD_0LA1RC_1LA0RC	FAIL	fwd:lc=18,part=0,rc=2,s0=0 mir:lc=21,part=0,rc=18,s0=0
+0RB1RB_1LC0RD_0RA1LB_0LB1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=18,s0=0
+0RB1RB_1RC1LB_0LB1RD_1LA0RC	FAIL	fwd:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84 mir:lc=26,part=0,rc=0,s0=0
+0RB1RC_0RC1LD_1LB1RC_1RA0LB	FAIL	fwd:lc=26,part=0,rc=0,s0=0 mir:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84
+0RB1RC_1LC1LC_0LD0RA_1RA1LD	FAIL	fwd:lc=18,part=180,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+0RB1RD_1LC1RB_0RB1LD_1RA0LC	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=36,part=90,rc=18,s0=34 why:LR=92,RL1=54
+1RB---_0LB1RC_1LB0RD_1LC0RC	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB---_0LC1RB_0LB1RD_1LC0RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=19,part=0,rc=0,s0=0
+1RB---_0LC1RD_0LB1RD_1LC0RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB---_0RC0LD_0RD0RB_1LD1RB	FAIL	fwd:lc=18,part=0,rc=30,s0=0 mir:lc=30,part=0,rc=18,s0=0
+1RB---_1LB1RC_0RB0RD_0RC0LB	FAIL	fwd:lc=18,part=0,rc=36,s0=0 mir:lc=36,part=0,rc=18,s0=0
+1RB---_1LC0RB_0LD1RB_1LC1RB	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB---_1LC0RB_1LD1RC_0LC1RB	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=21,part=0,rc=18,s0=0
+1RB---_1LC0RD_0LC1RD_1LC0RB	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB---_1LC1RD_0LB1RD_1LB0RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB---_1LC1RD_1LB1RD_1LB0RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB0LA_0RC1LD_1LB1RC_1LA0LB	FAIL	fwd:lc=19,part=0,rc=0,s0=0 mir:lc=18,part=114,rc=19,s0=0
+1RB0LA_1LC1LA_1RD1LB_0LC0RD	FAIL	fwd:lc=31,part=252,rc=18,s0=55 why:LR=143,RL1=90 mir:lc=18,part=0,rc=31,s0=0
+1RB0LB_1LC1RD_0LB1RA_1LB0RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB0LC_0LA0RB_0RD1LC_1LA1RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=36,part=0,rc=0,s0=0
+1RB0LC_0LC1RA_1LB1RD_1LC0RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB0LC_0RC1RD_0RD1LA_1LC1RD	FAIL	fwd:lc=32,part=0,rc=0,s0=0 mir:lc=18,part=267,rc=31,s0=58 why:LR=168,RL1=84
+1RB0LC_1LA1RD_1LA1LB_0RD0LA	FAIL	fwd:lc=35,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=33,s0=0
+1RB0LC_1LC1LD_0RD1LA_1LC1RD	FAIL	fwd:lc=26,part=0,rc=0,s0=0 mir:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84
+1RB0LC_1RC1LA_1LD1RB_0RB0LD	FAIL	fwd:lc=18,part=0,rc=29,s0=0 mir:lc=30,part=288,rc=18,s0=55 why:LR=143,RL1=90
+1RB0LC_1RC1RD_0RD1LA_1LC1RD	FAIL	fwd:lc=26,part=0,rc=0,s0=0 mir:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84
+1RB0LD_0LC1LC_1LD1RC_0RC1LA	FAIL	fwd:lc=26,part=0,rc=0,s0=0 mir:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84
+1RB0LD_0LC1RA_0RC1LA_0RB1LD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=24,part=0,rc=0,s0=0
+1RB0LD_0LC1RA_1LD1LA_0RB1LD	FAIL	fwd:lc=21,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=2,s0=0
+1RB0LD_0LC1RA_1RB1LA_0RB1LD	FAIL	fwd:lc=27,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=7,s0=0
+1RB0LD_0LC1RC_0RC1RD_1LA0LD	FAIL	fwd:lc=75,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=70,s0=0
+1RB0LD_0RC1RA_1LC0LA_0RA1LD	FAIL	fwd:lc=24,part=0,rc=18,s0=0 mir:lc=30,part=0,rc=6,s0=0
+1RB0LD_0RC1RA_1LC1LD_0RB1LD	FAIL	fwd:lc=21,part=0,rc=19,s0=0 mir:lc=19,part=0,rc=3,s0=0
+1RB0LD_1LB1RC_0RC1RD_1LA0LD	FAIL	fwd:lc=69,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=64,s0=0
+1RB0LD_1LC1RA_---1LA_0RA1LD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB0LD_1LC1RA_0RB0LC_1LA0RD	FAIL	fwd:lc=18,part=0,rc=33,s0=0 mir:lc=35,part=288,rc=18,s0=55 why:LR=143,RL1=90
+1RB0LD_1LC1RA_0RD1LC_0RA1LD	FAIL	fwd:lc=36,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB0LD_1LC1RA_1LD1LC_0RA1LD	FAIL	fwd:lc=36,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB0LD_1LC1RA_1RA1LA_0RB1LD	FAIL	fwd:lc=21,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=3,s0=0
+1RB0LD_1LC1RA_1RD1LC_0RB1LD	FAIL	fwd:lc=36,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB0LD_1RC1LC_1LD1RC_0RC1LA	FAIL	fwd:lc=26,part=0,rc=0,s0=0 mir:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84
+1RB0LD_1RC1RA_1LA0RC_0RA1LD	FAIL	fwd:lc=18,part=0,rc=34,s0=0 mir:lc=34,part=0,rc=0,s0=0
+1RB0LD_1RC1RA_1LA1LD_0RA1LD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB0LD_1RC1RA_1LA1RB_0RB1LD	FAIL	fwd:lc=18,part=0,rc=30,s0=0 mir:lc=30,part=0,rc=0,s0=0
+1RB0LD_1RC1RA_1LC1LA_0RA1LD	FAIL	fwd:lc=19,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=1,s0=0
+1RB0LD_1RC1RA_1LC1RD_0RA1LD	FAIL	fwd:lc=19,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=1,s0=0
+1RB0LD_1RC1RB_1LD1RC_0RC1LA	FAIL	fwd:lc=23,part=0,rc=0,s0=0 mir:lc=20,part=180,rc=23,s0=48 why:LR=136,RL1=72
+1RB0RB_0LC1RD_1LB1LA_1LC0RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB0RB_1LA1RC_0LD0RB_1RB1LD	FAIL	fwd:lc=18,part=180,rc=26,s0=64 why:LR=186,RL1=90 mir:lc=27,part=0,rc=0,s0=0
+1RB0RB_1LC1RD_0LB1LA_1LB0RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB0RC_0LB1RC_0LD1RA_1RC1LD	FAIL	fwd:lc=21,part=153,rc=18,s0=62 why:LR=178,RL1=90 mir:lc=18,part=0,rc=0,s0=0
+1RB0RC_1LA1RD_1RB1LC_0LC0RB	FAIL	fwd:lc=18,part=180,rc=26,s0=64 why:LR=186,RL1=90 mir:lc=27,part=0,rc=0,s0=0
+1RB0RC_1LC1LA_0LB1RD_1LB0RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB0RD_0LB1LC_1RD1LC_0LC1RA	FAIL	fwd:lc=21,part=171,rc=18,s0=72 why:LR=212,RL1=102 mir:lc=18,part=0,rc=0,s0=0
+1RB0RD_1LB0LC_1RD1LC_0LC1RA	FAIL	fwd:lc=19,part=153,rc=18,s0=62 why:LR=178,RL1=90 mir:lc=18,part=0,rc=1,s0=0
+1RB0RD_1LC0RD_0LB1RA_1LB0RB	FAIL	fwd:lc=24,part=20,rc=18,s0=0 mir:lc=18,part=30,rc=24,s0=0
+1RB0RD_1LC1RD_0RB0LC_1RB1LA	FAIL	fwd:lc=18,part=0,rc=30,s0=0 mir:lc=32,part=288,rc=18,s0=55 why:LR=143,RL1=90
+1RB1LA_0LA0RC_0LD1RB_1RC1LD	FAIL	fwd:lc=19,part=120,rc=18,s0=44 why:LR=116,RL1=72 mir:lc=18,part=0,rc=0,s0=0
+1RB1LA_0LA1RC_0LD0RB_1LA1RD	FAIL	fwd:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84 mir:lc=28,part=0,rc=0,s0=0
+1RB1LA_0LA1RC_0LD0RB_1RC1LD	FAIL	fwd:lc=21,part=130,rc=18,s0=44 why:LR=116,RL1=72 mir:lc=18,part=0,rc=0,s0=0
+1RB1LA_0LA1RC_0RD0RB_1LB0LD	FAIL	fwd:lc=21,part=153,rc=18,s0=62 why:LR=178,RL1=90 mir:lc=18,part=0,rc=3,s0=0
+1RB1LA_0LA1RC_0RD0RB_1LC1LB	FAIL	fwd:lc=18,part=180,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB1LA_0LA1RC_1LD0RB_---1LA	FAIL	fwd:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84 mir:lc=26,part=0,rc=0,s0=0
+1RB1LA_0LA1RC_1LD0RB_1RA1LD	FAIL	fwd:lc=23,part=200,rc=23,s0=48 why:LR=136,RL1=72 mir:lc=23,part=0,rc=0,s0=0
+1RB1LA_0LA1RC_1RD0RB_1LD0LA	FAIL	fwd:lc=19,part=153,rc=18,s0=62 why:LR=178,RL1=90 mir:lc=18,part=0,rc=1,s0=0
+1RB1LA_0LC1RB_1RA1LD_1LC0RB	FAIL	fwd:lc=24,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB1LA_0LC1RD_1RA0LB_0LA0RB	FAIL	fwd:lc=24,part=132,rc=24,s0=46 why:LR=116,RL1=78 mir:lc=24,part=3,rc=6,s0=0
+1RB1LA_0LC1RD_1RB1LC_1LA0RB	FAIL	fwd:lc=23,part=203,rc=25,s0=44 why:LR=124,RL1=66 mir:lc=26,part=0,rc=0,s0=0
+1RB1LA_0RC1LD_1LB1RC_0LA0LB	FAIL	fwd:lc=25,part=0,rc=0,s0=0 mir:lc=18,part=210,rc=24,s0=57 why:LR=166,RL1=81
+1RB1LA_0RC1RD_1LC1LD_0LA0RB	FAIL	fwd:lc=21,part=124,rc=18,s0=0 mir:lc=18,part=0,rc=3,s0=0
+1RB1LA_1LA1RC_1RB0LD_0RC1LD	FAIL	fwd:lc=36,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB1LA_1LC0RD_0RA0LC_0LA1RD	FAIL	fwd:lc=36,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB1LA_1LC0RD_1RA1LB_0LC1RD	FAIL	fwd:lc=27,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB1LA_1LC1RD_1LA0RA_0LA0RB	FAIL	fwd:lc=18,part=216,rc=24,s0=74 why:LR=220,RL1=102 mir:lc=25,part=0,rc=0,s0=0
+1RB1LA_1LC1RD_1LA1LB_0LA0RB	FAIL	fwd:lc=21,part=226,rc=24,s0=74 why:LR=220,RL1=102 mir:lc=25,part=0,rc=3,s0=0
+1RB1LA_1LC1RD_1LA1RD_0LA0RB	FAIL	fwd:lc=18,part=216,rc=24,s0=74 why:LR=220,RL1=102 mir:lc=25,part=0,rc=0,s0=0
+1RB1LA_1LC1RD_1RA0RA_0LA0RB	FAIL	fwd:lc=18,part=216,rc=24,s0=74 why:LR=220,RL1=102 mir:lc=25,part=0,rc=0,s0=0
+1RB1LA_1LC1RD_1RA1LC_0LA0RB	FAIL	fwd:lc=20,part=216,rc=24,s0=74 why:LR=220,RL1=102 mir:lc=25,part=0,rc=0,s0=0
+1RB1LA_1LC1RD_1RB0RA_0LA0RB	FAIL	fwd:lc=18,part=180,rc=26,s0=64 why:LR=186,RL1=90 mir:lc=27,part=0,rc=0,s0=0
+1RB1LA_1LC1RD_1RB1LC_0LA0RB	FAIL	fwd:lc=20,part=180,rc=26,s0=64 why:LR=186,RL1=90 mir:lc=27,part=0,rc=0,s0=0
+1RB1LA_1LC1RD_1RC1LA_0LA0RB	FAIL	fwd:lc=18,part=216,rc=27,s0=74 why:LR=220,RL1=102 mir:lc=28,part=0,rc=0,s0=0
+1RB1LA_1RC0LD_0LA1RB_0RC1LD	FAIL	fwd:lc=36,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB1LA_1RC1RD_0LA---_0LA0RB	FAIL	fwd:lc=18,part=153,rc=18,s0=76 why:LR=213,RL1=111 mir:lc=18,part=0,rc=0,s0=0
+1RB1LA_1RC1RD_1LC0LB_0LA0RB	FAIL	fwd:lc=23,part=97,rc=18,s0=34 why:LR=92,RL1=54 mir:lc=18,part=0,rc=5,s0=0
+1RB1LB_1LA1RC_0LD0RB_1RB1LD	FAIL	fwd:lc=21,part=196,rc=26,s0=64 why:LR=186,RL1=90 mir:lc=27,part=0,rc=3,s0=0
+1RB1LB_1LC1RB_0RB1LD_0RA0LC	FAIL	fwd:lc=24,part=0,rc=0,s0=0 mir:lc=18,part=162,rc=24,s0=53 why:LR=151,RL1=78
+1RB1LB_1RC0LD_0LA1RB_0RC1LD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB1LB_1RC1LB_1LA1RD_0LB0RC	FAIL	fwd:lc=18,part=216,rc=24,s0=74 why:LR=220,RL1=102 mir:lc=25,part=0,rc=0,s0=0
+1RB1LC_0LA0RB_0RD0LC_1RD1LA	FAIL	fwd:lc=18,part=0,rc=36,s0=0 mir:lc=36,part=0,rc=18,s0=0
+1RB1LC_0LA0RD_1RD1LC_0LC1RB	FAIL	fwd:lc=18,part=150,rc=18,s0=54 why:LR=140,RL1=90 mir:lc=18,part=0,rc=0,s0=0
+1RB1LC_0LA1RC_1LA0RD_0LC1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB1LC_0LB1RC_1LA0RD_0LC1RD	FAIL	fwd:lc=21,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB1LC_0LC0RB_1LA1LD_0RD1LC	FAIL	fwd:lc=24,part=198,rc=18,s0=55 why:LR=143,RL1=90 mir:lc=21,part=0,rc=24,s0=0
+1RB1LC_0LC0RB_1LA1RD_0LA0RA	FAIL	fwd:lc=30,part=288,rc=18,s0=55 why:LR=143,RL1=90 mir:lc=18,part=0,rc=29,s0=0
+1RB1LC_0LC0RB_1LA1RD_0RC0RD	FAIL	fwd:lc=18,part=225,rc=52,s0=67 why:LR=185,RL1=90 mir:lc=53,part=0,rc=18,s0=0
+1RB1LC_0LC0RB_1LA1RD_1RC0RD	FAIL	fwd:lc=18,part=255,rc=42,s0=79 why:LR=237,RL1=90 mir:lc=42,part=0,rc=18,s0=0
+1RB1LC_0LC1RA_1LB1RD_1LC0RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB1LC_0LC1RD_1RB1LC_1LA0RB	FAIL	fwd:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84 mir:lc=26,part=0,rc=0,s0=0
+1RB1LC_0RC1LD_1LB1RC_1RA0LB	FAIL	fwd:lc=26,part=0,rc=0,s0=0 mir:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84
+1RB1LC_1LA1RB_1LA0RD_0LC1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=36,part=0,rc=18,s0=0
+1RB1LC_1LB1LC_0RD0LA_1LA1RD	FAIL	fwd:lc=30,part=0,rc=0,s0=0 mir:lc=18,part=180,rc=29,s0=64 why:LR=186,RL1=90
+1RB1LC_1LC0RD_1LA1LB_0LC1RD	FAIL	fwd:lc=30,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=30,s0=0
+1RB1LC_1LC1RC_1LA0RD_0LA1RD	FAIL	fwd:lc=18,part=0,rc=3,s0=0 mir:lc=21,part=0,rc=18,s0=0
+1RB1LC_1RC1RB_1LA0RD_0LC1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=36,part=0,rc=18,s0=0
+1RB1LD_0LC1RB_0LD1RC_1LA0RC	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=36,part=0,rc=18,s0=0
+1RB1LD_0RC1RB_0LD1RC_1LA0RC	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=36,part=0,rc=18,s0=0
+1RB1LD_1LC---_1LA1RC_0RC0LA	FAIL	fwd:lc=25,part=0,rc=0,s0=0 mir:lc=18,part=216,rc=24,s0=74 why:LR=220,RL1=102
+1RB1LD_1LC1RA_0RB0LC_0LB1RD	FAIL	fwd:lc=18,part=0,rc=24,s0=0 mir:lc=30,part=234,rc=18,s0=55 why:LR=143,RL1=90
+1RB1LD_1LC1RB_0LD1RC_1LA0RC	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=36,part=0,rc=18,s0=0
+1RB1LD_1RC0RB_1LA0RB_0LD1LB	FAIL	fwd:lc=18,part=0,rc=73,s0=0 mir:lc=78,part=0,rc=0,s0=0
+1RB1LD_1RC1LB_1LA1RD_0LB0RC	FAIL	fwd:lc=18,part=216,rc=24,s0=74 why:LR=220,RL1=102 mir:lc=25,part=0,rc=0,s0=0
+1RB1LD_1RC1RD_0LD1RC_1LA0RC	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB1RA_0RC1LA_1LC1LD_0RB0RD	FAIL	fwd:lc=18,part=0,rc=25,s0=0 mir:lc=43,part=0,rc=18,s0=0
+1RB1RA_1LC0RD_1LA1LB_0LB1RD	FAIL	fwd:lc=18,part=0,rc=1,s0=0 mir:lc=37,part=0,rc=18,s0=0
+1RB1RA_1RC0LA_1LD1RB_0RB0LD	FAIL	fwd:lc=18,part=0,rc=30,s0=0 mir:lc=35,part=288,rc=18,s0=55 why:LR=143,RL1=90
+1RB1RB_1LA1RC_0LD0RB_1RB1LD	FAIL	fwd:lc=18,part=180,rc=26,s0=64 why:LR=186,RL1=90 mir:lc=27,part=0,rc=0,s0=0
+1RB1RB_1LC0RD_1RA1LB_0LB1RD	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB1RB_1RC1LB_1LA1RD_0LB0RC	FAIL	fwd:lc=18,part=216,rc=24,s0=74 why:LR=220,RL1=102 mir:lc=25,part=0,rc=0,s0=0
+1RB1RC_0LC1LA_1LB1RD_1LC0RD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=18,s0=0
+1RB1RC_0RC0LD_1LD1RC_0RA1LB	FAIL	fwd:lc=18,part=0,rc=0,s0=0 mir:lc=18,part=120,rc=18,s0=0
+1RB1RC_1LA0RD_1RD1LC_0LC1RB	FAIL	fwd:lc=18,part=213,rc=25,s0=58 why:LR=168,RL1=84 mir:lc=26,part=0,rc=0,s0=0
+1RB1RC_1LB0RA_0LC1RD_1LC0RD	FAIL	fwd:lc=19,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=1,s0=0
+1RB1RC_1LB1LA_1RA0LD_0RA1LD	FAIL	fwd:lc=19,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=1,s0=0
+1RB1RC_1LB1RA_0LC1RD_1LC0RD	FAIL	fwd:lc=19,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=1,s0=0
+1RB1RC_1LC0LD_1RA0LD_0RC1LD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB1RC_1LC0RD_0LC1RD_0RB0LA	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB1RC_1LC1LA_1RA0LD_0RA1LD	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB1RC_1LC1RA_1RA0LD_0RA1LD	FAIL	fwd:lc=18,part=0,rc=30,s0=0 mir:lc=30,part=0,rc=0,s0=0
+1RB1RC_1LC1RC_1RA0LD_0RC1LD	FAIL	fwd:lc=18,part=0,rc=33,s0=0 mir:lc=33,part=0,rc=0,s0=0
+1RB1RD_0LB1LC_1RA1LC_0LC0RA	FAIL	fwd:lc=21,part=162,rc=18,s0=82 why:LR=230,RL1=120 mir:lc=18,part=0,rc=0,s0=0
+1RB1RD_0RC1LA_1LD0RB_0LD1RC	FAIL	fwd:lc=18,part=0,rc=25,s0=0 mir:lc=27,part=0,rc=0,s0=0
+1RB1RD_1LB1LC_0RA1LC_1RA0LC	FAIL	fwd:lc=19,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=1,s0=0
+1RB1RD_1LC---_0RD1LC_1RA0LC	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB1RD_1LC0RD_0LC1RD_0RB0LA	FAIL	fwd:lc=18,part=0,rc=18,s0=0 mir:lc=18,part=0,rc=0,s0=0
+1RB1RD_1LC1RA_0RB0LC_1LA0LB	FAIL	fwd:lc=18,part=0,rc=24,s0=0 mir:lc=24,part=234,rc=18,s0=55 why:LR=143,RL1=90
