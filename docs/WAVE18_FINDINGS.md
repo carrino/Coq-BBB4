@@ -12,13 +12,24 @@ lesson was not spent; it had one more level to give._
 
 | | |
 |---|---:|
-| boards this wave | **225** (all `NLAP_*`, through the one checker) |
-| `D_remaining` | 883 → **658** |
-| frozen rows settled | 4,273 → **4,498 / 5,156 (87.2%)**, from 82.9% |
+| boards this wave | **258** (all `NLAP_*`, through the one checker) — 225 single-count, then 33 more from the two-count route of §4c |
+| `D_remaining` | 883 → **625** |
+| frozen rows settled | 4,273 → **4,531 / 5,156 (87.9%)**, from 82.9% |
 | new Coq | `Counters/NestedLapLift.v` — additive; `LapDecider.v`, `LapGlue.v`, `LapCertGlue.v`, `NestedLap.v` all untouched |
-| board axiom footprint | `functional_extensionality_dep` only, on all 225 (checked, one `Print Assumptions` per board) |
-| closeout | `audit.py` OK — the tables still partition the frozen list exactly |
+| board axiom footprint | `functional_extensionality_dep` only, on all 258 (checked, one `Print Assumptions` per board) |
+| closeout | `audit.py` OK, and **KERNEL-VERIFIED**: `Closeout.vo` + all 45 `CB_*.vo` compile, `closeout_partial` is Qed at `functional_extensionality_dep` only, and `vm_compute` on `List.length remaining_rows` returns the wave's figure |
 | census | `census_cache --check` MATCH at every commit; `theories/Census/` untouched |
+
+```
+closeout_partial : forall tm, Deferred D_census tm ->
+                              boarded tm \/ Deferred D_remaining tm
+```
+
+is the certified statement, and `D_remaining` is now the wave's own list — so these
+boards are not a tooling claim, they are a kernel one.  (`CloseoutFinal.v`,
+which chains this to `census_decided`, still cannot be built in a container:
+the committed census `.vo` are OCaml 4.14.2 and apt coq here is 4.14.1.  See
+`WAVE16_FINDINGS.md` §4b — it is a toolchain fact, not a proof failure.)
 
 No existing board changes. The nested route is a FALLBACK inside
 `emit_lapcert.derive`, tried only where the flat one raises `no overflow
@@ -136,24 +147,30 @@ The emitter over the whole 883, cross-referenced against that classification:
 
 | shape | n | boarded | what the rest fail on |
 |---|---:|---:|---|
-| **`AFFINE`/`EXP2`** | 500 | **225 (45%)** | 134 no inner family at `pow2 j`, 111 no exit chain, 20 no boot chain, 8 no interior chain, 2 no inner interior chain |
+| **`AFFINE`/`EXP2`** | 500 | **258 (52%)** | 134 no inner family at `pow2 j`, 111 no exit chain, 20 no boot chain, 8 no interior chain, 2 no inner interior chain |
 | `-`/`no-anchor` | 239 | 0 | 211 "no overflow phase" + 28 "no anchor" — these never had a decodable anchor family; the nested probe just reports it differently |
 | `AFFINE`/`AFFINE` | 52 | 0 | 23 no inner family, 15 no visit witness (StA), 14 no interior chain |
 | `QUAD` / `PARITY` / `HIGHER` / `EXP3` / `EXP4` | 83 | 0 | all on the INTERIOR branch, which this wave does not touch |
 | `AFFINE`/`HIGHER` | 9 | 0 | 5 no inner family, 2 no boot, 2 no inner interior |
 
-So the residue's failure profile at `D_remaining = 658` is
+So the residue's failure profile at `D_remaining = 625` (after §4c's 33) is
 
 ```
- 265  no inner family at pow2 j  (162 of them AFFINE/EXP2)
  211  no overflow phase          (the no-anchor bucket)
+ 185  no inner family at pow2 j  (162 of them AFFINE/EXP2)
  105  no interior chain          (QUAD 41, HIGHER 13, PARITY 13, EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8)
- 111  no exit chain
+  65  no exit chain
   28  no anchor
   22  no boot chain
   15  no visit witness (StA is targeted)
+   8  no shift chain
+   5  no second exit chain
    4  no inner interior chain
 ```
+
+and `ovfshape` over the same 625: 242 `AFFINE`/`EXP2`, 239 no-anchor, 52
+`AFFINE`/`AFFINE`, 41 `QUAD`, 13 `PARITY-AFFINE`, 13 `HIGHER`, 10 `EXP3`, 9
+`AFFINE`/`HIGHER`, 6 `EXP4`.
 
 **Read the boot/exit split with §4b.**  `derive_nested` at first reported the
 LAST key tried rather than the furthest any key got, which filed a machine
@@ -217,6 +234,20 @@ the mirror image of a count after it).
 
 `tools/counters/nestcert.py` already returns the phase's `mid` list, so the
 split costs nothing to reproduce.
+
+**BUILT, AND IT BOARDS 33 MORE.**  `theories/Counters/NestedLap2.v` is the one
+lemma (`boot_via_fill`, 12 lines, `functional_extensionality_dep` only) and
+the emitter grew a `_second_count` search plus a fifth chain.  Over the
+299-machine failure set: **33 boards**, `D_remaining` 658 → **625**.  The
+residual reasons are `no shift chain` (8) and `no second exit chain` (5), so
+the shape is right and what is left is chain search on a much smaller
+population.  A board of this kind carries TWO `Cin` families at the same
+state and alphabet with different tails, e.g.
+
+    Cin  v = (StB, (Jp v ++ [S1;S1;S0], S0, []))
+    Cin2 v = (StB, (Jp v ++ [S0;S0;S1], S0, []))
+
+which is the shifted frame, written down.
 
 ## 5. DO NOT RETRY (measured this wave)
 

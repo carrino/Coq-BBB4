@@ -602,12 +602,13 @@ Lemma geo_@ID@ : forall p j, cview p = (S j, None) ->
 Proof.
   intros p j E. destruct (@ENCMOD@.@NONE@ p j E) as (_ & H2).
   assert (HD : cden [] [] j B1_@ID@
-             = (@ST0@, (rep @UD@ (S j) ++ @OVPOST@, S0, @OVFAR@))).
+             = (@ST0@, (@HDLEFT@, S0, @OVFAR@))).
   { unfold cden, B1_@ID@, sden, sflat;
       cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
     replace (1 * j + 1) with (S j) by lia.
     replace (0 * j + 0) with 0 by lia.
-    cbn [rep app]. reflexivity. }
+    cbn [rep app]. first [ reflexivity
+      | rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ]. }
   assert (HC : Cc (Pos.succ p) = (@ST0@, (@HCLEFT@, S0, @FAR@))).
   { unfold Cc_@ID@. rewrite H2.
     first [ rewrite <- !app_assoc; reflexivity
@@ -940,9 +941,23 @@ def render(D):
     ovpost, ovwant = tuple(D['ovpost']), tuple(D['ovwant'])
     body = 'rep %s (S j) ++ %s' % (clist(d['uD']), clist(ovpost))
     pad = len(ovwant) - len(ovpost)
-    if pad < 0 or ovwant[:len(ovpost)] != ovpost or any(ovwant[len(ovpost):]):
+    if pad < 0:
+        # The REACHED post is the longer one -- the lap stopped past the
+        # anchor rather than short of it.  Same blank, other side of the
+        # equation: nest the surplus on [HD] instead of on [HC].  (The nested
+        # route reaches this: its exit chain lands on the outer successor,
+        # and landing one blank OVER is as common there as landing one under.)
+        n = -pad
+        if ovpost[:len(ovwant)] != ovwant or any(ovpost[len(ovwant):]):
+            raise DeriveError('overflow close %r vs %r' % (ovpost, ovwant))
+        body = ('(' * n + 'rep %s (S j) ++ %s' % (clist(d['uD']),
+                                                  clist(ovwant))
+                + ''.join(') ++ [S0]' for _ in range(n)))
+        hcleft = 'rep %s (S j) ++ %s' % (clist(d['uD']), clist(ovwant))
+        close = 'rewrite !lbl_%s. reflexivity.' % ID
+    elif ovwant[:len(ovpost)] != ovpost or any(ovwant[len(ovpost):]):
         raise DeriveError('overflow close %r vs %r' % (ovpost, ovwant))
-    if pad == 0:
+    elif pad == 0:
         hcleft, close = body, 'reflexivity.'
     else:
         # each surplus cell is one trailing blank, invisible to [lift]
@@ -1048,9 +1063,11 @@ def render(D):
         farb = farnest = clist(D['far'])
     N = D.get('nest')
     reps = {
-        '@OVFDEFS@': (NC.NEST_DEFS if N else FLAT_OVF_DEFS),
+        '@OVFDEFS@': (NC.nest_defs(D, ENCDATA, clist, cconf, cchain, ST, ID)
+                      if N else FLAT_OVF_DEFS),
         '@OVFCASE@': (NC.NEST_OVFCASE if N else FLAT_OVF_CASE),
-        '@NESTGLUE@': (NC.NEST_GLUE + '\n\n' if N else ''),
+        '@NESTGLUE@': (NC.nest_glue(D, ENCDATA, clist, cconf, cchain, ST, ID)
+                       + '\n\n' if N else ''),
         '@NESTIMPORT@': '',
         '@PREF@': (NEST_PREFIX if N else PREFIX), '@ID@': ID, '@SPEC@': spec,
         '@GLUELIFT@': ' LapCertGlueLift' if islack else '',
@@ -1086,7 +1103,7 @@ def render(D):
         '@US@': clist(d['uS']), '@UD@': clist(d['uD']),
         '@OBSP@': str(d['obS'] - 1 if d['obS'] >= 1 else 0),
         '@CNTP@': 'j',
-        '@OVPOST@': clist(ovpost), '@HCLEFT@': hcleft, '@OVFAR@': ovfar,
+        '@HDLEFT@': body, '@HCLEFT@': hcleft, '@OVFAR@': ovfar,
         '@CLOSE@': close, '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
         '@VISHYP@': ('forall p q, In q %s ->' % slist(D['sset'])
                      if D['absd'] is not None

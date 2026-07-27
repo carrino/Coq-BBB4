@@ -2,9 +2,9 @@
 
 _Rewritten 2026-07-27 at the end of the wave-18 RESIDUE track (branch
 `claude/coq-bbb4-residude-oy73r4`), which took THE TASK — the exponential
-overflow, the `AFFINE`/`EXP2` bucket, 500 of the 883 — and **boarded 225 of
-them**.  `D_remaining` is **658**; 4,498 of the frozen 5,156 are settled
-(87.2%).  Full assessment: `docs/WAVE18_FINDINGS.md` — §2 is why it took
+overflow, the `AFFINE`/`EXP2` bucket, 500 of the 883 — and **boarded 258 of
+them**.  `D_remaining` is **625**; 4,531 of the frozen 5,156 are settled
+(87.9%).  Full assessment: `docs/WAVE18_FINDINGS.md` — §2 is why it took
 three waves, §4b is the measurement that names the next 130 machines, §5 is
 the one do-not-retry, §6 is the lesson._
 
@@ -54,26 +54,29 @@ LapCertGlue, LapGlueAbs, NestedLap and NestedLapLift are axiom-FREE or
 funext-only -- keep them that way).  Everything under tools/ is UNTRUSTED;
 the kernel re-checks every board.
 
-STATE: 4,498 of the frozen 5,156 settled (87.2%); D_remaining = 658.
+STATE: 4,531 of the frozen 5,156 settled (87.9%); D_remaining = 625.
 THE HOLDOUTS ARE NOT YOURS.  Do not open that front, do not sweep
 tools/census_holdouts_kept.txt.
 
-Failure profile, measured at D_remaining = 658 by running
+Failure profile, measured at D_remaining = 625 by running
   python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt --json OUT
 (3 shards, ~20 min; the run also tells you the nested route's verdict per
 machine).  Cross-referenced against ovfshape.py over the same list:
 
-  265  no inner family at pow2 j   -- 162 AFFINE/EXP2, 23 AFFINE/AFFINE
+  185  no inner family at pow2 j   -- 162 AFFINE/EXP2, 23 AFFINE/AFFINE
   211  no overflow phase           -- ALL of them the no-anchor bucket
-  111  no exit chain               -- AFFINE/EXP2; MEASURED EXPONENTIAL
   105  no interior chain           -- QUAD 41, HIGHER 13, PARITY-AFFINE 13,
                                       EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8
+   65  no exit chain               -- MEASURED EXPONENTIAL, and the two-count
+                                      route did NOT reach these
    28  no anchor
    22  no boot chain               -- MEASURED EXPONENTIAL on 14 of 16
    15  no visit witness (StA)
+    8  no shift chain              -- has a second family, no chain into it
+    5  no second exit chain
     4  no inner interior chain
-ovfshape over the whole 658-machine list, for shape rather than blocker:
-  275 AFFINE/EXP2, 239 no-anchor, 52 AFFINE/AFFINE, 41 QUAD, 13 PARITY-AFFINE,
+ovfshape over the whole 625-machine list, for shape rather than blocker:
+  242 AFFINE/EXP2, 239 no-anchor, 52 AFFINE/AFFINE, 41 QUAD, 13 PARITY-AFFINE,
   13 HIGHER, 10 EXP3, 9 AFFINE/HIGHER, 6 EXP4.
 Per-machine cost is a vm_compute:
   python3 tools/counters/emit_lapcert.py --list FILE --emit   (25 alphabets)
@@ -82,13 +85,17 @@ exactly what you boarded, in minutes.
 
 THE TASK -- FINISH THE NESTED LAP, AND IT IS AN IDENTIFICATION PROBLEM.
 
-  225 of the 500 AFFINE/EXP2 machines are boarded.  Of the 275 that are not,
-  ~275 - 8 - 2 = 265 fail for exactly three reasons, and WAVE18 section 4b
-  measured what is behind two of them:
+  258 of the 500 AFFINE/EXP2 machines are boarded -- 225 with ONE inner count
+  and 33 with TWO (the sync-bouncer shift; Counters/NestedLap2.v).  Of the
+  242 that are not:
 
-    111  "no exit chain"  -- the exit is EXPONENTIAL (0 AFFINE of 24 sampled)
-     22  "no boot chain"  -- the boot is EXPONENTIAL (14 EXP of 16 with a key)
+     65  "no exit chain"  -- the exit is EXPONENTIAL (0 AFFINE of 24 sampled)
+                             AND the second-count search does not reach them
     134  "no inner family at pow2 j"
+     22  "no boot chain"  -- the boot is EXPONENTIAL (14 EXP of 16 with a key)
+      8  "no shift chain" / 5 "no second exit chain" -- these DO have the
+                             second family; only a chain is missing, so they
+                             are the cheapest 13 on the board
 
   An sside carries a*j + b, so an exponential half is UNREPRESENTABLE as one
   chain.  Do NOT widen derive_chain for these; that is now measured twice over
@@ -107,7 +114,8 @@ THE TASK -- FINISH THE NESTED LAP, AND IT IS AN IDENTIFICATION PROBLEM.
 
   five affine chains and TWO exponential inner runs, not three and one.
 
-  IT SHOULD NEED NO NEW COQ.  NestedLapLift.nested_overflow_lift's Hboot is an
+  THAT IS BUILT (Counters/NestedLap2.boot_via_fill, 12 lines, and it boarded
+  33).  IT NEEDED NO NEW COMPOSITION THEOREM.  NestedLapLift.nested_overflow_lift's Hboot is an
   ARBITRARY csteps run into Cin v0 -- it does not have to be one chain.  So
   instantiate the theorem at the SECOND inner family and build its boot as
   boot1 ++ inner_to_fill_lift(Cin1) ++ mid.  The emitter work is one more

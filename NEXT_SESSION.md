@@ -418,15 +418,17 @@ carry-continue windows at the turnaround, then the assembly and the Coq.
 `wglue_neverqh` still needs no change.  `HOLDOUTS_MXDYS_SN.md` section 5b has
 the full table and sizes the other three.
 
-## 2g. Wave-18, RESIDUE track (2026-07-27) — THE TASK lands: 225 boards
+## 2g. Wave-18, RESIDUE track (2026-07-27) — THE TASK lands: 258 boards
 
 Full write-up: `docs/WAVE18_FINDINGS.md`.  Took **THE TASK** of the wave-15
 and wave-16 prompts — the `AFFINE`/`EXP2` bucket, 500 of the 883 unproven
 rows, whose overflow lap costs `Θ(2^j)` — and produced its first boards.
 
-- **`D_remaining` 883 → 658; 4,498 / 5,156 = 87.2% settled** (from 82.9%).
-  225 `NLAP_*` boards, every one `functional_extensionality_dep` only
-  (checked per board), `audit.py` OK, `census_cache --check` MATCH.
+- **`D_remaining` 883 → 625; 4,531 / 5,156 = 87.9% settled** (from 82.9%).
+  258 `NLAP_*` boards, every one `functional_extensionality_dep` only
+  (checked per board), `audit.py` OK, `census_cache --check` MATCH.  The
+  closeout is KERNEL-VERIFIED: `Closeout.vo` + all `CB_*.vo` compile and
+  `closeout_partial` is Qed at `functional_extensionality_dep` only.
 - **The blocker was wave-16's acceptance test, one level down.**
   `docs/NESTED_LAP_PLAN.md` had Stage A and Stage B done and Stage C stuck at
   "boot chain 1 of 12, and it is NOT a search budget".  That was true; the
@@ -460,7 +462,7 @@ rows, whose overflow lap costs `Θ(2^j)` — and produced its first boards.
   fix lands as a **defaulted flag**, grep for every caller of the function,
   not just the one that motivated it.  Two waves of "the boot is not a search
   problem" were spent on a call site that had never been revisited.
-- Failure profile at 658: 265 no inner family at `pow2 j`, 211 no overflow
+- Failure profile after the first 225 (at `D_remaining` = 658): 265 no inner family at `pow2 j`, 211 no overflow
   phase (the no-anchor bucket), 111 no exit chain, 105 no interior chain
   (QUAD 41, HIGHER 13, PARITY 13, EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8),
   28 no anchor, 22 no boot chain, 15 no visit witness, 4 no inner interior.
@@ -473,6 +475,15 @@ rows, whose overflow lap costs `Θ(2^j)` — and produced its first boards.
   inner counting does not stop at `fill (pow2 j)`, an exponential boot that it
   did not start at `pow2 j`.  `NESTED_LAP_PLAN` §3 predicted exactly this
   ("a SUBSEQUENCE of a longer count satisfies that too").
+- **AND THAT WAS BUILT TOO.**  Splitting the phase at the first inner fill and
+  searching the second half finds a SECOND consecutive family on 11 of 16 --
+  same state, same alphabet, SHIFTED TAIL.  That is mxdys' sync bouncer
+  counter ("count 8->15, shift, count 8->15 again").  It needed ONE new lemma
+  (`Counters/NestedLap2.boot_via_fill`, 12 lines) because
+  `nested_overflow_lift`'s `Hboot` is an ARBITRARY `csteps` run: instantiate
+  at the SECOND family and fold the first count into the boot.  **33 more
+  boards; `D_remaining` 658 -> 625.**  What is left of that bucket is 8 "no
+  shift chain" + 5 "no second exit chain".
 
 ## 3. The long-tail roadmap
 
