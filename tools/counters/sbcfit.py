@@ -305,13 +305,27 @@ def mirror(spec):
     return spec.translate(str.maketrans('RL', 'LR'))
 
 
-def sample_run(tab, T, want):
-    """Snapshots (q, head, tape) spread over the run, for reading words off."""
+def windows(tab, T, lwn, rwn, cap=40000):
+    """Every DISTINCT (state, left window, right window) the run ever shows.
+
+    Sampling uniformly in TIME loses certificates: on
+    `1LB1RE_0LC0LB_1RD1LB_0RA---_0RF0LC_1RA0RD` -- which upstream solves --
+    every derivation step succeeds, but d1 = [0;1;0;1] never lands in a
+    uniformly spaced snapshot, so the search never proposes it.  What matters
+    is the set of distinct local windows, not when they occur, and that set is
+    small because a sweep repeats the same few neighbourhoods.
+
+    `lw[i]` is the cell i to the LEFT of the head counting the head itself;
+    `rw[j]` is the cell j to the right, likewise.
+    """
     q, head, tape = 0, 0, {}
-    out, every = [], max(1, T // want)
-    for t in range(T):
-        if t and t % every == 0:
-            out.append((q, head, dict(tape)))
+    seen = set()
+    for _ in range(T):
+        seen.add((q,
+                  tuple(tape.get(head - i, 0) for i in range(lwn)),
+                  tuple(tape.get(head + j, 0) for j in range(rwn))))
+        if len(seen) >= cap:
+            break
         tr = tab.get((q, tape.get(head, 0)))
         if tr is None:
             break
@@ -319,26 +333,24 @@ def sample_run(tab, T, want):
         tape[head] = w
         head += d
         q = nq
-    return out
+    return seen
 
 
-def _walk(tab, tape, q, head, lo, hi, tq, th, maxsteps=2000):
+def _walk(tab, tape, q, head, lo, hi, tq, th, maxsteps=400):
     """Step inside [lo,hi] until (tq,th); reading outside is a failure.
 
-    The window is finite and the machine deterministic, so a repeated config
-    can never reach the target: bail on the spot.  Without this the search
-    spends its whole budget watching junk candidates bounce.
+    400 is a 10x margin, not a guess.  Instrumenting `check_rule` over all 416
+    upstream certificates gives, as the WORST case of any hypothesis on any
+    machine: R_reset 41 steps, L_overflow 29, everything else <= 16.  These
+    rules act on a window of a dozen cells; they are short by construction.
+    Raise it if a future shape says otherwise -- but a junk candidate that
+    bounces for thousands of steps is the thing this bound is here to kill.
     """
-    seen = set()
     for _ in range(maxsteps):
         if q == tq and head == th:
             return tape
         if head < lo or head > hi:
             return None
-        key = (q, head, tuple(tape.get(p, 0) for p in range(lo, hi + 1)))
-        if key in seen:
-            return None
-        seen.add(key)
         tr = tab.get((q, tape.get(head, 0)))
         if tr is None:
             return None
@@ -483,29 +495,33 @@ def _match_S0(tape, head, lo, hi, d1, dp, w0, w10, nb, nd, nw, kmax):
     return n0, m0, tuple(d1a) + (0,) * (3 * nb)
 
 
-def search(spec, T=400000, samples=200, maxdl=2, maxwl=8, maxbl=8, cap=400000,
+def search(spec, T=400000, maxdl=2, maxwl=6, maxbl=6, cap=400000,
            dbg=None):
     """Propose SBCv1 certificates for `spec`; return the first that verifies."""
     tab = parse(spec)
-    snaps = sample_run(tab, T, samples)
-    if not snaps:
+    wins = windows(tab, T, max(maxbl, maxdl + 1), max(maxwl, maxdl + 1))
+    if not wins:
         return None
 
-    rc, lc = set(), set()
-    for q, h, tape in snaps:
+    # Dedupe the PROPOSALS before deriving: many windows read off the same
+    # (state, block) pair, and a derivation is far dearer than a set lookup.
+    pr, pl = set(), set()
+    for q, lw, rw in wins:
         for dl in range(maxdl + 1):
-            d = tuple(tape.get(h - 1 - i, 0) for i in range(dl))
             for wl in range(1, maxwl + 1):
-                w0 = tuple(tape.get(h + j, 0) for j in range(wl))
-                w0p = derive_shift(tab, q, d, w0)
-                if w0p is not None and w0p != w0:
-                    rc.add((q, d, w0, w0p))
-            dp = tuple(tape.get(h + 1 + i, 0) for i in range(dl))
+                pr.add((q, lw[1:dl + 1], rw[:wl]))
             for bl in range(1, maxbl + 1):
-                d1 = tuple(tape.get(h - i, 0) for i in range(bl))
-                d1p = derive_lshift(tab, q, d1, dp)
-                if d1p is not None:
-                    lc.add((q, d1, dp, d1p))
+                pl.add((q, lw[:bl], rw[1:dl + 1]))
+
+    rc, lc = set(), set()
+    for q, d, w0 in pr:
+        w0p = derive_shift(tab, q, d, w0)
+        if w0p is not None and w0p != w0:
+            rc.add((q, d, w0, w0p))
+    for q, d1, dp in pl:
+        d1p = derive_lshift(tab, q, d1, dp)
+        if d1p is not None:
+            lc.add((q, d1, dp, d1p))
 
     # Build every partial certificate the two shift rules admit, THEN resolve
     # all their S0 configs in a single pass.
@@ -517,7 +533,7 @@ def search(spec, T=400000, samples=200, maxdl=2, maxwl=8, maxbl=8, cap=400000,
             d0 = derive_shift(tab, QR, d, d1p)     # L_return gives d0
             if d0 is None or d0 == d1:
                 continue
-            for w10l in range(1, len(w0) + 1):
+            for w10l in range(1, min(len(w0), 4) + 1):
                 w10 = (0,) * w10l
                 w11 = derive_rl0(tab, QR, QL, d, dp, w10, w0)
                 if w11 is None:
