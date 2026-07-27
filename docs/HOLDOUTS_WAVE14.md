@@ -547,70 +547,29 @@ machines for 3.
 
 ---
 
-## §8 — #32 `1RB1LD_1RC0RB_1LA0RC_0LD0LA` re-anchored on BBB's event (CLOSED)
+## §8 — SUPERSEDED: #32 and the two `1RB---` wrap holdouts
 
-`tools/counters/lap32.py` anchored on the head-on-blank config with comb count
-`k = 2^j − 1` and unit `(011)`.  It validated, but topped out at **95.2%** unit
-coverage with a fixed ~57-step boundary gadget per era, and the residual never
-resolved.  BBB's `results/counter32.cert` uses a different phase of the SAME
-orbit — `SUMMARY.md:2134` records the `k = 2^j − 1` reading as a first-guess
-trap that "timed out".
+This section briefly held a parallel decode of #32 and a `WrapBounce.v` proof of
+the two `1RB---` machines.  Both were already done on `main`, better, and the
+files have been removed rather than left as a second competing account:
 
-**The BBB anchor, confirmed against the blank-tape run** (steps 33 / 101 / 311 /
-1021 for j = 0..3):
+- **The wrap pair** is boarded by `theories/Counters/WrapBouncer.v` +
+  `Machines/Counters/WrapBc_R.v` / `WrapBc_L.v`, through
+  `LapGlueAbs.glue_qh_abs`, with `Tests/CountersWrapBc_Corruption.v` and the
+  `_CoqProject` wiring.  The removed `WrapBounce.v` proved the same triple off a
+  shared `{B,C,D}` core but was never wired.
 
-    Cf(j) = (StB, (rep [S0] z ++ rep [S0;S1;S1] a ++ [S1], S1, []))
-            a = 2^j (a -> 2a, a PURE doubling),  z = 2j+3 (z -> z+2)
+- **#32** is decoded in `docs/HOLDOUTS_MXDYS_SN.md` §5b — read that, not this.
+  Its route is strictly better: three suffix rewritings `R1/R2/R3`, uniform in
+  the tail, composing to a one-line micro-lap law, with the macro doubling
+  falling out as a CONSEQUENCE.  Because `WaveCounter.wglue_neverqh` takes an
+  arbitrary anchor with a total successor, **the Theta(k^2) macro lap never has
+  to be modelled at all**, and nine `reflexivity` gadgets
+  (`tools/counters/gadgets32.py`) are the whole remaining per-machine job.
 
-cconf left is nearest-first, so `[S0;S1;S1]` reads `110` on the tape — BBB's comb
-unit.  Both parses describe the same tape word; BBB's absorbs two cells of our
-`111` prefix into comb units, which is what turns `a -> 2a+1` into `a -> 2a`.
-
-**Lap length `36a^2 + 34a − 2`** (a = 2^j): 210 / 710 / 2574 / 9758 / 37950 /
-149630 for j = 1..6, matching the raw stepper exactly.
-
-### Closed inventory — `tools/counters/lap32b.py`, 100% coverage
-
-FOUR engines (unbounded, need induction):
-
-    COLLAPSE  cycL P=3  (StA, ([S0;S1;S1]++L, S1, r)) -> (StA, (L, S1, [S0;S0;S1]++r))
-    SPREAD    cycR P=5  (StB, (L, S0, [S1;S0;S0]++r)) -> (StB, ([S0;S1;S1]++L, S0, r))
-    ZSWEEPL   P=1       (StD, ([S0]++L, S0, r))       -> (StD, (L, S0, [S0]++r))
-    ZSWEEPR   P=1       (StB, (L, S1, [S1]++r))       -> (StB, ([S0]++L, S1, r))
-
-SIX boundary gadgets (fixed size, each a `csteps` reflexivity lemma):
-
-    g5   2   (StB, (L, S0, [S0]++r))            -> (StA, (L, S1, [S1]++r))
-    g6   2   (StD, ([S1;S1]++L, S0, r))         -> (StA, (L, S1, [S0;S0]++r))
-    g7   3   (StA, ([S1]++L, S1, r))            -> (StB, ([S1]++L, S0, [S1]++r))
-    g8   4   (StB, (L, S0, [S1;S0]++r))         -> (StB, ([S1;S1]++L, S1, r))
-    g9   4   (StB, (L, S1, [S0;S0]++r))         -> (StD, (L, S0, [S1;S1]++r))
-    g10 16   (StB, (L, S0, [S1;S1;S0;S0;S0]++r))-> (StA, (L, S1, [S0;S1;S1;S1;S1]++r))
-
-`g9` also needs its `r = []` instance (blank materialisation) — it fires once per
-lap at the right frontier.  Every unit is frame-polymorphic in `L` and `r`;
-none destructures beyond the cells it writes.
-
-GUARD ORDER (load-bearing): `SPREAD`'s window `[S1;S0;S0]` REFINES `g8`'s
-`[S1;S0]`, so SPREAD must be tried first.  `g10`'s `[S1;S1;S0;S0;S0]` is
-disjoint from both.  All other pairs are disjoint on `(state, head)`.
-
-### Unit counts, closed form (a = 2^j)
-
-    g5 = g6 = g8 = g9 = g10 = a          (once per era -- there are `a` eras)
-    g7 = 3a                              (three left-edge turns per era)
-    zsweepl = 6a − 2      zsweepr = 6a
-    collapse = a(9a−5)/2  spread = 3a(3a−1)/2
-
-The five `= a` gadgets are what identify the era boundary; collapse/spread growing
-quadratically means the per-era engine count is LINEAR in the era index — which is
-exactly the shape `Counters/CReach.v:creach_iter` was built for (it folds a
-mid-configuration family `f : nat -> cconf` over the outer loop).
-
-### What is left
-
-The unit inventory is done.  The open piece is the ERA INVARIANT: the
-mid-configuration family `f i` for `i < a`, with `f 0` reached from `Cf j` by a
-prefix and `f a` closing onto `Cf (j+1)`.  Then `creach_iter` + `creach_pos`
-gives `LapGlue.Hlap` and `glue_neverqh` closes it (#32 is a never-QH machine —
-`claim_qh F` — so this is the `LapGlue`, not the `LapGlueQH`, closer).
+  The removed `lap32b.py` modelled that macro lap directly — 4 engines + 6
+  boundary gadgets, 100% coverage, lap length `36a^2 + 34a - 2` for
+  `a = 2^j`.  It is consistent with §5b's `36k^2 + 29k - 4` (same machine, both
+  orientations, anchors a constant number of steps apart) and so independently
+  corroborates the settled anchor — but it is work `wglue_neverqh` makes
+  unnecessary, and following it would be a detour.
