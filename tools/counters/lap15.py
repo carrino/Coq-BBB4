@@ -332,6 +332,23 @@ def pos15(lead, v):
     return (1 << (len(b) - 1)) + sum(x << i for i, x in enumerate(b[:-1]))
 
 
+def venc(m):
+    """The block vector as a STRUCTURAL RECURSION on the positive -- no 2^k
+    arithmetic, so this transcribes straight to a Coq Fixpoint on positive.
+
+        v(2) = [2],  v(3) = [3]
+        v(m) = (m + (m/2 mod 2)) :: v(m/2)
+        lead = 1 + (m mod 2)
+
+    Checked against every anchor out to t = 3e6.  This is the definition
+    `Cf15 : positive -> cconf` should be built from.
+    """
+    if m in (2, 3):
+        return [m]
+    h = m // 2
+    return [m + (h % 2)] + venc(h)
+
+
 def counter():
     """p -> p+1 every lap, cf15 reproduces every tape, totals are 2p-1."""
     bad = []
@@ -341,6 +358,8 @@ def counter():
         p = pos15(l, v)
         if cf15(p) != (l, v):
             bad.append('cf15(%d) != %s' % (p, (l, v)))
+        if venc(p) != v or 1 + p % 2 != l:
+            bad.append('venc(%d) != %s' % (p, v))
         if l + sum(v) != 2 * p - 1:
             bad.append('total 1s at p=%d is not 2p-1' % p)
         if prev is not None and p != prev + 1:
