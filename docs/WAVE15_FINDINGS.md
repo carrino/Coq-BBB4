@@ -171,6 +171,38 @@ It is: the decider designed for our shape class was never run.**  Everything
 in "The numbers" above is a measurement of `Inductive` (plus a 7-machine
 `RWLAcc` sample), and it should be read that way.
 
+### RRBA MEASURED AT LAST -- and its class does NOT contain our counters
+
+The sharpest probe available: `tools/mxdys/control/D_ixp_family.txt`, 40 of the
+149 `IXP_*` boards.  Those are machines we have ALREADY PROVED are
+exponential-overflow interleaved counters -- the exact species the residue's
+dominant class is made of, all known non-halting.  If RRBA covers our
+counters, it must decide these.
+
+    0RB1LC_1LA1RB_1LD0LA_0RD0RC   FAIL
+    1RB1RC_0LA0RC_0LD1RB_1RC1LD   FAIL
+    0RB0LD_1LC0LD_1LD1RC_0RC1LA   FAIL
+    0RB0LC_1LC1RB_0RD1LA_1RB1LA   FAIL
+    0RB1LC_1LA1RB_0LD0LA_0RD0LA   FAIL
+
+Every parameter set tried is taken from mxdys' own `RRBAv*.v` proofs
+(`n_skip` 0-1, `k` 4-6, `T` 1k-10k, including `s1k6T10000` which he uses in 385
+of them), so this is not a strawman configuration.
+
+**Conclusion: our counter species is not RRBA's species.**  Its advertised
+class is "sync BI-counter" and "shift-recursive"; ours is a SINGLE counter
+whose overflow re-runs the interior lap.  A zero `C_residue` is therefore
+explained rather than mysterious, and the RRBA thread is closed.
+
+_(Caveat: 5 machines at the time of writing, sweep still running.  But these
+are the strongest possible positives -- if a decider misses machines we have
+PROVED are in the family, more samples will not rescue it.)_
+
+**What stays live.**  mxdys named *both* tools, and only one is now ruled out.
+`Inductive` remains untested in the configuration that matters: its counter
+representations are hint-gated and every wave-15 sweep ran `ex_rules = []`.
+That is the remaining lead.
+
 ### `RRBA` NOW EXTRACTS -- the recipe is solved, the number is not
 
 Late in the wave the extraction was unblocked.  The fix is one flag:
