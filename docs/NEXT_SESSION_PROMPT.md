@@ -60,29 +60,50 @@ Per-machine cost is a vm_compute:
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded, in minutes.
 
-FIRST: CHECK FOR RRBA RESULTS in tools/mxdys/results/.  A run was started at
-the end of wave-15 on John's box and its outcome REORDERS everything below.
-RRBA is the decider whose stated class is "shift-recursive (counter balanced,
-counter inverting), sync bi-counter" -- i.e. our residue's shape class -- and
-wave-15 only ever measured Inductive, which its own author says gets "SOME OF"
-the counter families.  Read the three lists as:
+MXDYS THREAD: CLOSED except for one live lead.  Do not re-open it blind.
 
-  C_residue high  -> THE ROADMAP CHANGES.  RRBA is what eliminated these
-                     machines and the nested lap is us re-deriving it by hand.
-                     Switch to extracting its rule chains: a decided machine
-                     gives a rule loop, the states in that loop's configs are
-                     the ones hit infinitely often (docs/RULE_LADDER.md sec 4),
-                     and LapGlueAbs + the visit-witness machinery already
-                     consume exactly that.  Do NOT keep hand-building Stage C.
-  C_residue ~0
-    and A high    -> the rig works and the residue is beyond RRBA too.  The
-                     ladder build in docs/RULE_LADDER.md is the honest path,
-                     and item (1) below is the near-term boards.
-  A ~0            -> the harness is broken; the C number means nothing.  Do not
-                     record any verdict.
+  mxdys told John "see Inductive and RRBA deciders in
+  github.com/ccz181078/busycoq/tree/BB6/", which is why wave-15 exists.
+  Both are now measured, and the wave's real finding is that NEITHER had been
+  tested in the configuration that matters:
 
-Wave-15's Inductive numbers on the SAME lists, for comparison:
-A_boarded 19/40, B_holdout 0/39, C_residue 0/39.
+    RRBA  -- RULED OUT.  Extraction is solved (Unset Extraction AutoInline;
+             recipe in tools/mxdys/README.md).  Run against
+             tools/mxdys/control/D_ixp_family.txt -- 40 of our own IXP_*
+             boards, machines we have PROVED are exponential-overflow
+             interleaved counters, i.e. the residue's exact species -- it
+             FAILS every one, at parameters taken from mxdys' own RRBAv*.v
+             proofs.  Its class is "sync BI-counter"; ours is a SINGLE
+             counter whose overflow re-runs the interior lap.  Different
+             species.  Do not spend more time here.
+
+    Inductive -- THE LIVE LEAD, and still untested properly.  It decides 48%
+             of the machines we boarded and 0% of the residue, but EVERY
+             wave-15 sweep ran with ex_rules = [].  Its counter
+             representations (side_binary, side_binary_Pos, side_BL) are
+             HINT-GATED -- the README's "Others (requires some hints from
+             human)" -- and our residue is exactly those.  A hint IS an
+             ENCDATA row:
+
+               side_binary_Pos_inc_rule d0 d1 d1a qL qR QL QR
+                 where d1^^n is our rep uS j, d0 is our uD, d1a the edge word
+
+             We compute all of it already.  The one attempt guessed blind
+             (T0 in {0,50,200,1000}, 2-cell digits, block size 2) against
+             mxdys' real parameters (T0=7450, 4-cell digits, block size 5) and
+             got 0 of 6 -- a WEAK negative.  The block-size mismatch is the
+             interesting part: our alphabets are 1-3 cells and his are 4-5,
+             which suggests these machines want a coarser macro-block than our
+             anchor search uses.  tools/mxdys/hint.ml is built and takes
+             <spec> d0 d1 d1a.  Half a day, and it is the only thing that
+             could still make this trove pay.
+
+  A STANDING LESSON from this wave, worth more than the deciders: I twice
+  argued from README prose about which tool was "the" right one, in opposite
+  directions within a day, and both times was over-narrow.  When the expert
+  has named the tools, MEASURE them.  And build the control FIRST -- the
+  positive control (48% on boarded machines) is what proved the harness sound
+  and made every later negative worth believing.
 
 THE TASK -- THE EXPONENTIAL OVERFLOW, AND MEASURE BEFORE TEMPLATING.
 
