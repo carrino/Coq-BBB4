@@ -953,6 +953,8 @@ machine	kind	vfile	theorem	const
 1RB1RA_1LC0RA_0LC1LD_1RB1LC	nqh	theories/Machines/Counters/Wave_36.v	nqh_1RB1RA_1LC0RA_0LC1LD_1RB1LC	tm_36
 1RB0LB_0LB0RC_1LD1RC_1LA1RB	nqh	theories/Machines/Counters/Wave_6.v	nqh_1RB0LB_0LB0RC_1LD1RC_1LA1RB	tm_6
 1RB0LC_1LA1RD_1LA1LC_0RD1RB	nqh	theories/Machines/Counters/Wave_7.v	nqh_1RB0LC_1LA1RD_1LA1LC_0RD1RB	tm_7
+1RB---_1LC0LB_0RC0LD_1RD1RB	iqh	theories/Machines/Counters/WrapBc_L.v	iqh_1RB_1LC0LB_0RC0LD_1RD1RB	tm_wl
+1RB---_1RC0RB_0LC0RD_1LD1LB	iqh	theories/Machines/Counters/WrapBc_R.v	iqh_1RB_1RC0RB_0LC0RD_1LD1LB	tm_wr
 0RB---_1LA1LC_0LD0LC_1RD0LB	iqh	theories/Machines/IRulesQHStage/IQHStage_11.v	cqh_w3_01090	tm_w3_01090
 0RB---_1LA1LC_0LD0LC_1RD1LB	iqh	theories/Machines/IRulesQHStage/IQHStage_11.v	cqh_w3_01091	tm_w3_01091
 0RB---_1LA1LC_0LD0LC_1RD1LC	iqh	theories/Machines/IRulesQHStage/IQHStage_11.v	cqh_w3_01092	tm_w3_01092

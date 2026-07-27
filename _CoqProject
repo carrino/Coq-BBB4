@@ -560,6 +560,12 @@ theories/Machines/Counters/BCtr_11.v
 theories/Machines/Counters/BCtr_13.v
 theories/Tests/CountersBCtr_Corruption.v
 
+# --- counters track: wrap bouncer (the two 1RB--- holdouts) ---
+theories/Counters/WrapBouncer.v
+theories/Machines/Counters/WrapBc_R.v
+theories/Machines/Counters/WrapBc_L.v
+theories/Tests/CountersWrapBc_Corruption.v
+
 # --- holdouts boarded by the NGramHist never-QH tier (wave 14) ---
 theories/Machines/NGHHold/NGHHold_00.v
 theories/Machines/NGHHold/NGHHold_01.v
