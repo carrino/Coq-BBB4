@@ -175,16 +175,46 @@ STATE: (4,2) holdouts 4 -> 3 unproven (`census_holdouts_kept.txt` n
 `D_remaining` 1,009 -> 1,008.  `census_cache --check` MATCH throughout
 (nothing under `theories/Census/` was touched).
 
-**Next: tower #20 (`1RB0RD_1LC1LB_1RA0LB_1LC1RA`).**  John: its record tape
-is a word over the blocks `10` / `110` -- **a counter in another alphabet**,
-which is why the S(n) shape search misses it -- and "it looks very similar
-to #15 the way the head bounces off of the lsb and then passes through".
-So the #15 playbook is the plan: sample at the record, read the block word
-as a numeral, check that one lap is `+1`, then gadgets EXHAUSTIVELY over
-`|L|,|R| <= 4` before any Coq, then `asm`-style symbolic replay, then the
-composition.  If one lap is `p -> p+1` it takes `LapGlue.glue_neverqh` with
-no invariant, exactly as #15 did.  BBB's decode is in
-`docs/HOLDOUTS_MXDYS_SN.md` section 5b under "tower #20".
+**Next: tower #20 (`1RB0RD_1LC1LB_1RA0LB_1LC1RA`) -- RECONNOITRED here, and
+it is much cheaper than BBB's decode suggests.**  `tools/counters/probe20.py`
+(CTape-faithful mirror) and `tools/counters/lap20.py` (the checker) are new
+and green.  John's reading -- "the record tape is a word over the blocks
+`10`/`110`, a counter in another alphabet ... it looks very similar to #15
+the way the head bounces off of the lsb and then passes through" -- checks
+out on both halves:
+
+  - **same sampling as #15/#32**: the LEFT RECORD, `StC`, reading blank, left
+    list empty.  After a 3-record boot (t = 4, 18, 28) the family settles at
+    t = 50 and STRICTLY ALTERNATES between two leads over the same tail `T`:
+    `(StC, ([], S0, 1 1 0 1 0 ++ T))` and `(StC, ([], S0, 1 0 1 1 1 1 0 ++ T))`
+    -- #15's alternating lead verbatim, over 606 anchors;
+  - **rule A is a CONSTANT 10-STEP UNIFORM WINDOW** (A-type -> B-type),
+    checked over all 511 tails with `|T| <= 8`.  Both left lists are empty so
+    there is no `L` to quantify over.  #15's `ruleA` again;
+  - **John's alphabet is right**: the tape after the lead factors greedily
+    into `110` (`b`) and `10` (`a`), and when the residue is exactly `1` the
+    WHOLE tape is a block word -- those are the sparse "tower" anchors
+    (t = 142, 626, 1750: `babbaaab`, `bab^8abaaabb`, `bab^16ababbabbbb`).
+    That is BBB's `pat ++ (2)^r ++ [1]` with the macro symbol `2 = 110`;
+  - **the counter is unary in `b`**: at every A-type anchor the block word
+    begins with a run of `b`s and THAT RUN LENGTH IS THE LAP INDEX --
+    0,1,2,3,... with no exceptions over the 303 A-anchors reachable in
+    400,000 steps.  One long lap is `r -> r+1`.
+
+So the abstract state is `(r, rest)` and the closer should be FREE:
+`WaveCounter.wglue_neverqh` takes an arbitrary anchor type with a total
+successor and a preserved invariant -- the same closer double #32 used.  **No
+closed form for `rest`, and no port of BBB's 14-template FSM, is needed for
+`NeverQuasiHaltsSt`**; that FSM is BBB's route to a step-count BOUND, which
+is not what we need.
+
+WHAT IS LEFT is the long lap: the `B-type -> A-type` sweep (costs 36, 56, 52,
+72, 68, 84, 84, 124, ... for r = 1,2,3,...) and whatever invariant on `rest`
+it needs.  **Check every gadget EXHAUSTIVELY over all `(L,R)` with
+`|L|,|R| <= 4` before writing any Coq.**  #20's sweep has the same
+bounce-and-walk-back shape that made #15's deposit a SWEEP and not a window,
+and that is the one trap in this family that a sample does not catch.  BBB's
+decode is in `docs/HOLDOUTS_MXDYS_SN.md` section 5b under "tower #20".
 
 ## 2e. Wave-17 (2026-07-27) -- double #32 boarded; the (4,2) holdouts are 4
 

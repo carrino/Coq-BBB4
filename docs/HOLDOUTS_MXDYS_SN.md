@@ -510,15 +510,60 @@ What the board added over the reconnaissance above:
 
 ### tower #20 — `1RB0RD_1LC1LB_1RA0LB_1LC1RA`
 
-Not re-measured this session; BBB's decode is complete and is the plan of
-record.  The load-bearing idea is that the trailing region
+BBB's decode is complete and was the plan of record: the trailing region
 `pat ++ (2)^r ++ [1]` has an infinite raw pattern set but factors into a
 CLOSED 14-template FSM over `(template, r)`, `T1..T6 -> U1..U6 -> W1,W2 -> T1`
 with fixed per-transition `(dr, dct, split)`.  Termination is by **rmin
 closure** (`rmin[i] + dr[i] >= rmin[next[i]]`) plus nonnegative comb deltas,
 so there is no reachability leg at all.  In our terms: a finite table plus a
-well-founded argument — a checker port, not a hand proof, and the biggest of
-the five.
+well-founded argument — a checker port, not a hand proof.
+
+**Measured this session (`tools/counters/probe20.py`, `lap20.py`, all green),
+and it looks a great deal cheaper than that.**  John: its record tape is a
+word over the blocks `10` / `110` — a counter in another alphabet, which is
+why the S(n) shape search misses it — and *"it looks very similar to #15 the
+way the head bounces off of the lsb and then passes through"*.  Both halves
+check out:
+
+* **Same sampling as #15 and #32.**  Read at the LEFT RECORD — head on the
+  leftmost visited cell, `StC`, reading blank, left list empty.  After a
+  3-record boot (t = 4, 18, 28) the anchors settle at t = 50 and from then on
+  STRICTLY ALTERNATE between two leads over the same tail `T`:
+
+  ```
+  A-type   (StC, ([], S0, 1 1 0 1 0     ++ T))
+  B-type   (StC, ([], S0, 1 0 1 1 1 1 0 ++ T))
+  ```
+
+  — #15's alternating lead, verbatim, over 606 anchors.
+* **Rule A is a CONSTANT 10-STEP UNIFORM WINDOW**, `A-type -> B-type`, for
+  every tail — checked over all 511 tails with `|T| <= 8`.  Both left lists
+  are empty, so there is no `L` to quantify over.  That is #15's `ruleA`
+  again: constant cost, no induction, the whole no-carry lap.
+* **John's alphabet confirmed.**  The tape after the lead factors greedily
+  into `110` (`b`) and `10` (`a`).  When the residue is exactly `1` the WHOLE
+  tape is a block word, and those configurations are precisely the sparse
+  "tower" anchors — `t = 142, 626, 1750` give `babbaaab`,
+  `bab^8abaaabb`, `bab^16ababbabbbb`.  That is BBB's `pat ++ (2)^r ++ [1]`
+  with the macro symbol `2 = 110`.
+* **The counter is visible and it is unary in `b`.**  At every A-type anchor
+  the block word after the lead begins with a run of `b`s, and **that run
+  length IS the lap index** — 0, 1, 2, 3, … with no exceptions over the 303
+  A-anchors reachable in 400,000 steps.  So one long lap is `r -> r+1`.
+* **Which means the closer is probably free, exactly as it was for #32.**
+  The abstract state is `(r, rest)`; `WaveCounter.wglue_neverqh` takes an
+  ARBITRARY anchor type with a total successor and a preserved invariant, so
+  no closed form for `rest` — and no 14-template FSM — has to be modelled to
+  get `NeverQuasiHaltsSt`.  The FSM is BBB's route to a step-count bound,
+  which is not what we need.
+
+**What is left, and it is the whole job:** the long lap's tape-level gadgets
+(the `B-type -> A-type` sweep, whose cost grows: 36, 56, 52, 72, 68, 84, 84,
+124, … for `r = 1, 2, 3, …`) and whatever invariant on `rest` the sweep needs.
+**Check every gadget EXHAUSTIVELY over all `(L,R)` with `|L|,|R| <= 4` before
+writing any Coq** — that is the trap #15 paid for, and #20's sweep has the
+same bounce-and-walk-back shape that made #15's deposit a sweep rather than a
+window.
 
 ### fractal #3 / #5 — `1RB0LA_1LC0RD_0LB1LA_0RB1LA`, `1RB0LA_1LC1RD_0LC1LA_0RD0RB`
 
@@ -563,6 +608,8 @@ gcc -O2 -o fast_sn tools/counters/fast_sn.c    # the v4-irules row
 | `tools/counters/lap15.py` | measured micro-lap, gadgets EXHAUSTIVELY over `|L|,|R| <= 4`, and the counter reading for #15 |
 | `tools/counters/asm15.py` | #15's lap replayed from the verified gadgets alone, diffed against the simulator |
 | `tools/counters/comp15.py` | #15's composition layer (`Scan`/`btail`/`venc`, `back_frame`, the assembled lap) |
+| `tools/counters/probe20.py` | CTape-faithful mirror for tower #20 |
+| `tools/counters/lap20.py` | #20's anchor family, alternating leads, uniform rule A, and the `b`-run counter |
 
 **Budget matters**: a family whose anchors are `Θ(4^n)` apart needs ~4M steps
 to show 8 laps, and the fitter *refuses* to certify without slack — so a
