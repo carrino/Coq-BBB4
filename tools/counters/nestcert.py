@@ -40,6 +40,17 @@ from emit_interleave import carry                                  # noqa: E402
 
 LAB = 'ABCD'
 
+# How many cells past the decoded word an inner key may carry.
+#
+# MEASURED, and it is a do-not-retry: at 6 a key appears on 13 of 40 machines
+# that report "no inner family" at 3 (and [K] = 5, 6 or 7 changes nothing, so
+# the tail length is the binding constraint on FINDING a family, not the
+# octave) -- but re-running the whole 299-machine failure set at 6 boards
+# ZERO.  33 machines move from "no inner family" to "no boot chain"/"no exit
+# chain", i.e. the longer-tailed families exist and no chain lands on them.
+# Key counts are 0-4, so the [maxkeys] cap is not what is binding either.
+MAXTAIL = 3
+
 
 class NestError(Exception):
     """This machine does not take the nested route."""
@@ -68,12 +79,15 @@ def decode(word, A, B, C):
 
 
 def inner_keys(tab, ENCDATA, ENCS, st0, encf, tail, far, K=6,
-               maxT=400000, maxtail=3):
+               maxT=400000, maxtail=MAXTAIL):
     """Every (alphabet, state, tail, far) whose decoded values run exactly
     2^(K-1) .. 2^K-1 inside ONE overflow phase of the given outer anchor.
 
     Keys are returned MOST-HITS-FIRST but the caller must ENUMERATE: the
     best-scoring key is measured never to be the one the boot lands on.
+
+    [maxtail] is how many cells past the decoded word the key may carry; see
+    [MAXTAIL] for why it is 3 and not 6.
     """
     tail, far = tuple(tail), tuple(far)
     p, pn = 2 ** K - 1, 2 ** K

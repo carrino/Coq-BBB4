@@ -418,6 +418,53 @@ carry-continue windows at the turnaround, then the assembly and the Coq.
 `wglue_neverqh` still needs no change.  `HOLDOUTS_MXDYS_SN.md` section 5b has
 the full table and sizes the other three.
 
+## 2g. Wave-18, RESIDUE track (2026-07-27) — THE TASK lands: 225 boards
+
+Full write-up: `docs/WAVE18_FINDINGS.md`.  Took **THE TASK** of the wave-15
+and wave-16 prompts — the `AFFINE`/`EXP2` bucket, 500 of the 883 unproven
+rows, whose overflow lap costs `Θ(2^j)` — and produced its first boards.
+
+- **`D_remaining` 883 → 658; 4,498 / 5,156 = 87.2% settled** (from 82.9%).
+  225 `NLAP_*` boards, every one `functional_extensionality_dep` only
+  (checked per board), `audit.py` OK, `census_cache --check` MATCH.
+- **The blocker was wave-16's acceptance test, one level down.**
+  `docs/NESTED_LAP_PLAN.md` had Stage A and Stage B done and Stage C stuck at
+  "boot chain 1 of 12, and it is NOT a search budget".  That was true; the
+  cause was the line three below it — *"9 cells, real is 11"*, i.e. the chain
+  lands two TRAILING BLANKS past the inner anchor.  `nestboot.py` was written
+  in wave-15 and calls `derive_chain` with the wave-16 flag's `False` default.
+  Measured 2×2 (`tools/counters/nestboot2.py`, 30 machines, boot AND exit):
+  best key + exact joints 5/30, every key + exact 7/30, best key + `lift`
+  9/30, **every key + `lift` 17/30** — and on all 17 the inner family's own
+  interior lap derives too.
+- **New Coq is one additive file**, `Counters/NestedLapLift.v`:
+  `inner_to_fill_lift` (NestedLap's induction in `stepn`/`lift` space, where
+  the `Θ(2^j)` stays inside an `exists n`), `nested_overflow_lift` (pulled
+  back to one `csteps` run by `LapCertGlueLift.stepn_csteps_at`),
+  `vis_via_fill` (a state firing only in the EXIT half is still visited —
+  8 of 30 need it) and `cview_fill_pow2`.  `LapDecider.v`, `LapGlue.v`,
+  `LapCertGlue.v` and `NestedLap.v` are UNTOUCHED, and the nested route is a
+  FALLBACK inside `emit_lapcert.derive`, so no existing board changes
+  (regression: 39 of a 40-board sample re-derive; the one that does not fails
+  identically on the pre-change tools).
+- Emitter `tools/counters/nestcert.py`: inner-family search with keys
+  ENUMERATED not ranked, the three chains, and a differential validation that
+  replays every piece against the raw simulator — including each of the 246
+  inner laps at `j = 2..7`, not just the endpoints.
+- **DO NOT RETRY:** a wider inner-key tail.  `maxtail = 6` finds a family on
+  13 of 40 machines that report "no inner family" at 3 (and `K ∈ {5,6,7}`
+  changes nothing), but re-running the whole 299-machine failure set at 6
+  boards ZERO — the 33 machines it unlocks all fail on the boot or exit chain.
+  Key counts are 0-4, so `maxkeys` was never binding either.
+- **THE LESSON, and it is wave-16's surviving a level of abstraction:** when a
+  fix lands as a **defaulted flag**, grep for every caller of the function,
+  not just the one that motivated it.  Two waves of "the boot is not a search
+  problem" were spent on a call site that had never been revisited.
+- Failure profile at 658: 265 no inner family at `pow2 j`, 211 no overflow
+  phase (the no-anchor bucket), 105 no interior chain (QUAD 41, HIGHER 13,
+  PARITY 13, EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8), 68 no boot chain,
+  65 no exit chain, 28 no anchor, 15 no visit witness, 4 no inner interior.
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
