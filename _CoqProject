@@ -600,6 +600,10 @@ theories/Machines/Counters/Double_9.v
 theories/Machines/Counters/Double_32.v
 theories/Tests/CountersDbl_Corruption.v
 
+# --- counters track: wave4 #15, a plain binary counter ---
+theories/Machines/Counters/Wave4_15.v
+theories/Tests/CountersW15_Corruption.v
+
 # --- wave-2/3 staged residue proofs (wired) ---
 theories/Checkers/IRules/MetaQH.v
 theories/Checkers/IRules/MetaBlkPfxQH.v
