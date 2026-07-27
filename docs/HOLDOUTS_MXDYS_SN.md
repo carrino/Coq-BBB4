@@ -248,20 +248,39 @@ which reproduces the whole measured orbit (j = 2..8 checked term by term),
 including the doubling of the macro anchor as a consequence rather than an
 assumption.
 
-**The two comb gadgets are also measured**, and they are what the `8j` is
-made of -- 5 steps out and 3 steps back per comb block, both uniform in the
-left context and in the tail:
+**The full step-gadget set is measured too.**  Nine identities, every one
+uniform in the surrounding tape, every one a `reflexivity` in Coq.  Checked
+differentially by `tools/counters/gadgets32.py` over five left contexts, five
+tails and five middles:
 
 ```coq
-rc5 : csteps tm_32 5 (StA, (L, S0, [S1;S0;S1;S0;S0;S1] ++ X))
-      = Some (StA, ([S1;S0;S1] ++ L, S0, [S1;S0;S1] ++ X))
-
-lc3 : csteps tm_32 3 (StA, ([S0;S1;S1] ++ L, S1, X))
-      = Some (StA, (L, S1, [S0;S0;S1] ++ X))
+(* rightward *)
+bt4 : (StA,(L,S0,[S0;S1;S0]++R))            ->4  (StA,([S1;S1]++L,S0,[S1]++R))
+rc5 : (StA,(L,S0,[S1;S0;S1;S0]++R))         ->5  (StA,([S1;S0;S1]++L,S0,[S1]++R))
+(* turnarounds *)
+tn4 : (StA,(L,S0,[S1;S0;S0]++R))            ->4  (StA,([S0;S1]++L,S1,[S1]++R))
+tn6 : (StA,(L,S0,[S1;S0;S1;S1;S0;S0]++R))   ->6  (StA,([S0;S1;S0;S1]++L,S0,[S1;S0]++R))
+md3 : (StA,(L,S0,[S0;S0;S1]++R))            ->3  (StA,([S1]++L,S1,[S1;S1]++R))
+(* leftward *)
+lc3 : (StA,([S0;S1]++M,S1,R))               ->3  (StA,(ctl M,chd M,[S0;S0;S1]++R))
+la2 : (StA,([S1]++M,S1,R))                  ->2  (StA,(ctl M,chd M,[S0;S1]++R))
+(* the two run sweeps R1 needs *)
+b1  : (StB,(L,S1,R))                        ->1  (StB,([S0]++L,chd R,ctl R))
+d0  : (StD,(L,S0,R))                        ->1  (StD,(ctl L,chd L,[S0]++R))
 ```
 
-So every one of R1/R2/R3 is: `rc5` iterated `j` times, a bounded window, `lc3`
-iterated `j` times.  Nothing else.
+`rc5`/`lc3` are what the `8j` is made of: 5 steps out and 3 steps back per comb
+block.  `b1`/`d0` iterated are what the `2m` in R1 is made of.  The assemblies,
+read off the traces and confirmed by the step counts:
+
+```
+R2 = bt4 . rc5^(j-2) . rc5 . tn4 . lc3^j . la2                  4+5(j-2)+5+4+3j+2 = 8j+5
+R3 = bt4 . rc5^(j-2) . tn6 . tn4 . lc3 . md3 . la2 . (lc3.la2)   ...              = 8j+11
+R1 = bt4 . rc5^(j-2) . [A0 . b1^(m+1) . B0 . C0]
+             . [A1 . d0^(m+1) . D1] . lc3 . la2                  ...              = 8j+2m+5
+```
+
+Nothing outside this list is needed.
 
 **What remains is Coq, and the closer is free.**  `WaveCounter.wglue_neverqh`
 takes an ARBITRARY anchor type with a total successor and a preserved
