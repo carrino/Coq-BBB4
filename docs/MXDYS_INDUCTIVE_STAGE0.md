@@ -310,13 +310,74 @@ The plan's Stage 1/2/3 as written assumed endpoint liveness.  Revised:
 
 ---
 
-## 6. Numbers (larger residue sample)
+## 6. The three numbers, over the whole residue
 
-_Filled in from the 120-machine randomized run; see
-`/tmp/.../sample120.txt.stage0.json` for per-machine detail._
+All 1,157 machines of `tools/closeout/frozen_unproven.txt`, at mxdys' exact
+hint-free `Indv1.v` recipe (`default_config`, `T = 100000`):
 
-Retained regardless of that run's outcome: gate (ii) is answered by §2, and
-§2 does not depend on the residue at all.
+| outcome | count |
+|---|---:|
+| step budget exhausted (`inl`) | 1,145 |
+| **`nonhalting`** | **12** |
+| `halts` | 0 |
+
+* **(i) 12 / 1,157 — 1.0 %.**  The hint-free search does essentially nothing
+  on this residue.  (0 reported halting, which is the expected consistency
+  check: these are non-halting machines.)
+
+* **(ii) 0 / 1,157.**  The over-approximating collector reports state counts
+  `2`×8, `3`×3, `4`×1 among the 12, i.e. one apparent full-coverage machine —
+  `1RB1RD_1RC0LD_1LB0RA_1LC0LC`.  Dumping it shows the apparent coverage is an
+  **artifact of the over-approximation**: the accepted certificate is
+
+  ```
+  STEPLB 0^inf {0}> 0^inf  -->(>=v1)  1.(0)^(+ v1 23)….0^inf {3}> 0^inf
+  ```
+
+  which names states **A and D only**.  The other two states come from
+  scratch propositions in the `w1_`/`w0_` layer slots that `check_nonhalt`
+  never inspects.  So the honest count of machines whose *certificate* covers
+  all four states is **zero**, and the generous over-count still only produced
+  one.  This is §2's structural argument confirmed on the residue itself.
+
+* **(iii)** Among the 12: **11 need `nat_mul`**, 1 needs nothing, and **0 need
+  `nat_powsum`**.  That is itself informative — the hint-free search only ever
+  succeeds on residue machines whose cost is at most quadratic, and never
+  reaches a `powsum` machine.  It gives up exactly at the EXP2 wall
+  `ovfshape.py` measured (496 EXP2 of 1,176), rather than crossing it.
+  The `powsum` capability is real, but it is reached through the **hints**
+  (§4a's hinted cert reports `flags=11`, i.e. `nat_powsum` set), not through
+  the black-box search.
+
+### Feeding our own alphabets in as hints
+
+27 of a random 40 residue machines yield a counter family from
+`alphabet_infer.py` at 160 words each.  Mapping `(A,B,C) → (d0,d1,d1a)` and
+gridding the parameters inference does not supply (`qL`, `qR`, `QR`; `QL`
+pinned to the inferred anchor state; `--block-size |A|`; `--exploop`;
+`maxT 30000`):
+
+* one rule at a time (`--becpos` **or** `--dec`), 72 configs/machine: **0/27**.
+* the interior+overflow **pair** (`--dec` **+** `--ov1`), as `config_SBC`
+  actually supplies them: see §6a.
+
+**This negative is bounded, and the bound matters.**  What it rules out is the
+*naive* grid.  What it does **not** rule out, and what a follow-up should vary
+before concluding anything, is:
+
+1. **`initial_steps`.**  Every one of mxdys' SBC certs passes a per-machine
+   offset in the 1,268–7,450 range.  We passed 0, so the search starts from a
+   blank tape on which the counter structure has not yet formed.  This is the
+   most likely single cause.
+2. **`qL`/`qR` word length.**  His are up to `[0;1;0]`, `[0;1;1;0;1]`; we
+   gridded only `{ε, 0, 1}`.
+3. **The two anchor state *pairs*.**  `config_SBC` takes `QL QR QL' QR'` —
+   the interior and overflow rules may be anchored at *different* states.  We
+   forced them equal.
+
+None of that changes the gate: even a hint that lands returns a certificate
+naming two states (§4a, measured on his own machine).  It changes only
+whether their engine is usable as a rule-discovery oracle for our checker.
 
 ---
 
