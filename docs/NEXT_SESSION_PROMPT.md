@@ -3,14 +3,15 @@
 _Rewritten 2026-07-27 at the end of the wave-18 RESIDUE track (branch
 `claude/coq-bbb4-residude-oy73r4`), which took THE TASK — the exponential
 overflow, the `AFFINE`/`EXP2` bucket, 500 of the 883 — and **boarded 258 of
-them**.  `D_remaining` is **625**; 4,531 of the frozen 5,156 are settled
-(87.9%).  Full assessment: `docs/WAVE18_FINDINGS.md` — §2 is why it took
+them**.  With the concurrent HOLDOUTS track merged (which CLOSED the (4,2)
+holdout list: wave4 #15, fractal #3/#5, tower #20), `D_remaining` is **622**
+and 4,534 of the frozen 5,156 are settled (87.9%).  Full assessment: `docs/WAVE18_FINDINGS.md` — §2 is why it took
 three waves, §4b is the measurement that names the next 130 machines, §5 is
 the one do-not-retry, §6 is the lesson._
 
-_**Scope: the RESIDUE only.**  John runs the 4 remaining (4,2) holdouts in
-dedicated sessions — that front is out of scope, and the residue is the whole
-job._
+_**Scope: the RESIDUE only** — and as of this merge that is not a restriction
+but a description: the (4,2) HOLDOUT list is CLOSED, so the residue is all
+that is left._
 
 **Before pasting, check:** substitute the branch the session should develop
 on, and name any files a concurrent session owns.
@@ -54,11 +55,13 @@ LapCertGlue, LapGlueAbs, NestedLap and NestedLapLift are axiom-FREE or
 funext-only -- keep them that way).  Everything under tools/ is UNTRUSTED;
 the kernel re-checks every board.
 
-STATE: 4,531 of the frozen 5,156 settled (87.9%); D_remaining = 625.
-THE HOLDOUTS ARE NOT YOURS.  Do not open that front, do not sweep
-tools/census_holdouts_kept.txt.
+STATE: 4,534 of the frozen 5,156 settled (87.9%); D_remaining = 622.
+THE HOLDOUTS ARE DONE -- the (4,2) holdout list CLOSED on 2026-07-27 (wave4
+#15, fractal #3/#5, tower #20).  Everything left is RESIDUE, and it is all
+yours.
 
-Failure profile, measured at D_remaining = 625 by running
+Failure profile, measured at D_remaining = 625 (i.e. before the 3 holdout
+boards merged in; they are not residue rows and change none of it) by running
   python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt --json OUT
 (3 shards, ~20 min; the run also tells you the nested route's verdict per
 machine).  Cross-referenced against ovfshape.py over the same list:

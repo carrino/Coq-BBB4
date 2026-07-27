@@ -8,6 +8,16 @@ This wave took **THE TASK** of the wave-15 and wave-16 prompts — the
 _**Read §2 before touching any chain search in this tree again.** The wave-16
 lesson was not spent; it had one more level to give._
 
+_A CONCURRENT session ran a separate wave-18 on the HOLDOUTS front (PRs #44-#46,
+`docs/HOLDOUTS_FRACTAL.md` and `HOLDOUTS_MXDYS_SN.md` §5b) and **closed the
+(4,2) holdout list**: wave4 #15, fractal #3/#5 and tower #20.  The two tracks
+are disjoint and were merged.  **After the merge `D_remaining` is 622**, not
+the 625 in the scoreboard below — 883 − 258 here − 3 there.  The generated
+closeout tables were REGENERATED over the union rather than hand-merged, which
+is the only correct way to resolve a conflict under `theories/Closeout/`.
+`NEXT_SESSION.md` §2j is this track (RESIDUE) and §2g-2i are that one
+(HOLDOUTS)._
+
 ## 1. Scoreboard
 
 | | |
