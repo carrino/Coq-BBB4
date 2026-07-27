@@ -146,7 +146,7 @@ THEN, in ranked order (all independent of the above):
 
   (3) The 239 no-anchor machines.  alphabet_infer.py + gen_alphabet.py INFER a
       counter's word family from its own tape as a triple (A,B,C) and generate
-      a PROVED Coq module; 19 families are wired.  They may or may not be
+      a PROVED Coq module; 21 families are wired.  They may or may not be
       EXP2 once decodable -- and if they are, the wave-18 machinery takes them
       with no new theory.
 
