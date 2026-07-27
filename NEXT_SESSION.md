@@ -551,6 +551,129 @@ the trap #15 paid for, and #20's sweep has the same bounce-and-walk-back
 shape that made #15's deposit a SWEEP and not a window.  BBB's decode is in
 `docs/HOLDOUTS_MXDYS_SN.md` section 5b under "tower #20".
 
+## 2h. Wave-19 (2026-07-27) -- tower #20: assembly green, Coq to the middle
+
+`tools/counters/asm20.py` (new, green), `theories/Machines/Counters/Tower_20.v`
+(new, compiles, `Print Assumptions` clean).  **#20 has NO
+`NeverQuasiHaltsSt` theorem yet**, so it is still a holdout: `D_remaining`
+stays **882**, holdouts stay **3**, `census_cache --check` MATCH, closeout
+audit OK.  Nothing under `theories/Census/` was touched.
+
+**THE ASSEMBLY IS DONE AND IT IS THE GATE THAT WAS MISSING.**
+`tools/counters/asm20.py` replays one lap from the verified gadgets alone as
+PURE LIST OPS and diffs it against the raw simulator -- configuration AND
+step count AND that the b-run increments -- for every anchor reachable in
+400,000 steps, plus the check that no earlier left record occurs inside a
+lap.  Green.  The lap is:
+
+    B(r,rest) = (StC,([],S0, 1011110 ++ b^r ++ rest))       b = 110, a = 10
+
+  1. `entry10` -- a uniform 10-step window -- leaves the left debris
+     `E = [1;0;1;0;1;1]` and `R = 1 ++ b^r ++ rest`;
+  2. `out5^r` eats the b-run one block at a time, laying `[1;0;1]` per
+     block, so the left list becomes `lay r E = (101)^r ++ E`.  That
+     `(101)^r` is John's "repeated 101" -- the empty bouncer body -- and it
+     is confirmed exactly;
+  3. **the MIDDLE**, which runs on into `rest` and turns around;
+  4. **the RETURN**, the re-encoder: `rb3` eats `[1;0;1]` and emits `b`,
+     `rb2` eats `[0;1]` and emits `a` -- ONE BLOCK PER UNIT.
+
+**Where the +1 comes from, and it is free.**  Phase 4 over `lay r E` emits
+`b^r` and then, off `E`, `b`, `a`, `b`.  Emissions PREPEND, and
+`b ++ a = 1 1 0 1 0` is exactly the A-type lead, so the tape comes out as
+`leadA ++ b^(r+1) ++ ...`.  **The spare `b` in the entry debris IS the
+counter's increment.**  This is `bk_layE`, and it is proved.
+
+**Two new gadgets**, both checked EXHAUSTIVELY over all 961 `(L,R)` with
+`|L|,|R| <= 4` before being written (`tools/counters/lap20.py`'s
+`exhaustive`):
+
+    rb3   (StC,(1 0 1 ++ L, S1, R)) -3-> (StC,(L, S1, 1 1 0 ++ R))
+    rb2   (StC,(0 1   ++ L, S1, R)) -2-> (StC,(L, S1, 1 0   ++ R))
+
+The `retB3`/`retB2` written in the previous handoff are NOT the gadgets that
+fire; they are the same three/two steps entered one cell earlier.  Use
+`rb3`/`rb2`.  The sweep's last unit is `rb3e` (`L = [S1]`), which lands on
+the new left record -- stated separately rather than through `chd`/`ctl`,
+which is enough because `Rev`'s base case is `[S1]`.
+
+**WHAT COMPILES** (`theories/Machines/Counters/Tower_20.v`, wired into
+`_CoqProject`, NOT into `tools/counters_manifest.tsv` -- it has no theorem
+to name):
+- the eight single-step joints, through `chd`/`ctl`;
+- the six gadgets as one-line `reflexivity` lemmas;
+- `ruleA`: the whole no-carry lap, a constant 10-step window, uniform in the
+  tail, both left lists empty so there is no `L` to quantify over;
+- `entry10`, `out5s`, and `lapB_pre` composing them.  **After `lapB_pre` the
+  configuration is `(StC, (lay r E, S0, S1 :: rest))` and NEITHER component
+  mentions `r` again** -- this is the structural fact that makes the rest of
+  the proof `r`-free;
+- the return sweep as ONE inductive relation carrying both directions:
+  `Rev W` (the units the sweep eats) with `bk` carrying the emitted word
+  alongside, and `retsweep` a single induction over `Rev`.  `RevP`/`enc`/
+  `bk_app`/`rcost_app` split it at the middle's debris;
+- `lapB_post`: **the entire post-middle half of the lap, for ANY `RevP`
+  debris `D`** -- `csteps (pcost D + rcost (lay r E)) (StC,(D ++ lay r E,
+  S1, R)) = Some (CfA (S r, enc D R))`;
+- `vis20` (all four states within four steps of the anchor) and `boot20`
+  (t = 50, `vm_compute` + `ceqb_lift`).
+
+**WHAT IS LEFT IS EXACTLY ONE LEMMA, AND IT IS MEASURED.**  The middle:
+
+    forall rest, exists n D R', RevP D /\
+      csteps tm_20 n (StC, (M, S0, S1 :: rest)) = Some (StC, (D ++ M, S1, R'))
+
+**uniform in `M`** -- verified: the middle never reads below its own debris.
+`D` is `RevP`-shaped in every lap measured.  Feed it to `lapB_post` and the
+lap closes; `nextA (r,rest) = (S r, enc D R')`.
+
+**AND THE MIDDLE IS #15's CARRY AGAIN.**  Write `rest` as `1^n1 0 1^n2 0
+...`.  Because the head enters on a 1 the run it actually reads is `n_i + 1`,
+so:
+
+  - `n_i` EVEN -> the run read is odd, the sweep rides over it and continues;
+  - `n_i` ODD  -> the run read is even, and that is the TURNAROUND.
+
+**So the bits are the run lengths of `rest` mod 2, the carry rides over the
+EVEN runs, and it stops at the first ODD one** -- #15's `Scan` with "even"
+and "odd" swapped.  The lap index `r` is the leading b-run, i.e. the leading
+2s of the run-length word.  Measured shape (`rest` run-lengths -> next,
+debris, cost):
+
+    [1,4]            -> [7]            D empty      8      n1 odd: turn at once
+    [1,1,1,2,1]      -> [4,1,2,1]      D empty      8
+    [1,2,5,1]        -> [5,5,1]        D empty      8
+    [7]              -> [1]            D = baaa    11
+    [4,1,2,1]        -> [5,1]          D = ba      15      n1 even: ride one
+    [5,5,1]          -> [8,1]          D = aa      12
+    [4,8,1]          -> [1]            D = bbaaaba 23      ride two
+    [4,4,2,4,2,2,1]  -> [1]            D = bbbbabbaba 41
+
+`n1` odd is a CONSTANT 8-STEP WINDOW (`[1,x,T] -> [x+3,T]`, no debris) --
+that is the `cross5 ret2 bc` branch, and it is half of all laps.  Reproduce
+the table with the middle-extractor pattern in `asm20.py`.
+
+**Traps, in addition to #15's (which all still apply).**
+1. The `A`-type and `B`-type leads are `1 1 0 1 0` and `1 0 1 1 1 1 0`;
+   `ruleA` connects them in 10 steps and it is `reflexivity`.  Do not try to
+   make one lap go A -> A directly: rule A and the long lap are separate.
+2. `bk`'s base case emits a block (`S1::S1::S0::R`), so `bk` does NOT split
+   as an accumulator over `++`.  That is what `RevP`/`enc`/`pcost` are for --
+   `rcost (D ++ W) = pcost D + rcost W`, no subtraction.
+3. Do NOT anchor at the "tower" configurations (t = 142, 626, 1750).  John's
+   `110`/`111110`/`101010` block reading parses those cleanly and only those
+   -- the dense A-anchors leave a residue.  Confirmed this session; the
+   dense StC left-record family is the one with the `+1` lap.
+4. Do NOT port BBB's 14-template FSM.  It is TRUE, and it is BBB's route to
+   a step-count BOUND, which `NeverQuasiHaltsSt` does not need.
+
+**Then**: `wglue_neverqh` at `a0_20 = (0, [1;0;1;1;1;1])` (`boot20` is
+already proved), corruption controls in `theories/Tests/` in
+`CountersW15_Corruption.v`'s tradition, then `tools/counters_manifest.tsv`,
+`gen_stages.py`, `tools/closeout/audit.py`, and
+`make -f Makefile.coq -j2 theories/Closeout/Closeout.vo` (`-j2`, NOT `-j4`).
+That takes `D_remaining` 882 -> 881 and holdouts 3 -> 2 (fractal #3/#5).
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
