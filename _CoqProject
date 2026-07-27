@@ -313,6 +313,8 @@ theories/Tests/CountersA_Corruption.v
 # --- counters track: session B ---
 theories/Counters/ILCounter.v
 theories/Counters/JpCounter.v
+theories/Counters/BlankTail.v
+theories/Counters/MpCounter.v
 theories/Counters/ExpCounter.v
 theories/Machines/Counters/Interleave_18.v
 theories/Machines/Counters/Interleave_35.v
@@ -1294,6 +1296,7 @@ theories/Counters/IXPGadgets.v
 
 theories/Checkers/LapDecider.v
 theories/Counters/LapCertGlue.v
+theories/Counters/LapCertGlueLift.v
 theories/Counters/GpCounter.v
 theories/Counters/Alph_000_001_00.v
 theories/Counters/Alph_000_001_1.v
@@ -1306,6 +1309,7 @@ theories/Counters/Alph_00_01_01.v
 theories/Counters/Alph_00_01_1.v
 theories/Counters/Alph_00_10_1.v
 theories/Counters/Alph_00_11_11.v
+theories/Counters/Alph_01_11_011.v
 theories/Counters/Alph_01_11_11.v
 theories/Counters/Alph_0_1_1.v
 theories/Counters/Alph_10_11_1.v
@@ -1727,3 +1731,32 @@ theories/Closeout/CB_40.v
 theories/Closeout/CB_41.v
 theories/Closeout/Closeout.v
 theories/Closeout/CloseoutFinal.v
+theories/Machines/Counters/LAPC_0RB0LC_0LC1LD_0RD1LA_1LC1RD.v
+theories/Machines/Counters/LAPC_0RB0LC_0RC1LD_0RD1LA_1LC1RD.v
+theories/Machines/Counters/LAPC_0RB0LC_1LC1LD_0RD1LA_1LC1RD.v
+theories/Machines/Counters/LAPC_0RB0LC_1RC1LD_0RD1LA_1LC1RD.v
+theories/Machines/Counters/LAPC_0RB0LD_0LC1LC_1LD1RC_0RC1LA.v
+theories/Machines/Counters/LAPC_0RB0LD_0RC1LC_1LD1RC_0RC1LA.v
+theories/Machines/Counters/LAPC_0RB0LD_1LA1LC_1LD1RC_0RC1LA.v
+theories/Machines/Counters/LAPC_0RB0LD_1LC0LA_1LD1RC_0RC1LA.v
+theories/Machines/Counters/LAPC_0RB0LD_1LC1LC_1LD1RC_0RC1LA.v
+theories/Machines/Counters/LAPC_0RB0LD_1RC1LC_1LD1RC_0RC1LA.v
+theories/Machines/Counters/LAPC_0RB1LB_1LC1RB_0RB1LD_0RA0LC.v
+theories/Machines/Counters/LAPC_0RB1LC_0RC1LD_1LB1RC_0RA0LB.v
+theories/Machines/Counters/LAPC_0RB1LC_1LA1RB_0RD0LA_1LB0LC.v
+theories/Machines/Counters/LAPC_0RB1LC_1LA1RB_0RD0LA____1LB.v
+theories/Machines/Counters/LAPC_1RB1LA_0LA1RC_0LD0RB_1RA0RC.v
+theories/Machines/Counters/LAPC_1RB1LA_0LA1RC_0LD0RB____1RA.v
+theories/Machines/Counters/LAPC_1RB1LB_1LC1RB_0RB1LD_0RA0LC.v
+theories/Machines/Counters/LAPC_1RB1LC_0LC0RB_1LA1RD_0RC0RD.v
+theories/Machines/Counters/LAPC_1RB1LC_0RC1LD_1LB1RC_0RA0LB.v
+theories/Machines/Counters/LAPC_1RB1LD_1LC1RA_0RB0LC_0LB0LD.v
+theories/Machines/Counters/LAPC_1RB1RC_0LC1RD_1RB1LC_0LA0RB.v
+theories/Machines/Counters/LAPC_1RB1RC_1LB0RA_0LC1RD_1LC0RD.v
+theories/Machines/Counters/LAPC_1RB1RC_1LB0RA_1LD0RC_0LD1RC.v
+theories/Machines/Counters/LAPC_1RB1RC_1LB1LA_0LC1RD_1LC0RD.v
+theories/Machines/Counters/LAPC_1RB1RC_1LB1LA_0RC1LD_1RC0LD.v
+theories/Machines/Counters/LAPC_1RB1RC_1LB1LA_1LD0RC_0LD1RC.v
+theories/Machines/Counters/LAPC_1RB1RC_1LB1LA_1RD0LC_0RD1LC.v
+theories/Machines/Counters/LAPC_1RB1RC_1LB1RA_0LC1RD_1LC0RD.v
+theories/Machines/Counters/LAPC_1RB1RC_1LB1RA_1LD0RC_0LD1RC.v
