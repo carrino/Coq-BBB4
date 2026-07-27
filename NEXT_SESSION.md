@@ -104,7 +104,11 @@ not the empty *list*) to become parameters — the encoding alone was not enough
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
 holdouts rather than the residue.  Headlines:
 
-- **The 27 are 11 boarded / 16 unproven** (was 5/22).  `#6` and `#24` landed
+- **The 27 are 16 boarded / 11 unproven** (was 5/22; this line said
+  "11 boarded / 16 unproven" until 2026-07-27 — that was the mid-wave count
+  and it went stale as the rest of the wave landed.  Re-derived against the
+  authority: `census_holdouts_kept.txt` ∩ `closeout/frozen_unproven.txt` = 11,
+  complement = 16, which matches `docs/HOLDOUTS_WAVE14.md` §1).  `#6` and `#24` landed
   (`theories/Machines/Counters/Wave_6.v`, `Wave_24.v`), so **all six
   `wave_counter` machines are now boarded** off the one `WaveCounter.v`
   closer — it needed no change.  `docs/HOLDOUTS_WAVE14.md` §1 has the full

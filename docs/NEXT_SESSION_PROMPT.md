@@ -60,6 +60,94 @@ Per-machine cost is a vm_compute:
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded, in minutes.
 
+FROM PR #40 (branch claude/coq-bbb4-residue-removal-lt5yac), which ran Stage 0
+independently and agrees with wave-15 on every number.  THESE ARE SIDE ITEMS,
+NOT THE WAVE -- "THE TASK" below (the exponential overflow, ~340 machines) is
+the wave, and nothing here competes with it.  (a) is worth doing first only
+because it is measured in HOURS and is a strict prerequisite for (b); (c) is
+the highest-VARIANCE item on the whole board, not the highest-yield, and
+should wait until THE TASK stalls.  Three things wave-15 does not have:
+
+  (a) SOME MACHINES ARE BLOCKED BY THE CENSUS CONSTANT, NOT BY DIFFICULTY.
+      QHBound 2000 is FALSE for any machine that genuinely quasi-halts after
+      step 2000, so no liveness strength can ever take it through that tier.
+      B_census = 2000 is an arbitrary bookkeeping value.  John's fix, and it
+      is free: raise the TARGET predicate to QHBound 32779478 (the champion's
+      score) and prove it only on the DEFERRED machines -- the census itself
+      never changes.  TNF_QH.v already has qhbound_mono and neverqh_qhbound,
+      so it is a three-line corollary over the untouched census_decided;
+      B_census/D_census stay put, CENSUS_VO_HASH stays MATCH, and the walk
+      never re-runs.  NOT YET WRITTEN.  Do this first -- it is small and it
+      unblocks (b).
+
+      SIZE THIS BUCKET BEFORE ASSUMING IT IS FOUR.  A machine is
+      constant-blocked iff its true score exceeds 2000, and PR #40 found five
+      (2332, 2512, 2568, 2819, 66349) -- but only inside a 400k-step window,
+      so anything scoring between 400k and 32.8M was classified RECUR and
+      never seen.  If the bucket is 5, the corollary is worth 5 boards; if it
+      is 150, it is worth 150, and it is still three lines.  That makes this
+      the cheapest unknown on the board.  The scan is
+      /tmp/.../deepscan.py in the PR #40 session (35M steps/machine, ~1.5 h
+      at 4 workers, paused at 325/1157); it is pure simulation, no Coq.
+      WARNING, and this bit is load-bearing: a single-window "quiet" verdict
+      is UNSOUND -- a state visited at exponentially spaced times looks quiet
+      at every finite window.  Confirm every candidate with the two-window
+      test (tools/counters/visit_gaps.py --confirm) before counting it.  That
+      trap cost PR #40 a retraction from 538 quasi-halters to 217.
+
+  (b) FOUR BOARDS ALREADY PROVED, ALL STILL UNPROVEN ON MAIN, ALL
+      CONSTANT-BLOCKED.  theories/Counters/BlankTail.v: if after a finite
+      prefix the machine sits in state q with the half-tape AHEAD blank and
+      tm q S0 self-loops to q, it marches across virgin tape forever in one
+      state, so every other state is quiet.  Two-line induction; per machine a
+      TM table plus one vm_compute.
+        QHBound 2512  1RB1RA_0RC1LA_1LC1LD_0RB0RD
+        QHBound 2568  1RB1RA_0RC0RB_0RD1RA_1LD1LB
+        QHBound 2819  1RB1RC_1LC1RD_1RA1LD_0RD0LB   (previous BBB(4) champion)
+        QHBound 66349 1RB0LD_1LC0LA_1LA0LC_1RD1RC   (previous BBB(4) champion)
+      All four compile, functional_extensionality_dep only.  They are PROVED
+      but NOT BOARDED: they need (a), then the closeout wiring.
+      The CHAMPION 1RB1LD_1RC1RB_1LC1LA_0RC0RD is the same shape -- at step
+      32,779,478 its tape is COMPLETELY BLANK and it spins out in state C
+      (C0 -> 1,L,C), which is why it is also the BLB(4) champion: the blanking
+      event and the quiet point are the same event.  It wants the same closer
+      via cstepsN (nat is unary; a 32.8M literal is catastrophic).
+      blanktail_scan.py proves this closer is EXHAUSTED at exactly these five;
+      the period-k generalisation buys nothing (every hit has period 1).
+
+  (c) THE HINT PATH IS BUILT AND VALIDATED.  Wave-15 names this its lead
+      item; PR #40 does NOT agree it should be run first, and the reason is a
+      number.  Inductive's measured ceiling on our residue is ~20 of 1,176
+      (under 2%) -- but that was measured UNHINTED, and the counter
+      representations are hint-gated, so hints could lift it a lot or not at
+      all.  Nobody knows.  THE TASK below targets ~340 machines with our own
+      machinery and no such uncertainty, so it is the wave.
+      The disagreement is about SIZING, not about doing it: run the hint path
+      as a MEASUREMENT, not as a wave.  30 machines with derived hints, look
+      at the fire rate, THEN decide.  That is cheap (wave-15 costs the whole
+      thing at half a day) and it converts the largest unknown on the board
+      into a number.  What would be wrong is committing a wave to it on the
+      strength of the shape argument alone -- which is exactly the mistake
+      wave-15's own standing lesson, a few lines below, warns about.
+      busycoq mirror branch claude/coq-bbb4-residue-removal-lt5yac:
+      verify/InductiveDump.v adds --bec/--becpos/--dec/--ov0/--ov1 (words as
+      digit strings, "." = empty; states as letters) plus --initial-steps and
+      --mnc, and a --dump that prints the rule chain and the states each
+      config_expr carries.  VALIDATED by reproducing mxdys' own IndSBCv1.v
+      nonhalt3: hint-free budget-exhausted at 9.15 s, hinted nonhalting in
+      0.067 s with flags = nat_mul + nat_powsum + a counter-side constructor.
+      tools/counters/exrules_check.py is a SOUND rejection filter for the
+      ExtraRules obligation (~2 ms/candidate), validated against two rules
+      mxdys proved with Qed and against a one-state perturbation.
+      exrules_search.py derives candidates from alphabet_infer's (A,B,C) --
+      which IS his (d0,d1,d1a); the bbchallenge wiki's Inductive_Proof_System
+      page documents the same triple as C(d0,d1,dh,n).
+      NOTE the obligations carry NO step count -- they are bare -[tm]->+
+      progress facts, and the powsum cost is synthesised by the ENGINE when it
+      nests them.  Our LapDecider conflates shape and cost (sside carries
+      a*j+b), which is why a Theta(2^j) lap is unstateable for us and not for
+      him.  That is a design lesson, not a bolt-on.
+
 MXDYS THREAD: CLOSED except for one live lead.  Do not re-open it blind.
 
   mxdys told John "see Inductive and RRBA deciders in
