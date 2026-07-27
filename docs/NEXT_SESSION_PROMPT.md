@@ -93,29 +93,39 @@ THE TASK -- FINISH THE NESTED LAP, AND IT IS AN IDENTIFICATION PROBLEM.
   An sside carries a*j + b, so an exponential half is UNREPRESENTABLE as one
   chain.  Do NOT widen derive_chain for these; that is now measured twice over
   (WAVE16 section 5, and this).  What is wrong is the INNER FAMILY'S
-  IDENTIFICATION, and NESTED_LAP_PLAN section 3 predicted the mechanism:
+  IDENTIFICATION -- and WAVE18 section 4c already found what it is:
 
-      innerfam requires the decoded values to be exactly 2^(K-1)..2^K-1, and
-      a SUBSEQUENCE of a longer count satisfies that too.
+    SPLIT ONE OVERFLOW PHASE AT THE FIRST INNER ALL-ONES FILL AND SEARCH THE
+    SECOND HALF ON ITS OWN.  11 OF 16 SAMPLED CARRY A SECOND CONSECUTIVE
+    2^(K-1)..2^K-1 FAMILY THERE -- same state, same alphabet, SHIFTED TAIL
+    (e.g. Jp@B tail=[S1;S1;S0], then Jp@B tail=[S0;S0;S1]).
 
-  An exponential EXIT says the inner counting does not STOP at fill(pow2 j) --
-  there is more after it.  An exponential BOOT says it did not START at
-  pow2 j.  So the concrete next move, in order:
+  That is John's reading of mxdys' sync bouncer counter, verbatim: "count
+  8->15, shift, count 8->15 again".  The overflow phase is
 
-    1. Dump one overflow phase in absolute coordinates
-       (tools/counters/spacetime.py) for three or four of the "no exit chain"
-       machines and read where the inner count actually begins and ends.
-       ASK JOHN with the tape -- hand-inspection is 22-for-22 across waves
-       8-14, and this is exactly the kind of question it answers.  Cluster
-       first (wall_survey.py / alphabet_infer.py) so one reading covers many.
-    2. If the inner run really is longer than one octave, the fix may be free:
-       NestedLapLift.nested_overflow_lift is stated GENERICALLY in Cin and
-       should compose with itself, i.e. a THIRD level costs no new theory.
-       Measure before building -- that is what section 4b is for.
-    3. The 134 "no inner family" are the same population seen from the other
-       side, and Stage A already sized them: 21% of inner counters run at
-       another octave or offset.  Both the search and the glue (epow2_, gbo_)
-       hard-wire v0 = pow2 j.
+      boot -> count -> SHIFT -> count -> exit
+
+  five affine chains and TWO exponential inner runs, not three and one.
+
+  IT SHOULD NEED NO NEW COQ.  NestedLapLift.nested_overflow_lift's Hboot is an
+  ARBITRARY csteps run into Cin v0 -- it does not have to be one chain.  So
+  instantiate the theorem at the SECOND inner family and build its boot as
+  boot1 ++ inner_to_fill_lift(Cin1) ++ mid.  The emitter work is one more
+  family search and one more chain; nestcert.py already returns the phase's
+  `mid` list, so the split costs nothing to reproduce.  Worth ~76 of the 111
+  at the sampled rate, and the same construction should absorb part of the 22
+  exponential boots (a count BEFORE the identified one is the mirror image of
+  a count after it).
+
+  If a machine has NEITHER (5 of the 16 had nothing after the fill): dump the
+  phase in absolute coordinates (tools/counters/spacetime.py) and ASK JOHN
+  with the tape.  Hand-inspection is 22-for-22 across waves 8-14.  Cluster
+  first (wall_survey.py / alphabet_infer.py) so one reading covers many.
+
+  The 134 "no inner family" are the same population seen from the other side,
+  and Stage A already sized them: 21% of inner counters run at another octave
+  or offset.  Both the search and the glue (epow2_, gbo_) hard-wire
+  v0 = pow2 j.
 
   DO NOT RETRY (measured in wave-18): a wider inner-key tail.  maxtail = 6
   FINDS families -- 13 of 40 machines that report "no inner family" at 3 --

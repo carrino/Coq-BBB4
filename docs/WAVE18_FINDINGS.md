@@ -182,6 +182,42 @@ An exponential EXIT says the inner counting is not finished at
 way the inner family is mis-identified at one end, and that -- not the chain
 search -- is where the next 130 machines are.
 
+## 4c. …and the exponential exit is A SECOND COUNT IN A SHIFTED FRAME
+
+Checked directly, and this is the wave's best lead for the next one.  Split
+one overflow phase at the first inner all-ones fill and re-run the
+inner-family search on the SECOND half alone:
+
+| | |
+|---|---:|
+| sampled from `no exit chain` | 16 |
+| **a second consecutive `2^(K-1)..2^K-1` family after the fill** | **11** |
+| nothing after the fill | 5 |
+
+and on all 11 the second family is at the SAME state and the SAME alphabet as
+the first, differing only in its TAIL — e.g. `Jp@B tail=[S1;S1;S0]` then
+`Jp@B tail=[S0;S0;S1]`.
+
+That is exactly John's reading of mxdys' sync bouncer counter, quoted in the
+wave-15 prompt: **"count 8→15, shift, count 8→15 again"**.  The overflow
+phase is
+
+    boot -> count -> SHIFT -> count -> exit
+
+five affine chains and TWO exponential inner runs, not three chains and one.
+
+**It should need no new theory.**  `nested_overflow_lift`'s `Hboot` is an
+arbitrary `csteps` run into `Cin v0` — it does not have to be one chain.  So
+instantiate the theorem at the SECOND inner family and build its boot from
+`boot1 ++ inner_to_fill_lift(Cin1) ++ mid`.  The emitter work is one more
+chain and one more family search; `Counters/NestedLapLift.v` is untouched.
+Worth ~76 of the 111 on this sample's rate, and the same construction should
+absorb part of the 22 exponential boots (a count BEFORE the identified one is
+the mirror image of a count after it).
+
+`tools/counters/nestcert.py` already returns the phase's `mid` list, so the
+split costs nothing to reproduce.
+
 ## 5. DO NOT RETRY (measured this wave)
 
 * **A wider inner-key tail.** `inner_keys`' `maxtail` at 6 instead of 3 DOES
@@ -224,13 +260,15 @@ excluded the prototype that most needed it.
    `NESTED_LAP_PLAN`'s index-shift warning: the naive reindex to `v0 =
    pow2 j + 1` needs count `j-1`, which an `sside` (`a*j + b`, `b : nat`)
    cannot carry, and the naive construction measured 0 of 12.
-2. **`no exit chain` (111) / `no boot chain` (22).** §4b measured these:
-   the missing half is EXPONENTIAL, so this is NOT a search gap and no
-   `derive_chain` widening can touch it. The inner family is mis-identified at
-   one end — the counting does not start at `pow2 j` (exp boot) or does not
-   stop at `fill (pow2 j)` (exp exit). Fix the identification, or nest
-   `nested_overflow_lift` inside itself (it is stated generically in `Cin`, so
-   it should compose); measure which before building either.
+2. **`no exit chain` (111) / `no boot chain` (22) — DO THIS FIRST, it is the
+   biggest measured lead on the board.** §4b: the missing half is
+   EXPONENTIAL, so no `derive_chain` widening can touch it. §4c says why:
+   **11 of 16 sampled have a SECOND inner count after the first fill**, at the
+   same state and alphabet with a shifted tail — the sync-bouncer-counter
+   shape. The phase is `boot -> count -> shift -> count -> exit`, and
+   `nested_overflow_lift` takes it with NO new Coq, because its `Hboot` is an
+   arbitrary `csteps` run: instantiate at the SECOND family and compose the
+   first count into the boot.
 3. **`no interior chain`, 105.** Unchanged by this wave and now the shape-most
    diverse bucket: `QUAD` 41, `HIGHER` 13, `PARITY-AFFINE` 13, `EXP3` 10,
    `EXP4` 6, `AFFINE/AFFINE` 14, `EXP2` 8. The 41 `QUAD/QUAD` are the largest
