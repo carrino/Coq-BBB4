@@ -418,11 +418,107 @@ Proof.
   - exists 2. eexists. split; reflexivity.
 Qed.
 
+(** ** The abstract state, and the successor in closed form
+
+    The anchor's tail is a word of 1-RUN LENGTHS: [wruns [n1;n2;...]] is
+    [1^n1 0 1^n2 0 ...].  There is no separate lap index -- the leading
+    b-run IS the leading run of 2s, because [b = 110 = 1^2 0]
+    ([wruns_blks] below) -- so the abstract state is just the word.
+
+    Reading rightward from the anchor the head enters on a 1, so the run it
+    actually reads at [n_i] is [n_i + 1].  Hence [n_i] EVEN means the run
+    read is odd and the sweep RIDES over it; [n_i] ODD means the run read is
+    even, and that is the TURNAROUND.  This is wave4 #15's carry with the
+    parities swapped: the "bits" are the run lengths mod 2, the carry rides
+    over the even ones and stops at the first odd one.
+
+    Each ride lays an alternating block that the return sweep re-encodes as
+    [b a^(n/2-1)], the turn lays [a^((n-1)/2)], and the entry debris
+    contributes the spare [b] that is the [+1].  Re-encoding reverses the
+    unit order and maps [b -> 2], [a -> 1], which is [nv] below.
+
+    [nv0] is a structural recursion on the list, so [nv] is TOTAL: no fuel,
+    and no closed form for the tape, is needed anywhere.  It reproduces the
+    orbit's A-anchor word for all 302 laps reachable in 400,000 steps and on
+    synthetic anchors the orbit never visits
+    ([tools/counters/nv20.py], green). *)
+
+Fixpoint wruns (w : list nat) : list Sym :=
+  match w with
+  | [] => []
+  | n :: t => repeat S1 n ++ S0 :: wruns t
+  end.
+
+Fixpoint rep1 (k : nat) (t : list nat) : list nat :=
+  match k with 0 => t | S i => 1 :: rep1 i t end.
+
+Fixpoint nv0 (w : list nat) : list nat :=
+  match w with
+  | [] => []                                    (* excluded by the invariant *)
+  | n :: t =>
+      if Nat.even n
+      then rep1 (Nat.div2 n - 1) (2 :: nv0 t)    (* ride *)
+      else match t with
+           | [] => rep1 (Nat.div2 n) [2; 1]      (* turn, nothing beyond *)
+           | n2 :: t2 => rep1 (Nat.div2 n) ((n2 + 3) :: t2)   (* turn *)
+           end
+  end.
+
+(** The leading 2 is the entry debris's spare block -- the counter's [+1]. *)
+Definition nv (w : list nat) : list nat := 2 :: nv0 w.
+
+Definition CfW (w : list nat) : cconf := (StC, ([], S0, leadA (wruns w))).
+
+(** The bridge to the [blks]/[lay] machinery already proved: a leading run
+    of 2s in the run-length word IS the b-run the outward sweep eats. *)
+Fixpoint rep2 (r : nat) (v : list nat) : list nat :=
+  match r with 0 => v | S i => 2 :: rep2 i v end.
+
+Lemma wruns_blks : forall r v, wruns (rep2 r v) = blks r (wruns v).
+Proof.
+  induction r as [|r IH]; intro v; cbn [rep2 blks wruns repeat app];
+    [reflexivity | rewrite IH; reflexivity].
+Qed.
+
+Lemma CfW_blks : forall r v,
+  CfW (rep2 r v) = (StC, ([], S0, leadA (blks r (wruns v)))).
+Proof. intros r v. unfold CfW. rewrite wruns_blks. reflexivity. Qed.
+
+(** The lap's two settled halves, restated on the run-length word: rule A,
+    then the entry and the b-run sweep. *)
+Lemma lapA_W : forall w,
+  csteps tm_20 10 (CfW w) = Some (StC, ([], S0, leadB (wruns w))).
+Proof. intro w. apply ruleA. Qed.
+
+Lemma lapB_pre_W : forall r v,
+  csteps tm_20 (10 + 5 * r)
+    (StC, ([], S0, leadB (wruns (rep2 r v))))
+  = Some (StC, (lay r E, S0, S1 :: wruns v)).
+Proof.
+  intros r v. rewrite wruns_blks.
+  rewrite csteps_add, entry10, out5s. reflexivity.
+Qed.
+
 (** ** Boot
 
     The family settles at t = 50, at the A-type anchor with [r = 0] and
     [rest = 1 0 1 1 1 1]; the three left records before it (t = 4, 18, 28)
-    are the boot and belong to no phase. *)
+    are the boot and belong to no phase.  In run-length form that anchor is
+    [w = [1; 4]]. *)
+
+Definition w0_20 : list nat := [1; 4].
+
+Lemma boot20_W : exists t0, stepn tm_20 t0 InitES = Some (lift (CfW w0_20)).
+Proof.
+  exists 50.
+  assert (H : match csteps tm_20 50 c0 with
+              | Some c => ceqb c (CfW w0_20)
+              | None => false
+              end = true) by (vm_compute; reflexivity).
+  destruct (csteps tm_20 50 c0) as [c|] eqn:Ec; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ Ec).
+  f_equal. apply ceqb_lift. exact H.
+Qed.
 
 Definition a0_20 : nat * list Sym := (0, [S1; S0; S1; S1; S1; S1]).
 
