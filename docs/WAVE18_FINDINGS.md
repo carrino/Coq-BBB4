@@ -14,9 +14,11 @@ _A CONCURRENT session ran a separate wave-18 on the HOLDOUTS front (PRs #44-#46,
 are disjoint and were merged.  **After the merge `D_remaining` is 622**, not
 the 625 in the scoreboard below — 883 − 258 here − 3 there.  The generated
 closeout tables were REGENERATED over the union rather than hand-merged, which
-is the only correct way to resolve a conflict under `theories/Closeout/`.
-`NEXT_SESSION.md` §2j is this track (RESIDUE) and §2g-2i are that one
-(HOLDOUTS)._
+is the only correct way to resolve a conflict under `theories/Closeout/`, and
+the merged result is KERNEL-VERIFIED the same way §1 records: `closeout_partial`
+Qed at `functional_extensionality_dep` only, `vm_compute` on
+`List.length remaining_rows` = **622**.  `NEXT_SESSION.md` §2j is this track
+(RESIDUE) and §2g-2i are that one (HOLDOUTS)._
 
 ## 1. Scoreboard
 

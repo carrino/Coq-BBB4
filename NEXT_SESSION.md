@@ -802,7 +802,10 @@ list** -- #20 is the last one.
   than hand-merged, which is the only correct way to resolve a conflict under
   `theories/Closeout/`.  The joint figure is **D_remaining = 622**; every
   per-track number above and in 2j is that track's own and is superseded by
-  it.  `audit.py` OK, `census_cache --check` MATCH.]
+  it.  `audit.py` OK, `census_cache --check` MATCH, and the MERGED closeout is
+  KERNEL-VERIFIED: `Closeout.vo` + all 46 `CB_*.vo` compile, `closeout_partial`
+  is Qed at `functional_extensionality_dep` only, and
+  `vm_compute (List.length remaining_rows)` = 622.]
 
 ## 2j. Wave-18, RESIDUE track (2026-07-27) — THE TASK lands: 258 boards
 
