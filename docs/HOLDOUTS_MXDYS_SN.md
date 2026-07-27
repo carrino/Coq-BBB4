@@ -422,6 +422,48 @@ the invariant is mod 4 and not mod 2**.  `ret1` is the 1-step/cell return,
 giving rule B's `3 + 1 = 4` steps per cell.  What is left is the deposit and
 carry-continue windows at the turnaround, then the assembly.
 
+**John's reading supersedes all of the above: #15 is a plain BINARY
+COUNTER.**  *"each bit is the zero stripe position mod 2.  the 2nd left most
+stripe is the lsb ... reading left to right, 2nd zero is lsb and the value is
+position % 2, next zero is 2's and value is position + 1 % 2, next zero is
+4's and value is position % 2."*  Measured, that is exactly right.  Number
+the zero stripes `z[0] = 0` (the anchor's own blank), `z[k+1]` the k-th
+after it; then
+
+```
+bit k  =  (z[k+1] + k) mod 2       (equivalently: 1 iff the number of 1s
+                                    strictly left of that stripe is EVEN)
+```
+
+and the TOP stripe-bit is always `0` — it is a sentinel, i.e. the implicit
+leading `1` of a `positive`.  Dropping it, `p = 2^(width-1) + value`, and
+
+> **one lap is `p -> p+1`, with no exceptions.**  Over 1,493 consecutive laps
+> `p` runs `2, 3, 4, ..., 1495` with no gaps.  The spawn is not a special
+> case — it is just the carry out of the top.
+
+**This dissolves the whole mod-4 layer.**  The abstract state is a
+`positive` advanced by `Pos.succ`, which is `LapGlue.glue_neverqh`'s
+interface — the closer `BCtr_28` already uses — *not*
+`WaveCounter.wglue_neverqh`.  There is no invariant to preserve and no
+`carry`/`nextf`/`fp`/`pbits`/`WInv`/`carry_ok` port at all: "binary increment
+terminates" is everything the carry needed.  `WInv4` above is true but
+unnecessary.  The doc's "~80 lines of mod-4 arithmetic layer" is zero lines.
+
+The tape is a closed form in `p`.  With `k = floor(log2 p)` and `r = p - 2^k`:
+
+```
+lead  =  1 + (p mod 2)
+v[j]  =  2^(k-j) + sum_{i>=j} c(i-j) * bit_i(r),   c = 1, 3, 4, 8, 16, 32, ...
+                                                   (c(0)=1, c(1)=3, c(d)=2^d)
+total 1s on the tape  =  2p - 1
+```
+
+checked against every anchor out to `t = 3e6` (`lap15.py`'s `counter()`).
+So `Cf : positive -> cconf` is directly writable, and what remains for the
+board is only the lap lemma `Cf p --> Cf (Pos.succ p)` — where the deposit
+gadget below still has to be stated correctly.
+
 ### tower #20 — `1RB0RD_1LC1LB_1RA0LB_1LC1RA`
 
 Not re-measured this session; BBB's decode is complete and is the plan of
