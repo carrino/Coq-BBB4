@@ -1,9 +1,10 @@
-# Wave-18 — THE TASK lands: the exponential overflow boards, 225 of them
+# Wave-18 — THE TASK lands: the exponential overflow boards, 258 of them
 
 _Branch `claude/coq-bbb4-residude-oy73r4`, off merged wave-16 + wave-17.
 This wave took **THE TASK** of the wave-15 and wave-16 prompts — the
 `AFFINE`/`EXP2` bucket, the residue's dominant class, whose overflow lap costs
-`Θ(2^j)` — and produced its first boards. `D_remaining` **883 → 658**._
+`Θ(2^j)` — and produced its first boards. `D_remaining` **883 → 625** on this
+track alone; see the merge note below for the joint figure._
 
 _**Read §2 before touching any chain search in this tree again.** The wave-16
 lesson was not spent; it had one more level to give._
