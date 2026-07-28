@@ -20,7 +20,17 @@ census_boarded   : forall tm, QHBound 2000 tm
 bbb4_target      : forall tm, QHBound 32779478 tm
                            \/ NeverQuasiHaltsSt tm
                            \/ Deferred D_remaining tm
+
+bbb4_decided_le_prev_champion : forall tm,
+  ~ Deferred D_remaining tm -> QHBound 66349 tm \/ NeverQuasiHaltsSt tm
 ```
+
+The last corollary is the previous-record reading: every decided machine
+quasihalts by the *previous* champion's 66,349 or never quasihalts, so among
+known (4,2) machines only the (still-skipped) champion exceeds the previous
+record.  The decided set in fact satisfies the census tier bound 2,000 — the
+known machines between 2,000 and the champion, the four previous champions
+at 2,512–66,349, are all currently residue rows.
 
 where `boarded tm` is
 `NeverQuasiHaltsSt tm \/ (NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm)`

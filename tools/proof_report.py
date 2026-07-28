@@ -63,6 +63,20 @@ a proof that BBB(4) = {score:,}.  The precise scope of the claim is
 docs/CLAIMS.md; the residue, mapped by shape and blocker, is
 docs/RESIDUE_MAP.md.
 
+Sharper, in previous-record terms:
+
+  bbb4_decided_le_prev_champion : forall tm,
+    ~ Deferred D_remaining tm ->
+    QHBound 66349 tm \\/ NeverQuasiHaltsSt tm
+
+-- every machine NOT in the skipped list quasihalts by the PREVIOUS
+champion's score, 66,349, or never quasihalts.  So among all known
+(4,2) machines, only the current champion exceeds the previous record.
+(The decided set currently even satisfies the census tier bound 2,000;
+the machines known to score between 2,000 and the champion -- the four
+previous champions, 2,512..66,349 -- are all still in the skipped
+list.)
+
 Axiom footprint: functional_extensionality_dep, and nothing else
 (printed by Print Assumptions during the build above; independently
 checkable with coqchk -o).

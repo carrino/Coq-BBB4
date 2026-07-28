@@ -57,4 +57,46 @@ Proof.
     [left; exact H | right; exact H | destruct (Hres H)].
 Qed.
 
+(** The census tier fact the corollary below rests on: every
+    machine the theorem does not skip has score <= 2000
+    ([B_census], definitionally).  NOTE this is an artifact of
+    where the census drew its line, not of the (4,2) landscape:
+    the machines known to score between 2000 and the champion --
+    the four previous champions, 2,512..66,349 -- are all
+    currently in the SKIPPED list. *)
+Lemma bbb4_decided_le_2000 : forall tm,
+  ~ Deferred D_remaining tm ->
+  QHBound 2000 tm \/ NeverQuasiHaltsSt tm.
+Proof.
+  intros tm Hres.
+  destruct (census_boarded tm) as [H | [[H | (Hnh & Hb & Hq)] | H]].
+  - left; exact H.
+  - right; exact H.
+  - left; exact Hb.
+  - destruct (Hres H).
+Qed.
+
+(** The PREVIOUS champion's score, 66,349
+    (1RB0LD_1LC0LA_1LA0LC_1RD1RC, theories/Machines/Counters/
+    BlankTail_66349.v).  Digit form for the same [lia] reason
+    as [champion_score]. *)
+Definition prev_champion_score : nat :=
+  ((((6)*10 + 6)*10 + 3)*10 + 4)*10 + 9.
+
+(** The community-facing reading: every machine the theorem
+    decides quasihalts by the PREVIOUS champion's score or never
+    quasihalts -- so among all known (4,2) machines, only the
+    (skipped, undecided) champion exceeds the previous record. *)
+Corollary bbb4_decided_le_prev_champion : forall tm,
+  ~ Deferred D_remaining tm ->
+  QHBound prev_champion_score tm \/ NeverQuasiHaltsSt tm.
+Proof.
+  intros tm Hres.
+  destruct (bbb4_decided_le_2000 tm Hres) as [H | H];
+    [left | right; exact H].
+  apply (qhbound_mono 2000);
+    [unfold prev_champion_score; lia | exact H].
+Qed.
+
 Print Assumptions bbb4_target.
+Print Assumptions bbb4_decided_le_prev_champion.
