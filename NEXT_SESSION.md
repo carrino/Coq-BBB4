@@ -417,7 +417,13 @@ carry-continue windows at the turnaround, then the assembly and the Coq.
 `wglue_neverqh` still needs no change.  `HOLDOUTS_MXDYS_SN.md` section 5b has
 the full table and sizes the other three.
 
-## 2g. Wave-18, HOLDOUTS track (2026-07-27) -- wave4 #15 boarded, then #3/#5/#20; the (4,2) holdout list CLOSES
+## 2g. Wave-18, HOLDOUTS track (2026-07-27) -- wave4 #15 boarded; #3/#5 follow in 2h, #20 does NOT
+
+[CORRECTED 2026-07-28.  This heading used to read "then #3/#5/#20; the (4,2)
+holdout list CLOSES".  The fractals #3/#5 were boarded (section 2h), but
+**tower #20 never was** -- see 2k.  It has no `NeverQuasiHaltsSt`, no manifest
+row, and is still in `tools/closeout/frozen_unproven.txt`.  The (4,2) holdout
+list has ONE machine left.]
 
 Full write-up: `docs/HOLDOUTS_MXDYS_SN.md` section 5b.
 `theories/Machines/Counters/Wave4_15.v` (730 lines),
