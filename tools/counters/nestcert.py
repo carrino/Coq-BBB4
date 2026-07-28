@@ -1786,14 +1786,21 @@ def cascade_segments(mid, ENCDATA, ENCS, maxtail=CASC_MAXTAIL,
 
 
 def cascade_runs(mid, ENCDATA, ENCS, maxtail=CASC_MAXTAIL,
-                 minlen=CASC_MINLEN, encs=None):
+                 minlen=CASC_MINLEN, encs=None, prefer=None):
     """The phase's counts as a NON-OVERLAPPING chain, earliest first.
 
     Non-overlap is what separates a real cascade level from an octave shadow:
     a shadow decodes over (nearly) the same span as the count it shadows, so
-    an earliest-start greedy scan keeps the count and drops the shadow."""
+    an earliest-start greedy scan keeps the count and drops the shadow.
+
+    [prefer] breaks the remaining tie.  Digit alphabets coincide -- `Jp` and
+    the inferred `Alph_11_10_1` are the same three words -- and which name the
+    scan reports decides which Coq module the board has to import, so the
+    OUTER anchor's alphabet is preferred when it decodes the run too."""
+    segs = sorted(cascade_segments(mid, ENCDATA, ENCS, maxtail, minlen, encs),
+                  key=lambda s: (s[0], s[1], s[4][0] != prefer, s[4]))
     out, cur = [], -1
-    for s in cascade_segments(mid, ENCDATA, ENCS, maxtail, minlen, encs):
+    for s in segs:
         if s[0] > cur:
             out.append(s)
             cur = s[1]
@@ -1833,7 +1840,8 @@ def _tail_mlaw(T, levels, ex, unit, w):
     return M
 
 
-def cascade_law(mid, ENCDATA, ENCS, K, encs=None, maxtail=CASC_MAXTAIL):
+def cascade_law(mid, ENCDATA, ENCS, K, encs=None, maxtail=CASC_MAXTAIL,
+                prefer=None):
     """Read the cascade's LAW off one measured overflow phase.
 
     Returns the inner family, the main count's tail, and the tail law of the
@@ -1842,7 +1850,8 @@ def cascade_law(mid, ENCDATA, ENCS, K, encs=None, maxtail=CASC_MAXTAIL):
     number of levels or [M] is assumed -- all four are measured, and a phase
     that does not obey the law raises rather than being forced into it."""
     j = K - 1
-    runs = cascade_runs(mid, ENCDATA, ENCS, maxtail, encs=encs)
+    runs = cascade_runs(mid, ENCDATA, ENCS, maxtail, encs=encs,
+                        prefer=prefer)
     if len(runs) < 5:
         raise NestError('no cascade: %d counts in the phase' % len(runs))
     (_, _, v0, v1, key0) = runs[0]
@@ -2042,7 +2051,7 @@ def cascade_endpoints(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=7,
     chains.  Raises [NestError] with the piece that did not derive."""
     encf = ENC[enc]
     mid = phase_mid(tab, st0, encf, tail, far, K, maxT=4000000)
-    law = cascade_law(mid, ENCDATA, ENCS, K, encs)
+    law = cascade_law(mid, ENCDATA, ENCS, K, encs, prefer=enc)
     law['found'] = cascade_check(mid, law, ENCDATA)
     key = (law['inner'], law['st_in'], tuple(law['tail_main']),
            tuple(law['far_in']), 0)
