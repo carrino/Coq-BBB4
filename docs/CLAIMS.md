@@ -49,7 +49,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
 3. it is one of the **427** machines listed in `D_remaining`
-   (`tools/closeout/residue_map.tsv`), which the theorem **skips**.
+   (`tools/closeout/frozen_unproven.txt`), which the theorem **skips**.
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
 frozen table under completion of undefined transitions, non-start state swaps,
