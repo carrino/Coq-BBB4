@@ -28,6 +28,18 @@ Continue the (4,2) residue reduction in carrino/Coq-BBB4, on a new branch off
 main.
 
 READ FIRST, in this order:
+  docs/CASCADE_EXIT.md      -- THE TASK's design brief, all of it.  Section
+                               4b is the traced per-level mechanics; section
+                               4c is the GATE STATUS: the A->B level
+                               transition already DERIVES as a single-index
+                               chain (exact, tail opaque -- the chain is
+                               printed there), the B->A and base framings
+                               are OPEN, and the first build step is a
+                               `cascade endpoints` extractor INSIDE
+                               nestcert.py (ad-hoc probes measured
+                               inconsistent blank-head numbering; do not
+                               repeat that).  Only after B->A gates: the
+                               composition lemma, then the template.
   docs/WAVE18_FINDINGS.md   -- all of it; it is short.  Section 4b is the
                                wave's most useful result and it is a NEGATIVE:
                                the two remaining nested-lap chain buckets are
