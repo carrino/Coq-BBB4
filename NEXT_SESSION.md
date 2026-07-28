@@ -417,7 +417,13 @@ carry-continue windows at the turnaround, then the assembly and the Coq.
 `wglue_neverqh` still needs no change.  `HOLDOUTS_MXDYS_SN.md` section 5b has
 the full table and sizes the other three.
 
-## 2g. Wave-18, HOLDOUTS track (2026-07-27) -- wave4 #15 and fractal #3/#5 boarded; tower #20 is the LAST one
+## 2g. Wave-18, HOLDOUTS track (2026-07-27) -- wave4 #15 boarded; #3/#5 follow in 2h, #20 does NOT
+
+[CORRECTED 2026-07-28.  This heading used to read "then #3/#5/#20; the (4,2)
+holdout list CLOSES".  The fractals #3/#5 were boarded (section 2h), but
+**tower #20 never was** -- see 2k.  It has no `NeverQuasiHaltsSt`, no manifest
+row, and is still in `tools/closeout/frozen_unproven.txt`.  The (4,2) holdout
+list has ONE machine left.]
 
 Full write-up: `docs/HOLDOUTS_MXDYS_SN.md` section 5b.
 `theories/Machines/Counters/Wave4_15.v` (730 lines),
@@ -797,11 +803,7 @@ and `make -f Makefile.coq -j2 theories/Closeout/Closeout.vo` (`-j2`, NOT
 list** -- #20 is the last one.
 
   [MERGE NOTE, added when the two 2026-07-27 tracks were merged.  They are
-  DISJOINT -- the sections above board HOLDOUTS, section 2j boards RESIDUE.
-  NOTE: tower #20 is NOT boarded.  `Tower_20.v` carries the gadget, sweep and
-  re-encoding layers and compiles, but has NO top-level theorem, so
-  `inventory.py` correctly leaves `1RB0RD_1LC1LB_1RA0LB_1LC1RA` in
-  `D_remaining`.  It is the LAST (4,2) holdout.  --
+  DISJOINT -- the sections above board HOLDOUTS, section 2j boards RESIDUE --
   and the generated closeout tables were REGENERATED over the union rather
   than hand-merged, which is the only correct way to resolve a conflict under
   `theories/Closeout/`.  The joint figure is **D_remaining = 622**; every
@@ -880,6 +882,202 @@ rows, whose overflow lap costs `Θ(2^j)` — and produced its first boards.
   at the SECOND family and fold the first count into the boot.  **33 more
   boards; `D_remaining` 658 -> 625.**  What is left of that bucket is 8 "no
   shift chain" + 5 "no second exit chain".
+
+## 2k. Wave-20 (2026-07-27) -- tower #20: the MIDDLE is proved; the invariant
+
+`tools/counters/mid20.py` and `tools/counters/inv20.py` (both new, both
+green), `theories/Machines/Counters/Tower_20.v` extended (compiles,
+`Print Assumptions` clean).  **#20 still has NO `NeverQuasiHaltsSt`
+theorem**, so it is still the last (4,2) holdout.  This wave boards
+NOTHING: `D_remaining` is unchanged by it, and after the merge with the
+RESIDUE track (2j) that figure is **622**, not the 880 this branch was cut
+at.  `census_cache --check` MATCH, closeout audit untouched, nothing under
+`theories/Census/`.
+
+**THE MIDDLE -- section 2i's "exactly one lemma" -- IS DONE.**  The whole
+long lap is now Qed for every tail that HAS an odd entry:
+
+    lapB_full_ne : Forall (fun x => x <> 0) K ->
+      csteps tm_20 ((10 + 5*r) + ((rcostK K + (2*k+8))
+                    + (pcost (Dmid K k) + rcost (lay r E))))
+        (CfB (r, wruns (wev K ((2*k+1) :: S n2 :: t2))))
+      = Some (CfA (S r, enc (Dmid K k) (wruns ((S n2 + 3) :: t2))))
+
+plus `lapB_full_z` for the nothing-beyond branch.  `wev K t` is the word
+whose even prefix is `2k` for each `k` in `K`, so the hypothesis IS the
+decomposition "(even prefix) ++ (odd entry) ++ (rest)" -- i.e. the sweep
+turns -- and nothing else is assumed.
+
+**How it is built** (all `reflexivity` or one induction each):
+- five new joints, each checked in its EXACT stated form over all 961
+  `(L,R)` with `|L|,|R| <= 4` before being written -- `ad2` (the two-step
+  `A`/`D` stride), `fin2` (the ride's exit back into `StC`), `turn3`
+  (`A0 = 1RB`, the bounce into `StB`), and the two walk-backs `wb4`/`wb1`.
+  `ad2`, `wb4`, `wb1` READ the context, so -- trap 2 -- they are stated
+  through `chd`/`ctl`;
+- `walk`: the `A`/`D` stride iterated, ONE induction, uniform in the tail
+  `Z`, so the SAME lemma serves the ride and the turn.  That uniformity is
+  the whole trick -- the two cases differ only in what `Z` starts with;
+- `ride`: `n = 2k` EVEN, a constant `n+3` steps, debris `(1 0)^k 1`.
+  `out5` is the `k = 1` case and `k = 0` is a bare three-step window;
+- `turn_bounce` at step `2k+4`, then `wb4` (next run nonempty) or `wb1`
+  (next run empty, or the tape ends -- `chd [] = S0`, so it is the SAME
+  branch, not a third one).  **The `n2+3` of the successor is the four 1s
+  the walk-back lays, minus the one it consumed** -- `turn_ne` reads it
+  straight off the tape;
+- `rides`: the whole even prefix in one induction over `K`;
+- `Dmid`/`Dmidz` and `RevP_Dmid`/`RevP_Dmidz`: the debris is `RevP`, so it
+  drops into the already-proved `lapB_post` with no new sweep reasoning.
+  **`RevP` needs every ridden run nonempty** (`dbl 0 [S1] = [S1]` is `Rev`'s
+  TERMINAL unit, not a prefix unit, so a `0` entry breaks the decode) --
+  that is this family's `Forall (1 <= _)`, the same side condition
+  `WaveCounter` carries.
+
+**THE INVARIANT IS STILL THE ONE OPEN POINT, AND IT IS DEEPER THAN IT
+LOOKED.**  `inv20.py` establishes -- each check runs, none is a conjecture:
+
+1. **The alphabet is finite**: every entry of every reachable word is in
+   `{1,2,4,5,8}` (`7` occurs once, at lap 1, and never again).  `1` and `2`
+   are FRESH, laid by the return sweep; `4 = 1+3`, `5 = 2+3`, `8 = 5+3` are
+   BUMPED, and an entry is bumped at most twice (`1 -> 4`, `2 -> 5 -> 8`).
+   Alphabet closure is exactly "the entry just after the first odd is in
+   `{1,2,5}`".
+2. **The leading 2-run is the lap index**: `nv (2^r ++ v) = 2^(r+1) ++ nv0 v`,
+   so aliveness does not depend on `r` at all.
+3. **POOR is a 2-lap invariant.**  Call `2^a ++ [1] ++ t` POOR.  The image
+   of a POOR word has an odd IFF `Cond(t) = hasodd(X t)`, and two laps later
+   the word is POOR again with tail `T(1::u) = 2 :: nv0 u`,
+   `T(2::u) = 1 :: nv0 (1::u)`, `T([]) = []`.  One map, one obligation.
+4. **THE ENGINE.**  With `E(u)` = "last entry odd" and `B(u)` = "the first
+   odd sits at `|u|-2`",
+
+        E(u) /\ ~B(u)  ==>  E(nv0 u)
+
+   (200,000 random words, 9-letter alphabet).  So `E /\ never-B` suffices,
+   and the obligation drops from the semantic "hasodd for ever" to the
+   SYNTACTIC "never B" -- a condition on ONE position.  This is the real
+   handhold; use it.
+5. **The system is SELF-SIMILAR, and that is why every natural candidate
+   fails.**  The phase is 4-periodic -- `2^r ++ [1;1] ++ U`, `2^r ++ [4] ++ U`,
+   `2^r ++ [1;2] ++ nv0 U`, `2^r ++ [5] ++ nv0 U` -- and
+
+        U_{k+1} = X(nv0 U_k),   and with U = 4::x,   U_{k+1} = 4 :: nv x.
+
+   **FOUR LAPS AT ONE LEVEL ARE ONE LAP ONE LEVEL DOWN**, and `hasodd` at
+   the `r = 3 mod 4` phase is exactly `hasodd` of the level-below word.  The
+   obligation reproduces itself: there is no finite descent, and no
+   bounded-depth predicate can close (deepest death over the 5-letter
+   alphabet at `|v| <= 5` is 111 laps).  That also kills the hope that the
+   maximal invariant is regular.
+
+**REFUTED, with witnesses, each by exhaustive CLOSURE checking over the
+5-letter alphabet to length 8 plus tens of thousands of random words** --
+never by sampling the orbit.  `inv20.py` re-runs all of these; if one ever
+comes back NOT REFUTED it is the invariant and the file is out of date:
+
+    contains an odd                     nv [1;1] = [2;4]
+    ends in 1                           nv [1;1] = [2;4]
+    ends in 1, first odd not at |w|-2   nv [1;2;1] = [2;5;1]
+    the Scan/After DFA                  nv [4;1] = [2;1;2;2;1]; it also
+                                        REJECTS the reachable lap-3 word
+                                        [2;2;2;4;1;2;1] outright
+    alphabet & (rich | >= 2 odds)       nv [1;1] = [2;4]
+    ends [2;1] & d != 2                 nv [1;2;2;1] = [2;5;2;1]
+    ends [2;1], d not in {1,2}, plus
+      the POOR/odd-head refinements     nv [5;2;2;1] = [2;1;1;5;2;1]
+
+(`d(x)` = the number of entries after the first odd.)
+
+**WHERE TO GO NEXT, in order.**
+1. The LEVEL-1 orbit is visibly better behaved than the level-0 one: over
+   3000 laps it always ends `[2;1]` and its `d` is never 1 or 2 (level 0
+   ends `[2;1]`/`[5;1]`/`[8;1]` and does hit `d = 2`).  Anchor at level 1
+   and the candidate `ends [2;1] /\ d not in {1,2}` survives 2000 laps --
+   it fails closure only on words the orbit does not reach.  Closing that
+   gap IS the problem, but the level-1 formulation is much the smaller one.
+2. Because of (5), do not look for a regular/DFA invariant or a
+   bounded-depth one; both are ruled out above.  The shape that fits a
+   self-similar system is a predicate defined by well-founded recursion on
+   the DESCENT (level `k` to level `k+1`), or a `CoInductive` safety
+   predicate discharged by a productive `cofix` -- four laps of finite
+   obligations per level, then the next level.  Either way what is needed
+   is an invariant for the DESCENT map, not for `nv`.
+3. Only after that: `wglue_neverqh` at the level-1 boot (recompute `t0` --
+   `boot20_W`'s `vm_compute` pattern works at any `t`), corruption controls
+   in `theories/Tests/`, `tools/counters_manifest.tsv`, `gen_stages.py`,
+   `tools/closeout/audit.py`, `make -f Makefile.coq -j2
+   theories/Closeout/Closeout.vo` (`-j2`, NOT `-j4`).
+
+**Traps added this wave.**
+1. The turn's bounce is at `2k+4`, NOT `2k+3` -- `cross5` (5 steps for
+   `k = 0`) is the bounce PLUS one `StB` step, which is why the off-by-one
+   is easy to make and why `mid20.py` diffs the cost as well as the config.
+2. `dbl 0 [S1] = [S1]` is not `RevP`.  Any ride over an EMPTY run (`n = 0`)
+   breaks the return sweep's decode, so `Forall (fun x => x <> 0) K` is a
+   real hypothesis, not bookkeeping.
+3. State the lap costs RIGHT-NESTED (`a + (b + c)`), not `(a + b) + c`:
+   `csteps_add` peels one `+` at a time and left-nesting makes the first
+   rewrite land on the wrong split.
+
+## 2l. Wave-21 (2026-07-28) -- tower #20 CLOSED; the (4,2) holdout list is DONE
+
+`theories/Machines/Counters/Tower_20.v` now carries
+`nqh_tower20 : NeverQuasiHaltsSt tm_20` (`Print Assumptions` =
+`functional_extensionality_dep` only).  **`D_remaining` 622 -> 621**, the
+manifest gains its row, and #20 is off `frozen_unproven.txt`.  With that the
+**(4,2) HOLDOUT LIST IS CLOSED**: every wave/counter/holdout machine the
+project set out to board is boarded.  `census_cache --check` MATCH,
+`tools/closeout/audit.py` OK (exact partition), nothing under
+`theories/Census/`.
+
+**THE INVARIANT, found.**  Section 2k's open point was "an invariant that
+holds at the boot, is preserved by `nv`, and implies `hasodd`".  Every
+*closure predicate* candidate was refuted (2k) because the system is
+self-similar and the level boots do NOT cycle -- they GROW (level `2j+1` is
+`[1;1] ++ 2^(2j+2) ++ [1]`, level `2j+2` is `[1;5] ++ 2^(2j+1) ++ [1]`).  The
+fix is not a predicate but a **finite descent DESCRIPTOR** -- a mutual
+inductive grammar `Vd`/`Ud` with:
+
+- `decV`/`decU` decoding a descriptor to a run-length word;
+- `stepV`/`stepU` the successor ON descriptors;
+- `nv0 (decV v) = decV (stepV v)` and `Xf (nv0 (decU u)) = decU (stepU u)`
+  (`nv0_dec_mut`, one mutual induction over 15 cases; the four phase maps
+  `[1;1]++U -> [4]++U -> [1;2]++nv0 U -> [5]++nv0 U -> [1;1]++X(nv0 U)` are
+  unconditional identities of `nv0`);
+- every decode is alive (`existsb Nat.odd`) and zero-free (`alive_dec_mut`).
+
+The growth is captured by the `UDD a v` constructor (a `4 :: 2^a ++ decV v`
+block whose `stepU` bumps `a` and steps the nested `v`): the "obligation
+reproduces itself" of 2k is exactly the nesting recursion, and it is
+WELL-FOUNDED on the descriptor, so no cofix is needed.  The boot is `VA0`
+(`decV VA0 = [1;4]`), so `Cf20 (0,VA0) = CfW [1;4]` and `Hboot20 = boot20_W`.
+
+**The lap glue.**  `WaveCounter.wglue_neverqh` on state `(nat * Vd)`,
+`Inv = fun _ => True` (aliveness is a theorem, not a carried hypothesis).
+`Hlap20`: a general `decompose` writes any alive zero-free word as
+`wev K ((2k+1) :: rest)`, then `lapA . lapB_full_{ne,end}`; the tape-output
+`enc (Dmid/Dmidz K k) ...` is shown equal to `wruns (nv0 ...)` by
+`enc_ne`/`enc_end` (a small `enc`/`rideW`/`arep` algebra: `enc_arep`,
+`enc_app`, `enc_dblS`, `encride_core`).  The `rest = []` end-case lands one
+cell short of a written `0`, so it closes up to a trailing blank via
+`lift_app_blank` -- the only non-syntactic step.  `lapB_full_end` (turn on an
+empty next run) is the one new lap lemma this wave; `lapB_full_ne` already
+existed.
+
+**Reconnaissance / validation tools.**  `tools/counters/inv20.py` (the 2k
+refutations, still valid as history -- the descriptor is not a closure
+predicate so it is not among the refuted candidates) and the new
+`tools/counters/desc20.py`, which validates the descriptor MIRROR: the
+descriptor orbit reproduces the raw `nv` orbit word-for-word for 4000 laps,
+the step identities hold on 20k random descriptors, and the `enc` word-
+successor holds over 35k contexts.  All green.
+
+**NOT done here** (compute-bound, not #20-specific): the full
+`theories/Closeout/Closeout.vo` kernel re-check of all 4,535 boards -- it
+recompiles the whole board tree and belongs on the box (`-j2`, see 2k step 3
+and the CI note).  What IS verified in-container: `Tower_20.vo` clean, the
+generated `cov_12_0094` cover lemma re-checks against `CloseoutKit` (clean),
+`audit.py` OK, `census_cache --check` MATCH.
 
 ## 3. The long-tail roadmap
 

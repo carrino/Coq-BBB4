@@ -4,11 +4,10 @@ _The frontier of this project, published as a target list rather than as an
 apology.  Companion data: `tools/closeout/residue_map.tsv`, one row per
 machine, regenerated with the commands at the bottom._
 
-_**622 rows as of this commit.**  The count moves every wave, so treat the TSV
-as the authority and this prose as a snapshot.  621 of them are residue; the
-odd one out is `1RB0RD_1LC1LB_1RA0LB_1LC1RA`, the last (4,2) HOLDOUT (tower
-#20), whose proof layers are in `theories/Machines/Counters/Tower_20.v` but
-which has no top-level theorem yet._
+_**621 rows as of this commit.**  The count moves every wave, so treat the TSV
+as the authority and this prose as a snapshot.  With tower #20 boarded on
+2026-07-28 the (4,2) HOLDOUT list is closed, so all 621 are residue and this
+is the entire remaining problem._
 
 ## What this list is
 
@@ -55,7 +54,7 @@ the lap cost at consecutive `j` and classifies by finite differences:
 **Everything in these two columns is UNTRUSTED measurement, not a claim.**
 `tools/` carries no proof weight anywhere in this project; the shape column
 is a map drawn from simulation to help someone choose a target.  The only
-kernel-checked fact about these 622 rows is that they are *absent* from the
+kernel-checked fact about these 621 rows is that they are *absent* from the
 boarded set.
 
 ## The families
@@ -63,7 +62,7 @@ boarded set.
 | interior / overflow | n | what stops us |
 |---|---:|---|
 | `AFFINE`/`EXP2` | 242 | 134 no inner family at `pow2 j`, 65 no exit chain, 20 no boot chain, 8 no interior chain, 8 no shift chain, 5 no second exit chain, 2 no inner interior chain |
-| `-`/`no-anchor` | 236 | 211 no overflow phase, 25 no anchor |
+| `-`/`no-anchor` | 235 | 211 no overflow phase, 24 no anchor |
 | `AFFINE`/`AFFINE` | 52 | 23 no inner family, 15 no visit witness (`StA`), 14 no interior chain |
 | `QUAD`/`QUAD` | 41 | 41 no interior chain |
 | `PARITY-AFFINE` | 13 | 13 no interior chain |
@@ -104,7 +103,7 @@ boarded set.
 3. **The 41 `QUAD`/`QUAD`.** The largest family in the residue that has never
    had a design pass — a quadratic interior AND overflow.  `Bounce_8.v`'s
    `MeasureGlue` nesting is the precedent.
-4. **The 236 no-anchor.** Largest single bucket, and the cheapest per machine
+4. **The 235 no-anchor.** Largest single bucket, and the cheapest per machine
    *if* the alphabet inference generalises: wave-14 inferred 18 alphabets from
    tapes this way.
 
@@ -118,4 +117,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-shrank from 883 to 622 in one session.
+shrank from 883 to 621.

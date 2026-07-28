@@ -620,4 +620,3 @@ machine	interior	overflow	alphabet	blocker
 1RB1RD_1RC0LD_1LB0RA_1LC0LC	-	no-anchor	-	no anchor
 1RB1RD_1RC1LB_0LA1RD_0LB0RC	-	no-anchor	-	no overflow phase at K=6
 1RB1RD_1RC1LB_1LA1RD_0LB0RC	-	no-anchor	-	no overflow phase at K=6
-1RB0RD_1LC1LB_1RA0LB_1LC1RA	-	no-anchor	-	no anchor

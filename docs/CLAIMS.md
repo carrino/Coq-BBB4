@@ -26,7 +26,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    quasihalting score at all (`NeverQuasiHaltsSt`); or
 3. it does not halt, it quasihalts, and **some** bound on its quiet states is
    certified (`NonHalt /\ (exists B, QHBound B) /\ QuasiHaltsSt`); or
-4. it is one of the **622** machines listed in `D_remaining`
+4. it is one of the **621** machines listed in `D_remaining`
    (`tools/closeout/residue_map.tsv`).
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
@@ -53,31 +53,29 @@ Three things are missing before the record itself is a theorem here:
    `NeverQuasiHaltsSt` (no score) or `QHBound 2000`, apart from four
    `BlankTail` machines at 2512, 2568, 2819 and 66349.  `qhbound_mono` (already
    proved) lifts all of them to one constant.  The work is re-deriving the
-   ~4,534 stage lemmas against the stronger predicate and rebuilding.  **Not
+   ~4,535 stage lemmas against the stronger predicate and rebuilding.  **Not
    done.**
 2. **The champion has no board.**  `1RB1LD_1RC1RB_1LC1LA_0RC0RD` blanks its
    tape at step 32,779,478 and then spins out in state C.  Its shape is exactly
    what `theories/Counters/BlankTail.v` already closes for the four previous
    champions; what it needs is a 32.8M-step prefix, for which
    `Checkers/TCyclerN.v` already supplies `cstepsN` and `cstepsN_nat`.  It is
-   currently one of the 622.  **Not done.**
-3. **The 622.**  Any of them could, for all this development knows, be a
+   currently one of the 621.  **Not done.**
+3. **The 621.**  Any of them could, for all this development knows, be a
    quasihalter with a larger score.  That is what undecided means.
 
 So the honest one-line summary is:
 
-> Every (4,2) machine is decided except 622, and the classification is
+> Every (4,2) machine is decided except 621, and the classification is
 > kernel-checked with one standard axiom.  The BBB(4) *value* does not yet
 > follow from what is here.
 
-## Scope of the 622
+## Scope of the 621
 
-621 are residue — machines no engine in this repository settles, mapped by
-shape and blocker in `docs/RESIDUE_MAP.md`.  The 622nd is the last (4,2)
-*holdout*, tower #20 (`1RB0RD_1LC1LB_1RA0LB_1LC1RA`); its gadget, sweep and
-re-encoding layers are in `theories/Machines/Counters/Tower_20.v` and compile,
-but the file carries no top-level theorem, so `inventory.py` correctly leaves
-its row in `D_remaining`.
+All 621 are residue — machines no engine in this repository settles, mapped by
+shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
+closed: tower #20, the last of it, was boarded on 2026-07-28
+(`NEXT_SESSION.md` §2l).
 
 ## The trust boundary
 
