@@ -24,12 +24,14 @@ descriptor.  See `NEXT_SESSION.md` 2l for the shape and the lap glue.
 
 ## What is left (all disjoint from #20)
 
-1. **The residue track** -- the other 621 rows of `frozen_unproven.txt`.
-   Its prompt is the wave-18/20 revisions of this file:
-   `git show 02fd80b:docs/NEXT_SESSION_PROMPT.md`.  Everything in it about
-   the residue still stands; only its holdout-status lines (which said the
-   list had "exactly one machine left") are now history -- that one machine,
-   #20, is boarded.
+1. **The residue track** -- the other 621 rows of `frozen_unproven.txt`, and
+   now the whole remaining problem.  Its prompt has been lifted out of this
+   file's history into one of its own: **`docs/RESIDUE_PROMPT.md`**, with the
+   holdout-status lines updated (they said the list had "exactly one machine
+   left"; that machine, #20, is boarded).  The frontier itself is mapped
+   machine-by-machine in `docs/RESIDUE_MAP.md` +
+   `tools/closeout/residue_map.tsv`, and what the project does and does not
+   prove is stated in `docs/CLAIMS.md`.
 
 2. **The full `Closeout.vo` kernel re-check.**  Wave-21 verified #20's own
    pieces in-container (`Tower_20.vo` clean; the generated `cov_12_0094`

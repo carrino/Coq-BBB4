@@ -7,6 +7,11 @@
 > coverage numbers lower in *this* README are STALE; `NEXT_SESSION.md` +
 > `tools/check_coverage.py` are authoritative.
 
+> **What is actually proved, stated precisely — including what is NOT:
+> [`docs/CLAIMS.md`](docs/CLAIMS.md).**  The frontier that remains, mapped by
+> shape and blocker: [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md).  How to
+> check any of it yourself: [`docs/VERIFYING.md`](docs/VERIFYING.md).
+
 A Coq formalization of the Beeping Busy Beaver BBB(4) results
 produced by the [BBB harness](https://github.com/carrino/BBB):
 machine-checked proofs of never-quasihalting / quasihalting (with

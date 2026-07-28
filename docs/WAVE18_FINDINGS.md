@@ -1,16 +1,19 @@
-# Wave-18 — THE TASK lands: the exponential overflow boards, 225 of them
+# Wave-18 — THE TASK lands: the exponential overflow boards, 258 of them
 
 _Branch `claude/coq-bbb4-residude-oy73r4`, off merged wave-16 + wave-17.
 This wave took **THE TASK** of the wave-15 and wave-16 prompts — the
 `AFFINE`/`EXP2` bucket, the residue's dominant class, whose overflow lap costs
-`Θ(2^j)` — and produced its first boards. `D_remaining` **883 → 658**._
+`Θ(2^j)` — and produced its first boards. `D_remaining` **883 → 625** on this
+track alone; see the merge note below for the joint figure._
 
 _**Read §2 before touching any chain search in this tree again.** The wave-16
 lesson was not spent; it had one more level to give._
 
 _A CONCURRENT session ran a separate wave-18 on the HOLDOUTS front (PRs #44-#46,
 `docs/HOLDOUTS_FRACTAL.md` and `HOLDOUTS_MXDYS_SN.md` §5b) and **closed the
-(4,2) holdout list**: wave4 #15, fractal #3/#5 and tower #20.  The two tracks
+(4,2) holdout list to ONE**: wave4 #15 and fractal #3/#5 landed; tower #20
+(`1RB0RD_1LC1LB_1RA0LB_1LC1RA`) is NOT boarded -- `Tower_20.v` compiles but
+carries no top-level theorem, so its row stays in `D_remaining`.  The tracks
 are disjoint and were merged.  **After the merge `D_remaining` is 622**, not
 the 625 in the scoreboard below — 883 − 258 here − 3 there.  The generated
 closeout tables were REGENERATED over the union rather than hand-merged, which
