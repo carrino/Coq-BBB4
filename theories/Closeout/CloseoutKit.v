@@ -10,9 +10,12 @@
       completions boarded) or listed in [R], then
       [Deferred D tm -> boarded tm \/ Deferred R tm].
 
-    - [boarded] is Census/Assembly.v's predicate restated (quasihalting
-      behaviour settled: never-QH, or a quasihalter with SOME certified
-      last-visit bound);
+    - [boarded] settles the quasihalting behaviour with a CONCRETE bound:
+      never-QH, or a quasihalter whose quiet states all go quiet before
+      index 2000 (= [B_census]) -- every stage board certifies exactly
+      that bound, so the closeout can carry it to the top-level theorem
+      ([Closeout/BBB4_Theorem.v]); QH boards with larger bounds (the
+      BlankTail four) are residue rows, not stage rows;
     - [covers h] discharges from a single theorem about the row's own
       machine -- [NeverQuasiHaltsSt h] or the [NonHalt/QHBound/QuasiHaltsSt]
       triple -- because a non-halting machine's completions share its trace
@@ -32,15 +35,19 @@ From BBB4 Require Import BBB4_Statement Mirror.
 From BBB4.Census Require Import TNF_QH Deferred_Defs.
 Import ListNotations.
 
-(** ** The boarded predicate (Census/Assembly.v's, restated verbatim)
+(** ** The boarded predicate
 
-    The bound is existential on purpose: a deferred machine may be a
-    perfectly well-understood quasihalter whose quiet states go quiet after
-    step 2000 (the census's in-walk tier strength); deciding the machine is
-    what matters, not the size of its bound. *)
+    The bound is CONCRETE: 2000 = [B_census] (Census/Run.v), the census's
+    in-walk tier strength.  Every quasihalting stage board certifies
+    literally [QHBound 2000] (tools/closeout/inventory.py refuses any
+    other bound), so nothing is lost by pinning it -- and everything is
+    gained: the top-level theorem can then state one uniform score bound
+    for all decided machines instead of an existential.  Quasihalters
+    whose certified bound exceeds 2000 (the four BlankTail ex-champions)
+    are on the residue list, not in the stages. *)
 Definition boarded (tm : TM) : Prop :=
   NeverQuasiHaltsSt tm
-  \/ (NonHalt tm /\ (exists B, QHBound B tm) /\ QuasiHaltsSt tm).
+  \/ (NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm).
 
 (** [covers h]: every completion of [h] is boarded.  This is exactly the
     obligation [Deferred_base] induces for a listed row [h]. *)
@@ -77,12 +84,12 @@ Proof.
   intros h H tm Hle. left. exact (never_qh_le h tm H Hle).
 Qed.
 
-Lemma covers_iqh : forall B h,
-  NonHalt h -> QHBound B h -> QuasiHaltsSt h -> covers h.
+Lemma covers_iqh : forall h,
+  NonHalt h -> QHBound 2000 h -> QuasiHaltsSt h -> covers h.
 Proof.
-  intros B h Hnh Hb Hqh tm Hle. right.
+  intros h Hnh Hb Hqh tm Hle. right.
   split; [exact (nonhalt_le h tm Hnh Hle) |].
-  split; [exists B; exact (qhbound_le B h tm Hnh Hb Hle) |].
+  split; [exact (qhbound_le 2000 h tm Hnh Hb Hle) |].
   exact (qh_le h tm Hnh Hle Hqh).
 Qed.
 
@@ -115,7 +122,7 @@ Lemma covers_iqh_at : forall (t : TM) (r : list (option Trans)),
   covers (row_to_tm r).
 Proof.
   intros t r (Hnh & Hb & Hq) E.
-  rewrite (tm_ext (row_to_tm r) t E). exact (covers_iqh 2000 t Hnh Hb Hq).
+  rewrite (tm_ext (row_to_tm r) t E). exact (covers_iqh t Hnh Hb Hq).
 Qed.
 
 (** ** Swap transport, backwards (the [Deferred_swap] case) *)
@@ -151,14 +158,13 @@ Lemma boarded_unswap : forall u v tm,
   u <> StA -> v <> StA ->
   boarded (TM_swap u v tm) -> boarded tm.
 Proof.
-  intros u v tm HuA HvA [H | (Hnh & (B & Hb) & Hq)].
+  intros u v tm HuA HvA [H | (Hnh & Hb & Hq)].
   - left. exact (never_qh_unswap u v tm HuA HvA H).
   - right. split.
     + pose proof (nonhalt_swap u v (TM_swap u v tm) HuA HvA Hnh) as H2.
       rewrite TM_swap_swap in H2. exact H2.
     + split.
-      * exists B.
-        pose proof (qhbound_swap u v B (TM_swap u v tm) HuA HvA Hb) as H2.
+      * pose proof (qhbound_swap u v 2000 (TM_swap u v tm) HuA HvA Hb) as H2.
         rewrite TM_swap_swap in H2. exact H2.
       * exact (qh_unswap u v tm HuA HvA Hq).
 Qed.
@@ -167,10 +173,10 @@ Qed.
 
 Lemma boarded_unmirror : forall tm, boarded (mirror_tm tm) -> boarded tm.
 Proof.
-  intros tm [H | (Hnh & (B & Hb) & Hq)].
+  intros tm [H | (Hnh & Hb & Hq)].
   - left. exact (mirror_never_qh tm H).
   - right. split; [exact (mirror_nonhalt tm Hnh) |].
-    split; [exists B; exact (qhbound_mirror B tm Hb) |].
+    split; [exact (qhbound_mirror 2000 tm Hb) |].
     exact (mirror_qh tm Hq).
 Qed.
 

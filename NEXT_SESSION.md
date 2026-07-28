@@ -1,3 +1,8 @@
+_**Internal development log.**  Nothing in this file is needed to verify the
+results — start at [README.md](README.md) and [docs/CLAIMS.md](docs/CLAIMS.md).
+This is the project's lab notebook: the compute playbook and the per-wave
+findings and traps, kept verbatim for future sessions._
+
 # PLAYBOOK — read this first, before any census/proof work
 
 _Written 2026-07-21 after a ~3-day slog that was almost entirely wasted

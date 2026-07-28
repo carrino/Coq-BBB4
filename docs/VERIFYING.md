@@ -13,8 +13,8 @@ the census, and is where the one trust decision lives.
 `.vo`**.  Its only census dependencies are `TNF_QH.v`, `Deferred_Defs.v` and
 `Deferred_Data.v`, and none of those are among the 154 committed binaries —
 those are all walk output (`Census_Theorem`, `GG_*`, `GGH_*`, `G_*`,
-`Run_Split*`), which only `CloseoutFinal.v` loads.  So this tier is entirely
-from source.
+`Run_Split*`), which only `CloseoutFinal.v` / `BBB4_Theorem.v` load.  So this
+tier is entirely from source.
 
 ```bash
 sudo apt-get install -y coq          # must be 8.18.0; Ubuntu 24.04 ships it
@@ -76,16 +76,25 @@ check rather than a quick one.
 
 ## Tier B — chaining to the census
 
-`theories/Closeout/CloseoutFinal.v` gives `census_boarded`, the end-to-end
-statement.  It is the only file that loads the committed walk output, so it
-needs the toolchain that produced it:
+`theories/Closeout/CloseoutFinal.v` gives `census_boarded`, and
+`theories/Closeout/BBB4_Theorem.v` gives `bbb4_target`, the end-to-end
+statement `make proof` builds and reports.  These two files are the only
+ones that load the committed walk output (they are deliberately not in
+`_CoqProject`, so the default `make` never touches them), and they need
+the toolchain that produced it:
 
 ```bash
 opam switch create census 4.14.2
 opam install coq.8.18.0 coq-native
 eval $(opam env --switch=census)
-make -f Makefile.coq theories/Closeout/CloseoutFinal.vo
+make proof
 ```
+
+`make proof` checks the census cache hash, compiles the two files with
+`coqc` (watch for `Print Assumptions bbb4_target` in the output —
+expect exactly `functional_extensionality_dep`), and prints the report:
+the theorem, what it means, and the full list of residue machines it
+SKIPS.
 
 apt's Coq has **no `native_compute`** and cannot do the walk at all, which is
 why the census switch exists.  Note the OCaml version is load-bearing: `.vo`
@@ -123,8 +132,11 @@ committed hash, confirming your walk covered the same inputs.
   schedule several at once.  The build is incremental, so an OOM costs only
   the in-flight files — re-run and it resumes.  To defuse it up front, build
   those nine serially first, then parallelise the rest.
-* **`make all` also fails at the very last file** unless you are on the census
-  switch: `CloseoutFinal.v` is the only one that loads the committed `.vo`.
-  Everything before it is the real content.
+* **`make proof` needs the census switch; plain `make` does not.**
+  `CloseoutFinal.v` and `BBB4_Theorem.v` are the only files that load the
+  committed `.vo`, and they are kept out of `_CoqProject` so the default
+  build stays all-source.  On the wrong toolchain `make proof` fails with
+  "inconsistent assumptions" while loading — that is the marshalling
+  mismatch, not a proof failure.
 * **CI does not run any of this.**  A hosted runner has ~7 GB and a job limit
   well under a day, so neither the full build nor the walk can live there.
