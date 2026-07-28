@@ -1,0 +1,21 @@
+# Included by the generated Makefile.coq (coq_makefile's local hook).
+#
+# Memory throttle for the nine IRules batches: each peaks at ~6-8 GB, so a
+# high -j that schedules many of them together OOMs the box.  The order-only
+# prerequisites (the `|') below chain them into THREE columns, so at most
+# three build concurrently -- budget ~24 GB for them -- while every other
+# file is free to use the remaining job slots.  Order-only edges affect
+# scheduling only, never up-to-dateness: touching batch 00 does NOT force a
+# rebuild of 03/06.
+#
+# On a smaller machine, serialize harder by moving more targets into fewer
+# columns (one single chain = one batch at a time).
+
+theories/Machines/IRules_Batch_03.vo: | theories/Machines/IRules_Batch_00.vo
+theories/Machines/IRules_Batch_06.vo: | theories/Machines/IRules_Batch_03.vo
+
+theories/Machines/IRules_Batch_04.vo: | theories/Machines/IRules_Batch_01.vo
+theories/Machines/IRules_Batch_07.vo: | theories/Machines/IRules_Batch_04.vo
+
+theories/Machines/IRules_Batch_05.vo: | theories/Machines/IRules_Batch_02.vo
+theories/Machines/IRules_Batch_08.vo: | theories/Machines/IRules_Batch_05.vo
