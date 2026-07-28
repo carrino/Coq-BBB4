@@ -125,6 +125,38 @@ exact forward behavior — the emitter-per-machine + kernel-recheck route
 is our equivalent, and per-machine differential validation stays the
 discipline.
 
+## 4c. The go/no-go gate, part-run (2026-07-28, same session)
+
+The critical uniformity question — do the per-level transitions derive as
+single-index chains in the EXISTING language? — was tested directly on
+`0RB1LA_0LC1RD_1LA1LD_1RB0LA` (mirrored, `Jp`, count state `A`,
+`el=False er=True`, index := the level):
+
+* **The A→B transition DERIVES, exact (no lift):**
+
+      FROM (StA, ((), uS, 1, 0, soS ++ [1]), S0, far)     -- A-fill, tail head 1
+      TO   (StA, ((), uD, 1, 0, soD ++ [0]), S0, far)     -- B-start, tail head 0
+      chain [SRotL 1; SWin 1; SCycL 2 0; SWin 2; SCycR 2; SWin 1; SUnrotL 1]
+
+  with the `(01)^m` tail OPAQUE on both sides.  This is the load-bearing
+  half of the design: the level-uniform chain exists.
+
+* **The B→A(l-1) transition did not derive at the first framings tried.**
+  The raw trace says why the framing is delicate: the eat runs through the
+  digit region AND the repaired tail region, the turnaround writes `010`
+  rightward (3 cells, states B→C→D on this machine), and the relay lays
+  one `1` per cell.  The two scratchpad trace scripts disagreed on
+  blank-head numbering before this was resolved — endpoint extraction for
+  BA (and the base close) must be built INSIDE `nestcert` where
+  `phase_mid`/`rstrip0` conventions are single-sourced, not in ad-hoc
+  probes.  Until that is done it is OPEN whether BA is one single-index
+  chain (the A→B result makes it likely), a two-piece chain pasted with a
+  reframing equality, or genuinely two-index.
+
+Next session: build `cascade endpoints` in `nestcert.py` (the analogue of
+`endpoints()` for the four per-level sconfs), gate BA/base there, and only
+then write the composition lemma and template.
+
 ## 5. Do-not-retry, refined
 
 * The fixed-N multi-count route on this bucket stays dead (wave-22's 0 of
