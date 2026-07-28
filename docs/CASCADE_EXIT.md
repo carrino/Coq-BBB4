@@ -112,14 +112,18 @@ Coq is only a small cascade-chaining lemma (composing `exists n, stepn`
 runs down the levels) and per-level reframing glue that is pure `rep`
 algebra (`rep_add`-style, like the boards' existing `gbo_`/`gxi_`).
 
-**Per John (2026-07-28): do not look for one construction to cover all
-132 — there is not one.**  The cascade covers the big uniform `Jp`
-cluster (~55 machines share the exact octave profile, many differing in a
-single transition) plus most of the second group; the 15 "other" and the
-non-cascade rest need their own direct looks.  mxdys' deciders made this
-look easy because they synthesize per-machine rule systems from the exact
-forward behavior — the emitter-per-machine + kernel-recheck route is our
-equivalent, and per-machine differential validation stays the discipline.
+**How much of the 132 one construction covers** (John asked whether each
+machine really needs a direct look — the measured answer is no): the
+cascade covers ~72 (the big uniform `Jp` cluster — ~55 sharing the exact
+octave profile, many single-transition variants — plus most of the second
+group); the 5 `SCycR`-entry-offset machines share one checker extension;
+the open remainder is the 60 "no inner family" survivors (point this
+probe at them first) and the 15 odd-shaped rows.  Direct per-machine
+looks should only be spent on what survives those.  mxdys' deciders made
+this look easy because they synthesize per-machine rule systems from the
+exact forward behavior — the emitter-per-machine + kernel-recheck route
+is our equivalent, and per-machine differential validation stays the
+discipline.
 
 ## 5. Do-not-retry, refined
 
