@@ -37,7 +37,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is one of the **621** machines listed in `D_remaining`
+3. it is one of the **496** machines listed in `D_remaining`
    (`tools/closeout/residue_map.tsv`), which the theorem **skips**.
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
@@ -59,8 +59,8 @@ before the record itself is a theorem here:
    what `theories/Counters/BlankTail.v` already closes for the four previous
    champions; what it needs is a 32.8M-step prefix, for which
    `Checkers/TCyclerN.v` already supplies `cstepsN` and `cstepsN_nat`.  It is
-   currently one of the 621.  **Not done.**
-2. **The 621.**  Any of them could, for all this development knows, be a
+   currently one of the 496.  **Not done.**
+2. **The 496.**  Any of them could, for all this development knows, be a
    quasihalter with a larger score.  That is what undecided means.
 
 (The third gap this section used to list — the score bound existing only
@@ -71,13 +71,13 @@ to the champion's score by `qhbound_mono`.)
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 621 still-undecided machines —
+> 32,779,478 or never quasihalts, except 496 still-undecided machines —
 > kernel-checked with one standard axiom.  The BBB(4) *value* does not yet
-> follow from what is here, because the champion itself is one of the 621.
+> follow from what is here, because the champion itself is one of the 496.
 
-## Scope of the 621
+## Scope of the 496
 
-All 621 are residue — machines no engine in this repository settles, mapped by
+All 496 are residue — machines no engine in this repository settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28
 (`NEXT_SESSION.md` §2l).
