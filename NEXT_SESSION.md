@@ -1019,6 +1019,66 @@ comes back NOT REFUTED it is the invariant and the file is out of date:
    `csteps_add` peels one `+` at a time and left-nesting makes the first
    rewrite land on the wrong split.
 
+## 2l. Wave-21 (2026-07-28) -- tower #20 CLOSED; the (4,2) holdout list is DONE
+
+`theories/Machines/Counters/Tower_20.v` now carries
+`nqh_tower20 : NeverQuasiHaltsSt tm_20` (`Print Assumptions` =
+`functional_extensionality_dep` only).  **`D_remaining` 622 -> 621**, the
+manifest gains its row, and #20 is off `frozen_unproven.txt`.  With that the
+**(4,2) HOLDOUT LIST IS CLOSED**: every wave/counter/holdout machine the
+project set out to board is boarded.  `census_cache --check` MATCH,
+`tools/closeout/audit.py` OK (exact partition), nothing under
+`theories/Census/`.
+
+**THE INVARIANT, found.**  Section 2k's open point was "an invariant that
+holds at the boot, is preserved by `nv`, and implies `hasodd`".  Every
+*closure predicate* candidate was refuted (2k) because the system is
+self-similar and the level boots do NOT cycle -- they GROW (level `2j+1` is
+`[1;1] ++ 2^(2j+2) ++ [1]`, level `2j+2` is `[1;5] ++ 2^(2j+1) ++ [1]`).  The
+fix is not a predicate but a **finite descent DESCRIPTOR** -- a mutual
+inductive grammar `Vd`/`Ud` with:
+
+- `decV`/`decU` decoding a descriptor to a run-length word;
+- `stepV`/`stepU` the successor ON descriptors;
+- `nv0 (decV v) = decV (stepV v)` and `Xf (nv0 (decU u)) = decU (stepU u)`
+  (`nv0_dec_mut`, one mutual induction over 15 cases; the four phase maps
+  `[1;1]++U -> [4]++U -> [1;2]++nv0 U -> [5]++nv0 U -> [1;1]++X(nv0 U)` are
+  unconditional identities of `nv0`);
+- every decode is alive (`existsb Nat.odd`) and zero-free (`alive_dec_mut`).
+
+The growth is captured by the `UDD a v` constructor (a `4 :: 2^a ++ decV v`
+block whose `stepU` bumps `a` and steps the nested `v`): the "obligation
+reproduces itself" of 2k is exactly the nesting recursion, and it is
+WELL-FOUNDED on the descriptor, so no cofix is needed.  The boot is `VA0`
+(`decV VA0 = [1;4]`), so `Cf20 (0,VA0) = CfW [1;4]` and `Hboot20 = boot20_W`.
+
+**The lap glue.**  `WaveCounter.wglue_neverqh` on state `(nat * Vd)`,
+`Inv = fun _ => True` (aliveness is a theorem, not a carried hypothesis).
+`Hlap20`: a general `decompose` writes any alive zero-free word as
+`wev K ((2k+1) :: rest)`, then `lapA . lapB_full_{ne,end}`; the tape-output
+`enc (Dmid/Dmidz K k) ...` is shown equal to `wruns (nv0 ...)` by
+`enc_ne`/`enc_end` (a small `enc`/`rideW`/`arep` algebra: `enc_arep`,
+`enc_app`, `enc_dblS`, `encride_core`).  The `rest = []` end-case lands one
+cell short of a written `0`, so it closes up to a trailing blank via
+`lift_app_blank` -- the only non-syntactic step.  `lapB_full_end` (turn on an
+empty next run) is the one new lap lemma this wave; `lapB_full_ne` already
+existed.
+
+**Reconnaissance / validation tools.**  `tools/counters/inv20.py` (the 2k
+refutations, still valid as history -- the descriptor is not a closure
+predicate so it is not among the refuted candidates) and the new
+`tools/counters/desc20.py`, which validates the descriptor MIRROR: the
+descriptor orbit reproduces the raw `nv` orbit word-for-word for 4000 laps,
+the step identities hold on 20k random descriptors, and the `enc` word-
+successor holds over 35k contexts.  All green.
+
+**NOT done here** (compute-bound, not #20-specific): the full
+`theories/Closeout/Closeout.vo` kernel re-check of all 4,535 boards -- it
+recompiles the whole board tree and belongs on the box (`-j2`, see 2k step 3
+and the CI note).  What IS verified in-container: `Tower_20.vo` clean, the
+generated `cov_12_0094` cover lemma re-checks against `CloseoutKit` (clean),
+`audit.py` OK, `census_cache --check` MATCH.
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
