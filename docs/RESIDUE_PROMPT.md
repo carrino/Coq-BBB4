@@ -72,6 +72,16 @@ ENV: apt coq 8.18.0 -- `apt-get install -y coq`, then
 `coq_makefile -f _CoqProject -o Makefile.coq` first; the Counters+Checkers
 closure builds in ~30 s.  Do NOT run `make all` -- it pulls in the census.
 
+CI IS RED AND IT IS NOT YOURS: GitHub Actions is out of billing quota, so
+every ci.yml run -- on main too, unbroken since 2026-07-26 -- is reclaimed
+mid-job with "The runner has received a shutdown signal" / "operation was
+canceled" ~8 min in, while compiling whatever heavy file it happened to reach
+(usually IRules_Batch_*/Bulk/TCyc_05), with NO Coq error above it.  Do not
+diagnose it, do not tune ci.yml parallelism (a `-j4 -> -j2` theory was
+suspected on #48 and is WRONG), and do not read a red check as your diff
+being broken.  Verify locally instead: coq_makefile, then build only the
+files you touched, plus census_cache --check.
+
 NON-NEGOTIABLE: never touch theories/Census/; `python3 tools/census_cache.py
 --check` must stay MATCH.  A board counts only when its file compiles and
 `Print Assumptions` shows functional_extensionality_dep only (LapDecider,
@@ -113,28 +123,79 @@ exactly what you boarded, in minutes.
 THE TASK (re-ranked 2026-07-28 after wave-24 BUILT the cascade route; the
   theory and the emitter are done and the remaining work is BOARDING):
 
-  (0) BOARD THE CASCADE -- 57 of the 87 "no exit chain"/"no boot chain"
-      machines already have a kernel-checked overflow branch, and nothing
-      about them is open theory.  Wave-24 built: nestcert.cascade_endpoints
-      (the law, the per-level word check down to level 0, the peel x split
-      framing search), cascade_validate (the whole cascade replayed against
-      the raw simulator at j = 2..8), NestedLapCascade.v (fill_hop,
-      level_hop, cascade_down, cascade_overflow, cascade_vis_at -- funext
-      only), and cascade_emit.py, which renders the branch per machine.
-      `cascade_probe.py --gate` gates all 87; `cascade_emit.py --proto SPEC`
-      emits one branch; 57 of 57 gated machines compile.
-      WHAT IS LEFT is the wiring: a third route in emit_lapcert.derive /
-      render beside `nested` and `offset`, so a full board gets its interior
-      branch, bootstrap, VISIT WITNESSES and closer around the branch.  The
-      visits are the only piece with a new shape -- cascade_vis_at is stated
-      at an arbitrary level but only level 0 is available at EVERY outer
-      index, so a state firing nowhere in the boot must fire in the closing
-      sweep.  Boarding these is what finally moves D_remaining; the branch
-      alone moves it by ZERO.
+  (0) BOARD THE CASCADE.  The theory is DONE and nothing here is open
+      research -- this is wiring.  57 of the 87 "no exit chain"/"no boot
+      chain" machines already have a kernel-checked exponential overflow
+      branch; what they do not have is a BOARD, so D_remaining has not moved.
+
+      WHAT ALREADY EXISTS (do not rebuild any of it):
+        nestcert.cascade_endpoints  the law, the per-level word check down to
+                                    level 0, the peel x split framing search,
+                                    boot + inner lap + all three chains
+        nestcert.cascade_validate   the whole cascade replayed against the raw
+                                    simulator at j = 2..8
+        NestedLapCascade.v          fill_hop, level_hop, cascade_down,
+                                    cascade_down_all, cascade_overflow,
+                                    cascade_vis_at / cascade_vis (funext only)
+        cascade_emit.py             renders the ENTIRE overflow branch per
+                                    machine; 57 of 57 gated machines compile
+        theories/Tests/CASC_0RB1LA_0LC1RD_1LA1LD_1RB0LA.v   one pinned example
+      Reproduce: cascade_probe.py --gate            (all 87, gates 57)
+                 cascade_probe.py --endpoints SPEC -K 7
+                 cascade_emit.py --proto SPEC -K 7 -o FILE
+
+      THE BUILD -- a third route in emit_lapcert, beside `nested` and
+      `offset`.  The exact hooks, all in tools/counters/emit_lapcert.py:
+        derive():   the try/except ladder that calls NC.derive_nested then
+                    NC.derive_offset -- add NC.cascade_endpoints as a third
+                    arm.  Mind the two lines after it: `offset` swaps in
+                    B0R/B1R, and `cho = nest['che']` / `ro = srun(.., BE0)`
+                    assume a single exit chain.  The cascade's exit is the
+                    CLOSE chain, so cho = the CL chain and ro = srun from CL0;
+                    D['B1'] is then ro[0], which is CL1, NOT the anchor B1 --
+                    that is exactly what gcx_ bridges.
+        render():   `offset = bool(N and N.get('route') == 'offset')` needs a
+                    cascade sibling, and then four holes switch on it:
+                    @OVFDEFS@ (nest_defs*), @OVFCASE@ (NEST_OVFCASE),
+                    @NESTGLUE@ (nest_glue*), and the reps.update() at the end
+                    (nest_reps*).  cascade_emit.PROTO is ALREADY the whole
+                    branch -- SPLIT it into cascade_defs / cascade_glue /
+                    cascade_reps in that shape rather than writing new Coq.
+
+      THE ONE PIECE WITH A NEW SHAPE: the VISIT witnesses.  A board must show
+      every state fires.  viso_ covers the boot unchanged; for the rest the
+      analogue of visx_ is NestedLapCascade.cascade_vis, and the catch is that
+      it is sound at an arbitrary level but only LEVEL 0 is available at every
+      outer index (the obligation is universally quantified in j, and the
+      cascade at j reaches down to level 0 only).  So a state that fires
+      nowhere in the boot has to fire in the CLOSING SWEEP -- which is a long
+      full-tape sweep, so expect it to cover what is left, but MEASURE that
+      per machine before assuming it.  If some state fires only in a per-level
+      A/B transition, cascade_vis_at at a fixed level does NOT discharge it.
+
+      GOTCHAS ALREADY PAID FOR (all of these cost time in wave-24):
+        * landing bridges need a pad on BOTH sides.  A chain accepted up to
+          lift can stop PAST the anchor or one cell SHORT of it (when the
+          anchor's own tail ends in a blank lift cannot see).  Both occur in
+          this bucket; cascade_emit._pads/_nest handle it.
+        * re-SPLIT trailing blanks before rewriting them away.  After the
+          normalisation the side is one fused literal and there is no
+          `_ ++ [S0]` left for lbl_ to match.
+        * define lbl_ BEFORE its first use.  `rewrite ?lbl_X` with lbl_X
+          unbound silently does nothing (the `?` swallows it) and the failure
+          surfaces as an unrelated `reflexivity` error much later.
+        * the boot lands on B(j), not on some entry anchor: tail_main IS
+          extraB ++ rep unit (M - j) (law['main_is_B']).
+
+      AFTER THE BOARDS: inventory.py + gen_stages.py + audit.py shrink
+      D_remaining by exactly what you boarded.  A board counts only when the
+      file compiles and Print Assumptions shows functional_extensionality_dep
+      only.
+
       THEN the 30 that do not gate: 12 report a main count one octave down
-      (families() already carries an `oct` -- emitter work, not theory), 17
-      report one or two counts in the phase (the `no boot chain` mirror half
-      plus the 15 odd-shaped rows), 1 a main count at 4..7.
+      (families() already carries an `oct` for that shape -- emitter work, not
+      theory), 17 report one or two counts in the phase (the `no boot chain`
+      mirror half plus the 15 odd-shaped rows), 1 a main count at 4..7.
       Also point cascade_probe at the 60 "no inner family" survivors and the
       EXP3/EXP4/HIGHER interiors (a deeper cascade is exactly what a
       Theta(3^j) lap smells of) -- both untouched by wave-24.
