@@ -1468,6 +1468,20 @@ def process(spec, do_emit, force=False):
                 continue
             return dict(spec=spec, ok=True, enc=tag, file=path,
                         ni=_cost_str(D), no='%d*j+%d' % D['co'])
+    # The CASCADE route (wave-24 built, wave-25 boards): the overflow phase
+    # is a descending-octave cascade, so neither one chain nor the
+    # nested/offset compositions can express it -- the level induction in
+    # [Counters/NestedLapCascade.v] can.  Tried LAST: its extractor replays
+    # whole overflow phases against the raw simulator and is by far the most
+    # expensive derive.  (Imported lazily; cascade_emit imports this module.)
+    try:
+        import cascade_emit as CE
+        r = CE.process_board(spec, do_emit, force)
+        if r.get('ok'):
+            return r
+        last = r.get('why') or last
+    except Exception as e:                                     # noqa: BLE001
+        last = 'cascade: %s' % e
     return dict(spec=spec, ok=False, why=last or 'no anchor')
 
 

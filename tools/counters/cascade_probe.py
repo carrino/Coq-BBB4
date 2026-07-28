@@ -33,6 +33,13 @@ tails are `rep unit l ++ base`, an sside), plus `inner_to_fill_lift` at
 Usage:
   cascade_probe.py --classify            # the whole no-exit/no-boot bucket
   cascade_probe.py --timeline SPEC [-K 7]
+  cascade_probe.py --endpoints SPEC [-K 7]   # the LAW + the gated chains
+  cascade_probe.py --gate                    # --endpoints over the bucket
+
+The run/segment scan and every endpoint framing live in `nestcert.py`, beside
+`phase_mid`: section 4c of the brief measured two ad-hoc trace scripts
+disagreeing on blank-head numbering, so the conventions are single-sourced
+there and this file only drives them.
 
 UNTRUSTED like everything under tools/: measurement only.
 """
@@ -52,44 +59,19 @@ from emit_interleave import parse, LAB, ENC as ENCF            # noqa: E402
 
 def gather_idx(mid, maxtail, encs=None):
     """(key -> [(mid index, decoded value)]) over deep tails."""
-    hits = collections.defaultdict(list)
-    for i, (q, l, r) in enumerate(mid):
-        for name in (encs or E.ENCS):
-            d = E.ENCDATA[name]
-            if d['obS'] != 0:
-                continue
-            A, B, C = tuple(d['uD']), tuple(d['uS']), tuple(d['soD'])
-            for k in range(maxtail + 1):
-                if k > len(l) - 1:
-                    break
-                head, tl = (l[:len(l) - k], l[len(l) - k:]) if k else (l, ())
-                v = NC.decode(head, A, B, C)
-                if v is not None:
-                    hits[(name, q, tl, r)].append((i, v))
-    return hits
+    return NC._gather_idx(mid, E.ENCDATA, E.ENCS, maxtail, encs)
 
 
 def segments(mid, maxtail=40, minlen=4, encs=None):
     """Maximal consecutive-ascending count segments, longest-range kept when
     one octave shadows another over the same interval."""
-    segs = []
-    for key, iv in gather_idx(mid, maxtail, encs).items():
-        i0 = 0
-        while i0 < len(iv):
-            j = i0
-            while j + 1 < len(iv) and iv[j + 1][1] == iv[j][1] + 1:
-                j += 1
-            if j - i0 + 1 >= minlen:
-                segs.append((iv[i0][0], iv[j][0], iv[i0][1], iv[j][1], key))
-            i0 = j + 1
-    segs.sort()
-    return [s for s in segs
-            if not any(o[0] <= s[0] and s[1] <= o[1]
-                       and (o[3] - o[2]) > (s[3] - s[2]) for o in segs)]
+    return NC.cascade_segments(mid, E.ENCDATA, E.ENCS, maxtail, minlen, encs)
 
 
-def phase(spec, K, maxT=1500000):
-    """First anchor candidate (mirror searched) whose overflow phase closes."""
+def anchor(spec, K, maxT=1500000):
+    """The first anchor candidate (mirror searched) whose overflow phase
+    closes, with everything [nestcert.cascade_endpoints] needs to re-derive
+    it."""
     for mirrored in (False, True):
         dspec = E.mirror_spec(spec) if mirrored else spec
         tab = parse(dspec)
@@ -100,8 +82,17 @@ def phase(spec, K, maxT=1500000):
                                    maxT=maxT)
             except Exception:                                  # noqa: BLE001
                 continue
-            return mid, mirrored, enc, edge
-    return None, None, None, None
+            return dict(tab=tab, mid=mid, mirrored=mirrored, enc=enc,
+                        edge=edge, st0=st0, tail=tail, far=far)
+    return None
+
+
+def phase(spec, K, maxT=1500000):
+    """First anchor candidate (mirror searched) whose overflow phase closes."""
+    a = anchor(spec, K, maxT)
+    if a is None:
+        return None, None, None, None
+    return a['mid'], a['mirrored'], a['enc'], a['edge']
 
 
 def octave_profile(mid):
@@ -114,12 +105,74 @@ def octave_profile(mid):
     return octs
 
 
+def endpoints(spec, K, jhi=8, quiet=False):
+    """Gate one machine: read the law, check it against the phase, derive the
+    boot / lap / transition chains, and replay them all against the raw
+    simulator.  Returns the record, or raises."""
+    A = anchor(spec, K, maxT=4000000)
+    if A is None:
+        raise NC.NestError('no overflow phase at K=%d' % K)
+    d = NC.cascade_endpoints(A['tab'], E.ENCDATA, E.ENCS, E.ENC, A['enc'],
+                             A['st0'], A['tail'], A['far'], K=K)
+    d['nval'] = NC.cascade_validate(A['tab'], E.ENC, E.ENCDATA, A['enc'],
+                                    A['st0'], A['tail'], A['far'], d,
+                                    2, jhi)
+    d['anchor'] = A
+    if not quiet:
+        law = d['law']
+        print('%s  K=%d  mir=%s  outer=%s@%s' % (spec, K, A['mirrored'],
+                                                 A['enc'], A['edge']))
+        print('  law  inner=%s@%s far=%r  unit=%r extraA=%r extraB=%r '
+              'M-j=%d  main_is_B=%s'
+              % (law['inner'], LAB[law['st_in']], law['far_in'], law['unit'],
+                 law['extraA'], law['extraB'], law['M'] - law['j'],
+                 law['main_is_B']))
+        print('  levels found in the phase: %s'
+              % ' '.join('%d' % l for l, _ in law['found']))
+        print('  boot cost=%d*j+%d  lap cost=%d*i+%d'
+              % (d['cb'][0], d['cb'][1], d['cn'][0], d['cn'][1]))
+        for k in ('ENTRY', 'AB', 'BA', 'CLOSE', 'CLOSEA', 'CLOSEB'):
+            if k not in d['trans']:
+                continue
+            t = d['trans'][k]
+            print('  %-6s i=n%+d peel=%s post=%d el=%s lift=%s cost=%d*i+%d  %s'
+                  % (k, t['ioff'], t['peel'], t['post'], t['el'], t['lift'],
+                     t['cost'][0], t['cost'][1],
+                     ' '.join(E.cstep_str(s) for s in t['chain'])))
+        print('  %s' % d['nval'])
+    return d
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--classify', action='store_true')
     ap.add_argument('--timeline')
+    ap.add_argument('--endpoints')
+    ap.add_argument('--gate', action='store_true')
     ap.add_argument('-K', type=int, default=6)
     a = ap.parse_args()
+
+    if a.endpoints:
+        endpoints(a.endpoints, a.K if a.K != 6 else 7)
+        return
+
+    if a.gate:
+        tsv = os.path.join(REPO, 'tools/closeout/residue_map.tsv')
+        specs = [l.split('\t')[0] for l in open(tsv)
+                 if 'no exit chain' in l or 'no boot chain' in l]
+        tot = collections.Counter()
+        for spec in specs:
+            try:
+                d = endpoints(spec, a.K if a.K != 6 else 7, quiet=True)
+            except Exception as e:                             # noqa: BLE001
+                msg = str(e)[:64]
+                print('%-40s %s' % (spec, msg))
+                tot[msg] += 1
+                continue
+            print('%-40s GATED  %s' % (spec, d['nval']))
+            tot['GATED'] += 1
+        print(tot)
+        return
 
     if a.timeline:
         mid, mir, enc, edge = phase(a.timeline, a.K, maxT=3000000)

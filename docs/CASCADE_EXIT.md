@@ -125,7 +125,13 @@ exact forward behavior — the emitter-per-machine + kernel-recheck route
 is our equivalent, and per-machine differential validation stays the
 discipline.
 
-## 4c. The go/no-go gate, part-run (2026-07-28, same session)
+## 4c. The go/no-go gate: CLOSED (wave-24)
+
+**Superseded by §4d below.**  Everything §4c reports still holds as measured;
+what it left OPEN is now closed, and two of its structural readings were off
+by one level and by one count.  Read §4d first and §4c as the history.
+
+## 4c (history). The go/no-go gate, part-run (2026-07-28, same session)
 
 The critical uniformity question — do the per-level transitions derive as
 single-index chains in the EXISTING language? — was tested directly on
@@ -156,6 +162,92 @@ single-index chains in the EXISTING language? — was tested directly on
 Next session: build `cascade endpoints` in `nestcert.py` (the analogue of
 `endpoints()` for the four per-level sconfs), gate BA/base there, and only
 then write the composition lemma and template.
+
+## 4d. The gate, closed, and the route built (wave-24)
+
+**[STATUS, wave-25: BOARDED.  All 57 gated machines carry kernel-checked
+`NeverQuasiHaltsSt` theorems (`theories/Machines/Counters/CASB_*.v`), and
+8 of the 12 octave-shifted rows followed the same session (the whole
+cascade one octave down, the close one more ASCENDING count — the `oct=-1`
+route, `WAVE25_FINDINGS.md` §7): `D_remaining` 496 → 431.  What remains of
+this bucket is 22 rows: 4 whose closing count enters one value in
+(`xI (pow2 j)`), 17 one/two-count phases, 1 low main count.]**
+
+The extractor went where §4c said it had to -- `nestcert.py`, beside
+`phase_mid` -- and **B→A and the base close both derive as single-index
+chains**.  §4c's first alternative was the right one; nothing needed two
+indices, and no reindex was needed anywhere.
+
+Reproduce: `cascade_probe.py --endpoints 0RB1LA_0LC1RD_1LA1LD_1RB0LA -K 7`.
+
+```
+  A→B    index l,   peel (0,0) split 2   4i+4    (§4c's chain, unchanged)
+  B→A    index l-1, peel (1,0) split 5   4i+10
+  CLOSE  index j,   peel (1,0) split 2   4i+23
+  boot 4j+4, inner lap 4i+4
+```
+
+**Why B→A resisted, precisely.**  Two framing knobs, and it needs both:
+
+* the **peel** -- how many unit copies sit in `post` rather than in the
+  count.  Its turnaround walks back out over cells it has just written and at
+  peel 0 runs one short: the window is then blocked and the chain does not
+  exist, at any split.  One peeled unit is exactly the room it needs.
+* the **split** -- how many cells stay concrete before the opaque tail.  The
+  eat reads ONE cell into the growing region (the unit misreads there, and
+  that misread is what ENDS the eat), so its split cannot sit where A→B's
+  does.  §4b said the turnaround was fixed-size and read only the tail head;
+  it reads one cell further.
+
+Both are now searched rather than guessed (`nestcert._frame_pair`), which is
+what a per-machine emitter needs anyway.
+
+**Two structural corrections to §1 and §3.**
+
+* The cascade descends to **level 0**, not to level 2.  Levels 1 and 0 are
+  invisible to the segment scan only because their runs are 2 and 1 values
+  long, under `minlen`.  `cascade_check` predicts all four words of every
+  level from the law and finds each one in `phase_mid`'s own configurations,
+  down to level 0, at K = 6, 7 and 8.
+* The **main count is the level-j second count**: `tail_main = extraB ++ rep
+  unit (M - j)` on the nose (`law['main_is_B']`).  So the phase is uniform
+  from level j down, the boot lands on B(j), and the induction needs no
+  separate entry step -- the ENTRY chain the extractor derives independently
+  comes out equal to B→A, same framing and same chain.  §1's "main count,
+  then TWO per level" is really "TWO per level, from level j down, and the
+  first A is missing".
+
+**Population.**  `cascade_probe.py --gate` reads the law, checks it at every
+level, derives boot + lap + all three chains and replays the whole cascade
+against the raw simulator at j = 2..8 (77 counts, 1433 inner laps per
+machine): **57 of the 87** gate end-to-end, and `cascade_emit.py --proto`
+turns all 57 into a Coq overflow branch the kernel accepts -- 57 compile,
+none fails.  The 30 that do not, at K = 7:
+12 report a main count at `2^(j-1)..2^j-1` (an octave-shifted top level --
+`families()` already carries an `oct` for that shape, so this is emitter work,
+not new theory), 17 report one or two counts in the phase (the "no boot
+chain" mirror half and the 15 odd-shaped rows), 1 a main count at 4..7.
+
+**The Coq.**  `theories/Counters/NestedLapCascade.v`, additive and
+funext-only: `fill_hop`, `level_hop`, `cascade_down`, `cascade_overflow`,
+`cascade_vis_at`.  `D l m` carries the level and the tail length as SEPARATE
+`nat`s -- they move together, so one index would force `j - l` into an anchor
+and that is the wave-15 index-shift trap in a new costume.
+
+`tools/counters/cascade_emit.py` renders the branch per machine, and
+`theories/Tests/CASC_0RB1LA_0LC1RD_1LA1LD_1RB0LA.v` is the exemplar's,
+committed and kernel-checked: `lapo_` proves the `LapStep` obligation for an
+overflow phase with `2j+1` counts, `Print Assumptions` =
+`functional_extensionality_dep`.  It is a REGRESSION, not a board -- it
+carries the overflow branch only, so it moves `D_remaining` by zero.
+
+**What is left to board these machines** (wave-25): wire the branch into
+`emit_lapcert.derive`/`render` as a third route beside `nested` and `offset`,
+so a full board gets its interior branch, bootstrap, visit witnesses and
+closer.  The visit witnesses are the one piece with a new shape:
+`cascade_vis_at` is stated at an arbitrary level, but only level 0 is
+available at EVERY outer index, so states that fire nowhere in the boot must
+fire in the closing sweep.
 
 ## 5. Do-not-retry, refined
 

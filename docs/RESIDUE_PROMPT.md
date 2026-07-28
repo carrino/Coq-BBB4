@@ -1,21 +1,29 @@
 # Residue prompt — the nested front is spent down to its measured blockers
 
-_Rewritten 2026-07-28 at the end of the wave-23 RESIDUE track (branch
-`claude/residue-list-refinement-cxzdax`), which boarded the whole
+_Refreshed 2026-07-28 at the end of the wave-25 CASCADE-BOARDING track
+(branch `claude/cascade-counter-merge-issue-ki8ulc`), which boarded ALL 57
+gated cascade machines (`CASB_*`, every one accepted on the first render,
+funext-only) AND 8 of the 12 octave-down rows (the whole cascade sits one
+octave down; the close is one more ASCENDING count at octave j+1 between
+two affine chains -- WAVE25 section 7): `D_remaining` **496 -> 431**.  `docs/WAVE25_FINDINGS.md`.  Before it,
+wave-24 (branch `claude/residue-reduction-cascade-yhqvj4`, PR #54) closed
+the cascade gate and built the route end to end -- extractor, level
+induction, emitter -- but boarded nothing (`docs/WAVE24_FINDINGS.md`); and
+the wave-23 RESIDUE track (branch `claude/residue-list-refinement-cxzdax`)
+boarded the whole
 15-machine "no visit witness (`StA`)" bucket by the state-AVOIDANCE route:
 the kernel recomputes from the SAME lap chains that no window step is ever
 in `StA` (`Checkers/LapAvoid.v`, axiom-free), and
 `Counters/LapGlueQuiet.v` turns that plus a checked bootstrap window into
-the R_QH triple with the exact last-visit bound.  `D_remaining` is **496**
-and 4,660 of the frozen 5,156 are settled (90.4%).  Wave-22 before it
-landed 110 boards (the "no shift chain" 8 and 102 of "no inner family at
-`pow2 j`" via the OFFSET-family route).  Full assessments:
-`docs/WAVE23_FINDINGS.md`, `docs/WAVE22_FINDINGS.md`; the wave-18 story is
+the R_QH triple with the exact last-visit bound.  `D_remaining` is **431**
+and 4,725 of the frozen 5,156 are settled (91.6%).  Full assessments:
+`docs/WAVE25_FINDINGS.md`, `docs/WAVE23_FINDINGS.md`,
+`docs/WAVE22_FINDINGS.md`; the wave-18 story is
 `docs/WAVE18_FINDINGS.md`._
 
 _**Scope: the RESIDUE, which is now everything.**  The (4,2) HOLDOUT list was
 closed on 2026-07-28 when tower #20 was boarded (`NEXT_SESSION.md` §2l), so
-these 496 rows are the entire remaining problem.  `docs/RESIDUE_MAP.md` maps
+these 431 rows are the entire remaining problem.  `docs/RESIDUE_MAP.md` maps
 them by shape and blocker._
 
 **Before pasting, check:** substitute the branch the session should develop
@@ -28,18 +36,22 @@ Continue the (4,2) residue reduction in carrino/Coq-BBB4, on a new branch off
 main.
 
 READ FIRST, in this order:
-  docs/CASCADE_EXIT.md      -- THE TASK's design brief, all of it.  Section
-                               4b is the traced per-level mechanics; section
-                               4c is the GATE STATUS: the A->B level
-                               transition already DERIVES as a single-index
-                               chain (exact, tail opaque -- the chain is
-                               printed there), the B->A and base framings
-                               are OPEN, and the first build step is a
-                               `cascade endpoints` extractor INSIDE
-                               nestcert.py (ad-hoc probes measured
-                               inconsistent blank-head numbering; do not
-                               repeat that).  Only after B->A gates: the
-                               composition lemma, then the template.
+  docs/WAVE25_FINDINGS.md   -- THE TASK's state, all of it; it is short.  The
+                               57 gated cascade machines AND 8 of the 12
+                               octave-down rows are BOARDED (CASB_*); the
+                               route is a full third route in
+                               emit_lapcert/cascade_emit; what remains of the
+                               bucket is the 22 non-gated (item 0 below).
+  docs/WAVE24_FINDINGS.md   -- the build behind it: the gate, the level
+                               induction (theories/Counters/
+                               NestedLapCascade.v), the framing search.
+                               Section 7 has the cascade do-not-retries.
+  docs/CASCADE_EXIT.md      -- the design brief behind it.  Read section 4d
+                               (the gate closed, and the two structural
+                               corrections: the cascade descends to level 0,
+                               and the main count IS the level-j second
+                               count).  Sections 1-4c are history and are
+                               marked as such where 4d supersedes them.
   docs/WAVE18_FINDINGS.md   -- all of it; it is short.  Section 4b is the
                                wave's most useful result and it is a NEGATIVE:
                                the two remaining nested-lap chain buckets are
@@ -72,59 +84,59 @@ LapCertGlue, LapGlueAbs, NestedLap and NestedLapLift are axiom-FREE or
 funext-only -- keep them that way).  Everything under tools/ is UNTRUSTED;
 the kernel re-checks every board.
 
-STATE: 4,660 of the frozen 5,156 settled (90.4%); D_remaining = 496.
+STATE: 4,725 of the frozen 5,156 settled (91.6%); D_remaining = 431.
 THE HOLDOUT LIST IS CLOSED.  Everything left is RESIDUE and all of it is
 yours.  docs/RESIDUE_MAP.md + tools/closeout/residue_map.tsv give every
-remaining machine's measured lap shape and the exact blocker.
+remaining machine's measured lap shape and the exact blocker (the tsv is
+wave-23's measurement; subtract the 65 CASB_* boards from its
+no-exit/no-boot rows).
 
-Failure profile at D_remaining = 496 (residue_map.tsv, wave-23):
+Failure profile at D_remaining = 431 (residue_map.tsv minus wave-25):
 
   211  no overflow phase           -- ALL of them the no-anchor bucket
   105  no interior chain           -- QUAD 41, HIGHER 13, PARITY-AFFINE 13,
                                       EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8
-   65  no exit chain               -- MEASURED EXPONENTIAL; identification,
-                                      not chains (re-measured wave-22: the
-                                      N-count route buys 0 of these)
    60  no inner family at pow2 j   -- what SURVIVED the offset/split/refill
                                       routes; 32 have no family under any
                                       route, the rest fail an offset chain
+   22  the CASCADE's non-gated     -- was "65 no exit chain + 22 no boot
+                                      chain"; wave-25 boarded the 57 gated +
+                                      8 octave-down (CASB_*).  Of the 22:
+                                      4 whose closing count enters ONE VALUE
+                                      IN (xI (pow2 j) -- an emitter lemma
+                                      pair, WAVE25 section 7), 17 one/two-
+                                      count phases, 1 main count at 4..7
    24  no anchor
-   20  no boot chain               -- same population as "no exit", other side
     5  no second exit chain        -- the SCycR-entry-offset checker gap,
                                       measured precisely (WAVE22 section 2b)
     4  no inner interior chain
 (the 15 "no visit witness (StA)" rows were boarded in wave-23 -- the AVOID
-route, LAPQ_* -- and are gone from the map)
-ovfshape over the 496 for shape rather than blocker:
-  235 no-anchor, 132 AFFINE/EXP2, 37 AFFINE/AFFINE, 41 QUAD,
-  13 PARITY-AFFINE, 13 HIGHER, 10 EXP3, 9 AFFINE/HIGHER, 6 EXP4.
+route, LAPQ_*; the 57 gated cascade rows in wave-25 -- CASB_*)
 Per-machine cost is a vm_compute:
   python3 tools/counters/emit_lapcert.py --list FILE --emit   (25 alphabets)
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded, in minutes.
 
-THE TASK (re-ranked 2026-07-28 after the wave-23 CASCADE reconnaissance --
-  John's steer: the biggest category is counters, and the exp is the
-  obstacle.  docs/CASCADE_EXIT.md is the design brief; reproduce with
-  tools/counters/cascade_probe.py):
+THE TASK (re-ranked 2026-07-28 after wave-25 BOARDED the 57 gated cascade
+  machines -- CASB_*, docs/WAVE25_FINDINGS.md; the route is now a full
+  third route in the emitter, tried automatically after flat/nested/offset):
 
-  (0) THE CASCADE -- 72 of the 87 "no exit chain"/"no boot chain" machines,
-      measured.  One overflow phase is: main count 2^j..2^(j+1)-1, then for
-      each level l = j-1 down to 2 TWO counts 2^l..2^(l+1)-1 with tails
-      growing by one unit per level, then a closing sweep.  Steps Theta(2^j)
-      (WAVE18 4b's exponential, confirmed) but the COUNT OF COUNTS is
-      AFFINE in j -- which is why MAXCOUNTS=4 measured 0, and why
-      families() never saw it (it searches octaves >= 0 only, and MAXTAIL=3
-      caps tails at 3 where the cascade needs ~2j).  The build: a
-      NestedLapCascade level induction whose per-level pieces are
-      inner_to_fill_lift at v0 = pow2 l (ALREADY arbitrary-v0) plus
-      inter-count chains uniform in l (the tails are rep unit l ++ base --
-      an sside).  Emitter: detect via cascade_probe.segments, derive the
-      level chains at two consecutive levels and check they are the SAME
-      chain, base case + closing sweep concrete, full wave-18 differential
-      validation.  Also point the probe at the 60 "no inner family"
-      survivors and the EXP3/EXP4/HIGHER interiors (a deeper cascade is
-      exactly what a Theta(3^j) lap smells of).
+  (0) THE CASCADE's 22 NON-GATED -- the residue of the old no-exit/no-boot
+      bucket, all measured: 4 are the octave-down shape whose CLOSING COUNT
+      ENTERS ONE VALUE IN (starts at xI (pow2 j), not pow2 (S j)) -- an
+      emitter lemma pair (E (xI (pow2 n)) and its fill twin) in the LOW
+      template, WAVE25 section 7 names it precisely; 17 report one or two
+      counts in the phase (the `no boot chain` mirror half plus the 15
+      odd-shaped rows CASCADE_EXIT section 2 set aside -- re-measure before
+      designing); 1 a main count at 4..7.
+      `cascade_probe.py --gate` re-gates the bucket;
+      `cascade_emit.py --boards FILE` boards whatever newly gates (visits,
+      interior, boot and closer are all wired -- wave-25's survey showed the
+      boot chain + closing sweep host every witness, and per-level chains
+      can NEVER host one: at j = 0 there is no descent).
+      Also point cascade_probe at the 60 "no inner family" survivors and the
+      EXP3/EXP4/HIGHER interiors (a deeper cascade is exactly what a
+      Theta(3^j) lap smells of) -- both still untouched.
 
   (0b) The 60 "no inner family" survivors: 32 have no decodable family under
       any route (alphabet work -- alphabet_infer.py -- or ASK JOHN with a
@@ -132,6 +144,11 @@ THE TASK (re-ranked 2026-07-28 after the wave-23 CASCADE reconnaissance --
       measured says they are close.  Run cascade_probe over them FIRST --
       the negative-octave/deep-tail window sees families families() cannot.
 
+  DO NOT RETRY (measured wave-24): framing the cascade's B->A transition with
+  the opaque split where A->B's sits (no chain at any peel); framing it at
+  peel 0 (no chain at any split); reindexing the cascade's overflow branch at
+  j = S j' the way the offset route does (unnecessary -- the peel absorbs the
+  shift, and the reindex buys a concrete j = 0 case for nothing).
   DO NOT RETRY (measured wave-18/22): a wider inner-key tail (MAXTAIL);
   octave-only families (pow2 (j+oct), 0 of 162); the N-count route on the
   65 "no exit chain" / 20 "no boot chain" (0 of 87 -- identification, not
@@ -218,5 +235,6 @@ WAVE16 section 4b; it is not a proof failure).  Also the champion
 
 Commit + push per validated batch.  Name new files so they cannot clash with a
 concurrent session's (waves 10-18 used ILS1_*/ILS4_*/ILS4F_*, ILS1M_*/ILS4M_*/
-ILS4FM_*, IXP_*/IXPM_*, WLS_*/WLSM_*, WLJ_*, LAPC_*, LAPG_*, NLAP_*, Alph_*).
+ILS4FM_*, IXP_*/IXPM_*, WLS_*/WLSM_*, WLJ_*, LAPC_*, LAPG_*, NLAP_*, Alph_*;
+wave-23 LAPQ_*; wave-24 CASC_*; wave-25 CASB_*).
 ```
