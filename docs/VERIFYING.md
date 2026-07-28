@@ -129,11 +129,12 @@ committed hash, confirming your walk covered the same inputs.
   apt Coq and then switch to the census opam switch, `make` sees ~2,260
   up-to-date `.vo` and skips them — but the opam Coq cannot load apt-built
   `.vo`.  Decide which Coq you are doing the long build with before you start.
-* **`make all` at high `-j` runs out of memory.**  There are nine
-  `theories/Machines/IRules_Batch_*.v`, and at least one is ~6.3 GB; `-j8` can
-  schedule several at once.  The build is incremental, so an OOM costs only
-  the in-flight files — re-run and it resumes.  To defuse it up front, build
-  those nine serially first, then parallelise the rest.
+* **`make all` at high `-j` can run out of memory.**  There are nine
+  `theories/Machines/IRules_Batch_*.v` at ~6–8 GB peak each.
+  `Makefile.coq.local` chains them (order-only) into three columns, so even
+  `-j16` schedules at most three together (~24 GB); on a ~16 GB box use
+  `-j2`, or edit the chains down to one column.  The build is incremental,
+  so an OOM costs only the in-flight files — re-run and it resumes.
 * **`make proof` needs the census switch; plain `make` does not.**
   `CloseoutFinal.v` and `BBB4_Theorem.v` are the only files that load the
   committed `.vo`, and they are kept out of `_CoqProject` so the default

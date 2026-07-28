@@ -76,8 +76,12 @@ make            # the full from-source build: every checker, board and
 make proof      # + the census-backed top-level theorem and its report
 ```
 
-Use `make -j2`: one generated file peaks at ~6 GB of RAM, so higher
-`-j` wants a correspondingly larger machine.
+High `-j` is fine on a big machine: the nine memory-heavy
+`IRules_Batch_*` files (~6–8 GB each at peak) are throttled to at most
+three concurrent builds by order-only chains in `Makefile.coq.local`,
+so `make -j16` budgets ~24 GB for them while the rest of the tree fills
+the remaining slots.  On a ~16 GB box use `make -j2`, or tighten the
+chains in `Makefile.coq.local` to a single column.
 
 `make proof` additionally loads the **committed census `.vo`**
 (`theories/Census/Compute/`, the output of a ~7 h `native_compute`
