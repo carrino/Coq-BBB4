@@ -91,13 +91,34 @@ Per-machine cost is a vm_compute:
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded, in minutes.
 
-THE TASK (as ranked by measurement; the nested front is now SPENT to its
-  recorded blockers -- every cheap lead was taken this wave):
+THE TASK (re-ranked 2026-07-28 after the wave-23 CASCADE reconnaissance --
+  John's steer: the biggest category is counters, and the exp is the
+  obstacle.  docs/CASCADE_EXIT.md is the design brief; reproduce with
+  tools/counters/cascade_probe.py):
 
-  (0) The 60 "no inner family" survivors: 32 have no decodable family under
+  (0) THE CASCADE -- 72 of the 87 "no exit chain"/"no boot chain" machines,
+      measured.  One overflow phase is: main count 2^j..2^(j+1)-1, then for
+      each level l = j-1 down to 2 TWO counts 2^l..2^(l+1)-1 with tails
+      growing by one unit per level, then a closing sweep.  Steps Theta(2^j)
+      (WAVE18 4b's exponential, confirmed) but the COUNT OF COUNTS is
+      AFFINE in j -- which is why MAXCOUNTS=4 measured 0, and why
+      families() never saw it (it searches octaves >= 0 only, and MAXTAIL=3
+      caps tails at 3 where the cascade needs ~2j).  The build: a
+      NestedLapCascade level induction whose per-level pieces are
+      inner_to_fill_lift at v0 = pow2 l (ALREADY arbitrary-v0) plus
+      inter-count chains uniform in l (the tails are rep unit l ++ base --
+      an sside).  Emitter: detect via cascade_probe.segments, derive the
+      level chains at two consecutive levels and check they are the SAME
+      chain, base case + closing sweep concrete, full wave-18 differential
+      validation.  Also point the probe at the 60 "no inner family"
+      survivors and the EXP3/EXP4/HIGHER interiors (a deeper cascade is
+      exactly what a Theta(3^j) lap smells of).
+
+  (0b) The 60 "no inner family" survivors: 32 have no decodable family under
       any route (alphabet work -- alphabet_infer.py -- or ASK JOHN with a
       CLASS tape dump); the rest fail one of the offset chains and nothing
-      measured says they are close.
+      measured says they are close.  Run cascade_probe over them FIRST --
+      the negative-octave/deep-tail window sees families families() cannot.
 
   DO NOT RETRY (measured wave-18/22): a wider inner-key tail (MAXTAIL);
   octave-only families (pow2 (j+oct), 0 of 162); the N-count route on the

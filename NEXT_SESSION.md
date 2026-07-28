@@ -1171,10 +1171,25 @@ Full write-up: `docs/WAVE23_FINDINGS.md`.  Took the ranked item (2) -- the
   state, so a future quiet-StB/C/D lap family is emitter work only.
 
 STATE: `D_remaining` **496** (90.4% settled); `census_cache --check` MATCH
-throughout; `audit.py` OK (exact partition); closeout re-checked in-tree
-(`-j2`).  Next, in measured order: the 41 QUAD/QUAD, the 235 no-anchor,
-the 65 "no exit chain" (identification, not chains), and the 5 second-exit
-machines (the SCycR-entry-offset checker gap).
+throughout; `audit.py` OK (exact partition); the closeout is
+KERNEL-VERIFIED in-container (`-j2`): `Closeout.vo` + all 47 `CB_*.vo`
+compile, `closeout_partial` Qed at `functional_extensionality_dep` only,
+`vm_compute (List.length remaining_rows)` = 496.
+
+**Same session, the CASCADE reconnaissance (John: "the biggest category is
+counters; there is talk of having to deal with some exp to get them").**
+Full brief: `docs/CASCADE_EXIT.md`; tool: `tools/counters/cascade_probe.py`.
+The 65 "no exit chain" + 22 "no boot chain" machines were range-scanned at
+their true endpoints: **72 of 87 are a DESCENDING-OCTAVE CASCADE** -- main
+count `2^j..2^(j+1)-1`, then TWO counts per level `l = j-1 .. 2` with tails
+growing one unit per level, then a closing sweep.  Steps Theta(2^j) (4b's
+exponential, confirmed) but the count of counts is AFFINE in j -- why
+MAXCOUNTS=4 bought 0 and families() never saw it (octaves >= 0 only;
+MAXTAIL=3 vs ~2j-cell tails).  The build is a `NestedLapCascade` level
+induction; `inner_to_fill_lift` is already arbitrary-`v0`, the level chains
+are sside-uniform in `l`.  That is the next wave's THE TASK
+(`docs/RESIDUE_PROMPT.md` item 0); the 41 QUAD/QUAD, 235 no-anchor and the
+5 SCycR-gap machines follow.
 
 ## 3. The long-tail roadmap
 
