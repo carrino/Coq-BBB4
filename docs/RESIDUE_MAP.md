@@ -4,10 +4,19 @@ _The frontier of this project, published as a target list rather than as an
 apology.  Companion data: `tools/closeout/residue_map.tsv`, one row per
 machine, regenerated with the commands at the bottom._
 
-_**621 rows as of this commit.**  The count moves every wave, so treat the TSV
-as the authority and this prose as a snapshot.  With tower #20 boarded on
-2026-07-28 the (4,2) HOLDOUT list is closed, so all 621 are residue and this
-is the entire remaining problem._
+_**511 rows as of this commit** -- the project's first crossing of 90%
+settled.  The count moves every wave, so treat the TSV as the authority and
+this prose as a snapshot.  With tower #20 boarded on 2026-07-28 the (4,2)
+HOLDOUT list is closed, so all 511 are residue and this is the entire
+remaining problem.  (The wave-22 residue track boarded 110: the 8-machine
+"no shift chain" bucket by chaining the sync-bouncer construction through
+THREE and FOUR counts per overflow (`nestcert.MAXCOUNTS`), and 102 of the
+"no inner family at pow2 j" bucket by the OFFSET-family route -- an inner
+count starting at `2^(j+1)+2` rather than a power of two, the whole
+overflow branch reindexed at `j = S j'`, the `j = 0` case one concrete run,
+plus for the Mp-outer cluster a SPLIT inner lap (`i = 0` window + peeled
+`i - 1` chains) and a shift-by-one landing/refill bridge through
+`WTape.rep_rot` (`nestcert.derive_offset`).)_
 
 ## What this list is
 
@@ -54,15 +63,15 @@ the lap cost at consecutive `j` and classifies by finite differences:
 **Everything in these two columns is UNTRUSTED measurement, not a claim.**
 `tools/` carries no proof weight anywhere in this project; the shape column
 is a map drawn from simulation to help someone choose a target.  The only
-kernel-checked fact about these 621 rows is that they are *absent* from the
+kernel-checked fact about these rows is that they are *absent* from the
 boarded set.
 
 ## The families
 
 | interior / overflow | n | what stops us |
 |---|---:|---|
-| `AFFINE`/`EXP2` | 242 | 134 no inner family at `pow2 j`, 65 no exit chain, 20 no boot chain, 8 no interior chain, 8 no shift chain, 5 no second exit chain, 2 no inner interior chain |
 | `-`/`no-anchor` | 235 | 211 no overflow phase, 24 no anchor |
+| `AFFINE`/`EXP2` | 132 | 65 no exit chain, 32 no inner family at `pow2 j`, 20 no boot chain, 8 no interior chain, 5 no second exit chain, 2 no inner interior chain |
 | `AFFINE`/`AFFINE` | 52 | 23 no inner family, 15 no visit witness (`StA`), 14 no interior chain |
 | `QUAD`/`QUAD` | 41 | 41 no interior chain |
 | `PARITY-AFFINE` | 13 | 13 no interior chain |
@@ -84,10 +93,13 @@ boarded set.
 * **no inner family at pow2 j** — the overflow runs a second counter, but its
   count does not start at `2^j`.  Measured in wave-15: ~21% of these run at a
   different octave or offset.
-* **no boot / exit / shift / second exit chain** — the nested overflow's
-  pieces; the ones that say *shift* or *second exit* already have BOTH inner
-  families identified and are missing only one affine chain.  **These 13 are
-  the cheapest machines on the list.**
+* **no boot / exit / second exit chain** — the nested overflow's pieces.
+  Wave-22 boarded the 8 "no shift chain" machines (multi-count chaining) and
+  measured the 5 surviving "no second exit chain" machines precisely: their
+  exit's return sweep enters its rightward cycle mid-unit against a
+  non-matching post, which no rotation lstep can align — they need a new
+  `SCycR`-with-entry-offset step in `LapDecider.v` (a checker extension with
+  its own soundness proof), or hand-written boards.
 * **no visit witness (`StA` is targeted)** — a complete lap, but one state
   never fires inside it.  `docs/WAVE16_FINDINGS.md` §6b has the full analysis:
   these are quasihalters whose quiet state is `StA` (last visit at step 4-11,
@@ -96,14 +108,12 @@ boarded set.
 
 ## Where a newcomer should probably start
 
-1. **The 13 `no shift chain` / `no second exit chain`.** Both inner families
-   found, one chain missing.
-2. **The 15 `no visit witness`.** The analysis is done and written up; what is
+1. **The 15 `no visit witness`.** The analysis is done and written up; what is
    missing is a symbol-aware closer, and the bound is tiny.
-3. **The 41 `QUAD`/`QUAD`.** The largest family in the residue that has never
+2. **The 41 `QUAD`/`QUAD`.** The largest family in the residue that has never
    had a design pass — a quadratic interior AND overflow.  `Bounce_8.v`'s
    `MeasureGlue` nesting is the precedent.
-4. **The 235 no-anchor.** Largest single bucket, and the cheapest per machine
+3. **The 235 no-anchor.** Largest single bucket, and the cheapest per machine
    *if* the alphabet inference generalises: wave-14 inferred 18 alphabets from
    tapes this way.
 
@@ -117,4 +127,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-shrank from 883 to 621.
+shrank from 883 to 511.

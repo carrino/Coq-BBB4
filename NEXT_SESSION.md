@@ -1079,6 +1079,61 @@ and the CI note).  What IS verified in-container: `Tower_20.vo` clean, the
 generated `cov_12_0094` cover lemma re-checks against `CloseoutKit` (clean),
 `audit.py` OK, `census_cache --check` MATCH.
 
+## 2m. Wave-22, RESIDUE track (2026-07-28) -- the nested route grows two ends
+
+Full write-up: `docs/WAVE22_FINDINGS.md`.  **110 boards, `D_remaining`
+621 -> 511** -- the first crossing of **90% settled** -- and every front is
+EMITTER work only; wave-18's composition theorems were already general
+enough.
+
+- **The "no shift chain" 8: an overflow phase can chain ANY number of
+  counts.**  The 13 shift/second-exit machines carry a THIRD (sometimes a
+  FOURTH) count in yet another shifted frame.  `NestedLap2.boot_via_fill` is
+  generic in `(Cc, Cin1, Cin2)`, so it composes with itself and each extra
+  count is one more application -- no new Coq.  `nestcert._more_counts`
+  (recursive, backtracking, `MAXCOUNTS = 4`) plus a list-of-families
+  emission (assert-style boot stack, per-shift defs, multi-count `visx_`).
+  8 of 13 board.
+- **The 5 survivors are a MEASURED checker gap**: their exit's return sweep
+  enters its rightward cycle mid-unit against a non-matching post, which no
+  rotation lstep can align -- `SCycR` has no entry-offset `m` the way
+  `SCycL` does.  Boarding them = a `LapDecider.v` extension (new lstep +
+  soundness + corruption tests) or hand boards.  Do not re-run the search.
+- **The "no inner family at pow2 j" 22: the OFFSET family, reindexed.**  The
+  bucket's dominant cluster (95 of 162) is an inner count running
+  `2^(j+1)+c .. 2^(j+2)-1` -- fill reached, START offset, block count `j-1`:
+  the wave-15 index-shift trap.  What works: reindex the WHOLE overflow
+  branch at `j = S j'` (every side an ordinary sside in `j'`),
+  `v0 = xO (xI (pow2 j'))` fed to the UNCHANGED `nested_overflow_lift`,
+  `fill (xO (xI (pow2 j'))) = fill (pow2 (S (S j')))` by `cbn`, the `j = 0`
+  case one CONCRETE run (`lapo0_`, the bootstrap lemma's `ceqb` pattern),
+  and per-state concrete visit witnesses at `p = 1` (`visz_*`).
+  `nestcert.derive_offset`; 22 board, all axiom-clean.
+- **Traps paid for**: the boot landing INHERITS `b` from its source's count
+  (`SCycL` transfers it), so `gbo_` normalizes via
+  `replace (1*j+b) with (j+b); rewrite rep_add` -- do not try chain surgery,
+  nothing unfolds a count into a post.  And positive constructors wrap
+  LSB-OUTERMOST: `2^(j+2)+2 = xO (xI (pow2 j))`.
+- **The Mp-outer cluster (80 more boards): the SPLIT inner lap.**  The
+  cluster's inner lap is affine (4i+2) but only chains in SPLIT form (the
+  carry sweep's period sits one cell into the unit): Z chain at i=0 +
+  peeled P chains at count i-1 -- wave-13's j=0 split, ported to the
+  inner-family glue.  The boot lands in a SHIFT1 frame and the exit only
+  derives from the REPHASED fill; both bridge through one pinned
+  application of a board-local `rrc_` lemma over `WTape.rep_rot`.
+- **Measured zeros** (do-not-retry): octave-only families
+  (`pow2 (j+oct)`, no reindex) -- 0 of 162; the multi-count route on the
+  65 "no exit chain" / 22 "no boot chain" -- 0 of 87 (WAVE18 section 4b
+  stands: identification, not chains).
+- Template hygiene: the new `gso_`/`geo_`/`viso_` holes default to the old
+  text; a committed nested board re-renders BYTE-IDENTICALLY.
+
+STATE: `D_remaining` **511** (90.1% settled); `census_cache --check` MATCH
+throughout; `audit.py` OK.  Next, in measured order: the 15
+no-visit-witness, the 41 QUAD/QUAD, the 235 no-anchor, the 65 "no exit
+chain" (identification, not chains), and the 5 second-exit machines
+(the SCycR-entry-offset checker gap).
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
