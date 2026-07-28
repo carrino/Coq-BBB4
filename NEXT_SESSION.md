@@ -1187,9 +1187,25 @@ exponential, confirmed) but the count of counts is AFFINE in j -- why
 MAXCOUNTS=4 bought 0 and families() never saw it (octaves >= 0 only;
 MAXTAIL=3 vs ~2j-cell tails).  The build is a `NestedLapCascade` level
 induction; `inner_to_fill_lift` is already arbitrary-`v0`, the level chains
-are sside-uniform in `l`.  That is the next wave's THE TASK
-(`docs/RESIDUE_PROMPT.md` item 0); the 41 QUAD/QUAD, 235 no-anchor and the
-5 SCycR-gap machines follow.
+are sside-uniform in `l`.
+
+**Wave-24 BUILT it — this is no longer the next wave's task.**
+`docs/WAVE24_FINDINGS.md`.  All three per-level chains derive as single-index
+chains (B→A needed both framing knobs: one peeled unit for its turnaround,
+and a split one cell deeper because its eat reads into the growing region);
+`theories/Counters/NestedLapCascade.v` is the level induction, funext-only;
+`tools/counters/cascade_emit.py` renders the overflow branch per machine and
+**57 of the 87 gate and compile**.  Two structural corrections to the
+reconnaissance above: the cascade descends to level **0**, not to level 2,
+and the main count IS the level-`j` second count, so the phase is uniform
+from level `j` down.
+
+`D_remaining` is UNCHANGED at 496: an overflow branch is not a board.  The
+next wave's THE TASK (`docs/RESIDUE_PROMPT.md` item 0) is BOARDING these --
+a third route in `emit_lapcert.derive`/`render` beside `nested` and `offset`,
+whose one new piece is the visit witnesses (`cascade_vis_at` is stated at an
+arbitrary level, but only level 0 is available at every outer index).  The
+41 QUAD/QUAD, 235 no-anchor and the 5 SCycR-gap machines follow.
 
 ## 3. The long-tail roadmap
 
