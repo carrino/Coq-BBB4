@@ -77,7 +77,7 @@ splits it exactly:
 | best consecutive run in one overflow phase | n | reading |
 |---|---:|---|
 | `2^(K+1)+2 .. 2^(K+2)-1` (and +1/+3/+4 variants) | **95** | octave-up count with an OFFSET start; fill IS reached |
-| `2^(K+2)+2 .. 2^(K+2)+2^(K+1)-1` (`Ip`, ends at `10111111b`) | 24 | the count RIDES A FIXED TOP BIT and never reaches fill |
+| `2^(K+2)+2 .. 2^(K+2)+2^(K+1)-1` (`Ip`, ends at `10111111b`) | 24 | an ANCHOR ARTIFACT of the scan -- the same machines seen from a different anchor; the boarded 22 come from this set |
 | no run ≥ 8 under any obS=0 key | 41 | genuinely no decodable family |
 
 ### 3a. What boards: the reindex, done right this time
@@ -138,11 +138,22 @@ to say they are close.
   chain` machines** — re-measured over all 87 after the N-count
   generalization landed.  WAVE18 §4b stands: their blocker is family
   identification, not chains.
-* The 24 `Ip` riders (`130..191`) need a **partial-span composition lemma**
-  (`inner_to_fill_lift` runs to the fill; their count stops at
-  `2^(j+2)+2^(j+1)-1`, which is not all-ones).  The lemma is a bounded
-  successor-iteration in `stepn`/`lift` space (induction on `n ≤ tovf v`) —
-  a real but small piece of new Coq (`NestedLap3`), not attempted this wave.
+* The "24 `Ip` top-bit riders" segmentation was an ANCHOR ARTIFACT: re-run
+  after the 22 boards, the residual 140 have NO such runs.  A partial-span
+  lemma is NOT the next build.
+* **The residual 74-machine `Mp`-outer cluster (`run 66..127`, inner
+  `Alph_01_11_011`) is measured one level further**: the reindexed BOOT
+  CHAIN DERIVES (obS=1 outer handled, `c = 2`), and the inner interior lap
+  is perfectly AFFINE (`4i+2`, measured over the whole octave) — but its
+  chain does not derive at the plain `AI0/AI1` endpoints, and the exit
+  fails too.  The reason is a UNIT-BOUNDARY ALIGNMENT: the leftward carry
+  sweep's period sits one cell INTO the `[1;1]` rep (`11^i 01 =
+  1 (11)^(i-1) 101`), so `SCycL` only fires from the phase-shifted form
+  with count `i-1` — the interior-lap mirror of wave-13's `j = 0` SPLIT
+  (`Z`-chain at `i = 0`, peeled `P`-chains at `i = S i'`), which the OUTER
+  interior branch already has (`INT_SPLIT`) and the inner-family glue does
+  not.  That port (split-mode `lapin@S@` + peeled `gsn/gen`) is the next
+  build, worth up to 74 machines.
 
 ## 4. Template hygiene
 

@@ -86,31 +86,32 @@ Per-machine cost is a vm_compute:
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded, in minutes.
 
-THE TASK -- THE Ip TOP-BIT RIDERS, one small lemma from 24 boards.
+THE TASK -- THE Mp-OUTER OFFSET CLUSTER, 74 machines one split away.
 
-  The nested front's remaining buckets all have MEASURED blockers now
-  (WAVE22).  The one with a build already designed:
+  The residual "no inner family" bucket re-measured after wave-22's boards
+  (rangescan over the 140): 74 machines are Mp-outer (obS=1) with the SAME
+  offset family shape wave-22 boarded (inner run 2^(j+1)+2 .. 2^(j+2)-1,
+  inner alphabet Alph_01_11_011), and they are measured to ONE blocker:
 
-  24 machines (Ip, "no inner family at pow2 j") decode as a count of
-  w = 2..2^(j+1)-1 RIDING A FIXED TOP BIT: v = 2^(j+2) + w, run
-  2^(j+2)+2 .. 2^(j+2)+2^(j+1)-1, which never reaches the all-ones fill --
-  so inner_to_fill_lift (which runs TO the fill) cannot close their count.
-  What is needed is NestedLap3: a PARTIAL-SPAN twin,
+    - the reindexed BOOT CHAIN DERIVES (obS=1 outer handled, c=2);
+    - the inner interior lap is AFFINE, 4i+2 exactly, all i -- but its chain
+      does NOT derive at the plain AI0/AI1 endpoints, and the exit fails
+      the same way.
 
-      forall v n, n <= tovf v ->
-        exists m, stepn tm m (lift (Cin v)) = Some (lift (Cin (succ^n v)))
+  The reason, hand-traced: the leftward carry sweep's period sits one cell
+  INTO the [1;1] rep (11^i 01 = 1 (11)^(i-1) 101), so SCycL only fires from
+  the phase-shifted form with count i-1.  That is the INTERIOR-LAP mirror
+  of wave-13's j=0 split: a Z-chain at i=0 (the 2-step no-carry window) and
+  peeled P-chains at i = S i'.  The OUTER interior branch has exactly this
+  (INT_SPLIT, mode='split'); the inner-family glue (lapin@S@/gsn/gen) does
+  not.  Port it: split-mode inner lap in nestcert (_inner_lap trying the
+  peeled endpoints when the plain ones fail) + the two-chain lapin
+  emission.  Check the exit chain against the same phase-shift before
+  assuming it needs anything else.
 
-  (induction on n; tovf_succ gives the decreasing fuel; the None branch of
-  cview is unreachable while n <= tovf v).  Then the offset machinery of
-  wave-22 (nestcert.derive_offset) takes them: v0 = xO (xI (pow2 (S j'))),
-  vf = the partial fill xI^(j'+1) (xO (xI 1))-shaped, both plain positive
-  terms, all sides ordinary ssides after the same j = S j' reindex.
-  The range data and detector already exist (nestcert.offset_families finds
-  them at want-end 2^(K+2)+2^(K+1)-1 instead of 2^(K+2)-1).
-
-  The 73 offset-family machines that did NOT board (of the 95-cluster) fail
-  on the boot or the inner lap at the offset anchor -- nothing measured says
-  they are close; sample tapes and ASK JOHN with a CLASS, not a machine.
+  The 41 rangescan "no runs" machines have no decodable family under any
+  obS=0 key: alphabet work (alphabet_infer.py), or ASK JOHN with a CLASS
+  tape dump.
 
   DO NOT RETRY (measured wave-18/22): a wider inner-key tail (MAXTAIL);
   octave-only families (pow2 (j+oct), 0 of 162); the N-count route on the
