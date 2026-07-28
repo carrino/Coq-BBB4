@@ -125,6 +125,15 @@ committed hash, confirming your walk covered the same inputs.
 
 ## Traps
 
+* **`BBB4_Statement.vo` is the root of the entire tree — deleting or
+  touching it forces a full 1–2 h rebuild** (all ~2,080 files import it
+  transitively).  The one time deleting it is necessary: an error of the
+  shape *"contains library `BBB4_Statement` and not library
+  `BBB4.BBB4_Statement`"*, which means a stray `coqc` run **without**
+  `-Q theories BBB4` left a wrongly-named `.vo` shadowing the real one,
+  and `make` (seeing it up to date) will never fix it on its own.
+  Prevention is cheap: always compile one-off files as
+  `coqc -Q theories BBB4 <file.v>`, never bare `coqc`.
 * **Switching toolchains is invisible to `make`.**  If you build the tree with
   apt Coq and then switch to the census opam switch, `make` sees ~2,260
   up-to-date `.vo` and skips them — but the opam Coq cannot load apt-built
