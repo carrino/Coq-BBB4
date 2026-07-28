@@ -1,5 +1,9 @@
 # Coq-BBB4: scoping the Coq formalization of the BBB(4) results
 
+_**Historical document** (2026-07-13, the pre-build plan).  Its inventory and
+coverage numbers are frozen at that date; the current state of the
+development is [README.md](README.md) and [docs/CLAIMS.md](docs/CLAIMS.md)._
+
 Status: scoping document, 2026-07-13.  Nothing here is built yet; this
 maps the work of porting everything the BBB harness repo
 (`carrino/BBB`) proves into a machine-checked Coq development, using
