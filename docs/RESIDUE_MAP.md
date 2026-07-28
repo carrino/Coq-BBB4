@@ -4,9 +4,9 @@ _The frontier of this project, published as a target list rather than as an
 apology.  Companion data: `tools/closeout/residue_map.tsv`, one row per
 machine, regenerated with the commands at the bottom._
 
-_**492 rows as of this commit.**  The count moves every wave, so treat the
+_**427 rows as of this commit.**  The count moves every wave, so treat the
 TSV as the authority and this prose as a snapshot.  With tower #20 boarded
-on 2026-07-28 the (4,2) HOLDOUT list is closed, so all 492 are residue and
+on 2026-07-28 the (4,2) HOLDOUT list is closed, so all 427 are residue and
 this is the entire remaining problem.  (The wave-23 residue track boarded
 the whole 15-machine "no visit witness (`StA`)" bucket: quasihalters whose
 quiet state is a transition target, closed by the state-AVOIDANCE route --
