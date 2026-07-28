@@ -583,10 +583,10 @@ Definition B1_@ID@ : sconf := @B1@.
 
 @GLUEI@
 
-Lemma gso_@ID@ : forall p j, cview p = (S j, None) ->
+Lemma gso_@ID@ : forall p j, cview p = (@CVSJ@, None) ->
   Cc p = cden [] [] j B0_@ID@.
 Proof.
-  intros p j E. destruct (@ENCMOD@.@NONE@ p j E) as (H1 & _).
+  intros p j E. destruct (@ENCMOD@.@NONE@ p @NNJ@ E) as (H1 & _).
   unfold Cc_@ID@, cden, B0_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   replace (1 * j + @OBSP@) with (@CNTP@) by lia.
@@ -597,15 +597,15 @@ Qed.
 Lemma lbl_@ID@ : forall q l h r, lift (q,(l ++ [S0],h,r)) = lift (q,(l,h,r)).
 Proof. intros. unfold lift; simpl. rewrite lift_side_app_blank. reflexivity. Qed.
 
-Lemma geo_@ID@ : forall p j, cview p = (S j, None) ->
+Lemma geo_@ID@ : forall p j, cview p = (@CVSJ@, None) ->
   lift (cden [] [] j B1_@ID@) = lift (Cc (Pos.succ p)).
 Proof.
-  intros p j E. destruct (@ENCMOD@.@NONE@ p j E) as (_ & H2).
+  intros p j E. destruct (@ENCMOD@.@NONE@ p @NNJ@ E) as (_ & H2).
   assert (HD : cden [] [] j B1_@ID@
              = (@ST0@, (@HDLEFT@, S0, @OVFAR@))).
   { unfold cden, B1_@ID@, sden, sflat;
       cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
-    replace (1 * j + 1) with (S j) by lia.
+    replace (1 * j + @B1B@) with @B1SJ@ by lia.
     replace (0 * j + 0) with 0 by lia.
     cbn [rep app]. first [ reflexivity
       | rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ]. }
@@ -646,7 +646,7 @@ Qed.
 
 Lemma viso_@ID@ : forall (l : list lstep) (q : St),
   srun_st tm true true l B0_@ID@ = Some q ->
-  forall p j, cview p = (S j, None) ->
+  forall p j, cview p = (@CVSJ@, None) ->
   exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
 Proof.
   intros l q Hst p j E.
@@ -791,7 +791,16 @@ def derive(spec, edge, tail, p0, enc, far=()):
             nest = NC.derive_nested(tab, ENCDATA, ENCS, ENC, enc, st0, tail,
                                     far, B0, B1)
         except NC.NestError as e:
-            raise DeriveError('no overflow chain (nested: %s)' % e)
+            # the OFFSET route: the inner count starts at 2^(j+1)+c rather
+            # than a power of two, and the branch reindexes at j = S j'.
+            try:
+                nest = NC.derive_offset(tab, ENCDATA, ENCS, ENC, enc, st0,
+                                        tail, far)
+            except NC.NestError:
+                raise DeriveError('no overflow chain (nested: %s)' % e)
+        if nest.get('route') == 'offset':
+            # every overflow-side piece lives at the reindexed sides
+            B0, B1 = nest['B0R'], nest['B1R']
         cho = nest['che']
         ro = LC.srun(tab, True, True, cho, nest['BE0'])
     else:
@@ -938,8 +947,13 @@ def render(D):
     spec = D['spec']
     ID = mach_id(spec)
     d = ENCDATA[D['enc']]
+    N = D.get('nest')
+    offset = bool(N and N.get('route') == 'offset')
+    # the offset route reindexes the overflow branch at j = S j', so the
+    # outer successor's count is two up from the lemma's own index
+    sj = '(S (S j))' if offset else '(S j)'
     ovpost, ovwant = tuple(D['ovpost']), tuple(D['ovwant'])
-    body = 'rep %s (S j) ++ %s' % (clist(d['uD']), clist(ovpost))
+    body = 'rep %s %s ++ %s' % (clist(d['uD']), sj, clist(ovpost))
     pad = len(ovwant) - len(ovpost)
     if pad < 0:
         # The REACHED post is the longer one -- the lap stopped past the
@@ -950,10 +964,10 @@ def render(D):
         n = -pad
         if ovpost[:len(ovwant)] != ovwant or any(ovpost[len(ovwant):]):
             raise DeriveError('overflow close %r vs %r' % (ovpost, ovwant))
-        body = ('(' * n + 'rep %s (S j) ++ %s' % (clist(d['uD']),
-                                                  clist(ovwant))
+        body = ('(' * n + 'rep %s %s ++ %s' % (clist(d['uD']), sj,
+                                               clist(ovwant))
                 + ''.join(') ++ [S0]' for _ in range(n)))
-        hcleft = 'rep %s (S j) ++ %s' % (clist(d['uD']), clist(ovwant))
+        hcleft = 'rep %s %s ++ %s' % (clist(d['uD']), sj, clist(ovwant))
         close = 'rewrite !lbl_%s. reflexivity.' % ID
     elif ovwant[:len(ovpost)] != ovpost or any(ovwant[len(ovpost):]):
         raise DeriveError('overflow close %r vs %r' % (ovpost, ovwant))
@@ -994,6 +1008,20 @@ def render(D):
             # vis_via_fill supplies the exponentially long middle
             pull = ('' if _lift_vis(D) else
                     '    apply (vis_csteps_of_lift tm Cc).\n')
+            if offset:
+                # the reindexed anchor: destruct the outer index; p = 1 gets
+                # the concrete witness
+                vis.append('  - (* %s: fires in the exit half of the overflow *)\n'
+                           '%s'
+                           '    apply (vis_via_ovf_lift tm Cc lapil_%s %s).\n'
+                           '    intros p1 j1 E1. destruct j1 as [|j1\'].\n'
+                           '    + rewrite (cview_none_shape p1 0 E1).\n'
+                           '      apply (vis_lift_of_csteps tm Cc). exact visz_%s_%s.\n'
+                           '    + exact (visx_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                           '                   p1 j1\' E1).'
+                           % (ST[q], pull, ID, ST[q], ST[q], ID, ID,
+                              cchain(D['visx'][q]), ST[q]))
+                continue
             vis.append('  - (* %s: fires in the exit half of the overflow *)\n'
                        '%s'
                        '    apply (vis_via_ovf_lift tm Cc lapil_%s %s).\n'
@@ -1036,13 +1064,34 @@ def render(D):
             # premise.
             pull = ('' if _lift_vis(D) else
                     '    apply (vis_csteps_of_lift tm Cc).\n')
+            if offset:
+                vis.append('  - (* %s *)\n'
+                           '%s'
+                           '    apply (vis_via_ovf_lift tm Cc Hi %s).\n'
+                           '    intros p1 j1 E1. destruct j1 as [|j1\'].\n'
+                           '    + rewrite (cview_none_shape p1 0 E1).\n'
+                           '      apply (vis_lift_of_csteps tm Cc). exact visz_%s_%s.\n'
+                           '    + apply (vis_lift_of_csteps tm Cc).\n'
+                           '      apply (viso_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                           '                   p1 j1\' E1).'
+                           % (ST[q], pull, ST[q], ST[q], ID, ID,
+                              cchain(pre), ST[q]))
+            else:
+                vis.append('  - (* %s *)\n'
+                           '%s'
+                           '    apply (vis_via_ovf_lift tm Cc Hi %s).\n'
+                           '    intros p1 j1 E1. apply (vis_lift_of_csteps tm Cc).\n'
+                           '    apply (viso_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                           '                   p1 j1 E1).'
+                           % (ST[q], pull, ST[q], ID, cchain(pre), ST[q]))
+        elif offset:
             vis.append('  - (* %s *)\n'
-                       '%s'
-                       '    apply (vis_via_ovf_lift tm Cc Hi %s).\n'
-                       '    intros p1 j1 E1. apply (vis_lift_of_csteps tm Cc).\n'
-                       '    apply (viso_%s %s %s ltac:(vm_compute; reflexivity)\n'
-                       '                   p1 j1 E1).'
-                       % (ST[q], pull, ST[q], ID, cchain(pre), ST[q]))
+                       '    apply (vis_via_ovf tm Cc Hi %s).\n'
+                       '    intros p1 j1 E1. destruct j1 as [|j1\'].\n'
+                       '    + rewrite (cview_none_shape p1 0 E1). exact visz_%s_%s.\n'
+                       '    + exact (viso_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                       '                   p1 j1\' E1).'
+                       % (ST[q], ST[q], ST[q], ID, ID, cchain(pre), ST[q]))
         else:
             vis.append('  - (* %s *)\n'
                        '    apply (vis_via_ovf tm Cc Hi %s), viso_%s\n'
@@ -1061,12 +1110,13 @@ def render(D):
         farb, farnest = clist(igot), ifarnest
     else:
         farb = farnest = clist(D['far'])
-    N = D.get('nest')
     reps = {
-        '@OVFDEFS@': (NC.nest_defs(D, ENCDATA, clist, cconf, cchain, ST, ID)
+        '@OVFDEFS@': (((NC.nest_defs_offset if offset else NC.nest_defs)
+                       (D, ENCDATA, clist, cconf, cchain, ST, ID))
                       if N else FLAT_OVF_DEFS),
         '@OVFCASE@': (NC.NEST_OVFCASE if N else FLAT_OVF_CASE),
-        '@NESTGLUE@': (NC.nest_glue(D, ENCDATA, clist, cconf, cchain, ST, ID)
+        '@NESTGLUE@': (((NC.nest_glue_offset if offset else NC.nest_glue)
+                        (D, ENCDATA, clist, cconf, cchain, ST, ID))
                        + '\n\n' if N else ''),
         '@NESTIMPORT@': '',
         '@PREF@': (NEST_PREFIX if N else PREFIX), '@ID@': ID, '@SPEC@': spec,
@@ -1093,6 +1143,10 @@ def render(D):
         # the Coq FIXPOINT name; for the generated alphabets it is Ap_<tag>,
         # not the ENCDATA key
         '@ENC@': d.get('fn', D['enc']),
+        '@CVSJ@': 'S (S j)' if offset else 'S j',
+        '@NNJ@': '(S j)' if offset else 'j',
+        '@B1B@': '2' if offset else '1',
+        '@B1SJ@': '(S (S j))' if offset else '(S j)',
         '@ENCMOD@': d['mod'], '@SOME@': d['some'], '@NONE@': d['none'],
         '@ST0@': ST[D['st0']], '@TAIL@': clist(D['tail']),
         '@FAR@': clist(D['far']),
@@ -1101,8 +1155,9 @@ def render(D):
         '@CHO@': cchain(D['cho']),
         '@CAO@': str(D['co'][0]), '@CBO@': str(D['co'][1]),
         '@US@': clist(d['uS']), '@UD@': clist(d['uD']),
-        '@OBSP@': str(d['obS'] - 1 if d['obS'] >= 1 else 0),
-        '@CNTP@': 'j',
+        '@OBSP@': ('1' if offset
+                   else str(d['obS'] - 1 if d['obS'] >= 1 else 0)),
+        '@CNTP@': '(S j)' if offset else 'j',
         '@HDLEFT@': body, '@HCLEFT@': hcleft, '@OVFAR@': ovfar,
         '@CLOSE@': close, '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
         '@VISHYP@': ('forall p q, In q %s ->' % slist(D['sset'])
@@ -1146,7 +1201,8 @@ def render(D):
         '@VAL@': D['val'], '@VISITS@': '\n'.join(vis),
     }
     if N:
-        reps.update(NC.nest_reps(D, ENCDATA, clist, cconf, cchain, ST, ID))
+        reps.update((NC.nest_reps_offset if offset else NC.nest_reps)
+                    (D, ENCDATA, clist, cconf, cchain, ST, ID))
     out = HEADER
     for _ in range(3):          # the INTERIOR/GLUEI blocks themselves hold holes
         for k, v in reps.items():

@@ -76,6 +76,11 @@ _RANK = {
 # count is one more application -- no new Coq.
 MAXCOUNTS = 4
 
+# Highest octave shift the inner-family search reports (families at
+# [pow2 (j+oct)] for oct = 0..MAXOCT).  Octave-UP counts are representable
+# ([b] = oct); offsets are not (the index-shift trap, 0/12).
+MAXOCT = 2
+
 
 # --------------------------------------------------------------- the search ---
 
@@ -120,12 +125,20 @@ def phase_mid(tab, st0, encf, tail, far, K=6, maxT=400000):
     raise NestError('no overflow phase at K=%d' % K)
 
 
-def families(mid, ENCDATA, ENCS, K=6, maxtail=MAXTAIL):
-    """Every (alphabet, state, tail, far) in [mid] whose decoded values run
-    exactly 2^(K-1) .. 2^K-1.
+def families(mid, ENCDATA, ENCS, K=6, maxtail=MAXTAIL, maxoct=MAXOCT):
+    """Every (alphabet, state, tail, far, oct) in [mid] whose decoded values
+    run exactly 2^(K-1+oct) .. 2^(K+oct)-1.
 
-    Returned MOST-HITS-FIRST, but the caller must ENUMERATE: the best-scoring
-    key is measured never to be the one the boot lands on.
+    [oct] is the family's OCTAVE SHIFT against the outer index: Stage A
+    (NESTED_LAP_PLAN) measured 21% of inner counters running at another
+    octave or offset, and the glue used to hard-wire [oct] = 0.  An
+    octave-UP family starts at [pow2 (j+oct)], whose block count [j+oct] IS
+    an sside ([a]=1, [b]=oct) -- unlike the offset form [pow2 j + 1], whose
+    count [j-1] is not and measured 0/12 (the index-shift trap).
+
+    Returned MOST-HITS-FIRST within each octave, [oct] = 0 first, but the
+    caller must ENUMERATE: the best-scoring key is measured never to be the
+    one the boot lands on.
 
     [maxtail] is how many cells past the decoded word the key may carry; see
     [MAXTAIL] for why it is 3 and not 6.
@@ -146,10 +159,14 @@ def families(mid, ENCDATA, ENCS, K=6, maxtail=MAXTAIL):
                 v = decode(head, A, B, C)
                 if v is not None:
                     hits.setdefault((name, q, tl, r), []).append(v)
-    want_run = list(range(2 ** (K - 1), 2 ** K))
-    keys = [(k, len(v)) for k, v in hits.items() if v == want_run]
-    keys.sort(key=lambda kv: -kv[1])
-    return [k for k, _ in keys]
+    keys = []
+    for o in range(maxoct + 1):
+        want_run = list(range(2 ** (K - 1 + o), 2 ** (K + o)))
+        oct_keys = [(k + (o,), len(v)) for k, v in hits.items()
+                    if v == want_run]
+        oct_keys.sort(key=lambda kv: -kv[1])
+        keys += [k for k, _ in oct_keys]
+    return keys
 
 
 def split_at_fill(mid, ENC, key, K=6):
@@ -161,8 +178,8 @@ def split_at_fill(mid, ENC, key, K=6):
     with a shifted tail.  That is the sync-bouncer shape, "count 8->15, shift,
     count 8->15 again".
     """
-    name_in, st_in, ti, fi = key
-    w = LC.rstrip0(tuple(ENC[name_in](2 ** K - 1)) + tuple(ti))
+    name_in, st_in, ti, fi, oct_ = key
+    w = LC.rstrip0(tuple(ENC[name_in](2 ** (K + oct_) - 1)) + tuple(ti))
     wf = LC.rstrip0(tuple(fi))
     for i, (q, l, r) in enumerate(mid):
         if q == st_in and l == w and r == wf:
@@ -184,16 +201,19 @@ def endpoints(ENCDATA, enc, st0, tail, far, key):
     """B0 is `emit_lapcert.confs`'s overflow start and is passed in by the
     caller; the other three are built here.
 
-      inner start  CinS = rep uD_in j ++ soD_in ++ tail_in   ( = E_in (pow2 j))
-      inner fill   CinF = rep uS_in j ++ soS_in ++ tail_in   ( = E_in (fill _))
+      inner start  CinS = rep uD_in (j+o) ++ soD_in ++ tail_in  ( = E_in (pow2 (j+o)))
+      inner fill   CinF = rep uS_in (j+o) ++ soS_in ++ tail_in  ( = E_in (fill _))
       inner lap    AI0  = rep uS_in i ++ sS_in   / AI1 = rep uD_in i ++ sD_in
+
+    The family's octave shift [o] appears as the CONSTANT part of the count
+    ([a] = 1, [b] = o), which is exactly what an sside can carry.
     """
-    name_in, st_in, tail_in, far_in = key
+    name_in, st_in, tail_in, far_in, oct_ = key
     din = ENCDATA[name_in]
     Fin = (tuple(far_in), (), 0, 0, ())
     ti = tuple(tail_in)
-    CinS = (st_in, ((), din['uD'], 1, 0, din['soD'] + ti), 0, Fin)
-    CinF = (st_in, ((), din['uS'], 1, 0, din['soS'] + ti), 0, Fin)
+    CinS = (st_in, ((), din['uD'], 1, oct_, din['soD'] + ti), 0, Fin)
+    CinF = (st_in, ((), din['uS'], 1, oct_, din['soS'] + ti), 0, Fin)
     AI0 = (st_in, ((), din['uS'], 1, 0, din['sS']), 0, Fin)
     AI1 = (st_in, ((), din['uD'], 1, 0, din['sD']), 0, Fin)
     return CinS, CinF, AI0, AI1
@@ -250,13 +270,14 @@ def derive_nested(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, B0, B1,
     raise NestError(last)
 
 
-def _land(conf, st, d, post_want, far_want, what):
+def _land(conf, st, d, post_want, far_want, what, oct_=0, pre_want=()):
     """A reached endpoint must be the anchor's syntactic shape plus TRAILING
     BLANKS on each side, and nothing else.  Returns (post pad, far pad)."""
     if conf[0] != st or conf[2] != 0:
         raise NestError('%s lands in the wrong state/head' % what)
     lpre, lu, la, lb, lpost = conf[1]
-    if lpre or tuple(lu) != tuple(d) or (la, lb) != (1, 0):
+    if (tuple(lpre) != tuple(pre_want) or tuple(lu) != tuple(d)
+            or (la, lb) != (1, oct_)):
         raise NestError('%s rep shape %r' % (what, (conf[1],)))
     pad = _slack(lpost, post_want, what + ' post')
     if conf[3][1]:
@@ -267,7 +288,7 @@ def _land(conf, st, d, post_want, far_want, what):
 
 def _inner_lap(tab, ENCDATA, key):
     """The inner family's own interior lap: chain, srun, landing pads."""
-    name_in, st_in, tail_in, far_in = key
+    name_in, st_in, tail_in, far_in, _oct = key
     din = ENCDATA[name_in]
     AI0, AI1 = endpoints(ENCDATA, None, None, (), (), key)[2:]
     chn, _ = _chain(tab, False, True, AI0, AI1)
@@ -286,7 +307,7 @@ def _inner_lap(tab, ENCDATA, key):
 
 def build(tab, ENCDATA, ENCS, encf, enc, st0, tail, far, B0, B1, key, ENC,
           mid, K=6):
-    name_in, st_in, tail_in, far_in = key
+    name_in, st_in, tail_in, far_in, oct_ = key
     din, dout = ENCDATA[name_in], ENCDATA[enc]
     CinS, CinF, AI0, AI1 = endpoints(ENCDATA, enc, st0, tail, far, key)
 
@@ -318,7 +339,7 @@ def build(tab, ENCDATA, ENCS, encf, enc, st0, tail, far, B0, B1, key, ENC,
     BB1 = rb[0]
     bpad, bfar = _land(BB1, st_in, din['uD'],
                        tuple(din['soD']) + tuple(tail_in), tuple(far_in),
-                       'boot')
+                       'boot', oct_)
 
     # The exit's landing shape is checked by [emit_lapcert.render]'s existing
     # [geo_] machinery (it is an ordinary overflow endpoint); all this needs
@@ -329,7 +350,7 @@ def build(tab, ENCDATA, ENCS, encf, enc, st0, tail, far, B0, B1, key, ENC,
                   'exit far')
 
     d = dict(inner=name_in, st_in=st_in, tail_in=list(tail_in),
-             far_in=list(far_in),
+             far_in=list(far_in), oct=oct_,
              chb=chb, BB1=BB1, cb=(rb[1], rb[2]),
              che=che, BE0=BE0, BE1=re[0],
              ce=(re[1], re[2]),
@@ -360,7 +381,7 @@ def _more_counts(tab, ENCDATA, ENCS, ENC, CinF, B1, mid, key, K,
     def go(CinFc, seg, used, depth):
         keysn = [k for k in families(seg, ENCDATA, ENCS, K) if k not in used]
         for k2 in keysn[:maxkeys]:
-            name2, st2, ti2, fi2 = k2
+            name2, st2, ti2, fi2, oct2 = k2
             d2 = ENCDATA[name2]
             CinS2, CinF2, _, _ = endpoints(ENCDATA, None, None, (), (), k2)
             chm, _ = _chain(tab, True, True, CinFc, CinS2)
@@ -374,12 +395,12 @@ def _more_counts(tab, ENCDATA, ENCS, ENC, CinF, B1, mid, key, K,
                     raise NestError('internal: srun disagrees with the search')
                 mpad, mfar = _land(rm[0], st2, d2['uD'],
                                    tuple(d2['soD']) + tuple(ti2), tuple(fi2),
-                                   'shift')
+                                   'shift', oct2)
             except NestError as e:
                 _note(last, str(e))
                 continue
             lvl = dict(inner=name2, st_in=st2, tail_in=list(ti2),
-                       far_in=list(fi2),
+                       far_in=list(fi2), oct=oct2,
                        chm=chm, BM0=CinFc, BM1=rm[0], cm=(rm[1], rm[2]),
                        # the pads of the chain INTO this family, named the
                        # same as the first family's so [_fam_reps] is shared
@@ -432,7 +453,7 @@ def validate(tab, ENC, encf, enc, ENCDATA, st0, tail, far, key, d, jlo=2,
 
     The inner lap is checked at every inner value of the phase, so the
     Theta(2^j) run itself is replayed, not merely its endpoints."""
-    name_in, st_in, tail_in, far_in = key
+    name_in, st_in, tail_in, far_in, oct_ = key
     tail, far = tuple(tail), tuple(far)
     ti, fi = tuple(tail_in), tuple(far_in)
     encin = ENC[name_in]
@@ -453,7 +474,7 @@ def validate(tab, ENC, encf, enc, ENCDATA, st0, tail, far, key, d, jlo=2,
 
     for j in range(jlo, jhi + 1):
         p = 2 ** (j + 1) - 1                        # cview p = (S j, None)
-        v0, vf = 2 ** j, 2 ** (j + 1) - 1
+        v0, vf = 2 ** (j + oct_), 2 ** (j + oct_ + 1) - 1
         # boot
         start = (st0, tuple(encf(p)) + tail, 0, far)
         want = (st_in, tuple(encin(v0)) + ti, 0, fi)
@@ -462,21 +483,24 @@ def validate(tab, ENC, encf, enc, ENCDATA, st0, tail, far, key, d, jlo=2,
             raise NestError('validate boot j=%d: %r want %r' % (j, got, want))
         # the first count
         laps(st_in, encin, ti, fi, d['cn'], v0, vf, 'inner')
-        stc, encc, tc, fc = st_in, encin, ti, fi
+        stc, encc, tc, fc, vfc = st_in, encin, ti, fi, vf
         for k, lvl in enumerate(more):
             # the SHIFT, then the next count
             enc2 = ENC[lvl['inner']]
             st2, ti2, fi2 = (lvl['st_in'], tuple(lvl['tail_in']),
                              tuple(lvl['far_in']))
-            start = (stc, tuple(encc(vf)) + tc, 0, fc)
-            want = (st2, tuple(enc2(v0)) + ti2, 0, fi2)
+            v02 = 2 ** (j + lvl['oct'])
+            vf2 = 2 ** (j + lvl['oct'] + 1) - 1
+            start = (stc, tuple(encc(vfc)) + tc, 0, fc)
+            want = (st2, tuple(enc2(v02)) + ti2, 0, fi2)
             got = _sim(tab, start, lvl['cm'][0] * j + lvl['cm'][1])
             if not _eqlift(got, want):
                 raise NestError('validate shift%d j=%d: %r want %r'
                                 % (k + 2, j, got, want))
-            laps(st2, enc2, ti2, fi2, lvl['cn'], v0, vf, 'inner%d' % (k + 2))
-            stc, encc, tc, fc = st2, enc2, ti2, fi2
-        estart = (stc, tuple(encc(vf)) + tc, 0, fc)
+            laps(st2, enc2, ti2, fi2, lvl['cn'], v02, vf2,
+                 'inner%d' % (k + 2))
+            stc, encc, tc, fc, vfc = st2, enc2, ti2, fi2, vf2
+        estart = (stc, tuple(encc(vfc)) + tc, 0, fc)
         # exit
         want = (st0, tuple(encf(p + 1)) + tail, 0, far)
         got = _sim(tab, estart, d['ce'][0] * j + d['ce'][1])
@@ -875,5 +899,474 @@ def nest_reps(D, ENCDATA, clist, cconf, cchain, ST, ID):
             '  split; [exact Hn | split; [exact Hr | reflexivity]].'),
         '@VISX@': visx,
         '@LAST@': _fsfx(nf),
+    }
+    return reps
+
+
+# ------------------------------------------------- the OFFSET family route ---
+#
+# Wave-22.  The dominant "no inner family at pow2 j" cluster's inner count
+# runs 2^(j+1)+c .. 2^(j+2)-1 (c = 2 on every validated machine): the fill IS
+# the all-ones the exit needs, but the START is offset, and
+#
+#     E (2^(j+1)+c) = blocks(c) ++ rep uD (j+1-cw) ++ soD      cw = bits(c)
+#
+# has block count j-1 at c = 2 -- unrepresentable in an sside indexed by j
+# (the wave-15 index-shift trap).  The fix that MEASURES (22/162 validate) is
+# to REINDEX the whole overflow branch at j = S j': every side is then an
+# ordinary sside in j' (boot source b=1, inner start pre=blocks(c) b=0,
+# fill b=2, outer successor b=2), and the j = 0 case (p = 1) is one CONCRETE
+# run, handled the way the bootstrap lemma already handles concrete runs.
+#
+# [nested_overflow_lift] is stated at an arbitrary v0, so v0 = xO (xI (pow2
+# j')) needs NO new composition theory; [fill (xO (xI (pow2 j'))) = fill
+# (pow2 (S (S j')))] holds by cbn, so the fill glue reuses [cview_fill_pow2].
+
+# The offset values the detector reports.  Only cw = 2 offsets (c = 2, 3)
+# keep the reindex to ONE level; c = 1 is count j directly (no reindex, but
+# 0 measured); deeper c would need a deeper split (0 measured).
+OFFSETS = (2, 3)
+
+
+def _blocks_of(c, A, B):
+    """LSB-first digit blocks of ALL of [c]'s binary digits -- [c]'s own
+    leading 1 becomes a B block; the zeros above it are the rep."""
+    out = []
+    while c >= 1:
+        out += list(A if c % 2 == 0 else B)
+        c //= 2
+    return tuple(out)
+
+
+def _v0term(c, var):
+    """The Coq positive [2^(j+2)+c] as constructors over [pow2 var].  The
+    OUTERMOST constructor is the LSB, so wrap in reverse bit order."""
+    bits = []
+    while c >= 1:
+        bits.append(c % 2)
+        c //= 2
+    t = 'pow2 %s' % var
+    for b in reversed(bits):
+        t = '%s (%s)' % ('xI' if b else 'xO', t)
+    return t
+
+
+def _gather(mid, ENCDATA, ENCS, maxtail=MAXTAIL):
+    """The decoded-value streams behind [families], keyed the same way."""
+    hits = {}
+    for (q, l, r) in mid:
+        for name in ENCS:
+            d = ENCDATA[name]
+            if d['obS'] != 0:
+                continue
+            A, B, C = tuple(d['uD']), tuple(d['uS']), tuple(d['soD'])
+            for k in range(maxtail + 1):
+                if k > len(l) - 1:
+                    break
+                head, tl = (l[:len(l) - k], l[len(l) - k:]) if k else (l, ())
+                v = decode(head, A, B, C)
+                if v is not None:
+                    hits.setdefault((name, q, tl, r), []).append(v)
+    return hits
+
+
+def offset_families(mid, ENCDATA, ENCS, K=6, maxtail=MAXTAIL):
+    """Keys whose decoded values END with the run 2^(K+1)+c .. 2^(K+2)-1 --
+    the octave-up count with an offset start.  Returns (key4, c) pairs."""
+    out = []
+    for key, vals in _gather(mid, ENCDATA, ENCS, maxtail).items():
+        for c in OFFSETS:
+            want = list(range(2 ** (K + 1) + c, 2 ** (K + 2)))
+            if len(vals) >= len(want) and vals[-len(want):] == want:
+                out.append((key, c))
+    return out
+
+
+_BOOKKEEP = ('SFoldL', 'SFoldR', 'SRotL', 'SRotR', 'SUnrotL', 'SUnrotR')
+
+
+def _reland(tab, chain, start, target):
+    """Rotate a chain's landing onto [target]'s EXACT syntactic shape.
+
+    A chain accepted up to [lift] often lands on a denotational variant --
+    e.g. one unit over-folded into the count ([b]+1, post shortened), which
+    the offset glue's [replace]-based [cden] normalization cannot absorb.
+    The fix is chain surgery, not glue surgery: bookkeeping steps (folds and
+    rotations) cost (0,0), so strip them off the tail one at a time and ask
+    [_shape_to] for an exact-shape rotation path from each stripped landing.
+    Returns the fixed chain, or None."""
+    base = list(chain)
+    while True:
+        r = LC.srun(tab, True, True, base, start)
+        if r is None:
+            return None
+        c = r[0]
+        if LC._match(c, target, True, True, True):
+            fix = LC._shape_to(c, target, True, True, 8, False)
+            if fix is not None:
+                cand = base + fix
+                if LC.srun(tab, True, True, cand, start) is not None:
+                    return cand
+        if base and base[-1][0] in _BOOKKEEP:
+            base.pop()
+        else:
+            return None
+
+
+def _sim_to_lift(tab, cfg, want, cap):
+    """Steps until [cfg] reaches [want] up to trailing blanks; None if not."""
+    for t in range(1, cap):
+        try:
+            cfg = LC.wstep(tab, False, False, cfg)
+        except LC.Halt:
+            return None
+        if _eqlift(cfg, want):
+            return t
+    return None
+
+
+def derive_offset(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=6):
+    """The offset route: boot -> one offset count -> exit, reindexed at
+    j = S j'.  Raises [NestError] if no offset family works."""
+    dout = ENCDATA[enc]
+    if dout['obS'] != 0:
+        raise NestError('offset: outer obS != 0 is not wired')
+    encf = ENC[enc]
+    mid = phase_mid(tab, st0, encf, tail, far, K + 1)
+    cands = offset_families(mid, ENCDATA, ENCS, K)
+    if not cands:
+        raise NestError('no inner family at pow2 j')
+    tail_t, far_t = tuple(tail), tuple(far)
+    F = (far_t, (), 0, 0, ())
+    last = ['no inner family at pow2 j']
+    for (key4, c) in cands:
+        name_in, st_in, ti, fi = key4
+        din = ENCDATA[name_in]
+        preb = _blocks_of(c, tuple(din['uD']), tuple(din['uS']))
+        Fin = (tuple(fi), (), 0, 0, ())
+        ti_t = tuple(ti)
+        B0R = (st0, ((), dout['uS'], 1, 1, dout['soS'] + tail_t), 0, F)
+        B1R = (st0, ((), dout['uD'], 1, 2, dout['soD'] + tail_t), 0, F)
+        CinS = (st_in, (preb, din['uD'], 1, 0, din['soD'] + ti_t), 0, Fin)
+        CinF = (st_in, ((), din['uS'], 1, 2, din['soS'] + ti_t), 0, Fin)
+        try:
+            chb, _ = _chain(tab, True, True, B0R, CinS)
+            if chb is None:
+                raise NestError('no boot chain')
+            chb = _reland(tab, chb, B0R, CinS) or chb
+            lap1 = _inner_lap(tab, ENCDATA, key4 + (0,))
+            che, _ = _chain(tab, True, True, CinF, B1R)
+            if che is None:
+                raise NestError('no exit chain')
+            che = _reland(tab, che, CinF, B1R) or che
+            rb = LC.srun(tab, True, True, chb, B0R)
+            re = LC.srun(tab, True, True, che, CinF)
+            if rb is None or re is None:
+                raise NestError('internal: srun disagrees with the search')
+            if rb[2] == 0:
+                raise NestError('boot of zero length at j=0')
+            # the boot landing may carry EXTRA units folded into its count
+            # (b inherited from B0R); [gbo_]'s rep_add normalization absorbs
+            # any [lb], so only the FLAT residue is checked here
+            lpre, lu, la, lb_, lpost = rb[0][1]
+            if (tuple(lpre) != preb or tuple(lu) != tuple(din['uD'])
+                    or la != 1):
+                raise NestError('boot rep shape %r' % (rb[0][1],))
+            bpad = _slack(tuple(din['uD']) * lb_ + tuple(lpost),
+                          tuple(din['soD']) + ti_t, 'boot post')
+            if rb[0][3][1]:
+                raise NestError('boot far side carries a rep')
+            bfar = _slack(tuple(rb[0][3][0]) + tuple(rb[0][3][4]),
+                          tuple(fi), 'boot far')
+            # the exit landing: geo_'s HD wants the plain successor shape
+            lpre, lu, la, lb, _ = re[0][1]
+            if lpre or tuple(lu) != tuple(dout['uD']) or (la, lb) != (1, 2):
+                raise NestError('exit landing rep shape %r' % (re[0][1],))
+            if re[0][3][1]:
+                raise NestError('exit far side carries a rep')
+            efar = _slack(tuple(re[0][3][0]) + tuple(re[0][3][4]), far_t,
+                          'exit far')
+            # the j = 0 concrete lap: Cc 1 -> Cc 2 up to lift
+            c1 = (st0, tuple(encf(1)) + tail_t, 0, far_t)
+            n0 = _sim_to_lift(tab, c1,
+                              (st0, tuple(encf(2)) + tail_t, 0, far_t), 20000)
+            if n0 is None:
+                raise NestError('offset: no concrete lap at p=1')
+            # per-state first-visit witnesses from Cc 1, for the j=0 branch
+            # of the visit bullets
+            visz, cfg = {}, c1
+            visz[c1[0]] = 0
+            for t in range(1, 5000):
+                try:
+                    cfg = LC.wstep(tab, False, False, cfg)
+                except LC.Halt:
+                    break
+                if cfg[0] not in visz:
+                    visz[cfg[0]] = t
+                if len(visz) == 4:
+                    break
+            d = dict(route='offset', c=c, preb=list(preb),
+                     inner=name_in, st_in=st_in, tail_in=list(ti),
+                     far_in=list(fi), oct=0,
+                     chb=chb, BB1=rb[0], cb=(rb[1], rb[2]),
+                     che=che, BE0=CinF, BE1=re[0], ce=(re[1], re[2]),
+                     chn=lap1['chn'], AI0=lap1['AI0'], AI1=lap1['AI1'],
+                     cn=lap1['cn'],
+                     bpad=bpad, bfar=bfar, lb=lb_, ipad=lap1['ipad'],
+                     ifar=lap1['ifar'], efar=efar, more=[],
+                     B0R=B0R, B1R=B1R, n0=n0, visz=visz)
+            validate_offset(tab, ENC, encf, enc, st0, tail, far, key4, c, d)
+            return d
+        except NestError as e:
+            _note(last, str(e))
+    raise NestError(last[0])
+
+
+def validate_offset(tab, ENC, encf, enc, st0, tail, far, key4, c, d,
+                    jlo=1, jhi=7):
+    """Differential validation of the offset route: boot, every inner lap and
+    the exit at j = jlo..jhi (index j' = j-1), plus the whole phase at
+    j = 1, 2 and the concrete j = 0 lap."""
+    name_in, st_in, tail_in, far_in = key4
+    tail, far = tuple(tail), tuple(far)
+    ti, fi = tuple(tail_in), tuple(far_in)
+    encin = ENC[name_in]
+
+    def laps(v0, vf, j):
+        for v in range(v0, vf):
+            i, ov = carry(v)
+            if ov:
+                raise NestError('internal: inner overflow inside the run')
+            a = (st_in, tuple(encin(v)) + ti, 0, fi)
+            b = (st_in, tuple(encin(v + 1)) + ti, 0, fi)
+            g = _sim(tab, a, d['cn'][0] * i + d['cn'][1])
+            if not _eqlift(g, b):
+                raise NestError('validate inner v=%d: %r want %r' % (v, g, b))
+
+    for j in range(jlo, jhi + 1):
+        jp = j - 1
+        p = 2 ** (j + 1) - 1
+        v0, vf = 2 ** (j + 1) + c, 2 ** (j + 2) - 1
+        start = (st0, tuple(encf(p)) + tail, 0, far)
+        want = (st_in, tuple(encin(v0)) + ti, 0, fi)
+        got = _sim(tab, start, d['cb'][0] * jp + d['cb'][1])
+        if not _eqlift(got, want):
+            raise NestError('validate boot j=%d: %r want %r' % (j, got, want))
+        laps(v0, vf, j)
+        estart = (st_in, tuple(encin(vf)) + ti, 0, fi)
+        ewant = (st0, tuple(encf(p + 1)) + tail, 0, far)
+        got = _sim(tab, estart, d['ce'][0] * jp + d['ce'][1])
+        if not _eqlift(got, ewant):
+            raise NestError('validate exit j=%d: %r want %r' % (j, got, ewant))
+    # the concrete j = 0 lap was found by simulation, so it holds by
+    # construction; re-check it anyway
+    c1 = (st0, tuple(encf(1)) + tail, 0, far)
+    got = _sim(tab, c1, d['n0'])
+    if not _eqlift(got, (st0, tuple(encf(2)) + tail, 0, far)):
+        raise NestError('validate j=0 concrete lap')
+    d['nval'] = ('offset c=%d: %d overflow phases, j = %d..%d '
+                 '(%d inner laps), plus the concrete j=0 lap'
+                 % (c, jhi - jlo + 1, jlo, jhi,
+                    sum(2 ** (j + 1) - 1 - c for j in range(jlo, jhi + 1))))
+
+
+# ------------------------------------------------ OFFSET route Coq emission ---
+
+OFF_EPRE = r"""(** The OFFSET start: [E (2^(n+2)+@C@)] is fixed digit blocks, then the rep.
+    Its block count is one short of the outer index, which is why [lapo_]
+    below REINDEXES at [j = S j']. *)
+Lemma epre_@ID@ : forall n, @ENCI@ (@V0N@) = @PREBL@ ++ rep @UDI@ n ++ @SODI@.
+Proof.
+  intro n. cbn [@ENCI@]. rewrite epow2_@ID@.
+  cbn [app]. rewrite <- ?app_assoc. cbn [app]. reflexivity.
+Qed."""
+
+
+OFF_CHAIN_GLUE = r"""(** The boot lands on the OFFSET inner anchor up to @BPAD@/@BFAR@ trailing
+    blanks. *)
+Lemma gbo_@ID@ : forall j, lift (cden [] [] j BB1_@ID@) = lift (Cin (@V0J@)).
+Proof.
+  intro j.
+  assert (HD : cden [] [] j BB1_@ID@ = (@STI@, (@BLEFT@, S0, @BFARE@))).
+  { unfold cden, BB1_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+    replace (1 * j + @LB@) with (j + @LB@) by lia.
+    rewrite rep_add. cbn [rep app]. rewrite ?app_nil_r.
+    rewrite <- ?app_assoc. cbn [app]. rewrite ?app_nil_r.
+    reflexivity. }
+  assert (HC : Cin (@V0J@) = (@STI@, (@PREBL@ ++ rep @UDI@ j ++ @BWANT@, S0, @FARI@))).
+  { unfold Cin_@ID@. rewrite epre_@ID@.
+    first [ rewrite <- ?app_assoc; reflexivity
+          | cbn [app]; rewrite <- ?app_assoc; cbn [app];
+            rewrite ?app_nil_r; reflexivity ]. }
+  rewrite HD, HC. cbn [app]. rewrite <- ?app_assoc. cbn [app].
+  rewrite ?lbl_@ID@. rewrite ?lift_app_blank. reflexivity.
+Qed.
+
+(** The offset family's all-ones fill is the ordinary one two octaves up:
+    [fill (@V0J@) = fill (pow2 (S (S j)))] by computation, so
+    [cview_fill_pow2] still names the exit chain's start word. *)
+Lemma gxi_@ID@ : forall j, Cin (fill (@V0J@)) = cden [] [] j BE0_@ID@.
+Proof.
+  intro j.
+  assert (Hf : fill (@V0J@) = fill (pow2 (S (S j))))
+    by (cbn [pow2 fill]; reflexivity).
+  rewrite Hf.
+  destruct (@ENCMODI@.@NONEI@ (fill (pow2 (S (S j)))) (S (S j))
+              (cview_fill_pow2 (S (S j)))) as (H1 & _).
+  unfold Cin_@ID@, cden, BE0_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 2) with (S (S j)) by lia.
+  replace (0 * j + 0) with 0 by lia.
+  rewrite H1; cbn [rep app]. first [ rewrite <- ?app_assoc; cbn [app];
+        rewrite ?app_nil_r; reflexivity | reflexivity ].
+Qed."""
+
+
+OFF_LAPO = r"""(** [cview p = (1, None)] forces [p = 1], where the offset family's count is
+    empty: the overflow lap at p = 1 is ONE CONCRETE run, checked the way the
+    bootstrap lemma is. *)
+Lemma lapo0_@ID@ : exists n c', csteps tm n (Cc 1) = Some c'
+    /\ lift c' = lift (Cc 2) /\ 0 < n.
+Proof.
+  exists @N0@.
+  assert (H : match csteps tm @N0@ (Cc 1) with
+              | Some c => ceqb c (Cc 2) | None => false end = true)
+    by (vm_compute; reflexivity).
+  destruct (csteps tm @N0@ (Cc 1)) as [c|] eqn:E0; [|discriminate].
+  exists c. split; [reflexivity|]. split; [apply ceqb_lift; exact H | lia].
+Qed.
+
+(** The outer OVERFLOW branch.  The offset family's block count is one short
+    of the outer index, so the branch REINDEXES: the generic route runs at
+    [j = S j'] and [j = 0] is the concrete lap above. *)
+Lemma lapo_@ID@ : forall p j, cview p = (S j, None) ->
+  exists n c', csteps tm n (Cc p) = Some c'
+          /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+Proof.
+  intros p j E.
+  destruct j as [|j'].
+  - rewrite (cview_none_shape p 0 E). exact lapo0_@ID@.
+  - apply (nested_overflow_lift tm Cc Cin lapin_@ID@ p (@V0JP@)).
+    + exists (@CAB@ * j' + @CBB@), (cden [] [] j' BB1_@ID@).
+      split; [lia|]. split; [| exact (gbo_@ID@ j')].
+      rewrite (gso_@ID@ p j' E).
+      exact (srun_sound tm true true chb_@ID@ B0_@ID@ BB1_@ID@ @CAB@ @CBB@
+               run_boot_@ID@ [] [] j' ltac:(reflexivity) ltac:(reflexivity)).
+    + exists (@CAO@ * j' + @CBO@), (cden [] [] j' B1_@ID@).
+      split; [| exact (geo_@ID@ p j' E)].
+      rewrite (gxi_@ID@ j').
+      exact (srun_sound tm true true che_@ID@ BE0_@ID@ B1_@ID@ @CAO@ @CBO@
+               run_exit_@ID@ [] [] j' ltac:(reflexivity) ltac:(reflexivity)).
+Qed."""
+
+
+OFF_VISX = r"""(** A state firing in the EXIT chain is reached from the outer overflow
+    anchor by boot + the inner counter's own laps + that prefix -- at the
+    REINDEXED anchor (the caller destructs the outer index). *)
+Lemma visx_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm true true l BE0_@ID@ = Some q ->
+  forall p j, cview p = (S (S j), None) ->
+  exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q.
+Proof.
+  intros l q Hst p j E.
+  apply (vis_via_fill tm Cc Cin lapin_@ID@ q p (@V0J@)).
+  - exists (@CAB@ * j + @CBB@), (cden [] [] j BB1_@ID@). split;
+      [| exact (gbo_@ID@ j)].
+    rewrite (gso_@ID@ p j E).
+    exact (srun_sound tm true true chb_@ID@ B0_@ID@ BB1_@ID@ @CAB@ @CBB@
+             run_boot_@ID@ [] [] j ltac:(reflexivity) ltac:(reflexivity)).
+  - apply (vis_lift_of_csteps tm (fun _ : positive => Cin (fill (@V0J@))) xH).
+    apply (vis_of_run tm (fun _ : positive => Cin (fill (@V0J@)))
+                      true true l BE0_@ID@ xH j [] []);
+      [exact Hst | reflexivity | reflexivity | exact (gxi_@ID@ j)].
+Qed."""
+
+
+VISZ = r"""(** State @STQ@'s visit witness at the reindex's p = 1 case -- concrete. *)
+Lemma visz_@STQ@_@ID@ : exists k c, csteps tm k (Cc 1) = Some c /\ fst c = @STQ@.
+Proof. exists @KQ@. eexists. split; [vm_compute; reflexivity | reflexivity]. Qed."""
+
+
+def _off_reps(N, clist, ID):
+    """The offset-route holes shared by [OFF_EPRE]/[OFF_CHAIN_GLUE]."""
+    preb = tuple(N['preb'])
+    bwant = tuple(N['tail_in'])            # soD ++ tail_in is BWANT below
+    return {
+        '@C@': str(N['c']),
+        '@V0N@': _v0term(N['c'], 'n'),
+        '@V0J@': _v0term(N['c'], 'j'),
+        '@PREBL@': clist(preb),
+    }
+
+
+def nest_defs_offset(D, ENCDATA, clist, cconf, cchain, ST, ID):
+    N = D['nest']
+    fams = _fill(FAM_DEFS, _fam_reps(ENCDATA, N, clist, cconf, cchain, ST,
+                                     '', '', '', ''))
+    epre = _fill(_fill(OFF_EPRE, _off_reps(N, clist, ID)),
+                 _fam_reps(ENCDATA, N, clist, cconf, cchain, ST,
+                           '', '', '', ''))
+    chains = NEST_CHAINS.replace('@SHIFTDEF@', '')
+    return fams + '\n\n' + epre + '\n\n' + chains
+
+
+def nest_glue_offset(D, ENCDATA, clist, cconf, cchain, ST, ID):
+    N = D['nest']
+    freps = _fam_reps(ENCDATA, N, clist, cconf, cchain, ST, '', '', '', '')
+    lap_part = FAM_GLUE.split('(** The chain into this family')[0].rstrip()
+    out = _fill(lap_part, freps)
+    # the chain glue: BLEFT carries the PRE blocks before the rep
+    din = ENCDATA[N['inner']]
+    preb = tuple(N['preb'])
+    ti = tuple(N['tail_in'])
+    bwant = tuple(din['soD']) + ti
+    pad, farpad = N['bpad'], N['bfar']
+    bleft = ('(' * pad + '%s ++ rep %s j ++ %s'
+             % (clist(preb), clist(din['uD']), clist(bwant))
+             + ''.join(') ++ [S0]' for _ in range(pad)))
+    bfare = ('(' * farpad + clist(tuple(N['far_in']))
+             + ''.join(') ++ [S0]' for _ in range(farpad)))
+    creps = dict(_off_reps(N, clist, ID))
+    creps.update({'@BLEFT@': bleft, '@BFARE@': bfare,
+                  '@BWANT@': clist(bwant), '@LB@': str(N['lb'])})
+    out += '\n\n' + _fill(_fill(OFF_CHAIN_GLUE, creps), freps)
+    out += '\n\n' + LAPIL
+    out += '\n\n' + _fill(OFF_LAPO, {'@V0JP@': _v0term(N['c'], "j'"),
+                                     '@N0@': str(N['n0'])})
+    out += '\n\n@VISX@'
+    return out
+
+
+def nest_reps_offset(D, ENCDATA, clist, cconf, cchain, ST, ID):
+    N = D['nest']
+    mods = [ENCDATA[N['inner']]['mod']]
+    extra = ' '.join(sorted({m for m in mods
+                             if m != ENCDATA[D['enc']]['mod']}))
+    # p = 1 visit witnesses for every state the overflow bullets cover
+    need = sorted(set(D.get('vis') or {}) | set(D.get('visx') or {}))
+    visz = ''
+    for q in need:
+        if q not in N['visz']:
+            raise RuntimeError('offset: no p=1 witness for state %d' % q)
+        visz += _fill(VISZ, {'@STQ@': ST[q], '@KQ@': str(N['visz'][q])}) \
+            + '\n\n'
+    reps = {
+        '@BB1@': cconf(N['BB1']), '@CHB@': cchain(N['chb']),
+        '@CAB@': str(N['cb'][0]), '@CBB@': str(N['cb'][1]),
+        '@BE0@': cconf(N['BE0']), '@CHE@': cchain(N['che']),
+        '@NESTIMPORT@': (('' if D.get('islack') else ' LapCertGlueLift')
+                         + ' IXPGadgets NestedLap NestedLapLift'
+                         + ((' ' + extra) if extra else '')),
+        '@NVAL@': N['nval'],
+        '@LAPIL@': (
+            'exact lapi_@ID@.' if D.get('islack') else
+            'intros p j q0 E. destruct (lapi_@ID@ p j q0 E) as (n & Hn & Hr).\n'
+            '  exists n, (Cc (Pos.succ p)).\n'
+            '  split; [exact Hn | split; [exact Hr | reflexivity]].'),
+        '@VISX@': visz + ((_fill(OFF_VISX,
+                                 {'@V0J@': _v0term(N['c'], 'j')}) + '\n\n')
+                          if D.get('visx') else ''),
+        '@LAST@': '',
     }
     return reps

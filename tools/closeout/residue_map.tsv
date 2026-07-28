@@ -28,20 +28,16 @@ machine	interior	overflow	alphabet	blocker
 0RB0LC_1LC1RB_0RD1LA_1LB1RD	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 0RB0LC_1LC1RB_0RD1LA_1RD1RB	AFFINE	EXP2	Alph_10_11_11	no inner interior chain
 0RB0LC_1LC1RB_1LD1LA_0RD1RA	-	no-anchor	-	no overflow phase at K=6
-0RB0LC_1LC1RB_1LD1LA_1RD0RB	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 0RB0LC_1LC1RB_1LD1LA_1RD0RC	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_0LD1LB	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1LB0LA	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1LB0LB	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1LB0LC	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1LB0RC	-	no-anchor	-	no overflow phase at K=6
-0RB0LC_1LC1RB_1RD1LA_1LB0RD	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
-0RB0LC_1LC1RB_1RD1LA_1LB1LA	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 0RB0LC_1LC1RB_1RD1LA_1LB1LB	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1LB1LC	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1LB1RB	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1LB1RC	-	no-anchor	-	no overflow phase at K=6
-0RB0LC_1LC1RB_1RD1LA_1LB1RD	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 0RB0LC_1LC1RB_1RD1LA_1LC0LA	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1LC0LB	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1LC0LC	-	no-anchor	-	no overflow phase at K=6
@@ -61,13 +57,10 @@ machine	interior	overflow	alphabet	blocker
 0RB0LC_1LC1RB_1RD1LA_1RB0LD	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1RB0RC	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1RB0RD	-	no-anchor	-	no overflow phase at K=6
-0RB0LC_1LC1RB_1RD1LA_1RB1LA	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 0RB0LC_1LC1RB_1RD1LA_1RB1LB	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1RB1LC	-	no-anchor	-	no overflow phase at K=6
-0RB0LC_1LC1RB_1RD1LA_1RB1LD	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 0RB0LC_1LC1RB_1RD1LA_1RB1RB	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1RB1RC	-	no-anchor	-	no overflow phase at K=6
-0RB0LC_1LC1RB_1RD1LA_1RB1RD	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 0RB0LC_1LC1RB_1RD1LA_1RD1LB	-	no-anchor	-	no overflow phase at K=6
 0RB0LC_1LC1RB_1RD1LA_1RD1RB	-	no-anchor	-	no overflow phase at K=6
 0RB0LD_0RC1LB_1LA1RD_1RC0LB	AFFINE	EXP2	Jp	no inner family at pow2 j
@@ -314,7 +307,6 @@ machine	interior	overflow	alphabet	blocker
 1RB0LD_1LC1RA_1RD1RC_0RB1LD	-	no-anchor	-	no overflow phase at K=6
 1RB0LD_1LC1RB_1LD1RC_0RC1LA	AFFINE	EXP2	Mp	no inner family at pow2 j
 1RB0LD_1LC1RC_1LD1RC_0RC1LA	AFFINE	EXP2	Mp	no inner family at pow2 j
-1RB0LD_1RC1LB_1LA1RD_0LB0RC	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB0LD_1RC1LC_1LD1RC_0RC1LA	AFFINE	EXP2	Mp	no inner family at pow2 j
 1RB0LD_1RC1RA_1LA0RC_0RA1LD	-	no-anchor	-	no overflow phase at K=6
 1RB0LD_1RC1RA_1LA0RC_0RB1LD	-	no-anchor	-	no overflow phase at K=6
@@ -335,7 +327,6 @@ machine	interior	overflow	alphabet	blocker
 1RB0RB_1LC0RC_1RA0LD_0LB0LC	-	no-anchor	-	no anchor
 1RB0RB_1LC1LD_0LC1RA_0LD0RA	-	no-anchor	-	no anchor
 1RB0RB_1LC1RA_0LC0LD_0RA0RD	AFFINE	AFFINE	Alph_000_100_1	no interior chain
-1RB0RB_1RC1LB_1LA1RD_0LB0RC	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB0RC_0LA0RB_0LD1RC_1LA1LD	QUAD	QUAD	Kp	no interior chain
 1RB0RC_0LA1LC_0RD0LB_1LB1RD	AFFINE	EXP2	Alph_01_11_011	no interior chain
 1RB0RC_0LB1RC_0LD1RA_1RC1LD	AFFINE	EXP2	Mp	no inner family at pow2 j
@@ -348,7 +339,6 @@ machine	interior	overflow	alphabet	blocker
 1RB0RC_1LC1LA_0LB1RD_1LB0RD	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB0RC_1LC1RA_1RD1LB_0LC0RD	AFFINE	AFFINE	Alph_00_01_1	no inner family at pow2 j
 1RB0RC_1LC1RD_0LB1LA_1LB0RD	AFFINE	EXP2	Alph_01_11_011	no boot chain
-1RB0RC_1RC1LB_1LA1RD_0LB0RC	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB0RD_0LB1LC_1RD1LC_0LC1RA	AFFINE	EXP2	Mp	no inner family at pow2 j
 1RB0RD_0LC0RB_1LA1LC_0LC1RD	QUAD	QUAD	Kp	no interior chain
 1RB0RD_0RC0LD_1LD1RC_0LA1LB	AFFINE	EXP2	Alph_01_11_011	no interior chain
@@ -416,24 +406,18 @@ machine	interior	overflow	alphabet	blocker
 1RB1LA_1LC1RD_1LA0RD_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1LA1LA_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1LA1LB_0LA0RB	-	no-anchor	-	no overflow phase at K=6
-1RB1LA_1LC1RD_1LA1LC_0LA0RB	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB1LA_1LC1RD_1LA1RA_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1LA1RB_0LA0RB	-	no-anchor	-	no overflow phase at K=6
-1RB1LA_1LC1RD_1LA1RC_0LA0RB	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
-1RB1LA_1LC1RD_1LA1RD_0LA0RB	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB1LA_1LC1RD_1LC1LA_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1LC1RA_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1RA0LB_0LA0RB	-	no-anchor	-	no overflow phase at K=6
-1RB1LA_1LC1RD_1RA0LC_0LA0RB	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB1LA_1LC1RD_1RA0RA_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1RA0RB_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1RA0RD_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1RA1LA_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1RA1LB_0LA0RB	-	no-anchor	-	no overflow phase at K=6
-1RB1LA_1LC1RD_1RA1LC_0LA0RB	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB1LA_1LC1RD_1RA1RA_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1RA1RB_0LA0RB	-	no-anchor	-	no overflow phase at K=6
-1RB1LA_1LC1RD_1RA1RD_0LA0RB	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB1LA_1LC1RD_1RB0LB_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1RB0RA_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1LC1RD_1RB0RB_0LA0RB	-	no-anchor	-	no overflow phase at K=6
@@ -451,7 +435,6 @@ machine	interior	overflow	alphabet	blocker
 1RB1LA_1RC1LB_0LB1RD_1LA0RC	AFFINE	EXP2	Mp	no inner family at pow2 j
 1RB1LA_1RC1LB_1LA1RD_0LB0RC	-	no-anchor	-	no overflow phase at K=6
 1RB1LA_1RC1RD_0LC1LD_0LA0RB	-	no-anchor	-	no overflow phase at K=6
-1RB1LA_1RC1RD_1LC0LA_0LA0RB	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB1LA_1RC1RD_1LC0LB_0LA0RB	-	no-anchor	-	no overflow phase at K=6
 1RB1LB_1LA1RC_0LD0RB_1RB1LD	-	no-anchor	-	no overflow phase at K=6
 1RB1LB_1LC0RD_0LB1LA_0LA1RA	-	no-anchor	-	no anchor
@@ -467,7 +450,6 @@ machine	interior	overflow	alphabet	blocker
 1RB1LB_1RC0LD_1LA1RB_0RC1LD	AFFINE	EXP2	Jp	no boot chain
 1RB1LB_1RC1LB_0LA1RD_0LB0RC	-	no-anchor	-	no overflow phase at K=6
 1RB1LB_1RC1LB_0LB1RD_1LA0RC	AFFINE	EXP2	Mp	no inner family at pow2 j
-1RB1LB_1RC1LB_1LA1RD_0LB0RC	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB1LC_0LA0LD_1LD1RC_0RC1LB	-	no-anchor	-	no overflow phase at K=6
 1RB1LC_0LA0RB_0LD1LD_1RA0RA	EXP4	EXP4	Dp	no interior chain
 1RB1LC_0LA0RB_0RD0LC_1RD1LA	QUAD	QUAD	Kp	no interior chain
@@ -529,7 +511,6 @@ machine	interior	overflow	alphabet	blocker
 1RB1LC_1LC1RC_1LA0RD_0LC1RD	AFFINE	EXP2	Jp	no exit chain
 1RB1LC_1RC1LB_1LA0RD_0LA1RD	-	no-anchor	-	no overflow phase at K=6
 1RB1LC_1RC1LB_1LA0RD_0LC1RD	-	no-anchor	-	no overflow phase at K=6
-1RB1LC_1RC1LB_1LA1RD_0LB0RC	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB1LC_1RC1RB_1LA0RD_0LC1RD	-	no-anchor	-	no overflow phase at K=6
 1RB1LC_1RC1RC_1LA0RD_0LC1RD	AFFINE	EXP2	Jp	no exit chain
 1RB1LD_0LB1LC_1LA1RC_0RC0LA	-	no-anchor	-	no overflow phase at K=6
@@ -549,7 +530,6 @@ machine	interior	overflow	alphabet	blocker
 1RB1LD_1RC---_1LA1RC_0RC0LA	-	no-anchor	-	no overflow phase at K=6
 1RB1LD_1RC0RB_1LA0RB_0LD1LB	-	no-anchor	-	no anchor
 1RB1LD_1RC0RC_1LA0LA_0RA0LD	EXP4	EXP4	Dp	no interior chain
-1RB1LD_1RC1LB_1LA1RD_0LB0RC	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB1LD_1RC1RB_1LC1LA_0RC0RD	-	no-anchor	-	no anchor
 1RB1LD_1RC1RD_0LA1RC_1LA0RC	AFFINE	EXP2	Jp	no exit chain
 1RB1LD_1RC1RD_0LD1RC_1LA0RC	AFFINE	EXP2	Jp	no exit chain
@@ -571,7 +551,6 @@ machine	interior	overflow	alphabet	blocker
 1RB1RB_1LC0RD_1RA1LB_0LB1RD	AFFINE	EXP2	Jp	no exit chain
 1RB1RB_1LC1RB_0RB1LD_1RA0LC	AFFINE	EXP2	Mp	no inner family at pow2 j
 1RB1RB_1RC1LB_0LB1RD_1LA0RC	AFFINE	EXP2	Mp	no inner family at pow2 j
-1RB1RB_1RC1LB_1LA1RD_0LB0RC	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB1RC_0LA0RB_0LD0RC_1LD1LA	QUAD	QUAD	Kp	no interior chain
 1RB1RC_0LB1LC_0LD0RA_1RA1LD	-	no-anchor	-	no overflow phase at K=6
 1RB1RC_0LC1RB_1LD0RB_0RA1LC	AFFINE	EXP2	Jp	no exit chain
@@ -599,7 +578,6 @@ machine	interior	overflow	alphabet	blocker
 1RB1RC_1LC1RC_1RA0LD_0RC1LD	-	no-anchor	-	no overflow phase at K=6
 1RB1RC_1LC1RD_1RA1LD_0RD0LB	-	no-anchor	-	no anchor
 1RB1RC_1RC1LA_1LD1RB_0RB0LD	AFFINE	AFFINE	Alph_00_01_1	no inner family at pow2 j
-1RB1RC_1RC1LB_1LA1RD_0LB0RC	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB1RD_0LC1RB_0RA1LD_1LC0RB	AFFINE	EXP2	Jp	no exit chain
 1RB1RD_0LC1RB_1RA1LD_1LC0RB	AFFINE	EXP2	Jp	no exit chain
 1RB1RD_0LC1RD_1LB1LA_1LC0RD	AFFINE	EXP2	Mp	no inner family at pow2 j
