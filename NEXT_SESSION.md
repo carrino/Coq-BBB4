@@ -1084,6 +1084,118 @@ and the CI note).  What IS verified in-container: `Tower_20.vo` clean, the
 generated `cov_12_0094` cover lemma re-checks against `CloseoutKit` (clean),
 `audit.py` OK, `census_cache --check` MATCH.
 
+## 2m. Wave-22, RESIDUE track (2026-07-28) -- the nested route grows two ends
+
+Full write-up: `docs/WAVE22_FINDINGS.md`.  **110 boards, `D_remaining`
+621 -> 511** -- the first crossing of **90% settled** -- and every front is
+EMITTER work only; wave-18's composition theorems were already general
+enough.
+
+- **The "no shift chain" 8: an overflow phase can chain ANY number of
+  counts.**  The 13 shift/second-exit machines carry a THIRD (sometimes a
+  FOURTH) count in yet another shifted frame.  `NestedLap2.boot_via_fill` is
+  generic in `(Cc, Cin1, Cin2)`, so it composes with itself and each extra
+  count is one more application -- no new Coq.  `nestcert._more_counts`
+  (recursive, backtracking, `MAXCOUNTS = 4`) plus a list-of-families
+  emission (assert-style boot stack, per-shift defs, multi-count `visx_`).
+  8 of 13 board.
+- **The 5 survivors are a MEASURED checker gap**: their exit's return sweep
+  enters its rightward cycle mid-unit against a non-matching post, which no
+  rotation lstep can align -- `SCycR` has no entry-offset `m` the way
+  `SCycL` does.  Boarding them = a `LapDecider.v` extension (new lstep +
+  soundness + corruption tests) or hand boards.  Do not re-run the search.
+- **The "no inner family at pow2 j" 22: the OFFSET family, reindexed.**  The
+  bucket's dominant cluster (95 of 162) is an inner count running
+  `2^(j+1)+c .. 2^(j+2)-1` -- fill reached, START offset, block count `j-1`:
+  the wave-15 index-shift trap.  What works: reindex the WHOLE overflow
+  branch at `j = S j'` (every side an ordinary sside in `j'`),
+  `v0 = xO (xI (pow2 j'))` fed to the UNCHANGED `nested_overflow_lift`,
+  `fill (xO (xI (pow2 j'))) = fill (pow2 (S (S j')))` by `cbn`, the `j = 0`
+  case one CONCRETE run (`lapo0_`, the bootstrap lemma's `ceqb` pattern),
+  and per-state concrete visit witnesses at `p = 1` (`visz_*`).
+  `nestcert.derive_offset`; 22 board, all axiom-clean.
+- **Traps paid for**: the boot landing INHERITS `b` from its source's count
+  (`SCycL` transfers it), so `gbo_` normalizes via
+  `replace (1*j+b) with (j+b); rewrite rep_add` -- do not try chain surgery,
+  nothing unfolds a count into a post.  And positive constructors wrap
+  LSB-OUTERMOST: `2^(j+2)+2 = xO (xI (pow2 j))`.
+- **The Mp-outer cluster (80 more boards): the SPLIT inner lap.**  The
+  cluster's inner lap is affine (4i+2) but only chains in SPLIT form (the
+  carry sweep's period sits one cell into the unit): Z chain at i=0 +
+  peeled P chains at count i-1 -- wave-13's j=0 split, ported to the
+  inner-family glue.  The boot lands in a SHIFT1 frame and the exit only
+  derives from the REPHASED fill; both bridge through one pinned
+  application of a board-local `rrc_` lemma over `WTape.rep_rot`.
+- **Measured zeros** (do-not-retry): octave-only families
+  (`pow2 (j+oct)`, no reindex) -- 0 of 162; the multi-count route on the
+  65 "no exit chain" / 22 "no boot chain" -- 0 of 87 (WAVE18 section 4b
+  stands: identification, not chains).
+- Template hygiene: the new `gso_`/`geo_`/`viso_` holes default to the old
+  text; a committed nested board re-renders BYTE-IDENTICALLY.
+
+STATE: `D_remaining` **511** (90.1% settled); `census_cache --check` MATCH
+throughout; `audit.py` OK.  Next, in measured order: the 15
+no-visit-witness, the 41 QUAD/QUAD, the 235 no-anchor, the 65 "no exit
+chain" (identification, not chains), and the 5 second-exit machines
+(the SCycR-entry-offset checker gap).
+
+## 2n. Wave-23, RESIDUE track (2026-07-28) -- the no-visit-witness bucket closes
+
+Full write-up: `docs/WAVE23_FINDINGS.md`.  Took the ranked item (2) -- the
+15 "no visit witness (StA is targeted)" machines -- and boarded **all 15**:
+`D_remaining` **511 -> 496** (4,660/5,156 = 90.4% settled).
+
+- **The missing invariant never had to be found.**  WAVE16 6b said the
+  needed fact is symbol-aware ("StD never READS S1 after the boot") and "a
+  real build".  It is not: the lap certificates already model the forward
+  behavior exactly (mxdys' condition, quoted in `LapDecider.v`'s own
+  header), so "StA never fires after the boot" is COMPUTABLE from the
+  chains the boards already carry.  No invariant search, no closure, no new
+  certificate data -- three `vm_compute` booleans per board.
+- **New Coq, both additive:** `Checkers/LapAvoid.v` (axiom-FREE) --
+  `wavoid` window-trace check, `cycL_avoid`/`cycR_avoid` (the cyc
+  inductions carrying avoidance: one window check covers every iteration),
+  `savoid`/`srun_avoid` mirroring `sstep`/`srun`, soundness at every `j`
+  and tail; `Counters/LapGlueQuiet.v` (funext-only) -- `AvoidRun`,
+  `bootquiet_chk`/`bootvis_chk` one-`vm_compute` bootstrap-window checks,
+  and `glue_qh_quiet`: concrete-`t0` boot + StA-avoiding laps + visits for
+  the rest + checked `(s0, t0)` window => `NonHalt /\ QHBound (S s0) /\
+  QuasiHaltsSt` with the EXACT last-visit bound (4-11 on these).
+  `LapDecider.v`/`LapGlue.v`/`LapGlueQH.v`/`LapGlueAbs.v` untouched.
+- **Emitter:** the AVOID route in `emit_lapcert.py` (prefix `LAPQ_`),
+  taken when the only missing witness is StA, `absorb_search` fails, and
+  `avoid_probe` confirms the quiet shape.  `_mirrorize_qh` needed NO
+  change; pre-/post-change emitters render committed boards
+  byte-identically (checked).  All 15 derive on the mirror, boots 7-18,
+  `s0` 4-11.
+- **Controls:** `theories/Tests/LapAvoid_Corruption.v` -- a never-QH
+  board's chain (which really fires StA) is REJECTED; state-sensitivity on
+  the recurring states; window-overrun chains are false, not vacuous;
+  boot window slid onto the last visit is caught; wrong visit index caught.
+- **The route is not StA-specific**: `srun_avoid`/`glue_qh_quiet` take any
+  state, so a future quiet-StB/C/D lap family is emitter work only.
+
+STATE: `D_remaining` **496** (90.4% settled); `census_cache --check` MATCH
+throughout; `audit.py` OK (exact partition); the closeout is
+KERNEL-VERIFIED in-container (`-j2`): `Closeout.vo` + all 47 `CB_*.vo`
+compile, `closeout_partial` Qed at `functional_extensionality_dep` only,
+`vm_compute (List.length remaining_rows)` = 496.
+
+**Same session, the CASCADE reconnaissance (John: "the biggest category is
+counters; there is talk of having to deal with some exp to get them").**
+Full brief: `docs/CASCADE_EXIT.md`; tool: `tools/counters/cascade_probe.py`.
+The 65 "no exit chain" + 22 "no boot chain" machines were range-scanned at
+their true endpoints: **72 of 87 are a DESCENDING-OCTAVE CASCADE** -- main
+count `2^j..2^(j+1)-1`, then TWO counts per level `l = j-1 .. 2` with tails
+growing one unit per level, then a closing sweep.  Steps Theta(2^j) (4b's
+exponential, confirmed) but the count of counts is AFFINE in j -- why
+MAXCOUNTS=4 bought 0 and families() never saw it (octaves >= 0 only;
+MAXTAIL=3 vs ~2j-cell tails).  The build is a `NestedLapCascade` level
+induction; `inner_to_fill_lift` is already arbitrary-`v0`, the level chains
+are sside-uniform in `l`.  That is the next wave's THE TASK
+(`docs/RESIDUE_PROMPT.md` item 0); the 41 QUAD/QUAD, 235 no-anchor and the
+5 SCycR-gap machines follow.
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)

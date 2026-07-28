@@ -52,6 +52,10 @@ PREFIX = 'LAPC'
 # session's files).  inventory.py maps rows to theorems by PARSING THE TM
 # BODIES, so the prefix carries no meaning downstream.
 NEST_PREFIX = 'NLAP'
+# Quasihalters closed by the state-AVOIDANCE route (LapAvoid/LapGlueQuiet):
+# StA is targeted but never fires after the bootstrap, and the kernel
+# recomputes that from the SAME chains.
+AVOID_PREFIX = 'LAPQ'
 
 # ---------------------------------------------------------------------------
 # The digit alphabets.  For every encoding E and every p,
@@ -339,6 +343,128 @@ Theorem nonhalt_@ID@ : NonHalt tm.
 Proof. apply (proj1 iqh_@ID@). Qed.'''
 
 
+AVOID_DEFS_ONE = r'''Lemma av_int_@ID@ : srun_avoid tm false true StA chi_@ID@ A0_@ID@ = true.
+Proof. vm_compute. reflexivity. Qed.'''
+
+AVOID_DEFS_SPLIT = r'''Lemma av_z_@ID@ : srun_avoid tm false true StA chz_@ID@ Z0_@ID@ = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma av_p_@ID@ : srun_avoid tm false true StA chp_@ID@ P0_@ID@ = true.
+Proof. vm_compute. reflexivity. Qed.'''
+
+AVOID_LAPI_ONE = r'''  - exists (@CAI@ * j + @CBI@), (Cc (Pos.succ p)).
+    split.
+    { rewrite (gsi_@ID@ p j q0 E).
+      rewrite (srun_sound tm false true chi_@ID@ A0_@ID@ A1_@ID@ @CAI@ @CBI@
+                 run_int_@ID@ (@ENC@ q0 ++ @TAIL@) [] j
+                 ltac:(discriminate) ltac:(reflexivity)).
+      f_equal. exact (gei_@ID@ p j q0 E). }
+    split; [reflexivity|]. split; [lia|].
+    exact (avoid_of_run tm Cc false true StA chi_@ID@ A0_@ID@ A1_@ID@
+             @CAI@ @CBI@ p j (@ENC@ q0 ++ @TAIL@) [] run_int_@ID@ av_int_@ID@
+             ltac:(discriminate) ltac:(reflexivity) (gsi_@ID@ p j q0 E)).'''
+
+AVOID_LAPI_SPLIT = r'''  - destruct j as [|j'].
+    + destruct (gz_@ID@ p q0 E) as (HA & HB).
+      exists (@CAZ@ * 0 + @CBZ@), (Cc (Pos.succ p)).
+      split.
+      { rewrite HA.
+        rewrite (srun_sound tm false true chz_@ID@ Z0_@ID@ Z1_@ID@ @CAZ@ @CBZ@
+                   run_z_@ID@ (@ENC@ q0 ++ @TAIL@) [] 0
+                   ltac:(discriminate) ltac:(reflexivity)).
+        f_equal. exact HB. }
+      split; [reflexivity|]. split; [lia|].
+      exact (avoid_of_run tm Cc false true StA chz_@ID@ Z0_@ID@ Z1_@ID@
+               @CAZ@ @CBZ@ p 0 (@ENC@ q0 ++ @TAIL@) [] run_z_@ID@ av_z_@ID@
+               ltac:(discriminate) ltac:(reflexivity) HA).
+    + destruct (gp_@ID@ p j' q0 E) as (HA & HB).
+      exists (@CAP@ * j' + @CBP@), (Cc (Pos.succ p)).
+      split.
+      { rewrite HA.
+        rewrite (srun_sound tm false true chp_@ID@ P0_@ID@ P1_@ID@ @CAP@ @CBP@
+                   run_p_@ID@ (@ENC@ q0 ++ @TAIL@) [] j'
+                   ltac:(discriminate) ltac:(reflexivity)).
+        f_equal. exact HB. }
+      split; [reflexivity|]. split; [lia|].
+      exact (avoid_of_run tm Cc false true StA chp_@ID@ P0_@ID@ P1_@ID@
+               @CAP@ @CBP@ p j' (@ENC@ q0 ++ @TAIL@) [] run_p_@ID@ av_p_@ID@
+               ltac:(discriminate) ltac:(reflexivity) HA).'''
+
+AVOID_CLOSE = r'''(** StA IS a transition target, so [LapGlueQH.glue_qh]'s syntactic argument
+    is out; and [LapGlueAbs.closed_b] is a digraph fact, so no absorbing set
+    can exclude StA either.  What is true is trajectory-level: StA's last
+    visit is at index @S0@ (checked), the window (@S0@, @BOOT@) is StA-free
+    (checked), and EVERY lap avoids StA -- recomputed from the SAME chains by
+    the kernel ([av_*] below, [Checkers/LapAvoid.v]).
+    [LapGlueQuiet.glue_qh_quiet] closes with the exact bound S @S0@,
+    weakened to the census tier's 2000. *)
+@AVDEFS@
+
+Lemma av_ovf_@ID@ : srun_avoid tm true true StA cho_@ID@ B0_@ID@ = true.
+Proof. vm_compute. reflexivity. Qed.
+
+(** The full lap, avoidance carried on both branches. *)
+Lemma lapav_@ID@ : forall p, exists n c',
+  csteps tm n (Cc p) = Some c' /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n
+  /\ AvoidRun tm StA n (Cc p).
+Proof.
+  intro p. destruct (cview p) as [j oq] eqn:E. destruct oq as [q0|].
+@AVLAPI@
+  - destruct (cview_pos p j E) as (j' & ->).
+    exists (@CAO@ * j' + @CBO@), (cden [] [] j' B1_@ID@).
+    split.
+    { rewrite (gso_@ID@ p j' E).
+      exact (srun_sound tm true true cho_@ID@ B0_@ID@ B1_@ID@ @CAO@ @CBO@
+               run_ovf_@ID@ [] [] j'
+               ltac:(reflexivity) ltac:(reflexivity)). }
+    split; [exact (geo_@ID@ p j' E)|]. split; [lia|].
+    exact (avoid_of_run tm Cc true true StA cho_@ID@ B0_@ID@ B1_@ID@
+             @CAO@ @CBO@ p j' [] [] run_ovf_@ID@ av_ovf_@ID@
+             ltac:(reflexivity) ltac:(reflexivity) (gso_@ID@ p j' E)).
+Qed.
+
+(** The bootstrap at its CONCRETE index, StA's last visit, and the checked
+    StA-free window between them. *)
+Lemma bootc_@ID@ : stepn tm @BOOT@ InitES = Some (lift (Cc @P0@)).
+Proof.
+  assert (H : match csteps tm @BOOT@ c0 with
+              | Some c => ceqb c (Cc @P0@) | None => false end = true)
+    by (vm_compute; reflexivity).
+  destruct (csteps tm @BOOT@ c0) as [c|] eqn:E; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.
+Qed.
+
+Lemma bvis_@ID@ : VisitsAt tm StA @S0@.
+Proof. apply bootvis_chk_sound. vm_compute. reflexivity. Qed.
+
+Lemma bq_@ID@ : forall n c, @S0@ < n < @BOOT@ ->
+  stepn tm n InitES = Some c -> fst c <> StA.
+Proof.
+  intros n c Hn Hc.
+  refine (bootquiet_chk_sound tm StA (S @S0@) @DD@ _ n c _ Hc);
+    [vm_compute; reflexivity | lia].
+Qed.
+
+Definition iqh (tm : TM) : Prop :=
+  NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm.
+
+Theorem iqh_@ID@ : iqh tm.
+Proof.
+  destruct (glue_qh_quiet tm Cc @P0@ StA @BOOT@ @S0@
+              bootc_@ID@
+              (fun p _ => lapav_@ID@ p)
+              (fun p q _ Hq => vis_@ID@ p q Hq)
+              bvis_@ID@
+              bq_@ID@)
+    as (Hn & Hb & Hq).
+  split; [exact Hn | split; [| exact Hq]].
+  apply (qhbound_mono (S @S0@) 2000); [lia | exact Hb].
+Qed.
+
+Theorem nonhalt_@ID@ : NonHalt tm.
+Proof. apply (proj1 iqh_@ID@). Qed.'''
+
+
 # ---------------------------------------------------------------------------
 # The interior branch, in two shapes.
 #
@@ -555,9 +681,9 @@ HEADER = r'''(** * @PREF@_@ID@: machine @SPEC@, boarded by CERTIFICATE.
 From Coq Require Import Arith Lia Bool List PArith Wellfounded.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Counters Require Import WTape LapGlue LapGlueQH LapGlueAbs
-                                  MonoCounter JpCounter @ENCMOD@ LapCertGlue@GLUELIFT@@NESTIMPORT@.
+                                  MonoCounter JpCounter @ENCMOD@ LapCertGlue@GLUELIFT@@NESTIMPORT@@AVIMP@.
 From BBB4.Census Require Import TNF_QH.
-From BBB4.Checkers Require Import LapDecider.
+From BBB4.Checkers Require Import LapDecider@AVIMP2@.
 Import ListNotations.
 
 Definition mk_@ID@ (w : Sym) (d : Dir) (n : St) : option Trans := Some (mkTrans w d n).
@@ -583,10 +709,10 @@ Definition B1_@ID@ : sconf := @B1@.
 
 @GLUEI@
 
-Lemma gso_@ID@ : forall p j, cview p = (S j, None) ->
+Lemma gso_@ID@ : forall p j, cview p = (@CVSJ@, None) ->
   Cc p = cden [] [] j B0_@ID@.
 Proof.
-  intros p j E. destruct (@ENCMOD@.@NONE@ p j E) as (H1 & _).
+  intros p j E. destruct (@ENCMOD@.@NONE@ p @NNJ@ E) as (H1 & _).
   unfold Cc_@ID@, cden, B0_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   replace (1 * j + @OBSP@) with (@CNTP@) by lia.
@@ -597,15 +723,15 @@ Qed.
 Lemma lbl_@ID@ : forall q l h r, lift (q,(l ++ [S0],h,r)) = lift (q,(l,h,r)).
 Proof. intros. unfold lift; simpl. rewrite lift_side_app_blank. reflexivity. Qed.
 
-Lemma geo_@ID@ : forall p j, cview p = (S j, None) ->
+Lemma geo_@ID@ : forall p j, cview p = (@CVSJ@, None) ->
   lift (cden [] [] j B1_@ID@) = lift (Cc (Pos.succ p)).
 Proof.
-  intros p j E. destruct (@ENCMOD@.@NONE@ p j E) as (_ & H2).
+  intros p j E. destruct (@ENCMOD@.@NONE@ p @NNJ@ E) as (_ & H2).
   assert (HD : cden [] [] j B1_@ID@
              = (@ST0@, (@HDLEFT@, S0, @OVFAR@))).
   { unfold cden, B1_@ID@, sden, sflat;
       cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
-    replace (1 * j + 1) with (S j) by lia.
+    replace (1 * j + @B1B@) with @B1SJ@ by lia.
     replace (0 * j + 0) with 0 by lia.
     cbn [rep app]. first [ reflexivity
       | rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ]. }
@@ -646,7 +772,7 @@ Qed.
 
 Lemma viso_@ID@ : forall (l : list lstep) (q : St),
   srun_st tm true true l B0_@ID@ = Some q ->
-  forall p j, cview p = (S j, None) ->
+  forall p j, cview p = (@CVSJ@, None) ->
   exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
 Proof.
   intros l q Hst p j E.
@@ -679,6 +805,28 @@ def tclosure(tab, q0):
             if t is not None and t[2] not in S:
                 S.add(t[2]); work.append(t[2])
     return S
+
+
+def avoid_probe(tab, t0, maxT=200000):
+    """The AVOID route's empirical gate: StA's last visit is at some s0 < t0
+    and StA never fires at any index in [t0, maxT).  Returns dict(s0=..) or
+    None.  UNTRUSTED like everything here -- the kernel re-checks the window
+    by [vm_compute] and the laps by [srun_avoid]; this only proposes s0 and
+    fails fast on machines the route cannot take."""
+    cfg = (0, (), 0, ())
+    s0 = None
+    for t in range(maxT):
+        if cfg[0] == 0:
+            if t >= t0:
+                return None
+            s0 = t
+        try:
+            cfg = LC.wstep(tab, False, False, cfg)
+        except Halt_:
+            return None
+    if s0 is None or s0 >= t0:
+        return None
+    return dict(s0=s0)
 
 
 def absorb_search(tab, have, maxd=64):
@@ -791,7 +939,16 @@ def derive(spec, edge, tail, p0, enc, far=()):
             nest = NC.derive_nested(tab, ENCDATA, ENCS, ENC, enc, st0, tail,
                                     far, B0, B1)
         except NC.NestError as e:
-            raise DeriveError('no overflow chain (nested: %s)' % e)
+            # the OFFSET route: the inner count starts at 2^(j+1)+c rather
+            # than a power of two, and the branch reindexes at j = S j'.
+            try:
+                nest = NC.derive_offset(tab, ENCDATA, ENCS, ENC, enc, st0,
+                                        tail, far)
+            except NC.NestError:
+                raise DeriveError('no overflow chain (nested: %s)' % e)
+        if nest.get('route') == 'offset':
+            # every overflow-side piece lives at the reindexed sides
+            B0, B1 = nest['B0R'], nest['B1R']
         cho = nest['che']
         ro = LC.srun(tab, True, True, cho, nest['BE0'])
     else:
@@ -818,6 +975,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
     # inside the census tier, and inside the champion's 32.8M prefix.
     untargeted = all(t is None or t[2] != 0 for t in tab.values())
     vis, visi, qh, absd, sset = {}, {}, False, None, None
+    avoid = None
     missing = []
     chov = nest['chb'] if nest is not None else cho
     for q in range(4):
@@ -868,15 +1026,31 @@ def derive(spec, edge, tail, p0, enc, far=()):
             qh = True
         else:
             found = absorb_search(tab, sorted(set(vis) | set(visi) | set(visx)))
-            if found is None:
+            if found is not None:
+                absd, sset = found
+            elif missing == [0]:
+                # StA is TARGETED, so neither glue_qh nor an absorbing set can
+                # exclude it -- but it may be a genuine quasihalter whose
+                # targeting transition never fires after the boot.  The AVOID
+                # route (LapAvoid/LapGlueQuiet) proves that from the chains
+                # themselves; verified against boot below.
+                avoid = 'pending'
+            else:
                 raise DeriveError('no visit witness for state %s%s' % (
                     LAB[missing[0]],
                     '' if missing[0] or untargeted else ' (StA is targeted)'))
-            absd, sset = found
 
     boot = boot_probe(tab, st0, encf, tail, far, p0)
     if boot is None:
         raise DeriveError('no bootstrap to p0=%d' % p0)
+
+    if avoid is not None:
+        if nest is not None or islack or oslack:
+            raise DeriveError('avoid route: only flat exact boards are wired')
+        avoid = avoid_probe(tab, boot)
+        if avoid is None:
+            raise DeriveError(
+                'no visit witness for state A (StA is targeted)')
 
     # the overflow close: reached post vs wanted post, up to trailing blanks
     got = ro[0][1][4]
@@ -892,7 +1066,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 cz=((rz[1], rz[2]) if rz else None),
                 cp=((rp[1], rp[2]) if rp else None),
                 A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, visi=visi, visx=visx,
-                qh=qh, boot=boot,
+                qh=qh, boot=boot, avoid=avoid,
                 absd=absd, sset=sset, islack=islack, oslack=oslack,
                 nest=nest, ovpost=list(got), ovwant=list(want), val=why)
 
@@ -938,8 +1112,13 @@ def render(D):
     spec = D['spec']
     ID = mach_id(spec)
     d = ENCDATA[D['enc']]
+    N = D.get('nest')
+    offset = bool(N and N.get('route') == 'offset')
+    # the offset route reindexes the overflow branch at j = S j', so the
+    # outer successor's count is two up from the lemma's own index
+    sj = '(S (S j))' if offset else '(S j)'
     ovpost, ovwant = tuple(D['ovpost']), tuple(D['ovwant'])
-    body = 'rep %s (S j) ++ %s' % (clist(d['uD']), clist(ovpost))
+    body = 'rep %s %s ++ %s' % (clist(d['uD']), sj, clist(ovpost))
     pad = len(ovwant) - len(ovpost)
     if pad < 0:
         # The REACHED post is the longer one -- the lap stopped past the
@@ -950,10 +1129,10 @@ def render(D):
         n = -pad
         if ovpost[:len(ovwant)] != ovwant or any(ovpost[len(ovwant):]):
             raise DeriveError('overflow close %r vs %r' % (ovpost, ovwant))
-        body = ('(' * n + 'rep %s (S j) ++ %s' % (clist(d['uD']),
-                                                  clist(ovwant))
+        body = ('(' * n + 'rep %s %s ++ %s' % (clist(d['uD']), sj,
+                                               clist(ovwant))
                 + ''.join(') ++ [S0]' for _ in range(n)))
-        hcleft = 'rep %s (S j) ++ %s' % (clist(d['uD']), clist(ovwant))
+        hcleft = 'rep %s %s ++ %s' % (clist(d['uD']), sj, clist(ovwant))
         close = 'rewrite !lbl_%s. reflexivity.' % ID
     elif ovwant[:len(ovpost)] != ovpost or any(ovwant[len(ovpost):]):
         raise DeriveError('overflow close %r vs %r' % (ovpost, ovwant))
@@ -994,6 +1173,20 @@ def render(D):
             # vis_via_fill supplies the exponentially long middle
             pull = ('' if _lift_vis(D) else
                     '    apply (vis_csteps_of_lift tm Cc).\n')
+            if offset:
+                # the reindexed anchor: destruct the outer index; p = 1 gets
+                # the concrete witness
+                vis.append('  - (* %s: fires in the exit half of the overflow *)\n'
+                           '%s'
+                           '    apply (vis_via_ovf_lift tm Cc lapil_%s %s).\n'
+                           '    intros p1 j1 E1. destruct j1 as [|j1\'].\n'
+                           '    + rewrite (cview_none_shape p1 0 E1).\n'
+                           '      apply (vis_lift_of_csteps tm Cc). exact visz_%s_%s.\n'
+                           '    + exact (visx_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                           '                   p1 j1\' E1).'
+                           % (ST[q], pull, ID, ST[q], ST[q], ID, ID,
+                              cchain(D['visx'][q]), ST[q]))
+                continue
             vis.append('  - (* %s: fires in the exit half of the overflow *)\n'
                        '%s'
                        '    apply (vis_via_ovf_lift tm Cc lapil_%s %s).\n'
@@ -1036,13 +1229,34 @@ def render(D):
             # premise.
             pull = ('' if _lift_vis(D) else
                     '    apply (vis_csteps_of_lift tm Cc).\n')
+            if offset:
+                vis.append('  - (* %s *)\n'
+                           '%s'
+                           '    apply (vis_via_ovf_lift tm Cc Hi %s).\n'
+                           '    intros p1 j1 E1. destruct j1 as [|j1\'].\n'
+                           '    + rewrite (cview_none_shape p1 0 E1).\n'
+                           '      apply (vis_lift_of_csteps tm Cc). exact visz_%s_%s.\n'
+                           '    + apply (vis_lift_of_csteps tm Cc).\n'
+                           '      apply (viso_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                           '                   p1 j1\' E1).'
+                           % (ST[q], pull, ST[q], ST[q], ID, ID,
+                              cchain(pre), ST[q]))
+            else:
+                vis.append('  - (* %s *)\n'
+                           '%s'
+                           '    apply (vis_via_ovf_lift tm Cc Hi %s).\n'
+                           '    intros p1 j1 E1. apply (vis_lift_of_csteps tm Cc).\n'
+                           '    apply (viso_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                           '                   p1 j1 E1).'
+                           % (ST[q], pull, ST[q], ID, cchain(pre), ST[q]))
+        elif offset:
             vis.append('  - (* %s *)\n'
-                       '%s'
-                       '    apply (vis_via_ovf_lift tm Cc Hi %s).\n'
-                       '    intros p1 j1 E1. apply (vis_lift_of_csteps tm Cc).\n'
-                       '    apply (viso_%s %s %s ltac:(vm_compute; reflexivity)\n'
-                       '                   p1 j1 E1).'
-                       % (ST[q], pull, ST[q], ID, cchain(pre), ST[q]))
+                       '    apply (vis_via_ovf tm Cc Hi %s).\n'
+                       '    intros p1 j1 E1. destruct j1 as [|j1\'].\n'
+                       '    + rewrite (cview_none_shape p1 0 E1). exact visz_%s_%s.\n'
+                       '    + exact (viso_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                       '                   p1 j1\' E1).'
+                       % (ST[q], ST[q], ST[q], ID, ID, cchain(pre), ST[q]))
         else:
             vis.append('  - (* %s *)\n'
                        '    apply (vis_via_ovf tm Cc Hi %s), viso_%s\n'
@@ -1061,15 +1275,18 @@ def render(D):
         farb, farnest = clist(igot), ifarnest
     else:
         farb = farnest = clist(D['far'])
-    N = D.get('nest')
     reps = {
-        '@OVFDEFS@': (NC.nest_defs(D, ENCDATA, clist, cconf, cchain, ST, ID)
+        '@OVFDEFS@': (((NC.nest_defs_offset if offset else NC.nest_defs)
+                       (D, ENCDATA, clist, cconf, cchain, ST, ID))
                       if N else FLAT_OVF_DEFS),
         '@OVFCASE@': (NC.NEST_OVFCASE if N else FLAT_OVF_CASE),
-        '@NESTGLUE@': (NC.nest_glue(D, ENCDATA, clist, cconf, cchain, ST, ID)
+        '@NESTGLUE@': (((NC.nest_glue_offset if offset else NC.nest_glue)
+                        (D, ENCDATA, clist, cconf, cchain, ST, ID))
                        + '\n\n' if N else ''),
         '@NESTIMPORT@': '',
-        '@PREF@': (NEST_PREFIX if N else PREFIX), '@ID@': ID, '@SPEC@': spec,
+        '@PREF@': (NEST_PREFIX if N
+                   else AVOID_PREFIX if D.get('avoid') else PREFIX),
+        '@ID@': ID, '@SPEC@': spec,
         '@GLUELIFT@': ' LapCertGlueLift' if islack else '',
         '@FARB@': farb, '@FARNEST@': farnest,
         '@VISIL@': VISI_LEMMA if D.get('visi') else '',
@@ -1093,6 +1310,10 @@ def render(D):
         # the Coq FIXPOINT name; for the generated alphabets it is Ap_<tag>,
         # not the ENCDATA key
         '@ENC@': d.get('fn', D['enc']),
+        '@CVSJ@': 'S (S j)' if offset else 'S j',
+        '@NNJ@': '(S j)' if offset else 'j',
+        '@B1B@': '2' if offset else '1',
+        '@B1SJ@': '(S (S j))' if offset else '(S j)',
         '@ENCMOD@': d['mod'], '@SOME@': d['some'], '@NONE@': d['none'],
         '@ST0@': ST[D['st0']], '@TAIL@': clist(D['tail']),
         '@FAR@': clist(D['far']),
@@ -1101,18 +1322,31 @@ def render(D):
         '@CHO@': cchain(D['cho']),
         '@CAO@': str(D['co'][0]), '@CBO@': str(D['co'][1]),
         '@US@': clist(d['uS']), '@UD@': clist(d['uD']),
-        '@OBSP@': str(d['obS'] - 1 if d['obS'] >= 1 else 0),
-        '@CNTP@': 'j',
+        '@OBSP@': ('1' if offset
+                   else str(d['obS'] - 1 if d['obS'] >= 1 else 0)),
+        '@CNTP@': '(S j)' if offset else 'j',
         '@HDLEFT@': body, '@HCLEFT@': hcleft, '@OVFAR@': ovfar,
         '@CLOSE@': close, '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
         '@VISHYP@': ('forall p q, In q %s ->' % slist(D['sset'])
                      if D['absd'] is not None
-                     else 'forall p q, q <> StA ->' if D['qh']
+                     else 'forall p q, q <> StA ->'
+                       if D['qh'] or D.get('avoid')
                      else 'forall p q,'),
         '@VISINTRO@': ('intros p q Hq'
-                       if D['qh'] or D['absd'] is not None else 'intros p q'),
+                       if D['qh'] or D['absd'] is not None or D.get('avoid')
+                       else 'intros p q'),
         '@VISA@': '',
+        '@AVIMP@': ' LapGlueQuiet' if D.get('avoid') else '',
+        '@AVIMP2@': ' LapAvoid' if D.get('avoid') else '',
+        '@AVDEFS@': (AVOID_DEFS_ONE if D['mode'] == 'one'
+                     else AVOID_DEFS_SPLIT) if D.get('avoid') else '',
+        '@AVLAPI@': (AVOID_LAPI_ONE if D['mode'] == 'one'
+                     else AVOID_LAPI_SPLIT) if D.get('avoid') else '',
+        '@S0@': str(D['avoid']['s0']) if D.get('avoid') else '',
+        '@DD@': (str(D['boot'] - D['avoid']['s0'] - 1)
+                 if D.get('avoid') else ''),
         '@FINAL@': (ABS_CLOSE if D['absd'] is not None
+                    else AVOID_CLOSE if D.get('avoid')
                     else QH_CLOSE if D['qh']
                     else NQH_CLOSE_LIFT if lift_vis else NQH_CLOSE)
                     .replace('@ID@', ID).replace('@P0@', str(D['p0']))
@@ -1146,7 +1380,8 @@ def render(D):
         '@VAL@': D['val'], '@VISITS@': '\n'.join(vis),
     }
     if N:
-        reps.update(NC.nest_reps(D, ENCDATA, clist, cconf, cchain, ST, ID))
+        reps.update((NC.nest_reps_offset if offset else NC.nest_reps)
+                    (D, ENCDATA, clist, cconf, cchain, ST, ID))
     out = HEADER
     for _ in range(3):          # the INTERIOR/GLUEI blocks themselves hold holes
         for k, v in reps.items():
@@ -1210,7 +1445,8 @@ def process(spec, do_emit, force=False):
             if not do_emit:
                 return dict(spec=spec, ok=True, enc=tag,
                             ni=_cost_str(D), no='%d*j+%d' % D['co'])
-            pref = NEST_PREFIX if D.get('nest') else PREFIX
+            pref = (NEST_PREFIX if D.get('nest')
+                    else AVOID_PREFIX if D.get('avoid') else PREFIX)
             path = os.path.join(OUTDIR, '%s_%s.v' % (pref, mach_id(spec)))
             if os.path.exists(path) and not force:
                 return dict(spec=spec, ok=True, enc=tag, file=path,

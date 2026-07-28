@@ -1,17 +1,21 @@
-# Residue prompt — THE TASK is half done; the other half is a MEASUREMENT
+# Residue prompt — the nested front is spent down to its measured blockers
 
-_Rewritten 2026-07-27 at the end of the wave-18 RESIDUE track (branch
-`claude/coq-bbb4-residude-oy73r4`), which took THE TASK — the exponential
-overflow, the `AFFINE`/`EXP2` bucket, 500 of the 883 — and **boarded 258 of
-them**.  With the concurrent HOLDOUTS track merged (wave4 #15 and fractal
-#3/#5; tower #20 is the last one still open), `D_remaining` is **622** and
-4,534 of the frozen 5,156 are settled (87.9%).  Full assessment: `docs/WAVE18_FINDINGS.md` — §2 is why it took
-three waves, §4b is the measurement that names the next 130 machines, §5 is
-the one do-not-retry, §6 is the lesson._
+_Rewritten 2026-07-28 at the end of the wave-23 RESIDUE track (branch
+`claude/residue-list-refinement-cxzdax`), which boarded the whole
+15-machine "no visit witness (`StA`)" bucket by the state-AVOIDANCE route:
+the kernel recomputes from the SAME lap chains that no window step is ever
+in `StA` (`Checkers/LapAvoid.v`, axiom-free), and
+`Counters/LapGlueQuiet.v` turns that plus a checked bootstrap window into
+the R_QH triple with the exact last-visit bound.  `D_remaining` is **496**
+and 4,660 of the frozen 5,156 are settled (90.4%).  Wave-22 before it
+landed 110 boards (the "no shift chain" 8 and 102 of "no inner family at
+`pow2 j`" via the OFFSET-family route).  Full assessments:
+`docs/WAVE23_FINDINGS.md`, `docs/WAVE22_FINDINGS.md`; the wave-18 story is
+`docs/WAVE18_FINDINGS.md`._
 
 _**Scope: the RESIDUE, which is now everything.**  The (4,2) HOLDOUT list was
 closed on 2026-07-28 when tower #20 was boarded (`NEXT_SESSION.md` §2l), so
-these 621 rows are the entire remaining problem.  `docs/RESIDUE_MAP.md` maps
+these 496 rows are the entire remaining problem.  `docs/RESIDUE_MAP.md` maps
 them by shape and blocker._
 
 **Before pasting, check:** substitute the branch the session should develop
@@ -24,6 +28,18 @@ Continue the (4,2) residue reduction in carrino/Coq-BBB4, on a new branch off
 main.
 
 READ FIRST, in this order:
+  docs/CASCADE_EXIT.md      -- THE TASK's design brief, all of it.  Section
+                               4b is the traced per-level mechanics; section
+                               4c is the GATE STATUS: the A->B level
+                               transition already DERIVES as a single-index
+                               chain (exact, tail opaque -- the chain is
+                               printed there), the B->A and base framings
+                               are OPEN, and the first build step is a
+                               `cascade endpoints` extractor INSIDE
+                               nestcert.py (ad-hoc probes measured
+                               inconsistent blank-head numbering; do not
+                               repeat that).  Only after B->A gates: the
+                               composition lemma, then the template.
   docs/WAVE18_FINDINGS.md   -- all of it; it is short.  Section 4b is the
                                wave's most useful result and it is a NEGATIVE:
                                the two remaining nested-lap chain buckets are
@@ -56,99 +72,76 @@ LapCertGlue, LapGlueAbs, NestedLap and NestedLapLift are axiom-FREE or
 funext-only -- keep them that way).  Everything under tools/ is UNTRUSTED;
 the kernel re-checks every board.
 
-STATE: 4,535 of the frozen 5,156 settled (87.9%); D_remaining = 621.
-THE HOLDOUT LIST IS CLOSED -- tower #20 was boarded 2026-07-28.  Everything
-left is RESIDUE and all of it is yours.  docs/RESIDUE_MAP.md +
-tools/closeout/residue_map.tsv give every remaining machine's measured lap
-shape and the exact blocker.
+STATE: 4,660 of the frozen 5,156 settled (90.4%); D_remaining = 496.
+THE HOLDOUT LIST IS CLOSED.  Everything left is RESIDUE and all of it is
+yours.  docs/RESIDUE_MAP.md + tools/closeout/residue_map.tsv give every
+remaining machine's measured lap shape and the exact blocker.
 
-Failure profile, measured at D_remaining = 625 (i.e. before the 3 holdout
-boards merged in; they are not residue rows and change none of it) by running
-  python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt --json OUT
-(3 shards, ~20 min; the run also tells you the nested route's verdict per
-machine).  Cross-referenced against ovfshape.py over the same list:
+Failure profile at D_remaining = 496 (residue_map.tsv, wave-23):
 
-  185  no inner family at pow2 j   -- 162 AFFINE/EXP2, 23 AFFINE/AFFINE
   211  no overflow phase           -- ALL of them the no-anchor bucket
   105  no interior chain           -- QUAD 41, HIGHER 13, PARITY-AFFINE 13,
                                       EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8
-   65  no exit chain               -- MEASURED EXPONENTIAL, and the two-count
-                                      route did NOT reach these
-   28  no anchor
-   22  no boot chain               -- MEASURED EXPONENTIAL on 14 of 16
-   15  no visit witness (StA)
-    8  no shift chain              -- has a second family, no chain into it
-    5  no second exit chain
+   65  no exit chain               -- MEASURED EXPONENTIAL; identification,
+                                      not chains (re-measured wave-22: the
+                                      N-count route buys 0 of these)
+   60  no inner family at pow2 j   -- what SURVIVED the offset/split/refill
+                                      routes; 32 have no family under any
+                                      route, the rest fail an offset chain
+   24  no anchor
+   20  no boot chain               -- same population as "no exit", other side
+    5  no second exit chain        -- the SCycR-entry-offset checker gap,
+                                      measured precisely (WAVE22 section 2b)
     4  no inner interior chain
-ovfshape over the whole 625-machine list, for shape rather than blocker:
-  242 AFFINE/EXP2, 239 no-anchor, 52 AFFINE/AFFINE, 41 QUAD, 13 PARITY-AFFINE,
-  13 HIGHER, 10 EXP3, 9 AFFINE/HIGHER, 6 EXP4.
+(the 15 "no visit witness (StA)" rows were boarded in wave-23 -- the AVOID
+route, LAPQ_* -- and are gone from the map)
+ovfshape over the 496 for shape rather than blocker:
+  235 no-anchor, 132 AFFINE/EXP2, 37 AFFINE/AFFINE, 41 QUAD,
+  13 PARITY-AFFINE, 13 HIGHER, 10 EXP3, 9 AFFINE/HIGHER, 6 EXP4.
 Per-machine cost is a vm_compute:
   python3 tools/counters/emit_lapcert.py --list FILE --emit   (25 alphabets)
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded, in minutes.
 
-THE TASK -- FINISH THE NESTED LAP, AND IT IS AN IDENTIFICATION PROBLEM.
+THE TASK (re-ranked 2026-07-28 after the wave-23 CASCADE reconnaissance --
+  John's steer: the biggest category is counters, and the exp is the
+  obstacle.  docs/CASCADE_EXIT.md is the design brief; reproduce with
+  tools/counters/cascade_probe.py):
 
-  258 of the 500 AFFINE/EXP2 machines are boarded -- 225 with ONE inner count
-  and 33 with TWO (the sync-bouncer shift; Counters/NestedLap2.v).  Of the
-  242 that are not:
+  (0) THE CASCADE -- 72 of the 87 "no exit chain"/"no boot chain" machines,
+      measured.  One overflow phase is: main count 2^j..2^(j+1)-1, then for
+      each level l = j-1 down to 2 TWO counts 2^l..2^(l+1)-1 with tails
+      growing by one unit per level, then a closing sweep.  Steps Theta(2^j)
+      (WAVE18 4b's exponential, confirmed) but the COUNT OF COUNTS is
+      AFFINE in j -- which is why MAXCOUNTS=4 measured 0, and why
+      families() never saw it (it searches octaves >= 0 only, and MAXTAIL=3
+      caps tails at 3 where the cascade needs ~2j).  The build: a
+      NestedLapCascade level induction whose per-level pieces are
+      inner_to_fill_lift at v0 = pow2 l (ALREADY arbitrary-v0) plus
+      inter-count chains uniform in l (the tails are rep unit l ++ base --
+      an sside).  Emitter: detect via cascade_probe.segments, derive the
+      level chains at two consecutive levels and check they are the SAME
+      chain, base case + closing sweep concrete, full wave-18 differential
+      validation.  Also point the probe at the 60 "no inner family"
+      survivors and the EXP3/EXP4/HIGHER interiors (a deeper cascade is
+      exactly what a Theta(3^j) lap smells of).
 
-     65  "no exit chain"  -- the exit is EXPONENTIAL (0 AFFINE of 24 sampled)
-                             AND the second-count search does not reach them
-    134  "no inner family at pow2 j"
-     22  "no boot chain"  -- the boot is EXPONENTIAL (14 EXP of 16 with a key)
-      8  "no shift chain" / 5 "no second exit chain" -- these DO have the
-                             second family; only a chain is missing, so they
-                             are the cheapest 13 on the board
+  (0b) The 60 "no inner family" survivors: 32 have no decodable family under
+      any route (alphabet work -- alphabet_infer.py -- or ASK JOHN with a
+      CLASS tape dump); the rest fail one of the offset chains and nothing
+      measured says they are close.  Run cascade_probe over them FIRST --
+      the negative-octave/deep-tail window sees families families() cannot.
 
-  An sside carries a*j + b, so an exponential half is UNREPRESENTABLE as one
-  chain.  Do NOT widen derive_chain for these; that is now measured twice over
-  (WAVE16 section 5, and this).  What is wrong is the INNER FAMILY'S
-  IDENTIFICATION -- and WAVE18 section 4c already found what it is:
-
-    SPLIT ONE OVERFLOW PHASE AT THE FIRST INNER ALL-ONES FILL AND SEARCH THE
-    SECOND HALF ON ITS OWN.  11 OF 16 SAMPLED CARRY A SECOND CONSECUTIVE
-    2^(K-1)..2^K-1 FAMILY THERE -- same state, same alphabet, SHIFTED TAIL
-    (e.g. Jp@B tail=[S1;S1;S0], then Jp@B tail=[S0;S0;S1]).
-
-  That is John's reading of mxdys' sync bouncer counter, verbatim: "count
-  8->15, shift, count 8->15 again".  The overflow phase is
-
-      boot -> count -> SHIFT -> count -> exit
-
-  five affine chains and TWO exponential inner runs, not three and one.
-
-  THAT IS BUILT (Counters/NestedLap2.boot_via_fill, 12 lines, and it boarded
-  33).  IT NEEDED NO NEW COMPOSITION THEOREM.  NestedLapLift.nested_overflow_lift's Hboot is an
-  ARBITRARY csteps run into Cin v0 -- it does not have to be one chain.  So
-  instantiate the theorem at the SECOND inner family and build its boot as
-  boot1 ++ inner_to_fill_lift(Cin1) ++ mid.  The emitter work is one more
-  family search and one more chain; nestcert.py already returns the phase's
-  `mid` list, so the split costs nothing to reproduce.  Worth ~76 of the 111
-  at the sampled rate, and the same construction should absorb part of the 22
-  exponential boots (a count BEFORE the identified one is the mirror image of
-  a count after it).
-
-  If a machine has NEITHER (5 of the 16 had nothing after the fill): dump the
-  phase in absolute coordinates (tools/counters/spacetime.py) and ASK JOHN
-  with the tape.  Hand-inspection is 22-for-22 across waves 8-14.  Cluster
-  first (wall_survey.py / alphabet_infer.py) so one reading covers many.
-
-  The 134 "no inner family" are the same population seen from the other side,
-  and Stage A already sized them: 21% of inner counters run at another octave
-  or offset.  Both the search and the glue (epow2_, gbo_) hard-wire
-  v0 = pow2 j.
-
-  DO NOT RETRY (measured in wave-18): a wider inner-key tail.  maxtail = 6
-  FINDS families -- 13 of 40 machines that report "no inner family" at 3 --
-  and boards ZERO of them; the 33 it unlocks all fail on the boot or exit
-  chain.  Key counts are 0-4, so maxkeys was never binding either.
-  tools/counters/nestcert.py MAXTAIL records this.
+  DO NOT RETRY (measured wave-18/22): a wider inner-key tail (MAXTAIL);
+  octave-only families (pow2 (j+oct), 0 of 162); the N-count route on the
+  65 "no exit chain" / 20 "no boot chain" (0 of 87 -- identification, not
+  chains); more search budget on the 5 "no second exit chain" (a checker
+  gap: SCycR has no entry offset -- boarding them means extending
+  LapDecider.v with soundness + corruption tests, or hand boards).
 
 THEN, in ranked order (all independent of the above):
 
-  (1) 105 "no interior chain" -- now the second-largest bucket and the most
+  (1) 105 "no interior chain" -- the second-largest bucket and the most
       shape-diverse: QUAD 41, AFFINE/AFFINE 14, HIGHER 13, PARITY-AFFINE 13,
       EXP3 10, EXP2 8, EXP4 6.  The 41 QUAD/QUAD are the largest population in
       the whole residue that has never had a design pass -- a quadratic
@@ -158,14 +151,13 @@ THEN, in ranked order (all independent of the above):
       wave-14 measured only ~3 of the 13 derive both branches naively, so do
       not oversize it.
 
-  (2) The 15 no-visit-witness machines.  WAVE16 section 6b is still the
-      analysis and it is still right: these are quasi-halters whose quiet
-      state is StA (last visit at step 4-11, simulated), they miss glue_qh
-      (StA IS targeted) and glue_qh_abs (closed_b is a DIGRAPH fact, so any
-      set holding StD holds StA), and what is actually true is symbol-aware --
-      StD never READS S1 after the boot.  That is a real build, the bound is
-      tiny (QHBound 12 covers all 15), and vis_via_int_lift is NOT it (built,
-      fires on none).
+  [(2) the 15 no-visit-witness machines: DONE, wave-23.  The build was NOT
+      the symbol-aware invariant WAVE16 6b predicted -- the lap chains
+      already model the forward behavior exactly, so "StA never fires after
+      the boot" is recomputed from them by vm_compute (Checkers/LapAvoid.v +
+      Counters/LapGlueQuiet.v, emitter route `avoid`, boards LAPQ_*).  If a
+      future bucket has quiet-StB/C/D lap families, the same route takes
+      them with emitter work only.]
 
   (3) The 239 no-anchor machines.  alphabet_infer.py + gen_alphabet.py INFER a
       counter's word family from its own tape as a triple (A,B,C) and generate
