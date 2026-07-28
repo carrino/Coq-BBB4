@@ -1578,6 +1578,7 @@ theories/Counters/LapGlueAbs.v
 theories/Counters/NestedLap.v
 theories/Counters/NestedLapLift.v
 theories/Counters/NestedLap2.v
+theories/Counters/NestedLapCascade.v
 theories/Tests/NestedLapRegression.v
 theories/Tests/LapAvoid_Corruption.v
 theories/Machines/Counters/LAPC_0RB0LC_1LA1RB_0RC1LD_1RC0LD.v
