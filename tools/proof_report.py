@@ -34,7 +34,7 @@ def main():
         sys.exit('proof_report: MISMATCH -- %s says %s residue machines, '
                  'but %s lists %d.  Re-run `make closeout`.'
                  % (THEOREM_V, m.group(1), UNPROVEN, len(residue)))
-    if str(CHAMPION_SCORE) not in txt:
+    if '{:,}'.format(CHAMPION_SCORE) not in txt:
         sys.exit('proof_report: champion score %d not found in %s'
                  % (CHAMPION_SCORE, THEOREM_V))
 

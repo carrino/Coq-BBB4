@@ -25,8 +25,12 @@ From BBB4.Census Require Import TNF_QH Deferred_Defs Deferred_Data Run.
 From BBB4.Closeout Require Import CloseoutKit Closeout CloseoutFinal.
 Import ListNotations.
 
-(** The conjectured BBB(4) value: the champion's score. *)
-Definition champion_score : nat := 32779478.
+(** The conjectured BBB(4) value: the champion's score,
+    32,779,478.  Written digit by digit (Horner form)
+    because a bare literal this large is abstracted to
+    [Nat.of_num_uint], which [lia] cannot see through. *)
+Definition champion_score : nat :=
+  (((((((3)*10 + 2)*10 + 7)*10 + 7)*10 + 9)*10 + 4)*10 + 7)*10 + 8.
 
 Theorem bbb4_target : forall tm,
   QHBound champion_score tm \/ NeverQuasiHaltsSt tm

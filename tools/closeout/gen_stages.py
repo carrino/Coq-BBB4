@@ -351,8 +351,19 @@ def main():
     L.append('From BBB4.Closeout Require Import CloseoutKit Closeout CloseoutFinal.')
     L.append('Import ListNotations.')
     L.append('')
-    L.append('(** The conjectured BBB(4) value: the champion\'s score. *)')
-    L.append('Definition champion_score : nat := %d.' % CHAMPION_SCORE)
+    # Horner digit form: a bare 32779478 nat literal is abstracted to
+    # [Nat.of_num_uint] (the large-number guard), which [lia] cannot see
+    # through, so the qhbound_mono side goals below would fail.
+    horner = str(CHAMPION_SCORE)[0]
+    for d in str(CHAMPION_SCORE)[1:]:
+        horner = '(%s)*10 + %s' % (horner, d)
+    L.append('(** The conjectured BBB(4) value: the champion\'s score,')
+    L.append('    %s.  Written digit by digit (Horner form)'
+             % '{:,}'.format(CHAMPION_SCORE))
+    L.append('    because a bare literal this large is abstracted to')
+    L.append('    [Nat.of_num_uint], which [lia] cannot see through. *)')
+    L.append('Definition champion_score : nat :=')
+    L.append('  %s.' % horner)
     L.append('')
     L.append('Theorem bbb4_target : forall tm,')
     L.append('  QHBound champion_score tm \\/ NeverQuasiHaltsSt tm')
