@@ -2,22 +2,23 @@
 
 _Branch `claude/skipped-machines-residue-lyfjw6`, off main at `D_remaining`
 621 (the wave-21 merge).  This wave took the residue prompt's ranked leads in
-order and landed **30 boards**: the whole "no shift chain" bucket (8) and 22
-of "no inner family at `pow2 j`".  `D_remaining` **621 → 591** (4,565 of the
-frozen 5,156 settled, **88.5%**).  All 30 are `NLAP_*` through the one
-checker; `Print Assumptions` = `functional_extensionality_dep` only on every
-one (checked individually).  `census_cache --check` MATCH at every commit;
+order and landed **110 boards**: the whole "no shift chain" bucket (8) and
+102 of "no inner family at `pow2 j`" (22 + the 80-machine Mp-outer cluster).
+`D_remaining` **621 → 511** — the project's first crossing of **90% settled**
+(4,645 of the frozen 5,156).  All 110 are `NLAP_*` through the one checker;
+`Print Assumptions` = `functional_extensionality_dep` only on every one
+(checked individually).  `census_cache --check` MATCH at every commit;
 `theories/Census/` untouched; `audit.py` OK (exact partition)._
 
 ## 1. Scoreboard
 
 | | |
 |---|---:|
-| boards | **30** (8 multi-count + 22 offset-family) |
-| `D_remaining` | 621 → **591** |
-| frozen rows settled | 4,535 → **4,565 / 5,156 (88.5%)** |
-| new Coq | **none** — both fronts close through `NestedLapLift` / `NestedLap2` unchanged |
-| board axiom footprint | `functional_extensionality_dep` only, on all 30 |
+| boards | **110** (8 multi-count + 22 offset-family + 80 offset/split/refill) |
+| `D_remaining` | 621 → **511** |
+| frozen rows settled | 4,535 → **4,645 / 5,156 (90.1%)** |
+| new Coq | **none** — every front closes through `NestedLapLift` / `NestedLap2` / `WTape.rep_rot` unchanged |
+| board axiom footprint | `functional_extensionality_dep` only, on all 110 |
 | census | MATCH throughout |
 
 Both fronts are pure EMITTER work, and that is the wave's headline: the
@@ -141,19 +142,37 @@ to say they are close.
 * The "24 `Ip` top-bit riders" segmentation was an ANCHOR ARTIFACT: re-run
   after the 22 boards, the residual 140 have NO such runs.  A partial-span
   lemma is NOT the next build.
-* **The residual 74-machine `Mp`-outer cluster (`run 66..127`, inner
-  `Alph_01_11_011`) is measured one level further**: the reindexed BOOT
-  CHAIN DERIVES (obS=1 outer handled, `c = 2`), and the inner interior lap
-  is perfectly AFFINE (`4i+2`, measured over the whole octave) — but its
-  chain does not derive at the plain `AI0/AI1` endpoints, and the exit
-  fails too.  The reason is a UNIT-BOUNDARY ALIGNMENT: the leftward carry
-  sweep's period sits one cell INTO the `[1;1]` rep (`11^i 01 =
-  1 (11)^(i-1) 101`), so `SCycL` only fires from the phase-shifted form
-  with count `i-1` — the interior-lap mirror of wave-13's `j = 0` SPLIT
-  (`Z`-chain at `i = 0`, peeled `P`-chains at `i = S i'`), which the OUTER
-  interior branch already has (`INT_SPLIT`) and the inner-family glue does
-  not.  That port (split-mode `lapin@S@` + peeled `gsn/gen`) is the next
-  build, worth up to 74 machines.
+* ~~The residual `Mp`-outer cluster needs the inner-lap split~~ — **BUILT
+  the same wave, section 3c below, and it boarded 80.**
+
+### 3c. The Mp-outer cluster: the split inner lap, and two frame bridges (80 boards)
+
+The residual "no inner family" cluster (`Mp`-outer, inner `Alph_01_11_011`,
+`run 66..127`) was measured to one blocker and then built, all in-wave:
+
+* **the inner interior lap is affine (`4i+2`) but its chain only derives in
+  SPLIT form**: the carry sweep's period sits one cell INTO the `[1;1]`
+  unit, so `SCycL` fires only from the phase-shifted sconf — an exact `Z`
+  chain at `i = 0` plus peeled `P` chains at `i = S i'` (count `i-1`, one
+  unit in the prefix), the interior-lap mirror of wave-13's `j = 0` split
+  (`nestcert._inner_lap_split`, templates `FAM_{DEFS,GLUE}_LAP_SPLIT`);
+* **the boot lands in a SHIFT1 frame** (unit rotated one cell against the
+  block frame, `pre = preb[:-1]`, `u = x :: uD[:-1]`) — bridged in the glue
+  by ONE pinned application of a board-local `rrc_` lemma
+  (`rep (x::u) k ++ x :: Y = x :: rep (u++[x]) k ++ Y`, two lines over
+  `WTape.rep_rot`);
+* **the exit chain only derives from the REPHASED fill** (one unit cell
+  rotated out front: `uS^(j+2) ++ soS = a :: (b,a)^(j+1) ++ b :: soS`) —
+  same `rrc_` bridge, other direction (`nestcert._refill`,
+  `OFF_GXI_RF`).
+
+The outer alphabet is `Mp` (`obS = 1`), so the reindexed boot source is the
+PEELED form — the same `gso_`/`geo_` holes as `obS = 0` serve it unchanged.
+80 of the 140 sampled derive, all fully validated (7 overflow phases each,
+every inner lap replayed, plus the concrete `j = 0` lap), and all 80 board.
+
+The 60 that remain: 32 still "no inner family" under any route, and the
+others fail one of the offset chains; nothing measured says they are close.
 
 ## 4. Template hygiene
 

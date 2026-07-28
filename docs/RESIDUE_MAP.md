@@ -4,16 +4,19 @@ _The frontier of this project, published as a target list rather than as an
 apology.  Companion data: `tools/closeout/residue_map.tsv`, one row per
 machine, regenerated with the commands at the bottom._
 
-_**591 rows as of this commit.**  The count moves every wave, so treat the TSV
-as the authority and this prose as a snapshot.  With tower #20 boarded on
-2026-07-28 the (4,2) HOLDOUT list is closed, so all 591 are residue and this
-is the entire remaining problem.  (The wave-22 residue track boarded 30:
-the 8-machine "no shift chain" / "no second exit chain" bucket by chaining
-the sync-bouncer construction through THREE and FOUR counts per overflow
-(`nestcert.MAXCOUNTS`), and 22 of the "no inner family at pow2 j" bucket by
-the OFFSET-family route -- an inner count starting at `2^(j+1)+2` rather
-than a power of two, with the whole overflow branch reindexed at `j = S j'`
-and the `j = 0` case one concrete run (`nestcert.derive_offset`).)_
+_**511 rows as of this commit** -- the project's first crossing of 90%
+settled.  The count moves every wave, so treat the TSV as the authority and
+this prose as a snapshot.  With tower #20 boarded on 2026-07-28 the (4,2)
+HOLDOUT list is closed, so all 511 are residue and this is the entire
+remaining problem.  (The wave-22 residue track boarded 110: the 8-machine
+"no shift chain" bucket by chaining the sync-bouncer construction through
+THREE and FOUR counts per overflow (`nestcert.MAXCOUNTS`), and 102 of the
+"no inner family at pow2 j" bucket by the OFFSET-family route -- an inner
+count starting at `2^(j+1)+2` rather than a power of two, the whole
+overflow branch reindexed at `j = S j'`, the `j = 0` case one concrete run,
+plus for the Mp-outer cluster a SPLIT inner lap (`i = 0` window + peeled
+`i - 1` chains) and a shift-by-one landing/refill bridge through
+`WTape.rep_rot` (`nestcert.derive_offset`).)_
 
 ## What this list is
 
@@ -68,7 +71,7 @@ boarded set.
 | interior / overflow | n | what stops us |
 |---|---:|---|
 | `-`/`no-anchor` | 235 | 211 no overflow phase, 24 no anchor |
-| `AFFINE`/`EXP2` | 212 | 112 no inner family at `pow2 j`, 65 no exit chain, 20 no boot chain, 8 no interior chain, 5 no second exit chain, 2 no inner interior chain |
+| `AFFINE`/`EXP2` | 132 | 65 no exit chain, 32 no inner family at `pow2 j`, 20 no boot chain, 8 no interior chain, 5 no second exit chain, 2 no inner interior chain |
 | `AFFINE`/`AFFINE` | 52 | 23 no inner family, 15 no visit witness (`StA`), 14 no interior chain |
 | `QUAD`/`QUAD` | 41 | 41 no interior chain |
 | `PARITY-AFFINE` | 13 | 13 no interior chain |
@@ -124,4 +127,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-shrank from 883 to 591.
+shrank from 883 to 511.

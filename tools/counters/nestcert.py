@@ -628,9 +628,10 @@ def _fam_reps(ENCDATA, N, clist, cconf, cchain, ST, suffix, ordinal,
              + ''.join(') ++ [S0]' for _ in range(pad)))
     bfare = ('(' * farpad + clist(fi)
              + ''.join(') ++ [S0]' for _ in range(farpad)))
-    ifarb = clist(tuple(fi) + (0,) * N['ifar'])
-    ifarnest = ('(' * N['ifar'] + clist(fi)
-                + ''.join(') ++ [S0]' for _ in range(N['ifar'])))
+    nif = N.get('ifar', 0)
+    ifarb = clist(tuple(fi) + (0,) * nif)
+    ifarnest = ('(' * nif + clist(fi)
+                + ''.join(') ++ [S0]' for _ in range(nif)))
     return {
         '@S@': suffix, '@ORD@': ordinal,
         '@ENCI@': din.get('fn', N['inner']),
@@ -638,13 +639,15 @@ def _fam_reps(ENCDATA, N, clist, cconf, cchain, ST, suffix, ordinal,
         '@STI@': ST[N['st_in']], '@TAILI@': clist(ti), '@FARI@': clist(fi),
         '@USI@': clist(din['uS']), '@UDI@': clist(din['uD']),
         '@SDI@': clist(din['sD']), '@SODI@': clist(din['soD']),
-        '@AI0@': cconf(N['AI0']), '@AI1@': cconf(N['AI1']),
-        '@CHN@': cchain(N['chn']),
-        '@CAN@': str(N['cn'][0]), '@CBN@': str(N['cn'][1]),
+        '@AI0@': cconf(N['AI0']) if 'AI0' in N else '',
+        '@AI1@': cconf(N['AI1']) if 'AI1' in N else '',
+        '@CHN@': cchain(N['chn']) if 'chn' in N else '',
+        '@CAN@': str(N['cn'][0]) if 'cn' in N else '',
+        '@CBN@': str(N['cn'][1]) if 'cn' in N else '',
         '@BPAD@': str(pad), '@BFAR@': str(farpad),
         '@BLEFT@': bleft, '@BFARE@': bfare, '@BWANT@': clist(bwant),
         '@LANDC@': landc, '@FILLC@': fillc,
-        '@IFARCHG@': ('' if N['ifar'] == 0 else
+        '@IFARCHG@': ('' if nif == 0 else
                       '  change (%s) with (%s).\n  rewrite !lift_app_blank.\n'
                       % (ifarb, ifarnest)),
     }
@@ -1029,8 +1032,8 @@ def derive_offset(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=6):
     """The offset route: boot -> one offset count -> exit, reindexed at
     j = S j'.  Raises [NestError] if no offset family works."""
     dout = ENCDATA[enc]
-    if dout['obS'] != 0:
-        raise NestError('offset: outer obS != 0 is not wired')
+    if dout['obS'] > 1:
+        raise NestError('offset: outer obS > 1 is not wired')
     encf = ENC[enc]
     mid = phase_mid(tab, st0, encf, tail, far, K + 1)
     cands = offset_families(mid, ENCDATA, ENCS, K)
@@ -1045,7 +1048,12 @@ def derive_offset(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=6):
         preb = _blocks_of(c, tuple(din['uD']), tuple(din['uS']))
         Fin = (tuple(fi), (), 0, 0, ())
         ti_t = tuple(ti)
-        B0R = (st0, ((), dout['uS'], 1, 1, dout['soS'] + tail_t), 0, F)
+        if dout['obS'] >= 1:
+            # peeled: one unit in the prefix, count j'+1 in total
+            B0R = (st0, (dout['uS'], dout['uS'], 1, 1,
+                         dout['soS'] + tail_t), 0, F)
+        else:
+            B0R = (st0, ((), dout['uS'], 1, 1, dout['soS'] + tail_t), 0, F)
         B1R = (st0, ((), dout['uD'], 1, 2, dout['soD'] + tail_t), 0, F)
         CinS = (st_in, (preb, din['uD'], 1, 0, din['soD'] + ti_t), 0, Fin)
         CinF = (st_in, ((), din['uS'], 1, 2, din['soS'] + ti_t), 0, Fin)
@@ -1054,8 +1062,17 @@ def derive_offset(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=6):
             if chb is None:
                 raise NestError('no boot chain')
             chb = _reland(tab, chb, B0R, CinS) or chb
-            lap1 = _inner_lap(tab, ENCDATA, key4 + (0,))
+            try:
+                lap1 = _inner_lap(tab, ENCDATA, key4 + (0,))
+                lap1['lmode'] = 'one'
+            except NestError:
+                lap1 = _inner_lap_split(tab, ENCDATA, key4 + (0,))
+            refill = False
             che, _ = _chain(tab, True, True, CinF, B1R)
+            if che is None:
+                CinF = _refill(st_in, din, ti, fi)
+                refill = True
+                che, _ = _chain(tab, True, True, CinF, B1R)
             if che is None:
                 raise NestError('no exit chain')
             che = _reland(tab, che, CinF, B1R) or che
@@ -1066,18 +1083,10 @@ def derive_offset(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=6):
             if rb[2] == 0:
                 raise NestError('boot of zero length at j=0')
             # the boot landing may carry EXTRA units folded into its count
-            # (b inherited from B0R); [gbo_]'s rep_add normalization absorbs
-            # any [lb], so only the FLAT residue is checked here
-            lpre, lu, la, lb_, lpost = rb[0][1]
-            if (tuple(lpre) != preb or tuple(lu) != tuple(din['uD'])
-                    or la != 1):
-                raise NestError('boot rep shape %r' % (rb[0][1],))
-            bpad = _slack(tuple(din['uD']) * lb_ + tuple(lpost),
-                          tuple(din['soD']) + ti_t, 'boot post')
-            if rb[0][3][1]:
-                raise NestError('boot far side carries a rep')
-            bfar = _slack(tuple(rb[0][3][0]) + tuple(rb[0][3][4]),
-                          tuple(fi), 'boot far')
+            # (b inherited from B0R) and may arrive in the SHIFT1 form;
+            # [gbo_]'s rep_add (+ rrc) normalization absorbs both
+            bkind, lb_, bpad, bfar, u_l, pre_l = _land_offset(
+                rb[0], st_in, din, tuple(din['soD']) + ti_t, tuple(fi), preb)
             # the exit landing: geo_'s HD wants the plain successor shape
             lpre, lu, la, lb, _ = re[0][1]
             if lpre or tuple(lu) != tuple(dout['uD']) or (la, lb) != (1, 2):
@@ -1110,11 +1119,21 @@ def derive_offset(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=6):
                      far_in=list(fi), oct=0,
                      chb=chb, BB1=rb[0], cb=(rb[1], rb[2]),
                      che=che, BE0=CinF, BE1=re[0], ce=(re[1], re[2]),
-                     chn=lap1['chn'], AI0=lap1['AI0'], AI1=lap1['AI1'],
-                     cn=lap1['cn'],
-                     bpad=bpad, bfar=bfar, lb=lb_, ipad=lap1['ipad'],
-                     ifar=lap1['ifar'], efar=efar, more=[],
-                     B0R=B0R, B1R=B1R, n0=n0, visz=visz)
+                     bpad=bpad, bfar=bfar, lb=lb_, bkind=bkind,
+                     u_l=list(u_l), pre_l=list(pre_l),
+                     efar=efar, more=[], refill=refill,
+                     B0R=B0R, B1R=B1R, n0=n0, visz=visz,
+                     lmode=lap1.get('lmode', 'one'))
+            if d['lmode'] == 'one':
+                d.update(chn=lap1['chn'], AI0=lap1['AI0'], AI1=lap1['AI1'],
+                         cn=lap1['cn'], ipad=lap1['ipad'],
+                         ifar=lap1['ifar'])
+            else:
+                d.update(AIZ0=lap1['AIZ0'], AIZ1=lap1['AIZ1'],
+                         chnz=lap1['chnz'], cnz=lap1['cnz'],
+                         AIP0=lap1['AIP0'], AIP1=lap1['AIP1'],
+                         chnp=lap1['chnp'], cnp=lap1['cnp'],
+                         ifarz=lap1['ifarz'], ifarp=lap1['ifarp'])
             validate_offset(tab, ENC, encf, enc, st0, tail, far, key4, c, d)
             return d
         except NestError as e:
@@ -1132,6 +1151,12 @@ def validate_offset(tab, ENC, encf, enc, st0, tail, far, key4, c, d,
     ti, fi = tuple(tail_in), tuple(far_in)
     encin = ENC[name_in]
 
+    def lapcost(i):
+        if d.get('lmode', 'one') == 'one':
+            return d['cn'][0] * i + d['cn'][1]
+        return (d['cnz'][1] if i == 0
+                else d['cnp'][0] * (i - 1) + d['cnp'][1])
+
     def laps(v0, vf, j):
         for v in range(v0, vf):
             i, ov = carry(v)
@@ -1139,7 +1164,7 @@ def validate_offset(tab, ENC, encf, enc, st0, tail, far, key4, c, d,
                 raise NestError('internal: inner overflow inside the run')
             a = (st_in, tuple(encin(v)) + ti, 0, fi)
             b = (st_in, tuple(encin(v + 1)) + ti, 0, fi)
-            g = _sim(tab, a, d['cn'][0] * i + d['cn'][1])
+            g = _sim(tab, a, lapcost(i))
             if not _eqlift(g, b):
                 raise NestError('validate inner v=%d: %r want %r' % (v, g, b))
 
@@ -1302,40 +1327,92 @@ def _off_reps(N, clist, ID):
 
 def nest_defs_offset(D, ENCDATA, clist, cconf, cchain, ST, ID):
     N = D['nest']
-    fams = _fill(FAM_DEFS, _fam_reps(ENCDATA, N, clist, cconf, cchain, ST,
-                                     '', '', '', ''))
-    epre = _fill(_fill(OFF_EPRE, _off_reps(N, clist, ID)),
-                 _fam_reps(ENCDATA, N, clist, cconf, cchain, ST,
-                           '', '', '', ''))
+    freps = _fam_reps(ENCDATA, N, clist, cconf, cchain, ST, '', '', '', '')
+    fam_tpl = FAM_DEFS
+    if N.get('lmode') == 'split':
+        core = FAM_DEFS.split('(** Its own INTERIOR lap')[0].rstrip()
+        lap = _fill(FAM_DEFS_LAP_SPLIT, {
+            '@AIZ0@': cconf(N['AIZ0']), '@AIZ1@': cconf(N['AIZ1']),
+            '@CHNZ@': cchain(N['chnz']),
+            '@CAZN@': str(N['cnz'][0]), '@CBZN@': str(N['cnz'][1]),
+            '@AIP0@': cconf(N['AIP0']), '@AIP1@': cconf(N['AIP1']),
+            '@CHNP@': cchain(N['chnp']),
+            '@CAPN@': str(N['cnp'][0]), '@CBPN@': str(N['cnp'][1])})
+        fam_tpl = core + '\n\n' + lap
+    fams = _fill(fam_tpl, freps)
+    epre = _fill(_fill(OFF_EPRE, _off_reps(N, clist, ID)), freps)
+    rrc = OFF_RRC if (N.get('bkind') == 'shift1' or N.get('refill')) else ''
     chains = NEST_CHAINS.replace('@SHIFTDEF@', '')
-    return fams + '\n\n' + epre + '\n\n' + chains
+    return (fams + '\n\n' + epre + ('\n\n' + rrc if rrc else '')
+            + '\n\n' + chains)
 
 
 def nest_glue_offset(D, ENCDATA, clist, cconf, cchain, ST, ID):
     N = D['nest']
     freps = _fam_reps(ENCDATA, N, clist, cconf, cchain, ST, '', '', '', '')
-    lap_part = FAM_GLUE.split('(** The chain into this family')[0].rstrip()
-    out = _fill(lap_part, freps)
-    # the chain glue: BLEFT carries the PRE blocks before the rep
     din = ENCDATA[N['inner']]
+    fi = tuple(N['far_in'])
+    if N.get('lmode') == 'split':
+        ifz, ifp = N['ifarz'], N['ifarp']
+        sreps = dict(freps)
+        for (hole, nfar) in (('@IFZCHG@', ifz), ('@IFPCHG@', ifp)):
+            fb = clist(fi + (0,) * nfar)
+            fn = ('(' * nfar + clist(fi)
+                  + ''.join(') ++ [S0]' for _ in range(nfar)))
+            sreps[hole] = ('' if nfar == 0 else
+                           '  change (%s) with (%s).\n'
+                           '  rewrite !lift_app_blank.\n' % (fb, fn))
+        sreps.update({'@CAZN@': str(N['cnz'][0]), '@CBZN@': str(N['cnz'][1]),
+                      '@CAPN@': str(N['cnp'][0]),
+                      '@CBPN@': str(N['cnp'][1])})
+        out = _fill(FAM_GLUE_LAP_SPLIT, sreps)
+    else:
+        lap_part = FAM_GLUE.split('(** The chain into this family')[0].rstrip()
+        out = _fill(lap_part, freps)
+    # the chain glue: BLEFT carries the PRE blocks before the rep
     preb = tuple(N['preb'])
     ti = tuple(N['tail_in'])
     bwant = tuple(din['soD']) + ti
     pad, farpad = N['bpad'], N['bfar']
+    u_l, pre_l = tuple(N['u_l']), tuple(N['pre_l'])
+    shift1 = N.get('bkind') == 'shift1'
+    lflat = ((preb[-1],) + bwant) if shift1 else bwant
     bleft = ('(' * pad + '%s ++ rep %s j ++ %s'
-             % (clist(preb), clist(din['uD']), clist(bwant))
+             % (clist(pre_l), clist(u_l), clist(lflat))
              + ''.join(') ++ [S0]' for _ in range(pad)))
-    bfare = ('(' * farpad + clist(tuple(N['far_in']))
+    bfare = ('(' * farpad + clist(fi)
              + ''.join(') ++ [S0]' for _ in range(farpad)))
     creps = dict(_off_reps(N, clist, ID))
     creps.update({'@BLEFT@': bleft, '@BFARE@': bfare,
                   '@BWANT@': clist(bwant), '@LB@': str(N['lb'])})
-    out += '\n\n' + _fill(_fill(OFF_CHAIN_GLUE, creps), freps)
+    if shift1:
+        creps.update({'@PRELC@': clist(pre_l), '@ULC@': clist(u_l),
+                      '@XBWANT@': clist(lflat),
+                      '@XC@': _sym(preb[-1]),
+                      '@UTC@': clist(tuple(din['uD'])[:-1])})
+        gbo = _fill(_fill(OFF_GBO_S1, creps), freps)
+    else:
+        gbo = _fill(_fill(OFF_CHAIN_GLUE.split('(** The offset family')[0]
+                          .rstrip(), creps), freps)
+    if N.get('refill'):
+        uS = tuple(din['uS'])
+        a, b = uS[0], uS[1] if len(uS) > 1 else uS[0]
+        creps.update({'@BC@': _sym(b), '@UTFC@': '[%s]' % _sym(a)})
+        gxi = _fill(_fill(OFF_GXI_RF, creps), freps)
+    else:
+        gxi = _fill(_fill('(** The offset family'
+                          + OFF_CHAIN_GLUE.split('(** The offset family')[1],
+                          creps), freps)
+    out += '\n\n' + gbo + '\n\n' + gxi
     out += '\n\n' + LAPIL
     out += '\n\n' + _fill(OFF_LAPO, {'@V0JP@': _v0term(N['c'], "j'"),
                                      '@N0@': str(N['n0'])})
     out += '\n\n@VISX@'
     return out
+
+
+def _sym(x):
+    return 'S1' if x else 'S0'
 
 
 def nest_reps_offset(D, ENCDATA, clist, cconf, cchain, ST, ID):
@@ -1370,3 +1447,239 @@ def nest_reps_offset(D, ENCDATA, clist, cconf, cchain, ST, ID):
         '@LAST@': '',
     }
     return reps
+
+
+# --------------------------------------- OFFSET route: split inner lap etc ---
+#
+# Wave-22b.  The Mp-outer cluster (74+ machines) has the SAME offset family
+# as the boarded 22, but:
+#   * the inner family's interior lap chain does not derive at the plain
+#     AI0/AI1 endpoints -- the carry sweep's period sits one cell INTO the
+#     unit, so SCycL only fires from the phase-shifted form.  The fix is the
+#     interior-lap mirror of wave-13's j = 0 split: a Z chain at i = 0 and
+#     peeled P chains at i = S i' (count i-1, one unit in the prefix);
+#   * the exit chain does not derive from the plain fill form either; it
+#     does from the REPHASED form (one cell of the unit rotated out front:
+#     uS^(j+2) ++ soS = a :: (b,a)^(j+1) ++ b :: soS).
+# Both are measured on the whole cluster: P=OK Z=OK exit2=OK on 80 machines.
+
+def _inner_lap_split(tab, ENCDATA, key):
+    """The inner interior lap in SPLIT form.  Mirrors the outer split
+    (emit_lapcert.derive mode='split'): exact Z chain at i = 0, peeled P
+    chains at i = S i'."""
+    name_in, st_in, tail_in, far_in, _oct = key
+    din = ENCDATA[name_in]
+    Fin = (tuple(far_in), (), 0, 0, ())
+    uS, uD = tuple(din['uS']), tuple(din['uD'])
+    sS, sD = tuple(din['sS']), tuple(din['sD'])
+    Z0 = (st_in, (sS, (), 0, 0, ()), 0, Fin)
+    Z1 = (st_in, (sD, (), 0, 0, ()), 0, Fin)
+    P0 = (st_in, (uS, uS, 1, 0, sS), 0, Fin)
+    P1 = (st_in, (uD, uD, 1, 0, sD), 0, Fin)
+    chz, _ = _chain(tab, False, True, Z0, Z1)
+    chp, _ = _chain(tab, False, True, P0, P1)
+    if chz is None or chp is None:
+        raise NestError('no inner interior chain')
+    rz = LC.srun(tab, False, True, chz, Z0)
+    rp = LC.srun(tab, False, True, chp, P0)
+    if rz is None or rp is None:
+        raise NestError('internal: srun disagrees with the search')
+    if rz[2] == 0 or rp[2] == 0:
+        raise NestError('inner lap of zero length at i=0')
+    # landings: left side exact (the opaque tail forces it); far may pad
+    zpre, zu, za, zb, zpost = rz[0][1]
+    if zu or (za, zb) != (0, 0) or tuple(zpre) + tuple(zpost) != sD:
+        raise NestError('inner Z lap lands off shape %r' % (rz[0][1],))
+    if rz[0][3][1]:
+        raise NestError('inner Z far side carries a rep')
+    ifarz = _slack(tuple(rz[0][3][0]) + tuple(rz[0][3][4]), tuple(far_in),
+                   'inner Z far')
+    ppad, ifarp = _land(rp[0], st_in, uD, sD, tuple(far_in),
+                        'inner P lap', 0, uD)
+    if ppad:
+        raise NestError('inner P lap post pads (exact landing required)')
+    return dict(lmode='split',
+                AIZ0=Z0, AIZ1=rz[0], chnz=chz, cnz=(rz[1], rz[2]),
+                AIP0=P0, AIP1=rp[0], chnp=chp, cnp=(rp[1], rp[2]),
+                ifarz=ifarz, ifarp=ifarp)
+
+
+def _land_offset(conf, st, din, bwant, far_want, preb):
+    """Boot landing for the offset route: either the PLAIN shape
+    (pre = preb, u = uD, any count constant [lb], flat residue = bwant), or
+    the SHIFT1 shape (pre = preb minus its last cell x, u = x :: uD[:-1],
+    flat residue = x :: bwant) -- the form the chain naturally lands in when
+    the sweep's period sits one cell into the unit.  The glue bridges SHIFT1
+    with one pinned [rep_rot] application ([rrc_]).
+
+    Returns (kind, lb, pad, far_pad, u_l, pre_l)."""
+    uD = tuple(din['uD'])
+    if conf[0] != st or conf[2] != 0:
+        raise NestError('boot lands in the wrong state/head')
+    lpre, lu, la, lb, lpost = conf[1]
+    if conf[3][1]:
+        raise NestError('boot far side carries a rep')
+    fpad = _slack(tuple(conf[3][0]) + tuple(conf[3][4]), far_want, 'boot far')
+    if la != 1:
+        raise NestError('boot rep shape %r' % (conf[1],))
+    if tuple(lpre) == preb and tuple(lu) == uD:
+        pad = _slack(uD * lb + tuple(lpost), bwant, 'boot post')
+        return ('plain', lb, pad, fpad, uD, preb)
+    x = preb[-1] if preb else None
+    u_l = (x,) + uD[:-1] if preb else None
+    if (preb and uD and uD[-1] == x and tuple(lpre) == preb[:-1]
+            and tuple(lu) == u_l):
+        pad = _slack(u_l * lb + tuple(lpost), (x,) + bwant, 'boot post')
+        return ('shift1', lb, pad, fpad, u_l, preb[:-1])
+    raise NestError('boot rep shape %r' % (conf[1],))
+
+
+def _refill(st_in, din, tail_in, far_in):
+    """The REPHASED fill start: one unit cell rotated out front.
+    uS^(j+2) ++ soS ++ ti = a :: (b,a)^(j+1) ++ (b :: soS ++ ti)."""
+    uS = tuple(din['uS'])
+    a, b = uS[0], uS[1] if len(uS) > 1 else uS[0]
+    return (st_in, ((a,), (b, a), 1, 1,
+                    (b,) + tuple(din['soS']) + tuple(tail_in)), 0,
+            (tuple(far_in), (), 0, 0, ()))
+
+
+# ------------------------------------- OFFSET route: split/shift1 emission ---
+
+OFF_RRC = r"""(** Rotating one fixed cell across a rep -- the bridge between a chain's
+    natural landing frame and the encoding's block frame ([WTape.rep_rot],
+    with the trailing cell fused into the tail). *)
+Lemma rrc_@ID@ : forall (x : Sym) (u : list Sym) k (Y : list Sym),
+  rep (x :: u) k ++ x :: Y = x :: rep (u ++ [x]) k ++ Y.
+Proof.
+  intros. change (x :: Y) with ([x] ++ Y). rewrite app_assoc, <- rep_rot.
+  cbn [app]. rewrite <- ?app_assoc. reflexivity.
+Qed."""
+
+
+FAM_DEFS_LAP_SPLIT = r"""(** Its own INTERIOR lap, SPLIT: the carry sweep's period sits one cell
+    into the unit, so i = 0 is one concrete window and i = S i' runs with a
+    unit PEELED into the prefix (count i' = i - 1) -- the interior-lap
+    mirror of the outer j = 0 split. *)
+Definition AIZ@S@0_@ID@ : sconf := @AIZ0@.
+Definition AIZ@S@1_@ID@ : sconf := @AIZ1@.
+Definition chnz@S@_@ID@ : list lstep := @CHNZ@.
+
+Lemma run_innerz@S@_@ID@ : srun tm false true chnz@S@_@ID@ AIZ@S@0_@ID@ = Some (AIZ@S@1_@ID@, @CAZN@, @CBZN@).
+Proof. vm_compute. reflexivity. Qed.
+
+Definition AIP@S@0_@ID@ : sconf := @AIP0@.
+Definition AIP@S@1_@ID@ : sconf := @AIP1@.
+Definition chnp@S@_@ID@ : list lstep := @CHNP@.
+
+Lemma run_innerp@S@_@ID@ : srun tm false true chnp@S@_@ID@ AIP@S@0_@ID@ = Some (AIP@S@1_@ID@, @CAPN@, @CBPN@).
+Proof. vm_compute. reflexivity. Qed."""
+
+
+FAM_GLUE_LAP_SPLIT = r"""Lemma gsnz@S@_@ID@ : forall v q0, cview v = (0%nat, Some q0) ->
+  Cin@S@ v = cden (@ENCI@ q0 ++ @TAILI@) [] 0 AIZ@S@0_@ID@.
+Proof.
+  intros v q0 E. destruct (@ENCMODI@.@SOMEI@ v 0 q0 E) as (H1 & _).
+  unfold Cin@S@_@ID@, cden, AIZ@S@0_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  rewrite H1. cbn [rep app]. rewrite <- ?app_assoc. cbn [app].
+  rewrite ?app_nil_r. reflexivity.
+Qed.
+
+Lemma genz@S@_@ID@ : forall v q0, cview v = (0%nat, Some q0) ->
+  lift (cden (@ENCI@ q0 ++ @TAILI@) [] 0 AIZ@S@1_@ID@) = lift (Cin@S@ (Pos.succ v)).
+Proof.
+  intros v q0 E. destruct (@ENCMODI@.@SOMEI@ v 0 q0 E) as (_ & H2).
+  unfold Cin@S@_@ID@, cden, AIZ@S@1_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  cbn [rep app]. rewrite ?app_nil_r.
+@IFZCHG@  rewrite H2. first [ reflexivity
+        | cbn [rep app]; rewrite <- ?app_assoc; cbn [app];
+          rewrite ?app_nil_r; reflexivity ].
+Qed.
+
+Lemma gsnp@S@_@ID@ : forall v i q0, cview v = (S i, Some q0) ->
+  Cin@S@ v = cden (@ENCI@ q0 ++ @TAILI@) [] i AIP@S@0_@ID@.
+Proof.
+  intros v i q0 E. destruct (@ENCMODI@.@SOMEI@ v (S i) q0 E) as (H1 & _).
+  unfold Cin@S@_@ID@, cden, AIP@S@0_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * i + 0) with i by lia.
+  rewrite H1. cbn [rep app]. rewrite <- ?app_assoc. cbn [app].
+  rewrite ?app_nil_r. reflexivity.
+Qed.
+
+Lemma genp@S@_@ID@ : forall v i q0, cview v = (S i, Some q0) ->
+  lift (cden (@ENCI@ q0 ++ @TAILI@) [] i AIP@S@1_@ID@) = lift (Cin@S@ (Pos.succ v)).
+Proof.
+  intros v i q0 E. destruct (@ENCMODI@.@SOMEI@ v (S i) q0 E) as (_ & H2).
+  unfold Cin@S@_@ID@, cden, AIP@S@1_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * i + 0) with i by lia.
+@IFPCHG@  rewrite H2. cbn [rep app]. rewrite <- ?app_assoc. cbn [app].
+  rewrite ?app_nil_r. reflexivity.
+Qed.
+
+Lemma lapin@S@_@ID@ : forall v i q0, cview v = (i, Some q0) ->
+  exists n c', 0 < n /\ csteps tm n (Cin@S@ v) = Some c'
+               /\ lift c' = lift (Cin@S@ (Pos.succ v)).
+Proof.
+  intros v i q0 E. destruct i as [|i'].
+  - exists (@CAZN@ * 0 + @CBZN@), (cden (@ENCI@ q0 ++ @TAILI@) [] 0 AIZ@S@1_@ID@).
+    split; [lia|]. split; [| exact (genz@S@_@ID@ v q0 E)].
+    rewrite (gsnz@S@_@ID@ v q0 E).
+    exact (srun_sound tm false true chnz@S@_@ID@ AIZ@S@0_@ID@ AIZ@S@1_@ID@ @CAZN@ @CBZN@
+             run_innerz@S@_@ID@ (@ENCI@ q0 ++ @TAILI@) [] 0
+             ltac:(discriminate) ltac:(reflexivity)).
+  - exists (@CAPN@ * i' + @CBPN@), (cden (@ENCI@ q0 ++ @TAILI@) [] i' AIP@S@1_@ID@).
+    split; [lia|]. split; [| exact (genp@S@_@ID@ v i' q0 E)].
+    rewrite (gsnp@S@_@ID@ v i' q0 E).
+    exact (srun_sound tm false true chnp@S@_@ID@ AIP@S@0_@ID@ AIP@S@1_@ID@ @CAPN@ @CBPN@
+             run_innerp@S@_@ID@ (@ENCI@ q0 ++ @TAILI@) [] i'
+             ltac:(discriminate) ltac:(reflexivity)).
+Qed."""
+
+
+OFF_GBO_S1 = r"""(** The boot lands in the SHIFT1 frame (the unit rotated one cell against
+    the block frame), up to @BPAD@/@BFAR@ trailing blanks; [rrc_] bridges. *)
+Lemma gbo_@ID@ : forall j, lift (cden [] [] j BB1_@ID@) = lift (Cin (@V0J@)).
+Proof.
+  intro j.
+  assert (HD : cden [] [] j BB1_@ID@ = (@STI@, (@BLEFT@, S0, @BFARE@))).
+  { unfold cden, BB1_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+    replace (1 * j + @LB@) with (j + @LB@) by lia.
+    rewrite rep_add. cbn [rep app]. rewrite ?app_nil_r.
+    rewrite <- ?app_assoc. cbn [app]. rewrite ?app_nil_r.
+    reflexivity. }
+  assert (HC : Cin (@V0J@) = (@STI@, (@PRELC@ ++ rep @ULC@ j ++ @XBWANT@, S0, @FARI@))).
+  { unfold Cin_@ID@. rewrite epre_@ID@.
+    cbn [app]. rewrite <- ?app_assoc. cbn [app].
+    rewrite (rrc_@ID@ @XC@ @UTC@ j).
+    cbn [rep app]. rewrite <- ?app_assoc. cbn [app]. rewrite ?app_nil_r.
+    reflexivity. }
+  rewrite HD, HC. cbn [app]. rewrite <- ?app_assoc. cbn [app].
+  rewrite ?lbl_@ID@. rewrite ?lift_app_blank. reflexivity.
+Qed."""
+
+
+OFF_GXI_RF = r"""(** The exit chain starts from the REPHASED fill (one unit cell rotated out
+    front); [rrc_] bridges it back to the encoding's block frame. *)
+Lemma gxi_@ID@ : forall j, Cin (fill (@V0J@)) = cden [] [] j BE0_@ID@.
+Proof.
+  intro j.
+  assert (Hf : fill (@V0J@) = fill (pow2 (S (S j))))
+    by (cbn [pow2 fill]; reflexivity).
+  rewrite Hf.
+  destruct (@ENCMODI@.@NONEI@ (fill (pow2 (S (S j)))) (S (S j))
+              (cview_fill_pow2 (S (S j)))) as (H1 & _).
+  unfold Cin_@ID@, cden, BE0_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 1) with (S j) by lia.
+  replace (0 * j + 0) with 0 by lia.
+  rewrite H1.
+  cbn [app]. rewrite <- ?app_assoc. cbn [app].
+  rewrite (rrc_@ID@ @BC@ @UTFC@ (S j)).
+  cbn [rep app]. rewrite <- ?app_assoc. cbn [app]. rewrite ?app_nil_r.
+  reflexivity.
+Qed."""

@@ -1081,9 +1081,10 @@ generated `cov_12_0094` cover lemma re-checks against `CloseoutKit` (clean),
 
 ## 2m. Wave-22, RESIDUE track (2026-07-28) -- the nested route grows two ends
 
-Full write-up: `docs/WAVE22_FINDINGS.md`.  **30 boards, `D_remaining`
-621 -> 591** (88.5% settled), and both fronts are EMITTER work only --
-wave-18's composition theorems were already general enough.
+Full write-up: `docs/WAVE22_FINDINGS.md`.  **110 boards, `D_remaining`
+621 -> 511** -- the first crossing of **90% settled** -- and every front is
+EMITTER work only; wave-18's composition theorems were already general
+enough.
 
 - **The "no shift chain" 8: an overflow phase can chain ANY number of
   counts.**  The 13 shift/second-exit machines carry a THIRD (sometimes a
@@ -1113,6 +1114,13 @@ wave-18's composition theorems were already general enough.
   `replace (1*j+b) with (j+b); rewrite rep_add` -- do not try chain surgery,
   nothing unfolds a count into a post.  And positive constructors wrap
   LSB-OUTERMOST: `2^(j+2)+2 = xO (xI (pow2 j))`.
+- **The Mp-outer cluster (80 more boards): the SPLIT inner lap.**  The
+  cluster's inner lap is affine (4i+2) but only chains in SPLIT form (the
+  carry sweep's period sits one cell into the unit): Z chain at i=0 +
+  peeled P chains at count i-1 -- wave-13's j=0 split, ported to the
+  inner-family glue.  The boot lands in a SHIFT1 frame and the exit only
+  derives from the REPHASED fill; both bridge through one pinned
+  application of a board-local `rrc_` lemma over `WTape.rep_rot`.
 - **Measured zeros** (do-not-retry): octave-only families
   (`pow2 (j+oct)`, no reindex) -- 0 of 162; the multi-count route on the
   65 "no exit chain" / 22 "no boot chain" -- 0 of 87 (WAVE18 section 4b
@@ -1120,11 +1128,11 @@ wave-18's composition theorems were already general enough.
 - Template hygiene: the new `gso_`/`geo_`/`viso_` holes default to the old
   text; a committed nested board re-renders BYTE-IDENTICALLY.
 
-STATE: `D_remaining` **591**; `census_cache --check` MATCH throughout;
-`audit.py` OK.  Next, in measured order: the 24 `Ip` top-bit riders (need
-`NestedLap3`, a partial-span `inner_to_fill_lift` -- their count stops
-before the fill), the 15 no-visit-witness, the 41 QUAD/QUAD, the 235
-no-anchor.
+STATE: `D_remaining` **511** (90.1% settled); `census_cache --check` MATCH
+throughout; `audit.py` OK.  Next, in measured order: the 15
+no-visit-witness, the 41 QUAD/QUAD, the 235 no-anchor, the 65 "no exit
+chain" (identification, not chains), and the 5 second-exit machines
+(the SCycR-entry-offset checker gap).
 
 ## 3. The long-tail roadmap
 

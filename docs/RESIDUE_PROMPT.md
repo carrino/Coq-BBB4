@@ -1,13 +1,15 @@
 # Residue prompt — the nested front is spent down to its measured blockers
 
 _Rewritten 2026-07-28 at the end of the wave-22 RESIDUE track (branch
-`claude/skipped-machines-residue-lyfjw6`), which landed **30 boards**: the
+`claude/skipped-machines-residue-lyfjw6`), which landed **110 boards**: the
 whole "no shift chain" bucket (8, by chaining the sync-bouncer construction
-through 3-4 counts per overflow) and 22 of "no inner family at `pow2 j`"
+through 3-4 counts per overflow) and 102 of "no inner family at `pow2 j`"
 (the OFFSET-family route: inner count starting at `2^(j+1)+2`, the whole
-overflow branch reindexed at `j = S j'`).  `D_remaining` is **591** and
-4,565 of the frozen 5,156 are settled (88.5%).  Full assessment:
-`docs/WAVE22_FINDINGS.md`; the wave-18 story is `docs/WAVE18_FINDINGS.md`._
+overflow branch reindexed at `j = S j'`; for the Mp-outer cluster also the
+SPLIT inner lap and the `rrc_`/`rep_rot` frame bridges).  `D_remaining` is
+**511** and 4,645 of the frozen 5,156 are settled — the first crossing of
+**90%**.  Full assessment: `docs/WAVE22_FINDINGS.md`; the wave-18 story is
+`docs/WAVE18_FINDINGS.md`._
 
 _**Scope: the RESIDUE, which is now everything.**  The (4,2) HOLDOUT list was
 closed on 2026-07-28 when tower #20 was boarded (`NEXT_SESSION.md` §2l), so
@@ -56,62 +58,43 @@ LapCertGlue, LapGlueAbs, NestedLap and NestedLapLift are axiom-FREE or
 funext-only -- keep them that way).  Everything under tools/ is UNTRUSTED;
 the kernel re-checks every board.
 
-STATE: 4,565 of the frozen 5,156 settled (88.5%); D_remaining = 591.
+STATE: 4,645 of the frozen 5,156 settled (90.1%); D_remaining = 511.
 THE HOLDOUT LIST IS CLOSED.  Everything left is RESIDUE and all of it is
 yours.  docs/RESIDUE_MAP.md + tools/closeout/residue_map.tsv give every
 remaining machine's measured lap shape and the exact blocker.
 
-Failure profile at D_remaining = 591 (residue_map.tsv, wave-22):
+Failure profile at D_remaining = 511 (residue_map.tsv, wave-22):
 
   211  no overflow phase           -- ALL of them the no-anchor bucket
-  140  no inner family at pow2 j   -- see the split below; 24 of them are the
-                                      Ip TOP-BIT RIDERS, the next build
   105  no interior chain           -- QUAD 41, HIGHER 13, PARITY-AFFINE 13,
                                       EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8
    65  no exit chain               -- MEASURED EXPONENTIAL; identification,
                                       not chains (re-measured wave-22: the
                                       N-count route buys 0 of these)
+   60  no inner family at pow2 j   -- what SURVIVED the offset/split/refill
+                                      routes; 32 have no family under any
+                                      route, the rest fail an offset chain
    24  no anchor
-   20  no boot chain               -- same population, other side
+   20  no boot chain               -- same population as "no exit", other side
    15  no visit witness (StA)
     5  no second exit chain        -- the SCycR-entry-offset checker gap,
                                       measured precisely (WAVE22 section 2b)
     4  no inner interior chain
-    8  no interior chain (EXP2)
-ovfshape over the 591 for shape rather than blocker:
-  235 no-anchor, 212 AFFINE/EXP2, 52 AFFINE/AFFINE, 41 QUAD,
+ovfshape over the 511 for shape rather than blocker:
+  235 no-anchor, 132 AFFINE/EXP2, 52 AFFINE/AFFINE, 41 QUAD,
   13 PARITY-AFFINE, 13 HIGHER, 10 EXP3, 9 AFFINE/HIGHER, 6 EXP4.
 Per-machine cost is a vm_compute:
   python3 tools/counters/emit_lapcert.py --list FILE --emit   (25 alphabets)
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded, in minutes.
 
-THE TASK -- THE Mp-OUTER OFFSET CLUSTER, 74 machines one split away.
+THE TASK (as ranked by measurement; the nested front is now SPENT to its
+  recorded blockers -- every cheap lead was taken this wave):
 
-  The residual "no inner family" bucket re-measured after wave-22's boards
-  (rangescan over the 140): 74 machines are Mp-outer (obS=1) with the SAME
-  offset family shape wave-22 boarded (inner run 2^(j+1)+2 .. 2^(j+2)-1,
-  inner alphabet Alph_01_11_011), and they are measured to ONE blocker:
-
-    - the reindexed BOOT CHAIN DERIVES (obS=1 outer handled, c=2);
-    - the inner interior lap is AFFINE, 4i+2 exactly, all i -- but its chain
-      does NOT derive at the plain AI0/AI1 endpoints, and the exit fails
-      the same way.
-
-  The reason, hand-traced: the leftward carry sweep's period sits one cell
-  INTO the [1;1] rep (11^i 01 = 1 (11)^(i-1) 101), so SCycL only fires from
-  the phase-shifted form with count i-1.  That is the INTERIOR-LAP mirror
-  of wave-13's j=0 split: a Z-chain at i=0 (the 2-step no-carry window) and
-  peeled P-chains at i = S i'.  The OUTER interior branch has exactly this
-  (INT_SPLIT, mode='split'); the inner-family glue (lapin@S@/gsn/gen) does
-  not.  Port it: split-mode inner lap in nestcert (_inner_lap trying the
-  peeled endpoints when the plain ones fail) + the two-chain lapin
-  emission.  Check the exit chain against the same phase-shift before
-  assuming it needs anything else.
-
-  The 41 rangescan "no runs" machines have no decodable family under any
-  obS=0 key: alphabet work (alphabet_infer.py), or ASK JOHN with a CLASS
-  tape dump.
+  (0) The 60 "no inner family" survivors: 32 have no decodable family under
+      any route (alphabet work -- alphabet_infer.py -- or ASK JOHN with a
+      CLASS tape dump); the rest fail one of the offset chains and nothing
+      measured says they are close.
 
   DO NOT RETRY (measured wave-18/22): a wider inner-key tail (MAXTAIL);
   octave-only families (pow2 (j+oct), 0 of 162); the N-count route on the
