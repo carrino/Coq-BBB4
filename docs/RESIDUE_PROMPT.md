@@ -1,13 +1,13 @@
-# Residue prompt — THE TASK is half done; the other half is a MEASUREMENT
+# Residue prompt — the nested front is spent down to its measured blockers
 
-_Rewritten 2026-07-27 at the end of the wave-18 RESIDUE track (branch
-`claude/coq-bbb4-residude-oy73r4`), which took THE TASK — the exponential
-overflow, the `AFFINE`/`EXP2` bucket, 500 of the 883 — and **boarded 258 of
-them**.  With the concurrent HOLDOUTS track merged (wave4 #15 and fractal
-#3/#5; tower #20 is the last one still open), `D_remaining` is **622** and
-4,534 of the frozen 5,156 are settled (87.9%).  Full assessment: `docs/WAVE18_FINDINGS.md` — §2 is why it took
-three waves, §4b is the measurement that names the next 130 machines, §5 is
-the one do-not-retry, §6 is the lesson._
+_Rewritten 2026-07-28 at the end of the wave-22 RESIDUE track (branch
+`claude/skipped-machines-residue-lyfjw6`), which landed **30 boards**: the
+whole "no shift chain" bucket (8, by chaining the sync-bouncer construction
+through 3-4 counts per overflow) and 22 of "no inner family at `pow2 j`"
+(the OFFSET-family route: inner count starting at `2^(j+1)+2`, the whole
+overflow branch reindexed at `j = S j'`).  `D_remaining` is **591** and
+4,565 of the frozen 5,156 are settled (88.5%).  Full assessment:
+`docs/WAVE22_FINDINGS.md`; the wave-18 story is `docs/WAVE18_FINDINGS.md`._
 
 _**Scope: the RESIDUE, which is now everything.**  The (4,2) HOLDOUT list was
 closed on 2026-07-28 when tower #20 was boarded (`NEXT_SESSION.md` §2l), so
@@ -56,99 +56,72 @@ LapCertGlue, LapGlueAbs, NestedLap and NestedLapLift are axiom-FREE or
 funext-only -- keep them that way).  Everything under tools/ is UNTRUSTED;
 the kernel re-checks every board.
 
-STATE: 4,535 of the frozen 5,156 settled (87.9%); D_remaining = 621.
-THE HOLDOUT LIST IS CLOSED -- tower #20 was boarded 2026-07-28.  Everything
-left is RESIDUE and all of it is yours.  docs/RESIDUE_MAP.md +
-tools/closeout/residue_map.tsv give every remaining machine's measured lap
-shape and the exact blocker.
+STATE: 4,565 of the frozen 5,156 settled (88.5%); D_remaining = 591.
+THE HOLDOUT LIST IS CLOSED.  Everything left is RESIDUE and all of it is
+yours.  docs/RESIDUE_MAP.md + tools/closeout/residue_map.tsv give every
+remaining machine's measured lap shape and the exact blocker.
 
-Failure profile, measured at D_remaining = 625 (i.e. before the 3 holdout
-boards merged in; they are not residue rows and change none of it) by running
-  python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt --json OUT
-(3 shards, ~20 min; the run also tells you the nested route's verdict per
-machine).  Cross-referenced against ovfshape.py over the same list:
+Failure profile at D_remaining = 591 (residue_map.tsv, wave-22):
 
-  185  no inner family at pow2 j   -- 162 AFFINE/EXP2, 23 AFFINE/AFFINE
   211  no overflow phase           -- ALL of them the no-anchor bucket
+  140  no inner family at pow2 j   -- see the split below; 24 of them are the
+                                      Ip TOP-BIT RIDERS, the next build
   105  no interior chain           -- QUAD 41, HIGHER 13, PARITY-AFFINE 13,
                                       EXP3 10, EXP4 6, AFFINE/AFFINE 14, EXP2 8
-   65  no exit chain               -- MEASURED EXPONENTIAL, and the two-count
-                                      route did NOT reach these
-   28  no anchor
-   22  no boot chain               -- MEASURED EXPONENTIAL on 14 of 16
+   65  no exit chain               -- MEASURED EXPONENTIAL; identification,
+                                      not chains (re-measured wave-22: the
+                                      N-count route buys 0 of these)
+   24  no anchor
+   20  no boot chain               -- same population, other side
    15  no visit witness (StA)
-    8  no shift chain              -- has a second family, no chain into it
-    5  no second exit chain
+    5  no second exit chain        -- the SCycR-entry-offset checker gap,
+                                      measured precisely (WAVE22 section 2b)
     4  no inner interior chain
-ovfshape over the whole 625-machine list, for shape rather than blocker:
-  242 AFFINE/EXP2, 239 no-anchor, 52 AFFINE/AFFINE, 41 QUAD, 13 PARITY-AFFINE,
-  13 HIGHER, 10 EXP3, 9 AFFINE/HIGHER, 6 EXP4.
+    8  no interior chain (EXP2)
+ovfshape over the 591 for shape rather than blocker:
+  235 no-anchor, 212 AFFINE/EXP2, 52 AFFINE/AFFINE, 41 QUAD,
+  13 PARITY-AFFINE, 13 HIGHER, 10 EXP3, 9 AFFINE/HIGHER, 6 EXP4.
 Per-machine cost is a vm_compute:
   python3 tools/counters/emit_lapcert.py --list FILE --emit   (25 alphabets)
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded, in minutes.
 
-THE TASK -- FINISH THE NESTED LAP, AND IT IS AN IDENTIFICATION PROBLEM.
+THE TASK -- THE Ip TOP-BIT RIDERS, one small lemma from 24 boards.
 
-  258 of the 500 AFFINE/EXP2 machines are boarded -- 225 with ONE inner count
-  and 33 with TWO (the sync-bouncer shift; Counters/NestedLap2.v).  Of the
-  242 that are not:
+  The nested front's remaining buckets all have MEASURED blockers now
+  (WAVE22).  The one with a build already designed:
 
-     65  "no exit chain"  -- the exit is EXPONENTIAL (0 AFFINE of 24 sampled)
-                             AND the second-count search does not reach them
-    134  "no inner family at pow2 j"
-     22  "no boot chain"  -- the boot is EXPONENTIAL (14 EXP of 16 with a key)
-      8  "no shift chain" / 5 "no second exit chain" -- these DO have the
-                             second family; only a chain is missing, so they
-                             are the cheapest 13 on the board
+  24 machines (Ip, "no inner family at pow2 j") decode as a count of
+  w = 2..2^(j+1)-1 RIDING A FIXED TOP BIT: v = 2^(j+2) + w, run
+  2^(j+2)+2 .. 2^(j+2)+2^(j+1)-1, which never reaches the all-ones fill --
+  so inner_to_fill_lift (which runs TO the fill) cannot close their count.
+  What is needed is NestedLap3: a PARTIAL-SPAN twin,
 
-  An sside carries a*j + b, so an exponential half is UNREPRESENTABLE as one
-  chain.  Do NOT widen derive_chain for these; that is now measured twice over
-  (WAVE16 section 5, and this).  What is wrong is the INNER FAMILY'S
-  IDENTIFICATION -- and WAVE18 section 4c already found what it is:
+      forall v n, n <= tovf v ->
+        exists m, stepn tm m (lift (Cin v)) = Some (lift (Cin (succ^n v)))
 
-    SPLIT ONE OVERFLOW PHASE AT THE FIRST INNER ALL-ONES FILL AND SEARCH THE
-    SECOND HALF ON ITS OWN.  11 OF 16 SAMPLED CARRY A SECOND CONSECUTIVE
-    2^(K-1)..2^K-1 FAMILY THERE -- same state, same alphabet, SHIFTED TAIL
-    (e.g. Jp@B tail=[S1;S1;S0], then Jp@B tail=[S0;S0;S1]).
+  (induction on n; tovf_succ gives the decreasing fuel; the None branch of
+  cview is unreachable while n <= tovf v).  Then the offset machinery of
+  wave-22 (nestcert.derive_offset) takes them: v0 = xO (xI (pow2 (S j'))),
+  vf = the partial fill xI^(j'+1) (xO (xI 1))-shaped, both plain positive
+  terms, all sides ordinary ssides after the same j = S j' reindex.
+  The range data and detector already exist (nestcert.offset_families finds
+  them at want-end 2^(K+2)+2^(K+1)-1 instead of 2^(K+2)-1).
 
-  That is John's reading of mxdys' sync bouncer counter, verbatim: "count
-  8->15, shift, count 8->15 again".  The overflow phase is
+  The 73 offset-family machines that did NOT board (of the 95-cluster) fail
+  on the boot or the inner lap at the offset anchor -- nothing measured says
+  they are close; sample tapes and ASK JOHN with a CLASS, not a machine.
 
-      boot -> count -> SHIFT -> count -> exit
-
-  five affine chains and TWO exponential inner runs, not three and one.
-
-  THAT IS BUILT (Counters/NestedLap2.boot_via_fill, 12 lines, and it boarded
-  33).  IT NEEDED NO NEW COMPOSITION THEOREM.  NestedLapLift.nested_overflow_lift's Hboot is an
-  ARBITRARY csteps run into Cin v0 -- it does not have to be one chain.  So
-  instantiate the theorem at the SECOND inner family and build its boot as
-  boot1 ++ inner_to_fill_lift(Cin1) ++ mid.  The emitter work is one more
-  family search and one more chain; nestcert.py already returns the phase's
-  `mid` list, so the split costs nothing to reproduce.  Worth ~76 of the 111
-  at the sampled rate, and the same construction should absorb part of the 22
-  exponential boots (a count BEFORE the identified one is the mirror image of
-  a count after it).
-
-  If a machine has NEITHER (5 of the 16 had nothing after the fill): dump the
-  phase in absolute coordinates (tools/counters/spacetime.py) and ASK JOHN
-  with the tape.  Hand-inspection is 22-for-22 across waves 8-14.  Cluster
-  first (wall_survey.py / alphabet_infer.py) so one reading covers many.
-
-  The 134 "no inner family" are the same population seen from the other side,
-  and Stage A already sized them: 21% of inner counters run at another octave
-  or offset.  Both the search and the glue (epow2_, gbo_) hard-wire
-  v0 = pow2 j.
-
-  DO NOT RETRY (measured in wave-18): a wider inner-key tail.  maxtail = 6
-  FINDS families -- 13 of 40 machines that report "no inner family" at 3 --
-  and boards ZERO of them; the 33 it unlocks all fail on the boot or exit
-  chain.  Key counts are 0-4, so maxkeys was never binding either.
-  tools/counters/nestcert.py MAXTAIL records this.
+  DO NOT RETRY (measured wave-18/22): a wider inner-key tail (MAXTAIL);
+  octave-only families (pow2 (j+oct), 0 of 162); the N-count route on the
+  65 "no exit chain" / 20 "no boot chain" (0 of 87 -- identification, not
+  chains); more search budget on the 5 "no second exit chain" (a checker
+  gap: SCycR has no entry offset -- boarding them means extending
+  LapDecider.v with soundness + corruption tests, or hand boards).
 
 THEN, in ranked order (all independent of the above):
 
-  (1) 105 "no interior chain" -- now the second-largest bucket and the most
+  (1) 105 "no interior chain" -- the second-largest bucket and the most
       shape-diverse: QUAD 41, AFFINE/AFFINE 14, HIGHER 13, PARITY-AFFINE 13,
       EXP3 10, EXP2 8, EXP4 6.  The 41 QUAD/QUAD are the largest population in
       the whole residue that has never had a design pass -- a quadratic
