@@ -165,6 +165,11 @@ then write the composition lemma and template.
 
 ## 4d. The gate, closed, and the route built (wave-24)
 
+**[STATUS, wave-25: BOARDED.  All 57 gated machines carry kernel-checked
+`NeverQuasiHaltsSt` theorems (`theories/Machines/Counters/CASB_*.v`),
+`D_remaining` 496 → 439; `docs/WAVE25_FINDINGS.md`.  What remains of this
+bucket is the 30 non-gated rows of `WAVE24_FINDINGS.md` §5.]**
+
 The extractor went where §4c said it had to -- `nestcert.py`, beside
 `phase_mid` -- and **B→A and the base close both derive as single-index
 chains**.  §4c's first alternative was the right one; nothing needed two
