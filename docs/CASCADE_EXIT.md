@@ -87,6 +87,40 @@ The cascade needs a LEVEL INDUCTION, not more chains:
   the kind of structure that produces it; the probe's octave profile will
   say.
 
+## 4b. The transition mechanics, traced (and a correction)
+
+Raw-stepping one A-fill → B-start transition (the excursion between
+blank-head configs; `scratchpad` trace, machine
+`0RB1LA_0LC1RD_1LA1LD_1RB0LA` at K=7) shows the per-level transitions are
+NOT whole-tape sweeps (an earlier read of the blank-head dump suggested
+they were — only the ENTRY transition from the main fill is):
+
+* a cycle EATS the counter digits (`(1,0)` units, count affine in the
+  level `l`) and STOPS at the tail head (the unit misreads there);
+* a FIXED-SIZE turnaround window at the tail head does the level's whole
+  arithmetic — A→B flips the tail's head cell `1→0`; B→A(l-1) consumes
+  one digit and grows the tail by one `01` unit;
+* a cycle LAYS the region back (count affine in `l`), and the REST of the
+  `(01)^m` tail is never read — it is exactly the OPAQUE region the
+  existing `sside` language already quantifies over.
+
+Consequence: the big cluster needs NO new checker language.  Per level,
+single-index chains (index `l`, tail opaque) + `inner_to_fill_lift` at the
+level's family (tail opaque to the counts too); the entry chain is a
+one-off at index `j`; the base close is concrete-plus-index-`j`.  The new
+Coq is only a small cascade-chaining lemma (composing `exists n, stepn`
+runs down the levels) and per-level reframing glue that is pure `rep`
+algebra (`rep_add`-style, like the boards' existing `gbo_`/`gxi_`).
+
+**Per John (2026-07-28): do not look for one construction to cover all
+132 — there is not one.**  The cascade covers the big uniform `Jp`
+cluster (~55 machines share the exact octave profile, many differing in a
+single transition) plus most of the second group; the 15 "other" and the
+non-cascade rest need their own direct looks.  mxdys' deciders made this
+look easy because they synthesize per-machine rule systems from the exact
+forward behavior — the emitter-per-machine + kernel-recheck route is our
+equivalent, and per-machine differential validation stays the discipline.
+
 ## 5. Do-not-retry, refined
 
 * The fixed-N multi-count route on this bucket stays dead (wave-22's 0 of
