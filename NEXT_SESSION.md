@@ -1211,6 +1211,60 @@ a third route in `emit_lapcert.derive`/`render` beside `nested` and `offset`,
 whose one new piece is the visit witnesses (`cascade_vis_at` is stated at an
 arbitrary level, but only level 0 is available at every outer index).  The
 41 QUAD/QUAD, 235 no-anchor and the 5 SCycR-gap machines follow.
+**[DONE in wave-25, section 2o below: all 57 boarded, `D_remaining` 439.]**
+
+## 2o. Wave-25 (2026-07-28) -- the CASCADE boarded: 57 boards, D_remaining 439
+
+Full write-up: `docs/WAVE25_FINDINGS.md`.  PR #54 merged wave-24's build with
+nothing on the board (deliberately -- §2n above); this wave is the boarding
+it named as next.  **All 57 gated machines carry kernel-checked
+`NeverQuasiHaltsSt` theorems** (`theories/Machines/Counters/CASB_*.v`, 34
+direct / 23 mirror), every one accepted on the FIRST render, all
+`functional_extensionality_dep` only.  `D_remaining` **496 -> 439** (4,717 /
+5,156 = 91.5% settled).
+
+- **The wiring was measured before it was written** (survey over the 87):
+  every gated machine's interior derives as a SINGLE chain (9 exact, 48 up to
+  `lift` -- the wave-16 template unchanged), every one boots, and the visit
+  map came out exactly as §6 of the wave-24 write-up predicted: the boot
+  chain hosts most witnesses and EXACTLY ONE state per board fires only in
+  the closing sweep.  No split interior, no quiet state, no QH closer
+  anywhere in the population.
+- **The one new lemma shape is `visc_*`** -- the sweep-only state, reached
+  from an overflow anchor through the whole cascade by
+  `NestedLapCascade.cascade_vis`: the boot landing (`gbo_*`) as its first
+  premise, `vis_of_run` on the sweep chain (through `gcl_*`) as its second.
+  Per-level chains can NEVER host a universal witness (at j = 0 there is no
+  descent), so the emitter searches only the boot chain and the sweep.
+- **Everything else is composition, in `lift` space throughout**: closer
+  `LapCertGlueLift.glue_neverqh_lift` on all 57, interior via
+  `INT_ONE`/`GLUE_ONE`/`GLUE_ONE_LIFT`, mirror transfer via `mirrorize`,
+  all unforked.  `cascade_emit.py` gained `derive_board`/`process_board`
+  (`--board`/`--boards`), and `emit_lapcert.process` falls back to the
+  cascade route after flat/nested/offset -- tried LAST, it is the most
+  expensive derive.  `PROTO` split into `PROTO_DOC + PROTO_CORE` (the
+  committed `CASC_*` regression re-renders byte-identically, checked).
+  `NestedLapCascade.v`, `LapDecider.v` and every glue file untouched.
+- The 30 non-gated are unchanged from wave-24's measurement: 12
+  octave-shifted main counts (emitter work: `families()` already carries an
+  `oct`), 17 one/two-count phases (the `no boot chain` mirror half plus the
+  odd-shaped rows), 1 main count at 4..7.
+
+**Same session, the OCTAVE-DOWN 12: 8 more boards, `D_remaining` 431.**
+`docs/WAVE25_FINDINGS.md` §7.  The 12 "octave-shifted" non-gated rows are
+not a shifted top level -- the WHOLE cascade sits one octave down, there is
+no main count, and the close is one more ASCENDING count at octave j+1
+(Θ(2^j) -- why no sweep chain ever derived) between two affine chains.
+`oct = -1` variant through extractor and emitter (`reps_low`/`LOW_*`,
+gated render byte-identical); the reindex + concrete-p=1 devices are the
+offset route's, and the p=1 lap is real: these machines' outer-index-0
+overflow has NO cascade.  8 of 12 boarded first-render, funext-only.  The
+4 left: their closing count enters ONE VALUE IN (`xI (pow2 j)`), an
+emitter lemma-pair away -- see the write-up.
+
+STATE: `D_remaining` **431** (4,725 / 5,156 = 91.6% settled); closeout
+regenerated (`make closeout`), `audit.py` OK, `Closeout.vo` + stages
+kernel-verified in-container; `census_cache --check` MATCH throughout.
 
 ## 3. The long-tail roadmap
 

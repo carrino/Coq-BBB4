@@ -45,7 +45,7 @@ def _cat(parts):
 
 # --------------------------------------------------------------- the module ---
 
-PROTO = r'''(** * CASC_@ID@: the CASCADE overflow branch of @SPEC@.
+PROTO_DOC = r'''(** * CASC_@ID@: the CASCADE overflow branch of @SPEC@.
 
     Auto-emitted by tools/counters/cascade_emit.py (UNTRUSTED emitter; the Coq
     kernel re-runs the checker on every line below).  This module carries the
@@ -75,7 +75,86 @@ PROTO = r'''(** * CASC_@ID@: the CASCADE overflow branch of @SPEC@.
     exact configurations, every count of every level of every phase:
     @NVAL@.
     Axiom footprint: [functional_extensionality_dep] (via [CTape.lift]). *)
-From Coq Require Import Arith Lia Bool List PArith Wellfounded.
+'''
+
+# The board header.  Same machine facts, different framing: this one IS a
+# board -- the whole [NeverQuasiHaltsSt] theorem -- not an overflow-branch
+# regression.
+BOARD_DOC = r'''(** * CASB_@ID@: machine @SPEC@, boarded by the CASCADE route.
+
+    Auto-emitted by tools/counters/cascade_emit.py (UNTRUSTED emitter; the Coq
+    kernel re-runs the checker on every line below).  Left-growth binary
+    counter under the @ENC@ digit alphabet, anchored at
+
+      Cc p = (@ST0@, (@ENC@ p ++ @TAIL@, S0, @FAR@))
+
+    The INTERIOR branch is an ordinary lap certificate (@NI@ steps,
+    closing @ICLO@).  The OVERFLOW branch is a DESCENDING-OCTAVE
+    CASCADE: @NLEV@ inner counts, `2j+1` of them, down from level j to
+    level 0, each level's tail one unit longer than the last, then a
+    closing sweep to the outer successor.  The number of counts is
+    AFFINE IN j, which is why no fixed list of chains expresses it; the
+    induction is [NestedLapCascade.cascade_overflow].
+
+    Every level runs the SAME counter over the SAME digits.  What grows is the
+    region past them, and the counter never reads it -- so [Cin] below is
+    stated at an ARBITRARY TAIL [T], one interior-lap certificate discharges
+    every level at once, and the two per-level chains are ordinary
+    single-index chains with the growth in the sside's opaque region.
+
+      inner lap        @CAN@*i+@CBN@ steps, at any tail
+      boot             @CAB@*j+@CBB@         -> the level-j count
+      B(l+1) -> A(l)   @CABA@*l+@CBBA@
+      A(l)   -> B(l)   @CAAB@*l+@CBAB@
+      close            @CACL@*j+@CBCL@       -> the outer successor
+
+    VISITS: only the boot and the closing sweep fire at EVERY outer index
+    (at j = 0 there is no descent), so a state firing in neither the boot
+    chain nor the interior lap must fire in the sweep, reached through the
+    whole cascade by [NestedLapCascade.cascade_vis].
+
+    Differentially validated against the raw simulator -- step counts AND
+    exact configurations: @IVAL@ (interior); every count of every level of
+    every overflow phase, @NVAL@.
+    Axiom footprint: [functional_extensionality_dep] (via [CTape.lift]). *)
+'''
+
+# The octave-down board header.
+BOARD_DOC_LOW = r'''(** * CASB_@ID@: machine @SPEC@, boarded by the CASCADE route (octave down).
+
+    Auto-emitted by tools/counters/cascade_emit.py (UNTRUSTED emitter; the Coq
+    kernel re-runs the checker on every line below).  Left-growth binary
+    counter under the @ENC@ digit alphabet, anchored at
+
+      Cc p = (@ST0@, (@ENC@ p ++ @TAIL@, S0, @FAR@))
+
+    The INTERIOR branch is an ordinary lap certificate (@NI@ steps,
+    closing @ICLO@).  The OVERFLOW branch is a DESCENDING-OCTAVE CASCADE
+    sitting ONE OCTAVE DOWN: at outer index S j' the boot lands on the top
+    level's FIRST count A(j'), one A->B hop enters the standard descent
+    ([fill_hop] hides the count), and after level 0 the machine runs ONE
+    MORE ASCENDING COUNT at octave j+1 -- the same inner family over the
+    constant tail [BT] -- before the outer successor.  The p = 1 overflow
+    (outer index 0) has no cascade at all and is a concrete lap.  The
+    induction is [NestedLapCascade.cascade_overflow] at [d0 = 1].
+
+      inner lap        @CAN@*i+@CBN@ steps, at any tail
+      boot             @CAB@*j+@CBB@  at the REINDEXED anchor -> A(top)
+      B(l+1) -> A(l)   @CABA@*l+@CBBA@
+      A(l)   -> B(l)   @CAAB@*l+@CBAB@
+      closeA           @CACA@*j+@CBCA@  level 0 -> the closing count
+      closeB           @CACB@*j+@CBCB@  its fill -> the outer successor
+
+    VISITS: every state fires inside the boot chain, whose witness covers
+    the reindexed anchors; the p = 1 anchor gets concrete [visz_]
+    witnesses (the offset route's device).
+
+    Differentially validated against the raw simulator -- step counts AND
+    exact configurations: @IVAL@ (interior); @NVAL@.
+    Axiom footprint: [functional_extensionality_dep] (via [CTape.lift]). *)
+'''
+
+PROTO_CORE = r'''From Coq Require Import Arith Lia Bool List PArith Wellfounded.
 From BBB4 Require Import BBB4_Statement CTape Mirror.
 From Coq Require Import FunctionalExtensionality.
 From BBB4.Counters Require Import WTape MonoCounter JpCounter IXPGadgets
@@ -412,6 +491,426 @@ Proof.
 Qed.
 '''
 
+PROTO = PROTO_DOC + PROTO_CORE
+
+# ------------------------------------------------- the octave-down variant ---
+#
+# Wave-24's 12 "main count at 2^(j-1)..2^j-1" non-gated rows: the WHOLE
+# cascade sits one octave down.  At outer index S j' the boot lands on the
+# top level's FIRST count A(j'), one A->B hop enters the standard descent,
+# and after level 0 the machine runs ONE MORE ASCENDING COUNT at octave
+# j+1 (the same inner family, constant tail) before the successor -- so the
+# close is two affine chains around a [fill_hop], and the p = 1 overflow
+# (outer index 0) has no cascade at all: a concrete lap, the offset route's
+# exact j = 0 device.  No new library Coq: [fill_hop] and [cascade_vis]
+# already carry everything.
+
+LOW_CLOSE = r'''(** *** the close, octave-down: after level 0 the machine runs ONE MORE
+    ASCENDING COUNT at octave j+1 -- the same inner family over the constant
+    tail [BT], its exponentially many laps living in [fill_hop] -- framed by
+    two affine chains. *)
+Definition BT_@ID@ : list Sym := @BIGTAIL@.
+Local Notation BT := BT_@ID@.
+
+Definition CLA0_@ID@ : sconf := @CLA0@.
+Definition CLA1_@ID@ : sconf := @CLA1@.
+Definition chCLA_@ID@ : list lstep := @CHCLA@.
+
+Lemma run_closeA_@ID@ :
+  srun tm true true chCLA_@ID@ CLA0_@ID@ = Some (CLA1_@ID@, @CACA@, @CBCA@).
+Proof. vm_compute. reflexivity. Qed.
+
+Definition CLB0_@ID@ : sconf := @CLB0@.
+Definition CLB1_@ID@ : sconf := @CLB1@.
+Definition chCLB_@ID@ : list lstep := @CHCLB@.
+
+Lemma run_closeB_@ID@ :
+  srun tm true true chCLB_@ID@ CLB0_@ID@ = Some (CLB1_@ID@, @CACB@, @CBCB@).
+Proof. vm_compute. reflexivity. Qed.
+
+'''
+
+LOW_GBO = r'''(** The boot chain lands on the TOP level's FIRST count -- A at one level
+    BELOW the outer index, tail one unit past the top's -- up to @BPAD@/@BFAR@
+    trailing blanks. *)
+Lemma gboa_@ID@ : forall j, lift (cden [] [] j BB1_@ID@) = lift (Cin (TA 1) (pow2 j)).
+Proof.
+  intro j.
+  assert (HD : cden [] [] j BB1_@ID@ = (@STI@, (@BLEFT@, S0, @BFARE@))).
+  { unfold cden, BB1_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+@IXBO@    rewrite ?rep_add. cbn [rep app]. rewrite <- ?app_assoc.
+    cbn [app]. rewrite ?app_nil_r. reflexivity. }
+  assert (HC : Cin (TA 1) (pow2 j) = (@STI@, (@BWANT@, S0, @BFARW@))).
+  { unfold Cin_@ID@, TA_@ID@, Uc_@ID@. rewrite epow2_@ID@.
+    replace (1 + @D0@) with @D0P1@ by lia.
+    cbn [rep app]. rewrite <- ?app_assoc. cbn [app]. rewrite ?app_nil_r.
+    reflexivity. }
+  rewrite HD, HC. rewrite ?lbl_@ID@. rewrite ?lift_app_blank. reflexivity.
+Qed.
+
+'''
+
+LOW_GCL = r'''(** The level-0 count's tail is [j + 1] units past the top's; the closing
+    count starts at [pow2 (S (S j))] over [BT]. *)
+Lemma gcla_@ID@ : forall j, Dc 0 (j + 1) = cden [] [] (S j) CLA0_@ID@.
+Proof.
+  intro j.
+  unfold Dc_@ID@, Cin_@ID@, TB_@ID@, Uc_@ID@, cden, CLA0_@ID@, sden;
+    cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+  rewrite (epow2_@ID@ 0).
+@IXCLA@  rewrite ?rep_add. cbn [pow2 rep app]. rewrite <- ?app_assoc.
+  cbn [app]. rewrite ?app_nil_r. reflexivity.
+Qed.
+
+Lemma gclab_@ID@ : forall j,
+  lift (cden [] [] (S j) CLA1_@ID@) = lift (Cin BT (pow2 (S (S j)))).
+Proof.
+  intro j.
+  assert (HD : cden [] [] (S j) CLA1_@ID@ = (@STI@, (@CLABL@, S0, @CLABF@))).
+  { unfold cden, CLA1_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+@IXCLAB@    rewrite ?rep_add. cbn [rep app]. rewrite <- ?app_assoc.
+    cbn [app]. rewrite ?app_nil_r. reflexivity. }
+  assert (HC : Cin BT (pow2 (S (S j))) = (@STI@, (@CLABW@, S0, @CLABG@))).
+  { unfold Cin_@ID@, BT_@ID@. rewrite epow2_@ID@.
+    cbn [rep app]. rewrite <- ?app_assoc. cbn [app]. rewrite ?app_nil_r.
+    reflexivity. }
+  rewrite HD, HC. rewrite ?lbl_@ID@. rewrite ?lift_app_blank. reflexivity.
+Qed.
+
+Lemma gclb_@ID@ : forall j,
+  Cin BT (fill (pow2 (S (S j)))) = cden [] [] (S (S j)) CLB0_@ID@.
+Proof.
+  intro j.
+  unfold Cin_@ID@, BT_@ID@, cden, CLB0_@ID@, sden;
+    cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+  rewrite efill_@ID@.
+@IXCLB@  rewrite ?rep_add. cbn [rep app]. rewrite <- ?app_assoc.
+  cbn [app]. rewrite ?app_nil_r. reflexivity.
+Qed.
+
+(** The closing count lands one index up from [geo_]'s [B1] frame; both
+    normalise to the same explicit successor word. *)
+Lemma gclbx_@ID@ : forall j,
+  lift (cden [] [] (S (S j)) CLB1_@ID@) = lift (cden [] [] (S j) B1_@ID@).
+Proof.
+  intro j.
+  assert (HD : cden [] [] (S (S j)) CLB1_@ID@ = (@ST0@, (@CBXL@, S0, @CBXF@))).
+  { unfold cden, CLB1_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+@IXCBX@    rewrite ?rep_add. cbn [rep app]. rewrite <- ?app_assoc.
+    cbn [app]. rewrite ?app_nil_r. reflexivity. }
+  assert (HE : cden [] [] (S j) B1_@ID@ = (@ST0@, (@CBXB@, S0, @CBXG@))).
+  { unfold cden, B1_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+@IXCBE@    rewrite ?rep_add. cbn [rep app]. rewrite <- ?app_assoc.
+    cbn [app]. rewrite ?app_nil_r. reflexivity. }
+  rewrite HD, HE. rewrite ?lbl_@ID@. rewrite ?lift_app_blank. reflexivity.
+Qed.
+
+'''
+
+LOW_LAPO = r'''(** ** The overflow branch, reindexed
+
+    The top level sits ONE OCTAVE DOWN, so the generic route runs at
+    [j = S j']: boot to A(j'), one A->B hop ([fill_hop] hides that count),
+    [j'] level steps down, the closing count, out.  [j = 0] is a concrete
+    lap -- the p = 1 overflow has no cascade at all. *)
+
+Lemma gbor_@ID@ : forall p j, cview p = (S (S j), None) ->
+  exists n c, 0 < n /\ csteps tm n (Cc p) = Some c /\ lift c = lift (Dc j 1).
+Proof.
+  intros p j Ev.
+  assert (HAB : exists n, stepn tm n (lift (Cin (TA 1) (fill (pow2 j))))
+                = Some (lift (Dc j 1))).
+  { exists (@CAAB@ * j + @CBAB@). unfold Dc_@ID@.
+    rewrite (gABs_@ID@ j 0), <- (gABd_@ID@ j 0).
+    apply csteps_lift.
+    exact (srun_sound tm @ELAB@ true chAB_@ID@ AB0_@ID@ AB1_@ID@ @CAAB@ @CBAB@
+             run_AB_@ID@ (XAB_@ID@ 0) [] j
+             ltac:(@ELABT@) ltac:(reflexivity)). }
+  destruct (fill_hop tm Cin lapin_@ID@ (TA 1) (pow2 j) _ HAB) as (n2 & H2).
+  rewrite <- (gboa_@ID@ j) in H2.
+  destruct (stepn_csteps_at tm n2 (cden [] [] j BB1_@ID@) _ H2)
+    as (cc & Hcc & Hl).
+  exists (@CAB@ * j + @CBB@ + n2), cc.
+  split; [lia|]. split; [| exact Hl].
+  rewrite csteps_add, (gso_@ID@ p j Ev).
+  rewrite (srun_sound tm true true chb_@ID@ B0_@ID@ BB1_@ID@ @CAB@ @CBB@
+             run_boot_@ID@ [] [] j ltac:(reflexivity) ltac:(reflexivity)).
+  exact Hcc.
+Qed.
+
+(** j = 0: the p = 1 overflow, concrete. *)
+Lemma lapz_@ID@ : exists n c', csteps tm n (Cc 1) = Some c'
+  /\ lift c' = lift (Cc 2) /\ 0 < n.
+Proof.
+  exists @N0@.
+  assert (H : match csteps tm @N0@ (Cc 1) with
+              | Some c => ceqb c (Cc 2) | None => false end = true)
+    by (vm_compute; reflexivity).
+  destruct (csteps tm @N0@ (Cc 1)) as [c|] eqn:E0; [|discriminate].
+  exists c. split; [reflexivity|]. split; [apply ceqb_lift; exact H | lia].
+Qed.
+
+Lemma lapo_@ID@ : forall p j, cview p = (S j, None) ->
+  exists n c', csteps tm n (Cc p) = Some c'
+          /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+Proof.
+  intros p j Ev.
+  destruct j as [|j'].
+  - rewrite (cview_none_shape p 0 Ev). exact lapz_@ID@.
+  - apply (cascade_overflow tm Cc Dc hstep_@ID@ p j' 1).
+    + exact (gbor_@ID@ p j' Ev).
+    + assert (HB : exists n,
+        stepn tm n (lift (Cin BT (fill (pow2 (S (S j'))))))
+        = Some (lift (Cc (Pos.succ p)))).
+      { exists (@CACB@ * S (S j') + @CBCB@).
+        rewrite (gclb_@ID@ j'), <- (geo_@ID@ p (S j') Ev), <- (gclbx_@ID@ j').
+        apply csteps_lift.
+        exact (srun_sound tm true true chCLB_@ID@ CLB0_@ID@ CLB1_@ID@
+                 @CACB@ @CBCB@ run_closeB_@ID@ [] [] (S (S j'))
+                 ltac:(reflexivity) ltac:(reflexivity)). }
+      destruct (fill_hop tm Cin lapin_@ID@ BT (pow2 (S (S j'))) _ HB)
+        as (n2 & H2).
+      exists (@CACA@ * S j' + @CBCA@ + n2).
+      rewrite (gcla_@ID@ j'), stepn_add.
+      rewrite (csteps_lift _ _ _ _
+        (srun_sound tm true true chCLA_@ID@ CLA0_@ID@ CLA1_@ID@ @CACA@ @CBCA@
+           run_closeA_@ID@ [] [] (S j')
+           ltac:(reflexivity) ltac:(reflexivity))).
+      rewrite (gclab_@ID@ j'). exact H2.
+Qed.
+'''
+
+
+def _low_core():
+    """PROTO_CORE with the gated close/gbo/gcl/lapo sections swapped for the
+    octave-down ones and [gso_] restated at the reindexed anchor.  Assembled
+    by section markers so the gated text stays single-sourced."""
+    c = PROTO_CORE
+    i_close = c.index('(** *** the closing sweep')
+    i_glue = c.index('(** ** The per-level glue')
+    i_gbo = c.index('(** The boot lands on the level-j')
+    i_gcl = c.index('(** The closing sweep starts from')
+    i_lapo = c.index('(** ** The overflow branch')
+    mid2 = c[i_glue:i_gbo]
+    old_gso = ('Lemma gso_@ID@ : forall p j, cview p = (S j, None) ->'
+               ' Cc p = cden [] [] j B0_@ID@.')
+    new_gso = ('Lemma gso_@ID@ : forall p j, cview p = (S (S j), None) ->\n'
+               '  Cc p = cden [] [] j B0_@ID@.')
+    if old_gso not in mid2:
+        raise RuntimeError('low core: gso statement not found')
+    mid2 = mid2.replace(old_gso, new_gso)
+    old_none = 'destruct (@ENCMOD@.@NONE@ p j Ev) as (H1 & _).'
+    if old_none not in mid2:
+        raise RuntimeError('low core: gso NONE destruct not found')
+    mid2 = mid2.replace(old_none,
+                        'destruct (@ENCMOD@.@NONE@ p (S j) Ev) as (H1 & _).')
+    return (c[:i_close] + LOW_CLOSE + mid2 + LOW_GBO + LOW_GCL + LOW_LAPO)
+
+# ----------------------------------------------------------------- the board ---
+#
+# Everything a BOARD adds around the overflow branch: the interior lap at the
+# outer anchor (emit_lapcert's own templates, verbatim), the full lap, the
+# bootstrap, the visits and the closer.  The whole board runs in [lift] space
+# -- the cascade's overflow closes only up to [lift], so the closer is
+# [LapCertGlueLift.glue_neverqh_lift] on every one of these.
+
+BOARD_TAIL = r'''
+(** ** The INTERIOR branch, at the outer anchor *)
+
+@INTERIOR@
+
+@GLUEI@
+
+@LAPIL@(** ** The lap *)
+
+Lemma lap_@ID@ : forall p, exists n c',
+  csteps tm n (Cc p) = Some c' /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+Proof.
+  intro p. destruct (cview p) as [j oq] eqn:E. destruct oq as [q0|].
+@LAPICASE@
+  - destruct (cview_pos p j E) as (j' & ->).
+    exact (lapo_@ID@ p j' E).
+Qed.
+
+(** ** Bootstrap *)
+
+Lemma boot_@ID@ : exists t0, stepn tm t0 InitES = Some (lift (Cc @P0@)).
+Proof.
+  exists @BOOT@.
+  assert (H : match csteps tm @BOOT@ c0 with
+              | Some c => ceqb c (Cc @P0@) | None => false end = true)
+    by (vm_compute; reflexivity).
+  destruct (csteps tm @BOOT@ c0) as [c|] eqn:E; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.
+Qed.
+
+(** ** Visits
+
+    Only the boot and the closing sweep fire at EVERY outer index -- at
+    j = 0 the cascade has no descent, so a witness inside a per-level chain
+    would not be universal.  A state missing from the boot chain is found in
+    the SWEEP, reached through the whole cascade ([cascade_vis]: boot to
+    level j, [cascade_down] to level 0, then a prefix of the sweep). *)
+
+Lemma viso_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm true true l B0_@ID@ = Some q ->
+  forall p j, cview p = (S j, None) ->
+  exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros l q Hst p j E.
+  apply (vis_of_run tm Cc true true l B0_@ID@ p j [] []);
+    [exact Hst | reflexivity | reflexivity | exact (gso_@ID@ p j E)].
+Qed.
+
+Lemma visc_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm true true l CL0_@ID@ = Some q ->
+  forall p j, cview p = (S j, None) ->
+  exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q.
+Proof.
+  intros l q Hst p j Ev.
+  apply (cascade_vis tm Cc Dc hstep_@ID@ q p j 0).
+  - exists (@CAB@ * j + @CBB@), (cden [] [] j BB1_@ID@).
+    split; [| exact (gbo_@ID@ j)].
+    rewrite (gso_@ID@ p j Ev).
+    exact (srun_sound tm true true chb_@ID@ B0_@ID@ BB1_@ID@ @CAB@ @CBB@
+             run_boot_@ID@ [] [] j ltac:(reflexivity) ltac:(reflexivity)).
+  - rewrite gcl_@ID@.
+    destruct (vis_of_run tm (fun _ => cden [] [] j CL0_@ID@) true true l
+                CL0_@ID@ 1%positive j [] [] q Hst
+                ltac:(reflexivity) ltac:(reflexivity) eq_refl)
+      as (k & c & Hk & Hq).
+    exists k, (lift c).
+    split; [apply csteps_lift; exact Hk | rewrite lift_state; exact Hq].
+Qed.
+
+Lemma vis_@ID@ : forall p q,
+  exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q.
+Proof.
+  intros p q.
+  destruct q.
+@VISITS@
+Qed.
+
+@FINAL@
+'''
+
+VIS_BOOT = '''  - (* %s *)
+    apply (vis_via_ovf_lift tm Cc lapil_@ID@ %s).
+    intros p1 j1 E1. apply (vis_lift_of_csteps tm Cc).
+    apply (viso_@ID@ %s %s ltac:(vm_compute; reflexivity)
+                 p1 j1 E1).'''
+
+# the octave-down bullet: the reindexed [viso_] covers j1 = S j1'; the p = 1
+# anchor gets its concrete [visz_] witness (the offset route's device)
+VIS_BOOT_LOW = '''  - (* %s *)
+    apply (vis_via_ovf_lift tm Cc lapil_@ID@ %s).
+    intros p1 j1 E1. destruct j1 as [|j1'].
+    + rewrite (cview_none_shape p1 0 E1).
+      apply (vis_lift_of_csteps tm Cc). exact visz_%s_@ID@.
+    + apply (vis_lift_of_csteps tm Cc).
+      apply (viso_@ID@ %s %s ltac:(vm_compute; reflexivity)
+                   p1 j1' E1).'''
+
+VISZ_LOW = r'''(** State @STQ@'s visit witness at the reindex's p = 1 case -- concrete. *)
+Lemma visz_@STQ@_@ID@ : exists k c, csteps tm k (Cc 1) = Some c /\ fst c = @STQ@.
+Proof. exists @KQ@. eexists. split; [vm_compute; reflexivity | reflexivity]. Qed.'''
+
+BOARD_TAIL_LOW = r'''
+(** ** The INTERIOR branch, at the outer anchor *)
+
+@INTERIOR@
+
+@GLUEI@
+
+@LAPIL@(** ** The lap *)
+
+Lemma lap_@ID@ : forall p, exists n c',
+  csteps tm n (Cc p) = Some c' /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+Proof.
+  intro p. destruct (cview p) as [j oq] eqn:E. destruct oq as [q0|].
+@LAPICASE@
+  - destruct (cview_pos p j E) as (j' & ->).
+    exact (lapo_@ID@ p j' E).
+Qed.
+
+(** ** Bootstrap *)
+
+Lemma boot_@ID@ : exists t0, stepn tm t0 InitES = Some (lift (Cc @P0@)).
+Proof.
+  exists @BOOT@.
+  assert (H : match csteps tm @BOOT@ c0 with
+              | Some c => ceqb c (Cc @P0@) | None => false end = true)
+    by (vm_compute; reflexivity).
+  destruct (csteps tm @BOOT@ c0) as [c|] eqn:E; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.
+Qed.
+
+(** ** Visits
+
+    Every state fires inside the BOOT chain, which runs at the REINDEXED
+    anchor -- so the generic witness covers j = S j', and the p = 1 anchor
+    (whose overflow has no cascade) gets concrete [visz_] witnesses. *)
+
+Lemma viso_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm true true l B0_@ID@ = Some q ->
+  forall p j, cview p = (S (S j), None) ->
+  exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros l q Hst p j E.
+  apply (vis_of_run tm Cc true true l B0_@ID@ p j [] []);
+    [exact Hst | reflexivity | reflexivity | exact (gso_@ID@ p j E)].
+Qed.
+
+@VISZSEC@
+
+Lemma vis_@ID@ : forall p q,
+  exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q.
+Proof.
+  intros p q.
+  destruct q.
+@VISITS@
+Qed.
+
+@FINAL@
+'''
+
+VIS_CLOSE = '''  - (* %s: fires only in the closing sweep *)
+    apply (vis_via_ovf_lift tm Cc lapil_@ID@ %s).
+    intros p1 j1 E1.
+    apply (visc_@ID@ %s %s ltac:(vm_compute; reflexivity)
+                 p1 j1 E1).'''
+
+LAPIL_EXACT = r'''(** The interior closes exactly; the cascade's plumbing runs in [lift]
+    space, so restate it there. *)
+Lemma lapil_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  exists n c', 0 < n /\ csteps tm n (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)).
+Proof.
+  intros p j q0 E. destruct (lapi_@ID@ p j q0 E) as (n & Hn & Hr).
+  exists n, (Cc (Pos.succ p)). auto.
+Qed.
+
+'''
+
+LAPIL_LIFT = r'''(** [lapi_@ID@] is already in [lift] space; alias it for the plumbing. *)
+Lemma lapil_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  exists n c', 0 < n /\ csteps tm n (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)).
+Proof. exact lapi_@ID@. Qed.
+
+'''
+
+LAPICASE_EXACT = '''  - destruct (lapi_@ID@ p j q0 E) as (n & Hn & Hrun).
+    exists n, (Cc (Pos.succ p)).
+    split; [exact Hrun | split; [reflexivity | exact Hn]].'''
+
+LAPICASE_LIFT = '''  - destruct (lapi_@ID@ p j q0 E) as (n & c' & Hn & Hrun & Hlift).
+    exists n, c'. split; [exact Hrun | split; [exact Hlift | exact Hn]].'''
+
 
 def _sconf(c):
     return E.cconf(c)
@@ -421,7 +920,7 @@ def reps(spec, d, K):
     """Every hole of [PROTO], from one gated [cascade_endpoints] record."""
     A = d['anchor']
     law = d['law']
-    ID = spec.replace('-', 'x')
+    ID = E.mach_id(spec)
     din = E.ENCDATA[law['inner']]
     dout = E.ENCDATA[A['enc']]
     T = d['trans']
@@ -556,6 +1055,173 @@ def reps(spec, d, K):
     return r
 
 
+def reps_low(spec, d, K):
+    """[reps]'s octave-down twin: the shared holes, the reindexed boot's
+    landing bridge (to the TOP level's FIRST count), and the two-chain close
+    around the octave-(j+1) count.  Shapes the framing search cannot express
+    in this template raise rather than mis-render."""
+    A = d['anchor']
+    law = d['law']
+    ID = E.mach_id(spec)
+    din = E.ENCDATA[law['inner']]
+    dout = E.ENCDATA[A['enc']]
+    T = d['trans']
+    ba, ab = T['BA'], T['AB']
+    ca, cb = T['CLOSEA'], T['CLOSEB']
+    d0 = law['M'] - law['j']
+    unit = law['unit']
+    bt = tuple(law['big_tail'])
+    soD, soS = tuple(din['soD']), tuple(din['soS'])
+
+    if dout['obS'] != 0:
+        raise NC.NestError('cascade low: only obS=0 outer alphabets wired')
+    for t, nm in ((ca, 'CLOSEA'), (cb, 'CLOSEB')):
+        if not t['el']:
+            raise NC.NestError('cascade low: %s is not el' % nm)
+
+    # the boot lands on A(top): soD ++ extraA ++ unit^(dm+1)
+    bwant = soD + tuple(law['extraA']) + tuple(unit) * (d0 + 1)
+    bcore, bpad, bpadw = _pads(d['BB1'][1][4], bwant)
+    bfcore, bfar, bfarw = _pads(tuple(d['BB1'][3][0]) + tuple(d['BB1'][3][4]),
+                                tuple(law['far_in']))
+    brep = 'rep %s j' % clist(din['uD'])
+
+    # CLOSEA: level-0 fill -> the closing count's start
+    apre, au, aa, ab_, apost = ca['src'][1]
+    if (tuple(apre), tuple(au), aa, ab_, tuple(apost)) != \
+            (soD + tuple(law['extraB']), tuple(unit), 1, d0, ()):
+        raise NC.NestError('cascade low: CLOSEA src off shape %r'
+                           % (ca['src'][1],))
+    lpre, lu, la, lb, lpost = ca['land'][1]
+    if (tuple(lpre), tuple(lu), la, lb) != ((), tuple(din['uD']), 1, 1):
+        raise NC.NestError('cascade low: CLOSEA lands off shape %r'
+                           % (ca['land'][1],))
+    acore, apadl, apadw = _pads(lpost, soD + bt)
+    afcore, afarl, afarw = _pads(tuple(ca['land'][3][0])
+                                 + tuple(ca['land'][3][4]),
+                                 tuple(law['far_in']))
+    arep = 'rep %s (S (S j))' % clist(din['uD'])
+
+    # CLOSEB: the closing count's fill -> the outer successor
+    zpre, zu, za, zb, zpost = cb['src'][1]
+    if (tuple(zpre), tuple(zu), za, zb, tuple(zpost)) != \
+            ((), tuple(din['uS']), 1, 0, soS + bt):
+        raise NC.NestError('cascade low: CLOSEB src off shape %r'
+                           % (cb['src'][1],))
+    xpre, xu, xa, xb, xpost = cb['land'][1]
+    if (tuple(xpre), tuple(xu), xa, xb) != ((), tuple(dout['uD']), 1, 0):
+        raise NC.NestError('cascade low: CLOSEB lands off shape %r'
+                           % (cb['land'][1],))
+    ovwant = tuple(dout['soD']) + tuple(A['tail'])
+    xcore, xpadl, xpadb = _pads(xpost, ovwant)
+    xfcore, xfarl, xfarb = _pads(tuple(cb['land'][3][0])
+                                 + tuple(cb['land'][3][4]), tuple(A['far']))
+    xrep = 'rep %s (S (S j))' % clist(dout['uD'])
+
+    def cnt(v, b):
+        return ('  replace (1 * %s + %d) with %s by lia.\n'
+                % (v, b, v if b == 0 else '(%s + %d)' % (v, b)))
+
+    def far(v):
+        return '  replace (0 * %s + 0) with 0 by lia.\n' % v
+
+    r = {
+        '@ID@': ID, '@SPEC@': spec,
+        '@DSPEC@': E.mirror_spec(spec) if A['mirrored'] else spec,
+        '@TABLE@': coq_table(E.mirror_spec(spec) if A['mirrored'] else spec),
+        '@ST0@': ST[A['st0']], '@ENC@': dout.get('fn', A['enc']),
+        '@TAIL@': clist(A['tail']), '@FAR@': clist(A['far']),
+        '@STI@': ST[law['st_in']], '@ENCI@': din.get('fn', law['inner']),
+        '@FARI@': clist(law['far_in']),
+        '@UDI@': clist(din['uD']), '@USI@': clist(din['uS']),
+        '@SODI@': clist(din['soD']), '@SOSI@': clist(din['soS']),
+        '@ENCMODI@': din['mod'], '@SOMEI@': din['some'],
+        '@NONEI@': din['none'],
+        '@ENCMOD@': dout['mod'], '@NONE@': dout['none'],
+        '@UNIT@': clist(unit), '@D0@': str(d0), '@D0P1@': str(d0 + 1),
+        '@HEADA@': clist(law['extraA']), '@HEADB@': clist(law['extraB']),
+        '@AI0@': _sconf(d['AI0']), '@AI1@': _sconf(d['AI1']),
+        '@CHN@': E.cchain(d['chn']),
+        '@CAN@': str(d['cn'][0]), '@CBN@': str(d['cn'][1]),
+        '@B0@': _sconf(d['B0']), '@B1@': _sconf(d['B1']),
+        '@BB1@': _sconf(d['BB1']), '@CHB@': E.cchain(d['chb']),
+        '@CAB@': str(d['cb'][0]), '@CBB@': str(d['cb'][1]),
+        '@BA0@': _sconf(ba['src']), '@BA1@': _sconf(ba['land']),
+        '@CHBA@': E.cchain(ba['chain']),
+        '@CABA@': str(ba['cost'][0]), '@CBBA@': str(ba['cost'][1]),
+        '@AB0@': _sconf(ab['src']), '@AB1@': _sconf(ab['land']),
+        '@CHAB@': E.cchain(ab['chain']),
+        '@CAAB@': str(ab['cost'][0]), '@CBAB@': str(ab['cost'][1]),
+        '@ELBA@': 'true' if ba['el'] else 'false',
+        '@ELAB@': 'true' if ab['el'] else 'false',
+        '@ELBAT@': 'reflexivity' if ba['el'] else 'discriminate',
+        '@ELABT@': 'reflexivity' if ab['el'] else 'discriminate',
+        '@OBSP@': '0', '@CNTP@': 'j',
+        '@BPAD@': str(bpad), '@BFAR@': str(bfar),
+        '@BLEFT@': _nest(bcore, bpad, brep),
+        '@BFARE@': _nest(bfcore, bfar),
+        '@BWANT@': _nest(bcore, bpadw, brep),
+        '@BFARW@': _nest(bfcore, bfarw),
+        '@NLEV@': 'j', '@NVAL@': d['nval'],
+        '@EXTRAMOD@': ('' if din['mod'] == dout['mod']
+                       else ' ' + din['mod']),
+        '@BIGTAIL@': clist(bt),
+        '@CLA0@': _sconf(ca['src']), '@CLA1@': _sconf(ca['land']),
+        '@CHCLA@': E.cchain(ca['chain']),
+        '@CACA@': str(ca['cost'][0]), '@CBCA@': str(ca['cost'][1]),
+        '@CLB0@': _sconf(cb['src']), '@CLB1@': _sconf(cb['land']),
+        '@CHCLB@': E.cchain(cb['chain']),
+        '@CACB@': str(cb['cost'][0]), '@CBCB@': str(cb['cost'][1]),
+        '@CLABL@': _nest(acore, apadl, arep),
+        '@CLABW@': _nest(acore, apadw, arep),
+        '@CLABF@': _nest(afcore, afarl), '@CLABG@': _nest(afcore, afarw),
+        '@CBXL@': _nest(xcore, xpadl, xrep),
+        '@CBXB@': _nest(xcore, xpadb, xrep),
+        '@CBXF@': _nest(xfcore, xfarl), '@CBXG@': _nest(xfcore, xfarb),
+        '@N0@': str(d['n0']),
+    }
+    r['@XBA@'] = _xterm(ba, law, 'BA')
+    r['@XAB@'] = _xterm(ab, law, 'AB')
+
+    def front(term, k):
+        return '  replace (%s) with (%d + m) by lia.\n' % (term, k)
+
+    r['@IXBAS@'] = (cnt('l', ba['src'][1][3]) + far('l')
+                    + '  replace (S l) with (l + 1) by lia.\n'
+                    + front('m + %d' % d0, d0))
+    r['@IXBAD@'] = (cnt('l', ba['land'][1][3]) + far('l')
+                    + front('S m + %d' % d0, d0 + 1))
+    r['@IXABS@'] = (cnt('l', ab['src'][1][3]) + far('l')
+                    + front('S m + %d' % d0, d0 + 1))
+    r['@IXABD@'] = (cnt('l', ab['land'][1][3]) + far('l')
+                    + front('S m + %d' % d0, d0 + 1))
+    r['@IXBO@'] = ('  ' + cnt('j', d['BB1'][1][3]).strip() + '\n'
+                   + '  ' + far('j').strip() + '\n')
+    r['@FARN@'] = _farchg(d['ifar'], law['far_in'])
+    r['@FARBA@'] = _farchg(NC._slack(tuple(ba['land'][3][0])
+                                     + tuple(ba['land'][3][4]),
+                                     tuple(law['far_in']), 'BA far'),
+                           law['far_in'])
+    r['@FARAB@'] = _farchg(NC._slack(tuple(ab['land'][3][0])
+                                     + tuple(ab['land'][3][4]),
+                                     tuple(law['far_in']), 'AB far'),
+                           law['far_in'])
+    # the close's index arithmetic: CLOSEA runs at S j (level-0 tail is
+    # j+1 units past the top's), CLOSEB at S (S j) (the closing count)
+    r['@IXCLA@'] = ('  replace (1 * S j + %d) with (j + 1 + %d) by lia.\n'
+                    % (d0, d0)
+                    + far('S j'))
+    r['@IXCLAB@'] = ('    replace (1 * S j + 1) with (S (S j)) by lia.\n'
+                     + '  ' + far('S j'))
+    r['@IXCLB@'] = ('  replace (1 * S (S j) + 0) with (S (S j)) by lia.\n'
+                    + far('S (S j)'))
+    r['@IXCBX@'] = ('    replace (1 * S (S j) + 0) with (S (S j)) by lia.\n'
+                    + '  ' + far('S (S j)'))
+    r['@IXCBE@'] = ('    replace (1 * S j + 1) with (S (S j)) by lia.\n'
+                    + '  ' + far('S j'))
+    return r
+
+
 def _pads(got, want):
     """The common core of a landing and the anchor it is meant to be, plus the
     trailing blanks each carries past it.
@@ -626,15 +1292,210 @@ def proto(spec, K=7, out=None):
     return txt
 
 
+# ------------------------------------------------------------------ boards ---
+
+BOARD_PREFIX = 'CASB'
+
+
+def _far_slack_i(side, far):
+    """The interior lap's landing FAR side vs the anchor's: the blanks it
+    carries past it, rendered fused and re-split (emit_lapcert's far_slack)."""
+    if side[1]:
+        raise NC.NestError('interior far slack: unit run on the far side')
+    got, wnt = tuple(side[0]) + tuple(side[4]), tuple(far)
+    n = len(got) - len(wnt)
+    if n < 1 or got != wnt + (0,) * n:
+        raise NC.NestError('interior far slack %r vs %r' % (got, wnt))
+    return (clist(got), '(' * n + clist(wnt)
+            + ''.join(') ++ [S0]' for _ in range(n)))
+
+
+def derive_board(spec, K=7):
+    """Everything a FULL cascade board needs, gated: the wave-24 overflow
+    record plus the interior chain at the outer anchor, the bootstrap and one
+    visit witness per state.  Raises [NestError]/[DeriveError] naming the
+    first piece that does not derive."""
+    d = CP.endpoints(spec, K, quiet=True)
+    A = d['anchor']
+    oct_ = d['law'].get('oct', 0)
+    tab, st0 = A['tab'], A['st0']
+    tail, far, enc = A['tail'], A['far'], A['enc']
+    encf = E.ENC[enc]
+    dspec = E.mirror_spec(spec) if A['mirrored'] else spec
+    p0 = None
+    for (edge, tl, pp, en, fr) in E.anchors(dspec):
+        if (E.LAB.index(edge), tuple(tl), en, tuple(fr)) == \
+                (st0, tuple(tail), enc, tuple(far)):
+            p0 = pp
+            break
+    if p0 is None:
+        raise NC.NestError('anchor family lost its p0')
+
+    A0, A1, _, _ = E.confs(enc, st0, tail, far)
+    chi = E.LC.derive_chain(tab, False, True, A0, A1)
+    islack = False
+    if chi is None:
+        chi = E.LC.derive_chain(tab, False, True, A0, A1, lift=True)
+        if chi is None:
+            raise NC.NestError('no interior chain')
+        islack = True
+    if islack and oct_ == -1:
+        raise NC.NestError('cascade low: only exact interiors wired')
+    ri = E.LC.srun(tab, False, True, chi, A0)
+    if ri is None or ri[2] == 0:
+        raise NC.NestError('interior lap of zero length at j=0')
+    if islack:
+        A1 = ri[0]
+    cost = lambda j, c=(ri[1], ri[2]): c[0] * j + c[1]        # noqa: E731
+    ok, ival = E.validate_int(tab, st0, encf, tail, far, cost)
+    if not ok:
+        raise NC.NestError('interior validation: ' + ival)
+
+    boot = E.boot_probe(tab, st0, encf, tail, far, p0)
+    if boot is None:
+        raise NC.NestError('no bootstrap to p0=%d' % p0)
+
+    # one witness per state: the boot chain covers most; the closing sweep is
+    # the only other piece of the overflow available at EVERY outer index
+    # (octave down: the boot chain alone, plus the concrete p = 1 witnesses).
+    vis = {}
+    for q in range(4):
+        pre = E.LC.reach_state(tab, True, True, d['B0'], d['chb'], q)
+        if pre is not None:
+            vis[q] = ('boot', pre)
+            continue
+        if oct_ == 0:
+            pre = E.LC.reach_state(tab, True, True,
+                                   d['trans']['CLOSE']['src'],
+                                   d['trans']['CLOSE']['chain'], q)
+            if pre is not None:
+                vis[q] = ('close', pre)
+                continue
+        raise NC.NestError('no visit witness for state %s' % E.LAB[q])
+    if oct_ == -1 and sorted(d['visz']) != [0, 1, 2, 3]:
+        raise NC.NestError('cascade low: p=1 visit witnesses incomplete')
+
+    return dict(spec=spec, dspec=dspec, mirrored=A['mirrored'], d=d, K=K,
+                oct=oct_, p0=p0, boot=boot, chi=chi, ci=(ri[1], ri[2]),
+                A0=A0, A1=A1, islack=islack, vis=vis, ival=ival)
+
+
+def render_board(D):
+    """The full board source.  Rendered against the (possibly mirrored)
+    derivation spec, like emit_lapcert; [mirrorize] then rewrites it into the
+    transfer form for the real machine."""
+    d, dspec = D['d'], D['dspec']
+    low = D.get('oct', 0) == -1
+    A2 = dict(d['anchor'], mirrored=False)
+    r = (reps_low if low else reps)(dspec, dict(d, anchor=A2), D['K'])
+    ID = r['@ID@']
+    dout = E.ENCDATA[d['anchor']['enc']]
+    r.update({
+        '@SOME@': dout['some'],
+        '@US@': clist(dout['uS']), '@UD@': clist(dout['uD']),
+        '@A0@': E.cconf(D['A0']), '@A1@': E.cconf(D['A1']),
+        '@CHI@': E.cchain(D['chi']),
+        '@CAI@': str(D['ci'][0]), '@CBI@': str(D['ci'][1]),
+        '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
+        '@NI@': '%d*j+%d' % D['ci'],
+        '@ICLO@': 'up to [lift]' if D['islack'] else 'exactly',
+        '@IVAL@': D['ival'],
+        '@INTERIOR@': E.INT_ONE,
+        '@GLUEI@': E.GLUE_ONE_LIFT if D['islack'] else E.GLUE_ONE,
+        '@LAPIL@': LAPIL_LIFT if D['islack'] else LAPIL_EXACT,
+        '@LAPICASE@': LAPICASE_LIFT if D['islack'] else LAPICASE_EXACT,
+        '@FINAL@': E.NQH_CLOSE_LIFT,
+    })
+    if D['islack']:
+        farb, farnest = _far_slack_i(D['A1'][3], d['anchor']['far'])
+        r['@FARB@'], r['@FARNEST@'] = farb, farnest
+    vis = []
+    for q in range(4):
+        route, pre = D['vis'][q]
+        if low:
+            vis.append(VIS_BOOT_LOW % (ST[q], ST[q], ST[q],
+                                       E.cchain(pre), ST[q]))
+        else:
+            tpl = VIS_BOOT if route == 'boot' else VIS_CLOSE
+            vis.append(tpl % (ST[q], ST[q], E.cchain(pre), ST[q]))
+    r['@VISITS@'] = '\n'.join(vis)
+    if low:
+        r['@VISZSEC@'] = '\n\n'.join(
+            _fill(VISZ_LOW, {'@STQ@': ST[q], '@KQ@': str(d['visz'][q])})
+            for q in range(4))
+        src = BOARD_DOC_LOW + _low_core() + BOARD_TAIL_LOW
+    else:
+        src = BOARD_DOC + PROTO_CORE + BOARD_TAIL
+    for _ in range(3):              # the injected blocks carry holes themselves
+        for k, v in r.items():
+            src = src.replace(k, v)
+    if D['mirrored']:
+        src = E.mirrorize(src, D['spec'], dspec)
+    return src
+
+
+def process_board(spec, do_emit=True, force=False, K=7):
+    """emit_lapcert.process's shape, for the cascade route: derive, render,
+    compile, report.  Returns the result dict, or ok=False with the reason."""
+    try:
+        D = derive_board(spec, K)
+        src = render_board(D)
+    except Exception as e:                                     # noqa: BLE001
+        return dict(spec=spec, ok=False, why='cascade: %s' % e)
+    if not do_emit:
+        return dict(spec=spec, ok=True, enc=d_enc(D), ni='%d*j+%d' % D['ci'],
+                    no='cascade')
+    path = os.path.join(E.OUTDIR, '%s_%s.v'
+                        % (BOARD_PREFIX, E.mach_id(spec)))
+    if os.path.exists(path) and not force:
+        return dict(spec=spec, ok=True, enc=d_enc(D), file=path, skipped=True,
+                    ni='%d*j+%d' % D['ci'], no='cascade')
+    open(path, 'w').write(src)
+    ok, log = E.coqc(os.path.relpath(path, REPO))
+    if not ok:
+        os.remove(path)
+        lg = [l for l in log.strip().splitlines() if l.strip()]
+        return dict(spec=spec, ok=False,
+                    why='cascade coqc: ' + (lg[-1] if lg else '?'))
+    return dict(spec=spec, ok=True, enc=d_enc(D), file=path,
+                ni='%d*j+%d' % D['ci'], no='cascade')
+
+
+def d_enc(D):
+    return D['d']['anchor']['enc'] + ('/mirror' if D['mirrored'] else '')
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--proto', required=True)
+    ap.add_argument('--proto')
+    ap.add_argument('--board')
+    ap.add_argument('--boards', help='spec-list file: emit + coqc each')
     ap.add_argument('-K', type=int, default=7)
     ap.add_argument('-o')
+    ap.add_argument('--force', action='store_true')
     a = ap.parse_args()
-    txt = proto(a.proto, a.K, a.o)
-    if not a.o:
-        sys.stdout.write(txt)
+    if a.proto:
+        txt = proto(a.proto, a.K, a.o)
+        if not a.o:
+            sys.stdout.write(txt)
+        return
+    if a.board:
+        r = process_board(a.board, True, a.force, a.K)
+        print(r)
+        return
+    if a.boards:
+        specs = [l.strip() for l in open(a.boards) if l.strip()]
+        nok = 0
+        for i, spec in enumerate(specs):
+            r = process_board(spec, True, a.force, a.K)
+            nok += bool(r['ok'])
+            print('%3d/%d %-40s %s'
+                  % (i + 1, len(specs), spec,
+                     ('OK %s %s' % (r['enc'], r.get('file', '')))
+                     if r['ok'] else r['why'][:120]), flush=True)
+        print('%d / %d boarded' % (nok, len(specs)))
+        return
+    ap.error('one of --proto / --board / --boards is required')
 
 
 if __name__ == '__main__':
