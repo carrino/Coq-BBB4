@@ -61,9 +61,20 @@ _RANK = {
     'no boot chain': 0,
     'no exit chain': 1,
     'no inner interior chain': 2,
-    'boot of zero length at j=0': 3,
-    'inner lap of zero length at i=0': 3,
+    'no shift chain': 3,
+    'no second exit chain': 4,
+    'boot of zero length at j=0': 5,
+    'inner lap of zero length at i=0': 5,
 }
+
+# How many families ONE overflow phase may chain through beyond the first.
+# WAVE18 section 4c found the SECOND count ("count 8->15, shift, count 8->15
+# again"); the wave-22 residue track measured that the 13 machines left on
+# "no shift chain"/"no second exit chain" carry a THIRD (and sometimes a
+# fourth) count in yet another shifted frame.  [NestedLap2.boot_via_fill] is
+# generic in (Cc, Cin1, Cin2), so it composes with itself and each extra
+# count is one more application -- no new Coq.
+MAXCOUNTS = 4
 
 
 # --------------------------------------------------------------- the search ---
@@ -285,17 +296,19 @@ def build(tab, ENCDATA, ENCS, encf, enc, st0, tail, far, B0, B1, key, ENC,
     lap1 = _inner_lap(tab, ENCDATA, key)
     chn, rn = lap1['chn'], (None, lap1['cn'][0], lap1['cn'][1])
 
-    two = None
+    more = []
     che, _ = _chain(tab, True, True, CinF, B1)
     if che is None:
         # WAVE18 section 4c: the exit is EXPONENTIAL because the phase runs a
-        # SECOND count in a shifted frame.  Split at the first fill and look
-        # for it; [NestedLap2.boot_via_fill] folds the first count into the
-        # boot, so no new composition theorem is needed.
-        two = _second_count(tab, ENCDATA, ENCS, ENC, CinF, B1, mid, key, K)
-        che, CinF2 = two['che'], two['BE0']
+        # SECOND count in a shifted frame -- and sometimes a third and a
+        # fourth (wave-22).  Split at each fill and follow the chain of
+        # families; [NestedLap2.boot_via_fill] folds each finished count into
+        # the next one's boot, so no new composition theorem is needed.
+        more, che = _more_counts(tab, ENCDATA, ENCS, ENC, CinF, B1, mid,
+                                 key, K)
+    BE0 = more[-1]['BE0'] if more else CinF
     rb = LC.srun(tab, True, True, chb, B0)
-    re = LC.srun(tab, True, True, che, two['BE0'] if two else CinF)
+    re = LC.srun(tab, True, True, che, BE0)
     if rb is None or re is None:
         raise NestError('internal: srun disagrees with the search')
     if rb[2] == 0:
@@ -318,20 +331,23 @@ def build(tab, ENCDATA, ENCS, encf, enc, st0, tail, far, B0, B1, key, ENC,
     d = dict(inner=name_in, st_in=st_in, tail_in=list(tail_in),
              far_in=list(far_in),
              chb=chb, BB1=BB1, cb=(rb[1], rb[2]),
-             che=che, BE0=(two['BE0'] if two else CinF), BE1=re[0],
+             che=che, BE0=BE0, BE1=re[0],
              ce=(re[1], re[2]),
              chn=lap1['chn'], AI0=lap1['AI0'], AI1=lap1['AI1'],
              cn=lap1['cn'],
              bpad=bpad, bfar=bfar, ipad=lap1['ipad'], ifar=lap1['ifar'],
-             efar=efar, two=two)
+             efar=efar, more=more)
     validate(tab, ENC, encf, enc, ENCDATA, st0, tail, far, key, d)
     return d
 
 
-def _second_count(tab, ENCDATA, ENCS, ENC, CinF, B1, mid, key, K,
-                  maxkeys=40):
-    """The SHIFT and the SECOND count.  [CinF] is the first family's all-ones
-    fill -- where the exit chain would have started and could not."""
+def _more_counts(tab, ENCDATA, ENCS, ENC, CinF, B1, mid, key, K,
+                 maxkeys=40, maxcounts=MAXCOUNTS):
+    """The chain of SHIFTs and further counts.  [CinF] is the current
+    family's all-ones fill -- where the exit chain would have started and
+    could not.  Returns ([level, ...], che): each level is one further family
+    with the shift chain INTO it; [che] is the exit chain from the LAST
+    level's fill.  Backtracks over candidate families at every level."""
     post = split_at_fill(mid, ENC, key, K)
     if not post:
         raise NestError('no exit chain')
@@ -339,37 +355,60 @@ def _second_count(tab, ENCDATA, ENCS, ENC, CinF, B1, mid, key, K,
     keys2 = [k for k in keys2 if k != key]
     if not keys2:
         raise NestError('no exit chain')
-    last = 'no shift chain'
-    for k2 in keys2[:maxkeys]:
-        try:
+    last = ['no shift chain']
+
+    def go(CinFc, seg, used, depth):
+        keysn = [k for k in families(seg, ENCDATA, ENCS, K) if k not in used]
+        for k2 in keysn[:maxkeys]:
             name2, st2, ti2, fi2 = k2
             d2 = ENCDATA[name2]
             CinS2, CinF2, _, _ = endpoints(ENCDATA, None, None, (), (), k2)
-            chm, _ = _chain(tab, True, True, CinF, CinS2)
+            chm, _ = _chain(tab, True, True, CinFc, CinS2)
             if chm is None:
-                raise NestError('no shift chain')
+                _note(last, 'no shift chain')
+                continue
+            try:
+                lap2 = _inner_lap(tab, ENCDATA, k2)
+                rm = LC.srun(tab, True, True, chm, CinFc)
+                if rm is None:
+                    raise NestError('internal: srun disagrees with the search')
+                mpad, mfar = _land(rm[0], st2, d2['uD'],
+                                   tuple(d2['soD']) + tuple(ti2), tuple(fi2),
+                                   'shift')
+            except NestError as e:
+                _note(last, str(e))
+                continue
+            lvl = dict(inner=name2, st_in=st2, tail_in=list(ti2),
+                       far_in=list(fi2),
+                       chm=chm, BM0=CinFc, BM1=rm[0], cm=(rm[1], rm[2]),
+                       # the pads of the chain INTO this family, named the
+                       # same as the first family's so [_fam_reps] is shared
+                       bpad=mpad, bfar=mfar, BE0=CinF2,
+                       chn=lap2['chn'], AI0=lap2['AI0'], AI1=lap2['AI1'],
+                       cn=lap2['cn'], ipad=lap2['ipad'], ifar=lap2['ifar'])
             che, _ = _chain(tab, True, True, CinF2, B1)
-            if che is None:
-                raise NestError('no second exit chain')
-            lap2 = _inner_lap(tab, ENCDATA, k2)
-            rm = LC.srun(tab, True, True, chm, CinF)
-            if rm is None:
-                raise NestError('internal: srun disagrees with the search')
-            mpad, mfar = _land(rm[0], st2, d2['uD'],
-                               tuple(d2['soD']) + tuple(ti2), tuple(fi2),
-                               'shift')
-            return dict(inner=name2, st_in=st2, tail_in=list(ti2),
-                        far_in=list(fi2),
-                        chm=chm, BM0=CinF, BM1=rm[0], cm=(rm[1], rm[2]),
-                        # the pads of the chain INTO this family, named the
-                        # same as the first family's so [_fam_reps] is shared
-                        bpad=mpad, bfar=mfar,
-                        che=che, BE0=CinF2,
-                        chn=lap2['chn'], AI0=lap2['AI0'], AI1=lap2['AI1'],
-                        cn=lap2['cn'], ipad=lap2['ipad'], ifar=lap2['ifar'])
-        except NestError as e:
-            last = str(e)
-    raise NestError(last)
+            if che is not None:
+                return [lvl], che
+            _note(last, 'no second exit chain')
+            if depth + 1 < maxcounts:
+                seg2 = split_at_fill(seg, ENC, k2, K)
+                if seg2:
+                    deeper = go(CinF2, seg2, used | {k2}, depth + 1)
+                    if deeper is not None:
+                        lvls, che = deeper
+                        return [lvl] + lvls, che
+        return None
+
+    got = go(CinF, post, {key}, 1)
+    if got is None:
+        raise NestError(last[0])
+    return got
+
+
+def _note(last, msg):
+    """Keep the FURTHEST failure for the report, by [_RANK]."""
+    if _RANK.get(msg, len(_RANK)) >= _RANK.get(last[0], -1):
+        last[0] = msg
 
 
 # -------------------------------------------------------------- validation ---
@@ -398,10 +437,7 @@ def validate(tab, ENC, encf, enc, ENCDATA, st0, tail, far, key, d, jlo=2,
     ti, fi = tuple(tail_in), tuple(far_in)
     encin = ENC[name_in]
     n = 0
-    two = d.get('two')
-    if two:
-        enc2 = ENC[two['inner']]
-        st2, ti2, fi2 = two['st_in'], tuple(two['tail_in']), tuple(two['far_in'])
+    more = d.get('more') or []
 
     def laps(st, encx, tx, fx, cn, v0, vf, what):
         for v in range(v0, vf):
@@ -426,38 +462,43 @@ def validate(tab, ENC, encf, enc, ENCDATA, st0, tail, far, key, d, jlo=2,
             raise NestError('validate boot j=%d: %r want %r' % (j, got, want))
         # the first count
         laps(st_in, encin, ti, fi, d['cn'], v0, vf, 'inner')
-        if two:
-            # the SHIFT, then the second count
-            start = (st_in, tuple(encin(vf)) + ti, 0, fi)
+        stc, encc, tc, fc = st_in, encin, ti, fi
+        for k, lvl in enumerate(more):
+            # the SHIFT, then the next count
+            enc2 = ENC[lvl['inner']]
+            st2, ti2, fi2 = (lvl['st_in'], tuple(lvl['tail_in']),
+                             tuple(lvl['far_in']))
+            start = (stc, tuple(encc(vf)) + tc, 0, fc)
             want = (st2, tuple(enc2(v0)) + ti2, 0, fi2)
-            got = _sim(tab, start, two['cm'][0] * j + two['cm'][1])
+            got = _sim(tab, start, lvl['cm'][0] * j + lvl['cm'][1])
             if not _eqlift(got, want):
-                raise NestError('validate shift j=%d: %r want %r'
-                                % (j, got, want))
-            laps(st2, enc2, ti2, fi2, two['cn'], v0, vf, 'inner2')
-            estart = (st2, tuple(enc2(vf)) + ti2, 0, fi2)
-        else:
-            estart = (st_in, tuple(encin(vf)) + ti, 0, fi)
+                raise NestError('validate shift%d j=%d: %r want %r'
+                                % (k + 2, j, got, want))
+            laps(st2, enc2, ti2, fi2, lvl['cn'], v0, vf, 'inner%d' % (k + 2))
+            stc, encc, tc, fc = st2, enc2, ti2, fi2
+        estart = (stc, tuple(encc(vf)) + tc, 0, fc)
         # exit
         want = (st0, tuple(encf(p + 1)) + tail, 0, far)
         got = _sim(tab, estart, d['ce'][0] * j + d['ce'][1])
         if not _eqlift(got, want):
             raise NestError('validate exit j=%d: %r want %r' % (j, got, want))
         n += 1
+    nc = 1 + len(more)
     d['nval'] = '%d overflow phases, j = %d..%d (%d inner laps%s)' % (
         n, jlo, jhi,
-        sum(2 ** j - 1 for j in range(jlo, jhi + 1)) * (2 if two else 1),
-        ', two counts each' if two else '')
+        sum(2 ** j - 1 for j in range(jlo, jhi + 1)) * nc,
+        ', %d counts each' % nc if more else '')
 
 
 
 
 # --------------------------------------------------------- family templates ---
 #
-# A nested board carries ONE or TWO inner families (see WAVE18 section 4c).
-# Everything that is per-family -- the anchor, its [pow2] lemma, its own
-# interior lap and that lap's two glue lemmas -- is emitted from these, once
-# per family, with @S@ the family suffix ('' or '2').
+# A nested board carries ONE or MORE inner families (WAVE18 section 4c found
+# the second; wave-22 found chains of three and four).  Everything that is
+# per-family -- the anchor, its [pow2] lemma, its own interior lap and that
+# lap's two glue lemmas -- is emitted from these, once per family, with @S@
+# the family suffix ('', '2', '3', ...).
 
 FAM_DEFS = r"""(** ** The @ORD@INNER anchor family -- @ENCI@ at @STI@ *)
 Definition Cin@S@_@ID@ (v : positive) : cconf := (@STI@, (@ENCI@ v ++ @TAILI@, S0, @FARI@)).
@@ -615,13 +656,13 @@ Proof. vm_compute. reflexivity. Qed."""
 
 
 SHIFT_DEF = r"""
-(** *** shift: the FIRST count's all-ones fill -> the SECOND count's anchor.
+(** *** shift: count @F1@'s all-ones fill -> count @F@'s anchor.
     WAVE18 section 4c -- "count 8->15, shift, count 8->15 again". *)
-Definition BM0_@ID@ : sconf := @BM0@.
-Definition BM1_@ID@ : sconf := @BM1@.
-Definition chm_@ID@ : list lstep := @CHM@.
+Definition BM@S2@0_@ID@ : sconf := @BM0@.
+Definition BM@S2@1_@ID@ : sconf := @BM1@.
+Definition chm@S2@_@ID@ : list lstep := @CHM@.
 
-Lemma run_shift_@ID@ : srun tm true true chm_@ID@ BM0_@ID@ = Some (BM1_@ID@, @CAM@, @CBM@).
+Lemma run_shift@S2@_@ID@ : srun tm true true chm@S2@_@ID@ BM@S2@0_@ID@ = Some (BM@S2@1_@ID@, @CAM@, @CBM@).
 Proof. vm_compute. reflexivity. Qed.
 """
 
@@ -641,17 +682,40 @@ BOOT1 = r"""    exists (@CAB@ * j + @CBB@), (cden [] [] j BB1_@ID@).
              run_boot_@ID@ [] [] j ltac:(reflexivity) ltac:(reflexivity))."""
 
 
-BOOT2 = r"""    apply (boot_via_fill tm Cc Cin Cin2 lapin_@ID@ p (pow2 j) (pow2 j)).
-    + exists (@CAB@ * j + @CBB@), (cden [] [] j BB1_@ID@).
-      split; [lia|]. split; [| exact (gbo_@ID@ j)].
-      rewrite (gso_@ID@ p j E).
-      exact (srun_sound tm true true chb_@ID@ B0_@ID@ BB1_@ID@ @CAB@ @CBB@
-               run_boot_@ID@ [] [] j ltac:(reflexivity) ltac:(reflexivity)).
-    + exists (@CAM@ * j + @CBM@), (cden [] [] j BM1_@ID@).
-      split; [| exact (gbo2_@ID@ j)].
-      rewrite (gxi_@ID@ j).
-      exact (srun_sound tm true true chm_@ID@ BM0_@ID@ BM1_@ID@ @CAM@ @CBM@
-               run_shift_@ID@ [] [] j ltac:(reflexivity) ltac:(reflexivity))."""
+def _boot_stack(more, indent):
+    """The boot for a MULTI-count board: fold each finished count into the
+    next one's boot with one [boot_via_fill] application per shift, as a
+    sequence of [assert]s (HB1 into the first family, HBk into the k-th).
+    [boot_via_fill] is generic in (Cc, Cin1, Cin2), so the applications
+    compose with no new Coq.  Ends with the last assert proved; the CALLER
+    appends what consumes HB<nf>."""
+    ind = ' ' * indent
+    nf = len(more) + 1
+    L = ['assert (HB1 : exists n c, 0 < n /\\ csteps tm n (Cc p) = Some c',
+         ind + '              /\\ lift c = lift (Cin (pow2 j))).',
+         ind + '{ exists (@CAB@ * j + @CBB@), (cden [] [] j BB1_@ID@).',
+         ind + '  split; [lia|]. split; [| exact (gbo_@ID@ j)].',
+         ind + '  rewrite (gso_@ID@ p j E).',
+         ind + '  exact (srun_sound tm true true chb_@ID@ B0_@ID@ BB1_@ID@ @CAB@ @CBB@',
+         ind + '           run_boot_@ID@ [] [] j ltac:(reflexivity) ltac:(reflexivity)). }']
+    for i, lvl in enumerate(more):
+        f = i + 2
+        sp, sc, ss = _fsfx(f - 1), _fsfx(f), _ssfx(f)
+        ca, cb = lvl['cm']
+        L += ['%sassert (HB%d : exists n c, 0 < n /\\ csteps tm n (Cc p) = Some c'
+              % (ind, f),
+              ind + '              /\\ lift c = lift (Cin%s (pow2 j))).' % sc,
+              ind + '{ apply (boot_via_fill tm Cc Cin%s Cin%s lapin%s_@ID@ p (pow2 j) (pow2 j));'
+              % (sp, sc, sp),
+              ind + '    [exact HB%d|].' % (f - 1),
+              ind + '  exists (%d * j + %d), (cden [] [] j BM%s1_@ID@).' % (ca, cb, ss),
+              ind + '  split; [| exact (gbo%s_@ID@ j)].' % sc,
+              ind + '  rewrite (gxi%s_@ID@ j).' % sp,
+              ind + '  exact (srun_sound tm true true chm%s_@ID@ BM%s0_@ID@ BM%s1_@ID@ %d %d'
+              % (ss, ss, ss, ca, cb),
+              ind + '           run_shift%s_@ID@ [] [] j ltac:(reflexivity) ltac:(reflexivity)). }'
+              % ss]
+    return '\n'.join(L)
 
 
 LAPO = r"""(** The outer OVERFLOW branch, composed.  The exponential cost is the
@@ -693,50 +757,105 @@ Proof.
 Qed."""
 
 
+NEST_VISX_MULTI = r"""(** A state firing in the EXIT chain is reached from the outer overflow
+    anchor by the boot, the chained counts, and that prefix. *)
+Lemma visx_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm true true l BE0_@ID@ = Some q ->
+  forall p j, cview p = (S j, None) ->
+  exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q.
+Proof.
+  intros l q Hst p j E.
+  @BOOTSTACK@
+  destruct HB@NF@ as (nB & cB & _ & HcB & HlB).
+  apply (vis_via_fill tm Cc Cin@LAST@ lapin@LAST@_@ID@ q p (pow2 j));
+    [exists nB, cB; exact (conj HcB HlB)|].
+  apply (vis_lift_of_csteps tm (fun _ : positive => Cin@LAST@ (fill (pow2 j))) xH).
+  apply (vis_of_run tm (fun _ : positive => Cin@LAST@ (fill (pow2 j)))
+                    true true l BE0_@ID@ xH j [] []);
+    [exact Hst | reflexivity | reflexivity | exact (gxi@LAST@_@ID@ j)].
+Qed."""
+
+
 NEST_OVFCASE = r"""  - destruct (cview_pos p j E) as (j' & ->). exact (lapo_@ID@ p j' E)."""
+
+
+_ORD = ['FIRST ', 'SECOND ', 'THIRD ', 'FOURTH ', 'FIFTH ']
+
+
+def _fsfx(f):
+    """FAMILY-name suffix: Cin/Cin2/Cin3..., lapin_/lapin2_/..."""
+    return '' if f == 1 else str(f)
+
+
+def _ssfx(f):
+    """Suffix of the SHIFT into family [f]: chm_/BM0_/BM1_ kept bare for the
+    second family (the wave-18 names), numbered from the third on."""
+    return '' if f == 2 else str(f)
+
+
+def _families(N):
+    return [N] + (N.get('more') or [])
 
 
 def nest_defs(D, ENCDATA, clist, cconf, cchain, ST, ID):
     """The DEFINITIONS block: one per family, then the chains."""
     N = D['nest']
-    two = N.get('two')
-    fams = _fill(FAM_DEFS, _fam_reps(ENCDATA, N, clist, cconf, cchain, ST,
-                                     '', 'FIRST ' if two else '', '', ''))
-    if two:
-        fams += '\n\n' + _fill(FAM_DEFS,
-                                _fam_reps(ENCDATA, two, clist, cconf, cchain,
-                                          ST, '2', 'SECOND ', '', ''))
-    chains = NEST_CHAINS.replace('@SHIFTDEF@', SHIFT_DEF if two else '')
-    return fams + '\n\n' + chains
+    fams = _families(N)
+    nf = len(fams)
+    out = [_fill(FAM_DEFS,
+                 _fam_reps(ENCDATA, F, clist, cconf, cchain, ST, _fsfx(i + 1),
+                           _ORD[i] if nf > 1 else '', '', ''))
+           for i, F in enumerate(fams)]
+    shifts = []
+    for i, lvl in enumerate(N.get('more') or []):
+        f = i + 2
+        shifts.append(_fill(SHIFT_DEF, {
+            '@S2@': _ssfx(f), '@F@': str(f), '@F1@': str(f - 1),
+            '@BM0@': cconf(lvl['BM0']), '@BM1@': cconf(lvl['BM1']),
+            '@CHM@': cchain(lvl['chm']),
+            '@CAM@': str(lvl['cm'][0]), '@CBM@': str(lvl['cm'][1])}))
+    chains = NEST_CHAINS.replace('@SHIFTDEF@', ''.join(shifts))
+    return '\n\n'.join(out) + '\n\n' + chains
 
 
 def nest_glue(D, ENCDATA, clist, cconf, cchain, ST, ID):
     """The GLUE block: one per family, then [lapil_], [lapo_] and [visx_]."""
     N = D['nest']
-    two = N.get('two')
-    out = _fill(FAM_GLUE, _fam_reps(ENCDATA, N, clist, cconf, cchain, ST, '',
-                                    '', 'BB1_@ID@',
-                                    'BM0_@ID@' if two else 'BE0_@ID@'))
-    if two:
-        out += '\n\n' + _fill(FAM_GLUE,
-                               _fam_reps(ENCDATA, two, clist, cconf, cchain,
-                                         ST, '2', '', 'BM1_@ID@', 'BE0_@ID@'))
+    more = N.get('more') or []
+    fams = _families(N)
+    nf = len(fams)
+    parts = []
+    for i, F in enumerate(fams):
+        f = i + 1
+        landc = 'BB1_@ID@' if f == 1 else 'BM%s1_@ID@' % _ssfx(f)
+        fillc = 'BE0_@ID@' if f == nf else 'BM%s0_@ID@' % _ssfx(f + 1)
+        parts.append(_fill(FAM_GLUE,
+                           _fam_reps(ENCDATA, F, clist, cconf, cchain, ST,
+                                     _fsfx(f), '', landc, fillc)))
+    out = '\n\n'.join(parts)
     out += '\n\n' + LAPIL
-    out += '\n\n' + LAPO.replace('@BOOT@', (BOOT2 if two else BOOT1).strip()) \
-                          .replace('@LAST@', '2' if two else '')
+    boot = (BOOT1.strip() if not more
+            else _boot_stack(more, 4) + '\n    exact HB%d.' % nf)
+    out += '\n\n' + LAPO.replace('@BOOT@', boot).replace('@LAST@', _fsfx(nf))
     out += '\n\n@VISX@'
     return out
 
 
 def nest_reps(D, ENCDATA, clist, cconf, cchain, ST, ID):
-    """The machine-level holes the nested route adds (the per-family ones are
-    already substituted by [nest_defs] / [nest_glue])."""
+    """The machine-level holes the nested route adds (the per-family and
+    per-shift ones are already substituted by [nest_defs] / [nest_glue])."""
     N = D['nest']
-    two = N.get('two')
-    din = ENCDATA[N['inner']]
-    mods = [din['mod']] + ([ENCDATA[two['inner']]['mod']] if two else [])
+    more = N.get('more') or []
+    nf = len(more) + 1
+    mods = [ENCDATA[F['inner']]['mod'] for F in _families(N)]
     extra = ' '.join(sorted({m for m in mods
                              if m != ENCDATA[D['enc']]['mod']}))
+    visx = ''
+    if D.get('visx'):
+        visx = (NEST_VISX if not more else
+                NEST_VISX_MULTI
+                .replace('@BOOTSTACK@', _boot_stack(more, 2))
+                .replace('@NF@', str(nf))) + '\n\n'
     reps = {
         '@BB1@': cconf(N['BB1']), '@CHB@': cchain(N['chb']),
         '@CAB@': str(N['cb'][0]), '@CBB@': str(N['cb'][1]),
@@ -746,7 +865,7 @@ def nest_reps(D, ENCDATA, clist, cconf, cchain, ST, ID):
         # @GLUELIFT@ did not already do it.
         '@NESTIMPORT@': (('' if D.get('islack') else ' LapCertGlueLift')
                          + ' IXPGadgets NestedLap NestedLapLift'
-                         + (' NestedLap2' if two else '')
+                         + (' NestedLap2' if more else '')
                          + ((' ' + extra) if extra else '')),
         '@NVAL@': N['nval'],
         '@LAPIL@': (
@@ -754,11 +873,7 @@ def nest_reps(D, ENCDATA, clist, cconf, cchain, ST, ID):
             'intros p j q0 E. destruct (lapi_@ID@ p j q0 E) as (n & Hn & Hr).\n'
             '  exists n, (Cc (Pos.succ p)).\n'
             '  split; [exact Hn | split; [exact Hr | reflexivity]].'),
-        '@VISX@': (NEST_VISX + '\n\n' if D.get('visx') else ''),
-        '@LAST@': '2' if two else '',
+        '@VISX@': visx,
+        '@LAST@': _fsfx(nf),
     }
-    if two:
-        reps.update({'@BM0@': cconf(two['BM0']), '@BM1@': cconf(two['BM1']),
-                     '@CHM@': cchain(two['chm']),
-                     '@CAM@': str(two['cm'][0]), '@CBM@': str(two['cm'][1])})
     return reps

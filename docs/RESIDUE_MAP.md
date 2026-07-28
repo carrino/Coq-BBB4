@@ -4,10 +4,13 @@ _The frontier of this project, published as a target list rather than as an
 apology.  Companion data: `tools/closeout/residue_map.tsv`, one row per
 machine, regenerated with the commands at the bottom._
 
-_**621 rows as of this commit.**  The count moves every wave, so treat the TSV
+_**613 rows as of this commit.**  The count moves every wave, so treat the TSV
 as the authority and this prose as a snapshot.  With tower #20 boarded on
-2026-07-28 the (4,2) HOLDOUT list is closed, so all 621 are residue and this
-is the entire remaining problem._
+2026-07-28 the (4,2) HOLDOUT list is closed, so all 613 are residue and this
+is the entire remaining problem.  (The wave-22 residue track boarded the
+8-machine "no shift chain" / "no second exit chain" bucket by chaining the
+sync-bouncer construction through THREE and FOUR counts per overflow —
+`nestcert.MAXCOUNTS`.)_
 
 ## What this list is
 

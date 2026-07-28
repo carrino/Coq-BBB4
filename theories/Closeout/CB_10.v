@@ -84,6 +84,7 @@ Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1LD1RB_1RC1LD.
 Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LA___.
 Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB0LA.
 Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB0LC.
+Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB1LA.
 Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB1LC.
 Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB1RC.
 Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LD0LA.
@@ -100,10 +101,9 @@ Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC1LD_1RB0LA.
 Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC1RA_1RB0LA.
 Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD0LA_1RB0LA.
 Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD0LB_1RB0LA.
+Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD1LA_1RB0LA.
 Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD1LB_1RB0LA.
 Require BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD1RB_1RB0LA.
-Require BBB4.Machines.Counters.NLAP_0RB1LB_1LA0RC_0LD1RB_1RC1LD.
-Require BBB4.Machines.Counters.NLAP_0RB1LC_1LA1RB_0LD0LA_0RD1RA.
 Import ListNotations.
 
 (* 1RB---_1LC0RB_1LD1RB_0LC0LA *)
@@ -666,144 +666,144 @@ Proof.
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB0LC.nqh_0RB1LA_1RC0LA_1RD1RB_1LB0LC | intros q s; destruct q, s; reflexivity].
 Qed.
 
+(* 0RB1LA_1RC0LA_1RD1RB_1LB1LA *)
+Lemma cov_10_0080 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LB;t1LA]).
+Proof.
+  apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB1LA.tm_0RB1LA_1RC0LA_1RD1RB_1LB1LA);
+    [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB1LA.nqh_0RB1LA_1RC0LA_1RD1RB_1LB1LA | intros q s; destruct q, s; reflexivity].
+Qed.
+
 (* 0RB1LA_1RC0LA_1RD1RB_1LB1LC *)
-Lemma cov_10_0080 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LB;t1LC]).
+Lemma cov_10_0081 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LB;t1LC]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB1LC.tm_0RB1LA_1RC0LA_1RD1RB_1LB1LC);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB1LC.nqh_0RB1LA_1RC0LA_1RD1RB_1LB1LC | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC0LA_1RD1RB_1LB1RC *)
-Lemma cov_10_0081 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LB;t1RC]).
+Lemma cov_10_0082 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LB;t1RC]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB1RC.tm_0RB1LA_1RC0LA_1RD1RB_1LB1RC);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LB1RC.nqh_0RB1LA_1RC0LA_1RD1RB_1LB1RC | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC0LA_1RD1RB_1LD0LA *)
-Lemma cov_10_0082 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LD;t0LA]).
+Lemma cov_10_0083 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LD;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LD0LA.tm_0RB1LA_1RC0LA_1RD1RB_1LD0LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LD0LA.nqh_0RB1LA_1RC0LA_1RD1RB_1LD0LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC0LA_1RD1RB_1LD1LA *)
-Lemma cov_10_0083 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LD;t1LA]).
+Lemma cov_10_0084 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LD;t1LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LD1LA.tm_0RB1LA_1RC0LA_1RD1RB_1LD1LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LD1LA.nqh_0RB1LA_1RC0LA_1RD1RB_1LD1LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC0LA_1RD1RB_1LD1LB *)
-Lemma cov_10_0084 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LD;t1LB]).
+Lemma cov_10_0085 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LD;t1LB]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LD1LB.tm_0RB1LA_1RC0LA_1RD1RB_1LD1LB);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LD1LB.nqh_0RB1LA_1RC0LA_1RD1RB_1LD1LB | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC0LA_1RD1RB_1LD1LC *)
-Lemma cov_10_0085 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LD;t1LC]).
+Lemma cov_10_0086 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LD;t1LC]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LD1LC.tm_0RB1LA_1RC0LA_1RD1RB_1LD1LC);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LD1LC.nqh_0RB1LA_1RC0LA_1RD1RB_1LD1LC | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC0LA_1RD1RB_1LD1RA *)
-Lemma cov_10_0086 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LD;t1RA]).
+Lemma cov_10_0087 : covers (row_to_tm [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LD;t1RA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LD1RA.tm_0RB1LA_1RC0LA_1RD1RB_1LD1RA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC0LA_1RD1RB_1LD1RA.nqh_0RB1LA_1RC0LA_1RD1RB_1LD1RA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC1LB_0LB1RD_0LA0RC *)
-Lemma cov_10_0087 : covers (row_to_tm [t0RB;t1LA;t1RC;t1LB;t0LB;t1RD;t0LA;t0RC]).
+Lemma cov_10_0088 : covers (row_to_tm [t0RB;t1LA;t1RC;t1LB;t0LB;t1RD;t0LA;t0RC]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1LB_0LB1RD_0LA0RC.tm_0RB1LA_1RC1LB_0LB1RD_0LA0RC);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1LB_0LB1RD_0LA0RC.nqh_0RB1LA_1RC1LB_0LB1RD_0LA0RC | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC1RD_1LA---_1RB0LA *)
-Lemma cov_10_0088 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LA;tN;t1RB;t0LA]).
+Lemma cov_10_0089 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LA;tN;t1RB;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LA____1RB0LA.tm_0RB1LA_1RC1RD_1LA____1RB0LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LA____1RB0LA.nqh_0RB1LA_1RC1RD_1LA____1RB0LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC1RD_1LC0LA_1RB0LA *)
-Lemma cov_10_0089 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LC;t0LA;t1RB;t0LA]).
+Lemma cov_10_0090 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LC;t0LA;t1RB;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC0LA_1RB0LA.tm_0RB1LA_1RC1RD_1LC0LA_1RB0LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC0LA_1RB0LA.nqh_0RB1LA_1RC1RD_1LC0LA_1RB0LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC1RD_1LC1LA_1RB0LA *)
-Lemma cov_10_0090 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LC;t1LA;t1RB;t0LA]).
+Lemma cov_10_0091 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LC;t1LA;t1RB;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC1LA_1RB0LA.tm_0RB1LA_1RC1RD_1LC1LA_1RB0LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC1LA_1RB0LA.nqh_0RB1LA_1RC1RD_1LC1LA_1RB0LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC1RD_1LC1LB_1RB0LA *)
-Lemma cov_10_0091 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LC;t1LB;t1RB;t0LA]).
+Lemma cov_10_0092 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LC;t1LB;t1RB;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC1LB_1RB0LA.tm_0RB1LA_1RC1RD_1LC1LB_1RB0LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC1LB_1RB0LA.nqh_0RB1LA_1RC1RD_1LC1LB_1RB0LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC1RD_1LC1LD_1RB0LA *)
-Lemma cov_10_0092 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LC;t1LD;t1RB;t0LA]).
+Lemma cov_10_0093 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LC;t1LD;t1RB;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC1LD_1RB0LA.tm_0RB1LA_1RC1RD_1LC1LD_1RB0LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC1LD_1RB0LA.nqh_0RB1LA_1RC1RD_1LC1LD_1RB0LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC1RD_1LC1RA_1RB0LA *)
-Lemma cov_10_0093 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LC;t1RA;t1RB;t0LA]).
+Lemma cov_10_0094 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LC;t1RA;t1RB;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC1RA_1RB0LA.tm_0RB1LA_1RC1RD_1LC1RA_1RB0LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LC1RA_1RB0LA.nqh_0RB1LA_1RC1RD_1LC1RA_1RB0LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC1RD_1LD0LA_1RB0LA *)
-Lemma cov_10_0094 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LD;t0LA;t1RB;t0LA]).
+Lemma cov_10_0095 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LD;t0LA;t1RB;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD0LA_1RB0LA.tm_0RB1LA_1RC1RD_1LD0LA_1RB0LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD0LA_1RB0LA.nqh_0RB1LA_1RC1RD_1LD0LA_1RB0LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC1RD_1LD0LB_1RB0LA *)
-Lemma cov_10_0095 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LD;t0LB;t1RB;t0LA]).
+Lemma cov_10_0096 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LD;t0LB;t1RB;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD0LB_1RB0LA.tm_0RB1LA_1RC1RD_1LD0LB_1RB0LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD0LB_1RB0LA.nqh_0RB1LA_1RC1RD_1LD0LB_1RB0LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
+(* 0RB1LA_1RC1RD_1LD1LA_1RB0LA *)
+Lemma cov_10_0097 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LD;t1LA;t1RB;t0LA]).
+Proof.
+  apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD1LA_1RB0LA.tm_0RB1LA_1RC1RD_1LD1LA_1RB0LA);
+    [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD1LA_1RB0LA.nqh_0RB1LA_1RC1RD_1LD1LA_1RB0LA | intros q s; destruct q, s; reflexivity].
+Qed.
+
 (* 0RB1LA_1RC1RD_1LD1LB_1RB0LA *)
-Lemma cov_10_0096 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LD;t1LB;t1RB;t0LA]).
+Lemma cov_10_0098 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LD;t1LB;t1RB;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD1LB_1RB0LA.tm_0RB1LA_1RC1RD_1LD1LB_1RB0LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD1LB_1RB0LA.nqh_0RB1LA_1RC1RD_1LD1LB_1RB0LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 0RB1LA_1RC1RD_1LD1RB_1RB0LA *)
-Lemma cov_10_0097 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LD;t1RB;t1RB;t0LA]).
+Lemma cov_10_0099 : covers (row_to_tm [t0RB;t1LA;t1RC;t1RD;t1LD;t1RB;t1RB;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD1RB_1RB0LA.tm_0RB1LA_1RC1RD_1LD1RB_1RB0LA);
     [exact BBB4.Machines.Counters.NLAP_0RB1LA_1RC1RD_1LD1RB_1RB0LA.nqh_0RB1LA_1RC1RD_1LD1RB_1RB0LA | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 0RB1LB_1LA0RC_0LD1RB_1RC1LD *)
-Lemma cov_10_0098 : covers (row_to_tm [t0RB;t1LB;t1LA;t0RC;t0LD;t1RB;t1RC;t1LD]).
-Proof.
-  apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LB_1LA0RC_0LD1RB_1RC1LD.tm_0RB1LB_1LA0RC_0LD1RB_1RC1LD);
-    [exact BBB4.Machines.Counters.NLAP_0RB1LB_1LA0RC_0LD1RB_1RC1LD.nqh_0RB1LB_1LA0RC_0LD1RB_1RC1LD | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 0RB1LC_1LA1RB_0LD0LA_0RD1RA *)
-Lemma cov_10_0099 : covers (row_to_tm [t0RB;t1LC;t1LA;t1RB;t0LD;t0LA;t0RD;t1RA]).
-Proof.
-  apply (covers_nqh_at BBB4.Machines.Counters.NLAP_0RB1LC_1LA1RB_0LD0LA_0RD1RA.tm_0RB1LC_1LA1RB_0LD0LA_0RD1RA);
-    [exact BBB4.Machines.Counters.NLAP_0RB1LC_1LA1RB_0LD0LA_0RD1RA.nqh_0RB1LC_1LA1RB_0LD0LA_0RD1RA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 Definition cbrows_10 : list (list (option Trans)) := [
@@ -887,6 +887,7 @@ Definition cbrows_10 : list (list (option Trans)) := [
   [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LA;tN];
   [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LB;t0LA];
   [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LB;t0LC];
+  [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LB;t1LA];
   [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LB;t1LC];
   [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LB;t1RC];
   [t0RB;t1LA;t1RC;t0LA;t1RD;t1RB;t1LD;t0LA];
@@ -903,10 +904,9 @@ Definition cbrows_10 : list (list (option Trans)) := [
   [t0RB;t1LA;t1RC;t1RD;t1LC;t1RA;t1RB;t0LA];
   [t0RB;t1LA;t1RC;t1RD;t1LD;t0LA;t1RB;t0LA];
   [t0RB;t1LA;t1RC;t1RD;t1LD;t0LB;t1RB;t0LA];
+  [t0RB;t1LA;t1RC;t1RD;t1LD;t1LA;t1RB;t0LA];
   [t0RB;t1LA;t1RC;t1RD;t1LD;t1LB;t1RB;t0LA];
-  [t0RB;t1LA;t1RC;t1RD;t1LD;t1RB;t1RB;t0LA];
-  [t0RB;t1LB;t1LA;t0RC;t0LD;t1RB;t1RC;t1LD];
-  [t0RB;t1LC;t1LA;t1RB;t0LD;t0LA;t0RD;t1RA]
+  [t0RB;t1LA;t1RC;t1RD;t1LD;t1RB;t1RB;t0LA]
 ].
 
 Lemma cb_10_covers : Forall covers (map row_to_tm cbrows_10).

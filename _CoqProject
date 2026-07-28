@@ -2105,6 +2105,16 @@ theories/Machines/Counters/NLAP_1RB1RD_1LB0LC_0RA1LC_1RA0LC.v
 theories/Machines/Counters/NLAP_1RB1RD_1LB0LC_0RD1LC_1RA0LC.v
 theories/Machines/Counters/NLAP_1RB____1LC0RD_0LB1RB_1LB0RB.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/NLAP_0RB1LA_1RC0LA_1RD1RB_1LB1LA.v
+theories/Machines/Counters/NLAP_0RB1LA_1RC1RD_1LD1LA_1RB0LA.v
+theories/Machines/Counters/NLAP_1RB0LD_1RC1RA_1LA1LD_0RA1LD.v
+theories/Machines/Counters/NLAP_1RB0LD_1RC1RA_1LA1LD_0RB1LD.v
+theories/Machines/Counters/NLAP_1RB1RC_1LC1LD_1RA0LD_0RA1LD.v
+theories/Machines/Counters/NLAP_1RB1RC_1LC1LD_1RA0LD_0RC1LD.v
+theories/Machines/Counters/NLAP_1RB1RD_1LC0RD_1LA1LB_0LB1RD.v
+theories/Machines/Counters/NLAP_1RB1RD_1LC0RD_1LA1LB_0LC1RD.v
+
 theories/Closeout/CloseoutKit.v
 theories/Closeout/CB_00.v
 theories/Closeout/CB_01.v
