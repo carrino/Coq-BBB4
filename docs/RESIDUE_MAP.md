@@ -4,19 +4,24 @@ _The frontier of this project, published as a target list rather than as an
 apology.  Companion data: `tools/closeout/residue_map.tsv`, one row per
 machine, regenerated with the commands at the bottom._
 
-_**511 rows as of this commit** -- the project's first crossing of 90%
-settled.  The count moves every wave, so treat the TSV as the authority and
-this prose as a snapshot.  With tower #20 boarded on 2026-07-28 the (4,2)
-HOLDOUT list is closed, so all 511 are residue and this is the entire
-remaining problem.  (The wave-22 residue track boarded 110: the 8-machine
-"no shift chain" bucket by chaining the sync-bouncer construction through
-THREE and FOUR counts per overflow (`nestcert.MAXCOUNTS`), and 102 of the
-"no inner family at pow2 j" bucket by the OFFSET-family route -- an inner
-count starting at `2^(j+1)+2` rather than a power of two, the whole
-overflow branch reindexed at `j = S j'`, the `j = 0` case one concrete run,
-plus for the Mp-outer cluster a SPLIT inner lap (`i = 0` window + peeled
-`i - 1` chains) and a shift-by-one landing/refill bridge through
-`WTape.rep_rot` (`nestcert.derive_offset`).)_
+_**496 rows as of this commit.**  The count moves every wave, so treat the
+TSV as the authority and this prose as a snapshot.  With tower #20 boarded
+on 2026-07-28 the (4,2) HOLDOUT list is closed, so all 496 are residue and
+this is the entire remaining problem.  (The wave-23 residue track boarded
+the whole 15-machine "no visit witness (`StA`)" bucket: quasihalters whose
+quiet state is a transition target, closed by the state-AVOIDANCE route --
+the kernel recomputes from the SAME lap chains that no window step is ever
+in `StA` (`Checkers/LapAvoid.v`), and `Counters/LapGlueQuiet.v` turns that
+plus a checked bootstrap window into the R_QH triple with the exact
+last-visit bound.  Wave-22 before it boarded 110: the 8-machine "no shift
+chain" bucket by chaining the sync-bouncer construction through THREE and
+FOUR counts per overflow (`nestcert.MAXCOUNTS`), and 102 of the "no inner
+family at pow2 j" bucket by the OFFSET-family route -- an inner count
+starting at `2^(j+1)+2` rather than a power of two, the whole overflow
+branch reindexed at `j = S j'`, the `j = 0` case one concrete run, plus for
+the Mp-outer cluster a SPLIT inner lap (`i = 0` window + peeled `i - 1`
+chains) and a shift-by-one landing/refill bridge through `WTape.rep_rot`
+(`nestcert.derive_offset`).)_
 
 ## What this list is
 
@@ -72,7 +77,7 @@ boarded set.
 |---|---:|---|
 | `-`/`no-anchor` | 235 | 211 no overflow phase, 24 no anchor |
 | `AFFINE`/`EXP2` | 132 | 65 no exit chain, 32 no inner family at `pow2 j`, 20 no boot chain, 8 no interior chain, 5 no second exit chain, 2 no inner interior chain |
-| `AFFINE`/`AFFINE` | 52 | 23 no inner family, 15 no visit witness (`StA`), 14 no interior chain |
+| `AFFINE`/`AFFINE` | 37 | 23 no inner family, 14 no interior chain |
 | `QUAD`/`QUAD` | 41 | 41 no interior chain |
 | `PARITY-AFFINE` | 13 | 13 no interior chain |
 | `HIGHER`/`HIGHER` | 13 | 13 no interior chain |
@@ -100,20 +105,19 @@ boarded set.
   non-matching post, which no rotation lstep can align — they need a new
   `SCycR`-with-entry-offset step in `LapDecider.v` (a checker extension with
   its own soundness proof), or hand-written boards.
-* **no visit witness (`StA` is targeted)** — a complete lap, but one state
-  never fires inside it.  `docs/WAVE16_FINDINGS.md` §6b has the full analysis:
-  these are quasihalters whose quiet state is `StA` (last visit at step 4-11,
-  simulated), and what is actually true of them is symbol-aware — `StD` never
-  READS `S1` after the boot.  `QHBound 12` covers all 15.
+* **no visit witness (`StA` is targeted)** — RETIRED (wave-23 boarded all
+  15).  `docs/WAVE16_FINDINGS.md` §6b was the analysis: quasihalters whose
+  quiet state is `StA` (last visit at step 4-11).  The closer is the
+  state-AVOIDANCE route: `srun_avoid` re-runs the SAME chains checking no
+  window step is in `StA` (`Checkers/LapAvoid.v`), and
+  `LapGlueQuiet.glue_qh_quiet` closes the R_QH triple with the exact bound.
 
 ## Where a newcomer should probably start
 
-1. **The 15 `no visit witness`.** The analysis is done and written up; what is
-   missing is a symbol-aware closer, and the bound is tiny.
-2. **The 41 `QUAD`/`QUAD`.** The largest family in the residue that has never
+1. **The 41 `QUAD`/`QUAD`.** The largest family in the residue that has never
    had a design pass — a quadratic interior AND overflow.  `Bounce_8.v`'s
    `MeasureGlue` nesting is the precedent.
-3. **The 235 no-anchor.** Largest single bucket, and the cheapest per machine
+2. **The 235 no-anchor.** Largest single bucket, and the cheapest per machine
    *if* the alphabet inference generalises: wave-14 inferred 18 alphabets from
    tapes this way.
 

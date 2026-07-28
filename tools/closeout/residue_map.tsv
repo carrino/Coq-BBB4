@@ -277,19 +277,15 @@ machine	interior	overflow	alphabet	blocker
 1RB0RC_0RC1LD_1LB1RC_0LA0LB	AFFINE	EXP2	Mp	no inner family at pow2 j
 1RB0RC_1LA1RC_0LD0RB_1RB1LD	-	no-anchor	-	no overflow phase at K=6
 1RB0RC_1LA1RD_1RB1LC_0LC0RB	-	no-anchor	-	no overflow phase at K=6
-1RB0RC_1LC0RB_0LC1RD_0RB1LA	AFFINE	AFFINE	Kp	no visit witness for state A (StA is targeted
-1RB0RC_1LC0RD_0LC1RD_0RB1LA	AFFINE	AFFINE	Alph_00_10_1	no visit witness for state A (StA is targeted
 1RB0RC_1LC1LA_0LB1RD_1LB0RD	AFFINE	EXP2	Alph_10_11_11	no inner family at pow2 j
 1RB0RC_1LC1RA_1RD1LB_0LC0RD	AFFINE	AFFINE	Alph_00_01_1	no inner family at pow2 j
 1RB0RC_1LC1RD_0LB1LA_1LB0RD	AFFINE	EXP2	Alph_01_11_011	no boot chain
 1RB0RD_0LC0RB_1LA1LC_0LC1RD	QUAD	QUAD	Kp	no interior chain
 1RB0RD_0RC0LD_1LD1RC_0LA1LB	AFFINE	EXP2	Alph_01_11_011	no interior chain
-1RB0RD_0RC1LA_1LD0RB_0LD1RC	AFFINE	AFFINE	Alph_00_10_1	no visit witness for state A (StA is targeted
 1RB0RD_1LB0LC_1RD1LC_0LC1RA	AFFINE	EXP2	Mp	no inner family at pow2 j
 1RB0RD_1LB1LC_1RC0RA_0LB1RD	-	no-anchor	-	no overflow phase at K=6
 1RB0RD_1LC0LB_1LD0LB_1RD0RA	-	no-anchor	-	no anchor
 1RB0RD_1LC0LC_1LD0LB_1RD0RA	-	no-anchor	-	no anchor
-1RB0RD_1LC0RB_0LC1RD_0RB1LA	AFFINE	AFFINE	Kp	no visit witness for state A (StA is targeted
 1RB0RD_1LC1RA_0RB0LC_1LD0LA	AFFINE	EXP2	Alph_00_10_1	no boot chain
 1RB0RD_1LC1RD_0LB1RA_1LB0RD	AFFINE	EXP2	Alph_01_11_011	no boot chain
 1RB0RD_1RC---_1RD1LC_0LC1RA	-	no-anchor	-	no overflow phase at K=6
@@ -320,8 +316,6 @@ machine	interior	overflow	alphabet	blocker
 1RB1LA_0RC1RD_1LB0LD_0LA0RB	AFFINE	EXP2	Alph_01_11_011	no interior chain
 1RB1LA_0RC1RD_1LD0LB_0LA0RB	AFFINE	EXP2	Alph_01_11_011	no interior chain
 1RB1LA_1LA1RC_0LD0RB_1RB1LD	-	no-anchor	-	no overflow phase at K=6
-1RB1LA_1LC0RB_0LC1RD_0RB0LA	AFFINE	AFFINE	Kp	no visit witness for state A (StA is targeted
-1RB1LA_1LC0RB_0LC1RD_0RB1LA	AFFINE	AFFINE	Kp	no visit witness for state A (StA is targeted
 1RB1LA_1LC0RD_0RA0LC_0LA1RD	QUAD	QUAD	Kp	no interior chain
 1RB1LA_1LC0RD_0RB0LC_0LA1RD	QUAD	QUAD	Kp	no interior chain
 1RB1LA_1LC0RD_1LA1LB_0LB1RD	-	no-anchor	-	no overflow phase at K=6
@@ -471,7 +465,6 @@ machine	interior	overflow	alphabet	blocker
 1RB1RA_1RC0LA_1LD1RB_0RB0LD	AFFINE	AFFINE	Alph_00_01_1	no inner family at pow2 j
 1RB1RA_1RC1LB_0LB1RD_1LA0RC	-	no-anchor	-	no overflow phase at K=6
 1RB1RB_1LA1RC_0LD0RB_1RB1LD	-	no-anchor	-	no overflow phase at K=6
-1RB1RB_1LC0RB_0LC1RD_0RB1LA	AFFINE	AFFINE	Kp	no visit witness for state A (StA is targeted
 1RB1RB_1LC0RD_0RA1LB_0LB1RD	AFFINE	EXP2	Jp	no exit chain
 1RB1RB_1LC0RD_0RA1LB_0LC1RD	-	no-anchor	-	no overflow phase at K=6
 1RB1RB_1LC0RD_1RA1LB_0LB1RD	AFFINE	EXP2	Jp	no exit chain
@@ -479,19 +472,14 @@ machine	interior	overflow	alphabet	blocker
 1RB1RC_0LB1LC_0LD0RA_1RA1LD	-	no-anchor	-	no overflow phase at K=6
 1RB1RC_0LC1RB_1LD0RB_0RA1LC	AFFINE	EXP2	Jp	no exit chain
 1RB1RC_0LC1RB_1LD0RB_1RA1LC	AFFINE	EXP2	Jp	no exit chain
-1RB1RC_0RC1LA_1LD0RB_0LD1RC	AFFINE	AFFINE	Bp	no visit witness for state A (StA is targeted
 1RB1RC_0RC1LD_1LB1RC_0RA0LB	AFFINE	EXP2	Alph_01_11_011	no boot chain
 1RB1RC_1LA0LB_1LD0RD_1LB0RC	EXP3	EXP3	Ip	no interior chain
 1RB1RC_1LA1LD_0RB0RC_1LB0LB	AFFINE	AFFINE	Ip	no interior chain
 1RB1RC_1LA1RA_0RC1LD_1LB0LD	AFFINE	EXP2	Alph_000_111_111	no inner family at pow2 j
 1RB1RC_1LA1RC_0LD0RB_1RB1LD	-	no-anchor	-	no overflow phase at K=6
 1RB1RC_1LA1RD_1RB1LC_0LC0RB	-	no-anchor	-	no overflow phase at K=6
-1RB1RC_1LC0RB_0LC1RD_0RB0LA	AFFINE	AFFINE	Kp	no visit witness for state A (StA is targeted
-1RB1RC_1LC0RB_0LC1RD_0RB1LA	AFFINE	AFFINE	Kp	no visit witness for state A (StA is targeted
 1RB1RC_1LC0RB_1RA0LD_0RA1LD	-	no-anchor	-	no overflow phase at K=6
 1RB1RC_1LC0RB_1RA0LD_0RC1LD	-	no-anchor	-	no overflow phase at K=6
-1RB1RC_1LC0RD_0LC1RD_0RB0LA	AFFINE	AFFINE	Alph_00_10_1	no visit witness for state A (StA is targeted
-1RB1RC_1LC0RD_0LC1RD_0RB1LA	AFFINE	AFFINE	Alph_00_10_1	no visit witness for state A (StA is targeted
 1RB1RC_1LC1LB_1RA0LD_0RC1LD	-	no-anchor	-	no overflow phase at K=6
 1RB1RC_1LC1RB_1RA0LD_0RA1LD	-	no-anchor	-	no overflow phase at K=6
 1RB1RC_1LC1RB_1RA0LD_0RC1LD	-	no-anchor	-	no overflow phase at K=6
@@ -501,10 +489,7 @@ machine	interior	overflow	alphabet	blocker
 1RB1RC_1RC1LA_1LD1RB_0RB0LD	AFFINE	AFFINE	Alph_00_01_1	no inner family at pow2 j
 1RB1RD_0LC1RB_0RA1LD_1LC0RB	AFFINE	EXP2	Jp	no exit chain
 1RB1RD_0LC1RB_1RA1LD_1LC0RB	AFFINE	EXP2	Jp	no exit chain
-1RB1RD_0RC1LA_1LD0RB_0LD1RC	AFFINE	AFFINE	Alph_00_10_1	no visit witness for state A (StA is targeted
 1RB1RD_1LB0LC_1RA1LC_0LC0RA	-	no-anchor	-	no overflow phase at K=6
-1RB1RD_1LC0RB_0LC1RD_0RB0LA	AFFINE	AFFINE	Kp	no visit witness for state A (StA is targeted
-1RB1RD_1LC0RD_0LC1RD_0RB0LA	AFFINE	AFFINE	Alph_00_10_1	no visit witness for state A (StA is targeted
 1RB1RD_1LC1RA_0RB0LC_1LA0RD	-	no-anchor	-	no overflow phase at K=6
 1RB1RD_1LC1RD_0LB1LA_1LB0RD	-	no-anchor	-	no overflow phase at K=6
 1RB1RD_1RC0LD_1LB0RA_1LC0LC	-	no-anchor	-	no anchor

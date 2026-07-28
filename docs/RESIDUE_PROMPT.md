@@ -1,19 +1,21 @@
 # Residue prompt — the nested front is spent down to its measured blockers
 
-_Rewritten 2026-07-28 at the end of the wave-22 RESIDUE track (branch
-`claude/skipped-machines-residue-lyfjw6`), which landed **110 boards**: the
-whole "no shift chain" bucket (8, by chaining the sync-bouncer construction
-through 3-4 counts per overflow) and 102 of "no inner family at `pow2 j`"
-(the OFFSET-family route: inner count starting at `2^(j+1)+2`, the whole
-overflow branch reindexed at `j = S j'`; for the Mp-outer cluster also the
-SPLIT inner lap and the `rrc_`/`rep_rot` frame bridges).  `D_remaining` is
-**511** and 4,645 of the frozen 5,156 are settled — the first crossing of
-**90%**.  Full assessment: `docs/WAVE22_FINDINGS.md`; the wave-18 story is
+_Rewritten 2026-07-28 at the end of the wave-23 RESIDUE track (branch
+`claude/residue-list-refinement-cxzdax`), which boarded the whole
+15-machine "no visit witness (`StA`)" bucket by the state-AVOIDANCE route:
+the kernel recomputes from the SAME lap chains that no window step is ever
+in `StA` (`Checkers/LapAvoid.v`, axiom-free), and
+`Counters/LapGlueQuiet.v` turns that plus a checked bootstrap window into
+the R_QH triple with the exact last-visit bound.  `D_remaining` is **496**
+and 4,660 of the frozen 5,156 are settled (90.4%).  Wave-22 before it
+landed 110 boards (the "no shift chain" 8 and 102 of "no inner family at
+`pow2 j`" via the OFFSET-family route).  Full assessments:
+`docs/WAVE23_FINDINGS.md`, `docs/WAVE22_FINDINGS.md`; the wave-18 story is
 `docs/WAVE18_FINDINGS.md`._
 
 _**Scope: the RESIDUE, which is now everything.**  The (4,2) HOLDOUT list was
 closed on 2026-07-28 when tower #20 was boarded (`NEXT_SESSION.md` §2l), so
-these 621 rows are the entire remaining problem.  `docs/RESIDUE_MAP.md` maps
+these 496 rows are the entire remaining problem.  `docs/RESIDUE_MAP.md` maps
 them by shape and blocker._
 
 **Before pasting, check:** substitute the branch the session should develop
@@ -58,12 +60,12 @@ LapCertGlue, LapGlueAbs, NestedLap and NestedLapLift are axiom-FREE or
 funext-only -- keep them that way).  Everything under tools/ is UNTRUSTED;
 the kernel re-checks every board.
 
-STATE: 4,645 of the frozen 5,156 settled (90.1%); D_remaining = 511.
+STATE: 4,660 of the frozen 5,156 settled (90.4%); D_remaining = 496.
 THE HOLDOUT LIST IS CLOSED.  Everything left is RESIDUE and all of it is
 yours.  docs/RESIDUE_MAP.md + tools/closeout/residue_map.tsv give every
 remaining machine's measured lap shape and the exact blocker.
 
-Failure profile at D_remaining = 511 (residue_map.tsv, wave-22):
+Failure profile at D_remaining = 496 (residue_map.tsv, wave-23):
 
   211  no overflow phase           -- ALL of them the no-anchor bucket
   105  no interior chain           -- QUAD 41, HIGHER 13, PARITY-AFFINE 13,
@@ -76,12 +78,13 @@ Failure profile at D_remaining = 511 (residue_map.tsv, wave-22):
                                       route, the rest fail an offset chain
    24  no anchor
    20  no boot chain               -- same population as "no exit", other side
-   15  no visit witness (StA)
     5  no second exit chain        -- the SCycR-entry-offset checker gap,
                                       measured precisely (WAVE22 section 2b)
     4  no inner interior chain
-ovfshape over the 511 for shape rather than blocker:
-  235 no-anchor, 132 AFFINE/EXP2, 52 AFFINE/AFFINE, 41 QUAD,
+(the 15 "no visit witness (StA)" rows were boarded in wave-23 -- the AVOID
+route, LAPQ_* -- and are gone from the map)
+ovfshape over the 496 for shape rather than blocker:
+  235 no-anchor, 132 AFFINE/EXP2, 37 AFFINE/AFFINE, 41 QUAD,
   13 PARITY-AFFINE, 13 HIGHER, 10 EXP3, 9 AFFINE/HIGHER, 6 EXP4.
 Per-machine cost is a vm_compute:
   python3 tools/counters/emit_lapcert.py --list FILE --emit   (25 alphabets)
@@ -115,14 +118,13 @@ THEN, in ranked order (all independent of the above):
       wave-14 measured only ~3 of the 13 derive both branches naively, so do
       not oversize it.
 
-  (2) The 15 no-visit-witness machines.  WAVE16 section 6b is still the
-      analysis and it is still right: these are quasi-halters whose quiet
-      state is StA (last visit at step 4-11, simulated), they miss glue_qh
-      (StA IS targeted) and glue_qh_abs (closed_b is a DIGRAPH fact, so any
-      set holding StD holds StA), and what is actually true is symbol-aware --
-      StD never READS S1 after the boot.  That is a real build, the bound is
-      tiny (QHBound 12 covers all 15), and vis_via_int_lift is NOT it (built,
-      fires on none).
+  [(2) the 15 no-visit-witness machines: DONE, wave-23.  The build was NOT
+      the symbol-aware invariant WAVE16 6b predicted -- the lap chains
+      already model the forward behavior exactly, so "StA never fires after
+      the boot" is recomputed from them by vm_compute (Checkers/LapAvoid.v +
+      Counters/LapGlueQuiet.v, emitter route `avoid`, boards LAPQ_*).  If a
+      future bucket has quiet-StB/C/D lap families, the same route takes
+      them with emitter work only.]
 
   (3) The 239 no-anchor machines.  alphabet_infer.py + gen_alphabet.py INFER a
       counter's word family from its own tape as a triple (A,B,C) and generate
