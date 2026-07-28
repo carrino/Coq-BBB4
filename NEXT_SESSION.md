@@ -1134,6 +1134,63 @@ no-visit-witness, the 41 QUAD/QUAD, the 235 no-anchor, the 65 "no exit
 chain" (identification, not chains), and the 5 second-exit machines
 (the SCycR-entry-offset checker gap).
 
+## 2n. Wave-23, RESIDUE track (2026-07-28) -- the no-visit-witness bucket closes
+
+Full write-up: `docs/WAVE23_FINDINGS.md`.  Took the ranked item (2) -- the
+15 "no visit witness (StA is targeted)" machines -- and boarded **all 15**:
+`D_remaining` **511 -> 496** (4,660/5,156 = 90.4% settled).
+
+- **The missing invariant never had to be found.**  WAVE16 6b said the
+  needed fact is symbol-aware ("StD never READS S1 after the boot") and "a
+  real build".  It is not: the lap certificates already model the forward
+  behavior exactly (mxdys' condition, quoted in `LapDecider.v`'s own
+  header), so "StA never fires after the boot" is COMPUTABLE from the
+  chains the boards already carry.  No invariant search, no closure, no new
+  certificate data -- three `vm_compute` booleans per board.
+- **New Coq, both additive:** `Checkers/LapAvoid.v` (axiom-FREE) --
+  `wavoid` window-trace check, `cycL_avoid`/`cycR_avoid` (the cyc
+  inductions carrying avoidance: one window check covers every iteration),
+  `savoid`/`srun_avoid` mirroring `sstep`/`srun`, soundness at every `j`
+  and tail; `Counters/LapGlueQuiet.v` (funext-only) -- `AvoidRun`,
+  `bootquiet_chk`/`bootvis_chk` one-`vm_compute` bootstrap-window checks,
+  and `glue_qh_quiet`: concrete-`t0` boot + StA-avoiding laps + visits for
+  the rest + checked `(s0, t0)` window => `NonHalt /\ QHBound (S s0) /\
+  QuasiHaltsSt` with the EXACT last-visit bound (4-11 on these).
+  `LapDecider.v`/`LapGlue.v`/`LapGlueQH.v`/`LapGlueAbs.v` untouched.
+- **Emitter:** the AVOID route in `emit_lapcert.py` (prefix `LAPQ_`),
+  taken when the only missing witness is StA, `absorb_search` fails, and
+  `avoid_probe` confirms the quiet shape.  `_mirrorize_qh` needed NO
+  change; pre-/post-change emitters render committed boards
+  byte-identically (checked).  All 15 derive on the mirror, boots 7-18,
+  `s0` 4-11.
+- **Controls:** `theories/Tests/LapAvoid_Corruption.v` -- a never-QH
+  board's chain (which really fires StA) is REJECTED; state-sensitivity on
+  the recurring states; window-overrun chains are false, not vacuous;
+  boot window slid onto the last visit is caught; wrong visit index caught.
+- **The route is not StA-specific**: `srun_avoid`/`glue_qh_quiet` take any
+  state, so a future quiet-StB/C/D lap family is emitter work only.
+
+STATE: `D_remaining` **496** (90.4% settled); `census_cache --check` MATCH
+throughout; `audit.py` OK (exact partition); the closeout is
+KERNEL-VERIFIED in-container (`-j2`): `Closeout.vo` + all 47 `CB_*.vo`
+compile, `closeout_partial` Qed at `functional_extensionality_dep` only,
+`vm_compute (List.length remaining_rows)` = 496.
+
+**Same session, the CASCADE reconnaissance (John: "the biggest category is
+counters; there is talk of having to deal with some exp to get them").**
+Full brief: `docs/CASCADE_EXIT.md`; tool: `tools/counters/cascade_probe.py`.
+The 65 "no exit chain" + 22 "no boot chain" machines were range-scanned at
+their true endpoints: **72 of 87 are a DESCENDING-OCTAVE CASCADE** -- main
+count `2^j..2^(j+1)-1`, then TWO counts per level `l = j-1 .. 2` with tails
+growing one unit per level, then a closing sweep.  Steps Theta(2^j) (4b's
+exponential, confirmed) but the count of counts is AFFINE in j -- why
+MAXCOUNTS=4 bought 0 and families() never saw it (octaves >= 0 only;
+MAXTAIL=3 vs ~2j-cell tails).  The build is a `NestedLapCascade` level
+induction; `inner_to_fill_lift` is already arbitrary-`v0`, the level chains
+are sside-uniform in `l`.  That is the next wave's THE TASK
+(`docs/RESIDUE_PROMPT.md` item 0); the 41 QUAD/QUAD, 235 no-anchor and the
+5 SCycR-gap machines follow.
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
