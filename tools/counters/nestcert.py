@@ -1683,3 +1683,482 @@ Proof.
   cbn [rep app]. rewrite <- ?app_assoc. cbn [app]. rewrite ?app_nil_r.
   reflexivity.
 Qed."""
+
+
+# ============================================================== the CASCADE ---
+#
+# Wave-24.  `docs/CASCADE_EXIT.md` measured that one overflow phase of the
+# 72-machine exp-counter bucket ("no exit chain" + "no boot chain") is a
+# DESCENDING-OCTAVE CASCADE:
+#
+#     main count          2^j .. 2^(j+1)-1              tail T0
+#     level l = j-1 .. 0  TWO counts 2^l .. 2^(l+1)-1, tails growing by one
+#                         unit per level
+#     closing sweep       -> the outer successor
+#
+# The step cost is Theta(2^j) -- WAVE18 section 4b's exponential, confirmed --
+# but the COUNT OF COUNTS is AFFINE in j, which is why the fixed-N route
+# ([MAXCOUNTS]) measured 0 of 87 and why [families] never saw it (it searches
+# octaves >= 0 only, and [MAXTAIL] caps tails at 3 where the cascade needs
+# ~2j).  What DOES express it is a level INDUCTION whose per-level pieces are
+# ordinary chains uniform in the level index, with the growing part of the
+# tail OPAQUE -- exactly what an sside's [X] already is.
+#
+# This section is the ENDPOINT EXTRACTOR for that induction.  It lives HERE
+# and not in a probe on purpose: the wave-23 reconnaissance measured two
+# ad-hoc trace scripts disagreeing on blank-head numbering, so [phase_mid]'s
+# configurations and its [rstrip0] convention have to be single-sourced.
+# Every framing produced below is CHECKED against [phase_mid]'s own
+# configurations, at every level down to 0, before a chain is derived.
+#
+# The four transitions, at level [l] with [m] tail units ([l + m = M], the
+# phase's invariant):
+#
+#   ENTRY  main fill  -> A(j-1) start   one-off at index j, tails concrete
+#   AB     A(l) fill  -> B(l) start     index l, tail opaque
+#   BA     B(l) fill  -> A(l-1) start   index l-1, tail opaque
+#   CLOSE  B(0) fill  -> outer successor one-off at index j; the sweep READS
+#                                       the whole tail, so there it is a rep
+#                                       and not an opaque region
+#
+# Two framing degrees of freedom decide whether a transition derives, and both
+# are searched rather than guessed -- section 4c spent a session on the first
+# framing tried:
+#
+#   * the PEEL [r]: how many unit copies sit in [post] instead of in the
+#     count.  The B->A turnaround walks back out over cells it has just
+#     written, and at [r] = 0 it runs out of them one step early -- the window
+#     is then blocked and no chain exists.  One peeled unit is what its
+#     turnaround needs.
+#   * the SPLIT [P]: how many cells past the count stay concrete before the
+#     opaque tail starts.  A->B never reads the growing region; B->A reads
+#     exactly one cell into it (the unit misreads there, which is what ENDS
+#     the eat), so its split cannot sit where A->B's does.
+
+CASC_MAXTAIL = 64          # the cascade's tails are ~2j cells, not MAXTAIL
+CASC_MINLEN = 4            # shortest count run [cascade_segments] reports
+CASC_PEEL = 3              # unit copies the framing search may peel
+CASC_POST = 14             # concrete cells past the count the search may keep
+
+
+def _gather_idx(mid, ENCDATA, ENCS, maxtail=MAXTAIL, encs=None):
+    """[_gather] with the phase POSITION kept: key -> [(mid index, value)].
+
+    The cascade needs the positions.  Its counts are told apart from one
+    another -- and from the octave SHADOWS, which decode over the same span as
+    the count they shadow -- by WHERE in the phase they run, not by their key.
+    """
+    hits = {}
+    for i, (q, l, r) in enumerate(mid):
+        for name in (encs or ENCS):
+            d = ENCDATA[name]
+            if d['obS'] != 0:
+                continue
+            A, B, C = tuple(d['uD']), tuple(d['uS']), tuple(d['soD'])
+            for k in range(maxtail + 1):
+                if k > len(l) - 1:
+                    break
+                head, tl = (l[:len(l) - k], l[len(l) - k:]) if k else (l, ())
+                v = decode(head, A, B, C)
+                if v is not None:
+                    hits.setdefault((name, q, tl, r), []).append((i, v))
+    return hits
+
+
+def cascade_segments(mid, ENCDATA, ENCS, maxtail=CASC_MAXTAIL,
+                     minlen=CASC_MINLEN, encs=None):
+    """Maximal consecutive-ascending count runs; the widest kept when one
+    octave shadows another over the same span."""
+    segs = []
+    for key, iv in _gather_idx(mid, ENCDATA, ENCS, maxtail, encs).items():
+        i0 = 0
+        while i0 < len(iv):
+            k = i0
+            while k + 1 < len(iv) and iv[k + 1][1] == iv[k][1] + 1:
+                k += 1
+            if k - i0 + 1 >= minlen:
+                segs.append((iv[i0][0], iv[k][0], iv[i0][1], iv[k][1], key))
+            i0 = k + 1
+    segs.sort()
+    return [s for s in segs
+            if not any(o[0] <= s[0] and s[1] <= o[1]
+                       and (o[3] - o[2]) > (s[3] - s[2]) for o in segs)]
+
+
+def cascade_runs(mid, ENCDATA, ENCS, maxtail=CASC_MAXTAIL,
+                 minlen=CASC_MINLEN, encs=None):
+    """The phase's counts as a NON-OVERLAPPING chain, earliest first.
+
+    Non-overlap is what separates a real cascade level from an octave shadow:
+    a shadow decodes over (nearly) the same span as the count it shadows, so
+    an earliest-start greedy scan keeps the count and drops the shadow."""
+    out, cur = [], -1
+    for s in cascade_segments(mid, ENCDATA, ENCS, maxtail, minlen, encs):
+        if s[0] > cur:
+            out.append(s)
+            cur = s[1]
+    return out
+
+
+def _insert_ats(a, b, w):
+    """Every [e] with [b] = [a] carrying [w] cells INSERTED at [e].
+
+    The cascade's tails grow by one unit per level after a fixed head, and
+    this reads the head length off two consecutive levels instead of assuming
+    it.  There is usually more than one reading -- a tail `10101` growing to
+    `1010101` admits both (head `[]`, unit `10`) and (head `[1]`, unit `01`)
+    -- and only one of them makes the tail `head ++ rep unit m` for an [m]
+    that descends with the level, so ALL of them are returned and the caller
+    picks the one whose whole law closes."""
+    if len(b) != len(a) + w:
+        return []
+    return [e for e in range(len(a) + 1)
+            if a[:e] == b[:e] and a[e:] == b[e + w:]]
+
+
+def _tail_mlaw(T, levels, ex, unit, w):
+    """[M] with [T p = ex ++ rep unit (M - p)] at every measured level, or
+    None."""
+    M = None
+    for p in levels:
+        rest = T[p][len(ex):]
+        if T[p][:len(ex)] != ex or len(rest) % w or \
+                rest != unit * (len(rest) // w):
+            return None
+        m = len(rest) // w
+        if M is None:
+            M = m + p
+        elif M != m + p:
+            return None
+    return M
+
+
+def cascade_law(mid, ENCDATA, ENCS, K, encs=None, maxtail=CASC_MAXTAIL):
+    """Read the cascade's LAW off one measured overflow phase.
+
+    Returns the inner family, the main count's tail, and the tail law of the
+    per-level counts: [tail_A l = extraA ++ rep unit (M - l)], likewise for the
+    second count of the level.  Nothing about the unit, the head cells, the
+    number of levels or [M] is assumed -- all four are measured, and a phase
+    that does not obey the law raises rather than being forced into it."""
+    j = K - 1
+    runs = cascade_runs(mid, ENCDATA, ENCS, maxtail, encs=encs)
+    if len(runs) < 5:
+        raise NestError('no cascade: %d counts in the phase' % len(runs))
+    (_, _, v0, v1, key0) = runs[0]
+    if (v0, v1) != (2 ** j, 2 ** (j + 1) - 1):
+        raise NestError('no cascade: main count is %d..%d' % (v0, v1))
+    name, st, tail_main, far_in = key0
+    lev = {}
+    for (i0, i1, a, b, key) in runs[1:]:
+        if (key[0], key[1], key[3]) != (name, st, far_in):
+            raise NestError('no cascade: a count at %s@%d far=%r leaves the '
+                            'family' % (key[0], key[1], key[3]))
+        p = a.bit_length() - 1
+        if (a, b) != (2 ** p, 2 ** (p + 1) - 1):
+            raise NestError('no cascade: count %d..%d is not an octave'
+                            % (a, b))
+        lev.setdefault(p, []).append(key[2])
+    levels = sorted(lev, reverse=True)
+    if levels[0] != j - 1:
+        raise NestError('no cascade: top level is %d, not %d'
+                        % (levels[0], j - 1))
+    if levels != list(range(levels[0], levels[0] - len(levels), -1)):
+        raise NestError('no cascade: levels %r are not consecutive' % levels)
+    if len(levels) < 2:
+        raise NestError('no cascade: one level only')
+    for p in levels:
+        if len(lev[p]) != 2:
+            raise NestError('no cascade: level %d has %d counts, not two'
+                            % (p, len(lev[p])))
+    tA = {p: lev[p][0] for p in levels}
+    tB = {p: lev[p][1] for p in levels}
+    w = len(tA[levels[1]]) - len(tA[levels[0]])
+    if w <= 0:
+        raise NestError('no cascade: the tails do not grow (%d)' % w)
+    opts = {}
+    for nm, T in (('A', tA), ('B', tB)):
+        cur = None
+        for p in levels[:-1]:
+            got = {(e, T[p - 1][e:e + w])
+                   for e in _insert_ats(T[p], T[p - 1], w)}
+            cur = got if cur is None else (cur & got)
+        if not cur:
+            raise NestError('no cascade: the %s tails do not grow by one fixed '
+                            'unit' % nm)
+        opts[nm] = sorted(cur)
+    for (eA, unit) in opts['A']:
+        exA = tA[levels[0]][:eA]
+        MA = _tail_mlaw(tA, levels, exA, unit, w)
+        if MA is None:
+            continue
+        for (eB, uB) in opts['B']:
+            if uB != unit:
+                continue
+            exB = tB[levels[0]][:eB]
+            if _tail_mlaw(tB, levels, exB, unit, w) != MA:
+                continue
+            # Is the MAIN count just the level-j second count?  On the
+            # exemplar it is -- [tail_main] = extraB ++ rep unit (M - j) on
+            # the nose -- and then the phase is uniform from level j down,
+            # the boot lands on B(j), and the level induction needs no
+            # separate entry step at all.
+            return dict(inner=name, st_in=st, far_in=far_in,
+                        tail_main=tail_main, unit=unit, extraA=exA,
+                        extraB=exB, levels=levels, K=K, j=j, M=MA,
+                        main_is_B=(tail_main == exB + unit * (MA - j)))
+    raise NestError('no cascade: no tail law head ++ rep unit (M - l) fits '
+                    'both counts')
+
+
+def cascade_words(law, ENCDATA, l):
+    """The four per-level words, in [phase_mid]'s left-side form."""
+    d = ENCDATA[law['inner']]
+    uS, uD = tuple(d['uS']), tuple(d['uD'])
+    soS, soD = tuple(d['soS']), tuple(d['soD'])
+    T = law['unit'] * (law['M'] - l)
+    tA, tB = law['extraA'] + T, law['extraB'] + T
+    return dict(A0=uD * l + soD + tA, A1=uS * l + soS + tA,
+                B0=uD * l + soD + tB, B1=uS * l + soS + tB)
+
+
+def cascade_check(mid, law, ENCDATA):
+    """Every level's four words -- PREDICTED by the law, then looked up among
+    [phase_mid]'s own configurations, in phase order, down to level 0.
+
+    This is the gate that the law describes the machine and not a hand-read
+    trace.  The two lowest levels are never reported by [cascade_segments]
+    (their runs are 2 and 1 values long, below [CASC_MINLEN]), so finding them
+    here is a genuine extrapolation test, not a restatement of the input."""
+    st, far = law['st_in'], tuple(law['far_in'])
+    pos, out = -1, []
+    for l in range(law['j'] - 1, -1, -1):
+        w, found = cascade_words(law, ENCDATA, l), {}
+        for nm in ('A0', 'A1', 'B0', 'B1'):
+            # a level-0 count is one value wide, so its start IS its fill
+            lo = pos + 1 if nm in ('A0', 'B0') else pos
+            want = (st, LC.rstrip0(w[nm]), far)
+            hit = next((i for i in range(lo, len(mid)) if mid[i] == want), None)
+            if hit is None:
+                raise NestError('cascade level %d: %s is not in the phase'
+                                % (l, nm))
+            found[nm] = hit
+            pos = hit
+        out.append((l, found))
+    return out
+
+
+# ------------------------------------------------------- the framing search ---
+
+def _side(pre, u, c, i, r, tl, P):
+    """One endpoint, framed: peel [r] unit copies out of the count into
+    [post], then keep [P] cells concrete before the opaque tail.  Returns
+    (sside, X), or None when the framing does not exist at this index."""
+    if r < 0 or c - r < 0 or c - r < i:
+        return None
+    T = tuple(u) * r + tuple(tl)
+    if P > len(T):
+        return None
+    return ((tuple(pre), tuple(u), 1, c - r - i, T[:P]), T[P:])
+
+
+def _frame_pair(S, D, ns, peel=CASC_PEEL, post=CASC_POST):
+    """Every (peel, split) framing of a transition that is UNIFORM IN THE
+    INDEX: one sside per endpoint, the same at every sampled index, sharing
+    one opaque tail.  [S]/[D] are (pre, u, count, tail) laws."""
+    out = []
+    for rs in range(peel + 1):
+        for rd in range(peel + 1):
+            if len({S['c'](n) - rs - (D['c'](n) - rd) for n in ns}) != 1:
+                continue
+            for P in range(post + 1):
+                cand, Xs, ok = None, {}, True
+                for n in ns:
+                    i = min(S['c'](n) - rs, D['c'](n) - rd)
+                    s = _side(S['pre'], S['u'], S['c'](n), i, rs, S['t'](n), P)
+                    if s is None:
+                        ok = False
+                        break
+                    Pd = len(tuple(D['u']) * rd + tuple(D['t'](n))) - len(s[1])
+                    e = _side(D['pre'], D['u'], D['c'](n), i, rd, D['t'](n),
+                              Pd) if Pd >= 0 else None
+                    if e is None or e[1] != s[1]:
+                        ok = False
+                        break
+                    if cand is None:
+                        cand = (s[0], e[0], i - n)
+                    elif cand != (s[0], e[0], i - n):
+                        ok = False
+                        break
+                    Xs[n] = s[1]
+                if ok and cand is not None:
+                    out.append(dict(peel=(rs, rd), post=P, ssrc=cand[0],
+                                    sdst=cand[1], ioff=cand[2], Xs=Xs))
+    return out
+
+
+def cascade_transitions(law, ENCDATA, enc, st0, tail, far):
+    """The four transitions, each as a (pre, u, count, tail) law per endpoint
+    plus the indices to sample.  [n] is the LEVEL for the per-level pair and
+    the outer index [j] for the two one-offs."""
+    d, dout = ENCDATA[law['inner']], ENCDATA[enc]
+    uS, uD = tuple(d['uS']), tuple(d['uD'])
+    soS, soD = tuple(d['soS']), tuple(d['soD'])
+    W, M, j = law['unit'], law['M'], law['j']
+    eA, eB, tm = law['extraA'], law['extraB'], tuple(law['tail_main'])
+    st, fi, tl, fr = law['st_in'], tuple(law['far_in']), tuple(tail), tuple(far)
+    dm = M - j                              # tail units at level j; M = j + dm
+    return [
+        dict(kind='ENTRY', ns=[j], sst=st, dst=st, sfar=fi, dfar=fi,
+             S=dict(pre=(), u=uS, c=lambda n: n, t=lambda n: soS + tm),
+             D=dict(pre=(), u=uD, c=lambda n: n - 1,
+                    t=lambda n: soD + eA + W * (dm + 1))),
+        dict(kind='AB', ns=law['levels'], sst=st, dst=st, sfar=fi, dfar=fi,
+             S=dict(pre=(), u=uS, c=lambda n: n,
+                    t=lambda n: soS + eA + W * (M - n)),
+             D=dict(pre=(), u=uD, c=lambda n: n,
+                    t=lambda n: soD + eB + W * (M - n))),
+        dict(kind='BA', ns=[l for l in law['levels'] if l >= 1],
+             sst=st, dst=st, sfar=fi, dfar=fi,
+             S=dict(pre=(), u=uS, c=lambda n: n,
+                    t=lambda n: soS + eB + W * (M - n)),
+             D=dict(pre=(), u=uD, c=lambda n: n - 1,
+                    t=lambda n: soD + eA + W * (M - n + 1))),
+        dict(kind='CLOSE', ns=[j], sst=st, dst=st0, sfar=fi, dfar=fr,
+             S=dict(pre=soS + eB, u=W, c=lambda n: n + dm, t=lambda n: ()),
+             D=dict(pre=(), u=tuple(dout['uD']), c=lambda n: n + 1,
+                    t=lambda n: tuple(dout['soD']) + tl)),
+    ]
+
+
+def cascade_endpoints(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=7,
+                      encs=None):
+    """The CASCADE route's endpoints and chains, gated.
+
+    Reads the law off one measured overflow phase, checks it against
+    [phase_mid]'s own configurations at every level down to 0, then derives:
+    the BOOT into the main count, the inner family's own interior lap (shared
+    by every level -- the tail is opaque to it), and the four transition
+    chains.  Raises [NestError] with the piece that did not derive."""
+    encf = ENC[enc]
+    mid = phase_mid(tab, st0, encf, tail, far, K, maxT=4000000)
+    law = cascade_law(mid, ENCDATA, ENCS, K, encs)
+    law['found'] = cascade_check(mid, law, ENCDATA)
+    key = (law['inner'], law['st_in'], tuple(law['tail_main']),
+           tuple(law['far_in']), 0)
+    CinS, CinF, _, _ = endpoints(ENCDATA, enc, st0, tail, far, key)
+    B0, B1 = _confs_ovf(ENCDATA, enc, st0, tail, far)
+    chb, _ = _chain(tab, True, True, B0, CinS)
+    if chb is None:
+        raise NestError('no boot chain')
+    rb = LC.srun(tab, True, True, chb, B0)
+    if rb is None:
+        raise NestError('internal: srun disagrees with the search')
+    lap = _inner_lap(tab, ENCDATA, key)
+    trans = {}
+    for tr in cascade_transitions(law, ENCDATA, enc, st0, tail, far):
+        got = None
+        for fr in _frame_pair(tr['S'], tr['D'], tr['ns']):
+            el = not any(fr['Xs'].values())
+            src = (tr['sst'], fr['ssrc'], 0, (tr['sfar'], (), 0, 0, ()))
+            dst = (tr['dst'], fr['sdst'], 0, (tr['dfar'], (), 0, 0, ()))
+            ch, lift = _chain(tab, el, True, src, dst)
+            if ch is None:
+                continue
+            r = LC.srun(tab, el, True, ch, src)
+            if r is None:
+                continue
+            got = dict(fr, chain=ch, lift=lift, el=el, src=src, dst=dst,
+                       land=r[0], cost=(r[1], r[2]))
+            break
+        if got is None:
+            raise NestError('no cascade %s chain' % tr['kind'])
+        trans[tr['kind']] = got
+    return dict(law=law, key=key, trans=trans, chb=chb, BB1=rb[0],
+                cb=(rb[1], rb[2]), B0=B0, B1=B1, CinS=CinS, CinF=CinF,
+                chn=lap['chn'], AI0=lap['AI0'], AI1=lap['AI1'],
+                cn=lap['cn'], ipad=lap['ipad'], ifar=lap['ifar'])
+
+
+def cascade_validate(tab, ENC, ENCDATA, enc, st0, tail, far, d,
+                     jlo=2, jhi=7):
+    """Differentially check the WHOLE cascade against the raw simulator: the
+    boot, every count of every level, and all three transition chains, at
+    exact step counts and exact configurations, over a range of outer indices.
+
+    This is wave-18's discipline unchanged, and for this route it is the load-
+    bearing one: the chains are derived at ONE index from ONE phase, and only
+    a replay at other indices distinguishes a level-uniform chain from a
+    coincidence at the index it was read off."""
+    law = d['law']
+    encin, encf = ENC[law['inner']], ENC[enc]
+    st, fi = law['st_in'], tuple(law['far_in'])
+    W, dm = law['unit'], law['M'] - law['j']
+    eA, eB = law['extraA'], law['extraB']
+    tail, far = tuple(tail), tuple(far)
+    cn, cb = d['cn'], d['cb']
+    cBA = d['trans']['BA']['cost'], d['trans']['BA']['ioff']
+    cAB = d['trans']['AB']['cost'], d['trans']['AB']['ioff']
+    cCL = d['trans']['CLOSE']['cost'], d['trans']['CLOSE']['ioff']
+
+    def tl(ex, l, j):
+        return ex + W * (j + dm - l)
+
+    def hop(a, b, cost, n, what):
+        got = _sim(tab, a, cost[0][0] * (n + cost[1]) + cost[0][1])
+        if not _eqlift(got, b):
+            raise NestError('validate %s: %r want %r' % (what, got, b))
+
+    def laps(t, v0, vf, what):
+        for v in range(v0, vf):
+            i, ov = carry(v)
+            if ov:
+                raise NestError('internal: inner overflow inside the run')
+            a = (st, tuple(encin(v)) + t, 0, fi)
+            b = (st, tuple(encin(v + 1)) + t, 0, fi)
+            g = _sim(tab, a, cn[0] * i + cn[1])
+            if not _eqlift(g, b):
+                raise NestError('validate %s v=%d: %r want %r'
+                                % (what, v, g, b))
+
+    nlap = 0
+    for j in range(jlo, jhi + 1):
+        p = 2 ** (j + 1) - 1
+        hop((st0, tuple(encf(p)) + tail, 0, far),
+            (st, tuple(encin(2 ** j)) + tl(eB, j, j), 0, fi),
+            (cb, 0), j, 'boot j=%d' % j)
+        for l in range(j, 0, -1):
+            laps(tl(eB, l, j), 2 ** l, 2 ** (l + 1) - 1, 'B%d j=%d' % (l, j))
+            hop((st, tuple(encin(2 ** (l + 1) - 1)) + tl(eB, l, j), 0, fi),
+                (st, tuple(encin(2 ** (l - 1))) + tl(eA, l - 1, j), 0, fi),
+                cBA, l, 'BA%d j=%d' % (l, j))
+            laps(tl(eA, l - 1, j), 2 ** (l - 1), 2 ** l - 1,
+                 'A%d j=%d' % (l - 1, j))
+            hop((st, tuple(encin(2 ** l - 1)) + tl(eA, l - 1, j), 0, fi),
+                (st, tuple(encin(2 ** (l - 1))) + tl(eB, l - 1, j), 0, fi),
+                cAB, l - 1, 'AB%d j=%d' % (l - 1, j))
+            nlap += 2 ** l - 1 + 2 ** (l - 1) - 1
+        laps(tl(eB, 0, j), 1, 1, 'B0 j=%d' % j)
+        hop((st, tuple(encin(1)) + tl(eB, 0, j), 0, fi),
+            (st0, tuple(encf(2 ** (j + 1))) + tail, 0, far),
+            cCL, j, 'close j=%d' % j)
+    d['nval'] = ('cascade: %d overflow phases, j = %d..%d (%d levels, '
+                 '%d counts, %d inner laps)'
+                 % (jhi - jlo + 1, jlo, jhi,
+                    sum(j + 1 for j in range(jlo, jhi + 1)),
+                    sum(2 * j + 1 for j in range(jlo, jhi + 1)), nlap))
+    return d['nval']
+
+
+def _confs_ovf(ENCDATA, enc, st0, tail, far):
+    """[emit_lapcert.confs]'s two overflow endpoints, rebuilt here so this
+    section does not import its caller."""
+    d = ENCDATA[enc]
+    tail, far = tuple(tail), tuple(far)
+    F = (far, (), 0, 0, ())
+    if d['obS'] >= 1:
+        B0 = (st0, (d['uS'], d['uS'], 1, d['obS'] - 1, d['soS'] + tail), 0, F)
+    else:
+        B0 = (st0, ((), d['uS'], 1, 0, d['soS'] + tail), 0, F)
+    B1 = (st0, ((), d['uD'], 1, 1, d['soD'] + tail), 0, F)
+    return B0, B1
