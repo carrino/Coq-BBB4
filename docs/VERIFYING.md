@@ -107,7 +107,9 @@ versa.
 make census-verify WALK_JOBS=2
 ```
 
-This deletes the committed walk output and re-walks from source.  Budget
+This moves the committed walk output to a timestamped backup directory
+(`census_probes/vo-backup-*` — nothing is destroyed, and no manual `.vo`
+deletion is ever needed) and re-walks from source.  Budget
 **~24 hours** on ≥16 GB of RAM, on a native Linux filesystem — not `/mnt/c`
 under WSL2, where the drive bridge breaks `native_compute`.  `WALK_JOBS=2` is
 deliberate: `-P4` has OOM-killed a 16 GB box.

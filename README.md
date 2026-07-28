@@ -38,6 +38,33 @@ There are zero `Admitted` in `theories/`.  Verify with
 `Print Assumptions bbb4_target` (printed during `make proof`) or
 independently with `coqchk -o`.
 
+## The verification ladder
+
+Four rungs, in increasing order of paranoia — each needs strictly less
+trust than the one before.  No rung requires deleting anything by hand:
+a fresh clone carries no binaries except the census `.vo`, and the walk
+targets back up and re-derive those automatically.
+
+1. **Read the claim.**  [`docs/CLAIMS.md`](docs/CLAIMS.md) states
+   exactly what is proved — and what is not.  Trust: the authors.
+2. **`make`** (stock Coq 8.18, no opam, ~1–2 h).  Rebuilds every
+   checker, every board theorem, and `closeout_partial` — the entire
+   boarding argument — **from source; none of the committed `.vo` are
+   in this closure**.  Trust: the Coq kernel.
+3. **`make proof`** (the census opam switch, minutes).  Adds the
+   census chain: loads the 154 committed census `.vo` (hash-guarded
+   against the census sources) and yields `bbb4_target`.  Trust: the
+   kernel, plus that those `.vo` are honest output of the census walk.
+4. **`make census-verify`** (~24 h, ≥16 GB RAM).  Removes that last
+   trust: backs the committed `.vo` up automatically and re-walks the
+   census from source.  The walk is resumable per-unit, so re-walking
+   a *sample* of units and checking they reproduce the committed
+   output is also meaningful.  Trust: the kernel alone.
+
+For the extra-careful, `coqchk -o` re-verifies compiled proof terms
+with the standalone checker at any rung.  Full instructions and the
+expected outputs for every rung: [`docs/VERIFYING.md`](docs/VERIFYING.md).
+
 ## Building
 
 Requires Coq 8.18 and Python 3 (the Python is reporting/generation
