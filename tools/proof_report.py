@@ -70,12 +70,10 @@ Sharper, in previous-record terms:
     QHBound 66349 tm \\/ NeverQuasiHaltsSt tm
 
 -- every machine NOT in the skipped list quasihalts by the PREVIOUS
-champion's score, 66,349, or never quasihalts.  So among all known
-(4,2) machines, only the current champion exceeds the previous record.
-(The decided set currently even satisfies the census tier bound 2,000;
-the machines known to score between 2,000 and the champion -- the four
-previous champions, 2,512..66,349 -- are all still in the skipped
-list.)
+champion's score, 66,349, or never quasihalts.  The four previous
+champions (scores 2,512..66,349) are among the decided, so among all
+known (4,2) machines, only the current champion exceeds the previous
+record.
 
 Axiom footprint: functional_extensionality_dep, and nothing else
 (printed by Print Assumptions during the build above; independently

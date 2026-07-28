@@ -2,6 +2,10 @@ machine	kind	vfile	theorem	const
 1RB0LD_1RC0RC_1LA1RB_0LC0LD	nqh	theories/Machines/Counters/BCtr_11.v	nqh_1RB0LD_1RC0RC_1LA1RB_0LC0LD	tm_11
 1RB0RB_1LC1RA_1RA0LD_0LB0LD	nqh	theories/Machines/Counters/BCtr_13.v	nqh_1RB0RB_1LC1RA_1RA0LD_0LB0LD	tm_13
 1RB1LC_1LC1RD_1LA0LC_0RD0RB	nqh	theories/Machines/Counters/BCtr_28.v	nqh_1RB1LC_1LC1RD_1LA0LC_0RD0RB	tm_28
+1RB1RA_0RC1LA_1LC1LD_0RB0RD	iqhle:2512	theories/Machines/Counters/BlankTail_2512.v	tm_2512_board	tm_2512
+1RB1RA_0RC0RB_0RD1RA_1LD1LB	iqhle:2568	theories/Machines/Counters/BlankTail_2568.v	tm_2568_board	tm_2568
+1RB1RC_1LC1RD_1RA1LD_0RD0LB	iqhle:2819	theories/Machines/Counters/BlankTail_2819.v	tm_2819_board	tm_2819
+1RB0LD_1LC0LA_1LA0LC_1RD1RC	iqhle:66349	theories/Machines/Counters/BlankTail_66349.v	tm_66349_board	tm_66349
 1RB1RA_0RC0RB_1LC1LD_0RA0LA	nqh	theories/Machines/Counters/Bnc3.v	nqh_1RB1RA_0RC0RB_1LC1LD_0RA0LA	tm_v4
 1RB1LD_1RC0RB_1LA0RC_0LD0LA	nqh	theories/Machines/Counters/Double_32.v	nqh_1RB1LD_1RC0RB_1LA0RC_0LD0LA	tm_32
 1RB0LC_1RC0RD_1LA0LC_1RD0RA	nqh	theories/Machines/Counters/Double_9.v	nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA	tm_9

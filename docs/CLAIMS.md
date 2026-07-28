@@ -26,18 +26,19 @@ bbb4_decided_le_prev_champion : forall tm,
 ```
 
 The last corollary is the previous-record reading: every decided machine
-quasihalts by the *previous* champion's 66,349 or never quasihalts, so among
-known (4,2) machines only the (still-skipped) champion exceeds the previous
-record.  The decided set in fact satisfies the census tier bound 2,000 — the
-known machines between 2,000 and the champion, the four previous champions
-at 2,512–66,349, are all currently residue rows.
+quasihalts by the *previous* champion's 66,349 or never quasihalts.  The four
+previous champions themselves (scores 2,512–66,349,
+`Machines/Counters/BlankTail_*.v`) are among the decided, so among all known
+(4,2) machines only the (still-skipped) champion exceeds the previous record.
 
-where `boarded tm` is
-`NeverQuasiHaltsSt tm \/ (NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm)`
-— the bound is concrete, because every quasihalting stage board certifies
-literally `QHBound 2000` (= `B_census`, the census's in-walk tier strength;
-`tools/closeout/inventory.py` refuses any other bound, and quasihalters with
-larger certified bounds are residue rows, not stage rows).
+`boarded tm` is
+`NeverQuasiHaltsSt tm \/ (NonHalt tm /\ QHBound B_board tm /\ QuasiHaltsSt tm)`
+with `B_board` = 66,349, the previous champion's score, concrete.  Census-tier
+stage boards certify literally `QHBound 2000` (= `B_census`, the census's
+in-walk tier strength) and lift by `qhbound_mono`; the four ex-champions enter
+at their exact scores through a `B <=? B_board` gate the kernel evaluates
+(`covers_iqh_le_at`).  `tools/closeout/inventory.py` refuses any other
+statement shapes.
 
 Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
 **every** (4,2) Turing machine at least one of the following holds:
@@ -47,7 +48,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is one of the **496** machines listed in `D_remaining`
+3. it is one of the **492** machines listed in `D_remaining`
    (`tools/closeout/residue_map.tsv`), which the theorem **skips**.
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
@@ -69,25 +70,25 @@ before the record itself is a theorem here:
    what `theories/Counters/BlankTail.v` already closes for the four previous
    champions; what it needs is a 32.8M-step prefix, for which
    `Checkers/TCyclerN.v` already supplies `cstepsN` and `cstepsN_nat`.  It is
-   currently one of the 496.  **Not done.**
-2. **The 496.**  Any of them could, for all this development knows, be a
+   currently one of the 492.  **Not done.**
+2. **The 492.**  Any of them could, for all this development knows, be a
    quasihalter with a larger score.  That is what undecided means.
 
 (The third gap this section used to list — the score bound existing only
 existentially, per-board, instead of as one aggregated constant — is closed:
-`boarded` now carries the concrete `QHBound 2000`, and `bbb4_target` lifts it
-to the champion's score by `qhbound_mono`.)
+`boarded` now carries the concrete `QHBound B_board` (= 66,349), and
+`bbb4_target` lifts it to the champion's score by `qhbound_mono`.)
 
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 496 still-undecided machines —
+> 32,779,478 or never quasihalts, except 492 still-undecided machines —
 > kernel-checked with one standard axiom.  The BBB(4) *value* does not yet
-> follow from what is here, because the champion itself is one of the 496.
+> follow from what is here, because the champion itself is one of the 492.
 
-## Scope of the 496
+## Scope of the 492
 
-All 496 are residue — machines no engine in this repository settles, mapped by
+All 492 are residue — machines no engine in this repository settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28
 (`NEXT_SESSION.md` §2l).

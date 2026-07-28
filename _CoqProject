@@ -2239,6 +2239,12 @@ theories/Machines/Counters/LAPQ_1RB1RD_0RC1LA_1LD0RB_0LD1RC.v
 theories/Machines/Counters/LAPQ_1RB1RD_1LC0RB_0LC1RD_0RB0LA.v
 theories/Machines/Counters/LAPQ_1RB1RD_1LC0RD_0LC1RD_0RB0LA.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/BlankTail_2512.v
+theories/Machines/Counters/BlankTail_2568.v
+theories/Machines/Counters/BlankTail_2819.v
+theories/Machines/Counters/BlankTail_66349.v
+
 theories/Closeout/CloseoutKit.v
 theories/Closeout/CB_00.v
 theories/Closeout/CB_01.v
