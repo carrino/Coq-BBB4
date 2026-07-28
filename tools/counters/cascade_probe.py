@@ -131,7 +131,9 @@ def endpoints(spec, K, jhi=8, quiet=False):
               % ' '.join('%d' % l for l, _ in law['found']))
         print('  boot cost=%d*j+%d  lap cost=%d*i+%d'
               % (d['cb'][0], d['cb'][1], d['cn'][0], d['cn'][1]))
-        for k in ('ENTRY', 'AB', 'BA', 'CLOSE'):
+        for k in ('ENTRY', 'AB', 'BA', 'CLOSE', 'CLOSEA', 'CLOSEB'):
+            if k not in d['trans']:
+                continue
             t = d['trans'][k]
             print('  %-6s i=n%+d peel=%s post=%d el=%s lift=%s cost=%d*i+%d  %s'
                   % (k, t['ioff'], t['peel'], t['post'], t['el'], t['lift'],

@@ -1855,11 +1855,41 @@ def cascade_law(mid, ENCDATA, ENCS, K, encs=None, maxtail=CASC_MAXTAIL,
     if len(runs) < 5:
         raise NestError('no cascade: %d counts in the phase' % len(runs))
     (_, _, v0, v1, key0) = runs[0]
-    if (v0, v1) != (2 ** j, 2 ** (j + 1) - 1):
+    if (v0, v1) == (2 ** j, 2 ** (j + 1) - 1):
+        oct_ = 0
+        lev_runs = runs[1:]
+    elif (v0, v1) == (2 ** (j - 1), 2 ** j - 1):
+        # The whole cascade sits ONE OCTAVE DOWN: there is no separate main
+        # count -- the top level (j-1) carries TWO counts like every other
+        # level, and the boot lands on its FIRST count.  The overflow at
+        # p = 1 (outer index 0) has no cascade at all and is a concrete lap.
+        # These are wave-24's 12 "main count at 2^(j-1)..2^j-1" non-gated
+        # rows; the level structure below them is the standard one.
+        oct_ = -1
+        # The phase does not end at level 0: after the descent these
+        # machines run ONE WHOLE ASCENDING COUNT at octave j+1 (values
+        # 2^(j+1)..2^(j+2)-1, a short constant tail) before settling on the
+        # outer successor -- measured Theta(2^j), so the close is that
+        # count's own laps between two affine chains (CLOSEA in, CLOSEB
+        # out), not a sweep.  Separate it from the level runs here.
+        lev_runs = [r for r in runs if r[2].bit_length() - 1 < j]
+        big = [r for r in runs
+               if (r[2], r[3]) == (2 ** (j + 1), 2 ** (j + 2) - 1)]
+        if not big:
+            raise NestError('no cascade: octave-down phase has no closing '
+                            'count at octave %d' % (j + 1))
+    else:
         raise NestError('no cascade: main count is %d..%d' % (v0, v1))
     name, st, tail_main, far_in = key0
+    big_tail = None
+    if oct_ == -1:
+        bkey = big[0][4]
+        if (bkey[0], bkey[1], bkey[3]) != (name, st, far_in):
+            raise NestError('no cascade: the closing count at %s@%d far=%r '
+                            'leaves the family' % (bkey[0], bkey[1], bkey[3]))
+        big_tail = bkey[2]
     lev = {}
-    for (i0, i1, a, b, key) in runs[1:]:
+    for (i0, i1, a, b, key) in lev_runs:
         if (key[0], key[1], key[3]) != (name, st, far_in):
             raise NestError('no cascade: a count at %s@%d far=%r leaves the '
                             'family' % (key[0], key[1], key[3]))
@@ -1914,8 +1944,10 @@ def cascade_law(mid, ENCDATA, ENCS, K, encs=None, maxtail=CASC_MAXTAIL,
             # separate entry step at all.
             return dict(inner=name, st_in=st, far_in=far_in,
                         tail_main=tail_main, unit=unit, extraA=exA,
-                        extraB=exB, levels=levels, K=K, j=j, M=MA,
-                        main_is_B=(tail_main == exB + unit * (MA - j)))
+                        extraB=exB, levels=levels, K=K, j=j, M=MA, oct=oct_,
+                        big_tail=big_tail,
+                        main_is_B=(oct_ == 0
+                                   and tail_main == exB + unit * (MA - j)))
     raise NestError('no cascade: no tail law head ++ rep unit (M - l) fits '
                     'both counts')
 
@@ -2017,7 +2049,7 @@ def cascade_transitions(law, ENCDATA, enc, st0, tail, far):
     eA, eB, tm = law['extraA'], law['extraB'], tuple(law['tail_main'])
     st, fi, tl, fr = law['st_in'], tuple(law['far_in']), tuple(tail), tuple(far)
     dm = M - j                              # tail units at level j; M = j + dm
-    return [
+    out = [
         dict(kind='ENTRY', ns=[j], sst=st, dst=st, sfar=fi, dfar=fi,
              S=dict(pre=(), u=uS, c=lambda n: n, t=lambda n: soS + tm),
              D=dict(pre=(), u=uD, c=lambda n: n - 1,
@@ -2038,6 +2070,24 @@ def cascade_transitions(law, ENCDATA, enc, st0, tail, far):
              D=dict(pre=(), u=tuple(dout['uD']), c=lambda n: n + 1,
                     t=lambda n: tuple(dout['soD']) + tl)),
     ]
+    if law.get('oct', 0) == -1:
+        # the octave-down close: level-0 fill -> the octave-(j+1) closing
+        # count's START (its exponentially many laps live in [fill_hop]) ->
+        # from its FILL to the outer successor
+        bt = tuple(law['big_tail'])
+        out[-1:] = [
+            dict(kind='CLOSEA', ns=[j], sst=st, dst=st, sfar=fi, dfar=fi,
+                 S=dict(pre=soS + eB, u=W, c=lambda n: n + dm,
+                        t=lambda n: ()),
+                 D=dict(pre=(), u=uD, c=lambda n: n + 1,
+                        t=lambda n: soD + bt)),
+            dict(kind='CLOSEB', ns=[j], sst=st, dst=st0, sfar=fi, dfar=fr,
+                 S=dict(pre=(), u=uS, c=lambda n: n + 1,
+                        t=lambda n: soS + bt),
+                 D=dict(pre=(), u=tuple(dout['uD']), c=lambda n: n + 1,
+                        t=lambda n: tuple(dout['soD']) + tl)),
+        ]
+    return out
 
 
 def cascade_endpoints(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=7,
@@ -2053,10 +2103,26 @@ def cascade_endpoints(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=7,
     mid = phase_mid(tab, st0, encf, tail, far, K, maxT=4000000)
     law = cascade_law(mid, ENCDATA, ENCS, K, encs, prefer=enc)
     law['found'] = cascade_check(mid, law, ENCDATA)
-    key = (law['inner'], law['st_in'], tuple(law['tail_main']),
-           tuple(law['far_in']), 0)
+    oct_ = law.get('oct', 0)
+    if oct_ == 0:
+        key = (law['inner'], law['st_in'], tuple(law['tail_main']),
+               tuple(law['far_in']), 0)
+    else:
+        # one octave down: the boot lands on the TOP level's FIRST count,
+        # A(j-1) at value 2^(j-1), whose tail carries dm+1 units
+        key = (law['inner'], law['st_in'],
+               tuple(law['extraA'])
+               + tuple(law['unit']) * (law['M'] - law['j'] + 1),
+               tuple(law['far_in']), 0)
     CinS, CinF, _, _ = endpoints(ENCDATA, enc, st0, tail, far, key)
     B0, B1 = _confs_ovf(ENCDATA, enc, st0, tail, far)
+    if oct_ == -1:
+        # the boot chain runs at the REINDEXED anchor (one below the outer
+        # index), so its source carries one peeled unit copy in the prefix
+        dout = ENCDATA[enc]
+        B0 = (st0, (dout['uS'], dout['uS'], 1, dout['obS'],
+                    tuple(dout['soS']) + tuple(tail)), 0,
+              (tuple(far), (), 0, 0, ()))
     chb, _ = _chain(tab, True, True, B0, CinS)
     if chb is None:
         raise NestError('no boot chain')
@@ -2066,6 +2132,9 @@ def cascade_endpoints(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=7,
     lap = _inner_lap(tab, ENCDATA, key)
     trans = {}
     for tr in cascade_transitions(law, ENCDATA, enc, st0, tail, far):
+        if oct_ == -1 and tr['kind'] == 'ENTRY':
+            # no main count to enter from: the boot IS the entry
+            continue
         got = None
         for fr in _frame_pair(tr['S'], tr['D'], tr['ns']):
             el = not any(fr['Xs'].values())
@@ -2083,10 +2152,32 @@ def cascade_endpoints(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=7,
         if got is None:
             raise NestError('no cascade %s chain' % tr['kind'])
         trans[tr['kind']] = got
-    return dict(law=law, key=key, trans=trans, chb=chb, BB1=rb[0],
-                cb=(rb[1], rb[2]), B0=B0, B1=B1, CinS=CinS, CinF=CinF,
-                chn=lap['chn'], AI0=lap['AI0'], AI1=lap['AI1'],
-                cn=lap['cn'], ipad=lap['ipad'], ifar=lap['ifar'])
+    d = dict(law=law, key=key, trans=trans, chb=chb, BB1=rb[0],
+             cb=(rb[1], rb[2]), B0=B0, B1=B1, CinS=CinS, CinF=CinF,
+             chn=lap['chn'], AI0=lap['AI0'], AI1=lap['AI1'],
+             cn=lap['cn'], ipad=lap['ipad'], ifar=lap['ifar'])
+    if oct_ == -1:
+        # the outer index 0 overflow (p = 1) has no cascade: a concrete lap,
+        # plus per-state first-visit witnesses for the j = 0 visit bullets
+        # (the offset route's exact device)
+        tail_t, far_t = tuple(tail), tuple(far)
+        c1 = (st0, tuple(encf(1)) + tail_t, 0, far_t)
+        n0 = _sim_to_lift(tab, c1,
+                          (st0, tuple(encf(2)) + tail_t, 0, far_t), 20000)
+        if n0 is None:
+            raise NestError('cascade: no concrete lap at p=1')
+        visz, cfg = {c1[0]: 0}, c1
+        for t in range(1, 5000):
+            try:
+                cfg = LC.wstep(tab, False, False, cfg)
+            except LC.Halt:
+                break
+            if cfg[0] not in visz:
+                visz[cfg[0]] = t
+            if len(visz) == 4:
+                break
+        d['n0'], d['visz'] = n0, visz
+    return d
 
 
 def cascade_validate(tab, ENC, ENCDATA, enc, st0, tail, far, d,
@@ -2108,7 +2199,11 @@ def cascade_validate(tab, ENC, ENCDATA, enc, st0, tail, far, d,
     cn, cb = d['cn'], d['cb']
     cBA = d['trans']['BA']['cost'], d['trans']['BA']['ioff']
     cAB = d['trans']['AB']['cost'], d['trans']['AB']['ioff']
-    cCL = d['trans']['CLOSE']['cost'], d['trans']['CLOSE']['ioff']
+    if 'CLOSE' in d['trans']:
+        cCL = d['trans']['CLOSE']['cost'], d['trans']['CLOSE']['ioff']
+    else:
+        cCA = d['trans']['CLOSEA']['cost'], d['trans']['CLOSEA']['ioff']
+        cCB = d['trans']['CLOSEB']['cost'], d['trans']['CLOSEB']['ioff']
 
     def tl(ex, l, j):
         return ex + W * (j + dm - l)
@@ -2130,7 +2225,59 @@ def cascade_validate(tab, ENC, ENCDATA, enc, st0, tail, far, d,
                 raise NestError('validate %s v=%d: %r want %r'
                                 % (what, v, g, b))
 
+    oct_ = law.get('oct', 0)
     nlap = 0
+    if oct_ == -1:
+        # the concrete p = 1 lap first, then the generic branch from j = 1:
+        # boot lands on A(j-1)'s START, one AB hop enters the descent, and
+        # the level structure below is the standard one
+        got = _sim(tab, (st0, tuple(encf(1)) + tail, 0, far), d['n0'])
+        if not _eqlift(got, (st0, tuple(encf(2)) + tail, 0, far)):
+            raise NestError('validate p=1: %r' % (got,))
+        for j in range(max(jlo, 1), jhi + 1):
+            p = 2 ** (j + 1) - 1
+            hop((st0, tuple(encf(p)) + tail, 0, far),
+                (st, tuple(encin(2 ** (j - 1))) + tl(eA, j - 1, j), 0, fi),
+                (cb, -1), j, 'boot j=%d' % j)
+            laps(tl(eA, j - 1, j), 2 ** (j - 1), 2 ** j - 1,
+                 'Atop j=%d' % j)
+            hop((st, tuple(encin(2 ** j - 1)) + tl(eA, j - 1, j), 0, fi),
+                (st, tuple(encin(2 ** (j - 1))) + tl(eB, j - 1, j), 0, fi),
+                cAB, j - 1, 'ABtop j=%d' % j)
+            nlap += 2 ** (j - 1) - 1
+            for l in range(j - 1, 0, -1):
+                laps(tl(eB, l, j), 2 ** l, 2 ** (l + 1) - 1,
+                     'B%d j=%d' % (l, j))
+                hop((st, tuple(encin(2 ** (l + 1) - 1)) + tl(eB, l, j), 0,
+                     fi),
+                    (st, tuple(encin(2 ** (l - 1))) + tl(eA, l - 1, j), 0,
+                     fi),
+                    cBA, l, 'BA%d j=%d' % (l, j))
+                laps(tl(eA, l - 1, j), 2 ** (l - 1), 2 ** l - 1,
+                     'A%d j=%d' % (l - 1, j))
+                hop((st, tuple(encin(2 ** l - 1)) + tl(eA, l - 1, j), 0, fi),
+                    (st, tuple(encin(2 ** (l - 1))) + tl(eB, l - 1, j), 0,
+                     fi),
+                    cAB, l - 1, 'AB%d j=%d' % (l - 1, j))
+                nlap += 2 ** l - 1 + 2 ** (l - 1) - 1
+            laps(tl(eB, 0, j), 1, 1, 'B0 j=%d' % j)
+            bt = tuple(law['big_tail'])
+            hop((st, tuple(encin(1)) + tl(eB, 0, j), 0, fi),
+                (st, tuple(encin(2 ** (j + 1))) + bt, 0, fi),
+                cCA, j, 'closeA j=%d' % j)
+            laps(bt, 2 ** (j + 1), 2 ** (j + 2) - 1, 'BIG j=%d' % j)
+            nlap += 2 ** (j + 1) - 1
+            hop((st, tuple(encin(2 ** (j + 2) - 1)) + bt, 0, fi),
+                (st0, tuple(encf(2 ** (j + 1))) + tail, 0, far),
+                cCB, j, 'closeB j=%d' % j)
+        d['nval'] = ('cascade (octave down): p=1 concrete + %d overflow '
+                     'phases, j = %d..%d (%d levels, %d counts, '
+                     '%d inner laps)'
+                     % (jhi - max(jlo, 1) + 1, max(jlo, 1), jhi,
+                        sum(j for j in range(max(jlo, 1), jhi + 1)),
+                        sum(2 * j for j in range(max(jlo, 1), jhi + 1)),
+                        nlap))
+        return d['nval']
     for j in range(jlo, jhi + 1):
         p = 2 ** (j + 1) - 1
         hop((st0, tuple(encf(p)) + tail, 0, far),

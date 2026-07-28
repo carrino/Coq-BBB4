@@ -1250,9 +1250,21 @@ direct / 23 mirror), every one accepted on the FIRST render, all
   `oct`), 17 one/two-count phases (the `no boot chain` mirror half plus the
   odd-shaped rows), 1 main count at 4..7.
 
-STATE: `D_remaining` **439** (91.5% settled); closeout regenerated
-(`make closeout`), `audit.py` OK, `Closeout.vo` + stages kernel-verified
-in-container; `census_cache --check` MATCH throughout.
+**Same session, the OCTAVE-DOWN 12: 8 more boards, `D_remaining` 431.**
+`docs/WAVE25_FINDINGS.md` §7.  The 12 "octave-shifted" non-gated rows are
+not a shifted top level -- the WHOLE cascade sits one octave down, there is
+no main count, and the close is one more ASCENDING count at octave j+1
+(Θ(2^j) -- why no sweep chain ever derived) between two affine chains.
+`oct = -1` variant through extractor and emitter (`reps_low`/`LOW_*`,
+gated render byte-identical); the reindex + concrete-p=1 devices are the
+offset route's, and the p=1 lap is real: these machines' outer-index-0
+overflow has NO cascade.  8 of 12 boarded first-render, funext-only.  The
+4 left: their closing count enters ONE VALUE IN (`xI (pow2 j)`), an
+emitter lemma-pair away -- see the write-up.
+
+STATE: `D_remaining` **431** (4,725 / 5,156 = 91.6% settled); closeout
+regenerated (`make closeout`), `audit.py` OK, `Closeout.vo` + stages
+kernel-verified in-container; `census_cache --check` MATCH throughout.
 
 ## 3. The long-tail roadmap
 

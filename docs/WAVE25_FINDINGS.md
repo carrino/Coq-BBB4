@@ -93,3 +93,47 @@ No new checker surface and no new axiom: `NestedLapCascade.v`,
   (`families()` already carries an `oct`); the 17 one/two-count rows are the
   `no boot chain` mirror half plus the odd-shaped rows `CASCADE_EXIT.md` §2
   set aside, and nothing about them is a cascade.
+
+## 7. Same session: the OCTAVE-DOWN 12 — 8 boarded, and what they actually are
+
+Wave-24 filed the 12 "main count at `2^(j-1)..2^j-1`" rows as "an
+octave-shifted top level ... `families()` already carries an `oct`".  The
+measurement says more: **the whole cascade sits one octave down, and the
+close is not a sweep.**  At outer index `j`:
+
+* there is NO separate main count — the top level `j-1` carries TWO counts
+  like every other level, and the boot lands on its FIRST count (`A(j-1)`,
+  tail one unit past the top's);
+* the descent below is the standard one, down to level 0;
+* after level 0 the machine runs **one more ASCENDING count at octave `j+1`**
+  (values `2^(j+1)..2^(j+2)-1`, the same inner family over a constant 1-cell
+  tail) before settling on the successor — measured `Θ(2^j)`, which is why
+  no closing-sweep chain could ever derive.  The Coq close is two affine
+  chains (`CLOSEA` into the count, `CLOSEB` out of its fill) around a
+  `fill_hop`;
+* the `p = 1` overflow (outer index 0) has no cascade at all: a concrete
+  lap, handled by the offset route's exact `j = 0` device
+  (`cview_none_shape` + `lapz_*`/`visz_*`).
+
+**No new library Coq**: the branch is `cascade_overflow` at `d0 = 1`, the
+boot-entry hop is `fill_hop` + the `A→B` chain at `m = 0`, and the reindex
+(`j = S j'`) is the one wave-24's do-not-retry said the GATED machines don't
+need — these do, structurally, because their `j = 0` overflow genuinely has
+no cascade.  Extractor: `cascade_law`/`cascade_endpoints`/`cascade_validate`
+gained the `oct = -1` variant (the octave-`j+1` count doubles as a re-decode
+shadow, so the law reader now separates it from the levels explicitly);
+emitter: `reps_low` + the `LOW_*` template blocks, assembled from
+`PROTO_CORE` by section markers (the gated render is byte-identical,
+checked).
+
+**8 of the 12 boarded** (`CASB_*`, 4 mirror), all first-render, all
+funext-only; `D_remaining` **439 → 431**.  The remaining 4
+(`0RB1LA_1LC1RD_1RD1LD_1RB0LA`, `1RB0LD_1LC1RA_1RA1LA_0RB1LD`,
+`1RB1LB_1RC0LD_1LA1RB_0RC1LD`, `1RB1LC_1LC1RC_1LA0RD_0LA1RD`) are the same
+shape except the closing count **enters one value in** — it starts at
+`2^(j+1)+1 = xI (pow2 j)`, not at `pow2 (S j)` — so `CLOSEA`'s landing needs
+an `E (xI (pow2 n)) = sS ++ rep uD n ++ soD` glue lemma (a `cview_some` at
+`i = 0` fact, or plain `cbn` on the fixpoint) and `CLOSEB` an
+`E (fill (xI (pow2 n)))` twin; `fill_hop` at `v0 = xI (pow2 j)` already
+covers the count itself since `inner_to_fill_lift` is arbitrary-`v0`.
+Emitter work again, one lemma pair deep.
