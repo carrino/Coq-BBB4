@@ -7,8 +7,9 @@ branch of every `obS = 0` alphabet was never PEELED, and peeling it boarded
 **21** rows whose laps had been exactly affine all along
 (`emit_lapcert._peel_ovf`, `PEEL_*`) -- then took the QUAD route's cheapest
 cluster the same way and boarded **4** more (`QMG_*`; three padding gates
-and one missing lemma, `QuadGlue.quad_reach`).  `D_remaining` **319 -> 292**
-(4,864 of the frozen 5,156 settled, 94.3%).  The same wave measured the register x
+and one missing lemma, `QuadGlue.quad_reach`), plus 3 free from re-running
+wave-27's tolerant reader now that `derive` peels.  `D_remaining`
+**319 -> 291** (4,865 of the frozen 5,156 settled, 94.4%).  The same wave measured the register x
 counter bucket end to end (`tools/counters/regscan.py`) and the headline is a
 NEGATIVE result that re-ranks the whole list: of the 53 rows the reader can
 read, **53 carry a `Theta(2^k)` branch**.  The register build is not four
@@ -62,7 +63,7 @@ LapCertGlue, LapGlueAbs, SkipGlue, QuadGlue, NestedLap and NestedLapLift are
 axiom-FREE or funext-only -- keep them that way).  Everything under tools/
 is UNTRUSTED; the kernel re-checks every board.
 
-STATE: 4,864 of the frozen 5,156 settled (94.3%); D_remaining = 292.
+STATE: 4,865 of the frozen 5,156 settled (94.4%); D_remaining = 291.
 docs/RESIDUE_MAP.md + tools/closeout/residue_map.tsv give lap shapes and
 blockers (wave-23's measurement; subtract the boards of waves 25-28 --
 CASB_*, SKIP_*, QMG_*, PEEL_* -- from its rows).
@@ -83,14 +84,14 @@ Failure profile at D_remaining = 298:
    37  no inner family at pow2 j -- what the peel left; the 15 affine rows
                                    are gone, these have no consecutive-value
                                    family at all under jexcept_scan
-   20  no anchor
+   19  no anchor
    18  the CASCADE's non-gated  -- 17 one/two-count rows (WAVE26 section 3;
                                    the 10's blocker is the SHIFT chain, a
                                    re-encoding pass no single-index window
                                    chain can be) and 1 main count at 4..7
     5  no second exit chain     -- the SCycR-entry-offset checker gap
     4  no inner interior chain
-(113+95+37+20+18+5+4 = 292)
+(113+95+37+19+18+5+4 = 291)
 Per-machine cost is a vm_compute.  After a wave, make closeout (inventory +
 gen_stages + audit) shrinks D_remaining by exactly what you boarded.
 
@@ -162,6 +163,12 @@ THE TASK (re-ranked 2026-07-29 after wave-28's measurement):
       from the wave-26 prompt (the 10 two-count rows' blocker is a
       re-encoding SHIFT, a design question, not search).  Run cascade_probe
       over the EXP3/EXP4/HIGHER interiors -- still untouched.
+
+  STANDING MOVE (wave-28): after ANY change to emit_lapcert.derive, re-run
+  `restscan.py --emit` over the open buckets.  The tolerant reader finds
+  anchor families the tail enumeration never offers, and that is a
+  DIFFERENT gate from whatever derive just learned -- three rows this wave
+  needed both the tolerant tail and the peel, and cost nothing but the run.
 
   DO NOT RETRY (this wave's additions):
   * The UN-PEELED overflow chain on any obS = 0 alphabet.  Measured: 0 of

@@ -9,8 +9,8 @@ prompt asked for is **one piece bigger than the prompt thought**._
 
 ## 1. The one-line result
 
-**25 new boards, all funext-only.**  `D_remaining` **319 → 292** (the last
-4 boards cover 6 frozen rows).  Two routes:
+**28 new boards, all funext-only.**  `D_remaining` **319 → 291**.  Three
+routes:
 
 * **21 `PEEL_*`** — the flat overflow branch, PEELED (§2).  No library Coq
   at all; `emit_lapcert._peel_ovf` plus two `vm_compute` lemmas per board.
@@ -18,7 +18,12 @@ prompt asked for is **one piece bigger than the prompt thought**._
   turned out to be three padding bugs and ONE missing lemma
   (`QuadGlue.quad_reach` / `quad_reach0`, an induction over the ladder's
   rungs; `QuadGlue` stays axiom-free, `Print Assumptions quad_reach0` =
-  closed under the global context).
+  closed under the global context).  These 4 cover 6 frozen rows.
+* **3 `NLAP_*`/`LAPC_*`** — free, from re-running wave-27's TOLERANT reader
+  (`restscan.py`, which finds anchor families the tail enumeration never
+  offers) now that `derive` peels: the tolerant tail and the peel are two
+  different gates and three rows needed both.  Worth remembering as a
+  standing move: after any change to `derive`, re-run `restscan --emit`.
 
 Three new scans (`tools/counters/jexcept_scan.py`,
 `tools/counters/regscan.py`, `tools/counters/quad_classes.py`).
