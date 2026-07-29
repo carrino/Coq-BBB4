@@ -1,5 +1,7 @@
 # Coq-BBB4
 
+[![CI](https://github.com/carrino/Coq-BBB4/actions/workflows/ci.yml/badge.svg)](https://github.com/carrino/Coq-BBB4/actions/workflows/ci.yml)
+
 A Coq formalization of the Beeping Busy Beaver problem on 4-state,
 2-symbol Turing machines — BBB(4) — built from the certificates of the
 [BBB harness](https://github.com/carrino/BBB) on the patterns of
