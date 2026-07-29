@@ -89,12 +89,10 @@ checkable with coqchk -o).
     for mach in core:
         print('  ' + mach)
     print()
-    print('SHADOWS -- %d 0RB re-roots of core machines, skipped with them'
+    print('(Plus %d SHADOWS -- 0RB re-roots of core machines, skipped with'
           % len(shadows))
-    print('(tools/closeout/shadow_rows.tsv; each resolves with its core row):')
-    print()
-    for row in shadows:
-        print('  %s  ~>  %s' % (row[0], row[3]))
+    print(' them and resolved with them; the full machine ~> partner map is')
+    print(' tools/closeout/shadow_rows.tsv.)')
     print()
     print(line)
 
