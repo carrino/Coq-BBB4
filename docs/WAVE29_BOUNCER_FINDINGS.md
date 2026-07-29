@@ -314,13 +314,41 @@ is affine in the carry index and needs no new soundness surface.
 `emit_graycert --spec` reports `no Gray anchor` on both, for two reasons that
 are both representation, not search: its `Gp` is one cell per bit (these are
 two, blank-interleaved), and it offers no fixed frame to the LEFT of the head
-(these have `[S0; S1]`).  **The build is therefore: a `Gp2 p = exp0 (Gp p)`
-with its three decomposition lemmas transported from `GpCounter`'s through the
-`exp0` homomorphism (`exp0` distributes over `++` and sends `rep [S0] j` to
-`rep [S0;S0] j`), then ordinary affine chains and the mirror transfer.**  Two
-rows, one class — they differ in one transition and measure identically down
-to the step — and this is the next wave's first item, ahead of everything else
-in §7.
+(these have `[S0; S1]`).
+
+**The build, specified.**  `GpCounter`'s three decomposition lemmas
+(`cview_some_G`, `cview_some0_G`, `cview_none_G`) already do the Gray
+arithmetic; push them through the interleave `dbl (a :: w) = S0 :: a :: dbl w`
+(which distributes over `++` and sends `rep [S0] j` to `zz j`, the run of `j`
+blank PAIRS) and the lap becomes three concrete runs.  All three are verified
+against the raw simulator at `j = 0..8`, with the tail OPAQUE where the lemma
+says it should be, and the costs are exact:
+
+    branch          run                                                   cost
+    ----------------------------------------------------------------------------
+    cview (S j,None)  (Q,(F,S0, S0::S1::zz j ++ [S0;S1]))
+                   -> (Q,(F,S0, S0::S0::zz j ++ [S0;S1;S0;S1]))          4j+24
+    cview (S j,Some)  (Q,(F,S0, S0::S1::zz j ++ S0::S1::S0::x::Y))
+                   -> (Q,(F,S0, S0::S0::zz j ++ S0::S1::S0::negs x::Y))  4j+24
+    cview (0,  Some)  (Q,(F,S0, S0::S0::S0::x::Y))
+                   -> (Q,(F,S0, S0::S1::S0::negs x::Y))                     20
+
+with `Q = StB` and `F = [S0; S1]`; `Y` is opaque on the two interior branches
+and the overflow branch runs against blank, exactly as `GpCounter`'s lemmas
+predict.  `negs` is `GpCounter`'s own single-cell flip.  Note the overflow
+branch's [j] is the LEMMA's [j], one less than the count of trailing ones —
+mixing the two is what made the first attempt at these runs miss by 4 steps.
+
+Everything else is the pattern §5 and §6 already use: a sweep induction over
+`zz j`, three branch lemmas, `LapGlue.glue_neverqh`.  **This is the next
+wave's first item, ahead of everything else in §7.**
+
+The two rows are one class in the useful sense — same anchor family, same
+`4j+20` lap law, same 33,335 rests, same decode — but NOT the same machine:
+they differ in `C1` (`0LB` vs `0LC`), that transition IS exercised, and their
+trajectories diverge at step 21.  So the second is a genuine second board, not
+a duplicate, and it should be checked rather than assumed once the first
+lands.
 
 ### 7b. The two rows whose macro anchor is arithmetic
 
@@ -331,10 +359,16 @@ The macro index is arithmetic, not geometric, so the anchor family is
 `Cc p = shape (3*p)` with no `Fixpoint` at all — cheaper than anything §6
 needed.  What stops them today is that their macro lap is not one regime:
 their phases hold ~180 turnarounds each with no single dominant column step.
-**Measure them the way §7a was measured — an absolute-coordinate dump and a
-decode of the resting word — BEFORE designing a bounce for them.**  §7a is the
-standing warning: the turnaround signature of these rows is not diagnostic of
-the mechanism, and reading it as one cost this wave a ranking.
+They were measured the way §7a was, and the answer is a clean NEGATIVE:
+over every blank-head rest family (the three largest have 262, 204 and 202
+members), decoding at stride 1, 2 and 3, at every base offset, in both
+directions, **nothing gives a run of 8 consecutive values and nothing matches
+`gray(k)` or `2*gray(k)`.**  So they are not counters under any of the reads
+that worked elsewhere in this bucket, and the +3 macro law is the only
+regularity in hand.  They are also NOT a mirror pair despite identical family
+sizes — their tape-width signatures diverge — so they are two rows, not one.
+The next probe worth running on them is a 3-cell digit alphabet, since +3 per
+macro phase is what a 3-cell digit would look like.
 
 ### 7c. `0RB0RD_1LC1RB_1RA0LC_1LB0LC` and `_1LD0LC` — John's "bouncer counter"
 
@@ -357,11 +391,23 @@ it), `1RB0RB_1LC1LD_0LC1RA_0LD0RA` (macro anchor
 `0^j 1`, blocks 1,2,3,…, the §5 shape but with all four states live), and
 `1RB1RD_1RC0LD_1LB0RA_1LC0LC`.
 
-**`1RB0RB_1LC1LD_0LC1RA_0LD0RA` deserves the next look after §7b**: its macro
-anchor is literally `mkB j` — the §5 family — with the same `1k+1` law.  It
-is not a `1RB---` row, so all four states are live and the closer is
-`glue_neverqh` rather than `glue_qh_abs`, but if its lap is the erase/fill
-bounce with a fourth state in the loop it is one template variant away.
+**`1RB0RB_1LC1LD_0LC1RA_0LD0RA` is the bucket's one true `MeasureGlue`
+customer.**  Its macro anchor is literally `mkB j` — §5's family,
+`(StB, (repeat S0 j ++ [S1], S0, []))`, blocks 1, 2, 3, … — but its lap is not
+§5's `2i+5`.  Measured:
+
+    mkB j --> mkB (j+1)   in   2^(j+2) - 1 steps
+    j =  1   2   3   4    5    6
+    n =  7  15  31  63  127  255
+
+so the lap runs a COMPLETE binary count over the `j` cells it just cleared,
+and the dump shows exactly that: the head clears the region, then walks it
+building `11`, `011`, `101`, `111`, … before the frontier advances.  That is
+`MeasureGlue.mrun` with the abstract state = the inner word and
+`mu = BounceCounter.cval` (the value of the complement, "each increment
+decrements it by exactly one" — that file's own words), and it is the first
+row in this bucket that genuinely needs it.  The macro family is already
+written: `BounceGlue.mkB`.
 
 ### 7e. Deferred, per the prompt
 
@@ -397,8 +443,26 @@ taken it should be cheap.
 * **Reading an affine suffix of a phase's cost sequence as the phase's law.**
   Measured: `0RB1LC_1LC0RD` has an exactly affine suffix of 127 cycles
   covering 0% of the phase.  Always report the coverage.
+* **Decoding the two `+3` arithmetic rows (§7b) at stride 1, 2 or 3.**
+  MEASURED AND REFUTED: every blank-head rest family, every base offset, both
+  directions, no consecutive run of 8 and no `gray` match.  Try a 3-cell digit
+  before anything else there.
 * Standing: everything in WAVE29 §5, WAVE28 §4, WAVE27 §5, WAVE26 §6,
   WAVE25 §6, WAVE24 §7, WAVE18 §5, WAVE16 §5.
+
+## 8b. The bucket, re-ranked for the next wave
+
+1. **The two Gray rows (§7a)** — the build is specified to the exact run,
+   cost and opacity of all three branches, and `GpCounter` does the
+   arithmetic.  Two boards, no new theory.
+2. **`1RB0RB_1LC1LD_0LC1RA_0LD0RA` (§7d)** — the one true `MeasureGlue`
+   customer, macro family already written (`BounceGlue.mkB`), lap
+   `2^(j+2)-1`, measure `BounceCounter.cval`.  One board.
+3. **`0RB0RD_1LC1RB_1RA0LC_1L*0LC` (§7c)** — John's bouncer counter, envelope
+   `2^k+7`, the second `mrun` customer.  Two boards, one class.
+4. **The `+3` pair (§7b)** and the four rows in §7d — measure first; the
+   stride-1/2/3 decode is already refuted on the `+3` pair.
+5. Deferred (§7e): the champion and `0RB1LC_1LC0LC_0RD1LA_1RD1RB`.
 
 ## 9. Standing lessons, confirmed again
 
