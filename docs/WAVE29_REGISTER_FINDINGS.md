@@ -421,3 +421,77 @@ descending inner induction is a different carrier from
   of one `spacetime.py --rests --mark` dump with fixed `--lo/--hi`: John's
   "fixed `01` two cells right of the frame" is a 3-cell tail, and the
   question "which cell is home" answers itself once the columns line up.
+
+## 10. Appendix: `no interior chain` is THREE gaps, and nickdrozd sized them
+   for us
+
+_Added after the wave closed.  nickdrozd posted a list of 64 machines he was
+"pretty sure are all solvable"; he had read them off this repo's own published
+residue map.  Cross-checking the list is the cheapest measurement in the
+document and the most useful._
+
+**52 of his 64 are in the 172 core undecided rows** — 30% of the residue in
+one message.  The other 12 are already boarded, all of them in the two most
+recent waves: 9 by the QUAD route (`QMG_*`) and 3 by the wall-indexed bouncer
+route (`BNC_*`).  So on the part that can be checked his confidence is
+12-for-12, and it converted through routes that did not exist a fortnight ago.
+
+Of the open 52, **43 are `no interior chain`** — and in every one of the 43
+`ovfshape` reports the SAME law on both branches (AFFINE/AFFINE 12,
+HIGHER/HIGHER 12, PARITY-AFFINE 7, EXP3 6, EXP4 4, QUAD 1, AFFINE/EXP2 1).
+John's read of a sample ("they look like counters to me") is confirmed
+mechanically on the AFFINE/AFFINE rows: e.g.
+`1RB---_0LC1RD_0LB1RD_1LB0RD` under `Kp@D`, tail `[S0]`, far `[S1]` has
+**200 of 200 anchors with no gaps** and interior AND overflow both exactly
+`2j + 4`.  Nothing about these machines is hard.  The label is about us.
+
+`tools/counters/intgap.py` closes the symbolic reachable set of the interior
+branch under the whole step language and splits the bucket three ways.  Over
+all 51 `no interior chain` rows in the core list (`tools/counters/intgap51.json`;
+43 of the 51 are on nick's list):
+
+| n | gap | what it is |
+|---:|---|---|
+| **17** | `cycR-gap` | a MISSING PRIMITIVE, and the mirror of one that exists |
+| **8** | `lift` | the chain exists up to trailing blanks; `derive` never asks |
+| 26 | `unreachable` | target in no form at the first anchor offered |
+
+### 10a. The `cycR` gap: the step language is asymmetric
+
+`WTape.cycL` consumes the left repeated block and deposits **past a concrete
+right window** `rw` — that `rw` is exactly `SCycL n m`'s `m`.  `WTape.cycLW`
+generalises it on both sides.  But `WTape.cycR` requires the left window to be
+**EMPTY** on entry (`(q, ([], h, u)) -> (q, (w, h, []))`), and `SCycR n` has no
+offset parameter at all.  There is no `cycRW`.
+
+So a lap that walks the block back RIGHTWARD past a concrete left prefix
+cannot be written down.  That is precisely where these 17 dead-end.  On the
+`Kp@D` exemplar the search reaches 15 states and stops at
+
+    (StC, left = [S0;S1] concrete, head = S0, right = rep [S0] j ++ [S1])
+
+with the target `(StD, [S0] ++ rep [S0] j ++ [S1], S0, [S1])` — one `SCycR`
+away, past two concrete left cells.  The fix is `WTape.cycRW` by the same
+induction as `cycLW`, an `SCycR2 (n m : nat)` constructor with the mirrored
+`sstep` arm and soundness case, and the mirrored candidate generator in
+`lapcert.py`.  Additive: existing chains never mention it, so every committed
+board re-renders unchanged.
+
+### 10b. The `lift` gap: split x lift is not wired
+
+`emit_lapcert.derive` derives the SPLIT interior chains (`Z0 -> Z1` at
+`j = 0`, `P0 -> P1` at `j = S j'`) **exactly only** — the `lift=True` last
+resort is reached solely on the ONE-chain path, and the split templates
+(`GLUE_SPLIT`) prove exact equalities.  Measured: on 8 rows both split chains
+derive up to `lift` (e.g. `1RB0RB_1LC1RA_0LC0LD_0RA0RD` under
+`Alph_000_100_1@A`: `j=0` cost 4, `j=S j'` cost `10j'+14`, both landing one
+written blank past the anchor).  `LapCertGlueLift` already has the closers
+(`glue_neverqh_lift`, `vis_via_ovf_lift`) that wave-16 wired for the
+one-chain mode; what is missing is the template combination.  No new theory.
+
+**Ranking consequence.**  25 of the 51 sit behind two pieces of plumbing —
+one axiom-free `WTape` lemma with its checker arm, and one template
+combination — and 43 of the 51 are rows a community reader has independently
+flagged as legible.  That is a better next wave than anything in section 8.
+(The `no interior chain` bucket is the concurrent QUAD session's territory;
+this appendix is a measurement handed over, not a claim on it.)
