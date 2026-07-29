@@ -8,7 +8,7 @@
 
     -- every (4,2) machine either quasihalts with every quiet state
     quiet before index 32,779,478 (the champion's score), or never
-    quasihalts, or is one of the 423 SKIPPED residue machines
+    quasihalts, or is one of the 319 SKIPPED residue machines
     (tools/closeout/frozen_unproven.txt), still undecided.
 
     The champion [1RB1LD_1RC1RB_1LC1LA_0RC0RD] is itself one of the
