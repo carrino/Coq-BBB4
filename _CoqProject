@@ -2479,6 +2479,14 @@ theories/Machines/Counters/QMG_1RB1LC_0LC0RB_1RD1LA_0LC1RD.v
 theories/Machines/Counters/QMG_1RB1LC_0LC1RB_1RD1LA_0LA0RD.v
 theories/Machines/Counters/QMG_1RB1LC_0LC1RB_1RD1LA_0LC0RD.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/QMG_0RB0LA_1LA0RC_0LD1RC_1RB1LD.v
+theories/Machines/Counters/QMG_0RB0LA_1LA1RC_0LD0RC_1LD1RB.v
+theories/Machines/Counters/QMG_0RB1LA_1LC1RB_1RD0LA_0LC0RD.v
+theories/Machines/Counters/QMG_1RB0LC_0LA0RB_0RD1LC_1LA1RD.v
+theories/Machines/Counters/QMG_1RB1LA_1LC0RD_0RB0LC_0LA1RD.v
+theories/Machines/Counters/QMG_1RB1LC_0LA0RB_0RD0LC_1RD1LA.v
+
 theories/Closeout/CloseoutKit.v
 theories/Closeout/CB_00.v
 theories/Closeout/CB_01.v

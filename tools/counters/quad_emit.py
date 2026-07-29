@@ -83,15 +83,15 @@ def _denc(sc, j):
     return (q, _den(ls, j), h, _den(rs, j))
 
 
-def _chain(tab, els, src, dst):
+def _chain(tab, els, src, dst, er=True):
     for el in els:
         ch = None
         try:
-            ch = LC.derive_chain(tab, el, True, src, dst)
+            ch = LC.derive_chain(tab, el, er, src, dst)
         except Exception:                                          # noqa: BLE001
             ch = None
         if ch is not None:
-            rn = LC.srun(tab, el, True, ch, src)
+            rn = LC.srun(tab, el, er, ch, src)
             if rn is not None and rn[0] == dst:
                 return ch, el, (rn[1], rn[2])
     return None, None, None
@@ -111,19 +111,20 @@ def extract(spec):
     than assumed -- try each and keep the one whose whole structure closes.
     On a 1-cell alphabet [qr] is a singleton and this loop is the old code.
     """
-    law = QP.read_law(spec)
-    if law['mode'] != (-1, False):
-        raise QuadEmitError('mode %r (deep-pivot / rightward) not wired'
-                            % (law['mode'],))
+    laws = [l for l in QP.read_skeletons(spec)
+            if l['mode'] in ((-1, False), (0, False))]
+    if not laws:
+        raise QuadEmitError('no leftward ladder skeleton')
     errs = []
-    for npad in (0, 1):
-        for qi in range(len(law['qr'])):
-            try:
-                return _extract_at(spec, law, qi, npad)
-            except QuadEmitError as e:
-                errs.append('rung %s%s: %s'
-                            % (LAB[law['qr'][qi]],
-                               '' if not npad else ' +%d blank' % npad, e))
+    for law in laws:
+        for npad in (0, 1):
+            for qi in range(len(law['qr'])):
+                try:
+                    return _extract_at(spec, law, qi, npad)
+                except QuadEmitError as e:
+                    errs.append('%r rung %s%s: %s'
+                                % (law['mode'], LAB[law['qr'][qi]],
+                                   '' if not npad else ' +%d blank' % npad, e))
     raise QuadEmitError(' // '.join(errs))
 
 
@@ -274,26 +275,58 @@ def _extract_at(spec, law, qi, npad=0):
     # ------------------------------------------------------- the chains ---
     chains = {}
 
-    def want(name, els, src, dst):
-        ch, el, c = _chain(tab, els, src, dst)
+    def want(name, els, src, dst, er=True):
+        ch, el, c = _chain(tab, els, src, dst, er)
         if ch is None:
             raise QuadEmitError('no %s chain' % name)
-        chains[name] = dict(ch=ch, el=el, c=c, src=src, dst=dst)
+        chains[name] = dict(ch=ch, el=el, c=c, src=src, dst=dst, er=er)
 
-    # micro hops (peeled, index k')
-    want('MC1p', (False,),
-         (qr, _flat(LU), HH, (RU, RU, 1, 0, RPOST)),
-         (qr, E0, HH, (RU, RU, 1, 1, RPOST)))
-    want('MC0p', (False,),
-         (qr, _flat(LSTOP), HH, (RU, RU, 1, 0, RPOST)),
-         (qr, E0, HSTOP, (RU, RU, 1, 1, RPOST)))
-    # micro hops at k = 0
-    want('MC1z', (False,),
-         (qr, _flat(LU), HH, _flat(RP0)),
-         (qr, E0, HH, _flat(RU + RPOST)))
-    want('MC0z', (False,),
-         (qr, _flat(LSTOP), HH, _flat(RP0)),
-         (qr, E0, HSTOP, _flat(RU + RPOST)))
+    # The micro hop, in one of TWO regimes -- which one is READ off the
+    # machine by trying the chains, not assumed.
+    #
+    #  NEAR-PIVOT (the boarded shape): the round trip runs back to the
+    #  ANCHOR, so its cost is Theta(k) and the run traverses the RIGHT
+    #  block.  The chain's index is k, the right side is fully concrete
+    #  ([er = true]) and the left is flat over an opaque tail; four chains,
+    #  peeled at k = 0.
+    #
+    #  DEEP-PIVOT: the round trip runs out to the DEEPEST unprobed digit, so
+    #  its cost is Theta(m) and the run traverses the LEFT block.  The
+    #  chain's index is then m, and the right side -- which the hop only
+    #  ever touches at the head-adjacent cell -- moves into the OPAQUE tail
+    #  ([er = false], [XR = rep RU k ++ RPOST]).  That is what makes one
+    #  chain cover every k at once, and it needs only TWO chains, peeled at
+    #  the landing rather than at the start.
+    try:
+        want('MC1p', (False,),
+             (qr, _flat(LU), HH, (RU, RU, 1, 0, RPOST)),
+             (qr, E0, HH, (RU, RU, 1, 1, RPOST)))
+        want('MC0p', (False,),
+             (qr, _flat(LSTOP), HH, (RU, RU, 1, 0, RPOST)),
+             (qr, E0, HSTOP, (RU, RU, 1, 1, RPOST)))
+        # micro hops at k = 0
+        want('MC1z', (False,),
+             (qr, _flat(LU), HH, _flat(RP0)),
+             (qr, E0, HH, _flat(RU + RPOST)))
+        want('MC0z', (False,),
+             (qr, _flat(LSTOP), HH, _flat(RP0)),
+             (qr, E0, HSTOP, _flat(RU + RPOST)))
+        deep = False
+    except QuadEmitError as e0:
+        for n in ('MC1p', 'MC0p', 'MC1z', 'MC0z'):
+            chains.pop(n, None)
+        try:
+            want('MD1', (False,),
+                 (qr, (LU, LU, 1, 0, LSTOP), HH, E0),
+                 (qr, ((), LU, 1, 0, LSTOP), HH, _flat(RU)), er=False)
+            want('MD0', (False,),
+                 (qr, _flat(LSTOP), HH, E0),
+                 (qr, E0, HSTOP, _flat(RU)), er=False)
+        except QuadEmitError as e1:
+            raise QuadEmitError('%s (near) / %s (deep)' % (e0, e1))
+        if RP0 != RPOST:
+            raise QuadEmitError('deep pivot with a piecewise k = 0 rung')
+        deep = True
     # terminal (peeled, index k')
     want('TCp', (False,),
          (qr, E0, HSTOP, (RU, RU, 1, 0, RPOST)),
@@ -316,7 +349,7 @@ def _extract_at(spec, law, qi, npad=0):
     D = dict(spec=spec, law=law, A=A, enc=A['enc'], tail=tail, far=far,
              qr=qr, LU=LU, LSTOP=LSTOP, HH=HH, HSTOP=HSTOP, RU=RU,
              RPOST=RPOST, RP0=RP0, SDW=sdw, TFAR=TFAR, Wovf=Wovf,
-             chains=chains, WPRE=WPRE,
+             chains=chains, WPRE=WPRE, deep=deep,
              uS=uS, sS=sS, sSm=sSm, uD=uD, sD=sD)
 
     ok, why = validate(tab, A, D)
@@ -338,7 +371,7 @@ def _extract_at(spec, law, qi, npad=0):
     # visit witnesses: prefixes from the overflow anchor
     vis = {}
     bo = chains['BOOTO']
-    visq = {}
+    visq, visr = {}, {}
     tc = chains['TCp']
     for q in range(4):
         pre = LC.reach_state(tab, bo['el'], True, B0, bo['ch'], q)
@@ -353,17 +386,28 @@ def _extract_at(spec, law, qi, npad=0):
         if pre is not None:
             visq[q] = pre
             continue
-        # Neither carrier reaches it: say WHERE it does fire so the missing
+        # ... and a state that fires in the MICRO HOP is in neither.  The
+        # only rung the hop applies at for EVERY j is the last one,
+        # [Cq W j 1] -- [quad_reach_at] stops the same walk there, and a
+        # prefix of the m = 1 hop chain fires from it.
+        if deep:
+            md = chains['MD0']
+            pre = LC.reach_state(tab, md['el'], False, md['src'], md['ch'], q)
+            if pre is not None:
+                visr[q] = pre
+                continue
+        # No carrier reaches it: say WHERE it does fire so the missing
         # glue is named rather than guessed.
         seen = [n for n, c in chains.items()
                 if n not in ('BOOTO', 'TCp')
-                and LC.reach_state(tab, c['el'], True, c['src'],
-                                   c['ch'], q) is not None]
+                and LC.reach_state(tab, c['el'], c.get('er', True),
+                                   c['src'], c['ch'], q) is not None]
         raise QuadEmitError('no visit witness for state %s%s'
                             % (LAB[q], (' (fires in %s)' % ','.join(seen))
                                if seen else ' (in no chain)'))
     D['vis'] = vis
     D['visq'] = visq
+    D['visr'] = visr
     D['B0'] = B0
     return D
 
@@ -413,10 +457,16 @@ def validate(tab, A, D, jlo=2, jhi=10):
                     return False, ('j=%d ovf=%s k=%d: %r want %r'
                                    % (j, ovf, k, cfg, want))
                 if m > 0:
-                    nm = 'MC%sz' % (1 if m > 1 else 0) if k == 0 else \
-                         'MC%sp' % (1 if m > 1 else 0)
-                    c = D['chains'][nm]['c']
-                    steps = c[0] * (k - 1) + c[1] if k else c[1]
+                    if D['deep']:
+                        # the index is m, peeled at the LANDING
+                        nm = 'MD1' if m > 1 else 'MD0'
+                        c = D['chains'][nm]['c']
+                        steps = c[0] * (m - 2) + c[1] if m > 1 else c[1]
+                    else:
+                        nm = 'MC%sz' % (1 if m > 1 else 0) if k == 0 else \
+                             'MC%sp' % (1 if m > 1 else 0)
+                        c = D['chains'][nm]['c']
+                        steps = c[0] * (k - 1) + c[1] if k else c[1]
                     cfg = sim(tab, cfg, steps)
                     tot += steps
             nm = 'TCz' if nprobe == 0 else 'TCp'
@@ -493,6 +543,46 @@ Proof.
 Qed."""
 
 
+VISR_LEMMA = r"""(** A state that fires in the MICRO HOP -- neither in the boot nor in the
+    terminal, so neither [viso_] nor [visq_] can see it.  The hop applies at
+    every rung, but the only rung that EXISTS at every overflow anchor is
+    the last one ([Cq W j 1]; an interior rung needs [j >= 1]).
+    [QuadGlue.quad_reach_at] stops the ladder walk exactly there and a
+    prefix of the [m = 1] hop chain fires from it. *)
+Lemma visr_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm false false l c_MD00_@ID@ = Some q ->
+  forall p j, cview p = (S j, None) ->
+  exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros l q Hst p j E.
+  assert (HB : csteps tm (@ABO@ * j + @BBO@) (Cc p) = Some (Cq @WOVF@ 0 (S j))).
+  { rewrite (gso_@ID@ p j E).
+    rewrite (srun_sound tm @ELBO@ true ch_BOOTO_@ID@ c_BOOTO0_@ID@
+               c_BOOTO1_@ID@ @ABO@ @BBO@ run_BOOTO_@ID@ [] [] j
+               ltac:(@ELBOH@) ltac:(reflexivity)).
+    f_equal.
+    unfold cden, c_BOOTO1_@ID@, Cq_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+    replace (1 * j + 0) with j by lia.
+    cbn [rep app]. rewrite ?app_nil_r, <- ?app_assoc. reflexivity. }
+  destruct (quad_reach_at tm (S j) (Cq_@ID@ @WOVF@)
+              (fun k m (_ : k + S m = S j) => hop_@ID@ @WOVF@ k m) j 1
+              ltac:(lia))
+    as (n2 & H2).
+  assert (HR : Cq @WOVF@ j 1 = cden @WOVF@ (rep @RU@ j ++ @RPOST@) 0
+                                 c_MD00_@ID@).
+  { unfold Cq_@ID@, cden, c_MD00_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+    cbn [rep app]. rewrite ?app_nil_r, <- ?app_assoc. reflexivity. }
+  destruct (vis_of_run tm (fun _ : positive => Cq @WOVF@ j 1) false false
+              l c_MD00_@ID@ xH 0 @WOVF@ (rep @RU@ j ++ @RPOST@) q Hst
+              ltac:(discriminate) ltac:(discriminate) HR)
+    as (k3 & c & H3 & Hq).
+  exists ((@ABO@ * j + @BBO@) + (n2 + k3)), c. split; [| exact Hq].
+  rewrite csteps_add, HB, csteps_add, H2. exact H3.
+Qed."""
+
+
 def _fmtside(side):
     pre, u, a, b, post = side
     return 'mkS %s %s %d %d %s' % (clist(pre), clist(u), a, b, clist(post))
@@ -520,65 +610,52 @@ def _pad(base, n):
     return out
 
 
-HEADER = r'''(** * QMG_@ID@: machine @SPEC@, boarded by CERTIFICATE (QUAD route).
-
-    Auto-emitted by tools/counters/quad_emit.py (UNTRUSTED emitter; the Coq
-    kernel re-runs the checker on every line below).  A linear-search-carry
-    binary counter (WAVE26 section 7) under the @ENC@ alphabet: the interior
-    lap makes Theta(j) micro excursions -- one round trip per digit -- so no
-    single chain is the lap; each ROUND TRIP is a chain, and
-    [Counters/QuadGlue.quad_lap] (MeasureGlue.mrun at abstract state
-    (probe depth k, unprobed count m)) composes them into the quadratic lap.
-
-      anchor    Cc p = (@ST0@, (@ENC@ p ++ @TAIL@, S0, @FAR@))
-      family    Cq W k m: k probed digits right of the head, m unprobed
-                behind it, the deep word W OPAQUE
-      hop       Cq W k (S m) -> Cq W (S k) m   (chains MC*, exact)
-      terminal  Cq W k 0 -> the incremented word (chains TC*, exact)
-
-    The interior lap composes boot + j hops + terminal; the OVERFLOW lap is
-    the SAME composition with j+1 probes (the carry lands on the tail cell).
-    Both close up to [lift], so the closer is
-    [LapCertGlueLift.glue_neverqh_lift].
-
-    Differentially validated against the raw simulator -- @VAL@.
-    Axiom footprint: [functional_extensionality_dep] (via [CTape.lift]). *)
-From Coq Require Import Arith Lia Bool List PArith Wellfounded.
-From BBB4 Require Import BBB4_Statement CTape.
-From BBB4.Counters Require Import WTape LapGlue MonoCounter JpCounter
-                                  @ENCMOD@ LapCertGlue LapCertGlueLift
-                                  MeasureGlue QuadGlue.
-From BBB4.Census Require Import TNF_QH.
-From BBB4.Checkers Require Import LapDecider.
-Import ListNotations.
-
-Definition mk_@ID@ (w : Sym) (d : Dir) (n : St) : option Trans := Some (mkTrans w d n).
-Local Notation mk := mk_@ID@.
-
-(** @SPEC@ *)
-Definition tm_@ID@ : TM := fun q s => match q, s with
-@TABLE@ end.
-Local Notation tm := tm_@ID@.
-
-Definition Cc_@ID@ (p : positive) : cconf := (@ST0@, (@ENC@ p ++ @TAIL@, S0, @FAR@)).
-Local Notation Cc := Cc_@ID@.
-
-(** The two-index probe family (WAVE26 7d): k probed digits, m unprobed,
-    deep word W opaque. *)
-Definition Cq_@ID@ (W : list Sym) (k m : nat) : cconf :=
-  match m with
-  | O => (@QR@, (W, @HSTOP@, @CQPOST@))
-  | S m' => (@QR@, (rep @LU@ m' ++ @LSTOP@ ++ W, @HH@, @CQPOST@))
-  end.
-Local Notation Cq := Cq_@ID@.
-
-(** ** The certificate: nine chains, all run by the kernel *)
-
-@CHAINDEFS@
-
-(** ** The micro hop *)
-
+HOP_DEEP = r'''(** The DEEP-PIVOT hop.  This machine's round trip runs out to the deepest
+    UNPROBED digit rather than back to the anchor, so its cost is
+    [Theta(m)], not [Theta(k)] -- the chain's index is the unprobed count
+    and the peel is at the LANDING, not at the start.  The right side, which
+    the hop only ever touches at the head-adjacent cell, rides in the
+    chain's OPAQUE tail ([er = false], [XR = rep RU k ++ RPOST]); that is
+    what lets ONE chain cover every probe depth at once, and it is why this
+    regime needs two chains where the near-pivot one needs four. *)
 Lemma hop_@ID@ : forall W k m, exists n,
+  csteps tm n (Cq W k (S m)) = Some (Cq W (S k) m) /\ 0 < n.
+Proof.
+  intros W k m.
+  destruct m as [|m'].
+  - (* the landing rung: one concrete hop, at every probe depth *)
+    exists (@AMD0@ * 0 + @BMD0@). split; [|lia].
+    assert (HS : Cq W k 1 = cden W (rep @RU@ k ++ @RPOST@) 0 c_MD00_@ID@).
+    { unfold Cq_@ID@, cden, c_MD00_@ID@, sden;
+        cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+      cbn [rep app]. rewrite ?app_nil_r, <- ?app_assoc. reflexivity. }
+    rewrite HS.
+    rewrite (srun_sound tm false false ch_MD0_@ID@ c_MD00_@ID@ c_MD01_@ID@
+               @AMD0@ @BMD0@ run_MD0_@ID@ W (rep @RU@ k ++ @RPOST@) 0
+               ltac:(discriminate) ltac:(discriminate)).
+    unfold cden, c_MD01_@ID@, Cq_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+    cbn [rep app]. rewrite ?app_nil_r, <- ?app_assoc. reflexivity.
+  - (* a digit rung: the index is the unprobed count, peeled once *)
+    exists (@AMD1@ * m' + @BMD1@). split; [|lia].
+    assert (HS : Cq W k (S (S m'))
+                 = cden W (rep @RU@ k ++ @RPOST@) m' c_MD10_@ID@).
+    { unfold Cq_@ID@, cden, c_MD10_@ID@, sden;
+        cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+      replace (1 * m' + 0) with m' by lia.
+      cbn [rep app]. rewrite ?app_nil_r, <- ?app_assoc. reflexivity. }
+    rewrite HS.
+    rewrite (srun_sound tm false false ch_MD1_@ID@ c_MD10_@ID@ c_MD11_@ID@
+               @AMD1@ @BMD1@ run_MD1_@ID@ W (rep @RU@ k ++ @RPOST@) m'
+               ltac:(discriminate) ltac:(discriminate)).
+    unfold cden, c_MD11_@ID@, Cq_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+    replace (1 * m' + 0) with m' by lia.
+    cbn [rep app]. rewrite ?app_nil_r, <- ?app_assoc. reflexivity.
+Qed.'''
+
+
+HOP_NEAR = r'''Lemma hop_@ID@ : forall W k m, exists n,
   csteps tm n (Cq W k (S m)) = Some (Cq W (S k) m) /\ 0 < n.
 Proof.
   intros W k m.
@@ -633,7 +710,67 @@ Proof.
         cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post];
         replace (1 * k' + 1) with (S k') by lia;
         cbn [rep app]; rewrite <- ?app_assoc; reflexivity ].
-Qed.
+Qed.'''
+
+HEADER = r'''(** * QMG_@ID@: machine @SPEC@, boarded by CERTIFICATE (QUAD route).
+
+    Auto-emitted by tools/counters/quad_emit.py (UNTRUSTED emitter; the Coq
+    kernel re-runs the checker on every line below).  A linear-search-carry
+    binary counter (WAVE26 section 7) under the @ENC@ alphabet: the interior
+    lap makes Theta(j) micro excursions -- one round trip per digit -- so no
+    single chain is the lap; each ROUND TRIP is a chain, and
+    [Counters/QuadGlue.quad_lap] (MeasureGlue.mrun at abstract state
+    (probe depth k, unprobed count m)) composes them into the quadratic lap.
+
+      anchor    Cc p = (@ST0@, (@ENC@ p ++ @TAIL@, S0, @FAR@))
+      family    Cq W k m: k probed digits right of the head, m unprobed
+                behind it, the deep word W OPAQUE
+      hop       Cq W k (S m) -> Cq W (S k) m   (chains MC*, exact)
+      terminal  Cq W k 0 -> the incremented word (chains TC*, exact)
+
+    The interior lap composes boot + j hops + terminal; the OVERFLOW lap is
+    the SAME composition with j+1 probes (the carry lands on the tail cell).
+    Both close up to [lift], so the closer is
+    [LapCertGlueLift.glue_neverqh_lift].
+
+    Differentially validated against the raw simulator -- @VAL@.
+    Axiom footprint: [functional_extensionality_dep] (via [CTape.lift]). *)
+From Coq Require Import Arith Lia Bool List PArith Wellfounded.
+From BBB4 Require Import BBB4_Statement CTape.
+From BBB4.Counters Require Import WTape LapGlue MonoCounter JpCounter
+                                  @ENCMOD@ LapCertGlue LapCertGlueLift
+                                  MeasureGlue QuadGlue.
+From BBB4.Census Require Import TNF_QH.
+From BBB4.Checkers Require Import LapDecider.
+Import ListNotations.
+
+Definition mk_@ID@ (w : Sym) (d : Dir) (n : St) : option Trans := Some (mkTrans w d n).
+Local Notation mk := mk_@ID@.
+
+(** @SPEC@ *)
+Definition tm_@ID@ : TM := fun q s => match q, s with
+@TABLE@ end.
+Local Notation tm := tm_@ID@.
+
+Definition Cc_@ID@ (p : positive) : cconf := (@ST0@, (@ENC@ p ++ @TAIL@, S0, @FAR@)).
+Local Notation Cc := Cc_@ID@.
+
+(** The two-index probe family (WAVE26 7d): k probed digits, m unprobed,
+    deep word W opaque. *)
+Definition Cq_@ID@ (W : list Sym) (k m : nat) : cconf :=
+  match m with
+  | O => (@QR@, (W, @HSTOP@, @CQPOST@))
+  | S m' => (@QR@, (rep @LU@ m' ++ @LSTOP@ ++ W, @HH@, @CQPOST@))
+  end.
+Local Notation Cq := Cq_@ID@.
+
+(** ** The certificate: @NCHAINS@ chains, all run by the kernel *)
+
+@CHAINDEFS@
+
+(** ** The micro hop *)
+
+@HOPLEMMA@
 
 (** ** The terminal: the carry write and the clearing sweep.  Its chain
     count is the FINAL probe depth k -- the anchor's carry index. *)
@@ -847,7 +984,7 @@ CHAINDEF = r'''Definition c_%(n)s0_@ID@ : sconf := %(src)s.
 Definition c_%(n)s1_@ID@ : sconf := %(dst)s.
 Definition ch_%(n)s_@ID@ : list lstep := %(ch)s.
 
-Lemma run_%(n)s_@ID@ : srun tm %(el)s true ch_%(n)s_@ID@ c_%(n)s0_@ID@ = Some (c_%(n)s1_@ID@, %(ca)d, %(cb)d).
+Lemma run_%(n)s_@ID@ : srun tm %(el)s %(er)s ch_%(n)s_@ID@ c_%(n)s0_@ID@ = Some (c_%(n)s1_@ID@, %(ca)d, %(cb)d).
 Proof. vm_compute. reflexivity. Qed.'''
 
 
@@ -862,6 +999,7 @@ def render_quad(D):
         chaindefs.append(CHAINDEF % dict(
             n=n, src=_fmtconf(c['src']), dst=_fmtconf(c['dst']),
             ch=cchain(c['ch']), el='true' if c['el'] else 'false',
+            er='true' if c.get('er', True) else 'false',
             ca=c['c'][0], cb=c['c'][1]))
 
     # the overflow close: the reached word rep uD (S j) ++ SDW ++ Wovf vs
@@ -894,6 +1032,12 @@ def render_quad(D):
 
     vis = []
     for q in range(4):
+        if q in D.get('visr', {}):
+            vis.append('  - (* %s: fires in the micro hop *)'
+                       '\n    exact (visr_%s %s %s\n'
+                       '             ltac:(vm_compute; reflexivity) p1 j1 E1).'
+                       % (ST[q], ID, cchain(D['visr'][q]), ST[q]))
+            continue
         if q in D.get('visq', {}):
             vis.append('  - (* %s: fires inside the ladder, not in the boot *)'
                        '\n    exact (visq_%s %s %s\n'
@@ -948,10 +1092,16 @@ def render_quad(D):
         '@INTFAR@': intfar,
         '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
         '@VISITS@': '\n'.join(vis),
-        '@VISQL@': (VISQ_LEMMA + '\n\n') if D.get('visq') else '',
+        '@VISQL@': (((VISQ_LEMMA + '\n\n') if D.get('visq') else '')
+                    + ((VISR_LEMMA + '\n\n') if D.get('visr') else '')),
         '@VAL@': D['val'],
+        '@HOPLEMMA@': HOP_DEEP if D['deep'] else HOP_NEAR,
+        '@NCHAINS@': {7: 'seven', 9: 'nine'}.get(len(D['chains']),
+                                                 str(len(D['chains']))),
     }
-    for n in ('MC1p', 'MC0p', 'MC1z', 'MC0z', 'TCp', 'TCz'):
+    for n in ('MC1p', 'MC0p', 'MC1z', 'MC0z', 'MD1', 'MD0', 'TCp', 'TCz'):
+        if n not in ch:
+            continue
         key = n.upper()
         reps['@A%s@' % key] = str(ch[n]['c'][0])
         reps['@B%s@' % key] = str(ch[n]['c'][1])
