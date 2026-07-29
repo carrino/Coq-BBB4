@@ -249,7 +249,45 @@ mark law are two more gates in front of it, both in `quad_emit.extract`.
 
 The 4 non-rep rows are, by contrast, one gate deep — they read as the
 boarded shape all the way to the right-side test.  They are the cheapest
-QUAD rows and should go first.
+QUAD rows and should go first, and this wave took the first step for them.
+
+### 3f. The 4 non-rep rows: the right-side gate was PADDING, and it is fixed
+
+Their ladder right sides, measured (`0RB0LA_1RC1RB_1LA0LD_0RB1LD`, and the
+other three are identical):
+
+    k = 0   [S1]           k = 3   [S1;S1;S1;S1;S0]
+    k = 1   [S1;S1;S0]     k = 4   [S1;S1;S1;S1;S1;S0]
+    k = 2   [S1;S1;S1;S0]  ...
+
+That IS `rep RU k ++ RPOST` with `RU = [S1]` and `RPOST = [S1;S0]` — for
+every `k >= 1`.  At `k = 0` the ladder's first rung has not written the cell
+past it yet, so the rung is one trailing BLANK short.  `extract` took the
+stride off `rs[1] - rs[0]`, which with that missing blank reads `RU` two
+cells wide, and then the test fails on every rung and reports a shape
+mismatch that is not there.  **Read the landing, not its padding** — again.
+
+Fixed: the stride comes off two rungs that are both fully written
+(`rs[2] - rs[1]`), `RPOST` is what is left of `rs[1]`, and the rungs are
+compared up to trailing blanks.  Regression: all 6 committed `QMG_*` boards
+re-render **byte-identical** and recompile; the 4 rows now clear the
+right-side gate and stop one gate deeper, at `no BOOT1 chain`.
+
+And that gate is measured too.  `BOOT1` (and `BOOT0`, `BOOTO`, `MC1z`,
+`MC0z`, `TCz` — every chain stated at `k = 0`) asks for the destination
+right side `RPOST = [S1;S0]`, while the machine is at `[S1]`.  With the
+stripped post the chain derives immediately (`BOOT1`, cost `0*j + 1`,
+first try).  So the whole remaining obligation for these 4 rows is:
+
+* emit the six `k = 0` chains against `rstrip0 RPOST` rather than `RPOST`
+  (an emitter hole, mechanical); and
+* on the Coq side, bridge `Cq W 0 m`'s right side to the reached one across
+  ONE trailing blank — `WTape.lift_app_blank`, the same strip the flat
+  route's `oslack` path already uses, in the `k = 0` arms of `hop_`/`term_`
+  /the boots.
+
+That is the next wave's first half-hour, and it is worth doing before the
+16.
 
 ## 4. Do-not-retry, extended
 

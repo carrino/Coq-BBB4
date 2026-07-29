@@ -152,11 +152,20 @@ def extract(spec):
     HH = HH.pop()
     HSTOP = cfgs[-1][2]
     rs = [tuple(c[3]) for c in cfgs]
-    RPOST = rs[0]
-    d2 = len(rs[1]) - len(rs[0])
-    RU = rs[1][:d2]
+    # READ THE LANDING, NOT ITS PADDING (WAVE27 section 2, WAVE28 section 5).
+    # rs[0] is the ladder's FIRST rung and the cell past it has not been
+    # written yet, so it is one trailing BLANK short of rep RU 0 ++ RPOST.
+    # Taking the stride off rs[0]/rs[1] then reads RU two cells wide and the
+    # test fails on every rung; take it off two rungs that are both fully
+    # written, and compare up to trailing blanks the way the rest of this
+    # emitter does.
+    if len(rs) < 3:
+        raise QuadEmitError('ladder too short to read the right stride')
+    d2 = len(rs[2]) - len(rs[1])
+    RU = rs[2][:d2]
+    RPOST = rs[1][d2:]
     for k, r in enumerate(rs):
-        if r != RU * k + RPOST:
+        if LC.rstrip0(r) != LC.rstrip0(RU * k + RPOST):
             raise QuadEmitError('right sides are not rep RU k ++ RPOST')
     if LU != uS or LSTOP != sS:
         raise QuadEmitError('probe unit %r/%r vs alphabet %r/%r'
