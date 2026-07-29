@@ -19,7 +19,7 @@ SKIP and QUAD routes (`docs/WAVE27_FINDINGS.md`), wave-26 the cascade
 closeout and the QUAD design pass._
 
 _**Scope: the RESIDUE, which is everything.**  The (4,2) HOLDOUT list was
-closed on 2026-07-28; these 298 rows are the entire remaining problem._
+closed on 2026-07-28; these 291 rows are the entire remaining problem._
 
 **Before pasting, check:** substitute the branch the session should develop
 on, and name any files a concurrent session owns.
@@ -68,7 +68,7 @@ docs/RESIDUE_MAP.md + tools/closeout/residue_map.tsv give lap shapes and
 blockers (wave-23's measurement; subtract the boards of waves 25-28 --
 CASB_*, SKIP_*, QMG_*, PEEL_* -- from its rows).
 
-Failure profile at D_remaining = 298:
+Failure profile at D_remaining = 291:
 
   113  no overflow phase        -- the register x counter bucket, MEASURED
                                    in WAVE28 3c: 35 grow-11, 8
