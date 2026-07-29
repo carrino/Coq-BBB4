@@ -20,12 +20,16 @@ And four measurements that change the bucket's shape:
 |---|---|
 | `period-2+virt` (4) | **BOARDED**, all four (§2) |
 | `drift` (24) | **not a class**: 22 of 24 are `grow-11` once the reader's 8-cell far cap is lifted and the lowest octave is held out (§4a) |
-| `short` (36) | **not a class**: the chase's `TAILMAX = 2` was the whole blocker; with a 3- or 4-cell tail they walk 130+ anchors and read `grow-11` (§4b) |
+| `short` (36) | **not a class**: the chase's `TAILMAX = 2` was the whole blocker; with a 3- or 4-cell tail **34 of 36** walk 60-139 anchors and read a growing wall (§4b) |
 | `grow-11` (35, +8 `+virt`) | the far is `rep [S1;S1] (size p - c)` as the prompt says — but **no branch of it is a chain**: at the chase's frame every branch is exponential, because the chased "counter" is a `sqrt` SUBSEQUENCE of the machine's own (§5b).  Read with the wall on the FAR side instead, the interior lap is exact `4j+8` and 245 of 248 anchors close (§5c) -- the whole family is one flat interior chain plus one NESTED overflow (§5d) |
 
-So the bucket is not seven classes.  It is **10 constant-frame rows** (the 4
-boarded, the 4 `Jp` gray-code rows, 2 `plain`) and **~103 rows of ONE
-family**: a counter with a `[S1;S1]` wall that gains a block per octave.
+So the bucket is not seven classes.  Counted exactly:
+
+| n | class |
+|---:|---|
+| **99** | ONE family -- a counter with a wall that gains `[S1;S1]` (a few `[S1^4]`) per octave: 35 `grow-11` + 8 `grow-11+virt` + 22 of the `drift` + 34 of the `short` |
+| 10 | constant-frame: **4 boarded** here, the 4 `Jp` gray-code rows (§6), 2 `plain` |
+| 4 | still unread: 2 `drift` whose walk is short at `pmax = 300`, 2 `short` |
 
 Nothing under `theories/Census/` was touched; `census_cache --check` stayed
 MATCH throughout.  `SkipGlue`, `NestedLapLift`, `LapDecider`, `LapCertGlue`,
@@ -183,9 +187,20 @@ returning to the left end of the word:
 
 With `TAILMAX = 4` the chase on that row runs to **n = 137** anchors and
 reads `Jp@tail=[1;0;1;0]` mirrored, frames `A@[]`, `D@[S1]`, `D@[S1^3]`,
-`D@[S1^5]`, `D@[S1^7]` — §4a's shape exactly.  Over the sampled `short` rows
-the same holds; the answer to "which cell is home" is **the blank at the left
-end of the word**, and the `01` is not a landmark to anchor on but a tail the
+`D@[S1^5]`, `D@[S1^7]` — §4a's shape exactly.  The whole bucket, re-chased at
+`TAILMAX = 4`, `FARMAX = 40` (`regprobe.py --wide`) and then refitted by §4a:
+
+| n | fit |
+|---:|---|
+| 20 | `grow-11`, appended, lowest octave held out |
+| 4 | `grow-11` outright |
+| 2 | `grow-11`, PREPENDED |
+| 4 + 2 + 2 | `grow-1111` (with and without a held-out octave, 2 of them `+virt`) |
+| **2** | still `short` |
+
+**34 of the 36 walk, 60 to 139 anchors each, and every one of them reads a
+growing wall.**  The answer to "which cell is home" is the blank at the LEFT
+END OF THE WORD, and the `01` is not a landmark to anchor on but a tail the
 enumeration never offered.
 
 `TAILMAX` is left at 2 in `regscan.py` so that `reg113.json` still
