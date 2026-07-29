@@ -2462,6 +2462,15 @@ theories/Machines/Counters/NLAP_1RB0RC_1LC1LA_0LB1RD_1LB0RD.v
 theories/Machines/Counters/LAPC_1RB1LD_1RC0RB_1LA0RB_0LD1LB.v
 
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/RerootStage/RRPartner_00.v
+theories/Machines/RerootStage/RRPartner_01.v
+theories/Machines/RerootStage/RRPartner_02.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 theories/Machines/Counters/QMG_0RB0LA_1LA1RC_1LD1RB_0RB1LD.v
 theories/Machines/Counters/QMG_0RB0LA_1LA1RC_1LD1RB_0RC1LD.v
 theories/Machines/Counters/QMG_0RB0LA_1LC1RD_0RB1LC_1LA1RB.v
@@ -2487,7 +2496,65 @@ theories/Machines/Counters/QMG_1RB0LC_0LA0RB_0RD1LC_1LA1RD.v
 theories/Machines/Counters/QMG_1RB1LA_1LC0RD_0RB0LC_0LA1RD.v
 theories/Machines/Counters/QMG_1RB1LC_0LA0RB_0RD0LC_1RD1LA.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Closeout/CB_00.v
+theories/Closeout/CB_01.v
+theories/Closeout/CB_02.v
+theories/Closeout/CB_03.v
+theories/Closeout/CB_04.v
+theories/Closeout/CB_05.v
+theories/Closeout/CB_06.v
+theories/Closeout/CB_07.v
+theories/Closeout/CB_08.v
+theories/Closeout/CB_09.v
+theories/Closeout/CB_10.v
+theories/Closeout/CB_11.v
+theories/Closeout/CB_12.v
+theories/Closeout/CB_13.v
+theories/Closeout/CB_14.v
+theories/Closeout/CB_15.v
+theories/Closeout/CB_16.v
+theories/Closeout/CB_17.v
+theories/Closeout/CB_18.v
+theories/Closeout/CB_19.v
+theories/Closeout/CB_20.v
+theories/Closeout/CB_21.v
+theories/Closeout/CB_22.v
+theories/Closeout/CB_23.v
+theories/Closeout/CB_24.v
+theories/Closeout/CB_25.v
+theories/Closeout/CB_26.v
+theories/Closeout/CB_27.v
+theories/Closeout/CB_28.v
+theories/Closeout/CB_29.v
+theories/Closeout/CB_30.v
+theories/Closeout/CB_31.v
+theories/Closeout/CB_32.v
+theories/Closeout/CB_33.v
+theories/Closeout/CB_34.v
+theories/Closeout/CB_35.v
+theories/Closeout/CB_36.v
+theories/Closeout/CB_37.v
+theories/Closeout/CB_38.v
+theories/Closeout/CB_39.v
+theories/Closeout/CB_40.v
+theories/Closeout/CB_41.v
+theories/Closeout/CB_42.v
+theories/Closeout/CB_43.v
+theories/Closeout/CB_44.v
+theories/Closeout/CB_45.v
+theories/Closeout/CB_46.v
+theories/Closeout/CB_47.v
+theories/Closeout/Closeout.v
 theories/Closeout/CloseoutKit.v
+theories/Closeout/CoreRows.v
+theories/Closeout/SH_00.v
+theories/Closeout/ShadowKit.v
+
+theories/Closeout/CloseoutKit.v
+theories/Closeout/ShadowKit.v
+theories/Closeout/CoreRows.v
+theories/Closeout/SH_00.v
 theories/Closeout/CB_00.v
 theories/Closeout/CB_01.v
 theories/Closeout/CB_02.v
