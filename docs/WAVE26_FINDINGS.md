@@ -71,7 +71,7 @@ The 10 are the interesting ones and §4 is about them.  The 4 and the 3 are
 each a distinct unsolved shape; note two of the 3 measure overflow **HIGHER**,
 not `EXP2`, so they are not in the exponential-counter model at all.
 
-## 4. The 10: measured, and the ONE thing still untried
+## 4. The 10: two of the three pieces derive, and the third is not a search
 
 The 10 are a two-count overflow whose **first count sits one octave DOWN**.
 That is why they are `no boot chain` and not `no exit chain`:
