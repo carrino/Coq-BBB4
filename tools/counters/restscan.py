@@ -148,7 +148,8 @@ def board(spec, r, force=False):
         except (DeriveError, LC.Halt) as e:
             return dict(spec=spec, ok=False, why='flat: %s' % e)
         pref = (EL.NEST_PREFIX if D.get('nest')
-                else EL.AVOID_PREFIX if D.get('avoid') else EL.PREFIX)
+                else EL.AVOID_PREFIX if D.get('avoid')
+                else EL.PEEL_PREFIX if D.get('opeel') else EL.PREFIX)
         path = os.path.join(EL.OUTDIR, '%s_%s.v' % (pref, mach_id(spec)))
         if os.path.exists(path) and not force:
             return dict(spec=spec, ok=True, file=path, skipped=True)
