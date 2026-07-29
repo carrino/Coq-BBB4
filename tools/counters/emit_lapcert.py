@@ -651,6 +651,74 @@ Proof.
 Qed."""
 
 
+# ---------------------------------------------------------------------------
+# The SPLIT interior branch, up to [lift].
+#
+# Both halves are complete and in model and both land one written blank past
+# the anchor's far side.  [GLUE_SPLIT] states them as exact [cden] equalities,
+# which is strictly more than [LapDecider.lap_of_run] and [LapGlue]'s [Hlap]
+# ask for -- they want a [lift] equality, and [CTape.lift_side l = fun n =>
+# nth n l S0] cannot see a trailing blank.  Wave-16 wired that fallback for
+# the ONE-chain mode ([GLUE_ONE_LIFT]); this is the same fallback for the
+# split, and it needs no new theory: [lapi_] hands the weaker conclusion to
+# the same [LapCertGlueLift] closers.
+#
+# @ZPEEL@/@PPEEL@ are the per-half blank-peeling tactics -- empty when that
+# half happens to land exactly, so a MIXED split (one half exact, one half
+# slack) renders correctly rather than silently.
+# ---------------------------------------------------------------------------
+
+GLUE_SPLIT_LIFT = r"""Lemma gz_@ID@ : forall p q0, cview p = (0, Some q0) ->
+  Cc p = cden (@ENC@ q0 ++ @TAIL@) [] 0 Z0_@ID@ /\
+  lift (cden (@ENC@ q0 ++ @TAIL@) [] 0 Z1_@ID@) = lift (Cc (Pos.succ p)).
+Proof.
+  intros p q0 E. destruct (@ENCMOD@.@SOME@ p 0 q0 E) as (H1 & H2).
+  unfold Cc_@ID@, cden, Z0_@ID@, Z1_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  split.
+  - rewrite H1; cbn [rep app]. first [ rewrite <- app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+  - @ZPEEL@rewrite H2; cbn [rep app]. first [ rewrite <- app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+Qed.
+
+Lemma gp_@ID@ : forall p j q0, cview p = (S j, Some q0) ->
+  Cc p = cden (@ENC@ q0 ++ @TAIL@) [] j P0_@ID@ /\
+  lift (cden (@ENC@ q0 ++ @TAIL@) [] j P1_@ID@) = lift (Cc (Pos.succ p)).
+Proof.
+  intros p j q0 E. destruct (@ENCMOD@.@SOME@ p (S j) q0 E) as (H1 & H2).
+  unfold Cc_@ID@, cden, P0_@ID@, P1_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 0) with j by lia.
+  split.
+  - rewrite H1; cbn [rep app]. first [ rewrite <- !app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+  - @PPEEL@rewrite H2; cbn [rep app]. first [ rewrite <- !app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+Qed.
+
+Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) ->
+  exists n c', 0 < n /\ csteps tm n (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)).
+Proof.
+  intros p j q0 E. destruct j as [|j'].
+  - destruct (gz_@ID@ p q0 E) as (HA & HB).
+    exists (@CAZ@ * 0 + @CBZ@), (cden (@ENC@ q0 ++ @TAIL@) [] 0 Z1_@ID@).
+    split; [lia|]. split; [| exact HB].
+    rewrite HA.
+    exact (srun_sound tm false true chz_@ID@ Z0_@ID@ Z1_@ID@ @CAZ@ @CBZ@
+             run_z_@ID@ (@ENC@ q0 ++ @TAIL@) [] 0
+             ltac:(discriminate) ltac:(reflexivity)).
+  - destruct (gp_@ID@ p j' q0 E) as (HA & HB).
+    exists (@CAP@ * j' + @CBP@), (cden (@ENC@ q0 ++ @TAIL@) [] j' P1_@ID@).
+    split; [lia|]. split; [| exact HB].
+    rewrite HA.
+    exact (srun_sound tm false true chp_@ID@ P0_@ID@ P1_@ID@ @CAP@ @CBP@
+             run_p_@ID@ (@ENC@ q0 ++ @TAIL@) [] j'
+             ltac:(discriminate) ltac:(reflexivity)).
+Qed."""
+
+
 FLAT_OVF_DEFS = r"""Definition cho_@ID@ : list lstep := @CHO@.
 
 Lemma run_ovf_@ID@ : srun tm true true cho_@ID@ B0_@ID@ = Some (B1_@ID@, @CAO@, @CBO@).
@@ -987,19 +1055,48 @@ def derive(spec, edge, tail, p0, enc, far=()):
         # AFFINE/AFFINE bucket, whose laps are in model but end one blank out.
         chi = LC.derive_chain(tab, False, True, A0, A1, lift=True)
         if chi is None:
-            raise DeriveError('no interior chain')
-        if LC.chain_is_exact(tab, False, True, chi, A0, A1):
-            raise DeriveError('internal: exact chain found only under lift')
-        islack = True
-        mode = 'one'
-        ri = LC.srun(tab, False, True, chi, A0)
-        if ri[2] == 0:
-            raise DeriveError('lap of zero length at j=0')
-        # the reached configuration is what [run_int_*] states, so the board
-        # must name IT, not the canonical anchor form
-        A1 = ri[0]
-        cost = lambda j, c=(ri[1], ri[2]): c[0] * j + c[1]
-        chz = chp = rz = rp = None
+            # ... and then the SPLIT, up to [lift].  Wave-29 section 10b
+            # measured rows whose BOTH split halves derive one written blank
+            # past the anchor while no single chain derives at all: [GLUE_SPLIT]
+            # proves exact [cden] equalities and the [lift] last resort above
+            # was reached only on the ONE-chain path, so the combination was
+            # never tried.  Same theory as the one-chain lift route -- one more
+            # template ([GLUE_SPLIT_LIFT]) and the closers wave-16 already
+            # built.  Tried LAST, so no previously-boarded row changes route.
+            chz = chz or LC.derive_chain(tab, False, True, Z0, Z1, lift=True)
+            chp = chp or LC.derive_chain(tab, False, True, P0, P1, lift=True)
+            if chz is None or chp is None:
+                raise DeriveError('no interior chain')
+            if (LC.chain_is_exact(tab, False, True, chz, Z0, Z1)
+                    and LC.chain_is_exact(tab, False, True, chp, P0, P1)):
+                raise DeriveError(
+                    'internal: exact split found only under lift')
+            islack = True
+            mode = 'split'
+            rz = LC.srun(tab, False, True, chz, Z0)
+            rp = LC.srun(tab, False, True, chp, P0)
+            if rz[2] == 0 or rp[2] == 0:
+                raise DeriveError('lap of zero length at j=0')
+            # as on the one-chain lift route, the board must name the REACHED
+            # configurations -- they are what [run_z_*]/[run_p_*] state
+            Z1, P1 = rz[0], rp[0]
+            ri = None
+            cost = (lambda j, z=(rz[1], rz[2]), q=(rp[1], rp[2]):
+                    z[0] * 0 + z[1] if j == 0 else q[0] * (j - 1) + q[1])
+        else:
+            if LC.chain_is_exact(tab, False, True, chi, A0, A1):
+                raise DeriveError(
+                    'internal: exact chain found only under lift')
+            islack = True
+            mode = 'one'
+            ri = LC.srun(tab, False, True, chi, A0)
+            if ri[2] == 0:
+                raise DeriveError('lap of zero length at j=0')
+            # the reached configuration is what [run_int_*] states, so the
+            # board must name IT, not the canonical anchor form
+            A1 = ri[0]
+            cost = lambda j, c=(ri[1], ri[2]): c[0] * j + c[1]
+            chz = chp = rz = rp = None
     else:
         mode = 'split'
         rz = LC.srun(tab, False, True, chz, Z0)
@@ -1267,6 +1364,29 @@ def render(D):
         return got, ('(' * n + clist(wnt)
                      + ''.join(') ++ [S0]' for _ in range(n)))
 
+    def far_peel(side, what):
+        """The blank-peeling tactic for ONE reached far side: empty when that
+        half landed exactly on the anchor's far (nothing to peel, and
+        [lift_app_blank] would have no occurrence to rewrite), otherwise the
+        [change] + [lift_app_blank] pair.
+
+        [Nat.mul]/[Nat.add] have to be in the [cbn] list: the count is
+        [a * j + b], and [rewrite] does not compute, so without reducing it
+        first the far side is [pre ++ rep u (0 * 0 + 0) ++ post] and
+        [lift_app_blank] has no syntactic occurrence to match.  The EXACT
+        templates get away with [cbn [rep app]] because they finish by
+        [reflexivity], which is up to conversion."""
+        if side[1]:
+            raise DeriveError('%s far slack: unit run on the far side' % what)
+        got = tuple(side[0]) + tuple(side[4])
+        norm = 'cbn [rep app Nat.mul Nat.add]; rewrite ?app_nil_r.\n    '
+        if got == tuple(D['far']):
+            return ''
+        _, nest = far_slack(side, what)
+        return (norm
+                + 'change (%s) with (%s).\n    ' % (clist(got), nest)
+                + 'rewrite !lift_app_blank.\n    ')
+
     if D.get('oslack'):
         _, ovfar = far_slack(D['B1'][3], 'overflow')
         close = 'rewrite !lift_app_blank. ' + close
@@ -1386,13 +1506,16 @@ def render(D):
             peelglue += (VISZ_LEMMA.replace('@STQ@', ST[q])
                          .replace('@KQ@', str(P['visz'][q])) + '\n\n')
     islack = bool(D.get('islack'))
-    if islack and D['mode'] != 'one':
-        raise DeriveError('lift route: only mode=one is wired')
     # [glue_neverqh_lift] takes the visit premise in [stepn] space;
     # [glue_qh]/[glue_qh_abs] want it concrete and get there through
     # [vis_csteps_of_lift], so they need no lift twin.
     lift_vis = _lift_vis(D)
-    if islack:
+    zpeel = ppeel = ''
+    if islack and D['mode'] == 'split':
+        farb = farnest = clist(D['far'])
+        zpeel = far_peel(D['Z1'][3], 'interior j=0')
+        ppeel = far_peel(D['P1'][3], "interior j=S j'")
+    elif islack:
         igot, ifarnest = far_slack(D['A1'][3], 'interior')
         farb, farnest = clist(igot), ifarnest
     else:
@@ -1493,8 +1616,10 @@ def render(D):
                  else '%d*j+%d steps' % D['co']),
         '@NZ@': str(P['n0']) if P else '',
         '@INTERIOR@': (INT_ONE if D['mode'] == 'one' else INT_SPLIT),
-        '@GLUEI@': (GLUE_ONE_LIFT if islack
+        '@GLUEI@': (GLUE_SPLIT_LIFT if islack and D['mode'] == 'split'
+                    else GLUE_ONE_LIFT if islack
                     else GLUE_ONE if D['mode'] == 'one' else GLUE_SPLIT),
+        '@ZPEEL@': zpeel, '@PPEEL@': ppeel,
         '@A0@': cconf(D['A0']), '@A1@': cconf(D['A1']),
         '@CHI@': cchain(D['chi']) if D['chi'] else '[]',
         '@CAI@': str(D['ci'][0]) if D['ci'] else '0',
