@@ -77,4 +77,23 @@ Qed.
 Lemma quad_reach0 : exists n, csteps tm n (Cf 0 j) = Some (Cf j 0).
 Proof. exact (quad_reach j 0 ltac:(lia)). Qed.
 
+(** ... and the same walk stopped at an ARBITRARY rung.
+
+    [quad_reach0] lands on [Cf j 0], where both terminals start, which is
+    the right carrier for a state that fires in the terminal.  A state that
+    fires in the MICRO HOP needs a rung the hop still applies at, and the
+    only one available at EVERY [j] is the last one -- [Cf j 1], reached
+    here at [k = j], [m = 1].  (An interior rung [m >= 2] exists only once
+    [j >= 1], so it cannot host a witness that must hold at every overflow
+    anchor.) *)
+Lemma quad_reach_at : forall k m, k + m = j ->
+  exists n, csteps tm n (Cf 0 j) = Some (Cf k m).
+Proof.
+  induction k as [|k' IH]; intros m Hk.
+  - exists 0. cbn in Hk. subst m. reflexivity.
+  - destruct (IH (S m) ltac:(lia)) as (n1 & H1).
+    destruct (Hmicro k' m ltac:(lia)) as (n2 & H2 & _).
+    exists (n1 + n2). rewrite csteps_add, H1. exact H2.
+Qed.
+
 End Shape.
