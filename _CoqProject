@@ -1342,6 +1342,7 @@ theories/Checkers/LapAvoid.v
 theories/Counters/LapCertGlue.v
 theories/Counters/LapCertGlueLift.v
 theories/Counters/SkipGlue.v
+theories/Counters/RegGlue.v
 theories/Counters/QuadGlue.v
 theories/Counters/GpCounter.v
 theories/Counters/Alph_000_001_00.v
