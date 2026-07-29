@@ -24,7 +24,7 @@ import lapcert as LC                                               # noqa: E402
 LAB = 'ABCD'
 
 
-def run(spec, t0, t1, every, lo, hi, marks):
+def run(spec, t0, t1, every, lo, hi, marks, rests=False):
     tab = parse(spec)
     cfg = (0, (), 0, ())
     pos = 0
@@ -33,7 +33,8 @@ def run(spec, t0, t1, every, lo, hi, marks):
     for t in range(t1 + 1):
         q, l, h, r = cfg
         tape[pos] = h
-        if t >= t0 and (t - t0) % every == 0:
+        keep = (h == 0) if rests else ((t - t0) % every == 0)
+        if t >= t0 and keep:
             lo2 = lo if lo is not None else min(tape)
             hi2 = hi if hi is not None else max(tape)
             row = ''.join(('%d' % tape.get(i, 0)) for i in range(lo2, hi2 + 1))
@@ -61,14 +62,22 @@ def main():
     ap.add_argument('--lo', type=int)
     ap.add_argument('--hi', type=int)
     ap.add_argument('--ruler', action='store_true')
+    ap.add_argument('--mark', action='store_true',
+                    help='show the state letter AT the head cell')
+    ap.add_argument('--rests', action='store_true',
+                    help='only rows whose head reads a BLANK')
     a = ap.parse_args()
-    rows = run(a.spec, a.t0, a.t1, a.every, a.lo, a.hi, None)
+    rows = run(a.spec, a.t0, a.t1, a.every, a.lo, a.hi, None, a.rests)
     if a.ruler and rows:
         lo = a.lo if a.lo is not None else 0
         n = len(rows[0][3])
         print('%-8s %-2s %-4s %s' % ('', '', 'col', ''.join(
             str((lo + i) % 10) for i in range(n))))
+    lo0 = a.lo if a.lo is not None else 0
     for (t, q, pos, row, head) in rows:
+        if a.mark and lo0 <= pos < lo0 + len(row):
+            i = pos - lo0
+            row = row[:i] + q.lower() + row[i + 1:]
         print('%-8d %s p=%-4d %s' % (t, q, pos, row))
 
 

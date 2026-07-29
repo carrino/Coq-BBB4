@@ -42,7 +42,7 @@ Expected:
 closeout_partial : forall tm, Deferred D_census tm ->
                               boarded tm \/ skipped D_remaining tm
 Axioms: FunctionalExtensionality.functional_extensionality_dep
-     = 174
+     = 172
 ```
 
 And the two checks the kernel does not do for you:
