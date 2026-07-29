@@ -127,6 +127,38 @@ laps at `2^(k+1)-2`-style measured points.  Everything this wave built
 composes with it: the virtual-anchor fences (`SkipGlue`), the tolerant
 reader, and the same affine chains.
 
+## 4b. John's five reads during the wave (hand-inspection now 31-for-31)
+
+Given live during the wave's close, and the first is verified mechanically:
+
+* **`0RB0LB_1LC1RD_0RD0LC_1RB1LA`** (from the `no inner family` 32):
+  "a regular counter with a 0 to the left of every bit, and the carry has
+  to alternate states to cross these 0s."  CONFIRMED, and it opens a
+  class: `alphabet_infer` returns `A=[0,0] B=[0,1] C=[1]` — the
+  ALREADY-WIRED `Alph_00_01_1` — and under it the interior is exact
+  affine `4j+4` and the overflow `4j+6` for j >= 2 with ONE CONCRETE
+  EXCEPTION at j = 1 (8 steps, not 10; the state-alternating carry at
+  the smallest width).  That single exception is the whole mis-filing:
+  the flat validate rejects at the j = 1 anchor and `degree()` reads
+  HIGHER.  The boarding device already exists — state the overflow lap
+  at `j = S j''` and discharge j = 1 as a concrete vm_compute lap, the
+  offset route's j = 0 device one octave up.  MEASURE the `no inner
+  family` and `no anchor` buckets for this affine-with-small-j-exception
+  shape before designing anything new.
+* **`0RB1LA_1LC1RD_0RB1LD_1RB0LA`** (the 4 `Jp` long-phase skip rows):
+  "like a grey code where it counts up and down" — matches the measured
+  inner countdown inside the exponential overflow phase (the blank-head
+  rests step `111111011 -> 111011011 -> 101011011 -> ...`).  So these
+  are skip + a GRAY-CODE inner induction, not a third chain.
+* **`0RB0LD_1LA1LC_0LD0LC_1RD1RB`** and **`0RB1LA_1LA1LC_0LD0LC_1RD1RB`**
+  (from the `no anchor` 24): "just a bouncer" — the two differ only in
+  the A row, one class.  **`0RB0RD_1LC1RB_1RA0LC_1LB0LC`**: "a bouncer
+  counter."  Bouncer machinery exists in the tree (`BounceCounter.v`,
+  Bounce_8's MeasureGlue composition), and `QuadGlue` was JUST built for
+  exactly the measure-composed micro-lap shape — the `no anchor` bucket
+  should be probed with a bouncer-flavored quad reader before anything
+  else.
+
 ## 5. Do-not-retry, extended
 
 * The 4 `Jp` skip rows with a single V→E chain — 0 through 32+ extracted

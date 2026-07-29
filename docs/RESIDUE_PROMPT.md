@@ -127,10 +127,23 @@ THE TASK (re-ranked 2026-07-29 after wave-27):
         *  4 non-rep right sides (2-cell stride variants of the ladder).
         *  3 deep-pivot (boot is a j-dependent law, mode (1, True)).
 
-  (2) SKIP leftovers (WAVE27 section 2): wire s <= 4 (a pexpii view +
-      the same fences; at least one confirmed skip-4 machine) and the
-      4 Jp rows whose ~8j phase needs a 2-SEGMENT virtual pipeline
-      (V -> X -> E; the extractor already enumerates the candidates).
+  (2) JOHN'S WAVE-27 READS (WAVE27 section 4b, hand-inspection
+      31-for-31), cheapest first:
+        * the Alph_00_01_1 class (0RB0LB_1LC1RD_0RD0LC_1RB1LA): exact
+          affine under an ALREADY-WIRED alphabet with one concrete j=1
+          overflow exception -- board with the j = S j'' reindex plus a
+          concrete j=1 lap (the offset route's j=0 device, one octave
+          up).  MEASURE the no-inner-family and no-anchor buckets for
+          this shape first; it may be a batch.
+        * the no-anchor bucket reads as BOUNCERS (two machines one
+          class, plus a bouncer counter): probe with a bouncer-flavored
+          QuadGlue/MeasureGlue reader before any new theory.
+        * the 4 Jp long-phase rows are skip + a GRAY-CODE inner
+          induction (counts up and down inside the phase) -- an inner
+          NestedLap-style induction between VIRT and the landing, not a
+          third chain.
+      Plus the mechanical skip leftovers: wire s <= 4 (a pexpii view +
+      the same fences; at least one confirmed skip-4 machine).
 
   (3) The 60 "no inner family" survivors and the cascade's 18: unchanged
       from the wave-26 prompt (the 10 two-count rows' blocker is a
@@ -167,7 +180,7 @@ THREE STANDING LESSONS (now five waves of evidence):
 
 WHEN STUCK ON A CLASS: print a few machine strings WITH AN
 ABSOLUTE-COORDINATE TAPE DUMP (tools/counters/spacetime.py) and ask John.
-Hand-inspection is 26-for-26 across waves 8-26.  ASK EARLY, ask with a
+Hand-inspection is 31-for-31 across waves 8-27.  ASK EARLY, ask with a
 TAPE, and ask about a CLASS not a machine.
 
 DEFERRED TO STABLE HARDWARE: census fold-in (gen_proven.py + Deferred regen
