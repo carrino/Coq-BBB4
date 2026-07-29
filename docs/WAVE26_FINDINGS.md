@@ -370,3 +370,46 @@ sside form with their `cden` bridges, the standard wrapping, and the
 emitter.  Hand-board the exemplar `0RB0LA_1LA0LC_0RD1LC_1RB1RD` first —
 micro `B1R0 (C1R1)^i C0L0 (D1L1)^i D0L1`, term `B0R1 (A1R0)^(j+4)`, boot
 `A0L0`, everything validated to `j = 11`.
+
+## 8. John's decode of the no-anchor bucket: the SKIP counter (verified)
+
+_Added after the wave closed, same branch.  John read
+`0RB0LC_1LC1RB_0RD1LA_1LB1LA` off its tape dump: **"just a counter with 1
+to the left of every bit."**  Hand-inspection is now 23-for-23._
+
+Verified mechanically, and the reading opens the whole bucket:
+
+* **The decode is right and the anchor EXISTS.**  Pairs `1b`, LSB at the
+  left edge, head resting AT the left edge in `StA`: 2,492 consecutive
+  values decode over a 20k-step replay.  Better: `emit_lapcert.anchors`
+  ALREADY finds this family on the mirrored spec — `Alph_10_11_11@A`,
+  `tail=[0]`, `far=()`, an alphabet that has been wired since wave-14.
+* **Why every wave still reported `no anchor`:** the machine **never rests
+  at a power of two.**  `anchor_times` to p = 300 hits every value EXCEPT
+  {2, 4, 8, …, 256} — at the fill the overflow sweep runs straight
+  through, writing the LSB pair's data cell LAST and already incremented,
+  so `E(2^k)` exists only half-written and the overflow lap is
+  `fill(2^k − 1) → 2^k + 1`: **it enters one value in, at the OUTER
+  anchor** — the same phenomenon as the octave-down 4's closing count
+  (`xI (pow2 j)`, §2), one level up.  `phase_mid` waits for `E(2^K)`
+  exactly, which never comes; that single test is the entire bucket.
+* **With the anchor in hand the machine is AFFINE everywhere**: interior
+  lap `4j + 4`, double-step overflow `4j + 7`.  No cascade, no measure —
+  ordinary chains.
+
+**The boarding route** (no checker extension needed): define the family in
+plain Coq as
+
+    Cc p = if is_pow2 p then VIRT p else E p ++ tail
+
+with `VIRT (2^k)` the machine's real transient form (`E(2^k)` with the LSB
+pair half-written, at a measured head position), and close with
+`LapGlue.glue_neverqh` DIRECTLY — Bounce_8's pattern, which takes an
+arbitrary `Cc : positive -> cconf` and only needs boot + laps + visits.
+Three lap branches, all affine chains: interior (`cview Some`), fill →
+`VIRT`, `VIRT → E(2^k + 1)`.  `LapDecider` is not touched.
+
+**Scale**: a scan of all 211 is running; the early sample shows the exact
+SKIP-POW2 signature on a first slice plus OTHER skip sets (9-17 missing
+values at p ≤ 300) that need their own taxonomy — likely the same device
+with different virtual points.  Counts land in the next commit.
