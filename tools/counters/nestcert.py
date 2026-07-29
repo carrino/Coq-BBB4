@@ -1856,7 +1856,7 @@ def cascade_law(mid, ENCDATA, ENCS, K, encs=None, maxtail=CASC_MAXTAIL,
         raise NestError('no cascade: %d counts in the phase' % len(runs))
     (_, _, v0, v1, key0) = runs[0]
     if (v0, v1) == (2 ** j, 2 ** (j + 1) - 1):
-        oct_ = 0
+        oct_, big_in = 0, 0
         lev_runs = runs[1:]
     elif (v0, v1) == (2 ** (j - 1), 2 ** j - 1):
         # The whole cascade sits ONE OCTAVE DOWN: there is no separate main
@@ -1873,9 +1873,21 @@ def cascade_law(mid, ENCDATA, ENCS, K, encs=None, maxtail=CASC_MAXTAIL,
         # count's own laps between two affine chains (CLOSEA in, CLOSEB
         # out), not a sweep.  Separate it from the level runs here.
         lev_runs = [r for r in runs if r[2].bit_length() - 1 < j]
-        big = [r for r in runs
-               if (r[2], r[3]) == (2 ** (j + 1), 2 ** (j + 2) - 1)]
-        if not big:
+        # The closing count ends at the octave's fill, but it need not START
+        # at the octave: on part of this bucket it ENTERS ONE VALUE IN, at
+        # 2^(j+1)+1 = [xI (pow2 j)], because the chain into it lands on the
+        # count's second value rather than its first.  Nothing else about the
+        # phase changes -- the fill is the same value either way, so the way
+        # OUT is untouched -- so read the entry offset off the run instead of
+        # demanding it be zero.
+        big, big_in = None, None
+        for cand in (0, 1):
+            hit = [r for r in runs
+                   if (r[2], r[3]) == (2 ** (j + 1) + cand, 2 ** (j + 2) - 1)]
+            if hit:
+                big, big_in = hit, cand
+                break
+        if big is None:
             raise NestError('no cascade: octave-down phase has no closing '
                             'count at octave %d' % (j + 1))
     else:
@@ -1945,7 +1957,7 @@ def cascade_law(mid, ENCDATA, ENCS, K, encs=None, maxtail=CASC_MAXTAIL,
             return dict(inner=name, st_in=st, far_in=far_in,
                         tail_main=tail_main, unit=unit, extraA=exA,
                         extraB=exB, levels=levels, K=K, j=j, M=MA, oct=oct_,
-                        big_tail=big_tail,
+                        big_tail=big_tail, big_in=big_in,
                         main_is_B=(oct_ == 0
                                    and tail_main == exB + unit * (MA - j)))
     raise NestError('no cascade: no tail law head ++ rep unit (M - l) fits '
@@ -2075,11 +2087,17 @@ def cascade_transitions(law, ENCDATA, enc, st0, tail, far):
         # count's START (its exponentially many laps live in [fill_hop]) ->
         # from its FILL to the outer successor
         bt = tuple(law['big_tail'])
+        # [big_in] = 1: the closing count is entered one value in, at
+        # 2^(j+1)+1, whose word is uS ++ rep uD j ++ soD -- one FEWER unit
+        # copy than the octave's own word, with the odd digit peeled into the
+        # prefix.  The way out is unchanged: both values share a fill.
+        bi = law.get('big_in', 0)
         out[-1:] = [
             dict(kind='CLOSEA', ns=[j], sst=st, dst=st, sfar=fi, dfar=fi,
                  S=dict(pre=soS + eB, u=W, c=lambda n: n + dm,
                         t=lambda n: ()),
-                 D=dict(pre=(), u=uD, c=lambda n: n + 1,
+                 D=dict(pre=() if not bi else uS, u=uD,
+                        c=(lambda n: n + 1) if not bi else (lambda n: n),
                         t=lambda n: soD + bt)),
             dict(kind='CLOSEB', ns=[j], sst=st, dst=st0, sfar=fi, dfar=fr,
                  S=dict(pre=(), u=uS, c=lambda n: n + 1,
@@ -2262,11 +2280,12 @@ def cascade_validate(tab, ENC, ENCDATA, enc, st0, tail, far, d,
                 nlap += 2 ** l - 1 + 2 ** (l - 1) - 1
             laps(tl(eB, 0, j), 1, 1, 'B0 j=%d' % j)
             bt = tuple(law['big_tail'])
+            v0 = 2 ** (j + 1) + law.get('big_in', 0)
             hop((st, tuple(encin(1)) + tl(eB, 0, j), 0, fi),
-                (st, tuple(encin(2 ** (j + 1))) + bt, 0, fi),
+                (st, tuple(encin(v0)) + bt, 0, fi),
                 cCA, j, 'closeA j=%d' % j)
-            laps(bt, 2 ** (j + 1), 2 ** (j + 2) - 1, 'BIG j=%d' % j)
-            nlap += 2 ** (j + 1) - 1
+            laps(bt, v0, 2 ** (j + 2) - 1, 'BIG j=%d' % j)
+            nlap += 2 ** (j + 2) - 1 - v0
             hop((st, tuple(encin(2 ** (j + 2) - 1)) + bt, 0, fi),
                 (st0, tuple(encf(2 ** (j + 1))) + tail, 0, far),
                 cCB, j, 'closeB j=%d' % j)
