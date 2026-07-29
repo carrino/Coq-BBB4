@@ -112,6 +112,13 @@ closed: tower #20, the last of it, was boarded on 2026-07-28
 * The committed census `.vo` (154 files) are walk output, not source.  Loading
   them is a trust decision; `make census-verify` re-derives them from source
   instead.  See `docs/VERIFYING.md` for both paths.
+* **The rule for committed proof binaries:** a `.vo` is committed only when
+  reproducing it is prohibitive (the census walk: ~24 h, special toolchain),
+  and then only hash-guarded and with a from-source escape hatch.  Nothing
+  else in the tree ships as a binary — a file that rebuilds in minutes gets
+  rebuilt, not trusted — so the trust surface stays one sharply-drawn line:
+  everything up to `Closeout.vo` compiles from source, and exactly one fact
+  (`census_decided`) rides on committed output.
 
 ## Reproducing
 
