@@ -18,18 +18,18 @@ bbb4_target : forall tm,
 
 Every (4,2) Turing machine either **quasihalts with score at most
 32,779,478** — the champion's score — or **never quasihalts**, *except*
-the **319 residue machines** in `D_remaining`
+the **291 residue machines** in `D_remaining`
 (`tools/closeout/frozen_unproven.txt`), which are still undecided and
 are reported as **SKIPPED**.
 
 Two honest caveats, stated precisely in
 [`docs/CLAIMS.md`](docs/CLAIMS.md):
 
-* The champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` is itself one of the 319,
+* The champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` is itself one of the 291,
   so this is **not** a proof that BBB(4) = 32,779,478 — any residue
   machine could, for all this development proves, quasihalt with a
   larger score.
-* `Deferred D_remaining tm` means membership in the orbit of the 319
+* `Deferred D_remaining tm` means membership in the orbit of the 291
   frozen rows under completion of undefined transitions, non-start
   state swaps, and mirroring — not bare list membership.
 
@@ -106,13 +106,13 @@ verification tier, from "check one machine" to "re-walk the census".
 | `theories/BBB4_Statement.v` | The (4,2) machine model and the quasihalting semantics: `VisitsAt`, `QuietFrom`, `QuasiHaltsSt`, `NeverQuasiHaltsSt`, `QHBound` |
 | `theories/Checkers/` | The verified certificate checkers: cyclers, translated cyclers, n-gram closures with ranking/pattern measures, RepWL, fuel/drift rules, inductive-rules (irules) engines, quasihalt wrappers |
 | `theories/Closure.v` | The generic covering-abstraction / liveness engine the n-gram and RepWL checkers instantiate |
-| `theories/Machines/` | Per-machine theorems: ~4,300 generated boards (`Bulk/`, batch files) plus individually proved counter machines (`Machines/Counters/`) |
+| `theories/Machines/` | Per-machine theorems: the generated boards (`Bulk/`, batch files) plus individually proved counter machines (`Machines/Counters/`) — thousands of files; `tools/closeout/audit.py` prints the live count |
 | `theories/Counters/` | The windowed-run toolkit for hand-proved machines: `WTape`, `LapGlue`/`WaveCounter`/`MeasureGlue` closers, shared counter encodings |
 | `theories/Census/` | The trusted census: TNF enumeration, the in-walk deciders, the frozen deferred tables, and (committed as `.vo`) the walk output ending in `census_decided` |
 | `theories/Closeout/` | The assembly: generated stages bridging every decided frozen row to its board, `closeout_partial`, `census_boarded`, and `bbb4_target` |
 | `theories/Tests/` | Negative controls in the BBB corruption-test tradition: mutated certificates, periods, sides and claims must all fail |
 | `tools/` | **Untrusted** certificate search, generators, and differential validators — a wrong certificate fails to compile, never proves a false theorem |
-| `docs/` | The claim statement, verification guide, residue map, and per-wave development notes |
+| `docs/` | The claim statement, verification guide, residue map, and per-wave development notes — [`docs/README.md`](docs/README.md) is the index |
 
 ## The trust story
 
@@ -135,7 +135,7 @@ verification tier, from "check one machine" to "re-walk the census".
 
 * [`docs/CLAIMS.md`](docs/CLAIMS.md) — what is proved, exactly,
   including what is **not**.
-* [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) — the 319 undecided
+* [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) — the 291 undecided
   machines, mapped by shape and blocker.
 * [`docs/VERIFYING.md`](docs/VERIFYING.md) — how to check any of this
   yourself.
