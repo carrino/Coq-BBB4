@@ -505,11 +505,30 @@ PROTO = PROTO_DOC + PROTO_CORE
 # exact j = 0 device.  No new library Coq: [fill_hop] and [cascade_vis]
 # already carry everything.
 
+# The closing count need not start AT the octave.  On part of this bucket the
+# chain into it lands on its SECOND value, 2^(j+1)+1 = [xI (pow2 j)], and the
+# emitter's whole answer to that is this lemma pair: the entered value's own
+# word, and its fill's.  [fill_hop] needs nothing -- it is arbitrary-[v0]
+# already -- and the way OUT is untouched, because both values share a fill.
+EXI_SEC = r'''(** The closing count ENTERS ONE VALUE IN, at [xI (pow2 n)] = 2^(n+1)+1
+    rather than at [pow2 (S n)]: its word is the octave's with the odd digit
+    peeled off the front and one fewer unit copy behind it.  Its FILL is the
+    same all-ones value, so only the way IN moves. *)
+Lemma exi_@ID@ : forall n,
+  @ENCI@ (xI (pow2 n)) = @USI@ ++ rep @UDI@ n ++ @SODI@.
+Proof. intro n. rewrite <- epow2_@ID@. reflexivity. Qed.
+
+Lemma exif_@ID@ : forall n,
+  @ENCI@ (fill (xI (pow2 n))) = rep @USI@ (S n) ++ @SOSI@.
+Proof. intro n. exact (efill_@ID@ (S n)). Qed.
+
+'''
+
 LOW_CLOSE = r'''(** *** the close, octave-down: after level 0 the machine runs ONE MORE
     ASCENDING COUNT at octave j+1 -- the same inner family over the constant
     tail [BT], its exponentially many laps living in [fill_hop] -- framed by
     two affine chains. *)
-Definition BT_@ID@ : list Sym := @BIGTAIL@.
+@EXISEC@Definition BT_@ID@ : list Sym := @BIGTAIL@.
 Local Notation BT := BT_@ID@.
 
 Definition CLA0_@ID@ : sconf := @CLA0@.
@@ -552,7 +571,7 @@ Qed.
 '''
 
 LOW_GCL = r'''(** The level-0 count's tail is [j + 1] units past the top's; the closing
-    count starts at [pow2 (S (S j))] over [BT]. *)
+    count starts at [@BIGV@] over [BT]. *)
 Lemma gcla_@ID@ : forall j, Dc 0 (j + 1) = cden [] [] (S j) CLA0_@ID@.
 Proof.
   intro j.
@@ -564,7 +583,7 @@ Proof.
 Qed.
 
 Lemma gclab_@ID@ : forall j,
-  lift (cden [] [] (S j) CLA1_@ID@) = lift (Cin BT (pow2 (S (S j)))).
+  lift (cden [] [] (S j) CLA1_@ID@) = lift (Cin BT (@BIGV@)).
 Proof.
   intro j.
   assert (HD : cden [] [] (S j) CLA1_@ID@ = (@STI@, (@CLABL@, S0, @CLABF@))).
@@ -572,20 +591,20 @@ Proof.
       cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
 @IXCLAB@    rewrite ?rep_add. cbn [rep app]. rewrite <- ?app_assoc.
     cbn [app]. rewrite ?app_nil_r. reflexivity. }
-  assert (HC : Cin BT (pow2 (S (S j))) = (@STI@, (@CLABW@, S0, @CLABG@))).
-  { unfold Cin_@ID@, BT_@ID@. rewrite epow2_@ID@.
+  assert (HC : Cin BT (@BIGV@) = (@STI@, (@CLABW@, S0, @CLABG@))).
+  { unfold Cin_@ID@, BT_@ID@. rewrite @BIGVE@.
     cbn [rep app]. rewrite <- ?app_assoc. cbn [app]. rewrite ?app_nil_r.
     reflexivity. }
   rewrite HD, HC. rewrite ?lbl_@ID@. rewrite ?lift_app_blank. reflexivity.
 Qed.
 
 Lemma gclb_@ID@ : forall j,
-  Cin BT (fill (pow2 (S (S j)))) = cden [] [] (S (S j)) CLB0_@ID@.
+  Cin BT (fill (@BIGV@)) = cden [] [] (S (S j)) CLB0_@ID@.
 Proof.
   intro j.
   unfold Cin_@ID@, BT_@ID@, cden, CLB0_@ID@, sden;
     cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
-  rewrite efill_@ID@.
+  rewrite @BIGVF@.
 @IXCLB@  rewrite ?rep_add. cbn [rep app]. rewrite <- ?app_assoc.
   cbn [app]. rewrite ?app_nil_r. reflexivity.
 Qed.
@@ -664,7 +683,7 @@ Proof.
   - apply (cascade_overflow tm Cc Dc hstep_@ID@ p j' 1).
     + exact (gbor_@ID@ p j' Ev).
     + assert (HB : exists n,
-        stepn tm n (lift (Cin BT (fill (pow2 (S (S j'))))))
+        stepn tm n (lift (Cin BT (fill (@BIGVP@))))
         = Some (lift (Cc (Pos.succ p)))).
       { exists (@CACB@ * S (S j') + @CBCB@).
         rewrite (gclb_@ID@ j'), <- (geo_@ID@ p (S j') Ev), <- (gclbx_@ID@ j').
@@ -672,7 +691,7 @@ Proof.
         exact (srun_sound tm true true chCLB_@ID@ CLB0_@ID@ CLB1_@ID@
                  @CACB@ @CBCB@ run_closeB_@ID@ [] [] (S (S j'))
                  ltac:(reflexivity) ltac:(reflexivity)). }
-      destruct (fill_hop tm Cin lapin_@ID@ BT (pow2 (S (S j'))) _ HB)
+      destruct (fill_hop tm Cin lapin_@ID@ BT (@BIGVP@) _ HB)
         as (n2 & H2).
       exists (@CACA@ * S j' + @CBCA@ + n2).
       rewrite (gcla_@ID@ j'), stepn_add.
@@ -1092,15 +1111,23 @@ def reps_low(spec, d, K):
             (soD + tuple(law['extraB']), tuple(unit), 1, d0, ()):
         raise NC.NestError('cascade low: CLOSEA src off shape %r'
                            % (ca['src'][1],))
+    # [big_in] = 1: the count is entered one value in, at [xI (pow2 (S j))],
+    # so the landing carries the odd digit in its PREFIX and one fewer unit
+    # copy behind it.  Its fill is the octave's, so CLOSEB is untouched.
+    bi = law.get('big_in', 0)
+    uSi = tuple(din['uS'])
     lpre, lu, la, lb, lpost = ca['land'][1]
-    if (tuple(lpre), tuple(lu), la, lb) != ((), tuple(din['uD']), 1, 1):
+    if (tuple(lpre), tuple(lu), la, lb) != \
+            (((), tuple(din['uD']), 1, 1) if not bi
+             else (uSi, tuple(din['uD']), 1, 0)):
         raise NC.NestError('cascade low: CLOSEA lands off shape %r'
                            % (ca['land'][1],))
     acore, apadl, apadw = _pads(lpost, soD + bt)
     afcore, afarl, afarw = _pads(tuple(ca['land'][3][0])
                                  + tuple(ca['land'][3][4]),
                                  tuple(law['far_in']))
-    arep = 'rep %s (S (S j))' % clist(din['uD'])
+    arep = ('rep %s (S (S j))' % clist(din['uD']) if not bi
+            else '%s ++ rep %s (S j)' % (clist(uSi), clist(din['uD'])))
 
     # CLOSEB: the closing count's fill -> the outer successor
     zpre, zu, za, zb, zpost = cb['src'][1]
@@ -1179,6 +1206,11 @@ def reps_low(spec, d, K):
         '@CBXB@': _nest(xcore, xpadb, xrep),
         '@CBXF@': _nest(xfcore, xfarl), '@CBXG@': _nest(xfcore, xfarb),
         '@N0@': str(d['n0']),
+        '@BIGV@': 'pow2 (S (S j))' if not bi else 'xI (pow2 (S j))',
+        '@BIGVP@': "pow2 (S (S j'))" if not bi else "xI (pow2 (S j'))",
+        '@BIGVE@': 'epow2_%s' % ID if not bi else 'exi_%s' % ID,
+        '@BIGVF@': 'efill_%s' % ID if not bi else 'exif_%s' % ID,
+        '@EXISEC@': '' if not bi else EXI_SEC,
     }
     r['@XBA@'] = _xterm(ba, law, 'BA')
     r['@XAB@'] = _xterm(ab, law, 'AB')
@@ -1211,7 +1243,8 @@ def reps_low(spec, d, K):
     r['@IXCLA@'] = ('  replace (1 * S j + %d) with (j + 1 + %d) by lia.\n'
                     % (d0, d0)
                     + far('S j'))
-    r['@IXCLAB@'] = ('    replace (1 * S j + 1) with (S (S j)) by lia.\n'
+    r['@IXCLAB@'] = ('    replace (1 * S j + %d) with (%s) by lia.\n'
+                     % (1 - bi, 'S (S j)' if not bi else 'S j')
                      + '  ' + far('S j'))
     r['@IXCLB@'] = ('  replace (1 * S (S j) + 0) with (S (S j)) by lia.\n'
                     + far('S (S j)'))

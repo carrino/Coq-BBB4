@@ -1,7 +1,13 @@
 # Residue prompt — the nested front is spent down to its measured blockers
 
-_Refreshed 2026-07-28 at the end of the wave-25 CASCADE-BOARDING track
-(branch `claude/cascade-counter-merge-issue-ki8ulc`), which boarded ALL 57
+_Refreshed 2026-07-29 at the end of the wave-26 track (branch
+`claude/residue-reduction-4-2-dpb65q`), which boarded the LAST 4 octave-down
+rows -- the ones whose closing count enters one value in, at `xI (pow2 j)` --
+and so **spent the cascade route**: all 69 machines that gate are boarded.
+`D_remaining` **431 -> 427**.  `docs/WAVE26_FINDINGS.md`; section 3 is the
+re-measurement of the 17 rows the bucket has left and section 4 the one thing
+still untried on the largest of them.  Before it, wave-25
+(branch `claude/cascade-counter-merge-issue-ki8ulc`) boarded ALL 57
 gated cascade machines (`CASB_*`, every one accepted on the first render,
 funext-only) AND 8 of the 12 octave-down rows (the whole cascade sits one
 octave down; the close is one more ASCENDING count at octave j+1 between
@@ -15,9 +21,9 @@ boarded the whole
 the kernel recomputes from the SAME lap chains that no window step is ever
 in `StA` (`Checkers/LapAvoid.v`, axiom-free), and
 `Counters/LapGlueQuiet.v` turns that plus a checked bootstrap window into
-the R_QH triple with the exact last-visit bound.  `D_remaining` is **431**
-and 4,725 of the frozen 5,156 are settled (91.6%).  Full assessments:
-`docs/WAVE25_FINDINGS.md`, `docs/WAVE23_FINDINGS.md`,
+the R_QH triple with the exact last-visit bound.  `D_remaining` is **427**
+and 4,729 of the frozen 5,156 are settled (91.7%).  Full assessments:
+`docs/WAVE26_FINDINGS.md`, `docs/WAVE25_FINDINGS.md`, `docs/WAVE23_FINDINGS.md`,
 `docs/WAVE22_FINDINGS.md`; the wave-18 story is
 `docs/WAVE18_FINDINGS.md`._
 
@@ -36,12 +42,21 @@ Continue the (4,2) residue reduction in carrino/Coq-BBB4, on a new branch off
 main.
 
 READ FIRST, in this order:
-  docs/WAVE25_FINDINGS.md   -- THE TASK's state, all of it; it is short.  The
-                               57 gated cascade machines AND 8 of the 12
-                               octave-down rows are BOARDED (CASB_*); the
-                               route is a full third route in
-                               emit_lapcert/cascade_emit; what remains of the
-                               bucket is the 22 non-gated (item 0 below).
+  docs/WAVE26_FINDINGS.md   -- THE TASK's state, all of it; it is short.  The
+                               CASCADE ROUTE IS SPENT: all 69 machines that
+                               gate are boarded (CASB_*).  Section 3 is the
+                               re-measurement of the 18 rows the bucket has
+                               left, in three named sub-families; section 4
+                               is the one thing still untried on the largest
+                               of them (10 rows) and section 6 is what this
+                               wave measured NEGATIVE.  Section 5 answers
+                               "are the halting-transition machines easier"
+                               with numbers: yes, and already spent.
+  docs/WAVE25_FINDINGS.md   -- the boarding wave behind it.  The 57 gated
+                               cascade machines AND 8 of the 12 octave-down
+                               rows; the route is a full third route in
+                               emit_lapcert/cascade_emit.  Section 7 is the
+                               octave-down shape, which wave-26 finished.
   docs/WAVE24_FINDINGS.md   -- the build behind it: the gate, the level
                                induction (theories/Counters/
                                NestedLapCascade.v), the framing search.
@@ -84,14 +99,14 @@ LapCertGlue, LapGlueAbs, NestedLap and NestedLapLift are axiom-FREE or
 funext-only -- keep them that way).  Everything under tools/ is UNTRUSTED;
 the kernel re-checks every board.
 
-STATE: 4,725 of the frozen 5,156 settled (91.6%); D_remaining = 431.
+STATE: 4,729 of the frozen 5,156 settled (91.7%); D_remaining = 427.
 THE HOLDOUT LIST IS CLOSED.  Everything left is RESIDUE and all of it is
 yours.  docs/RESIDUE_MAP.md + tools/closeout/residue_map.tsv give every
 remaining machine's measured lap shape and the exact blocker (the tsv is
-wave-23's measurement; subtract the 65 CASB_* boards from its
+wave-23's measurement; subtract the 69 CASB_* boards from its
 no-exit/no-boot rows).
 
-Failure profile at D_remaining = 431 (residue_map.tsv minus wave-25):
+Failure profile at D_remaining = 427 (residue_map.tsv minus waves 25-26):
 
   211  no overflow phase           -- ALL of them the no-anchor bucket
   105  no interior chain           -- QUAD 41, HIGHER 13, PARITY-AFFINE 13,
@@ -99,41 +114,63 @@ Failure profile at D_remaining = 431 (residue_map.tsv minus wave-25):
    60  no inner family at pow2 j   -- what SURVIVED the offset/split/refill
                                       routes; 32 have no family under any
                                       route, the rest fail an offset chain
-   22  the CASCADE's non-gated     -- was "65 no exit chain + 22 no boot
-                                      chain"; wave-25 boarded the 57 gated +
-                                      8 octave-down (CASB_*).  Of the 22:
-                                      4 whose closing count enters ONE VALUE
-                                      IN (xI (pow2 j) -- an emitter lemma
-                                      pair, WAVE25 section 7), 17 one/two-
-                                      count phases, 1 main count at 4..7
+   18  the CASCADE's non-gated     -- was "65 no exit chain + 22 no boot
+                                      chain"; the route is SPENT, all 69 that
+                                      gate are boarded (CASB_*).  Of the 18:
+                                      17 one/two-count phases -- re-measured
+                                      in WAVE26 section 3 as three sub-
+                                      families, 10 + 4 + 3, ALL of them
+                                      `no boot chain` -- and 1 main count
+                                      at 4..7
    24  no anchor
     5  no second exit chain        -- the SCycR-entry-offset checker gap,
                                       measured precisely (WAVE22 section 2b)
     4  no inner interior chain
-(the 15 "no visit witness (StA)" rows were boarded in wave-23 -- the AVOID
-route, LAPQ_*; the 57 gated cascade rows in wave-25 -- CASB_*)
+(211+105+60+18+24+5+4 = 427, and this profile is now regenerated: it is the
+427 rows of tools/closeout/frozen_unproven.txt joined against residue_map.tsv,
+not the wave-23 numbers with boards subtracted by hand.  The 15 "no visit
+witness (StA)" rows were boarded in wave-23 -- the AVOID route, LAPQ_*; the
+69 cascade rows in waves 25-26 -- CASB_*)
 Per-machine cost is a vm_compute:
   python3 tools/counters/emit_lapcert.py --list FILE --emit   (25 alphabets)
 After a wave, inventory.py + gen_stages.py + audit.py shrink D_remaining by
 exactly what you boarded, in minutes.
 
-THE TASK (re-ranked 2026-07-28 after wave-25 BOARDED the 57 gated cascade
-  machines -- CASB_*, docs/WAVE25_FINDINGS.md; the route is now a full
-  third route in the emitter, tried automatically after flat/nested/offset):
+THE TASK (re-ranked 2026-07-29 after wave-26 SPENT the cascade route --
+  all 69 gating machines boarded, CASB_*, docs/WAVE26_FINDINGS.md; the route
+  is a full third route in the emitter, tried automatically after
+  flat/nested/offset):
 
-  (0) THE CASCADE's 22 NON-GATED -- the residue of the old no-exit/no-boot
-      bucket, all measured: 4 are the octave-down shape whose CLOSING COUNT
-      ENTERS ONE VALUE IN (starts at xI (pow2 j), not pow2 (S j)) -- an
-      emitter lemma pair (E (xI (pow2 n)) and its fill twin) in the LOW
-      template, WAVE25 section 7 names it precisely; 17 report one or two
-      counts in the phase (the `no boot chain` mirror half plus the 15
-      odd-shaped rows CASCADE_EXIT section 2 set aside -- re-measure before
-      designing); 1 a main count at 4..7.
-      `cascade_probe.py --gate` re-gates the bucket;
-      `cascade_emit.py --boards FILE` boards whatever newly gates (visits,
-      interior, boot and closer are all wired -- wave-25's survey showed the
-      boot chain + closing sweep host every witness, and per-level chains
-      can NEVER host one: at j = 0 there is no descent).
+  (0) THE CASCADE's 18 NON-GATED, re-measured (WAVE26 section 3).  All 17 of
+      the one/two-count rows are `no boot chain`, in three sub-families:
+        * 10  TWO counts one octave apart, under TWO DIFFERENT alphabets
+              (Alph_01_11_011 tail 11, then Alph_10_11_1 = Ip tail 1).  The
+              FIRST count sits one octave DOWN, which is why families() --
+              floored at oct >= 0 -- never offers it and the boot is searched
+              into the second count instead.  THIS IS THE BEST LEAD IN THE
+              BUCKET and wave-26 took it two steps: with the floor lifted the
+              octave-down family is found on all 10, and the BOOT CHAIN INTO
+              IT DERIVES ON ALL 10 under _frame_pair -- identically, at
+              peel (1,0) post 6, cost 4*i+6, EXACT.  So they are neither an
+              identification nor a boot failure.  WHAT IS LEFT is the SHIFT
+              chain (octave-down fill -> the octave-0 count's start), and it
+              is NOT a search-budget problem: 0 at peel <= 3 / split <= 14
+              AND 0 at peel <= 8 / split <= 30 (378 framings each).  It has
+              to RE-ENCODE a j-length word from one digit alphabet into
+              another (Alph_01_11_011 -> Ip) across ~66 configurations -- a
+              pass over the whole word, which a single-index window chain
+              cannot be at any framing.  Naming that piece is the design
+              question; do NOT widen further and do NOT go back to
+              alphabets.  Note that when it lands, the octave-down count is
+              j-1 blocks and needs the j = S j' reindex, which the low
+              cascade route already builds (cview_none_shape + lapz_/visz_).
+        *  4  one 5-value count (12..16) spanning the whole phase with a
+              GROWING far side -- a distinct unsolved shape.
+        *  3  one span decoded at five octaves (nested SHADOWS, not five
+              counts); two of the three measure overflow HIGHER, so they are
+              not in the exponential-counter model at all.
+      Plus 1 main count at 4..7.  `cascade_probe.py --gate` re-gates the
+      bucket; `cascade_emit.py --boards FILE` boards whatever newly gates.
       Also point cascade_probe at the 60 "no inner family" survivors and the
       EXP3/EXP4/HIGHER interiors (a deeper cascade is exactly what a
       Theta(3^j) lap smells of) -- both still untouched.
@@ -160,11 +197,58 @@ THEN, in ranked order (all independent of the above):
 
   (1) 105 "no interior chain" -- the second-largest bucket and the most
       shape-diverse: QUAD 41, AFFINE/AFFINE 14, HIGHER 13, PARITY-AFFINE 13,
-      EXP3 10, EXP2 8, EXP4 6.  The 41 QUAD/QUAD are the largest population in
-      the whole residue that has never had a design pass -- a quadratic
-      interior AND overflow, outside the affine certificate model.
-      Bounce_8.v's MeasureGlue nesting is the precedent.  The 13
-      PARITY-AFFINE are IN model after the m=2 re-index (j = 2i+r), but
+      EXP3 10, EXP2 8, EXP4 6.
+
+      THE 41 QUAD/QUAD NOW HAVE THEIR DESIGN PASS -- WAVE26 section 7, and it
+      is the best-characterised unboarded population in the residue.  They are
+      ONE shape with no exceptions: a binary increment whose CARRY IS DONE BY
+      LINEAR SEARCH, one round trip per digit, out to the digit and back,
+      before probing one deeper.  Measured over all 41:
+        * the interior lap fits an exact integer quadratic       41/41
+        * the OVERFLOW polynomial is the SAME polynomial          41/41
+          (so a route that takes the interior takes the overflow free)
+        * head-direction REVERSALS per lap are affine in j,       41/41
+          slope exactly 2 -- one extra round trip per extra digit
+        * the micro-lap RLEs to a fixed letter pattern with counts
+          affine in the probe index k                            33/41
+        * THE MICRO-LAP IS LITERALLY A CHAIN -- its (state, read,
+          write, move) sequence is a fixed list of 2-3 window steps
+          with counts affine in k                                41/41
+          (37 uniform in k, 4 after the standard k = 2i+r re-index)
+      So NOTHING about the micro-lap is outside the certificate model; the
+      only thing outside it is that there are Theta(j) of them.
+      Leading coefficient = the alphabet's word stride: 1*j^2 for the 25 Kp,
+      2*j^2 for the 10 Bp and 6 Alph_00_10_1.
+      DO NOT SEARCH FOR AN INTERIOR CHAIN.  A chain sweeps a BOUNDED number
+      of times; these make Theta(j) excursions, so no derive_chain widening
+      reaches them at any peel, split or budget.  That is a proof from the
+      shape, not a failed search, and it explains WAVE16 section 5.
+      THE ROUTE IS MeasureGlue.v, and BOTH halves of it are now built and
+      validated (WAVE26 7f, same session):
+        * tools/counters/quad_probe.py reads the whole law -- boot, micro,
+          terminal as folded step-patterns with affine count laws -- and
+          validates it at EXACT step counts, j = 2..11, interior AND
+          overflow: 29 OF 41 GATE (13 Kp, 10 Bp, 6 Alph_00_10_1; 26
+          anchor-pivot + 3 deep-pivot whose boot is a j-dependent law; 16
+          need parity classes; all from j = 2, no concrete exceptions).
+        * theories/Tests/QuadMGShape.v pins the composition KERNEL-CHECKED
+          and AXIOM-FREE: MeasureGlue.mrun at abstract state (k, m), stepA
+          a pure pair function, mu = snd, P x = fst x + snd x = j.  Micro
+          hop + terminal => the whole quadratic lap, one csteps run.
+      The 12 that do not gate are ONE further shape -- the DOUBLE LADDER
+      (ascending probes, then a descending clearing ladder inside the
+      terminal; named in WAVE26 7f) -- two mrun compositions back to back;
+      the reader needs recursive terminal segmentation before they gate.
+      WHAT REMAINS FOR A BOARD is assembly (WAVE26 7e): the two-index
+      denotation Cf k m (the cascade's Dc l m pattern), the micro chain and
+      Hterm in sside form with their cden bridges, the standard wrapping,
+      and the emitter.  HAND-BOARD THE EXEMPLAR 0RB0LA_1LA0LC_0RD1LC_1RB1RD
+      FIRST (micro B1R0 (C1R1)^i C0L0 (D1L1)^i D0L1, term B0R1 (A1R0)^(j+4),
+      boot A0L0, validated to j = 11); Hterm -- whose chain count is the
+      FINAL k, tied to the anchor's carry index -- is the one piece with no
+      precedent, so do it first.  Then the emitter, then the 29.
+
+      The 13 PARITY-AFFINE are IN model after the m=2 re-index (j = 2i+r), but
       wave-14 measured only ~3 of the 13 derive both branches naively, so do
       not oversize it.
 
@@ -176,11 +260,31 @@ THEN, in ranked order (all independent of the above):
       future bucket has quiet-StB/C/D lap families, the same route takes
       them with emitter work only.]
 
-  (3) The 239 no-anchor machines.  alphabet_infer.py + gen_alphabet.py INFER a
-      counter's word family from its own tape as a triple (A,B,C) and generate
-      a PROVED Coq module; 21 families are wired.  They may or may not be
-      EXP2 once decodable -- and if they are, the wave-18 machinery takes them
-      with no new theory.
+  (3) THE 211 "no overflow phase" + 24 "no anchor" -- RE-RANKED TO THE TOP
+      by WAVE26 section 8: John decoded the class ("a counter with 1 to the
+      left of every bit") and the whole bucket opened.  The alphabet was
+      wired since wave-14 (Alph_10_11_11) and emit_lapcert.anchors FINDS the
+      family on the mirrored spec; the only blocker was ever that these
+      counters NEVER REST AT A POWER OF TWO -- the overflow sweep writes the
+      LSB pair's data cell last, already incremented, so the overflow lap
+      ENTERS s VALUES IN at the OUTER anchor (fill -> 2^k + s) and phase_mid,
+      waiting for E(2^k) exactly, reported `no overflow phase` forever.
+      Measured over all 211 (anchor_times to p=300): 104 find the anchor
+      family IMMEDIATELY -- ~42 skip-1, ~48 skip-2 (the offset route's +2
+      one level up), 5 deeper skip sets to name -- and 107 are the
+      ALTERNATE-OCTAVE two-form shape (the family rests in this form only on
+      odd octaves; the decode held on every sampled row).  The exemplar
+      0RB0LC_1LC1RB_0RD1LA_1LB1LA is AFFINE everywhere once the anchor is in
+      hand: interior 4j+4, overflow 4j+7.  THE ROUTE (no checker extension):
+      Cc p = if is_pow2 p then VIRT p else E p ++ tail, VIRT the measured
+      half-written form, closed by LapGlue.glue_neverqh DIRECTLY (arbitrary
+      Cc, Bounce_8's pattern); laps = interior / fill->VIRT / VIRT->E(2^k+s),
+      all affine chains.  Build order: phase_mid closure reading s off the
+      machine, the VIRT extractor, one hand exemplar, the emitter, then the
+      104; the 107 two-form rows need the second form enumerated first.
+      THIS IS THE BIGGEST AND CHEAPEST BITE IN THE RESIDUE -- do it before
+      the QUAD build.  (alphabet_infer.py + gen_alphabet.py remain the tools
+      for anything here that decodes under a NEW alphabet.)
 
 DO NOT RETRY (measured; grids in COUNTER_CLOSEOUT.md section 5, WAVE12 section
 8, WAVE13 sections 4 and 8, WAVE14 section 7, WAVE15 section 5, WAVE16 section
@@ -211,8 +315,19 @@ DO NOT RETRY (measured; grids in COUNTER_CLOSEOUT.md section 5, WAVE12 section
     absolute column parity (frame_probe.py, spacetime.py).
   * Believing a negative from an emitter run that RAISED.  Survey with
     wall_survey.py, which keeps the best outcome per machine, first.
+  * The MACHINES WITH A HALTING TRANSITION as a batch (wave-26 section 5).
+    One fewer reachable transition IS easier for this machinery -- 97.1% of
+    the 1,537 frozen `---` machines are settled against 89.4% of the rest --
+    but that is exactly why only 45 are left, 10.5% of the residue against
+    29.8% of the frozen set, spread over the same buckets with no sub-route.
 
-TWO STANDING LESSONS, both earned by a wave that spent itself relearning them:
+THREE STANDING LESSONS, each earned by a wave that spent itself relearning it:
+  * WHEN A TRANSITION TRACES BUT DOES NOT DERIVE, PEEL BEFORE ANYTHING ELSE.
+    (peel, split) is the search space, and ONE peeled unit copy has now been
+    the whole difference three times running: B->A in wave-24, the
+    octave-down boot in wave-25, and the 10 two-count rows' boot in wave-26
+    (0 of 10 unframed, 10 of 10 at peel (1,0)).  Do not reach for alphabets,
+    octaves or new theory until _frame_pair has been run.
   * When a population is "in model but the search cannot find it", check what
     the search is being asked to PROVE before widening it (wave-16).
   * When that fix lands as a defaulted FLAG, grep every caller of the function

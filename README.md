@@ -18,18 +18,18 @@ bbb4_target : forall tm,
 
 Every (4,2) Turing machine either **quasihalts with score at most
 32,779,478** — the champion's score — or **never quasihalts**, *except*
-the **427 residue machines** in `D_remaining`
+the **423 residue machines** in `D_remaining`
 (`tools/closeout/frozen_unproven.txt`), which are still undecided and
 are reported as **SKIPPED**.
 
 Two honest caveats, stated precisely in
 [`docs/CLAIMS.md`](docs/CLAIMS.md):
 
-* The champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` is itself one of the 427,
+* The champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` is itself one of the 423,
   so this is **not** a proof that BBB(4) = 32,779,478 — any residue
   machine could, for all this development proves, quasihalt with a
   larger score.
-* `Deferred D_remaining tm` means membership in the orbit of the 427
+* `Deferred D_remaining tm` means membership in the orbit of the 423
   frozen rows under completion of undefined transitions, non-start
   state swaps, and mirroring — not bare list membership.
 
@@ -135,7 +135,7 @@ verification tier, from "check one machine" to "re-walk the census".
 
 * [`docs/CLAIMS.md`](docs/CLAIMS.md) — what is proved, exactly,
   including what is **not**.
-* [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) — the 427 undecided
+* [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) — the 423 undecided
   machines, mapped by shape and blocker.
 * [`docs/VERIFYING.md`](docs/VERIFYING.md) — how to check any of this
   yourself.
