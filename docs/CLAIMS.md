@@ -62,7 +62,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **181** undecided core machines in
+3. it is **skipped**: one of the **174** undecided core machines in
    `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **85**
    0RB re-root shadows (`tools/closeout/shadow_rows.tsv`), which resolve
    automatically as core machines are boarded.
@@ -86,8 +86,8 @@ before the record itself is a theorem here:
    what `theories/Counters/BlankTail.v` already closes for the four previous
    champions; what it needs is a 32.8M-step prefix, for which
    `Checkers/TCyclerN.v` already supplies `cstepsN` and `cstepsN_nat`.  It is
-   currently one of the 181 core machines.  **Not done.**
-2. **The 181 (+ their 85 shadows).**  Any of them could, for all this
+   currently one of the 174 core machines.  **Not done.**
+2. **The 174 (+ their 85 shadows).**  Any of them could, for all this
    development knows, be a quasihalter with a larger score.  That is what
    undecided means.
 
@@ -99,14 +99,14 @@ existentially, per-board, instead of as one aggregated constant — is closed:
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 181 still-undecided machines (and
+> 32,779,478 or never quasihalts, except 174 still-undecided machines (and
 > their 85 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The BBB(4) *value* does not yet
-> follow from what is here, because the champion itself is one of the 181.
+> follow from what is here, because the champion itself is one of the 174.
 
-## Scope of the 181
+## Scope of the 174
 
-All 181 core machines are residue — machines no engine in this repository
+All 174 core machines are residue — machines no engine in this repository
 settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28
