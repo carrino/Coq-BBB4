@@ -16,6 +16,12 @@ rows and 1 main-count-at-4..7.  Nothing in `theories/` outside the four new
 board files was touched; no new library Coq, no new checker surface, no new
 axiom.
 
+`make closeout` regenerated the stages; `audit.py` OK (exact partition);
+`Closeout.vo` and every stage file recompiled in-container, with
+`Print Assumptions closeout_partial` = `functional_extensionality_dep` only;
+`census_cache --check` MATCH throughout (nothing under `theories/Census/`
+touched).
+
 ## 2. The 4: what "enters one value in" actually cost
 
 Wave-25's §7 reading was exactly right, including the size of the fix.  At
