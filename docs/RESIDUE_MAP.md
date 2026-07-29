@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**247 rows as of this commit — 167 distinct core machines + 80 0RB
+_**240 rows as of this commit — 162 distinct core machines + 78 0RB
 re-root shadows that fall with them.**  The count moves every wave, so
 treat the row files as the authority and this prose as a snapshot.  With
 tower #20 boarded on 2026-07-28 the (4,2) HOLDOUT list is closed, so this
@@ -80,15 +80,19 @@ boarded set.
 
 ## The families
 
-Counts below are over the 167 core rows as of this commit (the shape
+Counts below are over the 162 core rows as of this commit (the shape
 measurements come from the last full `ovfshape.py` sweep, filtered to the
-live list):
+live list).  **The blocker labels predate wave-30**: that wave measured the
+biggest ones out of existence — the `no overflow phase` bucket's interior
+gate is now EMPTY (bit-polarity inversion, `WAVE30_FINDINGS.md` §6b–6d) and
+67 of those rows now stop on the exponential overflow arm instead, behind
+the single bounded-inner-carrier build (§9 there).
 
-| interior / overflow | n | what stops us |
+| interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
 | `-`/`no-anchor` | 81 | 70 no overflow phase, 11 no anchor |
-| `AFFINE`/`EXP2` | 30 | 17 no inner family at `pow2 j`, 6 no boot chain, 4 no interior chain, 2 no second exit chain, 1 no inner interior chain |
-| `AFFINE`/`AFFINE` | 19 | 12 no interior chain, 7 no inner family |
+| `AFFINE`/`EXP2` | 29 | 17 no inner family at `pow2 j`, 5 no boot chain, 4 no interior chain, 2 no second exit chain, 1 no inner interior chain |
+| `AFFINE`/`AFFINE` | 15 | 8 no interior chain, 7 no inner family |
 | `HIGHER`/`HIGHER` | 12 | 12 no interior chain |
 | `EXP3`/`EXP3` | 8 | 8 no interior chain |
 | `PARITY-AFFINE` | 7 | 7 no interior chain |
@@ -124,51 +128,46 @@ live list):
   window step is in `StA` (`Checkers/LapAvoid.v`), and
   `LapGlueQuiet.glue_qh_quiet` closes the R_QH triple with the exact bound.
 
-## The community cross-check, and the 25 nearest to falling
+## The community cross-check — and how it played out
 
 nickdrozd read the published version of this map and posted 64 machines he
-was "pretty sure are all solvable".  On the part that can be checked he was
-12-for-12: 12 of the 64 were already boarded, all by routes that did not
-exist a fortnight earlier.  The open 52 concentrate in the
-`no interior chain` bucket (43 of them), and
-`tools/counters/intgap.py` (results: `tools/counters/intgap51.json`,
-analysis: `docs/WAVE29_REGISTER_FINDINGS.md` §10) splits that bucket into
-three gaps — **none of which is about the machines**:
+was "pretty sure are all solvable"; John's live hand-reads ran alongside.
+The scorecard so far: nick's checkable 12 were 12-for-12 (all boarded by
+routes that did not exist a fortnight earlier), John's hand-inspections
+stand at 36-for-36, and two of his one-line reads ("msb on the left",
+"like a grey counter, up then down") exposed a **bit-polarity inversion in
+the reader itself** — the tape was being decoded under alphabets with the
+two digit words swapped, so 51 machines "counting down" were ordinary
+ascending counters all along (`docs/WAVE30_FINDINGS.md` §6b).  Fixing the
+reader emptied the interior gate of the 70-row bucket outright.
 
-* **17 rows, `cycR-gap`** — a missing PRIMITIVE that is the mirror of one
-  that exists: `WTape.cycL` deposits past a concrete right window and
-  `cycLW` generalises it, but there is no `cycRW`, and `SCycR` has no
-  offset parameter.  One `WTape` lemma + one `SCycR2` checker constructor
-  + the mirrored candidate generator closes all 17
-  (`docs/WAVE30_PROMPT.md` §1 is the build recipe).
-* **8 rows, `lift`** — both split interior chains derive *up to trailing
-  blanks*, and the `lift=True` last resort is simply never tried on the
-  split path.  A template combination in `emit_lapcert.derive`; the Coq
-  closers (`LapCertGlueLift`) already exist.  No new theory.
-* **26 rows, `unreachable`** — the target appears in no form at the anchor
-  offered; these need a different anchor or decomposition, and are the only
-  part of the bucket where the difficulty might be real.
+Wave-30 also *measured two of the sized routes dead* — the `cycR-gap`
+primitive fires nowhere sound, and the double peel is irrelevant
+(§§2, 4 there; both are now do-not-retry).  The surviving structure:
 
-So 25 machines — half of them independently flagged as legible by a
-community reader — sit behind two pieces of plumbing.  That is the
-lowest-hanging fruit on this list.
+* **67 rows** — one gate: the **bounded inner carrier**
+  (`WAVE30_FINDINGS.md` §9 item 1).  The inner counter of the exponential
+  overflow arm runs a PARTIAL octave; the missing piece is one lemma
+  beside `NestedLapLift.inner_to_fill_lift`, stopped at a measured
+  endpoint instead of the fill.  The single biggest lever on this list.
+* **26 rows, `unreachable`** — re-measured at EVERY anchor family, both
+  mirrors, tolerant and parity-split readers; all 26 survive (§5).  The
+  one part of the old "easy" bucket where the difficulty looks real.
+* **8 period-2 rows** — need a genuine parity device (a two-unit `cycR`
+  with an even/odd-split interior), sized honestly in §9 item 4.
 
 ## Where a newcomer should probably start
 
-1. **The 25 above.**  The exact build steps are written down in
-   `docs/WAVE30_PROMPT.md` §§1–2; the machines are listed in
-   `tools/counters/intgap51.json` (verdicts `cycR-gap` and `lift`).
-2. **The 81 no-anchor.** Half the residue, and the cheapest per machine
-   *if* the alphabet inference generalises: their tapes never decode as a
-   counter under any of the 21 alphabets in the zoo, so the first step is
-   reading a new `(A,B,C)` triple off the tape with
-   `tools/counters/alphabet_infer.py` — wave-14 inferred 18 alphabets from
-   tapes this way.
-3. **The 17 `AFFINE`/`EXP2` "no inner family at `pow2 j`".** These are
-   counters whose pieces are all in-model; only the inner count's start
-   value falls outside the emitter's current index shapes.  Wave-22's
-   OFFSET-family route (`nestcert.derive_offset`) boarded most of this
-   bucket; the survivors need one more index shape, not a new theory.
+1. **The bounded inner carrier** (`docs/WAVE30_FINDINGS.md` §9, items
+   1–2).  One Coq lemma plus the two-form board's interior glue, measured
+   to be the only gate in front of 67 rows.
+2. **The 11 no-anchor.** Their resting tapes are regular families that are
+   NOT digit words (five are solid blocks of ones — index the family by
+   the wall, do not hunt for an alphabet; `WAVE29_BOUNCER_FINDINGS.md`
+   §§7–8 has a measured reading for every one, including two Gray-code
+   counters whose build is fully specified and unexecuted).
+3. **The 26 `unreachable`.**  Fresh eyes on the decomposition; every
+   mechanical re-read has been tried and is recorded.
 
 ## Reproducing the map
 
@@ -180,4 +179,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 167).
+first shrank from 883 to 511 (and, wave by wave, to the current 162).
