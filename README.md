@@ -140,7 +140,11 @@ verification tier, from "check one machine" to "re-walk the census".
 
 The open-problem list is [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md):
 every remaining machine, mapped by shape and blocker, with suggested
-starting points.  Each board is a self-contained per-machine proof, the
+starting points.  The burndown list itself — what still needs to be
+proven — is `tools/closeout/core_rows.txt` (one line per remaining core
+machine, bbchallenge format); `tools/closeout/frozen_unproven.txt` adds
+their 0RB shadows, and `python3 tools/closeout/audit.py` prints the live
+tally.  Each board is a self-contained per-machine proof, the
 shared toolkits are documented, and a machine leaves the SKIPPED list
 the moment any kernel-checked proof settles it —
 [`docs/TERMINOLOGY.md`](docs/TERMINOLOGY.md) has the vocabulary and

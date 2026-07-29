@@ -123,15 +123,47 @@ live list):
   window step is in `StA` (`Checkers/LapAvoid.v`), and
   `LapGlueQuiet.glue_qh_quiet` closes the R_QH triple with the exact bound.
 
+## The community cross-check, and the 25 nearest to falling
+
+nickdrozd read the published version of this map and posted 64 machines he
+was "pretty sure are all solvable".  On the part that can be checked he was
+12-for-12: 12 of the 64 were already boarded, all by routes that did not
+exist a fortnight earlier.  The open 52 concentrate in the
+`no interior chain` bucket (43 of them), and
+`tools/counters/intgap.py` (results: `tools/counters/intgap51.json`,
+analysis: `docs/WAVE29_REGISTER_FINDINGS.md` §10) splits that bucket into
+three gaps — **none of which is about the machines**:
+
+* **17 rows, `cycR-gap`** — a missing PRIMITIVE that is the mirror of one
+  that exists: `WTape.cycL` deposits past a concrete right window and
+  `cycLW` generalises it, but there is no `cycRW`, and `SCycR` has no
+  offset parameter.  One `WTape` lemma + one `SCycR2` checker constructor
+  + the mirrored candidate generator closes all 17
+  (`docs/WAVE30_PROMPT.md` §1 is the build recipe).
+* **8 rows, `lift`** — both split interior chains derive *up to trailing
+  blanks*, and the `lift=True` last resort is simply never tried on the
+  split path.  A template combination in `emit_lapcert.derive`; the Coq
+  closers (`LapCertGlueLift`) already exist.  No new theory.
+* **26 rows, `unreachable`** — the target appears in no form at the anchor
+  offered; these need a different anchor or decomposition, and are the only
+  part of the bucket where the difficulty might be real.
+
+So 25 machines — half of them independently flagged as legible by a
+community reader — sit behind two pieces of plumbing.  That is the
+lowest-hanging fruit on this list.
+
 ## Where a newcomer should probably start
 
-1. **The 81 no-anchor.** Half the residue, and the cheapest per machine
+1. **The 25 above.**  The exact build steps are written down in
+   `docs/WAVE30_PROMPT.md` §§1–2; the machines are listed in
+   `tools/counters/intgap51.json` (verdicts `cycR-gap` and `lift`).
+2. **The 81 no-anchor.** Half the residue, and the cheapest per machine
    *if* the alphabet inference generalises: their tapes never decode as a
    counter under any of the 21 alphabets in the zoo, so the first step is
    reading a new `(A,B,C)` triple off the tape with
    `tools/counters/alphabet_infer.py` — wave-14 inferred 18 alphabets from
    tapes this way.
-2. **The 17 `AFFINE`/`EXP2` "no inner family at `pow2 j`".** These are
+3. **The 17 `AFFINE`/`EXP2` "no inner family at `pow2 j`".** These are
    counters whose pieces are all in-model; only the inner count's start
    value falls outside the emitter's current index shapes.  Wave-22's
    OFFSET-family route (`nestcert.derive_offset`) boarded most of this
