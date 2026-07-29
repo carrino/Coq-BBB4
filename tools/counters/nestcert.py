@@ -2613,14 +2613,17 @@ def solo_endpoints(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=7,
     key_m = (law['main_enc'], law['main_st'], tuple(law['main_tail']),
              tuple(law['main_far']), law['main_oct'])
     # `rep uS i ++ sS` has no rotation when sS starts with a blank, so the
-    # level lap is SPLIT on every machine measured; the main lap usually is
-    # not, and the plain form is preferred where it exists (one chain, one
-    # glue pair).
+    # LEVEL lap has no chain at the plain AI0/AI1 on any of these and the
+    # wave-22b Z/P split is the only form it derives in.  The main lap usually
+    # derives plain too, but it derives SPLIT on every machine measured, so
+    # both families are taken in the split form and the emitter carries ONE
+    # lap template instead of two.  [lap_m_plain] is kept for the record.
     lap_in = _inner_lap_split(tab, ENCDATA, key_in)
+    lap_m = _inner_lap_split(tab, ENCDATA, key_m)
     try:
-        lap_m = _inner_lap(tab, ENCDATA, key_m)
+        lap_m_plain = _inner_lap(tab, ENCDATA, key_m)
     except NestError:
-        lap_m = _inner_lap_split(tab, ENCDATA, key_m)
+        lap_m_plain = None
     B0, B1 = _confs_ovf(ENCDATA, enc, st0, tail, far)
     trans = {}
     for tr in solo_transitions(law, ENCDATA, enc, st0, tail, far):
@@ -2642,7 +2645,8 @@ def solo_endpoints(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=7,
             raise NestError('no solo %s chain' % tr['kind'])
         trans[tr['kind']] = got
     return dict(law=law, trans=trans, lap_in=lap_in, lap_m=lap_m,
-                key_in=key_in, key_m=key_m, B0=B0, B1=B1)
+                lap_m_plain=lap_m_plain, key_in=key_in, key_m=key_m,
+                B0=B0, B1=B1)
 
 
 def _lapcost(lap, c):
