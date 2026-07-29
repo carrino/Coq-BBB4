@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**255 rows as of this commit — 172 distinct core machines + 83 0RB
+_**247 rows as of this commit — 167 distinct core machines + 80 0RB
 re-root shadows that fall with them.**  The count moves every wave, so
 treat the row files as the authority and this prose as a snapshot.  With
 tower #20 boarded on 2026-07-28 the (4,2) HOLDOUT list is closed, so this
@@ -80,17 +80,21 @@ boarded set.
 
 ## The families
 
+Counts below are over the 167 core rows as of this commit (the shape
+measurements come from the last full `ovfshape.py` sweep, filtered to the
+live list):
+
 | interior / overflow | n | what stops us |
 |---|---:|---|
-| `-`/`no-anchor` | 235 | 211 no overflow phase, 24 no anchor |
-| `AFFINE`/`EXP2` | 132 | 65 no exit chain, 32 no inner family at `pow2 j`, 20 no boot chain, 8 no interior chain, 5 no second exit chain, 2 no inner interior chain |
-| `AFFINE`/`AFFINE` | 37 | 23 no inner family, 14 no interior chain |
-| `QUAD`/`QUAD` | 41 | 41 no interior chain |
-| `PARITY-AFFINE` | 13 | 13 no interior chain |
-| `HIGHER`/`HIGHER` | 13 | 13 no interior chain |
-| `EXP3`/`EXP3` | 10 | 10 no interior chain |
-| `AFFINE`/`HIGHER` | 9 | 5 no inner family, 2 no boot chain, 2 no inner interior chain |
-| `EXP4`/`EXP4` | 6 | 6 no interior chain |
+| `-`/`no-anchor` | 81 | 70 no overflow phase, 11 no anchor |
+| `AFFINE`/`EXP2` | 30 | 17 no inner family at `pow2 j`, 6 no boot chain, 4 no interior chain, 2 no second exit chain, 1 no inner interior chain |
+| `AFFINE`/`AFFINE` | 19 | 12 no interior chain, 7 no inner family |
+| `HIGHER`/`HIGHER` | 12 | 12 no interior chain |
+| `EXP3`/`EXP3` | 8 | 8 no interior chain |
+| `PARITY-AFFINE` | 7 | 7 no interior chain |
+| `QUAD`/`QUAD` | 4 | 4 no interior chain |
+| `EXP4`/`EXP4` | 4 | 4 no interior chain |
+| `AFFINE`/`HIGHER` | 2 | 1 no boot chain, 1 no inner interior chain |
 
 ### What each blocker means
 
@@ -121,12 +125,17 @@ boarded set.
 
 ## Where a newcomer should probably start
 
-1. **The 41 `QUAD`/`QUAD`.** The largest family in the residue that has never
-   had a design pass — a quadratic interior AND overflow.  `Bounce_8.v`'s
-   `MeasureGlue` nesting is the precedent.
-2. **The 235 no-anchor.** Largest single bucket, and the cheapest per machine
-   *if* the alphabet inference generalises: wave-14 inferred 18 alphabets from
+1. **The 81 no-anchor.** Half the residue, and the cheapest per machine
+   *if* the alphabet inference generalises: their tapes never decode as a
+   counter under any of the 21 alphabets in the zoo, so the first step is
+   reading a new `(A,B,C)` triple off the tape with
+   `tools/counters/alphabet_infer.py` — wave-14 inferred 18 alphabets from
    tapes this way.
+2. **The 17 `AFFINE`/`EXP2` "no inner family at `pow2 j`".** These are
+   counters whose pieces are all in-model; only the inner count's start
+   value falls outside the emitter's current index shapes.  Wave-22's
+   OFFSET-family route (`nestcert.derive_offset`) boarded most of this
+   bucket; the survivors need one more index shape, not a new theory.
 
 ## Reproducing the map
 
@@ -138,4 +147,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-shrank from 883 to 511.
+first shrank from 883 to 511 (and, wave by wave, to the current 167).
