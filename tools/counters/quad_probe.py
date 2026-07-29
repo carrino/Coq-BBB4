@@ -200,6 +200,17 @@ def lap_marks(tab, A, p, mode=(-1, False), tmax=200000):
     # both fit; the template parse plus exact-time validation catch any
     # non-uniformity.
     side, post = mode
+    if side == 0:
+        # RESTORE-POINT marks, read straight off the tape instead of off the
+        # head's column records.  A column record is only a PROXY for a
+        # restore point and it fails on the machines whose excursions
+        # DESCEND: those walk out to the deepest digit FIRST and then make
+        # shrinking round trips, so every record is set inside the opening
+        # walk and the ladder that follows is invisible.  The restore points
+        # themselves are exactly what the skeleton wants (the docstring's
+        # M(k)): the tape content is the anchor's again, letter for letter.
+        return T, [(t, q, col) for (t, q, col, ct) in tr[1:T]
+                   if ct == _content(c0, 0)], steps_of(tab, c0, T)
     t0 = 0
     if post:
         cols = [col for (_, _, col, _) in tr[:T + 1]]
@@ -259,7 +270,7 @@ def law_cost(classes, k):
                for b, s, z in zip(c['blocks'], c['sl'], c['ic']))
 
 
-def read_law_side(spec, mode, Js=(4, 5, 6, 7, 8, 9)):
+def read_law_side(spec, mode, Js=(4, 5, 6, 7, 8, 9), mkey='k'):
     """The whole law: anchor, q_r, stride, boot, micro, and the two
     terminals -- each a (letters, count-law) pair.  Read across several j so
     the j-dependence is measured rather than assumed."""
@@ -288,7 +299,10 @@ def read_law_side(spec, mode, Js=(4, 5, 6, 7, 8, 9)):
         for k0 in (0, 1, 2):
             sq = tuple(q for (_, q, _) in marks[k0:])
             so_ = tuple(q for (_, q, _) in mo[k0:])
-            per = next((n for n in (1, 2)
+            # a 2-cell alphabet puts TWO rungs per digit and some machines
+            # three or four; the emitter picks which of them is the ladder's
+            # own, so all the reader has to do is find the period
+            per = next((n for n in (1, 2, 3, 4)
                         if all(x == sq[i % n] for i, x in enumerate(sq))
                         and all(x == sq[i % n] for i, x in enumerate(so_))),
                        None)
@@ -321,16 +335,23 @@ def read_law_side(spec, mode, Js=(4, 5, 6, 7, 8, 9)):
         elif stride != st[:len(stride)] and st != stride[:len(st)]:
             raise QuadError('stride moved across j: %r vs %r' % (st, stride))
         col0s[J] = cols[0]
+        # The micro hop is indexed by the PROBE DEPTH when the round trip
+        # pivots on the anchor (cost Theta(k)) and by the REMAINING COUNT
+        # when it pivots on the deepest unprobed digit (cost Theta(m)).
+        # Which one it is is read off the machine: [mkey] picks the keying
+        # and the interior/overflow agreement test decides.
+        def mk(k, n):
+            return k if mkey == 'k' else n - k
         b_, micros, term = segments(T, marks, steps)
         bootint_segs[J] = b_
         for k, m in enumerate(micros, 1):
-            if micro_segs.setdefault(k, m) != m:
+            if micro_segs.setdefault(mk(k, len(marks)), m) != m:
                 raise QuadError('micro %d varies across j' % k)
         term_segs[J] = term
         bo, mio, tmo = segments(To, mo, so)
         bootovf_segs[J] = bo
         for k, m in enumerate(mio, 1):
-            if micro_segs.setdefault(k, m) != m:
+            if micro_segs.setdefault(mk(k, len(mo)), m) != m:
                 raise QuadError('overflow micro %d differs' % k)
         ovf_segs[J] = tmo
 
@@ -377,7 +398,7 @@ def read_law_side(spec, mode, Js=(4, 5, 6, 7, 8, 9)):
         return (f[0][0], f[1][0])
 
     return dict(spec=spec, anchor=A, qr=qr, stride=stride,
-                mode=mode,
+                mode=mode, mkey=mkey,
                 nint=count_law(nints, 'interior'),
                 col0=count_law(col0s, 'first column'),
                 novf=count_law(novfs, 'overflow'),
@@ -388,17 +409,80 @@ def read_law_side(spec, mode, Js=(4, 5, 6, 7, 8, 9)):
                 ovf=law_of(ovf_segs, 'ovf-term'))
 
 
+def read_skeletons(spec, Js=(5, 6, 7)):
+    """EVERY viable ladder skeleton, in mode order: (anchor, mode, rung states, mark counts).
+
+    [read_law] additionally fits the boot/micro/terminal step patterns as
+    affine laws, and that fit fails whenever the rungs cycle through more
+    than two states -- the segment between two consecutive marks then
+    depends on the rung's residue, and no single template covers it.  The
+    EMITTER does not need those fits: it re-derives every chain from the
+    measured configurations and validates them against the raw simulator.
+    So it asks for the skeleton, which is the part the law reader gets right
+    on every machine in the bucket.  The mode order and the leading-mark
+    strip are [read_law_side]'s, so a machine both readers accept is read
+    the same way by both."""
+    r = OV.classify(spec)
+    if r.get('overflow') == 'no-anchor':
+        raise QuadError('no anchor')
+    dspec = mirror_spec(spec) if r.get('mirror') else spec
+    tab = parse(dspec)
+    A = dict(st0=LAB.index(r['edge']), encf=ENC[r['enc']], tail=r['tail'],
+             far=r['far'], enc=r['enc'], mirror=bool(r.get('mirror')),
+             dspec=dspec)
+    errs, out = [], []
+    for mode in ((-1, False), (0, False), (1, True), (1, False), (-1, True)):
+        try:
+            qr, nints, novfs = None, {}, {}
+            for J in Js:
+                _, marks, _ = lap_marks(tab, A, interior_p(J), mode)
+                _, mo, _ = lap_marks(tab, A, overflow_p(J), mode)
+                ok0 = None
+                for k0 in (0, 1, 2):
+                    sq = tuple(q for (_, q, _) in marks[k0:])
+                    so_ = tuple(q for (_, q, _) in mo[k0:])
+                    per = next((n for n in (1, 2, 3, 4)
+                                if sq and all(x == sq[i % n]
+                                              for i, x in enumerate(sq))
+                                and all(x == sq[i % n]
+                                        for i, x in enumerate(so_))), None)
+                    if per is not None:
+                        ok0 = (k0, sq[:per])
+                        break
+                if ok0 is None:
+                    raise QuadError('mark states vary')
+                k0, q0 = ok0
+                if qr is None:
+                    qr = q0
+                elif q0 != qr:
+                    raise QuadError('mark states moved across j')
+                nints[J], novfs[J] = len(marks) - k0, len(mo) - k0
+            f = _fit_affine([(J, (nints[J],)) for J in Js])
+            g = _fit_affine([(J, (novfs[J],)) for J in Js])
+            if f is None or g is None:
+                raise QuadError('mark counts fit no affine law')
+            out.append(dict(spec=spec, anchor=A, qr=qr, mode=mode,
+                            nint=(f[0][0], f[1][0]),
+                            novf=(g[0][0], g[1][0])))
+        except QuadError as e:
+            errs.append('%r: %s' % (mode, e))
+    if not out:
+        raise QuadError(' // '.join(errs))
+    return out
+
+
 def read_law(spec, Js=(4, 5, 6, 7, 8, 9)):
     """Try the four skeletons in order: anchor-pivot probes leftward, then
     the deep-pivot ladders (records on the return side after the turn),
     then the rightward mirrors.  The first mode whose law closes wins; the
     error reported is the first mode's."""
     errs = []
-    for mode in ((-1, False), (1, True), (1, False), (-1, True)):
-        try:
-            return read_law_side(spec, mode, Js)
-        except QuadError as e:
-            errs.append('%r: %s' % (mode, e))
+    for mode in ((-1, False), (0, False), (1, True), (1, False), (-1, True)):
+        for mkey in ('k', 'm'):
+            try:
+                return read_law_side(spec, mode, Js, mkey)
+            except QuadError as e:
+                errs.append('%r/%s: %s' % (mode, mkey, e))
     raise QuadError(' // '.join(errs))
 
 
@@ -412,7 +496,8 @@ def predict(law, j, ovf):
     nm = a * j + b
     for k in range(1, nm):
         times.append(t)
-        t += law_cost(law['micro'], k)
+        t += law_cost(law['micro'], k if law.get('mkey', 'k') == 'k'
+                      else nm - k)
     times.append(t)
     t += law_cost(law['ovf'] if ovf else law['term'], j)
     return times, t
