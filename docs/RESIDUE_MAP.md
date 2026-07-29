@@ -111,7 +111,8 @@ live list):
   different octave or offset.
 * **no boot / exit / second exit chain** — the nested overflow's pieces.
   Wave-22 boarded the 8 "no shift chain" machines (multi-count chaining) and
-  measured the 5 surviving "no second exit chain" machines precisely: their
+  measured the then-surviving "no second exit chain" machines (2 remain)
+  precisely: their
   exit's return sweep enters its rightward cycle mid-unit against a
   non-matching post, which no rotation lstep can align — they need a new
   `SCycR`-with-entry-offset step in `LapDecider.v` (a checker extension with
