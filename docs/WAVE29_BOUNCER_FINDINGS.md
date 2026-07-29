@@ -249,12 +249,30 @@ written in state order.  That restriction costs exactly one row, §7's
 ### 7a. `0RB1RC_1RC0LB_0RD0RC_1LD1LA` — the same class, mirrored
 
 Anchor `(StA, ([], S0, repeat S1 n))`, blocks 9, 27, 81 — the `x3` macro law
-of §6 with the block on the RIGHT.  Its mirror image has the wall-bounce
-roles at `(StA, StC, StD)` with `StB` as the drift, so it needs (a) the board
-template's drift state parameterised and its visit case-split permuted, and
-(b) the ordinary `mirror_common.mirrorize` transfer.  **No new theory** —
-`WallBounce` already proves the bounce for any role assignment.  One row,
-mechanical.
+of §6 with the block on the RIGHT.  Measured on its mirror
+`0LB1LC_1LC0RB_0LD0LC_1RD1RA`, whose wall-bounce roles are
+`(Bq, Cq, Dq) = (StA, StC, StD)` with `StB` as the drift:
+
+* the bounce and the terminal are IDENTICAL to §6 — `wM (S a) r --> wM a
+  (r+3)` and `wM 0 r --> wA (r+3)`, both at `2*r+5`, verified over an
+  `(a, r)` grid.  `BounceGlue.WallBounce` proves them as they stand; the
+  role assignment is a parameter and the section does not care.
+* the collapse is `wA n --> wM (n-2) 3` in `5n+2` steps, the same law as
+  `0RB0RB`'s.
+
+The emitter's drift state and visit case-split were parameterised this wave
+and the `mirror_common.mirrorize` transfer wired behind them, so the mirror
+route is in place.  It does NOT fire on this row, for one measured reason:
+**its drift runs with the head on a BLANK.**  The wall turn writes `S0`
+rather than `S1` (`tab[Bq][S0] = 0 L Aq`), and the ripple is
+
+    (Aq, (S1 :: L, S0, R))  -->  (Aq, (L, S0, S1 :: R))   in 5 steps
+
+against §6's `(Aq, (S1 :: L, S1, S1 :: R)) --> (Aq, (L, S1, S1 :: S1 :: R))`.
+So `rip1_`, `tail_` and the collapse's first step all need the head symbol
+and the written symbol as parameters.  **Still no new theory** — the whole
+difference is in the collapse, which is per-board anyway.  One row, one
+template variant, and the emitter refuses it rather than guessing.
 
 ### 7b. The four rows whose macro anchor is arithmetic
 

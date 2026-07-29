@@ -2513,6 +2513,8 @@ theories/Machines/Counters/QMG_1RB1LC_0LA0RB_0RD0LC_1RD1LA.v
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 theories/Closeout/CB_00.v
 theories/Closeout/CB_01.v
 theories/Closeout/CB_02.v

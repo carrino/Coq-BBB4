@@ -59,7 +59,7 @@ sys.path.insert(0, HERE)
 # driver come from the lapcert emitter so a board named here is named the same
 # way every other wave names it.
 from emit_lapcert import mach_id, coqc                              # noqa: E402,F401
-from mirror_common import mirror_spec                               # noqa: E402,F401
+from mirror_common import mirror_spec, mirrorize                   # noqa: E402,F401
 
 LAB = 'ABCD'
 
@@ -901,26 +901,26 @@ Definition visD_@ID@ := wvisD tm St@B@ St@C@ St@D@ eq_refl eq_refl eq_refl.
 (** One cell of the walk.  The tape is UNCHANGED -- the cell is cleared
     and rewritten -- which is what makes the walk a pure translation. *)
 Lemma rip1_@ID@ : forall L R,
-  csteps tm @RP@ (StA, (S1 :: L, S1, S1 :: R))
-    = Some (StA, (L, S1, S1 :: S1 :: R)).
+  csteps tm @RP@ (St@A@, (S1 :: L, S1, S1 :: R))
+    = Some (St@A@, (L, S1, S1 :: S1 :: R)).
 Proof. intros L R. reflexivity. Qed.
 
 Lemma ripn_@ID@ : forall k L R,
-  csteps tm (@RP@ * k) (StA, (repeat S1 k ++ L, S1, S1 :: R))
-    = Some (StA, (L, S1, repeat S1 k ++ S1 :: R)).
+  csteps tm (@RP@ * k) (St@A@, (repeat S1 k ++ L, S1, S1 :: R))
+    = Some (St@A@, (L, S1, repeat S1 k ++ S1 :: R)).
 Proof.
   induction k as [|k IH]; intros L R; [reflexivity|].
   cbn [repeat app].
   replace (@RP@ * S k) with (@RP@ + @RP@ * k) by lia.
   apply (chain_@ID@ @RP@ (@RP@ * k) _
-           (StA, (repeat S1 k ++ L, S1, S1 :: S1 :: R))).
+           (St@A@, (repeat S1 k ++ L, S1, S1 :: S1 :: R))).
   - apply rip1_@ID@.
   - rewrite IH, rep_snoc. reflexivity.
 Qed.
 
 (** The turn at the far end: the walk becomes the first bounce. *)
 Lemma tail_@ID@ : forall X,
-  csteps tm @TL@ (StA, ([], S1, @TAILPRE@X))
+  csteps tm @TL@ (St@A@, ([], S1, @TAILPRE@X))
     = Some (St@B@, ([S1; S1; S1], chd X, ctl X)).
 Proof. intro X. reflexivity. Qed.
 
@@ -930,10 +930,10 @@ Proof.
   intro m. unfold wA.
   replace (@RP@ * @MPLUS@ + @TLP1@) with (1 + (@RP@ * @MPLUS@ + @TL@)) by lia.
   cbn [repeat].
-  apply (chain_@ID@ 1 _ _ (StA, (repeat S1 @MPLUS@, S1, [S1]))).
+  apply (chain_@ID@ 1 _ _ (St@A@, (repeat S1 @MPLUS@, S1, [S1]))).
   { reflexivity. }
   apply (chain_@ID@ (@RP@ * @MPLUS@) @TL@ _
-           (StA, ([], S1, repeat S1 @MPLUS@ ++ [S1]))).
+           (St@A@, ([], S1, repeat S1 @MPLUS@ ++ [S1]))).
   { pose proof (ripn_@ID@ @MPLUS@ [] []) as Hr.
     rewrite app_nil_r in Hr. exact Hr. }
   rewrite rep_app1.
@@ -984,7 +984,7 @@ Qed.
 (** ** Visits: every state recurs inside one lap *)
 
 Lemma visA_@ID@ : forall m,
-  exists c, csteps tm 1 (aA @NCOL@) = Some c /\ fst c = StA.
+  exists c, csteps tm 1 (aA @NCOL@) = Some c /\ fst c = St@A@.
 Proof.
   intro m. unfold wA. cbn [repeat]. eexists. split; reflexivity.
 Qed.
@@ -995,20 +995,7 @@ Proof.
   intros p q. unfold Cc.
   destruct (anchor_@ID@ (Pos.to_nat p)) as (m & Hm). rewrite Hm.
   destruct q.
-  - destruct (visA_@ID@ m) as (c & Hc & Hq).
-    exists 1, c. split; [exact Hc | exact Hq].
-  - exists 0. eexists. split; reflexivity.
-  - destruct (visC_@ID@ m 3) as (c & Hc & Hq).
-    exists (@RP@ * @MPLUS@ + @TLP1@ + 1), c. split; [| exact Hq].
-    apply (chain_@ID@ (@RP@ * @MPLUS@ + @TLP1@) 1 _ (aM m 3)).
-    + apply wcol_@ID@.
-    + exact Hc.
-  - destruct (visD_@ID@ m 3) as (c & Hc & Hq).
-    exists (@RP@ * @MPLUS@ + @TLP1@ + (3 + 2)), c. split; [| exact Hq].
-    apply (chain_@ID@ (@RP@ * @MPLUS@ + @TLP1@) (3 + 2) _ (aM m 3)).
-    + apply wcol_@ID@.
-    + exact Hc.
-Qed.
+@VISCASES@Qed.
 
 (** ** Boot and the theorem *)
 
@@ -1025,8 +1012,7 @@ Proof.
 Qed.
 
 Theorem nqh_@ID@ : NeverQuasiHaltsSt tm.
-Proof.
-  apply (glue_neverqh tm Cc 1).
+Proof. apply (glue_neverqh tm Cc 1).
   - exact boot_@ID@.
   - intros p _. apply lap_@ID@.
   - intros p q _. apply vis_@ID@.
@@ -1053,11 +1039,13 @@ def wroles(spec):
         D = tc[2]
         if tab.get((D, 0)) != (1, 1, D) or tab.get((D, 1)) != (1, 1, B):
             continue
-        if tab.get((B, 0)) != (1, -1, 0):        # the drift is entered here
+        rest = [q for q in range(4) if q not in (B, C, D)]
+        if len(rest) != 1:
             continue
-        if (B, C, D) != (1, 2, 3):
+        A = rest[0]
+        if tab.get((B, 0)) != (1, -1, A):        # the drift is entered here
             continue
-        return (B, C, D)
+        return (B, C, D, A)
     return None
 
 
@@ -1068,7 +1056,7 @@ def _run(tab, cfg, n):
     return cfg
 
 
-def wmeasure(spec, B):
+def wmeasure(spec, B, A):
     """(rp, tl, cc1), measured -- plus a DIFFERENTIAL VALIDATION of every
     gadget the board is about to claim, against the raw simulator."""
     import lapcert as LC
@@ -1080,15 +1068,15 @@ def wmeasure(spec, B):
     def aM(a, r):
         return (B, (1,) * r, 1, (1,) * a)
 
-    rp, c = None, (0, (1,) * 5, 1, (1,) * 3)
+    rp, c = None, (A, (1,) * 5, 1, (1,) * 3)
     for t in range(1, 40):
         c = LC.wstep(tab, False, False, c)
-        if c == (0, (1,) * 4, 1, (1,) * 4):
+        if c == (A, (1,) * 4, 1, (1,) * 4):
             rp = t
             break
     if rp is None:
         return None
-    tl, cc1, c = None, None, (0, (), 1, (1,) * 8)
+    tl, cc1, c = None, None, (A, (), 1, (1,) * 8)
     for t in range(0, 40):
         if c[0] == B and c[1] == (1, 1, 1) and c[2] == 1:
             tl, cc1 = t, 8 - len(c[3])
@@ -1110,16 +1098,21 @@ def wmeasure(spec, B):
 def wemit(spec, write=True, check=True):
     from emit_interleave import coq_table
     import lapcert as LC
-    r = wroles(spec)
+    # A right-growing machine is proved on its MIRROR and transferred back by
+    # Mirror.mirror_never_qh -- the wave-9 route, no new theory.
+    mspec, r = spec, wroles(spec)
     if r is None:
-        return (spec, 'not a wall bouncer', None)
-    B, C, D = r
-    m = wmeasure(spec, B)
+        mspec = mirror_spec(spec)
+        r = wroles(mspec)
+        if r is None:
+            return (spec, 'not a wall bouncer', None)
+    B, C, D, A = r
+    m = wmeasure(mspec, B, A)
     if m is None:
         return (spec, 'wall-bounce gadgets do not validate', None)
     rp, tl, cc1 = m
     gadd = 6 - 3 * cc1
-    tab = parse(spec)
+    tab = parse(mspec)
     blk = [3]
     for _ in range(4):
         blk.append(3 * blk[-1] + gadd)
@@ -1131,7 +1124,7 @@ def wemit(spec, write=True, check=True):
         cfg = LC.wstep(tab, False, False, cfg)
     if t0 is None:
         return (spec, 'no boot to the p = 1 anchor', None)
-    mid = mach_id(spec)
+    mid = mach_id(mspec)
     tail = '' if gadd == 0 else ' + ' + str(gadd)
     nx = '3 * n' + tail
     br = '3 * blk_' + mid + " t'" + tail
@@ -1140,8 +1133,23 @@ def wemit(spec, write=True, check=True):
         ncol = '(S ' + ncol + ')'
     mplus = 'm' if cc1 == 1 else '(S m)'
     nd = ''
+    cases = {}
+    cases[A] = ('    destruct (visA_' + mid + ' m) as (c & Hc & Hq).\n'
+                '    exists 1, c. split; [exact Hc | exact Hq].\n')
+    cases[B] = '    exists 0. eexists. split; reflexivity.\n'
+    cost = str(rp) + ' * ' + mplus + ' + ' + str(tl + 1)
+    for st, nm, off in ((C, 'visC_', '1'), (D, 'visD_', '(3 + 2)')):
+        cases[st] = (
+            '    destruct (' + nm + mid + ' m 3) as (c & Hc & Hq).\n'
+            '    exists (' + cost + ' + ' + off + '), c. split; [| exact Hq].\n'
+            '    apply (chain_' + mid + ' (' + cost + ') ' + off
+            + ' _ (aM m 3)).\n'
+            '    + apply wcol_' + mid + '.\n'
+            '    + exact Hc.\n')
+    viscases = ''.join('  -' + cases[q][3:] for q in range(4))
     src = (WBOARD.replace('@PREF@', BOARD_PREFIX).replace('@ID@', mid)
-           .replace('@SPEC@', spec).replace('@TABLE@', coq_table(spec))
+           .replace('@VISCASES@', viscases).replace('@A@', LAB[A])
+           .replace('@SPEC@', mspec).replace('@TABLE@', coq_table(mspec))
            .replace('@B@', LAB[B]).replace('@C@', LAB[C]).replace('@D@', LAB[D])
            .replace('@RP@', str(rp)).replace('@TLP1@', str(tl + 1))
            .replace('@TL@', str(tl)).replace('@CC1@', str(cc1))
@@ -1151,6 +1159,9 @@ def wemit(spec, write=True, check=True):
            .replace('@BLKREC@', br).replace('@T0@', str(t0))
            .replace('@B0@', str(blk[0])).replace('@B1@', str(blk[1]))
            .replace('@B2@', str(blk[2])).replace('@B3@', str(blk[3])))
+    if mspec != spec:
+        src = mirrorize(src, spec, mspec)
+        mid = mach_id(spec)
     path = os.path.join(OUTDIR, BOARD_PREFIX + '_' + mid + '.v')
     if not write:
         return (spec, 'dry run', src)
@@ -1229,7 +1240,7 @@ def emit(spec, write=True, check=True):
         return (spec, 'no boot to the p = 1 anchor', None)
     mid = mach_id(spec)
     src = (BOARD.replace('@PREF@', BOARD_PREFIX).replace('@ID@', mid)
-           .replace('@SPEC@', spec).replace('@TABLE@', coq_table(spec))
+           .replace('@SPEC@', mspec).replace('@TABLE@', coq_table(mspec))
            .replace('@T0@', str(t0))
            .replace('@E@', LAB[E]).replace('@X@', LAB[X])
            .replace('@Y@', LAB[Y]))

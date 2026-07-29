@@ -209,8 +209,7 @@ Proof.
 Qed.
 
 Theorem nqh_0RB0LD_1LA1LC_0LD0LC_1RD1RB : NeverQuasiHaltsSt tm.
-Proof.
-  apply (glue_neverqh tm Cc 1).
+Proof. apply (glue_neverqh tm Cc 1).
   - exact boot_0RB0LD_1LA1LC_0LD0LC_1RD1RB.
   - intros p _. apply lap_0RB0LD_1LA1LC_0LD0LC_1RD1RB.
   - intros p q _. apply vis_0RB0LD_1LA1LC_0LD0LC_1RD1RB.
