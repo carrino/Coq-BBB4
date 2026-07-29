@@ -1368,7 +1368,6 @@ theories/Counters/Alph_11_10_1.v
 theories/Machines/Counters/LAPC_1RB1LA_1LC1RD_1LB1RA_0LA0RB.v
 
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
-theories/Counters/RegGlue.v
 theories/Machines/Counters/LAPC_0RB0LB_0RC1LB_1LA1RD_1RC0LB.v
 theories/Machines/Counters/LAPC_0RB0LC_1LC1RB_0LD1LA_1RA0RB.v
 theories/Machines/Counters/LAPC_0RB0RC_1LC0RB_0LD1RA_1RC1LD.v
