@@ -18,6 +18,10 @@
       anchor at [j+1] differ in ONE cell, so no digit alphabet reads them.
     - a one-transition mutant that re-routes the eraser back into [StA]
       breaks closure, so the absorbing-set argument must reject it.
+    - and, for the WALL BOUNCE class, that the wall gives up exactly one
+      cell per bounce while the run gains exactly three, that the three
+      collapses differ only in the drift's steps-per-cell, and that the
+      block TRIPLES rather than doubling.
 
     Everything is decided by [vm_compute]/[reflexivity]/[discriminate]. *)
 
@@ -28,7 +32,10 @@ From BBB4.Counters Require Import LapGlueAbs BounceGlue.
 From BBB4.Machines.Counters Require Import
   BNC_1RB____1LC0RB_1LD1RB_1LC1RB
   BNC_1RB____1LC1RD_1LB1RD_1LB0RD
-  BNC_1RB____1LC1RD_1LB1RD_1LC0RD.
+  BNC_1RB____1LC1RD_1LB1RD_1LC0RD
+  BNC_0RB0LD_1LA1LC_0LD0LC_1RD1RB
+  BNC_0RB0RB_1LA1LC_0LD0LC_1RD1RB
+  BNC_0RB1LA_1LA1LC_0LD0LC_1RD1RB.
 Import ListNotations.
 
 Local Notation t1 := BNC_1RB____1LC0RB_1LD1RB_1LC1RB.tm_1RB____1LC0RB_1LD1RB_1LC1RB.
@@ -156,3 +163,74 @@ Proof. exact iqh_1RB____1LC1RD_1LB1RD_1LB0RD. Qed.
 
 Example t3_triple : NonHalt t3 /\ QHBound 2000 t3 /\ QuasiHaltsSt t3.
 Proof. exact iqh_1RB____1LC1RD_1LB1RD_1LC0RD. Qed.
+
+(** ** The WALL BOUNCE class: three machines that differ only in row A
+
+    0RB0LD / 0RB0RB / 0RB1LA _1LA1LC_0LD0LC_1RD1RB.  Rows B, C and D are
+    identical, so [BounceGlue.WallBounce] proves the bounce once and each
+    board differs only in its collapse -- 3, 5 and 1 steps per cell
+    of drift.  The controls below pin the parts a wrong reading would get
+    wrong. *)
+
+Local Notation u1 := BNC_0RB0LD_1LA1LC_0LD0LC_1RD1RB.tm_0RB0LD_1LA1LC_0LD0LC_1RD1RB.
+Local Notation u2 := BNC_0RB0RB_1LA1LC_0LD0LC_1RD1RB.tm_0RB0RB_1LA1LC_0LD0LC_1RD1RB.
+Local Notation u3 := BNC_0RB1LA_1LA1LC_0LD0LC_1RD1RB.tm_0RB1LA_1LA1LC_0LD0LC_1RD1RB.
+
+(** The bounce cost is [2*r+5] exactly, and the wall gives up exactly one
+    cell while the run gains exactly three. *)
+Example u1_bounce_11 : csteps u1 11 (wM StB 5 3) = Some (wM StB 4 6).
+Proof. vm_compute; reflexivity. Qed.
+
+Example u1_bounce_not_10 : csteps u1 10 (wM StB 5 3) <> Some (wM StB 4 6).
+Proof. vm_compute; discriminate. Qed.
+
+Example u1_bounce_not_12 : csteps u1 12 (wM StB 5 3) <> Some (wM StB 4 6).
+Proof. vm_compute; discriminate. Qed.
+
+(** The wall gives up ONE, not two: [wM 3 6] is not where the bounce lands. *)
+Example u1_wall_one : csteps u1 11 (wM StB 5 3) <> Some (wM StB 3 6).
+Proof. vm_compute; discriminate. Qed.
+
+(** The run gains THREE, not two or four. *)
+Example u1_run_three : csteps u1 11 (wM StB 5 3) <> Some (wM StB 4 5).
+Proof. vm_compute; discriminate. Qed.
+
+(** The terminal is the same chain read at [a = 0]. *)
+Example u1_term : csteps u1 11 (wM StB 0 3) = Some (wA StB 6).
+Proof. vm_compute; reflexivity. Qed.
+
+(** The three collapses, one per drift speed: 3n+2, 5n+2 and n+7. *)
+Example u1_collapse : csteps u1 (3 * 9 + 2) (wA StB 9) = Some (wM StB 7 3).
+Proof. vm_compute; reflexivity. Qed.
+
+Example u2_collapse : csteps u2 (5 * 9 + 2) (wA StB 9) = Some (wM StB 7 3).
+Proof. vm_compute; reflexivity. Qed.
+
+(** 0RB1LA's drift eats ONE cell fewer, so its collapse lands at [n-1]. *)
+Example u3_collapse : csteps u3 (9 + 7) (wA StB 9) = Some (wM StB 8 3).
+Proof. vm_compute; reflexivity. Qed.
+
+Example u3_not_n2 : csteps u3 (9 + 7) (wA StB 9) <> Some (wM StB 7 3).
+Proof. vm_compute; discriminate. Qed.
+
+(** The macro law: the block TRIPLES on the first two and triples-plus-three
+    on the third.  A doubling -- the WrapBouncer prior -- is refuted. *)
+Example u1_macro : csteps u1 285 (wA StB 9) = Some (wA StB 27).
+Proof. vm_compute; reflexivity. Qed.
+
+Example u1_macro_not_double : csteps u1 285 (wA StB 9) <> Some (wA StB 18).
+Proof. vm_compute; discriminate. Qed.
+
+Example u3_macro : csteps u3 547 (wA StB 12) = Some (wA StB 39).
+Proof. vm_compute; reflexivity. Qed.
+
+(** All four states fire inside one lap, which is why these three close with
+    [glue_neverqh] and not with a quasihalting tier. *)
+Example u1_never : NeverQuasiHaltsSt u1.
+Proof. exact BNC_0RB0LD_1LA1LC_0LD0LC_1RD1RB.nqh_0RB0LD_1LA1LC_0LD0LC_1RD1RB. Qed.
+
+Example u2_never : NeverQuasiHaltsSt u2.
+Proof. exact BNC_0RB0RB_1LA1LC_0LD0LC_1RD1RB.nqh_0RB0RB_1LA1LC_0LD0LC_1RD1RB. Qed.
+
+Example u3_never : NeverQuasiHaltsSt u3.
+Proof. exact BNC_0RB1LA_1LA1LC_0LD0LC_1RD1RB.nqh_0RB1LA_1LA1LC_0LD0LC_1RD1RB. Qed.

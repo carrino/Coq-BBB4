@@ -279,3 +279,188 @@ Proof.
 Qed.
 
 End EraseFill.
+
+(** * The WALL BOUNCE: a solid block, a wall that marches one cell per bounce
+
+    The second shape the reader found in the bucket, and the one John read
+    off [0RB0LD_1LA1LC_0LD0LC_1RD1RB] directly.  The tape is one SOLID
+    BLOCK of ones with the head inside it; the wall is the head's own
+    column, and it moves out by exactly one cell per bounce while the
+    block grows by two on the far side:
+
+      wA n   = (B, (repeat S1 n, S0, []))          the head just off the
+                                                   block's near end
+      wM a r = (B, (repeat S1 r, S1, repeat S1 a)) the head INSIDE it, [r]
+                                                   cells of rebuilt run
+                                                   behind, [a] of wall ahead
+
+    One bounce is [wM (S a) r --> wM a (r+3)] in exactly [2*r+5] steps --
+    the eraser sweeps back over the run turning it to zeros, the filler
+    sweeps out again turning them to ones and overshooting by three, and
+    the wall gives up one cell.  When the wall is spent the same chain
+    lands on [wA (r+3)] instead, so [Hbounce] and [Hterm] are ONE
+    derivation read at two values of [a] -- which is why they cost the
+    same.
+
+    The macro lap is therefore [a] bounces after a collapse sweep, the
+    bounce count is explicit in the anchor, and (as in [WrapBouncer], and
+    unlike the nested counters) plain induction suffices: no
+    [MeasureGlue].  The COLLAPSE differs from machine to machine -- it is
+    the only place the fourth state appears -- so it stays in the board,
+    and this section supplies the part that does not: the bounce, the
+    terminal, the chain, and the three visit witnesses. *)
+
+Section WallBounce.
+
+Variable tm : TM.
+
+(** [Bq] turns at the wall, [Cq] erases the run leftward, [Dq] fills it
+    back rightward.  Read off the table by [bouncecert.py]; the board
+    discharges each hypothesis by [reflexivity]. *)
+Variable Bq Cq Dq : St.
+
+Hypothesis HB1 : tm Bq S1 = Some (mkTrans S1 DL Cq).
+Hypothesis HC1 : tm Cq S1 = Some (mkTrans S0 DL Cq).
+Hypothesis HC0 : tm Cq S0 = Some (mkTrans S0 DL Dq).
+Hypothesis HD0 : tm Dq S0 = Some (mkTrans S1 DR Dq).
+Hypothesis HD1 : tm Dq S1 = Some (mkTrans S1 DR Bq).
+
+Definition wA (n : nat) : cconf := (Bq, (repeat S1 n, S0, [])).
+Definition wM (a r : nat) : cconf :=
+  (Bq, (repeat S1 r, S1, repeat S1 a)).
+
+Lemma wchain0 : forall n1 n2 c c1 c2,
+  csteps tm n1 c = Some c1 -> csteps tm n2 c1 = Some c2 ->
+  csteps tm (n1 + n2) c = Some c2.
+Proof. intros. rewrite csteps_add, H. assumption. Qed.
+
+(** The eraser's leftward sweep, ending on the blank past the run. *)
+Lemma cerase : forall k R,
+  csteps tm (S k) (Cq, (repeat S1 k, S1, R))
+    = Some (Cq, ([], S0, repeat S0 (S k) ++ R)).
+Proof.
+  induction k as [|k IH]; intros R.
+  - cbn. rewrite HC1. reflexivity.
+  - cbn [repeat].
+    apply (wchain0 1 (S k) _ (Cq, (repeat S1 k, S1, S0 :: R))).
+    + cbn. rewrite HC1. reflexivity.
+    + rewrite IH. cbn [repeat app]. rewrite rep_snoc. reflexivity.
+Qed.
+
+(** The turn at the wall, then the whole erase sweep. *)
+Lemma wce : forall r R,
+  csteps tm (S r) (Bq, (repeat S1 r, S1, R))
+    = Some (Cq, ([], S0, repeat S0 r ++ S1 :: R)).
+Proof.
+  destruct r as [|r]; intros R.
+  - cbn. rewrite HB1. reflexivity.
+  - cbn [repeat].
+    apply (wchain0 1 (S r) _ (Cq, (repeat S1 r, S1, S1 :: R))).
+    + cbn. rewrite HB1. reflexivity.
+    + rewrite cerase. reflexivity.
+Qed.
+
+(** One more blank and the sweep hands over to the filler. *)
+Lemma wcd : forall R,
+  csteps tm 1 (Cq, ([], S0, R)) = Some (Dq, ([], S0, S0 :: R)).
+Proof. intro R. cbn. rewrite HC0. reflexivity. Qed.
+
+(** The filler's rightward sweep back over the zeros. *)
+Lemma wdf : forall k L R,
+  csteps tm (S k) (Dq, (L, S0, repeat S0 k ++ R))
+    = Some (Dq, (repeat S1 (S k) ++ L, chd R, ctl R)).
+Proof.
+  induction k as [|k IH]; intros L R.
+  - cbn. rewrite HD0. reflexivity.
+  - cbn [repeat app].
+    apply (wchain0 1 (S k) _ (Dq, (S1 :: L, S0, repeat S0 k ++ R))).
+    + cbn. rewrite HD0. reflexivity.
+    + rewrite IH. cbn [repeat app]. rewrite rep_snoc. reflexivity.
+Qed.
+
+(** The filler meets the wall and hands back to [Bq]. *)
+Lemma wdb : forall L R,
+  csteps tm 1 (Dq, (L, S1, R)) = Some (Bq, (S1 :: L, chd R, ctl R)).
+Proof. intros L R. cbn. rewrite HD1. reflexivity. Qed.
+
+(** ONE derivation, read at two values of the wall.  [a] is opaque here;
+    the two customers below just instantiate it. *)
+Lemma wrun : forall r X,
+  csteps tm (2 * r + 5) (Bq, (repeat S1 r, S1, X))
+    = Some (Bq, (repeat S1 (r + 3), chd X, ctl X)).
+Proof.
+  intros r X.
+  replace (2 * r + 5) with (S r + (1 + (S (S r) + 1))) by lia.
+  apply (wchain0 (S r) _ _ (Cq, ([], S0, repeat S0 r ++ S1 :: X))).
+  { apply wce. }
+  apply (wchain0 1 _ _ (Dq, ([], S0, repeat S0 (S r) ++ S1 :: X))).
+  { rewrite wcd. cbn [repeat app]. reflexivity. }
+  apply (wchain0 (S (S r)) _ _ (Dq, (repeat S1 (S (S r)), S1, X))).
+  { rewrite (wdf (S r) [] (S1 :: X)).
+    cbn [chd ctl]. rewrite app_nil_r. reflexivity. }
+  rewrite wdb.
+  replace (r + 3) with (S (S (S r))) by lia.
+  cbn [repeat]. reflexivity.
+Qed.
+
+(** The wall gives up one cell. *)
+Lemma wbounce : forall a r,
+  csteps tm (2 * r + 5) (wM (S a) r) = Some (wM a (r + 3)).
+Proof.
+  intros a r. unfold wM. rewrite wrun. reflexivity.
+Qed.
+
+(** ...and when it is spent, the block is solid again, three cells longer. *)
+Lemma wterm : forall r,
+  csteps tm (2 * r + 5) (wM 0 r) = Some (wA (r + 3)).
+Proof.
+  intro r. unfold wM, wA. cbn [repeat]. rewrite wrun. reflexivity.
+Qed.
+
+(** [d] bounces, then the terminal. *)
+Lemma wmchain : forall d r, exists n, 0 < n /\
+  csteps tm n (wM d r) = Some (wA (r + 3 * d + 3)).
+Proof.
+  induction d as [|d IH]; intros r.
+  - exists (2 * r + 5). split; [lia|].
+    replace (r + 3 * 0 + 3) with (r + 3) by lia.
+    apply wterm.
+  - destruct (IH (r + 3)) as (n & Hn & Hrun).
+    exists ((2 * r + 5) + n). split; [lia|].
+    rewrite csteps_add, wbounce, Hrun.
+    replace (r + 3 + 3 * d + 3) with (r + 3 * S d + 3) by lia.
+    reflexivity.
+Qed.
+
+(** ** Visit witnesses inside the bounce
+
+    [Bq] at index 0, [Cq] one step later, [Dq] once the erase sweep has
+    run out.  Every board's lap passes through a [wM], so these three
+    plus the fourth state's own witness in the collapse cover [glue_neverqh]'s
+    obligation. *)
+
+Lemma wvisB : forall a r, exists c,
+  csteps tm 0 (wM a r) = Some c /\ fst c = Bq.
+Proof. intros a r. eexists. split; reflexivity. Qed.
+
+Lemma wvisC : forall a r, exists c,
+  csteps tm 1 (wM a r) = Some c /\ fst c = Cq.
+Proof.
+  intros a r. unfold wM. eexists. split.
+  - cbn. rewrite HB1. reflexivity.
+  - reflexivity.
+Qed.
+
+Lemma wvisD : forall a r, exists c,
+  csteps tm (r + 2) (wM a r) = Some c /\ fst c = Dq.
+Proof.
+  intros a r. unfold wM. eexists. split.
+  - replace (r + 2) with (S r + 1) by lia.
+    apply (wchain0 (S r) 1 _
+             (Cq, ([], S0, repeat S0 r ++ S1 :: repeat S1 a))).
+    + apply wce.
+    + apply wcd.
+  - reflexivity.
+Qed.
+
+End WallBounce.

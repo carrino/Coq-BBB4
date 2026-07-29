@@ -9,7 +9,7 @@
 
     -- every (4,2) machine is a bounded quasihalter, or has its
     quasihalting behaviour settled by a board, or is skipped: one of
-    the 178 core [remaining_rows] machines, or a 0RB re-root shadow
+    the 175 core [remaining_rows] machines, or a 0RB re-root shadow
     of one (85 at generation time; ShadowKit.v).
 
     This file LOADS the committed census .vo, which are

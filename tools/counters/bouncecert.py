@@ -43,6 +43,7 @@ rather than proving a wrong theorem.
   bouncecert.py --spec S --cycles     bounce cycles, wall column, costs
   bouncecert.py --spec S --macro      macro phases and their laws
   bouncecert.py --spec S --family     the sside family in the wall index
+  bouncecert.py --spec S --anchors    the macro anchor (solid block) per phase
   bouncecert.py --spec S --all-views  all four, in order
   bouncecert.py --emit [--spec S]     render + compile the BNC_* boards
 """
@@ -625,6 +626,41 @@ def summarise(spec, steps):
     return analyse(spec, steps)
 
 
+def anchors_of(R, ph=None, n=9):
+    """The configuration at each macro-phase boundary.
+
+    THE bucket-wide fact, and the one every anchor enumeration missed: every
+    one of the 19 DOES rest, once per macro phase, at a configuration with
+    the head just off one end of the written region and NOTHING on the other
+    side.  On eight of them the region is a solid block of ones; on the rest
+    it carries structure.  Either way it is a legitimate anchor family -- it
+    is simply not a digit WORD, so `anchors()`, `restscan` and `regscan`
+    (which all decode the rest against an alphabet) cannot express it."""
+    ph = macro_phases(R)[1] if ph is None else ph
+    out = []
+    for p in ph[:n]:
+        q, l, h, r = R.conf_at(p[0])
+        solid = (set(l) <= {1} and set(r) <= {1} and (not l or not r))
+        out.append((p[0], LAB[q], len(l), h, len(r), solid))
+    return out
+
+
+def view_anchors(spec, R, n):
+    side, ph = macro_phases(R)
+    A = anchors_of(R, ph, n)
+    print('== the macro anchor: one rest per phase (slow frontier = %s) =='
+          % side)
+    print('   i       t  st  |left|  head  |right|  solid block?')
+    for i, a in enumerate(A):
+        print('%4d %7d   %s %7d %5d %8d  %s'
+              % (i, a[0], a[1], a[2], a[3], a[4], 'yes' if a[5] else 'NO'))
+    ns = [max(a[2], a[4]) for a in A]
+    if len(ns) >= 3:
+        print('   block law: %s' % law(list(range(len(ns))), ns))
+        print('   blocks: %s' % ', '.join(str(x) for x in ns))
+        print('   states: %s' % ''.join(a[1] for a in A))
+
+
 def view_all(steps):
     hdr = ('%-29s %3s %5s %5s %-9s %4s %5s %5s %6s %-13s %-12s %4s %-8s %-6s'
            % ('spec', 'lv', 'turns', 'phase', 'frontier', 'wall', 'step',
@@ -647,6 +683,26 @@ def view_all(steps):
           % sum(1 for r in rows if r['kind'] == 'plain'))
     print('bouncer counters (cycle cost fits no affine law):       %d'
           % sum(1 for r in rows if r['kind'] == 'counter'))
+    print()
+    print('== the MACRO ANCHOR: the solid block at each phase boundary ==')
+    print('  spec                           st  block law %-24s %s'
+          % ('blocks', 'kind + the last one, written out'))
+    for r in rows:
+        A = anchors_of(r['R'])
+        if len(A) < 3:
+            print('  %-29s  (fewer than 3 phases)' % r['spec'])
+            continue
+        ns = [max(a[2], a[4]) for a in A]
+        R2 = r['R']
+        t = A[-1][0]
+        q, l, h, rr = R2.conf_at(t)
+        side = cell(l[::-1]) if l else cell(rr)
+        print('  %-29s  %-4s %-9s %-24s %s%s'
+              % (r['spec'], ''.join(sorted(set(a[1] for a in A))),
+                 law(list(range(len(ns))), ns),
+                 ', '.join(str(x) for x in ns[:6]),
+                 'solid  ' if all(a[5] for a in A) else 'shaped ',
+                 side[:34] + ('...' if len(side) > 34 else '')))
     print()
     print('== the wall-indexed turnaround families ==')
     for r in rows:
@@ -750,6 +806,362 @@ Qed.
 '''
 
 
+# ---------------------------------------------------------------- wall board ---
+#
+# The WALL BOUNCE class.  A machine is a customer of BounceGlue's
+# [WallBounce] section when three of its states play the roles the reader
+# measured -- Bq turns at the wall, Cq erases the run leftward with a
+# self-loop, Dq fills it back rightward -- and the fourth, StA, is the drift.
+# The roles are READ OFF THE TABLE, never assigned.  The emitter only takes
+# machines whose roles land on (StB, StC, StD) in that order, because the
+# board's visit case-split is written in state order; a permuted assignment
+# is a template variant, not new theory.
+
+WBOARD = r'''(** * @PREF@_@ID@: machine @SPEC@ never quasihalts.
+
+    One of the residue's `no anchor` rows, and the class John read off the
+    tape (WAVE29_FINDINGS.md section 6, on this row's sibling
+    0RB0LD_1LA1LC_0LD0LC_1RD1RB -- the three differ only in row A):
+
+      "keeps bouncing back and forth with c and d states.  then when it
+       passes the wall on the right it moves the wall over one and heads
+       back left and then goes back to bouncing"
+
+    THE COUNTER IS NOT A WORD, IT IS THE WALL POSITION.  That is why eight
+    waves of digit-alphabet anchor enumeration returned nothing here: the
+    machine never rests in a decodable digit configuration, and the thing
+    that grows monotonically is a COLUMN.  The family is [BounceGlue]'s
+    wall-indexed pair
+
+      wA St@B@ n   = (St@B@, (repeat S1 n, S0, []))
+      wM St@B@ a r = (St@B@, (repeat S1 r, S1, repeat S1 a))
+
+    and [BounceGlue.WallBounce] supplies everything not involving [StA]:
+    one bounce is [wM (S a) r --> wM a (r+3)] in exactly [2*r+5] steps,
+    the terminal [wM 0 r --> wA (r+3)] is the SAME derivation read at
+    [a = 0] (which is why they cost the same), and [wmchain] composes [a]
+    of them.  The wall moves by exactly ONE cell per bounce and the cost
+    is affine in it, so the bounce count is explicit in the anchor and
+    plain induction suffices -- no [MeasureGlue], no measure, no
+    well-founded recursion.
+
+    What is left, and all this file adds, is the COLLAPSE, the only place
+    [StA] appears: it walks the solid block from its near end to its far
+    end at @RP@ steps per cell LEAVING THE TAPE UNCHANGED, and @TL@ more
+    steps turn the walk around into the first bounce:
+
+      wA n  -->  wM (n-@CC1@) 3   in  @RP@*(n-1) + @TLP1@  steps.
+
+    The macro lap is therefore [wA n --> wA (@NEXTN@)] and the block sizes
+    are @B0@, @B1@, @B2@, @B3@, ...  Every state recurs inside one lap
+    ([St@B@] at index 0, [StA] at 1, [St@C@] and [St@D@] inside the first
+    bounce), so the closer is [LapGlue.glue_neverqh] directly -- Bounce_8's
+    pattern, on a family indexed by the wall rather than by a counter.
+
+    Measured off the raw simulator by [tools/counters/bouncecert.py]
+    (turnaround columns, wall step +1 per cycle, the affine cost law, and
+    the wall-indexed turnaround families) and differentially validated --
+    the bounce and terminal over an (a, r) grid, the collapse at every
+    n = 3..40, and the anchor sequence against the blank-tape replay --
+    before any Coq was written.
+
+    [Print Assumptions] = [functional_extensionality_dep] only. *)
+
+From Coq Require Import Arith Lia Bool List PArith.
+From BBB4 Require Import BBB4_Statement CTape.
+From BBB4.Census Require Import TNF_QH.
+From BBB4.Counters Require Import LapGlue BounceGlue.
+Import ListNotations.
+
+Definition mk (w : Sym) (d : Dir) (n : St) : option Trans :=
+  Some (mkTrans w d n).
+
+(** @SPEC@ *)
+Definition tm_@ID@ : TM := fun q s => match q, s with
+@TABLE@ end.
+Local Notation tm := tm_@ID@.
+
+Local Notation aA := (wA St@B@).
+Local Notation aM := (wM St@B@).
+
+Lemma chain_@ID@ : forall n1 n2 c c1 c2,
+  csteps tm n1 c = Some c1 -> csteps tm n2 c1 = Some c2 ->
+  csteps tm (n1 + n2) c = Some c2.
+Proof. intros. rewrite csteps_add, H. assumption. Qed.
+
+(** ** The bounce, straight from [BounceGlue.WallBounce] *)
+
+Definition mchain_@ID@ := wmchain tm St@B@ St@C@ St@D@
+  eq_refl eq_refl eq_refl eq_refl eq_refl.
+Definition visC_@ID@ := wvisC tm St@B@ St@C@ eq_refl.
+Definition visD_@ID@ := wvisD tm St@B@ St@C@ St@D@ eq_refl eq_refl eq_refl.
+
+(** ** The collapse: [StA] walks the block at @RP@ steps per cell *)
+
+(** One cell of the walk.  The tape is UNCHANGED -- the cell is cleared
+    and rewritten -- which is what makes the walk a pure translation. *)
+Lemma rip1_@ID@ : forall L R,
+  csteps tm @RP@ (StA, (S1 :: L, S1, S1 :: R))
+    = Some (StA, (L, S1, S1 :: S1 :: R)).
+Proof. intros L R. reflexivity. Qed.
+
+Lemma ripn_@ID@ : forall k L R,
+  csteps tm (@RP@ * k) (StA, (repeat S1 k ++ L, S1, S1 :: R))
+    = Some (StA, (L, S1, repeat S1 k ++ S1 :: R)).
+Proof.
+  induction k as [|k IH]; intros L R; [reflexivity|].
+  cbn [repeat app].
+  replace (@RP@ * S k) with (@RP@ + @RP@ * k) by lia.
+  apply (chain_@ID@ @RP@ (@RP@ * k) _
+           (StA, (repeat S1 k ++ L, S1, S1 :: S1 :: R))).
+  - apply rip1_@ID@.
+  - rewrite IH, rep_snoc. reflexivity.
+Qed.
+
+(** The turn at the far end: the walk becomes the first bounce. *)
+Lemma tail_@ID@ : forall X,
+  csteps tm @TL@ (StA, ([], S1, @TAILPRE@X))
+    = Some (St@B@, ([S1; S1; S1], chd X, ctl X)).
+Proof. intro X. reflexivity. Qed.
+
+Lemma wcol_@ID@ : forall m,
+  csteps tm (@RP@ * @MPLUS@ + @TLP1@) (aA @NCOL@) = Some (aM m 3).
+Proof.
+  intro m. unfold wA.
+  replace (@RP@ * @MPLUS@ + @TLP1@) with (1 + (@RP@ * @MPLUS@ + @TL@)) by lia.
+  cbn [repeat].
+  apply (chain_@ID@ 1 _ _ (StA, (repeat S1 @MPLUS@, S1, [S1]))).
+  { reflexivity. }
+  apply (chain_@ID@ (@RP@ * @MPLUS@) @TL@ _
+           (StA, ([], S1, repeat S1 @MPLUS@ ++ [S1]))).
+  { pose proof (ripn_@ID@ @MPLUS@ [] []) as Hr.
+    rewrite app_nil_r in Hr. exact Hr. }
+  rewrite rep_app1.
+  exact (tail_@ID@ (repeat S1 (S m))).
+Qed.
+
+(** ** The macro lap *)
+
+Lemma wlap_@ID@ : forall m, exists k, 0 < k /\
+  csteps tm k (aA @NCOL@) = Some (aA (3 + 3 * m + 3)).
+Proof.
+  intro m. destruct (mchain_@ID@ m 3) as (k & Hk & Hrun).
+  exists (@RP@ * @MPLUS@ + @TLP1@ + k). split; [lia|].
+  apply (chain_@ID@ (@RP@ * @MPLUS@ + @TLP1@) k _ (aM m 3)).
+  - apply wcol_@ID@.
+  - exact Hrun.
+Qed.
+
+(** ** The anchor family: block sizes @B0@, @B1@, @B2@, ... *)
+
+Fixpoint blk_@ID@ (t : nat) : nat :=
+  match t with 0 => @B0@ | S t' => @BLKREC@ end.
+
+Lemma blk_ge_@ID@ : forall t, @CC1@ <= blk_@ID@ t.
+Proof. induction t; cbn; lia. Qed.
+
+(** Every block the family visits is big enough to collapse. *)
+Lemma anchor_@ID@ : forall t, exists m, blk_@ID@ t = @NCOL@.
+Proof.
+  intro t. pose proof (blk_ge_@ID@ t).
+  exists (blk_@ID@ t - @CC1@). lia.
+Qed.
+
+Definition Cc (p : positive) : cconf := aA (blk_@ID@ (Pos.to_nat p)).
+
+Lemma lap_@ID@ : forall p, exists n c',
+  csteps tm n (Cc p) = Some c' /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+Proof.
+  intro p. unfold Cc. rewrite Pos2Nat.inj_succ. cbn [blk_@ID@].
+  destruct (anchor_@ID@ (Pos.to_nat p)) as (m & Hm). rewrite Hm.
+  destruct (wlap_@ID@ m) as (k & Hk & Hrun).
+  exists k, (aA (3 + 3 * m + 3)).
+  split; [exact Hrun | split; [| exact Hk]].
+  replace (3 + 3 * m + 3) with (3 * @NCOL@@GADDS@) by lia.
+  reflexivity.
+Qed.
+
+(** ** Visits: every state recurs inside one lap *)
+
+Lemma visA_@ID@ : forall m,
+  exists c, csteps tm 1 (aA @NCOL@) = Some c /\ fst c = StA.
+Proof.
+  intro m. unfold wA. cbn [repeat]. eexists. split; reflexivity.
+Qed.
+
+Lemma vis_@ID@ : forall p q, exists k c,
+  csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros p q. unfold Cc.
+  destruct (anchor_@ID@ (Pos.to_nat p)) as (m & Hm). rewrite Hm.
+  destruct q.
+  - destruct (visA_@ID@ m) as (c & Hc & Hq).
+    exists 1, c. split; [exact Hc | exact Hq].
+  - exists 0. eexists. split; reflexivity.
+  - destruct (visC_@ID@ m 3) as (c & Hc & Hq).
+    exists (@RP@ * @MPLUS@ + @TLP1@ + 1), c. split; [| exact Hq].
+    apply (chain_@ID@ (@RP@ * @MPLUS@ + @TLP1@) 1 _ (aM m 3)).
+    + apply wcol_@ID@.
+    + exact Hc.
+  - destruct (visD_@ID@ m 3) as (c & Hc & Hq).
+    exists (@RP@ * @MPLUS@ + @TLP1@ + (3 + 2)), c. split; [| exact Hq].
+    apply (chain_@ID@ (@RP@ * @MPLUS@ + @TLP1@) (3 + 2) _ (aM m 3)).
+    + apply wcol_@ID@.
+    + exact Hc.
+Qed.
+
+(** ** Boot and the theorem *)
+
+Lemma boot_@ID@ : exists t0, stepn tm t0 InitES = Some (lift (Cc 1)).
+Proof.
+  exists @T0@.
+  assert (H : match csteps tm @T0@ c0 with
+              | Some c => ceqb c (Cc 1)
+              | None => false
+              end = true) by (vm_compute; reflexivity).
+  destruct (csteps tm @T0@ c0) as [c|] eqn:Eq; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ Eq).
+  f_equal. apply ceqb_lift. exact H.
+Qed.
+
+Theorem nqh_@ID@ : NeverQuasiHaltsSt tm.
+Proof.
+  apply (glue_neverqh tm Cc 1).
+  - exact boot_@ID@.
+  - intros p _. apply lap_@ID@.
+  - intros p q _. apply vis_@ID@.
+Qed.
+
+Theorem nonhalt_@ID@ : NonHalt tm.
+Proof. apply never_qh_nonhalt, nqh_@ID@. Qed.
+'''
+
+
+def wroles(spec):
+    """(Bq, Cq, Dq) for the WALL-BOUNCE shape, read off the table."""
+    tab = parse(spec)
+    for B in range(4):
+        t = tab.get((B, 1))
+        if t is None or t[:2] != (1, -1) or t[2] == B:
+            continue
+        C = t[2]
+        if tab.get((C, 1)) != (0, -1, C):
+            continue
+        tc = tab.get((C, 0))
+        if tc is None or tc[:2] != (0, -1):
+            continue
+        D = tc[2]
+        if tab.get((D, 0)) != (1, 1, D) or tab.get((D, 1)) != (1, 1, B):
+            continue
+        if tab.get((B, 0)) != (1, -1, 0):        # the drift is entered here
+            continue
+        if (B, C, D) != (1, 2, 3):
+            continue
+        return (B, C, D)
+    return None
+
+
+def _run(tab, cfg, n):
+    import lapcert as LC
+    for _ in range(n):
+        cfg = LC.wstep(tab, False, False, cfg)
+    return cfg
+
+
+def wmeasure(spec, B):
+    """(rp, tl, cc1), measured -- plus a DIFFERENTIAL VALIDATION of every
+    gadget the board is about to claim, against the raw simulator."""
+    import lapcert as LC
+    tab = parse(spec)
+
+    def aA(n):
+        return (B, (1,) * n, 0, ())
+
+    def aM(a, r):
+        return (B, (1,) * r, 1, (1,) * a)
+
+    rp, c = None, (0, (1,) * 5, 1, (1,) * 3)
+    for t in range(1, 40):
+        c = LC.wstep(tab, False, False, c)
+        if c == (0, (1,) * 4, 1, (1,) * 4):
+            rp = t
+            break
+    if rp is None:
+        return None
+    tl, cc1, c = None, None, (0, (), 1, (1,) * 8)
+    for t in range(0, 40):
+        if c[0] == B and c[1] == (1, 1, 1) and c[2] == 1:
+            tl, cc1 = t, 8 - len(c[3])
+            break
+        c = LC.wstep(tab, False, False, c)
+    if tl is None or cc1 not in (1, 2):
+        return None
+    for r in range(0, 12):
+        for a in range(0, 6):
+            want = aA(r + 3) if a == 0 else aM(a - 1, r + 3)
+            if _run(tab, aM(a, r), 2 * r + 5) != want:
+                return None
+    for n in range(cc1, 41):
+        if _run(tab, aA(n), rp * (n - 1) + tl + 1) != aM(n - cc1, 3):
+            return None
+    return (rp, tl, cc1)
+
+
+def wemit(spec, write=True, check=True):
+    from emit_interleave import coq_table
+    import lapcert as LC
+    r = wroles(spec)
+    if r is None:
+        return (spec, 'not a wall bouncer', None)
+    B, C, D = r
+    m = wmeasure(spec, B)
+    if m is None:
+        return (spec, 'wall-bounce gadgets do not validate', None)
+    rp, tl, cc1 = m
+    gadd = 6 - 3 * cc1
+    tab = parse(spec)
+    blk = [3]
+    for _ in range(4):
+        blk.append(3 * blk[-1] + gadd)
+    want, cfg, t0 = (B, (1,) * blk[1], 0, ()), (0, (), 0, ()), None
+    for t in range(20000):
+        if cfg == want:
+            t0 = t
+            break
+        cfg = LC.wstep(tab, False, False, cfg)
+    if t0 is None:
+        return (spec, 'no boot to the p = 1 anchor', None)
+    mid = mach_id(spec)
+    tail = '' if gadd == 0 else ' + ' + str(gadd)
+    nx = '3 * n' + tail
+    br = '3 * blk_' + mid + " t'" + tail
+    ncol = 'm'
+    for _ in range(cc1):
+        ncol = '(S ' + ncol + ')'
+    mplus = 'm' if cc1 == 1 else '(S m)'
+    nd = ''
+    src = (WBOARD.replace('@PREF@', BOARD_PREFIX).replace('@ID@', mid)
+           .replace('@SPEC@', spec).replace('@TABLE@', coq_table(spec))
+           .replace('@B@', LAB[B]).replace('@C@', LAB[C]).replace('@D@', LAB[D])
+           .replace('@RP@', str(rp)).replace('@TLP1@', str(tl + 1))
+           .replace('@TL@', str(tl)).replace('@CC1@', str(cc1))
+           .replace('@TAILPRE@', 'S1 :: ' * (cc1 - 1))
+           .replace('@NCOL@', ncol).replace('@MPLUS@', mplus)
+           .replace('@GADDS@', tail).replace('@NEXTN@', nx)
+           .replace('@BLKREC@', br).replace('@T0@', str(t0))
+           .replace('@B0@', str(blk[0])).replace('@B1@', str(blk[1]))
+           .replace('@B2@', str(blk[2])).replace('@B3@', str(blk[3])))
+    path = os.path.join(OUTDIR, BOARD_PREFIX + '_' + mid + '.v')
+    if not write:
+        return (spec, 'dry run', src)
+    with open(path, 'w') as f:
+        f.write(src)
+    if not check:
+        return (spec, 'written', path)
+    ok, log = coqc(path)
+    return (spec, 'BOARDED' if ok else 'coqc FAILED\n' + log, path)
+
+
 def roles(spec):
     """(E, X, Y) as state indices, or None if the machine is not an
     erase/fill bouncer.  Read off the table; nothing is assigned."""
@@ -835,6 +1247,10 @@ def emit(spec, write=True, check=True):
 def view_emit(specs, write, check):
     for spec in specs or BUCKET:
         s, msg, path = emit(spec, write=write, check=check)
+        if path is None:
+            _s2, msg2, path2 = wemit(spec, write=write, check=check)
+            if path2 is not None or msg2 != 'not a wall bouncer':
+                msg, path = msg2, path2
         print('%-29s %s%s' % (s, msg, ('  -> ' + path) if path and write else ''))
 
 
@@ -847,6 +1263,7 @@ def main():
     ap.add_argument('--cycles', action='store_true')
     ap.add_argument('--macro', action='store_true')
     ap.add_argument('--family', action='store_true')
+    ap.add_argument('--anchors', action='store_true')
     ap.add_argument('--all-views', action='store_true')
     ap.add_argument('--all', action='store_true')
     ap.add_argument('--emit', action='store_true')
@@ -871,6 +1288,8 @@ def main():
         view_macro(a.spec, R, a.n)
     if a.family or a.all_views:
         view_family(a.spec, R, a.n)
+    if a.anchors or a.all_views:
+        view_anchors(a.spec, R, a.n)
 
 
 if __name__ == '__main__':
