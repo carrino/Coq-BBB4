@@ -5,8 +5,10 @@ _Refreshed 2026-07-29 at the end of the wave-28 track (branch
 previous refresh ranked third and found a route under it: the overflow
 branch of every `obS = 0` alphabet was never PEELED, and peeling it boarded
 **21** rows whose laps had been exactly affine all along
-(`emit_lapcert._peel_ovf`, `PEEL_*`).  `D_remaining` **319 -> 298** (4,858 of
-the frozen 5,156 settled, 94.2%).  The same wave measured the register x
+(`emit_lapcert._peel_ovf`, `PEEL_*`) -- then took the QUAD route's cheapest
+cluster the same way and boarded **4** more (`QMG_*`; three padding gates
+and one missing lemma, `QuadGlue.quad_reach`).  `D_remaining` **319 -> 292**
+(4,864 of the frozen 5,156 settled, 94.3%).  The same wave measured the register x
 counter bucket end to end (`tools/counters/regscan.py`) and the headline is a
 NEGATIVE result that re-ranks the whole list: of the 53 rows the reader can
 read, **53 carry a `Theta(2^k)` branch**.  The register build is not four
@@ -60,7 +62,7 @@ LapCertGlue, LapGlueAbs, SkipGlue, QuadGlue, NestedLap and NestedLapLift are
 axiom-FREE or funext-only -- keep them that way).  Everything under tools/
 is UNTRUSTED; the kernel re-checks every board.
 
-STATE: 4,858 of the frozen 5,156 settled (94.2%); D_remaining = 298.
+STATE: 4,864 of the frozen 5,156 settled (94.3%); D_remaining = 292.
 docs/RESIDUE_MAP.md + tools/closeout/residue_map.tsv give lap shapes and
 blockers (wave-23's measurement; subtract the boards of waves 25-28 --
 CASB_*, SKIP_*, QMG_*, PEEL_* -- from its rows).
@@ -73,13 +75,12 @@ Failure profile at D_remaining = 298:
                                    period-2+virt, 2 plain (all 53 with a
                                    Theta(2^k) branch), 24 drift, 36 the
                                    reader cannot read yet
-   99  no interior chain        -- QUAD 35 (16 parity + 12 double-ladder
-                                   + 4 non-rep + 3 deep-pivot, ALL emitter
-                                   extensions of quad_emit.py),
-                                   AFFINE/AFFINE 14, HIGHER 13,
+   95  no interior chain        -- QUAD 31 (16 parity + 12 double-ladder
+                                   + 3 deep-pivot; the 4 non-rep are
+                                   BOARDED), AFFINE/AFFINE 14, HIGHER 13,
                                    PARITY-AFFINE 13, EXP3 10, EXP2 8,
                                    EXP4 6
-   39  no inner family at pow2 j -- what the peel left; the 15 affine rows
+   37  no inner family at pow2 j -- what the peel left; the 15 affine rows
                                    are gone, these have no consecutive-value
                                    family at all under jexcept_scan
    20  no anchor
@@ -89,7 +90,7 @@ Failure profile at D_remaining = 298:
                                    chain can be) and 1 main count at 4..7
     5  no second exit chain     -- the SCycR-entry-offset checker gap
     4  no inner interior chain
-(113+99+39+20+18+5+4 = 298)
+(113+95+37+20+18+5+4 = 292)
 Per-machine cost is a vm_compute.  After a wave, make closeout (inventory +
 gen_stages + audit) shrinks D_remaining by exactly what you boarded.
 
@@ -99,20 +100,15 @@ THE TASK (re-ranked 2026-07-29 after wave-28's measurement):
       own gates in WAVE28 3e with tools/counters/quad_classes.py) -- 35
       rows, NO NEW THEORY, and now the largest no-new-theory bite in the
       residue.  In CHEAPEST-FIRST order, which is not size order:
-        *  4 non-rep right sides -- START HERE.  ALL NINE CHAINS ALREADY
-           DERIVE on all four (WAVE28 3f): the right-side gate was PADDING
-           (the ladder's k = 0 rung is one trailing blank short), Cq is now
-           piecewise in k with the MEASURED first rung in its k = 0 arm,
-           and the 6 committed QMG_* boards re-render byte-identical after
-           both fixes.  ONE lemma is left.  The emitter now reports it:
-             no visit witness for state A (fires in MC0p,MC0z,TCp,TCz,BOOT0)
-           -- the missing state fires INSIDE the ladder, and vis_via_ovf
-           (the only carrier the QUAD board has) sees the BOOTO prefix
-           only.  Write vis_via_quad in QuadGlue: run the anchor to the
-           rung Cq W k m that quad_lap's mrun already passes through, then
-           fire.  It is the exact analogue of NestedLapLift.vis_via_fill,
-           which the nested route needed for the same reason.  4 boards.
-        * 16 PARITY-CLASS -- THREE gates, not one.  Every one is a 2-cell
+        *  4 non-rep right sides -- DONE (WAVE28 3f).  Three of the four
+           gates were PADDING and one was a missing lemma
+           (QuadGlue.quad_reach: walk the ladder's rungs to Cq W j 0, where
+           both terminals start, so a state that fires INSIDE the ladder
+           has a witness).  Read that section before the 16: the same three
+           padding shapes (a rung one blank short, a terminal one blank
+           past the far side, a cbn that eats the ++ [S0] a rewrite needs)
+           will be in front of them too.
+        * 16 PARITY-CLASS -- now the top of this list.  THREE gates, not one.  Every one is a 2-cell
            alphabet (Bp / Alph_00_10_1, so rep RU k slides two cells), has
            the parity class in the MICRO hop only (cls 21111), AND a
            DOUBLED mark-count law ((2,1)/(2,3) or (2,2)/(2,4), not the

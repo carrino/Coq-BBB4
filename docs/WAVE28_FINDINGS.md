@@ -9,13 +9,24 @@ prompt asked for is **one piece bigger than the prompt thought**._
 
 ## 1. The one-line result
 
-**21 new boards, all first render, all funext-only, no new library Coq.**
-`D_remaining` **319 → 298**.  One emitter extension
-(`emit_lapcert._peel_ovf` + the `PEEL_*` template arms), two new scans
-(`tools/counters/jexcept_scan.py`, `tools/counters/regscan.py`).
-`LapDecider`, `LapCertGlue`, `SkipGlue`, `QuadGlue` and every other library
-file are **untouched**; nothing under `theories/Census/` was touched and
-`census_cache --check` stayed MATCH throughout.
+**25 new boards, all funext-only.**  `D_remaining` **319 → 292** (the last
+4 boards cover 6 frozen rows).  Two routes:
+
+* **21 `PEEL_*`** — the flat overflow branch, PEELED (§2).  No library Coq
+  at all; `emit_lapcert._peel_ovf` plus two `vm_compute` lemmas per board.
+* **4 `QMG_*`** — the QUAD route's `non-rep right side` cluster (§3f), which
+  turned out to be three padding bugs and ONE missing lemma
+  (`QuadGlue.quad_reach` / `quad_reach0`, an induction over the ladder's
+  rungs; `QuadGlue` stays axiom-free, `Print Assumptions quad_reach0` =
+  closed under the global context).
+
+Three new scans (`tools/counters/jexcept_scan.py`,
+`tools/counters/regscan.py`, `tools/counters/quad_classes.py`).
+`LapDecider`, `LapCertGlue` and `SkipGlue` are **untouched**; the only
+library edit anywhere is the two lemmas appended to `QuadGlue`.  Nothing
+under `theories/Census/` was touched and `census_cache --check` stayed MATCH
+throughout.  All 6 previously-committed `QMG_*` boards re-render
+**byte-identical**.
 
 (The wave opened at `D_remaining` = 319, not the 323 the wave-27 prompt
 states: `main` had picked up four more boards in PR #55 before this branch
@@ -301,8 +312,21 @@ the exact analogue of `NestedLapLift.vis_via_fill`, which is what the nested
 route needed for the same reason.  A `vis_via_quad` in `QuadGlue` plus the
 bullet that uses it, and these 4 board.
 
-(The emitter now NAMES where the state fires instead of just refusing, so
-the next wave does not have to rediscover this.)
+And that is what this wave built.  `QuadGlue.quad_reach` walks the rungs by
+iterating `Hmicro` (`forall m k, k + m = j -> exists n, csteps tm n (Cf k m)
+= Some (Cf j 0)`, a four-line induction), `quad_reach0` instantiates it at
+the ladder's start, and the board's `visq_<ID>` composes BOOTO + that walk +
+a prefix of the terminal chain.  `QuadGlue` stays axiom-free.
+
+Two more padding gates surfaced behind it and are fixed the same way: the
+terminal lands one BLANK past the anchor's far side (`WTape.lift_app_blank`
+in the overflow AND interior closes — the interior strip has to run BEFORE
+`cbn [rep app]`, which otherwise eats the `++ [S0]` the rewrite matches on).
+
+**All four board, funext-only**, and the 6 committed `QMG_*` re-render
+byte-identical after all of it.  `no interior chain` 99 → 95, QUAD/QUAD
+35 → 31.  The emitter also NAMES where a missing state fires now, so the
+next cluster does not have to rediscover its own gate.
 
 ## 4. Do-not-retry, extended
 
