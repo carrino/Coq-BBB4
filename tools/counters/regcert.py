@@ -98,6 +98,79 @@ def walk(dspec, enc, tail, pmax=PMAX):
     return tab, out, v0
 
 
+def frame_probe(dspec, enc, tail, vlo=4, vhi=320, maxT=6000000):
+    """The TWO-FORM reader: per octave, the rest frames that cover EVERY
+    value of that octave.
+
+    [walk] chases forward and takes the FIRST rest whose word matches, which
+    on this bucket is measured to be the wrong one: a machine that rests
+    twice per value -- once with the wall at the head and once past it --
+    reads as a GROWING far under the chase and as a CONSTANT period-2 far
+    here (WAVE29 section 5b).  So collect every rest, key it by
+    (state, far), and keep only the keys that see the whole octave.
+
+    Returns (frames, cfgs): [frames] maps an octave to the set of frames
+    covering it, [cfgs] one witnessing configuration per (value, frame)."""
+    tab = parse(dspec)
+    d = ENCDATA[enc]
+    A, B, C = tuple(d['uD']), tuple(d['uS']), tuple(d['soD'])
+    tl = tuple(tail)
+    seen, wit = {}, {}
+    cfg = (0, (), 0, ())
+    for _ in range(maxT):
+        try:
+            cfg = LC.wstep(tab, False, False, cfg)
+        except LC.Halt:
+            break
+        q, l, h, r = cfg
+        if h:
+            continue
+        if len(l) < len(tl) or (tl and tuple(l[len(l) - len(tl):]) != tl):
+            continue
+        w = l[:len(l) - len(tl)] if tl else l
+        v = NC.decode(w, A, B, C)
+        if v is None or not vlo <= v < vhi:
+            continue
+        f = (q, LC.rstrip0(r))
+        seen.setdefault(v.bit_length() - 1, {}).setdefault(f, set()).add(v)
+        wit.setdefault((v, f), cfg)
+    frames = {}
+    for k, byf in seen.items():
+        want = 1 << k
+        if (want << 1) > vhi:
+            continue
+        full = {f for f, vs in byf.items() if len(vs) == want}
+        if full:
+            frames[k] = full
+    return frames, wit
+
+
+def frames_of_probe(frames):
+    """Pick one frame per octave so that the choice is period 1 or 2 in the
+    octave, preferring the SHORTEST far (a constant wall over a growing
+    one)."""
+    ks = sorted(frames)
+    if len(ks) < 4:
+        raise RegError('probe covers only %d octaves' % len(ks))
+    ks = ks[:-1] if len(ks) > 4 else ks
+    for P in (1, 2):
+        pick, ok = {}, True
+        for b in range(P):
+            common = None
+            for k in ks:
+                if (k - ks[0]) % P != b:
+                    continue
+                common = frames[k] if common is None else common & frames[k]
+            if not common:
+                ok = False
+                break
+            pick[b] = min(common, key=lambda f: (len(f[1]), f))
+        if not ok:
+            continue
+        return P, {k: pick[(k - ks[0]) % P] for k in ks}, ks
+    raise RegError('no period-1 or -2 frame covers every octave')
+
+
 def read_frames(cfgs, floor):
     """The octave frames and the VIRTUAL octaves, read off the walk.
 
@@ -1164,7 +1237,28 @@ def main():
     ap.add_argument('--emit', action='store_true')
     ap.add_argument('--force', action='store_true')
     ap.add_argument('--out')
+    ap.add_argument('--frames', action='store_true',
+                    help='the TWO-FORM read: per-octave frames with full '
+                         'coverage, and the period-1/2 pick')
     a = ap.parse_args()
+    if a.frames:
+        rows = ([r for r in json.load(open(a.json))
+                 if not a.kind or r['kind'] == a.kind] if a.json else
+                [dict(spec=a.spec, enc=a.enc, mirror=a.mirror,
+                      tail=json.loads(a.tail) if a.tail else [])])
+        for r in rows:
+            ds = mirror_spec(r['spec']) if r['mirror'] else r['spec']
+            try:
+                fr, _ = frame_probe(ds, r['enc'], tuple(r['tail']))
+                P, pick, ks = frames_of_probe(fr)
+                print('%-40s period-%d  %s' % (
+                    r['spec'], P,
+                    ' | '.join('%d:%s@%s' % (k, LAB[pick[k][0]],
+                                             ''.join(map(str, pick[k][1]))
+                                             or '-') for k in ks)))
+            except Exception as e:                             # noqa: BLE001
+                print('%-40s %s: %s' % (r['spec'], type(e).__name__, e))
+        return
     if a.json:
         rows = [r for r in json.load(open(a.json))
                 if not a.kind or r['kind'] == a.kind]

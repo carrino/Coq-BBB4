@@ -21,7 +21,7 @@ And four measurements that change the bucket's shape:
 | `period-2+virt` (4) | **BOARDED**, all four (§2) |
 | `drift` (24) | **not a class**: 22 of 24 are `grow-11` once the reader's 8-cell far cap is lifted and the lowest octave is held out (§4a) |
 | `short` (36) | **not a class**: the chase's `TAILMAX = 2` was the whole blocker; with a 3- or 4-cell tail they walk 130+ anchors and read `grow-11` (§4b) |
-| `grow-11` (35, +8 `+virt`) | the far is `rep [S1;S1] (size p - c)` as the prompt says — but **no branch of it is a chain**: the INTERIOR lap is `Theta(2^k)` and the overflow `Theta(4^k)`, measured on 6 rows (§5).  And the reason is that the chased "counter" is a SUBSEQUENCE of the machine's own (§5b) |
+| `grow-11` (35, +8 `+virt`) | the far is `rep [S1;S1] (size p - c)` as the prompt says — but **no branch of it is a chain**: at the chase's frame every branch is exponential, because the chased "counter" is a `sqrt` SUBSEQUENCE of the machine's own (§5b).  Read with the wall on the FAR side instead, the interior lap is exact `4j+8` and 245 of 248 anchors close (§5c) -- the whole family is one flat interior chain plus one NESTED overflow (§5d) |
 
 So the bucket is not seven classes.  It is **10 constant-frame rows** (the 4
 boarded, the 4 `Jp` gray-code rows, 2 `plain`) and **~103 rows of ONE
@@ -191,7 +191,8 @@ enumeration never offered.
 `TAILMAX` is left at 2 in `regscan.py` so that `reg113.json` still
 reproduces; the wide scan is a separate run.
 
-## 5. The `grow-11` family (prompt item 2): the `Cc` is right, the CHAINS are not
+## 5. The `grow-11` family (prompt item 2): the `Cc` IS right, and the
+   overflow is where all of it lives
 
 The prompt asked to check EARLY whether `rep u (Pos.size_nat p - c)` survives
 the lap glue.  It does, structurally, and it does not, dynamically.
@@ -212,8 +213,8 @@ right).  On the interior branch the two indices are independent, but there
 the far is untouched and can ride as the RIGHT OPAQUE TAIL — the same device
 this wave's interior chain already uses.
 
-**Dynamically it does not.**  Measured over 6 rows of the class, at the
-frames above:
+**Dynamically it does not — at the frame the chase reads.**  Measured over
+6 rows of the class, at the growing-far frames above:
 
 | row | interior lap at octave `k` | overflow lap |
 |---|---|---|
@@ -221,40 +222,70 @@ frames above:
 | `0RB0RD_1LA1RC_1RD1LC_0LC1RA` | 44, 92, 188, 380 | 1619, 6303, 24883 |
 | `0RB1LA_1RC0LA_1LD1RB_1LB1LD` | 44, 92, 188, 380, 764 | 102, 202, 398, 786 — `Theta(2^k)` |
 
-**Not one branch is affine, including the INTERIOR one.**  So the family is
-not "a different `Cc` with ordinary chains"; at this frame it is a nested
-branch inside a nested branch.
+Not one branch is affine, **including the interior one** — and an interior
+increment cannot cost `2^k` steps on a tape of `O(k)` cells unless something
+else is counting.  It is.
 
-### 5b. …and the reason: the chased counter is a SUBSEQUENCE of the real one
+### 5b. The chased counter is a SUBSEQUENCE of the machine's own
 
-This is the part worth carrying forward.  Decode the blank-head rests INSIDE
-one of those "interior laps" and they are a consecutive run of the SAME
-alphabet at the SAME state:
+Decode the blank-head rests INSIDE one of those "interior laps" and they are
+a consecutive run in the SAME alphabet at the SAME state with the SAME far:
 
-    chased anchor p = 16  ->  17     inner rests decode  97 .. 98
-    chased anchor p = 32  ->  33     inner rests decode 386 .. 389
-    chased anchor p = 64  ->  65     inner rests decode 1540 .. 1547
+    chased anchor p = 16 -> 17     inner rests decode   97 ..   98
+    chased anchor p = 32 -> 33     inner rests decode  386 ..  389
+    chased anchor p = 64 -> 65     inner rests decode 1540 .. 1547
 
-with `real ≈ 0.376 * p^2`.  The chase's `p` is not the machine's counter: it
+with `real ~ 0.376 * p^2`.  The chase's `p` is not the machine's counter: it
 is the subsequence of values whose word happens to match `E p ++ [S1;S1]`
-with a short far.  **The tail was taken from the wrong split** — the real
-anchor is `Alph_10_11_11@D`, tail `[]`, far `[S1;S1]`, a plain counter with a
-constant two-cell wall.
+with a short far.  **The tail was taken from the wrong split.**
 
-Under that key `ovfshape.anchor_times` finds **126 anchors to p = 400** and
-the interior lap is a clean exact **`4j + 20`** — but the family is present
-only on ALTERNATE octaves (present 5-7, 17-31, 65-127, 257-511; absent
-8-16, 32-64, 128-256).  That is WAVE26 section 8b's alternate-octave shape,
-i.e. **the register x counter regime again, one level down** — the same
-`period-2` piecewise `Cc` this wave just built, except that the second form
-(the one the machine rests in on the missing octaves) has to be read off the
-machine before the chase can walk through it.
+### 5c. The TWO-FORM read: the interior lap IS flat
 
-That is the next wave's job and it is now a well-posed one: `regscan.chase`
-demands the counter word end exactly at the head, so it cannot cross an
-octave whose form is different; a TWO-FORM chase (seed on one form, read the
-other off the boundary) turns ~103 rows into the shape `regcert.py` already
-emits.
+`regcert.frame_probe` collects EVERY blank-head rest, keys it by
+`(state, far)` and keeps the keys that cover every value of an octave.  On
+the same machine, with the wall moved out of the tail and onto the far side
+(`Alph_10_11_11@D`, tail `[S1;S1]`):
+
+    octave 2, 4, 6   D @ far = []           covers all 4 / 16 / 64 values
+    octave 3, 5, 7   D @ far = [S1;S1]      covers all 8 / 32 / 128 values
+
+a CONSTANT period-2 wall, not a growing one.  At that frame, over
+`p = 8 .. 255`:
+
+| branch | cost | closes |
+|---|---|---|
+| interior, even octave | **`4j + 8`, exact** | yes |
+| interior, odd octave | **`4j + 20`, exact** | yes |
+| overflow, even octave | 789 (j=4), 3101 (j=6) — `Theta(2^j)` | as a nested branch |
+| overflow, odd octave | — | **no** |
+
+**245 of the 248 anchors close exactly**, and the three that do not are
+exactly the odd-octave overflows — the octave crossings at which the wall
+gains its `[S1;S1]`.  So the interior branch is flat and independent of the
+octave, and ALL of the family's cost, growth and difficulty is in the
+overflow lap.
+
+### 5d. What that says the build is
+
+Both readings are half right, and together they say the prompt's `Cc` is the
+right one:
+
+    Cc p = (q, E p ++ tail, S0, rep u (Pos.size_nat p - c))
+
+* the INTERIOR branch is flat (`4j+8` measured) and does not touch the wall,
+  so the wall rides as the RIGHT OPAQUE TAIL and ONE chain covers every
+  octave — the same device this wave's `REG_*` interior chain already uses;
+* the OVERFLOW branch both increments the counter and APPENDS one `[S1;S1]`
+  to the wall.  Its two tape sides then carry two different counts, `j` on
+  the left and `m = j - c` on the right — but they are LINKED, so reindexing
+  at `j = j' + c` (prefix `rep uS c` on the left, `rep u j'` on the right)
+  puts both on one `sside` index and `LapDecider` can express it;
+* and that overflow is `Theta(2^j)`, so it is a NESTED branch
+  (`NestedLapLift`), not a chain.
+
+That is one `Cc` shape, one flat interior chain, and one nested overflow --
+**for roughly 103 of the 113 rows**.  It is the next wave's main build and it
+is now fully specified.
 
 ## 6. The 4 `plain+virt`: they are the four `Jp` gray-code rows
 
@@ -275,12 +306,16 @@ descending inner induction is a different carrier from
   period P.**  Measured: on all 4 `period-2+virt` rows the single fit reports
   "exponential" on branches that are `4k+7` / `4k+9` per parity.  Fit per
   octave class first; you may be looking at one nested branch, not four.
-* **Reading the `grow-11` family at `Alph_10_11_11@<state>` with the wall in
-  the TAIL.**  Measured on 6 rows: every branch comes out exponential
-  (interior `Theta(2^k)`, overflow up to `Theta(4^k)`) because the chased
-  values are a `~sqrt` subsequence of the machine's own counter (§5b).  Move
-  the wall from the tail to the FAR side and the interior lap is `4j+20`
-  exact.
+* **Reading the `grow-11` family with the wall in the TAIL.**  Measured on 6
+  rows: every branch comes out exponential (interior `Theta(2^k)`, overflow
+  up to `Theta(4^k)`) because the chased values are then a `~sqrt`
+  subsequence of the machine's own counter (§5b).  Move the wall from the
+  tail to the FAR side and the interior lap is exact `4j+8` / `4j+20` and
+  245 of 248 anchors close (§5c).
+* **`regscan.chase` on a family whose wall grows.**  It takes the FIRST rest
+  whose word matches, which on this bucket is measured to be a rest of a
+  LATER pass with a longer wall.  Collect every rest and keep the frames that
+  cover a whole octave (`regcert.frame_probe`) instead.
 * **`nestcert.families` on a phase whose inner rests DESCEND.**  The 4
   `plain+virt` rows: the run is there, `15..8`, and `families` requires
   `2^(K-1)..2^K-1` ascending, so it reports nothing at any tail.  Needs a
@@ -294,11 +329,14 @@ descending inner induction is a different carrier from
 
 ## 8. What the next wave should build
 
-1. **The TWO-FORM CHASE** (§5b).  Seed on the form the machine rests in on
-   one octave parity, read the OTHER form off the octave boundary, and walk
-   through it.  That is the single missing reader, and behind it sit ~103 of
-   the 113 — as the `period-2` piecewise `Cc` that `regcert.py` already
-   emits.  Everything else in this document is downstream of it.
+1. **The `size_nat` far, with a REINDEXED nested overflow** (§5d).  One
+   `Cc`, one flat interior chain (the wall as the right opaque tail), one
+   nested overflow chain stated at `j = j' + c` so both tape sides carry one
+   index.  Behind it sit **~103 of the 113**.  `regcert.frame_probe` /
+   `frames_of_probe` are the reader it needs (they already find the wall and
+   its period); what is missing is the `Pos.size_nat` analogue of
+   `RegGlue.podd` (an interior increment preserves it, an overflow raises it
+   by one) and the reindexed overflow chain.
 2. **A descending inner carrier** for the 4 `Jp` gray-code rows (§6):
    `inner_to_fill_lift` run from `fill v0` down to `v0`, which is the same
    well-founded induction on `JpCounter.tovf` in the other direction.
