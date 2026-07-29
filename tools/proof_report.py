@@ -82,8 +82,8 @@ checkable with coqchk -o).
     print('SKIPPED -- the %d undecided residue machines' % len(residue))
     print('(tools/closeout/frozen_unproven.txt):')
     print()
-    for i in range(0, len(residue), 2):
-        print('  ' + '  '.join(residue[i:i + 2]))
+    for m in residue:
+        print('  ' + m)
     print()
     print(line)
 
