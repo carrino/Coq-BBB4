@@ -211,8 +211,12 @@ THEN, in ranked order (all independent of the above):
           slope exactly 2 -- one extra round trip per extra digit
         * the micro-lap RLEs to a fixed letter pattern with counts
           affine in the probe index k                            33/41
-          (the other 8 alternate two increments -- the parity shape,
-           uniform after the k = 2i+r re-index, and all 8 are Bp)
+        * THE MICRO-LAP IS LITERALLY A CHAIN -- its (state, read,
+          write, move) sequence is a fixed list of 2-3 window steps
+          with counts affine in k                                41/41
+          (37 uniform in k, 4 after the standard k = 2i+r re-index)
+      So NOTHING about the micro-lap is outside the certificate model; the
+      only thing outside it is that there are Theta(j) of them.
       Leading coefficient = the alphabet's word stride: 1*j^2 for the 25 Kp,
       2*j^2 for the 10 Bp and 6 Alph_00_10_1.
       DO NOT SEARCH FOR AN INTERIOR CHAIN.  A chain sweeps a BOUNDED number
@@ -223,8 +227,15 @@ THEN, in ranked order (all independent of the above):
       exactly this ("chains an unbounded number of micro laps ... only a
       measure bounds how many"); costs are existentially quantified there, so
       a quadratic total is no obstruction -- only the structure must be
-      uniform, and it is.  Instantiation, endpoint shapes and the first thing
-      to measure (the micro-lap chain under _frame_pair) are in WAVE26 7d/7e.
+      uniform, and it is.  Instantiation and endpoint shapes are in WAVE26
+      7d; what is left (7e) is ENGINEERING, not discovery: an extractor that
+      reads (probe chain body, stride, parity) off one lap, a MeasureGlue
+      board template, the k = 2i+r re-index for the 4 parity rows, and the
+      wave-18 differential validator.  No new library Coq is predicted.  The
+      one piece with no precedent in the tree is Hterm -- the terminal sweep
+      writes the carry then clears the probed digits, so its chain count is
+      the FINAL k, and the board has to tie that k to the anchor's carry
+      index.  Check that early; everything else is assembly.
 
       The 13 PARITY-AFFINE are IN model after the m=2 re-index (j = 2i+r), but
       wave-14 measured only ~3 of the 13 derive both branches naively, so do

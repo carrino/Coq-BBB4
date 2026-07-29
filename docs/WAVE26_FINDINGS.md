@@ -224,7 +224,15 @@ Cost `2+4+6+8+10 = 30`, exactly the measured `(j+1)(j+2)` at `j = 4`.
 | interior lap polynomial fits an exact integer quadratic | **41 / 41** |
 | **overflow polynomial is the SAME polynomial** as the interior | **41 / 41** |
 | head-direction **reversals per lap affine in `j`, slope exactly 2** | **41 / 41** |
-| micro-lap (one excursion) run-length-encodes to a fixed letter pattern with counts affine in the probe index `k` | 33 / 41 directly; the other **8 alternate between two increments** — the parity pattern, uniform after the `k = 2i+r` re-index, and all 8 are `Bp` |
+| micro-lap (one excursion) run-length-encodes to a fixed letter pattern with counts affine in the probe index `k` | 33 / 41 directly; the other 8 alternate between two increments — the parity pattern — and all 8 are `Bp` |
+| **the micro-lap's `(state, read, write, move)` sequence — i.e. a CHAIN — is a fixed list with counts affine in `k`** | **41 / 41**: 37 uniform in `k`, 4 after the standard `k = 2i+r` re-index.  **The chain bodies are 2–3 window steps.** |
+
+That last row is the decisive one and it is worth stating plainly: **the
+micro-lap is not merely chain-*like*, it is literally a chain** — a fixed list
+of two or three `(state, read, write, move)` window steps with counted
+repeats, which is exactly what `LapDecider` expresses and what `srun` costs at
+`ca*k + cb`.  Nothing about the micro-lap is outside the certificate model.
+What is outside the model is only that there are `Θ(j)` of them.
 
 The leading coefficient is the alphabet's word stride: `1·j²` for the 25 `Kp`
 rows (1-cell digits), `2·j²` for the 10 `Bp` and 6 `Alph_00_10_1` rows (2-cell
@@ -274,15 +282,35 @@ digits plus the anchor tail, a count of `k-1` with `a = 1`.  One digit crosses
 from the opaque region to the counted one per step, which is precisely the
 `Xs`-shaped opaque region `nestcert._xterm` already reads off a framing.
 
-### 7e. What is NOT done, and the first thing to do
+### 7e. What is NOT done — and what is no longer in doubt
 
-No board, and no emitter route.  The one thing to measure next is the
-**micro-lap chain under `_frame_pair`** — the same first move that turned the
-10 two-count rows around in §4, and by §7b's uniformity it should derive.  If
-it does, the 41 need: an extractor that reads `(probe body, stride, parity)`
-off one lap, a `MeasureGlue` instantiation in the board template, and the
-`k = 2i+r` re-index for the 8 `Bp` rows.  No new library Coq is predicted —
-`MeasureGlue.v` is funext-clean and already carries the composition.
+**No board and no emitter route.**  That is the whole of what is missing, and
+it is engineering rather than discovery, because both halves of the route are
+now confirmed rather than conjectured:
+
+* the **micro-lap is a chain** — §7b's last row, 41 / 41, bodies of 2–3 window
+  steps.  It does not need `_frame_pair` or any widening; it is already in the
+  certificate model.
+* the **composition is `MeasureGlue.mrun`**, which exists, is funext-clean,
+  and quantifies costs existentially.
+
+So the build the 41 want is:
+
+1. an extractor that reads `(probe chain body, stride, parity)` off one
+   measured interior lap — the same shape of reader as `cascade_law`;
+2. a board template instantiating `MeasureGlue` with `A = k`, `mu = j+1-k`,
+   `Cf k` the head-at-digit-`k` denotation, `Hstep` the micro-lap chain and
+   `Hterm` the set-and-clear sweep;
+3. the `k = 2i+r` re-index for the 4 parity rows;
+4. the differential validator, replaying whole laps at several `j` against the
+   raw simulator — wave-18's discipline, unchanged.
+
+**No new library Coq is predicted.**  The one thing to check early, because it
+is the only piece with no precedent in this tree, is `Hterm`: the terminal
+sweep writes the carry and then clears the probed digits, so it is a chain
+whose count is the *final* `k` rather than a running one, and the board has to
+tie that `k` to the anchor's carry index.  Everything else is assembly.
 
 Reproduce every number here with the scripts named in this section plus
 `tools/counters/ovfshape.py --spec SPEC -v`.
+
