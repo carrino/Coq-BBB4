@@ -171,19 +171,55 @@ the register step, the piecewise `Cc` + `glue_neverqh` closer from the SKIP
 route) — but composing the nested branch with a piecewise `Cc` is a build,
 not an emitter extension, and it is the next wave's main job.
 
-### 3c. Two further shapes the chase names
+### 3c. The whole bucket, measured: 53 read, and every one of them is nested
 
-Besides `period-P (+virt)`, the chase separates out:
+`regscan.py --laps` over all 113 rows of the `no overflow phase` bucket
+(`tools/counters/reg113.json`):
 
-* **`grow-<u>`** — the far side GROWS by a fixed unit per octave
-  (`+11/oct` on `0RB0RD_1LA1RC_1RD1LC_0LC1RA` and
-  `0RB1LA_1RC0LA_1LD1RB_1LB1LD`): a wall that gains one block per octave, not
-  a register that cycles.  `Cc p = (q, E p ++ tail, S0, rep u (size p - c))`
-  states it; whether the laps then derive is unmeasured.
-* **`drift`** — the frame moves by no law the scan knows.  These are the rows
-  to hand to John with a tape.
+| n | frame law | what the laps cost |
+|---|---|---|
+| **35** | `grow-11` | far grows `[S1;S1]` per octave; one overflow direction `Theta(2^j)` |
+| **8** | `grow-11+virt` | growing far AND a virtual anchor; BOTH its laps `Theta(2^k)` |
+| **4** | `plain+virt` | constant frame, virtual anchor; the lap INTO it `Theta(2^k)` (114, 240, 494, 1004 at k = 4..7), the way out 4 steps flat |
+| **4** | `period-2+virt` | John's exemplar class; 2 with both virt laps exponential, 2 with the way out exponential |
+| **2** | `plain` | constant frame, overflow `Theta(2^j)` |
+| 24 | `drift` | the frame moves by no law this scan knows |
+| 36 | `short` | the chase never advanced past its seed — see below |
 
-The full per-row split over the 113 is `tools/counters/reg113.json` (see §5).
+**53 rows read cleanly and 53 of 53 carry at least one `Theta(2^k)` branch.
+Not one is four ordinary chains.**  That is the answer to prompt item (0),
+and it is not the answer the prompt expected.
+
+Two further things the split says:
+
+* **"Register" is the wrong word for 43 of the 53.**  `grow-11` and
+  `grow-11+virt` do not cycle through a finite set of frames: the far side
+  GAINS one `[S1;S1]` block per octave.  That is a wall that grows with the
+  counter, and it states as `Cc p = (q, E p ++ tail, S0, rep u (size p - c))`
+  — a different `Cc` from the finite union the prompt describes, with a
+  `Pos.size_nat` argument rather than a residue.  Only the 4
+  `period-2+virt` rows are the two-form family John read.
+* **The 36 `short` rows are the READER's limit, not the machines'.**  The
+  chase demands a blank-head rest with the counter word ending exactly at
+  the head (`E p ++ tail` on the near side); 25 of the 36 stall at the seed
+  itself.  These are WAVE26 section 8c's mid-tape rests — the head sits
+  INSIDE the frame — and reading them needs the head-anywhere decode that
+  section asked for and this scan does not have.  Nothing here says they are
+  hard; it says they are unread.
+
+### 3d. What the next wave should build
+
+Not "a `Cc` with a register argument and one extra lap shape per register
+step".  The piece that is missing is the composition:
+
+    piecewise Cc  (VIRT arm + framed arm)   x   a NESTED branch
+
+`SkipGlue` gives the p0-fenced `reach_ovf` / `vis_via_ovf` for the virtual
+arm; `NestedLapLift` gives boot + inner-counter induction + exit for the
+exponential branch; `glue_neverqh` closes an arbitrary `Cc`.  What does not
+exist is an emitter that puts a nested branch inside a piecewise `Cc` --
+`nestcert` assumes the single-`Cc` template throughout.  That, plus the
+head-anywhere decode for the 36, is the register wave.
 
 ## 4. Do-not-retry, extended
 
@@ -196,9 +232,13 @@ The full per-row split over the 113 is `tools/counters/reg113.json` (see §5).
   Measured on `0RB0RD_1LA1RC_1RD1LC_0LC1RA`: the intersection names a
   two-form family whose laps do not close at any floor, because it mixes two
   different passes over the same value.  Chase the family instead.
-* **Expecting the register step to be a chain.**  Measured on the exemplar
-  John read: `4*2^k + 11`, at both frame assignments.  Budget for the nested
-  composition from the start.
+* **Expecting any branch of the register bucket to be a chain.**  Measured
+  over the whole 113: of the 53 rows the chase reads, 53 carry a
+  `Theta(2^k)` branch, at every frame assignment tried.  Budget for the
+  nested composition from the start.
+* **Calling a virtual anchor flat because the lap OUT of it is short.**  The
+  4 `plain+virt` rows leave the virtual anchor in 4 steps and REACH it in
+  `Theta(2^k)`.  Both laps have to be checked.
 * Standing: everything in WAVE27 §5, WAVE26 §6, WAVE25 §6, WAVE24 §7,
   WAVE18 §5, WAVE16 §5.
 

@@ -224,17 +224,24 @@ def lap_law(walk, law, floor):
     if not ints:
         return dict(shape='short')
     if law.get('virt'):
-        vl = _affine({k: c for k, c in vout.items()})
+        # BOTH laps the virtual anchor carries have to be affine for the
+        # board to be four ordinary chains: the one INTO it (the ordinary
+        # overflow) and the one OUT of it (the register step).  Measured on
+        # the whole bucket, at least one of the two is always Theta(2^k).
+        vli, vlo = _affine(vin), _affine(vout)
         ilaw = {i: _affine(d) for i, d in ints.items()}
         if any(v is None for v in ilaw.values()):
             return dict(shape='interior-nonaffine',
                         ints={i: sorted(d.items())[:6]
                               for i, d in ints.items()})
-        return dict(shape='virt-flat' if vl else 'virt-EXP',
+        return dict(shape='virt-flat' if (vli and vlo) else
+                    'virt-EXP-in' if vlo else
+                    'virt-EXP-out' if vli else 'virt-EXP-both',
                     ci={i: list(v) for i, v in ilaw.items()},
                     vin=sorted(vin.items())[:5],
                     vout=sorted(vout.items())[:5],
-                    vlaw=list(vl) if vl else None, floor=floor)
+                    vlawin=list(vli) if vli else None,
+                    vlawout=list(vlo) if vlo else None, floor=floor)
     if not ovfs:
         return dict(shape='short')
     ilaw = {i: _affine(d) for i, d in ints.items()}
@@ -263,8 +270,9 @@ def _tails():
 def scan(spec, do_laps=False, pmax=PMAX):
     RANK = {'plain': 0, 'period': 1, 'grow': 4, 'drift': 6,
             'mid': 7, 'short': 8}
-    SH = {'flat': 0, 'virt-flat': 1, 'nested-1': 2, 'virt-EXP': 3,
-          'nested-2': 4, 'nested-3': 5}
+    SH = {'flat': 0, 'virt-flat': 1, 'nested-1': 2, 'virt-EXP-in': 3,
+          'virt-EXP-out': 3, 'virt-EXP-both': 4, 'nested-2': 4,
+          'nested-3': 5}
 
     def rank(r):
         k = r['kind'].split('-')[0].replace('+virt', '')
