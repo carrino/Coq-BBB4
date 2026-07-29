@@ -5,7 +5,10 @@ apology.  Companion data: `tools/closeout/residue_map.tsv`, one row per
 machine, regenerated with the commands at the bottom.  The TSV is an
 ANALYSIS SNAPSHOT (a ~40 min sweep) and can lag a wave or two behind the
 list itself; the authority for membership and count is
-`tools/closeout/frozen_unproven.txt`, which every closeout regen rewrites._
+`tools/closeout/frozen_unproven.txt`, which every closeout regen rewrites.
+The closeout further splits that list: `core_rows.txt` is the distinct
+problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
+automatically with their core rows (Closeout/ShadowKit.v)._
 
 _**291 rows as of this commit.**  The count moves every wave, so treat the
 TSV as the authority and this prose as a snapshot.  With tower #20 boarded

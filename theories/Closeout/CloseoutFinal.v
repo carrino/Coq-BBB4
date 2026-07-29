@@ -5,11 +5,12 @@
     [closeout_partial] (Closeout.v).
 
       [census_boarded : forall tm, QHBound B_census tm \/ boarded tm
-                                   \/ Deferred D_remaining tm]
+                                   \/ skipped D_remaining tm]
 
     -- every (4,2) machine is a bounded quasihalter, or has its
-    quasihalting behaviour settled by a board, or is one of the
-    remaining [remaining_rows] machines (291 at generation time).
+    quasihalting behaviour settled by a board, or is skipped: one of
+    the 192 core [remaining_rows] machines, or a 0RB re-root shadow
+    of one (96 at generation time; ShadowKit.v).
 
     This file LOADS the committed census .vo, which are
     OCaml-toolchain-specific: compile it on the census box under the
@@ -19,11 +20,11 @@ From Coq Require Import List.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Census Require Import TNF_QH Deferred_Defs Deferred_Data Run.
 From BBB4.Census.Compute Require Import Census_Theorem.
-From BBB4.Closeout Require Import CloseoutKit Closeout.
+From BBB4.Closeout Require Import CloseoutKit ShadowKit CoreRows Closeout.
 Import ListNotations.
 
 Theorem census_boarded : forall tm,
-  QHBound B_census tm \/ boarded tm \/ Deferred D_remaining tm.
+  QHBound B_census tm \/ boarded tm \/ skipped D_remaining tm.
 Proof.
   intro tm.
   destruct (census_decided tm) as [H | H]; [left; exact H | right].

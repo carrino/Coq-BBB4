@@ -62,8 +62,10 @@ def main():
     frozen = [f for f in frozen if f]
     fset = set(frozen)
 
-    co = os.path.join(ROOT, 'theories/Closeout/Closeout.v')
-    remaining = rows_of(co, 'remaining_rows')
+    remaining = rows_of(os.path.join(ROOT, 'theories/Closeout/CoreRows.v'),
+                        'remaining_rows')
+    shadow = rows_of(os.path.join(ROOT, 'theories/Closeout/SH_00.v'),
+                     'shrows_00')
     proven = []
     for i in range(1000):
         stage = os.path.join(ROOT, 'theories/Closeout/CB_%02d.v' % i)
@@ -71,27 +73,43 @@ def main():
             break
         proven += rows_of(stage, 'cbrows_%02d' % i)
 
-    pset, rset = set(proven), set(remaining)
+    pset, rset, sset = set(proven), set(remaining), set(shadow)
     bad = []
     if len(proven) != len(pset):
         bad.append('proven table has %d duplicate rows' % (len(proven) - len(pset)))
     if len(remaining) != len(rset):
-        bad.append('remaining table has %d duplicate rows' % (len(remaining) - len(rset)))
-    inv_p, inv_r = pset - fset, rset - fset
-    if inv_p:
-        bad.append('%d proven rows are NOT on the frozen list (e.g. %s)'
-                   % (len(inv_p), sorted(inv_p)[0]))
-    if inv_r:
-        bad.append('%d remaining rows are NOT on the frozen list (e.g. %s)'
-                   % (len(inv_r), sorted(inv_r)[0]))
-    both = pset & rset
-    if both:
-        bad.append('%d rows appear in BOTH tables (e.g. %s)'
-                   % (len(both), sorted(both)[0]))
-    missed = fset - pset - rset
+        bad.append('core table has %d duplicate rows' % (len(remaining) - len(rset)))
+    if len(shadow) != len(sset):
+        bad.append('shadow table has %d duplicate rows' % (len(shadow) - len(sset)))
+    for nm, s in (('proven', pset), ('core', rset), ('shadow', sset)):
+        inv = s - fset
+        if inv:
+            bad.append('%d %s rows are NOT on the frozen list (e.g. %s)'
+                       % (len(inv), nm, sorted(inv)[0]))
+    for a, b_, nm in ((pset, rset, 'proven+core'), (pset, sset, 'proven+shadow'),
+                      (rset, sset, 'core+shadow')):
+        both = a & b_
+        if both:
+            bad.append('%d rows appear in BOTH %s tables (e.g. %s)'
+                       % (len(both), nm, sorted(both)[0]))
+    missed = fset - pset - rset - sset
     if missed:
-        bad.append('%d frozen rows in NEITHER table (e.g. %s)'
+        bad.append('%d frozen rows in NO table (e.g. %s)'
                    % (len(missed), sorted(missed)[0]))
+
+    # the shadow relation itself, re-derived independently of the emitter
+    import shadowlib
+    for spec in sorted(sset):
+        m = shadowlib.parse(spec)
+        qt = shadowlib.qstar(m)
+        if qt is None:
+            bad.append('shadow row %s has no blank prefix' % spec)
+            continue
+        base = shadowlib.swap_uv(m, 'A', qt[0])
+        ok = any(shadowlib.le(shadowlib.parse(p), shadowlib.apply_ops(base, ops))
+                 for ops in shadowlib._OPS_CHOICES for p in rset)
+        if not ok:
+            bad.append('shadow row %s: re-root not in the core orbit' % spec)
 
     if bad:
         print('CLOSEOUT AUDIT: FAIL')
@@ -103,8 +121,11 @@ def main():
     print('CLOSEOUT AUDIT: OK')
     print('  frozen deferred rows      %5d' % len(fset))
     print('  settled by a board        %5d  (%.1f%%)' % (len(pset), pct))
-    print('  remaining (D_remaining)   %5d' % len(rset))
-    print('  tables partition the frozen list exactly; no invented or duplicate rows')
+    print('  core undecided (listed)   %5d' % len(rset))
+    print('  0RB shadows of the core   %5d  (resolve with their core rows)'
+          % len(sset))
+    print('  tables partition the frozen list exactly; no invented or duplicate rows;')
+    print('  every shadow re-root independently re-verified in the core orbit')
 
 
 if __name__ == '__main__':

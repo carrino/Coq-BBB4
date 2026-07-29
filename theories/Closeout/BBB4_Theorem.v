@@ -4,12 +4,14 @@
 
       [bbb4_target : forall tm,
          QHBound champion_score tm \/ NeverQuasiHaltsSt tm
-         \/ Deferred D_remaining tm]
+         \/ skipped D_remaining tm]
 
     -- every (4,2) machine either quasihalts with every quiet state
     quiet before index 32,779,478 (the champion's score), or never
-    quasihalts, or is one of the 291 SKIPPED residue machines
-    (tools/closeout/frozen_unproven.txt), still undecided.
+    quasihalts, or is SKIPPED: one of the 192 distinct undecided
+    core machines (tools/closeout/core_rows.txt), or one of their
+    96 0RB re-root shadows (shadow_rows.tsv), which resolve
+    automatically as core machines are boarded.
 
     The champion [1RB1LD_1RC1RB_1LC1LA_0RC0RD] is itself one of the
     skipped machines (its 32.8M-step prefix has no board yet),
@@ -22,7 +24,7 @@
 From Coq Require Import Arith List Lia.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Census Require Import TNF_QH Deferred_Defs Deferred_Data Run.
-From BBB4.Closeout Require Import CloseoutKit Closeout CloseoutFinal.
+From BBB4.Closeout Require Import CloseoutKit ShadowKit CoreRows Closeout CloseoutFinal.
 Import ListNotations.
 
 (** The conjectured BBB(4) value: the champion's score,
@@ -34,7 +36,7 @@ Definition champion_score : nat :=
 
 Theorem bbb4_target : forall tm,
   QHBound champion_score tm \/ NeverQuasiHaltsSt tm
-  \/ Deferred D_remaining tm.
+  \/ skipped D_remaining tm.
 Proof.
   intro tm.
   destruct (census_boarded tm) as [H | [[H | (Hnh & Hb & Hq)] | H]].
@@ -49,7 +51,7 @@ Qed.
 (** The reading `make proof` reports: skipping the residue, every
     machine quasihalts by the champion's score or never quasihalts. *)
 Corollary bbb4_target_skipping_residue : forall tm,
-  ~ Deferred D_remaining tm ->
+  ~ skipped D_remaining tm ->
   QHBound champion_score tm \/ NeverQuasiHaltsSt tm.
 Proof.
   intros tm Hres.
@@ -68,7 +70,7 @@ Definition prev_champion_score : nat := B_board.
     decided -- so among all known (4,2) machines, only the
     (skipped, undecided) champion exceeds the previous record. *)
 Corollary bbb4_decided_le_prev_champion : forall tm,
-  ~ Deferred D_remaining tm ->
+  ~ skipped D_remaining tm ->
   QHBound prev_champion_score tm \/ NeverQuasiHaltsSt tm.
 Proof.
   intros tm Hres.
