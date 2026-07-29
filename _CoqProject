@@ -2527,6 +2527,16 @@ theories/Machines/Counters/REG_0RB1LC_1LA1RB_0LD0LA_1RD0RB.v
 theories/Machines/Counters/REG_1RB1LA_0LA1RC_0RD0RB_1LD0LA.v
 theories/Machines/Counters/REG_1RB1LA_1RC1RD_1LC0LB_0LA0RB.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/LAPC_1RB0LD_1LC1RA_0LC1LD_0RA0RB.v
+theories/Machines/Counters/LAPC_1RB0RB_1LC1RA_0LC0LD_0RA0RD.v
+theories/Machines/Counters/LAPC_1RB1LC_0LA1RD_1LA0LC_0RD0RB.v
+theories/Machines/Counters/LAPC_1RB1LD_0LB1RC_1LA0RC_0RB0LB.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/LAPC_0RB0RC_1RC0LA_1LD1RB_0LD1LA.v
+theories/Machines/Counters/LAPC_0RB1LD_1LA1RC_1RB0RC_0LD0LA.v
+
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
 theories/Closeout/CoreRows.v
