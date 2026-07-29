@@ -143,17 +143,85 @@ def endpoints(spec, K, jhi=8, quiet=False):
     return d
 
 
+def solo(spec, K, jhi=8, quiet=False):
+    """Gate one machine on the SOLO cascade route (`nestcert` section
+    "the SOLO cascade"): read the law with the shadow rule off, check it at
+    every level down to 0 and at the main count's start, derive both interior
+    laps and the four chains, then replay the whole phase against the raw
+    simulator over a range of outer indices.  Returns the record, or raises."""
+    A = anchor(spec, K, maxT=6000000)
+    if A is None:
+        raise NC.NestError('no overflow phase at K=%d' % K)
+    d = NC.solo_endpoints(A['tab'], E.ENCDATA, E.ENCS, E.ENC, A['enc'],
+                          A['st0'], A['tail'], A['far'], K=K)
+    NC.solo_validate(A['tab'], E.ENC, E.ENCDATA, A['enc'], A['st0'],
+                     A['tail'], A['far'], d, 2, jhi)
+    d['anchor'] = A
+    if not quiet:
+        law = d['law']
+        print('%s  K=%d  mir=%s  outer=%s@%s' % (spec, K, A['mirrored'],
+                                                 A['enc'], A['edge']))
+        print('  law  levels=%s  inner=%s@%s far=%r  unit=%r extra=%r '
+              'M-j=%d' % (','.join('%d' % l for l, _ in law['found']),
+                          law['inner'], LAB[law['st_in']], law['far_in'],
+                          law['unit'], law['extra'], law['M'] - law['j']))
+        print('       main=%s@%s tail=%r far=%r octave j+%d, at mid[%d]'
+              % (law['main_enc'], LAB[law['main_st']], law['main_tail'],
+                 law['main_far'], law['main_oct'], law['main_at']))
+        for nm in ('lap_in', 'lap_m'):
+            L = d[nm]
+            print('  %-7s %s' % (nm, '%d*i+%d' % L['cn'] if 'cn' in L else
+                                 'SPLIT  z=%d*i+%d  p=%d*i+%d'
+                                 % (L['cnz'] + L['cnp'])))
+        for k in ('BOOT', 'DOWN', 'MAINA', 'MAINB'):
+            t = d['trans'][k]
+            print('  %-6s i=n%+d peel=%s post=%d el=%s lift=%s cost=%d*i+%d  %s'
+                  % (k, t['ioff'], t['peel'], t['post'], t['el'], t['lift'],
+                     t['cost'][0], t['cost'][1],
+                     ' '.join(E.cstep_str(s) for s in t['chain'])))
+        print('  %s' % d['nval'])
+    return d
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--classify', action='store_true')
     ap.add_argument('--timeline')
     ap.add_argument('--endpoints')
+    ap.add_argument('--solo')
+    ap.add_argument('--sologate', help='spec-list file (default: the bucket)',
+                    nargs='?', const='')
     ap.add_argument('--gate', action='store_true')
     ap.add_argument('-K', type=int, default=6)
     a = ap.parse_args()
 
     if a.endpoints:
         endpoints(a.endpoints, a.K if a.K != 6 else 7)
+        return
+
+    if a.solo:
+        solo(a.solo, a.K if a.K != 6 else 7)
+        return
+
+    if a.sologate is not None:
+        if a.sologate:
+            specs = [l.strip() for l in open(a.sologate) if l.strip()]
+        else:
+            tsv = os.path.join(REPO, 'tools/closeout/residue_map.tsv')
+            specs = [l.split('\t')[0] for l in open(tsv)
+                     if 'no boot chain' in l]
+        tot = collections.Counter()
+        for spec in specs:
+            try:
+                d = solo(spec, a.K if a.K != 6 else 7, quiet=True)
+            except Exception as e:                             # noqa: BLE001
+                msg = str(e)[:64]
+                print('%-40s %s' % (spec, msg))
+                tot[msg] += 1
+                continue
+            print('%-40s GATED  %s' % (spec, d['nval']))
+            tot['GATED'] += 1
+        print(tot)
         return
 
     if a.gate:
