@@ -42,7 +42,7 @@ Expected:
 closeout_partial : forall tm, Deferred D_census tm ->
                               boarded tm \/ Deferred D_remaining tm
 Axioms: FunctionalExtensionality.functional_extensionality_dep
-     = 496
+     = 319
 ```
 
 And the two checks the kernel does not do for you:
@@ -150,5 +150,8 @@ committed hash, confirming your walk covered the same inputs.
   build stays all-source.  On the wrong toolchain `make proof` fails with
   "inconsistent assumptions" while loading — that is the marshalling
   mismatch, not a proof failure.
-* **CI does not run any of this.**  A hosted runner has ~7 GB and a job limit
-  well under a day, so neither the full build nor the walk can live there.
+* **CI runs only the light tier.**  A hosted runner has ~7 GB, so neither
+  the full build (the IRules batches peak at ~6–8 GB) nor the walk can live
+  there.  `.github/workflows/ci.yml` builds the core library, the closeout
+  kit and two end-to-end machine-proof families from source, enforces zero
+  `Admitted`, and runs the untrusted audits; tiers A and B above are local.

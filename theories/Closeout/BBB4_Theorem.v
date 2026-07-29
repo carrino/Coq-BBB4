@@ -8,7 +8,7 @@
 
     -- every (4,2) machine either quasihalts with every quiet state
     quiet before index 32,779,478 (the champion's score), or never
-    quasihalts, or is one of the 323 SKIPPED residue machines
+    quasihalts, or is one of the 319 SKIPPED residue machines
     (tools/closeout/frozen_unproven.txt), still undecided.
 
     The champion [1RB1LD_1RC1RB_1LC1LA_0RC0RD] is itself one of the
@@ -41,8 +41,8 @@ Proof.
   - left. apply (qhbound_mono B_census);
       [unfold B_census, champion_score; lia | exact H].
   - right; left; exact H.
-  - left. apply (qhbound_mono 2000);
-      [unfold champion_score; lia | exact Hb].
+  - left. apply (qhbound_mono B_board);
+      [unfold B_board, champion_score; lia | exact Hb].
   - right; right; exact H.
 Qed.
 
@@ -57,4 +57,28 @@ Proof.
     [left; exact H | right; exact H | destruct (Hres H)].
 Qed.
 
+(** The PREVIOUS champion's score: [CloseoutKit.B_board] =
+    66,349 (1RB0LD_1LC0LA_1LA0LC_1RD1RC, theories/Machines/
+    Counters/BlankTail_66349.v) -- the bound [boarded] carries. *)
+Definition prev_champion_score : nat := B_board.
+
+(** The community-facing reading: every machine the theorem
+    decides quasihalts by the PREVIOUS champion's score or never
+    quasihalts -- the four previous champions are among the
+    decided -- so among all known (4,2) machines, only the
+    (skipped, undecided) champion exceeds the previous record. *)
+Corollary bbb4_decided_le_prev_champion : forall tm,
+  ~ Deferred D_remaining tm ->
+  QHBound prev_champion_score tm \/ NeverQuasiHaltsSt tm.
+Proof.
+  intros tm Hres.
+  destruct (census_boarded tm) as [H | [[H | (Hnh & Hb & Hq)] | H]].
+  - left. apply (qhbound_mono B_census);
+      [unfold B_census, prev_champion_score, B_board; lia | exact H].
+  - right; exact H.
+  - left; exact Hb.
+  - destruct (Hres H).
+Qed.
+
 Print Assumptions bbb4_target.
+Print Assumptions bbb4_decided_le_prev_champion.

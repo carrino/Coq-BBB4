@@ -37,8 +37,12 @@ def cert_types():
 
 
 def main():
-    holdouts = [l.strip() for l in open(BBB + "/BBB4_holdouts_3713.txt")
-                if l.strip()]
+    # The holdout list ships with this repo (byte-identical to the wiki's
+    # published copy); the BBB repo is only needed for the C cert types.
+    hfile = BBB + "/BBB4_holdouts_3713.txt"
+    if not os.path.exists(hfile):
+        hfile = os.path.join(HERE, "BBB4_holdouts_3713.txt")
+    holdouts = [l.strip() for l in open(hfile) if l.strip()]
     hset = set(holdouts)
     manifest = {}
     qh_count = 0
@@ -58,14 +62,30 @@ def main():
                 manifest[parts[0]] = parts[1]
                 if mfname == "wrap_manifest.tsv":
                     qh_count += 1
+    # Boards beyond the harness holdout list are expected now: the counters
+    # track boards CENSUS-residue rows (tools/closeout/), whose orbit
+    # representatives -- some with `---' holes -- are not harness holdouts.
+    # They are excluded from the holdout coverage table below.
     stray = [m for m in manifest if m not in hset]
     if stray:
-        print("ERROR: %d proven machines NOT on the holdout list:" % len(stray))
-        for m in stray[:10]:
-            print(" ", m)
-        sys.exit(1)
+        print("note: %d manifest machines are census-residue boards beyond "
+              "the holdout list (expected; excluded from the table below)"
+              % len(stray))
+        for m in stray:
+            del manifest[m]
+
+    print("holdout list:          %5d" % len(holdouts))
+    print("Coq-proven:            %5d  (%d never-QH, %d QH with exact score)"
+          % (len(manifest), len(manifest) - qh_count, qh_count))
+    print("no same-name theorem:  %5d  (decided via their census-orbit "
+          "representative; see tools/closeout/)"
+          % (len(holdouts) - len(manifest)))
 
     types = cert_types()
+    if not types:
+        print("\n(no BBB repo with committed certificates at BBB_REPO=%s;"
+              "\n skipping the C-cert-type table)" % BBB)
+        return
     open_machines = [m for m in holdouts if m not in types]
     remaining = collections.Counter()
     for m in holdouts:
@@ -73,9 +93,6 @@ def main():
             continue
         remaining[tuple(sorted(types[m]))] += 1
 
-    print("holdout list:          %5d" % len(holdouts))
-    print("Coq-proven:            %5d  (%d never-QH, %d QH with exact score)"
-          % (len(manifest), len(manifest) - qh_count, qh_count))
     print("open upstream:         %5d" % len(open_machines))
     print("C-certified, no Coq:   %5d"
           % (len(holdouts) - len(manifest) - len(open_machines)))

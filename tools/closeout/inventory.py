@@ -44,6 +44,16 @@ IQH_OK_RE = re.compile(
     r'Definition\s+(?:iqh|pqhs)\s*\(\s*tm\s*:\s*TM\s*\)\s*:\s*Prop\s*:=\s*'
     r'NonHalt\s+tm\s*/\\\s*QHBound\s+2000\s+tm\s*/\\\s*QuasiHaltsSt\s+tm\s*\.')
 
+# Explicit-bound quasihalt boards (kind iqhle:<B>): admitted only up to the
+# closeout bound B_board (CloseoutKit.v) -- the previous champion's score.
+THMLE_RE = re.compile(
+    r'(?:Theorem|Lemma)\s+(\w+)\s*:\s*iqh_le\s+(\d+)\s+\(?(\w+)\)?\s*\.')
+IQHLE_OK_RE = re.compile(
+    r'Definition\s+iqh_le\s*\(\s*B\s*:\s*nat\s*\)\s*\(\s*tm\s*:\s*TM\s*\)'
+    r'\s*:\s*Prop\s*:=\s*'
+    r'NonHalt\s+tm\s*/\\\s*QHBound\s+B\s+tm\s*/\\\s*QuasiHaltsSt\s+tm\s*\.')
+B_BOARD = 66349
+
 SLOT = {('A', '0'): 0, ('A', '1'): 1, ('B', '0'): 2, ('B', '1'): 3,
         ('C', '0'): 4, ('C', '1'): 5, ('D', '0'): 6, ('D', '1'): 7}
 
@@ -112,6 +122,19 @@ def main():
                 continue  # iqh/pqhs with unexpected definition: refuse
             hits[spec].append((kind, vfile, thm, const))
             nthm += 1
+        if IQHLE_OK_RE.search(txt):
+            for thm, bound, const in THMLE_RE.findall(txt):
+                if const == 'tm':
+                    if len(nota) != 1:
+                        continue
+                    const = nota[0]
+                spec = defs.get(const)
+                if spec is None or spec not in fset:
+                    continue
+                if int(bound) > B_BOARD:
+                    continue  # above the closeout bound: refuse
+                hits[spec].append(('iqhle:%s' % bound, vfile, thm, const))
+                nthm += 1
 
     chosen = {}
     for spec, cands in hits.items():

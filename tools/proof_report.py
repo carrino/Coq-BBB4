@@ -63,6 +63,18 @@ a proof that BBB(4) = {score:,}.  The precise scope of the claim is
 docs/CLAIMS.md; the residue, mapped by shape and blocker, is
 docs/RESIDUE_MAP.md.
 
+Sharper, in previous-record terms:
+
+  bbb4_decided_le_prev_champion : forall tm,
+    ~ Deferred D_remaining tm ->
+    QHBound 66349 tm \\/ NeverQuasiHaltsSt tm
+
+-- every machine NOT in the skipped list quasihalts by the PREVIOUS
+champion's score, 66,349, or never quasihalts.  The four previous
+champions (scores 2,512..66,349) are among the decided, so among all
+known (4,2) machines, only the current champion exceeds the previous
+record.
+
 Axiom footprint: functional_extensionality_dep, and nothing else
 (printed by Print Assumptions during the build above; independently
 checkable with coqchk -o).
@@ -70,8 +82,8 @@ checkable with coqchk -o).
     print('SKIPPED -- the %d undecided residue machines' % len(residue))
     print('(tools/closeout/frozen_unproven.txt):')
     print()
-    for i in range(0, len(residue), 2):
-        print('  ' + '  '.join(residue[i:i + 2]))
+    for m in residue:
+        print('  ' + m)
     print()
     print(line)
 

@@ -139,6 +139,34 @@ Proof.
   rewrite Hc in Hc2. injection Hc2 as <-. congruence.
 Qed.
 
+(** ** The march is total: the machine never halts *)
+
+Lemma tail_nonhalt : NonHalt tm.
+Proof.
+  intro n.
+  destruct (le_lt_dec N0 n) as [Hle|Hlt].
+  - destruct (tail_visits n Hle) as (c & Hc & _).
+    rewrite Hc. discriminate.
+  - assert (Hpre' := Hpre).
+    replace N0 with (n + (N0 - n)) in Hpre' by lia.
+    rewrite csteps_add in Hpre'.
+    destruct (csteps tm n c0) as [c'|] eqn:E; [|discriminate].
+    rewrite <- lift_c0, (csteps_lift _ _ _ _ E). discriminate.
+Qed.
+
+(** ** The start state quasihalts the machine (when it is not the runner):
+    [StA] is visited at index 0 and, being off the tail, is quiet from the
+    prefix onward. *)
+
+Lemma tail_qh : q <> StA -> QuasiHaltsSt tm.
+Proof.
+  intro HqA.
+  exists StA. split.
+  - exists 0. exists InitES. split; reflexivity.
+  - exists N0. intros n Hn.
+    apply (tail_no_other StA n); [congruence | exact Hn].
+Qed.
+
 (** ** The closer *)
 
 Theorem qhbound_blank_tail : forall B, N0 <= B -> QHBound B tm.
@@ -221,4 +249,39 @@ Proof.
   destruct d.
   - exact (qhbound_blank_tail_L tm q w N0 l r B Hq Epre Hside HB).
   - exact (qhbound_blank_tail_R tm q w N0 l r B Hq Epre Hside HB).
+Qed.
+
+(** ** The full board: the census triple in one [vm_compute]
+
+    [NonHalt /\ QHBound B /\ QuasiHaltsSt] -- what the closeout's
+    [iqh_le]-kind stage entries consume.  The one extra premise over
+    [qhbound_blank_tail_check] is [q <> StA] (boolean), which makes [StA]
+    the quasihalt witness: visited at index 0, quiet from the prefix on.
+    This is also the champion's route: its blank-tail runner is [StC]. *)
+
+Theorem blank_tail_board : forall tm q w d N0 B,
+  tm q S0 = Some (mkTrans w d q) ->
+  st_eqb q StA = false ->
+  blank_tail_checkb d tm q N0 = true ->
+  N0 <= B ->
+  NonHalt tm /\ QHBound B tm /\ QuasiHaltsSt tm.
+Proof.
+  intros tm q w d N0 B Hq HqA Hchk HB.
+  assert (HqA' : q <> StA).
+  { intro E. subst q.
+    rewrite (proj2 (st_eqb_spec StA StA) eq_refl) in HqA. discriminate. }
+  unfold blank_tail_checkb in Hchk.
+  destruct (csteps tm N0 c0) as [[q' [[l h] r]]|] eqn:Epre; [|discriminate].
+  apply andb_prop in Hchk as [Hchk Hside].
+  apply andb_prop in Hchk as [Hq' Hh].
+  apply st_eqb_spec in Hq'. apply sym_eqb_spec in Hh. subst q' h.
+  assert (Hloop : forall n, exists ct',
+    csteps tm n (q, (l, S0, r)) = Some (q, ct')).
+  { intro n. destruct d.
+    - exact (march_L tm q w n l r Hq (blank_listb_spec l Hside)).
+    - exact (march_R tm q w n l r Hq (blank_listb_spec r Hside)). }
+  split; [| split].
+  - exact (tail_nonhalt tm q N0 (l, S0, r) Epre Hloop).
+  - exact (qhbound_blank_tail tm q N0 (l, S0, r) Epre Hloop B HB).
+  - exact (tail_qh tm q N0 (l, S0, r) Epre Hloop HqA').
 Qed.

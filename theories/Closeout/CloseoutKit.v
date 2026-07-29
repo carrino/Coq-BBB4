@@ -12,10 +12,11 @@
 
     - [boarded] settles the quasihalting behaviour with a CONCRETE bound:
       never-QH, or a quasihalter whose quiet states all go quiet before
-      index 2000 (= [B_census]) -- every stage board certifies exactly
-      that bound, so the closeout can carry it to the top-level theorem
-      ([Closeout/BBB4_Theorem.v]); QH boards with larger bounds (the
-      BlankTail four) are residue rows, not stage rows;
+      index [B_board] = 66,349, the PREVIOUS champion's score.  Census-
+      tier stage boards certify [QHBound 2000] and lift by monotonicity;
+      the four BlankTail ex-champions enter at their exact scores through
+      the [B <=? B_board] gate.  The closeout carries the bound to the
+      top-level theorem ([Closeout/BBB4_Theorem.v]);
     - [covers h] discharges from a single theorem about the row's own
       machine -- [NeverQuasiHaltsSt h] or the [NonHalt/QHBound/QuasiHaltsSt]
       triple -- because a non-halting machine's completions share its trace
@@ -30,24 +31,35 @@
     proven rows; Closeout.v instantiates [deferred_split] against the frozen
     tables and chains [census_decided]. *)
 
-From Coq Require Import Arith Bool List FunctionalExtensionality.
+From Coq Require Import Arith Lia Bool List FunctionalExtensionality.
 From BBB4 Require Import BBB4_Statement Mirror.
 From BBB4.Census Require Import TNF_QH Deferred_Defs.
 Import ListNotations.
 
 (** ** The boarded predicate
 
-    The bound is CONCRETE: 2000 = [B_census] (Census/Run.v), the census's
-    in-walk tier strength.  Every quasihalting stage board certifies
-    literally [QHBound 2000] (tools/closeout/inventory.py refuses any
-    other bound), so nothing is lost by pinning it -- and everything is
-    gained: the top-level theorem can then state one uniform score bound
-    for all decided machines instead of an existential.  Quasihalters
-    whose certified bound exceeds 2000 (the four BlankTail ex-champions)
-    are on the residue list, not in the stages. *)
+    The bound is CONCRETE: [B_board], the PREVIOUS champion's score
+    66,349 ([Machines/Counters/BlankTail_66349.v]).  Every census-tier
+    stage board certifies literally [QHBound 2000] (= [B_census]) and
+    lifts here by [qhbound_mono]; quasihalters above the census tier --
+    the four BlankTail ex-champions, scores 2,512..66,349 -- enter with
+    their exact bounds through [covers_iqh_le_at], whose [B <=? B_board]
+    gate the kernel evaluates.  So the top-level theorem carries one
+    uniform bound: every decided quasihalter scores at most the previous
+    record, and only the (undecided) champion is known to exceed it.
+
+    [B_board] is written digit by digit (Horner form) because a bare
+    literal this large is abstracted to [Nat.of_num_uint], which [lia]
+    cannot see through. *)
+Definition B_board : nat :=
+  ((((6)*10 + 6)*10 + 3)*10 + 4)*10 + 9.  (* = 66,349 *)
+
+Lemma le_2000_B_board : 2000 <= B_board.
+Proof. unfold B_board. lia. Qed.
+
 Definition boarded (tm : TM) : Prop :=
   NeverQuasiHaltsSt tm
-  \/ (NonHalt tm /\ QHBound 2000 tm /\ QuasiHaltsSt tm).
+  \/ (NonHalt tm /\ QHBound B_board tm /\ QuasiHaltsSt tm).
 
 (** [covers h]: every completion of [h] is boarded.  This is exactly the
     obligation [Deferred_base] induces for a listed row [h]. *)
@@ -89,7 +101,8 @@ Lemma covers_iqh : forall h,
 Proof.
   intros h Hnh Hb Hqh tm Hle. right.
   split; [exact (nonhalt_le h tm Hnh Hle) |].
-  split; [exact (qhbound_le 2000 h tm Hnh Hb Hle) |].
+  split; [exact (qhbound_mono 2000 B_board tm le_2000_B_board
+                   (qhbound_le 2000 h tm Hnh Hb Hle)) |].
   exact (qh_le h tm Hnh Hle Hqh).
 Qed.
 
@@ -123,6 +136,25 @@ Lemma covers_iqh_at : forall (t : TM) (r : list (option Trans)),
 Proof.
   intros t r (Hnh & Hb & Hq) E.
   rewrite (tm_ext (row_to_tm r) t E). exact (covers_iqh t Hnh Hb Hq).
+Qed.
+
+(** Explicit-bound variant (kind iqh_le): a board certifying its exact
+    score bound [B], admitted when the kernel evaluates [B <=? B_board].
+    The four BlankTail ex-champions enter here. *)
+Lemma covers_iqh_le_at : forall (B : nat) (t : TM) (r : list (option Trans)),
+  NonHalt t /\ QHBound B t /\ QuasiHaltsSt t ->
+  (B <=? B_board) = true ->
+  (forall q s, row_to_tm r q s = t q s) ->
+  covers (row_to_tm r).
+Proof.
+  intros B t r (Hnh & Hb & Hq) HleB E.
+  rewrite (tm_ext (row_to_tm r) t E).
+  intros tm Hle. right.
+  split; [exact (nonhalt_le t tm Hnh Hle) |].
+  split.
+  - exact (qhbound_mono B B_board tm (proj1 (Nat.leb_le B B_board) HleB)
+             (qhbound_le B t tm Hnh Hb Hle)).
+  - exact (qh_le t tm Hnh Hle Hq).
 Qed.
 
 (** ** Swap transport, backwards (the [Deferred_swap] case) *)
@@ -164,7 +196,7 @@ Proof.
     + pose proof (nonhalt_swap u v (TM_swap u v tm) HuA HvA Hnh) as H2.
       rewrite TM_swap_swap in H2. exact H2.
     + split.
-      * pose proof (qhbound_swap u v 2000 (TM_swap u v tm) HuA HvA Hb) as H2.
+      * pose proof (qhbound_swap u v B_board (TM_swap u v tm) HuA HvA Hb) as H2.
         rewrite TM_swap_swap in H2. exact H2.
       * exact (qh_unswap u v tm HuA HvA Hq).
 Qed.
@@ -176,7 +208,7 @@ Proof.
   intros tm [H | (Hnh & Hb & Hq)].
   - left. exact (mirror_never_qh tm H).
   - right. split; [exact (mirror_nonhalt tm Hnh) |].
-    split; [exact (qhbound_mirror 2000 tm Hb) |].
+    split; [exact (qhbound_mirror B_board tm Hb) |].
     exact (mirror_qh tm Hq).
 Qed.
 

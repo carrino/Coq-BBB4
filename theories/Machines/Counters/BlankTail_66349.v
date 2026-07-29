@@ -35,3 +35,20 @@ Proof.
 Qed.
 
 Print Assumptions tm_66349_qhbound.
+
+(** The full census triple, for the closeout's explicit-bound stage entry
+    (kind iqh_le): [StA] is visited at index 0 and quiet from the prefix on,
+    and the blank-tail march never halts. *)
+Definition iqh_le (B : nat) (tm : TM) : Prop :=
+  NonHalt tm /\ QHBound B tm /\ QuasiHaltsSt tm.
+
+Theorem tm_66349_board : iqh_le 66349 tm_66349.
+Proof.
+  apply (blank_tail_board tm_66349 StD S1 DR 66349 66349).
+  - exact tm_66349_selfloop.
+  - reflexivity.
+  - vm_compute. reflexivity.
+  - lia.
+Qed.
+
+Print Assumptions tm_66349_board.

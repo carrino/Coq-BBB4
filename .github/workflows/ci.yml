@@ -1,13 +1,39 @@
+# The full build cannot run here (docs/VERIFYING.md "Traps"): a hosted
+# runner has ~7 GB of RAM and the nine IRules_Batch_* files peak at
+# ~6-8 GB each, and the census walk needs coq-native and ~24 h.  Those
+# tiers are local (`make`, `make proof`, `make census-verify`).
+#
+# What CI *can* certify, and does: the core library and the closeout
+# kit compile from source, two families of end-to-end machine proofs
+# kernel-check, there are zero Admitted anywhere in theories/, and the
+# untrusted consistency audits (closeout partition, census cache hash,
+# proof-report cross-checks) all pass.
 name: CI
 on:
   push:
   pull_request:
 jobs:
-  build:
+  core:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - name: Install Coq
         run: sudo apt-get update && sudo apt-get install -y coq
-      - name: Build
-        run: make -j4
+      - name: Coq version (expect 8.18.0)
+        run: coqc --version
+      - name: Generate Makefile.coq
+        run: make Makefile.coq
+      - name: Core library + closeout kit, from source
+        run: make -f Makefile.coq -j4 theories/Closeout/CloseoutKit.vo
+      - name: End-to-end machine proofs (cycler + translated-cycler checkers)
+        run: |
+          make -f Makefile.coq -j4 theories/Machines/Cycle_Examples.vo
+          make -f Makefile.coq -j4 theories/Machines/TCycler_Examples.vo
+      - name: "Hygiene: zero Admitted in theories/"
+        run: "! grep -rn 'Admitted\\.' theories --include='*.v'"
+      - name: "Untrusted audits: closeout partition, census cache, report"
+        run: |
+          python3 tools/closeout/audit.py
+          python3 tools/census_cache.py --check
+          python3 tools/proof_report.py > /dev/null

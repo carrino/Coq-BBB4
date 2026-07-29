@@ -2244,6 +2244,11 @@ theories/Machines/Counters/LAPQ_1RB1RD_0RC1LA_1LD0RB_0LD1RC.v
 theories/Machines/Counters/LAPQ_1RB1RD_1LC0RB_0LC1RD_0RB0LA.v
 theories/Machines/Counters/LAPQ_1RB1RD_1LC0RD_0LC1RD_0RB0LA.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/BlankTail_2512.v
+theories/Machines/Counters/BlankTail_2568.v
+theories/Machines/Counters/BlankTail_2819.v
+theories/Machines/Counters/BlankTail_66349.v
 # --- wave-25: the CASCADE boards (cascade_emit.py --boards; the 57 gated
 #     exp-counter machines of the no-exit/no-boot bucket) ---
 theories/Machines/Counters/CASB_0RB1LA_0LC1RD_1LA1LD_1RB0LA.v
