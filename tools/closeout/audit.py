@@ -24,7 +24,9 @@ import os
 import re
 import sys
 
-ROOT = '/home/user/Coq-BBB4'
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if not os.path.isdir(os.path.join(ROOT, 'theories')):
+    ROOT = '/home/user/Coq-BBB4'
 SHORT_RE = re.compile(r'^\s*\[(t[0-9A-Za-z;]+)\](?:;)?\s*$')
 
 
