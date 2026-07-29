@@ -2337,3 +2337,411 @@ def _confs_ovf(ENCDATA, enc, st0, tail, far):
         B0 = (st0, ((), d['uS'], 1, 0, d['soS'] + tail), 0, F)
     B1 = (st0, ((), d['uD'], 1, 1, d['soD'] + tail), 0, F)
     return B0, B1
+
+
+# ------------------------------------------- the SOLO cascade (one per level) ---
+#
+# Wave-29b.  The 18 remaining `no boot chain` rows were filed by WAVE26 section
+# 4 as a TWO-COUNT overflow whose first count sits one octave down, with the
+# blocker "the shift chain from the octave-down count's fill to the octave-0
+# count's start", measured at 0 chains over 378 framings per machine and
+# diagnosed as "a re-encoding pass over a j-length word, which a single-index
+# window chain cannot be at any framing".
+#
+# The diagnosis was of a shape that is not there.  There is no shift: the
+# region between the two counts is THE REST OF A CASCADE.  One overflow phase
+# of these machines is
+#
+#     level j-1 : ONE count 2^(j-1) .. 2^j-1          tail extra ++ unit
+#     level j-2 : ONE count 2^(j-2) .. 2^(j-1)-1      tail one unit longer
+#     ...
+#     level 0   : the single value 1                  tail j units longer
+#     the MAIN count 2^j .. 2^(j+1)-1, in a SECOND family
+#     -> the outer successor
+#
+# i.e. wave-24's cascade with the levels carrying ONE count instead of two and
+# the main count LAST instead of first -- exactly the mirror image
+# `CASCADE_EXIT.md` section 3 predicted the `no boot chain` half would be.
+#
+# WHY [cascade_segments] COULD NOT SEE IT, mechanically: its shadow rule drops
+# any run whose mid-index span sits inside a wider run's.  An octave SHADOW of
+# the descent -- the same words re-decoded with one extra leading digit, e.g.
+# `Ip@C tail=[1]` reading 96..127 where the levels read 32..63, 16..31, ... --
+# spans the WHOLE descent, so every real level count is inside it and every one
+# is dropped.  What is left is (top level, main count) and that is the
+# "two counts in the phase" WAVE26 measured.  The counts kept below are the
+# same ones, read with the shadow rule OFF and the earliest-start non-overlap
+# scan doing the separating instead; the widest run at a given start still
+# wins, so the shadow is preferred only where it does not hide a finer
+# decomposition.
+#
+# The pieces, all four ordinary chains and both of them peeled:
+#
+#   BOOT   outer overflow start -> level (j-1) count start   index j-1
+#   DOWN   level l fill -> level (l-1) start                 index l-1
+#          THE level step, uniform in l -- [NestedLapCascade.Hstep] via
+#          [fill_hop] (one count per level), where the gated route uses
+#          [level_hop] (two)
+#   MAINA  level 0 fill -> the MAIN count's start             index j
+#   MAINB  main count fill -> the outer successor             index j
+#
+# and the LEVEL family's interior lap needs [_inner_lap_split], not
+# [_inner_lap]: `rep uS i ++ sS` cannot be rotated when `sS` starts with a
+# blank (`Alph_01_11_011` has sS = uD = [0;1]), so no chain exists at the plain
+# AI0/AI1 on ANY of these -- the wave-22b Z/P device takes all of them.  That
+# is the standing peel lesson applied to an interior lap rather than to a
+# transition.
+
+def cascade_segments_all(mid, ENCDATA, ENCS, maxtail=CASC_MAXTAIL,
+                         minlen=CASC_MINLEN, encs=None):
+    """[cascade_segments] with the SHADOW RULE OFF.
+
+    [cascade_segments] keeps only maximal runs, which is right when a shadow
+    covers the count it shadows and wrong when it covers a whole DESCENT: then
+    the containment test deletes every level.  Non-overlap alone separates
+    them, so this returns every run and leaves the choosing to
+    [solo_runs]."""
+    segs = []
+    for key, iv in _gather_idx(mid, ENCDATA, ENCS, maxtail, encs).items():
+        i0 = 0
+        while i0 < len(iv):
+            k = i0
+            while k + 1 < len(iv) and iv[k + 1][1] == iv[k][1] + 1:
+                k += 1
+            if k - i0 + 1 >= minlen:
+                segs.append((iv[i0][0], iv[k][0], iv[i0][1], iv[k][1], key))
+            i0 = k + 1
+    return sorted(segs)
+
+
+def solo_runs(mid, ENCDATA, ENCS, maxtail=CASC_MAXTAIL, minlen=CASC_MINLEN,
+              encs=None, prefer=None):
+    """The phase's counts as a NON-OVERLAPPING chain, earliest first, WIDEST
+    at each start.
+
+    Same greedy scan as [cascade_runs], over [cascade_segments_all] instead:
+    at a given start the widest run wins (so a shadow is taken where nothing
+    finer starts at its own index), and [prefer] breaks the alphabet-aliasing
+    tie the same way."""
+    segs = sorted(cascade_segments_all(mid, ENCDATA, ENCS, maxtail, minlen,
+                                       encs),
+                  key=lambda s: (s[0], -(s[3] - s[2]), s[4][0] != prefer,
+                                 s[4]))
+    out, cur = [], -1
+    for s in segs:
+        if s[0] > cur:
+            out.append(s)
+            cur = s[1]
+    return out
+
+
+def solo_law(mid, ENCDATA, ENCS, K, encs=None, maxtail=CASC_MAXTAIL,
+             prefer=None):
+    """Read the SOLO cascade's law off one measured overflow phase.
+
+    Levels [j-1 .. lo], ONE count each, tail [extra ++ rep unit (M - l)]; then
+    ONE main count at octave [j + main_oct] in a possibly DIFFERENT family.
+    Nothing about the unit, the head cells, the number of levels, [M] or the
+    main count's octave is assumed -- all are measured, and a phase that does
+    not obey the law raises rather than being forced into it."""
+    j = K - 1
+    runs = solo_runs(mid, ENCDATA, ENCS, maxtail, encs=encs, prefer=prefer)
+    lev_runs = [r for r in runs if r[2].bit_length() - 1 < j]
+    if not lev_runs:
+        raise NestError('no solo cascade: no count below octave %d' % j)
+    main, mo = None, None
+    for cand in (0, 1):
+        hit = [r for r in runs
+               if (r[2], r[3]) == (2 ** (j + cand), 2 ** (j + cand + 1) - 1)]
+        if hit:
+            main, mo = hit[-1], cand
+            break
+    if main is None:
+        raise NestError('no solo cascade: no main count at octave %d or %d'
+                        % (j, j + 1))
+    if main[0] < lev_runs[-1][1]:
+        raise NestError('no solo cascade: the main count does not follow the '
+                        'descent')
+    name, st, _, far_in = lev_runs[0][4]
+    lev = {}
+    for (i0, i1, a, b, key) in lev_runs:
+        if (key[0], key[1], key[3]) != (name, st, far_in):
+            raise NestError('no solo cascade: a count at %s@%d far=%r leaves '
+                            'the family' % (key[0], key[1], key[3]))
+        p = a.bit_length() - 1
+        if (a, b) != (2 ** p, 2 ** (p + 1) - 1):
+            raise NestError('no solo cascade: count %d..%d is not an octave'
+                            % (a, b))
+        if p in lev:
+            raise NestError('no solo cascade: level %d carries two counts'
+                            % p)
+        lev[p] = key[2]
+    levels = sorted(lev, reverse=True)
+    if levels[0] != j - 1:
+        raise NestError('no solo cascade: top level is %d, not %d'
+                        % (levels[0], j - 1))
+    if levels != list(range(levels[0], levels[0] - len(levels), -1)):
+        raise NestError('no solo cascade: levels %r are not consecutive'
+                        % levels)
+    if len(levels) < 3:
+        raise NestError('no solo cascade: %d levels only' % len(levels))
+    w = len(lev[levels[1]]) - len(lev[levels[0]])
+    if w <= 0:
+        raise NestError('no solo cascade: the tails do not grow (%d)' % w)
+    cur = None
+    for p in levels[:-1]:
+        got = {(e, lev[p - 1][e:e + w])
+               for e in _insert_ats(lev[p], lev[p - 1], w)}
+        cur = got if cur is None else (cur & got)
+    if not cur:
+        raise NestError('no solo cascade: the tails do not grow by one fixed '
+                        'unit')
+    for (e, unit) in sorted(cur):
+        ex = lev[levels[0]][:e]
+        M = _tail_mlaw(lev, levels, ex, unit, w)
+        if M is None:
+            continue
+        mk = main[4]
+        return dict(inner=name, st_in=st, far_in=far_in, unit=unit, extra=ex,
+                    levels=levels, K=K, j=j, M=M, oct=-1, mode='solo',
+                    main_enc=mk[0], main_st=mk[1], main_tail=mk[2],
+                    main_far=mk[3], main_oct=mo)
+    raise NestError('no solo cascade: no tail law extra ++ rep unit (M - l) '
+                    'fits the levels')
+
+
+def solo_words(law, ENCDATA, l):
+    """The level's two words -- start and fill -- in [phase_mid]'s left form."""
+    d = ENCDATA[law['inner']]
+    uS, uD = tuple(d['uS']), tuple(d['uD'])
+    soS, soD = tuple(d['soS']), tuple(d['soD'])
+    T = law['extra'] + law['unit'] * (law['M'] - l)
+    return dict(S=uD * l + soD + T, F=uS * l + soS + T)
+
+
+def solo_check(mid, law, ENCDATA):
+    """Every level's two words, and the main count's start -- PREDICTED by the
+    law, then looked up among [phase_mid]'s own configurations, in phase order,
+    down to level 0.
+
+    Levels 1 and 0 run 2 and 1 values and are never reported by the segment
+    scan (they are below [CASC_MINLEN]), so finding them here is a genuine
+    extrapolation test rather than a restatement of the input."""
+    st, far = law['st_in'], tuple(law['far_in'])
+    pos, out = -1, []
+    for l in range(law['j'] - 1, -1, -1):
+        w, found = solo_words(law, ENCDATA, l), {}
+        for nm in ('S', 'F'):
+            # a level-0 count is one value wide, so its start IS its fill
+            lo = pos + 1 if nm == 'S' else pos
+            want = (st, LC.rstrip0(w[nm]), far)
+            hit = next((i for i in range(lo, len(mid)) if mid[i] == want), None)
+            if hit is None:
+                raise NestError('solo level %d: %s is not in the phase'
+                                % (l, nm))
+            found[nm] = hit
+            pos = hit
+        out.append((l, found))
+    dm = ENCDATA[law['main_enc']]
+    want = (law['main_st'],
+            LC.rstrip0(tuple(dm['uD']) * (law['j'] + law['main_oct'])
+                       + tuple(dm['soD']) + tuple(law['main_tail'])),
+            tuple(law['main_far']))
+    hit = next((i for i in range(pos + 1, len(mid)) if mid[i] == want), None)
+    if hit is None:
+        raise NestError('solo: the main count start is not in the phase')
+    return out, hit
+
+
+def solo_transitions(law, ENCDATA, enc, st0, tail, far):
+    """The four transitions, each as a (pre, u, count, tail) law per endpoint
+    plus the indices to sample.  [n] is the LEVEL for [DOWN] and the outer
+    index [j] for the three one-offs."""
+    d, dm, dout = (ENCDATA[law['inner']], ENCDATA[law['main_enc']],
+                   ENCDATA[enc])
+    uS, uD = tuple(d['uS']), tuple(d['uD'])
+    soS, soD = tuple(d['soS']), tuple(d['soD'])
+    mS, mD = tuple(dm['uS']), tuple(dm['uD'])
+    msS, msD = tuple(dm['soS']), tuple(dm['soD'])
+    W, M, j, mo = law['unit'], law['M'], law['j'], law['main_oct']
+    ex, mt = law['extra'], tuple(law['main_tail'])
+    st, fi = law['st_in'], tuple(law['far_in'])
+    mst, mfi = law['main_st'], tuple(law['main_far'])
+    tl, fr = tuple(tail), tuple(far)
+    return [
+        dict(kind='BOOT', ns=[j], sst=st0, dst=st, sfar=fr, dfar=fi,
+             S=dict(pre=(), u=tuple(dout['uS']), c=lambda n: n + dout['obS'],
+                    t=lambda n: tuple(dout['soS']) + tl),
+             D=dict(pre=(), u=uD, c=lambda n: n - 1,
+                    t=lambda n: soD + ex + W * (M - n + 1))),
+        dict(kind='DOWN', ns=[l for l in law['levels'] if l >= 1],
+             sst=st, dst=st, sfar=fi, dfar=fi,
+             S=dict(pre=(), u=uS, c=lambda n: n,
+                    t=lambda n: soS + ex + W * (M - n)),
+             D=dict(pre=(), u=uD, c=lambda n: n - 1,
+                    t=lambda n: soD + ex + W * (M - n + 1))),
+        dict(kind='MAINA', ns=[j], sst=st, dst=mst, sfar=fi, dfar=mfi,
+             S=dict(pre=soS + ex, u=W, c=lambda n: n + M - j,
+                    t=lambda n: ()),
+             D=dict(pre=(), u=mD, c=lambda n: n + mo,
+                    t=lambda n: msD + mt)),
+        dict(kind='MAINB', ns=[j], sst=mst, dst=st0, sfar=mfi, dfar=fr,
+             S=dict(pre=(), u=mS, c=lambda n: n + mo,
+                    t=lambda n: msS + mt),
+             D=dict(pre=(), u=tuple(dout['uD']), c=lambda n: n + 1,
+                    t=lambda n: tuple(dout['soD']) + tl)),
+    ]
+
+
+def solo_endpoints(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=7,
+                   encs=None):
+    """The SOLO cascade route's endpoints and chains, gated.
+
+    Reads the law off one measured overflow phase, checks it against
+    [phase_mid]'s own configurations at every level down to 0 AND at the main
+    count's start, then derives both interior laps and the four transition
+    chains.  Raises [NestError] with the piece that did not derive."""
+    encf = ENC[enc]
+    mid = phase_mid(tab, st0, encf, tail, far, K, maxT=6000000)
+    law = solo_law(mid, ENCDATA, ENCS, K, encs, prefer=enc)
+    law['found'], law['main_at'] = solo_check(mid, law, ENCDATA)
+    # the LEVEL family, at the top level's tail, and the MAIN family
+    key_in = (law['inner'], law['st_in'],
+              tuple(law['extra'])
+              + tuple(law['unit']) * (law['M'] - law['j'] + 1),
+              tuple(law['far_in']), 0)
+    key_m = (law['main_enc'], law['main_st'], tuple(law['main_tail']),
+             tuple(law['main_far']), law['main_oct'])
+    # `rep uS i ++ sS` has no rotation when sS starts with a blank, so the
+    # LEVEL lap has no chain at the plain AI0/AI1 on any of these and the
+    # wave-22b Z/P split is the only form it derives in.  The main lap usually
+    # derives plain too, but it derives SPLIT on every machine measured, so
+    # both families are taken in the split form and the emitter carries ONE
+    # lap template instead of two.  [lap_m_plain] is kept for the record.
+    lap_in = _inner_lap_split(tab, ENCDATA, key_in)
+    lap_m = _inner_lap_split(tab, ENCDATA, key_m)
+    try:
+        lap_m_plain = _inner_lap(tab, ENCDATA, key_m)
+    except NestError:
+        lap_m_plain = None
+    B0, B1 = _confs_ovf(ENCDATA, enc, st0, tail, far)
+    trans = {}
+    for tr in solo_transitions(law, ENCDATA, enc, st0, tail, far):
+        got = None
+        for fr in _frame_pair(tr['S'], tr['D'], tr['ns']):
+            el = not any(fr['Xs'].values())
+            src = (tr['sst'], fr['ssrc'], 0, (tr['sfar'], (), 0, 0, ()))
+            dst = (tr['dst'], fr['sdst'], 0, (tr['dfar'], (), 0, 0, ()))
+            ch, lift = _chain(tab, el, True, src, dst)
+            if ch is None:
+                continue
+            r = LC.srun(tab, el, True, ch, src)
+            if r is None:
+                continue
+            got = dict(fr, chain=ch, lift=lift, el=el, src=src, dst=dst,
+                       land=r[0], cost=(r[1], r[2]))
+            break
+        if got is None:
+            raise NestError('no solo %s chain' % tr['kind'])
+        trans[tr['kind']] = got
+    return dict(law=law, trans=trans, lap_in=lap_in, lap_m=lap_m,
+                lap_m_plain=lap_m_plain, key_in=key_in, key_m=key_m,
+                B0=B0, B1=B1)
+
+
+def _lapcost(lap, c):
+    """Steps of ONE interior lap at carry index [c] -- the split form's Z
+    chain at [c] = 0 and its peeled P chain at [c] = S c'."""
+    if 'cn' in lap:
+        return lap['cn'][0] * c + lap['cn'][1]
+    return (lap['cnz'][1] if c == 0
+            else lap['cnp'][0] * (c - 1) + lap['cnp'][1])
+
+
+def solo_validate(tab, ENC, ENCDATA, enc, st0, tail, far, d, jlo=2, jhi=8):
+    """Differentially check the WHOLE solo cascade against the raw simulator:
+    the boot, every count of every level, every level hop, the two main-count
+    chains and the main count's own laps, at exact step counts and exact
+    configurations, over a range of outer indices -- plus the concrete p = 1
+    lap and its per-state first visits, which the reindex needs.
+
+    Load-bearing for this route as for the gated one: every chain is derived at
+    ONE index off ONE phase, and only a replay elsewhere tells a level-uniform
+    chain from a coincidence at the index it was read at."""
+    law = d['law']
+    encin, encm, encf = (ENC[law['inner']], ENC[law['main_enc']], ENC[enc])
+    st, fi = law['st_in'], tuple(law['far_in'])
+    mst, mfi = law['main_st'], tuple(law['main_far'])
+    mt, mo = tuple(law['main_tail']), law['main_oct']
+    ex, W = law['extra'], law['unit']
+    tail, far = tuple(tail), tuple(far)
+
+    def hop(a, b, tr, n, what):
+        cost = tr['cost']
+        got = _sim(tab, a, cost[0] * (n + tr['ioff']) + cost[1])
+        if not _eqlift(got, b):
+            raise NestError('validate %s: %r want %r' % (what, got, b))
+
+    def laps(ef, sq, t, fr, v0, vf, lap, what):
+        n = 0
+        for v in range(v0, vf):
+            c, ov = carry(v)
+            if ov:
+                raise NestError('internal: inner overflow inside the run')
+            a = (sq, tuple(ef(v)) + t, 0, fr)
+            b = (sq, tuple(ef(v + 1)) + t, 0, fr)
+            g = _sim(tab, a, _lapcost(lap, c))
+            if not _eqlift(g, b):
+                raise NestError('validate %s v=%d: %r want %r'
+                                % (what, v, g, b))
+            n += 1
+        return n
+
+    def T(l, j):
+        return ex + W * (j - l)
+
+    nlap, nph = 0, 0
+    for j in range(max(jlo, 1), jhi + 1):
+        p = 2 ** (j + 1) - 1
+        hop((st0, tuple(encf(p)) + tail, 0, far),
+            (st, tuple(encin(2 ** (j - 1))) + T(j - 1, j), 0, fi),
+            d['trans']['BOOT'], j, 'boot j=%d' % j)
+        for l in range(j - 1, 0, -1):
+            nlap += laps(encin, st, T(l, j), fi, 2 ** l, 2 ** (l + 1) - 1,
+                         d['lap_in'], 'lev%d j=%d' % (l, j))
+            hop((st, tuple(encin(2 ** (l + 1) - 1)) + T(l, j), 0, fi),
+                (st, tuple(encin(2 ** (l - 1))) + T(l - 1, j), 0, fi),
+                d['trans']['DOWN'], l, 'down%d j=%d' % (l, j))
+        v0 = 2 ** (j + mo)
+        hop((st, tuple(encin(1)) + T(0, j), 0, fi),
+            (mst, tuple(encm(v0)) + mt, 0, mfi),
+            d['trans']['MAINA'], j, 'mainA j=%d' % j)
+        nlap += laps(encm, mst, mt, mfi, v0, 2 ** (j + mo + 1) - 1,
+                     d['lap_m'], 'main j=%d' % j)
+        hop((mst, tuple(encm(2 ** (j + mo + 1) - 1)) + mt, 0, mfi),
+            (st0, tuple(encf(2 ** (j + 1))) + tail, 0, far),
+            d['trans']['MAINB'], j, 'mainB j=%d' % j)
+        nph += 1
+    # outer index 0 (p = 1) has no cascade: a concrete lap, plus per-state
+    # first-visit witnesses for the reindex's j = 0 visit bullets
+    c1 = (st0, tuple(encf(1)) + tail, 0, far)
+    n0 = _sim_to_lift(tab, c1, (st0, tuple(encf(2)) + tail, 0, far), 20000)
+    if n0 is None:
+        raise NestError('solo cascade: no concrete lap at p=1')
+    visz, cfg = {c1[0]: 0}, c1
+    for t in range(1, 5000):
+        try:
+            cfg = LC.wstep(tab, False, False, cfg)
+        except LC.Halt:
+            break
+        if cfg[0] not in visz:
+            visz[cfg[0]] = t
+        if len(visz) == 4:
+            break
+    d['n0'], d['visz'] = n0, visz
+    d['nval'] = ('solo cascade: p=1 concrete (%d steps) + %d overflow phases, '
+                 'j = %d..%d (%d levels, %d counts, %d inner laps)'
+                 % (n0, nph, max(jlo, 1), jhi,
+                    sum(j for j in range(max(jlo, 1), jhi + 1)),
+                    sum(j + 1 for j in range(max(jlo, 1), jhi + 1)), nlap))
+    return d['nval']
