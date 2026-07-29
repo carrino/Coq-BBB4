@@ -24,6 +24,8 @@ jobs:
         run: coqc --version
       - name: Generate Makefile.coq
         run: make Makefile.coq
+      - name: "Build graph closes: every target of `make all` has a rule (dry run)"
+        run: make -f Makefile.coq -n all > /dev/null
       - name: Core library + closeout kit, from source
         run: make -f Makefile.coq -j4 theories/Closeout/CloseoutKit.vo
       - name: End-to-end machine proofs (cycler + translated-cycler checkers)
