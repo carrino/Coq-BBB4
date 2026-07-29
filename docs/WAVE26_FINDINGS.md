@@ -409,7 +409,18 @@ arbitrary `Cc : positive -> cconf` and only needs boot + laps + visits.
 Three lap branches, all affine chains: interior (`cview Some`), fill →
 `VIRT`, `VIRT → E(2^k + 1)`.  `LapDecider` is not touched.
 
-**Scale**: a scan of all 211 is running; the early sample shows the exact
-SKIP-POW2 signature on a first slice plus OTHER skip sets (9-17 missing
-values at p ≤ 300) that need their own taxonomy — likely the same device
-with different virtual points.  Counts land in the next commit.
+**The taxonomy so far** (a full scan of the 211 is running; each shape below
+is verified on named machines, counts land in the next commit):
+
+* **skip-1**: missing exactly `{2^k}` — `fill → 2^k + 1`, one virtual
+  anchor.  The exemplar above.
+* **skip-2**: missing exactly `{2^k} ∪ {2^k + 1}` (plus small-`p` concrete
+  noise) — `fill → 2^k + 2`, two virtual anchors; measured on
+  `0RB0LC_1LC1RB_0RD1LA_1LB1RB` and `0RB0LC_1LC1RB_1RD1LA_1LB0LA`.  The
+  `+2` entry is the offset route's device one level up.
+* **alternate-octave**: the form appears only on ODD octaves (present 2-3,
+  8-15, 32-63, 128-255, 512-1023; measured on
+  `0RB0LC_1LC1RB_1LD1LA_1RD0RC`) — the machine rests in a SECOND syntactic
+  form on the even octaves, so the family is two-formed the way skip-k
+  families are virtual-pointed.  These are the scan's current
+  `no anchor family` rows; the decode itself still holds on all of them.
