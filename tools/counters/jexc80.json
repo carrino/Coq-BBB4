@@ -1,0 +1,2018 @@
+[
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   4
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "0RB---_1RC1LD_0LD0RC_1LB1LA",
+  "enc": "Alph_00_01_1",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   6
+  ],
+  "ifloor": 0,
+  "ofloor": 2,
+  "iexc": {},
+  "oexc": {
+   "1": 8
+  },
+  "nint": 6,
+  "novf": 7,
+  "kind": "jexc:i0/o2",
+  "spec": "0RB0LB_1LC1RD_0RD0LC_1RB1LA",
+  "enc": "Alph_00_01_1",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    4
+   ],
+   [
+    1,
+    8
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    3,
+    16
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    5,
+    24
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    26
+   ],
+   [
+    2,
+    52
+   ],
+   [
+    3,
+    102
+   ],
+   [
+    4,
+    200
+   ],
+   [
+    5,
+    394
+   ],
+   [
+    6,
+    780
+   ],
+   [
+    7,
+    1550
+   ]
+  ],
+  "spec": "0RB0LC_1LA1RC_1RB0LD_0RB1LD",
+  "enc": "Jp",
+  "edge": "D",
+  "tail": [
+   1,
+   0,
+   0,
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "0RB0LC_1LC1RB_0RD1LA_1LB1RD",
+  "enc": "Alph_10_11_11",
+  "edge": "A",
+  "tail": [
+   1,
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    4
+   ],
+   [
+    1,
+    8
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    3,
+    16
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    5,
+    24
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    28
+   ],
+   [
+    2,
+    54
+   ],
+   [
+    3,
+    104
+   ],
+   [
+    4,
+    202
+   ],
+   [
+    5,
+    396
+   ],
+   [
+    6,
+    782
+   ],
+   [
+    7,
+    1552
+   ]
+  ],
+  "spec": "0RB0LD_0RC1LB_1LA1RD_1RC0LB",
+  "enc": "Jp",
+  "edge": "B",
+  "tail": [
+   1,
+   0,
+   0,
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   8,
+   0
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "0RB0LD_1LC1RD_0RD0LC_1RB1LA",
+  "enc": "Alph_00_01_1",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "0RB0RC_1LC0LD_0LD1RA_1RC1LD",
+  "enc": "Mp",
+  "edge": "C",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    4
+   ],
+   [
+    1,
+    8
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    3,
+    16
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    5,
+    24
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    28
+   ],
+   [
+    2,
+    54
+   ],
+   [
+    3,
+    104
+   ],
+   [
+    4,
+    202
+   ],
+   [
+    5,
+    396
+   ],
+   [
+    6,
+    782
+   ],
+   [
+    7,
+    1552
+   ]
+  ],
+  "spec": "0RB1LA_1LC1RD_0RA0LD_1RB0LA",
+  "enc": "Jp",
+  "edge": "A",
+  "tail": [
+   1,
+   0,
+   0,
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    4
+   ],
+   [
+    1,
+    8
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    3,
+    16
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    5,
+    24
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    10
+   ],
+   [
+    2,
+    24
+   ],
+   [
+    3,
+    54
+   ],
+   [
+    4,
+    116
+   ],
+   [
+    5,
+    242
+   ],
+   [
+    6,
+    496
+   ],
+   [
+    7,
+    1006
+   ]
+  ],
+  "spec": "0RB1LA_1LC1RD_0RA1LD_1RB0LA",
+  "enc": "Jp",
+  "edge": "A",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    4
+   ],
+   [
+    1,
+    8
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    3,
+    16
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    5,
+    24
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    26
+   ],
+   [
+    2,
+    52
+   ],
+   [
+    3,
+    102
+   ],
+   [
+    4,
+    200
+   ],
+   [
+    5,
+    394
+   ],
+   [
+    6,
+    780
+   ],
+   [
+    7,
+    1550
+   ]
+  ],
+  "spec": "0RB1LA_1LC1RD_0RB0LD_1RB0LA",
+  "enc": "Jp",
+  "edge": "A",
+  "tail": [
+   1,
+   0,
+   0,
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    8
+   ],
+   [
+    1,
+    12
+   ],
+   [
+    2,
+    16
+   ],
+   [
+    3,
+    20
+   ],
+   [
+    4,
+    24
+   ],
+   [
+    5,
+    28
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    57
+   ],
+   [
+    2,
+    101
+   ],
+   [
+    3,
+    181
+   ],
+   [
+    4,
+    333
+   ],
+   [
+    5,
+    629
+   ],
+   [
+    6,
+    1213
+   ],
+   [
+    7,
+    2373
+   ]
+  ],
+  "spec": "0RB1LA_1RC0LA_0RD1RB_1LD0LB",
+  "enc": "Jp",
+  "edge": "B",
+  "tail": [
+   1,
+   0,
+   0,
+   1,
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "0RB1LC_1LA1RB_0LD0LA_1RA0RB",
+  "enc": "Mp",
+  "edge": "A",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "0RB1LC_1LA1RB_1LD0LA_1RD0RB",
+  "enc": "Mp",
+  "edge": "A",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "0RB1LC_1LA1RB_1RD0LA_1LB1RD",
+  "enc": "Mp",
+  "edge": "A",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "0RB1LC_1LA1RB_1RD0LA_1RB1RD",
+  "enc": "Mp",
+  "edge": "A",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    4
+   ],
+   [
+    1,
+    8
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    3,
+    16
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    5,
+    24
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    10
+   ],
+   [
+    2,
+    24
+   ],
+   [
+    3,
+    54
+   ],
+   [
+    4,
+    116
+   ],
+   [
+    5,
+    242
+   ],
+   [
+    6,
+    496
+   ],
+   [
+    7,
+    1006
+   ]
+  ],
+  "spec": "0RB1LD_0RC1LB_1LA1RD_1RC0LB",
+  "enc": "Jp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   4
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "0RB1RB_1LC1RD_0RD0LC_1RB1LA",
+  "enc": "Alph_00_01_1",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "ci": [
+   6,
+   6
+  ],
+  "co": [
+   18,
+   -7
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB0LB_1LC1RD_0RD0LC_1RA1LD",
+  "enc": "Alph_000_001_1",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB0LC_1RC1LA_1LD1RB_0RB0LD",
+  "enc": "Alph_00_01_1",
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    8
+   ],
+   [
+    1,
+    12
+   ],
+   [
+    2,
+    16
+   ],
+   [
+    3,
+    20
+   ],
+   [
+    4,
+    24
+   ],
+   [
+    5,
+    28
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    57
+   ],
+   [
+    2,
+    101
+   ],
+   [
+    3,
+    181
+   ],
+   [
+    4,
+    333
+   ],
+   [
+    5,
+    629
+   ],
+   [
+    6,
+    1213
+   ],
+   [
+    7,
+    2373
+   ]
+  ],
+  "spec": "1RB0LD_0RC1RA_1LC0LA_0RA1LD",
+  "enc": "Jp",
+  "edge": "A",
+  "tail": [
+   1,
+   0,
+   0,
+   1,
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    4
+   ],
+   [
+    1,
+    8
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    3,
+    16
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    5,
+    24
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    10
+   ],
+   [
+    2,
+    24
+   ],
+   [
+    3,
+    54
+   ],
+   [
+    4,
+    116
+   ],
+   [
+    5,
+    242
+   ],
+   [
+    6,
+    496
+   ],
+   [
+    7,
+    1006
+   ]
+  ],
+  "spec": "1RB0LD_1LC1RA_0RD1LA_0RB1LD",
+  "enc": "Jp",
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB0LD_1LC1RB_1LD1RC_0RC1LA",
+  "enc": "Mp",
+  "edge": "D",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB0LD_1RC1RB_1LD1RC_0RC1LA",
+  "enc": "Mp",
+  "edge": "D",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   2
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB0RB_0LC1RB_1LC1LD_1LA0RA",
+  "enc": "Alph_11_00_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    6
+   ],
+   [
+    1,
+    10
+   ],
+   [
+    2,
+    14
+   ],
+   [
+    3,
+    18
+   ],
+   [
+    4,
+    22
+   ],
+   [
+    5,
+    26
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    14
+   ],
+   [
+    2,
+    26
+   ],
+   [
+    3,
+    46
+   ],
+   [
+    4,
+    82
+   ],
+   [
+    5,
+    150
+   ],
+   [
+    6,
+    282
+   ],
+   [
+    7,
+    542
+   ]
+  ],
+  "spec": "1RB0RC_0LC1RD_1LB1LA_1LC0RD",
+  "enc": "Alph_10_11_11",
+  "edge": "A",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB0RC_0RC1LD_1LB1RC_0LA0LB",
+  "enc": "Mp",
+  "edge": "B",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    6
+   ],
+   [
+    1,
+    10
+   ],
+   [
+    2,
+    14
+   ],
+   [
+    3,
+    18
+   ],
+   [
+    4,
+    22
+   ],
+   [
+    5,
+    26
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    14
+   ],
+   [
+    2,
+    26
+   ],
+   [
+    3,
+    46
+   ],
+   [
+    4,
+    82
+   ],
+   [
+    5,
+    150
+   ],
+   [
+    6,
+    282
+   ],
+   [
+    7,
+    542
+   ]
+  ],
+  "spec": "1RB0RC_1LC1LA_0LB1RD_1LB0RD",
+  "enc": "Alph_10_11_11",
+  "edge": "A",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB0RC_1LC1RA_1RD1LB_0LC0RD",
+  "enc": "Alph_00_01_1",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB0RD_1LB0LC_1RD1LC_0LC1RA",
+  "enc": "Mp",
+  "edge": "D",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1LA_0LA1RC_0RD0RB_1LB0LA",
+  "enc": "Mp",
+  "edge": "B",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1LA_0LA1RC_1LD0RB_1LA1LD",
+  "enc": "Mp",
+  "edge": "B",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1LA_0LA1RC_1LD0RB_1RA1LD",
+  "enc": "Mp",
+  "edge": "B",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1LA_0LA1RC_1RD0RB_1LD0LA",
+  "enc": "Mp",
+  "edge": "B",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1LA_0LC1RD_1RA1LC_0LA0RB",
+  "enc": "Alph_10_11_11",
+  "edge": "D",
+  "tail": [
+   1,
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1LA_1RC1LB_0LB1RD_1LA0RC",
+  "enc": "Mp",
+  "edge": "C",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   8,
+   -1
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB1LB_1RC0LA_1LD1RB_0RB0LD",
+  "enc": "Alph_00_01_1",
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    4
+   ],
+   [
+    1,
+    8
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    3,
+    16
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    5,
+    24
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    26
+   ],
+   [
+    2,
+    52
+   ],
+   [
+    3,
+    102
+   ],
+   [
+    4,
+    200
+   ],
+   [
+    5,
+    394
+   ],
+   [
+    6,
+    780
+   ],
+   [
+    7,
+    1550
+   ]
+  ],
+  "spec": "1RB1LC_0LA0RC_1LA0RD_0LA1RD",
+  "enc": "Jp",
+  "edge": "D",
+  "tail": [
+   1,
+   0,
+   0,
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   4
+  ],
+  "ifloor": 0,
+  "ofloor": 2,
+  "iexc": {},
+  "oexc": {
+   "1": 7
+  },
+  "nint": 6,
+  "novf": 7,
+  "kind": "jexc:i0/o2",
+  "spec": "1RB1LC_0LC0RB_1LA0RD_1LC1LD",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   8,
+   -1
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB1LC_0LC0RB_1LA0RD_1LC1RC",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   4
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB1LC_0LC0RB_1LA1LD_0RA---",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   4
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB1LC_0LC0RB_1LA1LD_0RD1LC",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   2
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB1LC_0LC0RB_1LA1LD_1LA---",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   6
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB1LC_0LC0RB_1LA1LD_1RC0RA",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   4
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB1LC_0LC0RB_1LA1LD_1RC1LA",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   6
+  ],
+  "ifloor": 0,
+  "ofloor": 2,
+  "iexc": {},
+  "oexc": {
+   "1": 8
+  },
+  "nint": 6,
+  "novf": 7,
+  "kind": "jexc:i0/o2",
+  "spec": "1RB1LC_0LC0RB_1LA1RD_0LA0RA",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   8,
+   0
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB1LC_0LC0RB_1LA1RD_0LA0RC",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   4
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB1LC_0LC0RB_1LA1RD_0LA1LA",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1LC_0LC0RB_1LA1RD_0RC0RA",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1LC_0LC0RB_1LA1RD_0RC1LA",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   6
+  ],
+  "ifloor": 0,
+  "ofloor": 2,
+  "iexc": {},
+  "oexc": {
+   "1": 9
+  },
+  "nint": 6,
+  "novf": 7,
+  "kind": "jexc:i0/o2",
+  "spec": "1RB1LC_0LC0RB_1LA1RD_1LD0RA",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   4
+  ],
+  "ifloor": 0,
+  "ofloor": 2,
+  "iexc": {},
+  "oexc": {
+   "1": 7
+  },
+  "nint": 6,
+  "novf": 7,
+  "kind": "jexc:i0/o2",
+  "spec": "1RB1LC_0LC0RB_1LA1RD_1LD1LA",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1LC_0LC0RB_1LA1RD_1RC0RA",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1LC_0LC0RB_1LA1RD_1RC1LA",
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "ci": [
+   6,
+   6
+  ],
+  "co": [
+   18,
+   -7
+  ],
+  "ifloor": 0,
+  "ofloor": 0,
+  "iexc": {},
+  "oexc": {},
+  "nint": 6,
+  "novf": 7,
+  "kind": "affine",
+  "spec": "1RB1LC_0LC0RB_1LD1RC_1LA0RA",
+  "enc": "Alph_000_001_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    4
+   ],
+   [
+    1,
+    8
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    3,
+    16
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    5,
+    24
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    28
+   ],
+   [
+    2,
+    54
+   ],
+   [
+    3,
+    104
+   ],
+   [
+    4,
+    202
+   ],
+   [
+    5,
+    396
+   ],
+   [
+    6,
+    782
+   ],
+   [
+    7,
+    1552
+   ]
+  ],
+  "spec": "1RB1LD_0LC0RD_0LA1RC_1LA0RC",
+  "enc": "Jp",
+  "edge": "C",
+  "tail": [
+   1,
+   0,
+   0,
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    4
+   ],
+   [
+    1,
+    8
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    3,
+    16
+   ],
+   [
+    4,
+    20
+   ],
+   [
+    5,
+    24
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    10
+   ],
+   [
+    2,
+    24
+   ],
+   [
+    3,
+    54
+   ],
+   [
+    4,
+    116
+   ],
+   [
+    5,
+    242
+   ],
+   [
+    6,
+    496
+   ],
+   [
+    7,
+    1006
+   ]
+  ],
+  "spec": "1RB1LD_0LC1RD_0LA1RC_1LA0RC",
+  "enc": "Jp",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1RA_1LC1RB_0RB1LD_1RA0LC",
+  "enc": "Mp",
+  "edge": "C",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "ci": [
+   4,
+   4
+  ],
+  "co": [
+   4,
+   4
+  ],
+  "ifloor": 0,
+  "ofloor": 2,
+  "iexc": {},
+  "oexc": {
+   "1": 7
+  },
+  "nint": 6,
+  "novf": 7,
+  "kind": "jexc:i0/o2",
+  "spec": "1RB1RA_1RC0LA_1LD1RB_0RB0LD",
+  "enc": "Alph_00_01_1",
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "kind": "nonaffine",
+  "ints": [
+   [
+    0,
+    18
+   ],
+   [
+    1,
+    24
+   ],
+   [
+    2,
+    30
+   ],
+   [
+    3,
+    36
+   ],
+   [
+    4,
+    42
+   ],
+   [
+    5,
+    48
+   ]
+  ],
+  "ovfs": [
+   [
+    1,
+    66
+   ],
+   [
+    2,
+    120
+   ],
+   [
+    3,
+    222
+   ],
+   [
+    4,
+    420
+   ],
+   [
+    5,
+    810
+   ],
+   [
+    6,
+    1584
+   ],
+   [
+    7,
+    3126
+   ]
+  ],
+  "spec": "1RB1RC_1LA1RA_0RC1LD_1LB0LD",
+  "enc": "Alph_000_111_111",
+  "edge": "A",
+  "tail": [
+   1,
+   0
+  ],
+  "far": [
+   1,
+   1,
+   1
+  ],
+  "mirror": false
+ },
+ {
+  "kind": "open-lap",
+  "bad": [
+   1
+  ],
+  "spec": "1RB1RC_1RC1LA_1LD1RB_0RB0LD",
+  "enc": "Alph_00_01_1",
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "mirror": true
+ },
+ {
+  "spec": "0RB0LD_1LA1LC_0LD0LC_1RD1RB",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "0RB0RB_1LA1LC_0LD0LC_1RD1RB",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "0RB0RD_1LC1RB_1RA0LC_1LB0LC",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "0RB0RD_1LC1RB_1RA0LC_1LD0LC",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "0RB1LA_1LA1LC_0LD0LC_1RD1RB",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "0RB1LB_1LC1RC_1RD0LA_0RC1RB",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "0RB1LC_1LC0RD_1RD0LC_1LA1RB",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "0RB1LC_1LC1RD_1LA0LC_0RD1RB",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "0RB1RC_1RC0LB_0RD0RC_1LD1LA",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "1RB---_1LC0RB_1LD1RB_1LC1RB",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "1RB---_1LC1RD_1LB1RD_1LB0RD",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "1RB---_1LC1RD_1LB1RD_1LC0RD",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "1RB0RB_1LC0RC_1RA0LD_0LB0LC",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "1RB0RB_1LC1LD_0LC1RA_0LD0RA",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "1RB0RD_1LC0LB_1LD0LB_1RD0RA",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "1RB0RD_1LC0LC_1LD0LB_1RD0RA",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "1RB1LB_1LC0RD_0LB1LA_0LA1RA",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_1LA0RB_0LD1LB",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "1RB1LD_1RC1RB_1LC1LA_0RC0RD",
+  "kind": "no-anchor-family"
+ },
+ {
+  "spec": "1RB1RD_1RC0LD_1LB0RA_1LC0LC",
+  "kind": "no-anchor-family"
+ }
+]

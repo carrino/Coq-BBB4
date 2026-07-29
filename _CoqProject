@@ -2430,6 +2430,36 @@ theories/Machines/Counters/QMG_0RB1LA_1RC1RB_1LD0LA_0RC0LD.v
 theories/Machines/Counters/QMG_1RB0RC_0LA0RB_0LD1RC_1LA1LD.v
 theories/Machines/Counters/QMG_1RB1RA_1LC0LD_0RB0LC_0RA1LD.v
 theories/Machines/Counters/QMG_1RB1RC_0LA0RB_0LD0RC_1LD1LA.v
+theories/Machines/Counters/PEEL_0RB0LB_1LC1RD_0RD0LC_1RB1LA.v
+theories/Machines/Counters/PEEL_0RB0LD_1LC1RD_0RD0LC_1RB1LA.v
+theories/Machines/Counters/PEEL_0RB1RB_1LC1RD_0RD0LC_1RB1LA.v
+theories/Machines/Counters/PEEL_0RB____1RC1LD_0LD0RC_1LB1LA.v
+theories/Machines/Counters/PEEL_1RB0LB_1LC1RD_0RD0LC_1RA1LD.v
+theories/Machines/Counters/PEEL_1RB0RB_0LC1RB_1LC1LD_1LA0RA.v
+theories/Machines/Counters/PEEL_1RB1LB_1RC0LA_1LD1RB_0RB0LD.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA0RD_1LC1LD.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA0RD_1LC1RC.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA1LD_0RA___.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA1LD_0RD1LC.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA1LD_1LA___.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA1LD_1RC0RA.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA1LD_1RC1LA.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA1RD_0LA0RA.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA1RD_0LA0RC.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA1RD_0LA1LA.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA1RD_1LD0RA.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LA1RD_1LD1LA.v
+theories/Machines/Counters/PEEL_1RB1LC_0LC0RB_1LD1RC_1LA0RA.v
+theories/Machines/Counters/PEEL_1RB1RA_1RC0LA_1LD1RB_0RB0LD.v
+theories/Machines/Counters/QMG_0RB0LA_1RC1RB_1LA0LD_0RB1LD.v
+theories/Machines/Counters/QMG_0RB1LA_1RC1RB_1LD0LA_0RB0LD.v
+theories/Machines/Counters/QMG_1RB0RD_0LC0RB_1LA1LC_0LC1RD.v
+theories/Machines/Counters/QMG_1RB1RA_1LC0LD_0RA0LC_0RA1LD.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/LAPC_1RB0RD_1LB0LC_1RD1LC_0LC1RA.v
+theories/Machines/Counters/NLAP_1RB0RC_1LC1LA_0LB1RD_1LB0RD.v
+theories/Machines/Counters/LAPC_1RB1LD_1RC0RB_1LA0RB_0LD1LB.v
 
 theories/Closeout/CloseoutKit.v
 theories/Closeout/CB_00.v

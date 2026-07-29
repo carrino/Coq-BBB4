@@ -56,6 +56,10 @@ NEST_PREFIX = 'NLAP'
 # StA is targeted but never fires after the bootstrap, and the kernel
 # recomputes that from the SAME chains.
 AVOID_PREFIX = 'LAPQ'
+# Boards whose overflow branch is PEELED (stated at j = S j', with p = 1 a
+# concrete lap -- [_peel_ovf]).  Its own prefix for the same reason as the
+# others: a wave stays legible and cannot collide with a concurrent session.
+PEEL_PREFIX = 'PEEL'
 
 # ---------------------------------------------------------------------------
 # The digit alphabets.  For every encoding E and every p,
@@ -218,14 +222,20 @@ def eqlift(a, b):
             and LC.rstrip0(a[3]) == LC.rstrip0(b[3]))
 
 
-def validate(tab, st0, encf, tail, far, cost, co, hi=200):
+def validate(tab, st0, encf, tail, far, cost, co, hi=200, peel=None):
     """Differentially check both branches against the raw simulator: exact
-    step counts AND exact configurations, on every p in range."""
+    step counts AND exact configurations, on every p in range.
+
+    [peel] is the peeled overflow route's concrete [p = 1] step count: the
+    branch's chain then starts one index up, so the affine law is read at
+    [j - 2] and [p = 1] is checked against that one number."""
     tail, far = tuple(tail), tuple(far)
     n = 0
-    for p in range(2, hi):
+    for p in range(1 if peel is not None else 2, hi):
         j, ov = carry(p)
-        if ov:
+        if ov and peel is not None:
+            steps = peel if j == 1 else co[0] * (j - 2) + co[1]
+        elif ov:
             steps = co[0] * (j - 1) + co[1]
         else:
             steps = cost(j)
@@ -655,6 +665,40 @@ FLAT_OVF_CASE = r"""  - destruct (cview_pos p j E) as (j' & ->).
     + exact (geo_@ID@ p j' E).
     + lia."""
 
+# --------------------------------------------------------------- the PEEL ---
+# The overflow branch stated at [j = S j'], with one more unit copy standing
+# in the chain's PREFIX -- and the case it leaves behind, [p = 1], discharged
+# as one concrete run.  See [_peel_ovf].
+LAPZ_LEMMA = r"""(** The smallest overflow anchor, [p = 1]: one concrete run.  The peeled
+    branch below states its chain at [j = S j'], so this case is what the
+    reindex leaves behind -- the [j = 0] device of the offset route, at the
+    OUTER anchor. *)
+Lemma lapz_@ID@ : exists n c', csteps tm n (Cc 1) = Some c'
+  /\ lift c' = lift (Cc 2) /\ 0 < n.
+Proof.
+  exists @NZ@.
+  assert (H : match csteps tm @NZ@ (Cc 1) with
+              | Some c => ceqb c (Cc 2) | None => false end = true)
+    by (vm_compute; reflexivity).
+  destruct (csteps tm @NZ@ (Cc 1)) as [c|] eqn:Ez; [|discriminate].
+  exists c. split; [reflexivity|]. split; [apply ceqb_lift; exact H | lia].
+Qed."""
+
+VISZ_LEMMA = r"""(** State @STQ@'s visit witness at the peeled branch's [p = 1] case. *)
+Lemma visz_@STQ@_@ID@ : exists k c, csteps tm k (Cc 1) = Some c /\ fst c = @STQ@.
+Proof. exists @KQ@. eexists. split; [vm_compute; reflexivity | reflexivity]. Qed."""
+
+FLAT_OVF_CASE_PEEL = r"""  - destruct (cview_pos p j E) as (j' & ->).
+    destruct j' as [|j''].
+    + rewrite (cview_none_shape p 0 E). exact lapz_@ID@.
+    + apply (lap_of_run tm Cc true true cho_@ID@ B0_@ID@ B1_@ID@ @CAO@ @CBO@ p j'' [] []).
+      * exact run_ovf_@ID@.
+      * reflexivity.
+      * reflexivity.
+      * exact (gso_@ID@ p j'' E).
+      * exact (geo_@ID@ p j'' E).
+      * lia."""
+
 
 HEADER = r'''(** * @PREF@_@ID@: machine @SPEC@, boarded by CERTIFICATE.
 
@@ -849,6 +893,54 @@ def absorb_search(tab, have, maxd=64):
     return None
 
 
+def _peel_ovf(tab, st0, encf, d, tail, far, Rr):
+    """THE PEEL, on the overflow branch -- the standing first move.
+
+    [confs] hands the overflow chain a count that can be EMPTY whenever the
+    alphabet's [obS] is 0 (every INFERRED alphabet, and Ip/Jp): at [j = 0] the
+    anchor is [p = 1], the smallest overflow word, and the head has no
+    concrete cell to step onto.  A machine whose [p = 1] lap is a different
+    length -- John's read of 0RB0LB_1LC1RD_0RD0LC_1RB1LA, "the carry has to
+    alternate states to cross these 0s", 8 steps where the law says 10 --
+    then has NO single chain covering the branch, and the row is filed under
+    [no inner family] or [no anchor] with an exact affine law sitting in
+    plain sight.
+
+    So state the branch at [j = S j'] with one more unit copy standing in the
+    chain's prefix, and discharge [p = 1] as one CONCRETE run: the offset
+    route's [j = 0] device, at the OUTER anchor.  Returns the peeled sides,
+    the chain, the concrete [p = 1] step count and its per-state visit
+    witnesses, or None when the peeled chain does not derive either."""
+    uS, uD = tuple(d['uS']), tuple(d['uD'])
+    tail, far = tuple(tail), tuple(far)
+    B0 = (st0, (uS * (d['obS'] + 1), uS, 1, 0, d['soS'] + tail), 0, Rr)
+    B1 = (st0, (uD, uD, 1, 1, d['soD'] + tail), 0, Rr)
+    cho = LC.derive_chain(tab, True, True, B0, B1)
+    slack = False
+    if cho is None:
+        cho = LC.derive_chain(tab, True, True, B0, B1, lift=True)
+        slack = cho is not None
+    if cho is None:
+        return None
+    c1 = (st0, tuple(encf(1)) + tail, 0, far)
+    c2 = (st0, tuple(encf(2)) + tail, 0, far)
+    n0, cfg, visz = None, c1, {c1[0]: 0}
+    for t in range(1, 20000):
+        try:
+            cfg = LC.wstep(tab, False, False, cfg)
+        except Halt_:
+            break
+        if cfg[0] not in visz:
+            visz[cfg[0]] = t
+        if n0 is None and eqlift(cfg, c2):
+            n0 = t
+        if n0 is not None and len(visz) == 4:
+            break
+    if n0 is None:
+        return None
+    return dict(B0=B0, B1=B1, cho=cho, slack=slack, n0=n0, visz=visz)
+
+
 def boot_probe(tab, st0, encf, tail, far, p0, maxT=200000):
     """Steps from the blank tape to the anchor at p0 (up to blank padding)."""
     want = (st0, tuple(encf(p0)) + tuple(tail), 0, tuple(far))
@@ -921,6 +1013,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
     cho = LC.derive_chain(tab, True, True, B0, B1)
     oslack = False
     nest = None
+    peel = None
     if cho is None:
         # The same trailing blank, on the overflow branch.  This one costs NO
         # new Coq: [geo_*] already closes the overflow up to [lift] (that is
@@ -928,6 +1021,13 @@ def derive(spec, edge, tail, p0, enc, far=()):
         # from the RIGHT side -- the glue just has to say so.
         cho = LC.derive_chain(tab, True, True, B0, B1, lift=True)
         oslack = cho is not None
+    if cho is None:
+        # PEEL BEFORE ANYTHING ELSE (the standing lesson, five waves running).
+        # One more unit copy in the overflow chain's prefix, [p = 1] concrete.
+        peel = _peel_ovf(tab, st0, encf, d, tail, far, Rr)
+        if peel is not None:
+            B0, B1, cho, oslack = (peel['B0'], peel['B1'], peel['cho'],
+                                   peel['slack'])
     if cho is None:
         # NO single chain covers the overflow, and for 492 of the 883 rows
         # that is not a search gap: the overflow costs [Theta(2^j)] and an
@@ -957,9 +1057,12 @@ def derive(spec, edge, tail, p0, enc, far=()):
         raise DeriveError('lap of zero length at j=0')
 
     if nest is None:
-        ok, why = validate(tab, st0, encf, tail, far, cost, (ro[1], ro[2]))
+        ok, why = validate(tab, st0, encf, tail, far, cost, (ro[1], ro[2]),
+                           peel=peel['n0'] if peel else None)
         if not ok:
             raise DeriveError('validation: ' + why)
+        if peel:
+            why += ' (overflow PEELED at j = S j\', p = 1 concrete)'
     else:
         # the flat validate() assumes ONE overflow chain covers the branch;
         # nestcert.validate replays all three pieces (and every inner lap)
@@ -1045,7 +1148,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
         raise DeriveError('no bootstrap to p0=%d' % p0)
 
     if avoid is not None:
-        if nest is not None or islack or oslack:
+        if nest is not None or islack or oslack or peel is not None:
             raise DeriveError('avoid route: only flat exact boards are wired')
         avoid = avoid_probe(tab, boot)
         if avoid is None:
@@ -1068,7 +1171,8 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, visi=visi, visx=visx,
                 qh=qh, boot=boot, avoid=avoid,
                 absd=absd, sset=sset, islack=islack, oslack=oslack,
-                nest=nest, ovpost=list(got), ovwant=list(want), val=why)
+                nest=nest, opeel=peel,
+                ovpost=list(got), ovwant=list(want), val=why)
 
 
 def slist(qs):
@@ -1114,9 +1218,15 @@ def render(D):
     d = ENCDATA[D['enc']]
     N = D.get('nest')
     offset = bool(N and N.get('route') == 'offset')
-    # the offset route reindexes the overflow branch at j = S j', so the
-    # outer successor's count is two up from the lemma's own index
-    sj = '(S (S j))' if offset else '(S j)'
+    P = D.get('opeel')
+    # BOTH reindexing routes state the overflow branch at [j = S j'] and hand
+    # [p = 1] a concrete lap: the offset route (nested overflow, inner count
+    # entering off a power of two) and the PEEL (flat overflow, one more unit
+    # copy in the chain's prefix).  Everything that only cares about the
+    # INDEX is shared; the two differ in the count each side denotes.
+    reix = offset or bool(P)
+    # the reindexed branch's outer successor is two up from the lemma's index
+    sj = '(S (S j))' if reix else '(S j)'
     ovpost, ovwant = tuple(D['ovpost']), tuple(D['ovwant'])
     body = 'rep %s %s ++ %s' % (clist(d['uD']), sj, clist(ovpost))
     pad = len(ovwant) - len(ovpost)
@@ -1173,7 +1283,7 @@ def render(D):
             # vis_via_fill supplies the exponentially long middle
             pull = ('' if _lift_vis(D) else
                     '    apply (vis_csteps_of_lift tm Cc).\n')
-            if offset:
+            if reix:
                 # the reindexed anchor: destruct the outer index; p = 1 gets
                 # the concrete witness
                 vis.append('  - (* %s: fires in the exit half of the overflow *)\n'
@@ -1229,7 +1339,7 @@ def render(D):
             # premise.
             pull = ('' if _lift_vis(D) else
                     '    apply (vis_csteps_of_lift tm Cc).\n')
-            if offset:
+            if reix:
                 vis.append('  - (* %s *)\n'
                            '%s'
                            '    apply (vis_via_ovf_lift tm Cc Hi %s).\n'
@@ -1249,7 +1359,7 @@ def render(D):
                            '    apply (viso_%s %s %s ltac:(vm_compute; reflexivity)\n'
                            '                   p1 j1 E1).'
                            % (ST[q], pull, ST[q], ID, cchain(pre), ST[q]))
-        elif offset:
+        elif reix:
             vis.append('  - (* %s *)\n'
                        '    apply (vis_via_ovf tm Cc Hi %s).\n'
                        '    intros p1 j1 E1. destruct j1 as [|j1\'].\n'
@@ -1263,6 +1373,18 @@ def render(D):
                        '      with (l := %s).\n'
                        '    vm_compute; reflexivity.'
                        % (ST[q], ST[q], ID, cchain(pre)))
+    # the peeled branch's two leftovers, both at p = 1: the concrete lap and
+    # one concrete visit witness per state the overflow bullets cover
+    peelglue = ''
+    if P:
+        peelglue = LAPZ_LEMMA.replace('@NZ@', str(P['n0'])) + '\n\n'
+        for q in sorted(set(D.get('vis') or {})):
+            if not D['vis'][q]:
+                continue                     # the anchor state needs no run
+            if q not in P['visz']:
+                raise DeriveError('peel: no p=1 witness for state %s' % LAB[q])
+            peelglue += (VISZ_LEMMA.replace('@STQ@', ST[q])
+                         .replace('@KQ@', str(P['visz'][q])) + '\n\n')
     islack = bool(D.get('islack'))
     if islack and D['mode'] != 'one':
         raise DeriveError('lift route: only mode=one is wired')
@@ -1279,13 +1401,18 @@ def render(D):
         '@OVFDEFS@': (((NC.nest_defs_offset if offset else NC.nest_defs)
                        (D, ENCDATA, clist, cconf, cchain, ST, ID))
                       if N else FLAT_OVF_DEFS),
-        '@OVFCASE@': (NC.NEST_OVFCASE if N else FLAT_OVF_CASE),
+        '@OVFCASE@': (NC.NEST_OVFCASE if N
+                      else FLAT_OVF_CASE_PEEL if P else FLAT_OVF_CASE),
         '@NESTGLUE@': (((NC.nest_glue_offset if offset else NC.nest_glue)
                         (D, ENCDATA, clist, cconf, cchain, ST, ID))
-                       + '\n\n' if N else ''),
-        '@NESTIMPORT@': '',
+                       + '\n\n' if N else peelglue),
+        # [cview_none_shape] (p = 1 from cview p = (1, None)) lives in
+        # IXPGadgets, and the peeled branch is the only FLAT route that needs
+        # it -- the nested routes pull it in through @NESTIMPORT@ already.
+        '@NESTIMPORT@': ' IXPGadgets' if P else '',
         '@PREF@': (NEST_PREFIX if N
-                   else AVOID_PREFIX if D.get('avoid') else PREFIX),
+                   else AVOID_PREFIX if D.get('avoid')
+                   else PEEL_PREFIX if P else PREFIX),
         '@ID@': ID, '@SPEC@': spec,
         '@GLUELIFT@': ' LapCertGlueLift' if islack else '',
         '@FARB@': farb, '@FARNEST@': farnest,
@@ -1310,8 +1437,8 @@ def render(D):
         # the Coq FIXPOINT name; for the generated alphabets it is Ap_<tag>,
         # not the ENCDATA key
         '@ENC@': d.get('fn', D['enc']),
-        '@CVSJ@': 'S (S j)' if offset else 'S j',
-        '@NNJ@': '(S j)' if offset else 'j',
+        '@CVSJ@': 'S (S j)' if reix else 'S j',
+        '@NNJ@': '(S j)' if reix else 'j',
         '@B1B@': '2' if offset else '1',
         '@B1SJ@': '(S (S j))' if offset else '(S j)',
         '@ENCMOD@': d['mod'], '@SOME@': d['some'], '@NONE@': d['none'],
@@ -1361,7 +1488,10 @@ def render(D):
                  '                                           all-ones fill, then exit %d*j+%d'
                  % (D['nest']['cb'][0], D['nest']['cb'][1],
                     D['co'][0], D['co'][1]) if D.get('nest')
+                 else '%d*j+%d steps at j = S j\', %d at p = 1'
+                      % (D['co'] + (P['n0'],)) if P
                  else '%d*j+%d steps' % D['co']),
+        '@NZ@': str(P['n0']) if P else '',
         '@INTERIOR@': (INT_ONE if D['mode'] == 'one' else INT_SPLIT),
         '@GLUEI@': (GLUE_ONE_LIFT if islack
                     else GLUE_ONE if D['mode'] == 'one' else GLUE_SPLIT),
@@ -1446,7 +1576,8 @@ def process(spec, do_emit, force=False):
                 return dict(spec=spec, ok=True, enc=tag,
                             ni=_cost_str(D), no='%d*j+%d' % D['co'])
             pref = (NEST_PREFIX if D.get('nest')
-                    else AVOID_PREFIX if D.get('avoid') else PREFIX)
+                    else AVOID_PREFIX if D.get('avoid')
+                    else PEEL_PREFIX if D.get('opeel') else PREFIX)
             path = os.path.join(OUTDIR, '%s_%s.v' % (pref, mach_id(spec)))
             if os.path.exists(path) and not force:
                 return dict(spec=spec, ok=True, enc=tag, file=path,

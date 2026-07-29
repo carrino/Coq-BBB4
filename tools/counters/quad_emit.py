@@ -152,11 +152,29 @@ def extract(spec):
     HH = HH.pop()
     HSTOP = cfgs[-1][2]
     rs = [tuple(c[3]) for c in cfgs]
-    RPOST = rs[0]
-    d2 = len(rs[1]) - len(rs[0])
-    RU = rs[1][:d2]
+    # READ THE LANDING, NOT ITS PADDING (WAVE27 section 2, WAVE28 section 5).
+    # rs[0] is the ladder's FIRST rung and the cell past it has not been
+    # written yet, so it is one trailing BLANK short of rep RU 0 ++ RPOST.
+    # Taking the stride off rs[0]/rs[1] then reads RU two cells wide and the
+    # test fails on every rung; take it off two rungs that are both fully
+    # written, and compare up to trailing blanks the way the rest of this
+    # emitter does.
+    if len(rs) < 3:
+        raise QuadEmitError('ladder too short to read the right stride')
+    d2 = len(rs[2]) - len(rs[1])
+    RU = rs[2][:d2]
+    RPOST = rs[1][d2:]
+    # ... and the k = 0 rung is stated at what the machine has actually
+    # WRITTEN there -- rs[0] itself, NOT [rstrip0 RPOST].  The blank at the
+    # end of [RPOST] is a real cell on most boards (stripping it blindly
+    # breaks all six committed QMG_* renders); it is only missing at k = 0,
+    # and only because the ladder has not reached past itself yet.  [Cq]'s
+    # k = 0 arm carries [RP0] and every k >= 1 arm the canonical [RPOST];
+    # the two coincide, so the render is unchanged, on every board whose
+    # first rung is fully written.
+    RP0 = rs[0]
     for k, r in enumerate(rs):
-        if r != RU * k + RPOST:
+        if LC.rstrip0(r) != LC.rstrip0(RU * k + RPOST):
             raise QuadEmitError('right sides are not rep RU k ++ RPOST')
     if LU != uS or LSTOP != sS:
         raise QuadEmitError('probe unit %r/%r vs alphabet %r/%r'
@@ -216,33 +234,34 @@ def extract(spec):
          (qr, E0, HSTOP, (RU, RU, 1, 1, RPOST)))
     # micro hops at k = 0
     want('MC1z', (False,),
-         (qr, _flat(LU), HH, _flat(RPOST)),
+         (qr, _flat(LU), HH, _flat(RP0)),
          (qr, E0, HH, _flat(RU + RPOST)))
     want('MC0z', (False,),
-         (qr, _flat(LSTOP), HH, _flat(RPOST)),
+         (qr, _flat(LSTOP), HH, _flat(RP0)),
          (qr, E0, HSTOP, _flat(RU + RPOST)))
     # terminal (peeled, index k')
     want('TCp', (False,),
          (qr, E0, HSTOP, (RU, RU, 1, 0, RPOST)),
          (A['st0'], ((), uD, 1, 1, sdw), 0, _flat(TFAR)))
     want('TCz', (False,),
-         (qr, E0, HSTOP, _flat(RPOST)),
+         (qr, E0, HSTOP, _flat(RP0)),
          (A['st0'], _flat(uD * 0 + sdw), 0, _flat(TFAR)))
     # boots
     want('BOOT1', (False, True),
          (A['st0'], (uS, uS, 1, 0, sS), 0, F),
-         (qr, ((), LU, 1, 0, LSTOP), HH, _flat(RPOST)))
+         (qr, ((), LU, 1, 0, LSTOP), HH, _flat(RP0)))
     want('BOOT0', (False, True),
          (A['st0'], (sS, (), 0, 0, ()), 0, F),
-         (qr, E0, HSTOP, _flat(RPOST)))
+         (qr, E0, HSTOP, _flat(RP0)))
     B0 = confs(A['enc'], A['st0'], tail, far)[2]
     want('BOOTO', (False, True),
          B0,
-         (qr, ((), LU, 1, 0, LSTOP + Wovf), HH, _flat(RPOST)))
+         (qr, ((), LU, 1, 0, LSTOP + Wovf), HH, _flat(RP0)))
 
     D = dict(spec=spec, law=law, A=A, enc=A['enc'], tail=tail, far=far,
              qr=qr, LU=LU, LSTOP=LSTOP, HH=HH, HSTOP=HSTOP, RU=RU,
-             RPOST=RPOST, SDW=sdw, TFAR=TFAR, Wovf=Wovf, chains=chains,
+             RPOST=RPOST, RP0=RP0, SDW=sdw, TFAR=TFAR, Wovf=Wovf,
+             chains=chains,
              uS=uS, sS=sS, uD=uD, sD=sD)
 
     ok, why = validate(tab, A, D)
@@ -264,12 +283,32 @@ def extract(spec):
     # visit witnesses: prefixes from the overflow anchor
     vis = {}
     bo = chains['BOOTO']
+    visq = {}
+    tc = chains['TCp']
     for q in range(4):
         pre = LC.reach_state(tab, bo['el'], True, B0, bo['ch'], q)
-        if pre is None:
-            raise QuadEmitError('no visit witness for state %s' % LAB[q])
-        vis[q] = pre
+        if pre is not None:
+            vis[q] = pre
+            continue
+        # The state fires INSIDE the ladder, not in the boot -- and
+        # [vis_via_ovf] only ever sees the BOOTO prefix.  [QuadGlue.
+        # quad_reach0] walks the rungs to [Cq W j 0], where both terminals
+        # start, so a prefix of the TERMINAL chain is a witness there.
+        pre = LC.reach_state(tab, tc['el'], True, tc['src'], tc['ch'], q)
+        if pre is not None:
+            visq[q] = pre
+            continue
+        # Neither carrier reaches it: say WHERE it does fire so the missing
+        # glue is named rather than guessed.
+        seen = [n for n, c in chains.items()
+                if n not in ('BOOTO', 'TCp')
+                and LC.reach_state(tab, c['el'], True, c['src'],
+                                   c['ch'], q) is not None]
+        raise QuadEmitError('no visit witness for state %s%s'
+                            % (LAB[q], (' (fires in %s)' % ','.join(seen))
+                               if seen else ' (in no chain)'))
     D['vis'] = vis
+    D['visq'] = visq
     D['B0'] = B0
     return D
 
@@ -342,13 +381,53 @@ def _upper(p, j):
 
 
 def _cq(D, W, k, m):
+    post = D['RP0'] if k == 0 else D['RU'] * k + D['RPOST']
     if m == 0:
-        return (D['qr'], W, D['HSTOP'], D['RU'] * k + D['RPOST'])
-    return (D['qr'], D['LU'] * (m - 1) + D['LSTOP'] + W, D['HH'],
-            D['RU'] * k + D['RPOST'])
+        return (D['qr'], W, D['HSTOP'], post)
+    return (D['qr'], D['LU'] * (m - 1) + D['LSTOP'] + W, D['HH'], post)
 
 
 # ------------------------------------------------------------- rendering ---
+
+VISQ_LEMMA = r"""(** A state that fires INSIDE the ladder, not in the boot.  [vis_via_ovf]
+    carries a witness taken from ONE chain prefix at the anchor, and for this
+    board that chain is [BOOTO] -- so [viso_] cannot see this state at all.
+    [QuadGlue.quad_reach0] walks the rungs to [Cq W j 0], where BOTH
+    terminals start, and a prefix of the terminal chain is a witness there.
+    The analogue of [NestedLapLift.vis_via_fill], needed for the same
+    reason. *)
+Lemma visq_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm false true l c_TCp0_@ID@ = Some q ->
+  forall p j, cview p = (S j, None) ->
+  exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros l q Hst p j E.
+  assert (HB : csteps tm (@ABO@ * j + @BBO@) (Cc p) = Some (Cq @WOVF@ 0 (S j))).
+  { rewrite (gso_@ID@ p j E).
+    rewrite (srun_sound tm @ELBO@ true ch_BOOTO_@ID@ c_BOOTO0_@ID@
+               c_BOOTO1_@ID@ @ABO@ @BBO@ run_BOOTO_@ID@ [] [] j
+               ltac:(@ELBOH@) ltac:(reflexivity)).
+    f_equal.
+    unfold cden, c_BOOTO1_@ID@, Cq_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+    replace (1 * j + 0) with j by lia.
+    cbn [rep app]. rewrite ?app_nil_r, <- ?app_assoc. reflexivity. }
+  destruct (quad_reach0 tm (S j) (Cq_@ID@ @WOVF@)
+              (fun k m (_ : k + S m = S j) => hop_@ID@ @WOVF@ k m))
+    as (n2 & H2).
+  assert (HR : Cq @WOVF@ (S j) 0 = cden @WOVF@ [] j c_TCp0_@ID@).
+  { unfold Cq_@ID@, cden, c_TCp0_@ID@, sden;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+    replace (1 * j + 0) with j by lia.
+    cbn [rep app]. rewrite <- ?app_assoc. reflexivity. }
+  destruct (vis_of_run tm (fun _ : positive => Cq @WOVF@ (S j) 0) false true
+              l c_TCp0_@ID@ xH j @WOVF@ [] q Hst
+              ltac:(discriminate) ltac:(reflexivity) HR)
+    as (k3 & c & H3 & Hq).
+  exists ((@ABO@ * j + @BBO@) + (n2 + k3)), c. split; [| exact Hq].
+  rewrite csteps_add, HB, csteps_add, H2. exact H3.
+Qed."""
+
 
 def _fmtside(side):
     pre, u, a, b, post = side
@@ -424,8 +503,8 @@ Local Notation Cc := Cc_@ID@.
     deep word W opaque. *)
 Definition Cq_@ID@ (W : list Sym) (k m : nat) : cconf :=
   match m with
-  | O => (@QR@, (W, @HSTOP@, rep @RU@ k ++ @RPOST@))
-  | S m' => (@QR@, (rep @LU@ m' ++ @LSTOP@ ++ W, @HH@, rep @RU@ k ++ @RPOST@))
+  | O => (@QR@, (W, @HSTOP@, @CQPOST@))
+  | S m' => (@QR@, (rep @LU@ m' ++ @LSTOP@ ++ W, @HH@, @CQPOST@))
   end.
 Local Notation Cq := Cq_@ID@.
 
@@ -571,7 +650,7 @@ Proof.
           cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
         cbn [rep app]. rewrite ?app_nil_r, <- ?app_assoc. reflexivity. }
       rewrite HQ. exact Hrun. }
-    { rewrite Hl. unfold Cc_@ID@. rewrite H2. cbn [rep app].
+    { rewrite Hl. unfold Cc_@ID@. rewrite H2.@INTFAR@ cbn [rep app].
       first [ reflexivity
             | rewrite <- ?app_assoc; cbn [app]; reflexivity ]. }
   - (* j = S j'': the boot lands on the first digit *)
@@ -596,7 +675,7 @@ Proof.
         replace (1 * j'' + 0) with j'' by lia.
         cbn [rep app]. rewrite ?app_nil_r, <- ?app_assoc. reflexivity. }
       rewrite HQ. exact Hrun. }
-    { rewrite Hl. unfold Cc_@ID@. rewrite H2. cbn [rep app].
+    { rewrite Hl. unfold Cc_@ID@. rewrite H2.@INTFAR@ cbn [rep app].
       first [ reflexivity
             | rewrite <- ?app_assoc; cbn [app]; reflexivity ]. }
 Qed.
@@ -683,7 +762,7 @@ Proof.
      | exact (gso_@ID@ p j E)].
 Qed.
 
-Lemma vis_@ID@ : forall p q,
+@VISQL@Lemma vis_@ID@ : forall p q,
   exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q.
 Proof.
   intros p q.
@@ -730,18 +809,33 @@ def render_quad(D):
             or any(wanttl[len(gottl):])):
         raise QuadEmitError('overflow close %r vs %r' % (gottl, wanttl))
     ovpad = _pad('rep @UD@ (S j) ++ %s' % clist(gottl), npad)
-    ovclose = ('rewrite !lbl_@ID@. ' if npad else '') + 'reflexivity.'
-    # the exact-close template needs the terminal to land on the anchor's
-    # own far side and the interior tail verbatim
-    if D['TFAR'] != D['far']:
+    # The terminal may land one or more BLANKS past the anchor's far side --
+    # invisible to [lift], and [WTape.lift_app_blank] is that strip on the
+    # right.  [TFARL] stays the REACHED word (the exact [term_] statement
+    # names it); only the final close peels the blanks.
+    nfar = len(D['TFAR']) - len(D['far'])
+    if (nfar < 0 or D['TFAR'][:len(D['far'])] != D['far']
+            or any(D['TFAR'][len(D['far']):])):
         raise QuadEmitError('terminal far %r vs %r not wired'
                             % (D['TFAR'], D['far']))
+    ovclose = (('rewrite !lbl_@ID@. ' if npad else '')
+               + ('rewrite !lift_app_blank. ' if nfar else '')
+               + 'reflexivity.')
+    # the INTERIOR lap lands on the same far side, so it peels the same
+    # blanks -- a separate close in the template, the same strip
+    intfar = ' rewrite !lift_app_blank.' if nfar else ''
     if D['SDW'] != D['sD']:
         raise QuadEmitError('stop-digit landing %r vs sD %r not wired'
                             % (D['SDW'], D['sD']))
 
     vis = []
     for q in range(4):
+        if q in D.get('visq', {}):
+            vis.append('  - (* %s: fires inside the ladder, not in the boot *)'
+                       '\n    exact (visq_%s %s %s\n'
+                       '             ltac:(vm_compute; reflexivity) p1 j1 E1).'
+                       % (ST[q], ID, cchain(D['visq'][q]), ST[q]))
+            continue
         pre = D['vis'][q]
         if not pre:
             vis.append('  - (* %s: the anchor state *)\n'
@@ -764,15 +858,27 @@ def render_quad(D):
         '@QR@': ST[D['qr']], '@HH@': SYM[D['HH']], '@HSTOP@': SYM[D['HSTOP']],
         '@LU@': clist(D['LU']), '@LSTOP@': clist(D['LSTOP']),
         '@RU@': clist(D['RU']), '@RPOST@': clist(D['RPOST']),
+        # the k = 0 rung is one cell short whenever the ladder has not
+        # written past itself yet; when it is not, this is the plain form
+        # and the render is byte-identical to every earlier board
+        '@CQPOST@': ('rep @RU@ k ++ @RPOST@' if D['RP0'] == D['RPOST']
+                     else ('match k with O => %s'
+                           ' | S k\' => rep @RU@ (S k\') ++ @RPOST@ end'
+                           % clist(D['RP0']))),
         '@UD@': clist(D['uD']), '@SDW@': clist(D['SDW']),
-        '@TFARL@': clist(D['TFAR']),
+        # nested so each [lift_app_blank] rewrite peels exactly one blank
+        '@TFARL@': ('(' * nfar + clist(D['far'])
+                    + ''.join(') ++ [S0]' for _ in range(nfar))
+                    if nfar else clist(D['TFAR'])),
         '@WOVF@': clist(D['Wovf']),
         '@CHAINDEFS@': '\n\n'.join(chaindefs),
         '@OBSP@': str(d['obS'] - 1 if d['obS'] >= 1 else 0),
         '@CNTP@': 'j' if d['obS'] >= 1 else 'j',
         '@OVPAD@': ovpad, '@OVCLOSE@': ovclose,
+        '@INTFAR@': intfar,
         '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
         '@VISITS@': '\n'.join(vis),
+        '@VISQL@': (VISQ_LEMMA + '\n\n') if D.get('visq') else '',
         '@VAL@': D['val'],
     }
     for n in ('MC1p', 'MC0p', 'MC1z', 'MC0z', 'TCp', 'TCz'):

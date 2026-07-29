@@ -54,4 +54,27 @@ Proof.
     exact (Hterm0 k HP).
   - cbn. lia.
 Qed.
+
+(** A visit witness INSIDE the ladder.
+
+    [LapCertGlue.vis_via_ovf] carries a witness taken from ONE chain prefix
+    at the anchor, and for a QUAD board that chain is the boot -- so a state
+    that fires in a micro hop or in the terminal has no witness at all.  It
+    is reachable, though: iterating [Hmicro] walks every rung, and the last
+    one, [Cf j 0], is where BOTH terminals start.  This is the analogue of
+    [NestedLapLift.vis_via_fill], which the nested route needed for exactly
+    the same reason. *)
+Lemma quad_reach : forall m k, k + m = j ->
+  exists n, csteps tm n (Cf k m) = Some (Cf j 0).
+Proof.
+  induction m as [|m' IH]; intros k Hk.
+  - exists 0. rewrite <- (Nat.add_0_r k), Hk. reflexivity.
+  - destruct (Hmicro k m' Hk) as (n1 & H1 & _).
+    destruct (IH (S k) ltac:(lia)) as (n2 & H2).
+    exists (n1 + n2). rewrite csteps_add, H1. exact H2.
+Qed.
+
+Lemma quad_reach0 : exists n, csteps tm n (Cf 0 j) = Some (Cf j 0).
+Proof. exact (quad_reach j 0 ltac:(lia)). Qed.
+
 End Shape.
