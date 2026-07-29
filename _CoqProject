@@ -2520,6 +2520,8 @@ theories/Machines/Counters/QMG_1RB1LC_0LA0RB_0RD0LC_1RD1LA.v
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 theories/Closeout/CB_00.v
 theories/Closeout/CB_01.v
 theories/Closeout/CB_02.v
@@ -2568,11 +2570,16 @@ theories/Closeout/CB_44.v
 theories/Closeout/CB_45.v
 theories/Closeout/CB_46.v
 theories/Closeout/CB_47.v
+theories/Closeout/CB_48.v
 theories/Closeout/Closeout.v
 theories/Closeout/CloseoutKit.v
 theories/Closeout/CoreRows.v
 theories/Closeout/SH_00.v
 theories/Closeout/ShadowKit.v
+theories/Machines/Counters/REG_0RB0LC_1LC1RB_1LD1LA_1RD0RC.v
+theories/Machines/Counters/REG_0RB1LC_1LA1RB_0LD0LA_1RD0RB.v
+theories/Machines/Counters/REG_1RB1LA_0LA1RC_0RD0RB_1LD0LA.v
+theories/Machines/Counters/REG_1RB1LA_1RC1RD_1LC0LB_0LA0RB.v
 
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
@@ -2627,4 +2634,5 @@ theories/Closeout/CB_45.v
 theories/Closeout/CB_46.v
 theories/Closeout/CB_47.v
 theories/Closeout/CB_48.v
+theories/Closeout/CB_49.v
 theories/Closeout/Closeout.v

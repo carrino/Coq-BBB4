@@ -1,0 +1,573 @@
+[
+ {
+  "spec": "0RB0LC_1LC1RB_1LD1LA_1RD0RC",
+  "ok": true,
+  "enc": "Alph_10_11_11",
+  "mirror": true,
+  "p0": 8,
+  "val": "192 anchors, 2 nested overflows, 18 inner laps"
+ },
+ {
+  "spec": "0RB0LC_1LC1RB_1RD1LA_0LD1LB",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB0LC_1LC1RB_1RD1LA_1LD1LB",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB0RC_1LC0RD_0LD1RA_1RC1LD",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "0RB0RC_1LC1RB_0LD1RA_1RC1LD",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "0RB0RC_1LC1RD_0LD1RA_1RC1LD",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "0RB0RD_1LA1RC_1RD1LC_0LC1RA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB0RD_1RC---_1RD1LC_0LC1RA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_0LC1RD_0LD1LD_1RB0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_0LC1RD_1LD0RB_1RB0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_0LC1RD_1LD1LD_1RB0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_0LC1RD_1RB1LD_1RB0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_1LC1RD_0RB1LD_1RB0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_1LC1RD_1LD1RC_1RB0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_1LC1RD_1RA1RC_1RB0LA",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "0RB1LA_1LC1RD_1RB0LD_1RB0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_1RC0LA_0RD1RB_1LD1LB",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "0RB1LA_1RC0LA_1LD1RB_1LB1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_1RC0LA_1LD1RB_1LB1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_1RC0LA_1RD1RB_1LB0RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_1RC0LA_1RD1RB_1LB1LD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "0RB1LA_1RC0LA_1RD1RB_1LB1RB",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "0RB1LA_1RC0LA_1RD1RB_1LB1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_1RC1RD_1LD0RC_1RB0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_1RC1RD_1LD1RC_1RB0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LA_1RC1RD_1LD1RD_1RB0LA",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "0RB1LC_0RC1RC_1LA0RD_0LA1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LC_1LA1RB_0LD0LA_1LB---",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LC_1LA1RB_0LD0LA_1RA0LB",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "0RB1LC_1LA1RB_0LD0LA_1RA1LB",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "0RB1LC_1LA1RB_0LD0LA_1RA1LD",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "0RB1LC_1LA1RB_0LD0LA_1RC1LB",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LC_1LA1RB_0LD0LA_1RD0RB",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 1"
+ },
+ {
+  "spec": "0RB1LC_1LA1RB_1LD0LA_1LB---",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "0RB1LC_1LA1RB_1RD0LA_1LB1LD",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "0RB1LC_1LA1RC_1LA0RD_0LA1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LC_1LA1RC_1RB0LD_0RB1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LC_1RC0LA_1LA0RD_0LA1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LC_1RC1RC_1LA0RD_0LA1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "0RB1LD_1LC1RB_1LA1RC_0RC0LA",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "0RB1RB_1LC0RD_0RA1LB_0LC1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB---_1RC1LB_0LB1RD_0RA0RC",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB---_1RC1LB_0LB1RD_1RA0RC",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB0LA_1LC0RD_1LA1LB_0LB1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LA_1LC0RD_1LA1LB_0LC1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LA_1LC1LA_1RD1LB_0LC0RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LC_0RC1LD_1LB1RC_0LA0LB",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB0LC_1LC0RD_0RA1LB_0LC1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_0LC1RA_0LA1LA_0RB1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_0LC1RA_1LA0RB_0RB1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_0LC1RA_1LA1LA_0RB1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_0LC1RA_1RB1LA_0RB1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_0RC1RA_1LC1LA_0RA1LD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB0LD_0RC1RA_1LC1LA_0RB1LD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB0LD_1LC1LB_1LD1RC_0RC1LA",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB0LD_1LC1RA_0RB1LA_0RB1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_1LC1RA_1LA1LC_0RA1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_1LC1RA_1LA1RC_0RA1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_1LC1RA_1LA1RC_0RB1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_1LC1RA_1RD1RC_0RB1LD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB0LD_1RC1RA_1LA0RC_0RA1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_1RC1RA_1LA0RC_0RB1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_1RC1RA_1LA1LC_0RA1LD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB0LD_1RC1RA_1LA1RA_0RA1LD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB0LD_1RC1RA_1LA1RA_0RB1LD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB0LD_1RC1RA_1LA1RC_0RA1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0LD_1RC1RA_1LA1RC_0RB1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB0RD_1LB1LC_1RC0RA_0LB1RD",
+  "ok": false,
+  "why": "no boot chain"
+ },
+ {
+  "spec": "1RB0RD_1RC---_1RD1LC_0LC1RA",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0RD0RB_1LB0RA",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0RD0RB_1LB1RA",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0RD0RB_1LB1RD",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0RD0RB_1LC1RA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0RD0RB_1LD0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 1"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0RD0RB_1RA---",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_1LD0RB_1RA1RD",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_1RD0RB_1RA---",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB1LA_0RC1LD_1LB1RC_0LA0LB",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB1LA_1LC0RD_1LA1LB_0LB1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LA_1LC0RD_1LA1LB_0LC1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LA_1LC0RD_1RA1LB_0LB1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LA_1LC0RD_1RA1LB_0LC1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LA_1LC1RD_0RC1RA_0LA0RB",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LA_1LC1RD_1RC1RA_0LA0RB",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LA_1RC1LB_0LA1RD_0LB0RC",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB1LA_1RC1RD_1LC0LB_0LA0RB",
+  "ok": true,
+  "enc": "Alph_10_11_11",
+  "mirror": false,
+  "p0": 8,
+  "val": "192 anchors, 2 nested overflows, 18 inner laps"
+ },
+ {
+  "spec": "1RB1LB_1LC0RD_1LA1LB_0LB1RD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB1LB_1LC0RD_1LA1LB_0LC1RD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB1LC_0LA0LD_1LD1RC_0RC1LB",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LC_0LA1RC_1LA0RD_0LA1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LC_0LA1RC_1RB0LD_0RB1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LC_0LC0RB_1LA1LD_1RC0LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LC_0RC1LD_1LB1RC_0LA0LB",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB1LC_1LA0RC_1LA0RD_0LA1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LC_1RC1LB_1LA0RD_0LA1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LC_1RC1LB_1LA0RD_0LC1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LC_1RC1RB_1LA0RD_0LC1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1LD_0LB1LC_1LA1RC_0RC0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 1"
+ },
+ {
+  "spec": "1RB1LD_1LB1LC_1LA1RC_0RC0LA",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 1"
+ },
+ {
+  "spec": "1RB1LD_1LC1LB_0LA1RC_1LA0RC",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB1RA_0RC1LB_1LA1RD_1RC0LB",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1RA_1LC0RD_1LA1LB_0LB1RD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB1RA_1LC0RD_1RA1LB_0LB1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1RA_1RC1LB_0LB1RD_1LA0RC",
+  "ok": false,
+  "why": "no inner family at pow2 j"
+ },
+ {
+  "spec": "1RB1RB_1LC0RD_0RA1LB_0LC1RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1RC_1LC0RB_1RA0LD_0RA1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1RC_1LC0RB_1RA0LD_0RC1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1RC_1LC1LB_1RA0LD_0RC1LD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB1RC_1LC1RB_1RA0LD_0RA1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1RC_1LC1RB_1RA0LD_0RC1LD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ },
+ {
+  "spec": "1RB1RC_1LC1RC_1RA0LD_0RA1LD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB1RC_1LC1RC_1RA0LD_0RC1LD",
+  "ok": false,
+  "why": "no gap-free two-form family"
+ },
+ {
+  "spec": "1RB1RD_1LC1RA_0RB0LC_1LA0RD",
+  "ok": false,
+  "why": "no interior j=0 chain at octave parity 0"
+ }
+]
