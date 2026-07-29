@@ -74,3 +74,20 @@ Proof.
 Qed.
 
 End AnchorReach.
+
+(** ** The LEFT twin of [WTape.lift_app_blank]
+
+    [CTape.lift_tape] is symmetric in the two sides, so [lift_side_app_blank]
+    already proves both cases -- but only the RIGHT one had a name, and an
+    overflow lap that lands one written blank past the anchor's LEFT end is
+    exactly as invisible to [lift] as one past its right.  Wave-30: this is what
+    the offset route's boot needed, and it lives HERE rather than beside its
+    twin in [WTape] because [WTape.v] is inside the committed census input
+    closure (`tools/census_cache.py`) and editing that file would force the
+    deferred 7h re-walk.  Same one-line proof, no new argument. *)
+Lemma lift_app_blank_l : forall q l h r,
+  lift (q, (l ++ [S0], h, r)) = lift (q, (l, h, r)).
+Proof.
+  intros. unfold lift; simpl.
+  rewrite lift_side_app_blank. reflexivity.
+Qed.

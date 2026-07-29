@@ -1365,6 +1365,8 @@ theories/Counters/Alph_11_00_001.v
 theories/Counters/Alph_11_00_01.v
 theories/Counters/Alph_11_00_1.v
 theories/Counters/Alph_11_10_1.v
+theories/Counters/Alph_11_10_11.v
+theories/Counters/Alph_11_01_11.v
 theories/Machines/Counters/LAPC_1RB1LA_1LC1RD_1LB1RA_0LA0RB.v
 
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
@@ -2539,6 +2541,19 @@ theories/Machines/Counters/CASB_1RB1LA_0LA0RC_0LD1RB_1RC1LD.v
 theories/Machines/Counters/CASB_1RB1LA_0LA1RC_0LD0RB_1LA1LD.v
 theories/Machines/Counters/CASB_1RB1RA_1LC1RB_0RB1LD_0RA0LC.v
 theories/Machines/Counters/CASB_1RB1RC_0RC1LD_1LB1RC_0RA0LB.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/LAPC_0RB0RC_1RC0LA_1LD1RB_0LD1LA.v
+theories/Machines/Counters/LAPC_0RB1LD_1LA1RC_1RB0RC_0LD0LA.v
+theories/Machines/Counters/LAPC_1RB0LD_1LC1RA_0LC1LD_0RA0RB.v
+theories/Machines/Counters/LAPC_1RB0RB_1LC1RA_0LC0LD_0RA0RD.v
+theories/Machines/Counters/LAPC_1RB1LC_0LA1RD_1LA0LC_0RD0RB.v
+theories/Machines/Counters/LAPC_1RB1LD_0LB1RC_1LA0RC_0RB0LB.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/NLAP_1RB1LC_0LC0RB_1LA1RD_1RC0RD.v
 
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
