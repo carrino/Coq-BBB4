@@ -1895,7 +1895,7 @@ Proof.
 Qed.
 
 Lemma gclb_@ID@ : forall j,
-  CinM MT (fill (@BIGV@)) = cden [] [] (S j) CLB0_@ID@.
+  CinM MT (fill (@BIGV@)) = cden [] [] @CLBI@ CLB0_@ID@.
 Proof.
   intro j.
   unfold CinM_@ID@, MT_@ID@, cden, CLB0_@ID@, sden;
@@ -1908,10 +1908,10 @@ Qed.
 (** The main count's chain out lands on the outer successor up to trailing
     blanks; both sides normalise to the same explicit word. *)
 Lemma gclbx_@ID@ : forall j,
-  lift (cden [] [] (S j) CLB1_@ID@) = lift (cden [] [] (S j) B1_@ID@).
+  lift (cden [] [] @CLBI@ CLB1_@ID@) = lift (cden [] [] (S j) B1_@ID@).
 Proof.
   intro j.
-  assert (HD : cden [] [] (S j) CLB1_@ID@ = (@ST0@, (@CBXL@, S0, @CBXF@))).
+  assert (HD : cden [] [] @CLBI@ CLB1_@ID@ = (@ST0@, (@CBXL@, S0, @CBXF@))).
   { unfold cden, CLB1_@ID@, sden;
       cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
 @IXCBX@    rewrite ?rep_add. cbn [rep app]. rewrite <- ?app_assoc.
@@ -1954,11 +1954,11 @@ Proof.
                run_boot_@ID@ [] [] j' ltac:(reflexivity) ltac:(reflexivity)).
     + assert (HB : exists n, stepn tm n (lift (CinM MT (fill (@BIGVP@))))
                    = Some (lift (Cc (Pos.succ p)))).
-      { exists (@CACB@ * S j' + @CBCB@).
+      { exists (@CACB@ * @CLBIA@ + @CBCB@).
         rewrite (gclb_@ID@ j'), <- (geo_@ID@ p (S j') Ev), <- (gclbx_@ID@ j').
         apply csteps_lift.
         exact (srun_sound tm true true chCLB_@ID@ CLB0_@ID@ CLB1_@ID@
-                 @CACB@ @CBCB@ run_closeB_@ID@ [] [] (S j')
+                 @CACB@ @CBCB@ run_closeB_@ID@ [] [] @CLBIP@
                  ltac:(reflexivity) ltac:(reflexivity)). }
       destruct (fill_hop tm CinM AMlap_@ID@ MT (@BIGVP@) _ HB) as (n2 & H2).
       exists (@CACA@ * S j' + @CBCA@ + n2).
@@ -2124,8 +2124,10 @@ def reps_solo(spec, d, K):
             raise NC.NestError('solo: %s is not el' % nm)
     if bt['ioff'] != -1 or dw['ioff'] != -1:
         raise NC.NestError('solo: BOOT/DOWN are not at index n-1')
-    if ca['ioff'] != 0 or cb['ioff'] != 0:
-        raise NC.NestError('solo: the close is not at the outer index')
+    if ca['ioff'] != 0 or cb['ioff'] != mo:
+        raise NC.NestError('solo: the close is not at the outer index '
+                           '(MAINA %+d, MAINB %+d, main octave j+%d)'
+                           % (ca['ioff'], cb['ioff'], mo))
 
     # --- the boot: source shape (one peeled unit in [post]), and its landing
     spre, su, sa, sb, spost = bt['src'][1]
@@ -2156,12 +2158,16 @@ def reps_solo(spec, d, K):
     arep = 'rep %s (%s)' % (clist(dm['uD']), 'S j' if not mo else 'S (S j)')
 
     # --- MAINB: the main count's fill in, the outer successor out
+    # MAINB is framed at the main count's OWN index, so its count constant is
+    # the octave offset less whatever the framing already absorbed
+    mb = mo - cb['ioff']
     zpre, zu, za, zb, zpost = cb['src'][1]
     if (tuple(zpre), tuple(zu), za, zb, tuple(zpost)) != \
-            ((), tuple(dm['uS']), 1, mo, msS + mt):
+            ((), tuple(dm['uS']), 1, mb, msS + mt):
         raise NC.NestError('solo: MAINB src off shape %r' % (cb['src'][1],))
     ypre, yu, ya, yb, ypost = cb['land'][1]
-    if (tuple(ypre), tuple(yu), ya, yb) != ((), tuple(dout['uD']), 1, 1):
+    if (tuple(ypre), tuple(yu), ya, yb) != ((), tuple(dout['uD']), 1,
+                                            1 - cb['ioff']):
         raise NC.NestError('solo: MAINB lands off shape %r' % (cb['land'][1],))
     ovwant = tuple(dout['soD']) + tuple(A['tail'])
     ycore, ypadl, ypadb = _pads(ypost, ovwant)
@@ -2232,6 +2238,12 @@ def reps_solo(spec, d, K):
         '@CBXF@': _nest(yfcore, yfarl), '@CBXG@': _nest(yfcore, yfarb),
         '@BIGV@': 'pow2 (%s)' % ('S j' if not mo else 'S (S j)'),
         '@BIGVP@': "pow2 (%s)" % ("S j'" if not mo else "S (S j')"),
+        # MAINB runs at the main count's own index, which is one up from the
+        # outer one when the main count sits one octave up
+        '@CLBI@': '(S j)' if not cb['ioff'] else '(S (S j))',
+        '@CLBIP@': "(S j')" if not cb['ioff'] else "(S (S j'))",
+        # the same index unparenthesised, for the arithmetic site
+        '@CLBIA@': "S j'" if not cb['ioff'] else "S (S j')",
         '@N0@': str(d['n0']), '@NVAL@': d['nval'],
         # every module the three families live in that the base import list
         # does not already carry
@@ -2269,11 +2281,12 @@ def reps_solo(spec, d, K):
     r['@IXCLA@'] = (cnt('S j', ca['src'][1][3]) + far('S j')
                     + '  replace (j + 0 + %d) with (%s) by lia.\n'
                     % (d0, 'S j' if d0 == 1 else 'S j + %d' % (d0 - 1)))
+    ci = 'S j' if not cb['ioff'] else 'S (S j)'
     r['@IXCLAB@'] = ('    ' + cntf('S j', mo).strip() + '\n'
                      + '  ' + far('S j'))
-    r['@IXCLB@'] = (cntf('S j', mo) + far('S j'))
-    r['@IXCBX@'] = ('    ' + cntf('S j', cb['land'][1][3]).strip() + '\n'
-                    + '  ' + far('S j'))
+    r['@IXCLB@'] = (cntf(ci, mb) + far(ci))
+    r['@IXCBX@'] = ('    ' + cntf(ci, cb['land'][1][3]).strip() + '\n'
+                    + '  ' + far(ci))
     r['@IXCBE@'] = ('    ' + cntf('S j', d['B1'][1][3]).strip() + '\n'
                     + '  ' + far('S j'))
     return r
