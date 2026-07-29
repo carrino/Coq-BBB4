@@ -178,7 +178,34 @@ def main():
     ap.add_argument('--nested', help='comma-separated octaves to probe')
     ap.add_argument('--grow', action='store_true',
                     help='fit the growing far, lowest octave held out')
+    ap.add_argument('--wide', action='store_true',
+                    help='re-chase with TAILMAX=4 and FARMAX=40')
+    ap.add_argument('--tailmax', type=int, default=4)
     a = ap.parse_args()
+    if a.wide:
+        # The `short` bucket is the reader, not the machines: [_tails]
+        # enumerates at most TAILMAX = 2 cells and the exemplar's tail is
+        # THREE (John's "fixed 01 two cells right of the frame").  Widen it
+        # and the chase walks 130+ anchors.  Left out of regscan.py's own
+        # defaults so that reg113.json still reproduces.
+        RS.TAILMAX, RS.FARMAX = a.tailmax, 40
+        rows = [r for r in json.load(open(a.json))
+                if not a.kind or r['kind'] == a.kind]
+        import collections as _c
+        cnt = _c.Counter()
+        for i, r in enumerate(rows):
+            try:
+                g = RS.scan(r['spec'], False, a.pmax)
+            except Exception as e:                             # noqa: BLE001
+                g = dict(kind='ERR:%s' % e)
+            cnt[g.get('kind', '?')] += 1
+            print('%4d/%d %-40s %-12s %s tail=%s mir=%s n=%s' % (
+                i + 1, len(rows), r['spec'], g.get('kind'), g.get('enc'),
+                g.get('tail'), g.get('mirror'), g.get('n')), flush=True)
+        print()
+        for k, v in cnt.most_common():
+            print('%5d  %s' % (v, k))
+        return
     if a.grow:
         rows = [r for r in json.load(open(a.json))
                 if not a.kind or r['kind'] == a.kind]
