@@ -1,5 +1,7 @@
 # Coq-BBB4
 
+[![CI](https://github.com/carrino/Coq-BBB4/actions/workflows/ci.yml/badge.svg)](https://github.com/carrino/Coq-BBB4/actions/workflows/ci.yml)
+
 A Coq formalization of the Beeping Busy Beaver problem on 4-state,
 2-symbol Turing machines — BBB(4) — built from the certificates of the
 [BBB harness](https://github.com/carrino/BBB) on the patterns of
@@ -13,25 +15,28 @@ A Coq formalization of the Beeping Busy Beaver problem on 4-state,
 
 ```coq
 bbb4_target : forall tm,
-  QHBound 32779478 tm \/ NeverQuasiHaltsSt tm \/ Deferred D_remaining tm
+  QHBound 32779478 tm \/ NeverQuasiHaltsSt tm \/ skipped D_remaining tm
 ```
 
 Every (4,2) Turing machine either **quasihalts with score at most
 32,779,478** — the champion's score — or **never quasihalts**, *except*
-the **319 residue machines** in `D_remaining`
-(`tools/closeout/frozen_unproven.txt`), which are still undecided and
-are reported as **SKIPPED**.
+the machines the theorem **skips**: the **181 undecided core machines**
+(`tools/closeout/core_rows.txt`), plus **85 shadows** — 0RB machines
+whose all-blank prefix re-roots them into a core machine's orbit
+(`skipped`'s second disjunct), and which therefore resolve automatically
+as core machines are boarded.
 
 Two honest caveats, stated precisely in
 [`docs/CLAIMS.md`](docs/CLAIMS.md):
 
-* The champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` is itself one of the 319,
+* The champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` is itself one of the 181,
   so this is **not** a proof that BBB(4) = 32,779,478 — any residue
   machine could, for all this development proves, quasihalt with a
   larger score.
-* `Deferred D_remaining tm` means membership in the orbit of the 319
-  frozen rows under completion of undefined transitions, non-start
-  state swaps, and mirroring — not bare list membership.
+* `skipped D_remaining tm` means membership in the orbit of the 181
+  core rows under completion of undefined transitions, non-start state
+  swaps, and mirroring — or a blank-prefix re-root into that orbit —
+  not bare list membership.
 
 **Axiom footprint: `functional_extensionality_dep`, and nothing else.**
 There are zero `Admitted` in `theories/`.  Verify with
@@ -106,13 +111,13 @@ verification tier, from "check one machine" to "re-walk the census".
 | `theories/BBB4_Statement.v` | The (4,2) machine model and the quasihalting semantics: `VisitsAt`, `QuietFrom`, `QuasiHaltsSt`, `NeverQuasiHaltsSt`, `QHBound` |
 | `theories/Checkers/` | The verified certificate checkers: cyclers, translated cyclers, n-gram closures with ranking/pattern measures, RepWL, fuel/drift rules, inductive-rules (irules) engines, quasihalt wrappers |
 | `theories/Closure.v` | The generic covering-abstraction / liveness engine the n-gram and RepWL checkers instantiate |
-| `theories/Machines/` | Per-machine theorems: ~4,300 generated boards (`Bulk/`, batch files) plus individually proved counter machines (`Machines/Counters/`) |
+| `theories/Machines/` | Per-machine theorems: the generated boards (`Bulk/`, batch files) plus individually proved counter machines (`Machines/Counters/`) — thousands of files; `tools/closeout/audit.py` prints the live count |
 | `theories/Counters/` | The windowed-run toolkit for hand-proved machines: `WTape`, `LapGlue`/`WaveCounter`/`MeasureGlue` closers, shared counter encodings |
 | `theories/Census/` | The trusted census: TNF enumeration, the in-walk deciders, the frozen deferred tables, and (committed as `.vo`) the walk output ending in `census_decided` |
 | `theories/Closeout/` | The assembly: generated stages bridging every decided frozen row to its board, `closeout_partial`, `census_boarded`, and `bbb4_target` |
 | `theories/Tests/` | Negative controls in the BBB corruption-test tradition: mutated certificates, periods, sides and claims must all fail |
 | `tools/` | **Untrusted** certificate search, generators, and differential validators — a wrong certificate fails to compile, never proves a false theorem |
-| `docs/` | The claim statement, verification guide, residue map, and per-wave development notes |
+| `docs/` | The claim statement, verification guide, residue map, and per-wave development notes — [`docs/README.md`](docs/README.md) is the index |
 
 ## The trust story
 
@@ -131,11 +136,21 @@ verification tier, from "check one machine" to "re-walk the census".
   `tools/closeout/audit.py` (untrusted).  Padding `remaining_rows`
   would only *weaken* the theorem, never falsify it.
 
+## Contributing
+
+The open-problem list is [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md):
+every remaining machine, mapped by shape and blocker, with suggested
+starting points.  Each board is a self-contained per-machine proof, the
+shared toolkits are documented, and a machine leaves the SKIPPED list
+the moment any kernel-checked proof settles it —
+[`docs/TERMINOLOGY.md`](docs/TERMINOLOGY.md) has the vocabulary and
+[`NEXT_SESSION.md`](NEXT_SESSION.md) the accumulated traps.
+
 ## Status and further reading
 
 * [`docs/CLAIMS.md`](docs/CLAIMS.md) — what is proved, exactly,
   including what is **not**.
-* [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) — the 319 undecided
+* [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) — the 181 undecided
   machines, mapped by shape and blocker.
 * [`docs/VERIFYING.md`](docs/VERIFYING.md) — how to check any of this
   yourself.

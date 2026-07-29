@@ -11,19 +11,33 @@ Kernel-checked, `Qed`, in `theories/Closeout/` (built and reported by
 
 ```coq
 closeout_partial : forall tm, Deferred D_census tm ->
-                              boarded tm \/ Deferred D_remaining tm
+                              boarded tm \/ skipped D_remaining tm
 
 census_boarded   : forall tm, QHBound 2000 tm
                            \/ boarded tm
-                           \/ Deferred D_remaining tm
+                           \/ skipped D_remaining tm
 
 bbb4_target      : forall tm, QHBound 32779478 tm
                            \/ NeverQuasiHaltsSt tm
-                           \/ Deferred D_remaining tm
+                           \/ skipped D_remaining tm
 
 bbb4_decided_le_prev_champion : forall tm,
-  ~ Deferred D_remaining tm -> QHBound 66349 tm \/ NeverQuasiHaltsSt tm
+  ~ skipped D_remaining tm -> QHBound 66349 tm \/ NeverQuasiHaltsSt tm
 ```
+
+where (`Closeout/ShadowKit.v`, the bbchallenge community's 0RB observation
+made kernel-checked)
+
+```coq
+skipped R tm :=  Deferred R tm
+             \/ exists qs t, stepn tm t InitES = Some (qs, snd InitES)
+                           /\ Deferred R (TM_swap StA qs tm)
+```
+
+-- a machine is skipped if it is one of the undecided CORE machines, **or**
+it runs an all-blank prefix into the orbit of one (a 0RB re-root SHADOW).
+A shadow is not a separate open problem: it resolves automatically the
+moment its core machine is boarded.
 
 The last corollary is the previous-record reading: every decided machine
 quasihalts by the *previous* champion's 66,349 or never quasihalts.  The four
@@ -48,8 +62,10 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is one of the **319** machines listed in `D_remaining`
-   (`tools/closeout/frozen_unproven.txt`), which the theorem **skips**.
+3. it is **skipped**: one of the **181** undecided core machines in
+   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **85**
+   0RB re-root shadows (`tools/closeout/shadow_rows.tsv`), which resolve
+   automatically as core machines are boarded.
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
 frozen table under completion of undefined transitions, non-start state swaps,
@@ -70,9 +86,10 @@ before the record itself is a theorem here:
    what `theories/Counters/BlankTail.v` already closes for the four previous
    champions; what it needs is a 32.8M-step prefix, for which
    `Checkers/TCyclerN.v` already supplies `cstepsN` and `cstepsN_nat`.  It is
-   currently one of the 319.  **Not done.**
-2. **The 319.**  Any of them could, for all this development knows, be a
-   quasihalter with a larger score.  That is what undecided means.
+   currently one of the 181 core machines.  **Not done.**
+2. **The 181 (+ their 85 shadows).**  Any of them could, for all this
+   development knows, be a quasihalter with a larger score.  That is what
+   undecided means.
 
 (The third gap this section used to list — the score bound existing only
 existentially, per-board, instead of as one aggregated constant — is closed:
@@ -82,13 +99,15 @@ existentially, per-board, instead of as one aggregated constant — is closed:
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 319 still-undecided machines —
+> 32,779,478 or never quasihalts, except 181 still-undecided machines (and
+> their 85 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The BBB(4) *value* does not yet
-> follow from what is here, because the champion itself is one of the 319.
+> follow from what is here, because the champion itself is one of the 181.
 
-## Scope of the 319
+## Scope of the 181
 
-All 319 are residue — machines no engine in this repository settles, mapped by
+All 181 core machines are residue — machines no engine in this repository
+settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28
 (`NEXT_SESSION.md` §2l).

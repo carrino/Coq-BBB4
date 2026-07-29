@@ -24,7 +24,7 @@ make -f Makefile.coq -j2 theories/Closeout/Closeout.vo
 
 `Makefile.coq` is generated — the committed `Makefile` regenerates it, so do
 not run `coq_makefile` yourself.  Budget one to two hours on four cores; it is
-~1,500 board files.
+~2,000 board files (the count grows every proof wave).
 
 Then, in a scratch `.v`:
 
@@ -40,9 +40,9 @@ Expected:
 
 ```
 closeout_partial : forall tm, Deferred D_census tm ->
-                              boarded tm \/ Deferred D_remaining tm
+                              boarded tm \/ skipped D_remaining tm
 Axioms: FunctionalExtensionality.functional_extensionality_dep
-     = 319
+     = 181
 ```
 
 And the two checks the kernel does not do for you:
@@ -126,8 +126,8 @@ committed hash, confirming your walk covered the same inputs.
 ## Traps
 
 * **`BBB4_Statement.vo` is the root of the entire tree — deleting or
-  touching it forces a full 1–2 h rebuild** (all ~2,080 files import it
-  transitively).  The one time deleting it is necessary: an error of the
+  touching it forces a full 1–2 h rebuild** (every file in the tree
+  imports it transitively).  The one time deleting it is necessary: an error of the
   shape *"contains library `BBB4_Statement` and not library
   `BBB4.BBB4_Statement`"*, which means a stray `coqc` run **without**
   `-Q theories BBB4` left a wrongly-named `.vo` shadowing the real one,
@@ -135,7 +135,7 @@ committed hash, confirming your walk covered the same inputs.
   Prevention is cheap: always compile one-off files as
   `coqc -Q theories BBB4 <file.v>`, never bare `coqc`.
 * **Switching toolchains is invisible to `make`.**  If you build the tree with
-  apt Coq and then switch to the census opam switch, `make` sees ~2,260
+  apt Coq and then switch to the census opam switch, `make` sees thousands of
   up-to-date `.vo` and skips them — but the opam Coq cannot load apt-built
   `.vo`.  Decide which Coq you are doing the long build with before you start.
 * **`make all` at high `-j` can run out of memory.**  There are nine

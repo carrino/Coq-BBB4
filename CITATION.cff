@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use or reference this formalization, please cite it as below."
+title: "Coq-BBB4: a machine-checked formalization of Beeping Busy Beaver BBB(4)"
+authors:
+  - family-names: "Carrino"
+    given-names: "John"
+repository-code: "https://github.com/carrino/Coq-BBB4"
+license: ISC
+abstract: >-
+  Kernel-checked Coq proofs (Coq 8.18, axiom footprint
+  functional_extensionality_dep only) that every 4-state 2-symbol Turing
+  machine either quasihalts with score at most the champion's 32,779,478
+  or never quasihalts, modulo an explicitly listed and shrinking residue
+  of undecided machines.  Built from the certificates of the BBB harness
+  on the patterns of Coq-BB5 and busycoq.
+keywords:
+  - busy beaver
+  - beeping busy beaver
+  - quasihalting
+  - Turing machines
+  - Coq
+  - formal verification

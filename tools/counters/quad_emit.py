@@ -118,12 +118,13 @@ def extract(spec):
     errs = []
     for law in laws:
         for npad in (0, 1):
-            for qi in range(len(law['qr'])):
+            for qi in list(range(len(law['qr']))) + [-1]:
                 try:
                     return _extract_at(spec, law, qi, npad)
                 except QuadEmitError as e:
                     errs.append('%r rung %s%s: %s'
-                                % (law['mode'], LAB[law['qr'][qi]],
+                                % (law['mode'],
+                                   'all' if qi < 0 else LAB[law['qr'][qi]],
                                    '' if not npad else ' +%d blank' % npad, e))
     raise QuadEmitError(' // '.join(errs))
 
@@ -154,7 +155,8 @@ def _extract_at(spec, law, qi, npad=0):
     for J, ovf in ((J0, False), (J0 + 1, False), (J0, True)):
         p = QP.overflow_p(J) if ovf else QP.interior_p(J)
         T, marks, _ = QP.lap_marks(tab, A, p, law['mode'])
-        marks = [m for m in marks if m[1] == law['qr'][qi]]
+        if qi >= 0:
+            marks = [m for m in marks if m[1] == law['qr'][qi]]
         nm = J + 2 if ovf else J + 1
         if len(marks) != nm:
             raise QuadEmitError('%d marks at J=%d ovf=%s, want %d'
@@ -166,7 +168,7 @@ def _extract_at(spec, law, qi, npad=0):
 
     marks, cfgs, endc, T = shapes[(J0, False)]
     # the pieces, off the interior marks at J0
-    qr = law['qr'][qi]
+    qr = law['qr'][qi] if qi >= 0 else cfgs[-1][0]
     lus = [tuple(c[1]) for c in cfgs]
     d1 = len(lus[0]) - len(lus[1])
     LU = lus[0][:d1]
@@ -194,7 +196,12 @@ def _extract_at(spec, law, qi, npad=0):
         raise QuadEmitError('ladder too short to read the right stride')
     d2 = len(rs[2]) - len(rs[1])
     RU = rs[2][:d2]
-    RPOST = rs[1][d2:]
+    # The rung count on the right can start at k or at k-1: on a ladder
+    # whose k = 0 rung is peeled (its own state, its own right side) the
+    # first FULL rung is k = 1 and carries [RPOST] alone.  Read which off
+    # the rungs rather than assuming the aligned form.
+    ROFF = 0 if LC.rstrip0(rs[2]) == LC.rstrip0(RU * 2 + rs[1][d2:]) else 1
+    RPOST = rs[1] if ROFF else rs[1][d2:]
     # ... and the k = 0 rung is stated at what the machine has actually
     # WRITTEN there -- rs[0] itself, NOT [rstrip0 RPOST].  The blank at the
     # end of [RPOST] is a real cell on most boards (stripping it blindly
@@ -204,11 +211,22 @@ def _extract_at(spec, law, qi, npad=0):
     # the two coincide, so the render is unchanged, on every board whose
     # first rung is fully written.
     RP0 = rs[0]
-    for k, r in enumerate(rs):
-        if LC.rstrip0(r) != LC.rstrip0(RU * k + RPOST):
-            raise QuadEmitError('right sides are not rep RU k ++ RPOST')
-    if {c[0] for c in cfgs} != {qr}:
-        raise QuadEmitError('mark states vary')
+    for k, r in enumerate(rs[1:], 1):
+        if LC.rstrip0(r) != LC.rstrip0(RU * (k - ROFF) + RPOST):
+            raise QuadEmitError('right sides are not rep RU (k-%d) ++ RPOST'
+                                % ROFF)
+    if not ROFF and LC.rstrip0(rs[0]) != LC.rstrip0(RPOST):
+        raise QuadEmitError('right sides are not rep RU k ++ RPOST')
+    # The ladder's FIRST rung -- the one the boot lands on, k = 0 -- can be
+    # in a state of its own: the boot's last step enters it, and only the
+    # HOP re-enters the rung state proper.  [Cq] then carries the state
+    # piecewise in k, exactly the way it already carries the k = 0 right
+    # side, and every chain that starts at k = 0 (MC*z, TCz) is a separate
+    # chain already.  READ THE LANDING, NOT ITS PADDING.
+    QR0 = cfgs[0][0]
+    if {c[0] for c in cfgs[1:]} != {qr} or (QR0 != qr and len(cfgs) < 3):
+        raise QuadEmitError('mark states vary: %r'
+                            % ([LAB[c[0]] for c in cfgs],))
 
     # the interior deep word must be E q0 ++ tail (here q0's encoding is
     # opaque -- just check the prefix relation via the anchor)
@@ -297,24 +315,31 @@ def _extract_at(spec, law, qi, npad=0):
     #  ([er = false], [XR = rep RU k ++ RPOST]).  That is what makes one
     #  chain cover every k at once, and it needs only TWO chains, peeled at
     #  the landing rather than at the start.
+    # the peeled right side: [RSRC] is the rung at k = S k', [RDST] at S k
+    RSRC = ((), RU, 1, 0, RPOST) if ROFF else (RU, RU, 1, 0, RPOST)
+    RDST = (RU, RU, 1, 0, RPOST) if ROFF else (RU, RU, 1, 1, RPOST)
+    RZ1 = _flat(RPOST) if ROFF else _flat(RU + RPOST)
     try:
         want('MC1p', (False,),
-             (qr, _flat(LU), HH, (RU, RU, 1, 0, RPOST)),
-             (qr, E0, HH, (RU, RU, 1, 1, RPOST)))
+             (qr, _flat(LU), HH, RSRC),
+             (qr, E0, HH, RDST))
         want('MC0p', (False,),
-             (qr, _flat(LSTOP), HH, (RU, RU, 1, 0, RPOST)),
-             (qr, E0, HSTOP, (RU, RU, 1, 1, RPOST)))
+             (qr, _flat(LSTOP), HH, RSRC),
+             (qr, E0, HSTOP, RDST))
         # micro hops at k = 0
         want('MC1z', (False,),
-             (qr, _flat(LU), HH, _flat(RP0)),
-             (qr, E0, HH, _flat(RU + RPOST)))
+             (QR0, _flat(LU), HH, _flat(RP0)),
+             (qr, E0, HH, RZ1))
         want('MC0z', (False,),
-             (qr, _flat(LSTOP), HH, _flat(RP0)),
-             (qr, E0, HSTOP, _flat(RU + RPOST)))
+             (QR0, _flat(LSTOP), HH, _flat(RP0)),
+             (qr, E0, HSTOP, RZ1))
         deep = False
     except QuadEmitError as e0:
         for n in ('MC1p', 'MC0p', 'MC1z', 'MC0z'):
             chains.pop(n, None)
+        if QR0 != qr:
+            raise QuadEmitError('%s (near) / deep pivot with a k = 0 rung '
+                                'state of its own' % e0)
         try:
             want('MD1', (False,),
                  (qr, (LU, LU, 1, 0, LSTOP), HH, E0),
@@ -329,27 +354,27 @@ def _extract_at(spec, law, qi, npad=0):
         deep = True
     # terminal (peeled, index k')
     want('TCp', (False,),
-         (qr, E0, HSTOP, (RU, RU, 1, 0, RPOST)),
+         (qr, E0, HSTOP, RSRC),
          (A['st0'], ((), uD, 1, 1, sdw), 0, _flat(TFAR)))
     want('TCz', (False,),
-         (qr, E0, HSTOP, _flat(RP0)),
+         (QR0, E0, HSTOP, _flat(RP0)),
          (A['st0'], _flat(uD * 0 + sdw), 0, _flat(TFAR)))
     # boots
     want('BOOT1', (False, True),
          (A['st0'], (uS, uS, 1, 0, sSm), 0, F),
-         (qr, ((), LU, 1, 0, LSTOP), HH, _flat(RP0)))
+         (QR0, ((), LU, 1, 0, LSTOP), HH, _flat(RP0)))
     want('BOOT0', (False, True),
          (A['st0'], (sSm, (), 0, 0, ()), 0, F),
-         (qr, E0, HSTOP, _flat(RP0)))
+         (QR0, E0, HSTOP, _flat(RP0)))
     B0 = confs(A['enc'], A['st0'], tail, far)[2]
     want('BOOTO', (False, True),
          B0,
-         (qr, ((), LU, 1, 0, LSTOP + Wovf), HH, _flat(RP0)))
+         (QR0, ((), LU, 1, 0, LSTOP + Wovf), HH, _flat(RP0)))
 
     D = dict(spec=spec, law=law, A=A, enc=A['enc'], tail=tail, far=far,
              qr=qr, LU=LU, LSTOP=LSTOP, HH=HH, HSTOP=HSTOP, RU=RU,
              RPOST=RPOST, RP0=RP0, SDW=sdw, TFAR=TFAR, Wovf=Wovf,
-             chains=chains, WPRE=WPRE, deep=deep,
+             chains=chains, WPRE=WPRE, deep=deep, QR0=QR0, ROFF=ROFF,
              uS=uS, sS=sS, sSm=sSm, uD=uD, sD=sD)
 
     ok, why = validate(tab, A, D)
@@ -495,10 +520,12 @@ def _upper(p, j):
 
 
 def _cq(D, W, k, m):
-    post = D['RP0'] if k == 0 else D['RU'] * k + D['RPOST']
+    post = (D['RP0'] if k == 0
+            else D['RU'] * (k - D['ROFF']) + D['RPOST'])
+    st = D['QR0'] if k == 0 else D['qr']
     if m == 0:
-        return (D['qr'], W, D['HSTOP'], post)
-    return (D['qr'], D['LU'] * (m - 1) + D['LSTOP'] + W, D['HH'], post)
+        return (st, W, D['HSTOP'], post)
+    return (st, D['LU'] * (m - 1) + D['LSTOP'] + W, D['HH'], post)
 
 
 # ------------------------------------------------------------- rendering ---
@@ -682,7 +709,7 @@ Proof.
       [ reflexivity
       | unfold cden, c_MC0p1_@ID@, Cq_@ID@, sden;
         cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post];
-        replace (1 * k' + 1) with (S k') by lia;
+        @RPLD@;
         cbn [rep app]; rewrite <- ?app_assoc; reflexivity ].
   - (* k = 0, landing on a digit *)
     exists (@AMC1Z@ * 0 + @BMC1Z@). split; [|lia].
@@ -708,7 +735,7 @@ Proof.
       [ reflexivity
       | unfold cden, c_MC1p1_@ID@, Cq_@ID@, sden;
         cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post];
-        replace (1 * k' + 1) with (S k') by lia;
+        @RPLD@;
         cbn [rep app]; rewrite <- ?app_assoc; reflexivity ].
 Qed.'''
 
@@ -759,8 +786,8 @@ Local Notation Cc := Cc_@ID@.
     deep word W opaque. *)
 Definition Cq_@ID@ (W : list Sym) (k m : nat) : cconf :=
   match m with
-  | O => (@QR@, (W, @HSTOP@, @CQPOST@))
-  | S m' => (@QR@, (rep @LU@ m' ++ @LSTOP@ ++ W, @HH@, @CQPOST@))
+  | O => (@CQST@, (W, @HSTOP@, @CQPOST@))
+  | S m' => (@CQST@, (rep @LU@ m' ++ @LSTOP@ ++ W, @HH@, @CQPOST@))
   end.
 Local Notation Cq := Cq_@ID@.
 
@@ -805,7 +832,7 @@ Proof.
       [ reflexivity
       | unfold cden, c_TCp1_@ID@, sden;
         cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post];
-        replace (1 * k' + 1) with (S k') by lia;
+        @RPLD@;
         cbn [rep app]; rewrite ?app_nil_r, <- ?app_assoc; reflexivity ].
 Qed.
 
@@ -1063,16 +1090,24 @@ def render_quad(D):
         '@ENCMOD@': d['mod'], '@SOME@': d['some'], '@NONE@': d['none'],
         '@ST0@': ST[A['st0']], '@TAIL@': clist(D['tail']),
         '@FAR@': clist(D['far']), '@TABLE@': coq_table(spec),
-        '@QR@': ST[D['qr']], '@HH@': SYM[D['HH']], '@HSTOP@': SYM[D['HSTOP']],
+        '@QR@': ST[D['qr']],
+        # the k = 0 rung -- the boot's landing -- can be in its own state
+        '@CQST@': (ST[D['qr']] if D['QR0'] == D['qr'] else
+                   ('match k with O => %s | S _ => %s end'
+                    % (ST[D['QR0']], ST[D['qr']]))), '@HH@': SYM[D['HH']], '@HSTOP@': SYM[D['HSTOP']],
         '@LU@': clist(D['LU']), '@LSTOP@': clist(D['LSTOP']),
         '@RU@': clist(D['RU']), '@RPOST@': clist(D['RPOST']),
         # the k = 0 rung is one cell short whenever the ladder has not
         # written past itself yet; when it is not, this is the plain form
         # and the render is byte-identical to every earlier board
-        '@CQPOST@': ('rep @RU@ k ++ @RPOST@' if D['RP0'] == D['RPOST']
-                     else ('match k with O => %s'
-                           ' | S k\' => rep @RU@ (S k\') ++ @RPOST@ end'
-                           % clist(D['RP0']))),
+        '@CQPOST@': ('rep @RU@ k ++ @RPOST@'
+                     if not D['ROFF'] and D['RP0'] == D['RPOST']
+                     else ('match k with O => %s | S k\' => rep @RU@ %s'
+                           ' ++ @RPOST@ end'
+                           % (clist(D['RP0']),
+                              "k\'" if D['ROFF'] else "(S k\')"))),
+        '@RPLD@': ("replace (1 * k\' + 0) with k\' by lia" if D['ROFF']
+                   else "replace (1 * k\' + 1) with (S k\') by lia"),
         '@UD@': clist(D['uD']), '@SDW@': clist(D['SDW']),
         # nested so each [lift_app_blank] rewrite peels exactly one blank
         '@TFARL@': ('(' * nfar + clist(D['far'])
