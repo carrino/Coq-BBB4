@@ -290,22 +290,48 @@ blank-head rest keyed by `(alphabet, state, tail, far)`, and look for a PAIR
 of keys whose union is gap-free and which splits by octave parity.  On the
 exemplar it returns `Mp@C tail=[S1]` and `Mp@C tail=[S0;S1;S1]` directly.
 
-### 5d. What that says the build is
+### 5d. The build, specified — and how far it gets today
 
-Not a `size_nat` far, and not a nested branch: **the same piecewise `Cc`
-this wave already emits, with the period-2 piece moved from the FAR side to
-the TAIL**:
+`tools/counters/tailcert.py` (new) is the route: `two_form()` reads the pair
+of keys off the machine (collect every blank-head rest keyed by
+`(alphabet, state, tail, far)`, keep a PAIR whose union is gap-free and which
+splits by octave parity), and `_derive` builds the certificate.  Swept over
+the 113, `two_form` finds a gap-free family on **95 of them** — 28 `Mp`,
+22 `Ip`, 35 `Alph_10_11_11`, 6 one-form, plus a few others; 18 find none.
 
-    Cc p = (StC, Ap_Mp p ++ (if podd p then t1 else t0), S0, far)
+The board is
 
-`RegGlue.podd` already supplies the parity and its three lemmas; `regcert.py`
-already emits per-parity interior, overflow and register arms and validates
-them differentially.  What it does not do is put the parity in the tail --
-`@TAIL@` is a single constant in the board template.  That is an emitter
-change, not a theory one, and behind it sit the ~99 rows of section 1.
+    Cc p = if podd p then (q1, E p ++ t1, S0, f1)
+                     else (q0, E p ++ t0, S0, f0)
 
-**Do not** carry section 5a's `Theta(4^k)` numbers forward: they are an
-artifact of the wrong split and are superseded by this section.
+and both peels are needed, measured on the exemplar:
+
+* the anchor's prefix is EMPTY on both sides, so at `j = 0` the head has no
+  concrete cell to step onto and NO window step exists — `derive_chain`
+  returns nothing at every framing.  The interior branch therefore SPLITS
+  (`j = 0` concrete: `SWin 2`, cost 2; `j = S j'` with one unit peeled into
+  the prefix: cost `4j'+6`), which is `emit_lapcert`'s split mode;
+* the overflow branch is likewise stated at `j = S j'` with one unit peeled,
+  and `cview p = (1, None)` (that is, `p = 1`) is fenced below `p0`.  Cost
+  `4j'+10` out of an even octave, exact.
+
+With those, **three of the four branches derive and validate**.  The fourth —
+the overflow out of an ODD octave, `Theta(2^j)` — does not, and the reason is
+worth recording because it is a NEW inner shape:
+
+    K = 5 (p = 63 -> 64):  inner rests run 132 .. 191  =  2^7+4 .. 2^7+2^6-1
+    K = 7 (p = 255 -> 256): inner rests run 516 .. 767  =  2^9+4 .. 2^9+2^8-1
+
+The inner counter runs a **PARTIAL octave** — it starts at an offset and
+stops HALFWAY, not at the all-ones fill.  `nestcert.families` wants a full
+`2^(K-1) .. 2^K - 1`, `nestcert.derive_offset` wants `2^(K+1)+c .. 2^(K+2)-1`,
+and `NestedLapLift.inner_to_fill_lift` runs to `fill v0`.  None of the three
+covers "from `v0` to `v0 + 2^k - 1`".
+
+So the missing piece is a **bounded inner carrier**: the same well-founded
+induction on `JpCounter.tovf`, stopped at a measured endpoint instead of at
+the fill.  That is one lemma next to `inner_to_fill_lift`, and behind it sit
+the 95.
 
 ## 6. The 4 `plain+virt`: they are the four `Jp` gray-code rows
 
@@ -349,12 +375,13 @@ descending inner induction is a different carrier from
 
 ## 8. What the next wave should build
 
-1. **The period-2 piece in the TAIL** (§5c/§5d).  `Cc p = (q, E p ++ (if
-   podd p then t1 else t0), S0, far)` under `Mp`.  No new theory: `RegGlue`
-   has the parity, `regcert.py` has the per-parity arms and the differential
-   validation; the board template just hard-codes `@TAIL@` as one constant.
-   `regprobe.two_form()` finds the two keys.  Behind it sit **~99 of the
-   113**, and their interior lap is exact `4j+2`.
+1. **A BOUNDED inner carrier** (§5d), and then the two-form board.
+   `tailcert.py` already reads the family (95 of the 113) and derives three
+   of its four branches; the fourth needs `inner_to_fill_lift` stopped at a
+   measured endpoint rather than at the all-ones fill, because the inner
+   counter of the exponential arm runs a PARTIAL octave.  One lemma next to
+   `inner_to_fill_lift`, then the board template (split interior + peeled
+   overflow + the nested arm), and the 95 follow.
 2. **A descending inner carrier** for the 4 `Jp` gray-code rows (§6):
    `inner_to_fill_lift` run from `fill v0` down to `v0`, which is the same
    well-founded induction on `JpCounter.tovf` in the other direction.
