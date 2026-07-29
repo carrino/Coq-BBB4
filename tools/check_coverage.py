@@ -37,8 +37,12 @@ def cert_types():
 
 
 def main():
-    holdouts = [l.strip() for l in open(BBB + "/BBB4_holdouts_3713.txt")
-                if l.strip()]
+    # The holdout list ships with this repo (byte-identical to the wiki's
+    # published copy); the BBB repo is only needed for the C cert types.
+    hfile = BBB + "/BBB4_holdouts_3713.txt"
+    if not os.path.exists(hfile):
+        hfile = os.path.join(HERE, "BBB4_holdouts_3713.txt")
+    holdouts = [l.strip() for l in open(hfile) if l.strip()]
     hset = set(holdouts)
     manifest = {}
     qh_count = 0
