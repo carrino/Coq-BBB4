@@ -95,19 +95,29 @@ gen_stages + audit) shrinks D_remaining by exactly what you boarded.
 
 THE TASK (re-ranked 2026-07-29 after wave-28's measurement):
 
-  (1) THE QUAD EMITTER EXTENSIONS (WAVE27 section 3) -- 35 rows, NO NEW
-      THEORY, and now the largest no-new-theory bite in the residue.  In
-      measured-size order:
-        * 16 PARITY-CLASS: micro chains differ in LETTERS by k-parity.
-          Derive per-parity chain pairs; the sconf count fields already
-          express k = 2i+r (a = 2); add rep (u ++ u) i = rep u (2*i) to
-          QuadGlue and destruct parity in hop_/term_.
-        * 12 DOUBLE-LADDER: ascending probes then a descending clearing
-          ladder inside the terminal; two mrun compositions back to back
-          (the theorem composes with itself); the reader needs recursive
-          terminal segmentation.
-        *  4 non-rep right sides (2-cell stride variants of the ladder).
-        *  3 deep-pivot (boot is a j-dependent law, mode (1, True)).
+  (1) THE QUAD EMITTER EXTENSIONS (WAVE27 section 3, re-measured at their
+      own gates in WAVE28 3e with tools/counters/quad_classes.py) -- 35
+      rows, NO NEW THEORY, and now the largest no-new-theory bite in the
+      residue.  In CHEAPEST-FIRST order, which is not size order:
+        *  4 non-rep right sides -- ONE gate deep.  read_law reports them
+           as the boarded shape exactly (Kp, mode (-1,False), cls 11111,
+           mark law (1,1)/(1,2)); quad_emit.extract takes them all the way
+           to `right sides are not rep RU k ++ RPOST` and stops there.
+           Start here.
+        * 16 PARITY-CLASS -- THREE gates, not one.  Every one is a 2-cell
+           alphabet (Bp / Alph_00_10_1, so rep RU k slides two cells), has
+           the parity class in the MICRO hop only (cls 21111), AND a
+           DOUBLED mark-count law ((2,1)/(2,3) or (2,2)/(2,4), not the
+           plain ladder's (1,1)/(1,2)).  Per-parity chain pairs plus the
+           k = 2i+r reindex (rep (u ++ u) i = rep u (2*i) in QuadGlue,
+           destruct parity in hop_) is necessary and NOT sufficient -- the
+           stride and the mark law are two more gates in extract().
+        * 12 DOUBLE-LADDER: read_law itself fails ("term counts fit no
+           affine law").  Ascending probes then a descending clearing
+           ladder inside the terminal; two mrun compositions back to back
+           (the theorem composes with itself); the reader needs recursive
+           terminal segmentation.
+        *  3 deep-pivot (mode (1, True), mark law (1,0)/(1,1)).
 
   (2) THE REGISTER x COUNTER BUILD, re-scoped by WAVE28 section 3.  It is
       NOT "a Cc with a register argument and one extra lap shape" -- every

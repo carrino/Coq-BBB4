@@ -221,6 +221,36 @@ exist is an emitter that puts a nested branch inside a piecewise `Cc` --
 `nestcert` assumes the single-`Cc` template throughout.  That, plus the
 head-anywhere decode for the 36, is the register wave.
 
+## 3e. Same session: the QUAD 35, re-measured at their own gates
+
+Since §3 demoted the register build, the QUAD emitter extensions become the
+next wave's top item — so they got the same treatment.
+`tools/counters/quad_classes.py` runs `quad_probe.read_law` over the 35 and
+reports the FIRST gate each row trips plus the per-class shape behind it:
+
+| n | gate | what `read_law` says |
+|---|---|---|
+| **16** | `stride-2` | `Bp` / `Alph_00_10_1`, `mode = (-1, False)`, `cls = 21111`, mark law `(2,1)/(2,3)` or `(2,2)/(2,4)` |
+| **12** | read fails | "term counts fit no affine law" — the double ladder, exactly as WAVE27 §3 named it |
+| **4** | passes every early gate | `Kp`, `cls = 11111`, mark law `(1,1)/(1,2)` — the boarded shape, and they fail LATER, on `right sides are not rep RU k ++ RPOST` |
+| **3** | `deep-pivot` | `mode = (1, True)`, mark law `(1,0)/(1,1)` |
+
+The counts reproduce WAVE27 §3 exactly (16 / 12 / 4 / 3), which is worth
+having independently.  What is new is the shape of the 16:
+
+**the "parity-class" 16 need three things at once, not one.**  Every one of
+them is a 2-cell alphabet (`len uS = 2`, so `rep RU k` slides two cells at a
+time), carries a parity class in `micro` (`cls = 21111` — the parity is in
+the MICRO hop only, never in `term`/`ovf`/`boot`), and has a DOUBLED
+mark-count law (`nint = (2, _)`, `novf = (2, _)`) instead of the plain
+ladder's `(1,1)/(1,2)`.  Wiring "per-parity chain pairs and the `k = 2i+r`
+reindex" is necessary and not sufficient: the 2-cell stride and the doubled
+mark law are two more gates in front of it, both in `quad_emit.extract`.
+
+The 4 non-rep rows are, by contrast, one gate deep — they read as the
+boarded shape all the way to the right-side test.  They are the cheapest
+QUAD rows and should go first.
+
 ## 4. Do-not-retry, extended
 
 * **The un-peeled overflow chain on any `obS = 0` alphabet.**  Measured: 0
