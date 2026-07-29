@@ -260,11 +260,31 @@ THEN, in ranked order (all independent of the above):
       future bucket has quiet-StB/C/D lap families, the same route takes
       them with emitter work only.]
 
-  (3) The 239 no-anchor machines.  alphabet_infer.py + gen_alphabet.py INFER a
-      counter's word family from its own tape as a triple (A,B,C) and generate
-      a PROVED Coq module; 21 families are wired.  They may or may not be
-      EXP2 once decodable -- and if they are, the wave-18 machinery takes them
-      with no new theory.
+  (3) THE 211 "no overflow phase" + 24 "no anchor" -- RE-RANKED TO THE TOP
+      by WAVE26 section 8: John decoded the class ("a counter with 1 to the
+      left of every bit") and the whole bucket opened.  The alphabet was
+      wired since wave-14 (Alph_10_11_11) and emit_lapcert.anchors FINDS the
+      family on the mirrored spec; the only blocker was ever that these
+      counters NEVER REST AT A POWER OF TWO -- the overflow sweep writes the
+      LSB pair's data cell last, already incremented, so the overflow lap
+      ENTERS s VALUES IN at the OUTER anchor (fill -> 2^k + s) and phase_mid,
+      waiting for E(2^k) exactly, reported `no overflow phase` forever.
+      Measured over all 211 (anchor_times to p=300): 104 find the anchor
+      family IMMEDIATELY -- ~42 skip-1, ~48 skip-2 (the offset route's +2
+      one level up), 5 deeper skip sets to name -- and 107 are the
+      ALTERNATE-OCTAVE two-form shape (the family rests in this form only on
+      odd octaves; the decode held on every sampled row).  The exemplar
+      0RB0LC_1LC1RB_0RD1LA_1LB1LA is AFFINE everywhere once the anchor is in
+      hand: interior 4j+4, overflow 4j+7.  THE ROUTE (no checker extension):
+      Cc p = if is_pow2 p then VIRT p else E p ++ tail, VIRT the measured
+      half-written form, closed by LapGlue.glue_neverqh DIRECTLY (arbitrary
+      Cc, Bounce_8's pattern); laps = interior / fill->VIRT / VIRT->E(2^k+s),
+      all affine chains.  Build order: phase_mid closure reading s off the
+      machine, the VIRT extractor, one hand exemplar, the emitter, then the
+      104; the 107 two-form rows need the second form enumerated first.
+      THIS IS THE BIGGEST AND CHEAPEST BITE IN THE RESIDUE -- do it before
+      the QUAD build.  (alphabet_infer.py + gen_alphabet.py remain the tools
+      for anything here that decodes under a NEW alphabet.)
 
 DO NOT RETRY (measured; grids in COUNTER_CLOSEOUT.md section 5, WAVE12 section
 8, WAVE13 sections 4 and 8, WAVE14 section 7, WAVE15 section 5, WAVE16 section

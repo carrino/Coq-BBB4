@@ -409,8 +409,14 @@ arbitrary `Cc : positive -> cconf` and only needs boot + laps + visits.
 Three lap branches, all affine chains: interior (`cview Some`), fill →
 `VIRT`, `VIRT → E(2^k + 1)`.  `LapDecider` is not touched.
 
-**The taxonomy so far** (a full scan of the 211 is running; each shape below
-is verified on named machines, counts land in the next commit):
+**The taxonomy, full scan** (`anchor_times` to p = 300 over all 211; the
+skip set is the machine's, read not assumed): **104 of the 211 find the
+anchor family immediately** -- 21 missing exactly the 8 powers of two
+(skip-1), 9+12 missing the powers plus/minus a small-p concrete case
+(skip-1 with p=1 noise), 31+17 missing `{2^k} ∪ {2^k+1}` (skip-2, with and
+without the noise), 3+2 with slightly deeper skip sets to name.  **107
+report `no anchor family`** -- the alternate-octave shape below, or another
+tail/edge.  Per-shape:
 
 * **skip-1**: missing exactly `{2^k}` — `fill → 2^k + 1`, one virtual
   anchor.  The exemplar above.
@@ -422,5 +428,10 @@ is verified on named machines, counts land in the next commit):
   8-15, 32-63, 128-255, 512-1023; measured on
   `0RB0LC_1LC1RB_1LD1LA_1RD0RC`) — the machine rests in a SECOND syntactic
   form on the even octaves, so the family is two-formed the way skip-k
-  families are virtual-pointed.  These are the scan's current
-  `no anchor family` rows; the decode itself still holds on all of them.
+  families are virtual-pointed.  These are the scan's 107 `no anchor
+  family` rows; the decode itself held on the sampled ones, so the miss is
+  the FORM enumeration, not the reading.
+
+**Ranking consequence**: 104 rows with an anchor in hand and affine costs
+is a bigger and cheaper bite than the QUAD 29 — the skip-counter route
+(virtual anchor + `glue_neverqh`) should go FIRST in the next wave.
