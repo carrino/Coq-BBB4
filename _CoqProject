@@ -569,6 +569,17 @@ theories/Machines/Counters/WrapBc_R.v
 theories/Machines/Counters/WrapBc_L.v
 theories/Tests/CountersWrapBc_Corruption.v
 
+# --- counters track: the erase/fill bouncer (`no anchor`, wall-indexed) ---
+theories/Counters/BounceGlue.v
+theories/Machines/Counters/BNC_1RB____1LC0RB_1LD1RB_1LC1RB.v
+theories/Machines/Counters/BNC_1RB____1LC1RD_1LB1RD_1LB0RD.v
+theories/Machines/Counters/BNC_1RB____1LC1RD_1LB1RD_1LC0RD.v
+theories/Machines/Counters/BNC_0RB0LD_1LA1LC_0LD0LC_1RD1RB.v
+theories/Machines/Counters/BNC_0RB0RB_1LA1LC_0LD0LC_1RD1RB.v
+theories/Machines/Counters/BNC_0RB1LA_1LA1LC_0LD0LC_1RD1RB.v
+theories/Machines/Counters/BNC_0RB1RC_1RC0LB_0RD0RC_1LD1LA.v
+theories/Tests/CountersBounce_Corruption.v
+
 # --- counters track: the x3 bouncer (the v4-irules holdout) ---
 theories/Machines/Counters/Bnc3.v
 theories/Tests/CountersBnc3_Corruption.v
@@ -2499,6 +2510,24 @@ theories/Machines/Counters/QMG_1RB1LC_0LA0RB_0RD0LC_1RD1LA.v
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/REG_0RB0LC_1LC1RB_1LD1LA_1RD0RC.v
+theories/Machines/Counters/REG_0RB1LC_1LA1RB_0LD0LA_1RD0RB.v
+theories/Machines/Counters/REG_1RB1LA_0LA1RC_0RD0RB_1LD0LA.v
+theories/Machines/Counters/REG_1RB1LA_1RC1RD_1LC0LB_0LA0RB.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 theories/Machines/Counters/CASB_0RB0LD_1RC1RB_1LD1RC_0RC1LA.v
 theories/Machines/Counters/CASB_0RB0RC_1LC0LC_0LD1RA_1RC1LD.v
 theories/Machines/Counters/CASB_0RB1LC_1LA1RB_0LD0LA_1RA0RA.v
@@ -2508,61 +2537,6 @@ theories/Machines/Counters/CASB_1RB0RB_0RC1LD_1LB1RC_0LA0LB.v
 theories/Machines/Counters/CASB_1RB1LA_0LA0RC_0LD1RB_1RC1LD.v
 theories/Machines/Counters/CASB_1RB1LA_0LA1RC_0LD0RB_1LA1LD.v
 theories/Machines/Counters/CASB_1RB1RA_1LC1RB_0RB1LD_0RA0LC.v
-
-# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
-theories/Closeout/CB_00.v
-theories/Closeout/CB_01.v
-theories/Closeout/CB_02.v
-theories/Closeout/CB_03.v
-theories/Closeout/CB_04.v
-theories/Closeout/CB_05.v
-theories/Closeout/CB_06.v
-theories/Closeout/CB_07.v
-theories/Closeout/CB_08.v
-theories/Closeout/CB_09.v
-theories/Closeout/CB_10.v
-theories/Closeout/CB_11.v
-theories/Closeout/CB_12.v
-theories/Closeout/CB_13.v
-theories/Closeout/CB_14.v
-theories/Closeout/CB_15.v
-theories/Closeout/CB_16.v
-theories/Closeout/CB_17.v
-theories/Closeout/CB_18.v
-theories/Closeout/CB_19.v
-theories/Closeout/CB_20.v
-theories/Closeout/CB_21.v
-theories/Closeout/CB_22.v
-theories/Closeout/CB_23.v
-theories/Closeout/CB_24.v
-theories/Closeout/CB_25.v
-theories/Closeout/CB_26.v
-theories/Closeout/CB_27.v
-theories/Closeout/CB_28.v
-theories/Closeout/CB_29.v
-theories/Closeout/CB_30.v
-theories/Closeout/CB_31.v
-theories/Closeout/CB_32.v
-theories/Closeout/CB_33.v
-theories/Closeout/CB_34.v
-theories/Closeout/CB_35.v
-theories/Closeout/CB_36.v
-theories/Closeout/CB_37.v
-theories/Closeout/CB_38.v
-theories/Closeout/CB_39.v
-theories/Closeout/CB_40.v
-theories/Closeout/CB_41.v
-theories/Closeout/CB_42.v
-theories/Closeout/CB_43.v
-theories/Closeout/CB_44.v
-theories/Closeout/CB_45.v
-theories/Closeout/CB_46.v
-theories/Closeout/CB_47.v
-theories/Closeout/Closeout.v
-theories/Closeout/CloseoutKit.v
-theories/Closeout/CoreRows.v
-theories/Closeout/SH_00.v
-theories/Closeout/ShadowKit.v
 theories/Machines/Counters/CASB_1RB1RC_0RC1LD_1LB1RC_0RA0LB.v
 
 theories/Closeout/CloseoutKit.v
@@ -2618,4 +2592,5 @@ theories/Closeout/CB_45.v
 theories/Closeout/CB_46.v
 theories/Closeout/CB_47.v
 theories/Closeout/CB_48.v
+theories/Closeout/CB_49.v
 theories/Closeout/Closeout.v

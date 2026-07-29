@@ -554,7 +554,7 @@ Proof.
                run_boot_1RB1RC_0RC1LD_1LB1RC_0RA0LB [] [] j' ltac:(reflexivity) ltac:(reflexivity)).
     + assert (HB : exists n, stepn tm n (lift (CinM MT (fill (pow2 (S (S j'))))))
                    = Some (lift (Cc (Pos.succ p)))).
-      { exists (4 * (S (S j')) + 6).
+      { exists (4 * S (S j') + 6).
         rewrite (gclb_1RB1RC_0RC1LD_1LB1RC_0RA0LB j'), <- (geo_1RB1RC_0RC1LD_1LB1RC_0RA0LB p (S j') Ev), <- (gclbx_1RB1RC_0RC1LD_1LB1RC_0RA0LB j').
         apply csteps_lift.
         exact (srun_sound tm true true chCLB_1RB1RC_0RC1LD_1LB1RC_0RA0LB CLB0_1RB1RC_0RC1LD_1LB1RC_0RA0LB CLB1_1RB1RC_0RC1LD_1LB1RC_0RA0LB

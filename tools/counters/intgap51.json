@@ -1,0 +1,2011 @@
+[
+ {
+  "spec": "1RB---_0LB1RC_0RD0RC_1LB1LD",
+  "mirror": true,
+  "enc": "Alph_00_10_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 11,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_0LB1RC_1LB0RD_1LB0RC",
+  "mirror": true,
+  "enc": "Kp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 7,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_0LB1RC_1LB0RD_1LC0RC",
+  "mirror": true,
+  "enc": "Bp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 5,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 19,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_0LB1RC_1LB0RD_1LC0RD",
+  "mirror": true,
+  "enc": "Dp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 30,
+   "dead": 3,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB---_0LB1RC_1LD0RC_1LB1RC",
+  "mirror": true,
+  "enc": "Dp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 31,
+   "dead": 2,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB---_0LC1RB_0LB1RD_1LC0RD",
+  "mirror": true,
+  "enc": "Kp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 15,
+   "dead": 2,
+   "cycr": 2,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB---_0LC1RD_0LB1RC_1LB0RD",
+  "mirror": true,
+  "enc": "Kp",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 15,
+   "dead": 2,
+   "cycr": 2,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB---_0LC1RD_0LB1RD_1LB0RD",
+  "mirror": true,
+  "enc": "Kp",
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 15,
+   "dead": 2,
+   "cycr": 2,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB---_0LC1RD_0LB1RD_1LC0RD",
+  "mirror": true,
+  "enc": "Kp",
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 15,
+   "dead": 2,
+   "cycr": 2,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB---_0LC1RD_1LB1RC_1LB0RD",
+  "mirror": true,
+  "enc": "Ip",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 24,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 88,
+   "dead": 3,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_0LC1RD_1LB1RD_1LB0RD",
+  "mirror": true,
+  "enc": "Ip",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 24,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 88,
+   "dead": 3,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_0RC0RB_1LD1LC_0LD1RB",
+  "mirror": true,
+  "enc": "Alph_00_10_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 7,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_1LC0RB_0LD1RB_0LC1RB",
+  "mirror": true,
+  "enc": "Kp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 15,
+   "dead": 2,
+   "cycr": 2,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB---_1LC0RB_0LD1RB_0LC1RD",
+  "mirror": true,
+  "enc": "Kp",
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 15,
+   "dead": 2,
+   "cycr": 2,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB---_1LC0RB_0LD1RB_1LC1RB",
+  "mirror": true,
+  "enc": "Ip",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 24,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 88,
+   "dead": 3,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_1LC0RB_0LD1RB_1LC1RD",
+  "mirror": true,
+  "enc": "Ip",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 24,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 88,
+   "dead": 3,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_1LC0RB_1LD1RB_0LD1RB",
+  "mirror": true,
+  "enc": "Dp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 31,
+   "dead": 2,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB---_1LC0RD_0LC1RB_1LB0RB",
+  "mirror": true,
+  "enc": "Bp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 5,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 19,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_1LC0RD_0LC1RB_1LB0RD",
+  "mirror": true,
+  "enc": "Dp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 30,
+   "dead": 3,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB---_1LC0RD_0LC1RB_1LC0RB",
+  "mirror": true,
+  "enc": "Kp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 7,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_1LC0RD_0LC1RD_1LC0RB",
+  "mirror": true,
+  "enc": "Kp",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 7,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_1LC1LB_0LC1RD_0RB0RD",
+  "mirror": true,
+  "enc": "Alph_00_01_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   0,
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 5,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 19,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_1LC1RB_0LB1RD_1LC0RD",
+  "mirror": true,
+  "enc": "Ip",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 24,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 88,
+   "dead": 3,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_1LC1RD_0LB1RD_1LC0RD",
+  "mirror": true,
+  "enc": "Ip",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 24,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 88,
+   "dead": 3,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB---_1LC1RD_0LC1RD_1LB0RD",
+  "mirror": true,
+  "enc": "Dp",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 31,
+   "dead": 2,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB0LD_0LC0RB_1LA1RC_0RC1LD",
+  "mirror": false,
+  "enc": "Kp",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB0LD_1LC1RA_0LC1LD_0RA0RB",
+  "mirror": true,
+  "enc": "Dp",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [
+   0,
+   0,
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 16,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 5,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": true,
+   "reach": 89,
+   "dead": 3,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 4
+  },
+  "verdict": "lift: split x lift is not wired"
+ },
+ {
+  "spec": "1RB0RB_0LC0LD_1LC1LD_1RA0RA",
+  "mirror": false,
+  "enc": "Alph_11_00_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 19,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB0RB_0LC1RD_1LC1LA_0LA1RB",
+  "mirror": false,
+  "enc": "Alph_11_00_1",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 26,
+   "dead": 3,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB0RB_0RC1RC_0LD1LA_1LD0LA",
+  "mirror": false,
+  "enc": "Alph_11_00_1",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 19,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB0RB_1LC1RA_0LC0LD_0RA0RD",
+  "mirror": true,
+  "enc": "Alph_000_100_1",
+  "edge": "A",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": true,
+   "reach": 46,
+   "dead": 3,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 5
+  },
+  "verdict": "lift: split x lift is not wired"
+ },
+ {
+  "spec": "1RB0RC_0LA1LC_0RD0LB_1LB1RD",
+  "mirror": true,
+  "enc": "Alph_01_11_011",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": true,
+   "reach": 23,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "lift: split x lift is not wired"
+ },
+ {
+  "spec": "1RB0RD_0RC0LD_1LD1RC_0LA1LB",
+  "mirror": true,
+  "enc": "Alph_01_11_011",
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": true,
+   "reach": 23,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "lift: split x lift is not wired"
+ },
+ {
+  "spec": "1RB1LA_0LA0LC_1LC1RD_0RB0RD",
+  "mirror": false,
+  "enc": "Kp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 6,
+   "dead": 2,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB1LA_0LA0RC_0LD0RB_1LD1RC",
+  "mirror": false,
+  "enc": "Kp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 6,
+   "dead": 2,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD0RC_1LD0RB",
+  "mirror": false,
+  "enc": "Kp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 6,
+   "dead": 2,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB1LA_0LC0RD_1LC1RD_0LA0RB",
+  "mirror": false,
+  "enc": "Kp",
+  "edge": "D",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 6,
+   "dead": 2,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB1LA_0RC1RD_1LB0LD_0LA0RB",
+  "mirror": false,
+  "enc": "Alph_01_11_011",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": true,
+   "reach": 23,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "lift: split x lift is not wired"
+ },
+ {
+  "spec": "1RB1LA_0RC1RD_1LD0LB_0LA0RB",
+  "mirror": false,
+  "enc": "Alph_01_11_011",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": true,
+   "reach": 23,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "lift: split x lift is not wired"
+ },
+ {
+  "spec": "1RB1LA_1LC0RD_0RA0LC_0LA1RD",
+  "mirror": true,
+  "enc": "Kp",
+  "edge": "A",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB1LB_1LC1LA_0LB1RD_0RB0RD",
+  "mirror": true,
+  "enc": "Ip",
+  "edge": "A",
+  "tail": [
+   0
+  ],
+  "far": [
+   0,
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 13,
+   "dead": 0,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 44,
+   "dead": 0,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_0LD1LD_1RA0RA",
+  "mirror": false,
+  "enc": "Dp",
+  "edge": "A",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 11,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_0RD1LA_0LC1RD",
+  "mirror": false,
+  "enc": "Kp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB1LC_0LA1RD_1LA0LC_0RD0RB",
+  "mirror": false,
+  "enc": "Dp",
+  "edge": "A",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": true,
+   "reach": 23,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "lift: split x lift is not wired"
+ },
+ {
+  "spec": "1RB1LC_0LC0RB_0RD1LA_0LA1RD",
+  "mirror": false,
+  "enc": "Kp",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 4,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB1LC_1LB1RA_0LC0LD_0RA0RD",
+  "mirror": false,
+  "enc": "Alph_11_00_1",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [
+   0,
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 6,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 32,
+   "dead": 2,
+   "cycr": 2,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB1LC_1LC1RA_0LC0LD_0RA0RD",
+  "mirror": false,
+  "enc": "Alph_11_00_1",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [
+   0,
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 6,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 32,
+   "dead": 2,
+   "cycr": 2,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "cycR-gap: SCycR has no left-prefix offset"
+ },
+ {
+  "spec": "1RB1LD_0LB1RC_1LA0RC_0RB0LB",
+  "mirror": true,
+  "enc": "Dp",
+  "edge": "C",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 8,
+   "dead": 1,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": true,
+   "reach": 50,
+   "dead": 3,
+   "cycr": 1,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "lift: split x lift is not wired"
+ },
+ {
+  "spec": "1RB1LD_1RC0RC_1LA0LA_0RA0LD",
+  "mirror": true,
+  "enc": "Dp",
+  "edge": "A",
+  "tail": [
+   0
+  ],
+  "far": [],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 1,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": true,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 7,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB1RC_1LA0LB_1LD0RD_1LB0RC",
+  "mirror": true,
+  "enc": "Ip",
+  "edge": "B",
+  "tail": [
+   0
+  ],
+  "far": [
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 13,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": true,
+   "lift": false,
+   "reach": 3,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 1,
+   "liftable": 1
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 59,
+   "dead": 2,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ },
+ {
+  "spec": "1RB1RC_1LA1LD_0RB0RC_1LB0LB",
+  "mirror": true,
+  "enc": "Ip",
+  "edge": "A",
+  "tail": [
+   0
+  ],
+  "far": [
+   0,
+   1
+  ],
+  "one": {
+   "exact": false,
+   "lift": false,
+   "reach": 13,
+   "dead": 0,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "z": {
+   "exact": false,
+   "lift": false,
+   "reach": 2,
+   "dead": 1,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "p": {
+   "exact": false,
+   "lift": false,
+   "reach": 44,
+   "dead": 0,
+   "cycr": 0,
+   "denot": 0,
+   "liftable": 0
+  },
+  "verdict": "unreachable: target in no form"
+ }
+]

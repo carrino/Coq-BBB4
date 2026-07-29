@@ -157,12 +157,23 @@ def deps_of(vpath, idx):
 
 
 def board_closure(vfiles):
-    """Transitive in-tree dependency closure of vfiles, minus theories/Census/."""
+    """Transitive in-tree dependency closure of vfiles, minus theories/Census/
+    and theories/Closeout/.
+
+    Closeout is excluded because THIS generator owns that section of
+    _CoqProject: it strips every `theories/Closeout/' line and re-appends the
+    canonical list.  Without the exclusion a board that reaches into the kit
+    (RerootStage/RRPartner_02.v imports CloseoutKit) drags the whole Closeout
+    closure into the "missing board files" set -- which is computed against a
+    `listed' set the strip has already emptied of Closeout -- so all 53 files
+    get added a second time.  make then warns "target ... given more than once
+    in the same rule" for every one of them on the doc targets."""
     idx = module_index()
     seen, stack = set(), list(vfiles)
     while stack:
         v = stack.pop()
-        if v in seen or v.startswith('theories/Census/'):
+        if (v in seen or v.startswith('theories/Census/')
+                or v.startswith('theories/Closeout/')):
             continue
         seen.add(v)
         stack.extend(deps_of(v, idx))
@@ -596,6 +607,22 @@ def main():
     # CloseoutFinal.v and BBB4_Theorem.v are deliberately NOT in _CoqProject:
     # they load the committed census .vo (toolchain-specific), so the default
     # `make' must not depend on them.  `make proof' compiles them explicitly.
+
+    # Defensive: a .v listed twice makes coq_makefile emit duplicate doc-target
+    # rules, and `make' warns "given more than once in the same rule" for each.
+    # Keep first occurrences; blanks and comments pass through untouched.
+    seen_v, deduped = set(), []
+    for l in lines:
+        s = l.strip()
+        if s.endswith('.v'):
+            if s in seen_v:
+                continue
+            seen_v.add(s)
+        deduped.append(l)
+    if len(deduped) != len(lines):
+        print('_CoqProject: dropped %d duplicate .v line(s)'
+              % (len(lines) - len(deduped)))
+    lines = deduped
     nwrote += write_if_changed(cp, '\n'.join(lines) + '\n')
     print('stages: %d (%d rows) + Closeout.v (%d remaining)'
           ' + CloseoutFinal.v + BBB4_Theorem.v'
