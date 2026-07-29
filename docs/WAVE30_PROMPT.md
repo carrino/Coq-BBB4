@@ -175,6 +175,30 @@ The missing piece is one lemma beside `inner_to_fill_lift`: the same
 well-founded induction on `JpCounter.tovf`, stopped at a measured endpoint
 instead of at the fill.  Take it only if §§1–3 land early.
 
+## CONCURRENT WORK — `claude/cascade-twocount-4-2-r82mvf`
+
+That branch owns the **`no boot chain`** bucket (the solo-cascade reading).
+Checked: **zero row overlap** with any of §§1–5 — one blocker label per row,
+and its 12 rows intersect none of your 51 / 70 / 24.  Its diff is
+`tools/counters/nestcert.py` (+404, additive, everything named `cascade_*` /
+`solo_*`) and `cascade_probe.py`; `families`, `endpoints`, `_inner_lap` and
+`_inner_lap_split` are untouched, so `tailcert.py`'s imports are safe.
+
+Two things to respect:
+
+* **§1 changes the chain search for EVERY route**, including that branch's
+  `_inner_lap_split`, which all 10 of its gating rows go through.  Offer
+  `SCycR2` as the LAST candidate in `_cyc_candidates` and hold the
+  byte-identical re-render test over every committed board — that is what
+  keeps the two waves independent.  Whichever merges second inherits the
+  check; run it, do not assume it.
+* **DO NOT TAKE §4 while that branch is live.**  The bounded inner carrier
+  touches `NestedLapLift.v` and `nestcert.py`'s INNER-FAMILY section, which is
+  the one place the two waves would collide textually.  Park it.
+
+Do not edit `nestcert.py`'s cascade section, `cascade_probe.py`,
+`cascade_emit.py`, `NestedLapCascade.v`, or any `CASB_*` / `CASC_*` board.
+
 ## (5) The 26 `unreachable` — MEASURE, do not build
 
 `intgap.py` probes only the FIRST anchor family `emit_lapcert.anchors` offers.
