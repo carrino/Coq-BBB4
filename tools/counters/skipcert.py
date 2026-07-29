@@ -153,11 +153,14 @@ def _align_side(l0, l1, j0):
             # by moving the family out of reach -- not expressible as an
             # sside (b is a nat); skip
             continue
-        key = (pre, u, b, post)
+        # normalize: fold the constant copies into the prefix, so the
+        # rendered anchor family is always pre' ++ rep u k ++ post
+        pre = pre + u * b
+        key = (pre, u, post)
         if key in seen:
             continue
         seen.add(key)
-        out.append((pre, u, 1, b, post))
+        out.append((pre, u, 1, 0, post))
     return out
 
 
@@ -177,8 +180,28 @@ def virt_candidates(tr0, tr1, K0, st0):
             if q1 != q0 or h1 != h0 or tuple(r0) != tuple(r1):
                 continue
             for fam in _align_side(l0, l1, j0):
+                if not fam[1]:
+                    continue        # a virtual anchor family must grow
                 out.append((t0, t1, (q0, fam, h0,
                                      (tuple(r0), (), 0, 0, ()))))
+    return out
+
+
+def end_family(tr0, tr1, j0, want_pre, want_u):
+    """The phase-END configuration as an sside family: the landing anchor,
+    read off the machine rather than assumed, so machines that finish with
+    extra written blanks (or a rewritten far wall) still align.  Filtered
+    to the families whose prefix and unit are the encoding's own."""
+    q0, l0, h0, r0 = tr0[-1]
+    q1, l1, h1, r1 = tr1[-1]
+    out = []
+    if q1 != q0 or h1 != h0 or tuple(r0) != tuple(r1):
+        return out
+    for fam in _align_side(l0, l1, j0):
+        pre, u, a, b, post = fam
+        if tuple(u) != tuple(want_u) or tuple(pre) != tuple(want_pre):
+            continue
+        out.append((q0, fam, h0, (tuple(r0), (), 0, 0, ())))
     return out
 
 
@@ -241,19 +264,21 @@ def derive_skip(dspec, edge, tail, enc, far):
 
     got = None
     if s == 1:
-        E1 = (st0, (d['uS'], d['uD'], 1, 0, d['soD']), 0, F)
-        tried = 0
+        ends = end_family(tr6, tr7, 5, d['uS'], d['uD'])
+        ends.append((st0, (d['uS'], d['uD'], 1, 0, d['soD']), 0, F))
         for (t0, t1, V) in cands:
             chf, elf, cf = _chain2(tab, True, B0, V)
             if chf is None:
                 continue
-            chv, elv, cv = _chain2(tab, True, V, E1)
-            if chv is None:
-                continue
-            tried += 1
-            got = dict(s=1, V=V, chf=chf, elf=elf, cf=cf,
-                       chv=chv, elv=elv, cv=cv, E1=E1, tv=(t0, t1))
-            break
+            for E1 in ends:
+                chv, elv, cv = _chain2(tab, True, V, E1)
+                if chv is None:
+                    continue
+                got = dict(s=1, V=V, chf=chf, elf=elf, cf=cf,
+                           chv=chv, elv=elv, cv=cv, E1=E1, tv=(t0, t1))
+                break
+            if got is not None:
+                break
         if got is None:
             raise SkipError('no chain pipeline through any of %d candidates'
                             % len(cands))
@@ -261,7 +286,10 @@ def derive_skip(dspec, edge, tail, enc, far):
         # s = 2: fill -> V -> W -> E(2^K + 2).  W's landing target carries
         # the reindexed count: source W at j = S j'' (one unit folded into
         # the prefix), target count j''.
-        E2 = (st0, (d['uD'] + d['uS'], d['uD'], 1, 0, d['soD']), 0, F)
+        ends = end_family(tr6, tr7, 4, tuple(d['uD']) + tuple(d['uS']),
+                          d['uD'])
+        ends.append((st0, (tuple(d['uD']) + tuple(d['uS']), d['uD'], 1, 0,
+                           d['soD']), 0, F))
         for iv in range(len(cands)):
             t0v, t1v, V = cands[iv]
             chf, elf, cf = _chain2(tab, True, B0, V)
@@ -279,14 +307,17 @@ def derive_skip(dspec, edge, tail, enc, far):
                 if wa != 1:
                     continue
                 WS = (wq, (tuple(wpre) + tuple(wu), wu, 1, wb, wpost), wh, wr)
-                chw, elw, cw = _chain2(tab, True, WS, E2)
-                if chw is None:
-                    continue
-                got = dict(s=2, V=V, W=W, WS=WS, chf=chf, elf=elf, cf=cf,
-                           chv=chv, elv=elv, cv=cv,
-                           chw=chw, elw=elw, cw=cw, E2=E2,
-                           tv=(t0v, t1v), tw=(t0w, t1w))
-                break
+                for E2 in ends:
+                    chw, elw, cw = _chain2(tab, True, WS, E2)
+                    if chw is None:
+                        continue
+                    got = dict(s=2, V=V, W=W, WS=WS, chf=chf, elf=elf, cf=cf,
+                               chv=chv, elv=elv, cv=cv,
+                               chw=chw, elw=elw, cw=cw, E2=E2,
+                               tv=(t0v, t1v), tw=(t0w, t1w))
+                    break
+                if got is not None:
+                    break
             if got is not None:
                 break
         if got is None:
@@ -688,6 +719,21 @@ CC_S1 = r'''Definition Cc_@ID@ (p : positive) : cconf :=
 
 VIRT_S1 = r'''match pexp p with Some (S _) => true | _ => false end'''
 
+CC_S2 = r'''Definition Cc_@ID@ (p : positive) : cconf :=
+  match pexp p with
+  | Some (S k) => (@VST@, (@VPRE@ ++ rep @VU@ k ++ @VPOST@, @VH@, @VFARL@))
+  | _ =>
+    match pexpi p with
+    | Some k => (@WST@, (@WPRE@ ++ rep @WU@ k ++ @WPOST@, @WH@, @WFARL@))
+    | None => (@ST0@, (@ENC@ p ++ @TAIL@, S0, @FAR@))
+    end
+  end.'''
+
+VIRT_S2 = r'''match pexp p with
+  | Some (S _) => true
+  | _ => match pexpi p with Some _ => true | None => false end
+  end'''
+
 VIRTCERT_S1 = r'''Definition E1_@ID@ : sconf := @E1@.
 Definition chv_@ID@ : list lstep := @CHV@.
 
@@ -769,6 +815,175 @@ HVRUN_S1 = r'''  intros p _ H1 H2. exfalso. unfold virt_@ID@ in *.
   destruct (pexp p) as [[|k]|] eqn:E1; try discriminate.
   rewrite (pexp_succ_virt p k E1) in H2. discriminate.'''
 
+VIRTCERT_S2 = r'''Definition W0_@ID@ : sconf := @W0@.
+Definition chv_@ID@ : list lstep := @CHV@.
+
+Lemma run_virt_@ID@ : srun tm @ELV@ true chv_@ID@ V0_@ID@ = Some (W0_@ID@, @CAV@, @CBV@).
+Proof. vm_compute. reflexivity. Qed.
+
+(** The second virtual lap, from the REINDEXED W anchor (one unit copy in
+    the prefix, so the source covers k = S k' only; k = 0 is p = 3 < p0). *)
+Definition WS_@ID@ : sconf := @WS@.
+Definition E2_@ID@ : sconf := @E2@.
+Definition chw_@ID@ : list lstep := @CHW@.
+
+Lemma run_virt2_@ID@ : srun tm @ELW@ true chw_@ID@ WS_@ID@ = Some (E2_@ID@, @CAW@, @CBW@).
+Proof. vm_compute. reflexivity. Qed.'''
+
+VIRTGLUE_S2 = r'''Lemma gsv_@ID@ : forall p k, pexp p = Some (S k) ->
+  Cc p = cden [] [] k V0_@ID@.
+Proof.
+  intros p k Hx. unfold Cc_@ID@. rewrite Hx.
+  unfold cden, V0_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * k + 0) with k by lia.
+  first [ reflexivity
+        | cbn [rep app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+Qed.
+
+(** The V lap lands EXACTLY on the second virtual anchor. *)
+Lemma gew_@ID@ : forall p k, pexp p = Some (S k) ->
+  cden [] [] k W0_@ID@ = Cc (Pos.succ p).
+Proof.
+  intros p k Hx. unfold Cc_@ID@.
+  rewrite (pexp_succ_virt p k Hx), (pexpi_succ_virt p k Hx).
+  unfold cden, W0_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * k + 0) with k by lia.
+  first [ reflexivity
+        | cbn [rep app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+Qed.
+
+Lemma lapv_@ID@ : forall p k, pexp p = Some (S k) ->
+  exists n, 0 < n /\ csteps tm n (Cc p) = Some (Cc (Pos.succ p)).
+Proof.
+  intros p k Hx. exists (@CAV@ * k + @CBV@). split; [lia|].
+  rewrite (gsv_@ID@ p k Hx).
+  rewrite (srun_sound tm @ELV@ true chv_@ID@ V0_@ID@ W0_@ID@ @CAV@ @CBV@
+             run_virt_@ID@ [] [] k ltac:(@ELVH@) ltac:(reflexivity)).
+  f_equal. exact (gew_@ID@ p k Hx).
+Qed.
+
+Lemma gsw_@ID@ : forall p k, pexpi p = Some (S k) ->
+  Cc p = cden [] [] k WS_@ID@.
+Proof.
+  intros p k Hxi.
+  rewrite (pexpi_some p (S k) Hxi).
+  unfold Cc_@ID@. cbn [pexp pexpi]. rewrite (pexp_pow2 (S k)).
+  unfold cden, WS_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * k + 0) with k by lia.
+  cbn [rep]. first [ rewrite <- ?app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ].
+Qed.
+
+(** The landing: E(2^(S (S k)) + 2) = uD ++ uS ++ rep uD k ++ soD, up to
+    trailing blanks. *)
+Lemma gew2_@ID@ : forall p k, pexpi p = Some (S k) ->
+  lift (cden [] [] k E2_@ID@) = lift (Cc (Pos.succ p)).
+Proof.
+  intros p k Hxi.
+  rewrite (pexpi_succ_shape p k Hxi).
+  unfold Cc_@ID@. cbn [pexp pexpi].
+  assert (HD : cden [] [] k E2_@ID@ = (@ST0@, (@E2DEN@, S0, @E2FAR@))).
+  { unfold cden, E2_@ID@, sden, sflat;
+      cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
+    replace (1 * k + 0) with k by lia.
+    first [ reflexivity
+      | cbn [rep app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ]. }
+  assert (HC : @ENC@ (xO (xI (pow2 k))) ++ @TAIL@ = @E2PAD@).
+  { simpl @ENC@. rewrite (apow_@ID@ (pow2 k) k (pexp_pow2 k)).
+    first [ rewrite <- !app_assoc; reflexivity
+        | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ]. }
+  rewrite HD, HC. @VCLOSE@
+Qed.
+
+Lemma lapw_@ID@ : forall p k, pexpi p = Some (S k) ->
+  exists n c', 0 < n /\ csteps tm n (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)).
+Proof.
+  intros p k Hxi.
+  exists (@CAW@ * k + @CBW@), (cden [] [] k E2_@ID@).
+  split; [lia|]. split; [| exact (gew2_@ID@ p k Hxi)].
+  rewrite (gsw_@ID@ p k Hxi).
+  exact (srun_sound tm @ELW@ true chw_@ID@ WS_@ID@ E2_@ID@ @CAW@ @CBW@
+           run_virt2_@ID@ [] [] k ltac:(@ELWH@) ltac:(reflexivity)).
+Qed.'''
+
+LAPINT_S2 = r'''  - destruct (pexp p) as [[|k]|] eqn:Epx.
+    + rewrite (pexp_zero p Epx) in E. cbn in E. discriminate.
+    + destruct (lapv_@ID@ p k Epx) as (n & Hn & Hrun).
+      exists n, (Cc (Pos.succ p)).
+      split; [exact Hrun | split; [reflexivity | exact Hn]].
+    + destruct (pexpi p) as [[|m]|] eqn:Exi.
+      * rewrite (pexpi_some p 0 Exi) in Hp.
+        exfalso. apply Hp. vm_compute. reflexivity.
+      * destruct (lapw_@ID@ p m Exi) as (n & c' & Hn & Hrun & Hl).
+        exists n, c'. split; [exact Hrun | split; [exact Hl | exact Hn]].
+      * destruct (lapi_@ID@ p j q0 E Epx Exi) as (n & Hn & Hrun).
+        exists n, (Cc (Pos.succ p)).
+        split; [exact Hrun | split; [reflexivity | exact Hn]].'''
+
+LAPFILL_S2 = r'''  - destruct (cview_pos p j E) as (j' & ->).
+    destruct (pexpi p) as [[|m]|] eqn:Exi.
+    + rewrite (pexpi_some p 0 Exi) in Hp.
+      exfalso. apply Hp. vm_compute. reflexivity.
+    + rewrite (pexpi_cview p m Exi) in E. discriminate.
+    + destruct (lapf_@ID@ p j' E Exi) as (n & Hn & Hrun).
+      exists n, (Cc (Pos.succ p)).
+      split; [exact Hrun | split; [reflexivity | exact Hn]].'''
+
+HINT_S2 = r'''  intros p j q0 _ E Hv. unfold virt_@ID@ in Hv.
+  destruct (pexp p) as [[|k]|] eqn:Epx.
+  - rewrite (pexp_zero p Epx) in E. cbn in E. discriminate.
+  - discriminate Hv.
+  - destruct (pexpi p) as [m|] eqn:Exi; [discriminate Hv|].
+    exact (lapi_@ID@ p j q0 E Epx Exi).'''
+
+HSUCC_S2 = r'''  intros p j q0 E Hv. unfold virt_@ID@ in *.
+  rewrite (pexp_succ_int p j q0 E).
+  destruct (pexp p) as [[|k]|] eqn:Epx.
+  - rewrite (pexp_zero p Epx) in E. cbn in E. discriminate.
+  - discriminate Hv.
+  - rewrite (pexpi_succ_int p j q0 E Epx). reflexivity.'''
+
+HVLAP_S2 = r'''  intros p Hp Hv. unfold virt_@ID@ in Hv.
+  destruct (pexp p) as [[|k]|] eqn:Epx.
+  - destruct (pexpi p) as [m|] eqn:Exi; [| discriminate Hv].
+    rewrite (pexp_zero p Epx) in Exi. cbn in Exi. discriminate.
+  - destruct (lapv_@ID@ p k Epx) as (n & Hn & Hrun).
+    exists n, (Cc (Pos.succ p)).
+    split; [exact Hn | split; [exact Hrun | reflexivity]].
+  - destruct (pexpi p) as [[|m]|] eqn:Exi; try discriminate Hv.
+    + rewrite (pexpi_some p 0 Exi) in Hp.
+      exfalso. apply Hp. vm_compute. reflexivity.
+    + destruct (lapw_@ID@ p m Exi) as (n & c' & Hn & Hrun & Hl).
+      exists n, c'. split; [exact Hn | split; [exact Hrun | exact Hl]].'''
+
+HVRUN_S2 = r'''  intros p Hp H1 H2. unfold virt_@ID@ in *.
+  destruct (pexp p) as [[|k]|] eqn:E1.
+  - destruct (pexpi p) as [m|] eqn:E2; [| discriminate H1].
+    rewrite (pexp_zero p E1) in E2. cbn in E2. discriminate.
+  - destruct (pexp_shape p k E1) as (r & -> & Hr).
+    change (Pos.succ (Pos.succ (xO r))) with (xO (Pos.succ r)).
+    destruct k as [|k'].
+    + rewrite (pexp_zero r Hr) in Hp.
+      exfalso. apply Hp. vm_compute. reflexivity.
+    + destruct (pexp_shape r k' Hr) as (r2 & -> & _).
+      change (Pos.succ (xO r2)) with (xI r2).
+      cbn [pexp pexpi]. reflexivity.
+  - destruct (pexpi p) as [[|m]|] eqn:E2; try discriminate H1.
+    + rewrite (pexpi_some p 0 E2) in Hp.
+      exfalso. apply Hp. vm_compute. reflexivity.
+    + exfalso. rewrite (pexpi_succ_shape p m E2) in H2.
+      cbn [pexp pexpi] in H2. discriminate.'''
+
+VISFENCE_S2 = r'''  assert (Exi1 : pexpi p1 = None).
+  { destruct (pexpi p1) as [[|m]|] eqn:Exi; [| | reflexivity].
+    - rewrite (pexpi_some p1 0 Exi) in Hp1.
+      exfalso. apply Hp1. vm_compute. reflexivity.
+    - rewrite (pexpi_cview p1 m Exi) in E1. discriminate. }'''
+
 VISV_LEMMA = r'''(** A state that fires only in the virtual lap: the fill lap runs to the
     virtual anchor EXACTLY, then the virt-chain prefix fires. *)
 Lemma visv_@ID@ : forall (l : list lstep) (q : St),
@@ -809,57 +1024,75 @@ def _pad(base, n):
     return out
 
 
-def render_skip(D):
-    spec = D['spec']
-    ID = mach_id(spec)
-    d = ENCDATA[D['enc']]
-    s = D['s']
-    if s != 1:
-        raise SkipError('render: only s=1 wired so far')
-
-    vq, (vpre, vu, va, vb, vpost), vh, vr = D['V']
-    if va != 1 and vu:
-        raise SkipError('render: virt anchor a != 1')
-    vfar = tuple(vr[0]) + tuple(vr[4])
+def _vform(name, sc):
+    """The virtual anchor's rendered pieces, with shape checks."""
+    vq, (vpre, vu, va, vb, vpost), vh, vr = sc
+    if (va, vb) != (1, 0):
+        raise SkipError('render: %s anchor not normalized' % name)
     if vr[1]:
-        raise SkipError('render: virt anchor far side carries a rep')
+        raise SkipError('render: %s anchor far side carries a rep' % name)
     if not vu:
-        raise SkipError('render: virt anchor is flat (no rep)')
+        raise SkipError('render: %s anchor is flat (no rep)' % name)
+    return vq, vpre, vu, vpost, vh, tuple(vr[0]) + tuple(vr[4])
 
-    # the E1 landing vs the true anchor: E(2^(S k)+1) ++ tail has the
-    # reached word plus trailing blanks only
-    e1 = D['E1']
-    e1den = '%s ++ rep %s k ++ %s' % (clist(e1[1][0]), clist(e1[1][1]),
-                                      clist(e1[1][4]))
-    want = tuple(d['uS']) + tuple(d['soD']) + tuple(D['tail'])
-    got = tuple(e1[1][0]) + tuple(e1[1][4])
+
+def _landing(D, e, want_word, ID):
+    """The E-form landing vs the true anchor: reached word plus trailing
+    blanks only, on both sides.  Returns (den, far, padded den, close)."""
+    d = ENCDATA[D['enc']]
+    eden = '%s ++ rep %s k ++ %s' % (clist(e[1][0]), clist(e[1][1]),
+                                     clist(e[1][4]))
+    if tuple(e[1][1]) != tuple(d['uD']) or (e[1][2], e[1][3]) != (1, 0):
+        raise SkipError('render: landing unit %r' % (e[1],))
+    want = want_word + tuple(d['soD']) + tuple(D['tail'])
+    got = tuple(e[1][0]) + tuple(e[1][4])
     npad = len(want) - len(got)
     if npad < 0 or want[:len(got)] != got or any(want[len(got):]):
-        raise SkipError('render: E1 landing %r vs anchor %r' % (got, want))
-    e1far = clist([x for x in (tuple(e1[3][0]) + tuple(e1[3][4]))])
+        raise SkipError('render: landing %r vs anchor %r' % (got, want))
+    if tuple(e[1][0]) != want_word:
+        raise SkipError('render: landing prefix %r vs %r'
+                        % (e[1][0], want_word))
     ffar = tuple(D['far'])
-    gfar = tuple(e1[3][0]) + tuple(e1[3][4])
-    if LC.rstrip0(gfar) != LC.rstrip0(ffar):
-        raise SkipError('render: E1 far %r vs %r' % (gfar, ffar))
+    gfar = tuple(e[3][0]) + tuple(e[3][4])
     nfarpad = len(gfar) - len(ffar)
-    if nfarpad < 0 or gfar[:len(ffar)] != ffar:
-        raise SkipError('render: E1 far pad %r vs %r' % (gfar, ffar))
-
+    if (LC.rstrip0(gfar) != LC.rstrip0(ffar) or nfarpad < 0
+            or gfar[:len(ffar)] != ffar):
+        raise SkipError('render: landing far %r vs %r' % (gfar, ffar))
+    # nested-pad form, so each [lift_app_blank] rewrite peels one blank
+    efar = _pad(clist(ffar), nfarpad)
     vclose = []
     if npad:
         vclose.append('rewrite !lbl_%s.' % ID)
     if nfarpad:
         vclose.append('rewrite !lift_app_blank.')
     vclose.append('reflexivity.')
+    return eden, efar, _pad(eden, npad), ' '.join(vclose)
+
+
+def render_skip(D):
+    spec = D['spec']
+    ID = mach_id(spec)
+    d = ENCDATA[D['enc']]
+    s = D['s']
+
+    vq, vpre, vu, vpost, vh, vfar = _vform('V', D['V'])
+
+    if s == 1:
+        e1den, e1far, e1pad, vclose = _landing(D, D['E1'], tuple(d['uS']), ID)
+        wq = wpre = wu = wpost = wh = wfar = None
+    else:
+        wq, wpre, wu, wpost, wh, wfar = _vform('W', D['W'])
+        e1den, e1far, e1pad, vclose = _landing(
+            D, D['E2'], tuple(d['uD']) + tuple(d['uS']), ID)
 
     vis = []
     for q in range(4):
         mode, pre = D['vis'][q]
         if mode == 'fill' and not pre:
             vis.append('  - (* %s: the anchor state *)\n'
-                       '    rewrite (gso_%s p1 j1 E1).\n'
+                       '    rewrite (gso_%s p1 j1 E1%s).\n'
                        '    exists 0. eexists. split; reflexivity.'
-                       % (ST[q], ID))
+                       % (ST[q], ID, '@GSOA@'))
         elif mode == 'fill':
             vis.append('  - (* %s *)\n'
                        '    exact (viso_%s %s %s\n'
@@ -887,12 +1120,11 @@ def render_skip(D):
         '@FAR@': clist(D['far']), '@TABLE@': coq_table(spec),
         '@US@': clist(d['uS']), '@UD@': clist(d['uD']),
         '@SOD@': clist(d['soD']),
-        '@CCDEF@': CC_S1, '@VIRTDEF@': VIRT_S1,
+        '@CCDEF@': CC_S1 if s == 1 else CC_S2,
+        '@VIRTDEF@': VIRT_S1 if s == 1 else VIRT_S2,
         '@VST@': ST[vq], '@VPRE@': clist(vpre), '@VU@': clist(vu),
         '@VPOST@': clist(vpost), '@VH@': SYM[vh], '@VFARL@': clist(vfar),
-        '@VB@': str(vb),
-        '@VBK@': '(%s)' % ' '.join(['S'] * vb + ['k']) if vb else 'k',
-        '@VBJ@': '(%s)' % ' '.join(['S'] * vb + ['j']) if vb else 'j',
+        '@VB@': '0', '@VBK@': 'k', '@VBJ@': 'j',
         '@A0@': _fmtconf(D['A0']), '@A1@': _fmtconf(D['A1']),
         '@CHI@': cchain(D['chi']),
         '@CAI@': str(D['ci'][0]), '@CBI@': str(D['ci'][1]),
@@ -902,29 +1134,59 @@ def render_skip(D):
         '@ELF@': 'true' if D['elf'] else 'false',
         '@ELFH@': 'reflexivity' if D['elf'] else 'discriminate',
         '@ELFH2@': ('reflexivity' if D['elf'] else 'discriminate'),
-        '@VIRTCERT@': VIRTCERT_S1, '@VIRTGLUE@': VIRTGLUE_S1,
-        '@E1@': _fmtconf(e1), '@CHV@': cchain(D['chv']),
+        '@VIRTCERT@': VIRTCERT_S1 if s == 1 else VIRTCERT_S2,
+        '@VIRTGLUE@': VIRTGLUE_S1 if s == 1 else VIRTGLUE_S2,
+        '@CHV@': cchain(D['chv']),
         '@CAV@': str(D['cv'][0]), '@CBV@': str(D['cv'][1]),
         '@ELV@': 'true' if D['elv'] else 'false',
         '@ELVH@': 'reflexivity' if D['elv'] else 'discriminate',
         '@ELVH2@': ('reflexivity' if D['elv'] else 'discriminate'),
-        '@E1DEN@': e1den, '@E1FAR@': e1far,
-        '@E1PAD@': _pad(e1den, npad),
-        '@VCLOSE@': ' '.join(vclose),
-        '@LAPINT@': LAPINT_S1, '@LAPFILL@': LAPFILL_S1,
-        '@HINT@': HINT_S1, '@HSUCC@': HSUCC_S1,
-        '@HVLAP@': HVLAP_S1, '@HVRUN@': HVRUN_S1,
-        '@GSIH@': '', '@GSIHN@': '', '@GSIRED@': '', '@GEIRED@': '',
-        '@GSOH@': '', '@GSOHN@': '', '@GSORED@': '', '@GSOA@': '',
-        '@VISFENCE@': '',
+        '@VCLOSE@': vclose,
+        '@LAPINT@': LAPINT_S1 if s == 1 else LAPINT_S2,
+        '@LAPFILL@': LAPFILL_S1 if s == 1 else LAPFILL_S2,
+        '@HINT@': HINT_S1 if s == 1 else HINT_S2,
+        '@HSUCC@': HSUCC_S1 if s == 1 else HSUCC_S2,
+        '@HVLAP@': HVLAP_S1 if s == 1 else HVLAP_S2,
+        '@HVRUN@': HVRUN_S1 if s == 1 else HVRUN_S2,
+        '@GSIH@': '' if s == 1 else 'pexpi p = None ->',
+        '@GSIHN@': '' if s == 1 else 'Hxi',
+        '@GSIRED@': '' if s == 1 else 'rewrite Hxi.',
+        '@GEIRED@': ('' if s == 1
+                     else 'rewrite (pexpi_succ_int p j q0 E Hx).'),
+        '@GSOH@': '' if s == 1 else 'pexpi p = None ->',
+        '@GSOHN@': '' if s == 1 else 'Hxi',
+        '@GSORED@': '' if s == 1 else 'rewrite Hxi. ',
+        '@GSOA@': '' if s == 1 else ' Exi1',
+        '@VISFENCE@': '' if s == 1 else VISFENCE_S2,
         '@VISVLEM@': VISV_LEMMA if need_visv else '',
         '@VISITS@': '\n'.join(vis),
         '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
-        '@NI@': '%d*j+%d' % D['ci'], '@NF@': '%d*j+%d' % D['cf'],
-        '@NVDOC@': ('      virt      (pexp p = Some (S k)): %d*k+%d steps, '
-                    'up to [lift]\n' % D['cv']),
+        '@NI@': '%d*j+%d' % tuple(D['ci']), '@NF@': '%d*j+%d' % tuple(D['cf']),
+        '@NVDOC@': (('      virt      (pexp p = Some (S k)): %d*k+%d steps, '
+                     'up to [lift]\n' % tuple(D['cv'])) if s == 1 else
+                    ('      virt      (pexp p = Some (S k)): %d*k+%d steps, '
+                     'exact, onto the SECOND virtual anchor\n'
+                     '      virt2     (pexpi p = Some (S k)): %d*k+%d steps, '
+                     'up to [lift]\n' % (tuple(D['cv']) + tuple(D['cw'])))),
         '@VAL@': D['val'],
     }
+    if s == 1:
+        reps.update({
+            '@E1@': _fmtconf(D['E1']),
+            '@E1DEN@': e1den, '@E1FAR@': e1far, '@E1PAD@': e1pad,
+        })
+    else:
+        reps.update({
+            '@W0@': _fmtconf(D['W']), '@WS@': _fmtconf(D['WS']),
+            '@E2@': _fmtconf(D['E2']), '@CHW@': cchain(D['chw']),
+            '@CAW@': str(D['cw'][0]), '@CBW@': str(D['cw'][1]),
+            '@ELW@': 'true' if D['elw'] else 'false',
+            '@ELWH@': 'reflexivity' if D['elw'] else 'discriminate',
+            '@WST@': ST[wq], '@WPRE@': clist(wpre), '@WU@': clist(wu),
+            '@WPOST@': clist(wpost), '@WH@': SYM[wh],
+            '@WFARL@': clist(wfar),
+            '@E2DEN@': e1den, '@E2FAR@': e1far, '@E2PAD@': e1pad,
+        })
     out = HEADER
     for _ in range(4):
         for k, v in reps.items():
