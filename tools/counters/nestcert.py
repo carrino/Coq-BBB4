@@ -1224,7 +1224,12 @@ Proof.
     first [ rewrite <- ?app_assoc; reflexivity
           | cbn [app]; rewrite <- ?app_assoc; cbn [app];
             rewrite ?app_nil_r; reflexivity ]. }
-  rewrite HD, HC. cbn [app]. rewrite <- ?app_assoc. cbn [app].
+  (* The offset boot can land one written blank past the anchor on EITHER
+     side, and [lift] sees neither.  Strip it FIRST: [cbn [app]] flattens
+     `w ++ [S0]` into one literal and destroys the shape
+     [WTape.lift_app_blank_l] matches on. *)
+  rewrite HD, HC. rewrite ?lift_app_blank_l.
+  cbn [app]. rewrite <- ?app_assoc. cbn [app].
   rewrite ?lbl_@ID@. rewrite ?lift_app_blank. reflexivity.
 Qed.
 
