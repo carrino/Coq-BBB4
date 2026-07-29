@@ -131,6 +131,16 @@ verification tier, from "check one machine" to "re-walk the census".
   `tools/closeout/audit.py` (untrusted).  Padding `remaining_rows`
   would only *weaken* the theorem, never falsify it.
 
+## Contributing
+
+The open-problem list is [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md):
+every remaining machine, mapped by shape and blocker, with suggested
+starting points.  Each board is a self-contained per-machine proof, the
+shared toolkits are documented, and a machine leaves the SKIPPED list
+the moment any kernel-checked proof settles it —
+[`docs/TERMINOLOGY.md`](docs/TERMINOLOGY.md) has the vocabulary and
+[`NEXT_SESSION.md`](NEXT_SESSION.md) the accumulated traps.
+
 ## Status and further reading
 
 * [`docs/CLAIMS.md`](docs/CLAIMS.md) — what is proved, exactly,
