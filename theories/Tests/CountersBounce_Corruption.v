@@ -26,7 +26,7 @@
     Everything is decided by [vm_compute]/[reflexivity]/[discriminate]. *)
 
 From Coq Require Import Arith Bool List PArith.
-From BBB4 Require Import BBB4_Statement CTape.
+From BBB4 Require Import BBB4_Statement CTape Mirror.
 From BBB4.Census Require Import TNF_QH.
 From BBB4.Counters Require Import LapGlueAbs BounceGlue.
 From BBB4.Machines.Counters Require Import
@@ -35,7 +35,8 @@ From BBB4.Machines.Counters Require Import
   BNC_1RB____1LC1RD_1LB1RD_1LC0RD
   BNC_0RB0LD_1LA1LC_0LD0LC_1RD1RB
   BNC_0RB0RB_1LA1LC_0LD0LC_1RD1RB
-  BNC_0RB1LA_1LA1LC_0LD0LC_1RD1RB.
+  BNC_0RB1LA_1LA1LC_0LD0LC_1RD1RB
+  BNC_0RB1RC_1RC0LB_0RD0RC_1LD1LA.
 Import ListNotations.
 
 Local Notation t1 := BNC_1RB____1LC0RB_1LD1RB_1LC1RB.tm_1RB____1LC0RB_1LD1RB_1LC1RB.
@@ -234,3 +235,53 @@ Proof. exact BNC_0RB0RB_1LA1LC_0LD0LC_1RD1RB.nqh_0RB0RB_1LA1LC_0LD0LC_1RD1RB. Qe
 
 Example u3_never : NeverQuasiHaltsSt u3.
 Proof. exact BNC_0RB1LA_1LA1LC_0LD0LC_1RD1RB.nqh_0RB1LA_1LA1LC_0LD0LC_1RD1RB. Qed.
+
+(** ** The MIRRORED wall bouncer: 0RB1RC_1RC0LB_0RD0RC_1LD1LA
+
+    Same bounce, block on the right, and one measured difference: its drift
+    walks the block with the head on a BLANK, because the wall turn writes
+    [S0] rather than [S1].  The controls pin both halves of that. *)
+
+Local Notation v0 :=
+  BNC_0RB1RC_1RC0LB_0RD0RC_1LD1LA.tm_0RB1RC_1RC0LB_0RD0RC_1LD1LA.
+Local Notation vm :=
+  BNC_0RB1RC_1RC0LB_0RD0RC_1LD1LA.tmm_0RB1RC_1RC0LB_0RD0RC_1LD1LA.
+
+(** The mirror is the mirror -- the transfer rests on this and nothing else. *)
+Example v_mirror_ok : mirror_tm v0 = vm.
+Proof. exact BNC_0RB1RC_1RC0LB_0RD0RC_1LD1LA.mirror_ok_0RB1RC_1RC0LB_0RD0RC_1LD1LA. Qed.
+
+(** THE discriminator: this machine's wall turn writes S0, u1's writes S1.
+    That single cell is why it needs the second board template. *)
+Example v_turn_writes_S0 : vm StA S0 = Some (mkTrans S0 DL StB).
+Proof. reflexivity. Qed.
+
+Example u1_turn_writes_S1 : u1 StB S0 = Some (mkTrans S1 DL StA).
+Proof. reflexivity. Qed.
+
+(** ...so its drift keeps the head on a BLANK and steps 5 cells at a time. *)
+Example v_ripple_5 : csteps vm 5 (StA, ([S1; S1; S1], S0, [])) =
+  Some (StA, ([S1; S1], S0, [S1])).
+Proof. vm_compute; reflexivity. Qed.
+
+Example v_ripple_not_4 : csteps vm 4 (StA, ([S1; S1; S1], S0, [])) <>
+  Some (StA, ([S1; S1], S0, [S1])).
+Proof. vm_compute; discriminate. Qed.
+
+(** The bounce is bit-for-bit the same as u1's -- WallBounce proves it once. *)
+Example v_bounce_11 : csteps vm 11 (wM StA 5 3) = Some (wM StA 4 6).
+Proof. vm_compute; reflexivity. Qed.
+
+Example v_term : csteps vm 11 (wM StA 0 3) = Some (wA StA 6).
+Proof. vm_compute; reflexivity. Qed.
+
+(** The collapse is 5n+2, the same law as u2's, and the block TRIPLES. *)
+Example v_collapse : csteps vm (5 * 9 + 2) (wA StA 9) = Some (wM StA 7 3).
+Proof. vm_compute; reflexivity. Qed.
+
+Example v_macro : csteps vm 303 (wA StA 9) = Some (wA StA 27).
+Proof. vm_compute; reflexivity. Qed.
+
+(** And the conclusion holds of the REAL machine, not the mirror. *)
+Example v_never : NeverQuasiHaltsSt v0.
+Proof. exact BNC_0RB1RC_1RC0LB_0RD0RC_1LD1LA.nqh_0RB1RC_1RC0LB_0RD0RC_1LD1LA. Qed.

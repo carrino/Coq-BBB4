@@ -1240,7 +1240,7 @@ def emit(spec, write=True, check=True):
         return (spec, 'no boot to the p = 1 anchor', None)
     mid = mach_id(spec)
     src = (BOARD.replace('@PREF@', BOARD_PREFIX).replace('@ID@', mid)
-           .replace('@SPEC@', mspec).replace('@TABLE@', coq_table(mspec))
+           .replace('@SPEC@', spec).replace('@TABLE@', coq_table(spec))
            .replace('@T0@', str(t0))
            .replace('@E@', LAB[E]).replace('@X@', LAB[X])
            .replace('@Y@', LAB[Y]))
@@ -1255,12 +1255,343 @@ def emit(spec, write=True, check=True):
     return (spec, 'BOARDED' if ok else 'coqc FAILED\n' + log, path)
 
 
+# ------------------------------------------------------- wall board, mirrored ---
+#
+# The second WALL BOUNCE variant, and the only measured difference is where the
+# drift keeps the head.  Section 6's machines walk the block with the head ON
+# it (head = S1); these walk it with the head in the GAP the walk opens
+# (head = S0), because the wall turn writes S0 rather than S1.  The bounce and
+# the terminal are bit-for-bit identical and BounceGlue.WallBounce proves them
+# unchanged; only the collapse differs, and the collapse lives in the board.
+
+WBOARD2 = r'''(** * @PREF@_@ID@: machine @SPEC@ never quasihalts.
+
+    The `no anchor` bucket's wall bouncer again, MIRRORED: this machine's
+    block grows RIGHTWARD, so every lemma below runs on the mirrored table
+    and [Mirror.mirror_never_qh] transfers the conclusion back -- the
+    wave-9 route, no new theory.
+
+    Its bounce is bit-for-bit §6's and [BounceGlue.WallBounce] proves it
+    unchanged:
+
+      wA St@B@ n   = (St@B@, (repeat S1 n, S0, []))
+      wM St@B@ a r = (St@B@, (repeat S1 r, S1, repeat S1 a))
+      wM (S a) r --> wM a (r+3)   and   wM 0 r --> wA (r+3),  both 2*r+5
+
+    What differs is the DRIFT, and it differs in exactly one measured way:
+    **the drift runs with the head on a BLANK.**  The wall turn writes [S0]
+    rather than [S1] (`tm St@B@ S0 = 0 L St@A@`), so the walk leaves the
+    head in the gap it opens rather than on the block, and the ripple is
+
+      (St@B@, (S1 :: S1 :: L, S0, R)) --> (St@B@, (S1 :: L, S0, S1 :: R))
+
+    in @RP@ steps -- one unit PEELED, because the step that turns the walk
+    around reads the cell BELOW the head and the un-peeled form does not
+    name it.  That is the standing lesson at the smallest possible scale.
+    @TL@ more steps turn the walk into the first bounce:
+
+      wA n --> wM (n-2) 3   in  @RP@*(n-1) + @TLP1M@  steps,
+
+    so the macro lap is [wA n --> wA (3*n)] and the block sizes are
+    @B0@, @B1@, @B2@, @B3@, ...  Every state recurs inside one lap
+    (St@B@ at index 0, St@A@ -- the drift -- at 1, St@C@ and St@D@ inside
+    the first bounce), so the closer is [LapGlue.glue_neverqh].
+
+    Measured off the raw simulator by [tools/counters/bouncecert.py] and
+    differentially validated (the bounce and terminal over an (a, r) grid,
+    the collapse at every n = 2..40, the anchor sequence against the
+    blank-tape replay) before any Coq was written.
+
+    [Print Assumptions] = [functional_extensionality_dep] only. *)
+
+From Coq Require Import Arith Lia Bool List PArith.
+From BBB4 Require Import BBB4_Statement CTape.
+From BBB4.Census Require Import TNF_QH.
+From BBB4.Counters Require Import LapGlue BounceGlue.
+Import ListNotations.
+
+Definition mk (w : Sym) (d : Dir) (n : St) : option Trans :=
+  Some (mkTrans w d n).
+
+(** @SPEC@ *)
+Definition tm_@ID@ : TM := fun q s => match q, s with
+@TABLE@ end.
+Local Notation tm := tm_@ID@.
+
+Local Notation aA := (wA St@B@).
+Local Notation aM := (wM St@B@).
+
+Lemma chain_@ID@ : forall n1 n2 c c1 c2,
+  csteps tm n1 c = Some c1 -> csteps tm n2 c1 = Some c2 ->
+  csteps tm (n1 + n2) c = Some c2.
+Proof. intros. rewrite csteps_add, H. assumption. Qed.
+
+(** ** The bounce, straight from [BounceGlue.WallBounce] *)
+
+Definition mchain_@ID@ := wmchain tm St@B@ St@C@ St@D@
+  eq_refl eq_refl eq_refl eq_refl eq_refl.
+Definition visC_@ID@ := wvisC tm St@B@ St@C@ eq_refl.
+Definition visD_@ID@ := wvisD tm St@B@ St@C@ St@D@ eq_refl eq_refl eq_refl.
+
+(** ** The collapse: the drift walks the block with the head on a BLANK *)
+
+Lemma rip1_@ID@ : forall L R,
+  csteps tm @RP@ (St@B@, (S1 :: S1 :: L, S0, R))
+    = Some (St@B@, (S1 :: L, S0, S1 :: R)).
+Proof. intros L R. reflexivity. Qed.
+
+Lemma ripn_@ID@ : forall k L R,
+  csteps tm (@RP@ * k) (St@B@, (repeat S1 k ++ S1 :: L, S0, R))
+    = Some (St@B@, (S1 :: L, S0, repeat S1 k ++ R)).
+Proof.
+  induction k as [|k IH]; intros L R; [reflexivity|].
+  cbn [repeat app].
+  rewrite (rep_snoc S1 k L).
+  replace (@RP@ * S k) with (@RP@ + @RP@ * k) by lia.
+  apply (chain_@ID@ @RP@ (@RP@ * k) _
+           (St@B@, (S1 :: (repeat S1 k ++ L), S0, S1 :: R))).
+  - apply rip1_@ID@.
+  - rewrite <- (rep_snoc S1 k L), IH, (rep_snoc S1 k R). reflexivity.
+Qed.
+
+(** The turn at the far end: the walk becomes the first bounce. *)
+Lemma tail_@ID@ : forall X,
+  csteps tm @TL@ (St@B@, ([S1], S0, X))
+    = Some (St@B@, ([S1; S1; S1], chd X, ctl X)).
+Proof. intro X. reflexivity. Qed.
+
+Lemma wcol_@ID@ : forall m,
+  csteps tm (@RP@ * (S m) + @TL@) (aA (S (S m))) = Some (aM m 3).
+Proof.
+  intro m. unfold wA.
+  apply (chain_@ID@ (@RP@ * (S m)) @TL@ _
+           (St@B@, ([S1], S0, repeat S1 (S m)))).
+  { pose proof (ripn_@ID@ (S m) [] (@nil Sym)) as Hr.
+    rewrite app_nil_r in Hr.
+    replace (repeat S1 (S m) ++ [S1]) with (repeat S1 (S (S m))) in Hr
+      by (rewrite rep_app1; reflexivity).
+    exact Hr. }
+  exact (tail_@ID@ (repeat S1 (S m))).
+Qed.
+
+(** ** The macro lap *)
+
+Lemma wlap_@ID@ : forall m, exists k, 0 < k /\
+  csteps tm k (aA (S (S m))) = Some (aA (3 + 3 * m + 3)).
+Proof.
+  intro m. destruct (mchain_@ID@ m 3) as (k & Hk & Hrun).
+  exists (@RP@ * (S m) + @TL@ + k). split; [lia|].
+  apply (chain_@ID@ (@RP@ * (S m) + @TL@) k _ (aM m 3)).
+  - apply wcol_@ID@.
+  - exact Hrun.
+Qed.
+
+(** ** The anchor family: block sizes @B0@, @B1@, @B2@, ... *)
+
+Fixpoint blk_@ID@ (t : nat) : nat :=
+  match t with 0 => @B0@ | S t' => 3 * blk_@ID@ t' end.
+
+Lemma blk_ge_@ID@ : forall t, 2 <= blk_@ID@ t.
+Proof. induction t; cbn; lia. Qed.
+
+Lemma anchor_@ID@ : forall t, exists m, blk_@ID@ t = S (S m).
+Proof.
+  intro t. pose proof (blk_ge_@ID@ t). exists (blk_@ID@ t - 2). lia.
+Qed.
+
+Definition Cc (p : positive) : cconf := aA (blk_@ID@ (Pos.to_nat p)).
+
+Lemma lap_@ID@ : forall p, exists n c',
+  csteps tm n (Cc p) = Some c' /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+Proof.
+  intro p. unfold Cc. rewrite Pos2Nat.inj_succ. cbn [blk_@ID@].
+  destruct (anchor_@ID@ (Pos.to_nat p)) as (m & Hm). rewrite Hm.
+  destruct (wlap_@ID@ m) as (k & Hk & Hrun).
+  exists k, (aA (3 + 3 * m + 3)).
+  split; [exact Hrun | split; [| exact Hk]].
+  replace (3 + 3 * m + 3) with (3 * (S (S m))) by lia.
+  reflexivity.
+Qed.
+
+(** ** Visits: every state recurs inside one lap *)
+
+Lemma visX_@ID@ : forall m,
+  exists c, csteps tm 1 (aA (S (S m))) = Some c /\ fst c = St@A@.
+Proof.
+  intro m. unfold wA. cbn [repeat]. eexists. split; reflexivity.
+Qed.
+
+Lemma vis_@ID@ : forall p q, exists k c,
+  csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros p q. unfold Cc.
+  destruct (anchor_@ID@ (Pos.to_nat p)) as (m & Hm). rewrite Hm.
+  destruct q.
+@VISCASES@Qed.
+
+(** ** Boot and the theorem *)
+
+Lemma boot_@ID@ : exists t0, stepn tm t0 InitES = Some (lift (Cc 1)).
+Proof.
+  exists @T0@.
+  assert (H : match csteps tm @T0@ c0 with
+              | Some c => ceqb c (Cc 1)
+              | None => false
+              end = true) by (vm_compute; reflexivity).
+  destruct (csteps tm @T0@ c0) as [c|] eqn:Eq; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ Eq).
+  f_equal. apply ceqb_lift. exact H.
+Qed.
+
+Theorem nqh_@ID@ : NeverQuasiHaltsSt tm.
+Proof. apply (glue_neverqh tm Cc 1).
+  - exact boot_@ID@.
+  - intros p _. apply lap_@ID@.
+  - intros p q _. apply vis_@ID@.
+Qed.
+
+Theorem nonhalt_@ID@ : NonHalt tm.
+Proof. apply never_qh_nonhalt, nqh_@ID@. Qed.
+'''
+
+
+def wroles2(spec):
+    """(Bq, Cq, Dq, Aq) for the BLANK-HEAD-drift wall bouncer."""
+    tab = parse(spec)
+    for B in range(4):
+        t = tab.get((B, 1))
+        if t is None or t[:2] != (1, -1) or t[2] == B:
+            continue
+        C = t[2]
+        if tab.get((C, 1)) != (0, -1, C):
+            continue
+        tc = tab.get((C, 0))
+        if tc is None or tc[:2] != (0, -1):
+            continue
+        D = tc[2]
+        if tab.get((D, 0)) != (1, 1, D) or tab.get((D, 1)) != (1, 1, B):
+            continue
+        rest = [q for q in range(4) if q not in (B, C, D)]
+        if len(rest) != 1:
+            continue
+        A = rest[0]
+        if tab.get((B, 0)) != (0, -1, A):     # the drift turn writes S0
+            continue
+        return (B, C, D, A)
+    return None
+
+
+def wmeasure2(spec, B):
+    """(rp, tl) for the blank-head drift, plus a full differential
+    validation of every gadget the board is about to claim."""
+    import lapcert as LC
+    tab = parse(spec)
+
+    def aA(n):
+        return (B, (1,) * n, 0, ())
+
+    def aM(a, r):
+        return (B, (1,) * r, 1, (1,) * a)
+
+    rp, c = None, (B, (1,) * 6, 0, ())
+    for t in range(1, 40):
+        c = LC.wstep(tab, False, False, c)
+        if c == (B, (1,) * 5, 0, (1,)):
+            rp = t
+            break
+    if rp is None:
+        return None
+    tl, c = None, (B, (1,), 0, (1,) * 8)
+    for t in range(0, 40):
+        if c[0] == B and c[1] == (1, 1, 1) and c[2] == 1 and len(c[3]) == 7:
+            tl = t
+            break
+        c = LC.wstep(tab, False, False, c)
+    if tl is None:
+        return None
+    for r in range(0, 12):
+        for a in range(0, 6):
+            want = aA(r + 3) if a == 0 else aM(a - 1, r + 3)
+            if _run(tab, aM(a, r), 2 * r + 5) != want:
+                return None
+    for n in range(2, 41):
+        if _run(tab, aA(n), rp * (n - 1) + tl) != aM(n - 2, 3):
+            return None
+    return (rp, tl)
+
+
+def wemit2(spec, write=True, check=True):
+    from emit_interleave import coq_table
+    import lapcert as LC
+    mspec, r = spec, wroles2(spec)
+    if r is None:
+        mspec = mirror_spec(spec)
+        r = wroles2(mspec)
+        if r is None:
+            return (spec, 'not a blank-head wall bouncer', None)
+    B, C, D, A = r
+    m = wmeasure2(mspec, B)
+    if m is None:
+        return (spec, 'blank-head gadgets do not validate', None)
+    rp, tl = m
+    tab = parse(mspec)
+    blk = [3]
+    for _ in range(4):
+        blk.append(3 * blk[-1])
+    want, cfg, t0 = (B, (1,) * blk[1], 0, ()), (0, (), 0, ()), None
+    for t in range(20000):
+        if cfg == want:
+            t0 = t
+            break
+        cfg = LC.wstep(tab, False, False, cfg)
+    if t0 is None:
+        return (spec, 'no boot to the p = 1 anchor', None)
+    mid = mach_id(mspec)
+    cost = str(rp) + ' * (S m) + ' + str(tl)
+    cases = {}
+    cases[A] = ('    destruct (visX_' + mid + ' m) as (c & Hc & Hq).\n'
+                '    exists 1, c. split; [exact Hc | exact Hq].\n')
+    cases[B] = '    exists 0. eexists. split; reflexivity.\n'
+    for st, nm, off in ((C, 'visC_', '1'), (D, 'visD_', '(3 + 2)')):
+        cases[st] = (
+            '    destruct (' + nm + mid + ' m 3) as (c & Hc & Hq).\n'
+            '    exists (' + cost + ' + ' + off + '), c. split; [| exact Hq].\n'
+            '    apply (chain_' + mid + ' (' + cost + ') ' + off
+            + ' _ (aM m 3)).\n'
+            '    + apply wcol_' + mid + '.\n'
+            '    + exact Hc.\n')
+    viscases = ''.join('  -' + cases[q][3:] for q in range(4))
+    src = (WBOARD2.replace('@PREF@', BOARD_PREFIX).replace('@ID@', mid)
+           .replace('@VISCASES@', viscases)
+           .replace('@SPEC@', mspec).replace('@TABLE@', coq_table(mspec))
+           .replace('@A@', LAB[A]).replace('@B@', LAB[B])
+           .replace('@C@', LAB[C]).replace('@D@', LAB[D])
+           .replace('@RP@', str(rp)).replace('@TLP1M@', str(tl + rp))
+           .replace('@TL@', str(tl)).replace('@T0@', str(t0))
+           .replace('@B0@', str(blk[0])).replace('@B1@', str(blk[1]))
+           .replace('@B2@', str(blk[2])).replace('@B3@', str(blk[3])))
+    if mspec != spec:
+        src = mirrorize(src, spec, mspec)
+        mid = mach_id(spec)
+    path = os.path.join(OUTDIR, BOARD_PREFIX + '_' + mid + '.v')
+    if not write:
+        return (spec, 'dry run', src)
+    with open(path, 'w') as f:
+        f.write(src)
+    if not check:
+        return (spec, 'written', path)
+    ok, log = coqc(path)
+    return (spec, 'BOARDED' if ok else 'coqc FAILED\n' + log, path)
+
+
 def view_emit(specs, write, check):
     for spec in specs or BUCKET:
         s, msg, path = emit(spec, write=write, check=check)
-        if path is None:
-            _s2, msg2, path2 = wemit(spec, write=write, check=check)
-            if path2 is not None or msg2 != 'not a wall bouncer':
+        for alt in (wemit, wemit2):
+            if path is not None:
+                break
+            _s2, msg2, path2 = alt(spec, write=write, check=check)
+            if path2 is not None or not msg2.startswith('not a'):
                 msg, path = msg2, path2
         print('%-29s %s%s' % (s, msg, ('  -> ' + path) if path and write else ''))
 

@@ -16,13 +16,15 @@ the bucket against that read, and then builds it._
 
 ## 1. The one-line result
 
-**6 new boards, all first render, all funext-only.**  `D_remaining`
-**266 → 260**; core undecided **181 → 175**.
+**7 new boards, all first render, all funext-only.**  `D_remaining`
+**266 → 259**; core undecided **181 → 174**.
 
 * **3** — the bucket's `1RB---` rows, quasihalters closed by `QHBound` via
   `LapGlueAbs.glue_qh_abs` (§5).
 * **3** — the wall-bounce class `*_1LA1LC_0LD0LC_1RD1RB`, never-quasihalters
   closed by `LapGlue.glue_neverqh` (§6).
+* **1** — the same class MIRRORED, `0RB1RC_1RC0LB_0RD0RC_1LD1LA` (§6b),
+  transferred by `Mirror.mirror_never_qh`.
 
 Two new files, both mine: `tools/counters/bouncecert.py` (the reader, §2) and
 `theories/Counters/BounceGlue.v` (two sections, §5/§6), plus
@@ -244,57 +246,95 @@ rightward — and refuses any machine whose roles do not land on
 written in state order.  That restriction costs exactly one row, §7's
 `0RB1RC`.
 
+### 6b. The same class, mirrored: `0RB1RC_1RC0LB_0RD0RC_1LD1LA`
+
+Anchor `(StA, ([], S0, repeat S1 n))`, blocks 9, 27, 81 — §6's `x3` macro law
+with the block on the RIGHT, so every lemma runs on the mirrored table and
+`Mirror.mirror_never_qh` transfers the conclusion back (the wave-9 route, no
+new theory).  Its bounce and terminal are bit-for-bit §6's and
+`BounceGlue.WallBounce` proves them unchanged; its roles are
+`(Bq, Cq, Dq) = (StA, StC, StD)` with `StB` the drift, which the section does
+not care about.
+
+**One measured thing differs, and it is one cell.**  Its wall turn writes
+`S0` where §6's writes `S1`:
+
+    §6   tm Bq S0 = 1 L Aq      the drift walks the block with the head ON it
+    §6b  tm Bq S0 = 0 L Aq      the drift walks it with the head in the GAP
+
+so the ripple is `(Bq, (S1 :: S1 :: L, S0, R)) --> (Bq, (S1 :: L, S0, S1 :: R))`
+against §6's `(Aq, (S1 :: L, S1, R)) --> (Aq, (L, S1, S1 :: R))` — and note
+the PEEL: the step that turns the walk around reads the cell below the head,
+and the un-peeled form does not name it, so the sweep does not derive without
+one unit peeled into the prefix.  The standing lesson at the smallest possible
+scale, four waves running.
+
+Collapse `wA n --> wM (n-2) 3` in `5n+2` steps, the same law as `0RB0RB`'s.
+The board is a second template (`bouncecert.wemit2`), not new theory; the
+emitter reads the discriminator off the table and refuses rather than guessing.
+
 ## 7. What did not board, measured
 
-### 7a. `0RB1RC_1RC0LB_0RD0RC_1LD1LA` — the same class, mirrored
+### 7a. `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and `_1LC0LC_` are GRAY-CODE COUNTERS
 
-Anchor `(StA, ([], S0, repeat S1 n))`, blocks 9, 27, 81 — the `x3` macro law
-of §6 with the block on the RIGHT.  Measured on its mirror
-`0LB1LC_1LC0RB_0LD0LC_1RD1RA`, whose wall-bounce roles are
-`(Bq, Cq, Dq) = (StA, StC, StD)` with `StB` as the drift:
+**This corrects a ranking made earlier in this same wave.**  On the strength
+of their turnaround signature — left turnaround PINNED at column −3, right
+turnarounds running the ruler sequence 1, 3, 1, 5, 1, 3, 1, 7, … — these two
+were ranked as bouncer counters needing `MeasureGlue`.  Measured off an
+absolute-coordinate dump, they are not bouncers at all.  The ruler sequence
+was real; it is a Gray code's carry depth, not a nested bounce.
 
-* the bounce and the terminal are IDENTICAL to §6 — `wM (S a) r --> wM a
-  (r+3)` and `wM 0 r --> wA (r+3)`, both at `2*r+5`, verified over an
-  `(a, r)` grid.  `BounceGlue.WallBounce` proves them as they stand; the
-  role assignment is a parameter and the section does not care.
-* the collapse is `wA n --> wM (n-2) 3` in `5n+2` steps, the same law as
-  `0RB0RB`'s.
+The dump (`spacetime.py --lo -6 --hi 14`) shows bits on ODD columns only,
+every even column blank at every rest, and the head resting at column −1 —
+inside the word, on its own blank cell.  Decoding the word above that cell,
+MSB at the far end:
 
-The emitter's drift state and visit case-split were parameterised this wave
-and the `mirror_common.mirrorize` transfer wired behind them, so the mirror
-route is in place.  It does NOT fire on this row, for one measured reason:
-**its drift runs with the head on a BLANK.**  The wall turn writes `S0`
-rather than `S1` (`tab[Bq][S0] = 0 L Aq`), and the ripple is
+    v(k) == 2 * gray(k+1)            33335 / 33335   both machines
+    wall-adjacent bit == k mod 2     33335 / 33335   both machines
 
-    (Aq, (S1 :: L, S0, R))  -->  (Aq, (L, S0, S1 :: R))   in 5 steps
+exact, no exceptions, over a 400k-step replay (`gray n = n XOR (n >> 1)`).
+Taking the EVEN sub-family (`k` odd, `p = (k+1)/2`) makes the wall-adjacent
+bit constant and the word exactly `GpCounter.Gp p = bits (gray (2p))` —
+the tree's own wave-13 Gray fixpoint — written one bit per two cells:
 
-against §6's `(Aq, (S1 :: L, S1, S1 :: R)) --> (Aq, (L, S1, S1 :: S1 :: R))`.
-So `rip1_`, `tail_` and the collapse's first step all need the head symbol
-and the written symbol as parameters.  **Still no new theory** — the whole
-difference is in the collapse, which is per-board anyway.  One row, one
-template variant, and the emitter refuses it rather than guessing.
+    Cc p = (StB, ([S0; S1], S0, exp0 (Gp p)))      exp0 x = S0 :: x :: nil
 
-### 7b. The four rows whose macro anchor is arithmetic
+verified cell-for-cell against the simulator at `p = 1..40`.  **And the lap is
+AFFINE in the carry index**: measured cost `4j + 20` where `j` is the number
+of trailing ones of `p`, i.e. `MonoCounter.cview`'s own `j` —
+
+    j = 0 1 2 3 4        cost = 20 24 28 32 36
+
+so `LapDecider` expresses it as it stands.  This is John's wave-27 §4b read
+("like a grey code where it counts up and down") landing on a second class,
+and the machinery already exists: `theories/Counters/GpCounter.v` and
+`tools/counters/emit_graycert.py`, whose docstring records that the Gray lap
+is affine in the carry index and needs no new soundness surface.
+
+`emit_graycert --spec` reports `no Gray anchor` on both, for two reasons that
+are both representation, not search: its `Gp` is one cell per bit (these are
+two, blank-interleaved), and it offers no fixed frame to the LEFT of the head
+(these have `[S0; S1]`).  **The build is therefore: a `Gp2 p = exp0 (Gp p)`
+with its three decomposition lemmas transported from `GpCounter`'s through the
+`exp0` homomorphism (`exp0` distributes over `++` and sends `rep [S0] j` to
+`rep [S0;S0] j`), then ordinary affine chains and the mirror transfer.**  Two
+rows, one class — they differ in one transition and measure identically down
+to the step — and this is the next wave's first item, ahead of everything else
+in §7.
+
+### 7b. The two rows whose macro anchor is arithmetic
 
     0RB1LB_1LC1RC_1RD0LA_0RC1RB    blocks 3, 6, 9, 12, 15, 18, ...   (+3)
     1RB1LB_1LC0RD_0LB1LA_0LA1RA    blocks 1, 3, 6, 9, 12, 15, ...    (+3)
-    1RB0RD_1LC0LB_1LD0LB_1RD0RA    blocks 1, 5, 7, 9, 11, 13, ...    (+2)
-    1RB0RD_1LC0LC_1LD0LB_1RD0RA    blocks 1, 5, 7, 9, 11, 13, ...    (+2)
 
-These are the cheapest remaining rows and they are ranked first for the next
-wave.  The macro index is arithmetic, not geometric, so the anchor family is
-`Cc p = shape (a*p + b)` with no `Fixpoint` at all; the last two are a
-one-transition pair like §5's.  What stops them today is that their macro lap
-is not one regime: `1RB0RD`'s left turnaround is PINNED at column −3 (a fixed
-wall, not a moving one) and the right turnarounds run the ruler sequence
-1, 3, 1, 5, 1, 3, 1, 7, …, which is a binary counter's carry depth.  Its
-phase envelope is affine — the longest cycle in phase `k` costs `4k+12`,
-measured — while the cycles inside it are not.  So these are bouncer
-COUNTERS in the precise sense the prompt named: the region between the walls
-carries its own count, and the composition is `MeasureGlue.mrun` with the
-abstract state = the bounce index and `mu` = the distance to the wall.
-**That is the first place in this bucket where `MeasureGlue` is actually
-needed**, and it is the shape it was built for.
+The macro index is arithmetic, not geometric, so the anchor family is
+`Cc p = shape (3*p)` with no `Fixpoint` at all — cheaper than anything §6
+needed.  What stops them today is that their macro lap is not one regime:
+their phases hold ~180 turnarounds each with no single dominant column step.
+**Measure them the way §7a was measured — an absolute-coordinate dump and a
+decode of the resting word — BEFORE designing a bounce for them.**  §7a is the
+standing warning: the turnaround signature of these rows is not diagnostic of
+the mechanism, and reading it as one cost this wave a ranking.
 
 ### 7c. `0RB0RD_1LC1RB_1RA0LC_1LB0LC` and `_1LD0LC` — John's "bouncer counter"
 
@@ -339,9 +379,17 @@ taken it should be cheap.
   solid block of ones, whose "value" is a length; a numeral alphabet cannot
   express a length.  Do not widen `ENCDATA`; index the family by the wall.
 * **Assuming the bucket needs `MeasureGlue`.**  Measured: 8 of 19 are plain
-  bouncers whose bounce count is explicit in the anchor, and all 6 boarded
-  here needed plain induction only.  Reach for `mrun` when the phase's cost
+  bouncers whose bounce count is explicit in the anchor, all 7 boarded here
+  needed plain induction only, and two more (§7a) are not bouncers at all but
+  ordinary affine Gray-code counters.  Reach for `mrun` when the phase's cost
   sequence fails the affine fit WITH COVERAGE (§2), not before.
+* **Reading a machine's MECHANISM off its turnaround signature.**  MEASURED
+  AND REFUTED this wave, on this wave's own ranking: `1RB0RD_1LC0LB_*` has a
+  pinned wall and a ruler-sequence turnaround pattern, which reads as a nested
+  binary count inside a bounce.  It is a Gray-code counter with no bounce in
+  it at all, and one absolute-coordinate dump said so.  The turnaround
+  sequence tells you the machine bounces; it does not tell you what it is
+  counting.  Dump the tape.
 * **Ranking a regime by how many cycles it holds.**  Measured: on the rows in
   §7c the drift ripple is 3,199 cycles and the bounce is a handful, and
   ranking by run length picks the drift every time.  Rank by the STEPS the
