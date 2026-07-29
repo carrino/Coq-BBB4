@@ -314,3 +314,59 @@ tie that `k` to the anchor's carry index.  Everything else is assembly.
 Reproduce every number here with the scripts named in this section plus
 `tools/counters/ovfshape.py --spec SPEC -v`.
 
+
+### 7f. Same session: the extractor and the skeleton, BUILT
+
+§7e's items 1 (extractor) and part of 2 (the composition) are no longer
+pending; the fable leg of this session built and validated both.
+
+**`tools/counters/quad_probe.py`** reads the whole law off measured laps —
+boot, micro and terminal as folded step-patterns with affine count laws —
+and validates it differentially: exact restore-point times, exact totals,
+exact successor tape, `j = 2..11`, interior AND overflow.  **29 of 41 gate**
+(13 `Kp`, 10 `Bp`, 6 `Alph_00_10_1`; 13 single-class, 16 with parity
+classes; every one from `j = 2` with no concrete exceptions).  Generalising
+the reader over the class forced four findings the design pass had not seen:
+
+* **anchor-pivot vs DEEP-PIVOT.**  3 of the 29 (`mode=(1, True)`, all `Kp`)
+  walk out once and do their round trips pivoting on the DEEP end, so their
+  boot is `j`-dependent — a law, not a fixed step list.  The reader tries
+  four skeleton modes: records left/right, tracked from the start or from
+  the opposite side's global extreme.
+* **two-cell alphabets set TWO depth records per digit** — the mark count is
+  an affine law `a*j + b`, not `j + const`.
+* **the parity classes differ in LETTERS, not just counts** — per-class
+  templates, with counts fit in the class ORDINAL (a slope of ½ in `k` is
+  no integer fit in `k`).
+* **the terminal folds as `prefix + (2-step block)^(affine) + suffix`** —
+  §7b's "pattern varies" was the flat RLE not folding repeated pairs, not a
+  real irregularity.
+
+**`theories/Tests/QuadMGShape.v`** pins the composition, kernel-checked and
+**axiom-free** (`Print Assumptions quad_lap`: closed under the global
+context): `MeasureGlue.mrun` at abstract state `(k, m)`, `stepA` a PURE pair
+function, `mu = snd`, `P x = fst x + snd x = j` — exactly §7d's table.
+Given a micro hop `Cf k (S m) → Cf (S k) m` and a terminal at `m = 0`, the
+whole quadratic lap is one `csteps` run.  The `(0, j)` entry point needs one
+`change` to eta-pin the pair; that is in the file.
+
+**The 12 that do not gate** are one further shape, the DOUBLE LADDER:
+ascending probe trips, then a DESCENDING ladder of clearing trips inside
+what the reader calls the terminal (visible as block counts descending
+`…5,1,5 … 4,1,4 … 3,1,3…` in the failure prints).  In Coq that is two
+`mrun` compositions back to back — nothing new — but the reader needs to
+segment the terminal recursively before they gate:
+
+    0RB0LA_1LA0RC_0LD1RC_1RB1LD   0RB0LA_1LA1RC_0LD0RC_1LD1RB
+    0RB0LA_1RC1LB_1LA0RD_0LB1RD   0RB1LA_1LC1RB_1RD0LA_0LB0RD
+    0RB1LA_1LC1RB_1RD0LA_0LC0RD   0RB1LC_1LA1RB_0RD0LC_1RD0LA
+    1RB0LC_0LA0RB_0RD1LC_1LA1RD   1RB0LD_0LC0RB_1LA1RC_0RC1LD
+    1RB1LA_0LA1RC_0LD0RC_1LD0RB   1RB1LA_1LC0RD_0RA0LC_0LA1RD
+    1RB1LA_1LC0RD_0RB0LC_0LA1RD   1RB1LC_0LA0RB_0RD0LC_1RD1LA
+
+What remains for a board is §7e items 1'-6: the two-index denotation
+`Cf k m` (the cascade's `Dc l m` pattern), the micro chain and `Hterm` in
+sside form with their `cden` bridges, the standard wrapping, and the
+emitter.  Hand-board the exemplar `0RB0LA_1LA0LC_0RD1LC_1RB1RD` first —
+micro `B1R0 (C1R1)^i C0L0 (D1L1)^i D0L1`, term `B0R1 (A1R0)^(j+4)`, boot
+`A0L0`, everything validated to `j = 11`.

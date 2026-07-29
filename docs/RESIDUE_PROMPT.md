@@ -223,19 +223,30 @@ THEN, in ranked order (all independent of the above):
       of times; these make Theta(j) excursions, so no derive_chain widening
       reaches them at any peel, split or budget.  That is a proof from the
       shape, not a failed search, and it explains WAVE16 section 5.
-      THE ROUTE IS MeasureGlue.v, which already exists and was built for
-      exactly this ("chains an unbounded number of micro laps ... only a
-      measure bounds how many"); costs are existentially quantified there, so
-      a quadratic total is no obstruction -- only the structure must be
-      uniform, and it is.  Instantiation and endpoint shapes are in WAVE26
-      7d; what is left (7e) is ENGINEERING, not discovery: an extractor that
-      reads (probe chain body, stride, parity) off one lap, a MeasureGlue
-      board template, the k = 2i+r re-index for the 4 parity rows, and the
-      wave-18 differential validator.  No new library Coq is predicted.  The
-      one piece with no precedent in the tree is Hterm -- the terminal sweep
-      writes the carry then clears the probed digits, so its chain count is
-      the FINAL k, and the board has to tie that k to the anchor's carry
-      index.  Check that early; everything else is assembly.
+      THE ROUTE IS MeasureGlue.v, and BOTH halves of it are now built and
+      validated (WAVE26 7f, same session):
+        * tools/counters/quad_probe.py reads the whole law -- boot, micro,
+          terminal as folded step-patterns with affine count laws -- and
+          validates it at EXACT step counts, j = 2..11, interior AND
+          overflow: 29 OF 41 GATE (13 Kp, 10 Bp, 6 Alph_00_10_1; 26
+          anchor-pivot + 3 deep-pivot whose boot is a j-dependent law; 16
+          need parity classes; all from j = 2, no concrete exceptions).
+        * theories/Tests/QuadMGShape.v pins the composition KERNEL-CHECKED
+          and AXIOM-FREE: MeasureGlue.mrun at abstract state (k, m), stepA
+          a pure pair function, mu = snd, P x = fst x + snd x = j.  Micro
+          hop + terminal => the whole quadratic lap, one csteps run.
+      The 12 that do not gate are ONE further shape -- the DOUBLE LADDER
+      (ascending probes, then a descending clearing ladder inside the
+      terminal; named in WAVE26 7f) -- two mrun compositions back to back;
+      the reader needs recursive terminal segmentation before they gate.
+      WHAT REMAINS FOR A BOARD is assembly (WAVE26 7e): the two-index
+      denotation Cf k m (the cascade's Dc l m pattern), the micro chain and
+      Hterm in sside form with their cden bridges, the standard wrapping,
+      and the emitter.  HAND-BOARD THE EXEMPLAR 0RB0LA_1LA0LC_0RD1LC_1RB1RD
+      FIRST (micro B1R0 (C1R1)^i C0L0 (D1L1)^i D0L1, term B0R1 (A1R0)^(j+4),
+      boot A0L0, validated to j = 11); Hterm -- whose chain count is the
+      FINAL k, tied to the anchor's carry index -- is the one piece with no
+      precedent, so do it first.  Then the emitter, then the 29.
 
       The 13 PARITY-AFFINE are IN model after the m=2 re-index (j = 2i+r), but
       wave-14 measured only ~3 of the 13 derive both branches naively, so do
