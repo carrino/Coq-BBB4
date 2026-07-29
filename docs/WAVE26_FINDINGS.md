@@ -1,10 +1,15 @@
-# Wave-26: the cascade bucket, closed out — and what the residue of it is
+# Wave-26: the cascade bucket, closed out — and the 41 QUAD/QUAD, characterised
 
 _Branch `claude/residue-reduction-4-2-dpb65q`, 2026-07-29.  Wave-25 boarded
 the 57 gated cascade machines and 8 of the 12 octave-down rows, and named the
 remaining 4 precisely (`docs/WAVE25_FINDINGS.md` §7): the same octave-down
 shape except the closing count **enters one value in**.  This wave boards
-those 4 and then re-measures the 17 one/two-count rows the bucket has left._
+those 4, re-measures the 17 one/two-count rows the bucket has left (§3-4),
+and then takes the design pass `RESIDUE_PROMPT.md` item (1) asks for on the
+41 `QUAD`/`QUAD` rows — the largest never-designed population in the residue.
+**§7 is that pass, and it is the most reusable thing in this document:** the
+41 are ONE shape, measured with no exceptions, and the composition theorem
+they need is already in the tree._
 
 ## 1. The one-line result
 
@@ -172,3 +177,112 @@ Add:
 * Reading the 3 shadow-only rows as a one-count-per-level cascade — the five
   descending segments are nested re-decodings of ONE span, not five counts,
   and two of the three measure overflow `HIGHER`.
+
+## 7. Same session: the 41 QUAD/QUAD, characterised — one shape, all of them
+
+`RESIDUE_PROMPT.md` item (1) calls the 41 `QUAD`/`QUAD` rows of the
+`no interior chain` bucket "the largest population in the whole residue that
+has never had a design pass".  This is that pass.  It is measurement only —
+nothing is boarded — but the class turns out to be **completely uniform**, and
+the composition theorem it needs **already exists**.
+
+### 7a. What they are
+
+A binary increment whose **carry is done by linear search**: to find the first
+zero digit the head makes ONE ROUND TRIP PER DIGIT, out to the digit and back
+to the anchor, before probing one digit deeper.  `Θ(j)` excursions of length
+`Θ(k)` gives `Θ(j²)` — the measured quadratic, on the nose.
+
+Here is one whole interior lap, `p = 47 → 48` at carry index `j = 4`, of
+`0RB1LA_1LC1RD_1RD1LD_1RB0LA`'s cluster-mate
+`0RB0LA_1LA0LC_0RD1LC_1RB1RD` (mirrored spec `0LB0RA_1RA0RC_0LD1RC_1LB1LD`,
+`Kp@A`, `tools/counters/spacetime.py --t0 324 --t1 355 --lo -7 --hi 4`).  The
+counter word reads leftward from the head, LSB nearest: `47 = 111101` in `Kp`.
+
+```
+         col  -7........4      head
+324  A p=0    010111100000     at the anchor, word = 1 1 1 1 0 1
+326  C p=0    010111000000     probe depth 1: clear it ...
+328  B p=-2   010111100000     ... restored, one deeper
+329  C p=-1   010110100000     probe depth 2 ...
+333  B p=-3   010111100000     ... restored, one deeper
+334  C p=-2   010101100000     probe depth 3 ...
+340  B p=-4   010111100000     ... restored, one deeper
+341  C p=-3   010011100000     probe depth 4 ...
+349  B p=-5   010111100000     ... restored, one deeper
+350  A p=-4   011111100000     depth 5 is the first ZERO digit -> SET it
+351  A p=-3   011011100000     and sweep back right, clearing the ones
+354  A p=0    011000000000     lap done: 48 = 000011
+```
+
+Cost `2+4+6+8+10 = 30`, exactly the measured `(j+1)(j+2)` at `j = 4`.
+
+### 7b. Three measurements, all 41 machines, no exceptions
+
+| measurement | result |
+|---|---|
+| interior lap polynomial fits an exact integer quadratic | **41 / 41** |
+| **overflow polynomial is the SAME polynomial** as the interior | **41 / 41** |
+| head-direction **reversals per lap affine in `j`, slope exactly 2** | **41 / 41** |
+| micro-lap (one excursion) run-length-encodes to a fixed letter pattern with counts affine in the probe index `k` | 33 / 41 directly; the other **8 alternate between two increments** — the parity pattern, uniform after the `k = 2i+r` re-index, and all 8 are `Bp` |
+
+The leading coefficient is the alphabet's word stride: `1·j²` for the 25 `Kp`
+rows (1-cell digits), `2·j²` for the 10 `Bp` and 6 `Alph_00_10_1` rows (2-cell
+digits).  Example micro-lap bodies: `B·Cᵏ·Dᵏ`, `CD`, `AB`, `DAB`, `AC` — a
+handful of shapes, each a fixed letter pattern with counted runs.
+
+That overflow and interior are the *same polynomial* says the machine does not
+treat overflow specially at all: the carry search simply runs one digit
+further.  A route that takes the interior branch takes the overflow branch for
+free, which is why this bucket is `no interior chain` and not
+`no interior chain` + something else.
+
+### 7c. Why no chain search can ever reach them
+
+A `LapDecider` chain is a fixed list of window steps, so it sweeps a **bounded**
+number of times and `srun` returns `ca*i + cb`.  These laps make `Θ(j)`
+excursions — reversal count affine in `j` with slope 2, measured on all 41.
+**No `derive_chain` widening reaches them at any peel, split, or budget**, and
+this is a proof from the shape rather than a failed search.  It is consistent
+with `WAVE16_FINDINGS.md` §5's do-not-retry list and explains it.
+
+### 7d. The route: `MeasureGlue`, which already exists
+
+`theories/Counters/MeasureGlue.v` was built for exactly this and its docstring
+describes this class almost word for word — *"a bounce macro-lap `D(k) → D(k+1)`
+is not one parametric run: it chains an unbounded number of micro laps … and
+only a measure bounds how many"*.  `mrun` composes a measure-decreasing
+recurrence of exact micro laps into one `csteps` run, and costs are
+existentially quantified throughout, so a quadratic total is no obstruction at
+all — only the *structure* has to be uniform, and it is.
+
+The instantiation the 41 want:
+
+| `MeasureGlue` variable | here |
+|---|---|
+| `A` (abstract micro state) | the probe depth `k` |
+| `stepA k` | `Some (k+1)` while digit `k` is set; `None` at the first clear digit |
+| `mu k` | `j + 1 - k` |
+| `Cf k` | head at the `k`-th digit, word unchanged — the tape at `t = 328/333/340/349` above is literally identical |
+| `Hstep` | the micro-lap chain, uniform in `k` |
+| `Hterm` | the carry write plus the clearing sweep (`t = 350..354`) |
+
+The micro-lap's endpoints are both plain ssides: the region left of the deepest
+probe is never touched, so it is an **arbitrary opaque tail** exactly like the
+cascade's `Cin T v`; the region right of the head is the `k-1` already-probed
+digits plus the anchor tail, a count of `k-1` with `a = 1`.  One digit crosses
+from the opaque region to the counted one per step, which is precisely the
+`Xs`-shaped opaque region `nestcert._xterm` already reads off a framing.
+
+### 7e. What is NOT done, and the first thing to do
+
+No board, and no emitter route.  The one thing to measure next is the
+**micro-lap chain under `_frame_pair`** — the same first move that turned the
+10 two-count rows around in §4, and by §7b's uniformity it should derive.  If
+it does, the 41 need: an extractor that reads `(probe body, stride, parity)`
+off one lap, a `MeasureGlue` instantiation in the board template, and the
+`k = 2i+r` re-index for the 8 `Bp` rows.  No new library Coq is predicted —
+`MeasureGlue.v` is funext-clean and already carries the composition.
+
+Reproduce every number here with the scripts named in this section plus
+`tools/counters/ovfshape.py --spec SPEC -v`.

@@ -197,11 +197,36 @@ THEN, in ranked order (all independent of the above):
 
   (1) 105 "no interior chain" -- the second-largest bucket and the most
       shape-diverse: QUAD 41, AFFINE/AFFINE 14, HIGHER 13, PARITY-AFFINE 13,
-      EXP3 10, EXP2 8, EXP4 6.  The 41 QUAD/QUAD are the largest population in
-      the whole residue that has never had a design pass -- a quadratic
-      interior AND overflow, outside the affine certificate model.
-      Bounce_8.v's MeasureGlue nesting is the precedent.  The 13
-      PARITY-AFFINE are IN model after the m=2 re-index (j = 2i+r), but
+      EXP3 10, EXP2 8, EXP4 6.
+
+      THE 41 QUAD/QUAD NOW HAVE THEIR DESIGN PASS -- WAVE26 section 7, and it
+      is the best-characterised unboarded population in the residue.  They are
+      ONE shape with no exceptions: a binary increment whose CARRY IS DONE BY
+      LINEAR SEARCH, one round trip per digit, out to the digit and back,
+      before probing one deeper.  Measured over all 41:
+        * the interior lap fits an exact integer quadratic       41/41
+        * the OVERFLOW polynomial is the SAME polynomial          41/41
+          (so a route that takes the interior takes the overflow free)
+        * head-direction REVERSALS per lap are affine in j,       41/41
+          slope exactly 2 -- one extra round trip per extra digit
+        * the micro-lap RLEs to a fixed letter pattern with counts
+          affine in the probe index k                            33/41
+          (the other 8 alternate two increments -- the parity shape,
+           uniform after the k = 2i+r re-index, and all 8 are Bp)
+      Leading coefficient = the alphabet's word stride: 1*j^2 for the 25 Kp,
+      2*j^2 for the 10 Bp and 6 Alph_00_10_1.
+      DO NOT SEARCH FOR AN INTERIOR CHAIN.  A chain sweeps a BOUNDED number
+      of times; these make Theta(j) excursions, so no derive_chain widening
+      reaches them at any peel, split or budget.  That is a proof from the
+      shape, not a failed search, and it explains WAVE16 section 5.
+      THE ROUTE IS MeasureGlue.v, which already exists and was built for
+      exactly this ("chains an unbounded number of micro laps ... only a
+      measure bounds how many"); costs are existentially quantified there, so
+      a quadratic total is no obstruction -- only the structure must be
+      uniform, and it is.  Instantiation, endpoint shapes and the first thing
+      to measure (the micro-lap chain under _frame_pair) are in WAVE26 7d/7e.
+
+      The 13 PARITY-AFFINE are IN model after the m=2 re-index (j = 2i+r), but
       wave-14 measured only ~3 of the 13 derive both branches naively, so do
       not oversize it.
 
