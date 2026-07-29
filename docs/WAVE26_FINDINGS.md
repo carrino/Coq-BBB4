@@ -435,3 +435,49 @@ tail/edge.  Per-shape:
 **Ranking consequence**: 104 rows with an anchor in hand and affine costs
 is a bigger and cheaper bite than the QUAD 29 — the skip-counter route
 (virtual anchor + `glue_neverqh`) should go FIRST in the next wave.
+
+### 8b. Addendum: three more hand-reads, all confirmed (25-for-25)
+
+* **`0RB0LC_1LC1RB_1LD1LA_1RD0RC`** (alternate-octave): John — "similar to
+  the counter, with ~3 extra columns to the left of the LSB, changing
+  `110 → 010 → 000` on MSB carry."  Confirmed and sharpened: the tape is
+  `[register][1b-pairs]`, and the REGISTER, not the counter, is what
+  alternates.  Odd octaves: register at one value, every count rests
+  `A@L`.  Even octaves: the machine rests with the head INSIDE the
+  register on its blank cell (`11[0]…pairs`, col −1/−2), and the register
+  steps mid-octave at a `B@R` rest at `2^(k+1)−2`.  So the family is
+  (register state × counter), a FINITE union of anchor forms with
+  register steps at measured points — the same piecewise-`Cc` device as
+  skip-`s`, one register dimension richer.  This is the shape of the 107.
+* **`0RB1LD_1LC1RB_1LA1RC_0RC0LA`**: John — "just an interleaved counter,
+  1 to the left of each bit."  Confirmed: dominant rest key `StD@L`,
+  2,478 consecutive values.  The encoding is plain; the skip-4 gap
+  (`{2^k..2^k+3}` never resting) is real but orthogonal — the carry is
+  spent without pausing, which is exactly what the VIRT device expresses.
+* **`0RB0LC_1LC1RB_1RD1LA_1LC0RC`**: same — plain counter, `StA@L`,
+  2,494 consecutive values, skip-1 with a concrete head below `v = 7`.
+
+The picture is now uniform across the whole 211: ONE encoding (John's
+"1 to the left of every bit"), THREE resting regimes (skip-s, register ×
+counter, and the plain form), and every hand-read so far has confirmed
+mechanically.  The boarding device is the same piecewise `Cc` +
+`glue_neverqh` in all three regimes.
+
+### 8c. The 107, split by a crude edge-scan — and one more read (26-for-26)
+
+John: `0RB0LC_1LC1RB_1RD1LA_1LD1LB` is "a normal counter, 1 to the left of
+each bit, and 2 extra ones on the right."  Confirmed: `StA@L`, 2,488
+resting values, FULLY CONSECUTIVE — no skip, no register.  The constant
+`11` suffix is simply a tail the anchor enumeration never offered.  So
+`anchors()` has TWO gaps, not one: the `phase_mid` closure (§8) and the
+TAIL/PREFIX enumeration.
+
+A crude edge-only scan splits the 107: **4 plain-full** (missed tail —
+flat route as-is once the tail is offered), **20 register-like**
+(alternate-octave coverage), **83 not caught by the crude scan** — their
+rests are mid-tape (the register machine's rests sit INSIDE the register
+on its blank cell) or framed by prefixes/suffixes the scan does not try.
+Every hand-read row from this bin so far has been the same encoding, so
+the 83 are expected to fall to the same tolerant reader the next wave
+builds anyway: head-anywhere rests, constant prefix/suffix frames, the
+register dimension.  Hand-inspection: 26-for-26.
