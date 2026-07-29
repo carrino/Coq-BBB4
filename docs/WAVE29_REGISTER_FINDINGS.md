@@ -330,8 +330,28 @@ covers "from `v0` to `v0 + 2^k - 1`".
 
 So the missing piece is a **bounded inner carrier**: the same well-founded
 induction on `JpCounter.tovf`, stopped at a measured endpoint instead of at
-the fill.  That is one lemma next to `inner_to_fill_lift`, and behind it sit
-the 95.
+the fill.  That is one lemma next to `inner_to_fill_lift`.
+
+### 5e. Swept: where the 113 actually stop
+
+`tailcert.py --list` over all 113 (`tools/counters/tail113.json`), reporting
+the FURTHEST gate either orientation reached:
+
+| n | gate |
+|---:|---|
+| **66** | `no interior j=0 chain` — the split's concrete `j = 0` lap does not derive; a THIRD framing, not a theory gap |
+| 22 | `no inner family at pow2 j` — the partial-octave inner counter of §5d |
+| 18 | `no gap-free two-form family` — the reader still misses these |
+| 4 | `no interior j=0 chain` at the other parity |
+| 1 | `no boot chain` |
+| **2** | fully derive and validate (192 anchors, 2 nested overflows, 18 inner laps) — and both are rows this wave already boarded through `regcert.py`, so they add nothing |
+
+So the two-form route as it stands boards **zero new machines**: the reader
+reaches 95 rows, but 70 of them stop at a `j = 0` framing gate before any of
+the exponential machinery is reached.  That gate is the cheap thing to attack
+next — it is the PEEL question one notch further in, and it stands in front of
+70 rows.  The two rows that DO derive end-to-end are the proof that the rest
+of the route is sound.
 
 ## 6. The 4 `plain+virt`: they are the four `Jp` gray-code rows
 
