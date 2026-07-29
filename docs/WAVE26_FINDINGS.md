@@ -462,3 +462,22 @@ The picture is now uniform across the whole 211: ONE encoding (John's
 counter, and the plain form), and every hand-read so far has confirmed
 mechanically.  The boarding device is the same piecewise `Cc` +
 `glue_neverqh` in all three regimes.
+
+### 8c. The 107, split by a crude edge-scan — and one more read (26-for-26)
+
+John: `0RB0LC_1LC1RB_1RD1LA_1LD1LB` is "a normal counter, 1 to the left of
+each bit, and 2 extra ones on the right."  Confirmed: `StA@L`, 2,488
+resting values, FULLY CONSECUTIVE — no skip, no register.  The constant
+`11` suffix is simply a tail the anchor enumeration never offered.  So
+`anchors()` has TWO gaps, not one: the `phase_mid` closure (§8) and the
+TAIL/PREFIX enumeration.
+
+A crude edge-only scan splits the 107: **4 plain-full** (missed tail —
+flat route as-is once the tail is offered), **20 register-like**
+(alternate-octave coverage), **83 not caught by the crude scan** — their
+rests are mid-tape (the register machine's rests sit INSIDE the register
+on its blank cell) or framed by prefixes/suffixes the scan does not try.
+Every hand-read row from this bin so far has been the same encoding, so
+the 83 are expected to fall to the same tolerant reader the next wave
+builds anyway: head-anywhere rests, constant prefix/suffix frames, the
+register dimension.  Hand-inspection: 26-for-26.
