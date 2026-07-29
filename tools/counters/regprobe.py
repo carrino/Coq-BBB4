@@ -328,3 +328,67 @@ def grow_scan(rows, pmax=140):
 
 if __name__ == '__main__':
     main()
+
+
+def two_form(spec, encs=None, maxtail=3, maxfar=3, maxT=400000,
+             vlo=8, vhi=256):
+    """John's read of `0RB0RC_1LC1RB_0LD1RA_1RC1LD` (wave-29), mechanised:
+    "a pure counter with a 1 to the left of each bit, msb on the left, and 2
+    ones to the left of the msb".
+
+    Under `Alph_01_11_11` that machine is a PLAIN counter -- no wall, no
+    register -- whose anchor family alternates its TAIL by octave parity:
+    `C@[S1]` on odd octaves, `C@[S0;S1;S1]` on even ones, and the union
+    covers 8..255 with NO gaps.  The "growing `[S1;S1]` wall" every earlier
+    reader saw is the counter's own leading zero-pairs read under the wrong
+    alphabet.
+
+    So this scan looks for a PAIR of anchor keys whose union is gap-free and
+    which splits by octave parity.  Returns the best such pair, or None."""
+    import collections as _c
+    from emit_interleave import parse as _parse
+    encs = encs or list(EL.ENCS)
+    tab = _parse(spec)
+    luts = {}
+    for e in encs:
+        f = EL.ENC[e]
+        luts[e] = {tuple(f(v)): v for v in range(1, vhi + 1)}
+    vals = _c.defaultdict(set)
+    cfg = (0, (), 0, ())
+    for _ in range(maxT):
+        try:
+            cfg = RS.LC.wstep(tab, False, False, cfg)
+        except RS.LC.Halt:
+            break
+        q, l, h, r = cfg
+        if h:
+            continue
+        rr = RS.LC.rstrip0(r)
+        if len(rr) > maxfar:
+            continue
+        for k in range(maxtail + 1):
+            if k > len(l) - 1:
+                break
+            w = tuple(l[:len(l) - k]) if k else tuple(l)
+            tl = tuple(l[len(l) - k:]) if k else ()
+            for e in encs:
+                v = luts[e].get(w)
+                if v is not None and vlo <= v <= vhi:
+                    vals[(e, q, tl, rr)].add(v)
+    best = None
+    keys = sorted(vals, key=lambda k: -len(vals[k]))[:40]
+    for i, a in enumerate(keys):
+        for b in keys[i:]:
+            if a[0] != b[0]:
+                continue
+            u = vals[a] | vals[b]
+            if not all(v in u for v in range(vlo, vhi)):
+                continue
+            pa = {v.bit_length() - 1 for v in vals[a]}
+            pb = {v.bit_length() - 1 for v in vals[b]}
+            if a != b and (pa & pb):
+                continue
+            score = (a == b, -len(vals[a]) - len(vals[b]))
+            if best is None or score < best[0]:
+                best = (score, a, b)
+    return None if best is None else (best[1], best[2])
