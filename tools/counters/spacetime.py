@@ -62,6 +62,8 @@ def main():
     ap.add_argument('--lo', type=int)
     ap.add_argument('--hi', type=int)
     ap.add_argument('--ruler', action='store_true')
+    ap.add_argument('--mark', action='store_true',
+                    help='show the state letter AT the head cell')
     ap.add_argument('--rests', action='store_true',
                     help='only rows whose head reads a BLANK')
     a = ap.parse_args()
@@ -71,7 +73,11 @@ def main():
         n = len(rows[0][3])
         print('%-8s %-2s %-4s %s' % ('', '', 'col', ''.join(
             str((lo + i) % 10) for i in range(n))))
+    lo0 = a.lo if a.lo is not None else 0
     for (t, q, pos, row, head) in rows:
+        if a.mark and lo0 <= pos < lo0 + len(row):
+            i = pos - lo0
+            row = row[:i] + q.lower() + row[i + 1:]
         print('%-8d %s p=%-4d %s' % (t, q, pos, row))
 
 

@@ -176,7 +176,26 @@ def main():
     ap.add_argument('--kind')
     ap.add_argument('--pmax', type=int, default=140)
     ap.add_argument('--nested', help='comma-separated octaves to probe')
+    ap.add_argument('--grow', action='store_true',
+                    help='fit the growing far, lowest octave held out')
     a = ap.parse_args()
+    if a.grow:
+        rows = [r for r in json.load(open(a.json))
+                if not a.kind or r['kind'] == a.kind]
+        import collections as _c
+        cnt = _c.Counter()
+        for spec, got, byoct in grow_scan(rows, a.pmax):
+            if isinstance(got, dict):
+                key = 'grow-%s/%s drop=%d' % (''.join(map(str, got['unit'])),
+                                              got['mode'], got['drop'])
+            else:
+                key = str(got)
+            cnt[key] += 1
+            print('%-40s %s' % (spec, key))
+        print()
+        for k, v in cnt.most_common():
+            print('%5d  %s' % (v, k))
+        return
     if a.nested:
         ks = [int(x) for x in a.nested.split(',')]
         rows = ([r for r in json.load(open(a.json))
@@ -213,6 +232,72 @@ def main():
         print(fmt(law, cls))
         print()
 
+
+
+
+def grow_law(byoct, ks, drop=1):
+    """Fit `far = pre ++ rep u m ++ post` over the octaves, holding out the
+    lowest [drop] of them.
+
+    `regscan.frame_law` fits the growth from ks[0] and requires the unit to
+    be APPENDED, so a family whose lowest octave is exceptional (a different
+    state, or a shorter far) or whose unit is PREPENDED falls through to
+    `drift`.  Measured over the 113: that is the whole of the `drift`
+    bucket."""
+    ks = [k for k in ks if k >= ks[0] + drop]
+    if len(ks) < 3:
+        return None
+    q0 = byoct[ks[0]][0]
+    if any(byoct[k][0] != q0 for k in ks):
+        return None
+    f0, f1 = tuple(byoct[ks[0]][1]), tuple(byoct[ks[1]][1])
+    d = len(f1) - len(f0)
+    if d <= 0:
+        return None
+    for mode in ('append', 'prepend'):
+        if mode == 'append':
+            u = f1[len(f0):]
+            ok = f1[:len(f0)] == f0
+            fam = lambda i, u=u: f0 + u * i                     # noqa: E731
+        else:
+            u = f1[:d]
+            ok = f1[d:] == f0
+            fam = lambda i, u=u: u * i + f0                     # noqa: E731
+        if not ok or not u:
+            continue
+        if all(tuple(byoct[k][1]) == fam(k - ks[0]) for k in ks):
+            return dict(unit=list(u), mode=mode, base=list(f0), st=q0,
+                        k0=ks[0], octs=len(ks))
+    return None
+
+
+def grow_scan(rows, pmax=140):
+    """The `drift` question, answered: re-walk each row and fit [grow_law]
+    with the lowest octave held out."""
+    import regcert as RC
+    out = []
+    # the chase caps the far side at [regscan.FARMAX] = 8 cells, which a
+    # GROWING far outruns after three octaves -- so the reader, not the
+    # machine, is what stopped the walk.  Widen it for this fit.
+    save, RS.FARMAX = RS.FARMAX, 40
+    for r in rows:
+        try:
+            ds = (mirror_spec(r['spec']) if r['mirror'] else r['spec'])
+            _, cfgs, v0 = RC.walk(ds, r['enc'], tuple(r['tail']), pmax)
+            byoct, atpow, virt, ks = RC.read_frames(cfgs, max(8, v0))
+        except Exception as e:                                 # noqa: BLE001
+            out.append((r['spec'], 'walk: %s' % e, None))
+            continue
+        got = None
+        for drop in (0, 1, 2):
+            got = grow_law(byoct, ks, drop)
+            if got:
+                got['drop'] = drop
+                break
+        out.append((r['spec'], got, {k: (LAB[q], f)
+                                     for k, (q, f) in byoct.items()}))
+    RS.FARMAX = save
+    return out
 
 if __name__ == '__main__':
     main()

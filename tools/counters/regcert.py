@@ -126,22 +126,50 @@ def read_frames(cfgs, floor):
     return byoct, atpow, virt, ks
 
 
-def frame_law(byoct, virt, ks):
-    """(period, forms, virtual residue).  Only P = 1 and P = 2 are wired."""
-    for P in (1, 2):
-        forms = [byoct[k] for k in ks[:P]]
-        if not all(byoct[k] == forms[(k - ks[0]) % P] for k in ks):
-            continue
-        if not virt:
-            vres = None
-        else:
-            vres = virt[0] % 2 if P == 2 else 0
-            bad = [k for k in ks if (k in virt) !=
-                   ((k % 2 == vres) if P == 2 else True)]
-            if bad:
-                continue
-        return P, forms, vres
-    raise RegError('frame law is not period 1 or 2')
+def frames_by_parity(byoct, atpow, virt, ks):
+    """(frame far by octave parity, VIRT far by octave parity, the [virt]
+    selector, the two states).
+
+    The octave frame is read as a function of the parity of the octave, and
+    so is the VIRTUAL frame -- on two of the four `period-2+virt` rows the
+    machine rests at EVERY power of two in a transient frame, and that frame
+    alternates too."""
+    st_f = byoct[ks[0]][0]
+    if any(byoct[k][0] != st_f for k in ks):
+        raise RegError('frame STATE varies by octave')
+    fpar = {}
+    for k in ks:
+        b = k % 2
+        if b in fpar and fpar[b] != byoct[k][1]:
+            raise RegError('frame far is not a function of octave parity')
+        fpar[b] = byoct[k][1]
+    if len(fpar) < 2:
+        raise RegError('walk covers only one octave parity')
+    if not virt:
+        raise RegError('no virtual anchor: the flat/nested route applies')
+    st_v = atpow[virt[0]][0]
+    if any(atpow[k][0] != st_v for k in virt):
+        raise RegError('virtual frame STATE varies by octave')
+    fparv = {}
+    for k in virt:
+        b = k % 2
+        if b in fparv and fparv[b] != atpow[k][1]:
+            raise RegError('virtual far is not a function of octave parity')
+        fparv[b] = atpow[k][1]
+    vp = sorted(fparv)
+    if len(vp) == 2:
+        vsel = 'true'
+    elif vp == [0]:
+        vsel = 'negb (podd p)'
+    else:
+        vsel = 'podd p'
+    # every octave of a virtual parity must actually be virtual
+    for k in ks:
+        if (k % 2 in fparv) != (k in virt):
+            raise RegError('virtuality is not a function of octave parity')
+    for b in (0, 1):
+        fparv.setdefault(b, fparv[vp[0]])
+    return fpar, fparv, vsel, st_f, st_v
 
 
 # ------------------------------------------------------------ derivation ---
@@ -204,78 +232,91 @@ def derive(spec, enc, tail, mirrored, pmax=PMAX):
 
     floor = max(8, v0)
     byoct, atpow, virt, ks = read_frames(cfgs, floor)
-    P, forms, vres = frame_law(byoct, virt, ks)
-    if not virt:
-        raise RegError('no virtual anchor: the flat/nested route applies')
-    st_f = forms[0][0]
-    if any(f[0] != st_f for f in forms):
-        raise RegError('frame STATE varies by octave; not wired')
-    st_v, far_v = atpow[virt[0]]
-    if any(atpow[k] != (st_v, far_v) for k in virt):
-        raise RegError('virtual frame varies by octave')
-    # forms indexed by octave parity: fpar[b] is the far side at octaves
-    # whose parity is b.  [podd p = true] iff the octave is odd.
-    if P == 1:
-        fpar = {0: forms[0][1], 1: forms[0][1]}
-    else:
-        fpar = {ks[0] % 2: forms[0][1], (ks[0] + 1) % 2: forms[1][1]}
+    fpar, fparv, vsel, st_f, st_v = frames_by_parity(byoct, atpow, virt, ks)
+    vpar = sorted({k % 2 for k in virt})
     p0 = 1 << ks[0]
 
-    # ---- the interior lap: ONE chain, the frame carried as the RIGHT
-    # opaque tail, so both parities go through it.
-    A0 = (st_f, ((), uS, 1, 0, sS), 0, F(()))
-    A1 = (st_f, ((), uD, 1, 0, sD), 0, F(()))
-    chi, ri = _chain(tab, False, False, A0, A1)
-    if chi is None or ri[0] != A1:
-        raise RegError('no interior chain (frame-opaque)')
-    if ri[2] == 0:
-        raise RegError('interior lap of zero length at j=0')
+    # ---- the interior lap, one chain per octave parity.  The frame sits
+    # in the chain's own right side (the head steps onto it on some
+    # machines), so it is CONCRETE and the opaque right tail is empty.
+    #
+    # READ THE LANDING, NOT ITS PADDING.  The chase strips trailing blanks
+    # off the far side, so a frame the machine actually leaves as [.. S0]
+    # is reported one cell short -- and then the interior lap lands one
+    # written blank past the anchor and closes only up to [lift], which
+    # [SkipGlue.reach_ovf_skip] cannot use.  Recover the padding by trying
+    # it: whichever far makes the interior chain land EXACTLY is the frame,
+    # and the whole board is then stated against it.
+    ints = {}
+    for b in (0, 1):
+        got = None
+        for pad in range(3):
+            far = tuple(fpar[b]) + (0,) * pad
+            A0 = (st_f, ((), uS, 1, 0, sS), 0, F(far))
+            A1 = (st_f, ((), uD, 1, 0, sD), 0, F(far))
+            ch, r = _chain(tab, False, True, A0, A1)
+            if ch is not None and r[0] == A1 and r[2] > 0:
+                got = (far, A0, A1, ch, (r[1], r[2]))
+                break
+        if got is None:
+            raise RegError('no interior chain at octave parity %d' % b)
+        fpar[b] = got[0]
+        ints[b] = dict(A0=got[1], A1=got[2], ch=got[3], c=got[4])
 
-    # ---- the overflow laps, one per octave parity.  The target at
-    # 2^(S j) is the VIRTUAL anchor when (S j) is a virtual octave and the
-    # next octave's ordinary frame otherwise.
-    VIRTC = (st_v, ((), uD, 1, 1, soD + tail), 0, F(far_v))
+    # ---- the overflow laps, one per octave parity.  The anchor at
+    # 2^(S j) is virtual exactly when (S j)'s parity is a virtual one.
     ovf = {}
     for b in (0, 1):
         B0 = (st_f, ((), uS, 1, 0, soS + tail), 0, F(fpar[b]))
-        tgt_virt = (P == 2 and vres == (1 - b)) or (P == 1)
+        nb = 1 - b
+        tgt_virt = nb in vpar
         if tgt_virt:
-            B1 = VIRTC
+            B1 = (st_v, ((), uD, 1, 1, soD + tail), 0, F(fparv[nb]))
         else:
-            B1 = (st_f, ((), uD, 1, 1, soD + tail), 0, F(fpar[1 - b]))
+            B1 = (st_f, ((), uD, 1, 1, soD + tail), 0, F(fpar[nb]))
         ch, r = _chain(tab, True, True, B0, B1)
         if ch is None or r[0] != B1:
             raise RegError('no overflow chain at octave parity %d' % b)
         ovf[b] = dict(B0=B0, B1=B1, ch=ch, c=(r[1], r[2]), virt=tgt_virt)
-        if P == 1:
-            ovf[1] = ovf[0]
-            break
 
-    # ---- the register step: out of the virtual anchor, into the octave's
-    # own frame.  Flat first, then the nested composition.
-    vb = virt[0] % 2 if P == 2 else virt[0] % 1
-    VP = (st_v, (uD, uD, 1, 0, soD + tail), 0, F(far_v))
-    VT = (st_f, (uS, uD, 1, 0, soD + tail), 0, F(fpar[vb]))
-    chv, rv = _chain(tab, True, True, VIRTC, VT)
-    nest = None
-    if chv is not None and rv[0] == VT:
-        vlap = dict(kind='flat', ch=chv, c=(rv[1], rv[2]), T=VT)
-    else:
-        K = max(k for k in virt if k <= 6)
+    # ---- the register steps, one arm per VIRTUAL octave parity.  The
+    # source is the PEELED virtual anchor: the step's first move is onto
+    # the counter's own top block and the unpeeled form denies the head a
+    # concrete cell to step onto (the standing peel).
+    vlap = {}
+    for b in vpar:
+        VS = (st_v, (uD, uD, 1, 0, soD + tail), 0, F(fparv[b]))
+        VC = (st_v, ((), uD, 1, 1, soD + tail), 0, F(fparv[b]))
+        VT = (st_f, (uS, uD, 1, 0, soD + tail), 0, F(fpar[b]))
+        ch, r = _chain(tab, True, True, VS, VT)
+        if ch is not None and r[0] == VT and r[2] > 0:
+            vlap[b] = dict(kind='flat', VS=VS, T=VT, ch=ch, c=(r[1], r[2]),
+                           key=(enc, st_f, (), (), 0))
+            continue
+        ch, r = _chain(tab, True, True, VC, VT)
+        if ch is not None and r[0] == VT and r[2] > 0:
+            vlap[b] = dict(kind='flat', VS=VC, T=VT, ch=ch, c=(r[1], r[2]),
+                           key=(enc, st_f, (), (), 0))
+            continue
+        cands = [k for k in virt if k % 2 == b and k <= 6]
+        if not cands:
+            raise RegError('no measured virtual anchor at parity %d' % b)
+        K = max(cands)
         p = 1 << K
         if p not in cfgs or (p + 1) not in cfgs:
             raise RegError('walk does not reach the virtual anchor 2^%d' % K)
         nx = cfgs[p + 1]
         want = (nx[0], tuple(ENC[enc](p + 1)) + tail, LC.rstrip0(nx[3]))
         mid = _phase(tab, cfgs[p], want)
-        nest = _nested(tab, enc, st_f, tail, VP, VT, mid, K)
-        vlap = dict(kind='nested', T=VT, VP=VP, **nest)
+        nest = _nested(tab, enc, st_f, tail, VS, VT, mid, K)
+        vlap[b] = dict(kind='nested', VS=VS, T=VT, **nest)
 
     D = dict(spec=dspec, orig=spec, mirror=mirrored, enc=enc,
-             tail=list(tail), st_f=st_f, st_v=st_v, far_v=list(far_v),
-             fpar={b: list(fpar[b]) for b in (0, 1)}, P=P, vres=vres,
-             virt=virt, ks=ks, p0=p0, A0=A0, A1=A1, chi=chi,
-             ci=(ri[1], ri[2]), VIRTC=VIRTC, ovf=ovf, vlap=vlap)
+             tail=list(tail), st_f=st_f, st_v=st_v, vsel=vsel,
+             fpar={b: list(fpar[b]) for b in (0, 1)},
+             fparv={b: list(fparv[b]) for b in (0, 1)},
+             vpar=vpar, virt=virt, ks=ks, p0=p0, ints=ints,
+             ovf=ovf, vlap=vlap)
     D['val'] = validate(tab, D, cfgs)
     D['vis'] = visits(tab, D)
     D['boot'] = boot(tab, D, cfgs)
@@ -313,29 +354,31 @@ def _anchor(D, encf, p):
     k = octave(p)
     if k in D['virt'] and p == (1 << k):
         return (D['st_v'], tuple(encf(p)) + tuple(D['tail']), 0,
-                tuple(D['far_v']))
+                tuple(D['fparv'][k % 2]))
     return (D['st_f'], tuple(encf(p)) + tuple(D['tail']), 0,
             tuple(D['fpar'][k % 2]))
 
 
 def validate(tab, D, cfgs, hi=HI):
     """Replay EVERY branch against the raw simulator: exact step counts,
-    exact configurations, [lift]-equal landings, and -- on the register
-    step -- every inner lap of the inner counter."""
+    exact configurations, [lift]-equal landings, and -- on each register
+    step -- every inner lap of its inner counter."""
     encf = ENC[D['enc']]
-    n, ninner = 0, 0
+    n, ninner, nreg = 0, 0, 0
     for p in range(D['p0'], hi):
         k = octave(p)
-        if k > D['ks'][-1]:
+        # the NEXT anchor must also lie in an octave the walk fully saw:
+        # its frame is what the lap is validated against.
+        if octave(p + 1) > D['ks'][-1]:
             break
         start = _anchor(D, encf, p)
         want = _anchor(D, encf, p + 1)
         if k in D['virt'] and p == (1 << k):
-            V = D['vlap']
+            nreg += 1
+            V = D['vlap'][k % 2]
             if V['kind'] == 'flat':
                 steps = V['c'][0] * (k - 1) + V['c'][1]
             else:
-                # boot + the inner counter's own laps + exit
                 steps = V['cb'][0] * (k - 1) + V['cb'][1]
                 cur = EL.sim(tab, start, steps)
                 if not EL.eqlift(cur, _denc(V['CinS'], k - 1)):
@@ -346,8 +389,7 @@ def validate(tab, D, cfgs, hi=HI):
                     i, ov = carry(v)
                     if ov:
                         break
-                    s = V['cn'][0] * i + V['cn'][1]
-                    cur = EL.sim(tab, cur, s)
+                    cur = EL.sim(tab, cur, V['cn'][0] * i + V['cn'][1])
                     ninner += 1
                     v += 1
                 if not EL.eqlift(cur, _denc(V['CinF'], k - 1)):
@@ -363,14 +405,14 @@ def validate(tab, D, cfgs, hi=HI):
                 b = k % 2
                 steps = D['ovf'][b]['c'][0] * (j - 1) + D['ovf'][b]['c'][1]
             else:
-                steps = D['ci'][0] * j + D['ci'][1]
+                b = k % 2
+                steps = D['ints'][b]['c'][0] * j + D['ints'][b]['c'][1]
         got = EL.sim(tab, start, steps)
         if not EL.eqlift(got, want):
             raise RegError('p=%d branch: %d steps -> %r want %r' %
                            (p, steps, got, want))
         n += 1
-    return '%d anchors, %d register steps, %d inner laps' % (
-        n, len([k for k in D['virt'] if (1 << k) < hi]), ninner)
+    return '%d anchors, %d register steps, %d inner laps' % (n, nreg, ninner)
 
 
 # ---------------------------------------------------------------- visits ---
@@ -404,7 +446,6 @@ def boot(tab, D, cfgs):
         cfg = LC.wstep(tab, False, False, cfg)
     raise RegError('no bootstrap to p0=%d' % D['p0'])
 
-
 # ---------------------------------------------------------------- render ---
 
 BOARD = r'''(** * REG_@ID@: machine @SPEC@, boarded by CERTIFICATE (REGISTER route).
@@ -412,33 +453,32 @@ BOARD = r'''(** * REG_@ID@: machine @SPEC@, boarded by CERTIFICATE (REGISTER rou
     Auto-emitted by tools/counters/regcert.py (UNTRUSTED emitter; the Coq
     kernel re-runs the checker on every line below).  A binary counter under
     the @ENCF@ digit alphabet (@ENCM@.v) whose anchor FRAME depends on the
-    OCTAVE: the machine keeps a one-cell REGISTER past the head and moves it
-    once per octave, so the family is (register state x counter) and the
-    anchor is piecewise (WAVE28 section 3c, `period-2+virt`).
+    OCTAVE: the machine keeps a REGISTER mark past the head and moves it once
+    per octave, so the family is (register state x counter) and the anchor is
+    PIECEWISE (WAVE28 section 3c, the `period-2+virt` class).
 
-      Cc p = if virt p then (@STVN@, E p ++ tail, S0, @FARVC@)
-             else (@STFN@, E p ++ tail, S0, if podd p then @FAR1C@ else @FAR0C@)
+      Cc p = if virt p then (@STVN@, E p ++ tail, S0, frmv p)
+             else (@STFN@, E p ++ tail, S0, frm p)
 
-    [RegGlue.podd] is the octave parity ([podd p = true] iff the octave is
-    odd); [virt p] holds at the powers of two the machine rests at in a
-    DIFFERENT frame from their own octave's -- the SKIP route's virtual
-    anchor, one dimension up.  Four lap branches, and they are NOT four
-    ordinary chains:
+    with [RegGlue.podd] the octave parity ([podd p = true] iff the octave is
+    odd), [frm]/[frmv] the two frames it selects, and [virt p] the powers of
+    two the machine rests at in a DIFFERENT frame from their own octave's --
+    the SKIP route's virtual anchor, one dimension up.  The lap branches are
+    NOT all chains:
 
       interior  (virt p = false, cview p = (j, Some q0)):  @CI@ steps, exact,
                 the frame carried as the RIGHT OPAQUE TAIL so ONE chain
                 covers both octave parities
       overflow  (cview p = (S j, None)), one chain per parity:
-                podd p = true:  @CO1@ steps   podd p = false: @CO0@ steps
-      register  (virt p = true): boot @CB@, then the INNER counter's own laps
-                to its all-ones fill, then exit @CE@ -- [Theta(2^k)], and the
-                exponent is never written down
-                ([Counters/NestedLapLift.nested_overflow_lift]).
+                podd p = true: @CO1@   podd p = false: @CO0@
+      register  (virt p = true), one arm per parity: @VDESC@
 
-    The register step is the whole point: the mark cannot be moved without a
-    pass that COUNTS, so a nested branch sits inside a piecewise [Cc].
-    [Counters/SkipGlue.v] fences the virtual anchors ([reach_ovf_skip] /
-    [vis_via_skip], the interior-lap hypothesis GUARDED by "not virtual"),
+    The register step is the point: the mark cannot be moved without a pass
+    that COUNTS, so a NESTED branch sits inside a piecewise [Cc] and the
+    exponent stays inside the [exists n] of
+    [Counters/NestedLapLift.inner_to_fill_lift].  [Counters/SkipGlue.v]
+    fences the virtual anchors ([reach_ovf_skip] / [vis_via_skip], the
+    interior-lap hypothesis GUARDED by "not virtual"),
     [Counters/RegGlue.v] supplies the octave parity, and the closer is
     [LapGlue.glue_neverqh] directly.
 
@@ -464,10 +504,9 @@ Definition tm_@ID@ : TM := fun q s => match q, s with
 @TABLE@ end.
 Local Notation tm := tm_@ID@.
 
-(** The virtual anchors: the powers of two whose octave parity is the one
-    the machine rests at in its transient frame.  [pexp p = Some 0] (that
-    is, [p = 1]) is excluded by the [S _] pattern, so [Cc 1] is an ordinary
-    frame anchor and the overflow glue holds at it too. *)
+(** The virtual anchors.  [pexp p = Some 0] (that is, [p = 1]) is excluded by
+    the [S _] pattern, so [Cc 1] is an ordinary frame anchor and the overflow
+    glue holds at it too. *)
 Definition virt_@ID@ (p : positive) : bool :=
   match pexp p with Some (S _) => @VSEL@ | _ => false end.
 Local Notation virt := virt_@ID@.
@@ -476,30 +515,23 @@ Definition frm_@ID@ (p : positive) : list Sym :=
   if podd p then @FAR1C@ else @FAR0C@.
 Local Notation frm := frm_@ID@.
 
+Definition frmv_@ID@ (p : positive) : list Sym :=
+  if podd p then @FARV1C@ else @FARV0C@.
+Local Notation frmv := frmv_@ID@.
+
 Definition Cc_@ID@ (p : positive) : cconf :=
-  if virt_@ID@ p then (@STVN@, (@ENCF@ p ++ @TAIL@, S0, @FARVC@))
+  if virt_@ID@ p then (@STVN@, (@ENCF@ p ++ @TAIL@, S0, frmv_@ID@ p))
   else (@STFN@, (@ENCF@ p ++ @TAIL@, S0, frm_@ID@ p)).
 Local Notation Cc := Cc_@ID@.
 
-(** ** The INNER anchor family -- the counter the register step re-runs *)
-Definition Cin_@ID@ (v : positive) : cconf :=
-  (@ISTN@, (@IENCF@ v ++ @ITAIL@, S0, @IFAR@)).
-Local Notation Cin := Cin_@ID@.
-
+@CINDEFS@
 Ltac rshape_@ID@ :=
   cbn [rep app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r;
   reflexivity.
 
 (** ** The certificate *)
 
-Definition A0_@ID@ : sconf := @A0@.
-Definition A1_@ID@ : sconf := @A1@.
-Definition chi_@ID@ : list lstep := @CHI@.
-
-Lemma run_int_@ID@ : srun tm false false chi_@ID@ A0_@ID@ = Some (A1_@ID@, @CAI@, @CBI@).
-Proof. vm_compute. reflexivity. Qed.
-
-Definition B01_@ID@ : sconf := @B01@.
+@INTDEFS@Definition B01_@ID@ : sconf := @B01@.
 Definition B11_@ID@ : sconf := @B11@.
 Definition cho1_@ID@ : list lstep := @CHO1@.
 
@@ -513,37 +545,13 @@ Definition cho0_@ID@ : list lstep := @CHO0@.
 Lemma run_ovf0_@ID@ : srun tm true true cho0_@ID@ B00_@ID@ = Some (B10_@ID@, @CAO0@, @CBO0@).
 Proof. vm_compute. reflexivity. Qed.
 
-(** *** the register step: boot (from the PEELED virtual anchor -- the first
-    move is onto the counter's own top block), inner laps, exit *)
-Definition VP_@ID@ : sconf := @VP@.
-Definition CS_@ID@ : sconf := @CS@.
-Definition chb_@ID@ : list lstep := @CHB@.
-
-Lemma run_boot_@ID@ : srun tm true true chb_@ID@ VP_@ID@ = Some (CS_@ID@, @CAB@, @CBB@).
-Proof. vm_compute. reflexivity. Qed.
-
-Definition AI0_@ID@ : sconf := @AI0@.
-Definition AI1_@ID@ : sconf := @AI1@.
-Definition chn_@ID@ : list lstep := @CHN@.
-
-Lemma run_inner_@ID@ : srun tm false true chn_@ID@ AI0_@ID@ = Some (AI1_@ID@, @CAN@, @CBN@).
-Proof. vm_compute. reflexivity. Qed.
-
-Definition CF_@ID@ : sconf := @CF@.
-Definition VT_@ID@ : sconf := @VT@.
-Definition che_@ID@ : list lstep := @CHE@.
-
-Lemma run_exit_@ID@ : srun tm true true che_@ID@ CF_@ID@ = Some (VT_@ID@, @CAE@, @CBE@).
-Proof. vm_compute. reflexivity. Qed.
-
+@VIRTDEFS@
 (** ** Anchor glue -- the only per-machine mathematics *)
 
 Lemma epow_@ID@ : forall n, @ENCF@ (pow2 n) = rep @UD@ n ++ @SOD@.
 Proof. induction n; simpl; [reflexivity | rewrite IHn; reflexivity]. Qed.
 
-Lemma iepow_@ID@ : forall n, @IENCF@ (pow2 n) = rep @IUD@ n ++ @ISOD@.
-Proof. induction n; simpl; [reflexivity | rewrite IHn; reflexivity]. Qed.
-
+@IEPOWS@
 Lemma hsucc0_@ID@ : forall p j q0, cview p = (j, Some q0) ->
   virt (Pos.succ p) = false.
 Proof.
@@ -564,43 +572,7 @@ Proof.
   exists m. reflexivity.
 Qed.
 
-(** *** the interior branch.  The frame is the RIGHT OPAQUE TAIL, so the one
-    chain speaks at both octave parities at once. *)
-Lemma gsi_@ID@ : forall p j q0, cview p = (j, Some q0) -> virt p = false ->
-  Cc p = cden (@ENCF@ q0 ++ @TAIL@) (frm p) j A0_@ID@.
-Proof.
-  intros p j q0 E Hv. unfold Cc_@ID@. rewrite Hv.
-  destruct (@ENCM@.@SOME@ p j q0 E) as (H1 & _).
-  unfold cden, A0_@ID@; cbn [c_st c_l c_h c_r].
-  unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * j + 0) with j by lia. replace (0 * j + 0) with 0 by lia.
-  rewrite H1. rshape_@ID@.
-Qed.
-
-Lemma gei_@ID@ : forall p j q0, cview p = (j, Some q0) -> virt p = false ->
-  cden (@ENCF@ q0 ++ @TAIL@) (frm p) j A1_@ID@ = Cc (Pos.succ p).
-Proof.
-  intros p j q0 E Hv. unfold Cc_@ID@.
-  rewrite (hsucc0_@ID@ p j q0 E).
-  unfold frm_@ID@. rewrite (podd_succ_int p j q0 E).
-  destruct (@ENCM@.@SOME@ p j q0 E) as (_ & H2).
-  unfold cden, A1_@ID@; cbn [c_st c_l c_h c_r].
-  unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * j + 0) with j by lia. replace (0 * j + 0) with 0 by lia.
-  rewrite H2. rshape_@ID@.
-Qed.
-
-Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) -> virt p = false ->
-  exists n, 0 < n /\ csteps tm n (Cc p) = Some (Cc (Pos.succ p)).
-Proof.
-  intros p j q0 E Hv. exists (@CAI@ * j + @CBI@). split; [lia|].
-  rewrite (gsi_@ID@ p j q0 E Hv).
-  rewrite (srun_sound tm false false chi_@ID@ A0_@ID@ A1_@ID@ @CAI@ @CBI@
-             run_int_@ID@ (@ENCF@ q0 ++ @TAIL@) (frm p) j
-             ltac:(discriminate) ltac:(discriminate)).
-  f_equal. exact (gei_@ID@ p j q0 E Hv).
-Qed.
-
+@INTGLUE@
 (** *** the overflow branch.  A fill anchor is never virtual: above [1] it is
     not a power of two at all, and [1] fails the [S _] pattern. *)
 Lemma vfill_@ID@ : forall p j, cview p = (S j, None) -> virt p = false.
@@ -611,129 +583,15 @@ Proof.
 Qed.
 
 @OVFGLUE@
+(** ** The register step, one arm per octave parity *)
 
-(** *** the register step *)
-
-Lemma vpar_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
-  podd p = @VPARV@.
-Proof.
-  intros p k Hv Hx. unfold virt_@ID@ in Hv. rewrite Hx in Hv.
-  destruct (podd p); @VPARD@.
-Qed.
-
-Lemma gsv_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
-  Cc p = cden [] [] k VP_@ID@.
-Proof.
-  intros p k Hv Hx. unfold Cc_@ID@. rewrite Hv.
-  rewrite (pexp_some p (S k) Hx), epow_@ID@.
-  unfold cden, VP_@ID@; cbn [c_st c_l c_h c_r].
-  unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * k + 0) with k by lia. replace (0 * k + 0) with 0 by lia.
-  rshape_@ID@.
-Qed.
-
-Lemma gsn_@ID@ : forall v i q0, cview v = (i, Some q0) ->
-  Cin v = cden (@IENCF@ q0 ++ @ITAIL@) [] i AI0_@ID@.
-Proof.
-  intros v i q0 E. destruct (@IENCM@.@ISOME@ v i q0 E) as (H1 & _).
-  unfold Cin_@ID@, cden, AI0_@ID@; cbn [c_st c_l c_h c_r].
-  unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * i + 0) with i by lia. replace (0 * i + 0) with 0 by lia.
-  rewrite H1. rshape_@ID@.
-Qed.
-
-Lemma gen_@ID@ : forall v i q0, cview v = (i, Some q0) ->
-  cden (@IENCF@ q0 ++ @ITAIL@) [] i AI1_@ID@ = Cin (Pos.succ v).
-Proof.
-  intros v i q0 E. destruct (@IENCM@.@ISOME@ v i q0 E) as (_ & H2).
-  unfold Cin_@ID@, cden, AI1_@ID@; cbn [c_st c_l c_h c_r].
-  unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * i + 0) with i by lia. replace (0 * i + 0) with 0 by lia.
-  rewrite H2. rshape_@ID@.
-Qed.
-
-Lemma lapin_@ID@ : forall v i q0, cview v = (i, Some q0) ->
-  exists n c', 0 < n /\ csteps tm n (Cin v) = Some c'
-               /\ lift c' = lift (Cin (Pos.succ v)).
-Proof.
-  intros v i q0 E.
-  exists (@CAN@ * i + @CBN@), (Cin (Pos.succ v)).
-  split; [lia|]. split; [| reflexivity].
-  rewrite (gsn_@ID@ v i q0 E).
-  rewrite (srun_sound tm false true chn_@ID@ AI0_@ID@ AI1_@ID@ @CAN@ @CBN@
-             run_inner_@ID@ (@IENCF@ q0 ++ @ITAIL@) [] i
-             ltac:(discriminate) ltac:(reflexivity)).
-  f_equal. exact (gen_@ID@ v i q0 E).
-Qed.
-
-Lemma gbo_@ID@ : forall k, lift (cden [] [] k CS_@ID@) = lift (Cin (pow2 k)).
-Proof.
-  intro k. f_equal.
-  unfold Cin_@ID@, cden, CS_@ID@; cbn [c_st c_l c_h c_r].
-  unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * k + 0) with k by lia. replace (0 * k + 0) with 0 by lia.
-  rewrite iepow_@ID@. rshape_@ID@.
-Qed.
-
-Lemma gxi_@ID@ : forall k, Cin (fill (pow2 k)) = cden [] [] k CF_@ID@.
-Proof.
-  intro k.
-  destruct (@IENCM@.@INONE@ (fill (pow2 k)) k (cview_fill_pow2 k)) as (H1 & _).
-  unfold Cin_@ID@, cden, CF_@ID@; cbn [c_st c_l c_h c_r].
-  unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * k + 0) with k by lia. replace (0 * k + 0) with 0 by lia.
-  rewrite H1. rshape_@ID@.
-Qed.
-
-Lemma gev_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
-  lift (cden [] [] k VT_@ID@) = lift (Cc (Pos.succ p)).
-Proof.
-  intros p k Hv Hx. f_equal.
-  unfold Cc_@ID@, frm_@ID@. rewrite (hsuccv_@ID@ p k Hx).
-  rewrite (podd_succ_pexp p k Hx), (vpar_@ID@ p k Hv Hx).
-  rewrite (pexp_some p (S k) Hx).
-  cbn [Pos.succ pow2 @ENCF@]. rewrite epow_@ID@.
-  unfold cden, VT_@ID@; cbn [c_st c_l c_h c_r].
-  unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * k + 0) with k by lia. replace (0 * k + 0) with 0 by lia.
-  rshape_@ID@.
-Qed.
-
-Lemma hbo_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
-  exists n c, 0 < n /\ csteps tm n (Cc p) = Some c
-              /\ lift c = lift (Cin (pow2 k)).
-Proof.
-  intros p k Hv Hx.
-  exists (@CAB@ * k + @CBB@), (cden [] [] k CS_@ID@).
-  split; [lia|]. split; [| exact (gbo_@ID@ k)].
-  rewrite (gsv_@ID@ p k Hv Hx).
-  exact (srun_sound tm true true chb_@ID@ VP_@ID@ CS_@ID@ @CAB@ @CBB@
-           run_boot_@ID@ [] [] k ltac:(reflexivity) ltac:(reflexivity)).
-Qed.
-
-Lemma hxe_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
-  exists n c', csteps tm n (Cin (fill (pow2 k))) = Some c'
-               /\ lift c' = lift (Cc (Pos.succ p)).
-Proof.
-  intros p k Hv Hx.
-  exists (@CAE@ * k + @CBE@), (cden [] [] k VT_@ID@).
-  split; [| exact (gev_@ID@ p k Hv Hx)].
-  rewrite (gxi_@ID@ k).
-  exact (srun_sound tm true true che_@ID@ CF_@ID@ VT_@ID@ @CAE@ @CBE@
-           run_exit_@ID@ [] [] k ltac:(reflexivity) ltac:(reflexivity)).
-Qed.
-
-(** The register step, composed.  The [Theta(2^k)] middle is the [exists n]
-    inside [NestedLapLift.inner_to_fill_lift]; no formula for it is written. *)
+@VIRTGLUE@
 Lemma lapv_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
   exists n c', 0 < n /\ csteps tm n (Cc p) = Some c'
                /\ lift c' = lift (Cc (Pos.succ p)).
 Proof.
-  intros p k Hv Hx.
-  destruct (nested_overflow_lift tm Cc Cin lapin_@ID@ p (pow2 k)
-              (hbo_@ID@ p k Hv Hx) (hxe_@ID@ p k Hv Hx))
-    as (n & c' & Hr & Hl & Hn).
-  exists n, c'. split; [exact Hn | split; [exact Hr | exact Hl]].
+  intros p k Hv Hx. destruct (podd p) eqn:Hb.
+@LAPVCASES@
 Qed.
 
 (** ** SkipGlue's hypotheses *)
@@ -842,6 +700,67 @@ Theorem nonhalt_@ID@ : NonHalt tm.
 Proof. apply never_qh_nonhalt, nqh_@ID@. Qed.
 '''
 
+INT_DEFS = r"""Definition A0@B@_@ID@ : sconf := @A0@.
+Definition A1@B@_@ID@ : sconf := @A1@.
+Definition chi@B@_@ID@ : list lstep := @CHI@.
+
+Lemma run_int@B@_@ID@ : srun tm false true chi@B@_@ID@ A0@B@_@ID@ = Some (A1@B@_@ID@, @CAI@, @CBI@).
+Proof. vm_compute. reflexivity. Qed.
+
+"""
+
+INT_GLUE = r"""(** *** the interior branch at octave parity @BV@.  The frame is CONCRETE in
+    the chain's own right side: on some machines the head steps onto it. *)
+Lemma gsi@B@_@ID@ : forall p j q0, cview p = (j, Some q0) -> virt p = false ->
+  podd p = @BV@ -> Cc p = cden (@ENCF@ q0 ++ @TAIL@) [] j A0@B@_@ID@.
+Proof.
+  intros p j q0 E Hv Hb. unfold Cc_@ID@. rewrite Hv.
+  unfold frm_@ID@. rewrite Hb.
+  destruct (@ENCM@.@SOME@ p j q0 E) as (H1 & _).
+  unfold cden, A0@B@_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 0) with j by lia. replace (0 * j + 0) with 0 by lia.
+  rewrite H1. rshape_@ID@.
+Qed.
+
+Lemma gei@B@_@ID@ : forall p j q0, cview p = (j, Some q0) -> virt p = false ->
+  podd p = @BV@ ->
+  cden (@ENCF@ q0 ++ @TAIL@) [] j A1@B@_@ID@ = Cc (Pos.succ p).
+Proof.
+  intros p j q0 E Hv Hb. unfold Cc_@ID@.
+  rewrite (hsucc0_@ID@ p j q0 E).
+  unfold frm_@ID@. rewrite (podd_succ_int p j q0 E), Hb.
+  destruct (@ENCM@.@SOME@ p j q0 E) as (_ & H2).
+  unfold cden, A1@B@_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * j + 0) with j by lia. replace (0 * j + 0) with 0 by lia.
+  rewrite H2. rshape_@ID@.
+Qed.
+
+Lemma lapi@B@_@ID@ : forall p j q0, cview p = (j, Some q0) -> virt p = false ->
+  podd p = @BV@ ->
+  exists n, 0 < n /\ csteps tm n (Cc p) = Some (Cc (Pos.succ p)).
+Proof.
+  intros p j q0 E Hv Hb. exists (@CAI@ * j + @CBI@). split; [lia|].
+  rewrite (gsi@B@_@ID@ p j q0 E Hv Hb).
+  rewrite (srun_sound tm false true chi@B@_@ID@ A0@B@_@ID@ A1@B@_@ID@ @CAI@ @CBI@
+             run_int@B@_@ID@ (@ENCF@ q0 ++ @TAIL@) [] j
+             ltac:(discriminate) ltac:(reflexivity)).
+  f_equal. exact (gei@B@_@ID@ p j q0 E Hv Hb).
+Qed.
+
+"""
+
+INT_DISPATCH = r"""Lemma lapi_@ID@ : forall p j q0, cview p = (j, Some q0) -> virt p = false ->
+  exists n, 0 < n /\ csteps tm n (Cc p) = Some (Cc (Pos.succ p)).
+Proof.
+  intros p j q0 E Hv. destruct (podd p) eqn:Hb.
+  - exact (lapi1_@ID@ p j q0 E Hv Hb).
+  - exact (lapi0_@ID@ p j q0 E Hv Hb).
+Qed.
+
+"""
+
 OVF_GLUE = r'''Lemma gso@B@_@ID@ : forall p j, cview p = (S j, None) -> podd p = @BV@ ->
   Cc p = cden [] [] j B0@B@_@ID@.
 Proof.
@@ -857,7 +776,7 @@ Qed.
 Lemma geo@B@_@ID@ : forall p j, cview p = (S j, None) -> podd p = @BV@ ->
   cden [] [] j B1@B@_@ID@ = Cc (Pos.succ p).
 Proof.
-  intros p j E Hb. unfold Cc_@ID@, virt_@ID@, frm_@ID@.
+  intros p j E Hb. unfold Cc_@ID@, virt_@ID@, frm_@ID@, frmv_@ID@.
   rewrite (pexp_succ_fill p (S j) E).
   rewrite (podd_succ_fill p j E), Hb. cbn [negb].
   destruct (@ENCM@.@NONE@ p j E) as (_ & H2).
@@ -878,9 +797,231 @@ Proof.
 Qed.
 '''
 
+# --- the register arm: the source/landing glue, shared by both kinds ------
+
+VIRT_HEAD = r'''Lemma gsv@B@_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
+  podd p = @BV@ -> Cc p = cden [] [] k VS@B@_@ID@.
+Proof.
+  intros p k Hv Hx Hb. unfold Cc_@ID@, frmv_@ID@. rewrite Hv, Hb.
+  rewrite (pexp_some p (S k) Hx), epow_@ID@.
+  unfold cden, VS@B@_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * k + 0) with k by lia. replace (0 * k + 0) with 0 by lia.
+  rshape_@ID@.
+Qed.
+
+Lemma gev@B@_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
+  podd p = @BV@ -> lift (cden [] [] k VT@B@_@ID@) = lift (Cc (Pos.succ p)).
+Proof.
+  intros p k Hv Hx Hb. f_equal.
+  unfold Cc_@ID@, frm_@ID@. rewrite (hsuccv_@ID@ p k Hx).
+  rewrite (podd_succ_pexp p k Hx), Hb.
+  rewrite (pexp_some p (S k) Hx).
+  cbn [Pos.succ pow2 @ENCF@]. rewrite epow_@ID@.
+  unfold cden, VT@B@_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * k + 0) with k by lia. replace (0 * k + 0) with 0 by lia.
+  rshape_@ID@.
+Qed.
+
+'''
+
+VIRT_FLAT_DEFS = r'''(** *** the register step at octave parity @BV@: FLAT *)
+Definition VS@B@_@ID@ : sconf := @VS@.
+Definition VT@B@_@ID@ : sconf := @VT@.
+Definition chv@B@_@ID@ : list lstep := @CHV@.
+
+Lemma run_virt@B@_@ID@ : srun tm true true chv@B@_@ID@ VS@B@_@ID@ = Some (VT@B@_@ID@, @CAV@, @CBV@).
+Proof. vm_compute. reflexivity. Qed.
+
+'''
+
+VIRT_FLAT_GLUE = r'''Lemma lapv@B@_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
+  podd p = @BV@ ->
+  exists n c', 0 < n /\ csteps tm n (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)).
+Proof.
+  intros p k Hv Hx Hb.
+  exists (@CAV@ * k + @CBV@), (cden [] [] k VT@B@_@ID@).
+  split; [lia|]. split; [| exact (gev@B@_@ID@ p k Hv Hx Hb)].
+  rewrite (gsv@B@_@ID@ p k Hv Hx Hb).
+  exact (srun_sound tm true true chv@B@_@ID@ VS@B@_@ID@ VT@B@_@ID@ @CAV@ @CBV@
+           run_virt@B@_@ID@ [] [] k ltac:(reflexivity) ltac:(reflexivity)).
+Qed.
+
+'''
+
+VIRT_NEST_CIN = r'''(** ** The INNER anchor family of the parity-@BV@ register step -- the
+    counter that step re-runs *)
+Definition Cin@B@_@ID@ (v : positive) : cconf :=
+  (@ISTN@, (@IENCF@ v ++ @ITAIL@, S0, @IFAR@)).
+Local Notation Cin@B@ := Cin@B@_@ID@.
+
+'''
+
+VIRT_NEST_DEFS = r'''(** *** the register step at octave parity @BV@: boot (from the PEELED
+    virtual anchor -- the first move is onto the counter's own top block),
+    the inner counter's laps, exit *)
+Definition VS@B@_@ID@ : sconf := @VS@.
+Definition CS@B@_@ID@ : sconf := @CS@.
+Definition chb@B@_@ID@ : list lstep := @CHB@.
+
+Lemma run_boot@B@_@ID@ : srun tm true true chb@B@_@ID@ VS@B@_@ID@ = Some (CS@B@_@ID@, @CAB@, @CBB@).
+Proof. vm_compute. reflexivity. Qed.
+
+Definition AI0@B@_@ID@ : sconf := @AI0@.
+Definition AI1@B@_@ID@ : sconf := @AI1@.
+Definition chn@B@_@ID@ : list lstep := @CHN@.
+
+Lemma run_inner@B@_@ID@ : srun tm false true chn@B@_@ID@ AI0@B@_@ID@ = Some (AI1@B@_@ID@, @CAN@, @CBN@).
+Proof. vm_compute. reflexivity. Qed.
+
+Definition CF@B@_@ID@ : sconf := @CF@.
+Definition VT@B@_@ID@ : sconf := @VT@.
+Definition che@B@_@ID@ : list lstep := @CHE@.
+
+Lemma run_exit@B@_@ID@ : srun tm true true che@B@_@ID@ CF@B@_@ID@ = Some (VT@B@_@ID@, @CAE@, @CBE@).
+Proof. vm_compute. reflexivity. Qed.
+
+'''
+
+VIRT_NEST_GLUE = r'''Lemma gsn@B@_@ID@ : forall v i q0, cview v = (i, Some q0) ->
+  Cin@B@ v = cden (@IENCF@ q0 ++ @ITAIL@) [] i AI0@B@_@ID@.
+Proof.
+  intros v i q0 E. destruct (@IENCM@.@ISOME@ v i q0 E) as (H1 & _).
+  unfold Cin@B@_@ID@, cden, AI0@B@_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * i + 0) with i by lia. replace (0 * i + 0) with 0 by lia.
+  rewrite H1. rshape_@ID@.
+Qed.
+
+Lemma gen@B@_@ID@ : forall v i q0, cview v = (i, Some q0) ->
+  cden (@IENCF@ q0 ++ @ITAIL@) [] i AI1@B@_@ID@ = Cin@B@ (Pos.succ v).
+Proof.
+  intros v i q0 E. destruct (@IENCM@.@ISOME@ v i q0 E) as (_ & H2).
+  unfold Cin@B@_@ID@, cden, AI1@B@_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * i + 0) with i by lia. replace (0 * i + 0) with 0 by lia.
+  rewrite H2. rshape_@ID@.
+Qed.
+
+Lemma lapin@B@_@ID@ : forall v i q0, cview v = (i, Some q0) ->
+  exists n c', 0 < n /\ csteps tm n (Cin@B@ v) = Some c'
+               /\ lift c' = lift (Cin@B@ (Pos.succ v)).
+Proof.
+  intros v i q0 E.
+  exists (@CAN@ * i + @CBN@), (Cin@B@ (Pos.succ v)).
+  split; [lia|]. split; [| reflexivity].
+  rewrite (gsn@B@_@ID@ v i q0 E).
+  rewrite (srun_sound tm false true chn@B@_@ID@ AI0@B@_@ID@ AI1@B@_@ID@ @CAN@ @CBN@
+             run_inner@B@_@ID@ (@IENCF@ q0 ++ @ITAIL@) [] i
+             ltac:(discriminate) ltac:(reflexivity)).
+  f_equal. exact (gen@B@_@ID@ v i q0 E).
+Qed.
+
+Lemma gbo@B@_@ID@ : forall k, lift (cden [] [] k CS@B@_@ID@) = lift (Cin@B@ (pow2 k)).
+Proof.
+  intro k. f_equal.
+  unfold Cin@B@_@ID@, cden, CS@B@_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * k + 0) with k by lia. replace (0 * k + 0) with 0 by lia.
+  rewrite @IEPOW@. rshape_@ID@.
+Qed.
+
+Lemma gxi@B@_@ID@ : forall k, Cin@B@ (fill (pow2 k)) = cden [] [] k CF@B@_@ID@.
+Proof.
+  intro k.
+  destruct (@IENCM@.@INONE@ (fill (pow2 k)) k (cview_fill_pow2 k)) as (H1 & _).
+  unfold Cin@B@_@ID@, cden, CF@B@_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * k + 0) with k by lia. replace (0 * k + 0) with 0 by lia.
+  rewrite H1. rshape_@ID@.
+Qed.
+
+Lemma hbo@B@_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
+  podd p = @BV@ ->
+  exists n c, 0 < n /\ csteps tm n (Cc p) = Some c
+              /\ lift c = lift (Cin@B@ (pow2 k)).
+Proof.
+  intros p k Hv Hx Hb.
+  exists (@CAB@ * k + @CBB@), (cden [] [] k CS@B@_@ID@).
+  split; [lia|]. split; [| exact (gbo@B@_@ID@ k)].
+  rewrite (gsv@B@_@ID@ p k Hv Hx Hb).
+  exact (srun_sound tm true true chb@B@_@ID@ VS@B@_@ID@ CS@B@_@ID@ @CAB@ @CBB@
+           run_boot@B@_@ID@ [] [] k ltac:(reflexivity) ltac:(reflexivity)).
+Qed.
+
+Lemma hxe@B@_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
+  podd p = @BV@ ->
+  exists n c', csteps tm n (Cin@B@ (fill (pow2 k))) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)).
+Proof.
+  intros p k Hv Hx Hb.
+  exists (@CAE@ * k + @CBE@), (cden [] [] k VT@B@_@ID@).
+  split; [| exact (gev@B@_@ID@ p k Hv Hx Hb)].
+  rewrite (gxi@B@_@ID@ k).
+  exact (srun_sound tm true true che@B@_@ID@ CF@B@_@ID@ VT@B@_@ID@ @CAE@ @CBE@
+           run_exit@B@_@ID@ [] [] k ltac:(reflexivity) ltac:(reflexivity)).
+Qed.
+
+(** The register step, composed.  The [Theta(2^k)] middle is the [exists n]
+    inside [NestedLapLift.inner_to_fill_lift]; no formula for it is written. *)
+Lemma lapv@B@_@ID@ : forall p k, virt p = true -> pexp p = Some (S k) ->
+  podd p = @BV@ ->
+  exists n c', 0 < n /\ csteps tm n (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)).
+Proof.
+  intros p k Hv Hx Hb.
+  destruct (nested_overflow_lift tm Cc Cin@B@ lapin@B@_@ID@ p (pow2 k)
+              (hbo@B@_@ID@ p k Hv Hx Hb) (hxe@B@_@ID@ p k Hv Hx Hb))
+    as (n & c' & Hr & Hl & Hn).
+  exists n, c'. split; [exact Hn | split; [exact Hr | exact Hl]].
+Qed.
+
+'''
+
 
 def _far(fs):
     return clist(fs)
+
+
+def _arm_reps(D, V, b, ID, di=None):
+    """The per-parity substitutions of one register arm."""
+    reps = {'@B@': str(b), '@BV@': 'true' if b else 'false',
+            '@VT@': EL.cconf(V['T']), '@VS@': EL.cconf(V['VS'])}
+    if V['kind'] == 'flat':
+        reps.update({'@CHV@': EL.cchain(V['ch']),
+                     '@CAV@': str(V['c'][0]), '@CBV@': str(V['c'][1])})
+    else:
+        iencf = di.get('fn') or V['key'][0]
+        reps.update({
+            '@CS@': EL.cconf(V['CinS']), '@CF@': EL.cconf(V['CinF']),
+            '@AI0@': EL.cconf(V['AI0']), '@AI1@': EL.cconf(V['AI1']),
+            '@CHB@': EL.cchain(V['chb']), '@CHN@': EL.cchain(V['chn']),
+            '@CHE@': EL.cchain(V['che']),
+            '@CAB@': str(V['cb'][0]), '@CBB@': str(V['cb'][1]),
+            '@CAN@': str(V['cn'][0]), '@CBN@': str(V['cn'][1]),
+            '@CAE@': str(V['ce'][0]), '@CBE@': str(V['ce'][1]),
+            '@IENCF@': iencf, '@IENCM@': di['mod'],
+            '@ISOME@': di['some'], '@INONE@': di['none'],
+            '@ITAIL@': clist(V['key'][2]), '@IFAR@': clist(V['key'][3]),
+            '@ISTN@': ST[V['key'][1]],
+            '@IEPOW@': 'iepow%d_%s' % (b, ID),
+            '@IUD@': clist(di['uD']), '@ISOD@': clist(di['soD']),
+        })
+    return reps
+
+
+def _fill(tpl, reps):
+    out = tpl
+    for _ in range(3):
+        for k, v in reps.items():
+            out = out.replace(k, v)
+    return out
+
+
+IEPOW = ('Lemma iepow@B@_@ID@ : forall n, @IENCF@ (pow2 n) = rep @IUD@ n ++ @ISOD@.\n'
+         'Proof. induction n; simpl; [reflexivity | rewrite IHn; reflexivity]. Qed.\n\n')
 
 
 def render(D):
@@ -888,32 +1029,60 @@ def render(D):
     ID = mach_id(spec)
     d = ENCDATA[D['enc']]
     encf = d.get('fn') or D['enc']
-    V = D['vlap']
-    if V['kind'] != 'nested':
-        raise RegError('only the NESTED register step is rendered')
-    ienc = V['key'][0]
-    di = ENCDATA[ienc]
-    iencf = di.get('fn') or ienc
     mods = []
-    for m in (d['mod'], di['mod']):
+    for m in [d['mod']] + [ENCDATA[V['key'][0]]['mod']
+                           for V in D['vlap'].values()
+                           if V['kind'] == 'nested']:
         if m not in mods and m not in ('JpCounter', 'MonoCounter', 'WTape'):
             mods.append(m)
 
-    # the two overflow arms, by octave parity ([podd p = true] is parity 1)
+    idefs, iglue = [], []
+    for b in (1, 0):
+        I = D['ints'][b]
+        r = {'@B@': str(b), '@BV@': 'true' if b else 'false',
+             '@A0@': EL.cconf(I['A0']), '@A1@': EL.cconf(I['A1']),
+             '@CHI@': EL.cchain(I['ch']),
+             '@CAI@': str(I['c'][0]), '@CBI@': str(I['c'][1])}
+        idefs.append(_fill(INT_DEFS, r))
+        iglue.append(_fill(INT_GLUE, r))
+    iglue.append(INT_DISPATCH)
+
     ovf = []
     for b in (1, 0):
         O = D['ovf'][b]
-        geofrm = ''
-        ovf.append(OVF_GLUE
-                   .replace('@B@', str(b)).replace('@BV@',
-                                                   'true' if b else 'false')
-                   .replace('@CAO@', str(O['c'][0]))
-                   .replace('@CBO@', str(O['c'][1]))
-                   .replace('@GEOFRM@', geofrm))
+        ovf.append(_fill(OVF_GLUE,
+                         {'@B@': str(b), '@BV@': 'true' if b else 'false',
+                          '@CAO@': str(O['c'][0]), '@CBO@': str(O['c'][1])}))
+
+    cindefs, vdefs, vglue, iepows, lapvcases, vdesc = [], [], [], [], [], []
+    for b in (1, 0):
+        V = D['vlap'].get(b)
+        if V is None:
+            lapvcases.append(
+                '  - exfalso. unfold virt_@ID@ in Hv. rewrite Hx, Hb in Hv.\n'
+                '    discriminate Hv.')
+            continue
+        di = ENCDATA[V['key'][0]] if V['kind'] == 'nested' else None
+        reps = _arm_reps(D, V, b, ID, di)
+        if V['kind'] == 'flat':
+            vdefs.append(_fill(VIRT_FLAT_DEFS, reps))
+            vglue.append(_fill(VIRT_HEAD + VIRT_FLAT_GLUE, reps))
+            vdesc.append('parity %s FLAT, %d*k+%d steps'
+                         % (reps['@BV@'], V['c'][0], V['c'][1]))
+        else:
+            cindefs.append(_fill(VIRT_NEST_CIN, reps))
+            vdefs.append(_fill(VIRT_NEST_DEFS, reps))
+            vglue.append(_fill(VIRT_HEAD + VIRT_NEST_GLUE, reps))
+            iepows.append(_fill(IEPOW, reps))
+            vdesc.append('parity %s NESTED, boot %d*k+%d then the inner '
+                         'counter then exit %d*k+%d'
+                         % (reps['@BV@'], V['cb'][0], V['cb'][1],
+                            V['ce'][0], V['ce'][1]))
+        lapvcases.append('  - exact (lapv%d_@ID@ p k Hv Hx Hb).' % b)
 
     vis = []
     for b in (1, 0):
-        blk = ['  %s destruct q.' % ('-' if b == 1 else '-')]
+        blk = ['  - destruct q.']
         for q in range(4):
             blk.append('    + exact (viso%d_%s %s %s '
                        'ltac:(vm_compute; reflexivity) p1 j1 E1 Hb1).'
@@ -925,24 +1094,14 @@ def render(D):
         '@MODS@': ' '.join(mods),
         '@ENCF@': encf, '@ENCM@': d['mod'],
         '@SOME@': d['some'], '@NONE@': d['none'],
-        '@IENCF@': iencf, '@IENCM@': di['mod'],
-        '@ISOME@': di['some'], '@INONE@': di['none'],
         '@UD@': clist(d['uD']), '@SOD@': clist(d['soD']),
-        '@IUD@': clist(di['uD']), '@ISOD@': clist(di['soD']),
         '@TAIL@': clist(D['tail']),
-        '@ITAIL@': clist(V['key'][2]), '@IFAR@': clist(V['key'][3]),
-        '@ISTN@': ST[V['key'][1]],
         '@STFN@': ST[D['st_f']], '@STVN@': ST[D['st_v']],
-        '@FARVC@': _far(D['far_v']),
+        '@FARV1C@': _far(D['fparv'][1]), '@FARV0C@': _far(D['fparv'][0]),
         '@FAR1C@': _far(D['fpar'][1]), '@FAR0C@': _far(D['fpar'][0]),
-        '@VSEL@': 'negb (podd p)' if D['vres'] == 0 else 'podd p',
-        '@VPARV@': 'false' if D['vres'] == 0 else 'true',
-        '@VPARD@': ('[discriminate | reflexivity]' if D['vres'] == 0
-                    else '[reflexivity | discriminate]'),
+        '@VSEL@': D['vsel'],
         '@P0@': str(D['p0']), '@BOOT@': str(D['boot']),
-        '@A0@': EL.cconf(D['A0']), '@A1@': EL.cconf(D['A1']),
-        '@CHI@': EL.cchain(D['chi']),
-        '@CAI@': str(D['ci'][0]), '@CBI@': str(D['ci'][1]),
+        '@INTDEFS@': ''.join(idefs), '@INTGLUE@': ''.join(iglue),
         '@B01@': EL.cconf(D['ovf'][1]['B0']),
         '@B11@': EL.cconf(D['ovf'][1]['B1']),
         '@CHO1@': EL.cchain(D['ovf'][1]['ch']),
@@ -951,21 +1110,18 @@ def render(D):
         '@B10@': EL.cconf(D['ovf'][0]['B1']),
         '@CHO0@': EL.cchain(D['ovf'][0]['ch']),
         '@CAO0@': str(D['ovf'][0]['c'][0]), '@CBO0@': str(D['ovf'][0]['c'][1]),
-        '@VP@': EL.cconf(V['VP']), '@CS@': EL.cconf(V['CinS']),
-        '@CHB@': EL.cchain(V['chb']),
-        '@CAB@': str(V['cb'][0]), '@CBB@': str(V['cb'][1]),
-        '@AI0@': EL.cconf(V['AI0']), '@AI1@': EL.cconf(V['AI1']),
-        '@CHN@': EL.cchain(V['chn']),
-        '@CAN@': str(V['cn'][0]), '@CBN@': str(V['cn'][1]),
-        '@CF@': EL.cconf(V['CinF']), '@VT@': EL.cconf(V['T']),
-        '@CHE@': EL.cchain(V['che']),
-        '@CAE@': str(V['ce'][0]), '@CBE@': str(V['ce'][1]),
+        '@CINDEFS@': ''.join(cindefs),
+        '@VIRTDEFS@': ''.join(vdefs),
+        '@VIRTGLUE@': ''.join(vglue),
+        '@IEPOWS@': ''.join(iepows),
+        '@LAPVCASES@': '\n'.join(lapvcases),
         '@OVFGLUE@': '\n'.join(ovf),
         '@VISITS1@': vis[0], '@VISITS0@': vis[1],
-        '@CI@': '%d*j+%d' % D['ci'],
+        '@CI@': '%d*j+%d / %d*j+%d by parity'
+                % (D['ints'][1]['c'] + D['ints'][0]['c']),
         '@CO1@': '%d*j+%d' % D['ovf'][1]['c'],
         '@CO0@': '%d*j+%d' % D['ovf'][0]['c'],
-        '@CB@': '%d*k+%d' % V['cb'], '@CE@': '%d*k+%d' % V['ce'],
+        '@VDESC@': '; '.join(vdesc),
         '@VAL@': D['val'],
     }
     out = BOARD
