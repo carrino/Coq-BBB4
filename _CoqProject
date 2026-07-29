@@ -2309,6 +2309,12 @@ theories/Machines/Counters/CASB_1RB1RC_0LC1RB_1LD0RB_1RA1LC.v
 theories/Machines/Counters/CASB_1RB1RD_0LC1RB_0RA1LD_1LC0RB.v
 theories/Machines/Counters/CASB_1RB1RD_0LC1RB_1RA1LD_1LC0RB.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/CASB_0RB1LA_1LC1RD_1RD1LD_1RB0LA.v
+theories/Machines/Counters/CASB_1RB0LD_1LC1RA_1RA1LA_0RB1LD.v
+theories/Machines/Counters/CASB_1RB1LB_1RC0LD_1LA1RB_0RC1LD.v
+theories/Machines/Counters/CASB_1RB1LC_1LC1RC_1LA0RD_0LA1RD.v
+
 theories/Closeout/CloseoutKit.v
 theories/Closeout/CB_00.v
 theories/Closeout/CB_01.v
