@@ -164,6 +164,15 @@ def extract(spec):
     d2 = len(rs[2]) - len(rs[1])
     RU = rs[2][:d2]
     RPOST = rs[1][d2:]
+    # ... and the k = 0 rung is stated at what the machine has actually
+    # WRITTEN there -- rs[0] itself, NOT [rstrip0 RPOST].  The blank at the
+    # end of [RPOST] is a real cell on most boards (stripping it blindly
+    # breaks all six committed QMG_* renders); it is only missing at k = 0,
+    # and only because the ladder has not reached past itself yet.  [Cq]'s
+    # k = 0 arm carries [RP0] and every k >= 1 arm the canonical [RPOST];
+    # the two coincide, so the render is unchanged, on every board whose
+    # first rung is fully written.
+    RP0 = rs[0]
     for k, r in enumerate(rs):
         if LC.rstrip0(r) != LC.rstrip0(RU * k + RPOST):
             raise QuadEmitError('right sides are not rep RU k ++ RPOST')
@@ -225,33 +234,34 @@ def extract(spec):
          (qr, E0, HSTOP, (RU, RU, 1, 1, RPOST)))
     # micro hops at k = 0
     want('MC1z', (False,),
-         (qr, _flat(LU), HH, _flat(RPOST)),
+         (qr, _flat(LU), HH, _flat(RP0)),
          (qr, E0, HH, _flat(RU + RPOST)))
     want('MC0z', (False,),
-         (qr, _flat(LSTOP), HH, _flat(RPOST)),
+         (qr, _flat(LSTOP), HH, _flat(RP0)),
          (qr, E0, HSTOP, _flat(RU + RPOST)))
     # terminal (peeled, index k')
     want('TCp', (False,),
          (qr, E0, HSTOP, (RU, RU, 1, 0, RPOST)),
          (A['st0'], ((), uD, 1, 1, sdw), 0, _flat(TFAR)))
     want('TCz', (False,),
-         (qr, E0, HSTOP, _flat(RPOST)),
+         (qr, E0, HSTOP, _flat(RP0)),
          (A['st0'], _flat(uD * 0 + sdw), 0, _flat(TFAR)))
     # boots
     want('BOOT1', (False, True),
          (A['st0'], (uS, uS, 1, 0, sS), 0, F),
-         (qr, ((), LU, 1, 0, LSTOP), HH, _flat(RPOST)))
+         (qr, ((), LU, 1, 0, LSTOP), HH, _flat(RP0)))
     want('BOOT0', (False, True),
          (A['st0'], (sS, (), 0, 0, ()), 0, F),
-         (qr, E0, HSTOP, _flat(RPOST)))
+         (qr, E0, HSTOP, _flat(RP0)))
     B0 = confs(A['enc'], A['st0'], tail, far)[2]
     want('BOOTO', (False, True),
          B0,
-         (qr, ((), LU, 1, 0, LSTOP + Wovf), HH, _flat(RPOST)))
+         (qr, ((), LU, 1, 0, LSTOP + Wovf), HH, _flat(RP0)))
 
     D = dict(spec=spec, law=law, A=A, enc=A['enc'], tail=tail, far=far,
              qr=qr, LU=LU, LSTOP=LSTOP, HH=HH, HSTOP=HSTOP, RU=RU,
-             RPOST=RPOST, SDW=sdw, TFAR=TFAR, Wovf=Wovf, chains=chains,
+             RPOST=RPOST, RP0=RP0, SDW=sdw, TFAR=TFAR, Wovf=Wovf,
+             chains=chains,
              uS=uS, sS=sS, uD=uD, sD=sD)
 
     ok, why = validate(tab, A, D)
@@ -276,7 +286,18 @@ def extract(spec):
     for q in range(4):
         pre = LC.reach_state(tab, bo['el'], True, B0, bo['ch'], q)
         if pre is None:
-            raise QuadEmitError('no visit witness for state %s' % LAB[q])
+            # Say WHERE the state does fire, so the missing glue is named
+            # rather than guessed: [vis_via_ovf] only ever sees the BOOTO
+            # prefix, and a state that fires in the interior boot or inside
+            # the ladder needs a different carrier ([vis_via_int_lift] for
+            # the first, a mrun-aware witness for the second).
+            seen = [n for n, c in chains.items()
+                    if n != 'BOOTO'
+                    and LC.reach_state(tab, c['el'], True, c['src'],
+                                       c['ch'], q) is not None]
+            raise QuadEmitError('no visit witness for state %s%s'
+                                % (LAB[q], (' (fires in %s)' % ','.join(seen))
+                                   if seen else ' (in no chain)'))
         vis[q] = pre
     D['vis'] = vis
     D['B0'] = B0
@@ -351,10 +372,10 @@ def _upper(p, j):
 
 
 def _cq(D, W, k, m):
+    post = D['RP0'] if k == 0 else D['RU'] * k + D['RPOST']
     if m == 0:
-        return (D['qr'], W, D['HSTOP'], D['RU'] * k + D['RPOST'])
-    return (D['qr'], D['LU'] * (m - 1) + D['LSTOP'] + W, D['HH'],
-            D['RU'] * k + D['RPOST'])
+        return (D['qr'], W, D['HSTOP'], post)
+    return (D['qr'], D['LU'] * (m - 1) + D['LSTOP'] + W, D['HH'], post)
 
 
 # ------------------------------------------------------------- rendering ---
@@ -433,8 +454,8 @@ Local Notation Cc := Cc_@ID@.
     deep word W opaque. *)
 Definition Cq_@ID@ (W : list Sym) (k m : nat) : cconf :=
   match m with
-  | O => (@QR@, (W, @HSTOP@, rep @RU@ k ++ @RPOST@))
-  | S m' => (@QR@, (rep @LU@ m' ++ @LSTOP@ ++ W, @HH@, rep @RU@ k ++ @RPOST@))
+  | O => (@QR@, (W, @HSTOP@, @CQPOST@))
+  | S m' => (@QR@, (rep @LU@ m' ++ @LSTOP@ ++ W, @HH@, @CQPOST@))
   end.
 Local Notation Cq := Cq_@ID@.
 
@@ -773,6 +794,13 @@ def render_quad(D):
         '@QR@': ST[D['qr']], '@HH@': SYM[D['HH']], '@HSTOP@': SYM[D['HSTOP']],
         '@LU@': clist(D['LU']), '@LSTOP@': clist(D['LSTOP']),
         '@RU@': clist(D['RU']), '@RPOST@': clist(D['RPOST']),
+        # the k = 0 rung is one cell short whenever the ladder has not
+        # written past itself yet; when it is not, this is the plain form
+        # and the render is byte-identical to every earlier board
+        '@CQPOST@': ('rep @RU@ k ++ @RPOST@' if D['RP0'] == D['RPOST']
+                     else ('match k with O => %s'
+                           ' | S k\' => rep @RU@ (S k\') ++ @RPOST@ end'
+                           % clist(D['RP0']))),
         '@UD@': clist(D['uD']), '@SDW@': clist(D['SDW']),
         '@TFARL@': clist(D['TFAR']),
         '@WOVF@': clist(D['Wovf']),

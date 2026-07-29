@@ -99,18 +99,19 @@ THE TASK (re-ranked 2026-07-29 after wave-28's measurement):
       own gates in WAVE28 3e with tools/counters/quad_classes.py) -- 35
       rows, NO NEW THEORY, and now the largest no-new-theory bite in the
       residue.  In CHEAPEST-FIRST order, which is not size order:
-        *  4 non-rep right sides -- START HERE, most of the way done.
-           WAVE28 3f: the right-side gate was PADDING (the ladder's k = 0
-           rung is one trailing blank short, so the stride read two cells
-           wide); that is fixed in quad_emit and the 6 committed QMG_*
-           boards re-render byte-identical.  The 4 now stop one gate
-           deeper, at `no BOOT1 chain`, and that gate is measured: every
-           chain stated at k = 0 (BOOT1/BOOT0/BOOTO/MC1z/MC0z/TCz) asks for
-           the right side RPOST where the machine is at rstrip0 RPOST, and
-           with the stripped post BOOT1 derives first try.  What is left is
-           (a) emit the six k = 0 chains against rstrip0 RPOST, and (b)
-           bridge Cq W 0 m's right side across ONE trailing blank with
-           WTape.lift_app_blank in the k = 0 arms.  Half an hour.
+        *  4 non-rep right sides -- START HERE.  ALL NINE CHAINS ALREADY
+           DERIVE on all four (WAVE28 3f): the right-side gate was PADDING
+           (the ladder's k = 0 rung is one trailing blank short), Cq is now
+           piecewise in k with the MEASURED first rung in its k = 0 arm,
+           and the 6 committed QMG_* boards re-render byte-identical after
+           both fixes.  ONE lemma is left.  The emitter now reports it:
+             no visit witness for state A (fires in MC0p,MC0z,TCp,TCz,BOOT0)
+           -- the missing state fires INSIDE the ladder, and vis_via_ovf
+           (the only carrier the QUAD board has) sees the BOOTO prefix
+           only.  Write vis_via_quad in QuadGlue: run the anchor to the
+           rung Cq W k m that quad_lap's mrun already passes through, then
+           fire.  It is the exact analogue of NestedLapLift.vis_via_fill,
+           which the nested route needed for the same reason.  4 boards.
         * 16 PARITY-CLASS -- THREE gates, not one.  Every one is a 2-cell
            alphabet (Bp / Alph_00_10_1, so rep RU k slides two cells), has
            the parity class in the MICRO hop only (cls 21111), AND a

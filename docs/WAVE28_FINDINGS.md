@@ -273,21 +273,36 @@ compared up to trailing blanks.  Regression: all 6 committed `QMG_*` boards
 re-render **byte-identical** and recompile; the 4 rows now clear the
 right-side gate and stop one gate deeper, at `no BOOT1 chain`.
 
-And that gate is measured too.  `BOOT1` (and `BOOT0`, `BOOTO`, `MC1z`,
-`MC0z`, `TCz` — every chain stated at `k = 0`) asks for the destination
-right side `RPOST = [S1;S0]`, while the machine is at `[S1]`.  With the
-stripped post the chain derives immediately (`BOOT1`, cost `0*j + 1`,
-first try).  So the whole remaining obligation for these 4 rows is:
+That gate was the same thing one level in, and it is now fixed too.  Every
+chain stated at `k = 0` (`BOOT1`, `BOOT0`, `BOOTO`, `MC1z`, `MC0z`, `TCz`)
+asked for the right side `RPOST = [S1;S0]` where the machine is at `[S1]`.
+`Cq` is now PIECEWISE in `k` — the `k = 0` arm carries the MEASURED first
+rung `rs[0]`, every `k >= 1` arm the canonical `rep RU k ++ RPOST` — and the
+six chains are stated against `rs[0]`.  (`rstrip0 RPOST` is NOT the right
+value and breaks all six committed renders: that trailing blank is a real
+written cell on most boards, and it is missing only at `k = 0` and only
+because the ladder has not reached past itself.  Read the landing.)  On a
+board whose first rung is fully written the two arms coincide, so the
+rendered text is unchanged — checked, all 6 `QMG_*` re-render
+byte-identical after both fixes.
 
-* emit the six `k = 0` chains against `rstrip0 RPOST` rather than `RPOST`
-  (an emitter hole, mechanical); and
-* on the Coq side, bridge `Cq W 0 m`'s right side to the reached one across
-  ONE trailing blank — `WTape.lift_app_blank`, the same strip the flat
-  route's `oslack` path already uses, in the `k = 0` arms of `hop_`/`term_`
-  /the boots.
+**All nine chains now derive on all four rows.**  What is left is one named
+lemma.  The visit gate reports:
 
-That is the next wave's first half-hour, and it is worth doing before the
-16.
+    no visit witness for state A (fires in MC0p,MC0z,TCp,TCz,BOOT0)
+
+on every one of the four (states A, D, B, C respectively).  `quad_emit` only
+ever looks in the `BOOTO` prefix, because `LapCertGlue.vis_via_ovf` is the
+only carrier the QUAD board has — and the state these rows are missing fires
+INSIDE the ladder (the `MC0*` hop onto the stop cell and the terminal), not
+in the boot.  So they need a ladder-aware witness: run the anchor to the
+rung `Cq W k m` that `quad_lap`'s `mrun` already passes through, then fire —
+the exact analogue of `NestedLapLift.vis_via_fill`, which is what the nested
+route needed for the same reason.  A `vis_via_quad` in `QuadGlue` plus the
+bullet that uses it, and these 4 board.
+
+(The emitter now NAMES where the state fires instead of just refusing, so
+the next wave does not have to rediscover this.)
 
 ## 4. Do-not-retry, extended
 
