@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**240 rows as of this commit — 162 distinct core machines + 78 0RB
+_**228 rows as of this commit — 152 distinct core machines + 76 0RB
 re-root shadows that fall with them.**  The count moves every wave, so
 treat the row files as the authority and this prose as a snapshot.  With
 tower #20 boarded on 2026-07-28 the (4,2) HOLDOUT list is closed, so this
@@ -80,7 +80,7 @@ boarded set.
 
 ## The families
 
-Counts below are over the 162 core rows as of this commit (the shape
+Counts below are over the core rows as of this commit (the shape
 measurements come from the last full `ovfshape.py` sweep, filtered to the
 live list).  **The blocker labels predate wave-30**: that wave measured the
 biggest ones out of existence — the `no overflow phase` bucket's interior
@@ -91,9 +91,9 @@ the single bounded-inner-carrier build (§9 there).
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
 | `-`/`no-anchor` | 81 | 70 no overflow phase, 11 no anchor |
-| `AFFINE`/`EXP2` | 29 | 17 no inner family at `pow2 j`, 5 no boot chain, 4 no interior chain, 2 no second exit chain, 1 no inner interior chain |
-| `AFFINE`/`AFFINE` | 15 | 8 no interior chain, 7 no inner family |
+| `AFFINE`/`EXP2` | 25 | 16 no inner family at `pow2 j`, 4 no interior chain, 2 no boot chain, 2 no second exit chain, 1 no inner interior chain |
 | `HIGHER`/`HIGHER` | 12 | 12 no interior chain |
+| `AFFINE`/`AFFINE` | 9 | 8 no interior chain, 1 no inner family |
 | `EXP3`/`EXP3` | 8 | 8 no interior chain |
 | `PARITY-AFFINE` | 7 | 7 no interior chain |
 | `QUAD`/`QUAD` | 4 | 4 no interior chain |
@@ -148,8 +148,8 @@ primitive fires nowhere sound, and the double peel is irrelevant
 * **67 rows clear the interior gate and stop on the exponential overflow
   arm** — but not at one gate.  The wave-31 measurement pass
   (`docs/WAVE31_PROMPT.md`, built on `WAVE30_FINDINGS.md` §6g) split it:
-  **12 rows are already derived** and wait only on the two-form board
-  RENDERER; **16** are the bounded-inner-carrier lemma; **27** are a
+  the 12 renderer rows are BOARDED (wave-31, PR #73); **16** remain
+  behind the bounded-inner-carrier lemma; **27** are a
   measured DOUBLE nesting (`Theta(4^k)` phases — wall +4 per overflow,
   mechanising John's read; the single-nesting register step cannot close
   them); **22** `no boot chain` rows have never been re-run against the
@@ -164,10 +164,9 @@ primitive fires nowhere sound, and the double peel is irrelevant
 
 ## Where a newcomer should probably start
 
-1. **The wave-31 prompt's ordered builds** (`docs/WAVE31_PROMPT.md`):
-   the two-form board renderer first (12 rows already derived,
-   `tools/counters/tailcert_derived12.txt`), then the `lift` plumbing,
-   then the bounded inner carrier (16 rows).
+1. **The wave-31 prompt's remaining builds** (`docs/WAVE31_PROMPT.md`;
+   item (0), the two-form renderer, landed as 12 boards in PR #73): the
+   `lift` plumbing, then the bounded inner carrier (16 rows).
 2. **The 11 no-anchor.** Their resting tapes are regular families that are
    NOT digit words (five are solid blocks of ones — index the family by
    the wall, do not hunt for an alphabet; `WAVE29_BOUNCER_FINDINGS.md`
@@ -186,4 +185,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 162).
+first shrank from 883 to 511 (and, wave by wave, to the current 152).
