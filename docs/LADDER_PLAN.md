@@ -663,7 +663,10 @@ candidate):
 
 **87 of 143, against the ~100 the session's gate set.  The gate fires, so this
 section is the taxonomy and the constructor stops here.**  Measured on the full
-143 at `d4bbdd9` (`tools/ladder/core143_ph.jsonl`, table `sweep143_ph.log`,
+143 with the `valfam.py` committed at `6f50b48` — `d4bbdd9` plus one change,
+the exact-view bound in `_groups` counting DIGIT runs rather than all runs, so
+that a phase with a four-cell terminator is not silently denied a fill arm —
+(`tools/ladder/core143_ph.jsonl`, table `sweep143_ph.log`,
 8,763 s of per-row wall, median 33 s, max 301 s, **0 hard timeouts and 0
 crashes**), printed by `rowcounts.py`:
 
