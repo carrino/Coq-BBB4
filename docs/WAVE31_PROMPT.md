@@ -41,8 +41,13 @@ They then all stop in the same place.  Measured over the 70:
 |   1 | `no inner interior chain` |
 |   0 | `no interior j=0 chain` — **was 70** |
 
-**YOUR TASK IS THE EXPONENTIAL OVERFLOW ARM.**  Four builds, in this order.
-(1) is a prerequisite for anything boarding at all and is pure plumbing.  (2) is
+And over the current 162 open core rows, `tailcert --list` now reports
+**12 fully derived** — blocked only by the missing renderer of §(0).
+
+**YOUR TASK IS THE EXPONENTIAL OVERFLOW ARM — after (0), which is free.**  Five
+builds, in this order.  **(0) is 12 rows that already derive and validate and
+have nowhere to be written; do it first and do not be talked out of it.**
+(1) is a prerequisite for anything else boarding and is pure plumbing.  (2) is
 the lemma wave-29 §5d specified and wave-30 could not take (it was parked while
 `claude/cascade-twocount-4-2-r82mvf` held `NestedLapLift`; that branch has
 merged, so it is unparked).  (3) and (4) are the two largest sub-buckets and
@@ -61,6 +66,79 @@ each needs a measurement before a design.
   (the exactness assertions you are relaxing in (1)).
 * `docs/WAVE28_FINDINGS.md` §2 (the PEEL) and `docs/WAVE16_FINDINGS.md` §§5–6
   (do-not-retry).
+
+## (0) THE TWO-FORM BOARD RENDERER — 12 rows ALREADY DERIVED.  DO THIS FIRST.
+
+`tools/counters/tailcert.py` reads the family, derives every branch, and
+**differentially validates each one against the raw simulator** — and then stops,
+because it has no renderer.  Its docstring advertises `--emit`; `main()` never
+implemented it.  `PREFIX = 'REG'`, `OUTDIR`, and the imports of `coqc` and
+`mirrorize` are all there, unused.  The route's last mile was never built.
+
+Measured with wave-30's fixed reader, `tailcert.py --list` over the 162 open core
+rows:
+
+    12 / 162 fully derived
+
+Twelve rows whose certificate exists, validates, and cannot be written down.
+The list is `tools/counters/tailcert_derived12.txt`, and it splits cleanly:
+
+| n | alphabet | overflow arms | validation |
+|--:|---|---|---|
+| **6** | `Alph_00_01_1` | **FLAT** — 0 nested overflows | 192 anchors |
+| 6 | `Alph_10_11_11` | nested — 4 nested overflows, 56 inner laps | 192 anchors |
+
+**Take the 6 FLAT ones first.**  They have no nesting anywhere: a per-parity
+split interior and a per-parity flat overflow, every branch replayed against the
+raw simulator.  Two of them (`1RB0RD_0RC0LD_1LD1RC_0LA1LB`,
+`1RB1LA_0RC1RD_1LD0LB_0LA0RB`) are rows wave-30 §3a filed as blocked on the
+overflow branch through the FLAT route — the two-form framing reaches what
+`emit_lapcert` could not.
+
+**This is ahead of everything else in this document.**  It needs no new
+mathematics, no new lemma, and no new measurement: the certificates are in hand.
+
+### What to build
+
+`tools/counters/regcert.py` already renders a piecewise-`Cc` board that
+alternates its frame by octave parity (`render` at l. 1100, `process` at l. 1209,
+plus the `_arm_reps` / `_fill` template helpers), and `tailcert` already imports
+`regcert`'s `RegError`, `F`, `octave`, `_chain`, `_phase`, `_denc` and even uses
+the same `REG_*` prefix.  Start from that renderer.
+
+Two structural differences to handle — check them against `_derive` before
+writing a template:
+
+* the interior branch is a SPLIT (`Z0 -> Z1` at `j = 0`, `P0 -> P1` at
+  `j = S j'`) **per octave parity** — four chains, not two.  `emit_lapcert`'s
+  `GLUE_SPLIT` is the shape for each half; what is new is the per-parity pair;
+* the overflow arm CROSSES parities: `_derive` states it as
+
+      B0 = (st[b],  (uS, uS, 1, 0, soS ++ tl[b]),  S0, far[b])
+      B1 = (st[nb], ((), uD, 1, 2, soD ++ tl[nb]), S0, far[nb])
+
+  — destination state `st[nb]`, count `1*j+2`, source PEELED.  That framing is
+  why these rows derive here and NOT through `emit_lapcert.derive`, which was
+  tried on the exemplar's key and fails at `no overflow chain` on both parities.
+  Do not try to shortcut through the flat route; the framing is the point.
+
+`D` carries `spec`, `orig`, `mirror`, `enc`, `st`, `tl`, `fr`, `ks`, `p0`,
+`ints` (`Z0 Z1 P0 P1 chz chp cz cp` per parity), `ovf` (per parity: `kind B0 B1`
+plus `ch c` when `kind == 'flat'`, or the boot/inner/exit triple when
+`kind == 'nested'`), `vis`, `boot`, `val`.
+
+### Acceptance
+
+Every board compiles and `Print Assumptions nqh_<ID>` is funext-only.  Nothing
+under `theories/` needs to change for the 12 flat rows — if a board wants a new
+library lemma, check the census closure first (see NON-NEGOTIABLE).  Run the
+A/B re-render check afterwards: adding a renderer cannot re-route
+`emit_lapcert`, but `tailcert` shares `regcert`'s helpers, so prove it.
+
+**Expect 6 boards from the flat arms and 6 more once the nested arm renders, then
+re-run `tailcert --list` over the residue** — the
+reader fix moved 67 rows and only 12 were checked for end-to-end derivation
+against the CURRENT open list.
 
 ## (1) `lift` IN `tailcert`'s INTERIOR SPLIT — plumbing, prerequisite, 0 new Coq
 
