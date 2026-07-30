@@ -2,22 +2,25 @@
 
 _Written 2026-07-30 after Nick Drozd pointed at 23 residue rows and said they
 were easy.  They were, and this file records why — the reason generalises well
-past those 23._
+past those 23.  Extended the same day, after a second list of 31, by two more
+flavours (§8); §0 is the state after both waves and §§1–7 are the first wave,
+kept as written._
 
 ## 0. TL;DR
 
-* **78 rows boarded**, kernel-checked, `functional_extensionality_dep` only.
-  Core undecided **143 → 97**, 0RB shadows **74 → 42**, settled
-  **4,939 → 5,017 of 5,156 (95.8% → 97.3%)**.
-* 20 of the 78 are Drozd's.  The other 58 are the SAME TWO sub-machines under a
-  state relabelling and/or a mirror, found by re-running the tier over the whole
-  open core and iterating to a fixed point (each round of boards promotes 0RB
-  shadows into the core, and those had never been swept).
-* The tier is now EXHAUSTED on the open list: 0 of the remaining 97 rows match
-  a flavour, by the same probe that found all 78.
-* The mechanism is one new idea and three new files.  For a counter, the
-  **state-avoiding SUB-MACHINE can be far simpler than the machine**, and
-  liveness only needs that sub-machine to terminate — not an exact lap.
+* **127 rows boarded** over two waves, kernel-checked,
+  `functional_extensionality_dep` only.  Core undecided **143 → 68**,
+  0RB shadows **74 → 22**, settled **4,939 → 5,066 of 5,156
+  (95.8% → 98.3%)**.
+* The mechanism is one idea.  For a counter, the **state-avoiding SUB-MACHINE
+  can be far simpler than the machine**, and liveness only needs that
+  sub-machine to terminate — not an exact lap.
+* Across the whole open core the sparse state's avoid sub-machine takes only
+  **FOUR** shapes up to state relabelling and mirroring.  Wave 1 proved two of
+  them (§2, plain binary counters running DOWN, 78 rows); wave 2 proved the
+  other two (§8, counters in a PAIR encoding, 49 rows).
+* The tier is EXHAUSTED on the open list at both waves' end, by the same probe
+  each time: 0 of the remaining 68 rows match a flavour.
 * `docs/WHY_NO_HAMMER.md` is not refuted; it is **sharpened**.  Its measurement
   ("the q-avoiding subgraph of a finite abstraction is cyclic at every
   precision") is exactly right, and it says the abstraction has to go.  It does
@@ -211,7 +214,9 @@ The tier is not about `1RB0LD`.  The generalisable claim is:
 > about a SMALLER machine, and the smaller machine is often several rungs
 > below the original on the counter ladder.**
 
-Two concrete follow-ups, in order of cheapness:
+Three concrete follow-ups, in order of cheapness (1 and 2 are DONE — see §8
+for what they actually paid, which in both cases was far more than the
+estimate here):
 
 1. **The third flavour** (§4) — two rows, one measure.
 2. **MIRRORING — the half of the widening that is still on the table.**
@@ -241,3 +246,139 @@ Two concrete follow-ups, in order of cheapness:
   do not bother.
 * **`mu` without the `rep S1 k ++ S0 :: l2` invariant.**  The frame shift
   doubles it (§2).
+* **Sizing a flavour from the rows that suggested it.**  §6 called the third
+  flavour "two rows, one measure".  It was 34 rows, and its sibling another 15
+  (§8).  Group the whole open core's avoid tables BEFORE costing a lemma —
+  `tools/reachst/cluster.py` is three lines of work and it is the difference
+  between a two-row lemma and a fifty-row one.
+
+## 8. Wave 2: the PAIR counters, and the other two flavours
+
+_2026-07-30, after Drozd named a second list — 31 rows this time.  Twenty of
+the 31 were already settled before they were named: **17 by wave 1's
+fixed-point sweep**, which had caught them as relabellings and mirrors of its
+two flavours, 2 by wave 32's two-form route, and one is the QUASIHALTER
+`1RB1RD_1RC0LD_1LB0RA_1LC0LC`.  Of the 11 that were left, 4 board here and 7
+do not (§8e)._
+
+### 8a. Grouping first
+
+The 11 open rows of Drozd's 31 were clustered by the CANONICAL FORM of their
+sparse state's avoid table, modulo state relabelling and mirroring
+(`tools/reachst/cluster.py`).  Three of them share ONE table — and it is
+exactly the third flavour §4 flagged, the one the two `0RC1LA` rows wanted.
+Swept over the whole open core the same table appears in **25 of 97 rows**,
+not the two §4 estimated from the rows that had suggested it.  That is the
+lesson of this wave and it is now a do-not-retry entry in §7.
+
+### 8b. Flavour C — the block GROWS, and the counter INCREMENTS
+
+    qA 0 -> ..qC   qA 1 -> 0L qD          (the eraser; its blank is the gate)
+    qB 0 -> 1L qD  qB 1 -> 1R qB          (the rightward sweep)
+    qD 0 -> 0R qB  qD 1 -> 1L qA          (the writer)
+
+`mu` is useless here, exactly as §4 said: the `qA`/`qD` alternation walks left
+turning `1^k` into `1010…` while the `qB` sweep appends a 1, so the block grows
+and the tape-as-a-binary-number goes UP.  What is running is a counter in a
+different alphabet.  Read the tape rightward from the head TWO CELLS AT A TIME,
+
+    X = (1,1)    Y = (0,1)    Z = (1,0)    O = (0,0)
+
+and one round — restart to restart — is exactly
+
+    X^j (0,b) R   |-->   X Y^(j-1) (1,b) R
+
+a little-endian increment on the leading `{X,Y}` block, with `Z` the
+terminator that stops the machine.  So the measure is
+
+    mu2 w = sum_{i <= q} [w(2i) = 0] * 2^i,     q = min { i | w(2i+1) = 0 }
+
+which drops by **exactly 2** every round (`mc_drop`), and `mu2 = 0` is exactly
+the halting case — the leading 1-run has odd length, `qA` meets the barrier
+blank and steps to `qC`.  Induction on `mu2`, nothing else.
+
+### 8c. Flavour D — the same five arrows, and it DECREMENTS
+
+    qA 0 -> ..qC   qA 1 -> 1L qD          (the writer; its blank is the gate)
+    qB 0 -> 1L qA  qB 1 -> 1R qB
+    qD 0 -> 0R qB  qD 1 -> 0L qA          (the eraser; its blank turns)
+
+C and D are the same shape with the two BLANK branches swapped between the
+writer and the eraser.  That one swap turns the increment into borrow
+propagation:
+
+    X^j Z R   |-->   Z^j X R
+
+so reading `Z` as the bit 1 over the leading `{X,Z}` block,
+
+    nu2 w = sum_{i < p} [w(2i+1) = 0] * 2^i,    p = min { i | w(2i) = 0 }
+
+drops by **exactly 1** per round (`md_drop`), and `nu2 = 0` — the block is all
+`X` — is the halting case.  D needs no refill dance at the turn: the eraser's
+blank branch lands on the next restart directly.
+
+Both are in `theories/Checkers/ReachSt.v`, sections `MC` and `MD`.  Unlike
+`MA`/`MB` a round CONSUMES a blank from the right list, so the decomposed form
+has to be restored every round; that is why both state reaching `qC` on the
+LIFTED configuration, where `lift_pad_r` makes the restore free.
+
+### 8d. What it paid, and the seven that are left
+
+| | rows | core | shadows | settled |
+|---|---|---|---|---|
+| after wave 1 | — | 97 | 42 | 5,017 (97.3%) |
+| + flavour C | 34 | 77 | 28 | 5,051 (98.0%) |
+| + flavour D | 15 | 68 | 22 | 5,066 (98.3%) |
+
+Both were swept to a fixed point (each round of boards promotes 0RB shadows
+into the core, and those had never been swept): C caught 20 then 14, D caught
+9 then 6.  The tier is exhausted again — 0 of the remaining 68 match any of
+the four flavours.
+
+Of Drozd's 31, **24 are settled**: the 20 that already were (see the note
+under §8), plus 3 by flavour C and 1 by flavour D.
+
+### 8e. The seven that are left, and why the tier cannot reach them
+
+A board needs TWO independent things for the SAME state `q`: the `q`-avoiding
+sub-machine must terminate (so `ReachSt tm q` is provable at all), and
+`NGramHist` must discharge the other three with `q` lifted out.  Wave 1 and
+wave 2 both chose `q` by sparseness and never had to ask whether that was the
+right choice.  `tools/reachst/bothhalves.py` asks it per state — `T` = the
+avoid machine terminates exhaustively at width <= 10, `N` = the closure
+discharges the other three at `k=2` or `k=3`, `n=2`:
+
+    1RB1LC_0LC0RB_0RD1LA_0LA1RD   A:T-  B:fN  C:T-  D:T-
+    1RB1LC_0LC0RB_1LA1LD_1RC0LD   A:T-  B:T-  C:T-  D:fN
+    1RB1LD_1RC0RC_1LA0LA_0RA0LD   A:T-  B:f-  C:f-  D:fN
+    1RB1RC_1LA0LB_1LD0RD_1LB0RC   A:T-  B:T-  C:f-  D:f-
+    1RB1RC_1LA1LD_0RB0RC_1LB0LB   A:T-  B:T-  C:fN  D:T-
+    1RB1RC_1LA1RA_0RC1LD_1LB0LD   A:f-  B:f-  C:T-  D:f-
+    1RB1RD_1LC1RA_0RB0LC_1LA0RD   A:T-  B:T-  C:T-  D:fN
+
+**Not one cell reads `TN`, and the near-misses are all the same near-miss.**
+On five of the seven exactly ONE state carries the `N`, and it is exactly the
+state whose avoid machine fails: the two halves exist, on disjoint states.
+There is no choice for the emitter to get right here — a board must lift the
+`N` state, and that state has no `ReachSt` theorem to lift it with.  On the
+other two the closure discharges no state at all, so the tier has nothing to
+lift.
+
+So the seven are blocked by two different things, and only one of them is
+about `ReachSt`:
+
+* **The avoid machine of the only liftable state does not terminate** (the
+  five rows with an `fN` cell).  Every
+  counterexample `avoid_probe.py --tables` reports is a spin-out on an
+  ALL-BLANK tape — a configuration the machine never reaches.  `ReachSt`
+  quantifies over EVERY configuration, so the predicate as it stands is
+  strictly stronger than liveness needs and these rows fall outside it.  The
+  fix is a `ReachSt` relativised to an invariant the real orbit satisfies.
+  That is the first thing in this direction that is not just another measure,
+  and it is what the tier should do next: it is worth at least these rows and
+  the same spin-outs were 10 of the 62 tables measured in wave 1 (§5).
+* **The closure discharges nothing** (`1RB1RC_1LA0LB_1LD0RD_1LB0RC` and
+  `1RB1RC_1LA1RA_0RC1LD_1LB0LD`).  Nothing to lift, so a
+  better `ReachSt` would not help either; these want more precision on the
+  `NGramHist` side, or a different engine entirely.  `docs/RESIDUE_MAP.md`
+  files them as `EXP3`/`AFFINE` interior laps with no interior chain.
