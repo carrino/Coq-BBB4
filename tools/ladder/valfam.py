@@ -488,30 +488,68 @@ def fit_fill_p(obs):
     return None
 
 
-def observe_fill(fam, snaps, want=8):
+def anchor_seq(fam, tm, steps, cap=4000):
+    """(digits, p) at every anchor visit, from the RAW machine.
+
+    Its own run rather than the miner's snapshots, because the fill law needs
+    to see several OCTAVES and the mining trace is only long enough for one or
+    two -- a counter that widens by two reaches its second fill somewhere past
+    where the ladder stopped looking.  Only anchor visits materialize a side,
+    so the extra length is nearly free."""
+    tape, pos, q, lo, hi = {}, 0, 0, 0, 0
+    out = []
+    for _ in range(steps):
+        h = tape.get(pos, 0)
+        if q == fam.q and h == fam.h and len(out) < cap:
+            gl = [tape.get(pos - 1 - i, 0) for i in range(pos - lo)]
+            gr = [tape.get(pos + 1 + i, 0) for i in range(hi - pos)]
+            while gl and gl[-1] == 0:
+                gl.pop()
+            while gr and gr[-1] == 0:
+                gr.pop()
+            L, R = block_rle(gl), block_rle(gr)
+            cfg = (q, h, L, R)
+            pp = fam.far_p(cfg)
+            if pp is not None:
+                c = runs_cells(fam.counter_side(cfg))
+                out.append((None if c is None else fam.decode(c), pp))
+        tr = tm.get((q, h))
+        if tr is None:
+            break
+        w, d, q = tr
+        tape[pos] = w
+        pos += d
+        lo, hi = min(lo, pos), max(hi, pos)
+    return out
+
+
+def observe_fill(fam, tm, steps=150000, want=8, lookahead=16):
     """Read the fill law off the anchor visits: every time the machine sits on
     the top string of some width, record the width, the outer parameter, and
-    where the NEXT family member is -- string AND outer parameter."""
-    seq = []
-    for t, s in snaps:
-        if s is None:
-            break
-        pp = fam.far_p(s)
-        if pp is None or (s[0], s[1]) != (fam.q, fam.h):
-            continue
-        c = runs_cells(fam.counter_side(s))
-        if c is None:
-            continue
-        seq.append((fam.decode(c), pp))
+    where the next family MEMBER is -- string and outer parameter.
+
+    The member, not the next visit.  The fill widens the counter, and the head
+    crosses the anchor cell several times on the way, so the successor of a top
+    string is typically 2 to 8 anchor visits along and every visit in between
+    decodes to nothing.  Requiring the immediately following visit to decode
+    found a law on 6 of the 41 rows that fail only at the overflow; scanning
+    forward to the next member is the same correction already made twice, to
+    the differential probe (cf7eeab) and to the arms' replay (3341a3c)."""
+    seq = anchor_seq(fam, tm, steps)
     obs, seen = [], set()
-    for (a, pa), (b, pb) in zip(seq, seq[1:]):
-        if not a or b is None:
+    for i, (a, pa) in enumerate(seq):
+        if not a or any(d != fam.b - 1 for d in a):
             continue
         k = len(a)
-        if any(d != fam.b - 1 for d in a) or (k, pa) in seen:
+        if (k, pa) in seen:
             continue
-        seen.add((k, pa))
-        obs.append((k, b, pa, pb))
+        for j in range(i + 1, min(i + 1 + lookahead, len(seq))):
+            b, pb = seq[j]
+            if b is None:
+                continue
+            seen.add((k, pa))
+            obs.append((k, b, pa, pb))
+            break
         if len(obs) >= want:
             break
     return obs
@@ -1274,6 +1312,34 @@ def prune(tm, fam, arms, kmax, states=None):
     return arms
 
 
+def drop_wrong(tm, fam, arms, kmax, states=None, rounds=4):
+    """Remove arms that claim a config and land OFF the family.
+
+    The case split is first-applicable-in-spec_key-order, and among arms of
+    the same shape the most general goes first, so one arm that is right on
+    the bulk and wrong on the fill SHADOWS every specialization the repair can
+    build for it -- the repaired arm exists, covers the string, and never gets
+    asked.  Dropping the offender is the one move that keeps the selection a
+    function of the configuration: it only ever removes arms, so an arm set
+    that already covers is untouched, and what the offender was covering is
+    handed back to the repair as ordinary uncovered strings."""
+    ok, _, rep = cover(tm, fam, arms, kmax, states)
+    for _ in range(rounds):
+        if ok or not rep['n_wrong']:
+            break
+        bad = Counter(n for n, _, _, _ in rep['wrong'])
+        name = bad.most_common(1)[0][0]
+        trial = [a for a in arms if a.name != name]
+        if not trial:
+            break
+        ok2, _, rep2 = cover(tm, fam, trial, kmax, states)
+        if rep2['n_wrong'] + rep2['n_uncovered'] > \
+                rep['n_wrong'] + rep['n_uncovered']:
+            break
+        arms, ok, rep = trial, ok2, rep2
+    return arms
+
+
 def minimize(arms, covmap):
     """Greedy set cover: drop arms whose every digit string is already claimed
     by a more general one (the window sweep yields many nested variants)."""
@@ -1515,7 +1581,7 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         # by the time we get here, so p widens which visits count as anchors
         # from the start rather than being fixed up afterwards.
         bt, bds, bp = find_boot(fam, snaps)
-        fill_obs = observe_fill(fam, snaps)
+        fill_obs = observe_fill(fam, tm)
         fam.fill = fit_fill([(k, t) for k, t, _, _ in fill_obs]) or CARRY
         plaw = fit_fill_p([(pa, k, pb) for k, _, pa, pb in fill_obs])
         if plaw is None:
@@ -1553,8 +1619,15 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
                              rep['uncovered_all'] + rep['wrong_all'], ctr,
                              groups, deadline=slice_end, max_new=32)
                 if not new:
-                    break
-                arms += new
+                    # nothing new to add: the remaining failures may be an arm
+                    # SHADOWING its own repair, so drop the offender and let
+                    # the next round rebuild what it was covering
+                    trial = drop_wrong(tm, fam, arms, km, states)
+                    if len(trial) == len(arms):
+                        break
+                    arms = trial
+                else:
+                    arms += new
                 ok, covmap, rep = cover(tm, fam, arms, kmax=km, states=states)
                 rounds += 1
             rep['repair_rounds'] = rounds
