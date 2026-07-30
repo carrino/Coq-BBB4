@@ -29,10 +29,9 @@ results, and their numbers freeze at their write date — but they record
 The root-level [`NEXT_SESSION.md`](../NEXT_SESSION.md) is the running
 digest of all of it.
 
-* **Per-wave findings** — `WAVE4_STAGE.md` through `WAVE30_FINDINGS.md`
-  (with `WAVE30_MACHINES_TO_CHECK.md`, the `WAVE30_PROMPT.md` staging
-  note, and the live `WAVE31_PROMPT.md`): what each proof wave boarded
-  and how.
+* **Per-wave findings** — `WAVE4_STAGE.md` through `WAVE31_FINDINGS.md`
+  (with the `WAVE*_PROMPT.md` staging notes; `WAVE32_PROMPT.md` is the
+  live one): what each proof wave boarded and how.
 * **Holdout campaign** — `HOLDOUTS_WAVE14.md`, `HOLDOUTS_MXDYS_SN.md`,
   `HOLDOUTS_FRACTAL.md`: the 27 hardest machines, now all boarded.
 * **Machine readings** — `BOUNCER_COUNTER_READING.md`,
