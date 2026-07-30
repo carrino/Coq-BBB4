@@ -875,7 +875,7 @@ Proof. vm_compute. reflexivity. Qed.
 IEPOW = ('Lemma iepow@B@_@ID@ : forall n, @IENCF@ (pow2 n) = rep @IUD@ n ++ @ISOD@.\n'
          'Proof. induction n; simpl; [reflexivity | rewrite IHn; reflexivity]. Qed.\n\n')
 
-OVF_NEST_GLUE = r'''Lemma gsn@B@_@ID@ : forall v i q0, cview v = (i, Some q0) ->
+OVF_NEST_GLUE_A = r'''Lemma gsn@B@_@ID@ : forall v i q0, cview v = (i, Some q0) ->
   Cin@B@ v = cden (@IENCF@ q0 ++ @ITAIL@) [] i AI0@B@_@ID@.
 Proof.
   intros v i q0 E. destruct (@IENCM@.@ISOME@ v i q0 E) as (H1 & _).
@@ -918,7 +918,9 @@ Proof.
   rewrite @IEPOW@. rshape_@ID@.
 Qed.
 
-Lemma gxi@B@_@ID@ : forall k, Cin@B@ (fill (pow2 @IPOWK@)) = cden [] [] k CF@B@_@ID@.
+'''
+
+OVF_NEST_GLUE_FILL = r'''Lemma gxi@B@_@ID@ : forall k, Cin@B@ (fill (pow2 @IPOWK@)) = cden [] [] k CF@B@_@ID@.
 Proof.
   intro k.
   destruct (@IENCM@.@INONE@ (fill (pow2 @IPOWK@)) @IPOWK@ (cview_fill_pow2 @IPOWK@)) as (H1 & _).
@@ -961,6 +963,80 @@ Proof.
   intros p j E Hb.
   exact (nested_overflow_lift tm Cc Cin@B@ lapin@B@_@ID@ p (pow2 @IPOWJ@)
            (hbo@B@_@ID@ p j E Hb) (hxe@B@_@ID@ p j E Hb)).
+Qed.
+
+'''
+
+# The HALFWAY tail: the inner run stops at [half2], not at the fill.  Only
+# [gxi]/[hxe]/[lapo] differ -- [hbo] is verbatim the fill tail's, because the
+# boot lands on the same octave start.  See `Counters/NestedLapHalf.v`.
+OVF_NEST_GLUE_HALF = r'''Lemma ihalf@B@_@ID@ : forall n, @IENCF@ (half2 n) = rep @IUS@ n ++ @IUD@ ++ @ISOD@.
+Proof. induction n; simpl; [reflexivity | rewrite IHn; reflexivity]. Qed.
+
+Lemma gxi@B@_@ID@ : forall k, Cin@B@ (half2 @IHK@) = cden [] [] k CF@B@_@ID@.
+Proof.
+  intro k.
+  unfold Cin@B@_@ID@, cden, CF@B@_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * k + @IOCTM1@) with @IHK@ by lia. replace (0 * k + 0) with 0 by lia.
+  rewrite ihalf@B@_@ID@. rshape_@ID@.
+Qed.
+
+Lemma hbo@B@_@ID@ : forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
+  exists n c, 0 < n /\ csteps tm n (Cc p) = Some c
+              /\ lift c = lift (Cin@B@ (pow2 @IPOWJ@)).
+Proof.
+  intros p j E Hb.
+  exists (@CAB@ * j + @CBB@), (cden [] [] j CS@B@_@ID@).
+  split; [lia|]. split; [| exact (gbo@B@_@ID@ j)].
+  rewrite (gso@B@_@ID@ p j E Hb).
+  exact (srun_sound tm true true chb@B@_@ID@ B0@B@_@ID@ CS@B@_@ID@ @CAB@ @CBB@
+           run_boot@B@_@ID@ [] [] j ltac:(reflexivity) ltac:(reflexivity)).
+Qed.
+
+Lemma hxe@B@_@ID@ : forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
+  exists n c', csteps tm n (Cin@B@ (half2 @IHJ@)) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)).
+Proof.
+  intros p j E Hb.
+  exists (@CAE@ * j + @CBE@), (cden [] [] j B1@B@_@ID@).
+  split; [| f_equal; exact (geo@B@_@ID@ p j E Hb)].
+  rewrite (gxi@B@_@ID@ j).
+  exact (srun_sound tm true true che@B@_@ID@ CF@B@_@ID@ B1@B@_@ID@ @CAE@ @CBE@
+           run_exit@B@_@ID@ [] [] j ltac:(reflexivity) ltac:(reflexivity)).
+Qed.
+
+(** The overflow arm, composed.  The [Theta(2^j)] middle is the [exists n]
+    inside [NestedLapHalf.inner_to_half_lift]: the inner counter runs from
+    [pow2 (S j)] to [half2 j] -- HALF its octave -- and stops there. *)
+Lemma lapo@B@_@ID@ : forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
+  exists n c', csteps tm n (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+Proof.
+  intros p j E Hb.
+  exact (nested_overflow_half_lift tm Cc Cin@B@ lapin@B@_@ID@ p @IHJ@
+           (hbo@B@_@ID@ p j E Hb) (hxe@B@_@ID@ p j E Hb)).
+Qed.
+
+'''
+
+VISX_HALF = r'''(** [VISX]'s twin for a HALFWAY arm: the exit fires from [half2], so the
+    bridge is [NestedLapHalf.vis_via_half]. *)
+Lemma visx@B@_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm true true l CF@B@_@ID@ = Some q ->
+  forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
+  exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros l q Hst p j E Hb.
+  apply (vis_csteps_of_lift tm Cc p q).
+  apply (vis_via_half tm Cc Cin@B@ lapin@B@_@ID@ q p @IHJ@).
+  - destruct (hbo@B@_@ID@ p j E Hb) as (n & c & _ & Hn & Hl).
+    exists n, c. exact (conj Hn Hl).
+  - apply (vis_lift_of_csteps tm
+             (fun _ : positive => Cin@B@ (half2 @IHJ@)) xH).
+    apply (vis_of_run tm (fun _ : positive => Cin@B@ (half2 @IHJ@))
+                      true true l CF@B@_@ID@ xH j [] []);
+      [exact Hst | reflexivity | reflexivity | exact (gxi@B@_@ID@ j)].
 Qed.
 
 '''
@@ -1138,8 +1214,12 @@ def render(D):
     # be wrong, and it would fail at `coqc` looking like an ordinary derivation
     # failure.
     for b, O in D['ovf'].items():
-        if O['kind'] == 'nested' and (O.get('shape', 'fill') != 'fill'
-                                      or O.get('off', 0)):
+        if O['kind'] != 'nested':
+            continue
+        if O.get('shape', 'fill') == 'half' and not O.get('off', 0) \
+                and O['key'][4] >= 1:
+            continue            # wave-33: the HALFWAY template, below
+        if O.get('shape', 'fill') != 'fill' or O.get('off', 0):
             raise RegError('bounded inner run at octave parity %d '
                            '(shape=%s, offset=%d) has no template yet'
                            % (b, O.get('shape', 'fill'), O.get('off', 0)))
@@ -1174,6 +1254,7 @@ def render(D):
                 if b in D['vis'][q] and D['vis'][q][b][0] == 'exit')
 
     cindefs, odefs, oglue, iepows, viso = [], [], [], [], []
+    halfmod = ''
     for b in (1, 0):
         O = D['ovf'][b]
         r = dict(_sub(D, b),
@@ -1207,13 +1288,32 @@ def render(D):
                 '@ISTN@': ST[O['key'][1]],
                 '@IEPOW@': 'iepow%d_%s' % (b, ID),
                 '@IUD@': clist(di['uD']), '@ISOD@': clist(di['soD'])})
+            half = O.get('shape', 'fill') == 'half'
+            if half:
+                # the octave start is [pow2 (S (j + o - 1))] and the endpoint
+                # is [half2 (j + o - 1)]; [NestedLapHalf] states both at the
+                # SAME index, so name it once and derive the start from it.
+                hj = 'j' if o == 1 else '(j + %d)' % (o - 1)
+                hk = 'k' if o == 1 else '(k + %d)' % (o - 1)
+                r.update({'@IHJ@': hj, '@IHK@': hk,
+                          '@IOCTM1@': str(o - 1),
+                          '@IPOWJ@': '(S %s)' % hj,
+                          '@IPOWK@': '(S %s)' % hk,
+                          '@IUS@': clist(di['uS'])})
             cindefs.append(_fill(OVF_NEST_CIN, r))
             odefs.append(_fill(OVF_ENDS + OVF_NEST_DEFS, r))
-            oglue.append(_fill(OVF_HEAD + OVF_NEST_GLUE, r))
+            oglue.append(_fill(OVF_HEAD + OVF_NEST_GLUE_A
+                               + (OVF_NEST_GLUE_HALF if half
+                                  else OVF_NEST_GLUE_FILL), r))
             iepows.append(_fill(IEPOW, r))
+            if half:
+                halfmod = ' NestedLapHalf'
         viso.append(_fill(VISO, r))
         if b in needx:
-            viso.append(_fill(VISX, r))
+            viso.append(_fill(
+                VISX_HALF if (O['kind'] == 'nested'
+                              and O.get('shape', 'fill') == 'half')
+                else VISX, r))
 
     # the peel's leftover [p = 1], one concrete run per state
     zk = visz(parse(spec), D)
@@ -1280,7 +1380,7 @@ def render(D):
         '@INTDEFS@': ''.join(idefs), '@INTGLUE@': ''.join(iglue),
         '@OVFDEFS@': ''.join(odefs), '@OVFGLUE@': ''.join(oglue),
         '@IEPOWS@': ''.join(iepows),
-        '@VISBLOCK@': visblock, '@PARMOD@': parmod,
+        '@VISBLOCK@': visblock, '@PARMOD@': parmod + halfmod,
         '@VISCASES@': viscases, '@PARWHO@': parwho,
         '@VISO@': ''.join(viso), '@VISZ@': vz, '@VISZCASES@': vzcases,
         '@VISITS1@': vis[0], '@VISITS0@': vis[1],

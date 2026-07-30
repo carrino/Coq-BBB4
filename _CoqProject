@@ -1594,6 +1594,7 @@ theories/Machines/Counters/LAPC_1RB____1LC0RD_0LC1RD_0RB0RD.v
 theories/Counters/LapGlueAbs.v
 theories/Counters/NestedLap.v
 theories/Counters/NestedLapLift.v
+theories/Counters/NestedLapHalf.v
 theories/Counters/NestedLap2.v
 theories/Counters/NestedLapCascade.v
 theories/Tests/NestedLapRegression.v
@@ -2588,6 +2589,14 @@ theories/Machines/Counters/REG_0RB1LA_1RC1RD_1LD1RC_1RB0LA.v
 
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 theories/Machines/Counters/QHB_1RB1RD_1RC0LD_1LB0RA_1LC0LC.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/REG_1RB0LC_0RC1LD_1LB1RC_0LA0LB.v
+theories/Machines/Counters/REG_1RB1LA_0LA1RC_0RD0RB_1LB0RA.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/REG_0RB0RC_1LC0RD_0LD1RA_1RC1LD.v
+theories/Machines/Counters/REG_0RB1LC_1LA1RB_0LD0LA_1RA0LB.v
 
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
