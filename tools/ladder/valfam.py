@@ -529,7 +529,42 @@ def fit_fill_p(obs):
     return None
 
 
-def anchor_cells(fam, tm, steps=150000, cap=4000):
+_WALKS = {}
+
+
+def raw_anchor_visits(tm, q, h, steps=150000, cap=6000):
+    """Every visit to the anchor CELL of the raw run, as (left runs, right
+    runs).  Cached per (state, head): a row tries up to six candidate families
+    and several of them share an anchor, and this walk is the single most
+    expensive thing `close` does outside the arm search."""
+    key = (q, h, steps, cap)
+    got = _WALKS.get(key)
+    if got is not None:
+        return got
+    tape, pos, cq, lo, hi = {}, 0, 0, 0, 0
+    out = []
+    for _ in range(steps):
+        cell = tape.get(pos, 0)
+        if cq == q and cell == h and len(out) < cap:
+            gl = [tape.get(pos - 1 - i, 0) for i in range(pos - lo)]
+            gr = [tape.get(pos + 1 + i, 0) for i in range(hi - pos)]
+            while gl and gl[-1] == 0:
+                gl.pop()
+            while gr and gr[-1] == 0:
+                gr.pop()
+            out.append((block_rle(gl), block_rle(gr)))
+        tr = tm.get((cq, cell))
+        if tr is None:
+            break
+        w, d, cq = tr
+        tape[pos] = w
+        pos += d
+        lo, hi = min(lo, pos), max(hi, pos)
+    _WALKS[key] = out
+    return out
+
+
+def anchor_cells(fam, tm, steps=150000, cap=6000):
     """(counter-side cells, p) at every anchor visit, from the RAW machine.
 
     Its own run rather than the miner's snapshots, because the fill law needs
@@ -537,35 +572,20 @@ def anchor_cells(fam, tm, steps=150000, cap=4000):
     two -- a counter that widens by two reaches its second fill somewhere past
     where the ladder stopped looking.  Only anchor visits materialize a side,
     so the extra length is nearly free.  Cells, not digits: the PHASE pass
-    below has to ask what a visit would read as under another terminator, and
-    that question is not answerable once the reading has already been made."""
-    tape, pos, q, lo, hi = {}, 0, 0, 0, 0
+    has to ask what a visit would read as under another terminator, and that
+    question is not answerable once the reading has already been made."""
     out = []
-    for _ in range(steps):
-        h = tape.get(pos, 0)
-        if q == fam.q and h == fam.h and len(out) < cap:
-            gl = [tape.get(pos - 1 - i, 0) for i in range(pos - lo)]
-            gr = [tape.get(pos + 1 + i, 0) for i in range(hi - pos)]
-            while gl and gl[-1] == 0:
-                gl.pop()
-            while gr and gr[-1] == 0:
-                gr.pop()
-            cfg = (q, h, block_rle(gl), block_rle(gr))
-            pp = fam.far_p(cfg)
-            if pp is not None:
-                c = runs_cells(fam.counter_side(cfg))
-                out.append((None if c is None else tuple(c), pp))
-        tr = tm.get((q, h))
-        if tr is None:
-            break
-        w, d, q = tr
-        tape[pos] = w
-        pos += d
-        lo, hi = min(lo, pos), max(hi, pos)
+    for L, R in raw_anchor_visits(tm, fam.q, fam.h, steps, cap):
+        cfg = (fam.q, fam.h, L, R)
+        pp = fam.far_p(cfg)
+        if pp is None:
+            continue
+        c = runs_cells(fam.counter_side(cfg))
+        out.append((None if c is None else tuple(c), pp))
     return out
 
 
-def anchor_seq(fam, tm, steps=150000, cap=4000):
+def anchor_seq(fam, tm, steps=150000, cap=6000):
     """(digits, p) at every anchor visit -- phase 0 only, for the probes that
     predate phases."""
     return [(None if c is None else fam.decode(list(c)), pp)
@@ -1107,11 +1127,18 @@ def probe_families(tm, snaps, rules, top=4, max_occ=200):
 
 # ---------------------------------------------------------------------- arms
 
+_UID = itertools.count()
+
+
 class Arm:
     def __init__(self, name, rule, ops, kind, uses):
         self.name, self.rule, self.ops = name, rule, ops
         self.kind, self.uses = kind, uses
         self.covers = []
+        # a stable identity for the subsumption cache: arm NAMES restart with
+        # the counter on each candidate family, so they cannot key it
+        self.uid = next(_UID)
+        self.multi_var = _multi_var(rule.lhs)
 
     def steps(self, env):
         tot = Expr(0)
@@ -1205,7 +1232,8 @@ def mine_arms(tm, rules, fam, windows=(1, 2, 3, 4, 5), max_keys=160,
         if sig in seen:
             continue
         seen.add(sig)
-        for arm in _replay_arm(tm, rules, fam, lhs, lbs, next(ctr), budget):
+        for arm in _replay_arm(tm, rules, fam, lhs, lbs, next(ctr), budget,
+                               deadline=deadline):
             arms.append(arm)
             break
     return arms
@@ -1226,6 +1254,7 @@ def repair(tm, rules, fam, arms, uncovered, ctr, groups, budget=400,
     step case is the symbolic arm."""
     rep = Replay(tm, [], budget=4, raise_ok=False)
     added = []
+    order, n_added = order_arms(arms), 0
     for item in uncovered:
         k, v = item[0], item[1]
         pp = item[2] if len(item) > 2 else fam.p0
@@ -1242,8 +1271,10 @@ def repair(tm, rules, fam, arms, uncovered, ctr, groups, budget=400,
         if cfg is None or nxt is None:
             continue
         want = cfg_cells(nxt)
+        if len(added) != n_added:
+            order, n_added = order_arms(arms + added), len(added)
         first = None
-        for a in order_arms(arms + added):
+        for a in order:
             if rep.apply_rule(a.rule, cfg, bulk=False) is not None:
                 first = a
                 break
@@ -1252,11 +1283,20 @@ def repair(tm, rules, fam, arms, uncovered, ctr, groups, budget=400,
             continue
         got = None
         for m in windows:
+            # the deadline used to be checked once per ITEM, and one item can
+            # try 6 windows x 2 markers x 4 pins replays: measured at 98.8 s
+            # against a 90 s deadline on 1RB---_0LC1RD_1LB1RC_1LB0RD, which
+            # is how a cooperative cap turns into a hard timeout once the
+            # round is repeated per candidate
+            if deadline and time.time() > deadline:
+                break
             for mk in (True, False):
                 view = fam.view(cfg, m, marker=mk)
                 key = _vkey(view)
                 cs = [e.c for e in cfg_counts(view)]
                 for T in pins:
+                    if deadline and time.time() > deadline:
+                        break
                     pin = {i for i, c in enumerate(cs) if c <= T}
                     insts = [(d, w) for d, w in groups.get(key, [])
                              if all(cfg_counts(w)[i].c == cs[i] for i in pin)]
@@ -1269,7 +1309,8 @@ def repair(tm, rules, fam, arms, uncovered, ctr, groups, budget=400,
                     # visits along, and taking the first stop is exactly how
                     # an arm lands off the family.
                     for arm in _replay_arm(tm, rules, fam, lhs, lbs,
-                                           next(ctr), budget):
+                                           next(ctr), budget,
+                                           deadline=deadline):
                         out = rep.apply_rule(arm.rule, cfg, bulk=False)
                         if out is not None and cfg_cells(out) == want:
                             got = arm
@@ -1325,7 +1366,8 @@ def _member_env(fam, cfg, lbs, tries=3):
     return True
 
 
-def _replay_arm(tm, rules, fam, lhs, lbs, idx, budget, max_stops=6):
+def _replay_arm(tm, rules, fam, lhs, lbs, idx, budget, max_stops=6,
+                deadline=None):
     """Replay to the anchor, yielding at each stop.
 
     It used to yield only the FIRST anchor-shaped config and return.  An
@@ -1341,6 +1383,11 @@ def _replay_arm(tm, rules, fam, lhs, lbs, idx, budget, max_stops=6):
     ops, uses, n, stops, fallback = ['step'], set(), 0, 0, None
     while cur is not None and n < budget:
         n += 1
+        # a single replay is `budget` engine steps over configs that can be
+        # large, so the step budget alone does not bound the WALL clock; every
+        # caller has a deadline and this is where it has to be honoured
+        if deadline and not n % 16 and time.time() > deadline:
+            break
         if fam.anchor_shaped(cur):
             rule = Rule('arm%d' % idx, lhs, cur, dict(rep.lbs), None,
                         dict(rep.fired), level=1)
@@ -1441,18 +1488,32 @@ def _multi_var(lhs):
     return any(n > 1 for n in seen.values())
 
 
+_COVERS = {}
+
+
 def covers(a, b):
     """Is every config arm `b` applies to also one arm `a` applies to?
 
     Applicability is `match_rule` plus the lower-bound check in
     `Replay.apply_rule`, both syntactic, so this is decidable on the arms as
     data -- which is the point: the case split has to be checkable by whatever
-    checks the certificate, not just by the search that produced it."""
+    checks the certificate, not just by the search that produced it.
+
+    Memoized on the pair: `order_arms` is quadratic and runs inside `cover`
+    and `repair`, so the same comparison is asked thousands of times per row."""
+    key = (a.uid, b.uid)
+    r = _COVERS.get(key)
+    if r is None:
+        _COVERS[key] = r = _covers(a, b)
+    return r
+
+
+def _covers(a, b):
     qa, ha, La, Ra = a.rule.lhs
     qb, hb, Lb, Rb = b.rule.lhs
     if (qa, ha) != (qb, hb):
         return False
-    if _multi_var(a.rule.lhs) or _multi_var(b.rule.lhs):
+    if a.multi_var or b.multi_var:
         return a is b
     la, lb = a.rule.lbs, b.rule.lbs
     return _side_covers(La, la, Lb, lb) and _side_covers(Ra, la, Rb, lb)
@@ -1603,15 +1664,16 @@ def cover(tm, fam, arms, kmax=7, states=None):
                 'arm_hits': dict(used)}
 
 
-def prune(tm, fam, arms, kmax, states=None):
+def prune(tm, fam, arms, kmax, states=None, deadline=None):
     """Drop any arm the family still covers correctly without: the window
     sweep leaves whole-side variants of arms whose local form already does
-    the job.  Least-used first, one re-check per drop."""
+    the job.  Least-used first, one re-check per drop -- so it is one full
+    coverage pass per arm, which is why it takes a deadline."""
     ok, covmap, _ = cover(tm, fam, arms, kmax, states)
     if not ok:
         return arms
     for a in sorted(arms, key=lambda a: len(covmap.get(a.name, ()))):
-        if len(arms) == 1:
+        if len(arms) == 1 or (deadline and time.time() > deadline):
             break
         trial = [x for x in arms if x is not a]
         ok2, cov2, _ = cover(tm, fam, trial, kmax, states)
@@ -1819,6 +1881,8 @@ def chain_check(tm, fam, boot_t, boot_ds, boot_p=None, laps=40,
 
 def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
     t0 = time.time()
+    _WALKS.clear()
+    _COVERS.clear()
     tm = parse_tm(spec)
     ns = n_states(tm)
     res = {'spec': spec, 'closed': False}
@@ -1873,6 +1937,14 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         if time.time() - t0 > cap:
             res['reason'] = 'time cap'
             return res
+        # Budget, not mathematics: the FALLBACK candidates (two-parameter far
+        # side, and any candidate past the first few) are what a row that
+        # never closes spends its last minute on, and that minute is what
+        # pushes a row from `returns a diagnosis` to `hard timeout`.  A
+        # fallback only starts if a real slice is left for it.
+        if fi >= n_one and time.time() - t0 > 0.7 * cap:
+            res['fallback_candidates_skipped'] = ntry - fi
+            break
         # Per-family slice, so one hopeless candidate cannot eat the budget.
         # The one-parameter candidates divide the budget among THEMSELVES, so
         # adding two-parameter fallbacks cannot shorten a slice that a row
@@ -1953,7 +2025,7 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
                   else reach(fam, bds, bp, km, boot_ph=bph))
         arms = minimize(arms, covmap)
         if ok and time.time() < slice_end:
-            arms = prune(tm, fam, arms, km, states)
+            arms = prune(tm, fam, arms, km, states, deadline=slice_end)
             ok, covmap, rep2b = cover(tm, fam, arms, km, states)
             rep2b['repair_rounds'] = rounds
             rep = rep2b
@@ -1984,7 +2056,7 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
             arms += new
             ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2, states=states2)
         if ok2 and time.time() < slice_end:
-            arms = prune(tm, fam, arms, km2, states2)
+            arms = prune(tm, fam, arms, km2, states2, deadline=slice_end)
             ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2, states=states2)
             rep2['repair_rounds'] = rounds
             rep = {k: v for k, v in rep2.items()
