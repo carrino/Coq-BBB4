@@ -360,29 +360,58 @@ def _nested_ovf(tab, B0, B1, mid, K):
     Measured over item (1)'s 39 rows, 60 nested arms: they open 26 arms across
     13 rows that reported `no inner family at pow2 j` with nothing at all, and
     24 of the 32 keys they contribute carry octave shift 1 (see `validate`).
-    `ENCS` itself is untouched, so no other scan's search space moves."""
-    keys = NC.families(mid, ENCDATA, TRY, K=K)
-    if not keys:
+    `ENCS` itself is untouched, so no other scan's search space moves.
+
+    Wave-32 item (1): the inner run is searched by `nestcert.bounded_runs`, not
+    `families`, so a family that starts at an OFFSET or stops at the HALF is
+    found too.  The full-octave key still comes first AND still goes through
+    `nestcert.endpoints` on the identical call, so a board that derived before
+    derives the same way -- the new endpoints are reachable only by a key
+    `families` returned nothing for."""
+    cands = NC.bounded_runs(mid, ENCDATA, TRY, K=K)
+    if not cands:
         raise RegError('no inner family at pow2 j')
-    last = 'no inner family'
-    for key in keys[:24]:
-        CinS, CinF, AI0, AI1 = NC.endpoints(ENCDATA, None, None, (), (), key)
+    # The FURTHEST candidate's blocker, not the last one's.  With only
+    # full-octave keys the distinction rarely bit; enumerating bounded runs as
+    # well appends candidates that fail EARLY, and reporting the last of those
+    # would move a row's label BACKWARDS purely because the search got wider.
+    # Measured: 6 rows reported `no boot chain` before and `... not an sside`
+    # after, and one went from `no inner interior chain` to `no boot chain`.
+    fails = []
+    for (key, lo, hi, shape) in cands[:24]:
+        if shape == 'fill' and lo == 2 ** (K - 1 + key[4]):
+            # the full-octave route, byte-for-byte the pre-wave-32 call
+            CinS, CinF, AI0, AI1 = NC.endpoints(ENCDATA, None, None, (),
+                                                (), key)
+        else:
+            ends = NC.bounded_endpoints(ENCDATA, key, lo, hi, shape)
+            if ends is None:
+                # the index-shift trap: the run's block count is j + oct - w
+                # and an sside cannot carry a negative constant.  Buying the
+                # headroom means peeling the OUTER index, which restates the
+                # whole arm; filed, not chased.
+                fails.append('inner run is not an sside at this octave')
+                continue
+            CinS, CinF, AI0, AI1 = ends
         chb, rb = _chain(tab, True, True, B0, CinS)
         if chb is None or rb[0] != CinS or rb[2] == 0:
-            last = 'no boot chain'
+            fails.append('no boot chain')
             continue
         chn, rn = _chain(tab, False, True, AI0, AI1)
         if chn is None or rn[0] != AI1 or rn[2] == 0:
-            last = 'no inner interior chain'
+            fails.append('no inner interior chain')
             continue
         che, re = _chain(tab, True, True, CinF, B1)
         if che is None or re[0] != B1:
-            last = 'no exit chain'
+            fails.append('no exit chain')
             continue
         return dict(key=key, CinS=CinS, CinF=CinF, AI0=AI0, AI1=AI1,
                     chb=chb, cb=(rb[1], rb[2]), chn=chn, cn=(rn[1], rn[2]),
-                    che=che, ce=(re[1], re[2]))
-    raise RegError(last)
+                    che=che, ce=(re[1], re[2]),
+                    # NOT `c`: a FLAT arm's `c` is its (a, b) cost tuple, and
+                    # the two would share a key on the same `ovf` dict.
+                    shape=shape, off=lo - 2 ** (hi.bit_length() - 1))
+    raise RegError(max(fails, key=_rank) if fails else 'no inner family')
 
 
 # ------------------------------------------------------------ validation ---
@@ -417,25 +446,39 @@ def validate(tab, D, hi=HI):
                     raise RegError('p=%d boot -> %r want %r'
                                    % (p, cur, _denc(O['CinS'], j - 2)))
                 # The inner family's OCTAVE SHIFT belongs in the replay bound.
-                # `CinS` is `E_in (pow2 (j - 2 + oct))` -- `nestcert.endpoints`
-                # puts `oct` in the sside's constant `b` -- and the run ends at
-                # ITS fill, so an `oct >= 1` family has `2^(j-2+oct)` laps, not
-                # `2^(j-2)`.  Wave-32: replaying from `1 << (j - 2)` walked the
-                # right per-lap step counts (the low bits, hence the carry
-                # indices, agree) but too FEW laps, landed short of the fill,
-                # and filed the row `inner fill lands off the measured
-                # endpoint`.  That is the whole of that 6-row bucket.
-                v = 1 << (j - 2 + O['key'][4])
-                while True:
+                # `CinS` is `E_in (pow2 (j - 2 + oct) + c)` -- `nestcert`'s
+                # endpoints put `oct` in the sside's constant `b` -- and an
+                # `oct >= 1` family has `2^(j-2+oct)` laps, not `2^(j-2)`.
+                # Wave-32: replaying from `1 << (j - 2)` walked the right
+                # per-lap step counts (the low bits, hence the carry indices,
+                # agree) but too FEW laps, landed short of the fill, and filed
+                # the row `inner fill lands off the measured endpoint`.  That
+                # is the whole of that 6-row bucket.
+                #
+                # Item (1): the run need not end at the fill.  `shape` says
+                # where it does end, and the loop runs TO that value instead of
+                # until the counter overflows -- which is the replay of exactly
+                # the run `NestedLapLift.inner_to_add_lift` certifies.
+                m = j - 2 + O['key'][4]
+                v = (1 << m) + O.get('off', 0)
+                vend = ((1 << (m + 1)) - 1 if O.get('shape', 'fill') == 'fill'
+                        else (1 << m) + (1 << (m - 1)) - 1)
+                while v < vend:
                     i, iov = carry(v)
                     if iov:
-                        break
+                        # k > tovf v0: the run would carry past its octave, so
+                        # an intermediate anchor is NOT interior and [Hin] does
+                        # not apply there.  The search rules this out; if it
+                        # ever fires the search and the replay disagree.
+                        raise RegError('p=%d inner run overflows at v=%d '
+                                       '(end %d)' % (p, v, vend))
                     cur = EL.sim(tab, cur, O['cn'][0] * i + O['cn'][1])
                     ninner += 1
                     v += 1
                 if not EL.eqlift(cur, _denc(O['CinF'], j - 2)):
-                    raise RegError('p=%d inner fill -> %r want %r'
-                                   % (p, cur, _denc(O['CinF'], j - 2)))
+                    raise RegError('p=%d inner %s -> %r want %r'
+                                   % (p, O.get('shape', 'fill'), cur,
+                                      _denc(O['CinF'], j - 2)))
                 steps = O['ce'][0] * (j - 2) + O['ce'][1]
                 start = cur
         else:
@@ -1021,6 +1064,23 @@ def _far_peel(far, pad):
 
 def render(D):
     spec = D['spec']
+    # The nested templates below state the inner run as
+    # `inner_to_fill_lift ... (pow2 @IPOWJ@)` -- a run from the octave start TO
+    # THE FILL.  A bounded arm (`nestcert.bounded_runs` shape 'half', or a
+    # 'fill' run that starts at an offset) is a DIFFERENT run, and its board has
+    # to cite `NestedLapLift.inner_to_add_lift` with the endpoint the search
+    # measured.  Wave-32 derived no such row -- all 16 the reader opened stop at
+    # an earlier gate (WAVE32_FINDINGS section 16) -- so that template is
+    # deliberately NOT written on speculation.  Refuse loudly rather than emit
+    # the fill template for a run that does not reach the fill: the board would
+    # be wrong, and it would fail at `coqc` looking like an ordinary derivation
+    # failure.
+    for b, O in D['ovf'].items():
+        if O['kind'] == 'nested' and (O.get('shape', 'fill') != 'fill'
+                                      or O.get('off', 0)):
+            raise RegError('bounded inner run at octave parity %d '
+                           '(shape=%s, offset=%d) has no template yet'
+                           % (b, O.get('shape', 'fill'), O.get('off', 0)))
     ID = mach_id(spec)
     d = ENCDATA[D['enc']]
     encf = d.get('fn') or D['enc']
@@ -1189,7 +1249,10 @@ def process(spec, do_emit=False, force=False, encs=None):
 # family is not filed under whatever its MIRROR did (nestcert's lesson).
 _RANK = ['no gap-free two-form family', 'two-form family covers only',
          'no interior j=0 chain', 'no interior j=S j chain',
-         'no inner family at pow2 j', 'no boot chain',
+         'no inner family at pow2 j',
+         # a family WAS found and only its index shift is unstatable, so this
+         # is further than "no family at all" and nearer than any chain gate
+         'inner run is not an sside', 'no boot chain',
          'no inner interior chain', 'no exit chain',
          'no visit witness', 'no bootstrap']
 

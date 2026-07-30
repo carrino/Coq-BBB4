@@ -52,6 +52,20 @@ Proof.
   cbn [pow2 fill cview]. rewrite IH. reflexivity.
 Qed.
 
+(** The converse of [JpCounter.tovf0_allones]: the all-ones shape is the ONLY
+    place the overflow distance is zero.  [inner_to_add_lift] below needs the
+    implication in this direction -- its side condition bounds [tovf], and what
+    it has to rule out is the [cview _ = (_, None)] anchor [Hin] says nothing
+    about. *)
+Lemma tovf_allones_0 : forall v i, cview v = (i, None) -> tovf v = 0.
+Proof.
+  induction v as [v IH|v IH|]; intros i H; cbn in H.
+  - destruct (cview v) as [j r] eqn:E. inversion H; subst.
+    cbn. rewrite (IH j eq_refl). lia.
+  - discriminate.
+  - reflexivity.
+Qed.
+
 Section InnerFillLift.
 
 Variable tm : TM.
@@ -89,6 +103,50 @@ Proof.
     { exfalso. destruct v; cbn in Ecv;
         [destruct (cview v); discriminate | discriminate | discriminate]. }
     exists 0. rewrite (fill_allones v i' Ecv). reflexivity.
+Qed.
+
+(** ** The BOUNDED inner run -- [k] increments and stop
+
+    [inner_to_fill_lift] runs the inner counter all the way to its all-ones
+    fill.  WAVE29_REGISTER_FINDINGS section 5d measured that on the two-form
+    exponential arm it does not get there -- it starts at an OFFSET and stops
+    HALFWAY:
+
+      K = 5 (p = 63 -> 64):   inner rests run 132 .. 191 = 2^7+4 .. 2^7+2^6-1
+      K = 7 (p = 255 -> 256): inner rests run 516 .. 767 = 2^9+4 .. 2^9+2^8-1
+
+    so the run the emitter must state is "[k] increments from [v]", not "up to
+    [fill v]".  Neither [inner_to_fill_lift] nor [nestcert.derive_offset]'s
+    [2^(K+1)+c .. 2^(K+2)-1] covers it.
+
+    This is a PLAIN induction on [k].  The fill's well-founded recursion on
+    [tovf] is only needed to reach a target you cannot count down to; a bounded
+    run takes [k] steps and stops, so [k] is the structural measure.
+
+    [k <= tovf v] is the ENTIRE side condition.  It says the run stops at or
+    before the fill, which is exactly what makes every intermediate anchor
+    INTERIOR -- so [Hin] applies at each one -- and [JpCounter.tovf_succ]
+    carries it through the step.
+
+    Deliberately NOT stated as
+    [forall m, m < k -> exists i q0, cview (Nat.iter m Pos.succ v) = (i, Some q0)]:
+    [k] is exponential in the board's symbolic index ([2^(K+1) - 5] on the
+    measurement above), so a per-[m] premise cannot be discharged by
+    [vm_compute] and the board cannot state it at all. *)
+Lemma inner_to_add_lift : forall k v, k <= tovf v ->
+  exists n, stepn tm n (lift (Cin v)) = Some (lift (Cin (Nat.iter k Pos.succ v))).
+Proof.
+  induction k as [|k IH]; intros v Hk.
+  - exists 0. reflexivity.
+  - destruct (cview v) as [i oq] eqn:Ecv; destruct oq as [q0|].
+    + (* an interior anchor: [Hin] fires, and one increment is spent *)
+      destruct (Hin v i q0 Ecv) as (n & c' & _ & Hrun & Hlift).
+      destruct (IH (Pos.succ v)) as (m & Hm).
+      { rewrite tovf_succ by lia. lia. }
+      exists (n + m). rewrite Nat.iter_succ_r.
+      rewrite stepn_add, (csteps_lift _ _ _ _ Hrun), Hlift. exact Hm.
+    + (* the fill -- excluded by [k <= tovf v], with [S k] increments to make *)
+      exfalso. rewrite (tovf_allones_0 v i Ecv) in Hk. lia.
 Qed.
 
 End InnerFillLift.

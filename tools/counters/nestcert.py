@@ -125,6 +125,27 @@ def phase_mid(tab, st0, encf, tail, far, K=6, maxT=400000):
     raise NestError('no overflow phase at K=%d' % K)
 
 
+# Shortest contiguous inner run [bounded_runs] will report.  The arm's cost
+# has to be Theta(2^j) for the nested route to be the right one at all, so a
+# run of 1-3 values is a coincidence of the reader, not a counter: wave-32
+# measured runs of 1 and 2 on nearly every row (`innerrun.py`), and every one
+# of them is a frame the phase passes through twice.
+MINRUN = 8
+
+
+def _longest_run(vals):
+    """The longest contiguous +1 stretch of [vals], in visit order.
+
+    A family the carrier can express has to be CONSECUTIVE, and the reader
+    must not be allowed to stitch two frames into one apparent run."""
+    best = cur = [vals[0]]
+    for a, b in zip(vals, vals[1:]):
+        cur = cur + [b] if b == a + 1 else [b]
+        if len(cur) > len(best):
+            best = cur
+    return best[0], best[-1], len(best)
+
+
 def families(mid, ENCDATA, ENCS, K=6, maxtail=MAXTAIL, maxoct=MAXOCT):
     """Every (alphabet, state, tail, far, oct) in [mid] whose decoded values
     run exactly 2^(K-1+oct) .. 2^(K+oct)-1.
@@ -142,23 +163,12 @@ def families(mid, ENCDATA, ENCS, K=6, maxtail=MAXTAIL, maxoct=MAXOCT):
 
     [maxtail] is how many cells past the decoded word the key may carry; see
     [MAXTAIL] for why it is 3 and not 6.
+
+    This function is UNCHANGED by wave-32 and deliberately so: [regcert] calls
+    it too, and the byte-identical A/B is a re-render of the REG_* boards.  The
+    bounded search is [bounded_runs] below, and only [tailcert] calls it.
     """
-    hits = {}
-    for (q, l, r) in mid:
-        for name in ENCS:
-            d = ENCDATA[name]
-            if d['obS'] != 0:
-                # obS >= 1 alphabets frame the all-ones anchor differently;
-                # the [pow2]/[fill] glue below assumes soS = soD = C.
-                continue
-            A, B, C = tuple(d['uD']), tuple(d['uS']), tuple(d['soD'])
-            for k in range(maxtail + 1):
-                if k > len(l) - 1:
-                    break
-                head, tl = (l[:len(l) - k], l[len(l) - k:]) if k else (l, ())
-                v = decode(head, A, B, C)
-                if v is not None:
-                    hits.setdefault((name, q, tl, r), []).append(v)
+    hits = _gather(mid, ENCDATA, ENCS, maxtail)
     keys = []
     for o in range(maxoct + 1):
         want_run = list(range(2 ** (K - 1 + o), 2 ** (K + o)))
@@ -167,6 +177,77 @@ def families(mid, ENCDATA, ENCS, K=6, maxtail=MAXTAIL, maxoct=MAXOCT):
         oct_keys.sort(key=lambda kv: -kv[1])
         keys += [k for k, _ in oct_keys]
     return keys
+
+
+def bounded_runs(mid, ENCDATA, ENCS, K=6, maxtail=MAXTAIL, maxoct=MAXOCT,
+                 minrun=MINRUN):
+    """[families], but for a run that need not fill its octave: every key whose
+    longest contiguous stretch is `v0 .. v0 + k`, reported WITH its endpoints.
+
+    Returns `(key5, lo, hi, shape)` tuples, full-octave keys FIRST and in
+    [families]'s own order, so a caller that enumerates gets today's route
+    before any new one.  [shape] is 'fill' or 'half'.
+
+    MEASURED (wave-32, `innerrun.py` over item (1)'s 33 rows / 54 nested arms):
+    the inner run is one of exactly three shapes, and only the third needs the
+    bounded carrier --
+
+        10  FULL    lo = 2^(K-1+o), hi = 2^(K+o)-1     -- [families] finds it
+        20  offset  lo = 2^m + c,   hi = 2^(m+1)-1     -- ends AT the fill
+        16  HALF    lo = 2^m + c,   hi = 2^m + 2^(m-1)-1
+
+    The offset shape does NOT need new mathematics: [inner_to_fill_lift] runs
+    from ANY [v] to [fill v], so an offset START was always in range and it is
+    the SEARCH that refused it.  [shape] is that discriminator, and it is what
+    picks the lemma at render time:
+
+        'fill'  -> [NestedLapLift.inner_to_fill_lift]  (in the tree since w16)
+        'half'  -> [NestedLapLift.inner_to_add_lift]   (wave-32)
+
+    The in-octave test is `lo.bit_length() == hi.bit_length()`, which is not a
+    heuristic: it says the run does not carry past the top of its octave, and
+    that is EXACTLY the carrier's side condition [k <= tovf v0]
+    ([tovf v = 2^width(v) - 1 - v], so `hi <= 2^width(lo) - 1` iff
+    `hi - lo <= tovf lo`).  A key the search accepts here is a key whose Coq
+    side condition is discharged by construction.
+
+    Runs that are in-octave but end at NEITHER the fill nor the half are
+    REFUSED, and that is the reader being honest rather than a missing lemma:
+    the endpoint word of `hi = 159 = 2^7 + 2^5 - 1` is
+    `rep uS 5 ++ uD ++ uD ++ so` -- TWO zero blocks, and how many there are at
+    a general [j] is not something one octave's reading can say.  Both accepted
+    shapes reproduce at two consecutive octaves on the same arm (measured: the
+    same key gives 65..95 at m=6 and 129..191 at m=7), which is what makes
+    their [j]-law a law and not a coincidence.  Wave-32 measured 66 such
+    refused runs against 82 accepted ones.
+    """
+    hits = _gather(mid, ENCDATA, ENCS, maxtail)
+    fullkeys = families(mid, ENCDATA, ENCS, K, maxtail, maxoct)
+    full = set(fullkeys)
+    out = [(k, 2 ** (K - 1 + k[4]), 2 ** (K + k[4]) - 1, 'fill')
+           for k in fullkeys]
+    rest = []
+    for key, vals in hits.items():
+        lo, hi, n = _longest_run(vals)
+        if n < minrun:
+            continue
+        m = lo.bit_length() - 1
+        if hi.bit_length() != m + 1:
+            continue                      # carries past the octave: k > tovf v0
+        o = m - (K - 1)
+        if not 0 <= o <= maxoct:
+            continue                      # not the octave the arm is indexed at
+        if hi == 2 ** (m + 1) - 1:
+            shape = 'fill'
+        elif hi == 2 ** m + 2 ** (m - 1) - 1:
+            shape = 'half'
+        else:
+            continue                      # endpoint word has no known j-law
+        if key + (o,) in full:
+            continue                      # already reported, in [families]'s order
+        rest.append((key + (o,), lo, hi, shape, n))
+    rest.sort(key=lambda t: (t[0][4], -t[4]))
+    return out + [t[:4] for t in rest]
 
 
 def split_at_fill(mid, ENC, key, K=6):
@@ -217,6 +298,60 @@ def endpoints(ENCDATA, enc, st0, tail, far, key):
     AI0 = (st_in, ((), din['uS'], 1, 0, din['sS']), 0, Fin)
     AI1 = (st_in, ((), din['uD'], 1, 0, din['sD']), 0, Fin)
     return CinS, CinF, AI0, AI1
+
+
+def bounded_endpoints(ENCDATA, key, lo, hi, shape):
+    """[endpoints] for a run that starts at an OFFSET and may stop short of the
+    fill.  Returns `(CinS, CinE, AI0, AI1)`, or None when the run's block
+    counts are not ssides.  [shape] is [bounded_runs]'s, 'fill' or 'half'.
+
+    The family's octave start is `2^m` with `m = j + oct` blocks (that is the
+    index [endpoints] states everything at), so with `lo = 2^m + c` and
+    `w = width(c)`:
+
+      inner start  CinS = blocks(c) ++ rep uD_in (j + oct - w) ++ soD_in ++ tail
+      inner end, at the fill:
+                   CinE = rep uS_in (j + oct) ++ soD_in ++ tail    ( = [endpoints]'s CinF )
+      inner end, HALF (hi = 2^m + 2^(m-1) - 1):
+                   CinE = rep uS_in (j + oct - 1) ++ uD_in ++ soD_in ++ tail
+
+    [sden_parts] folds the constant count into the prefix as `pre + u * b`, so
+    **[b] must be >= 0** -- a negative one silently denotes a DIFFERENT word
+    rather than failing.  That is the index-shift trap (wave-29: the offset form
+    `pow2 j + 1`, whose count is `j - 1`, measured 0/12), and it is why this
+    returns None instead of a template: an offset needs `oct >= width(c)` and a
+    HALF endpoint needs `oct >= 1`.  Buying more headroom means peeling the
+    OUTER index (`j = S j'`, as `derive_offset` does), which restates the whole
+    arm and is not done here.
+
+    [soS] is used nowhere: the `obS == 0` filter in [_gather] is exactly the
+    condition `soS = soD = C`, so the two spellings coincide on every key that
+    reaches this function.
+    """
+    name_in, st_in, tail_in, far_in, oct_ = key
+    din = ENCDATA[name_in]
+    m = hi.bit_length() - 1                    # blocks in the family's octave
+    c = lo - 2 ** m
+    if c < 0 or shape not in ('fill', 'half'):
+        return None
+    at_fill = shape == 'fill'
+    if hi != (2 ** (m + 1) - 1 if at_fill else 2 ** m + 2 ** (m - 1) - 1):
+        return None                            # [shape] does not describe [hi]
+    w = c.bit_length()
+    b_lo = oct_ - w
+    b_hi = oct_ if at_fill else oct_ - 1
+    if b_lo < 0 or b_hi < 0:
+        return None                            # not an sside at this octave
+    Fin = (tuple(far_in), (), 0, 0, ())
+    ti = tuple(tail_in)
+    so = tuple(din['soD'])
+    CinS = (st_in, (_blocks_of(c, tuple(din['uD']), tuple(din['uS'])),
+                    din['uD'], 1, b_lo, so + ti), 0, Fin)
+    post = so + ti if at_fill else tuple(din['uD']) + so + ti
+    CinE = (st_in, ((), din['uS'], 1, b_hi, post), 0, Fin)
+    AI0 = (st_in, ((), din['uS'], 1, 0, din['sS']), 0, Fin)
+    AI1 = (st_in, ((), din['uD'], 1, 0, din['sD']), 0, Fin)
+    return CinS, CinE, AI0, AI1
 
 
 def _chain(tab, el, er, a, b):

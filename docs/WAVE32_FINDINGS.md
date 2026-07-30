@@ -483,10 +483,261 @@ The per-bucket row lists are under `tools/counters/buckets32/`, with
 `tools/counters/buckets.py` splits a `tailcert --out` JSON into them.
 `buckets31/` was assembled by hand.
 
+> **The table in this section is the MID-wave state.**  §12 onward is the second
+> half of wave-32 (item (1) proper, the bounded carrier), and it moves 23 of
+> these rows.  `buckets32/` has been **regenerated at the end of the wave** and
+> therefore matches §16, not this table — there is deliberately only ONE list on
+> disk, so no next wave can read a stale one.  This table is reproducible with
+> `tailcert --list tools/closeout/core_rows.txt` at `6202911`.
+
 Boards are verified individually — each compiles and `Print Assumptions` is
 checked — and the stage integration is checked structurally by `audit.py`, as in
 previous waves; the 50 closeout stages are not recompiled (that is the whole
 4,938-board build).
+
+## 12. Item (1): the BOUNDED INNER CARRIER, proved — and it is 20 lines
+
+`theories/Counters/NestedLapLift.v`, next to the twin it is named after:
+
+    Lemma inner_to_add_lift : forall k v, k <= tovf v ->
+      exists n, stepn tm n (lift (Cin v)) = Some (lift (Cin (Nat.iter k Pos.succ v))).
+
+exactly as the prompt specced it — **plain induction on `k`**, side condition
+`k <= tovf v` and nothing else, carried through the step by `JpCounter.tovf_succ`.
+No per-`m` premise: `k` is exponential in the board's symbolic index (`2^(j-1)-1-c`
+on the measured runs below), so `vm_compute` could not discharge one and the board
+could not state it.
+
+`Print Assumptions inner_to_add_lift` is `functional_extensionality_dep` only, and
+`NestedLapLift.v` is confirmed OUTSIDE the census closure
+(`census_cache.closure_v_files()`), so it is a legal home. `census_cache.py --check`
+is MATCH at the unchanged hash `12362a25...e15d833f`.
+
+**`Nat.iter`, not `Pos.iter`.** The prompt writes `Pos.iter Pos.succ v k`, and that
+does not typecheck: `tovf : positive -> nat`, so `k <= tovf v` forces `k : nat`.
+It would be the wrong iterate even so — Coq's `Pos.iter f x xH = f x` applies `f`
+ONCE, so a `positive` count has no `k = 0`, and a plain induction needs exactly
+that base case. `Nat.iter` is also the house spelling (`WaveCounter.anc`).
+
+One helper was needed and is the converse of an existing lemma:
+
+    Lemma tovf_allones_0 : forall v i, cview v = (i, None) -> tovf v = 0.
+
+`JpCounter.tovf0_allones` runs the other way. The step case has to rule out the
+all-ones anchor — the one place `Hin` says nothing — and the side condition rules
+it out through `tovf`, so the implication is needed in this direction.
+
+### 12a. The step, measured against the raw simulator
+
+The standing move, paid: `1RB0LC_0RC1LD_1LB1RC_0LA0LB`, parity 1, `Ip` at
+`oct = 1`, shape `half`.
+
+| `p` | `j` | `v0` | `vend` | `k` | boot lands on `CinS` | `k=0` | `k=1` | `k=2` | full run |
+|--:|--:|--:|--:|--:|:-:|:-:|:-:|:-:|:-:|
+| 3 | 2 | 2 | 2 | 0 | yes | ok | ok | **no** | ok |
+| 15 | 4 | 8 | 11 | 3 | yes | ok | ok | ok | ok |
+| 63 | 6 | 32 | 47 | 15 | yes | ok | ok | ok | ok |
+
+The `no` is the result, not a defect: at `p = 3`, `tovf 2 = 1`, so `k = 2`
+violates `k <= tovf v` and the lemma does not claim that step. **The simulator
+disagrees exactly where the side condition stops applying and agrees everywhere
+inside it** — which is the sharpest evidence available that the premise is the
+right one and is not doing less work than it looks.
+
+## 13. The run is one of THREE shapes, and only one of them needed the lemma
+
+`innerrun.py` over item (1)'s 33-row list, best key per arm (54 nested arms):
+
+| n | shape | `lo` | `hi` |
+|--:|---|---|---|
+| 20 | offset | `2^m + c` | `2^(m+1) - 1` — **the fill** |
+| 16 | HALF | `2^m + c` | `2^m + 2^(m-1) - 1` |
+| 10 | FULL | `2^(K-1+o)` | `2^(K+o) - 1` — what `families` already takes |
+
+**The offset shape needed no new mathematics at all.** `inner_to_fill_lift` runs
+from ANY `v` to `fill v`, so an offset START was always in range; it was the
+SEARCH that refused it, because `families` tests `vals == list(range(2^(K-1+o),
+2^(K+o)))` and an offset start fails the first element. Half of the bucket was a
+reader bug wearing a missing-lemma costume — the same lesson as §2, one wave
+later and one gate deeper.
+
+So `nestcert.bounded_runs` reports `(key5, lo, hi, shape)` with `shape` in
+`{'fill','half'}`, and `shape` picks the lemma at render time. The in-octave test
+is `lo.bit_length() == hi.bit_length()`, which is not a heuristic: `tovf v =
+2^width(v) - 1 - v`, so "the run does not carry past the top of its octave" IS
+`k <= tovf v0`. **A key the search accepts is a key whose Coq side condition is
+discharged by construction.**
+
+Runs that are in-octave but end at neither the fill nor the half are REFUSED —
+82 accepted against 66 refused. That is the reader being honest: `hi = 159 =
+2^7 + 2^5 - 1` has endpoint word `rep uS 5 ++ uD ++ uD ++ so`, TWO zero blocks,
+and how many there are at a general `j` is not something one octave's reading can
+say. Both accepted shapes were checked to reproduce at two consecutive octaves on
+the same arm (`65..95` at `m=6` and `129..191` at `m=7`), which is what makes
+their `j`-law a law rather than a coincidence.
+
+Verification that the symbolic endpoints denote the right words: every accepted
+candidate's `CinS`/`CinE` was instantiated at the concrete `j` and compared with
+`ENC[name](lo)` / `ENC[name](hi)` — **164 match, 0 mismatch**.
+
+## 14. What actually binds is the INDEX-SHIFT TRAP, not the carrier
+
+`sden_parts` folds an sside's constant count into its prefix as `pre + u * b`, so
+**`b` must be >= 0** — a negative one silently denotes a DIFFERENT word instead of
+failing. The bounded endpoints' counts are
+
+    start   j + oct - width(c)          end (half)   j + oct - 1
+
+so an offset needs `oct >= width(c)` and a half endpoint needs `oct >= 1`. That is
+wave-29's index-shift trap (`pow2 j + 1`, count `j - 1`, measured 0/12) in its
+general form, and it is the binding constraint on this route — not the lemma,
+which took an afternoon.
+
+`nestcert.bounded_endpoints` returns None rather than a template when the count is
+not an sside, and `_nested_ovf` files the row `inner run is not an sside at this
+octave`. Buying the headroom means peeling the OUTER index (`j = S j'`, as
+`derive_offset` does), which restates the whole arm — boot, interior, exit and the
+visit bullets — and is **not** done here. 2 rows end the wave filed there.
+
+## 15. `_nested_ovf` reported the LAST candidate's blocker, not the furthest
+
+Found by the before/after diff, and worth recording because it is a measurement
+artefact that would have been published as a result. `_nested_ovf` enumerates
+candidate keys and overwrites `last` on each failure, so the reported gate was
+whichever key happened to be tried last. With only full-octave keys that rarely
+bit; appending bounded candidates — which fail EARLY and in bulk — moved 6 rows
+from `no boot chain` to `inner run is not an sside` and one from `no inner
+interior chain` to `no boot chain`, i.e. **BACKWARDS, purely because the search
+got wider**.
+
+Fixed by ranking the failures and raising the furthest (`max(fails, key=_rank)`),
+and `inner run is not an sside` is placed in `_RANK` between `no inner family at
+pow2 j` and `no boot chain` — a family WAS found and only its index shift is
+unstatable. After the fix the same sweep reports **0 rows whose furthest gate went
+backwards**, and the `not an sside` bucket is 2 rather than 8.
+
+## 16. The gate table AFTER item (1) — BEFORE at `6202911`, AFTER at this commit
+
+`tailcert.py --list tools/closeout/core_rows.txt`, 143 open core rows, no `--emit`:
+
+    0 / 143 fully derived        (both sides)
+
+| n before | n after | furthest gate | Δ |
+|--:|--:|---|--:|
+| 40 | 40 | `no interior j=S j chain at octave parity 0` | = |
+| 29 | 26 | `no boot chain` | **−3** |
+| 25 | 25 | `no gap-free two-form family` | = |
+| 20 | **4** | `no inner family at pow2 j` | **−16** |
+| 17 | 17 | `register step does not close` | = |
+| 2 | **17** | `no inner interior chain` | **+15** |
+| 5 | 5 | `no exit chain` | = |
+| 4 | 4 | `no interior j=0 chain at octave parity 0` | = |
+| 1 | 2 | `no visit witness for state A at octave parity 0` | +1 |
+| — | 2 | `inner run is not an sside at this octave` | **new** |
+| — | 1 | `no visit witness for state D at octave parity 1` | **new** |
+
+**23 rows move, 0 board**, and 0 regress. That is the third wave running in which
+opening a gate moves rows and boards none (wave-31 §8b moved 30 and boarded 0;
+§2 of this document moved 13 and boarded 0), and it was predicted in the prompt.
+The BEFORE column reproduces §10's table exactly, re-measured at `6202911`.
+
+Where the 16 rows that left `no inner family` went: 8 to `no inner interior
+chain`, 4 to `no boot chain`, 2 to `not an sside`, 2 to a visit witness.
+
+### 16a. The two rows one gate from boarding are blocked on the FLAT arm
+
+`1RB0LC_0RC1LD_1LB1RC_0LA0LB` (state A) and `1RB1LA_0LA1RC_0RD0RB_1LB0RA`
+(state D) get **past `validate`** — the bounded run replays against the raw
+simulator at every anchor — and stop at `visits`. Measured: on both, the failing
+parity is the **FLAT** arm, not the nested one, and the state fires in neither the
+boot prefix nor the exit prefix nor an inner lap. `visits` has no fallback for a
+flat arm at all (a nested one has `vis_via_fill`). That is a pre-existing gap
+newly exposed because the OTHER parity now derives, it is not what item (1) is
+for, and per the prompt it is filed rather than chased.
+
+## 17. The A/B, which this time had something to disturb — and did not
+
+Wave-31's A/B came back clean because it touched nothing shared; §6's likewise.
+This one changes `nestcert`, which `regcert` calls, so it is the first A/B this
+track has run that could genuinely move committed boards.
+
+Both harnesses, pristine worktree at `6202911` vs the patched tree:
+
+| harness | boards | result |
+|---|--:|---|
+| `rerender_check.py` (LAPC/NLAP/PEEL/LAPQ) | 870 | **byte-identical** |
+| `rerender_tail.py` (REG_*) | 12 | **byte-identical** |
+
+It came back clean for a reason that was designed in rather than hoped for:
+**`families` is not changed**. Its body was refactored onto the `_gather` helper
+that already existed beside it, and the bounded search is a separate function only
+`tailcert` calls. The refactor was checked to be behaviour-preserving directly —
+old body vs new over 7,200 comparisons (300 random `mid` phases × both alphabet
+lists × K ∈ {4,5,6,7} × maxoct ∈ {0,1,2}), **0 differences** — and the full-octave
+route in `_nested_ovf` still goes through `nestcert.endpoints` on the identical
+call, so a board that derived before derives by the same code path.
+
+Note for the next wave: `rerender_check.py` reports ~800 of 870 boards as
+DIFFERING from the tree. That is the known baseline noise the prompt warns about
+and is why this is an A/B; the literal test cannot pass.
+
+## 18. What is in the tree, and what is deliberately NOT
+
+In:
+
+* `NestedLapLift.inner_to_add_lift` and `tovf_allones_0` (funext-only);
+* `nestcert.bounded_runs` / `bounded_endpoints`, and `families` refactored onto
+  `_gather` with its behaviour unchanged;
+* `tailcert._nested_ovf` on the bounded search, `validate` replaying to the
+  measured endpoint rather than to the fill, and the furthest-gate fix;
+* `buckets32/` regenerated at this commit, matching §16.
+
+Deliberately not:
+
+* **the bounded RENDER template.** No row derives, so there is nothing to render
+  and nothing to compile; writing the template would be writing untested Coq
+  emission. `render` instead **refuses a bounded arm loudly** — otherwise it would
+  silently emit the `inner_to_fill_lift` template for a run that does not reach
+  the fill, producing a wrong board whose `coqc` failure looks like an ordinary
+  derivation failure and gets the file deleted;
+* **`vis_via_add`**, the bounded twin of `vis_via_fill`. It is the piece the next
+  wave needs the moment a bounded row boards and needs an exit-chain witness, and
+  it is a five-line copy of `vis_via_fill` with `inner_to_add_lift` in place of
+  `inner_to_fill_lift` — but nothing exercises it today.
+
+## 19. DO NOT RETRY (measured, this half of the wave)
+
+* **The bounded inner carrier as a way to BOARD rows.** 0 of the 16 it opens.
+  It is built, proved and committed; do not rebuild it, and do not expect boards
+  from opening a gate. Three waves, three times, ~60 rows.
+* **A bounded family whose count needs `b < 0`.** Not a search-space question and
+  not a lemma question — `sden_parts` cannot spell it. The only route is peeling
+  the outer index, and that is an arm-wide restatement (§14).
+* **Reading a bounded endpoint's `j`-law off ONE octave.** 66 of the 148
+  in-octave runs end somewhere with no law a single reading can determine. Check
+  two consecutive octaves on the same arm before believing a shape.
+
+## 20. Standing lessons, paid again
+
+* **MEASURE THE BUCKET BEFORE DESIGNING FOR IT** — and the measurement said the
+  prompt's own framing was half wrong: 20 of 39 arms needed no new mathematics,
+  only a search that would look at them. The lemma the prompt asked for was
+  correct and necessary; the *size* it was asked for was not.
+* **AND MEASURE IT AT A COMMIT.** The BEFORE table here was re-measured rather
+  than copied from §10, and that is what caught §15.
+* **A SOUNDNESS ARGUMENT IS A MEASUREMENT** (§12a), and the boundary case is
+  worth more than the passing ones.
+* **SWEEP AFTER, NOT BEFORE.** §15 exists only because the sweep was diffed
+  per-row instead of by bucket totals. The totals looked fine.
+
+### A note on the prompt's reading list
+
+`docs/LADDER_PLAN.md` does not exist in this tree and never has — there is no
+`§4b` anywhere under `docs/`. The nearest documents are `docs/RULE_LADDER.md`
+(sections 0–7, no 4b) and `docs/NESTED_LAP_PLAN.md` (§4 is "Risks, honestly",
+with no subsections). The substantive specification for item (1) is
+`WAVE32_PROMPT.md` §(1) plus `WAVE29_REGISTER_FINDINGS.md` §5d, both of which
+exist and were followed.
 
 ## 11. What the next wave should build
 
