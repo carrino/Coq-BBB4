@@ -47,7 +47,7 @@ def main():
     ap.add_argument('--verbose', action='store_true')
     a = ap.parse_args()
     specs = [a.spec] if a.spec else \
-        [l.strip() for l in open(a.list) if l.strip()]
+        [l.split()[0] for l in open(a.list) if l.strip()]
     for spec in specs:
         r = analyze(spec, a.steps, a.verbose)
         print('%-30s %s' % (spec, {k: v for k, v in r.items()
