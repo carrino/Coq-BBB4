@@ -20,3 +20,22 @@
 [ 20/ 40   693s] 1RB---_1LC0RD_0LC1RB_1LC0RB    closed             31.4s
 [ 21/ 40   693s] 1RB---_1LC0RD_0LC1RD_1LC0RB    closed             30.3s
 [ 22/ 40   693s] 1RB---_1LC1LB_0LC1RD_0RB0RD    closed             23.0s
+[ 23/ 40   838s] 1RB---_1LC1RB_0LB1RD_1LC0RD    timeout            306.9s
+[ 24/ 40   838s] 1RB---_1LC1RD_0LB1RD_1LC0RD    arm-lands-off-family 300.8s
+[ 25/ 40   838s] 1RB---_1LC1RD_0LC1RD_1LB0RD    no-counter-shape   21.1s
+[ 26/ 40   838s] 1RB0LD_0LC0RB_1LA1RC_0RC1LD    closed             26.6s
+[ 27/ 40   838s] 1RB0RB_0LC0LD_1LC1LD_1RA0RA    closed             28.7s
+[ 28/ 40   838s] 1RB0RB_0LC1RD_1LC1LA_0LA1RB    no-counter-shape   30.9s
+[ 29/ 40   838s] 1RB0RB_0RC1RC_0LD1LA_1LD0LA    closed             26.2s
+[ 30/ 40   852s] 1RB1LA_0LA0LC_1LC1RD_0RB0RD    closed             25.4s
+[ 31/ 40   870s] 1RB1LA_0LA0RC_0LD0RB_1LD1RC    closed             33.1s
+[ 32/ 40   870s] 1RB1LA_0LA1RC_0LD0RC_1LD0RB    closed             24.6s
+[ 33/ 40   879s] 1RB1LA_1LC0RD_0RA0LC_0LA1RD    closed             27.8s
+[ 34/ 40   909s] 1RB1LC_0LA0RB_0LD1LD_1RA0RA    closed             46.9s
+[ 35/ 40   909s] 1RB1LC_0LA0RB_0RD1LA_0LC1RD    closed             32.6s
+[ 36/ 40   912s] 1RB1LC_0LC0RB_0RD1LA_0LA1RD    closed             32.2s
+[ 37/ 40  1001s] 1RB1LC_1LB1RA_0LC0LD_0RA0RD    interior-not-covered 98.4s
+[ 38/ 40  1001s] 1RB1LC_1LC1RA_0LC0LD_0RA0RD    interior-not-covered 57.0s
+[ 39/ 40  1001s] 1RB1LD_1RC0RC_1LA0LA_0RA0LD    closed             29.5s
+[ 40/ 40  1001s] 1RB1RC_1LA0LB_1LD0RD_1LB0RC    no-counter-shape   34.7s
+DONE40
