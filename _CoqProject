@@ -1345,6 +1345,7 @@ theories/Counters/LapGlueQuiet.v
 theories/Checkers/LapAvoid.v
 theories/Counters/LapCertGlue.v
 theories/Counters/LapCertGlueLift.v
+theories/Counters/LapCertGluePar.v
 theories/Counters/SkipGlue.v
 theories/Counters/QuadGlue.v
 theories/Counters/GpCounter.v
@@ -1597,6 +1598,7 @@ theories/Machines/Counters/LAPC_1RB____1LC0RD_0LC1RD_0RB0RD.v
 theories/Counters/LapGlueAbs.v
 theories/Counters/NestedLap.v
 theories/Counters/NestedLapLift.v
+theories/Counters/NestedLapHalf.v
 theories/Counters/NestedLap2.v
 theories/Counters/NestedLapCascade.v
 theories/Tests/NestedLapRegression.v
@@ -2725,6 +2727,22 @@ theories/Machines/ReachSt/RST_0RB0LC_1LC1RB_1RD1LA_0LD1LB.v
 theories/Machines/ReachSt/RST_0RB0LC_1LC1RB_1RD1LA_1LD1LB.v
 theories/Machines/ReachSt/RST_0RB1LD_1LC1RB_1LA1RC_0RC0LA.v
 theories/Machines/ReachSt/RST_0RB1RC_1LA0LC_0LD0RA_1RA1LD.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/REG_0RB0RC_1LC0RD_0LD1RA_1RC1LD.v
+theories/Machines/Counters/REG_0RB1LC_1LA1RB_0LD0LA_1RA0LB.v
+theories/Machines/Counters/REG_0RB1LC_1LA1RB_0LD0LA_1RA1LB.v
+theories/Machines/Counters/REG_0RB1LC_1LA1RB_1LD0LA_1LB___.v
+theories/Machines/Counters/REG_0RB1LC_1LA1RB_1RD0LA_1LB1LD.v
+theories/Machines/Counters/REG_1RB0LC_0RC1LD_1LB1RC_0LA0LB.v
+theories/Machines/Counters/REG_1RB0LD_1LC1LB_1LD1RC_0RC1LA.v
+theories/Machines/Counters/REG_1RB0RD_1RC____1RD1LC_0LC1RA.v
+theories/Machines/Counters/REG_1RB1LA_0LA1RC_0RD0RB_1LB0RA.v
+theories/Machines/Counters/REG_1RB1LA_0LA1RC_0RD0RB_1LB1RA.v
+theories/Machines/Counters/REG_1RB1LA_0LA1RC_1LD0RB_1RA1RD.v
+theories/Machines/Counters/REG_1RB1LA_0LA1RC_1RD0RB_1RA___.v
+theories/Machines/Counters/REG_1RB1RA_1RC1LB_0LB1RD_1LA0RC.v
+theories/Machines/Counters/REG_1RB____1RC1LB_0LB1RD_1RA0RC.v
 
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
