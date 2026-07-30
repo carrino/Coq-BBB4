@@ -1,0 +1,13 @@
+[  1/143     8s] 0RB0RD_1LC1RB_1RA0LC_1LB0LC    no-counter-shape   7.6s
+[  2/143     8s] 0RB0RD_1LC1RB_1RA0LC_1LD0LC    no-counter-shape   7.6s
+[  3/143     8s] 0RB1LC_1LC0RD_1RD0LC_1LA1RB    no-counter-shape   7.1s
+[  4/143    18s] 0RB1LC_1LC1RD_1LA0LC_0RD1RB    no-counter-shape   11.0s
+[  5/143    35s] 1RB---_0LB1RC_0RD0RC_1LB1LD    closed             27.5s
+[  6/143    39s] 1RB---_0LB1RC_1LB0RD_1LB0RC    closed             31.6s
+[  7/143    58s] 1RB---_0LB1RC_1LB0RD_1LC0RC    closed             39.5s
+[  8/143    58s] 1RB---_0LB1RC_1LB0RD_1LC0RD    no-counter-shape   21.8s
+[  9/143    60s] 1RB---_0LB1RC_1LD0RC_1LB1RC    no-counter-shape   20.4s
+[ 10/143    91s] 1RB---_0LC1RB_0LB1RD_1LC0RD    closed             34.5s
+[ 11/143    93s] 1RB---_0LC1RD_0LB1RC_1LB0RD    closed             35.2s
+[ 12/143    97s] 1RB---_0LC1RD_0LB1RD_1LB0RD    closed             37.1s
+[ 13/143   129s] 1RB---_0LC1RD_0LB1RD_1LC0RD    closed             37.1s
