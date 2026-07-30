@@ -3634,3 +3634,67 @@ New traps for the catalog:
 
 #37 (side L Gray sibling) reuses the DblCounter gray algebra + this
 mini-lap skeleton verbatim (decrement direction, inert high context).
+
+# Cleanup + residue-recon session (2026-07-29): build fix, issue #61 burndown, emitter findings
+
+Community-facing pass after the public announcement, plus recon over the
+167-core residue.  No Coq toolchain in this container, so everything here
+is either docs/tooling or a measurement handed to the next proof session.
+
+## Landed (branch claude/coq-bbb4-cleanup-kmtd7g, PR #69)
+
+- **BUILD FIX: `_CoqProject` was missing `theories/Counters/RegGlue.v`** --
+  the four REG_* boards (7613cb9) import it, so a fresh `make` died with
+  "No rule to make target RegGlue.vo".  One line added.  CI now runs
+  `make -f Makefile.coq -n all` (dry run, seconds) so a board whose dep
+  never made it into `_CoqProject` fails fast instead of on a user's box.
+- Docs freshened to the live counts (167 core + 80 shadows, audit OK):
+  README, CLAIMS, RESIDUE_MAP (family table regenerated over the live
+  list; newcomer section now leads with the 25 cycR-gap/lift rows).
+- Pruned 24 orphan .v never wired into any build (15 ILS4F_*, 7 LAPC_*,
+  PQHS_00, Census/Assembly.v) -- all their machines settled elsewhere;
+  recoverable from git history.
+- **Issue #61 now carries the full burndown list**: all 167 core rows
+  grouped by blocker, cycR-gap/lift rows tagged, champion flagged;
+  verified programmatically against core_rows.txt (exact match) and
+  intgap51.json (all 51 verdicts).  Lesson re-learned: NEVER retype
+  machine lists into a post -- generate, paste verbatim, then diff the
+  posted content against the row file.  The first attempt fabricated
+  ~100 rows and only the diff caught it.
+
+## Emitter recon over the 167 (dry pass, per-row 30s cap)
+
+- **`1RB1LC_0LC0RB_1LA1RD_1RC0RD` (core row 131, filed "no boot chain")
+  NOW DERIVES: `OK Alph_00_10_1 4*j+4 4*j+13`.**  The cascade wave
+  taught the engine what this row needed and nobody re-swept.  On a box
+  with Coq: `emit_lapcert.py --spec 1RB1LC_0LC0RB_1LA1RD_1RC0RD --emit`,
+  then the closeout regen.  A free board.
+- **`emit_lapcert.py` OOM-dies on `1RB0RD_1LB1LC_1RC0RA_0LB1RD`** (core
+  row 78): `nestcert.derive_offset` -> `phase_mid` at K=7 accumulates
+  every blank-head config of a phase that never closes (400k-step cap,
+  no memory cap) until the OOM killer takes the process -- exit 137, and
+  a full-list run dies SILENTLY partway.  Nine rows total exceeded 30s
+  (rows 34-36, 47-50, 78, 167 of core_rows.txt).  Any "run the emitter
+  over the WHOLE residue" step (wave-30 acceptance) must shard around
+  them or bound phase_mid's `mid` list.  NOT fixed here on purpose: an
+  emitter change can shift candidate ordering, and the byte-identical
+  re-render regression that guards that needs coqc.
+- Everything else: 157 rows report "no" with unchanged blocker labels.
+
+## John's readings this session (recorded for the next design pass)
+
+- `0RB1LA_0LC1RD_0LD1LD_1RB0LA` (Gray-ish up/down read): it is a SHADOW
+  of core `1RB0LD_0LC1RA_0LA1LA_0RB1LD` (shadow_rows.tsv row 29), which
+  tailcert already reads as a two-form family stopping at
+  "no interior j=0 chain at octave parity 0" -- i.e. wave-30 §3's double
+  peel is the designed unblock, not a new decode.
+- `0RB0RD_1LC1RB_1RA0LC_1LB0LC` "is a bouncer counter" -- CONFIRMED
+  read, matches WAVE29_BOUNCER_FINDINGS §7c verbatim (envelope 2^k+7);
+  waiting on the MeasureGlue/mrun build, family indexed by the wall.
+- `0RB1LC_1LC1RD_1LA0LC_0RD1RB` "bouncer counter, reminds me of
+  1RB1LD_1RC0RB_1LA0RC_0LD0LA" -- the analogy points at the Double_32
+  ROUTE: abandon the macro anchor, re-sample at the record, transcribe
+  the rewriting system on the comb word (here `1^11 0 (110)^k`, blocks
+  2,4,7,9,15,17), close with WaveCounter.wglue_neverqh (no closed form
+  needed).  comb_probe.py says NOCOMB but its template demands an Ip/Jp
+  tail and short prefix, so that negative does not test this read.
