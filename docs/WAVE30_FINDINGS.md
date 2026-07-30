@@ -451,6 +451,53 @@ So for wave-31 item (3): the digit-width hypothesis is closed.  What remains
 un-measured there is the per-octave-class lap fit and whether the INNER family
 is ascending under the inverted alphabets.
 
+## 6g. …and the wall DOES move: the overflow phase is Theta(4^k), not Theta(2^k)
+
+§6f measured the WORD and found no wall motion.  John's follow-up says why that
+was the wrong object: *"the msb butts up against the wall but doesn't include
+it."*  The wall is a SEPARATE object just beyond the top of the word, so a
+word-length measurement can never see it move.
+
+`tools/counters/wallstep.py` tracks the wall itself — the first run of `>= 2`
+ones outward from the head, which under a `dig0 = 00` / `dig1 = 01` alphabet
+cannot be counter digits — and records its absolute column and the time between
+displacements.  On the exemplar `1RB1RD_1LC1RA_0RB0LC_1LA0RD`:
+
+    wall start column   0    4    8    12    16    20    24
+    first seen at t     6   42  168   654  2580 10266 40992
+    displacement           +4   +4    +4    +4    +4    +4
+    phase ratio               7.0  4.0   3.9   4.0   4.0   4.0
+
+**`wall +4 per overflow, phase ratio ~3.99`** — the read, mechanised, exactly.
+
+And that second column is the finding.  Over the 27 `register step does not
+close` rows, on the 14 where the side heuristic locks on (the other 13 have
+incidental `11` pairs on the counter's own side and need a better selector):
+
+| phase ratio per octave | rows |
+|---|---:|
+| ~4 | 9 |
+| ~6 | 3 |
+| ~3 | 2 |
+| **~2** | **0** |
+
+Not one row has a phase that doubles.  `nestcert`'s register step is built for
+an inner counter that RE-COUNTS the counter once to move the mark — that is
+`Theta(2^k)`, and `NestedLapLift.nested_overflow_lift` is stated against it.  A
+phase growing `4^k` means the inner counter itself runs a full octave per step:
+a DOUBLE nesting, not a single one.  A search for a `2^k`-shaped inner family
+will not find a `4^k` phase, and from the outside that is precisely
+`register step does not close`.
+
+So the 27 are not a carrier-endpoint problem (§6d item 2) and not a width
+problem (§6f).  They need one more level of nesting, and the exponent is
+measured rather than guessed.  The wall displacement (1, 2 or 4 cells) is the
+per-row constant that the arm's landing has to be stated with.
+
+**Consequence for wave-31's ranking:** item (2), the bounded inner carrier, is
+the right build for the 16 inner-fill rows but will NOT reach the 27.  Item (3)
+is a bigger build than the prompt assumed, and it now has a measured shape.
+
 ## 7. What is in the tree
 
 | file | role |
@@ -462,6 +509,7 @@ is ascending under the inverted alphabets.
 | `tools/counters/twoform_dir.py` | **new**: which WAY a two-form family counts (§4) |
 | `tools/counters/dblpeel_probe.py` | **new**: the double peel, measured before any template (§4) |
 | `tools/counters/digitwidth.py` | **new**: word growth per octave vs the alphabet's digit width (§6f) |
+| `tools/counters/wallstep.py` | **new**: the wall's displacement per overflow and the phase growth ratio (§6g) |
 | `tools/counters/tailcert.py` | the two INVERTED alphabet rows + `two_form` refuses a descending family (§6b, §6c) |
 | `theories/Counters/Alph_11_10_11.v`, `Alph_11_01_11.v` | **new**, generated and proved by `gen_alphabet.py` (§6b) |
 | `theories/Counters/LapCertGlue.v` | `lift_app_blank_l`, funext-only (§6e) |

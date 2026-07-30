@@ -128,9 +128,37 @@ endpoint off the machine, do not assume `2^K - 4`.
 off the endpoint), and re-check whether the same carrier moves any of the 27 in
 (3).
 
-## (3) `register step does not close` — 27 rows.  MEASURE FIRST
+## (3) `register step does not close` — 27 rows.  MEASURED: it is a DOUBLE nesting
 
-The largest sub-bucket, and nobody has read it.  Before designing anything:
+The largest sub-bucket.  Wave-30 §6g measured it after John's read of
+`1RB1RD_1LC1RA_0RB0LC_1LA0RD` ("a wall on the right, msb on the right, when the
+msb overflows the wall moves over 4"; "the msb butts up against the wall but
+doesn't include it").
+
+    wall start column   0    4    8    12    16    20    24
+    first seen at t     6   42  168   654  2580 10266 40992
+
+The wall moves a FIXED number of cells (1, 2 or 4, per row) per overflow, and
+the phase between displacements grows by a factor of **~4** — over the 14 of 27
+rows where `tools/counters/wallstep.py` locks on: ratio ~4 on 9, ~6 on 3, ~3 on
+2, and **~2 on none**.
+
+`nestcert`'s register step is built for an inner counter that RE-COUNTS the
+counter once, which is `Theta(2^k)`, and `nested_overflow_lift` is stated against
+that.  A `Theta(4^k)` phase means the inner counter itself runs a full octave per
+step — a DOUBLE nesting.  A search for a `2^k` inner family cannot find a `4^k`
+phase, and from outside that is exactly `register step does not close`.
+
+So (2)'s bounded carrier will NOT reach these 27, and this item is bigger than a
+carrier fix.  Two things to do before designing:
+
+* fix `wallstep.py`'s side selector for the 13 rows it misses (the counter's own
+  side carries incidental `11` pairs), so the exponent is known on all 27;
+* then decide whether the shape is a double nesting or one nesting over a
+  SQUARED index — the measured constants (wall displacement per row, phase
+  ratio) are what the arm's landing must be stated with.
+
+Also still unmeasured:
 
 * dump the phase with `tools/counters/spacetime.py --rests --mark --ruler` and
   FIXED `--lo/--hi` (without fixed columns the frame shifts row to row and the
@@ -138,7 +166,7 @@ The largest sub-bucket, and nobody has read it.  Before designing anything:
 * fit the arm's laps PER OCTAVE CLASS, not with one affine law — wave-29 §7,
   a period-P frame makes a single fit report "exponential" on branches that are
   `4k+7`/`4k+9` per parity;
-* the DIGIT-WIDTH hypothesis is already closed: `tools/counters/digitwidth.py`
+* the DIGIT-WIDTH hypothesis is closed: `tools/counters/digitwidth.py`
   measures the word growing exactly 2 cells per octave against a 2-cell digit on
   **all 27**, so no row is being read as a subsequence and none needs a wider
   alphabet (`docs/WAVE30_FINDINGS.md` §6f).  Do not re-open it;
