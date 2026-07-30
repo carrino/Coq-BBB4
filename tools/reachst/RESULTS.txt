@@ -1,0 +1,37 @@
+1RB0LD_0LC1RA_0LA1LA_0RB1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_0LC1RA_0RA1LA_0RB1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_0LC1RA_0RC1LA_0RB1LD  A:F/- B:F/- C:T/- D:F/-
+1RB0LD_0LC1RA_1LA0RB_0RB1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_0LC1RA_1LA1LA_0RB1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_0LC1RA_1RB1LA_0RB1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_0RC1RA_1LC0LA_0RA1LD  A:F/- B:F/- C:T/- D:F/-
+1RB0LD_0RC1RA_1LC1LA_0RA1LD  A:F/- B:F/- C:T/- D:F/-
+1RB0LD_0RC1RA_1LC1LA_0RB1LD  A:F/- B:F/- C:T/- D:F/-
+1RB0LD_1LC1LB_1LD1RC_0RC1LA  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1LC1RA_0RB1LA_0RB1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1LC1RA_0RD1LA_0RB1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1LC1RA_1LA1LC_0RA1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1LC1RA_1LA1RC_0RA1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1LC1RA_1LA1RC_0RB1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1LC1RA_1RD1RC_0RB1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1LC1RB_1LD1RC_0RC1LA  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1RC1RA_1LA0RC_0RA1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1RC1RA_1LA0RC_0RB1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1RC1RA_1LA1LC_0RA1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1RC1RA_1LA1RA_0RA1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1RC1RA_1LA1RA_0RB1LD  A:T/- B:T/- C:T/- D:T/-
+1RB0LD_1RC1RA_1LA1RC_0RA1LD  A:T/- B:T/- C:T/- D:T/-
+
+62 distinct avoid tables
+52 terminate exhaustively (W<=10)
+  NONTERM A0->1RB A1->HALT B0->0LC B1->1RA C0->0RC C1->1LA  cex(w,bits,pos,state)=(0, 0, -1, 'B')
+  NONTERM A0->1RB A1->HALT B0->0RC B1->1RA C0->1LC C1->0LA  cex(w,bits,pos,state)=(0, 0, -1, 'B')
+  NONTERM A0->1RB A1->HALT B0->0RC B1->1RA C0->1LC C1->1LA  cex(w,bits,pos,state)=(0, 0, -1, 'B')
+  NONTERM A0->HALT A1->0LD C0->0RC C1->1LA D0->HALT D1->1LD  cex(w,bits,pos,state)=(0, 0, -1, 'C')
+  NONTERM A0->HALT A1->0LD C0->1LC C1->0LA D0->0RA D1->1LD  cex(w,bits,pos,state)=(0, 0, -1, 'C')
+  NONTERM A0->HALT A1->0LD C0->1LC C1->1LA D0->0RA D1->1LD  cex(w,bits,pos,state)=(0, 0, -1, 'C')
+  NONTERM A0->HALT A1->0LD C0->1LC C1->1LA D0->HALT D1->1LD  cex(w,bits,pos,state)=(0, 0, -1, 'C')
+  NONTERM B0->0LC B1->HALT C0->0RC C1->HALT D0->0RB D1->1LD  cex(w,bits,pos,state)=(0, 0, -1, 'B')
+  NONTERM B0->0RC B1->HALT C0->1LC C1->HALT D0->0RB D1->1LD  cex(w,bits,pos,state)=(0, 0, -1, 'B')
+  NONTERM B0->0RC B1->HALT C0->1LC C1->HALT D0->HALT D1->1LD  cex(w,bits,pos,state)=(0, 0, -1, 'B')
+0 have a uniform step bound at depth 40

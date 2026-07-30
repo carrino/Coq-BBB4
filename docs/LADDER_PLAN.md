@@ -209,6 +209,134 @@ rules (they identify the digit alphabet mechanically: the drained block
 words ARE the digits).  That is rung two proper; the local-rule layer
 underneath it is built and measured.
 
+## 4d. Rung two, measured: the value-indexed family on all 143 core rows
+
+_All numbers below measured at commit `cf7eeab` (branch
+`claude/ladder-value-family-3j1776`), 20k-step traces, 300 s hard wall cap per
+machine, 3 jobs.  Raw: `tools/ladder/core150_valfam.jsonl` (one JSON
+certificate candidate or failure report per row); readable table:
+`tools/ladder/core150_valfam_rows.txt`; the fixture's certificate:
+`tools/ladder/ladder_fixture_cert.json`.  Total 12,153 s of per-row wall
+(~3.4 CPU-hours), median 26 s/row, max 309 s, **0 timeouts, 0 crashes**._
+
+The increment is real and it is the one §4c called for: a counter-segment tape
+item `CTR(alph, v)` whose increment is a RULE FAMILY over the carry index `j`,
+with the alphabet read off the ladder (the words its own rules move one of per
+application) and the digit VALUES pinned by requiring consecutive anchor
+visits to differ by exactly +1.  On the dev fixture it closes end-to-end:
+
+    digits 11 = 0, 10 = 1 (10 named by ladder rule r1), LSB next to the head
+    boot      5 steps from blank to E(1)
+    interior  1^{2+z} #          -> 1 0 1^z #             4 steps      j = 0
+              10^1 1^{2+z} #     -> 1^3 0 1^z #           8 steps      j = 1
+              10^2 1^{2+z} #     -> 1^5 0 1^z #          12 steps      j = 2
+              10^{1+y} 1^{2+z} # -> 1^{3+2y} 0 1^z #   8+4y steps      j >= 3
+                                          (ONE bulk application of r1, y free)
+    overflow  10^1 / 10^2 / 10^3 -> 1^3 / 1^5 / 1^7     (k = 1,2,3, fire once)
+              10^{1+y}           -> 1^{3+2y}          8+4y steps, k >= 4
+
+254/254 digit strings covered to k=7, stable to k=9, 8 arms, liveness ABCD read
+only off the five arms taken infinitely often, and the raw simulator agrees on
+shapes AND exact step counts at every probe including every octave boundary.
+Base = concrete replay at small `j`, step = the ladder's own rules bulk-applied:
+`find_IH`/`try_ind` at the value level, as §4c predicted.
+
+### The gate: 21 of 143.  It fires.
+
+| outcome | rows | what it means |
+|---|---:|---|
+| **closed** | **21** | full certificate candidate: family, arms, boot, liveness |
+| overflow leaves the family | 88 | every INTERIOR value covered; only the fill fails |
+| no counter reading at any anchor | 24 | (14 no signal, 6 far side varies, 3 partial, 1 broken) |
+| arm lands off the family | 7 | family + interior, arms stop at the wrong anchor |
+| interior not covered | 3 | carry classes the repair never reached |
+
+The five pinned Stage-A rows (`tools/ladder/stageA_valfam5.jsonl`) land where
+§3's table says they should: the interior-wall row `1RB---_0LB1RC_0RD0RC_1LB1LD`
+**closes** (base-3, two-cell digits `00`/`01`/`11`, 10 arms, 40 laps); the
+bounded-carrier, boot-blocked and register rows all reach `overflow leaves the
+family`; the two-form row has no counter reading at any anchor.  The register
+row failing at rung two is the correct outcome §3 predicted.
+
+**21 < ~40, so §3's kill criterion fires and this is the failure taxonomy, not
+a build-out.**  What the 21 are is as informative as the number:
+
+* 20 of the 21 come from ONE gate bucket, `no_interior_jS_j_chain_at_octave_
+  parity_0` — wave-31's largest, 40 rows.  Rung two takes **half of that bucket
+  in a single sweep**, on rows where `bin/irules` finds zero anchors (§2).
+* 8 of the 21 are never-QH (every visited state infinitely often).  The other
+  13 close with i.o. `BCD` and visited `ABCD`: the family PROVES those machines
+  quasi-halt and names the witness state.  That is a real verdict, not a
+  failure — `BBB4_Statement.QuasiHaltsSt` has a `Visited` conjunct, so a state
+  visited once and never again is exactly a quasi-halt witness.
+* 17 base-2 with one-cell digits, 4 base-3 with two-cell digits.  17 of 21 have
+  their alphabet named outright by a ladder rule; 4 rest on the weaker
+  provenance (digit WIDTH from a ladder word, values from a chain twice as
+  long).  No terminator was needed on any of the 21; boots are all <= 17 steps.
+* Every one of the 21 passes raw-simulator differential validation; 18 of 21
+  also match the arms' PREDICTED STEP COUNTS exactly; all 21 confirm >= 40
+  consecutive laps replayed from the blank tape.  Median 24 arms, max 31.
+
+### Ranking the 122 misses
+
+**(b) needs a second parameter or rung three — 88 rows, the dominant mode.**
+`overflow leaves the family` is not a near miss; it is a precise diagnosis.
+These rows cover a **median 98.8 %** of their digit strings — every value whose
+digit string has a clear digit somewhere — and fail on exactly the all-max
+strings, `v = b^k - 1`.  The interior arms are proved, the differential agrees,
+and then the FILL steps out of the one-parameter family.  Two sub-cases, and
+the gate labels separate them cleanly:
+
+* **17 rows are `register_step_does_not_close`** — the Θ(4^k) double nesting.
+  On `1RB1RD_1LC1RA_0RB0LC_1LA0RD` the fill turns the counter's TERMINATOR from
+  `01` into `11`, i.e. the terminator is itself a digit of an outer register.
+  These are rung THREE and **failing here is the correct outcome** §3 predicted.
+* **71 rows are not rung three** — 32 `no_inner_family_at_pow2_j`, 18
+  `no_boot_chain`, 14 `no_gap-free_two-form_family`.  Their fill leaves the
+  family because the far side carries an outer parameter the family cannot
+  name: on `1RB0LA_1LC0RD_1LA1LB_0LB1RD` the overflow goes to state A with a
+  growing unary block.  The next increment is a **two-parameter family
+  `E(p, v)`** — one CTR plus one affine outer count, with the interior arms
+  unchanged (they already work) and only the fill arm crossing `p -> p+1`.
+  That is rung two-and-a-half, and it is where the next 70 rows live.
+
+**(c) engine gaps — 10 rows, plus ~10 more hiding in (a).**  7 `arm lands off
+the family` and 3 `interior not covered`: a family is found and the interior
+nearly covers, but an arm stops at the wrong anchor visit or a carry class was
+never mined.  Separately, 10 of the 14 `no signal` rows sit in the SAME gate
+bucket where 20 sisters closed — a searcher gap, not a shape gap.  Realistic
+recovery from fixing these: ~15-20 rows, which would put rung two near 40 but
+only reaches the gate by clearing bugs, not by new mathematics.
+
+**(a) genuinely not a counter at this anchor — ~14 rows.**  The remainder of
+the no-reading bucket: no anchor whose counter side decodes over a
+ladder-named alphabet with +1 steps.  6 of them are `far side varies` — the
+largest constant-far-side group at any anchor is 4 visits of 200
+(`0RB0RD_1LC1RB_1RA0LC_1LB0LC`), i.e. both sides move together, which is again
+a two-parameter shape rather than a non-counter.  3 more show a +1 delta on
+50-90 % of visits with the rest at 3^k, a counter whose visit sequence is not a
+pure odometer.
+
+### What this says about the plan
+
+The diagnosis in §0 survives and sharpens.  Rule discovery is NOT the
+bottleneck: the ladder finds and proves local rules on every row, the value
+family reads its own alphabet with no curated list (and the two rows that
+needed a 3-symbol, 2-cell alphabet were found without one being written down),
+and the interior of the odometer is covered on **109 of 143 rows** — 21 fully
+plus 88 that cover every interior value.  The bottleneck is a **single missing
+constructor**: the fill needs to move an outer parameter.  A one-parameter
+`CTR(alph, v)` cannot express `E(p, v)`, and 71 rows queue behind exactly that,
+with 17 more behind the rung-3 version of the same thing.
+
+So the honest read is not "rung two failed" but "**rung two is one constructor
+short, and the sweep names the constructor**".  Whether to spend the next
+session on `E(p, v)` or fall back to the wave route is a scope call §3 reserves
+for the gate — and the gate says stop and report, which this section does.
+What Stage B should NOT do yet is design a kernel checker: the surviving cert
+shape (family + arms + boot + liveness, all four present on 21 rows) would be
+re-cut the moment a second parameter lands.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH

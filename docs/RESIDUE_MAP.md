@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**203 rows as of this commit — 134 distinct core machines + 69 0RB
+_**86 rows as of this commit — 65 distinct core machines + 21 0RB
 re-root shadows that fall with them.**  The count moves every wave, so
 treat the row files as the authority and this prose as a snapshot.  With
 tower #20 boarded on 2026-07-28 the (4,2) HOLDOUT list is closed, so this
@@ -197,4 +197,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 134).
+first shrank from 883 to 511 (and, wave by wave, to the current 65).

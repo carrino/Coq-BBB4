@@ -145,8 +145,10 @@ def norm_side(runs, lbs):
         rs.append((w, e))
     # 2. absorb / merge, in a fixpoint loop (cheap: lists are short)
     changed = True
-    while changed:
+    guard = 0
+    while changed and guard < 12:
         changed = False
+        guard += 1
         out = []
         i = 0
         while i < len(rs):
@@ -229,6 +231,33 @@ def norm_side(runs, lbs):
             rs2.append(rs[i])
             i += 1
         rs = rs2
+        # 3b. block-phase rotation.  [s]*c ++ w^n  ==  [s]*(c-1) ++ r^n ++ [s]
+        # with r = (s,) ++ w[:-1], valid exactly when s == w[-1].  Purely a
+        # change of representation (the cell string is identical), but a
+        # necessary one: the miner's snapshots come from the greedy block RLE,
+        # which starts a block as early as possible, while replay leaves the
+        # stray cell in FRONT of the block.  Without this a rule discovered in
+        # one phase silently fails to match the replay's own output -- which is
+        # what blocks a symbolic drain inside a family arm.  The stray cell only
+        # ever moves outward, so the rewrite terminates.
+        rs3 = []
+        i = 0
+        while i < len(rs):
+            w, e = rs[i]
+            if (len(w) == 1 and w != MARKER and e.is_const() and e.c >= 1
+                    and i + 1 < len(rs) and len(rs[i + 1][0]) > 1
+                    and rs[i + 1][0][-1] == w[0]):
+                bw, be = rs[i + 1]
+                if e.c > 1:
+                    rs3.append((w, Expr(e.c - 1)))
+                rs3.append(((w[0],) + bw[:-1], be))
+                rs3.append((w, Expr(1)))
+                i += 2
+                changed = True
+                continue
+            rs3.append(rs[i])
+            i += 1
+        rs = rs3
         # re-merge after folds
         out = []
         for w, e in rs:
@@ -488,8 +517,10 @@ class Replay:
                     return None
                 base = el.subst(env)
                 out_counts.append(base + reps.scale(d.c) if d.c else base)
-        for tr in rule.fired:
-            self._fire(tr, reps)      # under-approximation: >= reps firings
+        for tr, cnt in rule.fired.items():
+            # exact when the rule body fires tr a constant number of times
+            # (then the total is affine); otherwise under-approximate by reps.
+            self._fire(tr, reps.scale(cnt.c) if cnt.is_const() else reps)
         out = cfg_with_counts(rule.rhs, out_counts)
         q, h, L, R = out
         # splice abstract rests back in place of the markers

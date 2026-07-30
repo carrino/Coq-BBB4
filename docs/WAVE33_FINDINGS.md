@@ -6,6 +6,25 @@ bucket: nickdrozd posted 24 machines he called easy.  One was already
 boarded; the other 23 are all in the core residue, and working them turned
 into three small builds that boarded 14 rows in total (9 core + 5 shadows)._
 
+## 0a. Merge note (read this before the numbers below)
+
+This branch was cut from `53cec48` and worked nickdrozd's list in
+PARALLEL with `claude/drozd-easy-problems-mc03i3` (PR #82) and the
+ReachSt tier (PR #81), both of which landed on `main` first.  Every
+count in sections 0-8 is **this branch's own delta against `53cec48`**
+and is left as measured; it is not the state of the tree.
+
+After merging `origin/main` (`8b00ac3`):
+
+    5,070 of 5,156 settled (98.3%), 65 core + 21 shadows
+    nickdrozd's 24: 12 settled, 12 open
+
+The three builds here are orthogonal to that work -- they are the
+`tailcert` two-form route's own gates -- and all 14 boards rebuild clean
+against the merged libraries.  The gate table in section 7 was measured
+on the 134-row list this branch produced, so re-run `buckets.py` over the
+current `core_rows.txt` before using it to pick a target.
+
 ## 0. The scoreboard
 
     before   4,939 settled / 143 core + 74 shadows      (main, 53cec48)
