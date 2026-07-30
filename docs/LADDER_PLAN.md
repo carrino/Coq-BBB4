@@ -140,6 +140,39 @@ If the ladder hits its Stage-A gate, the wave route stops being the plan of
 record and becomes the tail-cleanup tool.  If it misses, we have lost one
 stage-A prototype and still hold both wave items.
 
+## 4b. Addendum (2026-07-30, later the same day): wave-32's first commit
+confirms the diagnosis from the other side
+
+`origin/claude/wave32-prompt-residue-cotlom` @ `5ffdebb` (concurrent session,
+6 boards, core 150 → 146, shadows 76 → 74):
+
+* **Two of item (1)'s three sub-buckets were emitter blindness, not missing
+  mathematics.**  The entire 6-row "fill lands off the endpoint" bucket was a
+  replay bug (the octave shift ignored in the inner start), and 13 of the 33
+  `no inner family` rows were invisible only because `_nested_ovf` searched
+  `ENCS` while the two-form reader uses `TRY` — three alphabets registered
+  privately in one module that another module's search could not see.  That
+  is the strongest evidence yet for §0's root cause: hand-plumbed,
+  per-module search vocabularies (25 alphabets, private `ENCDATA` rows) fail
+  by omission, silently, and each omission reads as a new "shape".  A ladder
+  that DERIVES its rules has no curated alphabet list to be blind to.
+* **The moved-not-boarded pattern, third instance.**  The 13 opened rows
+  board none of themselves — they advance to `no boot chain` (9) and
+  `no exit chain` (4).  Gates in series, again; per-gate grammar work keeps
+  paying per-gate.
+* **Stage-A instrumentation now exists.**  The commit lands exactly the
+  probes a ladder searcher wants as its observation layer: `intnest.py`
+  (does the interior lap carry an inner counter), `intfit.py` (per-octave-
+  class affine fit), `jspeel.py`, `innerrun.py`, `innerenc.py`.  Stage A
+  should consume these rather than re-derive them.
+
+All five Stage-A rows in §3's table are still open at `5ffdebb`.  Item (1)'s
+remaining lemma-shaped target shrinks from 39 rows to ~20; the bounded-carrier
+lemma is still worth landing but its bucket was smaller than its label.
+File-coordination note: the live wave session owns `tailcert.py` and the
+`REG_*`/closeout tables; this plan's files (`docs/LADDER_PLAN.md`,
+`tools/ladder/`) are disjoint by construction, and Stage A must keep it so.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
