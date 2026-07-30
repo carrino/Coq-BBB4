@@ -78,6 +78,29 @@ def rots(w):
     return {w[i:] + w[:i] for i in range(len(w))}
 
 
+# --------------------------------------------------------------- the CODE
+# Two ways a counter segment can denote a number.  `binary` is positional.
+# `gray` is the REFLECTED code, the one whose successive words differ in a
+# single digit -- which is why "count up to full, then back down to zero, then
+# widen" is what it looks like on the tape, and why a positional reader sees
+# the value jump and calls the machine a non-counter.  Generalized to base b:
+# decode is the running sum from the most significant digit down, encode is the
+# difference to the next digit up; at b = 2 both collapse to the XOR chain.
+# Digit strings are LSB-first throughout, so index 0 is least significant.
+
+def gray_decode(ds, b):
+    out, s = [], 0
+    for d in reversed(ds):
+        s = (s + d) % b
+        out.append(s)
+    return out[::-1]
+
+
+def gray_encode(ns, b):
+    return [(ns[i] - (ns[i + 1] if i + 1 < len(ns) else 0)) % b
+            for i in range(len(ns))]
+
+
 def digit_words(rules):
     """The words the ladder moves ONE OF per application -- the digits, named
     by the ladder itself.
@@ -129,10 +152,17 @@ class Fam:
         self.p0 = 0
         self.prange = (0, 0)
         self.templated = False        # found by the far-side TEMPLATE pass
+        self.code = 'binary'          # or 'gray': the reflected code
+        # How much the value advances per ANCHOR VISIT.  Hard-coded to 1
+        # everywhere until now.  A machine whose lowest cell is a phase bit
+        # visits the anchor once per TWO counter steps, so its chain is +2 and
+        # a +1 test rejects it -- the same assumption as the code and the fill
+        # law, one level further out.
+        self.step = 1
 
     def key(self):
         return (self.q, self.h, self.side, self.other, tuple(self.digs),
-                self.pre, self.tail)
+                self.pre, self.tail, self.code, self.step)
 
     # ------------------------------------------------------- the far side
     def far_cells(self, p=None):
@@ -214,10 +244,43 @@ class Fam:
         return cells
 
     def value(self, ds):
+        """Digit string -> the number it denotes, in this family's CODE.
+
+        `binary` is the positional reading.  `gray` is the reflected code:
+        successive words differ in one digit, so read positionally the value
+        jumps (24, 27, 30, 29, 20, ... on `1RB0RB_0LC0LD_1LC1LD_1RA0RA`) and a
+        +1-per-visit test rejects the machine as not a counter.  It is a
+        counter; the reader was assuming an encoding."""
+        ds = gray_decode(ds, self.b) if self.code == 'gray' else ds
         v = 0
         for d in reversed(ds):
             v = v * self.b + d
         return v
+
+    def of_value(self, v, k):
+        """The width-k digit string denoting v, in this family's code."""
+        ns, x = [], v
+        for _ in range(k):
+            ns.append(x % self.b)
+            x //= self.b
+        if x:
+            return None
+        return gray_encode(ns, self.b) if self.code == 'gray' else ns
+
+    def top(self, k):
+        """The width-k string at the top of its octave -- value b^k - 1.
+
+        For `binary` that is the all-max string, which is what the fill law
+        used to test for directly.  For a reflected code it is not, and
+        testing the string rather than the value is how a Gray counter's fill
+        went unseen."""
+        return self.of_value(self.b ** k - 1, k)
+
+    def is_top(self, ds):
+        """Is this the last member at its width -- the one the fill leaves
+        from?  Phrased as "the next step would overflow" so it is right for
+        any step, not just +1."""
+        return self.value(ds) + self.step > self.b ** len(ds) - 1
 
     def cfg(self, ds, p=None):
         """The counter segment in ITS OWN alphabet -- one run per maximal
@@ -344,6 +407,7 @@ class Fam:
                 'near_head_prefix': list(self.pre),
                 'terminator': list(self.tail),
                 'base': self.b, 'digit_len': self.l,
+                'code': self.code, 'value_step_per_anchor_visit': self.step,
                 'order': 'LSB nearest head'}
 
 
@@ -405,6 +469,14 @@ class Fill:
 
 CARRY = Fill(1, (), 0, (1,))
 
+# The codes the family search will read a counter segment in.  Positional
+# first, always: a row that reads as a plain odometer must keep reading as one.
+CODES = ('binary', 'gray')
+
+# Value advance per anchor visit.  1 first, for the same reason: a row that
+# already reads as one step per visit must keep reading that way.
+STEPS = (1, 2)
+
 
 def fit_fill(obs):
     """[(k, target digit string)] -> Fill, or None.
@@ -443,16 +515,16 @@ def fit_fill(obs):
 
 
 def next_ds(fam, ds):
-    """Odometer successor inside a width; the family's FILL LAW at the top."""
-    ds = list(ds)
-    i = 0
-    while i < len(ds) and ds[i] == fam.b - 1:
-        ds[i] = 0
-        i += 1
-    if i == len(ds):
-        return (fam.fill or CARRY).apply(len(ds))
-    ds[i] += 1
-    return ds
+    """Successor inside a width; the family's FILL LAW at the top.
+
+    Stated on the VALUE rather than as a digit-wise odometer ripple, so that
+    it is correct for any code the family reads in.  For `binary` this is
+    exactly the old carry."""
+    k = len(ds)
+    v = fam.value(ds)
+    if v + fam.step > fam.b ** k - 1:
+        return (fam.fill or CARRY).apply(k)
+    return fam.of_value(v + fam.step, k)
 
 
 def succ(fam, ds, p):
@@ -464,7 +536,7 @@ def succ(fam, ds, p):
     nd = next_ds(fam, ds)
     if nd is None:
         return None, None
-    if len(nd) == len(ds) and any(d != fam.b - 1 for d in ds):
+    if len(nd) == len(ds) and not fam.is_top(ds):
         return nd, p
     f = fam.fill or CARRY
     return nd, f.apply_p(p, len(ds))
@@ -538,7 +610,7 @@ def observe_fill(fam, tm, steps=150000, want=8, lookahead=16):
     seq = anchor_seq(fam, tm, steps)
     obs, seen = [], set()
     for i, (a, pa) in enumerate(seq):
-        if not a or any(d != fam.b - 1 for d in a):
+        if not a or not fam.is_top(a):
             continue
         k = len(a)
         if (k, pa) in seen:
@@ -675,9 +747,14 @@ def find_families(tm, snaps, rules, max_anchor=8, min_chain=8, max_occ=200,
                     for tl in range(min(len(suf), 2 * l) + 1):
                         tail = tuple(suf[len(suf) - tl:]) if tl else ()
                         for p in range(l):
-                            fam = _try_parse(q, h, side, other, occ, cs, sel,
-                                             l, p, tail, seeds, min_chain)
-                            if fam is not None and fam[0].key() not in seen:
+                            for code in CODES:
+                              for stp in STEPS:
+                                fam = _try_parse(q, h, side, other, occ, cs,
+                                                 sel, l, p, tail, seeds,
+                                                 min_chain, code=code,
+                                                 step=stp)
+                                if fam is None or fam[0].key() in seen:
+                                    continue
                                 seen.add(fam[0].key())
                                 found.append(fam)
             # The TEMPLATE pass.  Grouping by the far side's CELLS splits an
@@ -720,7 +797,8 @@ def find_families(tm, snaps, rules, max_anchor=8, min_chain=8, max_occ=200,
     # sort AFTER every constant-far-side one however long their chain: they
     # are the fallback, and a row that reads as a one-parameter counter must
     # keep reading as one.
-    found.sort(key=lambda f: (f[0].templated, -f[2], len(f[0].tail),
+    found.sort(key=lambda f: (f[0].templated, f[0].code != 'binary',
+                              f[0].step != 1, -f[2], len(f[0].tail),
                               len(f[0].pre), f[0].l))
     return found
 
@@ -775,7 +853,7 @@ def _grams(cs, sel, l, p, tail):
 
 
 def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain,
-               pids=None):
+               pids=None, code='binary', step=1):
     grams, pres = _grams(cs, sel, l, p, tail)
     alpha = set()
     for g in grams:
@@ -796,9 +874,12 @@ def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain,
             if g is None or pr is None or any(x not in idx for x in g):
                 vals.append(None)
                 continue
+            ds = [idx[x] for x in g]            # LSB-first
+            if code == 'gray':
+                ds = gray_decode(ds, len(perm))
             v = 0
-            for x in reversed(g):
-                v = v * len(perm) + idx[x]
+            for d in reversed(ds):
+                v = v * len(perm) + d
             vals.append((v, pr, len(g)))
         b = len(perm)
         i = 0
@@ -810,17 +891,19 @@ def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain,
             while k + 1 < len(vals) and vals[k + 1] is not None \
                     and vals[k + 1][1] == vals[i][1]:
                 if pids is None or pids[k + 1] == pids[k]:
-                    if vals[k + 1][0] != vals[k][0] + 1:
+                    if vals[k + 1][0] != vals[k][0] + step:
                         break
-                elif vals[k][0] != b ** vals[k][2] - 1:
+                elif vals[k][0] + step <= b ** vals[k][2] - 1:
                     # p may only move at the top string -- that is what makes
                     # the fill the only arm crossing the outer parameter
                     break
                 k += 1
             if k - i + 1 >= need and (best is None or k - i + 1 > best[2]):
                 nm = {a: seeds[a] for a in perm if a in seeds}
-                best = (Fam(q, h, side, other, list(perm), vals[i][1], nm,
-                            tail), occ[sel[i]][0], k - i + 1)
+                fm = Fam(q, h, side, other, list(perm), vals[i][1], nm, tail)
+                fm.code = code
+                fm.step = step
+                best = (fm, occ[sel[i]][0], k - i + 1)
             i = k + 1
     return best
 
@@ -964,7 +1047,9 @@ def sample_digits(fam, kmax=5, extra=(6, 7, 8, 9)):
     # at more widths than the exhaustive part reaches -- one instance is a
     # base case, several are an induction.
     for k in range(1, 13):
-        out.append([fam.b - 1] * k)
+        t = fam.top(k)
+        if t:
+            out.append(t)
         t = (fam.fill or CARRY).apply(k)
         if t:
             out.append(t)
@@ -1043,10 +1128,9 @@ def repair(tm, rules, fam, arms, uncovered, ctr, groups, budget=400,
         pp = item[2] if len(item) > 2 else fam.p0
         if len(added) >= max_new or (deadline and time.time() > deadline):
             break
-        ds, x = [], v
-        for _ in range(k):
-            ds.append(x % fam.b)
-            x //= fam.b
+        ds = fam.of_value(v, k)          # in the family's CODE, not positional
+        if ds is None:
+            continue
         nd, npp = succ(fam, ds, pp)
         cfg = fam.cfg(ds, pp)
         nxt = None if nd is None else fam.cfg(nd, npp)
@@ -1413,8 +1497,7 @@ def differential(tm, fam, arms, boot_ds, boot_p=None, n_checks=18,
     # string of each width) is among them, plus the state either side of it.
     walk = reach(fam, boot_ds, fam.p0 if boot_p is None else boot_p,
                  kmax=9, cap=6000)
-    tops = [i for i, (ds, _) in enumerate(walk)
-            if all(d == fam.b - 1 for d in ds)]
+    tops = [i for i, (ds, _) in enumerate(walk) if fam.is_top(ds)]
     want_i = set()
     for i in tops:
         want_i |= {i - 1, i, i + 1}
@@ -1465,7 +1548,7 @@ def differential(tm, fam, arms, boot_ds, boot_p=None, n_checks=18,
                 break
         out.append({'v': v, 'k': len(ds), 'to_k': len(nd), 'p': pp,
                     'to_p': npp,
-                    'at_fill': all(d == fam.b - 1 for d in ds),
+                    'at_fill': fam.is_top(ds),
                     'arm': armname, 'shape_ok': at is not None,
                     'anchor_visit_index': idx,
                     'raw_steps': at, 'predicted_steps': pred,
@@ -1603,10 +1686,20 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         # that widens by more than one puts half the widths out of reach, and
         # asking for arms there asks for configurations the run never enters.
         enum, ok, covmap, rep, rounds = 'all digit strings', False, {}, {}, 0
-        for mode in ('all', 'reachable'):
+        # A step other than +1 means only part of each width is a member, so
+        # "every digit string" is not a claim the family can make -- go
+        # straight to the states the boot actually reaches.
+        modes = ('all', 'reachable') if fam.step == 1 else ('reachable',)
+        for mode in modes:
             states = None if mode == 'all' else reach(fam, bds, bp, km)
             if mode == 'reachable' and (bds is None or len(states or ()) < 8):
+                res.setdefault('tried', []).append(
+                    {'family': fam.json(), 'fill': fam.fill.json(),
+                     'reason': ('no boot into the family' if bds is None
+                                else 'reachable set too short to check')})
                 break
+            if mode == 'reachable':
+                enum = 'states reachable from the boot'
             ok, covmap, rep = cover(tm, fam, arms, kmax=km, states=states)
             rounds = 0
             # The repair used to be skipped outright when every failure sat at
@@ -1637,6 +1730,8 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
                 break
         states = (None if enum == 'all digit strings'
                   else reach(fam, bds, bp, km))
+        if fam.step != 1:
+            states = reach(fam, bds, bp, km)
         arms = minimize(arms, covmap)
         if ok and time.time() < slice_end:
             arms = prune(tm, fam, arms, km, states)
@@ -1644,10 +1739,12 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
             rep2b['repair_rounds'] = rounds
             rep = rep2b
         if not ok:
+            if not rep:                       # the mode loop never ran a cover
+                continue
             res.setdefault('tried', []).append(
                 {'family': fam.json(), 'fill': fam.fill.json(),
                  'reason': ('overflow leaves the family'
-                            if rep['fails_only_at_overflow']
+                            if rep.get('fails_only_at_overflow')
                             else 'family not covered'),
                  'coverage': {k: v for k, v in rep.items()
                               if k not in ('uncovered_all', 'wrong_all')}})
