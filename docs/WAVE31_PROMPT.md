@@ -28,9 +28,10 @@ inverted alphabets registered and `two_form` refusing a descending family, **67
 of the 70 read ascending**, and with `lift` allowed on the interior split
 **every one of them clears the interior gate**.
 
-They then all stop in the same place.  Measured over the 70:
+They then all stop in the same place.  Measured over the 70 **with (1)'s `lift`
+patch applied** — this is the table you get AFTER item (1), not before:
 
-|   n | furthest gate |
+|   n | furthest gate, with `lift` on the interior split |
 |----:|---|
 |  27 | `register step does not close` |
 |  22 | `no boot chain` |
@@ -41,8 +42,26 @@ They then all stop in the same place.  Measured over the 70:
 |   1 | `no inner interior chain` |
 |   0 | `no interior j=0 chain` — **was 70** |
 
-And over the current 162 open core rows, `tailcert --list` now reports
-**12 fully derived** — blocked only by the missing renderer of §(0).
+**AS COMMITTED, the interior gate is still shut.**  Item (1) was measured with a
+patched copy of `tailcert` and never landed, so `tailcert.py --list` over the 162
+open core rows on today's `main` reports:
+
+|   n | furthest gate, as committed |
+|----:|---|
+|  38 | `no interior j=S j chain` at octave parity 0 |
+|  30 | `no inner family at pow2 j` |
+|  26 | `no gap-free two-form family` |
+|  26 | `no interior j=0 chain` at octave parity 0 |
+|  **12** | **OK — fully derived, see §(0)** |
+|  11 | `no boot chain` |
+|  10 | `no interior j=0 chain` at octave parity 1 |
+|   6 | inner fill lands off the measured endpoint |
+|   3 | one each: no visit witness for StA, no inner interior chain, register step |
+
+So **74 rows (38 + 26 + 10) are still behind the exactness assertion** that item
+(1) removes.  That is the single largest gate in the residue, it is two lines of
+plumbing plus a per-parity glue template, and it is measured to open all of them.
+Do not read the first table as work already done.
 
 **YOUR TASK IS THE EXPONENTIAL OVERFLOW ARM — after (0), which is free.**  Five
 builds, in this order.  **(0) is 12 rows that already derive and validate and
