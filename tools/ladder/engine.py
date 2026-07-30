@@ -500,9 +500,13 @@ class Replay:
         return (q, h, norm_side(L, self.lbs), norm_side(R, self.lbs))
 
     def run(self, cfg, target=None):
+        max_runs = len(cfg[2]) + len(cfg[3]) + 10
         for _ in range(self.budget):
             if target is not None and cfg == target:
                 return cfg
+            if len(cfg[2]) + len(cfg[3]) > max_runs:
+                self.fail = 'wander'
+                return None
             nxt = None
             for rule in self.rules:
                 nxt = self.apply_rule(rule, cfg)

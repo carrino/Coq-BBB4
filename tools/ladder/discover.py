@@ -35,7 +35,7 @@ def mine_shapes(snaps, windows=(1, 2, 3)):
     return table
 
 
-def candidates(table, min_occ=3, max_cands=6000):
+def candidates(table, min_occ=3, max_cands=2000):
     cands = []
     for key, occ in table.items():
         if len(occ) < min_occ:
@@ -79,7 +79,7 @@ def generalize(key, delta, pairs):
     return lhs, rhs, varmap
 
 
-def prove(tm, rules, lhs, rhs, budget=800):
+def prove(tm, rules, lhs, rhs, budget=200):
     """->+ replay.  Forced first concrete step guarantees progress; the rest
     may use chains and earlier rules.  Returns (lbs, fired) or None."""
     rep = Replay(tm, rules, budget=budget)
@@ -105,13 +105,20 @@ def redundant(tm, rules, lhs, rhs):
     return False
 
 
-def build_ladder(tm, table, max_rules=60, rounds=5, verbose=False):
+def build_ladder(tm, table, max_rules=60, rounds=5, verbose=False,
+                 time_cap=300.0):
+    import time
+    t0 = time.time()
     cands = candidates(table)
     rules = []
     done = set()
     for rnd in range(rounds):
         new = 0
         for key, delta, pairs in cands:
+            if time.time() - t0 > time_cap:
+                if verbose:
+                    print('  [time cap hit, partial ladder]')
+                return _prune(tm, rules)
             sig = (key, delta)
             if sig in done or len(rules) >= max_rules:
                 continue
@@ -137,7 +144,11 @@ def build_ladder(tm, table, max_rules=60, rounds=5, verbose=False):
                 print('  proved %r' % rule)
         if new == 0:
             break
-    # prune: drop rules that are pure specializations of the survivors
+    return _prune(tm, rules)
+
+
+def _prune(tm, rules):
+    """Drop rules that are pure specializations of the survivors."""
     kept = []
     for ru in rules:
         if redundant(tm, kept, ru.lhs, ru.rhs):
