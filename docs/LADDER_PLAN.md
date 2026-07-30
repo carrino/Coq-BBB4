@@ -530,53 +530,6 @@ and no arm realizes it"; sweep 2 separates them.  For at least 27 of the 41,
 task is arm selection and not more inference.  A null result that moves 21 rows
 from one side of a diagnosis to the other is worth more than the 18 % it cost.
 
-### Sweep 3: the counter's CODE, and 69 becomes 75
-
-_Measured at `66db337` over the same 143 rows and budget:
-`tools/ladder/core143_gray.jsonl`, table `core143_gray_rows.txt`, 10,820 s of
-per-row wall (sweep 2 was 10,758 s, so this layer is free)._
-
-John read `1RB0RB_0LC0LD_1LC1LD_1RA0RA` off the tape: *"a wall and msb on the
-left; when the wall moves over the high bit is set, then it counts up to full,
-then back down to 0, then the wall moves over again."*  That is the **reflected
-binary (Gray) code**, and "up to full then back down" is the reflection itself.
-Decoding the left side as Gray gives 300 consecutive `+2` steps out of 300
-anchor visits.  Read positionally the same tape gives 24, 27, 30, 29, 20, 23,
-18, 17 — which is why the search reported "+1 on 26 % of visits" and filed the
-machine under *no counter reading at any anchor*.
-
-Two more assumptions, the same shape as the fill law's, both now inferred:
-
-* **the CODE** — `Fam.value` read the digit string positionally, full stop.  It
-  now reads `binary` or `gray`, positional first.  `next_ds` is stated on the
-  VALUE rather than as a digit-wise carry ripple so it is right for either, and
-  the top of an octave is tested by value rather than by "all digits max" —
-  which, for a reflected code, is not the top at all.
-* **the STEP** — `_try_parse` required consecutive anchor visits to differ by
-  exactly `+1`.  A machine whose lowest cell is a phase bit crosses the anchor
-  once per TWO counter steps.  Inferred now; a step other than 1 means only part
-  of each width is a member, so those families are checked against the states
-  reachable from the boot.
-
-| | sweep 2 | sweep 3 |
-|---|---:|---:|
-| closed | 69 | **75** |
-| gained | — | **6** |
-| lost | — | **0** |
-| per-row wall | 10,758 s | 10,820 s |
-
-All six are `gray`, step 2; all six were *no counter reading at any anchor*
-before; all six pass the differential on shapes and exact step counts and
-confirm 40 laps from the blank tape.  **All six are in the live core** (30 → 36
-of 65).  Four are in John's 40-row bucket, which goes 21 → 25; two are outside
-it, so the reflected reading finds rows elsewhere in the residue too.
-
-That bucket is worth a last word.  `no interior j=S j' chain at octave parity 0`
-names how forty machines failed ONE test — positional base-`b`, `+1` per anchor
-visit.  It is at least four things: 25 now closed, 8 Fibonacci-rank, 3 wall-clock
-timeouts, 4 engine gaps.  A label that records how a search failed will keep
-being mistaken for a property of the machines.
-
 ### Addendum: what 69 is worth against the LIVE residue
 
 _Added after merging `origin/main` at `e955ed8`, which is 9 commits and three
@@ -605,6 +558,301 @@ route has NOT reached, found by a searcher that costs CPU rather than a session,
 is exactly what §3 Stage C was for.  But it also means the honest headline for
 this work is "a prover that finds 36 live candidates and a taxonomy", not
 "75 of 143".
+
+## 4f. Rung two-and-three-quarters: arm selection settled, and the counter's PHASES
+
+_Working set: the 41 rows sweep 1 left at `overflow leaves the family`
+(`tools/ladder/work41_fill.txt`, extracted from `core143_fill.jsonl`).
+Baseline for them re-measured at `66ad4c2` before any change this session:
+**41 of 41 still open**, so `143a9d1`'s member-stop fix moved none of them —
+what it moved was the LAW, from 6 of 41 fitted in sweep 1 to 20 of 41.  All
+counts below print from `tools/ladder/rowcounts.py`, `fillcost.py` and
+`phases.py` over the artefacts they cite._
+
+### The blocker was named correctly and diagnosed wrongly
+
+§4e's reading was that the fill law is right and no arm realizes it, and that
+two things were in the way: the fill arm is not built, and arm selection
+shadows its own repair.  The first half is right.  The second is not what the
+measurement says, and the reason the arm is not built is not a search gap.
+
+**An arm's step count is a sum of affine `fired` expressions.**  So before
+looking for the arm, measure what the machine actually charges for one fill.
+`tools/ladder/fillcost.py` walks the raw machine and times the top string of
+each width to the next family member:
+
+| population | fill cost | interior |
+|---|---|---|
+| the 41 open rows | **39 exponential** (per-digit ratio 1.95–2.01), 2 affine | affine, all 41 |
+| 8 rows sampled from the 69 CLOSED | **8 affine** (ratio 1.08–1.11, one 0.75) | affine |
+
+The separation is exact, and it is not a near miss: a fill costing `Θ(2^p)`
+against an affine interior is not an arm that a wider search finds.  No amount
+of arm mining closes those rows, and sweep 1 spending 300 s on some of them was
+spent against a wall.
+
+### Except that it is a misreading, and the fourth one of the same kind
+
+`Fam` pinned ONE terminator — the common suffix of the anchor visits sharing
+the commonest far side.  `tools/ladder/phases.py` varies that and nothing else
+(anchor, digits, base, far side exactly as the family read them) and asks what
+the visits the one-tail family calls undecodable would read as:
+
+* **26 of the 41 read on THREE terminators**, 5 on two, 4 on four, 6 on one;
+* 23 of the 41 then read **100 % of their anchor visits**;
+* and the machine laps once per terminator before widening.
+
+On `1RB1LA_1LC0RD_1LA1LB_0LB1RD` — §3's boot-blocked Stage-A row, open since
+sweep 1 — the three terminators are `101`, `001`, `01`, all 10001 anchor visits
+read, and the cycle is `0 → 1 at p`, `1 → 2 at p+1`, `2 → 0 at p+1`: the width
+moves twice per lap of the cycle, which is where the `p+2` of the one-terminator
+reading came from.  The `Θ(2^p)` fill was two whole laps the reader could not
+see.  It closes with 14 arms, exact step counts and 40 laps.
+
+So the phase is part of the counter's state, exactly like the width, and it is
+inferred rather than assumed (`fit_phases`), with three guards: a phase must
+read ≥ 8 distinct visits, every phase must have a fill law that interpolates to
+a single target phase, and the whole reading must be a CHAIN the model's own
+successor explains (≥ 0.95 of consecutive read visits).  A family that already
+reads all its own visits is left exactly as it was; a family with visits it
+cannot read is re-read wherever the guards pass, whether or not it was failing,
+and on the full sweep that includes eight rows which already closed (see the
+gate below — they still close, with fewer arms).
+
+**This is the fourth time the missing constructor has been a hard-coded
+assumption about the counter's own arithmetic** — the carry (§4e), the anchor
+(§4e), the base (§4e's Fibonacci rows), and now the terminator.  §4e's rule
+holds: a reader that assumes an arithmetic reports the machine as the thing
+that failed.
+
+### Arm selection, settled
+
+The choice §4e left open is closed in favour of **first applicable in the
+listed order, with the order a linearization of pattern subsumption, most
+specific first** (`order_arms`).  Three reasons, in order of weight:
+
+1. **It is checkable from the arms as data.**  Applicability is `match_rule`
+   plus `apply_rule`'s lower-bound test, both syntactic, so `covers` decides
+   subsumption by interval containment per run coordinate and `order_ok`
+   re-derives the ordering property from the arm list.  The Stage-B kernel
+   never trusts the order it is handed and never has to decide membership.
+2. **The alternative does not settle the case it was proposed for.**  `First
+   applicable whose result is in the family` was the other candidate; but the
+   failure it was meant to fix — an interior arm firing at an overflow — lands
+   ON a family member, just the wrong one.  Membership does not separate it.
+3. **It makes the repair reachable by construction.**  The old `spec_key` put
+   the most general arm of a shape first, so a specialization built for a
+   string the general arm gets wrong was never asked.
+
+`cover`, `repair`, `differential` and the emitted certificate all use the one
+order; `arm_selection` in the certificate JSON states it and
+`arm_order_is_subsumption_linearization` carries the check.  `cover` also now
+MEASURES shadowing (`shadowed_by_selection`) rather than asserting it — and the
+measurement is that on the working set it is **0**: where an arm was wrong, no
+later arm was right.  `drop_wrong` stays, but it is no longer the only way to
+unshadow a repair.
+
+### The cheap pass, reported separately
+
+None of this is mathematics; all of it is where a 300 s cooperative cap stopped
+being one.  `covers` is memoized per arm pair (`order_arms` is quadratic and
+ran inside `cover` and once per item in `repair` — 17.7 s of a 56 s row);
+`repair` recomputes the order only when the arm set grows; the raw anchor walk
+is cached per (state, head) instead of re-walked 150k steps per candidate
+family; `repair` checks its deadline per window and per pin rather than once
+per item (measured 98.8 s against a 90 s deadline on
+`1RB---_0LC1RD_1LB1RC_1LB0RD`, the row §4e reports as hard-timing-out);
+`_replay_arm` and `prune` take deadlines at all; and fallback candidates do not
+START past 70 % of the cap, with the certificate recording how many were
+skipped.
+
+| row | before | after |
+|---|---:|---:|
+| `1RB0LD_1RC1RA_1LA1RA_0RB1LD` | 56.1 s | 26.2 s |
+| `1RB0LC_1LC0RD_0RA1LB_0LC1RD` | 308.7 s | 73.7 s |
+| `1RB0LD_0LC1RA_0LA1LA_0RB1LD` | 302.9 s | 79.7 s |
+| the dev row `1RB1LA_1LC0RD_1LA1LB_0LB1RD` | 58.0 s | 29.2 s |
+
+### The result on the working set
+
+| the 41 | before | after |
+|---|---:|---:|
+| closed | 0 | **18** |
+| `overflow leaves the family` | 41 | 23 |
+
+All 18 pass raw-simulator differential validation, **all 18 match the arms'
+predicted step counts exactly**, all 18 confirm 40 laps replayed from blank,
+all 18 are never-QH, and all 18 cover EVERY digit string rather than only the
+reachable ones.  Median 19 arms, median 33 s, max 275 s — no row hit the cap.
+Every one of the 18 was closed by the phase pass (2 phases on 4 rows, 3 on 11,
+4 on 3); none of them closes without it.  `arm_order_is_subsumption_linearization`
+holds on all 18 and `shadowed_by_selection` is 0 on all 18.
+
+The cycles read like counters, which is the point — e.g.
+`1RB0LD_1RC1RA_1LA1LC_0RA1LD`: `0→3 p+0`, `3→2 p+0`, `2→1 p+2`, `1→0 p+0`,
+four terminators and the width moving once per cycle.
+
+### Ranking the 23 that are still open
+
+Every one of them fails at the OVERFLOW and nowhere else — the interior is
+covered on all 23 — and the split is by what the terminators do
+(`tools/ladder/work41_after.jsonl`, the `terminators_by_phase` of the best
+candidate):
+
+* **(a) the terminator is `word^m` — 8 rows, and 6 of them are ONE digit
+  string short.**  Their phases come out as `[]`, `01`, `0101`: not a cycle of
+  distinct terminators but one terminator GROWING, `tail = (01)^m`.  The
+  reading is right as far as it goes and then the last phase's fill wants
+  `(01)^(m+1)`, a phase a finite set does not have.  Measured directly on
+  `1RB0LC_1LC0RD_0RA1LB_0LC1RD`: the anchor-visit gap at the last phase's fill
+  is 4 at width 2 and 16 at width 4 — still exponential, because that fill is
+  the register's own increment.  **This is the register, and it is the same
+  move `fit_far` already makes for the far side**: a terminator as a run
+  TEMPLATE `word^(a·m + b)` with its own law, `m` a third parameter beside the
+  width and the phase, the arms generalizing over a sample of `m` exactly as
+  they now do over `p`.  §4d called these Θ(4^k) and put them at rung three;
+  the measurement says the constructor is one more template, not one more rung.
+* **(b) the phase pass found nothing — 6 rows, 1 to 5 strings short.**  One
+  terminator, and no second terminator reads ≥ 8 of the visits it cannot read.
+  `1RB---_1LC1RD_0LB1RD_1LB0RD` is the clean case: 100 % of anchor visits read
+  on one phase and the fill still costs `Θ(2^p)` (ratio 1.98).  Nothing here is
+  a misreading; these look like genuine nested fills.
+* **(c) a phase cycle that does not close — 9 rows, 4 to 5 strings short.**
+  Three or four terminators are found, the chain holds, and several of the
+  phases' fills still want a phase outside the set — the same shape as (a) with
+  a less obvious word.
+
+### The gate
+
+**87 of 143, against the ~100 the session's gate set.  The gate fires, so this
+section is the taxonomy and the constructor stops here.**  Measured on the full
+143 at `d4bbdd9` (`tools/ladder/core143_ph.jsonl`, table `sweep143_ph.log`,
+8,763 s of per-row wall, median 33 s, max 301 s, **0 hard timeouts and 0
+crashes**), printed by `rowcounts.py`:
+
+| working set | rows | sweep 1 | now |
+|---|---:|---:|---:|
+| engine-gap (c) | 24 | 0 | 0 |
+| two-parameter target | 71 | 32 | **50** |
+| register (rung 3) | 17 | 16 | 16 |
+| regression (already closed) | 21 | 21 | 21 |
+| **total** | **143** | **69** | **87** |
+
+All 87 pass the differential, 86 of 87 match predicted step counts exactly, all
+87 confirm 40 laps from blank, all 87 cover every digit string, and **no row
+that closed before stopped closing** — the only transitions are 18 rows from
+`overflow leaves the family` to `closed`.  73 are never-QH, 14 name a
+quasi-halt witness.  `arm_order_is_subsumption_linearization` holds on 87 of 87
+and `shadowed_by_selection` is 0 on 87 of 87.
+
+26 of the 87 read on more than one terminator (12 on two, 11 on three, 3 on
+four).  Eight of those 26 already closed at sweep 1 on ONE terminator and now
+read as multi-phase: the guards let the pass fire wherever it improves the
+reading, not only where the old reading failed, and those eight still pass the
+differential and the lap check — with FEWER arms (median 15 against 32 for the
+single-phase rows), because a phase absorbs case splits the arms were carrying.
+
+The one cost, and it is the cheap pass's not the constructor's: three rows that
+sweep 1 reported as `arm lands off the family` now spend the whole cap and
+report `time cap` instead of a per-candidate diagnosis
+(`1RB---_0LC1RD_1LB1RC_1LB0RD`, `1RB---_1LC0RB_0LD1RB_1LC1RD`,
+`1RB---_1LC1RB_0LB1RD_1LC0RD`).  The first of them is the row §4e records as
+HARD-timing-out; it now returns inside the subprocess timeout, which is the
+half of that complaint the budget work was aimed at.  The other half — the
+phase pass costs one raw walk and one fit per candidate family, and these rows
+have many candidates — is unfinished, and it is a budget item, not a
+mathematical one.  What it bought is
+not only the 18: it is that the residue is now 23 rows all failing at one
+place, with 8 of them naming their own next constructor, and a per-row
+measurement (`fillcost.py`, `phases.py`) that says in advance whether a row's
+fill can be an arm at all.  That measurement did not exist before this session,
+and it is what stops the next round spending 300 s per row against a wall.
+
+### What this says about Stage B
+
+§4e's position was that the certificate shape is stable in its four parts and
+unstable in the arithmetic of one, so the kernel should be designed against the
+parts and parameterized in the successor.  This session is evidence for that
+and against waiting any longer:
+
+* the successor moved AGAIN — one terminator became a cycle of them, and the
+  residue says it next becomes `word^m` — so freezing `pre ++ mid^n ++ suf`
+  would have been wrong for the third time running;
+* but the four parts did not move at all.  Family, fill law, arms, boot,
+  liveness: the phase went in as another coordinate of the family's state and
+  every part kept its shape;
+* and **the one part §4e listed as open is now closed**.  Arm selection is
+  decided, and decided in the form Stage B needs: a case split the checker
+  re-derives from the arms as data (`order_ok`), with no membership decision
+  inside the kernel and no reliance on the order the search happened to emit.
+
+So the Stage-B kernel can now be specified: rules as data, one soundness
+theorem by induction on ladder position, a case split that is
+first-applicable-in-a-subsumption-order, and the successor as a PARAMETER of
+the family rather than a fixed law.  The next constructor (the terminator
+template) is a change to that parameter, not to the kernel — which is the test
+§4e asked for and the first time the answer has been yes.
+
+## 4g. The counter's CODE and its step, read not assumed
+
+_Merged from `claude/ladder-two-parameter-anchor-c0vkav`, which ran beside §4f
+on the same files.  The two are complementary and were measured separately
+before the merge: §4f's phase pass closes 87 of 143 at `0246b0c`, this layer
+closes 75 of 143 at `66db337`, the union of the two closed sets is 93, and the
+six rows this layer adds are exactly the six §4f does not reach.  The merged
+number is measured below._
+
+John read `1RB0RB_0LC0LD_1LC1LD_1RA0RA` off the tape: *"a wall and msb on the
+left; when the wall moves over the high bit is set, then it counts up to full,
+then back down to 0, then the wall moves over again."*  That is the **reflected
+binary (Gray) code**, and "up to full then back down" is the reflection itself.
+Decoding the left side as Gray gives 300 consecutive `+2` steps out of 300
+anchor visits; read positionally the same tape gives 24, 27, 30, 29, 20, 23,
+18, 17, which is why the search reported "+1 on 26 % of visits" and filed the
+machine under *no counter reading at any anchor*.
+
+Two more assumptions, the same shape as the fill law's in §4e and the phase's
+in §4f, both now inferred rather than hard-coded:
+
+* **the CODE.**  `Fam.value` read the digit string positionally, full stop.  It
+  now reads `binary` or `gray`, positional first.  The codec is the general
+  base-`b` reflected code — running sum down to decode, difference to the next
+  digit up to encode — which collapses to the XOR chain at `b = 2`.  `next_ds`
+  is stated on the VALUE rather than as a digit-wise carry ripple so it is
+  right for either code, and the top of an octave is tested by value rather
+  than by "all digits max", which for a reflected code is not the top at all.
+* **the STEP.**  `_try_parse` required consecutive anchor visits to differ by
+  exactly `+1`.  A machine whose lowest cell is a phase bit crosses the anchor
+  once per TWO counter steps.  A step other than 1 means only part of each
+  width is a member, so those families are checked against the states reachable
+  from the boot rather than against every digit string.
+
+One bug fell out of the first: `repair` rebuilt the failing digit string from
+`(k, v)` by positional decomposition, which is the wrong string for any family
+whose code is not positional.  It goes through `of_value` now, and that single
+fix is what took the Gray rows from "family found, interior 65 % covered" to
+closed.
+
+The rows this adds, all `gray` with step 2, all previously *no counter reading
+at any anchor*, all with the differential agreeing on shapes AND exact step
+counts and 40 laps confirmed from the blank tape:
+
+    1RB0RB_0LC0LD_1LC1LD_1RA0RA   C1/L   1RB0RD_1LC0LB_1LD0LB_1RD0RA
+    1RB0RB_0RC1RC_0LD1LA_1LD0LA   C0/L   1RB0RD_1LC0LC_1LD0LB_1RD0RA
+    1RB1LC_0LA0RB_0LD1LD_1RA0RA   A0/L   1RB1LD_1RC0RC_1LA0LA_0RA0LD
+
+Four of the six are in the `no interior j=S j' chain at octave parity 0`
+bucket, which that layer alone takes 21 → 25 of 40; two are outside it.  That
+bucket names how forty machines failed ONE test — positional base-`b`, `+1` per
+anchor visit — and it is at least four things: now-closed rows, Fibonacci-rank
+counters (exactly F(n) distinct counter words per length, `numsys.py`),
+wall-clock timeouts, and engine gaps.  **A label that records how a search
+failed keeps being mistaken for a property of the machines.**  §4d made that
+error twice, §4e once more, and it is the same error each time: an assumption
+about the counter's own arithmetic, reported as the machine's failure.
+
+Credit where it is due: the Gray reading came from John's read of the tape, not
+from the searcher.
 
 ## 5. What this is NOT
 

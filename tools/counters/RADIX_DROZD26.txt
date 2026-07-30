@@ -1,0 +1,55 @@
+# tools/counters/radix_infer.py over Drozd's 26.
+#
+# The counter reading, WITHOUT assuming base 2.  tools/kcopy_classify.py and
+# tools/counters/alphabet_infer.py can only ever return a base-2 encoding
+# (KCOPY<k>/SEP<k>; the positive-recursion E(xO q)/E(xI q)), and every
+# alphabet in theories/Counters -- Ip, Jp, Kp, Dp, Bp, Mp -- is base 2.
+#
+# 17 of 26 rows decode to CONSECUTIVE integers at some anchor.  Four are
+# RADIX 3 with 2-cell digits; counter_encodings.tsv calls all four KCOPY1,
+# which is why emit_kp.py derives 0 of 17 on these rows -- wrong radix.
+#
+# 5 rows are AFFINE in the carry length on the branches observed, i.e. the
+# shape the single-sweep lap templates want:
+#   1RB---_0LB1RC_0RD0RC_1LB1LD
+#   1RB---_0LB1RC_1LB0RD_1LB0RC
+#   1RB---_0RC0RB_1LD1LC_0LD1RB
+#   1RB---_1LC0RD_0LC1RB_1LC0RB
+#   1RB---_1LC0RD_0LC1RD_1LC0RB
+#
+# The three radix-2 affine rows already have their Coq encoding
+# (theories/Counters/KpCounter.v).  What they lack is an emitter pairing that
+# encoding with the QUASIHALTING closer -- they are 1RB--- rows, so they need
+# iqh (LapGlueQuiet.glue_qh_quiet), and emit_kp.py emits never-QH boards
+# while emit_qh.py is hard-wired to the Jp encoding.
+#
+# CAVEAT: "AFFINE" here means affine over the carry lengths that occurred in
+# 6*10^4 anchor visits, interior and overflow lumped together.  It is a
+# routing hint, not the emitter's differential validation.
+
+1RB---_0LB1RC_0RD0RC_1LB1LD  side=L anchor=B RADIX=3 digits=00/01/11 (2 cells) n=10003 lap=[(0, 4), (1, 8), (2, 12), (3, 16)] AFFINE
+1RB---_0LB1RC_1LB0RD_1LB0RC  side=L anchor=B RADIX=2 digits=0/1 (1 cells) n=15004 lap=[(0, 2), (1, 4), (2, 6), (3, 8)] AFFINE
+1RB---_0LB1RC_1LB0RD_1LC0RC  side=L anchor=B RADIX=3 digits=00/10/11 (2 cells) n=12005 lap=[(0, 2), (0, 4), (1, 6), (1, 8)] non-affine
+1RB---_0LC1RB_0LB1RD_1LC0RD  side=L anchor=C RADIX=2 digits=0/1 (1 cells) n=12860 lap=[(0, 2), (1, 6), (2, 6), (3, 10)] non-affine
+1RB---_0LC1RD_0LB1RC_1LB0RD  side=L anchor=B RADIX=2 digits=0/1 (1 cells) n=12860 lap=[(0, 2), (1, 6), (2, 6), (3, 10)] non-affine
+1RB---_0LC1RD_0LB1RD_1LB0RD  no consecutive decode found
+1RB---_0LC1RD_0LB1RD_1LC0RD  no consecutive decode found
+1RB---_0RC0RB_1LD1LC_0LD1RB  side=L anchor=D RADIX=3 digits=00/01/11 (2 cells) n=10002 lap=[(0, 4), (1, 8), (2, 12), (3, 16)] AFFINE
+1RB---_1LC0RB_0LD1RB_0LC1RB  no consecutive decode found
+1RB---_1LC0RB_0LD1RB_0LC1RD  side=L anchor=C RADIX=2 digits=0/1 (1 cells) n=12859 lap=[(0, 2), (1, 6), (2, 6), (3, 10)] non-affine
+1RB1LA_1LC0RD_0RA0LC_0LA1RD  side=L anchor=C RADIX=2 digits=0/1 (1 cells) n=6016 lap=[(0, 1), (0, 4), (1, 8), (2, 14)] non-affine
+1RB1LC_0LA0RB_0RD1LA_0LC1RD  side=R anchor=B RADIX=2 digits=0/1 (1 cells) n=10383 lap=[(0, 2), (1, 8), (2, 6), (3, 16)] non-affine
+1RB1LD_1RC0RC_1LA0LA_0RA0LD  no consecutive decode found
+1RB---_1LC0RD_0LC1RB_1LB0RB  side=L anchor=C RADIX=3 digits=00/10/11 (2 cells) n=12005 lap=[(0, 2), (0, 4), (1, 6), (1, 8)] non-affine
+1RB---_1LC0RD_0LC1RB_1LC0RB  side=L anchor=C RADIX=2 digits=0/1 (1 cells) n=15003 lap=[(0, 2), (1, 4), (2, 6), (3, 8)] AFFINE
+1RB---_1LC0RD_0LC1RD_1LC0RB  side=L anchor=C RADIX=2 digits=0/1 (1 cells) n=15003 lap=[(0, 2), (1, 4), (2, 6), (3, 8)] AFFINE
+1RB---_1LC1LB_0LC1RD_0RB0RD  no consecutive decode found
+1RB0LD_0LC0RB_1LA1RC_0RC1LD  side=R anchor=B RADIX=2 digits=0/1 (1 cells) n=6016 lap=[(0, 4), (0, 8), (1, 1), (1, 8)] non-affine
+1RB0RB_0LC0LD_1LC1LD_1RA0RA  no consecutive decode found
+1RB0RB_0RC1RC_0LD1LA_1LD0LA  no consecutive decode found
+1RB1LA_0LA0LC_1LC1RD_0RB0RD  side=R anchor=B RADIX=2 digits=0/1 (1 cells) n=7519 lap=[(0, 2), (1, 6), (2, 12), (3, 20)] non-affine
+1RB1LA_0LA0RC_0LD0RB_1LD1RC  side=R anchor=B RADIX=2 digits=0/1 (1 cells) n=10383 lap=[(0, 2), (1, 8), (2, 6), (3, 16)] non-affine
+1RB1LA_0LA1RC_0LD0RC_1LD0RB  side=R anchor=B RADIX=2 digits=0/1 (1 cells) n=7519 lap=[(0, 2), (1, 6), (2, 12), (3, 20)] non-affine
+1RB1LC_0LA0RB_0LD1LD_1RA0RA  no consecutive decode found
+1RB1LC_0LC0RB_0RD1LA_0LA1RD  side=R anchor=B RADIX=2 digits=0/1 (1 cells) n=9647 lap=[(0, 4), (1, 4), (2, 12), (3, 8)] non-affine
+1RB1RC_1LA0LB_1LD0RD_1LB0RC  no consecutive decode found
