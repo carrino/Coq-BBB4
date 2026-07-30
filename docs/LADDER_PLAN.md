@@ -344,7 +344,7 @@ _Sweep 1 measured at commit `0153dd1` (branch
 mining traces, 300 s hard wall cap per machine, 3 jobs, 9,127 s of per-row
 wall.  Raw: `tools/ladder/core143_fill.jsonl`; readable table
 `core143_fill_rows.txt`.  Every count below is printed by
-`tools/ladder/numbers.py` from those files rather than restated here, and the
+`tools/ladder/rowcounts.py` from those files rather than restated here, and the
 working sets are files, not prose: `work71_twoparam.txt` (the 71 non-register
 overflow rows), `work24_enginegap.txt`, `work17_register.txt`,
 `work21_closed.txt` (the regression set)._

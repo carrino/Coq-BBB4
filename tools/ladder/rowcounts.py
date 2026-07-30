@@ -5,7 +5,7 @@ A section that quotes measurements should be regenerable from the artefacts it
 cites, so this is the only place the counts are computed and the prose copies
 them rather than restating them.
 
-Usage: numbers.py OLD.jsonl NEW.jsonl [NUMSYS.txt ...]
+Usage: rowcounts.py OLD.jsonl NEW.jsonl [NUMSYS.txt ...]
 """
 
 import collections
