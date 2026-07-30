@@ -145,22 +145,29 @@ Wave-30 also *measured two of the sized routes dead* — the `cycR-gap`
 primitive fires nowhere sound, and the double peel is irrelevant
 (§§2, 4 there; both are now do-not-retry).  The surviving structure:
 
-* **67 rows** — one gate: the **bounded inner carrier**
-  (`WAVE30_FINDINGS.md` §9 item 1).  The inner counter of the exponential
-  overflow arm runs a PARTIAL octave; the missing piece is one lemma
-  beside `NestedLapLift.inner_to_fill_lift`, stopped at a measured
-  endpoint instead of the fill.  The single biggest lever on this list.
+* **67 rows clear the interior gate and stop on the exponential overflow
+  arm** — but not at one gate.  The wave-31 measurement pass
+  (`docs/WAVE31_PROMPT.md`, built on `WAVE30_FINDINGS.md` §6g) split it:
+  **12 rows are already derived** and wait only on the two-form board
+  RENDERER; **16** are the bounded-inner-carrier lemma; **27** are a
+  measured DOUBLE nesting (`Theta(4^k)` phases — wall +4 per overflow,
+  mechanising John's read; the single-nesting register step cannot close
+  them); **22** `no boot chain` rows have never been re-run against the
+  SOLO-cascade route since the reader fix.
 * **26 rows, `unreachable`** — re-measured at EVERY anchor family, both
-  mirrors, tolerant and parity-split readers; all 26 survive (§5).  The
-  one part of the old "easy" bucket where the difficulty looks real.
+  mirrors, tolerant and parity-split readers; all 26 survive
+  (`WAVE30_FINDINGS.md` §5).  The one part of the old "easy" bucket where
+  the difficulty looks real.
 * **8 period-2 rows** — need a genuine parity device (a two-unit `cycR`
-  with an even/odd-split interior), sized honestly in §9 item 4.
+  with an even/odd-split interior), sized honestly in
+  `WAVE30_FINDINGS.md` §9 item 4.
 
 ## Where a newcomer should probably start
 
-1. **The bounded inner carrier** (`docs/WAVE30_FINDINGS.md` §9, items
-   1–2).  One Coq lemma plus the two-form board's interior glue, measured
-   to be the only gate in front of 67 rows.
+1. **The wave-31 prompt's ordered builds** (`docs/WAVE31_PROMPT.md`):
+   the two-form board renderer first (12 rows already derived,
+   `tools/counters/tailcert_derived12.txt`), then the `lift` plumbing,
+   then the bounded inner carrier (16 rows).
 2. **The 11 no-anchor.** Their resting tapes are regular families that are
    NOT digit words (five are solid blocks of ones — index the family by
    the wall, do not hunt for an alphabet; `WAVE29_BOUNCER_FINDINGS.md`
