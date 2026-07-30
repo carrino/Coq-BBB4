@@ -285,14 +285,11 @@ def _derive(spec, dspec, mirrored, encs=None):
         Z1 = (st[b], (sD, (), 0, 0, ()), 0, F(fr[b]))
         P0 = (st[b], (uS, uS, 1, 0, sS), 0, F(fr[b]))
         P1 = (st[b], (uD, uD, 1, 0, sD), 0, F(fr[b]))
-        chz, rz = _chain(tab, False, True, Z0, Z1)
-        chp, rp = _chain(tab, False, True, P0, P1)
-        if chz is None or rz[0] != Z1 or rz[2] == 0:
-            raise RegError('no interior j=0 chain at octave parity %d' % b)
-        if chp is None or rp[0] != P1 or rp[2] == 0:
-            raise RegError('no interior j=S j chain at octave parity %d' % b)
-        ints[b] = dict(Z0=Z0, Z1=Z1, P0=P0, P1=P1, chz=chz, chp=chp,
-                       cz=(rz[1], rz[2]), cp=(rp[1], rp[2]))
+        gz = _int_chain(tab, Z0, Z1, 'j=0', b)
+        gp = _int_chain(tab, P0, P1, 'j=S j', b)
+        ints[b] = dict(Z0=Z0, Z1=gz[0], P0=P0, P1=gp[0],
+                       chz=gz[1], chp=gp[1], cz=gz[2], cp=gp[2],
+                       zpad=gz[3], ppad=gp[3])
 
     for b in (0, 1):
         nb = 1 - b
@@ -319,6 +316,38 @@ def _derive(spec, dspec, mirrored, encs=None):
     D['vis'] = visits(tab, D)
     D['boot'] = boot(tab, D)
     return D
+
+
+def _int_chain(tab, A, T, what, b):
+    """One half of the interior split: EXACT first, then up to `lift`.
+
+    Wave-31: the exact-landing assertion, not the machines, is what filed rows
+    at `no interior j=<half> chain`.  Measured over the open core rows, of the
+    74 rows the two assertions filed, 30 derive at all four halves once `lift`
+    is allowed and 44 stay blocked -- so the fallback is necessary and it is
+    not sufficient, and the 44 are a fact about the machine.
+
+    The slack is uniform where it occurs, and that is what makes it renderable:
+    the LEFT side always lands exactly (it carries the opaque `E q0 ++ tail`,
+    so a blank there would sit in the MIDDLE of the word and `lift` could not
+    hide it) and the reached FAR side is the anchor's plus trailing blanks.
+    Returns (landing, chain, (a, b), farpad) with `farpad` the blank count."""
+    ch, r = _chain(tab, False, True, A, T)
+    if ch is not None and r[0] == T and r[2] != 0:
+        return T, ch, (r[1], r[2]), 0
+    ch, r = _chain(tab, False, True, A, T, lift=True)
+    if ch is None or r[2] == 0 or not LC._match(r[0], T, False, True, True):
+        raise RegError('no interior %s chain at octave parity %d' % (what, b))
+    got = r[0]
+    if got[0] != T[0] or got[1] != T[1] or got[2] != T[2]:
+        raise RegError('interior %s slack at octave parity %d is not on the '
+                       'far side: %r vs %r' % (what, b, got, T))
+    gp, wp = tuple(got[3][0]), tuple(T[3][0])
+    if got[3][1:] != T[3][1:] or len(gp) <= len(wp) \
+            or gp[:len(wp)] != wp or any(gp[len(wp):]):
+        raise RegError('interior %s far slack at octave parity %d: %r vs %r'
+                       % (what, b, got[3], T[3]))
+    return got, ch, (r[1], r[2]), len(gp) - len(wp)
 
 
 def _nested_ovf(tab, B0, B1, mid, K):
@@ -501,6 +530,8 @@ BOARD = r'''(** * REG_@ID@: machine @SPEC@, boarded by CERTIFICATE (TWO-FORM rou
       overflow  (cview p = (S (S j), None)), one arm per parity, CROSSING into
                 the other parity's frame: @CO@
 
+    @ISLACK@
+
     The overflow arm is stated one peel deeper than the flat route's: its
     source carries a unit copy in the prefix and its landing counts
     [1*j+2] blocks, so the reindex leaves [cview p = (1, None)] (that is,
@@ -639,7 +670,7 @@ Proof.
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
   split.
   - rewrite H1. rshape_@ID@.
-  - f_equal. rewrite H2. rshape_@ID@.
+  - @ZPEEL@f_equal. rewrite H2. rshape_@ID@.
 Qed.
 
 Lemma gp@B@_@ID@ : forall p j q0, cview p = (S j, Some q0) -> podd p = @BV@ ->
@@ -653,7 +684,7 @@ Proof.
   replace (1 * j + 0) with j by lia. replace (0 * j + 0) with 0 by lia.
   split.
   - rewrite H1. rshape_@ID@.
-  - f_equal. rewrite H2. rshape_@ID@.
+  - @PPEEL@f_equal. rewrite H2. rshape_@ID@.
 Qed.
 
 Lemma lapi@B@_@ID@ : forall p j q0, cview p = (j, Some q0) -> podd p = @BV@ ->
@@ -901,6 +932,30 @@ def _sub(D, b):
             '@TL@': clist(D['tl'][b]), '@FR@': clist(D['fr'][b])}
 
 
+def _far_peel(far, pad):
+    """The blank-peeling tactic for ONE interior half's landing, or '' when
+    that half landed exactly on the anchor's far side.
+
+    `Nat.mul`/`Nat.add` have to be in the `cbn` list: the far count is
+    `a * j + b` and `rewrite` does not compute, so without reducing it first
+    the side reads `pre ++ rep [] (0 * j + 0) ++ [] ++ []` and
+    `WTape.lift_app_blank` has no syntactic occurrence to match.  The EXACT
+    template gets away without this because it finishes by `reflexivity`,
+    which is up to conversion.
+
+    The `change` nests one `++ [S0]` per surplus blank so each `rewrite`
+    peels exactly one.  Never emitted with pad = 0: `lift_app_blank` would
+    have nothing to rewrite and `rewrite !` would fail."""
+    if not pad:
+        return ''
+    got = tuple(far) + (0,) * pad
+    nest = ('(' * pad + clist(far)
+            + ''.join(') ++ [S0]' for _ in range(pad)))
+    return ('cbn [rep app Nat.mul Nat.add]; rewrite ?app_nil_r.\n    '
+            'change (%s) with (%s).\n    ' % (clist(got), nest)
+            + 'rewrite !lift_app_blank.\n    ')
+
+
 def render(D):
     spec = D['spec']
     ID = mach_id(spec)
@@ -921,7 +976,9 @@ def render(D):
                     '@P0C@': EL.cconf(I['P0']), '@P1C@': EL.cconf(I['P1']),
                     '@CHZ@': EL.cchain(I['chz']), '@CHP@': EL.cchain(I['chp']),
                     '@CAZ@': str(I['cz'][0]), '@CBZ@': str(I['cz'][1]),
-                    '@CAP@': str(I['cp'][0]), '@CBP@': str(I['cp'][1])})
+                    '@CAP@': str(I['cp'][0]), '@CBP@': str(I['cp'][1]),
+                    '@ZPEEL@': _far_peel(D['fr'][b], I['zpad']),
+                    '@PPEEL@': _far_peel(D['fr'][b], I['ppad'])})
         idefs.append(_fill(INT_DEFS, r))
         iglue.append(_fill(INT_GLUE, r))
     iglue.append(INT_DISPATCH)
@@ -1004,6 +1061,19 @@ def render(D):
             for b in (1, 0)),
         '@VNEST@': (', and every inner lap of every nested overflow'
                     if nest else ''),
+        '@ISLACK@': (
+            'Every branch closes EXACTLY on the next anchor.'
+            if not any(D['ints'][b][k] for b in (0, 1)
+                       for k in ('zpad', 'ppad')) else
+            'The interior halves marked below land one or more written blanks\n'
+            '    past the anchor\'s FAR side and so close only up to [lift]\n'
+            '    ([WTape.lift_app_blank]): %s.  The whole board is stated in\n'
+            '    [lift] space anyway, so this costs nothing but the peel.'
+            % ', '.join('parity %s %s +%d'
+                        % ('true' if b else 'false', h, D['ints'][b][k])
+                        for b in (1, 0)
+                        for h, k in (('j=0', 'zpad'), ('j=S j', 'ppad'))
+                        if D['ints'][b][k])),
         '@VAL@': D['val'],
     }
     out = BOARD
