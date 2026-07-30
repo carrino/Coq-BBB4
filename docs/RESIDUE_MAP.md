@@ -83,17 +83,17 @@ boarded set.
 Counts below are over the core rows as of this commit (the shape
 measurements come from the last full `ovfshape.py` sweep, filtered to the
 live list).  **The `blocker` column in the TSV predates wave-30.**  The
-CURRENT gate partition — measured post-reader-fix and post-`lift`, one
-committed row list per gate — is `tools/counters/buckets31/*.txt`
-(`WAVE31_FINDINGS.md` §8; the lists partition `core_rows.txt` exactly):
+CURRENT gate partition — a fresh `tailcert` scan, one committed row list
+per gate, REGENERABLE via `tailcert --out` + `buckets.py` — is
+`tools/counters/buckets34/*.txt` with `GATETABLE.md` beside it (the
+lists partition `core_rows.txt` exactly):
 
 | n | furthest gate today | | n | furthest gate today |
 |--:|---|---|--:|---|
-| 40 | no interior `j = S j'` chain | | 6 | inner fill lands off the endpoint |
-| 33 | no inner family at `pow2 j` | | 4 | no interior `j = 0` chain |
-| 26 | no gap-free two-form family | | 2 | no inner interior chain |
-| 20 | no boot chain | | 1 | no visit witness |
-| 17 | register step does not close | | 1 | no exit chain |
+| 40 | no interior `j = S j'` chain | | 2 | no inner family at `pow2 j` |
+| 10 | no gap-free two-form family | | 2 | no inner interior chain |
+| 5 | register step does not close | | 1 | no visit witness (StA) |
+| 4 | no interior `j = 0` chain | | 1 | no boot chain |
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
@@ -137,55 +137,38 @@ committed row list per gate — is `tools/counters/buckets31/*.txt`
 
 ## The community cross-check — and how it played out
 
-nickdrozd read the published version of this map and posted 64 machines he
-was "pretty sure are all solvable"; John's live hand-reads ran alongside.
-The scorecard so far: nick's checkable 12 were 12-for-12 (all boarded by
-routes that did not exist a fortnight earlier), John's hand-inspections
-stand at 36-for-36, and two of his one-line reads ("msb on the left",
-"like a grey counter, up then down") exposed a **bit-polarity inversion in
-the reader itself** — the tape was being decoded under alphabets with the
-two digit words swapped, so 51 machines "counting down" were ordinary
-ascending counters all along (`docs/WAVE30_FINDINGS.md` §6b).  Fixing the
-reader emptied the interior gate of the 70-row bucket outright.
+nickdrozd read the published version of this map and posted lists of
+machines he was "pretty sure are all solvable"; John's live hand-reads and
+the mxdys Inductive target list ran alongside.  Every one of those calls
+has paid out: nick's lists sized the `no interior chain` bucket, then
+seeded BOTH ReachSt waves (`docs/REACHST_TIER.md` — liveness of the
+sparse state as termination of the state-DELETED sub-machine, 107 boards
+across five flavours plus the parity-witness fix `LapCertGluePar`);
+John's one-line reads exposed the bit-polarity inversion that emptied the
+old 70-row interior gate (`WAVE30_FINDINGS.md` §6b); and the Inductive
+prover's layer read cracked the CHAMPION — the machine blanks its whole
+10,239-cell region and returns to a blank tape in `StC` at step
+32,779,478, so its board is one ~17 s binary-fuel `vm_compute`
+(`Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`, in the tree,
+awaiting the closeout regen).
 
-Three sized routes have since been *measured dead* (all do-not-retry):
-the `cycR-gap` primitive fires nowhere sound and the double peel is
-irrelevant (`WAVE30_FINDINGS.md` §§2, 4), and the SOLO-cascade route
-boards 0 of the boot-chain bucket for five distinct causes
-(`WAVE31_FINDINGS.md`, PR #74).  Wave-31 delivered the two-form board
-RENDERER (14 boards, PRs #73/#74) and built the `lift` interior fallback,
-which re-measured the whole frontier into the gate table above.  The
-structure now:
-
-* **39 rows** are the **bounded inner carrier**'s measured target — the
-  33 `no inner family at pow2 j` plus the 6 off-endpoint fills
-  (`tailcert_innerfam33.txt` / `tailcert_filloff6.txt`) — the only
-  wave-31 item whose stated size survived contact with the data, and the
-  only one needing new Coq.  First build of `docs/WAVE32_PROMPT.md`.
-* **40 rows, `no interior j = S j' chain`** — 38 of them dead at BOTH
-  parities on the successor half while `j = 0` derives exactly.  Never
-  had a route item written for it; the standing do-not-retry on "a
-  deeper peel" covers only the `j = 0` half, so the obvious experiment
-  is open, not closed (WAVE32_PROMPT item 2).
-* **17 rows, `register step does not close`** — the measured
-  `Theta(4^k)` DOUBLE nesting (wall +4 per overflow, mechanising John's
-  read); the single-nesting register step cannot close them.
-* **26 rows, no gap-free two-form family** (the champion among them) —
-  re-measured at every anchor family, both mirrors, tolerant and
-  parity-split readers; all survive.  Where the difficulty looks real.
+Measured dead along the way (all do-not-retry): the `cycR-gap`
+primitive, the double peel, the SOLO-cascade route on the boot bucket,
+every framing of the 40-row interior bucket, the flat `emit_lapcert`
+route, and uniform step bounds for avoid sub-machines without sweep
+acceleration.
 
 ## Where a newcomer should probably start
 
-1. **The wave-32 prompt's ordered builds** (`docs/WAVE32_PROMPT.md`):
-   the bounded inner carrier (39 rows, one lemma), then the 40-row
-   `j = S j'` bucket.
-2. **The 11 no-anchor.** Their resting tapes are regular families that are
-   NOT digit words (five are solid blocks of ones — index the family by
-   the wall, do not hunt for an alphabet; `WAVE29_BOUNCER_FINDINGS.md`
-   §§7–8 has a measured reading for every one, including two Gray-code
-   counters whose build is fully specified and unexecuted).
-3. **The no gap-free two-form 26.**  Fresh eyes on the decomposition;
-   every mechanical re-read has been tried and is recorded.
+1. **The nested interior lap** — 40 of the 65: the interior lap is
+   itself a NESTED (double) lap, the one route that does not exist yet
+   (`docs/WAVE33_PROMPT.md` item 1).  Everything else is a thin tail.
+2. **The ReachSt leftovers** — the mirror transport lemma and the 7 rows
+   PR #82 measured as unreachable by the avoid-machine method
+   (`docs/REACHST_TIER.md` §6).
+3. **The two-form 10** (champion aside): the Gray-code pair
+   `1RB0RD_1LC0L{B,C}_1LD0LB_1RD0RA` still carries a fully specified,
+   unexecuted build (`WAVE29_BOUNCER_FINDINGS.md` §7a).
 
 ## Reproducing the map
 
