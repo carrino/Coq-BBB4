@@ -115,12 +115,19 @@ class Fam:
         self.other = tuple(other)
         self.digs = [tuple(d) for d in digs]
         self.pre = tuple(pre)
-        self.tail = tuple(tail)     # fixed terminator at the far end
+        self.tail = tuple(tail)     # the terminator the discovery read
+        # PHASES.  A machine may run the same digit alphabet through several
+        # terminators in turn -- lap in phase 0, lap in phase 1, then widen --
+        # and a reader pinned to one of them calls the other laps undecodable
+        # and reports a fill costing Theta(2^p) (`fillcost.py`).  The phase is
+        # part of the family's state, like the width; `tails[0]` is the tail
+        # the discovery read, so a one-phase family is exactly today's.
+        self.tails = (self.tail,)
         self.named_by = named_by          # digit word -> ladder rule name
         self.l = len(self.digs[0])
         self.b = len(self.digs)
         self.idx = {d: i for i, d in enumerate(self.digs)}
-        self.fill = None                  # the width law, inferred later
+        self.fills = None            # one width law per phase, inferred later
         # The far side as a run TEMPLATE with a symbolic count: a list of
         # (word, a, b) spelling word^(a*p + b).  None means the one-parameter
         # family -- the far side is the constant cell tuple `other`, which is
@@ -179,18 +186,25 @@ class Fam:
         return sorted({min(max(lo, self.p0 + i), hi) for i in range(n)}) or \
             [self.p0]
 
-    def decode(self, cells):
-        """cells (nearest-first, trailing blanks stripped) -> digits LSB-first.
-        Blanks stripped off the far end are restored by the pad loop."""
+    @property
+    def fill(self):
+        """The phase-0 law, for the one-phase reporting paths."""
+        return None if not self.fills else self.fills[0]
+
+    def decode(self, cells, ph=0):
+        """cells (nearest-first, trailing blanks stripped) -> digits LSB-first,
+        read in PHASE ph.  Blanks stripped off the far end are restored by the
+        pad loop."""
+        tail = self.tails[ph]
         base = list(cells)
         if tuple(base[:len(self.pre)]) != self.pre:
             return None
-        for pad in range(self.l + len(self.tail) + 1):
+        for pad in range(self.l + len(tail) + 1):
             c = base + [0] * pad
-            n = len(c) - len(self.pre) - len(self.tail)
+            n = len(c) - len(self.pre) - len(tail)
             if n < 0 or n % self.l:
                 continue
-            if self.tail and tuple(c[len(c) - len(self.tail):]) != self.tail:
+            if tail and tuple(c[len(c) - len(tail):]) != tail:
                 continue
             mid = c[len(self.pre):len(self.pre) + n]
             ds, ok = [], True
@@ -200,15 +214,23 @@ class Fam:
                     ok = False
                     break
                 ds.append(self.idx[g])
-            if ok and self.encode(ds) == list(cells):
+            if ok and self.encode(ds, ph) == list(cells):
                 return ds
         return None
 
-    def encode(self, ds):
+    def read(self, cells):
+        """(phase, digits) for the first phase that reads these cells."""
+        for ph in range(len(self.tails)):
+            ds = self.decode(cells, ph)
+            if ds is not None:
+                return ph, ds
+        return None, None
+
+    def encode(self, ds, ph=0):
         cells = list(self.pre)
         for d in ds:
             cells.extend(self.digs[d])
-        cells.extend(self.tail)
+        cells.extend(self.tails[ph])
         while cells and cells[-1] == 0:
             cells.pop()
         return cells
@@ -219,7 +241,7 @@ class Fam:
             v = v * self.b + d
         return v
 
-    def cfg(self, ds, p=None):
+    def cfg(self, ds, p=None, ph=0):
         """The counter segment in ITS OWN alphabet -- one run per maximal
         stretch of equal digits -- NOT in the miner's greedy block RLE.  This
         is the whole point of CTR being a tape item: under greedy blocking the
@@ -236,7 +258,7 @@ class Fam:
                 k += 1
             runs.append(canon_run(self.digs[ds[i]], Expr(k - i)))
             i = k
-        runs.extend(((c,), Expr(1)) for c in self.tail)
+        runs.extend(((c,), Expr(1)) for c in self.tails[ph])
         out = []
         for w, e in runs:
             if out and out[-1][0] == w:
@@ -314,7 +336,7 @@ class Fam:
         cells, mk = self.visible(cfg, env)
         if cells is None:
             return False
-        return self.aligned(cells) if mk else self.decode(cells) is not None
+        return self.aligned(cells) if mk else self.read(cells)[1] is not None
 
     def view(self, cfg, m, marker=True):
         """Local view: the counter side is truncated at m runs behind a wall
@@ -343,6 +365,8 @@ class Fam:
                     'the +1 chain'),
                 'near_head_prefix': list(self.pre),
                 'terminator': list(self.tail),
+                'terminators_by_phase': [list(t) for t in self.tails],
+                'n_phases': len(self.tails),
                 'base': self.b, 'digit_len': self.l,
                 'order': 'LSB nearest head'}
 
@@ -362,12 +386,18 @@ class Fill:
     (`s=1, suf=[1]`), the reset-and-widen (`s=1`, nothing else), the
     parity-two widen (`s=2`) -- and, with a non-empty `pre`/`suf`, the fills
     that land on a fixed low string at the new width.  One `find_IH` at the
-    width level; the arms below it are unchanged."""
+    width level; the arms below it are unchanged.
 
-    __slots__ = ('s', 'pre', 'mid', 'suf', 'seen', 'pa', 'pb', 'pc')
+    `to` is the PHASE the fill lands in.  A one-phase family fills back into
+    itself and `to` is 0, which is what every closed row does today; a
+    multi-phase counter laps once per terminator, so its phase-0 fill lands in
+    phase 1 without widening at all and only the last phase's fill moves p."""
 
-    def __init__(self, s, pre=(), mid=0, suf=(), seen=(), pa=1, pb=0, pc=0):
-        self.s, self.mid = s, mid
+    __slots__ = ('s', 'pre', 'mid', 'suf', 'seen', 'pa', 'pb', 'pc', 'to')
+
+    def __init__(self, s, pre=(), mid=0, suf=(), seen=(), pa=1, pb=0, pc=0,
+                 to=0):
+        self.s, self.mid, self.to = s, mid, to
         self.pre, self.suf = tuple(pre), tuple(suf)
         self.seen = tuple(seen)
         # the OUTER parameter's law across the fill: p' = pa*p + pb*k + pc.
@@ -388,7 +418,8 @@ class Fill:
         return list(self.pre) + [self.mid] * n + list(self.suf)
 
     def is_carry(self):
-        return (self.s, self.pre, self.mid, self.suf) == (1, (), 0, (1,))
+        return (self.s, self.pre, self.mid, self.suf, self.to) == \
+            (1, (), 0, (1,), 0)
 
     def json(self):
         return {'widens_by': self.s, 'target_prefix': list(self.pre),
@@ -397,6 +428,7 @@ class Fill:
                        % (self.s, ''.join(map(str, self.pre)) + '<%d>' % self.mid
                           + ''.join(map(str, self.suf))),
                 'inferred_from_widths': list(self.seen),
+                'lands_in_phase': self.to,
                 'outer_p_law': "p' = %d*p + %d*k + %d" % (self.pa, self.pb,
                                                           self.pc),
                 'fill_moves_outer_p': self.moves_p(),
@@ -442,32 +474,41 @@ def fit_fill(obs):
     return f if all(f.apply(k) == t for k, t in obs) else None
 
 
-def next_ds(fam, ds):
-    """Odometer successor inside a width; the family's FILL LAW at the top."""
+def fam_fill(fam, ph):
+    """Phase ph's fill law, defaulting to the odometer carry."""
+    if not fam.fills:
+        return CARRY
+    f = fam.fills[ph] if ph < len(fam.fills) else None
+    return f or CARRY
+
+
+def next_ds(fam, ds, ph=0):
+    """Odometer successor inside a width; the phase's FILL LAW at the top."""
     ds = list(ds)
     i = 0
     while i < len(ds) and ds[i] == fam.b - 1:
         ds[i] = 0
         i += 1
     if i == len(ds):
-        return (fam.fill or CARRY).apply(len(ds))
+        return fam_fill(fam, ph).apply(len(ds))
     ds[i] += 1
     return ds
 
 
-def succ(fam, ds, p):
-    """The family's successor on (digit string, outer parameter).
+def succ(fam, ds, p, ph=0):
+    """The family's successor on (digit string, outer parameter, PHASE).
 
-    The interior arms never touch p -- that is the whole discipline of the
-    two-parameter family, and it is why they carry over unchanged from the
-    one-parameter one.  The FILL is the only arm that crosses p."""
-    nd = next_ds(fam, ds)
+    The interior arms never touch p or the phase -- that is the whole
+    discipline: they carry over unchanged from the one-parameter family.  The
+    FILL is the only arm that crosses either, and which phase it lands in is
+    read off the machine like everything else (`fit_fills`)."""
+    nd = next_ds(fam, ds, ph)
     if nd is None:
-        return None, None
+        return None, None, None
     if len(nd) == len(ds) and any(d != fam.b - 1 for d in ds):
-        return nd, p
-    f = fam.fill or CARRY
-    return nd, f.apply_p(p, len(ds))
+        return nd, p, ph
+    f = fam_fill(fam, ph)
+    return nd, f.apply_p(p, len(ds)), f.to
 
 
 def fit_fill_p(obs):
@@ -488,71 +529,235 @@ def fit_fill_p(obs):
     return None
 
 
-def anchor_seq(fam, tm, steps, cap=4000):
-    """(digits, p) at every anchor visit, from the RAW machine.
+_WALKS = {}
 
-    Its own run rather than the miner's snapshots, because the fill law needs
-    to see several OCTAVES and the mining trace is only long enough for one or
-    two -- a counter that widens by two reaches its second fill somewhere past
-    where the ladder stopped looking.  Only anchor visits materialize a side,
-    so the extra length is nearly free."""
-    tape, pos, q, lo, hi = {}, 0, 0, 0, 0
+
+def raw_anchor_visits(tm, q, h, steps=150000, cap=6000):
+    """Every visit to the anchor CELL of the raw run, as (left runs, right
+    runs).  Cached per (state, head): a row tries up to six candidate families
+    and several of them share an anchor, and this walk is the single most
+    expensive thing `close` does outside the arm search."""
+    key = (q, h, steps, cap)
+    got = _WALKS.get(key)
+    if got is not None:
+        return got
+    tape, pos, cq, lo, hi = {}, 0, 0, 0, 0
     out = []
     for _ in range(steps):
-        h = tape.get(pos, 0)
-        if q == fam.q and h == fam.h and len(out) < cap:
+        cell = tape.get(pos, 0)
+        if cq == q and cell == h and len(out) < cap:
             gl = [tape.get(pos - 1 - i, 0) for i in range(pos - lo)]
             gr = [tape.get(pos + 1 + i, 0) for i in range(hi - pos)]
             while gl and gl[-1] == 0:
                 gl.pop()
             while gr and gr[-1] == 0:
                 gr.pop()
-            L, R = block_rle(gl), block_rle(gr)
-            cfg = (q, h, L, R)
-            pp = fam.far_p(cfg)
-            if pp is not None:
-                c = runs_cells(fam.counter_side(cfg))
-                out.append((None if c is None else fam.decode(c), pp))
-        tr = tm.get((q, h))
+            out.append((block_rle(gl), block_rle(gr)))
+        tr = tm.get((cq, cell))
         if tr is None:
             break
-        w, d, q = tr
+        w, d, cq = tr
         tape[pos] = w
         pos += d
         lo, hi = min(lo, pos), max(hi, pos)
+    _WALKS[key] = out
     return out
 
 
-def observe_fill(fam, tm, steps=150000, want=8, lookahead=16):
+def anchor_cells(fam, tm, steps=150000, cap=6000):
+    """(counter-side cells, p) at every anchor visit, from the RAW machine.
+
+    Its own run rather than the miner's snapshots, because the fill law needs
+    to see several OCTAVES and the mining trace is only long enough for one or
+    two -- a counter that widens by two reaches its second fill somewhere past
+    where the ladder stopped looking.  Only anchor visits materialize a side,
+    so the extra length is nearly free.  Cells, not digits: the PHASE pass
+    has to ask what a visit would read as under another terminator, and that
+    question is not answerable once the reading has already been made."""
+    out = []
+    for L, R in raw_anchor_visits(tm, fam.q, fam.h, steps, cap):
+        cfg = (fam.q, fam.h, L, R)
+        pp = fam.far_p(cfg)
+        if pp is None:
+            continue
+        c = runs_cells(fam.counter_side(cfg))
+        out.append((None if c is None else tuple(c), pp))
+    return out
+
+
+def anchor_seq(fam, tm, steps=150000, cap=6000):
+    """(digits, p) at every anchor visit -- phase 0 only, for the probes that
+    predate phases."""
+    return [(None if c is None else fam.decode(list(c)), pp)
+            for c, pp in anchor_cells(fam, tm, steps, cap)]
+
+
+def read_seq(fam, walk):
+    """[(phase, digits, p)] over an `anchor_cells` walk; (None, None, p) for a
+    visit no phase reads."""
+    out = []
+    for c, pp in walk:
+        if c is None:
+            out.append((None, None, pp))
+            continue
+        ph, ds = fam.read(list(c))
+        out.append((ph, ds, pp))
+    return out
+
+
+def chain_frac(fam, seq):
+    """Fraction of consecutive READ visits that the model's own successor
+    explains -- either the next member is `succ` of this one, or it is this one
+    again (the head crosses the anchor cell twice without the counter moving).
+
+    This is the guard on the phase pass: an extra terminator that reads a lot
+    of mid-flight tapes would raise the read fraction and destroy the chain, so
+    the chain is what decides, not the count."""
+    got = [(ph, ds, pp) for ph, ds, pp in seq if ds]
+    if len(got) < 4:
+        return 0.0
+    ok = 0
+    for (ph, ds, pp), (ph2, ds2, pp2) in zip(got, got[1:]):
+        if (ph, ds, pp) == (ph2, ds2, pp2):
+            ok += 1
+            continue
+        nd, npp, nph = succ(fam, ds, pp, ph)
+        if nd is not None and (nph, nd, npp) == (ph2, ds2, pp2):
+            ok += 1
+    return ok / (len(got) - 1)
+
+
+def observe_fill(fam, walk, want=12):
     """Read the fill law off the anchor visits: every time the machine sits on
-    the top string of some width, record the width, the outer parameter, and
-    where the next family MEMBER is -- string and outer parameter.
+    the top string of some width IN SOME PHASE, record the phase, the width,
+    the outer parameter, and where the next family MEMBER is -- phase, string
+    and outer parameter.
 
     The member, not the next visit.  The fill widens the counter, and the head
     crosses the anchor cell several times on the way, so the successor of a top
-    string is typically 2 to 8 anchor visits along and every visit in between
-    decodes to nothing.  Requiring the immediately following visit to decode
-    found a law on 6 of the 41 rows that fail only at the overflow; scanning
-    forward to the next member is the same correction already made twice, to
-    the differential probe (cf7eeab) and to the arms' replay (3341a3c)."""
-    seq = anchor_seq(fam, tm, steps)
+    string is several anchor visits along and every visit in between decodes to
+    nothing.  It used to scan a fixed 16 visits ahead; measured on the 41
+    `overflow leaves the family` rows the gap GROWS with the width (7, 25, 97,
+    385, 1537 visits on 1RB1LA_1LC0RD_1LA1LB_0LB1RD), so a constant window sees
+    at most one width and `fit_fill` needs two -- 21 of those 41 fell back to
+    the hard-coded carry for want of a second observation.  The scan now runs
+    to the next member however far that is."""
+    seq = read_seq(fam, walk)
     obs, seen = [], set()
-    for i, (a, pa) in enumerate(seq):
+    for i, (ph, a, pa) in enumerate(seq):
         if not a or any(d != fam.b - 1 for d in a):
             continue
-        k = len(a)
-        if (k, pa) in seen:
+        if (ph, len(a), pa) in seen:
             continue
-        for j in range(i + 1, min(i + 1 + lookahead, len(seq))):
-            b, pb = seq[j]
-            if b is None:
+        for j in range(i + 1, len(seq)):
+            ph2, b, pb = seq[j]
+            if b is None or (ph2, b, pb) == (ph, a, pa):
                 continue
-            seen.add((k, pa))
-            obs.append((k, b, pa, pb))
+            seen.add((ph, len(a), pa))
+            obs.append((ph, len(a), ph2, b, pa, pb))
             break
         if len(obs) >= want:
             break
     return obs
+
+
+def fit_fills(fam, obs):
+    """One `Fill` per phase, or None if some phase's law does not interpolate.
+
+    Per phase because the phases do different things: on the measured rows the
+    early phases hand over at the same width and only the last one widens."""
+    out = []
+    for ph in range(len(fam.tails)):
+        mine = [o for o in obs if o[0] == ph]
+        tos = {o[2] for o in mine}
+        if len(tos) > 1:
+            return None            # the fill's target phase is not a function
+        f = fit_fill([(k, t) for _, k, _, t, _, _ in mine])
+        if f is None:
+            if len(fam.tails) > 1:
+                return None        # a phase with no law is not a reading
+            f = Fill(CARRY.s, CARRY.pre, CARRY.mid, CARRY.suf)
+        f.to = tos.pop() if tos else 0
+        plaw = fit_fill_p([(pa, k, pb) for _, k, _, _, pa, pb in mine])
+        if plaw is None:
+            plaw = (1, 0, 0)
+        f.pa, f.pb, f.pc = plaw
+        out.append(f)
+    return out
+
+
+def fit_phases(fam, walk, max_phases=4, min_visits=8, min_chain=0.95):
+    """Terminators beyond the one the discovery read, inferred like everything
+    else: take the anchor visits no phase reads yet and ask which single
+    terminator reads the most of them, keeping the anchor, the digits, the base
+    and the far side exactly as the family read them.
+
+    Guarded three ways, and the guards are what keep a row that closes today
+    closed.  A candidate phase must read at least `min_visits` distinct visits;
+    every phase must then have a fill law that interpolates (`fit_fills`), with
+    a single target phase; and the whole reading must be a CHAIN -- the model's
+    own successor has to explain at least `min_chain` of the consecutive read
+    visits.  A terminator that merely reads a lot of mid-flight tapes raises
+    the read count and destroys the chain, so it is the chain that decides.
+    When nothing qualifies the family is left exactly as it was."""
+    cells = [c for c, _ in walk if c is not None]
+    if not cells:
+        return False
+
+    def fit(tails):
+        fam.tails = tuple(tails)
+        fam.fills = None
+        fills = fit_fills(fam, observe_fill(fam, walk, want=6 * len(tails)))
+        if fills is None:
+            return None
+        fam.fills = fills
+        seq = read_seq(fam, walk)
+        return sum(1 for _, ds, _ in seq if ds), chain_frac(fam, seq)
+
+    base = list(fam.tails)
+    got0 = fit(base)
+    tails = list(base)
+    uniq = list(dict.fromkeys(cells))
+    while len(tails) < max_phases:
+        fam.tails = tuple(tails)
+        unread = [c for c in uniq
+                  if all(fam.decode(list(c), i) is None
+                         for i in range(len(tails)))]
+        if not unread:
+            break
+        cand = set()
+        for c in unread:
+            for tl in range(2 * fam.l + 2):
+                cand.add(tuple(c[len(c) - tl:]) if tl else ())
+        # every candidate is scored by what it READS, not by how often its
+        # cells happen to appear: a frequent suffix that reads a shifted digit
+        # is exactly the misreading this pass exists to avoid
+        pick, best_n = None, min_visits - 1
+        for t in sorted(cand, key=lambda t: (-len(t), t)):
+            if t in tails:
+                continue
+            fam.tails = tuple(tails + [t])
+            n = sum(1 for c in unread
+                    if fam.decode(list(c), len(tails)) is not None)
+            if n > best_n:
+                pick, best_n = t, n
+        if pick is None:
+            break
+        tails.append(pick)
+    if len(tails) == len(base):
+        fit(base)
+        return False
+    # longest reading first, then shorter ones: the greedy can overshoot with a
+    # phase that reads visits no fill law explains
+    for n in range(len(tails), len(base), -1):
+        got = fit(tails[:n])
+        if got is None:
+            continue
+        read, chain = got
+        if chain >= min_chain and (got0 is None or read > got0[0]):
+            return True
+    fit(base)
+    return False
 
 
 def fit_far(fam, occ):
@@ -922,11 +1127,18 @@ def probe_families(tm, snaps, rules, top=4, max_occ=200):
 
 # ---------------------------------------------------------------------- arms
 
+_UID = itertools.count()
+
+
 class Arm:
     def __init__(self, name, rule, ops, kind, uses):
         self.name, self.rule, self.ops = name, rule, ops
         self.kind, self.uses = kind, uses
         self.covers = []
+        # a stable identity for the subsumption cache: arm NAMES restart with
+        # the counter on each candidate family, so they cannot key it
+        self.uid = next(_UID)
+        self.multi_var = _multi_var(rule.lhs)
 
     def steps(self, env):
         tot = Expr(0)
@@ -946,28 +1158,31 @@ class Arm:
 
 
 def sample_digits(fam, kmax=5, extra=(6, 7, 8, 9)):
+    """[(phase, digit string)] the arms are mined from."""
     out = []
-    for k in range(1, kmax + 1):
-        for v in range(fam.b ** k):
-            ds = []
-            x = v
-            for _ in range(k):
-                ds.append(x % fam.b)
-                x //= fam.b
-            out.append(ds)
-    for k in extra:
-        for seed in (0, 1, 2):
-            ds = [(i * 7 + seed * 3 + k) % fam.b for i in range(k)]
-            out.append(ds)
-    # the TOP string at every width, and where the fill law sends it.  The
-    # fill arm is generalized across these, so they have to be in the sample
-    # at more widths than the exhaustive part reaches -- one instance is a
-    # base case, several are an induction.
-    for k in range(1, 13):
-        out.append([fam.b - 1] * k)
-        t = (fam.fill or CARRY).apply(k)
-        if t:
-            out.append(t)
+    for ph in range(len(fam.tails)):
+        for k in range(1, kmax + 1):
+            for v in range(fam.b ** k):
+                ds = []
+                x = v
+                for _ in range(k):
+                    ds.append(x % fam.b)
+                    x //= fam.b
+                out.append((ph, ds))
+        for k in extra:
+            for seed in (0, 1, 2):
+                ds = [(i * 7 + seed * 3 + k) % fam.b for i in range(k)]
+                out.append((ph, ds))
+        # the TOP string at every width, and where the fill law sends it.  The
+        # fill arm is generalized across these, so they have to be in the
+        # sample at more widths than the exhaustive part reaches -- one
+        # instance is a base case, several are an induction.
+        f = fam_fill(fam, ph)
+        for k in range(1, 13):
+            out.append((ph, [fam.b - 1] * k))
+            t = f.apply(k)
+            if t:
+                out.append((f.to, t))
     return out
 
 
@@ -985,17 +1200,23 @@ def _groups(fam, windows, max_exact_runs=4):
     One p would pin it, which is the one-parameter family."""
     g = defaultdict(list)
     ps = fam.psample()
-    for ds in sample_digits(fam):
+    for ph, ds in sample_digits(fam):
         for pp in ps:
-            cfg = fam.cfg(ds, pp)
+            cfg = fam.cfg(ds, pp, ph)
             if cfg is None:
                 continue
             for m in windows:
                 v = fam.view(cfg, m)
-                g[_vkey(v)].append(((ds, pp), v))
-            if len(fam.counter_side(cfg)) <= max_exact_runs:
+                g[_vkey(v)].append((((ds, pp, ph)), v))
+            # The exact view is what the FILL arm needs -- it has to see the
+            # counter's END.  The bound is on the DIGIT runs: the near-head
+            # prefix and the phase's terminator are fixed cells that add runs
+            # without adding generality, and a phase whose terminator is four
+            # cells long was silently denied a fill arm by counting them.
+            fixed = len(fam.pre) + len(fam.tails[ph])
+            if len(fam.counter_side(cfg)) <= max_exact_runs + fixed:
                 v = fam.view(cfg, 0, marker=False)  # exact: the overflow arm
-                g[_vkey(v)].append(((ds, pp), v))
+                g[_vkey(v)].append((((ds, pp, ph)), v))
     return g
 
 
@@ -1017,7 +1238,8 @@ def mine_arms(tm, rules, fam, windows=(1, 2, 3, 4, 5), max_keys=160,
         if sig in seen:
             continue
         seen.add(sig)
-        for arm in _replay_arm(tm, rules, fam, lhs, lbs, next(ctr), budget):
+        for arm in _replay_arm(tm, rules, fam, lhs, lbs, next(ctr), budget,
+                               deadline=deadline):
             arms.append(arm)
             break
     return arms
@@ -1038,23 +1260,27 @@ def repair(tm, rules, fam, arms, uncovered, ctr, groups, budget=400,
     step case is the symbolic arm."""
     rep = Replay(tm, [], budget=4, raise_ok=False)
     added = []
+    order, n_added = order_arms(arms), 0
     for item in uncovered:
         k, v = item[0], item[1]
         pp = item[2] if len(item) > 2 else fam.p0
+        ph = item[3] if len(item) > 3 else 0
         if len(added) >= max_new or (deadline and time.time() > deadline):
             break
         ds, x = [], v
         for _ in range(k):
             ds.append(x % fam.b)
             x //= fam.b
-        nd, npp = succ(fam, ds, pp)
-        cfg = fam.cfg(ds, pp)
-        nxt = None if nd is None else fam.cfg(nd, npp)
+        nd, npp, nph = succ(fam, ds, pp, ph)
+        cfg = fam.cfg(ds, pp, ph)
+        nxt = None if nd is None else fam.cfg(nd, npp, nph)
         if cfg is None or nxt is None:
             continue
         want = cfg_cells(nxt)
+        if len(added) != n_added:
+            order, n_added = order_arms(arms + added), len(added)
         first = None
-        for a in sorted(arms + added, key=spec_key):
+        for a in order:
             if rep.apply_rule(a.rule, cfg, bulk=False) is not None:
                 first = a
                 break
@@ -1063,15 +1289,25 @@ def repair(tm, rules, fam, arms, uncovered, ctr, groups, budget=400,
             continue
         got = None
         for m in windows:
+            # the deadline used to be checked once per ITEM, and one item can
+            # try 6 windows x 2 markers x 4 pins replays: measured at 98.8 s
+            # against a 90 s deadline on 1RB---_0LC1RD_1LB1RC_1LB0RD, which
+            # is how a cooperative cap turns into a hard timeout once the
+            # round is repeated per candidate
+            if deadline and time.time() > deadline:
+                break
             for mk in (True, False):
                 view = fam.view(cfg, m, marker=mk)
                 key = _vkey(view)
                 cs = [e.c for e in cfg_counts(view)]
                 for T in pins:
+                    if deadline and time.time() > deadline:
+                        break
                     pin = {i for i, c in enumerate(cs) if c <= T}
                     insts = [(d, w) for d, w in groups.get(key, [])
                              if all(cfg_counts(w)[i].c == cs[i] for i in pin)]
-                    lhs, lbs = _generalize(insts + [((ds, pp), view)], pin)
+                    lhs, lbs = _generalize(insts + [((ds, pp, ph), view)],
+                                           pin)
                     if lhs is None:
                         continue
                     # try EVERY anchor stop the replay offers, not just the
@@ -1079,7 +1315,8 @@ def repair(tm, rules, fam, arms, uncovered, ctr, groups, budget=400,
                     # visits along, and taking the first stop is exactly how
                     # an arm lands off the family.
                     for arm in _replay_arm(tm, rules, fam, lhs, lbs,
-                                           next(ctr), budget):
+                                           next(ctr), budget,
+                                           deadline=deadline):
                         out = rep.apply_rule(arm.rule, cfg, bulk=False)
                         if out is not None and cfg_cells(out) == want:
                             got = arm
@@ -1135,7 +1372,8 @@ def _member_env(fam, cfg, lbs, tries=3):
     return True
 
 
-def _replay_arm(tm, rules, fam, lhs, lbs, idx, budget, max_stops=6):
+def _replay_arm(tm, rules, fam, lhs, lbs, idx, budget, max_stops=6,
+                deadline=None):
     """Replay to the anchor, yielding at each stop.
 
     It used to yield only the FIRST anchor-shaped config and return.  An
@@ -1151,6 +1389,11 @@ def _replay_arm(tm, rules, fam, lhs, lbs, idx, budget, max_stops=6):
     ops, uses, n, stops, fallback = ['step'], set(), 0, 0, None
     while cur is not None and n < budget:
         n += 1
+        # a single replay is `budget` engine steps over configs that can be
+        # large, so the step budget alone does not bound the WALL clock; every
+        # caller has a deadline and this is where it has to be honoured
+        if deadline and not n % 16 and time.time() > deadline:
+            break
         if fam.anchor_shaped(cur):
             rule = Rule('arm%d' % idx, lhs, cur, dict(rep.lbs), None,
                         dict(rep.fired), level=1)
@@ -1187,19 +1430,140 @@ def _replay_arm(tm, rules, fam, lhs, lbs, idx, budget, max_stops=6):
 # ------------------------------------------------------------------ coverage
 
 def spec_key(arm):
-    """Specificity: an arm pinning the whole side (it can see the counter END)
-    outranks a local one; within a class the MOST GENERAL goes first -- less
-    context, more free variables -- so the symbolic arms own the bulk and the
-    pinned base cases only pick up what the lower bounds leave.  The family's
-    case split is FIRST APPLICABLE IN THIS ORDER -- it has to be a function,
-    because several proved arms can apply to one config and stop at DIFFERENT
-    anchors along the same trajectory (an interior arm firing at an overflow
-    lands a whole carry short).  Deterministic order, one arm per value."""
+    """Deterministic TIE-BREAK inside `order_arms`, and nothing more.
+
+    It used to be the case split itself, and it put the most general arm of a
+    shape first, which is how an arm that is right on the bulk and wrong on
+    the fill shadowed every specialization the repair could build for it.  The
+    order is now `order_arms` -- a linearization of pattern subsumption, most
+    specific first -- and this is only how ties among incomparable patterns
+    are broken."""
     q, h, L, R = arm.rule.lhs
     runs = L + R
     local = any(w == MARKER for w, _ in runs)
     nv = len({v for e in cfg_counts(arm.rule.lhs) for v in e.v})
     return (1 if local else 0, len(runs), -nv, arm.name)
+
+
+def _count_covers(ae, la, be, lb):
+    """Does pattern count `ae` (lower bounds `la`) match every value pattern
+    count `be` (lower bounds `lb`) matches?
+
+    A pattern coordinate is either a constant -- it matches that value alone --
+    or `c + var` with `var >= lbs[var]`, which matches every value from
+    `c + lbs[var]` up.  Both are intervals, so containment is arithmetic."""
+    def floor(e, lbs):
+        if e.is_const():
+            return e.c, e.c                      # exactly this value
+        items = list(e.v.items())
+        if len(items) != 1 or items[0][1] != 1:
+            return None, None                    # not a shape match_rule takes
+        return e.c + lbs.get(items[0][0], 1), None
+    alo, aex = floor(ae, la)
+    blo, bex = floor(be, lb)
+    if alo is None or blo is None:
+        return False
+    if aex is not None:                          # a is a single value
+        return bex is not None and bex == aex
+    return blo >= alo                            # b's whole range is inside a's
+
+
+def _side_covers(pa, la, pb, lb):
+    amark = bool(pa) and pa[-1][0] == MARKER
+    bmark = bool(pb) and pb[-1][0] == MARKER
+    ax = pa[:-1] if amark else pa
+    bx = pb[:-1] if bmark else pb
+    if amark:
+        if len(ax) > len(bx):
+            return False        # a demands more runs than b guarantees
+    elif bmark or len(ax) != len(bx):
+        return False            # an exact pattern cannot cover an open one
+    for (aw, ae), (bw, be) in zip(ax, bx):
+        if aw != bw or not _count_covers(ae, la, be, lb):
+            return False
+    return True
+
+
+def _multi_var(lhs):
+    """A variable used in two coordinates ties them together, which is outside
+    the interval reasoning above; such an arm is treated as incomparable."""
+    seen = Counter()
+    for e in cfg_counts(lhs):
+        for v in e.v:
+            seen[v] += 1
+    return any(n > 1 for n in seen.values())
+
+
+_COVERS = {}
+
+
+def covers(a, b):
+    """Is every config arm `b` applies to also one arm `a` applies to?
+
+    Applicability is `match_rule` plus the lower-bound check in
+    `Replay.apply_rule`, both syntactic, so this is decidable on the arms as
+    data -- which is the point: the case split has to be checkable by whatever
+    checks the certificate, not just by the search that produced it.
+
+    Memoized on the pair: `order_arms` is quadratic and runs inside `cover`
+    and `repair`, so the same comparison is asked thousands of times per row."""
+    key = (a.uid, b.uid)
+    r = _COVERS.get(key)
+    if r is None:
+        _COVERS[key] = r = _covers(a, b)
+    return r
+
+
+def _covers(a, b):
+    qa, ha, La, Ra = a.rule.lhs
+    qb, hb, Lb, Rb = b.rule.lhs
+    if (qa, ha) != (qb, hb):
+        return False
+    if a.multi_var or b.multi_var:
+        return a is b
+    la, lb = a.rule.lbs, b.rule.lbs
+    return _side_covers(La, la, Lb, lb) and _side_covers(Ra, la, Rb, lb)
+
+
+def strictly_covers(a, b):
+    return a is not b and covers(a, b) and not covers(b, a)
+
+
+def order_arms(arms):
+    """THE CASE SPLIT: first applicable in this order, most specific first.
+
+    The order is a linearization of pattern subsumption -- if arm `a`'s
+    pattern matches everything arm `b`'s does and more, `b` comes first -- with
+    `spec_key` breaking ties between incomparable patterns.  That is ordinary
+    pattern-match semantics, and it is correct BY CONSTRUCTION in the sense
+    that matters for Stage B: the checker re-derives the order from the arms
+    themselves (`order_ok`) rather than trusting the order they were written
+    in, and it never has to decide whether an arm's RESULT is in the family.
+
+    The alternative considered was `first applicable whose result is a family
+    member`, which is also decidable; it was rejected because it does not
+    actually settle the case it was proposed for -- an interior arm firing at
+    an overflow lands a whole carry short, i.e. ON a member, just the wrong
+    one -- and it puts a membership decision inside the kernel's case split.
+    Subsumption order costs the checker one syntactic comparison per pair."""
+    rest, out = list(arms), []
+    while rest:
+        cand = [a for a in rest
+                if not any(strictly_covers(a, b) for b in rest)]
+        if not cand:                     # subsumption is a preorder: no cycles
+            out.extend(sorted(rest, key=spec_key))
+            break
+        a = min(cand, key=spec_key)
+        out.append(a)
+        rest.remove(a)
+    return out
+
+
+def order_ok(arms):
+    """The property `order_arms` establishes, stated so a checker can re-run
+    it: no arm is preceded by one strictly more general."""
+    return not any(strictly_covers(arms[i], arms[j])
+                   for i in range(len(arms)) for j in range(i + 1, len(arms)))
 
 
 def only_at_overflow(fam, strings):
@@ -1224,86 +1588,98 @@ def all_strings(fam, kmax):
 
 
 def all_states(fam, kmax):
-    return [(ds, pp) for ds in all_strings(fam, kmax) for pp in fam.psample()]
+    return [(ds, pp, ph) for ds in all_strings(fam, kmax)
+            for pp in fam.psample() for ph in range(len(fam.tails))]
 
 
-def reach(fam, boot_ds, boot_p, kmax, cap=4000):
+def reach(fam, boot_ds, boot_p, kmax, cap=4000, boot_ph=0):
     """The states the machine actually VISITS: walk the successor from the
     boot.  With a fill law that widens by more than one, the widths reachable
     from the boot are one parity class -- and demanding coverage of the other
     parity demands arms for configurations the run never enters.  (That is the
     `..._at_octave_parity_0` gate label, read from this side.)"""
     out, seen = [], set()
-    ds, pp = list(boot_ds), boot_p
+    ds, pp, ph = list(boot_ds), boot_p, boot_ph
     while ds is not None and len(ds) <= kmax and len(out) < cap:
-        key = (len(ds), fam.value(ds), pp)
+        key = (len(ds), fam.value(ds), pp, ph)
         if key in seen:
             break
         seen.add(key)
-        out.append((list(ds), pp))
-        ds, pp = succ(fam, ds, pp)
+        out.append((list(ds), pp, ph))
+        ds, pp, ph = succ(fam, ds, pp, ph)
     return out
 
 
 def cover(tm, fam, arms, kmax=7, states=None):
     """Every digit string in `states` (default: all up to kmax digits): the
-    FIRST applicable arm (by spec_key) must land on the successor.  Returns
-    (ok, covmap, report)."""
+    FIRST APPLICABLE arm in `order_arms` order must land on the successor.
+    Returns (ok, covmap, report).
+
+    `shadowed` counts the failures where the selected arm lands wrong and a
+    LATER arm lands right -- the case the old most-general-first order made
+    unreachable, measured rather than asserted."""
     rep = Replay(tm, [], budget=4, raise_ok=False)
-    arms = sorted(arms, key=spec_key)
+    arms = order_arms(arms)
     uncovered, wrong, used = [], [], defaultdict(int)
     covmap = defaultdict(set)
-    total = 0
-    for ds, pp in (all_states(fam, kmax) if states is None else states):
-        nd, npp = succ(fam, ds, pp)
+    total, shadowed = 0, 0
+    for ds, pp, ph in (all_states(fam, kmax) if states is None else states):
+        nd, npp, nph = succ(fam, ds, pp, ph)
         if nd is None:
             continue
         k, v = len(ds), fam.value(ds)
         total += 1
-        cfg = fam.cfg(ds, pp)
-        nxt = fam.cfg(nd, npp)
+        cfg = fam.cfg(ds, pp, ph)
+        nxt = fam.cfg(nd, npp, nph)
         if cfg is None or nxt is None:
             continue
         want = cfg_cells(nxt)
         hit = 0
-        for arm in arms:
+        for i, arm in enumerate(arms):
             out = rep.apply_rule(arm.rule, cfg, bulk=False)
             if out is None:
                 continue
             if cfg_cells(out) != want:
-                wrong.append((arm.name, k, v, pp))
+                wrong.append((arm.name, k, v, pp, ph))
+                for later in arms[i + 1:]:
+                    o2 = rep.apply_rule(later.rule, cfg, bulk=False)
+                    if o2 is not None and cfg_cells(o2) == want:
+                        shadowed += 1
+                        break
                 break
             hit += 1
             used[arm.name] += 1
-            covmap[arm.name].add((k, v, pp))
+            covmap[arm.name].add((k, v, pp, ph))
             if len(arm.covers) < 8:
                 arm.covers.append(v)
             break
-        if hit == 0 and (not wrong or wrong[-1][1:] != (k, v, pp)):
-            uncovered.append((k, v, pp))
+        if hit == 0 and (not wrong or wrong[-1][1:] != (k, v, pp, ph)):
+            uncovered.append((k, v, pp, ph))
     ok = not uncovered and not wrong
     return ok, covmap, {'strings': total, 'kmax': kmax,
                 'uncovered': uncovered[:12], 'n_uncovered': len(uncovered),
                 'uncovered_all': uncovered,
                 'wrong': wrong[:12], 'n_wrong': len(wrong),
-                'wrong_all': [(k, v, pp) for _, k, v, pp in wrong],
+                'wrong_all': [(k, v, pp, ph) for _, k, v, pp, ph in wrong],
+                'shadowed_by_selection': shadowed,
                 'wrong_only_at_overflow': only_at_overflow(
-                    fam, [(k, v) for _, k, v, _ in wrong]),
+                    fam, [(k, v) for _, k, v, _, _ in wrong]),
                 'fails_only_at_overflow': only_at_overflow(
-                    fam, [(k, v) for k, v, _ in uncovered]
-                    + [(k, v) for _, k, v, _ in wrong]),
+                    fam, [(k, v) for k, v, _, _ in uncovered]
+                    + [(k, v) for _, k, v, _, _ in wrong]),
                 'arm_hits': dict(used)}
 
 
-def prune(tm, fam, arms, kmax, states=None):
+def prune(tm, fam, arms, kmax, states=None, deadline=None):
     """Drop any arm the family still covers correctly without: the window
     sweep leaves whole-side variants of arms whose local form already does
-    the job.  Least-used first, one re-check per drop."""
+    the job.  Least-used first, one re-check per drop -- so it is one full
+    coverage pass per arm, which is why it takes a deadline."""
     ok, covmap, _ = cover(tm, fam, arms, kmax, states)
     if not ok:
         return arms
     for a in sorted(arms, key=lambda a: len(covmap.get(a.name, ()))):
-        if len(arms) == 1:
+        if len(arms) == 1 or (deadline and time.time() > deadline):
             break
         trial = [x for x in arms if x is not a]
         ok2, cov2, _ = cover(tm, fam, trial, kmax, states)
@@ -1315,11 +1691,10 @@ def prune(tm, fam, arms, kmax, states=None):
 def drop_wrong(tm, fam, arms, kmax, states=None, rounds=4):
     """Remove arms that claim a config and land OFF the family.
 
-    The case split is first-applicable-in-spec_key-order, and among arms of
-    the same shape the most general goes first, so one arm that is right on
-    the bulk and wrong on the fill SHADOWS every specialization the repair can
-    build for it -- the repaired arm exists, covers the string, and never gets
-    asked.  Dropping the offender is the one move that keeps the selection a
+    Under the old most-general-first order this was the only move that could
+    unshadow a repair.  `order_arms` puts the specialization first outright,
+    so this now only fires for an arm that is wrong on a string NO other arm
+    claims correctly.  Dropping the offender is the one move that keeps the selection a
     function of the configuration: it only ever removes arms, so an arm set
     that already covers is untouched, and what the offender was covering is
     handed back to the repair as ordinary uncovered strings."""
@@ -1327,7 +1702,7 @@ def drop_wrong(tm, fam, arms, kmax, states=None, rounds=4):
     for _ in range(rounds):
         if ok or not rep['n_wrong']:
             break
-        bad = Counter(n for n, _, _, _ in rep['wrong'])
+        bad = Counter(w[0] for w in rep['wrong'])
         name = bad.most_common(1)[0][0]
         trial = [a for a in arms if a.name != name]
         if not trial:
@@ -1375,7 +1750,8 @@ def visited_states(tm, upto):
 
 
 def find_boot(fam, snaps):
-    """First trace index whose config IS a family member; its (ds, p)."""
+    """First trace index whose config IS a family member; its (ds, p, phase).
+    """
     for t, s in snaps:
         if s is None:
             break
@@ -1385,20 +1761,20 @@ def find_boot(fam, snaps):
         c = runs_cells(fam.counter_side(s))
         if c is None:
             continue
-        ds = fam.decode(c)
+        ph, ds = fam.read(c)
         if not ds:
             continue
-        cf = fam.cfg(ds, pp)
+        cf = fam.cfg(ds, pp, ph)
         if cf is None or cfg_cells(cf) != cfg_cells(s):
             continue
-        return t, ds, pp
-    return None, None, None
+        return t, ds, pp, ph
+    return None, None, None, None
 
 
 # ------------------------------------------------------- differential checks
 
 def differential(tm, fam, arms, boot_ds, boot_p=None, n_checks=18,
-                 max_steps=400000, max_visits=24):
+                 max_steps=400000, max_visits=24, boot_ph=0):
     """Raw-simulator check of the FAMILY (not just the rules): from E(v), the
     raw machine must reach E(v+1), and -- the arms' fired counts being exact --
     at exactly the predicted step count.  Octave boundaries (v = b^m - 1 and
@@ -1412,8 +1788,8 @@ def differential(tm, fam, arms, boot_ds, boot_p=None, n_checks=18,
     # actually enters under the inferred fill law -- and every fill (the top
     # string of each width) is among them, plus the state either side of it.
     walk = reach(fam, boot_ds, fam.p0 if boot_p is None else boot_p,
-                 kmax=9, cap=6000)
-    tops = [i for i, (ds, _) in enumerate(walk)
+                 kmax=9, cap=6000, boot_ph=boot_ph)
+    tops = [i for i, (ds, _, _) in enumerate(walk)
             if all(d == fam.b - 1 for d in ds)]
     want_i = set()
     for i in tops:
@@ -1423,13 +1799,13 @@ def differential(tm, fam, arms, boot_ds, boot_p=None, n_checks=18,
     probes = [walk[i] for i in sorted(want_i)
               if 0 <= i < len(walk)][:n_checks]
     rep = Replay(tm, [], budget=4, raise_ok=False)
-    order = sorted(arms, key=spec_key)
+    order = order_arms(arms)
     out = []
-    for ds, pp in probes:
+    for ds, pp, ph in probes:
         v = fam.value(ds)
-        nd, npp = succ(fam, ds, pp)
-        cfg = fam.cfg(ds, pp)
-        nxt = None if nd is None else fam.cfg(nd, npp)
+        nd, npp, nph = succ(fam, ds, pp, ph)
+        cfg = fam.cfg(ds, pp, ph)
+        nxt = None if nd is None else fam.cfg(nd, npp, nph)
         if cfg is None or nxt is None:
             continue
         want = cfg_cells(nxt)
@@ -1464,7 +1840,7 @@ def differential(tm, fam, arms, boot_ds, boot_p=None, n_checks=18,
             if n >= max_visits:
                 break
         out.append({'v': v, 'k': len(ds), 'to_k': len(nd), 'p': pp,
-                    'to_p': npp,
+                    'to_p': npp, 'phase': ph, 'to_phase': nph,
                     'at_fill': all(d == fam.b - 1 for d in ds),
                     'arm': armname, 'shape_ok': at is not None,
                     'anchor_visit_index': idx,
@@ -1474,11 +1850,12 @@ def differential(tm, fam, arms, boot_ds, boot_p=None, n_checks=18,
 
 
 def chain_check(tm, fam, boot_t, boot_ds, boot_p=None, laps=40,
-                max_steps=400000):
+                max_steps=400000, boot_ph=0):
     """Replay the raw machine from BLANK and confirm the family's successive
     members appear, in order, at the boot offset -- the end-to-end check."""
     tape, pos, q, lo, hi = {}, 0, 0, 0, 0
     ds, pp = list(boot_ds), fam.p0 if boot_p is None else boot_p
+    ph = boot_ph
     seen, t = 0, 0
     while t < max_steps and seen <= laps:
         if t >= boot_t and q == fam.q and tape.get(pos, 0) == fam.h:
@@ -1488,11 +1865,11 @@ def chain_check(tm, fam, boot_t, boot_ds, boot_p=None, laps=40,
                 gl.pop()
             while gr and gr[-1] == 0:
                 gr.pop()
-            cf = fam.cfg(ds, pp)
+            cf = fam.cfg(ds, pp, ph)
             want = None if cf is None else cfg_cells(cf)
             if want is not None and (q, fam.h, tuple(gl), tuple(gr)) == want:
                 seen += 1
-                ds, pp = succ(fam, ds, pp)
+                ds, pp, ph = succ(fam, ds, pp, ph)
                 if ds is None:
                     return {'laps_confirmed': seen, 'fill_law_ran_out': True}
         h = tape.get(pos, 0)
@@ -1510,6 +1887,8 @@ def chain_check(tm, fam, boot_t, boot_ds, boot_p=None, laps=40,
 
 def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
     t0 = time.time()
+    _WALKS.clear()
+    _COVERS.clear()
     tm = parse_tm(spec)
     ns = n_states(tm)
     res = {'spec': spec, 'closed': False}
@@ -1564,6 +1943,14 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         if time.time() - t0 > cap:
             res['reason'] = 'time cap'
             return res
+        # Budget, not mathematics: the FALLBACK candidates (two-parameter far
+        # side, and any candidate past the first few) are what a row that
+        # never closes spends its last minute on, and that minute is what
+        # pushes a row from `returns a diagnosis` to `hard timeout`.  A
+        # fallback only starts if a real slice is left for it.
+        if fi >= n_one and time.time() - t0 > 0.7 * cap:
+            res['fallback_candidates_skipped'] = ntry - fi
+            break
         # Per-family slice, so one hopeless candidate cannot eat the budget.
         # The one-parameter candidates divide the budget among THEMSELVES, so
         # adding two-parameter fallbacks cannot shorten a slice that a row
@@ -1580,14 +1967,18 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         # shape this candidate is -- the far side's template is already fixed
         # by the time we get here, so p widens which visits count as anchors
         # from the start rather than being fixed up afterwards.
-        bt, bds, bp = find_boot(fam, snaps)
-        fill_obs = observe_fill(fam, tm)
-        fam.fill = fit_fill([(k, t) for k, t, _, _ in fill_obs]) or CARRY
-        plaw = fit_fill_p([(pa, k, pb) for k, _, pa, pb in fill_obs])
-        if plaw is None:
-            plaw = (1, 0, 0)
-        fam.fill.pa, fam.fill.pb, fam.fill.pc = plaw
-        fill_fitted = bool(fill_obs)
+        # One raw walk feeds all three: the PHASES (which terminators the
+        # machine runs the alphabet through), the fill law of each phase, and
+        # the boot.  The phase pass leaves a family that reads all its own
+        # anchor visits exactly as it is, so a row that closes today is
+        # untouched by it.
+        walk = anchor_cells(fam, tm)
+        multiphase = fit_phases(fam, walk)
+        fill_obs = observe_fill(fam, walk)
+        if fam.fills is None:
+            fam.fills = fit_fills(fam, fill_obs) or [Fill(1, (), 0, (1,))]
+        bt, bds, bp, bph = find_boot(fam, snaps)
+        fill_fitted = all(f.seen for f in fam.fills)
         groups = _groups(fam, (1, 2, 3, 4, 5))
         arms = mine_arms(tm, rules, fam, deadline=slice_end, ctr=ctr,
                          groups=groups)
@@ -1604,7 +1995,8 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         # asking for arms there asks for configurations the run never enters.
         enum, ok, covmap, rep, rounds = 'all digit strings', False, {}, {}, 0
         for mode in ('all', 'reachable'):
-            states = None if mode == 'all' else reach(fam, bds, bp, km)
+            states = (None if mode == 'all'
+                      else reach(fam, bds, bp, km, boot_ph=bph))
             if mode == 'reachable' and (bds is None or len(states or ()) < 8):
                 break
             ok, covmap, rep = cover(tm, fam, arms, kmax=km, states=states)
@@ -1636,10 +2028,10 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
                         else 'states reachable from the boot')
                 break
         states = (None if enum == 'all digit strings'
-                  else reach(fam, bds, bp, km))
+                  else reach(fam, bds, bp, km, boot_ph=bph))
         arms = minimize(arms, covmap)
         if ok and time.time() < slice_end:
-            arms = prune(tm, fam, arms, km, states)
+            arms = prune(tm, fam, arms, km, states, deadline=slice_end)
             ok, covmap, rep2b = cover(tm, fam, arms, km, states)
             rep2b['repair_rounds'] = rounds
             rep = rep2b
@@ -1657,7 +2049,7 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         # width, so give the repair a few rounds at the wider level before
         # calling the family unstable.
         states2 = (None if enum == 'all digit strings'
-                   else reach(fam, bds, bp, km2))
+                   else reach(fam, bds, bp, km2, boot_ph=bph))
         ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2, states=states2)
         for _ in range(4):
             if ok2 or time.time() > slice_end:
@@ -1670,7 +2062,7 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
             arms += new
             ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2, states=states2)
         if ok2 and time.time() < slice_end:
-            arms = prune(tm, fam, arms, km2, states2)
+            arms = prune(tm, fam, arms, km2, states2, deadline=slice_end)
             ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2, states=states2)
             rep2['repair_rounds'] = rounds
             rep = {k: v for k, v in rep2.items()
@@ -1685,7 +2077,7 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
             continue
         rep.pop('uncovered_all', None)
         rep.pop('wrong_all', None)
-        arms = sorted(arms, key=spec_key)
+        arms = order_arms(arms)
         if bt is None:
             res.setdefault('tried', []).append(
                 {'family': fam.json(), 'fill': fam.fill.json(),
@@ -1699,10 +2091,10 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         # must NOT count.  The widest width is read off the coverage rather
         # than assumed to be km2: a fill that widens by two only ever reaches
         # one parity class.
-        top_k = max((k for s in cov2.values() for k, _, _ in s), default=km2)
+        top_k = max((k for s in cov2.values() for k, *_ in s), default=km2)
         live, fin = [], []
         for a in arms:
-            ks = {k for k, _, _ in cov2.get(a.name, ())}
+            ks = {k for k, *_ in cov2.get(a.name, ())}
             (live if ks and max(ks) == top_k else fin).append(a)
         fired = {}
         for a in live:
@@ -1712,14 +2104,22 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         seen = visited_states(tm, bt) | {t[0] for a in arms
                                          for t in a.rule.fired}
         io_letters = sorted(chr(65 + q) for q in io)
-        diff = differential(tm, fam, arms, bds, bp)
-        chk = chain_check(tm, fam, bt, bds, bp)
+        diff = differential(tm, fam, arms, bds, bp, boot_ph=bph)
+        chk = chain_check(tm, fam, bt, bds, bp, boot_ph=bph)
         res.update({
             'closed': bool(diff) and all(d['shape_ok'] for d in diff),
             'family': fam.json(),
             'fill': fam.fill.json(),
-            'fill_observed': [[k, t, pa, pb] for k, t, pa, pb in fill_obs],
+            'fill_by_phase': [f.json() for f in fam.fills],
+            'fill_observed': [[ph, k, ph2, t, pa, pb]
+                              for ph, k, ph2, t, pa, pb in fill_obs],
             'fill_law_inferred': fill_fitted,
+            'phases': {
+                'n': len(fam.tails),
+                'terminators': [list(t) for t in fam.tails],
+                'found_by_the_phase_pass': multiphase,
+                'cycle': ['phase %d top -> phase %d, p+%d'
+                          % (i, f.to, f.s) for i, f in enumerate(fam.fills)]},
             'enumeration': enum,
             'two_parameter': two_param,
             'outer_parameter': (None if fam.otmpl is None else {
@@ -1731,13 +2131,17 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
                 'checked_at_p': fam.psample()}),
             'family_first_seen': ft, 'anchor_chain': chain,
             'arms': [a.json() for a in arms],
-            'arm_selection': 'first applicable in the order listed',
+            'arm_selection': ('first applicable in the order listed; the '
+                              'order is a linearization of pattern '
+                              'subsumption, most specific first'),
+            'arm_order_is_subsumption_linearization': order_ok(arms),
+            'arm_selection_shadowed': rep.get('shadowed_by_selection', 0),
             'arms_infinitely_often': [a.name for a in live],
             'arms_finitely_often': [a.name for a in fin],
             'coverage': rep,
             'boot': {'steps_from_blank': bt, 'digits_lsb_first': bds,
-                     'value': fam.value(bds), 'p': bp,
-                     'cells': fam.encode(bds)},
+                     'value': fam.value(bds), 'p': bp, 'phase': bph,
+                     'cells': fam.encode(bds, bph)},
             'liveness': {
                 'fired_transitions': sorted('%s%d' % (chr(65 + t[0]), t[1])
                                             for t in fired),
