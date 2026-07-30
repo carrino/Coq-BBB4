@@ -141,9 +141,10 @@ two.
 
 ### 3c. `1RB1RD_1RC0LD_1LB0RA_1LC0LC` is a QUASIHALTER, and the sweep's `t` never reached it
 
-This is the one row §10 could not re-measure — it is far slower than the other
-145 under `tailcert`, and it had sat in the residue through thirty-two waves of
-never-quasihalting emitters. John read it by hand on 2026-07-30:
+This is the one row §10 could not re-measure inside a sweep's budget — it is far
+slower than the other 145 under `tailcert`, and it had sat in the residue through
+thirty-two waves of never-quasihalting emitters. John read it by hand on
+2026-07-30:
 
 > just diverges to the right using all states but B after 2331 steps
 
@@ -470,8 +471,10 @@ The deltas are exactly what §2 and §3 predict and nothing else moved: the 13 r
 the alphabet fix opened are the +9 and +4, and the 6-row fill-off bucket is gone
 because those rows are now boards.
 
-The one row that did not finish under `tailcert` — `1RB1RD_1RC0LD_1LB0RA_1LC0LC`,
-far slower than the other 145; budget for it — needed no gate label in the end:
+The one row that would not finish under `tailcert` within a 50-minute sweep —
+`1RB1RD_1RC0LD_1LB0RA_1LC0LC`, far slower than the other 145; budget for it. A
+later `--emit` pass did eventually complete it and confirmed wave-31's
+`no gap-free two-form family`, but it needed no gate label in the end:
 it is a QUASIHALTER and is now boarded as one (§3c). So the table above covers
 **all 143** rows that remain open, with no carried entries.
 
