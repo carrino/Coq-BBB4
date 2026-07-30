@@ -2,3 +2,8 @@
 [  2/143     8s] 0RB0RD_1LC1RB_1RA0LC_1LD0LC    no-counter-shape   8.4s
 [  3/143     8s] 0RB1LC_1LC0RD_1RD0LC_1LA1RB    no-counter-shape   7.7s
 [  4/143    19s] 0RB1LC_1LC1RD_1LA0LC_0RD1RB    no-counter-shape   11.4s
+[  5/143    36s] 1RB---_0LB1RC_0RD0RC_1LB1LD    closed             27.9s
+[  6/143    40s] 1RB---_0LB1RC_1LB0RD_1LB0RC    closed             32.0s
+[  7/143    59s] 1RB---_0LB1RC_1LB0RD_1LC0RC    closed             40.0s
+[  8/143    59s] 1RB---_0LB1RC_1LB0RD_1LC0RD    no-counter-shape   22.4s
+[  9/143    61s] 1RB---_0LB1RC_1LD0RC_1LB1RC    no-counter-shape   20.4s
