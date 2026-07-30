@@ -20,8 +20,8 @@ bbb4_target : forall tm,
 
 Every (4,2) Turing machine either **quasihalts with score at most
 32,779,478** — the champion's score — or **never quasihalts**, *except*
-the machines the theorem **skips**: the **172 undecided core machines**
-(`tools/closeout/core_rows.txt`), plus **83 shadows** — 0RB machines
+the machines the theorem **skips**: the **150 undecided core machines**
+(`tools/closeout/core_rows.txt`), plus **76 shadows** — 0RB machines
 whose all-blank prefix re-roots them into a core machine's orbit
 (`skipped`'s second disjunct), and which therefore resolve automatically
 as core machines are boarded.
@@ -29,11 +29,11 @@ as core machines are boarded.
 Two honest caveats, stated precisely in
 [`docs/CLAIMS.md`](docs/CLAIMS.md):
 
-* The champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` is itself one of the 172,
+* The champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` is itself one of the 150,
   so this is **not** a proof that BBB(4) = 32,779,478 — any residue
   machine could, for all this development proves, quasihalt with a
   larger score.
-* `skipped D_remaining tm` means membership in the orbit of the 172
+* `skipped D_remaining tm` means membership in the orbit of the 150
   core rows under completion of undefined transitions, non-start state
   swaps, and mirroring — or a blank-prefix re-root into that orbit —
   not bare list membership.
@@ -140,7 +140,11 @@ verification tier, from "check one machine" to "re-walk the census".
 
 The open-problem list is [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md):
 every remaining machine, mapped by shape and blocker, with suggested
-starting points.  Each board is a self-contained per-machine proof, the
+starting points.  The burndown list itself — what still needs to be
+proven — is `tools/closeout/core_rows.txt` (one line per remaining core
+machine, bbchallenge format); `tools/closeout/frozen_unproven.txt` adds
+their 0RB shadows, and `python3 tools/closeout/audit.py` prints the live
+tally.  Each board is a self-contained per-machine proof, the
 shared toolkits are documented, and a machine leaves the SKIPPED list
 the moment any kernel-checked proof settles it —
 [`docs/TERMINOLOGY.md`](docs/TERMINOLOGY.md) has the vocabulary and
@@ -150,7 +154,7 @@ the moment any kernel-checked proof settles it —
 
 * [`docs/CLAIMS.md`](docs/CLAIMS.md) — what is proved, exactly,
   including what is **not**.
-* [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) — the 172 undecided
+* [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) — the 150 undecided
   machines, mapped by shape and blocker.
 * [`docs/VERIFYING.md`](docs/VERIFYING.md) — how to check any of this
   yourself.
