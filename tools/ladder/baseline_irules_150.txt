@@ -1,0 +1,27 @@
+# Baseline: current BBB irules engine vs the 150 open core rows
+#
+# Measured 2026-07-30.  Input list: tools/closeout/core_rows.txt at Coq-BBB4
+# commit 105db12 (150 rows).  Prover: BBB bin/irules built from BBB commit
+# 5f1856e (v2+ engine: block runs, multi-variable meta maps, prefix).
+#
+#   bin/irules --max-steps 200000  --cert-dir certs core_rows.txt
+#   bin/irules --max-steps 1000000 --cert-dir certs core_rows.txt
+#
+# Result, both budgets:
+#
+#   caught:      0 / 150
+#   certs:       0
+#   verdict:     150 x "undecided", every derived column zero
+#                (no anchor, no meta map, no rules discovered)
+#
+# Reading: this is the LADDER_PLAN.md 0-line.  The failure is uniform and
+# shallow -- the engine finds no recurring fixed-shape template at all,
+# because a counter's carry ripple restructures the mid-cycle tape
+# (BBB/docs/irules2.md "Scope and limits": geometric mid-cycle cascades need
+# rule-in-rule).  Escalating steps 5x changed nothing, confirming shape,
+# not budget, is the blocker.  Same 0/150 as the wave-8 sweep
+# (tools/nghist/wave8_irules_sweep.csv) despite the engine gaining block
+# runs, multi-variable meta maps and prefixes since -- none of which touch
+# the missing rung.
+#
+# Everything here is untrusted measurement; no theories/** involved.
