@@ -138,6 +138,10 @@ The largest sub-bucket, and nobody has read it.  Before designing anything:
 * fit the arm's laps PER OCTAVE CLASS, not with one affine law — wave-29 §7,
   a period-P frame makes a single fit report "exponential" on branches that are
   `4k+7`/`4k+9` per parity;
+* the DIGIT-WIDTH hypothesis is already closed: `tools/counters/digitwidth.py`
+  measures the word growing exactly 2 cells per octave against a 2-cell digit on
+  **all 27**, so no row is being read as a subsequence and none needs a wider
+  alphabet (`docs/WAVE30_FINDINGS.md` §6f).  Do not re-open it;
 * check whether the inner family is ASCENDING under the INVERTED alphabets
   (`tailcert.INVERTED`).  Wave-30's whole result is that this was wrong at the
   outer level for 51 rows; the inner level has not been re-checked and

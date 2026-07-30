@@ -411,6 +411,46 @@ its derivation and nobody re-swept.  The `?lift_app_blank_l` rewrite has to run
 BEFORE the close's `cbn [app]`, which flattens `w ++ [S0]` into one literal and
 destroys the shape it matches on.
 
+## 6f. The 27 `register step does not close` rows: NOT a digit-width mismatch
+
+John, on `1RB1RD_1LC1RA_0RB0LC_1LA0RD` (one of the 27): *"just a counter with 0s
+to the left of each bit with a wall on the right, msb on the right, when the msb
+overflows the wall moves over 4"*.
+
+**Confirmed**: the wall is real and it is not misread high bits.  The row reads
+under `Alph_00_01_0` — `dig(0) = 00`, `dig(1) = 01`, terminator `0` — so a `1`
+only ever occurs as the SECOND cell of a digit and **two adjacent `1`s cannot be
+counter digits at all**.  The `11` on the far side is therefore a genuine wall,
+which is what distinguishes this from the `grow-11` artefact wave-29 §5c retired
+(there the "wall" WAS the counter's own leading pairs).  An unfiltered
+absolute-coordinate dump also confirms the geometry: the counter grows away from
+a fixed 2-cell object on the far side, msb nearest it.
+
+**Not confirmed, and this is the useful part**: the wall does not move 4 cells
+per overflow.  `tools/counters/digitwidth.py` measures the length of the matched
+word at the first pass through each octave and differences it.  Over all 27:
+
+| n | result |
+|---:|---|
+| **27** | word grows **exactly 2 cells per octave**, matching a 2-cell digit |
+
+Every row, every octave, no exceptions.  The `+4` visible in a raw dump spans
+TWO octaves, not one.
+
+That is worth recording because of what it rules out.  A wall moving 4 cells per
+overflow under a 2-cell alphabet would have meant the reader was matching a
+SUBSEQUENCE — one reader-digit per two machine digits — which is exactly the
+wave-29 §5b failure mode, and it would have meant the register step fails because
+it tries to move the mark one digit where the machine moves it two.  The fix
+would have been a 4-cell alphabet.  **Measured: no row in the category has that
+problem.**  The 27 are being read at the right width, on a genuine consecutive
+family (243 `p -> p+1` transitions realised), and their blocker is in the arm
+itself, not in the reading of the word.
+
+So for wave-31 item (3): the digit-width hypothesis is closed.  What remains
+un-measured there is the per-octave-class lap fit and whether the INNER family
+is ascending under the inverted alphabets.
+
 ## 7. What is in the tree
 
 | file | role |
@@ -421,6 +461,7 @@ destroys the shape it matches on.
 | `tools/counters/cycrprobe.py` | **new**: dumps the `cycR-gap` dead ends and their closing unit runs (§2) |
 | `tools/counters/twoform_dir.py` | **new**: which WAY a two-form family counts (§4) |
 | `tools/counters/dblpeel_probe.py` | **new**: the double peel, measured before any template (§4) |
+| `tools/counters/digitwidth.py` | **new**: word growth per octave vs the alphabet's digit width (§6f) |
 | `tools/counters/tailcert.py` | the two INVERTED alphabet rows + `two_form` refuses a descending family (§6b, §6c) |
 | `theories/Counters/Alph_11_10_11.v`, `Alph_11_01_11.v` | **new**, generated and proved by `gen_alphabet.py` (§6b) |
 | `theories/Counters/LapCertGlue.v` | `lift_app_blank_l`, funext-only (§6e) |
