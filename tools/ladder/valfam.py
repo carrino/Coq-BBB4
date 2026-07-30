@@ -36,7 +36,7 @@ import time
 from collections import Counter, defaultdict
 
 from engine import (Expr, MARKER, Replay, Rule, canon_run, cfg_counts,
-                    cfg_repr, n_states, parse_tm)
+                    cfg_repr, match_rule, n_states, parse_tm)
 from trace import block_rle, simulate
 from validate import raw_run
 
@@ -845,11 +845,17 @@ def find_boot(fam, snaps):
 
 # ------------------------------------------------------- differential checks
 
-def differential(tm, fam, arms, boot_ds, n_checks=18, max_steps=400000):
-    """Raw-simulator check of the FAMILY (not just the rules): from E(v),
-    the raw machine must reach E(v+1), and -- when the arms' fired counts are
-    exact -- at exactly the predicted step count.  Octave boundaries
-    (v = 2^m - 1 and v = 2^m) are always among the probes."""
+def differential(tm, fam, arms, boot_ds, n_checks=18, max_steps=400000,
+                 max_visits=12):
+    """Raw-simulator check of the FAMILY (not just the rules): from E(v), the
+    raw machine must reach E(v+1), and -- the arms' fired counts being exact --
+    at exactly the predicted step count.  Octave boundaries (v = b^m - 1 and
+    v = b^m) are always among the probes.
+
+    The head passes the anchor cell several times per increment, so the check
+    scans the first `max_visits` (state, head) matches and reports WHICH one
+    is E(v+1); requiring it to be the first would fail on every machine whose
+    carry re-crosses its own low digit."""
     v0 = fam.value(boot_ds)
     probes = []
     for m in range(1, 9):
@@ -857,6 +863,7 @@ def differential(tm, fam, arms, boot_ds, n_checks=18, max_steps=400000):
     probes += [v0, v0 + 1, v0 + 5, 6, 11, 23, 47]
     probes = sorted({v for v in probes if v >= max(v0, 1)})[:n_checks]
     rep = Replay(tm, [], budget=4, raise_ok=False)
+    order = sorted(arms, key=spec_key)
     out = []
     for v in probes:
         ds, x = [], v
@@ -868,29 +875,19 @@ def differential(tm, fam, arms, boot_ds, n_checks=18, max_steps=400000):
         cfg = fam.cfg(ds)
         want = cfg_cells(fam.cfg(next_ds(fam, ds)))
         pred, armname = None, None
-        for arm in arms:
-            o = rep.apply_rule(arm.rule, cfg, bulk=False)
-            if o is None:
+        for arm in order:
+            if rep.apply_rule(arm.rule, cfg, bulk=False) is None:
                 continue
             armname = arm.name
-            m = arm.rule.lhs
-            env = {}
-            # recover the arm's variable binding on this instance
-            from engine import match_rule
             mm = match_rule(arm.rule, cfg)
-            if mm is not None:
-                env = {k: e for k, e in mm[0].items()}
-            s = arm.steps(env)
+            s = arm.steps(dict(mm[0]) if mm else {})
             pred = s.c if s.is_const() else None
             break
         q, h, L, R = cfg
-        Lc = list(runs_cells(L))
-        Rc = list(runs_cells(R))
-        got, at = None, None
+        Lc, Rc = list(runs_cells(L)), list(runs_cells(R))
+        at, idx, n = None, None, 0
         for t, cq, pos, tape, lo, hi in raw_run(tm, q, h, Lc, Rc, max_steps):
-            if t == 0:
-                continue
-            if cq != fam.q or tape.get(pos, 0) != fam.h:
+            if t == 0 or cq != fam.q or tape.get(pos, 0) != fam.h:
                 continue
             gl = [tape.get(pos - 1 - i, 0) for i in range(pos - lo)]
             gr = [tape.get(pos + 1 + i, 0) for i in range(hi - pos)]
@@ -898,9 +895,14 @@ def differential(tm, fam, arms, boot_ds, n_checks=18, max_steps=400000):
                 gl.pop()
             while gr and gr[-1] == 0:
                 gr.pop()
-            got, at = (cq, fam.h, tuple(gl), tuple(gr)), t
-            break
-        out.append({'v': v, 'arm': armname, 'shape_ok': got == want,
+            if (cq, fam.h, tuple(gl), tuple(gr)) == want:
+                at, idx = t, n
+                break
+            n += 1
+            if n >= max_visits:
+                break
+        out.append({'v': v, 'arm': armname, 'shape_ok': at is not None,
+                    'anchor_visit_index': idx,
                     'raw_steps': at, 'predicted_steps': pred,
                     'steps_ok': pred is not None and pred == at})
     return out
