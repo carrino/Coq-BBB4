@@ -616,7 +616,7 @@ pow2 j` and `no boot chain` — a family WAS found and only its index shift is
 unstatable. After the fix the same sweep reports **0 rows whose furthest gate went
 backwards**, and the `not an sside` bucket is 2 rather than 8.
 
-## 16. The gate table AFTER item (1) — BEFORE at `6202911`, AFTER at this commit
+## 16. The gate table AFTER item (1) — BEFORE at `6202911`, AFTER at `85f3c37`
 
 `tailcert.py --list tools/closeout/core_rows.txt`, 143 open core rows, no `--emit`:
 
