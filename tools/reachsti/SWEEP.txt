@@ -1,0 +1,30 @@
+# tools/reachsti/sweep.py over Drozd's 26 -- which engine proves which state LIVE.
+# A row is boardable only when EVERY allowed state is covered, because
+# NeverQuasiHaltsSt (and the QHBound half of iqh) obliges them all at once.
+#
+#   direct   ReachStI measure certificate
+#   chained  + "from state q1, reach q2" liveness implications (not implemented in Coq)
+#   closure  NGramHist at k in {2,3}, n in {2,3}
+#
+# All 14 1RB--- rows are here; the closure exceeds a 2-minute budget on
+# 1RB0LD_0LC0RB_1LA1RC_0RC1LD and the rows after it, which are therefore absent.
+# 0 rows boardable.  See docs/WAVE34_REACHSTI.md section 4.
+
+1RB---_0LB1RC_0RD0RC_1LB1LD allowed=BCD  direct=B    chained=B    closure=B    missing CD
+1RB---_0LB1RC_1LB0RD_1LB0RC allowed=BCD  direct=B    chained=B    closure=B    missing CD
+1RB---_0LB1RC_1LB0RD_1LC0RC allowed=BCD  direct=B    chained=B    closure=B    missing CD
+1RB---_0LC1RB_0LB1RD_1LC0RD allowed=BCD  direct=BC   chained=BC   closure=BC   missing D
+1RB---_0LC1RD_0LB1RC_1LB0RD allowed=BCD  direct=BC   chained=BC   closure=BC   missing D
+1RB---_0LC1RD_0LB1RD_1LB0RD allowed=BCD  direct=BC   chained=BC   closure=BC   missing D
+1RB---_0LC1RD_0LB1RD_1LC0RD allowed=BCD  direct=BC   chained=BC   closure=BC   missing D
+1RB---_0RC0RB_1LD1LC_0LD1RB allowed=BCD  direct=D    chained=D    closure=D    missing BC
+1RB---_1LC0RB_0LD1RB_0LC1RB allowed=BCD  direct=CD   chained=CD   closure=CD   missing B
+1RB---_1LC0RB_0LD1RB_0LC1RD allowed=BCD  direct=CD   chained=CD   closure=CD   missing B
+1RB1LA_1LC0RD_0RA0LC_0LA1RD allowed=ABCD direct=A    chained=AB   closure=AD   missing C
+1RB1LC_0LA0RB_0RD1LA_0LC1RD allowed=ABCD direct=C    chained=C    closure=ACD  missing B
+1RB1LD_1RC0RC_1LA0LA_0RA0LD allowed=ABCD direct=A    chained=A    closure=ABC  missing D
+1RB---_1LC0RD_0LC1RB_1LB0RB allowed=BCD  direct=C    chained=C    closure=C    missing BD
+1RB---_1LC0RD_0LC1RB_1LC0RB allowed=BCD  direct=C    chained=C    closure=C    missing BD
+1RB---_1LC0RD_0LC1RD_1LC0RB allowed=BCD  direct=C    chained=C    closure=C    missing BD
+1RB---_1LC1LB_0LC1RD_0RB0RD allowed=BCD  direct=C    chained=C    closure=C    missing BD
+1RB0LD_0LC0RB_1LA1RC_0RC1LD allowed=ABCD direct=C    chained=AC   closure=CD   missing B

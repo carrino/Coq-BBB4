@@ -104,6 +104,34 @@ clean `.vo` state, `functional_extensionality_dep` only).  It also needed the
 anchor HEAD symbol, the anchor TAIL and the anchor's FAR side (a blank *cell*,
 not the empty *list*) to become parameters — the encoding alone was not enough.
 
+## 2b2. Wave-34 (2026-07-30) — `ReachStI`, and Drozd's 26 measured
+
+Full write-up: `docs/WAVE34_REACHSTI.md`.  The tier `docs/REACHST_TIER.md`
+§8e asks for -- `ReachSt` relativised to an invariant -- now exists
+(`theories/Checkers/ReachStI.v`).  **It boards none of Drozd's 26.**  Read
+the write-up before spending a session on this front; the three things worth
+carrying forward:
+
+- **The 14 `1RB---` rows are NOT never-quasihalters.**  `StA` fires once at
+  index 0 and nothing targets it, so they quasihalt with score 1 and their
+  target is `iqh`, not `NeverQuasiHaltsSt`.  `tools/reachst/bothhalves.py`
+  skips them ("boards via its completions"), so they had never been measured
+  by the ReachSt tier at all.  For those rows `ReachSt tm q` is not merely
+  unprovable, it is **false** -- `(StA, ([], S1, []))` halts on the spot.
+- **The measure replaces the flavour lemmas.**  `drop_ok` is a computable
+  certificate (`B * ones l + C * ones r + rk (q, chd l, h, chd r)`, strict
+  drop per goal-avoiding step, Bellman-Ford search in
+  `tools/reachsti/cert_search.py`) and certifies a state on **25 of the 26**
+  rows -- against `ReachSt.v`'s four hand-written flavours.  It also returns
+  `NonHalt`, which the `iqh` rows cannot get anywhere else.
+- **The blocker is not the tier, it is the wall.**  On all 14 `1RB---` rows
+  the NGramHist closure certifies *exactly* the states `ReachStI` does.  9 of
+  the 17 rows swept are short by exactly ONE state, always the state whose
+  liveness is "the leftward sweep stops at the counter's wall".  13 of the 54
+  missing states have a pure one-direction avoid sub-machine, so the sized
+  next piece is `FuelWide`'s runner rule wired into the one-state-lifted
+  path (`ClosureExt`); the other 41 still want the wall itself.
+
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27

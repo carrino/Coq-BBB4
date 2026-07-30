@@ -11,6 +11,7 @@ theories/Checkers/Halt.v
 theories/Checkers/Cycle.v
 theories/Closure.v
 theories/Checkers/ReachSt.v
+theories/Checkers/ReachStI.v
 theories/Checkers/ClosureExt.v
 theories/Checkers/FuelClass.v
 theories/Checkers/ExactClosure.v
@@ -209,6 +210,7 @@ theories/Tests/Cycle_Corruption.v
 theories/Tests/TCycler_Corruption.v
 theories/Tests/Closure_Corruption.v
 theories/Tests/NGram_Corruption.v
+theories/Tests/ReachStI_Examples.v
 theories/Tests/NGramHist_Corruption.v
 theories/Machines/Bulk/Bulk_001.v
 theories/Machines/Bulk/Bulk_002.v
