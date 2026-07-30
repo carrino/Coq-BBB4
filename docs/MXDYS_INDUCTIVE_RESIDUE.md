@@ -216,11 +216,11 @@ row-level receipt.
 | budget | result |
 | --- | --- |
 | `maxT = 100000`, 30 s/config | **0 / 23**, all seven configs exhausted on every row |
-| `maxT = 1000000`, 45 s/config | in progress at write time; 0 of the rows completed so far decide |
+| `maxT = 1000000`, 45 s/config | **0 / 23**, completed 2026-07-30 |
 
-(The 10x budget matters less than it looks: `docs/LADDER_PLAN.md` §2 measured a
-5x escalation changing nothing for `bin/irules` on the same population, because
-the blocker is SHAPE, not budget.  Record the finished number when it lands.)
+The 10x budget changed nothing, which is the same signal `docs/LADDER_PLAN.md`
+§2 measured for `bin/irules` on this population (5x escalation, zero change):
+**the blocker is SHAPE, not budget.**
 
 Seventeen of the 23 carry an undefined `A1` (`1RB---`), i.e. they are rows
 whose non-halting argument must also show `A1` is never reached.  That is not
