@@ -1346,6 +1346,11 @@ theories/Machines/NGHStage/NGH_07.v
 theories/Counters/IXPGadgets.v
 
 theories/Checkers/LapDecider.v
+theories/Checkers/LadderFam.v
+theories/Checkers/LadderKernel.v
+theories/Machines/Ladder/LDR_0RB____0LC1RB_1LA1LD_1LC0RB.v
+theories/Machines/Ladder/LDR_1RB0RB_0LC0LD_1LC1LD_1RA0RA.v
+theories/Machines/Ladder/LDR_1RB0RC_1LC1RA_1RD1LB_0LC0RD.v
 theories/Counters/LapGlueQuiet.v
 theories/Counters/KpWallQH.v
 theories/Checkers/LapAvoid.v
