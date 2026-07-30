@@ -128,3 +128,7 @@
 [128/143  3227s] 1RB1RA_0RC1LB_1LA1RD_1RC0LB    closed             30.7s
 [129/143  3239s] 1RB1RA_1LC0RD_1LA1LB_0LB1RD    overflow-leaves-family 37.6s
 [130/143  3239s] 1RB1RA_1LC0RD_1RA1LB_0LB1RD    closed             30.3s
+[131/143  3300s] 1RB1RA_1LC1RB_0RB1LD_1RA0LC    closed             72.9s
+[132/143  3305s] 1RB1RA_1RC1LB_0LB1RD_1LA0RC    closed             71.7s
+[133/143  3305s] 1RB1RB_1LC0RD_0RA1LB_0LC1RD    overflow-leaves-family 33.0s
+[134/143  3307s] 1RB1RC_1LA0LB_1LD0RD_1LB0RC    no-counter-shape   35.1s
