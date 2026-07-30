@@ -2585,6 +2585,9 @@ theories/Machines/Counters/REG_1RB1RC_1LC1RB_1RA0LD_0RA1LD.v
 theories/Machines/Counters/REG_0RB1LA_1LC1RD_1LD1RC_1RB0LA.v
 theories/Machines/Counters/REG_0RB1LA_1RC1RD_1LD1RC_1RB0LA.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/QHB_1RB1RD_1RC0LD_1LB0RA_1LC0LC.v
+
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
 theories/Closeout/CoreRows.v

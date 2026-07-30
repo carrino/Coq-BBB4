@@ -7,8 +7,8 @@ Continue the (4,2) residue reduction in `carrino/Coq-BBB4`, on branch
 
 `make closeout-status`, or `python3 tools/closeout/audit.py`:
 
-    4,938 of the frozen 5,156 settled (95.8%)
-    144 core undecided + 74 0RB shadows (the shadows resolve with their cores)
+    4,939 of the frozen 5,156 settled (95.8%)
+    143 core undecided + 74 0RB shadows (the shadows resolve with their cores)
 
 **Read §5 and §8 of `docs/WAVE32_FINDINGS.md` before anything else.**  The
 largest bucket in the residue was measured DEAD to every framing this wave, and
@@ -44,7 +44,7 @@ The three things standing in front of everything else:
 * **38 rows: the interior lap is a NESTED lap, and a DOUBLE one.**  Item (1).
 * **26 nested arms: the inner family runs a PARTIAL octave.**  Item (2) — the
   bounded carrier, correctly sized at last.
-* **26 rows: `no gap-free two-form family`.**  Reader-level, still unopened.
+* **25 rows: `no gap-free two-form family`.**  Reader-level, still unopened.
 
 ## READ FIRST, in this order
 
@@ -166,11 +166,26 @@ word to END at the terminator `C`, so a word whose high part is
 cost nothing; (a) is a Coq lemma plus an emitter that has to name an exponential
 index.
 
+## THE RESIDUE IS ALL NEVER-QH CANDIDATES — that is now measured, not assumed
+
+Wave-32 §3c boarded `1RB1RD_1RC0LD_1LB0RA_1LC0LC` as a QUASIHALTER
+(`QHBound 2401`) after John read it by hand: it diverges right using every state
+but B after 2331 steps.  It had carried the label `no gap-free two-form family`
+for three waves, which was TRUE and useless -- it has no two-form family because
+it is not a counter.
+
+Every emitter under `tools/counters/` assumes never-quasihalting, so none of
+them could ever have said so.  `tools/sweep_qhbound_deep.py` then asked the
+question properly over the whole open list, with `t` read off each machine
+instead of from a fixed candidate list: **0 of 143**, with a positive control
+that reproduces the one row that fired.  So the remaining 143 really are
+never-quasihalting candidates and item (1)/(2) are the right shape of work.
+**Do not re-run that sweep** (§8).
+
 ## ALSO OPEN, not items
 
-* **25 `no gap-free two-form family`** (26 with the one row wave-32 could not
-  re-measure).  Untouched for three waves and now the largest bucket after
-  item (1) and `no boot chain`.  Reader-level: wave-30's whole result was the
+* **25 `no gap-free two-form family`.**  Untouched for three waves and now the
+  largest bucket after item (1) and `no boot chain`.  Reader-level: wave-30's whole result was the
   reader being wrong for 51 rows, and this is the bucket saying it is still wrong
   for 26.  Check the INVERTED alphabets and the two-cell terminator partners
   before assuming new mathematics.  Wave-32's §9 lesson applies directly — the
@@ -246,9 +261,9 @@ After any change to a library file, rebuild BOTH `theories/Counters` and
 assumptions over library BBB4.Counters.WTape", which also looks like a proof
 failure and is not.
 
-`tailcert.py --list` over the 146 takes **over an hour**, and one row
-(`1RB1RD_1RC0LD_1LB0RA_1LC0LC`) is much slower than the rest — start the sweep
-first and work while it runs.  `cascade_probe` needs a couple of GB per row; run
+`tailcert.py --list` over the 143 takes **over an hour** — start the sweep first
+and work while it runs.  (The row that never finished for wave-32,
+`1RB1RD_1RC0LD_1LB0RA_1LC0LC`, is boarded and gone.)  `cascade_probe` needs a couple of GB per row; run
 probes one row at a time under `ulimit -v`.
 
 ## DO NOT RETRY (measured)
@@ -261,6 +276,9 @@ probes one row at a time under `ulimit -v`.
   `jspeel.py`, 0/40.  (The `j = 0` half was already covered by WAVE30 §8.)
 * **Reading a fill-off-endpoint diagnostic as a partial inner run.**  WAVE32 §3:
   all 6 ran a FULL octave and the replay bound was wrong.
+* **Looking for more residue QUASIHALTERS by widening the QHBound sweep's `t`.**
+  WAVE32 §3c: `sweep_qhbound_deep.py` reads `t` off each machine and gets 0 of
+  143, with a positive control.
 * **The SOLO CASCADE against `no boot chain`.**  Wave-31 §9: 0 of 11 with five
   distinct causes.
 * **The `lift` fallback in the interior split as a way to BOARD rows.**

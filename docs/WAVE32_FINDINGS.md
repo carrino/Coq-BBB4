@@ -10,12 +10,12 @@ say it of a bucket table without qualification: the probes are in the tree.
 
 ## 1. The one-line result
 
-    4,930 of the frozen 5,156 settled  ->  4,938   (95.6% -> 95.8%)
-    150 core undecided + 76 0RB shadows ->  144 core + 74 shadows
+    4,930 of the frozen 5,156 settled  ->  4,939   (95.6% -> 95.8%)
+    150 core undecided + 76 0RB shadows ->  143 core + 74 shadows
 
-**+8 boards** — 6 from the items below and **2 more the input list did not
-contain until the first 6 landed** (§3b) — and the two items of the wave-32
-prompt came back as follows.
+**+9 boards** — 6 from the items below, **2 more the input list did not contain
+until the first 6 landed** (§3b), and **1 that is not a never-quasihalter at all**
+(§3c) — and the two items of the wave-32 prompt came back as follows.
 
 **Item (1) — the bounded inner carrier.** Not built, and it should not have been
 built first. Measuring the bucket before designing for it found **two defects in
@@ -138,6 +138,55 @@ nested overflows each, `functional_extensionality_dep` only, and both exercise
 stops changing.** One pass is not enough, and the second pass is free. After the
 second pass core is 144 with no further promotions, so this wave converged in
 two.
+
+### 3c. `1RB1RD_1RC0LD_1LB0RA_1LC0LC` is a QUASIHALTER, and the sweep's `t` never reached it
+
+This is the one row §10 could not re-measure — it is far slower than the other
+145 under `tailcert`, and it had sat in the residue through thirty-two waves of
+never-quasihalting emitters. John read it by hand on 2026-07-30:
+
+> just diverges to the right using all states but B after 2331 steps
+
+Confirmed against the raw simulator over 3,000,000 steps: **`StB` is entered for
+the last time at index 2331**, `StA`/`StC`/`StD` keep firing, the head drifts
+right at about one cell per three steps and the tape never reaches further left
+than −13.
+
+So `StB` is eventually quiet and the machine **quasihalts**. It was never going
+to board as a never-quasihalter, which is why every counter emitter filed it
+under one gate or another — the gate label was a category error, not a
+measurement.
+
+What it needs is a score BOUND, and the route has been in the tree for many
+waves: `Checkers/Wrap.ngram_check_qhbound` wraps `StB` to a halt, closes the
+2-gram abstraction of the configuration at index `t` (**4 contexts**), and checks
+that closure is halt-free and per-state acyclic — halt-free gives `NonHalt`,
+acyclicity gives liveness so no state other than `StB` can be quiet, and `StB`'s
+last visit is exhibited concretely. `QHBound 2401`, well inside the closeout's
+`B_board` = 66,349, so the board is the standard `iqh_le` shape and the whole
+certificate is one `vm_compute`.
+
+**Why no wave found it, and this is the third instance of the same failure this
+wave:** `tools/sweep_qhbound_residue.py` searches `CAND_T = (64, 256, 1024)`.
+The last `StB` visit is at 2331. **Every candidate `t` was below the one index
+that had to be exceeded.** Nothing about the route was missing — the search
+range was. At `t = 2400, n = 2` the certificate is found on the first try.
+
+Note what this says about a gate label. The row was filed
+`no gap-free two-form family`, and that was *true* — it has no two-form counter
+family, because it is not a counter. **A gate label says where one emitter
+stopped, not what the machine is.**
+
+So the obvious follow-up got asked: `tools/sweep_qhbound_deep.py` runs the same
+gate over the whole open list with `t` read off each machine's own measured
+last-visit index instead of a fixed candidate list.
+
+    0 of the remaining 143 open rows are QHBound-decidable this way
+
+and the **positive control** matters more than the zero: run on the boarded row
+it reproduces `q = B, s = 2331, n = 2, t = 2400` exactly. So the zero is a
+measurement, not a broken sweep. `1RB1RD_1RC0LD_1LB0RA_1LC0LC` was the only one,
+and the residue really is 143 never-quasihalting candidates.
 
 ## 4. What the bounded inner carrier is actually for — 26 arms, and the run shape
 
@@ -347,6 +396,13 @@ library file was either, so no board outside the six was recompiled.
 * **Reading the fill-off-endpoint bucket as evidence of a partial inner run.**
   All 6 rows ran a FULL octave; the validator's replay bound ignored the family's
   octave shift. Read §3 before stating any endpoint off that diagnostic.
+* **Running the never-QH emitters at `1RB1RD_1RC0LD_1LB0RA_1LC0LC`.** It is a
+  quasihalter (§3c) and is now boarded as one. Its old `no gap-free two-form
+  family` label was true and useless.
+* **Looking for more quasihalters in the residue by widening `t`.**
+  `sweep_qhbound_deep.py` reads `t` off each machine and gets **0 of 143**, with
+  a positive control that reproduces the one row that did fire. The remaining
+  residue is never-quasihalting candidates.
 * **Sizing the bounded carrier at 39 rows.** 19 of the 39 needed no carrier —
   13 an alphabet, 6 a replay bound. The target is 26 nested arms (§4).
 * Standing: WAVE31 §9, WAVE30 §8, WAVE29 §7, WAVE28 §4, WAVE27 §5, WAVE26 §6,
@@ -378,12 +434,19 @@ library file was either, so no board outside the six was recompiled.
   because the probe prints `anchors n/N`. A probe that states a verdict without
   stating how much it looked at cannot be checked — by the next wave, or by the
   one writing it.
+* **A GATE LABEL SAYS WHERE AN EMITTER STOPPED, NOT WHAT THE MACHINE IS.** §3c:
+  a row carried `no gap-free two-form family` for three waves. The label was
+  true — it has no two-form family, because it is not a counter at all. Every
+  emitter in `tools/counters/` assumes never-quasihalting, so none of them could
+  ever have said so.
+* **AND WHEN A SEARCH FINDS NOTHING, RUN THE POSITIVE CONTROL.** §3c's zero is
+  only worth stating because the same sweep fires on the row that boarded.
 * **RE-SWEEP AFTER THE CLOSEOUT REGEN, NOT JUST AFTER THE LAST WAVE.** §3b: the
   open list GREW by two when six boards landed, because boarding re-roots the
   shadow table. Wave-31 §7 got +2 the same way. Two waves running is not a
   coincidence — iterate until the list stops moving.
 
-## 10. The gate table AFTER this wave — measured 2026-07-30 over the 144
+## 10. The gate table AFTER this wave — measured 2026-07-30 over the 143
 
 `tailcert.py --list tools/closeout/core_rows.txt` (no `--emit`, so these are
 `scan`'s FURTHEST-gate labels), at `5ffdebb`, 143 of the 144 open rows:
@@ -394,7 +457,7 @@ library file was either, so no board outside the six was recompiled.
 |--:|---|--:|
 | 40 | `no interior j=S j chain at octave parity 0` | = |
 | 29 | `no boot chain` | +9 |
-| 25 | `no gap-free two-form family` | −1 |
+| 25 | `no gap-free two-form family` | **−1** |
 | 20 | `no inner family at pow2 j` | **−13** |
 | 17 | `register step does not close` | = |
 | 5 | `no exit chain` | +4 |
@@ -407,11 +470,10 @@ The deltas are exactly what §2 and §3 predict and nothing else moved: the 13 r
 the alphabet fix opened are the +9 and +4, and the 6-row fill-off bucket is gone
 because those rows are now boards.
 
-**One row is not re-measured**: `1RB1RD_1RC0LD_1LB0RA_1LC0LC` did not finish in
-either the baseline or the post-change sweep (it is far slower than the other
-145; budget for it). Wave-31 filed it `no gap-free two-form family`, and nothing
-this wave changes `two_form`, so that bucket is 26 rather than 25 — but it is
-CARRIED, not measured, and the row lists say 25.
+The one row that did not finish under `tailcert` — `1RB1RD_1RC0LD_1LB0RA_1LC0LC`,
+far slower than the other 145; budget for it — needed no gate label in the end:
+it is a QUASIHALTER and is now boarded as one (§3c). So the table above covers
+**all 143** rows that remain open, with no carried entries.
 
 The per-bucket row lists are under `tools/counters/buckets32/`, with
 `GATETABLE.md` beside them, and they are now **regenerable**:
