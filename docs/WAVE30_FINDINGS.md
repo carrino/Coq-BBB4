@@ -411,6 +411,102 @@ its derivation and nobody re-swept.  The `?lift_app_blank_l` rewrite has to run
 BEFORE the close's `cbn [app]`, which flattens `w ++ [S0]` into one literal and
 destroys the shape it matches on.
 
+## 6f. The 27 `register step does not close` rows: NOT a digit-width mismatch
+
+John, on `1RB1RD_1LC1RA_0RB0LC_1LA0RD` (one of the 27): *"just a counter with 0s
+to the left of each bit with a wall on the right, msb on the right, when the msb
+overflows the wall moves over 4"*.
+
+**Confirmed**: the wall is real and it is not misread high bits.  The row reads
+under `Alph_00_01_0` — `dig(0) = 00`, `dig(1) = 01`, terminator `0` — so a `1`
+only ever occurs as the SECOND cell of a digit and **two adjacent `1`s cannot be
+counter digits at all**.  The `11` on the far side is therefore a genuine wall,
+which is what distinguishes this from the `grow-11` artefact wave-29 §5c retired
+(there the "wall" WAS the counter's own leading pairs).  An unfiltered
+absolute-coordinate dump also confirms the geometry: the counter grows away from
+a fixed 2-cell object on the far side, msb nearest it.
+
+**Not confirmed, and this is the useful part**: the wall does not move 4 cells
+per overflow.  `tools/counters/digitwidth.py` measures the length of the matched
+word at the first pass through each octave and differences it.  Over all 27:
+
+| n | result |
+|---:|---|
+| **27** | word grows **exactly 2 cells per octave**, matching a 2-cell digit |
+
+Every row, every octave, no exceptions.  The `+4` visible in a raw dump spans
+TWO octaves, not one.
+
+That is worth recording because of what it rules out.  A wall moving 4 cells per
+overflow under a 2-cell alphabet would have meant the reader was matching a
+SUBSEQUENCE — one reader-digit per two machine digits — which is exactly the
+wave-29 §5b failure mode, and it would have meant the register step fails because
+it tries to move the mark one digit where the machine moves it two.  The fix
+would have been a 4-cell alphabet.  **Measured: no row in the category has that
+problem.**  The 27 are being read at the right width, on a genuine consecutive
+family (243 `p -> p+1` transitions realised), and their blocker is in the arm
+itself, not in the reading of the word.
+
+So for wave-31 item (3): the digit-width hypothesis is closed.  What remains
+un-measured there is the per-octave-class lap fit and whether the INNER family
+is ascending under the inverted alphabets.
+
+## 6g. …and the wall DOES move: the overflow phase is Theta(4^k), not Theta(2^k)
+
+§6f measured the WORD and found no wall motion.  John's follow-up says why that
+was the wrong object: *"the msb butts up against the wall but doesn't include
+it."*  The wall is a SEPARATE object just beyond the top of the word, so a
+word-length measurement can never see it move.
+
+`tools/counters/wallstep.py` tracks the wall itself — the first run of `>= 2`
+ones outward from the head, which under a `dig0 = 00` / `dig1 = 01` alphabet
+cannot be counter digits — and records its absolute column and the time between
+displacements.  On the exemplar `1RB1RD_1LC1RA_0RB0LC_1LA0RD`:
+
+    wall start column   0    4    8    12    16    20    24
+    first seen at t     6   42  168   654  2580 10266 40992
+    displacement           +4   +4    +4    +4    +4    +4
+    phase ratio               7.0  4.0   3.9   4.0   4.0   4.0
+
+**`wall +4 per overflow, phase ratio ~3.99`** — the read, mechanised, exactly.
+
+And that second column is the finding.  Over the 27 `register step does not
+close` rows, on the 8 where a MONOTONE wall is detected:
+
+| phase ratio per octave | rows | wall step |
+|---|---:|---|
+| ~4 | 5 | 2 or 4 cells |
+| ~6 | 3 | 2 cells |
+| **~2** | **0** | — |
+
+Not one row has a phase that doubles.
+
+_(Corrected: the first run of this measurement reported 14 rows with ratios
+~4/~6/~3.  It ordered each wall's sightings by COLUMN rather than by
+first-sighting TIME, and on a side the counter grows into those two orders
+differ — which produced negative gaps and meaningless ratios on 6 of the 14.
+`wallstep.py` now orders by time and requires the displacement to be monotone,
+which drops those 6 and turns the other 13 from a spurious `+1 / ratio ~0` into
+an honest "no wall found".  The 8 that survive are the trustworthy ones, and
+the conclusion is unchanged: 4 and 6, never 2.)_  `nestcert`'s register step is built for
+an inner counter that RE-COUNTS the counter once to move the mark — that is
+`Theta(2^k)`, and `NestedLapLift.nested_overflow_lift` is stated against it.  A
+phase growing `4^k` means the inner counter itself runs a full octave per step:
+a DOUBLE nesting, not a single one.  A search for a `2^k`-shaped inner family
+will not find a `4^k` phase, and from the outside that is precisely
+`register step does not close`.
+
+So the 27 are not a carrier-endpoint problem (§6d item 2) and not a width
+problem (§6f).  They need one more level of nesting, and the exponent is
+measured rather than guessed on the 8; the remaining 19 have no monotone wall
+under this detector, which is a fact about the DETECTOR and the next thing to
+sharpen — not evidence that they are a different shape.  The wall displacement (1, 2 or 4 cells) is the
+per-row constant that the arm's landing has to be stated with.
+
+**Consequence for wave-31's ranking:** item (2), the bounded inner carrier, is
+the right build for the 16 inner-fill rows but will NOT reach the 27.  Item (3)
+is a bigger build than the prompt assumed, and it now has a measured shape.
+
 ## 7. What is in the tree
 
 | file | role |
@@ -421,6 +517,8 @@ destroys the shape it matches on.
 | `tools/counters/cycrprobe.py` | **new**: dumps the `cycR-gap` dead ends and their closing unit runs (§2) |
 | `tools/counters/twoform_dir.py` | **new**: which WAY a two-form family counts (§4) |
 | `tools/counters/dblpeel_probe.py` | **new**: the double peel, measured before any template (§4) |
+| `tools/counters/digitwidth.py` | **new**: word growth per octave vs the alphabet's digit width (§6f) |
+| `tools/counters/wallstep.py` | **new**: the wall's displacement per overflow and the phase growth ratio (§6g) |
 | `tools/counters/tailcert.py` | the two INVERTED alphabet rows + `two_form` refuses a descending family (§6b, §6c) |
 | `theories/Counters/Alph_11_10_11.v`, `Alph_11_01_11.v` | **new**, generated and proved by `gen_alphabet.py` (§6b) |
 | `theories/Counters/LapCertGlue.v` | `lift_app_blank_l`, funext-only (§6e) |
