@@ -11,3 +11,134 @@
 [ 11/143    99s] 1RB---_0LC1RD_0LB1RC_1LB0RD    closed             35.0s
 [ 12/143   103s] 1RB---_0LC1RD_0LB1RD_1LB0RD    closed             36.6s
 [ 13/143   135s] 1RB---_0LC1RD_0LB1RD_1LC0RD    closed             37.6s
+[ 14/143   400s] 1RB---_0LC1RD_1LB1RC_1LB0RD    timeout            300.7s
+[ 15/143   400s] 1RB---_0LC1RD_1LB1RD_1LB0RD    arm-lands-off-family 256.7s
+[ 16/143   400s] 1RB---_0RC0RB_1LD1LC_0LD1RB    closed             36.8s
+[ 17/143   400s] 1RB---_1LC0RB_0LD1RB_0LC1RB    closed             38.2s
+[ 18/143   400s] 1RB---_1LC0RB_0LD1RB_0LC1RD    closed             35.5s
+[ 19/143   501s] 1RB---_1LC0RB_0LD1RB_1LC1RB    arm-lands-off-family 255.4s
+[ 20/143   661s] 1RB---_1LC0RB_0LD1RB_1LC1RD    timeout            300.8s
+[ 21/143   661s] 1RB---_1LC0RB_1LD1RB_0LD1RB    no-counter-shape   20.6s
+[ 22/143   661s] 1RB---_1LC0RD_0LC1RB_1LB0RB    closed             48.0s
+[ 23/143   661s] 1RB---_1LC0RD_0LC1RB_1LB0RD    no-counter-shape   21.7s
+[ 24/143   661s] 1RB---_1LC0RD_0LC1RB_1LC0RB    closed             32.3s
+[ 25/143   661s] 1RB---_1LC0RD_0LC1RD_1LC0RB    closed             32.2s
+[ 26/143   661s] 1RB---_1LC1LB_0LC1RD_0RB0RD    closed             37.1s
+[ 27/143   834s] 1RB---_1LC1RB_0LB1RD_1LC0RD    timeout            300.7s
+[ 28/143   834s] 1RB---_1LC1RD_0LB1RD_1LB0RD    overflow-leaves-family 196.5s
+[ 29/143   916s] 1RB---_1LC1RD_0LB1RD_1LC0RD    arm-lands-off-family 255.6s
+[ 30/143   916s] 1RB---_1LC1RD_0LC1RD_1LB0RD    no-counter-shape   22.2s
+[ 31/143   916s] 1RB---_1RC1LB_0LB1RD_0RA0RC    closed             84.2s
+[ 32/143   916s] 1RB---_1RC1LB_0LB1RD_1RA0RC    closed             74.7s
+[ 33/143   916s] 1RB0LA_1LC0RD_1LA1LB_0LB1RD    closed             37.0s
+[ 34/143   931s] 1RB0LA_1LC0RD_1LA1LB_0LC1RD    closed             31.3s
+[ 35/143   944s] 1RB0LA_1LC1LA_1RD1LB_0LC0RD    closed             36.0s
+[ 36/143   996s] 1RB0LC_0RC1LD_1LB1RC_0LA0LB    closed             80.0s
+[ 37/143  1037s] 1RB0LC_1LC0RD_0RA1LB_0LC1RD    overflow-leaves-family 106.3s
+[ 38/143  1037s] 1RB0LD_0LC0RB_1LA1RC_0RC1LD    closed             27.1s
+[ 39/143  1084s] 1RB0LD_0LC1RA_0LA1LA_0RB1LD    overflow-leaves-family 112.8s
+[ 40/143  1084s] 1RB0LD_0LC1RA_0RA1LA_0RB1LD    no-counter-shape   28.7s
+[ 41/143  1084s] 1RB0LD_0LC1RA_0RC1LA_0RB1LD    no-counter-shape   28.4s
+[ 42/143  1141s] 1RB0LD_0LC1RA_1LA0RB_0RB1LD    overflow-leaves-family 103.9s
+[ 43/143  1156s] 1RB0LD_0LC1RA_1LA1LA_0RB1LD    overflow-leaves-family 102.3s
+[ 44/143  1189s] 1RB0LD_0LC1RA_1RB1LA_0RB1LD    overflow-leaves-family 104.2s
+[ 45/143  1189s] 1RB0LD_0RC1RA_1LC0LA_0RA1LD    no-counter-shape   28.3s
+[ 46/143  1202s] 1RB0LD_0RC1RA_1LC1LA_0RA1LD    closed             46.5s
+[ 47/143  1217s] 1RB0LD_0RC1RA_1LC1LA_0RB1LD    closed             47.7s
+[ 48/143  1265s] 1RB0LD_1LC1LB_1LD1RC_0RC1LA    closed             76.1s
+[ 49/143  1269s] 1RB0LD_1LC1RA_0RB1LA_0RB1LD    overflow-leaves-family 67.0s
+[ 50/143  1508s] 1RB0LD_1LC1RA_0RD1LA_0RB1LD    overflow-leaves-family 290.9s
+[ 51/143  1508s] 1RB0LD_1LC1RA_1LA1LC_0RA1LD    closed             32.2s
+[ 52/143  1508s] 1RB0LD_1LC1RA_1LA1RC_0RA1LD    closed             45.2s
+[ 53/143  1508s] 1RB0LD_1LC1RA_1RD1RC_0RB1LD    closed             32.1s
+[ 54/143  1508s] 1RB0LD_1LC1RB_1LD1RC_0RC1LA    closed             159.1s
+[ 55/143  1508s] 1RB0LD_1RC1RA_1LA0RC_0RA1LD    closed             39.4s
+[ 56/143  1508s] 1RB0LD_1RC1RA_1LA0RC_0RB1LD    closed             32.8s
+[ 57/143  1508s] 1RB0LD_1RC1RA_1LA1LC_0RA1LD    closed             53.6s
+[ 58/143  1508s] 1RB0LD_1RC1RA_1LA1RA_0RA1LD    closed             48.8s
+[ 59/143  1511s] 1RB0LD_1RC1RA_1LA1RA_0RB1LD    closed             37.0s
+[ 60/143  1547s] 1RB0LD_1RC1RA_1LA1RC_0RA1LD    closed             43.1s
+[ 61/143  1667s] 1RB0LD_1RC1RB_1LD1RC_0RC1LA    closed             159.2s
+[ 62/143  1667s] 1RB0RB_0LC0LD_1LC1LD_1RA0RA    closed             30.5s
+[ 63/143  1667s] 1RB0RB_0LC1RD_1LC1LA_0LA1RB    no-counter-shape   29.7s
+[ 64/143  1667s] 1RB0RB_0RC1RC_0LD1LA_1LD0LA    closed             27.0s
+[ 65/143  1667s] 1RB0RB_1LC0RC_1RA0LD_0LB0LC    no-counter-shape   12.9s
+[ 66/143  1667s] 1RB0RB_1LC1LD_0LC1RA_0LD0RA    no-counter-shape   20.4s
+[ 67/143  1884s] 1RB0RC_0LA1LC_0RD0LB_1LB1RD    overflow-leaves-family 300.7s
+[ 68/143  1884s] 1RB0RC_0RC1LD_1LB1RC_0LA0LB    closed             74.5s
+[ 69/143  1884s] 1RB0RC_1LC1RA_1RD1LB_0LC0RD    closed             35.2s
+[ 70/143  1884s] 1RB0RD_1LB1LC_1RC0RA_0LB1RD    overflow-leaves-family 34.8s
+[ 71/143  1884s] 1RB0RD_1LC0LB_1LD0LB_1RD0RA    closed             28.9s
+[ 72/143  1884s] 1RB0RD_1LC0LC_1LD0LB_1RD0RA    closed             37.1s
+[ 73/143  1884s] 1RB0RD_1LC1RA_0RB0LC_1LD0LA    overflow-leaves-family 42.5s
+[ 74/143  1884s] 1RB0RD_1RC---_1RD1LC_0LC1RA    closed             75.0s
+[ 75/143  1884s] 1RB1LA_0LA0LC_1LC1RD_0RB0RD    closed             26.2s
+[ 76/143  1884s] 1RB1LA_0LA0RC_0LD0RB_1LD1RC    closed             33.4s
+[ 77/143  1884s] 1RB1LA_0LA1RC_0LD0RC_1LD0RB    closed             24.8s
+[ 78/143  1908s] 1RB1LA_0LA1RC_0RD0RB_1LB0LA    closed             74.6s
+[ 79/143  1916s] 1RB1LA_0LA1RC_0RD0RB_1LB0RA    closed             75.7s
+[ 80/143  1959s] 1RB1LA_0LA1RC_0RD0RB_1LB1RA    closed             74.5s
+[ 81/143  1982s] 1RB1LA_0LA1RC_0RD0RB_1LB1RD    closed             74.4s
+[ 82/143  1990s] 1RB1LA_0LA1RC_0RD0RB_1LC1RA    closed             74.0s
+[ 83/143  2033s] 1RB1LA_0LA1RC_0RD0RB_1RA---    closed             74.3s
+[ 84/143  2057s] 1RB1LA_0LA1RC_1LD0RB_1LA1LD    closed             74.4s
+[ 85/143  2063s] 1RB1LA_0LA1RC_1LD0RB_1RA1LD    closed             72.9s
+[ 86/143  2107s] 1RB1LA_0LA1RC_1LD0RB_1RA1RD    closed             73.6s
+[ 87/143  2133s] 1RB1LA_0LA1RC_1RD0RB_1LD0LA    closed             76.7s
+[ 88/143  2137s] 1RB1LA_0LA1RC_1RD0RB_1RA---    closed             74.1s
+[ 89/143  2139s] 1RB1LA_0LC0RD_1LC1RD_0LA0RB    closed             32.4s
+[ 90/143  2434s] 1RB1LA_0LC1RD_1LC1LA_0LA0RB    overflow-leaves-family 300.9s
+[ 91/143  2434s] 1RB1LA_0LC1RD_1RA1LC_0LA0RB    closed             72.4s
+[ 92/143  2434s] 1RB1LA_0RC1LD_1LB1RC_0LA0LB    closed             76.7s
+[ 93/143  2510s] 1RB1LA_0RC1RD_1LB0LD_0LA0RB    overflow-leaves-family 300.4s
+[ 94/143  2510s] 1RB1LA_1LC0RD_0RA0LC_0LA1RD    closed             28.2s
+[ 95/143  2510s] 1RB1LA_1LC0RD_1LA1LB_0LB1RD    closed             42.4s
+[ 96/143  2510s] 1RB1LA_1LC0RD_1RA1LB_0LB1RD    closed             42.1s
+[ 97/143  2510s] 1RB1LA_1LC1RD_0RC1RA_0LA0RB    closed             73.6s
+[ 98/143  2510s] 1RB1LA_1LC1RD_1RC1RA_0LA0RB    closed             73.0s
+[ 99/143  2639s] 1RB1LA_1RC1LB_0LA1RD_0LB0RC    overflow-leaves-family 204.9s
+[100/143  2639s] 1RB1LA_1RC1LB_0LB1RD_1LA0RC    closed             159.4s
+[101/143  2639s] 1RB1LB_1LC0RD_0LB1LA_0LA1RA    no-counter-shape   16.6s
+[102/143  2639s] 1RB1LB_1LC0RD_1LA1LB_0LB1RD    closed             48.0s
+[103/143  2639s] 1RB1LB_1LC0RD_1LA1LB_0LC1RD    closed             35.6s
+[104/143  2865s] 1RB1LB_1LC1LA_0LB1RD_0RB0RD    closed             254.8s
+[105/143  2865s] 1RB1LC_0LA0LD_1LD1RC_0RC1LB    closed             75.3s
+[106/143  2865s] 1RB1LC_0LA0RB_0LD1LD_1RA0RA    closed             46.3s
+[107/143  2865s] 1RB1LC_0LA0RB_0RD1LA_0LC1RD    closed             32.4s
+[108/143  2948s] 1RB1LC_0LA0RC_1LA0RD_0LA1RD    overflow-leaves-family 238.2s
+[109/143  2948s] 1RB1LC_0LA1RC_1LA0RD_0LA1RD    overflow-leaves-family 125.4s
+[110/143  2951s] 1RB1LC_0LA1RC_1RB0LD_0RB1LD    overflow-leaves-family 107.2s
+[111/143  2951s] 1RB1LC_0LC0RB_0RD1LA_0LA1RD    closed             32.0s
+[112/143  2951s] 1RB1LC_0LC0RB_1LA1LD_1RC0LD    closed             30.4s
+[113/143  2966s] 1RB1LC_0LC0RB_1LA1RD_0LA0RD    overflow-leaves-family 38.4s
+[114/143  3024s] 1RB1LC_0RC1LD_1LB1RC_0LA0LB    closed             75.9s
+[115/143  3042s] 1RB1LC_1LA0RC_1LA0RD_0LA1RD    overflow-leaves-family 91.1s
+[116/143  3085s] 1RB1LC_1LB1RA_0LC0LD_0RA0RD    interior-not-covered 118.9s
+[117/143  3085s] 1RB1LC_1LC1RA_0LC0LD_0RA0RD    interior-not-covered 53.9s
+[118/143  3090s] 1RB1LC_1RC1LB_1LA0RD_0LC1RD    closed             48.0s
+[119/143  3109s] 1RB1LC_1RC1RB_1LA0RD_0LC1RD    closed             31.4s
+[120/143  3158s] 1RB1LD_0LB1LC_1LA1RC_0RC0LA    closed             73.8s
+[121/143  3371s] 1RB1LD_0LC0RD_0LA1RC_1LA0RC    overflow-leaves-family 281.1s
+[122/143  3371s] 1RB1LD_0LC1RD_0LA1RC_1LA0RC    overflow-leaves-family 257.4s
+[123/143  3371s] 1RB1LD_1LB1LC_1LA1RC_0RC0LA    closed             73.0s
+[124/143  3371s] 1RB1LD_1LC1LB_0LA1RC_1LA0RC    closed             30.5s
+[125/143  3371s] 1RB1LD_1LC1RA_0RB0LC_0RA0LD    overflow-leaves-family 51.1s
+[126/143  3371s] 1RB1LD_1RC0RC_1LA0LA_0RA0LD    closed             30.2s
+[127/143  3371s] 1RB1LD_1RC1RB_1LC1LA_0RC0RD    no-counter-shape   5.2s
+[128/143  3380s] 1RB1RA_0RC1LB_1LA1RD_1RC0LB    closed             31.4s
+[129/143  3418s] 1RB1RA_1LC0RD_1LA1LB_0LB1RD    closed             51.5s
+[130/143  3418s] 1RB1RA_1LC0RD_1RA1LB_0LB1RD    closed             31.4s
+[131/143  3454s] 1RB1RA_1LC1RB_0RB1LD_1RA0LC    closed             74.2s
+[132/143  3477s] 1RB1RA_1RC1LB_0LB1RD_1LA0RC    closed             75.0s
+[133/143  3518s] 1RB1RB_1LC0RD_0RA1LB_0LC1RD    overflow-leaves-family 99.4s
+[134/143  3518s] 1RB1RC_1LA0LB_1LD0RD_1LB0RC    no-counter-shape   34.6s
+[135/143  3707s] 1RB1RC_1LA1LD_0RB0RC_1LB0LB    closed             230.2s
+[136/143  3789s] 1RB1RC_1LA1RA_0RC1LD_1LB0LD    timeout            300.4s
+[137/143  3789s] 1RB1RC_1LC0RB_1RA0LD_0RA1LD    closed             33.1s
+[138/143  3789s] 1RB1RC_1LC0RB_1RA0LD_0RC1LD    closed             38.8s
+[139/143  3789s] 1RB1RC_1LC1LB_1RA0LD_0RC1LD    closed             54.1s
+[140/143  3789s] 1RB1RC_1LC1RB_1RA0LD_0RC1LD    closed             43.5s
+[141/143  3789s] 1RB1RC_1LC1RC_1RA0LD_0RA1LD    closed             37.1s
+[142/143  3789s] 1RB1RC_1LC1RC_1RA0LD_0RC1LD    closed             48.4s
+[143/143  3789s] 1RB1RD_1LC1RA_0RB0LC_1LA0RD    closed             37.5s
+MERGEDDONE

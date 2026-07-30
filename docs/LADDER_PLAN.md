@@ -796,11 +796,18 @@ template) is a change to that parameter, not to the kernel — which is the test
 ## 4g. The counter's CODE and its step, read not assumed
 
 _Merged from `claude/ladder-two-parameter-anchor-c0vkav`, which ran beside §4f
-on the same files.  The two are complementary and were measured separately
-before the merge: §4f's phase pass closes 87 of 143 at `0246b0c`, this layer
-closes 75 of 143 at `66db337`, the union of the two closed sets is 93, and the
-six rows this layer adds are exactly the six §4f does not reach.  The merged
-number is measured below._
+on the same files.  The two are complementary, and the merge composes them
+exactly: §4f's phase pass closes 87 of 143 alone (`0246b0c`), this layer 75
+alone (`66db337`), their union is 93, and **the merged file measures 93 of 143
+with no row lost in either direction** (`tools/ladder/core143_merged.jsonl`,
+table `core143_merged_rows.txt`).  87 read `binary` at step 1 and 6 read `gray`
+at step 2; all 93 pass the differential on shapes, 92 of 93 on exact step
+counts, all 93 confirm 40 laps from the blank tape, 79 are never-QH.  Against
+the LIVE core the ladder now holds **33 of 62**.
+
+That the two compose is not a given and was the thing worth checking: both
+layers add candidate families competing for the same per-family time budget, so
+either could have squeezed the other's rows past the 300 s cap.  Neither did._
 
 John read `1RB0RB_0LC0LD_1LC1LD_1RA0RA` off the tape: *"a wall and msb on the
 left; when the wall moves over the high bit is set, then it counts up to full,
