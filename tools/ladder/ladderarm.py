@@ -161,7 +161,7 @@ def _nvar(runs):
     return sum(1 for _, _, v in runs if v)
 
 
-def normalize(lhs_s, rhs_s, steps_s):
+def normalize(lhs_s, rhs_s, steps_s, lbs=None):
     """(sconf_lhs, sconf_rhs, ca, cb, el, er) for the Coq kernel.
 
     A side is kept EXACT when it already fits one repeated block -- that is
@@ -177,6 +177,30 @@ def normalize(lhs_s, rhs_s, steps_s):
         raise ArmShape('step count in %d variables' % len(cvars))
     jvar = next(iter(cvars), None)
     ca = cvars.get(jvar, 0) if jvar else 0
+
+    lbs = lbs or {}
+
+    def shift(runs, v, m):
+        out = []
+        for w, c, vs in runs:
+            if v in vs:
+                out.append((w, c + vs[v] * m, vs))
+            else:
+                out.append((w, c, vs))
+        return out
+
+    if jvar is None:
+        vs = set()
+        for _, _, v in Ll + Lr + Rl + Rr:
+            vs |= set(v)
+        if len(vs) == 1:
+            jvar = next(iter(vs))
+    if jvar is not None:
+        m = lbs.get(jvar, 0)
+        if m:
+            Ll, Lr = shift(Ll, jvar, m), shift(Lr, jvar, m)
+            Rl, Rr = shift(Rl, jvar, m), shift(Rr, jvar, m)
+            cb += ca * m
 
     Ll, openL = _split_marker(Ll)
     Rl, openR = _split_marker(Rl)

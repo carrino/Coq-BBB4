@@ -32,7 +32,7 @@ def _conf(c):
     return (q, _side(L), h, _side(R))
 
 
-def derive_arm(tab, lhs_s, rhs_s, steps_s, maxdepth=32, nmax=120):
+def derive_arm(tab, lhs_s, rhs_s, steps_s, lbs=None, maxdepth=32, nmax=120):
     """(chain, ca, cb, el, er, lhs, rhs) or raise ArmShape.
 
     The certificate's right-hand side is printed with trailing blanks
@@ -44,7 +44,7 @@ def derive_arm(tab, lhs_s, rhs_s, steps_s, maxdepth=32, nmax=120):
     The step count is still required to be exactly the certificate's: an arm
     whose count is off by one is a wrong arm, and the kernel says so rather
     than rounding it away."""
-    L, R, ca, cb, el, er = normalize(lhs_s, rhs_s, steps_s)
+    L, R, ca, cb, el, er = normalize(lhs_s, rhs_s, steps_s, lbs)
     c0, c1 = _conf(L), _conf(R)
     chain = LC.derive_chain(tab, el, er, c0, c1, maxdepth=maxdepth,
                             nmax=nmax, lift=True)
@@ -78,7 +78,7 @@ def main():
     for a in cert['arms']:
         try:
             chain, ca, cb, el, er, _, _ = derive_arm(
-                tab, a['lhs'], a['rhs'], a['steps'],
+                tab, a['lhs'], a['rhs'], a['steps'], a.get('lbs'),
                 maxdepth=args.maxdepth, nmax=args.nmax)
             print('%-8s ok  %2d steps  %d*j+%-3d el=%-5s er=%-5s  %s'
                   % (a['name'], len(chain), ca, cb, el, er, chain))

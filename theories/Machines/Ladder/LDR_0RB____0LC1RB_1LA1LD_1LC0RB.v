@@ -83,9 +83,9 @@ Proof. eapply arm_sound; [exact rules_sound_0RB____0LC1RB_1LA1LD_1LC0RB | exact 
 
 (* B[0] L<10^1+y0> R<>  ==>  B[0] L<1^3+2*y0> R<>   [8+4*y0 steps] *)
 Definition arm7_0RB____0LC1RB_1LA1LD_1LC0RB : LRule :=
-  mkLRule (mkC StB (mkS [S1;S0] [S1;S0] 1 0 []) S0 (mkS [] [] 0 0 []))
-          (mkC StB (mkS [S1;S1] [S1;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 4 8.
-Definition ch_arm7_0RB____0LC1RB_1LA1LD_1LC0RB : list rstep := [RB (SWin 2);RB (SCycL 2 0);RB (SWinL 4);RB (SCycR 2);RB (SWin 2)].
+  mkLRule (mkC StB (mkS [S1;S0;S1;S0;S1;S0;S1;S0] [S1;S0] 1 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StB (mkS [S1;S1;S1;S1;S1;S1;S1;S1] [S1;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 4 20.
+Definition ch_arm7_0RB____0LC1RB_1LA1LD_1LC0RB : list rstep := [RB (SWin 8);RB (SCycL 2 0);RB (SWinL 4);RB (SCycR 2);RB (SWin 8)].
 Lemma ok_arm7_0RB____0LC1RB_1LA1LD_1LC0RB :
   check_arm tm true true rules arm7_0RB____0LC1RB_1LA1LD_1LC0RB ch_arm7_0RB____0LC1RB_1LA1LD_1LC0RB = true.
 Proof. vm_compute. reflexivity. Qed.
@@ -127,9 +127,9 @@ Proof. eapply arm_sound; [exact rules_sound_0RB____0LC1RB_1LA1LD_1LC0RB | exact 
 
 (* B[0] L<10^1+y0 1^2+y1> R<>  ==>  B[0] L<1^3+2*y0 0^1 1^y1> R<>   [8+4*y0 steps] *)
 Definition arm10_0RB____0LC1RB_1LA1LD_1LC0RB : LRule :=
-  mkLRule (mkC StB (mkS [S1;S0] [S1;S0] 1 0 [S1;S1]) S0 (mkS [] [] 0 0 []))
-          (mkC StB (mkS [S1;S1] [S1;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 4 8.
-Definition ch_arm10_0RB____0LC1RB_1LA1LD_1LC0RB : list rstep := [RB (SWin 2);RB (SCycL 2 0);RB (SWin 4);RB (SCycR 2);RB (SWin 2)].
+  mkLRule (mkC StB (mkS [S1;S0;S1;S0;S1;S0] [S1;S0] 1 0 [S1;S1]) S0 (mkS [] [] 0 0 []))
+          (mkC StB (mkS [S1;S1;S1;S1;S1;S1] [S1;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 4 16.
+Definition ch_arm10_0RB____0LC1RB_1LA1LD_1LC0RB : list rstep := [RB (SWin 6);RB (SCycL 2 0);RB (SWin 4);RB (SCycR 2);RB (SWin 6)].
 Lemma ok_arm10_0RB____0LC1RB_1LA1LD_1LC0RB :
   check_arm tm false true rules arm10_0RB____0LC1RB_1LA1LD_1LC0RB ch_arm10_0RB____0LC1RB_1LA1LD_1LC0RB = true.
 Proof. vm_compute. reflexivity. Qed.
@@ -160,9 +160,9 @@ Proof. eapply arm_sound; [exact rules_sound_0RB____0LC1RB_1LA1LD_1LC0RB | exact 
 
 (* B[0] L<10^1+y0 1^2+y1 10^1+y2> R<>  ==>  B[0] L<1^3+2*y0 0^1 1^y1 10^1+y2> R<>   [8+4*y0 steps] *)
 Definition arm12_0RB____0LC1RB_1LA1LD_1LC0RB : LRule :=
-  mkLRule (mkC StB (mkS [S1;S0] [S1;S0] 1 0 [S1;S1]) S0 (mkS [] [] 0 0 []))
-          (mkC StB (mkS [S1;S1] [S1;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 4 8.
-Definition ch_arm12_0RB____0LC1RB_1LA1LD_1LC0RB : list rstep := [RB (SWin 2);RB (SCycL 2 0);RB (SWin 4);RB (SCycR 2);RB (SWin 2)].
+  mkLRule (mkC StB (mkS [S1;S0;S1;S0;S1;S0] [S1;S0] 1 0 [S1;S1]) S0 (mkS [] [] 0 0 []))
+          (mkC StB (mkS [S1;S1;S1;S1;S1;S1] [S1;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 4 16.
+Definition ch_arm12_0RB____0LC1RB_1LA1LD_1LC0RB : list rstep := [RB (SWin 6);RB (SCycL 2 0);RB (SWin 4);RB (SCycR 2);RB (SWin 6)].
 Lemma ok_arm12_0RB____0LC1RB_1LA1LD_1LC0RB :
   check_arm tm false true rules arm12_0RB____0LC1RB_1LA1LD_1LC0RB ch_arm12_0RB____0LC1RB_1LA1LD_1LC0RB = true.
 Proof. vm_compute. reflexivity. Qed.
@@ -193,9 +193,9 @@ Proof. eapply arm_sound; [exact rules_sound_0RB____0LC1RB_1LA1LD_1LC0RB | exact 
 
 (* B[0] L<10^1+y0 1^2+y1 10^1+y2 1^2+y3 #^1> R<>  ==>  B[0] L<1^3+2*y0 0^1 1^y1 10^1+y2 1^2+y3 #^1> R<>   [8+4*y0 steps] *)
 Definition arm8_0RB____0LC1RB_1LA1LD_1LC0RB : LRule :=
-  mkLRule (mkC StB (mkS [S1;S0] [S1;S0] 1 0 [S1;S1]) S0 (mkS [] [] 0 0 []))
-          (mkC StB (mkS [S1;S1] [S1;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 4 8.
-Definition ch_arm8_0RB____0LC1RB_1LA1LD_1LC0RB : list rstep := [RB (SWin 2);RB (SCycL 2 0);RB (SWin 4);RB (SCycR 2);RB (SWin 2)].
+  mkLRule (mkC StB (mkS [S1;S0;S1;S0;S1;S0] [S1;S0] 1 0 [S1;S1]) S0 (mkS [] [] 0 0 []))
+          (mkC StB (mkS [S1;S1;S1;S1;S1;S1] [S1;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 4 16.
+Definition ch_arm8_0RB____0LC1RB_1LA1LD_1LC0RB : list rstep := [RB (SWin 6);RB (SCycL 2 0);RB (SWin 4);RB (SCycR 2);RB (SWin 6)].
 Lemma ok_arm8_0RB____0LC1RB_1LA1LD_1LC0RB :
   check_arm tm false true rules arm8_0RB____0LC1RB_1LA1LD_1LC0RB ch_arm8_0RB____0LC1RB_1LA1LD_1LC0RB = true.
 Proof. vm_compute. reflexivity. Qed.

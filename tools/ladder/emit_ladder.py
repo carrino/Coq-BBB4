@@ -248,7 +248,7 @@ Proof. apply rule_sound_nil. exact ladder_ok_%(mid)s. Qed.
         nm = a['name']
         try:
             chain, ca, cb, el, er, c0, c1 = derive_arm(
-                tab, a['lhs'], a['rhs'], a['steps'])
+                tab, a['lhs'], a['rhs'], a['steps'], a.get('lbs'))
         except (ArmShape, ValueError) as e:
             bad.append((nm, str(e)))
             L.append('(* %s: NO KERNEL CHAIN -- %s *)\n' % (nm, e))
