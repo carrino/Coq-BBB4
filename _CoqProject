@@ -1341,6 +1341,7 @@ theories/Counters/LapGlueQuiet.v
 theories/Checkers/LapAvoid.v
 theories/Counters/LapCertGlue.v
 theories/Counters/LapCertGlueLift.v
+theories/Counters/LapCertGluePar.v
 theories/Counters/SkipGlue.v
 theories/Counters/QuadGlue.v
 theories/Counters/GpCounter.v

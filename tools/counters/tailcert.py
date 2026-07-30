@@ -495,7 +495,15 @@ def validate(tab, D, hi=HI):
 
 
 def visits(tab, D):
-    """A witness for every state at EVERY overflow anchor, both parities.
+    """A witness for every state at the overflow anchors of at least ONE
+    octave parity.
+
+    A state that fires in one arm and not the other is NOT a dead row: the
+    overflow anchors alternate parity, so a single-parity witness reaches
+    every anchor in at most one extra lap
+    ([Counters/LapCertGluePar.vis_via_ovf_par_lift]).  Before wave-33 both
+    parities were demanded here and the row was filed
+    `no visit witness for state <q> at octave parity <b>'.
 
     On a nested arm the BOOT chain is tried first and the EXIT chain second.
     A state that fires only after the inner counter has run its `Theta(2^j)`
@@ -522,8 +530,9 @@ def visits(tab, D):
                 if w is not None:
                     pre[b] = ('exit', w)
                     continue
-            raise RegError('no visit witness for state %s at octave '
-                           'parity %d' % (LAB[q], b))
+        if not pre:
+            raise RegError('no visit witness for state %s at either octave '
+                           'parity' % LAB[q])
         out[q] = pre
     return out
 
@@ -625,7 +634,7 @@ From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Counters Require Import WTape LapGlue MonoCounter JpCounter
                                   @MODS@ LapCertGlue LapCertGlueLift
                                   IXPGadgets NestedLap NestedLapLift
-                                  RegGlue.
+                                  RegGlue@PARMOD@.
 From BBB4.Census Require Import TNF_QH.
 From BBB4.Checkers Require Import LapDecider.
 Import ListNotations.
@@ -689,28 +698,7 @@ Proof.
   rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.
 Qed.
 
-(** ** Visits
-
-    [LapCertGlueLift.vis_via_ovf_lift] asks for a witness at EVERY overflow
-    anchor, and the overflow anchors alternate frames -- so the witness is a
-    prefix of whichever of the two overflow chains that parity uses, plus the
-    peel's leftover [p = 1]. *)
-
-@VISO@@VISZ@Lemma vis_@ID@ : forall p q, (@P0@ <= p)%positive ->
-  exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q.
-Proof.
-  intros p q _.
-  apply (vis_via_ovf_lift tm Cc lapi_@ID@ q).
-  intros p1 j1 E1. destruct j1 as [|j2].
-  - assert (H1 : p1 = 1%positive)
-      by (rewrite (cview_none_shape p1 0 E1); reflexivity).
-    subst p1. apply vis_lift_of_csteps. destruct q.
-@VISZCASES@
-  - apply vis_lift_of_csteps. destruct (podd p1) eqn:Hb1.
-@VISITS1@
-@VISITS0@
-Qed.
-
+@VISBLOCK@
 Theorem nqh_@ID@ : NeverQuasiHaltsSt tm.
 Proof. apply (glue_neverqh_lift tm Cc @P0@). - exact boot_@ID@. - intros p Hp. apply (lap_@ID@ p Hp). - intros p q Hp. apply (vis_@ID@ p q Hp). Qed.
 
@@ -1017,6 +1005,80 @@ Qed.
 
 '''
 
+VIS_HEAD = r"""(** ** Visits
+
+    [LapCertGlueLift.vis_via_ovf_lift] asks for a witness at EVERY overflow
+    anchor, and the overflow anchors alternate frames -- so the witness is a
+    prefix of whichever of the two overflow chains that parity uses, plus the
+    peel's leftover [p = 1]. *)
+
+@VISO@@VISZ@Lemma vis_@ID@ : forall p q, (@P0@ <= p)%positive ->
+  exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q.
+Proof.
+  intros p q _.
+  apply (vis_via_ovf_lift tm Cc lapi_@ID@ q).
+  intros p1 j1 E1. destruct j1 as [|j2].
+  - assert (H1 : p1 = 1%positive)
+      by (rewrite (cview_none_shape p1 0 E1); reflexivity).
+    subst p1. apply vis_lift_of_csteps. destruct q.
+@VISZCASES@
+  - apply vis_lift_of_csteps. destruct (podd p1) eqn:Hb1.
+@VISITS1@
+@VISITS0@
+Qed.
+"""
+
+# The MIXED block, for a board where at least one state fires in ONE of the
+# two overflow arms only.  The two arms are different runs, so a live state
+# can have no prefix witness in one of them; [LapCertGluePar] weakens the
+# premise for exactly those states -- the overflow anchors alternate parity,
+# so a witness at one parity reaches every anchor in at most one extra lap.
+# States witnessed at both parities keep the ordinary route verbatim.
+VIS_MIXED_HEAD = r"""(** ** Visits
+
+    [LapCertGlueLift.vis_via_ovf_lift] asks for a witness at EVERY overflow
+    anchor, and the overflow anchors alternate frames -- so the witness is a
+    prefix of whichever of the two overflow chains that parity uses, plus the
+    peel's leftover [p = 1].
+
+    @PARWHO@ in ONE of the two arms only, which is not a reason to give
+    up on it: the overflow anchors ALTERNATE parity, so a witness at a single
+    parity is reached from every anchor in at most one extra lap.  That is
+    [LapCertGluePar.vis_via_ovf_par_lift], whose premise ranges over the
+    overflow anchors of one parity and which consumes the OVERFLOW lap
+    [lapo_@ID@] to cross the octave boundary. *)
+
+@VISO@@VISZ@Lemma vis_@ID@ : forall p q, (@P0@ <= p)%positive ->
+  exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q.
+Proof.
+  intros p q Hp.
+  assert (H2 : (2 <= p)%positive).
+  { apply Pos.le_trans with (@P0@)%positive; [| exact Hp].
+    unfold Pos.le; vm_compute; discriminate. }
+  destruct q.
+@VISCASES@
+Qed.
+"""
+
+VIS_BOTH_CASE = r"""  - (* @STQ@ fires in both overflow arms *)
+    apply (vis_via_ovf_lift tm Cc lapi_@ID@ @STQ@).
+    intros p1 j1 E1. destruct j1 as [|j2].
+    + assert (H1 : p1 = 1%positive)
+        by (rewrite (cview_none_shape p1 0 E1); reflexivity).
+      subst p1. apply vis_lift_of_csteps. exact visz@STQ@_@ID@.
+    + apply vis_lift_of_csteps. destruct (podd p1) eqn:Hb1.
+      * exact (vis@W1@1_@ID@ @CH1@ @STQ@ ltac:(vm_compute; reflexivity)
+                 p1 j2 E1 Hb1).
+      * exact (vis@W0@0_@ID@ @CH0@ @STQ@ ltac:(vm_compute; reflexivity)
+                 p1 j2 E1 Hb1)."""
+
+VIS_PAR_CASE = r"""  - (* @STQ@ fires in the parity-@PBV@ arm ONLY -- LapCertGluePar *)
+    apply (vis_via_ovf_par_lift tm Cc lapi_@ID@ lapo_@ID@ @PBV@ @STQ@);
+      [| exact H2].
+    intros p1 j2 E1 Hb1. apply vis_lift_of_csteps.
+    exact (vis@PW@@PB@_@ID@ @PCH@ @STQ@ ltac:(vm_compute; reflexivity)
+             p1 j2 E1 Hb1)."""
+
 VISZ = ('(** State @STQ@ at the peel\'s leftover overflow anchor [p = 1]. *)\n'
         'Lemma visz@STQ@_@ID@ : exists k c, csteps tm k (Cc 1) = Some c '
         '/\\ fst c = @STQ@.\n'
@@ -1109,7 +1171,7 @@ def render(D):
     # a state witnessed in the EXIT chain needs `visx@B@`, which only a nested
     # arm has; `visits` never files one against a flat arm.
     needx = set(b for q in range(4) for b in (0, 1)
-                if D['vis'][q][b][0] == 'exit')
+                if b in D['vis'][q] and D['vis'][q][b][0] == 'exit')
 
     cindefs, odefs, oglue, iepows, viso = [], [], [], [], []
     for b in (1, 0):
@@ -1160,16 +1222,49 @@ def render(D):
     vzcases = '\n'.join('    + exact (visz%s_%s).' % (ST[q], ID)
                         for q in range(4))
 
-    vis = []
-    for b in (1, 0):
-        blk = ['    + destruct q.']
+    # A state witnessed at ONE parity only takes the [LapCertGluePar] route;
+    # when every state is witnessed at both, the board renders exactly as it
+    # did before wave-33 (this is the byte-identical case).
+    single = {q: list(D['vis'][q])[0] for q in range(4)
+              if len(D['vis'][q]) == 1}
+    vis = ['', '']
+    if not single:
+        vis = []
+        for b in (1, 0):
+            blk = ['    + destruct q.']
+            for q in range(4):
+                where, ch = D['vis'][q][b]
+                blk.append('      * exact (vis%s%d_%s %s %s '
+                           'ltac:(vm_compute; reflexivity) p1 j2 E1 Hb1).'
+                           % ('o' if where == 'boot' else 'x', b, ID,
+                              EL.cchain(ch), ST[q]))
+            vis.append('\n'.join(blk))
+
+    if not single:
+        visblock, parmod, viscases, parwho = VIS_HEAD, '', '', ''
+    else:
+        visblock, parmod = VIS_MIXED_HEAD, ' LapCertGluePar'
+        cases = []
         for q in range(4):
-            where, ch = D['vis'][q][b]
-            blk.append('      * exact (vis%s%d_%s %s %s '
-                        'ltac:(vm_compute; reflexivity) p1 j2 E1 Hb1).'
-                        % ('o' if where == 'boot' else 'x', b, ID,
-                           EL.cchain(ch), ST[q]))
-        vis.append('\n'.join(blk))
+            if q in single:
+                b = single[q]
+                where, ch = D['vis'][q][b]
+                cases.append(_fill(VIS_PAR_CASE, {
+                    '@STQ@': ST[q], '@ID@': ID, '@PB@': str(b),
+                    '@PBV@': 'true' if b else 'false',
+                    '@PW@': 'o' if where == 'boot' else 'x',
+                    '@PCH@': EL.cchain(ch)}))
+                continue
+            r = {'@STQ@': ST[q], '@ID@': ID}
+            for b in (0, 1):
+                where, ch = D['vis'][q][b]
+                r['@W%d@' % b] = 'o' if where == 'boot' else 'x'
+                r['@CH%d@' % b] = EL.cchain(ch)
+            cases.append(_fill(VIS_BOTH_CASE, r))
+        viscases = '\n'.join(cases)
+        qs = [ST[q] for q in sorted(single)]
+        parwho = ('%s fires' % qs[0] if len(qs) == 1 else
+                  '%s each fire' % ', '.join(qs))
 
     nest = [b for b in (1, 0) if D['ovf'][b]['kind'] == 'nested']
     reps = {
@@ -1185,6 +1280,8 @@ def render(D):
         '@INTDEFS@': ''.join(idefs), '@INTGLUE@': ''.join(iglue),
         '@OVFDEFS@': ''.join(odefs), '@OVFGLUE@': ''.join(oglue),
         '@IEPOWS@': ''.join(iepows),
+        '@VISBLOCK@': visblock, '@PARMOD@': parmod,
+        '@VISCASES@': viscases, '@PARWHO@': parwho,
         '@VISO@': ''.join(viso), '@VISZ@': vz, '@VISZCASES@': vzcases,
         '@VISITS1@': vis[0], '@VISITS0@': vis[1],
         '@CIZ@': '%d*j+%d / %d*j+%d' % (D['ints'][1]['cz']
