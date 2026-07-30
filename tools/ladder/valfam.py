@@ -16,10 +16,18 @@ rather than as one rule per shape:
                                  followed by a clear one; the j set digits are
                                  drained by ONE BULK application of a proven
                                  ladder rule, so j is symbolic;
-    overflow   E(2^k-1) ->+ E(2^k)  the fill: the counter widens.
+    overflow   E(p, b^p-1) ->+ E(p', c)   the fill: the counter WIDENS, and
+                                 this is the only arm that moves the width.
 
-Every v takes exactly one arm, so the family is closed by construction, and
-the two arms plus a concrete boot are a never-QH certificate CANDIDATE.
+The width p is the family's SECOND PARAMETER, and the fill law -- what the
+top string of width p goes to -- is INFERRED, never assumed (`Fill`).  It used
+to be hard-coded as the odometer carry `[0]*p ++ [1]`, and every machine that
+does something else (widen by two, reset to zero, land on a fixed low string)
+read as "overflow leaves the family" against an assumption rather than against
+its own behaviour.
+
+Every (p, v) takes exactly one arm, so the family is closed by construction,
+and the arms plus a concrete boot are a never-QH certificate CANDIDATE.
 
 The alphabet is NOT curated.  It is read off the ladder: the block words the
 ladder's own carry rules DRAIN are the digits (up to phase, i.e. rotation),
@@ -112,6 +120,7 @@ class Fam:
         self.l = len(self.digs[0])
         self.b = len(self.digs)
         self.idx = {d: i for i, d in enumerate(self.digs)}
+        self.fill = None                  # the width law, inferred later
 
     def key(self):
         return (self.q, self.h, self.side, self.other, tuple(self.digs),
@@ -200,6 +209,58 @@ class Fam:
         oc = runs_cells(self.other_side(cfg))
         return oc is not None and tuple(oc) == self.other
 
+    def visible(self, cfg, env=None):
+        """Counter-side cells up to the wall marker; (cells, marker_seen)."""
+        out = []
+        for w, e in self.counter_side(cfg):
+            if w == MARKER:
+                return out, True
+            n = e.subst(env or {})
+            if not n.is_const() or n.c < 0:
+                return None, None
+            out.extend(list(w) * n.c)
+        while out and out[-1] == 0:
+            out.pop()
+        return out, False
+
+    def aligned(self, cells):
+        """Is this a digit-aligned PREFIX of some family member?  The wall
+        marker hides the rest, so a local arm's landing config can only be
+        checked this far -- but this far is enough to catch a stop that is
+        mid-digit, which is what landing off the family looks like."""
+        n = min(len(cells), len(self.pre))
+        if tuple(cells[:n]) != self.pre[:n]:
+            return False
+        mid = cells[len(self.pre):]
+        full, rem = divmod(len(mid), self.l)
+        for i in range(full):
+            if tuple(mid[i * self.l:(i + 1) * self.l]) not in self.idx:
+                return False
+        if rem:
+            part = tuple(mid[full * self.l:])
+            if not any(d[:rem] == part for d in self.digs):
+                return False
+        return True
+
+    def member(self, cfg, env=None):
+        """Anchor-shaped AND actually a family MEMBER -- the counter side
+        decodes to a digit string (or, behind the wall, is digit-aligned so
+        far).
+
+        `anchor_shaped` alone is not enough to stop an arm's replay at: the
+        head crosses the anchor cell several times per increment and the far
+        side is often back in place mid-carry, so the FIRST anchor-shaped
+        config an arm reaches is routinely a mid-flight tape that decodes to
+        nothing.  Stopping there is what "arm lands off the family" is, and it
+        is the same class of bug as the differential probe fixed in cf7eeab --
+        both stopped at an anchor VISIT instead of at a family MEMBER."""
+        if not self.anchor_shaped(cfg):
+            return False
+        cells, mk = self.visible(cfg, env)
+        if cells is None:
+            return False
+        return self.aligned(cells) if mk else self.decode(cells) is not None
+
     def view(self, cfg, m, marker=True):
         """Local view: the counter side is truncated at m runs behind a wall
         marker; the other side stays exact.  With marker=True the wall is
@@ -231,18 +292,126 @@ class Fam:
                 'order': 'LSB nearest head'}
 
 
+class Fill:
+    """The FILL LAW: what the top string of width p goes to.
+
+    `next_ds` used to hard-code the odometer carry -- all-max of width p goes
+    to `[0]*p ++ [1]`, the value b^p -- and then reported every machine that
+    does something else as "overflow leaves the family".  The law is a
+    property of the machine, so it is read off the trace like the alphabet and
+    the digit values are: observe the top string's successor at two widths and
+    interpolate.
+
+    The interpolant is `pre ++ mid^n ++ suf` at width `p + s`, which is the
+    smallest shape closing over what the rows actually do: the carry
+    (`s=1, suf=[1]`), the reset-and-widen (`s=1`, nothing else), the
+    parity-two widen (`s=2`) -- and, with a non-empty `pre`/`suf`, the fills
+    that land on a fixed low string at the new width.  One `find_IH` at the
+    width level; the arms below it are unchanged."""
+
+    __slots__ = ('s', 'pre', 'mid', 'suf', 'seen')
+
+    def __init__(self, s, pre=(), mid=0, suf=(), seen=()):
+        self.s, self.mid = s, mid
+        self.pre, self.suf = tuple(pre), tuple(suf)
+        self.seen = tuple(seen)
+
+    def apply(self, k):
+        n = k + self.s - len(self.pre) - len(self.suf)
+        if n < 0:
+            return None
+        return list(self.pre) + [self.mid] * n + list(self.suf)
+
+    def is_carry(self):
+        return (self.s, self.pre, self.mid, self.suf) == (1, (), 0, (1,))
+
+    def json(self):
+        return {'widens_by': self.s, 'target_prefix': list(self.pre),
+                'target_fill_digit': self.mid, 'target_suffix': list(self.suf),
+                'law': 'E(p, b^p - 1) -> E(p+%d, %s)'
+                       % (self.s, ''.join(map(str, self.pre)) + '<%d>' % self.mid
+                          + ''.join(map(str, self.suf))),
+                'inferred_from_widths': list(self.seen),
+                'is_the_odometer_carry': self.is_carry()}
+
+
+CARRY = Fill(1, (), 0, (1,))
+
+
+def fit_fill(obs):
+    """[(k, target digit string)] -> Fill, or None.
+
+    Two observations at different widths pin (s, pre, mid, suf); the rest are
+    a check.  Interpolation, not a guess: a law that does not reproduce every
+    observed fill is rejected outright."""
+    obs = [(k, list(t)) for k, t in obs if t is not None]
+    if len(obs) < 2:
+        return None
+    ss = {len(t) - k for k, t in obs}
+    if len(ss) != 1:
+        return None
+    s = ss.pop()
+    a, b = sorted(obs, key=lambda x: x[0])[:2]
+    if a[0] == b[0]:
+        return None
+    ta, tb = a[1], b[1]
+    p = 0
+    while p < min(len(ta), len(tb)) and ta[p] == tb[p]:
+        p += 1
+    q = 0
+    while (q < min(len(ta), len(tb)) - p and ta[-1 - q] == tb[-1 - q]):
+        q += 1
+    mids = {d for t in (ta, tb) for d in t[p:len(t) - q]}
+    if len(mids) > 1:
+        return None
+    mid = mids.pop() if mids else 0
+    pre, suf = ta[:p], ta[len(ta) - q:] if q else []
+    while pre and pre[-1] == mid:
+        pre.pop()
+    while suf and suf[0] == mid:
+        suf.pop(0)
+    f = Fill(s, pre, mid, suf, sorted(k for k, _ in obs))
+    return f if all(f.apply(k) == t for k, t in obs) else None
+
+
 def next_ds(fam, ds):
-    """Odometer successor; widens on overflow."""
+    """Odometer successor inside a width; the family's FILL LAW at the top."""
     ds = list(ds)
     i = 0
     while i < len(ds) and ds[i] == fam.b - 1:
         ds[i] = 0
         i += 1
     if i == len(ds):
-        ds.append(1)
-    else:
-        ds[i] += 1
+        return (fam.fill or CARRY).apply(len(ds))
+    ds[i] += 1
     return ds
+
+
+def observe_fill(fam, snaps, want=6):
+    """Read the fill law off the anchor visits: every time the machine is at
+    the top string of some width, record where the NEXT family member is."""
+    seq = []
+    for t, s in snaps:
+        if s is None:
+            break
+        if not fam.anchor_shaped(s):
+            continue
+        c = runs_cells(fam.counter_side(s))
+        if c is None:
+            continue
+        seq.append(fam.decode(c))
+    obs, seen = [], set()
+    for a, b in zip(seq, seq[1:]):
+        if not a or b is None:
+            continue
+        k = len(a)
+        if any(d != fam.b - 1 for d in a) or k in seen:
+            continue
+        seen.add(k)
+        obs.append((k, b))
+        if len(obs) >= want:
+            break
+    return obs
 
 
 def trailing_max(fam, ds):
@@ -538,6 +707,15 @@ def sample_digits(fam, kmax=5, extra=(6, 7, 8, 9)):
         for seed in (0, 1, 2):
             ds = [(i * 7 + seed * 3 + k) % fam.b for i in range(k)]
             out.append(ds)
+    # the TOP string at every width, and where the fill law sends it.  The
+    # fill arm is generalized across these, so they have to be in the sample
+    # at more widths than the exhaustive part reaches -- one instance is a
+    # base case, several are an induction.
+    for k in range(1, 13):
+        out.append([fam.b - 1] * k)
+        t = (fam.fill or CARRY).apply(k)
+        if t:
+            out.append(t)
     return out
 
 
@@ -628,12 +806,16 @@ def repair(tm, rules, fam, arms, uncovered, ctr, groups, budget=400,
                     lhs, lbs = _generalize(insts + [(ds, view)], pin)
                     if lhs is None:
                         continue
+                    # try EVERY anchor stop the replay offers, not just the
+                    # first: past a fill the family member is several anchor
+                    # visits along, and taking the first stop is exactly how
+                    # an arm lands off the family.
                     for arm in _replay_arm(tm, rules, fam, lhs, lbs,
                                            next(ctr), budget):
                         out = rep.apply_rule(arm.rule, cfg, bulk=False)
                         if out is not None and cfg_cells(out) == want:
                             got = arm
-                        break
+                            break
                     if got:
                         break
                 if got:
@@ -671,12 +853,34 @@ def _generalize(insts, pin=()):
     return lhs, lbs
 
 
-def _replay_arm(tm, rules, fam, lhs, lbs, idx, budget):
+def _member_env(fam, cfg, lbs, tries=3):
+    """Membership of a SYMBOLIC landing config: check it at the free
+    variables' lower bounds and a couple of offsets.  All instantiations must
+    be members -- one mid-digit witness is enough to reject the stop."""
+    vs = sorted({v for e in cfg_counts(cfg) for v in e.v})
+    if not vs:
+        return fam.member(cfg)
+    for d in range(tries):
+        env = {v: lbs.get(v, 1) + d for v in vs}
+        if not fam.member(cfg, env):
+            return False
+    return True
+
+
+def _replay_arm(tm, rules, fam, lhs, lbs, idx, budget, max_stops=6):
+    """Replay to the anchor, yielding at each stop.
+
+    It used to yield only the FIRST anchor-shaped config and return.  An
+    increment crosses the anchor cell several times, so the first stop is
+    frequently a mid-flight tape rather than a family member -- and past a
+    fill, where the counter widens, the family member is several visits
+    further on.  Now the member stops come first, and the raw first stop is
+    kept only as the fallback, so nothing that used to replay stops doing so."""
     rep = Replay(tm, rules, lbs=dict(lbs), budget=budget)
     cur = rep.step(lhs)
     if cur is None:
         return
-    ops, uses, n = ['step'], set(), 0
+    ops, uses, n, stops, fallback = ['step'], set(), 0, 0, None
     while cur is not None and n < budget:
         n += 1
         if fam.anchor_shaped(cur):
@@ -684,8 +888,14 @@ def _replay_arm(tm, rules, fam, lhs, lbs, idx, budget):
                         dict(rep.fired), level=1)
             kind = 'local' if any(w == MARKER for w, _ in
                                   fam.counter_side(cur)) else 'global'
-            yield Arm('arm%d' % idx, rule, list(ops), kind, set(uses))
-            return
+            arm = Arm('arm%d' % idx, rule, list(ops), kind, set(uses))
+            stops += 1
+            if _member_env(fam, cur, rep.lbs):
+                yield arm
+            elif fallback is None:
+                fallback = arm
+            if stops >= max_stops:
+                break
         nxt = None
         for ru in rules:
             nxt = rep.apply_rule(ru, cur)
@@ -702,6 +912,8 @@ def _replay_arm(tm, rules, fam, lhs, lbs, idx, budget):
             if nxt is not None:
                 ops.append('step')
         cur = nxt
+    if fallback is not None:
+        yield fallback
 
 
 # ------------------------------------------------------------------ coverage
@@ -727,39 +939,68 @@ def only_at_overflow(fam, strings):
     return bool(strings) and all(v == fam.b ** k - 1 for k, v in strings)
 
 
-def cover(tm, fam, arms, kmax=7):
-    """Every digit string up to kmax digits: the FIRST applicable arm (by
-    spec_key) must land on E(v+1).  Returns (ok, covmap, report)."""
-    rep = Replay(tm, [], budget=4, raise_ok=False)
-    arms = sorted(arms, key=spec_key)
-    uncovered, wrong, used = [], [], defaultdict(int)
-    covmap = defaultdict(set)
-    total = 0
+def all_strings(fam, kmax):
+    out = []
     for k in range(1, kmax + 1):
         for v in range(fam.b ** k):
             ds, x = [], v
             for _ in range(k):
                 ds.append(x % fam.b)
                 x //= fam.b
-            total += 1
-            cfg = fam.cfg(ds)
-            want = cfg_cells(fam.cfg(next_ds(fam, ds)))
-            hit = 0
-            for arm in arms:
-                out = rep.apply_rule(arm.rule, cfg, bulk=False)
-                if out is None:
-                    continue
-                if cfg_cells(out) != want:
-                    wrong.append((arm.name, k, v))
-                    break
-                hit += 1
-                used[arm.name] += 1
-                covmap[arm.name].add((k, v))
-                if len(arm.covers) < 8:
-                    arm.covers.append(v)
+            out.append(ds)
+    return out
+
+
+def reach(fam, boot_ds, kmax, cap=4000):
+    """The states the machine actually VISITS: walk the successor from the
+    boot.  With a fill law that widens by more than one, the widths reachable
+    from the boot are one parity class -- and demanding coverage of the other
+    parity demands arms for configurations the run never enters.  (That is the
+    `..._at_octave_parity_0` gate label, read from this side.)"""
+    out, seen, ds = [], set(), list(boot_ds)
+    while ds is not None and len(ds) <= kmax and len(out) < cap:
+        key = (len(ds), fam.value(ds))
+        if key in seen:
+            break
+        seen.add(key)
+        out.append(list(ds))
+        ds = next_ds(fam, ds)
+    return out
+
+
+def cover(tm, fam, arms, kmax=7, states=None):
+    """Every digit string in `states` (default: all up to kmax digits): the
+    FIRST applicable arm (by spec_key) must land on the successor.  Returns
+    (ok, covmap, report)."""
+    rep = Replay(tm, [], budget=4, raise_ok=False)
+    arms = sorted(arms, key=spec_key)
+    uncovered, wrong, used = [], [], defaultdict(int)
+    covmap = defaultdict(set)
+    total = 0
+    for ds in (all_strings(fam, kmax) if states is None else states):
+        nd = next_ds(fam, ds)
+        if nd is None:
+            continue
+        k, v = len(ds), fam.value(ds)
+        total += 1
+        cfg = fam.cfg(ds)
+        want = cfg_cells(fam.cfg(nd))
+        hit = 0
+        for arm in arms:
+            out = rep.apply_rule(arm.rule, cfg, bulk=False)
+            if out is None:
+                continue
+            if cfg_cells(out) != want:
+                wrong.append((arm.name, k, v))
                 break
-            if hit == 0 and (not wrong or wrong[-1][1:] != (k, v)):
-                uncovered.append((k, v))
+            hit += 1
+            used[arm.name] += 1
+            covmap[arm.name].add((k, v))
+            if len(arm.covers) < 8:
+                arm.covers.append(v)
+            break
+        if hit == 0 and (not wrong or wrong[-1][1:] != (k, v)):
+            uncovered.append((k, v))
     ok = not uncovered and not wrong
     return ok, covmap, {'strings': total, 'kmax': kmax,
                 'uncovered': uncovered[:12], 'n_uncovered': len(uncovered),
@@ -773,18 +1014,18 @@ def cover(tm, fam, arms, kmax=7):
                 'arm_hits': dict(used)}
 
 
-def prune(tm, fam, arms, kmax):
+def prune(tm, fam, arms, kmax, states=None):
     """Drop any arm the family still covers correctly without: the window
     sweep leaves whole-side variants of arms whose local form already does
     the job.  Least-used first, one re-check per drop."""
-    ok, covmap, _ = cover(tm, fam, arms, kmax)
+    ok, covmap, _ = cover(tm, fam, arms, kmax, states)
     if not ok:
         return arms
     for a in sorted(arms, key=lambda a: len(covmap.get(a.name, ()))):
         if len(arms) == 1:
             break
         trial = [x for x in arms if x is not a]
-        ok2, cov2, _ = cover(tm, fam, trial, kmax)
+        ok2, cov2, _ = cover(tm, fam, trial, kmax, states)
         if ok2:
             arms, covmap = trial, cov2
     return arms
@@ -846,7 +1087,7 @@ def find_boot(fam, snaps):
 # ------------------------------------------------------- differential checks
 
 def differential(tm, fam, arms, boot_ds, n_checks=18, max_steps=400000,
-                 max_visits=12):
+                 max_visits=24):
     """Raw-simulator check of the FAMILY (not just the rules): from E(v), the
     raw machine must reach E(v+1), and -- the arms' fired counts being exact --
     at exactly the predicted step count.  Octave boundaries (v = b^m - 1 and
@@ -856,24 +1097,29 @@ def differential(tm, fam, arms, boot_ds, n_checks=18, max_steps=400000,
     scans the first `max_visits` (state, head) matches and reports WHICH one
     is E(v+1); requiring it to be the first would fail on every machine whose
     carry re-crosses its own low digit."""
-    v0 = fam.value(boot_ds)
-    probes = []
-    for m in range(1, 9):
-        probes += [fam.b ** m - 1, fam.b ** m, fam.b ** m + 1]
-    probes += [v0, v0 + 1, v0 + 5, 6, 11, 23, 47]
-    probes = sorted({v for v in probes if v >= max(v0, 1)})[:n_checks]
+    # Probes come off the REACHABLE walk, so they are states the machine
+    # actually enters under the inferred fill law -- and every fill (the top
+    # string of each width) is among them, plus the state either side of it.
+    walk = reach(fam, boot_ds, kmax=9, cap=6000)
+    tops = [i for i, ds in enumerate(walk)
+            if all(d == fam.b - 1 for d in ds)]
+    want_i = set()
+    for i in tops:
+        want_i |= {i - 1, i, i + 1}
+    for i in (0, 1, 2, 5, 11, len(walk) // 2, len(walk) - 2):
+        want_i.add(i)
+    probes = [walk[i] for i in sorted(want_i)
+              if 0 <= i < len(walk)][:n_checks]
     rep = Replay(tm, [], budget=4, raise_ok=False)
     order = sorted(arms, key=spec_key)
     out = []
-    for v in probes:
-        ds, x = [], v
-        while x:
-            ds.append(x % fam.b)
-            x //= fam.b
-        if not ds:
+    for ds in probes:
+        v = fam.value(ds)
+        nd = next_ds(fam, ds)
+        if nd is None:
             continue
         cfg = fam.cfg(ds)
-        want = cfg_cells(fam.cfg(next_ds(fam, ds)))
+        want = cfg_cells(fam.cfg(nd))
         pred, armname = None, None
         for arm in order:
             if rep.apply_rule(arm.rule, cfg, bulk=False) is None:
@@ -901,7 +1147,9 @@ def differential(tm, fam, arms, boot_ds, n_checks=18, max_steps=400000,
             n += 1
             if n >= max_visits:
                 break
-        out.append({'v': v, 'arm': armname, 'shape_ok': at is not None,
+        out.append({'v': v, 'k': len(ds), 'to_k': len(nd),
+                    'at_fill': all(d == fam.b - 1 for d in ds),
+                    'arm': armname, 'shape_ok': at is not None,
                     'anchor_visit_index': idx,
                     'raw_steps': at, 'predicted_steps': pred,
                     'steps_ok': pred is not None and pred == at})
@@ -984,37 +1232,59 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
                         time.time() + max(20.0, (t0 + cap - time.time())
                                           / max(1, ntry - fi)))
         ctr = itertools.count()
+        # The boot and the FILL LAW come first: the law decides what the
+        # successor of a top string is, and the sample the arms are mined from
+        # has to contain the fills it predicts.
+        bt, bds = find_boot(fam, snaps)
+        fill_obs = observe_fill(fam, snaps)
+        fam.fill = fit_fill(fill_obs) or CARRY
+        fill_fitted = fam.fill is not CARRY or bool(fill_obs)
         groups = _groups(fam, (1, 2, 3, 4, 5))
         arms = mine_arms(tm, rules, fam, deadline=slice_end, ctr=ctr,
                          groups=groups)
         if not arms:
             res.setdefault('tried', []).append(
-                {'family': fam.json(), 'reason': 'no arm replayed to anchor'})
+                {'family': fam.json(), 'fill': fam.fill.json(),
+                 'reason': 'no arm replayed to anchor'})
             continue
         km = min(kmax, kmax_for(fam.b))
         km2 = km + (2 if fam.b == 2 else 1)
-        ok, covmap, rep = cover(tm, fam, arms, kmax=km)
-        rounds = 0
-        while (not ok and rounds < 5 and time.time() < slice_end
-               and not rep['fails_only_at_overflow']):
-            new = repair(tm, rules, fam, arms,
-                         rep['uncovered_all'] + rep['wrong_all'], ctr,
-                         groups, deadline=slice_end, max_new=32)
-            if not new:
+        # Enumeration: every digit string first (the strongest claim), and if
+        # that fails, the states actually REACHABLE from the boot.  A fill law
+        # that widens by more than one puts half the widths out of reach, and
+        # asking for arms there asks for configurations the run never enters.
+        enum, ok, covmap, rep, rounds = 'all digit strings', False, {}, {}, 0
+        for mode in ('all', 'reachable'):
+            states = None if mode == 'all' else reach(fam, bds, km)
+            if mode == 'reachable' and (bds is None or len(states or ()) < 8):
                 break
-            arms += new
-            ok, covmap, rep = cover(tm, fam, arms, kmax=km)
-            rounds += 1
-        rep['repair_rounds'] = rounds
+            ok, covmap, rep = cover(tm, fam, arms, kmax=km, states=states)
+            rounds = 0
+            while (not ok and rounds < 5 and time.time() < slice_end
+                   and not rep['fails_only_at_overflow']):
+                new = repair(tm, rules, fam, arms,
+                             rep['uncovered_all'] + rep['wrong_all'], ctr,
+                             groups, deadline=slice_end, max_new=32)
+                if not new:
+                    break
+                arms += new
+                ok, covmap, rep = cover(tm, fam, arms, kmax=km, states=states)
+                rounds += 1
+            rep['repair_rounds'] = rounds
+            if ok:
+                enum = ('all digit strings' if mode == 'all'
+                        else 'states reachable from the boot')
+                break
+        states = None if enum == 'all digit strings' else reach(fam, bds, km)
         arms = minimize(arms, covmap)
         if ok and time.time() < slice_end:
-            arms = prune(tm, fam, arms, km)
-            ok, covmap, rep2b = cover(tm, fam, arms, km)
+            arms = prune(tm, fam, arms, km, states)
+            ok, covmap, rep2b = cover(tm, fam, arms, km, states)
             rep2b['repair_rounds'] = rounds
             rep = rep2b
         if not ok:
             res.setdefault('tried', []).append(
-                {'family': fam.json(),
+                {'family': fam.json(), 'fill': fam.fill.json(),
                  'reason': ('overflow leaves the family'
                             if rep['fails_only_at_overflow']
                             else 'family not covered'),
@@ -1025,7 +1295,8 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         # A miss here is usually a carry class that only first APPEARS at that
         # width, so give the repair a few rounds at the wider level before
         # calling the family unstable.
-        ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2)
+        states2 = None if enum == 'all digit strings' else reach(fam, bds, km2)
+        ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2, states=states2)
         for _ in range(4):
             if ok2 or time.time() > slice_end:
                 break
@@ -1035,10 +1306,10 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
             if not new:
                 break
             arms += new
-            ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2)
+            ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2, states=states2)
         if ok2 and time.time() < slice_end:
-            arms = prune(tm, fam, arms, km2)
-            ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2)
+            arms = prune(tm, fam, arms, km2, states2)
+            ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2, states=states2)
             rep2['repair_rounds'] = rounds
             rep = {k: v for k, v in rep2.items()
                    if k not in ('uncovered_all', 'wrong_all')}
@@ -1053,20 +1324,24 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         rep.pop('uncovered_all', None)
         rep.pop('wrong_all', None)
         arms = sorted(arms, key=spec_key)
-        bt, bds = find_boot(fam, snaps)
         if bt is None:
             res.setdefault('tried', []).append(
-                {'family': fam.json(), 'reason': 'no boot into the family'})
+                {'family': fam.json(), 'fill': fam.fill.json(),
+                 'reason': 'no boot into the family'})
             continue
         # Liveness may only read arms taken INFINITELY OFTEN.  An arm still
-        # claiming digit strings at the largest width tested claims one at
-        # every width (the run visits every value, so every width recurs);
-        # an arm whose last claim is at some fixed width -- the small-k
-        # overflow base cases -- fires finitely often and must NOT count.
+        # claiming digit strings at the WIDEST width covered claims one at
+        # every width it can reach (the run visits every value, so every
+        # reachable width recurs); an arm whose last claim is at some fixed
+        # width -- the small-k overflow base cases -- fires finitely often and
+        # must NOT count.  The widest width is read off the coverage rather
+        # than assumed to be km2: a fill that widens by two only ever reaches
+        # one parity class.
+        top_k = max((k for s in cov2.values() for k, _ in s), default=km2)
         live, fin = [], []
         for a in arms:
             ks = {k for k, _ in cov2.get(a.name, ())}
-            (live if ks and max(ks) == km2 else fin).append(a)
+            (live if ks and max(ks) == top_k else fin).append(a)
         fired = {}
         for a in live:
             for tr, e in a.rule.fired.items():
@@ -1074,12 +1349,16 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         io = {t[0] for t in fired}
         seen = visited_states(tm, bt) | {t[0] for a in arms
                                          for t in a.rule.fired}
-        states = sorted(chr(65 + q) for q in io)
+        io_letters = sorted(chr(65 + q) for q in io)
         diff = differential(tm, fam, arms, bds)
         chk = chain_check(tm, fam, bt, bds)
         res.update({
             'closed': bool(diff) and all(d['shape_ok'] for d in diff),
             'family': fam.json(),
+            'fill': fam.fill.json(),
+            'fill_observed': [[k, t] for k, t in fill_obs],
+            'fill_law_inferred': fill_fitted,
+            'enumeration': enum,
             'family_first_seen': ft, 'anchor_chain': chain,
             'arms': [a.json() for a in arms],
             'arm_selection': 'first applicable in the order listed',
@@ -1092,7 +1371,7 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
             'liveness': {
                 'fired_transitions': sorted('%s%d' % (chr(65 + t[0]), t[1])
                                             for t in fired),
-                'states_infinitely_often': ''.join(states),
+                'states_infinitely_often': ''.join(io_letters),
                 'states_visited': ''.join(sorted(chr(65 + q) for q in seen)),
                 'read_from_arms': [a.name for a in live],
                 'all_states': len(io) == ns,
