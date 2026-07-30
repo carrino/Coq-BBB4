@@ -496,6 +496,35 @@ stable in its FOUR PARTS and unstable in the arithmetic of one of them, so a
 kernel checker should be designed against the parts and parameterized in the
 successor — not designed now against `pre ++ mid^n ++ suf` specifically.
 
+### Addendum: what 69 is worth against the LIVE residue
+
+_Added after merging `origin/main` at `e955ed8`, which is 9 commits and three
+boarding waves ahead of where this branch was cut._
+
+The 69 above are 69 of the **143 core rows as they stood when the sweep ran**.
+While it ran, the wave route boarded heavily — wave-33's parity-0 offset peel,
+the HALFWAY nested arm, the ReachSt PAIR counters — and `tools/closeout/core_rows.txt`
+is now **65 rows**.  Against that list:
+
+| | rows |
+|---|---:|
+| closed by the ladder AND still in the live core | **30** |
+| closed by the ladder, already boarded by the wave route | 39 |
+| still in the live core, ladder does not close | 35 |
+
+So the ladder's marginal contribution **today** is 30 of 65, not 69 of 143, and
+it is 30 rows of *untrusted certificate candidates* — Stage B does not exist, so
+the number of machines this branch boards is **zero** and the core count does not
+move.  Both framings are true and the second is the one that matters for
+scheduling: the two routes are working the same population concurrently and 39
+rows of this sweep's yield were overtaken mid-measurement.
+
+That is an argument for Stage B's priority, not against it — 30 rows the wave
+route has NOT reached, found by a searcher that costs CPU rather than a session,
+is exactly what §3 Stage C was for.  But it also means the honest headline for
+this work is "a prover that finds 30 live candidates and a taxonomy", not
+"69 of 143".
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
