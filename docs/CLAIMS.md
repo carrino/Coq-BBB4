@@ -62,8 +62,8 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **150** undecided core machines in
-   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **76**
+3. it is **skipped**: one of the **144** undecided core machines in
+   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **74**
    0RB re-root shadows (`tools/closeout/shadow_rows.tsv`), which resolve
    automatically as core machines are boarded.
 
@@ -86,8 +86,8 @@ before the record itself is a theorem here:
    what `theories/Counters/BlankTail.v` already closes for the four previous
    champions; what it needs is a 32.8M-step prefix, for which
    `Checkers/TCyclerN.v` already supplies `cstepsN` and `cstepsN_nat`.  It is
-   currently one of the 150 core machines.  **Not done.**
-2. **The 150 (+ their 76 shadows).**  Any of them could, for all this
+   currently one of the 144 core machines.  **Not done.**
+2. **The 144 (+ their 74 shadows).**  Any of them could, for all this
    development knows, be a quasihalter with a larger score.  That is what
    undecided means.
 
@@ -99,14 +99,14 @@ existentially, per-board, instead of as one aggregated constant — is closed:
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 150 still-undecided machines (and
-> their 76 0RB re-root shadows) —
+> 32,779,478 or never quasihalts, except 144 still-undecided machines (and
+> their 74 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The BBB(4) *value* does not yet
-> follow from what is here, because the champion itself is one of the 150.
+> follow from what is here, because the champion itself is one of the 144.
 
-## Scope of the 150
+## Scope of the 144
 
-All 150 core machines are residue — machines no engine in this repository
+All 144 core machines are residue — machines no engine in this repository
 settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28
