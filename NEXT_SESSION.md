@@ -124,7 +124,25 @@ carrying forward:
   `tools/reachsti/cert_search.py`) and certifies a state on **25 of the 26**
   rows -- against `ReachSt.v`'s four hand-written flavours.  It also returns
   `NonHalt`, which the `iqh` rows cannot get anywhere else.
-- **The blocker is not the tier, it is the wall.**  On all 14 `1RB---` rows
+- **The counter reading was being taken at the wrong RADIX.**  `kcopy_classify.py`
+  (KCOPY<k>/SEP<k>) and `alphabet_infer.py` (a positive-recursion) can only
+  return a BASE-2 counter, and so can every alphabet in `theories/Counters`
+  (Ip, Jp, Kp, Dp, Bp, Mp).  `1RB---_0LB1RC_0RD0RC_1LB1LD` is a **base-3**
+  counter -- 2-cell digits over {00,01,11}, anchor snapshots decoding to
+  1,2,3,... over 10^4 visits, lap `4 + 4j`.  That is why `emit_kp.py` derives
+  0 of 17.  New tool `tools/counters/radix_infer.py`; results in
+  `tools/counters/RADIX_DROZD26.txt`.  **5 rows are affine in the carry
+  length, all of them `1RB---`.**
+- **The counter route needs no ReachStI and no closure**, which is the real
+  lesson: a lap gives every state's liveness at once plus `NonHalt`.
+  `LapGlueQuiet.glue_qh_quiet` is already the right closer (`qa = StA`,
+  `s0 = 0`, `t0 = 1`; `StA`-freedom is free because nothing targets `StA`),
+  and `BNC_1RB____1LC0RB_1LD1RB_1LC1RB.v` is a `1RB---` row already boarded
+  that way.  For the three radix-2 affine rows the encoding (`KpCounter.Kp`)
+  and the closer both exist; **the missing piece is an emitter pairing `Kp`
+  with the QH closer** -- `emit_kp.py` emits never-QH, `emit_qh.py` emits the
+  `iqh` triple but is hard-wired to `Jp`.  Cross those two first.
+- **For the liveness-engine route the blocker is the wall.**  On all 14 `1RB---` rows
   the NGramHist closure certifies *exactly* the states `ReachStI` does.  9 of
   the 17 rows swept are short by exactly ONE state, always the state whose
   liveness is "the leftward sweep stops at the counter's wall".  13 of the 54

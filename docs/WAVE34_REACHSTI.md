@@ -143,7 +143,69 @@ row (`1RB1LA_1LC0RD_0RA0LC_0LA1RD`, `A` then `B`) and nothing anywhere else,
 and it closes no row.  It is therefore **not** implemented in Coq: it would
 add machinery and board nothing.
 
-## 5. The next step, with the measurement that sizes it
+## 4b. The counter reading — and why the classifier was pointing the wrong way
+
+The liveness engines were the wrong tool, and the reason is worth writing
+down, because it is a *classification* bug rather than a proof gap.
+
+`tools/kcopy_classify.py` labels 17 of the 26 `KCOPY1` ("one bit per cell"),
+and `emit_kp.py` derives **0 of 17**, every one at "laps not affine on both
+branches".  But `kcopy_classify.py`'s entire vocabulary — `KCOPY<k>`,
+`SEP<k>` — is *one BIT per k cells*, and `alphabet_infer.py`'s shape is a
+positive-recursion (`E (xO q) = A ++ E q`, `E (xI q) = B ++ E q`).  **Both can
+only ever return a base-2 counter, and so can every alphabet in
+`theories/Counters`: Ip, Jp, Kp, Dp, Bp, Mp.**
+
+Some of these rows are not base 2.  Reading the tape of
+`1RB---_0LB1RC_0RD0RC_1LB1LD` at its anchor (state `StB`, empty left list —
+the wall):
+
+    01 | 11 | 00 01 | 01 01 | 11 01 | 00 11 | 01 11 | 11 11 | 00 00 01
+     1 |  2 |   0,1 |   1,1 |   2,1 |   0,2 |   1,2 |   2,2 |    0,0,1
+     1    2      3       4       5       6       7       8         9
+gap: 4    4      8       4       4       8       4       4        12
+
+It is a **base-3 counter, one digit per two cells**, digits
+`{00, 01, 11} = {0, 1, 2}`, whose anchor snapshots decode to
+1, 2, 3, … consecutively over 10^4 visits, with the lap **affine in the carry
+length**: `4 + 4j`.  `emit_kp.py` was fitting the wrong radix.
+
+`tools/counters/radix_infer.py` (new) does the search without assuming base 2.
+Over the 26 (`tools/counters/RADIX_DROZD26.txt`): **17 decode to consecutive
+integers** at some anchor, four of them at radix 3 with 2-cell digits, and
+**5 are affine in the carry length on the branches observed** — all five
+`1RB---` rows:
+
+    1RB---_0LB1RC_0RD0RC_1LB1LD   radix 3, digits 00/01/11, lap 4 + 4j
+    1RB---_0LB1RC_1LB0RD_1LB0RC   radix 2, one cell,         lap 2 + 2j
+    1RB---_0RC0RB_1LD1LC_0LD1RB   radix 3, digits 00/01/11, lap 4 + 4j
+    1RB---_1LC0RD_0LC1RB_1LC0RB   radix 2, one cell,         lap 2 + 2j
+    1RB---_1LC0RD_0LC1RD_1LC0RB   radix 2, one cell,         lap 2 + 2j
+
+(Affine over the carry lengths that *occurred*, interior and overflow lumped:
+a routing hint, not the emitter's differential validation.)
+
+**This is the route that should have been taken, and it does not need
+`ReachStI` at all.**  A lap gives the liveness of *every* state at once, plus
+`NonHalt` — which is exactly where the closure route died.  The closer
+already exists and is already aimed at this case:
+`LapGlueQuiet.glue_qh_quiet` returns `NonHalt /\ QHBound (S s0) /\
+QuasiHaltsSt` from a bootstrap, laps avoiding the quiet state, and a visit
+witness per other state.  For a `1RB---` row that is `qa = StA`, `s0 = 0`,
+`t0 = 1`, and `StA`-freedom of every lap is immediate because nothing targets
+`StA`.  `theories/Machines/Counters/BNC_1RB____1LC0RB_1LD1RB_1LC1RB.v` is a
+`1RB---` row already boarded exactly this way (via `BounceGlue.bounce_qh`).
+
+So for the three radix-2 affine rows the Coq encoding already exists
+(`KpCounter.Kp`) and the closer already exists.  The missing piece is an
+**emitter pairing the `Kp` encoding with the QUASIHALTING closer**:
+`emit_kp.py` emits never-QH boards, and `emit_qh.py` — which does emit the
+`iqh` triple — is hard-wired to the `Jp` encoding.  Crossing those two is the
+shortest path to boarding rows from this list.  The two radix-3 rows need one
+more thing: a ternary digit alphabet, which no `theories/Counters` encoding
+currently provides.
+
+## 5. The other next step, with the measurement that sizes it
 
 For the missing states the run that must be excluded is often a pure
 **runner**, which is what `Closure.runner_ok` + `Records.run_right_exhausts`

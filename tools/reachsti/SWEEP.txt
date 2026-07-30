@@ -2,13 +2,19 @@
 # A row is boardable only when EVERY allowed state is covered, because
 # NeverQuasiHaltsSt (and the QHBound half of iqh) obliges them all at once.
 #
-#   direct   ReachStI measure certificate
-#   chained  + "from state q1, reach q2" liveness implications (not implemented in Coq)
+#   direct   ReachStI measure certificate (theories/Checkers/ReachStI.v)
+#   chained  + "from state q1, reach q2" implications (NOT implemented in Coq)
 #   closure  NGramHist at k in {2,3}, n in {2,3}
 #
-# All 14 1RB--- rows are here; the closure exceeds a 2-minute budget on
-# 1RB0LD_0LC0RB_1LA1RC_0RC1LD and the rows after it, which are therefore absent.
-# 0 rows boardable.  See docs/WAVE34_REACHSTI.md section 4.
+# 22 of 26 rows measured; ALL 14 of the 1RB--- rows are here.  The last four
+# rows below carry a 2-minute closure budget (marked when it expired); the
+# 4 rows the closure never finished are listed at the foot.  Those four are
+# covered independently by tools/reachst/bothhalves.py, which reports no
+# state reading TN on any of them, so they are not boardable either.
+#
+# 0 rows boardable.  10 rows are short by EXACTLY ONE state -- always the
+# state whose liveness is "the leftward sweep stops at the counter's wall".
+# See docs/WAVE34_REACHSTI.md section 4.
 
 1RB---_0LB1RC_0RD0RC_1LB1LD allowed=BCD  direct=B    chained=B    closure=B    missing CD
 1RB---_0LB1RC_1LB0RD_1LB0RC allowed=BCD  direct=B    chained=B    closure=B    missing CD
@@ -28,3 +34,13 @@
 1RB---_1LC0RD_0LC1RD_1LC0RB allowed=BCD  direct=C    chained=C    closure=C    missing BD
 1RB---_1LC1LB_0LC1RD_0RB0RD allowed=BCD  direct=C    chained=C    closure=C    missing BD
 1RB0LD_0LC0RB_1LA1RC_0RC1LD allowed=ABCD direct=C    chained=AC   closure=CD   missing B
+1RB0RB_0LC0LD_1LC1LD_1RA0RA allowed=ABCD direct=C    chained=C    closure=C    missing ABD
+1RB0RB_0RC1RC_0LD1LA_1LD0LA allowed=ABCD direct=D    chained=D    closure=D    missing ABC
+1RB1LA_0LA0LC_1LC1RD_0RB0RD allowed=ABCD direct=C    chained=C    closure=C    missing ABD
+1RB1LA_0LA0RC_0LD0RB_1LD1RC allowed=ABCD direct=     chained=     closure=D    missing ABC
+
+# closure did not finish (see above):
+#   1RB1LA_0LA1RC_0LD0RC_1LD0RB
+#   1RB1LC_0LA0RB_0LD1LD_1RA0RA
+#   1RB1LC_0LC0RB_0RD1LA_0LA1RD
+#   1RB1RC_1LA0LB_1LD0RD_1LB0RC
