@@ -1,0 +1,144 @@
+[  1/143     8s] 0RB0RD_1LC1RB_1RA0LC_1LB0LC    no-counter-shape   7.6s
+[  2/143     8s] 0RB0RD_1LC1RB_1RA0LC_1LD0LC    no-counter-shape   7.7s
+[  3/143     8s] 0RB1LC_1LC0RD_1RD0LC_1LA1RB    no-counter-shape   7.1s
+[  4/143    19s] 0RB1LC_1LC1RD_1LA0LC_0RD1RB    no-counter-shape   11.8s
+[  5/143    37s] 1RB---_0LB1RC_0RD0RC_1LB1LD    closed             29.5s
+[  6/143    45s] 1RB---_0LB1RC_1LB0RD_1LB0RC    closed             36.8s
+[  7/143    65s] 1RB---_0LB1RC_1LB0RD_1LC0RC    closed             46.5s
+[  8/143    65s] 1RB---_0LB1RC_1LB0RD_1LC0RD    no-counter-shape   25.4s
+[  9/143    68s] 1RB---_0LB1RC_1LD0RC_1LB1RC    no-counter-shape   23.4s
+[ 10/143    93s] 1RB---_0LC1RB_0LB1RD_1LC0RD    closed             30.4s
+[ 11/143    95s] 1RB---_0LC1RD_0LB1RC_1LB0RD    closed             29.1s
+[ 12/143    98s] 1RB---_0LC1RD_0LB1RD_1LB0RD    closed             29.6s
+[ 13/143   123s] 1RB---_0LC1RD_0LB1RD_1LC0RD    closed             30.4s
+[ 14/143   404s] 1RB---_0LC1RD_1LB1RC_1LB0RD    arm-lands-off-family 309.1s
+[ 15/143   404s] 1RB---_0LC1RD_1LB1RD_1LB0RD    arm-replay-failed  251.7s
+[ 16/143   404s] 1RB---_0RC0RB_1LD1LC_0LD1RB    closed             22.5s
+[ 17/143   404s] 1RB---_1LC0RB_0LD1RB_0LC1RB    closed             29.7s
+[ 18/143   404s] 1RB---_1LC0RB_0LD1RB_0LC1RD    closed             29.1s
+[ 19/143   455s] 1RB---_1LC0RB_0LD1RB_1LC1RB    arm-replay-failed  250.6s
+[ 20/143   650s] 1RB---_1LC0RB_0LD1RB_1LC1RD    arm-lands-off-family 300.8s
+[ 21/143   650s] 1RB---_1LC0RB_1LD1RB_0LD1RB    no-counter-shape   16.9s
+[ 22/143   650s] 1RB---_1LC0RD_0LC1RB_1LB0RB    closed             32.5s
+[ 23/143   650s] 1RB---_1LC0RD_0LC1RB_1LB0RD    no-counter-shape   18.1s
+[ 24/143   650s] 1RB---_1LC0RD_0LC1RB_1LC0RB    closed             25.9s
+[ 25/143   650s] 1RB---_1LC0RD_0LC1RD_1LC0RB    closed             26.2s
+[ 26/143   650s] 1RB---_1LC1LB_0LC1RD_0RB0RD    overflow-leaves-family 18.7s
+[ 27/143   798s] 1RB---_1LC1RB_0LB1RD_1LC0RD    arm-lands-off-family 301.0s
+[ 28/143   798s] 1RB---_1LC1RD_0LB1RD_1LB0RD    arm-replay-failed  166.6s
+[ 29/143   903s] 1RB---_1LC1RD_0LB1RD_1LC0RD    arm-replay-failed  253.1s
+[ 30/143   903s] 1RB---_1LC1RD_0LC1RD_1LB0RD    no-counter-shape   17.1s
+[ 31/143   939s] 1RB---_1RC1LB_0LB1RD_0RA0RC    overflow-leaves-family 256.0s
+[ 32/143  1049s] 1RB---_1RC1LB_0LB1RD_1RA0RC    overflow-leaves-family 250.8s
+[ 33/143  1049s] 1RB0LA_1LC0RD_1LA1LB_0LB1RD    overflow-leaves-family 23.6s
+[ 34/143  1049s] 1RB0LA_1LC0RD_1LA1LB_0LC1RD    overflow-leaves-family 24.1s
+[ 35/143  1049s] 1RB0LA_1LC1LA_1RD1LB_0LC0RD    overflow-leaves-family 23.5s
+[ 36/143  1163s] 1RB0LC_0RC1LD_1LB1RC_0LA0LB    arm-replay-failed  211.8s
+[ 37/143  1163s] 1RB0LC_1LC0RD_0RA1LB_0LC1RD    overflow-leaves-family 23.4s
+[ 38/143  1163s] 1RB0LD_0LC0RB_1LA1RC_0RC1LD    closed             21.1s
+[ 39/143  1163s] 1RB0LD_0LC1RA_0LA1LA_0RB1LD    overflow-leaves-family 24.3s
+[ 40/143  1163s] 1RB0LD_0LC1RA_0RA1LA_0RB1LD    no-counter-shape   23.0s
+[ 41/143  1163s] 1RB0LD_0LC1RA_0RC1LA_0RB1LD    no-counter-shape   22.6s
+[ 42/143  1163s] 1RB0LD_0LC1RA_1LA0RB_0RB1LD    overflow-leaves-family 24.7s
+[ 43/143  1163s] 1RB0LD_0LC1RA_1LA1LA_0RB1LD    overflow-leaves-family 24.7s
+[ 44/143  1163s] 1RB0LD_0LC1RA_1RB1LA_0RB1LD    overflow-leaves-family 25.6s
+[ 45/143  1163s] 1RB0LD_0RC1RA_1LC0LA_0RA1LD    no-counter-shape   22.9s
+[ 46/143  1163s] 1RB0LD_0RC1RA_1LC1LA_0RA1LD    arm-replay-failed  26.2s
+[ 47/143  1163s] 1RB0LD_0RC1RA_1LC1LA_0RB1LD    overflow-leaves-family 26.0s
+[ 48/143  1340s] 1RB0LD_1LC1LB_1LD1RC_0RC1LA    arm-replay-failed  209.0s
+[ 49/143  1340s] 1RB0LD_1LC1RA_0RB1LA_0RB1LD    overflow-leaves-family 25.0s
+[ 50/143  1340s] 1RB0LD_1LC1RA_0RD1LA_0RB1LD    overflow-leaves-family 25.8s
+[ 51/143  1340s] 1RB0LD_1LC1RA_1LA1LC_0RA1LD    overflow-leaves-family 24.1s
+[ 52/143  1340s] 1RB0LD_1LC1RA_1LA1RC_0RA1LD    overflow-leaves-family 24.7s
+[ 53/143  1340s] 1RB0LD_1LC1RA_1RD1RC_0RB1LD    overflow-leaves-family 24.7s
+[ 54/143  1437s] 1RB0LD_1LC1RB_1LD1RC_0RC1LA    overflow-leaves-family 224.3s
+[ 55/143  1437s] 1RB0LD_1RC1RA_1LA0RC_0RA1LD    overflow-leaves-family 25.3s
+[ 56/143  1437s] 1RB0LD_1RC1RA_1LA0RC_0RB1LD    overflow-leaves-family 25.5s
+[ 57/143  1437s] 1RB0LD_1RC1RA_1LA1LC_0RA1LD    overflow-leaves-family 24.7s
+[ 58/143  1437s] 1RB0LD_1RC1RA_1LA1RA_0RA1LD    overflow-leaves-family 25.1s
+[ 59/143  1437s] 1RB0LD_1RC1RA_1LA1RA_0RB1LD    overflow-leaves-family 25.8s
+[ 60/143  1437s] 1RB0LD_1RC1RA_1LA1RC_0RA1LD    overflow-leaves-family 24.3s
+[ 61/143  1565s] 1RB0LD_1RC1RB_1LD1RC_0RC1LA    overflow-leaves-family 219.3s
+[ 62/143  1565s] 1RB0RB_0LC0LD_1LC1LD_1RA0RA    no-counter-shape   19.8s
+[ 63/143  1565s] 1RB0RB_0LC1RD_1LC1LA_0LA1RB    no-counter-shape   25.5s
+[ 64/143  1565s] 1RB0RB_0RC1RC_0LD1LA_1LD0LA    no-counter-shape   19.8s
+[ 65/143  1565s] 1RB0RB_1LC0RC_1RA0LD_0LB0LC    no-counter-shape   10.4s
+[ 66/143  1565s] 1RB0RB_1LC1LD_0LC1RA_0LD0RA    no-counter-shape   17.3s
+[ 67/143  1719s] 1RB0RC_0LA1LC_0RD0LB_1LB1RD    overflow-leaves-family 278.8s
+[ 68/143  1719s] 1RB0RC_0RC1LD_1LB1RC_0LA0LB    overflow-leaves-family 225.1s
+[ 69/143  1719s] 1RB0RC_1LC1RA_1RD1LB_0LC0RD    overflow-leaves-family 23.0s
+[ 70/143  1719s] 1RB0RD_1LB1LC_1RC0RA_0LB1RD    overflow-leaves-family 20.2s
+[ 71/143  1719s] 1RB0RD_1LC0LB_1LD0LB_1RD0RA    no-counter-shape   19.0s
+[ 72/143  1719s] 1RB0RD_1LC0LC_1LD0LB_1RD0RA    no-counter-shape   24.8s
+[ 73/143  1719s] 1RB0RD_1LC1RA_0RB0LC_1LD0LA    overflow-leaves-family 25.5s
+[ 74/143  1932s] 1RB0RD_1RC---_1RD1LC_0LC1RA    overflow-leaves-family 254.8s
+[ 75/143  1932s] 1RB1LA_0LA0LC_1LC1RD_0RB0RD    closed             20.5s
+[ 76/143  1932s] 1RB1LA_0LA0RC_0LD0RB_1LD1RC    closed             27.1s
+[ 77/143  1932s] 1RB1LA_0LA1RC_0LD0RC_1LD0RB    closed             20.0s
+[ 78/143  1951s] 1RB1LA_0LA1RC_0RD0RB_1LB0LA    overflow-leaves-family 223.1s
+[ 79/143  1990s] 1RB1LA_0LA1RC_0RD0RB_1LB0RA    overflow-leaves-family 250.7s
+[ 80/143  2187s] 1RB1LA_0LA1RC_0RD0RB_1LB1RA    overflow-leaves-family 254.6s
+[ 81/143  2187s] 1RB1LA_0LA1RC_0RD0RB_1LB1RD    arm-replay-failed  204.1s
+[ 82/143  2242s] 1RB1LA_0LA1RC_0RD0RB_1LC1RA    overflow-leaves-family 252.4s
+[ 83/143  2412s] 1RB1LA_0LA1RC_0RD0RB_1RA---    overflow-leaves-family 257.6s
+[ 84/143  2412s] 1RB1LA_0LA1RC_1LD0RB_1LA1LD    overflow-leaves-family 222.8s
+[ 85/143  2464s] 1RB1LA_0LA1RC_1LD0RB_1RA1LD    overflow-leaves-family 222.0s
+[ 86/143  2668s] 1RB1LA_0LA1RC_1LD0RB_1RA1RD    overflow-leaves-family 258.0s
+[ 87/143  2668s] 1RB1LA_0LA1RC_1RD0RB_1LD0LA    overflow-leaves-family 225.4s
+[ 88/143  2721s] 1RB1LA_0LA1RC_1RD0RB_1RA---    overflow-leaves-family 257.0s
+[ 89/143  2721s] 1RB1LA_0LC0RD_1LC1RD_0LA0RB    closed             26.4s
+[ 90/143  2858s] 1RB1LA_0LC1RD_1LC1LA_0LA0RB    overflow-leaves-family 193.8s
+[ 91/143  2858s] 1RB1LA_0LC1RD_1RA1LC_0LA0RB    arm-replay-failed  129.8s
+[ 92/143  2977s] 1RB1LA_0RC1LD_1LB1RC_0LA0LB    overflow-leaves-family 255.7s
+[ 93/143  3073s] 1RB1LA_0RC1RD_1LB0LD_0LA0RB    overflow-leaves-family 275.9s
+[ 94/143  3073s] 1RB1LA_1LC0RD_0RA0LC_0LA1RD    closed             21.6s
+[ 95/143  3073s] 1RB1LA_1LC0RD_1LA1LB_0LB1RD    overflow-leaves-family 23.8s
+[ 96/143  3073s] 1RB1LA_1LC0RD_1RA1LB_0LB1RD    overflow-leaves-family 23.6s
+[ 97/143  3073s] 1RB1LA_1LC1RD_0RC1RA_0LA0RB    arm-replay-failed  126.3s
+[ 98/143  3105s] 1RB1LA_1LC1RD_1RC1RA_0LA0RB    arm-replay-failed  128.6s
+[ 99/143  3175s] 1RB1LA_1RC1LB_0LA1RD_0LB0RC    arm-replay-failed  122.0s
+[100/143  3304s] 1RB1LA_1RC1LB_0LB1RD_1LA0RC    overflow-leaves-family 230.6s
+[101/143  3304s] 1RB1LB_1LC0RD_0LB1LA_0LA1RA    no-counter-shape   12.0s
+[102/143  3304s] 1RB1LB_1LC0RD_1LA1LB_0LB1RD    overflow-leaves-family 23.1s
+[103/143  3304s] 1RB1LB_1LC0RD_1LA1LB_0LC1RD    overflow-leaves-family 23.6s
+[104/143  3411s] 1RB1LB_1LC1LA_0LB1RD_0RB0RD    arm-replay-failed  247.2s
+[105/143  3447s] 1RB1LC_0LA0LD_1LD1RC_0RC1LB    overflow-leaves-family 272.1s
+[106/143  3447s] 1RB1LC_0LA0RB_0LD1LD_1RA0RA    no-counter-shape   19.9s
+[107/143  3447s] 1RB1LC_0LA0RB_0RD1LA_0LC1RD    closed             26.0s
+[108/143  3447s] 1RB1LC_0LA0RC_1LA0RD_0LA1RD    overflow-leaves-family 23.8s
+[109/143  3447s] 1RB1LC_0LA1RC_1LA0RD_0LA1RD    overflow-leaves-family 23.8s
+[110/143  3447s] 1RB1LC_0LA1RC_1RB0LD_0RB1LD    overflow-leaves-family 25.2s
+[111/143  3447s] 1RB1LC_0LC0RB_0RD1LA_0LA1RD    closed             25.8s
+[112/143  3447s] 1RB1LC_0LC0RB_1LA1LD_1RC0LD    overflow-leaves-family 23.1s
+[113/143  3466s] 1RB1LC_0LC0RB_1LA1RD_0LA0RD    overflow-leaves-family 28.5s
+resuming: 113 already done, 30 to go
+[  1/ 30   211s] 1RB1LC_0RC1LD_1LB1RC_0LA0LB    arm-replay-failed  210.9s
+[  2/ 30   211s] 1RB1LC_1LA0RC_1LA0RD_0LA1RD    overflow-leaves-family 28.5s
+[  3/ 30   211s] 1RB1LC_1LB1RA_0LC0LD_0RA0RD    arm-replay-failed  73.4s
+[  4/ 30   211s] 1RB1LC_1LC1RA_0LC0LD_0RA0RD    interior-not-covered 47.9s
+[  5/ 30   211s] 1RB1LC_1RC1LB_1LA0RD_0LC1RD    overflow-leaves-family 26.1s
+[  6/ 30   211s] 1RB1LC_1RC1RB_1LA0RD_0LC1RD    overflow-leaves-family 24.8s
+[  7/ 30   234s] 1RB1LD_0LB1LC_1LA1RC_0RC0LA    arm-replay-failed  134.4s
+[  8/ 30   234s] 1RB1LD_0LC0RD_0LA1RC_1LA0RC    overflow-leaves-family 25.4s
+[  9/ 30   234s] 1RB1LD_0LC1RD_0LA1RC_1LA0RC    overflow-leaves-family 24.9s
+[ 10/ 30   283s] 1RB1LD_1LB1LC_1LA1RC_0RC0LA    arm-replay-failed  131.6s
+[ 11/ 30   283s] 1RB1LD_1LC1LB_0LA1RC_1LA0RC    overflow-leaves-family 25.6s
+[ 12/ 30   283s] 1RB1LD_1LC1RA_0RB0LC_0RA0LD    interior-not-covered 41.4s
+[ 13/ 30   283s] 1RB1LD_1RC0RC_1LA0LA_0RA0LD    no-counter-shape   21.6s
+[ 14/ 30   283s] 1RB1LD_1RC1RB_1LC1LA_0RC0RD    no-counter-shape   3.8s
+[ 15/ 30   287s] 1RB1RA_0RC1LB_1LA1RD_1RC0LB    overflow-leaves-family 25.3s
+[ 16/ 30   300s] 1RB1RA_1LC0RD_1LA1LB_0LB1RD    overflow-leaves-family 24.5s
+[ 17/ 30   308s] 1RB1RA_1LC0RD_1RA1LB_0LB1RD    overflow-leaves-family 24.6s
+[ 18/ 30   522s] 1RB1RA_1LC1RB_0RB1LD_1RA0LC    overflow-leaves-family 234.9s
+[ 19/ 30   522s] 1RB1RA_1RC1LB_0LB1RD_1LA0RC    arm-replay-failed  209.5s
+[ 20/ 30   522s] 1RB1RB_1LC0RD_0RA1LB_0LC1RD    overflow-leaves-family 25.2s
+[ 21/ 30   522s] 1RB1RC_1LA0LB_1LD0RD_1LB0RC    no-counter-shape   31.3s
+[ 22/ 30   543s] 1RB1RC_1LA1LD_0RB0RC_1LB0LB    arm-replay-failed  179.3s
+[ 23/ 30   544s] 1RB1RC_1LA1RA_0RC1LD_1LB0LD    arm-replay-failed  34.3s
+[ 24/ 30   548s] 1RB1RC_1LC0RB_1RA0LD_0RA1LD    overflow-leaves-family 25.9s
+[ 25/ 30   570s] 1RB1RC_1LC0RB_1RA0LD_0RC1LD    overflow-leaves-family 26.7s
+[ 26/ 30   572s] 1RB1RC_1LC1LB_1RA0LD_0RC1LD    overflow-leaves-family 28.4s
+[ 27/ 30   575s] 1RB1RC_1LC1RB_1RA0LD_0RC1LD    overflow-leaves-family 26.7s
+[ 28/ 30   596s] 1RB1RC_1LC1RC_1RA0LD_0RA1LD    overflow-leaves-family 25.6s
+[ 29/ 30   599s] 1RB1RC_1LC1RC_1RA0LD_0RC1LD    overflow-leaves-family 26.9s
+[ 30/ 30   600s] 1RB1RD_1LC1RA_0RB0LC_1LA0RD    overflow-leaves-family 25.5s
