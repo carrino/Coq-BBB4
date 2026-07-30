@@ -10,10 +10,13 @@ theories/Mirror.v
 theories/Checkers/Halt.v
 theories/Checkers/Cycle.v
 theories/Closure.v
+theories/Checkers/ReachSt.v
+theories/Checkers/ClosureExt.v
 theories/Checkers/FuelClass.v
 theories/Checkers/ExactClosure.v
 theories/Checkers/NGram.v
 theories/Checkers/NGramHist.v
+theories/Checkers/NGramHistExt.v
 theories/Checkers/NGramHistWrap.v
 theories/Checkers/TCycler.v
 theories/Checkers/TCyclerN.v
@@ -2587,6 +2590,29 @@ theories/Machines/Counters/REG_0RB1LA_1RC1RD_1LD1RC_1RB0LA.v
 
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 theories/Machines/Counters/QHB_1RB1RD_1RC0LD_1LB0RA_1LC0LC.v
+
+
+# --- the REACHST tier: NGramHist for three states, ReachSt for the fourth
+theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_0LA1LA_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_0RA1LA_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_0RC1LA_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_1LA0RB_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_1LA1LA_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_1RB1LA_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_0RC1RA_1LC0LA_0RA1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_0RC1RA_1LC1LA_0RA1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_0RC1RA_1LC1LA_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_1LC1RA_0RB1LA_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_1LC1RA_0RD1LA_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_1LC1RA_1LA1LC_0RA1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_1LC1RA_1LA1RC_0RA1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_1LC1RA_1RD1RC_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_1RC1RA_1LA0RC_0RA1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_1RC1RA_1LA0RC_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_1RC1RA_1LA1LC_0RA1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_1RC1RA_1LA1RA_0RA1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_1RC1RA_1LA1RA_0RB1LD.v
+theories/Machines/ReachSt/RST_1RB0LD_1RC1RA_1LA1RC_0RA1LD.v
 
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
