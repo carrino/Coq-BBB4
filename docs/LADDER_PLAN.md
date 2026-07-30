@@ -496,6 +496,69 @@ stable in its FOUR PARTS and unstable in the arithmetic of one of them, so a
 kernel checker should be designed against the parts and parameterized in the
 successor — not designed now against `pre ++ mid^n ++ suf` specifically.
 
+### Sweep 2: the far-side template is worth exactly zero, and that isolates the blocker
+
+_Sweep 2 measured at `143a9d1` over the same 143 rows, same budget:
+`tools/ladder/core143_two.jsonl`, 10,758 s of per-row wall._
+
+It carries everything this branch built after sweep 1 — the far-side run
+template, `find_families`' template pass, the repair reaching the overflow, the
+forward-scanning fill observer, `drop_wrong`.  The result:
+
+| | sweep 1 | sweep 2 |
+|---|---:|---:|
+| closed | 69 | **69** |
+| rows gained | — | **0** |
+| rows lost | — | **0** |
+| far-side template fired on | — | **0 rows** |
+| per-row wall | 9,127 s | 10,758 s |
+
+**Zero delta on all 143 rows, for 18 % more wall clock**, and three rows crossed
+from `arm lands off the family` to a hard timeout — they now return no diagnosis
+where they used to return a wrong-anchor report.  The far-side template never
+fired once: `find_families` prefers anchors with a long constant-far-side chain,
+which are by construction the anchors where the far side does not move, and its
+template pass only runs when every constant group falls under the chain
+threshold.  The layer is built, it is inert, and nothing here credits it.
+
+**But one component did exactly its job, and that is the useful finding.**  The
+forward-scanning observer took the number of still-open overflow rows with an
+inferred fill law from **6 of 41 to 27 of 41** — and not one of those 21 rows
+closed.  Sweep 1 could not separate "the law is unknown" from "the law is known
+and no arm realizes it"; sweep 2 separates them.  For at least 27 of the 41,
+**the law is right and the fill ARM is the whole blocker**, which is why §4f's
+task is arm selection and not more inference.  A null result that moves 21 rows
+from one side of a diagnosis to the other is worth more than the 18 % it cost.
+
+### Addendum: what 69 is worth against the LIVE residue
+
+_Added after merging `origin/main` at `e955ed8`, which is 9 commits and three
+boarding waves ahead of where this branch was cut._
+
+The 69 above are 69 of the **143 core rows as they stood when the sweep ran**.
+While it ran, the wave route boarded heavily — wave-33's parity-0 offset peel,
+the HALFWAY nested arm, the ReachSt PAIR counters — and `tools/closeout/core_rows.txt`
+is now **65 rows**.  Against that list:
+
+| | rows |
+|---|---:|
+| closed by the ladder AND still in the live core | **36** |
+| closed by the ladder, already boarded by the wave route | 39 |
+| still in the live core, ladder does not close | 29 |
+
+So the ladder's marginal contribution **today** is 36 of 65, not 75 of 143, and
+it is 30 rows of *untrusted certificate candidates* — Stage B does not exist, so
+the number of machines this branch boards is **zero** and the core count does not
+move.  Both framings are true and the second is the one that matters for
+scheduling: the two routes are working the same population concurrently and 39
+rows of this sweep's yield were overtaken mid-measurement.
+
+That is an argument for Stage B's priority, not against it — 30 rows the wave
+route has NOT reached, found by a searcher that costs CPU rather than a session,
+is exactly what §3 Stage C was for.  But it also means the honest headline for
+this work is "a prover that finds 36 live candidates and a taxonomy", not
+"75 of 143".
+
 ## 4f. Rung two-and-three-quarters: arm selection settled, and the counter's PHASES
 
 _Working set: the 41 rows sweep 1 left at `overflow leaves the family`
@@ -729,6 +792,67 @@ first-applicable-in-a-subsumption-order, and the successor as a PARAMETER of
 the family rather than a fixed law.  The next constructor (the terminator
 template) is a change to that parameter, not to the kernel — which is the test
 §4e asked for and the first time the answer has been yes.
+
+## 4g. The counter's CODE and its step, read not assumed
+
+_Merged from `claude/ladder-two-parameter-anchor-c0vkav`, which ran beside §4f
+on the same files.  The two are complementary and were measured separately
+before the merge: §4f's phase pass closes 87 of 143 at `0246b0c`, this layer
+closes 75 of 143 at `66db337`, the union of the two closed sets is 93, and the
+six rows this layer adds are exactly the six §4f does not reach.  The merged
+number is measured below._
+
+John read `1RB0RB_0LC0LD_1LC1LD_1RA0RA` off the tape: *"a wall and msb on the
+left; when the wall moves over the high bit is set, then it counts up to full,
+then back down to 0, then the wall moves over again."*  That is the **reflected
+binary (Gray) code**, and "up to full then back down" is the reflection itself.
+Decoding the left side as Gray gives 300 consecutive `+2` steps out of 300
+anchor visits; read positionally the same tape gives 24, 27, 30, 29, 20, 23,
+18, 17, which is why the search reported "+1 on 26 % of visits" and filed the
+machine under *no counter reading at any anchor*.
+
+Two more assumptions, the same shape as the fill law's in §4e and the phase's
+in §4f, both now inferred rather than hard-coded:
+
+* **the CODE.**  `Fam.value` read the digit string positionally, full stop.  It
+  now reads `binary` or `gray`, positional first.  The codec is the general
+  base-`b` reflected code — running sum down to decode, difference to the next
+  digit up to encode — which collapses to the XOR chain at `b = 2`.  `next_ds`
+  is stated on the VALUE rather than as a digit-wise carry ripple so it is
+  right for either code, and the top of an octave is tested by value rather
+  than by "all digits max", which for a reflected code is not the top at all.
+* **the STEP.**  `_try_parse` required consecutive anchor visits to differ by
+  exactly `+1`.  A machine whose lowest cell is a phase bit crosses the anchor
+  once per TWO counter steps.  A step other than 1 means only part of each
+  width is a member, so those families are checked against the states reachable
+  from the boot rather than against every digit string.
+
+One bug fell out of the first: `repair` rebuilt the failing digit string from
+`(k, v)` by positional decomposition, which is the wrong string for any family
+whose code is not positional.  It goes through `of_value` now, and that single
+fix is what took the Gray rows from "family found, interior 65 % covered" to
+closed.
+
+The rows this adds, all `gray` with step 2, all previously *no counter reading
+at any anchor*, all with the differential agreeing on shapes AND exact step
+counts and 40 laps confirmed from the blank tape:
+
+    1RB0RB_0LC0LD_1LC1LD_1RA0RA   C1/L   1RB0RD_1LC0LB_1LD0LB_1RD0RA
+    1RB0RB_0RC1RC_0LD1LA_1LD0LA   C0/L   1RB0RD_1LC0LC_1LD0LB_1RD0RA
+    1RB1LC_0LA0RB_0LD1LD_1RA0RA   A0/L   1RB1LD_1RC0RC_1LA0LA_0RA0LD
+
+Four of the six are in the `no interior j=S j' chain at octave parity 0`
+bucket, which that layer alone takes 21 → 25 of 40; two are outside it.  That
+bucket names how forty machines failed ONE test — positional base-`b`, `+1` per
+anchor visit — and it is at least four things: now-closed rows, Fibonacci-rank
+counters (exactly F(n) distinct counter words per length, `numsys.py`),
+wall-clock timeouts, and engine gaps.  **A label that records how a search
+failed keeps being mistaken for a property of the machines.**  §4d made that
+error twice, §4e once more, and it is the same error each time: an assumption
+about the counter's own arithmetic, reported as the machine's failure.
+
+Credit where it is due: the Gray reading came from John's read of the tape, not
+from the searcher.
 
 ## 5. What this is NOT
 
