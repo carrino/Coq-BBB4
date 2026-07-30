@@ -1,0 +1,15 @@
+# tools/reachst/bothhalves.py on the 7 rows of Drozd's second list that
+# the tier cannot reach, measured at the wave-2 fixed point.
+#   T/f  the q-avoiding sub-machine terminates exhaustively (W <= 10)
+#   N/-  NGramHist discharges the other three with q lifted (k=2 or 3, n=2)
+# A board needs ONE state reading TN.  None of these has one.
+
+1RB1LC_0LC0RB_0RD1LA_0LA1RD  A:T- B:fN C:T- D:T-  
+1RB1LC_0LC0RB_1LA1LD_1RC0LD  A:T- B:T- C:T- D:fN  
+1RB1LD_1RC0RC_1LA0LA_0RA0LD  A:T- B:f- C:f- D:fN  
+1RB1RC_1LA0LB_1LD0RD_1LB0RC  A:T- B:T- C:f- D:f-  
+1RB1RC_1LA1LD_0RB0RC_1LB0LB  A:T- B:T- C:fN D:T-  
+1RB1RC_1LA1RA_0RC1LD_1LB0LD  A:f- B:f- C:T- D:f-  
+1RB1RD_1LC1RA_0RB0LC_1LA0RD  A:T- B:T- C:T- D:fN  
+
+0 of 7 rows have a state with BOTH halves
