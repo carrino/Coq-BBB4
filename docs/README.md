@@ -45,6 +45,11 @@ digest of all of it.
   `MXDYS_INDUCTIVE_STAGE0.md`.
 * **Closeout/census plumbing** — `CLOSEOUT_ROUTE_A.md`,
   `COUNTER_CLOSEOUT.md`, `REROOT_LISTC_STAGE.md`, `V5GAP_STAGE.md`.
+* **The mxdys inductive prover** — `MXDYS_INDUCTIVE_STAGE0.md` (the measured
+  gate), `MXDYS_DECIDERS_PLAN.md`, and
+  [`MXDYS_INDUCTIVE_RESIDUE.md`](MXDYS_INDUCTIVE_RESIDUE.md) — the prover run
+  over the community's target list, what it decides, and the two anchor
+  families it handed over (one of them the champion's board).
 * **Residue campaign** — `RESIDUE_708_DIAGNOSIS.md`,
   `RESIDUE_HEADROOM.md`, `RESIDUE_VISIT_MEASUREMENT.md`, and the live
   session prompts `RESIDUE_PROMPT.md` / `NEXT_SESSION_PROMPT.md`.

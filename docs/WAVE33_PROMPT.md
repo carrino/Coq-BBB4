@@ -334,3 +334,13 @@ Write `docs/WAVE33_FINDINGS.md`.
 
 Census fold-in, `CloseoutFinal.v`, the champion
 `1RB1LD_1RC1RB_1LC1LA_0RC0RD`, and `0RB1LC_1LC0LC_0RD1LA_1RD1RB`.
+
+**Correction (2026-07-30): the champion is NOT stable-hardware work and is now
+proved.**  `theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`
+carries `NonHalt /\ QHBound 32779478 /\ QuasiHaltsSt`, funext-only, in ~17 s.
+The 32.8M-step prefix is one `vm_compute` once the fuel is a BINARY numeral
+(`TCyclerN.cstepsN`, `N.iter`) instead of a unary `nat`; the machine lands on a
+COMPLETELY BLANK TAPE in state `C` and `C0 = 1LC` spins there forever.  It is
+not wired into the closeout yet — that pass changes `core_rows.txt`,
+`bbb4_target`'s caveat and `docs/CLAIMS.md`.  See
+`docs/MXDYS_INDUCTIVE_RESIDUE.md` §2, including the numeral-guard trap.
