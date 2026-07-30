@@ -40,18 +40,41 @@ from emit_interleave import parse                                  # noqa: E402
 from mirror_common import mirror_spec                              # noqa: E402
 
 
-def _wall(seq):
-    """(start, end) of the first run of >= 2 ones, or None."""
-    for i in range(len(seq) - 1):
+def _runs(seq):
+    """Every maximal run of >= 2 ones, innermost first."""
+    out, i = [], 0
+    while i < len(seq) - 1:
         if seq[i] == 1 and seq[i + 1] == 1:
             j = i
             while j + 1 < len(seq) and seq[j + 1] == 1:
                 j += 1
-            return i, j
-    return None
+            out.append((i, j))
+            i = j + 1
+        else:
+            i += 1
+    return out
 
 
-def _side(spec, maxt, right):
+def _wall(seq, outermost):
+    """The candidate wall run.  Two policies, because which one is the wall
+    depends on which side the counter grows into:
+
+      innermost  the run nearest the head -- right when the word lies BEYOND
+                 the wall, or when the wall is the only run;
+      outermost  the run farthest from the head -- right when the word lies
+                 BETWEEN the head and the wall, which is John's geometry ("the
+                 msb butts up against the wall but doesn't include it").  On
+                 those rows the counter's own side carries incidental `11`
+                 pairs that the innermost policy locks onto instead, giving a
+                 spurious step of 1 and a flat ratio.
+    """
+    r = _runs(seq)
+    if not r:
+        return None
+    return r[-1] if outermost else r[0]
+
+
+def _side(spec, maxt, right, outermost):
     """First sighting of each distinct wall start column, on one side."""
     tab = parse(spec)
     cfg, pos, seen = (0, (), 0, ()), 0, {}
@@ -59,7 +82,7 @@ def _side(spec, maxt, right):
         q, l, h, r = cfg
         if h == 0:
             seq = list(r) if right else list(l)
-            w = _wall(seq)
+            w = _wall(seq, outermost)
             if w is not None:
                 col = pos + 1 + w[0] if right else pos - 1 - w[0]
                 if col not in seen:
@@ -77,17 +100,29 @@ def probe(spec, maxt=200000):
     for mir in (False, True):
         ds = mirror_spec(spec) if mir else spec
         for right in (True, False):
-            seen = _side(ds, maxt, right)
+          for outer in (False, True):
+            seen = _side(ds, maxt, right, outer)
             if len(seen) < 4:
                 continue
-            cols = sorted(seen, reverse=not right)
-            steps = [abs(cols[i + 1] - cols[i]) for i in range(len(cols) - 1)]
+            # Order by TIME, not by column.  On a side the counter grows
+            # into, column order and first-sighting order are DIFFERENT, and
+            # sorting by column produces negative gaps and a meaningless
+            # ratio -- which is what made this measurement miss 13 of 27 rows
+            # on its first outing.
+            cols = sorted(seen, key=lambda c: seen[c][0])
+            steps = [cols[i + 1] - cols[i] for i in range(len(cols) - 1)]
             ts = [seen[c][0] for c in cols]
             gaps = [ts[i + 1] - ts[i] for i in range(len(ts) - 1)]
+            # a wall moves ONE WAY; drop a candidate that wanders
+            if steps and not (all(x > 0 for x in steps)
+                              or all(x < 0 for x in steps)):
+                continue
+            steps = [abs(x) for x in steps]
             ratio = [round(gaps[i + 1] / gaps[i], 2)
                      for i in range(len(gaps) - 1) if gaps[i]]
             st = collections.Counter(steps).most_common(1)[0]
             cand = dict(spec=spec, mirror=mir, side='R' if right else 'L',
+                        policy='outer' if outer else 'inner',
                         walls=len(cols), wall_step=st[0],
                         step_regular=st[1] == len(steps),
                         steps=steps[:8], gaps=gaps[:8], ratio=ratio[:6],
@@ -129,9 +164,10 @@ def main():
         res.append(o)
         cnt['step=%s ratio~%s' % (o.get('wall_step', '-'),
                                   o.get('median_ratio', '-'))] += 1
-        print('%3d/%d %-30s %-4s walls=%-3s %s' % (
+        print('%3d/%d %-30s %-4s %-6s walls=%-3s %s' % (
             i + 1, len(specs), spec, o.get('side', '-'),
-            o.get('walls', '-'), o['verdict']), flush=True)
+            o.get('policy', '-'), o.get('walls', '-'), o['verdict']),
+            flush=True)
     print()
     for k, v in cnt.most_common():
         print('%5d  %s' % (v, k))

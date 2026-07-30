@@ -471,17 +471,24 @@ displacements.  On the exemplar `1RB1RD_1LC1RA_0RB0LC_1LA0RD`:
 **`wall +4 per overflow, phase ratio ~3.99`** — the read, mechanised, exactly.
 
 And that second column is the finding.  Over the 27 `register step does not
-close` rows, on the 14 where the side heuristic locks on (the other 13 have
-incidental `11` pairs on the counter's own side and need a better selector):
+close` rows, on the 8 where a MONOTONE wall is detected:
 
-| phase ratio per octave | rows |
-|---|---:|
-| ~4 | 9 |
-| ~6 | 3 |
-| ~3 | 2 |
-| **~2** | **0** |
+| phase ratio per octave | rows | wall step |
+|---|---:|---|
+| ~4 | 5 | 2 or 4 cells |
+| ~6 | 3 | 2 cells |
+| **~2** | **0** | — |
 
-Not one row has a phase that doubles.  `nestcert`'s register step is built for
+Not one row has a phase that doubles.
+
+_(Corrected: the first run of this measurement reported 14 rows with ratios
+~4/~6/~3.  It ordered each wall's sightings by COLUMN rather than by
+first-sighting TIME, and on a side the counter grows into those two orders
+differ — which produced negative gaps and meaningless ratios on 6 of the 14.
+`wallstep.py` now orders by time and requires the displacement to be monotone,
+which drops those 6 and turns the other 13 from a spurious `+1 / ratio ~0` into
+an honest "no wall found".  The 8 that survive are the trustworthy ones, and
+the conclusion is unchanged: 4 and 6, never 2.)_  `nestcert`'s register step is built for
 an inner counter that RE-COUNTS the counter once to move the mark — that is
 `Theta(2^k)`, and `NestedLapLift.nested_overflow_lift` is stated against it.  A
 phase growing `4^k` means the inner counter itself runs a full octave per step:
@@ -491,7 +498,9 @@ will not find a `4^k` phase, and from the outside that is precisely
 
 So the 27 are not a carrier-endpoint problem (§6d item 2) and not a width
 problem (§6f).  They need one more level of nesting, and the exponent is
-measured rather than guessed.  The wall displacement (1, 2 or 4 cells) is the
+measured rather than guessed on the 8; the remaining 19 have no monotone wall
+under this detector, which is a fact about the DETECTOR and the next thing to
+sharpen — not evidence that they are a different shape.  The wall displacement (1, 2 or 4 cells) is the
 per-row constant that the arm's landing has to be stated with.
 
 **Consequence for wave-31's ranking:** item (2), the bounded inner carrier, is

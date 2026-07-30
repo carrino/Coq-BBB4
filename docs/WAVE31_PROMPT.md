@@ -138,10 +138,11 @@ doesn't include it").
     wall start column   0    4    8    12    16    20    24
     first seen at t     6   42  168   654  2580 10266 40992
 
-The wall moves a FIXED number of cells (1, 2 or 4, per row) per overflow, and
-the phase between displacements grows by a factor of **~4** — over the 14 of 27
-rows where `tools/counters/wallstep.py` locks on: ratio ~4 on 9, ~6 on 3, ~3 on
-2, and **~2 on none**.
+The wall moves a FIXED number of cells (2 or 4, per row) per overflow, and the
+phase between displacements grows by a factor of **4 or 6** — over the 8 of 27
+rows where `tools/counters/wallstep.py` detects a MONOTONE wall: ratio ~4 on 5,
+~6 on 3, and **~2 on none**.  The other 19 report "no wall found": that is a
+statement about the detector, not about those machines.
 
 `nestcert`'s register step is built for an inner counter that RE-COUNTS the
 counter once, which is `Theta(2^k)`, and `nested_overflow_lift` is stated against
@@ -152,8 +153,12 @@ phase, and from outside that is exactly `register step does not close`.
 So (2)'s bounded carrier will NOT reach these 27, and this item is bigger than a
 carrier fix.  Two things to do before designing:
 
-* fix `wallstep.py`'s side selector for the 13 rows it misses (the counter's own
-  side carries incidental `11` pairs), so the exponent is known on all 27;
+* sharpen `wallstep.py` for the 19 rows with no monotone wall.  Two policies
+  (innermost / outermost run of `>= 2` ones, each side) and a monotonicity
+  requirement get 8; what is missing is a way to tell the wall from the
+  counter's own incidental `11` pairs when both move.  Candidate: a run whose
+  LENGTH is constant across sightings, since a wall does not grow while the
+  word does.  Get the exponent on all 27 before designing the nesting;
 * then decide whether the shape is a double nesting or one nesting over a
   SQUARED index — the measured constants (wall displacement per row, phase
   ratio) are what the arm's landing must be stated with.
