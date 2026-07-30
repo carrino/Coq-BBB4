@@ -616,7 +616,7 @@ skipped.
 All 18 pass raw-simulator differential validation, **all 18 match the arms'
 predicted step counts exactly**, all 18 confirm 40 laps replayed from blank,
 all 18 are never-QH, and all 18 cover EVERY digit string rather than only the
-reachable ones.  Median 19 arms, median 33 s, max 275 s — no row hit the cap.
+reachable ones.  (Confirmed on the full 143 below.)  Median 19 arms, median 33 s, max 275 s — no row hit the cap.
 Every one of the 18 was closed by the phase pass (2 phases on 4 rows, 3 on 11,
 4 on 3); none of them closes without it.  `arm_order_is_subsumption_linearization`
 holds on all 18 and `shadowed_by_selection` is 0 on all 18.
@@ -657,8 +657,44 @@ candidate):
 
 ### The gate
 
-**69 + 18 = 87 of 143, against the ~100 the task set.  The gate fires, so this
-section is the taxonomy and the constructor stops here.**  What it bought is
+**87 of 143, against the ~100 the session's gate set.  The gate fires, so this
+section is the taxonomy and the constructor stops here.**  Measured on the full
+143 at `d4bbdd9` (`tools/ladder/core143_ph.jsonl`, table `sweep143_ph.log`,
+8,763 s of per-row wall, median 33 s, max 301 s, **0 hard timeouts and 0
+crashes**), printed by `rowcounts.py`:
+
+| working set | rows | sweep 1 | now |
+|---|---:|---:|---:|
+| engine-gap (c) | 24 | 0 | 0 |
+| two-parameter target | 71 | 32 | **50** |
+| register (rung 3) | 17 | 16 | 16 |
+| regression (already closed) | 21 | 21 | 21 |
+| **total** | **143** | **69** | **87** |
+
+All 87 pass the differential, 86 of 87 match predicted step counts exactly, all
+87 confirm 40 laps from blank, all 87 cover every digit string, and **no row
+that closed before stopped closing** — the only transitions are 18 rows from
+`overflow leaves the family` to `closed`.  73 are never-QH, 14 name a
+quasi-halt witness.  `arm_order_is_subsumption_linearization` holds on 87 of 87
+and `shadowed_by_selection` is 0 on 87 of 87.
+
+26 of the 87 read on more than one terminator (12 on two, 11 on three, 3 on
+four).  Eight of those 26 already closed at sweep 1 on ONE terminator and now
+read as multi-phase: the guards let the pass fire wherever it improves the
+reading, not only where the old reading failed, and those eight still pass the
+differential and the lap check — with FEWER arms (median 15 against 32 for the
+single-phase rows), because a phase absorbs case splits the arms were carrying.
+
+The one cost, and it is the cheap pass's not the constructor's: three rows that
+sweep 1 reported as `arm lands off the family` now spend the whole cap and
+report `time cap` instead of a per-candidate diagnosis
+(`1RB---_0LC1RD_1LB1RC_1LB0RD`, `1RB---_1LC0RB_0LD1RB_1LC1RD`,
+`1RB---_1LC1RB_0LB1RD_1LC0RD`).  The first of them is the row §4e records as
+HARD-timing-out; it now returns inside the subprocess timeout, which is the
+half of that complaint the budget work was aimed at.  The other half — the
+phase pass costs one raw walk and one fit per candidate family, and these rows
+have many candidates — is unfinished, and it is a budget item, not a
+mathematical one.  What it bought is
 not only the 18: it is that the residue is now 23 rows all failing at one
 place, with 8 of them naming their own next constructor, and a per-row
 measurement (`fillcost.py`, `phases.py`) that says in advance whether a row's
