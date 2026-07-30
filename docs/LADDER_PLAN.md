@@ -337,6 +337,165 @@ What Stage B should NOT do yet is design a kernel checker: the surviving cert
 shape (family + arms + boot + liveness, all four present on 21 rows) would be
 re-cut the moment a second parameter lands.
 
+## 4e. Rung two-and-a-half, measured: 21 of 143 becomes 69 of 143
+
+_Sweep 1 measured at commit `0153dd1` (branch
+`claude/ladder-two-parameter-anchor-c0vkav`), engine at `3341a3c`; 20k-step
+mining traces, 300 s hard wall cap per machine, 3 jobs, 9,127 s of per-row
+wall.  Raw: `tools/ladder/core143_fill.jsonl`; readable table
+`core143_fill_rows.txt`.  Every count below is printed by
+`tools/ladder/rowcounts.py` from those files rather than restated here, and the
+working sets are files, not prose: `work71_twoparam.txt` (the 71 non-register
+overflow rows), `work24_enginegap.txt`, `work17_register.txt`,
+`work21_closed.txt` (the regression set)._
+
+§4d named a blocker: 88 rows covered a median 98.8 % of their digit strings and
+failed on exactly `v = b^k − 1`, so "the fill steps out of the one-parameter
+family" and the missing constructor was a second parameter.  The measurement
+reproduces exactly.  The diagnosis of WHY was wrong, and how it was wrong is
+the content of this section.
+
+### The fill did not leave the family.  The model had the wrong successor.
+
+`next_ds` hard-coded the odometer carry — the top string of width `p` goes to
+`[0]*p ++ [1]`, the value `b^p`.  Nothing measured that.  It is what a binary
+odometer does, and it was written down as though it were a property of the rows.
+
+Read instead off the trace — take the anchor visits, decode each, and look at
+where the successor of every top string actually is — the law is `pre ++ mid^n
+++ suf` at width `p + s`, and **the hard-coded carry is 21 of the 69 rows that
+close: precisely the 21 that already closed.**  Every one of the 48 new rows
+closes on a law that had to be read off the machine.  Fourteen distinct laws
+appear; the commonest new one widens by TWO and resets to zero.
+
+So the constructor §4d asked for was already half-present.  The counter's own
+WIDTH is the second parameter: a digit string of length `p` **is** `E(p, v)`,
+the interior arms never touch `p`, and the fill is the only arm that crosses
+it.  What was missing was not the ability to express `E(p, v)` but the
+willingness to READ `E(p, b^p−1) → E(p', c)` instead of assuming it.  `Fill`
+interpolates it from the top string's successor observed at two widths —
+`find_IH` at the width level — and rejects any law that fails to reproduce
+every observed fill.
+
+### Three engine gaps, all one bug
+
+Each was something that wanted a family MEMBER and settled for an anchor VISIT.
+The head crosses the anchor cell several times per increment, so a config
+matching `(state, head)` plus the far side is routinely a mid-flight tape that
+decodes to nothing.
+
+* the differential probe (fixed earlier, `cf7eeab`);
+* `_replay_arm`, which stopped at the first anchor-shaped config — that IS what
+  "arm lands off the family" is;
+* `observe_fill`, which read the successor off the immediately following visit.
+  Measured on three rows, the successor sits 2–8 visits along and every visit
+  between is undecodable; of the 41 rows sweep 1 left failing only at the
+  overflow, a law was fitted on 6.
+
+Plus one guard that inverted its own meaning: the repair loop ran only `while
+not fails_only_at_overflow`.  Correct while the law was hard-coded — no
+specializing reaches a successor the model has wrong — and precisely wrong once
+the law is read off the machine, which left rows one digit string short.
+
+### The far side as a run template
+
+`Fam.other` was a constant cell tuple and `anchor_shaped` demanded equality with
+it; that is where the one-parameter assumption was baked in.  It is now a run
+template `word^(a·p + b)`, inferred like everything else: group anchor visits by
+the far side's run WORDS instead of its cells, take the coordinate that moves as
+the carrier, fit the rest affinely, and reject the template if it fails to
+reproduce any observed far side.  `find_families` gained a matching pass for the
+case where every constant-far-side group falls under the chain threshold — which
+is what the `far side varies` rows are — letting the `+1` chain cross `p` at the
+top string and nowhere else.  Coverage, boot, liveness, the differential and
+`chain_check` all run over `(p, v)`; the interior arms are proved once with `p`
+symbolic and are unchanged in what they do to the counter.
+
+**This layer contributed nothing measurable in sweep 1** — it landed after it
+(`95af653`, `143a9d1`) and is measured by sweep 2 (`core143_two.jsonl`).  Stated
+plainly because it is the layer this session was commissioned to build, and the
+yield came from the fill law instead.
+
+### The result
+
+| working set | rows | before | after |
+|---|---:|---:|---:|
+| engine-gap (c) | 24 | 0 | **0** |
+| two-parameter target | 71 | 0 | **32** |
+| register (rung 3) | 17 | 0 | **16** |
+| regression (already closed) | 21 | 21 | 21 |
+| **total** | **143** | **21** | **69** |
+
+All 69 pass raw-simulator differential validation and confirm 40 laps replayed
+from the blank tape; 68 of 69 also match the arms' predicted step counts
+exactly.  55 are never-QH, 14 name a quasi-halt witness state.  Median 24 arms,
+median 36 s.  No row that closed before stopped closing.  3 rows spend the full
+300 s cap.  §3's kill criterion (≥ ~40 of 150 at rung two) is cleared.
+
+### Two of §4d's calls were wrong
+
+* **The register 17 are not rung three.**  16 of 17 close.  §4d read their fill
+  as "the terminator becomes a digit of an outer register" — which is exactly a
+  fill target with low digits set, `E(p, b^p−1) → E(p+2, 11⟨0⟩)`, stated
+  directly by the inferred law.  §3 predicted these would fail at rung two and
+  called that "a correct failure"; the prediction was wrong, and the Θ(4^k)
+  growth comes out of a fill that widens by two.
+* **The (c) engine-gap pass recovers ZERO of its 24 rows**, against §4d's
+  estimate of 15–20.  The engine bugs were real and are fixed, but they are not
+  what was holding those rows.  Counting the distinct counter-side strings of
+  each length at the busiest constant-far-side anchor (`tools/ladder/numsys.py`,
+  no ladder and no decoding needed) gives, on twelve of them,
+
+      length     1  2  3  4  5  6   7   8   9
+      strings    1  1  2  3  5  8  13  21  34
+
+  exactly the Fibonacci numbers to length 9 — six of the seven `arm lands off
+  the family` rows and six of the fourteen `no signal` rows, including the ten
+  §4d called "a searcher gap, not a shape gap" because twenty sisters in the
+  same gate bucket closed.  They are not a searcher gap.  Those counters are in
+  a **Fibonacci rank system**, their successor is not positional, and no base-`b`
+  `CTR` decodes them however far the search is widened.  The signature appears in
+  none of the other 121 rows.
+
+Both errors have the same shape as the main one, and it is worth naming the
+pattern: **a reader that assumes an arithmetic reports the machine as the thing
+that failed.**  Three times now the "missing constructor" was a hard-coded
+assumption about the counter's own arithmetic — the carry, the anchor, the base.
+
+### Ranking the 74 misses
+
+* **(a) not a base-`b` counter — 12 rows, named exactly.**  The Fibonacci-rank
+  rows above.  The next constructor is a `CTR` over a rank system with `Fill`'s
+  successor generalized from "carry the odometer" to "the successor in this
+  system" — the same shape of fix as this section's, and the sweep names it as
+  precisely as §4d named the last one.
+* **(b) fill law not yet inferable — 41 rows** (`overflow leaves the family`),
+  the dominant mode.  Interior fully covered, failing on a median 4.7 % of
+  strings, all at the overflow.  Sweep 1 fitted a law on only 6 of them because
+  `observe_fill` was looking at the wrong visit; `143a9d1` fixes that and sweep 2
+  measures it.  On the two rows checked by hand the law is now inferred and the
+  rows are 2 and 3 digit strings short — the residue is the fill ARM, not the
+  law.
+* **(c) still engine gaps — a handful.**  7 `arm lands off the family` (6 of
+  them Fibonacci, so not really), 2 `interior not covered`, and 3 rows that
+  spend the full 300 s cap and are cut off mid-repair rather than mid-argument.
+* **(d) no counter reading at any anchor — 24 rows**, of which 6 are `far side
+  varies` (the far-side template's target) and 3 show `+1` on 50–90 % of visits.
+
+### What this says about the plan
+
+The §0 diagnosis holds and sharpens again.  Rule discovery was never the
+bottleneck and still is not.  What each round has cost is one hard-coded
+assumption about the counter's arithmetic, and each has been worth 30–50 rows.
+
+Stage B is now worth considering — but §4d's reason for deferring it has not
+expired so much as changed owner.  The cert shape (family + fill law + arms +
+boot + liveness) has been re-cut once this session already, and the Fibonacci
+rows will re-cut `Fill` again.  The honest reading is that the cert shape is
+stable in its FOUR PARTS and unstable in the arithmetic of one of them, so a
+kernel checker should be designed against the parts and parameterized in the
+successor — not designed now against `pre ++ mid^n ++ suf` specifically.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH

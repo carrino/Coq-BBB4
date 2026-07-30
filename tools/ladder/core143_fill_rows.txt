@@ -1,0 +1,144 @@
+spec                           verdict                    rules  arms  live   wall note
+1RB---_0LB1RC_0RD0RC_1LB1LD    closed                         3    10   BCD   26.1 boot@6 base=3 digits=00/01/11 cover=1092 stable_k=6 diff=True steps=True laps=40
+1RB---_0LB1RC_1LB0RD_1LB0RC    closed                         3    24   BCD   30.8 boot@4 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB---_0LB1RC_1LB0RD_1LC0RC    closed                         6    31   BCD   38.7 boot@4 base=3 digits=00/10/11 cover=1092 stable_k=6 diff=True steps=True laps=40
+1RB---_0LC1RB_0LB1RD_1LC0RD    closed                         3    24   BCD   34.3 boot@4 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB---_0LC1RD_0LB1RC_1LB0RD    closed                         3    24   BCD   34.0 boot@6 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB---_0LC1RD_0LB1RD_1LB0RD    closed                         4    24   BCD   35.9 boot@11 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB---_0LC1RD_0LB1RD_1LC0RD    closed                         4    24   BCD   36.5 boot@11 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB---_0RC0RB_1LD1LC_0LD1RB    closed                         3    10   BCD   27.1 boot@4 base=3 digits=00/01/11 cover=1092 stable_k=6 diff=True steps=True laps=40
+1RB---_1LC0RB_0LD1RB_0LC1RB    closed                         4    24   BCD   35.8 boot@9 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB---_1LC0RB_0LD1RB_0LC1RD    closed                         3    24   BCD   35.3 boot@2 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB---_1LC0RD_0LC1RB_1LB0RB    closed                         6    31   BCD   42.4 boot@2 base=3 digits=00/10/11 cover=1092 stable_k=6 diff=True steps=True laps=40
+1RB---_1LC0RD_0LC1RB_1LC0RB    closed                         3    24   BCD   31.8 boot@2 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB---_1LC0RD_0LC1RD_1LC0RB    closed                         3    24   BCD   32.3 boot@2 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB---_1LC1LB_0LC1RD_0RB0RD    closed                         3     8   BCD   23.3 boot@8 base=3 digits=00/01/11 cover=1092 stable_k=6 diff=True steps=True laps=40
+1RB---_1RC1LB_0LB1RD_0RA0RC    closed                         2    39  ABCD   74.4 boot@8 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB---_1RC1LB_0LB1RD_1RA0RC    closed                         2    39  ABCD   86.8 boot@8 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LA_1LC0RD_1LA1LB_0LB1RD    closed                         5     7  ABCD   38.6 boot@13 base=2 digits=11/10 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LA_1LC0RD_1LA1LB_0LC1RD    closed                         5     7  ABCD   33.7 boot@30 base=2 digits=11/10 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LA_1LC1LA_1RD1LB_0LC0RD    closed                         2     7  ABCD   36.4 boot@9 base=2 digits=00/01 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LC_0RC1LD_1LB1RC_0LA0LB    closed                         3    39  ABCD   86.6 boot@16 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LD_0LC0RB_1LA1RC_0RC1LD    closed                         7    14  ABCD   26.3 boot@16 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LD_1LC1LB_1LD1RC_0RC1LA    closed                         2    39  ABCD   78.3 boot@7 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LD_1LC1RA_1LA1LC_0RA1LD    closed                         2     8  ABCD   34.9 boot@9 base=2 digits=11/01 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LD_1LC1RA_1RD1RC_0RB1LD    closed                         4     8  ABCD   32.3 boot@13 base=2 digits=11/10 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LD_1LC1RB_1LD1RC_0RC1LA    closed                         2    39  ABCD  211.2 boot@39 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LD_1RC1RA_1LA0RC_0RA1LD    closed                         5     7  ABCD   33.5 boot@26 base=2 digits=11/10 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LD_1RC1RA_1LA0RC_0RB1LD    closed                         5     7  ABCD   31.9 boot@17 base=2 digits=11/10 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0LD_1RC1RB_1LD1RC_0RC1LA    closed                         2    39  ABCD  277.1 boot@33 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0RC_0RC1LD_1LB1RC_0LA0LB    closed                         2    39  ABCD   73.6 boot@10 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0RC_1LC1RA_1RD1LB_0LC0RD    closed                         2     7  ABCD   28.8 boot@11 base=2 digits=00/01 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB0RD_1RC---_1RD1LC_0LC1RA    closed                         2    39  ABCD   73.8 boot@3 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA0LC_1LC1RD_0RB0RD    closed                         5    24  ABCD   25.6 boot@1 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA0RC_0LD0RB_1LD1RC    closed                         3    24  ABCD   34.0 boot@1 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA1RC_0LD0RC_1LD0RB    closed                         4    10  ABCD   25.4 boot@1 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=False laps=40
+1RB1LA_0LA1RC_0RD0RB_1LB0LA    closed                         2    39  ABCD   72.9 boot@26 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA1RC_0RD0RB_1LB0RA    closed                         3    39  ABCD   74.4 boot@13 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA1RC_0RD0RB_1LB1RA    closed                         2    39  ABCD   72.3 boot@26 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA1RC_0RD0RB_1LB1RD    closed                         2    39  ABCD   73.6 boot@28 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA1RC_0RD0RB_1LC1RA    closed                         2    39  ABCD   73.6 boot@10 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA1RC_0RD0RB_1RA---    closed                         2    39  ABCD   73.3 boot@8 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA1RC_1LD0RB_1LA1LD    closed                         2    38  ABCD   72.9 boot@14 base=2 digits=01/11 cover=1021 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA1RC_1LD0RB_1RA1LD    closed                         2    38  ABCD   72.9 boot@16 base=2 digits=01/11 cover=1021 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA1RC_1LD0RB_1RA1RD    closed                         2    39  ABCD   73.9 boot@10 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA1RC_1RD0RB_1LD0LA    closed                         2    38  ABCD   72.8 boot@30 base=2 digits=01/11 cover=1021 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LA1RC_1RD0RB_1RA---    closed                         2    39  ABCD   73.2 boot@8 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LC0RD_1LC1RD_0LA0RB    closed                         3    24  ABCD   32.2 boot@3 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0LC1RD_1RA1LC_0LA0RB    closed                         2    39  ABCD   69.7 boot@26 base=2 digits=10/11 cover=1020 stable_k=9 diff=True steps=True laps=40
+1RB1LA_0RC1LD_1LB1RC_0LA0LB    closed                         2    39  ABCD   73.6 boot@12 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_1LC0RD_0RA0LC_0LA1RD    closed                         7    14  ABCD   27.6 boot@17 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_1LC1RD_0RC1RA_0LA0RB    closed                         2    41  ABCD   73.0 boot@21 base=2 digits=10/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LA_1LC1RD_1RC1RA_0LA0RB    closed                         2    40  ABCD   71.7 boot@44 base=2 digits=10/11 cover=1021 stable_k=9 diff=True steps=True laps=40
+1RB1LB_1LC1LA_0LB1RD_0RB0RD    closed                         5    41  ABCD  230.6 boot@7 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LC_0LA0LD_1LD1RC_0RC1LB    closed                         2    39  ABCD   73.9 boot@10 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LC_0LA0RB_0RD1LA_0LC1RD    closed                         3    24  ABCD   31.9 boot@1 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LC_0LC0RB_0RD1LA_0LA1RD    closed                         3    24  ABCD   33.5 boot@1 base=2 digits=0/1 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LC_0LC0RB_1LA1LD_1RC0LD    closed                         4     7  ABCD   30.0 boot@15 base=2 digits=00/01 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LC_0RC1LD_1LB1RC_0LA0LB    closed                         2    39  ABCD   75.2 boot@10 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LC_1RC1RB_1LA0RD_0LC1RD    closed                         2     8  ABCD   29.9 boot@7 base=2 digits=11/01 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LD_0LB1LC_1LA1RC_0RC0LA    closed                         2    41  ABCD   73.8 boot@13 base=2 digits=10/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1LD_1LB1LC_1LA1RC_0RC0LA    closed                         2    40  ABCD   74.0 boot@32 base=2 digits=10/11 cover=1021 stable_k=9 diff=True steps=True laps=40
+1RB1LD_1LC1LB_0LA1RC_1LA0RC    closed                         4     8  ABCD   30.3 boot@4 base=2 digits=11/10 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1RA_0RC1LB_1LA1RD_1RC0LB    closed                         4     8  ABCD   31.4 boot@7 base=2 digits=11/10 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1RA_1LC0RD_1RA1LB_0LB1RD    closed                         2     8  ABCD   30.2 boot@14 base=2 digits=11/01 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1RA_1LC1RB_0RB1LD_1RA0LC    closed                         2    38  ABCD   74.3 boot@12 base=2 digits=01/11 cover=1021 stable_k=9 diff=True steps=True laps=40
+1RB1RA_1RC1LB_0LB1RD_1LA0RC    closed                         2    39  ABCD   73.5 boot@8 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1RC_1LA1LD_0RB0RC_1LB0LB    closed                         5    41  ABCD  161.0 boot@9 base=2 digits=01/11 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1RC_1LC0RB_1RA0LD_0RA1LD    closed                         5     7  ABCD   32.7 boot@17 base=2 digits=11/10 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1RC_1LC0RB_1RA0LD_0RC1LD    closed                         5     7  ABCD   32.6 boot@14 base=2 digits=11/10 cover=1022 stable_k=9 diff=True steps=True laps=40
+1RB1RD_1LC1RA_0RB0LC_1LA0RD    closed                         2     7  ABCD   31.6 boot@22 base=2 digits=00/01 cover=1022 stable_k=9 diff=True steps=True laps=40
+0RB0RD_1LC1RB_1RA0LC_1LB0LC    no-counter-shape/far-side-varies     5                6.7 no reading; largest constant-far-side group 4 of 200 visits at C0/R
+0RB0RD_1LC1RB_1RA0LC_1LD0LC    no-counter-shape/far-side-varies     5                6.9 no reading; largest constant-far-side group 4 of 200 visits at C0/R
+0RB1LC_1LC0RD_1RD0LC_1LA1RB    no-counter-shape/far-side-varies    18                6.7 no reading; largest constant-far-side group 4 of 200 visits at C1/L
+0RB1LC_1LC1RD_1LA0LC_0RD1RB    no-counter-shape/far-side-varies    17                9.9 no reading; largest constant-far-side group 5 of 200 visits at C1/L
+1RB---_0LB1RC_1LB0RD_1LC0RD    no-counter-shape/no-signal     3               22.0 best D1/R l=1 base=2: +1 on 39% of 75 visits [[1, 29], [2, 17]]
+1RB---_0LB1RC_1LD0RC_1LB1RC    no-counter-shape/no-signal     3               20.6 best C1/R l=1 base=2: +1 on 39% of 46 visits [[1, 18], [2, 10]]
+1RB---_0LC1RD_1LB1RC_1LB0RD    arm-lands-off-family           4              312.2 best D1/R l=2 base=3: +1 on 87% of 75 visits [[1, 65], [2, 6]]
+1RB---_0LC1RD_1LB1RD_1LB0RD    arm-lands-off-family           4              260.0 best D1/R l=2 base=3: +1 on 87% of 75 visits [[1, 65], [2, 6]]
+1RB---_1LC0RB_0LD1RB_1LC1RB    arm-lands-off-family           4              256.3 best B1/R l=2 base=3: +1 on 87% of 75 visits [[1, 65], [2, 6]]
+1RB---_1LC0RB_0LD1RB_1LC1RD    arm-lands-off-family           4              304.0 best B1/R l=2 base=3: +1 on 87% of 75 visits [[1, 65], [2, 6]]
+1RB---_1LC0RB_1LD1RB_0LD1RB    no-counter-shape/no-signal     3               20.6 best B1/R l=1 base=2: +1 on 39% of 46 visits [[1, 18], [2, 10]]
+1RB---_1LC0RD_0LC1RB_1LB0RD    no-counter-shape/no-signal     3               23.1 best D1/R l=1 base=2: +1 on 39% of 75 visits [[1, 29], [2, 17]]
+1RB---_1LC1RB_0LB1RD_1LC0RD    arm-lands-off-family           4              301.3 best D1/R l=2 base=3: +1 on 87% of 75 visits [[1, 65], [2, 6]]
+1RB---_1LC1RD_0LB1RD_1LB0RD    overflow-leaves-family         3              138.9 best D1/R l=2 base=2: +1 on 100% of 50 visits [[1, 50]]
+1RB---_1LC1RD_0LB1RD_1LC0RD    arm-lands-off-family           4              259.4 best D1/R l=2 base=3: +1 on 87% of 75 visits [[1, 65], [2, 6]]
+1RB---_1LC1RD_0LC1RD_1LB0RD    no-counter-shape/no-signal     3               21.3 best D1/R l=1 base=2: +1 on 39% of 46 visits [[1, 18], [2, 10]]
+1RB0LC_1LC0RD_0RA1LB_0LC1RD    overflow-leaves-family         4               36.7 best D1/L l=2 base=2: +1 on 100% of 65 visits [[1, 65]]
+1RB0LD_0LC1RA_0LA1LA_0RB1LD    overflow-leaves-family         5               33.2 best D1/R l=2 base=2: +1 on 100% of 67 visits [[1, 67]]
+1RB0LD_0LC1RA_0RA1LA_0RB1LD    no-counter-shape/partial-+1     4               29.1 best B1/R l=1 base=2: +1 on 51% of 49 visits [[1, 25], [3, 12]]
+1RB0LD_0LC1RA_0RC1LA_0RB1LD    no-counter-shape/partial-+1     4               29.2 best A1/R l=2 base=3: +1 on 51% of 49 visits [[1, 25], [2, 12]]
+1RB0LD_0LC1RA_1LA0RB_0RB1LD    overflow-leaves-family         4               33.5 best D1/R l=2 base=2: +1 on 100% of 65 visits [[1, 65]]
+1RB0LD_0LC1RA_1LA1LA_0RB1LD    overflow-leaves-family         4               33.6 best D1/R l=2 base=2: +1 on 100% of 66 visits [[1, 66]]
+1RB0LD_0LC1RA_1RB1LA_0RB1LD    overflow-leaves-family         4               34.0 best D1/R l=2 base=2: +1 on 100% of 64 visits [[1, 64]]
+1RB0LD_0RC1RA_1LC0LA_0RA1LD    no-counter-shape/partial-+1     2               28.7 best D1/R l=1 base=2: +1 on 51% of 51 visits [[1, 26], [3, 12]]
+1RB0LD_0RC1RA_1LC1LA_0RA1LD    overflow-leaves-family         5               35.8 best D1/R l=2 base=2: +1 on 100% of 50 visits [[1, 50]]
+1RB0LD_0RC1RA_1LC1LA_0RB1LD    overflow-leaves-family         6               34.8 best D1/R l=2 base=2: +1 on 100% of 65 visits [[1, 65]]
+1RB0LD_1LC1RA_0RB1LA_0RB1LD    overflow-leaves-family         5               34.6 best D1/R l=2 base=2: +1 on 100% of 67 visits [[1, 67]]
+1RB0LD_1LC1RA_0RD1LA_0RB1LD    overflow-leaves-family         5               39.8 best D1/R l=2 base=2: +1 on 100% of 67 visits [[1, 67]]
+1RB0LD_1LC1RA_1LA1RC_0RA1LD    overflow-leaves-family         4               34.4 best D1/R l=2 base=2: +1 on 100% of 50 visits [[1, 50]]
+1RB0LD_1RC1RA_1LA1LC_0RA1LD    overflow-leaves-family         4               33.1 best D1/R l=2 base=2: +1 on 100% of 51 visits [[1, 51]]
+1RB0LD_1RC1RA_1LA1RA_0RA1LD    overflow-leaves-family         5               32.9 best D1/R l=2 base=2: +1 on 100% of 49 visits [[1, 49]]
+1RB0LD_1RC1RA_1LA1RA_0RB1LD    overflow-leaves-family         5               34.4 best D1/R l=2 base=2: +1 on 100% of 67 visits [[1, 67]]
+1RB0LD_1RC1RA_1LA1RC_0RA1LD    overflow-leaves-family         4               32.5 best D1/R l=2 base=2: +1 on 100% of 49 visits [[1, 49]]
+1RB0RB_0LC0LD_1LC1LD_1RA0RA    no-counter-shape/no-signal     2               24.2 best D0/L l=1 base=2: +1 on 26% of 49 visits [[-3, 18], [1, 13]]
+1RB0RB_0LC1RD_1LC1LA_0LA1RB    no-counter-shape/no-signal     3               31.9 best B1/L l=1 base=2: +1 on 0% of 76 visits [[-3, 47], [-6, 11]]
+1RB0RB_0RC1RC_0LD1LA_1LD0LA    no-counter-shape/no-signal     2               24.5 best A0/L l=1 base=2: +1 on 26% of 49 visits [[-3, 18], [1, 13]]
+1RB0RB_1LC0RC_1RA0LD_0LB0LC    no-counter-shape/far-side-varies    15               12.4 no reading; largest constant-far-side group 3 of 200 visits at C1/R
+1RB0RB_1LC1LD_0LC1RA_0LD0RA    no-counter-shape/no-signal     2               21.3 best B0/R l=2 base=3: +1 on 40% of 5 visits [[1, 2], [3, 2]]
+1RB0RC_0LA1LC_0RD0LB_1LB1RD    overflow-leaves-family         2              273.4 best D1/R l=2 base=2: +1 on 100% of 49 visits [[1, 49]]
+1RB0RD_1LB1LC_1RC0RA_0LB1RD    overflow-leaves-family         2               25.3 best B0/L l=2 base=2: +1 on 100% of 47 visits [[1, 47]]
+1RB0RD_1LC0LB_1LD0LB_1RD0RA    no-counter-shape/no-signal     2               24.2 best B0/R l=2 base=2: +1 on 26% of 49 visits [[-3, 18], [1, 13]]
+1RB0RD_1LC0LC_1LD0LB_1RD0RA    no-counter-shape/no-signal     2               29.7 best B0/R l=2 base=2: +1 on 26% of 49 visits [[-3, 18], [1, 13]]
+1RB0RD_1LC1RA_0RB0LC_1LD0LA    overflow-leaves-family         2               31.9 best C1/R l=2 base=2: +1 on 100% of 51 visits [[1, 51]]
+1RB1LA_0LC1RD_1LC1LA_0LA0RB    overflow-leaves-family         2              231.3 best A1/L l=2 base=2: +1 on 100% of 67 visits [[1, 67]]
+1RB1LA_0RC1RD_1LB0LD_0LA0RB    overflow-leaves-family         2              272.8 best A1/L l=2 base=2: +1 on 100% of 49 visits [[1, 49]]
+1RB1LA_1LC0RD_1LA1LB_0LB1RD    overflow-leaves-family         5               33.0 best D1/L l=2 base=2: +1 on 100% of 49 visits [[1, 49]]
+1RB1LA_1LC0RD_1RA1LB_0LB1RD    overflow-leaves-family         5               31.9 best D1/L l=2 base=2: +1 on 100% of 48 visits [[1, 48]]
+1RB1LA_1RC1LB_0LA1RD_0LB0RC    overflow-leaves-family         2              158.2 best B1/L l=2 base=2: +1 on 100% of 65 visits [[1, 65]]
+1RB1LA_1RC1LB_0LB1RD_1LA0RC    overflow-leaves-family         2              289.7 best B1/L l=2 base=2: +1 on 100% of 49 visits [[1, 49]]
+1RB1LB_1LC0RD_0LB1LA_0LA1RA    no-counter-shape/far-side-varies     8               14.7 no reading; largest constant-far-side group 3 of 200 visits at A1/L
+1RB1LB_1LC0RD_1LA1LB_0LB1RD    overflow-leaves-family         4               30.4 best D1/L l=2 base=2: +1 on 100% of 50 visits [[1, 50]]
+1RB1LB_1LC0RD_1LA1LB_0LC1RD    overflow-leaves-family         5               31.9 best D1/L l=2 base=2: +1 on 100% of 67 visits [[1, 67]]
+1RB1LC_0LA0RB_0LD1LD_1RA0RA    no-counter-shape/no-signal     2               25.2 best B0/L l=1 base=2: +1 on 50% of 199 visits [[1, 99], [5, 38]]
+1RB1LC_0LA0RC_1LA0RD_0LA1RD    overflow-leaves-family         4               33.9 best D1/L l=2 base=2: +1 on 100% of 65 visits [[1, 65]]
+1RB1LC_0LA1RC_1LA0RD_0LA1RD    overflow-leaves-family         5               33.3 best D1/L l=2 base=2: +1 on 100% of 67 visits [[1, 67]]
+1RB1LC_0LA1RC_1RB0LD_0RB1LD    overflow-leaves-family         4               35.1 best D1/R l=2 base=2: +1 on 100% of 64 visits [[1, 64]]
+1RB1LC_0LC0RB_1LA1RD_0LA0RD    overflow-leaves-family         3               35.4 best B1/L l=2 base=2: +1 on 100% of 67 visits [[1, 67]]
+1RB1LC_1LA0RC_1LA0RD_0LA1RD    overflow-leaves-family         3               30.2 best D1/L l=2 base=2: +1 on 100% of 63 visits [[1, 63]]
+1RB1LC_1LB1RA_0LC0LD_0RA0RD    interior-not-covered           3               97.4 best A0/L l=2 base=2: +1 on 100% of 11 visits [[1, 11]]
+1RB1LC_1LC1RA_0LC0LD_0RA0RD    interior-not-covered           3               56.4 best A0/L l=2 base=2: +1 on 100% of 6 visits [[1, 6]]
+1RB1LC_1RC1LB_1LA0RD_0LC1RD    overflow-leaves-family         5               31.4 best D1/L l=2 base=2: +1 on 100% of 48 visits [[1, 48]]
+1RB1LD_0LC0RD_0LA1RC_1LA0RC    overflow-leaves-family         4               34.5 best C1/L l=2 base=2: +1 on 100% of 67 visits [[1, 67]]
+1RB1LD_0LC1RD_0LA1RC_1LA0RC    overflow-leaves-family         5               32.2 best C1/L l=2 base=2: +1 on 100% of 67 visits [[1, 67]]
+1RB1LD_1LC1RA_0RB0LC_0RA0LD    overflow-leaves-family         3               48.6 best A0/R l=1 base=2: +1 on 51% of 85 visits [[1, 43], [3, 17]]
+1RB1LD_1RC0RC_1LA0LA_0RA0LD    no-counter-shape/no-signal     2               26.5 best A0/R l=1 base=2: +1 on 25% of 99 visits [[-3, 38], [1, 25]]
+1RB1LD_1RC1RB_1LC1LA_0RC0RD    no-counter-shape/no-signal     4                4.5 best C1/L l=3 base=2: +1 on 17% of 6 visits [[1, 1], [14, 1]]
+1RB1RA_1LC0RD_1LA1LB_0LB1RD    overflow-leaves-family         5               30.7 best D1/L l=2 base=2: +1 on 100% of 51 visits [[1, 51]]
+1RB1RB_1LC0RD_0RA1LB_0LC1RD    overflow-leaves-family         4               31.4 best D1/L l=2 base=2: +1 on 100% of 66 visits [[1, 66]]
+1RB1RC_1LA0LB_1LD0RD_1LB0RC    no-counter-shape/chain-broken     6               36.2 best B0/R l=2 base=3: +1 on 100% of 132 visits [[1, 132]]
+1RB1RC_1LA1RA_0RC1LD_1LB0LD    arm-lands-off-family           3              125.0 best D1/L l=3 base=2: +1 on 100% of 32 visits [[1, 32]]
+1RB1RC_1LC1LB_1RA0LD_0RC1LD    overflow-leaves-family         5               32.3 best D1/R l=2 base=2: +1 on 100% of 51 visits [[1, 51]]
+1RB1RC_1LC1RB_1RA0LD_0RC1LD    overflow-leaves-family         5               35.8 best D1/R l=2 base=2: +1 on 100% of 48 visits [[1, 48]]
+1RB1RC_1LC1RC_1RA0LD_0RA1LD    overflow-leaves-family         5               35.2 best D1/R l=2 base=2: +1 on 100% of 66 visits [[1, 66]]
+1RB1RC_1LC1RC_1RA0LD_0RC1LD    overflow-leaves-family         4               31.5 best D1/R l=2 base=2: +1 on 100% of 50 visits [[1, 50]]
