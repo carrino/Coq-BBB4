@@ -496,6 +496,40 @@ stable in its FOUR PARTS and unstable in the arithmetic of one of them, so a
 kernel checker should be designed against the parts and parameterized in the
 successor — not designed now against `pre ++ mid^n ++ suf` specifically.
 
+### Sweep 2: the far-side template is worth exactly zero, and that isolates the blocker
+
+_Sweep 2 measured at `143a9d1` over the same 143 rows, same budget:
+`tools/ladder/core143_two.jsonl`, 10,758 s of per-row wall._
+
+It carries everything this branch built after sweep 1 — the far-side run
+template, `find_families`' template pass, the repair reaching the overflow, the
+forward-scanning fill observer, `drop_wrong`.  The result:
+
+| | sweep 1 | sweep 2 |
+|---|---:|---:|
+| closed | 69 | **69** |
+| rows gained | — | **0** |
+| rows lost | — | **0** |
+| far-side template fired on | — | **0 rows** |
+| per-row wall | 9,127 s | 10,758 s |
+
+**Zero delta on all 143 rows, for 18 % more wall clock**, and three rows crossed
+from `arm lands off the family` to a hard timeout — they now return no diagnosis
+where they used to return a wrong-anchor report.  The far-side template never
+fired once: `find_families` prefers anchors with a long constant-far-side chain,
+which are by construction the anchors where the far side does not move, and its
+template pass only runs when every constant group falls under the chain
+threshold.  The layer is built, it is inert, and nothing here credits it.
+
+**But one component did exactly its job, and that is the useful finding.**  The
+forward-scanning observer took the number of still-open overflow rows with an
+inferred fill law from **6 of 41 to 27 of 41** — and not one of those 21 rows
+closed.  Sweep 1 could not separate "the law is unknown" from "the law is known
+and no arm realizes it"; sweep 2 separates them.  For at least 27 of the 41,
+**the law is right and the fill ARM is the whole blocker**, which is why §4f's
+task is arm selection and not more inference.  A null result that moves 21 rows
+from one side of a diagnosis to the other is worth more than the 18 % it cost.
+
 ### Addendum: what 69 is worth against the LIVE residue
 
 _Added after merging `origin/main` at `e955ed8`, which is 9 commits and three
