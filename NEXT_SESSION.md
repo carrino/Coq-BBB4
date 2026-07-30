@@ -133,6 +133,9 @@ carrying forward:
   0 of 17.  New tool `tools/counters/radix_infer.py`; results in
   `tools/counters/RADIX_DROZD26.txt`.  **5 rows are affine in the carry
   length, all of them `1RB---`.**
+- **THREE ROWS BOARDED** (core 65 -> 62): `1RB---_0LB1RC_1LB0RD_1LB0RC`,
+  `1RB---_1LC0RD_0LC1RB_1LC0RB`, `1RB---_1LC0RD_0LC1RD_1LC0RB`, all as `iqh`
+  off the new role-parameterised closer `theories/Counters/KpWallQH.v`.
 - **The counter route needs no ReachStI and no closure**, which is the real
   lesson: a lap gives every state's liveness at once plus `NonHalt`.
   `LapGlueQuiet.glue_qh_quiet` is already the right closer (`qa = StA`,

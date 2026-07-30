@@ -806,6 +806,9 @@ theories/Counters/DpCounter.v
 theories/Machines/Counters/ILD_1RB1RD_1LC0LB_1RA1LC_0RD1LB.v
 theories/Counters/KpCounter.v
 theories/Machines/Counters/ILK_1RB0LD_0LC1LA_0RC1LA_1RC0LD.v
+theories/Machines/Counters/KQ_1RB____0LB1RC_1LB0RD_1LB0RC.v
+theories/Machines/Counters/KQ_1RB____1LC0RD_0LC1RB_1LC0RB.v
+theories/Machines/Counters/KQ_1RB____1LC0RD_0LC1RD_1LC0RB.v
 
 theories/Machines/Counters/ILS1M_0RB0LB_0RC1LB_1RD0LB_1LA1RC.v
 theories/Machines/Counters/ILS1M_0RB0LD_1LA1RC_1RB0LD_0RB1LD.v
@@ -1344,6 +1347,7 @@ theories/Counters/IXPGadgets.v
 
 theories/Checkers/LapDecider.v
 theories/Counters/LapGlueQuiet.v
+theories/Counters/KpWallQH.v
 theories/Checkers/LapAvoid.v
 theories/Counters/LapCertGlue.v
 theories/Counters/LapCertGlueLift.v

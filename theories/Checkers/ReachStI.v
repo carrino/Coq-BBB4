@@ -297,6 +297,25 @@ Definition start_ok (tm : TM) (allowed : list St) (t : nat) : bool :=
   | None => false
   end.
 
+(** Every configuration a run from an allowed one passes through is allowed.
+    This is what discharges [LapGlueQuiet]'s [AvoidRun] premise on the
+    [1RB---] rows: nothing targets [StA], so [allowed = [StB;StC;StD]] is
+    closed and no lap can touch [StA]. *)
+Lemma inv_csteps_all : forall tm allowed,
+  inv_ok tm allowed = true ->
+  forall n cc cc', InAllowed allowed cc -> csteps tm n cc = Some cc' ->
+  InAllowed allowed cc'.
+Proof.
+  intros tm allowed Hinv n.
+  induction n as [|n IH]; intros cc cc' Hin Hst.
+  - cbn [csteps] in Hst. injection Hst as <-. exact Hin.
+  - cbn [csteps] in Hst.
+    destruct (cstep tm cc) as [cc1|] eqn:E; [| discriminate].
+    destruct (inv_cstep tm allowed cc Hinv Hin) as (cc2 & Hs2 & Hin2).
+    rewrite E in Hs2. injection Hs2 as <-.
+    exact (IH cc1 cc' Hin2 Hst).
+Qed.
+
 Theorem reach_sti_recurs_b : forall tm allowed qgoal B C rk t,
   start_ok tm allowed t = true ->
   inv_ok tm allowed = true ->

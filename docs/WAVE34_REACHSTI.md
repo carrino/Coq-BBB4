@@ -1,10 +1,21 @@
 # Wave 34 — `ReachStI`, and Drozd's 26 measured end to end
 
-Nick Drozd posted 26 machines as "easy".  All 26 are in
-`tools/closeout/core_rows.txt` (the 65 open core rows).  This wave builds the
-tier `docs/REACHST_TIER.md` §8e names as the next move — **`ReachSt`
-relativised to an invariant** — measures exactly what it buys on those 26,
-and reports, honestly, that **it boards none of them** and why.
+Nick Drozd posted 26 machines as "easy".  All 26 were in
+`tools/closeout/core_rows.txt` (then 65 open core rows).  **Three are now
+proved** (core 65 → 62) — but not by the tier this wave set out to build.
+
+Two things happened, and the second is the one worth reading:
+
+1. The tier `docs/REACHST_TIER.md` §8e names as the next move — **`ReachSt`
+   relativised to an invariant** — was built (§2), measured (§3), and
+   **boards none of these rows** (§4).  Why it cannot is a sharper statement
+   of the residue's real blocker than the project had before.
+2. Following John's reframing — *"besides that it's just a counter, nothing
+   more"* — reading the counters directly showed the front was stuck partly
+   on a **classification bug**: the repo's counter classifiers are base-2
+   only, and some of these rows are base 3 (§4b).  Re-read at the right
+   anchor, three rows have an affine lap and board off machinery that
+   already existed.
 
 Everything below that is a measurement was produced by a tool committed in
 this wave; everything that is a proof is kernel-checked with the usual
@@ -97,7 +108,7 @@ exists to stop) and the two goal states that row is genuinely missing.
 * On the 14 `1RB---` rows this is the first liveness *or* non-halting fact
   the development has ever had.
 
-## 4. Why it still boards nothing — the actual blocker
+## 4. Why the tier boards nothing — the actual blocker
 
 A board needs **every** visited state at once: `NeverQuasiHaltsSt` quantifies
 over all of them, and so does the `QHBound` half of `iqh`.  `ReachStI`
@@ -127,8 +138,8 @@ same reason, so there is no complementarity to exploit there at all.
 one state.  `bothhalves.py` says the same thing from the other side — 0 of
 the 26 have a state reading `TN`.
 
-**So no row is boardable, and 9 of the 17 measured are short by exactly one
-state.**  That one state is always the **wall** state.  On
+**So no row is boardable BY THIS TIER, and 9 of the 17 measured are short by
+exactly one state.**  That one state is always the **wall** state.  On
 `1RB---_0LB1RC_0RD0RC_1LB1LD` the counter is `1 [bits] 1` with a fixed `1` at
 cell 0; `StC` is live iff `StB`'s leftward sweep always terminates at that
 wall, and neither a state-set invariant nor a finite window can see it.  It is
@@ -185,6 +196,21 @@ integers** at some anchor, four of them at radix 3 with 2-cell digits, and
 (Affine over the carry lengths that *occurred*, interior and overflow lumped:
 a routing hint, not the emitter's differential validation.)
 
+### What it boarded
+
+**Three rows are now proved** (core 65 -> 62, settled 5,070 -> 5,073 = 98.4%):
+
+    1RB---_0LB1RC_1LB0RD_1LB0RC     KQ_1RB____0LB1RC_1LB0RD_1LB0RC.v
+    1RB---_1LC0RD_0LC1RB_1LC0RB     KQ_1RB____1LC0RD_0LC1RB_1LC0RB.v
+    1RB---_1LC0RD_0LC1RD_1LC0RB     KQ_1RB____1LC0RD_0LC1RD_1LC0RB.v
+
+all three as `iqh = NonHalt /\ QHBound 2000 /\ QuasiHaltsSt`, kernel-checked,
+`functional_extensionality_dep` only.  They are the same machine up to
+relabelling of the three defined states, so the closer is parameterised by
+the roles (`theories/Counters/KpWallQH.v`) and each board is the closer plus
+five `vm_compute` facts.  A scan of `core_rows.txt` for that role shape finds
+exactly these three.
+
 **This is the route that should have been taken, and it does not need
 `ReachStI` at all.**  A lap gives the liveness of *every* state at once, plus
 `NonHalt` — which is exactly where the closure route died.  The closer
@@ -196,14 +222,11 @@ witness per other state.  For a `1RB---` row that is `qa = StA`, `s0 = 0`,
 `StA`.  `theories/Machines/Counters/BNC_1RB____1LC0RB_1LD1RB_1LC1RB.v` is a
 `1RB---` row already boarded exactly this way (via `BounceGlue.bounce_qh`).
 
-So for the three radix-2 affine rows the Coq encoding already exists
-(`KpCounter.Kp`) and the closer already exists.  The missing piece is an
-**emitter pairing the `Kp` encoding with the QUASIHALTING closer**:
-`emit_kp.py` emits never-QH boards, and `emit_qh.py` — which does emit the
-`iqh` triple — is hard-wired to the `Jp` encoding.  Crossing those two is the
-shortest path to boarding rows from this list.  The two radix-3 rows need one
-more thing: a ternary digit alphabet, which no `theories/Counters` encoding
-currently provides.
+The three radix-2 affine rows are done (above).  The two radix-3 rows still
+need one thing that does not exist: a **ternary digit alphabet** in
+`theories/Counters` — every encoding there is base 2.  Their anchor, lap
+(`4 + 4j`) and digit set (`{00,01,11}`) are already measured, so that is a
+well-specified piece of work rather than a search.
 
 ## 5. The other next step, with the measurement that sizes it
 
