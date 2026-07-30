@@ -117,3 +117,6 @@
 [117/143  2664s] 1RB1LC_1LC1RA_0LC0LD_0RA0RD    interior-not-covered 56.4s
 [118/143  2664s] 1RB1LC_1RC1LB_1LA0RD_0LC1RD    overflow-leaves-family 31.4s
 [119/143  2666s] 1RB1LC_1RC1RB_1LA0RD_0LC1RD    closed             29.9s
+[120/143  2721s] 1RB1LD_0LB1LC_1LA1RC_0RC0LA    closed             73.8s
+[121/143  2721s] 1RB1LD_0LC0RD_0LA1RC_1LA0RC    overflow-leaves-family 34.5s
+[122/143  2721s] 1RB1LD_0LC1RD_0LA1RC_1LA0RC    overflow-leaves-family 32.2s
