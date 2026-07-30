@@ -120,3 +120,8 @@
 [120/143  2721s] 1RB1LD_0LB1LC_1LA1RC_0RC0LA    closed             73.8s
 [121/143  2721s] 1RB1LD_0LC0RD_0LA1RC_1LA0RC    overflow-leaves-family 34.5s
 [122/143  2721s] 1RB1LD_0LC1RD_0LA1RC_1LA0RC    overflow-leaves-family 32.2s
+[123/143  2772s] 1RB1LD_1LB1LC_1LA1RC_0RC0LA    closed             74.0s
+[124/143  2772s] 1RB1LD_1LC1LB_0LA1RC_1LA0RC    closed             30.3s
+[125/143  2772s] 1RB1LD_1LC1RA_0RB0LC_0RA0LD    overflow-leaves-family 48.6s
+[126/143  2772s] 1RB1LD_1RC0RC_1LA0LA_0RA0LD    no-counter-shape   26.5s
+[127/143  2772s] 1RB1LD_1RC1RB_1LC1LA_0RC0RD    no-counter-shape   4.5s
