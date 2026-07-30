@@ -45,3 +45,5 @@
 [ 45/143  1099s] 1RB0LD_0RC1RA_1LC0LA_0RA1LD    no-counter-shape   27.4s
 [ 46/143  1116s] 1RB0LD_0RC1RA_1LC1LA_0RA1LD    overflow-leaves-family 43.2s
 [ 47/143  1138s] 1RB0LD_0RC1RA_1LC1LA_0RB1LD    overflow-leaves-family 38.7s
+[ 48/143  1174s] 1RB0LD_1LC1LB_1LD1RC_0RC1LA    closed             74.8s
+[ 49/143  1174s] 1RB0LD_1LC1RA_0RB1LA_0RB1LD    overflow-leaves-family 42.8s
