@@ -108,6 +108,49 @@ Proof.
   cbn [Nat.pow] in *. lia.
 Qed.
 
+
+(** ** The OFFSET start
+
+    `innerrun.py` also measured runs that START a small constant above the
+    octave: [lo = 2^m + c].  The start has a name too -- it is the concrete
+    constructor word of [c] on top of [pow2 (m - width c)], which the emitter
+    writes down directly -- so the only thing a board needs is the numeric
+    side condition, and that is [inner_to_named_lift] below: any [v] and any
+    [E] in the SAME octave, stated purely in [Pos.to_nat] and [tovf], with no
+    commitment to how either was built.
+
+    [tovf_size] is what turns [tovf] of a built-up start into arithmetic. *)
+
+Lemma size_nat_pow2 : forall n, Pos.size_nat (pow2 n) = S n.
+Proof. induction n as [|n IH]; [reflexivity | cbn [pow2 Pos.size_nat]; lia]. Qed.
+
+Lemma size_nat_half2 : forall n, Pos.size_nat (half2 n) = S (S n).
+Proof. induction n as [|n IH]; [reflexivity | cbn [half2 Pos.size_nat]; lia]. Qed.
+
+Lemma pos_lt_pow2_size : forall v, Pos.to_nat v < 2 ^ Pos.size_nat v.
+Proof.
+  induction v as [v IH|v IH|]; cbn [Pos.size_nat Nat.pow].
+  - rewrite Pos2Nat.inj_xI. lia.
+  - rewrite Pos2Nat.inj_xO. lia.
+  - cbn. lia.
+Qed.
+
+Lemma tovf_size : forall v, tovf v = 2 ^ Pos.size_nat v - 1 - Pos.to_nat v.
+Proof.
+  induction v as [v IH|v IH|]; [| | reflexivity];
+    cbn [tovf Pos.size_nat Nat.pow]; rewrite IH;
+    [rewrite Pos2Nat.inj_xI | rewrite Pos2Nat.inj_xO];
+    pose proof (pos_lt_pow2_size v); lia.
+Qed.
+
+(** [half2 n] as [3 * 2^n - 1] -- the form a board's side conditions reduce
+    to once [Nat.pow_add_r] has split the index shift off. *)
+Lemma pos2nat_half2' : forall n, Pos.to_nat (half2 n) = 3 * 2 ^ n - 1.
+Proof.
+  intro n. rewrite pos2nat_half2. cbn [Nat.pow].
+  pose proof (one_le_pow2 n). lia.
+Qed.
+
 Section InnerHalfLift.
 
 Variable tm : TM.
@@ -120,6 +163,22 @@ Hypothesis Hin : forall v i q0, cview v = (i, Some q0) ->
 (** The inner counter, run from its octave start to the HALFWAY value.  The
     [exists n] is the whole [Theta(2^n)] middle; no formula for it is written
     down, exactly as in [inner_to_fill_lift]. *)
+(** Any two anchors of the same octave: the run from [v] to [E] takes
+    [Pos.to_nat E - Pos.to_nat v] increments, and the side condition is
+    [inner_to_add_lift]'s verbatim.  Neither endpoint has to be a power of
+    two, a fill or a half -- the board names them and discharges the two
+    numeric premises. *)
+Lemma inner_to_named_lift : forall v E,
+  Pos.to_nat v <= Pos.to_nat E ->
+  Pos.to_nat E - Pos.to_nat v <= tovf v ->
+  exists m, stepn tm m (lift (Cin v)) = Some (lift (Cin E)).
+Proof.
+  intros v E Hle Hk.
+  destruct (inner_to_add_lift tm Cin Hin
+              (Pos.to_nat E - Pos.to_nat v) v Hk) as (m & Hm).
+  exists m. rewrite (iter_succ_to _ _ Hle) in Hm. exact Hm.
+Qed.
+
 Lemma inner_to_half_lift : forall n,
   exists m, stepn tm m (lift (Cin (pow2 (S n)))) = Some (lift (Cin (half2 n))).
 Proof.
@@ -153,6 +212,42 @@ Proof.
   destruct (inner_to_half_lift tm Cin Hin n) as (mi & Hi).
   exists (m + (mi + k)), e. split; [| exact Hq].
   rewrite stepn_add, (csteps_lift _ _ _ _ Hm), Hl, stepn_add, Hi. exact Hk.
+Qed.
+
+(** [vis_via_half] / [nested_overflow_half_lift] with both endpoints NAMED by
+    the board instead of fixed at [pow2 (S n)] and [half2 n]. *)
+Lemma vis_via_named : forall (q : St) (p v E : positive),
+  Pos.to_nat v <= Pos.to_nat E ->
+  Pos.to_nat E - Pos.to_nat v <= tovf v ->
+  (exists m c, csteps tm m (Cc p) = Some c /\ lift c = lift (Cin v)) ->
+  (exists k e, stepn tm k (lift (Cin E)) = Some e /\ fst e = q) ->
+  exists k e, stepn tm k (lift (Cc p)) = Some e /\ fst e = q.
+Proof.
+  intros q p v E Hle Hk (m & c & Hm & Hl) (k & e & Hk2 & Hq).
+  destruct (inner_to_named_lift tm Cin Hin v E Hle Hk) as (mi & Hi).
+  exists (m + (mi + k)), e. split; [| exact Hq].
+  rewrite stepn_add, (csteps_lift _ _ _ _ Hm), Hl, stepn_add, Hi. exact Hk2.
+Qed.
+
+Theorem nested_overflow_named_lift : forall (p v E : positive),
+  Pos.to_nat v <= Pos.to_nat E ->
+  Pos.to_nat E - Pos.to_nat v <= tovf v ->
+  (exists m c, 0 < m /\ csteps tm m (Cc p) = Some c /\ lift c = lift (Cin v)) ->
+  (exists m c', csteps tm m (Cin E) = Some c'
+                /\ lift c' = lift (Cc (Pos.succ p))) ->
+  exists m c', csteps tm m (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < m.
+Proof.
+  intros p v E Hle Hk (nb & cb & Hnb & Hb & Hbl) (ne & ce & He & Hel).
+  destruct (inner_to_named_lift tm Cin Hin v E Hle Hk) as (ni & Hi).
+  assert (Hrest : stepn tm (ni + ne) (lift cb) = Some (lift ce)).
+  { rewrite stepn_add, Hbl, Hi. exact (csteps_lift _ _ _ _ He). }
+  destruct (stepn_csteps_at tm (ni + ne) cb (lift ce) Hrest)
+    as (cf & Hcf & Hcfl).
+  exists (nb + (ni + ne)), cf. split; [| split].
+  - rewrite csteps_add, Hb. exact Hcf.
+  - rewrite Hcfl. exact Hel.
+  - lia.
 Qed.
 
 (** The outer overflow branch of a HALFWAY arm, in the shape

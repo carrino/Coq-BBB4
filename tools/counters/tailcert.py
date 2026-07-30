@@ -350,6 +350,37 @@ def _int_chain(tab, A, T, what, b):
     return got, ch, (r[1], r[2]), len(gp) - len(wp)
 
 
+
+def _inner_chain(tab, AI0, AI1):
+    """The inner family's own interior lap: EXACT first, then up to `lift`.
+
+    This is `_int_chain`'s wave-31 fallback, moved onto the arm it was never
+    given.  MEASURED (wave-33) over the 17 rows filed `no inner interior
+    chain': the lap cost is affine at `4*i + b' on 21 of the 22 arms
+    (`1RB1LC_0LC0RB_1LA1RD_0LA0RD' is the one genuine exception, at
+    4, 16, 36, 72, 140), so the label was about the LANDING, not the machine
+    -- and 9 of the 17 close as soon as one trailing blank on the FAR side is
+    allowed, which is exactly the slack the outer interior already tolerates.
+
+    Same discipline as `_int_chain`: the left side must land EXACTLY (it
+    carries the opaque `E q0 ++ tail`, so a blank there would sit inside the
+    word) and the far side may only gain trailing blanks.
+    Returns (landing, chain, (a, b), farpad) or None."""
+    chn, rn = _chain(tab, False, True, AI0, AI1)
+    if chn is not None and rn[0] == AI1 and rn[2] != 0:
+        return AI1, chn, (rn[1], rn[2]), 0
+    chn, rn = _chain(tab, False, True, AI0, AI1, lift=True)
+    if chn is None or rn[2] == 0 or not LC._match(rn[0], AI1, False, True, True):
+        return None
+    got = rn[0]
+    if got[0] != AI1[0] or got[1] != AI1[1] or got[2] != AI1[2]:
+        return None
+    gp, wp = tuple(got[3][0]), tuple(AI1[3][0])
+    if got[3][1:] != AI1[3][1:] or len(gp) <= len(wp) \
+            or gp[:len(wp)] != wp or any(gp[len(wp):]):
+        return None
+    return got, chn, (rn[1], rn[2]), len(gp) - len(wp)
+
 def _nested_ovf(tab, B0, B1, mid, K):
     """boot + inner counter + exit for an OVERFLOW arm at symbolic index K.
 
@@ -397,16 +428,17 @@ def _nested_ovf(tab, B0, B1, mid, K):
         if chb is None or rb[0] != CinS or rb[2] == 0:
             fails.append('no boot chain')
             continue
-        chn, rn = _chain(tab, False, True, AI0, AI1)
-        if chn is None or rn[0] != AI1 or rn[2] == 0:
+        got = _inner_chain(tab, AI0, AI1)
+        if got is None:
             fails.append('no inner interior chain')
             continue
+        AI1, chn, rn, npad = got
         che, re = _chain(tab, True, True, CinF, B1)
         if che is None or re[0] != B1:
             fails.append('no exit chain')
             continue
         return dict(key=key, CinS=CinS, CinF=CinF, AI0=AI0, AI1=AI1,
-                    chb=chb, cb=(rb[1], rb[2]), chn=chn, cn=(rn[1], rn[2]),
+                    chb=chb, cb=(rb[1], rb[2]), chn=chn, cn=rn, npad=npad,
                     che=che, ce=(re[1], re[2]),
                     # NOT `c`: a FLAT arm's `c` is its (a, b) cost tuple, and
                     # the two would share a key on the same `ovf` dict.
@@ -885,7 +917,18 @@ Proof.
   rewrite H1. rshape_@ID@.
 Qed.
 
-Lemma gen@B@_@ID@ : forall v i q0, cview v = (i, Some q0) ->
+@INNERGLUE@Lemma gbo@B@_@ID@ : forall k, lift (cden [] [] k CS@B@_@ID@) = lift (Cin@B@ @ISTARTK@).
+Proof.
+  intro k. f_equal.
+  unfold Cin@B@_@ID@, cden, CS@B@_@ID@; cbn [c_st c_l c_h c_r].
+  unfold sden; cbn [s_pre s_u s_a s_b s_post].
+  replace (1 * k + @ISTARTB@) with @ISTARTN@ by lia. replace (0 * k + 0) with 0 by lia.
+  rewrite @ISTARTE@. rshape_@ID@.
+Qed.
+
+'''
+
+INNER_GLUE = r'''Lemma gen@B@_@ID@ : forall v i q0, cview v = (i, Some q0) ->
   cden (@IENCF@ q0 ++ @ITAIL@) [] i AI1@B@_@ID@ = Cin@B@ (Pos.succ v).
 Proof.
   intros v i q0 E. destruct (@IENCM@.@ISOME@ v i q0 E) as (_ & H2).
@@ -909,13 +952,33 @@ Proof.
   f_equal. exact (gen@B@_@ID@ v i q0 E).
 Qed.
 
-Lemma gbo@B@_@ID@ : forall k, lift (cden [] [] k CS@B@_@ID@) = lift (Cin@B@ (pow2 @IPOWK@)).
+'''
+
+# The same pair when the inner lap lands one or more written blanks
+# PAST the anchor's far side: the landing is stated up to [lift] and
+# the peel ([WTape.lift_app_blank]) is what closes it, exactly as the
+# OUTER interior halves have done since wave-31.
+INNER_GLUE_LIFT = r'''Lemma gen@B@_@ID@ : forall v i q0, cview v = (i, Some q0) ->
+  lift (cden (@IENCF@ q0 ++ @ITAIL@) [] i AI1@B@_@ID@) = lift (Cin@B@ (Pos.succ v)).
 Proof.
-  intro k. f_equal.
-  unfold Cin@B@_@ID@, cden, CS@B@_@ID@; cbn [c_st c_l c_h c_r].
+  intros v i q0 E. destruct (@IENCM@.@ISOME@ v i q0 E) as (_ & H2).
+  unfold Cin@B@_@ID@, cden, AI1@B@_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * k + @IOCT@) with @IPOWK@ by lia. replace (0 * k + 0) with 0 by lia.
-  rewrite @IEPOW@. rshape_@ID@.
+  replace (1 * i + 0) with i by lia. replace (0 * i + 0) with 0 by lia.
+  @NPEEL@f_equal. rewrite H2. rshape_@ID@.
+Qed.
+
+Lemma lapin@B@_@ID@ : forall v i q0, cview v = (i, Some q0) ->
+  exists n c', 0 < n /\ csteps tm n (Cin@B@ v) = Some c'
+               /\ lift c' = lift (Cin@B@ (Pos.succ v)).
+Proof.
+  intros v i q0 E.
+  exists (@CAN@ * i + @CBN@), (cden (@IENCF@ q0 ++ @ITAIL@) [] i AI1@B@_@ID@).
+  split; [lia|]. split; [| exact (gen@B@_@ID@ v i q0 E)].
+  rewrite (gsn@B@_@ID@ v i q0 E).
+  exact (srun_sound tm false true chn@B@_@ID@ AI0@B@_@ID@ AI1@B@_@ID@ @CAN@ @CBN@
+           run_inner@B@_@ID@ (@IENCF@ q0 ++ @ITAIL@) [] i
+           ltac:(discriminate) ltac:(reflexivity)).
 Qed.
 
 '''
@@ -932,7 +995,7 @@ Qed.
 
 Lemma hbo@B@_@ID@ : forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
   exists n c, 0 < n /\ csteps tm n (Cc p) = Some c
-              /\ lift c = lift (Cin@B@ (pow2 @IPOWJ@)).
+              /\ lift c = lift (Cin@B@ @ISTARTJ@).
 Proof.
   intros p j E Hb.
   exists (@CAB@ * j + @CBB@), (cden [] [] j CS@B@_@ID@).
@@ -984,7 +1047,7 @@ Qed.
 
 Lemma hbo@B@_@ID@ : forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
   exists n c, 0 < n /\ csteps tm n (Cc p) = Some c
-              /\ lift c = lift (Cin@B@ (pow2 @IPOWJ@)).
+              /\ lift c = lift (Cin@B@ @ISTARTJ@).
 Proof.
   intros p j E Hb.
   exists (@CAB@ * j + @CBB@), (cden [] [] j CS@B@_@ID@).
@@ -1006,7 +1069,9 @@ Proof.
            run_exit@B@_@ID@ [] [] j ltac:(reflexivity) ltac:(reflexivity)).
 Qed.
 
-(** The overflow arm, composed.  The [Theta(2^j)] middle is the [exists n]
+@HALFLAPO@'''
+
+HALF_LAPO = r"""(** The overflow arm, composed.  The [Theta(2^j)] middle is the [exists n]
     inside [NestedLapHalf.inner_to_half_lift]: the inner counter runs from
     [pow2 (S j)] to [half2 j] -- HALF its octave -- and stops there. *)
 Lemma lapo@B@_@ID@ : forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
@@ -1018,7 +1083,62 @@ Proof.
            (hbo@B@_@ID@ p j E Hb) (hxe@B@_@ID@ p j E Hb)).
 Qed.
 
-'''
+"""
+
+# The same arm when the inner run also starts at an OFFSET above the octave:
+# both endpoints are NAMED and the two numeric premises are discharged from
+# [NestedLapHalf.tovf_size] plus the board's own [iloN]/[iloS].
+OFF_DEFS = r"""(** *** the inner run's OFFSET start [2^(j+@IOCT@) + @IADD@], named. *)
+Definition ilo@B@_@ID@ (k : nat) : positive := @ILOCTOR@.
+
+Lemma iloE@B@_@ID@ : forall k,
+  @IENCF@ (ilo@B@_@ID@ k) = @ICBITS@ ++ rep @IUD@ (k + @IOW@) ++ @ISOD@.
+Proof. intro k. unfold ilo@B@_@ID@. cbn [@IENCF@]. rewrite @IEPOW@. rshape_@ID@. Qed.
+
+Lemma iloN@B@_@ID@ : forall k, Pos.to_nat (ilo@B@_@ID@ k) = @IMUL@ * 2 ^ k + @IADD@.
+Proof.
+  intro k. unfold ilo@B@_@ID@.
+  rewrite ?Pos2Nat.inj_xI, ?Pos2Nat.inj_xO, pos2nat_pow2, Nat.pow_add_r.
+  cbn [Nat.pow]. lia.
+Qed.
+
+Lemma iloS@B@_@ID@ : forall k, Pos.size_nat (ilo@B@_@ID@ k) = k + @ISZ@.
+Proof.
+  intro k. unfold ilo@B@_@ID@. cbn [Pos.size_nat]. rewrite size_nat_pow2. lia.
+Qed.
+
+Lemma iloLE@B@_@ID@ : forall k,
+  Pos.to_nat (ilo@B@_@ID@ k) <= Pos.to_nat (half2 (k + @IOM1@)).
+Proof.
+  intro k. rewrite iloN@B@_@ID@, pos2nat_half2', Nat.pow_add_r.
+  cbn [Nat.pow]. pose proof (one_le_pow2 k). lia.
+Qed.
+
+Lemma iloK@B@_@ID@ : forall k,
+  Pos.to_nat (half2 (k + @IOM1@)) - Pos.to_nat (ilo@B@_@ID@ k)
+    <= tovf (ilo@B@_@ID@ k).
+Proof.
+  intro k. rewrite tovf_size, iloS@B@_@ID@, ?iloN@B@_@ID@, pos2nat_half2',
+    !Nat.pow_add_r. cbn [Nat.pow]. pose proof (one_le_pow2 k). lia.
+Qed.
+
+"""
+
+OFF_LAPO = r"""(** The overflow arm, composed.  The inner counter runs from the OFFSET
+    start [ilo@B@_@ID@ j] to [half2 @IHJ@]; both endpoints are named and
+    [NestedLapHalf.nested_overflow_named_lift] takes the two numeric
+    premises. *)
+Lemma lapo@B@_@ID@ : forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
+  exists n c', csteps tm n (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+Proof.
+  intros p j E Hb.
+  exact (nested_overflow_named_lift tm Cc Cin@B@ lapin@B@_@ID@ p
+           (ilo@B@_@ID@ j) (half2 @IHJ@) (iloLE@B@_@ID@ j) (iloK@B@_@ID@ j)
+           (hbo@B@_@ID@ p j E Hb) (hxe@B@_@ID@ p j E Hb)).
+Qed.
+
+"""
 
 VISX_HALF = r'''(** [VISX]'s twin for a HALFWAY arm: the exit fires from [half2], so the
     bridge is [NestedLapHalf.vis_via_half]. *)
@@ -1216,9 +1336,14 @@ def render(D):
     for b, O in D['ovf'].items():
         if O['kind'] != 'nested':
             continue
-        if O.get('shape', 'fill') == 'half' and not O.get('off', 0) \
-                and O['key'][4] >= 1:
-            continue            # wave-33: the HALFWAY template, below
+        if O.get('shape', 'fill') == 'half' and O['key'][4] >= 1 \
+                and O.get('off', 0) <= (1 << (O['key'][4] - 1)) - 1:
+            # wave-33: the HALFWAY template, below.  The offset bound is
+            # `lo <= hi' at j = 0 -- the arm is stated for every j, and
+            # `2^(j+oct) + c <= 2^(j+oct) + 2^(j+oct-1) - 1' is exactly
+            # `c <= 2^(oct-1) - 1' there.  A bigger offset needs the outer
+            # index peeled, which restates the whole arm.
+            continue
         if O.get('shape', 'fill') != 'fill' or O.get('off', 0):
             raise RegError('bounded inner run at octave parity %d '
                            '(shape=%s, offset=%d) has no template yet'
@@ -1288,7 +1413,35 @@ def render(D):
                 '@ISTN@': ST[O['key'][1]],
                 '@IEPOW@': 'iepow%d_%s' % (b, ID),
                 '@IUD@': clist(di['uD']), '@ISOD@': clist(di['soD'])})
+            npad = O.get('npad', 0)
+            off = O.get('off', 0)
+            r.update({'@NPEEL@': _far_peel(O['key'][3], npad),
+                      '@INNERGLUE@': INNER_GLUE_LIFT if npad else INNER_GLUE,
+                      '@ISTARTB@': str(O['CinS'][1][3]),
+                      '@ISTARTK@': '(pow2 @IPOWK@)', '@ISTARTJ@': '(pow2 @IPOWJ@)',
+                      '@ISTARTN@': '@IPOWK@', '@ISTARTE@': '@IEPOW@',
+                      '@HALFLAPO@': HALF_LAPO, '@OFFDEFS@': ''})
             half = O.get('shape', 'fill') == 'half'
+            if half and off:
+                # the OFFSET start: c's bits, LSB outermost, on top of
+                # pow2 (j + oct - w).  `_off_ctor` also fixes the constants
+                # the two numeric side lemmas are stated with.
+                w = off.bit_length()
+                ow = o - w
+                ctor = ''.join('x%s (' % ('I' if (off >> i) & 1 else 'O')
+                               for i in range(w))
+                r.update({
+                    '@ILOCTOR@': ctor + ('pow2 (k + %d)' % ow if ow else
+                                         'pow2 k') + ')' * w,
+                    '@ICBITS@': clist(O['CinS'][1][0]),
+                    '@IOW@': str(ow), '@IADD@': str(off),
+                    '@IMUL@': str(1 << o), '@ISZ@': str(o + 1),
+                    '@IOM1@': str(o - 1),
+                    '@ISTARTK@': '(ilo@B@_@ID@ k)',
+                    '@ISTARTJ@': '(ilo@B@_@ID@ j)',
+                    '@ISTARTN@': ('(k + %d)' % ow) if ow else 'k',
+                    '@ISTARTE@': 'iloE@B@_@ID@',
+                    '@HALFLAPO@': OFF_LAPO, '@OFFDEFS@': OFF_DEFS})
             if half:
                 # the octave start is [pow2 (S (j + o - 1))] and the endpoint
                 # is [half2 (j + o - 1)]; [NestedLapHalf] states both at the
@@ -1302,7 +1455,7 @@ def render(D):
                           '@IUS@': clist(di['uS'])})
             cindefs.append(_fill(OVF_NEST_CIN, r))
             odefs.append(_fill(OVF_ENDS + OVF_NEST_DEFS, r))
-            oglue.append(_fill(OVF_HEAD + OVF_NEST_GLUE_A
+            oglue.append(_fill(OVF_HEAD + '@OFFDEFS@' + OVF_NEST_GLUE_A
                                + (OVF_NEST_GLUE_HALF if half
                                   else OVF_NEST_GLUE_FILL), r))
             iepows.append(_fill(IEPOW, r))
