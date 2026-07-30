@@ -1,0 +1,5 @@
+1RB---_1RC1LB_0LB1RD_1RA0RC    {'verdict': 'ladder', 'shapes': 1496, 'rules': 9, 'local': 9, 'levels': 1, 'rule_states': 'BCD', 'cover': '351/2000', 'invalid': []}
+1RB---_0LB1RC_0RD0RC_1LB1LD    {'verdict': 'ladder', 'shapes': 1924, 'rules': 3, 'local': 3, 'levels': 1, 'rule_states': 'BC', 'cover': '225/2000', 'invalid': []}
+0RB0RD_1LC1RB_1RA0LC_1LB0LC    {'verdict': 'ladder', 'shapes': 580, 'rules': 5, 'local': 5, 'levels': 1, 'rule_states': 'ABC', 'cover': '608/2000', 'invalid': []}
+1RB0LA_1LC0RD_1LA1LB_0LB1RD    {'verdict': 'ladder', 'shapes': 1420, 'rules': 3, 'local': 3, 'levels': 1, 'rule_states': 'BCD', 'cover': '337/2000', 'invalid': []}
+1RB1RD_1LC1RA_0RB0LC_1LA0RD    {'verdict': 'ladder', 'shapes': 1407, 'rules': 3, 'local': 3, 'levels': 1, 'rule_states': 'ABC', 'cover': '348/2000', 'invalid': []}
