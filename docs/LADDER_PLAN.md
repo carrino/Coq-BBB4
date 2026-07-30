@@ -530,6 +530,53 @@ and no arm realizes it"; sweep 2 separates them.  For at least 27 of the 41,
 task is arm selection and not more inference.  A null result that moves 21 rows
 from one side of a diagnosis to the other is worth more than the 18 % it cost.
 
+### Sweep 3: the counter's CODE, and 69 becomes 75
+
+_Measured at `66db337` over the same 143 rows and budget:
+`tools/ladder/core143_gray.jsonl`, table `core143_gray_rows.txt`, 10,820 s of
+per-row wall (sweep 2 was 10,758 s, so this layer is free)._
+
+John read `1RB0RB_0LC0LD_1LC1LD_1RA0RA` off the tape: *"a wall and msb on the
+left; when the wall moves over the high bit is set, then it counts up to full,
+then back down to 0, then the wall moves over again."*  That is the **reflected
+binary (Gray) code**, and "up to full then back down" is the reflection itself.
+Decoding the left side as Gray gives 300 consecutive `+2` steps out of 300
+anchor visits.  Read positionally the same tape gives 24, 27, 30, 29, 20, 23,
+18, 17 — which is why the search reported "+1 on 26 % of visits" and filed the
+machine under *no counter reading at any anchor*.
+
+Two more assumptions, the same shape as the fill law's, both now inferred:
+
+* **the CODE** — `Fam.value` read the digit string positionally, full stop.  It
+  now reads `binary` or `gray`, positional first.  `next_ds` is stated on the
+  VALUE rather than as a digit-wise carry ripple so it is right for either, and
+  the top of an octave is tested by value rather than by "all digits max" —
+  which, for a reflected code, is not the top at all.
+* **the STEP** — `_try_parse` required consecutive anchor visits to differ by
+  exactly `+1`.  A machine whose lowest cell is a phase bit crosses the anchor
+  once per TWO counter steps.  Inferred now; a step other than 1 means only part
+  of each width is a member, so those families are checked against the states
+  reachable from the boot.
+
+| | sweep 2 | sweep 3 |
+|---|---:|---:|
+| closed | 69 | **75** |
+| gained | — | **6** |
+| lost | — | **0** |
+| per-row wall | 10,758 s | 10,820 s |
+
+All six are `gray`, step 2; all six were *no counter reading at any anchor*
+before; all six pass the differential on shapes and exact step counts and
+confirm 40 laps from the blank tape.  **All six are in the live core** (30 → 36
+of 65).  Four are in John's 40-row bucket, which goes 21 → 25; two are outside
+it, so the reflected reading finds rows elsewhere in the residue too.
+
+That bucket is worth a last word.  `no interior j=S j' chain at octave parity 0`
+names how forty machines failed ONE test — positional base-`b`, `+1` per anchor
+visit.  It is at least four things: 25 now closed, 8 Fibonacci-rank, 3 wall-clock
+timeouts, 4 engine gaps.  A label that records how a search failed will keep
+being mistaken for a property of the machines.
+
 ### Addendum: what 69 is worth against the LIVE residue
 
 _Added after merging `origin/main` at `e955ed8`, which is 9 commits and three
@@ -542,11 +589,11 @@ is now **65 rows**.  Against that list:
 
 | | rows |
 |---|---:|
-| closed by the ladder AND still in the live core | **30** |
+| closed by the ladder AND still in the live core | **36** |
 | closed by the ladder, already boarded by the wave route | 39 |
-| still in the live core, ladder does not close | 35 |
+| still in the live core, ladder does not close | 29 |
 
-So the ladder's marginal contribution **today** is 30 of 65, not 69 of 143, and
+So the ladder's marginal contribution **today** is 36 of 65, not 75 of 143, and
 it is 30 rows of *untrusted certificate candidates* — Stage B does not exist, so
 the number of machines this branch boards is **zero** and the core count does not
 move.  Both framings are true and the second is the one that matters for
@@ -556,8 +603,8 @@ rows of this sweep's yield were overtaken mid-measurement.
 That is an argument for Stage B's priority, not against it — 30 rows the wave
 route has NOT reached, found by a searcher that costs CPU rather than a session,
 is exactly what §3 Stage C was for.  But it also means the honest headline for
-this work is "a prover that finds 30 live candidates and a taxonomy", not
-"69 of 143".
+this work is "a prover that finds 36 live candidates and a taxonomy", not
+"75 of 143".
 
 ## 5. What this is NOT
 
