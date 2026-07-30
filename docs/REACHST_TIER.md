@@ -6,12 +6,15 @@ past those 23._
 
 ## 0. TL;DR
 
-* **42 rows boarded**, kernel-checked, `functional_extensionality_dep` only.
-  Core undecided **143 → 119**, 0RB shadows **74 → 56**, settled
-  **4,939 → 4,981 of 5,156 (96.6%)**.
-* 20 of the 42 are Drozd's; the other 22 are the same two sub-machines under a
-  different STATE RELABELLING, found by re-running the tier over the whole open
-  core and then iterating as boarding promoted shadows into it.
+* **78 rows boarded**, kernel-checked, `functional_extensionality_dep` only.
+  Core undecided **143 → 97**, 0RB shadows **74 → 42**, settled
+  **4,939 → 5,017 of 5,156 (95.8% → 97.3%)**.
+* 20 of the 78 are Drozd's.  The other 58 are the SAME TWO sub-machines under a
+  state relabelling and/or a mirror, found by re-running the tier over the whole
+  open core and iterating to a fixed point (each round of boards promotes 0RB
+  shadows into the core, and those had never been swept).
+* The tier is now EXHAUSTED on the open list: 0 of the remaining 97 rows match
+  a flavour, by the same probe that found all 78.
 * The mechanism is one new idea and three new files.  For a counter, the
   **state-avoiding SUB-MACHINE can be far simpler than the machine**, and
   liveness only needs that sub-machine to terminate — not an exact lap.
@@ -117,29 +120,48 @@ So the boards are `NGramHist` for three states and a theorem for the fourth:
 Nothing is weakened.  The skipped state's obligation is not dropped, it is
 MOVED, and the caller has to prove it.
 
-## 4. The 42, the widening, and the 2 that are not here
+## 4. The 78, the two widenings, and the 2 that are not here
 
 The four ReachSt roles are SECTION VARIABLES (`qA qB qC qD : St`), not
-`StA..StD`.  The sub-machine is what the theorem is about, so any relabelling
-of it is the same theorem — and the residue is full of relabellings.  Boarding
-all of Drozd's rows first, then re-running the tier over the whole open core and
-iterating (each round of boards promotes 0RB shadows into the core, and those
-had never been swept), gives **42 boards from the same two lemmas**:
+`StA..StD`, and `Mirror.mirror_visits` is an iff.  So a machine boards if ITS
+sub-machine, or its MIRROR's, is one of the two flavours under ANY state
+relabelling — and the residue is full of both.  Boarding Drozd's rows first,
+then re-running the tier over the whole open core and iterating to a fixed point
+(each round of boards promotes 0RB shadows into the core, and those had never
+been swept), gives **78 boards from the same two lemmas**:
 
-| flavour | roles `qA qB qC qD` | `k,n` | rows |
-|---|---|---|---|
-| mb | A B C D | 2,2 / 3,2 | 10 / 2 |
-| mb | D B C A | 2,2 / 3,2 | 4 / 1 |
-| mb | C A B D | 2,2 / 3,2 | 1 / 1 |
-| mb | B C A D · C B A D · D C A B | 2,2 | 1 · 1 · 1 |
-| ma | A B C D | 2,2 / 3,2 | 6 / 2 |
-| ma | B C D A | 2,2 / 3,2 | 6 / 2 |
-| ma | C A B D | 2,2 / 3,2 | 3 / 1 |
+| flavour | route | roles `qA qB qC qD` | `k,n` | rows |
+|---|---|---|---|---|
+| ma | direct | A B C D | 2,2 | 6 |
+| ma | direct | A B C D | 3,2 | 2 |
+| ma | direct | B C D A | 2,2 | 6 |
+| ma | direct | B C D A | 3,2 | 2 |
+| ma | direct | C A B D | 2,2 | 3 |
+| ma | direct | C A B D | 3,2 | 1 |
+| ma | mirror | B C A D | 2,2 | 5 |
+| ma | mirror | B C A D | 3,2 | 1 |
+| ma | mirror | C A B D | 2,2 | 2 |
+| mb | direct | A B C D | 2,2 | 10 |
+| mb | direct | A B C D | 3,2 | 2 |
+| mb | direct | B C A D | 2,2 | 1 |
+| mb | direct | C A B D | 2,2 | 1 |
+| mb | direct | C A B D | 3,2 | 1 |
+| mb | direct | C B A D | 2,2 | 3 |
+| mb | direct | D B C A | 2,2 | 12 |
+| mb | direct | D B C A | 3,2 | 1 |
+| mb | direct | D C A B | 2,2 | 3 |
+| mb | mirror | B C A D | 2,2 | 4 |
+| mb | mirror | B C A D | 3,2 | 1 |
+| mb | mirror | C A B D | 2,2 | 8 |
+| mb | mirror | D A B C | 2,2 | 3 |
 
-All at `t=200 fuel=40000`; the per-row table is the emitted headers under
-`theories/Machines/ReachSt/`.  **Six distinct role assignments** appear, and
-only 20 of the 42 use the identity — so the relabelling generalisation is worth
-more than the original catch.
+All at `t=200 fuel=40000`; the per-row detail is in the emitted headers under
+`theories/Machines/ReachSt/`.  **Eight distinct role assignments** appear and
+only 20 of the 78 use the identity; 24 go through the mirror.  So the two
+generalisations together are worth **nearly three times** the original catch,
+and neither needed a line of new mathematics — the relabelling because the
+ReachSt roles are section variables, the mirror because `Mirror.mirror_visits`
+is already an iff.
 
 The 23rd row Drozd listed, `1RB0LD_1LC1RA_1LA1RC_0RB1LD`, was **already
 boarded** (`theories/Machines/Counters/REG_...`, wave-32's two-form route).  It
