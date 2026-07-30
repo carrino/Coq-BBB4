@@ -539,18 +539,22 @@ the visits the one-tail family calls undecodable would read as:
 * 23 of the 41 then read **100 % of their anchor visits**;
 * and the machine laps once per terminator before widening.
 
-On `1RB1LA_1LC0RD_1LA1LB_0LB1RD` — §3's boot-blocked Stage-A row — the three
-terminators are `101`, `01`, `001`, all 10001 anchor visits read, and the cycle
-is `0/p → 2/p → 1/p+1 → 0/p+1`.  The `Θ(2^p)` fill was two whole laps the
-reader could not see.
+On `1RB1LA_1LC0RD_1LA1LB_0LB1RD` — §3's boot-blocked Stage-A row, open since
+sweep 1 — the three terminators are `101`, `001`, `01`, all 10001 anchor visits
+read, and the cycle is `0 → 1 at p`, `1 → 2 at p+1`, `2 → 0 at p+1`: the width
+moves twice per lap of the cycle, which is where the `p+2` of the one-terminator
+reading came from.  The `Θ(2^p)` fill was two whole laps the reader could not
+see.  It closes with 14 arms, exact step counts and 40 laps.
 
 So the phase is part of the counter's state, exactly like the width, and it is
 inferred rather than assumed (`fit_phases`), with three guards: a phase must
 read ≥ 8 distinct visits, every phase must have a fill law that interpolates to
 a single target phase, and the whole reading must be a CHAIN the model's own
 successor explains (≥ 0.95 of consecutive read visits).  A family that already
-reads all its own visits is left exactly as it was, which is why the rows that
-closed before are untouched.
+reads all its own visits is left exactly as it was; a family with visits it
+cannot read is re-read wherever the guards pass, whether or not it was failing,
+and on the full sweep that includes eight rows which already closed (see the
+gate below — they still close, with fewer arms).
 
 **This is the fourth time the missing constructor has been a hard-coded
 assumption about the counter's own arithmetic** — the carry (§4e), the anchor
