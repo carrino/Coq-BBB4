@@ -81,3 +81,31 @@
 [ 81/143  1754s] 1RB1LA_0LA1RC_0RD0RB_1LB1RD    closed             73.6s
 [ 82/143  1757s] 1RB1LA_0LA1RC_0RD0RB_1LC1RA    closed             73.6s
 [ 83/143  1775s] 1RB1LA_0LA1RC_0RD0RB_1RA---    closed             73.3s
+[ 84/143  1827s] 1RB1LA_0LA1RC_1LD0RB_1LA1LD    closed             72.9s
+[ 85/143  1830s] 1RB1LA_0LA1RC_1LD0RB_1RA1LD    closed             72.9s
+[ 86/143  1849s] 1RB1LA_0LA1RC_1LD0RB_1RA1RD    closed             73.9s
+[ 87/143  1900s] 1RB1LA_0LA1RC_1RD0RB_1LD0LA    closed             72.8s
+[ 88/143  1903s] 1RB1LA_0LA1RC_1RD0RB_1RA---    closed             73.2s
+[ 89/143  1903s] 1RB1LA_0LC0RD_1LC1RD_0LA0RB    closed             32.2s
+[ 90/143  2112s] 1RB1LA_0LC1RD_1LC1LA_0LA0RB    overflow-leaves-family 231.3s
+[ 91/143  2112s] 1RB1LA_0LC1RD_1RA1LC_0LA0RB    closed             69.7s
+[ 92/143  2112s] 1RB1LA_0RC1LD_1LB1RC_0LA0LB    closed             73.6s
+[ 93/143  2243s] 1RB1LA_0RC1RD_1LB0LD_0LA0RB    overflow-leaves-family 272.8s
+[ 94/143  2243s] 1RB1LA_1LC0RD_0RA0LC_0LA1RD    closed             27.6s
+[ 95/143  2243s] 1RB1LA_1LC0RD_1LA1LB_0LB1RD    overflow-leaves-family 33.0s
+[ 96/143  2243s] 1RB1LA_1LC0RD_1RA1LB_0LB1RD    overflow-leaves-family 31.9s
+[ 97/143  2243s] 1RB1LA_1LC1RD_0RC1RA_0LA0RB    closed             73.0s
+[ 98/143  2243s] 1RB1LA_1LC1RD_1RC1RA_0LA0RB    closed             71.7s
+[ 99/143  2301s] 1RB1LA_1RC1LB_0LA1RD_0LB0RC    overflow-leaves-family 158.2s
+[100/143  2474s] 1RB1LA_1RC1LB_0LB1RD_1LA0RC    overflow-leaves-family 289.7s
+[101/143  2474s] 1RB1LB_1LC0RD_0LB1LA_0LA1RA    no-counter-shape   14.7s
+[102/143  2474s] 1RB1LB_1LC0RD_1LA1LB_0LB1RD    overflow-leaves-family 30.4s
+[103/143  2474s] 1RB1LB_1LC0RD_1LA1LB_0LC1RD    overflow-leaves-family 31.9s
+[104/143  2531s] 1RB1LB_1LC1LA_0LB1RD_0RB0RD    closed             230.6s
+[105/143  2531s] 1RB1LC_0LA0LD_1LD1RC_0RC1LB    closed             73.9s
+[106/143  2531s] 1RB1LC_0LA0RB_0LD1LD_1RA0RA    no-counter-shape   25.2s
+[107/143  2531s] 1RB1LC_0LA0RB_0RD1LA_0LC1RD    closed             31.9s
+[108/143  2531s] 1RB1LC_0LA0RC_1LA0RD_0LA1RD    overflow-leaves-family 33.9s
+[109/143  2531s] 1RB1LC_0LA1RC_1LA0RD_0LA1RD    overflow-leaves-family 33.3s
+[110/143  2531s] 1RB1LC_0LA1RC_1RB0LD_0RB1LD    overflow-leaves-family 35.1s
+[111/143  2541s] 1RB1LC_0LC0RB_0RD1LA_0LA1RD    closed             33.5s
