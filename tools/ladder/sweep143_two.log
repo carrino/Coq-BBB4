@@ -87,3 +87,6 @@
 [ 87/143  2044s] 1RB1LA_0LA1RC_1RD0RB_1LD0LA    closed             70.5s
 [ 88/143  2057s] 1RB1LA_0LA1RC_1RD0RB_1RA---    closed             72.3s
 [ 89/143  2057s] 1RB1LA_0LC0RD_1LC1RD_0LA0RB    closed             31.2s
+[ 90/143  2319s] 1RB1LA_0LC1RD_1LC1LA_0LA0RB    overflow-leaves-family 302.2s
+[ 91/143  2319s] 1RB1LA_0LC1RD_1RA1LC_0LA0RB    closed             70.6s
+[ 92/143  2319s] 1RB1LA_0RC1LD_1LB1RC_0LA0LB    closed             74.7s
