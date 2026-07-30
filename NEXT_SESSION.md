@@ -104,6 +104,55 @@ clean `.vo` state, `functional_extensionality_dep` only).  It also needed the
 anchor HEAD symbol, the anchor TAIL and the anchor's FAR side (a blank *cell*,
 not the empty *list*) to become parameters — the encoding alone was not enough.
 
+## 2b2. Wave-34 (2026-07-30) — `ReachStI`, and Drozd's 26 measured
+
+Full write-up: `docs/WAVE34_REACHSTI.md`.  The tier `docs/REACHST_TIER.md`
+§8e asks for -- `ReachSt` relativised to an invariant -- now exists
+(`theories/Checkers/ReachStI.v`).  **It boards none of Drozd's 26.**  Read
+the write-up before spending a session on this front; the three things worth
+carrying forward:
+
+- **The 14 `1RB---` rows are NOT never-quasihalters.**  `StA` fires once at
+  index 0 and nothing targets it, so they quasihalt with score 1 and their
+  target is `iqh`, not `NeverQuasiHaltsSt`.  `tools/reachst/bothhalves.py`
+  skips them ("boards via its completions"), so they had never been measured
+  by the ReachSt tier at all.  For those rows `ReachSt tm q` is not merely
+  unprovable, it is **false** -- `(StA, ([], S1, []))` halts on the spot.
+- **The measure replaces the flavour lemmas.**  `drop_ok` is a computable
+  certificate (`B * ones l + C * ones r + rk (q, chd l, h, chd r)`, strict
+  drop per goal-avoiding step, Bellman-Ford search in
+  `tools/reachsti/cert_search.py`) and certifies a state on **25 of the 26**
+  rows -- against `ReachSt.v`'s four hand-written flavours.  It also returns
+  `NonHalt`, which the `iqh` rows cannot get anywhere else.
+- **The counter reading was being taken at the wrong RADIX.**  `kcopy_classify.py`
+  (KCOPY<k>/SEP<k>) and `alphabet_infer.py` (a positive-recursion) can only
+  return a BASE-2 counter, and so can every alphabet in `theories/Counters`
+  (Ip, Jp, Kp, Dp, Bp, Mp).  `1RB---_0LB1RC_0RD0RC_1LB1LD` is a **base-3**
+  counter -- 2-cell digits over {00,01,11}, anchor snapshots decoding to
+  1,2,3,... over 10^4 visits, lap `4 + 4j`.  That is why `emit_kp.py` derives
+  0 of 17.  New tool `tools/counters/radix_infer.py`; results in
+  `tools/counters/RADIX_DROZD26.txt`.  **5 rows are affine in the carry
+  length, all of them `1RB---`.**
+- **THREE ROWS BOARDED** (core 65 -> 62): `1RB---_0LB1RC_1LB0RD_1LB0RC`,
+  `1RB---_1LC0RD_0LC1RB_1LC0RB`, `1RB---_1LC0RD_0LC1RD_1LC0RB`, all as `iqh`
+  off the new role-parameterised closer `theories/Counters/KpWallQH.v`.
+- **The counter route needs no ReachStI and no closure**, which is the real
+  lesson: a lap gives every state's liveness at once plus `NonHalt`.
+  `LapGlueQuiet.glue_qh_quiet` is already the right closer (`qa = StA`,
+  `s0 = 0`, `t0 = 1`; `StA`-freedom is free because nothing targets `StA`),
+  and `BNC_1RB____1LC0RB_1LD1RB_1LC1RB.v` is a `1RB---` row already boarded
+  that way.  For the three radix-2 affine rows the encoding (`KpCounter.Kp`)
+  and the closer both exist; **the missing piece is an emitter pairing `Kp`
+  with the QH closer** -- `emit_kp.py` emits never-QH, `emit_qh.py` emits the
+  `iqh` triple but is hard-wired to `Jp`.  Cross those two first.
+- **For the liveness-engine route the blocker is the wall.**  On all 14 `1RB---` rows
+  the NGramHist closure certifies *exactly* the states `ReachStI` does.  9 of
+  the 17 rows swept are short by exactly ONE state, always the state whose
+  liveness is "the leftward sweep stops at the counter's wall".  13 of the 54
+  missing states have a pure one-direction avoid sub-machine, so the sized
+  next piece is `FuelWide`'s runner rule wired into the one-state-lifted
+  path (`ClosureExt`); the other 41 still want the wall itself.
+
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27

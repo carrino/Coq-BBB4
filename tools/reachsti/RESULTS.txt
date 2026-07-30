@@ -1,0 +1,39 @@
+# ReachStI certificates over Drozd's 26 (tools/reachsti/drozd26.txt).
+# Produced by tools/reachsti/cert_search.py -- UNTRUSTED; the Coq kernel
+# re-evaluates inv_ok / drop_ok / start_ok on every emitted board.
+#
+# allowed  the largest total, closed state set (inv_ok); on a 1RB--- row
+#          this drops StA and with it the undefined transition
+# certs    states whose avoid sub-machine has a measure certificate
+
+1RB---_0LB1RC_0RD0RC_1LB1LD  allowed=BCD   B(B=2,C=1)
+1RB---_0LB1RC_1LB0RD_1LB0RC  allowed=BCD   B(B=0,C=1)
+1RB---_0LB1RC_1LB0RD_1LC0RC  allowed=BCD   B(B=0,C=1)
+1RB---_0LC1RB_0LB1RD_1LC0RD  allowed=BCD   B(B=0,C=1) C(B=0,C=1)
+1RB---_0LC1RD_0LB1RC_1LB0RD  allowed=BCD   B(B=0,C=1) C(B=0,C=1)
+1RB---_0LC1RD_0LB1RD_1LB0RD  allowed=BCD   B(B=0,C=1) C(B=0,C=1)
+1RB---_0LC1RD_0LB1RD_1LC0RD  allowed=BCD   B(B=0,C=1) C(B=0,C=1)
+1RB---_0RC0RB_1LD1LC_0LD1RB  allowed=BCD   D(B=2,C=1)
+1RB---_1LC0RB_0LD1RB_0LC1RB  allowed=BCD   C(B=0,C=1) D(B=0,C=1)
+1RB---_1LC0RB_0LD1RB_0LC1RD  allowed=BCD   C(B=0,C=1) D(B=0,C=1)
+1RB1LA_1LC0RD_0RA0LC_0LA1RD  allowed=ABCD  A(B=1,C=2)
+1RB1LC_0LA0RB_0RD1LA_0LC1RD  allowed=ABCD  C(B=0,C=1)
+1RB1LD_1RC0RC_1LA0LA_0RA0LD  allowed=ABCD  A(B=1,C=0)
+1RB---_1LC0RD_0LC1RB_1LB0RB  allowed=BCD   C(B=0,C=1)
+1RB---_1LC0RD_0LC1RB_1LC0RB  allowed=BCD   C(B=0,C=1)
+1RB---_1LC0RD_0LC1RD_1LC0RB  allowed=BCD   C(B=0,C=1)
+1RB---_1LC1LB_0LC1RD_0RB0RD  allowed=BCD   C(B=2,C=1)
+1RB0LD_0LC0RB_1LA1RC_0RC1LD  allowed=ABCD  C(B=2,C=1)
+1RB0RB_0LC0LD_1LC1LD_1RA0RA  allowed=ABCD  C(B=0,C=3)
+1RB0RB_0RC1RC_0LD1LA_1LD0LA  allowed=ABCD  D(B=0,C=3)
+1RB1LA_0LA0LC_1LC1RD_0RB0RD  allowed=ABCD  C(B=2,C=1)
+1RB1LA_0LA0RC_0LD0RB_1LD1RC  allowed=ABCD  NONE
+1RB1LA_0LA1RC_0LD0RC_1LD0RB  allowed=ABCD  D(B=2,C=1)
+1RB1LC_0LA0RB_0LD1LD_1RA0RA  allowed=ABCD  A(B=0,C=1) C(B=0,C=1) D(B=0,C=1)
+1RB1LC_0LC0RB_0RD1LA_0LA1RD  allowed=ABCD  A(B=0,C=1) C(B=0,C=1) D(B=2,C=1)
+1RB1RC_1LA0LB_1LD0RD_1LB0RC  allowed=ABCD  A(B=1,C=1) B(B=0,C=1)
+
+25 of 26 rows certify at least one state.
+The one row with NONE, 1RB1LA_0LA0RC_0LD0RB_1LD1RC, certifies StD once
+the rank is allowed two cells of context per side instead of one;
+extending drop_ok to that depth is mechanical and not done.
