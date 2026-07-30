@@ -220,6 +220,11 @@ class Fam:
                 'digits': [list(d) for d in self.digs],
                 'digit_named_by': {''.join(map(str, w)): r
                                    for w, r in self.named_by.items()},
+                'alphabet_provenance': (
+                    'digit word named by a ladder rule'
+                    if self.named_by else
+                    'digit width from a ladder rule word; values pinned by '
+                    'the +1 chain'),
                 'near_head_prefix': list(self.pre),
                 'terminator': list(self.tail),
                 'base': self.b, 'digit_len': self.l,
@@ -265,7 +270,7 @@ def find_families(tm, snaps, rules, max_anchor=8, min_chain=8, max_occ=200,
     for w, rn in named.items():
         for r in rots(w):
             seeds.setdefault(r, rn)
-    lens = sorted({len(w) for w in named})
+    lens = _widths(named)
 
     byqh = defaultdict(list)
     for t, s in snaps:
@@ -307,6 +312,17 @@ def find_families(tm, snaps, rules, max_anchor=8, min_chain=8, max_occ=200,
     return found
 
 
+def _widths(named, mult=3, cap=4):
+    """Candidate digit widths.  A carry rule that shifts ONE CELL per
+    application names width 1 even when the counter's digit is two cells
+    wide -- the carry crosses the digit in pieces.  So the widths the ladder
+    offers are its own run-word widths and small MULTIPLES of them; the
+    alphabet is still read off the ladder, never from a list."""
+    ws = {len(w) for w in named} or {1}
+    return sorted({m * w for w in ws for m in range(1, mult + 1)
+                   if m * w <= cap})
+
+
 def _common_suffix(seqs):
     if not seqs:
         return []
@@ -319,7 +335,7 @@ def _common_suffix(seqs):
     return out
 
 
-def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain):
+def _grams(cs, sel, l, p, tail):
     grams, pres = [], []
     for i in sel:
         c = cs[i]
@@ -342,14 +358,22 @@ def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain):
             grams.append(None)
             continue
         grams.append(tuple(tuple(mid[j:j + l]) for j in range(0, len(mid), l)))
+    return grams, pres
+
+
+def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain):
+    grams, pres = _grams(cs, sel, l, p, tail)
     alpha = set()
     for g in grams:
         if g:
             alpha |= set(g)
     if not (2 <= len(alpha) <= 3):
         return None
-    if not any(a in seeds for a in alpha):
-        return None            # the ladder must name at least one digit
+    # accept either a digit word the ladder names outright, or a digit WIDTH
+    # the ladder names -- the latter only on a chain twice as long, since the
+    # +1 evidence is then carrying the whole alphabet claim
+    strong = any(a in seeds for a in alpha)
+    need = min_chain if strong else 2 * min_chain
     best = None
     for perm in itertools.permutations(sorted(alpha)):
         idx = {a: i for i, a in enumerate(perm)}
@@ -372,12 +396,107 @@ def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain):
                    and vals[k + 1][1] == vals[i][1]
                    and vals[k + 1][0] == vals[k][0] + 1):
                 k += 1
-            if k - i + 1 >= min_chain and (best is None or k - i + 1 > best[2]):
+            if k - i + 1 >= need and (best is None or k - i + 1 > best[2]):
                 nm = {a: seeds[a] for a in perm if a in seeds}
                 best = (Fam(q, h, side, other, list(perm), vals[i][1], nm,
                             tail), occ[sel[i]][0], k - i + 1)
             i = k + 1
     return best
+
+
+def kmax_for(b, budget=500):
+    """Widest counter enumerated exhaustively inside a fixed string budget."""
+    k, tot = 0, 0
+    while tot + b ** (k + 1) <= budget and k < 7:
+        k += 1
+        tot += b ** k
+    return max(k, 2)
+
+
+def probe_families(tm, snaps, rules, top=4, max_occ=200):
+    """Near-miss diagnostic for rows where no family is accepted: for the best
+    reading of each frequent anchor, the HISTOGRAM of value deltas between
+    consecutive visits.  A row whose modal delta is +1 but whose chain breaks
+    is a counter the odometer model does not fit; a row with no dominant delta
+    is not a counter segment at that anchor at all.  Discovery only."""
+    named = digit_words(rules)
+    seeds = set()
+    for w in named:
+        seeds |= rots(w)
+    lens = _widths(named)
+    byqh = defaultdict(list)
+    for t, s in snaps:
+        if s is None:
+            break
+        byqh[(s[0], s[1])].append((t, s))
+    out = []
+    for (q, h), occ in sorted(byqh.items(),
+                              key=lambda kv: -len(kv[1]))[:top]:
+        occ = occ[-max_occ:]
+        for side in ('L', 'R'):
+            cs = [runs_cells(s[2] if side == 'L' else s[3]) for _, s in occ]
+            os = [tuple(runs_cells(s[3] if side == 'L' else s[2]) or ())
+                  for _, s in occ]
+            for other, n in Counter(os).most_common(2):
+                sel = [i for i in range(len(occ)) if os[i] == other]
+                if len(sel) < 6:
+                    continue
+                suf = _common_suffix([cs[i] for i in sel if cs[i]])
+                for l in lens:
+                    for tl in range(min(len(suf), 2 * l) + 1):
+                        tail = tuple(suf[len(suf) - tl:]) if tl else ()
+                        for pp in range(l):
+                            g, _ = _grams(cs, sel, l, pp, tail)
+                            al = set()
+                            for x in g:
+                                if x:
+                                    al |= set(x)
+                            if not (2 <= len(al) <= 3):
+                                continue
+                            for perm in itertools.permutations(sorted(al)):
+                                idx = {a: i for i, a in enumerate(perm)}
+                                vs = []
+                                for x in g:
+                                    if x is None or any(y not in idx
+                                                        for y in x):
+                                        vs.append(None)
+                                        continue
+                                    v = 0
+                                    for y in reversed(x):
+                                        v = v * len(perm) + idx[y]
+                                    vs.append(v)
+                                d = Counter(b - a for a, b in zip(vs, vs[1:])
+                                            if a is not None and b is not None)
+                                if not d:
+                                    continue
+                                tot = sum(d.values())
+                                out.append({
+                                    'anchor': '%s%d' % (chr(65 + q), h),
+                                    'side': side, 'digit_len': l,
+                                    'base': len(perm), 'terminator_len': tl,
+                                    'prefix_len': pp, 'visits': tot,
+                                    'plus1_frac': round(d.get(1, 0) / tot, 3),
+                                    'top_deltas': d.most_common(3)})
+    if out:
+        out.sort(key=lambda r: -r['plus1_frac'])
+        return out[:6]
+    # No reading at all.  The commonest cause is that the FAR side never
+    # repeats -- it grows with the counter, so the family would need a second
+    # parameter E(p, v) and a one-parameter CTR cannot express it.  Report the
+    # largest constant-far-side group per anchor so the two cases separate.
+    info = []
+    for (q, h), occ in sorted(byqh.items(), key=lambda kv: -len(kv[1]))[:top]:
+        occ = occ[-max_occ:]
+        for side in ('L', 'R'):
+            os = [tuple(runs_cells(s[3] if side == 'L' else s[2]) or ())
+                  for _, s in occ]
+            c = Counter(os)
+            info.append({'anchor': '%s%d' % (chr(65 + q), h), 'side': side,
+                         'visits': len(occ),
+                         'max_constant_far_side_group':
+                             c.most_common(1)[0][1] if c else 0})
+    info.sort(key=lambda r: -r['max_constant_far_side_group'])
+    return [{'no_reading': True, 'far_side_groups': info[:4]}]
 
 
 # ---------------------------------------------------------------------- arms
@@ -440,7 +559,7 @@ def _groups(fam, windows, max_exact_runs=4):
     return g
 
 
-def mine_arms(tm, rules, fam, windows=(1, 2, 3, 4, 5), max_keys=48,
+def mine_arms(tm, rules, fam, windows=(1, 2, 3, 4, 5), max_keys=160,
               budget=400, deadline=None, ctr=None, groups=None):
     """Group canonical family configs by local-view shape, generalize counts
     across instances, and replay each generalization to the next anchor."""
@@ -688,6 +807,23 @@ def minimize(arms, covmap):
 
 # ---------------------------------------------------------------------- boot
 
+def visited_states(tm, upto):
+    """States the machine actually visits in the first `upto` steps -- the
+    Visited conjunct of BBB4_Statement.QuasiHaltsSt.  Never-visited states do
+    not witness quasi-halting, so never-QH is  visited == infinitely-often,
+    not  all-states == infinitely-often."""
+    tape, pos, q, out = {}, 0, 0, set()
+    for _ in range(upto + 1):
+        out.add(q)
+        tr = tm.get((q, tape.get(pos, 0)))
+        if tr is None:
+            break
+        w, d, q = tr
+        tape[pos] = w
+        pos += d
+    return out
+
+
 def find_boot(fam, snaps):
     """First trace index whose config IS a family member."""
     for t, s in snaps:
@@ -832,6 +968,7 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
     fams = find_families(tm, snaps, rules)
     res['n_families'] = len(fams)
     if not fams:
+        res['family_probe'] = probe_families(tm, snaps, rules)
         res['reason'] = ('no value family: no anchor whose counter side '
                          'decodes over ladder-named digits with +1 steps')
         return res
@@ -852,23 +989,25 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
             res.setdefault('tried', []).append(
                 {'family': fam.json(), 'reason': 'no arm replayed to anchor'})
             continue
-        ok, covmap, rep = cover(tm, fam, arms, kmax=kmax)
+        km = min(kmax, kmax_for(fam.b))
+        km2 = km + (2 if fam.b == 2 else 1)
+        ok, covmap, rep = cover(tm, fam, arms, kmax=km)
         rounds = 0
-        while (not ok and rounds < 3 and time.time() < slice_end
+        while (not ok and rounds < 5 and time.time() < slice_end
                and not rep['fails_only_at_overflow']):
             new = repair(tm, rules, fam, arms,
                          rep['uncovered_all'] + rep['wrong_all'], ctr,
-                         groups, deadline=slice_end, max_new=12)
+                         groups, deadline=slice_end, max_new=32)
             if not new:
                 break
             arms += new
-            ok, covmap, rep = cover(tm, fam, arms, kmax=kmax)
+            ok, covmap, rep = cover(tm, fam, arms, kmax=km)
             rounds += 1
         rep['repair_rounds'] = rounds
         arms = minimize(arms, covmap)
         if ok and time.time() < slice_end:
-            arms = prune(tm, fam, arms, kmax)
-            ok, covmap, rep2b = cover(tm, fam, arms, kmax)
+            arms = prune(tm, fam, arms, km)
+            ok, covmap, rep2b = cover(tm, fam, arms, km)
             rep2b['repair_rounds'] = rounds
             rep = rep2b
         if not ok:
@@ -880,9 +1019,28 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
                  'coverage': {k: v for k, v in rep.items()
                               if k not in ('uncovered_all', 'wrong_all')}})
             continue
-        # stability: the same arm set must still cover two octaves further out
-        ok2, cov2, rep2 = cover(tm, fam, arms, kmax=kmax + 2)
-        rep['stable_to_kmax'] = kmax + 2 if ok2 else None
+        # Stability: the same arm set must still cover the next octaves out.
+        # A miss here is usually a carry class that only first APPEARS at that
+        # width, so give the repair a few rounds at the wider level before
+        # calling the family unstable.
+        ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2)
+        for _ in range(4):
+            if ok2 or time.time() > slice_end:
+                break
+            new = repair(tm, rules, fam, arms,
+                         rep2['uncovered_all'] + rep2['wrong_all'], ctr,
+                         groups, deadline=slice_end, max_new=32)
+            if not new:
+                break
+            arms += new
+            ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2)
+        if ok2 and time.time() < slice_end:
+            arms = prune(tm, fam, arms, km2)
+            ok2, cov2, rep2 = cover(tm, fam, arms, kmax=km2)
+            rep2['repair_rounds'] = rounds
+            rep = {k: v for k, v in rep2.items()
+                   if k not in ('uncovered_all', 'wrong_all')}
+        rep['stable_to_kmax'] = km2 if ok2 else None
         if not ok2:
             res.setdefault('tried', []).append(
                 {'family': fam.json(),
@@ -906,16 +1064,19 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         live, fin = [], []
         for a in arms:
             ks = {k for k, _ in cov2.get(a.name, ())}
-            (live if ks and max(ks) == kmax + 2 else fin).append(a)
+            (live if ks and max(ks) == km2 else fin).append(a)
         fired = {}
         for a in live:
             for tr, e in a.rule.fired.items():
                 fired[tr] = fired.get(tr, Expr(0)) + e
-        states = sorted({chr(65 + t[0]) for t in fired})
+        io = {t[0] for t in fired}
+        seen = visited_states(tm, bt) | {t[0] for a in arms
+                                         for t in a.rule.fired}
+        states = sorted(chr(65 + q) for q in io)
         diff = differential(tm, fam, arms, bds)
         chk = chain_check(tm, fam, bt, bds)
         res.update({
-            'closed': True,
+            'closed': bool(diff) and all(d['shape_ok'] for d in diff),
             'family': fam.json(),
             'family_first_seen': ft, 'anchor_chain': chain,
             'arms': [a.json() for a in arms],
@@ -930,16 +1091,23 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
                 'fired_transitions': sorted('%s%d' % (chr(65 + t[0]), t[1])
                                             for t in fired),
                 'states_infinitely_often': ''.join(states),
+                'states_visited': ''.join(sorted(chr(65 + q) for q in seen)),
                 'read_from_arms': [a.name for a in live],
-                'all_states': len(states) == ns,
-                'never_quasihalts': len(states) == ns},
+                'all_states': len(io) == ns,
+                'never_quasihalts': seen <= io,
+                'quasihalts_at_states': ''.join(
+                    sorted(chr(65 + q) for q in seen - io))},
             'differential': diff,
             'differential_ok': all(d['shape_ok'] for d in diff),
             'differential_steps_ok': all(d['steps_ok'] for d in diff),
             'chain_check': chk,
             'seconds': round(time.time() - t0, 1)})
+        if not res['closed']:
+            res['reason'] = ('differential mismatch: the family closes but '
+                             'the raw simulator disagrees -- engine bug')
         return res
     res['reason'] = res.get('reason', 'families found but none closed')
+    res.setdefault('family_probe', probe_families(tm, snaps, rules))
     res['seconds'] = round(time.time() - t0, 1)
     return res
 

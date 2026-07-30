@@ -79,15 +79,85 @@ def bucket(r):
     return 'other'
 
 
+NEAR = 'counter signal, odometer model does not fit'
+
+
+def probe_note(r):
+    """Near-miss reading for rows where no family was accepted."""
+    pr = r.get('family_probe') or []
+    if not pr:
+        return ''
+    b = pr[0]
+    if b.get('no_reading'):
+        g = b.get('far_side_groups') or [{}]
+        return ('no reading; largest constant-far-side group %s of %s visits '
+                'at %s/%s' % (g[0].get('max_constant_far_side_group'),
+                              g[0].get('visits'), g[0].get('anchor'),
+                              g[0].get('side')))
+    return ('best %s/%s l=%d base=%d: +1 on %.0f%% of %d visits %s'
+            % (b['anchor'], b['side'], b['digit_len'], b['base'],
+               100 * b['plus1_frac'], b['visits'], b['top_deltas'][:2]))
+
+
+def subbucket(r):
+    """Split no-counter-shape by how close the near-miss probe came."""
+    if bucket(r) != 'no-counter-shape':
+        return bucket(r)
+    pr = r.get('family_probe') or []
+    if not pr:
+        return 'no-counter-shape/no-probe'
+    if pr[0].get('no_reading'):
+        g = (pr[0].get('far_side_groups') or [{}])[0]
+        if (g.get('max_constant_far_side_group') or 0) < 6:
+            return 'no-counter-shape/far-side-varies'
+        return 'no-counter-shape/no-reading'
+    f = pr[0]['plus1_frac']
+    if f >= 0.9:
+        return 'no-counter-shape/chain-broken'
+    if f >= 0.5:
+        return 'no-counter-shape/partial-+1'
+    return 'no-counter-shape/no-signal'
+
+
+def table(path, out):
+    rows = [json.loads(l) for l in open(path) if l.strip()]
+    with open(out, 'w') as f:
+        f.write('%-30s %-26s %5s %5s %5s %6s %s\n'
+                % ('spec', 'verdict', 'rules', 'arms', 'live', 'wall',
+                   'note'))
+        for r in sorted(rows, key=lambda r: (not r.get('closed'), r['spec'])):
+            liv = r.get('liveness', {}).get('states_infinitely_often', '')
+            note = ''
+            if r.get('closed'):
+                note = ('boot@%s base=%d digits=%s cover=%s stable_k=%s '
+                        'diff=%s steps=%s laps=%s'
+                        % (r['boot']['steps_from_blank'],
+                           r['family']['base'],
+                           '/'.join(''.join(map(str, d))
+                                    for d in r['family']['digits']),
+                           r['coverage']['strings'],
+                           r['coverage'].get('stable_to_kmax'),
+                           r.get('differential_ok'),
+                           r.get('differential_steps_ok'),
+                           r.get('chain_check', {}).get('laps_confirmed')))
+            else:
+                note = probe_note(r) or (r.get('reason') or '')[:70]
+            f.write('%-30s %-26s %5s %5s %5s %6s %s\n'
+                    % (r['spec'], subbucket(r), r.get('n_rules', ''),
+                       len(r.get('arms', [])) or '', liv,
+                       r.get('wall', ''), note))
+    return rows
+
+
 def summarize(path):
     rows = [json.loads(l) for l in open(path) if l.strip()]
-    c = Counter(bucket(r) for r in rows)
+    c = Counter(subbucket(r) for r in rows)
     print('rows: %d' % len(rows))
     for k, n in c.most_common():
-        print('  %-22s %4d' % (k, n))
+        print('  %-34s %4d' % (k, n))
     cl = [r for r in rows if r.get('closed')]
     if cl:
-        print('closed: liveness all-states %d/%d, differential ok %d, '
+        print('closed: never-QH (all states i.o.) %d/%d, differential ok %d, '
               'exact step counts %d'
               % (sum(1 for r in cl if r['liveness']['all_states']), len(cl),
                  sum(1 for r in cl if r.get('differential_ok')),
@@ -107,6 +177,7 @@ def main():
     ap.add_argument('--list')
     ap.add_argument('--out')
     ap.add_argument('--summary')
+    ap.add_argument('--table')
     ap.add_argument('--steps', type=int, default=20000)
     ap.add_argument('--cap', type=float, default=240.0)
     ap.add_argument('--kmax', type=int, default=7)
@@ -114,6 +185,9 @@ def main():
     a = ap.parse_args()
     if a.summary:
         summarize(a.summary)
+        if a.table:
+            table(a.summary, a.table)
+            print('table -> %s' % a.table)
         return
     specs = [l.split()[0] for l in open(a.list) if l.strip()]
     done = set()
