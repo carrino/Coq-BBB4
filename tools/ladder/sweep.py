@@ -63,14 +63,16 @@ def bucket(r):
         return 'no-counter-shape'
     tried = r.get('tried') or []
     reasons = {t.get('reason') for t in tried}
-    if 'no arm replayed to anchor' in reasons:
-        return 'arm-replay-failed'
-    if 'no boot into the family' in reasons:
-        return 'no-boot'
-    if 'coverage not stable at kmax+2' in reasons:
-        return 'coverage-unstable'
+    # report how far the BEST candidate family got, not the first
     if 'overflow leaves the family' in reasons:
         return 'overflow-leaves-family'
+    if 'coverage not stable at kmax+2' in reasons:
+        return 'coverage-unstable'
+    if 'no boot into the family' in reasons:
+        return 'no-boot'
+    if 'family not covered' not in reasons and \
+            'no arm replayed to anchor' in reasons:
+        return 'arm-replay-failed'
     if 'family not covered' in reasons:
         if all(t.get('coverage', {}).get('n_wrong') for t in tried
                if t.get('reason') == 'family not covered'):
