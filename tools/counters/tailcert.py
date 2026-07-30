@@ -1092,14 +1092,14 @@ OFF_DEFS = r"""(** *** the inner run's OFFSET start [2^(j+@IOCT@) + @IADD@], nam
 Definition ilo@B@_@ID@ (k : nat) : positive := @ILOCTOR@.
 
 Lemma iloE@B@_@ID@ : forall k,
-  @IENCF@ (ilo@B@_@ID@ k) = @ICBITS@ ++ rep @IUD@ (k + @IOW@) ++ @ISOD@.
+  @IENCF@ (ilo@B@_@ID@ k) = @ICBITS@ ++ rep @IUD@ @ISTARTN@ ++ @ISOD@.
 Proof. intro k. unfold ilo@B@_@ID@. cbn [@IENCF@]. rewrite @IEPOW@. rshape_@ID@. Qed.
 
 Lemma iloN@B@_@ID@ : forall k, Pos.to_nat (ilo@B@_@ID@ k) = @IMUL@ * 2 ^ k + @IADD@.
 Proof.
   intro k. unfold ilo@B@_@ID@.
-  rewrite ?Pos2Nat.inj_xI, ?Pos2Nat.inj_xO, pos2nat_pow2, Nat.pow_add_r.
-  cbn [Nat.pow]. lia.
+  repeat (rewrite Pos2Nat.inj_xI || rewrite Pos2Nat.inj_xO).
+  rewrite pos2nat_pow2, ?Nat.pow_add_r. cbn [Nat.pow]. lia.
 Qed.
 
 Lemma iloS@B@_@ID@ : forall k, Pos.size_nat (ilo@B@_@ID@ k) = k + @ISZ@.
@@ -1108,18 +1108,41 @@ Proof.
 Qed.
 
 Lemma iloLE@B@_@ID@ : forall k,
-  Pos.to_nat (ilo@B@_@ID@ k) <= Pos.to_nat (half2 (k + @IOM1@)).
+  Pos.to_nat (ilo@B@_@ID@ @IJK@) <= Pos.to_nat (half2 (@IJK@ + @IOM1@)).
 Proof.
   intro k. rewrite iloN@B@_@ID@, pos2nat_half2', Nat.pow_add_r.
   cbn [Nat.pow]. pose proof (one_le_pow2 k). lia.
 Qed.
 
 Lemma iloK@B@_@ID@ : forall k,
-  Pos.to_nat (half2 (k + @IOM1@)) - Pos.to_nat (ilo@B@_@ID@ k)
-    <= tovf (ilo@B@_@ID@ k).
+  Pos.to_nat (half2 (@IJK@ + @IOM1@)) - Pos.to_nat (ilo@B@_@ID@ @IJK@)
+    <= tovf (ilo@B@_@ID@ @IJK@).
 Proof.
   intro k. rewrite tovf_size, iloS@B@_@ID@, ?iloN@B@_@ID@, pos2nat_half2',
     !Nat.pow_add_r. cbn [Nat.pow]. pose proof (one_le_pow2 k). lia.
+Qed.
+
+"""
+
+# The same arm when the offset only fits from j = 1 on.  A parity-0 overflow
+# anchor has an ODD octave index -- [cview p = (S (S j), None)] makes
+# [podd p = true] exactly when [j] is even -- so the j = 0 case (p = 3) is
+# VACUOUS on that side, and the arm can be stated one peel deeper for free.
+OFF_LAPO_PEEL = r"""(** The overflow arm, composed, one peel deeper.  The inner run's offset
+    start [2^(j+@IOCT@) + @IADD@] only sits below the halfway endpoint from
+    [j = 1] on; on this parity [j = 0] is [p = 3], whose octave is odd, so
+    [podd p = @BV@] refutes it. *)
+Lemma lapo@B@_@ID@ : forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
+  exists n c', csteps tm n (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+Proof.
+  intros p j E Hb. destruct j as [|j0].
+  - exfalso. rewrite (cview_none_shape p 1 E) in Hb.
+    vm_compute in Hb. discriminate.
+  - exact (nested_overflow_named_lift tm Cc Cin@B@ lapin@B@_@ID@ p
+             (ilo@B@_@ID@ (S j0)) (half2 (S j0 + @IOM1@))
+             (iloLE@B@_@ID@ j0) (iloK@B@_@ID@ j0)
+             (hbo@B@_@ID@ p (S j0) E Hb) (hxe@B@_@ID@ p (S j0) E Hb)).
 Qed.
 
 """
@@ -1336,8 +1359,14 @@ def render(D):
     for b, O in D['ovf'].items():
         if O['kind'] != 'nested':
             continue
-        if O.get('shape', 'fill') == 'half' and O['key'][4] >= 1 \
-                and O.get('off', 0) <= (1 << (O['key'][4] - 1)) - 1:
+        # A parity-0 arm never sees j = 0 (that anchor's octave is odd), so it
+        # buys one extra doubling of headroom for the offset -- see
+        # OFF_LAPO_PEEL.
+        oct_ = O['key'][4]
+        cap = (0 if oct_ < 1 else
+               (1 << oct_) - 1 if b == 0 else (1 << (oct_ - 1)) - 1)
+        if O.get('shape', 'fill') == 'half' and oct_ >= 1 \
+                and O.get('off', 0) <= cap:
             # wave-33: the HALFWAY template, below.  The offset bound is
             # `lo <= hi' at j = 0 -- the arm is stated for every j, and
             # `2^(j+oct) + c <= 2^(j+oct) + 2^(j+oct-1) - 1' is exactly
@@ -1441,7 +1470,10 @@ def render(D):
                     '@ISTARTJ@': '(ilo@B@_@ID@ j)',
                     '@ISTARTN@': ('(k + %d)' % ow) if ow else 'k',
                     '@ISTARTE@': 'iloE@B@_@ID@',
-                    '@HALFLAPO@': OFF_LAPO, '@OFFDEFS@': OFF_DEFS})
+                    '@IJK@': 'k', '@HALFLAPO@': OFF_LAPO,
+                    '@OFFDEFS@': OFF_DEFS})
+                if off > (1 << (o - 1)) - 1:
+                    r.update({'@IJK@': '(S k)', '@HALFLAPO@': OFF_LAPO_PEEL})
             if half:
                 # the octave start is [pow2 (S (j + o - 1))] and the endpoint
                 # is [half2 (j + o - 1)]; [NestedLapHalf] states both at the
