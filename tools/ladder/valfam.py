@@ -1208,7 +1208,13 @@ def _groups(fam, windows, max_exact_runs=4):
             for m in windows:
                 v = fam.view(cfg, m)
                 g[_vkey(v)].append((((ds, pp, ph)), v))
-            if len(fam.counter_side(cfg)) <= max_exact_runs:
+            # The exact view is what the FILL arm needs -- it has to see the
+            # counter's END.  The bound is on the DIGIT runs: the near-head
+            # prefix and the phase's terminator are fixed cells that add runs
+            # without adding generality, and a phase whose terminator is four
+            # cells long was silently denied a fill arm by counting them.
+            fixed = len(fam.pre) + len(fam.tails[ph])
+            if len(fam.counter_side(cfg)) <= max_exact_runs + fixed:
                 v = fam.view(cfg, 0, marker=False)  # exact: the overflow arm
                 g[_vkey(v)].append((((ds, pp, ph)), v))
     return g

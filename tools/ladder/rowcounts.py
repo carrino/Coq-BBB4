@@ -81,6 +81,17 @@ def main():
           % dict(collections.Counter(r.get('enumeration') for r in cl)))
     print('two-parameter far side: %d'
           % sum(1 for r in cl if r.get('outer_parameter')))
+    print('\nphases of the closed rows: %s'
+          % dict(collections.Counter((r.get('phases') or {}).get('n', 1)
+                                     for r in cl)))
+    print('closed BY the phase pass (>1 terminator)  %d'
+          % sum(1 for r in cl
+                if (r.get('phases') or {}).get('found_by_the_phase_pass')))
+    print('arm order is a subsumption linearization  %d of %d'
+          % (sum(1 for r in cl
+                 if r.get('arm_order_is_subsumption_linearization')), len(cl)))
+    print('selection shadowed a correct later arm    %d'
+          % sum(1 for r in cl if r.get('arm_selection_shadowed')))
     print('\n== transitions ==')
     t = collections.Counter((subbucket(old[s]), subbucket(new[s]))
                             for s in both)

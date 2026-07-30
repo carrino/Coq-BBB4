@@ -158,7 +158,36 @@ def measure(spec, steps=200000, trace=20000, ladder_cap=60.0, which=0):
             fills.append((len(ds), t2 - t))
     from fillcost import verdict
     v, r = verdict(fills)
+    # Per PHASE, because the phases do different things and a row can have a
+    # cheap handover in one phase and a nested fill in another -- that second
+    # case is a register, not a phase cycle, and mixing the widths of all
+    # phases into one ratio hides it.  A phase's fill has to be an ARM, so
+    # what matters is how many anchor visits the arm's replay must cross:
+    # bounded is a rule, growing with the width is rung three.
+    byph = {}
+    for i, (t, ph, ds, pp) in enumerate(seq):
+        if not all(d == fam.b - 1 for d in ds):
+            continue
+        for j in range(i + 1, len(seq)):
+            if seq[j][1:3] == (ph, ds):
+                continue
+            byph.setdefault((ph, len(ds)), j - i)
+            break
+    per_phase, worst = {}, 'affine'
+    for ph in range(len(phases)):
+        pts = sorted((k, g) for (p, k), g in byph.items() if p == ph)
+        pv, pr = verdict(pts)
+        per_phase[ph] = {'visit_gap_by_width': pts[:8], 'verdict': pv,
+                         'ratio': pr}
+        if pv == 'exponential':
+            worst = 'exponential'
+        elif pv == 'superlinear' and worst == 'affine':
+            worst = 'superlinear'
+    max_gap = max(byph.values()) if byph else None
     return {'spec': spec, 'verdict': v, 'per_digit_ratio': r,
+            'fill_arm_verdict': worst,
+            'max_fill_visit_gap': max_gap,
+            'per_phase': per_phase,
             'n_phases': len(phases),
             'phases': [list(p) for p in phases],
             'visits': len(obs), 'read': len(seq), 'unread': n_unread,
@@ -191,9 +220,12 @@ def main():
             r = {'spec': s, 'verdict': 'crash: %s' % type(e).__name__,
                  'detail': str(e)[:160]}
         out.append(r)
-        print('%-32s phases=%s read=%s %-12s ratio=%-6s %s'
-              % (s, r.get('n_phases'), r.get('read_frac'), r['verdict'],
-                 r.get('per_digit_ratio'), r.get('fills', [])[:4]))
+        print('%-32s phases=%s read=%-5s fill_arm=%-12s max_gap=%-5s %s'
+              % (s, r.get('n_phases'), r.get('read_frac'),
+                 r.get('fill_arm_verdict', r['verdict']),
+                 r.get('max_fill_visit_gap'),
+                 [(k, d['verdict']) for k, d in
+                  sorted((r.get('per_phase') or {}).items())]))
         if a.verbose:
             print(json.dumps(r, indent=1))
         sys.stdout.flush()
@@ -204,9 +236,13 @@ def main():
     print('\n== phases needed ==')
     for k, n in Counter(r.get('n_phases') for r in out).most_common():
         print('  %-6s %3d' % (k, n))
-    print('== fill cost under the multi-phase reading ==')
-    for k, n in Counter(r['verdict'] for r in out).most_common():
+    print('== is every phase fill an ARM (bounded anchor stops)? ==')
+    for k, n in Counter(r.get('fill_arm_verdict', r['verdict'])
+                        for r in out).most_common():
         print('  %-14s %3d' % (k, n))
+    ok = [r for r in out if r.get('fill_arm_verdict') == 'affine'
+          and (r.get('max_fill_visit_gap') or 99) <= 8]
+    print('  cycle closes with every fill inside 8 anchor stops: %d' % len(ok))
 
 
 if __name__ == '__main__':

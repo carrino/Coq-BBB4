@@ -1,0 +1,28 @@
+open rows: 23
+terminators are powers of one word (tail = word^m): 8
+other: 15
+strings short: {1: 9, 2: 5, 5: 6, 4: 3}
+
+GROW  tails=3  short=1   1RB0LC_1LC0RD_0RA1LB_0LC1RD    [[], [0, 1], [0, 1, 0, 1]]
+GROW  tails=3  short=1   1RB0LD_0LC1RA_1LA0RB_0RB1LD    [[], [0, 1], [0, 1, 0, 1]]
+GROW  tails=3  short=1   1RB0LD_0LC1RA_1LA1LA_0RB1LD    [[], [0, 1], [0, 1, 0, 1]]
+GROW  tails=3  short=1   1RB0LD_0LC1RA_1RB1LA_0RB1LD    [[], [0, 1], [0, 1, 0, 1]]
+GROW  tails=3  short=1   1RB1LC_0LA1RC_1RB0LD_0RB1LD    [[], [0, 1], [0, 1, 0, 1]]
+GROW  tails=3  short=1   1RB1RB_1LC0RD_0RA1LB_0LC1RD    [[], [0, 1], [0, 1, 0, 1]]
+GROW  tails=2  short=2   1RB0LD_0LC1RA_0LA1LA_0RB1LD    [[0, 1], [0, 1, 0, 1]]
+GROW  tails=2  short=4   1RB0RD_1LC1RA_0RB0LC_1LD0LA    [[1], [1, 1, 1]]
+-     tails=1  short=1   1RB---_1LC1RD_0LB1RD_1LB0RD    [[]]
+-     tails=1  short=1   1RB1LA_0LC1RD_1LC1LA_0LA0RB    [[]]
+-     tails=1  short=1   1RB1LC_0LC0RB_1LA1RD_0LA0RD    [[]]
+-     tails=1  short=2   1RB0RC_0LA1LC_0RD0LB_1LB1RD    [[1]]
+-     tails=3  short=2   1RB0RD_1LB1LC_1RC0RA_0LB1RD    [[1], [1, 0, 0, 1], [0, 1]]
+-     tails=1  short=2   1RB1LA_0RC1RD_1LB0LD_0LA0RB    [[1]]
+-     tails=1  short=2   1RB1LD_1LC1RA_0RB0LC_0RA0LD    [[]]
+-     tails=2  short=4   1RB1LC_0LA0RC_1LA0RD_0LA1RD    [[0, 0, 1], [0, 0, 1, 0, 1]]
+-     tails=4  short=4   1RB1LC_1LA0RC_1LA0RD_0LA1RD    [[], [0, 0, 1, 1], [1, 0, 0, 1], [0, 0, 1]]
+-     tails=3  short=5   1RB0LD_1LC1RA_0RB1LA_0RB1LD    [[0, 0, 1, 1], [], [1, 0, 1, 1]]
+-     tails=3  short=5   1RB0LD_1LC1RA_0RD1LA_0RB1LD    [[0, 0, 1, 1], [], [1, 0, 1, 1]]
+-     tails=1  short=5   1RB1LA_1RC1LB_0LA1RD_0LB0RC    [[1, 1]]
+-     tails=3  short=5   1RB1LC_0LA1RC_1LA0RD_0LA1RD    [[0, 0, 1, 1], [], [1, 0, 1, 1]]
+-     tails=3  short=5   1RB1LD_0LC0RD_0LA1RC_1LA0RC    [[1, 0, 0, 1], [0, 0, 0, 1], []]
+-     tails=3  short=5   1RB1LD_0LC1RD_0LA1RC_1LA0RC    [[0, 0, 1, 1], [], [1, 0, 1, 1]]
