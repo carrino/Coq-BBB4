@@ -173,6 +173,42 @@ File-coordination note: the live wave session owns `tailcert.py` and the
 `REG_*`/closeout tables; this plan's files (`docs/LADDER_PLAN.md`,
 `tools/ladder/`) are disjoint by construction, and Stage A must keep it so.
 
+## 4c. Stage-A gate zero, measured (2026-07-30, `tools/ladder/`)
+
+The prototype exists and the discovery layer works on the real rows.  On
+the dev fixture (`0RB---_0LC1RB_1LA1LD_1LC0RB`, the one counter the wave
+route derives today) the miner finds and the engine PROVES exactly the
+machine's three fundamental local rules — the B increment chain and both
+carry drains — as context-free rules behind a wall marker, all passing
+raw-simulator differential validation.  On the five pinned Stage-A rows
+(20k-step traces, per-machine time cap):
+
+| row | rules | states | invalid |
+|---|---:|---|---|
+| `1RB---_1RC1LB_0LB1RD_1RA0RC` (bounded carrier) | 9 | BCD | 0 |
+| `1RB---_0LB1RC_0RD0RC_1LB1LD` (interior wall) | 3 | BC | 0 |
+| `0RB0RD_1LC1RB_1RA0LC_1LB0LC` (two-form) | 5 | ABC | 0 |
+| `1RB0LA_1LC0RD_1LA1LB_0LB1RD` (boot-blocked) | 3 | BCD | 0 |
+| `1RB1RD_1LC1RA_0RB0LC_1LA0RD` (register, ~4^k) | 3 | ABC | 0 |
+
+Compact, validated rule sets on every row — on machines where the
+production irules engine discovers NOTHING (§2: zero anchors, zero rules,
+zero certs at two budgets).  The rule-in-rule machinery (bulk application
+of proven rules inside another rule's replay) and the single-application
+subsumption check are what separate the two — both were engine bugs or
+absences at some point in the build, and both are now differentially
+validated.
+
+The closure layer does NOT yet close any row, fixture included, and the
+failure is exactly `RULE_LADDER.md` §3's prediction: an octave meta-cycle
+is 2^k rests whose mid-octave shapes follow the bit pattern, so no
+fixed-shape anchor family with an affine self-map exists.  The next
+increment is the VALUE-INDEXED rule family — a counter-segment tape item
+with a cview-style case split, discovered from the ladder's own carry
+rules (they identify the digit alphabet mechanically: the drained block
+words ARE the digits).  That is rung two proper; the local-rule layer
+underneath it is built and measured.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
