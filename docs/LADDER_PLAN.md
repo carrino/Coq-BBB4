@@ -620,7 +620,7 @@ skipped.
 All 18 pass raw-simulator differential validation, **all 18 match the arms'
 predicted step counts exactly**, all 18 confirm 40 laps replayed from blank,
 all 18 are never-QH, and all 18 cover EVERY digit string rather than only the
-reachable ones.  (Confirmed on the full 143 below.)  Median 19 arms, median 33 s, max 275 s — no row hit the cap.
+reachable ones.  Median 19 arms, median 33 s, max 275 s — no row hit the cap.
 Every one of the 18 was closed by the phase pass (2 phases on 4 rows, 3 on 11,
 4 on 3); none of them closes without it.  `arm_order_is_subsumption_linearization`
 holds on all 18 and `shadowed_by_selection` is 0 on all 18.
