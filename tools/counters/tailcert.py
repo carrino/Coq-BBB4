@@ -351,8 +351,17 @@ def _int_chain(tab, A, T, what, b):
 
 
 def _nested_ovf(tab, B0, B1, mid, K):
-    """boot + inner counter + exit for an OVERFLOW arm at symbolic index K."""
-    keys = NC.families(mid, ENCDATA, ENCS, K=K)
+    """boot + inner counter + exit for an OVERFLOW arm at symbolic index K.
+
+    The inner family is searched over `TRY`, not over `ENCS`.  Wave-32: this
+    module registers three alphabets privately in `ENCDATA` -- `Alph_01_11_11`
+    (the obS = 0 spelling of Mp's) and wave-30's two INVERTED rows -- and used
+    them for the OUTER reader only, so the inner search could not see them.
+    Measured over item (1)'s 39 rows, 60 nested arms: they open 26 arms across
+    13 rows that reported `no inner family at pow2 j` with nothing at all, and
+    24 of the 32 keys they contribute carry octave shift 1 (see `validate`).
+    `ENCS` itself is untouched, so no other scan's search space moves."""
+    keys = NC.families(mid, ENCDATA, TRY, K=K)
     if not keys:
         raise RegError('no inner family at pow2 j')
     last = 'no inner family'
@@ -407,7 +416,16 @@ def validate(tab, D, hi=HI):
                 if not EL.eqlift(cur, _denc(O['CinS'], j - 2)):
                     raise RegError('p=%d boot -> %r want %r'
                                    % (p, cur, _denc(O['CinS'], j - 2)))
-                v = 1 << (j - 2)
+                # The inner family's OCTAVE SHIFT belongs in the replay bound.
+                # `CinS` is `E_in (pow2 (j - 2 + oct))` -- `nestcert.endpoints`
+                # puts `oct` in the sside's constant `b` -- and the run ends at
+                # ITS fill, so an `oct >= 1` family has `2^(j-2+oct)` laps, not
+                # `2^(j-2)`.  Wave-32: replaying from `1 << (j - 2)` walked the
+                # right per-lap step counts (the low bits, hence the carry
+                # indices, agree) but too FEW laps, landed short of the fill,
+                # and filed the row `inner fill lands off the measured
+                # endpoint`.  That is the whole of that 6-row bucket.
+                v = 1 << (j - 2 + O['key'][4])
                 while True:
                     i, iov = carry(v)
                     if iov:
@@ -434,18 +452,35 @@ def validate(tab, D, hi=HI):
 
 
 def visits(tab, D):
-    """A witness for every state at EVERY overflow anchor, both parities.  On
-    a nested arm the visible chain is the BOOT chain."""
+    """A witness for every state at EVERY overflow anchor, both parities.
+
+    On a nested arm the BOOT chain is tried first and the EXIT chain second.
+    A state that fires only after the inner counter has run its `Theta(2^j)`
+    laps has no prefix of the boot to witness it, and `vis_of_run` can see a
+    prefix of ONE chain only; `NestedLapLift.vis_via_fill` bridges the two and
+    is what `nestcert` has always used for this (its docstring measures the
+    case at 8 of 30).  Wave-32: with the octave-shift replay fixed, this is
+    where all 6 of the `inner fill lands off the endpoint` rows stop, so the
+    fallback is what those rows were queued behind.
+
+    Returns {state: {parity: ('boot'|'exit', chain)}}."""
     out = {}
     for q in range(4):
         pre = {}
         for b in (0, 1):
             O = D['ovf'][b]
             ch = O['ch'] if O['kind'] == 'flat' else O['chb']
-            pre[b] = LC.reach_state(tab, True, True, O['B0'], ch, q)
-            if pre[b] is None:
-                raise RegError('no visit witness for state %s at octave '
-                               'parity %d' % (LAB[q], b))
+            w = LC.reach_state(tab, True, True, O['B0'], ch, q)
+            if w is not None:
+                pre[b] = ('boot', w)
+                continue
+            if O['kind'] == 'nested':
+                w = LC.reach_state(tab, True, True, O['CinF'], O['che'], q)
+                if w is not None:
+                    pre[b] = ('exit', w)
+                    continue
+            raise RegError('no visit witness for state %s at octave '
+                           'parity %d' % (LAB[q], b))
         out[q] = pre
     return out
 
@@ -843,28 +878,28 @@ Proof.
   f_equal. exact (gen@B@_@ID@ v i q0 E).
 Qed.
 
-Lemma gbo@B@_@ID@ : forall k, lift (cden [] [] k CS@B@_@ID@) = lift (Cin@B@ (pow2 k)).
+Lemma gbo@B@_@ID@ : forall k, lift (cden [] [] k CS@B@_@ID@) = lift (Cin@B@ (pow2 @IPOWK@)).
 Proof.
   intro k. f_equal.
   unfold Cin@B@_@ID@, cden, CS@B@_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * k + 0) with k by lia. replace (0 * k + 0) with 0 by lia.
+  replace (1 * k + @IOCT@) with @IPOWK@ by lia. replace (0 * k + 0) with 0 by lia.
   rewrite @IEPOW@. rshape_@ID@.
 Qed.
 
-Lemma gxi@B@_@ID@ : forall k, Cin@B@ (fill (pow2 k)) = cden [] [] k CF@B@_@ID@.
+Lemma gxi@B@_@ID@ : forall k, Cin@B@ (fill (pow2 @IPOWK@)) = cden [] [] k CF@B@_@ID@.
 Proof.
   intro k.
-  destruct (@IENCM@.@INONE@ (fill (pow2 k)) k (cview_fill_pow2 k)) as (H1 & _).
+  destruct (@IENCM@.@INONE@ (fill (pow2 @IPOWK@)) @IPOWK@ (cview_fill_pow2 @IPOWK@)) as (H1 & _).
   unfold Cin@B@_@ID@, cden, CF@B@_@ID@; cbn [c_st c_l c_h c_r].
   unfold sden; cbn [s_pre s_u s_a s_b s_post].
-  replace (1 * k + 0) with k by lia. replace (0 * k + 0) with 0 by lia.
+  replace (1 * k + @IOCT@) with @IPOWK@ by lia. replace (0 * k + 0) with 0 by lia.
   rewrite H1. rshape_@ID@.
 Qed.
 
 Lemma hbo@B@_@ID@ : forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
   exists n c, 0 < n /\ csteps tm n (Cc p) = Some c
-              /\ lift c = lift (Cin@B@ (pow2 j)).
+              /\ lift c = lift (Cin@B@ (pow2 @IPOWJ@)).
 Proof.
   intros p j E Hb.
   exists (@CAB@ * j + @CBB@), (cden [] [] j CS@B@_@ID@).
@@ -875,7 +910,7 @@ Proof.
 Qed.
 
 Lemma hxe@B@_@ID@ : forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
-  exists n c', csteps tm n (Cin@B@ (fill (pow2 j))) = Some c'
+  exists n c', csteps tm n (Cin@B@ (fill (pow2 @IPOWJ@))) = Some c'
                /\ lift c' = lift (Cc (Pos.succ p)).
 Proof.
   intros p j E Hb.
@@ -893,8 +928,36 @@ Lemma lapo@B@_@ID@ : forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
                /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
 Proof.
   intros p j E Hb.
-  exact (nested_overflow_lift tm Cc Cin@B@ lapin@B@_@ID@ p (pow2 j)
+  exact (nested_overflow_lift tm Cc Cin@B@ lapin@B@_@ID@ p (pow2 @IPOWJ@)
            (hbo@B@_@ID@ p j E Hb) (hxe@B@_@ID@ p j E Hb)).
+Qed.
+
+'''
+
+VISX = r'''(** A state that fires in the parity-@BV@ arm's EXIT chain -- i.e. only after
+    the inner counter has run its [Theta(2^j)] laps -- has no witness in the
+    BOOT chain, and [vis_of_run] can see a prefix of one chain only.
+    [NestedLapLift.vis_via_fill] bridges the two with the same [exists n] the
+    lap uses, so nothing exponential is written down here either.
+
+    Stated in the CONCRETE [csteps] form [viso@B@_@ID@] has, so the two are
+    interchangeable at the use site: [vis_via_fill] lands in [lift] space and
+    [LapCertGlueLift.vis_csteps_of_lift] pulls it straight back. *)
+Lemma visx@B@_@ID@ : forall (l : list lstep) (q : St),
+  srun_st tm true true l CF@B@_@ID@ = Some q ->
+  forall p j, cview p = (S (S j), None) -> podd p = @BV@ ->
+  exists k c, csteps tm k (Cc p) = Some c /\ fst c = q.
+Proof.
+  intros l q Hst p j E Hb.
+  apply (vis_csteps_of_lift tm Cc p q).
+  apply (vis_via_fill tm Cc Cin@B@ lapin@B@_@ID@ q p (pow2 @IPOWJ@)).
+  - destruct (hbo@B@_@ID@ p j E Hb) as (n & c & _ & Hn & Hl).
+    exists n, c. exact (conj Hn Hl).
+  - apply (vis_lift_of_csteps tm
+             (fun _ : positive => Cin@B@ (fill (pow2 @IPOWJ@))) xH).
+    apply (vis_of_run tm (fun _ : positive => Cin@B@ (fill (pow2 @IPOWJ@)))
+                      true true l CF@B@_@ID@ xH j [] []);
+      [exact Hst | reflexivity | reflexivity | exact (gxi@B@_@ID@ j)].
 Qed.
 
 '''
@@ -983,6 +1046,11 @@ def render(D):
         iglue.append(_fill(INT_GLUE, r))
     iglue.append(INT_DISPATCH)
 
+    # a state witnessed in the EXIT chain needs `visx@B@`, which only a nested
+    # arm has; `visits` never files one against a flat arm.
+    needx = set(b for q in range(4) for b in (0, 1)
+                if D['vis'][q][b][0] == 'exit')
+
     cindefs, odefs, oglue, iepows, viso = [], [], [], [], []
     for b in (1, 0):
         O = D['ovf'][b]
@@ -995,7 +1063,15 @@ def render(D):
             oglue.append(_fill(OVF_HEAD + OVF_FLAT_GLUE, r))
         else:
             di = ENCDATA[O['key'][0]]
+            # The family's OCTAVE SHIFT.  It rides in the sside's constant
+            # term (`nestcert.endpoints`: a = 1, b = oct), so the arm is stated
+            # at `pow2 (j + oct)` throughout and the two `cden` bridges reindex
+            # by it.  `oct = 0` renders exactly as before.
+            o = O['key'][4]
             r.update({
+                '@IOCT@': str(o),
+                '@IPOWK@': 'k' if not o else '(k + %d)' % o,
+                '@IPOWJ@': 'j' if not o else '(j + %d)' % o,
                 '@CS@': EL.cconf(O['CinS']), '@CF@': EL.cconf(O['CinF']),
                 '@AI0@': EL.cconf(O['AI0']), '@AI1@': EL.cconf(O['AI1']),
                 '@CHB@': EL.cchain(O['chb']), '@CHN@': EL.cchain(O['chn']),
@@ -1014,6 +1090,8 @@ def render(D):
             oglue.append(_fill(OVF_HEAD + OVF_NEST_GLUE, r))
             iepows.append(_fill(IEPOW, r))
         viso.append(_fill(VISO, r))
+        if b in needx:
+            viso.append(_fill(VISX, r))
 
     # the peel's leftover [p = 1], one concrete run per state
     zk = visz(parse(spec), D)
@@ -1026,9 +1104,11 @@ def render(D):
     for b in (1, 0):
         blk = ['    + destruct q.']
         for q in range(4):
-            blk.append('      * exact (viso%d_%s %s %s '
+            where, ch = D['vis'][q][b]
+            blk.append('      * exact (vis%s%d_%s %s %s '
                         'ltac:(vm_compute; reflexivity) p1 j2 E1 Hb1).'
-                        % (b, ID, EL.cchain(D['vis'][q][b]), ST[q]))
+                        % ('o' if where == 'boot' else 'x', b, ID,
+                           EL.cchain(ch), ST[q]))
         vis.append('\n'.join(blk))
 
     nest = [b for b in (1, 0) if D['ovf'][b]['kind'] == 'nested']
