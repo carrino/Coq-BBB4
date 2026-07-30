@@ -38,14 +38,54 @@ FLAVOURS = {
 }
 
 
-def flavour_of(tm):
-    """'mb' / 'ma' / None -- which ReachSt section proves [ReachSt tm StC]."""
-    b0 = tm['B'][0]
-    if b0 is None or b0[2] != 'C':
-        return None
-    for name, want in FLAVOURS.items():
-        if all(tm[q][b] == tr for (q, b), tr in want.items()):
-            return name
+def sparse_state(mstr, T=200000):
+    """The state that fires logarithmically often -- the liveness question."""
+    from collections import defaultdict
+    tm = decode_tab(mstr)
+    tape = defaultdict(int)
+    p, q = 0, 0
+    cnt = defaultdict(int)
+    for _ in range(T):
+        cnt[q] += 1
+        tr = tm[(q, tape[p])]
+        if tr is None:
+            break
+        tape[p] = tr[0]
+        p += tr[1]
+        q = tr[2]
+    return 'ABCD'[min(range(4), key=lambda i: cnt[i])]
+
+
+def decode_tab(mstr):
+    out = {}
+    tm = NP.decode(mstr)
+    for qi, q in enumerate('ABCD'):
+        for b in (0, 1):
+            tr = tm[q][b]
+            out[(qi, b)] = (None if tr is None
+                            else (tr[0], 1 if tr[1] == 'R' else -1, 'ABCD'.index(tr[2])))
+    return out
+
+
+def flavour_of(tm, sparse):
+    """(flavour, (a, b, c, d)) -- the state names playing the four ReachSt
+    roles, or None.  The roles need not be A/B/C/D: the sub-machine is what
+    matters, so any relabelling of it is the same theorem."""
+    import itertools
+    for a, b, d in itertools.permutations('ABCD', 3):
+        b0 = tm[b][0]
+        if b0 is None:
+            continue
+        c = b0[2]
+        if c in (a, b, d) or c != sparse:
+            continue
+        for name, want in FLAVOURS.items():
+            role = {'A': a, 'B': b, 'D': d}
+            if all(tm[role[rq]][rb] is not None
+                   and tm[role[rq]][rb][:2] == tr[:2]
+                   and tm[role[rq]][rb][2] == role[tr[2]]
+                   for (rq, rb), tr in want.items()):
+                return name, (a, b, c, d)
     return None
 
 
@@ -90,33 +130,46 @@ Import ListNotations.
 '''
 
 
-def emit(mstr, res, flav):
+PICK = ['left; reflexivity',
+        'right; left; reflexivity',
+        'right; right; left; reflexivity',
+        'right; right; right; reflexivity']
+
+
+def emit(mstr, res, flav, roles):
     nm = mstr
     tm = res['tm']
     thm = 'nqh_' + nm
-    b0 = tm['B'][0]
+    a, b, c, d = roles
+    qA, qB, qC, qD = ('St' + x for x in roles)
+    b0 = tm[b][0]
     w = NP.c_sym(b0[0])
-    d = 'DR' if b0[1] == 'R' else 'DL'
+    dd = 'DR' if b0[1] == 'R' else 'DL'
+    picks = ' | '.join(PICK[list(roles).index(x)] for x in 'ABCD')
     body = [NP.c_tm(tm, 'tm_' + nm),
             'Lemma total_{nm} : Total tm_{nm}.\n'
             'Proof. intros q s; destruct q, s; discriminate. Qed.'.format(nm=nm),
-            'Lemma reach_{nm} : ReachSt tm_{nm} StC.\n'
+            'Lemma cover_{nm} : forall q, q = {qA} \\/ q = {qB} \\/ q = {qC} \\/ q = {qD}.\n'
+            'Proof. destruct q; [ {picks} ]. Qed.'.format(
+                nm=nm, qA=qA, qB=qB, qC=qC, qD=qD, picks=picks),
+            'Lemma reach_{nm} : ReachSt tm_{nm} {qC}.\n'
             'Proof.\n'
-            '  exact ({flav}_ReachSt tm_{nm} eq_refl eq_refl eq_refl eq_refl eq_refl\n'
-            '           {w} {d} eq_refl).\n'
-            'Qed.'.format(nm=nm, flav=flav, w=w, d=d),
-            'Lemma recurC_{nm} : forall N, exists m, N <= m /\\ VisitsAt tm_{nm} StC m.\n'
-            'Proof. exact (reach_st_recurs tm_{nm} StC total_{nm} reach_{nm}). Qed.'
-            .format(nm=nm),
+            '  exact ({flav}_ReachSt tm_{nm} {qA} {qB} {qC} {qD} cover_{nm}\n'
+            '           eq_refl eq_refl eq_refl eq_refl eq_refl {w} {dd} eq_refl).\n'
+            'Qed.'.format(nm=nm, flav=flav, qA=qA, qB=qB, qC=qC, qD=qD,
+                          w=w, dd=dd),
+            'Lemma recurC_{nm} : forall N, exists m, N <= m /\\ VisitsAt tm_{nm} {qC} m.\n'
+            'Proof. exact (reach_st_recurs tm_{nm} {qC} total_{nm} reach_{nm}). Qed.'
+            .format(nm=nm, qC=qC),
             'Definition lset_' + nm + ' : hgset :=\n  ' + NP.c_gset(res['lset']) + '.',
             'Definition rset_' + nm + ' : hgset :=\n  ' + NP.c_gset(res['rset']) + '.',
             NP.c_cert(res['cert'], 'cert_' + nm),
             'Theorem {thm} : NeverQuasiHaltsSt tm_{nm}.\n'
             'Proof.\n'
             '  apply (ngramhist_check_neverqh_lex_ext_sound tm_{nm} {k} {n} {t} {fuel}\n'
-            '           lset_{nm} rset_{nm} cert_{nm} StC recurC_{nm}).\n'
+            '           lset_{nm} rset_{nm} cert_{nm} {qC} recurC_{nm}).\n'
             '  vm_compute. reflexivity.\nQed.'.format(
-                thm=thm, nm=nm, k=res['k'], n=res['n'], t=res['t'],
+                thm=thm, nm=nm, qC=qC, k=res['k'], n=res['n'], t=res['t'],
                 fuel=res['fuel'])]
     return '\n\n'.join(body), thm
 
@@ -136,25 +189,30 @@ def main():
     ok, bad = [], []
     for mstr in specs:
         tm = NP.decode(mstr)
-        flav = flavour_of(tm)
-        if flav is None:
-            bad.append((mstr, 'not a ReachSt flavour'))
-            continue
         if not total(tm):
             bad.append((mstr, 'has an undefined transition'))
             continue
-        res, err = prove_ext(mstr, args.k, args.n, args.t, args.fuel)
+        sparse = sparse_state(mstr)
+        got = flavour_of(tm, sparse)
+        if got is None:
+            bad.append((mstr, 'not a ReachSt flavour'))
+            continue
+        flav, roles = got
+        res, err = prove_ext(mstr, args.k, args.n, args.t, args.fuel,
+                             qext=roles[2])
         if res is None:
             bad.append((mstr, err))
             continue
-        body, thm = emit(mstr, res, flav)
+        body, thm = emit(mstr, res, flav, roles)
         path = os.path.join(args.outdir, 'RST_' + mstr + '.v')
         with open(path, 'w') as f:
             f.write(HEADER.format(mstr=mstr, k=args.k, n=args.n, t=args.t,
                                   fuel=args.fuel, nctx=res['nctx'],
-                                  qext='StC', flav=flav) + '\n' + body + '\n')
+                                  qext='St' + roles[2], flav=flav)
+                    + '\n' + body + '\n')
         ok.append((mstr, flav, res['nctx'], path))
-        print('OK   %s  %s  nctx=%d  -> %s' % (mstr, flav, res['nctx'], path))
+        print('OK   %s  %s roles=%s  nctx=%d  -> %s'
+              % (mstr, flav, ''.join(roles), res['nctx'], path))
     for mstr, why in bad:
         print('MISS %s  %s' % (mstr, why))
     print('\n%d emitted, %d missed' % (len(ok), len(bad)))

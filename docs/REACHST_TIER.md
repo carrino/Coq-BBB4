@@ -6,9 +6,12 @@ past those 23._
 
 ## 0. TL;DR
 
-* **20 rows boarded**, kernel-checked, `functional_extensionality_dep` only.
-  Core undecided **143 → 137**, 0RB shadows **74 → 60**, settled
-  **4,939 → 4,959 of 5,156 (96.2%)**.
+* **42 rows boarded**, kernel-checked, `functional_extensionality_dep` only.
+  Core undecided **143 → 119**, 0RB shadows **74 → 56**, settled
+  **4,939 → 4,981 of 5,156 (96.6%)**.
+* 20 of the 42 are Drozd's; the other 22 are the same two sub-machines under a
+  different STATE RELABELLING, found by re-running the tier over the whole open
+  core and then iterating as boarding promoted shadows into it.
 * The mechanism is one new idea and three new files.  For a counter, the
   **state-avoiding SUB-MACHINE can be far simpler than the machine**, and
   liveness only needs that sub-machine to terminate — not an exact lap.
@@ -114,16 +117,29 @@ So the boards are `NGramHist` for three states and a theorem for the fourth:
 Nothing is weakened.  The skipped state's obligation is not dropped, it is
 MOVED, and the caller has to prove it.
 
-## 4. The 20, and the 3 that are not (yet) here
+## 4. The 42, the widening, and the 2 that are not here
 
-Boarded (`theories/Machines/ReachSt/RST_<spec>.v`), all at `t=200 fuel=40000`:
+The four ReachSt roles are SECTION VARIABLES (`qA qB qC qD : St`), not
+`StA..StD`.  The sub-machine is what the theorem is about, so any relabelling
+of it is the same theorem — and the residue is full of relabellings.  Boarding
+all of Drozd's rows first, then re-running the tier over the whole open core and
+iterating (each round of boards promotes 0RB shadows into the core, and those
+had never been swept), gives **42 boards from the same two lemmas**:
 
-| flavour | `k,n` | rows |
-|---|---|---|
-| mb | 2,2 | `1RB0LD_0LC1RA_0LA1LA_0RB1LD`, `..._0LC1RA_0RA1LA_0RB1LD`, `..._0LC1RA_0RC1LA_0RB1LD`, `..._0LC1RA_1LA0RB_0RB1LD`, `..._0LC1RA_1LA1LA_0RB1LD`, `..._0LC1RA_1RB1LA_0RB1LD`, `..._1LC1RA_0RB1LA_0RB1LD`, `..._1LC1RA_0RD1LA_0RB1LD`, `..._1LC1RA_1RD1RC_0RB1LD`, `..._1RC1RA_1LA0RC_0RB1LD` |
-| mb | 3,2 | `1RB0LD_0RC1RA_1LC1LA_0RB1LD`, `1RB0LD_1RC1RA_1LA1RA_0RB1LD` |
-| ma | 2,2 | `1RB0LD_0RC1RA_1LC0LA_0RA1LD`, `..._1LC1RA_1LA1LC_0RA1LD`, `..._1LC1RA_1LA1RC_0RA1LD`, `..._1RC1RA_1LA0RC_0RA1LD`, `..._1RC1RA_1LA1LC_0RA1LD`, `..._1RC1RA_1LA1RC_0RA1LD` |
-| ma | 3,2 | `1RB0LD_0RC1RA_1LC1LA_0RA1LD`, `1RB0LD_1RC1RA_1LA1RA_0RA1LD` |
+| flavour | roles `qA qB qC qD` | `k,n` | rows |
+|---|---|---|---|
+| mb | A B C D | 2,2 / 3,2 | 10 / 2 |
+| mb | D B C A | 2,2 / 3,2 | 4 / 1 |
+| mb | C A B D | 2,2 / 3,2 | 1 / 1 |
+| mb | B C A D · C B A D · D C A B | 2,2 | 1 · 1 · 1 |
+| ma | A B C D | 2,2 / 3,2 | 6 / 2 |
+| ma | B C D A | 2,2 / 3,2 | 6 / 2 |
+| ma | C A B D | 2,2 / 3,2 | 3 / 1 |
+
+All at `t=200 fuel=40000`; the per-row table is the emitted headers under
+`theories/Machines/ReachSt/`.  **Six distinct role assignments** appear, and
+only 20 of the 42 use the identity — so the relabelling generalisation is worth
+more than the original catch.
 
 The 23rd row Drozd listed, `1RB0LD_1LC1RA_1LA1RC_0RB1LD`, was **already
 boarded** (`theories/Machines/Counters/REG_...`, wave-32's two-form route).  It
@@ -176,11 +192,15 @@ The tier is not about `1RB0LD`.  The generalisable claim is:
 Two concrete follow-ups, in order of cheapness:
 
 1. **The third flavour** (§4) — two rows, one measure.
-2. **Sweep the whole open list for sparse states whose avoid sub-machine is
-   already one of the two flavours, up to mirroring and state relabelling.**
-   The flavour test in `reachst_prove.flavour_of` is exact-match today and does
-   not try `Mirror.mirror_tm` or non-start state swaps.  Both are already in the
-   tree, and either would widen the catch for free.
+2. **MIRRORING — the half of the widening that is still on the table.**
+   State relabelling is now done (§4, +22 rows).  Mirroring is not: measured
+   over the open core AFTER this wave, **22 of the remaining 119 rows match a
+   flavour under mirroring** (and 0 without it — the forward catch is
+   exhausted).  They are untouched because `NGramHistExt` wants the liveness premise for the
+   ORIGINAL machine and `Mirror.v` transports `NeverQuasiHaltsSt`, not a single
+   state's `VisitsAt`.  One transport lemma — "`q` recurs in `mirror_tm tm`
+   implies `q` recurs in `tm`" — unlocks all 21.  This is the cheapest large
+   thing left in this direction and it is bigger than what is here.
 3. **A verified uniform-termination decider.**  The bounded symbolic search
    (branch on each freshly-read cell) is NOT enough on its own — a leftward
    sweep over an unbounded run has no uniform step bound: **0 of 62** tables are

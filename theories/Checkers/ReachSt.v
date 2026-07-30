@@ -19,14 +19,19 @@
     which reaches [q] from anywhere visits [q] at unboundedly large indices.
 
     The point is that the [q]-avoiding sub-machine can be DRAMATICALLY
-    simpler than the machine.  For the [1RB0LD] family the full machine is a
+    simpler than the machine.  Across 42 residue rows the full machine is a
     nested counter -- the residue's largest open item -- while the
-    [StC]-avoiding sub-machine is
+    [qC]-avoiding sub-machine is one of just TWO tables
 
-        A0 -> 1RB   A1 -> 0LD   B1 -> 1RA   D0 -> 0R{A,B}   D1 -> 1LD
+        qA 0 -> 1R qB   qA 1 -> 0L qD   qB 1 -> 1R qA
+        qD 0 -> 0R qB   qD 1 -> 1L qD          (flavour B)
+        qD 0 -> 0R qA   qD 1 -> 1L qD          (flavour A)
 
     a plain binary counter running DOWN, and termination only needs a
-    decreasing measure, not an exact lap.  The measure is
+    decreasing measure, not an exact lap.  The four roles [qA qB qC qD] are
+    SECTION VARIABLES, not [StA..StD]: the sub-machine is what matters, so any
+    relabelling of it is the same theorem, and that is where 19 of the 42 rows
+    come from.  The measure is
 
         mu (l, h, r) = 2 ^ |l| * (h + 2 * val r)
 
@@ -188,12 +193,12 @@ Local Ltac cru1 :=
     [D1 -> 1LD] walks left over the leading [S1]-run, writing it back
     unchanged, and stops on the first blank. *)
 
-Lemma dsweep : forall tm, tm StD S1 = Some (mkTrans S1 DL StD) ->
+Lemma dsweep : forall tm qD, tm qD S1 = Some (mkTrans S1 DL qD) ->
   forall l r,
-    csteps tm (S (runlen l)) (StD, (l, S1, r))
-    = Some (StD, (skipn (S (runlen l)) l, S0, rep S1 (S (runlen l)) ++ r)).
+    csteps tm (S (runlen l)) (qD, (l, S1, r))
+    = Some (qD, (skipn (S (runlen l)) l, S0, rep S1 (S (runlen l)) ++ r)).
 Proof.
-  intros tm HD1. induction l as [|[|] l IH]; intros r.
+  intros tm qD HD1. induction l as [|[|] l IH]; intros r.
   - cbn [runlen csteps cstep]. rewrite HD1. reflexivity.
   - cbn [runlen csteps cstep]. rewrite HD1. reflexivity.
   - cbn [runlen].
@@ -212,12 +217,13 @@ Qed.
 Section RightBranch.
 
   Variable tm : TM.
-  Hypothesis HA0 : tm StA S0 = Some (mkTrans S1 DR StB).
-  Hypothesis HB1 : tm StB S1 = Some (mkTrans S1 DR StA).
+  Variable qA qB : St.
+  Hypothesis HA0 : tm qA S0 = Some (mkTrans S1 DR qB).
+  Hypothesis HB1 : tm qB S1 = Some (mkTrans S1 DR qA).
 
   Lemma right_step : forall l r, chd r = S1 ->
-    csteps tm 2 (StA, (l, S0, r))
-    = Some (StA, (S1 :: S1 :: l, chd (ctl r), ctl (ctl r))).
+    csteps tm 2 (qA, (l, S0, r))
+    = Some (qA, (S1 :: S1 :: l, chd (ctl r), ctl (ctl r))).
   Proof.
     intros l r Er. cru. rewrite HA0. cru. rewrite Er. cru. rewrite HB1. cru.
     reflexivity.
@@ -246,27 +252,29 @@ Proof. reflexivity. Qed.
 Section MB.
 
   Variable tm : TM.
-  Hypothesis HA0 : tm StA S0 = Some (mkTrans S1 DR StB).
-  Hypothesis HA1 : tm StA S1 = Some (mkTrans S0 DL StD).
-  Hypothesis HB1 : tm StB S1 = Some (mkTrans S1 DR StA).
-  Hypothesis HD0 : tm StD S0 = Some (mkTrans S0 DR StB).
-  Hypothesis HD1 : tm StD S1 = Some (mkTrans S1 DL StD).
+  Variable qA qB qC qD : St.
+  Hypothesis Hst : forall q, q = qA \/ q = qB \/ q = qC \/ q = qD.
+  Hypothesis HA0 : tm qA S0 = Some (mkTrans S1 DR qB).
+  Hypothesis HA1 : tm qA S1 = Some (mkTrans S0 DL qD).
+  Hypothesis HB1 : tm qB S1 = Some (mkTrans S1 DR qA).
+  Hypothesis HD0 : tm qD S0 = Some (mkTrans S0 DR qB).
+  Hypothesis HD1 : tm qD S1 = Some (mkTrans S1 DL qD).
   Variable wB : Sym.
   Variable dB : Dir.
-  Hypothesis HB0 : tm StB S0 = Some (mkTrans wB dB StC).
+  Hypothesis HB0 : tm qB S0 = Some (mkTrans wB dB qC).
 
   Local Notation Hits cc :=
-    (exists k cc', csteps tm k cc = Some cc' /\ fst cc' = StC).
+    (exists k cc', csteps tm k cc = Some cc' /\ fst cc' = qC).
 
   (** [A] on a blank whose right neighbour is blank: [B] meets the blank. *)
-  Lemma mb_right0 : forall l r, chd r = S0 -> Hits (StA, (l, S0, r)).
+  Lemma mb_right0 : forall l r, chd r = S0 -> Hits (qA, (l, S0, r)).
   Proof.
     intros l r Er. exists 2. cru. rewrite HA0. cru. rewrite Er. cru.
     rewrite HB0. cru. eexists. split; reflexivity.
   Qed.
 
   (** The run is empty: [A] turns left onto a blank, [B] meets a blank. *)
-  Lemma mb_left0 : forall l2 r, Hits (StA, (S0 :: l2, S1, r)).
+  Lemma mb_left0 : forall l2 r, Hits (qA, (S0 :: l2, S1, r)).
   Proof.
     intros l2 r. exists 3. cru. rewrite HA1. cru. rewrite HD0. cru.
     rewrite HB0. cru. eexists. split; reflexivity.
@@ -274,8 +282,8 @@ Section MB.
 
   (** A real run: sweep left over it, then come back past the blank. *)
   Lemma mb_leftS : forall j l2 r,
-    csteps tm (4 + j) (StA, (rep S1 (S j) ++ S0 :: l2, S1, r))
-    = Some (StA, (S1 :: S0 :: l2,
+    csteps tm (4 + j) (qA, (rep S1 (S j) ++ S0 :: l2, S1, r))
+    = Some (qA, (S1 :: S0 :: l2,
                   chd (rep S1 j ++ S0 :: r), ctl (rep S1 j ++ S0 :: r))).
   Proof.
     intros j l2 r.
@@ -284,7 +292,7 @@ Section MB.
     rewrite csteps_add.
     replace (S j) with (S (runlen (rep S1 j ++ S0 :: l2)))
       by (rewrite runlen_rep; reflexivity).
-    rewrite (dsweep tm HD1 (rep S1 j ++ S0 :: l2) (S0 :: r)).
+    rewrite (dsweep tm qD HD1 (rep S1 j ++ S0 :: l2) (S0 :: r)).
     rewrite runlen_rep, skipn_rep.
     cru. rewrite HD0. cru. rewrite HB1. cru. reflexivity.
   Qed.
@@ -303,7 +311,7 @@ Section MB.
   Qed.
 
   Lemma mb_reachC_A : forall n k l2 h r,
-    mu (rep S1 k ++ S0 :: l2) h r < n -> Hits (StA, (rep S1 k ++ S0 :: l2, h, r)).
+    mu (rep S1 k ++ S0 :: l2) h r < n -> Hits (qA, (rep S1 k ++ S0 :: l2, h, r)).
   Proof.
     induction n as [|n IH]; intros k l2 h r Hmu; [lia|].
     destruct h as [|].
@@ -314,7 +322,7 @@ Section MB.
         destruct (IH (S (S k)) l2 (chd (ctl r)) (ctl (ctl r))
                     ltac:(cbn [rep app]; lia)) as (m & cc' & Hm & Hq).
         exists (2 + m), cc'. split; [| exact Hq].
-        rewrite csteps_add, (right_step tm HA0 HB1 _ r Er). exact Hm.
+        rewrite csteps_add, (right_step tm qA qB HA0 HB1 _ r Er). exact Hm.
     - destruct k as [|j].
       + cbn [rep app]. apply mb_left0.
       + pose proof (mb_leftS_drop j l2 r) as Hdec.
@@ -327,7 +335,7 @@ Section MB.
 
   Lemma mb_reachC_any : forall q k l2 h r, Hits (q, (rep S1 k ++ S0 :: l2, h, r)).
   Proof.
-    intros q k l2 h r. destruct q.
+    intros q k l2 h r. destruct (Hst q) as [E|[E|[E|E]]]; subst q.
     - apply (mb_reachC_A (S (mu (rep S1 k ++ S0 :: l2) h r)) k l2 h r ltac:(lia)).
     - destruct h.
       + exists 1. cru. rewrite HB0. cru. eexists. split; reflexivity.
@@ -349,13 +357,13 @@ Section MB.
           exists (2 + m), cc'. split; [| exact Hq].
           rewrite csteps_add. cru. rewrite HD0. cru. rewrite Er. cru.
           rewrite HB1. cru. cbn [rep app] in Hm. exact Hm.
-      + assert (Hs : csteps tm (S k + 2) (StD, (rep S1 k ++ S0 :: l2, S1, r))
-                     = Some (StA, (S1 :: S0 :: l2,
+      + assert (Hs : csteps tm (S k + 2) (qD, (rep S1 k ++ S0 :: l2, S1, r))
+                     = Some (qA, (S1 :: S0 :: l2,
                                    chd (rep S1 k ++ r), ctl (rep S1 k ++ r)))).
         { rewrite csteps_add.
           replace (S k) with (S (runlen (rep S1 k ++ S0 :: l2)))
             by (rewrite runlen_rep; reflexivity).
-          rewrite (dsweep tm HD1 (rep S1 k ++ S0 :: l2) r).
+          rewrite (dsweep tm qD HD1 (rep S1 k ++ S0 :: l2) r).
           rewrite runlen_rep, skipn_rep.
           cru. rewrite HD0. cru. rewrite HB1. cru. reflexivity. }
         destruct (mb_reachC_A
@@ -367,7 +375,7 @@ Section MB.
         rewrite csteps_add, Hs. cbn [rep app] in Hm. exact Hm.
   Qed.
 
-  Theorem mb_ReachSt : ReachSt tm StC.
+  Theorem mb_ReachSt : ReachSt tm qC.
   Proof.
     intros [q [[l h] r]]. try unfold ctape, cconf in *.
     assert (Hin : In S0 (l ++ [S0]))
@@ -388,26 +396,28 @@ End MB.
 Section MA.
 
   Variable tm : TM.
-  Hypothesis HA0 : tm StA S0 = Some (mkTrans S1 DR StB).
-  Hypothesis HA1 : tm StA S1 = Some (mkTrans S0 DL StD).
-  Hypothesis HB1 : tm StB S1 = Some (mkTrans S1 DR StA).
-  Hypothesis HD0 : tm StD S0 = Some (mkTrans S0 DR StA).
-  Hypothesis HD1 : tm StD S1 = Some (mkTrans S1 DL StD).
+  Variable qA qB qC qD : St.
+  Hypothesis Hst : forall q, q = qA \/ q = qB \/ q = qC \/ q = qD.
+  Hypothesis HA0 : tm qA S0 = Some (mkTrans S1 DR qB).
+  Hypothesis HA1 : tm qA S1 = Some (mkTrans S0 DL qD).
+  Hypothesis HB1 : tm qB S1 = Some (mkTrans S1 DR qA).
+  Hypothesis HD0 : tm qD S0 = Some (mkTrans S0 DR qA).
+  Hypothesis HD1 : tm qD S1 = Some (mkTrans S1 DL qD).
   Variable wB : Sym.
   Variable dB : Dir.
-  Hypothesis HB0 : tm StB S0 = Some (mkTrans wB dB StC).
+  Hypothesis HB0 : tm qB S0 = Some (mkTrans wB dB qC).
 
   Local Notation Hits cc :=
-    (exists k cc', csteps tm k cc = Some cc' /\ fst cc' = StC).
+    (exists k cc', csteps tm k cc = Some cc' /\ fst cc' = qC).
 
-  Lemma ma_right0 : forall l r, chd r = S0 -> Hits (StA, (l, S0, r)).
+  Lemma ma_right0 : forall l r, chd r = S0 -> Hits (qA, (l, S0, r)).
   Proof.
     intros l r Er. exists 2. cru. rewrite HA0. cru. rewrite Er. cru.
     rewrite HB0. cru. eexists. split; reflexivity.
   Qed.
 
   Lemma ma_left0 : forall l2 r,
-    csteps tm 2 (StA, (S0 :: l2, S1, r)) = Some (StA, (S0 :: l2, S0, r)).
+    csteps tm 2 (qA, (S0 :: l2, S1, r)) = Some (qA, (S0 :: l2, S0, r)).
   Proof.
     intros l2 r. cru. rewrite HA1. cru. rewrite HD0. cru. reflexivity.
   Qed.
@@ -417,8 +427,8 @@ Section MA.
   Proof. intros. unfold mu. cbn [length sval]. lia. Qed.
 
   Lemma ma_leftS : forall j l2 r,
-    csteps tm (3 + j) (StA, (rep S1 (S j) ++ S0 :: l2, S1, r))
-    = Some (StA, (S0 :: l2, S1, rep S1 j ++ S0 :: r)).
+    csteps tm (3 + j) (qA, (rep S1 (S j) ++ S0 :: l2, S1, r))
+    = Some (qA, (S0 :: l2, S1, rep S1 j ++ S0 :: r)).
   Proof.
     intros j l2 r.
     replace (3 + j) with (1 + (S j + 1)) by lia.
@@ -426,7 +436,7 @@ Section MA.
     rewrite csteps_add.
     replace (S j) with (S (runlen (rep S1 j ++ S0 :: l2)))
       by (rewrite runlen_rep; reflexivity).
-    rewrite (dsweep tm HD1 (rep S1 j ++ S0 :: l2) (S0 :: r)).
+    rewrite (dsweep tm qD HD1 (rep S1 j ++ S0 :: l2) (S0 :: r)).
     rewrite runlen_rep, skipn_rep, csteps_1.
     cru1. rewrite HD0. cru1. reflexivity.
   Qed.
@@ -443,7 +453,7 @@ Section MA.
   Qed.
 
   Lemma ma_reachC_A : forall n k l2 h r,
-    mu (rep S1 k ++ S0 :: l2) h r < n -> Hits (StA, (rep S1 k ++ S0 :: l2, h, r)).
+    mu (rep S1 k ++ S0 :: l2) h r < n -> Hits (qA, (rep S1 k ++ S0 :: l2, h, r)).
   Proof.
     induction n as [|n IH]; intros k l2 h r Hmu; [lia|].
     destruct h as [|].
@@ -454,7 +464,7 @@ Section MA.
         destruct (IH (S (S k)) l2 (chd (ctl r)) (ctl (ctl r))
                     ltac:(cbn [rep app]; lia)) as (m & cc' & Hm & Hq).
         exists (2 + m), cc'. split; [| exact Hq].
-        rewrite csteps_add, (right_step tm HA0 HB1 _ r Er). exact Hm.
+        rewrite csteps_add, (right_step tm qA qB HA0 HB1 _ r Er). exact Hm.
     - destruct k as [|j].
       + cbn [rep app] in *.
         pose proof (ma_left0_drop l2 r) as Hdec.
@@ -472,7 +482,7 @@ Section MA.
 
   Lemma ma_reachC_any : forall q k l2 h r, Hits (q, (rep S1 k ++ S0 :: l2, h, r)).
   Proof.
-    intros q k l2 h r. destruct q.
+    intros q k l2 h r. destruct (Hst q) as [E|[E|[E|E]]]; subst q.
     - apply (ma_reachC_A (S (mu (rep S1 k ++ S0 :: l2) h r)) k l2 h r ltac:(lia)).
     - destruct h.
       + exists 1. cru. rewrite HB0. cru. eexists. split; reflexivity.
@@ -491,12 +501,12 @@ Section MA.
         exists (1 + m), cc'. split; [| exact Hq].
         rewrite csteps_add, csteps_1. cru1. rewrite HD0. cru1.
         cbn [rep app] in Hm. exact Hm.
-      + assert (Hs : csteps tm (S k + 1) (StD, (rep S1 k ++ S0 :: l2, S1, r))
-                     = Some (StA, (S0 :: l2, S1, rep S1 k ++ r))).
+      + assert (Hs : csteps tm (S k + 1) (qD, (rep S1 k ++ S0 :: l2, S1, r))
+                     = Some (qA, (S0 :: l2, S1, rep S1 k ++ r))).
         { rewrite csteps_add.
           replace (S k) with (S (runlen (rep S1 k ++ S0 :: l2)))
             by (rewrite runlen_rep; reflexivity).
-          rewrite (dsweep tm HD1 (rep S1 k ++ S0 :: l2) r).
+          rewrite (dsweep tm qD HD1 (rep S1 k ++ S0 :: l2) r).
           rewrite runlen_rep, skipn_rep.
           cru. rewrite HD0. cru. reflexivity. }
         destruct (ma_reachC_A
@@ -507,7 +517,7 @@ Section MA.
         rewrite csteps_add, Hs. cbn [rep app] in Hm. exact Hm.
   Qed.
 
-  Theorem ma_ReachSt : ReachSt tm StC.
+  Theorem ma_ReachSt : ReachSt tm qC.
   Proof.
     intros [q [[l h] r]]. try unfold ctape, cconf in *.
     assert (Hin : In S0 (l ++ [S0]))
