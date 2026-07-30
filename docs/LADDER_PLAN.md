@@ -854,6 +854,138 @@ about the counter's own arithmetic, reported as the machine's failure.
 Credit where it is due: the Gray reading came from John's read of the tape, not
 from the searcher.
 
+## 4h. Stage B, built: the kernel, and what it does and does not yet close
+
+_Three boards at `2dfb26c`, kernel at `fca3334`, emitter and first board at
+`48e53b9`.  Coq 8.18.0.  Every number below is a file that compiles or a
+count printed by `tools/ladder/emit_ladder.py`._
+
+### First, two corrections to the numbers this session was handed
+
+* **`tools/ladder/core143_merged.jsonl` is 4 rows, 0 closed.**  That sweep is
+  still in flight (`7f5b0fd`, "merged-code 143 sweep in flight"); its log
+  stops at row 4.  The ~93 figure is the UNION of two separately measured
+  files -- `core143_ph.jsonl` closes 87 of 143, the Gray layer closes 75, and
+  4g records the union as 93 -- not a merged number anyone has measured.  The
+  merged sweep is still worth finishing; it is just not evidence yet.
+* **`tools/ladder/ladder_fixture_cert.json` is stale.**  It predates 4f and
+  4g: 8 arms, and no `code`, `phases` or `value_step_per_anchor_visit`
+  fields at all.  Re-certifying the dev row at this commit gives **13 arms**.
+  The boards below are all built from freshly emitted certificates.
+
+### What was built
+
+Two kernel files, and nothing in `theories/Census/`:
+
+* **`theories/Checkers/LadderFam.v`** -- the four things 4f and 4g say the
+  certificate carries, as a record: the fill law per phase with the phase it
+  lands in, the terminator of each phase, the CODE (positional or reflected,
+  with the general base-`b` codec and its round-trip proved), and the value
+  STEP per anchor visit.  `fam_succ` is computed from them.
+* **`theories/Checkers/LadderKernel.v`** -- rules as data over
+  `LapDecider.sconf`, and `rule_sound`: ONE theorem, by induction on ladder
+  POSITION, whose step case invokes the rules earlier in the list.  The base
+  steps are the reused engine's `sstep`/`sstep_sound`; the single new step
+  constructor is `RU i`, "apply ladder rule `i`".
+
+Reused unchanged, as 3 said: the block engine, `LapDecider`, `WTape`,
+`CTape`.  New trust surface: `rule_sound` plus the `vm_compute` that runs
+`check_ladder`/`check_arm`.
+
+### The gate: the dev fixture boards, and so do the other two
+
+| row | code | step | phases | fills | arms | ladder | compiles |
+|---|---|---:|---:|---:|---|---|---|
+| `0RB---_0LC1RB_1LA1LD_1LC0RB` | binary | 1 | 1 | 1 | **13/13** | 4/4 | yes |
+| `1RB0RB_0LC0LD_1LC1LD_1RA0RA` | **gray** | **2** | 1 | 1 | **49/49** | 2/2 | yes |
+| `1RB0RC_1LC1RA_1RD1LB_0LC0RD` | binary | 1 | **2** | **2** | **12/12** | 2/2 | yes |
+
+**No kernel file changed between the three.**  The whole difference is inside
+the `Fam` record, and it is worth printing because it is the claim itself:
+
+    Binary 1 [mkFill 1 [] 0 [1] 0]                    the dev fixture
+    Gray   2 [mkFill 1 [] 0 [1;1] 0]                  the Gray row
+    Binary 1 [mkFill 1 [] 0 [] 1; mkFill 0 [] 0 [] 0] the phase cycle
+
+The last line is 4f's phase cycle as data: phase 0 widens by one and lands in
+phase 1, phase 1 widens by NOTHING and lands back in phase 0.  **That is the
+test 4e asked for, and it passes.**
+
+`Print Assumptions` on the arm-soundness lemmas is *Closed under the global
+context* -- **zero axioms**, not even funext, because the arm statements are
+on `csteps`/`cden` and never go through `lift`.
+
+### Two normalisations the emitter needed, both recorded in the code
+
+* the certificate prints its right-hand side with trailing blanks stripped,
+  so the search matches up to `lift` and the kernel is handed the EXACT
+  configuration the chain reaches.  Composition needs that: a rule whose
+  target is only right up to blanks cannot be the source of the next one.
+* the guaranteed copies of a repeated block are materialised into `pre`
+  (`rep u (a*j+b) = rep u b ++ rep u (a*j)`).  Without it the two arms that
+  must see the END of the counter -- the fill, and the string just after it
+  -- have **no chain at all**, because a symbolic block count cannot have one
+  copy peeled off its front.  With it the fill arm is
+  `(10)^(j+1) -> (11)^(j+1) ++ 10` in exactly `4j+8` steps.
+
+A third was needed only for Gray: an arm may print a run count as `-2 + y0`
+under `y0 >= 2`, and `sside` counts are `nat`, so the arm's variable is
+re-indexed to its own lower bound.  That is a representation fix in the
+emitter, not a kernel change, and it took Gray from 48/49 to 49/49.
+
+### What does NOT yet close, stated exactly
+
+The boards prove every RULE the certificates carry.  They do not yet prove a
+MACHINE-level theorem: the closure from the arms to `NonHalt` and
+`NeverQuasiHaltsSt` is not built.  Three things are missing, and only the
+first is real mathematics.
+
+* **(a) The coverage reduction, and it is the one place where "the successor
+  is a parameter" is not free.**  The prover checks coverage by ENUMERATING
+  every digit string up to `kmax = 9`; a kernel cannot enumerate.  The
+  reduction to a finite case split is a list decomposition -- every digit
+  string is `t^n ++ d :: rest` with `d <> t`, or `t^k` -- which is generic and
+  cheap.  What is not generic is the SUCCESSOR of each class.  `fam_next` is
+  stated on the VALUE, which is exactly what makes it right for Gray and for
+  step 2 (4g), and the arms are patterns on CELLS with one symbolic run
+  length; bridging the two needs, per family, a lemma of the form "the class
+  `t^n ++ d :: rest` has successor `0^n ++ (d+1) :: rest`".  For positional
+  base-`b` step-1 that is elementary arithmetic on `val_pos`.  For a
+  reflected code, and for step 2, it is a DIFFERENT lemma.  So the successor
+  being a parameter buys a kernel that does not change; it does not buy the
+  class law for free.  **This is one lemma per (code, step) pair -- per
+  parameter VALUE, not per machine, and not per row** -- which is still the
+  right side of the trade 3 was making, but it should be written down rather
+  than discovered later.
+* **(b) Liveness has a cheap route on these rows and it should be taken.**
+  `arms_infinitely_often` is a MEASUREMENT in the certificate ("an arm still
+  claiming digit strings at the widest width covered"), not a theorem.  For
+  the FILL arm it is provable outright: the value strictly increases by
+  `fm_step` within a width and is bounded by `b^k - 1`, so the top of every
+  width is reached and the fill fires there, and the width grows without
+  bound.  On the dev fixture the fill arm alone fires `A0 B0 B1 C0 C1 D0` --
+  **all four states** -- so the fixture's liveness needs no interior arm at
+  all.  `LapGlue.glue_neverqh` then consumes it unchanged.
+* **(c) `RU` is so far unexercised by any arm.**  All three rows' arms derive
+  with base steps only (`SWin`/`SWinL`/`SCycL`/`SCycR`/`SRot`/`SFold`), so the
+  ladder is one level deep in practice.  The position induction is real and
+  is exercised -- 4 window rules validate on the dev row, 2 on each of the
+  others -- but no arm yet invokes one.  `SCycL`/`SCycR` are still
+  primitives, which is RULE_LADDER 5.4 undone; that is a simplification, not
+  a gap, and it costs nothing until a row needs a rung-1 rule the engine has
+  no primitive for.
+
+### What this says about the next session
+
+The order 4f implies still holds, with (a) sharpened: build the closure --
+(b) first, because it is short and it is what turns a pile of rule theorems
+into a boarded machine; then (a) for positional step-1, which covers the dev
+fixture and the bulk of the sweep; then (a) for `(gray, 2)`, which covers the
+six rows 4g adds.  **Only after a row is boarded end to end should the
+Fibonacci-rank constructor land** -- the reason 4d gave for deferring Stage B
+is now the reason to finish it, and the evidence above is that a new
+constructor is a new `Fam` field and 49 arms that still compile.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
