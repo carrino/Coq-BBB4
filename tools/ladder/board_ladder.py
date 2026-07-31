@@ -12,8 +12,10 @@ The filter is exactly what `LadderCheck.board_neverqh` asks for and no more
 (LADDER_PLAN 4i):
 
   * `closed` -- the prover found a family, arms and a differential;
-  * `code = binary` and `value_step_per_anchor_visit = 1` -- the class
-    successor lemma is stated for that pair only;
+  * `code = binary` and `value_step_per_anchor_visit = 1`, OR `code = gray`
+    and step 2 at base 2 -- the class successor lemma is stated for those two
+    pairs, and the gray one goes to a DIFFERENT closer (`boardG_neverqh`,
+    LadderCheck section 10) with its own list; see `wanted_gray`;
   * every phase's fill lands in a phase the family HAS -- the closure
     carries the phase CYCLE (LADDER_PLAN 4n), so a family with more than one
     terminator is stated rather than refused, and a fill that widens by
@@ -41,19 +43,60 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 
 
+def wanted_gray(r, fam, fills):
+    """(True, None) if LadderCheck section 10's closure applies.
+
+    The (Gray, 2) board is a DIFFERENT closure from section 7's and asks for a
+    different list (LADDER_PLAN 4o): base 2 and step 2, ONE phase, a fill whose
+    digit is 0 -- with a fill digit of 1 the target's digit sum alternates with
+    the width and the parity is not an invariant at all -- a boot of at least
+    two digits, and the fill target on the family's own parity side."""
+    if fam.get('base') != 2:
+        return False, 'gray at base %s' % fam.get('base')
+    if fam.get('value_step_per_anchor_visit') != 2:
+        return False, ('gray at step %s'
+                       % fam.get('value_step_per_anchor_visit'))
+    if len(fills) != 1:
+        return False, 'gray with %d phases' % len(fills)
+    f = fills[0]
+    if f.get('lands_in_phase', 0) != 0:
+        return False, 'gray fill lands in phase %s' % f.get('lands_in_phase')
+    if f.get('target_fill_digit') != 0:
+        return False, ('gray fill digit %s (the parity would alternate with '
+                       'the width)' % f.get('target_fill_digit'))
+    m = len(f.get('target_prefix') or []) + len(f.get('target_suffix') or [])
+    if m > 2 + f.get('widens_by', 0):
+        return False, ('gray fill target names %d digits but widens by %d'
+                       % (m, f.get('widens_by')))
+    ds0 = (r.get('boot') or {}).get('digits_lsb_first') or []
+    if len(ds0) < 2:
+        return False, 'gray boot is %d digits (the top needs two)' % len(ds0)
+    p = sum(ds0) % 2
+    fp = (sum(f.get('target_prefix') or [])
+          + sum(f.get('target_suffix') or [])) % 2
+    if fp != p:
+        return False, ('gray fill target has parity %d, the family %d' % (fp, p))
+    live = (r.get('liveness') or {}).get('states_infinitely_often')
+    if live != 'ABCD':
+        return False, 'live=%s (the gray board is board_neverqh only)' % live
+    return True, None
+
+
 def wanted(r):
     """(True, None) if the closure applies, else (False, why not)."""
     if not r.get('closed'):
         return False, r.get('reason') or 'not closed'
     fam = r.get('family') or {}
-    if fam.get('code') != 'binary':
-        return False, 'code %s' % fam.get('code')
-    if fam.get('value_step_per_anchor_visit', 1) != 1:
-        return False, 'step %s' % fam.get('value_step_per_anchor_visit')
     if fam.get('weights') is not None:
         return False, ('numeration %s: not positional base-b'
                        % fam.get('numeration'))
     fills = r.get('fill_by_phase') or [r.get('fill')]
+    if fam.get('code') == 'gray':
+        return wanted_gray(r, fam, fills)
+    if fam.get('code') != 'binary':
+        return False, 'code %s' % fam.get('code')
+    if fam.get('value_step_per_anchor_visit', 1) != 1:
+        return False, 'step %s' % fam.get('value_step_per_anchor_visit')
     nph = len(fills)
     for ph, f in enumerate(fills):
         if not 0 <= f.get('lands_in_phase', 0) < nph:
