@@ -52,6 +52,11 @@ class ShadowGenError(Exception):
     pass
 
 
+class Unbuilt(Exception):
+    """`coqc` could not resolve `BBB4.*` -- the tree is not built, so a
+    compile result means nothing in either direction."""
+
+
 def parse(spec):
     """bbchallenge spec -> 8 slots, None for an undefined transition."""
     slots = []
@@ -324,6 +329,8 @@ three corruptions below are the corruption-test tradition of
 order, a wrong prefix length or a wrong re-root state still compiled, the
 kernel would not be checking what this file claims it checks.
 """
+FIXTURE_VO = 'theories/Machines/Counters/' \
+             'RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.vo'
 FIXTURE = dict(spec='0RB0RD_1RC---_1RD1LC_0LC1RA', qs='B', t=1,
                partner='1RB---_1RC1LB_0LB1RD_0RA0RC',
                ops='swap:B:C,swap:C:D')
@@ -344,7 +351,16 @@ def _build_and_compile(cfg, fmap, outdir):
         r = subprocess.run(['coqc', '-R', 'theories', 'BBB4',
                             os.path.relpath(p, ROOT)],
                            cwd=ROOT, capture_output=True, text=True)
-        return r.returncode == 0
+        if r.returncode == 0:
+            return True
+        # An UNBUILT library is not a rejected board.  Without this the three
+        # corruptions below all report `rejected` on a tree where nothing has
+        # been compiled -- vacuously, because every file fails the same way --
+        # and the regression's corruption half says nothing at all.
+        if 'Cannot find a physical path bound to logical path' in \
+                (r.stderr or '') + (r.stdout or ''):
+            raise Unbuilt(os.path.relpath(p, ROOT))
+        return False
     finally:
         # p ends in '.v'; drop the source and every build product it made, so
         # the regression leaves the tree exactly as it found it.
@@ -359,18 +375,25 @@ def regress():
     outdir = os.path.join(ROOT, 'theories', 'Machines', 'Counters')
     ok = True
 
-    good = _build_and_compile(FIXTURE, fmap, outdir)
-    print('%-28s %s' % ('reproduces RRNQ',
-                        'COMPILES' if good else 'FAILS  <-- regression'))
-    ok &= good
+    try:
+        good = _build_and_compile(FIXTURE, fmap, outdir)
+        print('%-28s %s' % ('reproduces RRNQ',
+                            'COMPILES' if good else 'FAILS  <-- regression'))
+        ok &= good
 
-    for label, patch in CORRUPTIONS:
-        cfg = dict(FIXTURE)
-        cfg.update(patch)
-        bad = _build_and_compile(cfg, fmap, outdir)
-        print('%-28s %s' % (label,
-                            'compiles <-- NOT REJECTED' if bad else 'rejected'))
-        ok &= not bad
+        for label, patch in CORRUPTIONS:
+            cfg = dict(FIXTURE)
+            cfg.update(patch)
+            bad = _build_and_compile(cfg, fmap, outdir)
+            print('%-28s %s' % (label, 'compiles <-- NOT REJECTED' if bad
+                                else 'rejected'))
+            ok &= not bad
+    except Unbuilt as e:
+        print('GEN_SHADOW REGRESSION: INCONCLUSIVE -- the library is not '
+              'built, so %s cannot be compiled either way.\n'
+              '  Build the fixture first:\n'
+              '    make -f Makefile.coq -j3 %s' % (e, FIXTURE_VO))
+        return 2
 
     print('GEN_SHADOW REGRESSION: %s' % ('OK' if ok else 'FAILED'))
     return 0 if ok else 1

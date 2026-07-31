@@ -36,29 +36,61 @@ theories/Closeout/CloseoutFinal.v
 # densest bucket in it.  TWO stop on the FILL arm and neither row is core any
 # more, so they are worth nothing but are kept as the fill twin of the
 # question.  Wave 4l's shared arm indexing removed the older ClassSucc reason,
-# so do not re-file any of these under 4h(a) -- the note inside the files still
-# says 4h(a) and is stale.
+# so do not re-file any of these under 4h(a); wave 4p replaced that stale note
+# inside all nine interior files with the measured reason, one per half.
 #
-# LADDER_PLAN 5's table row reads this as a refusal: a cost that is not affine
-# in the run length has no chain at any stride, and the two QUAD rows here do
-# measure a terminal cost of (k+2)^2 exactly (docs/QUAD_TERMINAL_MEASUREMENT).
-# **That reading is not confirmed for these rows.**  Wave 4n found the
-# identical "no chain at any threshold and stride" on the gray six was a
-# one-cell far-side reading -- valfam drops a trailing blank run that the
-# cconf carries -- and with it corrected, zero of six became six of six.
-# Every board below was emitted before that fix and none has been re-measured.
-# tools/ladder/armprobe.py implements the corrected reading and has
-# --selftest; point it here before believing the refusal.
+# RE-MEASURED, wave 4p: **the nine are not one bucket, and the shared refusal
+# line is the only thing they share.**  armprobe.py says 5 of 9, and neither
+# half is what LADDER_PLAN 5 read off the failure text.
+#
+#   * FOUR are base-2 (the 1RB1LA/1RB0LD rows).  Their class fits -- the same
+#     single (Binary, 1) class a boarded row uses -- and their configuration
+#     is clean.  The interior arm's cost over the flat indices is 2, 6, 12,
+#     20, 30, 42, ... resp. 12, 18, 26, 36, 48, 62, ...: a SECOND difference
+#     of exactly 2, so quadratic in the run length.  A strided arm is one
+#     chain repeated and no arithmetic progression makes a quadratic affine,
+#     which is why every threshold and stride fail together.  LADDER_PLAN 5's
+#     non-affine carry ripple: **CONFIRMED, and now measured.**  It agrees
+#     with docs/QUAD_TERMINAL_MEASUREMENT.md, whose two rows are two of these
+#     four.  These four are not coming back without a new arm shape.
+#
+#   * FIVE are FIBONACCI (the 1RB--- rows), and **their arms derive.**  Two
+#     classes -- 1^n ++ [1;0] -> 0^n ++ [1;1] and [0] ++ 0^n -> [1] ++ 0^n --
+#     cover every interior successor, and both arms chain with costs whose
+#     first differences are constant.  The carry ripple here IS affine.  What
+#     blocks them is the NUMERATION: Fam has no weight field, fam_value is
+#     val_pos and fam_of_value divides down fm_b, and these counters spell
+#     2, 3, 5, 8, 13, 21 members at widths 1..6.  They are LADDER_PLAN 4m's
+#     five, filed here under the wrong reason, and they need 4m's
+#     Fibonacci-rank constructor -- not an arm.
+#
+# Wave 4n's one-cell far-side reading is REAL on two of the four base-2 rows
+# (1RB1LA_1LC0RD_0RA0LC_0LA1RD and 1RB0LD_0LC0RB_1LA1RC_0RC1LD): with the
+# certificate's other_side_cells every flat arm lands off the rhs, with the
+# boot's every one derives.  It does not rescue them -- the strided arm is
+# quadratic either way -- but it is why their refusal text differs.
+#
+# Reproduce all of it with
+#   python3 tools/ladder/armprobe.py tools/ladder/num59_after.jsonl --selftest
+#   python3 tools/ladder/armprobe.py tools/ladder/num59_after.jsonl \
+#           --rows tools/ladder/interior9_rows.txt
+# and see tools/ladder/interior9_probe.{jsonl,log} for the committed run.
 #
 # They are kept as the record of where each row stops.  When a row's arm
 # lands, its board finishes and moves into _CoqProject -- delete the line here
 # rather than leaving both; check_coqproject.py fails on a line that does.
 
 # INTERIOR arm (line 381) -- nine rows, all still core, five shadows between them
+#
+# quadratic interior cost, all four still core, five shadows between the first
+# three (4p: measured; LADDER_PLAN 5 confirmed for these)
 theories/Machines/Ladder/LDR_1RB0LD_0LC0RB_1LA1RC_0RC1LD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA0LC_1LC1RD_0RB0RD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA1RC_0LD0RC_1LD0RB.v
 theories/Machines/Ladder/LDR_1RB1LA_1LC0RD_0RA0LC_0LA1RD.v
+#
+# FIBONACCI numeration, arms DERIVE, blocked on 4m's constructor and not on an
+# arm (4p).  No shadows: all five carry one row each.
 theories/Machines/Ladder/LDR_1RB____0LB1RC_1LB0RD_1LC0RD.v
 theories/Machines/Ladder/LDR_1RB____0LB1RC_1LD0RC_1LB1RC.v
 theories/Machines/Ladder/LDR_1RB____1LC0RB_1LD1RB_0LD1RB.v
