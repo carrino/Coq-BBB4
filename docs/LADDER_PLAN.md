@@ -2646,6 +2646,197 @@ Both are downstream of the real gap.  Build the field, not the search.
 2 core rows and 2 shadows, and the twin measures identically.  4 of the rows
 left.
 
+## 4r. `(Fib, 1)` BUILT.  The record did not widen a third time, and the five board
+
+_Branch `claude/fibonacci-numeration-coq-uewigh`, cut from `main` at
+`2dbbe9b` (4p's #101 merged).  Coq 8.18.0, installed in the image.  Every
+number below is a count a script printed or a file that compiles._
+
+_Merged with the two shadow rows the gray boards freed (#104) and with 4q's
+bouncer reading (#103), both of which landed while this ran.  Re-derived
+rather than hand-resolved -- every generated closeout file was taken from one
+tree and rebuilt by `inventory.py`, `gen_stages.py`, `audit.py` (OK); the only
+files resolved by hand were this one and `NEXT_SESSION.md`.  **This section
+was written as 4q and renumbered: #103 took that number first.**_
+
+4p's instruction was to build the numeration it cracked and not to measure
+again.  That is what happened, and it went through on the terms 4p set:
+**the `Class` record did not widen, `ClassSucc` was not weakened, there is
+no second class record, and the five rows board.**
+
+    settled by a board       5107 -> 5112   (99.0% -> 99.1%)
+    core undecided             37 -> 32
+    0RB shadows of the core    12 -> 12     (these five carry none)
+
+on this branch's own base.  Merged with #104's two freed shadows the tree
+reads **5114 settled (99.2%), 30 core undecided, 12 shadows** -- the five rows
+are worth five either way, which is the point of counting them separately.
+
+### The one thing 4p did not know, and it changes which theorem they prove
+
+**All five rows QUASIHALT.**  4p's own text says why -- "`A` is entered once,
+at step 0: nothing targets it, which is why these five are filed
+`live = BCD`" -- and then the session plan asked for `NeverQuasiHaltsSt`.
+It is the same fact read twice and only one reading can be right: a state
+that stops firing IS a quasihalt, so `board_neverqh` proves the wrong theorem
+for every one of them, exactly as 4i found for the eleven binary rows.
+
+So the deliverable is section 8's twin and not section 7's.  It cost one
+extra block in `LadderCheck` 11 and nothing at all in the argument: the same
+`board_armF` case split, the same arms, the same iteration, plus the three
+things a quiet state costs (every arm avoids it, a visit chain per state that
+recurs, and the quiet state's last visit with the window to the boot anchor).
+`boardF_neverqh` is kept because it is what the argument proves before the
+quiet state is named.
+
+The five theorems are `iqh_* : NonHalt tm /\ QHBound 2000 tm /\
+QuasiHaltsSt tm`, axiom footprint `functional_extensionality_dep` only.
+
+### The numeration, in the kernel: one ceiling, and every old proof inert
+
+`Fam` gains nothing.  `Code` gains `Fib`, `fam_value` at `Fib` is the
+weighted fold, and the weights are COMPUTED from the position -- so no
+`mkFam` call changed, no board data changed, and the 31 boards emitted before
+this compile untouched.  That is what 4p meant by "a `Code` constructor, NOT
+a record field", and it held.
+
+**The one interface change a weighted numeration forces is the width's
+CEILING.**  `fam_is_top`, `fam_of_value` and `fam_wf` all read `b^k`, and at
+`Fib` the ceiling is `S (fibsum k)`, which is not a power of anything.
+`fam_lim` names it:
+
+    fam_lim F k = match fm_code F with Fib => S (fibsum k) | _ => b^k end
+
+and the three definitions read it instead.  Every `(Binary, 1)` and
+`(Gray, 2)` proof is unchanged but for the rewrite that turns `fam_lim` back
+into `Nat.pow` under its own `Hcode` -- eleven of those, all mechanical.
+**That is the whole cost of the third code in the generic half**, and it is
+worth stating because 4m priced this constructor at much more.
+
+### The risky lemma, and it was the round trip as 4p said
+
+    fibdec_round : length ds = k -> Forall (fun d => d < 2) ds ->
+                   fibokb o ds = true -> fibdec k o (fibval ds) = ds
+
+The numeration is REDUNDANT (`fibw 0 = fibw 1 = 1`, so `1;0;0` and `0;1;0`
+both have value 1), so `fam_of_value` is only an inverse ON THE MEMBERS and
+this is that canonicity theorem.  It went through, and the fallback 4p
+specified -- define the successor structurally and move the induction -- was
+not needed.
+
+What made it go through is a reading of the membership predicate 4p did not
+have.  4p states membership as *an optional leading `1`, then blocks `[0]`
+and `[1;1]`*.  Equivalently: **every maximal run of `1`s is even except the
+one that reaches index 0.**  Equivalently again, and this is the form that
+works: **at every `0`, the number of `1`s ABOVE it is even.**  The last form
+is a TWO-STATE AUTOMATON read from the most significant digit down -- `E`
+accepts a `0` and `O` does not, a `1` flips them, both accept at the end --
+and `o` is its state.
+
+With the state carried, each state's reachable values at width `k` are an
+INTERVAL:
+
+    E : [0, fibsum k]           O : [fibw (k-1), fibsum k]
+
+and the top digit splits `E`'s at exactly `fibw k`, because
+`fibsum (k-1) + 1 = fibw k`.  That is `fibsum_S`, it is the only identity the
+numeration rests on, and it is what makes the decode DETERMINISTIC.  The
+round trip is then an induction on the width against those two bounds
+(`fib_ub`, `fib_lb`) with no case split left over.
+
+**The first draft of the decode was wrong and the interval reading is what
+fixed it.**  Greedy-on-the-value alone -- take the top digit when
+`v > fibsum (k-1)` -- decodes width 3 value 3 to `1;0;1`, which is not a
+member; the test is right and the SUB-PROBLEM is not, because after a `1` the
+automaton is in `O` and the next digit is forced.  Two states, not one.
+
+### Stated before proved, and checked inside the kernel
+
+4o's discipline was an oracle in Python before the Coq.  Here the oracle
+already existed -- 4p's `tools/ladder/fibmem.py`, `FIBMEM: OK` -- so the
+check that was worth adding is the other direction: **the kernel's own
+membership predicate, enumerated.**  `fibokb` over every binary string of
+widths 0..10 counts
+
+    1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144
+
+which is 4p's counts read off the machines, and `fibdec 4 false` on `0..7`
+returns eight distinct members.  The predicate in Coq and the orbit on the
+tape are the same set, and that is checked in Coq rather than asserted.
+
+### What the closure actually needed, and the top is the easy one
+
+* **Coverage** (`fib_split`) is a `destruct` on the LOW DIGIT, as 4p said:
+  a `0` is the increment at run length 0, a `1` walks its own run to the `0`
+  that ends it -- or there is none and the string is `1^k`.  Two classes
+  where `(Gray, 2)` needed four.
+* **The top of a width is `1^k`**, a BARE RUN.  `(Binary, 1)`'s is
+  `(b-1)^k` and `(Gray, 2)`'s is `[1-p] ++ 0^(k-2) ++ [1]`; this one needs no
+  fixed word at either end, so the fill arm is the simplest of the three and
+  its index range starts at 1 rather than at 2.
+* **The increment class has `cs_u = [0]`** -- the fixed word before the run
+  that 4n specified and 4o built.  It was already there; this is the second
+  instance to use it, which is the first evidence that widening was right.
+* **`Section IterF`** differs from section 5 in three places and no more:
+  the measure is `fam_lim - value`, the invariant carries MEMBERSHIP, and the
+  family is one phase.  The step is 1, so section 5's arithmetic is the
+  arithmetic here -- which is why this section is shorter than 4o's.
+
+### The arms, derived rather than fitted
+
+4p measured both class arms deriving at threshold 0..1 and stride 1 with
+`armprobe.py`.  The emitter re-derives them from the machine and agrees:
+
+    4 interior at N0=1 st=1 + 1 fill at N0=1 st=1   (two rows)
+    2 interior at N0=0 st=1 + 1 fill at N0=1 st=1   (three rows)
+
+Five arms per row where the certificates carry four or five, and the fill arm
+at width index 1 serves every width because `aoff 1 1 k = 1` for all `k >= 1`.
+
+**What selects the third closure is `numeration` and the `weights` beside it,
+never `code`.**  All five certificates say `code: binary` -- 4p's lie -- so a
+`code`-driven dispatch would have sent them to the positional path, where
+`fam_value` would have been `val_pos` and every arm would have landed off the
+right-hand side.  `closure_data_fib` refuses on `numeration`, on the weights,
+on the canonical blocks `[[0],[1,1]]`, and on the fill target being a bare
+run of `0` (which is what `filled_fib0` discharges membership for).
+
+### Where the residue stops now
+
+* **The fibonacci bucket is EMPTY.**  4p's nine-row interior block is down to
+  the four base-2 rows, and 4p closed those: their interior arm cost has a
+  constant SECOND difference, no arithmetic progression makes a quadratic
+  affine, and no widening of `ARM_GRID` reaches them.  Not re-probed here and
+  they should not be re-probed again.
+* **The 30 that remain carry 12 shadows on ten rows.**  Nothing this session
+  moved a shadow, because these five had none -- 4p said so and it was right.
+  The re-root closer (#98's general half plus a worked `RRNQ_*`) is now worth
+  more than any further `ClassSucc` instance: it is the only thing that turns
+  a shadow into a settled row, and twelve rows is four times what a fourth
+  code pair could plausibly be worth.
+* **`Fam` has now carried three codes without widening once.**  4i's gate
+  has held through `(Gray, 2)`, the phase cycle and `(Fib, 1)`.  The cost of
+  the third was: one `fam_lim`, one membership predicate, one round trip, and
+  a `Section Iter` copy.  Nothing in the generic half moved.
+
+### What this says about the next session
+
+* **A fourth `(code, step)` pair is cheap and there is no evidence one is
+  needed.**  Every remaining core row has been measured into a bucket that is
+  not "the numeration": the four base-2 rows are quadratic-arm, and the rest
+  were never filed under a numeration blocker at all.  Do not go looking for
+  a fifth code before someone measures a row that wants it.
+* **The two FILL-arm rows in `coqproject_exempt.txt` are the only ladder rows
+  left with a mechanical blocker**, and neither is core, so they are worth
+  nothing but remain the fill twin of the question.
+* **The re-root closer is the next thing.**  Twelve shadows, ten core rows,
+  and the general half already exists.
+* The liveness of a row decides WHICH board it wants, and the certificate
+  carries it.  4i learned this for eleven binary rows, 4o's gray rows were
+  all `ABCD` so it did not come up, and this session was handed a plan that
+  named the wrong theorem.  **Read `liveness.states_infinitely_often` before
+  writing a board section, not after.**
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH

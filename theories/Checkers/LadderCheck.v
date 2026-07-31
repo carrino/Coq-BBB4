@@ -680,9 +680,11 @@ Proof.
   { rewrite <- Hlen. unfold fam_value. rewrite Hcode.
     apply val_pos_lt; [lia | exact Hbnd]. }
   assert (Htop : fam_is_top F (repeat (fm_b F - 1) n ++ d :: rest) = false).
-  { unfold fam_is_top. apply Nat.ltb_ge. lia. }
+  { unfold fam_is_top. rewrite (fam_lim_bin F _ Hcode).
+    apply Nat.ltb_ge. lia. }
   unfold fam_next. rewrite Htop.
-  rewrite <- Hsucc. unfold fam_of_value. rewrite Hcode.
+  rewrite <- Hsucc. unfold fam_of_value.
+  rewrite (fam_lim_bin F _ Hcode), Hcode.
   destruct (Nat.ltb_spec (fam_value F (repeat 0 n ++ S d :: rest))
               (Nat.pow (fm_b F)
                  (length (repeat (fm_b F - 1) n ++ d :: rest)))); [|lia].
@@ -698,6 +700,7 @@ Lemma pos1_is_top : forall F k,
   fam_is_top F (repeat (fm_b F - 1) k) = true.
 Proof.
   intros F k Hb Hcode Hstep. unfold fam_is_top, fam_value.
+  rewrite (fam_lim_bin F _ Hcode).
   rewrite Hcode, repeat_length, val_pos_repeat_max by lia.
   rewrite Hstep. pose proof (pow_pos (fm_b F) k ltac:(lia)). apply Nat.ltb_lt. lia.
 Qed.
@@ -733,8 +736,8 @@ Proof.
   intros F ds Hb Hcode Hstep Hbnd Htop.
   assert (Hlt : fam_value F ds < Nat.pow (fm_b F) (length ds))
     by (unfold fam_value; rewrite Hcode; apply val_pos_lt; [lia | exact Hbnd]).
-  unfold fam_is_top in Htop. apply Nat.ltb_lt in Htop.
-  rewrite Hstep in Htop.
+  unfold fam_is_top in Htop. rewrite (fam_lim_bin F _ Hcode) in Htop.
+  apply Nat.ltb_lt in Htop. rewrite Hstep in Htop.
   assert (Hv : fam_value F ds = Nat.pow (fm_b F) (length ds) - 1) by lia.
   unfold fam_value in Hv. rewrite Hcode in Hv.
   transitivity (pos_of (fm_b F) (length ds) (val_pos (fm_b F) ds)).
@@ -1123,7 +1126,7 @@ Lemma gray_roundtrip : forall ds, Forall (fun d => d < 2) ds ->
   fam_of_value F (fam_value F ds) (length ds) = Some ds.
 Proof.
   intros ds Hbnd. pose proof (gray_val_lt ds) as Hlt.
-  unfold fam_of_value. rewrite HbF, HcF.
+  unfold fam_of_value. rewrite (fam_lim_gray F _ HcF), HbF, HcF.
   destruct (Nat.ltb_spec (fam_value F ds) (Nat.pow 2 (length ds))); [|lia].
   f_equal. rewrite gray_value. unfold gval.
   rewrite <- (gdec_length 2 ds).
@@ -1152,7 +1155,8 @@ Proof.
   pose proof (gray_val_lt nd) as Hlt. rewrite HL in Hlt.
   pose proof (pow_pos 2 (length ds) ltac:(lia)).
   assert (Htop : fam_is_top F ds = false).
-  { unfold fam_is_top. rewrite HbF, HsF. apply Nat.ltb_ge. lia. }
+  { unfold fam_is_top. rewrite (fam_lim_gray F _ HcF), HbF, HsF.
+    apply Nat.ltb_ge. lia. }
   split; [exact Htop|].
   unfold fam_next. rewrite Htop, HsF, <- HV, <- HL.
   apply gray_roundtrip; exact Hnd.
@@ -1232,7 +1236,8 @@ Qed.
 Lemma g2top_is_top : forall p k, p < 2 -> 2 <= k ->
   fam_is_top F (g2top p k) = true.
 Proof.
-  intros p k Hp Hk. unfold fam_is_top. rewrite HbF, HsF.
+  intros p k Hp Hk. unfold fam_is_top.
+  rewrite (fam_lim_gray F _ HcF), HbF, HsF.
   rewrite (g2top_length p k Hk), (g2top_value p k Hp Hk).
   pose proof (pow_pos 2 k ltac:(lia)). apply Nat.ltb_lt. lia.
 Qed.
@@ -1247,7 +1252,8 @@ Proof.
      | rewrite g2top_length by lia; reflexivity |].
   rewrite (g2top_value p (length ds) Hp Hk).
   pose proof (gray_val_lt ds) as Hlt.
-  unfold fam_is_top in Htop. rewrite HbF, HsF in Htop.
+  unfold fam_is_top in Htop.
+  rewrite (fam_lim_gray F _ HcF), HbF, HsF in Htop.
   apply Nat.ltb_lt in Htop.
   assert (Hm : fam_value F ds mod 2 = p)
     by (rewrite gray_value, gval_mod2; exact Hpar).
@@ -1266,6 +1272,496 @@ Proof.
 Qed.
 
 End Gray2.
+
+(** ** 3c. The non-generic half a third time, at [(Fib, 1)]
+
+    LADDER_PLAN 4p measured five core rows whose counter is WEIGHTED: the
+    digit at index [i] carries [1, 1, 2, 3, 5, 8, ...] and the widths spell
+    2, 3, 5, 8, 13, 21 members rather than [2^k].  [LadderFam]'s [Fib] is
+    that arithmetic; this is the THIRD instance of [ClassSucc] over it, and
+    the record does not widen -- 4i's result, held for [(Gray, 2)] by 4o and
+    held again here.
+
+    What is different from both earlier instances is that the numeration is
+    REDUNDANT.  [fibw 0 = fibw 1 = 1], so [1;0;0] and [0;1;0] have the same
+    value, and "which string of a width the counter stands on" is not
+    determined by the value alone.  [ClassSucc]'s predicate [P] -- which
+    [(Binary, 1)] takes as [True] and [(Gray, 2)] as a parity -- is here a
+    MEMBERSHIP predicate on the digit string, and the risky lemma is that
+    the value is injective ON IT, so that [fam_of_value] is a genuine
+    inverse.
+
+    Membership, LSB-first (4p, checked against the orbit read off all five
+    machines by [tools/ladder/fibmem.py]): an optional leading [1], then a
+    concatenation of the blocks [[0]] and [[1;1]].  Equivalently, every
+    maximal run of [1]s has EVEN length except the one that reaches index 0.
+    Equivalently again, and this is [fibokb]: at every [0] the number of
+    [1]s ABOVE it is even.
+
+    The last form is a two-state automaton read from the most significant
+    digit DOWN, and [o] is its state: [E] (no run open) accepts a [0], [O]
+    (a run open with an odd count) does not, and a [1] flips the two.  Both
+    states accept at the end, which is the "optional leading [1]".
+    [LadderFam]'s [fibdec] is that automaton's decode, and the two facts
+    that make it an inverse are [fib_ub] and [fib_lb]: each state's
+    reachable values are an INTERVAL, and the top digit splits [E]'s at
+    exactly [fibw k], because [fibsum (k-1) + 1 = fibw k]. *)
+
+Fixpoint fibokb (o : bool) (ds : list nat) : bool :=
+  match ds with
+  | [] => true
+  | d :: t => (match d with
+               | O => Bool.eqb (Nat.odd (dsum t)) o
+               | _ => true
+               end) && fibokb o t
+  end.
+
+Lemma andb_swap3 : forall a b c : bool, a && (b && c) = b && (a && c).
+Proof. intros [] [] []; reflexivity. Qed.
+
+Lemma dsum_snoc : forall l d, dsum (l ++ [d]) = dsum l + d.
+Proof. intros l d. rewrite dsum_app. cbn [dsum]. lia. Qed.
+
+(** The two ways into the string.  From the HEAD they are definitional --
+    that is the side the class laws pattern on, and it is why the increment
+    class costs one line.  From the TAIL they are the automaton's own step,
+    and that is the side the decode's induction on the WIDTH needs. *)
+Lemma fibokb_snoc0 : forall o l, fibokb o (l ++ [0]) = negb o && fibokb o l.
+Proof.
+  intros o. induction l as [|x l IH]; cbn [app].
+  - destruct o; reflexivity.
+  - cbn [fibokb]. rewrite IH, dsum_snoc, Nat.add_0_r. apply andb_swap3.
+Qed.
+
+Lemma fibokb_snoc1 : forall o l, fibokb o (l ++ [1]) = fibokb (negb o) l.
+Proof.
+  intros o. induction l as [|x l IH]; cbn [app].
+  - destruct o; reflexivity.
+  - cbn [fibokb]. rewrite IH, dsum_snoc.
+    f_equal. destruct x as [|x]; [|reflexivity].
+    replace (dsum l + 1) with (S (dsum l)) by lia.
+    rewrite Nat.odd_succ, <- Nat.negb_odd.
+    destruct (Nat.odd (dsum l)); destruct o; reflexivity.
+Qed.
+
+(** Both states' values are bounded by the width's own [fibsum]: "the value
+    is below the ceiling" for a weighted numeration, which is what
+    [val_pos_lt] is for a positional one. *)
+Lemma fib_ub : forall ds, Forall (fun d => d < 2) ds ->
+  forall o, fibokb o ds = true -> fibval ds <= fibsum (length ds).
+Proof.
+  intros ds. induction ds as [|x ds IH] using rev_ind; intros Hbnd o Hok.
+  - cbn [length fibsum]. unfold fibval. cbn [fibvl]. lia.
+  - apply Forall_app in Hbnd as [Hb1 Hb2].
+    assert (Hx : x < 2) by exact (Forall_inv Hb2).
+    rewrite fibval_snoc, app_length. cbn [length]. rewrite Nat.add_1_r.
+    cbn [fibsum].
+    destruct x as [|[|x]]; [| |lia].
+    + rewrite fibokb_snoc0 in Hok. apply andb_true_iff in Hok as [_ Hok].
+      specialize (IH Hb1 o Hok). lia.
+    + rewrite fibokb_snoc1 in Hok. specialize (IH Hb1 (negb o) Hok). lia.
+Qed.
+
+(** State [O] cannot spell a small value: its top digit is FORCED to be a
+    [1], so its value is at least that digit's weight.  This is the half
+    that makes the decode's test at [fibw k] the right test. *)
+Lemma fib_lb : forall ds, Forall (fun d => d < 2) ds ->
+  fibokb true ds = true -> fiblo true (length ds) <= fibval ds.
+Proof.
+  intros ds. induction ds as [|x ds IH] using rev_ind; intros Hbnd Hok.
+  - cbn [length fiblo]. lia.
+  - clear IH. apply Forall_app in Hbnd as [Hb1 Hb2].
+    assert (Hx : x < 2) by exact (Forall_inv Hb2).
+    rewrite app_length. cbn [length]. rewrite Nat.add_1_r.
+    rewrite fibval_snoc.
+    destruct x as [|[|x]]; [| |lia].
+    + rewrite fibokb_snoc0 in Hok. cbn [negb andb] in Hok. discriminate.
+    + cbn [fiblo]. lia.
+Qed.
+
+(** THE ROUND TRIP, and it is the canonicity theorem the redundancy makes
+    necessary: the decode of a MEMBER's value is that member back.  With it,
+    two members of one width with one value are one string ([fib_inj]),
+    which is what turns "the top has value [fibsum k]" into "the top IS
+    [1^k]".
+
+    The induction is on the WIDTH and it strips the top digit.  A [0] there
+    forces the state to [E] and puts the value below [fibw k] ([fib_ub] on
+    the shorter string); a [1] flips the state and puts it at or above
+    ([fib_lb] with [fiblo_fibw]).  Those two bounds ARE the decode's test,
+    which is why there is no third case and no arithmetic left over. *)
+Lemma fibdec_round : forall k o ds,
+  length ds = k -> Forall (fun d => d < 2) ds -> fibokb o ds = true ->
+  fibdec k o (fibval ds) = ds.
+Proof.
+  induction k as [|k IH]; intros o ds Hlen Hbnd Hok.
+  - destruct ds; [reflexivity | cbn [length] in Hlen; lia].
+  - assert (Hne : ds <> []) by (intros ->; cbn [length] in Hlen; lia).
+    destruct (exists_last Hne) as (t & x & ->).
+    rewrite app_length in Hlen. cbn [length] in Hlen.
+    assert (Hlt : length t = k) by lia.
+    apply Forall_app in Hbnd as [Hbt Hbx].
+    assert (Hx : x < 2) by exact (Forall_inv Hbx).
+    pose proof (fibsum_S k) as Hss.
+    destruct x as [|[|x]]; [| |lia].
+    + (* the top digit is 0: state [E], and the value is inside width [k] *)
+      rewrite fibokb_snoc0 in Hok. apply andb_true_iff in Hok as [Ho Hok].
+      destruct o; [cbn [negb] in Ho; discriminate|].
+      rewrite fibval_snoc, Hlt, Nat.mul_0_l, Nat.add_0_r.
+      pose proof (fib_ub t Hbt false Hok) as Hub. rewrite Hlt in Hub.
+      cbn [fibdec orb].
+      replace (fibw (S k) <=? fibval t) with false
+        by (symmetry; apply Nat.leb_gt; lia).
+      rewrite (IH false t Hlt Hbt Hok). reflexivity.
+    + (* the top digit is 1: the state flips and the weight comes off *)
+      rewrite fibokb_snoc1 in Hok.
+      rewrite fibval_snoc, Hlt.
+      assert (Hb : o || (fibw (S k) <=? fibval t + 1 * fibw k) = true).
+      { destruct o; [reflexivity|]. cbn [orb]. apply Nat.leb_le.
+        cbn [negb] in Hok. pose proof (fib_lb t Hbt Hok) as Hlb.
+        rewrite Hlt in Hlb. pose proof (fiblo_fibw k). lia. }
+      cbn [fibdec]. rewrite Hb.
+      replace (fibval t + 1 * fibw k - fibw k) with (fibval t) by lia.
+      rewrite (IH (negb o) t Hlt Hbt Hok). reflexivity.
+Qed.
+
+(** The other direction: the decode of any value in a state's own interval
+    IS a member of that state.  This is what makes [fam_succ] total at
+    [Fib] -- the interior step lands back inside the family -- and it is the
+    half [fam_value_of_value] does not need. *)
+Lemma fibdec_ok : forall k o v,
+  fiblo o k <= v -> v <= fibsum k -> fibokb o (fibdec k o v) = true.
+Proof.
+  induction k as [|k IH]; intros o v Hlo Hhi; [reflexivity|].
+  pose proof (fibsum_S k) as Hss. pose proof (fibw_mono k) as Hmo.
+  cbn [fibsum] in Hhi. cbn [fibdec].
+  destruct (o || (fibw (S k) <=? v)) eqn:Eb.
+  - assert (Hlo' : fiblo (negb o) k <= v - fibw k).
+    { destruct o; cbn [negb fiblo]; [lia|].
+      destruct k as [|k']; [lia|].
+      cbn [orb] in Eb. apply Nat.leb_le in Eb. rewrite fibw_SS in Eb. lia. }
+    rewrite fibokb_snoc1. apply IH; [exact Hlo' | lia].
+  - apply orb_false_elim in Eb as [Eo Et]. subst o.
+    apply Nat.leb_gt in Et.
+    rewrite fibokb_snoc0. cbn [negb andb].
+    apply IH; [cbn [fiblo]; lia | lia].
+Qed.
+
+(** *** The runs the two classes are made of *)
+
+Lemma fibvl_rep0 : forall n j, fibvl j (repeat 0 n) = 0.
+Proof.
+  induction n as [|n IH]; intros j; cbn [repeat fibvl]; [reflexivity|].
+  rewrite IH. lia.
+Qed.
+
+Lemma fibval_rep0 : forall n, fibval (repeat 0 n) = 0.
+Proof. intros n. unfold fibval. apply fibvl_rep0. Qed.
+
+Lemma repeat_snoc : forall (A : Type) (a : A) n,
+  repeat a (S n) = repeat a n ++ [a].
+Proof.
+  intros A a n. replace (S n) with (n + 1) by lia.
+  rewrite repeat_app. reflexivity.
+Qed.
+
+(** The top of a width is the ALL-ONES string and its value is [fibsum k] --
+    the width's whole ceiling, which is what [maxval] is here.  Simpler than
+    [(Gray, 2)]'s top and simpler than [b^k - 1]: no [fam_of_value] is
+    needed to compute it. *)
+Lemma fibval_rep1 : forall n, fibval (repeat 1 n) = fibsum n.
+Proof.
+  induction n as [|n IH]; [reflexivity|].
+  cbn [fibsum]. rewrite (repeat_snoc nat 1 n), fibval_snoc, repeat_length, IH.
+  lia.
+Qed.
+
+Lemma fibokb_rep1 : forall o n X, fibokb o (repeat 1 n ++ X) = fibokb o X.
+Proof.
+  intros o. induction n as [|n IH]; intros X; [reflexivity|].
+  cbn [repeat app fibokb]. apply IH.
+Qed.
+
+Lemma dsum_rep0 : forall n X, dsum (repeat 0 n ++ X) = dsum X.
+Proof. intros n X. rewrite dsum_app, dsum_repeat. lia. Qed.
+
+Lemma fibokb_rep0 : forall o n X,
+  Bool.eqb (Nat.odd (dsum X)) o = true ->
+  fibokb o (repeat 0 n ++ X) = fibokb o X.
+Proof.
+  intros o n X H. induction n as [|n IH]; [reflexivity|].
+  cbn [repeat app fibokb]. rewrite dsum_rep0, H. cbn [andb]. exact IH.
+Qed.
+
+Lemma fibokb_rep0_nil : forall n, fibokb false (repeat 0 n) = true.
+Proof.
+  intros n.
+  rewrite <- (app_nil_r (repeat 0 n)), (fibokb_rep0 false n [] eq_refl).
+  reflexivity.
+Qed.
+
+Lemma fib_rep1_bnd : forall n, Forall (fun d => d < 2) (repeat 1 n).
+Proof.
+  intros n. apply Forall_forall. intros x Hx. apply repeat_spec in Hx. lia.
+Qed.
+
+Lemma fib_rep0_bnd : forall n, Forall (fun d => d < 2) (repeat 0 n).
+Proof.
+  intros n. apply Forall_forall. intros x Hx. apply repeat_spec in Hx. lia.
+Qed.
+
+Lemma fib_top_mem : forall k, fibokb false (repeat 1 k) = true.
+Proof.
+  intros k. rewrite <- (app_nil_r (repeat 1 k)), fibokb_rep1. reflexivity.
+Qed.
+
+(** *** The two classes, and they split on the LOW DIGIT
+
+    4p measured them over all 2,284 interior members of the five rows --
+    overlap 0, uncovered 0, wrong successor 0.  The increment carries a
+    fixed word BEFORE the run, which is [cls_side]'s [u]: the widening 4n
+    specified for [(Gray, 2)] and 4o built, needed again here and already
+    in place. *)
+Definition f1c (i : nat) : Class :=
+  match i with
+  | 0 => mkCls [0] 0 [] [1] 0 []       (** low digit 0: the increment *)
+  | _ => mkCls [] 1 [1;0] [] 0 [1;1]   (** low digit 1: the carry *)
+  end.
+
+(** The increment adds the weight of index 0, which is 1. *)
+Lemma fibval_cons01 : forall X, fibval (1 :: X) = fibval (0 :: X) + 1.
+Proof. intros X. unfold fibval. cbn [fibvl fibw]. lia. Qed.
+
+(** The carry adds 1 too, and THAT is [fibsum_S]: the run of ones it
+    collapses is worth exactly one less than the weight two places up.  The
+    ripple is affine here -- 4p measured it on the machines, and
+    LADDER_PLAN 5's sentence is simply false for these five. *)
+Lemma fibval_carry : forall n rest,
+  fibval (repeat 0 n ++ [1;1] ++ rest)
+  = fibval (repeat 1 n ++ [1;0] ++ rest) + 1.
+Proof.
+  intros n rest.
+  rewrite !fibval_app, !repeat_length, fibval_rep1, fibval_rep0.
+  cbn [app fibvl]. pose proof (fibsum_S n) as Hss. lia.
+Qed.
+
+Lemma f1c_len : forall i n rest,
+  length (cls_rhs (f1c i) n rest) = length (cls_lhs (f1c i) n rest).
+Proof.
+  intros i n rest. unfold cls_lhs, cls_rhs.
+  destruct i as [|i]; cbn [f1c cs_u cs_t cs_w cs_u' cs_t' cs_w'];
+    rewrite !app_length, !repeat_length; reflexivity.
+Qed.
+
+Lemma f1c_bnd : forall i n rest, Forall (fun d => d < 2) rest ->
+  Forall (fun d => d < 2) (cls_rhs (f1c i) n rest).
+Proof.
+  intros i n rest Hr. unfold cls_rhs.
+  destruct i as [|i]; cbn [f1c cs_u' cs_t' cs_w'];
+    repeat (apply Forall_app; split);
+    first [ exact Hr
+          | apply fib_rep0_bnd
+          | apply fib_rep1_bnd
+          | (repeat (apply Forall_cons; [lia|]); apply Forall_nil) ].
+Qed.
+
+(** The step and MEMBERSHIP together: the right-hand side of either class is
+    a member whose value is one more.  Membership is the only one of the two
+    that is not arithmetic, and it is where the classes differ -- the
+    increment's is a conjunct dropped, the carry's is that collapsing a run
+    of ones into [1;1] two places up does not move the parity ABOVE any of
+    the zeros it leaves behind. *)
+Lemma f1c_step : forall i n rest, Forall (fun d => d < 2) rest ->
+  fibokb false (cls_lhs (f1c i) n rest) = true ->
+  fibval (cls_rhs (f1c i) n rest) = fibval (cls_lhs (f1c i) n rest) + 1
+  /\ fibokb false (cls_rhs (f1c i) n rest) = true.
+Proof.
+  intros i n rest Hrest Hok. unfold cls_lhs, cls_rhs in *.
+  destruct i as [|i]; cbn [f1c cs_u cs_t cs_w cs_u' cs_t' cs_w'] in *;
+    cbn [app] in *.
+  - (* the increment: [0 :: X -> 1 :: X], and [X] carries the whole
+       membership because a leading [1] constrains nothing *)
+    cbn [fibokb] in Hok. apply andb_true_iff in Hok as [_ Hok].
+    split; [apply fibval_cons01 | cbn [fibokb]; rewrite Hok; reflexivity].
+  - (* the carry *)
+    rewrite fibokb_rep1 in Hok. cbn [fibokb andb] in Hok.
+    apply andb_true_iff in Hok as [Hpar Hok].
+    apply Bool.eqb_prop in Hpar.
+    split; [apply fibval_carry|].
+    rewrite (fibokb_rep0 false n (1 :: 1 :: rest)).
+    + cbn [fibokb]. rewrite Hok. reflexivity.
+    + cbn [dsum].
+      replace (1 + (1 + dsum rest)) with (S (S (dsum rest))) by lia.
+      rewrite Nat.odd_succ, Nat.even_succ, Hpar. reflexivity.
+Qed.
+
+(** Coverage: a member of a width is the top, or an instance of exactly one
+    of the two classes.  This is [digs_decomp]'s analogue, and where
+    [(Gray, 2)] needed a four-way split this is a [destruct] on the LOW
+    DIGIT: a [0] is the increment at run length 0, a [1] walks its own run
+    to the [0] that ends it -- or there is none, and the string is [1^k]. *)
+Lemma fib_split : forall ds,
+  Forall (fun d => d < 2) ds -> fibokb false ds = true -> 0 < length ds ->
+  ds = repeat 1 (length ds)
+  \/ exists i n rest, i < 2 /\ Forall (fun d => d < 2) rest
+                      /\ ds = cls_lhs (f1c i) n rest.
+Proof.
+  intros ds Hbnd Hok Hk.
+  destruct ds as [|d0 t]; [cbn [length] in Hk; lia|].
+  assert (Hd0 : d0 < 2) by exact (Forall_inv Hbnd).
+  pose proof (Forall_inv_tail Hbnd) as Hbt.
+  destruct d0 as [|d0].
+  - right. exists 0, 0, t. split; [lia|]. split; [exact Hbt|].
+    unfold cls_lhs. cbn [f1c cs_u cs_t cs_w repeat app]. reflexivity.
+  - assert (Hd1 : d0 = 0) by lia. subst d0.
+    destruct (digs_decomp 1 (1 :: t)) as [Hall | (n & d & rest & Hds & Hd)].
+    + left. exact Hall.
+    + destruct n as [|n]; [cbn [repeat app] in Hds; congruence|].
+      assert (Hbnd' : Forall (fun x => x < 2) (repeat 1 (S n) ++ d :: rest))
+        by (rewrite <- Hds; exact Hbnd).
+      apply Forall_app in Hbnd' as [_ Hb2].
+      assert (Hdlt : d < 2) by exact (Forall_inv Hb2).
+      assert (Hd0' : d = 0) by lia. subst d.
+      right. exists 1, n, rest. split; [lia|].
+      split; [exact (Forall_inv_tail Hb2)|].
+      rewrite Hds. unfold cls_lhs. cbn [f1c cs_u cs_t cs_w app].
+      rewrite (repeat_snoc nat 1 n), <- app_assoc. cbn [app]. reflexivity.
+Qed.
+
+(** *** The instance
+
+    Every lemma below is stated at an ARBITRARY family whose code is [Fib]
+    and whose step is 1, exactly as section 3 states [(Binary, 1)].  Nothing
+    here is a hypothesis about a particular row. *)
+
+Lemma fib_value : forall F, fm_code F = Fib ->
+  forall ds, fam_value F ds = fibval ds.
+Proof. intros F Hc ds. unfold fam_value. rewrite Hc. reflexivity. Qed.
+
+Lemma fib_roundtrip : forall F, fm_code F = Fib ->
+  forall ds, Forall (fun d => d < 2) ds -> fibokb false ds = true ->
+  fam_of_value F (fam_value F ds) (length ds) = Some ds.
+Proof.
+  intros F Hc ds Hbnd Hok.
+  pose proof (fib_ub ds Hbnd false Hok) as Hub.
+  unfold fam_of_value. rewrite (fam_lim_fib F _ Hc), Hc, (fib_value F Hc).
+  destruct (Nat.ltb_spec (fibval ds) (S (fibsum (length ds)))); [|lia].
+  f_equal. apply fibdec_round; [reflexivity | exact Hbnd | exact Hok].
+Qed.
+
+(** [fam_of_value] at [Fib], with everything the iteration needs off it in
+    one place: it returns, its result is a MEMBER of the right width, and
+    its digits are in range. *)
+Lemma fib_of_value_ok : forall F, fm_code F = Fib -> forall v k,
+  v <= fibsum k ->
+  fam_of_value F v k = Some (fibdec k false v)
+  /\ Forall (fun d => d < 2) (fibdec k false v)
+  /\ fibokb false (fibdec k false v) = true
+  /\ length (fibdec k false v) = k.
+Proof.
+  intros F Hc v k Hv. unfold fam_of_value. rewrite (fam_lim_fib F _ Hc), Hc.
+  destruct (Nat.ltb_spec v (S (fibsum k))); [|lia].
+  split; [reflexivity|]. split; [apply fibdec_bnd|].
+  split; [apply fibdec_ok; [cbn [fiblo]; lia | lia] | apply fibdec_length].
+Qed.
+
+Lemma fib_inj : forall F, fm_code F = Fib ->
+  forall a c, Forall (fun d => d < 2) a -> fibokb false a = true ->
+  Forall (fun d => d < 2) c -> fibokb false c = true ->
+  length a = length c -> fam_value F a = fam_value F c -> a = c.
+Proof.
+  intros F Hc a c Ha Hoka Hcc Hokc HL HV.
+  assert (E : Some a = Some c).
+  { rewrite <- (fib_roundtrip F Hc a Ha Hoka),
+            <- (fib_roundtrip F Hc c Hcc Hokc), HL, HV. reflexivity. }
+  injection E; auto.
+Qed.
+
+Lemma fib_next_of : forall F, fm_code F = Fib -> fm_step F = 1 ->
+  forall ds nd ph,
+  Forall (fun d => d < 2) nd -> fibokb false nd = true ->
+  length nd = length ds ->
+  fam_value F nd = fam_value F ds + 1 ->
+  fam_is_top F ds = false /\ fam_next F ds ph = Some nd.
+Proof.
+  intros F Hc Hs ds nd ph Hbnd Hok HL HV.
+  pose proof (fib_ub nd Hbnd false Hok) as Hub.
+  rewrite <- (fib_value F Hc), HL in Hub.
+  assert (Htop : fam_is_top F ds = false).
+  { unfold fam_is_top. rewrite (fam_lim_fib F _ Hc), Hs.
+    apply Nat.ltb_ge. lia. }
+  split; [exact Htop|].
+  unfold fam_next. rewrite Htop, Hs, <- HV, <- HL.
+  apply fib_roundtrip; assumption.
+Qed.
+
+Lemma fib_class : forall F, fm_code F = Fib -> fm_step F = 1 ->
+  forall i n rest, Forall (fun d => d < 2) rest ->
+  fibokb false (cls_lhs (f1c i) n rest) = true ->
+  fam_is_top F (cls_lhs (f1c i) n rest) = false
+  /\ (forall ph, fam_next F (cls_lhs (f1c i) n rest) ph
+                 = Some (cls_rhs (f1c i) n rest))
+  /\ fibokb false (cls_rhs (f1c i) n rest) = true.
+Proof.
+  intros F Hc Hs i n rest Hrest Hok.
+  destruct (f1c_step i n rest Hrest Hok) as (Hval & Hmem).
+  assert (HV : fam_value F (cls_rhs (f1c i) n rest)
+               = fam_value F (cls_lhs (f1c i) n rest) + 1)
+    by (rewrite !(fib_value F Hc); exact Hval).
+  destruct (fib_next_of F Hc Hs (cls_lhs (f1c i) n rest)
+              (cls_rhs (f1c i) n rest) 0
+              (f1c_bnd i n rest Hrest) Hmem (f1c_len i n rest) HV)
+    as (Htop & _).
+  split; [exact Htop | split; [|exact Hmem]].
+  intros ph.
+  exact (proj2 (fib_next_of F Hc Hs (cls_lhs (f1c i) n rest)
+                  (cls_rhs (f1c i) n rest) ph
+                  (f1c_bnd i n rest Hrest) Hmem (f1c_len i n rest) HV)).
+Qed.
+
+(** THE THIRD [ClassSucc] INSTANCE, and the record did not widen.  [P] is
+    the membership predicate; [Class] is untouched, [ClassSucc] is not
+    weakened, and there is no second class record. *)
+Lemma fib_class_succ : forall F i,
+  fm_b F = 2 -> fm_code F = Fib -> fm_step F = 1 ->
+  ClassSucc F (fun ds => fibokb false ds = true) (f1c i).
+Proof.
+  intros F i Hb Hc Hs n rest ph Hrest Hok. rewrite Hb in Hrest.
+  exact (proj1 (proj2 (fib_class F Hc Hs i n rest Hrest Hok)) ph).
+Qed.
+
+Lemma fib_top_value : forall F, fm_code F = Fib ->
+  forall k, fam_value F (repeat 1 k) = fibsum k.
+Proof. intros F Hc k. rewrite (fib_value F Hc). apply fibval_rep1. Qed.
+
+Lemma fib_is_top : forall F, fm_code F = Fib -> fm_step F = 1 ->
+  forall k, fam_is_top F (repeat 1 k) = true.
+Proof.
+  intros F Hc Hs k. unfold fam_is_top.
+  rewrite (fam_lim_fib F _ Hc), Hs, repeat_length, (fib_top_value F Hc).
+  apply Nat.ltb_lt. lia.
+Qed.
+
+(** The top of a width IS the all-ones string: the only MEMBER of the width
+    whose value is [fibsum k].  Uniqueness is [fib_inj], hence the round
+    trip -- the only place the canonicity is used, exactly as [gray_inj] is
+    for [(Gray, 2)]. *)
+Lemma fib_top_shape : forall F, fm_code F = Fib -> fm_step F = 1 ->
+  forall ds, Forall (fun d => d < 2) ds -> fibokb false ds = true ->
+  fam_is_top F ds = true -> ds = repeat 1 (length ds).
+Proof.
+  intros F Hc Hs ds Hbnd Hok Htop.
+  apply (fib_inj F Hc); try assumption.
+  - apply fib_rep1_bnd.
+  - apply fib_top_mem.
+  - rewrite repeat_length. reflexivity.
+  - rewrite (fib_top_value F Hc), (fib_value F Hc).
+    pose proof (fib_ub ds Hbnd false Hok) as Hub.
+    unfold fam_is_top in Htop.
+    rewrite (fam_lim_fib F _ Hc), Hs, (fib_value F Hc) in Htop.
+    apply Nat.ltb_lt in Htop. lia.
+Qed.
+
 
 (** ** 4. The lap: one arm, one class, one anchor step
 
@@ -1314,7 +1810,8 @@ Proof.
                 < Nat.pow (fm_b F) (length (repeat (fm_b F - 1) n ++ d :: rest))).
   { rewrite <- Hlen. unfold fam_value. rewrite Hcode.
     apply val_pos_lt; [lia | exact Hbnd]. }
-  unfold fam_is_top. apply Nat.ltb_ge. rewrite Hstep. nia.
+  unfold fam_is_top. rewrite (fam_lim_bin F _ Hcode).
+  apply Nat.ltb_ge. rewrite Hstep. nia.
 Qed.
 
 (** ** 5. The widths are cofinal, hence the fill arm fires forever
@@ -1429,10 +1926,11 @@ Proof.
     + apply Hfto; exact Hph.
   - (* an interior step: the phase stays *)
     assert (Hlt : fam_value F ds + fm_step F < Nat.pow (fm_b F) (length ds)).
-    { unfold fam_is_top in Htop. apply Nat.ltb_ge in Htop.
+    { unfold fam_is_top in Htop. rewrite (fam_lim_bin F _ Hcode) in Htop.
+      apply Nat.ltb_ge in Htop.
       pose proof (pow_pos (fm_b F) (length ds) ltac:(lia)). lia. }
     unfold fam_succ, fam_next. rewrite Htop.
-    unfold fam_of_value. rewrite Hcode.
+    unfold fam_of_value. rewrite (fam_lim_bin F _ Hcode), Hcode.
     destruct (Nat.ltb_spec (fam_value F ds + fm_step F)
                 (Nat.pow (fm_b F) (length ds))); [|lia].
     eexists. split; [reflexivity|]. simpl. repeat split.
@@ -1658,10 +2156,12 @@ Proof.
   - (* an interior step: the value goes up by two, so its low bit does not
        move and neither does the digit sum's parity *)
     assert (Hlt : fam_value F ds + fm_step F < Nat.pow (fm_b F) (length ds)).
-    { unfold fam_is_top in Htop. apply Nat.ltb_ge in Htop.
+    { unfold fam_is_top in Htop. rewrite (fam_lim_gray F _ HcF) in Htop.
+      apply Nat.ltb_ge in Htop.
       pose proof (pow_pos (fm_b F) (length ds) ltac:(lia)). lia. }
     assert (Hex : exists nd, fam_next F ds 0 = Some nd).
     { unfold fam_next. rewrite Htop. unfold fam_of_value.
+      rewrite (fam_lim_gray F _ HcF).
       destruct (Nat.ltb_spec (fam_value F ds + fm_step F)
                   (Nat.pow (fm_b F) (length ds))); [|lia].
       eexists; reflexivity. }
@@ -1671,6 +2171,7 @@ Proof.
     destruct (fam_next_interior F ds 0 nd ltac:(lia) Htop Hnd) as (Hval & Hlen).
     assert (Hbnd' : Forall (fun d => d < 2) nd).
     { unfold fam_next in Hnd. rewrite Htop in Hnd. unfold fam_of_value in Hnd.
+      rewrite (fam_lim_gray F _ HcF) in Hnd.
       destruct (_ <? _); [|discriminate]. rewrite HcF in Hnd.
       injection Hnd as <-. rewrite HbF. apply genc_lt. lia. }
     unfold InvG.
@@ -1756,6 +2257,186 @@ Lemma filled_parity : forall F ph k,
 Proof.
   intros F ph k Hm. unfold filled.
   rewrite !dsum_app, dsum_repeat, Hm. lia.
+Qed.
+
+(** ** 5c. The same, at [(Fib, 1)]: the ceiling is [fibsum k] and the
+    invariant carries MEMBERSHIP
+
+    [fam_value] at [Fib] is a weighted fold, so no lemma about [val_pos]
+    transfers and section 5 is restated rather than instantiated -- exactly
+    as 5b is for [(Gray, 2)].  What actually differs is small and is all
+    here:
+
+    * the measure is [fam_lim - value] and [fam_lim] at [Fib] is
+      [S (fibsum k)].  That the measure falls is [fam_next_interior], which
+      is generic; that it is BOUNDED is [fib_ub], which is not;
+    * the invariant carries MEMBERSHIP -- section 3c's [P], which is what
+      makes "member of this width" a predicate when the numeration is
+      redundant -- and it is preserved because the decode of an in-range
+      value is a member ([fibdec_ok], through [fib_of_value_ok]);
+    * the family is ONE PHASE.  All five fibonacci rows are (4p), so the
+      phase cycle section 5 carries has nothing to do here and [ph] is
+      pinned at [0].
+
+    Note what does NOT differ: the step is 1, so section 5's arithmetic is
+    the arithmetic here, and nothing about the fill law changes at all. *)
+
+Definition InvF (s : CtrSt) : Prop :=
+  let '(ds, _, ph) := s in
+  Forall (fun d => d < 2) ds /\ 0 < length ds /\ ph = 0
+  /\ fibokb false ds = true.
+
+Section IterF.
+
+Variable F : Fam.
+Hypothesis HbF   : fm_b F = 2.
+Hypothesis HcF   : fm_code F = Fib.
+Hypothesis HsF   : fm_step F = 1.
+Hypothesis Hfpre : Forall (fun d => d < 2) (f_pre (fam_fill F 0)).
+Hypothesis Hfsuf : Forall (fun d => d < 2) (f_suf (fam_fill F 0)).
+Hypothesis Hfmid : f_mid (fam_fill F 0) < 2.
+Hypothesis Hfs   : length (f_pre (fam_fill F 0))
+                   + length (f_suf (fam_fill F 0))
+                   <= 1 + f_s (fam_fill F 0).
+Hypothesis Hfto  : f_to (fam_fill F 0) = 0.
+(** The fill target is a MEMBER.  For a fill with no fixed words and a fill
+    digit of [0] -- which is what all five rows carry -- [filled_fib0] below
+    discharges this outright: the all-zero string of any width is a member. *)
+Hypothesis Hfmem : forall k, 0 < k -> fibokb false (filled F 0 k) = true.
+
+Lemma fillF_at_top : forall ds, 0 < length ds -> fam_is_top F ds = true ->
+  fam_next F ds 0 = Some (filled F 0 (length ds)).
+Proof.
+  intros ds Hk Htop. unfold fam_next, filled. rewrite Htop. unfold fill_apply.
+  destruct (Nat.leb_spec (length (f_pre (fam_fill F 0))
+                          + length (f_suf (fam_fill F 0)))
+              (length ds + f_s (fam_fill F 0))); [reflexivity | lia].
+Qed.
+
+Lemma filledF_length : forall k, 0 < k ->
+  length (filled F 0 k) = k + f_s (fam_fill F 0).
+Proof.
+  intros k Hk. unfold filled. rewrite !app_length, repeat_length. lia.
+Qed.
+
+Lemma filledF_bnd : forall k, Forall (fun d => d < 2) (filled F 0 k).
+Proof.
+  intros k. unfold filled. apply Forall_app. split; [exact Hfpre|].
+  apply Forall_app. split; [|exact Hfsuf].
+  apply Forall_forall. intros x Hx. apply repeat_spec in Hx. lia.
+Qed.
+
+Lemma invF_value_lt : forall ds, Forall (fun d => d < 2) ds ->
+  fibokb false ds = true -> fam_value F ds < fam_lim F (length ds).
+Proof.
+  intros ds Hbnd Hok.
+  rewrite (fam_lim_fib F _ HcF), (fib_value F HcF).
+  pose proof (fib_ub ds Hbnd false Hok). lia.
+Qed.
+
+Lemma famF_succ_total : forall s,
+  InvF s -> exists s', fam_succ F s = Some s' /\ InvF s'.
+Proof.
+  intros [[ds q] ph] (Hbnd & Hk & -> & Hok).
+  pose proof (fam_lim_fib F (length ds) HcF) as Hlim.
+  destruct (fam_is_top F ds) eqn:Htop.
+  - (* the fill, and it lands back in phase 0 *)
+    exists (filled F 0 (length ds), q, 0).
+    unfold fam_succ. rewrite (fillF_at_top ds Hk Htop), Htop, Hfto.
+    split; [reflexivity|]. unfold InvF.
+    split; [apply filledF_bnd|].
+    split; [rewrite filledF_length by exact Hk; lia|].
+    split; [reflexivity | apply Hfmem; exact Hk].
+  - (* an interior step: the decode of the next value is a member of the
+       same width, which is the whole of what membership costs here *)
+    assert (Hv : fam_value F ds + fm_step F <= fibsum (length ds)).
+    { unfold fam_is_top in Htop. apply Nat.ltb_ge in Htop.
+      rewrite Hlim in Htop. lia. }
+    destruct (fib_of_value_ok F HcF (fam_value F ds + fm_step F)
+                (length ds) Hv) as (Hov & Hbnd' & Hok' & Hlen').
+    exists (fibdec (length ds) false (fam_value F ds + fm_step F), q, 0).
+    unfold fam_succ, fam_next. rewrite Htop, Hov.
+    split; [reflexivity|]. unfold InvF.
+    split; [exact Hbnd'|].
+    split; [rewrite Hlen'; exact Hk|].
+    split; [reflexivity | exact Hok'].
+Qed.
+
+Lemma famF_iter_total : forall N s,
+  InvF s -> exists s', fam_iter F s N = Some s' /\ InvF s'.
+Proof.
+  induction N as [|N IH]; intros s Hi;
+    [exists s; split; [reflexivity | exact Hi]|].
+  destruct (famF_succ_total s Hi) as (s1 & H1 & Hi1).
+  destruct (IH s1 Hi1) as (s' & H' & Hi').
+  exists s'. split; [|exact Hi']. simpl. rewrite H1. exact H'.
+Qed.
+
+(** Within a width the measure [S (fibsum k) - value] falls by
+    [fm_step = 1], so the top of the width is reached in finitely many
+    anchor visits.  Section 5's [top_reached_aux] with [fam_lim] where the
+    power was. *)
+Lemma topF_reached_aux : forall m s,
+  InvF s ->
+  fam_lim F (length (ct_ds s)) - fam_value F (ct_ds s) <= m ->
+  exists n s', fam_iter F s n = Some s' /\ fam_is_top F (ct_ds s') = true
+               /\ InvF s'.
+Proof.
+  induction m as [|m IH]; intros s Hi Hm.
+  - exfalso. destruct s as [[ds q] ph].
+    destruct Hi as (Hbnd & _ & _ & Hok). simpl in Hm.
+    pose proof (invF_value_lt ds Hbnd Hok). lia.
+  - destruct (fam_is_top F (ct_ds s)) eqn:Htop.
+    + exists 0, s. split; [reflexivity | split; [exact Htop | exact Hi]].
+    + destruct s as [[ds q] ph]. simpl in Htop.
+      destruct (famF_succ_total _ Hi) as (s1 & H1 & Hi1).
+      unfold fam_succ in H1. rewrite Htop in H1.
+      destruct (fam_next F ds ph) as [nd|] eqn:Hnd; [|discriminate].
+      injection H1 as <-.
+      destruct (fam_next_interior F ds ph nd ltac:(lia) Htop Hnd)
+        as (Hval & Hlen).
+      destruct (IH _ Hi1) as (n & s' & Hit & Htop' & Hi').
+      { simpl. simpl in Hm. rewrite Hval, Hlen, HsF. lia. }
+      exists (S n), s'. split; [|split; [exact Htop' | exact Hi']].
+      simpl. unfold fam_succ. rewrite Htop, Hnd. exact Hit.
+Qed.
+
+Lemma topF_reached : forall s,
+  InvF s ->
+  exists n s', fam_iter F s n = Some s' /\ fam_is_top F (ct_ds s') = true
+               /\ InvF s'.
+Proof.
+  intros s Hi.
+  apply (topF_reached_aux
+           (fam_lim F (length (ct_ds s)) - fam_value F (ct_ds s)) s Hi). lia.
+Qed.
+
+Theorem topsF_cofinal : forall s N,
+  InvF s ->
+  exists n s', N <= n /\ fam_iter F s n = Some s'
+               /\ fam_is_top F (ct_ds s') = true /\ InvF s'.
+Proof.
+  intros s N Hi.
+  destruct (famF_iter_total N s Hi) as (sN & HN & HiN).
+  destruct (topF_reached sN HiN) as (m & s' & Hm & Htop & Hi').
+  exists (N + m), s'.
+  split; [lia | split; [| split; [exact Htop | exact Hi']]].
+  rewrite fam_iter_add, HN. exact Hm.
+Qed.
+
+End IterF.
+
+(** The fill target's membership, for a fill with no fixed words and a fill
+    digit of [0]: the all-zero string of any width is a member, so [Hfmem]
+    above is a [vm_compute] on the emitted board rather than an induction.
+    All five fibonacci rows fill to [0^(k+1)] (4p). *)
+Lemma filled_fib0 : forall F ph k,
+  f_pre (fam_fill F ph) = [] -> f_mid (fam_fill F ph) = 0 ->
+  f_suf (fam_fill F ph) = [] ->
+  fibokb false (filled F ph k) = true.
+Proof.
+  intros F ph k Hp Hm Hs. unfold filled. rewrite Hp, Hm, Hs.
+  cbn [app]. rewrite app_nil_r. apply fibokb_rep0_nil.
 Qed.
 
 (** ** 6. Selection: which arm serves which class, from the arms as DATA
@@ -2616,3 +3297,354 @@ Proof.
 Qed.
 
 End BoardG.
+
+(** ** 11. The board at [(Fib, 1)]
+
+    Section 7's board is [(Binary, 1)] in three places: the class law it
+    calls, the case split it runs on, and the shape it gives the fill arm's
+    left-hand side.  Section 3c replaces all three, so this is the same
+    argument over the same [glue_neverqhN], with:
+
+    * TWO interior classes rather than [b-1] or [(Gray, 2)]'s four, indexed
+      by [i < 2] and served by the same arm scheme (section 2b).  The
+      increment carries a fixed word before the run, which is [cls_side]'s
+      [u] -- built for [(Gray, 2)] by 4o and already in place;
+    * the fill arm indexed by the WIDTH and carrying NO fixed word at either
+      end, because the top of a width is [1^k] -- a bare run, simpler than
+      both earlier codes.  Its index range starts at 1: no width is 0;
+    * one phase.  All five fibonacci rows are one-phase (4p), so there is no
+      cycle to lap and no [pv] to choose.
+
+    All five rows quasihalt -- [A] is entered once at step 0 and nothing
+    targets it, which is why 4p files them [live = BCD] -- so section 8's
+    twin is what they actually use, and it is below.  [boardF_neverqh] is
+    kept because it is what the argument proves before the quiet state is
+    named, and a fibonacci row with liveness [ABCD] would want it. *)
+
+Section BoardF.
+
+Variable tm    : TM.
+Variable F     : Fam.
+Variable Aint  : nat -> nat -> LRule.  (** the interior arm for class [i] at
+                                           arm index [r] *)
+Variable N0i sti : nat.
+Variable Afill : nat -> LRule.         (** the fill arm at WIDTH index [r] *)
+Variable N0f stf : nat.
+Variable fw1 fw2 : nat -> nat.         (** how the top's concrete copies of the
+                                           run divide about the block *)
+Variable fm1 fm2 : nat -> nat.         (** and the fill target's *)
+Variable vis   : nat -> St -> list lstep.
+Variable ds0   : list nat.
+Variable t0    : nat.
+(** ...and, for a row that QUASIHALTS (section 8's twin below), the quiet
+    state, its last visit, and the visit chains for the states that recur. *)
+Variable qa    : St.
+Variable sq    : nat.
+Variable visq  : nat -> St -> list lstep.
+
+(** *** The family's parameters *)
+Hypothesis HbF   : fm_b F = 2.
+Hypothesis HcF   : fm_code F = Fib.
+Hypothesis HsF   : fm_step F = 1.
+Hypothesis Hfpre : Forall (fun d => d < 2) (f_pre (fam_fill F 0)).
+Hypothesis Hfsuf : Forall (fun d => d < 2) (f_suf (fam_fill F 0)).
+Hypothesis Hfmid : f_mid (fam_fill F 0) < 2.
+Hypothesis Hfs   : length (f_pre (fam_fill F 0))
+                   + length (f_suf (fam_fill F 0))
+                   <= 1 + f_s (fam_fill F 0).
+Hypothesis Hfto  : f_to (fam_fill F 0) = 0.
+Hypothesis Hfmem : forall k, 0 < k -> fibokb false (filled F 0 k) = true.
+
+(** *** The boot.  It is a MEMBER, which is membership's base case. *)
+Hypothesis Hbnd0 : Forall (fun d => d < 2) ds0.
+Hypothesis Hlen0 : 0 < length ds0.
+Hypothesis Hmem0 : fibokb false ds0 = true.
+Hypothesis Hboot : csteps tm t0 CTape.c0 = Some (fam_cfg F (ds0, 0, 0)).
+
+(** *** The interior arms, one per CLASS and arm index *)
+Hypothesis Hsti : 0 < sti.
+Hypothesis HAiS : forall i r, i < 2 -> r < N0i + sti ->
+  RuleSound tm (negb (fm_left F)) (fm_left F) (Aint i r).
+Hypothesis HAiL : forall i r, i < 2 -> r < N0i + sti ->
+  lr_lhs (Aint i r)
+    = cls_conf F (cls_side F (cs_u (f1c i)) (cs_t (f1c i)) r
+                    (astride N0i sti r) (cs_w (f1c i))).
+Hypothesis HAiR : forall i r, i < 2 -> r < N0i + sti ->
+  lr_rhs (Aint i r)
+    = cls_conf F (cls_side F (cs_u' (f1c i)) (cs_t' (f1c i)) r
+                    (astride N0i sti r) (cs_w' (f1c i))).
+Hypothesis HAiC : forall i r, i < 2 -> r < N0i + sti -> 0 < lr_cb (Aint i r).
+
+(** *** The fill arms, at both tails known empty, one per WIDTH index *)
+Hypothesis Hstf : 0 < stf.
+Hypothesis HN0f : 1 <= N0f.
+Hypothesis Hfw   : forall r, 1 <= r -> r < N0f + stf -> fw1 r + fw2 r = r.
+Hypothesis Hfm12 : forall r, 1 <= r -> r < N0f + stf ->
+  fm1 r + fm2 r
+  + (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0)))
+  = r + f_s (fam_fill F 0).
+Hypothesis HAfS : forall r, 1 <= r -> r < N0f + stf ->
+  RuleSound tm true true (Afill r).
+Hypothesis HAfL : forall r, 1 <= r -> r < N0f + stf ->
+  lr_lhs (Afill r)
+    = cls_conf F (run_side F 1 (fw1 r) (astride N0f stf r) (fw2 r) 0 [] []).
+Hypothesis HAfR : forall r, 1 <= r -> r < N0f + stf ->
+  lr_rhs (Afill r)
+    = cls_conf F (run_side F (f_mid (fam_fill F 0)) (fm1 r)
+                    (astride N0f stf r) (fm2 r) 0
+                    (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
+Hypothesis HAfC : forall r, 1 <= r -> r < N0f + stf -> 0 < lr_cb (Afill r).
+
+(** *** Liveness: every state is reached from every fill arm's anchor *)
+Hypothesis Hvisit : forall r q, 1 <= r -> r < N0f + stf ->
+  srun_st tm true true (vis r q) (lr_lhs (Afill r)) = Some q.
+
+Let sf0 : CtrSt := (ds0, 0, 0).
+
+Definition CfF (n : nat) : cconf :=
+  match fam_iter F sf0 n with
+  | Some s => fam_cfg F s
+  | None => CTape.c0
+  end.
+
+Lemma invF0 : InvF sf0.
+Proof. unfold InvF, sf0. repeat split; assumption. Qed.
+
+(** Section 5c's exports, at this section's own parameters. *)
+Lemma iterF_total : forall N s,
+  InvF s -> exists s', fam_iter F s N = Some s' /\ InvF s'.
+Proof. intros N s Hi. eapply famF_iter_total; eassumption. Qed.
+
+Lemma topsF_cof : forall s N,
+  InvF s ->
+  exists n s', N <= n /\ fam_iter F s n = Some s'
+               /\ fam_is_top F (ct_ds s') = true /\ InvF s'.
+Proof. intros s N Hi. eapply topsF_cofinal; eassumption. Qed.
+
+Lemma fillF_top : forall ds, 0 < length ds -> fam_is_top F ds = true ->
+  fam_next F ds 0 = Some (filled F 0 (length ds)).
+Proof. intros ds Hk Ht. eapply fillF_at_top; eassumption. Qed.
+
+(** The cells of the top of a width, as the fill arm's left-hand side: a
+    BARE run of the digit [1], with the arm at index [r] carrying [fw1 r]
+    copies before the block and [fw2 r] after.  No fixed word at either
+    end -- that is what [1^k] buys over both earlier codes' tops. *)
+Lemma cells_topF : forall k m1 s n m2, m1 + s * n + m2 = k ->
+  fam_cells F (repeat 1 k) 0 = sden [] n (run_side F 1 m1 s m2 0 [] []).
+Proof.
+  intros k m1 s n m2 Hk.
+  transitivity (fam_cells F ([] ++ repeat 1 (m1 + s * n + m2) ++ []) 0).
+  - f_equal. cbn [app]. rewrite app_nil_r, Hk. reflexivity.
+  - apply fam_cells_run.
+Qed.
+
+Lemma cells_filledF : forall k a s n c,
+  a + s * n + c
+    = k + f_s (fam_fill F 0)
+      - (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0))) ->
+  fam_cells F (filled F 0 k) 0
+    = sden [] n (run_side F (f_mid (fam_fill F 0)) a s c 0
+                   (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
+Proof.
+  intros k a s n c Hk.
+  transitivity (fam_cells F
+    (f_pre (fam_fill F 0)
+     ++ repeat (f_mid (fam_fill F 0)) (a + s * n + c)
+     ++ f_suf (fam_fill F 0)) 0).
+  - f_equal. unfold filled. rewrite Hk. reflexivity.
+  - apply fam_cells_run.
+Qed.
+
+(** The lap, by section 3c's two-way split: a member of a width is the top,
+    where a fill arm applies, or an instance of one of the two classes,
+    where an interior arm does.  [fib_split] is what [digs_decomp] was. *)
+Lemma board_armF : forall (P : bool -> bool -> LRule -> Prop),
+  (forall i r, i < 2 -> r < N0i + sti ->
+     P (negb (fm_left F)) (fm_left F) (Aint i r)) ->
+  (forall r, 1 <= r -> r < N0f + stf -> P true true (Afill r)) ->
+  forall s, InvF s ->
+  exists s' A el er X n,
+    fam_succ F s = Some s'
+    /\ P el er A
+    /\ (el = true -> tailL F X = []) /\ (er = true -> tailR F X = [])
+    /\ fam_cfg F s  = cden (tailL F X) (tailR F X) n (lr_lhs A)
+    /\ fam_cfg F s' = cden (tailL F X) (tailR F X) n (lr_rhs A)
+    /\ 0 < lr_cb A.
+Proof.
+  intros P HPi HPf [[ds q] ph] Hi.
+  destruct Hi as (Hbnd & Hk & -> & Hok).
+  destruct (fib_split ds Hbnd Hok Hk)
+    as [Htop | (i & n & rest & Hi2 & Hrest & Hds)].
+  - (* the top of a width: the FILL arm at the width's own index *)
+    remember (aoff N0f stf (length ds)) as r eqn:Er.
+    assert (Hr1 : 1 <= r)
+      by (subst r; pose proof (arm_index_pos N0f stf (length ds)
+                                 ltac:(lia) Hk); lia).
+    assert (Hrlt : r < N0f + stf) by (subst r; apply arm_index_lt; assumption).
+    assert (Hidx : r + astride N0f stf r * acnt N0f stf (length ds) = length ds)
+      by (subst r; apply arm_index; assumption).
+    pose proof (Hfw r Hr1 Hrlt) as Hfwr.
+    assert (Hist : fam_is_top F ds = true).
+    { rewrite Htop at 1. apply (fib_is_top F HcF HsF). }
+    exists (filled F 0 (length ds), q, 0), (Afill r).
+    exists true, true, [], (acnt N0f stf (length ds)).
+    split; [|split; [|split; [|split; [|split; [|split]]]]].
+    + unfold fam_succ.
+      rewrite (fillF_top ds Hk Hist), Hist, Hfto. reflexivity.
+    + exact (HPf r Hr1 Hrlt).
+    + intros _; apply tailL_nil.
+    + intros _; apply tailR_nil.
+    + rewrite (HAfL r Hr1 Hrlt). symmetry.
+      apply cden_cls_conf. rewrite Htop at 1. apply cells_topF. lia.
+    + rewrite (HAfR r Hr1 Hrlt). symmetry.
+      apply cden_cls_conf. apply cells_filledF.
+      pose proof (Hfm12 r Hr1 Hrlt). lia.
+    + exact (HAfC r Hr1 Hrlt).
+  - (* not the top: the INTERIOR arm of the class the split named *)
+    remember (aoff N0i sti n) as r eqn:Er.
+    assert (Hrlt : r < N0i + sti) by (subst r; apply arm_index_lt; assumption).
+    assert (Hidx : r + astride N0i sti r * acnt N0i sti n = n)
+      by (subst r; apply arm_index; assumption).
+    destruct (fib_class F HcF HsF i n rest Hrest
+                ltac:(rewrite <- Hds; exact Hok)) as (Hnt & Hnx & Hmem').
+    exists (cls_rhs (f1c i) n rest, q, 0), (Aint i r).
+    exists (negb (fm_left F)), (fm_left F), (cls_tail F rest 0).
+    exists (acnt N0i sti n).
+    split; [|split; [|split; [|split; [|split; [|split]]]]].
+    + unfold fam_succ. rewrite Hds, (Hnx 0), Hnt. reflexivity.
+    + exact (HPi i r Hi2 Hrlt).
+    + intros He. unfold tailL. destruct (fm_left F); [discriminate|reflexivity].
+    + intros He. unfold tailR. rewrite He. reflexivity.
+    + rewrite (HAiL i r Hi2 Hrlt). symmetry. apply cden_cls_conf.
+      rewrite Hds. unfold cls_lhs. rewrite <- Hidx at 1.
+      apply (fam_cells_class F (cs_u (f1c i)) (cs_t (f1c i)) r
+               (astride N0i sti r) (acnt N0i sti n) (cs_w (f1c i)) rest 0).
+    + rewrite (HAiR i r Hi2 Hrlt). symmetry. apply cden_cls_conf.
+      unfold cls_rhs. rewrite <- Hidx at 1.
+      apply (fam_cells_class F (cs_u' (f1c i)) (cs_t' (f1c i)) r
+               (astride N0i sti r) (acnt N0i sti n) (cs_w' (f1c i)) rest 0).
+    + exact (HAiC i r Hi2 Hrlt).
+Qed.
+
+Lemma board_lapF : forall s, InvF s ->
+  exists s' m, fam_succ F s = Some s' /\ 0 < m /\
+               csteps tm m (fam_cfg F s) = Some (fam_cfg F s').
+Proof.
+  intros s Hi.
+  destruct (board_armF (RuleSound tm) HAiS HAfS s Hi)
+    as (s' & A & el & er & X & n & Hsucc & HA & HL & HR & Hl & Hr & Hcb).
+  exists s', (lr_ca A * n + lr_cb A).
+  split; [exact Hsucc | split; [nia|]].
+  rewrite Hl, Hr. exact (HA _ _ n HL HR).
+Qed.
+
+(** The visit premise, at the top of whatever width the counter has reached.
+    Both closers need exactly this and they differ only in which chains they
+    are handed, so it is proved once over the chain. *)
+Lemma board_visitF : forall (V : nat -> St -> list lstep) q N,
+  (forall r, 1 <= r -> r < N0f + stf ->
+     srun_st tm true true (V r q) (lr_lhs (Afill r)) = Some q) ->
+  exists n k c, N <= n /\ csteps tm k (CfF n) = Some c /\ fst c = q.
+Proof.
+  intros V q N HV.
+  destruct (topsF_cof sf0 N invF0) as (n & s' & HN & Hit & Htop & Hi').
+  exists n.
+  destruct s' as [[ds' q'] ph']. simpl in Htop.
+  destruct Hi' as (Hbnd' & Hk' & Hph' & Hok').
+  assert (Hsh : ds' = repeat 1 (length ds'))
+    by (apply (fib_top_shape F HcF HsF); assumption).
+  remember (aoff N0f stf (length ds')) as r eqn:Er.
+  assert (Hr1 : 1 <= r)
+    by (subst r; pose proof (arm_index_pos N0f stf (length ds')
+                               ltac:(lia) Hk'); lia).
+  assert (Hrlt : r < N0f + stf) by (subst r; apply arm_index_lt; assumption).
+  assert (Hidx : r + astride N0f stf r * acnt N0f stf (length ds') = length ds')
+    by (subst r; apply arm_index; assumption).
+  pose proof (Hfw r Hr1 Hrlt) as Hfwr.
+  assert (Hden : CfF n
+                 = cden [] [] (acnt N0f stf (length ds')) (lr_lhs (Afill r))).
+  { unfold CfF. rewrite Hit, (HAfL r Hr1 Hrlt), Hph'.
+    rewrite <- (cden_cls_conf F
+                  (run_side F 1 (fw1 r) (astride N0f stf r) (fw2 r) 0 [] [])
+                  [] (acnt N0f stf (length ds')) ds' q' 0).
+    - unfold tailL, tailR; destruct (fm_left F); reflexivity.
+    - rewrite Hsh at 1. apply cells_topF. lia. }
+  destruct (vis_of_run tm (fun _ => CfF n) true true (V r q)
+              (lr_lhs (Afill r)) 1%positive (acnt N0f stf (length ds'))
+              [] [] q (HV r Hr1 Hrlt)
+              (fun _ => eq_refl) (fun _ => eq_refl) Hden) as (k & c & Hc & Hq).
+  exists k, c. split; [exact HN | split; [exact Hc | exact Hq]].
+Qed.
+
+Theorem boardF_neverqh : NeverQuasiHaltsSt tm.
+Proof.
+  apply (glue_neverqhN tm CfF).
+  - exists t0. unfold CfF; simpl.
+    rewrite <- lift_c0. apply csteps_lift. exact Hboot.
+  - intros n.
+    destruct (iterF_total n sf0 invF0) as (s & Hit & Hi).
+    destruct (board_lapF s Hi) as (s' & m & Hsucc & Hm & Hrun).
+    exists m, (fam_cfg F s'). unfold CfF. rewrite Hit.
+    split; [exact Hrun | split; [|exact Hm]].
+    replace (S n) with (n + 1) by lia.
+    rewrite fam_iter_add, Hit. simpl. rewrite Hsucc. reflexivity.
+  - intros q N. exact (board_visitF vis q N (fun r H1 Hr => Hvisit r q H1 Hr)).
+Qed.
+
+(** *** The same board, for a row that QUASIHALTS
+
+    All five fibonacci rows read [BCD] and not [ABCD] (4p): [A] is entered
+    once, at step 0, and nothing targets it -- [B] comes from [{A,C,D}], [C]
+    from [{B,C}], [D] from [{B,D}].  So [boardF_neverqh] proves the wrong
+    theorem for every one of them and section 8's twin is what they want.
+    Everything above is reused verbatim; what the row adds is section 8's
+    three things and no more: every arm avoids the quiet state, a visit chain
+    per state OTHER than it, and its LAST visit with the window from there to
+    the boot anchor. *)
+
+Hypothesis HAiV : forall i r, i < 2 -> r < N0i + sti ->
+  RuleAvoid tm (negb (fm_left F)) (fm_left F) qa (Aint i r).
+Hypothesis HAfV : forall r, 1 <= r -> r < N0f + stf ->
+  RuleAvoid tm true true qa (Afill r).
+Hypothesis HvisitQ : forall r q, q <> qa -> 1 <= r -> r < N0f + stf ->
+  srun_st tm true true (visq r q) (lr_lhs (Afill r)) = Some q.
+Hypothesis Hqvis : VisitsAt tm qa sq.
+Hypothesis Hqwin : forall n c, sq < n < t0 ->
+  stepn tm n InitES = Some c -> fst c <> qa.
+
+Lemma board_lap_avoidF : forall s, InvF s ->
+  exists s' m, fam_succ F s = Some s' /\ 0 < m
+    /\ csteps tm m (fam_cfg F s) = Some (fam_cfg F s')
+    /\ AvoidRun tm qa m (fam_cfg F s).
+Proof.
+  intros s Hi.
+  destruct (board_armF (fun el er A => RuleSound tm el er A
+                                       /\ RuleAvoid tm el er qa A)
+              (fun i r Hi2 Hr => conj (HAiS i r Hi2 Hr) (HAiV i r Hi2 Hr))
+              (fun r H1 Hr => conj (HAfS r H1 Hr) (HAfV r H1 Hr)) s Hi)
+    as (s' & A & el & er & X & n & Hsucc & (HAs & HAv)
+        & HL & HR & Hl & Hr & Hcb).
+  exists s', (lr_ca A * n + lr_cb A).
+  split; [exact Hsucc | split; [nia | split]].
+  - rewrite Hl, Hr. exact (HAs _ _ n HL HR).
+  - rewrite Hl. exact (HAv _ _ n HL HR).
+Qed.
+
+Theorem boardF_iqh : NonHalt tm /\ QHBound (S sq) tm /\ QuasiHaltsSt tm.
+Proof.
+  apply (glue_qh_quietN tm CfF qa t0 sq).
+  - unfold CfF; simpl. rewrite <- lift_c0. apply csteps_lift. exact Hboot.
+  - intros n.
+    destruct (iterF_total n sf0 invF0) as (s & Hit & Hi).
+    destruct (board_lap_avoidF s Hi) as (s' & m & Hsucc & Hm & Hrun & Hav).
+    exists m, (fam_cfg F s'). unfold CfF. rewrite Hit.
+    split; [exact Hrun | split; [| split; [exact Hm | exact Hav]]].
+    replace (S n) with (n + 1) by lia.
+    rewrite fam_iter_add, Hit. simpl. rewrite Hsucc. reflexivity.
+  - intros q N Hq.
+    exact (board_visitF visq q N (fun r H1 Hr => HvisitQ r q Hq H1 Hr)).
+  - exact Hqvis.
+  - exact Hqwin.
+Qed.
+
+End BoardF.

@@ -107,9 +107,181 @@ Proof.
   rewrite !app_length, repeat_length. lia.
 Qed.
 
+(** ** The FIBONACCI numeration
+
+    LADDER_PLAN.md 4p measured five core rows whose counter is not positional
+    at all: the digit at index [i] carries weight [1, 1, 2, 3, 5, 8, ...].
+    The weights are DETERMINED by the position, so they are computed here
+    rather than carried as a field -- no [mkFam] call and no board data
+    changes, which is the whole reason this is a [Code] constructor.
+
+    The numeration is REDUNDANT ([fibw 0 = fibw 1 = 1], so [1;0;0] and
+    [0;1;0] both have value 1), and which representative the counter stands
+    on is a MEMBERSHIP predicate, not an arithmetic fact.  That predicate
+    lives in [LadderCheck] (section 3c) with the class laws it discriminates;
+    what is here is the arithmetic it is a predicate over: the weights, the
+    weighted fold, and the DECODER that inverts it. *)
+
+Fixpoint fibw (i : nat) : nat :=
+  match i with
+  | O => 1
+  | S n => match n with
+           | O => 1
+           | S j => fibw n + fibw j
+           end
+  end.
+
+Lemma fibw_SS : forall j, fibw (S (S j)) = fibw (S j) + fibw j.
+Proof. reflexivity. Qed.
+
+Lemma fibw_pos2 : forall i, 0 < fibw i /\ 0 < fibw (S i).
+Proof.
+  induction i as [|i IH]; [cbn; lia|].
+  destruct IH as [H1 H2]. split; [exact H2 | rewrite fibw_SS; lia].
+Qed.
+
+Lemma fibw_pos : forall i, 0 < fibw i.
+Proof. intros i. apply (fibw_pos2 i). Qed.
+
+Lemma fibw_mono : forall i, fibw i <= fibw (S i).
+Proof.
+  destruct i as [|i]; [cbn; lia|].
+  rewrite fibw_SS. pose proof (fibw_pos i). lia.
+Qed.
+
+(** The largest value a width can spell: the sum of the weights it covers.
+    This is what [b^k - 1] was, and it is NOT a power of anything --
+    [fibsum] telescopes into the NEXT weight, which is the one identity the
+    whole numeration rests on. *)
+Fixpoint fibsum (k : nat) : nat :=
+  match k with
+  | O => 0
+  | S k' => fibsum k' + fibw k'
+  end.
+
+Lemma fibsum_S : forall k, S (fibsum k) = fibw (S k).
+Proof.
+  induction k as [|k IH]; [reflexivity|].
+  cbn [fibsum]. rewrite fibw_SS, <- IH. lia.
+Qed.
+
+Lemma fibsum_mono : forall k, fibsum k <= fibsum (S k).
+Proof. intros k. cbn [fibsum]. lia. Qed.
+
+(** The weighted fold, LSB-first, from weight index [j] up. *)
+Fixpoint fibvl (j : nat) (ds : list nat) : nat :=
+  match ds with
+  | [] => 0
+  | d :: t => d * fibw j + fibvl (S j) t
+  end.
+
+Definition fibval (ds : list nat) : nat := fibvl 0 ds.
+
+Lemma fibvl_app : forall a j b,
+  fibvl j (a ++ b) = fibvl j a + fibvl (j + length a) b.
+Proof.
+  induction a as [|x a IH]; intros j b; cbn [app fibvl length].
+  - rewrite Nat.add_0_r. reflexivity.
+  - rewrite IH. replace (S j + length a) with (j + S (length a)) by lia. lia.
+Qed.
+
+(** The one instance the induction on the WIDTH uses: the top digit sits at
+    weight index [length a], and everything below it is untouched. *)
+Lemma fibval_snoc : forall a d,
+  fibval (a ++ [d]) = fibval a + d * fibw (length a).
+Proof.
+  intros a d. unfold fibval. rewrite fibvl_app. cbn [fibvl].
+  rewrite Nat.add_0_l, Nat.add_0_r. reflexivity.
+Qed.
+
+Lemma fibval_app : forall a b,
+  fibval (a ++ b) = fibval a + fibvl (length a) b.
+Proof. intros a b. unfold fibval. rewrite fibvl_app. reflexivity. Qed.
+
+(** *** The decoder, and the two-state reading that makes it one
+
+    Read MSB-first, a member is accepted by a TWO-STATE automaton: from [E]
+    a [0] stays in [E] and a [1] goes to [O]; from [O] the next digit must be
+    a [1], which returns to [E]; both states accept at the end (the leading
+    run of [1]s -- the one that reaches index 0 -- is the one run allowed to
+    be odd).  [o] is that state.
+
+    What makes the decode DETERMINISTIC is that each state's reachable values
+    are an INTERVAL and the two the top digit selects between are disjoint:
+    from [E] at width [k] the values are [0 .. fibsum k], split by the top
+    digit at exactly [fibw k] -- because [fibsum (k-1) + 1 = fibw k], which
+    is [fibsum_S].  From [O] the top digit is forced. *)
+Definition fiblo (o : bool) (k : nat) : nat :=
+  if o then match k with O => 0 | S k' => fibw k' end else 0.
+
+(** State [O]'s floor at width [k], plus the top digit's own weight, is at
+    least the weight the decode tests against.  This is the whole reason the
+    [1] branch is FORCED when the value is at or above [fibw k] -- and with
+    it the round trip needs no case split on [k]. *)
+Lemma fiblo_fibw : forall k, fibw (S k) <= fiblo true k + fibw k.
+Proof.
+  destruct k as [|k]; cbn [fiblo]; [cbn [fibw]; lia|].
+  rewrite fibw_SS. lia.
+Qed.
+
+Fixpoint fibdec (k : nat) (o : bool) (v : nat) : list nat :=
+  match k with
+  | O => []
+  | S k' => if o || (fibw (S k') <=? v)
+            then fibdec k' (negb o) (v - fibw k') ++ [1]
+            else fibdec k' false v ++ [0]
+  end.
+
+Lemma fibdec_length : forall k o v, length (fibdec k o v) = k.
+Proof.
+  induction k as [|k IH]; intros o v; [reflexivity|].
+  cbn [fibdec]. destruct (o || _);
+    rewrite app_length, IH; cbn [length]; lia.
+Qed.
+
+Lemma fibdec_bnd : forall k o v, Forall (fun d => d < 2) (fibdec k o v).
+Proof.
+  induction k as [|k IH]; intros o v; [constructor|].
+  cbn [fibdec]. destruct (o || _); apply Forall_app; split;
+    solve [apply IH | repeat constructor; lia].
+Qed.
+
+(** The decode is a right inverse of the fold on the whole of each state's
+    interval.  This is the half that does not need membership at all -- only
+    the RANGE -- and it is what [fam_value_of_value] becomes at [Fib]. *)
+Lemma fibdec_val : forall k o v,
+  fiblo o k <= v -> v <= fibsum k -> fibval (fibdec k o v) = v.
+Proof.
+  induction k as [|k IH]; intros o v Hlo Hhi.
+  - cbn [fibsum] in Hhi. cbn [fibdec]. unfold fibval. cbn [fibvl]. lia.
+  - pose proof (fibsum_S k) as Hss.
+    pose proof (fibw_mono k) as Hmo.
+    cbn [fibsum] in Hhi. cbn [fibdec].
+    destruct (o || (fibw (S k) <=? v)) eqn:Eb.
+    + (* the top digit is 1: subtract its weight and read on *)
+      assert (Hge : fibw k <= v).
+      { destruct o; [cbn [fiblo] in Hlo; exact Hlo|].
+        cbn [orb] in Eb. apply Nat.leb_le in Eb. lia. }
+      assert (Hlo' : fiblo (negb o) k <= v - fibw k).
+      { destruct o; cbn [negb fiblo]; [lia|].
+        destruct k as [|k']; [lia|].
+        cbn [orb] in Eb. apply Nat.leb_le in Eb.
+        rewrite fibw_SS in Eb. lia. }
+      rewrite fibval_snoc, fibdec_length,
+              (IH (negb o) (v - fibw k) Hlo' ltac:(lia)).
+      lia.
+    + (* the top digit is 0: the value is below the next weight, hence
+         inside the narrower width *)
+      apply orb_false_elim in Eb as [Eo Et].
+      apply Nat.leb_gt in Et. subst o.
+      rewrite fibval_snoc, fibdec_length,
+              (IH false v ltac:(cbn [fiblo]; lia) ltac:(lia)).
+      lia.
+Qed.
+
 (** ** The code and the family *)
 
-Inductive Code : Set := Binary | Gray.
+Inductive Code : Set := Binary | Gray | Fib.
 
 Record Fam : Set := mkFam {
   fm_b     : nat;              (** base *)
@@ -126,24 +298,54 @@ Record Fam : Set := mkFam {
 }.
 
 Definition fam_value (F : Fam) (ds : list nat) : nat :=
-  val_pos (fm_b F) (match fm_code F with
-                    | Binary => ds
-                    | Gray => gdec (fm_b F) ds
-                    end).
+  match fm_code F with
+  | Binary => val_pos (fm_b F) ds
+  | Gray => val_pos (fm_b F) (gdec (fm_b F) ds)
+  | Fib => fibval ds
+  end.
+
+(** The width's CEILING: one past the largest value it can spell.  For a
+    positional or reflected code that is [b^k]; for [Fib] it is
+    [S (fibsum k)], which is not a power of anything.  It is the ONE thing a
+    weighted numeration changes about the interface, and naming it here is
+    what keeps [fam_is_top], [fam_of_value] and the liveness measure one
+    definition each rather than one per code. *)
+Definition fam_lim (F : Fam) (k : nat) : nat :=
+  match fm_code F with
+  | Fib => S (fibsum k)
+  | _ => Nat.pow (fm_b F) k
+  end.
+
+Lemma fam_lim_bin : forall F k,
+  fm_code F = Binary -> fam_lim F k = Nat.pow (fm_b F) k.
+Proof. intros F k H. unfold fam_lim. rewrite H. reflexivity. Qed.
+
+Lemma fam_lim_gray : forall F k,
+  fm_code F = Gray -> fam_lim F k = Nat.pow (fm_b F) k.
+Proof. intros F k H. unfold fam_lim. rewrite H. reflexivity. Qed.
+
+Lemma fam_lim_fib : forall F k,
+  fm_code F = Fib -> fam_lim F k = S (fibsum k).
+Proof. intros F k H. unfold fam_lim. rewrite H. reflexivity. Qed.
 
 Definition fam_of_value (F : Fam) (v k : nat) : option (list nat) :=
-  if v <? Nat.pow (fm_b F) k then
+  if v <? fam_lim F k then
     let ns := pos_of (fm_b F) k v in
-    Some (match fm_code F with Binary => ns | Gray => genc (fm_b F) ns end)
+    Some (match fm_code F with
+          | Binary => ns
+          | Gray => genc (fm_b F) ns
+          | Fib => fibdec k false v
+          end)
   else None.
 
 Lemma fam_of_value_length : forall F v k ds,
   fam_of_value F v k = Some ds -> length ds = k.
 Proof.
   intros F v k ds H. unfold fam_of_value in H.
-  destruct (v <? Nat.pow (fm_b F) k); [|discriminate].
+  destruct (v <? fam_lim F k); [|discriminate].
   destruct (fm_code F); injection H as <-;
-    [apply pos_of_length | rewrite genc_length; apply pos_of_length].
+    [apply pos_of_length | rewrite genc_length; apply pos_of_length
+     | apply fibdec_length].
 Qed.
 
 (** The width-[k] string the fill leaves from.  For [Binary] with step 1
@@ -151,10 +353,10 @@ Qed.
     directly; for a reflected code it is not the all-max string at all,
     which is why the test below is on the VALUE. *)
 Definition fam_top (F : Fam) (k : nat) : option (list nat) :=
-  fam_of_value F (Nat.pow (fm_b F) k - 1) k.
+  fam_of_value F (fam_lim F k - 1) k.
 
 Definition fam_is_top (F : Fam) (ds : list nat) : bool :=
-  Nat.pow (fm_b F) (length ds) - 1 <? fam_value F ds + fm_step F.
+  fam_lim F (length ds) - 1 <? fam_value F ds + fm_step F.
 
 Definition fam_fill (F : Fam) (ph : nat) : Fill :=
   nth ph (fm_fills F) carry_fill.
@@ -233,7 +435,7 @@ Qed.
     THEOREM about the fill arm rather than an assertion of the certificate. *)
 
 Definition fam_wf (F : Fam) (s : CtrSt) : Prop :=
-  let '(ds, _, _) := s in fam_value F ds < Nat.pow (fm_b F) (length ds).
+  let '(ds, _, _) := s in fam_value F ds < fam_lim F (length ds).
 
 (** The codec round-trip, for both codes.  [genc] and [gdec] are inverse
     because [gdec]'s entry [i] is the suffix sum of [genc]'s entries from
@@ -290,12 +492,13 @@ Lemma fam_value_of_value : forall F v k ds,
   1 < fm_b F -> fam_of_value F v k = Some ds -> fam_value F ds = v.
 Proof.
   intros F v k ds Hb H. unfold fam_of_value in H.
-  destruct (Nat.ltb_spec v (Nat.pow (fm_b F) k)) as [Hv|]; [|discriminate].
-  unfold fam_value.
+  destruct (Nat.ltb_spec v (fam_lim F k)) as [Hv|]; [|discriminate].
+  unfold fam_lim in Hv. unfold fam_value.
   destruct (fm_code F); injection H as <-.
   - apply val_pos_pos_of; assumption.
   - rewrite gdec_genc by (assumption || apply pos_of_lt; assumption).
     apply val_pos_pos_of; assumption.
+  - apply fibdec_val; [cbn [fiblo]; lia | lia].
 Qed.
 
 (** An interior step advances the value by exactly [fm_step] and keeps the
@@ -319,7 +522,7 @@ Lemma fam_next_wf : forall F ds ph nd,
   1 < fm_b F ->
   fam_is_top F ds = false ->
   fam_next F ds ph = Some nd ->
-  fam_value F nd < Nat.pow (fm_b F) (length nd).
+  fam_value F nd < fam_lim F (length nd).
 Proof.
   intros F ds ph nd Hb Htop H.
   unfold fam_next in H. rewrite Htop in H.
@@ -327,5 +530,5 @@ Proof.
   rewrite (fam_value_of_value _ _ _ _ Hb H).
   unfold fam_of_value in H.
   destruct (Nat.ltb_spec (fam_value F ds + fm_step F)
-              (Nat.pow (fm_b F) (length ds))) as [Hlt|]; [exact Hlt|discriminate].
+              (fam_lim F (length ds))) as [Hlt|]; [exact Hlt|discriminate].
 Qed.
