@@ -4145,10 +4145,11 @@ traps._
   changing it mid-build invalidates the makefile and `make` can exit 0 with
   hundreds of files unbuilt.  Board first, then build.
 
-## 2026-07-31 — `(Fib, 1)` built: the FIBONACCI five board, core 37 → 32
+## 2026-07-31 — `(Fib, 1)` built: the FIBONACCI five board, five rows off the core
 
 _Branch `claude/fibonacci-numeration-coq-uewigh`, cut from `main` at
-`2dbbe9b`.  Full write-up in `docs/LADDER_PLAN.md` §4q._
+`2dbbe9b`.  Full write-up in `docs/LADDER_PLAN.md` §4r — written as 4q and
+renumbered, because #103 took that number while this ran._
 
 - **The gate has now held THREE times.**  `Fam` carries `Binary`, `Gray` and
   `Fib` and the `Class` record has never widened; `ClassSucc` is not weakened
@@ -4192,9 +4193,10 @@ _Branch `claude/fibonacci-numeration-coq-uewigh`, cut from `main` at
   arm would have landed off the right-hand side.
 - **The emitter agreed with the probe.**  4p measured both class arms deriving
   at threshold 0..1 stride 1; the emitter re-derives the chains from the
-  machine and lands on exactly that.  `settled by a board` 5107 → 5112
-  (99.1%), `core undecided` 37 → 32, shadows unchanged at 12 — these five
-  carry none, as 4p said.
+  machine and lands on exactly that.  `settled by a board` 5107 → 5112,
+  `core undecided` 37 → 32 on this branch's own base; merged with #104's two
+  freed shadows the tree reads **5114 (99.2%) and 30 core**.  Shadows
+  unchanged at 12 — these five carry none, as 4p said.
 - **The fibonacci bucket is empty and the four base-2 rows are closed.**  Their
   interior arm cost has a constant SECOND difference; no arithmetic progression
   makes a quadratic affine and no widening of `ARM_GRID` reaches them.  Not
@@ -4317,3 +4319,25 @@ deliverable._
   `make` has no rule for them and editing their notes costs nothing.  All
   nine cited §4h(a)'s `ClassSucc` reason, which §4l removed and which fits
   neither half; they now carry the measured reason, one per half.
+
+- **Addendum, same day: the two shadows the gray boards freed are boarded**
+  (5107 → 5109, 47 rows remain), and the kernel agrees with the audit —
+  `Closeout.vo` rebuilt, `proven_rows` 5,109 with kernel-checked `covers`,
+  `remaining_rows` 35, `closeout_partial` on funext alone.
+- **The trap in freeing a shadow.**  `shadowlib.classify` drops a shadow from
+  `shadow_rows.tsv` the moment its partner leaves the unproven set — exactly
+  when it becomes actionable — so `gen_shadow.py --all` cannot see the rows
+  you just freed.  Use the explicit form and read the ops out of
+  `git show HEAD~1:tools/closeout/shadow_rows.tsv`.
+- **And `gen_shadow.py` hard-coded `BBB4.Machines.Counters`** for the partner
+  board; ladder boards are under `BBB4.Machines.Ladder`, so the emitted file
+  imported a module that does not exist.  It reads the package off
+  `frozen_map.tsv` now.
+- **A prompt is older than the plan.**  This session's own NEXT_PROMPT pointed
+  the next one at the four base-2 arms-blocked rows on the strength of §4i's
+  "the next widening is known and small".  §4p, merged hours later, had
+  MEASURED that arm quadratic — `(r+1)(r+2)`, second difference exactly 2 —
+  and no stride or offset reaches it.  Re-read the plan's last section before
+  acting on a prompt; the prompt was rewritten to §4p's actual selection (the
+  fibonacci five, whose numeration §4p cracked and `fibmem.py` checks).
+

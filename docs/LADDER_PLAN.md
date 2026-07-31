@@ -2288,6 +2288,43 @@ the denotation can state.
   split before any Coq was written; `armprobe.py --selftest` is the same
   discipline one rung down.
 
+### Addendum: the two shadows these four freed, boarded — and the trap in freeing them
+
+_Same branch, after #102 merged.  `Closeout.vo` rebuilt; the kernel's own
+numbers, not only the audit's: `proven_rows` 5,109 rows each with a
+kernel-checked [covers] proof, `remaining_rows` 35, `shadow_rows` 12, and
+`closeout_partial` on `functional_extensionality_dep` alone._
+
+The four rows above promoted two `0RB` shadows into the core.  Both are now
+boarded, and they cost no new argument — `Census/Reroot.neverqh_reroot` across
+the blank prefix and `Census/RerootSwap.neverqh_mirror`/`neverqh_swap` across
+the relabelling are general and proved once:
+
+    nqh_0RB0LA_1LA1RC_0RD1RD_1LB0LB : NeverQuasiHaltsSt tm   (mirror of
+                                        1RB1LC_0LA0RB_0LD1LD_1RA0RA)
+    nqh_0RB0LA_1RC1LA_1RD0RD_1LB0LB : NeverQuasiHaltsSt tm   (swap:B:C,swap:C:D
+                                        of 1RB1LD_1RC0RC_1LA0LA_0RA0LD)
+
+    settled by a board       5107 -> 5109   (99.1%)
+    core undecided             37 -> 35     (47 rows remain)
+
+**Two things about freeing a shadow, and the second is a trap.**
+
+* `gen_shadow.py` hard-coded the partner board's module as
+  `BBB4.Machines.Counters`.  A LADDER board lives under
+  `BBB4.Machines.Ladder`, so the emitted file imported a module that does not
+  exist and failed at line 25 — nowhere near the cause.  `frozen_map.tsv`
+  already carries the partner's file, so the package is read off it now.
+* **`shadowlib.classify` drops a shadow from `shadow_rows.tsv` the moment its
+  partner leaves the unproven set** — which is precisely when the shadow
+  becomes actionable.  So `gen_shadow.py --all`, whose input is that file,
+  cannot see the rows a session just freed; they have to be driven with the
+  explicit `--spec/--partner/--qs/--t/--ops` form, reading the data out of the
+  PREVIOUS revision of the table.  That is how these two were emitted.  The
+  generator's input and its trigger are on opposite sides of one regeneration,
+  and fixing `classify` so a freed row survives one generation is worth doing
+  before the next core row boards.
+
 ## 4p. The interior nine RE-MEASURED: 5 of 9, and the bucket was never one bucket
 
 _Branch `claude/interior-arm-remeasure-vg1xl2`, cut from `main` at `fa1be97`.
@@ -2505,11 +2542,122 @@ reduction shrinks the object; it does not decide it.
 * The nine boards' stop-notes cited 4h(a)'s `ClassSucc` condition, which 4l
   removed.  All nine now carry the measured reason, one per half.
 
-## 4q. `(Fib, 1)` BUILT.  The record did not widen a third time, and the five board
+## 4q. John reads the bouncer at the counter's own anchor: it IS one parameter, and 4j's fix is the only thing missing
+
+_John: "the counter part is 11, then the bits, msb on the right -- position 4
+and 5 are 1, then position 6 is the lsb", and "every bounce moves the left wall
+over by 2".  Rows `0RB0RD_1LC1RB_1RA0LC_1LB0LC` and its twin `...1LD0LC` -- 2
+core + 2 shadows, 4 of the remaining rows.  Every number below is measured._
+
+### The reading
+
+Sampled once per bounce (a bounce is two wall-advance events):
+
+    positions 4,5   `1 1`, at the same cells every bounce
+    position  6..   the counter, LSB nearest the marker, MSB to the RIGHT
+    value           = the bounce index, step +1
+    wall            recedes by exactly 2 per bounce
+
+    bounce   1  2   3    4    5     6     7     8     9    10  ... 16     17
+    bits     -  1   01   11   001   101   011   111   0001 1001    1111   00001
+    value    0  1   2    3    4     5     6     7     8    9       15     16
+
+**704 bounces to step 3,000,000, on both rows, zero failures.**  Sharper than
+4j's west-frontier reading of the same bits (`0^(2k+5)` then `4k+3`): same
+string -- the `11` contributes 1+2 = 3 and the counter `k` two positions up
+contributes `4k` -- but the step is **1** and the marker is **constant**.
+
+### The far side is `1^(2v+5)`, and that is the whole finding
+
+At the anchor that carries the constant `11` frame -- `(StB, head 0, head at
+offset 3)`, once per bounce -- the far side is a SOLID run of ones from the
+wall to the head.  Its length against the counter's own value `v`:
+
+    visit    2    3    4    5    6   ...  252   253   254   255
+    value    0    1    2    3    4        250   251   252   253
+    ones     5    7    9   11   13       505   507   509   511
+                                          all exactly 2v + 5
+
+**Exact at every visit from 2 to 255.**  (Visit 1 is the boot, at `2v+3`; it is
+the pre-family state and the boot premise carries it.)
+
+So this row is a ONE-parameter family after all.  Both things that vary -- the
+digit string and the wall distance -- are functions of the same `v`.  Nothing
+about the machine is unknown.
+
+### What is missing is a field, and 4j already named it
+
+`Fam` can name exactly one varying thing, the digit string `ds`.  The far side
+is `fm_other : list Sym` and the near-head prefix is `fm_pre : list Sym` --
+both FIXED words, neither able to say "a run whose length is affine in the
+parameter".  So the family can state the counter and cannot state the wall.
+
+4j's fix is exactly this shape and is quoted here because 4q supplies its
+constants: the side wants `s_pre ++ rep u (a*p + b)`, the engine's own `sside`
+(`LapDecider`: `pre ++ rep u (a*j+b) ++ post ++ X`).  At this anchor,
+
+    side = FAR (fm_other)     u = [S1]     a = 2     b = 5
+
+which is a cleaner instance than 4j's own `0^(2k+5)` on the near-head side.
+**The two anchors trade the growth between the sides and neither removes it:**
+
+| anchor | near-head side | far side |
+|---|---|---|
+| head at the wall (4j) | `0^(2k+5)` then `11` then digits | empty |
+| `(StB,0)` at offset 3 | `11` then digits (CONSTANT) | `1^(2v+5)` |
+
+**RETRACTION.**  An earlier draft of this section claimed the far side was
+BLANK at the fixed frame, and concluded the growth was free under `CTape.lift`
+and that this row needed neither 4j's outer parameter nor the phase cycle.
+That is wrong.  The blankness was measured at the wall-advance sample, where
+the head is AT the wall and its left side is empty by definition.  `lift`
+ignores trailing BLANKS; a growing run of ones is free at no anchor.  4j's
+conclusion stands; 4q corrects only its LOCATION and supplies the constants.
+
+### What the searcher does today, and why "no anchor" is stale
+
+`residue_map.tsv` files this row as `no anchor`.  `valfam` now reports **8
+families, none closed, 0 arms**, identically at 40k, 150k and 600k steps.
+Every family it TRIES is
+
+    {"state": "B", "head": 0, "side": "L", ..., "value_step_per_anchor_visit": 2}
+
+`side: "L"` is the receding wall and step 2 is the wall's 2-per-bounce: it is
+reading the window the wall opens rather than the counter, then correctly
+refusing it -- *"the fill DECREASES the outer parameter, so the family is
+finite: it is a reading of the window, not of the machine"*.
+
+The main pass finds nothing at all; all 8 come from the fallback passes.  The
+reason is not a heuristic and should not be patched around: `runs_cells`
+refuses a side it cannot make concrete, and the far side `1^(2v+5)` is a
+DIFFERENT concrete value at every visit.  Grouping visits by a constant far
+side cannot see a family whose far side is the parameter.  Two changes were
+tried here and **both reverted, neither helped**:
+
+* the near-head prefix is capped at `p < l` cells (`_grams` uses `p` as a cell
+  count), so a 2-cell constant prefix with 1-cell digits is unreachable;
+* splitting the pooled `(B,0)` anchor by near-head frame, since it fires at
+  offsets 1, 3 and 4 with different frames.
+
+Both are downstream of the real gap.  Build the field, not the search.
+
+### Worth
+
+2 core rows and 2 shadows, and the twin measures identically.  4 of the rows
+left.
+
+## 4r. `(Fib, 1)` BUILT.  The record did not widen a third time, and the five board
 
 _Branch `claude/fibonacci-numeration-coq-uewigh`, cut from `main` at
 `2dbbe9b` (4p's #101 merged).  Coq 8.18.0, installed in the image.  Every
 number below is a count a script printed or a file that compiles._
+
+_Merged with the two shadow rows the gray boards freed (#104) and with 4q's
+bouncer reading (#103), both of which landed while this ran.  Re-derived
+rather than hand-resolved -- every generated closeout file was taken from one
+tree and rebuilt by `inventory.py`, `gen_stages.py`, `audit.py` (OK); the only
+files resolved by hand were this one and `NEXT_SESSION.md`.  **This section
+was written as 4q and renumbered: #103 took that number first.**_
 
 4p's instruction was to build the numeration it cracked and not to measure
 again.  That is what happened, and it went through on the terms 4p set:
@@ -2519,6 +2667,10 @@ no second class record, and the five rows board.**
     settled by a board       5107 -> 5112   (99.0% -> 99.1%)
     core undecided             37 -> 32
     0RB shadows of the core    12 -> 12     (these five carry none)
+
+on this branch's own base.  Merged with #104's two freed shadows the tree
+reads **5114 settled (99.2%), 30 core undecided, 12 shadows** -- the five rows
+are worth five either way, which is the point of counting them separately.
 
 ### The one thing 4p did not know, and it changes which theorem they prove
 
@@ -2656,7 +2808,7 @@ run of `0` (which is what `filled_fib0` discharges membership for).
   constant SECOND difference, no arithmetic progression makes a quadratic
   affine, and no widening of `ARM_GRID` reaches them.  Not re-probed here and
   they should not be re-probed again.
-* **The 32 that remain carry 12 shadows on ten rows.**  Nothing this session
+* **The 30 that remain carry 12 shadows on ten rows.**  Nothing this session
   moved a shadow, because these five had none -- 4p said so and it was right.
   The re-root closer (#98's general half plus a worked `RRNQ_*`) is now worth
   more than any further `ClassSucc` instance: it is the only thing that turns
