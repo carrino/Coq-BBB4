@@ -213,6 +213,13 @@ def emit(spec, qs, t, partner, ops, fmap):
     rr = shadowlib.swap_uv(slots, 'A', qs)
     vis = first_visits(rr)
     core_mod = os.path.splitext(os.path.basename(core['vfile']))[0]
+    # ...and the PACKAGE it lives in.  Boards are not all under
+    # [Machines/Counters]: LADDER boards are under [Machines/Ladder], and a
+    # shadow whose core row is a ladder board imported the wrong module and
+    # failed to compile with the path hard-coded here.  [frozen_map.tsv]
+    # already carries the file, so read the package off it.
+    core_pkg = (os.path.dirname(core['vfile'])
+                .replace('theories', 'BBB4', 1).replace('/', '.'))
     mk = 'mk_' + name
 
     body = []
@@ -241,7 +248,7 @@ From Coq Require Import Arith Lia Bool List.
 From Coq Require Import FunctionalExtensionality.
 From BBB4 Require Import BBB4_Statement CTape Mirror.
 From BBB4.Census Require Import TNF_QH Reroot RerootSwap.
-From BBB4.Machines.Counters Require Import %s.
+From %s Require Import %s.
 Import ListNotations.
 
 Definition %s (w : Sym) (d : Dir) (n : St) : option Trans := Some (mkTrans w d n).
@@ -297,7 +304,7 @@ Theorem nonhalt_%s : NonHalt tm.
 Proof. apply never_qh_nonhalt, nqh_%s. Qed.
 ''' % (name, spec, partner, t, qs,
        ', '.join(':'.join(o) for o in ops) or 'no ops',
-       core_mod, mk, mk, spec, name, coq_table(slots, 'mk'), name,
+       core_pkg, core_mod, mk, mk, spec, name, coq_table(slots, 'mk'), name,
        qs, name, coq_table(rr, 'mk'), name,
        name, qs, name, apply_ops_coq(core['const'], ops),
        name, name, nqh_chain(ops, core['thm']),
