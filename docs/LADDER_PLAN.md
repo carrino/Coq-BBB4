@@ -1275,14 +1275,34 @@ each became a parameter.  The near-head prefix is the sixth, and unlike the
 others it is not even new work on the kernel side -- the field is already
 there.
 
-### What is NOT established
+### The probe, widened from the two reads, and what it does and does not say
 
-A probe over the other thirteen -- left frontier only, strides 1 to 3,
-exactly-constant differences -- matched two.  **That is a statement about the
-probe.**  It is the same shape of claim this section exists to warn about,
-and it should not be read as "the other thirteen are not bouncers".  A human
-read of one more of them is worth more than widening the probe, on the
-evidence of this section and of 4g.
+John confirmed the second row independently; it measures identical to the
+first.  `tools/ladder/bounce.py` generalises both, and drops exactly the
+assumption `valfam` bakes in -- nothing else.  It searches every
+
+    frontier (west / east)  x  side of the head (left / right)
+    x  spacer symbol  x  digit WORD WIDTH 1..3  x  stride 1..4 and offset
+    x  alphabet ordering  x  binary / gray  x  LSB-first / MSB-first
+
+for: spacer length affine in the lap index AND value affine in it with a
+positive step.  It carries `--selftest`, which re-finds both of John's rows,
+and it earned that: **two earlier versions of this probe missed them both.**
+The first interleaved the two frontiers into one lap stream, which scrambles
+the stride.  The second built the digit alphabet per lap, and a value of
+`1^2` has only one distinct word, so the lap was skipped.  Neither bug is
+visible without a known-positive case to test against, and both would have
+been reported as "the other thirteen are not bouncers".
+
+Run on all fifteen it matches **two: John's**.  The other thirteen do not
+have a counter of this shape at a frontier.
+
+**That is still a statement about the probe**, and the record says so
+plainly: `valfam` had a wider search than this one along every axis except
+the fixed prefix, and it was wrong about six Gray rows.  What can be said is
+narrower and worth saying: the thirteen are not blocked by the near-head
+spacer alone.  Whatever they are, fixing the outer parameter will not reach
+them, and one more human read is worth more than another axis on the probe.
 
 ## 5. What this is NOT
 
