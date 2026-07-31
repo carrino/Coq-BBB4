@@ -242,10 +242,22 @@ Definition cls_rhs (c : Class) (n : nat) (rest : list nat) : list nat :=
   cs_u' c ++ repeat (cs_t' c) n ++ cs_w' c ++ rest.
 
 (** A class law holds of [F] when [fam_next] agrees with it on every
-    instance of the class whose digits are in range. *)
-Definition ClassSucc (F : Fam) (c : Class) : Prop :=
+    instance of the class whose digits are in range AND which satisfies the
+    family's own membership predicate [P].
+
+    [P] is the one thing this interface needed that the [(Binary, 1)] case
+    does not use ([fun _ => True] below).  It is there because a family
+    whose step is not 1 has only PART of each width as a member (4g), and
+    the discriminator can be GLOBAL rather than a local pattern: for
+    [(Gray, 2)] it is the parity of the whole digit string -- which is the
+    value's low bit, and [+2] preserves it.  Measured, in LADDER_PLAN 4i:
+    with the parities mixed the classes contradict each other, and split by
+    parity four classes OF THIS RECORD's SHAPE cover every interior string
+    of every width.  So [(Gray, 2)] is a second instance of [ClassSucc] and
+    not a rewrite of it -- but only once [P] is here. *)
+Definition ClassSucc (F : Fam) (P : list nat -> Prop) (c : Class) : Prop :=
   forall n rest ph,
-    Forall (fun x => x < fm_b F) rest ->
+    Forall (fun x => x < fm_b F) rest -> P (cls_lhs c n rest) ->
     fam_next F (cls_lhs c n rest) ph = Some (cls_rhs c n rest).
 
 (** *** Positional arithmetic, and the [(Binary, 1)] instance *)
@@ -308,9 +320,9 @@ Definition pos1_class (F : Fam) (d : nat) : Class :=
 Lemma pos1_class_succ : forall F d,
   1 < fm_b F -> fm_code F = Binary -> fm_step F = 1 ->
   d < fm_b F - 1 ->
-  ClassSucc F (pos1_class F d).
+  ClassSucc F (fun _ => True) (pos1_class F d).
 Proof.
-  intros F d Hb Hcode Hstep Hd n rest ph Hrest.
+  intros F d Hb Hcode Hstep Hd n rest ph Hrest _.
   unfold ClassSucc, cls_lhs, cls_rhs, pos1_class; simpl.
   pose proof (pow_pos (fm_b F) n ltac:(lia)) as Hpn.
   assert (Hv : fam_value F (repeat (fm_b F - 1) n ++ d :: rest)
@@ -720,7 +732,7 @@ Proof.
     split; [|split].
     + assert (Hns : fam_next F (repeat (fm_b F - 1) n ++ d :: rest) 0
                     = Some (repeat 0 n ++ S d :: rest))
-        by exact (pos1_class_succ F d Hb Hcode Hstep Hdlt n rest 0 Hrest).
+        by exact (pos1_class_succ F d Hb Hcode Hstep Hdlt n rest 0 Hrest I).
       unfold fam_succ. rewrite Hns.
       destruct (fam_is_top F (repeat (fm_b F - 1) n ++ d :: rest));
         [rewrite Hfto|]; reflexivity.

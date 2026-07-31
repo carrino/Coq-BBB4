@@ -986,6 +986,158 @@ Fibonacci-rank constructor land** -- the reason 4d gave for deferring Stage B
 is now the reason to finish it, and the evidence above is that a new
 constructor is a new `Fam` field and 49 arms that still compile.
 
+## 4i. The gate, answered: the class law's shape, and the first boarded machine
+
+_Kernel at `b8797cf`, the row at `fa6f759`.  Coq 8.18.0.  Every number below
+is a file that compiles or a count a script printed._
+
+### The one thing that moved a number
+
+`1RB1LC_0LC0RB_1LA1LD_1RC0LD` is boarded end to end:
+`nqh_1RB1LC_0LC0RB_1LA1LD_1RC0LD : NeverQuasiHaltsSt tm`, axiom footprint
+`functional_extensionality_dep` only.  `tools/closeout/audit.py` reports
+
+    settled by a board   5073 -> 5074
+    core undecided         62 -> 61
+
+`inventory.py` needed no change: it already scans `theories/Machines/**/*.v`
+for `Theorem _ : NeverQuasiHaltsSt _`, and a ladder board is one more file
+with one more such theorem.  The gate's second clause did not fire.
+
+**Re-certifying at HEAD was not optional.**  The row has **12 arms**, not the
+7 the session was handed and not the 8 the stored fixture claims.  4h said the
+stored cert was stale by two sections; it is stale by three now.
+
+### The gate: yes, with exactly one widening -- and it is not the one expected
+
+The question was whether the class-successor lemma can be stated so that
+`(gray, 2)` is a second INSTANCE rather than a rewrite.  It can, and the
+interface is
+
+    Record Class := mkCls { cs_u; cs_t; cs_w;  cs_u'; cs_t'; cs_w' }
+    ClassSucc F P c :=
+      forall n rest ph, <digits in range> -> P (cls_lhs c n rest) ->
+        fam_next F (cs_u  ++ cs_t ^n  ++ cs_w  ++ rest) ph
+        = Some     (cs_u' ++ cs_t'^n  ++ cs_w' ++ rest)
+
+**The record's shape did not have to widen at all**, and that is the result
+worth having: the class shape IS the engine's `sside` shape --
+`s_pre ++ rep u (a*j+b) ++ s_post ++ X` -- which is why an arm proved for an
+arbitrary tail covers a whole class at once, and why the bridge between
+"patterns on cells" and "a successor on the value" is one rewrite
+(`flat_map_repeat`) rather than a translation layer.
+
+Measured on `1RB0RB_0LC0LD_1LC1LD_1RA0RA`'s family (`Gray`, step 2, base 2),
+by transcribing `LadderFam.v`'s `fam_next` into Python and enumerating:
+
+| | classes needed | interior strings covered, widths 3..12 |
+|---|---:|---:|
+| parities mixed | -- | the classes CONTRADICT each other |
+| parity fixed | **4** | **4082 / 4082** |
+
+and the four are, verbatim, instances of the record above:
+
+    [0;0] ++ 0^n ++ []      ->  [1;1] ++ 0^n ++ []
+    [0;1] ++ 1^n ++ []      ->  [1;0] ++ 1^n ++ []
+    [1]   ++ 0^n ++ [1;0]   ->  [0]   ++ 0^n ++ [1;1]
+    [1]   ++ 0^n ++ [1;1]   ->  [0]   ++ 0^n ++ [1;0]
+
+against `(binary, 1)`'s, which are the same record with `cs_u` empty:
+
+    []    ++ (b-1)^n ++ [d] ->  []    ++ 0^n ++ [d+1]     for each d < b-1
+
+**What did have to widen is the PREMISE, and the reason is 4g's.**  A step
+other than 1 means only part of each width is a member, and for `(gray, 2)`
+the discriminator is the parity of the whole digit string -- which is the
+value's low bit, and `+2` preserves it.  That is GLOBAL: it is not a pattern
+on any bounded window, so it cannot be pushed into `cs_u`/`cs_w`.  Hence the
+predicate `P` in `ClassSucc`.  `(binary, 1)` instantiates it at
+`fun _ => True` and never mentions it again.
+
+So the honest statement of the trade 3 was making: **one lemma per (code,
+step) pair, plus one membership invariant per pair, and the invariant is the
+part that was not anticipated.**  It is still per parameter VALUE and not per
+machine -- the six rows 4g adds share one parity invariant between them.
+
+### What the closure is, in three pieces
+
+* **Liveness.**  `glue_neverqhN` is `LapGlue.glue_neverqh` with the same
+  proof and a weaker `Hvis`: not "every state from every anchor" but "for
+  every `N`, some anchor past `N` reaches `q`".  Indexed by `nat` rather than
+  `positive`, because the premise has to compare an anchor index with `N`.
+  `tops_cofinal` discharges it from the FILL arm exactly as 4h(b) predicted:
+  within a width the value rises by `fm_step` and is bounded by `b^k - 1`
+  (`fam_next_wf`), so the measure `b^k - value` strictly decreases, every
+  width tops out, and the fill widens.  The certificate's
+  `arms_infinitely_often` MEASUREMENT is now a theorem.
+
+  One correction to 4h(b)'s reading, and it is about the fixture, not the
+  claim: on THIS row the fill arm's chain has no PREFIX landing in state D --
+  `D` is inside a `SWinL 13` macro step.  It costs nothing, because
+  `vis_of_run` wants a chain from the anchor and not a prefix of the arm's:
+  `[SWin 2; SCycL 2 0; SWin 1; SWinL 1]` reaches `D` from the same
+  configuration.  No interior arm was needed, which is what 4h(b) actually
+  claimed.
+
+* **Coverage.**  Generic half: `digs_decomp` (every string is `t^n ++ d :: rest`
+  with `d <> t`, or `t^k`) and `fam_cells_class`.  Non-generic half:
+  `ClassSucc` and `pos1_class_succ`.
+
+* **Selection.**  4f settled it so the kernel "never trusts the order it is
+  handed and never has to decide membership".  Under a PROVED case split
+  there is no order left to trust: the two classes are disjoint because
+  `digs_decomp` says so, not because an ordering check said so.  `sel` is
+  therefore a lookup in the arm list as data, and `covers`/`order_ok` are not
+  built.  **That is a real reduction in the trust surface, not a shortcut
+  taken** -- but it means the subsumption linearization is load-bearing only
+  for the SEARCH, and 4f's argument for it as a kernel obligation does not
+  survive contact with a proved split.
+
+### The certificate's arms are not the closure's arms
+
+This is the finding that cost the most and generalises the furthest.  The
+prover's 12 arms are multi-variable patterns; `sside` carries ONE symbolic
+run, so the emitter boards each with every run length but one pinned to its
+lower bound.  Those 12 arms are sound and they cover the 1022 strings the
+prover enumerated -- **and nothing beyond them.**  A kernel that consumed
+them would still be enumerating, one width at a time.
+
+So the emitter now BUILDS the class arms from the `Fam` record instead:
+
+| | arms | strings covered |
+|---|---:|---|
+| the certificate's, as boarded | 12 | 1022, to `kmax = 9` |
+| the closure's, built from `Fam` | **2** | every string of every width |
+
+one interior arm per digit below the top and one fill arm.  For base 2 that
+is `1 + 1`.  Both derive with the existing chain search and both land on the
+exact configuration, so `check_arm` validates them unchanged.
+
+4h's second normalisation still earns its keep and is now checked rather than
+recalled: the fill arm's guaranteed block copy MUST be materialised into
+`s_pre`.  The canonical `rep u (1*j+1)` form finds **no chain at all**; the
+`u ++ rep u j` form finds one in six steps.
+
+`RU` is still unexercised -- both class arms derive with base steps only, so
+the ladder remains one level deep in practice.  4h(c) is unchanged.
+
+### What this says about the next session
+
+The order 4h implies still holds, and the two next items are now cheaper than
+4h estimated because the interface exists and is measured:
+
+* `(gray, 2)`: four `ClassSucc` instances and one parity invariant, the four
+  classes already known (above).  The kernel does not change.
+* the remaining binary/step-1 never-QH rows: the emitter builds their class
+  arms already; what is not yet known is how many of the live core's 16
+  candidates have a fill law that is a pure widening, which is the one
+  condition `emit_ladder.py` refuses on.
+
+The quasi-halt-witness closer is still untouched, and it is the bigger prize
+on the live core: 11 of the 62 are binary/step-1 rows whose liveness reads
+`BCD` rather than `ABCD`, and `board_neverqh` proves the wrong theorem for
+them by construction.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
