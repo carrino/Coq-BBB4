@@ -220,14 +220,17 @@ or stride reaches a quadratic).
    `Counters/TernCounter.v` one notch out — and then the ordinary
    `LapDecider` + `LapGlueIx` route.  Eleven of the twelve carry no shadow;
    `1RB0RB_0LC1RD_1LC1LA_0LA1RB` carries one, so the block is 13 of the 47.
-2. **The twelve 0RB shadows on ten core rows — but NOT yet.**  A shadow
-   satisfies the `skipped` disjunct only while its core row is deferred, so
-   it needs a board of its own exactly when its core row boards, and not
-   before.  All ten carriers are still undecided.  The route is proved and
-   generated when the time comes (`Census/Reroot.v`, `Census/RerootSwap.v`,
-   `tools/closeout/gen_shadow.py`, and the two `SH_*.v` boards wave 4o's
-   promoted rows got the same day); five of the twelve sit on three of the
-   four quadratic rows, so those five are not coming back either.
+2. **The twelve 0RB shadows on ten core rows — but there is nothing to do.**
+   A shadow satisfies the `skipped` disjunct only while its core row is
+   deferred, so it needs a board of its own exactly when its core row boards,
+   and not before.  All ten carriers are still undecided.  And when one does
+   board, **its shadows now fall with it automatically**: the whole argument
+   is one lemma (`Census/ShadowBoard.shadow_nqh` — the prefix is all blanks,
+   what is left is the boarded row relabelled, three `vm_compute`s), and
+   `make closeout` runs `gen_shadow.py --harvest` to emit it.  So these twelve
+   rows are not a task, they are 12 of the 47 that come free with whatever
+   settles their partners.  Five of them sit on three of the four quadratic
+   rows, so those five are not coming back either.
 3. **The two live routes**, both with named next steps: ReachSt's mirror
    transport lemma and its measured-unreachable rows
    (`docs/REACHST_TIER.md` §6), and the ladder's refused arms — ELEVEN

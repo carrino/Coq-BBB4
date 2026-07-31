@@ -124,6 +124,28 @@ def main():
     print('  core undecided (listed)   %5d' % len(rset))
     print('  0RB shadows of the core   %5d  (resolve with their core rows)'
           % len(sset))
+
+    # A row whose partner has BOARDED is no longer a shadow -- it is an
+    # ordinary undecided row that can be boarded mechanically.  `make closeout`
+    # harvests these automatically; if any survive to here, say so, because
+    # they are the cheapest rows on the list by a wide margin.
+    fmap = {}
+    fp = os.path.join(ROOT, 'tools/closeout/frozen_map.tsv')
+    if os.path.exists(fp):
+        with open(fp) as f:
+            next(f, None)
+            for line in f:
+                c = line.rstrip('\n').split('\t')
+                if len(c) >= 2:
+                    fmap[c[0]] = c[1]
+    _c, _s, freed = shadowlib.classify(sorted(rset | sset), fmap)
+    if freed:
+        print('  re-root shadows of a BOARDED row: %d -- boardable NOW with'
+              % len(freed))
+        print('    python3 tools/closeout/gen_shadow.py --harvest')
+        for f in freed:
+            print('    %s  (partner %s, %s)'
+                  % (f['spec'], f['partner'], f['partner_kind']))
     print('  tables partition the frozen list exactly; no invented or duplicate rows;')
     print('  every shadow re-root independently re-verified in the core orbit')
 

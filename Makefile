@@ -171,7 +171,16 @@ census-resume: all
 # Run it after every wave of new boards; D_remaining shrinks by exactly the
 # machines boarded.  Requires the boards' own .vo to exist already (they are
 # built by `make all`).
+#
+# The gen_shadow --harvest pass between the two inventory runs is what makes a
+# 0RB SHADOW fall in the same regen as its core row.  A shadow rides the
+# [skipped] disjunct only while its partner is deferred, so boarding a core row
+# turns its shadows into ordinary undecided rows -- which need a board each,
+# but no new argument (Census/ShadowBoard.v).  --harvest emits them; the second
+# inventory picks them up.  It is a no-op when nothing was freed.
 closeout:
+	python3 tools/closeout/inventory.py
+	python3 tools/closeout/gen_shadow.py --harvest
 	python3 tools/closeout/inventory.py
 	python3 tools/closeout/gen_stages.py
 	python3 tools/closeout/audit.py
