@@ -745,90 +745,151 @@ Proof. intros F; unfold tailL; destruct (fm_left F); reflexivity. Qed.
 Lemma tailR_nil : forall F, tailR F [] = [].
 Proof. intros F; unfold tailR; destruct (fm_left F); reflexivity. Qed.
 
+(** A class instance is never the top of its width: its successor has the
+    same width, which is what lets the interior arm leave the PHASE alone.
+    Extracted from [pos1_class_succ]'s own arithmetic, where it was a local
+    assertion -- the phase cycle needs it as a lemma, because with more than
+    one phase "not the top" and "the phase does not move" are the same
+    fact. *)
+Lemma pos1_class_not_top : forall F d n rest,
+  1 < fm_b F -> fm_code F = Binary -> fm_step F = 1 ->
+  d < fm_b F - 1 -> Forall (fun x => x < fm_b F) rest ->
+  fam_is_top F (repeat (fm_b F - 1) n ++ d :: rest) = false.
+Proof.
+  intros F d n rest Hb Hcode Hstep Hd Hrest.
+  pose proof (pow_pos (fm_b F) n ltac:(lia)) as Hpn.
+  assert (Hv : fam_value F (repeat (fm_b F - 1) n ++ d :: rest)
+               = Nat.pow (fm_b F) n - 1
+                 + Nat.pow (fm_b F) n * (d + fm_b F * val_pos (fm_b F) rest)).
+  { unfold fam_value. rewrite Hcode. apply val_pos_class; lia. }
+  assert (Hv' : fam_value F (repeat 0 n ++ S d :: rest)
+                = Nat.pow (fm_b F) n * (S d + fm_b F * val_pos (fm_b F) rest)).
+  { unfold fam_value. rewrite Hcode. apply val_pos_repeat0. }
+  assert (Hbnd : Forall (fun x => x < fm_b F) (repeat 0 n ++ S d :: rest)).
+  { apply Forall_app. split.
+    - apply Forall_forall. intros x Hx. apply repeat_spec in Hx. lia.
+    - constructor; [lia | exact Hrest]. }
+  assert (Hlen : length (repeat 0 n ++ S d :: rest)
+                 = length (repeat (fm_b F - 1) n ++ d :: rest)).
+  { rewrite !app_length, !repeat_length. reflexivity. }
+  assert (Hlt : fam_value F (repeat 0 n ++ S d :: rest)
+                < Nat.pow (fm_b F) (length (repeat (fm_b F - 1) n ++ d :: rest))).
+  { rewrite <- Hlen. unfold fam_value. rewrite Hcode.
+    apply val_pos_lt; [lia | exact Hbnd]. }
+  unfold fam_is_top. apply Nat.ltb_ge. rewrite Hstep. nia.
+Qed.
+
 (** ** 5. The widths are cofinal, hence the fill arm fires forever
 
     4h(b): "the value strictly increases by [fm_step] within a width and is
     bounded by [b^k - 1], so the top of every width is reached and the fill
     fires there, and the width grows without bound."  That is
     [top_reached] and [tops_cofinal], and it is what turns the
-    certificate's MEASUREMENT [arms_infinitely_often] into a theorem. *)
+    certificate's MEASUREMENT [arms_infinitely_often] into a theorem.
+
+    All of it is stated over a family of [NPH] PHASES.  4i said the phase
+    cycle is "a change to this predicate and to nothing above it", and that
+    is exactly what it is: [Inv] carries [ph < NPH] instead of [ph = 0], the
+    fill law is read at the state's own phase, and the interior step leaves
+    the phase where it found it.  Nothing about the value, the width or the
+    measure changes, because the phase does not enter any of them.  A
+    one-phase family is [NPH = 1] and every phase-indexed object collapses
+    ([board_neverqh] below is that instance, with the interface it had
+    before this section was generalised). *)
 
 Definition ct_ds (s : CtrSt) : list nat := let '(ds, _, _) := s in ds.
+Definition ct_ph (s : CtrSt) : nat := let '(_, _, ph) := s in ph.
+
+(** Where the phase is after [k] fills.  The interior steps do not move it,
+    so this IS the phase cycle: [f_to] iterated. *)
+Fixpoint phto (F : Fam) (k ph : nat) : nat :=
+  match k with
+  | 0 => ph
+  | S k' => phto F k' (f_to (fam_fill F ph))
+  end.
+
+(** What a reachable counter state carries.  The phase is bounded rather
+    than pinned: a one-phase family's fill lands back in phase 0, a
+    multi-phase counter laps once per terminator and comes back. *)
+Definition Inv (F : Fam) (NPH : nat) (s : CtrSt) : Prop :=
+  let '(ds, _, ph) := s in
+  Forall (fun d => d < fm_b F) ds /\ 0 < length ds /\ ph < NPH.
+
+(** The fill at the top of width [k], in phase [ph]. *)
+Definition filled (F : Fam) (ph k : nat) : list nat :=
+  f_pre (fam_fill F ph)
+  ++ repeat (f_mid (fam_fill F ph))
+       (k + f_s (fam_fill F ph)
+        - (length (f_pre (fam_fill F ph)) + length (f_suf (fam_fill F ph))))
+  ++ f_suf (fam_fill F ph).
 
 Section Iter.
 
 Variable F : Fam.
+Variable NPH : nat.
 Hypothesis Hb    : 1 < fm_b F.
 Hypothesis Hcode : fm_code F = Binary.
 Hypothesis Hstep : fm_step F = 1.
-Hypothesis Hfpre : Forall (fun d => d < fm_b F) (f_pre (fam_fill F 0)).
-Hypothesis Hfsuf : Forall (fun d => d < fm_b F) (f_suf (fam_fill F 0)).
-Hypothesis Hfmid : f_mid (fam_fill F 0) < fm_b F.
-Hypothesis Hfs   : length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0))
-                   <= 1 + f_s (fam_fill F 0).
-Hypothesis Hfto  : f_to (fam_fill F 0) = 0.
-
-(** What a reachable counter state carries.  The phase is pinned because a
-    one-phase family's fill lands back in phase 0; a multi-phase family
-    carries the phase cycle here instead, which is a change to this
-    predicate and not to anything above it. *)
-Definition Inv (s : CtrSt) : Prop :=
-  let '(ds, _, ph) := s in
-  Forall (fun d => d < fm_b F) ds /\ 0 < length ds /\ ph = 0.
+Hypothesis Hfpre : forall ph, ph < NPH ->
+  Forall (fun d => d < fm_b F) (f_pre (fam_fill F ph)).
+Hypothesis Hfsuf : forall ph, ph < NPH ->
+  Forall (fun d => d < fm_b F) (f_suf (fam_fill F ph)).
+Hypothesis Hfmid : forall ph, ph < NPH -> f_mid (fam_fill F ph) < fm_b F.
+Hypothesis Hfs   : forall ph, ph < NPH ->
+  length (f_pre (fam_fill F ph)) + length (f_suf (fam_fill F ph))
+  <= 1 + f_s (fam_fill F ph).
+(** The phase CYCLE: every phase's fill lands in a phase of the same family.
+    At [NPH = 1] this is [f_to (fam_fill F 0) = 0], which is what it was. *)
+Hypothesis Hfto  : forall ph, ph < NPH -> f_to (fam_fill F ph) < NPH.
 
 Lemma inv_value_lt : forall s,
-  Inv s -> fam_value F (ct_ds s) < Nat.pow (fm_b F) (length (ct_ds s)).
+  Inv F NPH s -> fam_value F (ct_ds s) < Nat.pow (fm_b F) (length (ct_ds s)).
 Proof.
   intros [[ds p] ph] (Hbnd & _ & _); simpl.
   unfold fam_value. rewrite Hcode. apply val_pos_lt; [lia | exact Hbnd].
 Qed.
 
-(** The fill at the top, spelled out for a family whose fill law is a pure
-    widening (no target prefix or suffix). *)
-Definition filled (k : nat) : list nat :=
-  f_pre (fam_fill F 0)
-  ++ repeat (f_mid (fam_fill F 0))
-       (k + f_s (fam_fill F 0)
-        - (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0))))
-  ++ f_suf (fam_fill F 0).
-
-Lemma fill_at_top : forall ds,
+Lemma fill_at_top : forall ds ph, ph < NPH ->
   0 < length ds -> fam_is_top F ds = true ->
-  fam_next F ds 0 = Some (filled (length ds)).
+  fam_next F ds ph = Some (filled F ph (length ds)).
 Proof.
-  intros ds Hk Htop. unfold fam_next, filled. rewrite Htop.
-  unfold fill_apply.
-  destruct (Nat.leb_spec (length (f_pre (fam_fill F 0))
-                          + length (f_suf (fam_fill F 0)))
-              (length ds + f_s (fam_fill F 0))); [reflexivity | lia].
+  intros ds ph Hph Hk Htop. unfold fam_next, filled. rewrite Htop.
+  unfold fill_apply. pose proof (Hfs ph Hph).
+  destruct (Nat.leb_spec (length (f_pre (fam_fill F ph))
+                          + length (f_suf (fam_fill F ph)))
+              (length ds + f_s (fam_fill F ph))); [reflexivity | lia].
 Qed.
 
-Lemma filled_length : forall k, 0 < k ->
-  length (filled k) = k + f_s (fam_fill F 0).
+Lemma filled_length : forall ph k, ph < NPH -> 0 < k ->
+  length (filled F ph k) = k + f_s (fam_fill F ph).
 Proof.
-  intros k Hk. unfold filled.
+  intros ph k Hph Hk. unfold filled. pose proof (Hfs ph Hph).
   rewrite !app_length, repeat_length. lia.
 Qed.
 
-Lemma filled_bnd : forall k, Forall (fun d => d < fm_b F) (filled k).
+Lemma filled_bnd : forall ph k, ph < NPH ->
+  Forall (fun d => d < fm_b F) (filled F ph k).
 Proof.
-  intros k. unfold filled. apply Forall_app. split; [exact Hfpre|].
-  apply Forall_app. split; [|exact Hfsuf].
-  apply Forall_forall. intros x Hx. apply repeat_spec in Hx. lia.
+  intros ph k Hph. unfold filled. apply Forall_app.
+  split; [apply (Hfpre ph Hph)|].
+  apply Forall_app. split; [|apply (Hfsuf ph Hph)].
+  apply Forall_forall. intros x Hx. apply repeat_spec in Hx.
+  pose proof (Hfmid ph Hph). lia.
 Qed.
 
 Lemma fam_succ_total : forall s,
-  Inv s -> exists s', fam_succ F s = Some s' /\ Inv s'.
+  Inv F NPH s -> exists s', fam_succ F s = Some s' /\ Inv F NPH s'.
 Proof.
-  intros [[ds p] ph] Hi. destruct Hi as (Hbnd & Hlen & ->).
+  intros [[ds p] ph] Hi. destruct Hi as (Hbnd & Hlen & Hph).
   destruct (fam_is_top F ds) eqn:Htop.
-  - (* the fill *)
+  - (* the fill: the phase moves to the one the law lands in *)
     eexists. unfold fam_succ.
-    rewrite (fill_at_top ds Hlen Htop), Htop, Hfto.
+    rewrite (fill_at_top ds ph Hph Hlen Htop), Htop.
     split; [reflexivity|]. simpl. repeat split.
-    + apply filled_bnd.
-    + rewrite filled_length by exact Hlen. lia.
-  - (* an interior step *)
+    + apply filled_bnd; exact Hph.
+    + rewrite filled_length by assumption. pose proof (Hfs ph Hph). lia.
+    + apply Hfto; exact Hph.
+  - (* an interior step: the phase stays *)
     assert (Hlt : fam_value F ds + fm_step F < Nat.pow (fm_b F) (length ds)).
     { unfold fam_is_top in Htop. apply Nat.ltb_ge in Htop.
       pose proof (pow_pos (fm_b F) (length ds) ltac:(lia)). lia. }
@@ -839,10 +900,11 @@ Proof.
     eexists. split; [reflexivity|]. simpl. repeat split.
     + apply pos_of_lt; lia.
     + rewrite pos_of_length. exact Hlen.
+    + exact Hph.
 Qed.
 
 Lemma fam_iter_total : forall N s,
-  Inv s -> exists s', fam_iter F s N = Some s' /\ Inv s'.
+  Inv F NPH s -> exists s', fam_iter F s N = Some s' /\ Inv F NPH s'.
 Proof.
   induction N as [|N IH]; intros s Hi; [exists s; split; [reflexivity|exact Hi]|].
   destruct (fam_succ_total s Hi) as (s1 & H1 & Hi1).
@@ -853,32 +915,36 @@ Qed.
 (** Within a width the measure [b^k - value] strictly decreases, so the top
     of the width is reached in finitely many anchor visits. *)
 Lemma top_reached_aux : forall m s,
-  Inv s ->
+  Inv F NPH s ->
   Nat.pow (fm_b F) (length (ct_ds s)) - fam_value F (ct_ds s) <= m ->
-  exists n s', fam_iter F s n = Some s' /\ fam_is_top F (ct_ds s') = true.
+  exists n s', fam_iter F s n = Some s' /\ fam_is_top F (ct_ds s') = true
+               /\ Inv F NPH s' /\ ct_ph s' = ct_ph s.
 Proof.
   induction m as [|m IH]; intros s Hi Hm.
   - exfalso. pose proof (inv_value_lt s Hi). lia.
   - destruct (fam_is_top F (ct_ds s)) eqn:Htop.
-    + exists 0, s. split; [reflexivity | exact Htop].
+    + exists 0, s.
+      split; [reflexivity | split; [exact Htop | split; [exact Hi|reflexivity]]].
     + destruct s as [[ds p] ph]. simpl in Htop.
-      destruct Hi as (Hbnd & Hlen & ->).
-      assert (Hi : Inv (ds, p, 0)) by (simpl; repeat split; assumption).
+      destruct Hi as (Hbnd & Hlen & Hph).
+      assert (Hi : Inv F NPH (ds, p, ph)) by (simpl; repeat split; assumption).
       destruct (fam_succ_total _ Hi) as (s1 & H1 & Hi1).
-      (* the interior step: value up by [fm_step], width unchanged *)
+      (* the interior step: value up by [fm_step], width and PHASE unchanged *)
       unfold fam_succ in H1. rewrite Htop in H1.
-      destruct (fam_next F ds 0) as [nd|] eqn:Hnd; [|discriminate].
+      destruct (fam_next F ds ph) as [nd|] eqn:Hnd; [|discriminate].
       injection H1 as <-.
-      destruct (fam_next_interior F ds 0 nd Hb Htop Hnd) as (Hval & Hlen').
-      destruct (IH (nd, p, 0) Hi1) as (n & s' & Hit & Htop').
+      destruct (fam_next_interior F ds ph nd Hb Htop Hnd) as (Hval & Hlen').
+      destruct (IH (nd, p, ph) Hi1) as (n & s' & Hit & Htop' & Hi' & Hph').
       { simpl. simpl in Hm. rewrite Hval, Hlen'. lia. }
-      exists (S n), s'. split; [|exact Htop'].
+      exists (S n), s'.
+      split; [|split; [exact Htop' | split; [exact Hi' | exact Hph']]].
       simpl. unfold fam_succ. rewrite Htop, Hnd. exact Hit.
 Qed.
 
 Lemma top_reached : forall s,
-  Inv s ->
-  exists n s', fam_iter F s n = Some s' /\ fam_is_top F (ct_ds s') = true.
+  Inv F NPH s ->
+  exists n s', fam_iter F s n = Some s' /\ fam_is_top F (ct_ds s') = true
+               /\ Inv F NPH s' /\ ct_ph s' = ct_ph s.
 Proof.
   intros s Hi.
   apply (top_reached_aux
@@ -886,22 +952,82 @@ Proof.
   lia.
 Qed.
 
+(** One fill moves the phase one step along the cycle, and the top of the
+    NEXT phase is reached from there.  Iterated: a top in whatever phase the
+    cycle is in [k] fills from here.
+
+    This is what a multi-phase counter needs that a one-phase one does not.
+    A fill arm's anchor does not have to reach every state -- what has to
+    hold is that for each state SOME anchor past every bound reaches it, and
+    when the short phase of the cycle cannot (measured: a fill that laps into
+    the next terminator without widening is six machine steps long and passes
+    through two states), the tops of the OTHER phase carry the whole visit
+    premise, because they are cofinal too. *)
+Lemma top_after : forall k s, Inv F NPH s ->
+  exists n s', fam_iter F s n = Some s' /\ fam_is_top F (ct_ds s') = true
+               /\ Inv F NPH s' /\ ct_ph s' = phto F k (ct_ph s).
+Proof.
+  induction k as [|k IH]; intros s Hi.
+  - destruct (top_reached s Hi) as (n & s' & Hit & Htop & Hi' & Hph).
+    exists n, s'.
+    split; [exact Hit | split; [exact Htop | split; [exact Hi' | exact Hph]]].
+  - destruct (top_reached s Hi) as (n & s1 & Hit & Htop & Hi1 & Hph).
+    destruct (fam_succ_total s1 Hi1) as (s2 & Hs2 & Hi2).
+    assert (Hph2 : ct_ph s2 = f_to (fam_fill F (ct_ph s1))).
+    { destruct s1 as [[ds1 p1] ph1]. simpl in Htop |- *.
+      unfold fam_succ in Hs2. rewrite Htop in Hs2.
+      destruct (fam_next F ds1 ph1) as [nd|]; [|discriminate].
+      injection Hs2 as <-. reflexivity. }
+    destruct (IH s2 Hi2) as (m & s' & Hit2 & Htop' & Hi' & Hph').
+    exists (n + (1 + m)), s'.
+    split; [| split; [exact Htop' | split; [exact Hi' |]]].
+    + rewrite fam_iter_add, Hit. simpl. rewrite Hs2. exact Hit2.
+    + rewrite Hph', Hph2, Hph. reflexivity.
+Qed.
+
 (** ...and since a fill widens, tops keep coming: for every bound there is
     a later anchor at the top of its width.  This is the premise
-    [glue_neverqhN] needs, and the reason it needs only the weak one. *)
+    [glue_neverqhN] needs, and the reason it needs only the weak one.
+
+    Note what this does NOT need: that the fill widens.  A multi-phase
+    counter's phase-0 fill can widen by nothing at all (it re-enters the
+    same width in the next phase, which is what a terminator cycle IS), and
+    the argument is unchanged -- what it needs is that a top RECURS, and
+    [top_reached] gives that from any state whatever the phase. *)
 Theorem tops_cofinal : forall s N,
-  Inv s ->
+  Inv F NPH s ->
   exists n s', N <= n /\ fam_iter F s n = Some s'
-               /\ fam_is_top F (ct_ds s') = true /\ Inv s'.
+               /\ fam_is_top F (ct_ds s') = true /\ Inv F NPH s'.
 Proof.
   intros s N Hi.
   destruct (fam_iter_total N s Hi) as (sN & HN & HiN).
-  destruct (top_reached sN HiN) as (m & s' & Hm & Htop).
-  assert (Hi' : Inv s').
-  { destruct (fam_iter_total m sN HiN) as (s'' & H'' & Hi'').
-    rewrite Hm in H''. injection H'' as <-. exact Hi''. }
-  exists (N + m), s'. repeat split; [lia | | exact Htop | exact Hi'].
+  destruct (top_reached sN HiN) as (m & s' & Hm & Htop & Hi' & _).
+  exists (N + m), s'.
+  split; [lia | split; [| split; [exact Htop | exact Hi']]].
   rewrite fam_iter_add, HN. exact Hm.
+Qed.
+
+(** ...and cofinal IN A CHOSEN PHASE, provided the cycle reaches it from
+    every phase.  [pv] is a phase whose fill anchors witness every recurring
+    state; the hypothesis is that the cycle gets there, which for a concrete
+    family is a case split over [NPH] phases and a [vm_compute]. *)
+Theorem tops_cofinal_at : forall pv s N,
+  (forall ph, ph < NPH -> exists k, phto F k ph = pv) ->
+  Inv F NPH s ->
+  exists n s', N <= n /\ fam_iter F s n = Some s'
+               /\ fam_is_top F (ct_ds s') = true /\ Inv F NPH s'
+               /\ ct_ph s' = pv.
+Proof.
+  intros pv s N Hcyc Hi.
+  destruct (fam_iter_total N s Hi) as (sN & HN & HiN).
+  assert (HphN : ct_ph sN < NPH)
+    by (destruct sN as [[? ?] ?]; destruct HiN as (_ & _ & H); exact H).
+  destruct (Hcyc (ct_ph sN) HphN) as (k & Hk).
+  destruct (top_after k sN HiN) as (m & s' & Hm & Htop & Hi' & Hph).
+  exists (N + m), s'.
+  split; [lia | split; [| split; [exact Htop | split; [exact Hi' |]]]].
+  - rewrite fam_iter_add, HN. exact Hm.
+  - rewrite Hph. exact Hk.
 Qed.
 
 End Iter.
@@ -948,29 +1074,43 @@ Qed.
     [digs_decomp], and the emitted certificate's dozen arms are
     specialisations of the two at pinned run lengths.  Each class is served
     by one arm per ARM INDEX (section 2b), which is where 4k's two knobs
-    live: [N0i]/[sti] for the interior, [N0f]/[stf] for the fill. *)
+    live: [N0i]/[sti] for the interior, [N0f]/[stf] for the fill.
 
-Section Board.
+    The section is indexed by the PHASE as well as the arm index, because a
+    counter with more than one terminator laps through them: the fill arm
+    sees the terminator of its own phase and lands on the terminator of the
+    phase the law names.  The INTERIOR arm is not phase-indexed and does not
+    need to be -- its terminator is inside the opaque tail [cls_tail], which
+    is the same reason an arm proved for an arbitrary tail covers a whole
+    class.  [board_neverqh] and [board_iqh] at the end of the file are this
+    section at [NPH = 1], with the interface they had before. *)
+
+Section BoardPh.
 
 Variable tm    : TM.
 Variable F     : Fam.
+Variable NPH   : nat.               (** how many phases the family laps through *)
 Variable Aint  : nat -> nat -> LRule.  (** the interior arm for digit [d] at
                                            arm index [r] *)
 Variable N0i sti : nat.             (** its threshold and its stride *)
-Variable Afill : nat -> LRule.      (** the arm that sees the counter's end,
-                                        at arm index [r] *)
+Variable Afill : nat -> nat -> LRule.  (** the arm that sees the counter's end,
+                                           at arm index [r] and PHASE [ph] *)
 Variable N0f stf : nat.             (** and ITS threshold and stride -- the
                                         same scheme, its own two knobs *)
-Variable fm1 fm2 : nat -> nat.      (** how the fill's guaranteed copies split,
-                                        per arm index *)
+Variable fm1 fm2 : nat -> nat -> nat.  (** how the fill's guaranteed copies
+                                           split, per arm index and phase *)
+Variable pv    : nat.               (** the phase whose fill anchors witness
+                                        every recurring state *)
 Variable vis   : nat -> St -> list lstep.  (** a chain to each state, from
-                                               each fill arm's anchor *)
+                                               each fill arm's anchor in
+                                               phase [pv] *)
 Variable ds0   : list nat.          (** the boot digit string *)
+Variable ph0   : nat.               (** and the phase it is read in *)
 Variable t0    : nat.               (** and how many steps reach it *)
 
 (** And, for a row that QUASIHALTS rather than never quasihalting (section 8
     below), the quiet state, its last visit, and the visit chains for the
-    other three.  [board_neverqh] does not use them, so it does not carry
+    other three.  [boardph_neverqh] does not use them, so it does not carry
     them: a never-quasihalting board supplies [vis] and a quasihalting one
     supplies [visq]. *)
 Variable qa   : St.
@@ -981,27 +1121,43 @@ Variable visq : nat -> St -> list lstep.
 Hypothesis Hb    : 1 < fm_b F.
 Hypothesis Hcode : fm_code F = Binary.
 Hypothesis Hstep : fm_step F = 1.
-Hypothesis Hfpre : Forall (fun d => d < fm_b F) (f_pre (fam_fill F 0)).
-Hypothesis Hfsuf : Forall (fun d => d < fm_b F) (f_suf (fam_fill F 0)).
-Hypothesis Hfmid : f_mid (fam_fill F 0) < fm_b F.
-Hypothesis Hfs   : length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0))
-                   <= 1 + f_s (fam_fill F 0).
-Hypothesis Hfto  : f_to (fam_fill F 0) = 0.
+Hypothesis Hfpre : forall ph, ph < NPH ->
+  Forall (fun d => d < fm_b F) (f_pre (fam_fill F ph)).
+Hypothesis Hfsuf : forall ph, ph < NPH ->
+  Forall (fun d => d < fm_b F) (f_suf (fam_fill F ph)).
+Hypothesis Hfmid : forall ph, ph < NPH -> f_mid (fam_fill F ph) < fm_b F.
+Hypothesis Hfs   : forall ph, ph < NPH ->
+  length (f_pre (fam_fill F ph)) + length (f_suf (fam_fill F ph))
+  <= 1 + f_s (fam_fill F ph).
+Hypothesis Hfto  : forall ph, ph < NPH -> f_to (fam_fill F ph) < NPH.
+
+(** The visit phase, and that the cycle reaches it from every phase.  A fill
+    arm's anchor does NOT have to witness every recurring state: measured
+    (LADDER_PLAN 4n), the phase of a two-phase counter whose fill laps into
+    the next terminator without widening is six machine steps long and its
+    anchor reaches two of the four states, while the other phase's reaches
+    all four.  What the liveness needs is that the anchors which DO witness a
+    state keep coming, and [tops_cofinal_at] says the tops of one phase are
+    cofinal exactly when the cycle returns to it. *)
+Hypothesis Hpv   : pv < NPH.
+Hypothesis Hcyc  : forall ph, ph < NPH -> exists k, phto F k ph = pv.
 
 (** How many of the fill target's guaranteed digit copies sit before the
     symbolic run and how many after.  The emitter picks the split the chain
     search normalises to; the kernel only asks that they add up -- and what
-    they add up to now depends on the arm, because an arm at offset [r] has
-    [r] copies of the run on its left-hand side rather than one. *)
-Hypothesis Hfm12 : forall r, 0 < r -> r < N0f + stf ->
-  fm1 r + fm2 r
-  + (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0)))
-  = r + f_s (fam_fill F 0).
+    they add up to depends on the arm AND the phase, because an arm at
+    offset [r] has [r] copies of the run on its left-hand side and each
+    phase has its own fill law. *)
+Hypothesis Hfm12 : forall r ph, 0 < r -> r < N0f + stf -> ph < NPH ->
+  fm1 r ph + fm2 r ph
+  + (length (f_pre (fam_fill F ph)) + length (f_suf (fam_fill F ph)))
+  = r + f_s (fam_fill F ph).
 
 (** *** The boot *)
 Hypothesis Hbnd0 : Forall (fun d => d < fm_b F) ds0.
 Hypothesis Hlen0 : 0 < length ds0.
-Hypothesis Hboot : csteps tm t0 CTape.c0 = Some (fam_cfg F (ds0, 0, 0)).
+Hypothesis Hph0  : ph0 < NPH.
+Hypothesis Hboot : csteps tm t0 CTape.c0 = Some (fam_cfg F (ds0, 0, ph0)).
 
 (** *** The interior arms, one per digit below the top and per arm index *)
 Hypothesis Hsti : 0 < sti.
@@ -1015,27 +1171,30 @@ Hypothesis HAiR : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
 Hypothesis HAiC : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
   0 < lr_cb (Aint d r).
 
-(** *** The fill arms, at both tails known empty.  [0 < N0f] is what keeps
-    [r = 0] out of the index range: no width is [0], so no fill arm is. *)
+(** *** The fill arms, at both tails known empty, one per index and phase.
+    [0 < N0f] is what keeps [r = 0] out of the index range: no width is [0],
+    so no fill arm is. *)
 Hypothesis Hstf : 0 < stf.
 Hypothesis HN0f : 0 < N0f.
-Hypothesis HAfS : forall r, 0 < r -> r < N0f + stf ->
-  RuleSound tm true true (Afill r).
-Hypothesis HAfL : forall r, 0 < r -> r < N0f + stf ->
-  lr_lhs (Afill r)
-    = cls_conf F (run_side F (fm_b F - 1) r (astride N0f stf r) 0 0 [] []).
-Hypothesis HAfR : forall r, 0 < r -> r < N0f + stf ->
-  lr_rhs (Afill r)
-    = cls_conf F (run_side F (f_mid (fam_fill F 0)) (fm1 r)
-                    (astride N0f stf r) (fm2 r) 0
-                    (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
-Hypothesis HAfC : forall r, 0 < r -> r < N0f + stf -> 0 < lr_cb (Afill r).
+Hypothesis HAfS : forall r ph, 0 < r -> r < N0f + stf -> ph < NPH ->
+  RuleSound tm true true (Afill r ph).
+Hypothesis HAfL : forall r ph, 0 < r -> r < N0f + stf -> ph < NPH ->
+  lr_lhs (Afill r ph)
+    = cls_conf F (run_side F (fm_b F - 1) r (astride N0f stf r) 0 ph [] []).
+Hypothesis HAfR : forall r ph, 0 < r -> r < N0f + stf -> ph < NPH ->
+  lr_rhs (Afill r ph)
+    = cls_conf F (run_side F (f_mid (fam_fill F ph)) (fm1 r ph)
+                    (astride N0f stf r) (fm2 r ph) (f_to (fam_fill F ph))
+                    (f_pre (fam_fill F ph)) (f_suf (fam_fill F ph))).
+Hypothesis HAfC : forall r ph, 0 < r -> r < N0f + stf -> ph < NPH ->
+  0 < lr_cb (Afill r ph).
 
-(** *** Liveness: every state is reached from every fill arm's anchor *)
+(** *** Liveness: every state is reached from every fill arm's anchor IN
+    PHASE [pv] *)
 Hypothesis Hvisit : forall r q, 0 < r -> r < N0f + stf ->
-  srun_st tm true true (vis r q) (lr_lhs (Afill r)) = Some q.
+  srun_st tm true true (vis r q) (lr_lhs (Afill r pv)) = Some q.
 
-Let s0 : CtrSt := (ds0, 0, 0).
+Let s0 : CtrSt := (ds0, 0, ph0).
 
 Definition CfB (n : nat) : cconf :=
   match fam_iter F s0 n with
@@ -1043,19 +1202,44 @@ Definition CfB (n : nat) : cconf :=
   | None => CTape.c0
   end.
 
-Lemma inv0 : Inv F s0.
+Lemma inv0 : Inv F NPH s0.
 Proof. simpl. repeat split; assumption. Qed.
+
+(** The two facts section 5 exports, at this section's own parameters. *)
+Lemma iter_total : forall N s,
+  Inv F NPH s -> exists s', fam_iter F s N = Some s' /\ Inv F NPH s'.
+Proof. intros N s Hi. eapply fam_iter_total; eassumption. Qed.
+
+Lemma tops_cof : forall s N,
+  Inv F NPH s ->
+  exists n s', N <= n /\ fam_iter F s n = Some s'
+               /\ fam_is_top F (ct_ds s') = true /\ Inv F NPH s'.
+Proof. intros s N Hi. eapply tops_cofinal; eassumption. Qed.
+
+(** The tops of the visit phase are cofinal -- section 5's [tops_cofinal_at]
+    at this section's own parameters. *)
+Lemma tops_cof_pv : forall s N,
+  Inv F NPH s ->
+  exists n s', N <= n /\ fam_iter F s n = Some s'
+               /\ fam_is_top F (ct_ds s') = true /\ Inv F NPH s'
+               /\ ct_ph s' = pv.
+Proof. intros s N Hi. eapply tops_cofinal_at; eassumption. Qed.
+
+Lemma fill_top : forall ds ph, ph < NPH ->
+  0 < length ds -> fam_is_top F ds = true ->
+  fam_next F ds ph = Some (filled F ph (length ds)).
+Proof. intros ds ph Hph Hk Ht. eapply fill_at_top; eassumption. Qed.
 
 (** The cells of a top-of-width string, as the fill arm's left-hand side.
     The arm is the one at index [m1], and it walks the width in blocks of
     [s]: [m1 + s*n = k] is [arm_index] and nothing else. *)
-Lemma cells_top : forall k m1 s n, m1 + s * n = k ->
-  fam_cells F (repeat (fm_b F - 1) k) 0
-    = sden [] n (run_side F (fm_b F - 1) m1 s 0 0 [] []).
+Lemma cells_top : forall k m1 s n ph, m1 + s * n = k ->
+  fam_cells F (repeat (fm_b F - 1) k) ph
+    = sden [] n (run_side F (fm_b F - 1) m1 s 0 ph [] []).
 Proof.
-  intros k m1 s n Hk.
+  intros k m1 s n ph Hk.
   transitivity
-    (fam_cells F ([] ++ repeat (fm_b F - 1) (m1 + s * n + 0) ++ []) 0).
+    (fam_cells F ([] ++ repeat (fm_b F - 1) (m1 + s * n + 0) ++ []) ph).
   - f_equal. rewrite Nat.add_0_r, Hk, app_nil_r. reflexivity.
   - apply fam_cells_run.
 Qed.
@@ -1063,21 +1247,22 @@ Qed.
 (** ...and of what the fill law puts there, as its right-hand side.  The
     law's own prefix and suffix ride along as the fixed words either side of
     the run, which is what lets a family whose fill is not a bare widening
-    use the same arm shape. *)
-Lemma cells_filled : forall k a s n c,
+    use the same arm shape.  The tail is the one of the phase the law LANDS
+    in, which is the only place the phase cycle reaches the cells. *)
+Lemma cells_filled : forall k a s n c ph,
   a + s * n + c
-    = k + f_s (fam_fill F 0)
-      - (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0))) ->
-  fam_cells F (filled F k) 0
+    = k + f_s (fam_fill F ph)
+      - (length (f_pre (fam_fill F ph)) + length (f_suf (fam_fill F ph))) ->
+  fam_cells F (filled F ph k) (f_to (fam_fill F ph))
     = sden [] n
-        (run_side F (f_mid (fam_fill F 0)) a s c 0
-           (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
+        (run_side F (f_mid (fam_fill F ph)) a s c (f_to (fam_fill F ph))
+           (f_pre (fam_fill F ph)) (f_suf (fam_fill F ph))).
 Proof.
-  intros k a s n c Hk.
+  intros k a s n c ph Hk.
   transitivity (fam_cells F
-    (f_pre (fam_fill F 0)
-     ++ repeat (f_mid (fam_fill F 0)) (a + s * n + c)
-     ++ f_suf (fam_fill F 0)) 0).
+    (f_pre (fam_fill F ph)
+     ++ repeat (f_mid (fam_fill F ph)) (a + s * n + c)
+     ++ f_suf (fam_fill F ph)) (f_to (fam_fill F ph))).
   - f_equal. unfold filled. rewrite Hk. reflexivity.
   - apply fam_cells_run.
 Qed.
@@ -1087,16 +1272,16 @@ Qed.
 
     Stated ONCE, for both closers.  What a closer wants OF the arm it lands
     on is the parameter [P]: [board_neverqh] wants [RuleSound], and the
-    quasihalt board (Checkers/LadderQH.v) wants [RuleSound] and [RuleAvoid]
-    of the same arm.  Everything else -- which arm serves the state, at what
-    index and block count, and that the configurations either side of the
-    lap are that arm's two [cden]s -- is common, and duplicating it is how
-    two closers drift apart. *)
+    quasihalt board wants [RuleSound] and [RuleAvoid] of the same arm.
+    Everything else -- which arm serves the state, at what index and block
+    count, and that the configurations either side of the lap are that arm's
+    two [cden]s -- is common, and duplicating it is how two closers drift
+    apart. *)
 Lemma board_arm : forall (P : bool -> bool -> LRule -> Prop),
   (forall d r, d < fm_b F - 1 -> r < N0i + sti ->
      P (negb (fm_left F)) (fm_left F) (Aint d r)) ->
-  (forall r, 0 < r -> r < N0f + stf -> P true true (Afill r)) ->
-  forall s, Inv F s ->
+  (forall r ph, 0 < r -> r < N0f + stf -> ph < NPH -> P true true (Afill r ph)) ->
+  forall s, Inv F NPH s ->
   exists s' A el er X n,
     fam_succ F s = Some s'
     /\ P el er A
@@ -1105,9 +1290,10 @@ Lemma board_arm : forall (P : bool -> bool -> LRule -> Prop),
     /\ fam_cfg F s' = cden (tailL F X) (tailR F X) n (lr_rhs A)
     /\ 0 < lr_cb A.
 Proof.
-  intros P HPi HPf [[ds p] ph] Hi. destruct Hi as (Hbnd & Hlen & ->).
+  intros P HPi HPf [[ds p] ph] Hi. destruct Hi as (Hbnd & Hlen & Hph).
   destruct (digs_decomp (fm_b F - 1) ds) as [Htop | (n & d & rest & -> & Hd)].
-  - (* the top of a width: the FILL arm at index [aoff N0f stf (length ds)] *)
+  - (* the top of a width: the FILL arm at index [aoff N0f stf (length ds)],
+       in this state's OWN phase *)
     remember (aoff N0f stf (length ds)) as r eqn:Er.
     assert (Hr0 : 0 < r) by (subst r; apply arm_index_pos; assumption).
     assert (Hrlt : r < N0f + stf) by (subst r; apply arm_index_lt; assumption).
@@ -1115,22 +1301,25 @@ Proof.
       by (subst r; apply arm_index; assumption).
     assert (Hist : fam_is_top F ds = true).
     { rewrite Htop at 1. apply pos1_is_top; assumption. }
-    exists (filled F (length ds), p, 0), (Afill r), true, true, [].
+    exists (filled F ph (length ds), p, f_to (fam_fill F ph)), (Afill r ph).
+    exists true, true, [].
     exists (acnt N0f stf (length ds)).
     split; [|split; [|split; [|split; [|split; [|split]]]]].
     + unfold fam_succ.
-      erewrite fill_at_top by (assumption || lia).
-      rewrite Hist, Hfto. reflexivity.
-    + exact (HPf r Hr0 Hrlt).
+      rewrite (fill_top ds ph Hph Hlen Hist), Hist. reflexivity.
+    + exact (HPf r ph Hr0 Hrlt Hph).
     + intros _; apply tailL_nil.
     + intros _; apply tailR_nil.
-    + rewrite (HAfL r Hr0 Hrlt). symmetry.
+    + rewrite (HAfL r ph Hr0 Hrlt Hph). symmetry.
       apply cden_cls_conf. rewrite Htop at 1. apply cells_top. exact Hk.
-    + rewrite (HAfR r Hr0 Hrlt). symmetry.
+    + rewrite (HAfR r ph Hr0 Hrlt Hph). symmetry.
       apply cden_cls_conf. apply cells_filled.
-      pose proof (Hfm12 r Hr0 Hrlt). lia.
-    + exact (HAfC r Hr0 Hrlt).
-  - (* not the top: an INTERIOR arm, for the digit that is not the top one *)
+      pose proof (Hfm12 r ph Hr0 Hrlt Hph). lia.
+    + exact (HAfC r ph Hr0 Hrlt Hph).
+  - (* not the top: an INTERIOR arm, for the digit that is not the top one.
+       The phase is carried across untouched -- [pos1_class_not_top] is what
+       says the fill does not fire here, and with more than one phase that
+       is the same fact as "the phase does not move". *)
     apply Forall_app in Hbnd as [Hrun Hrest'].
     inversion Hrest' as [|? ? Hdb Hrest]; subst.
     assert (Hdlt : d < fm_b F - 1) by lia.
@@ -1138,31 +1327,31 @@ Proof.
     assert (Hrlt : r < N0i + sti) by (subst r; apply arm_index_lt; assumption).
     assert (Hn : r + astride N0i sti r * acnt N0i sti n = n)
       by (subst r; apply arm_index; assumption).
-    exists (repeat 0 n ++ S d :: rest, p, 0), (Aint d r).
-    exists (negb (fm_left F)), (fm_left F), (cls_tail F rest 0).
+    exists (repeat 0 n ++ S d :: rest, p, ph), (Aint d r).
+    exists (negb (fm_left F)), (fm_left F), (cls_tail F rest ph).
     exists (acnt N0i sti n).
     split; [|split; [|split; [|split; [|split; [|split]]]]].
-    + assert (Hns : fam_next F (repeat (fm_b F - 1) n ++ d :: rest) 0
+    + assert (Hns : fam_next F (repeat (fm_b F - 1) n ++ d :: rest) ph
                     = Some (repeat 0 n ++ S d :: rest))
-        by exact (pos1_class_succ F d Hb Hcode Hstep Hdlt n rest 0 Hrest I).
+        by exact (pos1_class_succ F d Hb Hcode Hstep Hdlt n rest ph Hrest I).
       unfold fam_succ. rewrite Hns.
-      destruct (fam_is_top F (repeat (fm_b F - 1) n ++ d :: rest));
-        [rewrite Hfto|]; reflexivity.
+      rewrite (pos1_class_not_top F d n rest Hb Hcode Hstep Hdlt Hrest).
+      reflexivity.
     + exact (HPi d r Hdlt Hrlt).
     + intros He. unfold tailL. destruct (fm_left F); [discriminate|reflexivity].
     + intros He. unfold tailR. rewrite He. reflexivity.
     + rewrite (HAiL d r Hdlt Hrlt). symmetry. apply cden_cls_conf.
       rewrite <- Hn at 1.
       apply (fam_cells_class F (fm_b F - 1) r (astride N0i sti r)
-               (acnt N0i sti n) [d] rest 0).
+               (acnt N0i sti n) [d] rest ph).
     + rewrite (HAiR d r Hdlt Hrlt). symmetry. apply cden_cls_conf.
       rewrite <- Hn at 1.
       apply (fam_cells_class F 0 r (astride N0i sti r)
-               (acnt N0i sti n) [S d] rest 0).
+               (acnt N0i sti n) [S d] rest ph).
     + exact (HAiC d r Hdlt Hrlt).
 Qed.
 
-Lemma board_lap : forall s, Inv F s ->
+Lemma board_lap : forall s, Inv F NPH s ->
   exists s' m, fam_succ F s = Some s' /\ 0 < m /\
                csteps tm m (fam_cfg F s) = Some (fam_cfg F s').
 Proof.
@@ -1174,7 +1363,43 @@ Proof.
   rewrite Hl, Hr. exact (HA _ _ n HL HR).
 Qed.
 
-Theorem board_neverqh : NeverQuasiHaltsSt tm.
+(** The visit premise, at a top of whatever phase the counter is in when it
+    gets there.  Both closers need exactly this and they differ only in
+    which chains they are handed, so it is proved once over the chain. *)
+Lemma board_visit : forall (V : nat -> St -> list lstep) q N,
+  (forall r, 0 < r -> r < N0f + stf ->
+     srun_st tm true true (V r q) (lr_lhs (Afill r pv)) = Some q) ->
+  exists n k c, N <= n /\ csteps tm k (CfB n) = Some c /\ fst c = q.
+Proof.
+  intros V q N HV.
+  destruct (tops_cof_pv s0 N inv0)
+    as (n & s' & HN & Hit & Htop & Hi' & Hph).
+  exists n.
+  destruct s' as [[ds' p'] ph']. simpl in Htop. simpl in Hph. subst ph'.
+  destruct Hi' as (Hbnd' & Hlen' & _).
+  assert (Hsh : ds' = repeat (fm_b F - 1) (length ds'))
+    by (apply pos1_top_shape; assumption).
+  remember (aoff N0f stf (length ds')) as r eqn:Er.
+  assert (Hr0 : 0 < r) by (subst r; apply arm_index_pos; assumption).
+  assert (Hrlt : r < N0f + stf) by (subst r; apply arm_index_lt; assumption).
+  assert (Hk : r + astride N0f stf r * acnt N0f stf (length ds') = length ds')
+    by (subst r; apply arm_index; assumption).
+  assert (Hden : CfB n
+                 = cden [] [] (acnt N0f stf (length ds')) (lr_lhs (Afill r pv))).
+  { unfold CfB. rewrite Hit, (HAfL r pv Hr0 Hrlt Hpv).
+    rewrite <- (cden_cls_conf F
+                  (run_side F (fm_b F - 1) r (astride N0f stf r) 0 pv [] [])
+                  [] (acnt N0f stf (length ds')) ds' p' pv).
+    - unfold tailL, tailR; destruct (fm_left F); reflexivity.
+    - rewrite Hsh at 1. apply cells_top. exact Hk. }
+  destruct (vis_of_run tm (fun _ => CfB n) true true (V r q)
+              (lr_lhs (Afill r pv)) 1%positive (acnt N0f stf (length ds'))
+              [] [] q (HV r Hr0 Hrlt)
+              (fun _ => eq_refl) (fun _ => eq_refl) Hden) as (k & c & Hc & Hq).
+  exists k, c. split; [exact HN | split; [exact Hc | exact Hq]].
+Qed.
+
+Theorem boardph_neverqh : NeverQuasiHaltsSt tm.
 Proof.
   apply (glue_neverqhN tm CfB).
   - (* boot *)
@@ -1182,8 +1407,7 @@ Proof.
     rewrite <- lift_c0. apply csteps_lift. exact Hboot.
   - (* lap *)
     intros n.
-    destruct (fam_iter_total F Hb Hcode Hstep Hfpre Hfsuf Hfmid Hfs Hfto
-                n s0 inv0) as (s & Hit & Hi).
+    destruct (iter_total n s0 inv0) as (s & Hit & Hi).
     destruct (board_lap s Hi) as (s' & m & Hsucc & Hm & Hrun).
     exists m, (fam_cfg F s'). unfold CfB. rewrite Hit.
     split; [exact Hrun | split; [|exact Hm]].
@@ -1191,31 +1415,7 @@ Proof.
     rewrite fam_iter_add, Hit. simpl. rewrite Hsucc. reflexivity.
   - (* visits: at every top, and the tops are cofinal *)
     intros q N.
-    destruct (tops_cofinal F Hb Hcode Hstep Hfpre Hfsuf Hfmid Hfs Hfto s0 N
-                inv0) as (n & s' & HN & Hit & Htop & Hi').
-    exists n.
-    destruct s' as [[ds' p'] ph']. simpl in Htop.
-    destruct Hi' as (Hbnd' & Hlen' & ->).
-    assert (Hsh : ds' = repeat (fm_b F - 1) (length ds'))
-      by (apply pos1_top_shape; assumption).
-    remember (aoff N0f stf (length ds')) as r eqn:Er.
-    assert (Hr0 : 0 < r) by (subst r; apply arm_index_pos; assumption).
-    assert (Hrlt : r < N0f + stf) by (subst r; apply arm_index_lt; assumption).
-    assert (Hk : r + astride N0f stf r * acnt N0f stf (length ds') = length ds')
-      by (subst r; apply arm_index; assumption).
-    assert (Hden : CfB n
-                   = cden [] [] (acnt N0f stf (length ds')) (lr_lhs (Afill r))).
-    { unfold CfB. rewrite Hit, (HAfL r Hr0 Hrlt).
-      rewrite <- (cden_cls_conf F
-                    (run_side F (fm_b F - 1) r (astride N0f stf r) 0 0 [] [])
-                    [] (acnt N0f stf (length ds')) ds' p' 0).
-      - unfold tailL, tailR; destruct (fm_left F); reflexivity.
-      - rewrite Hsh at 1. apply cells_top. exact Hk. }
-    destruct (vis_of_run tm (fun _ => CfB n) true true (vis r q)
-                (lr_lhs (Afill r)) 1%positive (acnt N0f stf (length ds'))
-                [] [] q (Hvisit r q Hr0 Hrlt)
-                (fun _ => eq_refl) (fun _ => eq_refl) Hden) as (k & c & Hc & Hq).
-    exists k, c. split; [exact HN | split; [exact Hc | exact Hq]].
+    exact (board_visit vis q N (fun r H0 Hr => Hvisit r q H0 Hr)).
 Qed.
 
 (** ** 8. The same board, for a row that QUASIHALTS
@@ -1232,8 +1432,154 @@ Qed.
     * the quiet state's LAST visit, and that the window from it to the boot
       anchor is quiet too -- both concrete indices, both [vm_compute].
 
-    These are declared after [board_neverqh], so a never-quasihalting board
+    These are declared after [boardph_neverqh], so a never-quasihalting board
     does not carry them and a quasihalting one does not carry [vis]. *)
+
+Hypothesis HAiV : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
+  RuleAvoid tm (negb (fm_left F)) (fm_left F) qa (Aint d r).
+Hypothesis HAfV : forall r ph, 0 < r -> r < N0f + stf -> ph < NPH ->
+  RuleAvoid tm true true qa (Afill r ph).
+
+Hypothesis HvisitQ : forall r q, q <> qa -> 0 < r -> r < N0f + stf ->
+  srun_st tm true true (visq r q) (lr_lhs (Afill r pv)) = Some q.
+
+Hypothesis Hqvis : VisitsAt tm qa sq.
+Hypothesis Hqwin : forall n c, sq < n < t0 ->
+  stepn tm n InitES = Some c -> fst c <> qa.
+
+Lemma board_lap_avoid : forall s, Inv F NPH s ->
+  exists s' m, fam_succ F s = Some s' /\ 0 < m
+    /\ csteps tm m (fam_cfg F s) = Some (fam_cfg F s')
+    /\ AvoidRun tm qa m (fam_cfg F s).
+Proof.
+  intros s Hi.
+  destruct (board_arm (fun el er A => RuleSound tm el er A
+                                      /\ RuleAvoid tm el er qa A)
+              (fun d r Hd Hr => conj (HAiS d r Hd Hr) (HAiV d r Hd Hr))
+              (fun r ph H0 Hr Hp => conj (HAfS r ph H0 Hr Hp)
+                                         (HAfV r ph H0 Hr Hp)) s Hi)
+    as (s' & A & el & er & X & n & Hsucc & (HAs & HAv) & HL & HR & Hl & Hr & Hcb).
+  exists s', (lr_ca A * n + lr_cb A).
+  split; [exact Hsucc | split; [nia | split]].
+  - rewrite Hl, Hr. exact (HAs _ _ n HL HR).
+  - rewrite Hl. exact (HAv _ _ n HL HR).
+Qed.
+
+Theorem boardph_iqh : NonHalt tm /\ QHBound (S sq) tm /\ QuasiHaltsSt tm.
+Proof.
+  apply (glue_qh_quietN tm CfB qa t0 sq).
+  - (* boot, at the concrete index the bound is stated against *)
+    unfold CfB; simpl. rewrite <- lift_c0. apply csteps_lift. exact Hboot.
+  - (* the lap, and that it never enters [qa] *)
+    intros n.
+    destruct (iter_total n s0 inv0) as (s & Hit & Hi).
+    destruct (board_lap_avoid s Hi) as (s' & m & Hsucc & Hm & Hrun & Hav).
+    exists m, (fam_cfg F s'). unfold CfB. rewrite Hit.
+    split; [exact Hrun | split; [| split; [exact Hm | exact Hav]]].
+    replace (S n) with (n + 1) by lia.
+    rewrite fam_iter_add, Hit. simpl. rewrite Hsucc. reflexivity.
+  - (* visits, for every state but the quiet one: [boardph_neverqh]'s third
+       bullet with [q <> qa] carried *)
+    intros q N Hq.
+    exact (board_visit visq q N (fun r H0 Hr => HvisitQ r q Hq H0 Hr)).
+  - exact Hqvis.
+  - exact Hqwin.
+Qed.
+
+End BoardPh.
+
+(** ** 9. The one-phase board, with the interface it had before section 7 was
+    phase-indexed.
+
+    Every board emitted so far is a one-phase family, and this is exactly
+    that instance: [NPH = 1], the boot in phase [0], one fill arm per index
+    rather than one per index and phase.  It is a WRAPPER and not a second
+    proof -- the whole content is [boardph_neverqh] at [NPH := 1] -- which is
+    the same discipline [board_arm] enforces between the two closers.  The
+    argument order is the one the emitted boards pass. *)
+
+Section BoardOne.
+
+Variable tm    : TM.
+Variable F     : Fam.
+Variable Aint  : nat -> nat -> LRule.
+Variable N0i sti : nat.
+Variable Afill : nat -> LRule.
+Variable N0f stf : nat.
+Variable fm1 fm2 : nat -> nat.
+Variable vis   : nat -> St -> list lstep.
+Variable ds0   : list nat.
+Variable t0    : nat.
+Variable qa    : St.
+Variable sq    : nat.
+Variable visq  : nat -> St -> list lstep.
+
+Hypothesis Hb    : 1 < fm_b F.
+Hypothesis Hcode : fm_code F = Binary.
+Hypothesis Hstep : fm_step F = 1.
+Hypothesis Hfpre : Forall (fun d => d < fm_b F) (f_pre (fam_fill F 0)).
+Hypothesis Hfsuf : Forall (fun d => d < fm_b F) (f_suf (fam_fill F 0)).
+Hypothesis Hfmid : f_mid (fam_fill F 0) < fm_b F.
+Hypothesis Hfs   : length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0))
+                   <= 1 + f_s (fam_fill F 0).
+Hypothesis Hfto  : f_to (fam_fill F 0) = 0.
+
+Hypothesis Hfm12 : forall r, 0 < r -> r < N0f + stf ->
+  fm1 r + fm2 r
+  + (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0)))
+  = r + f_s (fam_fill F 0).
+
+Hypothesis Hbnd0 : Forall (fun d => d < fm_b F) ds0.
+Hypothesis Hlen0 : 0 < length ds0.
+Hypothesis Hboot : csteps tm t0 CTape.c0 = Some (fam_cfg F (ds0, 0, 0)).
+
+Hypothesis Hsti : 0 < sti.
+Hypothesis HAiS : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
+  RuleSound tm (negb (fm_left F)) (fm_left F) (Aint d r).
+Hypothesis HAiL : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
+  lr_lhs (Aint d r)
+    = cls_conf F (cls_side F (fm_b F - 1) r (astride N0i sti r) [d]).
+Hypothesis HAiR : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
+  lr_rhs (Aint d r) = cls_conf F (cls_side F 0 r (astride N0i sti r) [S d]).
+Hypothesis HAiC : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
+  0 < lr_cb (Aint d r).
+
+Hypothesis Hstf : 0 < stf.
+Hypothesis HN0f : 0 < N0f.
+Hypothesis HAfS : forall r, 0 < r -> r < N0f + stf ->
+  RuleSound tm true true (Afill r).
+Hypothesis HAfL : forall r, 0 < r -> r < N0f + stf ->
+  lr_lhs (Afill r)
+    = cls_conf F (run_side F (fm_b F - 1) r (astride N0f stf r) 0 0 [] []).
+Hypothesis HAfR : forall r, 0 < r -> r < N0f + stf ->
+  lr_rhs (Afill r)
+    = cls_conf F (run_side F (f_mid (fam_fill F 0)) (fm1 r)
+                    (astride N0f stf r) (fm2 r) 0
+                    (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
+Hypothesis HAfC : forall r, 0 < r -> r < N0f + stf -> 0 < lr_cb (Afill r).
+
+Hypothesis Hvisit : forall r q, 0 < r -> r < N0f + stf ->
+  srun_st tm true true (vis r q) (lr_lhs (Afill r)) = Some q.
+
+(** The one-phase family read as a one-element cycle.  [ph < 1] IS [ph = 0],
+    which is what turns each hypothesis above into the phase-indexed one:
+    every obligation is this section's own hypothesis with the phase
+    substituted, and none of them is a new proof. *)
+Ltac one_phase_tac :=
+  try assumption; try lia;
+  intros;
+  repeat match goal with
+         | [ H : ?p < 1 |- _ ] => assert (p = 0) by lia; subst p
+         end;
+  rewrite ?Hfto;
+  try assumption; try lia; try (exists 0; reflexivity); eauto.
+
+Theorem board_neverqh : NeverQuasiHaltsSt tm.
+Proof.
+  apply (boardph_neverqh tm F 1 Aint N0i sti (fun r _ => Afill r) N0f stf
+                         (fun r _ => fm1 r) (fun r _ => fm2 r) 0 vis
+                         ds0 0 t0); one_phase_tac.
+Qed.
 
 Hypothesis HAiV : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
   RuleAvoid tm (negb (fm_left F)) (fm_left F) qa (Aint d r).
@@ -1247,67 +1593,12 @@ Hypothesis Hqvis : VisitsAt tm qa sq.
 Hypothesis Hqwin : forall n c, sq < n < t0 ->
   stepn tm n InitES = Some c -> fst c <> qa.
 
-Lemma board_lap_avoid : forall s, Inv F s ->
-  exists s' m, fam_succ F s = Some s' /\ 0 < m
-    /\ csteps tm m (fam_cfg F s) = Some (fam_cfg F s')
-    /\ AvoidRun tm qa m (fam_cfg F s).
-Proof.
-  intros s Hi.
-  destruct (board_arm (fun el er A => RuleSound tm el er A
-                                      /\ RuleAvoid tm el er qa A)
-              (fun d r Hd Hr => conj (HAiS d r Hd Hr) (HAiV d r Hd Hr))
-              (fun r H0 Hr => conj (HAfS r H0 Hr) (HAfV r H0 Hr)) s Hi)
-    as (s' & A & el & er & X & n & Hsucc & (HAs & HAv) & HL & HR & Hl & Hr & Hcb).
-  exists s', (lr_ca A * n + lr_cb A).
-  split; [exact Hsucc | split; [nia | split]].
-  - rewrite Hl, Hr. exact (HAs _ _ n HL HR).
-  - rewrite Hl. exact (HAv _ _ n HL HR).
-Qed.
-
 Theorem board_iqh : NonHalt tm /\ QHBound (S sq) tm /\ QuasiHaltsSt tm.
 Proof.
-  apply (glue_qh_quietN tm CfB qa t0 sq).
-  - (* boot, at the concrete index the bound is stated against *)
-    unfold CfB; simpl. rewrite <- lift_c0. apply csteps_lift. exact Hboot.
-  - (* the lap, and that it never enters [qa] *)
-    intros n.
-    destruct (fam_iter_total F Hb Hcode Hstep Hfpre Hfsuf Hfmid Hfs Hfto
-                n s0 inv0) as (s & Hit & Hi).
-    destruct (board_lap_avoid s Hi) as (s' & m & Hsucc & Hm & Hrun & Hav).
-    exists m, (fam_cfg F s'). unfold CfB. rewrite Hit.
-    split; [exact Hrun | split; [| split; [exact Hm | exact Hav]]].
-    replace (S n) with (n + 1) by lia.
-    rewrite fam_iter_add, Hit. simpl. rewrite Hsucc. reflexivity.
-  - (* visits, for every state but the quiet one: at every top, and the tops
-       are cofinal -- [board_neverqh]'s third bullet with [q <> qa] carried *)
-    intros q N Hq.
-    destruct (tops_cofinal F Hb Hcode Hstep Hfpre Hfsuf Hfmid Hfs Hfto s0 N
-                inv0) as (n & s' & HN & Hit & Htop & Hi').
-    exists n.
-    destruct s' as [[ds' p'] ph']. simpl in Htop.
-    destruct Hi' as (Hbnd' & Hlen' & ->).
-    assert (Hsh : ds' = repeat (fm_b F - 1) (length ds'))
-      by (apply pos1_top_shape; assumption).
-    remember (aoff N0f stf (length ds')) as r eqn:Er.
-    assert (Hr0 : 0 < r) by (subst r; apply arm_index_pos; assumption).
-    assert (Hrlt : r < N0f + stf) by (subst r; apply arm_index_lt; assumption).
-    assert (Hk : r + astride N0f stf r * acnt N0f stf (length ds') = length ds')
-      by (subst r; apply arm_index; assumption).
-    assert (Hden : CfB n
-                   = cden [] [] (acnt N0f stf (length ds')) (lr_lhs (Afill r))).
-    { unfold CfB. rewrite Hit, (HAfL r Hr0 Hrlt).
-      rewrite <- (cden_cls_conf F
-                    (run_side F (fm_b F - 1) r (astride N0f stf r) 0 0 [] [])
-                    [] (acnt N0f stf (length ds')) ds' p' 0).
-      - unfold tailL, tailR; destruct (fm_left F); reflexivity.
-      - rewrite Hsh at 1. apply cells_top. exact Hk. }
-    destruct (vis_of_run tm (fun _ => CfB n) true true (visq r q)
-                (lr_lhs (Afill r)) 1%positive (acnt N0f stf (length ds'))
-                [] [] q (HvisitQ r q Hq Hr0 Hrlt)
-                (fun _ => eq_refl) (fun _ => eq_refl) Hden) as (k & c & Hc & Hq').
-    exists k, c. split; [exact HN | split; [exact Hc | exact Hq']].
-  - exact Hqvis.
-  - exact Hqwin.
+  apply (boardph_iqh tm F 1 Aint N0i sti (fun r _ => Afill r) N0f stf
+                     (fun r _ => fm1 r) (fun r _ => fm2 r) 0
+                     ds0 0 t0 qa sq visq);
+    one_phase_tac.
 Qed.
 
-End Board.
+End BoardOne.
