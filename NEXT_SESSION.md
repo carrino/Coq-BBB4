@@ -4145,6 +4145,66 @@ traps._
   changing it mid-build invalidates the makefile and `make` can exit 0 with
   hundreds of files unbuilt.  Board first, then build.
 
+## 2026-08-01 — nickdrozd's nineteen: the CHAMPION boards, and both blockers were in the SEARCHER
+
+_Branch `claude/provable-turing-machines-zyuscn`, cut from `main` at
+`bed4676`.  Full write-up in `docs/LADDER_PLAN.md` §4s._
+
+    settled by a board       5115 -> 5117   (99.2%)
+    core undecided             30 ->   27
+    0RB shadows of the core    12 ->   12
+
+- **CHECK A COMMUNITY LIST AGAINST THE TREE BEFORE PLANNING WORK FROM IT.**
+  Four of nick's nineteen (`1RB0LC_1LC0RB_1RD1LA_0LA1RB`,
+  `1RB1LA_1LC0RB_0LA0LD_1RA0RB`, `1RB1LA_1LC0RB_0LA0LD_1RD0RB`,
+  `1RB1LD_1RC0RB_0LA1RB_0LD1LA`) have been boarded since the counter waves —
+  `Bounce_8.v`, `Spacer_22.v`, `Spacer_23.v`, `Mono_31.v`.  A list from
+  outside is against the published RESIDUE, not against the frozen census.
+  One `grep -rl` over `theories/` answers it in a second.
+- **The CHAMPION was never a mathematics problem and had not been for two
+  waves.**  Its board compiled; `boarded` demanded `QHBound B_board` with
+  `B_board` = 66,349 and `inventory.py` refused any `iqhle:` row above it.
+  `docs/CLAIMS.md` had written down both fixes months ago.  If a doc says
+  "admitting this is a `CloseoutKit` change, not a regen", that is a task
+  estimate, and the estimate was right: four `destruct`s on `boarded` in the
+  whole tree.
+- **THE TRAP IN THAT CHANGE IS THE GATE'S TYPE, not the disjunct.**  The
+  `B_board` twin takes `(B <=? B_board) = true` and the stage runs
+  `vm_compute`.  At `B_champ` = 32,779,478 that makes the kernel normalise a
+  **32.8M-constructor unary numeral**.  Use the PROPOSITION `B <= B_champ`
+  and `lia` on two Horner forms.  Same reason the board states its bound in a
+  `Definition` and not as `iqh_le 32779478`: a decimal literal that large is
+  left as `Nat.of_num_uint` (the `abstract after` guard), which `lia` cannot
+  see through and `vm_compute` must not be asked to force.  **Anything that
+  touches the champion's score must stay in Horner form end to end.**
+- **A `cconf` carries no trailing blanks, and that is a SORT KEY.**  §4n/§4o
+  left the two gray rows with "`fam_cells` spells one cell more than the
+  machine's `cconf` carries" and proposed a kernel trimming.  Not needed: the
+  same anchor rotated one cell was already in `find_families`' output at the
+  SAME chain length, and lost the tie on insertion order.  One term in
+  `found.sort` — a family all of whose digit words end in a blank, with no
+  terminator behind them, sorts last — and both rows close, emit, compile.
+- **`if not found` is the wrong shape for a fallback gate.**
+  `find_families` runs its numeration pass only when the main pass found
+  NOTHING.  Six of the seven fibonacci rows return 26-odd positional families
+  at chain **8** — which is `min_chain`, the floor — so 26 > 0 switched the
+  pass off and those rows had never been read as counters at all.  The five
+  rows wave 4r boarded found ZERO and fell through, reading at chains
+  89..290.  *The difference between the two halves of that bucket was never
+  the machine.*  `valfam.py --numeration` restates the gate as a comparison
+  against the best chain so far; six of the seven then read at 232..376.
+- **They are Zeckendorf, not `(Fib, 1)`.**  Weights `1,2,3,5,8` where
+  `LadderCheck` 11 states `1,1,2,3,5,8`, so `closure_data_fib` refuses.  Their
+  coverage fails only at the top of each width (`1^k`), so the residue of the
+  six is the FILL arm.  The seventh, `1RB0RB_0LC1RD_1LC1LA_0LA1RB`, finds no
+  family at ANY anchor — it is a `no anchor` row and should stop being
+  counted with them.
+- **Three waves running, the same lesson:** a gate label says where the
+  emitter stopped, and twice now the thing that stopped it was which of
+  several equally-good readings the tooling happened to hand it.  Check what
+  the emitter was HANDED before building a kernel instance for what it
+  refused.
+
 ## 2026-07-31 — `(Fib, 1)` built: the FIBONACCI five board, five rows off the core
 
 _Branch `claude/fibonacci-numeration-coq-uewigh`, cut from `main` at

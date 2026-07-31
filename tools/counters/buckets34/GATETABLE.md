@@ -1,4 +1,4 @@
-# Gate table over the 30 open core rows
+# Gate table over the 27 open core rows
 
 `tailcert.py --list tools/closeout/core_rows.txt --out scan.json` (scan labels,
 no --emit), split by `buckets.py`, filtered to live membership after each wave.
@@ -8,7 +8,7 @@ commands are untrusted Python and need no Coq.
 | n | furthest gate |
 |--:|---|
 | 14 | `no_interior_jS_j_chain_at_octave_parity_0` |
-| 10 | `no_gap_free_two_form_family` |
+| 7 | `no_gap_free_two_form_family` |
 | 2 | `no_inner_interior_chain` |
 | 1 | `no_boot_chain` |
 | 1 | `no_interior_j0_chain_at_octave_parity_0` |
@@ -46,3 +46,25 @@ one population.  Wave 4p measured the split; wave 4r acted on half of it:
 A gate name says what stopped the emitter, not what stops a proof.  Twice now
 this bucket has paid out for someone checking the measurement instead of the
 label.  Check it before reading a bucket as a difficulty class.
+
+**Wave 4s measured the seven fibonacci rows, and the reason nobody had is
+that the searcher never built the family.**  `find_families`' numeration pass
+runs only `if not found`, and six of the seven return 26-odd positional
+families at chain 8 -- `min_chain`, the floor -- which switches it off.  Under
+`valfam.py --numeration` six read as fibonacci at chains 232..376, and the
+seventh (`1RB0RB_0LC1RD_1LC1LA_0LA1RB`) has no family at any anchor and
+belongs in the `no anchor` population, not here.  The six are **Zeckendorf**
+(weights 1,2,3,5,8) and `LadderCheck` 11 states 1,1,2,3,5,8, so they are
+still open -- but their gate is now the FILL arm at the top of a width, not
+"no interior chain".  See `docs/LADDER_PLAN.md` §4s.
+
+## What wave 4s took out
+
+`no_gap_free_two_form_family` lost three rows and **not one of them needed
+the gate answered**: the champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` (a board that
+had compiled since wave 33, held out by an arithmetic comparison in
+`inventory.py`) and the two gray rows `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and
+`1RB0RD_1LC0LC_1LD0LB_1RD0RA` (which closed once the searcher preferred, among
+readings tied on chain length, one whose digit words do not all end in a
+blank).  Third wave running in which this table's biggest labels described
+the tooling.

@@ -1,192 +1,143 @@
-BUILD THE FIBONACCI NUMERATION.  Five core rows, the arms are MEASURED to
-derive, the numeration is MEASURED and checked against the machines, and the
-build is specified to the lemma.  In `carrino/Coq-BBB4`, on branch
-`claude/fib-numeration-<yourid>` cut from `main`.
+READ THE SIX FIBONACCI ROWS AT THE OTHER LADDER, OR BUILD THE ZECKENDORF ONE.
+Wave 4s measured them for the first time and they stop on ONE ARM.  In
+`carrino/Coq-BBB4`, on branch `claude/zeckendorf-<yourid>` cut from `main`.
 
 **Diff `origin/main` first**: `git show origin/main:tools/closeout/core_rows.txt`
-is one command, and the wave route has now taken rows out from under five
-sessions.  §4l, §4n, §4o and §4p each say this; §4o said it and then had its
-OWN next-session prompt invalidated eight hours later by §4p, which is the
-sharper lesson: **re-read the plan's last section before acting on a prompt,
-because the prompt is older than the plan.**
+is one command, and the wave route has now taken rows out from under six
+sessions.  §4l, §4n, §4o, §4p and §4r each say this; §4o said it and then had
+its OWN next-session prompt invalidated eight hours later by §4p.  **Re-read
+the plan's last section before acting on a prompt, because the prompt is older
+than the plan.**  This one was written at the end of §4s.
 
-Read first, in this order: `docs/LADDER_PLAN.md` **§4p in full** — it is the
-measurement that selected this task, and its last third ("The numeration,
-CRACKED") is the specification you are implementing; then **§4o in full**,
-which is the same build one numeration over and is the template you are
-copying; then `tools/ladder/fibmem.py` (`FIBMEM: OK`), the oracle that already
-checks every line of the spec against the orbit read off the machines; then
-`theories/Checkers/LadderCheck.v` §3b, §5b and §10 — the `(Gray, 2)` instance,
-which is the shape of every file you are about to add.
+Read first, in this order: `docs/LADDER_PLAN.md` **§4s in full** — it is the
+measurement that selected this task; then **§4r in full**, the `(Fib, 1)`
+build you would be copying; then `theories/Checkers/LadderCheck.v` §3c, §5c
+and §11, which are the three pieces a numeration costs.
 
-**STATE.**  **35** core undecided and **12** `0RB` shadows
+**STATE.**  **27** core undecided and **12** `0RB` shadows
 (`tools/closeout/core_rows.txt`, `tools/closeout/shadow_rows.tsv`;
-`make closeout-status`).  **5,109** frozen rows settled by a board, 99.1%.
-**47** rows remain.
+`make closeout-status`).  **5,117** frozen rows settled by a board, 99.2%.
+**39** rows remain.
 
-**THE TASK.**  §4p measured the five fibonacci rows and found the ARM RISK IS
-ZERO: all five fit the same two classes, both arms derive at threshold 0..1
-and **stride 1**, and the costs are affine (first differences a constant 2 and
-a constant 0).  What blocks them is the NUMERATION and nothing else — `Fam`
-has no weight field, `fam_value` is `val_pos`, and the five boards on disk
-declare `Binary 1`, which is not what their machines do.  §4p then cracked the
-numeration and checked all four facts:
+**THE TASK, AND IT HAS TWO ROUTES — MEASURE BEFORE YOU BUILD.**
 
-* **Membership.**  LSB-first: an optional leading `1`, then a concatenation of
-  the blocks `[0]` and `[1;1]`.  Counts come out 2, 3, 5, 8, 13, 21, 34, 55,
-  89, 144 and agree with the orbit at every width 0..11.
-* **The top of a width is `1^k`** — simpler than `(Gray, 2)`'s
-  `[1] ++ 0^(k-2) ++ [1]`, and no `of_value` is needed to compute it.
-* **The split is TWO-WAY and splits on the LOW DIGIT** — a `destruct`, where
-  §4o had to do four-way:
+The six rows are
 
-      low digit 0    [0] ++ 0^n ++ rest    ->   [1] ++ 0^n ++ rest
-      low digit 1    1^n ++ [1;0] ++ rest  ->   0^n ++ [1;1] ++ rest
+    1RB---_0LC1RD_1LB1RC_1LB0RD      1RB---_1LC0RB_0LD1RB_1LC1RD
+    1RB---_0LC1RD_1LB1RD_1LB0RD      1RB---_1LC1RB_0LB1RD_1LC0RD
+    1RB---_1LC0RB_0LD1RB_1LC1RB      1RB---_1LC1RD_0LB1RD_1LC0RD
 
-  Measured over all 2,284 interior members of the five rows: overlap 0,
-  uncovered 0, wrong successor 0.
-* **Each rewrite adds exactly 1 to the value**, so the successor never has to
-  be inverted pointwise.
+and `python3 valfam.py --spec <row> --numeration --cap 400` reads every one of
+them as a Fibonacci counter at an anchor chain of 232–376.  **The
+`--numeration` flag is required and it is new** (§4s): without it
+`find_families` returns 26-odd junk positional families at chain 8 and its
+`if not found` gate switches the numeration pass off entirely, which is why
+these rows had never been read at all.
 
-So the build is: a `Fib` constructor on `Code` (every existing section is
-gated by `Hypothesis Hcode : fm_code F = Binary` / `= Gray` and stays inert),
-`fam_value` at `Fib` as the weighted fold, the membership predicate as
-`ClassSucc`'s `P`, and the round-trip
-`fam_of_value F (fam_value F ds) (length ds) = Some ds` over it.
+Where they stop: the weights come back `1, 2, 3, 5, 8, 13` — **Zeckendorf**,
+not the `1, 1, 2, 3, 5, 8` that `LadderCheck` §11 states — so
+`closure_data_fib` refuses on the weights.  Under the shifted reading the
+INTERIOR covers cleanly and the failure is `overflow leaves the family`, with
+the uncovered set
 
-**THE ONE PLACE THE RISK IS.**  The numeration is **REDUNDANT** — `w0 = w1 = 1`,
-so `10000` and `01000` are both value 1 — and the membership rule is which
-representative the machine picks.  So the round-trip lemma is NOT free the way
-`(Gray, 2)`'s `gray_inj` was (there, one value and one width determined one
-string outright).  Here it holds only ON MEMBERS, and the proof has to use the
-membership predicate.  **Do that lemma first**: if it will not go through,
-STOP and write §4q with the counterexample, because everything else rests on
-it.
+    (k=2, v=3), (k=3, v=6), (k=4, v=11), (k=5, v=19), (k=6, v=32), (k=7, v=53)
 
-**THE CLOSER IS THE QUASIHALTING ONE, NOT `boardG_neverqh`.**  These five are
-`live = BCD`: `A` is entered once, at step 0, and nothing targets it.  So they
-QUASIHALT in `A` and want `LadderCheck` §8's shape (`boardph_iqh`) — every arm
-additionally `RuleAvoid`, a visit chain per state other than the quiet one,
-and the quiet state's last visit with the window to the anchor.  §4o's
-`Section BoardG` is never-QH only and does NOT serve them; budget for the iqh
-twin.  `sq = 0` here, which makes the window obligations small.
+which is `sum(weights[:k])` at each width — the string `1^k`, the top of the
+width.  With one repair round the wrong successors are a `1` followed by
+zeros at values 5, 8, 13, 21, the weights themselves.  **The whole residue of
+these six is the FILL arm.**
 
-**RE-ROOT DOES NOT SERVE THESE FIVE** and §4p says why: `Census/Reroot.v`'s
-precondition is a prefix writing only `S0` so the tape stays all-blank, and
-these rows write a `1` on step 0 — the very event re-root stops at.  Do not
-try it.
-
-**STATE THE LEMMAS AGAINST THE ORACLE BEFORE PROVING THEM.**  `fibmem.py`
-already checks the membership predicate, the top, the split and the successor
-against the orbit.  §4o's `gray2check.py` is the same discipline and it caught
-a wrong case split in seconds that would have cost hours in Coq.  Extend
-`fibmem.py` to whatever you state; do not state anything it has not checked.
-
-**DO ONE ROW END-TO-END FIRST**, drive it to its `iqh` triple, run
-`make closeout`, and confirm "settled by a board" moves.  **A board that does
-not move a number is not a board.**
+* **Route A — measure whether the `1,1,2,3,5` reading is available FIRST.**
+  `tools/counters/FIB_ELEVEN.txt` records all six at `F(1,1) off=0` under
+  `fib_anchor.py`, which is a different reading convention from `valfam`'s.
+  If some anchor admits `1,1,2,3,5` inside `Fam`'s denotation, the kernel
+  already speaks it and there is nothing to build.  **This is what freed the
+  two gray rows in §4s** — the buildable reading was already in
+  `find_families`' output and had only lost a tie — and it costs an
+  afternoon against a numeration's week.  Do it before Route B.
+* **Route B — the fourth `(code, step)` pair, `(Fib, 2)`/Zeckendorf.**  §4r
+  priced the third at one `fam_lim`, one membership predicate, one round
+  trip and a `Section Iter` copy, and the `Class` record did not widen.  The
+  differences from `(Fib, 1)`: membership is **no two adjacent 1s** (a
+  one-state automaton, simpler than §4r's two-state), the numeration is
+  NOT redundant so the round trip is `gray_inj`-easy rather than §4r's risky
+  lemma, and **the top of a width is `1010…` and not `1^k`** — which is the
+  fill arm's left-hand side and therefore the only genuinely new shape.
+  Write the oracle first (`tools/ladder/fibmem.py` is the template, and §4o's
+  `gray2check.py` before it): do not state a lemma the Python has not
+  checked against the orbit.
 
 **WHAT NOT TO DO.**
 
-* **Do not re-probe the four base-2 quadratic rows.**  §4p measured their
-  interior arm at `(r+1)(r+2)` and `r^2 + 5r + 12` — second difference exactly
-  2 in every case — and `QUAD_TERMINAL_MEASUREMENT.md` corroborates it by an
-  independent route on the terminal.  A strided arm is one chain repeated, so
-  its cost is affine along the stride; no widening of `ARM_GRID` reaches a
-  quadratic.  They are done as ladder rows.  **§4o's prompt pointed at exactly
-  these four and was wrong** — it read §4i's "the next widening is known and
-  small" as still live, and §4p had measured it dead.
-* Do not build another `ClassSucc` instance for a code that has no rows.
+* **Do not re-probe the four base-2 quadratic rows** (`1RB0LD_0LC0RB_...` and
+  the three `1RB1LA` rows).  §4p measured a second difference of exactly 2 on
+  the arm itself and `QUAD_TERMINAL_MEASUREMENT.md` corroborates it
+  independently.  No widening of `ARM_GRID` reaches a quadratic.
+* **Do not count `1RB0RB_0LC1RD_1LC1LA_0LA1RB` with the six.**  It has been
+  filed with them since `docs/CORE_3STATE.md` §3 read it as a φ row by radix
+  sweep, and §4s measured that it finds **no family at any anchor** —
+  `digit_words(rules)` names nothing.  It is a `no anchor` row.
 * Do not do the outer parameter (§4j).  **Never edit `theories/Census/`.**
 
-**Still open, and cheap, if you finish early.**  The two gray rows §4n and
-§4o left alone — `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and
-`1RB0RD_1LC0LC_1LD0LB_1RD0RA` — have two-cell digit words ending in `0`, so
-`fam_cells` spells one cell more than the machine's `cconf` carries at the
-anchor.  The gray emitter REFUSES them at the boot check with exactly that
-reason in the `.v` file, and `tools/ladder/gray2check.py` confirms their class
-law is fine.  Either re-read them at an anchor whose digit words do not end in
-a blank, or give `fam_cells` a trimming the denotation can state.  Two rows,
-and no kernel lemma is involved.
-
-**THE SHADOWS ARE NOT READY WORK, AND HERE IS WHY.**  Twelve `0RB` shadows sit
-on ten core rows.  A shadow satisfies the `skipped` disjunct only while its
-core row is DEFERRED; it needs a board of its own exactly when its core row
-boards, and not before.  **Five of the twelve sit on three of the four
-QUADRATIC rows** (§4p), so they are not coming back either.  Two things §4o
-paid for, when you do free one:
-
-* **You do not have to do anything.  A freed shadow now boards itself.**
-  §4o hit this the hard way: `shadowlib.classify` used to drop a shadow from
-  `shadow_rows.tsv` the moment its partner left the unproven set — exactly
-  when it became actionable — so `gen_shadow.py --all`, whose input is that
-  file, was blind to the rows that were ready, and §4o drove both of them by
-  hand off `git show HEAD~1:tools/closeout/shadow_rows.tsv`.  **Fixed:**
-  `classify` searches partners over the boarded set too and reports a third
-  category, `freed`; `gen_shadow.py --harvest` boards every one; and
-  `make closeout` runs it between two `inventory.py` passes.  So board a core
-  row, run `make closeout`, and its shadows come with it.  `audit.py` prints a
-  freed row that somehow survives, because it is the cheapest row on the list.
-* The generator reads the partner's PACKAGE off `frozen_map.tsv` rather than
-  hard-coding `BBB4.Machines.Counters` (§4o: ladder boards live under
-  `BBB4.Machines.Ladder`).  `gen_shadow.py --regress` is `OK, 4 of 4` on a
-  built tree and `INCONCLUSIVE` on an unbuilt one (§4p) — build the fixture
-  first or it tells you nothing.
+**Also open and cheap.**  Nick's list included three rows the ladder does not
+read at all — `1RB0RB_1LC0RC_1RA0LD_0LB0LC`, `1RB1LB_1LC0RD_0LB1LA_0LA1RA`,
+`1RB1RC_1LA0LB_1LD0RD_1LB0RC` — all three now measured as `no value family`
+under `--numeration` too, so they want `alphabet_infer.py` or a non-ladder
+route (ReachSt), not a numeration.
 
 **Facts worth not rediscovering.**
 
 * Coq is not in the image — `apt-get install -y coq` gives 8.18.0, which is
   what CI expects.  It takes about a minute.
 * **`make closeout` only needs `theories/Closeout/Closeout.vo`, whose
-  dependency closure does NOT include the nine `IRules_Batch`** (`coqdep` says
-  so; ask it, not the plan file).  Measured on 4 cores at `-j3` from cold:
-  roughly **4–10 files a minute**, so the closure is HOURS and not the 45
-  minutes §4n estimated.  `.vo` are gitignored, so a fresh container pays it
-  and a branch reset does not — start it EARLY in the background and read
-  while it runs.
+  dependency closure does NOT include the nine `IRules_Batch`** (`coqdep`
+  says so; ask it, not the plan file).  Measured on 4 cores at `-j2` from
+  cold: roughly **4–10 files a minute**, so the closure is HOURS.  `.vo` are
+  gitignored, so a fresh container pays it and a branch reset does not —
+  start it EARLY in the background and read while it runs.
 * **`tools/closeout/audit.py` is the live scoreboard and needs no Coq.**
   `inventory.py` → `gen_stages.py` → `audit.py` moves the numbers in seconds;
   the `Closeout.vo` build is what turns the audit's number into the kernel's.
   Say which one you have.
+* **A `cconf` carries no trailing blanks** (`lpad_eqb`), so a family all of
+  whose digit words end in a blank with no terminator behind them spells one
+  cell more than its own boot at EVERY width and no boot check can pass.
+  §4s made that a term in `find_families`' sort key.  If an emitter refuses a
+  boot with `boot cells ... are not the family at ...`, look for the rotated
+  anchor in the same output before touching `fam_cells`.
+* **Anything that touches the champion's score stays in HORNER form.**
+  32,779,478 as a decimal literal is left as `Nat.of_num_uint` (opaque to
+  `lia`), and forcing it under `vm_compute` builds 32.8M constructors.
+  `CloseoutKit.covers_iqh_champ_at`'s gate is the proposition `B <= B_champ`
+  under `lia` for exactly this reason — do not "simplify" it to a `<=?`.
 * **Editing a file under `theories/Checkers/` under a running `make` makes
-  every already-built board fail** with `inconsistent assumptions over library
-  BBB4.Checkers.LadderCheck`.  Same trap as rewriting `_CoqProject`
-  mid-build.  Finish the edit, then build.  (Adding an UNREGISTERED `.v` under
-  `theories/` is safe — `make` has no rule for it — which is how §4o compiled
-  boards while a build ran.)
+  every already-built board fail** with `inconsistent assumptions over
+  library BBB4.Checkers.LadderCheck`.  Same trap as rewriting `_CoqProject`
+  mid-build.  Finish the edit, then build.  (Adding an UNREGISTERED `.v`
+  under `theories/` is safe — `make` has no rule for it — which is how §4o
+  and §4s compiled boards while a build ran.)
 * **`stride = 0` needs the whole side concrete in `s_pre`** (`blk`/`blk_den`);
   the failure reads like "the carry ripple is not affine" and is an instant
-  `None` at every stride.  You are about to work next door to this — do not
-  re-derive it.
+  `None` at every stride.
 * **`RuleSound` is an equation on `cconf` and `CTape.ctape_move` does not
   normalise.**  A blank the head materialises by stepping back over it is
-  `S0 :: r` and not `r`; `valfam`'s `other_side_cells` drops exactly those
-  cells — the same TAPE under `lift` (so the boot premise does not notice) and
-  a different `cconf` (so every arm does).  The gray path reads the far side
-  off the BOOT for this reason; if an interior arm lands one cell off, this is
-  why.
-* `emit_ladder.py` writes its refusal reason **into the `.v` file**, and it is
-  the real exception text.  Read the file, not the driver's last line.
+  `S0 :: r` and not `r`.
+* `emit_ladder.py` writes its refusal reason **into the `.v` file**, and it
+  is the real exception text.  Read the file, not the driver's last line.
 * Keep `board_ladder.py`'s `wanted()`/`wanted_gray()` in step with
-  `closure_data`/`closure_data_gray`'s refusals.
+  `closure_data`/`closure_data_gray`'s refusals.  **Neither knows about the
+  Fib path** — §4r and §4s both drove `emit_ladder.py` on a cert JSON by
+  hand, because `wanted()` refuses `weights is not None` outright.
 * **Never run `valfam.py` and a full `make -jN` at the same time.**  One row
   is fine; a sweep is not.
 * CI builds `CloseoutKit.vo`, two example files and a `make all` dry run — it
   does NOT build the ladder boards or the `CB_*` stages.  Green CI is not
   evidence your board compiles.  Build it locally.  CI DOES check that every
-  `.v` under `theories/` is registered or exempt, so a board left unregistered
-  fails CI even though nothing builds it.
-* The arm-soundness, class and avoidance lemmas are Closed under the global
+  `.v` under `theories/` is registered or exempt.
+* The arm-soundness, class and avoidance lemmas are closed under the global
   context — zero axioms — because they are on `csteps`/`cden` and never go
-  through `lift`.  `board_arm`, `board_armG`, `gray_split`,
-  `gray2_class_succ`, `blk_den`, `arm_index` and `tops_cofinal_at` are too.
-  Keep it that way; funext enters only in the final assembly.
-* The time-cap bucket is three rows, not four.  All four re-run at
-  `--cap 900`: the three `1RB---` rows still cap with 26 families found and
-  four tried, so raising the budget is not the lever — the question is which
-  families the searcher spends it ON.  `1RB1RC_1LA1RA_0RC1LD_1LB0LD` finishes
-  in 723 s on `interior-not-covered` with 5 of 12 families tried: it is a
-  coverage row that was wearing the budget's label.
+  through `lift`.  Keep it that way; funext enters only in the final
+  assembly.
 
 **CONSTRAINTS.**  May touch `theories/Checkers/`, `theories/Machines/`,
 `tools/`, `docs/`, `NEXT_SESSION.md`.  **Never edit `theories/Census/`.**
