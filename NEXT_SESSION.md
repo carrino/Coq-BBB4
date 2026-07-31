@@ -1315,6 +1315,78 @@ STATE: `D_remaining` **431** (4,725 / 5,156 = 91.6% settled); closeout
 regenerated (`make closeout`), `audit.py` OK, `Closeout.vo` + stages
 kernel-verified in-container; `census_cache --check` MATCH throughout.
 
+## 2p. Ladder Stage B's CLOSURE (2026-07-31) -- the first machine boarded, and the gate answered
+
+_Branch `claude/stage-b-closure-wlrpey`.  Full write-up in
+`docs/LADDER_PLAN.md` 4i; this is the lab-notebook version -- the traps._
+
+**The number.**  `1RB1LC_0LC0RB_1LA1LD_1RC0LD` is boarded end to end and
+`tools/closeout/audit.py` went **62 -> 61 core undecided**, 5073 -> 5074
+settled.  Before this the ladder had proved a pile of RULES and zero
+machines.
+
+**Trap 1: re-certify, always.**  The row was handed over as "7 arms"; the
+stored `ladder_fixture_cert.json` says 8; at HEAD with `--kmax 9` it is
+**12**.  The fixture predates three sections now.  `valfam.py --spec ROW` is
+31 s -- there is never a reason to trust a stored cert.
+
+**Trap 2 (the big one): the certificate's arms are NOT the closure's arms.**
+The prover's arms are multi-variable patterns; `sside` carries ONE symbolic
+run, so `emit_ladder.py` boards each with every run length but one pinned to
+its lower bound.  Those arms are sound, and they cover exactly the 1022
+strings the prover enumerated and nothing more.  Feed them to a kernel and
+the kernel is still enumerating.
+
+The fix is that the class arms are BUILT from the `Fam` record, not mined:
+one interior arm per digit below the top, one fill arm.  **12 arms become 2,
+and 1022 strings become all of them.**  `emit_ladder.py` does this now; if
+you are boarding a new family and the arm count does not collapse, something
+is wrong.
+
+**Trap 3: the fill arm's pre-materialisation is not optional and now has a
+measurement.**  4h recorded it; this session checked it.  The canonical
+`rep u (1*j+1)` form for the fill arm finds **no chain at all**.  The
+`u ++ rep u j` form finds one in six steps.  Do not "clean up" the emitter's
+`pre` materialisation.
+
+**Trap 4: `vis_of_run` does not want a PREFIX of the arm's chain.**  On this
+row the fill arm's chain has no prefix landing in state D -- D is inside a
+`SWinL 13` macro step.  Any chain from the same anchor will do, and
+`[SWin 2; SCycL 2 0; SWin 1; SWinL 1]` reaches D.  4h's "the fill arm alone
+fires all four states" is about the dev fixture; the general statement is
+"all four are reachable from the fill's anchor", which is weaker and still
+enough.
+
+**The gate (4h's one open question) is ANSWERED: yes, with one widening, and
+not the widening anyone expected.**  The `Class` RECORD does not move --
+`cs_u ++ cs_t^n ++ cs_w ++ rest`, which is exactly the engine's `sside`
+shape.  Measured by transcribing `fam_next` into Python and enumerating the
+Gray row's family: parities mixed, the classes contradict each other; parity
+fixed, **four classes of that record cover 4082 of 4082 interior strings at
+widths 3..12**.  What widens is the PREMISE: `ClassSucc` now carries a
+membership predicate, because a step other than 1 makes only part of each
+width a member (4g) and for `(gray, 2)` the discriminator is the parity of
+the WHOLE string -- global, so it cannot be pushed into `cs_u`/`cs_w`.
+`(binary, 1)` instantiates it at `True`.
+
+**Selection.**  4f made `order_ok` a kernel obligation.  Under a PROVED case
+split there is nothing left to decide: the two classes are disjoint because
+`digs_decomp` says so.  `sel` is a lookup in the arm list as data and
+`covers`/`order_ok` are not built.  That is a smaller trust surface, not a
+shortcut -- but it means 4f's argument does not survive contact with a
+proved split, and the subsumption order is load-bearing for the SEARCH only.
+
+**Compute note.**  `valfam.py` and `make -jN` fight over 4 cores badly; a
+core sweep that should run at ~16 s/row ran at ~78 s/row against a build.
+Run one or the other.
+
+**What is NOT done, precisely.**  `theories/Closeout/Closeout.vo` was not
+rebuilt -- it needs all 2665 `_CoqProject` files and this container does not
+have the hours.  What IS kernel-verified: the board itself, and the exact
+`covers_nqh_at` proof line `gen_stages.py` emitted for the row (compiled
+standalone against `CloseoutKit` + the committed census `.vo`, funext only).
+The 62 -> 61 number is `audit.py`'s, which is the Python bookkeeping layer.
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
