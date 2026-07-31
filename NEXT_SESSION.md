@@ -155,8 +155,8 @@ carrying forward:
 
 ## 2b3. Wave-35 (2026-07-31) — the 24 three-state core rows are NINE machines
 
-Full write-up: `docs/CORE_3STATE.md`.  **10 of the 24 `1RB---` core rows
-board**; core 62 -> 55.  Read that file before touching this population
+Full write-up: `docs/CORE_3STATE.md`.  **12 of the 24 `1RB---` core rows
+board** -- half the population; core 62 -> 50.  Read that file before touching this population
 again.  The four things worth carrying:
 
 - **The 24 rows are 9 sub-machines.**  `StA` fires once and (on 23 of the 24)
@@ -191,13 +191,15 @@ again.  The four things worth carrying:
   The hand-written closers (`KpWallAlt.v`, `KpWallScan.v`) carry "still one
   of the two" existentially instead, which covers both parities at once.
 
-**Ranked next moves on the remaining 14** (details in `docs/CORE_3STATE.md`
-section 3): (1) the 2 rows of `0LB1RC_1LB0RD_1LC0RC` — base 3 again, digits
-`{00,10,11}`, one more `Ter3Wall`-sized closer; (2) the 10 rows whose lap is
-super-affine (`6,16,36,82,196` at carry lengths 0..4) — those are NESTED
-counters and `nestcert.py` is `S0`-anchor-only, so thread a second head
-symbol through it; (3) `1RB---_1RC1LB_0LB1RD_0RA0RC`, the one row that
-targets `StA`, which needs `LapAvoid` rather than `ReachStI.inv_ok`.
+**Ranked next moves on the remaining 12** (details in `docs/CORE_3STATE.md`
+section 3): (1) the 11 rows whose lap is super-affine (`6,16,36,82,196` at
+carry lengths 0..4) — those are NESTED counters and `nestcert.py` is
+`S0`-anchor-only, so thread a second head symbol through its INNER anchor;
+(2) `1RB---_1RC1LB_0LB1RD_0RA0RC`, the one row that targets `StA` — and
+`0RA` DOES fire, at indices 19, 66, 257, 1024, 4095, 16382, … (~4^k, measured
+to 2·10^6), so that row's target is `NeverQuasiHaltsSt`, NOT `iqh`, and its
+closer is `glue_neverqh`.  It is the only one of the 24 that does not
+quasihalt.
 
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 

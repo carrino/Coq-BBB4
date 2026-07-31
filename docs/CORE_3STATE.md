@@ -21,10 +21,10 @@ sub-machines (plus one row that does target `StA`):
 | `0LC1RD_0LB1RD_1LB0RD` | 3 | **3** | `Counters/KpWallAlt.v` |
 | `0LC1RB_0LB1RD_1LC0RD` | 3 | **3** | `Counters/KpWallScan.v` |
 | `0LC1RD_1LB1RD_1LC0RD` | 1 | **1** | `Checkers/LapDecider.v` (nested) |
+| `0LB1RC_1LB0RD_1LC0RC` | 2 | **2** | `Counters/Ter3WallB.v` |
 | `0LB1RC_1LD0RC_1LB1RC` | 3 | 0 | — |
 | `0LC1RD_1LB1RC_1LB0RD` | 3 | 0 | — |
 | `0LC1RD_1LB1RD_1LB0RD` | 3 | 0 | — |
-| `0LB1RC_1LB0RD_1LC0RC` | 2 | 0 | — |
 | `0LB1RC_1LB0RD_1LC0RD` | 2 | 0 | — |
 | (targets `StA`) | 1 | 0 | — |
 
@@ -59,16 +59,16 @@ searched `S0`-first so no previously boarded row can change route, and
 `anchors` proposes every family with a long consecutive-value run rather than
 the single best-scoring one.
 
-## 2. The boarded four families
+## 2. The boarded five families
 
-All four are `iqh` — `NonHalt /\ QHBound 2000 /\ QuasiHaltsSt` — **not**
+All five are `iqh` — `NonHalt /\ QHBound 2000 /\ QuasiHaltsSt` — **not**
 `NeverQuasiHaltsSt`: `StA` fires once and never again, so these machines
 genuinely quasihalt, with score 1.  `LapGlueQuiet.glue_qh_quiet` is the
 closer in every case (`qa = StA`, `s0 = 0`), and its `AvoidRun` premise is
 free from `ReachStI.inv_csteps_all` because the three roles are a total,
 closed state set that excludes `StA`.
 
-### `Ter3Wall.v` — base three (3 rows)
+### `Ter3Wall.v` / `Ter3WallB.v` — base three (3 + 2 rows)
 
 `tools/closeout/residue_map.tsv` calls these "EXP3": read at base 2 their lap
 grows like `3^j`.  They are not base 2.  After the wall the tape is 2-cell
@@ -86,6 +86,15 @@ snapshots a session ago; what was missing was the Coq side.
 * `Counters/LapGlueIx.v` — `LapGlueQuiet` over an ARBITRARY index.  Neither
   it nor `LapGlue` uses arithmetic; `Pos.le` only carries the `p0 <= p`
   guard.  A base-3 counter has no `positive` to index by.
+
+`Ter3WallB.v` is the same radix over a DIFFERENT alphabet — digits
+`{00, 10, 11}`, and the increment writes its fresh `1` in the digit's first
+cell (`00 -> 10`) where `Ter3Wall`'s writes it in the second (`00 -> 01`).
+There the parity IS the branch: the outward clear alternates one cell at a
+time and what stops it is the first clear cell, so a digit-0 stop leaves an
+even run and a digit-1 stop an odd one.  Base 3's two interior branches are
+therefore not two lap lemmas but the two parities of one, both `2k + 2` in
+the run length.
 
 ### `KpWallAlt.v` / `KpWallScan.v` — the alternating return (3 + 3 rows)
 
@@ -111,21 +120,9 @@ even runs, and `j` is universally quantified.  This is a real expressiveness
 gap, not a search gap — the alternative would be a state-SET in `sconf`,
 which changes `srun_sound` and every step's soundness lemma.
 
-## 3. The 14 survivors, and what each needs
+## 3. The 12 survivors, and what each needs
 
 Measured with `tools/counters/radix_infer.py` and by hand-reading traces.
-
-### `0LB1RC_1LB0RD_1LC0RC` (2 rows) — base three, different digits
-
-`1RB---_0LB1RC_1LB0RD_1LC0RC`, `1RB---_1LC0RD_0LC1RB_1LB0RB`.
-Base 3, 2-cell digits `{00, 10, 11}`, anchor at the wall, lap `4j + 2` and
-`4j + 4` on the two interior branches.  **This is the cheapest survivor
-group.**  `TernCounter.v` already supplies numerals, both increments and
-`TerStep`; what does not fit is `Ter3Wall`'s lap, because the increment
-writes its fresh `1` in the digit's FIRST cell (`00 -> 10`) where `Ter3Wall`
-writes it in the second (`00 -> 01`).  So: one more closer of the same size
-as `Ter3Wall`, or a `TerStep` widened to carry the stop-digit rewrite as
-data.
 
 ### `0LB1RC_1LB0RD_1LC0RD` (2 rows), `0LB1RC_1LD0RC_1LB1RC` (3 rows)
 
@@ -150,12 +147,21 @@ away.
 
 ### `1RB---_1RC1LB_0LB1RD_0RA0RC` — the one row that targets `StA`
 
-`StD`'s `S0` transition is `0RA`, so `StA` is re-entered whenever that fires.
-Everything above assumes `StA` fires once; this row needs either a proof that
-`0RA` never fires after the bootstrap (then `LapGlueQuiet` applies verbatim,
-its `AvoidRun` premise discharged by `LapAvoid` rather than by
-`ReachStI.inv_ok`), or a genuinely different argument.  It is also the row
-`radix_infer` reads at `p0 = 257` rather than 1, so its bootstrap is long.
+`StD`'s `S0` transition is `0RA`, and **it fires**: `StA` is re-entered at
+configuration indices
+
+```
+19, 66, 257, 1024, 4095, 16382, 65533, 262140, 1048571, …
+```
+
+(measured to `t = 2·10^6`; `t_k` is `4^k` to within a small linear term —
+`4095 = 2^12 - 1`, `16382 = 2^14 - 2`, `65533 = 2^16 - 3`, …).  So this row's
+target is **`NeverQuasiHaltsSt`, not `iqh`** — it is the one row of the 24
+that does not quasihalt, and `LapGlue.glue_neverqh` is its closer rather than
+`LapGlueQuiet.glue_qh_quiet`.  Its anchor family is indexed by that `4^k`,
+i.e. the lap doubles twice, so it wants the nested machinery of §3's second
+group, not a flat chain.  (This is also why `radix_infer` reads it at
+`p0 = 257` rather than 1: the readable anchors start after three doublings.)
 
 ## 4. Reproducing the measurements
 
