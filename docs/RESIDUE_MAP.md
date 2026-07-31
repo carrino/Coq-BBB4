@@ -10,8 +10,11 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**58 rows as of this commit — 43 distinct core machines + 15 0RB
-re-root shadows that fall with them.**  The count moves every wave, so
+_**56 rows as of this commit — 42 distinct core machines + 14 0RB
+re-root shadows.**  A shadow needs no new mathematics, but it does need its
+own board: boarding a core machine moves its shadow into `core_rows.txt`
+rather than settling it, so budget the pair (2026-07-31; worked example
+`Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v`).  The count moves every wave, so
 treat the row files as the authority and this prose as a snapshot.  With
 tower #20 boarded on 2026-07-28 the (4,2) HOLDOUT list is closed, so this
 is the entire remaining problem.  (The wave-23 residue track boarded
@@ -92,12 +95,12 @@ lists partition `core_rows.txt` exactly):
 |--:|---|---|--:|---|
 | 23 | no interior `j = S j'` chain | | 2 | no inner interior chain |
 | 10 | no gap-free two-form family | | 1 | no boot chain |
-| 4 | register step does not close | | 1 | no interior `j = 0` chain |
+| 3 | register step does not close | | 1 | no interior `j = 0` chain |
 | 2 | no inner family at `pow2 j` | | | |
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
-| `-`/`no-anchor` | 15 | 10 no anchor, 5 no overflow phase |
+| `-`/`no-anchor` | 14 | 10 no anchor, 4 no overflow phase at K=6 |
 | `HIGHER`/`HIGHER` | 12 | 12 no interior chain |
 | `QUAD`/`QUAD` | 4 | 4 no interior chain |
 | `EXP4`/`EXP4` | 4 | 4 no interior chain |
@@ -108,9 +111,9 @@ lists partition `core_rows.txt` exactly):
 
 **What that table now says, and it is the shape of the endgame:** the
 residue has inverted.  It used to be dominated by `AFFINE` machines our
-emitter could not frame; **23 of the 43 are now NON-AFFINE on both
+emitter could not frame; **23 of the 42 are now NON-AFFINE on both
 branches** (`HIGHER` 12, `QUAD` 4, `EXP4` 4, `EXP3` 3) — shapes whose lap
-cost the certificate language cannot write as `a*j + b` at all — plus 15
+cost the certificate language cannot write as `a*j + b` at all — plus 14
 whose tape never decodes as a counter under any alphabet.  Only 5 rows are
 affine on at least one branch.  The easy framings are spent.  What is
 left wants either a closer that never needs the cost (`LapGlue`'s lap
@@ -172,7 +175,7 @@ uniform step bounds for avoid sub-machines without sweep acceleration.
 
 ## Where a newcomer should probably start
 
-1. **The nested interior lap** — 23 of the 43, still the largest bucket,
+1. **The nested interior lap** — 23 of the 42, still the largest bucket,
    though no longer a monolith: `ReachStI` and the ladder have both taken
    rows out of it (`docs/WAVE33_PROMPT.md` item 1).
 2. **The two live routes**, both with named next steps: ReachSt's mirror
