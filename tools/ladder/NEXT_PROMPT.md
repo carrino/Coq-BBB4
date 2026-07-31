@@ -204,8 +204,14 @@ Resolving one by hand silently reverts whichever side's boards you did not
 notice.  Instead: `git checkout --theirs` to get a tree, then re-derive —
 
     python3 tools/closeout/inventory.py
+    python3 tools/closeout/gen_shadow.py --harvest   # boards any freed shadow
+    python3 tools/closeout/inventory.py              # ...and picks it up
     python3 tools/closeout/gen_stages.py
     python3 tools/closeout/audit.py     # must print CLOSEOUT AUDIT: OK
+
+`make closeout` runs exactly that sequence.  Driving it by hand and skipping
+the `--harvest` line is the one way a freed shadow still ends up sitting in
+`core_rows.txt`; `audit.py` prints it if it does.
 
 The board `.v` files are the source of truth and never conflict, because they
 are different files.
