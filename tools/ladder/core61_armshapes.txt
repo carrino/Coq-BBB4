@@ -1,0 +1,86 @@
+WHAT EACH LIVE-CORE ROW'S CLASS ARMS NEED  (LADDER_PLAN 4k)
+==========================================================
+
+Measured from tools/ladder/core61_sweep.jsonl (valfam --kmax 9 --cap 150 over
+the 61 core rows left after the first board; ~1.5 h, do not redo it).
+
+Only the 21 binary / step-1 / one-phase rows are listed -- the others are
+blocked before the arms (6 gray, 3 two-phase, 27 no family or none closed,
+4 time cap).  For each, the shape of the two CLASS arms:
+
+  interior  t^n ++ d :: rest -> 0^n ++ (d+1) :: rest,  n = off + stride*j
+  fill      t^(1+off+stride*j) -> the fill law's target
+
+"off" is the guaranteed copies materialised into s_pre; "stride" is the
+block width.  A row needs BOTH arms.  With stride and offset on both, 15 of
+21 have both; with stride on the interior only (the state at 4i) three do.
+
+
+NEVER QUASIHALTS -- board_neverqh takes these
+---------------------------------------------
+1RB1LA_0LA0RC_0LD0RB_1LD1RC    digitw=1  BOTH ARMS
+     interior stride 2, offsets/counts [(2, '4*j+6'), (1, '8*j+8')]
+     fill     stride 2, ['r=0 m1=0 m2=1 8*j+8', 'r=1 m1=0 m2=2 4*j+6']
+1RB1LA_0LC0RD_1LC1RD_0LA0RB    digitw=1  BOTH ARMS
+     interior stride 2, offsets/counts [(2, '8*j+12'), (1, '4*j+4')]
+     fill     stride 2, ['r=0 m1=0 m2=1 4*j+4', 'r=1 m1=0 m2=2 8*j+12']
+1RB1LB_1LC1LA_0LB1RD_0RB0RD    digitw=2  BOTH ARMS
+     interior stride 1, offsets/counts [(0, '4*j+8')]
+     fill     stride 1, ['r=0 m1=0 m2=2 4*j+10']
+1RB1LC_0LA0RB_0RD1LA_0LC1RD    digitw=1  BOTH ARMS
+     interior stride 2, offsets/counts [(2, '4*j+6'), (1, '8*j+8')]
+     fill     stride 2, ['r=0 m1=0 m2=1 8*j+8', 'r=1 m1=0 m2=2 4*j+6']
+1RB1LC_0LC0RB_0RD1LA_0LA1RD    digitw=1  BOTH ARMS
+     interior stride 2, offsets/counts [(2, '8*j+12'), (1, '4*j+4')]
+     fill     stride 2, ['r=0 m1=0 m2=1 4*j+4', 'r=1 m1=0 m2=2 8*j+12']
+1RB1RC_1LA1LD_0RB0RC_1LB0LB    digitw=2  BOTH ARMS
+     interior stride 1, offsets/counts [(0, '6*j+6')]
+     fill     stride 1, ['r=0 m1=0 m2=2 6*j+14']
+1RB0LD_0LC0RB_1LA1RC_0RC1LD    digitw=1  blocked
+     interior NO CHAIN
+     fill     NO CHAIN
+1RB1LA_0LA0LC_1LC1RD_0RB0RD    digitw=1  blocked
+     interior NO CHAIN
+     fill     NO CHAIN
+1RB1LA_0LA1RC_0LD0RC_1LD0RB    digitw=1  blocked
+     interior NO CHAIN
+     fill     NO CHAIN
+1RB1LA_1LC0RD_0RA0LC_0LA1RD    digitw=1  blocked
+     interior NO CHAIN
+     fill     NO CHAIN
+
+QUASIHALTS -- these need the LapGlueQuiet port TOO (4k step 2)
+--------------------------------------------------------------
+1RB---_0LB1RC_0RD0RC_1LB1LD    digitw=2  BOTH ARMS
+     interior stride 1, offsets/counts [(1, '4*j+8')]
+     fill     stride 1, ['r=0 m1=0 m2=1 4*j+8']
+1RB---_0LC1RB_0LB1RD_1LC0RD    digitw=1  BOTH ARMS
+     interior stride 2, offsets/counts [(2, '4*j+6'), (1, '4*j+6')]
+     fill     stride 2, ['r=0 m1=0 m2=1 4*j+6', 'r=1 m1=0 m2=2 4*j+6']
+1RB---_0LC1RD_0LB1RC_1LB0RD    digitw=1  BOTH ARMS
+     interior stride 2, offsets/counts [(2, '4*j+6'), (1, '4*j+6')]
+     fill     stride 2, ['r=0 m1=0 m2=1 4*j+6', 'r=1 m1=0 m2=2 4*j+6']
+1RB---_0LC1RD_0LB1RD_1LB0RD    digitw=1  BOTH ARMS
+     interior stride 2, offsets/counts [(0, '4*j+6'), (1, '4*j+8')]
+     fill     stride 2, ['r=0 m1=0 m2=1 4*j+8', 'r=1 m1=0 m2=2 4*j+10']
+1RB---_0LC1RD_0LB1RD_1LC0RD    digitw=1  BOTH ARMS
+     interior stride 2, offsets/counts [(0, '4*j+6'), (1, '4*j+8')]
+     fill     stride 2, ['r=0 m1=0 m2=1 4*j+8', 'r=1 m1=0 m2=2 4*j+10']
+1RB---_0RC0RB_1LD1LC_0LD1RB    digitw=2  BOTH ARMS
+     interior stride 1, offsets/counts [(1, '4*j+8')]
+     fill     stride 1, ['r=0 m1=0 m2=1 4*j+8']
+1RB---_1LC0RB_0LD1RB_0LC1RB    digitw=1  BOTH ARMS
+     interior stride 2, offsets/counts [(0, '4*j+6'), (1, '4*j+8')]
+     fill     stride 2, ['r=0 m1=0 m2=1 4*j+8', 'r=1 m1=0 m2=2 4*j+10']
+1RB---_1LC0RB_0LD1RB_0LC1RD    digitw=1  BOTH ARMS
+     interior stride 2, offsets/counts [(2, '4*j+6'), (1, '4*j+6')]
+     fill     stride 2, ['r=0 m1=0 m2=1 4*j+6', 'r=1 m1=0 m2=2 4*j+6']
+1RB---_1LC1LB_0LC1RD_0RB0RD    digitw=2  BOTH ARMS
+     interior stride 1, offsets/counts [(1, '4*j+8')]
+     fill     stride 1, ['r=0 m1=0 m2=2 4*j+10']
+1RB---_0LB1RC_1LB0RD_1LC0RC    digitw=2  blocked
+     interior stride 1, offsets/counts [(1, '4*j+6')]
+     fill     NO CHAIN
+1RB---_1LC0RD_0LC1RB_1LB0RB    digitw=2  blocked
+     interior stride 1, offsets/counts [(1, '4*j+6')]
+     fill     NO CHAIN

@@ -1304,6 +1304,105 @@ narrower and worth saying: the thirteen are not blocked by the near-head
 spacer alone.  Whatever they are, fixing the outer parameter will not reach
 them, and one more human read is worth more than another axis on the probe.
 
+### Cross-check: PR #90 read the same fifteen, on a different axis
+
+`docs/LADDER_NOFAM.md` (merged from `claude/fifteen-nofam-measurement-iuw18b`,
+which ran beside this session on the same fifteen rows) reports **13 of 15**
+with a monotone reading.  `bounce.py` here found **2**.  The two are not in
+conflict and the difference is the axis each held fixed:
+
+* this section varied the ANCHOR and the SPACER -- frontier, side, growing
+  near-head prefix -- and kept the numeration at base-`b`/gray;
+* #90 varied the NUMERATION -- Fibonacci weights, redundant base over cell
+  pairs, binomial, unary -- and kept the anchor at a (state, head) pair.
+
+Each found what its own axis could see.  Together: `no value family` is one
+label over at least two unrelated failures, and neither probe alone
+establishes anything about the rows the other one found.
+
+**On John's two bouncer rows the two readings differ, and #90's is cheaper.**
+This section reads them at the west frontier with a spacer `0^(2k+5)`, which
+needs the outer parameter.  #90 reads them at `D0/R` and `A1/R` with a
+terminator SET (`tl=*`, which is 4f's phases) and base 2 -- 16 of 20 and 15
+of 20 width classes exact, gap 1.  If #90's reading holds, those two rows
+want the phase cycle, which three other live-core rows already want, and not
+the outer parameter at all.  **That should be checked before 4j's fix is
+built**: 4j's cost estimate assumed the spacer was the only way in.
+
+And the largest single group in #90's table is **six rows on Fibonacci
+weights** -- the constructor 4d deferred and every brief since has ruled out
+of scope.  It is now measured, and it is the biggest numeration bucket in the
+live core.
+
+## 4k. The glue was never the bottleneck.  The ARMS are, and both of them want the same two knobs
+
+_Measured after 4j, before building anything.  The measurement contradicted
+the plan it was meant to confirm, which is why it is recorded before the
+work rather than after._
+
+### The recommendation that was wrong
+
+4i's reading of the live core said: eleven rows close but quasihalt, and
+`LapGlueQuiet.glue_qh_quiet` already ends in exactly the `iqh` triple
+`covers_iqh_at` consumes, with only the same too-strong `Hvis` that 4i
+weakened for `LapGlue`.  So the port looked like the best ratio available:
+eleven rows for one edit already done once.
+
+Running the closure's own emitter over those eleven first:
+
+    0 of 11 have the class arms the closure needs
+
+Not one.  Eight fail on the interior arm, three on the fill.  **The port
+would have been worth zero rows**, and would have been built before anyone
+found that out.
+
+### What actually gates them, and it is one thing
+
+Across all **21** binary/step-1/one-phase rows in the live core (10 that
+never quasihalt, 11 that do), with the interior arm carrying only the stride
+4i added:
+
+    3 board.  18 fail on ARM DERIVATION, not on the glue, the code,
+    the phase, or the liveness.
+
+4i put a stride on the interior arm and reported it "not enough", with the
+missing piece named: a guaranteed block copy materialised into `s_pre`, and
+then a separate arm for the residue's own `m = 0`.  That was right and it
+was half the story.  **The fill arm needs the same two knobs**, and 4i did
+not say so because 4i only ever tried the fill at one copy split and one
+stride.  With a stride AND a materialisation offset on BOTH arms:
+
+| | rows |
+|---|---:|
+| both arms derive | **15** |
+| interior only | 2 |
+| fill only | 0 |
+| neither | 4 |
+
+    never-quasihalts, both arms derive:  6   (2 already boarded, +4 new)
+    quasihalts,        both arms derive:  9
+
+So the order is the reverse of 4i's:
+
+1. **the two knobs on both arms** -- `+4` rows with `board_neverqh`
+   unchanged, no new glue at all;
+2. **then** the `LapGlueQuiet` port -- `+9`, and not one of them before (1).
+
+59 -> 46.  And 4i's own prediction of "four rows" from the interior offset
+is confirmed exactly -- the four are the parity rows it named.
+
+### The lesson, which is 4g's again with the sign flipped
+
+4g's warning is that a label recording how a SEARCH failed gets mistaken for
+a property of the machines.  This is the same error one level up: "eleven
+rows need the quasihalt closer" recorded which THEOREM they need and was
+mistaken for what is blocking them.  It is not.  Nothing was blocking them
+that a closer would fix.
+
+The cheap guard is the one used here: before building the thing that
+consumes the arms, run the arm builder over the rows and count.  It took one
+script and it changed the order of two sessions' work.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
