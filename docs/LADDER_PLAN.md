@@ -2327,7 +2327,7 @@ already had them as 5 fibonacci + 4 arms-blocked; the exempt file filed all
 nine under one line number, and that is the only thing they had in common.
 The table was right and the grouping was wrong.
 
-### The four base-2 rows: LADDER_PLAN 5 CONFIRMED, and now measured
+### The four base-2 rows: LADDER_PLAN §4i CONFIRMED, and now measured
 
 These four are not blocked on anything structural.  The probe fits each of
 them the single class
@@ -2400,7 +2400,7 @@ them):
 
 and both arms derive, at threshold 0..1 and **stride 1**.  Their costs are
 affine -- first differences a constant 2 and a constant 0.  **The carry
-ripple is affine here.**  LADDER_PLAN 5's sentence is simply false for these
+ripple is affine here.**  LADDER_PLAN §4i's sentence is simply false for these
 five, and 4h(a)'s `ClassSucc` reason was not it either.
 
 Worth noticing: the second class has a fixed word BEFORE the run (`cs_u =

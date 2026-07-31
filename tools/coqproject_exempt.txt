@@ -32,8 +32,11 @@ theories/Closeout/CloseoutFinal.v
 #   line 431  fill arm: no chain at any threshold 1..3, stride 1..4 or copy split
 #
 # NINE stop on the INTERIOR arm and all nine rows are still core; between them
-# they carry five 0RB shadows, so this list is 14 of the residue's rows and the
-# densest bucket in it.  TWO stop on the FILL arm and neither row is core any
+# they carry five 0RB shadows, so this list is 14 of the residue's 49 rows.
+# Do NOT read that as "the densest bucket, therefore the best target": wave 4p
+# measured that the density and the reachability are on OPPOSITE halves -- all
+# five shadows sit on the quadratic side, which is not coming back, and the
+# reachable side carries none.  TWO stop on the FILL arm and neither row is core any
 # more, so they are worth nothing but are kept as the fill twin of the
 # question.  Wave 4l's shared arm indexing removed the older ClassSucc reason,
 # so do not re-file any of these under 4h(a); wave 4p replaced that stale note
@@ -41,7 +44,7 @@ theories/Closeout/CloseoutFinal.v
 #
 # RE-MEASURED, wave 4p: **the nine are not one bucket, and the shared refusal
 # line is the only thing they share.**  armprobe.py says 5 of 9, and neither
-# half is what LADDER_PLAN 5 read off the failure text.
+# half is what LADDER_PLAN §4i read off the failure text.
 #
 #   * FOUR are base-2 (the 1RB1LA/1RB0LD rows).  Their class fits -- the same
 #     single (Binary, 1) class a boarded row uses -- and their configuration
@@ -49,7 +52,7 @@ theories/Closeout/CloseoutFinal.v
 #     20, 30, 42, ... resp. 12, 18, 26, 36, 48, 62, ...: a SECOND difference
 #     of exactly 2, so quadratic in the run length.  A strided arm is one
 #     chain repeated and no arithmetic progression makes a quadratic affine,
-#     which is why every threshold and stride fail together.  LADDER_PLAN 5's
+#     which is why every threshold and stride fail together.  LADDER_PLAN §4i's
 #     non-affine carry ripple: **CONFIRMED, and now measured.**  It agrees
 #     with docs/QUAD_TERMINAL_MEASUREMENT.md, whose two rows are two of these
 #     four.  These four are not coming back without a new arm shape.
@@ -82,8 +85,9 @@ theories/Closeout/CloseoutFinal.v
 
 # INTERIOR arm (line 381) -- nine rows, all still core, five shadows between them
 #
-# quadratic interior cost, all four still core, five shadows between the first
-# three (4p: measured; LADDER_PLAN 5 confirmed for these)
+# quadratic interior cost, all four still core, five shadows between the LAST
+# three (2 + 1 + 2; the 1RB0LD row carries none) -- 4p: measured on the arm,
+# and LADDER_PLAN's non-affine carry ripple confirmed for these
 theories/Machines/Ladder/LDR_1RB0LD_0LC0RB_1LA1RC_0RC1LD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA0LC_1LC1RD_0RB0RD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA1RC_0LD0RC_1LD0RB.v

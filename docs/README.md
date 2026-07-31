@@ -11,10 +11,14 @@ the lab notebook that produced them, kept verbatim.
 | [`VERIFYING.md`](VERIFYING.md) | How to check any of it yourself, tier by tier, with expected outputs and the traps. |
 | [`RESIDUE_MAP.md`](RESIDUE_MAP.md) | The undecided machines, mapped by shape and blocker — the open-problem list, published as targets. |
 
-Two supporting references:
+Three supporting references:
 
 * [`TERMINOLOGY.md`](TERMINOLOGY.md) — the project's vocabulary
   (boards, holdouts, residue, tiers, quasihalting).
+* [`CORE_3STATE.md`](CORE_3STATE.md) — the `1RB---_...` core rows read
+  as three-state machines, and §3 the FIBONACCI finding: the twelve
+  surviving rows count in φ, not in base 2.  The largest coherent block
+  of the open list, and the one whose remaining work is entirely in Coq.
 * [`WHY_NO_HAMMER.md`](WHY_NO_HAMMER.md) — the measured answer to "why
   not just run every decider over the residue?": the sweep exists, it
   was run, and this records why it cannot finish the job.

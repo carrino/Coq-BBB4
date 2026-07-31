@@ -36,8 +36,9 @@ already done.
   `shadow_rows.tsv` — `mirror`, `swap:B:C`, and combinations).
 * Every re-rooting is a permutation of states and/or a mirror of the tape, so
   the obligation is an equation between two concrete tables that `vm_compute`
-  decides.  **If one of them is not, STOP and write §4p with which shadow and
-  why** — do not weaken the general lemma to fit it.
+  decides.  **If one of them is not, STOP and write §4q with which shadow and
+  why** — do not weaken the general lemma to fit it.  (§4p is taken: the
+  interior-nine re-measurement landed alongside §4o.)
 * `audit.py` already re-verifies every shadow re-root in the core orbit
   independently, so a wrong re-rooting is caught by the audit and not by a
   wrong theorem.  Keep it that way.
