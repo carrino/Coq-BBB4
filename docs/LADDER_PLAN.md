@@ -1479,8 +1479,13 @@ re-checked by `bootvis_chk` / `bootquiet_chk`.
 the arm it lands on: `board_neverqh` at `RuleSound`, `board_iqh` at
 `RuleSound /\ RuleAvoid`.  Which arm serves a state, at what index and block
 count, and that the configurations either side are that arm's two `cden`s,
-is stated once.  `board_arm` and `board_lap_avoid` are Closed under the
-global context; funext still enters only in the final assembly.
+is stated once.
+
+Checked, not recalled: `arm_index`, `blk_den`, `arm_avoid`, `board_arm` and
+`board_lap_avoid` are all **Closed under the global context** -- zero
+axioms, because they are on `csteps`/`cden` and never go through `lift`.
+`glue_qh_quietN` carries `functional_extensionality_dep` and nothing else.
+4h's discipline holds: funext enters only in the final assembly.
 
 **4k's measurement held exactly.**  Over the live core, and it is
 `core61_armshapes.txt` row for row:
