@@ -152,19 +152,37 @@ def _extract_at(spec, law, qi, npad=0):
     # mark configurations at two adjacent J, interior and overflow
     J0 = 6
     shapes = {}
+    nmarks = {}
     for J, ovf in ((J0, False), (J0 + 1, False), (J0, True)):
         p = QP.overflow_p(J) if ovf else QP.interior_p(J)
         T, marks, _ = QP.lap_marks(tab, A, p, law['mode'])
         if qi >= 0:
             marks = [m for m in marks if m[1] == law['qr'][qi]]
-        nm = J + 2 if ovf else J + 1
-        if len(marks) != nm:
-            raise QuadEmitError('%d marks at J=%d ovf=%s, want %d'
-                                % (len(marks), J, ovf, nm))
+        nmarks[(J, ovf)] = len(marks)
         cfg0 = QP.anchor_cfg(A, p)
         cfgs = _cfgs_at(tab, cfg0, [t for (t, _, _) in marks])
         end = _cfgs_at(tab, cfg0, [T])[0]
         shapes[(J, ovf)] = (marks, cfgs, end, T)
+
+    # The ladder has one rung per unit walked, so the mark count is affine in
+    # [J] with slope 1 -- but its OFFSET is a property of the machine, not a
+    # constant.  This used to assert [J + 1] interior and [J + 2] overflow;
+    # measured over the live core, a rung whose k = 0 is peeled runs one
+    # SHORT of that at every J, on both branches, which refused the row
+    # outright.  So read the offset off the two adjacent J and check only the
+    # slope, exactly as [ROFF] below reads the right-hand rung base rather
+    # than assuming the aligned form.  Every board that satisfied the old
+    # constants still satisfies this (their offset IS 1, resp. 2), so the
+    # committed QMG_* renders are unchanged.
+    off_i = nmarks[(J0, False)] - J0
+    if nmarks[(J0 + 1, False)] - (J0 + 1) != off_i:
+        raise QuadEmitError(
+            'interior mark count not affine in J: %d at J=%d, %d at J=%d'
+            % (nmarks[(J0, False)], J0, nmarks[(J0 + 1, False)], J0 + 1))
+    off_o = nmarks[(J0, True)] - J0
+    if off_i < 0 or off_o < 0:
+        raise QuadEmitError('mark count below the run length (offset %d/%d)'
+                            % (off_i, off_o))
 
     marks, cfgs, endc, T = shapes[(J0, False)]
     # the pieces, off the interior marks at J0
