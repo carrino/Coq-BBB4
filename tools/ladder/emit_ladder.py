@@ -687,8 +687,8 @@ Qed.
 Lemma iarm_lhs_%(mid)s : forall d r,
   d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d ->
   lr_lhs (iarm_%(mid)s d r)
-    = cls_conf FAM (cls_side FAM (fm_b FAM - 1) r (astride %(n0i)d %(sti)d r)
-                      [d]).
+    = cls_conf FAM (cls_side FAM [] (fm_b FAM - 1) r
+                      (astride %(n0i)d %(sti)d r) [d]).
 Proof.
   intros d r Hd Hr. vm_compute in Hd.
 %(bcomp)s  exfalso; lia.
@@ -697,7 +697,7 @@ Qed.
 Lemma iarm_rhs_%(mid)s : forall d r,
   d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d ->
   lr_rhs (iarm_%(mid)s d r)
-    = cls_conf FAM (cls_side FAM 0 r (astride %(n0i)d %(sti)d r) [S d]).
+    = cls_conf FAM (cls_side FAM [] 0 r (astride %(n0i)d %(sti)d r) [S d]).
 Proof.
   intros d r Hd Hr. vm_compute in Hd.
 %(bcomp)s  exfalso; lia.
