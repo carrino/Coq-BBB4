@@ -1199,6 +1199,15 @@ table row, not a gap in the emitter: no stride and no offset makes
 induction on the run, which is what the ladder is FOR and what 4h(c) records
 as still unexercised) or a count language with a product in it.
 
+**4p closed the fourth line of that table.**  The two rows with "no chain at
+any n -- not yet diagnosed" are `1RB1LA_1LC0RD_0RA0LC_0LA1RD` and
+`1RB0LD_0LC0RB_1LA1RC_0RC1LD`, and the reason they showed no chain at all is
+4n's one-cell far side: the certificate carries `other_side_cells = [1]` where
+the boot spells `[1;0]`.  Read off the boot they do have chains, and their
+cost is `12, 18, 26, 36, 48, ...` -- second difference 2.  **So it is four
+quadratic rows and not two**, and the "not yet diagnosed" line was a
+configuration artifact hiding the same law.
+
 ### What this says about the next session
 
 The order 4h implies still holds, and the two next items are now cheaper than
@@ -1909,6 +1918,924 @@ A passed and B did not clear by more.
 * The two bouncers stay the wave route's, and the binomial row stays out of
   scope: no weight sequence expresses it, `fit_weights` correctly declines it,
   and it is still one row.
+
+## 4n. The probe first, then the PHASE CYCLE.  Three rows, and the gray six are four
+
+_Branch `claude/ladder-failing-machines-w2lio1`, cut from `main` at `bc882b2`
+(4l and 4m both merged).  Coq 8.18.0, installed in the image
+(`apt-get install -y coq`).  Every number below is a count a script printed
+or a file that compiles._
+
+4l's closing instruction was 4k's guard one bucket over: **run the arm
+builder over the gray six and the two-phase three FIRST and count**, and let
+the count decide what gets built.  That is what happened, and the count moved
+the decision.
+
+### The probe, and what it had to get right
+
+`tools/ladder/armprobe.py` relaxes the three refusals `closure_data` opens
+with -- `code = gray` at its first line, a step other than 1 at its second, a
+phase cycle at its third -- in a PROBE and not in the emitter, and reports
+per row whether every class arm the closure needs has a chain.  The classes
+are FITTED from the family's own successor rather than assumed: on the gray
+rows the fit recovers 4i's four `(gray, 2)` classes verbatim, which is the
+first independent confirmation of that table.  `--selftest` runs the whole
+probe over a row that is already boarded and checks it recovers the
+`(Binary, 1)` class and both arms -- the discipline `bounce.py --selftest`
+exists for.
+
+| | rows | |
+|---|---:|---|
+| closed, gray, `live = ABCD` | **4 of 6** | both class arms |
+| closed, two phases | **3 of 3** | both class arms |
+| time cap | all 4 re-run at `--cap 900` | 3 still capped; the 4th is not capped at all |
+
+**Two findings came out of making the probe honest, and both are about the
+CONFIGURATION and not about the class law.**
+
+* **`RuleSound` is an equation on `cconf`, and `ctape_move` does not
+  normalise.**  A blank the head materialises by stepping back over it is
+  `S0 :: r` and not `r`.  `valfam` reads the far side through a run-length
+  view that has already dropped a trailing blank run, so
+  `other_side_cells` can be short by exactly those cells -- the same TAPE
+  under `lift` (which is why `Hboot`, stated on `lift`, does not notice) and
+  a different `cconf`, which is what every arm is stated on.  Read the far
+  side off the boot instead and the interior arms of **all six** gray rows
+  derive; with the certificate's value, **none** does.  The failure reads as
+  "chain lands off the rhs" at every threshold and stride, and it is one
+  cell.
+
+* **The top of a width is the largest MEMBER, not the largest value.**  At
+  `(gray, 2)` the value `b^k - 1` is odd and therefore not a member at all,
+  so the fill arm's left-hand side is `[1] ++ 0^(k-2) ++ [1]` and not the
+  `0^(k-1) ++ [1]` that `of_value` computes.  An arm built on the other has
+  no chain for the good reason that the machine is never in that
+  configuration.  The probe reads the tops off the ORBIT for this reason.
+
+**The two gray rows that do not have both arms stop on the fill arm, and it
+is the mirror of the first finding.**  Their digit words are two cells and
+the second is a `0`, so the family spells one cell more than the machine's
+`cconf` carries at every anchor visit -- the trailing blank of the top digit
+is never materialised.  Measured: strip that one cell and the fill arm
+derives in 24 steps at every index and every copy split; leave it and it
+lands off the right-hand side at all of them.  That is a statement about the
+family's cell SPELLING, not about `(gray, 2)`, and it is what `fam_cells`
+cannot say: every digit contributes its whole word.
+
+### What the count decided, and it was not the biggest bucket
+
+Four rows (gray) against three (two phases), and the build costs are not
+close.  `(gray, 2)` wants `cls_side` widened with a fixed word before the run
+(three of the four classes have one), four `ClassSucc` instances, the parity
+invariant `P`, a four-way replacement for `digs_decomp`, and a `Section Iter`
+for a code and step the value arithmetic does not cover -- `fam_value` at
+`Gray` is a fold from the most significant digit down, so no lemma about
+`val_pos` transfers.  The phase cycle wants a bounded phase in `Inv` and
+nothing else new: it stays at `(Binary, 1)` and every piece of arithmetic
+already exists.  **Three rows that close beat four rows that might.**
+
+### What was built
+
+* **`Inv` carries `ph < NPH` instead of `ph = 0`**, which is 4i's sentence
+  ("a change to this predicate and to nothing above it") and it is exactly
+  that: `filled`, `fill_at_top` and `fam_succ_total` read the fill law at the
+  state's own phase, the interior step leaves the phase where it found it
+  (`pos1_class_not_top`, lifted out of `pos1_class_succ`'s own arithmetic,
+  is what says the fill does not fire there), and no value, width or measure
+  mentions a phase.  `tops_cofinal` does NOT need the fill to widen: a
+  phase-0 fill that re-enters the same width in phase 1 is what a terminator
+  cycle IS, and what the argument needs is that a top RECURS.
+* **`Section Board` is indexed by the phase** -- one fill arm per index and
+  phase, the terminator of its own phase on the left and of the phase the
+  law names on the right.  The interior arms are NOT phase-indexed and do not
+  need to be: their terminator is inside the opaque tail `cls_tail`, which is
+  the same reason an arm proved for an arbitrary tail covers a class.
+* **`board_neverqh` and `board_iqh` keep the interface they had**, as
+  wrappers at `NPH = 1` (`Section BoardOne`).  Not a second proof -- the whole
+  content is the phase-indexed theorem instantiated -- which is the
+  discipline `board_arm` already enforces between the two closers.  The
+  thirty-one boards emitted before this session compile unchanged; that was
+  checked before anything else was built on top.
+
+### The blocker the probe did NOT measure, and it is the interesting one
+
+All three rows have both class arms and all three then stopped on the same
+thing: **no chain from one fill anchor to one state**.  Consistently the
+anchor of the phase whose fill widens by NOTHING -- the lap into the next
+terminator -- which is six machine steps long and passes through two of the
+four states.  Raw simulation says the missing state is `26j + 1` steps away
+from that anchor, i.e. the far side of the whole counter walk, so it is not
+a search that needs widening.
+
+The fix is in the liveness and it is smaller than it looks.  **A fill arm's
+anchor does not have to witness every recurring state.**  What `glue_neverqhN`
+asks is that for every state and every bound SOME anchor past the bound
+reaches it, and the tops of ONE phase are enough if they are cofinal:
+
+    tops_cofinal_at : (forall ph, ph < NPH -> exists k, phto F k ph = pv) ->
+                      Inv F NPH s ->
+                      exists n s', N <= n /\ fam_iter F s n = Some s'
+                                   /\ fam_is_top F (ct_ds s') = true
+                                   /\ Inv F NPH s' /\ ct_ph s' = pv
+
+`top_reached` strengthened to preserve the phase (interior steps do not move
+it), one fill to step the cycle, and an induction on `k`.  `Hcyc` is a case
+split over `NPH` phases and a `vm_compute` on the emitted board.  The
+emitter picks `pv` by trying each phase and keeping the one whose anchors
+reach everything -- measured before it was built, on all three rows:
+
+    1RB0LA_1LC1LA_1RD1LB_0LC0RD   ph 0 reaches BCD,  ph 1 reaches ABCD   pv = 1
+    1RB0RC_1LC1RA_1RD1LB_0LC0RD   ph 0 reaches ABCD, ph 1 reaches BCD    pv = 0
+    1RB1RD_1LC1RA_0RB0LC_1LA0RD   ph 0 reaches ABC,  ph 1 reaches ABCD   pv = 1
+
+so `vis` loses its phase index rather than gaining one: the visit chains are
+at `pv` and the other phases' arms carry none.
+
+### The number
+
+    nqh_1RB0LA_1LC1LA_1RD1LB_0LC0RD : NeverQuasiHaltsSt tm
+    nqh_1RB0RC_1LC1RA_1RD1LB_0LC0RD : NeverQuasiHaltsSt tm
+    nqh_1RB1RD_1LC1RA_0RB0LC_1LA0RD : NeverQuasiHaltsSt tm
+
+axiom footprint `functional_extensionality_dep` only, as every board.
+`make closeout`:
+
+    settled by a board       5098 -> 5101   (+3)
+    core undecided             43 -> 40
+    0RB shadows of the core    15 -> 15     (no promotions this time)
+
+**Against this branch's own base.**  It was cut at `bc882b2`, before #95, so
+those three numbers do not know about main's two boards
+(`NLAP_1RB____1RC1LB_0LB1RD_0RA0RC`, core, and
+`RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA`, the worked shadow re-root).  The two board
+sets are disjoint, so the merge is the union and nothing was lost either way;
+every conflict was in a GENERATED file and was discharged by re-running
+`inventory.py`/`gen_stages.py` rather than resolved by hand.  After the merge:
+
+    settled by a board       5103   (99.0%)
+    core undecided             39
+    0RB shadows of the core    14
+
+None of the three rows boarded here carries a shadow, which is why the shadow
+count moves only by main's one.  **12 of the 39 core rows carry all 14
+shadows** (`tools/closeout/shadow_rows.tsv`, column 4) and therefore account
+for 26 of the 53 rows left; the remaining 27 are worth one row each.  That is
+the number to sort a bucket by, and the table below does not show it.
+
+### Where the 40 stop now
+
+| | rows | |
+|---|---:|---|
+| no value family PROBED AT ALL | 5 | `docs/LADDER_NOFAM.md`; three unread, two out of scope |
+| families found, none closed | 17 | mechanical: coverage, differential, or 4m's outer-parameter guard |
+| closed (fibonacci), `live = BCD` | 5 | 4m's five: the canonical form wants a Coq lemma |
+| closed, gray | 6 | **4 have both arms**; 2 stop on the cell spelling |
+| time cap | 3 | all re-run at `--cap 900` and still capped, 26 families each, 4 tried |
+| closed, binary/step-1/one-phase, ARMS BLOCKED | 4 | `RULE_LADDER` 5's table row |
+
+### What this says about the next session
+
+* **`(gray, 2)` is now a measured four rows and the build is specified.**
+  Four `ClassSucc` instances, the parity invariant, `cls_side` with a fixed
+  word before the run, a four-way case split to replace `digs_decomp`, and a
+  `Section Iter` at `Gray`/step 2.  The arms are known to derive, which is
+  what this session bought it: nobody has to guess again.
+* **The two gray rows that stop on the spelling are a FAMILY question, not a
+  kernel one.**  Either `valfam` reads them at an anchor whose digit words do
+  not end in a blank, or `fam_cells` gains a trimming the denotation can
+  state.  Do not build a `ClassSucc` for them: their class law is fine.
+* **The time cap is a time cap on three rows and a MISLABEL on the fourth.**
+  Re-run at six times the sweep's budget: the three `1RB---` rows still cap,
+  each having found 26 families and tried four of them, so raising the budget
+  is not the lever -- the question is which families the searcher spends it
+  ON.  `1RB1RC_1LA1RA_0RC1LD_1LB0LD` finishes in **723 s**, under the old
+  cap's own reach given a second chance, and stops on `interior-not-covered`
+  with 5 of 12 families tried.  It is not a time-cap row and never was: it is
+  a coverage row wearing the label of the budget that happened to expire on
+  it, which is 4g's lesson for the third time and the reason this bucket was
+  worth re-running at all.  The next reading of those
+  four should be about which families the searcher spends the budget ON, not
+  about how much budget it has.
+* Three traps, all paid for here: **editing a kernel file under a running
+  `make` makes every already-built board fail with "inconsistent assumptions
+  over library BBB4.Checkers.LadderCheck"** -- it is the same trap as
+  rewriting `_CoqProject` mid-build, and the fix is the same, do the edit and
+  then build.  `make closeout` only needs `theories/Closeout/Closeout.vo`,
+  whose dependency closure is 2188 files and **does not include the nine
+  `IRules_Batch`**, so a session that only wants the audit never pays their
+  8.2 GB each.  And `coqdep` is the thing to ask, not the plan file.
+
+## 4o. `(Gray, 2)` BUILT.  The record did not widen, the parity is a parameter, four rows
+
+_Branch `claude/gray-2-ladder-build-igrvzw`, cut from `main` at `fa1be97`
+(#99 merged).  Coq 8.18.0, installed in the image.  Every number below is a
+count a script printed or a file that compiles._
+
+4n's instruction was to build what its probe selected and not to measure
+again.  That is what happened.  **The gate 4i set -- that `(Gray, 2)` is a
+second INSTANCE of `ClassSucc` and not a rewrite of it -- holds: four
+instances go through, the `Class` record does not widen, `ClassSucc` is not
+weakened, and there is no second class record.**
+
+### The one thing 4n did not know, and it is the reason the table is one table
+
+**The parity is a PARAMETER, not the constant 0.**  Five of the six gray core
+rows have even members and `1RB0RB_0RC1RC_0LD1LA_1LD0LA` has odd ones -- its
+boot is `[0;1]`, digit sum 1, and its fill target is `[1] ++ 0^n ++ [1;1]`,
+digit sum 3.  Written with `p` where 4i's table has `0`, the four classes are
+one table and the odd family's are the even family's **with the two sides
+exchanged**:
+
+    [p;p]     0^n              ->  [1-p;1-p] 0^n
+    [p;1-p]   1^n              ->  [1-p;p]   1^n
+    [1-p]     0^n ++ [1;p]     ->  [p]       0^n ++ [1;1-p]
+    [1-p]     0^n ++ [1;1-p]   ->  [p]       0^n ++ [1;p]
+
+At `p = 0` these are 4i's four verbatim.  Had the parity been baked in at 0,
+one of the four rows would have needed a second table of four and the "record
+does not widen" result would have read very differently.  It is `g2c p i` in
+`LadderCheck`, `P` is `g2par p` (the digit sum's parity, which is the value's
+low bit and is what `+2` preserves), and **both values of `p` are exercised by
+a compiled board.**
+
+The top of a width follows the same parameter: it is
+`g2top p k = [1-p] ++ 0^(k-2) ++ [1]`, value `2^k - 2 + p`.  4n read the even
+case off the orbit; the odd family's top is `0^(k-1) ++ [1]`, which IS the
+string `of_value` computes for `b^k - 1`, so the two cases look nothing alike
+until `p` is a parameter.
+
+### Stated before proved: `tools/ladder/gray2check.py`
+
+4n's probe FITTED the classes from the family's own successor.  The oracle
+does the other half -- it takes the classes, the four-way split and the top
+shape **as the kernel states them** and checks all three by enumerating every
+bounded digit string of widths 2..13, not only the orbit:
+
+    6 of 6 gray rows check out    (8190 strings each)
+
+It found the parity bug in the first draft of the split immediately, which is
+what an oracle is for.  It also confirms 4n's reading that the two rows left
+alone have a fine class law: they check out here and stop elsewhere (below).
+
+### What the arithmetic actually needed, and it was smaller than "restate it"
+
+`fam_value` at `Gray` is `val_pos` after `gdec`, a fold from the most
+significant digit DOWN, so no lemma about `val_pos` transfers.  The one
+structural fact is that `gdec`'s entry at `i` is the parity of the digit sum
+from `i` up.  From it:
+
+    gval_cons : gval (d :: t) = (d + dsum t) mod 2 + 2 * gval t
+    gval_app  : gval (a ++ l) = gpre a (dsum l) + 2^|a| * gval l
+
+`gpre` is the bounded prefix's contribution, and **a class's two sides differ
+only in their fixed words, so the RUN is never evaluated** -- only `gpre` is,
+and that is a computation on two or three digits.  A run of `1`s decodes to an
+alternating bit pattern with no closed form the emitter could use; not needing
+one is the whole reason the four class laws are short.
+
+The codec's other direction (`genc_gdec`, `genc` after `gdec` is the identity)
+is what makes `fam_of_value (fam_value ds) |ds| = Some ds`, hence
+`gray_inj` -- two bounded strings of one width with one value are one string.
+That is what turns "the top has value `2^k - 2 + p`" into "the top IS
+`g2top p k`", and it is the only place uniqueness is used.
+
+### The three pieces, and where each lives
+
+* **Coverage.**  `gray_split` replaces `digs_decomp` FOUR ways and the
+  discriminator is the first digit alone: `ds[0] = p` and the class fires at
+  run length 0 with the first two digits as its fixed word; `ds[0] = 1-p` and
+  the zeros after it are the run.  There is a `1` past those zeros because
+  `(1-p) ++ 0^(k-1)` has digit sum `1-p` and the parity says `p` -- the
+  parity is what rules the missing case out, which is 4i's "it cannot be
+  pushed into `cs_u`/`cs_w`" from the other side.  If that `1` is the LAST
+  digit the string is the top.
+
+* **The kernel's iteration** (`Section IterG`) restates section 5 rather than
+  instantiating it.  The invariant carries the parity and `2 <= k` (the top
+  needs two digits to spell), the measure `2^k - value` falls by 2, and the
+  family is one phase -- all six gray rows are.  `Hfpar` (the fill target is a
+  member) is discharged by `filled_parity`: with a fill digit of `0` the
+  target's digit sum does not depend on the width at all.  **With a fill digit
+  of `1` it would alternate with the width and there would be no family**, so
+  the emitter refuses that case with that reason rather than failing later.
+
+* **The board** (`Section BoardG`, `boardG_neverqh`) is section 7's argument
+  over `gray_split`: four interior classes, and the fill arm **indexed by the
+  WIDTH** with a fixed word at each end, its index range starting at 2.
+  Section 7 is untouched and the 31 boards emitted before this compile
+  unchanged -- checked before anything was built on top.
+
+`cls_side` gained the fixed word `u` before the run, which is the one
+generic-half change (`fam_cells_class` took the same one line).  The 24 boards
+that name `cls_side` pass `[]`; that is a mechanical edit and the emitter now
+writes it.
+
+### The number
+
+    nqh_1RB0RB_0LC0LD_1LC1LD_1RA0RA : NeverQuasiHaltsSt tm
+    nqh_1RB0RB_0RC1RC_0LD1LA_1LD0LA : NeverQuasiHaltsSt tm   (parity 1)
+    nqh_1RB1LC_0LA0RB_0LD1LD_1RA0RA : NeverQuasiHaltsSt tm
+    nqh_1RB1LD_1RC0RC_1LA0LA_0RA0LD : NeverQuasiHaltsSt tm
+
+axiom footprint `functional_extensionality_dep` only.  Each closes with **4
+interior arms at `N0 = 0` stride 1 and 1 fill arm at `N0 = 2` stride 1** --
+five arms where the certificate carries 49, and the fill arm at width index 2
+serves every width because `aoff 2 1 k = 2` for all `k >= 2`.  `make closeout`:
+
+    settled by a board       5103 -> 5107   (99.0%)
+    core undecided             39 -> 37
+    0RB shadows of the core    14 -> 12
+
+**Two of the four carried a shadow, and boarding the core row does NOT settle
+it.**  `0RB0LA_1LA1RC_0RD1RD_1LB0LB` and `0RB0LA_1RC1LA_1RD0RD_1LB0LB` were
+shadows of two of these rows; with their partners boarded they become core
+rows in their own right and want the re-root board (#98's general half plus a
+worked `RRNQ_*`).  So the four boards take the remaining 53 rows to **49**,
+not to 49 by way of 45.  That is worth knowing before sorting a bucket by
+shadow count again: the shadow is worth a row only if someone builds its
+re-root.
+
+### The two rows 4n left alone stop where 4n said, and the emitter says so
+
+`1RB0RD_1LC0LB_1LD0LB_1RD0RA` and `1RB0RD_1LC0LC_1LD0LB_1RD0RA` have digit
+words `[0;0]` and `[1;0]`, so at the boot the family spells four cells and the
+machine's `cconf` carries three -- the trailing blank of the top digit is
+never materialised.  The gray emitter refuses them at the BOOT check, before
+any arm search, with
+
+    boot cells [1, 0, 1] are not the family at [1, 1]
+
+which is 4n's finding stated by the tool rather than recalled.  Their class
+law is fine (the oracle checks it), and the fix is still 4n's: read them at an
+anchor whose digit words do not end in a blank, or give `fam_cells` a trimming
+the denotation can state.
+
+### What this says about the next session
+
+* **`(Gray, 2)` is done and the bucket is empty but for those two.**  The gray
+  path in `emit_ladder.py` is separate from the binary one on purpose -- a
+  third `(code, step)` pair would be a third `closure_data_*`, and that is
+  cheaper than threading a fourth knob through the first.
+* **The next `ClassSucc` instance is the cheapest thing in the file now.**
+  What `(Gray, 2)` cost that a third pair will not: `cls_side`'s fixed word,
+  the membership predicate `P` in `ClassSucc`, and a `Section Iter` that does
+  not assume step 1.  All three are now in place and parameterised.
+* **Two shadows just became core rows.**  Twelve shadows still sit on ten core
+  rows; the re-root closer is what turns any of them into settled rows, and
+  it is now worth more than one more `ClassSucc`.
+* **The oracle-before-the-lemma discipline paid for itself here** and cost
+  about an hour.  `gray2check.py` is 300 lines and it caught a wrong case
+  split before any Coq was written; `armprobe.py --selftest` is the same
+  discipline one rung down.
+
+### Addendum: the two shadows these four freed, boarded — and the trap in freeing them
+
+_Same branch, after #102 merged.  `Closeout.vo` rebuilt; the kernel's own
+numbers, not only the audit's: `proven_rows` 5,109 rows each with a
+kernel-checked [covers] proof, `remaining_rows` 35, `shadow_rows` 12, and
+`closeout_partial` on `functional_extensionality_dep` alone._
+
+The four rows above promoted two `0RB` shadows into the core.  Both are now
+boarded, and they cost no new argument — `Census/Reroot.neverqh_reroot` across
+the blank prefix and `Census/RerootSwap.neverqh_mirror`/`neverqh_swap` across
+the relabelling are general and proved once:
+
+    nqh_0RB0LA_1LA1RC_0RD1RD_1LB0LB : NeverQuasiHaltsSt tm   (mirror of
+                                        1RB1LC_0LA0RB_0LD1LD_1RA0RA)
+    nqh_0RB0LA_1RC1LA_1RD0RD_1LB0LB : NeverQuasiHaltsSt tm   (swap:B:C,swap:C:D
+                                        of 1RB1LD_1RC0RC_1LA0LA_0RA0LD)
+
+    settled by a board       5107 -> 5109   (99.1%)
+    core undecided             37 -> 35     (47 rows remain)
+
+**Two things about freeing a shadow, and the second is a trap.**
+
+* `gen_shadow.py` hard-coded the partner board's module as
+  `BBB4.Machines.Counters`.  A LADDER board lives under
+  `BBB4.Machines.Ladder`, so the emitted file imported a module that does not
+  exist and failed at line 25 — nowhere near the cause.  `frozen_map.tsv`
+  already carries the partner's file, so the package is read off it now.
+* **`shadowlib.classify` drops a shadow from `shadow_rows.tsv` the moment its
+  partner leaves the unproven set** — which is precisely when the shadow
+  becomes actionable.  So `gen_shadow.py --all`, whose input is that file,
+  cannot see the rows a session just freed; they have to be driven with the
+  explicit `--spec/--partner/--qs/--t/--ops` form, reading the data out of the
+  PREVIOUS revision of the table.  That is how these two were emitted.  The
+  generator's input and its trigger are on opposite sides of one regeneration,
+  and fixing `classify` so a freed row survives one generation is worth doing
+  before the next core row boards.
+
+## 4p. The interior nine RE-MEASURED: 5 of 9, and the bucket was never one bucket
+
+_Branch `claude/interior-arm-remeasure-vg1xl2`, cut from `main` at `fa1be97`.
+Coq 8.18.0.  No row boards and no count moves -- the deliverable is the count
+and which of the two stories it is.  Every number below is a script's output;
+reproduce with `tools/ladder/armprobe.py` and the committed
+`tools/ladder/interior9_probe.{jsonl,log}`._
+
+_Merged with 4o's `(Gray, 2)` boards, which landed while this ran: the audit
+reads `settled by a board 5107 (99.0%)`, `core undecided 37`, `0RB shadows
+12`, and **all nine rows below are still core with the same five shadows on
+the same three of them** -- 4o's four gray rows are disjoint from these nine,
+so nothing here was taken out from under it.  Re-derived rather than
+hand-merged (`inventory.py`, `gen_stages.py`, `audit.py`: OK); the only
+conflicts were this file and `NEXT_SESSION.md`._
+
+The nine rows of `tools/coqproject_exempt.txt`'s "INTERIOR arm (line 381)"
+block all stop at the same line of `closure_data` with the same sentence --
+*no chain at any threshold 0..3 and stride 1..4, the carry ripple is not
+affine in the run length* -- and 4n's fix to the far-side reading, which
+turned zero of six gray rows into six of six, had never been pointed at them.
+So: `armprobe.py --selftest` first (OK, and it still reads its orbit through
+`of_value`, so the `(Binary, 1)` path is untouched), then the nine.
+
+### The count
+
+**5 of 9 have both class arms.**  **0 of 9 can be boarded**, and the two
+halves of that sentence are about different rows.
+
+| | rows | interior arm | why it stops |
+|---|---:|---|---|
+| base-2 (`1RB1LA`/`1RB0LD`) | 4 | **no chain** | the cost is quadratic in the run length |
+| fibonacci (`1RB---`) | 5 | **derives** | `Fam` cannot denote a weighted numeration |
+
+**The shared refusal line was the artifact.**  This file's own 4n table
+already had them as 5 fibonacci + 4 arms-blocked; the exempt file filed all
+nine under one line number, and that is the only thing they had in common.
+The table was right and the grouping was wrong.
+
+### The four base-2 rows: LADDER_PLAN 5 CONFIRMED, and now measured
+
+These four are not blocked on anything structural.  The probe fits each of
+them the single class
+
+    [] ++ 1^n ++ [0]   ->   [] ++ 0^n ++ [1]
+
+which is verbatim the class the boarded row `1RB1LA_0LA0RC_0LD0RB_1LD1RC`
+uses -- same base, same digit words, same terminator, same fill, same top
+shape.  The class law is fine and the configuration is clean.  What has no
+chain is the STRIDED arm, and the cost says why.  The interior arm's step
+count over the FLAT indices, at run length 0..8:
+
+    1RB1LA_0LA0LC_1LC1RD_0RB0RD    2, 6, 12, 20, 30, 42, 56, 72, 90
+    1RB1LA_0LA1RC_0LD0RC_1LD0RB    2, 6, 12, 20, 30, 42, 56, 72, 90
+    1RB1LA_1LC0RD_0RA0LC_0LA1RD   12, 18, 26, 36, 48, 62, 78, 96, 116
+    1RB0LD_0LC0RB_1LA1RC_0RC1LD   12, 18, 26, 36, 48, 62, 78, 96, 116
+
+**Second difference exactly 2 in every case** -- `(r+1)(r+2)` and
+`r^2 + 5r + 12`.  A strided arm is one chain repeated, so its cost is affine
+along the stride, and no arithmetic progression makes a quadratic affine.
+That is why thresholds 0..3 and strides 1..4 fail *together* rather than
+one-by-one, which is the shape of failure 4n taught us to distrust -- and
+here it is the real thing.
+
+The contrast is the point.  The boarded row's costs are
+
+    1RB1LA_0LA0RC_0LD0RB_1LD1RC    2, 8, 6, 16, 10, 24, 14, 32, 18
+
+not monotone at all, but affine *on each residue mod 2* (2, 6, 10, 14, 18 and
+8, 16, 24, 32), which is exactly why its stride-2 arm derives.  `ARM_GRID`
+catches costs that are piecewise-affine on a progression of length ≤ 4.  It
+cannot catch a quadratic and no widening of the grid will.
+
+This agrees with `docs/QUAD_TERMINAL_MEASUREMENT.md` by an independent route:
+its two QUAD rows are two of these four, and it measures this machine's
+*terminal* at exactly `(k+2)^2` where the measurement here is of the
+*interior class arm*.  Two different arms, same quadratic, same machine.
+
+**4n's one-cell far-side reading is REAL on two of the four, and it does not
+rescue them.**  On `1RB1LA_1LC0RD_0RA0LC_0LA1RD` and
+`1RB0LD_0LC0RB_1LA1RC_0RC1LD` the certificate carries `other_side_cells = [1]`
+and the boot spells `[1;0]`.  With the certificate's value every flat arm
+lands off the rhs; with the boot's, every one derives, in 12/18/26 steps.
+That is 4n's finding reproduced on two more rows, and it is why these two
+rows' refusal text differs from the other two's.  It moves the flat arms and
+leaves the strided arm exactly where it was.
+
+### The five fibonacci rows: the arms derive, and the probe was the thing that was broken
+
+`armprobe.py` could not answer these at all, and reported `no class fit: 1 of
+4 interior successors are in no class` -- which is not an arm failure and 4g's
+lesson says not to read it as one.  The orbit had **5 elements**.
+
+`Fam.value` honours the certificate's `weights`; `Fam.of_value` and
+`Fam.maxval` did not.  They are positional -- `v % b` down the widths and
+`b^k - 1` at the top -- so on a weighted numeration `is_top` is false at every
+string the counter ever stands on, `next_ds` asks `of_value` for a string that
+is not a member of any width, and the walk leaves the family after five steps.
+The fix is to stop inverting: `Fam.walk` reads the counter off the machine's
+own tape at every anchor visit (the near-head prefix, digit words, then the
+terminator of some phase -- `fam_cells` inverted), and `orbit_machine` orders
+each width's members by `value`.  The successor is READ.
+
+With that, all five rows fit **the same two classes**, covering every interior
+successor out to the widths the certificate's weights reach (596 resp. 364 of
+them):
+
+    [] ++ 1^n ++ [1;0]   ->   [] ++ 0^n ++ [1;1]      the carry
+    [0] ++ 0^n ++ []     ->   [1] ++ 0^n ++ []        the increment
+
+and both arms derive, at threshold 0..1 and **stride 1**.  Their costs are
+affine -- first differences a constant 2 and a constant 0.  **The carry
+ripple is affine here.**  LADDER_PLAN 5's sentence is simply false for these
+five, and 4h(a)'s `ClassSucc` reason was not it either.
+
+Worth noticing: the second class has a fixed word BEFORE the run (`cs_u =
+[0]`), which is the `cls_side` widening 4n specified for `(gray, 2)`.  These
+five would want it too.
+
+**What blocks them is the numeration and nothing else.**  `Fam` has no weight
+field: `fm_code` is `Binary | Gray`, `fam_value` is `val_pos`, and
+`fam_of_value` divides down `fm_b`.  These counters spell 2, 3, 5, 8, 13, 21
+members at widths 1..6 against `2^k`.  No value of the existing record
+denotes that successor, so the emitter cannot spell the family at all -- and
+the five boards on disk declare `Binary 1`, which is not what their machines
+do.  These are 4m's five, filed in the exempt block under a reason that was
+never theirs.
+
+### The numeration, CRACKED -- and it is four facts, all checked
+
+_Added after the section above, with John reading the machine.  The blocker
+4p names is the numeration; this is what it is.  `tools/ladder/fibmem.py`
+checks every line of it against the orbit read off the machines: `FIBMEM: OK`._
+
+**Membership.**  LSB-first, a member is an OPTIONAL LEADING `1`, then a
+concatenation of the blocks `[0]` and `[1;1]`.  (MSB-first: blocks of `0` and
+`11`, then an optional trailing `1`.)  Checked against every width of all
+five rows, 0..11 -- the predicate and the orbit agree exactly, and the counts
+come out 2, 3, 5, 8, 13, 21, 34, 55, 89, 144.
+
+That is the certificate's own `canonical_form.blocks = [[0],[1,1]]` with
+`base_widths = [0,1]`, and the `[0,1]` is the optional single-`1` remainder.
+4p could not decode `base_widths` and said so; it is that.  **The numeration
+is REDUNDANT** -- `w0 = w1 = 1`, so `10000` and `01000` both have value 1 --
+and this rule is which representative the machine picks.  That redundancy is
+why the round-trip lemma is the one with the risk in it.
+
+**The top of a width is `1^k`.**  All ones, and its value is the sum of the
+weights it covers, which is `maxval` as 4p corrected it.  Simpler than
+`(Gray, 2)`'s `[1] ++ 0^(k-2) ++ [1]`, and no `of_value` is needed to compute
+it.
+
+**The decomposition is TWO-WAY and it splits on the LOW DIGIT.**  Every
+non-top member is in exactly one class:
+
+    low digit 0    [0] ++ 0^n ++ rest   ->   [1] ++ 0^n ++ rest
+    low digit 1    1^n ++ [1;0] ++ rest ->   0^n ++ [1;1] ++ rest
+
+Measured over all 2,284 interior members of the five rows: **overlap 0,
+uncovered 0, wrong successor 0.**  This is `digs_decomp`'s analogue and it is
+the piece 4o had to do four-way for `(Gray, 2)`; here it is `ds` starting `0`
+or starting `1`, which is a `destruct`.
+
+**John's lap law, and why it matters.**  The interval between fill events is
+`10, 16, 26, 42, 68, 110, 178, 288, 466`, and John read it as
+`f(n+2) = f(n+1) + f(n) + n` on `f = lap - n - 1`.  The particular solution of
+that recurrence is `-n-1`, so **`lap(n)` is Fibonacci-type with an affine
+correction** -- exactly matching the 2, 3, 5, 8, 13, 21 members per width.
+The lap is not affine and does not need to be: only the ARM costs do, and 4p
+measured those affine (constant first differences 2 and 0).
+
+**What is left is Coq, not discovery.**  A `Fib` constructor on `Code`
+(existing sections are gated by `Hypothesis Hcode : fm_code F = Binary`/`Gray`
+and stay inert), `fam_value` at `Fib` as the weighted fold, and the round-trip
+`fam_of_value F (fam_value F ds) (length ds) = Some ds` over the membership
+predicate above.  The successor need not be inverted pointwise -- the two
+rewrites give it, and each adds exactly 1 to the value.
+
+**The 3-state reading, and why re-root does NOT serve it.**  `A` is entered
+once, at step 0: nothing targets it (`B` from `{A,C,D}`, `C` from `{B,C}`, `D`
+from `{B,D}`), which is why these five are filed `live = BCD`.  So the
+residual dynamics is a THREE-STATE machine on a tape that is blank but for one
+marked cell.  `Census/Reroot.v` cannot express that: its precondition is a
+prefix "writing only `S0`, so the tape stays all-blank", and these rows write
+a `1` on step 0 -- the very event re-root stops at.  A re-root carrying a
+non-blank configuration would be a new lemma, and it would still not import a
+result: BBB(3) is a blank-tape enumeration and this tape is not blank.  The
+reduction shrinks the object; it does not decide it.
+
+### What this says about the next session
+
+* **The four base-2 rows are done as ladder rows.**  Their arm is quadratic,
+  measured on the arm itself and corroborated by the terminal measurement.
+  A wider grid cannot reach them; a new arm shape that composes a quadratic
+  out of affine rungs could, and `QUAD_TERMINAL_MEASUREMENT` §0 already says
+  where that decomposition has to live (in the terminal, one level below
+  where the QUAD route expects it).  Do not re-probe them.
+* **The five fibonacci rows are worth exactly what 4m's constructor costs**,
+  and the arm risk is now zero -- which is what this session bought.  4n
+  chose the phase cycle over `(gray, 2)` on "three rows that close beat four
+  rows that might"; these five close on the same terms, and they carry no
+  shadows.
+* **The five shadows in this bucket sit on three of the four QUADRATIC rows**
+  (`shadow_rows.tsv` column 4: two on `1RB1LA_0LA0LC_1LC1RD_0RB0RD`, two on
+  `1RB1LA_1LC0RD_0RA0LC_0LA1RD`, one on `1RB1LA_0LA1RC_0LD0RC_1LD0RB`).  So
+  the "14 rows, densest bucket in the residue" reading is really 9 rows on
+  the quadratic side that are not coming back, and 5 on the fibonacci side
+  that are worth one row each.  **The bucket's density and its reachability
+  are on opposite halves.**
+* `gen_shadow.py --regress` printed `FAILED` on an unbuilt tree, and its
+  three corruption tests printed `rejected` for the same vacuous reason:
+  nothing compiled, so nothing could be rejected.  It now separates the two
+  and says `INCONCLUSIVE` with the target to build.  With the fixture built
+  it is **OK, 4 of 4** -- the generator was healthy the whole time.
+* The nine boards' stop-notes cited 4h(a)'s `ClassSucc` condition, which 4l
+  removed.  All nine now carry the measured reason, one per half.
+
+## 4q. John reads the bouncer at the counter's own anchor: it IS one parameter, and 4j's fix is the only thing missing
+
+_John: "the counter part is 11, then the bits, msb on the right -- position 4
+and 5 are 1, then position 6 is the lsb", and "every bounce moves the left wall
+over by 2".  Rows `0RB0RD_1LC1RB_1RA0LC_1LB0LC` and its twin `...1LD0LC` -- 2
+core + 2 shadows, 4 of the remaining rows.  Every number below is measured._
+
+### The reading
+
+Sampled once per bounce (a bounce is two wall-advance events):
+
+    positions 4,5   `1 1`, at the same cells every bounce
+    position  6..   the counter, LSB nearest the marker, MSB to the RIGHT
+    value           = the bounce index, step +1
+    wall            recedes by exactly 2 per bounce
+
+    bounce   1  2   3    4    5     6     7     8     9    10  ... 16     17
+    bits     -  1   01   11   001   101   011   111   0001 1001    1111   00001
+    value    0  1   2    3    4     5     6     7     8    9       15     16
+
+**704 bounces to step 3,000,000, on both rows, zero failures.**  Sharper than
+4j's west-frontier reading of the same bits (`0^(2k+5)` then `4k+3`): same
+string -- the `11` contributes 1+2 = 3 and the counter `k` two positions up
+contributes `4k` -- but the step is **1** and the marker is **constant**.
+
+### The far side is `1^(2v+5)`, and that is the whole finding
+
+At the anchor that carries the constant `11` frame -- `(StB, head 0, head at
+offset 3)`, once per bounce -- the far side is a SOLID run of ones from the
+wall to the head.  Its length against the counter's own value `v`:
+
+    visit    2    3    4    5    6   ...  252   253   254   255
+    value    0    1    2    3    4        250   251   252   253
+    ones     5    7    9   11   13       505   507   509   511
+                                          all exactly 2v + 5
+
+**Exact at every visit from 2 to 255.**  (Visit 1 is the boot, at `2v+3`; it is
+the pre-family state and the boot premise carries it.)
+
+So this row is a ONE-parameter family after all.  Both things that vary -- the
+digit string and the wall distance -- are functions of the same `v`.  Nothing
+about the machine is unknown.
+
+### What is missing is a field, and 4j already named it
+
+`Fam` can name exactly one varying thing, the digit string `ds`.  The far side
+is `fm_other : list Sym` and the near-head prefix is `fm_pre : list Sym` --
+both FIXED words, neither able to say "a run whose length is affine in the
+parameter".  So the family can state the counter and cannot state the wall.
+
+4j's fix is exactly this shape and is quoted here because 4q supplies its
+constants: the side wants `s_pre ++ rep u (a*p + b)`, the engine's own `sside`
+(`LapDecider`: `pre ++ rep u (a*j+b) ++ post ++ X`).  At this anchor,
+
+    side = FAR (fm_other)     u = [S1]     a = 2     b = 5
+
+which is a cleaner instance than 4j's own `0^(2k+5)` on the near-head side.
+**The two anchors trade the growth between the sides and neither removes it:**
+
+| anchor | near-head side | far side |
+|---|---|---|
+| head at the wall (4j) | `0^(2k+5)` then `11` then digits | empty |
+| `(StB,0)` at offset 3 | `11` then digits (CONSTANT) | `1^(2v+5)` |
+
+**RETRACTION.**  An earlier draft of this section claimed the far side was
+BLANK at the fixed frame, and concluded the growth was free under `CTape.lift`
+and that this row needed neither 4j's outer parameter nor the phase cycle.
+That is wrong.  The blankness was measured at the wall-advance sample, where
+the head is AT the wall and its left side is empty by definition.  `lift`
+ignores trailing BLANKS; a growing run of ones is free at no anchor.  4j's
+conclusion stands; 4q corrects only its LOCATION and supplies the constants.
+
+### What the searcher does today, and why "no anchor" is stale
+
+`residue_map.tsv` files this row as `no anchor`.  `valfam` now reports **8
+families, none closed, 0 arms**, identically at 40k, 150k and 600k steps.
+Every family it TRIES is
+
+    {"state": "B", "head": 0, "side": "L", ..., "value_step_per_anchor_visit": 2}
+
+`side: "L"` is the receding wall and step 2 is the wall's 2-per-bounce: it is
+reading the window the wall opens rather than the counter, then correctly
+refusing it -- *"the fill DECREASES the outer parameter, so the family is
+finite: it is a reading of the window, not of the machine"*.
+
+The main pass finds nothing at all; all 8 come from the fallback passes.  The
+reason is not a heuristic and should not be patched around: `runs_cells`
+refuses a side it cannot make concrete, and the far side `1^(2v+5)` is a
+DIFFERENT concrete value at every visit.  Grouping visits by a constant far
+side cannot see a family whose far side is the parameter.  Two changes were
+tried here and **both reverted, neither helped**:
+
+* the near-head prefix is capped at `p < l` cells (`_grams` uses `p` as a cell
+  count), so a 2-cell constant prefix with 1-cell digits is unreachable;
+* splitting the pooled `(B,0)` anchor by near-head frame, since it fires at
+  offsets 1, 3 and 4 with different frames.
+
+Both are downstream of the real gap.  Build the field, not the search.
+
+### Worth
+
+2 core rows and 2 shadows, and the twin measures identically.  4 of the rows
+left.
+
+## 4r. `(Fib, 1)` BUILT.  The record did not widen a third time, and the five board
+
+_Branch `claude/fibonacci-numeration-coq-uewigh`, cut from `main` at
+`2dbbe9b` (4p's #101 merged).  Coq 8.18.0, installed in the image.  Every
+number below is a count a script printed or a file that compiles._
+
+_Merged with the two shadow rows the gray boards freed (#104) and with 4q's
+bouncer reading (#103), both of which landed while this ran.  Re-derived
+rather than hand-resolved -- every generated closeout file was taken from one
+tree and rebuilt by `inventory.py`, `gen_stages.py`, `audit.py` (OK); the only
+files resolved by hand were this one and `NEXT_SESSION.md`.  **This section
+was written as 4q and renumbered: #103 took that number first.**_
+
+4p's instruction was to build the numeration it cracked and not to measure
+again.  That is what happened, and it went through on the terms 4p set:
+**the `Class` record did not widen, `ClassSucc` was not weakened, there is
+no second class record, and the five rows board.**
+
+    settled by a board       5107 -> 5112   (99.0% -> 99.1%)
+    core undecided             37 -> 32
+    0RB shadows of the core    12 -> 12     (these five carry none)
+
+on this branch's own base.  Merged with #104's two freed shadows the tree
+reads **5114 settled (99.2%), 30 core undecided, 12 shadows** -- the five rows
+are worth five either way, which is the point of counting them separately.
+
+### The one thing 4p did not know, and it changes which theorem they prove
+
+**All five rows QUASIHALT.**  4p's own text says why -- "`A` is entered once,
+at step 0: nothing targets it, which is why these five are filed
+`live = BCD`" -- and then the session plan asked for `NeverQuasiHaltsSt`.
+It is the same fact read twice and only one reading can be right: a state
+that stops firing IS a quasihalt, so `board_neverqh` proves the wrong theorem
+for every one of them, exactly as 4i found for the eleven binary rows.
+
+So the deliverable is section 8's twin and not section 7's.  It cost one
+extra block in `LadderCheck` 11 and nothing at all in the argument: the same
+`board_armF` case split, the same arms, the same iteration, plus the three
+things a quiet state costs (every arm avoids it, a visit chain per state that
+recurs, and the quiet state's last visit with the window to the boot anchor).
+`boardF_neverqh` is kept because it is what the argument proves before the
+quiet state is named.
+
+The five theorems are `iqh_* : NonHalt tm /\ QHBound 2000 tm /\
+QuasiHaltsSt tm`, axiom footprint `functional_extensionality_dep` only.
+
+### The numeration, in the kernel: one ceiling, and every old proof inert
+
+`Fam` gains nothing.  `Code` gains `Fib`, `fam_value` at `Fib` is the
+weighted fold, and the weights are COMPUTED from the position -- so no
+`mkFam` call changed, no board data changed, and the 31 boards emitted before
+this compile untouched.  That is what 4p meant by "a `Code` constructor, NOT
+a record field", and it held.
+
+**The one interface change a weighted numeration forces is the width's
+CEILING.**  `fam_is_top`, `fam_of_value` and `fam_wf` all read `b^k`, and at
+`Fib` the ceiling is `S (fibsum k)`, which is not a power of anything.
+`fam_lim` names it:
+
+    fam_lim F k = match fm_code F with Fib => S (fibsum k) | _ => b^k end
+
+and the three definitions read it instead.  Every `(Binary, 1)` and
+`(Gray, 2)` proof is unchanged but for the rewrite that turns `fam_lim` back
+into `Nat.pow` under its own `Hcode` -- eleven of those, all mechanical.
+**That is the whole cost of the third code in the generic half**, and it is
+worth stating because 4m priced this constructor at much more.
+
+### The risky lemma, and it was the round trip as 4p said
+
+    fibdec_round : length ds = k -> Forall (fun d => d < 2) ds ->
+                   fibokb o ds = true -> fibdec k o (fibval ds) = ds
+
+The numeration is REDUNDANT (`fibw 0 = fibw 1 = 1`, so `1;0;0` and `0;1;0`
+both have value 1), so `fam_of_value` is only an inverse ON THE MEMBERS and
+this is that canonicity theorem.  It went through, and the fallback 4p
+specified -- define the successor structurally and move the induction -- was
+not needed.
+
+What made it go through is a reading of the membership predicate 4p did not
+have.  4p states membership as *an optional leading `1`, then blocks `[0]`
+and `[1;1]`*.  Equivalently: **every maximal run of `1`s is even except the
+one that reaches index 0.**  Equivalently again, and this is the form that
+works: **at every `0`, the number of `1`s ABOVE it is even.**  The last form
+is a TWO-STATE AUTOMATON read from the most significant digit down -- `E`
+accepts a `0` and `O` does not, a `1` flips them, both accept at the end --
+and `o` is its state.
+
+With the state carried, each state's reachable values at width `k` are an
+INTERVAL:
+
+    E : [0, fibsum k]           O : [fibw (k-1), fibsum k]
+
+and the top digit splits `E`'s at exactly `fibw k`, because
+`fibsum (k-1) + 1 = fibw k`.  That is `fibsum_S`, it is the only identity the
+numeration rests on, and it is what makes the decode DETERMINISTIC.  The
+round trip is then an induction on the width against those two bounds
+(`fib_ub`, `fib_lb`) with no case split left over.
+
+**The first draft of the decode was wrong and the interval reading is what
+fixed it.**  Greedy-on-the-value alone -- take the top digit when
+`v > fibsum (k-1)` -- decodes width 3 value 3 to `1;0;1`, which is not a
+member; the test is right and the SUB-PROBLEM is not, because after a `1` the
+automaton is in `O` and the next digit is forced.  Two states, not one.
+
+### Stated before proved, and checked inside the kernel
+
+4o's discipline was an oracle in Python before the Coq.  Here the oracle
+already existed -- 4p's `tools/ladder/fibmem.py`, `FIBMEM: OK` -- so the
+check that was worth adding is the other direction: **the kernel's own
+membership predicate, enumerated.**  `fibokb` over every binary string of
+widths 0..10 counts
+
+    1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144
+
+which is 4p's counts read off the machines, and `fibdec 4 false` on `0..7`
+returns eight distinct members.  The predicate in Coq and the orbit on the
+tape are the same set, and that is checked in Coq rather than asserted.
+
+### What the closure actually needed, and the top is the easy one
+
+* **Coverage** (`fib_split`) is a `destruct` on the LOW DIGIT, as 4p said:
+  a `0` is the increment at run length 0, a `1` walks its own run to the `0`
+  that ends it -- or there is none and the string is `1^k`.  Two classes
+  where `(Gray, 2)` needed four.
+* **The top of a width is `1^k`**, a BARE RUN.  `(Binary, 1)`'s is
+  `(b-1)^k` and `(Gray, 2)`'s is `[1-p] ++ 0^(k-2) ++ [1]`; this one needs no
+  fixed word at either end, so the fill arm is the simplest of the three and
+  its index range starts at 1 rather than at 2.
+* **The increment class has `cs_u = [0]`** -- the fixed word before the run
+  that 4n specified and 4o built.  It was already there; this is the second
+  instance to use it, which is the first evidence that widening was right.
+* **`Section IterF`** differs from section 5 in three places and no more:
+  the measure is `fam_lim - value`, the invariant carries MEMBERSHIP, and the
+  family is one phase.  The step is 1, so section 5's arithmetic is the
+  arithmetic here -- which is why this section is shorter than 4o's.
+
+### The arms, derived rather than fitted
+
+4p measured both class arms deriving at threshold 0..1 and stride 1 with
+`armprobe.py`.  The emitter re-derives them from the machine and agrees:
+
+    4 interior at N0=1 st=1 + 1 fill at N0=1 st=1   (two rows)
+    2 interior at N0=0 st=1 + 1 fill at N0=1 st=1   (three rows)
+
+Five arms per row where the certificates carry four or five, and the fill arm
+at width index 1 serves every width because `aoff 1 1 k = 1` for all `k >= 1`.
+
+**What selects the third closure is `numeration` and the `weights` beside it,
+never `code`.**  All five certificates say `code: binary` -- 4p's lie -- so a
+`code`-driven dispatch would have sent them to the positional path, where
+`fam_value` would have been `val_pos` and every arm would have landed off the
+right-hand side.  `closure_data_fib` refuses on `numeration`, on the weights,
+on the canonical blocks `[[0],[1,1]]`, and on the fill target being a bare
+run of `0` (which is what `filled_fib0` discharges membership for).
+
+### Where the residue stops now
+
+* **The fibonacci bucket is EMPTY.**  4p's nine-row interior block is down to
+  the four base-2 rows, and 4p closed those: their interior arm cost has a
+  constant SECOND difference, no arithmetic progression makes a quadratic
+  affine, and no widening of `ARM_GRID` reaches them.  Not re-probed here and
+  they should not be re-probed again.
+* **The 30 that remain carry 12 shadows on ten rows.**  Nothing this session
+  moved a shadow, because these five had none -- 4p said so and it was right.
+  The re-root closer (#98's general half plus a worked `RRNQ_*`) is now worth
+  more than any further `ClassSucc` instance: it is the only thing that turns
+  a shadow into a settled row, and twelve rows is four times what a fourth
+  code pair could plausibly be worth.
+* **`Fam` has now carried three codes without widening once.**  4i's gate
+  has held through `(Gray, 2)`, the phase cycle and `(Fib, 1)`.  The cost of
+  the third was: one `fam_lim`, one membership predicate, one round trip, and
+  a `Section Iter` copy.  Nothing in the generic half moved.
+
+### What this says about the next session
+
+* **A fourth `(code, step)` pair is cheap and there is no evidence one is
+  needed.**  Every remaining core row has been measured into a bucket that is
+  not "the numeration": the four base-2 rows are quadratic-arm, and the rest
+  were never filed under a numeration blocker at all.  Do not go looking for
+  a fifth code before someone measures a row that wants it.
+* **The two FILL-arm rows in `coqproject_exempt.txt` are the only ladder rows
+  left with a mechanical blocker**, and neither is core, so they are worth
+  nothing but remain the fill twin of the question.
+* **The re-root closer is the next thing.**  Twelve shadows, ten core rows,
+  and the general half already exists.
+* The liveness of a row decides WHICH board it wants, and the certificate
+  carries it.  4i learned this for eleven binary rows, 4o's gray rows were
+  all `ABCD` so it did not come up, and this session was handed a plan that
+  named the wrong theorem.  **Read `liveness.states_infinitely_often` before
+  writing a board section, not after.**
 
 ## 5. What this is NOT
 

@@ -1,0 +1,92 @@
+# Files under theories/ that are deliberately NOT in _CoqProject.
+#
+# Checked by tools/check_coqproject.py (CI).  Everything else under
+# theories/ must be listed in _CoqProject, so no proof-shaped file goes
+# unbuilt -- and therefore unchecked -- by accident.  One glob per line;
+# keep the reason with it.
+
+# The census walk units and their theorem.  These are the ~7 h
+# native_compute enumeration, committed as .vo and hash-guarded by
+# tools/census_cache.py; `make census` / `make census-verify` drive them
+# directly (Makefile), never through Makefile.coq.
+theories/Census/Compute/*.v
+theories/Census/Run_Split*.v
+
+# The `make proof` tier, kept out of the default build on purpose: these
+# two are the only files that LOAD the committed census .vo, so `make`
+# stays a from-source build (README "The verification ladder", rung 2 vs 3).
+theories/Closeout/BBB4_Theorem.v
+theories/Closeout/CloseoutFinal.v
+
+# Ladder boards that are PARTIAL by construction: each stops before the
+# machine-level theorem because an arm of the CLOSURE has no chain.  Every
+# [sound_*] lemma in them is still a theorem -- the file's own header says how
+# many of the certificate's arms were re-derived, and for several it is all of
+# them.  Do not read that count as the reason: the certificate's arms and the
+# closure's CLASS arms are different sets.  closure_data builds the class arms
+# fresh from the family, and they are what fails.
+#
+# emit_ladder.py writes the reason into the .v file and there are exactly two:
+#
+#   line 381  interior arm: no chain at any threshold 0..3 and stride 1..4
+#   line 431  fill arm: no chain at any threshold 1..3, stride 1..4 or copy split
+#
+# The interior block held NINE rows until wave 4r; it holds FOUR.  TWO stop on
+# the FILL arm and neither row is core any more, so they are worth nothing but
+# are kept as the fill twin of the question.  Wave 4l's shared arm indexing
+# removed the older ClassSucc reason, so do not re-file any of these under
+# 4h(a); wave 4p replaced that stale note with the measured reason.
+#
+# RE-MEASURED, wave 4p: **the nine were not one bucket, and the shared refusal
+# line was the only thing they shared.**  armprobe.py said 5 of 9, and neither
+# half is what LADDER_PLAN 5 read off the failure text.
+#
+#   * FOUR are base-2 (the 1RB1LA/1RB0LD rows).  Their class fits -- the same
+#     single (Binary, 1) class a boarded row uses -- and their configuration
+#     is clean.  The interior arm's cost over the flat indices is 2, 6, 12,
+#     20, 30, 42, ... resp. 12, 18, 26, 36, 48, 62, ...: a SECOND difference
+#     of exactly 2, so quadratic in the run length.  A strided arm is one
+#     chain repeated and no arithmetic progression makes a quadratic affine,
+#     which is why every threshold and stride fail together.  LADDER_PLAN 5's
+#     non-affine carry ripple: **CONFIRMED, and now measured.**  It agrees
+#     with docs/QUAD_TERMINAL_MEASUREMENT.md, whose two rows are two of these
+#     four.  These four are not coming back without a new arm shape.
+#
+#   * FIVE were FIBONACCI (the 1RB--- rows) and **they are GONE from this
+#     list.**  4p measured their arms deriving and named the numeration as
+#     the only blocker; wave 4r built it -- LadderFam's Fib code, LadderCheck
+#     3c's third ClassSucc instance, 5c's iteration and 11's board -- and all
+#     five now carry iqh_* theorems and sit in _CoqProject.  They quasihalt
+#     (live = BCD: A is entered once, at step 0), so what they use is section
+#     11's quasihalter closer and not board_neverqh.
+#
+# Wave 4n's one-cell far-side reading is REAL on two of the four base-2 rows
+# (1RB1LA_1LC0RD_0RA0LC_0LA1RD and 1RB0LD_0LC0RB_1LA1RC_0RC1LD): with the
+# certificate's other_side_cells every flat arm lands off the rhs, with the
+# boot's every one derives.  It does not rescue them -- the strided arm is
+# quadratic either way -- but it is why their refusal text differs.
+#
+# Reproduce all of it with
+#   python3 tools/ladder/armprobe.py tools/ladder/num59_after.jsonl --selftest
+#   python3 tools/ladder/armprobe.py tools/ladder/num59_after.jsonl \
+#           --rows tools/ladder/interior9_rows.txt
+# and see tools/ladder/interior9_probe.{jsonl,log} for the committed run.
+#
+# They are kept as the record of where each row stops.  When a row's arm
+# lands, its board finishes and moves into _CoqProject -- delete the line here
+# rather than leaving both; check_coqproject.py fails on a line that does.
+
+# INTERIOR arm (line 381) -- FOUR rows, all still core, five shadows between
+# them.  The fibonacci five that shared this block boarded in wave 4r.
+#
+# Quadratic interior cost, all four still core, five shadows between the first
+# three (4p: measured; LADDER_PLAN 5 confirmed for these).  These are CLOSED as
+# ladder rows: a wider ARM_GRID cannot reach a quadratic.  Do not re-probe.
+theories/Machines/Ladder/LDR_1RB0LD_0LC0RB_1LA1RC_0RC1LD.v
+theories/Machines/Ladder/LDR_1RB1LA_0LA0LC_1LC1RD_0RB0RD.v
+theories/Machines/Ladder/LDR_1RB1LA_0LA1RC_0LD0RC_1LD0RB.v
+theories/Machines/Ladder/LDR_1RB1LA_1LC0RD_0RA0LC_0LA1RD.v
+
+# FILL arm (line 431) -- neither row is core any more
+theories/Machines/Ladder/LDR_1RB____0LB1RC_1LB0RD_1LC0RC.v
+theories/Machines/Ladder/LDR_1RB____1LC0RD_0LC1RB_1LB0RB.v

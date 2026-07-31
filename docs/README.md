@@ -29,9 +29,14 @@ results, and their numbers freeze at their write date — but they record
 The root-level [`NEXT_SESSION.md`](../NEXT_SESSION.md) is the running
 digest of all of it.
 
-* **Per-wave findings** — `WAVE4_STAGE.md` through `WAVE33_FINDINGS.md`
-  (with the `WAVE*_PROMPT.md` staging notes; `WAVE33_PROMPT.md` is the
-  live one): what each proof wave boarded and how.
+* **Per-wave findings** — `WAVE4_STAGE.md` through `WAVE34_REACHSTI.md`
+  (with the `WAVE*_PROMPT.md` staging notes): what each proof wave boarded
+  and how.
+* **The two live tracks** — [`REACHST_TIER.md`](REACHST_TIER.md): liveness
+  of a machine's sparse state as termination of the state-DELETED
+  sub-machine, the idea behind 110+ boards; and
+  [`LADDER_PLAN.md`](LADDER_PLAN.md) with `LADDER_NOFAM.md`: the
+  value-indexed rule family, which boarded its first machines in Stage B.
 * **Holdout campaign** — `HOLDOUTS_WAVE14.md`, `HOLDOUTS_MXDYS_SN.md`,
   `HOLDOUTS_FRACTAL.md`: the 27 hardest machines, now all boarded.
 * **Machine readings** — `BOUNCER_COUNTER_READING.md`,

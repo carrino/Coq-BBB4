@@ -15,8 +15,10 @@
     Axiom footprint: [functional_extensionality_dep], via [CTape.lift]. *)
 From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement CTape.
-From BBB4.Counters Require Import WTape.
-From BBB4.Checkers Require Import LapDecider LadderKernel LadderFam.
+From BBB4.Census Require Import TNF_QH.
+From BBB4.Counters Require Import WTape LapGlueQuiet.
+From BBB4.Checkers Require Import LapDecider LapAvoid LadderKernel LadderFam.
+From BBB4.Checkers Require Import LadderCheck.
 Import ListNotations.
 
 Definition mk_1RB0RB_0LC0LD_1LC1LD_1RA0RA (w : Sym) (d : Dir) (n : St) : option Trans :=
@@ -41,7 +43,7 @@ Local Notation tm := tm_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
     The successor is a PARAMETER here, not a law: [fam_succ] reads the fill
     of the phase it is in, the code the digits are written in, and the step
     the counter advances by, all off this record. *)
-Definition fam_1RB0RB_0LC0LD_1LC1LD_1RA0RA : Fam := mkFam 2 [[S0];[S1]] [] [[]] Gray 2 [mkFill 1 [] 0 [1;1] 0] StC S1 true [].
+Definition fam_1RB0RB_0LC0LD_1LC1LD_1RA0RA : Fam := mkFam 2 [[S0];[S1]] [] [[]] Gray 2 [mkFill 1 [] 0 [1;1] 0] StC S1 true [S0].
 Local Notation FAM := fam_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
 
 (** ** The ladder, as DATA
@@ -613,3 +615,375 @@ Proof. eapply arm_sound; [exact rules_sound_1RB0RB_0LC0LD_1LC1LD_1RA0RA | exact 
     sound: each [sound_*] is a theorem that the machine, from that arm's
     left-hand side and against any tail the flags permit, reaches the arm's
     right-hand side in exactly the certificate's step count. *)
+
+(** ** The closure: from the RULES to [NeverQuasiHaltsSt], at [(Gray, 2)]
+
+    The arms below are the case split of [LadderCheck.gray_split], built from
+    the FAMILY rather than mined: one interior arm per CLASS (there are four,
+    LADDER_PLAN 4i) and per arm index, and one fill arm per WIDTH index.
+    Every certificate arm above is one of these with its run lengths pinned to
+    their lower bounds, which is why 49 of them collapse to 5 here.
+
+    The family's parity is 0.  That is not a choice: it is the digit sum
+    of the boot, it is the value's low bit, [+2] preserves it, and it is what
+    makes "member of this width" a predicate rather than "every string of this
+    width".  The four classes and the top's shape are read off it.
+
+    The interior class runs at threshold 0 stride 1, the fill
+    class at threshold 2 stride 1.  [boardG_neverqh] consumes
+    them, the boot, and one chain per state per fill arm. *)
+Definition iarm0_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA : LRule :=
+  mkLRule (mkC StC (mkS [S0;S0] [S0] 1 0 []) S1 (mkS [S0] [] 0 0 []))
+          (mkC StC (mkS [S1;S1] [S0] 1 0 []) S1 (mkS [S0] [] 0 0 [])) 0 12.
+Definition ch_iarm0_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA : list rstep := [RB (SWin 12)].
+Lemma ok_iarm0_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA :
+  check_arm tm false true rules iarm0_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA
+            ch_iarm0_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Definition iarm1_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA : LRule :=
+  mkLRule (mkC StC (mkS [S0;S1] [S1] 1 0 []) S1 (mkS [S0] [] 0 0 []))
+          (mkC StC (mkS [S1;S0] [S1] 1 0 []) S1 (mkS [S0] [] 0 0 [])) 0 12.
+Definition ch_iarm1_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA : list rstep := [RB (SWin 12)].
+Lemma ok_iarm1_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA :
+  check_arm tm false true rules iarm1_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA
+            ch_iarm1_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Definition iarm2_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA : LRule :=
+  mkLRule (mkC StC (mkS [S1] [S0] 1 0 [S1;S0]) S1 (mkS [S0] [] 0 0 []))
+          (mkC StC (mkS [S0] [S0] 1 0 [S1;S1]) S1 (mkS [S0] [] 0 0 [])) 4 16.
+Definition ch_iarm2_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA : list rstep := [RB (SWin 5);RB (SCycL 1 0);RB (SWin 6);RB (SCycR 3);RB (SWin 5)].
+Lemma ok_iarm2_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA :
+  check_arm tm false true rules iarm2_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA
+            ch_iarm2_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Definition iarm3_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA : LRule :=
+  mkLRule (mkC StC (mkS [S1] [S0] 1 0 [S1;S1]) S1 (mkS [S0] [] 0 0 []))
+          (mkC StC (mkS [S0] [S0] 1 0 [S1;S0]) S1 (mkS [S0] [] 0 0 [])) 4 16.
+Definition ch_iarm3_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA : list rstep := [RB (SWin 5);RB (SCycL 1 0);RB (SWin 6);RB (SCycR 3);RB (SWin 5)].
+Lemma ok_iarm3_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA :
+  check_arm tm false true rules iarm3_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA
+            ch_iarm3_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Definition farm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA : LRule :=
+  mkLRule (mkC StC (mkS [S1] [S0] 1 0 [S1]) S1 (mkS [S0] [] 0 0 []))
+          (mkC StC (mkS [S0] [S0] 1 0 [S1;S1]) S1 (mkS [S0] [] 0 0 [])) 4 16.
+Definition ch_farm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA : list rstep := [RB (SWin 5);RB (SCycL 1 0);RB (SWin 1);RB (SWinL 5);RB (SCycR 3);RB (SWin 5)].
+Lemma ok_farm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA :
+  check_arm tm true true rules farm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA ch_farm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Definition iarm_1RB0RB_0LC0LD_1LC1LD_1RA0RA (i r : nat) : LRule :=
+  match i, r with
+  | 0, 0 => iarm0_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA
+  | 1, 0 => iarm1_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA
+  | 2, 0 => iarm2_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA
+  | 3, 0 => iarm3_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA
+  | _, _ => iarm0_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA   (* unreachable: i < 4 and r < N0i + sti *)
+  end.
+
+(** The fill arms, indexed by the WIDTH.  Both tails are known empty -- they
+    are the only arms that see the end of the counter -- and the left-hand
+    side is the top of the width: [1], then a run of zeros, then [1].
+    That is the largest MEMBER and not the largest value ([2^k - 1] has the
+    wrong parity and is not a member at all), which is why it has a fixed word
+    at each end.  [fw1]/[fw2] say how the top's concrete copies of the run
+    divide about the block and [fm1]/[fm2] the fill target's. *)
+Definition farm_1RB0RB_0LC0LD_1LC1LD_1RA0RA (r : nat) : LRule :=
+  match r with
+  | 2 => farm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA
+  | _ => farm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA   (* unreachable: 2 <= r < N0f + stf *)
+  end.
+
+Definition fw1_1RB0RB_0LC0LD_1LC1LD_1RA0RA (r : nat) : nat := match r with | 2 => 0 | _ => 0 end.
+Definition fw2_1RB0RB_0LC0LD_1LC1LD_1RA0RA (r : nat) : nat := match r with | 2 => 0 | _ => 0 end.
+Definition fm1_1RB0RB_0LC0LD_1LC1LD_1RA0RA (r : nat) : nat := match r with | 2 => 1 | _ => 0 end.
+Definition fm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA (r : nat) : nat := match r with | 2 => 0 | _ => 0 end.
+
+(** One chain per state per fill arm.  [vis_of_run] turns each into a visit
+    and [topsG_cofinal] says the tops keep coming, which is all the liveness
+    needs. *)
+Definition vis_1RB0RB_0LC0LD_1LC1LD_1RA0RA (r : nat) (q : St) : list lstep :=
+  match r, q with
+  | 2, StA => [SWin 2]
+  | 2, StB => [SWin 3]
+  | 2, StC => []
+  | 2, StD => [SWin 1]
+  | _, _ => []
+  end.
+
+Lemma iarm_sound_1RB0RB_0LC0LD_1LC1LD_1RA0RA : forall i r,
+  i < 4 -> r < 0 + 1 ->
+  RuleSound tm (negb (fm_left FAM)) (fm_left FAM) (iarm_1RB0RB_0LC0LD_1LC1LD_1RA0RA i r).
+Proof.
+  intros i r Hi Hr.
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { eapply arm_sound; [exact rules_sound_1RB0RB_0LC0LD_1LC1LD_1RA0RA | exact ok_iarm0_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA]. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { eapply arm_sound; [exact rules_sound_1RB0RB_0LC0LD_1LC1LD_1RA0RA | exact ok_iarm1_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA]. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { eapply arm_sound; [exact rules_sound_1RB0RB_0LC0LD_1LC1LD_1RA0RA | exact ok_iarm2_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA]. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { eapply arm_sound; [exact rules_sound_1RB0RB_0LC0LD_1LC1LD_1RA0RA | exact ok_iarm3_0_1RB0RB_0LC0LD_1LC1LD_1RA0RA]. }
+    exfalso; lia.
+  }
+  exfalso; lia.
+Qed.
+
+Lemma iarm_lhs_1RB0RB_0LC0LD_1LC1LD_1RA0RA : forall i r, i < 4 -> r < 0 + 1 ->
+  lr_lhs (iarm_1RB0RB_0LC0LD_1LC1LD_1RA0RA i r)
+    = cls_conf FAM (cls_side FAM (cs_u (g2c 0 i)) (cs_t (g2c 0 i)) r
+                      (astride 0 1 r) (cs_w (g2c 0 i))).
+Proof.
+  intros i r Hi Hr.
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; reflexivity. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; reflexivity. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; reflexivity. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; reflexivity. }
+    exfalso; lia.
+  }
+  exfalso; lia.
+Qed.
+
+Lemma iarm_rhs_1RB0RB_0LC0LD_1LC1LD_1RA0RA : forall i r, i < 4 -> r < 0 + 1 ->
+  lr_rhs (iarm_1RB0RB_0LC0LD_1LC1LD_1RA0RA i r)
+    = cls_conf FAM (cls_side FAM (cs_u' (g2c 0 i)) (cs_t' (g2c 0 i)) r
+                      (astride 0 1 r) (cs_w' (g2c 0 i))).
+Proof.
+  intros i r Hi Hr.
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; reflexivity. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; reflexivity. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; reflexivity. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; reflexivity. }
+    exfalso; lia.
+  }
+  exfalso; lia.
+Qed.
+
+Lemma iarm_cb_1RB0RB_0LC0LD_1LC1LD_1RA0RA : forall i r, i < 4 -> r < 0 + 1 ->
+  0 < lr_cb (iarm_1RB0RB_0LC0LD_1LC1LD_1RA0RA i r).
+Proof.
+  intros i r Hi Hr.
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; lia. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; lia. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; lia. }
+    exfalso; lia.
+  }
+  destruct i as [|i].
+  {
+    destruct r as [|r].
+    { vm_compute; lia. }
+    exfalso; lia.
+  }
+  exfalso; lia.
+Qed.
+
+Lemma farm_sound_1RB0RB_0LC0LD_1LC1LD_1RA0RA : forall r, 2 <= r -> r < 2 + 1 ->
+  RuleSound tm true true (farm_1RB0RB_0LC0LD_1LC1LD_1RA0RA r).
+Proof.
+  intros r H2 Hr.
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { eapply arm_sound; [exact rules_sound_1RB0RB_0LC0LD_1LC1LD_1RA0RA | exact ok_farm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA]. }
+  exfalso; lia.
+Qed.
+
+Lemma farm_lhs_1RB0RB_0LC0LD_1LC1LD_1RA0RA : forall r, 2 <= r -> r < 2 + 1 ->
+  lr_lhs (farm_1RB0RB_0LC0LD_1LC1LD_1RA0RA r)
+    = cls_conf FAM (run_side FAM 0 (fw1_1RB0RB_0LC0LD_1LC1LD_1RA0RA r)
+                      (astride 2 1 r) (fw2_1RB0RB_0LC0LD_1LC1LD_1RA0RA r) 0
+                      [1 - 0] [1]).
+Proof.
+  intros r H2 Hr.
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { vm_compute; reflexivity. }
+  exfalso; lia.
+Qed.
+
+Lemma farm_rhs_1RB0RB_0LC0LD_1LC1LD_1RA0RA : forall r, 2 <= r -> r < 2 + 1 ->
+  lr_rhs (farm_1RB0RB_0LC0LD_1LC1LD_1RA0RA r)
+    = cls_conf FAM (run_side FAM (f_mid (fam_fill FAM 0)) (fm1_1RB0RB_0LC0LD_1LC1LD_1RA0RA r)
+                      (astride 2 1 r) (fm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA r) 0
+                      (f_pre (fam_fill FAM 0)) (f_suf (fam_fill FAM 0))).
+Proof.
+  intros r H2 Hr.
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { vm_compute; reflexivity. }
+  exfalso; lia.
+Qed.
+
+Lemma farm_cb_1RB0RB_0LC0LD_1LC1LD_1RA0RA : forall r, 2 <= r -> r < 2 + 1 ->
+  0 < lr_cb (farm_1RB0RB_0LC0LD_1LC1LD_1RA0RA r).
+Proof.
+  intros r H2 Hr.
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { vm_compute; lia. }
+  exfalso; lia.
+Qed.
+
+Lemma fw_1RB0RB_0LC0LD_1LC1LD_1RA0RA : forall r, 2 <= r -> r < 2 + 1 ->
+  fw1_1RB0RB_0LC0LD_1LC1LD_1RA0RA r + fw2_1RB0RB_0LC0LD_1LC1LD_1RA0RA r + 2 = r.
+Proof.
+  intros r H2 Hr.
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { vm_compute; lia. }
+  exfalso; lia.
+Qed.
+
+Lemma fm12_1RB0RB_0LC0LD_1LC1LD_1RA0RA : forall r, 2 <= r -> r < 2 + 1 ->
+  fm1_1RB0RB_0LC0LD_1LC1LD_1RA0RA r + fm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA r
+  + (length (f_pre (fam_fill FAM 0)) + length (f_suf (fam_fill FAM 0)))
+  = r + f_s (fam_fill FAM 0).
+Proof.
+  intros r H2 Hr.
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { vm_compute; lia. }
+  exfalso; lia.
+Qed.
+
+Lemma boot_1RB0RB_0LC0LD_1LC1LD_1RA0RA :
+  csteps tm 14 c0 = Some (fam_cfg FAM ([1;1], 0, 0)).
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma vis_ok_1RB0RB_0LC0LD_1LC1LD_1RA0RA : forall r q, 2 <= r -> r < 2 + 1 ->
+  srun_st tm true true (vis_1RB0RB_0LC0LD_1LC1LD_1RA0RA r q) (lr_lhs (farm_1RB0RB_0LC0LD_1LC1LD_1RA0RA r)) = Some q.
+Proof.
+  intros r q H2 Hr.
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { exfalso; lia. }
+  destruct r as [|r].
+  { destruct q; vm_compute; reflexivity. }
+  exfalso; lia.
+Qed.
+
+(** The machine-level theorem.  Every argument is either a [RuleSound] the
+    Stage-B kernel discharged, or an equation two [vm_compute]s decide -- and
+    the PARITY, which is one more of the second kind. *)
+Theorem nqh_1RB0RB_0LC0LD_1LC1LD_1RA0RA : NeverQuasiHaltsSt tm.
+Proof.
+  apply (boardG_neverqh tm FAM 0 iarm_1RB0RB_0LC0LD_1LC1LD_1RA0RA 0 1
+                        farm_1RB0RB_0LC0LD_1LC1LD_1RA0RA 2 1
+                        fw1_1RB0RB_0LC0LD_1LC1LD_1RA0RA fw2_1RB0RB_0LC0LD_1LC1LD_1RA0RA fm1_1RB0RB_0LC0LD_1LC1LD_1RA0RA fm2_1RB0RB_0LC0LD_1LC1LD_1RA0RA
+                        vis_1RB0RB_0LC0LD_1LC1LD_1RA0RA [1;1] 14).
+  - vm_compute; reflexivity.
+  - vm_compute; reflexivity.
+  - vm_compute; reflexivity.
+  - lia.
+  - vm_compute; repeat constructor.
+  - vm_compute; repeat constructor.
+  - vm_compute; lia.
+  - vm_compute; lia.
+  - vm_compute; reflexivity.
+  - intros k Hk.
+    rewrite (filled_parity FAM 0 k ltac:(vm_compute; reflexivity)).
+    vm_compute; reflexivity.
+  - repeat constructor.
+  - vm_compute; lia.
+  - vm_compute; reflexivity.
+  - exact boot_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+  - lia.
+  - exact iarm_sound_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+  - exact iarm_lhs_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+  - exact iarm_rhs_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+  - exact iarm_cb_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+  - lia.
+  - lia.
+  - exact fw_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+  - exact fm12_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+  - exact farm_sound_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+  - exact farm_lhs_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+  - exact farm_rhs_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+  - exact farm_cb_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+  - exact vis_ok_1RB0RB_0LC0LD_1LC1LD_1RA0RA.
+Qed.

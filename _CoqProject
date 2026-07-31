@@ -28,6 +28,7 @@ theories/Census/RankSearch.v
 theories/Census/RepWLSearch.v
 theories/Census/Decide.v
 theories/Census/Reroot.v
+theories/Census/RerootSwap.v
 theories/Census/Deferred_Defs.v
 theories/Census/Deferred_00.v
 theories/Census/Deferred_01.v
@@ -1390,6 +1391,16 @@ theories/Machines/Ladder/LDR_0RB0LC_1LA1RB_0RD0LA_1RD1LC.v
 theories/Machines/Ladder/LDR_0RB0LC_1LC1RB_0RD0LA_1RD1LA.v
 theories/Machines/Ladder/LDR_0RB1LA_1LC1RD_0RD0LC_0LA1RB.v
 theories/Machines/Ladder/LDR_0RB1LC_0LC1RB_1RD1LA_0LA0RD.v
+theories/Machines/Ladder/LDR_1RB0LA_1LC1LA_1RD1LB_0LC0RD.v
+theories/Machines/Ladder/LDR_1RB1RD_1LC1RA_0RB0LC_1LA0RD.v
+theories/Machines/Ladder/LDR_1RB0RB_0RC1RC_0LD1LA_1LD0LA.v
+theories/Machines/Ladder/LDR_1RB1LC_0LA0RB_0LD1LD_1RA0RA.v
+theories/Machines/Ladder/LDR_1RB1LD_1RC0RC_1LA0LA_0RA0LD.v
+theories/Machines/Ladder/LDR_1RB____0LB1RC_1LB0RD_1LC0RD.v
+theories/Machines/Ladder/LDR_1RB____0LB1RC_1LD0RC_1LB1RC.v
+theories/Machines/Ladder/LDR_1RB____1LC0RB_1LD1RB_0LD1RB.v
+theories/Machines/Ladder/LDR_1RB____1LC0RD_0LC1RB_1LB0RD.v
+theories/Machines/Ladder/LDR_1RB____1LC1RD_0LC1RD_1LB0RD.v
 theories/Counters/LapGlueQuiet.v
 theories/Counters/KpWallAlt.v
 theories/Counters/KpWallQH.v
@@ -2803,6 +2814,10 @@ theories/Machines/Counters/NLAP_1RB____1RC1LB_0LB1RD_0RA0RC.v
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 theories/Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/SH_0RB0LA_1LA1RC_0RD1RD_1LB0LB.v
+theories/Machines/Counters/SH_0RB0LA_1RC1LA_1RD0RD_1LB0LB.v
+
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
 theories/Closeout/CoreRows.v
@@ -2858,4 +2873,5 @@ theories/Closeout/CB_47.v
 theories/Closeout/CB_48.v
 theories/Closeout/CB_49.v
 theories/Closeout/CB_50.v
+theories/Closeout/CB_51.v
 theories/Closeout/Closeout.v

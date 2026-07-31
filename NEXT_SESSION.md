@@ -259,6 +259,27 @@ via `LapGlue.glue_neverqh` — **and with it its `0RB` shadow**
   `Reroot.qhbound_reroot`, not `neverqh_reroot`, and that one shifts the bound
   by the prefix length and carries a `B + t <= 2000` side condition.
 
+  **SUPERSEDED (2026-07-31, same day, John): the generator is built.**
+  `tools/closeout/gen_shadow.py`, with the general half of the argument in
+  `theories/Census/RerootSwap.v`.  What changed the call was measuring the
+  cost rather than estimating it: the "full rebuild of the census and
+  closeout" that kept `neverqh_swap` local inside the RRNQ board is only
+  incurred by EDITING `Census/Reroot.v` -- Coq rebuilds the dependents of
+  CHANGED files, so a NEW module beside it costs one file's compile and
+  rebuilds nothing.  `neverqh_swap` and `neverqh_mirror` are both **Closed
+  under the global context** (zero axioms); only the `Visited` helper touches
+  funext, through `CTape.lift`.
+  Validated the way the tree validates emitters: `gen_shadow.py --regress`
+  reproduces the hand-written RRNQ board and then breaks it three ways --
+  op order reversed, prefix length off by one, wrong re-root state -- and all
+  three are REJECTED by the kernel.  It cleans up after itself, so it is safe
+  to run in a dirty tree.
+  The `iqh` caveat above still stands and is enforced rather than assumed:
+  `gen_shadow.py` refuses a core row whose `frozen_map.tsv` kind is not
+  `nqh`, and says so, instead of guessing at the `B + t` side condition.
+  Today all 14 shadows have UNDECIDED partners, so `--all` correctly emits
+  nothing; the generator earns its keep the moment a core row boards.
+
 - **The wave-35 diagnosis was wrong, and the correction is the reusable
   part.**  Wave-35 found this row at a CARRY-STRADDLING anchor and concluded
   the missing piece was a `LapDecider` template whose anchor straddles the
@@ -4123,3 +4144,200 @@ traps._
   build then LIES**: `Makefile.coq` is generated from `_CoqProject`, so
   changing it mid-build invalidates the makefile and `make` can exit 0 with
   hundreds of files unbuilt.  Board first, then build.
+
+## 2026-07-31 — `(Fib, 1)` built: the FIBONACCI five board, five rows off the core
+
+_Branch `claude/fibonacci-numeration-coq-uewigh`, cut from `main` at
+`2dbbe9b`.  Full write-up in `docs/LADDER_PLAN.md` §4r — written as 4q and
+renumbered, because #103 took that number while this ran._
+
+- **The gate has now held THREE times.**  `Fam` carries `Binary`, `Gray` and
+  `Fib` and the `Class` record has never widened; `ClassSucc` is not weakened
+  and there is no second class record.  The cost of the third code in the
+  generic half was ONE definition — see the next bullet — plus a membership
+  predicate, a round trip and a `Section Iter` copy.
+- **READ THE LIVENESS BEFORE WRITING A BOARD SECTION.**  The session plan
+  asked for `NeverQuasiHaltsSt` on all five; the certificates say
+  `live = BCD`, and 4p's own text explains why (`A` is entered once, at step
+  0, and nothing targets it).  A state that stops firing IS a quasihalt, so
+  §11 needed section 8's twin (`boardF_iqh`) and the never-QH closer proves
+  the wrong theorem for every one of them.  `liveness.states_infinitely_often`
+  is in the certificate; it costs nothing to look and half a section to
+  discover late.
+- **A weighted numeration changes exactly ONE thing in the generic half: the
+  width's CEILING.**  `fam_is_top`, `fam_of_value` and `fam_wf` all read
+  `b^k`; at `Fib` it is `S (fibsum k)`, which is not a power of anything.
+  `fam_lim` names it and the three read it, and every `(Binary, 1)` and
+  `(Gray, 2)` proof survives with one rewrite under its own `Hcode` (eleven
+  of those, all mechanical).  4m priced this constructor at much more.
+- **The risky lemma was the round trip and the fix was a SECOND STATE.**  The
+  numeration is redundant (`fibw 0 = fibw 1 = 1`), so `fam_of_value` is only
+  an inverse on the members.  Greedy-on-the-value alone is WRONG — width 3
+  value 3 decodes to `1;0;1`, not a member — because after a `1` the next
+  digit is forced.  Membership read as "at every `0`, an even number of `1`s
+  above it" is a two-state automaton; carry the state and each state's values
+  are an interval, split by the top digit at exactly `fibw k` because
+  `fibsum (k-1) + 1 = fibw k`.  Then the round trip is one induction on the
+  width with no case left over.
+- **Check the kernel's predicate against the measurement INSIDE Coq.**  4p's
+  `fibmem.py` checked the membership rule against the machines; the cheap
+  converse is to enumerate `fibokb` over every binary string of widths 0..10
+  and count: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144 — 4p's counts, in the
+  kernel's own terms.  Three `Compute`s, and it turns "I transcribed the rule
+  correctly" from a hope into a check.
+- **Dispatch on what was MEASURED, not on what the certificate calls itself.**
+  All five certificates say `code: binary` and it is false — that is the lie
+  4p caught.  `closure_data_fib` selects on `numeration` and the `weights`
+  beside it, and refuses on the canonical blocks and the fill target too.  A
+  `code`-driven dispatch would have sent them to the positional path and every
+  arm would have landed off the right-hand side.
+- **The emitter agreed with the probe.**  4p measured both class arms deriving
+  at threshold 0..1 stride 1; the emitter re-derives the chains from the
+  machine and lands on exactly that.  `settled by a board` 5107 → 5112,
+  `core undecided` 37 → 32 on this branch's own base; merged with #104's two
+  freed shadows the tree reads **5114 (99.2%) and 30 core**.  Shadows
+  unchanged at 12 — these five carry none, as 4p said.
+- **The fibonacci bucket is empty and the four base-2 rows are closed.**  Their
+  interior arm cost has a constant SECOND difference; no arithmetic progression
+  makes a quadratic affine and no widening of `ARM_GRID` reaches them.  Not
+  re-probed here.  **The re-root closer is now worth more than any further
+  `ClassSucc` instance**: twelve shadows on ten core rows, and #98's general
+  half already exists.
+
+## 2026-07-31 — `(Gray, 2)` built: four rows, and the parity turned out to be a PARAMETER
+
+_Branch `claude/gray-2-ladder-build-igrvzw`, cut from `main` at `fa1be97`.
+Full write-up in `docs/LADDER_PLAN.md` §4o._
+
+- **The gate 4i set holds.**  `(Gray, 2)` is a second INSTANCE of `ClassSucc`,
+  not a rewrite: four instances go through, the `Class` record does not widen,
+  `ClassSucc` is not weakened, no second class record.  `boardG_neverqh` is
+  `LadderCheck` section 10 and section 7 is untouched.
+- **The thing 4n did not know: the parity is a parameter, not the constant 0.**
+  Five of the six gray core rows have even members; `1RB0RB_0RC1RC_0LD1LA_1LD0LA`
+  has odd ones.  Written with `p` where 4i's table has `0`, the four classes
+  are ONE table and the odd family's are the even family's with the two sides
+  exchanged.  Both values of `p` are exercised by a compiled board.  Had `0`
+  been baked in, one of the four rows would have wanted a second table of
+  four — and "the record does not widen" would have read very differently.
+- **State the lemma against an oracle BEFORE proving it.**
+  `tools/ladder/gray2check.py` takes the classes, the four-way split and the
+  top shape as the kernel states them and enumerates every bounded digit
+  string of widths 2..13 for all six gray rows (8190 strings each).  It caught
+  a wrong split in the first draft in seconds; finding the same thing in Coq
+  would have cost hours.  Same discipline as `bounce.py --selftest` and
+  `armprobe.py --selftest`, one rung up.
+- **The arithmetic trick worth keeping.**  `fam_value` at `Gray` is `val_pos`
+  after `gdec`, a fold from the most significant digit DOWN, so no `val_pos`
+  lemma transfers.  But a class's two sides differ only in their FIXED WORDS,
+  so `gval_app` splits the value into a bounded prefix contribution and the
+  suffix's own, and **the run is never evaluated** — which matters, because a
+  run of `1`s decodes to an alternating bit pattern with no closed form.
+- **Two shadows became core rows.**  Boarding a core row does NOT settle its
+  `0RB` shadow; two of these four carried one, and those two are now core rows
+  wanting the re-root board.  `settled by a board` 5103 → 5107 and remaining
+  53 → 49, which is the honest number; core undecided 39 → 37 is not.
+- **`RuleSound` is on `cconf` and `ctape_move` does not normalise** — 4n's
+  finding, and the gray emitter pays for it directly: it reads the far side
+  off the BOOT (simulating from the blank tape) rather than trusting
+  `other_side_cells`, and then writes the `Fam` record from what the arm
+  search chose.  With the certificate's value, zero of the gray rows have an
+  interior arm; with the boot's, four do.  Getting this backwards shows up as
+  a `cls_conf` unification failure on `c_r`, nowhere near the cause.
+- **Emit the family AFTER the closure, for gray.**  Because of the above, the
+  `Fam` record depends on which far side the arm search picked, so `emit()`
+  runs the gray closure first.  The binary path still runs it last.
+- **`_rbranches`'s `body` must carry its own trailing period** — the `dead`
+  string has one and the live one does not, and the result is a Coq syntax
+  error 100 lines from the template.
+- **The two gray rows 4n left alone are refused at the BOOT check**, before
+  any arm search, with `boot cells [1, 0, 1] are not the family at [1, 1]`.
+  That is 4n's cell-spelling finding stated by the tool rather than recalled.
+  Their class law is fine — `gray2check.py` checks it.
+
+# 2026-07-31 — the interior nine, re-measured: 5 of 9, and it was two buckets
+
+_Full record in `docs/LADDER_PLAN.md` §4p.  Branch
+`claude/interior-arm-remeasure-vg1xl2` off `main` at `fa1be97`.  No row
+boards and no count moves of its own.  Merged with 4o's `(Gray, 2)` boards
+the audit reads `settled by a board 5107 (99.0%)`, `core undecided 37`, `0RB
+shadows 12` -- all of that movement is 4o's, and all nine rows below are still
+core with the same five shadows on the same three of them.  The count WAS the
+deliverable._
+
+- **The nine rows of the exempt block's "INTERIOR arm (line 381)" are not one
+  bucket, and the shared line number was the only thing they had in common.**
+  `armprobe.py` says **5 of 9** have both class arms.  Four are base-2 and
+  their arm is quadratic; five are Fibonacci and their arms DERIVE.
+  `LADDER_PLAN` §4n's own table already had them as 5 + 4 — the exempt file
+  is what conflated them.  **When two rows stop at the same line, that is a
+  fact about the emitter, not about the machines.**
+- **The four base-2 rows confirm §5's non-affine carry ripple, measured on
+  the arm itself.**  Their class fits (the same single `(Binary, 1)` class a
+  boarded row uses) and their configuration is clean.  The interior arm's
+  flat cost is `2, 6, 12, 20, 30, 42, …` resp. `12, 18, 26, 36, 48, 62, …` —
+  **second difference exactly 2**.  A strided arm is one chain repeated, so
+  its cost is affine along the stride, and no arithmetic progression makes a
+  quadratic affine.  That is why thresholds 0..3 and strides 1..4 fail
+  *together*.  Contrast the boarded row: `2, 8, 6, 16, 10, 24, …`, affine on
+  each residue mod 2, which is exactly why its stride-2 arm derives.
+  `ARM_GRID` catches piecewise-affine on a progression ≤ 4 and cannot be
+  widened into a quadratic.  Do not re-probe these four.
+- **The five Fibonacci rows were blocked by the PROBE, not by the machines.**
+  `Fam.value` honoured the certificate's `weights`; `of_value` and `maxval`
+  did not — positional `v % b` and `b^k - 1`.  On a weighted numeration
+  `is_top` is then false at every string the counter ever stands on and the
+  orbit walked off the family after **5 elements**, reported as `no class
+  fit`.  Fixed by not inverting at all: `Fam.walk` reads the counter off the
+  machine's tape at each anchor visit and `orbit_machine` orders each width's
+  members by `value`.  All five then fit the same two classes — the carry
+  `1^n ++ [1;0] -> 0^n ++ [1;1]` and the increment `[0] ++ 0^n -> [1] ++ 0^n`
+  — and both arms chain at **stride 1** with constant first differences.
+  They are §4m's five, and they need §4m's constructor, not an arm.
+- **§4n's one-cell far side is real on two more rows and does not rescue
+  them.**  Certificate `other_side_cells = [1]`, boot spells `[1;0]`: with the
+  certificate's value every flat arm lands off the rhs, with the boot's every
+  one derives.  It also closes §4j's fourth table line — those two rows are
+  the "no chain at any n, not yet diagnosed" pair, so it is **four** quadratic
+  rows and not two.
+- **The bucket's density and its reachability are on opposite halves.**  All
+  five shadows sit on three of the four QUADRATIC rows.  So "14 rows, the
+  densest bucket in the residue" is really 9 rows that are not coming back
+  and 5 that are worth one row each.  Check `shadow_rows.tsv` column 4
+  against the half you can actually reach, not against the bucket.
+- **Trap: `gen_shadow.py --regress` printed `FAILED` on an unbuilt tree and
+  its three corruption tests printed `rejected` — vacuously, because nothing
+  compiled, so nothing could be rejected.**  A corruption test that runs on a
+  tree where the good case also fails is not a test.  It now separates the two
+  and prints `INCONCLUSIVE` with the target to build.  Build
+  `theories/Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.vo` **and**
+  `theories/Census/RerootSwap.vo`, `theories/Mirror.vo`,
+  `NLAP_1RB____1RC1LB_0LB1RD_0RA0RC.vo` — the generated `SH_` requires more
+  than the hand-written original it reproduces.  Then it is OK, 4 of 4; the
+  generator was healthy the whole time.
+- **The nine boards are on disk, tracked, and NOT in `_CoqProject`**, so
+  `make` has no rule for them and editing their notes costs nothing.  All
+  nine cited §4h(a)'s `ClassSucc` reason, which §4l removed and which fits
+  neither half; they now carry the measured reason, one per half.
+
+- **Addendum, same day: the two shadows the gray boards freed are boarded**
+  (5107 → 5109, 47 rows remain), and the kernel agrees with the audit —
+  `Closeout.vo` rebuilt, `proven_rows` 5,109 with kernel-checked `covers`,
+  `remaining_rows` 35, `closeout_partial` on funext alone.
+- **The trap in freeing a shadow.**  `shadowlib.classify` drops a shadow from
+  `shadow_rows.tsv` the moment its partner leaves the unproven set — exactly
+  when it becomes actionable — so `gen_shadow.py --all` cannot see the rows
+  you just freed.  Use the explicit form and read the ops out of
+  `git show HEAD~1:tools/closeout/shadow_rows.tsv`.
+- **And `gen_shadow.py` hard-coded `BBB4.Machines.Counters`** for the partner
+  board; ladder boards are under `BBB4.Machines.Ladder`, so the emitted file
+  imported a module that does not exist.  It reads the package off
+  `frozen_map.tsv` now.
+- **A prompt is older than the plan.**  This session's own NEXT_PROMPT pointed
+  the next one at the four base-2 arms-blocked rows on the strength of §4i's
+  "the next widening is known and small".  §4p, merged hours later, had
+  MEASURED that arm quadratic — `(r+1)(r+2)`, second difference exactly 2 —
+  and no stride or offset reaches it.  Re-read the plan's last section before
+  acting on a prompt; the prompt was rewritten to §4p's actual selection (the
+  fibonacci five, whose numeration §4p cracked and `fibmem.py` checks).
+
