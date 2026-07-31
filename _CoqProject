@@ -1361,12 +1361,16 @@ theories/Counters/IXPGadgets.v
 theories/Checkers/LapDecider.v
 theories/Checkers/LadderFam.v
 theories/Checkers/LadderKernel.v
+theories/Checkers/LadderCheck.v
 theories/Machines/Ladder/LDR_0RB____0LC1RB_1LA1LD_1LC0RB.v
 theories/Machines/Ladder/LDR_1RB0RB_0LC0LD_1LC1LD_1RA0RA.v
 theories/Machines/Ladder/LDR_1RB0RC_1LC1RA_1RD1LB_0LC0RD.v
 theories/Counters/LapGlueIx.v
 theories/Counters/Ter3Wall.v
 theories/Counters/Ter3WallB.v
+theories/Machines/Ladder/LDR_1RB1LC_0LC0RB_1LA1LD_1RC0LD.v
+theories/Machines/Ladder/LDR_1RB1LB_1LC1LA_0LB1RD_0RB0RD.v
+theories/Machines/Ladder/LDR_1RB1RC_1LA1LD_0RB0RC_1LB0LB.v
 theories/Counters/LapGlueQuiet.v
 theories/Counters/KpWallAlt.v
 theories/Counters/KpWallQH.v
