@@ -108,9 +108,12 @@ incrementally; push and open a PR when the first row moves the core count.
   in that configuration.  Read the tops off the orbit.
 * `board_neverqh`/`board_iqh` are now WRAPPERS at `NPH = 1` over the
   phase-indexed `boardph_neverqh`/`boardph_iqh` (§4n).  Their argument order is
-  unchanged and the thirty-four boards use it; if you change `Section BoardPh`'s
-  variables, `Section BoardOne` is where the old interface is kept alive, and
-  every existing board depends on that.
+  unchanged and the 27 boards `_CoqProject` registers use it (9 of them through
+  `board_iqh`); if you change `Section BoardPh`'s variables, `Section BoardOne`
+  is where the old interface is kept alive, and every existing board depends on
+  that.  Six more `LDR_*.v` are on disk and tracked but NOT registered -- they
+  are the partial boards of the arms-blocked rows, they carry no closure, and
+  `make` has no rule for them.
 * **A fill arm's anchor does not have to witness every recurring state.**
   `tops_cofinal_at` gives the tops of one chosen phase `pv`, and the emitter
   picks `pv` by trying each phase.  If a gray row's fill anchor cannot reach
