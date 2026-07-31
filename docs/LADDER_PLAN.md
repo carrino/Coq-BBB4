@@ -1602,6 +1602,314 @@ the two-phase three FIRST and count.  `closure_data` refuses both at their
 first lines, so the probe is two lines commented out, and the answer decides
 whether `(gray, 2)`'s `ClassSucc` is worth six rows or zero.
 
+## 4m. The NUMERATION, built: five of the fifteen board, and the blocker moves
+
+_Branch `claude/ladder-numeration-axis-hy11zp`, cut from `main` at `5da0721`
+(PR #90 merged) and merged with `main` at `03f0b26` (PR #97) before this was
+written.  `tools/ladder/valfam.py` is the only file this session changed; no
+`tools/closeout/`, no wave-session file, no Coq (there is none in this image --
+see below).  Baseline and result are two full sweeps of the live core, at that
+time 59 rows, `sweep.py --cap 150 --kmax 9 --jobs 3`
+(`tools/ladder/num59_before.jsonl`, `num59_after.jsonl`).  Every number below
+is a count a script printed.  The measurement this builds on is
+`docs/LADDER_NOFAM.md`, which is cited and not rewritten._
+
+**Ran beside 4k/4l, not after them.**  This session and the two above it
+started from the same `main` and touched disjoint files -- 4k/4l are
+`emit_ladder.py` and the closer, this is `valfam.py` and family DISCOVERY --
+so nothing here is measured against 4l's core of 43.  It does not need to be:
+**all fifteen rows, and all five that board below, are still in the live core
+after 4l**, so the five are additional to 4l's nineteen and not a subset of
+them.  The sweep numbers below are against the 59-row core they were taken on
+and are labelled as such.
+
+### The kernel question, answered on minute one (NEXT_SESSION Rule 2)
+
+4j found that the outer parameter is carried everywhere and used nowhere:
+`LadderFam.fam_cfg` is `let '(ds, _, ph) := s in ...` and that `_` is p.  The
+question handed to this session was whether the UNARY constructor -- where "p
+IS the value" -- can be stated at all by a kernel whose denotation discards p,
+and if not, whether the fix is container-safe.
+
+**The premise is false, and that is the answer.  The unary family's parameter
+is not the outer one; it is `length ds`, which the denotation does read.**
+With `fm_b = 1`, `fm_digs = [w]`, `fm_fills = [Fill 1 [] 0 []]`:
+
+* `fam_value F ds = val_pos 1 ds = 0` at every width -- the only digit is `0`;
+* `fam_is_top F ds` is `1^k - 1 <? 0 + fm_step`, i.e. `0 <? 1`: **true at every
+  width**, so `fam_next` is ALWAYS `fill_apply`, and that fill is
+  `repeat 0 (k+1)`;
+* `fam_cells F ds ph = fm_pre ++ flat_map (fun d => nth d [w] []) ds ++ tail`
+  = `fm_pre ++ w^(length ds) ++ tail`.
+
+So `E(p) = pre ++ w^p ++ tail`, and `fam_succ` takes width `p` to width `p+1`.
+`p` and `v` collapse, the interior/overflow split becomes one arm per phase,
+and the fill law has nothing to infer -- exactly the simplification
+LADDER_NOFAM.md predicted, reached with **no new field on either side of the
+trust boundary**.  `valfam.py` says the same thing with the same absence of new
+machinery: `Fam.b = 1`, `Fam.value` unchanged (a positional sum over a
+one-digit alphabet is 0), `Fam.of_value(0, k) = [0]*k`.  That is why step 1
+below is a guard REMOVAL and not an addition.
+
+**What does have to change is a hypothesis, and it is not a field.**
+`LadderCheck.v`'s `Section Iter` opens `Hypothesis Hb : 1 < fm_b F`, and so --
+**re-read at the merged HEAD `03f0b26` rather than at the one this was drafted
+against, which is 4i's rule and it moved under this section** -- does 4l's new
+`Section Board`; `LadderFam.v`'s `pos_of_lt`, `fam_value_of_value`,
+`fam_next_interior` and `fam_next_wf` carry the same.  At `fm_b = 1` both
+sections are uninstantiable.  They should read `0 < fm_b F`, and the proofs go
+through:
+
+* `inv_value_lt` needs `val_pos_lt`, whose statement holds for every `b >= 1`
+  (`d + b*V <= (b-1) + b*(b^n - 1) = b^(n+1) - 1`) and whose proof is `nia`
+  over exactly that;
+* `fam_succ_total` and `top_reached_aux` each have an INTERIOR branch under
+  `fam_is_top F ds = false`, which at `b = 1` is `0 <? fm_step` false -- a
+  contradictory hypothesis, so the branch closes without arithmetic rather
+  than needing new arithmetic;
+* `fam_next_wf`/`fam_next_interior` are premised on that same false hypothesis
+  and are never invoked at `b = 1`;
+* `Section Board` never mentions `Hb` except to feed it to `fam_iter_total`,
+  `tops_cofinal` and the three `pos1_*` lemmas.  Of those, `pos1_class_succ` is
+  used only under `d < fm_b F - 1`, which at `b = 1` is `d < 0` and therefore
+  unsatisfiable -- **the interior arm is vacuous, which is the same collapse
+  read on the Coq side** -- and `pos1_is_top`/`pos1_top_shape` are about
+  `repeat (fm_b F - 1) k`, which at `b = 1` is `repeat 0 k`, i.e. every string
+  of the width.  Both hold; both need a `b = 1` case rather than the
+  `1 < b` arithmetic.
+
+That is container-safe under Rule 1 -- a re-proof of small per-file lemmas, no
+census walk, no unbroken `native_compute`.  **It is not verified here, because
+there is no Coq in this image** (`/root/.opam` does not exist, `coqc` is not on
+PATH).  Rule 2 says to settle that on minute one; this is that, and the change
+is written down rather than made.  And the outer parameter is still carried
+everywhere and used nowhere: **the unary constructor neither fixes that nor
+needs it fixed.**
+
+### What was built
+
+All of it is in `tools/ladder/valfam.py`, and the four new passes are behind
+one gate: they run **only when every pass that exists today found NOTHING**.
+That gate is why 4e/4f/4g's rows cannot move.  A row that reads as a positional
+odometer never reaches any of this, so it cannot be re-read into a worse family
+and cannot lose a per-candidate time slice to a fallback.  The cost is paid
+only by rows that today return `no value family` in seconds with the whole
+budget unspent -- which is exactly the fifteen.
+
+1. **The UNARY counter** (`_try_parse`'s `2 <= len(alpha) <= 3` guard, and
+   `_unary_pass`).  The counter side as a run template `word^p`, alphabet size
+   1, `p` the run count.  Two lines of arithmetic: the guard admits one digit,
+   and the value of a one-digit parse is `len(dsx)`.  It REMOVES machinery, as
+   promised -- every string is the top, so there is no interior arm, no
+   octave-top test and no fill law to infer.  Two defaults had to learn that
+   `b = 1` exists: the odometer carry's target suffix is the digit `1`, which a
+   one-digit alphabet does not have, so `fam_fill` defaults to the pure
+   widening at `b = 1` and `Fam.cfg` returns None on a digit outside the
+   alphabet instead of raising.
+2. **`Fam.weights`** -- `Sum d_i . w_i` for an inferred non-decreasing `w`, of
+   which `b^i` is one case.  `nofam.fit_weights` ported in substance (rank
+   DIFFERENCES inside a width class, exact rational elimination, contradictions
+   counted rather than averaged); `nofam.readings` deliberately NOT ported.
+3. **`Fam.ptmpl`** -- the near-head prefix as `u^(a*p + b)` instead of a fixed
+   word (4j's sixth defect), with `decode`/`encode`/`read`/`aligned`/`cfg` now
+   taking the outer parameter.  Inert while `ptmpl is None`, which it is on
+   every family the existing passes build.
+4. **Three of LADDER_NOFAM.md's four REACH defects**, inside the same gate: the
+   far-side template pass ungated and given 4g's `code`/`step` axes (defects 1
+   and 2); the near-head prefix run past the digit width so a one-cell digit
+   can have one (defect 3); and the terminator read off the whole group rather
+   than off its common suffix (defect 4).
+
+**The real cost of the weight sequence was `of_value`, exactly as predicted,
+and the route that generalises is the one that worked.**  The representation is
+not unique -- under `w = 1,1,2,3,5,8` the strings `1011` and `0111` are both
+6 -- so `of_value` has to produce the MACHINE's canonical spelling.
+`fit_classes` reads the canonical set as a right-linear grammar over MSB-end
+BLOCKS and extrapolates it to widths the walk never reached.  On the dev
+fixture it is
+
+    C(k) = C(k-1).0  u  C(k-2).11        C(0) = {e},  C(1) = {0, 1}
+
+-- blocks `{0, 11}`, class sizes 2, 3, 5, 8, 13, 21, 34.  Those sizes are
+`numsys.py`'s Fibonacci fingerprint, used here as the ACCEPTANCE TEST rather
+than as a label: the grammar has to reproduce every observed class exactly
+(containment only at the widest two widths, where the walk routinely stops
+mid-class) or the weights are refused.
+
+The dev fixture also shows why the grammar form is the one to implement rather
+than the forbidden-factor form guessed from the name.  **The canonical set here
+is NOT "no 11".**  Its size is the same -- `F(k+2)`, which is why the class
+sizes are Fibonacci either way -- but its members are different: `1100`, `0110`
+and `1111` are all canonical at width 4, and `0100` is not.  Reading blocks off
+the data finds the right language without anyone naming it; assuming Zeckendorf
+would have found the wrong language with the right count, and `cover` would
+have reported the machine leaving its own family.
+
+**One simplification fell out.**  The weights pass does not vary the step.  With
+the weight sequence read rather than assumed, `w` and `s*w` describe the same
+family -- the step and the weight sequence are the SAME axis -- so the pass
+fixes `s = 1` and lets the scale come out in the weights.  Half the search
+space, for free.
+
+### The gates
+
+| | measured | needed |
+|---|---:|---:|
+| **A.** a family with LADDER_NOFAM.md's measured NUMERATION | **8 of 15** | 8 |
+| **B.** closes end to end: differential, exact step counts, 40 laps | **5 of 15** | 4 |
+| **C.** no row that closes today stops closing | **0 regressions** | 0 |
+
+The live core, 59 rows at the time of the sweep, before and after:
+
+| | before | after |
+|---|---:|---:|
+| closed | 25 | **33** |
+| of those, never-QH (all states infinitely often) | 14 | 17 |
+| differential ok / exact step counts | 25 / 24 | 33 / 32 |
+| the fifteen: families probed | 0 on all fifteen | 10 of 15 |
+| the fifteen: closed end to end | 0 | **5** |
+
+**Three of the eight extra closures are not this session's.**
+`1RB0RB_0LC0LD_1LC1LD_1RA0RA`, `1RB0RB_0RC1RC_0LD1LA_1LD0LA` and
+`1RB0RC_1LC1RA_1RD1LB_0LC0RD` close under both codebases -- the first two are
+4g's own Gray rows, `code=gray, step=2`, 49 arms, and none of the three uses
+anything added here -- and the baseline sweep lost them to a subprocess
+failure (`sweep.py` reason `no output`).  The delta this session is
+responsible for is exactly **the five**, and it is worth writing that down
+rather than banking the 8.
+
+Gate A is counted STRICTLY: a family whose numeration is the one
+LADDER_NOFAM.md's table names for that row, at any anchor.  Ten of the fifteen
+get a family at all; eight get the measured one -- the five Fibonacci rows plus
+`0RB0RD_1LC1RB_1RA0LC_1LB0LC`, `0RB0RD_1LC1RB_1RA0LC_1LD0LC` and
+`0RB1LC_1LC0RD_1RD0LC_1LA1RB`, whose base-2 readings the far-side template pass
+reaches once defects 1 and 2 are lifted.  The three that get a family which is
+not the measured one are counted against, not for.
+
+The five that board read exactly what was measured -- same terminator, same
+weights, and the chain lengths (290, 291) are the ones LADDER_NOFAM.md's table
+reports:
+
+    1RB---_0LB1RC_1LB0RD_1LC0RD   B1/R  tail 11  w = 1,1,2,3,5,8,...   5 arms
+    1RB---_0LB1RC_1LD0RC_1LB1RC   C1/R  tail 11  w = 1,1,2,3,5,8,...   4 arms
+    1RB---_1LC0RB_1LD1RB_0LD1RB   B1/R  tail 11  w = 1,1,2,3,5,8,...   4 arms
+    1RB---_1LC0RD_0LC1RB_1LB0RD   C1/R  tail 11  w = 1,1,2,3,5,8,...   5 arms
+    1RB---_1LC1RD_0LC1RD_1LB0RD   D1/R  tail 11  w = 1,1,2,3,5,8,...   4 arms
+
+all with `enumeration = all digit strings` -- over the CANONICAL strings, which
+is what `all_strings` now enumerates -- all `differential_ok` and
+`differential_steps_ok`, all 40 laps confirmed from the blank tape.  The two
+LADDER_NOFAM.md calls "the two rows that need NOTHING but the weights" are the
+first and the fourth; they were the dev fixture, they closed first, and
+everything else followed.  Their liveness reads `BCD`, so they are 4i's
+quasi-halt-witness bucket and not yet boards.
+
+### The two false closures this session refused, and why that is worth more
+
+An earlier state of this branch reported `0RB1LC_1LC0RD_1RD0LC_1LA1RB` and
+`1RB0RB_1LC0RC_1RA0LD_0LB0LC` **closed**, with `differential_ok` and 40 laps
+confirmed.  They are not closures.
+
+Read at A0/L, `0RB0RD_1LC1RB_1RA0LC_1LB0LC` is a unary counter `1^p` on the
+left with the far side fitted as a run template -- and the fill's outer law is
+`p' = p - 1`.  The far side is being EATEN.  `far_cells` returns None as soon
+as a count goes negative, so the successor chain is finite BY CONSTRUCTION, and
+`chain_check`'s 40 laps say only that 40 is less than `p` at the boot (108).
+The single arm is pinned at one `p` and the differential's `predicted_steps` is
+`null` on every check past the first -- which is what `differential_steps_ok =
+false` was saying all along.
+
+`close` now refuses any family whose fill strictly decreases the outer
+parameter, and says so as the reason.  **No row that closes today has a fill
+that moves the outer parameter at all**, so the guard costs nothing: it is not
+a special case, it is the statement that a reading which is true over the
+window and false forever is the one thing a certificate candidate must never
+be.  Four of the fifteen now stop exactly there.
+
+### The unary reading is the weakest one in the file, and it has to go last
+
+Measured, twice.  With the unary constructor inside the ordinary
+constant-far-side pass -- where the guard removal naturally puts it -- it fired
+first, filled `found`, and switched the whole second-chance block off:
+
+* `1RB0RB_0LC1RD_1LC1LA_0LA1RB`, which LADDER_NOFAM.md measures as
+  **fibonacci**, returned two unary families and no Fibonacci one;
+* the BBB(4) champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD`, which `nofam.py` measures
+  as **not a counter** (shape classes growing `2n/3`), returned **eleven**
+  families;
+* the three rows whose measured reading is base-2 returned unary readings
+  instead of them.
+
+The cause is the one `nofam.unary_probe` already warns about in its ranking
+comment: *a bare run of 1s inside a bouncer also gives a monotone p*.  So
+`_try_parse` now takes `unary=True` explicitly and reads nothing else, and the
+unary pass runs only after the template, prefix and weights passes have all
+declined the row.  With that ordering the champion returns **zero** families,
+the three base-2 rows return base-2, and gate A goes from 6 to 8.  Strongest
+reading first is the same discipline 4e applied to the far-side template and 4g
+to the code and the step; this is the fourth time it has had to be applied and
+the first time it was measured as a REGRESSION in reading quality rather than
+as a missing reading.
+
+### Where the fifteen actually stop now
+
+| spec | families | where it stops |
+|---|---:|---|
+| `0RB0RD_1LC1RB_1RA0LC_1LB0LC` | 8 | the fill decreases the outer parameter |
+| `0RB0RD_1LC1RB_1RA0LC_1LD0LC` | 3 | coverage / differential |
+| `0RB1LC_1LC0RD_1RD0LC_1LA1RB` | 30 | the fill decreases the outer parameter |
+| `0RB1LC_1LC1RD_1LA0LC_0RD1RB` | 26 | the fill decreases the outer parameter |
+| `1RB---_0LB1RC_1LB0RD_1LC0RD` | 8 | **CLOSED** (fibonacci) |
+| `1RB---_0LB1RC_1LD0RC_1LB1RC` | 4 | **CLOSED** (fibonacci) |
+| `1RB---_1LC0RB_1LD1RB_0LD1RB` | 4 | **CLOSED** (fibonacci) |
+| `1RB---_1LC0RD_0LC1RB_1LB0RD` | 12 | **CLOSED** (fibonacci) |
+| `1RB---_1LC1RD_0LC1RD_1LB0RD` | 4 | **CLOSED** (fibonacci) |
+| `1RB0RB_0LC1RD_1LC1LA_0LA1RB` | 0 | no family: the fibonacci reading needs a terminator SET |
+| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | 5 | the fill decreases the outer parameter |
+| `1RB0RB_1LC1LD_0LC1RA_0LD0RA` | 0 | binomial -- deliberately out of scope |
+| `1RB1LB_1LC0RD_0LB1LA_0LA1RA` | 0 | not a counter; wave route |
+| `1RB1LD_1RC1RB_1LC1LA_0RC0RD` | 0 | not a counter; wave route (the champion) |
+| `1RB1RC_1LA0LB_1LD0RD_1LB0RC` | 0 | no family: `w = 1,1,3,3,9,9` not reached |
+
+So of the thirteen that are not the two bouncers: five board, four have a
+family and stop on the outer parameter, one stops on coverage, and three are
+still unread.  **The blocker on four rows is now downstream of family
+discovery and it has a name**, which is what this branch was told to report if
+A passed and B did not clear by more.
+
+### What this says about the next session
+
+* **The weight sequence is done, and the canonical form is the part that needs
+  a Coq lemma.**  It now has a concrete statement:
+  `C(k) = C(k-|u1|).u1 u ... u C(k-|un|).un` is a right-linear grammar,
+  `fam_of_value` is an index into it, and the obligation is that the index is
+  injective on each width -- which is where the class sizes stop being a
+  fingerprint and start being a theorem.  `fm_digs` gains a companion; nothing
+  in the kernel changes shape.
+* **The near-head prefix SET is the next constructor, and it is bigger than it
+  looked.**  Measured on `1RB0RB_1LC0RC_1RA0LD_0LB0LC` at A0/R over 567 anchor
+  visits: `phi . (101)^p . 0011111` parses 445 of them, `phi` takes 27 values
+  each occurring 16-17 times -- and the far side is **distinct on every one of
+  the 567 visits**, with 12 different run-word signatures, ranging at a FIXED
+  `p` over about 17 strings whose lengths span 26 cells.  Those are the same
+  fact: the prefix and the far side advance on one clock and `p` on another, so
+  the row is `E(p, phase)` with 27 phases.  (LADDER_NOFAM.md's `0^(24p+96)` is
+  `_far_affine`'s reading of the MINIMUM far-side length per `p`, which is
+  exactly what that function measures and exactly what it says.)  On the kernel
+  side this is `fm_pre` becoming `fm_pres : list (list Sym)` read at `nth ph`
+  -- the mirror of `fm_tails`, which already is -- plus a far side indexed by
+  the phase.
+* **`Fam.ptmpl` is built and fires on zero of the fifteen**, and that agrees
+  with 4j's own closing paragraph: the thirteen are not blocked by the
+  near-head spacer alone.  The denotation half is in place and inert, so the
+  next reader that needs it will not have to plumb it.
+* **`1 < fm_b F` should become `0 < fm_b F` on the box.**  Four `LadderFam`
+  lemmas, two section hypotheses (`Iter` and 4l's `Board`) and a `b = 1` case
+  in two `pos1_*` lemmas; every interior branch closes by contradiction.
+* The two bouncers stay the wave route's, and the binomial row stays out of
+  scope: no weight sequence expresses it, `fit_weights` correctly declines it,
+  and it is still one row.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
