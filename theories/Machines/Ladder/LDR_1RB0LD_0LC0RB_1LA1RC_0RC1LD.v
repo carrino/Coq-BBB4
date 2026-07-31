@@ -15,8 +15,10 @@
     Axiom footprint: [functional_extensionality_dep], via [CTape.lift]. *)
 From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement CTape.
-From BBB4.Counters Require Import WTape.
-From BBB4.Checkers Require Import LapDecider LadderKernel LadderFam LadderCheck.
+From BBB4.Census Require Import TNF_QH.
+From BBB4.Counters Require Import WTape LapGlueQuiet.
+From BBB4.Checkers Require Import LapDecider LapAvoid LadderKernel LadderFam.
+From BBB4.Checkers Require Import LadderCheck.
 Import ListNotations.
 
 Definition mk_1RB0LD_0LC0RB_1LA1RC_0RC1LD (w : Sym) (d : Dir) (n : St) : option Trans :=

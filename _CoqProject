@@ -1359,6 +1359,15 @@ theories/Machines/Ladder/LDR_1RB1LA_0LA0RC_0LD0RB_1LD1RC.v
 theories/Machines/Ladder/LDR_1RB1LA_0LC0RD_1LC1RD_0LA0RB.v
 theories/Machines/Ladder/LDR_1RB1LC_0LA0RB_0RD1LA_0LC1RD.v
 theories/Machines/Ladder/LDR_1RB1LC_0LC0RB_0RD1LA_0LA1RD.v
+theories/Machines/Ladder/LDR_1RB____0LB1RC_0RD0RC_1LB1LD.v
+theories/Machines/Ladder/LDR_1RB____0LC1RB_0LB1RD_1LC0RD.v
+theories/Machines/Ladder/LDR_1RB____0LC1RD_0LB1RC_1LB0RD.v
+theories/Machines/Ladder/LDR_1RB____0LC1RD_0LB1RD_1LB0RD.v
+theories/Machines/Ladder/LDR_1RB____0LC1RD_0LB1RD_1LC0RD.v
+theories/Machines/Ladder/LDR_1RB____0RC0RB_1LD1LC_0LD1RB.v
+theories/Machines/Ladder/LDR_1RB____1LC0RB_0LD1RB_0LC1RB.v
+theories/Machines/Ladder/LDR_1RB____1LC0RB_0LD1RB_0LC1RD.v
+theories/Machines/Ladder/LDR_1RB____1LC1LB_0LC1RD_0RB0RD.v
 theories/Counters/LapGlueQuiet.v
 theories/Counters/KpWallQH.v
 theories/Checkers/LapAvoid.v

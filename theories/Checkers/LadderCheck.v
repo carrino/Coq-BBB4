@@ -56,8 +56,9 @@
 
 From Coq Require Import Arith Lia Bool List PArith.
 From BBB4 Require Import BBB4_Statement CTape.
-From BBB4.Counters Require Import WTape.
-From BBB4.Checkers Require Import LapDecider LadderKernel LadderFam.
+From BBB4.Census Require Import TNF_QH.
+From BBB4.Counters Require Import WTape LapGlueQuiet.
+From BBB4.Checkers Require Import LapDecider LapAvoid LadderKernel LadderFam.
 Import ListNotations.
 
 (** ** 1. Liveness: the glue, with the visit premise one lap can carry
@@ -108,6 +109,210 @@ Proof.
 Qed.
 
 End GlueN.
+
+(** ** 1b. Liveness for a QUASIHALTER: the same port, of the same premise
+
+    Eleven of the live core's binary/step-1 rows have liveness [BCD] rather
+    than [ABCD] (4i): one state stops firing after the bootstrap, so
+    [board_neverqh] proves the wrong theorem for them by construction.
+    [LapGlueQuiet.glue_qh_quiet] already ends in exactly the triple
+    [CloseoutKit.covers_iqh_at] consumes, and its [Hvis] is the same
+    too-strong premise [glue_neverqhN] weakened above.  This is that port:
+    [nat]-indexed, and "for every [N] some anchor past [N] reaches [q]" for
+    every [q <> qa].
+
+    The one genuinely new obligation is [AvoidRun tm qa m (Cf n)] on the lap
+    -- the lap must never enter the quiet state.  [Checkers/LapAvoid.v]
+    computes it from the arm's own chain; [arm_avoid] below is the bridge. *)
+
+Section GlueQuietN.
+
+Variable tm : TM.
+Variable Cf : nat -> cconf.
+Variable qa : St.
+Variable t0 sq : nat.
+
+(** The bootstrap, at a CONCRETE index: the bound depends on it, and so does
+    the window in which [qa]'s last visit is looked for. *)
+Hypothesis Hboot : stepn tm t0 InitES = Some (lift (Cf 0)).
+
+(** The lap, strengthened with avoidance of [qa]. *)
+Hypothesis Hlap : forall n, exists m c',
+  csteps tm m (Cf n) = Some c' /\ lift c' = lift (Cf (S n)) /\ 0 < m
+  /\ AvoidRun tm qa m (Cf n).
+
+(** The weak visit premise, for every RECURRING state. *)
+Hypothesis Hvis : forall q N, q <> qa -> exists n k c,
+  N <= n /\ csteps tm k (Cf n) = Some c /\ fst c = q.
+
+(** [qa]'s last visit, and the checked [qa]-free window up to the anchor. *)
+Hypothesis Hqvis : VisitsAt tm qa sq.
+Hypothesis Hqwin : forall n c, sq < n < t0 ->
+  stepn tm n InitES = Some c -> fst c <> qa.
+
+Lemma gqn_lap_plain : forall n, exists m c',
+  csteps tm m (Cf n) = Some c' /\ lift c' = lift (Cf (S n)) /\ 0 < m.
+Proof.
+  intros n. destruct (Hlap n) as (m & c' & H1 & H2 & H3 & _).
+  exists m, c'. auto.
+Qed.
+
+(** The anchors march, and everything since [t0] is [qa]-free: every global
+    index in [[T, T+m)] projects into the lap from [Cf n] by [csteps_prefix]
+    and [csteps_lift], where [AvoidRun] speaks. *)
+Lemma gqn_anchors : forall k, exists T n, k <= T /\ t0 <= T
+  /\ stepn tm T InitES = Some (lift (Cf n))
+  /\ (forall N c, t0 <= N < T -> stepn tm N InitES = Some c -> fst c <> qa).
+Proof.
+  induction k as [|k IH].
+  - exists t0, 0. split; [lia|]. split; [lia|]. split; [exact Hboot|].
+    intros N c HN. lia.
+  - destruct IH as (T & n & HkT & Ht0T & Hstep & Hcov).
+    destruct (Hlap n) as (m & c' & Hrun & Hlift & Hm & Hav).
+    exists (T + m), (S n). split; [lia|]. split; [lia|]. split.
+    { rewrite stepn_add, Hstep, (csteps_lift _ _ _ _ Hrun), Hlift.
+      reflexivity. }
+    intros N c HN HstepN.
+    destruct (Nat.lt_ge_cases N T) as [HNT | HTN].
+    + exact (Hcov N c ltac:(lia) HstepN).
+    + replace N with (T + (N - T)) in HstepN by lia.
+      rewrite stepn_add, Hstep in HstepN.
+      destruct (csteps_prefix tm (N - T) m (Cf n) c' ltac:(lia) Hrun)
+        as (cm & Hcm & _).
+      rewrite (csteps_lift _ _ _ _ Hcm) in HstepN.
+      injection HstepN as <-.
+      rewrite lift_state.
+      exact (Hav (N - T) cm ltac:(lia) Hcm).
+Qed.
+
+Lemma gqn_noqa : forall N c, t0 <= N ->
+  stepn tm N InitES = Some c -> fst c <> qa.
+Proof.
+  intros N c HN Hstep.
+  destruct (gqn_anchors (S N)) as (T & n & HkT & Ht0T & _ & Hcov).
+  exact (Hcov N c ltac:(lia) Hstep).
+Qed.
+
+Lemma gqn_quiet : QuietAfter tm qa sq.
+Proof.
+  split; [exact Hqvis|].
+  intros n Hn (c & Hc & Hqc).
+  destruct (Nat.lt_ge_cases n t0) as [Hlt | Hge].
+  - exact (Hqwin n c ltac:(lia) Hc Hqc).
+  - exact (gqn_noqa n c Hge Hc Hqc).
+Qed.
+
+Lemma gqn_recurs : forall q, q <> qa ->
+  forall N, exists n, N <= n /\ VisitsAt tm q n.
+Proof.
+  intros q Hq N.
+  destruct (Hvis q N Hq) as (n & k & c & Hn & Hc & Hqc).
+  destruct (glue_reachN tm Cf (ex_intro _ t0 Hboot) gqn_lap_plain n)
+    as (T & HT & Hstep).
+  exists (T + k). split; [lia|].
+  exists (lift c). split.
+  - rewrite stepn_add, Hstep. apply csteps_lift; exact Hc.
+  - rewrite lift_state. exact Hqc.
+Qed.
+
+Lemma gqn_nonhalt : NonHalt tm.
+Proof.
+  intros n Hnone.
+  destruct (glue_reachN tm Cf (ex_intro _ t0 Hboot) gqn_lap_plain n)
+    as (T & HT & Hstep).
+  replace T with (n + (T - n)) in Hstep by lia.
+  rewrite stepn_add, Hnone in Hstep. discriminate.
+Qed.
+
+Lemma gqn_qhbound : QHBound (S sq) tm.
+Proof.
+  intros q s Hq.
+  destruct (st_eqb q qa) eqn:Eq.
+  - apply st_eqb_spec in Eq. subst q.
+    destruct Hq as (HvisS & _).
+    destruct (Nat.le_gt_cases s sq) as [Hle | Hgt]; [lia|].
+    exfalso. destruct gqn_quiet as (_ & Hq0). exact (Hq0 s Hgt HvisS).
+  - assert (Hne : q <> qa).
+    { intro E. rewrite E in Eq.
+      rewrite (proj2 (st_eqb_spec qa qa) eq_refl) in Eq. discriminate. }
+    exfalso.
+    destruct Hq as (_ & Hafter).
+    destruct (gqn_recurs q Hne (S s)) as (n & Hn & Hvn).
+    exact (Hafter n ltac:(lia) Hvn).
+Qed.
+
+Theorem glue_qh_quietN : NonHalt tm /\ QHBound (S sq) tm /\ QuasiHaltsSt tm.
+Proof.
+  split; [exact gqn_nonhalt | split; [exact gqn_qhbound |]].
+  exact (quiet_after_qh tm qa sq gqn_quiet).
+Qed.
+
+End GlueQuietN.
+
+(** ** 1c. An arm that avoids a state
+
+    [LapAvoid.srun_avoid_sound] is stated on [srun] over [list lstep]; an
+    arm's derivation is a [list rstep], which may invoke a ladder rule with
+    [RU].  Every class arm the emitter builds is all-[RB] today -- the ladder
+    remains one level deep in practice (4h(c)) -- so the bridge is a partial
+    projection and one lemma saying [rrun] on an all-[RB] chain IS [srun].
+    A chain that does invoke a rule simply projects to [None] and the arm is
+    refused, which is a checkable restriction and not an assumption. *)
+
+Fixpoint base_chain (l : list rstep) : option (list lstep) :=
+  match l with
+  | [] => Some []
+  | RB b :: t => option_map (cons b) (base_chain t)
+  | RU _ :: _ => None
+  end.
+
+Lemma base_chain_run : forall tm el er rs l lb c,
+  base_chain l = Some lb -> rrun tm el er rs l c = srun tm el er lb c.
+Proof.
+  intros tm el er rs l; induction l as [|[b|i] l IH]; intros lb c H; cbn in H.
+  - injection H as <-. reflexivity.
+  - destruct (base_chain l) as [t|] eqn:E; cbn in H; [|discriminate].
+    injection H as <-. cbn.
+    destruct (sstep tm el er b c) as [[[c1 a1] b1]|]; [|reflexivity].
+    rewrite (IH t c1 eq_refl). reflexivity.
+  - discriminate.
+Qed.
+
+(** The avoidance twin of [RuleSound]: from the rule's left-hand side, at any
+    carry index and against any tails the flags permit, the concrete run of
+    [ca*j + cb] steps never enters [qa]. *)
+Definition RuleAvoid (tm : TM) (el er : bool) (qa : St) (r : LRule) : Prop :=
+  forall XL XR j,
+    (el = true -> XL = []) -> (er = true -> XR = []) ->
+    AvoidRun tm qa (lr_ca r * j + lr_cb r) (cden XL XR j (lr_lhs r)).
+
+Definition check_avoid (tm : TM) (el er : bool) (qa : St) (a : LRule)
+    (l : list rstep) : bool :=
+  match base_chain l with
+  | Some lb => srun_avoid tm el er qa lb (lr_lhs a)
+  | None => false
+  end.
+
+(** No new certificate data: the avoidance is recomputed from the SAME chain
+    the kernel already replays, and a chain whose trace touches [qa]
+    evaluates to [false]. *)
+Lemma arm_avoid : forall tm el er qa rs a l,
+  check_arm tm el er rs a l = true ->
+  check_avoid tm el er qa a l = true ->
+  RuleAvoid tm el er qa a.
+Proof.
+  intros tm el er qa rs a l Hc Hav XL XR j HL HR.
+  unfold check_arm, check_rule in Hc.
+  destruct (rrun tm el er rs l (lr_lhs a)) as [[[c ca] cb]|] eqn:E;
+    [|discriminate].
+  apply andb_prop in Hc as [Hc Hcb]. apply andb_prop in Hc as [_ Hca].
+  apply Nat.eqb_eq in Hca. apply Nat.eqb_eq in Hcb.
+  unfold check_avoid in Hav.
+  destruct (base_chain l) as [lb|] eqn:Eb; [|discriminate].
+  rewrite (base_chain_run tm el er rs l lb (lr_lhs a) Eb) in E.
+  rewrite <- Hca, <- Hcb.
+  exact (srun_avoid_sound tm el er qa lb (lr_lhs a) c ca cb E Hav XL XR j HL HR).
+Qed.
 
 (** ** 2. The generic half of coverage: strings, classes and cells *)
 
@@ -776,6 +981,15 @@ Variable vis   : nat -> St -> list lstep.  (** a chain to each state, from
 Variable ds0   : list nat.          (** the boot digit string *)
 Variable t0    : nat.               (** and how many steps reach it *)
 
+(** And, for a row that QUASIHALTS rather than never quasihalting (section 8
+    below), the quiet state, its last visit, and the visit chains for the
+    other three.  [board_neverqh] does not use them, so it does not carry
+    them: a never-quasihalting board supplies [vis] and a quasihalting one
+    supplies [visq]. *)
+Variable qa   : St.
+Variable sq   : nat.
+Variable visq : nat -> St -> list lstep.
+
 (** *** The family's parameters *)
 Hypothesis Hb    : 1 < fm_b F.
 Hypothesis Hcode : fm_code F = Binary.
@@ -881,13 +1095,30 @@ Proof.
   - apply fam_cells_run.
 Qed.
 
-(** The lap, by the case split: a state is at the top of its width, where
-    the fill arm applies, or it is not, where an interior arm does. *)
-Lemma board_lap : forall s, Inv F s ->
-  exists s' m, fam_succ F s = Some s' /\ 0 < m /\
-               csteps tm m (fam_cfg F s) = Some (fam_cfg F s').
+(** The lap, by the case split: a state is at the top of its width, where a
+    fill arm applies, or it is not, where an interior arm does.
+
+    Stated ONCE, for both closers.  What a closer wants OF the arm it lands
+    on is the parameter [P]: [board_neverqh] wants [RuleSound], and the
+    quasihalt board (Checkers/LadderQH.v) wants [RuleSound] and [RuleAvoid]
+    of the same arm.  Everything else -- which arm serves the state, at what
+    index and block count, and that the configurations either side of the
+    lap are that arm's two [cden]s -- is common, and duplicating it is how
+    two closers drift apart. *)
+Lemma board_arm : forall (P : bool -> bool -> LRule -> Prop),
+  (forall d r, d < fm_b F - 1 -> r < N0i + sti ->
+     P (negb (fm_left F)) (fm_left F) (Aint d r)) ->
+  (forall r, 0 < r -> r < N0f + stf -> P true true (Afill r)) ->
+  forall s, Inv F s ->
+  exists s' A el er X n,
+    fam_succ F s = Some s'
+    /\ P el er A
+    /\ (el = true -> tailL F X = []) /\ (er = true -> tailR F X = [])
+    /\ fam_cfg F s  = cden (tailL F X) (tailR F X) n (lr_lhs A)
+    /\ fam_cfg F s' = cden (tailL F X) (tailR F X) n (lr_rhs A)
+    /\ 0 < lr_cb A.
 Proof.
-  intros [[ds p] ph] Hi. destruct Hi as (Hbnd & Hlen & ->).
+  intros P HPi HPf [[ds p] ph] Hi. destruct Hi as (Hbnd & Hlen & ->).
   destruct (digs_decomp (fm_b F - 1) ds) as [Htop | (n & d & rest & -> & Hd)].
   - (* the top of a width: the FILL arm at index [aoff N0f stf (length ds)] *)
     remember (aoff N0f stf (length ds)) as r eqn:Er.
@@ -897,24 +1128,21 @@ Proof.
       by (subst r; apply arm_index; assumption).
     assert (Hist : fam_is_top F ds = true).
     { rewrite Htop at 1. apply pos1_is_top; assumption. }
-    exists (filled F (length ds), p, 0).
-    exists (lr_ca (Afill r) * acnt N0f stf (length ds) + lr_cb (Afill r)).
-    split; [|split].
+    exists (filled F (length ds), p, 0), (Afill r), true, true, [].
+    exists (acnt N0f stf (length ds)).
+    split; [|split; [|split; [|split; [|split; [|split]]]]].
     + unfold fam_succ.
       erewrite fill_at_top by (assumption || lia).
       rewrite Hist, Hfto. reflexivity.
-    + pose proof (HAfC r Hr0 Hrlt). nia.
-    + apply (lap_from_arm tm F (Afill r) true true []
-               (acnt N0f stf (length ds))
-               (run_side F (fm_b F - 1) r (astride N0f stf r) 0 0 [] [])
-               (run_side F (f_mid (fam_fill F 0)) (fm1 r) (astride N0f stf r)
-                  (fm2 r) 0
-                  (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))));
-        try (apply HAfS || apply HAfL || apply HAfR); try assumption.
-      * intros _; apply tailL_nil.
-      * intros _; apply tailR_nil.
-      * rewrite Htop at 1. apply cells_top. exact Hk.
-      * apply cells_filled. pose proof (Hfm12 r Hr0 Hrlt). lia.
+    + exact (HPf r Hr0 Hrlt).
+    + intros _; apply tailL_nil.
+    + intros _; apply tailR_nil.
+    + rewrite (HAfL r Hr0 Hrlt). symmetry.
+      apply cden_cls_conf. rewrite Htop at 1. apply cells_top. exact Hk.
+    + rewrite (HAfR r Hr0 Hrlt). symmetry.
+      apply cden_cls_conf. apply cells_filled.
+      pose proof (Hfm12 r Hr0 Hrlt). lia.
+    + exact (HAfC r Hr0 Hrlt).
   - (* not the top: an INTERIOR arm, for the digit that is not the top one *)
     apply Forall_app in Hbnd as [Hrun Hrest'].
     inversion Hrest' as [|? ? Hdb Hrest]; subst.
@@ -923,30 +1151,40 @@ Proof.
     assert (Hrlt : r < N0i + sti) by (subst r; apply arm_index_lt; assumption).
     assert (Hn : r + astride N0i sti r * acnt N0i sti n = n)
       by (subst r; apply arm_index; assumption).
-    exists (repeat 0 n ++ S d :: rest, p, 0).
-    exists (lr_ca (Aint d r) * acnt N0i sti n + lr_cb (Aint d r)).
-    split; [|split].
+    exists (repeat 0 n ++ S d :: rest, p, 0), (Aint d r).
+    exists (negb (fm_left F)), (fm_left F), (cls_tail F rest 0).
+    exists (acnt N0i sti n).
+    split; [|split; [|split; [|split; [|split; [|split]]]]].
     + assert (Hns : fam_next F (repeat (fm_b F - 1) n ++ d :: rest) 0
                     = Some (repeat 0 n ++ S d :: rest))
         by exact (pos1_class_succ F d Hb Hcode Hstep Hdlt n rest 0 Hrest I).
       unfold fam_succ. rewrite Hns.
       destruct (fam_is_top F (repeat (fm_b F - 1) n ++ d :: rest));
         [rewrite Hfto|]; reflexivity.
-    + pose proof (HAiC d r Hdlt Hrlt). nia.
-    + apply (lap_from_arm tm F (Aint d r)
-               (negb (fm_left F)) (fm_left F)
-               (cls_tail F rest 0) (acnt N0i sti n)
-               (cls_side F (fm_b F - 1) r (astride N0i sti r) [d])
-               (cls_side F 0 r (astride N0i sti r) [S d]));
-        try (apply HAiS || apply HAiL || apply HAiR); try assumption.
-      * intros He. unfold tailL. destruct (fm_left F); [discriminate|reflexivity].
-      * intros He. unfold tailR. rewrite He. reflexivity.
-      * rewrite <- Hn at 1.
-        apply (fam_cells_class F (fm_b F - 1) r (astride N0i sti r)
-                 (acnt N0i sti n) [d] rest 0).
-      * rewrite <- Hn at 1.
-        apply (fam_cells_class F 0 r (astride N0i sti r)
-                 (acnt N0i sti n) [S d] rest 0).
+    + exact (HPi d r Hdlt Hrlt).
+    + intros He. unfold tailL. destruct (fm_left F); [discriminate|reflexivity].
+    + intros He. unfold tailR. rewrite He. reflexivity.
+    + rewrite (HAiL d r Hdlt Hrlt). symmetry. apply cden_cls_conf.
+      rewrite <- Hn at 1.
+      apply (fam_cells_class F (fm_b F - 1) r (astride N0i sti r)
+               (acnt N0i sti n) [d] rest 0).
+    + rewrite (HAiR d r Hdlt Hrlt). symmetry. apply cden_cls_conf.
+      rewrite <- Hn at 1.
+      apply (fam_cells_class F 0 r (astride N0i sti r)
+               (acnt N0i sti n) [S d] rest 0).
+    + exact (HAiC d r Hdlt Hrlt).
+Qed.
+
+Lemma board_lap : forall s, Inv F s ->
+  exists s' m, fam_succ F s = Some s' /\ 0 < m /\
+               csteps tm m (fam_cfg F s) = Some (fam_cfg F s').
+Proof.
+  intros s Hi.
+  destruct (board_arm (RuleSound tm) HAiS HAfS s Hi)
+    as (s' & A & el & er & X & n & Hsucc & HA & HL & HR & Hl & Hr & Hcb).
+  exists s', (lr_ca A * n + lr_cb A).
+  split; [exact Hsucc | split; [nia|]].
+  rewrite Hl, Hr. exact (HA _ _ n HL HR).
 Qed.
 
 Theorem board_neverqh : NeverQuasiHaltsSt tm.
@@ -991,6 +1229,98 @@ Proof.
                 [] [] q (Hvisit r q Hr0 Hrlt)
                 (fun _ => eq_refl) (fun _ => eq_refl) Hden) as (k & c & Hc & Hq).
     exists k, c. split; [exact HN | split; [exact Hc | exact Hq]].
+Qed.
+
+(** ** 8. The same board, for a row that QUASIHALTS
+
+    4i: eleven of the live core's binary/step-1 rows read [BCD] rather than
+    [ABCD].  Everything above is unchanged and is reused verbatim -- the same
+    family, the same arms, the same [board_arm] case split; what the row adds
+    is three things and no more:
+
+    * every arm AVOIDS the quiet state ([RuleAvoid], recomputed from the
+      arm's own chain by [LapAvoid]);
+    * a visit chain per state OTHER than the quiet one (the quiet state has
+      none, which is the whole point);
+    * the quiet state's LAST visit, and that the window from it to the boot
+      anchor is quiet too -- both concrete indices, both [vm_compute].
+
+    These are declared after [board_neverqh], so a never-quasihalting board
+    does not carry them and a quasihalting one does not carry [vis]. *)
+
+Hypothesis HAiV : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
+  RuleAvoid tm (negb (fm_left F)) (fm_left F) qa (Aint d r).
+Hypothesis HAfV : forall r, 0 < r -> r < N0f + stf ->
+  RuleAvoid tm true true qa (Afill r).
+
+Hypothesis HvisitQ : forall r q, q <> qa -> 0 < r -> r < N0f + stf ->
+  srun_st tm true true (visq r q) (lr_lhs (Afill r)) = Some q.
+
+Hypothesis Hqvis : VisitsAt tm qa sq.
+Hypothesis Hqwin : forall n c, sq < n < t0 ->
+  stepn tm n InitES = Some c -> fst c <> qa.
+
+Lemma board_lap_avoid : forall s, Inv F s ->
+  exists s' m, fam_succ F s = Some s' /\ 0 < m
+    /\ csteps tm m (fam_cfg F s) = Some (fam_cfg F s')
+    /\ AvoidRun tm qa m (fam_cfg F s).
+Proof.
+  intros s Hi.
+  destruct (board_arm (fun el er A => RuleSound tm el er A
+                                      /\ RuleAvoid tm el er qa A)
+              (fun d r Hd Hr => conj (HAiS d r Hd Hr) (HAiV d r Hd Hr))
+              (fun r H0 Hr => conj (HAfS r H0 Hr) (HAfV r H0 Hr)) s Hi)
+    as (s' & A & el & er & X & n & Hsucc & (HAs & HAv) & HL & HR & Hl & Hr & Hcb).
+  exists s', (lr_ca A * n + lr_cb A).
+  split; [exact Hsucc | split; [nia | split]].
+  - rewrite Hl, Hr. exact (HAs _ _ n HL HR).
+  - rewrite Hl. exact (HAv _ _ n HL HR).
+Qed.
+
+Theorem board_iqh : NonHalt tm /\ QHBound (S sq) tm /\ QuasiHaltsSt tm.
+Proof.
+  apply (glue_qh_quietN tm CfB qa t0 sq).
+  - (* boot, at the concrete index the bound is stated against *)
+    unfold CfB; simpl. rewrite <- lift_c0. apply csteps_lift. exact Hboot.
+  - (* the lap, and that it never enters [qa] *)
+    intros n.
+    destruct (fam_iter_total F Hb Hcode Hstep Hfpre Hfsuf Hfmid Hfs Hfto
+                n s0 inv0) as (s & Hit & Hi).
+    destruct (board_lap_avoid s Hi) as (s' & m & Hsucc & Hm & Hrun & Hav).
+    exists m, (fam_cfg F s'). unfold CfB. rewrite Hit.
+    split; [exact Hrun | split; [| split; [exact Hm | exact Hav]]].
+    replace (S n) with (n + 1) by lia.
+    rewrite fam_iter_add, Hit. simpl. rewrite Hsucc. reflexivity.
+  - (* visits, for every state but the quiet one: at every top, and the tops
+       are cofinal -- [board_neverqh]'s third bullet with [q <> qa] carried *)
+    intros q N Hq.
+    destruct (tops_cofinal F Hb Hcode Hstep Hfpre Hfsuf Hfmid Hfs Hfto s0 N
+                inv0) as (n & s' & HN & Hit & Htop & Hi').
+    exists n.
+    destruct s' as [[ds' p'] ph']. simpl in Htop.
+    destruct Hi' as (Hbnd' & Hlen' & ->).
+    assert (Hsh : ds' = repeat (fm_b F - 1) (length ds'))
+      by (apply pos1_top_shape; assumption).
+    remember (aoff N0f stf (length ds')) as r eqn:Er.
+    assert (Hr0 : 0 < r) by (subst r; apply arm_index_pos; assumption).
+    assert (Hrlt : r < N0f + stf) by (subst r; apply arm_index_lt; assumption).
+    assert (Hk : r + astride N0f stf r * acnt N0f stf (length ds') = length ds')
+      by (subst r; apply arm_index; assumption).
+    assert (Hden : CfB n
+                   = cden [] [] (acnt N0f stf (length ds')) (lr_lhs (Afill r))).
+    { unfold CfB. rewrite Hit, (HAfL r Hr0 Hrlt).
+      rewrite <- (cden_cls_conf F
+                    (run_side F (fm_b F - 1) r (astride N0f stf r) 0 0 [] [])
+                    [] (acnt N0f stf (length ds')) ds' p' 0).
+      - unfold tailL, tailR; destruct (fm_left F); reflexivity.
+      - rewrite Hsh at 1. apply cells_top. exact Hk. }
+    destruct (vis_of_run tm (fun _ => CfB n) true true (visq r q)
+                (lr_lhs (Afill r)) 1%positive (acnt N0f stf (length ds'))
+                [] [] q (HvisitQ r q Hq Hr0 Hrlt)
+                (fun _ => eq_refl) (fun _ => eq_refl) Hden) as (k & c & Hc & Hq').
+    exists k, c. split; [exact HN | split; [exact Hc | exact Hq']].
+  - exact Hqvis.
+  - exact Hqwin.
 Qed.
 
 End Board.

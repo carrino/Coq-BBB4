@@ -175,8 +175,10 @@ HEADER = '''(** * LDR_%(mid)s: machine %(spec)s, boarded by the STAGE-B LADDER.
     Axiom footprint: [functional_extensionality_dep], via [CTape.lift]. *)
 From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement CTape.
-From BBB4.Counters Require Import WTape.
-From BBB4.Checkers Require Import LapDecider LadderKernel LadderFam LadderCheck.
+From BBB4.Census Require Import TNF_QH.
+From BBB4.Counters Require Import WTape LapGlueQuiet.
+From BBB4.Checkers Require Import LapDecider LapAvoid LadderKernel LadderFam.
+From BBB4.Checkers Require Import LadderCheck.
 Import ListNotations.
 
 Definition mk_%(mid)s (w : Sym) (d : Dir) (n : St) : option Trans :=
@@ -227,6 +229,27 @@ def _splits(total):
     in the order to try them: 4h's normalisation (one copy materialised)
     first, then none, then the rest."""
     return [m for m in [1, 0] + list(range(2, total + 1)) if 0 <= m <= total]
+
+
+def last_visit(tab, qa, t0):
+    """The last configuration index below [t0] at which the machine, from the
+    blank tape, is in state [qa] -- the quiet state's LAST visit, which is
+    what [QHBound] is stated against.
+
+    UNTRUSTED like everything here: the board re-derives it with
+    [LapGlueQuiet.bootvis_chk] and re-checks the window above it with
+    [bootquiet_chk], both by [vm_compute]."""
+    tape, pos, q, last = {}, 0, 0, None
+    for i in range(t0):
+        if q == qa:
+            last = i
+        e = tab.get((q, tape.get(pos, 0)))
+        if e is None:
+            return last
+        w, d, q = e
+        tape[pos] = w
+        pos += d
+    return last
 
 
 def closure_data(cert, tab):
@@ -396,12 +419,34 @@ def closure_data(cert, tab):
     if not ds0:
         raise NoClosure('boot digit string is empty')
 
+    # Which closer this row wants.  A row whose liveness is ABCD never
+    # quasihalts and [board_neverqh] takes it; a row missing exactly one
+    # state QUASIHALTS in that state and wants [board_iqh] instead, with the
+    # arms additionally shown to avoid it (4k step 2).  [board_neverqh]
+    # proves the wrong theorem for the second kind by construction.
+    live = (cert.get('liveness') or {}).get('states_infinitely_often')
+    if live == ''.join(s[-1] for s in ST):
+        qa, sq = None, None
+    elif live and len(live) == 3:
+        qa = next(i for i in range(4) if ST[i][-1] not in live)
+        sq = last_visit(tab, qa, boot['steps_from_blank'])
+        if sq is None:
+            raise NoClosure('%s never visits %s before the anchor, so it is '
+                            'not the quiet state' % (cert['spec'], ST[qa]))
+    else:
+        raise NoClosure('liveness %r: the closure takes ABCD (never '
+                        'quasihalts) or exactly one quiet state' % live)
+
     # A chain to each state from EACH fill arm's anchor -- the tops the
     # liveness argument lands on are whatever widths the counter reaches, so
     # every arm index has to carry its own visits.  [vis_of_run] wants a
     # chain from the anchor, NOT a prefix of the arm's own chain -- which
     # matters, because a state can sit inside a macro step that no prefix
     # ends on.  So: walk out from every prefix of that arm's derivation.
+    # The QUIET state has no such chain, and wanting one is the bug the
+    # liveness split above exists to avoid.
+    want = [i for i in range(4) if i != qa]
+
     def visits(fl, fch):
         seen, cand = {}, []
         for i in range(len(fch) + 1):
@@ -416,7 +461,7 @@ def closure_data(cert, tab):
                     cand.append(base + [('SWinL', k), ('SWin', k2)])
                     cand.append(base + [('SWinR', k), ('SWin', k2)])
         for ch in cand:
-            if len(seen) == 4:
+            if all(i in seen for i in want):
                 break
             got = LC.srun(tab, True, True, ch, fl)
             if got:
@@ -426,16 +471,17 @@ def closure_data(cert, tab):
     vis = {}
     for (r, _s, _m1, _m2, fl, _fr, fch, _ca, _cb) in fill:
         seen = visits(fl, fch)
-        missing = [ST[i] for i in range(4) if i not in seen]
+        missing = [ST[i] for i in want if i not in seen]
         if missing:
             raise NoClosure('no chain from the fill anchor r=%d to %s'
                             % (r, ','.join(missing)))
-        vis[r] = seen
+        vis[r] = {i: seen[i] for i in want}
 
     return dict(b=b, el=el, er=er,
                 inter=inter, n0i=n0i, sti=sti,
                 fill=fill, n0f=n0f, stf=stf,
-                ds0=ds0, t0=boot['steps_from_blank'], vis=vis)
+                ds0=ds0, t0=boot['steps_from_blank'], vis=vis,
+                want=want, qa=qa, sq=sq)
 
 
 CLOSURE_NONE = '''
@@ -511,8 +557,8 @@ Definition fm2_%(mid)s (r : nat) : nat := match r with %(b2)s | _ => 0 end.
 
 '''
 
-CLOSURE_VIS = '''(** One chain per state per fill arm.  [vis_of_run] turns each into a
-    visit, and [tops_cofinal] says those anchors keep coming. *)
+CLOSURE_VIS = '''(** One chain per RECURRING state per fill arm.  [vis_of_run] turns each
+    into a visit, and [tops_cofinal] says those anchors keep coming. *)
 Definition vis_%(mid)s (r : nat) (q : St) : list lstep :=
   match r, q with
   %(vb)s
@@ -597,25 +643,13 @@ Proof.
 %(flia)s  exfalso; lia.
 Qed.
 
-Lemma vis_ok_%(mid)s : forall r q, 0 < r -> r < %(n0f)d + %(stf)d ->
-  srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r)) = Some q.
-Proof.
-  intros r q H0 Hr.
-%(fvis)s  exfalso; lia.
-Qed.
-
 Lemma boot_%(mid)s : csteps tm %(t0)d c0 = Some (fam_cfg FAM (%(ds0)s, 0, 0)).
 Proof. vm_compute. reflexivity. Qed.
 
-(** The machine-level theorem.  Every argument is either a [RuleSound] the
-    Stage-B kernel discharged, or an equation two [vm_compute]s decide. *)
-Theorem nqh_%(mid)s : NeverQuasiHaltsSt tm.
-Proof.
-  apply (board_neverqh tm FAM iarm_%(mid)s %(n0i)d %(sti)d
-                       farm_%(mid)s %(n0f)d %(stf)d
-                       fm1_%(mid)s fm2_%(mid)s vis_%(mid)s
-                       %(ds0)s %(t0)d).
-  - vm_compute; lia.
+'''
+
+# The board's arguments up to [HAfC]; both closers take exactly these.
+CLOSURE_ARGS = '''  - vm_compute; lia.
   - vm_compute; reflexivity.
   - vm_compute; reflexivity.
   - vm_compute; repeat constructor.
@@ -638,8 +672,98 @@ Proof.
   - exact farm_lhs_%(mid)s.
   - exact farm_rhs_%(mid)s.
   - exact farm_cb_%(mid)s.
-  - exact vis_ok_%(mid)s.
+'''
+
+CLOSURE_NQH = '''Lemma vis_ok_%(mid)s : forall r q, 0 < r -> r < %(n0f)d + %(stf)d ->
+  srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r)) = Some q.
+Proof.
+  intros r q H0 Hr.
+%(fvis)s  exfalso; lia.
 Qed.
+
+(** The machine-level theorem.  Every argument is either a [RuleSound] the
+    Stage-B kernel discharged, or an equation two [vm_compute]s decide. *)
+Theorem nqh_%(mid)s : NeverQuasiHaltsSt tm.
+Proof.
+  apply (board_neverqh tm FAM iarm_%(mid)s %(n0i)d %(sti)d
+                       farm_%(mid)s %(n0f)d %(stf)d
+                       fm1_%(mid)s fm2_%(mid)s vis_%(mid)s
+                       %(ds0)s %(t0)d).
+%(args)s  - exact vis_ok_%(mid)s.
+Qed.
+'''
+
+CLOSURE_QH = '''Lemma vis_ok_%(mid)s : forall r q, q <> %(qa)s -> 0 < r ->
+  r < %(n0f)d + %(stf)d ->
+  srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r)) = Some q.
+Proof.
+  intros r q Hq H0 Hr.
+%(fvis)s  exfalso; lia.
+Qed.
+
+(** *** The arms avoid the quiet state
+
+    Recomputed from the SAME chains the kernel already replays
+    ([LadderCheck.arm_avoid] over [LapAvoid.srun_avoid]): a chain whose trace
+    touches [%(qa)s] evaluates to [false] and this file fails to compile. *)
+%(avarms)s
+Lemma iarm_avoid_%(mid)s : forall d r,
+  d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d ->
+  RuleAvoid tm (negb (fm_left FAM)) (fm_left FAM) %(qa)s (iarm_%(mid)s d r).
+Proof.
+  intros d r Hd Hr. vm_compute in Hd.
+%(bav)s  exfalso; lia.
+Qed.
+
+Lemma farm_avoid_%(mid)s : forall r, 0 < r -> r < %(n0f)d + %(stf)d ->
+  RuleAvoid tm true true %(qa)s (farm_%(mid)s r).
+Proof.
+  intros r H0 Hr.
+%(fav)s  exfalso; lia.
+Qed.
+
+(** *** The quiet state's last visit, and the window from it to the anchor *)
+Lemma qvis_%(mid)s : VisitsAt tm %(qa)s %(sq)d.
+Proof. apply bootvis_chk_sound. vm_compute. reflexivity. Qed.
+
+Lemma qwin_%(mid)s : forall n c, %(sq)d < n < %(t0)d ->
+  stepn tm n InitES = Some c -> fst c <> %(qa)s.
+Proof.
+  intros n c Hn Hstep.
+  exact (bootquiet_chk_sound tm %(qa)s %(sq1)d %(win)d
+           ltac:(vm_compute; reflexivity) n c ltac:(lia) Hstep).
+Qed.
+
+(** The machine-level theorem.  This row QUASIHALTS in %(qa)s: the counter
+    laps forever and every other state recurs, but %(qa)s stops firing after
+    index %(sq)d.  [board_iqh] returns the exact bound and it is weakened to
+    the census tier's 2000. *)
+Definition iqh (tm : TM) : Prop :=
+  NonHalt tm /\\ QHBound 2000 tm /\\ QuasiHaltsSt tm.
+
+Theorem iqh_%(mid)s : iqh tm.
+Proof.
+  assert (H : NonHalt tm /\\ QHBound (S %(sq)d) tm /\\ QuasiHaltsSt tm).
+  { apply (board_iqh tm FAM iarm_%(mid)s %(n0i)d %(sti)d
+                     farm_%(mid)s %(n0f)d %(stf)d
+                     fm1_%(mid)s fm2_%(mid)s %(ds0)s %(t0)d
+                     %(qa)s %(sq)d vis_%(mid)s).
+%(args)s    - exact iarm_avoid_%(mid)s.
+    - exact farm_avoid_%(mid)s.
+    - exact vis_ok_%(mid)s.
+    - exact qvis_%(mid)s.
+    - exact qwin_%(mid)s. }
+  destruct H as (Hn & Hb & Hq).
+  split; [exact Hn | split; [| exact Hq]].
+  apply (qhbound_mono (S %(sq)d) 2000); [lia | exact Hb].
+Qed.
+'''
+
+
+AVOID_ARM = '''Lemma av_%(nm)s_%(mid)s :
+  RuleAvoid tm %(el)s %(er)s %(qa)s %(nm)s_%(mid)s.
+Proof. eapply arm_avoid; [exact ok_%(nm)s_%(mid)s | vm_compute; reflexivity]. Qed.
+
 '''
 
 
@@ -690,7 +814,7 @@ def emit_closure(cert, tab, mid):
     L.append(CLOSURE_VIS % dict(
         mid=mid,
         vb='\n  '.join('| %d, %s => %s' % (r, ST[i], coq_chain_l(cd['vis'][r][i]))
-                       for r, *_ in cd['fill'] for i in range(4))))
+                       for r, *_ in cd['fill'] for i in cd['want'])))
 
     def ibranches(body):
         """One brace-delimited branch per (digit, arm index); rest is dead."""
@@ -719,8 +843,32 @@ def emit_closure(cert, tab, mid):
         fsound=fbranches('eapply arm_sound; [exact rules_sound_%(mid)s '
                          '| exact ok_farm%(r)d_%(mid)s]'),
         fcomp=fbranches('vm_compute; reflexivity'),
-        flia=fbranches('vm_compute; lia'),
-        fvis=fbranches('destruct q; vm_compute; reflexivity')))
+        flia=fbranches('vm_compute; lia')))
+
+    common = dict(mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str),
+                  n0i=n0i, sti=sti, n0f=n0f, stf=stf,
+                  args=CLOSURE_ARGS % dict(mid=mid))
+    if cd['qa'] is None:
+        L.append(CLOSURE_NQH % dict(
+            common, fvis=fbranches('destruct q; vm_compute; reflexivity')))
+    else:
+        qa, sq = ST[cd['qa']], cd['sq']
+        av = []
+        for d, r, _s, *_ in cd['inter']:
+            av.append(AVOID_ARM % dict(
+                nm='iarm%d_%d' % (d, r), mid=mid, qa=qa,
+                el='(negb (fm_left FAM))', er='(fm_left FAM)'))
+        for r, *_ in cd['fill']:
+            av.append(AVOID_ARM % dict(nm='farm%d' % r, mid=mid, qa=qa,
+                                       el='true', er='true'))
+        L.append(CLOSURE_QH % dict(
+            common, qa=qa, sq=sq, sq1=sq + 1, win=cd['t0'] - sq - 1,
+            avarms=''.join(av),
+            bav=ibranches('exact av_iarm%(d)d_%(r)d_%(mid)s'),
+            fav=fbranches('exact av_farm%(r)d_%(mid)s'),
+            fvis=fbranches('destruct q; '
+                           'try (exfalso; apply Hq; reflexivity); '
+                           'vm_compute; reflexivity')))
     return ''.join(L), cd
 
 

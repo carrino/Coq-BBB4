@@ -15,8 +15,10 @@
     Axiom footprint: [functional_extensionality_dep], via [CTape.lift]. *)
 From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement CTape.
-From BBB4.Counters Require Import WTape.
-From BBB4.Checkers Require Import LapDecider LadderKernel LadderFam LadderCheck.
+From BBB4.Census Require Import TNF_QH.
+From BBB4.Counters Require Import WTape LapGlueQuiet.
+From BBB4.Checkers Require Import LapDecider LapAvoid LadderKernel LadderFam.
+From BBB4.Checkers Require Import LadderCheck.
 Import ListNotations.
 
 Definition mk_1RB1LA_0LC0RD_1LC1RD_0LA0RB (w : Sym) (d : Dir) (n : St) : option Trans :=
@@ -432,8 +434,8 @@ Definition farm_1RB1LA_0LC0RD_1LC1RD_0LA0RB (r : nat) : LRule :=
 Definition fm1_1RB1LA_0LC0RD_1LC1RD_0LA0RB (r : nat) : nat := match r with | 1 => 1 | 2 => 1 | _ => 0 end.
 Definition fm2_1RB1LA_0LC0RD_1LC1RD_0LA0RB (r : nat) : nat := match r with | 1 => 0 | 2 => 1 | _ => 0 end.
 
-(** One chain per state per fill arm.  [vis_of_run] turns each into a
-    visit, and [tops_cofinal] says those anchors keep coming. *)
+(** One chain per RECURRING state per fill arm.  [vis_of_run] turns each
+    into a visit, and [tops_cofinal] says those anchors keep coming. *)
 Definition vis_1RB1LA_0LC0RD_1LC1RD_0LA0RB (r : nat) (q : St) : list lstep :=
   match r, q with
   | 1, StA => [SWin 1]
@@ -593,6 +595,9 @@ Proof.
   exfalso; lia.
 Qed.
 
+Lemma boot_1RB1LA_0LC0RD_1LC1RD_0LA0RB : csteps tm 3 c0 = Some (fam_cfg FAM ([1], 0, 0)).
+Proof. vm_compute. reflexivity. Qed.
+
 Lemma vis_ok_1RB1LA_0LC0RD_1LC1RD_0LA0RB : forall r q, 0 < r -> r < 1 + 2 ->
   srun_st tm true true (vis_1RB1LA_0LC0RD_1LC1RD_0LA0RB r q) (lr_lhs (farm_1RB1LA_0LC0RD_1LC1RD_0LA0RB r)) = Some q.
 Proof.
@@ -605,9 +610,6 @@ Proof.
   { destruct q; vm_compute; reflexivity. }
   exfalso; lia.
 Qed.
-
-Lemma boot_1RB1LA_0LC0RD_1LC1RD_0LA0RB : csteps tm 3 c0 = Some (fam_cfg FAM ([1], 0, 0)).
-Proof. vm_compute. reflexivity. Qed.
 
 (** The machine-level theorem.  Every argument is either a [RuleSound] the
     Stage-B kernel discharged, or an equation two [vm_compute]s decide. *)
