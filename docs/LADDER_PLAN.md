@@ -1497,9 +1497,13 @@ and six more `0RB` rows after them, for nineteen boards; see below.
 
 The six that fail are the six the table calls blocked: four with no interior
 chain at any threshold or stride (the two quadratic rows and two undiagnosed
-at 4i), two whose mined arms carry a negative constant on the repeated
-block.  Neither is a gap in the emitter; both are `RULE_LADDER` 5's table
-row.
+at 4i), and two with no FILL chain at any threshold, stride or copy split.
+Neither is a gap in the emitter; both are `RULE_LADDER` 5's table row.
+
+`board_ladder.py` reported the last two as "arm205 negative constant on the
+repeated block", which is a note about ONE MINED ARM and not the refusal --
+the trap 4i already recorded and the driver still has.  The refusal is in the
+`.v` file, as always.  Read the file.
 
 ### What the number actually did, and one correction to 4k's arithmetic
 
