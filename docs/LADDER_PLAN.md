@@ -1533,15 +1533,43 @@ threshold 1 / stride 1 fill, and compile:
 so 4k's `59 -> 46` is reached, by a different route than 4k drew and with
 nineteen boards rather than thirteen.
 
-### Where the 46 stop now
+### And then the decay 4k warned about, measured
+
+4k's prompt said it plainly: *"the wave route is working the same population
+concurrently -- a candidate that sits unboarded decays."*  It did.  While
+this session ran, PR #91 boarded **nine of these nineteen rows** by the
+three-state ternary-counter route: every `1RB---` row here is also a
+`KS_`/`KA_`/`T3_` board on `main`, and both prove the same `iqh` triple.
+Merging, on top of `main`:
+
+    remaining (core + shadows)   68 -> 58
+    core undecided               47 -> 43
+    0RB shadows of the core      21 -> 15
+
+**Ten rows net, not nineteen** -- the four `1RB1L*` never-quasihalters the
+two knobs unlocked (4i's predicted four, exactly), and the six `0RB` rows.
+The nine quasihalters are now double-covered.
+
+That is not an argument against the closer: `board_iqh` is a general
+mechanism over the same `Fam` record and the same arms, and it will take the
+next quasihalting row the ladder reaches without any new theorem.  It IS an
+argument about ORDER, and it sharpens 4k's rule rather than contradicting
+it.  4k said: measure the arms before building the thing that consumes them.
+The measurement it did not do is the cheap one next to it -- **check what the
+concurrent route has already boarded before spending a session on a bucket**,
+because "eleven rows need the quasihalt closer" was a statement about this
+repository at one instant and two of those instants were four days apart.
+`tools/closeout/core_rows.txt` on `origin/main` answers it in one diff.
+
+### Where the 43 stop now
 
 | | rows | |
 |---|---:|---|
 | no value family PROBED AT ALL | 15 | `docs/LADDER_NOFAM.md`; PR #90 reads 13 of 15 |
-| families found, none closed | 12 | mechanical: coverage or differential |
+| families found, none closed | 11 | mechanical: coverage or differential |
 | closed, `live = ABCD`, gray | 6 | needs the `(gray, 2)` `ClassSucc` |
-| closed, binary/step-1/one-phase, ARMS BLOCKED | 6 | the count language, not the emitter |
 | time cap | 4 | |
+| closed, binary/step-1/one-phase, ARMS BLOCKED | 4 | the count language, not the emitter |
 | closed, two phases | 3 | needs the phase cycle in `Inv` |
 
 **There is no binary/step-1/one-phase row left that the closure can state.**

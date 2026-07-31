@@ -3940,7 +3940,15 @@ traps._
   quasihalting), 6 blocked on the arms — matching
   `tools/ladder/core61_armshapes.txt` row for row.  Then the six `0RB` rows
   that the boards promoted out of the shadow list certified and boarded too.
-  `settled by a board` 5076 → 5095; core undecided 59 → 46.
+  Nineteen boards; on this branch's base, core undecided 59 → 46.
+- **Nine of the nineteen were boarded concurrently by PR #91** (the
+  three-state ternary-counter wave) while this session ran — every `1RB---`
+  row here is also a `KS_`/`KA_`/`T3_` board on main, same `iqh` triple.
+  Merged, it is **ten rows net**: remaining 68 → 58, core undecided
+  47 → 43.  4k warned about exactly this ("a candidate that sits unboarded
+  decays") and the guard is one diff: check
+  `git show origin/main:tools/closeout/core_rows.txt` BEFORE picking a
+  bucket, not after building for it.
 - **Bookkeeping lesson.**  "core undecided" is a BUCKET, not a count of
   machines: boarding a core row can promote a `0RB` shadow into the core, so
   13 boards took 59 → 52, not 59 → 46.  Quote `settled by a board` when the
