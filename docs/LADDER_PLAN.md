@@ -1910,6 +1910,186 @@ A passed and B did not clear by more.
   scope: no weight sequence expresses it, `fit_weights` correctly declines it,
   and it is still one row.
 
+## 4n. The probe first, then the PHASE CYCLE.  Three rows, and the gray six are four
+
+_Branch `claude/ladder-failing-machines-w2lio1`, cut from `main` at `bc882b2`
+(4l and 4m both merged).  Coq 8.18.0, installed in the image
+(`apt-get install -y coq`).  Every number below is a count a script printed
+or a file that compiles._
+
+4l's closing instruction was 4k's guard one bucket over: **run the arm
+builder over the gray six and the two-phase three FIRST and count**, and let
+the count decide what gets built.  That is what happened, and the count moved
+the decision.
+
+### The probe, and what it had to get right
+
+`tools/ladder/armprobe.py` relaxes the three refusals `closure_data` opens
+with -- `code = gray` at its first line, a step other than 1 at its second, a
+phase cycle at its third -- in a PROBE and not in the emitter, and reports
+per row whether every class arm the closure needs has a chain.  The classes
+are FITTED from the family's own successor rather than assumed: on the gray
+rows the fit recovers 4i's four `(gray, 2)` classes verbatim, which is the
+first independent confirmation of that table.  `--selftest` runs the whole
+probe over a row that is already boarded and checks it recovers the
+`(Binary, 1)` class and both arms -- the discipline `bounce.py --selftest`
+exists for.
+
+| | rows | |
+|---|---:|---|
+| closed, gray, `live = ABCD` | **4 of 6** | both class arms |
+| closed, two phases | **3 of 3** | both class arms |
+| time cap | 1 of 4 re-run at `--cap 900` | still capped, `26` families, 4 tried |
+
+**Two findings came out of making the probe honest, and both are about the
+CONFIGURATION and not about the class law.**
+
+* **`RuleSound` is an equation on `cconf`, and `ctape_move` does not
+  normalise.**  A blank the head materialises by stepping back over it is
+  `S0 :: r` and not `r`.  `valfam` reads the far side through a run-length
+  view that has already dropped a trailing blank run, so
+  `other_side_cells` can be short by exactly those cells -- the same TAPE
+  under `lift` (which is why `Hboot`, stated on `lift`, does not notice) and
+  a different `cconf`, which is what every arm is stated on.  Read the far
+  side off the boot instead and the interior arms of **all six** gray rows
+  derive; with the certificate's value, **none** does.  The failure reads as
+  "chain lands off the rhs" at every threshold and stride, and it is one
+  cell.
+
+* **The top of a width is the largest MEMBER, not the largest value.**  At
+  `(gray, 2)` the value `b^k - 1` is odd and therefore not a member at all,
+  so the fill arm's left-hand side is `[1] ++ 0^(k-2) ++ [1]` and not the
+  `0^(k-1) ++ [1]` that `of_value` computes.  An arm built on the other has
+  no chain for the good reason that the machine is never in that
+  configuration.  The probe reads the tops off the ORBIT for this reason.
+
+**The two gray rows that do not have both arms stop on the fill arm, and it
+is the mirror of the first finding.**  Their digit words are two cells and
+the second is a `0`, so the family spells one cell more than the machine's
+`cconf` carries at every anchor visit -- the trailing blank of the top digit
+is never materialised.  Measured: strip that one cell and the fill arm
+derives in 24 steps at every index and every copy split; leave it and it
+lands off the right-hand side at all of them.  That is a statement about the
+family's cell SPELLING, not about `(gray, 2)`, and it is what `fam_cells`
+cannot say: every digit contributes its whole word.
+
+### What the count decided, and it was not the biggest bucket
+
+Four rows (gray) against three (two phases), and the build costs are not
+close.  `(gray, 2)` wants `cls_side` widened with a fixed word before the run
+(three of the four classes have one), four `ClassSucc` instances, the parity
+invariant `P`, a four-way replacement for `digs_decomp`, and a `Section Iter`
+for a code and step the value arithmetic does not cover -- `fam_value` at
+`Gray` is a fold from the most significant digit down, so no lemma about
+`val_pos` transfers.  The phase cycle wants a bounded phase in `Inv` and
+nothing else new: it stays at `(Binary, 1)` and every piece of arithmetic
+already exists.  **Three rows that close beat four rows that might.**
+
+### What was built
+
+* **`Inv` carries `ph < NPH` instead of `ph = 0`**, which is 4i's sentence
+  ("a change to this predicate and to nothing above it") and it is exactly
+  that: `filled`, `fill_at_top` and `fam_succ_total` read the fill law at the
+  state's own phase, the interior step leaves the phase where it found it
+  (`pos1_class_not_top`, lifted out of `pos1_class_succ`'s own arithmetic,
+  is what says the fill does not fire there), and no value, width or measure
+  mentions a phase.  `tops_cofinal` does NOT need the fill to widen: a
+  phase-0 fill that re-enters the same width in phase 1 is what a terminator
+  cycle IS, and what the argument needs is that a top RECURS.
+* **`Section Board` is indexed by the phase** -- one fill arm per index and
+  phase, the terminator of its own phase on the left and of the phase the
+  law names on the right.  The interior arms are NOT phase-indexed and do not
+  need to be: their terminator is inside the opaque tail `cls_tail`, which is
+  the same reason an arm proved for an arbitrary tail covers a class.
+* **`board_neverqh` and `board_iqh` keep the interface they had**, as
+  wrappers at `NPH = 1` (`Section BoardOne`).  Not a second proof -- the whole
+  content is the phase-indexed theorem instantiated -- which is the
+  discipline `board_arm` already enforces between the two closers.  The
+  thirty-one boards emitted before this session compile unchanged; that was
+  checked before anything else was built on top.
+
+### The blocker the probe did NOT measure, and it is the interesting one
+
+All three rows have both class arms and all three then stopped on the same
+thing: **no chain from one fill anchor to one state**.  Consistently the
+anchor of the phase whose fill widens by NOTHING -- the lap into the next
+terminator -- which is six machine steps long and passes through two of the
+four states.  Raw simulation says the missing state is `26j + 1` steps away
+from that anchor, i.e. the far side of the whole counter walk, so it is not
+a search that needs widening.
+
+The fix is in the liveness and it is smaller than it looks.  **A fill arm's
+anchor does not have to witness every recurring state.**  What `glue_neverqhN`
+asks is that for every state and every bound SOME anchor past the bound
+reaches it, and the tops of ONE phase are enough if they are cofinal:
+
+    tops_cofinal_at : (forall ph, ph < NPH -> exists k, phto F k ph = pv) ->
+                      Inv F NPH s ->
+                      exists n s', N <= n /\ fam_iter F s n = Some s'
+                                   /\ fam_is_top F (ct_ds s') = true
+                                   /\ Inv F NPH s' /\ ct_ph s' = pv
+
+`top_reached` strengthened to preserve the phase (interior steps do not move
+it), one fill to step the cycle, and an induction on `k`.  `Hcyc` is a case
+split over `NPH` phases and a `vm_compute` on the emitted board.  The
+emitter picks `pv` by trying each phase and keeping the one whose anchors
+reach everything -- measured before it was built, on all three rows:
+
+    1RB0LA_1LC1LA_1RD1LB_0LC0RD   ph 0 reaches BCD,  ph 1 reaches ABCD   pv = 1
+    1RB0RC_1LC1RA_1RD1LB_0LC0RD   ph 0 reaches ABCD, ph 1 reaches BCD    pv = 0
+    1RB1RD_1LC1RA_0RB0LC_1LA0RD   ph 0 reaches ABC,  ph 1 reaches ABCD   pv = 1
+
+so `vis` loses its phase index rather than gaining one: the visit chains are
+at `pv` and the other phases' arms carry none.
+
+### The number
+
+    nqh_1RB0LA_1LC1LA_1RD1LB_0LC0RD : NeverQuasiHaltsSt tm
+    nqh_1RB0RC_1LC1RA_1RD1LB_0LC0RD : NeverQuasiHaltsSt tm
+    nqh_1RB1RD_1LC1RA_0RB0LC_1LA0RD : NeverQuasiHaltsSt tm
+
+axiom footprint `functional_extensionality_dep` only, as every board.
+`make closeout`:
+
+    settled by a board       5098 -> 5101   (+3)
+    core undecided             43 -> 40
+    0RB shadows of the core    15 -> 15     (no promotions this time)
+
+### Where the 40 stop now
+
+| | rows | |
+|---|---:|---|
+| no value family PROBED AT ALL | 5 | `docs/LADDER_NOFAM.md`; three unread, two out of scope |
+| families found, none closed | 16 | mechanical: coverage, differential, or 4m's outer-parameter guard |
+| closed (fibonacci), `live = BCD` | 5 | 4m's five: the canonical form wants a Coq lemma |
+| closed, gray | 6 | **4 have both arms**; 2 stop on the cell spelling |
+| time cap | 4 | one re-run at `--cap 900` and still capped |
+| closed, binary/step-1/one-phase, ARMS BLOCKED | 4 | `RULE_LADDER` 5's table row |
+
+### What this says about the next session
+
+* **`(gray, 2)` is now a measured four rows and the build is specified.**
+  Four `ClassSucc` instances, the parity invariant, `cls_side` with a fixed
+  word before the run, a four-way case split to replace `digs_decomp`, and a
+  `Section Iter` at `Gray`/step 2.  The arms are known to derive, which is
+  what this session bought it: nobody has to guess again.
+* **The two gray rows that stop on the spelling are a FAMILY question, not a
+  kernel one.**  Either `valfam` reads them at an anchor whose digit words do
+  not end in a blank, or `fam_cells` gains a trimming the denotation can
+  state.  Do not build a `ClassSucc` for them: their class law is fine.
+* **The time cap is not a cap.**  One row re-run at six times the budget
+  still capped, with 26 families and four tried.  The next reading of those
+  four should be about which families the searcher spends the budget ON, not
+  about how much budget it has.
+* Three traps, all paid for here: **editing a kernel file under a running
+  `make` makes every already-built board fail with "inconsistent assumptions
+  over library BBB4.Checkers.LadderCheck"** -- it is the same trap as
+  rewriting `_CoqProject` mid-build, and the fix is the same, do the edit and
+  then build.  `make closeout` only needs `theories/Closeout/Closeout.vo`,
+  whose dependency closure is 2188 files and **does not include the nine
+  `IRules_Batch`**, so a session that only wants the audit never pays their
+  8.2 GB each.  And `coqdep` is the thing to ask, not the plan file.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
