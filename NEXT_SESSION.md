@@ -3944,11 +3944,21 @@ traps._
 - **Nine of the nineteen were boarded concurrently by PR #91** (the
   three-state ternary-counter wave) while this session ran — every `1RB---`
   row here is also a `KS_`/`KA_`/`T3_` board on main, same `iqh` triple.
-  Merged, it is **ten rows net**: remaining 68 → 58, core undecided
-  47 → 43.  4k warned about exactly this ("a candidate that sits unboarded
-  decays") and the guard is one diff: check
-  `git show origin/main:tools/closeout/core_rows.txt` BEFORE picking a
-  bucket, not after building for it.
+  Merged, the audit moved by **ten**: remaining 68 → 58, core undecided
+  47 → 43.  Quote ten.
+- **But do not turn that into "check what is claimed before you build".**
+  Rows-at-landing is the wrong unit for a mechanism, and this session is the
+  counter-example: 4i's stride on one arm derived 3 of 21; the two knobs on
+  both arms derived 15 of 21 — same rows, same certificates, same chain
+  search, one interface change — and the six promoted `0RB` rows then cost
+  minutes each because the machinery existed.  Buckets fall at once or not at
+  all.  What survives is only: the row count you quote can be stale, and
+  `git show origin/main:tools/closeout/core_rows.txt` is one diff.
+- **The other half, stated honestly:** `board_iqh`'s forward reach into the
+  current core is ZERO — all 13 closed rows still remaining read
+  `live = ABCD`.  The closer pays off in whatever population the next
+  numeration or code widening brings in, which is a contingent bet, not a
+  booked row.
 - **Bookkeeping lesson.**  "core undecided" is a BUCKET, not a count of
   machines: boarding a core row can promote a `0RB` shadow into the core, so
   13 boards took 59 → 52, not 59 → 46.  Quote `settled by a board` when the

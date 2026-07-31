@@ -1554,11 +1554,9 @@ threshold 1 / stride 1 fill, and compile:
 so 4k's `59 -> 46` is reached, by a different route than 4k drew and with
 nineteen boards rather than thirteen.
 
-### And then the decay 4k warned about, measured
+### The same nine rows, twice -- and what that is and is not evidence of
 
-4k's prompt said it plainly: *"the wave route is working the same population
-concurrently -- a candidate that sits unboarded decays."*  It did.  While
-this session ran, PR #91 boarded **nine of these nineteen rows** by the
+While this session ran, PR #91 boarded **nine of these nineteen rows** by the
 three-state ternary-counter route: every `1RB---` row here is also a
 `KS_`/`KA_`/`T3_` board on `main`, and both prove the same `iqh` triple.
 Merging, on top of `main`:
@@ -1567,20 +1565,35 @@ Merging, on top of `main`:
     core undecided               47 -> 43
     0RB shadows of the core      21 -> 15
 
-**Ten rows net, not nineteen** -- the four `1RB1L*` never-quasihalters the
-two knobs unlocked (4i's predicted four, exactly), and the six `0RB` rows.
-The nine quasihalters are now double-covered.
+So the audit moved by **ten**, not nineteen, and anyone quoting this session
+should quote ten.  Record that and then stop -- because the obvious next
+sentence, *"so check what the concurrent route has already boarded before
+spending a session on a bucket"*, is the wrong lesson, and an earlier draft of
+this section had it.
 
-That is not an argument against the closer: `board_iqh` is a general
-mechanism over the same `Fam` record and the same arms, and it will take the
-next quasihalting row the ladder reaches without any new theorem.  It IS an
-argument about ORDER, and it sharpens 4k's rule rather than contradicting
-it.  4k said: measure the arms before building the thing that consumes them.
-The measurement it did not do is the cheap one next to it -- **check what the
-concurrent route has already boarded before spending a session on a bucket**,
-because "eleven rows need the quasihalt closer" was a statement about this
-repository at one instant and two of those instants were four days apart.
-`tools/closeout/core_rows.txt` on `origin/main` answers it in one diff.
+**Rows-at-the-moment-of-landing is not the unit a MECHANISM is priced in**,
+and the evidence is this session's own numbers.  4i put a stride on one arm
+and got **3 of 21**.  The two knobs, on both arms, got **15 of 21** -- the
+same rows, the same certificates, the same chain search, one interface
+change.  Then the six `0RB` rows the boards promoted cost about three minutes
+each, because by then there was a mechanism to point at them.  That is the
+shape the whole route is betting on: nothing, nothing, and then a bucket falls
+at once.  A session that only ever builds what is currently unclaimed
+optimises for the delta and never gets there.
+
+The honest complication, and it cuts the other way: **`board_iqh`'s forward
+reach into the current core is zero.**  All 13 closed rows still remaining --
+the six gray, the three two-phase, the four arm-blocked -- read
+`live = ABCD`, so `board_neverqh` is the closer for every one of them.  The
+quasihalt closer does not pay off in the visible queue; it pays off in
+whatever population the next numeration or code widening brings in, which is a
+contingent bet and not a booked row.  Both halves belong in the record.
+
+What survives from 4k's rule is narrower and still worth having: **the row
+count you quote can be stale.**  "Eleven rows need the quasihalt closer" was
+true of this repository at one instant, and two of those instants were four
+days apart.  `git show origin/main:tools/closeout/core_rows.txt` is one diff,
+and it stops a session reporting a number that moved underneath it.
 
 ### Where the 43 stop now
 
