@@ -238,7 +238,25 @@ Proof. eapply arm_sound; [exact rules_sound_1RB0LD_0LC0RB_1LA1RC_0RC1LD | exact 
 (** ** The closure: NOT BUILT for this row -- interior arm: no chain at any threshold 0..3 and stride 1..4 -- the carry ripple is not affine in the run length
 
     The board above still proves every rule the certificate carries; what
-    is missing is the machine-level theorem.  LADDER_PLAN 4h(a) names the
-    condition: [LadderCheck] states the class-successor lemma for
-    [(Binary, 1)] only, so a family with another code or another step needs
-    its own instance of [ClassSucc] before this section can be emitted. *)
+    is missing is the machine-level theorem.
+
+    RE-MEASURED, LADDER_PLAN 4o.  The reason above is the MEASURED one and
+    4h(a)'s [ClassSucc] reason -- which 4l removed and which this note used
+    to give -- was never it: this family IS [(Binary, 1)], and the probe
+    fits it the single class
+
+        [] ++ 1^n ++ [0]   ->   [] ++ 0^n ++ [1]
+
+    which is the class a boarded row of this shape already uses.  The
+    configuration is clean too.  What has no chain is the STRIDED arm, and
+    the cost says why: the interior arm's step count over the flat indices
+    is 12, 18, 26, 36, 48, 62, 78, 96, 116 at run length 0..8 -- a
+    SECOND difference of exactly 2, so the cost is quadratic in the run
+    length.  A strided arm is one chain repeated, so its cost must be
+    affine, and no arithmetic progression makes a quadratic affine.  That is
+    why every threshold 0..3 and every stride 1..4 fail together.
+
+    This is LADDER_PLAN 5's non-affine carry ripple, and it is now measured
+    rather than read off the shape of the failure.  It agrees with
+    docs/QUAD_TERMINAL_MEASUREMENT.md, which measures this machine's
+    terminal at exactly [(k+2)^2] by a different route. *)
