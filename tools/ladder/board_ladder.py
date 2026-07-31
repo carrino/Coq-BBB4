@@ -14,7 +14,10 @@ The filter is exactly what `LadderCheck.board_neverqh` asks for and no more
   * `closed` -- the prover found a family, arms and a differential;
   * `code = binary` and `value_step_per_anchor_visit = 1` -- the class
     successor lemma is stated for that pair only;
-  * one phase, landing back in phase 0 -- the closure pins the phase;
+  * every phase's fill lands in a phase the family HAS -- the closure
+    carries the phase CYCLE (LADDER_PLAN 4n), so a family with more than one
+    terminator is stated rather than refused, and a fill that widens by
+    nothing (a lap into the next terminator at the same width) is fine;
   * the fill target names no more digits than the law widens by (plus the
     one guaranteed copy) -- the target's own prefix and suffix are fine, they
     ride along as the fixed words either side of the run;
@@ -48,15 +51,15 @@ def wanted(r):
     if fam.get('value_step_per_anchor_visit', 1) != 1:
         return False, 'step %s' % fam.get('value_step_per_anchor_visit')
     fills = r.get('fill_by_phase') or [r.get('fill')]
-    if len(fills) != 1:
-        return False, '%d phases' % len(fills)
-    f = fills[0]
-    if f.get('lands_in_phase') != 0 or f.get('widens_by', 0) < 1:
-        return False, 'fill does not widen back into phase 0'
-    m = len(f.get('target_prefix') or []) + len(f.get('target_suffix') or [])
-    if m > 1 + f.get('widens_by', 0):
-        return False, ('fill target names %d digits but widens by %d'
-                       % (m, f.get('widens_by')))
+    nph = len(fills)
+    for ph, f in enumerate(fills):
+        if not 0 <= f.get('lands_in_phase', 0) < nph:
+            return False, ('phase %d fills into phase %d, which this family '
+                           'does not have' % (ph, f.get('lands_in_phase')))
+        m = len(f.get('target_prefix') or []) + len(f.get('target_suffix') or [])
+        if m > 1 + f.get('widens_by', 0):
+            return False, ('phase %d fill target names %d digits but widens '
+                           'by %d' % (ph, m, f.get('widens_by')))
     live = (r.get('liveness') or {}).get('states_infinitely_often')
     if live not in ('ABCD', 'BCD', 'ACD', 'ABD', 'ABC'):
         return False, 'live=%s (neither closer states this)' % live

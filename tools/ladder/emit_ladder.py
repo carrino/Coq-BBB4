@@ -279,34 +279,44 @@ def closure_data(cert, tab):
     """
     fam = cert['family']
     fills = cert.get('fill_by_phase') or [cert['fill']]
+    nph = len(fills)
     if fam.get('code') != 'binary':
         raise NoClosure('code %s: LadderCheck states (Binary, 1) only'
                         % fam.get('code'))
     if fam.get('value_step_per_anchor_visit', 1) != 1:
         raise NoClosure('step %d: LadderCheck states (Binary, 1) only'
                         % fam.get('value_step_per_anchor_visit', 1))
-    if len(fills) != 1:
-        raise NoClosure('%d phases: the closure pins the phase at 0'
-                        % len(fills))
-    f = fills[0]
-    if f['widens_by'] < 1 or f['lands_in_phase'] != 0:
-        raise NoClosure('fill law does not land back in phase 0')
-    m = len(f['target_prefix']) + len(f['target_suffix'])
-    if m > 1 + f['widens_by']:
-        raise NoClosure('fill target names %d digits but widens by %d'
-                        % (m, f['widens_by']))
+    # The PHASE CYCLE (4l/4n).  [LadderCheck.Inv] carries [ph < NPH] rather
+    # than [ph = 0], so a family with more than one terminator is stated
+    # here rather than refused: what each phase's fill has to do is land in
+    # a phase this family HAS, and it does not have to widen -- a phase-0
+    # fill that re-enters the same width in phase 1 is what a terminator
+    # cycle IS, and [tops_cofinal] needs tops to recur and nothing more.
+    for ph, f in enumerate(fills):
+        if not 0 <= f['lands_in_phase'] < nph:
+            raise NoClosure('phase %d fills into phase %d, which this family '
+                            'does not have' % (ph, f['lands_in_phase']))
+        m = len(f['target_prefix']) + len(f['target_suffix'])
+        if m > 1 + f['widens_by']:
+            raise NoClosure('phase %d fill target names %d digits but widens '
+                            'by %d' % (ph, m, f['widens_by']))
     b = fam['base']
     if b < 2:
         raise NoClosure('base %d' % b)
 
     digs = [tuple(w) for w in fam['digits']]
     pre = tuple(fam['near_head_prefix'])
-    tail0 = tuple((fam.get('terminators_by_phase') or [fam['terminator']])[0])
+    tails = [tuple(t) for t in
+             (fam.get('terminators_by_phase') or [fam['terminator']])]
+    if len(tails) < nph:
+        raise NoClosure('%d fill laws but %d terminators' % (nph, len(tails)))
+    ph0 = cert['boot'].get('phase', 0)
+    if not 0 <= ph0 < nph:
+        raise NoClosure('the boot is read in phase %d of %d' % (ph0, nph))
     other = tuple(fam['other_side_cells'])
     q = ord(fam['state']) - 65
     hs = fam['head']
     left = fam['side'] == 'L'
-    mid = f['target_fill_digit']
     OTHER = (other, (), 0, 0, ())
 
     def conf(sd):
@@ -367,31 +377,35 @@ def closure_data(cert, tab):
     # of them and they divide about the block as [fm1] before and [fm2]
     # after; 4h's normalisation is that at least one should be materialised,
     # so try fm1 = 1 first.
-    fpre = tuple(x for d in f['target_prefix'] for x in digs[d])
-    fsuf = tuple(x for d in f['target_suffix'] for x in digs[d])
-
     def fill_at(n0, stride):
         got = []
-        for r in range(1, n0 + stride):
-            s = 0 if r < n0 else stride
-            fl = conf(blk(pre + digs[b - 1] * r, digs[b - 1], s, tail0))
-            total = r + f['widens_by'] - m
-            if total < 0:
-                return None
-            hit = None
-            for m1 in _splits(total):
-                cand = conf(blk(pre + fpre + digs[mid] * m1, digs[mid], s,
-                                digs[mid] * (total - m1) + fsuf + tail0))
-                try:
-                    ch, ca, cb = derive(True, True, fl, cand,
-                                        'fill arm r=%d' % r)
-                except NoClosure:
-                    continue
-                hit = (r, s, m1, total - m1, fl, cand, ch, ca, cb)
-                break
-            if hit is None:
-                return None
-            got.append(hit)
+        for ph, f in enumerate(fills):
+            to = f['lands_in_phase']
+            mid = f['target_fill_digit']
+            mf = len(f['target_prefix']) + len(f['target_suffix'])
+            fpre = tuple(x for d in f['target_prefix'] for x in digs[d])
+            fsuf = tuple(x for d in f['target_suffix'] for x in digs[d])
+            for r in range(1, n0 + stride):
+                s = 0 if r < n0 else stride
+                fl = conf(blk(pre + digs[b - 1] * r, digs[b - 1], s, tails[ph]))
+                total = r + f['widens_by'] - mf
+                if total < 0:
+                    return None
+                hit = None
+                for m1 in _splits(total):
+                    cand = conf(blk(pre + fpre + digs[mid] * m1, digs[mid], s,
+                                    digs[mid] * (total - m1) + fsuf
+                                    + tails[to]))
+                    try:
+                        ch, ca, cb = derive(True, True, fl, cand,
+                                            'fill arm r=%d ph=%d' % (r, ph))
+                    except NoClosure:
+                        continue
+                    hit = (r, ph, s, m1, total - m1, fl, cand, ch, ca, cb)
+                    break
+                if hit is None:
+                    return None
+                got.append(hit)
         return got
 
     fill, n0f, stf = None, None, None
@@ -412,7 +426,7 @@ def closure_data(cert, tab):
     cells = list(pre)
     for d in ds0:
         cells.extend(digs[d])
-    cells.extend(tail0)
+    cells.extend(tails[ph0])
     if cells != list(boot['cells']):
         raise NoClosure('boot cells %r are not the family at %r'
                         % (boot['cells'], ds0))
@@ -466,18 +480,92 @@ def closure_data(cert, tab):
             got = LC.srun(tab, True, True, ch, fl)
             if got:
                 seen.setdefault(got[0][0], ch)
+        if all(i in seen for i in want):
+            return seen
+
+        # A state the arm's own lap does not pass through.  [vis_of_run] wants
+        # a chain from the anchor and NOTHING about where it ends, so it may
+        # leave the lap entirely -- which a multi-phase counter needs, because
+        # a phase whose fill is a lap into the next terminator can be six
+        # steps long and pass through two states.  This walks out from the
+        # anchor the way the chain search itself explores (at a wall only a
+        # cycle or a rotation makes progress), breadth first, and keeps the
+        # first chain that lands in each state still wanted.
+        front, seenk = [([], fl)], set()
+        for _ in range(12):
+            if all(i in seen for i in want) or not front:
+                break
+            nxt = []
+            for ch, c in front:
+                try:
+                    sts = (LC._win_candidates(tab, True, True, c, 120)
+                           + LC._cyc_candidates(tab, True, True, c, 120)
+                           + LC._rot_candidates(c))
+                except LC.Halt:
+                    continue
+                for st in sts:
+                    try:
+                        r = LC.sstep(tab, True, True, st, c)
+                    except LC.Halt:
+                        continue
+                    if r is None:
+                        continue
+                    c2 = r[0]
+                    k = (c2[0], c2[1], c2[2], c2[3])
+                    if k in seenk:
+                        continue
+                    seenk.add(k)
+                    seen.setdefault(c2[0], ch + [st])
+                    nxt.append((ch + [st], c2))
+            front = nxt
         return seen
 
-    vis = {}
-    for (r, _s, _m1, _m2, fl, _fr, fch, _ca, _cb) in fill:
-        seen = visits(fl, fch)
-        missing = [ST[i] for i in want if i not in seen]
-        if missing:
-            raise NoClosure('no chain from the fill anchor r=%d to %s'
-                            % (r, ','.join(missing)))
-        vis[r] = {i: seen[i] for i in want}
+    # The VISIT PHASE.  A fill anchor does not have to reach every recurring
+    # state; what the liveness needs is that the anchors which DO reach it
+    # keep coming, and [tops_cofinal_at] gives that for the tops of any one
+    # phase the cycle returns to.  Measured (4n): on all three two-phase rows
+    # the phase whose fill laps into the next terminator WITHOUT widening is
+    # a six-step lap whose anchor reaches two states of four, and the other
+    # phase's anchor reaches all four.  So: pick a phase that reaches
+    # everything at every arm index, and report what each phase missed if
+    # none does.
+    seen_at = {}
+    for (r, ph, _s, _m1, _m2, fl, _fr, fch, _ca, _cb) in fill:
+        seen_at[(r, ph)] = visits(fl, fch)
+    pv, miss = None, []
+    for ph in range(nph):
+        bad = []
+        for (r, p) in sorted(seen_at):
+            if p != ph:
+                continue
+            gap = [ST[i] for i in want if i not in seen_at[(r, p)]]
+            if gap:
+                bad.append('r=%d misses %s' % (r, ','.join(gap)))
+        if not bad:
+            pv = ph
+            break
+        miss.append('phase %d (%s)' % (ph, '; '.join(bad)))
+    if pv is None:
+        raise NoClosure('no phase whose fill anchors reach every recurring '
+                        'state: %s' % ' | '.join(miss))
+    vis = {r: {i: seen_at[(r, pv)][i] for i in want}
+           for (r, p) in seen_at if p == pv}
 
-    return dict(b=b, el=el, er=er,
+    # ...and that the phase cycle returns to it from every phase, with the
+    # number of fills it takes -- the kernel's [Hcyc], discharged per phase.
+    def kto(ph):
+        cur = ph
+        for k in range(nph + 1):
+            if cur == pv:
+                return k
+            cur = fills[cur]['lands_in_phase']
+        return None
+    kcyc = [kto(ph) for ph in range(nph)]
+    if any(k is None for k in kcyc):
+        raise NoClosure('the phase cycle does not reach phase %d from every '
+                        'phase' % pv)
+
+    return dict(b=b, el=el, er=er, nph=nph, ph0=ph0, pv=pv, kcyc=kcyc,
                 inter=inter, n0i=n0i, sti=sti,
                 fill=fill, n0f=n0f, stf=stf,
                 ds0=ds0, t0=boot['steps_from_blank'], vis=vis,
@@ -531,34 +619,44 @@ CLOSURE_IDISP = '''Definition iarm_%(mid)s (d r : nat) : LRule :=
 
 '''
 
-CLOSURE_FARM = '''Definition farm%(r)d_%(mid)s : LRule :=
+CLOSURE_FARM = '''Definition farm%(r)d_%(ph)d_%(mid)s : LRule :=
   mkLRule (%(lhs)s)
           (%(rhs)s) %(ca)d %(cb)d.
-Definition ch_farm%(r)d_%(mid)s : list rstep := %(ch)s.
-Lemma ok_farm%(r)d_%(mid)s :
-  check_arm tm true true rules farm%(r)d_%(mid)s ch_farm%(r)d_%(mid)s = true.
+Definition ch_farm%(r)d_%(ph)d_%(mid)s : list rstep := %(ch)s.
+Lemma ok_farm%(r)d_%(ph)d_%(mid)s :
+  check_arm tm true true rules farm%(r)d_%(ph)d_%(mid)s
+            ch_farm%(r)d_%(ph)d_%(mid)s = true.
 Proof. vm_compute. reflexivity. Qed.
 
 '''
 
-CLOSURE_FDISP = '''(** The fill arms.  Both tails are known empty -- they are the only arms
-    that see the end of the counter -- and the arm at index [r] has [r]
-    guaranteed block copies materialised into [s_pre], without which it has
-    no chain at all.  [fm1]/[fm2] say how the fill target's own guaranteed
-    copies divide about the block. *)
-Definition farm_%(mid)s (r : nat) : LRule :=
-  match r with
+CLOSURE_FDISP = '''(** The fill arms, one per arm index and PHASE.  Both tails are known
+    empty -- they are the only arms that see the end of the counter -- and
+    the arm at index [r] has [r] guaranteed block copies materialised into
+    [s_pre], without which it has no chain at all.  [fm1]/[fm2] say how the
+    fill target's own guaranteed copies divide about the block.
+
+    The phase is the second index because the fill arm is the ONLY one that
+    sees a terminator: it leaves from the terminator of its own phase and
+    lands on the terminator of the phase its law names.  The interior arms
+    keep the terminator in the opaque tail and are phase-free. *)
+Definition farm_%(mid)s (r ph : nat) : LRule :=
+  match r, ph with
   %(br)s
-  | _ => farm%(r0)d_%(mid)s   (* unreachable: only 0 < r < N0 + st *)
+  | _, _ => farm%(r0)d_%(ph0)d_%(mid)s  (* unreachable: 0 < r < N0 + st *)
   end.
 
-Definition fm1_%(mid)s (r : nat) : nat := match r with %(b1)s | _ => 0 end.
-Definition fm2_%(mid)s (r : nat) : nat := match r with %(b2)s | _ => 0 end.
+Definition fm1_%(mid)s (r ph : nat) : nat :=
+  match r, ph with %(b1)s | _, _ => 0 end.
+Definition fm2_%(mid)s (r ph : nat) : nat :=
+  match r, ph with %(b2)s | _, _ => 0 end.
 
 '''
 
-CLOSURE_VIS = '''(** One chain per RECURRING state per fill arm.  [vis_of_run] turns each
-    into a visit, and [tops_cofinal] says those anchors keep coming. *)
+CLOSURE_VIS = '''(** One chain per RECURRING state per fill arm, at the VISIT PHASE %(pv)d.
+    [vis_of_run] turns each into a visit, and [tops_cofinal_at] says the tops
+    of that phase keep coming -- which is all the liveness needs, and is why
+    the arms of the other phases carry no visits at all. *)
 Definition vis_%(mid)s (r : nat) (q : St) : list lstep :=
   match r, q with
   %(vb)s
@@ -601,81 +699,62 @@ Proof.
 %(blia)s  exfalso; lia.
 Qed.
 
-Lemma farm_sound_%(mid)s : forall r, 0 < r -> r < %(n0f)d + %(stf)d ->
-  RuleSound tm true true (farm_%(mid)s r).
+Lemma farm_sound_%(mid)s : forall r ph, 0 < r -> r < %(n0f)d + %(stf)d ->
+  ph < %(nph)d -> RuleSound tm true true (farm_%(mid)s r ph).
 Proof.
-  intros r H0 Hr.
+  intros r ph H0 Hr Hph.
 %(fsound)s  exfalso; lia.
 Qed.
 
-Lemma farm_lhs_%(mid)s : forall r, 0 < r -> r < %(n0f)d + %(stf)d ->
-  lr_lhs (farm_%(mid)s r)
+Lemma farm_lhs_%(mid)s : forall r ph, 0 < r -> r < %(n0f)d + %(stf)d ->
+  ph < %(nph)d ->
+  lr_lhs (farm_%(mid)s r ph)
     = cls_conf FAM (run_side FAM (fm_b FAM - 1) r (astride %(n0f)d %(stf)d r)
-                      0 0 [] []).
+                      0 ph [] []).
 Proof.
-  intros r H0 Hr.
+  intros r ph H0 Hr Hph.
 %(fcomp)s  exfalso; lia.
 Qed.
 
-Lemma farm_rhs_%(mid)s : forall r, 0 < r -> r < %(n0f)d + %(stf)d ->
-  lr_rhs (farm_%(mid)s r)
-    = cls_conf FAM (run_side FAM (f_mid (fam_fill FAM 0)) (fm1_%(mid)s r)
-                      (astride %(n0f)d %(stf)d r) (fm2_%(mid)s r) 0
-                      (f_pre (fam_fill FAM 0)) (f_suf (fam_fill FAM 0))).
+Lemma farm_rhs_%(mid)s : forall r ph, 0 < r -> r < %(n0f)d + %(stf)d ->
+  ph < %(nph)d ->
+  lr_rhs (farm_%(mid)s r ph)
+    = cls_conf FAM (run_side FAM (f_mid (fam_fill FAM ph)) (fm1_%(mid)s r ph)
+                      (astride %(n0f)d %(stf)d r) (fm2_%(mid)s r ph)
+                      (f_to (fam_fill FAM ph))
+                      (f_pre (fam_fill FAM ph)) (f_suf (fam_fill FAM ph))).
 Proof.
-  intros r H0 Hr.
+  intros r ph H0 Hr Hph.
 %(fcomp)s  exfalso; lia.
 Qed.
 
-Lemma farm_cb_%(mid)s : forall r, 0 < r -> r < %(n0f)d + %(stf)d ->
-  0 < lr_cb (farm_%(mid)s r).
+Lemma farm_cb_%(mid)s : forall r ph, 0 < r -> r < %(n0f)d + %(stf)d ->
+  ph < %(nph)d -> 0 < lr_cb (farm_%(mid)s r ph).
 Proof.
-  intros r H0 Hr.
+  intros r ph H0 Hr Hph.
 %(flia)s  exfalso; lia.
 Qed.
 
-Lemma fm12_%(mid)s : forall r, 0 < r -> r < %(n0f)d + %(stf)d ->
-  fm1_%(mid)s r + fm2_%(mid)s r
-  + (length (f_pre (fam_fill FAM 0)) + length (f_suf (fam_fill FAM 0)))
-  = r + f_s (fam_fill FAM 0).
+Lemma fm12_%(mid)s : forall r ph, 0 < r -> r < %(n0f)d + %(stf)d ->
+  ph < %(nph)d ->
+  fm1_%(mid)s r ph + fm2_%(mid)s r ph
+  + (length (f_pre (fam_fill FAM ph)) + length (f_suf (fam_fill FAM ph)))
+  = r + f_s (fam_fill FAM ph).
 Proof.
-  intros r H0 Hr.
+  intros r ph H0 Hr Hph.
 %(flia)s  exfalso; lia.
 Qed.
 
-Lemma boot_%(mid)s : csteps tm %(t0)d c0 = Some (fam_cfg FAM (%(ds0)s, 0, 0)).
+Lemma boot_%(mid)s :
+  csteps tm %(t0)d c0 = Some (fam_cfg FAM (%(ds0)s, 0, %(ph0)d)).
 Proof. vm_compute. reflexivity. Qed.
 
 '''
 
-# The board's arguments up to [HAfC]; both closers take exactly these.
-CLOSURE_ARGS = '''  - vm_compute; lia.
-  - vm_compute; reflexivity.
-  - vm_compute; reflexivity.
-  - vm_compute; repeat constructor.
-  - vm_compute; repeat constructor.
-  - vm_compute; lia.
-  - vm_compute; lia.
-  - vm_compute; reflexivity.
-  - exact fm12_%(mid)s.
-  - repeat constructor.
-  - vm_compute; lia.
-  - exact boot_%(mid)s.
-  - lia.
-  - exact iarm_sound_%(mid)s.
-  - exact iarm_lhs_%(mid)s.
-  - exact iarm_rhs_%(mid)s.
-  - exact iarm_cb_%(mid)s.
-  - lia.
-  - lia.
-  - exact farm_sound_%(mid)s.
-  - exact farm_lhs_%(mid)s.
-  - exact farm_rhs_%(mid)s.
-  - exact farm_cb_%(mid)s.
-'''
-
-CLOSURE_NQH = '''Lemma vis_ok_%(mid)s : forall r q, 0 < r -> r < %(n0f)d + %(stf)d ->
-  srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r)) = Some q.
+CLOSURE_NQH = '''Lemma vis_ok_%(mid)s : forall r q, 0 < r ->
+  r < %(n0f)d + %(stf)d ->
+  srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r %(pv)d))
+    = Some q.
 Proof.
   intros r q H0 Hr.
 %(fvis)s  exfalso; lia.
@@ -685,17 +764,18 @@ Qed.
     Stage-B kernel discharged, or an equation two [vm_compute]s decide. *)
 Theorem nqh_%(mid)s : NeverQuasiHaltsSt tm.
 Proof.
-  apply (board_neverqh tm FAM iarm_%(mid)s %(n0i)d %(sti)d
-                       farm_%(mid)s %(n0f)d %(stf)d
-                       fm1_%(mid)s fm2_%(mid)s vis_%(mid)s
-                       %(ds0)s %(t0)d).
+  apply (boardph_neverqh tm FAM %(nph)d iarm_%(mid)s %(n0i)d %(sti)d
+                         farm_%(mid)s %(n0f)d %(stf)d
+                         fm1_%(mid)s fm2_%(mid)s %(pv)d vis_%(mid)s
+                         %(ds0)s %(ph0)d %(t0)d).
 %(args)s  - exact vis_ok_%(mid)s.
 Qed.
 '''
 
 CLOSURE_QH = '''Lemma vis_ok_%(mid)s : forall r q, q <> %(qa)s -> 0 < r ->
   r < %(n0f)d + %(stf)d ->
-  srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r)) = Some q.
+  srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r %(pv)d))
+    = Some q.
 Proof.
   intros r q Hq H0 Hr.
 %(fvis)s  exfalso; lia.
@@ -715,10 +795,10 @@ Proof.
 %(bav)s  exfalso; lia.
 Qed.
 
-Lemma farm_avoid_%(mid)s : forall r, 0 < r -> r < %(n0f)d + %(stf)d ->
-  RuleAvoid tm true true %(qa)s (farm_%(mid)s r).
+Lemma farm_avoid_%(mid)s : forall r ph, 0 < r -> r < %(n0f)d + %(stf)d ->
+  ph < %(nph)d -> RuleAvoid tm true true %(qa)s (farm_%(mid)s r ph).
 Proof.
-  intros r H0 Hr.
+  intros r ph H0 Hr Hph.
 %(fav)s  exfalso; lia.
 Qed.
 
@@ -744,10 +824,10 @@ Definition iqh (tm : TM) : Prop :=
 Theorem iqh_%(mid)s : iqh tm.
 Proof.
   assert (H : NonHalt tm /\\ QHBound (S %(sq)d) tm /\\ QuasiHaltsSt tm).
-  { apply (board_iqh tm FAM iarm_%(mid)s %(n0i)d %(sti)d
-                     farm_%(mid)s %(n0f)d %(stf)d
-                     fm1_%(mid)s fm2_%(mid)s %(ds0)s %(t0)d
-                     %(qa)s %(sq)d vis_%(mid)s).
+  { apply (boardph_iqh tm FAM %(nph)d iarm_%(mid)s %(n0i)d %(sti)d
+                       farm_%(mid)s %(n0f)d %(stf)d
+                       fm1_%(mid)s fm2_%(mid)s %(pv)d
+                       %(ds0)s %(ph0)d %(t0)d %(qa)s %(sq)d vis_%(mid)s).
 %(args)s    - exact iarm_avoid_%(mid)s.
     - exact farm_avoid_%(mid)s.
     - exact vis_ok_%(mid)s.
@@ -778,7 +858,7 @@ def _rbranches(n, body, dead='  exfalso; lia.\n', lo=0):
 
 
 def emit_closure(cert, tab, mid):
-    """The Coq for LadderCheck.board_neverqh, or a note on what stopped it."""
+    """The Coq for LadderCheck.boardph_neverqh, or a note on what stopped it."""
     try:
         cd = closure_data(cert, tab)
     except NoClosure as e:
@@ -786,10 +866,11 @@ def emit_closure(cert, tab, mid):
 
     b = cd['b']
     n0i, sti, n0f, stf = cd['n0i'], cd['sti'], cd['n0f'], cd['stf']
+    nph, ph0, pv = cd['nph'], cd['ph0'], cd['pv']
     nA, nF = n0i + sti, n0f + stf
     L = [CLOSURE_HEAD % dict(nc=len(cert['arms']),
                              na=len(cd['inter']) + len(cd['fill']),
-                             n0i=n0i, sti=sti, n0f=n0f, stf=stf)]
+                             n0i=n0i, sti=sti, n0f=n0f, stf=stf, nph=nph)]
     el, er = (cd['el'], cd['er'])
     for d, r, _s, c0, c1, ch, ca, cb in cd['inter']:
         L.append(CLOSURE_IARM % dict(
@@ -799,22 +880,24 @@ def emit_closure(cert, tab, mid):
         mid=mid,
         br='\n  '.join('| %d, %d => iarm%d_%d_%s' % (d, r, d, r, mid)
                        for d, r, _s, _0, _1, _c, _a, _b in cd['inter'])))
-    for r, _s, _m1, _m2, fl, fr, fch, fca, fcb in cd['fill']:
+    for r, ph, _s, _m1, _m2, fl, fr, fch, fca, fcb in cd['fill']:
         L.append(CLOSURE_FARM % dict(
-            r=r, mid=mid, lhs=coq_conf(fl), rhs=coq_conf(fr), ca=fca, cb=fcb,
-            ch=coq_chain(fch)))
-    r0 = cd['fill'][0][0]
+            r=r, ph=ph, mid=mid, lhs=coq_conf(fl), rhs=coq_conf(fr), ca=fca,
+            cb=fcb, ch=coq_chain(fch)))
+    r0, p0 = cd['fill'][0][0], cd['fill'][0][1]
     L.append(CLOSURE_FDISP % dict(
-        mid=mid, r0=r0,
-        br='\n  '.join('| %d => farm%d_%s' % (r, r, mid)
-                       for r, *_ in cd['fill']),
-        b1=' '.join('| %d => %d' % (r, m1) for r, _s, m1, *_ in cd['fill']),
-        b2=' '.join('| %d => %d' % (r, m2) for r, _s, _m1, m2, *_
-                    in cd['fill'])))
+        mid=mid, r0=r0, ph0=p0,
+        br='\n  '.join('| %d, %d => farm%d_%d_%s' % (r, ph, r, ph, mid)
+                       for r, ph, *_ in cd['fill']),
+        b1=' '.join('| %d, %d => %d' % (r, ph, m1)
+                    for r, ph, _s, m1, *_ in cd['fill']),
+        b2=' '.join('| %d, %d => %d' % (r, ph, m2)
+                    for r, ph, _s, _m1, m2, *_ in cd['fill'])))
     L.append(CLOSURE_VIS % dict(
-        mid=mid,
-        vb='\n  '.join('| %d, %s => %s' % (r, ST[i], coq_chain_l(cd['vis'][r][i]))
-                       for r, *_ in cd['fill'] for i in cd['want'])))
+        mid=mid, pv=pv,
+        vb='\n  '.join('| %d, %s => %s' % (r, ST[i], coq_chain_l(ch))
+                       for r in sorted(cd['vis'])
+                       for i, ch in sorted(cd['vis'][r].items()))))
 
     def ibranches(body):
         """One brace-delimited branch per (digit, arm index); rest is dead."""
@@ -829,28 +912,90 @@ def emit_closure(cert, tab, mid):
         return ''.join(out)
 
     def fbranches(body):
-        """One per fill arm index; index 0 and anything past the last dead."""
-        return _rbranches(nF, lambda r: (body % dict(r=r, mid=mid)) + '.',
-                          lo=1)
+        """One per (fill arm index, PHASE); index 0 and anything past the last
+        of either is dead."""
+        out = []
+        for r in range(nF):
+            if r < 1:
+                out.append('  destruct r as [|r].\n  { exfalso; lia. }\n')
+                continue
+            pb = []
+            for ph in range(nph):
+                pb.append('    destruct ph as [|ph].\n    { %s. }\n'
+                          % (body % dict(r=r, ph=ph, mid=mid)))
+            out.append('  destruct r as [|r].\n  {\n%s    exfalso; lia.\n  }\n'
+                       % ''.join(pb))
+        return ''.join(out)
+
+    def pharg(body):
+        """A board argument that is quantified over the PHASE: one branch per
+        phase, the rest dead.  At [nph = 1] it is the old one-liner with a
+        [destruct] around it."""
+        out = ['  - intros ph Hph.\n']
+        for _ in range(nph):
+            out.append('    destruct ph as [|ph].\n    { %s. }\n' % body)
+        out.append('    exfalso; lia.\n')
+        return ''.join(out)
 
     L.append(CLOSURE_THM % dict(
-        mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str),
+        mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str), ph0=ph0, nph=nph,
         n0i=n0i, sti=sti, n0f=n0f, stf=stf,
         bsound=ibranches('eapply arm_sound; [exact rules_sound_%(mid)s '
                          '| exact ok_iarm%(d)d_%(r)d_%(mid)s]'),
         bcomp=ibranches('vm_compute; reflexivity'),
         blia=ibranches('vm_compute; lia'),
         fsound=fbranches('eapply arm_sound; [exact rules_sound_%(mid)s '
-                         '| exact ok_farm%(r)d_%(mid)s]'),
+                         '| exact ok_farm%(r)d_%(ph)d_%(mid)s]'),
         fcomp=fbranches('vm_compute; reflexivity'),
         flia=fbranches('vm_compute; lia')))
 
+    # The board's arguments up to [HAfC]; both closers take exactly these.
+    # The five the family's own parameters supply are quantified over the
+    # phase now, so each is one branch per phase rather than one tactic.
+    args = ''.join([
+        '  - vm_compute; lia.\n',                        # Hb
+        '  - vm_compute; reflexivity.\n',                # Hcode
+        '  - vm_compute; reflexivity.\n',                # Hstep
+        pharg('vm_compute; repeat constructor'),          # Hfpre
+        pharg('vm_compute; repeat constructor'),          # Hfsuf
+        pharg('vm_compute; lia'),                         # Hfmid
+        pharg('vm_compute; lia'),                         # Hfs
+        pharg('vm_compute; lia'),                         # Hfto: the CYCLE
+        '  - lia.\n',                                     # Hpv
+        ''.join(['  - intros ph Hph.\n']                  # Hcyc
+                + ['    destruct ph as [|ph].\n'
+                   '    { exists %d; vm_compute; reflexivity. }\n' % k
+                   for k in cd['kcyc']]
+                + ['    exfalso; lia.\n']),
+        '  - exact fm12_%s.\n' % mid,                    # Hfm12
+        '  - repeat constructor.\n',                     # Hbnd0
+        '  - vm_compute; lia.\n',                        # Hlen0
+        '  - lia.\n',                                    # Hph0
+        '  - exact boot_%s.\n' % mid,                    # Hboot
+        '  - lia.\n',                                    # Hsti
+        '  - exact iarm_sound_%s.\n' % mid,
+        '  - exact iarm_lhs_%s.\n' % mid,
+        '  - exact iarm_rhs_%s.\n' % mid,
+        '  - exact iarm_cb_%s.\n' % mid,
+        '  - lia.\n',                                    # Hstf
+        '  - lia.\n',                                    # HN0f
+        '  - exact farm_sound_%s.\n' % mid,
+        '  - exact farm_lhs_%s.\n' % mid,
+        '  - exact farm_rhs_%s.\n' % mid,
+        '  - exact farm_cb_%s.\n' % mid,
+    ])
+
     common = dict(mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str),
-                  n0i=n0i, sti=sti, n0f=n0f, stf=stf,
-                  args=CLOSURE_ARGS % dict(mid=mid))
+                  ph0=ph0, nph=nph, pv=pv,
+                  n0i=n0i, sti=sti, n0f=n0f, stf=stf, args=args)
+    def vbranches(body):
+        """The visit lemma is at ONE phase, so its branches are over the arm
+        index alone -- the shape it had before the phase cycle."""
+        return _rbranches(nF, lambda r: body, lo=1)
+
     if cd['qa'] is None:
         L.append(CLOSURE_NQH % dict(
-            common, fvis=fbranches('destruct q; vm_compute; reflexivity')))
+            common, fvis=vbranches('destruct q; vm_compute; reflexivity.')))
     else:
         qa, sq = ST[cd['qa']], cd['sq']
         av = []
@@ -858,17 +1003,17 @@ def emit_closure(cert, tab, mid):
             av.append(AVOID_ARM % dict(
                 nm='iarm%d_%d' % (d, r), mid=mid, qa=qa,
                 el='(negb (fm_left FAM))', er='(fm_left FAM)'))
-        for r, *_ in cd['fill']:
-            av.append(AVOID_ARM % dict(nm='farm%d' % r, mid=mid, qa=qa,
-                                       el='true', er='true'))
+        for r, ph, *_ in cd['fill']:
+            av.append(AVOID_ARM % dict(nm='farm%d_%d' % (r, ph), mid=mid,
+                                       qa=qa, el='true', er='true'))
         L.append(CLOSURE_QH % dict(
             common, qa=qa, sq=sq, sq1=sq + 1, win=cd['t0'] - sq - 1,
             avarms=''.join(av),
             bav=ibranches('exact av_iarm%(d)d_%(r)d_%(mid)s'),
-            fav=fbranches('exact av_farm%(r)d_%(mid)s'),
-            fvis=fbranches('destruct q; '
+            fav=fbranches('exact av_farm%(r)d_%(ph)d_%(mid)s'),
+            fvis=vbranches('destruct q; '
                            'try (exfalso; apply Hq; reflexivity); '
-                           'vm_compute; reflexivity')))
+                           'vm_compute; reflexivity.')))
     return ''.join(L), cd
 
 
