@@ -1403,6 +1403,205 @@ The cheap guard is the one used here: before building the thing that
 consumes the arms, run the arm builder over the rows and count.  It took one
 script and it changed the order of two sessions' work.
 
+## 4l. Both knobs, on both arms, and then the closer.  Nineteen rows
+
+_Everything below is a file that compiles or a number a script printed.  The
+kernel at `LadderCheck.v`, the boards under `theories/Machines/Ladder/`, the
+audit from `make closeout`.  Coq 8.18.0._
+
+**Verified to the end.**  The full tree builds and `make closeout` runs in
+full:
+
+    closeout_partial : forall tm, Deferred D_census tm ->
+                       boarded tm \/ skipped D_remaining tm
+
+    Eval vm_compute in (List.length CoreRows.remaining_rows)  =  43
+
+axiom footprint `functional_extensionality_dep` only, and
+`census_cache.py --check` MATCH.  The 43 is the kernel's number, not only the
+audit's.
+
+### The gate 4k set, answered: one scheme
+
+4k's gate was that the interior arm and the fill arm must share ONE arm
+index -- one threshold, one stride, one offset, one lemma about
+`n = k + s*j` -- because two parallel indexing schemes is how `fm_pre`
+became a fixed list.  They can:
+
+    astride N0 st r = if r <? N0 then 0 else st
+    aoff    N0 st n = if n <? N0 then n else N0 + (n - N0) mod st
+    acnt    N0 st n = if n <? N0 then 0 else (n - N0) / st
+
+    arm_index    : aoff + astride (aoff) * acnt = n
+    arm_index_lt : aoff < N0 + st
+    arm_index_pos: 0 < N0 -> 0 < n -> 0 < aoff
+
+`Nat.div_mod_eq` and `lia`, as 4k said.  The two classes instantiate it at
+their own `(N0, st)`; nothing else about them is shared and nothing else
+needs to be.  4i's `off = n mod st` is this scheme at `N0 = 0`, and that is
+exactly why it stopped four rows short: an arm whose materialisation offset
+is at or above the stride cannot be a residue, so the small `n` it does not
+reach had no arm at all.
+
+The fill arm gets the same two knobs, which it had neither of.  Its
+threshold is at least 1 -- no width is 0 -- and the fill target's guaranteed
+copies now divide PER ARM INDEX rather than once:
+`fm1 r + fm2 r + |pre| + |suf| = r + f_s`, because the arm at offset `r`
+carries `r` copies of the run on its left-hand side and not one.
+
+### The one thing 4k did not anticipate, and it is a shape and not a count
+
+**With `stride = 0` there is no block for the engine's steps to walk
+AROUND.**  `SWin` moves inside `s_pre`; no chain step carries a cell from
+`s_post` across the block boundary into it -- `srot 0` is the identity.  So
+a flat arm stated as `mkS pre [] 1 0 post` has no chain at ANY depth, and
+the first run of the emitter refused all 21 rows on the flat arm alone.
+
+`blk` is the normalisation: with an empty block the whole side is concrete
+in `s_pre`, and `blk_den` says the denotation is the same either way.  That
+is what keeps it a normalisation of the SHAPE and not a second scheme, and
+it is why 4i's "a separate arm for the residue's own `m = 0`" is one line of
+`cls_side` rather than a second indexing scheme.  Both class sides take
+their block through it.
+
+Worth not rediscovering: the failure mode is a chain search that returns
+`None` instantly at every depth and every stride, which reads like "the
+carry ripple is not affine" and is not.
+
+### The closer, and 4k's order was right
+
+`glue_qh_quietN` is `LapGlueQuiet.glue_qh_quiet` `nat`-indexed with the same
+weak visit premise `glue_neverqhN` already carries, quantified over
+`q <> qa`.  Same proof.  The genuinely new obligation is `AvoidRun tm qa m
+(Cf n)` on the lap, and the bridge to `LapAvoid.srun_avoid_sound` is
+
+    base_chain : list rstep -> option (list lstep)
+    base_chain_run : base_chain l = Some lb ->
+                     rrun tm el er rs l c = srun tm el er lb c
+
+`RuleAvoid` is `RuleSound`'s twin and `arm_avoid` derives it from the SAME
+chain the kernel already replays, under `vm_compute`.  No new certificate
+data.  Every class arm the emitter builds is all-`RB` (4h(c): `RU` is still
+unexercised), and a chain that does invoke a ladder rule projects to `None`
+and the arm is refused -- checkable, not assumed.  `qa = A` on all nine, and
+its last visit is found by simulating the boot window (untrusted) and
+re-checked by `bootvis_chk` / `bootquiet_chk`.
+
+`board_lap` became `board_arm`, parameterised by what the closer wants OF
+the arm it lands on: `board_neverqh` at `RuleSound`, `board_iqh` at
+`RuleSound /\ RuleAvoid`.  Which arm serves a state, at what index and block
+count, and that the configurations either side are that arm's two `cden`s,
+is stated once.
+
+Checked, not recalled: `arm_index`, `blk_den`, `arm_avoid`, `board_arm` and
+`board_lap_avoid` are all **Closed under the global context** -- zero
+axioms, because they are on `csteps`/`cden` and never go through `lift`.
+`glue_qh_quietN` carries `functional_extensionality_dep` and nothing else.
+4h's discipline holds: funext enters only in the final assembly.
+
+**4k's measurement held exactly.**  Over the live core, and it is
+`core61_armshapes.txt` row for row:
+
+| | rows |
+|---|---:|
+| the closure applies to | 21 |
+| **boarded** | **15** |
+| never quasihalts | 6 (2 before, **+4**) |
+| quasihalts | 9 (**all new**) |
+| blocked on the arms | 6 |
+
+and six more `0RB` rows after them, for nineteen boards; see below.
+
+The six that fail are the six the table calls blocked: four with no interior
+chain at any threshold or stride (the two quadratic rows and two undiagnosed
+at 4i), and two with no FILL chain at any threshold, stride or copy split.
+Neither is a gap in the emitter; both are `RULE_LADDER` 5's table row.
+
+`board_ladder.py` reported the last two as "arm205 negative constant on the
+repeated block", which is a note about ONE MINED ARM and not the refusal --
+the trap 4i already recorded and the driver still has.  The refusal is in the
+`.v` file, as always.  Read the file.
+
+### What the number actually did, and one correction to 4k's arithmetic
+
+The thirteen rows above went in first:
+
+    settled by a board       5076 -> 5089   (+13)
+    core undecided             59 -> 52
+    0RB shadows of the core    21 -> 15
+
+4k predicted `59 -> 46` from thirteen rows.  Thirteen rows moved, and all
+thirteen were core rows -- but **core undecided fell by seven, not
+thirteen**, because six `0RB` rows moved the other way: they were shadows OF
+rows now settled by a board, so they need a resolution of their own instead
+of their partner's.  The lesson is small and it is 4g's again: **"core
+undecided" is a bucket, not a count of machines**, and a board that settles a
+core row can promote a shadow into it.  Quote `settled by a board` when the
+claim is about rows decided.
+
+Those six were then the cheapest thing on the list, and they are 4k's
+prediction the rest of the way: they are re-roots of rows just boarded, so
+their orbit is known to have a ladder reading, and they had never been swept
+because they had never been in the core.  Six `valfam` rows (~25 s each,
+alongside a build, which is the one contention the sweep rule permits) and
+all six close at `live = ABCD`, board at threshold 0 / stride 1 interior and
+threshold 1 / stride 1 fill, and compile:
+
+    settled by a board       5089 -> 5095   (+6)
+    core undecided             52 -> 46
+    0RB shadows of the core    15 -> 15
+
+so 4k's `59 -> 46` is reached, by a different route than 4k drew and with
+nineteen boards rather than thirteen.
+
+### And then the decay 4k warned about, measured
+
+4k's prompt said it plainly: *"the wave route is working the same population
+concurrently -- a candidate that sits unboarded decays."*  It did.  While
+this session ran, PR #91 boarded **nine of these nineteen rows** by the
+three-state ternary-counter route: every `1RB---` row here is also a
+`KS_`/`KA_`/`T3_` board on `main`, and both prove the same `iqh` triple.
+Merging, on top of `main`:
+
+    remaining (core + shadows)   68 -> 58
+    core undecided               47 -> 43
+    0RB shadows of the core      21 -> 15
+
+**Ten rows net, not nineteen** -- the four `1RB1L*` never-quasihalters the
+two knobs unlocked (4i's predicted four, exactly), and the six `0RB` rows.
+The nine quasihalters are now double-covered.
+
+That is not an argument against the closer: `board_iqh` is a general
+mechanism over the same `Fam` record and the same arms, and it will take the
+next quasihalting row the ladder reaches without any new theorem.  It IS an
+argument about ORDER, and it sharpens 4k's rule rather than contradicting
+it.  4k said: measure the arms before building the thing that consumes them.
+The measurement it did not do is the cheap one next to it -- **check what the
+concurrent route has already boarded before spending a session on a bucket**,
+because "eleven rows need the quasihalt closer" was a statement about this
+repository at one instant and two of those instants were four days apart.
+`tools/closeout/core_rows.txt` on `origin/main` answers it in one diff.
+
+### Where the 43 stop now
+
+| | rows | |
+|---|---:|---|
+| no value family PROBED AT ALL | 15 | `docs/LADDER_NOFAM.md`; PR #90 reads 13 of 15 |
+| families found, none closed | 11 | mechanical: coverage or differential |
+| closed, `live = ABCD`, gray | 6 | needs the `(gray, 2)` `ClassSucc` |
+| time cap | 4 | |
+| closed, binary/step-1/one-phase, ARMS BLOCKED | 4 | the count language, not the emitter |
+| closed, two phases | 3 | needs the phase cycle in `Inv` |
+
+**There is no binary/step-1/one-phase row left that the closure can state.**
+The fifteen that had both arms are boarded; the six that do not are
+`RULE_LADDER` 5's table row, not a gap in the emitter.  The next session's
+job is therefore a bucket it has not touched, and 4k's guard applies to each
+of them before anything is built: run the arm builder over the gray six and
+the two-phase three FIRST and count.  `closure_data` refuses both at their
+first lines, so the probe is two lines commented out, and the answer decides
+whether `(gray, 2)`'s `ClassSucc` is worth six rows or zero.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
@@ -1415,3 +1614,4 @@ script and it changed the order of two sessions' work.
 * NOT a bigger RepWL/n-gram sweep — `COUNTER_CLOSEOUT.md` §0: finitization
   itself is the bottleneck, 706/708 NOCLOSE, and a richer measure vocabulary
   cannot help.
+
