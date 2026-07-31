@@ -54,7 +54,7 @@
     and only in the final assembly.  The class lemmas and the lap are on
     [csteps]/[cden] and are Closed under the global context. *)
 
-From Coq Require Import Arith Lia Bool List.
+From Coq Require Import Arith Lia Bool List PArith.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Counters Require Import WTape.
 From BBB4.Checkers Require Import LapDecider LadderKernel LadderFam.
@@ -594,3 +594,181 @@ Proof.
   - injection H as <-. split; [left; reflexivity | apply sconf_eqb_eq; exact E].
   - destruct (IH lhs a H) as [Hin Hl]. split; [right; exact Hin | exact Hl].
 Qed.
+
+(** ** 7. The closure: what a board supplies, and what it gets
+
+    Everything a board hands in is either a [RuleSound] the Stage-B kernel
+    already discharged ([LadderKernel.arm_sound]), or an equation between
+    two CONCRETE terms that [vm_compute] closes.  The counter's four
+    parameters -- code, step, fill law, terminator -- are read off the
+    [Fam] record, so a family with a different successor is a different
+    record and not a different theorem.
+
+    Two arms carry the whole lap: an INTERIOR arm per non-top digit, and
+    the FILL arm.  That is not a coincidence of this row -- it is the case
+    split of [digs_decomp], and the emitted certificate's dozen arms are
+    specialisations of these two at pinned run lengths. *)
+
+Section Board.
+
+Variable tm    : TM.
+Variable F     : Fam.
+Variable Aint  : nat -> LRule.      (** the interior arm for digit [d] *)
+Variable Afill : LRule.             (** the arm that sees the counter's end *)
+Variable vis   : St -> list lstep.  (** a chain to each state, from the fill *)
+Variable ds0   : list nat.          (** the boot digit string *)
+Variable t0    : nat.               (** and how many steps reach it *)
+
+(** *** The family's parameters *)
+Hypothesis Hb    : 1 < fm_b F.
+Hypothesis Hcode : fm_code F = Binary.
+Hypothesis Hstep : fm_step F = 1.
+Hypothesis Hfpre : f_pre (fam_fill F 0) = [].
+Hypothesis Hfsuf : f_suf (fam_fill F 0) = [].
+Hypothesis Hfmid : f_mid (fam_fill F 0) < fm_b F.
+Hypothesis Hfs   : 0 < f_s (fam_fill F 0).
+Hypothesis Hfto  : f_to (fam_fill F 0) = 0.
+
+(** *** The boot *)
+Hypothesis Hbnd0 : Forall (fun d => d < fm_b F) ds0.
+Hypothesis Hlen0 : 0 < length ds0.
+Hypothesis Hboot : csteps tm t0 CTape.c0 = Some (fam_cfg F (ds0, 0, 0)).
+
+(** *** The interior arms, one per digit below the top *)
+Hypothesis HAiS : forall d, d < fm_b F - 1 ->
+  RuleSound tm (negb (fm_left F)) (fm_left F) (Aint d).
+Hypothesis HAiL : forall d, d < fm_b F - 1 ->
+  lr_lhs (Aint d) = cls_conf F (cls_side F (fm_b F - 1) [d]).
+Hypothesis HAiR : forall d, d < fm_b F - 1 ->
+  lr_rhs (Aint d) = cls_conf F (cls_side F 0 [S d]).
+Hypothesis HAiC : forall d, d < fm_b F - 1 -> 0 < lr_cb (Aint d).
+
+(** *** The fill arm, at both tails known empty *)
+Hypothesis HAfS : RuleSound tm true true Afill.
+Hypothesis HAfL : lr_lhs Afill = cls_conf F (run_side F (fm_b F - 1) 1 0 0).
+Hypothesis HAfR : lr_rhs Afill
+  = cls_conf F (run_side F (f_mid (fam_fill F 0)) 1 (f_s (fam_fill F 0)) 0).
+Hypothesis HAfC : 0 < lr_cb Afill.
+
+(** *** Liveness: every state is reached from the fill's anchor *)
+Hypothesis Hvisit : forall q,
+  srun_st tm true true (vis q) (lr_lhs Afill) = Some q.
+
+Let s0 : CtrSt := (ds0, 0, 0).
+
+Definition CfB (n : nat) : cconf :=
+  match fam_iter F s0 n with
+  | Some s => fam_cfg F s
+  | None => CTape.c0
+  end.
+
+Lemma inv0 : Inv F s0.
+Proof. simpl. repeat split; assumption. Qed.
+
+(** The cells of a top-of-width string, as the fill arm's left-hand side. *)
+Lemma cells_top : forall k, 0 < k ->
+  fam_cells F (repeat (fm_b F - 1) k) 0
+    = sden [] (k - 1) (run_side F (fm_b F - 1) 1 0 0).
+Proof.
+  intros k Hk. rewrite <- (fam_cells_run F (fm_b F - 1) 1 (k - 1) 0 0).
+  f_equal. f_equal. lia.
+Qed.
+
+(** ...and of what the fill law puts there, as its right-hand side. *)
+Lemma cells_filled : forall k, 0 < k ->
+  fam_cells F (repeat (f_mid (fam_fill F 0)) (k + f_s (fam_fill F 0))) 0
+    = sden [] (k - 1)
+        (run_side F (f_mid (fam_fill F 0)) 1 (f_s (fam_fill F 0)) 0).
+Proof.
+  intros k Hk.
+  rewrite <- (fam_cells_run F (f_mid (fam_fill F 0)) 1 (k - 1)
+                (f_s (fam_fill F 0)) 0).
+  f_equal. f_equal. lia.
+Qed.
+
+(** The lap, by the case split: a state is at the top of its width, where
+    the fill arm applies, or it is not, where an interior arm does. *)
+Lemma board_lap : forall s, Inv F s ->
+  exists s' m, fam_succ F s = Some s' /\ 0 < m /\
+               csteps tm m (fam_cfg F s) = Some (fam_cfg F s').
+Proof.
+  intros [[ds p] ph] Hi. destruct Hi as (Hbnd & Hlen & ->).
+  destruct (digs_decomp (fm_b F - 1) ds) as [Htop | (n & d & rest & -> & Hd)].
+  - (* the top of a width: the FILL arm *)
+    assert (Hist : fam_is_top F ds = true).
+    { rewrite Htop at 1. apply pos1_is_top; assumption. }
+    exists (repeat (f_mid (fam_fill F 0)) (length ds + f_s (fam_fill F 0)), p, 0).
+    exists (lr_ca Afill * (length ds - 1) + lr_cb Afill).
+    split; [|split].
+    + unfold fam_succ. rewrite (fill_at_top F Hfpre Hfsuf ds Hist), Hist, Hfto.
+      reflexivity.
+    + nia.
+    + apply (lap_from_arm tm F Afill true true [] (length ds - 1)
+               (run_side F (fm_b F - 1) 1 0 0)
+               (run_side F (f_mid (fam_fill F 0)) 1 (f_s (fam_fill F 0)) 0));
+        try assumption.
+      * intros _; apply tailL_nil.
+      * intros _; apply tailR_nil.
+      * rewrite Htop at 1. apply cells_top. exact Hlen.
+      * apply cells_filled. exact Hlen.
+  - (* not the top: an INTERIOR arm, for the digit that is not the top one *)
+    apply Forall_app in Hbnd as [Hrun Hrest'].
+    inversion Hrest' as [|? ? Hdb Hrest]; subst.
+    assert (Hdlt : d < fm_b F - 1) by lia.
+    exists (repeat 0 n ++ S d :: rest, p, 0).
+    exists (lr_ca (Aint d) * n + lr_cb (Aint d)).
+    split; [|split].
+    + assert (Hns : fam_next F (repeat (fm_b F - 1) n ++ d :: rest) 0
+                    = Some (repeat 0 n ++ S d :: rest))
+        by exact (pos1_class_succ F d Hb Hcode Hstep Hdlt n rest 0 Hrest).
+      unfold fam_succ. rewrite Hns.
+      destruct (fam_is_top F (repeat (fm_b F - 1) n ++ d :: rest));
+        [rewrite Hfto|]; reflexivity.
+    + pose proof (HAiC d Hdlt). nia.
+    + apply (lap_from_arm tm F (Aint d) (negb (fm_left F)) (fm_left F)
+               (cls_tail F rest 0) n
+               (cls_side F (fm_b F - 1) [d]) (cls_side F 0 [S d]));
+        try (apply HAiS || apply HAiL || apply HAiR); try assumption.
+      * intros He. unfold tailL. destruct (fm_left F); [discriminate|reflexivity].
+      * intros He. unfold tailR. rewrite He. reflexivity.
+      * apply (fam_cells_class F (fm_b F - 1) n [d] rest 0).
+      * apply (fam_cells_class F 0 n [S d] rest 0).
+Qed.
+
+Theorem board_neverqh : NeverQuasiHaltsSt tm.
+Proof.
+  apply (glue_neverqhN tm CfB).
+  - (* boot *)
+    exists t0. unfold CfB; simpl.
+    rewrite <- lift_c0. apply csteps_lift. exact Hboot.
+  - (* lap *)
+    intros n.
+    destruct (fam_iter_total F Hb Hcode Hstep Hfpre Hfsuf Hfmid Hfs Hfto
+                n s0 inv0) as (s & Hit & Hi).
+    destruct (board_lap s Hi) as (s' & m & Hsucc & Hm & Hrun).
+    exists m, (fam_cfg F s'). unfold CfB. rewrite Hit.
+    split; [exact Hrun | split; [|exact Hm]].
+    replace (S n) with (n + 1) by lia.
+    rewrite fam_iter_add, Hit. simpl. rewrite Hsucc. reflexivity.
+  - (* visits: at every top, and the tops are cofinal *)
+    intros q N.
+    destruct (tops_cofinal F Hb Hcode Hstep Hfpre Hfsuf Hfmid Hfs Hfto s0 N
+                inv0) as (n & s' & HN & Hit & Htop & Hi').
+    exists n.
+    destruct s' as [[ds' p'] ph']. simpl in Htop.
+    destruct Hi' as (Hbnd' & Hlen' & ->).
+    assert (Hsh : ds' = repeat (fm_b F - 1) (length ds'))
+      by (apply pos1_top_shape; assumption).
+    assert (Hden : CfB n = cden [] [] (length ds' - 1) (lr_lhs Afill)).
+    { unfold CfB. rewrite Hit, HAfL.
+      rewrite <- (cden_cls_conf F (run_side F (fm_b F - 1) 1 0 0) []
+                    (length ds' - 1) ds' p' 0).
+      - unfold tailL, tailR; destruct (fm_left F); reflexivity.
+      - rewrite Hsh at 1. apply cells_top. exact Hlen'. }
+    destruct (vis_of_run tm (fun _ => CfB n) true true (vis q) (lr_lhs Afill)
+                1%positive (length ds' - 1) [] [] q (Hvisit q)
+                (fun _ => eq_refl) (fun _ => eq_refl) Hden) as (k & c & Hc & Hq).
+    exists k, c. split; [exact HN | split; [exact Hc | exact Hq]].
+Qed.
+
+End Board.

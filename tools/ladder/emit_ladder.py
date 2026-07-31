@@ -176,7 +176,7 @@ HEADER = '''(** * LDR_%(mid)s: machine %(spec)s, boarded by the STAGE-B LADDER.
 From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Counters Require Import WTape.
-From BBB4.Checkers Require Import LapDecider LadderKernel LadderFam.
+From BBB4.Checkers Require Import LapDecider LadderKernel LadderFam LadderCheck.
 Import ListNotations.
 
 Definition mk_%(mid)s (w : Sym) (d : Dir) (n : St) : option Trans :=
@@ -189,6 +189,290 @@ Definition tm_%(mid)s : TM := fun q s => match q, s with
   end.
 Local Notation tm := tm_%(mid)s.
 '''
+
+
+# ------------------------------------------------------------- the closure --
+
+class NoClosure(Exception):
+    pass
+
+
+def coq_chain_l(chain):
+    """A chain of BASE steps only, for [srun_st] (no [rstep] wrapper)."""
+    return clist(chain, coq_lstep)
+
+
+def closure_data(cert, tab):
+    """The two CLASS arms, the boot and the per-state visits, or NoClosure.
+
+    LADDER_PLAN 4h(a): coverage reduces to a finite case split -- every
+    digit string is t^n ++ d :: rest with d <> t, or t^k.  The arms that
+    serve those two classes are not the mined arms the certificate carries:
+    those are the same rules with every run length but one pinned to its
+    lower bound.  Here they are built from the FAMILY, so there is one
+    interior arm per digit below the top and one fill arm, whatever the
+    certificate happened to emit.
+
+    The fill arm is the one that must see the end of the counter, so its
+    guaranteed block copy is materialised into s_pre (4h) -- without that
+    it has no chain at all.
+    """
+    fam = cert['family']
+    fills = cert.get('fill_by_phase') or [cert['fill']]
+    if fam.get('code') != 'binary':
+        raise NoClosure('code %s: LadderCheck states (Binary, 1) only'
+                        % fam.get('code'))
+    if fam.get('value_step_per_anchor_visit', 1) != 1:
+        raise NoClosure('step %d: LadderCheck states (Binary, 1) only'
+                        % fam.get('value_step_per_anchor_visit', 1))
+    if len(fills) != 1:
+        raise NoClosure('%d phases: the closure pins the phase at 0'
+                        % len(fills))
+    f = fills[0]
+    if f['target_prefix'] or f['target_suffix']:
+        raise NoClosure('fill law is not a pure widening')
+    if f['widens_by'] < 1 or f['lands_in_phase'] != 0:
+        raise NoClosure('fill law does not land back in phase 0')
+    b = fam['base']
+    if b < 2:
+        raise NoClosure('base %d' % b)
+
+    digs = [tuple(w) for w in fam['digits']]
+    pre = tuple(fam['near_head_prefix'])
+    tail0 = tuple((fam.get('terminators_by_phase') or [fam['terminator']])[0])
+    other = tuple(fam['other_side_cells'])
+    q = ord(fam['state']) - 65
+    hs = fam['head']
+    left = fam['side'] == 'L'
+    mid = f['target_fill_digit']
+    OTHER = (other, (), 0, 0, ())
+
+    def conf(sd):
+        return (q, sd, hs, OTHER) if left else (q, OTHER, hs, sd)
+
+    def derive(el, er, c0, c1, what):
+        ch = LC.derive_chain(tab, el, er, c0, c1, maxdepth=32, nmax=120,
+                             lift=True)
+        if ch is None:
+            raise NoClosure('%s: no chain' % what)
+        got = LC.srun(tab, el, er, ch, c0)
+        if got is None or got[0] != c1:
+            raise NoClosure('%s: chain lands off the rhs' % what)
+        if got[2] == 0:
+            raise NoClosure('%s: zero-step rule' % what)
+        return ch, got[1], got[2]
+
+    # the interior class arms: t^n ++ d :: rest  ->  0^n ++ (d+1) :: rest
+    inter = []
+    for d in range(b - 1):
+        c0 = conf((pre, digs[b - 1], 1, 0, digs[d]))
+        c1 = conf((pre, digs[0], 1, 0, digs[d + 1]))
+        el, er = (not left), left
+        ch, ca, cb = derive(el, er, c0, c1, 'interior arm d=%d' % d)
+        inter.append((d, c0, c1, ch, ca, cb, el, er))
+
+    # the fill arm: t^(1+n) -> mid^(1+n+s), both tails known empty
+    fl = conf((pre + digs[b - 1], digs[b - 1], 1, 0, tail0))
+    fr = conf((pre + digs[mid], digs[mid], 1, 0,
+               digs[mid] * f['widens_by'] + tail0))
+    fch, fca, fcb = derive(True, True, fl, fr, 'fill arm')
+
+    # the boot, and a chain to every state from the fill's anchor
+    boot = cert['boot']
+    ds0 = list(boot['digits_lsb_first'])
+    cells = list(pre)
+    for d in ds0:
+        cells.extend(digs[d])
+    cells.extend(tail0)
+    if cells != list(boot['cells']):
+        raise NoClosure('boot cells %r are not the family at %r'
+                        % (boot['cells'], ds0))
+    if not ds0:
+        raise NoClosure('boot digit string is empty')
+
+    vis, cand = {}, []
+    for n in range(0, 25):
+        cand.append([('SWin', n)])
+    for k in range(0, 20):
+        cand.append(fch[:3] + [('SWinL', k)])
+        for m in range(0, 6):
+            cand.append(fch[:3] + [('SWinL', k), ('SWin', m)])
+    for ch in cand:
+        r = LC.srun(tab, True, True, ch, fl)
+        if r:
+            vis.setdefault(r[0][0], ch)
+    missing = [ST[i] for i in range(4) if i not in vis]
+    if missing:
+        raise NoClosure('no chain from the fill anchor to %s'
+                        % ','.join(missing))
+
+    return dict(b=b, inter=inter, fill=(fl, fr, fch, fca, fcb),
+                ds0=ds0, t0=boot['steps_from_blank'], vis=vis)
+
+
+CLOSURE_NONE = '''
+(** ** The closure: NOT BUILT for this row -- %s
+
+    The board above still proves every rule the certificate carries; what
+    is missing is the machine-level theorem.  LADDER_PLAN 4h(a) names the
+    condition: [LadderCheck] states the class-successor lemma for
+    [(Binary, 1)] only, so a family with another code or another step needs
+    its own instance of [ClassSucc] before this section can be emitted. *)
+'''
+
+CLOSURE_HEAD = '''
+(** ** The closure: from the RULES to [NeverQuasiHaltsSt]
+
+    The arms below are the case split of [LadderCheck.digs_decomp], built
+    from the FAMILY rather than mined: an interior arm per digit below the
+    top, and the fill arm.  Every certificate arm above is one of these
+    with its run lengths pinned to their lower bounds, which is why %d of
+    them collapse to %d here.
+
+    [board_neverqh] consumes them, the boot, and one chain per state, and
+    returns the machine-level theorem. *)
+'''
+
+CLOSURE_IARM = '''Definition iarm%(d)d_%(mid)s : LRule :=
+  mkLRule (%(lhs)s)
+          (%(rhs)s) %(ca)d %(cb)d.
+Definition ch_iarm%(d)d_%(mid)s : list rstep := %(ch)s.
+Lemma ok_iarm%(d)d_%(mid)s :
+  check_arm tm %(el)s %(er)s rules iarm%(d)d_%(mid)s ch_iarm%(d)d_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+'''
+
+CLOSURE_IDISP = '''Definition iarm_%(mid)s (d : nat) : LRule :=
+  match d with
+  %(br)s
+  | _ => iarm0_%(mid)s   (* unreachable: the closure asks only d < b - 1 *)
+  end.
+
+'''
+
+CLOSURE_FARM = '''(** The fill arm.  Both tails are known empty -- it is the only arm that
+    sees the end of the counter -- and its guaranteed block copy is
+    materialised into [s_pre], without which it has no chain at all. *)
+Definition farm_%(mid)s : LRule :=
+  mkLRule (%(lhs)s)
+          (%(rhs)s) %(ca)d %(cb)d.
+Definition ch_farm_%(mid)s : list rstep := %(ch)s.
+Lemma ok_farm_%(mid)s :
+  check_arm tm true true rules farm_%(mid)s ch_farm_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+'''
+
+CLOSURE_VIS = '''(** One chain per state, from the fill's anchor.  [vis_of_run] turns each
+    into a visit, and [tops_cofinal] says those anchors keep coming. *)
+Definition vis_%(mid)s (q : St) : list lstep :=
+  match q with
+  %(vb)s
+  end.
+
+'''
+
+CLOSURE_THM = '''Lemma iarm_sound_%(mid)s : forall d, d < fm_b FAM - 1 ->
+  RuleSound tm (negb (fm_left FAM)) (fm_left FAM) (iarm_%(mid)s d).
+Proof.
+  intros d Hd. vm_compute in Hd.
+%(bsound)s  exfalso; lia.
+Qed.
+
+Lemma iarm_lhs_%(mid)s : forall d, d < fm_b FAM - 1 ->
+  lr_lhs (iarm_%(mid)s d) = cls_conf FAM (cls_side FAM (fm_b FAM - 1) [d]).
+Proof.
+  intros d Hd. vm_compute in Hd.
+%(bcomp)s  exfalso; lia.
+Qed.
+
+Lemma iarm_rhs_%(mid)s : forall d, d < fm_b FAM - 1 ->
+  lr_rhs (iarm_%(mid)s d) = cls_conf FAM (cls_side FAM 0 [S d]).
+Proof.
+  intros d Hd. vm_compute in Hd.
+%(bcomp)s  exfalso; lia.
+Qed.
+
+Lemma iarm_cb_%(mid)s : forall d, d < fm_b FAM - 1 ->
+  0 < lr_cb (iarm_%(mid)s d).
+Proof.
+  intros d Hd. vm_compute in Hd.
+%(blia)s  exfalso; lia.
+Qed.
+
+Lemma farm_sound_%(mid)s : RuleSound tm true true farm_%(mid)s.
+Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_farm_%(mid)s]. Qed.
+
+Lemma boot_%(mid)s : csteps tm %(t0)d c0 = Some (fam_cfg FAM (%(ds0)s, 0, 0)).
+Proof. vm_compute. reflexivity. Qed.
+
+(** The machine-level theorem.  Every argument is either a [RuleSound] the
+    Stage-B kernel discharged, or an equation two [vm_compute]s decide. *)
+Theorem nqh_%(mid)s : NeverQuasiHaltsSt tm.
+Proof.
+  apply (board_neverqh tm FAM iarm_%(mid)s farm_%(mid)s vis_%(mid)s
+                       %(ds0)s %(t0)d).
+  - vm_compute; lia.
+  - vm_compute; reflexivity.
+  - vm_compute; reflexivity.
+  - vm_compute; reflexivity.
+  - vm_compute; reflexivity.
+  - vm_compute; lia.
+  - vm_compute; lia.
+  - vm_compute; reflexivity.
+  - repeat constructor.
+  - vm_compute; lia.
+  - exact boot_%(mid)s.
+  - exact iarm_sound_%(mid)s.
+  - exact iarm_lhs_%(mid)s.
+  - exact iarm_rhs_%(mid)s.
+  - exact iarm_cb_%(mid)s.
+  - exact farm_sound_%(mid)s.
+  - vm_compute; reflexivity.
+  - vm_compute; reflexivity.
+  - vm_compute; lia.
+  - intros q; destruct q; vm_compute; reflexivity.
+Qed.
+'''
+
+
+def emit_closure(cert, tab, mid):
+    """The Coq for LadderCheck.board_neverqh, or a note on what stopped it."""
+    try:
+        cd = closure_data(cert, tab)
+    except NoClosure as e:
+        return CLOSURE_NONE % e, None
+
+    b = cd['b']
+    L = [CLOSURE_HEAD % (len(cert['arms']), b)]
+    for d, c0, c1, ch, ca, cb, el, er in cd['inter']:
+        L.append(CLOSURE_IARM % dict(
+            d=d, mid=mid, lhs=coq_conf(c0), rhs=coq_conf(c1), ca=ca, cb=cb,
+            ch=coq_chain(ch), el=str(el).lower(), er=str(er).lower()))
+    L.append(CLOSURE_IDISP % dict(
+        mid=mid,
+        br='\n  '.join('| %d => iarm%d_%s' % (d, d, mid)
+                       for d, _, _, _, _, _, _, _ in cd['inter'])))
+    fl, fr, fch, fca, fcb = cd['fill']
+    L.append(CLOSURE_FARM % dict(
+        mid=mid, lhs=coq_conf(fl), rhs=coq_conf(fr), ca=fca, cb=fcb,
+        ch=coq_chain(fch)))
+    L.append(CLOSURE_VIS % dict(
+        mid=mid,
+        vb='\n  '.join('| %s => %s' % (ST[i], coq_chain_l(cd['vis'][i]))
+                       for i in range(4))))
+    def branches(body):
+        return ''.join(
+            '  destruct d as [|d]; [%s|].\n' % (body % dict(d=d, mid=mid))
+            for d in range(b - 1))
+    L.append(CLOSURE_THM % dict(
+        mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str),
+        bsound=branches('eapply arm_sound; '
+                        '[exact rules_sound_%(mid)s | exact ok_iarm%(d)d_%(mid)s]'),
+        bcomp=branches('vm_compute; reflexivity'),
+        blia=branches('vm_compute; lia')))
+    return ''.join(L), cd
 
 
 def emit(cert, out):
@@ -277,8 +561,11 @@ Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_%(nm)s_%(mid)s]. 
     right-hand side in exactly the certificate's step count. *)
 ''' % dict(ng=len(good), nt=len(cert['arms'])))
 
+    closure, cd = emit_closure(cert, tab, mid)
+    L.append(closure)
+
     open(out, 'w').write(''.join(L))
-    return good, bad
+    return good, bad, cd
 
 
 def main():
@@ -293,9 +580,11 @@ def main():
         HERE, '..', '..', 'theories', 'Machines', 'Ladder',
         'LDR_%s.v' % mach_id(cert['spec']))
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
-    good, bad = emit(cert, out)
-    print('%s: %d arms boarded, %d without a chain' % (out, len(good),
-                                                       len(bad)))
+    good, bad, cd = emit(cert, out)
+    print('%s: %d arms boarded, %d without a chain, closure %s'
+          % (out, len(good), len(bad),
+             'BUILT (%d interior + 1 fill)' % len(cd['inter']) if cd
+             else 'not built'))
     for nm, e in bad:
         print('  %-8s %s' % (nm, e))
     return 0
