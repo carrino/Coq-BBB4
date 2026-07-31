@@ -3957,10 +3957,15 @@ traps._
   `theories/Machines/IRules_Batch_*.v` are ~16 CPU-minutes EACH at the very
   end, so the last quarter looks stalled and is not.  A single `valfam.py`
   row (~25 s) alongside a build is fine; the 61-row sweep is not.
-- **`IRules_Batch_*` OOM-kill each other at `-j3`** on the 15 GB box —
-  "Killed", `Error 137`.  The sources are a few KB; the `vm_compute` is not.
-  Build those nine SERIALLY and the rest at `-j3`.  A `-j3` run that lands
-  three of them together throws away ~40 minutes.
+- **`IRules_Batch_*` peak at 8.2 GB EACH** — measured, `IRules_Batch_02`
+  alone: `rc=0 peak_MB=8172`.  The sources are a few KB; the `vm_compute` is
+  not.  On the 15 GB box two concurrently is already over, so any `make -jN`
+  that schedules two together gets `Killed` / `Error 137` and throws the work
+  away.  Build the nine SERIALLY with nothing else running, then the rest at
+  `-j2`.  They are NOT optional: `Closeout.vo` needs them transitively via
+  `CB_*` -> `ListCStage3/*` -> `Census/Proven_06` -> `IRules_Batch_*`, and CI
+  never exercises that path (it builds `CloseoutKit.vo`, two example files
+  and a dry run of `make all`).
 - **`board_ladder.py` rewrites `_CoqProject` under a running `make` and the
   build then LIES**: `Makefile.coq` is generated from `_CoqProject`, so
   changing it mid-build invalidates the makefile and `make` can exit 0 with
