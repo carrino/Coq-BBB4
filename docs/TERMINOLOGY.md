@@ -128,8 +128,8 @@ signal it is aimed wrong.
 
 `python3 tools/closeout/audit.py` is the live scoreboard, and
 [issue #61](https://github.com/carrino/Coq-BBB4/issues/61) tracks it wave
-by wave.  As of 2026-07-31: **5,088 of the frozen 5,156 settled (98.7%)**,
-leaving **47 undecided core machines + 21 0RB shadows**.
+by wave.  As of 2026-07-31: **5,098 of the frozen 5,156 settled (98.9%)**,
+leaving **43 undecided core machines + 15 0RB shadows**.
 
 Two vocabulary corrections, because the situation changed under older
 notes in this tree:
@@ -271,9 +271,12 @@ i.e. not as exact as the halting result implied.
   the carry index — and, the load-bearing discipline, reads its parameters
   (fill law, terminator, code, step) OFF the machine instead of assuming
   them.  Every assumption it replaced with a measurement moved rows.  It
-  boarded its first machines in Stage B; boards emitted but still awaiting
-  their `ClassSucc` instance are listed in `tools/coqproject_exempt.txt`
-  rather than left to rot.
+  boarded its first machines in Stage B, and wave 4l made it the main
+  producer: ONE arm-indexing scheme shared by the interior and fill arms,
+  plus `LapGlueQuiet`'s closer ported to the `nat` index, so a ladder board
+  can certify QUASIHALTING and not only never-quasihalting.  Boards that
+  still stop at a single refused arm are listed in
+  `tools/coqproject_exempt.txt` rather than left to rot.
 
 ## Pointers
 - `docs/CLAIMS.md` — what is proved, exactly, including what is not.  If

@@ -58,6 +58,23 @@ def main():
 
     ghosts = sorted(p for p in listed if not os.path.exists(p))
 
+    # An exemption that has outlived its reason is the same drift in the other
+    # direction: a row's board finishes, moves into _CoqProject, and the line
+    # here stays behind claiming it is unbuilt.  A literal exempt path that is
+    # ALSO listed, or any pattern matching nothing on disk, is stale.
+    on_disk_set = set(on_disk)
+    stale = []
+    for pat in exempt:
+        if not any(c in pat for c in '*?['):
+            if pat in listed:
+                stale.append((pat, 'also in _CoqProject -- the file is built'))
+                continue
+            if pat not in on_disk_set:
+                stale.append((pat, 'no such file'))
+                continue
+        elif not any(fnmatch.fnmatch(p, pat) for p in on_disk):
+            stale.append((pat, 'matches nothing under theories/'))
+
     ok = True
     if unwired:
         ok = False
@@ -72,10 +89,19 @@ def main():
         print('GHOSTS: %d path(s) in _CoqProject do not exist:' % len(ghosts))
         for p in ghosts:
             print('  ', p)
+    if stale:
+        ok = False
+        print('STALE EXEMPTIONS: %d line(s) in tools/coqproject_exempt.txt no '
+              'longer describe anything:' % len(stale))
+        for pat, why in stale:
+            print('   %s  (%s)' % (pat, why))
+        print('Delete the line -- an exemption is a claim about a file that is '
+              'deliberately unbuilt.')
 
     if ok:
         print('COQPROJECT CHECK: OK (%d listed, %d exempt-matched, 0 unwired, '
-              '0 ghosts)' % (len(listed), len(on_disk) - len(listed)))
+              '0 ghosts, 0 stale exemptions)'
+              % (len(listed), len(on_disk) - len(listed)))
     return 0 if ok else 1
 
 

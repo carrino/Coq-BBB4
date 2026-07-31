@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**68 rows as of this commit — 47 distinct core machines + 21 0RB
+_**58 rows as of this commit — 43 distinct core machines + 15 0RB
 re-root shadows that fall with them.**  The count moves every wave, so
 treat the row files as the authority and this prose as a snapshot.  With
 tower #20 boarded on 2026-07-28 the (4,2) HOLDOUT list is closed, so this
@@ -90,10 +90,10 @@ lists partition `core_rows.txt` exactly):
 
 | n | furthest gate today | | n | furthest gate today |
 |--:|---|---|--:|---|
-| 40 | no interior `j = S j'` chain | | 2 | no inner family at `pow2 j` |
-| 10 | no gap-free two-form family | | 2 | no inner interior chain |
-| 5 | register step does not close | | 1 | no visit witness (StA) |
-| 4 | no interior `j = 0` chain | | 1 | no boot chain |
+| 23 | no interior `j = S j'` chain | | 2 | no inner interior chain |
+| 10 | no gap-free two-form family | | 1 | no boot chain |
+| 4 | register step does not close | | 1 | no interior `j = 0` chain |
+| 2 | no inner family at `pow2 j` | | | |
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
@@ -101,7 +101,6 @@ lists partition `core_rows.txt` exactly):
 | `HIGHER`/`HIGHER` | 12 | 12 no interior chain |
 | `QUAD`/`QUAD` | 4 | 4 no interior chain |
 | `EXP4`/`EXP4` | 4 | 4 no interior chain |
-| `PARITY-AFFINE` | 4 | 4 no interior chain |
 | `EXP3`/`EXP3` | 3 | 3 no interior chain |
 | `AFFINE`/`EXP2` | 2 | 1 no boot chain, 1 no inner family |
 | `AFFINE`/`HIGHER` | 2 | 1 no boot chain, 1 no inner interior chain |
@@ -109,11 +108,11 @@ lists partition `core_rows.txt` exactly):
 
 **What that table now says, and it is the shape of the endgame:** the
 residue has inverted.  It used to be dominated by `AFFINE` machines our
-emitter could not frame; **27 of the 47 are now NON-AFFINE on both
-branches** (`HIGHER`, `EXP3`, `EXP4`, `QUAD`, `PARITY-AFFINE`) — shapes
-whose lap cost the certificate language cannot write as `a*j + b` at all —
-plus 15 whose tape never decodes as a counter under any alphabet.  Only 5
-rows are affine on both branches.  The easy framings are spent.  What is
+emitter could not frame; **23 of the 43 are now NON-AFFINE on both
+branches** (`HIGHER` 12, `QUAD` 4, `EXP4` 4, `EXP3` 3) — shapes whose lap
+cost the certificate language cannot write as `a*j + b` at all — plus 15
+whose tape never decodes as a counter under any alphabet.  Only 5 rows are
+affine on at least one branch.  The easy framings are spent.  What is
 left wants either a closer that never needs the cost (`LapGlue`'s lap
 obligation is an EXISTENTIAL over step counts, which is how the wave-19
 fractals boarded with a `3^k` lap) or a route that never models the lap at
@@ -173,15 +172,17 @@ uniform step bounds for avoid sub-machines without sweep acceleration.
 
 ## Where a newcomer should probably start
 
-1. **The nested interior lap** — 26 of the 47, still the largest bucket,
+1. **The nested interior lap** — 23 of the 43, still the largest bucket,
    though no longer a monolith: `ReachStI` and the ladder have both taken
    rows out of it (`docs/WAVE33_PROMPT.md` item 1).
 2. **The two live routes**, both with named next steps: ReachSt's mirror
    transport lemma and its measured-unreachable rows
-   (`docs/REACHST_TIER.md` §6), and the ladder's per-family `ClassSucc`
-   instances — eight boards are emitted and waiting on exactly that
-   (`tools/coqproject_exempt.txt` lists them).
-3. **The non-affine 27.**  The gate says "the certificate language cannot
+   (`docs/REACHST_TIER.md` §6), and the ladder's refused arms — wave 4l
+   gave both class arms one shared indexing scheme and a quasihalt closer,
+   and SIX boards now stop at a single arm with every other rule proved
+   (`tools/coqproject_exempt.txt` lists them, four on the interior arm and
+   two on the fill arm).
+3. **The non-affine 23.**  The gate says "the certificate language cannot
    write this cost" — but `LapGlue`'s obligation never needs the cost
    written down.  Check what the closer actually demands before believing
    the gate.

@@ -18,19 +18,24 @@ theories/Census/Run_Split*.v
 theories/Closeout/BBB4_Theorem.v
 theories/Closeout/CloseoutFinal.v
 
-# Stage-B ladder boards that are PARTIAL by construction: each proves its
-# certificate's rules but stops before the machine-level theorem, because
-# LadderCheck states the class-successor lemma for (Binary, 1) only and
-# these families need their own ClassSucc instance first (LADDER_PLAN 4h(a),
-# and the commit "closure: a STRIDE on the interior class, and where the
-# other eight rows stop").  They are kept as the record of where each row
-# stops.  When a row's ClassSucc lands, its board finishes and moves into
-# _CoqProject -- delete the line here rather than leaving both.
+# Ladder boards that are PARTIAL by construction: each proves every rule its
+# certificate carries -- the [sound_*] lemmas are theorems -- but stops before
+# the machine-level theorem because ONE arm has no chain.  The file itself
+# says which arm and at what strides, and LADDER_PLAN 5's table row is the
+# reason: a cost that is not affine in the run length has no chain at any
+# stride, so this is a refusal and not a search that was cut short.
+#
+# Four stop on the INTERIOR arm (the two QUAD rows among them: their terminal
+# costs (k+2)^2 exactly -- docs/QUAD_TERMINAL_MEASUREMENT.md), two on the FILL
+# arm.  Wave 4l's shared arm indexing removed the older ClassSucc reason, so
+# do not re-file these under 4h(a).
+#
+# They are kept as the record of where each row stops.  When a row's arm
+# lands, its board finishes and moves into _CoqProject -- delete the line here
+# rather than leaving both; check_coqproject.py fails on a line that does.
 theories/Machines/Ladder/LDR_1RB0LD_0LC0RB_1LA1RC_0RC1LD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA0LC_1LC1RD_0RB0RD.v
-theories/Machines/Ladder/LDR_1RB1LA_0LA0RC_0LD0RB_1LD1RC.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA1RC_0LD0RC_1LD0RB.v
-theories/Machines/Ladder/LDR_1RB1LA_0LC0RD_1LC1RD_0LA0RB.v
 theories/Machines/Ladder/LDR_1RB1LA_1LC0RD_0RA0LC_0LA1RD.v
-theories/Machines/Ladder/LDR_1RB1LC_0LA0RB_0RD1LA_0LC1RD.v
-theories/Machines/Ladder/LDR_1RB1LC_0LC0RB_0RD1LA_0LA1RD.v
+theories/Machines/Ladder/LDR_1RB____0LB1RC_1LB0RD_1LC0RC.v
+theories/Machines/Ladder/LDR_1RB____1LC0RD_0LC1RB_1LB0RB.v
