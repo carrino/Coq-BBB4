@@ -1,13 +1,17 @@
 # The three-state core rows (`1RB---_...`), and how to finish them
 
-_Written 2026-07-31.  The 24 core rows whose `StA` has an undefined `S1`
-transition: after step 1 they are THREE-state machines started on a tape
-carrying a single `1`.  This is the map of that population — what they
-actually are, what boarded, and what each survivor still needs.  Companion
-reading: `COUNTER_CLOSEOUT.md` (the counter route in general),
-`WAVE34_REACHSTI.md` (the previous session on these rows)._
+_Written 2026-07-31; §3's `StA` entry rewritten the same day when that row
+boarded.  The 24 core rows whose `StA` has an undefined `S1` transition:
+after step 1 they are THREE-state machines started on a tape carrying a
+single `1`.  This is the map of that population — what they actually are,
+what boarded, and what each survivor still needs.  Companion reading:
+`COUNTER_CLOSEOUT.md` (the counter route in general), `WAVE34_REACHSTI.md`
+(the previous session on these rows)._
 
 ## 0. The one fact that reorganises the population
+
+**Thirteen of the 24 are boarded** (twelve on 2026-07-31 morning, then the
+`StA` row; §3).
 
 **The 24 rows are 9 sub-machines.**  `StA` fires once, at index 0, and 23 of
 the 24 rows are the target of no transition, so everything after step 1 is
@@ -26,7 +30,7 @@ sub-machines (plus one row that does target `StA`):
 | `0LC1RD_1LB1RC_1LB0RD` | 3 | 0 | — |
 | `0LC1RD_1LB1RD_1LB0RD` | 3 | 0 | — |
 | `0LB1RC_1LB0RD_1LC0RD` | 2 | 0 | — |
-| (targets `StA`) | 1 | 0 | — |
+| (targets `StA`) | 1 | **1** | `Machines/Counters/NLAP_1RB____1RC1LB_0LB1RD_0RA0RC.v` |
 
 Two rows sharing a sub-machine differ **only in their bootstrap**: the entry
 from `StA` lands in a different one of the three states, so the trajectory to
@@ -123,9 +127,16 @@ even runs, and `j` is universally quantified.  This is a real expressiveness
 gap, not a search gap — the alternative would be a state-SET in `sconf`,
 which changes `srun_sound` and every step's soundness lemma.
 
-## 3. The 12 survivors, and what each needs
+## 3. The survivors, and what each needs
 
-Measured with `tools/counters/radix_infer.py` and by hand-reading traces.
+Measured with `tools/counters/radix_infer.py`, `nestscan.py`,
+`radix_clock.py`, `fib_anchor.py` and by hand-reading traces.
+
+> **Read this section to the end before acting on it.**  It is written in
+> discovery order and the first half is superseded by the second: every
+> "measured absent" below is a base-2 search, and the eleven rows it is about
+> do not count in base 2.  The answer is at **"The anchor was never the
+> problem.  Here it is."**
 
 **The flat wall reading is measured absent — but read the caveat.**  A search
 over the TRUE wall anchor (head at cell 0) for all four surviving
@@ -134,15 +145,128 @@ sub-machines, across anchor state, anchor head symbol, radix 2–4, digit width
 **no consecutive-value decode** on any of them.  The same search finds base 3
 immediately on the two `Ter3Wall*` groups.
 
-The caveat is the one the `StA` row taught (§3 last entry): every scan named
-above pins the anchor's head to a fixed offset from a tape END.  A counter
-read AT THE CARRY straddles the head and is invisible to all of them.
-`tools/counters/carry_anchor.py` searches that shape and finds it on the
-`StA` row — and on **none** of these four sub-machines, with run-units `1`,
-`11`, `01`, `10`, `111` and eight digit-pairs.  So the nested diagnosis
-survives both searches, but "no flat reading" now means "no flat reading at
-the wall AND none at the carry", which is a stronger and better-founded
-statement than it was.
+The caveat the `StA` row taught (§3 last entry) is NOT the one first written
+here.  It is not that the anchor space is too narrow — it is that every scan
+in the tree scores a family by its longest run of CONSECUTIVE VALUES, which a
+NESTED counter supplies only inside one epoch.  Three searches have now come
+back negative on these four sub-machines, and they are independent:
+
+* the flat wall reading, above (head at cell 0, all the parameters listed);
+* `tools/counters/carry_anchor.py`, the carry-straddling shape, with
+  run-units `1`, `11`, `01`, `10`, `111` and eight digit-pairs — it finds the
+  `StA` row instantly and none of these;
+* `tools/counters/nestscan.py`, which drops the consecutive-value score
+  entirely and asks only whether ADJACENT anchor words are related by an
+  `Alph` increment.  On the `StA` row it reports `run = 255`.  On **all
+  eleven** surviving rows the best stretch is 1 or 2 pairs at every anchor,
+  and the anchor word grows at nearly every anchor instead of staying fixed
+  inside an epoch.
+
+So these eleven are not the `StA` row's shape wearing a different hat.  And
+the reason all three searches miss is now measured, and it is not the anchor:
+
+### **The eleven are not base 2.  They are FIBONACCI counters.**
+
+`tools/counters/radix_clock.py` (new) reads a counter's radix with no anchor,
+no word family and no alphabet: count, for each tape cell, how many writes
+actually CHANGED it.  A cell of digit weight `r^k` toggles `~V / r^k` times,
+so the ratio between the toggle counts of cells one digit apart IS the radix.
+On **all eleven** rows:
+
+```
+ratio = 1.6180 = phi,  spread 0.00 across every digit,
+raw counts 94432, 58362, 36070, 22291, 13776, 8514, 5262, 3252
+             — and F(n) = F(n-1) + F(n-2) holds on them exactly.
+```
+
+Calibration, against rows whose radix is already a theorem in this tree:
+
+| row | measured | proved by |
+|---|---|---|
+| `1RB---_0LC1RD_0LB1RD_1LB0RD` | base 2, spread 0.00 | `Counters/KpWallAlt.v` |
+| `1RB---_1RC1LB_0LB1RD_0RA0RC` | base 2 (stride 2) | `NLAP_1RB____1RC1LB_…` |
+| `1RB---_0LB1RC_0RD0RC_1LB1LD` | base 3, spread 0.00 | `Counters/Ter3Wall.v` |
+
+Independent cross-check on the tape width: at `t = 2·10^5` these rows have a
+23-cell tape and `~4.7·10^4` low-digit toggles; `phi^23 ≈ 6.4·10^4` is the
+right order, `2^23 ≈ 8.4·10^6` is wrong by two.
+
+That is the whole explanation of §3's negative searches.  **Every alphabet in
+`theories/Counters` is base 2** (plus `Ter3Wall`'s base 3), and every anchor
+scan decodes words in one of them, so a Fibonacci counter's words cannot
+decode to consecutive values at ANY anchor — which is exactly the "sparse
+self-similar set" `1 | 3 | 6,7 | 12,13,15 | …` recorded below.  It is
+wave-35's base-3 lesson a second time, one notch further out: *part of the
+residue is not base 2, and this part is not even an integer base.*
+
+### The anchor was never the problem.  Here it is.
+
+Acting on that reading, `tools/counters/fib_anchor.py` (new) runs the ordinary
+anchor scan — same anchor space, same consecutive-value score — with the
+weight ladder `1, 1, 2, 3, 5, 8, …` in place of `1, 2, 4, 8, 16`.  **All
+eleven rows decode to `0, 1, 2, 3, 4, …` at an ordinary flat anchor**, ten
+under `F(1,1)` and one (`1RB---_1LC1RB_0LB1RD_1LC0RD`) under `F(1,2)`, each
+scoring the full 4,000-word cap.  Two of them checked exhaustively:
+
+| row | anchor | transitions | consecutive-value failures |
+|---|---|---|---|
+| `1RB---_0LB1RC_1LB0RD_1LC0RD` | `StB`, head `S1`, word right, left empty | 57,300 | **0** |
+| `1RB---_0LC1RD_1LB1RC_1LB0RD` | `StB`, head `S0`, word right, 1 cell left | 21,890 | **0** |
+
+The per-row anchor and ladder for all eleven are recorded in
+`tools/counters/FIB_ELEVEN.txt`, so the next session does not have to re-run
+the scan.
+
+And the words are the ones this file already recorded — `(empty), 1, 11, 011,
+111, 0011, 1011, 1111, 00011, …` — the very sequence called "plain `Kp` words
+visited at a sparse self-similar set".  Weighed `1,1,2,3,5,8,…` they are
+
+```
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, …
+```
+
+with nothing skipped.  **The sparse set was a base-2 misreading and nothing
+else.**  The anchor sees every increment, it always did, and four waves of
+"WHERE is the anchor" were asking the wrong question.
+
+Control, so the score is not an artefact of offering more ladders: plain
+base 2 is one of the ladders `fib_anchor.py` tries, and the one row in this
+population that genuinely IS base 2 — `1RB---_1RC1LB_0LB1RD_0RA0RC`, boarded
+above — scores **4 of 4000** here against the eleven's **4000 of 4000**.
+
+### What these eleven now need
+
+Not an anchor search, and not `nestcert`'s inner head symbol.  A **Fibonacci
+numeral module** — the analogue of `Counters/TernCounter.v` one notch out:
+
+* `Fib v` over `positive` (or `nat`) with the encodings measured above.  Note
+  the two rows sampled use DIFFERENT digit words (`1, 11, 011, 111, 0011, …`
+  versus `1, 11, 101, 111, 1101, 1011, 1111, …`), so this is an alphabet
+  family like `Alph_*`, not a single fixpoint.
+* the increment, which is NOT a fixed-radix roll-over: `MonoCounter.cview`
+  splits `p` at its run of trailing ones over base 2 and does not apply.  The
+  carry here folds `F(k) + F(k+1) -> F(k+2)`, so the view has to name the
+  Fibonacci-carry position instead.
+* then the ordinary route: `LapDecider` chains at the anchor above, and
+  `LapGlueIx`-style glue (a Fibonacci counter has no `positive` to index by,
+  exactly as base 3 did not).
+
+**And the lap law is already measured, and it is AFFINE.**  Let `r` be the
+index of the highest digit the increment rewrites.  On both rows sampled the
+step gap is **single-valued in every observed class** and affine in `r`:
+
+| row | law | classes | laps |
+|---|---|---|---|
+| `1RB---_0LB1RC_1LB0RD_1LC0RD` | `2r` (one branch) | 22 | 38,201 |
+| `1RB---_0LC1RD_1LB1RC_1LB0RD` | `2r + 4` odd `r`, `2r + 8` even `r` | 19 | 21,890 |
+
+No class carries two different gaps.  Nothing super-affine, and at most a
+parity split — the same two-branch shape `Ter3WallB` already handles.  So once
+the numerals exist these are ORDINARY `LapDecider` chains, not nested ones:
+the same shape as every `Kp` board in `theories/Machines/Counters`, in a
+different base.  (The "lap is super-affine `6, 16, 36, 82, 196`" reading
+recorded below was measuring the base-2 misreading, where consecutive wall
+visits span a whole sub-epoch.)
 
 ### `0LB1RC_1LB0RD_1LC0RD` (2 rows), `0LB1RC_1LD0RC_1LB1RC` (3 rows)
 
@@ -156,7 +280,10 @@ them "HIGHER".  That label is a PARTIAL fit: sampling
 
 which are plain `Kp` words — a binary counter, low bit at the wall, top bit
 as terminator — and only the subsequence that happens to pair up as
-`00`/`11` looks like `Dp`.  So the counter reading is fine.  What is wrong is
+`00`/`11` looks like `Dp`.  [2026-07-31: those words ARE the tape, but
+reading them as base-2 `Kp` is the misreading — `radix_clock.py` says the
+radix is `phi`, so what looks like a binary counter skipping values is a
+Fibonacci counter read in the wrong base.]  What is wrong is
 that **the wall is not where every increment shows**: those words decode to
 
 ```
@@ -173,8 +300,17 @@ which is what `Counters/NestedLap*.v` and `nestcert.py` exist for.  The
 nested route in `emit_lapcert.py` is currently `S0`-anchor-only (it is
 refused outright when `HD = 1`, see the guard): `nestcert` states its INNER
 anchor with a literal `S0` head of its own, and that head is genuinely
-independent of the outer one.  **Threading a second head symbol through
-`nestcert` is the sized next piece for these five rows.**
+independent of the outer one.  Threading a second head symbol through
+`nestcert` is one sized piece.
+
+[2026-07-31, after the `StA` row boarded.]  **Do not start there.**  That row
+needed no second head symbol (its anchor head is `S0`), `nestscan.py` is
+negative on all five of these, and `radix_clock.py` says why: they count in
+`phi`, not in 2 (§3 preamble).  The head symbol is a real hole in `nestcert`,
+but no emitter in the tree can express a Fibonacci digit at any head symbol,
+so widening the anchor search cannot help until the numerals exist.  The
+`Kp`-shaped words below are a base-2 misreading of Zeckendorf digits, which is
+also why their "values" come out as a sparse self-similar set.
 
 ### `0LC1RD_1LB1RC_1LB0RD` (3 rows), `0LC1RD_1LB1RD_1LB0RD` (3 rows)
 
@@ -184,61 +320,123 @@ affine lap at any anchor the scan finds, so nested rather than flat.  Note
 is the nested route (`NLAP_`) at an `S0` anchor, so the machinery is not far
 away.
 
-### `1RB---_1RC1LB_0LB1RD_0RA0RC` — the one row that targets `StA`
+### `1RB---_1RC1LB_0LB1RD_0RA0RC` — the one row that targets `StA` — **BOARDED**
+
+`Machines/Counters/NLAP_1RB____1RC1LB_0LB1RD_0RA0RC.v`, `NeverQuasiHaltsSt`
+via `LapGlue.glue_neverqh`.  It is the one row of the 24 that does **not**
+quasihalt, so `glue_neverqh` rather than `LapGlueQuiet.glue_qh_quiet`.
+
+Its `0RB` shadow `0RB0RD_1RC---_1RD1LC_0LC1RA` boards with it, in
+`Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v` — and it has to,
+because a shadow is only a shadow of a row that is still DEFERRED: boarding
+the core row moves the shadow out of `shadow_rows.tsv` and into
+`core_rows.txt` rather than settling it.  The transport is
+`Census/Reroot.neverqh_reroot` across the blank prefix of length 1, plus
+`TM_swap StB StC` and `TM_swap StC StD`, which move no start state.
 
 **It is a plain binary counter** (John's reading, 2026-07-31): MSB to the
-LEFT, one marker `1` to the left of every bit, ordinary carry.  Confirmed by
-`tools/counters/carry_anchor.py`: **127 consecutive values** decode at the
-anchor
+LEFT, one marker `1` to the left of every bit, ordinary carry.  Digit words
+`A = 01`, `B = 11`, terminator `C = 1` — a new alphabet,
+`Counters/Alph_01_11_1.v`.
 
-  state `StB`, head symbol `S0`, run-unit `11`, digits `10`/`11`.
-
-**Why every scan in the tree missed it.**  The anchor is read AT THE CARRY:
-the head sits on the stop bit — the lowest clear bit — so the counter
-*straddles* the head, its high digits to the left and the run of set low
-digits to the right, and the head's position inside the word depends on the
-value.  Every anchor search here and in `tools/counters` pins the head to a
-fixed offset from a tape end (`anchor_scan`, `anchor_snaps_all`,
-`anchor_snaps_far_all`, `radix_infer`, and the `HD` scan added this session),
-so none of them can see it.  That is a general gap, not a quirk of this row.
-
-In `cconf` terms the anchor is
+**The anchor is FLAT, and the row is NESTED.**  `carry_anchor.py` found this
+row at a carry-straddling anchor (127 consecutive values at state `StB`, head
+`S0`, run-unit `11`, digits `10`/`11`), and the first reading of that was
+"the checker can express it, what is missing is a straddling template".  That
+was the wrong conclusion, and the straddling template was never needed.
+Restrict that same family to its `j = 0` members — the anchors whose carry
+run is EMPTY — and the head sits at the right end of the written region with
+the whole word to its left:
 
 ```coq
-Cc p = (StB, (S1 :: Rw q0, S0, rep [S1] (2 * j)))    where cview p = (j, Some q0)
+Cin v = (StB, (S1 :: Rw v, S0, [S0]))
 ```
 
-— the stop digit's own marker nearest the head on the left, then the higher
-digits as `(bit, marker)` pairs reading leftward, then the wall cell `S0` at
-cell 0; and on the right the carry run, two cells per set digit.
-`Checkers/LapDecider.v` can express exactly this shape (`cden` allows an
-opaque tail on one side and a `rep u (a*j+b)` block on the other, and here
-`el = false`, `er = true`, `c0 = mkC StB (mkS [S1] [] 0 0 []) S0 (mkS []
-[S1] 2 0 [])`).  **What is missing is the anchor search and a template whose
-anchor straddles the head, not the checker.**
+which is an ordinary flat anchor, and consecutive `j = 0` anchors are
+consecutive values of `v`.  The lap is `4j + 8` and closes EXACTLY (the one
+trailing `S0` in the anchor is what buys the exactness).
 
-**Why `StA` fires, and sparsely.**  The interleaved markers mean `StD`'s
-`0RA` is only reached when the counter WIDENS — `StA` is on the expand-the-
-wall path.  Measured, it is re-entered at configuration indices
+What actually hid the row was neither the head symbol nor the straddle: it
+was that **the counter is FIXED-WIDTH inside an epoch**.  `Cin v` is visited
+only for `v` in `[2^(2i), 2^(2i+1) - 1]`; when `v` fills to all ones the
+machine re-spreads the solid run of ones into marker/bit pairs and the word
+JUMPS to `2^(2i+2)`.  That widening is the only path on which `StD`'s `0RA`
+fires — measured configuration indices
 
 ```
 19, 66, 257, 1024, 4095, 16382, 65533, 262140, 1048571, …
 ```
 
-(to `t = 2·10^6`; `4095 = 2^12 - 1`, `16382 = 2^14 - 2`, `65533 = 2^16 - 3`,
-…), i.e. once per epoch.  So the counter is FIXED-WIDTH within an epoch and
-the widening is the outer level — and the row's target is
-**`NeverQuasiHaltsSt`, not `iqh`**: it is the one row of the 24 that does not
-quasihalt, and `LapGlue.glue_neverqh` is its closer rather than
-`LapGlueQuiet.glue_qh_quiet`.
+(to `t = 2·10^6`), once per epoch.  So the value sequence is
+`4,5,6,7 | 16,…,31 | 64,…,127 | …`, and **every anchor search in the tree
+scores a family by its longest run of CONSECUTIVE VALUES** — which for a
+nested counter is bounded by one epoch, drowning in noise at any tractable
+step budget.  `residue_map.tsv` read the row as "no-anchor / no overflow
+phase at K=6" for four waves on exactly that account.
+
+**The general gap, corrected.**  It is the SCORE, not the anchor space.
+`tools/counters/nestscan.py` (new) scores a candidate family by the local
+`Alph` increment structure of ADJACENT anchor words —
+
+```
+w = pre ++ B^j ++ A ++ tail      w' = pre ++ A^j ++ B ++ tail
+```
+
+— voting `(A, B, |pre|)` out of the pairs themselves, with no notion of "the
+value".  It reports this row's family at `run = 255` with the word length
+breaking `6 → 10 → 14 → 18 → 22` at pair 5, 21, 85, 341, i.e. the epoch
+structure read straight off.  Two details matter in that fit and both cost a
+family if dropped: the `pre` (the stop digit's own marker sits in front of
+the run) and a separate `j = 0` arm (there `B` does not occur in `w` at all
+and has to be read from `w'`).
+
+**The proof shape** is `Counters/NestedLap.v`'s, with the epoch as the outer
+level:
+
+| piece | what | cost |
+|---|---|---|
+| outer anchor | `Cc p := Cin (pow2 (2 * Pos.to_nat p))` | — |
+| boot | one interior lap | `8` |
+| inner | `Cin v0 -> Cin (fill v0)`, `inner_to_fill` | induction, existential |
+| exit | the widening, `Cin (fill (pow2 (2j))) -> Cc (p+1)` | `8j + 11` |
+
+Both laps are `LapDecider` certificates (`el`/`er` and the chains are in the
+file).  `StA`'s visit witness is a prefix of the EXIT chain, which is the
+only place it fires.  Differentially validated before the file was written:
+3,988 interior laps exact (`v = 2..3999`), 11 exit laps lift-exact, and the
+rails walked forward through six epochs of the real trajectory.
 
 ## 4. Reproducing the measurements
 
 ```sh
 python3 tools/counters/radix_infer.py <rowfile>     # radix, digits, lap law
 python3 tools/counters/carry_anchor.py <rowfile>    # anchors that straddle the head
+python3 tools/counters/nestscan.py    <rowfile>     # anchors of a NESTED counter
+python3 tools/counters/radix_clock.py <rowfile>     # radix, from the toggle spectrum
+python3 tools/counters/fib_anchor.py  <rowfile>     # anchors under FIBONACCI weights
 python3 tools/counters/emit_lapcert.py --list <rowfile> [--emit]
 ```
+
+Two of these are new and they are the ones to reach for when a row is called
+"no-anchor":
+
+* `radix_clock.py` FIRST, always.  It needs no anchor at all, so it still
+  answers on a row every other tool has given up on, and it answers the
+  question that decides which machinery can possibly apply.  Had it existed,
+  `Ter3Wall`'s base 3 and these eleven rows' `phi` would both have been known
+  four waves earlier.
+* then, on what it says: `fib_anchor.py` if the radix is `phi` (the ordinary
+  anchor scan with a Fibonacci weight ladder), or `nestscan.py` if the radix
+  is an integer but no scan finds a family — that is the only anchor scan here
+  that does not require a long run of consecutive values, so it is the only
+  one that can see a counter whose width is fixed inside an epoch.
+
+The pattern across both of this session's findings: **the anchor space was
+never the problem, the DECODING was.**  Twice in one session a row called
+"no-anchor" turned out to be sitting at an ordinary flat anchor that every
+scan already visits, missed once because the score demanded consecutive values
+from a nested counter and once because the weights were `1,2,4,8` on a machine
+counting in Fibonacci.
 
 The emitters are UNTRUSTED, as everything under `tools/` is: a wrong role,
 digit triple, boot index or chain fails to typecheck rather than mis-proving,

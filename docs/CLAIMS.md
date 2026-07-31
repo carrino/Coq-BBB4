@@ -62,10 +62,14 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **47** undecided core machines in
-   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **21**
-   0RB re-root shadows (`tools/closeout/shadow_rows.tsv`), which resolve
-   automatically as core machines are boarded.
+3. it is **skipped**: one of the **46** undecided core machines in
+   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **20**
+   0RB re-root shadows (`tools/closeout/shadow_rows.tsv`).  A shadow needs
+   no new mathematics — it is a blank-prefix re-root of a core machine —
+   but it does need its own board, because a shadow is a shadow only of a
+   core machine that is still undecided: boarding a core machine moves its
+   shadow into `core_rows.txt` until the same argument is transported
+   across the re-root.
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
 frozen table under completion of undefined transitions, non-start state swaps,
@@ -86,10 +90,10 @@ before the record itself is a theorem here:
    what `theories/Counters/BlankTail.v` already closes for the four previous
    champions; what it needs is a 32.8M-step prefix, for which
    `Checkers/TCyclerN.v` already supplies `cstepsN` and `cstepsN_nat`.  It is
-   currently one of the 47 core machines.  **Not done.**
-2. **The 68 (+ their 22 shadows).**  Any of them could, for all this
-   development knows, be a quasihalter with a larger score.  That is what
-   undecided means.
+   currently one of the 46 core machines.  **Not done.**
+2. **The 46 core machines (and their 20 shadows).**  Any of them could, for
+   all this development knows, be a quasihalter with a larger score.  That is
+   what undecided means.
 
 (The third gap this section used to list — the score bound existing only
 existentially, per-board, instead of as one aggregated constant — is closed:
@@ -99,14 +103,14 @@ existentially, per-board, instead of as one aggregated constant — is closed:
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 68 still-undecided machines (and
-> their 22 0RB re-root shadows) —
+> 32,779,478 or never quasihalts, except 66 still-undecided machines (46
+> core rows and their 20 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The BBB(4) *value* does not yet
-> follow from what is here, because the champion itself is one of the 47.
+> follow from what is here, because the champion itself is one of the 46.
 
-## Scope of the 47
+## Scope of the 46
 
-All 47 core machines are residue — machines no engine in this repository
+All 46 core machines are residue — machines no engine in this repository
 settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28

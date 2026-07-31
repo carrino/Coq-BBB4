@@ -1,0 +1,44 @@
+# The eleven surviving three-state 1RB--- core rows, read as FIBONACCI
+# counters.  Generated 2026-07-31 by
+#     python3 tools/counters/fib_anchor.py <the eleven rows>
+# (200,000 steps, 4,000-word cap).  UNTRUSTED measurement, like everything
+# under tools/ -- see docs/CORE_3STATE.md section 3 for what it means and
+# what to build next.
+#
+# Reading: "run=N of M" is the longest run of CONSECUTIVE decoded values out
+# of M anchor words; run == M means every single anchor visit is one
+# increment of the counter.  "F(a,b)" is the weight ladder a, b, a+b, ...
+# with the low digit NEAREST the head; "off" is how many leading weights are
+# skipped.  |other| is how many cells sit on the far side of the head.
+#
+# All eleven score the full cap.  Two were then checked exhaustively against
+# the raw simulator with zero consecutive-value failures:
+#   1RB---_0LB1RC_1LB0RD_1LC0RD   0 of 57,300 transitions
+#   1RB---_0LC1RD_1LB1RC_1LB0RD   0 of 21,890 transitions
+#
+# Measured lap law at these anchors (r = index of the highest digit the
+# increment rewrites; single-valued in every observed class):
+#   1RB---_0LB1RC_1LB0RD_1LC0RD   gap = 2r                     (22 classes)
+#   1RB---_0LC1RD_1LB1RC_1LB0RD   gap = 2r+4 odd r, 2r+8 even  (19 classes)
+1RB---_0LB1RC_1LB0RD_1LC0RD      run=4000  of 4000   StB h=S1 word=R |other|=0  F(1,1) off=0
+                                  first=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+1RB---_0LB1RC_1LD0RC_1LB1RC      run=4000  of 4000   StC h=S1 word=R |other|=1  F(1,1) off=0
+                                  first=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+1RB---_0LC1RD_1LB1RC_1LB0RD      run=4000  of 4000   StB h=S0 word=R |other|=1  F(1,1) off=0
+                                  first=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+1RB---_0LC1RD_1LB1RD_1LB0RD      run=4000  of 4000   StB h=S0 word=R |other|=1  F(1,1) off=0
+                                  first=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+1RB---_1LC0RB_0LD1RB_1LC1RB      run=4000  of 4000   StB h=S0 word=R |other|=1  F(1,1) off=0
+                                  first=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+1RB---_1LC0RB_0LD1RB_1LC1RD      run=4000  of 4000   StC h=S1 word=R |other|=0  F(1,1) off=0
+                                  first=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+1RB---_1LC0RB_1LD1RB_0LD1RB      run=4000  of 4000   StB h=S1 word=R |other|=1  F(1,1) off=0
+                                  first=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+1RB---_1LC0RD_0LC1RB_1LB0RD      run=4000  of 4000   StB h=S0 word=R |other|=1  F(1,1) off=0
+                                  first=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+1RB---_1LC1RB_0LB1RD_1LC0RD      run=4000  of 4000   StB h=S0 word=R |other|=1  F(1,1) off=1
+                                  first=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+1RB---_1LC1RD_0LB1RD_1LC0RD      run=4000  of 4000   StC h=S1 word=R |other|=0  F(1,1) off=0
+                                  first=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+1RB---_1LC1RD_0LC1RD_1LB0RD      run=4000  of 4000   StD h=S1 word=R |other|=1  F(1,1) off=0
+                                  first=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
