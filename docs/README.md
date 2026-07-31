@@ -50,6 +50,11 @@ digest of all of it.
   [`MXDYS_INDUCTIVE_RESIDUE.md`](MXDYS_INDUCTIVE_RESIDUE.md) — the prover run
   over the community's target list, what it decides, and the two anchor
   families it handed over (one of them the champion's board).
+* **Scoping a variant** —
+  [`INSTRUCTION_BEEPS.md`](INSTRUCTION_BEEPS.md): what it would cost to
+  re-found the whole development on an *instruction* beep instead of a
+  state beep, measured over the full TNF walk at both levels
+  (`tools/instrbeep/`).
 * **Residue campaign** — `RESIDUE_708_DIAGNOSIS.md`,
   `RESIDUE_HEADROOM.md`, `RESIDUE_VISIT_MEASUREMENT.md`, and the live
   session prompts `RESIDUE_PROMPT.md` / `NEXT_SESSION_PROMPT.md`.
