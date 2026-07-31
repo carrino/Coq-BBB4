@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**47 rows as of this commit — 35 distinct core machines + 12 0RB
+_**42 rows as of this commit — 30 distinct core machines + 12 0RB
 re-root shadows.**  A shadow needs no new mathematics, but it does need its
 own board: boarding a core machine moves its shadow into `core_rows.txt`
 rather than settling it, so budget the pair (2026-07-31; worked example
@@ -93,7 +93,7 @@ lists partition `core_rows.txt` exactly):
 
 | n | furthest gate today | | n | furthest gate today |
 |--:|---|---|--:|---|
-| 19 | no interior `j = S j'` chain | | 1 | no boot chain |
+| 14 | no interior `j = S j'` chain | | 1 | no boot chain |
 | 10 | no gap-free two-form family | | 1 | no interior `j = 0` chain |
 | 2 | no inner interior chain | | 1 | register step does not close |
 | | | | 1 | no inner family at `pow2 j` |
@@ -106,7 +106,7 @@ the re-root transport.)
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
 | `-`/`no-anchor` | 12 | 10 no anchor, 2 no overflow phase at K=6 |
-| `HIGHER`/`HIGHER` | 12 | 12 no interior chain |
+| `HIGHER`/`HIGHER` | 7 | 7 no interior chain |
 | `QUAD`/`QUAD` | 4 | 4 no interior chain |
 | `EXP3`/`EXP3` | 3 | 3 no interior chain |
 | `AFFINE`/`EXP2` | 2 | 1 no boot chain, 1 no inner family |
@@ -114,31 +114,34 @@ the re-root transport.)
 
 **What that table now says, and it is the shape of the endgame:** the
 residue has inverted.  It used to be dominated by `AFFINE` machines our
-emitter could not frame; **19 of the 35 measure NON-AFFINE on both
-branches** (`HIGHER` 12, `QUAD` 4, `EXP3` 3) — shapes whose lap
+emitter could not frame; **14 of the 30 measure NON-AFFINE on both
+branches** (`HIGHER` 7, `QUAD` 4, `EXP3` 3) — shapes whose lap
 cost the certificate language cannot write as `a*j + b` — plus 12 whose
 tape never decodes as a counter under any alphabet.  Only 4 rows are
 affine on at least one branch.
 
-**But `HIGHER` is not a verdict, and on this bucket it was a misreading.**
-The 12 `HIGHER`/`HIGHER` rows are exactly the twelve FIBONACCI counters
-(`docs/CORE_3STATE.md` §3): `ovfshape.py` measured their lap against a
-base-2 anchor, and their radix is **φ**.  `tools/counters/radix_clock.py`
-reads `ratio = 1.6180`, spread 0.00 across every digit, on all twelve; the
-raw per-cell toggle counts satisfy `F(n) = F(n−1) + F(n−2)` exactly.
-Re-running the anchor scan with the ladder `1,1,2,3,5,8,…` decodes them to
-`0,1,2,3,4,…` with nothing skipped.  Wave 4p then measured the ladder ARM
-costs on five of them and they are affine (constant first differences), so
-what blocks the twelve is the NUMERATION — `Fam` has no weight field — and
-not the cost.  So the honest count of rows whose cost the certificate
-language genuinely cannot write is **7**, not 19: `QUAD` 4 (measured on the
-arm in wave 4p and confirmed quadratic) and `EXP3` 3.
+**And `HIGHER` was never a verdict — on this bucket it was a misreading,
+and five of those rows have since BOARDED.**  The `HIGHER`/`HIGHER` rows are
+the FIBONACCI counters (`docs/CORE_3STATE.md` §3): `ovfshape.py` measured
+their lap against a base-2 anchor, and their radix is **φ**.
+`tools/counters/radix_clock.py` reads `ratio = 1.6180`, spread 0.00 across
+every digit; the raw per-cell toggle counts satisfy `F(n) = F(n−1) + F(n−2)`
+exactly, and re-running the anchor scan with the ladder `1,1,2,3,5,8,…`
+decodes them to `0,1,2,3,4,…` with nothing skipped.  Wave 4p measured the
+ladder ARM costs affine and named the numeration as the only blocker; **wave
+4r built it** — `LadderFam`'s `Fib` code, `LadderCheck` 3c's third
+`ClassSucc` instance, 5c's iteration and 11's quasihalter board — and the
+five rows that had partial ladder boards on disk now carry `iqh_*` theorems.
+**Seven remain**, and they are the whole `HIGHER` column.  So the honest
+count of rows whose cost the certificate language genuinely cannot write is
+**7**, not 14: `QUAD` 4 (measured on the arm in wave 4p) and `EXP3` 3.
 
 The easy framings are spent, but what is left wants either a closer that
 never needs the cost (`LapGlue`'s lap obligation is an EXISTENTIAL over
 step counts, which is how the wave-19 fractals boarded with a `3^k` lap),
-a route that never models the lap at all, like ReachSt, or — for the
-twelve above — a numeration the family record can denote.
+or a route that never models the lap at all, like ReachSt.  The numeration
+route is no longer speculative — it exists, and the seven `HIGHER` rows are
+what is left of the population it was built for.
 
 ### What each blocker means
 
@@ -150,9 +153,10 @@ twelve above — a numeration the family record can denote.
 * **no interior chain** — the ordinary lap is not expressible as one affine
   `srun`.  For `QUAD`/`EXP3` that is a statement about the
   machine, not the search: the certificate language carries `a*j + b`.
-  **For `HIGHER` it is not** — those twelve rows are the φ counters, and
-  the label came from measuring a Fibonacci lap on a base-2 clock (above,
-  and `docs/CORE_3STATE.md` §3).
+  **For `HIGHER` it is not** — those seven rows are the φ counters, the
+  label came from measuring a Fibonacci lap on a base-2 clock, and the
+  kernel can now denote that numeration (above, `docs/CORE_3STATE.md` §3,
+  `docs/LADDER_PLAN.md` §4r).
 * **no inner family at pow2 j** — the overflow runs a second counter, but its
   count does not start at `2^j`.  Measured in wave-15: ~21% of these run at a
   different octave or offset.
@@ -203,23 +207,24 @@ far-side template and its glue (§4k: measured before building it),
 uniform step bounds for avoid sub-machines without sweep acceleration, a
 flat arm stated with `stride = 0` (no chain at ANY depth, because `srot 0`
 is the identity — it reads like "not affine" and is not), **every base-2
-anchor search on the twelve φ rows** (four waves' worth, and now
-explained), and the ladder ARM_GRID on the four `QUAD` rows (wave 4p
+anchor search on the φ rows** (four waves' worth, and now explained), and the ladder ARM_GRID on the four `QUAD` rows (wave 4p
 measured a second difference of exactly 2 on the arm itself; no threshold
 or stride reaches a quadratic).
 
 ## Where a newcomer should probably start
 
-1. **The twelve Fibonacci rows** — the largest coherent block left, and the
-   only one whose remaining work is entirely inside Coq.  The radix (φ), the
-   per-row anchors, the membership predicate, the top of a width and the
-   two-way successor split are all measured and script-checked
-   (`docs/CORE_3STATE.md` §3, `docs/LADDER_PLAN.md` §4p,
-   `tools/ladder/fibmem.py`, `tools/counters/FIB_ELEVEN.txt`).  What they
-   need is a Fibonacci-rank constructor on `Fam`/`Code` — the analogue of
-   `Counters/TernCounter.v` one notch out — and then the ordinary
-   `LapDecider` + `LapGlueIx` route.  Eleven of the twelve carry no shadow;
-   `1RB0RB_0LC1RD_1LC1LA_0LA1RB` carries one, so the block is 13 of the 47.
+1. **The seven remaining Fibonacci rows — and the kernel already speaks
+   their numeration.**  Wave 4r built `(Fib, 1)` (`LadderFam`'s `Fib` code,
+   `LadderCheck` 3c/5c/11) and boarded the five φ rows that had partial
+   ladder boards on disk.  The other seven — six `1RB---` rows plus
+   `1RB0RB_0LC1RD_1LC1LA_0LA1RB` — have **never been through `emit_ladder`
+   at all**; there is no board for them on disk, partial or otherwise.  So
+   nobody has yet measured whether the new code reaches them, and that
+   measurement is an emitter run, not a kernel build.  It is the cheapest
+   unexplored thing on the list.  Six of the seven carry no shadow;
+   `1RB0RB_0LC1RD_1LC1LA_0LA1RB` carries one, so the block is 8 of the 42.
+   Per-row anchors and ladders: `tools/counters/FIB_ELEVEN.txt`,
+   `docs/CORE_3STATE.md` §3.
 2. **The twelve 0RB shadows on ten core rows — but there is nothing to do.**
    A shadow satisfies the `skipped` disjunct only while its core row is
    deferred, so it needs a board of its own exactly when its core row boards,
@@ -228,7 +233,7 @@ or stride reaches a quadratic).
    is one lemma (`Census/ShadowBoard.shadow_nqh` — the prefix is all blanks,
    what is left is the boarded row relabelled, three `vm_compute`s), and
    `make closeout` runs `gen_shadow.py --harvest` to emit it.  So these twelve
-   rows are not a task, they are 12 of the 47 that come free with whatever
+   rows are not a task, they are 12 of the 42 that come free with whatever
    settles their partners.  Five of them sit on three of the four quadratic
    rows, so those five are not coming back either.
 3. **The two live routes**, both with named next steps: ReachSt's mirror
@@ -254,4 +259,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 47).
+first shrank from 883 to 511 (and, wave by wave, to the current 42).
