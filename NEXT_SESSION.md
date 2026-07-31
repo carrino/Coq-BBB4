@@ -4145,6 +4145,63 @@ traps._
   changing it mid-build invalidates the makefile and `make` can exit 0 with
   hundreds of files unbuilt.  Board first, then build.
 
+## 2026-07-31 — `(Fib, 1)` built: the FIBONACCI five board, core 37 → 32
+
+_Branch `claude/fibonacci-numeration-coq-uewigh`, cut from `main` at
+`2dbbe9b`.  Full write-up in `docs/LADDER_PLAN.md` §4q._
+
+- **The gate has now held THREE times.**  `Fam` carries `Binary`, `Gray` and
+  `Fib` and the `Class` record has never widened; `ClassSucc` is not weakened
+  and there is no second class record.  The cost of the third code in the
+  generic half was ONE definition — see the next bullet — plus a membership
+  predicate, a round trip and a `Section Iter` copy.
+- **READ THE LIVENESS BEFORE WRITING A BOARD SECTION.**  The session plan
+  asked for `NeverQuasiHaltsSt` on all five; the certificates say
+  `live = BCD`, and 4p's own text explains why (`A` is entered once, at step
+  0, and nothing targets it).  A state that stops firing IS a quasihalt, so
+  §11 needed section 8's twin (`boardF_iqh`) and the never-QH closer proves
+  the wrong theorem for every one of them.  `liveness.states_infinitely_often`
+  is in the certificate; it costs nothing to look and half a section to
+  discover late.
+- **A weighted numeration changes exactly ONE thing in the generic half: the
+  width's CEILING.**  `fam_is_top`, `fam_of_value` and `fam_wf` all read
+  `b^k`; at `Fib` it is `S (fibsum k)`, which is not a power of anything.
+  `fam_lim` names it and the three read it, and every `(Binary, 1)` and
+  `(Gray, 2)` proof survives with one rewrite under its own `Hcode` (eleven
+  of those, all mechanical).  4m priced this constructor at much more.
+- **The risky lemma was the round trip and the fix was a SECOND STATE.**  The
+  numeration is redundant (`fibw 0 = fibw 1 = 1`), so `fam_of_value` is only
+  an inverse on the members.  Greedy-on-the-value alone is WRONG — width 3
+  value 3 decodes to `1;0;1`, not a member — because after a `1` the next
+  digit is forced.  Membership read as "at every `0`, an even number of `1`s
+  above it" is a two-state automaton; carry the state and each state's values
+  are an interval, split by the top digit at exactly `fibw k` because
+  `fibsum (k-1) + 1 = fibw k`.  Then the round trip is one induction on the
+  width with no case left over.
+- **Check the kernel's predicate against the measurement INSIDE Coq.**  4p's
+  `fibmem.py` checked the membership rule against the machines; the cheap
+  converse is to enumerate `fibokb` over every binary string of widths 0..10
+  and count: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144 — 4p's counts, in the
+  kernel's own terms.  Three `Compute`s, and it turns "I transcribed the rule
+  correctly" from a hope into a check.
+- **Dispatch on what was MEASURED, not on what the certificate calls itself.**
+  All five certificates say `code: binary` and it is false — that is the lie
+  4p caught.  `closure_data_fib` selects on `numeration` and the `weights`
+  beside it, and refuses on the canonical blocks and the fill target too.  A
+  `code`-driven dispatch would have sent them to the positional path and every
+  arm would have landed off the right-hand side.
+- **The emitter agreed with the probe.**  4p measured both class arms deriving
+  at threshold 0..1 stride 1; the emitter re-derives the chains from the
+  machine and lands on exactly that.  `settled by a board` 5107 → 5112
+  (99.1%), `core undecided` 37 → 32, shadows unchanged at 12 — these five
+  carry none, as 4p said.
+- **The fibonacci bucket is empty and the four base-2 rows are closed.**  Their
+  interior arm cost has a constant SECOND difference; no arithmetic progression
+  makes a quadratic affine and no widening of `ARM_GRID` reaches them.  Not
+  re-probed here.  **The re-root closer is now worth more than any further
+  `ClassSucc` instance**: twelve shadows on ten core rows, and #98's general
+  half already exists.
+
 ## 2026-07-31 — `(Gray, 2)` built: four rows, and the parity turned out to be a PARAMETER
 
 _Branch `claude/gray-2-ladder-build-igrvzw`, cut from `main` at `fa1be97`.
