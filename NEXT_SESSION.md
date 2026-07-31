@@ -4144,3 +4144,65 @@ traps._
   build then LIES**: `Makefile.coq` is generated from `_CoqProject`, so
   changing it mid-build invalidates the makefile and `make` can exit 0 with
   hundreds of files unbuilt.  Board first, then build.
+
+# 2026-07-31 — the interior nine, re-measured: 5 of 9, and it was two buckets
+
+_Full record in `docs/LADDER_PLAN.md` §4o.  Branch
+`claude/interior-arm-remeasure-vg1xl2` off `main` at `fa1be97`.  No row
+boards, no count moves: `settled by a board 5103 (99.0%)`, `core undecided
+39`, `0RB shadows 14`, unchanged.  The count WAS the deliverable._
+
+- **The nine rows of the exempt block's "INTERIOR arm (line 381)" are not one
+  bucket, and the shared line number was the only thing they had in common.**
+  `armprobe.py` says **5 of 9** have both class arms.  Four are base-2 and
+  their arm is quadratic; five are Fibonacci and their arms DERIVE.
+  `LADDER_PLAN` §4n's own table already had them as 5 + 4 — the exempt file
+  is what conflated them.  **When two rows stop at the same line, that is a
+  fact about the emitter, not about the machines.**
+- **The four base-2 rows confirm §5's non-affine carry ripple, measured on
+  the arm itself.**  Their class fits (the same single `(Binary, 1)` class a
+  boarded row uses) and their configuration is clean.  The interior arm's
+  flat cost is `2, 6, 12, 20, 30, 42, …` resp. `12, 18, 26, 36, 48, 62, …` —
+  **second difference exactly 2**.  A strided arm is one chain repeated, so
+  its cost is affine along the stride, and no arithmetic progression makes a
+  quadratic affine.  That is why thresholds 0..3 and strides 1..4 fail
+  *together*.  Contrast the boarded row: `2, 8, 6, 16, 10, 24, …`, affine on
+  each residue mod 2, which is exactly why its stride-2 arm derives.
+  `ARM_GRID` catches piecewise-affine on a progression ≤ 4 and cannot be
+  widened into a quadratic.  Do not re-probe these four.
+- **The five Fibonacci rows were blocked by the PROBE, not by the machines.**
+  `Fam.value` honoured the certificate's `weights`; `of_value` and `maxval`
+  did not — positional `v % b` and `b^k - 1`.  On a weighted numeration
+  `is_top` is then false at every string the counter ever stands on and the
+  orbit walked off the family after **5 elements**, reported as `no class
+  fit`.  Fixed by not inverting at all: `Fam.walk` reads the counter off the
+  machine's tape at each anchor visit and `orbit_machine` orders each width's
+  members by `value`.  All five then fit the same two classes — the carry
+  `1^n ++ [1;0] -> 0^n ++ [1;1]` and the increment `[0] ++ 0^n -> [1] ++ 0^n`
+  — and both arms chain at **stride 1** with constant first differences.
+  They are §4m's five, and they need §4m's constructor, not an arm.
+- **§4n's one-cell far side is real on two more rows and does not rescue
+  them.**  Certificate `other_side_cells = [1]`, boot spells `[1;0]`: with the
+  certificate's value every flat arm lands off the rhs, with the boot's every
+  one derives.  It also closes §4j's fourth table line — those two rows are
+  the "no chain at any n, not yet diagnosed" pair, so it is **four** quadratic
+  rows and not two.
+- **The bucket's density and its reachability are on opposite halves.**  All
+  five shadows sit on three of the four QUADRATIC rows.  So "14 rows, the
+  densest bucket in the residue" is really 9 rows that are not coming back
+  and 5 that are worth one row each.  Check `shadow_rows.tsv` column 4
+  against the half you can actually reach, not against the bucket.
+- **Trap: `gen_shadow.py --regress` printed `FAILED` on an unbuilt tree and
+  its three corruption tests printed `rejected` — vacuously, because nothing
+  compiled, so nothing could be rejected.**  A corruption test that runs on a
+  tree where the good case also fails is not a test.  It now separates the two
+  and prints `INCONCLUSIVE` with the target to build.  Build
+  `theories/Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.vo` **and**
+  `theories/Census/RerootSwap.vo`, `theories/Mirror.vo`,
+  `NLAP_1RB____1RC1LB_0LB1RD_0RA0RC.vo` — the generated `SH_` requires more
+  than the hand-written original it reproduces.  Then it is OK, 4 of 4; the
+  generator was healthy the whole time.
+- **The nine boards are on disk, tracked, and NOT in `_CoqProject`**, so
+  `make` has no rule for them and editing their notes costs nothing.  All
+  nine cited §4h(a)'s `ClassSucc` reason, which §4l removed and which fits
+  neither half; they now carry the measured reason, one per half.
