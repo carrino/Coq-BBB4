@@ -353,7 +353,7 @@ Proof. eapply arm_sound; [exact rules_sound_1RB1LA_0LA0LC_1LC1RD_0RB0RD | exact 
     left-hand side and against any tail the flags permit, reaches the arm's
     right-hand side in exactly the certificate's step count. *)
 
-(** ** The closure: NOT BUILT for this row -- interior arm: no chain at stride 1, 2, 3 or 4 -- the carry ripple is not affine in the run length
+(** ** The closure: NOT BUILT for this row -- interior arm: no chain at any threshold 0..3 and stride 1..4 -- the carry ripple is not affine in the run length
 
     The board above still proves every rule the certificate carries; what
     is missing is the machine-level theorem.  LADDER_PLAN 4h(a) names the

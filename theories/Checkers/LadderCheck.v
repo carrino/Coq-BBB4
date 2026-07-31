@@ -152,6 +152,107 @@ Proof.
   - right. exists 0, x, ds. split; [reflexivity | exact Hne].
 Qed.
 
+(** ** 2b. The arm index: ONE scheme, and both class arms use it
+
+    A class arm covers a run of length [n].  Which arm serves it, and at what
+    block count, is the single thing LADDER_PLAN 4k found BOTH arms wanting
+    and neither had.  The scheme is: [n] itself while [n] is below a
+    THRESHOLD [N0] -- a flat arm, stride [0], the whole run concrete in
+    [s_pre] -- and [N0 + (n - N0) mod st] at or above it, with the block
+    taken [(n - N0) / st] times.
+
+    One threshold, one stride, one offset, and [arm_index] is the one lemma
+    about [n = k + s*j] that both arms use; the interior arm and the fill arm
+    instantiate it at their own [(N0, st)].  That the SCHEME is shared is
+    4k's gate: two parallel indexing schemes is how [fm_pre] became a fixed
+    list in the first place.
+
+    4i's [off = n mod st] is this scheme at [N0 = 0], and that is exactly why
+    it stopped four rows short.  A materialisation offset of [off >= st]
+    cannot be a residue, so under the old scheme the small [n] such an arm
+    does not reach had no arm at all -- measured, in
+    [tools/ladder/core61_armshapes.txt], as interior offsets of 2 at stride
+    2.  Here they are [N0 = 1], [st = 2]: arms at [r = 0] (flat, the run
+    empty), [r = 1] (odd [n]) and [r = 2] (even [n >= 2]). *)
+
+Definition astride (N0 st r : nat) : nat := if r <? N0 then 0 else st.
+Definition aoff (N0 st n : nat) : nat :=
+  if n <? N0 then n else N0 + (n - N0) mod st.
+Definition acnt (N0 st n : nat) : nat :=
+  if n <? N0 then 0 else (n - N0) / st.
+
+(** The whole of the arithmetic: [Nat.div_mod_eq] and [lia]. *)
+Lemma arm_index : forall N0 st n, 0 < st ->
+  aoff N0 st n + astride N0 st (aoff N0 st n) * acnt N0 st n = n.
+Proof.
+  intros N0 st n Hst. unfold aoff, acnt, astride.
+  destruct (n <? N0) eqn:E.
+  - lia.
+  - apply Nat.ltb_ge in E.
+    assert (Hc : (N0 + (n - N0) mod st <? N0) = false)
+      by (apply Nat.ltb_ge; lia).
+    rewrite Hc.
+    pose proof (Nat.div_mod_eq (n - N0) st). lia.
+Qed.
+
+Lemma arm_index_lt : forall N0 st n, 0 < st -> aoff N0 st n < N0 + st.
+Proof.
+  intros N0 st n Hst. unfold aoff.
+  destruct (n <? N0) eqn:E.
+  - apply Nat.ltb_lt in E. lia.
+  - pose proof (Nat.mod_upper_bound (n - N0) st ltac:(lia)). lia.
+Qed.
+
+(** The fill arm never sees width [0], so its own threshold being positive is
+    what keeps [r = 0] out of its index range. *)
+Lemma arm_index_pos : forall N0 st n, 0 < N0 -> 0 < n -> 0 < aoff N0 st n.
+Proof.
+  intros N0 st n HN Hn. unfold aoff.
+  destruct (n <? N0) eqn:E; lia.
+Qed.
+
+Lemma rep_rep : forall (u : list Sym) s m, rep (rep u s) m = rep u (s * m).
+Proof.
+  intros u s. induction m as [|m IH]; simpl.
+  - rewrite Nat.mul_0_r. reflexivity.
+  - rewrite IH, <- rep_add. f_equal. lia.
+Qed.
+
+Lemma rep_nil_mul : forall (u : list Sym) s n, rep u s = [] -> rep u (s * n) = [].
+Proof.
+  intros u s n H. destruct u as [|x u]; [apply rep_nil|].
+  destruct s as [|s]; simpl in H; [|discriminate].
+  rewrite Nat.mul_0_l. reflexivity.
+Qed.
+
+(** A symbolic side whose repeated block may be EMPTY.
+
+    [stride = 0] is one end of the arm scheme above, and it needs exactly one
+    thing the strided end does not: with no block there is nothing for the
+    engine's window steps to walk AROUND.  [SWin] moves inside [s_pre] and no
+    step carries a cell from [s_post] across the block boundary into it, so a
+    side with an empty block and a non-empty [s_post] has no chain at all --
+    a flat arm has to be stated with everything concrete in [s_pre].
+
+    [blk] is that normalisation and [blk_den] says the denotation is the
+    same either way, which is what keeps it a normalisation of the SHAPE
+    rather than a second indexing scheme.  Both class sides below take their
+    block through it. *)
+Definition blk (P u : list Sym) (s : nat) (W : list Sym) : sside :=
+  match rep u s with
+  | [] => sflat (P ++ W)
+  | v => mkS P v 1 0 W
+  end.
+
+Lemma blk_den : forall P u s W X n,
+  sden X n (blk P u s W) = P ++ rep u (s * n) ++ W ++ X.
+Proof.
+  intros P u s W X n. unfold blk. destruct (rep u s) eqn:E.
+  - rewrite sden_flat, (rep_nil_mul u s n E), <- app_assoc. reflexivity.
+  - unfold sden; cbn [s_pre s_u s_a s_b s_post].
+    rewrite <- E, rep_rep, Nat.mul_1_l, Nat.add_0_r. reflexivity.
+Qed.
+
 Section Cells.
 
 Variable F : Fam.
@@ -166,46 +267,43 @@ Definition cls_tail (rest : list nat) (ph : nat) : list Sym :=
     affine in the run length: measured (LADDER_PLAN 4i), four live-core rows
     walk the run at one cost on even lengths and another on odd, so their
     class splits into one arm per residue and each arm's block is [s] copies
-    of the digit word.  [s = 1], [r = 0] is the ordinary case. *)
+    of the digit word.  [s = 1], [r = 0] is the ordinary case; [s = 0] is a
+    flat arm, and [blk] is what makes that shape derivable. *)
 Definition cls_side (t r s : nat) (w : list nat) : sside :=
-  mkS (fm_pre F ++ rep (dig F t) r) (rep (dig F t) s) 1 0
-      (flat_map (dig F) w).
-
-Lemma rep_rep : forall (u : list Sym) s m, rep (rep u s) m = rep u (s * m).
-Proof.
-  intros u s. induction m as [|m IH]; simpl.
-  - rewrite Nat.mul_0_r. reflexivity.
-  - rewrite IH, <- rep_add. f_equal. lia.
-Qed.
+  blk (fm_pre F ++ rep (dig F t) r) (dig F t) s (flat_map (dig F) w).
 
 Lemma fam_cells_class : forall t r s m w rest ph,
   fam_cells F (repeat t (r + s * m) ++ w ++ rest) ph
     = sden (cls_tail rest ph) m (cls_side t r s w).
 Proof.
   intros t r s m w rest ph.
-  rewrite fam_cells_eq. unfold sden, cls_side, cls_tail; simpl.
-  rewrite flat_map_repeat, flat_map_app.
-  rewrite ?Nat.mul_1_l, ?Nat.add_0_r.
-  rewrite rep_rep, rep_add, !app_assoc. reflexivity.
+  rewrite fam_cells_eq. unfold cls_side, cls_tail.
+  rewrite blk_den, flat_map_repeat, flat_map_app, rep_add, !app_assoc.
+  reflexivity.
 Qed.
 
-(** The class [t^(m1 + n + m2)] with NOTHING opaque -- the shape the fill
+(** The class [t^(m1 + s*n + m2)] with NOTHING opaque -- the shape the fill
     arm needs, because it must see the end of the counter.  The guaranteed
     copies are materialised into [s_pre] and [s_post] (4h: without that the
     fill arm has no chain at all, since a symbolic block count cannot have
-    one copy peeled off its front). *)
-Definition run_side (t m1 m2 ph : nat) (w1 w2 : list nat) : sside :=
-  mkS (fm_pre F ++ flat_map (dig F) w1 ++ rep (dig F t) m1) (dig F t) 1 0
+    one copy peeled off its front).
+
+    The STRIDE [s] is the second of 4k's two knobs and it is the same knob
+    [cls_side] carries: measured, six of the eleven quasihalters and four of
+    the ten never-QH rows have no fill chain without it, for the same reason
+    the interior arm needs one -- the cost of the widening alternates with
+    the parity of the width. *)
+Definition run_side (t m1 s m2 ph : nat) (w1 w2 : list nat) : sside :=
+  blk (fm_pre F ++ flat_map (dig F) w1 ++ rep (dig F t) m1) (dig F t) s
       (rep (dig F t) m2 ++ flat_map (dig F) w2 ++ nth ph (fm_tails F) []).
 
-Lemma fam_cells_run : forall t m1 n m2 ph w1 w2,
-  fam_cells F (w1 ++ repeat t (m1 + n + m2) ++ w2) ph
-    = sden [] n (run_side t m1 m2 ph w1 w2).
+Lemma fam_cells_run : forall t m1 s n m2 ph w1 w2,
+  fam_cells F (w1 ++ repeat t (m1 + s * n + m2) ++ w2) ph
+    = sden [] n (run_side t m1 s m2 ph w1 w2).
 Proof.
-  intros t m1 n m2 ph w1 w2.
-  rewrite fam_cells_eq. unfold sden, run_side; simpl.
-  rewrite !flat_map_app, (flat_map_repeat_nil F t (m1 + n + m2)).
-  rewrite ?Nat.mul_1_l, ?Nat.add_0_r.
+  intros t m1 s n m2 ph w1 w2.
+  rewrite fam_cells_eq. unfold run_side.
+  rewrite blk_den, !flat_map_app, (flat_map_repeat_nil F t (m1 + s * n + m2)).
   rewrite !rep_add, app_nil_r, !app_assoc. reflexivity.
 Qed.
 
@@ -664,14 +762,19 @@ Section Board.
 
 Variable tm    : TM.
 Variable F     : Fam.
-Variable Aint  : nat -> nat -> LRule.  (** the interior arm for digit [d],
-                                          run length [r] mod the stride *)
-Variable st    : nat.               (** the stride the class walks in *)
-Variable Afill : LRule.             (** the arm that sees the counter's end *)
-Variable vis   : St -> list lstep.  (** a chain to each state, from the fill *)
+Variable Aint  : nat -> nat -> LRule.  (** the interior arm for digit [d] at
+                                           arm index [r] *)
+Variable N0i sti : nat.             (** its threshold and its stride *)
+Variable Afill : nat -> LRule.      (** the arm that sees the counter's end,
+                                        at arm index [r] *)
+Variable N0f stf : nat.             (** and ITS threshold and stride -- the
+                                        same scheme, its own two knobs *)
+Variable fm1 fm2 : nat -> nat.      (** how the fill's guaranteed copies split,
+                                        per arm index *)
+Variable vis   : nat -> St -> list lstep.  (** a chain to each state, from
+                                               each fill arm's anchor *)
 Variable ds0   : list nat.          (** the boot digit string *)
 Variable t0    : nat.               (** and how many steps reach it *)
-Variable fm1 fm2 : nat.             (** how the fill's guaranteed copies split *)
 
 (** *** The family's parameters *)
 Hypothesis Hb    : 1 < fm_b F.
@@ -686,38 +789,50 @@ Hypothesis Hfto  : f_to (fam_fill F 0) = 0.
 
 (** How many of the fill target's guaranteed digit copies sit before the
     symbolic run and how many after.  The emitter picks the split the chain
-    search normalises to; the kernel only asks that they add up. *)
-Hypothesis Hfm12 : fm1 + fm2
+    search normalises to; the kernel only asks that they add up -- and what
+    they add up to now depends on the arm, because an arm at offset [r] has
+    [r] copies of the run on its left-hand side rather than one. *)
+Hypothesis Hfm12 : forall r, 0 < r -> r < N0f + stf ->
+  fm1 r + fm2 r
   + (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0)))
-  = 1 + f_s (fam_fill F 0).
+  = r + f_s (fam_fill F 0).
 
 (** *** The boot *)
 Hypothesis Hbnd0 : Forall (fun d => d < fm_b F) ds0.
 Hypothesis Hlen0 : 0 < length ds0.
 Hypothesis Hboot : csteps tm t0 CTape.c0 = Some (fam_cfg F (ds0, 0, 0)).
 
-(** *** The interior arms, one per digit below the top and residue *)
-Hypothesis Hst  : 0 < st.
-Hypothesis HAiS : forall d r, d < fm_b F - 1 -> r < st ->
+(** *** The interior arms, one per digit below the top and per arm index *)
+Hypothesis Hsti : 0 < sti.
+Hypothesis HAiS : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
   RuleSound tm (negb (fm_left F)) (fm_left F) (Aint d r).
-Hypothesis HAiL : forall d r, d < fm_b F - 1 -> r < st ->
-  lr_lhs (Aint d r) = cls_conf F (cls_side F (fm_b F - 1) r st [d]).
-Hypothesis HAiR : forall d r, d < fm_b F - 1 -> r < st ->
-  lr_rhs (Aint d r) = cls_conf F (cls_side F 0 r st [S d]).
-Hypothesis HAiC : forall d r, d < fm_b F - 1 -> r < st -> 0 < lr_cb (Aint d r).
+Hypothesis HAiL : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
+  lr_lhs (Aint d r)
+    = cls_conf F (cls_side F (fm_b F - 1) r (astride N0i sti r) [d]).
+Hypothesis HAiR : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
+  lr_rhs (Aint d r) = cls_conf F (cls_side F 0 r (astride N0i sti r) [S d]).
+Hypothesis HAiC : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
+  0 < lr_cb (Aint d r).
 
-(** *** The fill arm, at both tails known empty *)
-Hypothesis HAfS : RuleSound tm true true Afill.
-Hypothesis HAfL : lr_lhs Afill
-  = cls_conf F (run_side F (fm_b F - 1) 1 0 0 [] []).
-Hypothesis HAfR : lr_rhs Afill
-  = cls_conf F (run_side F (f_mid (fam_fill F 0)) fm1 fm2 0
-                  (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
-Hypothesis HAfC : 0 < lr_cb Afill.
+(** *** The fill arms, at both tails known empty.  [0 < N0f] is what keeps
+    [r = 0] out of the index range: no width is [0], so no fill arm is. *)
+Hypothesis Hstf : 0 < stf.
+Hypothesis HN0f : 0 < N0f.
+Hypothesis HAfS : forall r, 0 < r -> r < N0f + stf ->
+  RuleSound tm true true (Afill r).
+Hypothesis HAfL : forall r, 0 < r -> r < N0f + stf ->
+  lr_lhs (Afill r)
+    = cls_conf F (run_side F (fm_b F - 1) r (astride N0f stf r) 0 0 [] []).
+Hypothesis HAfR : forall r, 0 < r -> r < N0f + stf ->
+  lr_rhs (Afill r)
+    = cls_conf F (run_side F (f_mid (fam_fill F 0)) (fm1 r)
+                    (astride N0f stf r) (fm2 r) 0
+                    (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
+Hypothesis HAfC : forall r, 0 < r -> r < N0f + stf -> 0 < lr_cb (Afill r).
 
-(** *** Liveness: every state is reached from the fill's anchor *)
-Hypothesis Hvisit : forall q,
-  srun_st tm true true (vis q) (lr_lhs Afill) = Some q.
+(** *** Liveness: every state is reached from every fill arm's anchor *)
+Hypothesis Hvisit : forall r q, 0 < r -> r < N0f + stf ->
+  srun_st tm true true (vis r q) (lr_lhs (Afill r)) = Some q.
 
 Let s0 : CtrSt := (ds0, 0, 0).
 
@@ -730,16 +845,17 @@ Definition CfB (n : nat) : cconf :=
 Lemma inv0 : Inv F s0.
 Proof. simpl. repeat split; assumption. Qed.
 
-(** The cells of a top-of-width string, as the fill arm's left-hand side. *)
-Lemma cells_top : forall k, 0 < k ->
+(** The cells of a top-of-width string, as the fill arm's left-hand side.
+    The arm is the one at index [m1], and it walks the width in blocks of
+    [s]: [m1 + s*n = k] is [arm_index] and nothing else. *)
+Lemma cells_top : forall k m1 s n, m1 + s * n = k ->
   fam_cells F (repeat (fm_b F - 1) k) 0
-    = sden [] (k - 1) (run_side F (fm_b F - 1) 1 0 0 [] []).
+    = sden [] n (run_side F (fm_b F - 1) m1 s 0 0 [] []).
 Proof.
-  intros k Hk.
-  transitivity (fam_cells F ([] ++ repeat (fm_b F - 1) (1 + (k - 1) + 0) ++ []) 0).
-  - f_equal.
-    assert (E : 1 + (k - 1) + 0 = k) by lia.
-    rewrite E, app_nil_r. reflexivity.
+  intros k m1 s n Hk.
+  transitivity
+    (fam_cells F ([] ++ repeat (fm_b F - 1) (m1 + s * n + 0) ++ []) 0).
+  - f_equal. rewrite Nat.add_0_r, Hk, app_nil_r. reflexivity.
   - apply fam_cells_run.
 Qed.
 
@@ -747,23 +863,21 @@ Qed.
     law's own prefix and suffix ride along as the fixed words either side of
     the run, which is what lets a family whose fill is not a bare widening
     use the same arm shape. *)
-Lemma cells_filled : forall k, 0 < k ->
+Lemma cells_filled : forall k a s n c,
+  a + s * n + c
+    = k + f_s (fam_fill F 0)
+      - (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0))) ->
   fam_cells F (filled F k) 0
-    = sden [] (k - 1)
-        (run_side F (f_mid (fam_fill F 0)) fm1 fm2 0
+    = sden [] n
+        (run_side F (f_mid (fam_fill F 0)) a s c 0
            (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
 Proof.
-  intros k Hk.
+  intros k a s n c Hk.
   transitivity (fam_cells F
     (f_pre (fam_fill F 0)
-     ++ repeat (f_mid (fam_fill F 0)) (fm1 + (k - 1) + fm2)
+     ++ repeat (f_mid (fam_fill F 0)) (a + s * n + c)
      ++ f_suf (fam_fill F 0)) 0).
-  - f_equal. unfold filled.
-    assert (E : fm1 + (k - 1) + fm2
-                = k + f_s (fam_fill F 0)
-                  - (length (f_pre (fam_fill F 0))
-                     + length (f_suf (fam_fill F 0)))) by lia.
-    rewrite E. reflexivity.
+  - f_equal. unfold filled. rewrite Hk. reflexivity.
   - apply fam_cells_run.
 Qed.
 
@@ -775,34 +889,42 @@ Lemma board_lap : forall s, Inv F s ->
 Proof.
   intros [[ds p] ph] Hi. destruct Hi as (Hbnd & Hlen & ->).
   destruct (digs_decomp (fm_b F - 1) ds) as [Htop | (n & d & rest & -> & Hd)].
-  - (* the top of a width: the FILL arm *)
+  - (* the top of a width: the FILL arm at index [aoff N0f stf (length ds)] *)
+    remember (aoff N0f stf (length ds)) as r eqn:Er.
+    assert (Hr0 : 0 < r) by (subst r; apply arm_index_pos; assumption).
+    assert (Hrlt : r < N0f + stf) by (subst r; apply arm_index_lt; assumption).
+    assert (Hk : r + astride N0f stf r * acnt N0f stf (length ds) = length ds)
+      by (subst r; apply arm_index; assumption).
     assert (Hist : fam_is_top F ds = true).
     { rewrite Htop at 1. apply pos1_is_top; assumption. }
     exists (filled F (length ds), p, 0).
-    exists (lr_ca Afill * (length ds - 1) + lr_cb Afill).
+    exists (lr_ca (Afill r) * acnt N0f stf (length ds) + lr_cb (Afill r)).
     split; [|split].
     + unfold fam_succ.
       erewrite fill_at_top by (assumption || lia).
       rewrite Hist, Hfto. reflexivity.
-    + nia.
-    + apply (lap_from_arm tm F Afill true true [] (length ds - 1)
-               (run_side F (fm_b F - 1) 1 0 0 [] [])
-               (run_side F (f_mid (fam_fill F 0)) fm1 fm2 0
+    + pose proof (HAfC r Hr0 Hrlt). nia.
+    + apply (lap_from_arm tm F (Afill r) true true []
+               (acnt N0f stf (length ds))
+               (run_side F (fm_b F - 1) r (astride N0f stf r) 0 0 [] [])
+               (run_side F (f_mid (fam_fill F 0)) (fm1 r) (astride N0f stf r)
+                  (fm2 r) 0
                   (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))));
-        try assumption.
+        try (apply HAfS || apply HAfL || apply HAfR); try assumption.
       * intros _; apply tailL_nil.
       * intros _; apply tailR_nil.
-      * rewrite Htop at 1. apply cells_top. exact Hlen.
-      * apply cells_filled. exact Hlen.
+      * rewrite Htop at 1. apply cells_top. exact Hk.
+      * apply cells_filled. pose proof (Hfm12 r Hr0 Hrlt). lia.
   - (* not the top: an INTERIOR arm, for the digit that is not the top one *)
     apply Forall_app in Hbnd as [Hrun Hrest'].
     inversion Hrest' as [|? ? Hdb Hrest]; subst.
     assert (Hdlt : d < fm_b F - 1) by lia.
-    assert (Hn : n mod st + st * (n / st) = n).
-    { pose proof (Nat.div_mod_eq n st). lia. }
-    assert (Hr : n mod st < st) by (apply Nat.mod_upper_bound; lia).
+    remember (aoff N0i sti n) as r eqn:Er.
+    assert (Hrlt : r < N0i + sti) by (subst r; apply arm_index_lt; assumption).
+    assert (Hn : r + astride N0i sti r * acnt N0i sti n = n)
+      by (subst r; apply arm_index; assumption).
     exists (repeat 0 n ++ S d :: rest, p, 0).
-    exists (lr_ca (Aint d (n mod st)) * (n / st) + lr_cb (Aint d (n mod st))).
+    exists (lr_ca (Aint d r) * acnt N0i sti n + lr_cb (Aint d r)).
     split; [|split].
     + assert (Hns : fam_next F (repeat (fm_b F - 1) n ++ d :: rest) 0
                     = Some (repeat 0 n ++ S d :: rest))
@@ -810,19 +932,21 @@ Proof.
       unfold fam_succ. rewrite Hns.
       destruct (fam_is_top F (repeat (fm_b F - 1) n ++ d :: rest));
         [rewrite Hfto|]; reflexivity.
-    + pose proof (HAiC d (n mod st) Hdlt Hr). nia.
-    + apply (lap_from_arm tm F (Aint d (n mod st))
+    + pose proof (HAiC d r Hdlt Hrlt). nia.
+    + apply (lap_from_arm tm F (Aint d r)
                (negb (fm_left F)) (fm_left F)
-               (cls_tail F rest 0) (n / st)
-               (cls_side F (fm_b F - 1) (n mod st) st [d])
-               (cls_side F 0 (n mod st) st [S d]));
+               (cls_tail F rest 0) (acnt N0i sti n)
+               (cls_side F (fm_b F - 1) r (astride N0i sti r) [d])
+               (cls_side F 0 r (astride N0i sti r) [S d]));
         try (apply HAiS || apply HAiL || apply HAiR); try assumption.
       * intros He. unfold tailL. destruct (fm_left F); [discriminate|reflexivity].
       * intros He. unfold tailR. rewrite He. reflexivity.
       * rewrite <- Hn at 1.
-        apply (fam_cells_class F (fm_b F - 1) (n mod st) st (n / st) [d] rest 0).
+        apply (fam_cells_class F (fm_b F - 1) r (astride N0i sti r)
+                 (acnt N0i sti n) [d] rest 0).
       * rewrite <- Hn at 1.
-        apply (fam_cells_class F 0 (n mod st) st (n / st) [S d] rest 0).
+        apply (fam_cells_class F 0 r (astride N0i sti r)
+                 (acnt N0i sti n) [S d] rest 0).
 Qed.
 
 Theorem board_neverqh : NeverQuasiHaltsSt tm.
@@ -849,14 +973,22 @@ Proof.
     destruct Hi' as (Hbnd' & Hlen' & ->).
     assert (Hsh : ds' = repeat (fm_b F - 1) (length ds'))
       by (apply pos1_top_shape; assumption).
-    assert (Hden : CfB n = cden [] [] (length ds' - 1) (lr_lhs Afill)).
-    { unfold CfB. rewrite Hit, HAfL.
-      rewrite <- (cden_cls_conf F (run_side F (fm_b F - 1) 1 0 0 [] []) []
-                    (length ds' - 1) ds' p' 0).
+    remember (aoff N0f stf (length ds')) as r eqn:Er.
+    assert (Hr0 : 0 < r) by (subst r; apply arm_index_pos; assumption).
+    assert (Hrlt : r < N0f + stf) by (subst r; apply arm_index_lt; assumption).
+    assert (Hk : r + astride N0f stf r * acnt N0f stf (length ds') = length ds')
+      by (subst r; apply arm_index; assumption).
+    assert (Hden : CfB n
+                   = cden [] [] (acnt N0f stf (length ds')) (lr_lhs (Afill r))).
+    { unfold CfB. rewrite Hit, (HAfL r Hr0 Hrlt).
+      rewrite <- (cden_cls_conf F
+                    (run_side F (fm_b F - 1) r (astride N0f stf r) 0 0 [] [])
+                    [] (acnt N0f stf (length ds')) ds' p' 0).
       - unfold tailL, tailR; destruct (fm_left F); reflexivity.
-      - rewrite Hsh at 1. apply cells_top. exact Hlen'. }
-    destruct (vis_of_run tm (fun _ => CfB n) true true (vis q) (lr_lhs Afill)
-                1%positive (length ds' - 1) [] [] q (Hvisit q)
+      - rewrite Hsh at 1. apply cells_top. exact Hk. }
+    destruct (vis_of_run tm (fun _ => CfB n) true true (vis r q)
+                (lr_lhs (Afill r)) 1%positive (acnt N0f stf (length ds'))
+                [] [] q (Hvisit r q Hr0 Hrlt)
                 (fun _ => eq_refl) (fun _ => eq_refl) Hden) as (k & c & Hc & Hq).
     exists k, c. split; [exact HN | split; [exact Hc | exact Hq]].
 Qed.
