@@ -81,13 +81,15 @@ on type-in-type, unsafe (co)fixpoints, or assumed positivity.
 **It is not a proof that BBB(4) = 32,779,478.**  Two things are missing
 before the record itself is a theorem here:
 
-1. **The champion has no board.**  `1RB1LD_1RC1RB_1LC1LA_0RC0RD` blanks its
-   tape at step 32,779,478 and then spins out in state C.  Its shape is exactly
-   what `theories/Counters/BlankTail.v` already closes for the four previous
-   champions; what it needs is a 32.8M-step prefix, for which
-   `Checkers/TCyclerN.v` already supplies `cstepsN` and `cstepsN_nat`.  It is
-   currently one of the 47 core machines.  **Not done.**
-2. **The 68 (+ their 22 shadows).**  Any of them could, for all this
+1. **The champion's board is not yet CONSUMED.**  `1RB1LD_1RC1RB_1LC1LA_0RC0RD`
+   erases its whole working region and returns to a blank tape in `StC` at step
+   32,779,478, then spins left in `C` forever.  That board now exists and
+   compiles — `theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`,
+   one `vm_compute` over a binary-numeral fuel (`Checkers/TCyclerN.cstepsN`),
+   ~17 s — but the closeout tables have not been regenerated against it, so the
+   champion is still one of the 47 rows `bbb4_target` skips.  Until
+   `make closeout` runs and `D_remaining` drops it, **the value is not proved.**
+2. **The 47 (+ their 21 shadows).**  Any of them could, for all this
    development knows, be a quasihalter with a larger score.  That is what
    undecided means.
 
@@ -99,8 +101,8 @@ existentially, per-board, instead of as one aggregated constant — is closed:
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 68 still-undecided machines (and
-> their 22 0RB re-root shadows) —
+> 32,779,478 or never quasihalts, except 47 still-undecided machines (and
+> their 21 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The BBB(4) *value* does not yet
 > follow from what is here, because the champion itself is one of the 47.
 

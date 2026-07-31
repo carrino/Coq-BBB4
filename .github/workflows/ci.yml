@@ -34,6 +34,8 @@ jobs:
           make -f Makefile.coq -j4 theories/Machines/TCycler_Examples.vo
       - name: "Hygiene: zero Admitted in theories/"
         run: "! grep -rn 'Admitted\\.' theories --include='*.v'"
+      - name: "Hygiene: every .v under theories/ is built or explicitly exempt"
+        run: python3 tools/check_coqproject.py
       - name: "Untrusted audits: closeout partition, census cache, report"
         run: |
           python3 tools/closeout/audit.py

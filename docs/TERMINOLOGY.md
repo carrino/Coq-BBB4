@@ -124,16 +124,23 @@ snapshot from 2026-07-06 (pre-harvest) — read the residual off the Coq census
 from the 27. If an oracle-driven sweep ever "targets" a holdout, that's a
 signal it is aimed wrong.
 
-## Scoreboard snapshot (2026-07-24, wave-6)
+## Scoreboard (regenerate it; do not trust this line)
 
-- `D_census` = **5,156** = 27 holdouts + 5,129 residue (certified, frozen).
-- Wave-6 boarded **964 of the 5,129 residue** (staged, kernel-checked;
-  NOT yet subtracted from `D_census`): **434 never-QH** (`NGHStage/`,
-  `Forall NeverQuasiHaltsSt`) + **530 R_QH** (`NGHWStage/`, `Forall iqh`,
-  `iqh := NonHalt /\ QHBound 2000 /\ QuasiHaltsSt`). Disjoint (overlap 0).
-- The scoreboard's two numbers mean: **residue count = a tooling debt vs
-  mxdys** (target 0), **holdout count = the open problem** (shrinks slowly by
-  hand, may never hit 0).
+`python3 tools/closeout/audit.py` is the live scoreboard, and
+[issue #61](https://github.com/carrino/Coq-BBB4/issues/61) tracks it wave
+by wave.  As of 2026-07-31: **5,088 of the frozen 5,156 settled (98.7%)**,
+leaving **47 undecided core machines + 21 0RB shadows**.
+
+Two vocabulary corrections, because the situation changed under older
+notes in this tree:
+
+* **The HOLDOUT list is closed.**  Earlier documents call the 27 holdouts
+  "the open problem, may never hit 0" and the residue "a tooling debt".
+  Tower #20, the last holdout, was boarded on 2026-07-28.  Everything
+  still open is residue.
+* **The residue's own character inverted.**  It was machines whose lap our
+  emitter could not FRAME; it is now mostly machines whose lap is not
+  affine at all (`docs/RESIDUE_MAP.md`, "The families").
 
 ## `boarded`, and how the residue closes out without a re-walk
 
@@ -244,10 +251,37 @@ oracle-param / pattern-measure work becomes unnecessary). If some machines
 never determinize, those are the tell — residual far-cell uncertainty,
 i.e. not as exact as the halting result implied.
 
+## The two routes that produced the last ~120 boards
+
+* **REACHST tier** (`Checkers/ReachSt.v`, `ReachStI.v`;
+  `docs/REACHST_TIER.md`).  The liveness obligation is "state `q` recurs
+  forever".  Instead of modelling the machine's lap, DELETE `q` from the
+  table and ask whether the remaining sub-machine TERMINATES from every
+  configuration — if it must always come back to `q`, `q` recurs.  The
+  avoid sub-machine is routinely several rungs simpler than the machine
+  (plain binary counters running down, closed by an exact power-of-two
+  measure).  `ReachStI` relativises that to a proven state invariant, so
+  termination need only hold from configurations the machine actually
+  reaches.  This is why `docs/WHY_NO_HAMMER.md` is SHARPENED rather than
+  refuted: liveness is hard *for a finite abstraction*, and this route
+  removes the abstraction for one state.
+* **The LADDER** (`Checkers/Ladder*.v`, `Machines/Ladder/`;
+  `docs/LADDER_PLAN.md`).  Carries a counter segment as a value-indexed
+  rule family `CTR(alph, v)`, with the increment stated as a family over
+  the carry index — and, the load-bearing discipline, reads its parameters
+  (fill law, terminator, code, step) OFF the machine instead of assuming
+  them.  Every assumption it replaced with a measurement moved rows.  It
+  boarded its first machines in Stage B; boards emitted but still awaiting
+  their `ClassSucc` instance are listed in `tools/coqproject_exempt.txt`
+  rather than left to rot.
+
 ## Pointers
-- `docs/NGHIST_WAVE5.md` — wave-6 design, safety≠liveness, oracle, yields,
-  the two wire routes.
-- `NEXT_SESSION.md` — PLAYBOOK (compute discipline) + the wave-6 section +
-  the wave-7 oracle-drive plan.
-- `docs/IRULESQH_WAVE3.md`, `docs/REROOT_LISTC_STAGE.md`,
-  `docs/V5GAP_STAGE.md` — earlier residue-harvest waves.
+- `docs/CLAIMS.md` — what is proved, exactly, including what is not.  If
+  this file and that one disagree, that one is right.
+- `docs/RESIDUE_MAP.md` — the open list, by shape and by current gate.
+- `docs/REACHST_TIER.md`, `docs/LADDER_PLAN.md` — the two live routes.
+- `NEXT_SESSION.md` — the PLAYBOOK (compute discipline) and the running
+  lab notebook.
+- `docs/NGHIST_WAVE5.md`, `docs/IRULESQH_WAVE3.md`,
+  `docs/REROOT_LISTC_STAGE.md`, `docs/V5GAP_STAGE.md` — the early
+  residue-harvest waves, kept for their design record.
