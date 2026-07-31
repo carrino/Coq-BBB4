@@ -91,11 +91,6 @@ theories/Machines/Ladder/LDR_1RB1LA_1LC0RD_0RA0LC_0LA1RD.v
 #
 # FIBONACCI numeration, arms DERIVE, blocked on 4m's constructor and not on an
 # arm (4p).  No shadows: all five carry one row each.
-theories/Machines/Ladder/LDR_1RB____0LB1RC_1LB0RD_1LC0RD.v
-theories/Machines/Ladder/LDR_1RB____0LB1RC_1LD0RC_1LB1RC.v
-theories/Machines/Ladder/LDR_1RB____1LC0RB_1LD1RB_0LD1RB.v
-theories/Machines/Ladder/LDR_1RB____1LC0RD_0LC1RB_1LB0RD.v
-theories/Machines/Ladder/LDR_1RB____1LC1RD_0LC1RD_1LB0RD.v
 
 # FILL arm (line 431) -- neither row is core any more
 theories/Machines/Ladder/LDR_1RB____0LB1RC_1LB0RD_1LC0RC.v

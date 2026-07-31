@@ -3315,8 +3315,11 @@ End BoardG.
     * one phase.  All five fibonacci rows are one-phase (4p), so there is no
       cycle to lap and no [pv] to choose.
 
-    A row that quasihalts would want section 8's twin of this; none of the
-    five does (all are [live = BCD], measured), so it is not built. *)
+    All five rows quasihalt -- [A] is entered once at step 0 and nothing
+    targets it, which is why 4p files them [live = BCD] -- so section 8's
+    twin is what they actually use, and it is below.  [boardF_neverqh] is
+    kept because it is what the argument proves before the quiet state is
+    named, and a fibonacci row with liveness [ABCD] would want it. *)
 
 Section BoardF.
 
@@ -3333,6 +3336,11 @@ Variable fm1 fm2 : nat -> nat.         (** and the fill target's *)
 Variable vis   : nat -> St -> list lstep.
 Variable ds0   : list nat.
 Variable t0    : nat.
+(** ...and, for a row that QUASIHALTS (section 8's twin below), the quiet
+    state, its last visit, and the visit chains for the states that recur. *)
+Variable qa    : St.
+Variable sq    : nat.
+Variable visq  : nat -> St -> list lstep.
 
 (** *** The family's parameters *)
 Hypothesis HbF   : fm_b F = 2.
@@ -3530,10 +3538,15 @@ Proof.
   rewrite Hl, Hr. exact (HA _ _ n HL HR).
 Qed.
 
-Lemma board_visitF : forall q N,
+(** The visit premise, at the top of whatever width the counter has reached.
+    Both closers need exactly this and they differ only in which chains they
+    are handed, so it is proved once over the chain. *)
+Lemma board_visitF : forall (V : nat -> St -> list lstep) q N,
+  (forall r, 1 <= r -> r < N0f + stf ->
+     srun_st tm true true (V r q) (lr_lhs (Afill r)) = Some q) ->
   exists n k c, N <= n /\ csteps tm k (CfF n) = Some c /\ fst c = q.
 Proof.
-  intros q N.
+  intros V q N HV.
   destruct (topsF_cof sf0 N invF0) as (n & s' & HN & Hit & Htop & Hi').
   exists n.
   destruct s' as [[ds' q'] ph']. simpl in Htop.
@@ -3556,9 +3569,9 @@ Proof.
                   [] (acnt N0f stf (length ds')) ds' q' 0).
     - unfold tailL, tailR; destruct (fm_left F); reflexivity.
     - rewrite Hsh at 1. apply cells_topF. lia. }
-  destruct (vis_of_run tm (fun _ => CfF n) true true (vis r q)
+  destruct (vis_of_run tm (fun _ => CfF n) true true (V r q)
               (lr_lhs (Afill r)) 1%positive (acnt N0f stf (length ds'))
-              [] [] q (Hvisit r q Hr1 Hrlt)
+              [] [] q (HV r Hr1 Hrlt)
               (fun _ => eq_refl) (fun _ => eq_refl) Hden) as (k & c & Hc & Hq).
   exists k, c. split; [exact HN | split; [exact Hc | exact Hq]].
 Qed.
@@ -3575,7 +3588,63 @@ Proof.
     split; [exact Hrun | split; [|exact Hm]].
     replace (S n) with (n + 1) by lia.
     rewrite fam_iter_add, Hit. simpl. rewrite Hsucc. reflexivity.
-  - intros q N. exact (board_visitF q N).
+  - intros q N. exact (board_visitF vis q N (fun r H1 Hr => Hvisit r q H1 Hr)).
+Qed.
+
+(** *** The same board, for a row that QUASIHALTS
+
+    All five fibonacci rows read [BCD] and not [ABCD] (4p): [A] is entered
+    once, at step 0, and nothing targets it -- [B] comes from [{A,C,D}], [C]
+    from [{B,C}], [D] from [{B,D}].  So [boardF_neverqh] proves the wrong
+    theorem for every one of them and section 8's twin is what they want.
+    Everything above is reused verbatim; what the row adds is section 8's
+    three things and no more: every arm avoids the quiet state, a visit chain
+    per state OTHER than it, and its LAST visit with the window from there to
+    the boot anchor. *)
+
+Hypothesis HAiV : forall i r, i < 2 -> r < N0i + sti ->
+  RuleAvoid tm (negb (fm_left F)) (fm_left F) qa (Aint i r).
+Hypothesis HAfV : forall r, 1 <= r -> r < N0f + stf ->
+  RuleAvoid tm true true qa (Afill r).
+Hypothesis HvisitQ : forall r q, q <> qa -> 1 <= r -> r < N0f + stf ->
+  srun_st tm true true (visq r q) (lr_lhs (Afill r)) = Some q.
+Hypothesis Hqvis : VisitsAt tm qa sq.
+Hypothesis Hqwin : forall n c, sq < n < t0 ->
+  stepn tm n InitES = Some c -> fst c <> qa.
+
+Lemma board_lap_avoidF : forall s, InvF s ->
+  exists s' m, fam_succ F s = Some s' /\ 0 < m
+    /\ csteps tm m (fam_cfg F s) = Some (fam_cfg F s')
+    /\ AvoidRun tm qa m (fam_cfg F s).
+Proof.
+  intros s Hi.
+  destruct (board_armF (fun el er A => RuleSound tm el er A
+                                       /\ RuleAvoid tm el er qa A)
+              (fun i r Hi2 Hr => conj (HAiS i r Hi2 Hr) (HAiV i r Hi2 Hr))
+              (fun r H1 Hr => conj (HAfS r H1 Hr) (HAfV r H1 Hr)) s Hi)
+    as (s' & A & el & er & X & n & Hsucc & (HAs & HAv)
+        & HL & HR & Hl & Hr & Hcb).
+  exists s', (lr_ca A * n + lr_cb A).
+  split; [exact Hsucc | split; [nia | split]].
+  - rewrite Hl, Hr. exact (HAs _ _ n HL HR).
+  - rewrite Hl. exact (HAv _ _ n HL HR).
+Qed.
+
+Theorem boardF_iqh : NonHalt tm /\ QHBound (S sq) tm /\ QuasiHaltsSt tm.
+Proof.
+  apply (glue_qh_quietN tm CfF qa t0 sq).
+  - unfold CfF; simpl. rewrite <- lift_c0. apply csteps_lift. exact Hboot.
+  - intros n.
+    destruct (iterF_total n sf0 invF0) as (s & Hit & Hi).
+    destruct (board_lap_avoidF s Hi) as (s' & m & Hsucc & Hm & Hrun & Hav).
+    exists m, (fam_cfg F s'). unfold CfF. rewrite Hit.
+    split; [exact Hrun | split; [| split; [exact Hm | exact Hav]]].
+    replace (S n) with (n + 1) by lia.
+    rewrite fam_iter_add, Hit. simpl. rewrite Hsucc. reflexivity.
+  - intros q N Hq.
+    exact (board_visitF visq q N (fun r H1 Hr => HvisitQ r q Hq H1 Hr)).
+  - exact Hqvis.
+  - exact Hqwin.
 Qed.
 
 End BoardF.
