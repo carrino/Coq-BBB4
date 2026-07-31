@@ -4144,3 +4144,54 @@ traps._
   build then LIES**: `Makefile.coq` is generated from `_CoqProject`, so
   changing it mid-build invalidates the makefile and `make` can exit 0 with
   hundreds of files unbuilt.  Board first, then build.
+
+## 2026-07-31 — `(Gray, 2)` built: four rows, and the parity turned out to be a PARAMETER
+
+_Branch `claude/gray-2-ladder-build-igrvzw`, cut from `main` at `fa1be97`.
+Full write-up in `docs/LADDER_PLAN.md` §4o._
+
+- **The gate 4i set holds.**  `(Gray, 2)` is a second INSTANCE of `ClassSucc`,
+  not a rewrite: four instances go through, the `Class` record does not widen,
+  `ClassSucc` is not weakened, no second class record.  `boardG_neverqh` is
+  `LadderCheck` section 10 and section 7 is untouched.
+- **The thing 4n did not know: the parity is a parameter, not the constant 0.**
+  Five of the six gray core rows have even members; `1RB0RB_0RC1RC_0LD1LA_1LD0LA`
+  has odd ones.  Written with `p` where 4i's table has `0`, the four classes
+  are ONE table and the odd family's are the even family's with the two sides
+  exchanged.  Both values of `p` are exercised by a compiled board.  Had `0`
+  been baked in, one of the four rows would have wanted a second table of
+  four — and "the record does not widen" would have read very differently.
+- **State the lemma against an oracle BEFORE proving it.**
+  `tools/ladder/gray2check.py` takes the classes, the four-way split and the
+  top shape as the kernel states them and enumerates every bounded digit
+  string of widths 2..13 for all six gray rows (8190 strings each).  It caught
+  a wrong split in the first draft in seconds; finding the same thing in Coq
+  would have cost hours.  Same discipline as `bounce.py --selftest` and
+  `armprobe.py --selftest`, one rung up.
+- **The arithmetic trick worth keeping.**  `fam_value` at `Gray` is `val_pos`
+  after `gdec`, a fold from the most significant digit DOWN, so no `val_pos`
+  lemma transfers.  But a class's two sides differ only in their FIXED WORDS,
+  so `gval_app` splits the value into a bounded prefix contribution and the
+  suffix's own, and **the run is never evaluated** — which matters, because a
+  run of `1`s decodes to an alternating bit pattern with no closed form.
+- **Two shadows became core rows.**  Boarding a core row does NOT settle its
+  `0RB` shadow; two of these four carried one, and those two are now core rows
+  wanting the re-root board.  `settled by a board` 5103 → 5107 and remaining
+  53 → 49, which is the honest number; core undecided 39 → 37 is not.
+- **`RuleSound` is on `cconf` and `ctape_move` does not normalise** — 4n's
+  finding, and the gray emitter pays for it directly: it reads the far side
+  off the BOOT (simulating from the blank tape) rather than trusting
+  `other_side_cells`, and then writes the `Fam` record from what the arm
+  search chose.  With the certificate's value, zero of the gray rows have an
+  interior arm; with the boot's, four do.  Getting this backwards shows up as
+  a `cls_conf` unification failure on `c_r`, nowhere near the cause.
+- **Emit the family AFTER the closure, for gray.**  Because of the above, the
+  `Fam` record depends on which far side the arm search picked, so `emit()`
+  runs the gray closure first.  The binary path still runs it last.
+- **`_rbranches`'s `body` must carry its own trailing period** — the `dead`
+  string has one and the live one does not, and the result is a Coq syntax
+  error 100 lines from the template.
+- **The two gray rows 4n left alone are refused at the BOOT check**, before
+  any arm search, with `boot cells [1, 0, 1] are not the family at [1, 1]`.
+  That is 4n's cell-spelling finding stated by the tool rather than recalled.
+  Their class law is fine — `gray2check.py` checks it.

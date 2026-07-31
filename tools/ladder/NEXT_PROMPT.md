@@ -1,157 +1,135 @@
-BUILD `(gray, 2)`.  It is four rows, the arms are MEASURED to derive, and the
-build is specified to the lemma — in `carrino/Coq-BBB4`, on branch
-`claude/ladder-gray-<yourid>` cut from `main`.  **Diff `origin/main` first**
-(§4l's own lesson: `git show origin/main:tools/closeout/core_rows.txt` is one
-diff and costs nothing — the wave route has taken rows out from under two
-sessions now).  §4n merged: the phase cycle in `Inv`, three rows, core
-undecided 43 → 40 against §4n's own base — and then **39** once that branch
-merged `origin/main`, whose two boards §4n had not seen.  The wave route took
-rows out from under this session too; the diff is still one command.
+BUILD THE RE-ROOT CLOSER.  Twelve `0RB` shadows sit on ten core rows, the
+general half of the argument is already merged (#98), and one worked example
+is on disk.  Each shadow is a row the closeout still lists and nobody has to
+find a family for.  In `carrino/Coq-BBB4`, on branch
+`claude/reroot-<yourid>` cut from `main`.
 
-Read first, in this order: `docs/LADDER_PLAN.md` **§4n in full** — it is what
-the last session did, its probe is why you are not measuring again, and its
-last table is where the 40 stop; then §4i's "The gate, answered", whose four
-`(gray, 2)` classes are listed VERBATIM and were independently re-derived by
-§4n's probe from the machines themselves; then `theories/Checkers/LadderCheck.v`
-§3 (`Class`, `ClassSucc`, `pos1_class_succ`) and §5 (`Section Iter`), which is
-where every one of your edits goes; then `tools/ladder/armprobe.py`, which
-already builds the gray class arms and is the emitter you are about to teach
-`emit_ladder.py`.
+**Diff `origin/main` first**: `git show origin/main:tools/closeout/core_rows.txt`
+is one command, and the wave route has now taken rows out from under four
+sessions.  §4l, §4n and §4o each say this and each said it after paying.
 
-**STATE.** **39** core undecided and **14** `0RB` shadows
-(`tools/closeout/core_rows.txt`; `make closeout-status`).  **5,103** frozen rows
-settled by a board, 99.0%.  §4n's last table is stated against its own 40 and
-one of its rows is now boarded off it, so re-read it as: 17
-families-found-none-closed, 6 gray (**4 with both arms**), 5 fibonacci (§4m,
-`live = BCD`), 5 no-family, 3 time cap, 4 arms-blocked — minus main's core
-board.  Take the bucket counts from `core_rows.txt`, not from the table.
+Read first, in this order: `docs/LADDER_PLAN.md` **§4o in full** — what the
+last session built and, more to the point, its closing finding that boarding a
+core row does NOT settle its shadow; then `tools/closeout/shadow_rows.tsv`
+(column 4 is the partner and column 5 the re-rooting); then the merged general
+half of the re-root argument and the one worked example on main
+(`RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA`, from #95/#98); then
+`tools/closeout/gen_shadow.py`, which is the generator that has to learn to
+emit the rest.
 
-**The shadows are not spread evenly and it changes what a row is worth.**  All
-14 sit on **12** core rows, so those 12 rows carry **26 of the 53** remaining;
-the other 27 core rows carry one row each.  Three of the four ARMS-BLOCKED
-rows — the ones whose partial boards are already on disk with every arm but
-one proved — carry **5 shadows between them**, so they are worth 8 rows, not 3.
-`tools/closeout/shadow_rows.tsv` column 4 is the partner; count it before
-choosing a bucket.
+**STATE.**  **37** core undecided and **12** `0RB` shadows
+(`tools/closeout/core_rows.txt`, `tools/closeout/shadow_rows.tsv`;
+`make closeout-status`).  **5,107** frozen rows settled by a board, 99.0%.
+**49** rows remain.
 
-**THE TASK.**  §4n measured the gray six and found **four** of them have both
-class arms under the two knobs — and it found them by fitting the classes from
-`fam_next` and recovering §4i's four verbatim.  So the measurement 4k's guard
-asks for is DONE; do not re-run it.  Build the thing it selected:
+**THE TASK.**  §4o boarded four `(Gray, 2)` core rows and two of them carried
+a shadow — and the shadows did not go away, they became core rows.  That is
+the bookkeeping fact worth acting on: **a shadow is worth a row only if
+someone builds its re-root, and until then boarding its partner just moves it
+between two buckets.**  Twelve of the forty-nine remaining rows are of that
+kind, and they are the only rows in the list for which the mathematics is
+already done.
 
-* **`cls_side` gains a fixed word before the run.**  `(Binary, 1)`'s classes
-  have `cs_u = []` so `cls_side` never carried one; three of `(gray, 2)`'s four
-  do.  `run_side` already has `w1` — copy that shape, and `fam_cells_class`
-  takes the same one-line change.
-* **Four `ClassSucc` instances and one parity invariant.**  `P` is already in
-  the file for exactly this and `(Binary, 1)` instantiates it at `fun _ => True`.
-  The discriminator is the value's low bit, `+2` preserves it, and it is GLOBAL
-  — it cannot be pushed into `cs_u`/`cs_w` (§4i measured that: with the parities
-  mixed the four classes contradict each other).
-* **The case split.**  `board_arm` runs on `digs_decomp`; `(gray, 2)` needs the
-  four-way analogue — every member of a width is one of the four classes or the
-  top.  §4n's probe checks exactly this by enumeration and reports coverage, so
-  use it as the oracle while you state the lemma.
-* **The top of a width is `[1] ++ 0^(k-2) ++ [1]`, not the all-max run** — the
-  largest MEMBER, because `b^k - 1` is odd and not a member at all.  So
-  `pos1_is_top` / `pos1_top_shape` get gray twins, and the fill arm's left-hand
-  side has a fixed word each side of the run.
-* **`Section Iter` at `Gray`/step 2.**  `Hcode`/`Hstep` gate it, and
-  `fam_value` at `Gray` is a fold from the most significant digit down, so no
-  lemma about `val_pos` transfers.  `inv_value_lt`, `fam_succ_total` and
-  `top_reached_aux` each need their gray statement; the measure `b^k - value`
-  falls by 2 rather than 1 and that is the whole difference.
+* The general lemma is merged and the one worked example compiles.  What is
+  missing is the GENERATOR: `gen_shadow.py` emits one `RRNQ_*` today and the
+  twelve want twelve, each with its own re-rooting (column 5 of
+  `shadow_rows.tsv` — `mirror`, `swap:B:C`, and combinations).
+* Every re-rooting is a permutation of states and/or a mirror of the tape, so
+  the obligation is an equation between two concrete tables that `vm_compute`
+  decides.  **If one of them is not, STOP and write §4p with which shadow and
+  why** — do not weaken the general lemma to fit it.
+* `audit.py` already re-verifies every shadow re-root in the core orbit
+  independently, so a wrong re-rooting is caught by the audit and not by a
+  wrong theorem.  Keep it that way.
 
-**DO ONE ROW END-TO-END FIRST.**  `1RB0RB_0LC0LD_1LC1LD_1RA0RA` is the one §4g
-and §4i both read; drive it to `NeverQuasiHaltsSt tm_*`, `make closeout`, and
-confirm "core undecided" moves.  **A board that does not move a number is not a
-board.**
+**DO ONE ROW END-TO-END FIRST.**  `0RB0LA_1LA1RC_0RD1RD_1LB0LB` — it is one of
+the two §4o promoted, its partner `1RB1LC_0LA0RB_0LD1LD_1RA0RA` is boarded on
+this branch's base, and the re-rooting is a plain `mirror`.  Drive it to
+`NeverQuasiHaltsSt tm_*`, run `make closeout`, and confirm "settled by a
+board" moves.  **A board that does not move a number is not a board.**
 
-**GATE.**  If a `ClassSucc` instance will not go through, STOP and write §4o
-with which class and why — do not weaken `ClassSucc` to fit it, and do not add
-a second class record.  §4i's result that the record does not widen is worth
-more than any one row.
+**WHAT NOT TO DO.**  Do not build another `ClassSucc` instance — `(Gray, 2)`
+is done (§4o) and the next `(code, step)` pair is worth less than twelve rows.
+Do not do the outer parameter (§4j).  Do not touch the count language or `RU`.
+**Never edit `theories/Census/`.**
 
-**DO NOT** re-run the arm probe over the gray six (§4n did it: 4 of 6, and the
-two that fail do NOT fail on the class law — see below), do not add the
-Fibonacci-rank or terminator-template constructor (that is §4m's five rows and
-its own session), do not do the outer parameter (§4j), do not touch the count
-language or `RU`.
-
-**The two gray rows that are NOT in the four, and it is a FAMILY question.**
+**The two gray rows that are still open are a FAMILY question and are cheap.**
 `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and `1RB0RD_1LC0LC_1LD0LB_1RD0RA` have two-cell
 digit words ending in `0`, so `fam_cells` spells one cell more than the
-machine's `cconf` carries at the anchor — the trailing blank is never
-materialised.  Measured: strip that one cell and the fill arm derives in 24
-steps at every index and copy split.  Their class law is fine.  Either re-read
-them at an anchor whose digit words do not end in a blank, or give `fam_cells`
-a trimming the denotation can state.  Two rows, and it is not a `ClassSucc`.
-
-**CONSTRAINTS.**  May touch `theories/Checkers/`, `theories/Machines/Ladder/`,
-`tools/ladder/`, `docs/`, `NEXT_SESSION.md`.  **Never edit `theories/Census/`.**
-Do not touch tailcert/nestcert/regcert or wave-session files.  Commit
-incrementally; push and open a PR when the first row moves the core count.
+machine's `cconf` carries at the anchor.  The gray emitter now REFUSES them at
+the boot check with exactly that reason in the `.v` file, and
+`gray2check.py` confirms their class law is fine.  Either re-read them at an
+anchor whose digit words do not end in a blank, or give `fam_cells` a trimming
+the denotation can state.  Two rows, and no kernel lemma is involved.
 
 **Facts worth not rediscovering.**
 
-* Coq is not in the image — `apt-get install -y coq` gives 8.18.0, which is what
-  CI expects.  It takes about a minute.
-* **`make closeout` only needs `theories/Closeout/Closeout.vo`, and its
-  dependency closure is 2188 files that do NOT include the nine
-  `IRules_Batch`** (`coqdep` says so; ask it, not the plan file).  So the audit
-  never pays their 8.2 GB each.  `make -f Makefile.coq -j3
-  theories/Closeout/Closeout.vo` from cold is about 45 minutes on the 4-core
-  box; `make -j3 closeout` after a kernel edit is about 30 (31 boards + 51
-  `CB_*` + `Closeout`).  `.vo` are gitignored: a fresh container pays it, a
-  branch reset does not.
-* **Editing `theories/Checkers/LadderCheck.v` under a running `make` makes
+* Coq is not in the image — `apt-get install -y coq` gives 8.18.0, which is
+  what CI expects.  It takes about a minute.
+* **`make closeout` only needs `theories/Closeout/Closeout.vo`, whose
+  dependency closure is ~2,094 files and does NOT include the nine
+  `IRules_Batch`** (`coqdep` says so; ask it, not the plan file).  Measured on
+  4 cores at `-j3` from cold: about **4 files a minute**, so a cold closure is
+  hours and not the 45 minutes §4n estimated.  `.vo` are gitignored, so a
+  fresh container pays it and a branch reset does not — start it EARLY and in
+  the background, and do the reading while it runs.
+* **`tools/closeout/audit.py` is the live scoreboard and needs no Coq at
+  all.**  `inventory.py` → `gen_stages.py` → `audit.py` moves the numbers in
+  seconds; the `Closeout.vo` build is what turns the audit's number into the
+  kernel's.  Report which one you have.
+* **Editing a file under `theories/Checkers/` under a running `make` makes
   every already-built board fail** with `inconsistent assumptions over library
-  BBB4.Checkers.LadderCheck`, and the build stops there.  Same trap as
-  rewriting `_CoqProject` mid-build, same fix: finish the edit, then build.
-  Nothing is lost but the wall clock.
+  BBB4.Checkers.LadderCheck`.  Same trap as rewriting `_CoqProject`
+  mid-build.  Finish the edit, then build.
 * **`RuleSound` is an equation on `cconf` and `CTape.ctape_move` does not
   normalise.**  A blank the head materialises by stepping back over it is
-  `S0 :: r` and not `r`, and `valfam`'s `other_side_cells` drops exactly those
-  cells — the same TAPE under `lift` (so `Hboot` does not notice) and a
-  different `cconf` (so every arm does).  `armprobe.py` reads the far side off
-  the boot for this reason and the emitter's gray path will have to.  Without
-  it, zero of six gray rows have an interior arm; with it, six.
-* **The top of a width is the largest MEMBER.**  At step 2 the all-max string is
-  not a member, and an arm built on it has no chain because the machine is never
-  in that configuration.  Read the tops off the orbit.
-* `board_neverqh`/`board_iqh` are now WRAPPERS at `NPH = 1` over the
-  phase-indexed `boardph_neverqh`/`boardph_iqh` (§4n).  Their argument order is
-  unchanged and the 27 boards `_CoqProject` registers use it (9 of them through
-  `board_iqh`); if you change `Section BoardPh`'s variables, `Section BoardOne`
-  is where the old interface is kept alive, and every existing board depends on
-  that.  Six more `LDR_*.v` are on disk and tracked but NOT registered -- they
-  are the partial boards of the arms-blocked rows, they carry no closure, and
-  `make` has no rule for them.
-* **A fill arm's anchor does not have to witness every recurring state.**
-  `tops_cofinal_at` gives the tops of one chosen phase `pv`, and the emitter
-  picks `pv` by trying each phase.  If a gray row's fill anchor cannot reach
-  some state, that mechanism is already there at `NPH = 1` (`pv = 0`) and what
-  it needs is a `pv` to choose from — which a one-phase family does not have.
-  Widening the visit search is the other half: `emit_ladder.visits` now walks
-  out from the anchor breadth-first over the engine's own candidate steps after
-  the prefix search fails.
-* **`stride = 0` needs the whole side concrete in `s_pre`** (`blk`/`blk_den`);
-  the failure reads like "the carry ripple is not affine" and is an instant
-  `None` at every stride.
-* `emit_ladder.py` writes its refusal reason **into the `.v` file**.  Read the
-  file, not the driver's last line.
-* Keep `board_ladder.py`'s `wanted()` in step with `closure_data`'s refusals.
-* **Never run `valfam.py` and a full `make -jN` at the same time.**  One row is
-  fine; a sweep is not.
-* The time-cap bucket is three rows, not four.  All four re-run at `--cap 900`
-  (six times the sweep's budget): the three `1RB---` rows still cap, each with
-  26 families found and four tried -- so raising the budget is not the lever,
-  and the question is which families the searcher spends it ON.
-  `1RB1RC_1LA1RA_0RC1LD_1LB0LD` finishes in 723 s and stops on
-  `interior-not-covered` with 5 of 12 families tried: it is a coverage row that
-  was wearing the budget's label.
+  `S0 :: r` and not `r`; `valfam`'s `other_side_cells` drops exactly those
+  cells — the same TAPE under `lift` (so the boot premise does not notice) and
+  a different `cconf` (so every arm does).  The gray path in `emit_ladder.py`
+  reads the far side off the BOOT for this reason and then writes the `Fam`
+  record from what the arm search chose.
+* **The top of a width is the largest MEMBER.**  At `(Gray, 2)` it is
+  `[1-p] ++ 0^(k-2) ++ [1]` with value `2^k - 2 + p`, and at even parity that
+  is NOT the string `of_value` computes for `b^k - 1`.
+* `emit_ladder.py` writes its refusal reason **into the `.v` file**, and it is
+  the real exception text.  Read the file, not the driver's last line.
+* Keep `board_ladder.py`'s `wanted()`/`wanted_gray()` in step with
+  `closure_data`/`closure_data_gray`'s refusals.
+* **Never run `valfam.py` and a full `make -jN` at the same time.**  One row
+  is fine; a sweep is not.
+* CI builds `CloseoutKit.vo`, two example files and a `make all` dry run — it
+  does NOT build the ladder boards or the `CB_*` stages.  Green CI is not
+  evidence your board compiles.  Build it locally.
 * The arm-soundness, class and avoidance lemmas are Closed under the global
   context — zero axioms — because they are on `csteps`/`cden` and never go
-  through `lift`.  `board_arm`, `board_lap_avoid`, `arm_index`, `blk_den`,
-  `top_after` and `tops_cofinal_at` are too.  Keep it that way; funext enters
-  only in the final assembly.
+  through `lift`.  `board_arm`, `board_armG`, `gray_split`,
+  `gray2_class_succ`, `blk_den`, `arm_index` and `tops_cofinal_at` are too.
+  Keep it that way; funext enters only in the final assembly.
+* The time-cap bucket is three rows, not four.  All four re-run at
+  `--cap 900`: the three `1RB---` rows still cap with 26 families found and
+  four tried, so raising the budget is not the lever — the question is which
+  families the searcher spends it ON.  `1RB1RC_1LA1RA_0RC1LD_1LB0LD` finishes
+  in 723 s on `interior-not-covered` with 5 of 12 families tried: it is a
+  coverage row that was wearing the budget's label.
+
+**CONSTRAINTS.**  May touch `theories/Checkers/`, `theories/Machines/`,
+`tools/`, `docs/`, `NEXT_SESSION.md`.  **Never edit `theories/Census/`.**
+Commit incrementally; push and open a PR when the first row moves the count.
+
+**MERGE DISCIPLINE.**  These files are ALL GENERATED and must never be
+hand-resolved on a conflict:
+
+    theories/Closeout/CB_*.v, Closeout.v, CoreRows.v, CloseoutFinal.v,
+    BBB4_Theorem.v, the Closeout section of _CoqProject,
+    tools/closeout/{core_rows.txt,frozen_map.tsv,frozen_unproven.txt,
+                    shadow_rows.tsv}
+
+Resolving one by hand silently reverts whichever side's boards you did not
+notice.  Instead: `git checkout --theirs` to get a tree, then re-derive —
+
+    python3 tools/closeout/inventory.py
+    python3 tools/closeout/gen_stages.py
+    python3 tools/closeout/audit.py     # must print CLOSEOUT AUDIT: OK
+
+The board `.v` files are the source of truth and never conflict, because they
+are different files.
