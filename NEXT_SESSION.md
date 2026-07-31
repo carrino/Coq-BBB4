@@ -4197,6 +4197,18 @@ renumbered, because #103 took that number while this ran._
   `core undecided` 37 → 32 on this branch's own base; merged with #104's two
   freed shadows the tree reads **5114 (99.2%) and 30 core**.  Shadows
   unchanged at 12 — these five carry none, as 4p said.
+- **"No more fibonacci rows" is NOT measured — it is the absence of a label.**
+  A `numeration` field only exists for a row whose family CLOSED, and 24 of
+  the 30 remaining core rows have no selected family at all (15 "families
+  found but none closed", 5 "no value family", 4 "time cap").  Nothing ever
+  asked those 24.  **And more clock is not the lever**: the six `1RB---` core
+  rows re-run at `--cap 420 --kmax 8` land exactly where they did at 240 —
+  three exhaust their candidates in 339 s and reject every one, three do not
+  finish.  They are rejection-limited.  The next move is to make
+  `valfam.py` record WHY each candidate was rejected (4p's move on the
+  interior nine, which paid for itself), then fingerprint survivors with
+  `orbit_machine` — members per width is 2,3,5,8,13,21 for fibonacci and
+  2,4,8,16 for positional, and it needs no certificate.
 - **The fibonacci bucket is empty and the four base-2 rows are closed.**  Their
   interior arm cost has a constant SECOND difference; no arithmetic progression
   makes a quadratic affine and no widening of `ARM_GRID` reaches them.  Not
