@@ -1402,6 +1402,8 @@ theories/Machines/Ladder/LDR_1RB____0LB1RC_1LD0RC_1LB1RC.v
 theories/Machines/Ladder/LDR_1RB____1LC0RB_1LD1RB_0LD1RB.v
 theories/Machines/Ladder/LDR_1RB____1LC0RD_0LC1RB_1LB0RD.v
 theories/Machines/Ladder/LDR_1RB____1LC1RD_0LC1RD_1LB0RD.v
+theories/Machines/Ladder/LDR_1RB0RD_1LC0LB_1LD0LB_1RD0RA.v
+theories/Machines/Ladder/LDR_1RB0RD_1LC0LC_1LD0LB_1RD0RA.v
 theories/Counters/LapGlueQuiet.v
 theories/Counters/KpWallAlt.v
 theories/Counters/KpWallQH.v

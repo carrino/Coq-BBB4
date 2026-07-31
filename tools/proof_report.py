@@ -47,7 +47,7 @@ def main():
 theories/Closeout/BBB4_Theorem.v:
 
   bbb4_target : forall tm,
-    QHBound {score:,} tm \\/ NeverQuasiHaltsSt tm \\/ skipped D_remaining tm
+    QHBound {score} tm \\/ NeverQuasiHaltsSt tm \\/ skipped D_remaining tm
 
 Every (4,2) Turing machine either
 
@@ -62,22 +62,31 @@ second disjunct, Closeout/ShadowKit.v).  A shadow is not a separate
 problem: it resolves automatically the moment its core machine is
 boarded.
 
-The champion {champ} is itself one of the core
-machines (its 32.8M-step prefix has no certificate yet), so this is NOT
-a proof that BBB(4) = {score:,}.  The precise scope of the claim is
+The champion {champ} is now BOARDED -- it
+quasihalts at exactly {score:,}, kernel-checked
+(Machines/Counters/Champion_*.v, one binary-fuel vm_compute), and it
+enters the closeout through [boarded]'s third disjunct.  So the
+theorem's bound is ATTAINED and not merely stated.  This is still NOT a
+proof that BBB(4) = {score:,}: {n} core machines remain skipped, and any
+of them could quasihalt later.  What it does buy is the LOWER bound --
+BBB(4) >= {score:,} -- and the standing invitation that if the {n}
+fall, the value follows.  The precise scope of the claim is
 docs/CLAIMS.md; the core machines, mapped by shape and blocker, are
 docs/RESIDUE_MAP.md.
 
 Sharper, in previous-record terms:
 
-  bbb4_decided_le_prev_champion : forall tm,
+  bbb4_decided_le_prev_champion_or_champion : forall tm,
     ~ skipped D_remaining tm ->
-    QHBound 66349 tm \\/ NeverQuasiHaltsSt tm
+    QHBound 66349 tm \\/ NeverQuasiHaltsSt tm \\/ QHBound {score} tm
 
 -- every machine NOT skipped quasihalts by the PREVIOUS champion's
-score, 66,349, or never quasihalts.  The four previous champions
+score, 66,349, or never quasihalts, or quasihalts by the champion's.
+The third case is [boarded]'s third disjunct and exactly one census row
+is in it: the champion and its orbit (the single `iqhch' line of
+tools/closeout/frozen_map.tsv).  The four previous champions
 (scores 2,512..66,349) are among the decided, so among all known
-(4,2) machines, only the current champion exceeds the previous record.
+(4,2) machines, only the champion exceeds the previous record.
 
 Axiom footprint: functional_extensionality_dep, and nothing else
 (printed by Print Assumptions during the build above; independently

@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**42 rows as of this commit — 30 distinct core machines + 12 0RB
+_**41 rows as of this commit — 29 distinct core machines + 12 0RB
 re-root shadows.**  A shadow needs no new mathematics, but it does need its
 own board: boarding a core machine moves its shadow into `core_rows.txt`
 rather than settling it, so budget the pair (2026-07-31; worked example
@@ -190,15 +190,24 @@ one-line reads exposed the bit-polarity inversion that emptied the old
 prover's layer read cracked the CHAMPION — the machine blanks its whole
 10,239-cell region and returns to a blank tape in `StC` at step
 32,779,478, so its board is one ~17 s binary-fuel `vm_compute`
-(`Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`, in the tree
-and compiling).  **A closeout regen will not consume it, and no number of
-re-runs will**: it proves `QHBound 32779478`, and `boarded` demands
-`QHBound B_board` with `B_board` = 66,349, the PREVIOUS champion's score
-(`Closeout/CloseoutKit.v`).  32,779,478 ≰ 66,349, so `inventory.py` refuses
-it by the same comparison and the champion stays on this list.  Admitting
-it is a `CloseoutKit` change — raise `B_board`, or give `boarded` a third
-disjunct for exact-score quasihalters above it — and it buys the LOWER
-bound only.  See `docs/CLAIMS.md` "What this is NOT" §1.
+(`Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`).  **That row
+is now OFF this list** (2026-08-01, wave 4s).  It sat here for one reason
+and the reason was never mathematics: `boarded` demanded `QHBound B_board`
+with `B_board` = 66,349, the PREVIOUS champion's score
+(`Closeout/CloseoutKit.v`), 32,779,478 ≰ 66,349, so `inventory.py` refused
+the board by the same comparison and no number of closeout regens moved it.
+The fix is the second of the two `CloseoutKit` changes this paragraph used
+to name — **a third disjunct** for exact-score quasihalters above
+`B_board`, carried through `covers_iqh_champ_at` and the swap/mirror
+lemmas — and not raising `B_board`, so
+`bbb4_decided_le_prev_champion_or_champion` still separates the champion
+from the other 5,114 boarded rows instead of coarsening all of them.  Its
+gate is the PROPOSITION `B <= B_champ` under `lia`, never a `<=?`:
+evaluating a boolean against 32,779,478 would make the kernel build a
+32.8M-constructor unary numeral.  It buys the LOWER bound — BBB(4) ≥
+32,779,478 is a theorem here now — and nothing more; the 29 that remain
+are what stands between this and the value.  See `docs/CLAIMS.md`
+"What this is NOT".
 
 Measured dead along the way (all do-not-retry): the `cycR-gap` primitive,
 the double peel, the SOLO-cascade route on the boot bucket, every FRAMING

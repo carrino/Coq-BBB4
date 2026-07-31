@@ -2837,6 +2837,170 @@ run of `0` (which is what `filled_fib0` discharges membership for).
   named the wrong theorem.  **Read `liveness.states_infinitely_often` before
   writing a board section, not after.**
 
+## 4s. nickdrozd's nineteen: three board, and BOTH blockers were in the searcher rather than in the kernel
+
+_Branch `claude/provable-turing-machines-zyuscn`, cut from `main` at `bed4676`.
+Coq 8.18.0 from apt.  Prompted by nickdrozd posting nineteen rows he was
+confident were all provable — the third time his lists have paid out (§4k's
+bucket sizing, and every ReachSt wave)._
+
+    settled by a board       5115 -> 5117   (99.2%)
+    core undecided             30 ->   27
+    0RB shadows of the core    12 ->   12   (none of the three carried one)
+
+**Read the nineteen against the tree before reading them as work.**  Four of
+them — `1RB0LC_1LC0RB_1RD1LA_0LA1RB`, `1RB1LA_1LC0RB_0LA0LD_1RA0RB`,
+`1RB1LA_1LC0RB_0LA0LD_1RD0RB`, `1RB1LD_1RC0RB_0LA1RB_0LD1LA` — have been
+boarded since the counter waves (`Bounce_8.v`, `Spacer_22.v`, `Spacer_23.v`,
+`Mono_31.v`).  They are not in `core_rows.txt` and never were on the published
+map; a list from outside the tree is against the RESIDUE, not against the
+frozen census.  Fifteen were live.
+
+### The CHAMPION, and the gate was arithmetic in a Python file
+
+`1RB1LD_1RC1RB_1LC1LA_0RC0RD` has had a compiling board since wave 33 —
+`NonHalt /\ QHBound 32779478 /\ QuasiHaltsSt`, one binary-fuel `vm_compute`.
+It stayed on the skipped list because `boarded` demanded `QHBound B_board`
+with `B_board` = 66,349 and `inventory.py` refused any `iqhle:` row above it.
+`docs/CLAIMS.md` had named the two possible fixes for months; this takes the
+second, **a third disjunct**, because raising `B_board` would coarsen all
+5,114 other boarded rows to 32.8M to admit one.
+
+    boarded tm := NeverQuasiHaltsSt tm
+               \/ (NonHalt tm /\ QHBound B_board tm /\ QuasiHaltsSt tm)
+               \/ (NonHalt tm /\ QHBound B_champ tm /\ QuasiHaltsSt tm)
+
+**The one thing that is not mechanical is the GATE'S TYPE.**  Its `B_board`
+twin `covers_iqh_le_at` takes `(B <=? B_board) = true` and the stage
+discharges it with `vm_compute; reflexivity`.  Doing that at `B_champ` would
+make the kernel normalise a **32.8M-constructor unary numeral** — the same
+trap the Horner form exists to dodge one level up.  So `covers_iqh_champ_at`
+takes the PROPOSITION `B <= B_champ` and the stage discharges it with `lia`
+on two Horner forms, which is instant and allocates nothing.  Same reason the
+board states its bound in a `Definition` rather than as `iqh_le 32779478`:
+a decimal literal that large is left as `Nat.of_num_uint`, opaque to `lia`
+and ruinous to `vm_compute`, so `inventory.py` gets a new kind (`iqhch`) that
+reads the Horner definition instead of a number in the theorem statement.
+
+Blast radius, measured: four `destruct`s on `boarded` in the whole tree
+(`boarded_unswap`, `boarded_unmirror`, and two in the generated
+`BBB4_Theorem.v`).  `bbb4_target` is UNCHANGED — both bounds go through
+`qhbound_mono` to `champion_score` — and the previous-record corollary is
+renamed `bbb4_decided_le_prev_champion_or_champion` and gains the third
+disjunct, which is the honest statement now that the champion is decided.
+**BBB(4) >= 32,779,478 is a theorem here now.**  It is still not the value.
+
+### The two GRAY rows: the tie-break is a property of `cconf`, not of the machine
+
+§4n and §4o left `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and
+`1RB0RD_1LC0LC_1LD0LB_1RD0RA` with a diagnosis — "two-cell digit words ending
+in `0`, so `fam_cells` spells one cell more than the machine's `cconf` carries
+at the anchor" — and two proposed fixes: re-read at another anchor, or give
+`fam_cells` a trimming.  **Neither was needed, because the other anchor was
+already in `find_families`' output and only sorted second.**
+
+Both rows read at `q=A h=0 side=R` with digit words `[(0,0),(1,0)]` at chain
+100, and *also* at `q=A h=1` with words `[(0,0),(0,1)]` at chain 100 — the
+same counter, the anchor rotated one cell.  The two tie on every term of the
+sort key, so insertion order picked the first, `close()` returned the first
+family that closed, and the emitter then refused its boot with `boot cells
+[1, 0, 1] are not the family at [1, 1]`.
+
+So the fix is one term in `found.sort`: **a family all of whose digit words
+end in a blank, with no terminator behind them, sorts after one that does
+not.**  A `cconf` carries no trailing blanks — that is what `lpad_eqb` is for
+— so such a family's spelling is always exactly one cell longer than its own
+boot, at every width, and no boot check can ever pass.  It is a property of
+the DENOTATION and not of the machine, it only fires on an exact tie in the
+fallback flags and the chain length, and when it fires it picks the reading
+the kernel can state.  Both rows then close (105 and 117 arms), emit
+`closure BUILT (4 interior at N0=0 st=1 + 1 fill at N0=2 st=1)`, compile, and
+carry `nqh_*` at `functional_extensionality_dep` only.
+
+**No kernel lemma was involved, exactly as §4o predicted — but the lever was
+the SEARCHER's preference and not `fam_cells`.**  Worth generalising: twice
+now (§4p's `HIGHER` label, this) a gate has been read as a statement about
+the machine when it was a statement about which of several equally-good
+readings the tooling happened to hand the emitter.
+
+### The FIBONACCI seven: measured at last, and they stop one step further on
+
+The seven rows §4r left — six `1RB---` plus `1RB0RB_0LC1RD_1LC1LA_0LA1RB` —
+had "never been through `emit_ladder` at all", and `docs/RESIDUE_MAP.md`
+called measuring them the cheapest unexplored thing on the list.  It was, and
+here is the measurement.
+
+**Why they had never been read: `find_families`' second-chance gate is
+all-or-nothing.**  The numeration pass (`_weights_pass`) runs only `if not
+found`.  On `1RB---_0LC1RD_1LB1RC_1LB0RD` the main pass returns **26**
+positional families, every one of them at chain **8**, which is `min_chain`
+— the FLOOR — and 26 > 0 switches the numeration pass off entirely.  The five
+rows §4r boarded found **zero** positional families, fell through, and read
+at chains of 89..290.  *The difference between the two halves of that bucket
+was never the machine; it was whether junk cleared a threshold first.*
+
+Restated as a comparison (`valfam.py --numeration`, opt-in, default
+behaviour unchanged): if nothing found so far reads more than `weak_chain`
+consecutive anchor visits, the row has not been read, and the numeration pass
+runs anyway.  Six of the seven then read as Fibonacci counters at chains of
+**232..376**:
+
+| row | anchor | chain |
+|---|---|--:|
+| `1RB---_0LC1RD_1LB1RC_1LB0RD` | `q=C h=0 R` | 376 |
+| `1RB---_0LC1RD_1LB1RD_1LB0RD` | `q=D h=1 R` | 232 |
+| `1RB---_1LC0RB_0LD1RB_1LC1RB` | `q=B h=1 R` | 232 |
+| `1RB---_1LC0RB_0LD1RB_1LC1RD` | `q=D h=0 R` | 375 |
+| `1RB---_1LC1RB_0LB1RD_1LC0RD` | `q=B h=0 R` | 376 |
+| `1RB---_1LC1RD_0LB1RD_1LC0RD` | `q=D h=1 R` | 232 |
+
+The seventh, `1RB0RB_0LC1RD_1LC1LA_0LA1RB`, still finds **no family at all**
+— `digit_words(rules)` names nothing at any anchor — so it is a different
+problem from the six and should stop being counted with them.  (This is the
+row `docs/CORE_3STATE.md` §3 found by radix sweep and recorded as "its
+once-per-increment anchor is not located yet".  Still true.)
+
+**And they are NOT `(Fib, 1)`.**  Every one of the ~21 weighted families per
+row comes back at weights `1, 2, 3, 5, 8, 13, 21` — `fibonacci(shifted)`,
+Zeckendorf — and `closure_data_fib` refuses on exactly that, because
+`LadderCheck` §11 states the numeration at `1, 1, 2, 3, 5, 8`.  Two ladders,
+both `phi`, different codes.
+
+**Where they stop, precisely, and it is one arm.**  Under the shifted reading
+the interior is fully covered and the failure is `overflow leaves the family`
+with the uncovered set
+
+    (k=2, v=3), (k=3, v=6), (k=4, v=11), (k=5, v=19), (k=6, v=32), (k=7, v=53)
+
+— which is `sum(weights[:k])` at each width, i.e. the string `1^k`, the top of
+the width.  With a repair round the wrong successors are `1` followed by
+zeros at values 5, 8, 13, 21 — the weights themselves.  So the whole residue
+of these six is the FILL arm at the top of a width, and the two candidate
+next steps are (a) a `(Fib, 2)`/Zeckendorf `ClassSucc` instance whose top of a
+width is `1010...` rather than `1^k`, or (b) making the search prefer the
+`1,1,2,3,5` reading these anchors also admit, which is the same lesson the
+gray rows just paid out — check whether the reading the emitter got is the
+only one before building a kernel instance for it.
+
+**Do not read "never been through the emitter" as "cheap" again without
+checking what the emitter was handed.**  §4r and `RESIDUE_MAP.md` both
+called this the cheapest unexplored item and both were right that it was
+cheap to MEASURE; neither could know it would land on a second numeration.
+
+### What this says about the next session
+
+* **The seven are six, and their blocker has a name.**  Zeckendorf tops.
+  Before building a fourth `(code, step)` pair, run the numeration pass with
+  the F(1,1) reading forced and see whether these anchors admit it — §4r's
+  advice ("do not go looking for a fifth code before someone measures a row
+  that wants it") applies to the fourth one too, and the gray rows are this
+  wave's evidence that the second-best reading is often the buildable one.
+* **`1RB0RB_0LC1RD_1LC1LA_0LA1RB` is not a fibonacci ladder row.**  It has no
+  family at any anchor.  File it with the `no anchor` bucket.
+* Twelve shadows on ten core rows, still.  None of the three rows boarded
+  here carried one; `gen_shadow.py --harvest` printed `nothing freed` and
+  `audit.py` is OK.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
