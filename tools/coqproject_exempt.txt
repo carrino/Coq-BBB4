@@ -1,0 +1,41 @@
+# Files under theories/ that are deliberately NOT in _CoqProject.
+#
+# Checked by tools/check_coqproject.py (CI).  Everything else under
+# theories/ must be listed in _CoqProject, so no proof-shaped file goes
+# unbuilt -- and therefore unchecked -- by accident.  One glob per line;
+# keep the reason with it.
+
+# The census walk units and their theorem.  These are the ~7 h
+# native_compute enumeration, committed as .vo and hash-guarded by
+# tools/census_cache.py; `make census` / `make census-verify` drive them
+# directly (Makefile), never through Makefile.coq.
+theories/Census/Compute/*.v
+theories/Census/Run_Split*.v
+
+# The `make proof` tier, kept out of the default build on purpose: these
+# two are the only files that LOAD the committed census .vo, so `make`
+# stays a from-source build (README "The verification ladder", rung 2 vs 3).
+theories/Closeout/BBB4_Theorem.v
+theories/Closeout/CloseoutFinal.v
+
+# Ladder boards that are PARTIAL by construction: each proves every rule its
+# certificate carries -- the [sound_*] lemmas are theorems -- but stops before
+# the machine-level theorem because ONE arm has no chain.  The file itself
+# says which arm and at what strides, and LADDER_PLAN 5's table row is the
+# reason: a cost that is not affine in the run length has no chain at any
+# stride, so this is a refusal and not a search that was cut short.
+#
+# Four stop on the INTERIOR arm (the two QUAD rows among them: their terminal
+# costs (k+2)^2 exactly -- docs/QUAD_TERMINAL_MEASUREMENT.md), two on the FILL
+# arm.  Wave 4l's shared arm indexing removed the older ClassSucc reason, so
+# do not re-file these under 4h(a).
+#
+# They are kept as the record of where each row stops.  When a row's arm
+# lands, its board finishes and moves into _CoqProject -- delete the line here
+# rather than leaving both; check_coqproject.py fails on a line that does.
+theories/Machines/Ladder/LDR_1RB0LD_0LC0RB_1LA1RC_0RC1LD.v
+theories/Machines/Ladder/LDR_1RB1LA_0LA0LC_1LC1RD_0RB0RD.v
+theories/Machines/Ladder/LDR_1RB1LA_0LA1RC_0LD0RC_1LD0RB.v
+theories/Machines/Ladder/LDR_1RB1LA_1LC0RD_0RA0LC_0LA1RD.v
+theories/Machines/Ladder/LDR_1RB____0LB1RC_1LB0RD_1LC0RC.v
+theories/Machines/Ladder/LDR_1RB____1LC0RD_0LC1RB_1LB0RB.v

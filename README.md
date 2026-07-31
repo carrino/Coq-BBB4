@@ -20,7 +20,7 @@ bbb4_target : forall tm,
 
 Every (4,2) Turing machine either **quasihalts with score at most
 32,779,478** — the champion's score — or **never quasihalts**, *except*
-the machines the theorem **skips**: the **42 undecided core machines**
+the machines the theorem **skips**: the **39 undecided core machines**
 (`tools/closeout/core_rows.txt`), plus **14 shadows** — 0RB machines
 whose all-blank prefix re-roots them into a core machine's orbit
 (`skipped`'s second disjunct).  A shadow carries no new mathematics, but
@@ -33,11 +33,11 @@ worked example).
 Two honest caveats, stated precisely in
 [`docs/CLAIMS.md`](docs/CLAIMS.md):
 
-* The champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` is itself one of the 42,
+* The champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` is itself one of the 39,
   so this is **not** a proof that BBB(4) = 32,779,478 — any residue
   machine could, for all this development proves, quasihalt with a
   larger score.
-* `skipped D_remaining tm` means membership in the orbit of the 42
+* `skipped D_remaining tm` means membership in the orbit of the 39
   core rows under completion of undefined transitions, non-start state
   swaps, and mirroring — or a blank-prefix re-root into that orbit —
   not bare list membership.
@@ -117,6 +117,8 @@ verification tier, from "check one machine" to "re-walk the census".
 | `theories/Closure.v` | The generic covering-abstraction / liveness engine the n-gram and RepWL checkers instantiate |
 | `theories/Machines/` | Per-machine theorems: the generated boards (`Bulk/`, batch files) plus individually proved counter machines (`Machines/Counters/`) — thousands of files; `tools/closeout/audit.py` prints the live count |
 | `theories/Counters/` | The windowed-run toolkit for hand-proved machines: `WTape`, `LapGlue`/`WaveCounter`/`MeasureGlue` closers, shared counter encodings |
+| `theories/Checkers/ReachSt.v`, `ReachStI.v` | The termination checker behind the REACHST tier: a machine's liveness obligation for one state, discharged as termination of the STATE-DELETED sub-machine (`docs/REACHST_TIER.md`) |
+| `theories/Checkers/Ladder*.v`, `theories/Machines/Ladder/` | The ladder: counter segments carried as a value-indexed rule family, its fill law read off the machine rather than assumed (`docs/LADDER_PLAN.md`) |
 | `theories/Census/` | The trusted census: TNF enumeration, the in-walk deciders, the frozen deferred tables, and (committed as `.vo`) the walk output ending in `census_decided` |
 | `theories/Closeout/` | The assembly: generated stages bridging every decided frozen row to its board, `closeout_partial`, `census_boarded`, and `bbb4_target` |
 | `theories/Tests/` | Negative controls in the BBB corruption-test tradition: mutated certificates, periods, sides and claims must all fail |
