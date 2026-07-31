@@ -1199,6 +1199,15 @@ table row, not a gap in the emitter: no stride and no offset makes
 induction on the run, which is what the ladder is FOR and what 4h(c) records
 as still unexercised) or a count language with a product in it.
 
+**4p closed the fourth line of that table.**  The two rows with "no chain at
+any n -- not yet diagnosed" are `1RB1LA_1LC0RD_0RA0LC_0LA1RD` and
+`1RB0LD_0LC0RB_1LA1RC_0RC1LD`, and the reason they showed no chain at all is
+4n's one-cell far side: the certificate carries `other_side_cells = [1]` where
+the boot spells `[1;0]`.  Read off the boot they do have chains, and their
+cost is `12, 18, 26, 36, 48, ...` -- second difference 2.  **So it is four
+quadratic rows and not two**, and the "not yet diagnosed" line was a
+configuration artifact hiding the same law.
+
 ### What this says about the next session
 
 The order 4h implies still holds, and the two next items are now cheaper than
@@ -2278,6 +2287,223 @@ the denotation can state.
   about an hour.  `gray2check.py` is 300 lines and it caught a wrong case
   split before any Coq was written; `armprobe.py --selftest` is the same
   discipline one rung down.
+
+## 4p. The interior nine RE-MEASURED: 5 of 9, and the bucket was never one bucket
+
+_Branch `claude/interior-arm-remeasure-vg1xl2`, cut from `main` at `fa1be97`.
+Coq 8.18.0.  No row boards and no count moves -- the deliverable is the count
+and which of the two stories it is.  Every number below is a script's output;
+reproduce with `tools/ladder/armprobe.py` and the committed
+`tools/ladder/interior9_probe.{jsonl,log}`._
+
+_Merged with 4o's `(Gray, 2)` boards, which landed while this ran: the audit
+reads `settled by a board 5107 (99.0%)`, `core undecided 37`, `0RB shadows
+12`, and **all nine rows below are still core with the same five shadows on
+the same three of them** -- 4o's four gray rows are disjoint from these nine,
+so nothing here was taken out from under it.  Re-derived rather than
+hand-merged (`inventory.py`, `gen_stages.py`, `audit.py`: OK); the only
+conflicts were this file and `NEXT_SESSION.md`._
+
+The nine rows of `tools/coqproject_exempt.txt`'s "INTERIOR arm (line 381)"
+block all stop at the same line of `closure_data` with the same sentence --
+*no chain at any threshold 0..3 and stride 1..4, the carry ripple is not
+affine in the run length* -- and 4n's fix to the far-side reading, which
+turned zero of six gray rows into six of six, had never been pointed at them.
+So: `armprobe.py --selftest` first (OK, and it still reads its orbit through
+`of_value`, so the `(Binary, 1)` path is untouched), then the nine.
+
+### The count
+
+**5 of 9 have both class arms.**  **0 of 9 can be boarded**, and the two
+halves of that sentence are about different rows.
+
+| | rows | interior arm | why it stops |
+|---|---:|---|---|
+| base-2 (`1RB1LA`/`1RB0LD`) | 4 | **no chain** | the cost is quadratic in the run length |
+| fibonacci (`1RB---`) | 5 | **derives** | `Fam` cannot denote a weighted numeration |
+
+**The shared refusal line was the artifact.**  This file's own 4n table
+already had them as 5 fibonacci + 4 arms-blocked; the exempt file filed all
+nine under one line number, and that is the only thing they had in common.
+The table was right and the grouping was wrong.
+
+### The four base-2 rows: LADDER_PLAN 5 CONFIRMED, and now measured
+
+These four are not blocked on anything structural.  The probe fits each of
+them the single class
+
+    [] ++ 1^n ++ [0]   ->   [] ++ 0^n ++ [1]
+
+which is verbatim the class the boarded row `1RB1LA_0LA0RC_0LD0RB_1LD1RC`
+uses -- same base, same digit words, same terminator, same fill, same top
+shape.  The class law is fine and the configuration is clean.  What has no
+chain is the STRIDED arm, and the cost says why.  The interior arm's step
+count over the FLAT indices, at run length 0..8:
+
+    1RB1LA_0LA0LC_1LC1RD_0RB0RD    2, 6, 12, 20, 30, 42, 56, 72, 90
+    1RB1LA_0LA1RC_0LD0RC_1LD0RB    2, 6, 12, 20, 30, 42, 56, 72, 90
+    1RB1LA_1LC0RD_0RA0LC_0LA1RD   12, 18, 26, 36, 48, 62, 78, 96, 116
+    1RB0LD_0LC0RB_1LA1RC_0RC1LD   12, 18, 26, 36, 48, 62, 78, 96, 116
+
+**Second difference exactly 2 in every case** -- `(r+1)(r+2)` and
+`r^2 + 5r + 12`.  A strided arm is one chain repeated, so its cost is affine
+along the stride, and no arithmetic progression makes a quadratic affine.
+That is why thresholds 0..3 and strides 1..4 fail *together* rather than
+one-by-one, which is the shape of failure 4n taught us to distrust -- and
+here it is the real thing.
+
+The contrast is the point.  The boarded row's costs are
+
+    1RB1LA_0LA0RC_0LD0RB_1LD1RC    2, 8, 6, 16, 10, 24, 14, 32, 18
+
+not monotone at all, but affine *on each residue mod 2* (2, 6, 10, 14, 18 and
+8, 16, 24, 32), which is exactly why its stride-2 arm derives.  `ARM_GRID`
+catches costs that are piecewise-affine on a progression of length ≤ 4.  It
+cannot catch a quadratic and no widening of the grid will.
+
+This agrees with `docs/QUAD_TERMINAL_MEASUREMENT.md` by an independent route:
+its two QUAD rows are two of these four, and it measures this machine's
+*terminal* at exactly `(k+2)^2` where the measurement here is of the
+*interior class arm*.  Two different arms, same quadratic, same machine.
+
+**4n's one-cell far-side reading is REAL on two of the four, and it does not
+rescue them.**  On `1RB1LA_1LC0RD_0RA0LC_0LA1RD` and
+`1RB0LD_0LC0RB_1LA1RC_0RC1LD` the certificate carries `other_side_cells = [1]`
+and the boot spells `[1;0]`.  With the certificate's value every flat arm
+lands off the rhs; with the boot's, every one derives, in 12/18/26 steps.
+That is 4n's finding reproduced on two more rows, and it is why these two
+rows' refusal text differs from the other two's.  It moves the flat arms and
+leaves the strided arm exactly where it was.
+
+### The five fibonacci rows: the arms derive, and the probe was the thing that was broken
+
+`armprobe.py` could not answer these at all, and reported `no class fit: 1 of
+4 interior successors are in no class` -- which is not an arm failure and 4g's
+lesson says not to read it as one.  The orbit had **5 elements**.
+
+`Fam.value` honours the certificate's `weights`; `Fam.of_value` and
+`Fam.maxval` did not.  They are positional -- `v % b` down the widths and
+`b^k - 1` at the top -- so on a weighted numeration `is_top` is false at every
+string the counter ever stands on, `next_ds` asks `of_value` for a string that
+is not a member of any width, and the walk leaves the family after five steps.
+The fix is to stop inverting: `Fam.walk` reads the counter off the machine's
+own tape at every anchor visit (the near-head prefix, digit words, then the
+terminator of some phase -- `fam_cells` inverted), and `orbit_machine` orders
+each width's members by `value`.  The successor is READ.
+
+With that, all five rows fit **the same two classes**, covering every interior
+successor out to the widths the certificate's weights reach (596 resp. 364 of
+them):
+
+    [] ++ 1^n ++ [1;0]   ->   [] ++ 0^n ++ [1;1]      the carry
+    [0] ++ 0^n ++ []     ->   [1] ++ 0^n ++ []        the increment
+
+and both arms derive, at threshold 0..1 and **stride 1**.  Their costs are
+affine -- first differences a constant 2 and a constant 0.  **The carry
+ripple is affine here.**  LADDER_PLAN 5's sentence is simply false for these
+five, and 4h(a)'s `ClassSucc` reason was not it either.
+
+Worth noticing: the second class has a fixed word BEFORE the run (`cs_u =
+[0]`), which is the `cls_side` widening 4n specified for `(gray, 2)`.  These
+five would want it too.
+
+**What blocks them is the numeration and nothing else.**  `Fam` has no weight
+field: `fm_code` is `Binary | Gray`, `fam_value` is `val_pos`, and
+`fam_of_value` divides down `fm_b`.  These counters spell 2, 3, 5, 8, 13, 21
+members at widths 1..6 against `2^k`.  No value of the existing record
+denotes that successor, so the emitter cannot spell the family at all -- and
+the five boards on disk declare `Binary 1`, which is not what their machines
+do.  These are 4m's five, filed in the exempt block under a reason that was
+never theirs.
+
+### The numeration, CRACKED -- and it is four facts, all checked
+
+_Added after the section above, with John reading the machine.  The blocker
+4p names is the numeration; this is what it is.  `tools/ladder/fibmem.py`
+checks every line of it against the orbit read off the machines: `FIBMEM: OK`._
+
+**Membership.**  LSB-first, a member is an OPTIONAL LEADING `1`, then a
+concatenation of the blocks `[0]` and `[1;1]`.  (MSB-first: blocks of `0` and
+`11`, then an optional trailing `1`.)  Checked against every width of all
+five rows, 0..11 -- the predicate and the orbit agree exactly, and the counts
+come out 2, 3, 5, 8, 13, 21, 34, 55, 89, 144.
+
+That is the certificate's own `canonical_form.blocks = [[0],[1,1]]` with
+`base_widths = [0,1]`, and the `[0,1]` is the optional single-`1` remainder.
+4p could not decode `base_widths` and said so; it is that.  **The numeration
+is REDUNDANT** -- `w0 = w1 = 1`, so `10000` and `01000` both have value 1 --
+and this rule is which representative the machine picks.  That redundancy is
+why the round-trip lemma is the one with the risk in it.
+
+**The top of a width is `1^k`.**  All ones, and its value is the sum of the
+weights it covers, which is `maxval` as 4p corrected it.  Simpler than
+`(Gray, 2)`'s `[1] ++ 0^(k-2) ++ [1]`, and no `of_value` is needed to compute
+it.
+
+**The decomposition is TWO-WAY and it splits on the LOW DIGIT.**  Every
+non-top member is in exactly one class:
+
+    low digit 0    [0] ++ 0^n ++ rest   ->   [1] ++ 0^n ++ rest
+    low digit 1    1^n ++ [1;0] ++ rest ->   0^n ++ [1;1] ++ rest
+
+Measured over all 2,284 interior members of the five rows: **overlap 0,
+uncovered 0, wrong successor 0.**  This is `digs_decomp`'s analogue and it is
+the piece 4o had to do four-way for `(Gray, 2)`; here it is `ds` starting `0`
+or starting `1`, which is a `destruct`.
+
+**John's lap law, and why it matters.**  The interval between fill events is
+`10, 16, 26, 42, 68, 110, 178, 288, 466`, and John read it as
+`f(n+2) = f(n+1) + f(n) + n` on `f = lap - n - 1`.  The particular solution of
+that recurrence is `-n-1`, so **`lap(n)` is Fibonacci-type with an affine
+correction** -- exactly matching the 2, 3, 5, 8, 13, 21 members per width.
+The lap is not affine and does not need to be: only the ARM costs do, and 4p
+measured those affine (constant first differences 2 and 0).
+
+**What is left is Coq, not discovery.**  A `Fib` constructor on `Code`
+(existing sections are gated by `Hypothesis Hcode : fm_code F = Binary`/`Gray`
+and stay inert), `fam_value` at `Fib` as the weighted fold, and the round-trip
+`fam_of_value F (fam_value F ds) (length ds) = Some ds` over the membership
+predicate above.  The successor need not be inverted pointwise -- the two
+rewrites give it, and each adds exactly 1 to the value.
+
+**The 3-state reading, and why re-root does NOT serve it.**  `A` is entered
+once, at step 0: nothing targets it (`B` from `{A,C,D}`, `C` from `{B,C}`, `D`
+from `{B,D}`), which is why these five are filed `live = BCD`.  So the
+residual dynamics is a THREE-STATE machine on a tape that is blank but for one
+marked cell.  `Census/Reroot.v` cannot express that: its precondition is a
+prefix "writing only `S0`, so the tape stays all-blank", and these rows write
+a `1` on step 0 -- the very event re-root stops at.  A re-root carrying a
+non-blank configuration would be a new lemma, and it would still not import a
+result: BBB(3) is a blank-tape enumeration and this tape is not blank.  The
+reduction shrinks the object; it does not decide it.
+
+### What this says about the next session
+
+* **The four base-2 rows are done as ladder rows.**  Their arm is quadratic,
+  measured on the arm itself and corroborated by the terminal measurement.
+  A wider grid cannot reach them; a new arm shape that composes a quadratic
+  out of affine rungs could, and `QUAD_TERMINAL_MEASUREMENT` §0 already says
+  where that decomposition has to live (in the terminal, one level below
+  where the QUAD route expects it).  Do not re-probe them.
+* **The five fibonacci rows are worth exactly what 4m's constructor costs**,
+  and the arm risk is now zero -- which is what this session bought.  4n
+  chose the phase cycle over `(gray, 2)` on "three rows that close beat four
+  rows that might"; these five close on the same terms, and they carry no
+  shadows.
+* **The five shadows in this bucket sit on three of the four QUADRATIC rows**
+  (`shadow_rows.tsv` column 4: two on `1RB1LA_0LA0LC_1LC1RD_0RB0RD`, two on
+  `1RB1LA_1LC0RD_0RA0LC_0LA1RD`, one on `1RB1LA_0LA1RC_0LD0RC_1LD0RB`).  So
+  the "14 rows, densest bucket in the residue" reading is really 9 rows on
+  the quadratic side that are not coming back, and 5 on the fibonacci side
+  that are worth one row each.  **The bucket's density and its reachability
+  are on opposite halves.**
+* `gen_shadow.py --regress` printed `FAILED` on an unbuilt tree, and its
+  three corruption tests printed `rejected` for the same vacuous reason:
+  nothing compiled, so nothing could be rejected.  It now separates the two
+  and says `INCONCLUSIVE` with the target to build.  With the fixture built
+  it is **OK, 4 of 4** -- the generator was healthy the whole time.
+* The nine boards' stop-notes cited 4h(a)'s `ClassSucc` condition, which 4l
+  removed.  All nine now carry the measured reason, one per half.
 
 ## 5. What this is NOT
 

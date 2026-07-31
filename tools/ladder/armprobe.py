@@ -105,6 +105,18 @@ class Fam:
         return gray_encode(ns, self.b) if self.code == 'gray' else ns
 
     def maxval(self, k):
+        """The largest value width `k` can spell.
+
+        For a WEIGHTED numeration that is not `b^k - 1`: the digits are
+        weighted by `fm_weights` and not by `b^i`, so the top of a width is
+        the sum of the weights it covers.  With `b^k - 1` here a Fibonacci
+        row's `is_top` is false at every string it ever stands on, `next_ds`
+        asks `of_value` for a positional string the counter never spells, and
+        the orbit walks off the family after five steps."""
+        if self.weights is not None:
+            if k > len(self.weights):
+                return None
+            return sum((self.b - 1) * w for w in self.weights[:k])
         return self.b ** k - 1
 
     def fill(self, ph):
@@ -122,7 +134,8 @@ class Fam:
 
     def is_top(self, ds):
         v = self.value(ds)
-        return v is None or v + self.step > self.maxval(len(ds))
+        mx = self.maxval(len(ds))
+        return v is None or mx is None or v + self.step > mx
 
     def next_ds(self, ds, ph):
         if self.is_top(ds):
@@ -173,6 +186,57 @@ class Fam:
             q = q2
         return q, tuple(l), h, tuple(r)
 
+    def parse_counter(self, ctr):
+        """`(digit string, phase)` for a counter side, or None.
+
+        The inverse of `fam_cells`: the near-head prefix, then digit words,
+        then the terminator of SOME phase, then blanks.  A digit word can be
+        a prefix of a terminator, so the terminator is taken only where the
+        rest of the side is blank -- which is what makes the parse unique."""
+        if tuple(ctr[:len(self.pre)]) != tuple(self.pre):
+            return None
+        body, ds, j = tuple(ctr[len(self.pre):]), [], 0
+        while True:
+            for ph, tl in enumerate(self.tails):
+                if body[j:j + len(tl)] == tuple(tl) and \
+                   all(c == 0 for c in body[j + len(tl):]):
+                    return tuple(ds), ph
+            hit = None
+            for di, dw in enumerate(self.digs):
+                if body[j:j + len(dw)] == tuple(dw):
+                    hit = (di, len(dw))
+                    break
+            if hit is None or j >= len(body):
+                return None
+            ds.append(hit[0])
+            j += hit[1]
+
+    def walk(self, tab, nsteps, kmax):
+        """The `(digit string, phase)` the counter stands on at every ANCHOR
+        visit, read off the machine's own tape.
+
+        This is the orbit `of_value` cannot compute.  `of_value` is positional
+        -- `v % b` down the widths -- and a weighted numeration is not: the
+        Fibonacci rows spell 2, 3, 5, 8, 13, 21 members at widths 1..6 and the
+        positional inverse names strings that are not members of any of them.
+        Read off the machine there is nothing to invert."""
+        l, h, r, q, out = [], 0, [], 0, []
+        for _ in range(nsteps):
+            if (q, h) == (self.q, self.hs):
+                got = self.parse_counter(tuple(l) if self.left else tuple(r))
+                if got is not None and len(got[0]) <= kmax:
+                    out.append(got)
+            e = tab.get((q, h))
+            if e is None:
+                break
+            w, d, q2 = e
+            if d > 0:
+                l, h, r = [w] + l, (r[0] if r else 0), r[1:]
+            else:
+                r, h, l = [w] + r, (l[0] if l else 0), l[1:]
+            q = q2
+        return out
+
     def read_other(self, tab):
         """The far sides to try for `fm_other`: the certificate's, and the one
         the machine actually spells at the anchor.
@@ -208,6 +272,36 @@ class Fam:
         if far != self.other:
             out.append(far)
         return out
+
+
+def orbit_machine(F, tab, kmax=11, nsteps=400000):
+    """The orbit and its interior successors, read off the MACHINE.
+
+    Used where `of_value` cannot serve: a weighted numeration is not
+    positional, so the successor of a member cannot be computed by dividing
+    down the base.  `value` IS trustworthy there -- it is the weighted sum --
+    so the members of a width are collected from the walk and ordered by
+    value, and the successor of a member is the next member of its width.
+    That is the same relation `fam_succ` denotes and it is read, not guessed.
+    """
+    vis = F.walk(tab, nsteps, kmax)
+    if not vis:
+        raise NoFit('the machine reaches no parseable anchor visit')
+    byk = {}
+    for ds, ph in vis:
+        byk.setdefault((len(ds), ph), {})[ds] = F.value(ds)
+    orb, pairs = [], []
+    for (k, ph), mem in sorted(byk.items()):
+        if any(v is None for v in mem.values()):
+            raise NoFit('width %d spells a string with no value' % k)
+        order = sorted(mem, key=lambda ds: mem[ds])
+        if len(set(mem.values())) != len(order):
+            raise NoFit('width %d spells two members with the same value' % k)
+        for i, ds in enumerate(order):
+            orb.append((ds, ph))
+            if i + 1 < len(order):
+                pairs.append((ds, order[i + 1]))
+    return orb, pairs
 
 
 def orbit(F, kmax=11):
@@ -468,18 +562,33 @@ def probe(cert, kmax=11, grid=None, verbose=False):
         return out
     out['other_cert'] = list(F.other)
     out['other_tried'] = [list(x) for x in fars]
-    orb = orbit(F, kmax)
-    pairs, seenp = [], set()
-    for ds, ph in orb:
-        if F.is_top(ds):
-            continue
-        nx, _ = F.next_ds(list(ds), ph)
-        if nx is None or len(nx) != len(ds):
-            continue
-        if ds in seenp:
-            continue
-        seenp.add(ds)
-        pairs.append((tuple(ds), tuple(nx)))
+    if F.weights is not None:
+        # a weighted numeration has no positional inverse; read it off the
+        # machine rather than off `of_value` (which names non-members)
+        # the certificate carries finitely many weights, and a width past the
+        # last one has no value -- read out to the widths it does cover
+        kw = min(kmax, len(F.weights))
+        out['kmax_used'] = kw
+        try:
+            orb, pairs = orbit_machine(F, tab, kw)
+        except NoFit as e:
+            out['stop'] = 'orbit: %s' % e
+            return out
+        out['orbit_read'] = 'machine'
+    else:
+        orb = orbit(F, kmax)
+        pairs, seenp = [], set()
+        for ds, ph in orb:
+            if F.is_top(ds):
+                continue
+            nx, _ = F.next_ds(list(ds), ph)
+            if nx is None or len(nx) != len(ds):
+                continue
+            if ds in seenp:
+                continue
+            seenp.add(ds)
+            pairs.append((tuple(ds), tuple(nx)))
+        out['orbit_read'] = 'of_value'
     out['orbit'] = len(orb)
     out['interior_strings'] = len(pairs)
     try:

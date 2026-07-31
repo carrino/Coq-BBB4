@@ -136,7 +136,27 @@ Proof. eapply arm_sound; [exact rules_sound_1RB____0LB1RC_1LB0RD_1LC0RD | exact 
 (** ** The closure: NOT BUILT for this row -- interior arm: no chain at any threshold 0..3 and stride 1..4 -- the carry ripple is not affine in the run length
 
     The board above still proves every rule the certificate carries; what
-    is missing is the machine-level theorem.  LADDER_PLAN 4h(a) names the
-    condition: [LadderCheck] states the class-successor lemma for
-    [(Binary, 1)] only, so a family with another code or another step needs
-    its own instance of [ClassSucc] before this section can be emitted. *)
+    is missing is the machine-level theorem.
+
+    RE-MEASURED, LADDER_PLAN 4p, AND THE REASON ABOVE IS WRONG.  The
+    interior class arm DERIVES.  The refusal line is what the emitter
+    printed and is kept as the record of what it did, but the probe, reading
+    the counter off the machine, fits this row two classes
+
+        [] ++ 1^n ++ [1;0]   ->   [] ++ 0^n ++ [1;1]     (the carry)
+        [0] ++ 0^n ++ []     ->   [1] ++ 0^n ++ []       (the increment)
+
+    covering every interior successor out to the widths the certificate's
+    weights cover, and both arms derive at threshold 0..1 and stride 1.
+    Their step counts are affine in the run length -- constant first
+    differences of 2 and 0 -- so the carry ripple here IS affine and 4h(a)'s
+    [ClassSucc] reason was not it either.
+
+    What blocks this row is the NUMERATION, not the arm.  [Fam] has no
+    weight field at all: [fm_code] is [Binary | Gray], [fam_value] is
+    [val_pos] and [fam_of_value] divides down [fm_b], so both are positional.
+    This family is WEIGHTED -- the certificate carries weights
+    [1;1;2;3;5;8;...] and the counter spells 2, 3, 5, 8, 13, 21 members at
+    widths 1..6, not [2^k].  No value of the existing record denotes that
+    successor, so the row needs LADDER_PLAN 4m's Fibonacci-rank constructor
+    before it can be emitted at all. *)
