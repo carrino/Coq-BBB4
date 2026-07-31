@@ -8,7 +8,7 @@ machine -- window lemmas, transported phases, an assembled lap, a bespoke
 [LapDecider.srun_sound] discharge them, once, for every machine.
 
 Per machine the Coq file now contains exactly:
-  * the TM table and the anchor [Cc p = (E, (Enc p ++ tail, S0, []))];
+  * the TM table and the anchor [Cc p = (E, (Enc p ++ tail, hd, far))];
   * two [srun ... = Some (..., ca, cb)] facts, closed by [vm_compute];
   * four ANCHOR GLUE lemmas -- the only per-machine mathematics -- each a
     [cview] rewrite plus [app_assoc];
@@ -40,7 +40,7 @@ sys.path.insert(0, HERE)
 from emit_interleave import (parse, carry, ENC, LAB, ST, SYM,          # noqa: E402
                              DeriveError, derive_tail_best,
                              derive_tail_best_far, mach_id, coq_table,
-                             clist)
+                             clist, Raw, strip0)
 from mirror_common import mirror_spec, mirrorize                       # noqa: E402
 import lapcert as LC
 import nestcert as NC                                                   # noqa: E402
@@ -171,6 +171,16 @@ except ImportError:                                                # pragma: no 
 FLAT = ((), (), 0, 0, ())
 Halt_ = LC.Halt
 
+# The anchor's HEAD symbol, set per candidate by [process].  Waves 8-33 all
+# hard-coded S0 here and in [anchors]'s two finders, and that single literal
+# is what hid the whole WALL-COUNTER population: a counter that grows away
+# from a fixed 1-cell is read at the moment the head sits ON that cell, so
+# its anchor head is S1 and no S0-only scan can see it.  (KpWallQH.v is the
+# hand-written instance -- [Cc p = (qW, ([], S1, Kp p))].)  Every consumer
+# below reads HD; nothing else changes, because the head symbol rides along
+# in the [sconf] literals the glue lemmas already carry.
+HD = 0
+
 
 def branches(enc, tail):
     """The four symbolic configurations: start/target of each branch."""
@@ -191,18 +201,18 @@ def confs(enc, st0, tail, far=()):
     d = ENCDATA[enc]
     tail, far = tuple(tail), tuple(far)
     F = (far, (), 0, 0, ())
-    A0 = (st0, ((), d['uS'], 1, 0, d['sS']), 0, F)
-    A1 = (st0, ((), d['uD'], 1, 0, d['sD']), 0, F)
+    A0 = (st0, ((), d['uS'], 1, 0, d['sS']), HD, F)
+    A1 = (st0, ((), d['uD'], 1, 0, d['sD']), HD, F)
     # overflow: E p = rep uS j ++ so, and E (succ p) = rep uD (S j) ++ so,
     # i.e. uD ++ rep uD j ++ so -- so the target carries uD in its prefix.
     # When obS >= 1 the overflow block is NEVER empty, so peel one copy into
     # the prefix: rep uS (S j) = uS ++ rep uS j.  That gives the head a
     # concrete cell to step onto, which is what the un-peeled form denies it.
     if d['obS'] >= 1:
-        B0 = (st0, (d['uS'], d['uS'], 1, d['obS'] - 1, d['soS'] + tail), 0, F)
+        B0 = (st0, (d['uS'], d['uS'], 1, d['obS'] - 1, d['soS'] + tail), HD, F)
     else:
-        B0 = (st0, ((), d['uS'], 1, 0, d['soS'] + tail), 0, F)
-    B1 = (st0, ((), d['uD'], 1, 1, d['soD'] + tail), 0, F)
+        B0 = (st0, ((), d['uS'], 1, 0, d['soS'] + tail), HD, F)
+    B1 = (st0, ((), d['uD'], 1, 1, d['soD'] + tail), HD, F)
     return A0, A1, B0, B1
 
 
@@ -239,8 +249,8 @@ def validate(tab, st0, encf, tail, far, cost, co, hi=200, peel=None):
             steps = co[0] * (j - 1) + co[1]
         else:
             steps = cost(j)
-        start = (st0, tuple(encf(p)) + tail, 0, far)
-        want = (st0, tuple(encf(p + 1)) + tail, 0, far)
+        start = (st0, tuple(encf(p)) + tail, HD, far)
+        want = (st0, tuple(encf(p + 1)) + tail, HD, far)
         got = sim(tab, start, steps)
         if not eqlift(got, want):
             return False, 'p=%d %s branch: %d steps -> %r want %r' % (
@@ -259,8 +269,8 @@ def validate_int(tab, st0, encf, tail, far, cost, hi=200):
         j, ov = carry(p)
         if ov:
             continue
-        start = (st0, tuple(encf(p)) + tail, 0, far)
-        want = (st0, tuple(encf(p + 1)) + tail, 0, far)
+        start = (st0, tuple(encf(p)) + tail, HD, far)
+        want = (st0, tuple(encf(p + 1)) + tail, HD, far)
         got = sim(tab, start, cost(j))
         if not eqlift(got, want):
             return False, 'p=%d int branch: %d steps -> %r want %r' % (
@@ -774,7 +784,7 @@ HEADER = r'''(** * @PREF@_@ID@: machine @SPEC@, boarded by CERTIFICATE.
     kernel re-runs the checker on every line below).  Left-growth binary
     counter under the @ENC@ digit alphabet (@ENCMOD@.v), anchored at
 
-      Cc p = (@ST0@, (@ENC@ p ++ @TAIL@, S0, []))
+      Cc p = (@ST0@, (@ENC@ p ++ @TAIL@, @AHD@, @FAR@))
 
     The lap is DATA, not a proof script: each branch is a list of steps for
     [Checkers/LapDecider.v], run by the kernel through [vm_compute] and
@@ -806,7 +816,7 @@ Definition tm_@ID@ : TM := fun q s => match q, s with
 @TABLE@ end.
 Local Notation tm := tm_@ID@.
 
-Definition Cc_@ID@ (p : positive) : cconf := (@ST0@, (@ENC@ p ++ @TAIL@, S0, @FAR@)).
+Definition Cc_@ID@ (p : positive) : cconf := (@ST0@, (@ENC@ p ++ @TAIL@, @AHD@, @FAR@)).
 Local Notation Cc := Cc_@ID@.
 
 (** ** The certificate *)
@@ -840,14 +850,14 @@ Lemma geo_@ID@ : forall p j, cview p = (@CVSJ@, None) ->
 Proof.
   intros p j E. destruct (@ENCMOD@.@NONE@ p @NNJ@ E) as (_ & H2).
   assert (HD : cden [] [] j B1_@ID@
-             = (@ST0@, (@HDLEFT@, S0, @OVFAR@))).
+             = (@ST0@, (@HDLEFT@, @AHD@, @OVFAR@))).
   { unfold cden, B1_@ID@, sden, sflat;
       cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
     replace (1 * j + @B1B@) with @B1SJ@ by lia.
     replace (0 * j + 0) with 0 by lia.
     cbn [rep app]. first [ reflexivity
       | rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ]. }
-  assert (HC : Cc (Pos.succ p) = (@ST0@, (@HCLEFT@, S0, @FAR@))).
+  assert (HC : Cc (Pos.succ p) = (@ST0@, (@HCLEFT@, @AHD@, @FAR@))).
   { unfold Cc_@ID@. rewrite H2.
     first [ rewrite <- !app_assoc; reflexivity
         | cbn [app]; rewrite <- ?app_assoc; cbn [app]; rewrite ?app_nil_r; reflexivity ]. }
@@ -981,8 +991,8 @@ def _peel_ovf(tab, st0, encf, d, tail, far, Rr):
     witnesses, or None when the peeled chain does not derive either."""
     uS, uD = tuple(d['uS']), tuple(d['uD'])
     tail, far = tuple(tail), tuple(far)
-    B0 = (st0, (uS * (d['obS'] + 1), uS, 1, 0, d['soS'] + tail), 0, Rr)
-    B1 = (st0, (uD, uD, 1, 1, d['soD'] + tail), 0, Rr)
+    B0 = (st0, (uS * (d['obS'] + 1), uS, 1, 0, d['soS'] + tail), HD, Rr)
+    B1 = (st0, (uD, uD, 1, 1, d['soD'] + tail), HD, Rr)
     cho = LC.derive_chain(tab, True, True, B0, B1)
     slack = False
     if cho is None:
@@ -990,8 +1000,8 @@ def _peel_ovf(tab, st0, encf, d, tail, far, Rr):
         slack = cho is not None
     if cho is None:
         return None
-    c1 = (st0, tuple(encf(1)) + tail, 0, far)
-    c2 = (st0, tuple(encf(2)) + tail, 0, far)
+    c1 = (st0, tuple(encf(1)) + tail, HD, far)
+    c2 = (st0, tuple(encf(2)) + tail, HD, far)
     n0, cfg, visz = None, c1, {c1[0]: 0}
     for t in range(1, 20000):
         try:
@@ -1011,7 +1021,7 @@ def _peel_ovf(tab, st0, encf, d, tail, far, Rr):
 
 def boot_probe(tab, st0, encf, tail, far, p0, maxT=200000):
     """Steps from the blank tape to the anchor at p0 (up to blank padding)."""
-    want = (st0, tuple(encf(p0)) + tuple(tail), 0, tuple(far))
+    want = (st0, tuple(encf(p0)) + tuple(tail), HD, tuple(far))
     cfg = (0, (), 0, ())
     for t in range(maxT):
         if eqlift(cfg, want):
@@ -1028,10 +1038,10 @@ def derive(spec, edge, tail, p0, enc, far=()):
     A0, A1, B0, B1 = confs(enc, st0, tail, far)
 
     Rr = (tuple(far), (), 0, 0, ())
-    Z0 = (st0, (d['sS'], (), 0, 0, ()), 0, Rr)
-    Z1 = (st0, (d['sD'], (), 0, 0, ()), 0, Rr)
-    P0 = (st0, (d['uS'], d['uS'], 1, 0, d['sS']), 0, Rr)
-    P1 = (st0, (d['uD'], d['uD'], 1, 0, d['sD']), 0, Rr)
+    Z0 = (st0, (d['sS'], (), 0, 0, ()), HD, Rr)
+    Z1 = (st0, (d['sD'], (), 0, 0, ()), HD, Rr)
+    P0 = (st0, (d['uS'], d['uS'], 1, 0, d['sS']), HD, Rr)
+    P1 = (st0, (d['uD'], d['uD'], 1, 0, d['sD']), HD, Rr)
 
     chi = LC.derive_chain(tab, False, True, A0, A1)
     islack = False
@@ -1132,6 +1142,14 @@ def derive(spec, edge, tail, p0, enc, far=()):
         # over the inner counter + exit ([Counters/NestedLapLift.v]); the two
         # affine halves are ordinary chains and the exponent stays inside an
         # existential.  See docs/NESTED_LAP_PLAN.md.
+        if HD:
+            # [nestcert] states its INNER anchor with a literal [S0] head of
+            # its own (Cin@S@_@ID@ and the two glue asserts).  Rather than
+            # thread [HD] into a second anchor whose head is genuinely
+            # independent of the outer one, refuse the route: a mismatch here
+            # could only make [derive] return a chain the kernel then rejects,
+            # but a loud refusal says which road is missing.
+            raise DeriveError('no overflow chain (nested route is S0-only)')
         try:
             nest = NC.derive_nested(tab, ENCDATA, ENCS, ENC, enc, st0, tail,
                                     far, B0, B1)
@@ -1258,7 +1276,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
     if LC.rstrip0(got) != LC.rstrip0(want):
         raise DeriveError('overflow close mismatch %r vs %r' % (got, want))
 
-    return dict(spec=spec, enc=enc, st0=st0, tail=list(tail),
+    return dict(spec=spec, enc=enc, st0=st0, tail=list(tail), hd=HD,
                 far=list(far), p0=p0, mode=mode,
                 chi=chi, cho=cho, co=(ro[1], ro[2]),
                 ci=((ri[1], ri[2]) if ri else None),
@@ -1566,7 +1584,7 @@ def render(D):
         '@B1SJ@': '(S (S j))' if offset else '(S j)',
         '@ENCMOD@': d['mod'], '@SOME@': d['some'], '@NONE@': d['none'],
         '@ST0@': ST[D['st0']], '@TAIL@': clist(D['tail']),
-        '@FAR@': clist(D['far']),
+        '@FAR@': clist(D['far']), '@AHD@': SYM[D['hd']],
         '@TABLE@': coq_table(spec),
         '@B0@': cconf(D['B0']), '@B1@': cconf(D['B1']),
         '@CHO@': cchain(D['cho']),
@@ -1650,21 +1668,100 @@ def coqc(path):
     return r.returncode == 0, (r.stderr or r.stdout)[-1500:]
 
 
-def anchors(spec):
-    """Candidate (edge, tail, p0, enc) anchor families, cheapest first.  The
-    ENCODING IS SEARCHED, never hard-coded -- wave-12's lesson."""
+# How many anchor families to try per (spec, mirror, head).  One derive is
+# seconds; the walk is bounded so a hopeless row cannot eat a session.
+ANCHOR_CAP = 12
+
+
+def anchor_snaps_hd(spec, hd, T=300000, nmax=600, wmax=4):
+    """Every (state, stripped-counter-side, stripped-far-side) snapshot whose
+    head symbol is [hd].  [emit_interleave.anchor_snaps_far_all] is this with
+    [hd] fixed at 0."""
+    raw = Raw(spec)
+    cfg = (0, [], 0, [])
     out = []
-    for finder in (derive_tail_best, derive_tail_best_far):
-        try:
-            a = finder(spec, encnames=ENCS)
-        except (DeriveError, Halt_):
-            continue
-        except Exception:                                     # noqa: BLE001
-            continue
-        a = tuple(a) + ((),) if len(a) == 4 else tuple(a[:4]) + (tuple(a[4]),)
-        if a[3] in ENCDATA and a not in out:
-            out.append(a)
+    for _ in range(T):
+        q, l, h, r = cfg
+        if h == hd and l:
+            w = tuple(strip0(r))
+            if len(w) <= wmax:
+                out.append((q, tuple(strip0(l)), w))
+                if len(out) >= nmax:
+                    break
+        cfg = raw.step(cfg)
+        if cfg is None:
+            break
     return out
+
+
+def anchor_families(spec, hd, maxt=6, minrun=12, wmax=4):
+    """EVERY (edge, tail, far, enc) family with a long consecutive-value run
+    at head symbol [hd], best run first.
+
+    [derive_tail_best]/[_far] return only the single best-scoring family, and
+    a family that scores best need not be the one whose lap decomposes -- so
+    a row with three readable anchors got exactly one try.  Here the search
+    proposes them all and [process] walks the list; the cost is a few more
+    failed derives, which are cheap and silent."""
+    sn = anchor_snaps_hd(spec, hd, wmax=wmax)
+    out = []
+    for enc in ENCS:
+        if enc not in ENCDATA:
+            continue
+        f = ENC[enc]
+        tab = {tuple(f(m)): m for m in range(1, 1 << 15)}
+        by = {}
+        for q, L, w in sn:
+            for tl in range(0, maxt + 1):
+                if tl > len(L):
+                    break
+                T0 = L[len(L) - tl:] if tl else ()
+                v = tab.get(L[:len(L) - tl] if tl else L)
+                if v is not None:
+                    by.setdefault((q, T0, w), []).append(v)
+        for (q, T0, w), vals in by.items():
+            run = brun = 1
+            start = bstart = vals[0]
+            for k in range(1, len(vals)):
+                run, start = ((run + 1, start) if vals[k] == vals[k - 1] + 1
+                              else (1, vals[k]))
+                if run > brun:
+                    brun, bstart = run, start
+            if brun >= minrun:
+                out.append((brun, LAB[q], list(T0) + [0], bstart, enc,
+                            list(w)))
+    out.sort(key=lambda r: (-r[0], len(r[2]), len(r[5])))
+    return [r[1:] for r in out]
+
+
+def anchors(spec, hd=0):
+    """Candidate (edge, tail, p0, enc, far) anchor families, cheapest first,
+    at head symbol [hd].  The ENCODING IS SEARCHED, never hard-coded --
+    wave-12's lesson."""
+    out = []
+    if hd == 0:
+        for finder in (derive_tail_best, derive_tail_best_far):
+            try:
+                a = finder(spec, encnames=ENCS)
+            except (DeriveError, Halt_):
+                continue
+            except Exception:                                 # noqa: BLE001
+                continue
+            a = (tuple(a) + ((),) if len(a) == 4
+                 else tuple(a[:4]) + (tuple(a[4]),))
+            if a[3] in ENCDATA and a not in out:
+                out.append(a)
+    try:
+        rest = anchor_families(spec, hd)
+    except (DeriveError, Halt_):
+        rest = []
+    except Exception:                                         # noqa: BLE001
+        rest = []
+    for edge, tail, p0, enc, far in rest:
+        a = (edge, tail, p0, enc, tuple(far))
+        if a not in out:
+            out.append(a)
+    return out[:ANCHOR_CAP]
 
 
 def _cost_str(D):
@@ -1683,53 +1780,70 @@ def process(spec, do_emit, force=False):
     """Try the machine directly (counter grows LEFT); if that finds nothing,
     try its MIRROR and transfer the conclusion back through
     Mirror.mirror_never_qh -- the wave-9 route, no new theory.  Growth
-    direction is thus searched, not declared."""
+    direction is thus searched, not declared.
+
+    The anchor's HEAD SYMBOL is searched the same way ([HD]).  S0 first, so
+    no previously-boarded row can change route."""
+    global HD
     last = None
     for mirrored in (False, True):
         dspec = mirror_spec(spec) if mirrored else spec
-        for (edge, tail, p0, enc, far) in anchors(dspec):
-            try:
-                D = derive(dspec, edge, tail, p0, enc, far)
-            except (DeriveError, Halt_) as e:
-                last = str(e)
-                continue
-            except Exception as e:                            # noqa: BLE001
-                last = '%s: %s' % (type(e).__name__, e)
-                continue
-            tag = enc + ('/mirror' if mirrored else '')
-            if not do_emit:
-                return dict(spec=spec, ok=True, enc=tag,
-                            ni=_cost_str(D), no='%d*j+%d' % D['co'])
-            pref = (NEST_PREFIX if D.get('nest')
-                    else AVOID_PREFIX if D.get('avoid')
-                    else PEEL_PREFIX if D.get('opeel') else PREFIX)
-            path = os.path.join(OUTDIR, '%s_%s.v' % (pref, mach_id(spec)))
-            if os.path.exists(path) and not force:
-                return dict(spec=spec, ok=True, enc=tag, file=path,
-                            skipped=True, ni=_cost_str(D),
-                            no='%d*j+%d' % D['co'])
-            try:
-                src = render(D)
-                if mirrored:
-                    src = mirrorize(src, spec, dspec)
-            except (DeriveError, RuntimeError) as e:
-                last = str(e)
-                continue
-            open(path, 'w').write(src)
-            ok, log = coqc(os.path.relpath(path, REPO))
-            if not ok:
-                os.remove(path)
-                lg = [l for l in log.strip().splitlines() if l.strip()]
-                last = 'coqc: ' + (lg[-1] if lg else '?')
-                continue
-            return dict(spec=spec, ok=True, enc=tag, file=path,
-                        ni=_cost_str(D), no='%d*j+%d' % D['co'])
-    # The CASCADE route (wave-24 built, wave-25 boards): the overflow phase
-    # is a descending-octave cascade, so neither one chain nor the
-    # nested/offset compositions can express it -- the level induction in
-    # [Counters/NestedLapCascade.v] can.  Tried LAST: its extractor replays
-    # whole overflow phases against the raw simulator and is by far the most
-    # expensive derive.  (Imported lazily; cascade_emit imports this module.)
+        for hd in (0, 1):
+            HD = hd
+            for (edge, tail, p0, enc, far) in anchors(dspec, hd):
+                r = _try_anchor(spec, dspec, mirrored, hd, edge, tail, p0,
+                                enc, far, do_emit, force)
+                if r.get('ok'):
+                    HD = 0
+                    return r
+                last = r.get('why') or last
+    HD = 0
+    return _cascade(spec, do_emit, force, last)
+
+
+def _try_anchor(spec, dspec, mirrored, hd, edge, tail, p0, enc, far,
+                do_emit, force):
+    """One (anchor family, head symbol) candidate: derive, render, compile."""
+    try:
+        D = derive(dspec, edge, tail, p0, enc, far)
+    except (DeriveError, Halt_) as e:
+        return dict(ok=False, why=str(e))
+    except Exception as e:                                    # noqa: BLE001
+        return dict(ok=False, why='%s: %s' % (type(e).__name__, e))
+    tag = enc + ('/mirror' if mirrored else '') + ('/S1' if hd else '')
+    if not do_emit:
+        return dict(spec=spec, ok=True, enc=tag,
+                    ni=_cost_str(D), no='%d*j+%d' % D['co'])
+    pref = (NEST_PREFIX if D.get('nest')
+            else AVOID_PREFIX if D.get('avoid')
+            else PEEL_PREFIX if D.get('opeel') else PREFIX)
+    path = os.path.join(OUTDIR, '%s_%s.v' % (pref, mach_id(spec)))
+    if os.path.exists(path) and not force:
+        return dict(spec=spec, ok=True, enc=tag, file=path, skipped=True,
+                    ni=_cost_str(D), no='%d*j+%d' % D['co'])
+    try:
+        src = render(D)
+        if mirrored:
+            src = mirrorize(src, spec, dspec)
+    except (DeriveError, RuntimeError) as e:
+        return dict(ok=False, why=str(e))
+    open(path, 'w').write(src)
+    ok, log = coqc(os.path.relpath(path, REPO))
+    if not ok:
+        os.remove(path)
+        lg = [l for l in log.strip().splitlines() if l.strip()]
+        return dict(ok=False, why='coqc: ' + (lg[-1] if lg else '?'))
+    return dict(spec=spec, ok=True, enc=tag, file=path,
+                ni=_cost_str(D), no='%d*j+%d' % D['co'])
+
+
+def _cascade(spec, do_emit, force, last):
+    """The CASCADE route (wave-24 built, wave-25 boards): the overflow phase
+    is a descending-octave cascade, so neither one chain nor the
+    nested/offset compositions can express it -- the level induction in
+    [Counters/NestedLapCascade.v] can.  Tried LAST: its extractor replays
+    whole overflow phases against the raw simulator and is by far the most
+    expensive derive.  (Imported lazily; cascade_emit imports this module.)"""
     try:
         import cascade_emit as CE
         r = CE.process_board(spec, do_emit, force)

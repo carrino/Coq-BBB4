@@ -153,6 +153,59 @@ carrying forward:
   next piece is `FuelWide`'s runner rule wired into the one-state-lifted
   path (`ClosureExt`); the other 41 still want the wall itself.
 
+## 2b3. Wave-35 (2026-07-31) — the 24 three-state core rows are NINE machines
+
+Full write-up: `docs/CORE_3STATE.md`.  **12 of the 24 `1RB---` core rows
+board** -- half the population; core 62 -> 50.  Read that file before touching this population
+again.
+
+  [MERGE NOTE, added when this wave was merged with the LADDER track (PR #90,
+  core 62 -> 59).  The two board sets are DISJOINT -- the ladder took three
+  rows this wave never touched -- so the joint figure is **47**, not 50 or
+  59.  `audit.py` OK at 47 core + 21 shadows.]  The four things worth carrying:
+
+- **The 24 rows are 9 sub-machines.**  `StA` fires once and (on 23 of the 24)
+  is the target of nothing, so everything after step 1 is the `{B,C,D}`
+  sub-machine on a tape with one `1`.  Up to relabelling those three states
+  the population collapses to NINE.  Two rows sharing a sub-machine differ
+  only in their BOOTSTRAP, so one role-parameterised closer plus one boot
+  probe boards a whole group.  Wave-34 wrote `KpWallQH.v` for one such group
+  without noticing the grouping; three more groups fell this session the same
+  way.
+- **The anchor's HEAD SYMBOL was hard-coded S0 everywhere.**  These are wall
+  counters read with the head ON the wall cell, so their anchor head is `S1`,
+  and `derive_tail_best`/`_far` (hence `emit_lapcert.anchors`) scanned only
+  `h == 0`.  `emit_lapcert.py` now carries `HD` as a module global, searched
+  S0-first, and `anchors` proposes every family with a long consecutive run
+  rather than the single best-scoring one.  Regression checked
+  (`1RB1RC_1LC0RD_0LC1RD_0RB0LA` still derives the same certificate).
+- **Part of the residue is NOT BASE 2.**  Every alphabet in `theories/Counters`
+  and every measurement tool is base 2; `radix_infer.py` had already read
+  `1RB---_0LB1RC_0RD0RC_1LB1LD` as base 3 with a `4j+4` lap, and
+  `residue_map.tsv` calls the same row "EXP3" because it is fitting the wrong
+  radix.  `Counters/TernCounter.v` (base-3 numerals, TWO increments — with
+  and without a terminator past the top digit), `Counters/LapGlueIx.v`
+  (`LapGlueQuiet` over an arbitrary index, since a base-3 counter has no
+  `positive` to index by) and `Counters/Ter3Wall.v` board those three rows.
+- **`Checkers/LapDecider.v` cannot express an ALTERNATING sweep**, and two of
+  the boarded groups need one.  `SCycL`/`SCycR` require the unit run to
+  return to its own state; an alternating sweep does so only every second
+  cell, and a fixed 2-cell unit covers only even runs while `j` is
+  universally quantified.  That is an expressiveness gap, not a search gap —
+  closing it means a state-SET in `sconf`, i.e. re-founding `srun_sound`.
+  The hand-written closers (`KpWallAlt.v`, `KpWallScan.v`) carry "still one
+  of the two" existentially instead, which covers both parities at once.
+
+**Ranked next moves on the remaining 12** (details in `docs/CORE_3STATE.md`
+section 3): (1) the 11 rows whose lap is super-affine (`6,16,36,82,196` at
+carry lengths 0..4) — those are NESTED counters and `nestcert.py` is
+`S0`-anchor-only, so thread a second head symbol through its INNER anchor;
+(2) `1RB---_1RC1LB_0LB1RD_0RA0RC`, the one row that targets `StA` — and
+`0RA` DOES fire, at indices 19, 66, 257, 1024, 4095, 16382, … (~4^k, measured
+to 2·10^6), so that row's target is `NeverQuasiHaltsSt`, NOT `iqh`, and its
+closer is `glue_neverqh`.  It is the only one of the 24 that does not
+quasihalt.
+
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
@@ -3851,3 +3904,69 @@ is either docs/tooling or a measurement handed to the next proof session.
   2,4,7,9,15,17), close with WaveCounter.wglue_neverqh (no closed form
   needed).  comb_probe.py says NOCOMB but its template demands an Ip/Jp
   tail and short prefix, so that negative does not test this read.
+
+# 2026-07-31 — the ladder's two knobs, the quasihalt closer, nineteen rows
+
+_Full record in `docs/LADDER_PLAN.md` §4l.  This is the short version plus the
+traps._
+
+- **`LadderCheck` now carries ONE arm-indexing scheme and both class arms use
+  it** — flat below a threshold `N0`, `N0 + (n-N0) mod st` at or above it,
+  block count `(n-N0)/st`.  `arm_index` is the one lemma (`Nat.div_mod_eq` +
+  `lia`).  4i's `off = n mod st` is this at `N0 = 0`, and that is why it left
+  four rows short: an arm whose materialisation offset is at or above the
+  stride cannot be a residue.
+- **The trap that cost the most, and it is a SHAPE not a count.**  With
+  `stride = 0` there is no repeated block for the engine's steps to walk
+  around: `SWin` moves inside `s_pre`, no step carries a cell from `s_post`
+  across the block boundary, and `srot 0` is the identity.  So a flat arm
+  written `mkS pre [] 1 0 post` has **no chain at any depth or stride**, and
+  the first emitter run refused all 21 rows on it.  `LadderCheck.blk` is the
+  normalisation (empty block ⇒ whole side concrete in `s_pre`) and `blk_den`
+  says the denotation is unchanged.  The failure reads exactly like "the
+  carry ripple is not affine in the run length" and is not.
+- **`LapGlueQuiet.glue_qh_quiet` ported** (`glue_qh_quietN`): `nat`-indexed,
+  weak visit premise for every `q <> qa`.  The new obligation is `AvoidRun`
+  on the lap; `base_chain : list rstep -> option (list lstep)` plus
+  `base_chain_run` bridges to `LapAvoid.srun_avoid_sound`, which is stated on
+  `srun`.  No new certificate data — the avoidance is recomputed from the
+  same chain the kernel already replays.
+- **`board_lap` became `board_arm`, parameterised by what the closer wants of
+  the arm.**  `board_neverqh` at `RuleSound`, `board_iqh` at
+  `RuleSound /\ RuleAvoid`.  The case split — which arm serves a state, at
+  what index, at what block count — is stated once.  Duplicating it is how
+  two closers drift apart.
+- **Numbers.**  21 rows the closure applies to, 15 boarded (6 never-QH, 9
+  quasihalting), 6 blocked on the arms — matching
+  `tools/ladder/core61_armshapes.txt` row for row.  Then the six `0RB` rows
+  that the boards promoted out of the shadow list certified and boarded too.
+  Nineteen boards; on this branch's base, core undecided 59 → 46.
+- **Nine of the nineteen were boarded concurrently by PR #91** (the
+  three-state ternary-counter wave) while this session ran — every `1RB---`
+  row here is also a `KS_`/`KA_`/`T3_` board on main, same `iqh` triple.
+  Merged, it is **ten rows net**: remaining 68 → 58, core undecided
+  47 → 43.  4k warned about exactly this ("a candidate that sits unboarded
+  decays") and the guard is one diff: check
+  `git show origin/main:tools/closeout/core_rows.txt` BEFORE picking a
+  bucket, not after building for it.
+- **Bookkeeping lesson.**  "core undecided" is a BUCKET, not a count of
+  machines: boarding a core row can promote a `0RB` shadow into the core, so
+  13 boards took 59 → 52, not 59 → 46.  Quote `settled by a board` when the
+  claim is about rows decided.
+- **Build note.**  The full tree is ~2 h at `-j3` and
+  `theories/Machines/IRules_Batch_*.v` are ~16 CPU-minutes EACH at the very
+  end, so the last quarter looks stalled and is not.  A single `valfam.py`
+  row (~25 s) alongside a build is fine; the 61-row sweep is not.
+- **`IRules_Batch_*` peak at 8.2 GB EACH** — measured, `IRules_Batch_02`
+  alone: `rc=0 peak_MB=8172`.  The sources are a few KB; the `vm_compute` is
+  not.  On the 15 GB box two concurrently is already over, so any `make -jN`
+  that schedules two together gets `Killed` / `Error 137` and throws the work
+  away.  Build the nine SERIALLY with nothing else running, then the rest at
+  `-j2`.  They are NOT optional: `Closeout.vo` needs them transitively via
+  `CB_*` -> `ListCStage3/*` -> `Census/Proven_06` -> `IRules_Batch_*`, and CI
+  never exercises that path (it builds `CloseoutKit.vo`, two example files
+  and a dry run of `make all`).
+- **`board_ladder.py` rewrites `_CoqProject` under a running `make` and the
+  build then LIES**: `Makefile.coq` is generated from `_CoqProject`, so
+  changing it mid-build invalidates the makefile and `make` can exit 0 with
+  hundreds of files unbuilt.  Board first, then build.

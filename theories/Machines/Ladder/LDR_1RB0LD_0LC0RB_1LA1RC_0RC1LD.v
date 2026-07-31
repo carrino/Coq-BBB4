@@ -15,8 +15,10 @@
     Axiom footprint: [functional_extensionality_dep], via [CTape.lift]. *)
 From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement CTape.
-From BBB4.Counters Require Import WTape.
-From BBB4.Checkers Require Import LapDecider LadderKernel LadderFam LadderCheck.
+From BBB4.Census Require Import TNF_QH.
+From BBB4.Counters Require Import WTape LapGlueQuiet.
+From BBB4.Checkers Require Import LapDecider LapAvoid LadderKernel LadderFam.
+From BBB4.Checkers Require Import LadderCheck.
 Import ListNotations.
 
 Definition mk_1RB0LD_0LC0RB_1LA1RC_0RC1LD (w : Sym) (d : Dir) (n : St) : option Trans :=
@@ -233,7 +235,7 @@ Proof. eapply arm_sound; [exact rules_sound_1RB0LD_0LC0RB_1LA1RC_0RC1LD | exact 
     left-hand side and against any tail the flags permit, reaches the arm's
     right-hand side in exactly the certificate's step count. *)
 
-(** ** The closure: NOT BUILT for this row -- interior arm: no chain at stride 1, 2, 3 or 4 -- the carry ripple is not affine in the run length
+(** ** The closure: NOT BUILT for this row -- interior arm: no chain at any threshold 0..3 and stride 1..4 -- the carry ripple is not affine in the run length
 
     The board above still proves every rule the certificate carries; what
     is missing is the machine-level theorem.  LADDER_PLAN 4h(a) names the

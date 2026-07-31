@@ -1304,16 +1304,324 @@ narrower and worth saying: the thirteen are not blocked by the near-head
 spacer alone.  Whatever they are, fixing the outer parameter will not reach
 them, and one more human read is worth more than another axis on the probe.
 
-## 4k. The NUMERATION, built: five of the fifteen board, and the blocker moves
+### Cross-check: PR #90 read the same fifteen, on a different axis
+
+`docs/LADDER_NOFAM.md` (merged from `claude/fifteen-nofam-measurement-iuw18b`,
+which ran beside this session on the same fifteen rows) reports **13 of 15**
+with a monotone reading.  `bounce.py` here found **2**.  The two are not in
+conflict and the difference is the axis each held fixed:
+
+* this section varied the ANCHOR and the SPACER -- frontier, side, growing
+  near-head prefix -- and kept the numeration at base-`b`/gray;
+* #90 varied the NUMERATION -- Fibonacci weights, redundant base over cell
+  pairs, binomial, unary -- and kept the anchor at a (state, head) pair.
+
+Each found what its own axis could see.  Together: `no value family` is one
+label over at least two unrelated failures, and neither probe alone
+establishes anything about the rows the other one found.
+
+**On John's two bouncer rows the two readings differ, and #90's is cheaper.**
+This section reads them at the west frontier with a spacer `0^(2k+5)`, which
+needs the outer parameter.  #90 reads them at `D0/R` and `A1/R` with a
+terminator SET (`tl=*`, which is 4f's phases) and base 2 -- 16 of 20 and 15
+of 20 width classes exact, gap 1.  If #90's reading holds, those two rows
+want the phase cycle, which three other live-core rows already want, and not
+the outer parameter at all.  **That should be checked before 4j's fix is
+built**: 4j's cost estimate assumed the spacer was the only way in.
+
+And the largest single group in #90's table is **six rows on Fibonacci
+weights** -- the constructor 4d deferred and every brief since has ruled out
+of scope.  It is now measured, and it is the biggest numeration bucket in the
+live core.
+
+## 4k. The glue was never the bottleneck.  The ARMS are, and both of them want the same two knobs
+
+_Measured after 4j, before building anything.  The measurement contradicted
+the plan it was meant to confirm, which is why it is recorded before the
+work rather than after._
+
+### The recommendation that was wrong
+
+4i's reading of the live core said: eleven rows close but quasihalt, and
+`LapGlueQuiet.glue_qh_quiet` already ends in exactly the `iqh` triple
+`covers_iqh_at` consumes, with only the same too-strong `Hvis` that 4i
+weakened for `LapGlue`.  So the port looked like the best ratio available:
+eleven rows for one edit already done once.
+
+Running the closure's own emitter over those eleven first:
+
+    0 of 11 have the class arms the closure needs
+
+Not one.  Eight fail on the interior arm, three on the fill.  **The port
+would have been worth zero rows**, and would have been built before anyone
+found that out.
+
+### What actually gates them, and it is one thing
+
+Across all **21** binary/step-1/one-phase rows in the live core (10 that
+never quasihalt, 11 that do), with the interior arm carrying only the stride
+4i added:
+
+    3 board.  18 fail on ARM DERIVATION, not on the glue, the code,
+    the phase, or the liveness.
+
+4i put a stride on the interior arm and reported it "not enough", with the
+missing piece named: a guaranteed block copy materialised into `s_pre`, and
+then a separate arm for the residue's own `m = 0`.  That was right and it
+was half the story.  **The fill arm needs the same two knobs**, and 4i did
+not say so because 4i only ever tried the fill at one copy split and one
+stride.  With a stride AND a materialisation offset on BOTH arms:
+
+| | rows |
+|---|---:|
+| both arms derive | **15** |
+| interior only | 2 |
+| fill only | 0 |
+| neither | 4 |
+
+    never-quasihalts, both arms derive:  6   (2 already boarded, +4 new)
+    quasihalts,        both arms derive:  9
+
+So the order is the reverse of 4i's:
+
+1. **the two knobs on both arms** -- `+4` rows with `board_neverqh`
+   unchanged, no new glue at all;
+2. **then** the `LapGlueQuiet` port -- `+9`, and not one of them before (1).
+
+59 -> 46.  And 4i's own prediction of "four rows" from the interior offset
+is confirmed exactly -- the four are the parity rows it named.
+
+### The lesson, which is 4g's again with the sign flipped
+
+4g's warning is that a label recording how a SEARCH failed gets mistaken for
+a property of the machines.  This is the same error one level up: "eleven
+rows need the quasihalt closer" recorded which THEOREM they need and was
+mistaken for what is blocking them.  It is not.  Nothing was blocking them
+that a closer would fix.
+
+The cheap guard is the one used here: before building the thing that
+consumes the arms, run the arm builder over the rows and count.  It took one
+script and it changed the order of two sessions' work.
+
+## 4l. Both knobs, on both arms, and then the closer.  Nineteen rows
+
+_Everything below is a file that compiles or a number a script printed.  The
+kernel at `LadderCheck.v`, the boards under `theories/Machines/Ladder/`, the
+audit from `make closeout`.  Coq 8.18.0._
+
+**Verified to the end.**  The full tree builds and `make closeout` runs in
+full:
+
+    closeout_partial : forall tm, Deferred D_census tm ->
+                       boarded tm \/ skipped D_remaining tm
+
+    Eval vm_compute in (List.length CoreRows.remaining_rows)  =  43
+
+axiom footprint `functional_extensionality_dep` only, and
+`census_cache.py --check` MATCH.  The 43 is the kernel's number, not only the
+audit's.
+
+### The gate 4k set, answered: one scheme
+
+4k's gate was that the interior arm and the fill arm must share ONE arm
+index -- one threshold, one stride, one offset, one lemma about
+`n = k + s*j` -- because two parallel indexing schemes is how `fm_pre`
+became a fixed list.  They can:
+
+    astride N0 st r = if r <? N0 then 0 else st
+    aoff    N0 st n = if n <? N0 then n else N0 + (n - N0) mod st
+    acnt    N0 st n = if n <? N0 then 0 else (n - N0) / st
+
+    arm_index    : aoff + astride (aoff) * acnt = n
+    arm_index_lt : aoff < N0 + st
+    arm_index_pos: 0 < N0 -> 0 < n -> 0 < aoff
+
+`Nat.div_mod_eq` and `lia`, as 4k said.  The two classes instantiate it at
+their own `(N0, st)`; nothing else about them is shared and nothing else
+needs to be.  4i's `off = n mod st` is this scheme at `N0 = 0`, and that is
+exactly why it stopped four rows short: an arm whose materialisation offset
+is at or above the stride cannot be a residue, so the small `n` it does not
+reach had no arm at all.
+
+The fill arm gets the same two knobs, which it had neither of.  Its
+threshold is at least 1 -- no width is 0 -- and the fill target's guaranteed
+copies now divide PER ARM INDEX rather than once:
+`fm1 r + fm2 r + |pre| + |suf| = r + f_s`, because the arm at offset `r`
+carries `r` copies of the run on its left-hand side and not one.
+
+### The one thing 4k did not anticipate, and it is a shape and not a count
+
+**With `stride = 0` there is no block for the engine's steps to walk
+AROUND.**  `SWin` moves inside `s_pre`; no chain step carries a cell from
+`s_post` across the block boundary into it -- `srot 0` is the identity.  So
+a flat arm stated as `mkS pre [] 1 0 post` has no chain at ANY depth, and
+the first run of the emitter refused all 21 rows on the flat arm alone.
+
+`blk` is the normalisation: with an empty block the whole side is concrete
+in `s_pre`, and `blk_den` says the denotation is the same either way.  That
+is what keeps it a normalisation of the SHAPE and not a second scheme, and
+it is why 4i's "a separate arm for the residue's own `m = 0`" is one line of
+`cls_side` rather than a second indexing scheme.  Both class sides take
+their block through it.
+
+Worth not rediscovering: the failure mode is a chain search that returns
+`None` instantly at every depth and every stride, which reads like "the
+carry ripple is not affine" and is not.
+
+### The closer, and 4k's order was right
+
+`glue_qh_quietN` is `LapGlueQuiet.glue_qh_quiet` `nat`-indexed with the same
+weak visit premise `glue_neverqhN` already carries, quantified over
+`q <> qa`.  Same proof.  The genuinely new obligation is `AvoidRun tm qa m
+(Cf n)` on the lap, and the bridge to `LapAvoid.srun_avoid_sound` is
+
+    base_chain : list rstep -> option (list lstep)
+    base_chain_run : base_chain l = Some lb ->
+                     rrun tm el er rs l c = srun tm el er lb c
+
+`RuleAvoid` is `RuleSound`'s twin and `arm_avoid` derives it from the SAME
+chain the kernel already replays, under `vm_compute`.  No new certificate
+data.  Every class arm the emitter builds is all-`RB` (4h(c): `RU` is still
+unexercised), and a chain that does invoke a ladder rule projects to `None`
+and the arm is refused -- checkable, not assumed.  `qa = A` on all nine, and
+its last visit is found by simulating the boot window (untrusted) and
+re-checked by `bootvis_chk` / `bootquiet_chk`.
+
+`board_lap` became `board_arm`, parameterised by what the closer wants OF
+the arm it lands on: `board_neverqh` at `RuleSound`, `board_iqh` at
+`RuleSound /\ RuleAvoid`.  Which arm serves a state, at what index and block
+count, and that the configurations either side are that arm's two `cden`s,
+is stated once.
+
+Checked, not recalled: `arm_index`, `blk_den`, `arm_avoid`, `board_arm` and
+`board_lap_avoid` are all **Closed under the global context** -- zero
+axioms, because they are on `csteps`/`cden` and never go through `lift`.
+`glue_qh_quietN` carries `functional_extensionality_dep` and nothing else.
+4h's discipline holds: funext enters only in the final assembly.
+
+**4k's measurement held exactly.**  Over the live core, and it is
+`core61_armshapes.txt` row for row:
+
+| | rows |
+|---|---:|
+| the closure applies to | 21 |
+| **boarded** | **15** |
+| never quasihalts | 6 (2 before, **+4**) |
+| quasihalts | 9 (**all new**) |
+| blocked on the arms | 6 |
+
+and six more `0RB` rows after them, for nineteen boards; see below.
+
+The six that fail are the six the table calls blocked: four with no interior
+chain at any threshold or stride (the two quadratic rows and two undiagnosed
+at 4i), and two with no FILL chain at any threshold, stride or copy split.
+Neither is a gap in the emitter; both are `RULE_LADDER` 5's table row.
+
+`board_ladder.py` reported the last two as "arm205 negative constant on the
+repeated block", which is a note about ONE MINED ARM and not the refusal --
+the trap 4i already recorded and the driver still has.  The refusal is in the
+`.v` file, as always.  Read the file.
+
+### What the number actually did, and one correction to 4k's arithmetic
+
+The thirteen rows above went in first:
+
+    settled by a board       5076 -> 5089   (+13)
+    core undecided             59 -> 52
+    0RB shadows of the core    21 -> 15
+
+4k predicted `59 -> 46` from thirteen rows.  Thirteen rows moved, and all
+thirteen were core rows -- but **core undecided fell by seven, not
+thirteen**, because six `0RB` rows moved the other way: they were shadows OF
+rows now settled by a board, so they need a resolution of their own instead
+of their partner's.  The lesson is small and it is 4g's again: **"core
+undecided" is a bucket, not a count of machines**, and a board that settles a
+core row can promote a shadow into it.  Quote `settled by a board` when the
+claim is about rows decided.
+
+Those six were then the cheapest thing on the list, and they are 4k's
+prediction the rest of the way: they are re-roots of rows just boarded, so
+their orbit is known to have a ladder reading, and they had never been swept
+because they had never been in the core.  Six `valfam` rows (~25 s each,
+alongside a build, which is the one contention the sweep rule permits) and
+all six close at `live = ABCD`, board at threshold 0 / stride 1 interior and
+threshold 1 / stride 1 fill, and compile:
+
+    settled by a board       5089 -> 5095   (+6)
+    core undecided             52 -> 46
+    0RB shadows of the core    15 -> 15
+
+so 4k's `59 -> 46` is reached, by a different route than 4k drew and with
+nineteen boards rather than thirteen.
+
+### And then the decay 4k warned about, measured
+
+4k's prompt said it plainly: *"the wave route is working the same population
+concurrently -- a candidate that sits unboarded decays."*  It did.  While
+this session ran, PR #91 boarded **nine of these nineteen rows** by the
+three-state ternary-counter route: every `1RB---` row here is also a
+`KS_`/`KA_`/`T3_` board on `main`, and both prove the same `iqh` triple.
+Merging, on top of `main`:
+
+    remaining (core + shadows)   68 -> 58
+    core undecided               47 -> 43
+    0RB shadows of the core      21 -> 15
+
+**Ten rows net, not nineteen** -- the four `1RB1L*` never-quasihalters the
+two knobs unlocked (4i's predicted four, exactly), and the six `0RB` rows.
+The nine quasihalters are now double-covered.
+
+That is not an argument against the closer: `board_iqh` is a general
+mechanism over the same `Fam` record and the same arms, and it will take the
+next quasihalting row the ladder reaches without any new theorem.  It IS an
+argument about ORDER, and it sharpens 4k's rule rather than contradicting
+it.  4k said: measure the arms before building the thing that consumes them.
+The measurement it did not do is the cheap one next to it -- **check what the
+concurrent route has already boarded before spending a session on a bucket**,
+because "eleven rows need the quasihalt closer" was a statement about this
+repository at one instant and two of those instants were four days apart.
+`tools/closeout/core_rows.txt` on `origin/main` answers it in one diff.
+
+### Where the 43 stop now
+
+| | rows | |
+|---|---:|---|
+| no value family PROBED AT ALL | 15 | `docs/LADDER_NOFAM.md`; PR #90 reads 13 of 15 |
+| families found, none closed | 11 | mechanical: coverage or differential |
+| closed, `live = ABCD`, gray | 6 | needs the `(gray, 2)` `ClassSucc` |
+| time cap | 4 | |
+| closed, binary/step-1/one-phase, ARMS BLOCKED | 4 | the count language, not the emitter |
+| closed, two phases | 3 | needs the phase cycle in `Inv` |
+
+**There is no binary/step-1/one-phase row left that the closure can state.**
+The fifteen that had both arms are boarded; the six that do not are
+`RULE_LADDER` 5's table row, not a gap in the emitter.  The next session's
+job is therefore a bucket it has not touched, and 4k's guard applies to each
+of them before anything is built: run the arm builder over the gray six and
+the two-phase three FIRST and count.  `closure_data` refuses both at their
+first lines, so the probe is two lines commented out, and the answer decides
+whether `(gray, 2)`'s `ClassSucc` is worth six rows or zero.
+
+## 4m. The NUMERATION, built: five of the fifteen board, and the blocker moves
 
 _Branch `claude/ladder-numeration-axis-hy11zp`, cut from `main` at `5da0721`
-(PR #90 merged).  `tools/ladder/valfam.py` is the only file changed; no
+(PR #90 merged) and merged with `main` at `03f0b26` (PR #97) before this was
+written.  `tools/ladder/valfam.py` is the only file this session changed; no
 `tools/closeout/`, no wave-session file, no Coq (there is none in this image --
-see below).  Baseline and result are two full sweeps of the live core of 59 at
-HEAD, `sweep.py --cap 150 --kmax 9 --jobs 3`
+see below).  Baseline and result are two full sweeps of the live core, at that
+time 59 rows, `sweep.py --cap 150 --kmax 9 --jobs 3`
 (`tools/ladder/num59_before.jsonl`, `num59_after.jsonl`).  Every number below
 is a count a script printed.  The measurement this builds on is
 `docs/LADDER_NOFAM.md`, which is cited and not rewritten._
+
+**Ran beside 4k/4l, not after them.**  This session and the two above it
+started from the same `main` and touched disjoint files -- 4k/4l are
+`emit_ladder.py` and the closer, this is `valfam.py` and family DISCOVERY --
+so nothing here is measured against 4l's core of 43.  It does not need to be:
+**all fifteen rows, and all five that board below, are still in the live core
+after 4l**, so the five are additional to 4l's nineteen and not a subset of
+them.  The sweep numbers below are against the 59-row core they were taken on
+and are labelled as such.
 
 ### The kernel question, answered on minute one (NEXT_SESSION Rule 2)
 
@@ -1343,11 +1651,14 @@ machinery: `Fam.b = 1`, `Fam.value` unchanged (a positional sum over a
 one-digit alphabet is 0), `Fam.of_value(0, k) = [0]*k`.  That is why step 1
 below is a guard REMOVAL and not an addition.
 
-**What does have to change is one hypothesis, and it is not a field.**
-`LadderCheck.v`'s `Section Iter` opens `Hypothesis Hb : 1 < fm_b F`, and
-`LadderFam.v`'s `pos_of_lt`, `fam_value_of_value`, `fam_next_interior` and
-`fam_next_wf` carry the same.  At `fm_b = 1` the section is uninstantiable.  It
-should read `0 < fm_b F`, and the proofs go through:
+**What does have to change is a hypothesis, and it is not a field.**
+`LadderCheck.v`'s `Section Iter` opens `Hypothesis Hb : 1 < fm_b F`, and so --
+**re-read at the merged HEAD `03f0b26` rather than at the one this was drafted
+against, which is 4i's rule and it moved under this section** -- does 4l's new
+`Section Board`; `LadderFam.v`'s `pos_of_lt`, `fam_value_of_value`,
+`fam_next_interior` and `fam_next_wf` carry the same.  At `fm_b = 1` both
+sections are uninstantiable.  They should read `0 < fm_b F`, and the proofs go
+through:
 
 * `inv_value_lt` needs `val_pos_lt`, whose statement holds for every `b >= 1`
   (`d + b*V <= (b-1) + b*(b^n - 1) = b^(n+1) - 1`) and whose proof is `nia`
@@ -1357,7 +1668,15 @@ should read `0 < fm_b F`, and the proofs go through:
   contradictory hypothesis, so the branch closes without arithmetic rather
   than needing new arithmetic;
 * `fam_next_wf`/`fam_next_interior` are premised on that same false hypothesis
-  and are never invoked at `b = 1`.
+  and are never invoked at `b = 1`;
+* `Section Board` never mentions `Hb` except to feed it to `fam_iter_total`,
+  `tops_cofinal` and the three `pos1_*` lemmas.  Of those, `pos1_class_succ` is
+  used only under `d < fm_b F - 1`, which at `b = 1` is `d < 0` and therefore
+  unsatisfiable -- **the interior arm is vacuous, which is the same collapse
+  read on the Coq side** -- and `pos1_is_top`/`pos1_top_shape` are about
+  `repeat (fm_b F - 1) k`, which at `b = 1` is `repeat 0 k`, i.e. every string
+  of the width.  Both hold; both need a `b = 1` case rather than the
+  `1 < b` arithmetic.
 
 That is container-safe under Rule 1 -- a re-proof of small per-file lemmas, no
 census walk, no unbroken `native_compute`.  **It is not verified here, because
@@ -1440,7 +1759,7 @@ space, for free.
 | **B.** closes end to end: differential, exact step counts, 40 laps | **5 of 15** | 4 |
 | **C.** no row that closes today stops closing | **0 regressions** | 0 |
 
-The live core of 59, swept before and after:
+The live core, 59 rows at the time of the sweep, before and after:
 
 | | before | after |
 |---|---:|---:|
@@ -1584,8 +1903,9 @@ A passed and B did not clear by more.
   with 4j's own closing paragraph: the thirteen are not blocked by the
   near-head spacer alone.  The denotation half is in place and inert, so the
   next reader that needs it will not have to plumb it.
-* **`1 < fm_b F` should become `0 < fm_b F` on the box.**  Four lemmas and one
-  section hypothesis; the interior branches close by contradiction.
+* **`1 < fm_b F` should become `0 < fm_b F` on the box.**  Four `LadderFam`
+  lemmas, two section hypotheses (`Iter` and 4l's `Board`) and a `b = 1` case
+  in two `pos1_*` lemmas; every interior branch closes by contradiction.
 * The two bouncers stay the wave route's, and the binomial row stays out of
   scope: no weight sequence expresses it, `fit_weights` correctly declines it,
   and it is still one row.
@@ -1602,3 +1922,4 @@ A passed and B did not clear by more.
 * NOT a bigger RepWL/n-gram sweep — `COUNTER_CLOSEOUT.md` §0: finitization
   itself is the bottleneck, 706/708 NOCLOSE, and a richer measure vocabulary
   cannot help.
+
