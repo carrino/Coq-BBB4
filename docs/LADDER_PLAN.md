@@ -3024,6 +3024,29 @@ instance.  40 rows remain.
   bouncer pair it means what 4q says.  Anything still filed `no anchor` is
   worth re-running before it is read by a human -- the gate is free.
 
+### The other five that already CLOSE, and they are ARM rows, not boot rows
+
+The same question asked of the whole core: which rows carry a `closed: true`
+certificate in a committed sweep and are still unproven?  Seven, of which two
+are the pair above.  The other five were run through the emitter and **none of
+them is a boot-check row** -- the refusals are all downstream:
+
+    1RB0LD_0LC0RB_1LA1RC_0RC1LD   arm2    no chain found
+    1RB1LA_0LA1RC_0LD0RC_1LD0RB   arm55   no chain found
+    1RB1LA_1LC0RD_0RA0LC_0LA1RD   arm2    no chain found
+    1RB1LA_0LA1RC_0RD0RB_1RA---   the certificate predates `lands_in_phase`
+    1RB1LA_0LA0LC_1LC1RD_0RB0RD   25 of 25 arms boarded, closure refused:
+      "interior arm: no chain at any threshold 0..3 and stride 1..4 --
+       the carry ripple is not affine in the run length"
+
+The last one is the interesting one and it is 4k's two knobs again: every arm
+the certificate carries re-derives, and the CLOSURE still will not build
+because the interior arm has no chain at any `(N0, stride)` in the grid.  So
+the five are one bucket with the arms and not with the boot, and widening
+`ARM_GRID` is the axis they sit on -- **not** the gate above, which is already
+free for them.  Worth knowing before someone re-runs the search on them: the
+search is not what is stopping these.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
