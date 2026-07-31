@@ -5,12 +5,30 @@ Every count below is one a script in this tree printed, not an estimate._
 
 ## 1. The verdicts
 
-| PR | what it is | verdict |
-|---|---|---|
-| **#100** the probe, the phase cycle, three rows | boards 3 core rows, 42 → 39 | **MERGE, first** |
-| **#92** counts + `check_coqproject.py` CI guard | docs and tooling, **no `.v`** | **MERGE**, counts re-swept to 39 + 14 |
-| **#98** `RerootSwap.v` + `gen_shadow.py` | fills a real general gap; the shadow harvester | **MERGE** |
-| **#99** five partial ladder boards | boards nothing — but see §4 | **MERGE**, with an exempt block |
+| PR | what it is | verdict | done |
+|---|---|---|---|
+| **#100** the probe, the phase cycle, three rows | boards 3 core rows, 42 → 39 | **MERGE, first** | `0fc5f0b` |
+| **#92** counts + `check_coqproject.py` CI guard | docs and tooling, **no `.v`** | **MERGE**, counts re-swept to 39 + 14 | `6e406e2` |
+| **#98** `RerootSwap.v` + `gen_shadow.py` | fills a real general gap; the shadow harvester | **MERGE** | `d07e999` |
+| **#99** five partial ladder boards | boards nothing — but see §4 | **MERGE**, with an exempt block | `fa1be97` |
+
+All four are merged and the queue is empty.  On the resulting `main`:
+
+```
+CLOSEOUT AUDIT: OK -- 5,103 of 5,156 settled (99.0%), 39 core, 14 shadows
+COQPROJECT CHECK: OK (2713 listed, 167 exempt-matched, 0 unwired, 0 ghosts,
+                      0 stale exemptions)
+proof_report.py: OK
+```
+
+Verified beyond CI, which builds only `CloseoutKit.vo` and two example files:
+`CB_51.v` — the new stage my merge resolution emitted, holding exactly the
+three new rows — and all three new ladder boards compile under Coq 8.18.0, and
+`RerootSwap.v`'s four lemmas have the axiom footprint #98 claims (three
+`Closed under the global context`, `visited_csteps` only
+`functional_extensionality_dep`).  `gen_shadow.py --all` emits nothing, as it
+should while every shadow's partner is undecided — and five of its `SKIP`
+lines name the three interior-arm rows that carry them.
 
 **#100 is the only open PR that moves the number**, and it was the only one
 with a conflict.  It is now merged with `main`, regenerated, and green.
