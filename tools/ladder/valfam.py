@@ -2500,8 +2500,62 @@ def visited_states(tm, upto):
     return out
 
 
-def find_boot(fam, snaps):
+def exact_cconf(tm, n):
+    """The machine's `CTape.cconf` after `n` steps, as `(q, left, head, right)`
+    with each side head-outward -- `CTape.ctape_move` simulated exactly.
+
+    Everything else in this file reads the tape through `block_rle`, which is a
+    view of the TAPE: it has already dropped the trailing blank run, so two
+    configurations that `lift` identifies look the same to it.  `Hboot` is not
+    stated on `lift`.  It is `csteps tm t0 c0 = Some (fam_cfg F (ds0, 0, ph0))`
+    -- an equation on `cconf`, and `ctape_move` does not normalise, so a blank
+    the head has never stepped over is simply absent from the list while
+    `fam_cells` always spells it.  This is the one place that difference is
+    visible."""
+    l, h, r, q = [], 0, [], 0
+    for _ in range(n):
+        e = tm.get((q, h))
+        if e is None:
+            return None
+        w, d, q2 = e
+        if d > 0:
+            l, h, r = [w] + l, (r[0] if r else 0), r[1:]
+        else:
+            r, h, l = [w] + r, (l[0] if l else 0), l[1:]
+        q = q2
+    return q, tuple(l), h, tuple(r)
+
+
+def boot_is_exact(fam, tm, bt, bds, bph):
+    """Does `fam_cells` spell the counter side the machine's `cconf` CARRIES?
+
+    A family whose digit words end in a blank spells one cell more than the
+    machine ever materialises, so `fam_cells F ds0 ph0` and the boot's counter
+    side are the same TAPE and different LISTS -- and `Hboot` is on the list.
+    Every emitter path already refuses such a family at its boot check ("boot
+    cells ... are not the family at ..."), so no row that BOARDS today can be
+    turned away by testing it here; what it changes is which candidate the
+    search settles on, which is the difference between a diagnosis and a
+    board (LADDER_PLAN 4s)."""
+    if bt is None or bds is None:
+        return False
+    ec = exact_cconf(tm, bt)
+    if ec is None:
+        return False
+    _, l, _, r = ec
+    cells = list(fam.pre)
+    for d in bds:
+        cells.extend(fam.digs[d])
+    cells.extend(fam.tails[bph] if bph < len(fam.tails) else ())
+    return tuple(cells) == (r if fam.side == 'R' else l)
+
+
+def find_boot(fam, snaps, tm=None):
     """First trace index whose config IS a family member; its (ds, p, phase).
+
+    With `tm` given the member must also be exact as a `cconf` and not only as
+    a tape (`boot_is_exact`): a member the boot premise cannot be stated at is
+    not a boot.
     """
     for t, s in snaps:
         if s is None:
@@ -2517,6 +2571,8 @@ def find_boot(fam, snaps):
             continue
         cf = fam.cfg(ds, pp, ph)
         if cf is None or cfg_cells(cf) != cfg_cells(s):
+            continue
+        if tm is not None and not boot_is_exact(fam, tm, t, ds, ph):
             continue
         return t, ds, pp, ph
     return None, None, None, None
@@ -2728,7 +2784,18 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         fill_obs = observe_fill(fam, walk)
         if fam.fills is None:
             fam.fills = fit_fills(fam, fill_obs) or [fam_fill(fam, 0)]
-        bt, bds, bp, bph = find_boot(fam, snaps)
+        bt, bds, bp, bph = find_boot(fam, snaps, tm)
+        if bds is None:
+            # No anchor visit whose counter side the denotation spells as a
+            # LIST.  Reported rather than carried, because the next candidate
+            # is routinely the same machine read one cell over and exact
+            # (LADDER_PLAN 4s).
+            res.setdefault('tried', []).append(
+                {'family': fam.json(),
+                 'reason': 'no boot whose counter side is exact as a cconf: '
+                           'the family spells cells the machine never '
+                           'materialises, so Hboot cannot be stated'})
+            continue
         # A fill whose outer-parameter law DECREASES p is not a family any
         # liveness argument can use.  `far_cells` returns None as soon as a
         # count goes negative, so the successor chain is finite BY
