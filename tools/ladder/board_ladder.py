@@ -18,10 +18,10 @@ The filter is exactly what `LadderCheck.board_neverqh` asks for and no more
   * the fill target names no more digits than the law widens by (plus the
     one guaranteed copy) -- the target's own prefix and suffix are fine, they
     ride along as the fixed words either side of the run;
-  * `states_infinitely_often = ABCD` -- [board_neverqh] concludes
-    `NeverQuasiHaltsSt`, so a row that quasihalts needs the OTHER closer and
-    boarding it here would prove a false thing (it cannot: the liveness
-    hypothesis would not discharge, but do not hand it the row).
+  * `states_infinitely_often` names ABCD or exactly three of them --
+    [board_neverqh] concludes `NeverQuasiHaltsSt` for the first and
+    [board_iqh] the R_QH triple for the second, quiet in the missing state
+    (LADDER_PLAN 4k step 2).  A row missing two or more states is neither.
 
 Everything here is UNTRUSTED bookkeeping.  A row that passes the filter and
 whose board does not compile is REPORTED, not silently dropped.
@@ -58,8 +58,8 @@ def wanted(r):
         return False, ('fill target names %d digits but widens by %d'
                        % (m, f.get('widens_by')))
     live = (r.get('liveness') or {}).get('states_infinitely_often')
-    if live != 'ABCD':
-        return False, 'live=%s (quasihalts; needs the QH closer)' % live
+    if live not in ('ABCD', 'BCD', 'ACD', 'ABD', 'ABC'):
+        return False, 'live=%s (neither closer states this)' % live
     return True, None
 
 
