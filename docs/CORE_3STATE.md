@@ -124,6 +124,15 @@ which changes `srun_sound` and every step's soundness lemma.
 
 Measured with `tools/counters/radix_infer.py` and by hand-reading traces.
 
+**Do not re-chase the flat reading.**  A search over the TRUE wall anchor
+(head at cell 0) for all four surviving sub-machines and the `StA`-targeting
+row, across anchor state, anchor head symbol, radix 2–4, digit width 1–3,
+terminator length 0–2 and 0–2 padding blanks past the top digit, finds **no
+consecutive-value decode at all** on any of them.  That is the same search
+that finds base 3 immediately on the two `Ter3Wall*` groups, so its silence
+here is evidence, not a gap: these rows have no positional counter at the
+wall, which is exactly what a nested counter looks like from outside.
+
 ### `0LB1RC_1LB0RD_1LC0RD` (2 rows), `0LB1RC_1LD0RC_1LB1RC` (3 rows)
 
 `residue_map` reads both as `Dp` (each bit in two identical copies) and calls
