@@ -2055,6 +2055,24 @@ axiom footprint `functional_extensionality_dep` only, as every board.
     core undecided             43 -> 40
     0RB shadows of the core    15 -> 15     (no promotions this time)
 
+**Against this branch's own base.**  It was cut at `bc882b2`, before #95, so
+those three numbers do not know about main's two boards
+(`NLAP_1RB____1RC1LB_0LB1RD_0RA0RC`, core, and
+`RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA`, the worked shadow re-root).  The two board
+sets are disjoint, so the merge is the union and nothing was lost either way;
+every conflict was in a GENERATED file and was discharged by re-running
+`inventory.py`/`gen_stages.py` rather than resolved by hand.  After the merge:
+
+    settled by a board       5103   (99.0%)
+    core undecided             39
+    0RB shadows of the core    14
+
+None of the three rows boarded here carries a shadow, which is why the shadow
+count moves only by main's one.  **12 of the 39 core rows carry all 14
+shadows** (`tools/closeout/shadow_rows.tsv`, column 4) and therefore account
+for 26 of the 53 rows left; the remaining 27 are worth one row each.  That is
+the number to sort a bucket by, and the table below does not show it.
+
 ### Where the 40 stop now
 
 | | rows | |

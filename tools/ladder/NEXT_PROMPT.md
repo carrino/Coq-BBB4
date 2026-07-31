@@ -4,7 +4,9 @@ build is specified to the lemma — in `carrino/Coq-BBB4`, on branch
 (§4l's own lesson: `git show origin/main:tools/closeout/core_rows.txt` is one
 diff and costs nothing — the wave route has taken rows out from under two
 sessions now).  §4n merged: the phase cycle in `Inv`, three rows, core
-undecided 43 → 40.
+undecided 43 → 40 against §4n's own base — and then **39** once that branch
+merged `origin/main`, whose two boards §4n had not seen.  The wave route took
+rows out from under this session too; the diff is still one command.
 
 Read first, in this order: `docs/LADDER_PLAN.md` **§4n in full** — it is what
 the last session did, its probe is why you are not measuring again, and its
@@ -16,10 +18,21 @@ where every one of your edits goes; then `tools/ladder/armprobe.py`, which
 already builds the gray class arms and is the emitter you are about to teach
 `emit_ladder.py`.
 
-**STATE.** 40 core undecided and 15 `0RB` shadows (`tools/closeout/core_rows.txt`;
-`make closeout-status`).  5,101 frozen rows settled by a board.  Per §4n's last
-table: 17 families-found-none-closed, 6 gray (**4 with both arms**), 5 fibonacci
-(§4m, `live = BCD`), 5 no-family, 3 time cap, 4 arms-blocked.
+**STATE.** **39** core undecided and **14** `0RB` shadows
+(`tools/closeout/core_rows.txt`; `make closeout-status`).  **5,103** frozen rows
+settled by a board, 99.0%.  §4n's last table is stated against its own 40 and
+one of its rows is now boarded off it, so re-read it as: 17
+families-found-none-closed, 6 gray (**4 with both arms**), 5 fibonacci (§4m,
+`live = BCD`), 5 no-family, 3 time cap, 4 arms-blocked — minus main's core
+board.  Take the bucket counts from `core_rows.txt`, not from the table.
+
+**The shadows are not spread evenly and it changes what a row is worth.**  All
+14 sit on **12** core rows, so those 12 rows carry **26 of the 53** remaining;
+the other 27 core rows carry one row each.  Three of the four ARMS-BLOCKED
+rows — the ones whose partial boards are already on disk with every arm but
+one proved — carry **5 shadows between them**, so they are worth 8 rows, not 3.
+`tools/closeout/shadow_rows.tsv` column 4 is the partner; count it before
+choosing a bucket.
 
 **THE TASK.**  §4n measured the gray six and found **four** of them have both
 class arms under the two knobs — and it found them by fitting the classes from
