@@ -1144,12 +1144,26 @@ worth recording:
 
 | | rows | |
 |---|---:|---|
-| no value family at any anchor | 22 | wave work |
+| no value family PROBED AT ALL | **15** | worth a human read; see below |
+| families found, none closed | 12 | mechanical: coverage or differential |
 | closed, quasihalts (`live = BCD`) | 11 | needs the QH-witness closer |
-| closed, `live = ABCD`, gray | 6 | needs the `(gray, 2)` `ClassSucc` |
-| closed, `live = ABCD`, two phases | 3 | needs the phase cycle in `Inv` |
 | closed, `live = ABCD`, binary/step-1/one-phase | **10** | this session's target |
+| closed, `live = ABCD`, gray | 6 | needs the `(gray, 2)` `ClassSucc` |
 | time cap | 4 | |
+| closed, `live = ABCD`, two phases | 3 | needs the phase cycle in `Inv` |
+
+The first two lines are DIFFERENT failures and an earlier draft of this
+table collapsed them into one number, which is the same mistake 4g names.
+"Families found, none closed" means the searcher probed 19 to 74 candidate
+families and they failed on coverage or on the differential -- mechanical,
+and diagnosable without a human.  "No value family probed at all" means it
+probed **zero**: no anchor's counter side decoded over ladder-named digits
+with +1 steps.  That is not a statement about the machine, it is a statement
+about the number system the searcher tried, and it is the bucket the six
+Gray rows sat in until someone read one off the tape.  The fifteen are
+listed with their tapes in `tools/ladder/core15_unread.txt`
+(`tools/ladder/tapes.py`, which reproduces 4g's reading -- at C1
+`1RB0RB_0LC0LD_1LC1LD_1RA0RA` reads 0, 2, 4, 6, 8, 10 as Gray).
 
 and of the ten, **two board** and eight stop at ONE place, which was not on
 anyone's list:

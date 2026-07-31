@@ -1395,6 +1395,18 @@ materialisation the fill arm has, and then m = 0 needs its own arm.  That
 widening is known, small, and worth four boards.  The quadratic two are
 RULE_LADDER 5's count language, not an emitter gap.
 
+**The bucket that wants a human, and the one that does not.**  Of the 61
+core rows swept, 15 had **zero** candidate families probed and 12 had 19-74
+probed that then failed on coverage or the differential.  Those are
+different failures and must not be added together.  The 12 are mechanical.
+The 15 are the bucket the six Gray rows sat in, labelled "no counter reading
+at any anchor", until John read one off the tape -- one read, six rows.
+`tools/ladder/tapes.py` renders a machine's tape at successive returns to an
+anchor, RLE'd, left side head-nearest-first; `tools/ladder/core15_unread.txt`
+is the 15 with their two busiest anchors already dumped.  The tool
+reproduces 4g's reading as a check (`--anchor C1` on
+`1RB0RB_0LC0LD_1LC1LD_1RA0RA` gives 0, 2, 4, 6, 8, 10 in Gray).
+
 **Compute note.**  `valfam.py` and `make -jN` fight over 4 cores badly; a
 core sweep that should run at ~16 s/row ran at ~78 s/row against a build.
 Run one or the other.
