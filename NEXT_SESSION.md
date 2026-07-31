@@ -1333,13 +1333,15 @@ stored `ladder_fixture_cert.json` says 8; at HEAD with `--kmax 9` it is
 **Trap 2 (the big one): the certificate's arms are NOT the closure's arms.**
 The prover's arms are multi-variable patterns; `sside` carries ONE symbolic
 run, so `emit_ladder.py` boards each with every run length but one pinned to
-its lower bound.  Those arms are sound, and they cover exactly the 1022
-strings the prover enumerated and nothing more.  Feed them to a kernel and
-the kernel is still enumerating.
+its lower bound.  Each keeps one free run length and so covers infinitely
+many strings -- but with the others pinned there is no argument that they
+TOGETHER reach every string of every width, and the only coverage claim
+behind them is the prover's enumeration to `kmax = 9`.  Feed them to a
+kernel and the kernel has nothing to do but enumerate alongside it.
 
 The fix is that the class arms are BUILT from the `Fam` record, not mined:
 one interior arm per digit below the top, one fill arm.  **12 arms become 2,
-and 1022 strings become all of them.**  `emit_ladder.py` does this now; if
+and an enumeration to `kmax = 9` becomes `digs_decomp`.**  `emit_ladder.py` does this now; if
 you are boarding a new family and the arm count does not collapse, something
 is wrong.
 

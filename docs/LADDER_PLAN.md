@@ -1098,16 +1098,19 @@ machine -- the six rows 4g adds share one parity invariant between them.
 This is the finding that cost the most and generalises the furthest.  The
 prover's 12 arms are multi-variable patterns; `sside` carries ONE symbolic
 run, so the emitter boards each with every run length but one pinned to its
-lower bound.  Those 12 arms are sound and they cover the 1022 strings the
-prover enumerated -- **and nothing beyond them.**  A kernel that consumed
-them would still be enumerating, one width at a time.
+lower bound.  Each boarded arm keeps one free run length, so each still
+covers infinitely many strings -- but **with the others pinned there is no
+argument that the twelve TOGETHER reach every string of every width**, and
+the only coverage claim behind them is the prover's enumeration to
+`kmax = 9`.  A kernel handed those arms has nothing to do but enumerate
+alongside it.
 
 So the emitter now BUILDS the class arms from the `Fam` record instead:
 
-| | arms | strings covered |
+| | arms | coverage argument |
 |---|---:|---|
-| the certificate's, as boarded | 12 | 1022, to `kmax = 9` |
-| the closure's, built from `Fam` | **2** | every string of every width |
+| the certificate's, as boarded | 12 | none: an enumeration to `kmax = 9` |
+| the closure's, built from `Fam` | **2** | `digs_decomp`: every string, every width |
 
 one interior arm per digit below the top and one fill arm.  For base 2 that
 is `1 + 1`.  Both derive with the existing chain search and both land on the
