@@ -416,6 +416,12 @@ Proof.
   destruct (n <? N0) eqn:E; lia.
 Qed.
 
+(** The gray fill arm is indexed by the WIDTH and its left-hand side spells a
+    fixed word at each end, so its index range starts at 2 rather than at 1.
+    [2 <= N0] is what keeps [r = 0] and [r = 1] out of it. *)
+Lemma arm_index_ge2 : forall N0 st n, 2 <= N0 -> 2 <= n -> 2 <= aoff N0 st n.
+Proof. intros N0 st n HN Hn. unfold aoff. destruct (n <? N0); lia. Qed.
+
 Lemma rep_rep : forall (u : list Sym) s m, rep (rep u s) m = rep u (s * m).
 Proof.
   intros u s. induction m as [|m IH]; simpl.
@@ -466,25 +472,32 @@ Variable F : Fam.
 Definition cls_tail (rest : list nat) (ph : nat) : list Sym :=
   flat_map (dig F) rest ++ nth ph (fm_tails F) [].
 
-(** The class [t^(r + s*m) ++ w ++ rest] IS one [sside], with [rest] opaque.
+(** The class [u ++ t^(r + s*m) ++ w ++ rest] IS one [sside], with [rest]
+    opaque.
 
     The STRIDE [s] is there because the cost of a carry ripple need not be
     affine in the run length: measured (LADDER_PLAN 4i), four live-core rows
     walk the run at one cost on even lengths and another on odd, so their
     class splits into one arm per residue and each arm's block is [s] copies
     of the digit word.  [s = 1], [r = 0] is the ordinary case; [s = 0] is a
-    flat arm, and [blk] is what makes that shape derivable. *)
-Definition cls_side (t r s : nat) (w : list nat) : sside :=
-  blk (fm_pre F ++ rep (dig F t) r) (dig F t) s (flat_map (dig F) w).
+    flat arm, and [blk] is what makes that shape derivable.
 
-Lemma fam_cells_class : forall t r s m w rest ph,
-  fam_cells F (repeat t (r + s * m) ++ w ++ rest) ph
-    = sden (cls_tail rest ph) m (cls_side t r s w).
+    The FIXED WORD [u] before the run is [Class]'s [cs_u] and it rides in
+    [s_pre] exactly as [run_side]'s [w1] does.  [(Binary, 1)]'s classes have
+    [cs_u = []], which is why this side never carried one; three of
+    [(Gray, 2)]'s four do (LADDER_PLAN 4i, 4n). *)
+Definition cls_side (u : list nat) (t r s : nat) (w : list nat) : sside :=
+  blk (fm_pre F ++ flat_map (dig F) u ++ rep (dig F t) r) (dig F t) s
+      (flat_map (dig F) w).
+
+Lemma fam_cells_class : forall u t r s m w rest ph,
+  fam_cells F (u ++ repeat t (r + s * m) ++ w ++ rest) ph
+    = sden (cls_tail rest ph) m (cls_side u t r s w).
 Proof.
-  intros t r s m w rest ph.
+  intros u t r s m w rest ph.
   rewrite fam_cells_eq. unfold cls_side, cls_tail.
-  rewrite blk_den, flat_map_repeat, flat_map_app, rep_add, !app_assoc.
-  reflexivity.
+  rewrite blk_den, !flat_map_app, flat_map_repeat_nil.
+  rewrite rep_add, !app_assoc. reflexivity.
 Qed.
 
 (** The class [t^(m1 + s*n + m2)] with NOTHING opaque -- the shape the fill
@@ -728,6 +741,531 @@ Proof.
   - symmetry. apply pos_of_val_pos; assumption.
   - rewrite Hv. apply pos_of_max; lia.
 Qed.
+
+(** ** 3b. The non-generic half again, at [(Gray, 2)]
+
+    LADDER_PLAN 4i asked whether the class-successor lemma can be stated so
+    that [(Gray, 2)] is a second INSTANCE rather than a rewrite, and measured
+    that it can: four classes OF [Class]'s OWN SHAPE cover every interior
+    string of every width, and what has to widen is the PREMISE -- the
+    predicate [P], because with a step other than 1 only PART of each width is
+    a member and the discriminator is the parity of the whole digit string.
+    4n's probe re-derived the same four from the machines themselves.  This is
+    that instance, and the record does not widen.
+
+    Everything below is about base 2 and the reflected code, so it is written
+    on [gval], the value [fam_value] computes there.  The one structural fact
+    the arithmetic needs is that [gdec]'s entry at [i] is the parity of the
+    digit sum from [i] up -- hence [gval_cons], hence [gval_app], which splits
+    the value at any point into a bounded PREFIX contribution [gpre] and the
+    suffix's own value.  A class's two sides differ only in their fixed words,
+    so the run never has to be evaluated: only [gpre] does.
+
+    The parity is a PARAMETER [p] and not a constant.  Five of the six gray
+    core rows are even and one is odd, and the odd family's classes are the
+    even family's with the two sides exchanged -- which written out is the
+    same table with [p] where [0] stood:
+
+      [p;p]     0^n              -> [1-p;1-p] 0^n
+      [p;1-p]   1^n              -> [1-p;p]   1^n
+      [1-p]     0^n ++ [1;p]     -> [p]       0^n ++ [1;1-p]
+      [1-p]     0^n ++ [1;1-p]   -> [p]       0^n ++ [1;p]
+
+    At [p = 0] those are 4i's four verbatim.  [tools/ladder/gray2check.py] is
+    the oracle: it checks the table, the split and the top shape by
+    enumerating every bounded string of widths 2..13 for all six rows. *)
+
+Fixpoint dsum (ds : list nat) : nat :=
+  match ds with
+  | [] => 0
+  | d :: t => d + dsum t
+  end.
+
+Lemma dsum_cons : forall d t, dsum (d :: t) = d + dsum t.
+Proof. reflexivity. Qed.
+
+Lemma dsum_app : forall l r, dsum (l ++ r) = dsum l + dsum r.
+Proof.
+  induction l as [|x l IH]; intros r; [reflexivity|].
+  cbn [app]. rewrite !dsum_cons, IH. lia.
+Qed.
+
+Lemma dsum_repeat : forall t n, dsum (repeat t n) = n * t.
+Proof.
+  induction n as [|n IH]; [reflexivity|].
+  cbn [repeat]. rewrite dsum_cons, IH. lia.
+Qed.
+
+Definition gval (ds : list nat) : nat := val_pos 2 (gdec 2 ds).
+
+Lemma gdec_hd : forall ds, hd 0 (gdec 2 ds) = dsum ds mod 2.
+Proof.
+  induction ds as [|d t IH]; [reflexivity|].
+  cbn [gdec hd]. rewrite IH, dsum_cons.
+  rewrite Nat.add_mod_idemp_r by lia. reflexivity.
+Qed.
+
+Lemma gval_cons : forall d t, gval (d :: t) = (d + dsum t) mod 2 + 2 * gval t.
+Proof.
+  intros d t. unfold gval. cbn [gdec val_pos].
+  rewrite gdec_hd, Nat.add_mod_idemp_r by lia. reflexivity.
+Qed.
+
+Lemma gval_nil : gval [] = 0.
+Proof. reflexivity. Qed.
+
+Lemma dsum_nil : dsum [] = 0.
+Proof. reflexivity. Qed.
+
+Fixpoint gpre (a : list nat) (p : nat) : nat :=
+  match a with
+  | [] => 0
+  | d :: t => (d + dsum t + p) mod 2 + 2 * gpre t p
+  end.
+
+Lemma gval_app : forall a l,
+  gval (a ++ l) = gpre a (dsum l) + Nat.pow 2 (length a) * gval l.
+Proof.
+  induction a as [|d a IH]; intros l; simpl (_ ++ _).
+  - simpl. lia.
+  - rewrite gval_cons, IH, dsum_app.
+    cbn [gpre length]. rewrite Nat.pow_succ_r by lia.
+    rewrite Nat.add_assoc. lia.
+Qed.
+
+Lemma gpre_repeat0 : forall n l p,
+  gpre (repeat 0 n ++ l) p
+  = ((dsum l + p) mod 2) * (Nat.pow 2 n - 1) + Nat.pow 2 n * gpre l p.
+Proof.
+  induction n as [|n IH]; intros l p; simpl (repeat _ _ ++ _).
+  - simpl. lia.
+  - cbn [gpre]. rewrite IH, dsum_app, dsum_repeat.
+    replace (0 + (n * 0 + dsum l) + p) with (dsum l + p) by lia.
+    pose proof (pow_pos 2 n ltac:(lia)).
+    rewrite Nat.pow_succ_r by lia. nia.
+Qed.
+
+Lemma gpre_repeat0_nil : forall n p,
+  gpre (repeat 0 n) p = (p mod 2) * (Nat.pow 2 n - 1).
+Proof.
+  intros n p. rewrite <- (app_nil_r (repeat 0 n)), gpre_repeat0.
+  rewrite dsum_nil. cbn [gpre]. rewrite Nat.add_0_l. lia.
+Qed.
+
+Lemma gval_mod2 : forall ds, gval ds mod 2 = dsum ds mod 2.
+Proof.
+  destruct ds as [|d t]; [reflexivity|].
+  rewrite gval_cons, dsum_cons.
+  replace (2 * gval t) with (gval t * 2) by lia.
+  rewrite Nat.mod_add by lia. rewrite Nat.mod_mod by lia. reflexivity.
+Qed.
+
+Lemma gval_shift : forall A B C,
+  length A = length B ->
+  gpre B (dsum C) = gpre A (dsum C) + 2 ->
+  gval (B ++ C) = gval (A ++ C) + 2.
+Proof. intros A B C HL HG. rewrite !gval_app, HL, HG. lia. Qed.
+
+(* ---------------------------------------------------------- the codec -- *)
+
+Lemma gdec_lt : forall b ds, 0 < b -> Forall (fun x => x < b) (gdec b ds).
+Proof.
+  induction ds as [|d t IH]; intros Hb; simpl; constructor;
+    [apply Nat.mod_upper_bound; lia | apply IH; exact Hb].
+Qed.
+
+Lemma gdec_hd_lt : forall b ds, 0 < b -> hd 0 (gdec b ds) < b.
+Proof.
+  intros b ds Hb. destruct ds as [|d t]; simpl; [lia|].
+  apply Nat.mod_upper_bound; lia.
+Qed.
+
+Lemma genc_lt : forall b ns, 0 < b -> Forall (fun x => x < b) (genc b ns).
+Proof.
+  induction ns as [|n t IH]; intros Hb; simpl; constructor;
+    [apply Nat.mod_upper_bound; lia | apply IH; exact Hb].
+Qed.
+
+Lemma modb_sub_add : forall b n m, 1 < b -> n < b -> m < b ->
+  ((n + m) mod b + (b - m)) mod b = n.
+Proof.
+  intros b n m Hb Hn Hm.
+  destruct (Nat.le_gt_cases b (n + m)) as [H|H].
+  - assert (E : (n + m) mod b = n + m - b).
+    { transitivity ((n + m - b + 1 * b) mod b).
+      - f_equal. lia.
+      - rewrite Nat.mod_add by lia. apply Nat.mod_small; lia. }
+    rewrite E. replace (n + m - b + (b - m)) with n by lia.
+    apply Nat.mod_small; lia.
+  - assert (E : (n + m) mod b = n + m) by (apply Nat.mod_small; lia).
+    rewrite E. replace (n + m + (b - m)) with (n + 1 * b) by lia.
+    rewrite Nat.mod_add by lia. apply Nat.mod_small; lia.
+Qed.
+
+Lemma genc_gdec : forall b ds, 1 < b -> Forall (fun d => d < b) ds ->
+  genc b (gdec b ds) = ds.
+Proof.
+  induction ds as [|d t IH]; intros Hb HF; [reflexivity|].
+  inversion HF as [|? ? Hd Ht]; subst.
+  cbn [gdec genc]. rewrite IH by assumption. f_equal.
+  pose proof (gdec_hd_lt b t ltac:(lia)) as Hh.
+  rewrite (Nat.mod_small (hd 0 (gdec b t)) b) by exact Hh.
+  rewrite Nat.mod_mod by lia.
+  apply modb_sub_add; assumption.
+Qed.
+
+Lemma mod2_add : forall c s e, s mod 2 = e -> (c + s) mod 2 = (c + e) mod 2.
+Proof. intros c s e H. rewrite <- H, Nat.add_mod_idemp_r by lia. reflexivity. Qed.
+
+Lemma mod2_cases : forall s, s mod 2 = 0 \/ s mod 2 = 1.
+Proof. intros s. pose proof (Nat.mod_upper_bound s 2 ltac:(lia)). lia. Qed.
+
+Lemma gpre1 : forall a s, gpre [a] s = (a + s) mod 2.
+Proof.
+  intros a s. cbn [gpre]. rewrite dsum_nil.
+  replace (a + 0 + s) with (a + s) by lia. lia.
+Qed.
+
+Lemma gpre2 : forall a b s,
+  gpre [a; b] s = (a + b + s) mod 2 + 2 * ((b + s) mod 2).
+Proof.
+  intros a b s. cbn [gpre]. rewrite !dsum_cons, dsum_nil.
+  replace (b + 0) with b by lia. replace (b + 0 + s) with (b + s) by lia. lia.
+Qed.
+
+Lemma gpre_run : forall a c n s,
+  gpre (a :: (repeat 0 n ++ [1; c])) s
+  = (a + (1 + c) + s) mod 2
+    + 2 * (((1 + c + s) mod 2) * (Nat.pow 2 n - 1)
+           + Nat.pow 2 n * ((1 + c + s) mod 2 + 2 * ((c + s) mod 2))).
+Proof.
+  intros a c n s. cbn [gpre]. rewrite gpre_repeat0, gpre2, dsum_app, dsum_repeat.
+  rewrite !dsum_cons, dsum_nil.
+  replace (n * 0 + (1 + (c + 0))) with (1 + c) by lia.
+  replace (1 + (c + 0)) with (1 + c) by lia.
+  reflexivity.
+Qed.
+
+Definition g2c (p i : nat) : Class :=
+  match i with
+  | 0 => mkCls [p; p] 0 [] [1 - p; 1 - p] 0 []
+  | 1 => mkCls [p; 1 - p] 1 [] [1 - p; p] 1 []
+  | 2 => mkCls [1 - p] 0 [1; p] [p] 0 [1; 1 - p]
+  | _ => mkCls [1 - p] 0 [1; 1 - p] [p] 0 [1; p]
+  end.
+
+Definition g2par (p : nat) (ds : list nat) : Prop := dsum ds mod 2 = p.
+
+Lemma g2c_step01 : forall p p' u u' t n rest,
+  p + p' = 1 -> u + u' = 1 ->
+  dsum ([p; u] ++ repeat t n ++ rest) mod 2 = p ->
+  gval ([p'; u'] ++ repeat t n ++ rest)
+  = gval ([p; u] ++ repeat t n ++ rest) + 2.
+Proof.
+  intros p p' u u' t n rest Hp Hu H.
+  apply (gval_shift [p; u] [p'; u'] (repeat t n ++ rest)); [reflexivity|].
+  rewrite !gpre2.
+  rewrite dsum_app in H. cbn [dsum] in H.
+  set (S := dsum (repeat t n ++ rest)) in *.
+  destruct (mod2_cases S) as [HS|HS];
+    rewrite !(mod2_add _ _ _ HS) in H; rewrite !(mod2_add _ _ _ HS);
+    assert (Hc : p = 0 /\ p' = 1 \/ p = 1 /\ p' = 0) by lia;
+    assert (Hd : u = 0 /\ u' = 1 \/ u = 1 /\ u' = 0) by lia;
+    destruct Hc as [[-> ->]|[-> ->]]; destruct Hd as [[-> ->]|[-> ->]];
+    cbn in H |- *; lia.
+Qed.
+
+Lemma g2c_step23 : forall a a' c c' n rest,
+  a + a' = 1 -> c + c' = 1 ->
+  dsum ([a] ++ repeat 0 n ++ [1; c] ++ rest) mod 2 = a' ->
+  gval ([a'] ++ repeat 0 n ++ [1; c'] ++ rest)
+  = gval ([a] ++ repeat 0 n ++ [1; c] ++ rest) + 2.
+Proof.
+  intros a a' c c' n rest Ha Hc H.
+  assert (Hd : dsum ([a] ++ repeat 0 n ++ [1; c] ++ rest)
+               = a + (1 + c) + dsum rest)
+    by (rewrite !dsum_app, dsum_repeat; cbn [dsum]; lia).
+  rewrite Hd in H.
+  rewrite (app_assoc (repeat 0 n) [1; c] rest),
+          (app_assoc (repeat 0 n) [1; c'] rest).
+  apply (gval_shift (a :: (repeat 0 n ++ [1; c]))
+                    (a' :: (repeat 0 n ++ [1; c'])) rest).
+  - cbn [length]. rewrite !app_length, !repeat_length. reflexivity.
+  - rewrite !gpre_run.
+    pose proof (pow_pos 2 n ltac:(lia)).
+    set (S := dsum rest) in *.
+    destruct (mod2_cases S) as [HS|HS];
+      rewrite !(mod2_add _ _ _ HS) in H; rewrite !(mod2_add _ _ _ HS);
+      assert (Hx : a = 0 /\ a' = 1 \/ a = 1 /\ a' = 0) by lia;
+      assert (Hy : c = 0 /\ c' = 1 \/ c = 1 /\ c' = 0) by lia;
+      destruct Hx as [[-> ->]|[-> ->]]; destruct Hy as [[-> ->]|[-> ->]];
+      cbn in H |- *; nia.
+Qed.
+
+Definition g2top (p k : nat) : list nat := (1 - p) :: repeat 0 (k - 2) ++ [1].
+
+Lemma g2top_length : forall p k, 2 <= k -> length (g2top p k) = k.
+Proof.
+  intros p k Hk. unfold g2top. cbn [length].
+  rewrite app_length, repeat_length. cbn [length]. lia.
+Qed.
+
+Lemma g2top_bnd : forall p k, p < 2 -> Forall (fun d : nat => d < 2) (g2top p k).
+Proof.
+  intros p k Hp. unfold g2top. apply Forall_cons; [lia|].
+  apply Forall_app. split.
+  - apply Forall_forall. intros x Hx. apply repeat_spec in Hx. lia.
+  - apply Forall_cons; [lia | apply Forall_nil].
+Qed.
+
+Lemma g2top_dsum : forall p k, p < 2 -> dsum (g2top p k) mod 2 = p.
+Proof.
+  intros p k Hp. unfold g2top. cbn [dsum].
+  rewrite dsum_app, dsum_repeat. cbn [dsum].
+  replace (1 - p + ((k - 2) * 0 + (1 + 0))) with (2 - p) by lia.
+  destruct p as [|[|p]]; try lia; reflexivity.
+Qed.
+
+Lemma g2top_gval : forall p k, p < 2 -> 2 <= k ->
+  gval (g2top p k) = Nat.pow 2 k - 2 + p.
+Proof.
+  intros p k Hp Hk. unfold g2top.
+  change ((1 - p) :: (repeat 0 (k - 2) ++ [1]))
+    with ([1 - p] ++ (repeat 0 (k - 2) ++ [1])).
+  rewrite gval_app. cbn [length]. rewrite gpre1.
+  rewrite dsum_app, dsum_repeat. cbn [dsum].
+  rewrite gval_app, gpre_repeat0_nil. cbn [dsum].
+  rewrite gval_cons. cbn [dsum]. rewrite gval_nil, repeat_length.
+  pose proof (pow_pos 2 (k - 2) ltac:(lia)).
+  assert (Hpw : Nat.pow 2 k = 4 * Nat.pow 2 (k - 2)).
+  { replace k with (S (S (k - 2))) at 1 by lia.
+    rewrite !Nat.pow_succ_r by lia. lia. }
+  replace (1 - p + ((k - 2) * 0 + (1 + 0))) with (2 - p) by lia.
+  replace ((1 + 0) mod 2) with 1 by reflexivity.
+  replace (Nat.pow 2 1) with 2 by reflexivity.
+  destruct p as [|[|p]]; try lia;
+    [ replace ((2 - 0) mod 2) with 0 by reflexivity
+    | replace ((2 - 1) mod 2) with 1 by reflexivity ]; lia.
+Qed.
+
+Lemma gray_split : forall p ds, p < 2 ->
+  Forall (fun d : nat => d < 2) ds -> dsum ds mod 2 = p -> 2 <= length ds ->
+  ds = g2top p (length ds)
+  \/ exists i n rest, i < 4 /\ Forall (fun d : nat => d < 2) rest
+                      /\ ds = cls_lhs (g2c p i) n rest.
+Proof.
+  intros p ds Hp Hbnd Hpar Hk.
+  destruct ds as [|d0 ds1]; [cbn [length] in Hk; lia|].
+  assert (Hd0 : d0 < 2) by exact (Forall_inv Hbnd).
+  pose proof (Forall_inv_tail Hbnd) as Hbnd1.
+  destruct (Nat.eq_dec d0 p) as [Hd0p|Hne].
+  - (* the first digit is the parity: the class fires at run length 0, and the
+       second digit picks which *)
+    destruct ds1 as [|d1 ds2]; [cbn [length] in Hk; lia|].
+    assert (Hd1 : d1 < 2) by exact (Forall_inv Hbnd1).
+    pose proof (Forall_inv_tail Hbnd1) as Hbnd2.
+    right. destruct (Nat.eq_dec d1 p) as [Hd1p|Hne1].
+    + exists 0, 0, ds2. split; [lia|]. split; [exact Hbnd2|].
+      unfold cls_lhs. cbn [g2c cs_u cs_t cs_w repeat app].
+      rewrite Hd0p, Hd1p. reflexivity.
+    + exists 1, 0, ds2. split; [lia|]. split; [exact Hbnd2|].
+      unfold cls_lhs. cbn [g2c cs_u cs_t cs_w repeat app].
+      rewrite Hd0p. f_equal. f_equal. lia.
+  - (* the first digit is the other one.  Walk the zeros after it: there IS a
+       1 past them, because [(1-p) ++ 0^m] has digit sum [1-p] and the parity
+       says [p].  If it is the LAST digit the string is the top. *)
+    assert (Hd0' : d0 = 1 - p) by lia.
+    destruct (digs_decomp 0 ds1) as [Hall | (n & d & rest & Hds1 & Hd)].
+    + exfalso.
+      assert (Hs : dsum ds1 = 0)
+        by (rewrite Hall at 1; rewrite dsum_repeat; lia).
+      cbn [dsum] in Hpar. rewrite Hs, Hd0' in Hpar.
+      destruct p as [|[|p]]; try lia; cbn in Hpar; lia.
+    + assert (Hd1 : d = 1).
+      { rewrite Hds1 in Hbnd1. apply Forall_app in Hbnd1 as [_ Hb2].
+        assert (Hx : d < 2) by exact (Forall_inv Hb2). lia. }
+      assert (Hbr : Forall (fun d : nat => d < 2) rest).
+      { rewrite Hds1 in Hbnd1. apply Forall_app in Hbnd1 as [_ Hb2].
+        exact (Forall_inv_tail Hb2). }
+      subst d. destruct rest as [|c rest'].
+      * left. unfold g2top. rewrite Hd0', Hds1. repeat f_equal.
+        cbn [length]. rewrite app_length, repeat_length. cbn [length]. lia.
+      * right. assert (Hc : c < 2) by exact (Forall_inv Hbr).
+        pose proof (Forall_inv_tail Hbr) as Hbr'.
+        destruct (Nat.eq_dec c p) as [Hcp|Hcn].
+        -- exists 2, n, rest'. split; [lia|]. split; [exact Hbr'|].
+           unfold cls_lhs. cbn [g2c cs_u cs_t cs_w].
+           rewrite Hd0', Hds1, Hcp. reflexivity.
+        -- exists 3, n, rest'. split; [lia|]. split; [exact Hbr'|].
+           unfold cls_lhs. cbn [g2c cs_u cs_t cs_w].
+           rewrite Hd0', Hds1. cbn [app]. repeat f_equal. lia.
+Qed.
+
+
+Section Gray2.
+
+Variable F : Fam.
+Hypothesis HbF : fm_b F = 2.
+Hypothesis HcF : fm_code F = Gray.
+Hypothesis HsF : fm_step F = 2.
+
+Lemma gray_value : forall ds, fam_value F ds = gval ds.
+Proof. intros ds. unfold fam_value, gval. rewrite HcF, HbF. reflexivity. Qed.
+
+Lemma gray_val_lt : forall ds, fam_value F ds < Nat.pow 2 (length ds).
+Proof.
+  intros ds. rewrite gray_value. unfold gval.
+  rewrite <- (gdec_length 2 ds).
+  apply val_pos_lt; [lia | apply gdec_lt; lia].
+Qed.
+
+Lemma gray_roundtrip : forall ds, Forall (fun d => d < 2) ds ->
+  fam_of_value F (fam_value F ds) (length ds) = Some ds.
+Proof.
+  intros ds Hbnd. pose proof (gray_val_lt ds) as Hlt.
+  unfold fam_of_value. rewrite HbF, HcF.
+  destruct (Nat.ltb_spec (fam_value F ds) (Nat.pow 2 (length ds))); [|lia].
+  f_equal. rewrite gray_value. unfold gval.
+  rewrite <- (gdec_length 2 ds).
+  rewrite (pos_of_val_pos 2 (gdec 2 ds) ltac:(lia) (gdec_lt 2 ds ltac:(lia))).
+  apply genc_gdec; [lia | exact Hbnd].
+Qed.
+
+Lemma gray_inj : forall a c,
+  Forall (fun d => d < 2) a -> Forall (fun d => d < 2) c ->
+  length a = length c -> fam_value F a = fam_value F c -> a = c.
+Proof.
+  intros a c Ha Hc HL HV.
+  assert (E : Some a = Some c).
+  { rewrite <- (gray_roundtrip a Ha), <- (gray_roundtrip c Hc), HL, HV.
+    reflexivity. }
+  injection E; auto.
+Qed.
+
+Lemma gray_next_of : forall ds nd ph,
+  Forall (fun d => d < 2) nd ->
+  length nd = length ds ->
+  fam_value F nd = fam_value F ds + 2 ->
+  fam_is_top F ds = false /\ fam_next F ds ph = Some nd.
+Proof.
+  intros ds nd ph Hnd HL HV.
+  pose proof (gray_val_lt nd) as Hlt. rewrite HL in Hlt.
+  pose proof (pow_pos 2 (length ds) ltac:(lia)).
+  assert (Htop : fam_is_top F ds = false).
+  { unfold fam_is_top. rewrite HbF, HsF. apply Nat.ltb_ge. lia. }
+  split; [exact Htop|].
+  unfold fam_next. rewrite Htop, HsF, <- HV, <- HL.
+  apply gray_roundtrip; exact Hnd.
+Qed.
+
+Lemma g2c_len : forall p i n rest,
+  length (cls_rhs (g2c p i) n rest) = length (cls_lhs (g2c p i) n rest).
+Proof.
+  intros p i n rest. unfold cls_lhs, cls_rhs.
+  destruct i as [|[|[|i]]]; cbn [g2c cs_u cs_t cs_w cs_u' cs_t' cs_w'];
+    rewrite !app_length, !repeat_length; reflexivity.
+Qed.
+
+Lemma g2c_bnd : forall p i n rest, p < 2 -> Forall (fun d => d < 2) rest ->
+  Forall (fun d => d < 2) (cls_rhs (g2c p i) n rest).
+Proof.
+  intros p i n rest Hp Hr. unfold cls_rhs.
+  assert (Hrep : forall t m, t < 2 -> Forall (fun d : nat => d < 2) (repeat t m)).
+  { intros t m Ht. apply Forall_forall. intros x Hx.
+    apply repeat_spec in Hx. lia. }
+  destruct i as [|[|[|i]]]; cbn [g2c cs_u' cs_t' cs_w'];
+    repeat (apply Forall_app; split);
+    first [ assumption
+          | (apply Hrep; lia)
+          | (repeat (apply Forall_cons; [lia|]); apply Forall_nil) ].
+Qed.
+
+Lemma gray2_class : forall p i n rest, p < 2 ->
+  Forall (fun d => d < 2) rest -> g2par p (cls_lhs (g2c p i) n rest) ->
+  fam_is_top F (cls_lhs (g2c p i) n rest) = false
+  /\ (forall ph, fam_next F (cls_lhs (g2c p i) n rest) ph
+                 = Some (cls_rhs (g2c p i) n rest))
+  /\ g2par p (cls_rhs (g2c p i) n rest).
+Proof.
+  intros p i n rest Hp Hrest Hpar.
+  assert (Hv : fam_value F (cls_rhs (g2c p i) n rest)
+               = fam_value F (cls_lhs (g2c p i) n rest) + 2).
+  { rewrite !gray_value. unfold g2par in Hpar.
+    destruct i as [|[|[|i]]]; unfold cls_lhs, cls_rhs in *;
+      cbn [g2c cs_u cs_t cs_w cs_u' cs_t' cs_w'] in *.
+    - exact (g2c_step01 p (1 - p) p (1 - p) 0 n rest
+               ltac:(lia) ltac:(lia) Hpar).
+    - exact (g2c_step01 p (1 - p) (1 - p) p 1 n rest
+               ltac:(lia) ltac:(lia) Hpar).
+    - exact (g2c_step23 (1 - p) p p (1 - p) n rest
+               ltac:(lia) ltac:(lia) Hpar).
+    - exact (g2c_step23 (1 - p) p (1 - p) p n rest
+               ltac:(lia) ltac:(lia) Hpar). }
+  destruct (gray_next_of (cls_lhs (g2c p i) n rest) (cls_rhs (g2c p i) n rest) 0
+              (g2c_bnd p i n rest Hp Hrest) (g2c_len p i n rest) Hv)
+    as (Htop & _).
+  split; [exact Htop | split].
+  - intros ph.
+    exact (proj2 (gray_next_of (cls_lhs (g2c p i) n rest)
+                    (cls_rhs (g2c p i) n rest) ph
+                    (g2c_bnd p i n rest Hp Hrest) (g2c_len p i n rest) Hv)).
+  - unfold g2par in *.
+    rewrite <- gval_mod2 in Hpar. rewrite <- gval_mod2.
+    rewrite <- gray_value in Hpar. rewrite <- gray_value. rewrite Hv.
+    replace (fam_value F (cls_lhs (g2c p i) n rest) + 2)
+      with (fam_value F (cls_lhs (g2c p i) n rest) + 1 * 2) by lia.
+    rewrite Nat.mod_add by lia. exact Hpar.
+Qed.
+
+Lemma gray2_class_succ : forall p i, p < 2 -> ClassSucc F (g2par p) (g2c p i).
+Proof.
+  intros p i Hp n rest ph Hrest Hpar. rewrite HbF in Hrest.
+  exact (proj1 (proj2 (gray2_class p i n rest Hp Hrest Hpar)) ph).
+Qed.
+
+Lemma g2top_value : forall p k, p < 2 -> 2 <= k ->
+  fam_value F (g2top p k) = Nat.pow 2 k - 2 + p.
+Proof.
+  intros p k Hp Hk. rewrite gray_value. apply g2top_gval; assumption.
+Qed.
+
+Lemma g2top_is_top : forall p k, p < 2 -> 2 <= k ->
+  fam_is_top F (g2top p k) = true.
+Proof.
+  intros p k Hp Hk. unfold fam_is_top. rewrite HbF, HsF.
+  rewrite (g2top_length p k Hk), (g2top_value p k Hp Hk).
+  pose proof (pow_pos 2 k ltac:(lia)). apply Nat.ltb_lt. lia.
+Qed.
+
+Lemma gray_top_shape : forall p ds, p < 2 ->
+  Forall (fun d : nat => d < 2) ds -> dsum ds mod 2 = p -> 2 <= length ds ->
+  fam_is_top F ds = true -> ds = g2top p (length ds).
+Proof.
+  intros p ds Hp Hbnd Hpar Hk Htop.
+  apply gray_inj;
+    [exact Hbnd | apply g2top_bnd; lia
+     | rewrite g2top_length by lia; reflexivity |].
+  rewrite (g2top_value p (length ds) Hp Hk).
+  pose proof (gray_val_lt ds) as Hlt.
+  unfold fam_is_top in Htop. rewrite HbF, HsF in Htop.
+  apply Nat.ltb_lt in Htop.
+  assert (Hm : fam_value F ds mod 2 = p)
+    by (rewrite gray_value, gval_mod2; exact Hpar).
+  remember (Nat.pow 2 (length ds - 1)) as q eqn:Eq.
+  assert (Hq1 : 1 <= q) by (subst q; apply pow_pos; lia).
+  assert (Hpw : Nat.pow 2 (length ds) = 2 * q).
+  { subst q. replace (length ds) with (S (length ds - 1)) at 1 by lia.
+    rewrite Nat.pow_succ_r by lia. reflexivity. }
+  rewrite Hpw in Hlt, Htop |- *.
+  assert (Hv : fam_value F ds = 2 * q - 2 \/ fam_value F ds = 2 * q - 1) by lia.
+  destruct Hv as [Hv|Hv]; rewrite Hv in Hm |- *.
+  - replace (2 * q - 2) with ((q - 1) * 2) in Hm by lia.
+    rewrite Nat.mod_mul in Hm by lia. lia.
+  - replace (2 * q - 1) with (1 + (q - 1) * 2) in Hm by lia.
+    rewrite Nat.mod_add in Hm by lia. cbn in Hm. lia.
+Qed.
+
+End Gray2.
 
 (** ** 4. The lap: one arm, one class, one anchor step
 
@@ -1032,6 +1570,194 @@ Qed.
 
 End Iter.
 
+(** ** 5b. The same, at [(Gray, 2)]: the parity is an invariant, and the
+    measure falls by two
+
+    [fam_value] at [Gray] is a fold from the most significant digit DOWN
+    ([gdec] before [val_pos]), so no lemma about [val_pos] transfers and
+    section 5 is restated rather than instantiated.  What actually differs is
+    small and is all here:
+
+    * the invariant carries the PARITY -- section 3b's [P], which is what
+      makes "member of this width" a predicate at all when the step is not 1
+      -- and it is preserved because [+2] does not move the value's low bit
+      and the fill target's digit sum is fixed ([Hfpar]);
+    * it carries [2 <= length ds] rather than [0 < length ds], because the top
+      of a width is [1-p] ++ 0^(k-2) ++ [1] and that needs two digits to
+      spell;
+    * the measure [2^k - value] falls by 2 rather than by 1, which changes one
+      [lia];
+    * the family is ONE PHASE.  All six gray core rows are (measured, 4n), so
+      the phase cycle section 5 carries has nothing to do here and [ph] is
+      pinned at [0]. *)
+
+Section IterG.
+
+Variable F : Fam.
+Variable p : nat.                   (** the family's own parity *)
+Hypothesis HbF   : fm_b F = 2.
+Hypothesis HcF   : fm_code F = Gray.
+Hypothesis HsF   : fm_step F = 2.
+Hypothesis Hp    : p < 2.
+Hypothesis Hfpre : Forall (fun d => d < 2) (f_pre (fam_fill F 0)).
+Hypothesis Hfsuf : Forall (fun d => d < 2) (f_suf (fam_fill F 0)).
+Hypothesis Hfmid : f_mid (fam_fill F 0) < 2.
+Hypothesis Hfs   : length (f_pre (fam_fill F 0))
+                   + length (f_suf (fam_fill F 0))
+                   <= 2 + f_s (fam_fill F 0).
+Hypothesis Hfto  : f_to (fam_fill F 0) = 0.
+(** The fill target is a MEMBER: its digit sum has the family's parity.  For a
+    fill whose digit is [0] this is a fact about [f_pre] and [f_suf] alone and
+    [filled_parity] below discharges it; a fill digit of [1] would make the
+    parity alternate with the width and there would be no family at all. *)
+Hypothesis Hfpar : forall k, 2 <= k -> dsum (filled F 0 k) mod 2 = p.
+
+Definition InvG (s : CtrSt) : Prop :=
+  let '(ds, _, ph) := s in
+  Forall (fun d => d < 2) ds /\ 2 <= length ds /\ ph = 0
+  /\ dsum ds mod 2 = p.
+
+Lemma fillG_at_top : forall ds, 2 <= length ds -> fam_is_top F ds = true ->
+  fam_next F ds 0 = Some (filled F 0 (length ds)).
+Proof.
+  intros ds Hk Htop. unfold fam_next, filled. rewrite Htop. unfold fill_apply.
+  destruct (Nat.leb_spec (length (f_pre (fam_fill F 0))
+                          + length (f_suf (fam_fill F 0)))
+              (length ds + f_s (fam_fill F 0))); [reflexivity | lia].
+Qed.
+
+Lemma filledG_length : forall k, 2 <= k ->
+  length (filled F 0 k) = k + f_s (fam_fill F 0).
+Proof.
+  intros k Hk. unfold filled. rewrite !app_length, repeat_length. lia.
+Qed.
+
+Lemma filledG_bnd : forall k, Forall (fun d => d < 2) (filled F 0 k).
+Proof.
+  intros k. unfold filled. apply Forall_app. split; [exact Hfpre|].
+  apply Forall_app. split; [|exact Hfsuf].
+  apply Forall_forall. intros x Hx. apply repeat_spec in Hx. lia.
+Qed.
+
+Lemma invG_value_lt : forall ds,
+  fam_value F ds < Nat.pow 2 (length ds).
+Proof. intros ds. apply gray_val_lt; assumption. Qed.
+
+Lemma famG_succ_total : forall s,
+  InvG s -> exists s', fam_succ F s = Some s' /\ InvG s'.
+Proof.
+  intros [[ds q] ph] (Hbnd & Hk & -> & Hpar).
+  destruct (fam_is_top F ds) eqn:Htop.
+  - (* the fill, and it lands back in phase 0 *)
+    exists (filled F 0 (length ds), q, 0).
+    unfold fam_succ. rewrite (fillG_at_top ds Hk Htop), Htop, Hfto.
+    split; [reflexivity|]. unfold InvG.
+    split; [apply filledG_bnd|].
+    split; [rewrite filledG_length by exact Hk; lia|].
+    split; [reflexivity | apply Hfpar; exact Hk].
+  - (* an interior step: the value goes up by two, so its low bit does not
+       move and neither does the digit sum's parity *)
+    assert (Hlt : fam_value F ds + fm_step F < Nat.pow (fm_b F) (length ds)).
+    { unfold fam_is_top in Htop. apply Nat.ltb_ge in Htop.
+      pose proof (pow_pos (fm_b F) (length ds) ltac:(lia)). lia. }
+    assert (Hex : exists nd, fam_next F ds 0 = Some nd).
+    { unfold fam_next. rewrite Htop. unfold fam_of_value.
+      destruct (Nat.ltb_spec (fam_value F ds + fm_step F)
+                  (Nat.pow (fm_b F) (length ds))); [|lia].
+      eexists; reflexivity. }
+    destruct Hex as (nd & Hnd).
+    exists (nd, q, 0).
+    split; [unfold fam_succ; rewrite Hnd, Htop; reflexivity|].
+    destruct (fam_next_interior F ds 0 nd ltac:(lia) Htop Hnd) as (Hval & Hlen).
+    assert (Hbnd' : Forall (fun d => d < 2) nd).
+    { unfold fam_next in Hnd. rewrite Htop in Hnd. unfold fam_of_value in Hnd.
+      destruct (_ <? _); [|discriminate]. rewrite HcF in Hnd.
+      injection Hnd as <-. rewrite HbF. apply genc_lt. lia. }
+    unfold InvG.
+    split; [exact Hbnd'|].
+    split; [rewrite Hlen; exact Hk|].
+    split; [reflexivity|].
+    assert (Hm : fam_value F nd mod 2 = fam_value F ds mod 2).
+    { rewrite Hval, HsF.
+      replace (fam_value F ds + 2) with (fam_value F ds + 1 * 2) by lia.
+      apply Nat.mod_add. lia. }
+    rewrite <- gval_mod2, <- (gray_value F HbF HcF), Hm.
+    rewrite (gray_value F HbF HcF), gval_mod2. exact Hpar.
+Qed.
+
+Lemma famG_iter_total : forall N s,
+  InvG s -> exists s', fam_iter F s N = Some s' /\ InvG s'.
+Proof.
+  induction N as [|N IH]; intros s Hi;
+    [exists s; split; [reflexivity | exact Hi]|].
+  destruct (famG_succ_total s Hi) as (s1 & H1 & Hi1).
+  destruct (IH s1 Hi1) as (s' & H' & Hi').
+  exists s'. split; [|exact Hi']. simpl. rewrite H1. exact H'.
+Qed.
+
+(** Within a width the measure [2^k - value] falls by [fm_step = 2], so the
+    top of the width is reached in finitely many anchor visits.  This is
+    section 5's [top_reached_aux] with the two in place of the one. *)
+Lemma topG_reached_aux : forall m s,
+  InvG s ->
+  Nat.pow 2 (length (ct_ds s)) - fam_value F (ct_ds s) <= m ->
+  exists n s', fam_iter F s n = Some s' /\ fam_is_top F (ct_ds s') = true
+               /\ InvG s'.
+Proof.
+  induction m as [|m IH]; intros s Hi Hm.
+  - exfalso. pose proof (invG_value_lt (ct_ds s)). lia.
+  - destruct (fam_is_top F (ct_ds s)) eqn:Htop.
+    + exists 0, s. split; [reflexivity | split; [exact Htop | exact Hi]].
+    + destruct s as [[ds q] ph]. simpl in Htop.
+      destruct (famG_succ_total _ Hi) as (s1 & H1 & Hi1).
+      unfold fam_succ in H1. rewrite Htop in H1.
+      destruct (fam_next F ds ph) as [nd|] eqn:Hnd; [|discriminate].
+      injection H1 as <-.
+      destruct (fam_next_interior F ds ph nd ltac:(lia) Htop Hnd)
+        as (Hval & Hlen).
+      destruct (IH _ Hi1) as (n & s' & Hit & Htop' & Hi').
+      { simpl. simpl in Hm. rewrite Hval, Hlen, HsF. lia. }
+      exists (S n), s'. split; [|split; [exact Htop' | exact Hi']].
+      simpl. unfold fam_succ. rewrite Htop, Hnd. exact Hit.
+Qed.
+
+Lemma topG_reached : forall s,
+  InvG s ->
+  exists n s', fam_iter F s n = Some s' /\ fam_is_top F (ct_ds s') = true
+               /\ InvG s'.
+Proof.
+  intros s Hi.
+  apply (topG_reached_aux
+           (Nat.pow 2 (length (ct_ds s)) - fam_value F (ct_ds s)) s Hi). lia.
+Qed.
+
+Theorem topsG_cofinal : forall s N,
+  InvG s ->
+  exists n s', N <= n /\ fam_iter F s n = Some s'
+               /\ fam_is_top F (ct_ds s') = true /\ InvG s'.
+Proof.
+  intros s N Hi.
+  destruct (famG_iter_total N s Hi) as (sN & HN & HiN).
+  destruct (topG_reached sN HiN) as (m & s' & Hm & Htop & Hi').
+  exists (N + m), s'.
+  split; [lia | split; [| split; [exact Htop | exact Hi']]].
+  rewrite fam_iter_add, HN. exact Hm.
+Qed.
+
+End IterG.
+
+(** The fill target's parity, for a fill whose digit is [0]: it does not
+    depend on the width at all, so [Hfpar] above is two [vm_compute]s on the
+    emitted board rather than an induction. *)
+Lemma filled_parity : forall F ph k,
+  f_mid (fam_fill F ph) = 0 ->
+  dsum (filled F ph k)
+  = dsum (f_pre (fam_fill F ph)) + dsum (f_suf (fam_fill F ph)).
+Proof.
+  intros F ph k Hm. unfold filled.
+  rewrite !dsum_app, dsum_repeat, Hm. lia.
+Qed.
+
 (** ** 6. Selection: which arm serves which class, from the arms as DATA
 
     4f settled the semantics -- first applicable in the listed order, the
@@ -1165,9 +1891,10 @@ Hypothesis HAiS : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
   RuleSound tm (negb (fm_left F)) (fm_left F) (Aint d r).
 Hypothesis HAiL : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
   lr_lhs (Aint d r)
-    = cls_conf F (cls_side F (fm_b F - 1) r (astride N0i sti r) [d]).
+    = cls_conf F (cls_side F [] (fm_b F - 1) r (astride N0i sti r) [d]).
 Hypothesis HAiR : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
-  lr_rhs (Aint d r) = cls_conf F (cls_side F 0 r (astride N0i sti r) [S d]).
+  lr_rhs (Aint d r)
+    = cls_conf F (cls_side F [] 0 r (astride N0i sti r) [S d]).
 Hypothesis HAiC : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
   0 < lr_cb (Aint d r).
 
@@ -1342,11 +2069,11 @@ Proof.
     + intros He. unfold tailR. rewrite He. reflexivity.
     + rewrite (HAiL d r Hdlt Hrlt). symmetry. apply cden_cls_conf.
       rewrite <- Hn at 1.
-      apply (fam_cells_class F (fm_b F - 1) r (astride N0i sti r)
+      apply (fam_cells_class F [] (fm_b F - 1) r (astride N0i sti r)
                (acnt N0i sti n) [d] rest ph).
     + rewrite (HAiR d r Hdlt Hrlt). symmetry. apply cden_cls_conf.
       rewrite <- Hn at 1.
-      apply (fam_cells_class F 0 r (astride N0i sti r)
+      apply (fam_cells_class F [] 0 r (astride N0i sti r)
                (acnt N0i sti n) [S d] rest ph).
     + exact (HAiC d r Hdlt Hrlt).
 Qed.
@@ -1538,9 +2265,10 @@ Hypothesis HAiS : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
   RuleSound tm (negb (fm_left F)) (fm_left F) (Aint d r).
 Hypothesis HAiL : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
   lr_lhs (Aint d r)
-    = cls_conf F (cls_side F (fm_b F - 1) r (astride N0i sti r) [d]).
+    = cls_conf F (cls_side F [] (fm_b F - 1) r (astride N0i sti r) [d]).
 Hypothesis HAiR : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
-  lr_rhs (Aint d r) = cls_conf F (cls_side F 0 r (astride N0i sti r) [S d]).
+  lr_rhs (Aint d r)
+    = cls_conf F (cls_side F [] 0 r (astride N0i sti r) [S d]).
 Hypothesis HAiC : forall d r, d < fm_b F - 1 -> r < N0i + sti ->
   0 < lr_cb (Aint d r).
 
@@ -1602,3 +2330,289 @@ Proof.
 Qed.
 
 End BoardOne.
+
+(** ** 10. The board at [(Gray, 2)]
+
+    Section 7's board is [(Binary, 1)] in three places and nowhere else: the
+    class law it calls ([pos1_class_succ]), the case split it runs on
+    ([digs_decomp] at [t = b-1]), and the shape it gives the fill arm's
+    left-hand side ([pos1_top_shape]).  Section 3b replaces all three, so this
+    is the same argument over the same [glue_neverqhN], with:
+
+    * FOUR interior classes rather than [b-1], indexed by [i < 4] and served
+      by the same arm scheme (section 2b) -- and the class carries a fixed
+      word before the run, which is what [cls_side]'s [u] is for;
+    * the fill arm indexed by the WIDTH and carrying a fixed word at EACH end
+      ([run_side]'s [w1]/[w2]), because the top of a width is
+      [1-p] ++ 0^(k-2) ++ [1] and not a bare run.  Its index range starts at
+      2, not at 1: no width is below 2 and the two fixed digits are part of
+      every one;
+    * one phase.  All six gray core rows are one-phase, so there is no cycle
+      to lap and no [pv] to choose.
+
+    A row that quasihalts would want section 8's twin of this; none of the
+    gray rows does ([live = ABCD], measured), so it is not built. *)
+
+Section BoardG.
+
+Variable tm    : TM.
+Variable F     : Fam.
+Variable p     : nat.                  (** the family's parity *)
+Variable Aint  : nat -> nat -> LRule.  (** the interior arm for class [i] at
+                                           arm index [r] *)
+Variable N0i sti : nat.
+Variable Afill : nat -> LRule.         (** the fill arm at WIDTH index [r] *)
+Variable N0f stf : nat.
+Variable fw1 fw2 : nat -> nat.         (** how the top's concrete copies of the
+                                           run divide about the block *)
+Variable fm1 fm2 : nat -> nat.         (** and the fill target's *)
+Variable vis   : nat -> St -> list lstep.
+Variable ds0   : list nat.
+Variable t0    : nat.
+
+(** *** The family's parameters *)
+Hypothesis HbF   : fm_b F = 2.
+Hypothesis HcF   : fm_code F = Gray.
+Hypothesis HsF   : fm_step F = 2.
+Hypothesis Hp    : p < 2.
+Hypothesis Hfpre : Forall (fun d => d < 2) (f_pre (fam_fill F 0)).
+Hypothesis Hfsuf : Forall (fun d => d < 2) (f_suf (fam_fill F 0)).
+Hypothesis Hfmid : f_mid (fam_fill F 0) < 2.
+Hypothesis Hfs   : length (f_pre (fam_fill F 0))
+                   + length (f_suf (fam_fill F 0))
+                   <= 2 + f_s (fam_fill F 0).
+Hypothesis Hfto  : f_to (fam_fill F 0) = 0.
+Hypothesis Hfpar : forall k, 2 <= k -> dsum (filled F 0 k) mod 2 = p.
+
+(** *** The boot.  It is a MEMBER, which is the parity's base case. *)
+Hypothesis Hbnd0 : Forall (fun d => d < 2) ds0.
+Hypothesis Hlen0 : 2 <= length ds0.
+Hypothesis Hpar0 : dsum ds0 mod 2 = p.
+Hypothesis Hboot : csteps tm t0 CTape.c0 = Some (fam_cfg F (ds0, 0, 0)).
+
+(** *** The interior arms, one per CLASS and arm index *)
+Hypothesis Hsti : 0 < sti.
+Hypothesis HAiS : forall i r, i < 4 -> r < N0i + sti ->
+  RuleSound tm (negb (fm_left F)) (fm_left F) (Aint i r).
+Hypothesis HAiL : forall i r, i < 4 -> r < N0i + sti ->
+  lr_lhs (Aint i r)
+    = cls_conf F (cls_side F (cs_u (g2c p i)) (cs_t (g2c p i)) r
+                    (astride N0i sti r) (cs_w (g2c p i))).
+Hypothesis HAiR : forall i r, i < 4 -> r < N0i + sti ->
+  lr_rhs (Aint i r)
+    = cls_conf F (cls_side F (cs_u' (g2c p i)) (cs_t' (g2c p i)) r
+                    (astride N0i sti r) (cs_w' (g2c p i))).
+Hypothesis HAiC : forall i r, i < 4 -> r < N0i + sti -> 0 < lr_cb (Aint i r).
+
+(** *** The fill arms, at both tails known empty, one per WIDTH index *)
+Hypothesis Hstf : 0 < stf.
+Hypothesis HN0f : 2 <= N0f.
+Hypothesis Hfw   : forall r, 2 <= r -> r < N0f + stf -> fw1 r + fw2 r + 2 = r.
+Hypothesis Hfm12 : forall r, 2 <= r -> r < N0f + stf ->
+  fm1 r + fm2 r
+  + (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0)))
+  = r + f_s (fam_fill F 0).
+Hypothesis HAfS : forall r, 2 <= r -> r < N0f + stf ->
+  RuleSound tm true true (Afill r).
+Hypothesis HAfL : forall r, 2 <= r -> r < N0f + stf ->
+  lr_lhs (Afill r)
+    = cls_conf F (run_side F 0 (fw1 r) (astride N0f stf r) (fw2 r) 0
+                    [1 - p] [1]).
+Hypothesis HAfR : forall r, 2 <= r -> r < N0f + stf ->
+  lr_rhs (Afill r)
+    = cls_conf F (run_side F (f_mid (fam_fill F 0)) (fm1 r)
+                    (astride N0f stf r) (fm2 r) 0
+                    (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
+Hypothesis HAfC : forall r, 2 <= r -> r < N0f + stf -> 0 < lr_cb (Afill r).
+
+(** *** Liveness: every state is reached from every fill arm's anchor *)
+Hypothesis Hvisit : forall r q, 2 <= r -> r < N0f + stf ->
+  srun_st tm true true (vis r q) (lr_lhs (Afill r)) = Some q.
+
+Let sg0 : CtrSt := (ds0, 0, 0).
+
+Definition CfG (n : nat) : cconf :=
+  match fam_iter F sg0 n with
+  | Some s => fam_cfg F s
+  | None => CTape.c0
+  end.
+
+Lemma invG0 : InvG p sg0.
+Proof. unfold InvG, sg0. repeat split; assumption. Qed.
+
+(** Section 5b's exports, at this section's own parameters. *)
+Lemma iterG_total : forall N s,
+  InvG p s -> exists s', fam_iter F s N = Some s' /\ InvG p s'.
+Proof. intros N s Hi. eapply famG_iter_total; eassumption. Qed.
+
+Lemma topsG_cof : forall s N,
+  InvG p s ->
+  exists n s', N <= n /\ fam_iter F s n = Some s'
+               /\ fam_is_top F (ct_ds s') = true /\ InvG p s'.
+Proof. intros s N Hi. eapply topsG_cofinal; eassumption. Qed.
+
+Lemma fillG_top : forall ds, 2 <= length ds -> fam_is_top F ds = true ->
+  fam_next F ds 0 = Some (filled F 0 (length ds)).
+Proof. intros ds Hk Ht. eapply fillG_at_top; eassumption. Qed.
+
+(** The cells of the top of a width, as the fill arm's left-hand side: a run
+    of zeros with [1-p] before it and [1] after, and the arm at index [r]
+    carries [fw1 r] copies before the block and [fw2 r] after. *)
+Lemma cells_topG : forall k m1 s n m2, m1 + s * n + m2 + 2 = k ->
+  fam_cells F (g2top p k) 0
+    = sden [] n (run_side F 0 m1 s m2 0 [1 - p] [1]).
+Proof.
+  intros k m1 s n m2 Hk. unfold g2top.
+  transitivity (fam_cells F ([1 - p] ++ repeat 0 (m1 + s * n + m2) ++ [1]) 0).
+  - f_equal. cbn [app]. do 3 f_equal. lia.
+  - apply fam_cells_run.
+Qed.
+
+Lemma cells_filledG : forall k a s n c,
+  a + s * n + c
+    = k + f_s (fam_fill F 0)
+      - (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0))) ->
+  fam_cells F (filled F 0 k) 0
+    = sden [] n (run_side F (f_mid (fam_fill F 0)) a s c 0
+                   (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
+Proof.
+  intros k a s n c Hk.
+  transitivity (fam_cells F
+    (f_pre (fam_fill F 0)
+     ++ repeat (f_mid (fam_fill F 0)) (a + s * n + c)
+     ++ f_suf (fam_fill F 0)) 0).
+  - f_equal. unfold filled. rewrite Hk. reflexivity.
+  - apply fam_cells_run.
+Qed.
+
+(** The lap, by section 3b's four-way split: a member of a width is the top,
+    where a fill arm applies, or an instance of one of the four classes, where
+    an interior arm does.  [gray_split] is what [digs_decomp] was. *)
+Lemma board_armG : forall (P : bool -> bool -> LRule -> Prop),
+  (forall i r, i < 4 -> r < N0i + sti ->
+     P (negb (fm_left F)) (fm_left F) (Aint i r)) ->
+  (forall r, 2 <= r -> r < N0f + stf -> P true true (Afill r)) ->
+  forall s, InvG p s ->
+  exists s' A el er X n,
+    fam_succ F s = Some s'
+    /\ P el er A
+    /\ (el = true -> tailL F X = []) /\ (er = true -> tailR F X = [])
+    /\ fam_cfg F s  = cden (tailL F X) (tailR F X) n (lr_lhs A)
+    /\ fam_cfg F s' = cden (tailL F X) (tailR F X) n (lr_rhs A)
+    /\ 0 < lr_cb A.
+Proof.
+  intros P HPi HPf [[ds q] ph] Hi.
+  destruct Hi as (Hbnd & Hk & -> & Hpar).
+  destruct (gray_split p ds Hp Hbnd Hpar Hk)
+    as [Htop | (i & n & rest & Hi4 & Hrest & Hds)].
+  - (* the top of a width: the FILL arm at the width's own index *)
+    remember (aoff N0f stf (length ds)) as r eqn:Er.
+    assert (Hr2 : 2 <= r) by (subst r; apply arm_index_ge2; assumption).
+    assert (Hrlt : r < N0f + stf) by (subst r; apply arm_index_lt; assumption).
+    assert (Hidx : r + astride N0f stf r * acnt N0f stf (length ds) = length ds)
+      by (subst r; apply arm_index; assumption).
+    pose proof (Hfw r Hr2 Hrlt) as Hfwr.
+    assert (Hist : fam_is_top F ds = true).
+    { rewrite Htop at 1. apply g2top_is_top; try assumption; lia. }
+    exists (filled F 0 (length ds), q, 0), (Afill r).
+    exists true, true, [], (acnt N0f stf (length ds)).
+    split; [|split; [|split; [|split; [|split; [|split]]]]].
+    + unfold fam_succ.
+      rewrite (fillG_top ds Hk Hist), Hist, Hfto.
+      reflexivity.
+    + exact (HPf r Hr2 Hrlt).
+    + intros _; apply tailL_nil.
+    + intros _; apply tailR_nil.
+    + rewrite (HAfL r Hr2 Hrlt). symmetry.
+      apply cden_cls_conf. rewrite Htop at 1. apply cells_topG. lia.
+    + rewrite (HAfR r Hr2 Hrlt). symmetry.
+      apply cden_cls_conf. apply cells_filledG.
+      pose proof (Hfm12 r Hr2 Hrlt). lia.
+    + exact (HAfC r Hr2 Hrlt).
+  - (* not the top: the INTERIOR arm of the class the split named *)
+    remember (aoff N0i sti n) as r eqn:Er.
+    assert (Hrlt : r < N0i + sti) by (subst r; apply arm_index_lt; assumption).
+    assert (Hidx : r + astride N0i sti r * acnt N0i sti n = n)
+      by (subst r; apply arm_index; assumption).
+    destruct (gray2_class F HbF HcF HsF p i n rest Hp Hrest
+                ltac:(unfold g2par; rewrite <- Hds; exact Hpar))
+      as (Hnt & Hnx & _).
+    exists (cls_rhs (g2c p i) n rest, q, 0), (Aint i r).
+    exists (negb (fm_left F)), (fm_left F), (cls_tail F rest 0).
+    exists (acnt N0i sti n).
+    split; [|split; [|split; [|split; [|split; [|split]]]]].
+    + unfold fam_succ. rewrite Hds, (Hnx 0), Hnt. reflexivity.
+    + exact (HPi i r Hi4 Hrlt).
+    + intros He. unfold tailL. destruct (fm_left F); [discriminate|reflexivity].
+    + intros He. unfold tailR. rewrite He. reflexivity.
+    + rewrite (HAiL i r Hi4 Hrlt). symmetry. apply cden_cls_conf.
+      rewrite Hds. unfold cls_lhs. rewrite <- Hidx at 1.
+      apply (fam_cells_class F (cs_u (g2c p i)) (cs_t (g2c p i)) r
+               (astride N0i sti r) (acnt N0i sti n) (cs_w (g2c p i)) rest 0).
+    + rewrite (HAiR i r Hi4 Hrlt). symmetry. apply cden_cls_conf.
+      unfold cls_rhs. rewrite <- Hidx at 1.
+      apply (fam_cells_class F (cs_u' (g2c p i)) (cs_t' (g2c p i)) r
+               (astride N0i sti r) (acnt N0i sti n) (cs_w' (g2c p i)) rest 0).
+    + exact (HAiC i r Hi4 Hrlt).
+Qed.
+
+Lemma board_lapG : forall s, InvG p s ->
+  exists s' m, fam_succ F s = Some s' /\ 0 < m /\
+               csteps tm m (fam_cfg F s) = Some (fam_cfg F s').
+Proof.
+  intros s Hi.
+  destruct (board_armG (RuleSound tm) HAiS HAfS s Hi)
+    as (s' & A & el & er & X & n & Hsucc & HA & HL & HR & Hl & Hr & Hcb).
+  exists s', (lr_ca A * n + lr_cb A).
+  split; [exact Hsucc | split; [nia|]].
+  rewrite Hl, Hr. exact (HA _ _ n HL HR).
+Qed.
+
+Lemma board_visitG : forall q N,
+  exists n k c, N <= n /\ csteps tm k (CfG n) = Some c /\ fst c = q.
+Proof.
+  intros q N.
+  destruct (topsG_cof sg0 N invG0) as (n & s' & HN & Hit & Htop & Hi').
+  exists n.
+  destruct s' as [[ds' q'] ph']. simpl in Htop.
+  destruct Hi' as (Hbnd' & Hk' & Hph' & Hpar').
+  assert (Hsh : ds' = g2top p (length ds'))
+    by (apply (gray_top_shape F HbF HcF HsF); assumption).
+  remember (aoff N0f stf (length ds')) as r eqn:Er.
+  assert (Hr2 : 2 <= r) by (subst r; apply arm_index_ge2; assumption).
+  assert (Hrlt : r < N0f + stf) by (subst r; apply arm_index_lt; assumption).
+  assert (Hidx : r + astride N0f stf r * acnt N0f stf (length ds') = length ds')
+    by (subst r; apply arm_index; assumption).
+  pose proof (Hfw r Hr2 Hrlt) as Hfwr.
+  assert (Hden : CfG n
+                 = cden [] [] (acnt N0f stf (length ds')) (lr_lhs (Afill r))).
+  { unfold CfG. rewrite Hit, (HAfL r Hr2 Hrlt), Hph'.
+    rewrite <- (cden_cls_conf F
+                  (run_side F 0 (fw1 r) (astride N0f stf r) (fw2 r) 0
+                     [1 - p] [1])
+                  [] (acnt N0f stf (length ds')) ds' q' 0).
+    - unfold tailL, tailR; destruct (fm_left F); reflexivity.
+    - rewrite Hsh at 1. apply cells_topG. lia. }
+  destruct (vis_of_run tm (fun _ => CfG n) true true (vis r q)
+              (lr_lhs (Afill r)) 1%positive (acnt N0f stf (length ds'))
+              [] [] q (Hvisit r q Hr2 Hrlt)
+              (fun _ => eq_refl) (fun _ => eq_refl) Hden) as (k & c & Hc & Hq).
+  exists k, c. split; [exact HN | split; [exact Hc | exact Hq]].
+Qed.
+
+Theorem boardG_neverqh : NeverQuasiHaltsSt tm.
+Proof.
+  apply (glue_neverqhN tm CfG).
+  - exists t0. unfold CfG; simpl.
+    rewrite <- lift_c0. apply csteps_lift. exact Hboot.
+  - intros n.
+    destruct (iterG_total n sg0 invG0) as (s & Hit & Hi).
+    destruct (board_lapG s Hi) as (s' & m & Hsucc & Hm & Hrun).
+    exists m, (fam_cfg F s'). unfold CfG. rewrite Hit.
+    split; [exact Hrun | split; [|exact Hm]].
+    replace (S n) with (n + 1) by lia.
+    rewrite fam_iter_add, Hit. simpl. rewrite Hsucc. reflexivity.
+  - intros q N. exact (board_visitG q N).
+Qed.
+
+End BoardG.
