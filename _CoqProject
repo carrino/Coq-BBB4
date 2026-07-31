@@ -28,6 +28,7 @@ theories/Census/RankSearch.v
 theories/Census/RepWLSearch.v
 theories/Census/Decide.v
 theories/Census/Reroot.v
+theories/Census/RerootSwap.v
 theories/Census/Deferred_Defs.v
 theories/Census/Deferred_00.v
 theories/Census/Deferred_01.v

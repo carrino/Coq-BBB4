@@ -259,6 +259,27 @@ via `LapGlue.glue_neverqh` — **and with it its `0RB` shadow**
   `Reroot.qhbound_reroot`, not `neverqh_reroot`, and that one shifts the bound
   by the prefix length and carries a `B + t <= 2000` side condition.
 
+  **SUPERSEDED (2026-07-31, same day, John): the generator is built.**
+  `tools/closeout/gen_shadow.py`, with the general half of the argument in
+  `theories/Census/RerootSwap.v`.  What changed the call was measuring the
+  cost rather than estimating it: the "full rebuild of the census and
+  closeout" that kept `neverqh_swap` local inside the RRNQ board is only
+  incurred by EDITING `Census/Reroot.v` -- Coq rebuilds the dependents of
+  CHANGED files, so a NEW module beside it costs one file's compile and
+  rebuilds nothing.  `neverqh_swap` and `neverqh_mirror` are both **Closed
+  under the global context** (zero axioms); only the `Visited` helper touches
+  funext, through `CTape.lift`.
+  Validated the way the tree validates emitters: `gen_shadow.py --regress`
+  reproduces the hand-written RRNQ board and then breaks it three ways --
+  op order reversed, prefix length off by one, wrong re-root state -- and all
+  three are REJECTED by the kernel.  It cleans up after itself, so it is safe
+  to run in a dirty tree.
+  The `iqh` caveat above still stands and is enforced rather than assumed:
+  `gen_shadow.py` refuses a core row whose `frozen_map.tsv` kind is not
+  `nqh`, and says so, instead of guessing at the `B + t` side condition.
+  Today all 14 shadows have UNDECIDED partners, so `--all` correctly emits
+  nothing; the generator earns its keep the moment a core row boards.
+
 - **The wave-35 diagnosis was wrong, and the correction is the reusable
   part.**  Wave-35 found this row at a CARRY-STRADDLING anchor and concluded
   the missing piece was a `LapDecider` template whose anchor straddles the
