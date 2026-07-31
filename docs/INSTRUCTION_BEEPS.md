@@ -18,8 +18,8 @@ hand-written surface — because every abstraction in the tree already
 carries the head symbol, and the `irules` engines already carry
 per-instruction fire lists.  The port of the *result* is a new campaign:
 41% of the machines the census's n-gram tier kills lose that proof, and
-854 of the 5,156 boarded rows stop being never-quasihalters and start
-needing a score.
+854 of the 5,156 frozen deferred rows stop being never-quasihalters and
+start needing a score (851 of them in rows that already carry a board).
 
 ---
 
@@ -195,7 +195,8 @@ than an in-walk tier — probed to 5e6 steps:
 | **state-level live, instruction dies** | **854** | board changes character: it must now prove a quiet instruction and an exact score |
 | of the 42 open core rows | 22 all-live / 18 state-quiet / **2 instruction-dies** | |
 
-The 854 are the expensive rows: a never-QH proof and a
+The 854 (851 of which already carry a board — §4 splits them by
+provenance) are the expensive rows: a never-QH proof and a
 quasihalt-with-score proof are different arguments, not different
 spellings.  The mitigating fact is that this repo already carries 3,292
 rows proved in exactly that shape, with the closers to match
@@ -239,23 +240,53 @@ Plus, none of it hand-written:
 
 And the part that is not an estimate but a campaign:
 
-* the **854 boards** that flip from never-QH to QH,
+* the **851 boarded rows** that flip from never-QH to QH,
 * the **2 of 42** open core rows that do the same,
 * and the tier-N class (b) machines that survive the downstream tiers —
   low thousands, each eventually a board.
 
-**Verdict.**  Re-founding the development on instruction beeps is
-roughly 15–25% of the original Coq engineering, and the architecture
-takes it without a rewrite: the head symbol is already in every node,
-the fire lists are already in the engine, and the two cycle tiers — 83%
-of the tree — port by renaming a quantifier.  Getting to a comparable
-*closeout* (42-ish open rows and a champion statement) is the real cost,
-because ~41% of the n-gram tier's kills need re-proving and a sixth of
-the boards change shape.  The cheap first move, if it is ever attempted,
-is to run the **full** Coq decider pipeline at instruction level rather
-than this four-tier proxy: that single measurement converts the largest
-remaining unknown — how much of tier N's loss the rank/RepWL/wrapped
-tiers recover — into a number.
+### Why the line count flatters the port
+
+Hand-written Coq is the *least* representative metric this project has.
+Measured over `theories/Machines/`:
+
+| | files | lines |
+| --- | ---: | ---: |
+| generated boards | 2,277 | 5,368,206 |
+| hand-written boards | 119 | 44,771 |
+
+and 198 of the last 341 commits touch `tools/` — the certificate
+*search*, not the Coq.  Weighting the port by lines therefore counts the
+part that does not repeat and ignores the part that does.  Splitting the
+work by what actually recurs:
+
+| | repeats at instruction level? |
+| --- | --- |
+| semantic core, closure engine, irules engines, counter toolkits, census plumbing, closeout assembly | **no** — the 3–5k-line delta above |
+| the 119 hand-written boards | **mostly no** — only **7 files** carry a row that flips |
+| the 2,277 generated boards | **yes, every one** — re-searched at instruction granularity and re-emitted |
+| the census walk | **yes, in full** |
+| the residue campaign | **partly, plus an unmeasured tail** |
+
+Of the 851 flipping rows, **844 sit in generated boards and 7 in
+hand-written ones**.  So the flip costs no new mathematics per machine —
+but it does cost a different certificate type from the emitters for 844
+rows, and the search behind all 5,100 boarded rows runs again either way.
+
+**Verdict.**  The design work does not repeat and the hard individual
+proofs mostly do not — that is the real saving, and it is the part that
+carried this project's risk.  Everything downstream of "we know how to
+prove this shape" does repeat: search, emit, walk, assemble.  Weighted
+by effort rather than by lines, re-founding the development on
+instruction beeps looks like **30–50%** of the original — not a rewrite,
+but not a port either.  The honest caveat is that the tail is not
+measured: the 10,597 machines that lose acyclicity liveness were tested
+against four of the census's seven tiers, and the three untested ones
+are exactly those that recovered 77.1% of the state-level residue.  So
+the cheap first move, if this is ever attempted, is to run the **full**
+Coq decider pipeline at instruction level rather than this four-tier
+proxy — that single measurement is what turns the range above into a
+number.
 
 ---
 
