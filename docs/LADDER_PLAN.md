@@ -2416,6 +2416,67 @@ the five boards on disk declare `Binary 1`, which is not what their machines
 do.  These are 4m's five, filed in the exempt block under a reason that was
 never theirs.
 
+### The numeration, CRACKED -- and it is four facts, all checked
+
+_Added after the section above, with John reading the machine.  The blocker
+4p names is the numeration; this is what it is.  `tools/ladder/fibmem.py`
+checks every line of it against the orbit read off the machines: `FIBMEM: OK`._
+
+**Membership.**  LSB-first, a member is an OPTIONAL LEADING `1`, then a
+concatenation of the blocks `[0]` and `[1;1]`.  (MSB-first: blocks of `0` and
+`11`, then an optional trailing `1`.)  Checked against every width of all
+five rows, 0..11 -- the predicate and the orbit agree exactly, and the counts
+come out 2, 3, 5, 8, 13, 21, 34, 55, 89, 144.
+
+That is the certificate's own `canonical_form.blocks = [[0],[1,1]]` with
+`base_widths = [0,1]`, and the `[0,1]` is the optional single-`1` remainder.
+4p could not decode `base_widths` and said so; it is that.  **The numeration
+is REDUNDANT** -- `w0 = w1 = 1`, so `10000` and `01000` both have value 1 --
+and this rule is which representative the machine picks.  That redundancy is
+why the round-trip lemma is the one with the risk in it.
+
+**The top of a width is `1^k`.**  All ones, and its value is the sum of the
+weights it covers, which is `maxval` as 4p corrected it.  Simpler than
+`(Gray, 2)`'s `[1] ++ 0^(k-2) ++ [1]`, and no `of_value` is needed to compute
+it.
+
+**The decomposition is TWO-WAY and it splits on the LOW DIGIT.**  Every
+non-top member is in exactly one class:
+
+    low digit 0    [0] ++ 0^n ++ rest   ->   [1] ++ 0^n ++ rest
+    low digit 1    1^n ++ [1;0] ++ rest ->   0^n ++ [1;1] ++ rest
+
+Measured over all 2,284 interior members of the five rows: **overlap 0,
+uncovered 0, wrong successor 0.**  This is `digs_decomp`'s analogue and it is
+the piece 4o had to do four-way for `(Gray, 2)`; here it is `ds` starting `0`
+or starting `1`, which is a `destruct`.
+
+**John's lap law, and why it matters.**  The interval between fill events is
+`10, 16, 26, 42, 68, 110, 178, 288, 466`, and John read it as
+`f(n+2) = f(n+1) + f(n) + n` on `f = lap - n - 1`.  The particular solution of
+that recurrence is `-n-1`, so **`lap(n)` is Fibonacci-type with an affine
+correction** -- exactly matching the 2, 3, 5, 8, 13, 21 members per width.
+The lap is not affine and does not need to be: only the ARM costs do, and 4p
+measured those affine (constant first differences 2 and 0).
+
+**What is left is Coq, not discovery.**  A `Fib` constructor on `Code`
+(existing sections are gated by `Hypothesis Hcode : fm_code F = Binary`/`Gray`
+and stay inert), `fam_value` at `Fib` as the weighted fold, and the round-trip
+`fam_of_value F (fam_value F ds) (length ds) = Some ds` over the membership
+predicate above.  The successor need not be inverted pointwise -- the two
+rewrites give it, and each adds exactly 1 to the value.
+
+**The 3-state reading, and why re-root does NOT serve it.**  `A` is entered
+once, at step 0: nothing targets it (`B` from `{A,C,D}`, `C` from `{B,C}`, `D`
+from `{B,D}`), which is why these five are filed `live = BCD`.  So the
+residual dynamics is a THREE-STATE machine on a tape that is blank but for one
+marked cell.  `Census/Reroot.v` cannot express that: its precondition is a
+prefix "writing only `S0`, so the tape stays all-blank", and these rows write
+a `1` on step 0 -- the very event re-root stops at.  A re-root carrying a
+non-blank configuration would be a new lemma, and it would still not import a
+result: BBB(3) is a blank-tape enumeration and this tape is not blank.  The
+reduction shrinks the object; it does not decide it.
+
 ### What this says about the next session
 
 * **The four base-2 rows are done as ladder rows.**  Their arm is quadratic,
