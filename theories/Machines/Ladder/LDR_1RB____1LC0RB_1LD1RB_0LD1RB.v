@@ -127,7 +127,7 @@ Proof. eapply arm_sound; [exact rules_sound_1RB____1LC0RB_1LD1RB_0LD1RB | exact 
     The board above still proves every rule the certificate carries; what
     is missing is the machine-level theorem.
 
-    RE-MEASURED, LADDER_PLAN 4o, AND THE REASON ABOVE IS WRONG.  The
+    RE-MEASURED, LADDER_PLAN 4p, AND THE REASON ABOVE IS WRONG.  The
     interior class arm DERIVES.  The refusal line is what the emitter
     printed and is kept as the record of what it did, but the probe, reading
     the counter off the machine, fits this row two classes

@@ -4147,7 +4147,7 @@ traps._
 
 # 2026-07-31 — the interior nine, re-measured: 5 of 9, and it was two buckets
 
-_Full record in `docs/LADDER_PLAN.md` §4o.  Branch
+_Full record in `docs/LADDER_PLAN.md` §4p.  Branch
 `claude/interior-arm-remeasure-vg1xl2` off `main` at `fa1be97`.  No row
 boards, no count moves: `settled by a board 5103 (99.0%)`, `core undecided
 39`, `0RB shadows 14`, unchanged.  The count WAS the deliverable._

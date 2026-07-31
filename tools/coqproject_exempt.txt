@@ -36,10 +36,10 @@ theories/Closeout/CloseoutFinal.v
 # densest bucket in it.  TWO stop on the FILL arm and neither row is core any
 # more, so they are worth nothing but are kept as the fill twin of the
 # question.  Wave 4l's shared arm indexing removed the older ClassSucc reason,
-# so do not re-file any of these under 4h(a); wave 4o replaced that stale note
+# so do not re-file any of these under 4h(a); wave 4p replaced that stale note
 # inside all nine interior files with the measured reason, one per half.
 #
-# RE-MEASURED, wave 4o: **the nine are not one bucket, and the shared refusal
+# RE-MEASURED, wave 4p: **the nine are not one bucket, and the shared refusal
 # line is the only thing they share.**  armprobe.py says 5 of 9, and neither
 # half is what LADDER_PLAN 5 read off the failure text.
 #
@@ -83,14 +83,14 @@ theories/Closeout/CloseoutFinal.v
 # INTERIOR arm (line 381) -- nine rows, all still core, five shadows between them
 #
 # quadratic interior cost, all four still core, five shadows between the first
-# three (4o: measured; LADDER_PLAN 5 confirmed for these)
+# three (4p: measured; LADDER_PLAN 5 confirmed for these)
 theories/Machines/Ladder/LDR_1RB0LD_0LC0RB_1LA1RC_0RC1LD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA0LC_1LC1RD_0RB0RD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA1RC_0LD0RC_1LD0RB.v
 theories/Machines/Ladder/LDR_1RB1LA_1LC0RD_0RA0LC_0LA1RD.v
 #
 # FIBONACCI numeration, arms DERIVE, blocked on 4m's constructor and not on an
-# arm (4o).  No shadows: all five carry one row each.
+# arm (4p).  No shadows: all five carry one row each.
 theories/Machines/Ladder/LDR_1RB____0LB1RC_1LB0RD_1LC0RD.v
 theories/Machines/Ladder/LDR_1RB____0LB1RC_1LD0RC_1LB1RC.v
 theories/Machines/Ladder/LDR_1RB____1LC0RB_1LD1RB_0LD1RB.v

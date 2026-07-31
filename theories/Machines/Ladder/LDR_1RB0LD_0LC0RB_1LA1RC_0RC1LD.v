@@ -240,7 +240,7 @@ Proof. eapply arm_sound; [exact rules_sound_1RB0LD_0LC0RB_1LA1RC_0RC1LD | exact 
     The board above still proves every rule the certificate carries; what
     is missing is the machine-level theorem.
 
-    RE-MEASURED, LADDER_PLAN 4o.  The reason above is the MEASURED one and
+    RE-MEASURED, LADDER_PLAN 4p.  The reason above is the MEASURED one and
     4h(a)'s [ClassSucc] reason -- which 4l removed and which this note used
     to give -- was never it: this family IS [(Binary, 1)], and the probe
     fits it the single class

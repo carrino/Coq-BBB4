@@ -1199,7 +1199,7 @@ table row, not a gap in the emitter: no stride and no offset makes
 induction on the run, which is what the ladder is FOR and what 4h(c) records
 as still unexercised) or a count language with a product in it.
 
-**4o closed the fourth line of that table.**  The two rows with "no chain at
+**4p closed the fourth line of that table.**  The two rows with "no chain at
 any n -- not yet diagnosed" are `1RB1LA_1LC0RD_0RA0LC_0LA1RD` and
 `1RB0LD_0LC0RB_1LA1RC_0RC1LD`, and the reason they showed no chain at all is
 4n's one-cell far side: the certificate carries `other_side_cells = [1]` where
@@ -2125,7 +2125,7 @@ the number to sort a bucket by, and the table below does not show it.
   `IRules_Batch`**, so a session that only wants the audit never pays their
   8.2 GB each.  And `coqdep` is the thing to ask, not the plan file.
 
-## 4o. The interior nine RE-MEASURED: 5 of 9, and the bucket was never one bucket
+## 4p. The interior nine RE-MEASURED: 5 of 9, and the bucket was never one bucket
 
 _Branch `claude/interior-arm-remeasure-vg1xl2`, cut from `main` at `fa1be97`.
 Coq 8.18.0.  No row boards, no count moves, and the deliverable is the count
