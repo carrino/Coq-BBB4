@@ -2125,13 +2125,184 @@ the number to sort a bucket by, and the table below does not show it.
   `IRules_Batch`**, so a session that only wants the audit never pays their
   8.2 GB each.  And `coqdep` is the thing to ask, not the plan file.
 
+## 4o. `(Gray, 2)` BUILT.  The record did not widen, the parity is a parameter, four rows
+
+_Branch `claude/gray-2-ladder-build-igrvzw`, cut from `main` at `fa1be97`
+(#99 merged).  Coq 8.18.0, installed in the image.  Every number below is a
+count a script printed or a file that compiles._
+
+4n's instruction was to build what its probe selected and not to measure
+again.  That is what happened.  **The gate 4i set -- that `(Gray, 2)` is a
+second INSTANCE of `ClassSucc` and not a rewrite of it -- holds: four
+instances go through, the `Class` record does not widen, `ClassSucc` is not
+weakened, and there is no second class record.**
+
+### The one thing 4n did not know, and it is the reason the table is one table
+
+**The parity is a PARAMETER, not the constant 0.**  Five of the six gray core
+rows have even members and `1RB0RB_0RC1RC_0LD1LA_1LD0LA` has odd ones -- its
+boot is `[0;1]`, digit sum 1, and its fill target is `[1] ++ 0^n ++ [1;1]`,
+digit sum 3.  Written with `p` where 4i's table has `0`, the four classes are
+one table and the odd family's are the even family's **with the two sides
+exchanged**:
+
+    [p;p]     0^n              ->  [1-p;1-p] 0^n
+    [p;1-p]   1^n              ->  [1-p;p]   1^n
+    [1-p]     0^n ++ [1;p]     ->  [p]       0^n ++ [1;1-p]
+    [1-p]     0^n ++ [1;1-p]   ->  [p]       0^n ++ [1;p]
+
+At `p = 0` these are 4i's four verbatim.  Had the parity been baked in at 0,
+one of the four rows would have needed a second table of four and the "record
+does not widen" result would have read very differently.  It is `g2c p i` in
+`LadderCheck`, `P` is `g2par p` (the digit sum's parity, which is the value's
+low bit and is what `+2` preserves), and **both values of `p` are exercised by
+a compiled board.**
+
+The top of a width follows the same parameter: it is
+`g2top p k = [1-p] ++ 0^(k-2) ++ [1]`, value `2^k - 2 + p`.  4n read the even
+case off the orbit; the odd family's top is `0^(k-1) ++ [1]`, which IS the
+string `of_value` computes for `b^k - 1`, so the two cases look nothing alike
+until `p` is a parameter.
+
+### Stated before proved: `tools/ladder/gray2check.py`
+
+4n's probe FITTED the classes from the family's own successor.  The oracle
+does the other half -- it takes the classes, the four-way split and the top
+shape **as the kernel states them** and checks all three by enumerating every
+bounded digit string of widths 2..13, not only the orbit:
+
+    6 of 6 gray rows check out    (8190 strings each)
+
+It found the parity bug in the first draft of the split immediately, which is
+what an oracle is for.  It also confirms 4n's reading that the two rows left
+alone have a fine class law: they check out here and stop elsewhere (below).
+
+### What the arithmetic actually needed, and it was smaller than "restate it"
+
+`fam_value` at `Gray` is `val_pos` after `gdec`, a fold from the most
+significant digit DOWN, so no lemma about `val_pos` transfers.  The one
+structural fact is that `gdec`'s entry at `i` is the parity of the digit sum
+from `i` up.  From it:
+
+    gval_cons : gval (d :: t) = (d + dsum t) mod 2 + 2 * gval t
+    gval_app  : gval (a ++ l) = gpre a (dsum l) + 2^|a| * gval l
+
+`gpre` is the bounded prefix's contribution, and **a class's two sides differ
+only in their fixed words, so the RUN is never evaluated** -- only `gpre` is,
+and that is a computation on two or three digits.  A run of `1`s decodes to an
+alternating bit pattern with no closed form the emitter could use; not needing
+one is the whole reason the four class laws are short.
+
+The codec's other direction (`genc_gdec`, `genc` after `gdec` is the identity)
+is what makes `fam_of_value (fam_value ds) |ds| = Some ds`, hence
+`gray_inj` -- two bounded strings of one width with one value are one string.
+That is what turns "the top has value `2^k - 2 + p`" into "the top IS
+`g2top p k`", and it is the only place uniqueness is used.
+
+### The three pieces, and where each lives
+
+* **Coverage.**  `gray_split` replaces `digs_decomp` FOUR ways and the
+  discriminator is the first digit alone: `ds[0] = p` and the class fires at
+  run length 0 with the first two digits as its fixed word; `ds[0] = 1-p` and
+  the zeros after it are the run.  There is a `1` past those zeros because
+  `(1-p) ++ 0^(k-1)` has digit sum `1-p` and the parity says `p` -- the
+  parity is what rules the missing case out, which is 4i's "it cannot be
+  pushed into `cs_u`/`cs_w`" from the other side.  If that `1` is the LAST
+  digit the string is the top.
+
+* **The kernel's iteration** (`Section IterG`) restates section 5 rather than
+  instantiating it.  The invariant carries the parity and `2 <= k` (the top
+  needs two digits to spell), the measure `2^k - value` falls by 2, and the
+  family is one phase -- all six gray rows are.  `Hfpar` (the fill target is a
+  member) is discharged by `filled_parity`: with a fill digit of `0` the
+  target's digit sum does not depend on the width at all.  **With a fill digit
+  of `1` it would alternate with the width and there would be no family**, so
+  the emitter refuses that case with that reason rather than failing later.
+
+* **The board** (`Section BoardG`, `boardG_neverqh`) is section 7's argument
+  over `gray_split`: four interior classes, and the fill arm **indexed by the
+  WIDTH** with a fixed word at each end, its index range starting at 2.
+  Section 7 is untouched and the 31 boards emitted before this compile
+  unchanged -- checked before anything was built on top.
+
+`cls_side` gained the fixed word `u` before the run, which is the one
+generic-half change (`fam_cells_class` took the same one line).  The 24 boards
+that name `cls_side` pass `[]`; that is a mechanical edit and the emitter now
+writes it.
+
+### The number
+
+    nqh_1RB0RB_0LC0LD_1LC1LD_1RA0RA : NeverQuasiHaltsSt tm
+    nqh_1RB0RB_0RC1RC_0LD1LA_1LD0LA : NeverQuasiHaltsSt tm   (parity 1)
+    nqh_1RB1LC_0LA0RB_0LD1LD_1RA0RA : NeverQuasiHaltsSt tm
+    nqh_1RB1LD_1RC0RC_1LA0LA_0RA0LD : NeverQuasiHaltsSt tm
+
+axiom footprint `functional_extensionality_dep` only.  Each closes with **4
+interior arms at `N0 = 0` stride 1 and 1 fill arm at `N0 = 2` stride 1** --
+five arms where the certificate carries 49, and the fill arm at width index 2
+serves every width because `aoff 2 1 k = 2` for all `k >= 2`.  `make closeout`:
+
+    settled by a board       5103 -> 5107   (99.0%)
+    core undecided             39 -> 37
+    0RB shadows of the core    14 -> 12
+
+**Two of the four carried a shadow, and boarding the core row does NOT settle
+it.**  `0RB0LA_1LA1RC_0RD1RD_1LB0LB` and `0RB0LA_1RC1LA_1RD0RD_1LB0LB` were
+shadows of two of these rows; with their partners boarded they become core
+rows in their own right and want the re-root board (#98's general half plus a
+worked `RRNQ_*`).  So the four boards take the remaining 53 rows to **49**,
+not to 49 by way of 45.  That is worth knowing before sorting a bucket by
+shadow count again: the shadow is worth a row only if someone builds its
+re-root.
+
+### The two rows 4n left alone stop where 4n said, and the emitter says so
+
+`1RB0RD_1LC0LB_1LD0LB_1RD0RA` and `1RB0RD_1LC0LC_1LD0LB_1RD0RA` have digit
+words `[0;0]` and `[1;0]`, so at the boot the family spells four cells and the
+machine's `cconf` carries three -- the trailing blank of the top digit is
+never materialised.  The gray emitter refuses them at the BOOT check, before
+any arm search, with
+
+    boot cells [1, 0, 1] are not the family at [1, 1]
+
+which is 4n's finding stated by the tool rather than recalled.  Their class
+law is fine (the oracle checks it), and the fix is still 4n's: read them at an
+anchor whose digit words do not end in a blank, or give `fam_cells` a trimming
+the denotation can state.
+
+### What this says about the next session
+
+* **`(Gray, 2)` is done and the bucket is empty but for those two.**  The gray
+  path in `emit_ladder.py` is separate from the binary one on purpose -- a
+  third `(code, step)` pair would be a third `closure_data_*`, and that is
+  cheaper than threading a fourth knob through the first.
+* **The next `ClassSucc` instance is the cheapest thing in the file now.**
+  What `(Gray, 2)` cost that a third pair will not: `cls_side`'s fixed word,
+  the membership predicate `P` in `ClassSucc`, and a `Section Iter` that does
+  not assume step 1.  All three are now in place and parameterised.
+* **Two shadows just became core rows.**  Twelve shadows still sit on ten core
+  rows; the re-root closer is what turns any of them into settled rows, and
+  it is now worth more than one more `ClassSucc`.
+* **The oracle-before-the-lemma discipline paid for itself here** and cost
+  about an hour.  `gray2check.py` is 300 lines and it caught a wrong case
+  split before any Coq was written; `armprobe.py --selftest` is the same
+  discipline one rung down.
+
 ## 4p. The interior nine RE-MEASURED: 5 of 9, and the bucket was never one bucket
 
 _Branch `claude/interior-arm-remeasure-vg1xl2`, cut from `main` at `fa1be97`.
-Coq 8.18.0.  No row boards, no count moves, and the deliverable is the count
+Coq 8.18.0.  No row boards and no count moves -- the deliverable is the count
 and which of the two stories it is.  Every number below is a script's output;
 reproduce with `tools/ladder/armprobe.py` and the committed
 `tools/ladder/interior9_probe.{jsonl,log}`._
+
+_Merged with 4o's `(Gray, 2)` boards, which landed while this ran: the audit
+reads `settled by a board 5107 (99.0%)`, `core undecided 37`, `0RB shadows
+12`, and **all nine rows below are still core with the same five shadows on
+the same three of them** -- 4o's four gray rows are disjoint from these nine,
+so nothing here was taken out from under it.  Re-derived rather than
+hand-merged (`inventory.py`, `gen_stages.py`, `audit.py`: OK); the only
+conflicts were this file and `NEXT_SESSION.md`._
 
 The nine rows of `tools/coqproject_exempt.txt`'s "INTERIOR arm (line 381)"
 block all stop at the same line of `closure_data` with the same sentence --

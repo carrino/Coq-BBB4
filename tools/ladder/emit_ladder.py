@@ -687,8 +687,8 @@ Qed.
 Lemma iarm_lhs_%(mid)s : forall d r,
   d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d ->
   lr_lhs (iarm_%(mid)s d r)
-    = cls_conf FAM (cls_side FAM (fm_b FAM - 1) r (astride %(n0i)d %(sti)d r)
-                      [d]).
+    = cls_conf FAM (cls_side FAM [] (fm_b FAM - 1) r
+                      (astride %(n0i)d %(sti)d r) [d]).
 Proof.
   intros d r Hd Hr. vm_compute in Hd.
 %(bcomp)s  exfalso; lia.
@@ -697,7 +697,7 @@ Qed.
 Lemma iarm_rhs_%(mid)s : forall d r,
   d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d ->
   lr_rhs (iarm_%(mid)s d r)
-    = cls_conf FAM (cls_side FAM 0 r (astride %(n0i)d %(sti)d r) [S d]).
+    = cls_conf FAM (cls_side FAM [] 0 r (astride %(n0i)d %(sti)d r) [S d]).
 Proof.
   intros d r Hd Hr. vm_compute in Hd.
 %(bcomp)s  exfalso; lia.
@@ -1028,10 +1028,626 @@ def emit_closure(cert, tab, mid):
     return ''.join(L), cd
 
 
+# ===========================================================================
+# The (Gray, 2) path.  LadderCheck section 10 ([boardG_neverqh]) is a
+# DIFFERENT closure from section 7's and this builds its arms, so it is kept
+# entirely apart from [closure_data] rather than threaded through it: four
+# interior classes instead of [b-1] digits, a fill arm indexed by the WIDTH
+# with a fixed word at each end, one phase, and the far side read off the
+# boot.  Nothing below is shared with the binary path.
+# ===========================================================================
+
+def g2c(p, i):
+    """[LadderCheck.g2c p i] as (u, t, w, u', t', w').  4i's four classes at
+    the family's own parity; at p = 0 they are 4i's table verbatim and at
+    p = 1 they are the same four with the two sides exchanged."""
+    q = 1 - p
+    return [([p, p], 0, [], [q, q], 0, []),
+            ([p, q], 1, [], [q, p], 1, []),
+            ([q], 0, [1, p], [p], 0, [1, q]),
+            ([q], 0, [1, q], [p], 0, [1, p])][i]
+
+
+def _gray_boot_conf(cert, tab):
+    """The anchor's `cconf`, by simulating `CTape.ctape_move` from the blank
+    tape to the boot index.
+
+    This is the one place the far side can be read EXACTLY.  `RuleSound` is an
+    equation on `cconf` and `ctape_move` does not normalise, so a blank the
+    head materialised by stepping back over it is `S0 :: r` and not `r`;
+    `valfam`'s `other_side_cells` reads through a run-length view that has
+    already dropped a trailing blank run and can be short by exactly those
+    cells (LADDER_PLAN 4n).  Same TAPE under `lift`, different `cconf`."""
+    l, h, r, q = [], 0, [], 0
+    for _ in range(cert['boot']['steps_from_blank']):
+        e = tab.get((q, h))
+        if e is None:
+            return None
+        w, d, q2 = e
+        if d > 0:
+            l, h, r = [w] + l, (r[0] if r else 0), r[1:]
+        else:
+            r, h, l = [w] + r, (l[0] if l else 0), l[1:]
+        q = q2
+    return q, tuple(l), h, tuple(r)
+
+
+def _gray_far_sides(cert, tab):
+    """The far sides to try for `fm_other`: the certificate's, and the one the
+    machine actually spells at the anchor."""
+    fam = cert['family']
+    other = tuple(fam['other_side_cells'])
+    bc = _gray_boot_conf(cert, tab)
+    if bc is None:
+        raise NoClosure('the boot index halts')
+    q, l, h, r = bc
+    if (q, h) != (ord(fam['state']) - 65, fam['head']):
+        raise NoClosure('the boot index is not the anchor')
+    far = r if fam['side'] == 'L' else l
+    n = min(len(far), len(other))
+    if far[:n] != other[:n] or any(c != 0 for c in far[n:] + other[n:]):
+        raise NoClosure('the boot far side is %r, the family carries %r and '
+                        'they differ by more than trailing blanks'
+                        % (far, other))
+    return [other] if far == other else [other, far]
+
+
+def _gray_visits(tab, fl, fch, want):
+    """A chain from a fill arm's anchor to each state in `want`.
+
+    `vis_of_run` wants a chain from the ANCHOR and nothing about where it
+    ends, not a prefix of the arm's own chain -- a state can sit inside a
+    macro step that no prefix ends on.  So: walk out from every prefix of the
+    arm's derivation, then breadth-first from the anchor if that is not
+    enough."""
+    seen, cand = {}, []
+    for i in range(len(fch) + 1):
+        base = fch[:i]
+        cand.append(base)
+        for k in range(0, 31):
+            cand.append(base + [('SWin', k)])
+            cand.append(base + [('SWinL', k)])
+            cand.append(base + [('SWinR', k)])
+        for k in range(0, 16):
+            for k2 in range(0, 8):
+                cand.append(base + [('SWinL', k), ('SWin', k2)])
+                cand.append(base + [('SWinR', k), ('SWin', k2)])
+    for ch in cand:
+        if all(i in seen for i in want):
+            break
+        got = LC.srun(tab, True, True, ch, fl)
+        if got:
+            seen.setdefault(got[0][0], ch)
+    if all(i in seen for i in want):
+        return seen
+    front, seenk = [([], fl)], set()
+    for _ in range(12):
+        if all(i in seen for i in want) or not front:
+            break
+        nxt = []
+        for ch, c in front:
+            try:
+                sts = (LC._win_candidates(tab, True, True, c, 120)
+                       + LC._cyc_candidates(tab, True, True, c, 120)
+                       + LC._rot_candidates(c))
+            except LC.Halt:
+                continue
+            for st in sts:
+                try:
+                    res = LC.sstep(tab, True, True, st, c)
+                except LC.Halt:
+                    continue
+                if res is None:
+                    continue
+                c2 = res[0]
+                k = (c2[0], c2[1], c2[2], c2[3])
+                if k in seenk:
+                    continue
+                seenk.add(k)
+                seen.setdefault(c2[0], ch + [st])
+                nxt.append((ch + [st], c2))
+        front = nxt
+    return seen
+
+
+def closure_data_gray(cert, tab):
+    """The class arms of a one-phase (Gray, 2) family, for LadderCheck 10.
+
+    LADDER_PLAN 4i measured the coverage and 4n re-derived it from the
+    machines: four classes of `Class`'s own shape cover every interior string
+    of every width, split by the PARITY of the digit sum -- which is the
+    value's low bit, and +2 preserves it.  So the arms are one per CLASS and
+    arm index, plus one fill arm per WIDTH index; the fill arm's left-hand
+    side is the top of the width, [1-p] ++ 0^(k-2) ++ [1], the largest MEMBER
+    and not the largest value."""
+    fam = cert['family']
+    fills = cert.get('fill_by_phase') or [cert['fill']]
+    if fam.get('code') != 'gray':
+        raise NoClosure('code %s is not gray' % fam.get('code'))
+    if fam['base'] != 2:
+        raise NoClosure('base %d: LadderCheck states (Gray, 2) at base 2'
+                        % fam['base'])
+    if fam.get('value_step_per_anchor_visit') != 2:
+        raise NoClosure('step %d: LadderCheck states (Gray, 2)'
+                        % fam.get('value_step_per_anchor_visit', 1))
+    if fam.get('weights') is not None:
+        raise NoClosure('numeration %s is not positional base-2'
+                        % fam.get('numeration'))
+    if len(fills) != 1:
+        raise NoClosure('%d phases: the gray board is one-phase (4n measured '
+                        'all six gray rows at one)' % len(fills))
+    f = fills[0]
+    if f['lands_in_phase'] != 0:
+        raise NoClosure('the fill lands in phase %d of 1'
+                        % f['lands_in_phase'])
+    if f['target_fill_digit'] != 0:
+        raise NoClosure('the fill digit is %d: with a fill digit of 1 the '
+                        "target's digit sum alternates with the width, so the "
+                        'parity is not an invariant at all'
+                        % f['target_fill_digit'])
+    tails = [tuple(t) for t in
+             (fam.get('terminators_by_phase') or [fam['terminator']])]
+    if cert['boot'].get('phase', 0) != 0:
+        raise NoClosure('the boot is read in phase %d of 1'
+                        % cert['boot'].get('phase', 0))
+    live = (cert.get('liveness') or {}).get('states_infinitely_often')
+    if live != ''.join(s[-1] for s in ST):
+        raise NoClosure('liveness %r: the gray board is board_neverqh only '
+                        '(no gray core row quasihalts)' % live)
+
+    digs = [tuple(w) for w in fam['digits']]
+    pre = tuple(fam['near_head_prefix'])
+    q = ord(fam['state']) - 65
+    hs = fam['head']
+    left = fam['side'] == 'L'
+    el, er = (not left), left
+
+    boot = cert['boot']
+    ds0 = list(boot['digits_lsb_first'])
+    if len(ds0) < 2:
+        raise NoClosure('the boot digit string %r is shorter than two digits, '
+                        'and the top of a width needs two to spell' % ds0)
+    p = sum(ds0) % 2
+    cells = list(pre)
+    for d in ds0:
+        cells.extend(digs[d])
+    cells.extend(tails[0])
+    if cells != list(boot['cells']):
+        raise NoClosure('boot cells %r are not the family at %r'
+                        % (boot['cells'], ds0))
+    fpar = (sum(f['target_prefix']) + sum(f['target_suffix'])) % 2
+    if fpar != p:
+        raise NoClosure("the fill target's digit sum has parity %d and the "
+                        "family's members have parity %d, so the fill leaves "
+                        'the family' % (fpar, p))
+
+    fpre, fsuf = list(f['target_prefix']), list(f['target_suffix'])
+    mid = f['target_fill_digit']
+    mf = len(fpre) + len(fsuf)
+
+    def cellsof(ds):
+        out = []
+        for d in ds:
+            out.extend(digs[d])
+        return tuple(out)
+
+    def conf(other, sd):
+        OT = (other, (), 0, 0, ())
+        return (q, sd, hs, OT) if left else (q, OT, hs, sd)
+
+    def derive(e0, e1, c0, c1, what):
+        ch = LC.derive_chain(tab, e0, e1, c0, c1, maxdepth=32, nmax=120,
+                             lift=True)
+        if ch is None:
+            raise NoClosure('%s: no chain' % what)
+        got = LC.srun(tab, e0, e1, ch, c0)
+        if got is None or got[0] != c1:
+            raise NoClosure('%s: chain lands off the rhs' % what)
+        if got[2] == 0:
+            raise NoClosure('%s: zero-step rule' % what)
+        return ch, got[1], got[2]
+
+    def interior_at(other, n0, stride):
+        got = []
+        for i in range(4):
+            u, t, w, u2, t2, w2 = g2c(p, i)
+            for r in range(n0 + stride):
+                s = 0 if r < n0 else stride
+                c0 = conf(other, blk(pre + cellsof(u) + digs[t] * r,
+                                     digs[t], s, cellsof(w)))
+                c1 = conf(other, blk(pre + cellsof(u2) + digs[t2] * r,
+                                     digs[t2], s, cellsof(w2)))
+                if c0 == c1:
+                    return None
+                try:
+                    ch, ca, cb = derive(el, er, c0, c1,
+                                        'interior class %d r=%d' % (i, r))
+                except NoClosure:
+                    return None
+                got.append((i, r, s, c0, c1, ch, ca, cb))
+        return got
+
+    def fill_at(other, n0, stride):
+        got = []
+        for r in range(2, n0 + stride):
+            s = 0 if r < n0 else stride
+            run = r - 2
+            total = r + f['widens_by'] - mf
+            if total < 0:
+                return None
+            hit = None
+            for w1 in _splits(run):
+                lhs = conf(other, blk(pre + cellsof([1 - p]) + digs[0] * w1,
+                                      digs[0], s,
+                                      digs[0] * (run - w1) + cellsof([1])
+                                      + tails[0]))
+                for m1 in _splits(total):
+                    rhs = conf(other,
+                               blk(pre + cellsof(fpre) + digs[mid] * m1,
+                                   digs[mid], s,
+                                   digs[mid] * (total - m1) + cellsof(fsuf)
+                                   + tails[0]))
+                    if lhs == rhs:
+                        continue
+                    try:
+                        ch, ca, cb = derive(True, True, lhs, rhs,
+                                            'fill r=%d' % r)
+                    except NoClosure:
+                        continue
+                    hit = (r, s, w1, run - w1, m1, total - m1, lhs, rhs,
+                           ch, ca, cb)
+                    break
+                if hit:
+                    break
+            if hit is None:
+                return None
+            got.append(hit)
+        return got
+
+    best = None
+    for other in _gray_far_sides(cert, tab):
+        inter = n0i = sti = None
+        for n0, stride in ARM_GRID:
+            hit = interior_at(other, n0, stride)
+            if hit is not None:
+                inter, n0i, sti = hit, n0, stride
+                break
+        fill = n0f = stf = None
+        for n0, stride in ARM_GRID:
+            if n0 < 2 or n0 + stride < 3:
+                continue      # no width is below 2, and there must be an arm
+            hit = fill_at(other, n0, stride)
+            if hit is not None:
+                fill, n0f, stf = hit, n0, stride
+                break
+        score = (inter is not None) + (fill is not None)
+        if best is None or score > best[0]:
+            best = (score, other, inter, n0i, sti, fill, n0f, stf)
+        if score == 2:
+            break
+    _sc, other, inter, n0i, sti, fill, n0f, stf = best
+    if inter is None:
+        raise NoClosure('interior class arm: no chain at any threshold 0..3 '
+                        'and stride 1..4')
+    if fill is None:
+        raise NoClosure('fill arm: no chain at any threshold 2..3, stride '
+                        '1..4 or copy split')
+
+    want = list(range(4))
+    vis = {}
+    for (r, _s, _w1, _w2, _m1, _m2, lhs, _rhs, fch, _ca, _cb) in fill:
+        seen = _gray_visits(tab, lhs, fch, want)
+        gap = [ST[i] for i in want if i not in seen]
+        if gap:
+            raise NoClosure('the fill anchor at width index %d reaches no %s'
+                            % (r, ','.join(gap)))
+        vis[r] = {i: seen[i] for i in want}
+
+    return dict(gray=True, p=p, el=el, er=er, other=list(other),
+                inter=inter, n0i=n0i, sti=sti,
+                fill=fill, n0f=n0f, stf=stf, nph=1,
+                ds0=ds0, t0=boot['steps_from_blank'], vis=vis, want=want,
+                qa=None, sq=None, pv=0, ph0=0, kcyc=[0], b=2)
+
+
+CLOSURE_G_HEAD = '''
+(** ** The closure: from the RULES to [NeverQuasiHaltsSt], at [(Gray, 2)]
+
+    The arms below are the case split of [LadderCheck.gray_split], built from
+    the FAMILY rather than mined: one interior arm per CLASS (there are four,
+    LADDER_PLAN 4i) and per arm index, and one fill arm per WIDTH index.
+    Every certificate arm above is one of these with its run lengths pinned to
+    their lower bounds, which is why %(nc)d of them collapse to %(na)d here.
+
+    The family's parity is %(p)d.  That is not a choice: it is the digit sum
+    of the boot, it is the value's low bit, [+2] preserves it, and it is what
+    makes "member of this width" a predicate rather than "every string of this
+    width".  The four classes and the top's shape are read off it.
+
+    The interior class runs at threshold %(n0i)d stride %(sti)d, the fill
+    class at threshold %(n0f)d stride %(stf)d.  [boardG_neverqh] consumes
+    them, the boot, and one chain per state per fill arm. *)
+'''
+
+CLOSURE_G_IARM = '''Definition iarm%(i)d_%(r)d_%(mid)s : LRule :=
+  mkLRule (%(lhs)s)
+          (%(rhs)s) %(ca)d %(cb)d.
+Definition ch_iarm%(i)d_%(r)d_%(mid)s : list rstep := %(ch)s.
+Lemma ok_iarm%(i)d_%(r)d_%(mid)s :
+  check_arm tm %(el)s %(er)s rules iarm%(i)d_%(r)d_%(mid)s
+            ch_iarm%(i)d_%(r)d_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+'''
+
+CLOSURE_G_FARM = '''Definition farm%(r)d_%(mid)s : LRule :=
+  mkLRule (%(lhs)s)
+          (%(rhs)s) %(ca)d %(cb)d.
+Definition ch_farm%(r)d_%(mid)s : list rstep := %(ch)s.
+Lemma ok_farm%(r)d_%(mid)s :
+  check_arm tm true true rules farm%(r)d_%(mid)s ch_farm%(r)d_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+'''
+
+CLOSURE_G_DISP = '''Definition iarm_%(mid)s (i r : nat) : LRule :=
+  match i, r with
+  %(ibr)s
+  | _, _ => iarm0_0_%(mid)s   (* unreachable: i < 4 and r < N0i + sti *)
+  end.
+
+(** The fill arms, indexed by the WIDTH.  Both tails are known empty -- they
+    are the only arms that see the end of the counter -- and the left-hand
+    side is the top of the width: [%(top)d], then a run of zeros, then [1].
+    That is the largest MEMBER and not the largest value ([2^k - 1] has the
+    wrong parity and is not a member at all), which is why it has a fixed word
+    at each end.  [fw1]/[fw2] say how the top's concrete copies of the run
+    divide about the block and [fm1]/[fm2] the fill target's. *)
+Definition farm_%(mid)s (r : nat) : LRule :=
+  match r with
+  %(fbr)s
+  | _ => farm%(r0)d_%(mid)s   (* unreachable: 2 <= r < N0f + stf *)
+  end.
+
+Definition fw1_%(mid)s (r : nat) : nat := match r with %(b1)s | _ => 0 end.
+Definition fw2_%(mid)s (r : nat) : nat := match r with %(b2)s | _ => 0 end.
+Definition fm1_%(mid)s (r : nat) : nat := match r with %(b3)s | _ => 0 end.
+Definition fm2_%(mid)s (r : nat) : nat := match r with %(b4)s | _ => 0 end.
+
+(** One chain per state per fill arm.  [vis_of_run] turns each into a visit
+    and [topsG_cofinal] says the tops keep coming, which is all the liveness
+    needs. *)
+Definition vis_%(mid)s (r : nat) (q : St) : list lstep :=
+  match r, q with
+  %(vb)s
+  | _, _ => []
+  end.
+
+'''
+
+CLOSURE_G_THM = '''Lemma iarm_sound_%(mid)s : forall i r,
+  i < 4 -> r < %(n0i)d + %(sti)d ->
+  RuleSound tm (negb (fm_left FAM)) (fm_left FAM) (iarm_%(mid)s i r).
+Proof.
+  intros i r Hi Hr.
+%(isound)s  exfalso; lia.
+Qed.
+
+Lemma iarm_lhs_%(mid)s : forall i r, i < 4 -> r < %(n0i)d + %(sti)d ->
+  lr_lhs (iarm_%(mid)s i r)
+    = cls_conf FAM (cls_side FAM (cs_u (g2c %(p)d i)) (cs_t (g2c %(p)d i)) r
+                      (astride %(n0i)d %(sti)d r) (cs_w (g2c %(p)d i))).
+Proof.
+  intros i r Hi Hr.
+%(icomp)s  exfalso; lia.
+Qed.
+
+Lemma iarm_rhs_%(mid)s : forall i r, i < 4 -> r < %(n0i)d + %(sti)d ->
+  lr_rhs (iarm_%(mid)s i r)
+    = cls_conf FAM (cls_side FAM (cs_u' (g2c %(p)d i)) (cs_t' (g2c %(p)d i)) r
+                      (astride %(n0i)d %(sti)d r) (cs_w' (g2c %(p)d i))).
+Proof.
+  intros i r Hi Hr.
+%(icomp)s  exfalso; lia.
+Qed.
+
+Lemma iarm_cb_%(mid)s : forall i r, i < 4 -> r < %(n0i)d + %(sti)d ->
+  0 < lr_cb (iarm_%(mid)s i r).
+Proof.
+  intros i r Hi Hr.
+%(ilia)s  exfalso; lia.
+Qed.
+
+Lemma farm_sound_%(mid)s : forall r, 2 <= r -> r < %(n0f)d + %(stf)d ->
+  RuleSound tm true true (farm_%(mid)s r).
+Proof.
+  intros r H2 Hr.
+%(fsound)s  exfalso; lia.
+Qed.
+
+Lemma farm_lhs_%(mid)s : forall r, 2 <= r -> r < %(n0f)d + %(stf)d ->
+  lr_lhs (farm_%(mid)s r)
+    = cls_conf FAM (run_side FAM 0 (fw1_%(mid)s r)
+                      (astride %(n0f)d %(stf)d r) (fw2_%(mid)s r) 0
+                      [1 - %(p)d] [1]).
+Proof.
+  intros r H2 Hr.
+%(fcomp)s  exfalso; lia.
+Qed.
+
+Lemma farm_rhs_%(mid)s : forall r, 2 <= r -> r < %(n0f)d + %(stf)d ->
+  lr_rhs (farm_%(mid)s r)
+    = cls_conf FAM (run_side FAM (f_mid (fam_fill FAM 0)) (fm1_%(mid)s r)
+                      (astride %(n0f)d %(stf)d r) (fm2_%(mid)s r) 0
+                      (f_pre (fam_fill FAM 0)) (f_suf (fam_fill FAM 0))).
+Proof.
+  intros r H2 Hr.
+%(fcomp)s  exfalso; lia.
+Qed.
+
+Lemma farm_cb_%(mid)s : forall r, 2 <= r -> r < %(n0f)d + %(stf)d ->
+  0 < lr_cb (farm_%(mid)s r).
+Proof.
+  intros r H2 Hr.
+%(flia)s  exfalso; lia.
+Qed.
+
+Lemma fw_%(mid)s : forall r, 2 <= r -> r < %(n0f)d + %(stf)d ->
+  fw1_%(mid)s r + fw2_%(mid)s r + 2 = r.
+Proof.
+  intros r H2 Hr.
+%(flia)s  exfalso; lia.
+Qed.
+
+Lemma fm12_%(mid)s : forall r, 2 <= r -> r < %(n0f)d + %(stf)d ->
+  fm1_%(mid)s r + fm2_%(mid)s r
+  + (length (f_pre (fam_fill FAM 0)) + length (f_suf (fam_fill FAM 0)))
+  = r + f_s (fam_fill FAM 0).
+Proof.
+  intros r H2 Hr.
+%(flia)s  exfalso; lia.
+Qed.
+
+Lemma boot_%(mid)s :
+  csteps tm %(t0)d c0 = Some (fam_cfg FAM (%(ds0)s, 0, 0)).
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma vis_ok_%(mid)s : forall r q, 2 <= r -> r < %(n0f)d + %(stf)d ->
+  srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r)) = Some q.
+Proof.
+  intros r q H2 Hr.
+%(fvis)s  exfalso; lia.
+Qed.
+
+(** The machine-level theorem.  Every argument is either a [RuleSound] the
+    Stage-B kernel discharged, or an equation two [vm_compute]s decide -- and
+    the PARITY, which is one more of the second kind. *)
+Theorem nqh_%(mid)s : NeverQuasiHaltsSt tm.
+Proof.
+  apply (boardG_neverqh tm FAM %(p)d iarm_%(mid)s %(n0i)d %(sti)d
+                        farm_%(mid)s %(n0f)d %(stf)d
+                        fw1_%(mid)s fw2_%(mid)s fm1_%(mid)s fm2_%(mid)s
+                        vis_%(mid)s %(ds0)s %(t0)d).
+  - vm_compute; reflexivity.
+  - vm_compute; reflexivity.
+  - vm_compute; reflexivity.
+  - lia.
+  - vm_compute; repeat constructor.
+  - vm_compute; repeat constructor.
+  - vm_compute; lia.
+  - vm_compute; lia.
+  - vm_compute; reflexivity.
+  - intros k Hk.
+    rewrite (filled_parity FAM 0 k ltac:(vm_compute; reflexivity)).
+    vm_compute; reflexivity.
+  - repeat constructor.
+  - vm_compute; lia.
+  - vm_compute; reflexivity.
+  - exact boot_%(mid)s.
+  - lia.
+  - exact iarm_sound_%(mid)s.
+  - exact iarm_lhs_%(mid)s.
+  - exact iarm_rhs_%(mid)s.
+  - exact iarm_cb_%(mid)s.
+  - lia.
+  - lia.
+  - exact fw_%(mid)s.
+  - exact fm12_%(mid)s.
+  - exact farm_sound_%(mid)s.
+  - exact farm_lhs_%(mid)s.
+  - exact farm_rhs_%(mid)s.
+  - exact farm_cb_%(mid)s.
+  - exact vis_ok_%(mid)s.
+Qed.
+'''
+
+
+def emit_closure_gray(cert, tab, mid):
+    """The Coq for LadderCheck.boardG_neverqh, or a note on what stopped it."""
+    try:
+        cd = closure_data_gray(cert, tab)
+    except NoClosure as e:
+        return CLOSURE_NONE % e, None
+
+    p = cd['p']
+    n0i, sti, n0f, stf = cd['n0i'], cd['sti'], cd['n0f'], cd['stf']
+    nA, nF = n0i + sti, n0f + stf
+    el, er = cd['el'], cd['er']
+    L = [CLOSURE_G_HEAD % dict(nc=len(cert['arms']),
+                               na=len(cd['inter']) + len(cd['fill']),
+                               p=p, n0i=n0i, sti=sti, n0f=n0f, stf=stf)]
+    for i, r, _s, c0, c1, ch, ca, cb in cd['inter']:
+        L.append(CLOSURE_G_IARM % dict(
+            i=i, r=r, mid=mid, lhs=coq_conf(c0), rhs=coq_conf(c1), ca=ca,
+            cb=cb, ch=coq_chain(ch), el=str(el).lower(), er=str(er).lower()))
+    for r, _s, _w1, _w2, _m1, _m2, lhs, rhs, ch, ca, cb in cd['fill']:
+        L.append(CLOSURE_G_FARM % dict(
+            r=r, mid=mid, lhs=coq_conf(lhs), rhs=coq_conf(rhs), ca=ca, cb=cb,
+            ch=coq_chain(ch)))
+    L.append(CLOSURE_G_DISP % dict(
+        mid=mid, top=1 - p, r0=cd['fill'][0][0],
+        ibr='\n  '.join('| %d, %d => iarm%d_%d_%s' % (i, r, i, r, mid)
+                        for i, r, *_ in cd['inter']),
+        fbr='\n  '.join('| %d => farm%d_%s' % (r, r, mid)
+                        for r, *_ in cd['fill']),
+        b1=' '.join('| %d => %d' % (r, w1) for r, _s, w1, *_ in cd['fill']),
+        b2=' '.join('| %d => %d' % (r, w2)
+                    for r, _s, _w1, w2, *_ in cd['fill']),
+        b3=' '.join('| %d => %d' % (r, m1)
+                    for r, _s, _w1, _w2, m1, *_ in cd['fill']),
+        b4=' '.join('| %d => %d' % (r, m2)
+                    for r, _s, _w1, _w2, _m1, m2, *_ in cd['fill']),
+        vb='\n  '.join('| %d, %s => %s' % (r, ST[i], coq_chain_l(ch))
+                       for r in sorted(cd['vis'])
+                       for i, ch in sorted(cd['vis'][r].items()))))
+
+    def ibranches(body):
+        """One brace-delimited branch per (class index, arm index)."""
+        out = []
+        for i in range(4):
+            rb = []
+            for r in range(nA):
+                rb.append('    destruct r as [|r].\n    { %s. }\n'
+                          % (body % dict(i=i, r=r, mid=mid)))
+            out.append('  destruct i as [|i].\n  {\n%s    exfalso; lia.\n  }\n'
+                       % ''.join(rb))
+        return ''.join(out)
+
+    def fbranches(body):
+        """One per fill arm index; 0 and 1 are dead, no width is below 2."""
+        return _rbranches(nF, lambda r: (body % dict(r=r, mid=mid)) + '.',
+                          lo=2)
+
+    L.append(CLOSURE_G_THM % dict(
+        mid=mid, p=p, t0=cd['t0'], ds0=clist(cd['ds0'], str),
+        n0i=n0i, sti=sti, n0f=n0f, stf=stf,
+        isound=ibranches('eapply arm_sound; [exact rules_sound_%(mid)s '
+                         '| exact ok_iarm%(i)d_%(r)d_%(mid)s]'),
+        icomp=ibranches('vm_compute; reflexivity'),
+        ilia=ibranches('vm_compute; lia'),
+        fsound=fbranches('eapply arm_sound; [exact rules_sound_%(mid)s '
+                         '| exact ok_farm%(r)d_%(mid)s]'),
+        fcomp=fbranches('vm_compute; reflexivity'),
+        flia=fbranches('vm_compute; lia'),
+        fvis=fbranches('destruct q; vm_compute; reflexivity')))
+    return ''.join(L), cd
+
+
 def emit(cert, out):
     spec = cert['spec']
     mid = mach_id(spec)
     tab = parse_tm(spec)
+
+    # The GRAY closure may need the far side the machine SPELLS at the anchor
+    # rather than the one the certificate carries (LADDER_PLAN 4n): the same
+    # tape under [lift], a different [cconf], and every arm is stated on
+    # [cconf].  Which one it is is decided while the arms are derived, so the
+    # gray closure runs FIRST and the [Fam] record below is written from what
+    # it chose.  The binary path is untouched and still runs last.
+    gray = cert['family'].get('code') == 'gray'
+    closure, cd = (emit_closure_gray(cert, tab, mid) if gray else (None, None))
+    if gray and cd is not None:
+        cert['family']['other_side_cells'] = list(cd['other'])
     L = []
     L.append(HEADER % dict(mid=mid, spec=spec, table=coq_table(spec)))
 
@@ -1114,7 +1730,8 @@ Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_%(nm)s_%(mid)s]. 
     right-hand side in exactly the certificate's step count. *)
 ''' % dict(ng=len(good), nt=len(cert['arms'])))
 
-    closure, cd = emit_closure(cert, tab, mid)
+    if not gray:
+        closure, cd = emit_closure(cert, tab, mid)
     L.append(closure)
 
     open(out, 'w').write(''.join(L))

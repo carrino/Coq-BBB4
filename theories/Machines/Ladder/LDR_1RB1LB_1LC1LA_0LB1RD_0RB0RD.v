@@ -644,7 +644,7 @@ Qed.
 Lemma iarm_lhs_1RB1LB_1LC1LA_0LB1RD_0RB0RD : forall d r,
   d < fm_b FAM - 1 -> r < 0 + 1 ->
   lr_lhs (iarm_1RB1LB_1LC1LA_0LB1RD_0RB0RD d r)
-    = cls_conf FAM (cls_side FAM (fm_b FAM - 1) r (astride 0 1 r)
+    = cls_conf FAM (cls_side FAM [] (fm_b FAM - 1) r (astride 0 1 r)
                       [d]).
 Proof.
   intros d r Hd Hr. vm_compute in Hd.
@@ -660,7 +660,7 @@ Qed.
 Lemma iarm_rhs_1RB1LB_1LC1LA_0LB1RD_0RB0RD : forall d r,
   d < fm_b FAM - 1 -> r < 0 + 1 ->
   lr_rhs (iarm_1RB1LB_1LC1LA_0LB1RD_0RB0RD d r)
-    = cls_conf FAM (cls_side FAM 0 r (astride 0 1 r) [S d]).
+    = cls_conf FAM (cls_side FAM [] 0 r (astride 0 1 r) [S d]).
 Proof.
   intros d r Hd Hr. vm_compute in Hd.
   destruct d as [|d].
