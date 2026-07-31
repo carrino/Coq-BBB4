@@ -3954,6 +3954,14 @@ traps._
   13 boards took 59 → 52, not 59 → 46.  Quote `settled by a board` when the
   claim is about rows decided.
 - **Build note.**  The full tree is ~2 h at `-j3` and
-  `theories/Machines/IRules_Batch_00.v` / `_01.v` are ~16 CPU-minutes EACH at
-  the very end, so the last quarter looks stalled and is not.  A single
-  `valfam.py` row (~25 s) alongside a build is fine; the 61-row sweep is not.
+  `theories/Machines/IRules_Batch_*.v` are ~16 CPU-minutes EACH at the very
+  end, so the last quarter looks stalled and is not.  A single `valfam.py`
+  row (~25 s) alongside a build is fine; the 61-row sweep is not.
+- **`IRules_Batch_*` OOM-kill each other at `-j3`** on the 15 GB box —
+  "Killed", `Error 137`.  The sources are a few KB; the `vm_compute` is not.
+  Build those nine SERIALLY and the rest at `-j3`.  A `-j3` run that lands
+  three of them together throws away ~40 minutes.
+- **`board_ladder.py` rewrites `_CoqProject` under a running `make` and the
+  build then LIES**: `Makefile.coq` is generated from `_CoqProject`, so
+  changing it mid-build invalidates the makefile and `make` can exit 0 with
+  hundreds of files unbuilt.  Board first, then build.
