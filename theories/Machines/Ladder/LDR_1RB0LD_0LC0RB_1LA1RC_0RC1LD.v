@@ -256,7 +256,7 @@ Proof. eapply arm_sound; [exact rules_sound_1RB0LD_0LC0RB_1LA1RC_0RC1LD | exact 
     affine, and no arithmetic progression makes a quadratic affine.  That is
     why every threshold 0..3 and every stride 1..4 fail together.
 
-    This is LADDER_PLAN 5's non-affine carry ripple, and it is now measured
+    This is LADDER_PLAN §4i's non-affine carry ripple, and it is now measured
     rather than read off the shape of the failure.  It agrees with
     docs/QUAD_TERMINAL_MEASUREMENT.md, which measures this machine's
     terminal at exactly [(k+2)^2] by a different route. *)

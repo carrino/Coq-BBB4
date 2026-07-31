@@ -109,6 +109,11 @@ snapshot from 2026-07-06 (pre-harvest) — read the residual off the Coq census
 
 ## The two fronts (and the discipline)
 
+_Written 2026-07-24, and **the holdout front has since closed** — tower #20,
+the last of the 27, was boarded on 2026-07-28, so everything still open is
+residue.  Kept because the discipline it states is why that happened.  See
+"Two vocabulary corrections" below._
+
 - **Residue → PORT WORK.** mxdys (presumably) already solved these — see
   the list-absence CAVEAT above; we're catching up in
   Coq because our in-walk tier is weaker. Bounded, mechanical, high-
@@ -128,8 +133,8 @@ signal it is aimed wrong.
 
 `python3 tools/closeout/audit.py` is the live scoreboard, and
 [issue #61](https://github.com/carrino/Coq-BBB4/issues/61) tracks it wave
-by wave.  As of 2026-07-31: **5,103 of the frozen 5,156 settled (99.0%)**,
-leaving **39 undecided core machines + 14 0RB shadows**.
+by wave.  As of 2026-07-31: **5,114 of the frozen 5,156 settled (99.2%)**,
+leaving **30 undecided core machines + 12 0RB shadows** — 42 rows.
 
 Two vocabulary corrections, because the situation changed under older
 notes in this tree:
@@ -160,8 +165,13 @@ left undischarged. It does **NOT** mean shrinking the 5,156 inside
 `census_decided` (that stays frozen — see §`boarded` above), and it does
 **NOT** touch the 27 (research front, out of scope here).
 
-Where we are: **964 / 5,129 boarded** (wave-6), ~**4,165 residue machines
-still unboarded**. Getting that gap to 0 is bounded, mechanical port work —
+Where we were when this plan was written: **964 / 5,129 boarded** (wave-6),
+~**4,165 residue machines still unboarded**.  _(Historical.  The live figure
+is in the scoreboard section above — 5,114 of 5,156 settled, 42 rows left —
+and the six steps below are the plan that got it there, kept for its design
+record rather than as a to-do list.  Steps 1–3 and 6 are done; what is left
+of the residue is the ladder/ReachSt work in `docs/RESIDUE_MAP.md`, not a
+param sweep.)_  Getting that gap to 0 is bounded, mechanical port work —
 mxdys presumably decided every one of these (list-absence CAVEAT above:
 a strong prior, not a guarantee), so a witness is very likely to exist. The steps, cheapest-leverage first:
 
@@ -191,7 +201,9 @@ a strong prior, not a guarantee), so a witness is very likely to exist. The step
 6. **Wire the closeout (Route A).** When every residue machine is staged,
    `app`-chain the per-file `Forall`s into `Forall boarded D_census` in a
    `Census/Assembly.v` — **no native_compute census walk, `D_census`
-   unchanged.** That closes the residue front.
+   unchanged.** That closes the residue front.  _(Done, and it landed as
+   `theories/Closeout/` — `CB_*.v` stages plus `Closeout.v` — not as
+   `Census/Assembly.v`.)_
 
 **The shortcut was tried and is dead.** The hammer probe (next section) ran
 2026-07-24: NO machine determinizes at any bounded history — the measure/

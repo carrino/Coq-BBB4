@@ -116,19 +116,17 @@ boards, and not before.  **Five of the twelve sit on three of the four
 QUADRATIC rows** (§4p), so they are not coming back either.  Two things §4o
 paid for, when you do free one:
 
-* **`shadowlib.classify` drops a shadow from `shadow_rows.tsv` the moment its
-  partner leaves the unproven set** — which is exactly when it becomes
-  actionable.  So `gen_shadow.py --all`, whose input is that file, cannot see
-  the row you just freed.  Drive it with the explicit form and read its
-  `qstar`/`prefix`/`partner`/`ops` out of the previous revision of the table:
-
-      git show HEAD~1:tools/closeout/shadow_rows.tsv
-      python3 tools/closeout/gen_shadow.py --spec SHADOW --partner CORE \
-              --qs B --t 1 --ops mirror --out theories/Machines/Counters --check
-
-  §4o boarded `0RB0LA_1LA1RC_0RD1RD_1LB0LB` and
-  `0RB0LA_1RC1LA_1RD0RD_1LB0LB` exactly this way.  Fixing `classify` so a
-  freed row survives one generation is a real improvement and worth doing.
+* **You do not have to do anything.  A freed shadow now boards itself.**
+  §4o hit this the hard way: `shadowlib.classify` used to drop a shadow from
+  `shadow_rows.tsv` the moment its partner left the unproven set — exactly
+  when it became actionable — so `gen_shadow.py --all`, whose input is that
+  file, was blind to the rows that were ready, and §4o drove both of them by
+  hand off `git show HEAD~1:tools/closeout/shadow_rows.tsv`.  **Fixed:**
+  `classify` searches partners over the boarded set too and reports a third
+  category, `freed`; `gen_shadow.py --harvest` boards every one; and
+  `make closeout` runs it between two `inventory.py` passes.  So board a core
+  row, run `make closeout`, and its shadows come with it.  `audit.py` prints a
+  freed row that somehow survives, because it is the cheapest row on the list.
 * The generator reads the partner's PACKAGE off `frozen_map.tsv` rather than
   hard-coding `BBB4.Machines.Counters` (§4o: ladder boards live under
   `BBB4.Machines.Ladder`).  `gen_shadow.py --regress` is `OK, 4 of 4` on a
@@ -206,8 +204,14 @@ Resolving one by hand silently reverts whichever side's boards you did not
 notice.  Instead: `git checkout --theirs` to get a tree, then re-derive —
 
     python3 tools/closeout/inventory.py
+    python3 tools/closeout/gen_shadow.py --harvest   # boards any freed shadow
+    python3 tools/closeout/inventory.py              # ...and picks it up
     python3 tools/closeout/gen_stages.py
     python3 tools/closeout/audit.py     # must print CLOSEOUT AUDIT: OK
+
+`make closeout` runs exactly that sequence.  Driving it by hand and skipping
+the `--harvest` line is the one way a freed shadow still ends up sitting in
+`core_rows.txt`; `audit.py` prints it if it does.
 
 The board `.v` files are the source of truth and never conflict, because they
 are different files.

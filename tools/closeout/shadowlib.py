@@ -9,13 +9,34 @@ generated SH stage proves it satisfies the [skipped] disjunct
 (Closeout/ShadowKit.v), and it resolves automatically when its core row is
 boarded.
 
-classify(remaining) -> (core_rows, shadows) where each shadow is a dict:
+classify(remaining, boarded) -> (core_rows, shadows, freed).  A shadow dict is:
   spec     the row text
   qs, t    the first 1-writing state and the blank-prefix length
-  partner  the core row text its re-root reduces to
+  partner  the row text its re-root reduces to
   ops      constructor ops, application order: [('mirror',)] / [('swap',u,v)]
 The emitted ops are re-verified here (partner <= ops(swap(row))) and, of
 course, by the kernel when the stage compiles.
+
+THE PARTNER POOL IS THE POINT.  A shadow satisfies the [skipped] disjunct
+only while its partner is still DEFERRED, so the moment the partner boards
+this row stops being a shadow and needs a board of its own -- which is
+exactly when the transport becomes buildable.  Searching only `remaining`
+therefore loses the link at the one moment it is worth something: the row
+falls out of `shadow_rows.tsv` into `core_rows.txt` carrying none of the
+(qs, t, partner, ops) needed to board it, and someone has to dig them out of
+the previous revision of the table by hand.  #104 did exactly that, twice.
+
+So the pool is `remaining` PLUS `boarded`, and the split is three ways:
+  shadows  partner still deferred  -> rides the skipped disjunct, no board
+  freed    partner already boarded -> ACTIONABLE: gen_shadow.py --harvest
+  core     everything else
+A freed row is still unproven, so it is also in `core_rows.txt` -- `freed` is
+an annotation on part of the core, not a fourth table, and the audit's
+partition invariant is untouched.  Harvesting one boards it and it leaves
+both lists on the next inventory pass.
+
+A boarded partner is preferred over a deferred one: both are true, but only
+the first settles the row instead of deferring it.
 """
 import itertools
 
@@ -82,9 +103,39 @@ _OPS_CHOICES += [[('swap',) + p, ('swap',) + q] for p in _PAIRS for q in _PAIRS
 _OPS_CHOICES = _OPS_CHOICES + [ops + [('mirror',)] for ops in _OPS_CHOICES]
 
 
-def classify(remaining):
+def _search(m, qs, pool, exclude):
+    """First (ops, partner) in `pool` whose row the re-root completes to.
+
+    `pool` is a list of (spec, parsed).  Ops are tried shortest-first, so a
+    row that matches with no relabelling at all is reported that way.
+    """
+    base = swap_uv(m, 'A', qs)
+    for ops in _OPS_CHOICES:
+        v = apply_ops(base, ops)
+        for pspec, prow in pool:
+            if pspec in exclude:
+                continue
+            # the partner must itself not be a 0RB row (no shadow chains)
+            if prow[0] is not None and prow[0][0] == '0':
+                continue
+            if le(prow, v):
+                return ops, pspec
+    return None
+
+
+def classify(remaining, boarded=None):
+    """Split `remaining` into core rows, live shadows, and freed shadows.
+
+    `boarded` maps an already-settled row's spec to its board kind
+    ('nqh' / 'iqh' / 'iqhle:<B>'), as `frozen_map.tsv` records it; pass None
+    or {} for the pre-#105 behaviour of searching deferred partners only.
+    """
+    boarded = boarded or {}
     rem_parsed = {s: parse(s) for s in remaining}
-    shadows = []
+    brd_parsed = [(s, parse(s)) for s in sorted(boarded)]
+    rem_pool = sorted(rem_parsed.items())
+
+    shadows, freed = [], []
     shadow_specs = set()
     for spec in remaining:
         m = rem_parsed[spec]
@@ -94,28 +145,34 @@ def classify(remaining):
         if qt is None or qt[0] == 'A':
             continue
         qs, t = qt
-        base = swap_uv(m, 'A', qs)
-        hit = None
-        for ops in _OPS_CHOICES:
-            v = apply_ops(base, ops)
-            for pspec, prow in rem_parsed.items():
-                if pspec == spec or pspec in shadow_specs:
-                    continue
-                # the partner must itself not be a 0RB row (no shadow chains)
-                if prow[0] is not None and prow[0][0] == '0':
-                    continue
-                if le(prow, v):
-                    hit = dict(spec=spec, qs=qs, t=t, partner=pspec, ops=ops)
-                    break
-            if hit:
+        # A boarded partner is preferred: it settles the row rather than
+        # deferring it.  A shadow may never be another shadow's partner, and
+        # never itself.
+        exclude = shadow_specs | {spec}
+        hit, where = None, None
+        for pool, tag in ((brd_parsed, 'freed'), (rem_pool, 'shadow')):
+            r = _search(m, qs, pool, exclude)
+            if r:
+                ops, pspec = r
+                hit = dict(spec=spec, qs=qs, t=t, partner=pspec, ops=ops)
+                where = tag
                 break
-        if hit:
-            assert le(rem_parsed[hit['partner']],
-                      apply_ops(swap_uv(m, 'A', hit['qs']), hit['ops']))
+        if not hit:
+            continue
+        assert le(parse(hit['partner']),
+                  apply_ops(swap_uv(m, 'A', hit['qs']), hit['ops'])), hit
+        if where == 'shadow':
             shadows.append(hit)
             shadow_specs.add(spec)
+        else:
+            hit['partner_kind'] = boarded[hit['partner']]
+            freed.append(hit)
     core = [s for s in remaining if s not in shadow_specs]
-    # partners must all be core rows
+    # a live shadow's partner must be an undecided core row; a freed one's
+    # must NOT be -- that is what makes it freed
     for sh in shadows:
         assert sh['partner'] in core, sh
-    return core, shadows
+    for fr in freed:
+        assert fr['partner'] not in remaining, fr
+        assert fr['spec'] in core, fr
+    return core, shadows, freed

@@ -4297,7 +4297,7 @@ deliverable._
 - **§4n's one-cell far side is real on two more rows and does not rescue
   them.**  Certificate `other_side_cells = [1]`, boot spells `[1;0]`: with the
   certificate's value every flat arm lands off the rhs, with the boot's every
-  one derives.  It also closes §4j's fourth table line — those two rows are
+  one derives.  It also closes §4i's fourth table line — those two rows are
   the "no chain at any n, not yet diagnosed" pair, so it is **four** quadratic
   rows and not two.
 - **The bucket's density and its reachability are on opposite halves.**  All

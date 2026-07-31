@@ -39,7 +39,9 @@ theories/Closeout/CloseoutFinal.v
 #
 # RE-MEASURED, wave 4p: **the nine were not one bucket, and the shared refusal
 # line was the only thing they shared.**  armprobe.py said 5 of 9, and neither
-# half is what LADDER_PLAN 5 read off the failure text.
+# half is what LADDER_PLAN §4i read off the failure text.  (Section 4i, not 5:
+# 5 is "What this is NOT" and says nothing about a carry ripple; the sentence
+# and its measurement table are 4i's.)
 #
 #   * FOUR are base-2 (the 1RB1LA/1RB0LD rows).  Their class fits -- the same
 #     single (Binary, 1) class a boarded row uses -- and their configuration
@@ -47,7 +49,7 @@ theories/Closeout/CloseoutFinal.v
 #     20, 30, 42, ... resp. 12, 18, 26, 36, 48, 62, ...: a SECOND difference
 #     of exactly 2, so quadratic in the run length.  A strided arm is one
 #     chain repeated and no arithmetic progression makes a quadratic affine,
-#     which is why every threshold and stride fail together.  LADDER_PLAN 5's
+#     which is why every threshold and stride fail together.  LADDER_PLAN §4i's
 #     non-affine carry ripple: **CONFIRMED, and now measured.**  It agrees
 #     with docs/QUAD_TERMINAL_MEASUREMENT.md, whose two rows are two of these
 #     four.  These four are not coming back without a new arm shape.
@@ -79,9 +81,11 @@ theories/Closeout/CloseoutFinal.v
 # INTERIOR arm (line 381) -- FOUR rows, all still core, five shadows between
 # them.  The fibonacci five that shared this block boarded in wave 4r.
 #
-# Quadratic interior cost, all four still core, five shadows between the first
-# three (4p: measured; LADDER_PLAN 5 confirmed for these).  These are CLOSED as
-# ladder rows: a wider ARM_GRID cannot reach a quadratic.  Do not re-probe.
+# Quadratic interior cost, all four still core, five shadows between the LAST
+# three -- 2 + 1 + 2, and the 1RB0LD row carries none (shadow_rows.tsv column 4;
+# "the first three" was wrong).  4p: measured on the arm, and LADDER_PLAN §4i's
+# non-affine carry ripple confirmed for these.  These are CLOSED as ladder
+# rows: a wider ARM_GRID cannot reach a quadratic.  Do not re-probe.
 theories/Machines/Ladder/LDR_1RB0LD_0LC0RB_1LA1RC_0RC1LD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA0LC_1LC1RD_0RB0RD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA1RC_0LD0RC_1LD0RB.v

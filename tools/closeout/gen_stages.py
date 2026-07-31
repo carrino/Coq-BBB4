@@ -191,7 +191,12 @@ def main():
     # ---- shadow classification (Closeout/ShadowKit.v's skipped disjunct) ----
     sys.path.insert(0, os.path.join(ROOT, 'tools/closeout'))
     import shadowlib
-    core_specs, shadows = shadowlib.classify(remaining)
+    # Partners are searched over the BOARDED rows too, so a row whose partner
+    # has already boarded is reported as `freed` -- actionable, not lost.  It
+    # is still unproven, so it is also in core_specs; `make closeout` runs
+    # gen_shadow.py --harvest to board it.
+    boarded_kind = {r[0]: r[1] for r in rows}
+    core_specs, shadows, freed = shadowlib.classify(remaining, boarded_kind)
     with open(os.path.join(ROOT, 'tools/closeout/core_rows.txt'), 'w') as f:
         f.write('\n'.join(core_specs) + '\n')
     with open(os.path.join(ROOT, 'tools/closeout/shadow_rows.tsv'), 'w') as f:
@@ -200,6 +205,13 @@ def main():
             f.write('%s\t%s\t%d\t%s\t%s\n' % (
                 sh['spec'], sh['qs'], sh['t'], sh['partner'],
                 ','.join(':'.join(o) for o in sh['ops'])))
+    if freed:
+        print('%d core row(s) are re-root shadows of a BOARDED row and can be '
+              'boarded now:' % len(freed))
+        for f in freed:
+            print('  %s  (partner %s, %s)'
+                  % (f['spec'], f['partner'], f['partner_kind']))
+        print('  -> python3 tools/closeout/gen_shadow.py --harvest')
 
     nwrote = 0
     stages = [rows[i:i + CHUNK] for i in range(0, len(rows), CHUNK)]

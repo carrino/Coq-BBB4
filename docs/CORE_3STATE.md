@@ -260,6 +260,31 @@ numeral module** — the analogue of `Counters/TernCounter.v` one notch out:
   `LapGlueIx`-style glue (a Fibonacci counter has no `positive` to index by,
   exactly as base 3 did not).
 
+**Update (later the same day — the numeration is now pinned, not just
+named).**  `docs/LADDER_PLAN.md` §4p ran the five `1RB---` rows that carry a
+partial ladder board through `tools/ladder/armprobe.py` and then
+`tools/ladder/fibmem.py`, and four facts are script-checked against the orbit
+read off the machines (`FIBMEM: OK`):
+
+* **membership** — LSB-first, an optional leading `1` then blocks `[0]` and
+  `[1;1]`; agrees with the orbit at every width 0..11 on all five rows, and
+  the counts come out `2, 3, 5, 8, 13, 21, 34, 55, 89, 144`.  The numeration
+  is REDUNDANT (`w0 = w1 = 1`), and this predicate is which representative
+  the machine picks — which is where the round-trip lemma's risk sits.
+* **the top of a width is `1^k`**, so no `of_value` is needed to compute it.
+* **the decomposition is TWO-way** and splits on the low digit: `0` →
+  increment, `1` → carry.  Over all 2,284 interior members of the five rows:
+  overlap 0, uncovered 0, wrong successor 0.  `(Gray, 2)` needed a four-way
+  `digs_decomp`; this one is a `destruct`.
+* **the arms DERIVE.**  Both classes chain at stride 1 with constant first
+  differences, so the ARM costs are affine even though the lap is not.  The
+  `[381]` refusal these five carried was never theirs.
+
+So what is left on this block is Coq and not discovery: a `Fib` constructor on
+`Code`, `fam_value` at `Fib` as the weighted fold, and the round-trip
+`fam_of_value F (fam_value F ds) (length ds) = Some ds` over the membership
+predicate above.
+
 **And the lap law is already measured, and it is AFFINE.**  Let `r` be the
 index of the highest digit the increment rewrites.  On both rows sampled the
 step gap is **single-valued in every observed class** and affine in `r`:

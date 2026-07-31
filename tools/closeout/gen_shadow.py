@@ -10,11 +10,14 @@ already proved in general:
     Census/Reroot.neverqh_reroot   across the blank prefix
     Census/RerootSwap.neverqh_swap / neverqh_mirror   across the relabelling
 
-so a shadow board carries NO new argument.  What it carries is two literal
-transition tables, the op chain, and four [Visited] witnesses -- which is
-exactly what a generator is for.  This file writes them; the kernel checks
-every one.  A wrong op order, a wrong re-root or a wrong witness index makes
-the emitted file fail to compile, never a false theorem.
+so a shadow board carries NO new argument.  Since #105 it carries almost no
+TEXT either: [Census/ShadowBoard.shadow_nqh] packages the whole thing as one
+lemma over three booleans, so an emitted board is one literal table, three
+numbers, an op chain, and three [vm_compute]s -- the sentence *the first t
+steps write only blanks, and what is left is that machine, which is proved.*
+The kernel checks every one.  A wrong op order, a wrong re-root state, a
+wrong prefix length or too small a fuel makes the emitted file fail to
+compile, never a false theorem.
 
 WHY THIS EXISTS.  NEXT_SESSION (2026-07-31, John) decided to hand-write
 shadow boards "until it is earning", with the revisit trigger: "when a shadow
@@ -28,11 +31,24 @@ instead, which shifts the bound by the prefix length and carries a
 `B + t <= B_board` side condition -- refused here rather than guessed at.
 
 Usage:
-    gen_shadow.py --all                  every shadow whose core row is boarded
+    gen_shadow.py --harvest              board every shadow whose partner has
+                                         BOARDED -- the one that runs in
+                                         `make closeout`; see below
+    gen_shadow.py --all                  every row in shadow_rows.tsv
     gen_shadow.py --spec SPEC            one row from shadow_rows.tsv
     gen_shadow.py --spec SPEC --qs B --t 1 --partner SPEC --ops swap:B:C,swap:C:D
                                          explicit (used for the regression)
     ... [--out DIR] [--check]            --check compiles what it wrote
+
+--harvest IS THE ONE THAT MATTERS, and --all cannot replace it.  A row sits in
+`shadow_rows.tsv` only while its partner is DEFERRED; the moment the partner
+boards, the row leaves that file -- which is the moment its board becomes
+buildable.  So `--all`, whose input is that file, is by construction blind to
+every row that is ready, and #104 had to drive two of them by hand off the
+previous git revision of the table.  `--harvest` recomputes the relation
+against the boarded set (shadowlib.classify) and so sees exactly those rows.
+`make closeout` runs it between two inventory passes, so a shadow now falls in
+the same regen as its core row with nobody typing anything.
 """
 import argparse
 import os
@@ -46,6 +62,11 @@ sys.path.insert(0, HERE)
 import shadowlib  # noqa: E402
 
 STATES = 'ABCD'
+
+# [ShadowBoard.all_visited_b] re-runs [csteps] from [c0] per index, so it is
+# quadratic in the fuel.  Every shadow in the tree needs <= 9; anything much
+# larger is a row worth looking at rather than generating.
+FUEL_CAP = 64
 
 
 class ShadowGenError(Exception):
@@ -148,6 +169,27 @@ def load_map():
     return out
 
 
+def load_unproven():
+    p = os.path.join(ROOT, 'tools', 'closeout', 'frozen_unproven.txt')
+    if not os.path.exists(p):
+        raise ShadowGenError('frozen_unproven.txt missing -- run inventory.py first')
+    return [l.strip() for l in open(p) if l.strip()]
+
+
+def freed_shadows():
+    """Rows that STOPPED being shadows because their partner boarded.
+
+    These are the actionable ones and the whole reason this generator exists:
+    a shadow becomes buildable at exactly the moment it falls out of
+    `shadow_rows.tsv`, so anything that reads only that file can never see
+    one.  See shadowlib.classify.
+    """
+    fmap = load_map()
+    _core, _shadows, freed = shadowlib.classify(
+        load_unproven(), {k: v['kind'] for k, v in fmap.items()})
+    return freed, fmap
+
+
 def load_shadows():
     p = os.path.join(ROOT, 'tools', 'closeout', 'shadow_rows.tsv')
     rows = []
@@ -193,14 +235,14 @@ def nqh_chain(ops, core_thm):
     lines = []
     for op in ops:
         if op[0] == 'mirror':
-            lines.append('  apply neverqh_mirror.')
+            lines.append('    apply neverqh_mirror.')
         else:
-            lines.append('  apply neverqh_swap; [discriminate | discriminate |].')
-    lines.append('  exact %s.' % core_thm)
+            lines.append('    apply neverqh_swap; [discriminate | discriminate |].')
+    lines.append('    exact %s.' % core_thm)
     return '\n'.join(lines)
 
 
-def emit(spec, qs, t, partner, ops, fmap):
+def emit(spec, qs, t, partner, ops, fmap, fuel=None):
     core = fmap.get(partner)
     if core is None:
         raise ShadowGenError('core row %s has no board in frozen_map.tsv' % partner)
@@ -216,7 +258,14 @@ def emit(spec, qs, t, partner, ops, fmap):
     slots = parse(spec)
     # the re-root: swap StA with q*
     rr = shadowlib.swap_uv(slots, 'A', qs)
-    vis = first_visits(rr)
+    # [ShadowBoard.all_visited_b] searches steps 0..f-1 for each state, so the
+    # fuel is the last first-visit plus one.  Tight on purpose: a fuel that is
+    # too small fails at [vm_compute] instead of proving something weaker.
+    fuel = fuel or max(first_visits(rr).values()) + 1
+    if fuel > FUEL_CAP:
+        raise ShadowGenError('re-root needs fuel %d (> %d) to visit every '
+                             'state; all_visited_b is quadratic in the fuel, '
+                             'so check this row by hand' % (fuel, FUEL_CAP))
     core_mod = os.path.splitext(os.path.basename(core['vfile']))[0]
     # ...and the PACKAGE it lives in.  Boards are not all under
     # [Machines/Counters]: LADDER boards are under [Machines/Ladder], and a
@@ -227,97 +276,68 @@ def emit(spec, qs, t, partner, ops, fmap):
                 .replace('theories', 'BBB4', 1).replace('/', '.'))
     mk = 'mk_' + name
 
-    body = []
-    body.append('''(** * SH_%s: machine %s, boarded by RE-ROOT off a boarded core row.
+    txt = '''(** * SH_%(name)s: machine %(spec)s, boarded by RE-ROOT off a boarded core row.
 
     GENERATED by [tools/closeout/gen_shadow.py] -- do not edit; regenerate.
 
-    This row is a SHADOW of the core row [%s]: its first transition writes
-    the blank, so it runs an all-blank prefix of length %d and thereafter IS
-    its re-root [TM_swap StA St%s] started fresh, and that re-root is the core
-    row relabelled (%s).  A shadow satisfies the [skipped] disjunct only while
-    its core row is still DEFERRED, so once the core row boards this row needs
-    a board of its own -- but no new argument:
+    This row is a SHADOW of the core row [%(partner)s]: its first
+    transition writes the blank, so its first %(t)d step(s) leave the tape all
+    blank, and from state [St%(qs)s] onward it IS its re-root
+    [TM_swap StA St%(qs)s] started fresh -- which is that core row relabelled
+    (%(opstr)s).  A shadow satisfies the [skipped] disjunct only while its
+    core row is still DEFERRED, so once the core row boards this row needs a
+    board of its own.  It needs no new ARGUMENT, though: every step of the
+    reasoning is general and proved once elsewhere, so the whole board is the
+    sentence you would say out loud --
 
-      [Census/Reroot.neverqh_reroot]        carries it across the blank prefix
-      [Census/RerootSwap.neverqh_swap]      across a non-start relabelling
-      [Census/RerootSwap.neverqh_mirror]    across a mirror
+      the first %(t)d step(s) write only blanks, and what is left is
+      %(partner)s, which is proved.
 
-    all three general and proved once.  What is per-machine here is two
-    literal tables, the op chain, and four [Visited] witnesses -- each one a
-    [vm_compute] the kernel re-runs.
+    [Census/ShadowBoard.shadow_nqh] is that sentence as one lemma; the three
+    bullets below are its three booleans, each a [vm_compute] the kernel
+    re-runs, and the fourth is the neighbouring board's own theorem carried
+    across the relabelling ([RerootSwap.neverqh_swap] / [neverqh_mirror]).
+    Nothing here is per-machine except the table, the numbers and the op
+    chain -- and a wrong one of any of those fails to compile.
 
     Axiom footprint: [functional_extensionality_dep] (via [CTape.lift] and
-    [Census/Reroot]). *)
-From Coq Require Import Arith Lia Bool List.
-From Coq Require Import FunctionalExtensionality.
+    [ShadowBoard.tm_eqb_spec]). *)
+From Coq Require Import List.
 From BBB4 Require Import BBB4_Statement CTape Mirror.
-From BBB4.Census Require Import TNF_QH Reroot RerootSwap.
-From %s Require Import %s.
+From BBB4.Census Require Import TNF_QH Reroot RerootSwap ShadowBoard.
+From %(core_pkg)s Require Import %(core_mod)s.
 Import ListNotations.
 
-Definition %s (w : Sym) (d : Dir) (n : St) : option Trans := Some (mkTrans w d n).
-Local Notation mk := %s.
+Definition %(mk)s (w : Sym) (d : Dir) (n : St) : option Trans := Some (mkTrans w d n).
+Local Notation mk := %(mk)s.
 
-(** %s *)
-Definition tm_%s : TM := fun q s => match q, s with
-%s end.
-Local Notation tm := tm_%s.
+(** %(spec)s *)
+Definition tm_%(name)s : TM := fun q s => match q, s with
+%(table)s end.
+Local Notation tm := tm_%(name)s.
 
-(** Its re-root [TM_swap StA St%s tm], written out so every obligation about
-    it is a [vm_compute] against a literal. *)
-Definition rr_%s : TM := fun q s => match q, s with
-%s end.
-Local Notation rr := rr_%s.
-
-Lemma rr_eq_%s : TM_swap StA St%s tm = rr.
+Theorem nqh_%(name)s : NeverQuasiHaltsSt tm.
 Proof.
-  apply functional_extensionality; intro q;
-    apply functional_extensionality; intro b; destruct q, b; reflexivity.
+  apply (shadow_nqh tm (%(applied)s) St%(qs)s %(t)d %(fuel)d).
+  - (* the first %(t)d step(s) leave the tape blank, in St%(qs)s *)
+    vm_compute; reflexivity.
+  - (* ...and from there it IS %(partner)s, relabelled *)
+    vm_compute; reflexivity.
+  - (* which visits every state, within %(fuel)d steps *)
+    vm_compute; reflexivity.
+  - (* ...and never quasihalts, which is the core row's own theorem *)
+%(chain)s
 Qed.
 
-Lemma rr_core_%s : rr = %s.
-Proof.
-  apply functional_extensionality; intro q;
-    apply functional_extensionality; intro b; destruct q, b; reflexivity.
-Qed.
-
-Lemma nqh_rr_%s : NeverQuasiHaltsSt rr.
-Proof.
-  rewrite rr_core_%s.
-%s
-Qed.
-
-(** The re-root visits every state.  [Reroot.visited_prefix] only reaches the
-    states of the blank prefix, and [rr] writes on its first step, so these
-    are ordinary short runs read off [csteps]. *)
-Lemma vis_rr_%s : forall q, Visited rr q.
-Proof.
-  intro q. destruct q.
-%s
-Qed.
-
-Theorem nqh_%s : NeverQuasiHaltsSt tm.
-Proof.
-  apply (neverqh_reroot tm St%s %d).
-  - apply prefix_ok_sound; vm_compute; reflexivity.
-  - rewrite rr_eq_%s. exact nqh_rr_%s.
-  - rewrite rr_eq_%s. exact vis_rr_%s.
-Qed.
-
-Theorem nonhalt_%s : NonHalt tm.
-Proof. apply never_qh_nonhalt, nqh_%s. Qed.
-''' % (name, spec, partner, t, qs,
-       ', '.join(':'.join(o) for o in ops) or 'no ops',
-       core_pkg, core_mod, mk, mk, spec, name, coq_table(slots, 'mk'), name,
-       qs, name, coq_table(rr, 'mk'), name,
-       name, qs, name, apply_ops_coq(core['const'], ops),
-       name, name, nqh_chain(ops, core['thm']),
-       name,
-       '\n'.join('  - apply (visited_csteps rr %d St%s); vm_compute; reflexivity.'
-                 % (vis[q], q) for q in STATES),
-       name, qs, t, name, name, name, name, name, name))
-    return 'SH_%s.v' % name, ''.join(body)
+Theorem nonhalt_%(name)s : NonHalt tm.
+Proof. apply never_qh_nonhalt, nqh_%(name)s. Qed.
+''' % dict(name=name, spec=spec, partner=partner, t=t, qs=qs, fuel=fuel,
+           opstr=', '.join(':'.join(o) for o in ops) or 'no ops',
+           core_pkg=core_pkg, core_mod=core_mod, mk=mk,
+           table=coq_table(slots, 'mk'),
+           applied=apply_ops_coq(core['const'], ops),
+           chain=nqh_chain(ops, core['thm']))
+    return 'SH_%s.v' % name, txt
 
 
 """The regression fixture: the one shadow that has already boarded.
@@ -338,12 +358,16 @@ CORRUPTIONS = [
     ('op order reversed', dict(ops='swap:C:D,swap:B:C')),
     ('prefix length off by one', dict(t=2)),
     ('wrong re-root state', dict(qs='C')),
+    # #105's packaged form introduces one new way to be wrong: the fuel for
+    # [ShadowBoard.all_visited_b].  Too small must FAIL, not silently prove
+    # something weaker -- so it is a control like the other three.
+    ('fuel too short', dict(_fuel=1)),
 ]
 
 
 def _build_and_compile(cfg, fmap, outdir):
     fn, txt = emit(cfg['spec'], cfg['qs'], cfg['t'], cfg['partner'],
-                   parse_ops(cfg['ops']), fmap)
+                   parse_ops(cfg['ops']), fmap, fuel=cfg.get('_fuel'))
     p = os.path.join(outdir, fn)
     with open(p, 'w') as f:
         f.write(txt)
@@ -402,6 +426,9 @@ def regress():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--all', action='store_true')
+    ap.add_argument('--harvest', action='store_true',
+                    help='board every shadow whose partner has BOARDED -- the '
+                         'rows shadow_rows.tsv can no longer see')
     ap.add_argument('--spec')
     ap.add_argument('--qs')
     ap.add_argument('--t', type=int)
@@ -417,21 +444,32 @@ def main():
     if a.regress:
         return regress()
 
-    fmap = load_map()
-    jobs = []
-    if a.spec and a.partner:
-        qs, t = a.qs, a.t
-        if qs is None or t is None:
-            qs, t = blank_prefix(parse(a.spec))
-        jobs.append((a.spec, qs, t, a.partner, parse_ops(a.ops)))
+    if a.harvest:
+        freed, fmap = freed_shadows()
+        if not freed:
+            print('gen_shadow --harvest: nothing freed '
+                  '(no shadow has a boarded partner)')
+            return 0
+        jobs = [(f['spec'], f['qs'], f['t'], f['partner'], f['ops'])
+                for f in freed]
+        print('gen_shadow --harvest: %d shadow(s) freed by a boarded partner'
+              % len(jobs))
     else:
-        for r in load_shadows():
-            if a.spec and r['machine'] != a.spec:
-                continue
-            jobs.append((r['machine'], r['qstar'], int(r['prefix']),
-                         r['partner'], parse_ops(r['ops'])))
-        if not jobs:
-            raise SystemExit('gen_shadow: nothing to do (no matching shadow)')
+        fmap = load_map()
+        jobs = []
+        if a.spec and a.partner:
+            qs, t = a.qs, a.t
+            if qs is None or t is None:
+                qs, t = blank_prefix(parse(a.spec))
+            jobs.append((a.spec, qs, t, a.partner, parse_ops(a.ops)))
+        else:
+            for r in load_shadows():
+                if a.spec and r['machine'] != a.spec:
+                    continue
+                jobs.append((r['machine'], r['qstar'], int(r['prefix']),
+                             r['partner'], parse_ops(r['ops'])))
+            if not jobs:
+                raise SystemExit('gen_shadow: nothing to do (no matching shadow)')
 
     outdir = os.path.join(ROOT, a.out)
     wrote, skipped = [], []
