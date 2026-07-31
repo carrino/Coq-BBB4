@@ -2822,10 +2822,46 @@ run of `0` (which is what `filled_fib0` discharges membership for).
 ### What this says about the next session
 
 * **A fourth `(code, step)` pair is cheap and there is no evidence one is
-  needed.**  Every remaining core row has been measured into a bucket that is
-  not "the numeration": the four base-2 rows are quadratic-arm, and the rest
-  were never filed under a numeration blocker at all.  Do not go looking for
-  a fifth code before someone measures a row that wants it.
+  needed -- but the evidence is ABSENCE OF A LABEL, not a measurement.**
+  Scanning every sweep for `numeration: fibonacci` returns exactly the five
+  rows this section boards, and it is tempting to read that as "there are no
+  more".  It is not: a `numeration` field only exists for a row whose family
+  CLOSED, and of the 30 core rows that remain, **24 have no selected family at
+  all** -- 15 "families found but none closed" (3..74 candidates each), 5 "no
+  value family", 4 "time cap".  Nothing ever asked those 24 what numeration
+  they are.  The label is SILENT, not negative.
+
+* **Raising the prover's clock is NOT the lever -- measured.**  The six
+  `1RB---` rows still in the core are the obvious suspects (same shape as the
+  five here, same bucket, 24 or 26 candidate families each).  Re-run at
+  `--cap 420 --kmax 8` against the committed sweep's 240:
+
+      1RB---_1LC1RB_0LB1RD_1LC0RD   26   time cap      -> time cap
+      1RB---_1LC0RB_0LD1RB_1LC1RD   26   time cap      -> time cap
+      1RB---_0LC1RD_1LB1RC_1LB0RD   26   time cap      -> time cap
+      1RB---_0LC1RD_1LB1RD_1LB0RD   24   none closed   -> none closed (339 s)
+      1RB---_1LC0RB_0LD1RB_1LC1RB   24   none closed   -> none closed (339 s)
+      1RB---_1LC1RD_0LB1RD_1LC0RD   24   none closed   -> none closed (339 s)
+
+  Three exhaust their candidates well inside the cap and reject every one;
+  three do not finish even at 420 s.  **They are rejection-limited, not
+  clock-limited.**  Do not re-run this with a bigger number.
+
+* **What WOULD move it is the per-candidate rejection reason, and it is not
+  recorded.**  `n_families` is a bare count and the candidates never reach the
+  JSONL, so "families found but none closed" is one opaque verdict over 15
+  rows.  Instrumenting `valfam.py` to say WHY each candidate was rejected is
+  the same move 4p made on the interior nine -- and that one turned a dead
+  bucket into the five rows above.  The honest fingerprint needs no label at
+  all: `armprobe.py`'s `orbit_machine` reads the counter off the machine's own
+  tape, and the members per width settle it -- 2, 3, 5, 8, 13, 21 is
+  fibonacci, 2, 4, 8, 16 is positional.
+
+* Worth knowing before that runs: `valfam.name_weights` has a
+  **`fibonacci(shifted)`** case, and `closure_data_fib` hard-refuses anything
+  whose weights do not start `1,1,2,3,5,8`.  That refusal is deliberate -- it
+  fails loudly rather than emitting a wrong board -- but a shifted row would
+  be turned away by an emitter that is one `if` from handling it.
 * **The two FILL-arm rows in `coqproject_exempt.txt` are the only ladder rows
   left with a mechanical blocker**, and neither is core, so they are worth
   nothing but remain the fill twin of the question.
