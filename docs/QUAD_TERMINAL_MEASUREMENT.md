@@ -87,13 +87,15 @@ issue either.
 
 ## 3. What this means for the eight
 
-Eight live core rows are ladder partials that stop at ONE line —
-*"interior arm: no chain at stride 1, 2, 3 or 4 -- the carry ripple is not
-affine in the run length"* — with 9 to 25 arms each already kernel-proved
-(`tools/coqproject_exempt.txt` lists them).  All four `QUAD`/`QUAD` rows
-in the residue are among them; the other four are labelled
-`PARITY-AFFINE`, which is the same ripple sampled where the parity trick
-happens to fit.
+Four live core rows are ladder partials that stop at ONE line —
+*"interior arm: no chain at any threshold 0..3 and stride 1..4"* — with 9
+to 25 arms each already kernel-proved (`tools/coqproject_exempt.txt` lists
+them).  Wave 4l (#97) is what narrowed this from eight: its shared arm
+indexing boarded the four that were only ever blocked on the scheme, and
+what is left on the interior arm is exactly the ripple.  All four
+`QUAD`/`QUAD` rows in the residue are among them.  (Two further ladder
+boards stop on the FILL arm instead; that is a different refusal and this
+document does not speak to it.)
 
 `emit_ladder`'s refusal is honest and its comment says so: *"A row whose
 cost is genuinely quadratic has no stride that works and is refused here;
@@ -121,7 +123,7 @@ statements of one obstruction.
 Door 1 is narrower and reuses `MeasureGlue` as it stands.  Door 2 is the
 principled one and would retire the whole "the certificate language
 carries `a*j + b`" family of blockers, which after the wave-34 inversion
-is **27 of the 47 open rows** (`RESIDUE_MAP.md`, "The families").
+is **23 of the 43 open rows** (`RESIDUE_MAP.md`, "The families").
 
 ## 5. Do not retry
 
