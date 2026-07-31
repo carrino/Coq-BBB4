@@ -57,7 +57,10 @@ head symbol is `S1`, and until this session every anchor search in the tree
 whole population.  `emit_lapcert.py` now carries the head symbol as `HD`,
 searched `S0`-first so no previously boarded row can change route, and
 `anchors` proposes every family with a long consecutive-value run rather than
-the single best-scoring one.
+the single best-scoring one.  Regression: a 10-row sample of already-boarded
+`LAPC`/`LAPQ`/`NLAP`/`PEEL` rows still derives 10/10, every one of them by
+the same encoding and step law as before and none of them by the new `S1`
+route.
 
 ## 2. The boarded five families
 
