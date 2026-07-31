@@ -2288,6 +2288,43 @@ the denotation can state.
   split before any Coq was written; `armprobe.py --selftest` is the same
   discipline one rung down.
 
+### Addendum: the two shadows these four freed, boarded — and the trap in freeing them
+
+_Same branch, after #102 merged.  `Closeout.vo` rebuilt; the kernel's own
+numbers, not only the audit's: `proven_rows` 5,109 rows each with a
+kernel-checked [covers] proof, `remaining_rows` 35, `shadow_rows` 12, and
+`closeout_partial` on `functional_extensionality_dep` alone._
+
+The four rows above promoted two `0RB` shadows into the core.  Both are now
+boarded, and they cost no new argument — `Census/Reroot.neverqh_reroot` across
+the blank prefix and `Census/RerootSwap.neverqh_mirror`/`neverqh_swap` across
+the relabelling are general and proved once:
+
+    nqh_0RB0LA_1LA1RC_0RD1RD_1LB0LB : NeverQuasiHaltsSt tm   (mirror of
+                                        1RB1LC_0LA0RB_0LD1LD_1RA0RA)
+    nqh_0RB0LA_1RC1LA_1RD0RD_1LB0LB : NeverQuasiHaltsSt tm   (swap:B:C,swap:C:D
+                                        of 1RB1LD_1RC0RC_1LA0LA_0RA0LD)
+
+    settled by a board       5107 -> 5109   (99.1%)
+    core undecided             37 -> 35     (47 rows remain)
+
+**Two things about freeing a shadow, and the second is a trap.**
+
+* `gen_shadow.py` hard-coded the partner board's module as
+  `BBB4.Machines.Counters`.  A LADDER board lives under
+  `BBB4.Machines.Ladder`, so the emitted file imported a module that does not
+  exist and failed at line 25 — nowhere near the cause.  `frozen_map.tsv`
+  already carries the partner's file, so the package is read off it now.
+* **`shadowlib.classify` drops a shadow from `shadow_rows.tsv` the moment its
+  partner leaves the unproven set** — which is precisely when the shadow
+  becomes actionable.  So `gen_shadow.py --all`, whose input is that file,
+  cannot see the rows a session just freed; they have to be driven with the
+  explicit `--spec/--partner/--qs/--t/--ops` form, reading the data out of the
+  PREVIOUS revision of the table.  That is how these two were emitted.  The
+  generator's input and its trigger are on opposite sides of one regeneration,
+  and fixing `classify` so a freed row survives one generation is worth doing
+  before the next core row boards.
+
 ## 4p. The interior nine RE-MEASURED: 5 of 9, and the bucket was never one bucket
 
 _Branch `claude/interior-arm-remeasure-vg1xl2`, cut from `main` at `fa1be97`.
