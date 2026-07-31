@@ -66,7 +66,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **42** undecided core machines in
+3. it is **skipped**: one of the **39** undecided core machines in
    `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **14**
    0RB re-root shadows (`tools/closeout/shadow_rows.tsv`).  A shadow needs
    no new mathematics — it is a blank-prefix re-root of a core machine —
@@ -89,15 +89,27 @@ on type-in-type, unsafe (co)fixpoints, or assumed positivity.
 **It is not a proof that BBB(4) = 32,779,478.**  Two things are missing
 before the record itself is a theorem here:
 
-1. **The champion has no board.**  `1RB1LD_1RC1RB_1LC1LA_0RC0RD` blanks its
-   tape at step 32,779,478 and then spins out in state C.  Its shape is exactly
-   what `theories/Counters/BlankTail.v` already closes for the four previous
-   champions; what it needs is a 32.8M-step prefix, for which
-   `Checkers/TCyclerN.v` already supplies `cstepsN` and `cstepsN_nat`.  It is
-   currently one of the 42 core machines.  **Not done.**
-2. **The 42 core machines (and their 14 shadows).**  Any of them could, for
-   all this development knows, be a quasihalter with a larger score.  That is
-   what undecided means.
+1. **The champion's board cannot be CONSUMED as `boarded` is defined.**
+   `1RB1LD_1RC1RB_1LC1LA_0RC0RD` erases its whole working region and returns to
+   a blank tape in `StC` at step 32,779,478, then spins left in `C` forever.
+   That board exists and compiles —
+   `theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`, one
+   `vm_compute` over a binary-numeral fuel (`Checkers/TCyclerN.cstepsN`), ~17 s
+   — proving `NonHalt /\ QHBound 32779478 /\ QuasiHaltsSt` at the champion's own
+   score.  But `boarded` demands `QHBound B_board` with `B_board` = **66,349**
+   (`CloseoutKit.v`), and 32,779,478 is not ≤ 66,349.  So the champion does not
+   satisfy `boarded`, `tools/closeout/inventory.py` refuses it by the same
+   arithmetic (`bound > B_BOARD`), and **`make closeout` does not drop it** —
+   verified 2026-07-31: a full run leaves every file byte-identical and the
+   count at 39.
+   Admitting it is a `CloseoutKit` change, not a regen: either raise `B_board`
+   (which weakens `bbb4_decided_le_prev_champion` for all 5,103 boarded rows) or
+   give `boarded` a third disjunct for exact-score quasihalters above `B_board`,
+   carried through `covers_*_at` and the swap/mirror lemmas.  Until then, **the
+   value is not proved.**
+2. **The 39 core machines (and their 14 shadows).**  Any of them could, for all this
+   development knows, be a quasihalter with a larger score.  That is what
+   undecided means.
 
 (The third gap this section used to list — the score bound existing only
 existentially, per-board, instead of as one aggregated constant — is closed:
@@ -107,14 +119,14 @@ existentially, per-board, instead of as one aggregated constant — is closed:
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 56 still-undecided machines (42
+> 32,779,478 or never quasihalts, except 53 still-undecided machines (39
 > core rows and their 14 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The BBB(4) *value* does not yet
-> follow from what is here, because the champion itself is one of the 42.
+> follow from what is here, because the champion itself is one of the 39.
 
-## Scope of the 42
+## Scope of the 39
 
-All 42 core machines are residue — machines no engine in this repository
+All 39 core machines are residue — machines no engine in this repository
 settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28

@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**56 rows as of this commit — 42 distinct core machines + 14 0RB
+_**53 rows as of this commit — 39 distinct core machines + 14 0RB
 re-root shadows.**  A shadow needs no new mathematics, but it does need its
 own board: boarding a core machine moves its shadow into `core_rows.txt`
 rather than settling it, so budget the pair (2026-07-31; worked example
@@ -93,22 +93,32 @@ lists partition `core_rows.txt` exactly):
 
 | n | furthest gate today | | n | furthest gate today |
 |--:|---|---|--:|---|
-| 40 | no interior `j = S j'` chain | | 2 | no inner family at `pow2 j` |
-| 10 | no gap-free two-form family | | 2 | no inner interior chain |
-| 5 | register step does not close | | 1 | no visit witness (StA) |
-| 4 | no interior `j = 0` chain | | 1 | no boot chain |
+| 23 | no interior `j = S j'` chain | | 2 | no inner interior chain |
+| 10 | no gap-free two-form family | | 1 | no boot chain |
+| 1 | register step does not close | | 1 | no interior `j = 0` chain |
+| 1 | no inner family at `pow2 j` | | | |
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
-| `-`/`no-anchor` | 81 | 70 no overflow phase, 11 no anchor |
-| `AFFINE`/`EXP2` | 25 | 16 no inner family at `pow2 j`, 4 no interior chain, 2 no boot chain, 2 no second exit chain, 1 no inner interior chain |
+| `-`/`no-anchor` | 12 | 10 no anchor, 2 no overflow phase at K=6 |
 | `HIGHER`/`HIGHER` | 12 | 12 no interior chain |
-| `AFFINE`/`AFFINE` | 9 | 8 no interior chain, 1 no inner family |
-| `EXP3`/`EXP3` | 8 | 8 no interior chain |
-| `PARITY-AFFINE` | 7 | 7 no interior chain |
 | `QUAD`/`QUAD` | 4 | 4 no interior chain |
 | `EXP4`/`EXP4` | 4 | 4 no interior chain |
+| `EXP3`/`EXP3` | 3 | 3 no interior chain |
+| `AFFINE`/`EXP2` | 2 | 1 no boot chain, 1 no inner family |
 | `AFFINE`/`HIGHER` | 2 | 1 no boot chain, 1 no inner interior chain |
+
+**What that table now says, and it is the shape of the endgame:** the
+residue has inverted.  It used to be dominated by `AFFINE` machines our
+emitter could not frame; **23 of the 39 are now NON-AFFINE on both
+branches** (`HIGHER` 12, `QUAD` 4, `EXP4` 4, `EXP3` 3) — shapes whose lap
+cost the certificate language cannot write as `a*j + b` at all — plus 14
+whose tape never decodes as a counter under any alphabet.  Only 5 rows are
+affine on at least one branch.  The easy framings are spent.  What is
+left wants either a closer that never needs the cost (`LapGlue`'s lap
+obligation is an EXISTENTIAL over step counts, which is how the wave-19
+fractals boarded with a `3^k` lap) or a route that never models the lap at
+all, like ReachSt.
 
 ### What each blocker means
 
@@ -143,35 +153,41 @@ lists partition `core_rows.txt` exactly):
 nickdrozd read the published version of this map and posted lists of
 machines he was "pretty sure are all solvable"; John's live hand-reads and
 the mxdys Inductive target list ran alongside.  Every one of those calls
-has paid out: nick's lists sized the `no interior chain` bucket, then
-seeded BOTH ReachSt waves (`docs/REACHST_TIER.md` — liveness of the
-sparse state as termination of the state-DELETED sub-machine, 107 boards
-across five flavours plus the parity-witness fix `LapCertGluePar`);
-John's one-line reads exposed the bit-polarity inversion that emptied the
-old 70-row interior gate (`WAVE30_FINDINGS.md` §6b); and the Inductive
+paid out: nick's lists sized the `no interior chain` bucket and then
+seeded every ReachSt wave (`docs/REACHST_TIER.md` — liveness of a
+machine's sparse state as TERMINATION of the state-deleted sub-machine,
+110+ boards across five flavours plus the parity-witness fix
+`LapCertGluePar` and the invariant-relativised `ReachStI`); John's
+one-line reads exposed the bit-polarity inversion that emptied the old
+70-row interior gate (`WAVE30_FINDINGS.md` §6b); and the Inductive
 prover's layer read cracked the CHAMPION — the machine blanks its whole
 10,239-cell region and returns to a blank tape in `StC` at step
 32,779,478, so its board is one ~17 s binary-fuel `vm_compute`
 (`Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`, in the tree,
 awaiting the closeout regen).
 
-Measured dead along the way (all do-not-retry): the `cycR-gap`
-primitive, the double peel, the SOLO-cascade route on the boot bucket,
-every framing of the 40-row interior bucket, the flat `emit_lapcert`
-route, and uniform step bounds for avoid sub-machines without sweep
-acceleration.
+Measured dead along the way (all do-not-retry): the `cycR-gap` primitive,
+the double peel, the SOLO-cascade route on the boot bucket, every FRAMING
+of the nested-lap bucket, the flat `emit_lapcert` route, the ladder's
+far-side template and its glue (§4k: measured before building it), and
+uniform step bounds for avoid sub-machines without sweep acceleration.
 
 ## Where a newcomer should probably start
 
-1. **The nested interior lap** — 40 of the 65: the interior lap is
-   itself a NESTED (double) lap, the one route that does not exist yet
-   (`docs/WAVE33_PROMPT.md` item 1).  Everything else is a thin tail.
-2. **The ReachSt leftovers** — the mirror transport lemma and the 7 rows
-   PR #82 measured as unreachable by the avoid-machine method
-   (`docs/REACHST_TIER.md` §6).
-3. **The two-form 10** (champion aside): the Gray-code pair
-   `1RB0RD_1LC0L{B,C}_1LD0LB_1RD0RA` still carries a fully specified,
-   unexecuted build (`WAVE29_BOUNCER_FINDINGS.md` §7a).
+1. **The nested interior lap** — 23 of the 39, still the largest bucket,
+   though no longer a monolith: `ReachStI` and the ladder have both taken
+   rows out of it (`docs/WAVE33_PROMPT.md` item 1).
+2. **The two live routes**, both with named next steps: ReachSt's mirror
+   transport lemma and its measured-unreachable rows
+   (`docs/REACHST_TIER.md` §6), and the ladder's refused arms — wave 4l
+   gave both class arms one shared indexing scheme and a quasihalt closer,
+   and SIX boards now stop at a single arm with every other rule proved
+   (`tools/coqproject_exempt.txt` lists them, four on the interior arm and
+   two on the fill arm).
+3. **The non-affine 23.**  The gate says "the certificate language cannot
+   write this cost" — but `LapGlue`'s obligation never needs the cost
+   written down.  Check what the closer actually demands before believing
+   the gate.
 
 ## Reproducing the map
 
