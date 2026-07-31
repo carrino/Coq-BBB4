@@ -50,6 +50,9 @@ def wanted(r):
         return False, 'code %s' % fam.get('code')
     if fam.get('value_step_per_anchor_visit', 1) != 1:
         return False, 'step %s' % fam.get('value_step_per_anchor_visit')
+    if fam.get('weights') is not None:
+        return False, ('numeration %s: not positional base-b'
+                       % fam.get('numeration'))
     fills = r.get('fill_by_phase') or [r.get('fill')]
     nph = len(fills)
     for ph, f in enumerate(fills):

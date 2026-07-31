@@ -286,6 +286,17 @@ def closure_data(cert, tab):
     if fam.get('value_step_per_anchor_visit', 1) != 1:
         raise NoClosure('step %d: LadderCheck states (Binary, 1) only'
                         % fam.get('value_step_per_anchor_visit', 1))
+    # A weight sequence is not a positional base-b numeration and
+    # [LadderFam.fam_value] is [val_pos].  4m's five fibonacci rows read as
+    # `code = binary, step = 1` and would otherwise be emitted here with a
+    # family whose value the kernel computes differently -- the board would
+    # fail [check_arm] rather than produce a wrong theorem, but the reason
+    # belongs in the file.
+    if fam.get('weights') is not None:
+        raise NoClosure('numeration %s: LadderCheck states positional base-b '
+                        '(fam_value is val_pos over the digits); a weight '
+                        'sequence wants its canonical-form lemma first (4m)'
+                        % fam.get('numeration'))
     # The PHASE CYCLE (4l/4n).  [LadderCheck.Inv] carries [ph < NPH] rather
     # than [ph = 0], so a family with more than one terminator is stated
     # here rather than refused: what each phase's fill has to do is land in
