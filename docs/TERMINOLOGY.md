@@ -133,8 +133,8 @@ signal it is aimed wrong.
 
 `python3 tools/closeout/audit.py` is the live scoreboard, and
 [issue #61](https://github.com/carrino/Coq-BBB4/issues/61) tracks it wave
-by wave.  As of 2026-07-31: **5,107 of the frozen 5,156 settled (99.0%)**,
-leaving **37 undecided core machines + 12 0RB shadows** — 49 rows.
+by wave.  As of 2026-07-31: **5,109 of the frozen 5,156 settled (99.1%)**,
+leaving **35 undecided core machines + 12 0RB shadows** — 47 rows.
 
 Two vocabulary corrections, because the situation changed under older
 notes in this tree:
@@ -167,7 +167,7 @@ left undischarged. It does **NOT** mean shrinking the 5,156 inside
 
 Where we were when this plan was written: **964 / 5,129 boarded** (wave-6),
 ~**4,165 residue machines still unboarded**.  _(Historical.  The live figure
-is in the scoreboard section above — 5,107 of 5,156 settled, 49 rows left —
+is in the scoreboard section above — 5,109 of 5,156 settled, 47 rows left —
 and the six steps below are the plan that got it there, kept for its design
 record rather than as a to-do list.  Steps 1–3 and 6 are done; what is left
 of the residue is the ladder/ReachSt work in `docs/RESIDUE_MAP.md`, not a

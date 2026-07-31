@@ -32,7 +32,7 @@ theories/Closeout/CloseoutFinal.v
 #   line 431  fill arm: no chain at any threshold 1..3, stride 1..4 or copy split
 #
 # NINE stop on the INTERIOR arm and all nine rows are still core; between them
-# they carry five 0RB shadows, so this list is 14 of the residue's 49 rows.
+# they carry five 0RB shadows, so this list is 14 of the residue's 47 rows.
 # Do NOT read that as "the densest bucket, therefore the best target": wave 4p
 # measured that the density and the reachability are on OPPOSITE halves -- all
 # five shadows sit on the quadratic side, which is not coming back, and the

@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**49 rows as of this commit — 37 distinct core machines + 12 0RB
+_**47 rows as of this commit — 35 distinct core machines + 12 0RB
 re-root shadows.**  A shadow needs no new mathematics, but it does need its
 own board: boarding a core machine moves its shadow into `core_rows.txt`
 rather than settling it, so budget the pair (2026-07-31; worked example
@@ -89,20 +89,19 @@ live list).  **The `blocker` column in the TSV predates wave-30.**  The
 CURRENT gate partition — a fresh `tailcert` scan, one committed row list
 per gate, REGENERABLE via `tailcert --out` + `buckets.py` — is
 `tools/counters/buckets34/*.txt` with `GATETABLE.md` beside it (the
-lists partition `core_rows.txt` exactly, minus the two re-root rows
-below, which have never been gate-scanned):
+lists partition `core_rows.txt` exactly):
 
 | n | furthest gate today | | n | furthest gate today |
 |--:|---|---|--:|---|
 | 19 | no interior `j = S j'` chain | | 1 | no boot chain |
 | 10 | no gap-free two-form family | | 1 | no interior `j = 0` chain |
 | 2 | no inner interior chain | | 1 | register step does not close |
-| 2 | re-root rows, not gate-scanned | | 1 | no inner family at `pow2 j` |
+| | | | 1 | no inner family at `pow2 j` |
 
-The two "re-root rows" are `0RB0LA_1LA1RC_0RD1RD_1LB0LB` and
-`0RB0LA_1RC1LA_1RD0RD_1LB0LB`: 0RB shadows whose core partners boarded in
-wave 4o, so they became core rows in their own right.  They have no gate —
-what they need is the re-root transport, not a family.
+(The two re-root rows wave 4o promoted out of the shadow table —
+`0RB0LA_1LA1RC_0RD1RD_1LB0LB` and `0RB0LA_1RC1LA_1RD0RD_1LB0LB` — boarded
+the same day and are gone from this list; they never needed a gate, only
+the re-root transport.)
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
@@ -110,14 +109,13 @@ what they need is the re-root transport, not a family.
 | `HIGHER`/`HIGHER` | 12 | 12 no interior chain |
 | `QUAD`/`QUAD` | 4 | 4 no interior chain |
 | `EXP3`/`EXP3` | 3 | 3 no interior chain |
-| `EXP4`/`EXP4` | 2 | 2 no interior chain |
 | `AFFINE`/`EXP2` | 2 | 1 no boot chain, 1 no inner family |
 | `AFFINE`/`HIGHER` | 2 | 1 no boot chain, 1 no inner interior chain |
 
 **What that table now says, and it is the shape of the endgame:** the
 residue has inverted.  It used to be dominated by `AFFINE` machines our
-emitter could not frame; **21 of the 37 measure NON-AFFINE on both
-branches** (`HIGHER` 12, `QUAD` 4, `EXP3` 3, `EXP4` 2) — shapes whose lap
+emitter could not frame; **19 of the 35 measure NON-AFFINE on both
+branches** (`HIGHER` 12, `QUAD` 4, `EXP3` 3) — shapes whose lap
 cost the certificate language cannot write as `a*j + b` — plus 12 whose
 tape never decodes as a counter under any alphabet.  Only 4 rows are
 affine on at least one branch.
@@ -133,8 +131,8 @@ Re-running the anchor scan with the ladder `1,1,2,3,5,8,…` decodes them to
 costs on five of them and they are affine (constant first differences), so
 what blocks the twelve is the NUMERATION — `Fam` has no weight field — and
 not the cost.  So the honest count of rows whose cost the certificate
-language genuinely cannot write is **9**, not 21: `QUAD` 4 (measured on the
-arm in wave 4p and confirmed quadratic), `EXP3` 3, `EXP4` 2.
+language genuinely cannot write is **7**, not 19: `QUAD` 4 (measured on the
+arm in wave 4p and confirmed quadratic) and `EXP3` 3.
 
 The easy framings are spent, but what is left wants either a closer that
 never needs the cost (`LapGlue`'s lap obligation is an EXISTENTIAL over
@@ -150,7 +148,7 @@ twelve above — a numeration the family record can denote.
   new `(A,B,C)` triple off the tape first; `gen_alphabet.py` then generates a
   PROVED Coq module for it (a wrong triple fails to compile).
 * **no interior chain** — the ordinary lap is not expressible as one affine
-  `srun`.  For `QUAD`/`EXP3`/`EXP4` that is a statement about the
+  `srun`.  For `QUAD`/`EXP3` that is a statement about the
   machine, not the search: the certificate language carries `a*j + b`.
   **For `HIGHER` it is not** — those twelve rows are the φ counters, and
   the label came from measuring a Fibonacci lap on a base-2 clock (above,
@@ -221,12 +219,15 @@ or stride reaches a quadratic).
    need is a Fibonacci-rank constructor on `Fam`/`Code` — the analogue of
    `Counters/TernCounter.v` one notch out — and then the ordinary
    `LapDecider` + `LapGlueIx` route.  Eleven of the twelve carry no shadow;
-   `1RB0RB_0LC1RD_1LC1LA_0LA1RB` carries one, so the block is 13 of the 49.
-2. **The twelve 0RB shadows on ten core rows.**  No new mathematics at all:
-   the general transport is merged and axiom-free (`Census/Reroot.v`,
-   `Census/RerootSwap.v`), one worked `RRNQ_*` example is on disk, and
-   `tools/closeout/gen_shadow.py` emits a shadow's board from its core row's.
-   These are 12 of the 49 rows left.
+   `1RB0RB_0LC1RD_1LC1LA_0LA1RB` carries one, so the block is 13 of the 47.
+2. **The twelve 0RB shadows on ten core rows — but NOT yet.**  A shadow
+   satisfies the `skipped` disjunct only while its core row is deferred, so
+   it needs a board of its own exactly when its core row boards, and not
+   before.  All ten carriers are still undecided.  The route is proved and
+   generated when the time comes (`Census/Reroot.v`, `Census/RerootSwap.v`,
+   `tools/closeout/gen_shadow.py`, and the two `SH_*.v` boards wave 4o's
+   promoted rows got the same day); five of the twelve sit on three of the
+   four quadratic rows, so those five are not coming back either.
 3. **The two live routes**, both with named next steps: ReachSt's mirror
    transport lemma and its measured-unreachable rows
    (`docs/REACHST_TIER.md` §6), and the ladder's refused arms — ELEVEN
@@ -235,10 +236,10 @@ or stride reaches a quadratic).
    two on the fill arm; wave 4p re-measured the nine and they are five
    Fibonacci rows whose arms DERIVE plus four base-2 rows whose arm is
    genuinely quadratic).
-4. **The non-affine nine.**  The gate says "the certificate language cannot
+4. **The non-affine seven.**  The gate says "the certificate language cannot
    write this cost" — but `LapGlue`'s obligation never needs the cost
    written down.  Check what the closer actually demands before believing
-   the gate; that check is what turned the old "non-affine 23" into 9.
+   the gate; that check is what turned the old "non-affine 23" into 7.
 
 ## Reproducing the map
 
@@ -250,4 +251,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 49).
+first shrank from 883 to 511 (and, wave by wave, to the current 47).

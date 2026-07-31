@@ -1,9 +1,9 @@
-# Gate table over the 37 open core rows
+# Gate table over the 35 open core rows
 
 `tailcert.py --list tools/closeout/core_rows.txt --out scan.json` (scan labels,
 no --emit), split by `buckets.py`, filtered to live membership after each wave.
-Regenerate rather than trust: both commands are untrusted Python and need no
-Coq.
+An exact partition of `core_rows.txt`.  Regenerate rather than trust: both
+commands are untrusted Python and need no Coq.
 
 | n | furthest gate |
 |--:|---|
@@ -14,20 +14,13 @@ Coq.
 | 1 | `no_interior_j0_chain_at_octave_parity_0` |
 | 1 | `no_inner_family_at_pow2_j` |
 | 1 | `register_step_does_not_close` |
-| 2 | *(not gate-scanned — see below)* |
 
-The `.txt` lists partition `core_rows.txt` **except** for two rows:
-
-    0RB0LA_1LA1RC_0RD1RD_1LB0LB
-    0RB0LA_1RC1LA_1RD0RD_1LB0LB
-
-Those are 0RB shadows whose core partners boarded in `docs/LADDER_PLAN.md`
-§4o, so they became core rows in their own right and were never in a
-`tailcert` scan.  They need the re-root transport
-(`Census/Reroot.v`, `Census/RerootSwap.v`, `tools/closeout/gen_shadow.py`),
-not a family, so a gate label would not say anything useful about them.
-Re-running `tailcert` over the current `core_rows.txt` would file them
-somewhere; nothing reads that label today.
+Wave 4o briefly put two rows in `core_rows.txt` that are in none of these
+lists — `0RB0LA_1LA1RC_0RD1RD_1LB0LB` and `0RB0LA_1RC1LA_1RD0RD_1LB0LB`, the
+0RB shadows its four boards promoted.  They boarded the same day
+(`Machines/Counters/SH_*.v`), so the partition is exact again.  Worth
+remembering as a shape: a promoted shadow needs the re-root transport, not a
+family, so it will never have a useful gate label.
 
 ## What the biggest bucket is really made of
 
