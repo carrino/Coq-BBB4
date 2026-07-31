@@ -128,8 +128,8 @@ signal it is aimed wrong.
 
 `python3 tools/closeout/audit.py` is the live scoreboard, and
 [issue #61](https://github.com/carrino/Coq-BBB4/issues/61) tracks it wave
-by wave.  As of 2026-07-31: **5,100 of the frozen 5,156 settled (98.9%)**,
-leaving **42 undecided core machines + 14 0RB shadows**.
+by wave.  As of 2026-07-31: **5,103 of the frozen 5,156 settled (99.0%)**,
+leaving **39 undecided core machines + 14 0RB shadows**.
 
 Two vocabulary corrections, because the situation changed under older
 notes in this tree:
