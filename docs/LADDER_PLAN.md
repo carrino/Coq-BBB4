@@ -1216,6 +1216,74 @@ on the live core: 11 of the 62 are binary/step-1 rows whose liveness reads
 `BCD` rather than `ABCD`, and `board_neverqh` proves the wrong theorem for
 them by construction.
 
+## 4j. John reads a bouncer, and the outer parameter turns out to be carried everywhere and used nowhere
+
+_John, on `0RB0RD_1LC1RB_1RA0LC_1LB0LC` from the fifteen: "that's a bouncer
+counter."  Measured below; the reading holds._
+
+### The reading, quantified
+
+The head bounces, drifting left.  At each lap where it reaches a NEW leftmost
+cell, take the tape to its right.  On every SECOND such lap:
+
+    lap k:   0^(2k+5)  followed by a binary counter reading  4k+3
+
+    k=0   0^5   1^2                 =  3
+    k=1   0^7   1^3                 =  7
+    k=2   0^9   1^2 0 1             = 11
+    k=3   0^11  1^4                 = 15
+    k=4   0^13  1^2 0^2 1           = 19
+    k=5   0^15  1^3 0 1             = 23        ... exactly, to k = 11
+
+Binary, LSB nearest the counter's own low end -- the SAME convention the
+certificates already use.  `0RB0RD_1LC1RB_1RA0LC_1LD0LC` is identical.  So
+the reading is worth at least two rows, and it is a counter by any standard
+the ladder already applies.
+
+### Why the searcher probed ZERO families, exactly
+
+Two places, and they are the same assumption on both sides of the trust
+boundary:
+
+* **The prover.**  `valfam.py` `Fam.read()`:
+  `if tuple(base[:len(self.pre)]) != self.pre: return None`.  The near-head
+  prefix is a FIXED tuple, matched exactly.  Here it is `0^(2k+5)` -- it
+  grows with the lap -- so `read()` returns `None` for every candidate at
+  every anchor, so `n_families = 0`, so the row is filed under *no anchor
+  whose counter side decodes*.
+* **The kernel.**  `LadderFam.fam_cfg` is
+  `let '(ds, _, ph) := s in ...`.  That `_` is the OUTER PARAMETER.  It is
+  carried through `fam_succ`, it is a field of `CtrSt`, the certificate
+  reports an `outer_p_law` and a `fill_moves_outer_p` for it, and there is a
+  merged branch named for it (`claude/ladder-two-parameter-anchor`, 4d) --
+  **and it does not appear in the denotation at all.**
+
+So the outer parameter is carried everywhere and used nowhere, and a machine
+whose near-head prefix grows with it cannot be seen by either half.
+
+### The fix is a shape both halves already have
+
+The near-head prefix wants to be `s_pre ++ rep u (a*p + b)` instead of a
+fixed word -- which is exactly `sside`, the engine's own side shape, the one
+4i notes the class decomposition already coincides with.  `fm_pre : list Sym`
+becomes a prefix plus a repeated block whose count is affine in `p`.
+
+**This is 4g's lesson for the fifth time.**  The carry, the anchor, the base,
+the terminator, the code: each was a hard-coded assumption about the
+counter's own arithmetic, each was reported as the machine's failure, and
+each became a parameter.  The near-head prefix is the sixth, and unlike the
+others it is not even new work on the kernel side -- the field is already
+there.
+
+### What is NOT established
+
+A probe over the other thirteen -- left frontier only, strides 1 to 3,
+exactly-constant differences -- matched two.  **That is a statement about the
+probe.**  It is the same shape of claim this section exists to warn about,
+and it should not be read as "the other thirteen are not bouncers".  A human
+read of one more of them is worth more than widening the probe, on the
+evidence of this section and of 4g.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
