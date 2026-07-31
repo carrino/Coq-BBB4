@@ -1304,6 +1304,36 @@ narrower and worth saying: the thirteen are not blocked by the near-head
 spacer alone.  Whatever they are, fixing the outer parameter will not reach
 them, and one more human read is worth more than another axis on the probe.
 
+### Cross-check: PR #90 read the same fifteen, on a different axis
+
+`docs/LADDER_NOFAM.md` (merged from `claude/fifteen-nofam-measurement-iuw18b`,
+which ran beside this session on the same fifteen rows) reports **13 of 15**
+with a monotone reading.  `bounce.py` here found **2**.  The two are not in
+conflict and the difference is the axis each held fixed:
+
+* this section varied the ANCHOR and the SPACER -- frontier, side, growing
+  near-head prefix -- and kept the numeration at base-`b`/gray;
+* #90 varied the NUMERATION -- Fibonacci weights, redundant base over cell
+  pairs, binomial, unary -- and kept the anchor at a (state, head) pair.
+
+Each found what its own axis could see.  Together: `no value family` is one
+label over at least two unrelated failures, and neither probe alone
+establishes anything about the rows the other one found.
+
+**On John's two bouncer rows the two readings differ, and #90's is cheaper.**
+This section reads them at the west frontier with a spacer `0^(2k+5)`, which
+needs the outer parameter.  #90 reads them at `D0/R` and `A1/R` with a
+terminator SET (`tl=*`, which is 4f's phases) and base 2 -- 16 of 20 and 15
+of 20 width classes exact, gap 1.  If #90's reading holds, those two rows
+want the phase cycle, which three other live-core rows already want, and not
+the outer parameter at all.  **That should be checked before 4j's fix is
+built**: 4j's cost estimate assumed the spacer was the only way in.
+
+And the largest single group in #90's table is **six rows on Fibonacci
+weights** -- the constructor 4d deferred and every brief since has ruled out
+of scope.  It is now measured, and it is the biggest numeration bucket in the
+live core.
+
 ## 4k. The glue was never the bottleneck.  The ARMS are, and both of them want the same two knobs
 
 _Measured after 4j, before building anything.  The measurement contradicted
