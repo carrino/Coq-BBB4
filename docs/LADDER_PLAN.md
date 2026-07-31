@@ -2873,6 +2873,157 @@ run of `0` (which is what `filled_fib0` discharges membership for).
   named the wrong theorem.  **Read `liveness.states_infinitely_often` before
   writing a board section, not after.**
 
+## 4s. The outer parameter is NECESSARY and NOT SUFFICIENT -- measured; and the two `no anchor` gray rows board on the searcher, not the kernel
+
+_This session was briefed to build 4j's outer parameter and drive
+`0RB0RD_1LC1RB_1RA0LC_1LB0LC` to a board with it.  The field was NOT built.
+The reason is a measurement, it is below, and it is the whole of 4s's value:
+4q's constants are right, 4q's anchor is right, and an affine far side is
+still not enough to state one lap of this machine.  Two OTHER rows boarded
+instead -- `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and `1RB0RD_1LC0LC_1LD0LB_1RD0RA` --
+and the fix there was in the SEARCHER and needed no kernel change at all._
+
+### 4q's reading, re-measured, with one correction to the shape
+
+Anchor `(StB, head 0, head at offset 3)`, sampled once per bounce, 180 visits
+to step 200,000 on BOTH rows.  Every number 4q reports holds:
+
+    far side ones = 2v + 5     exactly, at every visit, 0 failures / 180
+    counter side  = `1 1` then binary(v) LSB-first, the frame CONSTANT
+    value         = bounce index, step +1
+
+One correction, and it matters because it is the `sside` instance: the far
+side is **not** a solid run.  Head-outward it is
+
+    [S1; S0] ++ rep [S1] (2v + 4)
+
+-- a `1`, then a `0` one cell out, then the run.  The ONES number `2v+5` is
+right; the run itself is `2v+4` behind a two-cell fixed word.  So the far side
+IS an `sside`: `s_pre = [S1;S0]`, `s_u = [S1]`, `a = 2`, `b = 4`.  4q's
+`a = 2, b = 5` is the ones-count, not the record's `s_b`.  Both rows measure
+identically here, as 4q says.
+
+### What 4q did not measure: the lap has TWO unbounded excursions, not one
+
+Sample the head's reach between consecutive anchor visits:
+
+    v        0    1    2    3    4    5    6    7    8   ... 15
+    right    3    4    3    5    3    4    3    6    3        7
+    left     the whole 2v+5 run, to the wall, which then recedes by 2
+
+The right-hand excursion is `3 + t(v)`, `t` = the number of trailing ones of
+`v`: it is the CARRY RIPPLE, and one lap contains it.  Traced at `v = 7`
+(visit 9 -> 10, 148 steps): the head ripples first (steps 721-738, out to
+offset 9 and back), and only then sweeps left to the wall (steps 743-766) and
+zig-zags home `+3, -2` per cell.  So a single lap moves BOTH
+
+    the wall distance   2v + 5      and    the ripple length   t(v)
+
+and the two are independent -- `t(v)` is the trailing-ones count, which no
+function of `2v+5` gives.
+
+### Why that is fatal to an affine far side, and the argument is two lines
+
+`cden` takes ONE index for the whole configuration:
+
+    cden XL XR j c = (c_st c, (sden XL j (c_l c), c_h c, sden XR j (c_r c)))
+
+so `c_l` and `c_r` are instantiated at the SAME `j`.  The interior arm indexes
+the ripple by its run length: `fam_cells_class` reads the class
+`u ++ t^(r + s*m) ++ w ++ rest` at index `m`, which is what makes an unbounded
+ripple finitely many arms.  At that index the far side would have to be
+`a*m + b`.  It is `2*fam_value F ds + 5`, and on the class
+`1^(r+s*m) ++ [d] ++ rest` the value is `2^(r+s*m) - 1 + ...` -- **exponential
+in `m`**.  No `a` and `b` fit it.
+
+Fixing the ripple instead (a flat arm per ripple length, `s = 0`, far side
+indexed by `j = v`) does factor -- and wants one arm per ripple length, of
+which there are unboundedly many.  That is exactly the trade the stride was
+built to avoid.
+
+4j's own anchor fails for the mirror reason and it is worth writing down,
+because 4j proposed it: at the wall the far side is empty and the ONE side
+carries `0^(2k+5) ++ [1;1] ++ digits(k)` -- a growing spacer AND a carry
+ripple, two symbolic blocks on one `sside`, which has one.  **The two anchors
+trade the growth between the sides, as 4q says, and neither removes the second
+block.**
+
+### What WOULD work, so the next session does not re-derive it
+
+The lap splits.  The ripple finishes before the long sweep starts (measured
+above), so at TWO anchors per bounce each half factors:
+
+| lap | counter side | far side |
+|---|---|---|
+| ripple only | symbolic run, index = ripple length | untouched -> OPAQUE tail, no index |
+| wall only | untouched -> OPAQUE tail | `rep [S1] (2v+4)`, index = `v`, `a = 2` |
+
+Neither half needs two blocks, and the wall-only half is exactly 4j's outer
+parameter.  So **the outer parameter is necessary and not sufficient**: what
+is also missing is a per-phase ANCHOR.  `fam_cfg` reads `fm_st`, `fm_hs`,
+`fm_left` and `fm_pre` off the record and only `nth ph (fm_tails F) []` off
+the phase, so the phase mechanism varies the TERMINATOR and nothing else.  Two
+anchors per value step is a second widening, of four fields, and it changes
+`fam_succ` too (only one of the two laps advances the value).
+
+**That is why the field was not built.**  A far-side parameter alone has no
+consumer: it would close no row, and 4j's complaint about the existing `p` is
+precisely that it is carried everywhere and used nowhere.  Adding a second one
+next to it is not the fix.  Whoever takes this next should scope the ANCHOR
+and the parameter together, or leave both.
+
+### The two `no anchor` gray rows: the blocker was the SEARCHER
+
+`1RB0RD_1LC0LB_1LD0LB_1RD0RA` and `1RB0RD_1LC0LC_1LD0LB_1RD0RA`, filed
+`no anchor`, refused by the gray emitter with `boot cells [1, 0, 1] are not
+the family at [1, 1]`.  The diagnosis in the brief is right: `valfam` selects
+a family whose digit words are `[[0,0],[1,0]]`, both ending in a BLANK, so
+`fam_cells` spells `[1,0,1,0]` where the machine's `cconf` carries `[1,0,1]`.
+Same tape under `lift`; different list; and `Hboot` is on the list.
+
+The brief offers two fixes -- re-read at an anchor whose digit words do not
+end in a blank, or give `fam_cells` a trimming.  **The first one was already
+available and nothing had to be built.**  The search finds 29 families for
+this machine; enumerating them and testing each boot against an exact
+`ctape_move` simulation:
+
+    #0  (StA, R)  pre ()   digs [(0,0),(1,0)]   MISMATCH   <- the one selected
+    #1  (StA, R)  pre ()   digs [(0,0),(0,1)]   EXACT  (1-digit boot)
+    #2  (StC, R)  pre (1,) digs [(0,0),(0,1)]   EXACT  (2-digit boot)
+    #4  (StA, R)  pre (1,) digs [(0,0),(0,1)]   EXACT
+    #8  (StB, R)  pre ()   digs [(0,0),(0,1)]   EXACT
+
+Candidate #2 is the same machine read one cell over, and it is exact.  It was
+never reached because `close` settles on the first candidate that closes and
+nothing downstream of `find_boot` knows what the denotation can state.
+
+So the test went there: `exact_cconf` simulates `CTape.ctape_move` exactly,
+`boot_is_exact` asks whether `fam_cells` spells the counter side the boot's
+`cconf` CARRIES, and `find_boot` skips members that fail it.  Both rows then
+close on #2 and board.
+
+**This cannot cost a row that boards today**, and the argument is not a
+regression run: every emitter path already refuses a family at this same boot
+check, so a boarded row's certificate passes it by construction.  Checked
+anyway on `1RB0RB_0LC0LD_1LC1LD_1RA0RA` (boarded, gray): same family, same
+closure, with and without the gate.
+
+### Worth, and where the residue stops
+
+Two core rows, no shadows on either, no kernel change, no new `ClassSucc`
+instance.  40 rows remain.
+
+* The trimming the brief offers as the alternative was NOT built and should
+  not be: `fam_cells_class` and `fam_cells_run` decompose `fam_cells` into an
+  `sside` with an OPAQUE tail, and a trim at the end of the string is not
+  compositional with that -- it needs a "the tail is not all blank" side
+  condition on both lemmas and every `ClassSucc` instance above them.  A
+  cell-exact family costs nothing and there was one.
+* **`no anchor` is now two labels.** For these two rows it meant *the searcher
+  picked a family the kernel cannot state and stopped looking*.  For the
+  bouncer pair it means what 4q says.  Anything still filed `no anchor` is
+  worth re-running before it is read by a human -- the gate is free.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
