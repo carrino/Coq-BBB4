@@ -127,20 +127,47 @@ which changes `srun_sound` and every step's soundness lemma.
 
 Measured with `tools/counters/radix_infer.py` and by hand-reading traces.
 
-**Do not re-chase the flat reading.**  A search over the TRUE wall anchor
-(head at cell 0) for all four surviving sub-machines and the `StA`-targeting
-row, across anchor state, anchor head symbol, radix 2–4, digit width 1–3,
-terminator length 0–2 and 0–2 padding blanks past the top digit, finds **no
-consecutive-value decode at all** on any of them.  That is the same search
-that finds base 3 immediately on the two `Ter3Wall*` groups, so its silence
-here is evidence, not a gap: these rows have no positional counter at the
-wall, which is exactly what a nested counter looks like from outside.
+**The flat wall reading is measured absent — but read the caveat.**  A search
+over the TRUE wall anchor (head at cell 0) for all four surviving
+sub-machines, across anchor state, anchor head symbol, radix 2–4, digit width
+1–3, terminator length 0–2 and 0–2 padding blanks past the top digit, finds
+**no consecutive-value decode** on any of them.  The same search finds base 3
+immediately on the two `Ter3Wall*` groups.
+
+The caveat is the one the `StA` row taught (§3 last entry): every scan named
+above pins the anchor's head to a fixed offset from a tape END.  A counter
+read AT THE CARRY straddles the head and is invisible to all of them.
+`tools/counters/carry_anchor.py` searches that shape and finds it on the
+`StA` row — and on **none** of these four sub-machines, with run-units `1`,
+`11`, `01`, `10`, `111` and eight digit-pairs.  So the nested diagnosis
+survives both searches, but "no flat reading" now means "no flat reading at
+the wall AND none at the carry", which is a stronger and better-founded
+statement than it was.
 
 ### `0LB1RC_1LB0RD_1LC0RD` (2 rows), `0LB1RC_1LD0RC_1LB1RC` (3 rows)
 
 `residue_map` reads both as `Dp` (each bit in two identical copies) and calls
-them "HIGHER".  Measured directly at the `Dp` wall anchor, the lap really is
-super-affine: `6, 16, 36, 82, 196` steps at carry lengths `0..4`.  A lap that
+them "HIGHER".  That label is a PARTIAL fit: sampling
+`1RB---_0LB1RC_1LB0RD_1LC0RD` at the wall gives the words
+
+```
+(empty), 1, 11, 011, 111, 0011, 1011, 1111, 00011, 10011, 11011, 01111, …
+```
+
+which are plain `Kp` words — a binary counter, low bit at the wall, top bit
+as terminator — and only the subsequence that happens to pair up as
+`00`/`11` looks like `Dp`.  So the counter reading is fine.  What is wrong is
+that **the wall is not where every increment shows**: those words decode to
+
+```
+1 | 3 | 6,7 | 12,13,15 | 24,25,27,30,31 | 48,49,51,54,55,60, …
+```
+
+— a sparse self-similar set, each block twice the previous.  Consecutive wall
+visits are therefore separated by a whole sub-epoch, which is why the lap
+measured at that anchor is super-affine: `6, 16, 36, 82, 196` steps at carry
+lengths `0..4`.  The open question is not "is it a counter" but WHERE the
+anchor makes every increment visible.  A lap that
 grows like that is a NESTED counter — the outer increment runs an inner one —
 which is what `Counters/NestedLap*.v` and `nestcert.py` exist for.  The
 nested route in `emit_lapcert.py` is currently `S0`-anchor-only (it is
@@ -159,26 +186,57 @@ away.
 
 ### `1RB---_1RC1LB_0LB1RD_0RA0RC` — the one row that targets `StA`
 
-`StD`'s `S0` transition is `0RA`, and **it fires**: `StA` is re-entered at
-configuration indices
+**It is a plain binary counter** (John's reading, 2026-07-31): MSB to the
+LEFT, one marker `1` to the left of every bit, ordinary carry.  Confirmed by
+`tools/counters/carry_anchor.py`: **127 consecutive values** decode at the
+anchor
+
+  state `StB`, head symbol `S0`, run-unit `11`, digits `10`/`11`.
+
+**Why every scan in the tree missed it.**  The anchor is read AT THE CARRY:
+the head sits on the stop bit — the lowest clear bit — so the counter
+*straddles* the head, its high digits to the left and the run of set low
+digits to the right, and the head's position inside the word depends on the
+value.  Every anchor search here and in `tools/counters` pins the head to a
+fixed offset from a tape end (`anchor_scan`, `anchor_snaps_all`,
+`anchor_snaps_far_all`, `radix_infer`, and the `HD` scan added this session),
+so none of them can see it.  That is a general gap, not a quirk of this row.
+
+In `cconf` terms the anchor is
+
+```coq
+Cc p = (StB, (S1 :: Rw q0, S0, rep [S1] (2 * j)))    where cview p = (j, Some q0)
+```
+
+— the stop digit's own marker nearest the head on the left, then the higher
+digits as `(bit, marker)` pairs reading leftward, then the wall cell `S0` at
+cell 0; and on the right the carry run, two cells per set digit.
+`Checkers/LapDecider.v` can express exactly this shape (`cden` allows an
+opaque tail on one side and a `rep u (a*j+b)` block on the other, and here
+`el = false`, `er = true`, `c0 = mkC StB (mkS [S1] [] 0 0 []) S0 (mkS []
+[S1] 2 0 [])`).  **What is missing is the anchor search and a template whose
+anchor straddles the head, not the checker.**
+
+**Why `StA` fires, and sparsely.**  The interleaved markers mean `StD`'s
+`0RA` is only reached when the counter WIDENS — `StA` is on the expand-the-
+wall path.  Measured, it is re-entered at configuration indices
 
 ```
 19, 66, 257, 1024, 4095, 16382, 65533, 262140, 1048571, …
 ```
 
-(measured to `t = 2·10^6`; `t_k` is `4^k` to within a small linear term —
-`4095 = 2^12 - 1`, `16382 = 2^14 - 2`, `65533 = 2^16 - 3`, …).  So this row's
-target is **`NeverQuasiHaltsSt`, not `iqh`** — it is the one row of the 24
-that does not quasihalt, and `LapGlue.glue_neverqh` is its closer rather than
-`LapGlueQuiet.glue_qh_quiet`.  Its anchor family is indexed by that `4^k`,
-i.e. the lap doubles twice, so it wants the nested machinery of §3's second
-group, not a flat chain.  (This is also why `radix_infer` reads it at
-`p0 = 257` rather than 1: the readable anchors start after three doublings.)
+(to `t = 2·10^6`; `4095 = 2^12 - 1`, `16382 = 2^14 - 2`, `65533 = 2^16 - 3`,
+…), i.e. once per epoch.  So the counter is FIXED-WIDTH within an epoch and
+the widening is the outer level — and the row's target is
+**`NeverQuasiHaltsSt`, not `iqh`**: it is the one row of the 24 that does not
+quasihalt, and `LapGlue.glue_neverqh` is its closer rather than
+`LapGlueQuiet.glue_qh_quiet`.
 
 ## 4. Reproducing the measurements
 
 ```sh
 python3 tools/counters/radix_infer.py <rowfile>     # radix, digits, lap law
+python3 tools/counters/carry_anchor.py <rowfile>    # anchors that straddle the head
 python3 tools/counters/emit_lapcert.py --list <rowfile> [--emit]
 ```
 
