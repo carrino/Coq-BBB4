@@ -1,101 +1,103 @@
-BUILD THE INTERIOR ARM'S OFFSET.  Four core rows stop on ONE refusal, the
-widening is specified to the lemma in §4i, and three of the four carry five
-`0RB` shadows between them — so it is **nine rows**, the largest single
-bucket left.  In `carrino/Coq-BBB4`, on branch `claude/interior-offset-<yourid>`
-cut from `main`.
+BUILD THE FIBONACCI NUMERATION.  Five core rows, the arms are MEASURED to
+derive, the numeration is MEASURED and checked against the machines, and the
+build is specified to the lemma.  In `carrino/Coq-BBB4`, on branch
+`claude/fib-numeration-<yourid>` cut from `main`.
 
 **Diff `origin/main` first**: `git show origin/main:tools/closeout/core_rows.txt`
-is one command, and the wave route has now taken rows out from under four
-sessions.  §4l, §4n and §4o each say this and each said it after paying.
+is one command, and the wave route has now taken rows out from under five
+sessions.  §4l, §4n, §4o and §4p each say this; §4o said it and then had its
+OWN next-session prompt invalidated eight hours later by §4p, which is the
+sharper lesson: **re-read the plan's last section before acting on a prompt,
+because the prompt is older than the plan.**
 
-Read first, in this order: `docs/LADDER_PLAN.md` **§4i's "The live core,
-swept"** — it names these four rows and specifies the fix in one sentence;
-then **§4o in full**, which is the last session and whose closing findings are
-about the SHADOWS and not about gray; then
-`theories/Checkers/LadderCheck.v` §2b (`astride`/`aoff`/`acnt`/`arm_index`,
-`blk`, `blk_den`) and `Section Cells` (`cls_side`, `run_side`) — where the
-edit goes; then `tools/ladder/emit_ladder.py`'s `closure_data`, whose
-`interior_at` is what has to learn the offset.
+Read first, in this order: `docs/LADDER_PLAN.md` **§4p in full** — it is the
+measurement that selected this task, and its last third ("The numeration,
+CRACKED") is the specification you are implementing; then **§4o in full**,
+which is the same build one numeration over and is the template you are
+copying; then `tools/ladder/fibmem.py` (`FIBMEM: OK`), the oracle that already
+checks every line of the spec against the orbit read off the machines; then
+`theories/Checkers/LadderCheck.v` §3b, §5b and §10 — the `(Gray, 2)` instance,
+which is the shape of every file you are about to add.
 
 **STATE.**  **35** core undecided and **12** `0RB` shadows
 (`tools/closeout/core_rows.txt`, `tools/closeout/shadow_rows.tsv`;
 `make closeout-status`).  **5,109** frozen rows settled by a board, 99.1%.
 **47** rows remain.
 
-**THE TASK.**  These four core rows have a partial board already on disk and
-tracked (`theories/Machines/Ladder/LDR_*.v`, not registered in `_CoqProject`,
-carrying every arm the certificate has and no closure).  All four record the
-SAME refusal in the `.v` file:
+**THE TASK.**  §4p measured the five fibonacci rows and found the ARM RISK IS
+ZERO: all five fit the same two classes, both arms derive at threshold 0..1
+and **stride 1**, and the costs are affine (first differences a constant 2 and
+a constant 0).  What blocks them is the NUMERATION and nothing else — `Fam`
+has no weight field, `fam_value` is `val_pos`, and the five boards on disk
+declare `Binary 1`, which is not what their machines do.  §4p then cracked the
+numeration and checked all four facts:
 
-    interior arm: no chain at any threshold 0..3 and stride 1..4 --
-    the carry ripple is not affine in the run length
+* **Membership.**  LSB-first: an optional leading `1`, then a concatenation of
+  the blocks `[0]` and `[1;1]`.  Counts come out 2, 3, 5, 8, 13, 21, 34, 55,
+  89, 144 and agree with the orbit at every width 0..11.
+* **The top of a width is `1^k`** — simpler than `(Gray, 2)`'s
+  `[1] ++ 0^(k-2) ++ [1]`, and no `of_value` is needed to compute it.
+* **The split is TWO-WAY and splits on the LOW DIGIT** — a `destruct`, where
+  §4o had to do four-way:
 
-    1RB0LD_0LC0RB_1LA1RC_0RC1LD   0 shadows
-    1RB1LA_0LA0LC_1LC1RD_0RB0RD   2 shadows
-    1RB1LA_0LA1RC_0LD0RC_1LD0RB   1 shadow
-    1RB1LA_1LC0RD_0RA0LC_0LA1RD   2 shadows
+      low digit 0    [0] ++ 0^n ++ rest    ->   [1] ++ 0^n ++ rest
+      low digit 1    1^n ++ [1;0] ++ rest  ->   0^n ++ [1;1] ++ rest
 
-and §4i already measured why and what the fix is, in its own words:
+  Measured over all 2,284 interior members of the five rows: overlap 0,
+  uncovered 0, wrong successor 0.
+* **Each rewrite adds exactly 1 to the value**, so the successor never has to
+  be inverted pointwise.
 
-> at `s = 2` the odd residue derives (`4m+4`, as predicted) and the even one
-> does not, because its arm needs a guaranteed block copy materialised into
-> `s_pre` the way the fill arm's does, and then `m = 0` is no longer covered
-> by it.  **So the next widening is known and small: the interior arm needs
-> the same `[m1]` offset the fill arm already has, plus a separate arm for
-> the residue's own `m = 0`.**
+So the build is: a `Fib` constructor on `Code` (every existing section is
+gated by `Hypothesis Hcode : fm_code F = Binary` / `= Gray` and stays inert),
+`fam_value` at `Fib` as the weighted fold, the membership predicate as
+`ClassSucc`'s `P`, and the round-trip
+`fam_of_value F (fam_value F ds) (length ds) = Some ds` over it.
 
-So: give `cls_side` the offset `run_side` has (it already gained the fixed
-word `u` in §4o — this is the other half, the guaranteed copies materialised
-about the block), and give the arm scheme a flat arm at the residue's own
-`m = 0`.  `fam_cells_class` takes the matching change, exactly as it did in
-§4o.
+**THE ONE PLACE THE RISK IS.**  The numeration is **REDUNDANT** — `w0 = w1 = 1`,
+so `10000` and `01000` are both value 1 — and the membership rule is which
+representative the machine picks.  So the round-trip lemma is NOT free the way
+`(Gray, 2)`'s `gray_inj` was (there, one value and one width determined one
+string outright).  Here it holds only ON MEMBERS, and the proof has to use the
+membership predicate.  **Do that lemma first**: if it will not go through,
+STOP and write §4q with the counterexample, because everything else rests on
+it.
 
-**MEASURE BEFORE YOU BUILD.**  `tools/ladder/fillcost.py` and
-`core61_armshapes.txt` are the existing readings; walk the run from `t^n ++ d`
-to `0^n ++ (d+1)` for `n = 1..10` on all four rows and check the cost is
-`4m + c` per residue with a materialisation offset, and NOT quadratic.  §4i
-measured two of the live core as genuinely `(n+1)(n+2)` — no stride and no
-offset makes that affine, and those want `RU` or a count language, which is
-`RULE_LADDER` 5's table row and NOT this task.  **If one of the four turns out
-quadratic, STOP and write §4p with which row and the measured costs.**
+**THE CLOSER IS THE QUASIHALTING ONE, NOT `boardG_neverqh`.**  These five are
+`live = BCD`: `A` is entered once, at step 0, and nothing targets it.  So they
+QUASIHALT in `A` and want `LadderCheck` §8's shape (`boardph_iqh`) — every arm
+additionally `RuleAvoid`, a visit chain per state other than the quiet one,
+and the quiet state's last visit with the window to the anchor.  §4o's
+`Section BoardG` is never-QH only and does NOT serve them; budget for the iqh
+twin.  `sq = 0` here, which makes the window obligations small.
 
-**DO ONE ROW END-TO-END FIRST.**  `1RB1LA_1LC0RD_0RA0LC_0LA1RD` — it carries
-two shadows, so it is worth three rows on its own.  Drive it to
-`NeverQuasiHaltsSt tm_*`, run `make closeout`, and confirm "settled by a
-board" moves.  **A board that does not move a number is not a board.**
+**RE-ROOT DOES NOT SERVE THESE FIVE** and §4p says why: `Census/Reroot.v`'s
+precondition is a prefix writing only `S0` so the tape stays all-blank, and
+these rows write a `1` on step 0 — the very event re-root stops at.  Do not
+try it.
 
-**THEN COLLECT THE SHADOWS, AND MIND THE TRAP §4o FOUND.**
-`tools/closeout/gen_shadow.py` already exists and does the whole job
-(`--all`, `--check`, `--regress`); you do not have to write a generator.  But:
+**STATE THE LEMMAS AGAINST THE ORACLE BEFORE PROVING THEM.**  `fibmem.py`
+already checks the membership predicate, the top, the split and the successor
+against the orbit.  §4o's `gray2check.py` is the same discipline and it caught
+a wrong case split in seconds that would have cost hours in Coq.  Extend
+`fibmem.py` to whatever you state; do not state anything it has not checked.
 
-* **`shadowlib.classify` drops a shadow from `shadow_rows.tsv` the moment its
-  partner leaves the unproven set** — which is exactly when the shadow becomes
-  actionable.  So `gen_shadow.py --all`, whose input is that file, cannot see
-  the rows you just freed.  Board the core row, then drive each freed shadow
-  with the EXPLICIT form and read its `qstar`/`prefix`/`partner`/`ops` out of
-  the previous revision of the table:
+**DO ONE ROW END-TO-END FIRST**, drive it to its `iqh` triple, run
+`make closeout`, and confirm "settled by a board" moves.  **A board that does
+not move a number is not a board.**
 
-      git show HEAD~1:tools/closeout/shadow_rows.tsv
-      python3 tools/closeout/gen_shadow.py --spec SHADOW --partner CORE \
-              --qs B --t 1 --ops mirror --out theories/Machines/Counters --check
+**WHAT NOT TO DO.**
 
-  §4o boarded `0RB0LA_1LA1RC_0RD1RD_1LB0LB` and
-  `0RB0LA_1RC1LA_1RD0RD_1LB0LB` exactly this way.  **Fixing `classify` so the
-  freed rows survive one generation is a real improvement and worth doing
-  first** — but it is a change to a file another wave owns, so check
-  `origin/main` before editing it.
-* The generator now reads the partner's PACKAGE off `frozen_map.tsv` rather
-  than hard-coding `BBB4.Machines.Counters` (§4o: ladder boards live under
-  `BBB4.Machines.Ladder`, and a shadow off one imported the wrong module).
-* SCOPE: never-quasihalting core rows only.  A core row boarded as `iqh`
-  transports through `Reroot.qhbound_reroot`, which shifts the bound by the
-  prefix length and carries a `B + t <= B_board` side condition — the
-  generator refuses it rather than guessing, and that refusal is correct.
-
-**WHAT NOT TO DO.**  Do not build another `ClassSucc` instance — `(Gray, 2)`
-is done (§4o) and the next `(code, step)` pair is worth less than these nine
-rows.  Do not do the outer parameter (§4j).  Do not touch the count language
-or `RU`.  **Never edit `theories/Census/`.**
+* **Do not re-probe the four base-2 quadratic rows.**  §4p measured their
+  interior arm at `(r+1)(r+2)` and `r^2 + 5r + 12` — second difference exactly
+  2 in every case — and `QUAD_TERMINAL_MEASUREMENT.md` corroborates it by an
+  independent route on the terminal.  A strided arm is one chain repeated, so
+  its cost is affine along the stride; no widening of `ARM_GRID` reaches a
+  quadratic.  They are done as ladder rows.  **§4o's prompt pointed at exactly
+  these four and was wrong** — it read §4i's "the next widening is known and
+  small" as still live, and §4p had measured it dead.
+* Do not build another `ClassSucc` instance for a code that has no rows.
+* Do not do the outer parameter (§4j).  **Never edit `theories/Census/`.**
 
 **Still open, and cheap, if you finish early.**  The two gray rows §4n and
 §4o left alone — `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and
@@ -106,6 +108,32 @@ reason in the `.v` file, and `tools/ladder/gray2check.py` confirms their class
 law is fine.  Either re-read them at an anchor whose digit words do not end in
 a blank, or give `fam_cells` a trimming the denotation can state.  Two rows,
 and no kernel lemma is involved.
+
+**THE SHADOWS ARE NOT READY WORK, AND HERE IS WHY.**  Twelve `0RB` shadows sit
+on ten core rows.  A shadow satisfies the `skipped` disjunct only while its
+core row is DEFERRED; it needs a board of its own exactly when its core row
+boards, and not before.  **Five of the twelve sit on three of the four
+QUADRATIC rows** (§4p), so they are not coming back either.  Two things §4o
+paid for, when you do free one:
+
+* **`shadowlib.classify` drops a shadow from `shadow_rows.tsv` the moment its
+  partner leaves the unproven set** — which is exactly when it becomes
+  actionable.  So `gen_shadow.py --all`, whose input is that file, cannot see
+  the row you just freed.  Drive it with the explicit form and read its
+  `qstar`/`prefix`/`partner`/`ops` out of the previous revision of the table:
+
+      git show HEAD~1:tools/closeout/shadow_rows.tsv
+      python3 tools/closeout/gen_shadow.py --spec SHADOW --partner CORE \
+              --qs B --t 1 --ops mirror --out theories/Machines/Counters --check
+
+  §4o boarded `0RB0LA_1LA1RC_0RD1RD_1LB0LB` and
+  `0RB0LA_1RC1LA_1RD0RD_1LB0LB` exactly this way.  Fixing `classify` so a
+  freed row survives one generation is a real improvement and worth doing.
+* The generator reads the partner's PACKAGE off `frozen_map.tsv` rather than
+  hard-coding `BBB4.Machines.Counters` (§4o: ladder boards live under
+  `BBB4.Machines.Ladder`).  `gen_shadow.py --regress` is `OK, 4 of 4` on a
+  built tree and `INCONCLUSIVE` on an unbuilt one (§4p) — build the fixture
+  first or it tells you nothing.
 
 **Facts worth not rediscovering.**
 
