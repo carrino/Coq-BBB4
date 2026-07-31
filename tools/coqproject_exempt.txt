@@ -18,24 +18,53 @@ theories/Census/Run_Split*.v
 theories/Closeout/BBB4_Theorem.v
 theories/Closeout/CloseoutFinal.v
 
-# Ladder boards that are PARTIAL by construction: each proves every rule its
-# certificate carries -- the [sound_*] lemmas are theorems -- but stops before
-# the machine-level theorem because ONE arm has no chain.  The file itself
-# says which arm and at what strides, and LADDER_PLAN 5's table row is the
-# reason: a cost that is not affine in the run length has no chain at any
-# stride, so this is a refusal and not a search that was cut short.
+# Ladder boards that are PARTIAL by construction: each stops before the
+# machine-level theorem because an arm of the CLOSURE has no chain.  Every
+# [sound_*] lemma in them is still a theorem -- the file's own header says how
+# many of the certificate's arms were re-derived, and for several it is all of
+# them.  Do not read that count as the reason: the certificate's arms and the
+# closure's CLASS arms are different sets.  closure_data builds the class arms
+# fresh from the family, and they are what fails.
 #
-# Four stop on the INTERIOR arm (the two QUAD rows among them: their terminal
-# costs (k+2)^2 exactly -- docs/QUAD_TERMINAL_MEASUREMENT.md), two on the FILL
-# arm.  Wave 4l's shared arm indexing removed the older ClassSucc reason, so
-# do not re-file these under 4h(a).
+# emit_ladder.py writes the reason into the .v file and there are exactly two:
+#
+#   line 381  interior arm: no chain at any threshold 0..3 and stride 1..4
+#   line 431  fill arm: no chain at any threshold 1..3, stride 1..4 or copy split
+#
+# NINE stop on the INTERIOR arm and all nine rows are still core; between them
+# they carry five 0RB shadows, so this list is 14 of the residue's rows and the
+# densest bucket in it.  TWO stop on the FILL arm and neither row is core any
+# more, so they are worth nothing but are kept as the fill twin of the
+# question.  Wave 4l's shared arm indexing removed the older ClassSucc reason,
+# so do not re-file any of these under 4h(a) -- the note inside the files still
+# says 4h(a) and is stale.
+#
+# LADDER_PLAN 5's table row reads this as a refusal: a cost that is not affine
+# in the run length has no chain at any stride, and the two QUAD rows here do
+# measure a terminal cost of (k+2)^2 exactly (docs/QUAD_TERMINAL_MEASUREMENT).
+# **That reading is not confirmed for these rows.**  Wave 4n found the
+# identical "no chain at any threshold and stride" on the gray six was a
+# one-cell far-side reading -- valfam drops a trailing blank run that the
+# cconf carries -- and with it corrected, zero of six became six of six.
+# Every board below was emitted before that fix and none has been re-measured.
+# tools/ladder/armprobe.py implements the corrected reading and has
+# --selftest; point it here before believing the refusal.
 #
 # They are kept as the record of where each row stops.  When a row's arm
 # lands, its board finishes and moves into _CoqProject -- delete the line here
 # rather than leaving both; check_coqproject.py fails on a line that does.
+
+# INTERIOR arm (line 381) -- nine rows, all still core, five shadows between them
 theories/Machines/Ladder/LDR_1RB0LD_0LC0RB_1LA1RC_0RC1LD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA0LC_1LC1RD_0RB0RD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA1RC_0LD0RC_1LD0RB.v
 theories/Machines/Ladder/LDR_1RB1LA_1LC0RD_0RA0LC_0LA1RD.v
+theories/Machines/Ladder/LDR_1RB____0LB1RC_1LB0RD_1LC0RD.v
+theories/Machines/Ladder/LDR_1RB____0LB1RC_1LD0RC_1LB1RC.v
+theories/Machines/Ladder/LDR_1RB____1LC0RB_1LD1RB_0LD1RB.v
+theories/Machines/Ladder/LDR_1RB____1LC0RD_0LC1RB_1LB0RD.v
+theories/Machines/Ladder/LDR_1RB____1LC1RD_0LC1RD_1LB0RD.v
+
+# FILL arm (line 431) -- neither row is core any more
 theories/Machines/Ladder/LDR_1RB____0LB1RC_1LB0RD_1LC0RC.v
 theories/Machines/Ladder/LDR_1RB____1LC0RD_0LC1RB_1LB0RB.v
