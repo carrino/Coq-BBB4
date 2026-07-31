@@ -1399,12 +1399,13 @@ RULE_LADDER 5's count language, not an emitter gap.
 core sweep that should run at ~16 s/row ran at ~78 s/row against a build.
 Run one or the other.
 
-**What is NOT done, precisely.**  `theories/Closeout/Closeout.vo` was not
-rebuilt -- it needs all 2665 `_CoqProject` files and this container does not
-have the hours.  What IS kernel-verified: the board itself, and the exact
-`covers_nqh_at` proof line `gen_stages.py` emitted for the row (compiled
-standalone against `CloseoutKit` + the committed census `.vo`, funext only).
-The 62 -> 61 number is `audit.py`'s, which is the Python bookkeeping layer.
+**Verified to the end.**  The full tree built clean (2,665 files, `-j3`, ~2 h
+alongside the sweep -- do not run both at once, see the compute note) and
+`make closeout` ran in full: all 51 `CB_*.vo`, `Closeout.vo`, and
+`closeout_partial : forall tm, Deferred D_census tm -> boarded tm \/
+skipped D_remaining tm` with **`D_remaining` at 59 rows**, funext only, and
+`census_cache.py --check` MATCH.  So the 62 -> 59 is the kernel's number and
+not only `audit.py`'s.
 
 ## 3. The long-tail roadmap
 

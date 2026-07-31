@@ -1008,6 +1008,18 @@ with one more such theorem.  The gate's second clause did not fire.
 7 the session was handed and not the 8 the stored fixture claims.  4h said the
 stored cert was stale by two sections; it is stale by three now.
 
+### Verified to the end
+
+The full tree builds clean and `make closeout` runs in full: 51 `CB_*.vo`,
+`Closeout.vo`, and
+
+    closeout_partial : forall tm, Deferred D_census tm ->
+                       boarded tm \/ skipped D_remaining tm
+
+with `D_remaining` at **59** rows, axiom footprint funext, and
+`census_cache.py --check` MATCH.  The 62 -> 59 is the kernel's number, not
+only the audit's.
+
 ### The gate: yes, with exactly one widening -- and it is not the one expected
 
 The question was whether the class-successor lemma can be stated so that
