@@ -110,12 +110,18 @@ def read_radix(code, T=400000, floor=500, keep=8):
     spread, d, med, sp = out[0]
     fib = all(abs(sp[i] - sp[i + 1] - sp[i + 2]) <= 2
               for i in range(len(sp) - 2))
-    if abs(med - PHI) < 0.01:
+    if med < 1.2:
+        # every cell toggles alike: a sweeper/bouncer, not a positional
+        # counter at all.  Reporting this as "base 1" would be nonsense.
+        name = 'FLAT (every cell alike -- not a positional counter)'
+    elif abs(med - PHI) < 0.01:
         name = 'phi (Fibonacci/Zeckendorf)'
-    elif abs(med - round(med)) < 0.03:
+    elif abs(med - round(med)) < 0.03 and round(med) >= 2:
         name = 'base %d' % round(med)
     else:
         name = '?'
+    if spread > 0.05 and not name.startswith('FLAT'):
+        name += ' [UNRELIABLE: spread]'
     return d, med, spread, name, fib, sp
 
 

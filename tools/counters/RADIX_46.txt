@@ -1,0 +1,75 @@
+# Radix triage of the 46 undecided core rows, 2026-07-31.
+#     python3 tools/counters/radix_clock.py tools/closeout/core_rows.txt --steps 300000
+# UNTRUSTED measurement (tools/), grouped by residue_map.tsv's blocker label.
+# "+N" is how many 0RB shadows hang off that core row -- boarding a core row
+# WITHOUT its shadows does not reduce the core count, so budget them together.
+#
+# A spread of 0.00 means every digit of the ladder agrees and the radix is
+# solid; anything flagged UNRELIABLE means the busiest-cell walk ran off the
+# digits (it crossed a wall) and the number should not be used.
+# FLAT = every cell toggles alike, i.e. NOT a positional counter at all --
+# a sweeper/bouncer.  Confirmed independently: nestscan.py finds no
+# incrementing anchor family on 4 of the 5 FLAT rows.
+
+== no-anchor      14 core +  2 shadows
+   0RB0RD_1LC1RB_1RA0LC_1LB0LC         ratio=1.0069  spread=0.00  stride=3  FLAT (every cell alike -- not a positional counter)
+   0RB0RD_1LC1RB_1RA0LC_1LD0LC         ratio=1.0069  spread=0.00  stride=3  FLAT (every cell alike -- not a positional counter)
+   0RB1LC_1LC0RD_1RD0LC_1LA1RB         ratio=1.0046  spread=0.00  stride=2  FLAT (every cell alike -- not a positional counter)
+   0RB1LC_1LC1RD_1LA0LC_0RD1RB         no toggle ladder
+   1RB0LA_1LC1LA_1RD1LB_0LC0RD         ratio=2.0001  spread=0.00  stride=2  base 2
+   1RB0RB_1LC0RC_1RA0LD_0LB0LC         ratio=1.0062  spread=0.01  stride=1  FLAT (every cell alike -- not a positional counter)
+   1RB0RB_1LC1LD_0LC1RA_0LD0RA         ratio=1.8809  spread=2.16  stride=1  ? [UNRELIABLE: spread]
+   1RB0RD_1LB1LC_1RC0RA_0LB1RD         ratio=1.9207  spread=0.49  stride=2  ? [UNRELIABLE: spread]
+   1RB0RD_1LC0LB_1LD0LB_1RD0RA         ratio=2.0001  spread=0.00  stride=2  base 2
+   1RB0RD_1LC0LC_1LD0LB_1RD0RA         ratio=2.0001  spread=0.00  stride=2  base 2
+   1RB1LA_0LA1RC_0RD0RB_1RA---    +1   ratio=2.3156  spread=0.82  stride=3  ? [UNRELIABLE: spread]
+   1RB1LB_1LC0RD_0LB1LA_0LA1RA    +1   ratio=1.0155  spread=0.00  stride=2  FLAT (every cell alike -- not a positional counter)
+   1RB1LD_1RC1RB_1LC1LA_0RC0RD         no toggle ladder
+   1RB1RD_1LC1RA_0RB0LC_1LA0RD         ratio=1.9999  spread=0.00  stride=2  base 2
+
+== HIGHER         14 core +  3 shadows
+   1RB---_0LB1RC_1LB0RD_1LC0RD         ratio=1.6180  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf) F(n)=F(n-1)+F(n-2) holds
+   1RB---_0LB1RC_1LD0RC_1LB1RC         ratio=1.6180  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf) F(n)=F(n-1)+F(n-2) holds
+   1RB---_0LC1RD_1LB1RC_1LB0RD         ratio=1.6182  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf)
+   1RB---_0LC1RD_1LB1RD_1LB0RD         ratio=1.6182  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf)
+   1RB---_1LC0RB_0LD1RB_1LC1RB         ratio=1.6182  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf)
+   1RB---_1LC0RB_0LD1RB_1LC1RD         ratio=1.6182  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf)
+   1RB---_1LC0RB_1LD1RB_0LD1RB         ratio=1.6180  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf) F(n)=F(n-1)+F(n-2) holds
+   1RB---_1LC0RD_0LC1RB_1LB0RD         ratio=1.6180  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf) F(n)=F(n-1)+F(n-2) holds
+   1RB---_1LC1RB_0LB1RD_1LC0RD         ratio=1.6182  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf)
+   1RB---_1LC1RD_0LB1RD_1LC0RD         ratio=1.6182  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf)
+   1RB---_1LC1RD_0LC1RD_1LB0RD         ratio=1.6180  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf) F(n)=F(n-1)+F(n-2) holds
+   1RB0RB_0LC1RD_1LC1LA_0LA1RB    +1   ratio=1.6182  spread=0.00  stride=1  phi (Fibonacci/Zeckendorf) F(n)=F(n-1)+F(n-2) holds
+   1RB1LC_0LC0RB_1LA1RD_0LA0RD    +1   ratio=2.2045  spread=0.11  stride=2  ? [UNRELIABLE: spread]
+   1RB1LD_1LC1RA_0RB0LC_0RA0LD    +1   ratio=2.1898  spread=0.09  stride=2  ? [UNRELIABLE: spread]
+
+== QUAD            4 core +  5 shadows
+   1RB0LD_0LC0RB_1LA1RC_0RC1LD         ratio=2.0000  spread=0.00  stride=1  base 2
+   1RB1LA_0LA0LC_1LC1RD_0RB0RD    +2   ratio=2.6289  spread=1.79  stride=2  ? [UNRELIABLE: spread]
+   1RB1LA_0LA1RC_0LD0RC_1LD0RB    +1   ratio=2.0019  spread=0.01  stride=1  base 2
+   1RB1LA_1LC0RD_0RA0LC_0LA1RD    +2   ratio=4.0000  spread=2.00  stride=2  base 4 [UNRELIABLE: spread]
+
+== EXP4            4 core +  2 shadows
+   1RB0RB_0LC0LD_1LC1LD_1RA0RA         ratio=2.0002  spread=1.00  stride=1  base 2 [UNRELIABLE: spread]
+   1RB0RB_0RC1RC_0LD1LA_1LD0LA         ratio=2.0001  spread=0.00  stride=1  base 2
+   1RB1LC_0LA0RB_0LD1LD_1RA0RA    +1   ratio=2.0001  spread=1.33  stride=1  base 2 [UNRELIABLE: spread]
+   1RB1LD_1RC0RC_1LA0LA_0RA0LD    +1   ratio=4.0013  spread=3.00  stride=2  base 4 [UNRELIABLE: spread]
+
+== PARITY-AFFINE   4 core +  6 shadows
+   1RB1LA_0LA0RC_0LD0RB_1LD1RC    +1   ratio=3.9998  spread=0.00  stride=2  base 4
+   1RB1LA_0LC0RD_1LC1RD_0LA0RB    +1   ratio=4.0012  spread=0.00  stride=2  base 4
+   1RB1LC_0LA0RB_0RD1LA_0LC1RD    +1   ratio=2.0000  spread=0.00  stride=1  base 2
+   1RB1LC_0LC0RB_0RD1LA_0LA1RD    +3   ratio=2.0001  spread=0.00  stride=1  base 2
+
+== EXP3            3 core +  2 shadows
+   1RB1LC_1LB1RA_0LC0LD_0RA0RD    +1   ratio=1.1176  spread=0.38  stride=1  FLAT (every cell alike -- not a positional counter)
+   1RB1LC_1LC1RA_0LC0LD_0RA0RD    +1   ratio=1.2378  spread=0.56  stride=1  ? [UNRELIABLE: spread]
+   1RB1RC_1LA0LB_1LD0RD_1LB0RC         ratio=1.5000  spread=1.00  stride=1  ? [UNRELIABLE: spread]
+
+== EXP2            2 core +  0 shadows
+   1RB0RD_1LC1RA_0RB0LC_1LD0LA         ratio=1.2906  spread=0.39  stride=1  ? [UNRELIABLE: spread]
+   1RB1RC_1LA1RA_0RC1LD_1LB0LD         ratio=2.0002  spread=0.00  stride=3  base 2
+
+== AFFINE          1 core +  0 shadows
+   1RB0RC_1LC1RA_1RD1LB_0LC0RD         ratio=1.9995  spread=0.00  stride=2  base 2
+
