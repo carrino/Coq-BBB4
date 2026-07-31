@@ -229,10 +229,12 @@ def closure_data(cert, tab):
         raise NoClosure('%d phases: the closure pins the phase at 0'
                         % len(fills))
     f = fills[0]
-    if f['target_prefix'] or f['target_suffix']:
-        raise NoClosure('fill law is not a pure widening')
     if f['widens_by'] < 1 or f['lands_in_phase'] != 0:
         raise NoClosure('fill law does not land back in phase 0')
+    m = len(f['target_prefix']) + len(f['target_suffix'])
+    if m > 1 + f['widens_by']:
+        raise NoClosure('fill target names %d digits but widens by %d'
+                        % (m, f['widens_by']))
     b = fam['base']
     if b < 2:
         raise NoClosure('base %d' % b)
@@ -271,11 +273,28 @@ def closure_data(cert, tab):
         ch, ca, cb = derive(el, er, c0, c1, 'interior arm d=%d' % d)
         inter.append((d, c0, c1, ch, ca, cb, el, er))
 
-    # the fill arm: t^(1+n) -> mid^(1+n+s), both tails known empty
+    # the fill arm: t^(1+n) -> the fill law's target at width 1+n+s, both
+    # tails known empty.  [fm1] guaranteed copies of the fill digit sit
+    # before the symbolic run and [fm2] after; 4h's normalisation is that at
+    # least one must be materialised into [s_pre], so try fm1 = 1 first.
+    fpre = tuple(x for d in f['target_prefix'] for x in digs[d])
+    fsuf = tuple(x for d in f['target_suffix'] for x in digs[d])
     fl = conf((pre + digs[b - 1], digs[b - 1], 1, 0, tail0))
-    fr = conf((pre + digs[mid], digs[mid], 1, 0,
-               digs[mid] * f['widens_by'] + tail0))
-    fch, fca, fcb = derive(True, True, fl, fr, 'fill arm')
+    fm1, fm2, fr, fch, fca, fcb = None, None, None, None, None, None
+    for m1 in (1, 0):
+        m2 = 1 + f['widens_by'] - m - m1
+        if m2 < 0:
+            continue
+        cand = conf((pre + fpre + digs[mid] * m1, digs[mid], 1, 0,
+                     digs[mid] * m2 + fsuf + tail0))
+        try:
+            fch, fca, fcb = derive(True, True, fl, cand, 'fill arm')
+        except NoClosure:
+            continue
+        fm1, fm2, fr = m1, m2, cand
+        break
+    if fr is None:
+        raise NoClosure('fill arm: no chain at either copy split')
 
     # the boot, and a chain to every state from the fill's anchor
     boot = cert['boot']
@@ -307,6 +326,7 @@ def closure_data(cert, tab):
                         % ','.join(missing))
 
     return dict(b=b, inter=inter, fill=(fl, fr, fch, fca, fcb),
+                fm1=fm1, fm2=fm2,
                 ds0=ds0, t0=boot['steps_from_blank'], vis=vis)
 
 
@@ -412,15 +432,16 @@ Proof. vm_compute. reflexivity. Qed.
 Theorem nqh_%(mid)s : NeverQuasiHaltsSt tm.
 Proof.
   apply (board_neverqh tm FAM iarm_%(mid)s farm_%(mid)s vis_%(mid)s
-                       %(ds0)s %(t0)d).
+                       %(ds0)s %(t0)d %(fm1)d %(fm2)d).
   - vm_compute; lia.
   - vm_compute; reflexivity.
   - vm_compute; reflexivity.
-  - vm_compute; reflexivity.
-  - vm_compute; reflexivity.
+  - vm_compute; repeat constructor.
+  - vm_compute; repeat constructor.
   - vm_compute; lia.
   - vm_compute; lia.
   - vm_compute; reflexivity.
+  - vm_compute; lia.
   - repeat constructor.
   - vm_compute; lia.
   - exact boot_%(mid)s.
@@ -468,6 +489,7 @@ def emit_closure(cert, tab, mid):
             for d in range(b - 1))
     L.append(CLOSURE_THM % dict(
         mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str),
+        fm1=cd['fm1'], fm2=cd['fm2'],
         bsound=branches('eapply arm_sound; '
                         '[exact rules_sound_%(mid)s | exact ok_iarm%(d)d_%(mid)s]'),
         bcomp=branches('vm_compute; reflexivity'),

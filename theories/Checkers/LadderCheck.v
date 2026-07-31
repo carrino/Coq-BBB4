@@ -180,16 +180,17 @@ Qed.
     copies are materialised into [s_pre] and [s_post] (4h: without that the
     fill arm has no chain at all, since a symbolic block count cannot have
     one copy peeled off its front). *)
-Definition run_side (t m1 m2 ph : nat) : sside :=
-  mkS (fm_pre F ++ rep (dig F t) m1) (dig F t) 1 0
-      (rep (dig F t) m2 ++ nth ph (fm_tails F) []).
+Definition run_side (t m1 m2 ph : nat) (w1 w2 : list nat) : sside :=
+  mkS (fm_pre F ++ flat_map (dig F) w1 ++ rep (dig F t) m1) (dig F t) 1 0
+      (rep (dig F t) m2 ++ flat_map (dig F) w2 ++ nth ph (fm_tails F) []).
 
-Lemma fam_cells_run : forall t m1 n m2 ph,
-  fam_cells F (repeat t (m1 + n + m2)) ph = sden [] n (run_side t m1 m2 ph).
+Lemma fam_cells_run : forall t m1 n m2 ph w1 w2,
+  fam_cells F (w1 ++ repeat t (m1 + n + m2) ++ w2) ph
+    = sden [] n (run_side t m1 m2 ph w1 w2).
 Proof.
-  intros t m1 n m2 ph.
+  intros t m1 n m2 ph w1 w2.
   rewrite fam_cells_eq. unfold sden, run_side; simpl.
-  rewrite (flat_map_repeat_nil F t (m1 + n + m2)).
+  rewrite !flat_map_app, (flat_map_repeat_nil F t (m1 + n + m2)).
   rewrite ?Nat.mul_1_l, ?Nat.add_0_r.
   rewrite !rep_add, app_nil_r, !app_assoc. reflexivity.
 Qed.
@@ -458,10 +459,11 @@ Variable F : Fam.
 Hypothesis Hb    : 1 < fm_b F.
 Hypothesis Hcode : fm_code F = Binary.
 Hypothesis Hstep : fm_step F = 1.
-Hypothesis Hfpre : f_pre (fam_fill F 0) = [].
-Hypothesis Hfsuf : f_suf (fam_fill F 0) = [].
+Hypothesis Hfpre : Forall (fun d => d < fm_b F) (f_pre (fam_fill F 0)).
+Hypothesis Hfsuf : Forall (fun d => d < fm_b F) (f_suf (fam_fill F 0)).
 Hypothesis Hfmid : f_mid (fam_fill F 0) < fm_b F.
-Hypothesis Hfs   : 0 < f_s (fam_fill F 0).
+Hypothesis Hfs   : length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0))
+                   <= 1 + f_s (fam_fill F 0).
 Hypothesis Hfto  : f_to (fam_fill F 0) = 0.
 
 (** What a reachable counter state carries.  The phase is pinned because a
@@ -481,14 +483,36 @@ Qed.
 
 (** The fill at the top, spelled out for a family whose fill law is a pure
     widening (no target prefix or suffix). *)
+Definition filled (k : nat) : list nat :=
+  f_pre (fam_fill F 0)
+  ++ repeat (f_mid (fam_fill F 0))
+       (k + f_s (fam_fill F 0)
+        - (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0))))
+  ++ f_suf (fam_fill F 0).
+
 Lemma fill_at_top : forall ds,
-  fam_is_top F ds = true ->
-  fam_next F ds 0
-    = Some (repeat (f_mid (fam_fill F 0)) (length ds + f_s (fam_fill F 0))).
+  0 < length ds -> fam_is_top F ds = true ->
+  fam_next F ds 0 = Some (filled (length ds)).
 Proof.
-  intros ds Htop. unfold fam_next. rewrite Htop.
-  unfold fill_apply. rewrite Hfpre, Hfsuf; simpl.
-  rewrite Nat.sub_0_r, app_nil_r. reflexivity.
+  intros ds Hk Htop. unfold fam_next, filled. rewrite Htop.
+  unfold fill_apply.
+  destruct (Nat.leb_spec (length (f_pre (fam_fill F 0))
+                          + length (f_suf (fam_fill F 0)))
+              (length ds + f_s (fam_fill F 0))); [reflexivity | lia].
+Qed.
+
+Lemma filled_length : forall k, 0 < k ->
+  length (filled k) = k + f_s (fam_fill F 0).
+Proof.
+  intros k Hk. unfold filled.
+  rewrite !app_length, repeat_length. lia.
+Qed.
+
+Lemma filled_bnd : forall k, Forall (fun d => d < fm_b F) (filled k).
+Proof.
+  intros k. unfold filled. apply Forall_app. split; [exact Hfpre|].
+  apply Forall_app. split; [|exact Hfsuf].
+  apply Forall_forall. intros x Hx. apply repeat_spec in Hx. lia.
 Qed.
 
 Lemma fam_succ_total : forall s,
@@ -497,10 +521,11 @@ Proof.
   intros [[ds p] ph] Hi. destruct Hi as (Hbnd & Hlen & ->).
   destruct (fam_is_top F ds) eqn:Htop.
   - (* the fill *)
-    eexists. unfold fam_succ. rewrite (fill_at_top ds Htop), Htop, Hfto.
+    eexists. unfold fam_succ.
+    rewrite (fill_at_top ds Hlen Htop), Htop, Hfto.
     split; [reflexivity|]. simpl. repeat split.
-    + apply Forall_forall. intros x Hx. apply repeat_spec in Hx. lia.
-    + rewrite repeat_length. lia.
+    + apply filled_bnd.
+    + rewrite filled_length by exact Hlen. lia.
   - (* an interior step *)
     assert (Hlt : fam_value F ds + fm_step F < Nat.pow (fm_b F) (length ds)).
     { unfold fam_is_top in Htop. apply Nat.ltb_ge in Htop.
@@ -630,16 +655,25 @@ Variable Afill : LRule.             (** the arm that sees the counter's end *)
 Variable vis   : St -> list lstep.  (** a chain to each state, from the fill *)
 Variable ds0   : list nat.          (** the boot digit string *)
 Variable t0    : nat.               (** and how many steps reach it *)
+Variable fm1 fm2 : nat.             (** how the fill's guaranteed copies split *)
 
 (** *** The family's parameters *)
 Hypothesis Hb    : 1 < fm_b F.
 Hypothesis Hcode : fm_code F = Binary.
 Hypothesis Hstep : fm_step F = 1.
-Hypothesis Hfpre : f_pre (fam_fill F 0) = [].
-Hypothesis Hfsuf : f_suf (fam_fill F 0) = [].
+Hypothesis Hfpre : Forall (fun d => d < fm_b F) (f_pre (fam_fill F 0)).
+Hypothesis Hfsuf : Forall (fun d => d < fm_b F) (f_suf (fam_fill F 0)).
 Hypothesis Hfmid : f_mid (fam_fill F 0) < fm_b F.
-Hypothesis Hfs   : 0 < f_s (fam_fill F 0).
+Hypothesis Hfs   : length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0))
+                   <= 1 + f_s (fam_fill F 0).
 Hypothesis Hfto  : f_to (fam_fill F 0) = 0.
+
+(** How many of the fill target's guaranteed digit copies sit before the
+    symbolic run and how many after.  The emitter picks the split the chain
+    search normalises to; the kernel only asks that they add up. *)
+Hypothesis Hfm12 : fm1 + fm2
+  + (length (f_pre (fam_fill F 0)) + length (f_suf (fam_fill F 0)))
+  = 1 + f_s (fam_fill F 0).
 
 (** *** The boot *)
 Hypothesis Hbnd0 : Forall (fun d => d < fm_b F) ds0.
@@ -657,9 +691,11 @@ Hypothesis HAiC : forall d, d < fm_b F - 1 -> 0 < lr_cb (Aint d).
 
 (** *** The fill arm, at both tails known empty *)
 Hypothesis HAfS : RuleSound tm true true Afill.
-Hypothesis HAfL : lr_lhs Afill = cls_conf F (run_side F (fm_b F - 1) 1 0 0).
+Hypothesis HAfL : lr_lhs Afill
+  = cls_conf F (run_side F (fm_b F - 1) 1 0 0 [] []).
 Hypothesis HAfR : lr_rhs Afill
-  = cls_conf F (run_side F (f_mid (fam_fill F 0)) 1 (f_s (fam_fill F 0)) 0).
+  = cls_conf F (run_side F (f_mid (fam_fill F 0)) fm1 fm2 0
+                  (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
 Hypothesis HAfC : 0 < lr_cb Afill.
 
 (** *** Liveness: every state is reached from the fill's anchor *)
@@ -680,22 +716,38 @@ Proof. simpl. repeat split; assumption. Qed.
 (** The cells of a top-of-width string, as the fill arm's left-hand side. *)
 Lemma cells_top : forall k, 0 < k ->
   fam_cells F (repeat (fm_b F - 1) k) 0
-    = sden [] (k - 1) (run_side F (fm_b F - 1) 1 0 0).
-Proof.
-  intros k Hk. rewrite <- (fam_cells_run F (fm_b F - 1) 1 (k - 1) 0 0).
-  f_equal. f_equal. lia.
-Qed.
-
-(** ...and of what the fill law puts there, as its right-hand side. *)
-Lemma cells_filled : forall k, 0 < k ->
-  fam_cells F (repeat (f_mid (fam_fill F 0)) (k + f_s (fam_fill F 0))) 0
-    = sden [] (k - 1)
-        (run_side F (f_mid (fam_fill F 0)) 1 (f_s (fam_fill F 0)) 0).
+    = sden [] (k - 1) (run_side F (fm_b F - 1) 1 0 0 [] []).
 Proof.
   intros k Hk.
-  rewrite <- (fam_cells_run F (f_mid (fam_fill F 0)) 1 (k - 1)
-                (f_s (fam_fill F 0)) 0).
-  f_equal. f_equal. lia.
+  transitivity (fam_cells F ([] ++ repeat (fm_b F - 1) (1 + (k - 1) + 0) ++ []) 0).
+  - f_equal.
+    assert (E : 1 + (k - 1) + 0 = k) by lia.
+    rewrite E, app_nil_r. reflexivity.
+  - apply fam_cells_run.
+Qed.
+
+(** ...and of what the fill law puts there, as its right-hand side.  The
+    law's own prefix and suffix ride along as the fixed words either side of
+    the run, which is what lets a family whose fill is not a bare widening
+    use the same arm shape. *)
+Lemma cells_filled : forall k, 0 < k ->
+  fam_cells F (filled F k) 0
+    = sden [] (k - 1)
+        (run_side F (f_mid (fam_fill F 0)) fm1 fm2 0
+           (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))).
+Proof.
+  intros k Hk.
+  transitivity (fam_cells F
+    (f_pre (fam_fill F 0)
+     ++ repeat (f_mid (fam_fill F 0)) (fm1 + (k - 1) + fm2)
+     ++ f_suf (fam_fill F 0)) 0).
+  - f_equal. unfold filled.
+    assert (E : fm1 + (k - 1) + fm2
+                = k + f_s (fam_fill F 0)
+                  - (length (f_pre (fam_fill F 0))
+                     + length (f_suf (fam_fill F 0)))) by lia.
+    rewrite E. reflexivity.
+  - apply fam_cells_run.
 Qed.
 
 (** The lap, by the case split: a state is at the top of its width, where
@@ -709,15 +761,17 @@ Proof.
   - (* the top of a width: the FILL arm *)
     assert (Hist : fam_is_top F ds = true).
     { rewrite Htop at 1. apply pos1_is_top; assumption. }
-    exists (repeat (f_mid (fam_fill F 0)) (length ds + f_s (fam_fill F 0)), p, 0).
+    exists (filled F (length ds), p, 0).
     exists (lr_ca Afill * (length ds - 1) + lr_cb Afill).
     split; [|split].
-    + unfold fam_succ. rewrite (fill_at_top F Hfpre Hfsuf ds Hist), Hist, Hfto.
-      reflexivity.
+    + unfold fam_succ.
+      erewrite fill_at_top by (assumption || lia).
+      rewrite Hist, Hfto. reflexivity.
     + nia.
     + apply (lap_from_arm tm F Afill true true [] (length ds - 1)
-               (run_side F (fm_b F - 1) 1 0 0)
-               (run_side F (f_mid (fam_fill F 0)) 1 (f_s (fam_fill F 0)) 0));
+               (run_side F (fm_b F - 1) 1 0 0 [] [])
+               (run_side F (f_mid (fam_fill F 0)) fm1 fm2 0
+                  (f_pre (fam_fill F 0)) (f_suf (fam_fill F 0))));
         try assumption.
       * intros _; apply tailL_nil.
       * intros _; apply tailR_nil.
@@ -773,7 +827,7 @@ Proof.
       by (apply pos1_top_shape; assumption).
     assert (Hden : CfB n = cden [] [] (length ds' - 1) (lr_lhs Afill)).
     { unfold CfB. rewrite Hit, HAfL.
-      rewrite <- (cden_cls_conf F (run_side F (fm_b F - 1) 1 0 0) []
+      rewrite <- (cden_cls_conf F (run_side F (fm_b F - 1) 1 0 0 [] []) []
                     (length ds' - 1) ds' p' 0).
       - unfold tailL, tailR; destruct (fm_left F); reflexivity.
       - rewrite Hsh at 1. apply cells_top. exact Hlen'. }

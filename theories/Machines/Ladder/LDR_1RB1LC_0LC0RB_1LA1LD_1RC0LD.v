@@ -297,15 +297,16 @@ Proof. vm_compute. reflexivity. Qed.
 Theorem nqh_1RB1LC_0LC0RB_1LA1LD_1RC0LD : NeverQuasiHaltsSt tm.
 Proof.
   apply (board_neverqh tm FAM iarm_1RB1LC_0LC0RB_1LA1LD_1RC0LD farm_1RB1LC_0LC0RB_1LA1LD_1RC0LD vis_1RB1LC_0LC0RB_1LA1LD_1RC0LD
-                       [0;0] 15).
+                       [0;0] 15 1 2).
   - vm_compute; lia.
   - vm_compute; reflexivity.
   - vm_compute; reflexivity.
-  - vm_compute; reflexivity.
-  - vm_compute; reflexivity.
+  - vm_compute; repeat constructor.
+  - vm_compute; repeat constructor.
   - vm_compute; lia.
   - vm_compute; lia.
   - vm_compute; reflexivity.
+  - vm_compute; lia.
   - repeat constructor.
   - vm_compute; lia.
   - exact boot_1RB1LC_0LC0RB_1LA1LD_1RC0LD.
