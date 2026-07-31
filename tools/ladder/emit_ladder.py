@@ -176,7 +176,7 @@ HEADER = '''(** * LDR_%(mid)s: machine %(spec)s, boarded by the STAGE-B LADDER.
 From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Counters Require Import WTape.
-From BBB4.Checkers Require Import LapDecider LadderKernel LadderFam.
+From BBB4.Checkers Require Import LapDecider LadderKernel LadderFam LadderCheck.
 Import ListNotations.
 
 Definition mk_%(mid)s (w : Sym) (d : Dir) (n : St) : option Trans :=
@@ -189,6 +189,360 @@ Definition tm_%(mid)s : TM := fun q s => match q, s with
   end.
 Local Notation tm := tm_%(mid)s.
 '''
+
+
+# ------------------------------------------------------------- the closure --
+
+class NoClosure(Exception):
+    pass
+
+
+def coq_chain_l(chain):
+    """A chain of BASE steps only, for [srun_st] (no [rstep] wrapper)."""
+    return clist(chain, coq_lstep)
+
+
+def closure_data(cert, tab):
+    """The two CLASS arms, the boot and the per-state visits, or NoClosure.
+
+    LADDER_PLAN 4h(a): coverage reduces to a finite case split -- every
+    digit string is t^n ++ d :: rest with d <> t, or t^k.  The arms that
+    serve those two classes are not the mined arms the certificate carries:
+    those are the same rules with every run length but one pinned to its
+    lower bound.  Here they are built from the FAMILY, so there is one
+    interior arm per digit below the top and one fill arm, whatever the
+    certificate happened to emit.
+
+    The fill arm is the one that must see the end of the counter, so its
+    guaranteed block copy is materialised into s_pre (4h) -- without that
+    it has no chain at all.
+    """
+    fam = cert['family']
+    fills = cert.get('fill_by_phase') or [cert['fill']]
+    if fam.get('code') != 'binary':
+        raise NoClosure('code %s: LadderCheck states (Binary, 1) only'
+                        % fam.get('code'))
+    if fam.get('value_step_per_anchor_visit', 1) != 1:
+        raise NoClosure('step %d: LadderCheck states (Binary, 1) only'
+                        % fam.get('value_step_per_anchor_visit', 1))
+    if len(fills) != 1:
+        raise NoClosure('%d phases: the closure pins the phase at 0'
+                        % len(fills))
+    f = fills[0]
+    if f['widens_by'] < 1 or f['lands_in_phase'] != 0:
+        raise NoClosure('fill law does not land back in phase 0')
+    m = len(f['target_prefix']) + len(f['target_suffix'])
+    if m > 1 + f['widens_by']:
+        raise NoClosure('fill target names %d digits but widens by %d'
+                        % (m, f['widens_by']))
+    b = fam['base']
+    if b < 2:
+        raise NoClosure('base %d' % b)
+
+    digs = [tuple(w) for w in fam['digits']]
+    pre = tuple(fam['near_head_prefix'])
+    tail0 = tuple((fam.get('terminators_by_phase') or [fam['terminator']])[0])
+    other = tuple(fam['other_side_cells'])
+    q = ord(fam['state']) - 65
+    hs = fam['head']
+    left = fam['side'] == 'L'
+    mid = f['target_fill_digit']
+    OTHER = (other, (), 0, 0, ())
+
+    def conf(sd):
+        return (q, sd, hs, OTHER) if left else (q, OTHER, hs, sd)
+
+    def derive(el, er, c0, c1, what):
+        ch = LC.derive_chain(tab, el, er, c0, c1, maxdepth=32, nmax=120,
+                             lift=True)
+        if ch is None:
+            raise NoClosure('%s: no chain' % what)
+        got = LC.srun(tab, el, er, ch, c0)
+        if got is None or got[0] != c1:
+            raise NoClosure('%s: chain lands off the rhs' % what)
+        if got[2] == 0:
+            raise NoClosure('%s: zero-step rule' % what)
+        return ch, got[1], got[2]
+
+    # The interior class arms: t^n ++ d :: rest -> 0^n ++ (d+1) :: rest.
+    # The cost of the carry ripple need not be affine in [n] -- measured
+    # (4i), four live-core rows walk the run at one cost on even lengths and
+    # another on odd -- so the class is tried at stride 1 first and then at
+    # stride 2, one arm per residue.  A row whose cost is genuinely
+    # quadratic has no stride that works and is refused here; that is the
+    # count language of RULE_LADDER 5, not a gap in this emitter.
+    el, er = (not left), left
+    inter, st = None, None
+    for stride in (1, 2, 3, 4):
+        got, ok = [], True
+        for d in range(b - 1):
+            for r in range(stride):
+                c0 = conf((pre + digs[b - 1] * r, digs[b - 1] * stride, 1, 0,
+                           digs[d]))
+                c1 = conf((pre + digs[0] * r, digs[0] * stride, 1, 0,
+                           digs[d + 1]))
+                try:
+                    ch, ca, cb = derive(el, er, c0, c1,
+                                        'interior arm d=%d r=%d' % (d, r))
+                except NoClosure:
+                    ok = False
+                    break
+                got.append((d, r, c0, c1, ch, ca, cb))
+            if not ok:
+                break
+        if ok:
+            inter, st = got, stride
+            break
+    if inter is None:
+        raise NoClosure('interior arm: no chain at stride 1, 2, 3 or 4 -- the '
+                        'carry ripple is not affine in the run length')
+
+    # the fill arm: t^(1+n) -> the fill law's target at width 1+n+s, both
+    # tails known empty.  [fm1] guaranteed copies of the fill digit sit
+    # before the symbolic run and [fm2] after; 4h's normalisation is that at
+    # least one must be materialised into [s_pre], so try fm1 = 1 first.
+    fpre = tuple(x for d in f['target_prefix'] for x in digs[d])
+    fsuf = tuple(x for d in f['target_suffix'] for x in digs[d])
+    fl = conf((pre + digs[b - 1], digs[b - 1], 1, 0, tail0))
+    fm1, fm2, fr, fch, fca, fcb = None, None, None, None, None, None
+    for m1 in (1, 0):
+        m2 = 1 + f['widens_by'] - m - m1
+        if m2 < 0:
+            continue
+        cand = conf((pre + fpre + digs[mid] * m1, digs[mid], 1, 0,
+                     digs[mid] * m2 + fsuf + tail0))
+        try:
+            fch, fca, fcb = derive(True, True, fl, cand, 'fill arm')
+        except NoClosure:
+            continue
+        fm1, fm2, fr = m1, m2, cand
+        break
+    if fr is None:
+        raise NoClosure('fill arm: no chain at either copy split')
+
+    # the boot, and a chain to every state from the fill's anchor
+    boot = cert['boot']
+    ds0 = list(boot['digits_lsb_first'])
+    cells = list(pre)
+    for d in ds0:
+        cells.extend(digs[d])
+    cells.extend(tail0)
+    if cells != list(boot['cells']):
+        raise NoClosure('boot cells %r are not the family at %r'
+                        % (boot['cells'], ds0))
+    if not ds0:
+        raise NoClosure('boot digit string is empty')
+
+    # A chain to each state from the fill's anchor.  [vis_of_run] wants a
+    # chain from the anchor, NOT a prefix of the arm's own chain -- which
+    # matters, because a state can sit inside a macro step that no prefix
+    # ends on.  So: walk out from every prefix of the fill's derivation.
+    vis, cand = {}, []
+    for i in range(len(fch) + 1):
+        base = fch[:i]
+        cand.append(base)
+        for m in range(0, 31):
+            cand.append(base + [('SWin', m)])
+            cand.append(base + [('SWinL', m)])
+            cand.append(base + [('SWinR', m)])
+        for k in range(0, 16):
+            for m in range(0, 8):
+                cand.append(base + [('SWinL', k), ('SWin', m)])
+                cand.append(base + [('SWinR', k), ('SWin', m)])
+    for ch in cand:
+        if len(vis) == 4:
+            break
+        r = LC.srun(tab, True, True, ch, fl)
+        if r:
+            vis.setdefault(r[0][0], ch)
+    missing = [ST[i] for i in range(4) if i not in vis]
+    if missing:
+        raise NoClosure('no chain from the fill anchor to %s'
+                        % ','.join(missing))
+
+    return dict(b=b, inter=inter, st=st, el=el, er=er, fill=(fl, fr, fch, fca, fcb),
+                fm1=fm1, fm2=fm2,
+                ds0=ds0, t0=boot['steps_from_blank'], vis=vis)
+
+
+CLOSURE_NONE = '''
+(** ** The closure: NOT BUILT for this row -- %s
+
+    The board above still proves every rule the certificate carries; what
+    is missing is the machine-level theorem.  LADDER_PLAN 4h(a) names the
+    condition: [LadderCheck] states the class-successor lemma for
+    [(Binary, 1)] only, so a family with another code or another step needs
+    its own instance of [ClassSucc] before this section can be emitted. *)
+'''
+
+CLOSURE_HEAD = '''
+(** ** The closure: from the RULES to [NeverQuasiHaltsSt]
+
+    The arms below are the case split of [LadderCheck.digs_decomp], built
+    from the FAMILY rather than mined: an interior arm per digit below the
+    top, and the fill arm.  Every certificate arm above is one of these
+    with its run lengths pinned to their lower bounds, which is why %d of
+    them collapse to %d here.
+
+    [board_neverqh] consumes them, the boot, and one chain per state, and
+    returns the machine-level theorem. *)
+'''
+
+CLOSURE_IARM = '''Definition iarm%(d)d_%(r)d_%(mid)s : LRule :=
+  mkLRule (%(lhs)s)
+          (%(rhs)s) %(ca)d %(cb)d.
+Definition ch_iarm%(d)d_%(r)d_%(mid)s : list rstep := %(ch)s.
+Lemma ok_iarm%(d)d_%(r)d_%(mid)s :
+  check_arm tm %(el)s %(er)s rules iarm%(d)d_%(r)d_%(mid)s
+            ch_iarm%(d)d_%(r)d_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+'''
+
+CLOSURE_IDISP = '''Definition iarm_%(mid)s (d r : nat) : LRule :=
+  match d, r with
+  %(br)s
+  | _, _ => iarm0_0_%(mid)s   (* unreachable: only d < b-1 and r < stride *)
+  end.
+
+'''
+
+CLOSURE_FARM = '''(** The fill arm.  Both tails are known empty -- it is the only arm that
+    sees the end of the counter -- and its guaranteed block copy is
+    materialised into [s_pre], without which it has no chain at all. *)
+Definition farm_%(mid)s : LRule :=
+  mkLRule (%(lhs)s)
+          (%(rhs)s) %(ca)d %(cb)d.
+Definition ch_farm_%(mid)s : list rstep := %(ch)s.
+Lemma ok_farm_%(mid)s :
+  check_arm tm true true rules farm_%(mid)s ch_farm_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+'''
+
+CLOSURE_VIS = '''(** One chain per state, from the fill's anchor.  [vis_of_run] turns each
+    into a visit, and [tops_cofinal] says those anchors keep coming. *)
+Definition vis_%(mid)s (q : St) : list lstep :=
+  match q with
+  %(vb)s
+  end.
+
+'''
+
+CLOSURE_THM = '''Lemma iarm_sound_%(mid)s : forall d r, d < fm_b FAM - 1 -> r < %(st)d ->
+  RuleSound tm (negb (fm_left FAM)) (fm_left FAM) (iarm_%(mid)s d r).
+Proof.
+  intros d r Hd Hr. vm_compute in Hd.
+%(bsound)s  exfalso; lia.
+Qed.
+
+Lemma iarm_lhs_%(mid)s : forall d r, d < fm_b FAM - 1 -> r < %(st)d ->
+  lr_lhs (iarm_%(mid)s d r)
+    = cls_conf FAM (cls_side FAM (fm_b FAM - 1) r %(st)d [d]).
+Proof.
+  intros d r Hd Hr. vm_compute in Hd.
+%(bcomp)s  exfalso; lia.
+Qed.
+
+Lemma iarm_rhs_%(mid)s : forall d r, d < fm_b FAM - 1 -> r < %(st)d ->
+  lr_rhs (iarm_%(mid)s d r) = cls_conf FAM (cls_side FAM 0 r %(st)d [S d]).
+Proof.
+  intros d r Hd Hr. vm_compute in Hd.
+%(bcomp)s  exfalso; lia.
+Qed.
+
+Lemma iarm_cb_%(mid)s : forall d r, d < fm_b FAM - 1 -> r < %(st)d ->
+  0 < lr_cb (iarm_%(mid)s d r).
+Proof.
+  intros d r Hd Hr. vm_compute in Hd.
+%(blia)s  exfalso; lia.
+Qed.
+
+Lemma farm_sound_%(mid)s : RuleSound tm true true farm_%(mid)s.
+Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_farm_%(mid)s]. Qed.
+
+Lemma boot_%(mid)s : csteps tm %(t0)d c0 = Some (fam_cfg FAM (%(ds0)s, 0, 0)).
+Proof. vm_compute. reflexivity. Qed.
+
+(** The machine-level theorem.  Every argument is either a [RuleSound] the
+    Stage-B kernel discharged, or an equation two [vm_compute]s decide. *)
+Theorem nqh_%(mid)s : NeverQuasiHaltsSt tm.
+Proof.
+  apply (board_neverqh tm FAM iarm_%(mid)s %(st)d farm_%(mid)s vis_%(mid)s
+                       %(ds0)s %(t0)d %(fm1)d %(fm2)d).
+  - vm_compute; lia.
+  - vm_compute; reflexivity.
+  - vm_compute; reflexivity.
+  - vm_compute; repeat constructor.
+  - vm_compute; repeat constructor.
+  - vm_compute; lia.
+  - vm_compute; lia.
+  - vm_compute; reflexivity.
+  - vm_compute; lia.
+  - repeat constructor.
+  - vm_compute; lia.
+  - exact boot_%(mid)s.
+  - lia.
+  - exact iarm_sound_%(mid)s.
+  - exact iarm_lhs_%(mid)s.
+  - exact iarm_rhs_%(mid)s.
+  - exact iarm_cb_%(mid)s.
+  - exact farm_sound_%(mid)s.
+  - vm_compute; reflexivity.
+  - vm_compute; reflexivity.
+  - vm_compute; lia.
+  - intros q; destruct q; vm_compute; reflexivity.
+Qed.
+'''
+
+
+def emit_closure(cert, tab, mid):
+    """The Coq for LadderCheck.board_neverqh, or a note on what stopped it."""
+    try:
+        cd = closure_data(cert, tab)
+    except NoClosure as e:
+        return CLOSURE_NONE % e, None
+
+    b = cd['b']
+    L = [CLOSURE_HEAD % (len(cert['arms']), b)]
+    el, er = (cd['el'], cd['er'])
+    for d, r, c0, c1, ch, ca, cb in cd['inter']:
+        L.append(CLOSURE_IARM % dict(
+            d=d, r=r, mid=mid, lhs=coq_conf(c0), rhs=coq_conf(c1), ca=ca,
+            cb=cb, ch=coq_chain(ch), el=str(el).lower(), er=str(er).lower()))
+    L.append(CLOSURE_IDISP % dict(
+        mid=mid,
+        br='\n  '.join('| %d, %d => iarm%d_%d_%s' % (d, r, d, r, mid)
+                       for d, r, _, _, _, _, _ in cd['inter'])))
+    fl, fr, fch, fca, fcb = cd['fill']
+    L.append(CLOSURE_FARM % dict(
+        mid=mid, lhs=coq_conf(fl), rhs=coq_conf(fr), ca=fca, cb=fcb,
+        ch=coq_chain(fch)))
+    L.append(CLOSURE_VIS % dict(
+        mid=mid,
+        vb='\n  '.join('| %s => %s' % (ST[i], coq_chain_l(cd['vis'][i]))
+                       for i in range(4))))
+    st = cd['st']
+
+    def branches(body):
+        """One brace-delimited branch per (digit, residue); the rest is dead."""
+        out = []
+        for d in range(b - 1):
+            rb = []
+            for r in range(st):
+                rb.append('    destruct r as [|r].\n    { %s. }\n'
+                          % (body % dict(d=d, r=r, mid=mid)))
+            out.append('  destruct d as [|d].\n  {\n%s    exfalso; lia.\n  }\n'
+                       % ''.join(rb))
+        return ''.join(out)
+    L.append(CLOSURE_THM % dict(
+        mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str), st=st,
+        fm1=cd['fm1'], fm2=cd['fm2'],
+        bsound=branches('eapply arm_sound; [exact rules_sound_%(mid)s '
+                        '| exact ok_iarm%(d)d_%(r)d_%(mid)s]'),
+        bcomp=branches('vm_compute; reflexivity'),
+        blia=branches('vm_compute; lia')))
+    return ''.join(L), cd
 
 
 def emit(cert, out):
@@ -277,8 +631,11 @@ Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_%(nm)s_%(mid)s]. 
     right-hand side in exactly the certificate's step count. *)
 ''' % dict(ng=len(good), nt=len(cert['arms'])))
 
+    closure, cd = emit_closure(cert, tab, mid)
+    L.append(closure)
+
     open(out, 'w').write(''.join(L))
-    return good, bad
+    return good, bad, cd
 
 
 def main():
@@ -293,9 +650,11 @@ def main():
         HERE, '..', '..', 'theories', 'Machines', 'Ladder',
         'LDR_%s.v' % mach_id(cert['spec']))
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
-    good, bad = emit(cert, out)
-    print('%s: %d arms boarded, %d without a chain' % (out, len(good),
-                                                       len(bad)))
+    good, bad, cd = emit(cert, out)
+    print('%s: %d arms boarded, %d without a chain, closure %s'
+          % (out, len(good), len(bad),
+             'BUILT (%d interior + 1 fill)' % len(cd['inter']) if cd
+             else 'not built'))
     for nm, e in bad:
         print('  %-8s %s' % (nm, e))
     return 0

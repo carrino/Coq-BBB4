@@ -1315,6 +1315,110 @@ STATE: `D_remaining` **431** (4,725 / 5,156 = 91.6% settled); closeout
 regenerated (`make closeout`), `audit.py` OK, `Closeout.vo` + stages
 kernel-verified in-container; `census_cache --check` MATCH throughout.
 
+## 2p. Ladder Stage B's CLOSURE (2026-07-31) -- the first machine boarded, and the gate answered
+
+_Branch `claude/stage-b-closure-wlrpey`.  Full write-up in
+`docs/LADDER_PLAN.md` 4i; this is the lab-notebook version -- the traps._
+
+**The number.**  `1RB1LC_0LC0RB_1LA1LD_1RC0LD` is boarded end to end and
+`tools/closeout/audit.py` went **62 -> 61 core undecided**, 5073 -> 5074
+settled.  Before this the ladder had proved a pile of RULES and zero
+machines.
+
+**Trap 1: re-certify, always.**  The row was handed over as "7 arms"; the
+stored `ladder_fixture_cert.json` says 8; at HEAD with `--kmax 9` it is
+**12**.  The fixture predates three sections now.  `valfam.py --spec ROW` is
+31 s -- there is never a reason to trust a stored cert.
+
+**Trap 2 (the big one): the certificate's arms are NOT the closure's arms.**
+The prover's arms are multi-variable patterns; `sside` carries ONE symbolic
+run, so `emit_ladder.py` boards each with every run length but one pinned to
+its lower bound.  Each keeps one free run length and so covers infinitely
+many strings -- but with the others pinned there is no argument that they
+TOGETHER reach every string of every width, and the only coverage claim
+behind them is the prover's enumeration to `kmax = 9`.  Feed them to a
+kernel and the kernel has nothing to do but enumerate alongside it.
+
+The fix is that the class arms are BUILT from the `Fam` record, not mined:
+one interior arm per digit below the top, one fill arm.  **12 arms become 2,
+and an enumeration to `kmax = 9` becomes `digs_decomp`.**  `emit_ladder.py` does this now; if
+you are boarding a new family and the arm count does not collapse, something
+is wrong.
+
+**Trap 3: the fill arm's pre-materialisation is not optional and now has a
+measurement.**  4h recorded it; this session checked it.  The canonical
+`rep u (1*j+1)` form for the fill arm finds **no chain at all**.  The
+`u ++ rep u j` form finds one in six steps.  Do not "clean up" the emitter's
+`pre` materialisation.
+
+**Trap 4: `vis_of_run` does not want a PREFIX of the arm's chain.**  On this
+row the fill arm's chain has no prefix landing in state D -- D is inside a
+`SWinL 13` macro step.  Any chain from the same anchor will do, and
+`[SWin 2; SCycL 2 0; SWin 1; SWinL 1]` reaches D.  4h's "the fill arm alone
+fires all four states" is about the dev fixture; the general statement is
+"all four are reachable from the fill's anchor", which is weaker and still
+enough.
+
+**The gate (4h's one open question) is ANSWERED: yes, with one widening, and
+not the widening anyone expected.**  The `Class` RECORD does not move --
+`cs_u ++ cs_t^n ++ cs_w ++ rest`, which is exactly the engine's `sside`
+shape.  Measured by transcribing `fam_next` into Python and enumerating the
+Gray row's family: parities mixed, the classes contradict each other; parity
+fixed, **four classes of that record cover 4082 of 4082 interior strings at
+widths 3..12**.  What widens is the PREMISE: `ClassSucc` now carries a
+membership predicate, because a step other than 1 makes only part of each
+width a member (4g) and for `(gray, 2)` the discriminator is the parity of
+the WHOLE string -- global, so it cannot be pushed into `cs_u`/`cs_w`.
+`(binary, 1)` instantiates it at `True`.
+
+**Selection.**  4f made `order_ok` a kernel obligation.  Under a PROVED case
+split there is nothing left to decide: the two classes are disjoint because
+`digs_decomp` says so.  `sel` is a lookup in the arm list as data and
+`covers`/`order_ok` are not built.  That is a smaller trust surface, not a
+shortcut -- but it means 4f's argument does not survive contact with a
+proved split, and the subsumption order is load-bearing for the SEARCH only.
+
+**Where the other rows stop, measured.**  Swept all 61 remaining core rows.
+Ten reach the closure's filter; two board.  The other eight stop at ONE
+place and it was not on the list: **the carry ripple's step count is not
+affine in the run length**, and `LRule` carries `ca*j + cb`.  Four rows are
+two affine laws interleaved by the parity of the run length; two are
+genuinely quadratic (`(n+1)(n+2)`); two find no chain at all.  Every row that
+stops here has a ONE-cell digit word; all three that board have two-cell
+words.  With a one-cell digit the head's parity across the run is part of the
+state, so the cost alternates or accumulates.
+
+`cls_side` carries a STRIDE now for this reason and the emitter tries
+s = 1..4.  Not enough for the parity four: at s = 2 the odd residue derives
+(4m+4) and the even one does not -- it needs the same guaranteed-block-copy
+materialisation the fill arm has, and then m = 0 needs its own arm.  That
+widening is known, small, and worth four boards.  The quadratic two are
+RULE_LADDER 5's count language, not an emitter gap.
+
+**The bucket that wants a human, and the one that does not.**  Of the 61
+core rows swept, 15 had **zero** candidate families probed and 12 had 19-74
+probed that then failed on coverage or the differential.  Those are
+different failures and must not be added together.  The 12 are mechanical.
+The 15 are the bucket the six Gray rows sat in, labelled "no counter reading
+at any anchor", until John read one off the tape -- one read, six rows.
+`tools/ladder/tapes.py` renders a machine's tape at successive returns to an
+anchor, RLE'd, left side head-nearest-first; `tools/ladder/core15_unread.txt`
+is the 15 with their two busiest anchors already dumped.  The tool
+reproduces 4g's reading as a check (`--anchor C1` on
+`1RB0RB_0LC0LD_1LC1LD_1RA0RA` gives 0, 2, 4, 6, 8, 10 in Gray).
+
+**Compute note.**  `valfam.py` and `make -jN` fight over 4 cores badly; a
+core sweep that should run at ~16 s/row ran at ~78 s/row against a build.
+Run one or the other.
+
+**Verified to the end.**  The full tree built clean (2,665 files, `-j3`, ~2 h
+alongside the sweep -- do not run both at once, see the compute note) and
+`make closeout` ran in full: all 51 `CB_*.vo`, `Closeout.vo`, and
+`closeout_partial : forall tm, Deferred D_census tm -> boarded tm \/
+skipped D_remaining tm` with **`D_remaining` at 59 rows**, funext only, and
+`census_cache.py --check` MATCH.  So the 62 -> 59 is the kernel's number and
+not only `audit.py`'s.
+
 ## 3. The long-tail roadmap
 
 ### Scoreboard (2026-07-21 session end, authoritative — README's coverage table is STALE)
