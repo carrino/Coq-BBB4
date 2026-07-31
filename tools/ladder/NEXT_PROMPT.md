@@ -18,8 +18,8 @@ already builds the gray class arms and is the emitter you are about to teach
 
 **STATE.** 40 core undecided and 15 `0RB` shadows (`tools/closeout/core_rows.txt`;
 `make closeout-status`).  5,101 frozen rows settled by a board.  Per §4n's last
-table: 16 families-found-none-closed, 6 gray (**4 with both arms**), 5 fibonacci
-(§4m, `live = BCD`), 5 no-family, 4 time cap, 4 arms-blocked.
+table: 17 families-found-none-closed, 6 gray (**4 with both arms**), 5 fibonacci
+(§4m, `live = BCD`), 5 no-family, 3 time cap, 4 arms-blocked.
 
 **THE TASK.**  §4n measured the gray six and found **four** of them have both
 class arms under the two knobs — and it found them by fitting the classes from
@@ -127,10 +127,13 @@ incrementally; push and open a PR when the first row moves the core count.
 * Keep `board_ladder.py`'s `wanted()` in step with `closure_data`'s refusals.
 * **Never run `valfam.py` and a full `make -jN` at the same time.**  One row is
   fine; a sweep is not.
-* The four time-cap rows are not capped by the cap: two re-run at `--cap 900`
-  (six times the sweep's budget) and both still timed out, with 26 families
-  found and four tried.  That is a question about which families the searcher
-  spends the budget on.
+* The time-cap bucket is three rows, not four.  All four re-run at `--cap 900`
+  (six times the sweep's budget): the three `1RB---` rows still cap, each with
+  26 families found and four tried -- so raising the budget is not the lever,
+  and the question is which families the searcher spends it ON.
+  `1RB1RC_1LA1RA_0RC1LD_1LB0LD` finishes in 723 s and stops on
+  `interior-not-covered` with 5 of 12 families tried: it is a coverage row that
+  was wearing the budget's label.
 * The arm-soundness, class and avoidance lemmas are Closed under the global
   context — zero axioms — because they are on `csteps`/`cden` and never go
   through `lift`.  `board_arm`, `board_lap_avoid`, `arm_index`, `blk_den`,

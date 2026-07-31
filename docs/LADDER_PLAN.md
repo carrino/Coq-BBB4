@@ -1939,7 +1939,7 @@ exists for.
 |---|---:|---|
 | closed, gray, `live = ABCD` | **4 of 6** | both class arms |
 | closed, two phases | **3 of 3** | both class arms |
-| time cap | 2 of 4 re-run at `--cap 900` | both still capped, `26` families, 4 tried |
+| time cap | all 4 re-run at `--cap 900` | 3 still capped; the 4th is not capped at all |
 
 **Two findings came out of making the probe honest, and both are about the
 CONFIGURATION and not about the class law.**
@@ -2060,10 +2060,10 @@ axiom footprint `functional_extensionality_dep` only, as every board.
 | | rows | |
 |---|---:|---|
 | no value family PROBED AT ALL | 5 | `docs/LADDER_NOFAM.md`; three unread, two out of scope |
-| families found, none closed | 16 | mechanical: coverage, differential, or 4m's outer-parameter guard |
+| families found, none closed | 17 | mechanical: coverage, differential, or 4m's outer-parameter guard |
 | closed (fibonacci), `live = BCD` | 5 | 4m's five: the canonical form wants a Coq lemma |
 | closed, gray | 6 | **4 have both arms**; 2 stop on the cell spelling |
-| time cap | 4 | two re-run at `--cap 900` and both still capped |
+| time cap | 3 | all re-run at `--cap 900` and still capped, 26 families each, 4 tried |
 | closed, binary/step-1/one-phase, ARMS BLOCKED | 4 | `RULE_LADDER` 5's table row |
 
 ### What this says about the next session
@@ -2077,8 +2077,16 @@ axiom footprint `functional_extensionality_dep` only, as every board.
   kernel one.**  Either `valfam` reads them at an anchor whose digit words do
   not end in a blank, or `fam_cells` gains a trimming the denotation can
   state.  Do not build a `ClassSucc` for them: their class law is fine.
-* **The time cap is not a cap.**  Two rows re-run at six times the sweep's
-  budget and both still capped, with 26 families found and four tried.  The next reading of those
+* **The time cap is a time cap on three rows and a MISLABEL on the fourth.**
+  Re-run at six times the sweep's budget: the three `1RB---` rows still cap,
+  each having found 26 families and tried four of them, so raising the budget
+  is not the lever -- the question is which families the searcher spends it
+  ON.  `1RB1RC_1LA1RA_0RC1LD_1LB0LD` finishes in **723 s**, under the old
+  cap's own reach given a second chance, and stops on `interior-not-covered`
+  with 5 of 12 families tried.  It is not a time-cap row and never was: it is
+  a coverage row wearing the label of the budget that happened to expire on
+  it, which is 4g's lesson for the third time and the reason this bucket was
+  worth re-running at all.  The next reading of those
   four should be about which families the searcher spends the budget ON, not
   about how much budget it has.
 * Three traps, all paid for here: **editing a kernel file under a running
