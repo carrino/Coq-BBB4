@@ -2542,6 +2542,110 @@ reduction shrinks the object; it does not decide it.
 * The nine boards' stop-notes cited 4h(a)'s `ClassSucc` condition, which 4l
   removed.  All nine now carry the measured reason, one per half.
 
+## 4q. John reads the bouncer at the counter's own anchor: it IS one parameter, and 4j's fix is the only thing missing
+
+_John: "the counter part is 11, then the bits, msb on the right -- position 4
+and 5 are 1, then position 6 is the lsb", and "every bounce moves the left wall
+over by 2".  Rows `0RB0RD_1LC1RB_1RA0LC_1LB0LC` and its twin `...1LD0LC` -- 2
+core + 2 shadows, 4 of the remaining rows.  Every number below is measured._
+
+### The reading
+
+Sampled once per bounce (a bounce is two wall-advance events):
+
+    positions 4,5   `1 1`, at the same cells every bounce
+    position  6..   the counter, LSB nearest the marker, MSB to the RIGHT
+    value           = the bounce index, step +1
+    wall            recedes by exactly 2 per bounce
+
+    bounce   1  2   3    4    5     6     7     8     9    10  ... 16     17
+    bits     -  1   01   11   001   101   011   111   0001 1001    1111   00001
+    value    0  1   2    3    4     5     6     7     8    9       15     16
+
+**704 bounces to step 3,000,000, on both rows, zero failures.**  Sharper than
+4j's west-frontier reading of the same bits (`0^(2k+5)` then `4k+3`): same
+string -- the `11` contributes 1+2 = 3 and the counter `k` two positions up
+contributes `4k` -- but the step is **1** and the marker is **constant**.
+
+### The far side is `1^(2v+5)`, and that is the whole finding
+
+At the anchor that carries the constant `11` frame -- `(StB, head 0, head at
+offset 3)`, once per bounce -- the far side is a SOLID run of ones from the
+wall to the head.  Its length against the counter's own value `v`:
+
+    visit    2    3    4    5    6   ...  252   253   254   255
+    value    0    1    2    3    4        250   251   252   253
+    ones     5    7    9   11   13       505   507   509   511
+                                          all exactly 2v + 5
+
+**Exact at every visit from 2 to 255.**  (Visit 1 is the boot, at `2v+3`; it is
+the pre-family state and the boot premise carries it.)
+
+So this row is a ONE-parameter family after all.  Both things that vary -- the
+digit string and the wall distance -- are functions of the same `v`.  Nothing
+about the machine is unknown.
+
+### What is missing is a field, and 4j already named it
+
+`Fam` can name exactly one varying thing, the digit string `ds`.  The far side
+is `fm_other : list Sym` and the near-head prefix is `fm_pre : list Sym` --
+both FIXED words, neither able to say "a run whose length is affine in the
+parameter".  So the family can state the counter and cannot state the wall.
+
+4j's fix is exactly this shape and is quoted here because 4q supplies its
+constants: the side wants `s_pre ++ rep u (a*p + b)`, the engine's own `sside`
+(`LapDecider`: `pre ++ rep u (a*j+b) ++ post ++ X`).  At this anchor,
+
+    side = FAR (fm_other)     u = [S1]     a = 2     b = 5
+
+which is a cleaner instance than 4j's own `0^(2k+5)` on the near-head side.
+**The two anchors trade the growth between the sides and neither removes it:**
+
+| anchor | near-head side | far side |
+|---|---|---|
+| head at the wall (4j) | `0^(2k+5)` then `11` then digits | empty |
+| `(StB,0)` at offset 3 | `11` then digits (CONSTANT) | `1^(2v+5)` |
+
+**RETRACTION.**  An earlier draft of this section claimed the far side was
+BLANK at the fixed frame, and concluded the growth was free under `CTape.lift`
+and that this row needed neither 4j's outer parameter nor the phase cycle.
+That is wrong.  The blankness was measured at the wall-advance sample, where
+the head is AT the wall and its left side is empty by definition.  `lift`
+ignores trailing BLANKS; a growing run of ones is free at no anchor.  4j's
+conclusion stands; 4q corrects only its LOCATION and supplies the constants.
+
+### What the searcher does today, and why "no anchor" is stale
+
+`residue_map.tsv` files this row as `no anchor`.  `valfam` now reports **8
+families, none closed, 0 arms**, identically at 40k, 150k and 600k steps.
+Every family it TRIES is
+
+    {"state": "B", "head": 0, "side": "L", ..., "value_step_per_anchor_visit": 2}
+
+`side: "L"` is the receding wall and step 2 is the wall's 2-per-bounce: it is
+reading the window the wall opens rather than the counter, then correctly
+refusing it -- *"the fill DECREASES the outer parameter, so the family is
+finite: it is a reading of the window, not of the machine"*.
+
+The main pass finds nothing at all; all 8 come from the fallback passes.  The
+reason is not a heuristic and should not be patched around: `runs_cells`
+refuses a side it cannot make concrete, and the far side `1^(2v+5)` is a
+DIFFERENT concrete value at every visit.  Grouping visits by a constant far
+side cannot see a family whose far side is the parameter.  Two changes were
+tried here and **both reverted, neither helped**:
+
+* the near-head prefix is capped at `p < l` cells (`_grams` uses `p` as a cell
+  count), so a 2-cell constant prefix with 1-cell digits is unreachable;
+* splitting the pooled `(B,0)` anchor by near-head frame, since it fires at
+  offsets 1, 3 and 4 with different frames.
+
+Both are downstream of the real gap.  Build the field, not the search.
+
+### Worth
+
+2 core rows and 2 shadows, and the twin measures identically.  4 of the rows
+left.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
