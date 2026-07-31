@@ -106,7 +106,8 @@ def coq_fam(cert):
                syms(fam['near_head_prefix']),
                clist(fam.get('terminators_by_phase', [fam['terminator']]),
                      syms),
-               'Gray' if fam.get('code') == 'gray' else 'Binary',
+               ('Fib' if fam.get('numeration') == 'fibonacci'
+                else 'Gray' if fam.get('code') == 'gray' else 'Binary'),
                fam.get('value_step_per_anchor_visit', 1),
                clist(fills, coq_fill),
                'St' + fam['state'],
@@ -1633,6 +1634,612 @@ def emit_closure_gray(cert, tab, mid):
     return ''.join(L), cd
 
 
+
+# ===========================================================================
+# The (Fib, 1) path.  LadderCheck section 11 ([boardF_neverqh]) is a THIRD
+# closure and this builds its arms, kept apart from the other two for the same
+# reason they are kept apart from each other: two interior classes split on the
+# LOW DIGIT, a fill arm indexed by the WIDTH whose left-hand side is a BARE run
+# (the top of a width is 1^k), one phase, and MEMBERSHIP where the gray path
+# has a parity.
+#
+# The numeration is FIBONACCI (LADDER_PLAN 4p): digit i carries weight
+# 1, 1, 2, 3, 5, 8, ... and the widths spell 2, 3, 5, 8, 13, 21 members rather
+# than 2^k.  The certificate's own `code` says "binary" on all five of these
+# rows and that is the lie 4p caught -- what selects this path is `numeration`
+# and the `weights` beside it, never `code`.
+# ===========================================================================
+
+def f1c(i):
+    """[LadderCheck.f1c i] as (u, t, w, u', t', w').  4p's two classes: the
+    increment at low digit 0, the carry at low digit 1."""
+    return [([0], 0, [], [1], 0, []),
+            ([], 1, [1, 0], [], 0, [1, 1])][i]
+
+
+def fib_member(ds):
+    """[LadderCheck.fibokb false]: at every 0, an EVEN number of 1s above it.
+
+    Equivalently -- and this is how 4p states it -- an optional leading 1 then
+    a concatenation of the blocks [0] and [1;1], LSB-first.  Checked against
+    the orbit read off all five machines by tools/ladder/fibmem.py."""
+    return all(sum(ds[i + 1:]) % 2 == 0 for i in range(len(ds)) if ds[i] == 0)
+
+
+def closure_data_fib(cert, tab):
+    """The class arms of a one-phase (Fib, 1) family, for LadderCheck 11.
+
+    LADDER_PLAN 4p measured the coverage over all 2,284 interior members of
+    the five rows -- overlap 0, uncovered 0, wrong successor 0 -- and measured
+    both class arms deriving at threshold 0..1 and stride 1.  So the arms are
+    one per CLASS and arm index, plus one fill arm per WIDTH index; the fill
+    arm's left-hand side is the top of the width, 1^k, which is the largest
+    MEMBER and here also the largest VALUE (fibsum k), unlike either of the
+    other two codes."""
+    fam = cert['family']
+    fills = cert.get('fill_by_phase') or [cert['fill']]
+    if fam.get('numeration') != 'fibonacci':
+        raise NoClosure('numeration %r is not fibonacci'
+                        % fam.get('numeration'))
+    w = fam.get('weights')
+    if not w or list(w[:6]) != [1, 1, 2, 3, 5, 8]:
+        raise NoClosure('weights %r are not the fibonacci weights' % (w,))
+    if fam['base'] != 2:
+        raise NoClosure('base %d: LadderCheck states (Fib, 1) at base 2'
+                        % fam['base'])
+    if fam.get('value_step_per_anchor_visit', 1) != 1:
+        raise NoClosure('step %d: LadderCheck states (Fib, 1)'
+                        % fam.get('value_step_per_anchor_visit', 1))
+    cf = fam.get('canonical_form') or {}
+    if [list(b) for b in (cf.get('blocks') or [])] != [[0], [1, 1]]:
+        raise NoClosure('canonical blocks %r are not [[0],[1,1]]'
+                        % (cf.get('blocks'),))
+    if len(fills) != 1:
+        raise NoClosure('%d phases: the fibonacci board is one-phase (4p '
+                        'measured all five rows at one)' % len(fills))
+    f = fills[0]
+    if f['lands_in_phase'] != 0:
+        raise NoClosure('the fill lands in phase %d of 1'
+                        % f['lands_in_phase'])
+    # [filled_fib0] discharges "the fill target is a member" for exactly this
+    # shape: the all-zero string of any width is a member.  Anything else
+    # would need the target's own membership proved per width.
+    if (list(f['target_prefix']) or list(f['target_suffix'])
+            or f['target_fill_digit'] != 0):
+        raise NoClosure('the fill target is %r ++ %d^n ++ %r; [filled_fib0] '
+                        'discharges membership for a bare run of 0 only'
+                        % (f['target_prefix'], f['target_fill_digit'],
+                           f['target_suffix']))
+    tails = [tuple(t) for t in
+             (fam.get('terminators_by_phase') or [fam['terminator']])]
+    if cert['boot'].get('phase', 0) != 0:
+        raise NoClosure('the boot is read in phase %d of 1'
+                        % cert['boot'].get('phase', 0))
+    # The liveness picks the closer.  All five fibonacci rows read BCD (4p):
+    # A is entered once, at step 0, and nothing targets it, so the row
+    # QUASIHALTS in A and [boardF_neverqh] would prove the wrong theorem.
+    live = (cert.get('liveness') or {}).get('states_infinitely_often') or ''
+    missing = [i for i in range(4) if ST[i][-1] not in live]
+    if len(missing) > 1:
+        raise NoClosure('liveness %r leaves %d states finite; the board names '
+                        'ONE quiet state' % (live, len(missing)))
+
+    digs = [tuple(w) for w in fam['digits']]
+    pre = tuple(fam['near_head_prefix'])
+    q = ord(fam['state']) - 65
+    hs = fam['head']
+    left = fam['side'] == 'L'
+    el, er = (not left), left
+
+    boot = cert['boot']
+    ds0 = list(boot['digits_lsb_first'])
+    if not ds0:
+        raise NoClosure('the boot digit string is empty and a width is not')
+    if not fib_member(ds0):
+        raise NoClosure('the boot digit string %r is not a MEMBER: some 0 has '
+                        'an odd number of 1s above it, so the counter does '
+                        'not stand on it' % ds0)
+    cells = list(pre)
+    for d in ds0:
+        cells.extend(digs[d])
+    cells.extend(tails[0])
+    if cells != list(boot['cells']):
+        raise NoClosure('boot cells %r are not the family at %r'
+                        % (boot['cells'], ds0))
+
+    fpre, fsuf = list(f['target_prefix']), list(f['target_suffix'])
+    mid = f['target_fill_digit']
+    mf = len(fpre) + len(fsuf)
+
+    def cellsof(ds):
+        out = []
+        for d in ds:
+            out.extend(digs[d])
+        return tuple(out)
+
+    def conf(other, sd):
+        OT = (other, (), 0, 0, ())
+        return (q, sd, hs, OT) if left else (q, OT, hs, sd)
+
+    def derive(e0, e1, c0, c1, what):
+        ch = LC.derive_chain(tab, e0, e1, c0, c1, maxdepth=32, nmax=120,
+                             lift=True)
+        if ch is None:
+            raise NoClosure('%s: no chain' % what)
+        got = LC.srun(tab, e0, e1, ch, c0)
+        if got is None or got[0] != c1:
+            raise NoClosure('%s: chain lands off the rhs' % what)
+        if got[2] == 0:
+            raise NoClosure('%s: zero-step rule' % what)
+        return ch, got[1], got[2]
+
+    def interior_at(other, n0, stride):
+        got = []
+        for i in range(2):
+            u, t, w, u2, t2, w2 = f1c(i)
+            for r in range(n0 + stride):
+                s = 0 if r < n0 else stride
+                c0 = conf(other, blk(pre + cellsof(u) + digs[t] * r,
+                                     digs[t], s, cellsof(w)))
+                c1 = conf(other, blk(pre + cellsof(u2) + digs[t2] * r,
+                                     digs[t2], s, cellsof(w2)))
+                if c0 == c1:
+                    return None
+                try:
+                    ch, ca, cb = derive(el, er, c0, c1,
+                                        'interior class %d r=%d' % (i, r))
+                except NoClosure:
+                    return None
+                got.append((i, r, s, c0, c1, ch, ca, cb))
+        return got
+
+    def fill_at(other, n0, stride):
+        got = []
+        for r in range(1, n0 + stride):
+            s = 0 if r < n0 else stride
+            total = r + f['widens_by'] - mf
+            if total < 0:
+                return None
+            hit = None
+            for w1 in _splits(r):
+                # the top of width r is 1^r: a bare run, no fixed word at
+                # either end, which is what [cells_topF] states
+                lhs = conf(other, blk(pre + digs[1] * w1, digs[1], s,
+                                      digs[1] * (r - w1) + tails[0]))
+                for m1 in _splits(total):
+                    rhs = conf(other,
+                               blk(pre + cellsof(fpre) + digs[mid] * m1,
+                                   digs[mid], s,
+                                   digs[mid] * (total - m1) + cellsof(fsuf)
+                                   + tails[0]))
+                    if lhs == rhs:
+                        continue
+                    try:
+                        ch, ca, cb = derive(True, True, lhs, rhs,
+                                            'fill r=%d' % r)
+                    except NoClosure:
+                        continue
+                    hit = (r, s, w1, r - w1, m1, total - m1, lhs, rhs,
+                           ch, ca, cb)
+                    break
+                if hit:
+                    break
+            if hit is None:
+                return None
+            got.append(hit)
+        return got
+
+    best = None
+    for other in _gray_far_sides(cert, tab):
+        inter = n0i = sti = None
+        for n0, stride in ARM_GRID:
+            hit = interior_at(other, n0, stride)
+            if hit is not None:
+                inter, n0i, sti = hit, n0, stride
+                break
+        fill = n0f = stf = None
+        for n0, stride in ARM_GRID:
+            if n0 < 1:
+                continue      # the fill arm index range starts at 1
+            hit = fill_at(other, n0, stride)
+            if hit is not None:
+                fill, n0f, stf = hit, n0, stride
+                break
+        score = (inter is not None) + (fill is not None)
+        if best is None or score > best[0]:
+            best = (score, other, inter, n0i, sti, fill, n0f, stf)
+        if score == 2:
+            break
+    _sc, other, inter, n0i, sti, fill, n0f, stf = best
+    if inter is None:
+        raise NoClosure('interior class arm: no chain at any threshold 0..3 '
+                        'and stride 1..4')
+    if fill is None:
+        raise NoClosure('fill arm: no chain at any threshold 1..3, stride '
+                        '1..4 or copy split')
+
+    qa, sq = None, None
+    if missing:
+        qa = missing[0]
+        sq = last_visit(tab, qa, boot['steps_from_blank'])
+        if sq is None:
+            raise NoClosure('%s never enters %s below the boot anchor, so it '
+                            'is not the quiet state' % (cert['spec'], ST[qa]))
+    want = [i for i in range(4) if i != qa]
+    vis = {}
+    for (r, _s, _w1, _w2, _m1, _m2, lhs, _rhs, fch, _ca, _cb) in fill:
+        seen = _gray_visits(tab, lhs, fch, want)
+        gap = [ST[i] for i in want if i not in seen]
+        if gap:
+            raise NoClosure('the fill anchor at width index %d reaches no %s'
+                            % (r, ','.join(gap)))
+        vis[r] = {i: seen[i] for i in want}
+
+    return dict(fib=True, el=el, er=er, other=list(other),
+                inter=inter, n0i=n0i, sti=sti,
+                fill=fill, n0f=n0f, stf=stf, nph=1,
+                ds0=ds0, t0=boot['steps_from_blank'], vis=vis, want=want,
+                qa=qa, sq=sq, pv=0, ph0=0, kcyc=[0], b=2)
+
+
+CLOSURE_F_HEAD = '''
+(** ** The closure: from the RULES to [NeverQuasiHaltsSt], at [(Fib, 1)]
+
+    The arms below are the case split of [LadderCheck.fib_split], built from
+    the FAMILY rather than mined: one interior arm per CLASS (there are two,
+    LADDER_PLAN 4p) and per arm index, and one fill arm per WIDTH index.
+    Every certificate arm above is one of these with its run lengths pinned to
+    their lower bounds, which is why %(nc)d of them collapse to %(na)d here.
+
+    The numeration is FIBONACCI: the digit at index [i] carries weight
+    1, 1, 2, 3, 5, 8, ... and this width spells [fibsum k + 1] members, not
+    [2^k].  It is REDUNDANT -- the first two weights are both 1 -- so which
+    string of a width the counter stands on is a MEMBERSHIP predicate and not
+    an arithmetic fact, and that predicate is what [fibokb] is.  The two
+    classes split on the LOW DIGIT and the top of a width is [1^k].
+
+    The interior class runs at threshold %(n0i)d stride %(sti)d, the fill
+    class at threshold %(n0f)d stride %(stf)d.  [boardF_neverqh] consumes
+    them, the boot, and one chain per state per fill arm. *)
+'''
+
+CLOSURE_F_DISP = '''Definition iarm_%(mid)s (i r : nat) : LRule :=
+  match i, r with
+  %(ibr)s
+  | _, _ => iarm0_0_%(mid)s   (* unreachable: i < 2 and r < N0i + sti *)
+  end.
+
+(** The fill arms, indexed by the WIDTH.  Both tails are known empty -- they
+    are the only arms that see the end of the counter -- and the left-hand
+    side is the top of the width, which here is a BARE run of [1]s.  That is
+    both the largest MEMBER and the largest value ([fibsum k]), so unlike
+    either other code it needs no fixed word at either end.  [fw1]/[fw2] say
+    how the top's concrete copies of the run divide about the block and
+    [fm1]/[fm2] the fill target's. *)
+Definition farm_%(mid)s (r : nat) : LRule :=
+  match r with
+  %(fbr)s
+  | _ => farm%(r0)d_%(mid)s   (* unreachable: 1 <= r < N0f + stf *)
+  end.
+
+Definition fw1_%(mid)s (r : nat) : nat := match r with %(b1)s | _ => 0 end.
+Definition fw2_%(mid)s (r : nat) : nat := match r with %(b2)s | _ => 0 end.
+Definition fm1_%(mid)s (r : nat) : nat := match r with %(b3)s | _ => 0 end.
+Definition fm2_%(mid)s (r : nat) : nat := match r with %(b4)s | _ => 0 end.
+
+(** One chain per state per fill arm.  [vis_of_run] turns each into a visit
+    and [topsF_cofinal] says the tops keep coming, which is all the liveness
+    needs. *)
+Definition vis_%(mid)s (r : nat) (q : St) : list lstep :=
+  match r, q with
+  %(vb)s
+  | _, _ => []
+  end.
+
+'''
+
+CLOSURE_F_THM = '''Lemma iarm_sound_%(mid)s : forall i r,
+  i < 2 -> r < %(n0i)d + %(sti)d ->
+  RuleSound tm (negb (fm_left FAM)) (fm_left FAM) (iarm_%(mid)s i r).
+Proof.
+  intros i r Hi Hr.
+%(isound)s  exfalso; lia.
+Qed.
+
+Lemma iarm_lhs_%(mid)s : forall i r, i < 2 -> r < %(n0i)d + %(sti)d ->
+  lr_lhs (iarm_%(mid)s i r)
+    = cls_conf FAM (cls_side FAM (cs_u (f1c i)) (cs_t (f1c i)) r
+                      (astride %(n0i)d %(sti)d r) (cs_w (f1c i))).
+Proof.
+  intros i r Hi Hr.
+%(icomp)s  exfalso; lia.
+Qed.
+
+Lemma iarm_rhs_%(mid)s : forall i r, i < 2 -> r < %(n0i)d + %(sti)d ->
+  lr_rhs (iarm_%(mid)s i r)
+    = cls_conf FAM (cls_side FAM (cs_u' (f1c i)) (cs_t' (f1c i)) r
+                      (astride %(n0i)d %(sti)d r) (cs_w' (f1c i))).
+Proof.
+  intros i r Hi Hr.
+%(icomp)s  exfalso; lia.
+Qed.
+
+Lemma iarm_cb_%(mid)s : forall i r, i < 2 -> r < %(n0i)d + %(sti)d ->
+  0 < lr_cb (iarm_%(mid)s i r).
+Proof.
+  intros i r Hi Hr.
+%(ilia)s  exfalso; lia.
+Qed.
+
+Lemma farm_sound_%(mid)s : forall r, 1 <= r -> r < %(n0f)d + %(stf)d ->
+  RuleSound tm true true (farm_%(mid)s r).
+Proof.
+  intros r H1 Hr.
+%(fsound)s  exfalso; lia.
+Qed.
+
+Lemma farm_lhs_%(mid)s : forall r, 1 <= r -> r < %(n0f)d + %(stf)d ->
+  lr_lhs (farm_%(mid)s r)
+    = cls_conf FAM (run_side FAM 1 (fw1_%(mid)s r)
+                      (astride %(n0f)d %(stf)d r) (fw2_%(mid)s r) 0 [] []).
+Proof.
+  intros r H1 Hr.
+%(fcomp)s  exfalso; lia.
+Qed.
+
+Lemma farm_rhs_%(mid)s : forall r, 1 <= r -> r < %(n0f)d + %(stf)d ->
+  lr_rhs (farm_%(mid)s r)
+    = cls_conf FAM (run_side FAM (f_mid (fam_fill FAM 0)) (fm1_%(mid)s r)
+                      (astride %(n0f)d %(stf)d r) (fm2_%(mid)s r) 0
+                      (f_pre (fam_fill FAM 0)) (f_suf (fam_fill FAM 0))).
+Proof.
+  intros r H1 Hr.
+%(fcomp)s  exfalso; lia.
+Qed.
+
+Lemma farm_cb_%(mid)s : forall r, 1 <= r -> r < %(n0f)d + %(stf)d ->
+  0 < lr_cb (farm_%(mid)s r).
+Proof.
+  intros r H1 Hr.
+%(flia)s  exfalso; lia.
+Qed.
+
+Lemma fw_%(mid)s : forall r, 1 <= r -> r < %(n0f)d + %(stf)d ->
+  fw1_%(mid)s r + fw2_%(mid)s r = r.
+Proof.
+  intros r H1 Hr.
+%(flia)s  exfalso; lia.
+Qed.
+
+Lemma fm12_%(mid)s : forall r, 1 <= r -> r < %(n0f)d + %(stf)d ->
+  fm1_%(mid)s r + fm2_%(mid)s r
+  + (length (f_pre (fam_fill FAM 0)) + length (f_suf (fam_fill FAM 0)))
+  = r + f_s (fam_fill FAM 0).
+Proof.
+  intros r H1 Hr.
+%(flia)s  exfalso; lia.
+Qed.
+
+Lemma boot_%(mid)s :
+  csteps tm %(t0)d c0 = Some (fam_cfg FAM (%(ds0)s, 0, 0)).
+Proof. vm_compute. reflexivity. Qed.
+
+'''
+
+
+CLOSURE_F_NQH = '''Lemma vis_ok_%(mid)s : forall r q, 1 <= r ->
+  r < %(n0f)d + %(stf)d ->
+  srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r)) = Some q.
+Proof.
+  intros r q H1 Hr.
+%(fvis)s  exfalso; lia.
+Qed.
+
+(** The machine-level theorem.  Every argument is either a [RuleSound] the
+    Stage-B kernel discharged, or an equation two [vm_compute]s decide -- and
+    the boot's MEMBERSHIP, which is one more of the second kind. *)
+Theorem nqh_%(mid)s : NeverQuasiHaltsSt tm.
+Proof.
+  apply (boardF_neverqh tm FAM iarm_%(mid)s %(n0i)d %(sti)d
+                        farm_%(mid)s %(n0f)d %(stf)d
+                        fw1_%(mid)s fw2_%(mid)s fm1_%(mid)s fm2_%(mid)s
+                        vis_%(mid)s %(ds0)s %(t0)d).
+%(args)s  - exact vis_ok_%(mid)s.
+Qed.
+'''
+
+
+CLOSURE_F_QH = '''Lemma vis_ok_%(mid)s : forall r q, q <> %(qa)s -> 1 <= r ->
+  r < %(n0f)d + %(stf)d ->
+  srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r)) = Some q.
+Proof.
+  intros r q Hq H1 Hr.
+%(fvis)s  exfalso; lia.
+Qed.
+
+(** *** The arms avoid the quiet state
+
+    Recomputed from the SAME chains the kernel already replays
+    ([LadderCheck.arm_avoid] over [LapAvoid.srun_avoid]): a chain whose trace
+    touches [%(qa)s] evaluates to [false] and this file fails to compile. *)
+%(avarms)s
+Lemma iarm_avoid_%(mid)s : forall i r,
+  i < 2 -> r < %(n0i)d + %(sti)d ->
+  RuleAvoid tm (negb (fm_left FAM)) (fm_left FAM) %(qa)s (iarm_%(mid)s i r).
+Proof.
+  intros i r Hi Hr.
+%(bav)s  exfalso; lia.
+Qed.
+
+Lemma farm_avoid_%(mid)s : forall r, 1 <= r -> r < %(n0f)d + %(stf)d ->
+  RuleAvoid tm true true %(qa)s (farm_%(mid)s r).
+Proof.
+  intros r H1 Hr.
+%(fav)s  exfalso; lia.
+Qed.
+
+(** *** The quiet state's last visit, and the window from it to the anchor *)
+Lemma qvis_%(mid)s : VisitsAt tm %(qa)s %(sq)d.
+Proof. apply bootvis_chk_sound. vm_compute. reflexivity. Qed.
+
+Lemma qwin_%(mid)s : forall n c, %(sq)d < n < %(t0)d ->
+  stepn tm n InitES = Some c -> fst c <> %(qa)s.
+Proof.
+  intros n c Hn Hstep.
+  exact (bootquiet_chk_sound tm %(qa)s %(sq1)d %(win)d
+           ltac:(vm_compute; reflexivity) n c ltac:(lia) Hstep).
+Qed.
+
+(** The machine-level theorem.  This row QUASIHALTS in %(qa)s: the counter
+    laps forever over the fibonacci numeration and every other state recurs,
+    but %(qa)s stops firing after index %(sq)d -- it is entered once, at step
+    0, and nothing targets it (4p).  [boardF_iqh] returns the exact bound and
+    it is weakened to the census tier's 2000. *)
+Definition iqh (tm : TM) : Prop :=
+  NonHalt tm /\\ QHBound 2000 tm /\\ QuasiHaltsSt tm.
+
+Theorem iqh_%(mid)s : iqh tm.
+Proof.
+  assert (H : NonHalt tm /\\ QHBound (S %(sq)d) tm /\\ QuasiHaltsSt tm).
+  { apply (boardF_iqh tm FAM iarm_%(mid)s %(n0i)d %(sti)d
+                      farm_%(mid)s %(n0f)d %(stf)d
+                      fw1_%(mid)s fw2_%(mid)s fm1_%(mid)s fm2_%(mid)s
+                      %(ds0)s %(t0)d %(qa)s %(sq)d vis_%(mid)s).
+%(args)s    - exact iarm_avoid_%(mid)s.
+    - exact farm_avoid_%(mid)s.
+    - exact vis_ok_%(mid)s.
+    - exact qvis_%(mid)s.
+    - exact qwin_%(mid)s. }
+  destruct H as (Hn & Hb & Hq).
+  split; [exact Hn | split; [| exact Hq]].
+  apply (qhbound_mono (S %(sq)d) 2000); [lia | exact Hb].
+Qed.
+'''
+
+
+def emit_closure_fib(cert, tab, mid):
+    """The Coq for LadderCheck.boardF_neverqh, or a note on what stopped it."""
+    try:
+        cd = closure_data_fib(cert, tab)
+    except NoClosure as e:
+        return CLOSURE_NONE % e, None
+
+    n0i, sti, n0f, stf = cd['n0i'], cd['sti'], cd['n0f'], cd['stf']
+    nA, nF = n0i + sti, n0f + stf
+    el, er = cd['el'], cd['er']
+    L = [CLOSURE_F_HEAD % dict(nc=len(cert['arms']),
+                               na=len(cd['inter']) + len(cd['fill']),
+                               n0i=n0i, sti=sti, n0f=n0f, stf=stf)]
+    for i, r, _s, c0, c1, ch, ca, cb in cd['inter']:
+        L.append(CLOSURE_G_IARM % dict(
+            i=i, r=r, mid=mid, lhs=coq_conf(c0), rhs=coq_conf(c1), ca=ca,
+            cb=cb, ch=coq_chain(ch), el=str(el).lower(), er=str(er).lower()))
+    for r, _s, _w1, _w2, _m1, _m2, lhs, rhs, ch, ca, cb in cd['fill']:
+        L.append(CLOSURE_G_FARM % dict(
+            r=r, mid=mid, lhs=coq_conf(lhs), rhs=coq_conf(rhs), ca=ca, cb=cb,
+            ch=coq_chain(ch)))
+    L.append(CLOSURE_F_DISP % dict(
+        mid=mid, r0=cd['fill'][0][0],
+        ibr='\n  '.join('| %d, %d => iarm%d_%d_%s' % (i, r, i, r, mid)
+                        for i, r, *_ in cd['inter']),
+        fbr='\n  '.join('| %d => farm%d_%s' % (r, r, mid)
+                        for r, *_ in cd['fill']),
+        b1=' '.join('| %d => %d' % (r, w1) for r, _s, w1, *_ in cd['fill']),
+        b2=' '.join('| %d => %d' % (r, w2)
+                    for r, _s, _w1, w2, *_ in cd['fill']),
+        b3=' '.join('| %d => %d' % (r, m1)
+                    for r, _s, _w1, _w2, m1, *_ in cd['fill']),
+        b4=' '.join('| %d => %d' % (r, m2)
+                    for r, _s, _w1, _w2, _m1, m2, *_ in cd['fill']),
+        vb='\n  '.join('| %d, %s => %s' % (r, ST[i], coq_chain_l(ch))
+                       for r in sorted(cd['vis'])
+                       for i, ch in sorted(cd['vis'][r].items()))))
+
+    def ibranches(body):
+        """One brace-delimited branch per (class index, arm index)."""
+        out = []
+        for i in range(2):
+            rb = []
+            for r in range(nA):
+                rb.append('    destruct r as [|r].\n    { %s. }\n'
+                          % (body % dict(i=i, r=r, mid=mid)))
+            out.append('  destruct i as [|i].\n  {\n%s    exfalso; lia.\n  }\n'
+                       % ''.join(rb))
+        return ''.join(out)
+
+    def fbranches(body):
+        """One per fill arm index; 0 is dead, no width is 0."""
+        return _rbranches(nF, lambda r: (body % dict(r=r, mid=mid)) + '.',
+                          lo=1)
+
+    args = ''.join([
+        '  - vm_compute; reflexivity.\n',                 # fm_b = 2
+        '  - vm_compute; reflexivity.\n',                 # fm_code = Fib
+        '  - vm_compute; reflexivity.\n',                 # fm_step = 1
+        '  - vm_compute; repeat constructor.\n',          # f_pre bounded
+        '  - vm_compute; repeat constructor.\n',          # f_suf bounded
+        '  - vm_compute; lia.\n',                         # f_mid < 2
+        '  - vm_compute; lia.\n',                         # the fill spells
+        '  - vm_compute; reflexivity.\n',                 # f_to = 0
+        '  - intros k Hk. apply (filled_fib0 FAM 0 k);\n'
+        '      vm_compute; reflexivity.\n',               # the target is a member
+        '  - repeat constructor.\n',                      # ds0 bounded
+        '  - vm_compute; lia.\n',                         # 0 < |ds0|
+        '  - vm_compute; reflexivity.\n',                 # ds0 is a MEMBER
+        '  - exact boot_%s.\n' % mid,
+        '  - lia.\n',                                     # 0 < sti
+        '  - exact iarm_sound_%s.\n' % mid,
+        '  - exact iarm_lhs_%s.\n' % mid,
+        '  - exact iarm_rhs_%s.\n' % mid,
+        '  - exact iarm_cb_%s.\n' % mid,
+        '  - lia.\n',                                     # 0 < stf
+        '  - lia.\n',                                     # 1 <= N0f
+        '  - exact fw_%s.\n' % mid,
+        '  - exact fm12_%s.\n' % mid,
+        '  - exact farm_sound_%s.\n' % mid,
+        '  - exact farm_lhs_%s.\n' % mid,
+        '  - exact farm_rhs_%s.\n' % mid,
+        '  - exact farm_cb_%s.\n' % mid,
+    ])
+
+    L.append(CLOSURE_F_THM % dict(
+        mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str),
+        n0i=n0i, sti=sti, n0f=n0f, stf=stf,
+        isound=ibranches('eapply arm_sound; [exact rules_sound_%(mid)s '
+                         '| exact ok_iarm%(i)d_%(r)d_%(mid)s]'),
+        icomp=ibranches('vm_compute; reflexivity'),
+        ilia=ibranches('vm_compute; lia'),
+        fsound=fbranches('eapply arm_sound; [exact rules_sound_%(mid)s '
+                         '| exact ok_farm%(r)d_%(mid)s]'),
+        fcomp=fbranches('vm_compute; reflexivity'),
+        flia=fbranches('vm_compute; lia')))
+
+    common = dict(mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str),
+                  n0i=n0i, sti=sti, n0f=n0f, stf=stf, args=args)
+    if cd['qa'] is None:
+        L.append(CLOSURE_F_NQH % dict(
+            common, fvis=fbranches('destruct q; vm_compute; reflexivity')))
+    else:
+        qa, sq = ST[cd['qa']], cd['sq']
+        av = []
+        for i, r, _s, *_ in cd['inter']:
+            av.append(AVOID_ARM % dict(
+                nm='iarm%d_%d' % (i, r), mid=mid, qa=qa,
+                el='(negb (fm_left FAM))', er='(fm_left FAM)'))
+        for r, *_ in cd['fill']:
+            av.append(AVOID_ARM % dict(nm='farm%d' % r, mid=mid,
+                                       qa=qa, el='true', er='true'))
+        L.append(CLOSURE_F_QH % dict(
+            common, qa=qa, sq=sq, sq1=sq + 1, win=cd['t0'] - sq - 1,
+            avarms=''.join(av),
+            bav=ibranches('exact av_iarm%(i)d_%(r)d_%(mid)s'),
+            fav=fbranches('exact av_farm%(r)d_%(mid)s'),
+            fvis=fbranches('destruct q; '
+                           'try (exfalso; apply Hq; reflexivity); '
+                           'vm_compute; reflexivity')))
+    return ''.join(L), cd
+
+
 def emit(cert, out):
     spec = cert['spec']
     mid = mach_id(spec)
@@ -1644,9 +2251,19 @@ def emit(cert, out):
     # [cconf].  Which one it is is decided while the arms are derived, so the
     # gray closure runs FIRST and the [Fam] record below is written from what
     # it chose.  The binary path is untouched and still runs last.
+    # The FIBONACCI rows say [code: binary] in the certificate and that is the
+    # lie LADDER_PLAN 4p caught: their numeration is weighted and no positional
+    # code denotes their successor.  What selects the third closure is
+    # [numeration] and the [weights] beside it, never [code].
     gray = cert['family'].get('code') == 'gray'
-    closure, cd = (emit_closure_gray(cert, tab, mid) if gray else (None, None))
-    if gray and cd is not None:
+    fib = cert['family'].get('numeration') == 'fibonacci'
+    if fib:
+        closure, cd = emit_closure_fib(cert, tab, mid)
+    elif gray:
+        closure, cd = emit_closure_gray(cert, tab, mid)
+    else:
+        closure, cd = None, None
+    if (gray or fib) and cd is not None:
         cert['family']['other_side_cells'] = list(cd['other'])
     L = []
     L.append(HEADER % dict(mid=mid, spec=spec, table=coq_table(spec)))
@@ -1730,7 +2347,7 @@ Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_%(nm)s_%(mid)s]. 
     right-hand side in exactly the certificate's step count. *)
 ''' % dict(ng=len(good), nt=len(cert['arms'])))
 
-    if not gray:
+    if not (gray or fib):
         closure, cd = emit_closure(cert, tab, mid)
     L.append(closure)
 
