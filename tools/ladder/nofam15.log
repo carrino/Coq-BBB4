@@ -1,15 +1,15 @@
-0RB0RD_1LC1RB_1RA0LC_1LB0LC    base-2/binary        D0R stp=1 tl=*   ex=16 big=20   mem=3    gap=1 second counter succ=1.00 ctx=1.00 rec=0.99 21.9s
-0RB0RD_1LC1RB_1RA0LC_1LD0LC    base-2/binary        A1R stp=2 tl=*   ex=15 big=20   mem=6    gap=1 template   succ=1.00 ctx=1.00 rec=0.99 26.4s
-0RB1LC_1LC0RD_1RD0LC_1LA1RB    base-2/binary        A0L stp=1 tl=0011 ex=5  big=54   mem=3    gap=5 second counter succ=1.00 ctx=1.00 rec=0.99 38.8s
-0RB1LC_1LC1RD_1LA0LC_0RD1RB    mixed/weights        A0L stp=1 tl=01  ex=9  big=64   mem=126  gap=2 second counter succ=1.00 ctx=1.00 rec=1.00 38.5s
-1RB---_0LB1RC_1LB0RD_1LC0RD    fibonacci/weights    B1R stp=1 tl=11  ex=10 big=290  mem=898  gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 32.6s
-1RB---_0LB1RC_1LD0RC_1LB1RC    fibonacci/weights    B1R stp=1 tl=11  ex=10 big=290  mem=898  gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 34.1s
-1RB---_1LC0RB_1LD1RB_0LD1RB    fibonacci/weights    D1R stp=1 tl=11  ex=10 big=291  mem=899  gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 35.5s
-1RB---_1LC0RD_0LC1RB_1LB0RD    fibonacci/weights    C1R stp=1 tl=11  ex=10 big=291  mem=899  gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 33.9s
-1RB---_1LC1RD_0LC1RD_1LB0RD    fibonacci/weights    B1R stp=1 tl=11  ex=10 big=291  mem=899  gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 33.2s
-1RB0RB_0LC1RD_1LC1LA_0LA1RB    fibonacci/weights    A1L stp=1 tl=*   ex=20 big=34   mem=10   gap=7 second counter succ=1.00 ctx=1.00 rec=0.00 37.8s
-1RB0RB_1LC0RC_1RA0LD_0LB0LC    base-2/gray          D0R stp=1 tl=-   ex=1  big=4    mem=1    gap=0 second counter succ=1.00 ctx=1.00 rec=1.00 39.7s
-1RB0RB_1LC1LD_0LC1RA_0LD0RA    binomial/combinadic         stp=1 tl=-   ex=21 big=36   binomial               succ=0.91 ctx=0.91 rec=0.00 27.4s
-1RB1LB_1LC0RD_0LB1LA_0LA1RA    base-2/binary        B1L stp=3 tl=*   ex=0  big=0    mem=7    gap=3 second counter succ=1.00 ctx=1.00 rec=0.99 42.2s
-1RB1LD_1RC1RB_1LC1LA_0RC0RD    NO MONOTONE READING                                                            succ=1.00 ctx=1.00 rec=1.00 24.7s
-1RB1RC_1LA0LB_1LD0RD_1LB0RC    mixed/weights        B0R stp=1 tl=1   ex=7  big=243  mem=14   gap=6 bounded oscillation succ=1.00 ctx=1.00 rec=0.00 41.3s
+0RB0RD_1LC1RB_1RA0LC_1LB0LC    base-2/binary        D0R stp=1 tl=*   ex=16 big=20   mem=3    gap=1 second counter succ=1.00 ctx=1.00 rec=0.99 15.3s
+0RB0RD_1LC1RB_1RA0LC_1LD0LC    base-2/binary        A1R stp=2 tl=*   ex=15 big=20   mem=6    gap=1 template   succ=1.00 ctx=1.00 rec=0.99 17.1s
+0RB1LC_1LC0RD_1RD0LC_1LA1RB    base-2/binary        A0L stp=1 tl=0011 ex=5  big=54   mem=3    gap=5 second counter succ=1.00 ctx=1.00 rec=0.99 24.6s
+0RB1LC_1LC1RD_1LA0LC_0RD1RB    mixed/weights        A0L stp=1 tl=01  ex=9  big=64   mem=126  gap=2 second counter succ=1.00 ctx=1.00 rec=1.00 20.6s
+1RB---_0LB1RC_1LB0RD_1LC0RD    fibonacci/weights    B1R stp=1 tl=11  ex=10 big=290  mem=898  gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 21.1s
+1RB---_0LB1RC_1LD0RC_1LB1RC    fibonacci/weights    B1R stp=1 tl=11  ex=10 big=290  mem=898  gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 21.1s
+1RB---_1LC0RB_1LD1RB_0LD1RB    fibonacci/weights    D1R stp=1 tl=11  ex=10 big=291  mem=899  gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 22.0s
+1RB---_1LC0RD_0LC1RB_1LB0RD    fibonacci/weights    C1R stp=1 tl=11  ex=10 big=291  mem=899  gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 21.6s
+1RB---_1LC1RD_0LC1RD_1LB0RD    fibonacci/weights    B1R stp=1 tl=11  ex=10 big=291  mem=899  gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 21.8s
+1RB0RB_0LC1RD_1LC1LA_0LA1RB    fibonacci/weights    A1L stp=1 tl=*   ex=20 big=34   mem=10   gap=7 second counter succ=1.00 ctx=1.00 rec=0.00 29.0s
+1RB0RB_1LC0RC_1RA0LD_0LB0LC    unary/101                   stp=1 tl=0011111 p=1..17  phases=22  unary         succ=1.00 ctx=1.00 rec=1.00 26.6s
+1RB0RB_1LC1LD_0LC1RA_0LD0RA    binomial/combinadic         stp=1 tl=-   ex=21 big=36   binomial               succ=0.91 ctx=0.91 rec=0.00 19.0s
+1RB1LB_1LC0RD_0LB1LA_0LA1RA    base-2/binary        B1L stp=3 tl=*   ex=0  big=0    mem=7    gap=3 second counter succ=1.00 ctx=1.00 rec=0.99 28.9s
+1RB1LD_1RC1RB_1LC1LA_0RC0RD    NO MONOTONE READING                                                            succ=1.00 ctx=1.00 rec=1.00 17.5s
+1RB1RC_1LA0LB_1LD0RD_1LB0RC    mixed/weights        B0R stp=1 tl=1   ex=7  big=243  mem=14   gap=6 bounded oscillation succ=1.00 ctx=1.00 rec=0.00 35.2s

@@ -38,7 +38,9 @@ Three passes, cheapest first:
      whether the machine's own first-appearance order inside a width class IS
      the numeration's order; `chain_skip` adds the consecutiveness detail.
      `binomial_probe` measures one numeration that no weight sequence can
-     express.
+     express, and `unary_probe` measures one that needs no digits at all --
+     the counter side as a run template `word^p`, where the value IS the run
+     count.
 
   3. `far_class` / `anchor_probe` -- if the counter side is not the obstacle,
      what is?  Far side taxonomy (constant / template / second counter /
@@ -591,6 +593,97 @@ def binomial_probe(ctr):
             'mono_classes': mono, 'classes_seen': seen}
 
 
+def unary_probe(ctr, far, maxL=4, maxT=12):
+    """The counter side as a RUN TEMPLATE: `prefix . word^p . tail`.
+
+    Read off John's tape of `1RB0RB_1LC0RC_1RA0LD_0LB0LC`: *"once you get past
+    a certain point the count seems to be the number of 011 stripes"*, and
+    that is a counter whose value is `p` and whose alphabet has ONE digit.
+
+    `Fam` cannot hold it.  `_try_parse` requires `2 <= len(alpha) <= 3`,
+    because `Fam.b = len(digs)` is a radix and a base-1 positional numeration
+    is degenerate -- so a unary counter is rejected before any base, code,
+    step or terminator is tried.  But `word^(a*p + b)` is exactly the shape
+    §4e already fits on the FAR side (`fit_far`); the gap is that it is
+    available there and not on the counter side.
+
+    Reports, for the best (word, tail): how many visits parse, the range of
+    `p`, whether `p` is monotone over the walk, how many distinct prefixes
+    occur -- and, the finite-phase test, whether the prefix set at LARGE `p`
+    is the same set as at small `p`.  A bounded prefix set means the row is a
+    one-parameter family with a finite control state, not a value counter."""
+    if not ctr:
+        return None
+    S = max(ctr, key=len)
+    best = None
+    for T in range(0, min(maxT, len(S) - 1) + 1):
+        t = S[len(S) - T:] if T else ()
+        for L in range(1, maxL + 1):
+            if len(S) < T + L:
+                continue
+            w = S[len(S) - T - L:len(S) - T]
+            if not any(w):
+                continue
+            rec = []
+            for i, s in enumerate(ctr):
+                if T and s[len(s) - T:] != t:
+                    continue
+                e = len(s) - T
+                p = 0
+                while e >= L and s[e - L:e] == w:
+                    p += 1
+                    e -= L
+                if p:
+                    rec.append((p, s[:e], len(far[i])))
+            if len(rec) < 20:
+                continue
+            ps = [r[0] for r in rec]
+            pre = {r[1] for r in rec}
+            hi_p = max(ps)
+            lo_set = {r[1] for r in rec if r[0] <= hi_p // 3}
+            hi_set = {r[1] for r in rec if r[0] >= 2 * hi_p // 3}
+            got = {'word': ''.join(map(str, w)),
+                   'tail': ''.join(map(str, t)),
+                   'parsed': len(rec), 'visits': len(ctr),
+                   'p_min': min(ps), 'p_max': hi_p,
+                   'monotone': all(b >= a for a, b in zip(ps, ps[1:])),
+                   'increments': sorted(set(b - a for a, b in zip(ps, ps[1:]))
+                                        )[:4],
+                   'prefixes': len(pre),
+                   'phases_shared': len(lo_set & hi_set),
+                   'phases_low': len(lo_set), 'phases_high': len(hi_set),
+                   'far_affine': _far_affine(rec)}
+            # Ranked by what makes it a FAMILY, not by how big p gets: a
+            # bare run of 1s inside a bouncer also gives a monotone p, and
+            # what separates the real reading from it is that the far side is
+            # affine in p and that the prefix set at large p is the SAME
+            # finite set as at small p -- a control state, not a growing one.
+            key = (got['monotone'], got['far_affine'] is not None,
+                   got['phases_shared'] == got['prefixes'],
+                   set(got['increments']) <= {0, 1},
+                   -len(pre), hi_p)
+            if best is None or key > best[0]:
+                best = (key, got)
+    return best[1] if best else None
+
+
+def _far_affine(rec):
+    """Is the far side's LENGTH affine in p?  That is §4e's `a*p + b` measured
+    without a template: if it holds, the row is one-parameter on both sides."""
+    by = {}
+    for p, _, fl in rec:
+        by.setdefault(p, []).append(fl)
+    ks = sorted(by)
+    if len(ks) < 4:
+        return None
+    mins = [(k, min(by[k])) for k in ks]
+    d = {b - a for (_, a), (_, b) in zip(mins, mins[1:])}
+    if len(d) == 1:
+        a = d.pop()
+        return {'a': a, 'b': mins[0][1] - a * mins[0][0]}
+    return None
+
+
 # ------------------------------------------------- pass 3: the other side
 
 def far_class(far, ctr):
@@ -727,6 +820,7 @@ def analyze(spec, visits=1500, steps=200000, top=8):
                    'growth': growth_ratio(width_classes(ctr))}
             rec['readings'] = readings(ctr)[:4]
             rec['binomial'] = binomial_probe(ctr)
+            rec['unary'] = unary_probe(ctr, far)
             out['anchors'].append(rec)
     out['anchor_probe'] = anchor_probe(tm)
     best = None
@@ -741,6 +835,13 @@ def analyze(spec, visits=1500, steps=200000, top=8):
         out['best'] = dict(best[1], anchor=best[0]['anchor'],
                            side=best[0]['side'],
                            far=best[0]['far']['kind'])
+    up = [a['unary'] for a in out['anchors'] if a['unary']]
+    up = [u for u in up if u['monotone'] and u['p_max'] >= 8
+          and u['far_affine'] is not None
+          and u['phases_shared'] == u['prefixes']
+          and set(u['increments']) <= {0, 1}]
+    out['unary_best'] = max(up, key=lambda u: (-u['prefixes'], u['p_max']),
+                            default=None)
     bp = max((a['binomial'] for a in out['anchors']),
              key=lambda d: (d['exact_classes'], d['largest_class']),
              default=None)
@@ -776,6 +877,11 @@ def main():
             sm = ('%-20s        stp=1 tl=-   ex=%-2d big=%-4d binomial'
                   % ('binomial/combinadic', bp['exact_classes'],
                      bp['largest_class']))
+        up = r.get('unary_best')
+        if up and (not b or up['p_max'] > b['largest_class']):
+            sm = ('%-20s        stp=1 tl=%-7s p=1..%-3d phases=%-3d unary'
+                  % ('unary/' + up['word'], up['tail'][:7], up['p_max'],
+                     up['prefixes']))
         print('%-30s %-78s succ=%.2f ctx=%.2f rec=%.2f %ss'
               % (s, sm, bf, r['anchor_probe']['context_anchor'],
                  r['anchor_probe']['record_anchor'], r['seconds']))

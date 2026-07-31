@@ -24,9 +24,9 @@ the fifteen showing a monotone reading under some (base, code, step,
 terminator) the current search does not try** means the ladder's ceiling is
 real and the rest is wave work.
 
-**Twelve of the fifteen show one.**  The gate is cleared by a factor of three,
-and §4g's closing line holds for the fifth time: `no value family` is a label
-that records how a search failed, not a property of the machines.
+**Thirteen of the fifteen show one.**  The gate is cleared by a factor of
+three, and §4g's closing line holds for the fifth time: `no value family` is a
+label that records how a search failed, not a property of the machines.
 
 The one that decides it is not close.  On `1RB---_0LB1RC_1LB0RD_1LC0RD`, at
 anchor `B1/R`, terminator `11`, step `+1`, digit width 1, **constant far side
@@ -46,21 +46,21 @@ Of fifteen rows:
 
 | | rows |
 |---|---:|
-| a monotone reading exists at some anchor | **12** |
-| — numeration is NOT `w_i = b^i` (needs a constructor the search lacks) | **9** |
-| — numeration IS base-`b`; the search cannot reach the reading for other reasons | **3** |
-| no monotone reading found at any anchor | **3** |
+| a monotone reading exists at some anchor | **13** |
+| — the numeration is one the search cannot express | **10** |
+| — the numeration IS base-`b`; the search cannot reach the reading for other reasons | **3** |
+| no monotone reading found at any anchor | **2** |
 | — counter-side width classes grow LINEARLY: not a counter, wave-route shape | **2** |
-| — sub-geometric and irregular: unresolved | **1** |
 | RULE_LADDER §6's tail (shape set infinite under every finite abstraction) | **0** |
 
-Breaking the nine down by which numeration:
+Breaking the ten down by which numeration:
 
-| numeration | weights | rows |
+| numeration | how the value is spelled | rows |
 |---|---|---:|
-| Fibonacci | `1, 1, 2, 3, 5, 8, …` | **6** |
-| redundant base-`b` over cell PAIRS | `1, 1, 2, 2, 4, 4` and `1, 1, 3, 3, 9, 9` | **2** |
-| binomial (combinadic) — not a weight sequence at all | `C(p_j, j+1)` | **1** |
+| Fibonacci weights | `Σ d_i · F_{i+1}`, `w = 1, 1, 2, 3, 5, 8, …` | **6** |
+| redundant base-`b` over cell PAIRS | `w = 1, 1, 2, 2, 4, 4` and `1, 1, 3, 3, 9, 9` | **2** |
+| binomial (combinadic) — no weight sequence expresses it | `Σ_j C(p_j, j+1)` | **1** |
+| **unary**: the value is a RUN COUNT, alphabet size 1 | `word^p`, `p` is the value | **1** |
 
 The far side, at the anchor carrying the best reading: constant 5, second
 counter 6, bounded oscillation 2, template 1, no reading 1.
@@ -87,10 +87,10 @@ members.  `tl=*` means the reading needs a SET of terminators (§4f's phases),
 | `1RB---_1LC0RD_0LC1RB_1LB0RD` | NUMERATION | C1/R | **fibonacci**, tl=`11`, +1 | 10/291 | 0 | constant |
 | `1RB---_1LC1RD_0LC1RD_1LB0RD` | NUMERATION | B1/R | **fibonacci**, p=2, tl=`11`, +1 | 10/291 | 0 | constant |
 | `1RB0RB_0LC1RD_1LC1LA_0LA1RB` | NUMERATION | A1/L | **fibonacci**, p=1, tl=`*`, +1 | 20/34 | 7 | second counter |
-| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | unresolved | — | best is 1 class of 4 | 1/4 | 0 | second counter |
+| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | NUMERATION (unary) | A0/R, B1/R | **`φ·(101)^p·0011111`**, p is the value | p=1..26 | — | `0^(24p+96)` |
 | `1RB0RB_1LC1LD_0LC1RA_0LD0RA` | NUMERATION (binomial) | B1/L | **combinadic**, key `(width, popcount)` | 33/121 | — | popcount register |
 | `1RB1LB_1LC0RD_0LB1LA_0LA1RA` | not a counter | — | classes grow ~`n/4` | 0/0 | — | second counter |
-| `1RB1LD_1RC1RB_1LC1LA_0RC0RD` | not a counter | — | classes grow ~`2n/3` | 0/0 | — | template |
+| `1RB1LD_1RC1RB_1LC1LA_0RC0RD` | not a counter (the BBB(4) champion) | — | classes grow ~`2n/3` | 0/0 | — | template |
 | `1RB1RC_1LA0LB_1LD0RD_1LB0RC` | NUMERATION | B0/R | weights `1,1,3,3,9,9`, tl=`1`, +1 | 7/243 | 6 | bounded oscillation |
 
 (`1RB0RB_1LC1LD_0LC1RA_0LD0RA`'s binomial figures in the table are the
@@ -145,7 +145,7 @@ DISTINCT counter-side strings per width, measured over 4000 anchor visits:
 | the six fibonacci rows | `1 1 2 3 5 8 13 21 34 …` (ratio 1.618) | counter, Fibonacci rank |
 | `1RB0RB_1LC1LD_0LC1RA_0LD0RA` | `1 3 7 15 31 63 …` = `2^n − 1` | counter, every string of every popcount |
 | `1RB1RC_1LA0LB_1LD0RD_1LB0RC` | `1 1 1 3 3 9 9 27 …` (ratio 3) | counter, base 3 |
-| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `1 1 2 3 6 8 9 12 10 13 14 15 21 22` | sub-geometric, irregular — unresolved |
+| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `1 1 2 3 6 8 9 12 10 13 14 15 21 22` | counter, UNARY — the classes count phases, not values |
 | `1RB1LB_1LC0RD_0LB1LA_0LA1RA` | `1 1 1 1 2 2 2 2 3 3 3 3 4 4` ≈ `n/4` | **not a counter** |
 | `1RB1LD_1RC1RB_1LC1LA_0RC0RD` | `1 2 2 3 4 4 5 6 6 7 8 8 9 10` ≈ `2n/3` | **not a counter** |
 
@@ -153,9 +153,59 @@ DISTINCT counter-side strings per width, measured over 4000 anchor visits:
 the SMALLEST shape sets in the set, not the largest: a linear number of shapes
 per width is a bouncer's fingerprint, not a Collatz-like machine's.  They do
 not belong to nobody — they belong to the wave route, and the ladder route
-should stop counting them against itself.  The third unread row
-(`1RB0RB_1LC0RC_1RA0LD_0LB0LC`) is sub-geometric too; it is the one row this
-session did not resolve either way.
+should stop counting them against itself.  One of the two is the BBB(4)
+champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` itself (README §"honest caveats"); John
+reads it off the tape as *"bounce until it hits the left wall then move the
+wall over one and go back to bouncing"*, and the measurement agrees exactly:
+the left wall advances by one cell per lap (`lo` = −6, −7, −8, −9 at
+t = 8920, 25219, 70438, 197001), the span goes 166, 281, 472, 791 (ratio
+≈ 1.68) and the lap time ×2.8 ≈ 1.68² each time.  The other,
+`1RB1LB_1LC0RD_0LB1LA_0LA1RA`, is a quadratic bouncer with two alternating
+tape phases: 776 extent events in 400 000 steps, span growing by exactly one
+per event, gaps cycling `≈2300, 1, ≈780`, and the body alternating between
+`0^n` and `0111(01)^n`.  Neither is a counter and neither should be counted
+against the ladder.
+
+`1RB0RB_1LC0RC_1RA0LD_0LB0LC` — the row an earlier draft of this file called
+unresolved — is a counter after all, and the next section is what it is.
+
+## The row that was unresolved: a UNARY counter
+
+John read it off the tape: *"the right wall goes 1, 4, 7, 10, 11, 12, 10, 13
+and then sits at 13 for a long time and the action all happens to the left and
+the right settles into stripes … once you get past a certain point the count
+seems to be the number of `011` stripes."*  That is exactly right, and it is
+a counter whose alphabet has ONE digit.
+
+Measured (`nofam.unary_probe`, and independently straight off the raw tape):
+
+* the right wall freezes at cell 13 from t ≈ 4000 and never moves again; the
+  tape grows LEFTWARD from there;
+* the number of `011` stripes is **monotone non-decreasing with increments in
+  {0, 1} only**, reaching p = 26 at t = 382 000, and `p ∝ √t`
+  (`p²/t ≈ 0.0017`);
+* at anchors `A0/R` and `B1/R` the counter side parses as
+  `φ · (101)^p · 0011111` on 684 and 554 anchor visits — the block phase is a
+  rotation of John's `011`, which is what §4e's `digit_words` means by
+  "up to phase";
+* the prefix `φ` takes **exactly 27 values at A0/R and 22 at B1/R, and it is
+  the SAME set at small p as at large p** (27 of 27 and 22 of 22 shared
+  between `p < p_max/3` and `p ≥ 2·p_max/3`).  A bounded control state, not a
+  growing one;
+* the far side is `0^(24p + 96)` — affine in p, exactly on the nose, which is
+  §4e's `word^(a·p + b)` with `a = 24`.
+
+So the row is a complete ONE-parameter family: `E(p) = 0^(24p+96) [head]
+φ (101)^p 0011111`, φ in a finite set of 22.  It is not near a family; it is
+one.
+
+**Why `find_families` cannot see it:** `_try_parse` opens with
+`if not (2 <= len(alpha) <= 3): return None`.  A unary counter has one digit,
+so the row is rejected before any base, code, step or terminator is tried —
+the guard is upstream of every axis §4e, §4f and §4g added.  The guard is not
+wrong for what it was written for: `Fam.b = len(digs)` is a RADIX and base-1
+positional is degenerate.  The point is that a unary counter is not a
+degenerate radix, it is a different constructor.
 
 ## The fifth constructor, named
 
@@ -223,7 +273,7 @@ agree on the same six machines.
   than a base.  The canonicalization is the part that needs a theorem.
 
 *What it does NOT buy.*  Three rows read as base-2 already (see below), two
-rows are not counters, one is unresolved, and one needs something else:
+rows are not counters, and two need something else:
 
 **A sixth thing the data names, and it is not a weight sequence.**
 `1RB0RB_1LC1LD_0LC1RA_0LD0RA` takes, for each width `n` and each popcount `k`,
@@ -237,6 +287,36 @@ the second parameter and it is spelled on the far side as `1^(k−2)`, which is
 why the same row also reads as `far side is a second counter`.  Stated
 precisely so it is not confused with the fifth constructor; **one row, and not
 worth a field until something else joins it.**
+
+**And a seventh, which is cheaper than either: the COUNTER SIDE as a run
+template.**  `word^p`, alphabet size 1, `p` IS the value — the unary row above.
+This is the exact mirror of `fit_far`, which already fits `word^(a·p + b)` on
+the far side; `Fam` has `otmpl` for the far side and nothing for the counter
+side.  As a field it is the cheapest of the three:
+
+* `decode` is `len(mid) // len(word)` and `of_value` is `word * p`.  There is
+  no canonical-form problem, because there is only one string per value.
+* `p` and `v` COLLAPSE.  For a unary counter the width IS the value, so the
+  two-parameter family `E(p, v)` degenerates to `E(p)`, the fill law has
+  nothing to infer, and the interior/overflow split becomes one arm per phase.
+  Everything `Fill`, `fit_fills` and `only_at_overflow` do is vacuous here,
+  which is a simplification and not a special case to carry.
+* the cost is that `Fam` must ADMIT `b == 1` — `b**p`, `kmax_for`,
+  `all_strings` and the octave-top test all assume a radix ≥ 2 — and that the
+  phase is a near-head PREFIX drawn from an inferred finite set, where §4f's
+  phase is a terminator.  The prefix set is measured, bounded, and identical
+  at small and large `p`; inferring it is the same shape of job `fit_phases`
+  already does at the other end of the string.
+
+One row NEEDS it, but unlike the binomial one it costs almost nothing and it
+removes a guard (`2 <= len(alpha) <= 3`) rather than adding machinery.  It is
+also the least isolated of the three: the full test — `p` monotone with
+increments in {0, 1}, the far side affine in `p`, and the prefix set bounded
+AND identical at small and large `p` — fires at some anchor on **3 of the
+fifteen** (`0RB1LC_1LC0RD_1RD0LC_1LA1RB`, `0RB1LC_1LC1RD_1LA0LC_0RD1RB` and
+the row above).  The other two also have positional readings, so only one row
+depends on it; but a constructor that three of fifteen rows exhibit is worth
+measuring on the full 143 before it is called a one-row special case.
 
 ## Four things in `valfam.py`, written down and NOT changed
 
@@ -269,6 +349,10 @@ read-only.  Each of these was reached from a row above.
    common structure.  Three readings above need a terminator taken off the
    whole walk, and two need a SET of them (§4f's phases) BEFORE a family
    exists — `fit_phases` runs after, on a family already found.
+5. **`_try_parse` rejects an alphabet outside 2..3 digits**, which is upstream
+   of every axis §4e, §4f and §4g added, and which is what hides the unary row
+   above.  A unary counter is not a degenerate radix; see the seventh
+   constructor.
 
 None of these four is the fifth constructor.  Together they are what stands
 between the three base-2 rows in the table and a family, and they would have
@@ -279,15 +363,20 @@ rows that need it.
 
 * The weight sequence is worth **8 of 15** here and is the fifth instance of
   §4e's rule.  It is the one thing to build.
+* Dropping the `2 <= len(alpha)` guard and letting the counter side be a run
+  template is worth **1 row** and is the cheapest thing on this list — it
+  removes machinery rather than adding it.  Do it first, if only because it is
+  a two-line change that a sweep can measure.
 * The two `not a counter` rows should be handed to the wave route and removed
   from the ladder's denominator.  The ladder's ceiling on the live core is
-  38 of 62 with fifteen `no value family`; on this measurement at most
-  **two** of those fifteen are genuinely the ladder's ceiling, and neither is
-  RULE_LADDER §6's tail.
-* `1RB0RB_1LC0RC_1RA0LD_0LB0LC` is the one row this session did not resolve.
-  Its counter-side classes grow sub-geometrically and irregularly and its far
-  side is a register at 12 of 16 anchor-sides; it may be a two-register
-  machine whose two registers were never separated.
+  38 of 62 with fifteen `no value family`; on this measurement **none** of
+  those fifteen is RULE_LADDER §6's tail and only two are outside the ladder's
+  reach at all — and one of those two is the BBB(4) champion, which the wave
+  route was always going to own.
+* Credit where it is due, exactly as §4g recorded for the Gray reading: the
+  stripe count on `1RB0RB_1LC0RC_1RA0LD_0LB0LC`, and the bouncer readings of
+  the two non-counters, came from John's read of the tape.  The searcher had
+  the first row filed as `sub-geometric, irregular, unresolved`.
 
 ## Reproducing
 
