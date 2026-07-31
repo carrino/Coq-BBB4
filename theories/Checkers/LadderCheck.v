@@ -735,24 +735,9 @@ Qed.
     shape whose cells are one [sside] with the untouched remainder in that
     tail.  Putting the two together is the whole of the lap: no search, no
     membership test, and the instantiation of the arm's variable [j] is the
-    class's run length. *)
-
-Lemma lap_from_arm : forall tm F (A : LRule) el er X n sd sd' ds ds' p ph,
-  RuleSound tm el er A ->
-  (el = true -> tailL F X = []) -> (er = true -> tailR F X = []) ->
-  lr_lhs A = cls_conf F sd -> lr_rhs A = cls_conf F sd' ->
-  fam_cells F ds ph = sden X n sd ->
-  fam_cells F ds' ph = sden X n sd' ->
-  csteps tm (lr_ca A * n + lr_cb A) (fam_cfg F (ds, p, ph))
-    = Some (fam_cfg F (ds', p, ph)).
-Proof.
-  intros tm F A el er X n sd sd' ds ds' p ph HA HL HR Hl Hr Hc Hc'.
-  specialize (HA (tailL F X) (tailR F X) n HL HR).
-  rewrite Hl, Hr in HA.
-  rewrite (cden_cls_conf F sd X n ds p ph Hc),
-          (cden_cls_conf F sd' X n ds' p ph Hc') in HA.
-  exact HA.
-Qed.
+    class's run length.  [board_arm] below states it once and hands the two
+    [cden] equations to whichever closer asked, which is what lets one case
+    split serve both. *)
 
 Lemma tailL_nil : forall F, tailL F [] = [].
 Proof. intros F; unfold tailL; destruct (fm_left F); reflexivity. Qed.
@@ -958,10 +943,12 @@ Qed.
     [Fam] record, so a family with a different successor is a different
     record and not a different theorem.
 
-    Two arms carry the whole lap: an INTERIOR arm per non-top digit, and
-    the FILL arm.  That is not a coincidence of this row -- it is the case
-    split of [digs_decomp], and the emitted certificate's dozen arms are
-    specialisations of these two at pinned run lengths. *)
+    Two CLASSES carry the whole lap: the interior digits, and the top of a
+    width.  That is not a coincidence of any row -- it is the case split of
+    [digs_decomp], and the emitted certificate's dozen arms are
+    specialisations of the two at pinned run lengths.  Each class is served
+    by one arm per ARM INDEX (section 2b), which is where 4k's two knobs
+    live: [N0i]/[sti] for the interior, [N0f]/[stf] for the fill. *)
 
 Section Board.
 
