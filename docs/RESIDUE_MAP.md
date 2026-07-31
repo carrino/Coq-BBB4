@@ -10,8 +10,11 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**86 rows as of this commit — 65 distinct core machines + 21 0RB
-re-root shadows that fall with them.**  The count moves every wave, so
+_**56 rows as of this commit — 42 distinct core machines + 14 0RB
+re-root shadows.**  A shadow needs no new mathematics, but it does need its
+own board: boarding a core machine moves its shadow into `core_rows.txt`
+rather than settling it, so budget the pair (2026-07-31; worked example
+`Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v`).  The count moves every wave, so
 treat the row files as the authority and this prose as a snapshot.  With
 tower #20 boarded on 2026-07-28 the (4,2) HOLDOUT list is closed, so this
 is the entire remaining problem.  (The wave-23 residue track boarded

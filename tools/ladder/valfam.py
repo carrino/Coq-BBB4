@@ -128,6 +128,193 @@ def digit_words(rules):
     return out
 
 
+# --------------------------------------------------------- the NUMERATION
+# `Fam.decode` used to sum `d_i * b**i`, full stop.  That is ONE number
+# system, and a machine counting in another (Fibonacci rank, a redundant base
+# over cell pairs) reads as `no +1 chain` against the assumption rather than
+# against its own behaviour -- the same error the carry (4e), the anchor, the
+# terminator (4f) and the code (4g) each were until they became parameters.
+# So the weight sequence is read off the machine too:
+#
+#   `fit_weights`  -- inside a width class, take the distinct strings in order
+#                     of FIRST APPEARANCE and require Sum (d' - d) . w = step
+#                     between consecutive ranks.  Exact rational elimination,
+#                     equations added greedily, contradictions COUNTED rather
+#                     than averaged away.  Differences and not absolute ranks,
+#                     because a class whose top digit is pinned carries a
+#                     per-width offset and an absolute fit would solve it away
+#                     by setting the top weight to zero.
+#   `fit_classes`  -- the CANONICAL form, which is what a weight sequence
+#                     actually costs.  The representation is not unique
+#                     (Fibonacci: 1100 and 0100 are both 2) and the machine
+#                     writes exactly one of them, so `of_value` has to produce
+#                     the machine's string.  The canonical set is a REGULAR
+#                     language -- Zeckendorf is "no 11", which is why the class
+#                     sizes are Fibonacci in the first place -- read here as a
+#                     right-linear grammar over MSB-end BLOCKS, and accepted
+#                     only if it reproduces every observed class exactly.  The
+#                     class SIZES are `numsys.py`'s fingerprint, used as the
+#                     acceptance test rather than as a label.
+#
+# Ported from `tools/ladder/nofam.py`, which measured the fifteen
+# `no value family` rows (docs/LADDER_NOFAM.md).  `nofam.readings` is NOT
+# ported: it is a measurement instrument at ~30 s a row.
+
+FIB = [1, 1]
+while len(FIB) < 60:
+    FIB.append(FIB[-1] + FIB[-2])
+
+
+def _solve(eqs, W):
+    """Exact rational solve of `eqs` = [(coeffs, rhs)] for W unknowns, adding
+    equations greedily and COUNTING the ones that contradict what is already
+    fixed.  Greedy rather than least-squares on purpose: a handful of
+    mid-flight tapes must not drag the fit, they must be counted."""
+    from fractions import Fraction
+    rows = []          # (pivot, coeffs as Fractions, rhs)
+    bad = 0
+    for co, rhs in eqs:
+        v = [Fraction(x) for x in co]
+        r = Fraction(rhs)
+        for pv, pc, pr in rows:
+            if v[pv]:
+                f = v[pv] / pc[pv]
+                v = [x - f * y for x, y in zip(v, pc)]
+                r -= f * pr
+        piv = next((i for i, x in enumerate(v) if x), None)
+        if piv is None:
+            if r:
+                bad += 1
+            continue
+        rows.append((piv, v, r))
+    if not rows:
+        return None, bad
+    sol = [None] * W
+    for pv, v, r in reversed(rows):
+        s, ok = r, True
+        for i in range(pv + 1, W):
+            if v[i]:
+                if sol[i] is None:
+                    ok = False
+                    break
+                s -= v[i] * sol[i]
+        if ok:
+            sol[pv] = s / v[pv]
+    return sol, bad
+
+
+def fit_weights(ds, step=1, maxW=14, max_violated=0.02):
+    """A WEIGHT per digit position, from the machine's own enumeration ORDER
+    rather than from an assumed radix.
+
+    Inside a width class the strings appear in the order the counter reaches
+    them, so the RANK of a string by first appearance is its value if the
+    machine is counting at all -- and that is an observation, not an
+    assumption.  Returns the weight tuple, or None."""
+    order, seen = defaultdict(list), set()
+    for d in ds:
+        if d is None or d in seen:
+            continue
+        seen.add(d)
+        order[len(d)].append(d)
+    eqs, W = [], 0
+    for n, ss in order.items():
+        if len(ss) < 3 or n > maxW:
+            continue
+        W = max(W, n)
+        for a, b in zip(ss, ss[1:]):
+            eqs.append(([(b[i] if i < n else 0) - (a[i] if i < n else 0)
+                         for i in range(maxW)], step))
+    if len(eqs) < 8 or not W:
+        return None
+    sol, bad = _solve([(c[:W], r) for c, r in eqs], W)
+    if sol is None or bad > max_violated * len(eqs):
+        return None
+    # Keep the longest DETERMINED prefix.  A position that only ever appears
+    # in the widest, half-observed class is not pinned by the equations, and
+    # dropping the whole fit for it would throw away a numeration the machine
+    # states perfectly at every width below.  Strings wider than the prefix
+    # are then simply not read (`Fam.value` returns None there).
+    w = []
+    for x in sol:
+        if x is None or x.denominator != 1 or x <= 0:
+            break
+        if w and int(x) < w[-1]:
+            break                         # weights must not decrease
+        w.append(int(x))
+    return tuple(w) if len(w) >= 3 else None
+
+
+def name_weights(w, b):
+    if w is None:
+        return 'base-%d' % b if b > 1 else 'unary: the value is the run count'
+    if all(x == b ** i for i, x in enumerate(w)):
+        return 'base-%d' % b
+    if all(x == FIB[i] for i, x in enumerate(w)):
+        return 'fibonacci'
+    if all(x == FIB[i + 1] for i, x in enumerate(w)):
+        return 'fibonacci(shifted)'
+    return 'weights ' + ','.join(map(str, w[:8]))
+
+
+def gen_class(classes, k):
+    """The width-k canonical strings the grammar generates."""
+    blocks, base = classes
+    out = {0: frozenset([()])}
+    out.update(base)
+    for n in range(1, k + 1):
+        if n in out:
+            continue
+        s = set()
+        for u in blocks:
+            if len(u) <= n:
+                s |= {t + u for t in out[n - len(u)]}
+        out[n] = frozenset(s)
+    return out[k]
+
+
+def fit_classes(obs, maxu=2, max_blocks=3):
+    """The canonical form as a right-linear grammar: C(k) = U_u C(k-|u|) . u
+    over a small set of MSB-end BLOCKS, with the low widths taken verbatim.
+
+    `obs` is {width: iterable of digit tuples, LSB-first}.  The grammar must
+    reproduce every observed class EXACTLY except at the widest two widths,
+    where the walk routinely stops mid-class and containment is all that can
+    be asked.  Returns (blocks, base) or None.
+
+    Measured on the dev fixture (`1RB---_0LB1RC_1LB0RD_1LC0RD` at B1/R,
+    terminator `11`): blocks `{0, 11}`, class sizes 2, 3, 5, 8, 13, 21, 34 --
+    the Fibonacci fingerprint `numsys.py` reports without decoding anything,
+    reached here from the strings themselves."""
+    ks = sorted(k for k in obs if k > 0)
+    if len(ks) < 4 or ks != list(range(1, ks[-1] + 1)):
+        return None
+    have = {k: frozenset(obs[k]) for k in ks}
+    if any(not have[k] for k in ks):
+        return None
+    top, alpha = ks[-1], sorted({d for k in ks for s in have[k] for d in s})
+    cands = [tuple(u) for n in range(1, maxu + 1)
+             for u in itertools.product(alpha, repeat=n)]
+    for size in range(1, max_blocks + 1):
+        for bl in itertools.combinations(cands, size):
+            blocks = frozenset(bl)
+            base, ok = {0: frozenset([()])}, True
+            for k in ks:
+                g = gen_class((blocks, base), k)
+                if g == have[k]:
+                    continue
+                if k <= maxu:
+                    base[k] = have[k]          # a genuine base case
+                    continue
+                if k >= top - 1 and have[k] <= g:
+                    continue                   # widest widths: half-walked
+                ok = False
+                break
+            if ok:
+                return (blocks, base)
+    return None
+
+
 # ------------------------------------------------------------------- family
 
 class Fam:
@@ -162,13 +349,39 @@ class Fam:
         # family -- the far side is the constant cell tuple `other`, which is
         # where the one-parameter assumption used to be baked in.
         self.otmpl = None
+        # The near-head PREFIX, likewise: `u^(a*p + b)` instead of a fixed
+        # word.  None is today's fixed `pre` and every path below is unchanged.
+        self.ptmpl = None
         self.p0 = 0
         self.prange = (0, 0)
         self.templated = False        # found by the far-side TEMPLATE pass
+        # THE NUMERATION.  `decode` sums d_i * b**i.  That is one number system
+        # out of many, and a machine counting in another reads as `no +1 chain`
+        # against the assumption rather than against its own behaviour -- the
+        # same error the carry, the anchor, the base, the terminator and the
+        # code each were until they became parameters.  `weights` replaces
+        # `b**i` by an inferred non-decreasing positive sequence, so the value
+        # is Sum d_i * w_i; base-b is w_i = b**i and stays exactly what it is
+        # today, which is why None means "positional" and nothing below it
+        # changes.  Fibonacci is w = 1, 1, 2, 3, 5, 8.
+        self.weights = None
+        # The CANONICAL FORM, and it is the real cost of a weight sequence.
+        # For b**i the encoder is division.  For a general weight sequence the
+        # representation is NOT unique (Fibonacci: 1100 and 0100 are both 2)
+        # and the machine uses exactly one of them, so `of_value` has to
+        # produce the MACHINE's string and not any string with the right
+        # value.  `classes` is the right-linear grammar `fit_classes` reads off
+        # the observed width classes -- a regular language, which is why the
+        # class sizes are Fibonacci in the first place -- as
+        # (blocks, {width: frozenset of base strings}).
+        self.classes = None
+        self._cls = {}                # width -> [(value, ds)] in value order
+        self._byv = {}                # width -> {value: ds}
 
     def key(self):
         return (self.q, self.h, self.side, self.other, tuple(self.digs),
-                self.pre, self.tail, self.code, self.step)
+                self.pre, self.tail, self.code, self.step, self.weights,
+                self.ptmpl)
 
     # ------------------------------------------------------- the far side
     def far_cells(self, p=None):
@@ -220,22 +433,49 @@ class Fam:
         """The phase-0 law, for the one-phase reporting paths."""
         return None if not self.fills else self.fills[0]
 
-    def decode(self, cells, ph=0):
+    def pre_cells(self, p=None):
+        """The near-head prefix at outer parameter p.
+
+        4j's sixth defect: `Fam.read` matches the prefix as a FIXED tuple, so a
+        machine whose near-head spacer GROWS with the lap -- `0^(2k+5)` on
+        `0RB0RD_1LC1RB_1RA0LC_1LB0LC`, read off the tape by John -- returns
+        None for every candidate at every anchor, so `n_families = 0`, so the
+        row is filed under *no anchor whose counter side decodes*.  The shape
+        the prefix wants is the one the FAR side already has (`fit_far`) and
+        the one the kernel field already has (`fm_pre` beside the engine's own
+        `sside`): a fixed head plus a repeated block whose count is affine in
+        p.  `ptmpl` is None on every family the passes above build, and then
+        every path here is bit-for-bit what it was."""
+        if self.ptmpl is None:
+            return self.pre
+        p = self.p0 if p is None else p
+        out = []
+        for w, a, b in self.ptmpl:
+            n = a * p + b
+            if n < 0:
+                return None
+            out.extend(list(w) * n)
+        return tuple(out)
+
+    def decode(self, cells, ph=0, p=None):
         """cells (nearest-first, trailing blanks stripped) -> digits LSB-first,
-        read in PHASE ph.  Blanks stripped off the far end are restored by the
-        pad loop."""
+        read in PHASE ph at outer parameter p.  Blanks stripped off the far end
+        are restored by the pad loop."""
         tail = self.tails[ph]
+        pre = self.pre_cells(p)
+        if pre is None:
+            return None
         base = list(cells)
-        if tuple(base[:len(self.pre)]) != self.pre:
+        if tuple(base[:len(pre)]) != pre:
             return None
         for pad in range(self.l + len(tail) + 1):
             c = base + [0] * pad
-            n = len(c) - len(self.pre) - len(tail)
+            n = len(c) - len(pre) - len(tail)
             if n < 0 or n % self.l:
                 continue
             if tail and tuple(c[len(c) - len(tail):]) != tail:
                 continue
-            mid = c[len(self.pre):len(self.pre) + n]
+            mid = c[len(pre):len(pre) + n]
             ds, ok = [], True
             for i in range(0, n, self.l):
                 g = tuple(mid[i:i + self.l])
@@ -243,20 +483,20 @@ class Fam:
                     ok = False
                     break
                 ds.append(self.idx[g])
-            if ok and self.encode(ds, ph) == list(cells):
+            if ok and self.encode(ds, ph, p) == list(cells):
                 return ds
         return None
 
-    def read(self, cells):
+    def read(self, cells, p=None):
         """(phase, digits) for the first phase that reads these cells."""
         for ph in range(len(self.tails)):
-            ds = self.decode(cells, ph)
+            ds = self.decode(cells, ph, p)
             if ds is not None:
                 return ph, ds
         return None, None
 
-    def encode(self, ds, ph=0):
-        cells = list(self.pre)
+    def encode(self, ds, ph=0, p=None):
+        cells = list(self.pre_cells(p) or ())
         for d in ds:
             cells.extend(self.digs[d])
         cells.extend(self.tails[ph])
@@ -264,8 +504,47 @@ class Fam:
             cells.pop()
         return cells
 
+    # -------------------------------------------------- the width classes
+    def klass(self, k):
+        """The width-k members in VALUE order, as [(value, ds)].
+
+        Positional: every digit string of width k, which is what enumerating
+        `range(b**k)` has always meant.  With a weight sequence the members are
+        the CANONICAL strings only -- the ones the machine actually writes --
+        generated from `classes`, so `all_strings` and `reach` cannot report an
+        uncovered member the machine never reaches."""
+        got = self._cls.get(k)
+        if got is not None:
+            return got
+        if self.weights is None:
+            got = [(v, self.of_value(v, k)) for v in range(self.b ** k)]
+        elif k > len(self.weights) or self.classes is None:
+            got = []
+        else:
+            got = sorted((self.value(list(ds)), list(ds))
+                         for ds in gen_class(self.classes, k))
+            self._byv[k] = {v: ds for v, ds in got}
+        self._cls[k] = got
+        return got
+
+    def maxval(self, k):
+        """The top of an octave, on the VALUE.  For b**i that is b**k - 1;
+        for a weight sequence it is the largest value the width can spell,
+        which is what `is_top` has to compare against."""
+        if self.weights is None:
+            return self.b ** k - 1
+        cl = self.klass(k)
+        return cl[-1][0] if cl else -1
+
     def value(self, ds):
-        """Digit string -> the number it denotes, in this family's CODE."""
+        """Digit string -> the number it denotes, in this family's NUMERATION
+        and CODE.  None when the width is past the weights that were fitted --
+        a position no equation pinned is not a reading, and the callers stop
+        there rather than guessing it."""
+        if self.weights is not None:
+            if len(ds) > len(self.weights):
+                return None
+            return sum(d * self.weights[i] for i, d in enumerate(ds))
         ds = gray_decode(ds, self.b) if self.code == 'gray' else ds
         v = 0
         for d in reversed(ds):
@@ -274,6 +553,11 @@ class Fam:
 
     def of_value(self, v, k):
         """The width-k digit string denoting v, in this family's code."""
+        if self.weights is not None:
+            if k not in self._byv:
+                self.klass(k)
+            got = self._byv[k].get(v)
+            return None if got is None else list(got)
         ns, x = [], v
         for _ in range(k):
             ns.append(x % self.b)
@@ -285,13 +569,18 @@ class Fam:
     def top(self, k):
         """The width-k string the fill leaves from.  For `binary` with step 1
         that is the all-max string, which is what the fill law used to test for
-        directly; for a reflected code it is not the all-max string at all."""
+        directly; for a reflected code it is not the all-max string at all, and
+        for a weight sequence it is the last member of the width class."""
+        if self.weights is not None:
+            cl = self.klass(k)
+            return list(cl[-1][1]) if cl else None
         return self.of_value(self.b ** k - 1, k)
 
     def is_top(self, ds):
         """Would the next step overflow this width?  Phrased on the value so
-        it is right for any code and any step."""
-        return self.value(ds) + self.step > self.b ** len(ds) - 1
+        it is right for any code, any step and any numeration."""
+        v = self.value(ds)
+        return v is None or v + self.step > self.maxval(len(ds))
 
     def cfg(self, ds, p=None, ph=0):
         """The counter segment in ITS OWN alphabet -- one run per maximal
@@ -302,7 +591,16 @@ class Fam:
         local shapes covers the family.  Digit-aligned, the run vocabulary is
         the alphabet itself and the near-head runs are a function of the
         near-head digits -- which is what makes the arms LOCAL."""
-        runs = [((c,), Expr(1)) for c in self.pre]
+        pc = self.pre_cells(p)
+        if pc is None:
+            return None
+        # A digit the alphabet does not have is not a configuration.  The fill
+        # law can produce one -- the default is the odometer carry, whose
+        # target suffix is the digit `1`, and a UNARY family has only the digit
+        # `0` -- and the caller's contract for that has always been None.
+        if any(d < 0 or d >= self.b for d in ds):
+            return None
+        runs = [((c,), Expr(1)) for c in pc]
         i = 0
         while i < len(ds):
             k = i
@@ -352,15 +650,18 @@ class Fam:
             out.pop()
         return out, False
 
-    def aligned(self, cells):
+    def aligned(self, cells, p=None):
         """Is this a digit-aligned PREFIX of some family member?  The wall
         marker hides the rest, so a local arm's landing config can only be
         checked this far -- but this far is enough to catch a stop that is
         mid-digit, which is what landing off the family looks like."""
-        n = min(len(cells), len(self.pre))
-        if tuple(cells[:n]) != self.pre[:n]:
+        pre = self.pre_cells(p)
+        if pre is None:
             return False
-        mid = cells[len(self.pre):]
+        n = min(len(cells), len(pre))
+        if tuple(cells[:n]) != pre[:n]:
+            return False
+        mid = cells[len(pre):]
         full, rem = divmod(len(mid), self.l)
         for i in range(full):
             if tuple(mid[i * self.l:(i + 1) * self.l]) not in self.idx:
@@ -388,7 +689,9 @@ class Fam:
         cells, mk = self.visible(cfg, env)
         if cells is None:
             return False
-        return self.aligned(cells) if mk else self.read(cells)[1] is not None
+        pp = self.far_p(cfg)
+        return self.aligned(cells, pp) if mk \
+            else self.read(cells, pp)[1] is not None
 
     def view(self, cfg, m, marker=True):
         """Local view: the counter side is truncated at m runs behind a wall
@@ -416,12 +719,25 @@ class Fam:
                     'digit width from a ladder rule word; values pinned by '
                     'the +1 chain'),
                 'near_head_prefix': list(self.pre),
+                'near_head_prefix_template': (
+                    None if self.ptmpl is None else
+                    ['%s^(%d*p+%d)' % (''.join(map(str, w)), a, b)
+                     for w, a, b in self.ptmpl]),
                 'terminator': list(self.tail),
                 'terminators_by_phase': [list(t) for t in self.tails],
                 'n_phases': len(self.tails),
                 'base': self.b, 'digit_len': self.l,
                 'code': self.code,
                 'value_step_per_anchor_visit': self.step,
+                'numeration': name_weights(self.weights, self.b),
+                'weights': (None if self.weights is None
+                            else list(self.weights)),
+                'canonical_form': (None if self.classes is None else {
+                    'blocks': [list(u) for u in sorted(self.classes[0])],
+                    'base_widths': sorted(self.classes[1]),
+                    'class_sizes': [len(self.klass(k))
+                                    for k in range(1, min(
+                                        9, len(self.weights or ()) + 1))]}),
                 'order': 'LSB nearest head'}
 
 
@@ -497,6 +813,14 @@ CARRY = Fill(1, (), 0, (1,))
 CODES = ('binary', 'gray')
 STEPS = (1, 2)
 
+# The stand-in a visit's near-head prefix carries when the prefix is a
+# TEMPLATE rather than a fixed word.  `_try_parse` breaks a chain whenever two
+# consecutive visits spell different prefix cells; a prefix that grows with the
+# lap spells different cells at every visit BY CONSTRUCTION, so the identity
+# the chain must test is "the prefix the template predicts at this visit's p",
+# which is true of every visit that parsed at all.
+PTMPL = ('the prefix template',)
+
 
 def fit_fill(obs):
     """[(k, target digit string)] -> Fill, or None.
@@ -534,25 +858,35 @@ def fit_fill(obs):
     return f if all(f.apply(k) == t for k, t in obs) else None
 
 
+WIDEN = Fill(1, (), 0, ())
+
+
 def fam_fill(fam, ph):
-    """Phase ph's fill law, defaulting to the odometer carry."""
+    """Phase ph's fill law, defaulting to the odometer carry -- except for a
+    UNARY family, whose only possible fill is the pure widening: the carry's
+    target suffix is the digit `1` and a one-digit alphabet has no such digit,
+    so the default has to be `word^p -> word^(p+1)`."""
+    dflt = WIDEN if fam.b == 1 else CARRY
     if not fam.fills:
-        return CARRY
+        return dflt
     f = fam.fills[ph] if ph < len(fam.fills) else None
-    return f or CARRY
+    return f or dflt
 
 
 def next_ds(fam, ds, ph=0):
     """Successor inside a width; the phase's FILL LAW at the top.
 
     Stated on the VALUE rather than as a digit-wise carry ripple, so it is
-    right for any code the family reads in and any step it advances by.  For
-    `binary` with step 1 this is exactly the odometer carry."""
-    k = len(ds)
+    right for any code the family reads in, any numeration it counts in and any
+    step it advances by.  For `binary` with step 1 this is exactly the odometer
+    carry; for a UNARY family every string is the top, so the successor is
+    always the fill and the interior/overflow split collapses to one arm."""
     v = fam.value(ds)
-    if v + fam.step > fam.b ** k - 1:
-        return fam_fill(fam, ph).apply(k)
-    return fam.of_value(v + fam.step, k)
+    if v is None:
+        return None
+    if v + fam.step > fam.maxval(len(ds)):
+        return fam_fill(fam, ph).apply(len(ds))
+    return fam.of_value(v + fam.step, len(ds))
 
 
 def succ(fam, ds, p, ph=0):
@@ -648,7 +982,7 @@ def anchor_cells(fam, tm, steps=150000, cap=6000):
 def anchor_seq(fam, tm, steps=150000, cap=6000):
     """(digits, p) at every anchor visit -- phase 0 only, for the probes that
     predate phases."""
-    return [(None if c is None else fam.decode(list(c)), pp)
+    return [(None if c is None else fam.decode(list(c), 0, pp), pp)
             for c, pp in anchor_cells(fam, tm, steps, cap)]
 
 
@@ -660,7 +994,7 @@ def read_seq(fam, walk):
         if c is None:
             out.append((None, None, pp))
             continue
-        ph, ds = fam.read(list(c))
+        ph, ds = fam.read(list(c), pp)
         out.append((ph, ds, pp))
     return out
 
@@ -736,7 +1070,8 @@ def fit_fills(fam, obs):
         if f is None:
             if len(fam.tails) > 1:
                 return None        # a phase with no law is not a reading
-            f = Fill(CARRY.s, CARRY.pre, CARRY.mid, CARRY.suf)
+            d = WIDEN if fam.b == 1 else CARRY
+            f = Fill(d.s, d.pre, d.mid, d.suf)
         f.to = tos.pop() if tos else 0
         plaw = fit_fill_p([(pa, k, pb) for _, k, _, _, pa, pb in mine])
         if plaw is None:
@@ -760,7 +1095,7 @@ def fit_phases(fam, walk, max_phases=4, min_visits=8, min_chain=0.95):
     visits.  A terminator that merely reads a lot of mid-flight tapes raises
     the read count and destroys the chain, so it is the chain that decides.
     When nothing qualifies the family is left exactly as it was."""
-    cells = [c for c, _ in walk if c is not None]
+    cells = [(c, pp) for c, pp in walk if c is not None]
     if not cells:
         return False
 
@@ -780,13 +1115,13 @@ def fit_phases(fam, walk, max_phases=4, min_visits=8, min_chain=0.95):
     uniq = list(dict.fromkeys(cells))
     while len(tails) < max_phases:
         fam.tails = tuple(tails)
-        unread = [c for c in uniq
-                  if all(fam.decode(list(c), i) is None
+        unread = [(c, pp) for c, pp in uniq
+                  if all(fam.decode(list(c), i, pp) is None
                          for i in range(len(tails)))]
         if not unread:
             break
         cand = set()
-        for c in unread:
+        for c, _ in unread:
             for tl in range(2 * fam.l + 2):
                 cand.add(tuple(c[len(c) - tl:]) if tl else ())
         # every candidate is scored by what it READS, not by how often its
@@ -797,8 +1132,8 @@ def fit_phases(fam, walk, max_phases=4, min_visits=8, min_chain=0.95):
             if t in tails:
                 continue
             fam.tails = tuple(tails + [t])
-            n = sum(1 for c in unread
-                    if fam.decode(list(c), len(tails)) is not None)
+            n = sum(1 for c, pp in unread
+                    if fam.decode(list(c), len(tails), pp) is not None)
             if n > best_n:
                 pick, best_n = t, n
         if pick is None:
@@ -918,6 +1253,7 @@ def find_families(tm, snaps, rules, max_anchor=8, min_chain=8, max_occ=200,
         byqh[(s[0], s[1])].append((t, s))
 
     found, seen = [], set()
+    sides = []
     order = sorted(byqh.items(), key=lambda kv: -len(kv[1]))[:max_anchor]
     for (q, h), occ in order:
         if len(occ) < min_chain:
@@ -931,6 +1267,7 @@ def find_families(tm, snaps, rules, max_anchor=8, min_chain=8, max_occ=200,
                 cs.append(c)
                 os.append(tuple(o) if o is not None else None)
             pop = Counter(o for o in os if o is not None)
+            sides.append((q, h, side, byqh[(q, h)], occ, cs, os))
             for other, n in pop.most_common(max_other):
                 if n < min_chain:
                     break
@@ -950,41 +1287,47 @@ def find_families(tm, snaps, rules, max_anchor=8, min_chain=8, max_occ=200,
                                     continue
                                 seen.add(fam[0].key())
                                 found.append(fam)
-            # The TEMPLATE pass.  Grouping by the far side's CELLS splits an
-            # anchor whose far side moves into one small group per p, and when
-            # every group falls under min_chain the anchor reads as no counter
-            # at all -- which is what the `far side varies` rows are.  Group by
-            # the far side's run WORDS instead and the groups merge; the chain
-            # then runs +1 inside a p and is allowed to cross p exactly at the
-            # top string, which is the two-parameter family's own successor.
+            # The TEMPLATE pass, under the gate 4e gave it.
             if pop and pop.most_common(1)[0][1] >= min_chain:
                 continue
-            wt = [tuple(w for w, _ in (s2[3] if side == 'L' else s2[2]))
-                  for _, s2 in occ]
-            for words, n in Counter(wt).most_common(2):
-                if n < min_chain or not words:
-                    break
-                sel = [i for i in range(len(occ))
-                       if wt[i] == words and os[i] is not None]
-                pids = [os[i] for i in sel]
-                if len(sel) < min_chain or len(set(pids)) < 2:
-                    continue
-                other = Counter(pids).most_common(1)[0][0]
-                suf = _common_suffix([cs[i] for i in sel if cs[i]])
-                for l in lens:
-                    for tl in range(min(len(suf), 2 * l) + 1):
-                        tail = tuple(suf[len(suf) - tl:]) if tl else ()
-                        for p in range(l):
-                            fam = _try_parse(q, h, side, other, occ, cs, sel,
-                                             l, p, tail, seeds, min_chain,
-                                             pids=pids)
-                            if fam is None or fam[0].key() in seen:
-                                continue
-                            seen.add(fam[0].key())
-                            fam[0].templated = True
-                            if not fit_far(fam[0], occ):
-                                continue      # far side does not fit a*p+b
-                            found.append(fam)
+            _template_pass(q, h, side, occ, cs, os, seeds, lens, min_chain,
+                           found, seen)
+    # The second chance, and it runs only when everything above found NOTHING.
+    # That gate is deliberate and it is what keeps 4e/4f/4g's closed rows
+    # closed: a row that reads as a positional odometer today never reaches
+    # any of this, so it cannot be re-read into a worse family and cannot lose
+    # a per-candidate time slice to a fallback.  The cost is paid only by the
+    # rows that today return `no value family` in seconds with the whole
+    # budget left -- which is exactly the fifteen.
+    if not found:
+        end = time.time() + 40.0
+        for q, h, side, full, occ, cs, os in sides[:6]:
+            # 1. the far-side TEMPLATE pass, ungated and with 4g's two axes.
+            #    LADDER_NOFAM.md's first and second unchanged defects: the
+            #    pass is switched off whenever ANY constant-far-side group
+            #    reaches the chain threshold, and on
+            #    `0RB0RD_1LC1RB_1RA0LC_1LB0LC` the large group is the one that
+            #    is NOT the family; and inside it `_try_parse` is called with
+            #    neither `code=` nor `step=`, so a two-parameter family could
+            #    only ever be binary/+1 while `0RB0RD_1LC1RB_1RA0LC_1LD0LC`
+            #    reads at +2.
+            _template_pass(q, h, side, occ, cs, os, seeds, lens, min_chain,
+                           found, seen, codes=CODES, steps=STEPS, wide=True)
+            # 2. the near-head PREFIX as a run template (4j's sixth defect).
+            _pre_pass(q, h, side, occ, cs, os, seeds, lens, min_chain,
+                      found, seen)
+            # 3. the NUMERATION.
+            _weights_pass(q, h, side, full, seeds, lens, min_chain,
+                          found, seen, deadline=end)
+        # 4. and the UNARY counter last of all, only if nothing above read the
+        #    row.  Strongest reading first is the same discipline 4e applied to
+        #    the far-side template and 4g to the code and the step; the unary
+        #    reading is the weakest one there is and it must not be allowed to
+        #    crowd out a positional or a weighted one.
+        if not found:
+            for q, h, side, full, occ, cs, os in sides[:6]:
+                _unary_pass(q, h, side, occ, cs, os, seeds, lens, min_chain,
+                            found, seen)
     # longest chain first; ties to the cleanest reading (shortest terminator,
     # no near-head prefix, narrowest digit).  Template families sort AFTER
     # every constant-far-side one however long their chain, and a non-
@@ -994,6 +1337,271 @@ def find_families(tm, snaps, rules, max_anchor=8, min_chain=8, max_occ=200,
                               f[0].step != 1, -f[2], len(f[0].tail),
                               len(f[0].pre), f[0].l))
     return found
+
+
+def _template_pass(q, h, side, occ, cs, os, seeds, lens, min_chain,
+                   found, seen, codes=('binary',), steps=(1,), wide=False):
+    """The far side as a run TEMPLATE.
+
+    Grouping by the far side's CELLS splits an anchor whose far side moves into
+    one small group per p, and when every group falls under min_chain the
+    anchor reads as no counter at all -- which is what the `far side varies`
+    rows are.  Group by the far side's run WORDS instead and the groups merge;
+    the chain then runs +1 inside a p and is allowed to cross p exactly at the
+    top string, which is the two-parameter family's own successor.
+
+    `codes`/`steps` are 4g's two axes, which this pass could not use: it called
+    `_try_parse` with neither, so a two-parameter family was binary/+1 or
+    nothing.  `wide` runs the near-head prefix past the digit width, which
+    `p in range(l)` denies a one-cell digit outright."""
+    wt = [tuple(w for w, _ in (s2[3] if side == 'L' else s2[2]))
+          for _, s2 in occ]
+    for words, n in Counter(wt).most_common(2):
+        if n < min_chain or not words:
+            break
+        sel = [i for i in range(len(occ))
+               if wt[i] == words and os[i] is not None]
+        pids = [os[i] for i in sel]
+        if len(sel) < min_chain or len(set(pids)) < 2:
+            continue
+        other = Counter(pids).most_common(1)[0][0]
+        suf = _common_suffix([cs[i] for i in sel if cs[i]])
+        for l in lens:
+            for tl in range(min(len(suf), 2 * l) + 1):
+                tail = tuple(suf[len(suf) - tl:]) if tl else ()
+                for p in range(l + 2 if wide else l):
+                    for code in codes:
+                        for stp in steps:
+                            fam = _try_parse(q, h, side, other, occ, cs, sel,
+                                             l, p, tail, seeds, min_chain,
+                                             code=code, step=stp, pids=pids)
+                            if fam is None or fam[0].key() in seen:
+                                continue
+                            seen.add(fam[0].key())
+                            fam[0].templated = True
+                            if not fit_far(fam[0], occ):
+                                continue      # far side does not fit a*p+b
+                            found.append(fam)
+
+
+def _unary_pass(q, h, side, occ, cs, os, seeds, lens, min_chain, found, seen,
+                max_other=3):
+    """The counter side as a run template `word^p`, alphabet size 1, `p` the
+    run count -- the seventh constructor LADDER_NOFAM.md names, and the mirror
+    of `fit_far`, which already fits `word^(a*p + b)` on the far side.
+
+    The same grouping the ordinary pass uses: one constant-far-side group, the
+    ladder's own digit widths, the group's common suffix as the terminator.
+    Only the alphabet size differs, and with it everything the alphabet size
+    decides -- `maxval(k)` is 0, so every string is the top, so there is no
+    interior arm, no octave-top test and no fill law to infer."""
+    pop = Counter(o for o in os if o is not None)
+    for other, n in pop.most_common(max_other):
+        if n < min_chain:
+            break
+        sel = [i for i in range(len(occ)) if os[i] == other]
+        suf = _common_suffix([cs[i] for i in sel if cs[i]])
+        for l in lens:
+            for tl in range(min(len(suf), 2 * l) + 1):
+                tail = tuple(suf[len(suf) - tl:]) if tl else ()
+                for p in range(l + 2):
+                    got = _try_parse(q, h, side, other, occ, cs, sel, l, p,
+                                     tail, seeds, min_chain, unary=True)
+                    if got is None or got[0].key() in seen:
+                        continue
+                    seen.add(got[0].key())
+                    found.append(got)
+
+
+def _pre_pass(q, h, side, occ, cs, os, seeds, lens, min_chain, found, seen,
+              max_word=3):
+    """The near-head PREFIX as a run template `u^(a*p + b)` -- 4j's sixth
+    defect, and the sixth time an assumption about the counter's own spelling
+    was reported as the machine's failure.
+
+    `Fam.read` matches the prefix as a FIXED tuple.  John's bouncer counter
+    spells `0^(2k+5)` there, so `read()` returns None at every candidate at
+    every anchor and the row is filed under *no anchor whose counter side
+    decodes*.  The p comes from the same place the far side's does -- the
+    far-side run template `fit_far` fits -- so the two sides are parameterized
+    by ONE quantity, which is what makes it a family and not two clocks."""
+    wt = [tuple(w for w, _ in (s2[3] if side == 'L' else s2[2]))
+          for _, s2 in occ]
+    for words, n in Counter(wt).most_common(2):
+        if n < min_chain or not words:
+            break
+        sel = [i for i in range(len(occ))
+               if wt[i] == words and os[i] is not None]
+        if len(sel) < min_chain or len({os[i] for i in sel}) < 2:
+            continue
+        other = Counter(os[i] for i in sel).most_common(1)[0][0]
+        prov = Fam(q, h, side, other, [(0,)], (), {})
+        if not fit_far(prov, [occ[i] for i in sel]):
+            continue
+        ps = [prov.far_p(occ[i][1]) for i in sel]
+        if len({x for x in ps if x is not None}) < 3:
+            continue
+        for wl in range(1, max_word + 1):
+            c0 = cs[sel[0]]
+            if not c0 or len(c0) < wl:
+                continue
+            u = tuple(c0[:wl])
+            if not any(u):
+                u = (0,) * wl          # a blank spacer is the commonest case
+            cnt, ok = {}, True
+            for j, i in enumerate(sel):
+                c, pp = cs[i], ps[j]
+                if c is None or pp is None:
+                    continue
+                m = 0
+                while tuple(c[m * wl:(m + 1) * wl]) == u:
+                    m += 1
+                if cnt.setdefault(pp, m) != m:
+                    ok = False
+                    break
+            xs = sorted(cnt)
+            if not ok or len(xs) < 3:
+                continue
+            num, den = cnt[xs[1]] - cnt[xs[0]], xs[1] - xs[0]
+            if not num or not den or num % den:
+                continue
+            a = num // den
+            b = cnt[xs[0]] - a * xs[0]
+            if any(cnt[x] != a * x + b for x in xs) or a * min(xs) + b < 0:
+                continue
+            plens = [None if ps[j] is None else wl * (a * ps[j] + b)
+                     for j in range(len(sel))]
+            suf = _common_suffix([cs[i] for i in sel if cs[i]])
+            for l in lens:
+                for tl in range(min(len(suf), 2 * l) + 1):
+                    tail = tuple(suf[len(suf) - tl:]) if tl else ()
+                    for code in CODES:
+                        for stp in STEPS:
+                            got = _try_parse(q, h, side, other, occ, cs, sel,
+                                             l, 0, tail, seeds, min_chain,
+                                             code=code, step=stp,
+                                             plens=plens,
+                                             ptmpl=((u, a, b),))
+                            if got is None or got[0].key() in seen:
+                                continue
+                            seen.add(got[0].key())
+                            got[0].templated = True
+                            if not fit_far(got[0], occ):
+                                continue
+                            found.append(got)
+
+
+def _tail_cands(strs, l, cap=6, min_frac=0.15):
+    """Candidate TERMINATORS off the WHOLE group rather than off its common
+    suffix.
+
+    `_common_suffix` is the right reading when the terminator is the thing
+    every member of one constant-far-side group ends with; it returns the
+    EMPTY suffix as soon as two members end differently, which is exactly what
+    a complete width class looks like -- a class that spells every digit at
+    every position ends every way it can.  The dev fixture of the weight
+    sequence (`1RB---_0LB1RC_1LB0RD_1LC0RD` at B1/R) has one
+    constant-far-side group covering all 900 anchor visits, a common suffix of
+    length ZERO, and a terminator of `11`.  LADDER_NOFAM.md's fourth
+    unchanged defect, from the side it actually bites on."""
+    if not strs:
+        return [()]
+    n = len(strs)
+    got = []
+    for t in range(1, 2 * l + 3):
+        c = Counter(tuple(x[len(x) - t:]) for x in strs if len(x) >= t)
+        for suf, k in c.most_common(2):
+            if k >= min_frac * n:
+                got.append((k, suf))
+    got.sort(key=lambda x: (-x[0], len(x[1])))
+    out = [()]
+    for _, s in got[:cap]:
+        if s not in out:
+            out.append(s)
+    return out
+
+
+def _weights_pass(q, h, side, full, seeds, lens, min_chain,
+                  found, seen, max_other=1, max_occ=900, deadline=None):
+    """The counter's NUMERATION, read not assumed -- the fifth instance of the
+    rule 4e states and 4g restates.
+
+    `Fam.decode` sums `d_i * b**i`.  Replace `b**i` by the sequence the machine
+    itself states and six rows of the fifteen are Fibonacci, two more are a
+    redundant base over cell pairs (`1,1,2,2,4,4` and `1,1,3,3,9,9`), and
+    `base-b` is the case `w_i = b**i` and does not move.
+
+    Three things are read here and each is checked rather than assumed:
+    the WEIGHTS (`fit_weights`), the CANONICAL FORM (`fit_classes` -- without
+    it `of_value` cannot produce the machine's own spelling, and 4g's
+    positional-rebuild bug comes straight back), and the terminator off the
+    whole group (`_tail_cands`).  The near-head prefix runs past the digit
+    width on purpose: `p in range(l)` means a one-cell digit never gets one.
+
+    The STEP is not varied.  With the weights read rather than assumed, `w`
+    and `s*w` describe the same family -- the step and the weight sequence are
+    the SAME axis -- so the pass fixes `s = 1` and lets the scale come out in
+    the weights.  That is a reduction, not a restriction.
+
+    The window is the FIRST `max_occ` visits, not the last: the passes above
+    take `occ[-200:]`, which is the right window for a chain test and the wrong
+    one for a numeration, because a counter's narrow width classes are all at
+    the START of the run and the canonical form is read off the narrow ones.
+    A walk that begins at width 8 has no base case to generalize from."""
+    occ = full[:max_occ]
+    cs, os = [], []
+    for _, s in occ:
+        c = runs_cells(s[2] if side == 'L' else s[3])
+        o = runs_cells(s[3] if side == 'L' else s[2])
+        cs.append(c)
+        os.append(tuple(o) if o is not None else None)
+    pop = Counter(o for o in os if o is not None)
+    for other, n in pop.most_common(max_other):
+        if n < min_chain:
+            break
+        sel = [i for i in range(len(occ)) if os[i] == other]
+        strs = [cs[i] for i in sel if cs[i]]
+        for l in lens[:2]:
+            for tail in _tail_cands(strs, l):
+                for p in range(l + 2):
+                    if deadline and time.time() > deadline:
+                        return
+                    grams, _ = _grams(cs, sel, l, p, tail)
+                    alpha = sorted({x for g in grams if g for x in g})
+                    if not (2 <= len(alpha) <= 3):
+                        continue
+                    for perm in itertools.permutations(alpha):
+                        idx = {a: i for i, a in enumerate(perm)}
+                        ds = [None if g is None or any(x not in idx for x in g)
+                              else tuple(idx[x] for x in g) for g in grams]
+                        obs, sn = {}, set()
+                        for d in ds:
+                            if not d or d in sn:
+                                continue
+                            sn.add(d)
+                            obs.setdefault(len(d), []).append(d)
+                        # free pre-filter, before the rational elimination:
+                        # the widths have to be contiguous from 1 and the
+                        # classes have to grow, or there is no numeration to
+                        # read.  This is `numsys.py`'s statistic, used as a
+                        # gate rather than as a label.
+                        ks = sorted(obs)
+                        if len(ks) < 4 or ks != list(range(1, ks[-1] + 1)):
+                            continue
+                        w = fit_weights([d for d in ds if d])
+                        if w is None or all(x == len(perm) ** i
+                                            for i, x in enumerate(w)):
+                            continue     # positional: the plain pass owns it
+                        cls = fit_classes(obs)
+                        if cls is None:
+                            continue
+                        got = _try_parse(q, h, side, other, occ, cs, sel,
+                                         l, p, tail, seeds, min_chain,
+                                         weights=w, classes=cls)
+                        if got is None or got[0].key() in seen:
+                            continue
+                        seen.add(got[0].key())
+                        found.append(got)
 
 
 def _widths(named, mult=3, cap=4):
@@ -1019,24 +1627,30 @@ def _common_suffix(seqs):
     return out
 
 
-def _grams(cs, sel, l, p, tail):
+def _grams(cs, sel, l, p, tail, plens=None):
+    """Digit tuples and near-head prefixes per selected visit.
+
+    `plens` gives the prefix length PER VISIT rather than one for all of them,
+    which is what a prefix `u^(a*p+b)` needs: the spacer grows with the lap, so
+    the number of cells to strip before the digits do."""
     grams, pres = [], []
-    for i in sel:
+    for j, i in enumerate(sel):
         c = cs[i]
-        if c is None or len(c) < p + len(tail):
+        pj = p if plens is None else plens[j]
+        if c is None or pj is None or len(c) < pj + len(tail):
             grams.append(None)
             pres.append(None)
             continue
-        pres.append(tuple(c[:p]))
+        pres.append(PTMPL if plens is not None else tuple(c[:pj]))
         mid = None
         for pad in range(l + len(tail) + 1):
             cc = list(c) + [0] * pad
-            n = len(cc) - p - len(tail)
+            n = len(cc) - pj - len(tail)
             if n < 0 or n % l:
                 continue
             if tail and tuple(cc[len(cc) - len(tail):]) != tail:
                 continue
-            mid = cc[p:p + n]
+            mid = cc[pj:pj + n]
             break
         if mid is None:
             grams.append(None)
@@ -1047,14 +1661,40 @@ def _grams(cs, sel, l, p, tail):
 
 def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain,
                code='binary', step=1,
-               pids=None):
-    grams, pres = _grams(cs, sel, l, p, tail)
+               pids=None, weights=None, classes=None,
+               plens=None, ptmpl=None, unary=False):
+    grams, pres = _grams(cs, sel, l, p, tail, plens)
     alpha = set()
     for g in grams:
         if g:
             alpha |= set(g)
-    if not (2 <= len(alpha) <= 3):
+    # `unary` selects the one-digit reading and NOTHING else, so the pass that
+    # asks for it cannot also re-find the readings the passes above already
+    # tried.
+    if unary != (len(alpha) == 1):
         return None
+    # The guard used to be `2 <= len(alpha)`.  A UNARY counter -- one digit
+    # word, `word^p`, the value IS the run count -- was rejected here before
+    # any base, code, step or terminator was tried, which is upstream of every
+    # axis 4e, 4f and 4g added.  It is not a degenerate radix, it is a
+    # different constructor, and `b = 1` states it exactly: `maxval(k)` is 0,
+    # so every string is the top, so the successor is always the FILL and the
+    # interior/overflow split collapses to one arm per phase.  The kernel says
+    # the same thing with no change at all -- `fam_is_top` at `fm_b = 1` is
+    # `1^k - 1 < 0 + fm_step`, which is true for every string.
+    #
+    # It is also the WEAKEST reading in the file: a bare run of `1`s inside a
+    # bouncer gives a monotone run count too, which is why `nofam.unary_probe`
+    # ranks on the far side and the phase set rather than on how big p gets.
+    # So it is asked for explicitly and only after every other reading has
+    # declined the row -- measured, letting it run in the ordinary pass
+    # suppressed the Fibonacci reading of `1RB0RB_0LC1RD_1LC1LA_0LA1RB` and
+    # gave eleven families to the BBB(4) champion, which is not a counter.
+    if not (1 <= len(alpha) <= 3):
+        return None
+    if unary and (code != 'binary' or weights is not None
+                  or ptmpl is not None):
+        return None                  # a reflected code over one digit is one
     # accept either a digit word the ladder names outright, or a digit WIDTH
     # the ladder names -- the latter only on a chain twice as long, since the
     # +1 evidence is then carrying the whole alphabet claim
@@ -1063,19 +1703,38 @@ def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain,
     best = None
     for perm in itertools.permutations(sorted(alpha)):
         idx = {a: i for i, a in enumerate(perm)}
+        b = len(perm)
         vals = []
         for g, pr in zip(grams, pres):
             if g is None or pr is None or any(x not in idx for x in g):
                 vals.append(None)
                 continue
             dsx = [idx[x] for x in g]           # LSB-first
-            if code == 'gray':
-                dsx = gray_decode(dsx, len(perm))
-            v = 0
-            for d in reversed(dsx):
-                v = v * len(perm) + d
+            if b == 1:
+                # the RUN COUNT is the value: p and v collapse, so the fill law
+                # has nothing to infer and the width is the whole parameter
+                v = len(dsx)
+            elif weights is not None:
+                if len(dsx) > len(weights):
+                    vals.append(None)
+                    continue
+                v = sum(d * weights[i] for i, d in enumerate(dsx))
+            else:
+                if code == 'gray':
+                    dsx = gray_decode(dsx, b)
+                v = 0
+                for d in reversed(dsx):
+                    v = v * b + d
             vals.append((v, pr, len(g)))
-        b = len(perm)
+        if weights is not None:
+            def _mx(k, w=weights, bb=b):
+                return sum((bb - 1) * w[i] for i in range(min(k, len(w))))
+        elif b == 1:
+            def _mx(k):
+                return 0
+        else:
+            def _mx(k, bb=b):
+                return bb ** k - 1
         i = 0
         while i < len(vals):
             if vals[i] is None:
@@ -1087,15 +1746,18 @@ def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain,
                 if pids is None or pids[k + 1] == pids[k]:
                     if vals[k + 1][0] != vals[k][0] + step:
                         break
-                elif vals[k][0] + step <= b ** vals[k][2] - 1:
+                elif vals[k][0] + step <= _mx(vals[k][2]):
                     # p may only move at the top string -- that is what makes
                     # the fill the only arm crossing the outer parameter
                     break
                 k += 1
             if k - i + 1 >= need and (best is None or k - i + 1 > best[2]):
                 nm = {a: seeds[a] for a in perm if a in seeds}
-                fm = Fam(q, h, side, other, list(perm), vals[i][1], nm, tail)
+                fm = Fam(q, h, side, other, list(perm),
+                         () if ptmpl else vals[i][1], nm, tail)
                 fm.code, fm.step = code, step
+                fm.weights, fm.classes = weights, classes
+                fm.ptmpl = ptmpl
                 best = (fm, occ[sel[i]][0], k - i + 1)
             i = k + 1
     return best
@@ -1233,6 +1895,9 @@ def sample_digits(fam, kmax=5, extra=(6, 7, 8, 9)):
     out = []
     for ph in range(len(fam.tails)):
         for k in range(1, kmax + 1):
+            if fam.weights is not None:
+                out.extend((ph, list(ds)) for _, ds in fam.klass(k))
+                continue
             for v in range(fam.b ** k):
                 ds = []
                 x = v
@@ -1241,6 +1906,13 @@ def sample_digits(fam, kmax=5, extra=(6, 7, 8, 9)):
                     x //= fam.b
                 out.append((ph, ds))
         for k in extra:
+            if fam.weights is not None:
+                # a pseudo-random digit string is not a member of a family
+                # whose representation is canonical; the class itself is small
+                # (Fibonacci sizes), so sample its two ends instead
+                cl = fam.klass(k)
+                out.extend((ph, list(ds)) for _, ds in cl[:2] + cl[-2:])
+                continue
             for seed in (0, 1, 2):
                 ds = [(i * 7 + seed * 3 + k) % fam.b for i in range(k)]
                 out.append((ph, ds))
@@ -1639,8 +2311,8 @@ def order_ok(arms):
 
 
 def only_at_overflow(fam, strings):
-    """Are these digit strings exactly the all-max ones -- the fill?"""
-    return bool(strings) and all(v == fam.b ** k - 1 for k, v in strings)
+    """Are these digit strings exactly the top ones -- the fill?"""
+    return bool(strings) and all(v == fam.maxval(k) for k, v in strings)
 
 
 def _fam_cfg(fam, ds, pp):
@@ -1648,8 +2320,15 @@ def _fam_cfg(fam, ds, pp):
 
 
 def all_strings(fam, kmax):
+    """Every member of every width up to kmax.  With a weight sequence that is
+    the CANONICAL strings only -- enumerating all b**k would report uncovered
+    members the machine never reaches, which is `cover`'s own warning read from
+    the other side."""
     out = []
     for k in range(1, kmax + 1):
+        if fam.weights is not None:
+            out.extend(list(ds) for _, ds in fam.klass(k))
+            continue
         for v in range(fam.b ** k):
             ds, x = [], v
             for _ in range(k):
@@ -1833,7 +2512,7 @@ def find_boot(fam, snaps):
         c = runs_cells(fam.counter_side(s))
         if c is None:
             continue
-        ph, ds = fam.read(c)
+        ph, ds = fam.read(c, pp)
         if not ds:
             continue
         cf = fam.cfg(ds, pp, ph)
@@ -2048,8 +2727,27 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
         multiphase = fit_phases(fam, walk)
         fill_obs = observe_fill(fam, walk)
         if fam.fills is None:
-            fam.fills = fit_fills(fam, fill_obs) or [Fill(1, (), 0, (1,))]
+            fam.fills = fit_fills(fam, fill_obs) or [fam_fill(fam, 0)]
         bt, bds, bp, bph = find_boot(fam, snaps)
+        # A fill whose outer-parameter law DECREASES p is not a family any
+        # liveness argument can use.  `far_cells` returns None as soon as a
+        # count goes negative, so the successor chain is finite BY
+        # CONSTRUCTION, and `chain_check`'s 40 laps then say only that 40 is
+        # less than p at the boot.  Two of the fifteen read exactly this way
+        # once the unary constructor lets them read at all -- a bouncer eating
+        # a fixed spacer, `p' = p - 1` -- and the reading is true over the
+        # window and false forever, which is the one thing a certificate
+        # candidate must never be.  No row that closes today has a fill that
+        # moves the outer parameter at all, so this refuses nothing that was
+        # already being reported.
+        if any(f.moves_p() and f.apply_p(fam.p0, k) < fam.p0
+               for f in fam.fills for k in (1, 8)):
+            res.setdefault('tried', []).append(
+                {'family': fam.json(), 'fill': fam.fill.json(),
+                 'reason': 'the fill DECREASES the outer parameter, so the '
+                           'family is finite: it is a reading of the window, '
+                           'not of the machine'})
+            continue
         fill_fitted = all(f.seen for f in fam.fills)
         groups = _groups(fam, (1, 2, 3, 4, 5))
         arms = mine_arms(tm, rules, fam, deadline=slice_end, ctr=ctr,
@@ -2061,6 +2759,12 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
             continue
         km = min(kmax, kmax_for(fam.b))
         km2 = km + (2 if fam.b == 2 else 1)
+        if fam.weights is not None:
+            # A position no equation pinned is not a reading: the family is
+            # stated only as wide as the weights were actually fitted, and
+            # `Fam.value` returns None past that rather than guessing.
+            km2 = min(km2, len(fam.weights))
+            km = min(km, max(1, km2 - 2))
         # Enumeration: every digit string first (the strongest claim), and if
         # that fails, the states actually REACHABLE from the boot.  A fill law
         # that widens by more than one puts half the widths out of reach, and
@@ -2224,7 +2928,7 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
             'coverage': rep,
             'boot': {'steps_from_blank': bt, 'digits_lsb_first': bds,
                      'value': fam.value(bds), 'p': bp, 'phase': bph,
-                     'cells': fam.encode(bds, bph)},
+                     'cells': fam.encode(bds, bph, bp)},
             'liveness': {
                 'fired_transitions': sorted('%s%d' % (chr(65 + t[0]), t[1])
                                             for t in fired),

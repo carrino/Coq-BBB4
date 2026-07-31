@@ -217,6 +217,15 @@ The per-row anchor and ladder for all eleven are recorded in
 `tools/counters/FIB_ELEVEN.txt`, so the next session does not have to re-run
 the scan.
 
+**The family is bigger than this file's population.**  A radix sweep of every
+undecided core row (`tools/counters/RADIX_CORE.txt`) finds a TWELFTH `phi`
+row outside the 24 three-state rows: `1RB0RB_0LC1RD_1LC1LA_0LA1RB` (+1
+shadow), `phi` at spread 0.00, whose anchor values step by successive
+Fibonacci numbers.  Same family, read at a sparse anchor; its
+once-per-increment anchor is not located yet.  So a Fibonacci numeral module
+is worth **12 core rows + 1 shadow**, the largest coherent block left in the
+residue.
+
 And the words are the ones this file already recorded — `(empty), 1, 11, 011,
 111, 0011, 1011, 1111, 00011, …` — the very sequence called "plain `Kp` words
 visited at a sparse self-similar set".  Weighed `1,1,2,3,5,8,…` they are

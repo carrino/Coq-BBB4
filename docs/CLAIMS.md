@@ -36,8 +36,12 @@ skipped R tm :=  Deferred R tm
 
 -- a machine is skipped if it is one of the undecided CORE machines, **or**
 it runs an all-blank prefix into the orbit of one (a 0RB re-root SHADOW).
-A shadow is not a separate open problem: it resolves automatically the
-moment its core machine is boarded.
+A shadow is not a separate open problem — it needs no new mathematics — but
+it is not free either: a shadow is a shadow only of a core machine that is
+still undecided, so boarding a core machine moves its shadow INTO
+`core_rows.txt` until the same argument is transported across the re-root
+(`Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v` is the worked
+example).  Budget a core row and its shadows together.
 
 The last corollary is the previous-record reading: every decided machine
 quasihalts by the *previous* champion's 66,349 or never quasihalts.  The four
@@ -62,8 +66,8 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **46** undecided core machines in
-   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **20**
+3. it is **skipped**: one of the **42** undecided core machines in
+   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **14**
    0RB re-root shadows (`tools/closeout/shadow_rows.tsv`).  A shadow needs
    no new mathematics — it is a blank-prefix re-root of a core machine —
    but it does need its own board, because a shadow is a shadow only of a
@@ -90,8 +94,8 @@ before the record itself is a theorem here:
    what `theories/Counters/BlankTail.v` already closes for the four previous
    champions; what it needs is a 32.8M-step prefix, for which
    `Checkers/TCyclerN.v` already supplies `cstepsN` and `cstepsN_nat`.  It is
-   currently one of the 46 core machines.  **Not done.**
-2. **The 46 core machines (and their 20 shadows).**  Any of them could, for
+   currently one of the 42 core machines.  **Not done.**
+2. **The 42 core machines (and their 14 shadows).**  Any of them could, for
    all this development knows, be a quasihalter with a larger score.  That is
    what undecided means.
 
@@ -103,14 +107,14 @@ existentially, per-board, instead of as one aggregated constant — is closed:
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 66 still-undecided machines (46
-> core rows and their 20 0RB re-root shadows) —
+> 32,779,478 or never quasihalts, except 56 still-undecided machines (42
+> core rows and their 14 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The BBB(4) *value* does not yet
-> follow from what is here, because the champion itself is one of the 46.
+> follow from what is here, because the champion itself is one of the 42.
 
-## Scope of the 46
+## Scope of the 42
 
-All 46 core machines are residue — machines no engine in this repository
+All 42 core machines are residue — machines no engine in this repository
 settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28

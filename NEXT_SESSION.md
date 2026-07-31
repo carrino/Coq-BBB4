@@ -223,6 +223,13 @@ via `LapGlue.glue_neverqh` — **and with it its `0RB` shadow**
 **68 → 66**, core undecided **47 → 46**, shadows 21 → 20.  `audit.py` OK,
 `Print Assumptions` = `functional_extensionality_dep` on both.
 
+  [MERGE NOTE, added when this wave was merged with main (PR #94/#96, which
+  boarded the whole PARITY-AFFINE bucket -- 4 core + 6 shadows).  The two
+  board sets are DISJOINT, so the joint figure is **56 = 42 core + 14
+  shadows**, not 66.  `audit.py` OK at 5,100 of 5,156 settled.  None of the
+  twelve `phi` rows below was touched by that wave, so everything this
+  section says about them stands.]
+
 - **A shadow does NOT resolve for free when its core row boards — it INVERTS.**
   A shadow is only a shadow of a row that is still DEFERRED (`shadowlib.py`:
   the SH stage proves the row satisfies the `skipped` disjunct by pointing at
@@ -4037,3 +4044,69 @@ is either docs/tooling or a measurement handed to the next proof session.
   2,4,7,9,15,17), close with WaveCounter.wglue_neverqh (no closed form
   needed).  comb_probe.py says NOCOMB but its template demands an Ip/Jp
   tail and short prefix, so that negative does not test this read.
+
+# 2026-07-31 — the ladder's two knobs, the quasihalt closer, nineteen rows
+
+_Full record in `docs/LADDER_PLAN.md` §4l.  This is the short version plus the
+traps._
+
+- **`LadderCheck` now carries ONE arm-indexing scheme and both class arms use
+  it** — flat below a threshold `N0`, `N0 + (n-N0) mod st` at or above it,
+  block count `(n-N0)/st`.  `arm_index` is the one lemma (`Nat.div_mod_eq` +
+  `lia`).  4i's `off = n mod st` is this at `N0 = 0`, and that is why it left
+  four rows short: an arm whose materialisation offset is at or above the
+  stride cannot be a residue.
+- **The trap that cost the most, and it is a SHAPE not a count.**  With
+  `stride = 0` there is no repeated block for the engine's steps to walk
+  around: `SWin` moves inside `s_pre`, no step carries a cell from `s_post`
+  across the block boundary, and `srot 0` is the identity.  So a flat arm
+  written `mkS pre [] 1 0 post` has **no chain at any depth or stride**, and
+  the first emitter run refused all 21 rows on it.  `LadderCheck.blk` is the
+  normalisation (empty block ⇒ whole side concrete in `s_pre`) and `blk_den`
+  says the denotation is unchanged.  The failure reads exactly like "the
+  carry ripple is not affine in the run length" and is not.
+- **`LapGlueQuiet.glue_qh_quiet` ported** (`glue_qh_quietN`): `nat`-indexed,
+  weak visit premise for every `q <> qa`.  The new obligation is `AvoidRun`
+  on the lap; `base_chain : list rstep -> option (list lstep)` plus
+  `base_chain_run` bridges to `LapAvoid.srun_avoid_sound`, which is stated on
+  `srun`.  No new certificate data — the avoidance is recomputed from the
+  same chain the kernel already replays.
+- **`board_lap` became `board_arm`, parameterised by what the closer wants of
+  the arm.**  `board_neverqh` at `RuleSound`, `board_iqh` at
+  `RuleSound /\ RuleAvoid`.  The case split — which arm serves a state, at
+  what index, at what block count — is stated once.  Duplicating it is how
+  two closers drift apart.
+- **Numbers.**  21 rows the closure applies to, 15 boarded (6 never-QH, 9
+  quasihalting), 6 blocked on the arms — matching
+  `tools/ladder/core61_armshapes.txt` row for row.  Then the six `0RB` rows
+  that the boards promoted out of the shadow list certified and boarded too.
+  Nineteen boards; on this branch's base, core undecided 59 → 46.
+- **Nine of the nineteen were boarded concurrently by PR #91** (the
+  three-state ternary-counter wave) while this session ran — every `1RB---`
+  row here is also a `KS_`/`KA_`/`T3_` board on main, same `iqh` triple.
+  Merged, it is **ten rows net**: remaining 68 → 58, core undecided
+  47 → 43.  4k warned about exactly this ("a candidate that sits unboarded
+  decays") and the guard is one diff: check
+  `git show origin/main:tools/closeout/core_rows.txt` BEFORE picking a
+  bucket, not after building for it.
+- **Bookkeeping lesson.**  "core undecided" is a BUCKET, not a count of
+  machines: boarding a core row can promote a `0RB` shadow into the core, so
+  13 boards took 59 → 52, not 59 → 46.  Quote `settled by a board` when the
+  claim is about rows decided.
+- **Build note.**  The full tree is ~2 h at `-j3` and
+  `theories/Machines/IRules_Batch_*.v` are ~16 CPU-minutes EACH at the very
+  end, so the last quarter looks stalled and is not.  A single `valfam.py`
+  row (~25 s) alongside a build is fine; the 61-row sweep is not.
+- **`IRules_Batch_*` peak at 8.2 GB EACH** — measured, `IRules_Batch_02`
+  alone: `rc=0 peak_MB=8172`.  The sources are a few KB; the `vm_compute` is
+  not.  On the 15 GB box two concurrently is already over, so any `make -jN`
+  that schedules two together gets `Killed` / `Error 137` and throws the work
+  away.  Build the nine SERIALLY with nothing else running, then the rest at
+  `-j2`.  They are NOT optional: `Closeout.vo` needs them transitively via
+  `CB_*` -> `ListCStage3/*` -> `Census/Proven_06` -> `IRules_Batch_*`, and CI
+  never exercises that path (it builds `CloseoutKit.vo`, two example files
+  and a dry run of `make all`).
+- **`board_ladder.py` rewrites `_CoqProject` under a running `make` and the
+  build then LIES**: `Makefile.coq` is generated from `_CoqProject`, so
+  changing it mid-build invalidates the makefile and `make` can exit 0 with
+  hundreds of files unbuilt.  Board first, then build.
