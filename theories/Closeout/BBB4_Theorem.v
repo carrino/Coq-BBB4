@@ -8,7 +8,7 @@
 
     -- every (4,2) machine either quasihalts with every quiet state
     quiet before index 32,779,478 (the champion's score), or never
-    quasihalts, or is SKIPPED: one of the 61 distinct undecided
+    quasihalts, or is SKIPPED: one of the 59 distinct undecided
     core machines (tools/closeout/core_rows.txt), or one of their
     21 0RB re-root shadows (shadow_rows.tsv), which resolve
     automatically as core machines are boarded.

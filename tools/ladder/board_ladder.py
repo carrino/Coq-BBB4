@@ -15,7 +15,9 @@ The filter is exactly what `LadderCheck.board_neverqh` asks for and no more
   * `code = binary` and `value_step_per_anchor_visit = 1` -- the class
     successor lemma is stated for that pair only;
   * one phase, landing back in phase 0 -- the closure pins the phase;
-  * the fill law is a pure widening (no target prefix or suffix);
+  * the fill target names no more digits than the law widens by (plus the
+    one guaranteed copy) -- the target's own prefix and suffix are fine, they
+    ride along as the fixed words either side of the run;
   * `states_infinitely_often = ABCD` -- [board_neverqh] concludes
     `NeverQuasiHaltsSt`, so a row that quasihalts needs the OTHER closer and
     boarding it here would prove a false thing (it cannot: the liveness
@@ -49,10 +51,12 @@ def wanted(r):
     if len(fills) != 1:
         return False, '%d phases' % len(fills)
     f = fills[0]
-    if f.get('target_prefix') or f.get('target_suffix'):
-        return False, 'fill is not a pure widening'
     if f.get('lands_in_phase') != 0 or f.get('widens_by', 0) < 1:
         return False, 'fill does not widen back into phase 0'
+    m = len(f.get('target_prefix') or []) + len(f.get('target_suffix') or [])
+    if m > 1 + f.get('widens_by', 0):
+        return False, ('fill target names %d digits but widens by %d'
+                       % (m, f.get('widens_by')))
     live = (r.get('liveness') or {}).get('states_infinitely_often')
     if live != 'ABCD':
         return False, 'live=%s (quasihalts; needs the QH closer)' % live

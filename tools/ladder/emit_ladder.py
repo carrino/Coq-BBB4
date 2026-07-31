@@ -309,14 +309,25 @@ def closure_data(cert, tab):
     if not ds0:
         raise NoClosure('boot digit string is empty')
 
+    # A chain to each state from the fill's anchor.  [vis_of_run] wants a
+    # chain from the anchor, NOT a prefix of the arm's own chain -- which
+    # matters, because a state can sit inside a macro step that no prefix
+    # ends on.  So: walk out from every prefix of the fill's derivation.
     vis, cand = {}, []
-    for n in range(0, 25):
-        cand.append([('SWin', n)])
-    for k in range(0, 20):
-        cand.append(fch[:3] + [('SWinL', k)])
-        for m in range(0, 6):
-            cand.append(fch[:3] + [('SWinL', k), ('SWin', m)])
+    for i in range(len(fch) + 1):
+        base = fch[:i]
+        cand.append(base)
+        for m in range(0, 31):
+            cand.append(base + [('SWin', m)])
+            cand.append(base + [('SWinL', m)])
+            cand.append(base + [('SWinR', m)])
+        for k in range(0, 16):
+            for m in range(0, 8):
+                cand.append(base + [('SWinL', k), ('SWin', m)])
+                cand.append(base + [('SWinR', k), ('SWin', m)])
     for ch in cand:
+        if len(vis) == 4:
+            break
         r = LC.srun(tab, True, True, ch, fl)
         if r:
             vis.setdefault(r[0][0], ch)
