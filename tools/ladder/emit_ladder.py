@@ -264,14 +264,38 @@ def closure_data(cert, tab):
             raise NoClosure('%s: zero-step rule' % what)
         return ch, got[1], got[2]
 
-    # the interior class arms: t^n ++ d :: rest  ->  0^n ++ (d+1) :: rest
-    inter = []
-    for d in range(b - 1):
-        c0 = conf((pre, digs[b - 1], 1, 0, digs[d]))
-        c1 = conf((pre, digs[0], 1, 0, digs[d + 1]))
-        el, er = (not left), left
-        ch, ca, cb = derive(el, er, c0, c1, 'interior arm d=%d' % d)
-        inter.append((d, c0, c1, ch, ca, cb, el, er))
+    # The interior class arms: t^n ++ d :: rest -> 0^n ++ (d+1) :: rest.
+    # The cost of the carry ripple need not be affine in [n] -- measured
+    # (4i), four live-core rows walk the run at one cost on even lengths and
+    # another on odd -- so the class is tried at stride 1 first and then at
+    # stride 2, one arm per residue.  A row whose cost is genuinely
+    # quadratic has no stride that works and is refused here; that is the
+    # count language of RULE_LADDER 5, not a gap in this emitter.
+    el, er = (not left), left
+    inter, st = None, None
+    for stride in (1, 2, 3, 4):
+        got, ok = [], True
+        for d in range(b - 1):
+            for r in range(stride):
+                c0 = conf((pre + digs[b - 1] * r, digs[b - 1] * stride, 1, 0,
+                           digs[d]))
+                c1 = conf((pre + digs[0] * r, digs[0] * stride, 1, 0,
+                           digs[d + 1]))
+                try:
+                    ch, ca, cb = derive(el, er, c0, c1,
+                                        'interior arm d=%d r=%d' % (d, r))
+                except NoClosure:
+                    ok = False
+                    break
+                got.append((d, r, c0, c1, ch, ca, cb))
+            if not ok:
+                break
+        if ok:
+            inter, st = got, stride
+            break
+    if inter is None:
+        raise NoClosure('interior arm: no chain at stride 1, 2, 3 or 4 -- the '
+                        'carry ripple is not affine in the run length')
 
     # the fill arm: t^(1+n) -> the fill law's target at width 1+n+s, both
     # tails known empty.  [fm1] guaranteed copies of the fill digit sit
@@ -336,7 +360,7 @@ def closure_data(cert, tab):
         raise NoClosure('no chain from the fill anchor to %s'
                         % ','.join(missing))
 
-    return dict(b=b, inter=inter, fill=(fl, fr, fch, fca, fcb),
+    return dict(b=b, inter=inter, st=st, el=el, er=er, fill=(fl, fr, fch, fca, fcb),
                 fm1=fm1, fm2=fm2,
                 ds0=ds0, t0=boot['steps_from_blank'], vis=vis)
 
@@ -364,20 +388,21 @@ CLOSURE_HEAD = '''
     returns the machine-level theorem. *)
 '''
 
-CLOSURE_IARM = '''Definition iarm%(d)d_%(mid)s : LRule :=
+CLOSURE_IARM = '''Definition iarm%(d)d_%(r)d_%(mid)s : LRule :=
   mkLRule (%(lhs)s)
           (%(rhs)s) %(ca)d %(cb)d.
-Definition ch_iarm%(d)d_%(mid)s : list rstep := %(ch)s.
-Lemma ok_iarm%(d)d_%(mid)s :
-  check_arm tm %(el)s %(er)s rules iarm%(d)d_%(mid)s ch_iarm%(d)d_%(mid)s = true.
+Definition ch_iarm%(d)d_%(r)d_%(mid)s : list rstep := %(ch)s.
+Lemma ok_iarm%(d)d_%(r)d_%(mid)s :
+  check_arm tm %(el)s %(er)s rules iarm%(d)d_%(r)d_%(mid)s
+            ch_iarm%(d)d_%(r)d_%(mid)s = true.
 Proof. vm_compute. reflexivity. Qed.
 
 '''
 
-CLOSURE_IDISP = '''Definition iarm_%(mid)s (d : nat) : LRule :=
-  match d with
+CLOSURE_IDISP = '''Definition iarm_%(mid)s (d r : nat) : LRule :=
+  match d, r with
   %(br)s
-  | _ => iarm0_%(mid)s   (* unreachable: the closure asks only d < b - 1 *)
+  | _, _ => iarm0_0_%(mid)s   (* unreachable: only d < b-1 and r < stride *)
   end.
 
 '''
@@ -404,31 +429,32 @@ Definition vis_%(mid)s (q : St) : list lstep :=
 
 '''
 
-CLOSURE_THM = '''Lemma iarm_sound_%(mid)s : forall d, d < fm_b FAM - 1 ->
-  RuleSound tm (negb (fm_left FAM)) (fm_left FAM) (iarm_%(mid)s d).
+CLOSURE_THM = '''Lemma iarm_sound_%(mid)s : forall d r, d < fm_b FAM - 1 -> r < %(st)d ->
+  RuleSound tm (negb (fm_left FAM)) (fm_left FAM) (iarm_%(mid)s d r).
 Proof.
-  intros d Hd. vm_compute in Hd.
+  intros d r Hd Hr. vm_compute in Hd.
 %(bsound)s  exfalso; lia.
 Qed.
 
-Lemma iarm_lhs_%(mid)s : forall d, d < fm_b FAM - 1 ->
-  lr_lhs (iarm_%(mid)s d) = cls_conf FAM (cls_side FAM (fm_b FAM - 1) [d]).
+Lemma iarm_lhs_%(mid)s : forall d r, d < fm_b FAM - 1 -> r < %(st)d ->
+  lr_lhs (iarm_%(mid)s d r)
+    = cls_conf FAM (cls_side FAM (fm_b FAM - 1) r %(st)d [d]).
 Proof.
-  intros d Hd. vm_compute in Hd.
+  intros d r Hd Hr. vm_compute in Hd.
 %(bcomp)s  exfalso; lia.
 Qed.
 
-Lemma iarm_rhs_%(mid)s : forall d, d < fm_b FAM - 1 ->
-  lr_rhs (iarm_%(mid)s d) = cls_conf FAM (cls_side FAM 0 [S d]).
+Lemma iarm_rhs_%(mid)s : forall d r, d < fm_b FAM - 1 -> r < %(st)d ->
+  lr_rhs (iarm_%(mid)s d r) = cls_conf FAM (cls_side FAM 0 r %(st)d [S d]).
 Proof.
-  intros d Hd. vm_compute in Hd.
+  intros d r Hd Hr. vm_compute in Hd.
 %(bcomp)s  exfalso; lia.
 Qed.
 
-Lemma iarm_cb_%(mid)s : forall d, d < fm_b FAM - 1 ->
-  0 < lr_cb (iarm_%(mid)s d).
+Lemma iarm_cb_%(mid)s : forall d r, d < fm_b FAM - 1 -> r < %(st)d ->
+  0 < lr_cb (iarm_%(mid)s d r).
 Proof.
-  intros d Hd. vm_compute in Hd.
+  intros d r Hd Hr. vm_compute in Hd.
 %(blia)s  exfalso; lia.
 Qed.
 
@@ -442,7 +468,7 @@ Proof. vm_compute. reflexivity. Qed.
     Stage-B kernel discharged, or an equation two [vm_compute]s decide. *)
 Theorem nqh_%(mid)s : NeverQuasiHaltsSt tm.
 Proof.
-  apply (board_neverqh tm FAM iarm_%(mid)s farm_%(mid)s vis_%(mid)s
+  apply (board_neverqh tm FAM iarm_%(mid)s %(st)d farm_%(mid)s vis_%(mid)s
                        %(ds0)s %(t0)d %(fm1)d %(fm2)d).
   - vm_compute; lia.
   - vm_compute; reflexivity.
@@ -456,6 +482,7 @@ Proof.
   - repeat constructor.
   - vm_compute; lia.
   - exact boot_%(mid)s.
+  - lia.
   - exact iarm_sound_%(mid)s.
   - exact iarm_lhs_%(mid)s.
   - exact iarm_rhs_%(mid)s.
@@ -478,14 +505,15 @@ def emit_closure(cert, tab, mid):
 
     b = cd['b']
     L = [CLOSURE_HEAD % (len(cert['arms']), b)]
-    for d, c0, c1, ch, ca, cb, el, er in cd['inter']:
+    el, er = (cd['el'], cd['er'])
+    for d, r, c0, c1, ch, ca, cb in cd['inter']:
         L.append(CLOSURE_IARM % dict(
-            d=d, mid=mid, lhs=coq_conf(c0), rhs=coq_conf(c1), ca=ca, cb=cb,
-            ch=coq_chain(ch), el=str(el).lower(), er=str(er).lower()))
+            d=d, r=r, mid=mid, lhs=coq_conf(c0), rhs=coq_conf(c1), ca=ca,
+            cb=cb, ch=coq_chain(ch), el=str(el).lower(), er=str(er).lower()))
     L.append(CLOSURE_IDISP % dict(
         mid=mid,
-        br='\n  '.join('| %d => iarm%d_%s' % (d, d, mid)
-                       for d, _, _, _, _, _, _, _ in cd['inter'])))
+        br='\n  '.join('| %d, %d => iarm%d_%d_%s' % (d, r, d, r, mid)
+                       for d, r, _, _, _, _, _ in cd['inter'])))
     fl, fr, fch, fca, fcb = cd['fill']
     L.append(CLOSURE_FARM % dict(
         mid=mid, lhs=coq_conf(fl), rhs=coq_conf(fr), ca=fca, cb=fcb,
@@ -494,15 +522,24 @@ def emit_closure(cert, tab, mid):
         mid=mid,
         vb='\n  '.join('| %s => %s' % (ST[i], coq_chain_l(cd['vis'][i]))
                        for i in range(4))))
+    st = cd['st']
+
     def branches(body):
-        return ''.join(
-            '  destruct d as [|d]; [%s|].\n' % (body % dict(d=d, mid=mid))
-            for d in range(b - 1))
+        """One brace-delimited branch per (digit, residue); the rest is dead."""
+        out = []
+        for d in range(b - 1):
+            rb = []
+            for r in range(st):
+                rb.append('    destruct r as [|r].\n    { %s. }\n'
+                          % (body % dict(d=d, r=r, mid=mid)))
+            out.append('  destruct d as [|d].\n  {\n%s    exfalso; lia.\n  }\n'
+                       % ''.join(rb))
+        return ''.join(out)
     L.append(CLOSURE_THM % dict(
-        mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str),
+        mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str), st=st,
         fm1=cd['fm1'], fm2=cd['fm2'],
-        bsound=branches('eapply arm_sound; '
-                        '[exact rules_sound_%(mid)s | exact ok_iarm%(d)d_%(mid)s]'),
+        bsound=branches('eapply arm_sound; [exact rules_sound_%(mid)s '
+                        '| exact ok_iarm%(d)d_%(r)d_%(mid)s]'),
         bcomp=branches('vm_compute; reflexivity'),
         blia=branches('vm_compute; lia')))
     return ''.join(L), cd

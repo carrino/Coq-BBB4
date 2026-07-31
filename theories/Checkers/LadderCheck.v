@@ -160,19 +160,33 @@ Variable F : Fam.
 Definition cls_tail (rest : list nat) (ph : nat) : list Sym :=
   flat_map (dig F) rest ++ nth ph (fm_tails F) [].
 
-(** The class [t^n ++ w ++ rest] IS one [sside], with [rest] opaque. *)
-Definition cls_side (t : nat) (w : list nat) : sside :=
-  mkS (fm_pre F) (dig F t) 1 0 (flat_map (dig F) w).
+(** The class [t^(r + s*m) ++ w ++ rest] IS one [sside], with [rest] opaque.
 
-Lemma fam_cells_class : forall t n w rest ph,
-  fam_cells F (repeat t n ++ w ++ rest) ph
-    = sden (cls_tail rest ph) n (cls_side t w).
+    The STRIDE [s] is there because the cost of a carry ripple need not be
+    affine in the run length: measured (LADDER_PLAN 4i), four live-core rows
+    walk the run at one cost on even lengths and another on odd, so their
+    class splits into one arm per residue and each arm's block is [s] copies
+    of the digit word.  [s = 1], [r = 0] is the ordinary case. *)
+Definition cls_side (t r s : nat) (w : list nat) : sside :=
+  mkS (fm_pre F ++ rep (dig F t) r) (rep (dig F t) s) 1 0
+      (flat_map (dig F) w).
+
+Lemma rep_rep : forall (u : list Sym) s m, rep (rep u s) m = rep u (s * m).
 Proof.
-  intros t n w rest ph.
+  intros u s. induction m as [|m IH]; simpl.
+  - rewrite Nat.mul_0_r. reflexivity.
+  - rewrite IH, <- rep_add. f_equal. lia.
+Qed.
+
+Lemma fam_cells_class : forall t r s m w rest ph,
+  fam_cells F (repeat t (r + s * m) ++ w ++ rest) ph
+    = sden (cls_tail rest ph) m (cls_side t r s w).
+Proof.
+  intros t r s m w rest ph.
   rewrite fam_cells_eq. unfold sden, cls_side, cls_tail; simpl.
   rewrite flat_map_repeat, flat_map_app.
   rewrite ?Nat.mul_1_l, ?Nat.add_0_r.
-  rewrite !app_assoc. reflexivity.
+  rewrite rep_rep, rep_add, !app_assoc. reflexivity.
 Qed.
 
 (** The class [t^(m1 + n + m2)] with NOTHING opaque -- the shape the fill
@@ -650,7 +664,9 @@ Section Board.
 
 Variable tm    : TM.
 Variable F     : Fam.
-Variable Aint  : nat -> LRule.      (** the interior arm for digit [d] *)
+Variable Aint  : nat -> nat -> LRule.  (** the interior arm for digit [d],
+                                          run length [r] mod the stride *)
+Variable st    : nat.               (** the stride the class walks in *)
 Variable Afill : LRule.             (** the arm that sees the counter's end *)
 Variable vis   : St -> list lstep.  (** a chain to each state, from the fill *)
 Variable ds0   : list nat.          (** the boot digit string *)
@@ -680,14 +696,15 @@ Hypothesis Hbnd0 : Forall (fun d => d < fm_b F) ds0.
 Hypothesis Hlen0 : 0 < length ds0.
 Hypothesis Hboot : csteps tm t0 CTape.c0 = Some (fam_cfg F (ds0, 0, 0)).
 
-(** *** The interior arms, one per digit below the top *)
-Hypothesis HAiS : forall d, d < fm_b F - 1 ->
-  RuleSound tm (negb (fm_left F)) (fm_left F) (Aint d).
-Hypothesis HAiL : forall d, d < fm_b F - 1 ->
-  lr_lhs (Aint d) = cls_conf F (cls_side F (fm_b F - 1) [d]).
-Hypothesis HAiR : forall d, d < fm_b F - 1 ->
-  lr_rhs (Aint d) = cls_conf F (cls_side F 0 [S d]).
-Hypothesis HAiC : forall d, d < fm_b F - 1 -> 0 < lr_cb (Aint d).
+(** *** The interior arms, one per digit below the top and residue *)
+Hypothesis Hst  : 0 < st.
+Hypothesis HAiS : forall d r, d < fm_b F - 1 -> r < st ->
+  RuleSound tm (negb (fm_left F)) (fm_left F) (Aint d r).
+Hypothesis HAiL : forall d r, d < fm_b F - 1 -> r < st ->
+  lr_lhs (Aint d r) = cls_conf F (cls_side F (fm_b F - 1) r st [d]).
+Hypothesis HAiR : forall d r, d < fm_b F - 1 -> r < st ->
+  lr_rhs (Aint d r) = cls_conf F (cls_side F 0 r st [S d]).
+Hypothesis HAiC : forall d r, d < fm_b F - 1 -> r < st -> 0 < lr_cb (Aint d r).
 
 (** *** The fill arm, at both tails known empty *)
 Hypothesis HAfS : RuleSound tm true true Afill.
@@ -781,8 +798,11 @@ Proof.
     apply Forall_app in Hbnd as [Hrun Hrest'].
     inversion Hrest' as [|? ? Hdb Hrest]; subst.
     assert (Hdlt : d < fm_b F - 1) by lia.
+    assert (Hn : n mod st + st * (n / st) = n).
+    { pose proof (Nat.div_mod_eq n st). lia. }
+    assert (Hr : n mod st < st) by (apply Nat.mod_upper_bound; lia).
     exists (repeat 0 n ++ S d :: rest, p, 0).
-    exists (lr_ca (Aint d) * n + lr_cb (Aint d)).
+    exists (lr_ca (Aint d (n mod st)) * (n / st) + lr_cb (Aint d (n mod st))).
     split; [|split].
     + assert (Hns : fam_next F (repeat (fm_b F - 1) n ++ d :: rest) 0
                     = Some (repeat 0 n ++ S d :: rest))
@@ -790,15 +810,19 @@ Proof.
       unfold fam_succ. rewrite Hns.
       destruct (fam_is_top F (repeat (fm_b F - 1) n ++ d :: rest));
         [rewrite Hfto|]; reflexivity.
-    + pose proof (HAiC d Hdlt). nia.
-    + apply (lap_from_arm tm F (Aint d) (negb (fm_left F)) (fm_left F)
-               (cls_tail F rest 0) n
-               (cls_side F (fm_b F - 1) [d]) (cls_side F 0 [S d]));
+    + pose proof (HAiC d (n mod st) Hdlt Hr). nia.
+    + apply (lap_from_arm tm F (Aint d (n mod st))
+               (negb (fm_left F)) (fm_left F)
+               (cls_tail F rest 0) (n / st)
+               (cls_side F (fm_b F - 1) (n mod st) st [d])
+               (cls_side F 0 (n mod st) st [S d]));
         try (apply HAiS || apply HAiL || apply HAiR); try assumption.
       * intros He. unfold tailL. destruct (fm_left F); [discriminate|reflexivity].
       * intros He. unfold tailR. rewrite He. reflexivity.
-      * apply (fam_cells_class F (fm_b F - 1) n [d] rest 0).
-      * apply (fam_cells_class F 0 n [S d] rest 0).
+      * rewrite <- Hn at 1.
+        apply (fam_cells_class F (fm_b F - 1) (n mod st) st (n / st) [d] rest 0).
+      * rewrite <- Hn at 1.
+        apply (fam_cells_class F 0 (n mod st) st (n / st) [S d] rest 0).
 Qed.
 
 Theorem board_neverqh : NeverQuasiHaltsSt tm.

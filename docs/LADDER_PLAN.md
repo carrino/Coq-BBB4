@@ -1124,6 +1124,55 @@ recalled: the fill arm's guaranteed block copy MUST be materialised into
 `RU` is still unexercised -- both class arms derive with base steps only, so
 the ladder remains one level deep in practice.  4h(c) is unchanged.
 
+### The live core, swept, and where the other rows actually stop
+
+All 61 remaining core rows re-certified at HEAD (`valfam --kmax 9 --cap 150`).
+The breakdown is not the one this session was handed, and the difference is
+worth recording:
+
+| | rows | |
+|---|---:|---|
+| no value family at any anchor | 22 | wave work |
+| closed, quasihalts (`live = BCD`) | 11 | needs the QH-witness closer |
+| closed, `live = ABCD`, gray | 6 | needs the `(gray, 2)` `ClassSucc` |
+| closed, `live = ABCD`, two phases | 3 | needs the phase cycle in `Inv` |
+| closed, `live = ABCD`, binary/step-1/one-phase | **10** | this session's target |
+| time cap | 4 | |
+
+and of the ten, **two board** and eight stop at ONE place, which was not on
+anyone's list:
+
+**The carry ripple's step count is not affine in the run length.**  `LRule`
+carries `ca*j + cb`.  Measured, walking the run from `t^n ++ d` to
+`0^n ++ (d+1)` for n = 1..10:
+
+    boarded rows (digit word 2 cells)   4n+4, 4n+8, 6n+6        affine
+    4 rows       (digit word 1 cell)    8,6,16,10,24,14,...     TWO affine laws,
+                                        4,12,8,20,12,28,...     one per parity of n
+    2 rows       (digit word 1 cell)    6,12,20,30,42,56,...    (n+1)(n+2), quadratic
+    2 rows                              no chain at any n       not yet diagnosed
+
+The three rows that board all have TWO-cell digit words; every row that stops
+here has a one-cell word.  That is not a coincidence: with a one-cell digit
+the head's parity across the run is part of the state, so the cost either
+alternates or accumulates.
+
+`cls_side` now carries a STRIDE for exactly this reason -- the class is
+`t^(r + s*m) ++ w ++ rest`, one arm per residue, each affine in `m` -- and
+the emitter tries `s = 1, 2, 3, 4`.  It is not enough for the four
+parity rows: at `s = 2` the odd residue derives (`4m+4`, as predicted) and
+the even one does not, because its arm needs a guaranteed block copy
+materialised into `s_pre` the way the fill arm's does, and then `m = 0` is
+no longer covered by it.  **So the next widening is known and small: the
+interior arm needs the same [m1] offset the fill arm already has, plus a
+separate arm for the residue's own `m = 0`.**  Four rows.
+
+The two quadratic rows are a different matter and they are `RULE_LADDER` 5's
+table row, not a gap in the emitter: no stride and no offset makes
+`(n+1)(n+2)` affine.  They want either `RU` (derive the class arm by
+induction on the run, which is what the ladder is FOR and what 4h(c) records
+as still unexercised) or a count language with a product in it.
+
 ### What this says about the next session
 
 The order 4h implies still holds, and the two next items are now cheaper than

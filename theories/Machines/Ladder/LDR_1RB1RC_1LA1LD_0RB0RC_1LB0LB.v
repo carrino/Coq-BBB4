@@ -570,18 +570,19 @@ Proof. eapply arm_sound; [exact rules_sound_1RB1RC_1LA1LD_0RB0RC_1LB0LB | exact 
 
     [board_neverqh] consumes them, the boot, and one chain per state, and
     returns the machine-level theorem. *)
-Definition iarm0_1RB1RC_1LA1LD_0RB0RC_1LB0LB : LRule :=
+Definition iarm0_0_1RB1RC_1LA1LD_0RB0RC_1LB0LB : LRule :=
   mkLRule (mkC StB (mkS [S1] [] 0 0 []) S0 (mkS [] [S1;S1] 1 0 [S0;S1]))
           (mkC StB (mkS [S1] [] 0 0 []) S0 (mkS [] [S0;S1] 1 0 [S1;S1])) 6 6.
-Definition ch_iarm0_1RB1RC_1LA1LD_0RB0RC_1LB0LB : list rstep := [RB (SWin 2);RB (SCycR 2);RB (SWin 4);RB (SCycL 4 0)].
-Lemma ok_iarm0_1RB1RC_1LA1LD_0RB0RC_1LB0LB :
-  check_arm tm true false rules iarm0_1RB1RC_1LA1LD_0RB0RC_1LB0LB ch_iarm0_1RB1RC_1LA1LD_0RB0RC_1LB0LB = true.
+Definition ch_iarm0_0_1RB1RC_1LA1LD_0RB0RC_1LB0LB : list rstep := [RB (SWin 2);RB (SCycR 2);RB (SWin 4);RB (SCycL 4 0)].
+Lemma ok_iarm0_0_1RB1RC_1LA1LD_0RB0RC_1LB0LB :
+  check_arm tm true false rules iarm0_0_1RB1RC_1LA1LD_0RB0RC_1LB0LB
+            ch_iarm0_0_1RB1RC_1LA1LD_0RB0RC_1LB0LB = true.
 Proof. vm_compute. reflexivity. Qed.
 
-Definition iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB (d : nat) : LRule :=
-  match d with
-  | 0 => iarm0_1RB1RC_1LA1LD_0RB0RC_1LB0LB
-  | _ => iarm0_1RB1RC_1LA1LD_0RB0RC_1LB0LB   (* unreachable: the closure asks only d < b - 1 *)
+Definition iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB (d r : nat) : LRule :=
+  match d, r with
+  | 0, 0 => iarm0_0_1RB1RC_1LA1LD_0RB0RC_1LB0LB
+  | _, _ => iarm0_0_1RB1RC_1LA1LD_0RB0RC_1LB0LB   (* unreachable: only d < b-1 and r < stride *)
   end.
 
 (** The fill arm.  Both tails are known empty -- it is the only arm that
@@ -605,35 +606,56 @@ Definition vis_1RB1RC_1LA1LD_0RB0RC_1LB0LB (q : St) : list lstep :=
   | StD => [SWin 4;SCycR 2;SWinR 5]
   end.
 
-Lemma iarm_sound_1RB1RC_1LA1LD_0RB0RC_1LB0LB : forall d, d < fm_b FAM - 1 ->
-  RuleSound tm (negb (fm_left FAM)) (fm_left FAM) (iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB d).
+Lemma iarm_sound_1RB1RC_1LA1LD_0RB0RC_1LB0LB : forall d r, d < fm_b FAM - 1 -> r < 1 ->
+  RuleSound tm (negb (fm_left FAM)) (fm_left FAM) (iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB d r).
 Proof.
-  intros d Hd. vm_compute in Hd.
-  destruct d as [|d]; [eapply arm_sound; [exact rules_sound_1RB1RC_1LA1LD_0RB0RC_1LB0LB | exact ok_iarm0_1RB1RC_1LA1LD_0RB0RC_1LB0LB]|].
+  intros d r Hd Hr. vm_compute in Hd.
+  destruct d as [|d].
+  {
+    destruct r as [|r].
+    { eapply arm_sound; [exact rules_sound_1RB1RC_1LA1LD_0RB0RC_1LB0LB | exact ok_iarm0_0_1RB1RC_1LA1LD_0RB0RC_1LB0LB]. }
+    exfalso; lia.
+  }
   exfalso; lia.
 Qed.
 
-Lemma iarm_lhs_1RB1RC_1LA1LD_0RB0RC_1LB0LB : forall d, d < fm_b FAM - 1 ->
-  lr_lhs (iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB d) = cls_conf FAM (cls_side FAM (fm_b FAM - 1) [d]).
+Lemma iarm_lhs_1RB1RC_1LA1LD_0RB0RC_1LB0LB : forall d r, d < fm_b FAM - 1 -> r < 1 ->
+  lr_lhs (iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB d r)
+    = cls_conf FAM (cls_side FAM (fm_b FAM - 1) r 1 [d]).
 Proof.
-  intros d Hd. vm_compute in Hd.
-  destruct d as [|d]; [vm_compute; reflexivity|].
+  intros d r Hd Hr. vm_compute in Hd.
+  destruct d as [|d].
+  {
+    destruct r as [|r].
+    { vm_compute; reflexivity. }
+    exfalso; lia.
+  }
   exfalso; lia.
 Qed.
 
-Lemma iarm_rhs_1RB1RC_1LA1LD_0RB0RC_1LB0LB : forall d, d < fm_b FAM - 1 ->
-  lr_rhs (iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB d) = cls_conf FAM (cls_side FAM 0 [S d]).
+Lemma iarm_rhs_1RB1RC_1LA1LD_0RB0RC_1LB0LB : forall d r, d < fm_b FAM - 1 -> r < 1 ->
+  lr_rhs (iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB d r) = cls_conf FAM (cls_side FAM 0 r 1 [S d]).
 Proof.
-  intros d Hd. vm_compute in Hd.
-  destruct d as [|d]; [vm_compute; reflexivity|].
+  intros d r Hd Hr. vm_compute in Hd.
+  destruct d as [|d].
+  {
+    destruct r as [|r].
+    { vm_compute; reflexivity. }
+    exfalso; lia.
+  }
   exfalso; lia.
 Qed.
 
-Lemma iarm_cb_1RB1RC_1LA1LD_0RB0RC_1LB0LB : forall d, d < fm_b FAM - 1 ->
-  0 < lr_cb (iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB d).
+Lemma iarm_cb_1RB1RC_1LA1LD_0RB0RC_1LB0LB : forall d r, d < fm_b FAM - 1 -> r < 1 ->
+  0 < lr_cb (iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB d r).
 Proof.
-  intros d Hd. vm_compute in Hd.
-  destruct d as [|d]; [vm_compute; lia|].
+  intros d r Hd Hr. vm_compute in Hd.
+  destruct d as [|d].
+  {
+    destruct r as [|r].
+    { vm_compute; lia. }
+    exfalso; lia.
+  }
   exfalso; lia.
 Qed.
 
@@ -647,7 +669,7 @@ Proof. vm_compute. reflexivity. Qed.
     Stage-B kernel discharged, or an equation two [vm_compute]s decide. *)
 Theorem nqh_1RB1RC_1LA1LD_0RB0RC_1LB0LB : NeverQuasiHaltsSt tm.
 Proof.
-  apply (board_neverqh tm FAM iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB farm_1RB1RC_1LA1LD_0RB0RC_1LB0LB vis_1RB1RC_1LA1LD_0RB0RC_1LB0LB
+  apply (board_neverqh tm FAM iarm_1RB1RC_1LA1LD_0RB0RC_1LB0LB 1 farm_1RB1RC_1LA1LD_0RB0RC_1LB0LB vis_1RB1RC_1LA1LD_0RB0RC_1LB0LB
                        [0] 9 1 1).
   - vm_compute; lia.
   - vm_compute; reflexivity.
@@ -661,6 +683,7 @@ Proof.
   - repeat constructor.
   - vm_compute; lia.
   - exact boot_1RB1RC_1LA1LD_0RB0RC_1LB0LB.
+  - lia.
   - exact iarm_sound_1RB1RC_1LA1LD_0RB0RC_1LB0LB.
   - exact iarm_lhs_1RB1RC_1LA1LD_0RB0RC_1LB0LB.
   - exact iarm_rhs_1RB1RC_1LA1LD_0RB0RC_1LB0LB.

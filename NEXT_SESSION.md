@@ -1378,6 +1378,23 @@ split there is nothing left to decide: the two classes are disjoint because
 shortcut -- but it means 4f's argument does not survive contact with a
 proved split, and the subsumption order is load-bearing for the SEARCH only.
 
+**Where the other rows stop, measured.**  Swept all 61 remaining core rows.
+Ten reach the closure's filter; two board.  The other eight stop at ONE
+place and it was not on the list: **the carry ripple's step count is not
+affine in the run length**, and `LRule` carries `ca*j + cb`.  Four rows are
+two affine laws interleaved by the parity of the run length; two are
+genuinely quadratic (`(n+1)(n+2)`); two find no chain at all.  Every row that
+stops here has a ONE-cell digit word; all three that board have two-cell
+words.  With a one-cell digit the head's parity across the run is part of the
+state, so the cost alternates or accumulates.
+
+`cls_side` carries a STRIDE now for this reason and the emitter tries
+s = 1..4.  Not enough for the parity four: at s = 2 the odd residue derives
+(4m+4) and the even one does not -- it needs the same guaranteed-block-copy
+materialisation the fill arm has, and then m = 0 needs its own arm.  That
+widening is known, small, and worth four boards.  The quadratic two are
+RULE_LADDER 5's count language, not an emitter gap.
+
 **Compute note.**  `valfam.py` and `make -jN` fight over 4 cores badly; a
 core sweep that should run at ~16 s/row ran at ~78 s/row against a build.
 Run one or the other.
