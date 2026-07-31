@@ -1409,6 +1409,18 @@ _Everything below is a file that compiles or a number a script printed.  The
 kernel at `LadderCheck.v`, the boards under `theories/Machines/Ladder/`, the
 audit from `make closeout`.  Coq 8.18.0._
 
+**Verified to the end.**  The full tree builds and `make closeout` runs in
+full:
+
+    closeout_partial : forall tm, Deferred D_census tm ->
+                       boarded tm \/ skipped D_remaining tm
+
+    Eval vm_compute in (List.length CoreRows.remaining_rows)  =  43
+
+axiom footprint `functional_extensionality_dep` only, and
+`census_cache.py --check` MATCH.  The 43 is the kernel's number, not only the
+audit's.
+
 ### The gate 4k set, answered: one scheme
 
 4k's gate was that the interior arm and the fill arm must share ONE arm
