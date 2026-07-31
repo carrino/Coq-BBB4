@@ -81,14 +81,24 @@ on type-in-type, unsafe (co)fixpoints, or assumed positivity.
 **It is not a proof that BBB(4) = 32,779,478.**  Two things are missing
 before the record itself is a theorem here:
 
-1. **The champion's board is not yet CONSUMED.**  `1RB1LD_1RC1RB_1LC1LA_0RC0RD`
-   erases its whole working region and returns to a blank tape in `StC` at step
-   32,779,478, then spins left in `C` forever.  That board now exists and
-   compiles — `theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`,
-   one `vm_compute` over a binary-numeral fuel (`Checkers/TCyclerN.cstepsN`),
-   ~17 s — but the closeout tables have not been regenerated against it, so the
-   champion is still one of the 43 rows `bbb4_target` skips.  Until
-   `make closeout` runs and `D_remaining` drops it, **the value is not proved.**
+1. **The champion's board cannot be CONSUMED as `boarded` is defined.**
+   `1RB1LD_1RC1RB_1LC1LA_0RC0RD` erases its whole working region and returns to
+   a blank tape in `StC` at step 32,779,478, then spins left in `C` forever.
+   That board exists and compiles —
+   `theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`, one
+   `vm_compute` over a binary-numeral fuel (`Checkers/TCyclerN.cstepsN`), ~17 s
+   — proving `NonHalt /\ QHBound 32779478 /\ QuasiHaltsSt` at the champion's own
+   score.  But `boarded` demands `QHBound B_board` with `B_board` = **66,349**
+   (`CloseoutKit.v`), and 32,779,478 is not ≤ 66,349.  So the champion does not
+   satisfy `boarded`, `tools/closeout/inventory.py` refuses it by the same
+   arithmetic (`bound > B_BOARD`), and **`make closeout` does not drop it** —
+   verified 2026-07-31: a full run leaves every file byte-identical and the
+   count at 43.
+   Admitting it is a `CloseoutKit` change, not a regen: either raise `B_board`
+   (which weakens `bbb4_decided_le_prev_champion` for all 5,098 boarded rows) or
+   give `boarded` a third disjunct for exact-score quasihalters above `B_board`,
+   carried through `covers_*_at` and the swap/mirror lemmas.  Until then, **the
+   value is not proved.**
 2. **The 43 (+ their 15 shadows).**  Any of them could, for all this
    development knows, be a quasihalter with a larger score.  That is what
    undecided means.
