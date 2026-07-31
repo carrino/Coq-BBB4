@@ -1,0 +1,11 @@
+1RB1LA_0LA0LC_1LC1RD_0RB0RD       STOP  interior arm: N0=3 st=4: interior class 0 r=3: no chain  0s
+1RB1LA_1LC0RD_0RA0LC_0LA1RD       STOP  interior arm: N0=3 st=4: interior class 0 r=0: chain lands off the rhs  0s
+1RB1LA_0LA1RC_0LD0RC_1LD0RB       STOP  interior arm: N0=3 st=4: interior class 0 r=3: no chain  0s
+1RB0LD_0LC0RB_1LA1RC_0RC1LD       STOP  interior arm: N0=3 st=4: interior class 0 r=0: chain lands off the rhs  0s
+1RB---_0LB1RC_1LB0RD_1LC0RD       BOTH ARMS  2 classes, interior N0=1 st=1 (4 arms), fill N0=1 st=1 (1 arms)  0s
+1RB---_0LB1RC_1LD0RC_1LB1RC       BOTH ARMS  2 classes, interior N0=0 st=1 (2 arms), fill N0=1 st=1 (1 arms)  0s
+1RB---_1LC0RB_1LD1RB_0LD1RB       BOTH ARMS  2 classes, interior N0=0 st=1 (2 arms), fill N0=1 st=1 (1 arms)  0s
+1RB---_1LC0RD_0LC1RB_1LB0RD       BOTH ARMS  2 classes, interior N0=1 st=1 (4 arms), fill N0=1 st=1 (1 arms)  0s
+1RB---_1LC1RD_0LC1RD_1LB0RD       BOTH ARMS  2 classes, interior N0=0 st=1 (2 arms), fill N0=1 st=1 (1 arms)  0s
+
+5 of 9 rows have both class arms
