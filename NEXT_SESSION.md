@@ -246,6 +246,19 @@ via `LapGlue.glue_neverqh` — **and with it its `0RB` shadow**
   sits under the whole census and closeout, so moving a lemma into it costs a
   full rebuild of both.  Promote it when something else needs it.
 
+  **DECIDED (2026-07-31, John): do NOT build a shadow-board generator yet.**
+  Write each shadow by hand alongside its core row, the way
+  `RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v` was written.  The shape is uniform
+  enough that a generator is realistic -- `shadowlib.py` already computes
+  `(shadow, q*, t, core, ops)` for all 14, 13 of which have `t = 1` and
+  `q* = StB`, over only five distinct op chains -- but it is not worth the
+  build cost until it is earning.  **Revisit when a shadow does NOT fall in
+  the same session as its core row**, which is the signal that the hand route
+  has stopped being cheap.  The likeliest cause, and the thing to check first
+  if it happens: a core row boarded as `iqh` rather than never-QH goes through
+  `Reroot.qhbound_reroot`, not `neverqh_reroot`, and that one shifts the bound
+  by the prefix length and carries a `B + t <= 2000` side condition.
+
 - **The wave-35 diagnosis was wrong, and the correction is the reusable
   part.**  Wave-35 found this row at a CARRY-STRADDLING anchor and concluded
   the missing piece was a `LapDecider` template whose anchor straddles the
