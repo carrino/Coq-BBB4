@@ -102,6 +102,37 @@ The same table read the other way is the positive half: **on M2 and M3
 every state recurs on an `O(width)` schedule**, so the tier is *not*
 excluded there — see section 5.
 
+### 3a. The same test over the WHOLE core list, and it splits 13/2
+
+`gaps.py` is not specific to these four; it is a cheap a-priori triage for
+the tier on any row.  Run over all 15 open core rows (3M steps each), worst
+gap of any state against the final tape width:
+
+    1RB---_0LC1RD_1LB1RC_1LB0RD    width 28    worst C   30    ratio 1.07
+    1RB---_0LC1RD_1LB1RD_1LB0RD    width 28    worst C   31    ratio 1.11
+    1RB---_1LC0RB_0LD1RB_1LC1RB    width 28    worst D   31    ratio 1.11
+    1RB---_1LC0RB_0LD1RB_1LC1RD    width 28    worst D   30    ratio 1.07
+    1RB---_1LC1RB_0LB1RD_1LC0RD    width 28    worst B   30    ratio 1.07
+    1RB---_1LC1RD_0LB1RD_1LC0RD    width 28    worst B   31    ratio 1.11
+    1RB0RB_0LC1RD_1LC1LA_0LA1RB    width 28    worst D   31    ratio 1.11
+    1RB0RB_1LC0RC_1RA0LD_0LB0LC    width 2255  worst D 5985    ratio 2.65
+    1RB0RD_1LB1LC_1RC0RA_0LB1RD    width 39    worst A   39    ratio 1.00
+    1RB1LC_0LC0RB_1LA1RD_0LA0RD    width 32    worst D 262170  ratio 8192.81   DEAD
+    1RB1LC_1LB1RA_0LC0LD_0RA0RD    width 27    worst B   32    ratio 1.19
+    1RB1LC_1LC1RA_0LC0LD_0RA0RD    width 27    worst B   32    ratio 1.19
+    1RB1LD_1LC1RA_0RB0LC_0RA0LD    width 31    worst D 196633  ratio 6343.00   DEAD
+    1RB1RC_1LA0LB_1LD0RD_1LB0RC    width 26    worst C   48    ratio 1.85
+    1RB1RC_1LA1RA_0RC1LD_1LB0LD    width 53    worst C   55    ratio 1.04
+
+**Thirteen of the fifteen sit between 1.00 and 2.65** — a linear measure is
+not ruled out on any of them, on any state, and `1RB0RB_1LC0RC_..`'s 2255-cell
+tape at ratio 2.65 says the test is not just seeing small tapes.  **Two are
+four orders of magnitude out.**  There is no middle: the core list is either
+comfortably inside the tier's reach or hopelessly outside it, and this one
+command says which.  For the thirteen, `docs/REACHST_TIER.md`'s route is
+still open and every "missing q" the sweeps report is a search gap worth
+attacking; for the two, it is a wall and the counter must be read instead.
+
 ## 4. THE POSITIVE: `StD` on M1 is live, and here is the proof
 
 `StD` fires exactly at macro rule 5 (and at rule 2 with `R=0`, which only

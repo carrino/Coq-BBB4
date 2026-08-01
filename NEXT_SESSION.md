@@ -4849,16 +4849,22 @@ The four rows handed over as "easy" were `1RB1LC_0LC0RB_1LA1RD_0LA0RD`,
 the mathematics plus one permanent negative; read the write-up before
 touching them again.
 
-- **RUN `tools/mxdys4/gaps.py` BEFORE ANY `ReachSt` WORK, ON ANY ROW.**  It
-  measures the worst gap between consecutive visits of each state against
-  the tape width.  `ReachStI`'s measure is linear in the half-tape `S1`
+- **RUN `tools/mxdys4/gaps.py` BEFORE ANY `ReachSt` WORK, ON ANY ROW, AND
+  THE WHOLE CORE LIST SPLITS 13/2.**  It measures the worst gap between
+  consecutive visits of each state against the tape width.  `ReachStI`'s measure is linear in the half-tape `S1`
   counts, so it can only certify a goal reached in `O(width)` steps.  On
   rows 1 and 4 `StD` recurs on a `Theta(2^width)` schedule (gap 262170 at
   width 32; 196633 at width 31), so **the whole tier is closed on those two
   rows forever** — not a search failure, and no wider certificate class
   helps.  Every sweep that reports them "missing D" is reporting a wall.
   The same table read the other way says rows 2 and 3 are `O(width)` on all
-  four states, so the tier is *not* excluded there.
+  four states, so the tier is *not* excluded there.  Over all 15 open core rows the
+  worst-gap/width ratio is between **1.00 and 2.65 on thirteen of them**
+  (including `1RB0RB_1LC0RC_1RA0LD_0LB0LC` at width 2255, so this is not an
+  artefact of small tapes) and **8193 and 6343 on the two rows above**.
+  There is no middle.  For the thirteen the tier is still open and every
+  "missing q" the sweeps report is a search gap worth attacking; for the two
+  it is a wall.  Full table in `docs/WAVE36_MXDYS_FOUR.md` section 3a.
 
 - **A row whose orbit keeps ONE half-tape a bare unary run is a finite
   word-rewriting system, and `tools/mxdys4/extract.py` reads it off.**  Row
