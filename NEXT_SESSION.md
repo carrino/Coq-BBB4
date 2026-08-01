@@ -4858,7 +4858,9 @@ touching them again.
   rows forever** — not a search failure, and no wider certificate class
   helps.  Every sweep that reports them "missing D" is reporting a wall.
   The same table read the other way says rows 2 and 3 are `O(width)` on all
-  four states, so the tier is *not* excluded there.  Over all 15 open core rows the
+  four states, so the tier is *not* excluded there.  Over the 15 core rows open when this
+  wave ran (#118 has since taken the six `1RB---`, leaving nine -- **four of
+  which are this wave's four**) the
   worst-gap/width ratio is between **1.00 and 2.65 on thirteen of them**
   (including `1RB0RB_1LC0RC_1RA0LD_0LB0LC` at width 2255, so this is not an
   artefact of small tapes) and **8193 and 6343 on the two rows above**.
