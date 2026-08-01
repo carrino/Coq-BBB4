@@ -55,7 +55,7 @@ def run(spec, tape, pos, st, stop, limit=4000000):
         pos += d
         st = ns
         n += 1
-        if stop(st, pos):
+        if stop(st, pos, tape):
             return ("STOP", n, tape)
     return ("LIMIT", n, tape)
 
@@ -76,7 +76,7 @@ def check_bc(spec, chdL, R1):
     the cell the run must LAND on without reading; cell +1 = R's head.
     Everything else is unknown."""
     t = {0: 0, -1: 1, -2: chdL, 1: R1}
-    v, n, got = run(spec, t, 0, 1, lambda st, p: st == 3 and p == -2)
+    v, n, got = run(spec, t, 0, 1, lambda st, p, t: st == 3 and p == -2)
     if v != "STOP":
         return "%s(%d)" % (v, n)
     return verdict(got, {-2: chdL, -1: 0, 0: 1, 1: R1}, n)
@@ -100,7 +100,7 @@ def check_core(spec, j, ovf, chdL):
     t[2 * j + 2] = 0
     if not ovf:
         t[2 * j + 3] = 0          # chd of the tail Wp q, which starts S0
-    v, n, got = run(spec, t, 0, 3, lambda st, p: st == 3 and p == 0)
+    v, n, got = run(spec, t, 0, 3, lambda st, p, t: st == 3 and p == 0)
     if v != "STOP":
         return "%s(%d)" % (v, n)
     want = {c: 0 for c in range(-1, 2 * j + 2)}
@@ -129,13 +129,41 @@ def check_loop(spec, k, d, chdM):
     """(qD, (rep [S0] d ++ S1::M, S1, rep [S0] (2k+1) ++ S1::R))
    --> (qD, (ctl M, chd M, rep [S0] (2k+3+d) ++ S1::R))"""
     t, end, hi = loop_tape(k, d, chdM)
-    v, n, got = run(spec, t, 0, 3, lambda st, p: st == 3 and p == end)
+    v, n, got = run(spec, t, 0, 3, lambda st, p, t: st == 3 and p == end)
     if v != "STOP":
         return "%s(%d)" % (v, n), n
     want = {c: 0 for c in range(end, hi)}
     want[end] = chdM
     want[hi] = 1
     return verdict(got, want, n), n
+
+
+def fr(spec, k):
+    """step count of the field run at width k"""
+    t = {0: 0, -1: 0}
+    for i in range(2 * k):
+        t[1 + i] = 0
+    t[1 + 2 * k] = 1
+    goal = Fld(2 ** (k + 1) - 1)
+    return run(spec, t, 0, 3,
+               lambda st, q, tp: (st == 3 and q == 0 and all(
+                   tp.get(1 + i, 0) == c for i, c in enumerate(goal))))[1]
+
+
+def cc(spec, t_, m, d):
+    """step count of CASC(t, m, d)"""
+    tp = {0: 1}
+    for c in range(1, 2 * t_ + 1):
+        tp[-c] = 1
+    for c in range(1, d + 1):
+        tp[-(2 * t_ + c)] = 0
+    tp[-(2 * t_ + d + 1)] = 1
+    tp[-(2 * t_ + d + 2)] = 0
+    for c in range(1, 2 * m + 2):
+        tp[c] = 0
+    tp[2 * m + 2] = 1
+    end = -(2 * t_ + d + 2)
+    return run(spec, tp, 0, 3, lambda st, q, x: st == 3 and q == end)[1]
 
 
 def loop_cost(spec, k, d=0):
@@ -151,7 +179,130 @@ def lap_cost(spec, j):
     t[2 * j + 1] = 0
     t[2 * j + 2] = 0
     t[2 * j + 3] = 0
-    return run(spec, t, 0, 3, lambda st, p: st == 3 and p == 0)[1]
+    return run(spec, t, 0, 3, lambda st, p, t: st == 3 and p == 0)[1]
+
+
+# ------------------------------------------------------- Fld, MARK, CASC
+#
+# The three shapes `Hloop` at k >= 1 decomposes into.  None of them was
+# checked when §4z was written -- only the aggregate step count was -- so
+# these are the ones a proof would otherwise be written blind against.
+
+def Fld(p):
+    """`Bin3Lap.Fld`: the field word, 2 cells a digit, LSB first, with the
+    TOP bit dropped -- the marker `S1` above the field plays its part.
+
+    `Wp p = Fld p ++ [S0;S1]`, so `cview` transfers verbatim."""
+    out = []
+    while p > 1:
+        out += [0, p & 1]
+        p >>= 1
+    return out
+
+
+def cview(p):
+    j = 0
+    while p > 1 and p & 1:
+        j += 1
+        p >>= 1
+    return (j + 1, None) if p == 1 else (j, p >> 1)
+
+
+def check_fld_inc(spec, p):
+    """One field increment at a GENERAL value, not just at a power of two:
+
+    (qD, (L, S0, Fld p ++ S1::R)) --> (qD, (L, S0, Fld (succ p) ++ S1::R))
+
+    for every interior `p`.  This is `core` at `j = fst (cview p)` read in
+    `Fld` terms, and it is what the field run iterates."""
+    f = Fld(p)
+    t = {0: 0, -1: 0}
+    for i, c in enumerate(f):
+        t[1 + i] = c
+    t[1 + len(f)] = 1                      # the marker
+    v, n, got = run(spec, t, 0, 3, lambda st, q, tp: st == 3 and q == 0)
+    if v != "STOP":
+        return "%s(%d)" % (v, n)
+    g = Fld(p + 1)
+    want = {0: 0, -1: 0, 1 + len(g): 1}
+    for i, c in enumerate(g):
+        want[1 + i] = c
+    return verdict(got, want, n)
+
+
+def check_field_run(spec, k):
+    """The whole field run: Fld (2^k) (all clear) up to Fld (2^(k+1) - 1)
+    (= rep [S0;S1] k, all set), by repeated increments at ONE anchor."""
+    t = {0: 0, -1: 0}
+    for i in range(2 * k):
+        t[1 + i] = 0
+    t[1 + 2 * k] = 1
+    goal = Fld(2 ** (k + 1) - 1)
+
+    def stop(st, q, tp):
+        return (st == 3 and q == 0
+                and all(tp.get(1 + i, 0) == c for i, c in enumerate(goal)))
+    v, n, got = run(spec, t, 0, 3, stop)
+    if v != "STOP":
+        return "%s(%d)" % (v, n)
+    want = {0: 0, -1: 0, 1 + 2 * k: 1}
+    for i, c in enumerate(goal):
+        want[1 + i] = c
+    return verdict(got, want, n)
+
+
+def check_mark(spec, i):
+    """The step the field run CANNOT take: the all-set field meets the
+    marker where a pad should be.
+
+    (qD, (L, S0, rep [S0;S1] i ++ S1::R))
+      --2i+3-->  (qD, (rep [S1] (2i-2) ++ S0::L, S1, S0::S1::R))
+
+    The outward scan crosses i set digits, `A1` fires on the MARKER, and
+    `C1` clears the digit below it -- so the head comes to rest ON a set
+    cell, which is what the cascade then eats two at a time."""
+    t = {0: 0, -1: 0}
+    for c in range(i):
+        t[1 + 2 * c] = 0
+        t[2 + 2 * c] = 1
+    t[2 * i + 1] = 1                       # the marker
+    end = 2 * i - 1
+    v, n, got = run(spec, t, 0, 3, lambda st, q, tp: st == 3 and q == end)
+    if v != "STOP":
+        return "%s(%d)" % (v, n)
+    want = {-1: 0, 0: 0, 2 * i: 0, 2 * i + 1: 1}
+    for c in range(1, 2 * i):
+        want[c] = 1
+    return verdict(got, want, n, "" if n == 2 * i + 3 else " [!=2i+3]")
+
+
+def check_casc(spec, t_, m, d):
+    """The descending cascade, as ONE lemma with ONE induction:
+
+    (qD, (rep [S1] (2t) ++ rep [S0] d ++ S1::M, S1, rep [S0] (2m+1) ++ S1::R))
+ -> (qD, (ctl M, chd M, rep [S0] (2(m+t)+3+d) ++ S1::R))
+
+    Each turn is `Hloop` one level up, eating two set cells and laying down
+    two clear ones -- which is why the LAST turn carries `d+2` and every
+    other carries 0.  `t` counts the turns; the level `m` climbs."""
+    tp = {0: 1}
+    for c in range(1, 2 * t_ + 1):
+        tp[-c] = 1
+    for c in range(1, d + 1):
+        tp[-(2 * t_ + c)] = 0
+    tp[-(2 * t_ + d + 1)] = 1              # the S1 of S1::M
+    tp[-(2 * t_ + d + 2)] = 0              # chd M, landed on but never read
+    for c in range(1, 2 * m + 2):
+        tp[c] = 0
+    tp[2 * m + 2] = 1                      # the marker
+    end = -(2 * t_ + d + 2)
+    v, n, got = run(spec, tp, 0, 3, lambda st, q, x: st == 3 and q == end)
+    if v != "STOP":
+        return "%s(%d)" % (v, n)
+    want = {c: 0 for c in range(end, 2 * m + 2)}
+    want[2 * m + 2] = 1
+    # the run must lay rep [S0] (2(m+t)+3+d) between the head and the marker
+    return verdict(got, want, n)
 
 
 def main():
@@ -180,6 +331,41 @@ def main():
         print("         chd M = S1 costs identical: %s" % (
             [loop_cost(spec, k) for k in range(5)]
             == [check_loop(spec, k, 0, 1)[1] for k in range(5)]))
+
+
+        print("  Fld    Wp p = Fld p ++ [S0;S1], so cview transfers verbatim")
+        print("  fld+1  (qD,(L,S0,Fld p ++ S1::R)) ->"
+              " (qD,(L,S0,Fld (succ p) ++ S1::R))")
+        print("         " + "  ".join(
+            "p=%d %s" % (p, check_fld_inc(spec, p))
+            for p in range(2, 24) if cview(p)[1] is not None))
+        print("  field  Fld (2^k) ... Fld (2^(k+1)-1), one anchor, k = 1..5")
+        print("         " + "  ".join(
+            "k=%d %s" % (k, check_field_run(spec, k)) for k in range(1, 6)))
+        print("  MARK   (qD,(L,S0,rep[S0;S1] i ++ S1::R)) -2i+3->"
+              " (qD,(rep[S1](2i-2) ++ S0::L,S1,S0::S1::R))")
+        print("         " + "  ".join(
+            "i=%d %s" % (i, check_mark(spec, i)) for i in range(1, 7)))
+        print("  CASC   (qD,(rep[S1](2t) ++ rep[S0] d ++ S1::M,S1,"
+              "rep[S0](2m+1) ++ S1::R))")
+        print("      -> (qD,(ctl M,chd M,rep[S0](2(m+t)+3+d) ++ S1::R))")
+        for d in (0, 1, 2):
+            print("         d=%d  %s" % (d, "  ".join(
+                "t=%d,m=%d %s" % (t_, m, check_casc(spec, t_, m, d))
+                for t_ in range(4) for m in (0, 1))))
+
+        # --- the identity the proof follows, in one line ------------------
+        print("  Hloop = D1 ; field run ; MARK ; CASC -- and that is the whole"
+              " proof skeleton:")
+        for k in range(1, 6):
+            for d in (0, 1):
+                lhs = 1 + fr(spec, k) + (2 * k + 3) + cc(spec, k - 1, 0, d + 2)
+                rhs = loop_cost(spec, k, d)
+                print("         k=%d d=%d : 1 + %d + %d + %d = %-5d "
+                      "(LOOP=%d)  %s"
+                      % (k, d, fr(spec, k), 2 * k + 3,
+                         cc(spec, k - 1, 0, d + 2), lhs, rhs,
+                         "MATCH" if lhs == rhs else "NO"))
 
         # --- the decomposition, which is what §4y did not price -----------
         print("  Hloop's SHAPE.  If k >= 1 were one more carry induction the"
