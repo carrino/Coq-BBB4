@@ -303,9 +303,24 @@ unmeasured and is the cheapest next question (it takes minutes and no Coq).
 
 | row | gate | note |
 |---|---|---|
-| `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 | `no interior j = S j'` | wears a `HIGHER` label and the emitter finds **no family at any anchor** — `digit_words` names nothing.  But see below: it is the TWELFTH φ row, and the other eleven have all boarded. |
-| `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | gap ratio **1.00** — the tightest on the whole list |
-| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `no gap-free two-form family` | the last row of a bucket that went 10 → 1 without the gate ever being answered.  Gap ratio 2.65 on a 2,255-cell tape — the widest tape here, and still inside the tier.  **But wave 38 closed its two open routes: `StD` is permanently outside `ReachStI` (a `StD`-avoiding cycle raises `ones l`, so no `(B,C)` works — `docs/WAVE38_REST_FOUR.md` §2b) and the wave-36 lever does not apply.  Now the LEAST tractable of the four, not the most.** |
+| `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | gap ratio **1.00** — the tightest on the whole list.  THE LAST UNDECIDED (4,2) CORE ROW; its macro system is five of six rules read (`WAVE38_REST_FOUR.md` §4), the sixth (the `s=S1, R=0` leftward-sweep carry) still open. |
+
+**BOARDED, wave 39 (2026-08-01)** — the other two rows of this table, plus
+the last shadow, in one session (`NEXT_SESSION.md` §2b7):
+
+* `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 (was `no interior j = S j'`, the twelfth
+  φ row) — as `NeverQuasiHaltsSt` through its wave-38 macro system and the
+  `ones l + sval s` parity invariant, `Machines/Rest4/R2_*.v`; exactly the
+  transcription job `WAVE38_REST_FOUR.md` §3 said it had become.  Its 0RB
+  shadow `0RB1LC_1LC0LC_0RD1LA_1RD1RB` harvested in the same regen
+  (`Machines/Counters/SH_0RB1LC_1LC0LC_0RD1LA_1RD1RB.v`), so shadows are 0.
+* `1RB0RB_1LC0RC_1RA0LD_0LB0LC` (was `no gap-free two-form family`, "the
+  LEAST tractable of the four") — as `NeverQuasiHaltsSt` by a HAND lap
+  system: nine boundary words cycling at the left-turnaround anchor, laps
+  `96j + b_phi`, `StD` carried by the `cycL` zeroing sweep;
+  `Machines/Rest4/R3_*.v`.  The wave-38 `ReachStI` negative on `StD` stands
+  — the row went out AROUND the tier, not through it, one wave after §5's
+  caution about exactly this pattern.
 
 **BOARDED, wave 38** — `1RB1RC_1LA1RA_0RC1LD_1LB0LD` (was
 `no inner family at pow2 j`, gap ratio 1.04), through the ordinary

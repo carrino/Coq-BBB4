@@ -2894,6 +2894,9 @@ theories/Machines/Counters/B2L_1RB1LC_1LC1RA_0LC0LD_0RA0RD.v
 theories/Machines/Counters/SH_0RB0RA_1RC1LD_1LC1RB_0LD0LA.v
 theories/Machines/Counters/SH_0RB0RA_1RC1LD_1LD1RB_0LD0LA.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/SH_0RB1LC_1LC0LC_0RD1LA_1RD1RB.v
+
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
 theories/Closeout/CoreRows.v

@@ -1,5 +1,14 @@
 # Wave 38 — the last four core rows, measured end to end
 
+_**Postscript (wave 39, 2026-08-01):** rows 1 and 2 are BOARDED and row 2's
+shadow harvested — core 3 -> 1, shadows 0.  Row 2 went out exactly as §3
+below planned (`Machines/Rest4/R2_1RB0RB_0LC1RD_1LC1LA_0LA1RB.v`).  Row 1
+went out by a hand lap system at the left-turnaround anchor
+(`Machines/Rest4/R3_1RB0RB_1LC0RC_1RA0LD_0LB0LC.v`), the "quadratic-counter
+argument" §2d asks for; §2b's ReachStI negative stands, and §5's caution
+applied to row 1 one wave later.  Only row 3 (Drozd's sixth) remains; §4 is
+the live state of its reading.  Details: `NEXT_SESSION.md` §2b7._
+
 After wave 37 (mxdys's M1/M4) and the parallel base-2 pair board, the core
 undecided list was exactly four rows.  **Row 4 boarded during this session,
 from a parallel wave-38 session** (`KC3_1RB1RC_1LA1RA_0RC1LD_1LB0LD.v`,

@@ -465,6 +465,53 @@ before any Coq).  `kc3lem.py` is the one that paid: `INT` and `FRT` survive
 an unknown tail and `OVF` ABORTS, which is the probe reporting that
 `el = true` is load-bearing on the overflow branch and only there.
 
+## 2b7. Wave-39 (2026-08-01) — rows 1 and 2 board, the shadow harvests: core 3 -> 1, shadows 0
+
+Both remaining wave-38 rows with a mapped route (and one without) went out
+in one session.  **core undecided 3 -> 1, 0RB shadows 1 -> 0, settled
+5,152 -> 5,155 (99.98%).**  What remains of the (4,2) core is exactly
+`1RB0RD_1LB1LC_1RC0RA_0LB1RD` — Drozd's sixth, wave-38 §4's macro system,
+still missing its sixth rule (`s=S1, R=0`, the leftward-sweep carry).
+
+- **Row 2 (`1RB0RB_0LC1RD_1LC1LA_0LA1RB`, the phi row) was exactly the
+  transcription job §3 promised.**  `theories/Machines/Rest4/R2_*.v`: the
+  six rules, the composite parity invariant stated as "`ones l + sval s`
+  stays EVEN" (equivalent at rule 2's guard to §3c's "`ones l` is ODD",
+  but preserved by every rule, so no composite-map bookkeeping), and
+  `neverqh_of_live4`.  The liveness table in §3b over-delivered: `StB` is
+  step 1 of EVERY rule and `StC`/`StD` are step 2 of `R = 0` / `R >= 1`
+  respectively, so the only compositions needed are one or two macro steps.
+
+- **Row 1 (`1RB0RB_1LC0RC_1RA0LD_0LB0LC`) fell to a HAND lap system** —
+  the "quadratic-counter argument" §2d asked for, and §5's caution
+  ("untouchable by every liveness tier here and fall the same afternoon")
+  applied to this row too, one wave later.  At every left turnaround the
+  configuration is ONE-SIDED: `(StC, ([], S0, [1] 0^z W (011)^p T))` with
+  nine boundary words `W0..W8` cycling and `z = 24j + c_phi`,
+  `p = j + d_phi`, laps `96j + b_phi` — exact over 500+ laps.  A lap is
+  prep(3) / refill(3 per cell) / a BOUNDED `wsteps`-walled dance (6..66
+  steps; phase 3's window emits the new stripe) / a `cycL` zeroing sweep
+  (`[1 1] -> [0 0]`, `StD` every second step) / turn(3).  The Coq lap
+  lemma holds for EVERY even `z` and EVERY `p` — the invariant closes with
+  no arithmetic relation between them, so the quadratic law never has to
+  be stated.  Boot at `csteps 7455`, one `vm_compute`.  `StD`'s liveness
+  plus the three ReachStI-banked states close the row exactly as the R3
+  file header said they would.  **The §2b ReachStI negative stands** — it
+  is a statement about the tier, and the row went out around it, not
+  through it.
+
+- **The shadow (`0RB1LC_1LC0LC_0RD1LA_1RD1RB`) cost nobody anything:**
+  `make closeout`'s harvest emitted `SH_0RB1LC_1LC0LC_0RD1LA_1RD1RB.v`
+  from row 2's board in the same regen, exactly as gen_shadow.py §"when a
+  shadow does NOT fall in the same session as its core row" was built for.
+
+- Method note for the one remaining row: row 1's read came from anchoring
+  at LEFT-TURNAROUND extremes (a fresh global minimum every lap makes the
+  configuration one-sided, `l = []` for free) and diffing consecutive
+  anchors.  Drozd's sixth keeps `max R <= 31` at `StA`, so its anchor is
+  already one-sided the same way; if its sixth rule stays hard as a
+  rewrite rule, try the turnaround anchor instead.
+
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
