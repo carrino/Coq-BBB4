@@ -10,11 +10,10 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**4 rows as of this commit — 3 distinct core machines + 1 0RB
-re-root shadow.**  A shadow needs no new mathematics, but it does need its
-own board: boarding a core machine moves its shadow into `core_rows.txt`
-rather than settling it, so budget the pair (2026-08-01; worked example
-`Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v`).  The count moves every wave, so
+_**ONE row as of this commit — `1RB0RD_1LB1LC_1RC0RA_0LB1RD`, and no
+shadows.**  The shadow table is EMPTY for the first time since it was split
+out in #63: every 0RB re-root fell with its partner, exactly as designed
+(worked example `Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v`).  The count moves every wave, so
 treat the row files as the authority and this prose as a snapshot.  With
 tower #20 boarded on 2026-07-28 the (4,2) HOLDOUT list is closed, so this
 is the entire remaining problem.  (The wave-23 residue track boarded
@@ -93,12 +92,11 @@ lists partition `core_rows.txt` exactly):
 
 | n | furthest gate today |
 |--:|---|
-| 1 | no interior `j = S j'` chain |
 | 1 | no inner interior chain |
-| 1 | no gap-free two-form family |
 
-**One row per gate, and four gates are now EMPTY.**  `no inner family at
-pow2 j` joined them in #126 and `no interior j = 0 chain` in wave 37.
+**Six of the seven gates are EMPTY.**  `no inner family at pow2 j` went in
+#126, `no interior j = 0 chain` in wave 37, `no interior j = S j'` and
+`no gap-free two-form family` in wave 39.
 `register step does not close` lost its last
 row, `1RB1LA_0LA1RC_0RD0RB_1RA---`, in wave 4u along with its shadow — and
 that verdict had been stale rather than negative: the row closes today at the
@@ -128,12 +126,11 @@ and its shadow.  **Read a gate label as "where the emitter stopped", never as
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
-| `-`/`no-anchor` | 2 | 1 no anchor, 1 no overflow phase at K=6 |
-| `HIGHER`/`HIGHER` | 1 | 1 no family at any anchor |
+| `-`/`no-anchor` | 1 | no overflow phase at K=6 |
 
-**What that table now says, and why you should stop reading it.**  At three
-rows: two never decode as a counter under any alphabet and one is `HIGHER` on
-both branches.  Every row that ever carried a *decodable* shape is gone.  The
+**What that table now says, and why you should stop reading it.**  One row,
+and its entry is a pair of dashes: the emitter found no anchor, so it recorded
+no shape at all.  Every row that ever carried a *decodable* shape is gone.  The
 column has now been emptied three times from underneath by rows that went out
 through routes it does not model — the `AFFINE`/`HIGHER` pair in wave 37
 (re-read as word-rewriting systems), the `EXP3` pair in #123 (base-2 counters
@@ -277,8 +274,8 @@ three times — though all four rows boarded anyway, off the ladder).
 
 ## Where a newcomer should probably start
 
-At three rows the useful unit is the row, not the bucket.  All three, with
-what is known about each:
+At ONE row there is no unit but the row.  Everything else on this page is
+the record of how the other 5,155 went out.
 
 **BOARDED, #123 — and this page had just called the shape unreachable.**
 The two `1RB1LC` siblings (`1RB1LC_1LB1RA_0LC0LD_0RA0RD` and
@@ -310,9 +307,24 @@ out.  The one-transition difference between the rows is absorbed by `Hbc`:
 
 | row | gate | note |
 |---|---|---|
-| `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 | `no interior j = S j'` | wears a `HIGHER` label and the emitter finds **no family at any anchor** — `digit_words` names nothing.  But see below: it is the TWELFTH φ row, and the other eleven have all boarded. |
-| `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | gap ratio **1.00** — the tightest on the whole list |
-| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `no gap-free two-form family` | the last row of a bucket that went 10 → 1 without the gate ever being answered.  Gap ratio 2.65 on a 2,255-cell tape — the widest tape here, and still inside the tier |
+| `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | gap ratio **1.00** — the tightest on the whole list.  THE LAST UNDECIDED (4,2) CORE ROW; its macro system is five of six rules read (`WAVE38_REST_FOUR.md` §4), the sixth (the `s=S1, R=0` leftward-sweep carry) still open. |
+
+**BOARDED, wave 39 (2026-08-01)** — the other two rows of this table, plus
+the last shadow, in one session (`NEXT_SESSION.md` §2b7):
+
+* `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 (was `no interior j = S j'`, the twelfth
+  φ row) — as `NeverQuasiHaltsSt` through its wave-38 macro system and the
+  `ones l + sval s` parity invariant, `Machines/Rest4/R2_*.v`; exactly the
+  transcription job `WAVE38_REST_FOUR.md` §3 said it had become.  Its 0RB
+  shadow `0RB1LC_1LC0LC_0RD1LA_1RD1RB` harvested in the same regen
+  (`Machines/Counters/SH_0RB1LC_1LC0LC_0RD1LA_1RD1RB.v`), so shadows are 0.
+* `1RB0RB_1LC0RC_1RA0LD_0LB0LC` (was `no gap-free two-form family`, "the
+  LEAST tractable of the four") — as `NeverQuasiHaltsSt` by a HAND lap
+  system: nine boundary words cycling at the left-turnaround anchor, laps
+  `96j + b_phi`, `StD` carried by the `cycL` zeroing sweep;
+  `Machines/Rest4/R3_*.v`.  The wave-38 `ReachStI` negative on `StD` stands
+  — the row went out AROUND the tier, not through it, one wave after §5's
+  caution about exactly this pattern.
 
 **BOARDED, wave 38** — `1RB1RC_1LA1RA_0RC1LD_1LB0LD` (was
 `no inner family at pow2 j`, gap ratio 1.04), through the ordinary
@@ -372,10 +384,29 @@ values stepping by successive Fibonacci numbers — the same family as the
 eleven three-state rows that boarded on 2026-08-01 off `(Fib, 1)` and
 `(FibL, 1)` (`docs/CORE_3STATE.md` §3).  It is the twelfth of twelve and the
 only one left.  **The numeration is already built** — `LadderFam` has `Fib`,
-`FibL`, `fam_lo` and the round trips — so the entire remaining cost of this
-row is LOCATING ITS ONCE-PER-INCREMENT ANCHOR, which `digit_words` never
-enumerates because the row is read at a sparse one.  Every other row on this
-page needs mathematics that does not exist yet; this one needs a search.
+`FibL`, `fam_lo` and the round trips.
+
+**SETTLED, wave 38: the φ reading is exactly right, and `LADDER_PLAN.md`
+§4s's "no family at any anchor, file it with the no-anchor bucket" is a
+statement about the emitter and not about the machine.**  The measurement
+is not a ratio fit: running the row's validated macro system and recording
+the first macro step at which the counter reaches `n` digits gives
+17,709 = F(22)−2, 28,656 = F(23)−1, 46,366 = F(24)−2, … , 2,178,307 =
+F(32)−2 — **exactly Fibonacci, alternating offset −2/−1, out to F(32)**.
+The tape is 28 cells wide after 3,000,000 steps, growing like `log_φ t`,
+which is where the 1.11 gap ratio comes from.
+
+Wave 38 also found the route that does NOT need the anchor at all: this row
+passes wave 36's lever (its orbit keeps the RIGHT half-tape a bare unary
+run, 0 violations in 2,000,000 steps), so it is a finite word-rewriting
+system — six rules, exhaustive, differentially validated in
+`tools/mxdys4/cmacro2.py`.  Its four liveness obligations all reduce to the
+SINGLE fact that the macro system never gets stuck, and **that fact is now
+proved**: the composite step preserves the parity of `ones l`, is undefined
+only at `ones l = 0` (even), and the orbit starts odd -- so it is never
+stuck.  So the remaining cost is not a search for an anchor and not new
+mathematics; it is the Coq transcription.  `docs/WAVE38_REST_FOUR.md`
+§3.
 
 **The one shadow is not a task.**  `0RB1LC_1LC0LC_0RD1LA_1RD1RB` rides on the
 φ row and no other core row carries one.  It needs no new mathematics and it

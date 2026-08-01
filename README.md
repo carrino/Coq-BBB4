@@ -20,13 +20,14 @@ bbb4_target : forall tm,
 
 Every (4,2) Turing machine either **quasihalts with score at most
 32,779,478** — the champion's score — or **never quasihalts**, *except*
-the machines the theorem **skips**: the **3 undecided core machines**
-(`tools/closeout/core_rows.txt`), plus **1 shadow** — a 0RB machine
-whose all-blank prefix re-roots it into a core machine's orbit
-(`skipped`'s second disjunct).  A shadow carries no new mathematics, but
-it does need its own board: a shadow is a shadow only of a core machine
-that is still undecided, so boarding a core machine turns its shadow into
-a core machine until the same argument is transported across the re-root
+the machines the theorem **skips**: the **1 undecided core machine**
+(`tools/closeout/core_rows.txt`, `1RB0RD_1LB1LC_1RC0RA_0LB1RD`), plus
+**0 shadows** — 0RB machines whose all-blank prefix re-roots them into a
+core machine's orbit (`skipped`'s second disjunct).  A shadow carries no
+new mathematics, but it does need its own board: a shadow is a shadow
+only of a core machine that is still undecided, so boarding a core
+machine turns its shadow into a core machine until the same argument is
+transported across the re-root
 (`theories/Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v` is the
 worked example).
 
@@ -37,10 +38,10 @@ Two honest caveats, stated precisely in
   is boarded, quasihalting at exactly 32,779,478
   (`theories/Machines/Counters/Champion_*.v`), so BBB(4) ≥ 32,779,478 is
   a theorem here.  It is still **not** a proof that BBB(4) = 32,779,478:
-  any of the 3 skipped core machines could, for all this development
+  the one skipped core machine could, for all this development
   proves, quasihalt with a larger score.
-* `skipped D_remaining tm` means membership in the orbit of the 3
-  core rows under completion of undefined transitions, non-start state
+* `skipped D_remaining tm` means membership in the orbit of the last
+  core row under completion of undefined transitions, non-start state
   swaps, and mirroring — or a blank-prefix re-root into that orbit —
   not bare list membership.
 

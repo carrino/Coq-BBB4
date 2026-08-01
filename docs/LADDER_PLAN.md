@@ -3033,6 +3033,17 @@ cheap to MEASURE; neither could know it would land on a second numeration.
   wave's evidence that the second-best reading is often the buildable one.
 * **`1RB0RB_0LC1RD_1LC1LA_0LA1RB` is not a fibonacci ladder row.**  It has no
   family at any anchor.  File it with the `no anchor` bucket.
+
+  **CORRECTED, wave 38.**  The first sentence is wrong as written; what is
+  true is the second one, and it is a fact about the EMITTER.  The row IS a
+  φ row and the evidence is exact rather than a ratio fit: the first macro
+  step at which its counter reaches `n` digits is 17,709 = F(22)−2,
+  28,656 = F(23)−1, … , 2,178,307 = F(32)−2 — Fibonacci with an alternating
+  −2/−1 offset, out to F(32).  `digit_words` names nothing here because the
+  row is read at a sparse anchor, which is a gap in the enumeration and not
+  a verdict about the machine.  `docs/WAVE38_REST_FOUR.md` §3, and
+  `docs/RESIDUE_MAP.md`'s φ-row paragraph, which called this correctly
+  before it was measured.
 * Twelve shadows on ten core rows, still.  None of the three rows boarded
   here carried one; `gen_shadow.py --harvest` printed `nothing freed` and
   `audit.py` is OK.

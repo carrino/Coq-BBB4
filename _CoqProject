@@ -12,6 +12,7 @@ theories/Checkers/Cycle.v
 theories/Closure.v
 theories/Checkers/ReachSt.v
 theories/Checkers/ReachStI.v
+theories/Checkers/LiveAll.v
 theories/Checkers/ClosureExt.v
 theories/Checkers/FuelClass.v
 theories/Checkers/ExactClosure.v
@@ -2699,6 +2700,8 @@ theories/Machines/Counters/QHB_1RB1RD_1RC0LD_1LB0RA_1LC0LC.v
 # --- the mxdys four: NGramHist closure + a hand liveness proof for StD ---
 theories/Machines/Mxdys4/NGX_1RB1LC_0LC0RB_1LA1RD_0LA0RD.v
 theories/Machines/Mxdys4/NGX_1RB1LD_1LC1RA_0RB0LC_0RA0LD.v
+theories/Machines/Rest4/R2_1RB0RB_0LC1RD_1LC1LA_0LA1RB.v
+theories/Machines/Rest4/R3_1RB0RB_1LC0RC_1RA0LD_0LB0LC.v
 
 theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_0LA1LA_0RB1LD.v
 theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_0RA1LA_0RB1LD.v
@@ -2890,6 +2893,9 @@ theories/Machines/Counters/B2L_1RB1LC_1LB1RA_0LC0LD_0RA0RD.v
 theories/Machines/Counters/B2L_1RB1LC_1LC1RA_0LC0LD_0RA0RD.v
 theories/Machines/Counters/SH_0RB0RA_1RC1LD_1LC1RB_0LD0LA.v
 theories/Machines/Counters/SH_0RB0RA_1RC1LD_1LD1RB_0LD0LA.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/SH_0RB1LC_1LC0LC_0RD1LA_1RD1RB.v
 
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v

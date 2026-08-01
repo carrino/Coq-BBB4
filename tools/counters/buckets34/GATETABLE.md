@@ -1,4 +1,4 @@
-# Gate table over the 3 open core rows
+# Gate table over the 1 open core row
 
 `tailcert.py --list tools/closeout/core_rows.txt --out scan.json` (scan labels,
 no --emit), split by `buckets.py`, filtered to live membership after each wave.
@@ -7,42 +7,37 @@ commands are untrusted Python and need no Coq.
 
 | n | furthest gate |
 |--:|---|
-| 1 | `no_interior_jS_j_chain_at_octave_parity_0` |
 | 1 | `no_inner_interior_chain` |
-| 1 | `no_gap_free_two_form_family` |
 
-`register_step_does_not_close`, `no_boot_chain`,
-`no_interior_j0_chain_at_octave_parity_0` (wave 37) and
-`no_inner_family_at_pow2_j` (#126) are all EMPTY.
+**Six of the seven gates are EMPTY** — `register_step_does_not_close` and
+`no_boot_chain` first, then `no_interior_j0_chain_at_octave_parity_0`
+(wave 37), `no_inner_family_at_pow2_j` (#126), and
+`no_interior_jS_j_chain_at_octave_parity_0` and
+`no_gap_free_two_form_family` (wave 39).
 
-**Three rows, one per gate.  This table has stopped being useful, and that is
-the finding.**
-Every bucket it ever called large has emptied without the gate being answered,
-so what follows is kept as the record of how a gate label fails rather than as
-a difficulty map.  For choosing a target, read the per-row notes in
-`docs/RESIDUE_MAP.md`.
+**ONE ROW, and not one of the seven gates was ever answered.**  Every bucket
+on this page emptied by someone re-reading a machine instead.  What follows is
+kept as the record of how a gate label fails, not as a difficulty map.
 
-## What is actually left in the biggest bucket
+## What is actually left
 
-`no_interior_jS_j_chain_at_octave_parity_0` is 1 row, and the two that left
-it are entry 6 below: the `1RB1LC` siblings, which this file said "no closer
-in the tree glues a non-affine lap" about, and which #123 boarded off the
-PLAIN `LapGlue.glue_neverqh`.
+`no_inner_interior_chain` is 1 row: `1RB0RD_1LB1LC_1RC0RA_0LB1RD`, the last
+undecided (4,2) core machine.  Its `residue_map.tsv` entry is a pair of
+dashes — the emitter found no anchor, so it recorded no shape.  What is
+actually known about it lives in `docs/WAVE38_REST_FOUR.md` §4: the lever
+test APPLIES (0 impure over 2,000,000 steps), five of its six macro rules are
+read in closed form, and the sixth — the `s=S1, R=0` leftward-sweep carry —
+is the whole remaining problem.  Its fitted laps are `2^(2i+3) - 1` and
+`48*4^i - 6i - 15`: a doubling composed with a sweep affine in `i`.
 
-* **The one left is a `no anchor` row wearing this label** —
-  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` finds no family at any anchor
-  (`digit_words(rules)` names nothing).  This file used to add "it once
-  counted with the fibonacci rows; it was never one of them", which is the
-  next wrong verdict in the list below waiting to happen: `RADIX_CORE.txt`
-  reads it `phi` at spread 0.00 with anchor values stepping by successive
-  Fibonacci numbers, and the other eleven φ rows have all boarded.  It IS one
-  of them, read at a sparse anchor `digit_words` does not enumerate.  The
-  numeration it needs is built; the anchor is the only thing missing.
+The last two rows to leave this page both left through entries 8 and 9 below.
+`no_interior_jS_j_chain_at_octave_parity_0`'s final row was the φ row this
+file spent four waves calling anchorless.
 
-## What this table has been wrong about, seven times
+## What this table has been wrong about, nine times
 
 A gate name says what stopped the emitter, never what stops a proof.  This
-file has asserted seven verdicts that later measurement overturned.  The shape
+file has asserted nine verdicts that later measurement overturned.  The shape
 of the mistake is the same every time and is worth more than any label in it:
 
 1. **"The four QUADRATIC rows are not coming back without a new arm shape."**
@@ -106,6 +101,41 @@ of the mistake is the same every time and is worth more than any label in it:
    one-command test that separates "the emitter cannot find a family" from
    "the row is not that shape".
 
+8. **"`1RB0RB_0LC1RD_1LC1LA_0LA1RB` finds no family at any anchor; it once
+   counted with the fibonacci rows, it was never one of them."**  This file
+   said that for four waves.  It was one of them.  Wave 39 settled it not with
+   a ratio fit but with an exact identity: the first macro step at which the
+   counter reaches `n` digits is `17,709 = F(22)-2`, `28,656 = F(23)-1`, ...,
+   `2,178,307 = F(32)-2` — Fibonacci with an alternating `-2`/`-1` offset, out
+   to `F(32)`.  Its tape is 28 cells wide after 3,000,000 steps, growing like
+   `log_phi t`.  **"No family at any anchor" was true of the EMITTER and was
+   written down as a verdict about the machine** — the same sentence, in the
+   same file, that entries 1-7 are about.  It boarded in wave 39 with its
+   shadow.
+
+9. **"A FLAT toggle spectrum means the row is not a counter."**  Not from this
+   file — from the session prompt written for wave 39, and it is the cleanest
+   instance of the pattern on the page because the MEASUREMENT was right and
+   only the inference was wrong.  `radix_clock.py` reads
+   `1RB0RB_1LC0RC_1RA0LD_0LB0LC` at ratio `1.0013`, spread `0.00`, counts
+   `[3069, 3068, 3064, 3062, ...]` — every cell alike, stable from 400k to 4M
+   steps.  The prompt concluded "no radix, no digit, therefore no anchor to
+   find; this is a SWEEPER, take it to `WTape.cycR`/`cycL`/`cycLW`, do not run
+   counter probes at it."
+
+   It is a **quadratic UNARY counter**.  A unary counter has no positional
+   weighting, so a flat spectrum is exactly what it looks like — "flat" means
+   "no radix", and "no radix" means "unary", not "not a counter".  The right
+   end of the tape is a fixed suffix `...11011011011011011010011111`, the
+   stripe count `p = #011` grows, and `t ~ 434 p^2` (`p=20` at 178,000, `p=116`
+   at 5,840,000).  It wanted a quadratic-counter reading — `LinCarry`,
+   `Sep2Counter` — and the bouncer machinery the prompt pointed at was the
+   wrong shelf.  Wave 39 boarded it by hand off its lap system.
+
+   Corollary worth keeping: `radix_clock.py`'s FLAT verdict is a positive
+   reading, not a negative one.  It says "unary", and the tree has counters
+   for that.
+
 **The rows behind 1–4 all boarded.**  #118 took the six at `(FibL, 1)` — a
 fourth CODE, not a second numeration: `fibdec`/`fibokb` pick the greedy
 representative and these six stood on the LAZY one, so `LadderFam` gained
@@ -114,10 +144,11 @@ transitions swapped), plus `fam_lo`, because what a weighted numeration really
 costs the interface is a FLOOR — width `k` spells exactly
 `[fibw k .. fibsum k]`.  **Behind 5 and 6, all three rows boarded too** — the
 one that WAS base 3 in #120 (`Counters/Ter3WallD.v` + `LapGlueNeverIx.v`), the
-two that were not in #123 (`Counters/Bin3Lap.v`), and behind 7 the last
-`pow2 j` row in #126 (`Counters/Kc3Num.v`).  So every row this table has ever
-pronounced on is now decided, and it was wrong about the route in all seven
-cases.
+two that were not in #123 (`Counters/Bin3Lap.v`), behind 7 the last `pow2 j`
+row in #126 (`Counters/Kc3Num.v`), and behind 8 and 9 both wave-39 rows.  **So
+every row this table has ever pronounced on is now decided, and it was wrong
+about the route in all nine cases.**  One row is left and this file has never
+said anything about it.
 
 ## `no_gap_free_two_form_family`: 10 -> 1, and the gate was never answered
 

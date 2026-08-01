@@ -61,3 +61,27 @@ Idempotent; re-run it whenever the closure parameters change.
   invariant = the closure of the real orbit's nodes.  On failure they
   return the blocking negative cycle, which is how the spurious node that
   stops rows 2 and 3 was located (`docs/WAVE36_MXDYS_FOUR.md` section 5).
+
+## Wave 38 — the lever test mechanised, and the phi row's system
+
+**`cconf_rules.py SPEC --scan N`** — THE LEVER TEST.  Walks the real orbit,
+reads each `StA` configuration off in the `cconf` triple `(l, s, R)`, and
+counts how often the right half fails to be `1^R` then blanks.  0 impure
+means the row is a finite word-rewriting system and can be boarded the way
+M1/M4 were.  Seconds to run; run it on any new row before assuming it needs
+a decider.  Without `--scan` it prints the macro-rule grid directly in
+`cconf` coordinates, which is what `extract.py`'s frame form hides.
+
+Over wave 38's four rows it splits them 2-2: `1RB0RB_0LC1RD_1LC1LA_0LA1RB`
+and `1RB0RD_1LB1LC_1RC0RA_0LB1RD` apply (0 impure in 2,000,000 raw steps);
+`1RB0RB_1LC0RC_1RA0LD_0LB0LC` and `1RB1RC_1LA1RA_0RC1LD_1LB0LD` do not.
+The two that fail are exactly the two with `max R = 3` -- their counters
+are not unary and are not on the half-tape the lever reads.
+
+**`cmacro2.py [n]`** — the phi row's SIX rules in `cconf` coordinates,
+differentially validated against the raw simulator (4,000 macro steps, 0
+mismatches).  `cmacro2.py --T [n]` walks the COMPOSITE step instead: rules
+3-6 always leave `R' <= 1` and rule 5 at `k=0` consumes `R'=1`, so rule 2
+plus its consumer is a single length-preserving self-map on the left word.
+That map is the object the row's one remaining obligation should be stated
+over.  `docs/WAVE38_REST_FOUR.md` §3.
