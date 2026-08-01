@@ -11,8 +11,12 @@ undecided list is exactly four rows:
 This wave produced one piece of Coq that was missing outright, a
 **permanent negative** on row 1 that closes off the route the row was
 queued for, a **decisive reconciliation** of the two documents that
-disagreed about row 2, and complete or near-complete macro systems for the
-two rows that turn out to be word-rewriting systems.  No row boarded.
+disagreed about row 2, complete or near-complete macro systems for the two
+rows that turn out to be word-rewriting systems, and — the result most
+worth carrying — **row 2's missing invariant: `ones l` is ODD** (§3c),
+which was the single obligation standing between that row and a board.
+No row boarded; row 2 is now a transcription job rather than a research
+one.
 
 ## 1. The lever test, run on all four (and it splits them 2–2)
 
@@ -278,7 +282,7 @@ This is the same shape as M1/M4's parity lock, and §8's warning applies to
 transcribing it: state the parity facts as two implications, never as an
 `iff`, or `apply H in Hyp` will pick a direction by luck.
 
-### 3d. Two traps that cost time before the parity was found
+### 3d. Three traps that cost time before the parity was found
 
 Both are recorded because the obvious repairs look right and are not.
 
