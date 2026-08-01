@@ -1,7 +1,11 @@
 # Wave 38 — the last four core rows, measured end to end
 
 After wave 37 (mxdys's M1/M4) and the parallel base-2 pair board, the core
-undecided list is exactly four rows:
+undecided list was exactly four rows.  **Row 4 boarded during this session,
+from a parallel wave-38 session** (`KC3_1RB1RC_1LA1RA_0RC1LD_1LB0LD.v`,
+PR #126, `docs/LADDER_PLAN.md` §4aa), taking the core list to THREE; §5
+below is what this session measured on it before that landed and is kept
+only so the two negatives are not re-run.  The four:
 
     1RB0RB_1LC0RC_1RA0LD_0LB0LC      (row 1)
     1RB0RB_0LC1RD_1LC1LA_0LA1RB      (row 2, "the phi row")
@@ -339,7 +343,7 @@ exactly what rule 5's `R+4` plus the sweep produces.  It remains a hand
 board, and the macro-system route now looks cheaper than the reset-family
 route it was budgeted as.
 
-## 5. Row 4 — CLAIMED BY ANOTHER SESSION; nothing was lifted here
+## 5. Row 4 — BOARDED ELSEWHERE, and it is a caution about this method
 
 `KCOPY3`, right wall, `+9` cells per `8x` steps
 (`docs/RESIDUE_708_DIAGNOSIS.md`).  The lever does not apply (section 1;
@@ -347,12 +351,21 @@ route it was budgeted as.
 `cert_search.py` at `B,C <= 25` gives `StC` only (`B=1,C=4`) and `NONE` for
 `StA`, `StB`, `StD`.  The `NGramHist` closure discharges only `StC`.
 
-**Ownership: `claude/kcopy3-core-reduction-lv3uek` claimed this row on
-2026-08-01** (an empty claim commit, session `01DWvVFQ`), so it is being
-worked elsewhere and nothing above should be duplicated.  Wave 38 did no
-work on it beyond the two measurements recorded here, both of which were
-already implied by the committed sweeps.  If it boards, the core list reads
-3, and the counts in this document should be read accordingly.
+**BOARDED by a parallel session while this one was running**
+(`claude/kcopy3-core-reduction-lv3uek`, PR #126): the row went out through
+the ordinary `LapDecider` certificate route, because its lap is AFFINE in
+the carry length despite the `EXP2` label — `EXP2` was measuring the growth
+of the run against the tape width, not the shape of a lap.  Board:
+`theories/Machines/Counters/KC3_1RB1RC_1LA1RA_0RC1LD_1LB0LD.v`; method in
+`docs/LADDER_PLAN.md` §4aa and the wave-38 entry in `docs/RESIDUE_MAP.md`.
+
+That is a useful check on this document's own method.  The two measurements
+above are still correct — `ReachStI` really does give only `StC`, and the
+closure really does discharge only `StC` — and they were still no evidence
+about the machine.  **A row can be untouchable by every liveness tier here
+and fall to a counter certificate the same afternoon.**  Read §2b's
+permanent negative on row 1 with that in mind: it is permanent for
+`ReachStI`, and for nothing else.
 
 ## 6. What was measured dead, so nobody re-runs it
 
