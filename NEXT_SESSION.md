@@ -4145,6 +4145,66 @@ traps._
   changing it mid-build invalidates the makefile and `make` can exit 0 with
   hundreds of files unbuilt.  Board first, then build.
 
+## 2026-08-01 — nickdrozd's nineteen: the CHAMPION boards, and both blockers were in the SEARCHER
+
+_Branch `claude/provable-turing-machines-zyuscn`, cut from `main` at
+`bed4676`.  Full write-up in `docs/LADDER_PLAN.md` §4s._
+
+    settled by a board       5115 -> 5117   (99.2%)
+    core undecided             30 ->   27
+    0RB shadows of the core    12 ->   12
+
+- **CHECK A COMMUNITY LIST AGAINST THE TREE BEFORE PLANNING WORK FROM IT.**
+  Four of nick's nineteen (`1RB0LC_1LC0RB_1RD1LA_0LA1RB`,
+  `1RB1LA_1LC0RB_0LA0LD_1RA0RB`, `1RB1LA_1LC0RB_0LA0LD_1RD0RB`,
+  `1RB1LD_1RC0RB_0LA1RB_0LD1LA`) have been boarded since the counter waves —
+  `Bounce_8.v`, `Spacer_22.v`, `Spacer_23.v`, `Mono_31.v`.  A list from
+  outside is against the published RESIDUE, not against the frozen census.
+  One `grep -rl` over `theories/` answers it in a second.
+- **The CHAMPION was never a mathematics problem and had not been for two
+  waves.**  Its board compiled; `boarded` demanded `QHBound B_board` with
+  `B_board` = 66,349 and `inventory.py` refused any `iqhle:` row above it.
+  `docs/CLAIMS.md` had written down both fixes months ago.  If a doc says
+  "admitting this is a `CloseoutKit` change, not a regen", that is a task
+  estimate, and the estimate was right: four `destruct`s on `boarded` in the
+  whole tree.
+- **THE TRAP IN THAT CHANGE IS THE GATE'S TYPE, not the disjunct.**  The
+  `B_board` twin takes `(B <=? B_board) = true` and the stage runs
+  `vm_compute`.  At `B_champ` = 32,779,478 that makes the kernel normalise a
+  **32.8M-constructor unary numeral**.  Use the PROPOSITION `B <= B_champ`
+  and `lia` on two Horner forms.  Same reason the board states its bound in a
+  `Definition` and not as `iqh_le 32779478`: a decimal literal that large is
+  left as `Nat.of_num_uint` (the `abstract after` guard), which `lia` cannot
+  see through and `vm_compute` must not be asked to force.  **Anything that
+  touches the champion's score must stay in Horner form end to end.**
+- **A `cconf` carries no trailing blanks, and that is a SORT KEY.**  §4n/§4o
+  left the two gray rows with "`fam_cells` spells one cell more than the
+  machine's `cconf` carries" and proposed a kernel trimming.  Not needed: the
+  same anchor rotated one cell was already in `find_families`' output at the
+  SAME chain length, and lost the tie on insertion order.  One term in
+  `found.sort` — a family all of whose digit words end in a blank, with no
+  terminator behind them, sorts last — and both rows close, emit, compile.
+- **`if not found` is the wrong shape for a fallback gate.**
+  `find_families` runs its numeration pass only when the main pass found
+  NOTHING.  Six of the seven fibonacci rows return 26-odd positional families
+  at chain **8** — which is `min_chain`, the floor — so 26 > 0 switched the
+  pass off and those rows had never been read as counters at all.  The five
+  rows wave 4r boarded found ZERO and fell through, reading at chains
+  89..290.  *The difference between the two halves of that bucket was never
+  the machine.*  `valfam.py --numeration` restates the gate as a comparison
+  against the best chain so far; six of the seven then read at 232..376.
+- **They are Zeckendorf, not `(Fib, 1)`.**  Weights `1,2,3,5,8` where
+  `LadderCheck` 11 states `1,1,2,3,5,8`, so `closure_data_fib` refuses.  Their
+  coverage fails only at the top of each width (`1^k`), so the residue of the
+  six is the FILL arm.  The seventh, `1RB0RB_0LC1RD_1LC1LA_0LA1RB`, finds no
+  family at ANY anchor — it is a `no anchor` row and should stop being
+  counted with them.
+- **Three waves running, the same lesson:** a gate label says where the
+  emitter stopped, and twice now the thing that stopped it was which of
+  several equally-good readings the tooling happened to hand it.  Check what
+  the emitter was HANDED before building a kernel instance for what it
+  refused.
+
 ## 2026-07-31 — `(Fib, 1)` built: the FIBONACCI five board, five rows off the core
 
 _Branch `claude/fibonacci-numeration-coq-uewigh`, cut from `main` at
@@ -4353,68 +4413,60 @@ deliverable._
   acting on a prompt; the prompt was rewritten to §4p's actual selection (the
   fibonacci five, whose numeration §4p cracked and `fibmem.py` checks).
 
+## 2026-08-01 — the OUTER PARAMETER measured dead for its own two rows; the bouncer pair wants an ANCHOR too
 
-## 2026-08-01 — the outer parameter, measured DEAD for its own two rows; two other rows board on the searcher
-
-_Branch `claude/outer-parameter-build-jhfrqu`, cut from `main` at `988bbe3`.
-Full write-up in `docs/LADDER_PLAN.md` §4s.  **5114 → 5116 settled by a
-board; 30 → 28 core; 42 → 40 rows remain.**  `CLOSEOUT AUDIT: OK`, and
-`Closeout.vo` rebuilt so the audit's number is the kernel's._
+_Branch `claude/outer-parameter-build-jhfrqu`, cut from `main` at `988bbe3`,
+merged after #111.  Full write-up in `docs/LADDER_PLAN.md` §4t (written as 4s
+and renumbered — #111 took the number while this ran).  **This wave claims no
+rows**: it boarded §4s's two gray rows independently and #111 landed first,
+so the boards here are #111's and the counts are #111's (27 + 12)._
 
 - **The brief was to build 4j's outer parameter and drive
-  `0RB0RD_1LC1RB_1RA0LC_1LB0LC` with it.  The field was NOT built, and that
-  is the session's main result.**  4q's constants are right and its anchor is
-  right; what no section had measured is that ONE lap of these machines moves
-  **two independent unbounded quantities** — the wall distance `2v+5` and the
-  carry ripple `t(v)`, the trailing-ones count of `v`.  `cden` instantiates
-  both sides of a configuration at the SAME index, and the interior arm's
-  index is the ripple's run length, at which the far side is EXPONENTIAL.  So
-  an affine far side cannot be stated next to a symbolic ripple.  4j's own
-  anchor fails mirror-wise: one side would need two blocks.
-- **What would work is a per-phase ANCHOR as well**, because the lap splits
-  (the ripple finishes before the long sweep starts — traced).  One lap
-  touches only the counter, the other only the wall, and each half factors on
-  its own.  That is four more `Fam` fields (`fm_st`, `fm_hs`, `fm_left`,
-  `fm_pre` per phase) plus `fam_succ`.  **Scope the anchor and the parameter
-  together or neither** — a far-side parameter alone closes no row, and
-  "carried everywhere and used nowhere" is 4j's complaint about the `p` that
-  is already there.
-- **The two rows that DID board are `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and
-  `1RB0RD_1LC0LC_1LD0LB_1RD0RA`, and no kernel lemma was involved.**  Both
-  were filed `no anchor` and refused with `boot cells [1, 0, 1] are not the
-  family at [1, 1]`: the selected family's digit words both end in a BLANK, so
-  `fam_cells` spells a cell the machine's `cconf` never materialises.  Same
-  tape under `lift`, different list, and `Hboot` is on the list.
-- **The fix was in the SEARCHER.**  `valfam` finds 29 families for that
-  machine and candidate #2 — the same machine read one cell over, digit words
-  `[[0,0],[0,1]]` — is cell-exact.  It was never reached because `close`
-  settles on the first candidate that closes and nothing downstream of
-  `find_boot` knew what the denotation can state.  New `exact_cconf` +
-  `boot_is_exact` simulate `CTape.ctape_move` and make `find_boot` skip
-  members the boot premise cannot be stated at.
-- **That gate cannot cost a row that boards today, and the argument is not a
-  regression run**: every emitter path already refuses a family at the same
-  boot check, so a boarded row's certificate passes it by construction.
-  (Checked anyway on `1RB0RB_0LC0LD_1LC1LD_1RA0RA`: identical before/after.)
-- **Do NOT give `fam_cells` a trimming**, which was the brief's other option.
-  `fam_cells_class`/`fam_cells_run` decompose into an `sside` with an OPAQUE
-  tail and a trim at the end of the string is not compositional with that —
-  it needs a "the tail is not all blank" side condition on both lemmas and on
-  every `ClassSucc` instance above them.  A cell-exact family costs nothing.
-- **Asked of the whole core: seven rows carry a `closed: true` certificate in
-  a committed sweep.**  Two are the pair above.  The other five all refuse
-  DOWNSTREAM of the boot — three `no chain found` on a single arm, one on a
-  certificate predating `lands_in_phase`, and `1RB1LA_0LA0LC_1LC1RD_0RB0RD`
-  re-derives all 25 of its arms and still refuses with *"the carry ripple is
-  not affine in the run length"*.  **They are ARM_GRID rows, not searcher
-  rows** — re-running the search on them is wasted.
+  `0RB0RD_1LC1RB_1RA0LC_1LB0LC` with it.  The field was NOT built, and that is
+  the wave's result.**  4q's constants are right and its anchor is right —
+  re-measured, 180 visits per row, `2v+5` ones, zero failures.  What no
+  section had measured is that ONE lap moves **two independent unbounded
+  quantities**: the wall distance `2v+5` and the carry ripple `t(v)`, the
+  trailing-ones count of `v` (right excursion is exactly `3 + t(v)`).
+- **`cden` instantiates both sides of a configuration at the SAME index**, and
+  the interior arm's index is the ripple's run length, at which the far side
+  is EXPONENTIAL.  So an affine far side cannot be stated next to a symbolic
+  ripple.  4j's own anchor fails mirror-wise: one side would need two blocks.
+- **What would work is a per-phase ANCHOR as well.**  The lap splits — the
+  ripple finishes before the long sweep starts (traced) — so one half touches
+  only the counter and the other only the wall, and each factors alone.  That
+  is four more `Fam` fields (`fm_st`, `fm_hs`, `fm_left`, `fm_pre` per phase)
+  plus `fam_succ`.  **Scope the anchor and the parameter together or neither**
+  — a far-side parameter alone closes no row, and "carried everywhere and used
+  nowhere" is 4j's own complaint about the `p` that is already there.
+- **One correction to 4q's shape, and it is the `sside` instance:** the far
+  side is not a solid run.  Head-outward it is `[S1;S0] ++ rep [S1] (2v+4)`,
+  so `s_pre = [S1;S0]`, `s_u = [S1]`, `a = 2`, `b = 4`.  4q's `b = 5` is the
+  ones-COUNT, not the record's `s_b`.
+- **Two sessions reached §4s's gray diagnosis independently**, which is worth
+  something on its own: the lever differs.  §4s's is a sort tie-break that
+  fires on an exact tie; the alternative measured here is a hard gate that
+  simulates `ctape_move` at the boot and rejects any family with no
+  cell-exact member.  The hard gate is strictly stronger and was **dropped**
+  — no row needs it, and two mechanisms for one property in one function is
+  how the next session gets confused.  §4t records it for the day a row sorts
+  strictly first rather than tying.
+- **The five remaining core rows that already CLOSE are ARM rows.**  Seven
+  rows carry a `closed: true` certificate in a committed sweep; two are §4s's
+  gray pair.  The other five all refuse DOWNSTREAM of the boot — three
+  `no chain found` on a single arm, one on a certificate predating
+  `lands_in_phase`, and `1RB1LA_0LA0LC_1LC1RD_0RB0RD` re-derives all 25 of its
+  arms and still refuses with *"the carry ripple is not affine in the run
+  length"*.  **Re-running the search on them is wasted.**
 - **Timing, measured here:** `apt-get install -y coq` ≈ 1 min.  The
-  `Closeout.vo` closure from cold on 4 cores at `-j3` is **~2h20m**, not the
-  "hours" upper bound and not 45 min; ~2350 `.vo`.  Start it first, read
-  while it runs.  `make closeout` then rebuilt 24 CB stages + `Closeout.v` in
-  ~5 min.
-- **`make closeout` already does the rebuild.**  Its recipe ends with
+  `Closeout.vo` closure from cold on 4 cores at `-j3` is **~2h20m** (~2350
+  `.vo`) — not 45 min and not a whole day.  Start it first, read while it
+  runs.
+- **`make closeout` already ENDS with the rebuild** — its recipe runs
   `coq_makefile` + `make -f Makefile.coq theories/Closeout/Closeout.vo` +
-  `census_cache --check`, so there is no separate build step to remember —
-  but it means `make closeout` is a ~5-minute target, not a seconds one.
-  `make closeout-status` is the seconds one.
+  `census_cache --check` after the audit.  So it is a ~5-minute target on a
+  warm tree, not a seconds one; `make closeout-status` is the seconds one.
+- **Two sessions boarding the same rows in parallel is now a real cost.**
+  This is the second wave running (§4o's prompt was invalidated by §4p, and
+  §4r had to renumber).  Before boarding a row from an existing certificate,
+  check `origin/main` — not just at session start, but again before emitting.

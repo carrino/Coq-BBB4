@@ -210,6 +210,24 @@ Proof.
     [exact qhbound_champion | exact quasihalts_champion]].
 Qed.
 
+(** ** The closeout's entry point
+
+    [champion_tier] restated under the name the closeout inventory scans
+    for.  The other explicit-bound boards state [iqh_le B tm] with [B] a
+    decimal literal; the champion cannot, because its bound is 32,779,478
+    and a literal that large is left as [Nat.of_num_uint], which no
+    [lia] sees through and no [vm_compute] should be asked to force.  So
+    the bound rides in the DEFINITION, in Horner form, where it is
+    definitionally [CloseoutKit.B_champ] -- and the generated stage
+    discharges [B <= B_champ] by [lia] on the two Horner forms rather
+    than by evaluating either.  [kind = iqhch] in
+    [tools/closeout/frozen_map.tsv]. *)
+Definition iqh_champ (tm : TM) : Prop :=
+  NonHalt tm /\ QHBound champ_score tm /\ QuasiHaltsSt tm.
+
+Theorem iqh_champion : iqh_champ tm_champion.
+Proof. exact champion_tier. Qed.
+
 (** ** The bound is exact -- recorded, not proved here
 
     [StD]'s last visit is at index 32,779,477 (measured:

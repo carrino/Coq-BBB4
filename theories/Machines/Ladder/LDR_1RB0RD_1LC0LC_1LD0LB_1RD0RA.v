@@ -48,11 +48,12 @@ Local Notation FAM := fam_1RB0RD_1LC0LC_1LD0LB_1RD0RA.
 
 (** ** The ladder, as DATA
 
-    1 window rule(s).  [check_ladder] validates rule i against rules
+    2 window rule(s).  [check_ladder] validates rule i against rules
     0..i-1 only, and [rule_sound] -- ONE theorem, by induction on ladder
     POSITION -- turns that into soundness for all of them. *)
 Definition lad_1RB0RD_1LC0LC_1LD0LB_1RD0RA : list (LRule * list rstep) :=
-  [(mkLRule (mkC StD (mkS [] [] 0 0 []) S0 (mkS [S0] [] 0 0 [])) (mkC StD (mkS [S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 1, [RB (SWin 1)])].
+  [(mkLRule (mkC StD (mkS [] [] 0 0 []) S0 (mkS [S0] [] 0 0 [])) (mkC StD (mkS [S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 1, [RB (SWin 1)]);
+   (mkLRule (mkC StC (mkS [S1;S1] [] 0 0 []) S1 (mkS [] [] 0 0 [])) (mkC StC (mkS [] [] 0 0 []) S1 (mkS [S0;S0] [] 0 0 [])) 0 2, [RB (SWin 2)])].
 Local Notation lad := lad_1RB0RD_1LC0LC_1LD0LB_1RD0RA.
 
 Definition rules_1RB0RD_1LC0LC_1LD0LB_1RD0RA : list LRule := map fst lad.

@@ -21,8 +21,10 @@ bbb4_target      : forall tm, QHBound 32779478 tm
                            \/ NeverQuasiHaltsSt tm
                            \/ skipped D_remaining tm
 
-bbb4_decided_le_prev_champion : forall tm,
-  ~ skipped D_remaining tm -> QHBound 66349 tm \/ NeverQuasiHaltsSt tm
+bbb4_decided_le_prev_champion_or_champion : forall tm,
+  ~ skipped D_remaining tm -> QHBound 66349 tm
+                           \/ NeverQuasiHaltsSt tm
+                           \/ QHBound 32779478 tm
 ```
 
 where (`Closeout/ShadowKit.v`, the bbchallenge community's 0RB observation
@@ -44,19 +46,36 @@ still undecided, so boarding a core machine moves its shadow INTO
 example).  Budget a core row and its shadows together.
 
 The last corollary is the previous-record reading: every decided machine
-quasihalts by the *previous* champion's 66,349 or never quasihalts.  The four
-previous champions themselves (scores 2,512–66,349,
-`Machines/Counters/BlankTail_*.v`) are among the decided, so among all known
-(4,2) machines only the (still-skipped) champion exceeds the previous record.
+quasihalts by the *previous* champion's 66,349, or never quasihalts, or
+quasihalts by the champion's own 32,779,478.  The four previous champions
+themselves (scores 2,512–66,349, `Machines/Counters/BlankTail_*.v`) are among
+the decided, and **exactly one census row is in the third case** — the
+champion and its orbit, the single `iqhch` line of
+`tools/closeout/frozen_map.tsv`.  So among all known (4,2) machines only the
+champion exceeds the previous record, exactly as before it was boarded; what
+changed is that it is now *decided* rather than skipped.  (That the third
+case holds one row is untrusted bookkeeping, like the partition audit:
+`boarded`'s third disjunct carries a bound, not an identity, so the kernel
+states the disjunction and not the census of who satisfies it.)
 
 `boarded tm` is
-`NeverQuasiHaltsSt tm \/ (NonHalt tm /\ QHBound B_board tm /\ QuasiHaltsSt tm)`
-with `B_board` = 66,349, the previous champion's score, concrete.  Census-tier
-stage boards certify literally `QHBound 2000` (= `B_census`, the census's
-in-walk tier strength) and lift by `qhbound_mono`; the four ex-champions enter
-at their exact scores through a `B <=? B_board` gate the kernel evaluates
-(`covers_iqh_le_at`).  `tools/closeout/inventory.py` refuses any other
-statement shapes.
+
+```coq
+NeverQuasiHaltsSt tm
+\/ (NonHalt tm /\ QHBound B_board tm /\ QuasiHaltsSt tm)
+\/ (NonHalt tm /\ QHBound B_champ tm /\ QuasiHaltsSt tm)
+```
+
+with `B_board` = 66,349 (the previous champion's score) and `B_champ` =
+32,779,478 (the champion's), both concrete.  Census-tier stage boards certify
+literally `QHBound 2000` (= `B_census`, the census's in-walk tier strength)
+and lift by `qhbound_mono`; the four ex-champions enter at their exact scores
+through a `B <=? B_board` gate the kernel evaluates (`covers_iqh_le_at`); the
+champion enters through `covers_iqh_champ_at`, whose gate is the *proposition*
+`B <= B_champ` discharged by `lia` on two Horner forms — a `<=?` against
+32,779,478 would make the kernel build a 32.8M-constructor unary numeral, and
+nothing here ever evaluates that number.  `tools/closeout/inventory.py`
+refuses any other statement shapes.
 
 Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
 **every** (4,2) Turing machine at least one of the following holds:
@@ -66,7 +85,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **30** undecided core machines in
+3. it is **skipped**: one of the **27** undecided core machines in
    `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **12**
    0RB re-root shadows (`tools/closeout/shadow_rows.tsv`).  A shadow needs
    no new mathematics — it is a blank-prefix re-root of a core machine —
@@ -76,8 +95,8 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    across the re-root.
 
    _The two counts move every wave; the row files are the authority and
-   `python3 tools/closeout/audit.py` prints them live.  30 + 12 is the
-   2026-07-31 reading (5,114 of the frozen 5,156 settled, 99.2%)._
+   `python3 tools/closeout/audit.py` prints them live.  27 + 12 is the
+   2026-08-01 reading (5,117 of the frozen 5,156 settled, 99.2%)._
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
 frozen table under completion of undefined transitions, non-start state swaps,
@@ -90,47 +109,49 @@ on type-in-type, unsafe (co)fixpoints, or assumed positivity.
 
 ## What this is NOT
 
-**It is not a proof that BBB(4) = 32,779,478.**  Two things are missing
-before the record itself is a theorem here:
+**It is not a proof that BBB(4) = 32,779,478.**  One thing is missing before
+the record itself is a theorem here:
 
-1. **The champion's board cannot be CONSUMED as `boarded` is defined.**
-   `1RB1LD_1RC1RB_1LC1LA_0RC0RD` erases its whole working region and returns to
-   a blank tape in `StC` at step 32,779,478, then spins left in `C` forever.
-   That board exists and compiles —
-   `theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`, one
-   `vm_compute` over a binary-numeral fuel (`Checkers/TCyclerN.cstepsN`), ~17 s
-   — proving `NonHalt /\ QHBound 32779478 /\ QuasiHaltsSt` at the champion's own
-   score.  But `boarded` demands `QHBound B_board` with `B_board` = **66,349**
-   (`CloseoutKit.v`), and 32,779,478 is not ≤ 66,349.  So the champion does not
-   satisfy `boarded`, `tools/closeout/inventory.py` refuses it by the same
-   arithmetic (`bound > B_BOARD`), and **`make closeout` does not drop it** —
-   verified 2026-07-31: a full run leaves every file byte-identical and the
-   champion still on the list.  No amount of regeneration changes that.
-   Admitting it is a `CloseoutKit` change, not a regen: either raise `B_board`
-   (which weakens `bbb4_decided_le_prev_champion` for all 5,114 boarded rows) or
-   give `boarded` a third disjunct for exact-score quasihalters above `B_board`,
-   carried through `covers_*_at` and the swap/mirror lemmas.  Until then, **the
-   value is not proved.**
-2. **The 30 core machines (and their 12 shadows).**  Any of them could, for all this
-   development knows, be a quasihalter with a larger score.  That is what
-   undecided means.
+1. **The 27 core machines (and their 12 shadows).**  Any of them could, for
+   all this development knows, be a quasihalter with a larger score.  That is
+   what undecided means.  The list is `tools/closeout/core_rows.txt` and the
+   map is [`RESIDUE_MAP.md`](RESIDUE_MAP.md).
 
-(The third gap this section used to list — the score bound existing only
-existentially, per-board, instead of as one aggregated constant — is closed:
-`boarded` now carries the concrete `QHBound B_board` (= 66,349), and
-`bbb4_target` lifts it to the champion's score by `qhbound_mono`.)
+What *is* now proved, and was not before, is the **lower** bound.  The
+champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` erases its whole working region,
+returns to a blank tape in `StC` at step 32,779,478 and spins left in `C`
+forever; `theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`
+proves `NonHalt /\ QHBound 32779478 /\ QuasiHaltsSt` in one `vm_compute` over
+a binary-numeral fuel (`Checkers/TCyclerN.cstepsN`, ~17 s), and since
+2026-08-01 the closeout **consumes** it: `boarded` has the third disjunct this
+section used to ask for, carried through `covers_iqh_champ_at` and the
+swap/mirror lemmas, and `tools/closeout/inventory.py` boards the row as kind
+`iqhch`.  So `bbb4_target`'s bound is attained by a machine the theorem
+decides, not merely stated.  It stays a lower bound only: closing the 27 is
+what would turn it into the value.
+
+_Two gaps this section used to list are closed.  The score bound existing only
+existentially, per-board, instead of as one aggregated constant: `boarded`
+carries the concrete `QHBound B_board` (= 66,349) or `QHBound B_champ`
+(= 32,779,478), and `bbb4_target` lifts either to the champion's score by
+`qhbound_mono`.  And the champion's board being unconsumable: the fix taken
+was the second of the two this section named — the third disjunct, not raising
+`B_board` — precisely so that
+`bbb4_decided_le_prev_champion_or_champion` still separates the champion from
+the other 5,114 boarded rows instead of coarsening all of them to 32.8M._
 
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 42 still-undecided machines (30
+> 32,779,478 or never quasihalts, except 39 still-undecided machines (27
 > core rows and their 12 0RB re-root shadows) —
-> kernel-checked with one standard axiom.  The BBB(4) *value* does not yet
-> follow from what is here, because the champion itself is one of the 30.
+> kernel-checked with one standard axiom.  The bound is ATTAINED (the
+> champion is boarded, so BBB(4) >= 32,779,478), but the BBB(4) *value*
+> does not follow from what is here while the 27 stand.
 
-## Scope of the 30
+## Scope of the 27
 
-All 30 core machines are residue — machines no engine in this repository
+All 27 core machines are residue — machines no engine in this repository
 settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28

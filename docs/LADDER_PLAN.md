@@ -2873,22 +2873,186 @@ run of `0` (which is what `filled_fib0` discharges membership for).
   named the wrong theorem.  **Read `liveness.states_infinitely_often` before
   writing a board section, not after.**
 
-## 4s. The outer parameter is NECESSARY and NOT SUFFICIENT -- measured; and the two `no anchor` gray rows board on the searcher, not the kernel
+## 4s. nickdrozd's nineteen: three board, and BOTH blockers were in the searcher rather than in the kernel
 
-_This session was briefed to build 4j's outer parameter and drive
-`0RB0RD_1LC1RB_1RA0LC_1LB0LC` to a board with it.  The field was NOT built.
-The reason is a measurement, it is below, and it is the whole of 4s's value:
-4q's constants are right, 4q's anchor is right, and an affine far side is
-still not enough to state one lap of this machine.  Two OTHER rows boarded
-instead -- `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and `1RB0RD_1LC0LC_1LD0LB_1RD0RA` --
-and the fix there was in the SEARCHER and needed no kernel change at all._
+_Branch `claude/provable-turing-machines-zyuscn`, cut from `main` at `bed4676`.
+Coq 8.18.0 from apt.  Prompted by nickdrozd posting nineteen rows he was
+confident were all provable — the third time his lists have paid out (§4k's
+bucket sizing, and every ReachSt wave)._
+
+    settled by a board       5115 -> 5117   (99.2%)
+    core undecided             30 ->   27
+    0RB shadows of the core    12 ->   12   (none of the three carried one)
+
+**Read the nineteen against the tree before reading them as work.**  Four of
+them — `1RB0LC_1LC0RB_1RD1LA_0LA1RB`, `1RB1LA_1LC0RB_0LA0LD_1RA0RB`,
+`1RB1LA_1LC0RB_0LA0LD_1RD0RB`, `1RB1LD_1RC0RB_0LA1RB_0LD1LA` — have been
+boarded since the counter waves (`Bounce_8.v`, `Spacer_22.v`, `Spacer_23.v`,
+`Mono_31.v`).  They are not in `core_rows.txt` and never were on the published
+map; a list from outside the tree is against the RESIDUE, not against the
+frozen census.  Fifteen were live.
+
+### The CHAMPION, and the gate was arithmetic in a Python file
+
+`1RB1LD_1RC1RB_1LC1LA_0RC0RD` has had a compiling board since wave 33 —
+`NonHalt /\ QHBound 32779478 /\ QuasiHaltsSt`, one binary-fuel `vm_compute`.
+It stayed on the skipped list because `boarded` demanded `QHBound B_board`
+with `B_board` = 66,349 and `inventory.py` refused any `iqhle:` row above it.
+`docs/CLAIMS.md` had named the two possible fixes for months; this takes the
+second, **a third disjunct**, because raising `B_board` would coarsen all
+5,114 other boarded rows to 32.8M to admit one.
+
+    boarded tm := NeverQuasiHaltsSt tm
+               \/ (NonHalt tm /\ QHBound B_board tm /\ QuasiHaltsSt tm)
+               \/ (NonHalt tm /\ QHBound B_champ tm /\ QuasiHaltsSt tm)
+
+**The one thing that is not mechanical is the GATE'S TYPE.**  Its `B_board`
+twin `covers_iqh_le_at` takes `(B <=? B_board) = true` and the stage
+discharges it with `vm_compute; reflexivity`.  Doing that at `B_champ` would
+make the kernel normalise a **32.8M-constructor unary numeral** — the same
+trap the Horner form exists to dodge one level up.  So `covers_iqh_champ_at`
+takes the PROPOSITION `B <= B_champ` and the stage discharges it with `lia`
+on two Horner forms, which is instant and allocates nothing.  Same reason the
+board states its bound in a `Definition` rather than as `iqh_le 32779478`:
+a decimal literal that large is left as `Nat.of_num_uint`, opaque to `lia`
+and ruinous to `vm_compute`, so `inventory.py` gets a new kind (`iqhch`) that
+reads the Horner definition instead of a number in the theorem statement.
+
+Blast radius, measured: four `destruct`s on `boarded` in the whole tree
+(`boarded_unswap`, `boarded_unmirror`, and two in the generated
+`BBB4_Theorem.v`).  `bbb4_target` is UNCHANGED — both bounds go through
+`qhbound_mono` to `champion_score` — and the previous-record corollary is
+renamed `bbb4_decided_le_prev_champion_or_champion` and gains the third
+disjunct, which is the honest statement now that the champion is decided.
+**BBB(4) >= 32,779,478 is a theorem here now.**  It is still not the value.
+
+### The two GRAY rows: the tie-break is a property of `cconf`, not of the machine
+
+§4n and §4o left `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and
+`1RB0RD_1LC0LC_1LD0LB_1RD0RA` with a diagnosis — "two-cell digit words ending
+in `0`, so `fam_cells` spells one cell more than the machine's `cconf` carries
+at the anchor" — and two proposed fixes: re-read at another anchor, or give
+`fam_cells` a trimming.  **Neither was needed, because the other anchor was
+already in `find_families`' output and only sorted second.**
+
+Both rows read at `q=A h=0 side=R` with digit words `[(0,0),(1,0)]` at chain
+100, and *also* at `q=A h=1` with words `[(0,0),(0,1)]` at chain 100 — the
+same counter, the anchor rotated one cell.  The two tie on every term of the
+sort key, so insertion order picked the first, `close()` returned the first
+family that closed, and the emitter then refused its boot with `boot cells
+[1, 0, 1] are not the family at [1, 1]`.
+
+So the fix is one term in `found.sort`: **a family all of whose digit words
+end in a blank, with no terminator behind them, sorts after one that does
+not.**  A `cconf` carries no trailing blanks — that is what `lpad_eqb` is for
+— so such a family's spelling is always exactly one cell longer than its own
+boot, at every width, and no boot check can ever pass.  It is a property of
+the DENOTATION and not of the machine, it only fires on an exact tie in the
+fallback flags and the chain length, and when it fires it picks the reading
+the kernel can state.  Both rows then close (105 and 117 arms), emit
+`closure BUILT (4 interior at N0=0 st=1 + 1 fill at N0=2 st=1)`, compile, and
+carry `nqh_*` at `functional_extensionality_dep` only.
+
+**No kernel lemma was involved, exactly as §4o predicted — but the lever was
+the SEARCHER's preference and not `fam_cells`.**  Worth generalising: twice
+now (§4p's `HIGHER` label, this) a gate has been read as a statement about
+the machine when it was a statement about which of several equally-good
+readings the tooling happened to hand the emitter.
+
+### The FIBONACCI seven: measured at last, and they stop one step further on
+
+The seven rows §4r left — six `1RB---` plus `1RB0RB_0LC1RD_1LC1LA_0LA1RB` —
+had "never been through `emit_ladder` at all", and `docs/RESIDUE_MAP.md`
+called measuring them the cheapest unexplored thing on the list.  It was, and
+here is the measurement.
+
+**Why they had never been read: `find_families`' second-chance gate is
+all-or-nothing.**  The numeration pass (`_weights_pass`) runs only `if not
+found`.  On `1RB---_0LC1RD_1LB1RC_1LB0RD` the main pass returns **26**
+positional families, every one of them at chain **8**, which is `min_chain`
+— the FLOOR — and 26 > 0 switches the numeration pass off entirely.  The five
+rows §4r boarded found **zero** positional families, fell through, and read
+at chains of 89..290.  *The difference between the two halves of that bucket
+was never the machine; it was whether junk cleared a threshold first.*
+
+Restated as a comparison (`valfam.py --numeration`, opt-in, default
+behaviour unchanged): if nothing found so far reads more than `weak_chain`
+consecutive anchor visits, the row has not been read, and the numeration pass
+runs anyway.  Six of the seven then read as Fibonacci counters at chains of
+**232..376**:
+
+| row | anchor | chain |
+|---|---|--:|
+| `1RB---_0LC1RD_1LB1RC_1LB0RD` | `q=C h=0 R` | 376 |
+| `1RB---_0LC1RD_1LB1RD_1LB0RD` | `q=D h=1 R` | 232 |
+| `1RB---_1LC0RB_0LD1RB_1LC1RB` | `q=B h=1 R` | 232 |
+| `1RB---_1LC0RB_0LD1RB_1LC1RD` | `q=D h=0 R` | 375 |
+| `1RB---_1LC1RB_0LB1RD_1LC0RD` | `q=B h=0 R` | 376 |
+| `1RB---_1LC1RD_0LB1RD_1LC0RD` | `q=D h=1 R` | 232 |
+
+The seventh, `1RB0RB_0LC1RD_1LC1LA_0LA1RB`, still finds **no family at all**
+— `digit_words(rules)` names nothing at any anchor — so it is a different
+problem from the six and should stop being counted with them.  (This is the
+row `docs/CORE_3STATE.md` §3 found by radix sweep and recorded as "its
+once-per-increment anchor is not located yet".  Still true.)
+
+**And they are NOT `(Fib, 1)`.**  Every one of the ~21 weighted families per
+row comes back at weights `1, 2, 3, 5, 8, 13, 21` — `fibonacci(shifted)`,
+Zeckendorf — and `closure_data_fib` refuses on exactly that, because
+`LadderCheck` §11 states the numeration at `1, 1, 2, 3, 5, 8`.  Two ladders,
+both `phi`, different codes.
+
+**Where they stop, precisely, and it is one arm.**  Under the shifted reading
+the interior is fully covered and the failure is `overflow leaves the family`
+with the uncovered set
+
+    (k=2, v=3), (k=3, v=6), (k=4, v=11), (k=5, v=19), (k=6, v=32), (k=7, v=53)
+
+— which is `sum(weights[:k])` at each width, i.e. the string `1^k`, the top of
+the width.  With a repair round the wrong successors are `1` followed by
+zeros at values 5, 8, 13, 21 — the weights themselves.  So the whole residue
+of these six is the FILL arm at the top of a width, and the two candidate
+next steps are (a) a `(Fib, 2)`/Zeckendorf `ClassSucc` instance whose top of a
+width is `1010...` rather than `1^k`, or (b) making the search prefer the
+`1,1,2,3,5` reading these anchors also admit, which is the same lesson the
+gray rows just paid out — check whether the reading the emitter got is the
+only one before building a kernel instance for it.
+
+**Do not read "never been through the emitter" as "cheap" again without
+checking what the emitter was handed.**  §4r and `RESIDUE_MAP.md` both
+called this the cheapest unexplored item and both were right that it was
+cheap to MEASURE; neither could know it would land on a second numeration.
+
+### What this says about the next session
+
+* **The seven are six, and their blocker has a name.**  Zeckendorf tops.
+  Before building a fourth `(code, step)` pair, run the numeration pass with
+  the F(1,1) reading forced and see whether these anchors admit it — §4r's
+  advice ("do not go looking for a fifth code before someone measures a row
+  that wants it") applies to the fourth one too, and the gray rows are this
+  wave's evidence that the second-best reading is often the buildable one.
+* **`1RB0RB_0LC1RD_1LC1LA_0LA1RB` is not a fibonacci ladder row.**  It has no
+  family at any anchor.  File it with the `no anchor` bucket.
+* Twelve shadows on ten core rows, still.  None of the three rows boarded
+  here carried one; `gen_shadow.py --harvest` printed `nothing freed` and
+  `audit.py` is OK.
+
+## 4t. The outer parameter, measured DEAD for its own two rows: one lap moves TWO unbounded quantities and `cden` has one index
+
+_Branch `claude/outer-parameter-build-jhfrqu`, cut from `main` at `988bbe3`,
+written as 4s and renumbered — #111 took that number while this ran, and it
+boarded the two gray rows this session had also boarded.  **That overlap is
+resolved in #111's favour and this section claims no rows.**  What is left is
+the part #111 did not touch and the brief was actually about: 4j's OUTER
+PARAMETER, which was NOT built, because it does not close the two rows it
+exists for._
 
 ### 4q's reading, re-measured, with one correction to the shape
 
-Anchor `(StB, head 0, head at offset 3)`, sampled once per bounce, 180 visits
-to step 200,000 on BOTH rows.  Every number 4q reports holds:
+Anchor `(StB, head 0, head at offset 3)`, once per bounce, 180 visits to step
+200,000 on BOTH rows.  Every number 4q reports holds:
 
-    far side ones = 2v + 5     exactly, at every visit, 0 failures / 180
+    far side ones = 2v + 5     exactly, every visit, 0 failures / 180
     counter side  = `1 1` then binary(v) LSB-first, the frame CONSTANT
     value         = bounce index, step +1
 
@@ -2897,32 +3061,31 @@ side is **not** a solid run.  Head-outward it is
 
     [S1; S0] ++ rep [S1] (2v + 4)
 
--- a `1`, then a `0` one cell out, then the run.  The ONES number `2v+5` is
-right; the run itself is `2v+4` behind a two-cell fixed word.  So the far side
-IS an `sside`: `s_pre = [S1;S0]`, `s_u = [S1]`, `a = 2`, `b = 4`.  4q's
-`a = 2, b = 5` is the ones-count, not the record's `s_b`.  Both rows measure
-identically here, as 4q says.
+— a `1`, then a `0` one cell out, then the run.  The ONES count `2v+5` is
+right; the run is `2v+4` behind a two-cell fixed word.  So `s_pre = [S1;S0]`,
+`s_u = [S1]`, `a = 2`, `b = 4`.  4q's `b = 5` is the ones-count, not `s_b`.
+Both rows measure identically, as 4q says.
 
-### What 4q did not measure: the lap has TWO unbounded excursions, not one
+### What 4q did not measure: the lap has TWO unbounded excursions
 
-Sample the head's reach between consecutive anchor visits:
+The head's reach between consecutive anchor visits:
 
     v        0    1    2    3    4    5    6    7    8   ... 15
     right    3    4    3    5    3    4    3    6    3        7
     left     the whole 2v+5 run, to the wall, which then recedes by 2
 
-The right-hand excursion is `3 + t(v)`, `t` = the number of trailing ones of
-`v`: it is the CARRY RIPPLE, and one lap contains it.  Traced at `v = 7`
-(visit 9 -> 10, 148 steps): the head ripples first (steps 721-738, out to
-offset 9 and back), and only then sweeps left to the wall (steps 743-766) and
-zig-zags home `+3, -2` per cell.  So a single lap moves BOTH
+The right-hand excursion is exactly `3 + t(v)`, `t` = the number of trailing
+ones of `v`: it is the CARRY RIPPLE, and one lap contains it.  Traced at
+`v = 7` (visit 9 -> 10, 148 steps): the head ripples FIRST (steps 721-738, out
+to offset 9 and back), then sweeps left to the wall (743-766), then zig-zags
+home `+3, -2` per cell.  So one lap moves
 
     the wall distance   2v + 5      and    the ripple length   t(v)
 
-and the two are independent -- `t(v)` is the trailing-ones count, which no
+and the two are independent — `t(v)` is a trailing-ones count, which no
 function of `2v+5` gives.
 
-### Why that is fatal to an affine far side, and the argument is two lines
+### Why that is fatal to an affine far side, and it is two lines
 
 `cden` takes ONE index for the whole configuration:
 
@@ -2933,17 +3096,17 @@ the ripple by its run length: `fam_cells_class` reads the class
 `u ++ t^(r + s*m) ++ w ++ rest` at index `m`, which is what makes an unbounded
 ripple finitely many arms.  At that index the far side would have to be
 `a*m + b`.  It is `2*fam_value F ds + 5`, and on the class
-`1^(r+s*m) ++ [d] ++ rest` the value is `2^(r+s*m) - 1 + ...` -- **exponential
+`1^(r+s*m) ++ [d] ++ rest` the value is `2^(r+s*m) - 1 + ...` — **exponential
 in `m`**.  No `a` and `b` fit it.
 
 Fixing the ripple instead (a flat arm per ripple length, `s = 0`, far side
-indexed by `j = v`) does factor -- and wants one arm per ripple length, of
+indexed by `j = v`) DOES factor — and wants one arm per ripple length, of
 which there are unboundedly many.  That is exactly the trade the stride was
 built to avoid.
 
-4j's own anchor fails for the mirror reason and it is worth writing down,
+4j's own anchor fails for the mirror reason, and it is worth writing down
 because 4j proposed it: at the wall the far side is empty and the ONE side
-carries `0^(2k+5) ++ [1;1] ++ digits(k)` -- a growing spacer AND a carry
+carries `0^(2k+5) ++ [1;1] ++ digits(k)` — a growing spacer AND a carry
 ripple, two symbolic blocks on one `sside`, which has one.  **The two anchors
 trade the growth between the sides, as 4q says, and neither removes the second
 block.**
@@ -2961,75 +3124,47 @@ above), so at TWO anchors per bounce each half factors:
 Neither half needs two blocks, and the wall-only half is exactly 4j's outer
 parameter.  So **the outer parameter is necessary and not sufficient**: what
 is also missing is a per-phase ANCHOR.  `fam_cfg` reads `fm_st`, `fm_hs`,
-`fm_left` and `fm_pre` off the record and only `nth ph (fm_tails F) []` off
-the phase, so the phase mechanism varies the TERMINATOR and nothing else.  Two
-anchors per value step is a second widening, of four fields, and it changes
-`fam_succ` too (only one of the two laps advances the value).
+`fm_left` and `fm_pre` off the RECORD and only `nth ph (fm_tails F) []` off
+the phase, so the phase mechanism varies the TERMINATOR and nothing else.
+Two anchors per value step is a second widening, of four fields, and it
+changes `fam_succ` too (only one of the two laps advances the value).
 
 **That is why the field was not built.**  A far-side parameter alone has no
 consumer: it would close no row, and 4j's complaint about the existing `p` is
 precisely that it is carried everywhere and used nowhere.  Adding a second one
-next to it is not the fix.  Whoever takes this next should scope the ANCHOR
-and the parameter together, or leave both.
+next to it is not the fix.  Scope the ANCHOR and the parameter together, or
+leave both — and note that 4j's cost estimate assumed the spacer was the only
+way in, which is the assumption this section retires.
 
-### The two `no anchor` gray rows: the blocker was the SEARCHER
+### The two gray rows: same diagnosis, reached twice, and 4s's lever is the right one
 
-`1RB0RD_1LC0LB_1LD0LB_1RD0RA` and `1RB0RD_1LC0LC_1LD0LB_1RD0RA`, filed
-`no anchor`, refused by the gray emitter with `boot cells [1, 0, 1] are not
-the family at [1, 1]`.  The diagnosis in the brief is right: `valfam` selects
-a family whose digit words are `[[0,0],[1,0]]`, both ending in a BLANK, so
-`fam_cells` spells `[1,0,1,0]` where the machine's `cconf` carries `[1,0,1]`.
-Same tape under `lift`; different list; and `Hboot` is on the list.
+This session also boarded `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and
+`1RB0RD_1LC0LC_1LD0LB_1RD0RA` before #111 merged, from the same reading 4s
+gives: the selected family's digit words both end in a BLANK, the other anchor
+was already in `find_families`' output, and no kernel change was needed.  The
+boards are #111's; the only thing worth keeping from the duplicate is the
+difference in LEVER, in case a row ever needs the other one:
 
-The brief offers two fixes -- re-read at an anchor whose digit words do not
-end in a blank, or give `fam_cells` a trimming.  **The first one was already
-available and nothing had to be built.**  The search finds 29 families for
-this machine; enumerating them and testing each boot against an exact
-`ctape_move` simulation:
+* **4s's** is a sort tie-break — a blank-tailed family sorts after a
+  non-blank-tailed one — and it fires only on an exact tie in the fallback
+  flags and the chain length, which is what these two rows are.
+* **The alternative measured here** is a hard gate: simulate `ctape_move`
+  exactly at the boot index and require `fam_cells` to spell the counter side
+  the `cconf` CARRIES, rejecting any family with no such member.  It is
+  strictly stronger and catches the case where the unstatable family sorts
+  strictly FIRST rather than tying.
 
-    #0  (StA, R)  pre ()   digs [(0,0),(1,0)]   MISMATCH   <- the one selected
-    #1  (StA, R)  pre ()   digs [(0,0),(0,1)]   EXACT  (1-digit boot)
-    #2  (StC, R)  pre (1,) digs [(0,0),(0,1)]   EXACT  (2-digit boot)
-    #4  (StA, R)  pre (1,) digs [(0,0),(0,1)]   EXACT
-    #8  (StB, R)  pre ()   digs [(0,0),(0,1)]   EXACT
+**It was not kept, and the reason is the discipline and not the code:** no row
+in the tree needs it, 4s's tie-break covers every case that does exist, and
+two mechanisms for one property in one function is how the next session gets
+confused.  Build it if and when a row sorts strictly first.
 
-Candidate #2 is the same machine read one cell over, and it is exact.  It was
-never reached because `close` settles on the first candidate that closes and
-nothing downstream of `find_boot` knows what the denotation can state.
+### The other five core rows that already CLOSE are ARM rows, not searcher rows
 
-So the test went there: `exact_cconf` simulates `CTape.ctape_move` exactly,
-`boot_is_exact` asks whether `fam_cells` spells the counter side the boot's
-`cconf` CARRIES, and `find_boot` skips members that fail it.  Both rows then
-close on #2 and board.
-
-**This cannot cost a row that boards today**, and the argument is not a
-regression run: every emitter path already refuses a family at this same boot
-check, so a boarded row's certificate passes it by construction.  Checked
-anyway on `1RB0RB_0LC0LD_1LC1LD_1RA0RA` (boarded, gray): same family, same
-closure, with and without the gate.
-
-### Worth, and where the residue stops
-
-Two core rows, no shadows on either, no kernel change, no new `ClassSucc`
-instance.  40 rows remain.
-
-* The trimming the brief offers as the alternative was NOT built and should
-  not be: `fam_cells_class` and `fam_cells_run` decompose `fam_cells` into an
-  `sside` with an OPAQUE tail, and a trim at the end of the string is not
-  compositional with that -- it needs a "the tail is not all blank" side
-  condition on both lemmas and every `ClassSucc` instance above them.  A
-  cell-exact family costs nothing and there was one.
-* **`no anchor` is now two labels.** For these two rows it meant *the searcher
-  picked a family the kernel cannot state and stopped looking*.  For the
-  bouncer pair it means what 4q says.  Anything still filed `no anchor` is
-  worth re-running before it is read by a human -- the gate is free.
-
-### The other five that already CLOSE, and they are ARM rows, not boot rows
-
-The same question asked of the whole core: which rows carry a `closed: true`
-certificate in a committed sweep and are still unproven?  Seven, of which two
-are the pair above.  The other five were run through the emitter and **none of
-them is a boot-check row** -- the refusals are all downstream:
+Asked of the whole core: which rows carry a `closed: true` certificate in a
+committed sweep and are still unproven?  Seven, of which two are 4s's gray
+pair.  The other five — all still core after #111 — were run through the
+emitter and **none of them is a boot-check row**:
 
     1RB0LD_0LC0RB_1LA1RC_0RC1LD   arm2    no chain found
     1RB1LA_0LA1RC_0LD0RC_1LD0RB   arm55   no chain found
@@ -3039,13 +3174,12 @@ them is a boot-check row** -- the refusals are all downstream:
       "interior arm: no chain at any threshold 0..3 and stride 1..4 --
        the carry ripple is not affine in the run length"
 
-The last one is the interesting one and it is 4k's two knobs again: every arm
-the certificate carries re-derives, and the CLOSURE still will not build
-because the interior arm has no chain at any `(N0, stride)` in the grid.  So
-the five are one bucket with the arms and not with the boot, and widening
-`ARM_GRID` is the axis they sit on -- **not** the gate above, which is already
-free for them.  Worth knowing before someone re-runs the search on them: the
-search is not what is stopping these.
+The last is the interesting one and it is 4k's two knobs again: every arm the
+certificate carries re-derives, and the CLOSURE still will not build because
+the interior arm has no chain anywhere in the grid.  So the five are one
+bucket with the ARMS and not with the boot — **re-running the search on them
+is wasted**, and they do not belong with 4s's gray pair however similar the
+label looks.
 
 ## 5. What this is NOT
 
