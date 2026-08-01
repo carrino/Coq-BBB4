@@ -3252,7 +3252,9 @@ one:
   which the audit itself proposed the moment the partner landed.
 
 Both compile under Coq 8.18.0 at `functional_extensionality_dep` only.  CI
-builds neither, so both were built locally.
+builds neither, so both were built locally.  `Closeout.vo` was then rebuilt
+from cold and the KERNEL agrees with the audit: `proven_rows` 5119,
+`shadow_rows` 11, `closeout_partial` on funext alone.
 
 **Worth knowing for the next partner: boarding one does not drop the core
 count by one.**  `inventory.py` PROMOTES the freed shadow out of

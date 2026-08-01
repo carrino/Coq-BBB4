@@ -4547,3 +4547,10 @@ LADDER_PLAN §4u.  Coq 8.18.0 from apt (~1 min).
   `pkill -f "Makefile.coq -j1"` killed the shell that was about to start the
   `-j3` build, so the restart never happened and the log was never created.
   Use a pattern that cannot match the invocation, or `pgrep` the PID first.
+- **The kernel agrees with the audit, checked and not assumed.**
+  `theories/Closeout/Closeout.vo` rebuilt from cold on this branch:
+  `proven_rows` **5119**, `shadow_rows` **11**, and `closeout_partial` closed
+  under `functional_extensionality_dep` alone.  That is the audit's number
+  turned into the kernel's.  ~2350 `.vo`; the run here was split across a
+  `-j1` stretch alongside the sweep and a `-j3` stretch after it, so treat
+  §4t's ~2h20m at `-j3` as still the figure to plan with.
