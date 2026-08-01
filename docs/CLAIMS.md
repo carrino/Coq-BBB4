@@ -96,7 +96,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
 
    _The two counts move every wave; the row files are the authority and
    `python3 tools/closeout/audit.py` prints them live.  22 + 11 is the
-   2026-08-01 reading (5,125 of the frozen 5,156 settled, 99.4%)._
+   2026-08-01 reading (5,128 of the frozen 5,156 settled, 99.5%)._
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
 frozen table under completion of undefined transitions, non-start state swaps,
@@ -112,7 +112,7 @@ on type-in-type, unsafe (co)fixpoints, or assumed positivity.
 **It is not a proof that BBB(4) = 32,779,478.**  One thing is missing before
 the record itself is a theorem here:
 
-1. **The 21 core machines (and their 10 shadows).**  Any of them could, for
+1. **The 20 core machines (and their 8 shadows).**  Any of them could, for
    all this development knows, be a quasihalter with a larger score.  That is
    what undecided means.  The list is `tools/closeout/core_rows.txt` and the
    map is [`RESIDUE_MAP.md`](RESIDUE_MAP.md).
@@ -151,7 +151,7 @@ So the honest one-line summary is:
 
 ## Scope of the 22
 
-All 21 core machines are residue — machines no engine in this repository
+All 20 core machines are residue — machines no engine in this repository
 settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28
