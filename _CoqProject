@@ -649,6 +649,7 @@ theories/Tests/CountersDbl_Corruption.v
 
 # --- counters track: wave4 #15, a plain binary counter ---
 theories/Machines/Counters/Wave4_15.v
+theories/Tests/LadderLazyFib_Corruption.v
 theories/Tests/CountersW15_Corruption.v
 
 # --- counters track: tower #20, a counter in the alphabet {10, 110} ---
@@ -1427,6 +1428,12 @@ theories/Machines/Ladder/LDR_1RB____1LC1RD_0LC1RD_1LB0RD.v
 theories/Machines/Ladder/LDR_1RB0RD_1LC0LB_1LD0LB_1RD0RA.v
 theories/Machines/Ladder/LDR_1RB0RD_1LC0LC_1LD0LB_1RD0RA.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA1RC_0RD0RB_1RA____.v
+theories/Machines/Ladder/LDR_1RB____0LC1RD_1LB1RC_1LB0RD.v
+theories/Machines/Ladder/LDR_1RB____0LC1RD_1LB1RD_1LB0RD.v
+theories/Machines/Ladder/LDR_1RB____1LC0RB_0LD1RB_1LC1RB.v
+theories/Machines/Ladder/LDR_1RB____1LC0RB_0LD1RB_1LC1RD.v
+theories/Machines/Ladder/LDR_1RB____1LC1RB_0LB1RD_1LC0RD.v
+theories/Machines/Ladder/LDR_1RB____1LC1RD_0LB1RD_1LC0RD.v
 theories/Counters/LapGlueQuiet.v
 theories/Counters/KpWallAlt.v
 theories/Counters/KpWallQH.v

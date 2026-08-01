@@ -3831,3 +3831,111 @@ constant epilogue), giving `CF k -->^(108k+275) CF (k+1)` and
   itself is the bottleneck, 706/708 NOCLOSE, and a richer measure vocabulary
   cannot help.
 
+
+## 4x. The fibonacci six BOARD: `(FibL, 1)`, and the widening was a code rather than a record
+
+_Branch `claude/nick-drozd-easy-problems-wm1961`, cut from `main` at `256e7e6`.
+Coq 8.18.0 from apt.  Prompted by nickdrozd's list of nine "easy" rows; one of
+the nine (`1RB1LB_1LC0RD_0LB1LA_0LA1RA`) was already boarded by 4w, and six of
+the remaining eight are the fibonacci six 4v and 4w both measured and neither
+built._
+
+    settled by a board       5136 -> 5142   (99.7%)
+    core undecided             15 ->    9
+    0RB shadows of the core     5 ->    5   (none of the six carries one)
+
+**All six board.**  `theories/Machines/Ladder/LDR_1RB____0LC1RD_1LB1RC_1LB0RD.v`
+and its five siblings, each `iqh` (`NonHalt /\ QHBound 2000 /\ QuasiHaltsSt`)
+off `LadderCheck.boardL_iqh`, `Print Assumptions` =
+`functional_extensionality_dep` only.
+
+### What was actually built, and it is smaller than §4v priced it
+
+4v priced the widening as one field on `Class` and one on `Fill`.  The
+`Class` half is right and is what §3d does — but as a SECOND record
+(`ClassW`, over `wrep`) rather than a widening of the first, so none of the
+44 boards already standing on `Class` moves by a character.  The `Fill` half
+turned out not to be needed at all, and that is the finding worth carrying:
+
+* **`Fill` cannot spell the lazy fill and does not have to.**  The fill
+  target is the SMALLEST string of the next width, which is alternating —
+  `(1 0)^m 1` at even width, `1 (1 0)^m 1` at odd — so a `Fill` record whose
+  `f_mid` is a digit cannot write it, and the two parities would have needed
+  one PHASE each.  Instead `fam_next` reads `LadderFam.lazfill` directly at
+  `FibL`: a function of the width, both parities in one definition, and the
+  family stays ONE-PHASE.  A `Fill` field would have been carried by every
+  board in the tree to serve six rows.
+* **What a weighted numeration really costs the interface is a FLOOR.**
+  Every earlier code spells every value below its width's ceiling; the lazy
+  representative of width `k` spells exactly `fibw k .. fibsum k`.  So
+  `fam_of_value` needed a lower guard (`fam_lo`, 0 at every other code) and
+  without it it would have returned a string whose value is not the one
+  asked for.  That is the one genuinely generic change, and it is four lines.
+* **The numeration did not move.**  Not `fibw`, not `fibsum`, not `fam_lim`,
+  not `fibval` — 4v said so and it held.  `FibL` is `Fib` with a different
+  `fam_of_value` (`fiblaz` for `fibdec`) and a different membership
+  (`fiblazb` for `fibokb`), and the two decoders differ by exactly which
+  state a digit sends the scan into: in `fibdec` a `1` forces a `1`, in
+  `fiblaz` a `0` does.
+
+### The risky lemma, and it was the round trip as 4v said
+
+`fiblaz_round`: the decode of a member's value is that member.  It goes by
+`rev_ind` and splits on the top digit, and the two branches are the two ends
+of `fibsum_S` — a top `1` is FORCED because a member of the state below is at
+least `fibwp k`, so the value is at least `fibwp k + fibw k = fibw (S k)`; a
+top `0` is forced the other way because a member below is at most `fibsum k`,
+which is `fibw (S k) - 1`.  `laz_lb` (the floor) is what makes the first half
+go, and it is the lemma the greedy code never needed.
+
+### The class laws, and the fill arm reads TWO units
+
+`flc 0` and `flc 1` are 4v's two classes verbatim, and their value law is two
+telescoping identities:
+
+    fibval (wrep [1;0] n)      = fibwp (2n)          (the even class)
+    S (fibvl 1 (wrep [1;0] n)) = fibw (2n)           (the odd one)
+
+The FILL ARM is where the word run pays for itself: its left-hand side is the
+top of a width, a bare run of `[S1]`, and its right-hand side is the
+alternating `rep [S1;S0]`.  One `LRule` carries both because an `sside` names
+its own unit and its own affine count, so the arm reads `rep [S1] (2j + b)` on
+one side and `rep [S1;S0] (j + b')` on the other.  **The fill arm's stride is
+2 and it has to be**: `lazfill`'s shape is chosen by the width's PARITY, so an
+arm serving widths `r, r+s, …` can only have one shape if `s` is even.  That
+is the whole of what the parity costs once the phase is gone.
+
+### The emitter did not go through `valfam`, and should not have
+
+`tools/ladder/emit_lazyfib.py`.  These rows' family is not a fit but a
+MEASUREMENT — 4v/4w read it off 23,614 values per row and it is identical on
+all six — so the emitter reads it off the machine (anchor `StB`/`StC` at head
+`S1`, counter on the right, far side empty, one cell per digit, no prefix, no
+terminator) instead of asking `find_families`, which returns `1,2,3,5,8,13`
+here for the reason 4v gives.  The ladder comes out EMPTY on all six: every
+arm derives from window, cycle and rotation steps with no earlier rule
+invoked.  Four interior arms (`N0 = 1`, stride 1), two fill arms (`N0 = 1`,
+stride 2), boot at t = 4 (rows 1–2) or t = 2 (rows 3–6) on the width-1 string
+`[1]`.
+
+### What is left of nickdrozd's nine
+
+Two rows, and neither is a ladder row:
+
+* `1RB0RB_0LC1RD_1LC1LA_0LA1RB` — 4w's fibonacci twin of the solid-block wall
+  anchor.  Its own once-per-increment anchor is located (`StB`, head `S0`,
+  counter on the left with one cell dropped, decreasing for 987 consecutive
+  visits) and what stops a board is that the index is not monotone across
+  epochs, so it wants `LapGlueIx` over a FIBONACCI numeral type — plus a
+  never-QH twin of `glue_qh_quiet_ix`, which does not exist yet.  4w's third
+  route (the epoch obeys `lap(w) = lap(w-1) + lap(w-2) + 3` exactly, so a
+  strong induction with no numerals at all) is still the cheap thing to try
+  and is re-confirmed here to `w = 24`.
+* `1RB0RB_1LC0RC_1RA0LD_0LB0LC` — `LADDER_NOFAM.md`'s unary stripe counter.
+  Re-measured this wave: at the anchor `(StC, ([], S0, S1 :: 0^g ++ W))` the
+  left edge moves exactly −3 per bounce and the gap `g` is affine, but the
+  stripe word `W` is NOT bounded — it grows, and its successive values fall
+  into groups of three sharing a suffix with the prefixes cycling
+  `1000 / 111 / 1001`.  So the `φ · (101)^p · 0011111` reading is a
+  one-parameter family only at a SPARSER anchor than the bounce, and the
+  bounce anchor is nested rather than flat.  Do not start from the bounce.

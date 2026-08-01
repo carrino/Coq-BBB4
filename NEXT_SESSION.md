@@ -380,6 +380,50 @@ via `LapGlue.glue_neverqh` — **and with it its `0RB` shadow**
   Had it existed, both `Ter3Wall`'s base 3 and this `phi` would have been
   known four waves earlier.
 
+## 2b5. Wave-37 (2026-08-01) — the `1RB---` population is DONE, at `(FibL, 1)`
+
+Full write-up: `docs/LADDER_PLAN.md` §4x.  nickdrozd posted nine rows as
+"easy"; one was already boarded (§4w's two-block bouncer) and **six of the
+remaining eight board this wave** -- the fibonacci six that §4v and §4w both
+measured and neither built.  Core undecided **15 -> 9**, settled 5136 ->
+5142.  With them the whole 24-row three-state `1RB---` population is boarded.
+
+Four things worth carrying:
+
+- **The widening §4v priced was half right and half unnecessary.**  `Class`
+  does need a word run -- the lazy fibonacci increment sends `1^(2m)` to the
+  alternating `(1 0)^m` -- but as a SECOND record (`ClassW`) so that none of
+  the 44 boards already standing on `Class` moves.  `Fill` needs nothing:
+  at `FibL` the fill is `LadderFam.lazfill`, a FUNCTION OF THE WIDTH, so both
+  parities live in one definition and the family stays ONE-PHASE where a
+  `Fill` record would have wanted a phase per parity.
+- **What a weighted numeration costs the interface is a FLOOR.**  Every code
+  before `FibL` spells every value below its width's ceiling; the lazy
+  representative of width `k` spells exactly `fibw k .. fibsum k`.  So
+  `fam_of_value` grew a lower guard (`fam_lo`, which is 0 at every other
+  code).  That is the one genuinely generic change and it is four lines.
+- **The numeration itself did not move** -- not `fibw`, not `fibsum`, not
+  `fam_lim`, not `fibval`.  `FibL` is `Fib` with the other canonical form,
+  and the two decoders differ by exactly which state a digit sends the scan
+  into: in `fibdec` a `1` forces a `1`, in `fiblaz` a `0` does.
+- **The emitter did not go through `valfam` and should not have.**  These
+  rows' family is a MEASUREMENT, identical on all six, so
+  `tools/ladder/emit_lazyfib.py` reads it off the machine instead of asking
+  `find_families` (which returns `1,2,3,5,8,13` here, for §4v's reason).  The
+  ladder comes out EMPTY on all six: every arm is window/cycle/rotation steps
+  with no earlier rule invoked.
+
+**What is left of the nine: two rows, neither a ladder row.**
+`1RB0RB_0LC1RD_1LC1LA_0LA1RB` wants `LapGlueIx` over a fibonacci numeral type
+plus a never-QH twin of `glue_qh_quiet_ix` -- or §4w's third route, the strong
+induction on `lap(w) = lap(w-1) + lap(w-2) + 3`, re-confirmed exact to
+`w = 24` this wave.  `1RB0RB_1LC0RC_1RA0LD_0LB0LC` re-measured: at the bounce
+anchor the left edge moves exactly −3 and the gap is affine, but the stripe
+word GROWS (groups of three sharing a suffix, prefixes cycling
+`1000 / 111 / 1001`), so `LADDER_NOFAM.md`'s one-parameter `φ (101)^p 0011111`
+reading lives at a sparser anchor than the bounce and the bounce anchor is
+nested.  Do not start from the bounce.
+
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
