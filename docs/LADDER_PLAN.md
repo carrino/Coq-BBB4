@@ -3455,6 +3455,35 @@ fibval` (unchanged) and a one-state "no 00" decode; the round trip is
 not re-run `fib_anchor.py`** — the anchor and the ladder are settled; it is
 the canonical form and the class shape that are not.
 
+### And one row is a BASE-3 wall counter with an affine lap, anchor located
+
+`1RB1RC_1LA0LB_1LD0RD_1LB0RC` is `residue_map.tsv`'s `EXP3` / `Ip` /
+"no interior chain", and `LADDER_NOFAM.md` measures it at `1 1 1 3 3 9 9 27`
+strings per width — **ratio 3**, which that file records and then leaves.
+`tools/counters/ter3_probe.py` (new) locates the anchor, and the reading is
+exact:
+
+    anchor    (StA, ([], S1, S1 :: <digits>))
+    digits    2 cells, LSB nearest the head, {00, 10, 11} = {0, 1, 2}
+    top       TRUNCATED: `1` alone is digit 1, `11` is digit 2, and a top
+              digit 0 never occurs (`lpad_eqb` again)
+
+**75,006 consecutive anchor visits, 0 prefix failures, 0 consecutive-value
+failures**, decoding to `0, 1, 2, …, 75005`.  And the lap is **affine in the
+carry length** `c` (the count of trailing 2s), in exactly two branches with
+no third value in any class for `c = 0..9`:
+
+    gap = 6c + 4    or    6c + 6
+
+That alphabet is `theories/Counters/Ter3WallB.v`'s digit for digit, and the
+two branches are `TernCounter`'s `tsucc` (overflow writes a fresh digit)
+against `tsuccT`.  What is different from the three-state `Ter3Wall*` rows is
+only the CLOSER: `StA` is the target of `B0` here, so the theorem is
+`NeverQuasiHaltsSt` and `LapGlue.glue_neverqh` is the closer, not §11's
+quasihalter twin.  **This is the cheapest unbuilt row in the residue that
+this session measured** — the numerals, the alphabet and the increment all
+already exist.
+
 ### The row that did move: a two-block bouncer, boarded by hand
 
 `1RB1LB_1LC0RD_0LB1LA_0LA1RA` is one of the two rows `LADDER_NOFAM.md` files

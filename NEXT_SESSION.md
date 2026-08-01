@@ -4671,6 +4671,21 @@ Coq 8.18.0 from apt (~1 min).  Full write-up: `docs/LADDER_PLAN.md` §4v.
   of a width is `1^k` and not `1010…`.  A `(Fib, 2)` instance built to the
   old prompt's spec would have compiled and boarded nothing.
 
+- **`1RB1RC_1LA0LB_1LD0RD_1LB0RC` is a BASE-3 wall counter and its anchor is
+  now located** (`tools/counters/ter3_probe.py`, new).  `residue_map.tsv`
+  calls it `EXP3` / `Ip` / "no interior chain" and `LADDER_NOFAM.md` measures
+  ratio 3 and stops there.  The anchor is `(StA, ([], S1, S1 :: digits))`,
+  digits 2 cells LSB-first over `{00, 10, 11}` with the TOP digit truncated
+  (`1` alone is digit 1) -- **75,006 consecutive anchor visits, zero
+  failures, values 0..75,005** -- and the lap is AFFINE in the carry length
+  in two branches, `6c + 4` and `6c + 6`, with no third value in any class
+  for `c = 0..9`.  That alphabet is `Counters/Ter3WallB.v`'s digit for digit
+  and the two branches are `TernCounter`'s `tsucc` / `tsuccT`; the only new
+  piece is the CLOSER, because `StA` is the target of `B0` here so the
+  theorem is `NeverQuasiHaltsSt` and `LapGlue.glue_neverqh` is what closes
+  it, not §11's quasihalter twin.  **Cheapest unbuilt row this session
+  measured.**
+
 - **What blocks them is `Class`, not `Code`.**  The increment is exact and
   single-valued on all six (0 mismatches over ~3,982 interior transitions
   each) and sends `1^(2m) 0 rest -> (1 0)^m 1 rest` — an ALTERNATING run of
