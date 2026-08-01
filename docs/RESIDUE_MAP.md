@@ -305,7 +305,7 @@ unmeasured and is the cheapest next question (it takes minutes and no Coq).
 |---|---|---|
 | `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 | `no interior j = S j'` | wears a `HIGHER` label and the emitter finds **no family at any anchor** — `digit_words` names nothing.  But see below: it is the TWELFTH φ row, and the other eleven have all boarded. |
 | `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | gap ratio **1.00** — the tightest on the whole list |
-| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `no gap-free two-form family` | the last row of a bucket that went 10 → 1 without the gate ever being answered.  Gap ratio 2.65 on a 2,255-cell tape — the widest tape here, and still inside the tier |
+| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `no gap-free two-form family` | the last row of a bucket that went 10 → 1 without the gate ever being answered.  Gap ratio 2.65 on a 2,255-cell tape — the widest tape here, and still inside the tier.  **But wave 38 closed its two open routes: `StD` is permanently outside `ReachStI` (a `StD`-avoiding cycle raises `ones l`, so no `(B,C)` works — `docs/WAVE38_REST_FOUR.md` §2b) and the wave-36 lever does not apply.  Now the LEAST tractable of the four, not the most.** |
 
 **BOARDED, wave 38** — `1RB1RC_1LA1RA_0RC1LD_1LB0LD` (was
 `no inner family at pow2 j`, gap ratio 1.04), through the ordinary
@@ -361,10 +361,29 @@ values stepping by successive Fibonacci numbers — the same family as the
 eleven three-state rows that boarded on 2026-08-01 off `(Fib, 1)` and
 `(FibL, 1)` (`docs/CORE_3STATE.md` §3).  It is the twelfth of twelve and the
 only one left.  **The numeration is already built** — `LadderFam` has `Fib`,
-`FibL`, `fam_lo` and the round trips — so the entire remaining cost of this
-row is LOCATING ITS ONCE-PER-INCREMENT ANCHOR, which `digit_words` never
-enumerates because the row is read at a sparse one.  Every other row on this
-page needs mathematics that does not exist yet; this one needs a search.
+`FibL`, `fam_lo` and the round trips.
+
+**SETTLED, wave 38: the φ reading is exactly right, and `LADDER_PLAN.md`
+§4s's "no family at any anchor, file it with the no-anchor bucket" is a
+statement about the emitter and not about the machine.**  The measurement
+is not a ratio fit: running the row's validated macro system and recording
+the first macro step at which the counter reaches `n` digits gives
+17,709 = F(22)−2, 28,656 = F(23)−1, 46,366 = F(24)−2, … , 2,178,307 =
+F(32)−2 — **exactly Fibonacci, alternating offset −2/−1, out to F(32)**.
+The tape is 28 cells wide after 3,000,000 steps, growing like `log_φ t`,
+which is where the 1.11 gap ratio comes from.
+
+Wave 38 also found the route that does NOT need the anchor at all: this row
+passes wave 36's lever (its orbit keeps the RIGHT half-tape a bare unary
+run, 0 violations in 2,000,000 steps), so it is a finite word-rewriting
+system — six rules, exhaustive, differentially validated in
+`tools/mxdys4/cmacro2.py`.  Its four liveness obligations all reduce to the
+SINGLE fact that the macro system never gets stuck, and **that fact is now
+proved**: the composite step preserves the parity of `ones l`, is undefined
+only at `ones l = 0` (even), and the orbit starts odd -- so it is never
+stuck.  So the remaining cost is not a search for an anchor and not new
+mathematics; it is the Coq transcription.  `docs/WAVE38_REST_FOUR.md`
+§3.
 
 **The five shadows are not a task.**  They sit on five of the eight, they need
 no new mathematics, and they fall automatically: `Census/ShadowBoard.shadow_nqh`

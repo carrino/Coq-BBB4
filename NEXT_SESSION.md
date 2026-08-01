@@ -5449,3 +5449,192 @@ shape blocked it before is worth re-reading against them.
   exact, no `lift_app_blank` anywhere.
 - `exists n. eexists. split; [| reflexivity]` does not close a `fst ?c = q`
   visit goal — name the config.
+
+---
+
+# Wave 38 (2026-08-01) — the last four core rows, all four measured
+
+(This session's half.  Row 4 boarded in a PARALLEL wave-38 session, PR #126;
+the other three are below.  Core list 4 -> 3, shadows 1.)
+
+Full write-up: `docs/WAVE38_REST_FOUR.md`.  The core list at session start
+was six; the parallel base-2 pair session landed mid-session and took it to
+**four, which are exactly this session's rows**.  None boarded.  What this
+wave produced is one missing piece of Coq, two permanent negatives, one
+settled documentation dispute, and two macro systems.
+
+## Start here next time: row 2 is a TRANSCRIPTION job now, not a research one
+
+`1RB0RB_0LC1RD_1LC1LA_0LA1RB` -- the phi row -- has its mathematics
+COMPLETE.  Nothing is left to discover; what is left is Coq.
+
+* It passes wave 36's lever (right half-tape a bare unary run, 0 violations
+  in 2,000,000 raw steps), so it is a finite word-rewriting system.
+* Six macro rules, exhaustive, in `cconf` coordinates, differentially
+  validated over 4,000 macro steps with 0 mismatches
+  (`tools/mxdys4/cmacro2.py`).
+* All FOUR liveness obligations discharge structurally: `StA` is the macro
+  boundary, `StB` is visited by every rule, and `StC`/`StD` each follow
+  within 2 macro steps by a case split on `R` (measured max gap 2 for both).
+* The ONE remaining obligation was that the macro system never sticks, and
+  **the invariant that gives it is `ones l` ODD.**
+
+**The parity argument, in full.**  Rules 3-6 always leave `R' <= 1` and rule
+5 at `k=0` consumes `R'=1`, so rule 2 plus its consumer is a single self-map
+`T` on the left word at `(s=S1, R=0)`.  With `w = 0^j 1 a l2`:
+
+    a=S0, j odd  :  T w = 1^(j+2) l2        ones change  j+1   (even)
+    a=S0, j even :  T w = 0 1^(j+1) l2      ones change  j     (even)
+    a=S1, j odd  :  T w = 1^(j+1) 0 l2      ones change  j-1   (even)
+    a=S1, j even :  T w = 0 1^j 0 l2        ones change  j-2   (even)
+
+All four preserve length AND the parity of `ones`.  `T` is undefined exactly
+when `w` has no `S1`, i.e. `ones w = 0`, which is EVEN.  So an odd-ones word
+can never stick and can never reach a stuck one.  The first `(S1,0)` word on
+the real orbit is `[S1]`, one `S1`, odd.  Done.
+
+Verified two ways by `tools/mxdys4/cmacro2.py --parity`: exhaustively over
+all 4,194,304 words of prefix length <= 22 (0 parity violations; and of the
+131,072 odd-ones words in the length-18 range, not one sticks), and along
+the real orbit over 2,000,000 macro steps -- 763,932 rule-2 configurations,
+EVERY one with `ones l` odd, none even.
+
+Same shape as M1/M4's parity lock, so §8's transcription warning applies:
+state the parity facts as TWO IMPLICATIONS, never an `iff`, or
+`apply H in Hyp` picks a direction by luck.
+
+**What is left is Coq**: six rule lemmas (induction on `R` for the walk
+through the run, on `j` for the left sweep), the composite step, the parity
+lemma, and `neverqh_of_live4` to close.  Two traps that look like the
+invariant and are not, both recorded in `docs/WAVE38_REST_FOUR.md` §3d:
+`In S1 l` is not closed under the rules, and "avoid words with two ones" is
+wrong because the doomed set is not closed downward (`0^i 1 1 0^inf` has a
+four-ones preimage).  Every doomed word has EVEN `ones` -- that is the fact
+that generalises, not the shape.
+
+Boarding it reads 4 core -> 3 and takes its `0RB` shadow
+`0RB1LC_1LC0LC_0RD1LA_1RD1RB` with it, so 1 shadow -> 0.
+
+## What is now CLOSED, so nobody re-opens it
+
+* **Row 1 `1RB0RB_1LC0RC_1RA0LD_0LB0LC` is QUADRATIC, and that is its
+  lead.**  `LADDER_NOFAM.md`'s unary-stripe reading is right and now has a
+  growth law: the first step at which the stripe count `p = #011` reaches a
+  value gives `t ≈ 434 p²`, converging cleanly (p=20 at 178,000; p=116 at
+  5,840,000), with the tape width linear in `p`.  It is the ONLY polynomial
+  row of the four — row 2 is a Fibonacci counter and row 3's fitted laps are
+  a doubling composed with an affine sweep, so both are exponential — which is exactly why the word-rewriting lever does not read it and
+  why its `max R = 3`.  The obvious inference -- "so point `RepWL` at it" -- was
+  CHECKED AND IS WRONG: row 1 already survives both committed RepWL sweeps
+  (`repwl2_survivors.txt` 2753, `repwl_residue_survivors.txt` 3102) out to
+  rung `(L,T) = (6,4)`, and block length 6 covers the period-3 stripe, so
+  it is not a rung-size gap.  What the quadratic law changes is the TARGET,
+  not the tool: the row wants a quadratic-counter reading, which is closer
+  to `theories/Counters/` (`LinCarry`, `Sep2Counter`) than to anything rows
+  2 and 3 need.  Nobody has read it against those.  A hand reading, not a
+  search.
+* **The `ReachStI` route on row 1 is closed.**  `ReachStI`
+  certifies `StA`/`StB`/`StC`; `StD` is PERMANENTLY outside the tier, not
+  merely unsearched.  Bellman-Ford is complete per `(B,C)`, and the cycle
+  `(StA,1,1,0) -A1-> (StB,0,0,0) -B0-> (StC,0,0,1) -C0-> (StA,1,1,0)` is
+  `StD`-avoiding, returns `rk` to its start, and gains 1 on `ones l`, so
+  `mu` cannot drop for any `B, C >= 0`.  Pushed to `B,C <= 60` before the
+  witness was extracted; do not push further.  The lever does not apply
+  either (§1 of the write-up).  **This row went from "priority 1, one state
+  short" to the least tractable of the four.**
+* **The general form of that test is cheap and should be run FIRST**, next
+  to `gaps.py`: search the goal-avoiding graph for a cycle with
+  `delta ones_l >= 0` and `delta ones_r >= 0`.  One such cycle kills the
+  whole `ReachStI` tier for that goal state.  `docs/REACHST_TIER.md`, last
+  section.
+* **`pin_kn.py` on rows 2 and 3**, 64 runs (8 rungs × 4 `qext`).  Neither
+  row's `NGramHist` closure opens: row 2 misses `StA` everywhere, row 3
+  mostly does not close at all.  `k`/`n` is not the knob on either.
+* **`cert_search.py` at `B,C <= 25`** on rows 2/3/4: row 2 `StC` only, row
+  3 nothing at all, row 4 `StC` only.
+* **Row 4 (KCOPY3, `1RB1RC_1LA1RA_0RC1LD_1LB0LD`) BOARDED** in a parallel
+  wave-38 session (PR #126) while this one was running, taking the core
+  list to THREE.  It went out through the ordinary `LapDecider` route: its
+  lap is AFFINE in the carry length despite the `EXP2` label, because
+  `EXP2` measures the growth of the RUN against the tape width and not the
+  shape of a lap.  **That is the caution to carry out of this wave**: the
+  two negatives above are correct and were still no evidence about the
+  machine.  A row can be untouchable by every liveness tier in the tree and
+  fall to a counter certificate the same afternoon.  So read the row 1
+  negative as permanent for `ReachStI` and for nothing else.
+* **The block-run half-tape search on rows 1 and 4** — every block of length
+  <= 4, junk <= 8 at both ends, gated per state.  Nothing survives.  Rows 1
+  and 4 are the two with `max R = 3`: their counters are not unary and are
+  not on the half-tape the lever reads.
+
+## The φ dispute is settled, in RESIDUE_MAP's favour
+
+`RESIDUE_MAP.md` read row 2 as `phi` at spread 0.00; `LADDER_PLAN.md` §4s
+said "not a fibonacci ladder row, no family at any anchor, file it with the
+no-anchor bucket".  **RESIDUE_MAP was right and §4s has been corrected in
+place.**  The evidence is exact rather than a ratio fit: the first macro
+step at which the counter reaches `n` digits is 17,709 = F(22)−2,
+28,656 = F(23)−1, 46,366 = F(24)−2, … , 2,178,307 = F(32)−2 — Fibonacci
+with an alternating −2/−1 offset, out to F(32).  §4s's sentence was true of
+the EMITTER (`digit_words` never enumerates the sparse anchor this row is
+read at) and was written as though it were a verdict about the machine.
+That is the same failure mode RESIDUE_MAP's φ-row paragraph warned about.
+
+Worth carrying: the row's tape is only **28 cells wide after 3,000,000
+steps**, growing like `log_φ t`.  A row can be a core undecided holdout and
+still have a tiny tape; "undecided" here means long laps, not a big tape.
+
+## Row 3 is further along than its file suggests
+
+`1RB0RD_1LB1LC_1RC0RA_0LB1RD` (Drozd's sixth) ALSO passes the lever — which
+the reset-family lap fit did not predict — and five of its six macro rules
+are already in closed form (`docs/WAVE38_REST_FOUR.md` §4).  The sixth,
+`s=S1, R=0`, is its leftward carry and is not yet closed.  The macro-system
+route now looks cheaper than the `NestC`-sized reset-family route it was
+budgeted as.  Second priority, after row 2.
+
+## New in the tree
+
+* `theories/Checkers/LiveAll.v` — `neverqh_of_live4`, the closer that turns
+  four per-state liveness facts into `NeverQuasiHaltsSt`.  It did not exist
+  before; every prior board reached the theorem through a checker that
+  produces it whole, which a row with no closure coverage cannot use.  Also
+  `nonhalt_of_live` (`NonHalt` from any ONE live state, no `Visited`).
+* `tools/mxdys4/cmacro2.py` — row 2's six rules, differentially validated.
+* `tools/mxdys4/cconf_rules.py` — the wave-36 lever test, mechanised.
+  `--scan N` walks the real orbit and reports impure right halves; the grid
+  mode reads the macro system off directly in `cconf` coordinates instead of
+  the frame coordinates `extract.py` prints.  Run `--scan` on any new row
+  before assuming it needs a decider; it is seconds and it split these four
+  2-2.
+
+## Traps this wave paid for
+
+* **A list/tuple comparison silently made an invariant search return
+  "nothing survives".**  The block-run checker compared `seq[i:i+k]` (a
+  list) against a tuple pattern; in Python that is always unequal, so every
+  candidate was rejected and the first run reported 0 survivors on ALL
+  rows — including M1, which is KNOWN to have the invariant.  The bug was
+  caught only because M1 was in the run as a control.  **Put a row with a
+  known-positive answer in every search you write**, and disbelieve a
+  clean negative that includes it.
+* **`make closeout` ITSELF STARTS A SECOND `make`, and that is how the
+  documented two-compilations race actually happens.**  The playbook warns
+  that a killed `make` leaves `coqc` children behind; the way this session
+  hit it was different and is worth knowing.  The `closeout:` target's last
+  three lines are `coq_makefile`, `$(MAKE) -f Makefile.coq
+  theories/Closeout/Closeout.vo`, and `census_cache.py --check`.  So running
+  `make closeout` WHILE a `make -f Makefile.coq ... Closeout.vo` is already
+  in flight puts two independent `make`s on the same `.vo` set -- caught
+  here with both live, compiling different files, minutes from colliding.
+  **Run `make closeout` only when no build is running**, or run just its
+  Python half (`inventory.py`, `gen_shadow.py --harvest`, `inventory.py`,
+  `gen_stages.py`, `audit.py`) which touches no `.vo` at all.  Recovery:
+  kill the tree leaf-first (`coqc`, `sh`, `make`, `make`, `timeout`) and
+  DELETE the `.vo`/`.vos`/`.vok` of whatever file the killed `coqc` was
+  writing -- it may be truncated, and the surviving build will not rebuild
+  it on its own.
+* **A failed search is not a negative until you have the witness.**
+  `cert_search.py` returning `NONE` at `B,C <= 60` looks like "search
+  harder"; the blocking cycle turns the same runs into a permanent result
+  in one extra query.  Extract the obstruction, don't widen the range.
