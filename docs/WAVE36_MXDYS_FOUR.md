@@ -246,7 +246,10 @@ Because the state gaps are `O(width)` (§3), a `ReachStI`-style board is
 *possible in principle* for all four states.  It does not work today, and
 the reason is exact:
 
-* `cert_search.py` covers only `StC`.
+* `cert_search.py` covers only `StC` — and so does the NGramHist closure
+  (`closure_certs` returns `C` on both rows, against `ABC` on M1 and M4).
+  **The two engines are independent and they agree**, so the gap is the
+  abstraction's, not one engine's, and swapping engines is not the move.
 * `tools/mxdys4/certE.py` (extent measure `Be*ext l + Ce*ext r`, which is
   the right shape — the sweeps are bounded by the distance to the outermost
   `1`, not by the count) and `certM.py` / `certM3.py` (k-cell window plus
