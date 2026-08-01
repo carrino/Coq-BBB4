@@ -512,6 +512,16 @@ still missing its sixth rule (`s=S1, R=0`, the leftward-sweep carry).
   already one-sided the same way; if its sixth rule stays hard as a
   rewrite rule, try the turnaround anchor instead.
 
+- The regen is KERNEL-VERIFIED in-container: `Closeout.vo` + all 52
+  `CB_*.vo` + the harvested shadow compile under apt coq 8.18.0 at -j4,
+  `Print Assumptions closeout_partial` and the shadow theorem both
+  `functional_extensionality_dep` only, `length remaining_rows` = 1 by
+  `vm_compute`, `census_cache --check` MATCH.  (`CloseoutFinal.vo` /
+  `BBB4_Theorem.vo` stay box jobs, as always — committed census `.vo`
+  toolchain.)  Timing on this image, 4 cores: apt coq ~1 min, the full
+  base + closeout rebuild ~35 min at -j4; `make closeout`'s inner make
+  is SERIAL unless the outer make got `-j` — run `make -j4 closeout`.
+
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
