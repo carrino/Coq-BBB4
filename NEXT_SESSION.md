@@ -4531,3 +4531,89 @@ LADDER_PLAN §4u.  Coq 8.18.0 from apt (~1 min).
   board adds `Census/ShadowBoard.vo` and ~1 min.  Two `IRules_Batch_*` at
   8.2 GB will not fit in 14 GB together, so the full `Closeout.vo` closure was
   run at `-j1` alongside the sweep rather than `-j3`.
+
+## 2026-08-01 — the four 0RB core rows are bouncer counters, and they board by hand
+
+Branch `claude/nick-drozd-puzzles-2u8vo2`, cut from `main` at `f2bfabc`.
+Coq 8.18.0 from apt (~1 min).
+
+    settled by a board       5119 -> 5123   (99.4%)
+    core undecided             26 ->   22
+    0RB shadows of the core    11 ->   11   (none of the four had one)
+
+- **All four `0RB` rows at the top of `core_rows.txt` are bouncer counters,
+  and every one of them factors the way `BCtrCounter` says a bouncer counter
+  factors** — a length affine in the counter's value on one side, the counter
+  on the other, and a lap that never has to look at both at once.  The four
+  are `0RB0RD_1LC1RB_1RA0LC_1LB0LC`, `0RB0RD_1LC1RB_1RA0LC_1LD0LC`,
+  `0RB1LC_1LC0RD_1RD0LC_1LA1RB`, `0RB1LC_1LC1RD_1LA0LC_0RD1RB`.
+  New: `theories/Counters/Sep2Counter.v` (the closer for the first two) and
+  four machine files under `theories/Machines/Counters/`.
+
+- **`counter_encodings.tsv` had the right labels the whole time and the anchor
+  search had the wrong reading.**  `residue_map.tsv` says `no-anchor` for all
+  four and `RADIX_CORE.txt` calls the first two `FLAT (every cell alike --
+  not a positional counter)`.  Both are measurements of the WRONG REGION.  On
+  `0RB0RD_1LC1RB_1RA0LC_1LB0LC` the anchor is
+
+      0 1 1 [D:1] 1 0^(2v+2) 1 1 <v, low digit first, one cell per digit>
+
+  and the flat stretch the radix probe measured is the ZIPPER GAP, whose
+  length is `2v+2` — of course every cell of it looks alike.  The digits are
+  past the two-cell separator.  **A probe that reports "not positional" has
+  found a region without digits, not a machine without a counter**; re-run it
+  anchored at the far end before believing it.
+
+- **`0RB0RD_..._1LB0LC` and `0RB0RD_..._1LD0LC` have literally the same
+  orbit.**  They differ only in `D 0` (`1LB` vs `1LD`).  Where the first runs
+  `D 0 -> B`, `B 0 -> C`, `C 1 -> C`, the second runs `D 0 -> D`, `D 0 -> D`,
+  `D 1 -> C`: three steps, the same three cells written, the same state at the
+  same head.  So the two are step-for-step identical from the blank tape, they
+  share `Sep2Counter`, and their eight gadget statements are word for word the
+  same (only the transition counts differ: `D0` 1149 vs 2298 over 2·10⁶ steps).
+  **Two core rows can be one machine.**  It is worth diffing the specs of any
+  two rows in the same bucket before paying for two analyses.
+
+- **The other two are comb counters and write their value TWICE.**  The head
+  sits at the right edge on a blank in state B; to its left is a comb —
+  `(10)^v` for `0RB1LC_1LC0RD_1RD0LC_1LA1RB`, `(101)^v` for
+  `0RB1LC_1LC1RD_1LA0LC_0RD1RB` — and past it the same `v` again in binary,
+  two cells per digit.  The comb is the unary copy, the digits the binary one,
+  and the lap keeps them in step: the head crosses the comb leftward (4 resp.
+  3 steps per unit), runs the binary increment at the far end, and walks back
+  rebuilding the comb one unit longer.  That double bookkeeping is why a
+  single-parameter anchor search finds nothing: **the family is indexed by one
+  number but SPELLED twice, and the two spellings sit at opposite ends of the
+  tape.**
+
+- **Neither comb row's lap is one pass.**  `(10)^v` needs two half-laps
+  (`6v+3`, then `6v+8·carry(v)+13`), `(101)^v` needs three
+  (`6v+4c+5`, `6v+4c+9`, `6v+7`).  `LapGlue` does not care — its lap premise
+  is "reaches the next anchor in at least one step" — so the intermediate
+  anchors stay inside the lap lemma and never reach the family.  **Do not add
+  phases to the family to make a lap uniform; chain the passes instead.**
+
+- **The overflow needs no separate rule on any of the four**, exactly as
+  `BCtrCounter` predicted: `enc [] = []`, and `chd []`/`ctl []` hand the walk
+  a blank, which is what a digit-0 is.  The one place it costs anything is
+  `Comb3`'s pass 3, where a fresh top digit leaves one trailing blank the
+  anchor does not spell — that is the file's single `lift` step (`tail_lift`),
+  and it is the reason `LapGlue`'s premise is stated up to `lift` at all.
+
+- **`D` is not always reachable in a bounded prefix of the anchor.**  On
+  `Comb3` state D is entered only from `B 1`, and B does not read a one until
+  pass 1 hands the head back, `1 + 3v + 2·carry(v) + 2` steps in.  `LapGlue`'s
+  `Hvis` allows the offset to depend on the anchor, so this is free — but a
+  visit obligation written as "the first four steps" will not close here.
+
+- **Timings, this image, 4 cores / 15 GB.**  `apt-get install -y coq` ~1 min.
+  The five new files compile in well under a minute against a warm
+  `BBB4_Statement`/`CTape`/`WTape`/`LapGlue`/`BCtrCounter`.  `coqchk -o` on
+  the largest board is seconds.  `make closeout`'s bookkeeping half
+  (inventory/gen_shadow/gen_stages/audit) is ~2 min; the `Closeout.vo` rebuild
+  behind it is the expensive part and is unchanged in cost.
+
+- **What this does NOT touch.**  The remaining 22 core rows are the ones the
+  ladder plan is about; none of the arguments here generalise to them —
+  these four were bouncer counters, which is the ONE shape the repo already
+  had a closer for.  `docs/LADDER_PLAN.md` §4 is still the route for the rest.
