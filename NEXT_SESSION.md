@@ -4834,6 +4834,94 @@ core rows with three more -- so the joint figure is **5,136 settled / 15 core
 measured the fibonacci six against the kernel and reached the same verdict
 from opposite directions; see `docs/LADDER_PLAN.md` §4w.]_
 
+## 2026-08-01 (later still) — mxdys's four: the macro systems, and the wall on `StD`
+
+_Branch `claude/busy-beaver-proofs-vjbequ`.  Full write-up in
+`docs/WAVE36_MXDYS_FOUR.md`; tools in `tools/mxdys4/`._
+
+    settled by a board       unchanged by this wave
+    core undecided             unchanged by this wave
+    0RB shadows of the core    unchanged by this wave
+
+The four rows handed over as "easy" were `1RB1LC_0LC0RB_1LA1RD_0LA0RD`,
+`1RB1LC_1LB1RA_0LC0LD_0RA0RD`, `1RB1LC_1LC1RA_0LC0LD_0RA0RD` and
+`1RB1LD_1LC1RA_0RB0LC_0RA0LD`.  **None is boarded.**  What was produced is
+the mathematics plus one permanent negative; read the write-up before
+touching them again.
+
+- **RUN `tools/mxdys4/gaps.py` BEFORE ANY `ReachSt` WORK, ON ANY ROW, AND
+  THE WHOLE CORE LIST SPLITS 13/2.**  It measures the worst gap between
+  consecutive visits of each state against the tape width.  `ReachStI`'s measure is linear in the half-tape `S1`
+  counts, so it can only certify a goal reached in `O(width)` steps.  On
+  rows 1 and 4 `StD` recurs on a `Theta(2^width)` schedule (gap 262170 at
+  width 32; 196633 at width 31), so **the whole tier is closed on those two
+  rows forever** — not a search failure, and no wider certificate class
+  helps.  Every sweep that reports them "missing D" is reporting a wall.
+  The same table read the other way says rows 2 and 3 are `O(width)` on all
+  four states, so the tier is *not* excluded there.  Over the 15 core rows open when this
+  wave ran (#118 has since taken the six `1RB---`, leaving nine -- **four of
+  which are this wave's four**) the
+  worst-gap/width ratio is between **1.00 and 2.65 on thirteen of them**
+  (including `1RB0RB_1LC0RC_1RA0LD_0LB0LC` at width 2255, so this is not an
+  artefact of small tapes) and **8193 and 6343 on the two rows above**.
+  There is no middle.  For the thirteen the tier is still open and every
+  "missing q" the sweeps report is a search gap worth attacking; for the two
+  it is a wall.  Full table in `docs/WAVE36_MXDYS_FOUR.md` section 3a.
+
+- **A row whose orbit keeps ONE half-tape a bare unary run is a finite
+  word-rewriting system, and `tools/mxdys4/extract.py` reads it off.**  Row
+  1 holds `L [q s] 1^R` and row 4 holds `1^p [q s] R` for their entire
+  orbits (0 violations in 400k steps).  Row 1 becomes four macro rules,
+  row 4 three, each starting and ending in `StA`; both differentially
+  validated against the raw simulator (400/400 and 4000/4000 macro steps).
+  That is the reading `emit_lapcert.py` refuses with "no cascade" and
+  `residue_map.tsv` labels `AFFINE/HIGHER`.
+
+- **`StD` on row 1 is LIVE, and the proof is six lines** (write-up section
+  4).  `StD` fires exactly at macro rule 5.  Read the frame as a binary
+  number with cell 0 most significant: rules 1, 2 and 4 all strictly
+  increase it, only rule 5 clears a cell, and — the load-bearing part —
+  **rules 1 and 2 send the head to `w-2`, rule 4 preserves parity, and only
+  rule 5 sends it to `w-1`.**  Widths stay odd, so after the epoch-opening
+  rule 1 the head is locked to ODD positions, where both widenings are
+  unavailable (`p=1` needs `W[0]=0`, already 1; `p=0` is even).  A bounded
+  strictly-increasing quantity in a class with one exit forces that exit.
+  Verified 0 violations over 3000 macro steps.  Row 4 transports.
+
+- **So rows 1 and 4 are ONE formalised argument from a board.**  `StA`,
+  `StB`, `StC` already come off the shelf — `cert_search.py` returns
+  `ReachStI` certificates for row 1's three, and `sweep.py`'s closure
+  engine covers row 4's — and `NeverQuasiHaltsSt` is provable by
+  `destruct q` over the four.  The remaining Coq is: the macro rules of
+  section 2a as `csteps` lemmas over `rep S1 R` (`WTape`'s scan lemmas
+  already cover the `B`/`D` runs), then section 4's induction on
+  `2^w - N(W)`.
+
+- **Rows 2 and 3 have an exact consecutive counter and a `Theta(3^c)`
+  carry.**  At every `StA` configuration with a blank left half-tape, row 2
+  reads `n` in base 2 LSB-first, two cells per digit (`0 -> 00`,
+  `1 -> 01`), with `n = 0, 1, 2, 3, ...` and no gaps; the lap is
+  `6 + 7*(3^c-1)/2 + c` in the carry length.  `residue_map.tsv`'s `EXP3` is
+  measuring this correctly.
+
+- **What stops rows 2 and 3 is ONE spurious node, and widening the window
+  does not remove it.**  `certE/certM/certM3` generalise the certificate
+  from `ones` to EXTENTS (distance to the outermost `1` — the right shape,
+  since the sweeps are bounded by that distance and not by the count), with
+  `k`-cell windows and capped extents.  All still fail on A, B, D, always
+  on `C |0[0]0` with the left half-tape blank, whose `C0 -> 0LC` self-loop
+  sweeps left forever.  It is not in the real orbit (row 2's `C` always
+  reads `1` when it reaches the blank region) but every local abstraction
+  generates it, because "the leftmost `1` is exactly at the head" is not a
+  bounded-window fact.  The sized piece is a suffix-closed regular
+  half-tape invariant — `ctape_move` supports it (`DR` takes a tail, `DL`
+  prepends one known cell) — not a wider window and not a deeper cap.
+
+- **Rows 1 and 4 are the same shape with the half-tapes exchanged, but they
+  are NOT related by `mirror_tm` under any state bijection fixing the start
+  state** (checked exhaustively over all 6).  The reading transports; the
+  board will not.
+
 ## 2026-08-01 (later) — the fibonacci six are NOT Zeckendorf: same numeration, other representative
 
 _Branch `claude/next-session-progress-g74nya`, cut from `main` at `b61135a`
