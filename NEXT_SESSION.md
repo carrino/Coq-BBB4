@@ -4671,6 +4671,35 @@ Coq 8.18.0 from apt (~1 min).  Full write-up: `docs/LADDER_PLAN.md` §4v.
   of a width is `1^k` and not `1010…`.  A `(Fib, 2)` instance built to the
   old prompt's spec would have compiled and boarded nothing.
 
+- **John read three more rows during the session, and two of them share ONE
+  anchor** (`tools/counters/wallblock.py`, new).
+  `1RB1LA_0LA0LC_1LC1RD_0RB0RD` (+2 shadows) and
+  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` (+1 shadow) both have
+
+      Cf w = (StA, ([], S0, rep [S1] w))
+
+  -- head on a blank, nothing to the left, a solid block of `w` ones to the
+  right -- with the block growing by exactly ONE cell per lap and an inner
+  counter running over it each lap.  The inner counter is the only
+  difference and it shows in the lap law, both exact over eleven laps:
+  `2^(w+3) - (2w+5)` (binary) and `lap(w-1) + lap(w-2) + 3` (fibonacci).
+  **This is the row `CORE_3STATE.md` §3 filed as "its once-per-increment
+  anchor is not located yet" and §4s as "`digit_words` names nothing at any
+  anchor".**  Both are true of the DIGIT-FAMILY search; the anchor is not a
+  digit family at all, it is a BARE RUN, and no scan in `tools/counters` or
+  `tools/ladder` looks for one.  What they need now is a NESTED closer
+  (`Counters/NestedLap*.v`), not a ladder arm -- John's "moving the carry bit
+  x spots over takes x bounces" is exactly why 4p's arm cost has a constant
+  second difference: **the carry is an inner LOOP, not an affine arm.**  Three
+  rows apiece, counting the shadows.
+
+- **`1RB0RB_1LC0RC_1RA0LD_0LB0LC`'s wall is exactly 3 cells per bounce.**
+  Over sixty consecutive left-edge events the left end goes -2, -5, -8, ...,
+  -176 with no exception, while the right end freezes at cell 13 from
+  t ~ 3400 and never moves again.  That is `LADDER_NOFAM.md`'s
+  `E(p) = 0^(24p+96) [head] φ (101)^p 0011111` re-indexed by the BOUNCE
+  rather than by the counter value, and the two agree.
+
 - **`1RB1RC_1LA0LB_1LD0RD_1LB0RC` is a BASE-3 wall counter and its anchor is
   now located** (`tools/counters/ter3_probe.py`, new).  `residue_map.tsv`
   calls it `EXP3` / `Ip` / "no interior chain" and `LADDER_NOFAM.md` measures

@@ -3455,6 +3455,60 @@ fibval` (unchanged) and a one-state "no 00" decode; the round trip is
 not re-run `fib_anchor.py`** — the anchor and the ladder are settled; it is
 the canonical form and the class shape that are not.
 
+### John reads two more rows, and they turn out to be the SAME anchor
+
+_Added after the section above, from John's readings of three rows during the
+session.  All three check out; two of them relocate an anchor the tree has
+recorded as missing for four waves._
+
+**`1RB1LA_0LA0LC_1LC1RD_0RB0RD` and `1RB0RB_0LC1RD_1LC1LA_0LA1RB` have the
+SAME one-parameter family, and it is the simplest shape in the residue:**
+
+    Cf w = (StA, ([], S0, rep [S1] w))
+
+— the head on a blank, nothing to its left, a solid block of `w` ones to its
+right.  The block grows by exactly ONE cell per lap on both, and each lap
+runs an inner counter over the block.  What differs is only that counter, and
+it is visible in the lap law (`tools/counters/wallblock.py`, both exact over
+eleven laps):
+
+| row | lap law | inner counter |
+|---|---|---|
+| `1RB1LA_0LA0LC_1LC1RD_0RB0RD` (+2 shadows) | `2^(w+3) - (2w+5)` | binary |
+| `1RB0RB_0LC1RD_1LC1LA_0LA1RB` (+1 shadow) | `lap(w-1)+lap(w-2)+3` | fibonacci |
+
+John's readings are what located it.  The first: *"a counter where moving the
+carry bit x spots over takes x bounces."*  That is why §4p measures a
+constant SECOND difference on the arm and why no widening of `ARM_GRID`
+reaches it — **the carry is an inner LOOP, not an affine arm**, so the row
+was never an arm-search problem.  The second: *"counts down from 1111
+whenever the left wall moves over; you could say the bits are inverted, lsb
+on the right; the left wall moves over 1 on each overflow"* — and the
+Fibonacci lap recurrence is that countdown's length.
+
+**This is the row `docs/CORE_3STATE.md` §3 recorded as "its once-per-increment
+anchor is not located yet" and §4s measured as "`digit_words(rules)` names
+nothing at any anchor".**  Both are true of the DIGIT-FAMILY search and both
+stop being the question here: **the anchor is not a digit family at all, it
+is a bare run**, and every scan in `tools/counters` and `tools/ladder` looks
+for a word over a digit alphabet.  Four waves of "where is the anchor" were
+searching a space that does not contain it.
+
+What these two now need is a NESTED closer — the outer lap is `1^w -> 1^(w+1)`
+and the inner one is the counter, which is `Counters/NestedLap*.v`'s shape
+and not `LadderCheck`'s.  They are worth **three rows apiece**, since between
+them they carry three shadows.
+
+**The third reading, on `1RB0RB_1LC0RC_1RA0LD_0LB0LC`:** *"a unary counter —
+how many 110 stripes are there counting from the right; it bounces farther
+and farther left while doing the unary counting; the left wall moves over 3
+spots each bounce."*  The wall is exact: over sixty consecutive left-edge
+events the left end goes `-2, -5, -8, …, -176`, **exactly −3 every time**,
+while the right end freezes at cell 13 from `t ≈ 3400` and never moves again.
+That is `LADDER_NOFAM.md`'s `E(p) = 0^(24p+96) [head] φ (101)^p 0011111`
+re-indexed by the BOUNCE rather than by the counter — `101` is a rotation of
+`110`, which is what that file means by "up to phase" — and the two agree.
+
 ### And one row is a BASE-3 wall counter with an affine lap, anchor located
 
 `1RB1RC_1LA0LB_1LD0RD_1LB0RC` is `residue_map.tsv`'s `EXP3` / `Ip` /
