@@ -5012,3 +5012,88 @@ The six rows handed over were `1RB0LD_0LC0RB_1LA1RC_0RC1LD`,
   three stages that carry the new rows -- `CB_11`, `CB_15`, `CB_17` --
   355 `.vo` in ~7 min at `-j3`, so the generated `covers` lemmas are
   kernel-checked even though the whole closeout is not.
+
+## 2026-08-01 (later still) — the base-3 row boards; its two "siblings" are BASE 2, and the probe is what caught it
+
+_Branch `claude/base3-block-core-rows-gq9xdm`, cut from `main` at `2baa351`.
+Coq 8.18.0 from apt.  Full write-up: `docs/LADDER_PLAN.md` §4y._
+
+    settled by a board       5142 -> 5143   (99.7%)
+    core undecided              9 ->    8
+    0RB shadows of the core     5 ->    5   (the boarded row carries none)
+
+- **PARAMETERISING THE PROBE FIRST WAS THE WHOLE SESSION.**  The plan
+  inferred, from a shared `EXP3`/`EXP3` residue and a one-transition diff,
+  that `1RB1LC_1LB1RA_0LC0LD_0RA0RD` and `1RB1LC_1LC1RA_0LC0LD_0RA0RD` were
+  the same base-3 counter as `1RB1RC_1LA0LB_1LD0RD_1LB0RC`.  **They are base
+  2.**  Exact and consecutive from 0 at three anchors each, zero decode
+  failures, and NO base-3 reading at any anchor or prefix on either.  The
+  inference was flagged as an inference and the measurement was made step 1;
+  that is the only reason a wrong family was not built.
+
+- **"Anchor visits 0" is a verdict about the SCAN, not the row.**  A probe
+  that hard-codes its anchor reports nothing useful about a row whose anchor
+  is elsewhere.  `tools/counters/ter3_scan.py` sweeps (state, head symbol) x
+  blank side x prefix 0/1/2 x every 2-cell radix, and **its first job is to
+  reproduce the known reading** — it re-finds 4w's base-3 anchor at 25,004
+  consecutive values before it is trusted on anything unknown.  Build the
+  control into the sweep.
+
+- **`EXP3` IS A LAP LABEL, NOT A RADIX LABEL.**  `CORE_3STATE.md` §2 defines
+  it as "read at base 2 their lap grows like `3^j`", and says of the
+  `Ter3Wall*` rows "they are not base 2".  That is a statement about those
+  rows, not about the label.  These two ARE base 2 and carry the same label.
+  `residue_map.tsv`'s own alphabet field had it right all along —
+  `Alph_11_00_1` names two digit words plus a top, i.e. a binary alphabet,
+  against the base-3 row's `Ip`.  **Read the alphabet column, not the lap
+  column, when the question is the radix.**
+
+- **`liveness.states_infinitely_often` IS NOT A COQ IDENTIFIER.**  It does
+  not exist in `theories/` — it is a field in the ladder emitter's
+  certificate, and on a hand board the thing it names is `glue_neverqh`'s
+  `Hvis` premise.  Do not go looking for the theorem; MEASURE the premise.
+  Every one of 37,502 laps of the boarded row contains all four states, so
+  the theorem is `NeverQuasiHaltsSt`.  The `Ter3Wall*` rows differ because
+  their `StA` is the target of no transition; this row's `StA` is the target
+  of `B0` and is the anchor's own state.
+
+- **The never-QH twin of `glue_qh_quiet_ix` now EXISTS**
+  (`Counters/LapGlueNeverIx.glue_neverqh_ix`, ~25 lines, compiled first try).
+  §4x lists it as missing for the fibonacci twin
+  `1RB0RB_0LC1RD_1LC1LA_0LA1RB`; that row's remaining blocker is now the
+  fibonacci numeral type alone.
+
+- **The counter side of the board was free and the machine side was not.**
+  `Ter3WallB.TerStepB` and `ter_stepB_nil` were reused VERBATIM — same
+  digits, same `tsucc`.  What is new: the anchor carries a MARKER cell
+  between the wall and the digits (the lap clears it going out and rewrites
+  it coming home, and that rewrite is what re-lands the head on the wall),
+  and the return sweep costs four steps per two cells instead of one per
+  cell.  When a new row shares an alphabet with a boarded one, expect to
+  reuse the numerals and to rewrite every lap lemma.
+
+- **State the lap law against the probe first — third time it has paid.**
+  `6c + 4` / `6c + 6` / `6c + 4` on the trichotomy's three cases, checked
+  over 50,003 consecutive laps with zero mismatches BEFORE any Coq.  The
+  case worth checking is the non-obvious one: overflow shares the digit-0
+  branch's cost rather than having a branch of its own.
+
+- **Timings, this image, 4 cores / 15 GB.**  `apt-get install -y coq` ~1 min.
+  The full `Closeout.vo` closure (~2,200 files) IS buildable here — ~19 min
+  at `-j4` from cold, started in the background at minute two and finished
+  before it was needed.  `make closeout` on top of a warm tree is ~4 min and
+  prints `CLOSEOUT AUDIT: OK` + `CENSUS CACHE: MATCH`.  The three new `.v`
+  compile in seconds each.  **Do not edit an already-built `.v` while that
+  background make runs** — it will rebuild the `.vo` under already-compiled
+  dependents.  The new-file route (`LapGlueNeverIx.v` rather than a third
+  section of `LapGlueIx.v`) sidesteps this completely and cost nothing.
+
+### What the next session should take
+
+**The two base-2 siblings, as ONE closer for FOUR rows.**  They differ only
+in the lap's constants (`3.5*3^c + c + 2.5` against `3*3^c + 2c + 1`), share
+an anchor set, an alphabet and an increment, and each carries a `0RB` shadow.
+Their lap is geometric so no ladder arm reaches them — but `LapGlue`'s lap
+premise existentially quantifies the step count, so a hand board never sees
+the closed form; what it needs is an inner induction over the carry run.
+Four rows of the eight that remain, on measurements that are already made.

@@ -105,13 +105,34 @@ REQ_RE = None
 
 
 def _req_re():
+    """Match ONE `Require` sentence, against a single sentence at a time.
+
+    The pattern is applied per sentence (see [_sentences]) rather than to the
+    whole file, because `[\\w.]+` absorbs the terminating period and `\\s+`
+    crosses newlines: run over a whole file, one match swallowed every
+    `Require` line from the first to the last and returned `List.`, `CTape.`,
+    `From`, `Require` ... as module names.  The visible symptom was that the
+    LAST module of every `Require` line went missing from the dependency
+    closure, which stayed invisible for as long as every such module happened
+    to be listed in _CoqProject for some other reason.
+    """
     global REQ_RE
     if REQ_RE is None:
         import re
         REQ_RE = re.compile(
-            r'(?:From\s+([\w.]+)\s+)?Require\s+(?:Import\s+|Export\s+)?'
-            r'((?:[\w.]+\s+)*[\w.]+)\s*\.')
+            r'\s*(?:From\s+([\w.]+)\s+)?Require\s+(?:Import\s+|Export\s+)?'
+            r'([\w.\s]*)$')
     return REQ_RE
+
+
+def _sentences(text):
+    """Split Coq source into sentences on a period followed by whitespace.
+
+    `BBB4.Counters` keeps its dots (they are followed by a letter); the
+    period ending `Require Import WTape TernCounter.` does not.
+    """
+    import re
+    return re.split(r'\.(?=\s|$)', text)
 
 
 def module_index():
@@ -136,7 +157,11 @@ def deps_of(vpath, idx):
         return []
     # suffix lookup: 'WTape' under 'From BBB4.Counters' -> BBB4.Counters.WTape
     out = []
-    for prefix, names in _req_re().findall(text):
+    for sent in _sentences(text):
+        m = _req_re().match(sent)
+        if m is None:
+            continue
+        prefix, names = m.group(1) or '', m.group(2)
         for name in names.split():
             cands = []
             if prefix:

@@ -31,12 +31,17 @@ the base-3 module that already exists plus a `LapGlue.glue_neverqh` closer
 (it is a four-state row -- `StA` is the target of `B0` -- so its theorem is
 `NeverQuasiHaltsSt`, not the `iqh` the three-state `Ter3Wall*` rows carry).
 
-    python3 tools/counters/ter3_probe.py [--steps N]
+    python3 tools/counters/ter3_probe.py [--spec SPEC] [--steps N]
+
+`--spec` defaults to the row above.  The two `1RB1LC` core rows
+`1RB1LC_1LB1RA_0LC0LD_0RA0RD` and `1RB1LC_1LC1RA_0LC0LD_0RA0RD` read
+`EXP3`/`EXP3` in the same residue map and differ from each other in ONE
+transition, so they are the obvious things to point it at.
 """
 import argparse
 from collections import defaultdict
 
-SPEC = "1RB1RC_1LA0LB_1LD0RD_1LB0RC"
+DEFAULT_SPEC = "1RB1RC_1LA0LB_1LD0RD_1LB0RC"
 DIG = {(0, 0): 0, (1, 0): 1, (1, 1): 2}
 
 
@@ -102,9 +107,10 @@ def carry(v):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument('--spec', default=DEFAULT_SPEC)
     ap.add_argument('--steps', type=int, default=600000)
     a = ap.parse_args()
-    ws = list(anchors(SPEC, a.steps))
+    ws = list(anchors(a.spec, a.steps))
     vals, bad = [], 0
     for _, w in ws:
         if not w or w[0] != 1:
@@ -115,7 +121,7 @@ def main():
     fails = sum(1 for i in range(1, len(vals))
                 if vals[i] is None or vals[i - 1] is None
                 or vals[i] != vals[i - 1] + 1)
-    print("%s" % SPEC)
+    print("%s" % a.spec)
     print("  anchor visits            %d" % len(ws))
     print("  prefix failures          %d" % bad)
     print("  consecutive-value fails  %d" % fails)
