@@ -96,7 +96,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
 
    _The two counts move every wave; the row files are the authority and
    `python3 tools/closeout/audit.py` prints them live.  15 + 5 is the
-   2026-08-01 reading (5,136 of the frozen 5,156 settled, 99.6%)._
+   2026-08-01 reading (5,142 of the frozen 5,156 settled, 99.7%)._
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
 frozen table under completion of undefined transitions, non-start state swaps,
