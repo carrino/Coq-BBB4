@@ -121,7 +121,7 @@ pass).  #114 took four more `0RB` rows, all bouncer counters; #115 took a
 doubling nested bouncer; #116 took a two-block bouncer
 (`1RB1LB_1LC0RD_0LB1LA_0LA1RA`, hand-boarded off `WTape.cycR`/`cycL`/`cycLW`)
 and its shadow.  **Read a gate label as "where the emitter stopped", never as
-"how hard the machine is"; that is now six waves running**
+"how hard the machine is"; that is now seven waves running**
 (`docs/LADDER_PLAN.md` §4s).
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
@@ -148,35 +148,46 @@ three as `Counters/LinC_*` and #116 took the last as
 `Counters/BinCarry_*` off John's carry reading, with its two shadows.  A
 shape measurement bounds the ladder, never the machine.
 
-**And `HIGHER` was never a verdict — on this bucket it was a misreading,
-and five of those rows have since BOARDED.**  The `HIGHER`/`HIGHER` rows are
-the FIBONACCI counters (`docs/CORE_3STATE.md` §3): `ovfshape.py` measured
-their lap against a base-2 anchor, and their radix is **φ**.
-`tools/counters/radix_clock.py` reads `ratio = 1.6180`, spread 0.00 across
-every digit; the raw per-cell toggle counts satisfy `F(n) = F(n−1) + F(n−2)`
-exactly, and re-running the anchor scan with the ladder `1,1,2,3,5,8,…`
-decodes them to `0,1,2,3,4,…` with nothing skipped.  Wave 4p measured the
-ladder ARM costs affine and named the numeration as the only blocker; **wave
-4r built it** — `LadderFam`'s `Fib` code, `LadderCheck` 3c's third
-`ClassSucc` instance, 5c's iteration and 11's quasihalter board — and the
-five rows that had partial ladder boards on disk now carry `iqh_*` theorems.
-**Six remain** in the `HIGHER` column (a seventh row once counted with them,
-`1RB0RB_0LC1RD_1LC1LA_0LA1RB`, has no family at any anchor and belongs in the
-`no anchor` block).  So the honest count of rows whose cost the certificate
-language genuinely cannot write is **7**, not 14: `QUAD` 4 (measured on the
-arm in wave 4p) and `EXP3` 3 — and the six are not among them, because wave
-4s read them at chains of 232-376 and their remaining gate is one ARM.
+**`HIGHER` was never a verdict — it was a base-2 clock, and this bucket has
+been re-read three times.**  The `HIGHER`/`HIGHER` rows are the FIBONACCI
+counters (`docs/CORE_3STATE.md` §3): `ovfshape.py` measured their lap against
+a base-2 anchor, and their radix is **φ**.  `tools/counters/radix_clock.py`
+reads `ratio = 1.6180`, spread 0.00 across every digit; the raw per-cell toggle
+counts satisfy `F(n) = F(n−1) + F(n−2)` exactly, and re-running the anchor scan
+with the ladder `1,1,2,3,5,8,…` decodes them to `0,1,2,3,4,…` with nothing
+skipped.  Wave 4p measured the ladder ARM costs affine; **wave 4r built the
+numeration** (`LadderFam`'s `Fib` code, `LadderCheck` 3c/5c/11) and the five
+rows that had partial ladder boards now carry `iqh_*` theorems.
 
-The easy framings are spent, but what is left wants either a closer that
-never needs the cost (`LapGlue`'s lap obligation is an EXISTENTIAL over
-step counts, which is how the wave-19 fractals boarded with a `3^k` lap),
-or a route that never models the lap at all, like ReachSt.  The numeration
-route is no longer speculative — it exists, and the six `HIGHER` rows are
-what is left of the population it was built for.  Wave 4s read all six and
-called them Zeckendorf; **wave 4v measured that they are not** — they count in
-the kernel's own `fibw` (1,1,2,3,5,8), with `fam_lim`, the width spans and the
-top of a width all matching `LadderFam` exactly, and what differs is the
-REPRESENTATIVE they stand on.  See `docs/LADDER_PLAN.md` §4v.
+**Where it stands now (wave 4v, measured):** SIX rows remain, they are one
+sub-machine — identical value-to-string tables at their own anchors, so one
+instance boards all six — and **the numeration needs nothing built**.  They
+count in the kernel's own `fibw = 1,1,2,3,5,8`, with `fam_lim`, the width
+spans and the top of a width all matching `LadderFam` exactly.  4s's reading
+of the weights as `1,2,3,5,8` (Zeckendorf) came from a fit that had dropped a
+column — the lowest digit is a constant 1, so `fit_weights` cannot pin it and
+abandons the fit.  What actually differs is the **representative**: `fibw 0 =
+fibw 1 = 1`, so a value does not determine a string, `fibdec`/`fibokb` pick
+the greedy member, and these six stand on the lazy one (LSB-first, top digit
+1, no two ZEROS adjacent) on all 23,614 measured values — 4r's five boarded
+rows being the exact complement.  **What blocks them is `Class`, not `Code`**:
+the increment sends `1^(2m) 0 rest -> (1 0)^m 1 rest` and `cs_t : nat` is a run
+of one repeated digit, so the widening is `cs_t`/`cs_t'`/`f_mid` to
+`list nat`.  A seventh row once counted here — `1RB0RB_0LC1RD_1LC1LA_0LA1RB`
+finds no family at any anchor and belongs in the `no anchor` block.
+`docs/LADDER_PLAN.md` §4v.
+
+So the honest count of rows whose cost the certificate language genuinely
+cannot write is **3** — the `EXP3` rows — and not the 14 that measure
+non-affine.  The six φ rows are not among them (their arm costs are affine and
+their arithmetic is denotable; only the string form is out of reach), and
+neither were the four `QUAD` rows, every one of which has now boarded.
+
+The easy framings are spent.  What is left wants either a closer that never
+needs the cost (`LapGlue`'s lap obligation is an EXISTENTIAL over step counts,
+which is how the wave-19 fractals boarded with a `3^k` lap), a route that never
+models the lap at all, like ReachSt, or — for the six — one field widened in
+the generic half.
 
 ### What each blocker means
 
@@ -186,14 +197,13 @@ REPRESENTATIVE they stand on.  See `docs/LADDER_PLAN.md` §4v.
   new `(A,B,C)` triple off the tape first; `gen_alphabet.py` then generates a
   PROVED Coq module for it (a wrong triple fails to compile).
 * **no interior chain** — the ordinary lap is not expressible as one affine
-  `srun`.  For `EXP3` that is a statement about the
-  machine, not the search: the certificate language carries `a*j + b`.
-  It was said of `QUAD` too, and all four `QUAD` rows have since boarded.
-  **For `HIGHER` it is not** — those seven rows are the φ counters, the
-  label came from measuring a Fibonacci lap on a base-2 clock, and the
-  kernel can now denote that numeration (above, `docs/CORE_3STATE.md` §3,
-  `docs/LADDER_PLAN.md` §4r).  Wave 4v measured that it denotes their
-  ARITHMETIC exactly and only their string FORM is out of reach (§4v).
+  `srun`.  For `EXP3` that is a statement about the machine, not the search:
+  the certificate language carries `a*j + b`.  **It was said of `QUAD` too,
+  and all four `QUAD` rows have since boarded** — off the ladder entirely.
+  **And for `HIGHER` it was never true**: those rows are the φ counters, the
+  label came from measuring a Fibonacci lap on a base-2 clock, and 4v measured
+  that the kernel denotes their arithmetic exactly — only their string FORM is
+  out of reach (above; `docs/CORE_3STATE.md` §3, `docs/LADDER_PLAN.md` §4v).
 * **no inner family at pow2 j** — the overflow runs a second counter, but its
   count does not start at `2^j`.  Measured in wave-15: ~21% of these run at a
   different octave or offset.
@@ -238,7 +248,7 @@ to name — **a third disjunct** for exact-score quasihalters above
 `B_board`, carried through `covers_iqh_champ_at` and the swap/mirror
 lemmas — and not raising `B_board`, so
 `bbb4_decided_le_prev_champion_or_champion` still separates the champion
-from the other 5,118 boarded rows instead of coarsening all of them.  Its
+from the other 5,135 boarded rows instead of coarsening all of them.  Its
 gate is the PROPOSITION `B <= B_champ` under `lia`, never a `<=?`:
 evaluating a boolean against 32,779,478 would make the kernel build a
 32.8M-constructor unary numeral.  It buys the LOWER bound — BBB(4) ≥

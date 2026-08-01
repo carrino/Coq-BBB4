@@ -285,6 +285,15 @@ So what is left on this block is Coq and not discovery: a `Fib` constructor on
 `fam_of_value F (fam_value F ds) (length ds) = Some ds` over the membership
 predicate above.
 
+**[Built in wave 4r, and it boarded exactly these five.]**  `LadderFam`'s
+`Fib` code, `LadderCheck` 3c/5c/11.  Read the rest of this section as a record
+of the five, not of the population: the membership predicate above is the
+GREEDY representative, and the SIX rows still open stand on the complementary
+LAZY one — LSB-first, top digit 1, no two ZEROS adjacent — which is why 4r's
+construction does not reach them and why what they need is a widened `Class`
+rather than a numeration.  `docs/LADDER_PLAN.md` §4v, oracle
+`tools/ladder/fiblazy.py`.
+
 **And the lap law is already measured, and it is AFFINE.**  Let `r` be the
 index of the highest digit the increment rewrites.  On both rows sampled the
 step gap is **single-valued in every observed class** and affine in `r`:
