@@ -1,4 +1,4 @@
-# Gate table over the 4 open core rows
+# Gate table over the 3 open core rows
 
 `tailcert.py --list tools/closeout/core_rows.txt --out scan.json` (scan labels,
 no --emit), split by `buckets.py`, filtered to live membership after each wave.
@@ -10,12 +10,12 @@ commands are untrusted Python and need no Coq.
 | 1 | `no_interior_jS_j_chain_at_octave_parity_0` |
 | 1 | `no_inner_interior_chain` |
 | 1 | `no_gap_free_two_form_family` |
-| 1 | `no_inner_family_at_pow2_j` |
 
-`register_step_does_not_close`, `no_boot_chain` and — since wave 37 —
-`no_interior_j0_chain_at_octave_parity_0` are all EMPTY.
+`register_step_does_not_close`, `no_boot_chain`,
+`no_interior_j0_chain_at_octave_parity_0` (wave 37) and
+`no_inner_family_at_pow2_j` (#126) are all EMPTY.
 
-**Four rows, one per gate.  This table has stopped being useful, and that is
+**Three rows, one per gate.  This table has stopped being useful, and that is
 the finding.**
 Every bucket it ever called large has emptied without the gate being answered,
 so what follows is kept as the record of how a gate label fails rather than as
@@ -39,10 +39,10 @@ PLAIN `LapGlue.glue_neverqh`.
   of them, read at a sparse anchor `digit_words` does not enumerate.  The
   numeration it needs is built; the anchor is the only thing missing.
 
-## What this table has been wrong about, six times
+## What this table has been wrong about, seven times
 
 A gate name says what stopped the emitter, never what stops a proof.  This
-file has asserted six verdicts that later measurement overturned.  The shape
+file has asserted seven verdicts that later measurement overturned.  The shape
 of the mistake is the same every time and is worth more than any label in it:
 
 1. **"The four QUADRATIC rows are not coming back without a new arm shape."**
@@ -91,6 +91,21 @@ of the mistake is the same every time and is worth more than any label in it:
    what the lap shape pointed at.  `docs/RESIDUE_MAP.md` states the
    existential caveat two sections above where it made this claim.
 
+7. **"`no_inner_family_at_pow2_j` is a nested-cascade row."**  Never stated
+   here in those words, but it is what the label plus the TSV's `EXP2`
+   interior said, and #126 measured **both fields wrong in the hard
+   direction**.  The lap is AFFINE in the carry length (`6j+6` / `6j+4` /
+   `6(S j)+2`, zero mismatches over 250,012 laps) because the counter's LSB
+   sits against the wall, so an increment is local; `EXP2` was the growth of
+   the RUN against the tape width, not the shape of a lap.  And the
+   `Alph_000_111_111` field does not decode the row at all — `Ap` mismatches
+   at 250,013 of 250,013 anchor visits, because the real numeral packs its
+   top TWO digits into four cells instead of six.  The row went out by the
+   ordinary `LapDecider` route with a new numeral (`Counters/Kc3Num.v`).
+   `tools/counters/kc3lap.py`'s lap-per-`cview`-class table is the
+   one-command test that separates "the emitter cannot find a family" from
+   "the row is not that shape".
+
 **The rows behind 1–4 all boarded.**  #118 took the six at `(FibL, 1)` — a
 fourth CODE, not a second numeration: `fibdec`/`fibokb` pick the greedy
 representative and these six stood on the LAZY one, so `LadderFam` gained
@@ -99,8 +114,9 @@ transitions swapped), plus `fam_lo`, because what a weighted numeration really
 costs the interface is a FLOOR — width `k` spells exactly
 `[fibw k .. fibsum k]`.  **Behind 5 and 6, all three rows boarded too** — the
 one that WAS base 3 in #120 (`Counters/Ter3WallD.v` + `LapGlueNeverIx.v`), the
-two that were not in #123 (`Counters/Bin3Lap.v`).  So every row this table has
-ever pronounced on is now decided, and it was wrong about the route in all six
+two that were not in #123 (`Counters/Bin3Lap.v`), and behind 7 the last
+`pow2 j` row in #126 (`Counters/Kc3Num.v`).  So every row this table has ever
+pronounced on is now decided, and it was wrong about the route in all seven
 cases.
 
 ## `no_gap_free_two_form_family`: 10 -> 1, and the gate was never answered

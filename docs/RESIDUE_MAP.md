@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**5 rows as of this commit — 4 distinct core machines + 1 0RB
+_**4 rows as of this commit — 3 distinct core machines + 1 0RB
 re-root shadow.**  A shadow needs no new mathematics, but it does need its
 own board: boarding a core machine moves its shadow into `core_rows.txt`
 rather than settling it, so budget the pair (2026-08-01; worked example
@@ -91,12 +91,15 @@ per gate, REGENERABLE via `tailcert --out` + `buckets.py` — is
 `tools/counters/buckets34/*.txt` with `GATETABLE.md` beside it (the
 lists partition `core_rows.txt` exactly):
 
-| n | furthest gate today | | n | furthest gate today |
-|--:|---|---|--:|---|
-| 1 | no interior `j = S j'` chain | | 1 | no gap-free two-form family |
-| 1 | no inner interior chain | | 1 | no inner family at `pow2 j` |
+| n | furthest gate today |
+|--:|---|
+| 1 | no interior `j = S j'` chain |
+| 1 | no inner interior chain |
+| 1 | no gap-free two-form family |
 
-**One row per gate, and three gates are now EMPTY.**  `register step does not close` lost its last
+**One row per gate, and four gates are now EMPTY.**  `no inner family at
+pow2 j` joined them in #126 and `no interior j = 0 chain` in wave 37.
+`register step does not close` lost its last
 row, `1RB1LA_0LA1RC_0RD0RB_1RA---`, in wave 4u along with its shadow — and
 that verdict had been stale rather than negative: the row closes today at the
 defaults in 60 s, and the sweep that said otherwise differed in its arm set,
@@ -127,17 +130,21 @@ and its shadow.  **Read a gate label as "where the emitter stopped", never as
 |---|---:|---|
 | `-`/`no-anchor` | 2 | 1 no anchor, 1 no overflow phase at K=6 |
 | `HIGHER`/`HIGHER` | 1 | 1 no family at any anchor |
-| `AFFINE`/`EXP2` | 1 | 1 no inner family |
 
-**What that table now says, and why you should stop reading it.**  At four
-rows: two never decode as a counter under any alphabet, one is `HIGHER` on
-both branches, one is affine on its interior.  But the column has now been
-emptied twice from underneath by rows that went out through routes it does
-not model — the `AFFINE`/`HIGHER` pair in wave 37 (re-read as word-rewriting
-systems) and the `EXP3` pair in #123 (base-2 counters whose whole geometric
-lap rides inside `LapGlue`'s existential step count).  **A non-affine shape
-measurement has never once predicted that a row was hard.**  Read the
-per-row notes below instead.
+**What that table now says, and why you should stop reading it.**  At three
+rows: two never decode as a counter under any alphabet and one is `HIGHER` on
+both branches.  Every row that ever carried a *decodable* shape is gone.  The
+column has now been emptied three times from underneath by rows that went out
+through routes it does not model — the `AFFINE`/`HIGHER` pair in wave 37
+(re-read as word-rewriting systems), the `EXP3` pair in #123 (base-2 counters
+whose whole geometric lap rides inside `LapGlue`'s existential step count),
+and the last `AFFINE`/`EXP2` row in #126 — where **both** TSV fields turned
+out to be misleading in the hard direction: the `EXP2` was the growth of the
+RUN against the tape width and not the shape of a lap (the lap is affine), and
+the `alphabet` field failed to decode the row at 250,013 of 250,013 anchor
+visits.  **A non-affine shape measurement has never once predicted that a row
+was hard, and this column has now also been caught naming an alphabet that
+decodes nothing.**  Read the per-row notes below instead.
 
 **The `QUAD` column is gone, and it is the caution worth keeping.**  It held
 four rows whose arm really is quadratic — a second difference of exactly 2,
@@ -270,7 +277,7 @@ three times — though all four rows boarded anyway, off the ladder).
 
 ## Where a newcomer should probably start
 
-At four rows the useful unit is the row, not the bucket.  All four, with
+At three rows the useful unit is the row, not the bucket.  All three, with
 what is known about each:
 
 **BOARDED, #123 — and this page had just called the shape unreachable.**
@@ -306,7 +313,28 @@ out.  The one-transition difference between the rows is absorbed by `Hbc`:
 | `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 | `no interior j = S j'` | wears a `HIGHER` label and the emitter finds **no family at any anchor** — `digit_words` names nothing.  But see below: it is the TWELFTH φ row, and the other eleven have all boarded. |
 | `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | gap ratio **1.00** — the tightest on the whole list |
 | `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `no gap-free two-form family` | the last row of a bucket that went 10 → 1 without the gate ever being answered.  Gap ratio 2.65 on a 2,255-cell tape — the widest tape here, and still inside the tier |
-| `1RB1RC_1LA1RA_0RC1LD_1LB0LD` | `no inner family at pow2 j` | NOT a time-cap row: finishes in 723 s on `interior-not-covered` with 5 of 12 families tried.  Gap ratio 1.04 |
+
+**BOARDED, wave 38** — `1RB1RC_1LA1RA_0RC1LD_1LB0LD` (was
+`no inner family at pow2 j`, gap ratio 1.04), through the ordinary
+`LapDecider` certificate route after all.  **Both of its TSV fields were
+misleading and both in the hard direction**, which is the transferable part:
+
+* `EXP2` interior/`no inner family at pow2 j` reads as the nested cascade
+  (`Bin3Lap.v`'s shape).  It is not — the lap is AFFINE in the carry length
+  (`6j+6` / `6j+4` / `6(S j)+2`, zero mismatches over 250,012 laps), because
+  the counter's LSB sits against the wall so an increment is local.  `EXP2`
+  is the growth of the RUN against the tape width, not the shape of a lap.
+* the `Alph_000_111_111` field does not decode the row at all: `Ap`
+  mismatches at 250,013 of 250,013 anchor visits.  The real numeral packs
+  its top TWO digits into four cells instead of six, and the packing is
+  forced by the extent law rather than being a decoder artefact, so no
+  re-anchoring reads it away.  New numeral: `theories/Counters/Kc3Num.v`.
+
+The gate label was accurate about what the emitter could find and useless
+about what the row is; `tools/counters/kc3lap.py`'s lap-per-`cview`-class
+table is the one-command test that separates the two.  Board:
+`theories/Machines/Counters/KC3_1RB1RC_1LA1RA_0RC1LD_1LB0LD.v`; method in
+`docs/LADDER_PLAN.md` §4aa.  No `0RB` shadow.
 
 **BOARDED, wave 37** — `1RB1LC_0LC0RB_1LA1RD_0LA0RD` (was
 `no inner interior chain`, gap ratio 8,192.81) and
@@ -325,12 +353,16 @@ method in `docs/WAVE36_MXDYS_FOUR.md` §§2a, 2b, 4, 8.
 width.  Over the core list as it stood at eight rows **it split with no
 middle** — six between 1.00 and 2.65, two four orders of magnitude out — and
 the two walls are exactly the two rows wave 37 then boarded by hand.  So
-**every row left on this table is inside the tier's reach** (1.00, 1.04, 1.11
-and 2.65), `docs/REACHST_TIER.md`'s route is excluded on none of them, and
-every "missing q" the sweeps report is a search gap rather than a wall.  That
-is a different axis from the gate labels above, which are about the *counter*
-emitter; of the two, this is the one that has not yet been wrong.  Full table
-and method: `docs/WAVE36_MXDYS_FOUR.md` §3a.
+**every row left on this table is inside the tier's reach** (1.00, 1.11 and
+2.65) and `docs/REACHST_TIER.md`'s route is excluded on none of them.  That is
+a different axis from the gate labels above, which are about the *counter*
+emitter; of the two, this is the one that has not yet been wrong.
+
+**But "not excluded" is not "this is the route."**  Wave 38's row sat at ratio
+1.04 and boarded OFF the tier anyway (#126).  The triage is a cheap way to
+rule the tier OUT, and it has never been wrong doing that; it has never yet
+been the thing that ruled a route IN.  Full table and method:
+`docs/WAVE36_MXDYS_FOUR.md` §3a.
 
 **The φ row is the cheapest lead on the list, and this table used to hide
 it.**  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` is filed above as "no family at any
@@ -368,4 +400,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 5).
+first shrank from 883 to 511 (and, wave by wave, to the current 4).

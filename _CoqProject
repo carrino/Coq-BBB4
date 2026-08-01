@@ -1453,6 +1453,7 @@ theories/Counters/Alph_000_010_0.v
 theories/Counters/Alph_000_010_01.v
 theories/Counters/Alph_000_100_1.v
 theories/Counters/Alph_000_111_111.v
+theories/Counters/Kc3Num.v
 theories/Counters/Alph_00_01_0.v
 theories/Counters/Alph_00_01_01.v
 theories/Counters/Alph_00_01_1.v
@@ -1688,6 +1689,7 @@ theories/Machines/Counters/LAPC_1RB0LB_1LB0LC_0RD1LC_1RD1RA.v
 theories/Machines/Counters/LAPC_1RB0RC_0RC1LA_1LD0RB_0LD1RC.v
 theories/Machines/Counters/LAPC_1RB0RC_1LA0RA_0LD1RC_1LD1LB.v
 theories/Machines/Counters/LAPC_1RB1LB_1LA1LC_0LC1RD_1RA0RD.v
+theories/Machines/Counters/KC3_1RB1RC_1LA1RA_0RC1LD_1LB0LD.v
 theories/Machines/Counters/LAPC_1RB____0RC0RB_1LD0RB_0LD1RC.v
 theories/Machines/Counters/LAPC_1RB____0RC1LB_1LD0RB_0LD1RC.v
 theories/Machines/Counters/LAPC_1RB____1LC0RD_0LC1RD_0RB0RD.v
