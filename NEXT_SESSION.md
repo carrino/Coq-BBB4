@@ -4926,14 +4926,26 @@ the certificate class, is what carries the proof.**
   without touching 500 lines of proof.  That is the pattern to reuse
   wherever a board is half generated and half hand-written.
 
+- **What was kernel-checked here, and what was not.**  Green in this
+  container: both boards, both harvested shadows, `CB_16` (the stage that
+  consumes the shadows) and `CB_37` (the stage that consumes the two core
+  rows, via their `nqh_*` theorems) — so every `covers` lemma this wave
+  added is checked — plus `CLOSEOUT AUDIT: OK` and `CENSUS CACHE: MATCH`.
+  NOT rebuilt here: the full `Closeout.vo` closure, which needs the whole
+  ~2,760-file tree.  It belongs on the box, as in §2b3's wave.
+
 - **Timings and a container trap, this image, 4 cores / 16 GB.**
   `apt-get install -y coq` ~1 min (8.18.0).  Each board compiles in 4 s
   against a warm tree; the liveness halves are 510 and 533 lines.  **`make
   -j4` OOM-KILLED `IRules_Batch_02` (exit 137)** — those batches peak around
-  7 GB of RSS each, so two of them in parallel is already the ceiling here.
-  `make -j2` survives.  And a killed `make` leaves its unfinished `coqc`
-  children running: starting a second `make` on top of them races two
-  compilations onto the same `.vo`.  Kill the tree, not the `make`.
+  8 GB of RSS each, so two of them in parallel is already the ceiling here
+  and `make -j2` can still lose the pair.  Build `IRules_Batch_*` serially,
+  then `-j2` for the rest.  Two further traps, both cheap to avoid: a killed
+  `make` leaves its unfinished `coqc` children running, so starting a second
+  `make` on top of them races two compilations onto the same `.vo` (kill the
+  tree, not the `make`); and a wait loop written as
+  `while pgrep -f "IRules_Batch_00.v"` matches ITS OWN command line and
+  never exits.
 
 - **Rows 2 and 3 are untouched and their blocker is unchanged**
   (`1RB1LC_1LB1RA_0LC0LD_0RA0RD`, `1RB1LC_1LC1RA_0LC0LD_0RA0RD`).  They are
