@@ -107,9 +107,10 @@ excluded there — see section 5.
 `gaps.py` is not specific to these four; it is a cheap a-priori triage for
 the tier on any row.  Run over the 15 core rows open when this wave ran (3M
 steps each), worst gap of any state against the final tape width.  (#118 has
-since boarded the six `1RB---` rows, leaving **nine** — and **four of those
-nine are this wave's four**, so the table below is the whole remaining
-problem plus the six that went out by another route.)
+since boarded the six `1RB---` rows and #120 the `1RB1RC_1LA0LB_..` row,
+leaving **eight** — and **four of those eight are this wave's four**, so the
+table below is the whole remaining problem plus the seven that went out by
+another route.)
 
     1RB---_0LC1RD_1LB1RC_1LB0RD    width 28    worst C   30    ratio 1.07
     1RB---_0LC1RD_1LB1RD_1LB0RD    width 28    worst C   31    ratio 1.11

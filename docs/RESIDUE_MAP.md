@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**14 rows as of this commit — 9 distinct core machines + 5 0RB
+_**13 rows as of this commit — 8 distinct core machines + 5 0RB
 re-root shadows.**  A shadow needs no new mathematics, but it does need its
 own board: boarding a core machine moves its shadow into `core_rows.txt`
 rather than settling it, so budget the pair (2026-08-01; worked example
@@ -93,7 +93,7 @@ lists partition `core_rows.txt` exactly):
 
 | n | furthest gate today | | n | furthest gate today |
 |--:|---|---|--:|---|
-| 4 | no interior `j = S j'` chain | | 1 | no interior `j = 0` chain |
+| 3 | no interior `j = S j'` chain | | 1 | no interior `j = 0` chain |
 | 2 | no inner interior chain | | 1 | no inner family at `pow2 j` |
 | 1 | no gap-free two-form family | | | |
 
@@ -126,17 +126,20 @@ and its shadow.  **Read a gate label as "where the emitter stopped", never as
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
-| `EXP3`/`EXP3` | 3 | 3 no interior chain |
 | `-`/`no-anchor` | 2 | 2 no overflow phase at K=6 |
 | `AFFINE`/`HIGHER` | 2 | 2 no inner interior chain |
+| `EXP3`/`EXP3` | 2 | 2 base-2 counters with a `3^c` lap (wave 4y) |
 | `HIGHER`/`HIGHER` | 1 | 1 no family at any anchor |
 | `AFFINE`/`EXP2` | 1 | 1 no inner family |
 
-**What that table now says:** four of the nine measure NON-AFFINE on both
-branches (`EXP3` 3, `HIGHER` 1), two never decode as a counter under any
-alphabet, and three are affine on at least one branch.  The population is now
-small enough that the shape column is worth less than the per-row notes below:
-at nine rows, read them individually.
+**What that table now says:** three of the eight measure NON-AFFINE on both
+branches (`EXP3` 2, `HIGHER` 1), two never decode as a counter under any
+alphabet, and three are affine on at least one branch.  At eight rows the
+shape column is worth less than the per-row notes below — read them
+individually.  And `EXP3` is a lap shape, not a radix: wave 4y measured its
+two remaining rows as **base 2** counters whose lap grows like `3^c`, where
+the `Ter3Wall*` rows carrying the same label really are base 3.  When the
+question is the radix, read the ALPHABET column.
 
 **The `QUAD` column is gone, and it is the caution worth keeping.**  It held
 four rows whose arm really is quadratic — a second difference of exactly 2,
@@ -269,51 +272,69 @@ three times — though all four rows boarded anyway, off the ladder).
 
 ## Where a newcomer should probably start
 
-At nine rows the useful unit is the row, not the bucket.  All nine, with what
-is known about each:
+At eight rows the useful unit is the row, not the bucket.  All eight, with
+what is known about each:
 
-**The BASE-3 block — 3 rows, 2 shadows, 5 of the 14 left, and one of them is
-a build rather than a search.**  All three read `EXP3`/`EXP3`, and the ladder
-never had an anchor for any of them.
+**The two `1RB1LC` siblings — measured, and the measurement is the lead.**
+They differ from each other in **exactly one transition** (`B0`: `1LB` vs
+`1LC`), and #120's `tools/counters/ter3_scan.py` swept every blank-side
+anchor, every 0/1/2-cell prefix and every 2-cell radix on both:
 
-| row | shadow | state |
-|---|---|---|
-| `1RB1RC_1LA0LB_1LD0RD_1LB0RC` | — | **reconnoitred; build-ready** |
-| `1RB1LC_1LB1RA_0LC0LD_0RA0RD` | ⬩+1 | not probed |
-| `1RB1LC_1LC1RA_0LC0LD_0RA0RD` | ⬩+1 | not probed |
+| row | shadow | anchor | reading | lap |
+|---|---|---|---|---|
+| `1RB1LC_1LB1RA_0LC0LD_0RA0RD` | ⬩+1 | `(StA, ([], S0, <digits>))` | base 2, `{00, 10}` | `3.5*3^c + c + 2.5` |
+| `1RB1LC_1LC1RA_0LC0LD_0RA0RD` | ⬩+1 | `(StA, ([], S0, <digits>))` | base 2, `{00, 10}` | `3*3^c + 2c + 1` |
 
-`tools/counters/ter3_probe.py` (wave 4v) located the first one completely:
-anchor `(StA, ([], S1, S1 :: <digits>))`, digits 2 cells LSB-nearest over
-`{00, 10, 11} = {0, 1, 2}` with a TRUNCATED top (`1` alone is digit 1), and
-**75,006 consecutive anchor visits with 0 prefix failures and 0
-consecutive-value failures**, values `0..75,005`.  The lap is AFFINE in the
-carry length `c` in exactly two branches, `6c+4` and `6c+6`, with no third
-value in any class for `c = 0..9`.
+Both exact and consecutive from 0 with zero decode failures, each corroborated
+at two further anchors (`C1`, `D0`).  **No base-3 reading exists at any anchor
+or prefix on either** — this map used to call them base-3 by inference from
+their `EXP3` label and their one-transition distance from
+`1RB1RC_1LA0LB_1LD0RD_1LB0RC` (now boarded, wave 4y, and genuinely base 3).
+The inference was wrong on both counts, and the shape table above says why:
+`EXP3` names a LAP that grows like `3^j`, not a radix.
 
-**Almost nothing about it is new.**  The alphabet is `Counters/Ter3WallB.v`'s
-digit for digit; the two branches are `Counters/TernCounter.v`'s `tsucc` and
-`tsuccT`.  The one piece that is new is the CLOSER: `StA` is the target of
-`B0` on this row, so its theorem is `NeverQuasiHaltsSt` and
-`LapGlue.glue_neverqh` closes it, not `LadderCheck` §11's quasihalter twin.
-
-The other two are siblings — they differ from each other in **exactly one
-transition** (`B0`: `1LB` vs `1LC`), which in this tree has repeatedly meant
-one counter with a different bootstrap, closed by one role-parameterised
-closer (`docs/CORE_3STATE.md` §0).  Point `ter3_probe.py` at them before
-assuming anything; it takes minutes and no Coq.
+So what these two need is not `Ter3Wall*` but a base-2 counter whose lap is
+`α*3^c + βc + γ` — a shape no closer in the tree has: `LapGlue` glues AFFINE
+laps and `LadderCheck`'s families are all affine-lapped too.  Whether the
+half-integer coefficient on the first row survives a change of anchor is
+unmeasured and is the cheapest next question (it takes minutes and no Coq).
 
 **Measured, with a named blocker.**
 
 | row | gate | note |
 |---|---|---|
-| `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 | `no interior j = S j'` | wears a `HIGHER` label but finds **no family at any anchor** — `digit_words` names nothing.  Really a `no anchor` row. |
-| `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | |
-| `1RB1LC_0LC0RB_1LA1RD_0LA0RD` ⬩+1 | `no inner interior chain` | |
-| `1RB1LD_1LC1RA_0RB0LC_0RA0LD` ⬩+1 | `no interior j = 0` | |
-| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `no gap-free two-form family` | the last row of a bucket that went 10 → 1 without the gate ever being answered |
-| `1RB1RC_1LA1RA_0RC1LD_1LB0LD` | `no inner family at pow2 j` | NOT a time-cap row: finishes in 723 s on `interior-not-covered` with 5 of 12 families tried |
+| `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 | `no interior j = S j'` | wears a `HIGHER` label and the emitter finds **no family at any anchor** — `digit_words` names nothing.  But see below: it is the TWELFTH φ row, and the other eleven have all boarded. |
+| `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | gap ratio **1.00** — the tightest on the whole list |
+| `1RB1LC_0LC0RB_1LA1RD_0LA0RD` ⬩+1 | `no inner interior chain` | gap ratio **8,192.81** — REACHST is a wall here.  But wave 36 §4 has a pen-and-paper argument that `StD` is live on it, so the remaining work may be transcription |
+| `1RB1LD_1LC1RA_0RB0LC_0RA0LD` ⬩+1 | `no interior j = 0` | gap ratio **6,343** — the other REACHST wall |
+| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `no gap-free two-form family` | the last row of a bucket that went 10 → 1 without the gate ever being answered.  Gap ratio 2.65 on a 2,255-cell tape — the widest tape here, and still inside the tier |
+| `1RB1RC_1LA1RA_0RC1LD_1LB0LD` | `no inner family at pow2 j` | NOT a time-cap row: finishes in 723 s on `interior-not-covered` with 5 of 12 families tried.  Gap ratio 1.04 |
 
-**The five shadows are not a task.**  They sit on five of the nine, they need
+**A second, orthogonal reading of the same eight.**  Wave 36's
+`tools/mxdys4/gaps.py` is a cheap a-priori triage for the REACHST tier: run
+3M steps and compare each state's worst recurrence gap to the final tape
+width.  Over the core list **it splits with no middle** — six of the eight
+sit between 1.00 and 2.65, and two are four orders of magnitude out.  That is
+a different axis from the gate labels above (which are about the *counter*
+emitter), and on six rows it says `docs/REACHST_TIER.md`'s route is not
+excluded and every "missing q" the sweeps report is a search gap worth
+attacking.  On the two it is a wall, and the counter has to be read instead.
+Full table and method: `docs/WAVE36_MXDYS_FOUR.md` §3a.
+
+**The φ row is the cheapest lead on the list, and this table used to hide
+it.**  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` is filed above as "no family at any
+anchor", which is true of the EMITTER and is not a verdict about the machine.
+`tools/counters/RADIX_CORE.txt` reads it as `phi` at spread 0.00, with anchor
+values stepping by successive Fibonacci numbers — the same family as the
+eleven three-state rows that boarded on 2026-08-01 off `(Fib, 1)` and
+`(FibL, 1)` (`docs/CORE_3STATE.md` §3).  It is the twelfth of twelve and the
+only one left.  **The numeration is already built** — `LadderFam` has `Fib`,
+`FibL`, `fam_lo` and the round trips — so the entire remaining cost of this
+row is LOCATING ITS ONCE-PER-INCREMENT ANCHOR, which `digit_words` never
+enumerates because the row is read at a sparse one.  Every other row on this
+page needs mathematics that does not exist yet; this one needs a search.
+
+**The five shadows are not a task.**  They sit on five of the eight, they need
 no new mathematics, and they fall automatically: `Census/ShadowBoard.shadow_nqh`
 is the whole argument in one lemma and `make closeout` runs
 `gen_shadow.py --harvest`.  Board a core row and its shadow comes with it —
@@ -335,4 +356,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 14).
+first shrank from 883 to 511 (and, wave by wave, to the current 13).
