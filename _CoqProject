@@ -584,6 +584,7 @@ theories/Machines/Counters/LinC_1RB1LA_0LA1RC_0LD0RC_1LD0RB.v
 theories/Machines/Counters/LinC_1RB0LD_0LC0RB_1LA1RC_0RC1LD.v
 theories/Machines/Counters/LinC_1RB1LA_1LC0RD_0RA0LC_0LA1RD.v
 theories/Machines/Counters/NestC_1RB0RB_1LC1LD_0LC1RA_0LD0RA.v
+theories/Machines/Counters/Wid_1RB0RD_1LC1RA_0RB0LC_1LD0LA.v
 theories/Tests/CountersLinC_Corruption.v
 
 # --- counters track: wrap bouncer (the two 1RB--- holdouts) ---
