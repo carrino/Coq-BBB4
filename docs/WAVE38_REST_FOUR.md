@@ -129,8 +129,10 @@ samples).  The first step at which `p` reaches a given value:
 **`t ≈ 434 p²`, converging cleanly, with the tape width linear in `p`.**
 
 So row 1 is a **quadratic** unary counter — the only polynomial row of the
-four.  Rows 2 and 3 are Fibonacci counters with exponential laps; row 1 is
-not in that family at all, which is exactly why the word-rewriting lever
+four.  Row 2 is a Fibonacci counter (§3) and row 3's fitted laps are a
+doubling composed with a sweep affine in `i` (`2^(2i+3) - 1` and
+`48*4^i - 6i - 15`, `NEXT_SESSION.md`), so both have exponential laps;
+row 1 is not in that family at all, which is exactly why the word-rewriting lever
 does not read it and why `max R = 3`.  Its laps are `O(p) = O(width)` and
 there are `p` of them, which is where the 2.66 gap ratio comes from.
 
@@ -146,8 +148,8 @@ So row 1 has no open route among the existing engines: `ReachStI`
 permanently dead for `StD`, the lever inapplicable, the `NGramHist` closure
 covering nothing, and `RepWL` swept.  What the quadratic law changes is the
 TARGET rather than the tool — the row wants a quadratic-counter argument,
-which is a different animal from rows 2 and 3's Fibonacci counters and
-closer to the shapes already in `theories/Counters/` (`LinCarry`,
+which is a different animal from rows 2 and 3's exponential-lap counters
+and closer to the shapes already in `theories/Counters/` (`LinCarry`,
 `Sep2Counter`).  Nobody has read this row against those, and that is the
 one honest next experiment; it is not a search, it is a hand reading.
 

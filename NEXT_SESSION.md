@@ -5494,8 +5494,8 @@ Boarding it reads 4 core -> 3 and takes its `0RB` shadow with it.
   growth law: the first step at which the stripe count `p = #011` reaches a
   value gives `t ≈ 434 p²`, converging cleanly (p=20 at 178,000; p=116 at
   5,840,000), with the tape width linear in `p`.  It is the ONLY polynomial
-  row of the four — rows 2 and 3 are Fibonacci counters with exponential
-  laps — which is exactly why the word-rewriting lever does not read it and
+  row of the four — row 2 is a Fibonacci counter and row 3's fitted laps are
+  a doubling composed with an affine sweep, so both are exponential — which is exactly why the word-rewriting lever does not read it and
   why its `max R = 3`.  The obvious inference -- "so point `RepWL` at it" -- was
   CHECKED AND IS WRONG: row 1 already survives both committed RepWL sweeps
   (`repwl2_survivors.txt` 2753, `repwl_residue_survivors.txt` 3102) out to
