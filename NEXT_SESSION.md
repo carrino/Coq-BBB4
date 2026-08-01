@@ -4724,5 +4724,9 @@ The six rows handed over were `1RB0LD_0LC0RB_1LA1RC_0RC1LD`,
   under a second against a warm `BBB4_Statement`/`CTape`/`WTape`/
   `LapGlue`/`KpCounter`.  `make closeout`'s bookkeeping half
   (inventory / gen_shadow --harvest / gen_stages / audit) is ~2 min and
-  freed three shadows.  The `Closeout.vo` closure was NOT rebuilt here
-  (2,119 board files); it belongs on the box, as before.
+  freed three shadows.  The full `Closeout.vo` closure was NOT rebuilt
+  here (2,119 board files); it belongs on the box, as before.  What WAS
+  rebuilt and is green: `CloseoutKit`, `ShadowKit`, `CoreRows`, and the
+  three stages that carry the new rows -- `CB_11`, `CB_15`, `CB_17` --
+  355 `.vo` in ~7 min at `-j3`, so the generated `covers` lemmas are
+  kernel-checked even though the whole closeout is not.
