@@ -85,8 +85,8 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **27** undecided core machines in
-   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **12**
+3. it is **skipped**: one of the **26** undecided core machines in
+   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **11**
    0RB re-root shadows (`tools/closeout/shadow_rows.tsv`).  A shadow needs
    no new mathematics — it is a blank-prefix re-root of a core machine —
    but it does need its own board, because a shadow is a shadow only of a
@@ -138,13 +138,13 @@ carries the concrete `QHBound B_board` (= 66,349) or `QHBound B_champ`
 was the second of the two this section named — the third disjunct, not raising
 `B_board` — precisely so that
 `bbb4_decided_le_prev_champion_or_champion` still separates the champion from
-the other 5,114 boarded rows instead of coarsening all of them to 32.8M._
+the other 5,118 boarded rows instead of coarsening all of them to 32.8M._
 
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 39 still-undecided machines (27
-> core rows and their 12 0RB re-root shadows) —
+> 32,779,478 or never quasihalts, except 37 still-undecided machines (26
+> core rows and their 11 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The bound is ATTAINED (the
 > champion is boarded, so BBB(4) >= 32,779,478), but the BBB(4) *value*
 > does not follow from what is here while the 26 stand.

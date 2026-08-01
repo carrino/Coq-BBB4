@@ -1,4 +1,4 @@
-# Gate table over the 27 open core rows
+# Gate table over the 26 open core rows
 
 `tailcert.py --list tools/closeout/core_rows.txt --out scan.json` (scan labels,
 no --emit), split by `buckets.py`, filtered to live membership after each wave.
@@ -13,7 +13,12 @@ commands are untrusted Python and need no Coq.
 | 1 | `no_boot_chain` |
 | 1 | `no_interior_j0_chain_at_octave_parity_0` |
 | 1 | `no_inner_family_at_pow2_j` |
-| 1 | `register_step_does_not_close` |
+
+`register_step_does_not_close` is now EMPTY.  Its last row,
+`1RB1LA_0LA1RC_0RD0RB_1RA---`, boarded in wave 4u together with its shadow --
+the verdict on it had been STALE, not negative: it closes at the defaults in
+60 s, and the sweep that said otherwise differed in its arm set, not in its
+mathematics.
 
 Wave 4o briefly put two rows in `core_rows.txt` that are in none of these
 lists — `0RB0LA_1LA1RC_0RD1RD_1LB0LB` and `0RB0LA_1RC1LA_1RD0RD_1LB0LB`, the
