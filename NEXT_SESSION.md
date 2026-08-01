@@ -5580,6 +5580,22 @@ budgeted as.  Second priority, after row 2.
   caught only because M1 was in the run as a control.  **Put a row with a
   known-positive answer in every search you write**, and disbelieve a
   clean negative that includes it.
+* **`make closeout` ITSELF STARTS A SECOND `make`, and that is how the
+  documented two-compilations race actually happens.**  The playbook warns
+  that a killed `make` leaves `coqc` children behind; the way this session
+  hit it was different and is worth knowing.  The `closeout:` target's last
+  three lines are `coq_makefile`, `$(MAKE) -f Makefile.coq
+  theories/Closeout/Closeout.vo`, and `census_cache.py --check`.  So running
+  `make closeout` WHILE a `make -f Makefile.coq ... Closeout.vo` is already
+  in flight puts two independent `make`s on the same `.vo` set -- caught
+  here with both live, compiling different files, minutes from colliding.
+  **Run `make closeout` only when no build is running**, or run just its
+  Python half (`inventory.py`, `gen_shadow.py --harvest`, `inventory.py`,
+  `gen_stages.py`, `audit.py`) which touches no `.vo` at all.  Recovery:
+  kill the tree leaf-first (`coqc`, `sh`, `make`, `make`, `timeout`) and
+  DELETE the `.vo`/`.vos`/`.vok` of whatever file the killed `coqc` was
+  writing -- it may be truncated, and the surviving build will not rebuild
+  it on its own.
 * **A failed search is not a negative until you have the witness.**
   `cert_search.py` returning `NONE` at `B,C <= 60` looks like "search
   harder"; the blocking cycle turns the same runs into a permanent result
