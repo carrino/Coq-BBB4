@@ -20,16 +20,16 @@ bbb4_target : forall tm,
 
 Every (4,2) Turing machine either **quasihalts with score at most
 32,779,478** — the champion's score — or **never quasihalts**, *except*
-the machines the theorem **skips**: the **1 undecided core machine**
-(`tools/closeout/core_rows.txt`, `1RB0RD_1LB1LC_1RC0RA_0LB1RD`), plus
-**0 shadows** — 0RB machines whose all-blank prefix re-roots them into a
-core machine's orbit (`skipped`'s second disjunct).  A shadow carries no
-new mathematics, but it does need its own board: a shadow is a shadow
-only of a core machine that is still undecided, so boarding a core
-machine turns its shadow into a core machine until the same argument is
-transported across the re-root
-(`theories/Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v` is the
-worked example).
+the machines the theorem **skips** — and as of 2026-08-01 there are
+**NONE**: `tools/closeout/core_rows.txt` and
+`tools/closeout/shadow_rows.tsv` are both empty, and
+`python3 tools/closeout/audit.py` reports **5,156 of the frozen 5,156
+settled (100.0%)**.  `D_remaining` is `[]`, so `skipped D_remaining tm`
+is uninhabited.  (`bbb4_target` still carries the `skipped` disjunct
+verbatim — `gen_stages.py` emits the same shape whatever the residue is —
+so discharging it needs one small lemma, `~ Deferred [] tm` by induction
+on the derivation; that lemma is NOT yet in the tree.  See
+[`docs/CLAIMS.md`](docs/CLAIMS.md).)
 
 Two honest caveats, stated precisely in
 [`docs/CLAIMS.md`](docs/CLAIMS.md):

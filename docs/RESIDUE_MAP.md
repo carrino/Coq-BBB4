@@ -299,14 +299,13 @@ laps and `LadderCheck`'s families are all affine-lapped too.  Whether the
 half-integer coefficient on the first row survives a change of anchor is
 unmeasured and is the cheapest next question (it takes minutes and no Coq).
 
-**Measured, with a named blocker.**
+**Measured, with a named blocker.**  _This table is now EMPTY: all three
+rows boarded on 2026-08-01 and `tools/closeout/core_rows.txt` has no rows
+left._
 
-| row | gate | note |
-|---|---|---|
-| `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | gap ratio **1.00** — the tightest on the whole list.  THE LAST UNDECIDED (4,2) CORE ROW; its macro system is five of six rules read (`WAVE38_REST_FOUR.md` §4), the sixth (the `s=S1, R=0` leftward-sweep carry) still open. |
-
-**BOARDED, wave 39 (2026-08-01)** — the other two rows of this table, plus
-the last shadow, in one session (`NEXT_SESSION.md` §2b7):
+**BOARDED, wave 39 (2026-08-01)** — two of the three rows of this table,
+plus the last shadow, in one session (`NEXT_SESSION.md` §2b7); the third
+followed the same day (§2b8, below):
 
 * `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 (was `no interior j = S j'`, the twelfth
   φ row) — as `NeverQuasiHaltsSt` through its wave-38 macro system and the
@@ -321,6 +320,37 @@ the last shadow, in one session (`NEXT_SESSION.md` §2b7):
   `Machines/Rest4/R3_*.v`.  The wave-38 `ReachStI` negative on `StD` stands
   — the row went out AROUND the tier, not through it, one wave after §5's
   caution about exactly this pattern.
+
+**BOARDED, wave 39** — `1RB0RD_1LB1LC_1RC0RA_0LB1RD` (Drozd's sixth; was
+`no inner interior chain`, gap ratio 1.00), BY HAND, and the transferable
+part is that **the label was about `digit_words` and not about the tape**.
+The `no-anchor` column is a statement that the counter emitter found no
+family; the row has an exact anchor cell for cell, with a literally empty
+right list, and a DENSE one:
+
+* the family the row is named after — the reset family
+  `R k = (StC, ([], S0, rep [S1] k))` — is real (both closed forms exact on
+  all 13 measured half-laps) and is the WRONG anchor, because both half-laps
+  are exponential in `i`.  No affine lap-decider arm reaches it, so
+  `emit_lapcert.py`'s refusal here was correct.
+* `Counters/LapGlueNeverIx.glue_neverqh_ix` takes an arbitrary index type, so
+  the anchor need not be that family.  `tools/counters/drz6land.py` prints
+  max-gap per `(state, symbol)` in one command: `D0` recurs at most every
+  **56** steps over 300,000 — polynomial (`2z+4`) where the other seven
+  classes are exponential — with a literally empty right list at all 37,516
+  visits.  Read in those coordinates the whole row is three single-cell rules
+  (37,432 / 76 / 7 firings, zero mismatches over 37,515 transitions) and the
+  descending cascade is three lines, because a decrement IS the interior
+  rule.  The laps stay exponential (36, 198, 864, … steps); what changes is
+  that they are an induction over three closed rules instead of new
+  mathematics per gap.
+* there is **no invariant on the left word anywhere in the board** — the
+  macro rule genuinely can die (1,605 of 4,095 canonical words up to length 12
+  do), and the survivors are an arithmetic set rather than a local language,
+  so the board is built out of SHAPES that each carry their own `S1` instead.
+
+Board: `theories/Machines/Counters/DRZ6_1RB0RD_1LB1LC_1RC0RA_0LB1RD.v`;
+method in `docs/LADDER_PLAN.md` §4ab.  No `0RB` shadow.
 
 **BOARDED, wave 38** — `1RB1RC_1LA1RA_0RC1LD_1LB0LD` (was
 `no inner family at pow2 j`, gap ratio 1.04), through the ordinary

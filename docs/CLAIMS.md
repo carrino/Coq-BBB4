@@ -85,7 +85,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **1** undecided core machines in
+3. it is **skipped**: one of the **0** undecided core machines in
    `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **0**
    0RB re-root shadows (`tools/closeout/shadow_rows.tsv`).  A shadow needs
    no new mathematics — it is a blank-prefix re-root of a core machine —
@@ -95,8 +95,9 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    across the re-root.
 
    _The two counts move every wave; the row files are the authority and
-   `python3 tools/closeout/audit.py` prints them live.  1 + 0 is the
-   2026-08-01 reading (5,155 of the frozen 5,156 settled, 99.98%)._
+   `python3 tools/closeout/audit.py` prints them live.  0 + 0 is the
+   2026-08-01 reading (5,156 of the frozen 5,156 settled, 100.0%) — both
+   row files are now EMPTY._
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
 frozen table under completion of undefined transitions, non-start state swaps,
@@ -112,11 +113,25 @@ on type-in-type, unsafe (co)fixpoints, or assumed positivity.
 **It is not a proof that BBB(4) = 32,779,478.**  One thing is missing before
 the record itself is a theorem here:
 
-1. **The 1 core machine** (`1RB0RD_1LB1LC_1RC0RA_0LB1RD`, Drozd's sixth;
-   its 0RB shadow harvested with the phi row on 2026-08-01).  It could, for
-   all this development knows, be a quasihalter with a larger score.  That is
-   what undecided means.  The list is `tools/closeout/core_rows.txt` and the
-   map is [`RESIDUE_MAP.md`](RESIDUE_MAP.md).
+1. **One lemma, not one machine.**  The core list is now EMPTY — Drozd's
+   sixth, `1RB0RD_1LB1LC_1RC0RA_0LB1RD`, was the last row and boarded on
+   2026-08-01 — so `D_remaining = []` and nothing is skipped in fact.  But
+   `bbb4_target` still STATES the `skipped D_remaining tm` disjunct, because
+   `gen_stages.py` emits the same shape whatever the residue is.  Turning the
+   statement unconditional needs
+
+   ```coq
+   Lemma not_deferred_nil : forall tm, ~ Deferred [] tm.
+   Lemma not_skipped_nil  : forall tm, ~ skipped [] tm.
+   ```
+
+   — the first by induction on the `Deferred` derivation (`Deferred_base`
+   needs `In h []`; the `swap` and `mirror` constructors recurse), the second
+   by unfolding `ShadowKit.skipped`.  **Neither is in the tree yet**, and
+   until they are, the honest reading of `bbb4_target` is still "modulo a
+   residue that happens to be empty" rather than "for every machine".  This
+   is the immediate next piece of work, and it belongs in a NEW file rather
+   than in the generated `BBB4_Theorem.v`.
 
 What *is* now proved, and was not before, is the **lower** bound.  The
 champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` erases its whole working region,
@@ -144,8 +159,8 @@ the other 5,135 boarded rows instead of coarsening all of them to 32.8M._
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except ONE still-undecided machine
-> (`1RB0RD_1LB1LC_1RC0RA_0LB1RD`, Drozd's sixth) —
+> 32,779,478 or never quasihalts, except the machines on a residue list
+> that is now EMPTY (0 core rows, 0 shadows) —
 > kernel-checked with one standard axiom.  The bound is ATTAINED (the
 > champion is boarded, so BBB(4) >= 32,779,478), but the BBB(4) *value*
 > does not follow from what is here while that one row stands.
