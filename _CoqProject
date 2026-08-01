@@ -1691,6 +1691,7 @@ theories/Machines/Counters/LAPC_1RB0RC_0RC1LA_1LD0RB_0LD1RC.v
 theories/Machines/Counters/LAPC_1RB0RC_1LA0RA_0LD1RC_1LD1LB.v
 theories/Machines/Counters/LAPC_1RB1LB_1LA1LC_0LC1RD_1RA0RD.v
 theories/Machines/Counters/KC3_1RB1RC_1LA1RA_0RC1LD_1LB0LD.v
+theories/Machines/Counters/DRZ6_1RB0RD_1LB1LC_1RC0RA_0LB1RD.v
 theories/Machines/Counters/LAPC_1RB____0RC0RB_1LD0RB_0LD1RC.v
 theories/Machines/Counters/LAPC_1RB____0RC1LB_1LD0RB_0LD1RC.v
 theories/Machines/Counters/LAPC_1RB____1LC0RD_0LC1RD_0RB0RD.v
