@@ -4476,3 +4476,58 @@ so the boards here are #111's and the counts are #111's (27 + 12)._
   This is the second wave running (§4o's prompt was invalidated by §4p, and
   §4r had to renumber).  Before boarding a row from an existing certificate,
   check `origin/main` — not just at session start, but again before emitting.
+
+## 2026-08-01 — the stale verdict: #110's one-command row boards, and its shadow with it
+
+Branch `claude/shadow-partner-boarding-1jiujy`, cut from `main` at `295fd11`.
+LADDER_PLAN §4u.  Coq 8.18.0 from apt (~1 min).
+
+    settled by a board       5117 -> 5119   (99.3%)
+    core undecided             27 ->   26
+    0RB shadows of the core    12 ->   11
+
+- **This wave is the follow-through on #110's §4t, not a collision with it.**
+  §4t's last paragraph named `1RB1LA_0LA1RC_0RD0RB_1RA---` "the only row in
+  the core whose refusal is a stale schema" and said re-running `valfam` on it
+  was one command.  It is, it closes in 60 s at the stock cap, and it boards.
+  §4t claims no rows; §4u claims these two.
+- **The stale field the emitter hits first is `code`, not `lands_in_phase`.**
+  Emitting the committed `core143_ph.jsonl` cert refuses with
+  `code None: LadderCheck states (Binary, 1) only` — that sweep predates the
+  `code`/`step`/`numeration` stamps and `closure_data` gates on `code` before
+  anything else.  Read the refusal out of the `.v`, as always.
+- **The prompt for this wave was two waves stale in three separate places**,
+  and every one of them was checkable in under a minute: it said 30 core (it
+  is 27 on arrival, #111 having boarded three), it said §4r was the highest
+  section (§4s existed, and §4t landed mid-session), and its step 1 said "the
+  candidates never reach the JSONL" when `res['tried']` already carried them.
+  Diffing `origin/main:tools/closeout/core_rows.txt` and reading the plan's
+  LAST section first is what caught all three.
+- **Boarding a shadow PARTNER does not drop the core count.**  `inventory.py`
+  promotes the freed shadow out of `shadow_rows.tsv` into `core_rows.txt` —
+  a shadow is a shadow only while its partner is deferred.  Core went
+  27 -> 27 -> 26 across board-then-harvest, and the audit prints the middle
+  state as `re-root shadows of a BOARDED row: 1 -- boardable NOW`.  A session
+  that boards the partner and stops has moved the core count by zero.
+  `gen_shadow.py --harvest` (no arguments) does the second half; the audit
+  suggests the exact command.
+- **`n_families` is not a difficulty measure and must not be selected on.**
+  Over all fifteen "none closed" core rows, the candidate list is `fams[:4]`
+  and **every row tried exactly four** (three where only three existed),
+  pool sizes 3..74.  The brief's "prefer the smallest `n_fams` (19)" is
+  selecting on how much junk cleared the anchor threshold.  `valfam.py` now
+  writes `family_pool` (every family found, before the cut) and `rejection`
+  (tried vs never-tried, reason histogram, `all_failures_at_overflow`);
+  `reason` is unchanged so nothing downstream re-reads.
+- **"None closed" is five reasons.**  18 `family not covered`, 14 `overflow
+  leaves the family`, 13 `the fill DECREASES the outer parameter`, 5
+  `reachable set too short to check`, 5 `no arm replayed to anchor`.  Three
+  of the five are not statements about the family.  The overflow bucket is
+  §4s's top-of-a-width fingerprint reached in BASE 2 rather than Zeckendorf,
+  so that fill arm is the shared blocker across both numerations and is worth
+  more than a fourth `(code, step)` pair.
+- **Timings, this image, 4 cores / 15 GB.**  `valfam` on the boarded row 60 s.
+  The ladder board's dependency closure builds in ~9 min at `-j3`; the shadow
+  board adds `Census/ShadowBoard.vo` and ~1 min.  Two `IRules_Batch_*` at
+  8.2 GB will not fit in 14 GB together, so the full `Closeout.vo` closure was
+  run at `-j1` alongside the sweep rather than `-j3`.

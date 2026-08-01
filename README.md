@@ -20,8 +20,8 @@ bbb4_target : forall tm,
 
 Every (4,2) Turing machine either **quasihalts with score at most
 32,779,478** — the champion's score — or **never quasihalts**, *except*
-the machines the theorem **skips**: the **27 undecided core machines**
-(`tools/closeout/core_rows.txt`), plus **12 shadows** — 0RB machines
+the machines the theorem **skips**: the **26 undecided core machines**
+(`tools/closeout/core_rows.txt`), plus **11 shadows** — 0RB machines
 whose all-blank prefix re-roots them into a core machine's orbit
 (`skipped`'s second disjunct).  A shadow carries no new mathematics, but
 it does need its own board: a shadow is a shadow only of a core machine

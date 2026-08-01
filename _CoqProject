@@ -1404,6 +1404,7 @@ theories/Machines/Ladder/LDR_1RB____1LC0RD_0LC1RB_1LB0RD.v
 theories/Machines/Ladder/LDR_1RB____1LC1RD_0LC1RD_1LB0RD.v
 theories/Machines/Ladder/LDR_1RB0RD_1LC0LB_1LD0LB_1RD0RA.v
 theories/Machines/Ladder/LDR_1RB0RD_1LC0LC_1LD0LB_1RD0RA.v
+theories/Machines/Ladder/LDR_1RB1LA_0LA1RC_0RD0RB_1RA____.v
 theories/Counters/LapGlueQuiet.v
 theories/Counters/KpWallAlt.v
 theories/Counters/KpWallQH.v
@@ -2822,6 +2823,9 @@ theories/Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 theories/Machines/Counters/SH_0RB0LA_1LA1RC_0RD1RD_1LB0LB.v
 theories/Machines/Counters/SH_0RB0LA_1RC1LA_1RD0RD_1LB0LB.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/SH_0RB1LC_1LA1RB_0LD0LA_1LB___.v
 
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
