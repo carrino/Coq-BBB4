@@ -244,7 +244,14 @@ read at a sparse anchor; its once-per-increment anchor is not located yet.
 The eleven boarded on 2026-08-01 and this one did not, so the Fibonacci
 numeral module is now built (`LadderFam`'s `Fib` and `FibL`, plus `fam_lo`)
 and this row is the only customer left for it — **1 core row + 1 shadow, and
-the only thing missing is the anchor.**  `docs/RESIDUE_MAP.md` and
+the only thing missing is the anchor.**
+
+_**Resolved (wave 39, 2026-08-01):** the row and its shadow are BOARDED —
+but through the wave-38 macro system and the `ones` parity invariant
+(`Machines/Rest4/R2_1RB0RB_0LC1RD_1LC1LA_0LA1RB.v`, `NEXT_SESSION.md`
+§2b7), not through `Fib`/`FibL`.  The once-per-increment anchor was never
+located; the macro route made it unnecessary.  The Fibonacci ladder
+modules keep their eleven boarded customers._  `docs/RESIDUE_MAP.md` and
 `buckets34/GATETABLE.md` file the same row as "no family at any anchor —
 `digit_words` names nothing", which is the EMITTER's verdict at the emitter's
 anchor set and not a contradiction of the measurement here: `radix_clock.py`

@@ -9,8 +9,8 @@
 
     -- every (4,2) machine is a bounded quasihalter, or has its
     quasihalting behaviour settled by a board, or is skipped: one of
-    the 3 core [remaining_rows] machines, or a 0RB re-root shadow
-    of one (1 at generation time; ShadowKit.v).
+    the 1 core [remaining_rows] machines, or a 0RB re-root shadow
+    of one (0 at generation time; ShadowKit.v).
 
     This file LOADS the committed census .vo, which are
     OCaml-toolchain-specific: compile it on the census box under the
