@@ -306,7 +306,28 @@ unmeasured and is the cheapest next question (it takes minutes and no Coq).
 | `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 | `no interior j = S j'` | wears a `HIGHER` label and the emitter finds **no family at any anchor** — `digit_words` names nothing.  But see below: it is the TWELFTH φ row, and the other eleven have all boarded. |
 | `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | gap ratio **1.00** — the tightest on the whole list |
 | `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `no gap-free two-form family` | the last row of a bucket that went 10 → 1 without the gate ever being answered.  Gap ratio 2.65 on a 2,255-cell tape — the widest tape here, and still inside the tier |
-| `1RB1RC_1LA1RA_0RC1LD_1LB0LD` | `no inner family at pow2 j` | NOT a time-cap row: finishes in 723 s on `interior-not-covered` with 5 of 12 families tried.  Gap ratio 1.04 |
+
+**BOARDED, wave 38** — `1RB1RC_1LA1RA_0RC1LD_1LB0LD` (was
+`no inner family at pow2 j`, gap ratio 1.04), through the ordinary
+`LapDecider` certificate route after all.  **Both of its TSV fields were
+misleading and both in the hard direction**, which is the transferable part:
+
+* `EXP2` interior/`no inner family at pow2 j` reads as the nested cascade
+  (`Bin3Lap.v`'s shape).  It is not — the lap is AFFINE in the carry length
+  (`6j+6` / `6j+4` / `6(S j)+2`, zero mismatches over 250,012 laps), because
+  the counter's LSB sits against the wall so an increment is local.  `EXP2`
+  is the growth of the RUN against the tape width, not the shape of a lap.
+* the `Alph_000_111_111` field does not decode the row at all: `Ap`
+  mismatches at 250,013 of 250,013 anchor visits.  The real numeral packs
+  its top TWO digits into four cells instead of six, and the packing is
+  forced by the extent law rather than being a decoder artefact, so no
+  re-anchoring reads it away.  New numeral: `theories/Counters/Kc3Num.v`.
+
+The gate label was accurate about what the emitter could find and useless
+about what the row is; `tools/counters/kc3lap.py`'s lap-per-`cview`-class
+table is the one-command test that separates the two.  Board:
+`theories/Machines/Counters/KC3_1RB1RC_1LA1RA_0RC1LD_1LB0LD.v`; method in
+`docs/LADDER_PLAN.md` §4aa.  No `0RB` shadow.
 
 **BOARDED, wave 37** — `1RB1LC_0LC0RB_1LA1RD_0LA0RD` (was
 `no inner interior chain`, gap ratio 8,192.81) and
@@ -329,7 +350,8 @@ are about the *counter* emitter), and on the six it says
 `docs/REACHST_TIER.md`'s route is not excluded and every "missing q" the
 sweeps report is a search gap worth attacking.  The two walls are the two
 rows wave 37 boarded by hand, so **every row left on this table is inside
-the tier's reach**.  Full table and method: `docs/WAVE36_MXDYS_FOUR.md` §3a.
+the tier's reach** (and wave 38's row, at ratio 1.04, boarded off-tier
+regardless).  Full table and method: `docs/WAVE36_MXDYS_FOUR.md` §3a.
 
 **The φ row is the cheapest lead on the list, and this table used to hide
 it.**  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` is filed above as "no family at any

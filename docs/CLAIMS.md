@@ -85,8 +85,8 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **6** undecided core machines in
-   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **3**
+3. it is **skipped**: one of the **3** undecided core machines in
+   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **1**
    0RB re-root shadows (`tools/closeout/shadow_rows.tsv`).  A shadow needs
    no new mathematics — it is a blank-prefix re-root of a core machine —
    but it does need its own board, because a shadow is a shadow only of a
@@ -95,8 +95,8 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    across the re-root.
 
    _The two counts move every wave; the row files are the authority and
-   `python3 tools/closeout/audit.py` prints them live.  6 + 3 is the
-   2026-08-01 reading (5,147 of the frozen 5,156 settled, 99.8%)._
+   `python3 tools/closeout/audit.py` prints them live.  3 + 1 is the
+   2026-08-01 reading (5,152 of the frozen 5,156 settled, 99.9%)._
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
 frozen table under completion of undefined transitions, non-start state swaps,
