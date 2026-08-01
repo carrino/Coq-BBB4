@@ -306,6 +306,7 @@ theories/Counters/TernCounter.v
 theories/Counters/LapGlue.v
 theories/Counters/LapGlueQH.v
 theories/Counters/MonoCounter.v
+theories/Counters/Bin3Lap.v
 theories/Machines/Counters/Mono_10.v
 theories/Machines/Counters/Mono_26.v
 theories/Machines/Counters/Mono_31.v
