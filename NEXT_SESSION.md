@@ -4413,3 +4413,66 @@ deliverable._
   acting on a prompt; the prompt was rewritten to §4p's actual selection (the
   fibonacci five, whose numeration §4p cracked and `fibmem.py` checks).
 
+## 2026-08-01 — the OUTER PARAMETER measured dead for its own two rows; the bouncer pair wants an ANCHOR too
+
+_Branch `claude/outer-parameter-build-jhfrqu`, cut from `main` at `988bbe3`,
+merged after #111.  Full write-up in `docs/LADDER_PLAN.md` §4t (written as 4s
+and renumbered — #111 took the number while this ran).  **This wave claims no
+rows**: it boarded §4s's two gray rows independently and #111 landed first,
+so the boards here are #111's and the counts are #111's (27 + 12)._
+
+- **The brief was to build 4j's outer parameter and drive
+  `0RB0RD_1LC1RB_1RA0LC_1LB0LC` with it.  The field was NOT built, and that is
+  the wave's result.**  4q's constants are right and its anchor is right —
+  re-measured, 180 visits per row, `2v+5` ones, zero failures.  What no
+  section had measured is that ONE lap moves **two independent unbounded
+  quantities**: the wall distance `2v+5` and the carry ripple `t(v)`, the
+  trailing-ones count of `v` (right excursion is exactly `3 + t(v)`).
+- **`cden` instantiates both sides of a configuration at the SAME index**, and
+  the interior arm's index is the ripple's run length, at which the far side
+  is EXPONENTIAL.  So an affine far side cannot be stated next to a symbolic
+  ripple.  4j's own anchor fails mirror-wise: one side would need two blocks.
+- **What would work is a per-phase ANCHOR as well.**  The lap splits — the
+  ripple finishes before the long sweep starts (traced) — so one half touches
+  only the counter and the other only the wall, and each factors alone.  That
+  is four more `Fam` fields (`fm_st`, `fm_hs`, `fm_left`, `fm_pre` per phase)
+  plus `fam_succ`.  **Scope the anchor and the parameter together or neither**
+  — a far-side parameter alone closes no row, and "carried everywhere and used
+  nowhere" is 4j's own complaint about the `p` that is already there.
+- **One correction to 4q's shape, and it is the `sside` instance:** the far
+  side is not a solid run.  Head-outward it is `[S1;S0] ++ rep [S1] (2v+4)`,
+  so `s_pre = [S1;S0]`, `s_u = [S1]`, `a = 2`, `b = 4`.  4q's `b = 5` is the
+  ones-COUNT, not the record's `s_b`.
+- **Two sessions reached §4s's gray diagnosis independently**, which is worth
+  something on its own: the lever differs.  §4s's is a sort tie-break that
+  fires on an exact tie; the alternative measured here is a hard gate that
+  simulates `ctape_move` at the boot and rejects any family with no
+  cell-exact member.  The hard gate is strictly stronger and was **dropped**
+  — no row needs it, and two mechanisms for one property in one function is
+  how the next session gets confused.  §4t records it for the day a row sorts
+  strictly first rather than tying.
+- **Four of the five remaining core rows that already CLOSE are §4p's
+  QUADRATIC four — this was a re-probe the brief said not to do.**  Ten
+  minutes, and it is recorded only because it corroborates §4p from the other
+  side: §4p measured the arm's second difference as exactly 2, and the
+  emitter, which knows nothing about that, refuses in the same place with
+  *"the carry ripple is not affine in the run length"*.
+  `1RB1LA_0LA0LC_1LC1RD_0RB0RD` re-derives all 25 of its arms and the closure
+  still will not build.  **Two independent measurements, one blocker — do not
+  run a third.**
+- **The one genuinely new row there is `1RB1LA_0LA1RC_0RD0RB_1RA---`**, whose
+  certificate predates `lands_in_phase`, so it has never been offered to the
+  current emitter at all.  It is the only core row whose refusal is a STALE
+  SCHEMA rather than a blocker, and re-running `valfam` on it is one command.
+- **Timing, measured here:** `apt-get install -y coq` ≈ 1 min.  The
+  `Closeout.vo` closure from cold on 4 cores at `-j3` is **~2h20m** (~2350
+  `.vo`) — not 45 min and not a whole day.  Start it first, read while it
+  runs.
+- **`make closeout` already ENDS with the rebuild** — its recipe runs
+  `coq_makefile` + `make -f Makefile.coq theories/Closeout/Closeout.vo` +
+  `census_cache --check` after the audit.  So it is a ~5-minute target on a
+  warm tree, not a seconds one; `make closeout-status` is the seconds one.
+- **Two sessions boarding the same rows in parallel is now a real cost.**
+  This is the second wave running (§4o's prompt was invalidated by §4p, and
+  §4r had to renumber).  Before boarding a row from an existing certificate,
+  check `origin/main` — not just at session start, but again before emitting.
