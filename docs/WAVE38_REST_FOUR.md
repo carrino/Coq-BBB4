@@ -267,10 +267,12 @@ applies, the macro system is total, and by §3b all four of
 row.**
 
 Checked two ways by `tools/mxdys4/cmacro2.py --parity`: parity preservation
-exhaustively over all 262,144 words of prefix length ≤ 18 (0 violations),
-and along the real orbit — 152,786 rule-2 configurations, **all 152,786
-with `ones l` odd, none even**.  Separately, of the 131,072 odd-ones words
-in that exhaustive range, **not one sticks**.
+exhaustively over **all 4,194,304 words of prefix length ≤ 22 — 0
+violations**, and along the real orbit over 2,000,000 macro steps —
+**763,932 rule-2 configurations, every one with `ones l` odd, none even**.
+Separately, of the 131,072 odd-ones words in the length-18 range, **not one
+sticks**.  The symbolic argument above is the proof; these are the
+cross-checks.
 
 This is the same shape as M1/M4's parity lock, and §8's warning applies to
 transcribing it: state the parity facts as two implications, never as an

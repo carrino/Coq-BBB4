@@ -5491,9 +5491,10 @@ can never stick and can never reach a stuck one.  The first `(S1,0)` word on
 the real orbit is `[S1]`, one `S1`, odd.  Done.
 
 Verified two ways by `tools/mxdys4/cmacro2.py --parity`: exhaustively over
-all 262,144 words of prefix length <= 18 (0 parity violations; and of the
-131,072 odd-ones words in range, not one sticks), and along the real orbit
--- 152,786 rule-2 configurations, ALL with `ones l` odd.
+all 4,194,304 words of prefix length <= 22 (0 parity violations; and of the
+131,072 odd-ones words in the length-18 range, not one sticks), and along
+the real orbit over 2,000,000 macro steps -- 763,932 rule-2 configurations,
+EVERY one with `ones l` odd, none even.
 
 Same shape as M1/M4's parity lock, so §8's transcription warning applies:
 state the parity facts as TWO IMPLICATIONS, never an `iff`, or
