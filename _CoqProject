@@ -2870,6 +2870,9 @@ theories/Machines/Counters/SH_0RB1LB_1LC1RC_1RD0LA_0RC1RB.v
 theories/Counters/LapGlueNeverIx.v
 theories/Machines/Counters/T3D_1RB1RC_1LA0LB_1LD0RD_1LB0RC.v
 
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Counters/Ter3WallD.v
+
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
 theories/Closeout/CoreRows.v
