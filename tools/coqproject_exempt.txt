@@ -79,21 +79,23 @@ theories/Closeout/CloseoutFinal.v
 # lands, its board finishes and moves into _CoqProject -- delete the line here
 # rather than leaving both; check_coqproject.py fails on a line that does.
 
-# INTERIOR arm (line 381) -- FOUR partial boards; only ONE of their rows is
-# still core (#115 boarded the other three as LinC_*).  The fibonacci five
-# that shared this block boarded in wave 4r.
+# INTERIOR arm (line 381) -- FOUR partial boards and NOT ONE of their rows is
+# still core.  The fibonacci five that shared this block boarded in wave 4r.
 #
-# Quadratic interior cost.  4p measured it on the arm and LADDER_PLAN §4i's
-# non-affine carry ripple is confirmed for these: a strided arm is one chain
-# repeated, so a wider ARM_GRID cannot reach a quadratic.  That verdict still
-# stands AS A STATEMENT ABOUT THE LADDER -- and #115 boarded three of the four
-# anyway, by a route that never builds an arm (Machines/Counters/LinC_*, the
-# linear-search-carry counters).  Only 1RB1LA_0LA0LC_1LC1RD_0RB0RD is still
-# core, and it carries 2 of the 8 remaining shadows.
+# Quadratic interior cost.  4p measured it on the arm, §4t re-measured it, and
+# LADDER_PLAN §4i's non-affine carry ripple is confirmed: a strided arm is one
+# chain repeated, so a wider ARM_GRID cannot reach a quadratic.  That verdict
+# still stands AS A STATEMENT ABOUT THE LADDER.
+#
+# It never bounded the MACHINES.  All four have boarded, none of them with a
+# new arm shape: #115 took three as Machines/Counters/LinC_* (linear-search-
+# carry counters) and #116 took the last as
+# Machines/Counters/BinCarry_1RB1LA_0LA0LC_1LC1RD_0RB0RD, off John's carry
+# reading, with its two shadows.  Four for four.
 #
 # Keep the partial boards: their [sound_*] lemmas are still theorems and they
 # are the record of where the LADDER stops on this shape.  But do not read
-# "closed as a ladder row" as "closed" -- that reading was wrong three times
+# "closed as a ladder row" as "closed" -- that reading was wrong four times
 # out of four here, which is the whole lesson of the gate labels.
 theories/Machines/Ladder/LDR_1RB0LD_0LC0RB_1LA1RC_0RC1LD.v
 theories/Machines/Ladder/LDR_1RB1LA_0LA0LC_1LC1RD_0RB0RD.v

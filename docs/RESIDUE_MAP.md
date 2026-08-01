@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**25 rows as of this commit — 17 distinct core machines + 8 0RB
+_**20 rows as of this commit — 15 distinct core machines + 5 0RB
 re-root shadows.**  A shadow needs no new mathematics, but it does need its
 own board: boarding a core machine moves its shadow into `core_rows.txt`
 rather than settling it, so budget the pair (2026-08-01; worked example
@@ -93,9 +93,9 @@ lists partition `core_rows.txt` exactly):
 
 | n | furthest gate today | | n | furthest gate today |
 |--:|---|---|--:|---|
-| 11 | no interior `j = S j'` chain | | 1 | no interior `j = 0` chain |
-| 2 | no gap-free two-form family | | 1 | no inner family at `pow2 j` |
-| 2 | no inner interior chain | | | |
+| 10 | no interior `j = S j'` chain | | 1 | no interior `j = 0` chain |
+| 2 | no inner interior chain | | 1 | no inner family at `pow2 j` |
+| 1 | no gap-free two-form family | | | |
 
 **Two gates are now EMPTY.**  `register step does not close` lost its last
 row, `1RB1LA_0LA1RC_0RD0RB_1RA---`, in wave 4u along with its shadow — and
@@ -109,8 +109,8 @@ not in its mathematics (`docs/LADDER_PLAN.md` §4u).  `no boot chain` lost
 the same day and are gone from this list; they never needed a gate, only
 the re-root transport.)
 
-**The `no gap-free two-form family` bucket has gone 10 → 2 in three waves,
-and not one of the eight needed the gate answered.**  Wave 4s took three: the
+**The `no gap-free two-form family` bucket has gone 10 → 1 in four waves,
+and not one of the nine needed the gate answered.**  Wave 4s took three: the
 CHAMPION, which had a compiling board all along and was held out by an
 arithmetic comparison in `inventory.py`, and the two gray rows
 `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and `1RB0RD_1LC0LC_1LD0LB_1RD0RA`, which closed
@@ -118,29 +118,35 @@ the moment the family searcher was made to prefer, among readings tied on
 chain length, one whose digit words do not all end in a blank (a `cconf`
 carries no trailing blanks, so the other reading's boot check could never
 pass).  #114 took four more `0RB` rows, all bouncer counters; #115 took a
-doubling nested bouncer.  **Read a gate label as "where the emitter stopped",
-never as "how hard the machine is"; that is now five waves running**
+doubling nested bouncer; #116 took a two-block bouncer
+(`1RB1LB_1LC0RD_0LB1LA_0LA1RA`, hand-boarded off `WTape.cycR`/`cycL`/`cycLW`)
+and its shadow.  **Read a gate label as "where the emitter stopped", never as
+"how hard the machine is"; that is now six waves running**
 (`docs/LADDER_PLAN.md` §4s).
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
-| `HIGHER`/`HIGHER` | 7 | 6 the two-cell WORD run unit (wave 4v), 1 no family at any anchor |
-| `-`/`no-anchor` | 3 | 1 no anchor, 2 no overflow phase at K=6 |
+| `HIGHER`/`HIGHER` | 7 | 6 the word-valued run unit (wave 4v), 1 no family at any anchor |
 | `EXP3`/`EXP3` | 3 | 3 no interior chain |
+| `-`/`no-anchor` | 2 | 2 no overflow phase at K=6 |
 | `AFFINE`/`HIGHER` | 2 | 2 no inner interior chain |
-| `QUAD`/`QUAD` | 1 | 1 no interior chain |
 | `AFFINE`/`EXP2` | 1 | 1 no inner family |
 
 **What that table now says, and it is the shape of the endgame:** the
 residue has inverted.  It used to be dominated by `AFFINE` machines our
-emitter could not frame; **11 of the 17 measure NON-AFFINE on both
-branches** (`HIGHER` 7, `EXP3` 3, `QUAD` 1) — shapes whose lap
-cost the certificate language cannot write as `a*j + b` — plus 3 whose
-tape never decodes as a counter under any alphabet.  Only 3 rows are
-affine on at least one branch.  **And the `QUAD` column is the caution**:
-it held four rows until #115 boarded three of them by a route that never
-builds an arm at all (`Machines/Counters/LinC_*`), so a shape measurement
-bounds the LADDER and not the machine.
+emitter could not frame; **10 of the 15 measure NON-AFFINE on both
+branches** (`HIGHER` 7, `EXP3` 3) — shapes whose lap cost the certificate
+language cannot write as `a*j + b` — plus 2 whose tape never decodes as a
+counter under any alphabet.  Only 3 rows are affine on at least one branch.
+
+**The `QUAD` column is gone, and it is the caution worth keeping.**  It held
+four rows whose arm really is quadratic — a second difference of exactly 2,
+corroborated independently by `QUAD_TERMINAL_MEASUREMENT.md` and re-measured
+a third time in §4t — and this file said they were "not coming back without a
+new arm shape".  **All four boarded, none with a new arm shape**: #115 took
+three as `Counters/LinC_*` and #116 took the last as
+`Counters/BinCarry_*` off John's carry reading, with its two shadows.  A
+shape measurement bounds the ladder, never the machine.
 
 **And `HIGHER` was never a verdict — on this bucket it was a misreading,
 and five of those rows have since BOARDED.**  The `HIGHER`/`HIGHER` rows are
@@ -180,8 +186,9 @@ REPRESENTATIVE they stand on.  See `docs/LADDER_PLAN.md` §4v.
   new `(A,B,C)` triple off the tape first; `gen_alphabet.py` then generates a
   PROVED Coq module for it (a wrong triple fails to compile).
 * **no interior chain** — the ordinary lap is not expressible as one affine
-  `srun`.  For `QUAD`/`EXP3` that is a statement about the
+  `srun`.  For `EXP3` that is a statement about the
   machine, not the search: the certificate language carries `a*j + b`.
+  It was said of `QUAD` too, and all four `QUAD` rows have since boarded.
   **For `HIGHER` it is not** — those seven rows are the φ counters, the
   label came from measuring a Fibonacci lap on a base-2 clock, and the
   kernel can now denote that numeration (above, `docs/CORE_3STATE.md` §3,
@@ -246,9 +253,11 @@ far-side template and its glue (§4k: measured before building it),
 uniform step bounds for avoid sub-machines without sweep acceleration, a
 flat arm stated with `stride = 0` (no chain at ANY depth, because `srot 0`
 is the identity — it reads like "not affine" and is not), **every base-2
-anchor search on the φ rows** (four waves' worth, and now explained), and the ladder ARM_GRID on the four `QUAD` rows (wave 4p
-measured a second difference of exactly 2 on the arm itself; no threshold
-or stride reaches a quadratic).
+anchor search on the φ rows** (four waves' worth, and now explained), the
+Zeckendorf weight hunt (840 exhaustive fits, zero at `1,1,2,3,5,8` — the
+question was wrong, not the answer), and the ladder ARM_GRID on the four
+`QUAD` rows (a second difference of exactly 2 on the arm itself, measured
+three times — though all four rows boarded anyway, off the ladder).
 
 ## Where a newcomer should probably start
 
@@ -284,21 +293,22 @@ or stride reaches a quadratic).
    **The seventh is not one of them.**  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` finds
    no family at ANY anchor — `digit_words` names nothing — so it belongs in
    the `no anchor` population.  It carries a shadow.
-2. **The eight 0RB shadows on seven core rows — but there is nothing to do.**
+2. **The five 0RB shadows on five core rows — but there is nothing to do.**
    A shadow satisfies the `skipped` disjunct only while its core row is
    deferred, so it needs a board of its own exactly when its core row boards,
-   and not before.  All seven carriers are still undecided.  And when one does
+   and not before.  All five carriers are still undecided.  And when one does
    board, **its shadows now fall with it automatically**: the whole argument
    is one lemma (`Census/ShadowBoard.shadow_nqh` — the prefix is all blanks,
    what is left is the boarded row relabelled, three `vm_compute`s), and
    `make closeout` runs `gen_shadow.py --harvest` to emit it.  Wave 4u is the
    first time that fired in anger: `1RB1LA_0LA1RC_0RD0RB_1RA---` boarded and
    `SH_0RB1LC_1LA1RB_0LD0LA_1LB___.v` came with it, nobody typing anything.
-   So these eight rows are not a task, they are 8 of the 25 that come free
+   So these five rows are not a task, they are 5 of the 20 that come free
    with whatever settles their partners.  (That reading used to end "five of
    them sit on three of the four quadratic rows, so those five are not coming
-   back either" — #115 boarded three of those four, and their shadows came
-   with them.  Two of the eight sit on the one quadratic row still open.)
+   back either".  All four quadratic rows have since boarded and every one of
+   those shadows came with them — which is the harvest doing exactly what it
+   is for.)
 3. **The two live routes**, both with named next steps: ReachSt's mirror
    transport lemma and its measured-unreachable rows
    (`docs/REACHST_TIER.md` §6), and the ladder's refused arms — SIX boards
@@ -321,4 +331,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 25).
+first shrank from 883 to 511 (and, wave by wave, to the current 20).

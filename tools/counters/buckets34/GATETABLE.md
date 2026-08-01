@@ -1,4 +1,4 @@
-# Gate table over the 17 open core rows
+# Gate table over the 15 open core rows
 
 `tailcert.py --list tools/closeout/core_rows.txt --out scan.json` (scan labels,
 no --emit), split by `buckets.py`, filtered to live membership after each wave.
@@ -7,9 +7,9 @@ commands are untrusted Python and need no Coq.
 
 | n | furthest gate |
 |--:|---|
-| 11 | `no_interior_jS_j_chain_at_octave_parity_0` |
-| 2 | `no_gap_free_two_form_family` |
+| 10 | `no_interior_jS_j_chain_at_octave_parity_0` |
 | 2 | `no_inner_interior_chain` |
+| 1 | `no_gap_free_two_form_family` |
 | 1 | `no_interior_j0_chain_at_octave_parity_0` |
 | 1 | `no_inner_family_at_pow2_j` |
 
@@ -43,10 +43,14 @@ one population.  Wave 4p measured the split; wave 4r acted on half of it:
   never been through `emit_ladder` at all** — no board for them exists, partial
   or otherwise — so whether the new code reaches them is unmeasured.  That is
   an emitter run, not a kernel build.
-* **Four are genuinely quadratic on the arm** (`1RB0LD_0LC0RB_1LA1RC_0RC1LD`
-  and the three `1RB1LA` rows): a second difference of exactly 2, so no
-  threshold or stride in ARM_GRID reaches them.  Closed as ladder rows; do not
-  re-probe (`docs/QUAD_TERMINAL_MEASUREMENT.md` corroborates independently).
+* **The four QUADRATIC rows are GONE — all of them.**  Their arm really is
+  quadratic (a second difference of exactly 2, corroborated independently by
+  `docs/QUAD_TERMINAL_MEASUREMENT.md` and re-measured a third time in §4t), so
+  no widening of ARM_GRID reaches them and that verdict stands **about the
+  ladder**.  It never bounded the machines: #115 boarded three as
+  `Counters/LinC_*` and #116 boarded the last as
+  `Counters/BinCarry_1RB1LA_0LA0LC_1LC1RD_0RB0RD` off John's carry reading,
+  with its two shadows.  Four for four, by routes that never build an arm.
 * **Three have never been arm-probed** — `1RB1LC_1LB1RA_0LC0LD_0RA0RD`,
   `1RB1LC_1LC1RA_0LC0LD_0RA0RD`, `1RB1RC_1LA0LB_1LD0RD_1LB0RC`.
 
