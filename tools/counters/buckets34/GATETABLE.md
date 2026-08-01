@@ -25,11 +25,16 @@ a difficulty map.  For choosing a target, read the per-row notes in
 
 `no_interior_jS_j_chain_at_octave_parity_0` is 4 rows:
 
-* **THREE have never been arm-probed at all** —
-  `1RB1LC_1LB1RA_0LC0LD_0RA0RD`, `1RB1LC_1LC1RA_0LC0LD_0RA0RD`,
-  `1RB1RC_1LA0LB_1LD0RD_1LB0RC`.  They sat behind the φ/quad split for six
-  waves.  Two carry a shadow, so they are 5 of the 14 rows left, and no
-  measurement has ever been pointed at them.
+* **THREE are the BASE-3 block** — `1RB1LC_1LB1RA_0LC0LD_0RA0RD`,
+  `1RB1LC_1LC1RA_0LC0LD_0RA0RD` (which differ in exactly one transition) and
+  `1RB1RC_1LA0LB_1LD0RD_1LB0RC`.  All three read `EXP3`/`EXP3`; two carry a
+  shadow, so they are 5 of the 14 rows left.  **The third is reconnoitred and
+  build-ready** — `tools/counters/ter3_probe.py` located its anchor and
+  measured 75,006 consecutive visits with 0 failures and an affine lap in two
+  branches (`6c+4`, `6c+6`).  Its alphabet is `Ter3WallB`'s digit for digit
+  and its branches are `TernCounter`'s `tsucc`/`tsuccT`; only the closer is
+  new (`LapGlue.glue_neverqh`, since `StA` is a transition target here).  The
+  other two have not been probed.
 * **ONE is a `no anchor` row wearing this label** —
   `1RB0RB_0LC1RD_1LC1LA_0LA1RB` finds no family at any anchor
   (`digit_words(rules)` names nothing).  It once counted with the fibonacci

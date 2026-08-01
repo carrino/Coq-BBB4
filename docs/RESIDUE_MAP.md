@@ -272,19 +272,35 @@ three times — though all four rows boarded anyway, off the ladder).
 At nine rows the useful unit is the row, not the bucket.  All nine, with what
 is known about each:
 
-**Never arm-probed at all — a third of the core, and nobody has looked.**
-These three sat behind the φ/quad split for six waves and no measurement has
-ever been pointed at them.  `armprobe.py --selftest`, then point it at them.
+**The BASE-3 block — 3 rows, 2 shadows, 5 of the 14 left, and one of them is
+a build rather than a search.**  All three read `EXP3`/`EXP3`, and the ladder
+never had an anchor for any of them.
 
-| row | shadow |
-|---|---|
-| `1RB1LC_1LB1RA_0LC0LD_0RA0RD` | ⬩+1 |
-| `1RB1LC_1LC1RA_0LC0LD_0RA0RD` | ⬩+1 |
-| `1RB1RC_1LA0LB_1LD0RD_1LB0RC` | — |
+| row | shadow | state |
+|---|---|---|
+| `1RB1RC_1LA0LB_1LD0RD_1LB0RC` | — | **reconnoitred; build-ready** |
+| `1RB1LC_1LB1RA_0LC0LD_0RA0RD` | ⬩+1 | not probed |
+| `1RB1LC_1LC1RA_0LC0LD_0RA0RD` | ⬩+1 | not probed |
 
-Two of the three carry a shadow, so the block is **5 of the 14 rows left**.
-It is the cheapest unexplored thing on the list, and every comparable
-measurement in the last six waves has moved rows.
+`tools/counters/ter3_probe.py` (wave 4v) located the first one completely:
+anchor `(StA, ([], S1, S1 :: <digits>))`, digits 2 cells LSB-nearest over
+`{00, 10, 11} = {0, 1, 2}` with a TRUNCATED top (`1` alone is digit 1), and
+**75,006 consecutive anchor visits with 0 prefix failures and 0
+consecutive-value failures**, values `0..75,005`.  The lap is AFFINE in the
+carry length `c` in exactly two branches, `6c+4` and `6c+6`, with no third
+value in any class for `c = 0..9`.
+
+**Almost nothing about it is new.**  The alphabet is `Counters/Ter3WallB.v`'s
+digit for digit; the two branches are `Counters/TernCounter.v`'s `tsucc` and
+`tsuccT`.  The one piece that is new is the CLOSER: `StA` is the target of
+`B0` on this row, so its theorem is `NeverQuasiHaltsSt` and
+`LapGlue.glue_neverqh` closes it, not `LadderCheck` §11's quasihalter twin.
+
+The other two are siblings — they differ from each other in **exactly one
+transition** (`B0`: `1LB` vs `1LC`), which in this tree has repeatedly meant
+one counter with a different bootstrap, closed by one role-parameterised
+closer (`docs/CORE_3STATE.md` §0).  Point `ter3_probe.py` at them before
+assuming anything; it takes minutes and no Coq.
 
 **Measured, with a named blocker.**
 
