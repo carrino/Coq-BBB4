@@ -99,11 +99,11 @@ Require BBB4.Machines.Counters.CASB_1RB1RC_0RC1LD_1LB1RC_0RA0LB.
 Require BBB4.Machines.Counters.CASB_1RB1RD_0LC1RB_0RA1LD_1LC0RB.
 Require BBB4.Machines.Counters.CASB_1RB1RD_0LC1RB_1RA1LD_1LC0RB.
 Require BBB4.Machines.Counters.Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.
+Require BBB4.Machines.Counters.Comb2_0RB1LC_1LC0RD_1RD0LC_1LA1RB.
+Require BBB4.Machines.Counters.Comb3_0RB1LC_1LC1RD_1LA0LC_0RD1RB.
 Require BBB4.Machines.Counters.Double_32.
 Require BBB4.Machines.Counters.Double_9.
 Require BBB4.Machines.Counters.Fractal_3.
-Require BBB4.Machines.Counters.Fractal_5.
-Require BBB4.Machines.Counters.ILCM_1RB0LD_0RC1LB_1LD1RC_0RC1LA.
 Import ListNotations.
 
 (* 1RB0LD_1RC0RC_1LA1RB_0LC0LD *)
@@ -776,39 +776,39 @@ Proof.
      | intros q s; destruct q, s; reflexivity].
 Qed.
 
+(* 0RB1LC_1LC0RD_1RD0LC_1LA1RB *)
+Lemma cov_00_0095 : covers (row_to_tm [t0RB;t1LC;t1LC;t0RD;t1RD;t0LC;t1LA;t1RB]).
+Proof.
+  apply (covers_nqh_at BBB4.Machines.Counters.Comb2_0RB1LC_1LC0RD_1RD0LC_1LA1RB.tm_c2);
+    [exact BBB4.Machines.Counters.Comb2_0RB1LC_1LC0RD_1RD0LC_1LA1RB.nqh_0RB1LC_1LC0RD_1RD0LC_1LA1RB | intros q s; destruct q, s; reflexivity].
+Qed.
+
+(* 0RB1LC_1LC1RD_1LA0LC_0RD1RB *)
+Lemma cov_00_0096 : covers (row_to_tm [t0RB;t1LC;t1LC;t1RD;t1LA;t0LC;t0RD;t1RB]).
+Proof.
+  apply (covers_nqh_at BBB4.Machines.Counters.Comb3_0RB1LC_1LC1RD_1LA0LC_0RD1RB.tm_c3);
+    [exact BBB4.Machines.Counters.Comb3_0RB1LC_1LC1RD_1LA0LC_0RD1RB.nqh_0RB1LC_1LC1RD_1LA0LC_0RD1RB | intros q s; destruct q, s; reflexivity].
+Qed.
+
 (* 1RB1LD_1RC0RB_1LA0RC_0LD0LA *)
-Lemma cov_00_0095 : covers (row_to_tm [t1RB;t1LD;t1RC;t0RB;t1LA;t0RC;t0LD;t0LA]).
+Lemma cov_00_0097 : covers (row_to_tm [t1RB;t1LD;t1RC;t0RB;t1LA;t0RC;t0LD;t0LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.Double_32.tm_32);
     [exact BBB4.Machines.Counters.Double_32.nqh_1RB1LD_1RC0RB_1LA0RC_0LD0LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 1RB0LC_1RC0RD_1LA0LC_1RD0RA *)
-Lemma cov_00_0096 : covers (row_to_tm [t1RB;t0LC;t1RC;t0RD;t1LA;t0LC;t1RD;t0RA]).
+Lemma cov_00_0098 : covers (row_to_tm [t1RB;t0LC;t1RC;t0RD;t1LA;t0LC;t1RD;t0RA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.Double_9.tm_9);
     [exact BBB4.Machines.Counters.Double_9.nqh_1RB0LC_1RC0RD_1LA0LC_1RD0RA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 (* 1RB0LA_1LC0RD_0LB1LA_0RB1LA *)
-Lemma cov_00_0097 : covers (row_to_tm [t1RB;t0LA;t1LC;t0RD;t0LB;t1LA;t0RB;t1LA]).
+Lemma cov_00_0099 : covers (row_to_tm [t1RB;t0LA;t1LC;t0RD;t0LB;t1LA;t0RB;t1LA]).
 Proof.
   apply (covers_nqh_at BBB4.Machines.Counters.Fractal_3.tm_f3);
     [exact BBB4.Machines.Counters.Fractal_3.nqh_1RB0LA_1LC0RD_0LB1LA_0RB1LA | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LA_1LC1RD_0LC1LA_0RD0RB *)
-Lemma cov_00_0098 : covers (row_to_tm [t1RB;t0LA;t1LC;t1RD;t0LC;t1LA;t0RD;t0RB]).
-Proof.
-  apply (covers_nqh_at BBB4.Machines.Counters.Fractal_5.tm_f5);
-    [exact BBB4.Machines.Counters.Fractal_5.nqh_1RB0LA_1LC1RD_0LC1LA_0RD0RB | intros q s; destruct q, s; reflexivity].
-Qed.
-
-(* 1RB0LD_0RC1LB_1LD1RC_0RC1LA *)
-Lemma cov_00_0099 : covers (row_to_tm [t1RB;t0LD;t0RC;t1LB;t1LD;t1RC;t0RC;t1LA]).
-Proof.
-  apply (covers_nqh_at BBB4.Machines.Counters.ILCM_1RB0LD_0RC1LB_1LD1RC_0RC1LA.tm_1RB0LD_0RC1LB_1LD1RC_0RC1LA);
-    [exact BBB4.Machines.Counters.ILCM_1RB0LD_0RC1LB_1LD1RC_0RC1LA.nqh_1RB0LD_0RC1LB_1LD1RC_0RC1LA | intros q s; destruct q, s; reflexivity].
 Qed.
 
 Definition cbrows_00 : list (list (option Trans)) := [
@@ -907,11 +907,11 @@ Definition cbrows_00 : list (list (option Trans)) := [
   [t1RB;t1RD;t0LC;t1RB;t0RA;t1LD;t1LC;t0RB];
   [t1RB;t1RD;t0LC;t1RB;t1RA;t1LD;t1LC;t0RB];
   [t1RB;t1LD;t1RC;t1RB;t1LC;t1LA;t0RC;t0RD];
+  [t0RB;t1LC;t1LC;t0RD;t1RD;t0LC;t1LA;t1RB];
+  [t0RB;t1LC;t1LC;t1RD;t1LA;t0LC;t0RD;t1RB];
   [t1RB;t1LD;t1RC;t0RB;t1LA;t0RC;t0LD;t0LA];
   [t1RB;t0LC;t1RC;t0RD;t1LA;t0LC;t1RD;t0RA];
-  [t1RB;t0LA;t1LC;t0RD;t0LB;t1LA;t0RB;t1LA];
-  [t1RB;t0LA;t1LC;t1RD;t0LC;t1LA;t0RD;t0RB];
-  [t1RB;t0LD;t0RC;t1LB;t1LD;t1RC;t0RC;t1LA]
+  [t1RB;t0LA;t1LC;t0RD;t0LB;t1LA;t0RB;t1LA]
 ].
 
 Lemma cb_00_covers : Forall covers (map row_to_tm cbrows_00).

@@ -95,8 +95,8 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    across the re-root.
 
    _The two counts move every wave; the row files are the authority and
-   `python3 tools/closeout/audit.py` prints them live.  26 + 11 is the
-   2026-08-01 reading (5,119 of the frozen 5,156 settled, 99.3%)._
+   `python3 tools/closeout/audit.py` prints them live.  22 + 11 is the
+   2026-08-01 reading (5,123 of the frozen 5,156 settled, 99.4%)._
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
 frozen table under completion of undefined transitions, non-start state swaps,
@@ -112,7 +112,7 @@ on type-in-type, unsafe (co)fixpoints, or assumed positivity.
 **It is not a proof that BBB(4) = 32,779,478.**  One thing is missing before
 the record itself is a theorem here:
 
-1. **The 26 core machines (and their 11 shadows).**  Any of them could, for
+1. **The 22 core machines (and their 11 shadows).**  Any of them could, for
    all this development knows, be a quasihalter with a larger score.  That is
    what undecided means.  The list is `tools/closeout/core_rows.txt` and the
    map is [`RESIDUE_MAP.md`](RESIDUE_MAP.md).
@@ -147,11 +147,11 @@ So the honest one-line summary is:
 > core rows and their 12 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The bound is ATTAINED (the
 > champion is boarded, so BBB(4) >= 32,779,478), but the BBB(4) *value*
-> does not follow from what is here while the 26 stand.
+> does not follow from what is here while the 22 stand.
 
-## Scope of the 26
+## Scope of the 22
 
-All 26 core machines are residue — machines no engine in this repository
+All 22 core machines are residue — machines no engine in this repository
 settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28

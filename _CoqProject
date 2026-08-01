@@ -571,6 +571,13 @@ theories/Machines/Counters/BCtr_13.v
 theories/Machines/Counters/BCtr_28.v
 theories/Tests/CountersBCtr_Corruption.v
 
+# --- counters track: the four 0RB core counters (Drozd rows) ---
+theories/Counters/Sep2Counter.v
+theories/Machines/Counters/Sep2_0RB0RD_1LC1RB_1RA0LC_1LB0LC.v
+theories/Machines/Counters/Sep2_0RB0RD_1LC1RB_1RA0LC_1LD0LC.v
+theories/Machines/Counters/Comb2_0RB1LC_1LC0RD_1RD0LC_1LA1RB.v
+theories/Machines/Counters/Comb3_0RB1LC_1LC1RD_1LA0LC_0RD1RB.v
+
 # --- counters track: wrap bouncer (the two 1RB--- holdouts) ---
 theories/Counters/WrapBouncer.v
 theories/Machines/Counters/WrapBc_R.v
