@@ -301,6 +301,7 @@ theories/Tests/IRules_Corruption.v
 
 # --- counters track ---
 theories/Counters/WTape.v
+theories/Counters/BinVal.v
 theories/Counters/TernCounter.v
 theories/Counters/LapGlue.v
 theories/Counters/LapGlueQH.v
@@ -2692,6 +2693,10 @@ theories/Machines/Counters/QHB_1RB1RD_1RC0LD_1LB0RA_1LC0LC.v
 
 
 # --- the REACHST tier: NGramHist for three states, ReachSt for the fourth
+# --- the mxdys four: NGramHist closure + a hand liveness proof for StD ---
+theories/Machines/Mxdys4/NGX_1RB1LC_0LC0RB_1LA1RD_0LA0RD.v
+theories/Machines/Mxdys4/NGX_1RB1LD_1LC1RA_0RB0LC_0RA0LD.v
+
 theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_0LA1LA_0RB1LD.v
 theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_0RA1LA_0RB1LD.v
 theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_0RC1LA_0RB1LD.v

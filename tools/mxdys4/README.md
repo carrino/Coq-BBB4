@@ -25,6 +25,29 @@ half-tape a bare unary run (check with `macro1.py` / `macro4.py`) collapses
 to a finite word-rewriting system, and this reads that system off directly
 instead of guessing it.
 
+## Boarding rows 1 and 4 (wave 37)
+
+**`cmacro1.py [N]`, `cmacro4.py [N]`** — the same macro systems as
+`macro1.py`/`macro4.py`, but restated in the **`cconf` coordinates the Coq
+proof is written in**: `(l, s, R)` for row 1 and `(p, s, r)` for row 4,
+with `chd`/`ctl` at the list ends and an explicit blank between the unary
+run and the tail.  Each one differentially validates every rule against the
+raw simulator, then checks the `mu` deltas and the parity lock of
+`docs/WAVE36_MXDYS_FOUR.md` §4a over 4000 macro steps.  Re-derive here
+before touching Coq: the frame form of §2a hides which rules read past the
+run and what happens at the tape edge, and the `cconf` form does not.
+
+**`pin_kn.py SPEC [QEXT] [BUDGET]`** — at which `(k, n, t, fuel)` does the
+`NGramHist` closure discharge every state BUT `QEXT`?  On rows 1 and 4 the
+answer is `k=3, n=2` (134 / 131 contexts); `k=2` misses one state on each
+row and `n=3` does not close at all.
+
+**`emit_ngx.py`** — writes the closure half of the two boards
+(`lset`/`rset`/`cert` + the final theorem) into
+`theories/Machines/Mxdys4/NGX_*.v`, replacing everything after the MARK
+line and leaving the hand-written liveness proof above it alone.
+Idempotent; re-run it whenever the closure parameters change.
+
 ## The rest
 
 * `sim.py` — raw simulator (`Sim(spec)`), imported by the others.

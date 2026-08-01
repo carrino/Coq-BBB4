@@ -7,16 +7,20 @@ mxdys handed over four rows as easy:
     1RB1LC_1LC1RA_0LC0LD_0RA0RD      (M3)
     1RB1LD_1LC1RA_0RB0LC_0RA0LD      (M4)
 
-All four are in `tools/closeout/core_rows.txt`.  **None is boarded by this
-wave.**  What this wave produced is the mathematics: complete, validated
-macro-rule systems for M1 and M4, a proof of the one liveness obligation
-that had no route before, the exact counter reading for M2/M3, and — the
-result most worth carrying — a **permanent negative** that rules the whole
-`ReachSt` tier out of M1 and M4 forever, so no future session spends a day
-re-measuring it.
+**M1 and M4 are now BOARDED** (`theories/Machines/Mxdys4/NGX_*.v`, wave 37;
+see section 8).  M2 and M3 are not.
+
+What wave 36 produced is the mathematics: complete, validated macro-rule
+systems for M1 and M4, a proof of the one liveness obligation that had no
+route before, the exact counter reading for M2/M3, and — the result most
+worth carrying — a **permanent negative** that rules the whole `ReachSt`
+tier out of M1 and M4 forever, so no future session spends a day
+re-measuring it.  Wave 37 transcribed sections 2a/2b/4 into Coq and closed
+M1 and M4 with them.
 
 Everything below that is a measurement was produced by a tool in
-`tools/mxdys4/`.  Nothing here is a Coq proof yet.
+`tools/mxdys4/`; sections 2a, 2b, 4 and 4a are now also Coq, section 8
+says where.
 
 ## 1. The target is `NeverQuasiHaltsSt` on all four
 
@@ -137,16 +141,15 @@ command says which.  For the thirteen, `docs/REACHST_TIER.md`'s route is
 still open and every "missing q" the sweeps report is a search gap worth
 attacking; for the two, it is a wall and the counter must be read instead.
 
-## 4. THE POSITIVE: `StD` on M1 is live — a PEN-AND-PAPER argument
+## 4. THE POSITIVE: `StD` on M1 is live
 
-> **NOT KERNEL-CHECKED.**  Everything in this section is an argument on
-> the macro system of §2a, machine-checked only in the sense that its two
-> load-bearing lemmas were validated over 4000 macro steps by an untrusted
-> Python script.  It is not a Coq proof and nothing downstream may cite it
-> as one.  `1RB1LC_0LC0RB_1LA1RD_0LA0RD` stays in `core_rows.txt` and the
-> repo's counts are unchanged.  What the section buys is that the argument
-> exists and is short, so the remaining work on this row is transcription
-> rather than discovery.
+> **NOW KERNEL-CHECKED** (wave 37).  This section was written as a
+> pen-and-paper argument on the macro system of §2a; it has since been
+> transcribed into
+> `theories/Machines/Mxdys4/NGX_1RB1LC_0LC0RB_1LA1RD_0LA0RD.v`, where the
+> four rules are `csteps` lemmas and the argument below is `hitD_IO` /
+> `hitD_IE` / `g_step`.  Section 8 records the two places the transcription
+> needed more than the prose says.
 
 `StD` fires exactly at macro rule 5 (and at rule 2 with `R=0`, which only
 follows a rule 5).  So the whole obligation is: **rule 5 fires infinitely
@@ -185,7 +188,7 @@ the head is locked to odd positions, and the only exit from the odd class
 is rule 5 itself.**  M4's `StD` yields to the same argument transported
 through §2b.
 
-### 4a. The measure, in the form Coq wants
+### 4a. The measure, in the form Coq wants (this is the form Coq got)
 
 `N(W)` needs the frame; the equivalent quantity written straight on the
 `cconf` `(StA, (l, s, rep S1 R))` does not.  With `vall l` the left
@@ -216,8 +219,10 @@ preserve `length l` odd and `last l = S1`, no widening is enabled
 guard), and `2^w - mu` strictly decreases.
 
 Both lemmas — the four deltas and the parity lock — were checked over 4000
-macro steps with zero exceptions (`tools/mxdys4/macro1.py` carries the
-rules; the check is three lines on top of it).
+macro steps with zero exceptions (`tools/mxdys4/cmacro1.py` carries the
+rules in exactly these `cconf` coordinates and runs the check; it also
+re-validates every rule against the raw simulator).  They are now the Coq
+lemmas `mu_r1` / `mu_r2` / `mu_r4` and `hitD_IO`.
 
 With this, M1 and M4 need `StA`, `StB`, `StC` as well — and those are
 already available off the shelf: `tools/reachsti/cert_search.py` returns
@@ -269,18 +274,20 @@ both fail.
 
 ## 6. What is left
 
-| row | StA | StB | StC | StD | remaining |
+| row | StA | StB | StC | StD | status |
 |---|---|---|---|---|---|
-| M1 | ReachStI | ReachStI | ReachStI | §4 | formalise §4 + §2a |
-| M4 | closure | closure | closure | §4 transported | formalise, + §2b |
+| M1 | closure k=3 n=2 | closure | closure | §4, in Coq | **BOARDED** |
+| M4 | closure k=3 n=2 | closure | closure | §4 transported, in Coq | **BOARDED** |
 | M2 | — | — | ReachStI | — | §5's regular invariant |
 | M3 | — | — | ReachStI | — | §5's regular invariant |
 
-The M1/M4 job is the smaller one and it is fully specified: the four macro
-rules of §2a as `csteps` lemmas over `rep S1 R` (the scan lemmas in
-`Counters/WTape.v` already cover the `B`/`D` runs), then §4's induction on
-`2^w - N(W)`, then `StD`'s liveness composed with the three existing
-`ReachStI` certificates under a `destruct q`.
+The M1/M4 job was the smaller one and it went exactly as specified: the
+macro rules of §2a/§2b as `csteps` lemmas over `rep [S1] R` (the `cycR` /
+`cycL` scan lemmas in `Counters/WTape.v` cover the `B`/`D` and `C`/`D`
+runs), then §4's induction, then `StD`'s liveness supplied as the premise
+of `NGramHistExt.ngramhist_check_neverqh_lex_ext_sound`.  The `ReachStI`
+certificates of §4's last paragraph were not needed: at `k=3, n=2` the
+`NGramHist` closure covers `StA`, `StB` and `StC` on both rows on its own.
 
 ## 7. Tools
 
@@ -299,3 +306,98 @@ rules of §2a as `csteps` lemmas over `rep S1 R` (the scan lemmas in
   return the blocking negative cycle when they fail, which is what located
   §5's spurious node.
 * `rows.txt` — the four rows.
+
+## 8. Wave 37: M1 and M4 boarded, and what the transcription actually cost
+
+`theories/Machines/Mxdys4/NGX_1RB1LC_0LC0RB_1LA1RD_0LA0RD.v` and
+`NGX_1RB1LD_1LC1RA_0RB0LC_0RA0LD.v`: ~510 and ~533 lines of hand proof plus
+the emitted certificate data, four seconds each to compile,
+`functional_extensionality_dep` only.  Shared kit:
+`theories/Counters/BinVal.v` (the half-tape as a binary number, the parity
+predicates, the `last` algebra).  The closure half is emitted by
+`tools/mxdys4/emit_ngx.py`, which rewrites everything after a MARK line and
+leaves the hand proof above it alone.
+
+- **`k=2, n=2` DOES NOT CLOSE either row; `k=3, n=2` does.**  At `k=2` the
+  closure misses `StB` on M1 and `StC` on M4 (`no liveness cert for state
+  ...`), and `n=3` does not close at all.  `tools/mxdys4/pin_kn.py` sweeps
+  the grid; 134 and 131 contexts at the rung that works.  §4's plan to take
+  `StA`/`StB`/`StC` off `ReachStI` was therefore unnecessary.
+
+- **THE SHAPE MUST CARRY AN EXPLICIT BLANK AND THEN A GENERIC TAIL.**  The
+  configuration is `(StA, (l, s, rep [S1] R ++ S0 :: Z))`, not
+  `(StA, (l, s, rep [S1] R))` and not `... ++ Z`.  Both halves matter and
+  for opposite reasons: rules 1 and 5 both walk ONE cell past the unary run
+  and must find a blank there, so the `S0 ::` has to be in the statement;
+  and rule 1 consumes that blank and writes a fresh one, so without a
+  generic `Z` underneath it the output of one rule does not syntactically
+  match the input of the next and the whole chain has to be re-aligned by
+  hand at every join.  With both, `Z` is untouched by all four rules and
+  every rule lemma composes by `csteps_chain` with no rewriting at all.
+  M4 is the same one cell to the LEFT: `rep [S1] p ++ S0 :: Y`.
+
+- **§4's "suppose rule 5 fires finitely often" does not transcribe.  What
+  does is a predicate closed under ONE macro rule.**  The proof-by-
+  contradiction shape needs a global "after the last rule 5", which is not
+  a statement about a configuration.  The Coq form is two obligations over
+  a disjunction `G`:
+
+      hitD_G : G  ->  StD is visited within finitely many steps
+      g_step : G  ->  one macro rule lands in G again, in >= 1 steps
+
+  and then `forall N, exists m >= N` by induction on `N`.  §4's parity
+  invariant is only ONE disjunct of `G`.  Rule 5 LEAVES it (it sets
+  `R := 0`, and `R` is odd in the invariant), so `G` also carries the
+  even-parity companion and the blank-tape states `l = []` / `r = []` the
+  frame widens through.  Four disjuncts on M4, three on M1.
+
+- **The two phases need DIFFERENT measures, and that is the real content.**
+  The odd phase descends on `2^w - mu`, §4a's measure, and it is the phase
+  where the exponential lives.  The even phase does not: it descends on
+  `length l` (M1) resp. `length r` (M4), because rule 4 / rule 1 shortens
+  the counter side by two cells per firing and every other exit leaves the
+  phase in one step.  Trying to run the even phase on `mu` fails — that is
+  exactly where widening lives, and widening raises `2^w - mu`.
+
+- **The parity lock is what forbids widening, and it is worth stating as
+  `last l = S1` AND a parity, never one without the other.**  `last l = S1`
+  alone fails: `l = [S0; S1]` steps to `l = []`.  Parity alone fails: the
+  widening guard is a length, not a parity.  Together, `length l = 1` forces
+  `l = [S1]`, which is rule 5's guard and not rule 4's, and the frame cannot
+  widen.  Same statement on M4 with `r` for `l`.
+
+- **`apply H in Hyp` where `H : A <-> B` picks a direction by LUCK.**  With
+  `H : forall n, OddN (S (S n)) <-> OddN n` and `Hyp : OddN (S (S k))`,
+  BOTH sides unify (the second with `n := S (S k)`) and Coq took the wrong
+  one, silently turning the hypothesis into `OddN (S (S (S (S k))))`.  The
+  failure surfaces four tactics later as an unprovable `lia`.  `BinVal.v`
+  therefore states the two implications separately (`oddN_SS_inv`,
+  `oddN_SS_intro`) and never the `iff`.
+
+- **M4 has a genuine 2-cycle in its macro system and it is harmless.**
+  Rule 3' (`p = 0`, head reads `S1`) returns the identical configuration in
+  two steps.  It is not in the real orbit, but it does not have to be
+  excluded: it visits `StD` on its first step, so it satisfies the
+  obligation on the nose and only needs to be closed under `G`.  M1 has the
+  analogous rule-5-at-`R=0` cycle, and there the parity invariant excludes
+  it instead — either treatment works, and picking the cheap one per row
+  saved a case split each time.
+
+- **The rules were re-derived in `cconf` coordinates before any Coq.**
+  `tools/mxdys4/cmacro1.py` and `cmacro4.py` carry §2a/§2b as functions of
+  `(l, s, R)` resp. `(p, s, r)` — the exact triples the Coq lemmas are
+  stated over, including `chd`/`ctl` at the list ends — and differentially
+  validate them against the raw simulator (300/300 macro steps each) plus
+  the four `mu` deltas and the parity lock (4000 macro steps).  The frame
+  form of §2a hides two things the `cconf` form must say: which rules read
+  past the run, and what happens at `l = []` versus `l = [S0]`.
+
+- **A D-free run from an ARBITRARY shaped configuration does not
+  terminate**, so the invariant is not decoration.  From `(l, s, R) =
+  ([], S0, 1)` on M1 and `(p, s, r) = (1, S0, [])` on M4 the macro system
+  widens forever without ever visiting `StD` (measured to 200k macro
+  steps).  Both are parity-broken; neither is reachable.
+
+- **Both rows carry exactly one `0RB` shadow** (`0RB0LA_1LC1RD_0RD0LC_1RB1LA`
+  and `0RB0LA_1RC1LA_1LD1RB_0RC0LD`), harvested by `make closeout` in the
+  same regen.
