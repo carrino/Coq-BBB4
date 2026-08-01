@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**37 rows as of this commit — 26 distinct core machines + 11 0RB
+_**33 rows as of this commit — 22 distinct core machines + 11 0RB
 re-root shadows.**  A shadow needs no new mathematics, but it does need its
 own board: boarding a core machine moves its shadow into `core_rows.txt`
 rather than settling it, so budget the pair (2026-08-01; worked example
@@ -94,7 +94,7 @@ lists partition `core_rows.txt` exactly):
 | n | furthest gate today | | n | furthest gate today |
 |--:|---|---|--:|---|
 | 14 | no interior `j = S j'` chain | | 1 | no boot chain |
-| 7 | no gap-free two-form family | | 1 | no interior `j = 0` chain |
+| 3 | no gap-free two-form family | | 1 | no interior `j = 0` chain |
 | 2 | no inner interior chain | | 1 | no inner family at `pow2 j` |
 
 `register step does not close` is now EMPTY — its last row,
@@ -107,31 +107,33 @@ defaults in 60 s (`docs/LADDER_PLAN.md` §4u).
 the same day and are gone from this list; they never needed a gate, only
 the re-root transport.)
 
-**The `no gap-free two-form family` bucket lost three rows in wave 4s and
-none of the three needed the gate answered.**  The CHAMPION had a compiling
-board all along and was held out by an arithmetic comparison in
-`inventory.py`; the two gray rows `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and
-`1RB0RD_1LC0LC_1LD0LB_1RD0RA` closed the moment the family searcher was made
-to prefer, among readings tied on chain length, one whose digit words do not
-all end in a blank — a `cconf` carries no trailing blanks, so the other
-reading's boot check could never pass.  **Read a gate label as "where the
-emitter stopped", never as "how hard the machine is"; that is now three
-waves running** (`docs/LADDER_PLAN.md` §4s).
+**The `no gap-free two-form family` bucket has gone 10 → 3 in two waves, and
+not one of the seven needed the gate answered.**  Wave 4s took three: the
+CHAMPION, which had a compiling board all along and was held out by an
+arithmetic comparison in `inventory.py`, and the two gray rows
+`1RB0RD_1LC0LB_1LD0LB_1RD0RA` and `1RB0RD_1LC0LC_1LD0LB_1RD0RA`, which closed
+the moment the family searcher was made to prefer, among readings tied on
+chain length, one whose digit words do not all end in a blank (a `cconf`
+carries no trailing blanks, so the other reading's boot check could never
+pass).  Then #114 took the remaining four `0RB` rows — all four are bouncer
+counters.  **Read a gate label as "where the emitter stopped", never as "how
+hard the machine is"; that is now four waves running**
+(`docs/LADDER_PLAN.md` §4s).
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
-| `-`/`no-anchor` | 8 | 6 no anchor, 2 no overflow phase at K=6 |
 | `HIGHER`/`HIGHER` | 7 | 6 fill arm at the top of a width (wave 4s; was "no interior chain"), 1 no family at any anchor |
 | `QUAD`/`QUAD` | 4 | 4 no interior chain |
+| `-`/`no-anchor` | 4 | 2 no anchor, 2 no overflow phase at K=6 |
 | `EXP3`/`EXP3` | 3 | 3 no interior chain |
 | `AFFINE`/`EXP2` | 2 | 1 no boot chain, 1 no inner family |
 | `AFFINE`/`HIGHER` | 2 | 1 no boot chain, 1 no inner interior chain |
 
 **What that table now says, and it is the shape of the endgame:** the
 residue has inverted.  It used to be dominated by `AFFINE` machines our
-emitter could not frame; **14 of the 26 measure NON-AFFINE on both
+emitter could not frame; **14 of the 22 measure NON-AFFINE on both
 branches** (`HIGHER` 7, `QUAD` 4, `EXP3` 3) — shapes whose lap
-cost the certificate language cannot write as `a*j + b` — plus 8 whose
+cost the certificate language cannot write as `a*j + b` — plus 4 whose
 tape never decodes as a counter under any alphabet.  Only 4 rows are
 affine on at least one branch.
 
@@ -277,7 +279,7 @@ or stride reaches a quadratic).
    `make closeout` runs `gen_shadow.py --harvest` to emit it.  Wave 4u is the
    first time that fired in anger: `1RB1LA_0LA1RC_0RD0RB_1RA---` boarded and
    `SH_0RB1LC_1LA1RB_0LD0LA_1LB___.v` came with it, nobody typing anything.
-   So these eleven rows are not a task, they are 11 of the 37 that come free
+   So these eleven rows are not a task, they are 11 of the 33 that come free
    with whatever settles their partners.  Five of them sit on three of the four quadratic
    rows, so those five are not coming back either.
 3. **The two live routes**, both with named next steps: ReachSt's mirror
@@ -302,4 +304,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 37).
+first shrank from 883 to 511 (and, wave by wave, to the current 33).

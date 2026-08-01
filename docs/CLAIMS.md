@@ -85,7 +85,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **26** undecided core machines in
+3. it is **skipped**: one of the **22** undecided core machines in
    `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **11**
    0RB re-root shadows (`tools/closeout/shadow_rows.tsv`).  A shadow needs
    no new mathematics — it is a blank-prefix re-root of a core machine —
@@ -127,7 +127,7 @@ a binary-numeral fuel (`Checkers/TCyclerN.cstepsN`, ~17 s), and since
 section used to ask for, carried through `covers_iqh_champ_at` and the
 swap/mirror lemmas, and `tools/closeout/inventory.py` boards the row as kind
 `iqhch`.  So `bbb4_target`'s bound is attained by a machine the theorem
-decides, not merely stated.  It stays a lower bound only: closing the 27 is
+decides, not merely stated.  It stays a lower bound only: closing the 22 is
 what would turn it into the value.
 
 _Two gaps this section used to list are closed.  The score bound existing only
@@ -138,12 +138,12 @@ carries the concrete `QHBound B_board` (= 66,349) or `QHBound B_champ`
 was the second of the two this section named — the third disjunct, not raising
 `B_board` — precisely so that
 `bbb4_decided_le_prev_champion_or_champion` still separates the champion from
-the other 5,118 boarded rows instead of coarsening all of them to 32.8M._
+the other 5,122 boarded rows instead of coarsening all of them to 32.8M._
 
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 37 still-undecided machines (26
+> 32,779,478 or never quasihalts, except 33 still-undecided machines (22
 > core rows and their 11 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The bound is ATTAINED (the
 > champion is boarded, so BBB(4) >= 32,779,478), but the BBB(4) *value*

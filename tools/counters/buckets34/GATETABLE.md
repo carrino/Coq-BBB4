@@ -1,4 +1,4 @@
-# Gate table over the 26 open core rows
+# Gate table over the 22 open core rows
 
 `tailcert.py --list tools/closeout/core_rows.txt --out scan.json` (scan labels,
 no --emit), split by `buckets.py`, filtered to live membership after each wave.
@@ -8,7 +8,7 @@ commands are untrusted Python and need no Coq.
 | n | furthest gate |
 |--:|---|
 | 14 | `no_interior_jS_j_chain_at_octave_parity_0` |
-| 7 | `no_gap_free_two_form_family` |
+| 3 | `no_gap_free_two_form_family` |
 | 2 | `no_inner_interior_chain` |
 | 1 | `no_boot_chain` |
 | 1 | `no_interior_j0_chain_at_octave_parity_0` |
