@@ -3940,10 +3940,17 @@ Two rows, and neither is a ladder row:
   the carry rather than executed one after the other, and no strong induction
   over this family will find them.  What is left is the numerals.
 * `1RB0RB_1LC0RC_1RA0LD_0LB0LC` — `LADDER_NOFAM.md`'s unary stripe counter.
-  Re-measured this wave: at the anchor `(StC, ([], S0, S1 :: 0^g ++ W))` the
-  left edge moves exactly −3 per bounce and the gap `g` is affine, but the
-  stripe word `W` is NOT bounded — it grows, and its successive values fall
-  into groups of three sharing a suffix with the prefixes cycling
-  `1000 / 111 / 1001`.  So the `φ · (101)^p · 0011111` reading is a
-  one-parameter family only at a SPARSER anchor than the bounce, and the
-  bounce anchor is nested rather than flat.  Do not start from the bounce.
+  Its reading REPRODUCES (`nofam.py`: `unary/101`, tail `0011111`, `p = 1..17`,
+  22 phases, succ/ctx/rec all 1.00), and the thing to know before touching it
+  is which anchor that is.  It is visited once per COUNTER VALUE — 17 times in
+  200,000 steps — and the BOUNCE anchor is a different and much denser one:
+  at `(StC, ([], S0, S1 :: 0^g ++ W))` the left edge moves exactly −3 per
+  bounce (234 visits in 200,000 steps) and the gap `g` is affine, but the
+  stripe word `W` is NOT bounded there — it grows, and its successive values
+  fall into groups of three sharing a suffix with the prefixes cycling
+  `1000 / 111 / 1001`.  So roughly eight bounces separate consecutive `E(p)`,
+  the lap between them is quadratic in `p` (which costs a hand board nothing —
+  `LapGlue`'s lap premise existentially quantifies the step count) and `φ` is
+  a 22-element control state that a `Cf : positive -> cconf` has to absorb.
+  **Do not start from the bounce**, and do not expect a flat one-parameter
+  family at it.

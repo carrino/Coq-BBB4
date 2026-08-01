@@ -422,12 +422,16 @@ step trace of `Cf(w) -> Cf(w+1)` for the trace of `Cf(k) -> Cf(k+1)` at
 `k = w-1, w-2`, up to a position shift, all 24 state relabellings and a
 mirror, and there are **zero hits at `w = 6, 7, 8`**.  The recurrence is
 arithmetic on the lap count, not a containment of runs.  What is left is the
-numerals.  `1RB0RB_1LC0RC_1RA0LD_0LB0LC` re-measured: at the bounce
-anchor the left edge moves exactly −3 and the gap is affine, but the stripe
-word GROWS (groups of three sharing a suffix, prefixes cycling
-`1000 / 111 / 1001`), so `LADDER_NOFAM.md`'s one-parameter `φ (101)^p 0011111`
-reading lives at a sparser anchor than the bounce and the bounce anchor is
-nested.  Do not start from the bounce.
+numerals.  `1RB0RB_1LC0RC_1RA0LD_0LB0LC`: `LADDER_NOFAM.md`'s
+reading REPRODUCES (`nofam.py`: `unary/101`, tail `0011111`, `p = 1..17`, 22
+phases, succ/ctx/rec 1.00) and is visited once per COUNTER VALUE — 17 times in
+200,000 steps.  The BOUNCE anchor is a different, much denser one (234 visits):
+there the left edge moves exactly −3 and the gap is affine, but the stripe word
+GROWS (groups of three sharing a suffix, prefixes cycling `1000 / 111 / 1001`).
+So ~8 bounces separate consecutive `E(p)`, the lap is quadratic in `p` (free
+for a hand board — `LapGlue` existentially quantifies it) and `φ` is a
+22-element control state a `Cf : positive -> cconf` has to absorb.  Do not
+start from the bounce.
 
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 
