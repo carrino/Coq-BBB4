@@ -4083,3 +4083,188 @@ sets that cell, steps back onto the one `qD` just cleared and sets it too
   that overflow shares the digit-0 branch's cost rather than having its own.
   `fiblazy.py` / `gray2check.py` are the precedent and this is the third time
   it has paid.
+
+## 4z. The base-2 pair BOARDS, and the missing half of §4y's price was a CASCADE
+
+_Branch `claude/base2-pair-board-hsktcu`, cut from `main` at `46598f9` and
+rebased through #122 and #124.  Coq 8.18.0 from apt._
+
+    settled by a board       5147 -> 5151   (99.9%)
+    core undecided              6 ->    4
+    0RB shadows of the core     3 ->    1
+
+**Four rows: the two cores and the two shadows their partners freed.**
+
+§4y priced these two rows at "an inner induction over the carry run, and one
+closer serves both rows".  Both halves of that hold — the induction over the
+carry run is `Bin3Lap.core`, and one closer does serve both rows, for a
+sharper reason than §4y gave.  What §4y did not price is a second, nested
+obligation underneath the first, `Hloop`, and that one is a
+descending-octave cascade rather than a second carry induction.  It is the
+larger half of the board.
+
+### The anchor, pinned to an exact `cconf`
+
+`tools/counters/bin3lap.py`.  §4y's sweep found `D0`; a board needs four
+things the sweep does not give, and all four hold on both rows:
+
+| | `1RB1LC_1LB1RA_0LC0LD_0RA0RD` | `1RB1LC_1LC1RA_0LC0LD_0RA0RD` |
+|---|---|---|
+| anchor | `(StD, ([], S0, Wp p))` | same |
+| `Wp` mismatches | 0 / 1,023 visits | 0 / 1,395 visits |
+| values | `1, 2, 3, ...` no offset | same |
+| laps missing a state | none / 1,022 laps | none / 1,394 laps |
+
+The right word is **`MonoCounter.Wp` cell for cell** — not "some 2-cell radix
+decodes here", the actual `Wp`, with the even pad cell it already carries.
+So `cview`, `cview_some_W` and `cview_none_W` are reused unchanged and the
+numeral side is free, exactly as `TernCounter` was for §4y's base-3 row.
+Values start at 1 with no offset, so `Cf : positive -> cconf` fits and the
+closer is the PLAIN `LapGlue.glue_neverqh`; all four states occur in every
+lap, so the theorem is `NeverQuasiHaltsSt`.
+
+**The case worth checking collapsed a branch instead of adding one.**  §4y
+says to check whether overflow shares an interior branch's cost or has its
+own.  Here the lap depends only on the carry length and NOTHING else:
+`j = 1` interior and `j = 1` overflow both cost 14 (row 1) and 12 (row 2),
+at every `j`.  There is no trichotomy on these rows at all.
+
+### One closer, and the reason is a COMPOSITE rather than two constants
+
+§4y's reading was "the one-transition diff costs only the lap CONSTANTS".
+True, but it does not by itself give a shared closer, because the two rows'
+`B0` goes to different states and the sweeps that follow are different
+lengths.  What makes them one row is measured:
+
+**Every `B`-on-`S0` event of BOTH rows, over 3,000,000 steps each, has an
+`S1` to its left** — 214,290 and 250,006 events, zero exceptions.  And from
+that shape the two rows run the SAME composite:
+
+    (qB, (S1::L, S0, R))  -->  (qD, (ctl L, chd L, S0::S1::R))
+
+row 1 in four steps (`B0;B1;A1;C1` — `B0` turns back into `qB`, finds the set
+cell, hands to `qA`, which hands to `qC`) and row 2 in two (`B0;C1`).  That
+is `Bin3Lap`'s `Hbc`; `bc_selfB` and `bc_toC` discharge it from each row's
+own `B0`, and nothing downstream ever sees the difference.  The entire lap
+gap — `3.5*3^c + c + 2.5` against `3^(c+1) + 2c + 1` — is absorbed by
+`LapGlue`'s existential step count.  **The shared closer is a theorem about
+`B0`, not an observation about constants.**
+
+### What `theories/Counters/Bin3Lap.v` proves
+
+Units, the `qC` descent (`phC`), `tick`, `core`, `coreB`, `anchor_shape`,
+the lap (`lapD`), the visits (`visD`) and the closer (`bin3_nqh`).
+`Print Assumptions` is `functional_extensionality_dep` only.
+
+`core` is §4y's "inner induction over the carry run", and it is six lines:
+
+    core (j+1) = A0 ; B1 ; core j ; Hloop j
+
+— the outward scan reads digits in pairs while they carry, so the carry run
+peels one digit a level, and what closes each level is `Hloop` AT that level.
+
+**Stating the tail through `chd`/`ctl` makes the two `cview` cases ONE
+instance**, which is worth carrying.  `core`'s region is `rep [S0;S1] j ++ w`
+with side conditions `chd w = S0` and `chd (ctl w) = S0`; the interior takes
+`w = S0::S0::Wp q` and the OVERFLOW takes `w = []`, whose two top cells are
+blanks a `cconf` does not carry.  Both satisfy the side conditions, both land
+on `rep [S0] (2j+1) ++ S1 :: ctl (ctl w)`, and both laps are EXACT — there is
+no `lift_app_blank` anywhere in this file.  `Ter3WallD` needed one; this
+shape does not, and the difference is only where the pattern's last fixed
+cell sits.
+
+### The half §4y did not price, and it is not another carry induction
+
+    Hloop :  (qD, (rep [S0] d ++ S1::M, S1,  rep [S0] (2k+1) ++ S1::R))
+         --> (qD, (ctl M,       chd M, rep [S0] (2k+3+d) ++ S1::R))
+
+verified over an UNKNOWN context on BOTH sides for `k = 0..5`, `d = 0..3`,
+with `chd M` provably irrelevant (`tools/counters/bin3lem.py`).  `tick`
+proves `k = 0` outright, in eight lines.  `k >= 1` was the whole remaining
+board, and its shape is
+
+    LOOP(k,0) = 1 + <the k-digit field counted out>
+                  + (2k+3)
+                  + LOOP(0,0) + LOOP(1,0) + ... + LOOP(k-2,0) + LOOP(k-1,2)
+
+exact for `k = 1..4` on both rows (row 2, `k = 3`:
+`1 + 72 + 9 + 6 + 18 + 56 = 162`; row 1, `k = 3`:
+`1 + 88 + 9 + 6 + 20 + 64 = 188`).  That is a **descending-octave cascade**
+— `Counters/NestedLapCascade.v`'s shape, whose own header says why a fixed
+number of counts cannot reach it and that the fix is an induction over the
+LEVEL.  Two things follow.
+
+* **The number of counts is affine in `k`**, so `NestedLap2.boot_via_fill`'s
+  fold-one-count-into-the-next is the wrong lever here, for exactly the
+  reason §4w's `nestcert.MAXCOUNTS = 4` records.
+* **The middle term is the counter running its own laps one level down**, so
+  `Hloop` needs `core` at every carry length below `k` PLUS an induction over
+  the field's value.  It is well founded — `core (j+1)` needs `Hloop j`, and
+  `Hloop k` needs `core` only below `k` — but it is three nested inductions,
+  not one.
+
+**So §4y's price was half the board**, and the other half is the cascade.
+
+### How the cascade closes, and it is one identity
+
+`tools/counters/bin3lem.py` states the three pieces against the probe before
+any of them is proved — each over an unknown context on both sides — and
+then the identity that composes them, exact for `k = 1..5`, `d = 0..1`, on
+both rows:
+
+    Hloop(k, d) = D1 ; field-run(k) ; MARK(2k+3) ; CASC(k-1, 0, d+2)
+
+* **`Fld`, and the numeral side stays free.**  `Wp p = Fld p ++ [S0;S1]` —
+  the field word is `MonoCounter.Wp` with its top digit dropped, because the
+  MARKER `S1` above the field plays that part.  So `cview` transfers
+  verbatim: `cview_some_F` and `cview_none_F` are `cview_some_W` and
+  `cview_none_W` with `Wp` read as `Fld`.
+* **`field_run`, and its measure.**  The counter increments at ONE anchor
+  until the field is full.  The measure is `gap p = tops p - p`, where
+  `tops p` is the all-ones numeral of `p`'s width — which is FIXED along the
+  run, and that is the whole reason the measure drops by one a turn.
+* **`mark`, the step the field run cannot take.**  The all-set field meets
+  the marker where a pad would be, so `A1` fires instead of `A0`, `C1`
+  clears the digit below it, and the head comes to rest ON a set cell.  That
+  is what the cascade eats, two at a time, and it is why the cascade exists.
+* **`casc`, one induction on the turn count.**  Each turn is `Hloop` one
+  level up; the level climbs as the set cells run out.  The count of turns
+  being AFFINE in `k` — §4w's `nestcert.MAXCOUNTS = 4` wall — is not an
+  obstacle when it is the induction variable rather than something a
+  certificate has to name.
+
+**The nest is well founded on ONE number.**  `CORE (S j)` needs `CORE j` and
+`LOOP j`; `LOOP (S k)` needs both only strictly below `S k`, because the
+field's carries are strictly inside it (`Fld_carry_lt`: `2j < |Fld p|`) and
+the cascade's levels are strictly under it.  So `core_loop` proves the two
+together by plain induction on the level — no well-founded recursion, no
+mutual fixpoint.
+
+### The two boards
+
+`theories/Machines/Counters/B2L_1RB1LC_1LB1RA_0LC0LD_0RA0RD.v` and
+`B2L_1RB1LC_1LC1RA_0LC0LD_0RA0RD.v`, both `NeverQuasiHaltsSt`, both
+`Print Assumptions` = `functional_extensionality_dep` only.  Each is a table,
+a five-line boot (`vm_compute` at step 5 and step 3), the two composite
+obligations discharged from its own `B0`, and one `exact`.  Their shadows
+`0RB0RA_1RC1LD_1LC1RB_0LD0LA` and `0RB0RA_1RC1LD_1LD1RB_0LD0LA` fell to
+`gen_shadow.py --harvest` with no hand work, as designed.
+
+### Worth not rediscovering
+
+* **`ter3_scan.py`'s `visits()` ends with `st = ns`.**  A copy of that loop
+  that drops the line runs the machine in one state forever, writes a cell a
+  step, and looks like a 60,000-cell runaway rather than a typo.  Cost: one
+  round of "why is this simulator quadratic".
+* **The `D0` reading and the `A0` reading are the same tape.**  §4y lists
+  `A0` with digits `{00, 10}` and `D0` with `{00, 01}`; they differ by which
+  cell the pair boundary falls on, and only `D0`'s is `Wp`.  The prompt's
+  inference that `D0` is the anchor to build on was right, and step 1 is
+  what confirmed it rather than assumed it.
+* **The machine is a two-mode sweep**, which is the fastest way to read it:
+  `qD` clears set cells upward and hands to `qA` one past the first clear
+  one; `qA` on a clear cell sets it and hands to `qB` (which steps over a
+  set bit back into `qA`, or fires the composite on a clear one); `qA` on a
+  set cell hands to `qC`, which walks down to the first set cell, clears it
+  and hands back to `qD`.  Every lemma in `Bin3Lap.v` is one of those four
+  sentences.

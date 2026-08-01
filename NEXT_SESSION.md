@@ -5308,3 +5308,112 @@ Their lap is geometric so no ladder arm reaches them — but `LapGlue`'s lap
 premise existentially quantifies the step count, so a hand board never sees
 the closed form; what it needs is an inner induction over the carry run.
 Four rows of the eight that remain, on measurements that are already made.
+
+## 2026-08-01 (later still) — the base-2 pair BOARDS: `core` + the CASCADE, four rows, 99.9%
+
+`docs/LADDER_PLAN.md` §4z has the full write-up.  Branch
+`claude/base2-pair-board-hsktcu`, cut from `main` at `46598f9`.
+
+    settled by a board       5147 -> 5151   (99.9%)
+    core undecided              6 ->    4
+    0RB shadows of the core     3 ->    1
+
+**Four rows: the two cores plus the two shadows `gen_shadow.py --harvest`
+freed.**  (The session opened at 5,143 / 8 / 5; #124 boarded mxdys's rows 1
+and 4 mid-flight, so the pair's own contribution is 5,147 -> 5,151.)
+
+### The three deliverables
+
+1. `tools/counters/bin3lap.py` — pins the `D0` anchor of both rows to the
+   exact `cconf` `(StD, ([], S0, Wp p))`.  The right word is
+   `MonoCounter.Wp` CELL FOR CELL (0 mismatches over 1,023 / 1,395 visits),
+   values `1, 2, 3, ...` with no offset, the lap single-valued per `cview`
+   class with **overflow sharing the interior cost at every `j`**, and all
+   four states in every lap.
+2. `theories/Counters/Bin3Lap.v` — the closer, proved down to ONE hypothesis
+   (`Hloop`).  `Print Assumptions bin3_nqh` = `functional_extensionality_dep`.
+3. `tools/counters/bin3lem.py` — every rule stated against the probe over an
+   UNKNOWN context on both sides before it was proved, plus the step-count
+   identity that names `Hloop`'s shape.
+
+### The two findings worth carrying
+
+**One closer serves both rows because of a COMPOSITE, not because "only the
+constants differ".**  Every `B`-on-`S0` event of either row (3,000,000 steps
+each, 214,290 and 250,006 events, zero exceptions) has an `S1` to its left,
+and from there both rows run
+
+    (qB, (S1::L, S0, R))  -->  (qD, (ctl L, chd L, S0::S1::R))
+
+row 1 in 4 steps, row 2 in 2.  `bc_selfB` / `bc_toC` discharge it from each
+row's own `B0`; nothing downstream sees the difference.
+
+**§4y priced half the board.**  "An inner induction over the carry run" is
+`Bin3Lap.core` — six lines, `core (j+1) = A0 ; B1 ; core j ; Hloop j`, done.
+Underneath it is `Hloop`, and `k >= 1` is
+
+    LOOP(k,0) = 1 + <k-digit field counted out> + (2k+3)
+                  + LOOP(0,0) + ... + LOOP(k-2,0) + LOOP(k-1,2)
+
+exact for `k = 1..4` on both rows.  That is `NestedLapCascade`'s
+descending-octave shape with an AFFINE number of counts, so `NestedLap2`'s
+fold-one-count-into-the-next cannot reach it and `nestcert.MAXCOUNTS = 4` is
+the recorded reason.  It is well founded (`core (j+1)` needs `Hloop j`;
+`Hloop k` needs `core` only below `k`) but it is three nested inductions.
+
+### How `Hloop` closed
+
+    Hloop(k, d) = D1 ; field-run(k) ; MARK(2k+3) ; CASC(k-1, 0, d+2)
+
+stated in `bin3lem.py` against the probe, each piece over an unknown context
+on both sides, and the identity exact for `k = 1..5`, `d = 0..1`, on both
+rows BEFORE any of it was written in Coq.  The four pieces:
+
+* `Fld` — `Wp p = Fld p ++ [S0;S1]`.  The field word is `MonoCounter.Wp`
+  with its top digit dropped, because the MARKER plays that part, so `cview`
+  transfers verbatim and the numeral side stays free.
+* `field_run` — increments at ONE anchor until the field is full, on the
+  measure `gap p = tops p - p`.  `tops p` (the all-ones numeral of p's
+  width) is FIXED along the run; that is the whole reason the measure drops.
+* `mark` — the step the field run cannot take: the all-set field meets the
+  marker where a pad would be, so `A1` fires instead of `A0` and the head
+  lands ON a set cell.
+* `casc` — one induction on the turn count, the level climbing as the set
+  cells run out.  **The turn count being AFFINE in `k` — §4w's
+  `nestcert.MAXCOUNTS = 4` wall — is not an obstacle when it is the
+  induction variable** rather than something a certificate must name.  That
+  is the transferable lesson.
+
+Well founded on ONE number: `CORE (S j)` needs `CORE j` and `LOOP j`;
+`LOOP (S k)` needs both strictly below `S k` (`Fld_carry_lt` bounds the
+field's carries, the cascade's levels are strictly under it).  So
+`core_loop` proves them together by plain induction on the level.
+
+### For the next session
+
+`tools/closeout/core_rows.txt` has FOUR rows left.  None of them has been
+triaged for shape in this session; start there.  `Counters/Bin3Lap.v` is
+finished and reusable — its `Fld`/`tops`/`gap` layer and its `casc` are the
+first cascade in the tree that closes, so a row whose `NestedLapCascade`
+shape blocked it before is worth re-reading against them.
+
+**Traps hit this session, so they are not hit again:**
+
+- `replace 1 with (2 * 0 + 1) in H by lia` replaces EVERY literal `1` in
+  `H`, including the ones inside `2*t` and `d+1`.  Rewrite the goal to match
+  the hypothesis, or `replace` the compound term, never a bare literal.
+- Step counts and list indices that are equal but spelled differently must
+  STAY spelled differently: `replace` is global, so a lemma stated with
+  `csteps tm (2*i) ... rep [S1] (2*i)` cannot have its step count rewritten
+  without wrecking the `rep`.  `phOUT` uses `i + i` for the count and `2*i`
+  for the `rep` for exactly this reason.
+
+- `ter3_scan.py`'s `visits()` loop ends with `st = ns`.  Copying it without
+  that line gives a machine stuck in one state, writing a cell a step — it
+  presents as a quadratic simulator, not as a typo.
+- `LapGlue`'s `Hlap` is up to `lift`, but this shape does not need it:
+  stating `core`'s tail through `chd`/`ctl` makes the interior and the
+  OVERFLOW anchor the same instance (`w = S0::S0::Wp q` and `w = []`), both
+  exact, no `lift_app_blank` anywhere.
+- `exists n. eexists. split; [| reflexivity]` does not close a `fst ?c = q`
+  visit goal — name the config.

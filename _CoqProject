@@ -306,6 +306,7 @@ theories/Counters/TernCounter.v
 theories/Counters/LapGlue.v
 theories/Counters/LapGlueQH.v
 theories/Counters/MonoCounter.v
+theories/Counters/Bin3Lap.v
 theories/Machines/Counters/Mono_10.v
 theories/Machines/Counters/Mono_26.v
 theories/Machines/Counters/Mono_31.v
@@ -2881,6 +2882,12 @@ theories/Counters/Ter3WallD.v
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 theories/Machines/Counters/SH_0RB0LA_1LC1RD_0RD0LC_1RB1LA.v
 theories/Machines/Counters/SH_0RB0LA_1RC1LA_1LD1RB_0RC0LD.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/B2L_1RB1LC_1LB1RA_0LC0LD_0RA0RD.v
+theories/Machines/Counters/B2L_1RB1LC_1LC1RA_0LC0LD_0RA0RD.v
+theories/Machines/Counters/SH_0RB0RA_1RC1LD_1LC1RB_0LD0LA.v
+theories/Machines/Counters/SH_0RB0RA_1RC1LD_1LD1RB_0LD0LA.v
 
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
