@@ -383,6 +383,16 @@ about `ReachSt`:
   `NGramHist` side, or a different engine entirely.  `docs/RESIDUE_MAP.md`
   files them as `EXP3`/`AFFINE` interior laps with no interior chain.
 
+  **Wave 38 settled the second of those two, and it was the different
+  engine.**  `1RB1RC_1LA1RA_0RC1LD_1LB0LD` boarded through the plain
+  `Checkers/LapDecider.v` certificate route -- five chains and a numeral --
+  with no `ReachSt`, no `NGramHist` and no lift of any state.  Worth
+  recording as a limit of this whole triage: the row's gap ratio (1.04) put
+  it comfortably INSIDE the tier, both halves of `bothhalves.py` failed on
+  it, and neither fact bore on the route that actually worked.  A `T`/`N`
+  cell says whether THIS tier can reach a row; it says nothing about whether
+  the row is hard.  See `docs/LADDER_PLAN.md` §4aa.
+
 ## The cheapest thing to run before ANY work in this tier
 
 `tools/mxdys4/gaps.py SPEC` (wave 36): 3M steps, and for each state the

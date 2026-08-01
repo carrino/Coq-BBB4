@@ -4268,3 +4268,147 @@ obligations discharged from its own `B0`, and one `exact`.  Their shadows
   set cell hands to `qC`, which walks down to the first set cell, clears it
   and hands back to `qD`.  Every lemma in `Bin3Lap.v` is one of those four
   sentences.
+
+## 4aa. The KCOPY3 row BOARDS, and it is NOT the nested shape the map filed it as
+
+_Branch `claude/kcopy3-core-reduction-lv3uek`, cut from `main` at `1ba216c`.
+Coq 8.18.0 from apt._
+
+    settled by a board       5151 -> 5152   (99.9%)
+    core undecided              4 ->    3
+
+One row: `1RB1RC_1LA1RA_0RC1LD_1LB0LD`, filed `AFFINE` / `EXP2` /
+`Alph_000_111_111` / `no inner family at pow2 j`.  **Two of those four
+fields are wrong, and both were wrong in the direction that made the row
+look hard.**  It is an ordinary monotone counter with an affine lap, and the
+whole board is 260 lines of certificate data plus one new numeral.
+
+### The negative that mattered most: EXP2 + no-inner-family is NOT the nest here
+
+The row was queued as the nested/descending-cascade shape, i.e. as
+`Bin3Lap.v` again — a `core` carry induction with an `Hloop` cascade
+underneath it.  Measured, it is neither.  `tools/counters/kc3lap.py` over
+3,000,000 steps gives the lap between consecutive anchors in closed form,
+with **0 mismatches over 250,012 laps**:
+
+    cview p = (j, Some q0), q0 <> xH     6j + 6      249,978 laps
+    cview p = (j, Some xH)               6j + 4           17 laps
+    cview p = (S j, None)                6(S j) + 2       17 laps
+
+Affine in the carry length, and that is the WHOLE lap — the head walks out
+over the `j` carried digits (three cells each, six steps a digit round
+trip) and comes back.  There is no inner induction over the field's value
+and no cascade, because the counter's LSB sits against the right wall and
+an increment is local: only `log` of the tape moves.  `EXP2` is the growth
+of the RUN against the tape width (`p ~ 2^(width/3)`), not the shape of a
+lap, and reading it as the latter is what filed this row with the nest.
+
+**The cheap test that would have said so, and it is one line.**  If the lap
+against `cview` is single-valued and affine, the row is a `LapDecider`
+certificate and nothing else.  Run `kc3lap.py`'s lap table BEFORE reading a
+residue-map interior/overflow class as a proof shape.
+
+### The alphabet field is wrong, and no anchor can fix it
+
+`residue_map.tsv` files the row under `Alph_000_111_111` — three cells a
+digit, `A = [S0;S0;S0]`, `B = C = [S1;S1;S1]`.  That file's own header says
+it was "verified against the machine's own tape for **1** consecutive anchor
+word", and one word is exactly enough to miss this:
+
+    anchor visits 250013   Wk mismatches 0        values 1..250013
+    anchor visits 250013   Ap mismatches 250013   first at p = 1
+
+The top TWO digits share FOUR cells, not six: the leading digit is the
+three-cell marker and the digit below it is a SINGLE cell.  This is the
+`SEP3` pair's "frontier group of two packed bits"
+(`docs/RESIDUE_708_DIAGNOSIS.md`) one radix up, and here it is not a
+tooling artefact that a better decoder would read away — **it is forced by
+the extent law.**  A uniform `3n`-cell word plus a marker does not fit in
+the `3n-1` cells the tape holds, so NO choice of anchor exposes `Ap`.  Any
+emitter that assumes a uniform digit alphabet will silently derive nothing
+here; `emit_lapcert.py`'s `ENCDATA` rows are all uniform, which is why this
+board is hand-written rather than emitted.
+
+`theories/Counters/Kc3Num.v` is the numeral, five clauses:
+
+    Wk xH = [S1]      Wk (xO xH) = [S0;S1;S1;S1]     Wk (xI xH) = [S1;S1;S1;S1]
+    Wk (xO q) = [S0;S0;S0] ++ Wk q                   Wk (xI q) = [S1;S1;S1] ++ Wk q
+
+**Only ONE of the two unfolding lemmas carries a side condition**, and that
+is worth not rediscovering: `Wk (xI q) = [S1;S1;S1] ++ Wk q` holds at
+`q = xH` too, because a SET packed digit under the marker and a fourth
+marker cell are the same list.  Only a CLEAR packed digit (`xO xH`) breaks
+the recursion.  So the packing costs exactly one branch, not two.
+
+### The anchor, pinned to an exact `cconf`
+
+    Cc p = (StC, (Wk p, S1, []))
+
+The counter grows LEFTWARD against a right wall, so the numeral is the
+`cconf`'s LEFT list and the right side is literally empty (`er = true` on
+every branch).  All four of `bin3lap.py`'s requirements hold: the word is
+`Wk` cell for cell, the other side is empty and the head symbol is fixed,
+values are `1, 2, 3, ...` with no offset, and the lap is single-valued per
+`cview` class.
+
+### What the case worth checking did, and it is a THIRD outcome
+
+§4y found overflow with its own cost; §4z found it sharing an interior
+branch's and collapsing one.  Here overflow has its own cost **and** the
+interior SPLITS: a carry that lands on the packed digit rewrites one cell
+where an interior carry rewrites three, so `cview`'s `Some` case is two
+branches, on `q0 = xH` versus `q0 <> xH`.  Three `cview` branches, which no
+uniform alphabet produces.  It is a rare event — 17 frontier laps against
+249,978 interior in 3M steps, one per power of two — so a sweep that
+samples laps will not see it, and a certificate that omits it fails to
+close rather than mis-proving.
+
+### The peel, and why only overflow escapes it
+
+Each interior/frontier branch is stated TWICE, at `j = 0` and at `j = S j'`.
+The reason is mechanical and generic: the anchor's head sits FLUSH against
+the repeated block (`s_pre = []`), and `LapDecider.SWin` runs its window on
+`s_pre` alone, so with an empty prefix no window step can move and no
+rotation can expose one — `SRotL m` needs `s_post` to START with the first
+`m` cells of the unit, and the interior's `s_post` is `[S0;S0;S0]` against a
+unit of `[S1;S1;S1]`.  The `j = S j'` statement carries one peeled digit in
+the prefix and the `j = 0` lap is fully concrete (`SWin 6` / `SWin 4`).
+**Only the overflow branch escapes it**, and only because its `s_post` is
+the single `[S1]` that `SRotL 1` can rotate out — which is exactly the
+`SRotL 1` the chain search puts first.  Five certificates, not three.
+
+### Liveness, read before choosing a closer
+
+`glue_neverqh`'s `Hvis` premise is "every state is reachable from every
+anchor", and the cheap reading is to count laps that contain all four
+states.  **Zero of 250,012 laps miss a state**, so the theorem is
+`NeverQuasiHaltsSt` and the closer is the PLAIN `LapGlue.glue_neverqh` —
+no quasihalting route, no `LapGlueQH`.  All five branches close EXACTLY, so
+there is no `lift` slack in the file at all and `LapCertGlue.reach_ovf`
+takes both interior branches directly.
+
+### The board
+
+`theories/Machines/Counters/KC3_1RB1RC_1LA1RA_0RC1LD_1LB0LD.v`:
+`NeverQuasiHaltsSt`, `Print Assumptions` = `functional_extensionality_dep`
+only, four seconds to compile.  The machine grows leftward natively, so
+unlike the `LAPC_*` boards there is no `Mirror` hop.
+
+### Worth not rediscovering
+
+* **`tools/counters/kc3lem.py` earned its keep on the OVERFLOW branch.**
+  Run over an UNKNOWN context, `INT` and `FRT` pass and `OVF` ABORTS —
+  because overflow is the one lap that walks past the top of the numeral,
+  into the tape's blank region.  That is not a bug in the rule, it is the
+  rule telling you `el = true` (the opaque tail is known empty) is load
+  bearing on that branch and only that branch.  A probe that pads with
+  blanks everywhere would have reported three clean rules and hidden it.
+* **Spell the lap witness as `ca * j + cb`, never as the number.**
+  `srun_sound` produces `csteps tm (0 * 0 + 4)`, and `exists 4` does not
+  unify with it.  The fix is `exists (0 * 0 + 4)` — NOT `replace 4 with
+  (0 * 0 + 4)`, which is global and rewrites the other literal 4s in the
+  goal.
+* **The `cview`-class refinement is `q0 = 1`, not "the top digit".**
+  `cview p = (j, Some q0)` has `q0 = p >> (j+1)`, so "the carry lands on the
+  packed digit" is exactly `q0 = xH` — a condition the existing `cview`
+  already sees.  No new view function, no second parameter.
