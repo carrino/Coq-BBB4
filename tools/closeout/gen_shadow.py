@@ -26,9 +26,30 @@ answer to that trigger; `RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v` is the
 hand-written original this reproduces as a regression.
 
 SCOPE.  Never-quasihalting core rows only (`kind = nqh` in frozen_map.tsv).
-A core row boarded as `iqh` transports through [Reroot.qhbound_reroot]
-instead, which shifts the bound by the prefix length and carries a
-`B + t <= B_board` side condition -- refused here rather than guessed at.
+A core row boarded as `iqh` is REFUSED, loudly: `--harvest` prints SKIP with
+the reason and `audit.py` lists the row under "re-root shadows of a BOARDED
+row", so it waits rather than going quiet or going wrong.
+
+WHEN YOU BUILD THE iqh HALF -- and the arithmetic, so nobody re-derives it.
+It is a near-twin of the nqh path: [Reroot.qhbound_reroot] in place of
+[neverqh_reroot], which shifts the bound by the prefix length `t` and carries
+a `B + t <= B_board` side condition.  That condition sounds like the hard
+part and is not:
+
+  * a plain `iqh` board certifies literally `QHBound 2000` (= B_census), and
+    B_board is 66,349.  Every shadow in the tree has `t` of 1 or 2, so the
+    obligation is `2002 <= 66349` -- a triviality the kernel evaluates.
+  * it can only bite against an `iqhle:<B>` board with B near the ceiling,
+    and there is exactly ONE in the tree: 1RB0LD_1LC0LA_1LA0LC_1RD1RC at
+    iqhle:66349, the previous champion.  The other four explicit-bound
+    boards sit at 2,401-2,819.  So a shadow would have to be a shadow OF the
+    previous champion for this to be a real decision.
+
+Deferred on purpose (2026-07-31, John): all ten current shadow partners are
+still undecided core rows, so nothing needs it yet, and the refusal is
+visible.  Cross that bridge when a shadow-carrying core row boards as a
+quasihalter.  Note that #106's five Fibonacci rows all boarded `iqh` and
+carried no shadows -- the first real chance this fires, not a sign it cannot.
 
 Usage:
     gen_shadow.py --harvest              board every shadow whose partner has
