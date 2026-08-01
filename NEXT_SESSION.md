@@ -4617,3 +4617,84 @@ Coq 8.18.0 from apt (~1 min).
   ladder plan is about; none of the arguments here generalise to them —
   these four were bouncer counters, which is the ONE shape the repo already
   had a closer for.  `docs/LADDER_PLAN.md` §4 is still the route for the rest.
+
+## 2026-08-01 — nickdrozd's nineteen, second pass: the two-block bouncer boards, and the fibonacci six are the OTHER canonical form
+
+Branch `claude/drozd-easy-proofs-yw7sa5`, cut from `main` at `0010050`.
+Coq 8.18.0 from apt (~1 min).  Full write-up: `docs/LADDER_PLAN.md` §4v.
+
+    settled by a board       5123 -> 5125   (99.4%)
+    core undecided             22 ->   21
+    0RB shadows of the core    11 ->   10
+
+- **Read the list against the tree first.**  Of nickdrozd's nineteen, SEVEN
+  are already boarded (`Bounce_8`, `Spacer_22`, `Spacer_23`, `Mono_31`, the
+  two `LDR_1RB0RD_1LC0L*` gray rows, and the CHAMPION
+  `1RB1LD_1RC1RB_1LC1LA_0RC0RD`), exactly as §4s said of the same list at its
+  own date.  A list from outside the tree is against the RESIDUE, and the
+  residue moves.  Twelve were live this time.
+
+- **`1RB1LB_1LC0RD_0LB1LA_0LA1RA` boards, and its shadow with it.**
+  `docs/LADDER_NOFAM.md` files it as "a quadratic bouncer … not a counter"
+  and `docs/MXDYS_INDUCTIVE_RESIDUE.md` §3 as "the family, found; the
+  grammar, one piece short".  The missing grammar is a two-repeater `sside`
+  (the family carries `(0 1)^a` and `(0 1 1 1 1)^b` on ONE side, different
+  indices) and **a hand board does not need it**: `WTape.cycR` / `cycL` /
+  `cycLW` each cross one repeated block and a lap is a CHAIN of them.  New:
+  `theories/Machines/Counters/TwoRun_1RB1LB_1LC0RD_0LB1LA_0LA1RA.v`, plus
+  `SH_0RB1LB_1LC1RC_1RD0LA_0RC1RB.v` which `gen_shadow.py --harvest` freed
+  the moment the partner landed.
+
+- **"Not a counter" is a statement about the reader, and the file's own
+  fingerprint says so.**  `LADDER_NOFAM.md` measures this row at
+  `1 1 1 1 2 2 2 2 3 3 3 3` distinct strings per width — LINEAR, which is a
+  bouncer's signature, and it says as much two paragraphs later.  **A linear
+  shape-count is a routing signal to the wave track**, not a residue verdict.
+  Same lesson as #114's "a probe that reports 'not positional' has found a
+  region without digits, not a machine without a counter", from the other
+  side.  The sibling `1RB0RB_1LC0RC_1RA0LD_0LB0LC` is the same call and is
+  still open.
+
+- **The fibonacci six: BOTH routes the previous prompt named are refuted.**
+  The anchor and the weight ladder were never the question — all six decode
+  to `0, 1, 2, …` with zero failures under the kernel's own
+  `fibw = 1, 1, 2, 3, 5, 8`.  The **canonical form** is: the numeration is
+  redundant, `fam_of_value` at `Fib` is `fibdec`, and `fibdec` picks the
+  other representative.  `LadderCheck` §3c's `fibokb` accepts **324 of
+  4,000** of these rows' anchor words; the control (§4r's five boarded rows)
+  scores 4,000.  The six score **4,000 of 4,000** on "no two adjacent ZEROS,
+  `d0 = 1`" — the LAZY form — and §4r's five score 243 on it.  Exact
+  complement, both directions (`tools/counters/lazyfib.py`).
+  **And they are not Zeckendorf**, which is what §4s inferred from the
+  weights `1, 2, 3, 5, 8` alone: those are the same tape with the forced low
+  digit split off as `fm_pre`, the members contain adjacent 1s, and the top
+  of a width is `1^k` and not `1010…`.  A `(Fib, 2)` instance built to the
+  old prompt's spec would have compiled and boarded nothing.
+
+- **What blocks them is `Class`, not `Code`.**  The increment is exact and
+  single-valued on all six (0 mismatches over ~3,982 interior transitions
+  each) and sends `1^(2m) 0 rest -> (1 0)^m 1 rest` — an ALTERNATING run of
+  half the length, two parity classes.  `cs_t : nat` is a run of ONE
+  REPEATED DIGIT and cannot spell it; no regrouping rescues it (a 2-cell
+  digit at index `j` has values `0, fibw (2j+1), fibw (2j), fibw (2j+2)`,
+  not multiples of a common weight).  So the sized piece is `cs_t : list
+  nat` — a change to the GENERIC half, §4i's gate — and the arm side already
+  speaks it, since `LadderKernel`'s `sside` is `rep (s_u s) (s_a s * j +
+  s_b s)`.  Ranked plan in `tools/ladder/NEXT_PROMPT.md`.
+
+- **Validate every unit rule against its WHOLE unknown context in the oracle
+  before writing Coq.**  Each candidate rule for the bouncer was run over all
+  instantiations of its unknown left and right context (every word up to
+  length 6).  The four that came back context-independent became
+  `cycR`/`cycL`/`cycLW` premises; the four that did not became one-sided
+  `wsteps_frame_l`/`_r` joints.  **That split IS the proof structure** —
+  minutes in Python, hours if guessed in Coq.  Corollary trap: a `csteps`
+  lemma over a symbolic left list reduces by `reflexivity` only while the
+  head stays right of its start, because `ctape_move DL` blocks on a
+  variable `l`; that is the same fact as the `wsteps true true` premise, and
+  the oracle reports it as `mindepth = 0`.
+
+- **`rewrite` picks the wrong `rep`/`app` occurrence constantly.**  Give the
+  lemma its arguments (`rewrite (zsum 3 (4*j+6) [S1])`), and never `cbn
+  [rep]` where an index is `4 * j` — `cbn` unfolds the `Nat.mul` and the
+  term stops matching everything downstream.

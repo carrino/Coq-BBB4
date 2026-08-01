@@ -3356,6 +3356,138 @@ two above are overflow.
   for one board plus two harvests.  Both are 4p quadratic rows, which is why
   the biggest prize in the residue also sits behind its hardest blocker.
 
+## 4v. The fibonacci six read at last: they are the LAZY numeration, both proposed routes are dead, and `Class` is what has to widen
+
+_Branch `claude/drozd-easy-proofs-yw7sa5`, cut from `main` at `0010050`.
+Coq 8.18.0 from apt.  Prompted by nickdrozd posting the same nineteen rows
+§4s measured; twelve were still live._
+
+    settled by a board       5123 -> 5125   (99.4%)
+    core undecided             22 ->   21
+    0RB shadows of the core    11 ->   10
+
+The row that moved is not a ladder row — it is the two-block bouncer of §4v
+below the fold (`theories/Machines/Counters/TwoRun_1RB1LB_1LC0RD_0LB1LA_0LA1RA.v`,
+plus the shadow `--harvest` freed the moment it landed).  What this section
+is actually for is the **six fibonacci rows**, because `NEXT_PROMPT.md`
+offered two routes for them and **both are refuted**, one of them by a
+measurement that takes ten minutes and would have been wasted otherwise.
+
+### Route A is dead, and the number is 324 against 4000
+
+`NEXT_PROMPT.md` §Route A: "measure whether the `1,1,2,3,5` reading is
+available FIRST — if some anchor admits it inside `Fam`'s denotation, the
+kernel already speaks it and there is nothing to build."  It is available:
+`tools/counters/fib_anchor.py` was right, every one of the six decodes to
+`0, 1, 2, 3, …` at an ordinary flat anchor with one cell per digit and the
+weights `fibw = 1, 1, 2, 3, 5, 8`.  **The weights were never the question.
+The CANONICAL FORM is**, because `fam_of_value` at `Fib` is `fibdec`, and
+`fibdec` decodes into ONE of the numeration's several representatives.
+
+Scanning every anchor of every row (all four sides, other-side words up to
+three cells, prefixes and terminators up to two, offsets 0–2) and counting
+how many of 4,000 consecutive anchor words are `LadderCheck` §3c members:
+
+| row | anchor | consecutive | `fibokb` | "no 00" |
+|---|---|--:|--:|--:|
+| `1RB---_0LC1RD_1LB1RC_1LB0RD` | `StB` h=`S0` | 4000/4000 | **324** | **4000** |
+| `1RB---_0LC1RD_1LB1RD_1LB0RD` | `StB` h=`S0` | 4000/4000 | **324** | **4000** |
+| `1RB---_1LC0RB_0LD1RB_1LC1RB` | `StB` h=`S0` | 4000/4000 | **324** | **4000** |
+| `1RB---_1LC0RB_0LD1RB_1LC1RD` | `StC` h=`S1` | 4000/4000 | **323** | **4000** |
+| `1RB---_1LC1RB_0LB1RD_1LC0RD` | `StC` h=`S1` | 4000/4000 | **323** | **4000** |
+| `1RB---_1LC1RD_0LB1RD_1LC0RD` | `StC` h=`S1` | 4000/4000 | **323** | **4000** |
+
+and the control — §4r's five boarded rows, at their own anchors — comes back
+**4000 `fibokb` and 243 "no 00"**, the exact complement.  So the two halves
+of §4r's bucket were never one family: they are the SAME numeration in its
+TWO canonical forms, and the kernel has the other one.
+
+### They are not Zeckendorf either, so Route B would have built the wrong code
+
+§4s read the weights `1, 2, 3, 5, 8, 13` off `valfam`'s families and inferred
+Zeckendorf — "membership is no two adjacent 1s … the top of a width is
+`1010…`".  **That inference is wrong, and it is wrong in the direction that
+costs a week.**  The `1, 2, 3, 5, 8` reading is the same tape with the
+forced low digit split off as `fm_pre` (every word has `d0 = 1`), and the
+membership of what remains is
+
+    no two adjacent ZEROS,  d0 = 1,  top digit 1
+
+— the **lazy** (dual) fibonacci representation, whose top of a width IS `1^k`
+exactly as `(Fib, 1)`'s is.  Zeckendorf's members at width 4 are
+`0000, 1000, 0100, 0010, 1010, 0001, 1001, 0101`; the machine's are
+`0101, 1101, 0111, 1011, 1111`, which contain adjacent 1s and are not a
+subset of anything Zeckendorf spells.  A `(Fib, 2)` instance built to
+`NEXT_PROMPT.md`'s spec would have compiled and boarded nothing.
+
+### What actually blocks them, and it is `Class`, not `Code`
+
+The increment is single-valued and exact on **all six** — 0 value failures
+and 0 law mismatches over each row's ~3,982 interior transitions
+(`tools/counters/lazyfib.py --law`) — and it is
+
+    1^(2m)   0 rest   ->   (1 0)^m       1 rest
+    1 1^(2m) 0 rest   ->   1 (1 0)^m     1 rest
+
+i.e. the run of ones below the first zero comes back as an **alternating**
+`(1 0)` run of HALF the length, in two parity classes.  `LadderCheck`'s
+`Class` is
+
+    cls_lhs c n rest = cs_u ++ repeat (cs_t c) n ++ cs_w ++ rest
+
+with `cs_t : nat` — a run of ONE REPEATED DIGIT.  `(1 0)^m` is not one, and
+no regrouping rescues it: pairing the cells into 2-cell digits needs the
+pair's four values to be `0, W, 2W, 3W` of a common weight, and at index `j`
+they are `0, fibw (2j+1), fibw (2j), fibw (2j+2)`, which are not.  So the
+sized piece is **`cs_t : list nat`** (`cls_lhs` over `concat (repeat u n)`),
+which is a change to the GENERIC half — §4i's gate — and not a fourth
+`(code, step)` pair.  The good news is that the arm side already speaks it:
+`LadderKernel`'s `sside` is `rep (s_u s) (s_a s * j + s_b s)`, a WORD run
+with an affine length, so `fam_cells` of a word-run class is exactly a `rep`
+the arms already state.
+
+**Ranked, for whoever takes this next.** (1) Widen `Class` to a word run —
+three existing instances all use singleton `cs_t`, so they change by
+`cbn`; add `FibL` with `fam_lim = S (fibsum k)` (unchanged), `fam_value =
+fibval` (unchanged) and a one-state "no 00" decode; the round trip is
+`gray_inj`-easy because the lazy form is not redundant AT A FIXED WIDTH.
+(2) Only then the §11 board copy.  **Do not start from Zeckendorf, and do
+not re-run `fib_anchor.py`** — the anchor and the ladder are settled; it is
+the canonical form and the class shape that are not.
+
+### The row that did move: a two-block bouncer, boarded by hand
+
+`1RB1LB_1LC0RD_0LB1LA_0LA1RA` is one of the two rows `LADDER_NOFAM.md` files
+as "not a counter" and `MXDYS_INDUCTIVE_RESIDUE.md` §3 as "the family, found;
+the grammar, one piece short".  The missing piece is a two-repeater `sside`
+— the family carries `(0 1)^a` and `(0 1 1 1 1)^b` on ONE side with
+different indices — and a hand board does not need it, because `WTape`'s
+`cycR` / `cycL` / `cycLW` each cross one repeated block and a lap is a CHAIN
+of them.  The whole orbit past the boot is three sweeps over
+
+    Wf a b = (StC, ([S1], S0, S1 :: rep [S0;S1] a ++ rep [S0;S1;S1;S1;S1] b))
+
+each an eight-piece chain (constant prologue, `cycR` over the low block, a
+constant joint, `cycR` over the high block, the turn, `cycLW` back over what
+the high pass deposited, `cycL` over the zeros the low pass deposited, a
+constant epilogue), giving `CF k -->^(108k+275) CF (k+1)` and
+`LapGlue.glue_neverqh` directly.  **Two lessons worth carrying:**
+
+* **"Not a counter" is a statement about the READER, and `LADDER_NOFAM.md`'s
+  own fingerprint said so** — `1 1 1 1 2 2 2 2 3 3 3 3` distinct strings per
+  width is *linear*, which is a bouncer's signature, and the file says as
+  much two paragraphs later.  A linear shape-count is a *routing* signal to
+  the wave route, not a residue verdict.  This is #114's lesson ("a probe
+  that reports 'not positional' has found a region without digits") from the
+  other side.
+* **The eight-piece chain is mechanical once the unit rules are validated
+  over their whole context.**  Every rule here was checked in Python against
+  ALL instantiations of its unknown left and right context (every word up to
+  length 6) before any Coq was written; the four that came back
+  context-independent became `cycR`/`cycL`/`cycLW` premises and the four that
+  did not became one-sided `wsteps_frame_l` / `_r` joints.  That split IS the
+  proof structure, and it is worth doing in the oracle rather than in Coq.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
