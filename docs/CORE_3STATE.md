@@ -83,6 +83,16 @@ digits over `{00, 01, 11}` and the lap is `4j + 4` in the carry length —
 `tools/counters/radix_infer.py` measured that over 10^4 consecutive anchor
 snapshots a session ago; what was missing was the Coq side.
 
+**"They are not base 2" is true of THESE rows and not of the label.**  `EXP3`
+describes a lap, not a radix, and other rows carrying it really are base 2 —
+`1RB1LC_1LB1RA_0LC0LD_0RA0RD` and `1RB1LC_1LC1RA_0LC0LD_0RA0RD` are exact
+binary counters whose lap grows like `3^c`, measured at three anchors each
+with no base-3 reading anywhere (`tools/counters/ter3_scan.py`,
+`LADDER_PLAN.md` §4y).  When the question is the radix, read
+`residue_map.tsv`'s ALPHABET column: those two say `Alph_11_00_1`, which
+names two digit words plus a top and so is already a binary alphabet, where
+the rows here say `Ip`.
+
 * `Counters/TernCounter.v` — base-3 numerals `tern`, the carry view `tview`
   (the run of low 2s), the word `Tw` over three digit words and a
   terminator, and TWO increments, because both occur in these rows:
