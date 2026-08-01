@@ -3192,6 +3192,170 @@ emitter.  **It is the only row in the core whose refusal is a stale schema**,
 and re-running `valfam` on it is one command.  Worth doing before it is read
 as anything harder.
 
+## 4u. The stale verdict: 4t's one-command row boards, its shadow with it, and `n_families` turns out to mean nothing
+
+_Branch `claude/shadow-partner-boarding-1jiujy`, cut from `main` at `295fd11`
+(#111).  #110 merged while this ran and took the number 4t; nothing collides,
+because **this section is the follow-through on 4t's own last paragraph** and
+4t claims no rows._
+
+    settled by a board       5117 -> 5119   (99.3%)
+    core undecided             27 ->   26
+    0RB shadows of the core    12 ->   11
+
+### 4t called it, and it was one command
+
+4t closed by asking which core rows carry a `closed: true` certificate in a
+committed sweep, found five, showed four of them are 4p's quadratic four
+re-probed from the emitter's side, and said of the fifth:
+
+> `1RB1LA_0LA1RC_0RD0RB_1RA---` fails on a certificate written before
+> `lands_in_phase` existed, so it has never actually been offered to the
+> current emitter.  **It is the only row in the core whose refusal is a stale
+> schema**, and re-running `valfam` on it is one command.
+
+It is, and it closes: 60 s at the stock `--cap 240 --kmax 7`, full coverage at
+kmax 9, `differential_ok`, `differential_steps_ok`, 40 laps confirmed.  Two
+refinements to 4t's diagnosis, both from running it:
+
+* **The stale field the emitter hits first is `code`, not `lands_in_phase`.**
+  Emitting the committed `core143_ph.jsonl` certificate refuses with
+  `code None: LadderCheck states (Binary, 1) only` — that sweep predates the
+  `code` / `value_step_per_anchor_visit` / `numeration` stamps on `family`,
+  and `closure_data` gates on `code` before it reads anything else.
+* **The row was pinched between two artefacts, and neither is about the
+  machine.**  The only certificate that CLOSED was one the emitter could not
+  read; the only certificate the emitter could read said it had not closed.
+  `core143_ph.jsonl` closes on exactly the family today's searcher picks
+  (state B, head 0, side L, digits `[[0,1],[1,1]]`, terminator `[1]`, base 2)
+  while `num59_after.jsonl` rejects that same family at the same kmax with
+  `coverage not stable at kmax+2` and 21 uncovered strings.  The two runs
+  differ in their ARM SET and not in their mathematics: the closing run's
+  `arm_hits` reach `arm203`, the rejecting run's stop at `arm135`.
+
+`liveness.states_infinitely_often` is `ABCD`, read BEFORE the section was
+chosen as 4r insists, so the board is `NeverQuasiHaltsSt` and not section 11's
+quasihalter closer.
+
+### Two rows, because this partner carried a shadow
+
+This is the arithmetic the re-root closer was waiting on.  A `0RB` shadow
+settles only when its core PARTNER is boarded — `neverqh_reroot` carries the
+partner's theorem across the blank prefix, and with no partner theorem there
+is nothing to carry.  All ten partners were still core, so the re-root closer
+alone would have settled zero rows.  Boarding the partner is what freed this
+one:
+
+* `LDR_1RB1LA_0LA1RC_0RD0RB_1RA____.v` — 40 arms, 0 without a chain, closure
+  BUILT (2 interior at N0=1 st=1 + 1 fill at N0=1 st=1).
+* `SH_0RB1LC_1LA1RB_0LD0LA_1LB___.v` — harvested by `gen_shadow.py --harvest`,
+  which the audit itself proposed the moment the partner landed.
+
+Both compile under Coq 8.18.0 at `functional_extensionality_dep` only.  CI
+builds neither, so both were built locally.
+
+**Worth knowing for the next partner: boarding one does not drop the core
+count by one.**  `inventory.py` PROMOTES the freed shadow out of
+`shadow_rows.tsv` and into `core_rows.txt`, because a shadow is a shadow only
+while its partner is deferred.  Core went 27 -> 27 -> 26 across the two
+steps, not 27 -> 26 -> 25, and the audit prints the intermediate state as
+`re-root shadows of a BOARDED row: 1 -- boardable NOW`.  A session that boards
+a partner and stops has moved the settled count by one and the core count by
+zero.
+
+### `n_families` does not mean what fifteen rows have been read as meaning
+
+The brief for this wave asked for per-candidate rejection reasons on the
+grounds that "the candidates never reach the JSONL".  **That premise is
+stale** — `res['tried']` already carries `family` + `reason` + `coverage` per
+candidate, and has for some waves.
+
+The real gap is worse, and it is a SILENT CAP.  `n_families` is the size of
+the pool; the candidate list is `fams[:4]` one-parameter plus at most two
+two-parameter fallbacks.  Counted over the fifteen "families found but none
+closed" core rows, **every single one tried exactly four candidates** (three
+where only three existed), whatever the pool held:
+
+| pool `n_families` | 3 | 5 | 8 | 19 | 24 | 26 | 30 | 31 | 39 | 40 | 50 | 55 | 74 |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| candidates tried | 3 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 |
+
+So `n_families: 74, families found but none closed` looks like seventy-four
+rejections and is four.  The other seventy were never looked at.  **Selecting
+a row by smallest `n_fams` — as this session's own brief instructed — is
+therefore selecting on noise**: the number describes how much junk cleared the
+anchor threshold, not how much work was done or how close the row came.
+
+`valfam.py` now writes two fields unconditionally, neither of them a new
+measurement — the same data counted rather than listed:
+
+* `family_pool` — one line per family FOUND, before the cut: anchor, chain,
+  base, digit width, code, step, numeration, terminator, and whether it made
+  the candidate list.  The numeration is in there because 4s's fibonacci
+  question is asked of the POOL and not of the winner.
+* `rejection` — pool size vs tried vs never-tried, the reason histogram,
+  `all_failures_at_overflow` (4s's fingerprint), and the longest chain tried
+  against the longest in the pool.
+
+`reason` is left byte-identical so nothing downstream re-reads.
+
+### "None closed" is FIVE reasons, and they point five different places
+
+Folding `tried` over the fourteen rows that remain in the bucket:
+
+     18  family not covered
+     14  overflow leaves the family
+     13  the fill DECREASES the outer parameter, so the family is finite:
+           it is a reading of the window, not of the machine
+      5  reachable set too short to check
+      5  no arm replayed to anchor
+
+Three of those are not statements about the family at all.  `reachable set too
+short to check` accounts for one row entirely (`0RB0RD_1LC1RB_1RA0LC_1LD0LC`,
+all three candidates, three identical readings at chain 65 off one anchor
+`C1L` differing only in terminator length) and half of another.  `the fill
+DECREASES the outer parameter` accounts for four rows and says the searcher
+read a window rather than the machine.
+
+**The interesting bucket is `overflow leaves the family`, and it is 4s's
+fingerprint again.**  On three rows every candidate carries
+`fails_only_at_overflow: true`:
+
+    1RB0RD_1LB1LC_1RC0RA_0LB1RD   39   4/4 at overflow
+    1RB0RD_1LC1RA_0RB0LC_1LD0LA   40   4/4 at overflow
+    1RB1LC_0LC0RB_1LA1RD_0LA0RD   55   4/4 at overflow   <- shadow partner
+    1RB1LD_1LC1RA_0RB0LC_0RA0LD   31   2/4 at overflow   <- shadow partner
+
+That is the same shape 4s measured on the fibonacci six — the residue is the
+FILL arm at the top of a width — reached here in base 2 rather than in
+Zeckendorf, and by a different route.  **Two numerations, one blocker**, which
+makes the top-of-a-width fill arm the single most-shared obstruction in the
+core and not a fibonacci-specific one.  The four remaining shadow partners
+split across exactly two of the five buckets: `1RB1LC_1LB1RA_0LC0LD_0RA0RD`
+(19) and `1RB1LC_1LC1RA_0LC0LD_0RA0RD` (74) are `family not covered`, and the
+two above are overflow.
+
+### What this says about the next session
+
+* **The top-of-a-width fill arm is now the measured majority blocker.**  4s
+  found it on six fibonacci rows and read it as a Zeckendorf problem; it is
+  on at least four base-2 rows too.  Anything that covers `1^k` generically
+  is worth more than a fourth `(code, step)` pair, and it is the same
+  finding from two directions, which is the pattern 4s and 4t both flag as
+  the one worth trusting.
+* **Re-run before re-reading.**  This row's committed verdict was three
+  sweeps stale and it cost 60 s to find out.  A `reason` string in a
+  committed JSONL is a record of what the tooling did on the day, not a
+  property of the machine — 4s's gray rows, 4p's HIGHER label, 4t's stale
+  schema and this row are now four instances of the same lesson.
+* **Do not select on `n_fams`.**  It counts the pool and four is always tried.
+  Select on the `rejection` histogram, which now exists.
+* **Eleven shadows on NINE core rows remain**, and two of those nine carry
+  two shadows each (`1RB1LA_1LC0RD_0RA0LC_0LA1RD` and
+  `1RB1LA_0LA0LC_1LC1RD_0RB0RD`) — so those two are worth THREE rows apiece
+  for one board plus two harvests.  Both are 4p quadratic rows, which is why
+  the biggest prize in the residue also sits behind its hardest blocker.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH
