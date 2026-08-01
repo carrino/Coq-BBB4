@@ -4353,3 +4353,68 @@ deliverable._
   acting on a prompt; the prompt was rewritten to §4p's actual selection (the
   fibonacci five, whose numeration §4p cracked and `fibmem.py` checks).
 
+
+## 2026-08-01 — the outer parameter, measured DEAD for its own two rows; two other rows board on the searcher
+
+_Branch `claude/outer-parameter-build-jhfrqu`, cut from `main` at `988bbe3`.
+Full write-up in `docs/LADDER_PLAN.md` §4s.  **5114 → 5116 settled by a
+board; 30 → 28 core; 42 → 40 rows remain.**  `CLOSEOUT AUDIT: OK`, and
+`Closeout.vo` rebuilt so the audit's number is the kernel's._
+
+- **The brief was to build 4j's outer parameter and drive
+  `0RB0RD_1LC1RB_1RA0LC_1LB0LC` with it.  The field was NOT built, and that
+  is the session's main result.**  4q's constants are right and its anchor is
+  right; what no section had measured is that ONE lap of these machines moves
+  **two independent unbounded quantities** — the wall distance `2v+5` and the
+  carry ripple `t(v)`, the trailing-ones count of `v`.  `cden` instantiates
+  both sides of a configuration at the SAME index, and the interior arm's
+  index is the ripple's run length, at which the far side is EXPONENTIAL.  So
+  an affine far side cannot be stated next to a symbolic ripple.  4j's own
+  anchor fails mirror-wise: one side would need two blocks.
+- **What would work is a per-phase ANCHOR as well**, because the lap splits
+  (the ripple finishes before the long sweep starts — traced).  One lap
+  touches only the counter, the other only the wall, and each half factors on
+  its own.  That is four more `Fam` fields (`fm_st`, `fm_hs`, `fm_left`,
+  `fm_pre` per phase) plus `fam_succ`.  **Scope the anchor and the parameter
+  together or neither** — a far-side parameter alone closes no row, and
+  "carried everywhere and used nowhere" is 4j's complaint about the `p` that
+  is already there.
+- **The two rows that DID board are `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and
+  `1RB0RD_1LC0LC_1LD0LB_1RD0RA`, and no kernel lemma was involved.**  Both
+  were filed `no anchor` and refused with `boot cells [1, 0, 1] are not the
+  family at [1, 1]`: the selected family's digit words both end in a BLANK, so
+  `fam_cells` spells a cell the machine's `cconf` never materialises.  Same
+  tape under `lift`, different list, and `Hboot` is on the list.
+- **The fix was in the SEARCHER.**  `valfam` finds 29 families for that
+  machine and candidate #2 — the same machine read one cell over, digit words
+  `[[0,0],[0,1]]` — is cell-exact.  It was never reached because `close`
+  settles on the first candidate that closes and nothing downstream of
+  `find_boot` knew what the denotation can state.  New `exact_cconf` +
+  `boot_is_exact` simulate `CTape.ctape_move` and make `find_boot` skip
+  members the boot premise cannot be stated at.
+- **That gate cannot cost a row that boards today, and the argument is not a
+  regression run**: every emitter path already refuses a family at the same
+  boot check, so a boarded row's certificate passes it by construction.
+  (Checked anyway on `1RB0RB_0LC0LD_1LC1LD_1RA0RA`: identical before/after.)
+- **Do NOT give `fam_cells` a trimming**, which was the brief's other option.
+  `fam_cells_class`/`fam_cells_run` decompose into an `sside` with an OPAQUE
+  tail and a trim at the end of the string is not compositional with that —
+  it needs a "the tail is not all blank" side condition on both lemmas and on
+  every `ClassSucc` instance above them.  A cell-exact family costs nothing.
+- **Asked of the whole core: seven rows carry a `closed: true` certificate in
+  a committed sweep.**  Two are the pair above.  The other five all refuse
+  DOWNSTREAM of the boot — three `no chain found` on a single arm, one on a
+  certificate predating `lands_in_phase`, and `1RB1LA_0LA0LC_1LC1RD_0RB0RD`
+  re-derives all 25 of its arms and still refuses with *"the carry ripple is
+  not affine in the run length"*.  **They are ARM_GRID rows, not searcher
+  rows** — re-running the search on them is wasted.
+- **Timing, measured here:** `apt-get install -y coq` ≈ 1 min.  The
+  `Closeout.vo` closure from cold on 4 cores at `-j3` is **~2h20m**, not the
+  "hours" upper bound and not 45 min; ~2350 `.vo`.  Start it first, read
+  while it runs.  `make closeout` then rebuilt 24 CB stages + `Closeout.v` in
+  ~5 min.
+- **`make closeout` already does the rebuild.**  Its recipe ends with
+  `coq_makefile` + `make -f Makefile.coq theories/Closeout/Closeout.vo` +
+  `census_cache --check`, so there is no separate build step to remember —
+  but it means `make closeout` is a ~5-minute target, not a seconds one.
+  `make closeout-status` is the seconds one.
