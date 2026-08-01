@@ -93,7 +93,7 @@ lists partition `core_rows.txt` exactly):
 
 | n | furthest gate today | | n | furthest gate today |
 |--:|---|---|--:|---|
-| 10 | no interior `j = S j'` chain | | 1 | no interior `j = 0` chain |
+| 4 | no interior `j = S j'` chain | | 1 | no interior `j = 0` chain |
 | 2 | no inner interior chain | | 1 | no inner family at `pow2 j` |
 | 1 | no gap-free two-form family | | | |
 
@@ -121,23 +121,22 @@ pass).  #114 took four more `0RB` rows, all bouncer counters; #115 took a
 doubling nested bouncer; #116 took a two-block bouncer
 (`1RB1LB_1LC0RD_0LB1LA_0LA1RA`, hand-boarded off `WTape.cycR`/`cycL`/`cycLW`)
 and its shadow.  **Read a gate label as "where the emitter stopped", never as
-"how hard the machine is"; that is now seven waves running**
+"how hard the machine is"; that is now eight waves running**
 (`docs/LADDER_PLAN.md` §4s).
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
-| `HIGHER`/`HIGHER` | 7 | 6 the word-valued run unit (wave 4v), 1 no family at any anchor |
 | `EXP3`/`EXP3` | 3 | 3 no interior chain |
 | `-`/`no-anchor` | 2 | 2 no overflow phase at K=6 |
 | `AFFINE`/`HIGHER` | 2 | 2 no inner interior chain |
+| `HIGHER`/`HIGHER` | 1 | 1 no family at any anchor |
 | `AFFINE`/`EXP2` | 1 | 1 no inner family |
 
-**What that table now says, and it is the shape of the endgame:** the
-residue has inverted.  It used to be dominated by `AFFINE` machines our
-emitter could not frame; **10 of the 15 measure NON-AFFINE on both
-branches** (`HIGHER` 7, `EXP3` 3) — shapes whose lap cost the certificate
-language cannot write as `a*j + b` — plus 2 whose tape never decodes as a
-counter under any alphabet.  Only 3 rows are affine on at least one branch.
+**What that table now says:** four of the nine measure NON-AFFINE on both
+branches (`EXP3` 3, `HIGHER` 1), two never decode as a counter under any
+alphabet, and three are affine on at least one branch.  The population is now
+small enough that the shape column is worth less than the per-row notes below:
+at nine rows, read them individually.
 
 **The `QUAD` column is gone, and it is the caution worth keeping.**  It held
 four rows whose arm really is quadratic — a second difference of exactly 2,
@@ -148,46 +147,45 @@ three as `Counters/LinC_*` and #116 took the last as
 `Counters/BinCarry_*` off John's carry reading, with its two shadows.  A
 shape measurement bounds the ladder, never the machine.
 
-**`HIGHER` was never a verdict — it was a base-2 clock, and this bucket has
-been re-read three times.**  The `HIGHER`/`HIGHER` rows are the FIBONACCI
-counters (`docs/CORE_3STATE.md` §3): `ovfshape.py` measured their lap against
-a base-2 anchor, and their radix is **φ**.  `tools/counters/radix_clock.py`
-reads `ratio = 1.6180`, spread 0.00 across every digit; the raw per-cell toggle
-counts satisfy `F(n) = F(n−1) + F(n−2)` exactly, and re-running the anchor scan
-with the ladder `1,1,2,3,5,8,…` decodes them to `0,1,2,3,4,…` with nothing
-skipped.  Wave 4p measured the ladder ARM costs affine; **wave 4r built the
-numeration** (`LadderFam`'s `Fib` code, `LadderCheck` 3c/5c/11) and the five
-rows that had partial ladder boards now carry `iqh_*` theorems.
+**The `HIGHER` bucket is CLOSED, and it took four re-readings to get there.**
+It was never a verdict — it was a base-2 clock.  Those rows are the FIBONACCI
+counters (`docs/CORE_3STATE.md` §3): `ovfshape.py` measured their lap against a
+base-2 anchor, and their radix is **φ**.  The sequence is worth keeping because
+every step of it was a measurement overturning a label:
 
-**Where it stands now (wave 4v, measured):** SIX rows remain, they are one
-sub-machine — identical value-to-string tables at their own anchors, so one
-instance boards all six — and **the numeration needs nothing built**.  They
-count in the kernel's own `fibw = 1,1,2,3,5,8`, with `fam_lim`, the width
-spans and the top of a width all matching `LadderFam` exactly.  4s's reading
-of the weights as `1,2,3,5,8` (Zeckendorf) came from a fit that had dropped a
-column — the lowest digit is a constant 1, so `fit_weights` cannot pin it and
-abandons the fit.  What actually differs is the **representative**: `fibw 0 =
-fibw 1 = 1`, so a value does not determine a string, `fibdec`/`fibokb` pick
-the greedy member, and these six stand on the lazy one (LSB-first, top digit
-1, no two ZEROS adjacent) on all 23,614 measured values — 4r's five boarded
-rows being the exact complement.  **What blocks them is `Class`, not `Code`**:
-the increment sends `1^(2m) 0 rest -> (1 0)^m 1 rest` and `cs_t : nat` is a run
-of one repeated digit, so the widening is `cs_t`/`cs_t'`/`f_mid` to
-`list nat`.  A seventh row once counted here — `1RB0RB_0LC1RD_1LC1LA_0LA1RB`
-finds no family at any anchor and belongs in the `no anchor` block.
-`docs/LADDER_PLAN.md` §4v.
+1. **"no anchor"** — four waves searched for one.  `radix_clock.py` reads
+   `ratio = 1.6180`, spread 0.00 across every digit, and the toggle counts
+   satisfy `F(n) = F(n−1) + F(n−2)` exactly.  The anchor was always fine; the
+   *radix* was wrong.
+2. **"no interior chain"** — 4p measured the ladder ARM costs affine.  The
+   blocker was the numeration, and 4r built it (`LadderFam`'s `Fib` code),
+   boarding five rows.
+3. **"Zeckendorf, weights 1,2,3,5,8"** — 4s inferred that from a fit that had
+   dropped a column: the lowest digit is a constant 1, so `fit_weights` cannot
+   pin it and abandons the fit.  `1,2,3,5,8,13` is `1,1,2,3,5,8` with the
+   bottom rung missing — the numeration the kernel already had.
+4. **"what blocks them is `Class`, not `Code`"** — 4v's reading, and the six
+   boarded instead as a fourth CODE.  `fibw 0 = fibw 1 = 1`, so a value does
+   not determine a string; `fibdec`/`fibokb` pick the greedy member and these
+   six stood on the LAZY one.  #118 added `FibL` — the decoder `fiblaz` is
+   `fibdec`'s two-state automaton with the transitions swapped — plus `fam_lo`
+   (a weighted numeration costs the interface a FLOOR, since width `k` spells
+   exactly `[fibw k .. fibsum k]`) and `fam_next` reading `lazfill` directly.
+   All six `iqh`, `functional_extensionality_dep` only.
 
-So the honest count of rows whose cost the certificate language genuinely
-cannot write is **3** — the `EXP3` rows — and not the 14 that measure
-non-affine.  The six φ rows are not among them (their arm costs are affine and
-their arithmetic is denotable; only the string form is out of reach), and
-neither were the four `QUAD` rows, every one of which has now boarded.
+**One row still carries the `HIGHER` label and is not one of them**:
+`1RB0RB_0LC1RD_1LC1LA_0LA1RB` finds no family at any anchor, so it belongs
+with `no anchor`.
 
-The easy framings are spent.  What is left wants either a closer that never
-needs the cost (`LapGlue`'s lap obligation is an EXISTENTIAL over step counts,
-which is how the wave-19 fractals boarded with a `3^k` lap), a route that never
-models the lap at all, like ReachSt, or — for the six — one field widened in
-the generic half.
+So the count of rows whose cost the certificate language genuinely cannot
+write is **3** — the `EXP3` rows.  Not the φ rows (their arithmetic is
+denotable and now denoted), and not the four `QUAD` rows, every one of which
+boarded off the ladder entirely.
+
+What is left wants either a closer that never needs the cost (`LapGlue`'s lap
+obligation is an EXISTENTIAL over step counts, which is how the wave-19
+fractals boarded with a `3^k` lap) or a route that never models the lap at
+all, like ReachSt.
 
 ### What each blocker means
 
@@ -271,65 +269,61 @@ three times — though all four rows boarded anyway, off the ladder).
 
 ## Where a newcomer should probably start
 
-1. **The six Fibonacci rows — they want a second REPRESENTATIVE, not a
-   second code (wave 4v).**  Wave 4r built `(Fib, 1)` and boarded the five φ
-   rows that had partial ladder boards on disk.  The rest had "never been
-   through `emit_ladder` at all", and wave 4s found out why: `find_families`
-   runs its numeration pass only `if not found`, and these rows return 26-odd
-   junk positional families at chain 8 — `min_chain`, the floor — which
-   switched the pass off.  Under `valfam.py --numeration` six of the seven
-   read as Fibonacci counters at chains of 232–376.
+At nine rows the useful unit is the row, not the bucket.  All nine, with what
+is known about each:
 
-   Wave 4s read their weights as `1, 2, 3, 5, 8` and called them Zeckendorf.
-   **Wave 4v measured that they are the kernel's own `1, 1, 2, 3, 5, 8` with
-   a constant marker cell dropped** — `fit_weights` cannot pin a column that
-   never varies, so it discards the bottom rung instead of completing it.
-   Read with that cell, every number is `LadderFam`'s: `fibw`, `fam_lim k =
-   S (fibsum k)`, widths spanning `[fibw k .. fibsum k]`, the top of a width
-   `1^k` at `fibsum k`, value = anchor visit index.
+**The BASE-3 block — 3 rows, 2 shadows, 5 of the 14 left, and one of them is
+a build rather than a search.**  All three read `EXP3`/`EXP3`, and the ladder
+never had an anchor for any of them.
 
-   What differs is which member of each value's class the counter stands on.
-   `fibw` is redundant, `fibdec`/`fibokb` pick the greedy member, and these
-   six stand on the LAZY one — LSB-first, top digit 1, no two zeros adjacent
-   — on all 23,614 measured values and at every anchor.  Their two interior
-   classes and two fills are measured and validated against the orbit in
-   `tools/ladder/fiblazy.py`, and the kernel gap is one field: `Class`'s and
-   `Fill`'s run unit is a single digit where these laws need a two-cell WORD.
-   Six of the six carry no shadow, and all six are the same sub-machine, so
-   one instance boards all six.  Per-row anchors and ladders:
-   `tools/counters/FIB_ELEVEN.txt`, `tools/counters/fibform.py`,
-   `docs/CORE_3STATE.md` §3, `docs/LADDER_PLAN.md` §4v.
+| row | shadow | state |
+|---|---|---|
+| `1RB1RC_1LA0LB_1LD0RD_1LB0RC` | — | **reconnoitred; build-ready** |
+| `1RB1LC_1LB1RA_0LC0LD_0RA0RD` | ⬩+1 | not probed |
+| `1RB1LC_1LC1RA_0LC0LD_0RA0RD` | ⬩+1 | not probed |
 
-   **The seventh is not one of them.**  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` finds
-   no family at ANY anchor — `digit_words` names nothing — so it belongs in
-   the `no anchor` population.  It carries a shadow.
-2. **The five 0RB shadows on five core rows — but there is nothing to do.**
-   A shadow satisfies the `skipped` disjunct only while its core row is
-   deferred, so it needs a board of its own exactly when its core row boards,
-   and not before.  All five carriers are still undecided.  And when one does
-   board, **its shadows now fall with it automatically**: the whole argument
-   is one lemma (`Census/ShadowBoard.shadow_nqh` — the prefix is all blanks,
-   what is left is the boarded row relabelled, three `vm_compute`s), and
-   `make closeout` runs `gen_shadow.py --harvest` to emit it.  Wave 4u is the
-   first time that fired in anger: `1RB1LA_0LA1RC_0RD0RB_1RA---` boarded and
-   `SH_0RB1LC_1LA1RB_0LD0LA_1LB___.v` came with it, nobody typing anything.
-   So these five rows are not a task, they are 5 of the 20 that come free
-   with whatever settles their partners.  (That reading used to end "five of
-   them sit on three of the four quadratic rows, so those five are not coming
-   back either".  All four quadratic rows have since boarded and every one of
-   those shadows came with them — which is the harvest doing exactly what it
-   is for.)
-3. **The two live routes**, both with named next steps: ReachSt's mirror
-   transport lemma and its measured-unreachable rows
-   (`docs/REACHST_TIER.md` §6), and the ladder's refused arms — SIX boards
-   now stop at a single arm with every other rule proved
-   (`tools/coqproject_exempt.txt` lists them, four on the interior arm and
-   two on the fill arm; wave 4p measured the four and their interior cost has
-   a constant SECOND difference, so no threshold or stride reaches them).
-4. **The non-affine seven.**  The gate says "the certificate language cannot
-   write this cost" — but `LapGlue`'s obligation never needs the cost
-   written down.  Check what the closer actually demands before believing
-   the gate; that check is what turned the old "non-affine 23" into 7.
+`tools/counters/ter3_probe.py` (wave 4v) located the first one completely:
+anchor `(StA, ([], S1, S1 :: <digits>))`, digits 2 cells LSB-nearest over
+`{00, 10, 11} = {0, 1, 2}` with a TRUNCATED top (`1` alone is digit 1), and
+**75,006 consecutive anchor visits with 0 prefix failures and 0
+consecutive-value failures**, values `0..75,005`.  The lap is AFFINE in the
+carry length `c` in exactly two branches, `6c+4` and `6c+6`, with no third
+value in any class for `c = 0..9`.
+
+**Almost nothing about it is new.**  The alphabet is `Counters/Ter3WallB.v`'s
+digit for digit; the two branches are `Counters/TernCounter.v`'s `tsucc` and
+`tsuccT`.  The one piece that is new is the CLOSER: `StA` is the target of
+`B0` on this row, so its theorem is `NeverQuasiHaltsSt` and
+`LapGlue.glue_neverqh` closes it, not `LadderCheck` §11's quasihalter twin.
+
+The other two are siblings — they differ from each other in **exactly one
+transition** (`B0`: `1LB` vs `1LC`), which in this tree has repeatedly meant
+one counter with a different bootstrap, closed by one role-parameterised
+closer (`docs/CORE_3STATE.md` §0).  Point `ter3_probe.py` at them before
+assuming anything; it takes minutes and no Coq.
+
+**Measured, with a named blocker.**
+
+| row | gate | note |
+|---|---|---|
+| `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 | `no interior j = S j'` | wears a `HIGHER` label but finds **no family at any anchor** — `digit_words` names nothing.  Really a `no anchor` row. |
+| `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | |
+| `1RB1LC_0LC0RB_1LA1RD_0LA0RD` ⬩+1 | `no inner interior chain` | |
+| `1RB1LD_1LC1RA_0RB0LC_0RA0LD` ⬩+1 | `no interior j = 0` | |
+| `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `no gap-free two-form family` | the last row of a bucket that went 10 → 1 without the gate ever being answered |
+| `1RB1RC_1LA1RA_0RC1LD_1LB0LD` | `no inner family at pow2 j` | NOT a time-cap row: finishes in 723 s on `interior-not-covered` with 5 of 12 families tried |
+
+**The five shadows are not a task.**  They sit on five of the nine, they need
+no new mathematics, and they fall automatically: `Census/ShadowBoard.shadow_nqh`
+is the whole argument in one lemma and `make closeout` runs
+`gen_shadow.py --harvest`.  Board a core row and its shadow comes with it —
+first demonstrated in wave 4u, and every quadratic row's shadow came that way.
+
+**And re-run the stale-verdict query.**  Which core rows carry a `closed: true`
+certificate in a committed sweep and are still unproven?  That is how wave 4u's
+row was found — it had been carrying "families found, none closed" and closed
+at the defaults in 60 s, the old sweep differing in its *arm set* and not its
+mathematics.  Nobody has re-run it since the emitter changed.
 
 ## Reproducing the map
 
@@ -341,4 +335,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 20).
+first shrank from 883 to 511 (and, wave by wave, to the current 14).
