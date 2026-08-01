@@ -287,8 +287,12 @@ anchor `(StA, ([], S1, S1 :: <digits>))`, digits 2 cells LSB-nearest over
 `{00, 10, 11} = {0, 1, 2}` with a TRUNCATED top (`1` alone is digit 1), and
 **75,006 consecutive anchor visits with 0 prefix failures and 0
 consecutive-value failures**, values `0..75,005`.  The lap is AFFINE in the
-carry length `c` in exactly two branches, `6c+4` and `6c+6`, with no third
-value in any class for `c = 0..9`.
+carry length `c` in exactly two branches, `6c+4` and `6c+6`, with **both
+branches present at every `c = 0..9`** and no third value in any class.  (The
+probe's printout caps at ten classes; lifting the cap shows a `c = 10` class
+with only the `6c+4` branch sampled at the default 600k steps.  Still no third
+value — but the two-branch structure is confirmed to `c = 9` and only
+half-observed above it.)
 
 **Almost nothing about it is new.**  The alphabet is `Counters/Ter3WallB.v`'s
 digit for digit; the two branches are `Counters/TernCounter.v`'s `tsucc` and

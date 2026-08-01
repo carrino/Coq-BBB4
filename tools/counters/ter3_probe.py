@@ -21,7 +21,12 @@ in the carry length `c` (the number of trailing 2s), in exactly two branches:
 
     gap  =  6c + 4    or    6c + 6
 
-measured for c = 0..7 with no third value in any class.  So this row wants
+measured for c = 0..9 with BOTH branches present at every one, and no third
+value in any class anywhere.  (The printout caps at ten classes; lift the
+`[:10]` and a c = 10 class appears with only the `6c+4` branch sampled at
+600k steps -- still no third value, but the two-branch structure is confirmed
+to c = 9 and only half-observed above it.  Raise `--steps` if you want the
+top of the range to carry the same weight as the rest.)  So this row wants
 the base-3 module that already exists plus a `LapGlue.glue_neverqh` closer
 (it is a four-state row -- `StA` is the target of `B0` -- so its theorem is
 `NeverQuasiHaltsSt`, not the `iqh` the three-state `Ter3Wall*` rows carry).
