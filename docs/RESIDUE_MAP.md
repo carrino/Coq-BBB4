@@ -305,21 +305,31 @@ unmeasured and is the cheapest next question (it takes minutes and no Coq).
 |---|---|---|
 | `1RB0RB_0LC1RD_1LC1LA_0LA1RB` ⬩+1 | `no interior j = S j'` | wears a `HIGHER` label and the emitter finds **no family at any anchor** — `digit_words` names nothing.  But see below: it is the TWELFTH φ row, and the other eleven have all boarded. |
 | `1RB0RD_1LB1LC_1RC0RA_0LB1RD` | `no inner interior chain` | gap ratio **1.00** — the tightest on the whole list |
-| `1RB1LC_0LC0RB_1LA1RD_0LA0RD` ⬩+1 | `no inner interior chain` | gap ratio **8,192.81** — REACHST is a wall here.  But wave 36 §4 has a pen-and-paper argument that `StD` is live on it, so the remaining work may be transcription |
-| `1RB1LD_1LC1RA_0RB0LC_0RA0LD` ⬩+1 | `no interior j = 0` | gap ratio **6,343** — the other REACHST wall |
 | `1RB0RB_1LC0RC_1RA0LD_0LB0LC` | `no gap-free two-form family` | the last row of a bucket that went 10 → 1 without the gate ever being answered.  Gap ratio 2.65 on a 2,255-cell tape — the widest tape here, and still inside the tier |
 | `1RB1RC_1LA1RA_0RC1LD_1LB0LD` | `no inner family at pow2 j` | NOT a time-cap row: finishes in 723 s on `interior-not-covered` with 5 of 12 families tried.  Gap ratio 1.04 |
 
-**A second, orthogonal reading of the same eight.**  Wave 36's
+**BOARDED, wave 37** — `1RB1LC_0LC0RB_1LA1RD_0LA0RD` (was
+`no inner interior chain`, gap ratio 8,192.81) and
+`1RB1LD_1LC1RA_0RB0LC_0RA0LD` (was `no interior j = 0`, gap ratio 6,343),
+each with its `0RB` shadow.  Neither went out through the counter emitter,
+and neither could: their gate labels and their gap ratios were both correct
+and both permanent.  What boarded them is that the ROW is a finite
+word-rewriting system once one half-tape is read as a unary run — the
+`NGramHist` closure at `k=3, n=2` for three states, and a hand measure
+argument on the macro rules for `StD`.  `theories/Machines/Mxdys4/NGX_*.v`;
+method in `docs/WAVE36_MXDYS_FOUR.md` §§2a, 2b, 4, 8.
+
+**A second, orthogonal reading of the same list.**  Wave 36's
 `tools/mxdys4/gaps.py` is a cheap a-priori triage for the REACHST tier: run
 3M steps and compare each state's worst recurrence gap to the final tape
-width.  Over the core list **it splits with no middle** — six of the eight
-sit between 1.00 and 2.65, and two are four orders of magnitude out.  That is
-a different axis from the gate labels above (which are about the *counter*
-emitter), and on six rows it says `docs/REACHST_TIER.md`'s route is not
-excluded and every "missing q" the sweeps report is a search gap worth
-attacking.  On the two it is a wall, and the counter has to be read instead.
-Full table and method: `docs/WAVE36_MXDYS_FOUR.md` §3a.
+width.  Over the core list as it stood at eight rows **it split with no
+middle** — six sat between 1.00 and 2.65, and two were four orders of
+magnitude out.  That is a different axis from the gate labels above (which
+are about the *counter* emitter), and on the six it says
+`docs/REACHST_TIER.md`'s route is not excluded and every "missing q" the
+sweeps report is a search gap worth attacking.  The two walls are the two
+rows wave 37 boarded by hand, so **every row left on this table is inside
+the tier's reach**.  Full table and method: `docs/WAVE36_MXDYS_FOUR.md` §3a.
 
 **The φ row is the cheapest lead on the list, and this table used to hide
 it.**  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` is filed above as "no family at any

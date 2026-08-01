@@ -4834,6 +4834,129 @@ core rows with three more -- so the joint figure is **5,136 settled / 15 core
 measured the fibonacci six against the kernel and reached the same verdict
 from opposite directions; see `docs/LADDER_PLAN.md` §4w.]_
 
+## 2026-08-01 (later still) — mxdys's rows 1 and 4 BOARD: the ReachSt wall stands, and the row's own macro system goes round it
+
+_Branch `claude/mxdys-four-core-reduction-l4ahy7`, cut from `main` at `46598f9`
+(#121), merged `origin/main` at `384a785` (#122) mid-session.  Full write-up:
+`docs/WAVE36_MXDYS_FOUR.md` §8._
+
+    settled by a board       5143 -> 5147   (99.8%)
+    core undecided              8 ->    6
+    0RB shadows of the core     5 ->    3
+
+`1RB1LC_0LC0RB_1LA1RD_0LA0RD` and `1RB1LD_1LC1RA_0RB0LC_0RA0LD` are the two
+rows wave 36 measured four orders of magnitude outside the `ReachSt` tier.
+That negative is unchanged and was not worked around: **the row itself, not
+the certificate class, is what carries the proof.**
+
+- **WAVE 36's §4 WAS RIGHT AND ITS PROOF SHAPE WAS NOT TRANSCRIBABLE.**  The
+  prose argument is "suppose rule 5 fires finitely often, and look after the
+  last one" — which needs a global fact, not a fact about a configuration.
+  What goes into Coq is a predicate `G` on configurations with two
+  obligations: `StD` is hit from every member of `G`, and one macro rule
+  from a member lands in a member.  `forall N, exists m >= N` then falls out
+  by induction on `N`.  §4's parity invariant is only ONE disjunct of `G` —
+  rule 5 LEAVES it, so `G` also carries the opposite-parity companion and
+  the blank-tape states the frame widens through (three disjuncts on row 1,
+  four on row 4).  Budget the disjunction, not the argument.
+
+- **THE TWO PHASES NEED DIFFERENT MEASURES, AND THAT IS THE CONTENT.**  The
+  parity-locked phase descends on `2^w - mu` (§4a's measure) and is where
+  the `Theta(2^width)` lives.  The companion phase does NOT: it descends on
+  the COUNTER LENGTH, because the rule that runs there eats two cells per
+  firing and every other exit leaves the phase in one step.  Running the
+  companion phase on `mu` cannot work — widening lives exactly there, and
+  widening raises `2^w - mu`.
+
+- **THE CONFIGURATION SHAPE MUST CARRY AN EXPLICIT BLANK AND THEN A GENERIC
+  TAIL** — `(StA, (l, s, rep [S1] R ++ S0 :: Z))`, never `... ++ Z` and
+  never bare `rep [S1] R`.  Both halves matter and for opposite reasons: the
+  sweeps walk ONE cell past the unary run and must find a blank there, so
+  the `S0 ::` has to be in the statement; and the rule that consumes that
+  blank writes a fresh one, so without a generic `Z` underneath, one rule's
+  output does not syntactically match the next rule's input and every join
+  needs hand alignment.  With both, `Z` is untouched by every rule and the
+  whole chain composes by `csteps_chain` with no rewriting at all.
+
+- **THE PARITY LOCK NEEDS `last l = S1` AND A PARITY — NEITHER ALONE.**
+  `last l = S1` by itself fails (`l = [S0; S1]` steps to `l = []` and the
+  frame widens on the next rule).  A parity by itself fails (the widening
+  guard is a length, not a parity).  Together, `length l = 1` forces
+  `l = [S1]`, which is the D-rule's guard and not the widening rule's.
+
+- **A `StD`-FREE RUN FROM AN ARBITRARY SHAPED CONFIGURATION DOES NOT
+  TERMINATE**, so the invariant is load-bearing and one command shows it:
+  from `(l, s, R) = ([], S0, 1)` on row 1 and `(p, s, r) = (1, S0, [])` on
+  row 4 the macro system widens forever without ever visiting `StD`
+  (measured to 200k macro steps).  Both are parity-broken; neither is
+  reachable.  Check this BEFORE writing the invariant — it tells you whether
+  you need one at all.
+
+- **`k = 2, n = 2` DOES NOT CLOSE EITHER ROW.**  `tools/reachsti/sweep.py`
+  reports `closure=ABC` but it sweeps `(2,2), (3,2), (2,3)` and only says
+  THAT some rung works.  At `k=2, n=2` the closure misses `StB` on row 1 and
+  `StC` on row 4, and at `k=2` with `n=3` or `n=4` it does not close at all;
+  `k=3, n=2` is the cheapest rung that works on both (134 and 131 contexts).
+  `tools/mxdys4/pin_kn.py` prints the whole grid — run it before assuming
+  the emitter's default rung.  §4's plan to take `StA`,
+  `StB`, `StC` off `ReachStI` certificates was therefore unnecessary.
+
+- **`apply H in Hyp` WHERE `H : A <-> B` PICKS A DIRECTION BY LUCK.**  With
+  `H : forall n, OddN (S (S n)) <-> OddN n` and `Hyp : OddN (S (S k))`, BOTH
+  sides unify (the second with `n := S (S k)`) and Coq took the wrong one,
+  silently rewriting the hypothesis to `OddN (S (S (S (S k))))`.  It
+  surfaces four tactics later as an unprovable `lia` and costs an hour to
+  localise.  `theories/Counters/BinVal.v` therefore states the two
+  implications separately and never the `iff`.
+
+- **RE-DERIVE THE MACRO RULES IN `cconf` COORDINATES BEFORE ANY COQ, AND
+  CHECK THE PREDICATE EXHAUSTIVELY WITH CONTROLS.**  `tools/mxdys4/cmacro1.py`
+  and `cmacro4.py` carry §2a/§2b as functions of the exact triples the Coq
+  lemmas are stated over (including `chd`/`ctl` at the list ends), validate
+  every rule against the raw simulator, then check the `mu` deltas, the
+  parity lock, AND `G`'s closure + "`StD` is reached" exhaustively over
+  32,768 configurations per row — with the non-members as the control, where
+  both properties fail and must.  The frame form of §2a hides two things the
+  `cconf` form has to say: which rules read past the run, and what happens
+  at `l = []` versus `l = [S0]`.
+
+- **The emitter writes BELOW a MARK line.**  `tools/mxdys4/emit_ngx.py`
+  replaces everything after `(* --- generated below ... --- *)` and leaves
+  the hand proof above it alone, so the closure rung can be re-pinned
+  without touching 500 lines of proof.  That is the pattern to reuse
+  wherever a board is half generated and half hand-written.
+
+- **The full `Closeout.vo` closure WAS rebuilt in this container, and it is
+  a much smaller target than `make all`.**  `closeout_partial` is green off
+  the regenerated stages with `functional_extensionality_dep` only.  The
+  useful fact: `make -f Makefile.coq theories/Closeout/Closeout.vo` builds
+  the closeout's DEPENDENCY CLOSURE, not the tree — 2,760 files are listed
+  in `_CoqProject` but ~157 of them (the `IRules_Batch_*` batches among
+  them, the expensive ones) are boards for rows some other file already
+  proves, so no stage `Require`s them and the closure skips them entirely.
+  Target `Closeout.vo`, not `all`, when what you want is the closeout.
+  `CLOSEOUT AUDIT: OK` and `CENSUS CACHE: MATCH` alongside it; `make proof`
+  still needs the census opam switch and was not run.
+
+- **Timings and a container trap, this image, 4 cores / 16 GB.**
+  `apt-get install -y coq` ~1 min (8.18.0).  Each board compiles in 4 s
+  against a warm tree; the liveness halves are 510 and 533 lines.  **`make
+  -j4` OOM-KILLED `IRules_Batch_02` (exit 137)** — those batches peak around
+  8 GB of RSS each, so two of them in parallel is already the ceiling here
+  and `make -j2` can still lose the pair.  Build `IRules_Batch_*` serially,
+  then `-j2` for the rest.  Two further traps, both cheap to avoid: a killed
+  `make` leaves its unfinished `coqc` children running, so starting a second
+  `make` on top of them races two compilations onto the same `.vo` (kill the
+  tree, not the `make`); and a wait loop written as
+  `while pgrep -f "IRules_Batch_00.v"` matches ITS OWN command line and
+  never exits.
+
+- **Rows 2 and 3 are untouched and their blocker is unchanged**
+  (`1RB1LC_1LB1RA_0LC0LD_0RA0RD`, `1RB1LC_1LC1RA_0LC0LD_0RA0RD`).  They are
+  inside the `ReachSt` tier's reach by the gap test, and what stops them is
+  the one spurious node of §5 — the sized piece is still a suffix-closed
+  regular half-tape invariant, a sibling of `ReachStI.v`.
+
 ## 2026-08-01 (later still) — mxdys's four: the macro systems, and the wall on `StD`
 
 _Branch `claude/busy-beaver-proofs-vjbequ`.  Full write-up in
