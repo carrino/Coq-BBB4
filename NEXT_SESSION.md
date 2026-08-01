@@ -4784,7 +4784,7 @@ from opposite directions; see `docs/LADDER_PLAN.md` §4w.]_
 ## 2026-08-01 (later) — the fibonacci six are NOT Zeckendorf: same numeration, other representative
 
 _Branch `claude/next-session-progress-g74nya`, cut from `main` at `b61135a`
-(#110).  Full write-up in `docs/LADDER_PLAN.md` §4w._
+(#110).  Full write-up in `docs/LADDER_PLAN.md` §4v._
 
     settled by a board       unchanged by this wave
     core undecided             unchanged by this wave
