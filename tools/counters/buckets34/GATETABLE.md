@@ -1,4 +1,4 @@
-# Gate table over the 1 open core row
+# Gate table over the open core rows — THERE ARE NONE
 
 `tailcert.py --list tools/closeout/core_rows.txt --out scan.json` (scan labels,
 no --emit), split by `buckets.py`, filtered to live membership after each wave.
@@ -7,32 +7,32 @@ commands are untrusted Python and need no Coq.
 
 | n | furthest gate |
 |--:|---|
-| 1 | `no_inner_interior_chain` |
+| 0 | *(all seven buckets are empty)* |
 
-**Six of the seven gates are EMPTY** — `register_step_does_not_close` and
-`no_boot_chain` first, then `no_interior_j0_chain_at_octave_parity_0`
-(wave 37), `no_inner_family_at_pow2_j` (#126), and
-`no_interior_jS_j_chain_at_octave_parity_0` and
-`no_gap_free_two_form_family` (wave 39).
+`register_step_does_not_close` and `no_boot_chain` went first, then
+`no_interior_j0_chain_at_octave_parity_0` (wave 37),
+`no_inner_family_at_pow2_j` (#126), and
+`no_interior_jS_j_chain_at_octave_parity_0`,
+`no_gap_free_two_form_family` and `no_inner_interior_chain` (wave 39).
 
-**ONE ROW, and not one of the seven gates was ever answered.**  Every bucket
-on this page emptied by someone re-reading a machine instead.  What follows is
-kept as the record of how a gate label fails, not as a difficulty map.
+**ZERO ROWS, and NOT ONE OF THE SEVEN GATES WAS EVER ANSWERED.**  Every
+bucket on this page emptied because somebody re-read a machine, never because
+the gate the bucket is named for got settled.  That is the finding, and it is
+why this file survives as a record rather than as a difficulty map.
 
-## What is actually left
+## What was actually left, at the end
 
-`no_inner_interior_chain` is 1 row: `1RB0RD_1LB1LC_1RC0RA_0LB1RD`, the last
-undecided (4,2) core machine.  Its `residue_map.tsv` entry is a pair of
-dashes — the emitter found no anchor, so it recorded no shape.  What is
-actually known about it lives in `docs/WAVE38_REST_FOUR.md` §4: the lever
-test APPLIES (0 impure over 2,000,000 steps), five of its six macro rules are
-read in closed form, and the sixth — the `s=S1, R=0` leftward-sweep carry —
-is the whole remaining problem.  Its fitted laps are `2^(2i+3) - 1` and
-`48*4^i - 6i - 15`: a doubling composed with a sweep affine in `i`.
+`no_inner_interior_chain`'s final row was `1RB0RD_1LB1LC_1RC0RA_0LB1RD`,
+Drozd's sixth — the last undecided (4,2) core machine, boarded in wave 39
+(`Machines/Counters/DRZ6_*.v`).  Its `residue_map.tsv` entry was a pair of
+DASHES: the emitter found no anchor, so it recorded no shape at all, and the
+file therefore said nothing about the row that decided the project.  What it
+actually was: a doubling composed with a sweep affine in `i`, laps
+`2^(2i+3) - 1` and `48*4^i - 6i - 15`, closed once the word-rewriting lever
+gave its six macro rules.
 
-The last two rows to leave this page both left through entries 8 and 9 below.
-`no_interior_jS_j_chain_at_octave_parity_0`'s final row was the φ row this
-file spent four waves calling anchorless.
+That is the last word this table has on anything, and it is in character —
+the row it knew least about was the row that took longest.
 
 ## What this table has been wrong about, nine times
 
@@ -145,10 +145,13 @@ costs the interface is a FLOOR — width `k` spells exactly
 `[fibw k .. fibsum k]`.  **Behind 5 and 6, all three rows boarded too** — the
 one that WAS base 3 in #120 (`Counters/Ter3WallD.v` + `LapGlueNeverIx.v`), the
 two that were not in #123 (`Counters/Bin3Lap.v`), behind 7 the last `pow2 j`
-row in #126 (`Counters/Kc3Num.v`), and behind 8 and 9 both wave-39 rows.  **So
-every row this table has ever pronounced on is now decided, and it was wrong
-about the route in all nine cases.**  One row is left and this file has never
-said anything about it.
+row in #126 (`Counters/Kc3Num.v`), and behind 8 and 9 both wave-39 rows.
+
+**Every row this table ever pronounced on is decided, and it was wrong about
+the route in all nine cases.**  Nine for nine is the number worth carrying out
+of this project: a label that said a row was hard has never once survived
+somebody checking it.  The row this file said the LEAST about — a pair of
+dashes, no shape, no alphabet — was the last one standing.
 
 ## `no_gap_free_two_form_family`: 10 -> 1, and the gate was never answered
 

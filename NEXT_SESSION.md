@@ -512,6 +512,112 @@ still missing its sixth rule (`s=S1, R=0`, the leftward-sweep carry).
   already one-sided the same way; if its sixth rule stays hard as a
   rewrite rule, try the turnaround anchor instead.
 
+## 2b8. Wave-39, Drozd-sixth track (2026-08-01) — the row boards by MOVING THE ANCHOR, and the sparse family it is named after was the trap
+
+Row `1RB0RD_1LB1LC_1RC0RA_0LB1RD` (Drozd's sixth) — the LAST undecided
+(4,2) core row after §2b7 took the list to one — boarded as
+`NeverQuasiHaltsSt`.  **core undecided 1 -> 0, shadows 0, settled
+5,155 -> 5,156 (100.0%): `core_rows.txt` and `shadow_rows.tsv` are now
+both EMPTY and `D_remaining = []`.**  §2b7's closing method note ("if its
+sixth rule stays hard as a rewrite rule, try the turnaround anchor
+instead") was right that the answer was an anchor change; the anchor that
+worked is `D0`, not the turnaround.  Full write-up:
+`docs/LADDER_PLAN.md` §4ab.  `Print Assumptions` is
+`functional_extensionality_dep` only; `CLOSEOUT AUDIT: OK`.
+
+The board is ~330 lines and needs no certificate, no new numeral, no new
+combinator, and NO INVARIANT.  What made it cheap was one measurement taken
+before any Coq:
+
+- **PRICE THE ANCHOR BEFORE PRICING THE LAP.**  The reset family
+  `R k = (StC, ([], S0, rep [S1] k))` this row is always described by is
+  real — `tools/counters/drz6lap.py` confirms both closed forms exactly on
+  all 13 measured half-laps, 14 anchor visits, 0 non-unary — and it is the
+  WRONG anchor, because both half-laps are exponential in `i`.  Against `R`
+  the board is a three-level nesting.  `glue_neverqh_ix` takes an ARBITRARY
+  index type, so ask instead which class recurs with a SMALL gap:
+  `tools/counters/drz6land.py` prints max-gap per `(state, symbol)` in one
+  command.  Seven of the eight classes here grow exponentially; `D0` recurs
+  at most every **56** steps over 300,000 — the gap is `2z+4`, polynomial in
+  the leading zero-run — with a **literally empty right list at all 37,516
+  visits**.  Read at `E l = (StD, (l, S0, []))` the row is three single-cell
+  rules and the cascade is three lines, because in those coordinates a
+  decrement IS the interior rule.  **Do not overread this: the laps are
+  still exponential** (36, 198, 864, 3546, ... steps, i.e. 5, 26, 110, 446,
+  ... macro steps).  `D0` is a COORDINATE SYSTEM, not the index — what it
+  buys is that the macro system CLOSES there, so the exponential rides on an
+  induction over three rules instead of on new mathematics per gap.
+
+- **When a macro system has one rule that will not close, move the anchor to
+  the state that rule ENDS in.**  Wave 38 §4 read this row at `StA`, got five
+  clean rules, and stopped on the sixth — "the leftward sweep … it is this
+  row's carry".  At `D0` that sweep is not a rule at all: it sits inside
+  every macro step as one `WTape.cycL` over `rep [S0] z`.  Same machine, same
+  measurements, one anchor apart.
+
+- **The invariant does not exist, and looking for it is the expensive
+  mistake.**  The macro rule genuinely can die (rule (i) at `z=0` with an
+  all-blank tail eats the last `S1`, after which `StB` sweeps left forever).
+  `tools/counters/drz6inv.py` enumerates canonical left words: **1,605 of
+  4,095 up to length 12 die**, and the survivors are not a local language —
+  sizes 1, 2, 2, 5, 11, 23, 42 by length, `10111` dies and `10110` does not.
+  Read head-outward as a binary number with the head end as LSB, rule (i) is
+  `N -> N - 2^(z+1) - 1`; the good set is that arithmetic.  The board dodges
+  it entirely by being a chain of SHAPES (`G`, `Q`, `K`) each of which
+  carries its own `S1` by construction, so every branch guard is `eq_refl`.
+  If a dense landmark family needs a predicate on the tape, check whether a
+  chain of shapes avoids it before trying to characterise the reachable set.
+
+- **A fourth answer to LADDER_PLAN's overflow question.**  §4y: its own cost.
+  §4z: shared, collapsing a branch.  §4aa: its own plus a third branch.
+  Here: its own cost, and **the only branch that is not tail-generic** —
+  rule (iii) is the sole user of `A0 = 1RB` (8 firings in 300,000 steps) and
+  the unknown-context probe aborts it at step 5 reading the cell past the
+  head's run.  Rules (i)/(ii) survive an unknown tail; (iii) needs the
+  explicit empty right list, which is what `D0` always carries.  Had the
+  anchor been picked without checking the right list in exact `cconf`
+  coordinates, that branch would have been stated wrong.
+
+- `residue_map.tsv` supplied another bad label: this row's `no-anchor` is a
+  statement about `digit_words`, not about the tape.  Third overturned label
+  in three waves.
+
+New tooling, all untrusted: `drz6lap.py` (pins `R k` and re-derives both
+closed forms), `drz6land.py` (max-gap per state/symbol — the one that
+decided the board), `drz6cc.py` (faithful `CTape.cstep`, no blank
+stripping, which is what showed the right list is literally `[]`),
+`drz6trace.py`, `drz6edge.py`, `drz6lem.py` (the three rules stated against
+the probe over an UNKNOWN context, all 37,515 landmark transitions, zero
+mismatches), `drz6inv.py` (the dying-word enumeration), `drz6chain.py`
+(every arrow of the proof chain run on the real machine and compared cell
+for cell before any Coq).
+
+**THE ONE THING LEFT, and it is a lemma rather than a machine.**
+`bbb4_target` still STATES `\/ skipped D_remaining tm` even though
+`D_remaining = []`, because `gen_stages.py` emits the same shape whatever
+the residue is.  Discharging it needs
+
+    Lemma not_deferred_nil : forall tm, ~ Deferred [] tm.
+    Lemma not_skipped_nil  : forall tm, ~ skipped [] tm.
+
+the first by induction on the `Deferred` derivation (`Deferred_base` needs
+`In h []`, absurd; `Deferred_swap` and `Deferred_mirror` recurse), the
+second by unfolding `ShadowKit.skipped` (two disjuncts, both `Deferred []`).
+Put them in a NEW file — `BBB4_Theorem.v` is generated — and teach
+`gen_stages.py` to emit the unconditional corollary when the residue is
+empty.  Until that lands, the honest reading of the top-level theorem is
+still "modulo a residue that happens to be empty".
+
+**Trap, self-inflicted and worth the warning:** I started a second
+`make closeout` while the first was still running in the background and the
+two serial `make`s raced onto the same `.vo` — the failure surfaced as
+`System error: "...vo: No such file or directory"` several hundred files
+later, which reads like a missing dependency and is not.  The fix is to kill
+the tree, delete ALL build artefacts, and run ONE `make -f Makefile.coq -j1`;
+do not trust a partially-raced `.vo` set.  `make closeout` itself builds
+`Closeout.vo`, so "run the python part again to check convergence" is not a
+cheap command — run the four scripts directly instead.
+
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27

@@ -28,8 +28,9 @@ disagreed about row 2, complete or near-complete macro systems for the two
 rows that turn out to be word-rewriting systems, and — the result most
 worth carrying — **row 2's missing invariant: `ones l` is ODD** (§3c),
 which was the single obligation standing between that row and a board.
-No row boarded; row 2 is now a transcription job rather than a research
-one.
+No row boarded in this session; row 2 is now a transcription job rather
+than a research one.  **Row 3 boarded in wave 39 off §4's measurements —
+see the note at the head of that section.**
 
 ## 1. The lever test, run on all four (and it splits them 2–2)
 
@@ -324,6 +325,19 @@ close.  Boarding it reads 4 core -> 3 and takes its `0RB` shadow
 `0RB1LC_1LC0LC_0RD1LA_1RD1RB` with it, so 1 shadow -> 0.
 
 ## 4. Row 3 — Drozd's sixth also passes the lever, and most of it is read
+
+> **BOARDED in wave 39** (`DRZ6_1RB0RD_1LB1LC_1RC0RA_0LB1RD.v`,
+> `docs/LADDER_PLAN.md` §4ab), taking the core list to TWO.  What this
+> section got right is the lever verdict and the five clean `StA` rules; what
+> it stopped one step short of is below, and the fix was a change of ANCHOR,
+> not a harder derivation.  The sixth rule this section could not close —
+> `s=S1, R=0`, "the leftward sweep … this row's carry" — is not a rule at
+> all once the anchor moves to the state that sweep ENDS in.  Anchored at
+> `E l = (StD, (l, S0, []))` the sweep sits INSIDE every macro step as one
+> `WTape.cycL` over `rep [S0] z`, the system closes to three rules, and the
+> `D0` class recurs with a maximum gap of 56 over 300,000 steps with a
+> literally empty right list at all 37,516 visits.  Keep the rest of this
+> section: it is the measurement that made the row look tractable.
 
 The lever applies (section 1), which the Drozd lap fit did not predict.  In
 `cconf` coordinates the clean rules are:

@@ -4423,3 +4423,162 @@ unlike the `LAPC_*` boards there is no `Mirror` hop.
   `cview p = (j, Some q0)` has `q0 = p >> (j+1)`, so "the carry lands on the
   packed digit" is exactly `q0 = xH` — a condition the existing `cview`
   already sees.  No new view function, no second parameter.
+
+## 4ab. Drozd's sixth BOARDS by MOVING THE ANCHOR: the reset family is exponential, the `D0` landmark is bounded, and the index type absorbs the difference
+
+`1RB0RD_1LB1LC_1RC0RA_0LB1RD` was the row everyone described by its RESET
+family
+
+    R k = (StC, ([], S0, rep [S1] k)),
+
+visited only at `k = 2, 3 (mod 4)`, booting at `R 2` after three steps, with
+half-laps
+
+    R(4i+2) -> R(4i+3)    2^(2i+3) - 1
+    R(4i+3) -> R(4i+6)    48*4^i - 6i - 15
+
+— `tools/counters/drz6lap.py` confirms both closed forms exactly on all 13
+measured half-laps, with 14 anchor visits and zero non-unary ones.  That
+family is a correct description and a bad anchor, and the reason is worth
+stating in one line:
+
+> **BOTH half-laps are exponential in `i`, so the family is exponentially
+> SPARSE — and everything expensive about the row is the mathematics needed
+> to cross one of its gaps.**
+
+Every lap decider in the tree is affine, so no arm reaches it (the
+`emit_lapcert.py` refusal on this row was correct).  A hand board against `R`
+needs the descending cascade, the wall rewrite of the second half-lap, and a
+three-level nesting: entry sweep, cascade, exit sweep, then a phase-I chain of
+cascades, a turn, and a phase-III chain of cascades.  That was the budget.
+
+### 4ab.1 The lever, applied at the right state
+
+`Counters/LapGlueNeverIx.glue_neverqh_ix` takes an **arbitrary index type**
+`I` with `nxt : I -> I`.  Nothing requires `I` to be the family the row is
+named after.  So the question to ask FIRST, before pricing any cascade, is:
+
+> **which configuration class recurs with a BOUNDED gap?**
+
+`tools/counters/drz6land.py` answers it in one command — for each
+`(state, symbol)` it prints the maximum gap between consecutive visits over
+300,000 steps.  Seven of the eight classes have a maximum gap of 131,022 and
+growing.  The eighth does not:
+
+    A0 : visits 8       maxgap 131022
+    A1 : visits 37516   maxgap 31     (but 27 distinct right-run lengths)
+    ...
+    D0 : visits 37516   maxgap 56     1 distinct right-run length
+    ...
+
+`D0` — state `D` reading blank — recurs at most every **56** steps over that
+window, and its right list is **literally empty** at every one of 37,516
+visits (checked in exact `cconf` coordinates by `tools/counters/drz6cc.py`,
+not on a blank-stripped simulator).  That gap is not a constant — it is
+`2z+4` in the leading zero-run `z`, so it grows with the tape — but it is the
+only class that is POLYNOMIAL where the other seven are exponential.
+
+Be precise about what that buys, because the obvious reading is wrong: it
+does NOT make the anchor family's lap bounded.  The board's family `Cf t`
+still has laps of 36, 198, 864, 3546, 14292, … steps, containing
+5, 26, 110, 446, 1790, … macro steps.  What `D0` gives is a COORDINATE
+SYSTEM,
+
+    E l = (StD, (l, S0, [])),
+
+in which the row's macro system CLOSES — three rules, closed form, generic
+context — where the same system read at `StA` does not (wave 38 §4).  The
+exponential then rides on an induction over those three rules instead of on
+new mathematics per gap.
+
+### 4ab.2 What that buys: the cascade becomes THREE LINES
+
+With `l = rep [S0] z ++ S1 :: l2` head-outward, the `E`-to-`E` law is three
+branches:
+
+    (i)   l2 = S1 :: X       E l -> E (rep [S1] z ++ S0::S0::X)          2z+4
+    (ii)  chd l2 = S0, z>0   E l -> E (rep [S1] (z-1) ++ S0::S0::S1::ctl l2)
+                                                                         2z+4
+    (iii) chd l2 = S0, z=0   E l -> E (S0::S0::S1::S1:: ctl l2)            10
+
+Zero mismatches over all 37,515 landmark transitions; branch counts
+37432 / 76 / 7 (`tools/counters/drz6lem.py`).  Each is one `WTape.cycL`
+sweep, one `WTape.cycR` sweep and at most five single steps.
+
+The descending binary cascade — the thing the row was budgeted for — is then
+
+    Zdown (S a) = Zdown a ; rule (i) at z = 2a ; Zdown a
+
+because **in `E`-coordinates a decrement IS rule (i)**.  Two-cell digits, the
+context untouched, three lines of Coq.  The whole board is ~330 lines and the
+only non-linear induction in it is that one.
+
+### 4ab.3 The invariant that is not there
+
+The reason the anchor move is not free in general: a dense landmark family
+usually needs an INVARIANT on the left word, because the macro rule can die.
+Here it can: rule (i) with `z = 0` and `X` all-blank consumes the last `S1`
+and the machine then sweeps left in `StB` forever.  Enumerating canonical left
+words up to length 12 (`tools/counters/drz6inv.py`) shows **1,605 of 4,095 die**,
+and the survivors are NOT a local language — the good sets have sizes
+1, 2, 2, 5, 11, 23, 42 by length and admit no prefix characterisation
+(`10111` dies, `10110` does not).  Reading `l` head-outward as a binary
+number with the head end as LSB, rule (i) is `N -> N - 2^(z+1) - 1` and rules
+(ii)/(iii) push `N` back up; the good set is that arithmetic, not a regexp.
+
+**So do not look for the invariant — look for a chain of SHAPES that never
+needs one.**  Writing `G z = E (rep [S0] z ++ [S1])`, the anchor is
+`Cf t = G (4t+1)` and the lap is six composed pieces:
+
+    G(2b+1)      -> G(2b+2)          (ii) ; Zdown b
+    G(4t+2)      -> Q (2t) 0         (ii) ; Zdown 2t
+    Q (S m) j    -> Q m (S j)        (ii) ; Zdown m
+    Q 0 j        -> K 0 j            (iii) ; (i) ; Zdown 1
+    K s (S(S i)) -> K (S s) i        (ii) ; Zdown ; (i) ; Zdown
+    K s 0         = G (4s+5)
+
+with `Q m j = E (rep [S0] (2m) ++ [S1;S0;S0;S1] ++ rep [S0;S1] j)` and
+`K s i = E (rep [S0] (4s+5) ++ S1 :: rep [S0;S1] i)`.  Every shape carries its
+own `S1` by construction, so every branch guard discharges by `eq_refl` and
+**there is no invariant, and no predicate on `l`, anywhere in the file**.  The
+two `Q`/`K` chains are plain linear inductions.  `Q` is the second half-lap's
+wall rewrite and `K` is its phase III; the `1010…` region the raw trace shows
+is `rep [S0;S1] j`, and it is inert context in every rule that touches it.
+
+### 4ab.4 The overflow question, answered a FOURTH way
+
+§4y: overflow has its own cost.  §4z: overflow shares an interior branch's
+cost, collapsing a branch.  §4aa: its own cost PLUS a third frontier branch
+neither had.  Here: **its own cost, and it is the only branch that is not
+tail-generic.**  Rule (iii) is the sole user of `A0 = 1RB` (8 firings in
+300,000 steps), and run over an unknown right tail the single-cell probe
+aborts at step 5 — `A0` reads the cell PAST the head's run.  Rules (i) and
+(ii) tolerate a generic tail; (iii) needs the explicit empty right list, which
+is exactly what the `D0` landmark always carries.  Had the anchor been chosen
+without checking the right list in exact `cconf` coordinates, this branch
+would have been stated with a generic tail and would not have been provable.
+
+### 4ab.5 What transfers
+
+* **Price the ANCHOR before pricing the LAP.**  `drz6land.py`'s
+  `(state, symbol) -> max gap` table is one command and it decides whether a
+  row is a hand board or a bounded rewrite.  A sparse family with exponential
+  laps and a dense family with bounded laps can be the same machine.
+* **A residue-map `no-anchor` is about `digit_words`, not about the tape.**
+  This row's fields were `-` / `no-anchor` / `-` / `no overflow phase at K=6`,
+  and it has an exact anchor, cell for cell, with a literally empty right
+  list.  That is the third residue-map label overturned in three waves.
+* **`glue_neverqh_ix`'s arbitrary `I` is a real degree of freedom** and this
+  is the first row in the tree to spend it on DENSITY rather than on a
+  non-`positive` numeral.  `I = nat`, `nxt = S`, `Cf t = G (4t+1)`.
+* **Wave 38 §4 stopped one rule short, and the missing rule was a change of
+  anchor rather than a harder derivation.**  That analysis read the row at
+  `StA` and got five clean rules plus "the sixth rule, `s=S1, R=0`, is the
+  leftward sweep and is NOT yet in closed form … it is this row's carry".
+  Anchored at `D0` the leftward sweep is not a rule at all — it sits INSIDE
+  every macro step as one `cycL` over `rep [S0] z`, and the three rules above
+  are closed form.  When a macro system has one rule that will not close,
+  move the anchor to the state that rule ENDS in.
+
+Board: `theories/Machines/Counters/DRZ6_1RB0RD_1LB1LC_1RC0RA_0LB1RD.v`.
+No `0RB` shadow.  Axiom footprint `functional_extensionality_dep` only.
