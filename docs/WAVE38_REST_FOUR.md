@@ -87,6 +87,21 @@ while `B*ones l` grows, so `mu` cannot drop for any `B, C >= 0`.  None of
 `StD`, so the cycle is genuinely `StD`-avoiding.  Verified against the
 table by hand.
 
+### 2c. The three states are banked, in the kernel
+
+`theories/Machines/Rest4/R3_1RB0RB_1LC0RC_1RA0LD_0LB0LC.v` — the `StA`,
+`StB` and `StC` certificates, emitted by `tools/reachsti/emit.py` and
+re-checked by `vm_compute` inside each proof, restated as
+`LiveSt tm q` (the shape `neverqh_of_live4` consumes) and with `NonHalt`
+derived from one of them through `nonhalt_of_live`.
+
+It is deliberately **three lemmas and no theorem**: the row is still
+unproven and the closeout inventory correctly leaves it that way, because
+the file contains no `NeverQuasiHaltsSt`.  If `StD` ever falls to another
+engine, `neverqh_of_live4` closes the row in one line from these three plus
+that one.  The file also serves as the worked example of `LiveAll.v` in
+use.
+
 **So row 1 has three of four states and cannot get the fourth this way.**
 With the lever also excluded (section 1), row 1 needs mathematics that does
 not exist yet — it is now the least tractable of the four, not the most.
