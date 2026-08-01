@@ -19,12 +19,15 @@ Route B; then **§3c and §11 of `theories/Checkers/LadderCheck.v`**, the
 `(Fib, 1)` instance you are writing a sibling of; then §4r, which priced the
 last instance and is the closest thing to a cost model.
 
-**STATE.**  **17** core undecided and **8** `0RB` shadows
+**STATE.**  **15** core undecided and **5** `0RB` shadows
 (`tools/closeout/core_rows.txt`, `tools/closeout/shadow_rows.tsv`;
-`make closeout-status`).  **5,131** frozen rows settled by a board, 99.5%.
-**25** rows remain, and the six below are more than a third of the core.
-(The 2026-08-01 `drozd-easy-puzzles` wave boarded five core rows and freed
-three shadows; none of them is one of the six below, which are untouched.)
+`make closeout-status`).  **5,136** frozen rows settled by a board, 99.6%.
+**20** rows remain, and the six below are **more than a third of the core**.
+(Two 2026-08-01 waves ran in parallel on nickdrozd's nineteen and their board
+sets are DISJOINT: `drozd-easy-puzzles` took five core rows and three shadows,
+`drozd-easy-proofs` took `1RB1LB_1LC0RD_0LB1LA_0LA1RA` and
+`1RB1LA_0LA0LC_1LC1RD_0RB0RD` with three more.  None of the eight is one of
+the six below, which are untouched.)
 
 **THE TASK.**
 
@@ -127,11 +130,56 @@ nobody has measured it.**
   §4v boarded it again, in parallel) for one command — its refusal was a stale
   certificate schema, not mathematics.  §4u also names what the emitter hits
   first on such a certificate: the missing `code` stamp, not `lands_in_phase`.
-* Nick's list included three rows the ladder does not read at all —
-  `1RB0RB_1LC0RC_1RA0LD_0LB0LC`, `1RB1LB_1LC0RD_0LB1LA_0LA1RA`,
-  `1RB1RC_1LA0LB_1LD0RD_1LB0RC` — all three measured as `no value family`
-  under `--numeration` too, so they want `alphabet_infer.py` or a non-ladder
-  route (ReachSt), not a numeration.
+* Nick's list included three rows the ladder does not read at all, and the
+  `drozd-easy-proofs` wave BOARDED one of them and re-read the other two.
+  **`1RB1LB_1LC0RD_0LB1LA_0LA1RA` is settled** (a two-block bouncer, hand
+  board off `WTape.cycR`/`cycL`/`cycLW`), and the standing lesson is that
+  **"no value family" and "not a counter" are statements about the READER**:
+  `LADDER_NOFAM.md`'s own fingerprint for that row is `1 1 1 1 2 2 2 2 3 3 3 3`
+  strings per width — LINEAR, which is a bouncer's signature — and a linear
+  shape-count routes a row to the WAVE track, whose hand boards want no
+  grammar at all.  Of the other two:
+  - `1RB1RC_1LA0LB_1LD0RD_1LB0RC` is a **base-3 wall counter** and its anchor
+    is located (`tools/counters/ter3_probe.py`): 2-cell digits over
+    `{00,10,11}` LSB-first with a truncated top, 75,006 consecutive anchor
+    visits and zero failures, lap AFFINE in the carry length at `6c+4` /
+    `6c+6`.  That alphabet is `Counters/Ter3WallB.v`'s digit for digit and
+    the branches are `TernCounter`'s `tsucc`/`tsuccT`; the only new piece is
+    the closer, since this row's theorem is `NeverQuasiHaltsSt`.  **Cheapest
+    unbuilt row in the residue.**
+  - `1RB0RB_1LC0RC_1RA0LD_0LB0LC` is a unary counter whose left wall moves
+    exactly 3 cells per bounce (sixty consecutive events, no exception) with
+    the right end frozen at cell 13 — `LADDER_NOFAM.md`'s
+    `E(p) = 0^(24p+96) [head] φ (101)^p 0011111` re-indexed by the bounce.
+* **`1RB0RB_0LC1RD_1LC1LA_0LA1RB` needs one reusable kernel piece.**  Its
+  once-per-increment anchor IS located — `StB`, head `S0`, counter on the
+  LEFT with one cell dropped, read at `F(1,1)`, DECREASING by one for 987
+  consecutive visits (987 = `F(16)`, one whole epoch).  The index is not
+  monotone across epochs, so it wants `LapGlueIx`'s arbitrary index over a
+  fibonacci numeral type — and **`LapGlueIx` exports only the quasihalter
+  closer** (`glue_qh_quiet_ix`), while this row's four states all recur.  So
+  it needs a never-QH twin: a ~25-line copy of `LapGlue.glue_neverqh` with
+  `I`/`nxt` for `positive`/`Pos.succ` and no `AvoidRun`.  Write that first —
+  it is reusable and it is the only piece that is not this row's own
+  arithmetic.  Cheap thing to try before any of it: the epoch length obeys
+  `lap(w) = lap(w-1) + lap(w-2) + 3` EXACTLY to `w = 13`, so the epoch
+  contains two smaller epochs; the sub-epoch is NOT at
+  `(StA, (L, S0, rep [S1] k ++ R))` (zero occurrences at `w = 6, 7, 8`), so
+  the copy sits at some other, probably mirrored, shape.
+* **Validate every unit rule against its WHOLE unknown context in the oracle
+  before writing Coq.**  Run each candidate over all instantiations of its
+  unknown left and right context (every word up to length 6); the ones that
+  come back context-independent become `cycR`/`cycL`/`cycLW` premises and the
+  ones that do not become one-sided `wsteps_frame_l`/`_r` joints.  **That
+  split IS the proof structure** — minutes in Python, hours if guessed in
+  Coq.  Corollary: a `csteps` lemma over a symbolic left list reduces by
+  `reflexivity` only while the head stays right of its start, because
+  `ctape_move DL` blocks on a variable `l`.
+* **A quadratic lap is not a blocker for a hand board.**  `LapGlue`'s lap
+  premise existentially quantifies the step count; only the LADDER needs its
+  arms affine.  4p's constant second difference and 4t's "the carry ripple is
+  not affine in the run length" on `1RB1LA_0LA0LC_1LC1RD_0RB0RD` were both
+  measuring the tool, and that row boarded with a `j^2 + 5j + 8` lap.
 
 **Facts worth not rediscovering.**
 
