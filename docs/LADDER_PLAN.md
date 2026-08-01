@@ -3954,3 +3954,132 @@ Two rows, and neither is a ladder row:
   a 22-element control state that a `Cf : positive -> cconf` has to absorb.
   **Do not start from the bounce**, and do not expect a flat one-parameter
   family at it.
+
+## 4y. The base-3 row BOARDS, and its two "siblings" are a different radix — measured, not assumed
+
+_Branch `claude/base3-block-core-rows-gq9xdm`, cut from `main` at `2baa351`.
+Coq 8.18.0 from apt.  The three rows 4w's closing paragraphs pointed at: one
+reconnoitred and build-ready, two never probed and inferred to be its family
+on a one-transition diff._
+
+    settled by a board       5142 -> 5143   (99.7%)
+    core undecided              9 ->    8
+    0RB shadows of the core     5 ->    5   (the boarded row carries none)
+
+**The inference was wrong, and step 1 is what caught it.**  The session plan
+reasoned that `1RB1LC_1LB1RA_0LC0LD_0RA0RD` and
+`1RB1LC_1LC1RA_0LC0LD_0RA0RD` — same `EXP3`/`EXP3` residue as the base-3 row,
+one transition apart from each other — were probably the same counter, and
+said so while insisting the probe settle it.  They are not.  They are BASE 2.
+
+### The negative, and how it was measured
+
+`ter3_probe.py` hard-coded its anchor as well as its spec, so pointing it at
+either sibling prints `anchor visits 0` — which is a verdict about
+`(StA, ([], S1, ...))` and not about the row.  `tools/counters/ter3_scan.py`
+(new) sweeps instead: every blank-side anchor `(state, head symbol)`, a fixed
+prefix of 0/1/2 cells, and every 2-cell radix over `{00, 01, 10, 11}` with
+the top digit truncated, scored by the longest CONSECUTIVE-value run and then
+by the lap law per carry class.
+
+**Control first** — it reproduces 4w's reading of the base-3 row exactly:
+`StA` at head `S1`, prefix 1, base 3, digits `{00, 10, 11}`, 25,004
+consecutive values, lap `2 branches: 6c + 4 | 6c + 6`.  A sweep that cannot
+re-find the known answer is not evidence about the unknown ones.
+
+Then the siblings, each exact and consecutive from 0 with zero decode
+failures, and each corroborated at THREE anchors (`A0`, `C1`, `D0`):
+
+| row | radix | digits | lap |
+|---|---|---|---|
+| `1RB1LC_1LB1RA_0LC0LD_0RA0RD` | **2** | `{00, 10}` | `3.5*3^c + c + 2.5` |
+| `1RB1LC_1LC1RA_0LC0LD_0RA0RD` | **2** | `{00, 10}` | `3*3^c + 2c + 1` |
+
+with **no base-3 reading at any anchor or prefix on either**.  So the
+one-transition diff costs only the lap CONSTANTS — same anchor set, same
+alphabet, same increment — and the two siblings are one family with each
+other and a DIFFERENT family from the base-3 row.
+
+**`residue_map.tsv` said so already and nobody read it that way.**  Their
+alphabet field is `Alph_11_00_1`, which names TWO digit words plus a top;
+two digit words is a binary alphabet.  The base-3 row's is `Ip`.  The shared
+`EXP3` label is about the LAP, not the radix — `CORE_3STATE.md` §2 defines it
+as "read at base 2 their lap grows like `3^j`" — and for the `Ter3Wall*` rows
+that base-2 reading is a mirage while for these two it is the true one.
+**`EXP3` is not a radix claim and never was.**
+
+**What this costs the siblings.**  Their lap is geometric, not affine, so no
+ladder arm reaches them; but `LapGlue`'s lap premise existentially quantifies
+the step count, so a HAND board does not care about the closed form.  What it
+needs is an inner induction over the carry run, and the two rows differ only
+in constants, so one closer serves both — four rows, since each carries a
+shadow.  That is the best-priced unbuilt block left in the residue.
+
+### The row that boarded
+
+`1RB1RC_1LA0LB_1LD0RD_1LB0RC`, `NeverQuasiHaltsSt`,
+`theories/Machines/Counters/T3D_1RB1RC_1LA0LB_1LD0RD_1LB0RC.v`,
+`Print Assumptions` = `functional_extensionality_dep` only.  Three files, and
+only one of them is this row's own arithmetic.
+
+* **`Counters/LapGlueNeverIx.v`** — `LapGlue.glue_neverqh` over an ARBITRARY
+  index.  4w priced it at "~25 lines, reusable, and the only piece that is
+  not this row's own arithmetic" and that held exactly.  It is a separate
+  file rather than a third section of `LapGlueIx` because it shares none of
+  that file's machinery: no `AvoidRun`, no `VisitsAt`/`QuietAfter`, no
+  `QHBound`.  **4x lists this as "does not exist yet" for the fibonacci
+  twin; it exists now**, and that row's remaining blocker is the fibonacci
+  numeral type alone.
+* **`Counters/Ter3WallD.v`** — the four-state base-3 wall closer, role
+  parameterised over `qA`/`qB`/`qC`/`qD`.
+* the board.
+
+**The counter side was free.**  The digits are `Ter3WallB`'s `{00, 10, 11}`
+digit for digit and the increment is `TernCounter.tsucc`, so
+`Ter3WallB.TerStepB` and its instance `ter_stepB_nil` are reused VERBATIM —
+not adapted, not re-proved.  What is new is only the machine side.
+
+**The anchor carries a MARKER cell**, and it is the one structural surprise:
+
+    Cc t = (qA, ([], S1, S1 :: Wf t))
+
+where `Ter3Wall` and `Ter3WallB` anchor at `(q, ([], S1, Wf t))` with the
+digits flush against the wall.  The extra `S1` is not decoration — the lap
+CLEARS it on the way out (`qC` on the marker, one step in) and the return's
+last step REWRITES it, and that rewrite is what puts the head back on the
+wall in `qA`.  A closer written for the flush anchor cannot express this row.
+
+**The return sweep costs four steps per two cells**, where `Ter3WallB`'s
+costs one per cell: `qB` on a clear cell sets it and turns into `qA`, which
+sets the cell to its right and turns back, and the two `qB` steps that follow
+clear both again — net, the tape is unchanged and the head has moved two
+cells left.  That factor is the whole difference between `4j + 2 / 4j + 4`
+and `6c + 4 / 6c + 6`.
+
+**The parity is the branch here too, for a different reason.**  In
+`Ter3WallB` the two stops differ in how many cells they set; here they differ
+in their STATE.  An even set-cell run leaves the clear in `qD`, which sets
+the stop cell and turns (`00 -> 10`); an odd one leaves it in `qC`, which
+sets that cell, steps back onto the one `qD` just cleared and sets it too
+(`10 -> 11`).  Same trichotomy, same `TerStepB`, different mechanism.
+
+### Two things worth carrying
+
+* **The liveness was checked before the closer was chosen, and it decided
+  it.**  `liveness.states_infinitely_often` is a CERTIFICATE FIELD, not a
+  Coq theorem — there is no such identifier in `theories/`, and a session
+  that goes looking for one will not find it.  What it names is
+  `glue_neverqh`'s `Hvis` premise, and the cheap way to read it on a hand
+  board is to measure it: every one of 37,502 laps of this row contains all
+  four states, so `NeverQuasiHaltsSt` is the theorem and `glue_neverqh_ix`
+  the closer.  Contrast the `Ter3Wall*` rows, whose `StA` is the target of no
+  transition and which therefore genuinely quasihalt.  **This row's `StA` is
+  the target of `B0` AND is the anchor's own state**, which is the whole
+  difference.
+* **The lap law was stated against the probe before it was proved.**  The
+  trichotomy's three cases were predicted as `6c + 4` (stop digit 0),
+  `6c + 6` (stop digit 1) and `6c + 4` (overflow) and checked over 50,003
+  consecutive laps with ZERO mismatches — including the non-obvious half,
+  that overflow shares the digit-0 branch's cost rather than having its own.
+  `fiblazy.py` / `gray2check.py` are the precedent and this is the third time
+  it has paid.
