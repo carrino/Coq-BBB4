@@ -4617,6 +4617,7 @@ Coq 8.18.0 from apt (~1 min).
   ladder plan is about; none of the arguments here generalise to them —
   these four were bouncer counters, which is the ONE shape the repo already
   had a closer for.  `docs/LADDER_PLAN.md` §4 is still the route for the rest.
+
 ## 2026-08-01 (later) — the fibonacci six are NOT Zeckendorf: same numeration, other representative
 
 _Branch `claude/next-session-progress-g74nya`, cut from `main` at `b61135a`
@@ -4681,3 +4682,117 @@ movement is this wave's.)
   `-j3` is ~2h05m, agreeing with §4t's ~2h20m.  A ladder board itself
   compiles in ~6 s once `LadderCheck.vo` exists, so the long build is
   background work, not a gate on the proof work.
+
+
+## 2026-08-01 — Drozd's "easy" six: five board, and the sixth is measured
+
+Branch `claude/drozd-easy-puzzles-5qrdb0`, cut from `main` at `0010050`.
+Coq 8.18.0 from apt (~1 min).
+
+    settled by a board       5123 -> 5131   (99.5%)
+    core undecided             22 ->   17
+    0RB shadows of the core    11 ->    8
+
+The six rows handed over were `1RB0LD_0LC0RB_1LA1RC_0RC1LD`,
+`1RB0RB_1LC1LD_0LC1RA_0LD0RA`, `1RB0RD_1LB1LC_1RC0RA_0LB1RD`,
+`1RB0RD_1LC1RA_0RB0LC_1LD0LA`, `1RB1LA_0LA1RC_0LD0RC_1LD0RB` and
+`1RB1LA_1LC0RD_0RA0LC_0LA1RD`.  **Five are boarded; the third,
+`1RB0RD_1LB1LC_1RC0RA_0LB1RD`, is not** — see the last bullet.
+
+- **Every one of the five turned out to be a base-2 counter, and not one
+  of them is a counter the repo's anchor search can index.**  Three
+  shapes, three new files:
+
+  - `Counters/LinCarry.v` (two sections) — the `Kp` alphabet with a
+    LINEAR-SEARCH carry.  `1RB1LA_0LA1RC_0LD0RC_1LD0RB` is the bare
+    counter, `1RB0LD_0LC0RB_1LA1RC_0RC1LD` has one blank SPACER cell
+    between counter and head, and `1RB1LA_1LC0RD_0RA0LC_0LA1RD` is the
+    spacer machine mirrored.  Laps `(j+1)(j+2)` and `j^2+3j+4`.
+  - `NestC_1RB0RB_1LC1LD_0LC1RA_0LD0RA.v` — a doubling NESTED bouncer.
+  - `Wid_1RB0RD_1LC1RA_0RB0LC_1LD0LA.v` — a counter that WIDENS into its
+    own padding.
+
+- **`quad_emit.py` refuses all three QUAD/QUAD rows with `no TCp chain`,
+  and that refusal is correct and permanent.**  Their carry is a bouncer
+  that makes ONE ROUND TRIP PER DIGIT, so a lap is `Theta(j)` excursions
+  and no LapDecider chain reaches it at any framing.  The fix is not a
+  wider chain language; it is to do the induction on the run length by
+  hand, which is ~40 lines per shape.  §4p and §4t had already measured
+  the arm quadratic twice — this is the third measurement and it agrees;
+  what is new is that quadratic is not an obstacle to a HAND proof.
+
+- **Two of Drozd's rows are the same machine up to mirror + state
+  renaming, and the census orbit does not know it.**
+  `1RB1LA_1LC0RD_0RA0LC_0LA1RD` is `mirror_tm` of
+  `1RB0LD_0LC0RB_1LA1RC_0RC1LD` under `A B C D |-> B C A D`, and their
+  orbits agree step for step from the second step on.  They are still
+  two rows: the renaming moves the START state, so neither is reachable
+  from the other by completion/swap/mirror, and each needs its own boot.
+  The saving is real anyway — one `Spacer` section, two customers, the
+  second through `Mirror.mirror_never_qh`.  **Before analysing a core
+  row, mirror it and grep `core_rows.txt` for the result.**
+
+- **`no-anchor` in `residue_map.tsv` can mean "no ONE-parameter anchor",
+  not "no anchor".**  Both `no-anchor` rows here have a clean anchor
+  family with TWO parameters: `1RB0RB_...` is `1 0^a [A:0] 0^b 1` (wall,
+  head, marker; the head walks the gap once per record, each hop costing
+  twice the last), and `1RB0RD_1LC1RA_...` is `[C:0] <counter> 1^(2m+2)`
+  (a counter word AND a padding it eats on overflow).  Neither is
+  expressible as `Cf : positive -> cconf` directly; both are, as the
+  orbit of an abstract state under a `nxt` function iterated by a
+  `Fixpoint` and indexed by `Pos.to_nat`.  **That pattern -- abstract
+  state, `nxt`, `stt`, `LapGlue` over `Pos.to_nat` -- is the reusable
+  part of this wave**, and it turns a two-parameter family into one lap
+  per rule with no rule knowing about the others.
+
+- **A doubling lap does not have to be opaque.**
+  `1RB0RB_1LC1LD_0LC1RA_0LD0RA`'s hop costs `2^(b+3)-1` and unfolds into
+  FOUR mutually recursive rules of equal cost, each one step plus two of
+  the others one index down.  The pairing is the machine's own: `C`
+  leaves the `S1` it turns on and `D` clears it, so the `Cz`/`Dz` rules
+  differ in exactly one cell.  All four are proved by ONE induction.
+
+- **No closed form for a step count is needed anywhere.**  `Th`, `ST`,
+  `Dn` (nested bouncer) and the `4c+2 / 4c+8 / 6c+11` costs (widening
+  counter) are defined by the same recursions the proofs use, so no
+  `2^n` and no subtraction appears in any statement.  This is what kept
+  the two exponential rows to ~300 lines each.
+
+- **A state that only appears at an overflow still discharges `Hvis`.**
+  On the widening counter `StA` and `StD` occur nowhere in a plain
+  counting lap.  The witness runs forward to the next overflow on a
+  structural descent along `togo w = 2^|w| - 1 - val w`, written without
+  powers (`togo (false::t) = S (2 * togo t)`, `togo (true::t) =
+  2 * togo t`) so the descent is an ordinary `nat` induction.
+
+- **The sixth row, `1RB0RD_1LB1LC_1RC0RA_0LB1RD`, is NOT boarded, and
+  here is what was measured so the next session does not re-measure it.**
+  Its reset family is `R(k) = (StC, ([], S0, rep [S1] k))`, reached at
+  `t = 3, 10, 43, 74, 245, 372, 1113, 1624, ...` with
+  `k = 2, 3, 6, 7, 10, 11, 14, 15, ...`, i.e. pairs `(4i+2, 4i+3)`.  The
+  two half-laps are
+
+      R(4i+2) -> R(4i+3)   in   2^(2i+3) - 1     steps
+      R(4i+3) -> R(4i+6)   in   48*4^i - 6i - 15 steps
+
+  (both fitted exactly on i = 0..3).  The first half is a clean doubling;
+  the SECOND half carries a linear term, so it is not a single nested
+  recursion of the `NestC` kind -- it has a sweep whose length is affine
+  in `i` composed with one that doubles.  Between resets the tape
+  alternates all-ones `1^k` with a comb `(10)^m 1`, and `B` (`1LB`)
+  sweeps left turning a run of blanks into ones, which is what performs
+  the reset.  Budget it as a `NestC`-sized job plus the comb phase; do
+  not expect the anchor search to help (`residue_map.tsv` says
+  `no overflow phase at K=6`, which is again "no ONE-parameter anchor").
+
+- **Timings, this image, 4 cores / 15 GB.**  `apt-get install -y coq`
+  ~1 min.  Each of the five boards plus `LinCarry.v` compiles in well
+  under a second against a warm `BBB4_Statement`/`CTape`/`WTape`/
+  `LapGlue`/`KpCounter`.  `make closeout`'s bookkeeping half
+  (inventory / gen_shadow --harvest / gen_stages / audit) is ~2 min and
+  freed three shadows.  The full `Closeout.vo` closure was NOT rebuilt
+  here (2,119 board files); it belongs on the box, as before.  What WAS
+  rebuilt and is green: `CloseoutKit`, `ShadowKit`, `CoreRows`, and the
+  three stages that carry the new rows -- `CB_11`, `CB_15`, `CB_17` --
+  355 `.vo` in ~7 min at `-j3`, so the generated `covers` lemmas are
+  kernel-checked even though the whole closeout is not.

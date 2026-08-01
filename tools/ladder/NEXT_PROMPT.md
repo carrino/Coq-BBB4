@@ -19,10 +19,12 @@ Route B; then **§3c and §11 of `theories/Checkers/LadderCheck.v`**, the
 `(Fib, 1)` instance you are writing a sibling of; then §4r, which priced the
 last instance and is the closest thing to a cost model.
 
-**STATE.**  **22** core undecided and **11** `0RB` shadows
+**STATE.**  **17** core undecided and **8** `0RB` shadows
 (`tools/closeout/core_rows.txt`, `tools/closeout/shadow_rows.tsv`;
-`make closeout-status`).  **5,123** frozen rows settled by a board, 99.4%.
-**33** rows remain, and the six below are more than a quarter of them.
+`make closeout-status`).  **5,131** frozen rows settled by a board, 99.5%.
+**25** rows remain, and the six below are more than a third of the core.
+(The 2026-08-01 `drozd-easy-puzzles` wave boarded five core rows and freed
+three shadows; none of them is one of the six below, which are untouched.)
 
 **THE TASK.**
 
