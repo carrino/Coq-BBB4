@@ -318,11 +318,13 @@ predicates, the `last` algebra).  The closure half is emitted by
 `tools/mxdys4/emit_ngx.py`, which rewrites everything after a MARK line and
 leaves the hand proof above it alone.
 
-- **`k=2, n=2` DOES NOT CLOSE either row; `k=3, n=2` does.**  At `k=2` the
-  closure misses `StB` on M1 and `StC` on M4 (`no liveness cert for state
-  ...`), and `n=3` does not close at all.  `tools/mxdys4/pin_kn.py` sweeps
-  the grid; 134 and 131 contexts at the rung that works.  §4's plan to take
-  `StA`/`StB`/`StC` off `ReachStI` was therefore unnecessary.
+- **`k=2, n=2` DOES NOT CLOSE either row; `k=3, n=2` is the cheapest rung
+  that does.**  At `k=2, n=2` the closure misses `StB` on M1 and `StC` on M4
+  (`no liveness cert for state ...`), and at `k=2` with `n=3` or `n=4` it
+  does not close at all.  `k=3, n=2` works on both, at 134 and 131 contexts;
+  `k=3,n=3`, `k=4,n=2`, `k=4,n=3` and `k=3,n=4` also work and cost 2-3x the
+  contexts.  `tools/mxdys4/pin_kn.py` prints the whole grid.  §4's plan to
+  take `StA`/`StB`/`StC` off `ReachStI` was therefore unnecessary.
 
 - **THE SHAPE MUST CARRY AN EXPLICIT BLANK AND THEN A GENERIC TAIL.**  The
   configuration is `(StA, (l, s, rep [S1] R ++ S0 :: Z))`, not

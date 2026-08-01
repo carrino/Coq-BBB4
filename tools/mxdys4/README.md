@@ -39,8 +39,8 @@ run and what happens at the tape edge, and the `cconf` form does not.
 
 **`pin_kn.py SPEC [QEXT] [BUDGET]`** — at which `(k, n, t, fuel)` does the
 `NGramHist` closure discharge every state BUT `QEXT`?  On rows 1 and 4 the
-answer is `k=3, n=2` (134 / 131 contexts); `k=2` misses one state on each
-row and `n=3` does not close at all.
+answer is `k=3, n=2` (134 / 131 contexts); `k=2, n=2` misses one state on
+each row and `k=2` with `n=3` or `n=4` does not close at all.
 
 **`emit_ngx.py`** — writes the closure half of the two boards
 (`lset`/`rset`/`cert` + the final theorem) into
