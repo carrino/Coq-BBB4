@@ -4451,13 +4451,19 @@ so the boards here are #111's and the counts are #111's (27 + 12)._
   — no row needs it, and two mechanisms for one property in one function is
   how the next session gets confused.  §4t records it for the day a row sorts
   strictly first rather than tying.
-- **The five remaining core rows that already CLOSE are ARM rows.**  Seven
-  rows carry a `closed: true` certificate in a committed sweep; two are §4s's
-  gray pair.  The other five all refuse DOWNSTREAM of the boot — three
-  `no chain found` on a single arm, one on a certificate predating
-  `lands_in_phase`, and `1RB1LA_0LA0LC_1LC1RD_0RB0RD` re-derives all 25 of its
-  arms and still refuses with *"the carry ripple is not affine in the run
-  length"*.  **Re-running the search on them is wasted.**
+- **Four of the five remaining core rows that already CLOSE are §4p's
+  QUADRATIC four — this was a re-probe the brief said not to do.**  Ten
+  minutes, and it is recorded only because it corroborates §4p from the other
+  side: §4p measured the arm's second difference as exactly 2, and the
+  emitter, which knows nothing about that, refuses in the same place with
+  *"the carry ripple is not affine in the run length"*.
+  `1RB1LA_0LA0LC_1LC1RD_0RB0RD` re-derives all 25 of its arms and the closure
+  still will not build.  **Two independent measurements, one blocker — do not
+  run a third.**
+- **The one genuinely new row there is `1RB1LA_0LA1RC_0RD0RB_1RA---`**, whose
+  certificate predates `lands_in_phase`, so it has never been offered to the
+  current emitter at all.  It is the only core row whose refusal is a STALE
+  SCHEMA rather than a blocker, and re-running `valfam` on it is one command.
 - **Timing, measured here:** `apt-get install -y coq` ≈ 1 min.  The
   `Closeout.vo` closure from cold on 4 cores at `-j3` is **~2h20m** (~2350
   `.vo`) — not 45 min and not a whole day.  Start it first, read while it

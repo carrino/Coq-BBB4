@@ -3159,27 +3159,38 @@ in the tree needs it, 4s's tie-break covers every case that does exist, and
 two mechanisms for one property in one function is how the next session gets
 confused.  Build it if and when a row sorts strictly first.
 
-### The other five core rows that already CLOSE are ARM rows, not searcher rows
+### The other five that already CLOSE: four of them are 4p's QUADRATIC four, corroborated from the emitter's side
 
 Asked of the whole core: which rows carry a `closed: true` certificate in a
 committed sweep and are still unproven?  Seven, of which two are 4s's gray
 pair.  The other five — all still core after #111 — were run through the
-emitter and **none of them is a boot-check row**:
+emitter, and **none of them is a boot-check row**:
 
-    1RB0LD_0LC0RB_1LA1RC_0RC1LD   arm2    no chain found
-    1RB1LA_0LA1RC_0LD0RC_1LD0RB   arm55   no chain found
-    1RB1LA_1LC0RD_0RA0LC_0LA1RD   arm2    no chain found
-    1RB1LA_0LA1RC_0RD0RB_1RA---   the certificate predates `lands_in_phase`
-    1RB1LA_0LA0LC_1LC1RD_0RB0RD   25 of 25 arms boarded, closure refused:
+    1RB0LD_0LC0RB_1LA1RC_0RC1LD   arm2    no chain found          <- 4p QUAD
+    1RB1LA_0LA1RC_0LD0RC_1LD0RB   arm55   no chain found          <- 4p QUAD
+    1RB1LA_1LC0RD_0RA0LC_0LA1RD   arm2    no chain found          <- 4p QUAD
+    1RB1LA_0LA0LC_1LC1RD_0RB0RD   25 of 25 arms boarded, refused: <- 4p QUAD
       "interior arm: no chain at any threshold 0..3 and stride 1..4 --
        the carry ripple is not affine in the run length"
+    1RB1LA_0LA1RC_0RD0RB_1RA---   the certificate predates `lands_in_phase`
 
-The last is the interesting one and it is 4k's two knobs again: every arm the
-certificate carries re-derives, and the CLOSURE still will not build because
-the interior arm has no chain anywhere in the grid.  So the five are one
-bucket with the ARMS and not with the boot — **re-running the search on them
-is wasted**, and they do not belong with 4s's gray pair however similar the
-label looks.
+**Four of the five are 4p's base-2 quadratic rows and this is a re-probe of
+them, which the brief told this session not to do.**  It cost ten minutes and
+it is recorded because it corroborates 4p from the other side rather than
+adding to it: 4p measured the arm's cost directly and found a second
+difference of exactly 2, and the emitter — which knows nothing about that —
+refuses in the same place with `the carry ripple is not affine in the run
+length`, the `stride = 0` signature.  `1RB1LA_0LA0LC_1LC1RD_0RB0RD` is the
+sharpest form: all 25 arms of its certificate re-derive and the CLOSURE still
+will not build.  **Two independent measurements, one blocker.**  Nobody should
+run a third.
+
+The genuinely new one is the fifth, and it is not mathematics:
+`1RB1LA_0LA1RC_0RD0RB_1RA---` fails on a certificate written before
+`lands_in_phase` existed, so it has never actually been offered to the current
+emitter.  **It is the only row in the core whose refusal is a stale schema**,
+and re-running `valfam` on it is one command.  Worth doing before it is read
+as anything harder.
 
 ## 5. What this is NOT
 
