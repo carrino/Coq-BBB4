@@ -1,0 +1,40 @@
+# mxdys's four rows — macro-rule extraction and liveness measurement
+
+UNTRUSTED search/measurement tooling (repo rule: only the Coq checkers
+carry soundness).  Full write-up: `docs/WAVE36_MXDYS_FOUR.md`.
+
+The four rows (`rows.txt`):
+
+    1RB1LC_0LC0RB_1LA1RD_0LA0RD   1RB1LC_1LB1RA_0LC0LD_0RA0RD
+    1RB1LC_1LC1RA_0LC0LD_0RA0RD   1RB1LD_1LC1RA_0RB0LC_0RA0LD
+
+## The two things worth reusing
+
+**`gaps.py SPEC...`** — worst gap between consecutive visits of each state,
+against the tape width at that moment.  Run this BEFORE spending a session
+on a `ReachSt`/`ReachStI` board: the measure there is linear in the
+half-tape `S1` counts, so a state whose gap grows faster than the width is
+outside the tier permanently, whatever certificate class you search.  It is
+what closed `StD` on rows 1 and 4 (gap `Theta(2^width)`).
+
+**`extract.py SPEC MODE`** (`MODE` = `L1` left half-tape unary, `R1` right
+half-tape unary) — automatic macro-rule extraction.  Runs the raw machine
+from a symbolic configuration to the next `StA` configuration and prints
+the transformation, over a grid of parameters.  A row whose orbit keeps one
+half-tape a bare unary run (check with `macro1.py` / `macro4.py`) collapses
+to a finite word-rewriting system, and this reads that system off directly
+instead of guessing it.
+
+## The rest
+
+* `sim.py` — raw simulator (`Sim(spec)`), imported by the others.
+* `macro1.py` — row 1's four macro rules, differentially validated against
+  the raw simulator, plus a labelled macro trace.
+* `macro4.py` — row 4's three macro rules, differentially validated.
+* `certE.py`, `certM.py`, `certM3.py SPECFILE k MAX` — measure searches
+  generalising `tools/reachsti/cert_search.py` from `ones` to **extents**
+  (`ext l` = distance from the head to the outermost `S1`), with a `k`-cell
+  window and capped extents.  Bellman-Ford over the difference constraints,
+  invariant = the closure of the real orbit's nodes.  On failure they
+  return the blocking negative cycle, which is how the spurious node that
+  stops rows 2 and 3 was located (`docs/WAVE36_MXDYS_FOUR.md` section 5).
