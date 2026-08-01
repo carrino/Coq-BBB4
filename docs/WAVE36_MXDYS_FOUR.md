@@ -376,14 +376,15 @@ leaves the hand proof above it alone.
   therefore states the two implications separately (`oddN_SS_inv`,
   `oddN_SS_intro`) and never the `iff`.
 
-- **M4 has a genuine 2-cycle in its macro system and it is harmless.**
-  Rule 3' (`p = 0`, head reads `S1`) returns the identical configuration in
-  two steps.  It is not in the real orbit, but it does not have to be
-  excluded: it visits `StD` on its first step, so it satisfies the
-  obligation on the nose and only needs to be closed under `G`.  M1 has the
-  analogous rule-5-at-`R=0` cycle, and there the parity invariant excludes
-  it instead — either treatment works, and picking the cheap one per row
-  saved a case split each time.
+- **BOTH ROWS HAVE A GENUINE CYCLE IN THEIR MACRO SYSTEM, AND NEITHER HAS TO
+  BE EXCLUDED.**  M4's rule 3' (`p = 0`, head reads `S1`) returns the
+  identical configuration in two steps; M1's rule 5 at `R = 0` and the rule
+  2 after it are an 8-step cycle.  Neither is in the real orbit, and the
+  first instinct is to strengthen the invariant until it cannot see them.
+  Don't: both cycles VISIT `StD` on the spot, so they discharge the
+  obligation rather than threaten it, and all they need is to be closed
+  under `G` — which they are (M1's sits inside the even-parity disjunct).
+  The invariant has to exclude WIDENING, and nothing else.
 
 - **The rules were re-derived in `cconf` coordinates before any Coq.**
   `tools/mxdys4/cmacro1.py` and `cmacro4.py` carry §2a/§2b as functions of

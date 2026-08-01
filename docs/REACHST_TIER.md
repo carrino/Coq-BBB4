@@ -382,3 +382,23 @@ about `ReachSt`:
   better `ReachSt` would not help either; these want more precision on the
   `NGramHist` side, or a different engine entirely.  `docs/RESIDUE_MAP.md`
   files them as `EXP3`/`AFFINE` interior laps with no interior chain.
+
+## The cheapest thing to run before ANY work in this tier
+
+`tools/mxdys4/gaps.py SPEC` (wave 36): 3M steps, and for each state the
+worst gap between consecutive visits against the tape width at that moment.
+Every measure in this tier — `ReachSt`, `ReachStI`, the `NGramHist` closure
+certificates — is linear in the tape, so it can only ever certify a goal the
+machine reaches within `O(tape width)` steps.  A state whose gap grows faster
+than the width is outside the tier PERMANENTLY, whatever certificate class is
+searched, and a sweep that reports it "missing q" is reporting a wall rather
+than a gap.
+
+Over the core list the test splits with no middle (`docs/WAVE36_MXDYS_FOUR.md`
+§3a): ratios between 1.00 and 2.65, or four orders of magnitude out.  The two
+rows that were four orders out — `1RB1LC_0LC0RB_1LA1RD_0LA0RD` and
+`1RB1LD_1LC1RA_0RB0LC_0RA0LD` — were boarded in wave 37 without this tier:
+the closure discharges three states and the fourth gets a hand measure
+argument on the row's own macro rules (`theories/Machines/Mxdys4/NGX_*.v`,
+method in `docs/WAVE36_MXDYS_FOUR.md` §8).  That is the shape to reach for
+when `gaps.py` says wall — not a wider certificate class.
