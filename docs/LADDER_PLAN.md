@@ -2987,6 +2987,82 @@ checking what the emitter was handed.**  §4r and `RESIDUE_MAP.md` both
 called this the cheapest unexplored item and both were right that it was
 cheap to MEASURE; neither could know it would land on a second numeration.
 
+### Addendum: the numeration NAMED, and the instance specified to the lemma
+
+The six were then read the rest of the way, because "Zeckendorf, and the fill
+arm" is a diagnosis and not a spec.  All four facts are checked against the
+orbit by `tools/ladder/zeckmem.py` (`ZECKMEM: OK`), the `fibmem.py` /
+`gray2check.py` discipline one numeration further out.  **All six rows carry
+the SAME numeration** — identical weights, identical canonical blocks,
+identical anchor shape (`l = 1`, no near-head prefix) — so one instance
+boards all six.
+
+**First, the enumeration is not over-claiming, which had to be ruled out
+before anything else.**  `all_strings`' own docstring warns that enumerating
+`b^k` "would report uncovered members the machine never reaches".  Walk the
+anchor and compare: at widths 1..8 the class is 1, 2, 3, 5, 8, 13, 21, 34
+strings and the machine visits **exactly** those — zero ghosts, zero
+strings visited outside the class.  So the uncovered tops are real coverage
+failures and not an artefact of the reading.  *This is the check to run first
+whenever a weighted family fails only at the overflow.*
+
+1. **Membership.**  LSB-first, concatenations of the blocks `01` and `1`.
+   Equivalently: no two adjacent `0`s and the top digit set.  Equivalently
+   again, and this is what names it: the **bit-complement of Zeckendorf** (no
+   two adjacent `1`s) at the same width with the top digit `0`.
+2. **The top of a width is `1^k`** — the same as `(Fib, 1)`, so §11's fill
+   shape carries over unchanged.  That is the one free thing here.
+3. **The split is TWO-WAY and both classes fit the EXISTING `Class` record**
+   `(u, t, w, u', t', w')`, lhs `u ++ t^n ++ w` -> rhs `u' ++ t'^n ++ w'`:
+
+       increment   [0] ++ rest        ->  [1] ++ rest
+       carry       1^(2m+1) ++ [0]    ->  (01)^(m+1)
+
+   the carry being `u=[1], t=[1;1], w=[0]  ->  u'=[0;1], t'=[0;1], w'=[]` at
+   run length `m`.  Both fire at offset 0 or 1 (`cs_u` empty or `[1]`) — the
+   same threshold 0..1 §4p measured for the `(Fib, 1)` rows.  Over widths
+   1..10: 88 increments, 133 carries, 10 widenings (one per width), **0
+   unexplained**.  **So `Class` does not widen for a fourth time** — §4i's
+   gate holds through a fourth code, which is the thing worth knowing before
+   anyone budgets this.
+4. **The fill is the only genuinely new shape, and it is a BLOCK run.**
+
+       1^k  ->  the alternating string of width k+1 whose low digit is
+                (k+1) mod 2       (1 -> 01, 11 -> 101, 111 -> 0101, ...)
+
+   `(Fib, 1)`'s fill target was a bare run of `0`, which `Fill`'s
+   prefix / `digit^n` / suffix spells directly.  `(01)^m` is a run of a
+   two-cell BLOCK, which it does not.  **The obvious dodge is measured dead:**
+   re-reading at digit width 2 would make the alternating target a bare run of
+   ONE digit and cost `Fill` nothing, but `_weights_pass` at `lens = [2]`,
+   `[3]` and `[4]` returns **zero** weighted families on these rows against 42
+   at `lens = [1]` — the counter does not decode at any wider digit, on either
+   row sampled.  So the widening has to go into `Fill`.  The parity itself is
+   not new — §4o made exactly that a parameter for `(Gray, 2)`.
+
+**The honest cost estimate, then:** membership predicate, round trip, a
+`Section Iter` copy and the fill — §4r's four pieces — with the round trip
+LIKELY EASIER than §4r's (this numeration is not redundant the way `w0 = w1`
+made `(Fib, 1)`'s, so `fam_of_value` should invert outright rather than only
+on members, which is where §4r said all its risk sat) and the fill DEFINITELY
+HARDER: a block run where §4r had a bare one, and the cheap way out of that is
+measured dead.  **This is the first of the four codes whose cost is not in the
+numeration.**
+
+**And Route A is dead, which is worth stating so nobody spends a day on it.**
+`(Fib, 1)`'s `fibokb` and this membership are not the same language under
+identity, reversal, complement, or reversal-and-complement —
+`zeckmem.py --compare` prints the table, and the counts alone give it away
+(`|ours(k)| = |fibokb(k-1)|` at every width, but no transform aligns them).
+`fibokb` restricts runs of `1`s; this restricts runs of `0`s.
+`FIB_ELEVEN.txt` reads these rows at `F(1,1)` and that is not a contradiction
+— a consecutive-VALUE test passes under either ladder, because pinning
+`(Fib, 1)`'s low digit to `0` gives exactly these weights.  What separates
+them is which representative of a value the machine WRITES, and that is
+precisely what a `ClassSucc` needs and a value test never sees.  `fit_weights`
+solves for the weights exactly from the enumeration order, so there is no
+freedom in the reading to go looking for.
+
 ### What this says about the next session
 
 * **The seven are six, and their blocker has a name.**  Zeckendorf tops.

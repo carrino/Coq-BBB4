@@ -252,13 +252,22 @@ or stride reaches a quadratic).
    on the weights.  Under the shifted reading the interior covers and the
    failure is `overflow leaves the family` at exactly the top of each width
    (`1^k`, values 3, 6, 11, 19, 32, 53 = the partial sums of the weights).
-   So the whole residue of the six is **one arm, the fill**, and the two
-   candidate next steps are a `(Fib, 2)`/Zeckendorf `ClassSucc` instance
-   whose top of a width is `1010…` rather than `1^k`, or making the search
-   prefer the `1,1,2,3,5` reading these anchors also admit — which is the
-   same lever that freed the two gray rows.  Six of the six carry no shadow.
-   Per-row anchors and ladders: `tools/counters/FIB_ELEVEN.txt`,
-   `docs/CORE_3STATE.md` §3, `docs/LADDER_PLAN.md` §4s.
+   So the whole residue of the six is **one arm, the fill** — and the
+   numeration is now named and script-checked against the machines
+   (`tools/ladder/zeckmem.py`, `ZECKMEM: OK`).  It is the **bit-complement of
+   Zeckendorf**: no two adjacent `0`s, top digit set.  All six rows carry the
+   SAME one, so a single `ClassSucc` instance boards all six; the split fits
+   the EXISTING `Class` record (0 unexplained over widths 1..10), and the top
+   of a width is `1^k` exactly as at `(Fib, 1)`.  What is genuinely new is the
+   fill: `1^k` goes to the ALTERNATING string of width `k+1`, a run of a
+   two-cell BLOCK where `Fill` spells only `prefix ++ digit^n ++ suffix` — and
+   re-reading at digit width 2 to dodge that is measured dead (zero weighted
+   families at `lens = [2..4]`).  **Hunting for the `1,1,2,3,5` reading is
+   also dead**: `fibokb` restricts runs of `1`s and this restricts runs of
+   `0`s, and no reversal or complement aligns them
+   (`zeckmem.py --compare`).  Six of the six carry no shadow.  Per-row
+   anchors: `tools/counters/FIB_ELEVEN.txt`, `docs/CORE_3STATE.md` §3,
+   `docs/LADDER_PLAN.md` §4s and its addendum.
 
    **The seventh is not one of them.**  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` finds
    no family at ANY anchor — `digit_words` names nothing — so it belongs in

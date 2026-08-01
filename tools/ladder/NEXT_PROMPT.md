@@ -1,5 +1,6 @@
-READ THE SIX FIBONACCI ROWS AT THE OTHER LADDER, OR BUILD THE ZECKENDORF ONE.
-Wave 4s measured them for the first time and they stop on ONE ARM.  In
+BUILD THE ZECKENDORF-COMPLEMENT NUMERATION.  Six core rows, the numeration is
+MEASURED and script-checked against the machines, the split fits the EXISTING
+`Class` record, and the build is specified to the lemma.  In
 `carrino/Coq-BBB4`, on branch `claude/zeckendorf-<yourid>` cut from `main`.
 
 **Diff `origin/main` first**: `git show origin/main:tools/closeout/core_rows.txt`
@@ -19,7 +20,7 @@ and §11, which are the three pieces a numeration costs.
 `make closeout-status`).  **5,117** frozen rows settled by a board, 99.2%.
 **39** rows remain.
 
-**THE TASK, AND IT HAS TWO ROUTES — MEASURE BEFORE YOU BUILD.**
+**THE TASK: BUILD THE ZECKENDORF-COMPLEMENT INSTANCE.**
 
 The six rows are
 
@@ -47,25 +48,49 @@ width.  With one repair round the wrong successors are a `1` followed by
 zeros at values 5, 8, 13, 21, the weights themselves.  **The whole residue of
 these six is the FILL arm.**
 
-* **Route A — measure whether the `1,1,2,3,5` reading is available FIRST.**
-  `tools/counters/FIB_ELEVEN.txt` records all six at `F(1,1) off=0` under
-  `fib_anchor.py`, which is a different reading convention from `valfam`'s.
-  If some anchor admits `1,1,2,3,5` inside `Fam`'s denotation, the kernel
-  already speaks it and there is nothing to build.  **This is what freed the
-  two gray rows in §4s** — the buildable reading was already in
-  `find_families`' output and had only lost a tie — and it costs an
-  afternoon against a numeration's week.  Do it before Route B.
-* **Route B — the fourth `(code, step)` pair, `(Fib, 2)`/Zeckendorf.**  §4r
-  priced the third at one `fam_lim`, one membership predicate, one round
-  trip and a `Section Iter` copy, and the `Class` record did not widen.  The
-  differences from `(Fib, 1)`: membership is **no two adjacent 1s** (a
-  one-state automaton, simpler than §4r's two-state), the numeration is
-  NOT redundant so the round trip is `gray_inj`-easy rather than §4r's risky
-  lemma, and **the top of a width is `1010…` and not `1^k`** — which is the
-  fill arm's left-hand side and therefore the only genuinely new shape.
-  Write the oracle first (`tools/ladder/fibmem.py` is the template, and §4o's
-  `gray2check.py` before it): do not state a lemma the Python has not
-  checked against the orbit.
+**THE SPEC IS WRITTEN AND CHECKED.  `python3 tools/ladder/zeckmem.py` prints
+`ZECKMEM: OK`, and `--rows` re-reads the blocks off the six machines.**  §4s's
+addendum states all four facts; the oracle enumerates every one of them
+against the orbit, in the `fibmem.py` / `gray2check.py` tradition.  **Do not
+state a lemma `zeckmem.py` has not checked** — it already caught one
+off-by-one in the fill's parity that would have cost hours in Coq.
+
+* **`Class` does NOT widen.**  Both interior classes fit the existing
+  `(u, t, w, u', t', w')` record: the increment is `[0] ++ rest -> [1] ++
+  rest`, and the carry is `u=[1], t=[1;1], w=[0] -> u'=[0;1], t'=[0;1],
+  w'=[]` at run length `m`, both firing at offset 0 or 1.  Over widths 1..10:
+  88 increments, 133 carries, 10 widenings, **0 unexplained**.  §4i's gate
+  has now held through a fourth code — check that before budgeting.
+* **The round trip should be EASIER than §4r's**, which is where §4r put all
+  its risk.  This numeration is not redundant (no `w0 = w1`), so
+  `fam_of_value` ought to invert outright rather than only on members.
+* **The fill is where the work is**, and it is the one new shape: `1^k` goes
+  to the ALTERNATING string of width `k+1` whose low digit is `(k+1) mod 2`.
+  `(Fib, 1)`'s fill target was a bare run of `0`; `(01)^m` is a run of a
+  two-cell BLOCK, which `Fill`'s prefix/`digit^n`/suffix cannot spell.
+  The obvious dodge — re-read at digit width 2, where `(01)^m` is a bare run
+  of ONE digit and `Fill` needs nothing — is **MEASURED DEAD**: `_weights_pass`
+  at `lens=[2]`, `[3]`, `[4]` returns **zero** weighted families on these rows
+  (42 at `lens=[1]`), so the counter does not decode at any wider digit.  Do
+  not retry it; `Fill` is where the widening has to go.  The parity itself is
+  not new — §4o made exactly that a parameter for `(Gray, 2)`.
+* **DO NOT go looking for the `1,1,2,3,5` reading.**  §4s checked: `fibokb`
+  and this membership are not the same language under identity, reversal,
+  complement, or reversal-and-complement (`zeckmem.py --compare` prints the
+  table).  `fibokb` restricts runs of `1`s, this restricts runs of `0`s.
+  `FIB_ELEVEN.txt` reading these rows at `F(1,1)` is not a contradiction: a
+  consecutive-VALUE test passes under either ladder, because pinning
+  `(Fib, 1)`'s low digit to `0` gives exactly these weights.  What separates
+  them is which representative of a value the machine WRITES — which is what
+  a `ClassSucc` needs and a value test never sees.  And `fit_weights` solves
+  the weights exactly from the enumeration order, so there is no freedom in
+  the reading to go hunting for.
+* **Before anything else, if a weighted family fails only at the overflow:
+  check the class against the WALK.**  `all_strings`' docstring warns that
+  enumerating `b^k` would demand members the machine never reaches.  §4s
+  ruled that out here — at widths 1..8 the class is 1, 2, 3, 5, 8, 13, 21, 34
+  strings and the machine visits exactly those, zero ghosts — which is what
+  made the fill a real target rather than a reading error.
 
 **WHAT NOT TO DO.**
 
