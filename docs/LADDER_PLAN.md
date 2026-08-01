@@ -4084,22 +4084,24 @@ sets that cell, steps back onto the one `qD` just cleared and sets it too
   `fiblazy.py` / `gray2check.py` are the precedent and this is the third time
   it has paid.
 
-## 4z. The base-2 pair: one closer for both, `Hloop` for neither — and the missing half of §4y's price is a CASCADE
+## 4z. The base-2 pair BOARDS, and the missing half of §4y's price was a CASCADE
 
-_Branch `claude/base2-pair-board-hsktcu`, cut from `main` at `46598f9`
-(#120 and #121 both merged; `core_rows.txt` has 8).  Coq 8.18.0 from apt._
+_Branch `claude/base2-pair-board-hsktcu`, cut from `main` at `46598f9` and
+rebased through #122 and #124.  Coq 8.18.0 from apt._
 
-    settled by a board       5143 -> 5143   (99.7%, unchanged)
-    core undecided              8 ->    8
-    0RB shadows of the core     5 ->    5
+    settled by a board       5147 -> 5151   (99.9%)
+    core undecided              6 ->    4
+    0RB shadows of the core     3 ->    1
 
-**No number moved, and the reason is a measurement rather than a stall.**
+**Four rows: the two cores and the two shadows their partners freed.**
+
 §4y priced these two rows at "an inner induction over the carry run, and one
-closer serves both rows".  Both halves of that are now built and checked —
-the induction over the carry run is `Bin3Lap.core`, proved, and one closer
-does serve both rows, for a sharper reason than §4y gave.  What §4y did not
-price is a second, nested obligation underneath the first, and that one is a
-descending-octave cascade.
+closer serves both rows".  Both halves of that hold — the induction over the
+carry run is `Bin3Lap.core`, and one closer does serve both rows, for a
+sharper reason than §4y gave.  What §4y did not price is a second, nested
+obligation underneath the first, `Hloop`, and that one is a
+descending-octave cascade rather than a second carry induction.  It is the
+larger half of the board.
 
 ### The anchor, pinned to an exact `cconf`
 
@@ -4171,14 +4173,14 @@ no `lift_app_blank` anywhere in this file.  `Ter3WallD` needed one; this
 shape does not, and the difference is only where the pattern's last fixed
 cell sits.
 
-### The half that is open, and it is not another carry induction
+### The half §4y did not price, and it is not another carry induction
 
     Hloop :  (qD, (rep [S0] d ++ S1::M, S1,  rep [S0] (2k+1) ++ S1::R))
          --> (qD, (ctl M,       chd M, rep [S0] (2k+3+d) ++ S1::R))
 
 verified over an UNKNOWN context on BOTH sides for `k = 0..5`, `d = 0..3`,
 with `chd M` provably irrelevant (`tools/counters/bin3lem.py`).  `tick`
-proves `k = 0` outright, in eight lines.  `k >= 1` is the whole remaining
+proves `k = 0` outright, in eight lines.  `k >= 1` was the whole remaining
 board, and its shape is
 
     LOOP(k,0) = 1 + <the k-digit field counted out>
@@ -4201,10 +4203,52 @@ LEVEL.  Two things follow.
   `Hloop k` needs `core` only below `k` — but it is three nested inductions,
   not one.
 
-**So §4y's price was half the board.**  "An inner induction over the carry
-run" is `core`, and `core` is done.  The board is `Hloop`, and `Hloop` is a
-cascade.  A session that starts from `Bin3Lap.v` has one obligation left and
-both rows fall the moment it closes, with their shadows, for four rows.
+**So §4y's price was half the board**, and the other half is the cascade.
+
+### How the cascade closes, and it is one identity
+
+`tools/counters/bin3lem.py` states the three pieces against the probe before
+any of them is proved — each over an unknown context on both sides — and
+then the identity that composes them, exact for `k = 1..5`, `d = 0..1`, on
+both rows:
+
+    Hloop(k, d) = D1 ; field-run(k) ; MARK(2k+3) ; CASC(k-1, 0, d+2)
+
+* **`Fld`, and the numeral side stays free.**  `Wp p = Fld p ++ [S0;S1]` —
+  the field word is `MonoCounter.Wp` with its top digit dropped, because the
+  MARKER `S1` above the field plays that part.  So `cview` transfers
+  verbatim: `cview_some_F` and `cview_none_F` are `cview_some_W` and
+  `cview_none_W` with `Wp` read as `Fld`.
+* **`field_run`, and its measure.**  The counter increments at ONE anchor
+  until the field is full.  The measure is `gap p = tops p - p`, where
+  `tops p` is the all-ones numeral of `p`'s width — which is FIXED along the
+  run, and that is the whole reason the measure drops by one a turn.
+* **`mark`, the step the field run cannot take.**  The all-set field meets
+  the marker where a pad would be, so `A1` fires instead of `A0`, `C1`
+  clears the digit below it, and the head comes to rest ON a set cell.  That
+  is what the cascade eats, two at a time, and it is why the cascade exists.
+* **`casc`, one induction on the turn count.**  Each turn is `Hloop` one
+  level up; the level climbs as the set cells run out.  The count of turns
+  being AFFINE in `k` — §4w's `nestcert.MAXCOUNTS = 4` wall — is not an
+  obstacle when it is the induction variable rather than something a
+  certificate has to name.
+
+**The nest is well founded on ONE number.**  `CORE (S j)` needs `CORE j` and
+`LOOP j`; `LOOP (S k)` needs both only strictly below `S k`, because the
+field's carries are strictly inside it (`Fld_carry_lt`: `2j < |Fld p|`) and
+the cascade's levels are strictly under it.  So `core_loop` proves the two
+together by plain induction on the level — no well-founded recursion, no
+mutual fixpoint.
+
+### The two boards
+
+`theories/Machines/Counters/B2L_1RB1LC_1LB1RA_0LC0LD_0RA0RD.v` and
+`B2L_1RB1LC_1LC1RA_0LC0LD_0RA0RD.v`, both `NeverQuasiHaltsSt`, both
+`Print Assumptions` = `functional_extensionality_dep` only.  Each is a table,
+a five-line boot (`vm_compute` at step 5 and step 3), the two composite
+obligations discharged from its own `B0`, and one `exact`.  Their shadows
+`0RB0RA_1RC1LD_1LC1RB_0LD0LA` and `0RB0RA_1RC1LD_1LD1RB_0LD0LA` fell to
+`gen_shadow.py --harvest` with no hand work, as designed.
 
 ### Worth not rediscovering
 
