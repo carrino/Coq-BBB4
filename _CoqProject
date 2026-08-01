@@ -578,6 +578,13 @@ theories/Machines/Counters/Sep2_0RB0RD_1LC1RB_1RA0LC_1LD0LC.v
 theories/Machines/Counters/Comb2_0RB1LC_1LC0RD_1RD0LC_1LA1RB.v
 theories/Machines/Counters/Comb3_0RB1LC_1LC1RD_1LA0LC_0RD1RB.v
 
+# --- counters track: linear-search-carry counters (Drozd rows) ---
+theories/Counters/LinCarry.v
+theories/Machines/Counters/LinC_1RB1LA_0LA1RC_0LD0RC_1LD0RB.v
+theories/Machines/Counters/LinC_1RB0LD_0LC0RB_1LA1RC_0RC1LD.v
+theories/Machines/Counters/LinC_1RB1LA_1LC0RD_0RA0LC_0LA1RD.v
+theories/Tests/CountersLinC_Corruption.v
+
 # --- counters track: wrap bouncer (the two 1RB--- holdouts) ---
 theories/Counters/WrapBouncer.v
 theories/Machines/Counters/WrapBc_R.v
