@@ -65,6 +65,143 @@ From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Counters Require Import WTape MonoCounter LapGlue.
 Import ListNotations.
 
+(** ** The field numeral
+
+    `Hloop`'s inner run counts a FIXED-WIDTH field whose top digit is not a
+    digit at all: the marker [S1] sitting above it plays that part.  So the
+    field word is [MonoCounter.Wp] with its top digit dropped,
+
+      Wp p = Fld p ++ [S0; S1]
+
+    and [cview] transfers verbatim -- [cview_some_F] and [cview_none_F] below
+    are [cview_some_W] and [cview_none_W] with [Wp] read as [Fld]. *)
+
+Fixpoint Fld (p : positive) : list Sym :=
+  match p with
+  | xH => []
+  | xO q => S0 :: S0 :: Fld q
+  | xI q => S0 :: S1 :: Fld q
+  end.
+
+Lemma Wp_Fld : forall p, Wp p = Fld p ++ [S0; S1].
+Proof. induction p; simpl; rewrite ?IHp; reflexivity. Qed.
+
+Lemma cview_some_F : forall p j q, cview p = (j, Some q) ->
+  Fld p = rep [S0; S1] j ++ S0 :: S0 :: Fld q /\
+  Fld (Pos.succ p) = rep [S0; S0] j ++ S0 :: S1 :: Fld q.
+Proof.
+  induction p; intros j q H; simpl in H.
+  - destruct (cview p) as [j' r] eqn:E.
+    inversion H; subst j r.
+    destruct (IHp j' q eq_refl) as (H1 & H2).
+    split; simpl; [rewrite H1 | rewrite H2]; reflexivity.
+  - inversion H; subst j q. split; reflexivity.
+  - discriminate.
+Qed.
+
+(** [cview] never returns [(0, None)]: a zero carry means the low bit is
+    clear, which is the [xO] case, which always has a tail. *)
+Lemma cview_none_S : forall p j, cview p = (j, None) -> exists i, j = S i.
+Proof.
+  induction p; intros j H; simpl in H.
+  - destruct (cview p) as [j' r] eqn:E. inversion H. eauto.
+  - discriminate.
+  - inversion H. eauto.
+Qed.
+
+Lemma cview_none_F : forall p i, cview p = (S i, None) -> Fld p = rep [S0; S1] i.
+Proof.
+  induction p; intros i H; simpl in H.
+  - destruct (cview p) as [j' r] eqn:E.
+    inversion H; subst r i.
+    destruct (cview_none_S p j' E) as (i' & ->).
+    cbn [Fld]. rewrite (IHp i' eq_refl). cbn [rep app]. reflexivity.
+  - discriminate.
+  - inversion H; subst i. reflexivity.
+Qed.
+
+Lemma rep2_length : forall (a b : Sym) k, length (rep [a; b] k) = 2 * k.
+Proof.
+  intros a b. induction k; cbn [rep]; [reflexivity |].
+  rewrite app_length, IHk. cbn [length]. lia.
+Qed.
+
+(** The carry is strictly inside the field, so [core] is only ever called at
+    a level BELOW the field's width -- which is what makes the whole nest
+    well founded. *)
+Lemma Fld_carry_lt : forall p j q, cview p = (j, Some q) ->
+  2 * j < length (Fld p).
+Proof.
+  induction p; intros j q H; simpl in H.
+  - destruct (cview p) as [j' r] eqn:E. inversion H; subst j r.
+    specialize (IHp j' q eq_refl). cbn [Fld length]. lia.
+  - inversion H; subst j q. cbn [Fld length]. lia.
+  - discriminate.
+Qed.
+
+Lemma Fld_succ_length : forall p j q, cview p = (j, Some q) ->
+  length (Fld (Pos.succ p)) = length (Fld p).
+Proof.
+  intros p j q H. destruct (cview_some_F p j q H) as (H1 & H2).
+  rewrite H1, H2, !app_length, !rep2_length. reflexivity.
+Qed.
+
+(** ** The field run's measure
+
+    [tops p] is the all-ones numeral of [p]'s width; it is FIXED along the
+    run (the width does not change until the field is full), so
+    [tops p - p] counts the increments left and drops by one each time. *)
+
+Fixpoint tops (p : positive) : positive :=
+  match p with
+  | xH => xH
+  | xO q => xI (tops q)
+  | xI q => xI (tops q)
+  end.
+
+Lemma tops_le : forall p, Pos.to_nat p <= Pos.to_nat (tops p).
+Proof.
+  induction p; cbn [tops]; rewrite ?Pos2Nat.inj_xI, ?Pos2Nat.inj_xO in *; lia.
+Qed.
+
+Lemma tops_lt : forall p j q, cview p = (j, Some q) ->
+  Pos.to_nat p < Pos.to_nat (tops p).
+Proof.
+  induction p; intros j q H; simpl in H.
+  - destruct (cview p) as [j' r] eqn:E. inversion H; subst r.
+    specialize (IHp j' q eq_refl).
+    cbn [tops]. rewrite !Pos2Nat.inj_xI. lia.
+  - pose proof (tops_le p). cbn [tops].
+    rewrite Pos2Nat.inj_xO, Pos2Nat.inj_xI. lia.
+  - discriminate.
+Qed.
+
+Lemma tops_succ : forall p j q, cview p = (j, Some q) ->
+  tops (Pos.succ p) = tops p.
+Proof.
+  induction p; intros j q H; simpl in H.
+  - destruct (cview p) as [j' r] eqn:E. inversion H; subst r.
+    cbn [Pos.succ tops]. rewrite (IHp j' q eq_refl). reflexivity.
+  - reflexivity.
+  - discriminate.
+Qed.
+
+Definition gap (p : positive) : nat := Pos.to_nat (tops p) - Pos.to_nat p.
+
+Lemma gap_succ : forall p j q, cview p = (j, Some q) -> gap (Pos.succ p) < gap p.
+Proof.
+  intros p j q H. unfold gap.
+  rewrite (tops_succ p j q H), Pos2Nat.inj_succ.
+  pose proof (tops_lt p j q H). lia.
+Qed.
+
+(** [Fpow n] is [2^n]: the field at value zero, [n] digits wide. *)
+Fixpoint Fpow (n : nat) : positive :=
+  match n with 0 => xH | S m => xO (Fpow m) end.
+
+Lemma Fld_Fpow : forall n, Fld (Fpow n) = rep [S0; S0] n.
+Proof. induction n; cbn [Fpow Fld rep app]; [reflexivity | rewrite IHn; reflexivity]. Qed.
+
 Section Bin3Lap.
 
 Variable tm : TM.
@@ -139,6 +276,12 @@ Hypothesis Hbc : forall L R, exists n, 0 < n /\
 Hypothesis HbcC : forall L R, exists k c,
   csteps tm k (qB,(S1::L,S0,R)) = Some c /\ fst c = qC.
 
+Lemma rep0_cons : forall d Y, S0 :: (rep [S0] d ++ Y) = rep [S0] (d + 1) ++ Y.
+Proof.
+  intros d Y. rewrite rep_add, <- app_assoc. cbn [rep app].
+  rewrite rep_slide. reflexivity.
+Qed.
+
 (** ** The descent
 
     [qC] walks left over clear cells and stops on the first set one, which it
@@ -188,51 +331,227 @@ Proof.
   replace (d + 1 + 2) with (0 + 3 + d) by lia. reflexivity.
 Qed.
 
-(** ** The one open lemma
+(** ** The outward scan, and the step it cannot take
 
-    Verified over an unknown context on both sides for [k = 0..5], [d = 0..3]
-    on both rows (`tools/counters/bin3lem.py`); [tick] is its [k = 0] case.
-    [k >= 1] is a descending-octave cascade, not a second carry induction --
-    see this file's header and `docs/LADDER_PLAN.md` §4z. *)
-Hypothesis Hloop : forall k d M R, exists n, 0 < n /\
-  csteps tm n (qD,(rep [S0] d ++ S1 :: M,S1,rep [S0] (2 * k + 1) ++ S1 :: R))
-    = Some (qD,(ctl M,chd M,rep [S0] (2 * k + 3 + d) ++ S1 :: R)).
+    [phOUT] crosses set digits: [A0] sets the pad, [B1] steps over the bit,
+    two steps and two set cells a digit.  [mark] is what happens when the
+    scan runs out of digits -- the MARKER sits where the next pad would be,
+    so [A1] fires instead of [A0], [C1] clears the digit below it, and the
+    head comes to rest ON a set cell.  That is what the cascade then eats
+    two at a time, and it is why the cascade exists at all. *)
 
-(** ** The lap's own induction over the carry run
+Lemma phOUT : forall i L X,
+  csteps tm (i + i) (qA,(L,chd (rep [S0;S1] i ++ X),ctl (rep [S0;S1] i ++ X)))
+    = Some (qA,(rep [S1] (2 * i) ++ L,chd X,ctl X)).
+Proof.
+  induction i as [|i IH]; intros L X.
+  - cbn [rep app Nat.add]. reflexivity.
+  - replace (rep [S0;S1] (S i) ++ X) with (S0 :: S1 :: (rep [S0;S1] i ++ X))
+      by (cbn [rep app]; reflexivity).
+    cbn [chd ctl].
+    replace (S i + S i) with (1 + (1 + (i + i))) by lia.
+    rewrite csteps_add, (uA0 L (S1 :: (rep [S0;S1] i ++ X))). cbn [chd ctl].
+    rewrite csteps_add, (uB1 (S1 :: L) (rep [S0;S1] i ++ X)).
+    rewrite IH.
+    replace (2 * S i) with (2 * i + 2) by lia.
+    rewrite rep_add, <- app_assoc. cbn [rep app]. reflexivity.
+Qed.
 
-    The outward scan reads the counter's digits in pairs while they carry
-    ([A0] sets the pad, [B1] steps over the set bit), so the carry run peels
-    one digit at a time; what closes each level is [Hloop] at that level.
-    The tail is handled through [chd]/[ctl] rather than a fixed [S0::S0::],
-    which is what lets the OVERFLOW anchor -- whose two top cells are blanks
-    the [cconf] does not carry -- be the SAME instance with [w = []], with no
-    [lift_app_blank] anywhere. *)
-Lemma core : forall j M w, chd w = S0 -> chd (ctl w) = S0 ->
+Lemma mark : forall i L R,
+  csteps tm (i + i + 5) (qD,(L,S0,rep [S0;S1] (S i) ++ S1 :: R))
+    = Some (qD,(rep [S1] (2 * i) ++ S0 :: L,S1,rep [S0] 1 ++ S1 :: R)).
+Proof.
+  intros i L R.
+  replace (i + i + 5) with (1 + ((S i + S i) + (1 + 1))) by lia.
+  rewrite csteps_add, (uD0 L (rep [S0;S1] (S i) ++ S1 :: R)).
+  rewrite csteps_add, (phOUT (S i) (S0 :: L) (S1 :: R)). cbn [chd ctl].
+  replace (rep [S1] (2 * S i) ++ S0 :: L)
+    with (S1 :: S1 :: (rep [S1] (2 * i) ++ S0 :: L))
+    by (replace (2 * S i) with (S (S (2 * i))) by lia;
+        cbn [rep app]; reflexivity).
+  rewrite csteps_add, (uA1 (S1 :: S1 :: (rep [S1] (2 * i) ++ S0 :: L)) R).
+  cbn [chd ctl].
+  rewrite (uC1 (S1 :: (rep [S1] (2 * i) ++ S0 :: L)) (S1 :: R)).
+  cbn [chd ctl rep app]. reflexivity.
+Qed.
+
+(** ** The two propositions, and their mutual descent
+
+    [CORE j] is the lap's carry induction; [LOOP k] is the inner run.
+    [CORE (S j)] needs [CORE j] and [LOOP j]; [LOOP (S k)] needs both at
+    every level up to [k] -- the field's carries are strictly inside it
+    ([Fld_carry_lt]) and the cascade's levels are strictly below it.  So one
+    induction on the level proves them together. *)
+
+Definition CORE (j : nat) : Prop :=
+  forall M w, chd w = S0 -> chd (ctl w) = S0 ->
   exists n, 0 < n /\
   csteps tm n (qA,(M,chd (rep [S0;S1] j ++ w),ctl (rep [S0;S1] j ++ w)))
     = Some (qD,(ctl M,chd M,rep [S0] (2 * j + 1) ++ S1 :: ctl (ctl w))).
+
+Definition LOOP (k : nat) : Prop :=
+  forall d M R, exists n, 0 < n /\
+  csteps tm n (qD,(rep [S0] d ++ S1 :: M,S1,rep [S0] (2 * k + 1) ++ S1 :: R))
+    = Some (qD,(ctl M,chd M,rep [S0] (2 * k + 3 + d) ++ S1 :: R)).
+
+Lemma core_0 : CORE 0.
 Proof.
-  induction j as [|j IH]; intros M w Hw Hw2.
-  - (* base: set the stop digit and hand over to the composite *)
-    destruct (Hbc M (ctl (ctl w))) as (n & Hn & Hrun).
-    exists (1 + n). split; [lia |].
-    replace (2 * 0 + 1) with 1 by lia. cbn [rep app]. rewrite Hw.
-    rewrite csteps_add, (uA0 M (ctl w)), Hw2. exact Hrun.
-  - (* step: cross one carrying digit, recurse, then close with Hloop *)
-    replace (rep [S0;S1] (S j) ++ w)
-      with (S0 :: S1 :: (rep [S0;S1] j ++ w)) by (cbn [rep app]; reflexivity).
-    cbn [chd ctl].
-    destruct (IH (S1 :: S1 :: M) w Hw Hw2) as (n1 & Hn1 & H1).
-    destruct (Hloop j 0 M (ctl (ctl w))) as (n2 & Hn2 & H2).
-    exists (1 + (1 + (n1 + n2))). split; [lia |].
-    rewrite csteps_add, (uA0 M (S1 :: (rep [S0;S1] j ++ w))).
-    cbn [chd ctl].
-    rewrite csteps_add, (uB1 (S1 :: M) (rep [S0;S1] j ++ w)).
-    rewrite csteps_add, H1. cbn [chd ctl].
-    cbn [rep app] in H2.
-    replace (2 * S j + 1) with (2 * j + 3 + 0) by lia.
-    exact H2.
+  intros M w Hw Hw2.
+  destruct (Hbc M (ctl (ctl w))) as (n & Hn & Hrun).
+  exists (1 + n). split; [lia |].
+  replace (2 * 0 + 1) with 1 by lia. cbn [rep app]. rewrite Hw.
+  rewrite csteps_add, (uA0 M (ctl w)), Hw2. exact Hrun.
 Qed.
+
+Lemma core_S : forall j, CORE j -> LOOP j -> CORE (S j).
+Proof.
+  intros j IH HL M w Hw Hw2.
+  replace (rep [S0;S1] (S j) ++ w)
+    with (S0 :: S1 :: (rep [S0;S1] j ++ w)) by (cbn [rep app]; reflexivity).
+  cbn [chd ctl].
+  destruct (IH (S1 :: S1 :: M) w Hw Hw2) as (n1 & Hn1 & H1).
+  destruct (HL 0 M (ctl (ctl w))) as (n2 & Hn2 & H2).
+  exists (1 + (1 + (n1 + n2))). split; [lia |].
+  rewrite csteps_add, (uA0 M (S1 :: (rep [S0;S1] j ++ w))). cbn [chd ctl].
+  rewrite csteps_add, (uB1 (S1 :: M) (rep [S0;S1] j ++ w)).
+  rewrite csteps_add, H1. cbn [chd ctl].
+  cbn [rep app] in H2.
+  replace (2 * S j + 1) with (2 * j + 3 + 0) by lia.
+  exact H2.
+Qed.
+
+Lemma loop_0 : LOOP 0.
+Proof.
+  intros d M R. exists (d + 6). split; [lia |].
+  replace (2 * 0 + 1) with 1 by lia.
+  replace (2 * 0 + 3 + d) with (0 + 3 + d) by lia.
+  apply tick.
+Qed.
+
+(** The cascade, as one induction on the turn count: every turn is [LOOP]
+    one level up, eating two set cells and laying down two clear ones.  The
+    LAST turn is the one that carries [d]; every other carries none. *)
+Lemma casc : forall t m d M R,
+  (forall x, x <= m + t -> LOOP x) ->
+  exists n, csteps tm n
+      (qD,(rep [S1] (2 * t) ++ rep [S0] d ++ S1 :: M,S1,
+           rep [S0] (2 * m + 1) ++ S1 :: R))
+    = Some (qD,(ctl M,chd M,rep [S0] (2 * (m + t) + 3 + d) ++ S1 :: R)).
+Proof.
+  induction t as [|t IH]; intros m d M R HL.
+  - destruct (HL m ltac:(lia) d M R) as (n & _ & Hrun).
+    exists n. replace (2 * 0) with 0 by lia. cbn [rep app].
+    replace (2 * (m + 0) + 3 + d) with (2 * m + 3 + d) by lia.
+    exact Hrun.
+  - destruct (HL m ltac:(lia) 0
+      (rep [S1] (2 * t + 1) ++ rep [S0] d ++ S1 :: M) R) as (n1 & _ & H1).
+    destruct (IH (S m) d M R ltac:(intros x Hx; apply HL; lia)) as (n2 & H2).
+    exists (n1 + n2).
+    replace (rep [S1] (2 * S t) ++ rep [S0] d ++ S1 :: M)
+      with (S1 :: (rep [S1] (2 * t + 1) ++ rep [S0] d ++ S1 :: M))
+      by (replace (2 * S t) with (S (2 * t + 1)) by lia;
+          cbn [rep app]; reflexivity).
+    cbn [rep app] in H1.
+    rewrite csteps_add, H1.
+    replace (rep [S1] (2 * t + 1) ++ rep [S0] d ++ S1 :: M)
+      with (S1 :: (rep [S1] (2 * t) ++ rep [S0] d ++ S1 :: M))
+      by (replace (2 * t + 1) with (S (2 * t)) by lia;
+          cbn [rep app]; reflexivity).
+    cbn [chd ctl].
+    replace (2 * m + 3 + 0) with (2 * S m + 1) by lia.
+    rewrite H2.
+    replace (2 * (S m + t) + 3 + d) with (2 * (m + S t) + 3 + d) by lia.
+    reflexivity.
+Qed.
+
+(** The field run: increments at ONE anchor until the field is full.  The
+    measure is [gap] -- the distance to the all-ones numeral, which [tops]
+    holds fixed along the run. *)
+Lemma field_run : forall g w p L R,
+  (forall j, j < w -> CORE j) ->
+  gap p <= g ->
+  length (Fld p) = 2 * w ->
+  exists s, csteps tm s (qD,(L,S0,Fld p ++ S1 :: R))
+          = Some (qD,(L,S0,rep [S0;S1] w ++ S1 :: R)).
+Proof.
+  induction g as [|g IH]; intros w p L R HC Hg Hlen;
+    destruct (cview p) as [j r] eqn:E; destruct r as [q|].
+  - exfalso. pose proof (tops_lt p j q E). unfold gap in Hg. lia.
+  - destruct (cview_none_S p j E) as (i & Hi). subst j.
+    pose proof (cview_none_F p i E) as HF.
+    rewrite HF in Hlen. rewrite rep2_length in Hlen.
+    exists 0. cbn [csteps]. rewrite HF.
+    replace w with i by lia. reflexivity.
+  - destruct (cview_some_F p j q E) as (H1 & H2).
+    assert (Hj : j < w) by (pose proof (Fld_carry_lt p j q E); lia).
+    destruct (HC j Hj (S0 :: L) (S0 :: S0 :: (Fld q ++ S1 :: R))
+                 eq_refl eq_refl) as (n1 & _ & Hrun).
+    destruct (IH w (Pos.succ p) L R HC
+                ltac:(pose proof (gap_succ p j q E); lia)
+                ltac:(rewrite (Fld_succ_length p j q E); exact Hlen))
+      as (s & Hs).
+    exists (1 + (n1 + s)).
+    rewrite H1, <- app_assoc. cbn [app].
+    rewrite csteps_add,
+      (uD0 L (rep [S0;S1] j ++ S0 :: S0 :: (Fld q ++ S1 :: R))).
+    rewrite csteps_add, Hrun. cbn [chd ctl].
+    replace (rep [S0] (2 * j + 1) ++ S1 :: (Fld q ++ S1 :: R))
+      with (Fld (Pos.succ p) ++ S1 :: R)
+      by (rewrite H2, rep_dbl, rep_add, <- !app_assoc;
+          cbn [rep app]; reflexivity).
+    exact Hs.
+  - destruct (cview_none_S p j E) as (i & Hi). subst j.
+    pose proof (cview_none_F p i E) as HF.
+    rewrite HF in Hlen. rewrite rep2_length in Hlen.
+    exists 0. cbn [csteps]. rewrite HF.
+    replace w with i by lia. reflexivity.
+Qed.
+
+(** [LOOP (S k)] = D1 ; the field run ; MARK ; the cascade.  Every level it
+    calls is strictly below [S k]. *)
+Lemma loop_S : forall k,
+  (forall j, j <= k -> CORE j) -> (forall m, m <= k -> LOOP m) -> LOOP (S k).
+Proof.
+  intros k HC HL d M R.
+  destruct (field_run (gap (Fpow (S k))) (S k) (Fpow (S k))
+              (rep [S0] (d + 1) ++ S1 :: M) R
+              (fun j Hj => HC j ltac:(lia)) (le_n _)
+              ltac:(rewrite Fld_Fpow, rep2_length; reflexivity)) as (s & Hs).
+  destruct (casc k 0 (d + 2) M R (fun x Hx => HL x ltac:(lia))) as (nc & Hc).
+  exists (1 + (s + ((k + k + 5) + nc))). split; [lia |].
+  replace (2 * S k + 1) with (S (2 * k + 2)) by lia. cbn [rep app].
+  rewrite csteps_add,
+    (uD1 (rep [S0] d ++ S1 :: M) (S0 :: (rep [S0] (2 * k + 2) ++ S1 :: R))).
+  cbn [chd ctl]. rewrite rep0_cons.
+  replace (rep [S0] (2 * k + 2)) with (Fld (Fpow (S k)))
+    by (rewrite Fld_Fpow, rep_dbl; f_equal; lia).
+  rewrite csteps_add, Hs.
+  rewrite csteps_add, (mark k (rep [S0] (d + 1) ++ S1 :: M) R).
+  rewrite rep0_cons.
+  replace (d + 1 + 1) with (d + 2) by lia.
+  replace (2 * 0 + 1) with 1 in Hc by lia.
+  rewrite Hc.
+  replace (2 * (0 + k) + 3 + (d + 2)) with (2 * S k + 3 + d) by lia.
+  reflexivity.
+Qed.
+
+Lemma core_loop : forall n,
+  (forall j, j <= n -> CORE j) /\ (forall m, m <= n -> LOOP m).
+Proof.
+  induction n as [|n [IHC IHL]].
+  - split; intros x Hx; replace x with 0 by lia;
+      [apply core_0 | apply loop_0].
+  - split; intros x Hx; destruct (Nat.eq_dec x (S n)) as [->|Hne].
+    + apply core_S; [apply IHC | apply IHL]; lia.
+    + apply IHC. lia.
+    + apply loop_S; assumption.
+    + apply IHL. lia.
+Qed.
+
+Lemma core : forall j, CORE j.
+Proof. intro j. destruct (core_loop j) as (H & _). apply H. lia. Qed.
+
+
 
 (** The same walk, stopped at the composite's door: this is where [qB] and
     [qC] are witnessed, and it needs no [Hloop]. *)
