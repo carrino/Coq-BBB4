@@ -4531,3 +4531,19 @@ LADDER_PLAN §4u.  Coq 8.18.0 from apt (~1 min).
   board adds `Census/ShadowBoard.vo` and ~1 min.  Two `IRules_Batch_*` at
   8.2 GB will not fit in 14 GB together, so the full `Closeout.vo` closure was
   run at `-j1` alongside the sweep rather than `-j3`.
+- **The stale verdict did NOT generalise, and that is worth recording.**  All
+  fourteen remaining "none closed" core rows were re-run instrumented at the
+  stock cap (`tools/ladder/residue14_4t.{jsonl,log}`, 14 rows, ~17 min) and
+  **all fourteen still fail**.  `1RB1LA_0LA1RC_0RD0RB_1RA---` was stale on its
+  own account; the bucket is not hiding more of the same.  55 candidates tried
+  out of a pool of 402.
+- **`family_pool` corroborates §4s's floor reading from the pool side.**  The
+  three `1RB---` rows are the only ones whose ENTIRE pool sits at chain 8 —
+  `min_chain`, the floor — 24 families each, none reading past the threshold
+  that admitted them.  Every other row in the bucket reads at 32..200.  They
+  are the rows §4s's `--numeration` comparison exists for, and §4s already
+  measured where it takes them (Zeckendorf tops).
+- **`pkill -f "<pattern>"` matches the killing shell's own command line.**
+  `pkill -f "Makefile.coq -j1"` killed the shell that was about to start the
+  `-j3` build, so the restart never happened and the log was never created.
+  Use a pattern that cannot match the invocation, or `pgrep` the PID first.

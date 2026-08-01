@@ -3303,12 +3303,30 @@ measurement — the same data counted rather than listed:
 
 Folding `tried` over the fourteen rows that remain in the bucket:
 
-     18  family not covered
-     14  overflow leaves the family
+     19  family not covered
+     13  overflow leaves the family
      13  the fill DECREASES the outer parameter, so the family is finite:
            it is a reading of the window, not of the machine
       5  reachable set too short to check
       5  no arm replayed to anchor
+
+**`family_pool` corroborates 4s's floor reading from the other side.**  The
+three `1RB---` rows in this bucket are the only rows whose entire pool sits at
+chain **8** — `min_chain`, the FLOOR — 24 families each and not one of them
+reading more than the threshold that admitted it.  Every other row in the
+bucket reads at 32..200.  That is precisely the condition 4s's `weak_chain`
+comparison was written for, and it says the 24 are junk rather than
+candidates; 4s's `--numeration` pass is what these three want, and 4s already
+measured where it takes them (Zeckendorf tops).  The pool line makes it
+visible without running the pass.
+
+55 candidates tried out of a pool of 402.  The run is committed as
+`tools/ladder/residue14_4t.{jsonl,log}` and it is also the answer to "did the
+stale verdict generalise": **no.**  All fourteen re-run at the stock cap and
+all fourteen still fail, so `1RB1LA_0LA1RC_0RD0RB_1RA---` was stale on its own
+account and the bucket is not hiding more of the same.  That is worth as much
+as a row -- it is the difference between "the sweep is out of date" and "one
+certificate was".
 
 Three of those are not statements about the family at all.  `reachable set too
 short to check` accounts for one row entirely (`0RB0RD_1LC1RB_1RA0LC_1LD0LC`,
@@ -3318,13 +3336,19 @@ DECREASES the outer parameter` accounts for four rows and says the searcher
 read a window rather than the machine.
 
 **The interesting bucket is `overflow leaves the family`, and it is 4s's
-fingerprint again.**  On three rows every candidate carries
-`fails_only_at_overflow: true`:
+fingerprint again.**  It falls on exactly four rows, two of which fail at the
+top of a width and NOWHERE else:
 
     1RB0RD_1LB1LC_1RC0RA_0LB1RD   39   4/4 at overflow
     1RB0RD_1LC1RA_0RB0LC_1LD0LA   40   4/4 at overflow
-    1RB1LC_0LC0RB_1LA1RD_0LA0RD   55   4/4 at overflow   <- shadow partner
+    1RB1LC_0LC0RB_1LA1RD_0LA0RD   55   3/4 at overflow   <- shadow partner
     1RB1LD_1LC1RA_0RB0LC_0RA0LD   31   2/4 at overflow   <- shadow partner
+
+(Two rows are `all_failures_at_overflow`; the other two mix overflow with
+`family not covered`.  The committed `num59_after.jsonl` put
+`1RB1LC_0LC0RB_1LA1RD_0LA0RD` at 4/4 -- one more instance of a JSONL verdict
+being a record of the day rather than of the machine, which is why the live
+run is the one quoted here.)
 
 That is the same shape 4s measured on the fibonacci six — the residue is the
 FILL arm at the top of a width — reached here in base 2 rather than in

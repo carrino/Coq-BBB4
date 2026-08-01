@@ -3,3 +3,13 @@
 0RB0RD_1LC1RB_1RA0LC_1LB0LC    {'closed': False, 'rules': 5, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 24.2, 'reason': 'families found but none closed'}
 1RB1LC_1LB1RA_0LC0LD_0RA0RD    {'closed': False, 'rules': 3, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 98.9, 'reason': 'families found but none closed'}
 1RB---_0LC1RD_1LB1RD_1LB0RD    {'closed': False, 'rules': 4, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 204.0, 'reason': 'families found but none closed'}
+1RB---_1LC0RB_0LD1RB_1LC1RB    {'closed': False, 'rules': 4, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 204.1, 'reason': 'families found but none closed'}
+1RB---_1LC1RD_0LB1RD_1LC0RD    {'closed': False, 'rules': 4, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 204.0, 'reason': 'families found but none closed'}
+0RB1LC_1LC1RD_1LA0LC_0RD1RB    {'closed': False, 'rules': 17, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 28.1, 'reason': 'families found but none closed'}
+0RB1LC_1LC0RD_1RD0LC_1LA1RB    {'closed': False, 'rules': 18, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 17.9, 'reason': 'families found but none closed'}
+1RB1LD_1LC1RA_0RB0LC_0RA0LD    {'closed': False, 'rules': 3, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 42.9, 'reason': 'families found but none closed'}
+1RB0RD_1LB1LC_1RC0RA_0LB1RD    {'closed': False, 'rules': 2, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 29.3, 'reason': 'families found but none closed'}
+1RB0RD_1LC1RA_0RB0LC_1LD0LA    {'closed': False, 'rules': 2, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 35.3, 'reason': 'families found but none closed'}
+1RB1LC_0LC0RB_1LA1RD_0LA0RD    {'closed': False, 'rules': 3, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 37.5, 'reason': 'families found but none closed'}
+1RB1LC_1LC1RA_0LC0LD_0RA0RD    {'closed': False, 'rules': 3, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 62.5, 'reason': 'families found but none closed'}
+EXIT=0
