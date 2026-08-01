@@ -5489,7 +5489,23 @@ Boarding it reads 4 core -> 3 and takes its `0RB` shadow with it.
 
 ## What is now CLOSED, so nobody re-opens it
 
-* **Row 1 `1RB0RB_1LC0RC_1RA0LD_0LB0LC` has no route left.**  `ReachStI`
+* **Row 1 `1RB0RB_1LC0RC_1RA0LD_0LB0LC` is QUADRATIC, and that is its
+  lead.**  `LADDER_NOFAM.md`'s unary-stripe reading is right and now has a
+  growth law: the first step at which the stripe count `p = #011` reaches a
+  value gives `t ≈ 434 p²`, converging cleanly (p=20 at 178,000; p=116 at
+  5,840,000), with the tape width linear in `p`.  It is the ONLY polynomial
+  row of the four — rows 2 and 3 are Fibonacci counters with exponential
+  laps — which is exactly why the word-rewriting lever does not read it and
+  why its `max R = 3`.  The obvious inference -- "so point `RepWL` at it" -- was
+  CHECKED AND IS WRONG: row 1 already survives both committed RepWL sweeps
+  (`repwl2_survivors.txt` 2753, `repwl_residue_survivors.txt` 3102) out to
+  rung `(L,T) = (6,4)`, and block length 6 covers the period-3 stripe, so
+  it is not a rung-size gap.  What the quadratic law changes is the TARGET,
+  not the tool: the row wants a quadratic-counter reading, which is closer
+  to `theories/Counters/` (`LinCarry`, `Sep2Counter`) than to anything rows
+  2 and 3 need.  Nobody has read it against those.  A hand reading, not a
+  search.
+* **The `ReachStI` route on row 1 is closed.**  `ReachStI`
   certifies `StA`/`StB`/`StC`; `StD` is PERMANENTLY outside the tier, not
   merely unsearched.  Bellman-Ford is complete per `(B,C)`, and the cycle
   `(StA,1,1,0) -A1-> (StB,0,0,0) -B0-> (StC,0,0,1) -C0-> (StA,1,1,0)` is

@@ -103,12 +103,53 @@ that one.  The file also serves as the worked example of `LiveAll.v` in
 use.
 
 **So row 1 has three of four states and cannot get the fourth this way.**
-With the lever also excluded (section 1), row 1 needs mathematics that does
-not exist yet — it is now the least tractable of the four, not the most.
+With the lever also excluded (section 1), row 1 needs a different engine.
 Its gap ratio of 2.66 remains correct and remains inside the tier; the
 ratio says the tier is *not excluded by recurrence speed*, and this section
 says it is excluded by measure shape.  Those are different obstructions and
 the gap ratio was never evidence against this one.
+
+### 2d. But the row is QUADRATIC, and that is the lead
+
+`LADDER_NOFAM.md`'s unary-stripe reading (lines 90, 148, 169) is right, and
+measuring it gives the growth law nobody had written down.  The right end
+of the tape is a fixed suffix `…11011011011011011010011111` for the whole
+run, and the stripe count `p = #011` grows while the left region fills with
+`1`s and drains (`ones` swings between 294 and 1,744 at consecutive
+samples).  The first step at which `p` reaches a given value:
+
+| p | first t | t / p² |
+|---|---|---|
+| 20 | 178,000 | 445.0 |
+| 44 | 848,000 | 438.0 |
+| 68 | 2,014,000 | 435.6 |
+| 92 | 3,678,000 | 434.6 |
+| 116 | 5,840,000 | 434.0 |
+
+**`t ≈ 434 p²`, converging cleanly, with the tape width linear in `p`.**
+
+So row 1 is a **quadratic** unary counter — the only polynomial row of the
+four.  Rows 2 and 3 are Fibonacci counters with exponential laps; row 1 is
+not in that family at all, which is exactly why the word-rewriting lever
+does not read it and why `max R = 3`.  Its laps are `O(p) = O(width)` and
+there are `p` of them, which is where the 2.66 gap ratio comes from.
+
+The obvious inference from that shape — "so point `RepWL` at it" — **was
+checked and is wrong.**  Row 1 is already a survivor of BOTH committed
+RepWL sweeps (`tools/repwl2_survivors.txt` line 2753,
+`tools/repwl_residue_survivors.txt` line 3102), which ran the rung ladder
+out to `(L,T) = (6,4)`.  Block length 6 covers the period-3 `011` stripe
+comfortably, so this is not a rung-size gap and widening the ladder is the
+same trap as widening `maxBC` was in §2b.
+
+So row 1 has no open route among the existing engines: `ReachStI`
+permanently dead for `StD`, the lever inapplicable, the `NGramHist` closure
+covering nothing, and `RepWL` swept.  What the quadratic law changes is the
+TARGET rather than the tool — the row wants a quadratic-counter argument,
+which is a different animal from rows 2 and 3's Fibonacci counters and
+closer to the shapes already in `theories/Counters/` (`LinCarry`,
+`Sep2Counter`).  Nobody has read this row against those, and that is the
+one honest next experiment; it is not a search, it is a hand reading.
 
 ## 3. Row 2 — the phi reading is CONFIRMED, exactly, and the docs are
    reconciled
