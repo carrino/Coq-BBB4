@@ -285,6 +285,17 @@ So what is left on this block is Coq and not discovery: a `Fib` constructor on
 `fam_of_value F (fam_value F ds) (length ds) = Some ds` over the membership
 predicate above.
 
+**[2026-08-01: the SIX are boarded too.]**  `LadderCheck` section 3d is the
+class law for the lazy representative and section 12 the board it feeds;
+`docs/LADDER_PLAN.md` §4x is the write-up.  The widening turned out to be a
+second `Class` record (`ClassW`, over a word run) rather than a widening of
+the first, and NO `Fill` change at all -- at `FibL` the fill is
+`LadderFam.lazfill`, a function of the width, so both parities live in one
+definition and the family stays one-phase.  What a weighted numeration
+actually costs the interface is a FLOOR (`fam_lo`), because a width does not
+spell every value below its ceiling.  With that, the `1RB---` population is
+DONE: all 24 three-state core rows are boarded.
+
 **[Built in wave 4r, and it boarded exactly these five.]**  `LadderFam`'s
 `Fib` code, `LadderCheck` 3c/5c/11.  Read the rest of this section as a record
 of the five, not of the population: the membership predicate above is the

@@ -96,7 +96,7 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
 
    _The two counts move every wave; the row files are the authority and
    `python3 tools/closeout/audit.py` prints them live.  15 + 5 is the
-   2026-08-01 reading (5,136 of the frozen 5,156 settled, 99.6%)._
+   2026-08-01 reading (5,142 of the frozen 5,156 settled, 99.7%)._
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
 frozen table under completion of undefined transitions, non-start state swaps,
@@ -112,7 +112,7 @@ on type-in-type, unsafe (co)fixpoints, or assumed positivity.
 **It is not a proof that BBB(4) = 32,779,478.**  One thing is missing before
 the record itself is a theorem here:
 
-1. **The 15 core machines (and their 5 shadows).**  Any of them could, for
+1. **The 9 core machines (and their 5 shadows).**  Any of them could, for
    all this development knows, be a quasihalter with a larger score.  That is
    what undecided means.  The list is `tools/closeout/core_rows.txt` and the
    map is [`RESIDUE_MAP.md`](RESIDUE_MAP.md).
@@ -127,7 +127,7 @@ a binary-numeral fuel (`Checkers/TCyclerN.cstepsN`, ~17 s), and since
 section used to ask for, carried through `covers_iqh_champ_at` and the
 swap/mirror lemmas, and `tools/closeout/inventory.py` boards the row as kind
 `iqhch`.  So `bbb4_target`'s bound is attained by a machine the theorem
-decides, not merely stated.  It stays a lower bound only: closing the 15 is
+decides, not merely stated.  It stays a lower bound only: closing the 9 is
 what would turn it into the value.
 
 _Two gaps this section used to list are closed.  The score bound existing only
@@ -143,15 +143,15 @@ the other 5,135 boarded rows instead of coarsening all of them to 32.8M._
 So the honest one-line summary is:
 
 > Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except 20 still-undecided machines (15
+> 32,779,478 or never quasihalts, except 14 still-undecided machines (9
 > core rows and their 5 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The bound is ATTAINED (the
 > champion is boarded, so BBB(4) >= 32,779,478), but the BBB(4) *value*
-> does not follow from what is here while the 17 stand.
+> does not follow from what is here while the 14 stand.
 
-## Scope of the 15
+## Scope of the 9
 
-All 15 core machines are residue — machines no engine in this repository
+All 9 core machines are residue — machines no engine in this repository
 settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28
