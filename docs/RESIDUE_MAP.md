@@ -10,8 +10,8 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**9 rows as of this commit — 6 distinct core machines + 3 0RB
-re-root shadows.**  A shadow needs no new mathematics, but it does need its
+_**5 rows as of this commit — 4 distinct core machines + 1 0RB
+re-root shadow.**  A shadow needs no new mathematics, but it does need its
 own board: boarding a core machine moves its shadow into `core_rows.txt`
 rather than settling it, so budget the pair (2026-08-01; worked example
 `Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v`).  The count moves every wave, so
@@ -93,11 +93,10 @@ lists partition `core_rows.txt` exactly):
 
 | n | furthest gate today | | n | furthest gate today |
 |--:|---|---|--:|---|
-| 3 | no interior `j = S j'` chain | | 1 | no interior `j = 0` chain |
-| 2 | no inner interior chain | | 1 | no inner family at `pow2 j` |
-| 1 | no gap-free two-form family | | | |
+| 1 | no interior `j = S j'` chain | | 1 | no gap-free two-form family |
+| 1 | no inner interior chain | | 1 | no inner family at `pow2 j` |
 
-**Two gates are now EMPTY.**  `register step does not close` lost its last
+**One row per gate, and three gates are now EMPTY.**  `register step does not close` lost its last
 row, `1RB1LA_0LA1RC_0RD0RB_1RA---`, in wave 4u along with its shadow — and
 that verdict had been stale rather than negative: the row closes today at the
 defaults in 60 s, and the sweep that said otherwise differed in its arm set,
@@ -127,19 +126,18 @@ and its shadow.  **Read a gate label as "where the emitter stopped", never as
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
 | `-`/`no-anchor` | 2 | 1 no anchor, 1 no overflow phase at K=6 |
-| `EXP3`/`EXP3` | 2 | 2 base-2 counters with a `3^c` lap (wave 4y) |
 | `HIGHER`/`HIGHER` | 1 | 1 no family at any anchor |
 | `AFFINE`/`EXP2` | 1 | 1 no inner family |
 
-**What that table now says:** three of the six measure NON-AFFINE on both
-branches (`EXP3` 2, `HIGHER` 1), two never decode as a counter under any
-alphabet, and exactly one is affine on either branch.  The `AFFINE`/`HIGHER`
-pair that used to sit here is what wave 37 boarded, and it did not go out
-through this table's route at all.  At six rows the shape column is worth
-less than the per-row notes below — read them individually.  And `EXP3` is a lap shape, not a radix: wave 4y measured its
-two remaining rows as **base 2** counters whose lap grows like `3^c`, where
-the `Ter3Wall*` rows carrying the same label really are base 3.  When the
-question is the radix, read the ALPHABET column.
+**What that table now says, and why you should stop reading it.**  At four
+rows: two never decode as a counter under any alphabet, one is `HIGHER` on
+both branches, one is affine on its interior.  But the column has now been
+emptied twice from underneath by rows that went out through routes it does
+not model — the `AFFINE`/`HIGHER` pair in wave 37 (re-read as word-rewriting
+systems) and the `EXP3` pair in #123 (base-2 counters whose whole geometric
+lap rides inside `LapGlue`'s existential step count).  **A non-affine shape
+measurement has never once predicted that a row was hard.**  Read the
+per-row notes below instead.
 
 **The `QUAD` column is gone, and it is the caution worth keeping.**  It held
 four rows whose arm really is quadratic — a second difference of exactly 2,
@@ -272,32 +270,34 @@ three times — though all four rows boarded anyway, off the ladder).
 
 ## Where a newcomer should probably start
 
-At six rows the useful unit is the row, not the bucket.  All six, with
+At four rows the useful unit is the row, not the bucket.  All four, with
 what is known about each:
 
-**The two `1RB1LC` siblings — measured, and the measurement is the lead.**
-They differ from each other in **exactly one transition** (`B0`: `1LB` vs
-`1LC`), and #120's `tools/counters/ter3_scan.py` swept every blank-side
-anchor, every 0/1/2-cell prefix and every 2-cell radix on both:
+**BOARDED, #123 — and this page had just called the shape unreachable.**
+The two `1RB1LC` siblings (`1RB1LC_1LB1RA_0LC0LD_0RA0RD` and
+`1RB1LC_1LC1RA_0LC0LD_0RA0RD`, one transition apart at `B0`) went out
+together with their two shadows, both `NeverQuasiHaltsSt`, both
+`functional_extensionality_dep` only.  `theories/Counters/Bin3Lap.v` plus
+`Machines/Counters/B2L_*.v`.
 
-| row | shadow | anchor | reading | lap |
-|---|---|---|---|---|
-| `1RB1LC_1LB1RA_0LC0LD_0RA0RD` | ⬩+1 | `(StA, ([], S0, <digits>))` | base 2, `{00, 10}` | `3.5*3^c + c + 2.5` |
-| `1RB1LC_1LC1RA_0LC0LD_0RA0RD` | ⬩+1 | `(StA, ([], S0, <digits>))` | base 2, `{00, 10}` | `3*3^c + 2c + 1` |
-
-Both exact and consecutive from 0 with zero decode failures, each corroborated
-at two further anchors (`C1`, `D0`).  **No base-3 reading exists at any anchor
-or prefix on either** — this map used to call them base-3 by inference from
-their `EXP3` label and their one-transition distance from
-`1RB1RC_1LA0LB_1LD0RD_1LB0RC` (now boarded, wave 4y, and genuinely base 3).
-The inference was wrong on both counts, and the shape table above says why:
-`EXP3` names a LAP that grows like `3^j`, not a radix.
-
-So what these two need is not `Ter3Wall*` but a base-2 counter whose lap is
+**The claim this section made was: "a base-2 counter whose lap is
 `α*3^c + βc + γ` — a shape no closer in the tree has: `LapGlue` glues AFFINE
-laps and `LadderCheck`'s families are all affine-lapped too.  Whether the
-half-integer coefficient on the first row survives a change of anchor is
-unmeasured and is the cheapest next question (it takes minutes and no Coq).
+laps."**  It was wrong twice over.  No new closer was needed at all: the
+board uses the **plain** `LapGlue.glue_neverqh`, at the anchor
+`Cf p = (StD, ([], S0, Wp p))` with `MonoCounter.Wp` verbatim, `Cf` fitting
+with no offset because all four states occur in every lap.  And the reason
+the lap shape never mattered is written on this very page, three sections
+down: **`LapGlue`'s lap obligation is an existential over step counts, so a
+cost never has to be written down.**  The gap between `3.5*3^c + c + 2.5`
+and `3^(c+1) + 2c + 1` rides inside that existential and is never named in
+the proof.  This document contained the refutation of its own claim and
+still made it.
+
+*(The mathematics that was actually open was the cascade — `Bin3Lap`'s
+`Hloop`, that `LOOP (S k) = D1 ; field run ; MARK ; CASC` closes by one
+induction on the turn count with the level climbing as the set cells run
+out.  The one-transition difference between the rows is absorbed by `Hbc`:
+`bc_selfB` for `1LB`, `bc_toC` for `1LC`.)*
 
 **Measured, with a named blocker.**
 
@@ -319,18 +319,18 @@ word-rewriting system once one half-tape is read as a unary run — the
 argument on the macro rules for `StD`.  `theories/Machines/Mxdys4/NGX_*.v`;
 method in `docs/WAVE36_MXDYS_FOUR.md` §§2a, 2b, 4, 8.
 
-**A second, orthogonal reading of the same list.**  Wave 36's
+**A second, orthogonal reading, and it is the one that survived.**  Wave 36's
 `tools/mxdys4/gaps.py` is a cheap a-priori triage for the REACHST tier: run
 3M steps and compare each state's worst recurrence gap to the final tape
 width.  Over the core list as it stood at eight rows **it split with no
-middle** — six sat between 1.00 and 2.65, and two were four orders of
-magnitude out.  Those six are exactly the six left on this page; the two
-walls are exactly what wave 37 boarded.  That is a different axis from the gate labels above (which
-are about the *counter* emitter), and on the six it says
-`docs/REACHST_TIER.md`'s route is not excluded and every "missing q" the
-sweeps report is a search gap worth attacking.  The two walls are the two
-rows wave 37 boarded by hand, so **every row left on this table is inside
-the tier's reach**.  Full table and method: `docs/WAVE36_MXDYS_FOUR.md` §3a.
+middle** — six between 1.00 and 2.65, two four orders of magnitude out — and
+the two walls are exactly the two rows wave 37 then boarded by hand.  So
+**every row left on this table is inside the tier's reach** (1.00, 1.04, 1.11
+and 2.65), `docs/REACHST_TIER.md`'s route is excluded on none of them, and
+every "missing q" the sweeps report is a search gap rather than a wall.  That
+is a different axis from the gate labels above, which are about the *counter*
+emitter; of the two, this is the one that has not yet been wrong.  Full table
+and method: `docs/WAVE36_MXDYS_FOUR.md` §3a.
 
 **The φ row is the cheapest lead on the list, and this table used to hide
 it.**  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` is filed above as "no family at any
@@ -345,12 +345,12 @@ row is LOCATING ITS ONCE-PER-INCREMENT ANCHOR, which `digit_words` never
 enumerates because the row is read at a sparse one.  Every other row on this
 page needs mathematics that does not exist yet; this one needs a search.
 
-**The three shadows are not a task.**  They sit on three of the six — the two
-`1RB1LC` siblings and the φ row, one each — they need no new mathematics, and
-they fall automatically: `Census/ShadowBoard.shadow_nqh` is the whole argument
-in one lemma and `make closeout` runs `gen_shadow.py --harvest`.  Board a core
-row and its shadow comes with it — first demonstrated in wave 4u, and both of
-wave 37's shadows came that way.
+**The one shadow is not a task.**  `0RB1LC_1LC0LC_0RD1LA_1RD1RB` rides on the
+φ row and no other core row carries one.  It needs no new mathematics and it
+falls automatically: `Census/ShadowBoard.shadow_nqh` is the whole argument in
+one lemma and `make closeout` runs `gen_shadow.py --harvest`.  Board the φ row
+and the shadow comes with it — first demonstrated in wave 4u, and every shadow
+since (wave 37's two, #123's two) came that way without anyone touching it.
 
 **And re-run the stale-verdict query.**  Which core rows carry a `closed: true`
 certificate in a committed sweep and are still unproven?  That is how wave 4u's
@@ -368,4 +368,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 9).
+first shrank from 883 to 511 (and, wave by wave, to the current 5).
