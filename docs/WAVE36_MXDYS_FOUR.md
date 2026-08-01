@@ -133,7 +133,16 @@ command says which.  For the thirteen, `docs/REACHST_TIER.md`'s route is
 still open and every "missing q" the sweeps report is a search gap worth
 attacking; for the two, it is a wall and the counter must be read instead.
 
-## 4. THE POSITIVE: `StD` on M1 is live, and here is the proof
+## 4. THE POSITIVE: `StD` on M1 is live — a PEN-AND-PAPER argument
+
+> **NOT KERNEL-CHECKED.**  Everything in this section is an argument on
+> the macro system of §2a, machine-checked only in the sense that its two
+> load-bearing lemmas were validated over 4000 macro steps by an untrusted
+> Python script.  It is not a Coq proof and nothing downstream may cite it
+> as one.  `1RB1LC_0LC0RB_1LA1RD_0LA0RD` stays in `core_rows.txt` and the
+> repo's counts are unchanged.  What the section buys is that the argument
+> exists and is short, so the remaining work on this row is transcription
+> rather than discovery.
 
 `StD` fires exactly at macro rule 5 (and at rule 2 with `R=0`, which only
 follows a rule 5).  So the whole obligation is: **rule 5 fires infinitely
