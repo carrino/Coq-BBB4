@@ -2700,6 +2700,7 @@ theories/Machines/Counters/QHB_1RB1RD_1RC0LD_1LB0RA_1LC0LC.v
 # --- the mxdys four: NGramHist closure + a hand liveness proof for StD ---
 theories/Machines/Mxdys4/NGX_1RB1LC_0LC0RB_1LA1RD_0LA0RD.v
 theories/Machines/Mxdys4/NGX_1RB1LD_1LC1RA_0RB0LC_0RA0LD.v
+theories/Machines/Rest4/R2_1RB0RB_0LC1RD_1LC1LA_0LA1RB.v
 theories/Machines/Rest4/R3_1RB0RB_1LC0RC_1RA0LD_0LB0LC.v
 
 theories/Machines/ReachSt/RST_1RB0LD_0LC1RA_0LA1LA_0RB1LD.v
