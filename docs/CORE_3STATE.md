@@ -343,8 +343,12 @@ negative on all five of these, and `radix_clock.py` says why: they count in
 `phi`, not in 2 (§3 preamble).  The head symbol is a real hole in `nestcert`,
 but no emitter in the tree can express a Fibonacci digit at any head symbol,
 so widening the anchor search cannot help until the numerals exist.  The
-`Kp`-shaped words below are a base-2 misreading of Zeckendorf digits, which is
-also why their "values" come out as a sparse self-similar set.
+`Kp`-shaped words below are a base-2 misreading of FIBONACCI digits, which is
+also why their "values" come out as a sparse self-similar set.  (This file
+said "Zeckendorf" here.  Wave 4v measured the numeration: it is `1,1,2,3,5,8`
+— `LadderFam.fibw`, the one the kernel already states — and what these rows do
+differently is stand on the LAZY representative of it.  `docs/LADDER_PLAN.md`
+§4v; the oracle is `tools/ladder/fiblazy.py`.)
 
 ### `0LC1RD_1LB1RC_1LB0RD` (3 rows), `0LC1RD_1LB1RD_1LB0RD` (3 rows)
 

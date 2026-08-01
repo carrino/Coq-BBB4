@@ -1,0 +1,138 @@
+1RB---_0LC1RD_1LB1RC_1LB0RD    47 families, 21 weighted, shapes {'F(1,2)/Zeckendorf': 21}  (51s)
+    q=C h=0 R chain=376  l=1 p=0 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=232  l=1 p=0 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=232  l=1 p=1 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=186  l=1 p=0 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=118  l=1 p=0 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=115  l=1 p=1 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=97   l=1 p=0 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=89   l=1 p=0 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=63   l=1 p=0 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=60   l=1 p=1 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=55   l=1 p=0 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=55   l=1 p=0 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=55   l=1 p=0 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=55   l=1 p=1 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=55   l=1 p=0 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=34   l=1 p=1 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=34   l=1 p=1 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=34   l=1 p=1 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    raw weight fits: {'F(1,2)/Zeckendorf': 147}
+1RB---_0LC1RD_1LB1RD_1LB0RD    45 families, 21 weighted, shapes {'F(1,2)/Zeckendorf': 21}  (50s)
+    q=D h=1 R chain=232  l=1 p=0 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=232  l=1 p=1 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=232  l=1 p=1 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=118  l=1 p=0 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=115  l=1 p=1 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=111  l=1 p=1 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=63   l=1 p=0 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=60   l=1 p=1 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=56   l=1 p=1 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=55   l=1 p=0 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=55   l=1 p=1 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=55   l=1 p=1 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=34   l=1 p=1 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=34   l=1 p=1 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=34   l=1 p=1 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=34   l=1 p=1 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=34   l=1 p=1 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=34   l=1 p=1 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    raw weight fits: {'F(1,2)/Zeckendorf': 133}
+1RB---_1LC0RB_0LD1RB_1LC1RB    45 families, 21 weighted, shapes {'F(1,2)/Zeckendorf': 21}  (61s)
+    q=B h=1 R chain=232  l=1 p=0 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=232  l=1 p=1 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=232  l=1 p=1 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=118  l=1 p=0 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=115  l=1 p=1 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=111  l=1 p=1 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=63   l=1 p=0 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=60   l=1 p=1 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=56   l=1 p=1 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=55   l=1 p=0 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=55   l=1 p=1 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=55   l=1 p=1 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=34   l=1 p=0 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=34   l=1 p=1 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=34   l=1 p=0 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=34   l=1 p=1 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=34   l=1 p=0 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=34   l=1 p=1 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    raw weight fits: {'F(1,2)/Zeckendorf': 133}
+1RB---_1LC0RB_0LD1RB_1LC1RD    47 families, 21 weighted, shapes {'F(1,2)/Zeckendorf': 21}  (50s)
+    q=D h=0 R chain=375  l=1 p=0 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=232  l=1 p=0 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=232  l=1 p=1 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=186  l=1 p=0 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=118  l=1 p=0 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=115  l=1 p=1 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=97   l=1 p=0 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=89   l=1 p=0 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=63   l=1 p=0 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=60   l=1 p=1 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=55   l=1 p=0 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=55   l=1 p=0 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=55   l=1 p=0 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=55   l=1 p=1 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=55   l=1 p=0 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=34   l=1 p=0 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=34   l=1 p=0 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=1 R chain=34   l=1 p=0 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    raw weight fits: {'F(1,2)/Zeckendorf': 147}
+1RB---_1LC1RB_0LB1RD_1LC0RD    47 families, 21 weighted, shapes {'F(1,2)/Zeckendorf': 21}  (51s)
+    q=B h=0 R chain=376  l=1 p=0 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=232  l=1 p=0 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=232  l=1 p=1 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=186  l=1 p=0 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=118  l=1 p=0 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=115  l=1 p=1 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=97   l=1 p=0 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=89   l=1 p=0 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=63   l=1 p=0 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=60   l=1 p=1 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=55   l=1 p=0 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=55   l=1 p=0 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=55   l=1 p=0 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=55   l=1 p=1 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=B h=0 R chain=55   l=1 p=0 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    raw weight fits: {'F(1,2)/Zeckendorf': 147}
+1RB---_1LC1RD_0LB1RD_1LC0RD    45 families, 21 weighted, shapes {'F(1,2)/Zeckendorf': 21}  (52s)
+    q=D h=1 R chain=232  l=1 p=0 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=232  l=1 p=1 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=232  l=1 p=1 tail=[]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=118  l=1 p=0 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=115  l=1 p=1 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=112  l=1 p=1 tail=[1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=63   l=1 p=0 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=60   l=1 p=1 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=57   l=1 p=1 tail=[1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=55   l=1 p=0 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=55   l=1 p=1 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=55   l=1 p=1 tail=[1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=34   l=1 p=1 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=34   l=1 p=1 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[1, 1, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=1 R chain=34   l=1 p=0 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=D h=0 R chain=34   l=1 p=1 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    q=C h=0 R chain=34   l=1 p=1 tail=[1, 1, 0, 1]  [1, 2, 3, 5, 8, 13]  F(1,2)/Zeckendorf
+    raw weight fits: {'F(1,2)/Zeckendorf': 133}

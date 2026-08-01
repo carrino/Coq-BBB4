@@ -4618,6 +4618,72 @@ Coq 8.18.0 from apt (~1 min).
   these four were bouncer counters, which is the ONE shape the repo already
   had a closer for.  `docs/LADDER_PLAN.md` §4 is still the route for the rest.
 
+## 2026-08-01 (later) — the fibonacci six are NOT Zeckendorf: same numeration, other representative
+
+_Branch `claude/next-session-progress-g74nya`, cut from `main` at `b61135a`
+(#110).  Full write-up in `docs/LADDER_PLAN.md` §4v._
+
+    settled by a board       unchanged by this wave
+    core undecided             unchanged by this wave
+    0RB shadows of the core    unchanged by this wave
+
+(#112 and #114 both landed while this was written; the tree reads
+**5,123 settled / 22 core / 11 shadows** on arrival, and none of that
+movement is this wave's.)
+
+- **THIS SESSION BOARDED §4u's ROW TOO, IN PARALLEL, AND CLAIMS NEITHER.**
+  Both sessions read 4t's last paragraph, both ran the one command, both got
+  the same closure and the same harvested shadow.  #112 merged first, so the
+  boards are its; the duplicate `.v` was dropped on the rebase.  This is the
+  THIRD such collision in six waves (§4o/§4p, §4t/#111, §4u/§4v).  **The
+  practice that would have caught it is not "diff `origin/main` at session
+  start" — both sessions did that.  It is diffing again immediately before
+  emitting a board, because the window that matters is the hours you spend
+  inside the session.**
+- **Re-run §4t's query every time the emitter changes** (which core rows carry
+  a `closed: true` certificate and are still unproven).  It is cheap and it
+  has now paid out twice over, on two branches at once.
+- **A NUMERATION FITTED FROM ENUMERATION ORDER CANNOT SEE A CONSTANT DIGIT,
+  AND THAT IS HOW A WHOLE WAVE'S DIAGNOSIS WENT WRONG.**  §4s measured the
+  six surviving fibonacci rows at weights `1, 2, 3, 5, 8, 13`, read that as
+  Zeckendorf, and set the next session to build a fourth `(code, step)` pair.
+  The counter's lowest digit is a constant `1` — a marker — and
+  `fit_weights`' equations have a zero coefficient in a column that never
+  varies, so the weight comes back undetermined and the fit is DROPPED rather
+  than completed.  `1,2,3,5,8,13` is `1,1,2,3,5,8` with the bottom rung
+  missing.  **`LadderFam`'s `fibw`, `fibsum`, `fam_lim`, `fibval` and
+  `fam_top` are all already exactly right for these rows.**
+- **What differs is the REPRESENTATIVE, and that distinction is worth
+  carrying to any redundant numeration.**  `fibw 0 = fibw 1 = 1`, so a value
+  does not determine a string.  `fibdec`/`fibokb` pick the greedy member; the
+  six stand on the lazy one (LSB-first, top digit 1, no two zeros adjacent) on
+  all 23,614 measured values, at every anchor with a run above 50.  The five
+  rows §4r boarded fail the same check, so the two are genuinely different
+  populations of one numeration.
+- **The kernel gap is one field.**  Both interior classes and both fills are a
+  fixed word, a run, a fixed word and a tail — `Class`'s own shape, at equal
+  exponents, no stride — except that the run unit is a two-cell WORD
+  (`[1;1]`, `[1;0]`) where `Class.cs_t` and `Fill.f_mid` are single digits.
+  The CELL side already speaks word runs (`flat_map_repeat` lands on
+  `rep (dig F t) n`).  Laws validated against the orbit in
+  `tools/ladder/fiblazy.py` (23,593 interior + 20 fill + 23,614 membership
+  checks per row, zero failures, with corruption controls).
+- **This is the same missing shape as §2b3's alternating-sweep gap in
+  `LapDecider`.**  Two decks, one shape.  Fixing `LadderCheck` does not fix
+  `LapDecider`, but it prices it.
+- **Route A, as asked, is dead and was measured that way before anything was
+  built** (`tools/ladder/fibread.py`: 840 raw weight fits over all six rows,
+  every anchor, both digit widths, every prefix, terminator and permutation —
+  zero at `1,1,2,3,5,8`).  The right answer was one level down from the
+  question, which is why the exhaustive negative was worth having: it is what
+  forced the reading to be re-derived from the tape instead of from
+  `find_families`' output.
+- **Timing, re-measured:** the `Closeout.vo` closure from cold on 4 cores at
+  `-j3` is ~2h05m, agreeing with §4t's ~2h20m.  A ladder board itself
+  compiles in ~6 s once `LadderCheck.vo` exists, so the long build is
+  background work, not a gate on the proof work.
+
+
 ## 2026-08-01 — Drozd's "easy" six: five board, and the sixth is measured
 
 Branch `claude/drozd-easy-puzzles-5qrdb0`, cut from `main` at `0010050`.

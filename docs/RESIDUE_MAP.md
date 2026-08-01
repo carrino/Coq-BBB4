@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**39 rows as of this commit — 27 distinct core machines + 12 0RB
+_**33 rows as of this commit — 22 distinct core machines + 11 0RB
 re-root shadows.**  A shadow needs no new mathematics, but it does need its
 own board: boarding a core machine moves its shadow into `core_rows.txt`
 rather than settling it, so budget the pair (2026-08-01; worked example
@@ -155,9 +155,11 @@ never needs the cost (`LapGlue`'s lap obligation is an EXISTENTIAL over
 step counts, which is how the wave-19 fractals boarded with a `3^k` lap),
 or a route that never models the lap at all, like ReachSt.  The numeration
 route is no longer speculative — it exists, and the six `HIGHER` rows are
-what is left of the population it was built for.  Wave 4s read all six: they
-are Zeckendorf (`1, 2, 3, 5, 8`) where the kernel states `1, 1, 2, 3, 5, 8`,
-and what stops them is the FILL arm at the top of a width.
+what is left of the population it was built for.  Wave 4s read all six and
+called them Zeckendorf; **wave 4v measured that they are not** — they count in
+the kernel's own `fibw` (1,1,2,3,5,8), with `fam_lim`, the width spans and the
+top of a width all matching `LadderFam` exactly, and what differs is the
+REPRESENTATIVE they stand on.  See `docs/LADDER_PLAN.md` §4v.
 
 ### What each blocker means
 
@@ -172,7 +174,8 @@ and what stops them is the FILL arm at the top of a width.
   **For `HIGHER` it is not** — those seven rows are the φ counters, the
   label came from measuring a Fibonacci lap on a base-2 clock, and the
   kernel can now denote that numeration (above, `docs/CORE_3STATE.md` §3,
-  `docs/LADDER_PLAN.md` §4r).
+  `docs/LADDER_PLAN.md` §4r).  Wave 4v measured that it denotes their
+  ARITHMETIC exactly and only their string FORM is out of reach (§4v).
 * **no inner family at pow2 j** — the overflow runs a second counter, but its
   count does not start at `2^j`.  Measured in wave-15: ~21% of these run at a
   different octave or offset.
@@ -238,27 +241,34 @@ or stride reaches a quadratic).
 
 ## Where a newcomer should probably start
 
-1. **The six Fibonacci rows — MEASURED at last (wave 4s), and they want a
-   SECOND φ code.**  Wave 4r built `(Fib, 1)` and boarded the five φ rows
-   that had partial ladder boards on disk.  The rest had "never been through
-   `emit_ladder` at all", and wave 4s found out why: `find_families` runs its
-   numeration pass only `if not found`, and these rows return 26-odd junk
-   positional families at chain 8 — `min_chain`, the floor — which switched
-   the pass off.  Under `valfam.py --numeration` six of the seven read as
-   Fibonacci counters at chains of 232–376.
+1. **The six Fibonacci rows — they want a second REPRESENTATIVE, not a
+   second code (wave 4v).**  Wave 4r built `(Fib, 1)` and boarded the five φ
+   rows that had partial ladder boards on disk.  The rest had "never been
+   through `emit_ladder` at all", and wave 4s found out why: `find_families`
+   runs its numeration pass only `if not found`, and these rows return 26-odd
+   junk positional families at chain 8 — `min_chain`, the floor — which
+   switched the pass off.  Under `valfam.py --numeration` six of the seven
+   read as Fibonacci counters at chains of 232–376.
 
-   **But they are Zeckendorf** — weights `1, 2, 3, 5, 8` — where
-   `LadderCheck` §11 states `1, 1, 2, 3, 5, 8`, so `closure_data_fib` refuses
-   on the weights.  Under the shifted reading the interior covers and the
-   failure is `overflow leaves the family` at exactly the top of each width
-   (`1^k`, values 3, 6, 11, 19, 32, 53 = the partial sums of the weights).
-   So the whole residue of the six is **one arm, the fill**, and the two
-   candidate next steps are a `(Fib, 2)`/Zeckendorf `ClassSucc` instance
-   whose top of a width is `1010…` rather than `1^k`, or making the search
-   prefer the `1,1,2,3,5` reading these anchors also admit — which is the
-   same lever that freed the two gray rows.  Six of the six carry no shadow.
-   Per-row anchors and ladders: `tools/counters/FIB_ELEVEN.txt`,
-   `docs/CORE_3STATE.md` §3, `docs/LADDER_PLAN.md` §4s.
+   Wave 4s read their weights as `1, 2, 3, 5, 8` and called them Zeckendorf.
+   **Wave 4v measured that they are the kernel's own `1, 1, 2, 3, 5, 8` with
+   a constant marker cell dropped** — `fit_weights` cannot pin a column that
+   never varies, so it discards the bottom rung instead of completing it.
+   Read with that cell, every number is `LadderFam`'s: `fibw`, `fam_lim k =
+   S (fibsum k)`, widths spanning `[fibw k .. fibsum k]`, the top of a width
+   `1^k` at `fibsum k`, value = anchor visit index.
+
+   What differs is which member of each value's class the counter stands on.
+   `fibw` is redundant, `fibdec`/`fibokb` pick the greedy member, and these
+   six stand on the LAZY one — LSB-first, top digit 1, no two zeros adjacent
+   — on all 23,614 measured values and at every anchor.  Their two interior
+   classes and two fills are measured and validated against the orbit in
+   `tools/ladder/fiblazy.py`, and the kernel gap is one field: `Class`'s and
+   `Fill`'s run unit is a single digit where these laws need a two-cell WORD.
+   Six of the six carry no shadow, and all six are the same sub-machine, so
+   one instance boards all six.  Per-row anchors and ladders:
+   `tools/counters/FIB_ELEVEN.txt`, `tools/counters/fibform.py`,
+   `docs/CORE_3STATE.md` §3, `docs/LADDER_PLAN.md` §4v.
 
    **The seventh is not one of them.**  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` finds
    no family at ANY anchor — `digit_words` names nothing — so it belongs in
