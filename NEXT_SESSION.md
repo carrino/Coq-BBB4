@@ -4926,13 +4926,17 @@ the certificate class, is what carries the proof.**
   without touching 500 lines of proof.  That is the pattern to reuse
   wherever a board is half generated and half hand-written.
 
-- **What was kernel-checked here, and what was not.**  Green in this
-  container: both boards, both harvested shadows, `CB_16` (the stage that
-  consumes the shadows) and `CB_37` (the stage that consumes the two core
-  rows, via their `nqh_*` theorems) — so every `covers` lemma this wave
-  added is checked — plus `CLOSEOUT AUDIT: OK` and `CENSUS CACHE: MATCH`.
-  NOT rebuilt here: the full `Closeout.vo` closure, which needs the whole
-  ~2,760-file tree.  It belongs on the box, as in §2b3's wave.
+- **The full `Closeout.vo` closure WAS rebuilt in this container, and it is
+  a much smaller target than `make all`.**  `closeout_partial` is green off
+  the regenerated stages with `functional_extensionality_dep` only.  The
+  useful fact: `make -f Makefile.coq theories/Closeout/Closeout.vo` builds
+  the closeout's DEPENDENCY CLOSURE, not the tree — 2,760 files are listed
+  in `_CoqProject` but ~157 of them (the `IRules_Batch_*` batches among
+  them, the expensive ones) are boards for rows some other file already
+  proves, so no stage `Require`s them and the closure skips them entirely.
+  Target `Closeout.vo`, not `all`, when what you want is the closeout.
+  `CLOSEOUT AUDIT: OK` and `CENSUS CACHE: MATCH` alongside it; `make proof`
+  still needs the census opam switch and was not run.
 
 - **Timings and a container trap, this image, 4 cores / 16 GB.**
   `apt-get install -y coq` ~1 min (8.18.0).  Each board compiles in 4 s
