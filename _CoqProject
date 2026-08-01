@@ -12,6 +12,7 @@ theories/Checkers/Cycle.v
 theories/Closure.v
 theories/Checkers/ReachSt.v
 theories/Checkers/ReachStI.v
+theories/Checkers/LiveAll.v
 theories/Checkers/ClosureExt.v
 theories/Checkers/FuelClass.v
 theories/Checkers/ExactClosure.v
