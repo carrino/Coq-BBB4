@@ -578,6 +578,9 @@ theories/Machines/Counters/Sep2_0RB0RD_1LC1RB_1RA0LC_1LD0LC.v
 theories/Machines/Counters/Comb2_0RB1LC_1LC0RD_1RD0LC_1LA1RB.v
 theories/Machines/Counters/Comb3_0RB1LC_1LC1RD_1LA0LC_0RD1RB.v
 
+# --- counters track: the two-block bouncer (a Drozd row) ---
+theories/Machines/Counters/TwoRun_1RB1LB_1LC0RD_0LB1LA_0LA1RA.v
+
 # --- counters track: wrap bouncer (the two 1RB--- holdouts) ---
 theories/Counters/WrapBouncer.v
 theories/Machines/Counters/WrapBc_R.v
@@ -2833,6 +2836,9 @@ theories/Machines/Counters/SH_0RB0LA_1RC1LA_1RD0RD_1LB0LB.v
 
 # board files (+ their deps) added automatically by tools/closeout/gen_stages.py
 theories/Machines/Counters/SH_0RB1LC_1LA1RB_0LD0LA_1LB___.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/SH_0RB1LB_1LC1RC_1RD0LA_0RC1RB.v
 
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
