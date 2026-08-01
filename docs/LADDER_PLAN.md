@@ -3037,6 +3037,161 @@ cheap to MEASURE; neither could know it would land on a second numeration.
   here carried one; `gen_shadow.py --harvest` printed `nothing freed` and
   `audit.py` is OK.
 
+## 4t. The outer parameter, measured DEAD for its own two rows: one lap moves TWO unbounded quantities and `cden` has one index
+
+_Branch `claude/outer-parameter-build-jhfrqu`, cut from `main` at `988bbe3`,
+written as 4s and renumbered — #111 took that number while this ran, and it
+boarded the two gray rows this session had also boarded.  **That overlap is
+resolved in #111's favour and this section claims no rows.**  What is left is
+the part #111 did not touch and the brief was actually about: 4j's OUTER
+PARAMETER, which was NOT built, because it does not close the two rows it
+exists for._
+
+### 4q's reading, re-measured, with one correction to the shape
+
+Anchor `(StB, head 0, head at offset 3)`, once per bounce, 180 visits to step
+200,000 on BOTH rows.  Every number 4q reports holds:
+
+    far side ones = 2v + 5     exactly, every visit, 0 failures / 180
+    counter side  = `1 1` then binary(v) LSB-first, the frame CONSTANT
+    value         = bounce index, step +1
+
+One correction, and it matters because it is the `sside` instance: the far
+side is **not** a solid run.  Head-outward it is
+
+    [S1; S0] ++ rep [S1] (2v + 4)
+
+— a `1`, then a `0` one cell out, then the run.  The ONES count `2v+5` is
+right; the run is `2v+4` behind a two-cell fixed word.  So `s_pre = [S1;S0]`,
+`s_u = [S1]`, `a = 2`, `b = 4`.  4q's `b = 5` is the ones-count, not `s_b`.
+Both rows measure identically, as 4q says.
+
+### What 4q did not measure: the lap has TWO unbounded excursions
+
+The head's reach between consecutive anchor visits:
+
+    v        0    1    2    3    4    5    6    7    8   ... 15
+    right    3    4    3    5    3    4    3    6    3        7
+    left     the whole 2v+5 run, to the wall, which then recedes by 2
+
+The right-hand excursion is exactly `3 + t(v)`, `t` = the number of trailing
+ones of `v`: it is the CARRY RIPPLE, and one lap contains it.  Traced at
+`v = 7` (visit 9 -> 10, 148 steps): the head ripples FIRST (steps 721-738, out
+to offset 9 and back), then sweeps left to the wall (743-766), then zig-zags
+home `+3, -2` per cell.  So one lap moves
+
+    the wall distance   2v + 5      and    the ripple length   t(v)
+
+and the two are independent — `t(v)` is a trailing-ones count, which no
+function of `2v+5` gives.
+
+### Why that is fatal to an affine far side, and it is two lines
+
+`cden` takes ONE index for the whole configuration:
+
+    cden XL XR j c = (c_st c, (sden XL j (c_l c), c_h c, sden XR j (c_r c)))
+
+so `c_l` and `c_r` are instantiated at the SAME `j`.  The interior arm indexes
+the ripple by its run length: `fam_cells_class` reads the class
+`u ++ t^(r + s*m) ++ w ++ rest` at index `m`, which is what makes an unbounded
+ripple finitely many arms.  At that index the far side would have to be
+`a*m + b`.  It is `2*fam_value F ds + 5`, and on the class
+`1^(r+s*m) ++ [d] ++ rest` the value is `2^(r+s*m) - 1 + ...` — **exponential
+in `m`**.  No `a` and `b` fit it.
+
+Fixing the ripple instead (a flat arm per ripple length, `s = 0`, far side
+indexed by `j = v`) DOES factor — and wants one arm per ripple length, of
+which there are unboundedly many.  That is exactly the trade the stride was
+built to avoid.
+
+4j's own anchor fails for the mirror reason, and it is worth writing down
+because 4j proposed it: at the wall the far side is empty and the ONE side
+carries `0^(2k+5) ++ [1;1] ++ digits(k)` — a growing spacer AND a carry
+ripple, two symbolic blocks on one `sside`, which has one.  **The two anchors
+trade the growth between the sides, as 4q says, and neither removes the second
+block.**
+
+### What WOULD work, so the next session does not re-derive it
+
+The lap splits.  The ripple finishes before the long sweep starts (measured
+above), so at TWO anchors per bounce each half factors:
+
+| lap | counter side | far side |
+|---|---|---|
+| ripple only | symbolic run, index = ripple length | untouched -> OPAQUE tail, no index |
+| wall only | untouched -> OPAQUE tail | `rep [S1] (2v+4)`, index = `v`, `a = 2` |
+
+Neither half needs two blocks, and the wall-only half is exactly 4j's outer
+parameter.  So **the outer parameter is necessary and not sufficient**: what
+is also missing is a per-phase ANCHOR.  `fam_cfg` reads `fm_st`, `fm_hs`,
+`fm_left` and `fm_pre` off the RECORD and only `nth ph (fm_tails F) []` off
+the phase, so the phase mechanism varies the TERMINATOR and nothing else.
+Two anchors per value step is a second widening, of four fields, and it
+changes `fam_succ` too (only one of the two laps advances the value).
+
+**That is why the field was not built.**  A far-side parameter alone has no
+consumer: it would close no row, and 4j's complaint about the existing `p` is
+precisely that it is carried everywhere and used nowhere.  Adding a second one
+next to it is not the fix.  Scope the ANCHOR and the parameter together, or
+leave both — and note that 4j's cost estimate assumed the spacer was the only
+way in, which is the assumption this section retires.
+
+### The two gray rows: same diagnosis, reached twice, and 4s's lever is the right one
+
+This session also boarded `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and
+`1RB0RD_1LC0LC_1LD0LB_1RD0RA` before #111 merged, from the same reading 4s
+gives: the selected family's digit words both end in a BLANK, the other anchor
+was already in `find_families`' output, and no kernel change was needed.  The
+boards are #111's; the only thing worth keeping from the duplicate is the
+difference in LEVER, in case a row ever needs the other one:
+
+* **4s's** is a sort tie-break — a blank-tailed family sorts after a
+  non-blank-tailed one — and it fires only on an exact tie in the fallback
+  flags and the chain length, which is what these two rows are.
+* **The alternative measured here** is a hard gate: simulate `ctape_move`
+  exactly at the boot index and require `fam_cells` to spell the counter side
+  the `cconf` CARRIES, rejecting any family with no such member.  It is
+  strictly stronger and catches the case where the unstatable family sorts
+  strictly FIRST rather than tying.
+
+**It was not kept, and the reason is the discipline and not the code:** no row
+in the tree needs it, 4s's tie-break covers every case that does exist, and
+two mechanisms for one property in one function is how the next session gets
+confused.  Build it if and when a row sorts strictly first.
+
+### The other five that already CLOSE: four of them are 4p's QUADRATIC four, corroborated from the emitter's side
+
+Asked of the whole core: which rows carry a `closed: true` certificate in a
+committed sweep and are still unproven?  Seven, of which two are 4s's gray
+pair.  The other five — all still core after #111 — were run through the
+emitter, and **none of them is a boot-check row**:
+
+    1RB0LD_0LC0RB_1LA1RC_0RC1LD   arm2    no chain found          <- 4p QUAD
+    1RB1LA_0LA1RC_0LD0RC_1LD0RB   arm55   no chain found          <- 4p QUAD
+    1RB1LA_1LC0RD_0RA0LC_0LA1RD   arm2    no chain found          <- 4p QUAD
+    1RB1LA_0LA0LC_1LC1RD_0RB0RD   25 of 25 arms boarded, refused: <- 4p QUAD
+      "interior arm: no chain at any threshold 0..3 and stride 1..4 --
+       the carry ripple is not affine in the run length"
+    1RB1LA_0LA1RC_0RD0RB_1RA---   the certificate predates `lands_in_phase`
+
+**Four of the five are 4p's base-2 quadratic rows and this is a re-probe of
+them, which the brief told this session not to do.**  It cost ten minutes and
+it is recorded because it corroborates 4p from the other side rather than
+adding to it: 4p measured the arm's cost directly and found a second
+difference of exactly 2, and the emitter — which knows nothing about that —
+refuses in the same place with `the carry ripple is not affine in the run
+length`, the `stride = 0` signature.  `1RB1LA_0LA0LC_1LC1RD_0RB0RD` is the
+sharpest form: all 25 arms of its certificate re-derive and the CLOSURE still
+will not build.  **Two independent measurements, one blocker.**  Nobody should
+run a third.
+
+The genuinely new one is the fifth, and it is not mathematics:
+`1RB1LA_0LA1RC_0RD0RB_1RA---` fails on a certificate written before
+`lands_in_phase` existed, so it has never actually been offered to the current
+emitter.  **It is the only row in the core whose refusal is a stale schema**,
+and re-running `valfam` on it is one command.  Worth doing before it is read
+as anything harder.
+
 ## 5. What this is NOT
 
 * NOT a port of `Inductive.v` — measured dead for QH

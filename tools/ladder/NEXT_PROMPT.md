@@ -77,7 +77,23 @@ these six is the FILL arm.**
   filed with them since `docs/CORE_3STATE.md` §3 read it as a φ row by radix
   sweep, and §4s measured that it finds **no family at any anchor** —
   `digit_words(rules)` names nothing.  It is a `no anchor` row.
-* Do not do the outer parameter (§4j).  **Never edit `theories/Census/`.**
+* **Do not do the outer parameter (§4j), and §4t now says WHY rather than
+  just "not this wave".**  It is necessary and NOT sufficient for the two
+  rows it exists for: one lap of `0RB0RD_1LC1RB_1RA0LC_1LB0LC` moves two
+  independent unbounded quantities — the wall distance `2v+5` and the carry
+  ripple `t(v)` — and `cden` instantiates both sides of a configuration at
+  the SAME index, at which the far side is exponential.  The pair also wants
+  a per-phase ANCHOR (four more `Fam` fields plus `fam_succ`).  **Scope the
+  anchor and the parameter together, or leave both** — the field alone closes
+  no row, which is 4j's own complaint about the `p` already there.
+* **Do not re-run the emitter over the four base-2 quadratic rows either.**
+  §4t did (ten minutes) and it refuses with `the carry ripple is not affine
+  in the run length` — the same blocker §4p measured directly.  Two
+  measurements, one blocker.  **But `1RB1LA_0LA1RC_0RD0RB_1RA---` IS worth
+  one command**: it is the only core row whose refusal is a stale certificate
+  schema (predates `lands_in_phase`), so it has never reached the current
+  emitter.
+* **Never edit `theories/Census/`.**
 
 **Also open and cheap.**  Nick's list included three rows the ladder does not
 read at all — `1RB0RB_1LC0RC_1RA0LD_0LB0LC`, `1RB1LB_1LC0RD_0LB1LA_0LA1RA`,
@@ -91,14 +107,17 @@ route (ReachSt), not a numeration.
   what CI expects.  It takes about a minute.
 * **`make closeout` only needs `theories/Closeout/Closeout.vo`, whose
   dependency closure does NOT include the nine `IRules_Batch`** (`coqdep`
-  says so; ask it, not the plan file).  Measured on 4 cores at `-j2` from
-  cold: roughly **4–10 files a minute**, so the closure is HOURS.  `.vo` are
-  gitignored, so a fresh container pays it and a branch reset does not —
-  start it EARLY in the background and read while it runs.
+  says so; ask it, not the plan file).  **Timed end to end in §4t: ~2h20m on
+  4 cores at `-j3` from cold, ~2350 `.vo`** — hours, but a bounded number of
+  them.  `.vo` are gitignored, so a fresh container pays it and a branch
+  reset does not — start it EARLY in the background and read while it runs.
 * **`tools/closeout/audit.py` is the live scoreboard and needs no Coq.**
   `inventory.py` → `gen_stages.py` → `audit.py` moves the numbers in seconds;
   the `Closeout.vo` build is what turns the audit's number into the kernel's.
-  Say which one you have.
+  Say which one you have.  **`make closeout` gives you BOTH** — its recipe
+  ends with `coq_makefile` + `make -f Makefile.coq theories/Closeout/Closeout.vo`
+  + `census_cache --check`, so it is a ~5-minute target on a warm tree and not
+  a seconds one.  `make closeout-status` is the seconds one.
 * **A `cconf` carries no trailing blanks** (`lpad_eqb`), so a family all of
   whose digit words end in a blank with no terminator behind them spells one
   cell more than its own boot at EVERY width and no boot check can pass.
