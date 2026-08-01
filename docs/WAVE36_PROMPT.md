@@ -41,18 +41,26 @@ and the hole is filled by §4 instead.
 
 So:
 
-**Step 1 — get the closure half.**  Confirm and pin the parameters:
+**Step 1 — get the closure half.**  This half is DONE as a measurement:
 
-    python3 -c "import sys; sys.path.insert(0,'tools/nghist'); import reachst_prove as RP
+    python3 -c "import sys
+    sys.path.insert(0,'tools/reachsti'); sys.path.insert(0,'tools/nghist')
+    from sweep import closure_certs
     for m in ['1RB1LC_0LC0RB_1LA1RD_0LA0RD','1RB1LD_1LC1RA_0RB0LC_0RA0LD']:
-      for k,n in [(2,2),(3,2),(2,3),(3,3)]:
-        r,e = RP.prove_ext(m,k,n,200,4000,qext='D')
-        print(m,k,n,'OK' if r else e)"
+      print(m, ''.join(sorted(closure_certs(m,'ABCD'))))"
 
-`tools/reachsti/sweep.py` already reports `closure=ABC` on both rows, i.e.
-the closure discharges every state but `StD`, which is exactly `qext='D'`.
-It is slow (minutes per row); run it in the background.  Then reuse
-`reachst_prove.emit`'s output verbatim and delete only its `recurC_*` lemma.
+reports `ABC` on both rows — the closure discharges every state but `StD`,
+which is exactly `qext='D'`.  Confirmed twice (this, and
+`tools/reachsti/sweep.py`'s own run).  What is left is to pin `(k, n)` and
+run `reachst_prove.emit`, then delete only its `recurC_*` lemma.
+
+**Two traps in that tool, both met and both cheap to avoid.**
+`prove_ext` returns a `(result, error)` TUPLE, so `if RP.prove_ext(...)` is
+always true and a naive probe reports OK on everything — unpack it.  And it
+takes no timeout: call it with the sweep's parameters (`t=200`,
+**`fuel=40000`**, `(k,n)` from `[(2,2),(3,2),(2,3)]`) and under
+`signal.alarm`, exactly as `tools/reachsti/sweep.py:closure_certs` does.
+At `fuel=4000` it does not fail, it hangs.
 
 **Step 2 — prove the hole.**  `forall N, exists m, N <= m /\ VisitsAt tm StD m`.
 This is §4 of the findings, and it decomposes as:
