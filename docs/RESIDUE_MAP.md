@@ -378,9 +378,11 @@ passes wave 36's lever (its orbit keeps the RIGHT half-tape a bare unary
 run, 0 violations in 2,000,000 steps), so it is a finite word-rewriting
 system — six rules, exhaustive, differentially validated in
 `tools/mxdys4/cmacro2.py`.  Its four liveness obligations all reduce to the
-SINGLE fact that the macro system never gets stuck, and that fact is a
-carry analysis in the Fibonacci numeration.  So the remaining cost is not a
-search for an anchor; it is that one invariant.  `docs/WAVE38_REST_FOUR.md`
+SINGLE fact that the macro system never gets stuck, and **that fact is now
+proved**: the composite step preserves the parity of `ones l`, is undefined
+only at `ones l = 0` (even), and the orbit starts odd -- so it is never
+stuck.  So the remaining cost is not a search for an anchor and not new
+mathematics; it is the Coq transcription.  `docs/WAVE38_REST_FOUR.md`
 §3.
 
 **The five shadows are not a task.**  They sit on five of the eight, they need

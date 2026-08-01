@@ -234,25 +234,7 @@ that is a genuine quasihalt (only `StC` recurs), so it must be excluded,
 not waved past.  This is the same shape as M1/M4's "a D-free run from an
 arbitrary shaped configuration does not terminate".
 
-### 3c. What blocks it, stated precisely
-
-`In S1 l` is **not** closed under the rules, and neither is the obvious
-repair.  Two facts, both measured:
-
-* `R = 0 -> s = S1` **is** closed under all six rules (rules 3/5 are the
-  only producers of `R' = 0` and both set `s' = S1`; rules 1/2 set
-  `R' >= 1`).  It also kills rule 1 after the transient — rule 1 fires
-  exactly once, at macro step 0, in 300,000 macro steps.
-* The dangerous transitions are rules 5 and 6 at `k = 0`, which push only
-  `[S0]` onto `l` and so cannot replenish it.  Chasing closure through them
-  regresses: `(·,S1,0)` needs `(·,S1,1)` safe, which needs `(·,S1,2)` safe,
-  which lands back on rule 2's output `(ctl l1, chd l1, 2)`.
-
-Measured over 200,000 macro steps, at every rule-2 configuration the cell
-after the first `S1` is ALSO `S1` (`l = 0^j 1 1 …`), and `l` is 1-free only
-in configurations with `s = S0` and `R >= 3` (21 of 300,000).
-
-### 3d. The composite step, which is where the next session should start
+### 3c. THE INVARIANT, FOUND: `ones l` is ODD
 
 Rules 3–6 always leave `R' <= 1`, and `R' = 1` is immediately consumed by
 rule 5 at `k = 0`.  So `R` is only ever large transiently, and composing
@@ -260,44 +242,67 @@ rule 2 with the rule that consumes its output gives a SINGLE self-map `T`
 on the left word alone, taken at `(s = S1, R = 0)`.  Writing words
 nearest-cell-first and implicitly `0^∞`-terminated, `w = 0^j 1 a l2`:
 
-| case | `T(w)` |
-|---|---|
-| `a=S0`, `j` odd | `1^(j+2) l2` |
-| `a=S0`, `j` even | `0 1^(j+1) l2` |
-| `a=S1`, `j` odd | `1^(j+1) 0 l2` |
-| `a=S1`, `j` even | `0 1^j 0 l2` |
+| case | `T(w)` | `ones` change |
+|---|---|---|
+| `a=S0`, `j` odd | `1^(j+2) l2` | `j+1` |
+| `a=S0`, `j` even | `0 1^(j+1) l2` | `j` |
+| `a=S1`, `j` odd | `1^(j+1) 0 l2` | `j-1` |
+| `a=S1`, `j` even | `0 1^j 0 l2` | `j-2` |
 
-**`T` is LENGTH-PRESERVING** — all four cases give `|T(w)| = |w|` — so the
-whole row is a shift register on `0^∞`-terminated words, and the growth
-seen in `|l|` is only trailing blanks being consumed and released.  This is
-a much smaller object than the six-rule system and is the right thing to
-state the invariant over.
+All four cases PRESERVE LENGTH, so the row is a shift register on
+`0^∞`-terminated words.  And — this is the point — **in every case the
+parity of `j` that guards the case makes the `ones` change EVEN.**  So:
 
-Two facts about `T` that bound the problem:
+> **`T` preserves the parity of `ones w`.**
 
-* `ones(T(w)) >= ones(w)` in every case EXCEPT `j = 0, a = S1` — i.e. `w`
-  beginning `11` — where it drops by exactly 2.  So the counter can only
-  drain through a leading `11`.
-* The stuck set is `{0^∞}`, and its preimage chain is
-  `… -> 0^2 1 1 0^∞ -> 0 1 1 0^∞ -> 1 1 0^∞ -> 0^∞`.  But `0^i 1 1 0^∞`
-  for `i >= 2` ALSO has the preimage `1 1 0^(i-2) 1 1 0^∞`, which has four
-  ones and is not itself of the doomed shape — **so the doomed set is not
-  closed downward and "avoid words with two ones" is not the invariant.**
-  This is the trap to know about before starting.
+`T` is undefined exactly when `w` has no `S1`, i.e. when `ones w = 0`,
+which is EVEN.  Therefore
 
-Measured: 400,000 `T` steps from the real orbit's first `(S1, 0)` word
-never stick, `ones` ranges over 1…27, and no doomed word occurs.
+> **an odd-ones word can never be stuck and can never reach one.**
 
-**There is no linear potential.**  Fitting `nu(w) = Σ_{w[i]=1} c_i` with
-`nu(T(w)) = nu(w) + 1` over 200 orbit words leaves 185 inconsistent
-equations, so the value function is not a weighted digit sum and the parity
-of `j` genuinely enters.  That is why this is a carry analysis and not an
-odometer argument.  `LadderFam`'s `Fib`, `FibL` and `fam_lo` are the right
-vocabulary and already exist; the missing piece is the characterisation of
-`T`'s reachable set.  Budget it as a wave, not a tidy-up.
+The first `(S1, 0)` word on the real orbit is `[S1]`, with one `S1`.  Hence
+`ones l` is odd at every `(S1, 0)` configuration for ever, rule 2 always
+applies, the macro system is total, and by §3b all four of
+`StA`/`StB`/`StC`/`StD` recur.  **That completes the mathematics for this
+row.**
 
-**This is the cheapest row left and the one to start the next session on.**
-Everything except the invariant is done and validated.
+Checked two ways by `tools/mxdys4/cmacro2.py --parity`: parity preservation
+exhaustively over all 262,144 words of prefix length ≤ 18 (0 violations),
+and along the real orbit — 152,786 rule-2 configurations, **all 152,786
+with `ones l` odd, none even**.  Separately, of the 131,072 odd-ones words
+in that exhaustive range, **not one sticks**.
+
+This is the same shape as M1/M4's parity lock, and §8's warning applies to
+transcribing it: state the parity facts as two implications, never as an
+`iff`, or `apply H in Hyp` will pick a direction by luck.
+
+### 3d. Two traps that cost time before the parity was found
+
+Both are recorded because the obvious repairs look right and are not.
+
+* **`In S1 l` is not closed under the rules**, and neither is the obvious
+  strengthening.  The dangerous transitions are rules 5 and 6 at `k = 0`,
+  which push only `[S0]` onto `l` and cannot replenish it; chasing closure
+  through them regresses `(·,S1,0)` → `(·,S1,1)` → `(·,S1,2)` and back onto
+  rule 2's own output.  The parity invariant sidesteps the regress entirely
+  — it never mentions where the `S1`s are, only how many.
+* **"Avoid words with two ones" is NOT the invariant.**  The stuck word's
+  preimage chain is `… -> 0^2 1 1 0^∞ -> 0 1 1 0^∞ -> 1 1 0^∞ -> 0^∞`, so
+  the doomed words look like they are exactly `0^i 1 1 0^∞`.  They are not
+  closed downward: `0^i 1 1 0^∞` for `i >= 2` also has the preimage
+  `1 1 0^(i-2) 1 1 0^∞`, which has FOUR ones.  Every doomed word has even
+  `ones`, which is the fact that generalises; the shape is not.
+* **There is no linear potential.**  Fitting `nu(w) = Σ_{w[i]=1} c_i` with
+  `nu(T(w)) = nu(w) + 1` over 200 orbit words leaves 185 inconsistent
+  equations.  The value function is not a weighted digit sum — which is why
+  a parity, not a measure, is what closes this.
+
+**So row 2 is now a transcription job, not a research job**, and it is the
+row to start the next session on.  What is left is Coq: six rule lemmas
+(induction on `R` for the walk through the run, on `j` for the left sweep),
+the composite step, the parity lemma above, and `neverqh_of_live4` to
+close.  Boarding it reads 4 core -> 3 and takes its `0RB` shadow
+`0RB1LC_1LC0LC_0RD1LA_1RD1RB` with it, so 1 shadow -> 0.
 
 ## 4. Row 3 — Drozd's sixth also passes the lever, and most of it is read
 

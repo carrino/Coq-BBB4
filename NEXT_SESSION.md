@@ -5460,32 +5460,56 @@ was six; the parallel base-2 pair session landed mid-session and took it to
 wave produced is one missing piece of Coq, two permanent negatives, one
 settled documentation dispute, and two macro systems.
 
-## Start here next time: row 2, and only the invariant is left
+## Start here next time: row 2 is a TRANSCRIPTION job now, not a research one
 
-`1RB0RB_0LC1RD_1LC1LA_0LA1RB` is the cheapest row on the board by a wide
-margin.  Everything except ONE fact is done and validated:
+`1RB0RB_0LC1RD_1LC1LA_0LA1RB` -- the phi row -- has its mathematics
+COMPLETE.  Nothing is left to discover; what is left is Coq.
 
-* it passes wave 36's lever (right half-tape is a bare unary run, 0
-  violations in 2,000,000 raw steps);
-* its macro system is SIX rules, exhaustive, stated in `cconf` coordinates
-  and differentially validated over 4,000 macro steps with 0 mismatches
-  (`tools/mxdys4/cmacro2.py`);
-* all FOUR liveness obligations are discharged structurally — `StA` is the
-  macro boundary, `StB` is visited by every rule, and `StC`/`StD` each
-  follow within 2 macro steps by a case split on `R` (measured max gap 2 for
-  both).
+* It passes wave 36's lever (right half-tape a bare unary run, 0 violations
+  in 2,000,000 raw steps), so it is a finite word-rewriting system.
+* Six macro rules, exhaustive, in `cconf` coordinates, differentially
+  validated over 4,000 macro steps with 0 mismatches
+  (`tools/mxdys4/cmacro2.py`).
+* All FOUR liveness obligations discharge structurally: `StA` is the macro
+  boundary, `StB` is visited by every rule, and `StC`/`StD` each follow
+  within 2 macro steps by a case split on `R` (measured max gap 2 for both).
+* The ONE remaining obligation was that the macro system never sticks, and
+  **the invariant that gives it is `ones l` ODD.**
 
-**The single remaining obligation is that the macro system never gets
-stuck.**  Rule 2 needs a `S1` in `l`; on an all-blank left half-tape the
-machine sweeps left forever in `StC`, which is a genuine quasihalt, so it
-has to be excluded.  `In S1 l` is NOT closed under the rules and the
-obvious repairs regress (details and the two measured facts that constrain
-it: `docs/WAVE38_REST_FOUR.md` §3c).  It is a carry analysis in the
-Fibonacci numeration; `LadderFam`'s `Fib`, `FibL`, `fam_lo` already exist
-and are the right vocabulary.  Budget it as the wave's main job, not a
-tidy-up.
+**The parity argument, in full.**  Rules 3-6 always leave `R' <= 1` and rule
+5 at `k=0` consumes `R'=1`, so rule 2 plus its consumer is a single self-map
+`T` on the left word at `(s=S1, R=0)`.  With `w = 0^j 1 a l2`:
 
-Boarding it reads 4 core -> 3 and takes its `0RB` shadow with it.
+    a=S0, j odd  :  T w = 1^(j+2) l2        ones change  j+1   (even)
+    a=S0, j even :  T w = 0 1^(j+1) l2      ones change  j     (even)
+    a=S1, j odd  :  T w = 1^(j+1) 0 l2      ones change  j-1   (even)
+    a=S1, j even :  T w = 0 1^j 0 l2        ones change  j-2   (even)
+
+All four preserve length AND the parity of `ones`.  `T` is undefined exactly
+when `w` has no `S1`, i.e. `ones w = 0`, which is EVEN.  So an odd-ones word
+can never stick and can never reach a stuck one.  The first `(S1,0)` word on
+the real orbit is `[S1]`, one `S1`, odd.  Done.
+
+Verified two ways by `tools/mxdys4/cmacro2.py --parity`: exhaustively over
+all 262,144 words of prefix length <= 18 (0 parity violations; and of the
+131,072 odd-ones words in range, not one sticks), and along the real orbit
+-- 152,786 rule-2 configurations, ALL with `ones l` odd.
+
+Same shape as M1/M4's parity lock, so §8's transcription warning applies:
+state the parity facts as TWO IMPLICATIONS, never an `iff`, or
+`apply H in Hyp` picks a direction by luck.
+
+**What is left is Coq**: six rule lemmas (induction on `R` for the walk
+through the run, on `j` for the left sweep), the composite step, the parity
+lemma, and `neverqh_of_live4` to close.  Two traps that look like the
+invariant and are not, both recorded in `docs/WAVE38_REST_FOUR.md` §3d:
+`In S1 l` is not closed under the rules, and "avoid words with two ones" is
+wrong because the doomed set is not closed downward (`0^i 1 1 0^inf` has a
+four-ones preimage).  Every doomed word has EVEN `ones` -- that is the fact
+that generalises, not the shape.
+
+Boarding it reads 4 core -> 3 and takes its `0RB` shadow
+`0RB1LC_1LC0LC_0RD1LA_1RD1RB` with it, so 1 shadow -> 0.
 
 ## What is now CLOSED, so nobody re-opens it
 

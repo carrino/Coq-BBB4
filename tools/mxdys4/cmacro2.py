@@ -157,9 +157,66 @@ def run_T(n):
     return 0
 
 
+def run_parity(n):
+    """THE INVARIANT.  `ones l` is ODD at every (s=S1, R=0) configuration,
+    and that is exactly what makes the macro system total.
+
+      * it holds at the start -- the first such word on the real orbit is
+        [S1], one S1;
+      * T PRESERVES IT.  With w = 0^j 1 a l2 the four cases change `ones` by
+        j+1, j, j-1 and j-2 respectively, and in each case the parity of j
+        that guards the case makes that change EVEN:
+
+            a=S0, j odd  : ones diff = j+1   (even)
+            a=S0, j even : ones diff = j     (even)
+            a=S1, j odd  : ones diff = j-1   (even)
+            a=S1, j even : ones diff = j-2   (even)
+
+      * and it EXCLUDES THE STUCK CONFIGURATION.  T is undefined exactly
+        when w has no S1, i.e. when `ones w = 0`, which is EVEN.  So an
+        odd-ones word can never be stuck and can never reach one.
+
+    Hence rule 2 always applies, the macro system is total on the orbit, and
+    by the state-coverage argument every one of StA/StB/StC/StD recurs.  This
+    is the same shape as M1/M4's parity lock.
+
+    Checked here two ways: exhaustively over every word up to a prefix
+    length (parity preservation, and no odd-ones word ever sticking), and
+    along the real orbit."""
+    # (a) exhaustive over short words
+    N = 18
+    viol = stuck_odd = 0
+    for m in range(1 << N):
+        w = trim([(m >> i) & 1 for i in range(N)])
+        if 1 not in w:
+            continue
+        if trim(T(w)).count(1) % 2 != w.count(1) % 2:
+            viol += 1
+    print('parity preserved by T over all %d words of length <= %d: %s'
+          % (1 << N, N, 'YES (0 violations)' if viol == 0 else '%d VIOLATIONS' % viol))
+    # (b) along the real orbit
+    l, s, R = [], 0, 0
+    tot = odd = 0
+    for _ in range(n):
+        if s == 1 and R == 0:
+            tot += 1
+            odd += (l.count(1) % 2 == 1)
+        r = rule(l, s, R)
+        if r is None:
+            print('macro system UNDEFINED -- the invariant is wrong')
+            return 1
+        _, _, l, s, R = r
+        l = trim(l)
+    print('rule-2 configurations on the real orbit: %d, of which ones(l) ODD: %d'
+          % (tot, odd))
+    return 0 if (viol == 0 and odd == tot) else 1
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == '--T':
         return run_T(int(sys.argv[2]) if len(sys.argv) > 2 else 400000)
+    if len(sys.argv) > 1 and sys.argv[1] == '--parity':
+        return run_parity(int(sys.argv[2]) if len(sys.argv) > 2 else 400000)
     n = int(sys.argv[1]) if len(sys.argv) > 1 else 4000
     sim = Sim(CODE)
     # advance to the first StA configuration
