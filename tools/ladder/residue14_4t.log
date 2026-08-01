@@ -2,3 +2,4 @@
 1RB0RB_1LC0RC_1RA0LD_0LB0LC    {'closed': False, 'rules': 15, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 46.4, 'reason': 'families found but none closed'}
 0RB0RD_1LC1RB_1RA0LC_1LB0LC    {'closed': False, 'rules': 5, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 24.2, 'reason': 'families found but none closed'}
 1RB1LC_1LB1RA_0LC0LD_0RA0RD    {'closed': False, 'rules': 3, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 98.9, 'reason': 'families found but none closed'}
+1RB---_0LC1RD_1LB1RD_1LB0RD    {'closed': False, 'rules': 4, 'arms': 0, 'live': None, 'diff': None, 'steps_ok': None, 'laps': None, 'sec': 204.0, 'reason': 'families found but none closed'}
