@@ -16,9 +16,11 @@ Three supporting references:
 * [`TERMINOLOGY.md`](TERMINOLOGY.md) — the project's vocabulary
   (boards, holdouts, residue, tiers, quasihalting).
 * [`CORE_3STATE.md`](CORE_3STATE.md) — the `1RB---_...` core rows read
-  as three-state machines, and §3 the FIBONACCI finding: the twelve
-  surviving rows count in φ, not in base 2.  The largest coherent block
-  of the open list, and the one whose remaining work is entirely in Coq.
+  as three-state machines, and §3 the FIBONACCI finding: they count in φ,
+  not in base 2.  **All 24 boarded**, the last eleven off the ladder at
+  `(Fib, 1)` and `(FibL, 1)`; the file is kept for §3's shape — three
+  independent negative searches that were all asking the wrong question —
+  and because one φ row outside the 24 is still open.
 * [`WHY_NO_HAMMER.md`](WHY_NO_HAMMER.md) — the measured answer to "why
   not just run every decider over the residue?": the sweep exists, it
   was run, and this records why it cannot finish the job.

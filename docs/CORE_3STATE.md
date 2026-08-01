@@ -10,8 +10,15 @@ what boarded, and what each survivor still needs.  Companion reading:
 
 ## 0. The one fact that reorganises the population
 
-**Thirteen of the 24 are boarded** (twelve on 2026-07-31 morning, then the
-`StA` row; §3).
+**All 24 are boarded.**  Thirteen on 2026-07-31 (twelve in the morning, then
+the `StA` row; §3), and the eleven §3 calls "survivors" on 2026-08-01, all
+eleven off the LADDER at the fibonacci code that §3's last part predicts —
+five at `(Fib, 1)` and six at `(FibL, 1)`, boards
+`theories/Machines/Ladder/LDR_*.v`.  **This population is closed**; nothing
+in `tools/closeout/core_rows.txt` has an undefined `A1` any more.  §3 is kept
+as written because its shape — three independent negative searches that were
+all asking the wrong question — is the finding, but read every "survivor" in
+it as past tense.
 
 **The 24 rows are 9 sub-machines.**  `StA` fires once, at index 0, and 23 of
 the 24 rows are the target of no transition, so everything after step 1 is
@@ -26,10 +33,10 @@ sub-machines (plus one row that does target `StA`):
 | `0LC1RB_0LB1RD_1LC0RD` | 3 | **3** | `Counters/KpWallScan.v` |
 | `0LC1RD_1LB1RD_1LC0RD` | 1 | **1** | `Checkers/LapDecider.v` (nested) |
 | `0LB1RC_1LB0RD_1LC0RC` | 2 | **2** | `Counters/Ter3WallB.v` |
-| `0LB1RC_1LD0RC_1LB1RC` | 3 | 0 | — |
-| `0LC1RD_1LB1RC_1LB0RD` | 3 | 0 | — |
-| `0LC1RD_1LB1RD_1LB0RD` | 3 | 0 | — |
-| `0LB1RC_1LB0RD_1LC0RD` | 2 | 0 | — |
+| `0LB1RC_1LD0RC_1LB1RC` | 3 | **3** | ladder at `(Fib, 1)`, `Machines/Ladder/LDR_*.v` |
+| `0LC1RD_1LB1RC_1LB0RD` | 3 | **3** | ladder at `(FibL, 1)`, `Machines/Ladder/LDR_*.v` |
+| `0LC1RD_1LB1RD_1LB0RD` | 3 | **3** | ladder at `(FibL, 1)`, `Machines/Ladder/LDR_*.v` |
+| `0LB1RC_1LB0RD_1LC0RD` | 2 | **2** | ladder at `(Fib, 1)`, `Machines/Ladder/LDR_*.v` |
 | (targets `StA`) | 1 | **1** | `Machines/Counters/NLAP_1RB____1RC1LB_0LB1RD_0RA0RC.v` |
 
 Two rows sharing a sub-machine differ **only in their bootstrap**: the entry
@@ -227,14 +234,24 @@ The per-row anchor and ladder for all eleven are recorded in
 `tools/counters/FIB_ELEVEN.txt`, so the next session does not have to re-run
 the scan.
 
-**The family is bigger than this file's population.**  A radix sweep of every
-undecided core row (`tools/counters/RADIX_CORE.txt`) finds a TWELFTH `phi`
-row outside the 24 three-state rows: `1RB0RB_0LC1RD_1LC1LA_0LA1RB` (+1
-shadow), `phi` at spread 0.00, whose anchor values step by successive
-Fibonacci numbers.  Same family, read at a sparse anchor; its
-once-per-increment anchor is not located yet.  So a Fibonacci numeral module
-is worth **12 core rows + 1 shadow**, the largest coherent block left in the
-residue.
+**The family is bigger than this file's population, and the twelfth row is
+the one still open.**  A radix sweep of every undecided core row
+(`tools/counters/RADIX_CORE.txt`) finds a TWELFTH `phi` row outside the 24
+three-state rows: `1RB0RB_0LC1RD_1LC1LA_0LA1RB` (+1 shadow), `phi` at spread
+0.00, whose anchor values step by successive Fibonacci numbers.  Same family,
+read at a sparse anchor; its once-per-increment anchor is not located yet.
+
+The eleven boarded on 2026-08-01 and this one did not, so the Fibonacci
+numeral module is now built (`LadderFam`'s `Fib` and `FibL`, plus `fam_lo`)
+and this row is the only customer left for it — **1 core row + 1 shadow, and
+the only thing missing is the anchor.**  `docs/RESIDUE_MAP.md` and
+`buckets34/GATETABLE.md` file the same row as "no family at any anchor —
+`digit_words` names nothing", which is the EMITTER's verdict at the emitter's
+anchor set and not a contradiction of the measurement here: `radix_clock.py`
+read the ratio off a sparse sampling that `digit_words` never enumerates.
+That is exactly the mistake §3 records four times over, so believe the ratio
+and go looking for the once-per-increment anchor — with the ladder built,
+finding it is the whole remaining cost of the row.
 
 And the words are the ones this file already recorded — `(empty), 1, 11, 011,
 111, 0011, 1011, 1111, 00011, …` — the very sequence called "plain `Kp` words

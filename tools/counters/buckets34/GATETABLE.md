@@ -1,4 +1,4 @@
-# Gate table over the 9 open core rows
+# Gate table over the 8 open core rows
 
 `tailcert.py --list tools/closeout/core_rows.txt --out scan.json` (scan labels,
 no --emit), split by `buckets.py`, filtered to live membership after each wave.
@@ -7,7 +7,7 @@ commands are untrusted Python and need no Coq.
 
 | n | furthest gate |
 |--:|---|
-| 4 | `no_interior_jS_j_chain_at_octave_parity_0` |
+| 3 | `no_interior_jS_j_chain_at_octave_parity_0` |
 | 2 | `no_inner_interior_chain` |
 | 1 | `no_gap_free_two_form_family` |
 | 1 | `no_interior_j0_chain_at_octave_parity_0` |
@@ -15,7 +15,7 @@ commands are untrusted Python and need no Coq.
 
 `register_step_does_not_close` and `no_boot_chain` are both EMPTY.
 
-**At nine rows this table has stopped being useful, and that is the finding.**
+**At eight rows this table has stopped being useful, and that is the finding.**
 Every bucket it ever called large has emptied without the gate being answered,
 so what follows is kept as the record of how a gate label fails rather than as
 a difficulty map.  For choosing a target, read the per-row notes in
@@ -23,27 +23,28 @@ a difficulty map.  For choosing a target, read the per-row notes in
 
 ## What is actually left in the biggest bucket
 
-`no_interior_jS_j_chain_at_octave_parity_0` is 4 rows:
+`no_interior_jS_j_chain_at_octave_parity_0` is 3 rows:
 
-* **THREE are the BASE-3 block** — `1RB1LC_1LB1RA_0LC0LD_0RA0RD`,
-  `1RB1LC_1LC1RA_0LC0LD_0RA0RD` (which differ in exactly one transition) and
-  `1RB1RC_1LA0LB_1LD0RD_1LB0RC`.  All three read `EXP3`/`EXP3`; two carry a
-  shadow, so they are 5 of the 14 rows left.  **The third is reconnoitred and
-  build-ready** — `tools/counters/ter3_probe.py` located its anchor and
-  measured 75,006 consecutive visits with 0 failures and an affine lap in two
-  branches (`6c+4`, `6c+6`).  Its alphabet is `Ter3WallB`'s digit for digit
-  and its branches are `TernCounter`'s `tsucc`/`tsuccT`; only the closer is
-  new (`LapGlue.glue_neverqh`, since `StA` is a transition target here).  The
-  other two have not been probed.
+* **TWO are the `1RB1LC` siblings** — `1RB1LC_1LB1RA_0LC0LD_0RA0RD` and
+  `1RB1LC_1LC1RA_0LC0LD_0RA0RD`, which differ in exactly one transition.
+  Both read `EXP3`/`EXP3` and both carry a shadow, so they are 4 of the 13
+  rows left.  #120 measured them: base **2**, digits `{00, 10}`, anchored at
+  `(StA, ([], S0, <digits>))` with no prefix, laps `3.5*3^c + c + 2.5` and
+  `3*3^c + 2c + 1`.  No closer in the tree glues a non-affine lap.
 * **ONE is a `no anchor` row wearing this label** —
   `1RB0RB_0LC1RD_1LC1LA_0LA1RB` finds no family at any anchor
-  (`digit_words(rules)` names nothing).  It once counted with the fibonacci
-  rows; it was never one of them.
+  (`digit_words(rules)` names nothing).  This file used to add "it once
+  counted with the fibonacci rows; it was never one of them", which is the
+  fifth wrong verdict in the list below waiting to happen: `RADIX_CORE.txt`
+  reads it `phi` at spread 0.00 with anchor values stepping by successive
+  Fibonacci numbers, and the other eleven φ rows have all boarded.  It IS one
+  of them, read at a sparse anchor `digit_words` does not enumerate.  The
+  numeration it needs is built; the anchor is the only thing missing.
 
-## What this table has been wrong about, four times
+## What this table has been wrong about, five times
 
 A gate name says what stopped the emitter, never what stops a proof.  This
-file has asserted four verdicts that later measurement overturned.  The shape
+file has asserted five verdicts that later measurement overturned.  The shape
 of the mistake is the same every time and is worth more than any label in it:
 
 1. **"The four QUADRATIC rows are not coming back without a new arm shape."**
@@ -70,12 +71,24 @@ of the mistake is the same every time and is worth more than any label in it:
    an emitter run."**  It was measured, twice (§4s, §4v), and neither answer
    was "it reaches them" nor "the emitter refuses".
 
-**All of them boarded.**  #118 took the six at `(FibL, 1)` — a fourth CODE, not
-a second numeration: `fibdec`/`fibokb` pick the greedy representative and these
-six stood on the LAZY one, so `LadderFam` gained `FibL` with the decoder
-`fiblaz` (`fibdec`'s two-state automaton with the transitions swapped), plus
-`fam_lo`, because what a weighted numeration really costs the interface is a
-FLOOR — width `k` spells exactly `[fibw k .. fibsum k]`.
+5. **"THREE are the BASE-3 block."**  Only one of the three was.
+   `1RB1RC_1LA0LB_1LD0RD_1LB0RC` was probed and is base 3; the other two were
+   called base 3 because they read `EXP3` and sit one transition from each
+   other.  #120 swept both over every blank-side anchor, every 0/1/2-cell
+   prefix and every 2-cell radix: **base 2, with a `3^c` lap.**  `EXP3` names
+   the LAP, not the radix — `docs/CORE_3STATE.md` §2 says so in words, and
+   `residue_map.tsv`'s own `Alph_11_00_1` names two digit words, so the label
+   never claimed what this file read into it.
+
+**The rows behind 1–4 all boarded.**  #118 took the six at `(FibL, 1)` — a
+fourth CODE, not a second numeration: `fibdec`/`fibokb` pick the greedy
+representative and these six stood on the LAZY one, so `LadderFam` gained
+`FibL` with the decoder `fiblaz` (`fibdec`'s two-state automaton with the
+transitions swapped), plus `fam_lo`, because what a weighted numeration really
+costs the interface is a FLOOR — width `k` spells exactly
+`[fibw k .. fibsum k]`.  Behind 5, the one row that WAS base 3 boarded (#120,
+`Counters/Ter3WallD.v` + `Counters/LapGlueNeverIx.v`) and the two the label
+had swept in with it are still open, now with a correct reading.
 
 ## `no_gap_free_two_form_family`: 10 -> 1, and the gate was never answered
 
