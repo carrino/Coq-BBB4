@@ -131,11 +131,13 @@ and its shadow.  **Read a gate label as "where the emitter stopped", never as
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
-| `-`/`no-anchor` | 1 | no overflow phase at K=6 |
+| — | 0 | *(the table is empty)* |
 
-**What that table now says, and why you should stop reading it.**  One row,
-and its entry is a pair of dashes: the emitter found no anchor, so it recorded
-no shape at all.  Every row that ever carried a *decodable* shape is gone.  The
+**What that table said, and why it never predicted anything.**  Its last
+surviving entry was a pair of dashes — the emitter found no anchor on the
+final row, so it recorded no shape at all, and the column that was supposed to
+be a difficulty map said nothing whatever about the machine that took the
+longest.  The
 column has now been emptied three times from underneath by rows that went out
 through routes it does not model — the `AFFINE`/`HIGHER` pair in wave 37
 (re-read as word-rewriting systems), the `EXP3` pair in #123 (base-2 counters
@@ -445,12 +447,14 @@ stuck.  So the remaining cost is not a search for an anchor and not new
 mathematics; it is the Coq transcription.  `docs/WAVE38_REST_FOUR.md`
 §3.
 
-**The one shadow is not a task.**  `0RB1LC_1LC0LC_0RD1LA_1RD1RB` rides on the
-φ row and no other core row carries one.  It needs no new mathematics and it
-falls automatically: `Census/ShadowBoard.shadow_nqh` is the whole argument in
-one lemma and `make closeout` runs `gen_shadow.py --harvest`.  Board the φ row
-and the shadow comes with it — first demonstrated in wave 4u, and every shadow
-since (wave 37's two, #123's two) came that way without anyone touching it.
+**The shadows never became a task, and that was the design working.**  The
+shadow table is empty and the last entry, `0RB1LC_1LC0LC_0RD1LA_1RD1RB`, fell
+with the φ row it rode on.  `Census/ShadowBoard.shadow_nqh` is the whole
+argument in one lemma and `make closeout` runs `gen_shadow.py --harvest`, so
+from wave 4u onward every freed shadow boarded in the same regen as its
+partner — wave 37's two, #123's two, wave 39's one — without anyone touching
+it.  The population that once stood at 96 rows closed without ever being
+worked on directly.
 
 **And re-run the stale-verdict query.**  Which core rows carry a `closed: true`
 certificate in a committed sweep and are still unproven?  That is how wave 4u's
@@ -468,4 +472,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 4).
+first shrank from 883 to 511 (and, wave by wave, to zero).
