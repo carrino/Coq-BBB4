@@ -141,6 +141,40 @@ the head is locked to odd positions, and the only exit from the odd class
 is rule 5 itself.**  M4's `StD` yields to the same argument transported
 through §2b.
 
+### 4a. The measure, in the form Coq wants
+
+`N(W)` needs the frame; the equivalent quantity written straight on the
+`cconf` `(StA, (l, s, rep S1 R))` does not.  With `vall l` the left
+half-tape read as a binary number, **nearest cell the least significant**
+(`vall [] = 0`, `vall (b :: t) = sval b + 2 * vall t`),
+
+    mu (l, s, R)  =  2^R * (2 * vall l + sval s + 1)          [ = N(W) + 1 ]
+
+and the per-rule deltas are exact, with no frame in sight:
+
+| rule | delta |
+|---|---|
+| 1 | `+2` |
+| 2 | `+2^R` |
+| 4 | `+2^(R+1)` |
+| 5 | `-(2^(R+1) - 1)` |
+
+The bound is `mu <= 2^w` for `w = length l + 1 + R`, and **`w` is preserved
+by all four rules** (rule 1: `length l' = length l + R - 1`, `R' = 1`;
+rule 4: `-2` and `+2`; rule 5: `+R+1` and `R' = 0`).  So the induction is
+on `2^w - mu`, with `w` carried as proof-level data alongside the
+`cconf` and `length l = w - 1 - R` as part of the invariant.
+
+Head position `p = length l`, so "p odd" is "`length l` odd" and the
+frame's cell 0 is `last l`.  All of §4 in those terms: rules 1, 2 and 4
+preserve `length l` odd and `last l = S1`, no widening is enabled
+(`length l = 1` with `last l = S1` means `l = [S1]`, which is rule 5's
+guard), and `2^w - mu` strictly decreases.
+
+Both lemmas — the four deltas and the parity lock — were checked over 4000
+macro steps with zero exceptions (`tools/mxdys4/macro1.py` carries the
+rules; the check is three lines on top of it).
+
 With this, M1 and M4 need `StA`, `StB`, `StC` as well — and those are
 already available off the shelf: `tools/reachsti/cert_search.py` returns
 `ReachStI` certificates for M1's A `(B=0,C=1)`, B `(B=4,C=1)` and C
