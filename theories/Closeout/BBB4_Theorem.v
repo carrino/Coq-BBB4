@@ -8,15 +8,13 @@
 
     -- every (4,2) machine either quasihalts with every quiet state
     quiet before index 32,779,478 (the champion's score), or never
-    quasihalts, or is SKIPPED: one of the 30 distinct undecided
+    quasihalts, or is SKIPPED: one of the 27 distinct undecided
     core machines (tools/closeout/core_rows.txt), or one of their
     12 0RB re-root shadows (shadow_rows.tsv), which resolve
     automatically as core machines are boarded.
 
-    The champion [1RB1LD_1RC1RB_1LC1LA_0RC0RD] is itself one of the
-    skipped machines (its 32.8M-step prefix has no board yet),
-    so this is NOT a proof that BBB(4) = 32,779,478 --
-    see docs/CLAIMS.md.
+    NOTE: the champion [1RB1LD_1RC1RB_1LC1LA_0RC0RD] is no longer on the
+    residue list -- revisit docs/CLAIMS.md and this statement.
 
     Like CloseoutFinal.v this file loads the committed census .vo:
     compile under the census opam switch (see tools/census_cache.py).
@@ -39,12 +37,15 @@ Theorem bbb4_target : forall tm,
   \/ skipped D_remaining tm.
 Proof.
   intro tm.
-  destruct (census_boarded tm) as [H | [[H | (Hnh & Hb & Hq)] | H]].
+  destruct (census_boarded tm)
+    as [H | [[H | [(Hnh & Hb & Hq) | (Hnh & Hb & Hq)]] | H]].
   - left. apply (qhbound_mono B_census);
       [unfold B_census, champion_score; lia | exact H].
   - right; left; exact H.
   - left. apply (qhbound_mono B_board);
       [unfold B_board, champion_score; lia | exact Hb].
+  - left. apply (qhbound_mono B_champ);
+      [unfold B_champ, champion_score; lia | exact Hb].
   - right; right; exact H.
 Qed.
 
@@ -64,23 +65,41 @@ Qed.
     Counters/BlankTail_66349.v) -- the bound [boarded] carries. *)
 Definition prev_champion_score : nat := B_board.
 
-(** The community-facing reading: every machine the theorem
-    decides quasihalts by the PREVIOUS champion's score or never
-    quasihalts -- the four previous champions are among the
-    decided -- so among all known (4,2) machines, only the
-    (skipped, undecided) champion exceeds the previous record. *)
-Corollary bbb4_decided_le_prev_champion : forall tm,
+(** The community-facing reading, in previous-record terms.
+
+    Every machine the theorem decides either never quasihalts,
+    or quasihalts by the PREVIOUS champion's score, or
+    quasihalts by the CHAMPION's.  The third case is
+    [boarded]'s third disjunct and it is inhabited by exactly
+    ONE census row -- the champion 1RB1LD_1RC1RB_1LC1LA_0RC0RD
+    and its orbit, the single `iqhch` line of
+    tools/closeout/frozen_map.tsv.  So among all known (4,2)
+    machines only the champion exceeds the previous record,
+    exactly as before it was boarded; what changed is that it
+    is now DECIDED rather than skipped.
+
+    (That the third case has one row is UNTRUSTED bookkeeping,
+    like the partition audit: [boarded]'s third disjunct
+    carries a bound, not an identity, so the kernel states the
+    disjunction and not the census of who satisfies it.  This
+    corollary was called [bbb4_decided_le_prev_champion] and
+    had two disjuncts while the champion was skipped.) *)
+Corollary bbb4_decided_le_prev_champion_or_champion : forall tm,
   ~ skipped D_remaining tm ->
-  QHBound prev_champion_score tm \/ NeverQuasiHaltsSt tm.
+  QHBound prev_champion_score tm \/ NeverQuasiHaltsSt tm
+  \/ QHBound champion_score tm.
 Proof.
   intros tm Hres.
-  destruct (census_boarded tm) as [H | [[H | (Hnh & Hb & Hq)] | H]].
+  destruct (census_boarded tm)
+    as [H | [[H | [(Hnh & Hb & Hq) | (Hnh & Hb & Hq)]] | H]].
   - left. apply (qhbound_mono B_census);
       [unfold B_census, prev_champion_score, B_board; lia | exact H].
-  - right; exact H.
+  - right; left; exact H.
   - left; exact Hb.
+  - right; right. apply (qhbound_mono B_champ);
+      [unfold B_champ, champion_score; lia | exact Hb].
   - destruct (Hres H).
 Qed.
 
 Print Assumptions bbb4_target.
-Print Assumptions bbb4_decided_le_prev_champion.
+Print Assumptions bbb4_decided_le_prev_champion_or_champion.

@@ -1229,7 +1229,7 @@ def fit_far(fam, occ):
 # ----------------------------------------------------------------- discovery
 
 def find_families(tm, snaps, rules, max_anchor=8, min_chain=8, max_occ=200,
-                  max_other=3):
+                  max_other=3, numeration=False, weak_chain=12):
     """Anchor + alphabet inference.  Returns [(Fam, first_t, chain_len)].
 
     The anchors of a counter machine are a SUBSEQUENCE of the visits to their
@@ -1328,14 +1328,54 @@ def find_families(tm, snaps, rules, max_anchor=8, min_chain=8, max_occ=200,
             for q, h, side, full, occ, cs, os in sides[:6]:
                 _unary_pass(q, h, side, occ, cs, os, seeds, lens, min_chain,
                             found, seen)
+    # The NUMERATION pass, run a SECOND way: when the main pass found only
+    # families whose anchor chain never gets off the floor (LADDER_PLAN 4s).
+    #
+    # `if not found` above is an ALL-OR-NOTHING gate, and it is the reason the
+    # seven surviving fibonacci rows had never been read as fibonacci: the
+    # main pass returns 26 positional families for
+    # `1RB---_0LC1RD_1LB1RC_1LB0RD`, every one of them at chain 8 -- which is
+    # `min_chain`, the FLOOR -- and 26 > 0 switches the numeration pass off
+    # entirely.  The five rows wave 4r boarded found zero positional families,
+    # fell through to the numeration pass, and read at chains of 89..290.  The
+    # difference between the two halves of that bucket was never the machine;
+    # it was whether junk cleared a threshold first.
+    #
+    # So the gate is restated as a COMPARISON rather than a presence test: if
+    # nothing found so far reads more than `weak_chain` consecutive anchor
+    # visits, the row has not been read, and the numeration pass runs.  A row
+    # that reads plainly today has a long chain (every closed row in the tree
+    # is far above this floor) and is untouched, which is the property the
+    # `if not found` gate was protecting.  Weighted families then sort by
+    # chain like any other, so a genuine positional reading still wins.
+    if found and numeration and max(f[2] for f in found) <= weak_chain:
+        end = time.time() + 40.0
+        for q, h, side, full, occ, cs, os in sides[:6]:
+            _weights_pass(q, h, side, full, seeds, lens, min_chain,
+                          found, seen, deadline=end)
     # longest chain first; ties to the cleanest reading (shortest terminator,
     # no near-head prefix, narrowest digit).  Template families sort AFTER
     # every constant-far-side one however long their chain, and a non-
     # positional code or a step other than 1 sorts after the plain reading:
     # all three are fallbacks, and a row that reads plainly must keep to it.
+    #
+    # One tie-break sits between the chain and the shape: a family every one
+    # of whose digit words ends in a BLANK, with no terminator behind them,
+    # spells one cell more than a [cconf] can carry (LADDER_PLAN 4s).  A
+    # `cconf` holds no trailing blanks -- that is what `lpad_eqb` is for -- so
+    # the boot's own cells are the family's spelling minus its last cell, and
+    # every emitter boot check rejects it with `boot cells ... are not the
+    # family at ...`.  It is a property of the DENOTATION and not of the
+    # machine: the same anchor rotated one cell reads the same counter with
+    # words ending in a 1, and both readings are in `found` at the same chain
+    # length.  So this only ever fires on an exact tie in (fallback flags,
+    # chain), and when it fires it picks the reading the kernel can state.
+    def _blank_tail(f):
+        return int(not f.tail and all(d and d[-1] == 0 for d in f.digs))
+
     found.sort(key=lambda f: (f[0].templated, f[0].code != 'binary',
-                              f[0].step != 1, -f[2], len(f[0].tail),
-                              len(f[0].pre), f[0].l))
+                              f[0].step != 1, -f[2], _blank_tail(f[0]),
+                              len(f[0].tail), len(f[0].pre), f[0].l))
     return found
 
 
@@ -2636,7 +2676,8 @@ def chain_check(tm, fam, boot_t, boot_ds, boot_p=None, laps=40,
 
 # --------------------------------------------------------------------- drive
 
-def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
+def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False,
+          numeration=False):
     t0 = time.time()
     _WALKS.clear()
     _COVERS.clear()
@@ -2666,7 +2707,7 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False):
     if not rules:
         res['reason'] = 'no local rules'
         return res
-    fams = find_families(tm, snaps, rules)
+    fams = find_families(tm, snaps, rules, numeration=numeration)
     res['n_families'] = len(fams)
     if not fams:
         res['family_probe'] = probe_families(tm, snaps, rules)
@@ -2965,12 +3006,16 @@ def main():
     ap.add_argument('--kmax', type=int, default=7)
     ap.add_argument('--json')
     ap.add_argument('--verbose', action='store_true')
+    ap.add_argument('--numeration', action='store_true',
+                    help='also run the NUMERATION pass when the main pass '
+                         'found only floor-chain families (LADDER_PLAN 4s)')
     a = ap.parse_args()
     specs = [a.spec] if a.spec else \
         [l.split()[0] for l in open(a.list) if l.strip()]
     out = []
     for spec in specs:
-        r = close(spec, a.steps, a.cap, a.kmax, a.verbose)
+        r = close(spec, a.steps, a.cap, a.kmax, a.verbose,
+                  numeration=a.numeration)
         out.append(r)
         print('%-30s %s' % (spec, {
             'closed': r['closed'], 'rules': r.get('n_rules'),

@@ -54,6 +54,24 @@ IQHLE_OK_RE = re.compile(
     r'NonHalt\s+tm\s*/\\\s*QHBound\s+B\s+tm\s*/\\\s*QuasiHaltsSt\s+tm\s*\.')
 B_BOARD = 66349
 
+# The CHAMPION's board (kind iqhch): a quasihalter at 32,779,478, which is
+# above B_board and so lands in [boarded]'s THIRD disjunct
+# ([CloseoutKit.covers_iqh_champ_at], gate [B <= B_champ]).  It cannot state
+# its bound as a decimal literal the way the iqhle boards do -- 32,779,478 is
+# left as [Nat.of_num_uint], opaque to lia and ruinous to vm_compute -- so the
+# bound rides in the DEFINITION, in Horner form, and the regex checks that
+# definition rather than a number in the theorem statement.
+CHAMP_THM_RE = re.compile(
+    r'(?:Theorem|Lemma)\s+(\w+)\s*:\s*iqh_champ\s+\(?(\w+)\)?\s*\.')
+CHAMP_OK_RE = re.compile(
+    r'Definition\s+iqh_champ\s*\(\s*tm\s*:\s*TM\s*\)\s*:\s*Prop\s*:=\s*'
+    r'NonHalt\s+tm\s*/\\\s*QHBound\s+champ_score\s+tm\s*/\\\s*QuasiHaltsSt\s+tm\s*\.')
+# and the Horner form [champ_score] must actually BE 32,779,478.  The kernel
+# re-checks this in the stage (the [lia] gate), so this is hygiene, not proof.
+CHAMP_SCORE_RE = re.compile(
+    r'Definition\s+champ_score\s*:\s*nat\s*:=\s*([-()*+ 0-9\n]+?)(?:%nat)?\s*\.')
+B_CHAMP = 32779478
+
 SLOT = {('A', '0'): 0, ('A', '1'): 1, ('B', '0'): 2, ('B', '1'): 3,
         ('C', '0'): 4, ('C', '1'): 5, ('D', '0'): 6, ('D', '1'): 7}
 
@@ -135,6 +153,23 @@ def main():
                     continue  # above the closeout bound: refuse
                 hits[spec].append(('iqhle:%s' % bound, vfile, thm, const))
                 nthm += 1
+        if CHAMP_OK_RE.search(txt):
+            ms = CHAMP_SCORE_RE.search(txt)
+            try:
+                score = eval(ms.group(1), {'__builtins__': {}}, {}) if ms else None
+            except Exception:
+                score = None
+            if score == B_CHAMP:
+                for thm, const in CHAMP_THM_RE.findall(txt):
+                    if const == 'tm':
+                        if len(nota) != 1:
+                            continue
+                        const = nota[0]
+                    spec = defs.get(const)
+                    if spec is None or spec not in fset:
+                        continue
+                    hits[spec].append(('iqhch', vfile, thm, const))
+                    nthm += 1
 
     chosen = {}
     for spec, cands in hits.items():

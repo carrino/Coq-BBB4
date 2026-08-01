@@ -12,10 +12,13 @@
 
     - [boarded] settles the quasihalting behaviour with a CONCRETE bound:
       never-QH, or a quasihalter whose quiet states all go quiet before
-      index [B_board] = 66,349, the PREVIOUS champion's score.  Census-
-      tier stage boards certify [QHBound 2000] and lift by monotonicity;
-      the four BlankTail ex-champions enter at their exact scores through
-      the [B <=? B_board] gate.  The closeout carries the bound to the
+      index [B_board] = 66,349, the PREVIOUS champion's score, or -- the
+      third disjunct -- one that goes quiet before [B_champ] = 32,779,478,
+      the CHAMPION's own score.  Census-tier stage boards certify
+      [QHBound 2000] and lift by monotonicity; the four BlankTail
+      ex-champions enter at their exact scores through the
+      [B <=? B_board] gate; the champion itself enters through
+      [covers_iqh_champ_at].  The closeout carries the bound to the
       top-level theorem ([Closeout/BBB4_Theorem.v]);
     - [covers h] discharges from a single theorem about the row's own
       machine -- [NeverQuasiHaltsSt h] or the [NonHalt/QHBound/QuasiHaltsSt]
@@ -57,9 +60,37 @@ Definition B_board : nat :=
 Lemma le_2000_B_board : 2000 <= B_board.
 Proof. unfold B_board. lia. Qed.
 
+(** [B_champ]: the CHAMPION's own score, 32,779,478
+    ([Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v], and
+    definitionally [BBB4_Theorem.champion_score]).
+
+    The champion is the one decided machine that exceeds [B_board], and
+    a bound is not a place to be vague: rather than coarsen the second
+    disjunct to 32.8M -- which would throw away the fact that every
+    OTHER decided quasihalter is quiet by the previous record -- it gets
+    a disjunct of its own.  The top-level theorem reads both through
+    [qhbound_mono] and states the larger, so [bbb4_target] is unchanged
+    by this; what the third disjunct buys is that
+    [bbb4_decided_le_prev_champion] can still name exactly which
+    machine is the exception.
+
+    Horner digit form, for the same reason [B_board] is: a bare literal
+    this large is left as [Nat.of_num_uint], which [lia] cannot see
+    through -- and here it matters twice over, because forcing that
+    numeral would build 32.8M constructors.  Nothing below ever
+    evaluates [B_champ]: the gate is the PROPOSITION [B <= B_champ],
+    discharged by [lia] on the Horner form, and not a [<=?] the kernel
+    would have to run. *)
+Definition B_champ : nat :=
+  (((((((3)*10 + 2)*10 + 7)*10 + 7)*10 + 9)*10 + 4)*10 + 7)*10 + 8.
+
+Lemma B_board_le_B_champ : B_board <= B_champ.
+Proof. unfold B_board, B_champ. lia. Qed.
+
 Definition boarded (tm : TM) : Prop :=
   NeverQuasiHaltsSt tm
-  \/ (NonHalt tm /\ QHBound B_board tm /\ QuasiHaltsSt tm).
+  \/ (NonHalt tm /\ QHBound B_board tm /\ QuasiHaltsSt tm)
+  \/ (NonHalt tm /\ QHBound B_champ tm /\ QuasiHaltsSt tm).
 
 (** [covers h]: every completion of [h] is boarded.  This is exactly the
     obligation [Deferred_base] induces for a listed row [h]. *)
@@ -99,7 +130,7 @@ Qed.
 Lemma covers_iqh : forall h,
   NonHalt h -> QHBound 2000 h -> QuasiHaltsSt h -> covers h.
 Proof.
-  intros h Hnh Hb Hqh tm Hle. right.
+  intros h Hnh Hb Hqh tm Hle. right; left.
   split; [exact (nonhalt_le h tm Hnh Hle) |].
   split; [exact (qhbound_mono 2000 B_board tm le_2000_B_board
                    (qhbound_le 2000 h tm Hnh Hb Hle)) |].
@@ -149,10 +180,36 @@ Lemma covers_iqh_le_at : forall (B : nat) (t : TM) (r : list (option Trans)),
 Proof.
   intros B t r (Hnh & Hb & Hq) HleB E.
   rewrite (tm_ext (row_to_tm r) t E).
-  intros tm Hle. right.
+  intros tm Hle. right; left.
   split; [exact (nonhalt_le t tm Hnh Hle) |].
   split.
   - exact (qhbound_mono B B_board tm (proj1 (Nat.leb_le B B_board) HleB)
+             (qhbound_le B t tm Hnh Hb Hle)).
+  - exact (qh_le t tm Hnh Hle Hq).
+Qed.
+
+(** The CHAMPION's variant (kind iqhch): the same explicit-bound board,
+    admitted up to [B_champ] instead of [B_board] and landing in the
+    third disjunct.
+
+    The gate is a PROPOSITION, [B <= B_champ], not the boolean
+    [B <=? B_champ] its [B_board] twin uses.  That is forced, not
+    stylistic: [B_champ] is 32,779,478, so evaluating a [<=?] against it
+    means normalising a 32.8M-constructor unary numeral inside the
+    kernel.  In Horner form [lia] settles the same inequality
+    symbolically, in no time and no memory. *)
+Lemma covers_iqh_champ_at : forall (B : nat) (t : TM) (r : list (option Trans)),
+  NonHalt t /\ QHBound B t /\ QuasiHaltsSt t ->
+  B <= B_champ ->
+  (forall q s, row_to_tm r q s = t q s) ->
+  covers (row_to_tm r).
+Proof.
+  intros B t r (Hnh & Hb & Hq) HleB E.
+  rewrite (tm_ext (row_to_tm r) t E).
+  intros tm Hle. right; right.
+  split; [exact (nonhalt_le t tm Hnh Hle) |].
+  split.
+  - exact (qhbound_mono B B_champ tm HleB
              (qhbound_le B t tm Hnh Hb Hle)).
   - exact (qh_le t tm Hnh Hle Hq).
 Qed.
@@ -190,13 +247,20 @@ Lemma boarded_unswap : forall u v tm,
   u <> StA -> v <> StA ->
   boarded (TM_swap u v tm) -> boarded tm.
 Proof.
-  intros u v tm HuA HvA [H | (Hnh & Hb & Hq)].
+  intros u v tm HuA HvA [H | [(Hnh & Hb & Hq) | (Hnh & Hb & Hq)]].
   - left. exact (never_qh_unswap u v tm HuA HvA H).
-  - right. split.
+  - right; left. split.
     + pose proof (nonhalt_swap u v (TM_swap u v tm) HuA HvA Hnh) as H2.
       rewrite TM_swap_swap in H2. exact H2.
     + split.
       * pose proof (qhbound_swap u v B_board (TM_swap u v tm) HuA HvA Hb) as H2.
+        rewrite TM_swap_swap in H2. exact H2.
+      * exact (qh_unswap u v tm HuA HvA Hq).
+  - right; right. split.
+    + pose proof (nonhalt_swap u v (TM_swap u v tm) HuA HvA Hnh) as H2.
+      rewrite TM_swap_swap in H2. exact H2.
+    + split.
+      * pose proof (qhbound_swap u v B_champ (TM_swap u v tm) HuA HvA Hb) as H2.
         rewrite TM_swap_swap in H2. exact H2.
       * exact (qh_unswap u v tm HuA HvA Hq).
 Qed.
@@ -205,10 +269,13 @@ Qed.
 
 Lemma boarded_unmirror : forall tm, boarded (mirror_tm tm) -> boarded tm.
 Proof.
-  intros tm [H | (Hnh & Hb & Hq)].
+  intros tm [H | [(Hnh & Hb & Hq) | (Hnh & Hb & Hq)]].
   - left. exact (mirror_never_qh tm H).
-  - right. split; [exact (mirror_nonhalt tm Hnh) |].
+  - right; left. split; [exact (mirror_nonhalt tm Hnh) |].
     split; [exact (qhbound_mirror B_board tm Hb) |].
+    exact (mirror_qh tm Hq).
+  - right; right. split; [exact (mirror_nonhalt tm Hnh) |].
+    split; [exact (qhbound_mirror B_champ tm Hb) |].
     exact (mirror_qh tm Hq).
 Qed.
 
