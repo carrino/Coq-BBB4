@@ -3355,12 +3355,217 @@ two above are overflow.
   `1RB1LA_0LA0LC_1LC1RD_0RB0RD`) — so those two are worth THREE rows apiece
   for one board plus two harvests.  Both are 4p quadratic rows, which is why
   the biggest prize in the residue also sits behind its hardest blocker.
+## 4v. The fibonacci six are NOT Zeckendorf: same numeration, other REPRESENTATIVE, and the widening is one field
 
-## 4v. The fibonacci six read at last: they are the LAZY numeration, both proposed routes are dead, and `Class` is what has to widen
+_Branch `claude/next-session-progress-g74nya`, cut from `main` at `b61135a`
+(#110).  Coq 8.18.0 from apt.  Written as 4u and renumbered: #112 took that
+number while this ran, and it boarded the same row this session had also
+boarded.  **That overlap is resolved in #112's favour and this section claims
+no rows** — the same disposition 4t took against #111, and the third time in
+six waves.  Two tasks, both handed over by 4t; what is left here is the
+second, Route A on the six: "measure whether the `1,1,2,3,5` reading is
+available before building a numeration for `1,2,3,5,8`"._
+
+    settled by a board       unchanged by this section
+    core undecided             unchanged by this section
+    0RB shadows of the core    unchanged by this section
+
+(The live numbers moved twice while this was written and neither move was
+this section's: #112 took the row below to 5,119 / 26 / 11, and #114 then
+boarded four `0RB` bouncer rows to **5,123 / 22 / 11**.  Two of those four are
+`0RB0RD_1LC1RB_1RA0LC_1LB0LC` and `..._1LD0LC` — **4j's outer parameter has no
+consumer left at all**, and 4t's "scope the anchor and the parameter together,
+or leave both" is settled as *leave both*.)
+
+### The stale-schema row, reached twice, and the duplicate's one datum
+
+This session also boarded `1RB1LA_0LA1RC_0RD0RB_1RA---` from 4t's last
+paragraph, before #112 merged, and reached the same place by the same route —
+`valfam` closes it, `emit_ladder.py` reports *40 arms boarded, 0 without a
+chain, closure BUILT (2 interior at N0=1 st=1 + 1 fill at N0=1 st=1)*, the
+board compiles at `functional_extensionality_dep` only, and
+`gen_shadow.py --harvest` picks up the mirror shadow in the same regen.  **The
+boards are #112's**, whose write-up is 4u above and goes further: it names the
+stale field (`code`, not `lands_in_phase`) and measures `n_families` as a
+silent cap.  Nothing here is kept from the duplicate except the one thing 4u
+does not say, and it is a timing rather than a fact about the machine:
+
+* the row closes at the STOCK `--cap 240`, in **77 s**, and the emitter needs
+  no `--kmax 9` to build the closure from that certificate.  4u reports 60 s
+  at the stock cap with full coverage at kmax 9.  Two runs, one row, and the
+  spread is the machine's own budget rather than a difference in what closed.
+
+**The general lesson is 4t's own, and it now has two payouts on two branches:**
+a refusal text is evidence about the pass that produced it, not about the
+machine.  4t found the row by asking which core rows carry a `closed: true`
+certificate and are still unproven; that query is cheap, it is what both
+sessions ran first, and it is worth re-running whenever the emitter changes.
+
+### Route A, and it does not end where either branch of 4s expected
+
+4s measured all six at weights `1, 2, 3, 5, 8, 13` and read that as a second
+numeration — Zeckendorf — with `LadderCheck` §11's `1, 1, 2, 3, 5, 8` a
+different ladder.  Route A asked whether some anchor also admits the kernel's
+reading.  **Both halves of that framing are wrong, and the correction is the
+whole of this section.**
+
+**First, the negative half, measured exhaustively** (`tools/ladder/fibread.py`,
+which re-runs `find_families` with the numeration pass forced and reports
+every weight fit rather than the one the sort selected).  Across all six rows,
+every anchor, both digit widths, every near-head prefix, every terminator
+candidate and every digit permutation:
+
+    weighted families returned by find_families   126   all 1,2,3,5,8,13
+    raw weight fits before the chain test         840   all 1,2,3,5,8,13
+    fits at 1,1,2,3,5,8                             0
+
+So there is no tie to break and no second-best reading to prefer.  `fibread.py`
+answers Route A as asked, and the answer is no.
+
+**Second, why that does not matter: `1,2,3,5,8,13` IS `1,1,2,3,5,8`.**  The
+counter's lowest digit is a constant `1` at every one of its 23,614 values —
+a marker, not a varying digit — and `find_families` never has it in the word
+it fits.  Two ways, both measured on `1RB---_0LC1RD_1LB1RC_1LB0RD`:
+
+    q=B h=S1 R, far side empty   word = 1, 11, 101, 111, 1101, 1011, ...
+    q=C h=S0 R                   word =  ,  1,  01,  11,  101,  011, ...
+                                 with the marker moved to the LEFT of the head
+
+At the second anchor the marker is not in the word at all, so the ladder is
+fitted from the second rung up.  At the first it is the word's own index 0,
+and `fit_weights` still cannot use it: a column that never varies contributes
+a zero coefficient to every one of its enumeration-order equations, so that
+weight comes back undetermined and the whole fit is DROPPED rather than
+completed — which is why `p = 0` returns nothing there and `p = 1`, stripping
+the marker into `fm_pre`, returns `1,2,3,5,8,13`.  Either way `1,2,3,5,8` is
+not a measurement of the machine; it is the shadow of one constant cell.
+
+`tools/counters/fibform.py` measures the reading WITH that cell, against the
+raw simulator, on all six rows.  Every number is the kernel's:
+
+| | measured | `LadderFam` |
+|---|---|---|
+| weight at index `i` | 1, 1, 2, 3, 5, 8, 13 | `fibw i` |
+| value at anchor visit `n` | exactly `n` | `fm_step = 1` |
+| values spelled at width `k` | `[fibw k .. fibsum k]` | `fam_lim F k = S (fibsum k)` |
+| strings at width `k` | `fibonacci k` of them | — |
+| top of width `k` | `1^k`, value `fibsum k` | `fam_top` |
+
+`fibsum_S` — `S (fibsum k) = fibw (S k)`, the identity §3c says the whole
+numeration rests on — is what makes the third row's two ends meet.  **Nothing
+in the numeration needs to be built.  It is already there and it is already
+right.**
+
+### What is actually different: the counter stands on the OTHER representative
+
+`fibw` is redundant (`fibw 0 = fibw 1 = 1`), so a value does not determine a
+string, and §3c is explicit that "which string of a width the counter stands
+on" is a MEMBERSHIP predicate.  There are two ends of that redundancy and the
+six rows stand on the end the kernel does not implement:
+
+    v = 5, width 4    machine   1 1 0 1        LSB-first
+                      fibdec    0 0 1 1
+
+Over 23,614 values the machine's string equals `LadderFam.fibdec k false v` on
+**651** of them and satisfies `LadderCheck.fibokb` on the same 651 — the ones
+where the two ends coincide.  What it satisfies on **all 23,614** is
+
+    LSB-first: the top digit is 1 and NO TWO ZEROS ARE ADJACENT
+
+which is the lazy (maximal) representative, where `fibokb` — "every maximal
+run of 1s has even length except the one that reaches index 0" — is the
+greedy one.  **And no anchor gives the greedy one**: every anchor family with
+a consecutive run above 50 (ten of them, four at the full 4,000-visit cap)
+reads the same lazy strings.  That is the honest form of Route A's answer.
+
+**Control.**  The five rows 4r boarded at `(Fib, 1)` are run through the same
+check and FAIL it — `1RB---_0LB1RC_1LB0RD_1LC0RD` spells `v = 5` as `0 0 1 1`,
+which is `fibdec` exactly.  So the two representatives are two genuinely
+different populations of the one numeration, and a full-cap lazy score is
+evidence about the machine rather than an artefact of offering more forms.
+
+### The class laws, measured, and they need ONE field to change
+
+`tools/ladder/fiblazy.py` is the oracle, in the tradition `fibmem.py` set for
+`(Fib, 1)` and `gray2check.py` for `(Gray, 2)`: state nothing in Coq the
+Python has not checked against the orbit.  Over every interior step and every
+fill of all six rows — **23,593 interior + 20 fill + 23,614 membership
+checks per row, zero failures** — the laws are
+
+    INTERIOR, split on the PARITY of the low run of ones
+      E   (1,1)^m ++ [0]        ++ rest  ->  (1,0)^m ++ [1] ++ rest
+      O   [1] ++ (1,1)^m ++ [0] ++ rest  ->  [1] ++ (1,0)^m ++ [1] ++ rest
+
+    FILL, the top of a width, and the width's parity is the PHASE
+      E   (1,1)^m         ->  (1,0)^m ++ [1]              k = 2m
+      O   [1] ++ (1,1)^m  ->  [1] ++ (1,0)^m ++ [1]       k = 2m + 1
+
+with `--selftest` carrying the closed-form and arithmetic controls, and the
+orbit itself carrying the rest: swap the two parities in `cls_rhs` and the
+check reports 4,709 interior failures, widen the fill by one cell and it
+reports 17 fill failures (both at 40,000 steps).
+
+Read what that costs.  Both sides of every law are a fixed word, a run, a
+fixed word and an untouched tail — **exactly `Class`'s shape** — and the run
+lengths agree, so there is no stride.  The one thing that does not fit is
+that the run unit is a WORD (`[1;1]`, `[1;0]`) where `cs_t : nat` is a single
+digit, and likewise `Fill`'s `f_mid : nat`.  So the widening is:
+
+    Class.cs_t, Class.cs_t' : nat        ->  list nat
+    Fill.f_mid              : nat        ->  list nat
+
+and nothing else.  The CELL side already speaks word runs — `flat_map_repeat`
+lands on `rep (dig F t) n` and `rep` takes a word — so the change is on the
+DIGIT-string side only, and a one-cell word is the present case, so the three
+existing instances (`pos1_class`, `g2c`, `f1c`) re-state unchanged modulo
+`[t]` for `t`.
+
+**This retires Route B as 4s and the ladder prompt scoped it.**  A
+`(Fib, 2)`/Zeckendorf `ClassSucc` instance would build a `fam_lim`, a weight
+ladder and a round trip that all already exist, and it would still not spell
+the machine's strings, because the difference was never the weights.  What is
+wanted is a second REPRESENTATIVE of the code that is already there — a
+`fiblaz` decoder, a `fiblazb` membership, their round trip, and the two
+classes and two fills above — over a `Class`/`Fill` whose run unit is a word.
+
+Two of the prompt's Route-B details were also the wrong way round and should
+not be carried forward: membership is **no two adjacent ZEROS**, not "no two
+adjacent 1s", and **the top of a width is `1^k`** — the alternating `1010…`
+is what the fill LANDS ON, not what it leaves from.
+
+### Also measured, and worth not re-running
+
+* The six rows are one sub-machine's worth of behaviour: at their own anchors
+  all six produce the **identical** value-to-string table (23,614 values,
+  23,593 interior steps and 20 fills at 200,000 steps; 14,170 values and 18
+  distinct interior shapes at 120,000).  That is
+  `docs/CORE_3STATE.md` §1's grouping showing up in the counter reading, and
+  it means the widening boards six rows for one instance's work.  None of the
+  six carries a shadow.
+* The alternating run is the same expressiveness gap `NEXT_SESSION.md` §2b3
+  recorded against `LapDecider` (`SCycL`/`SCycR` cannot express an alternating
+  sweep).  Two decks, one missing shape.  Fixing it in `LadderCheck` does not
+  fix it in `LapDecider`, but it does price it.
+
+## 4w. The same six, from the other side: the LAZY representative, and two rows that were never ladder rows
 
 _Branch `claude/drozd-easy-proofs-yw7sa5`, cut from `main` at `0010050`.
 Coq 8.18.0 from apt.  Prompted by nickdrozd posting the same nineteen rows
 §4s measured; twelve were still live._
+
+_**This section was written as 4v and renumbered on merge: #115 took that
+number first.**  The two waves ran in parallel on the same nineteen rows and
+their board sets are DISJOINT -- #115 took five core rows and three shadows,
+this one took `1RB1LB_1LC0RD_0LB1LA_0LA1RA` and
+`1RB1LA_0LA0LC_1LC1RD_0RB0RD` with three more -- so the joint figure is
+**5,136 settled / 15 core / 5 shadows**, not either wave's own number.  On
+the fibonacci six the two agree and the measurements are independent: §4v
+reads the LAZY representative off 23,614 values and prices the widening as
+one field on `Class` and `Fill`; this section reads it off the membership
+counts (324 of 4,000 against the kernel's `fibokb`, an exact complement with
+§4r's five boarded rows) and off the increment's alternating carry.  **Two
+routes to the same verdict, which is the pattern §4s and §4t both flag as the
+one worth trusting.**  Read §4v first; it is the buildable half._
 
     settled by a board       5123 -> 5125   (99.4%)
     core undecided             22 ->   21

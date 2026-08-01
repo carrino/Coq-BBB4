@@ -2,7 +2,7 @@
 """UNTRUSTED (tools/): which CANONICAL FORM of the fibonacci numeration a
 row's anchor words are in.
 
-LADDER_PLAN 4v.  All eleven three-state `1RB---` fibonacci rows decode to
+LADDER_PLAN 4w.  All eleven three-state `1RB---` fibonacci rows decode to
 0, 1, 2, ... at a flat one-cell-per-digit anchor under the weights
 `fibw = 1, 1, 2, 3, 5, 8` -- the ones `LadderCheck` section 3c states.  The
 numeration is REDUNDANT, so that is not enough: `fam_of_value` at `Fib` is
@@ -117,7 +117,7 @@ for spec in ROWS+["--"]+BOARDED:
 def law(spec, T=300000, cap=4000):
     """The lazy form's INCREMENT, checked against the machine: the run of
     ones below the first zero comes back as an ALTERNATING (1 0) run of half
-    the length, in two parity classes.  LADDER_PLAN 4v."""
+    the length, in two parity classes.  LADDER_PLAN 4w."""
     c, tot, key, ws = best_anchor(spec, T, cap)
     bad, mism = 0, 0
     cls = defaultdict(int)

@@ -2,7 +2,7 @@
 """UNTRUSTED (tools/): read `1RB1RC_1LA0LB_1LD0RD_1LB0RC` as a BASE-3 wall
 counter, and measure its lap.
 
-LADDER_PLAN 4v.  `tools/closeout/residue_map.tsv` calls this row `EXP3` with
+LADDER_PLAN 4w.  `tools/closeout/residue_map.tsv` calls this row `EXP3` with
 alphabet `Ip` and blocker "no interior chain", and `docs/LADDER_NOFAM.md`
 measures `1 1 1 3 3 9 9 27` distinct strings per width -- ratio 3, i.e. a
 base-3 counter -- without locating the anchor.  This locates it, and the

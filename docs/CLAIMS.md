@@ -85,8 +85,8 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    champion's (`QHBound 32779478`); or
 2. it never quasihalts — no state is eventually quiet, so it has no
    quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **27** undecided core machines in
-   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **12**
+3. it is **skipped**: one of the **17** undecided core machines in
+   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **8**
    0RB re-root shadows (`tools/closeout/shadow_rows.tsv`).  A shadow needs
    no new mathematics — it is a blank-prefix re-root of a core machine —
    but it does need its own board, because a shadow is a shadow only of a
@@ -95,8 +95,8 @@ Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
    across the re-root.
 
    _The two counts move every wave; the row files are the authority and
-   `python3 tools/closeout/audit.py` prints them live.  22 + 11 is the
-   2026-08-01 reading (5,128 of the frozen 5,156 settled, 99.5%)._
+   `python3 tools/closeout/audit.py` prints them live.  15 + 5 is the
+   2026-08-01 reading (5,136 of the frozen 5,156 settled, 99.6%)._
 
 `Deferred D tm` is not list membership: it is membership in the orbit of the
 frozen table under completion of undefined transitions, non-start state swaps,
@@ -112,7 +112,7 @@ on type-in-type, unsafe (co)fixpoints, or assumed positivity.
 **It is not a proof that BBB(4) = 32,779,478.**  One thing is missing before
 the record itself is a theorem here:
 
-1. **The 20 core machines (and their 8 shadows).**  Any of them could, for
+1. **The 15 core machines (and their 5 shadows).**  Any of them could, for
    all this development knows, be a quasihalter with a larger score.  That is
    what undecided means.  The list is `tools/closeout/core_rows.txt` and the
    map is [`RESIDUE_MAP.md`](RESIDUE_MAP.md).
@@ -127,7 +127,7 @@ a binary-numeral fuel (`Checkers/TCyclerN.cstepsN`, ~17 s), and since
 section used to ask for, carried through `covers_iqh_champ_at` and the
 swap/mirror lemmas, and `tools/closeout/inventory.py` boards the row as kind
 `iqhch`.  So `bbb4_target`'s bound is attained by a machine the theorem
-decides, not merely stated.  It stays a lower bound only: closing the 27 is
+decides, not merely stated.  It stays a lower bound only: closing the 17 is
 what would turn it into the value.
 
 _Two gaps this section used to list are closed.  The score bound existing only
@@ -147,11 +147,11 @@ So the honest one-line summary is:
 > core rows and their 12 0RB re-root shadows) —
 > kernel-checked with one standard axiom.  The bound is ATTAINED (the
 > champion is boarded, so BBB(4) >= 32,779,478), but the BBB(4) *value*
-> does not follow from what is here while the 22 stand.
+> does not follow from what is here while the 17 stand.
 
-## Scope of the 22
+## Scope of the 15
 
-All 20 core machines are residue — machines no engine in this repository
+All 15 core machines are residue — machines no engine in this repository
 settles, mapped by
 shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
 closed: tower #20, the last of it, was boarded on 2026-07-28

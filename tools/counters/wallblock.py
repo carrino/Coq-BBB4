@@ -2,7 +2,7 @@
 """UNTRUSTED (tools/): the SOLID-BLOCK wall anchor, and the two core rows
 that have it.
 
-LADDER_PLAN 4v, from John's reading of the two rows.  Both
+LADDER_PLAN 4w, from John's reading of the two rows.  Both
 
     1RB1LA_0LA0LC_1LC1RD_0RB0RD      (+2 shadows)
     1RB0RB_0LC1RD_1LC1LA_0LA1RB      (+1 shadow)
