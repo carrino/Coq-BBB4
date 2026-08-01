@@ -3486,6 +3486,48 @@ whenever the left wall moves over; you could say the bits are inverted, lsb
 on the right; the left wall moves over 1 on each overflow"* — and the
 Fibonacci lap recurrence is that countdown's length.
 
+**`1RB1LA_0LA0LC_1LC1RD_0RB0RD` BOARDS on that reading** (with both its
+shadows -- three rows), and the anchor that does it is not the block at all:
+it is the counter's OWN once-per-increment anchor,
+
+    Cf p = (StA, (enc p ++ [S0], S0, []))    enc = binary, low digit at the head
+
+which decodes `0, 1, 2, 3, …` at consecutive visits with no exception over
+4,000 of them.  **The lap is `j^2 + 5j + 8` in the carry length and that is
+fine**: `LapGlue`'s lap premise existentially quantifies the step count, so
+a quadratic lap costs a hand board nothing.  Only the LADDER needs its arms
+affine — which is the whole content of 4p's second difference and 4t's "the
+carry ripple is not affine in the run length".  Both were measuring the
+tool, not the machine.  The cascade is `j` bounces at `2k+4` each, every
+unit rule a `cycR`/`cycL` at unit length one
+(`theories/Machines/Counters/BinCarry_1RB1LA_0LA0LC_1LC1RD_0RB0RD.v`).
+
+**Where the fibonacci twin stops.**  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` has the
+same block family and the same reading — and its own once-per-increment
+anchor is located too: `StB`, head `S0`, the counter on the LEFT with one
+cell dropped, read at `F(1,1)`, **decreasing by exactly one for 987
+consecutive visits** (987 = `F(16)`, i.e. one whole epoch).  That is John's
+"counts down from 1111, bits inverted, lsb on the right", measured.  Two
+things stop a board:
+
+* the index is not monotone across epochs — it counts DOWN inside an epoch
+  and jumps UP at the wall move — so `Cf : positive -> cconf` does not fit
+  and the family wants `LapGlueIx`'s arbitrary index, over a FIBONACCI
+  NUMERAL type (a `TernCounter`-shaped module) rather than a `positive`;
+* **`LapGlueIx` exports only the quasihalter closer** (`glue_qh_quiet_ix`).
+  This row's four states all recur, so it needs a never-QH twin — a ~25-line
+  copy of `LapGlue.glue_neverqh` with `I`/`nxt` for `positive`/`Pos.succ`
+  and no `AvoidRun`.  Write that first; it is reusable and it is the only
+  piece that is not this row's own arithmetic.
+
+There is a third route worth ten minutes before either: the epoch length
+obeys `lap(w) = lap(w-1) + lap(w-2) + 3` EXACTLY (checked to `w = 13`), which
+says the epoch contains two smaller epochs and would make the board a strong
+induction with no numerals at all.  The sub-epoch is **not** at
+`(StA, (L, S0, rep [S1] k ++ R))` — that shape occurs zero times inside an
+epoch, checked at `w = 6, 7, 8` — so the copy is at some other (probably
+mirrored) shape, and finding it is the cheap thing to try.
+
 **This is the row `docs/CORE_3STATE.md` §3 recorded as "its once-per-increment
 anchor is not located yet" and §4s measured as "`digit_words(rules)` names
 nothing at any anchor".**  Both are true of the DIGIT-FAMILY search and both

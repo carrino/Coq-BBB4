@@ -4693,6 +4693,35 @@ Coq 8.18.0 from apt (~1 min).  Full write-up: `docs/LADDER_PLAN.md` §4v.
   second difference: **the carry is an inner LOOP, not an affine arm.**  Three
   rows apiece, counting the shadows.
 
+- **`1RB1LA_0LA0LC_1LC1RD_0RB0RD` BOARDED on that reading, with both its
+  shadows** -- three rows.  The anchor is not the block; it is the counter's
+  own once-per-increment anchor `Cf p = (StA, (enc p ++ [S0], S0, []))`, a
+  plain binary numeral with the low digit at the head, decoding 0,1,2,3,...
+  with no exception over 4,000 visits.  **The lap is `j^2 + 5j + 8` in the
+  carry length and that is FINE** -- `LapGlue`'s lap premise existentially
+  quantifies the step count, so a quadratic lap costs a hand board nothing.
+  Only the LADDER needs affine arms, which is all 4p's second difference and
+  4t's "the carry ripple is not affine" ever measured.  **Both were measuring
+  the tool, not the machine.**
+
+- **The fibonacci twin `1RB0RB_0LC1RD_1LC1LA_0LA1RB` stops on two named
+  pieces.**  Its once-per-increment anchor IS located: `StB`, head `S0`,
+  counter on the LEFT with one cell dropped, read at `F(1,1)`, DECREASING by
+  exactly one for 987 consecutive visits (987 = F(16), one whole epoch) --
+  John's "counts down from 1111, bits inverted, lsb on the right", measured.
+  What stops it: (i) the index is not monotone across epochs (down inside,
+  up at the wall move), so it wants `LapGlueIx`'s arbitrary index over a
+  FIBONACCI NUMERAL type, not a `positive`; (ii) **`LapGlueIx` exports only
+  the quasihalter closer** and this row's four states all recur, so it needs
+  a never-QH twin -- a ~25-line copy of `LapGlue.glue_neverqh`.  Write that
+  first: it is reusable and it is the only piece that is not this row's own
+  arithmetic.  **Cheap thing to try before either**: the epoch length obeys
+  `lap(w) = lap(w-1) + lap(w-2) + 3` exactly (checked to w = 13), so the
+  epoch contains two smaller epochs and the board could be a strong
+  induction with no numerals at all.  The sub-epoch is NOT at
+  `(StA, (L, S0, rep [S1] k ++ R))` -- zero occurrences inside an epoch at
+  w = 6, 7, 8 -- so the copy sits at some other, probably mirrored, shape.
+
 - **`1RB0RB_1LC0RC_1RA0LD_0LB0LC`'s wall is exactly 3 cells per bounce.**
   Over sixty consecutive left-edge events the left end goes -2, -5, -8, ...,
   -176 with no exception, while the right end freezes at cell 13 from
