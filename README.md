@@ -20,8 +20,8 @@ bbb4_target : forall tm,
 
 Every (4,2) Turing machine either **quasihalts with score at most
 32,779,478** — the champion's score — or **never quasihalts**, *except*
-the machines the theorem **skips**: the **22 undecided core machines**
-(`tools/closeout/core_rows.txt`), plus **11 shadows** — 0RB machines
+the machines the theorem **skips**: the **17 undecided core machines**
+(`tools/closeout/core_rows.txt`), plus **8 shadows** — 0RB machines
 whose all-blank prefix re-roots them into a core machine's orbit
 (`skipped`'s second disjunct).  A shadow carries no new mathematics, but
 it does need its own board: a shadow is a shadow only of a core machine
@@ -37,7 +37,7 @@ Two honest caveats, stated precisely in
   is boarded, quasihalting at exactly 32,779,478
   (`theories/Machines/Counters/Champion_*.v`), so BBB(4) ≥ 32,779,478 is
   a theorem here.  It is still **not** a proof that BBB(4) = 32,779,478:
-  any of the 22 skipped core machines could, for all this development
+  any of the 17 skipped core machines could, for all this development
   proves, quasihalt with a larger score.
 * `skipped D_remaining tm` means membership in the orbit of the 22
   core rows under completion of undefined transitions, non-start state
