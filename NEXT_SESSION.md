@@ -4618,6 +4618,169 @@ Coq 8.18.0 from apt (~1 min).
   these four were bouncer counters, which is the ONE shape the repo already
   had a closer for.  `docs/LADDER_PLAN.md` §4 is still the route for the rest.
 
+## 2026-08-01 — nickdrozd's nineteen, second pass: the two-block bouncer boards, and the fibonacci six are the OTHER canonical form
+
+Branch `claude/drozd-easy-proofs-yw7sa5`, cut from `main` at `0010050`.
+Coq 8.18.0 from apt (~1 min).  Full write-up: `docs/LADDER_PLAN.md` §4w.
+
+    settled by a board       5123 -> 5125   (99.4%)
+    core undecided             22 ->   21
+    0RB shadows of the core    11 ->   10
+
+- **Read the list against the tree first.**  Of nickdrozd's nineteen, SEVEN
+  are already boarded (`Bounce_8`, `Spacer_22`, `Spacer_23`, `Mono_31`, the
+  two `LDR_1RB0RD_1LC0L*` gray rows, and the CHAMPION
+  `1RB1LD_1RC1RB_1LC1LA_0RC0RD`), exactly as §4s said of the same list at its
+  own date.  A list from outside the tree is against the RESIDUE, and the
+  residue moves.  Twelve were live this time.
+
+- **`1RB1LB_1LC0RD_0LB1LA_0LA1RA` boards, and its shadow with it.**
+  `docs/LADDER_NOFAM.md` files it as "a quadratic bouncer … not a counter"
+  and `docs/MXDYS_INDUCTIVE_RESIDUE.md` §3 as "the family, found; the
+  grammar, one piece short".  The missing grammar is a two-repeater `sside`
+  (the family carries `(0 1)^a` and `(0 1 1 1 1)^b` on ONE side, different
+  indices) and **a hand board does not need it**: `WTape.cycR` / `cycL` /
+  `cycLW` each cross one repeated block and a lap is a CHAIN of them.  New:
+  `theories/Machines/Counters/TwoRun_1RB1LB_1LC0RD_0LB1LA_0LA1RA.v`, plus
+  `SH_0RB1LB_1LC1RC_1RD0LA_0RC1RB.v` which `gen_shadow.py --harvest` freed
+  the moment the partner landed.
+
+- **"Not a counter" is a statement about the reader, and the file's own
+  fingerprint says so.**  `LADDER_NOFAM.md` measures this row at
+  `1 1 1 1 2 2 2 2 3 3 3 3` distinct strings per width — LINEAR, which is a
+  bouncer's signature, and it says as much two paragraphs later.  **A linear
+  shape-count is a routing signal to the wave track**, not a residue verdict.
+  Same lesson as #114's "a probe that reports 'not positional' has found a
+  region without digits, not a machine without a counter", from the other
+  side.  The sibling `1RB0RB_1LC0RC_1RA0LD_0LB0LC` is the same call and is
+  still open.
+
+- **The fibonacci six: BOTH routes the previous prompt named are refuted.**
+  The anchor and the weight ladder were never the question — all six decode
+  to `0, 1, 2, …` with zero failures under the kernel's own
+  `fibw = 1, 1, 2, 3, 5, 8`.  The **canonical form** is: the numeration is
+  redundant, `fam_of_value` at `Fib` is `fibdec`, and `fibdec` picks the
+  other representative.  `LadderCheck` §3c's `fibokb` accepts **324 of
+  4,000** of these rows' anchor words; the control (§4r's five boarded rows)
+  scores 4,000.  The six score **4,000 of 4,000** on "no two adjacent ZEROS,
+  `d0 = 1`" — the LAZY form — and §4r's five score 243 on it.  Exact
+  complement, both directions (`tools/counters/lazyfib.py`).
+  **And they are not Zeckendorf**, which is what §4s inferred from the
+  weights `1, 2, 3, 5, 8` alone: those are the same tape with the forced low
+  digit split off as `fm_pre`, the members contain adjacent 1s, and the top
+  of a width is `1^k` and not `1010…`.  A `(Fib, 2)` instance built to the
+  old prompt's spec would have compiled and boarded nothing.
+
+- **John read three more rows during the session, and two of them share ONE
+  anchor** (`tools/counters/wallblock.py`, new).
+  `1RB1LA_0LA0LC_1LC1RD_0RB0RD` (+2 shadows) and
+  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` (+1 shadow) both have
+
+      Cf w = (StA, ([], S0, rep [S1] w))
+
+  -- head on a blank, nothing to the left, a solid block of `w` ones to the
+  right -- with the block growing by exactly ONE cell per lap and an inner
+  counter running over it each lap.  The inner counter is the only
+  difference and it shows in the lap law, both exact over eleven laps:
+  `2^(w+3) - (2w+5)` (binary) and `lap(w-1) + lap(w-2) + 3` (fibonacci).
+  **This is the row `CORE_3STATE.md` §3 filed as "its once-per-increment
+  anchor is not located yet" and §4s as "`digit_words` names nothing at any
+  anchor".**  Both are true of the DIGIT-FAMILY search; the anchor is not a
+  digit family at all, it is a BARE RUN, and no scan in `tools/counters` or
+  `tools/ladder` looks for one.  What they need now is a NESTED closer
+  (`Counters/NestedLap*.v`), not a ladder arm -- John's "moving the carry bit
+  x spots over takes x bounces" is exactly why 4p's arm cost has a constant
+  second difference: **the carry is an inner LOOP, not an affine arm.**  Three
+  rows apiece, counting the shadows.
+
+- **`1RB1LA_0LA0LC_1LC1RD_0RB0RD` BOARDED on that reading, with both its
+  shadows** -- three rows.  The anchor is not the block; it is the counter's
+  own once-per-increment anchor `Cf p = (StA, (enc p ++ [S0], S0, []))`, a
+  plain binary numeral with the low digit at the head, decoding 0,1,2,3,...
+  with no exception over 4,000 visits.  **The lap is `j^2 + 5j + 8` in the
+  carry length and that is FINE** -- `LapGlue`'s lap premise existentially
+  quantifies the step count, so a quadratic lap costs a hand board nothing.
+  Only the LADDER needs affine arms, which is all 4p's second difference and
+  4t's "the carry ripple is not affine" ever measured.  **Both were measuring
+  the tool, not the machine.**
+
+- **The fibonacci twin `1RB0RB_0LC1RD_1LC1LA_0LA1RB` stops on two named
+  pieces.**  Its once-per-increment anchor IS located: `StB`, head `S0`,
+  counter on the LEFT with one cell dropped, read at `F(1,1)`, DECREASING by
+  exactly one for 987 consecutive visits (987 = F(16), one whole epoch) --
+  John's "counts down from 1111, bits inverted, lsb on the right", measured.
+  What stops it: (i) the index is not monotone across epochs (down inside,
+  up at the wall move), so it wants `LapGlueIx`'s arbitrary index over a
+  FIBONACCI NUMERAL type, not a `positive`; (ii) **`LapGlueIx` exports only
+  the quasihalter closer** and this row's four states all recur, so it needs
+  a never-QH twin -- a ~25-line copy of `LapGlue.glue_neverqh`.  Write that
+  first: it is reusable and it is the only piece that is not this row's own
+  arithmetic.  **Cheap thing to try before either**: the epoch length obeys
+  `lap(w) = lap(w-1) + lap(w-2) + 3` exactly (checked to w = 13), so the
+  epoch contains two smaller epochs and the board could be a strong
+  induction with no numerals at all.  The sub-epoch is NOT at
+  `(StA, (L, S0, rep [S1] k ++ R))` -- zero occurrences inside an epoch at
+  w = 6, 7, 8 -- so the copy sits at some other, probably mirrored, shape.
+
+- **`1RB0RB_1LC0RC_1RA0LD_0LB0LC`'s wall is exactly 3 cells per bounce.**
+  Over sixty consecutive left-edge events the left end goes -2, -5, -8, ...,
+  -176 with no exception, while the right end freezes at cell 13 from
+  t ~ 3400 and never moves again.  That is `LADDER_NOFAM.md`'s
+  `E(p) = 0^(24p+96) [head] φ (101)^p 0011111` re-indexed by the BOUNCE
+  rather than by the counter value, and the two agree.
+
+- **`1RB1RC_1LA0LB_1LD0RD_1LB0RC` is a BASE-3 wall counter and its anchor is
+  now located** (`tools/counters/ter3_probe.py`, new).  `residue_map.tsv`
+  calls it `EXP3` / `Ip` / "no interior chain" and `LADDER_NOFAM.md` measures
+  ratio 3 and stops there.  The anchor is `(StA, ([], S1, S1 :: digits))`,
+  digits 2 cells LSB-first over `{00, 10, 11}` with the TOP digit truncated
+  (`1` alone is digit 1) -- **75,006 consecutive anchor visits, zero
+  failures, values 0..75,005** -- and the lap is AFFINE in the carry length
+  in two branches, `6c + 4` and `6c + 6`, with no third value in any class
+  for `c = 0..9`.  That alphabet is `Counters/Ter3WallB.v`'s digit for digit
+  and the two branches are `TernCounter`'s `tsucc` / `tsuccT`; the only new
+  piece is the CLOSER, because `StA` is the target of `B0` here so the
+  theorem is `NeverQuasiHaltsSt` and `LapGlue.glue_neverqh` is what closes
+  it, not §11's quasihalter twin.  **Cheapest unbuilt row this session
+  measured.**
+
+- **What blocks them is `Class`, not `Code`.**  The increment is exact and
+  single-valued on all six (0 mismatches over ~3,982 interior transitions
+  each) and sends `1^(2m) 0 rest -> (1 0)^m 1 rest` — an ALTERNATING run of
+  half the length, two parity classes.  `cs_t : nat` is a run of ONE
+  REPEATED DIGIT and cannot spell it; no regrouping rescues it (a 2-cell
+  digit at index `j` has values `0, fibw (2j+1), fibw (2j), fibw (2j+2)`,
+  not multiples of a common weight).  So the sized piece is `cs_t : list
+  nat` — a change to the GENERIC half, §4i's gate — and the arm side already
+  speaks it, since `LadderKernel`'s `sside` is `rep (s_u s) (s_a s * j +
+  s_b s)`.  Ranked plan in `tools/ladder/NEXT_PROMPT.md`.
+
+- **Validate every unit rule against its WHOLE unknown context in the oracle
+  before writing Coq.**  Each candidate rule for the bouncer was run over all
+  instantiations of its unknown left and right context (every word up to
+  length 6).  The four that came back context-independent became
+  `cycR`/`cycL`/`cycLW` premises; the four that did not became one-sided
+  `wsteps_frame_l`/`_r` joints.  **That split IS the proof structure** —
+  minutes in Python, hours if guessed in Coq.  Corollary trap: a `csteps`
+  lemma over a symbolic left list reduces by `reflexivity` only while the
+  head stays right of its start, because `ctape_move DL` blocks on a
+  variable `l`; that is the same fact as the `wsteps true true` premise, and
+  the oracle reports it as `mindepth = 0`.
+
+- **`rewrite` picks the wrong `rep`/`app` occurrence constantly.**  Give the
+  lemma its arguments (`rewrite (zsum 3 (4*j+6) [S1])`), and never `cbn
+  [rep]` where an index is `4 * j` — `cbn` unfolds the `Nat.mul` and the
+  term stops matching everything downstream.
+
+_[MERGE NOTE.  The entry above and the one below are two sessions on
+nickdrozd's nineteen that ran in parallel on 2026-08-01; the board sets are
+DISJOINT -- this branch took `1RB1LB_1LC0RD_0LB1LA_0LA1RA` and
+`1RB1LA_0LA0LC_1LC1RD_0RB0RD` with their three shadows, #115 took five other
+core rows with three more -- so the joint figure is **5,136 settled / 15 core
+/ 5 shadows**, not either wave's own number.  Both waves independently
+measured the fibonacci six against the kernel and reached the same verdict
+from opposite directions; see `docs/LADDER_PLAN.md` §4w.]_
+
 ## 2026-08-01 (later) — the fibonacci six are NOT Zeckendorf: same numeration, other representative
 
 _Branch `claude/next-session-progress-g74nya`, cut from `main` at `b61135a`

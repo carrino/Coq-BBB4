@@ -578,6 +578,12 @@ theories/Machines/Counters/Sep2_0RB0RD_1LC1RB_1RA0LC_1LD0LC.v
 theories/Machines/Counters/Comb2_0RB1LC_1LC0RD_1RD0LC_1LA1RB.v
 theories/Machines/Counters/Comb3_0RB1LC_1LC1RD_1LA0LC_0RD1RB.v
 
+# --- counters track: the two-block bouncer (a Drozd row) ---
+theories/Machines/Counters/TwoRun_1RB1LB_1LC0RD_0LB1LA_0LA1RA.v
+
+# --- counters track: the quadratic-carry binary counter (a Drozd row) ---
+theories/Machines/Counters/BinCarry_1RB1LA_0LA0LC_1LC1RD_0RB0RD.v
+
 # --- counters track: linear-search-carry counters (Drozd rows) ---
 theories/Counters/LinCarry.v
 theories/Machines/Counters/LinC_1RB1LA_0LA1RC_0LD0RC_1LD0RB.v
@@ -2847,6 +2853,11 @@ theories/Machines/Counters/SH_0RB1LC_1LA1RB_0LD0LA_1LB___.v
 theories/Machines/Counters/SH_0RB0LA_1RC1LB_1LA0RD_0LB1RD.v
 theories/Machines/Counters/SH_0RB1LA_1LC1RB_1RD0LA_0LB0RD.v
 theories/Machines/Counters/SH_0RB1LC_1LA1RB_0RD0LC_1RD0LA.v
+
+# board files (+ their deps) added automatically by tools/closeout/gen_stages.py
+theories/Machines/Counters/SH_0RB0RA_0LC0LD_1RB1LC_1LD1RA.v
+theories/Machines/Counters/SH_0RB0RC_1LA1RB_1RC1LD_0LA0LD.v
+theories/Machines/Counters/SH_0RB1LB_1LC1RC_1RD0LA_0RC1RB.v
 
 theories/Closeout/CloseoutKit.v
 theories/Closeout/ShadowKit.v
