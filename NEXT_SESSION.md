@@ -417,7 +417,12 @@ Four things worth carrying:
 `1RB0RB_0LC1RD_1LC1LA_0LA1RB` wants `LapGlueIx` over a fibonacci numeral type
 plus a never-QH twin of `glue_qh_quiet_ix` -- or §4w's third route, the strong
 induction on `lap(w) = lap(w-1) + lap(w-2) + 3`, re-confirmed exact to
-`w = 24` this wave.  `1RB0RB_1LC0RC_1RA0LD_0LB0LC` re-measured: at the bounce
+`w = 24` this wave -- **and that route is now measured DEAD**: search the
+step trace of `Cf(w) -> Cf(w+1)` for the trace of `Cf(k) -> Cf(k+1)` at
+`k = w-1, w-2`, up to a position shift, all 24 state relabellings and a
+mirror, and there are **zero hits at `w = 6, 7, 8`**.  The recurrence is
+arithmetic on the lap count, not a containment of runs.  What is left is the
+numerals.  `1RB0RB_1LC0RC_1RA0LD_0LB0LC` re-measured: at the bounce
 anchor the left edge moves exactly −3 and the gap is affine, but the stripe
 word GROWS (groups of three sharing a suffix, prefixes cycling
 `1000 / 111 / 1001`), so `LADDER_NOFAM.md`'s one-parameter `φ (101)^p 0011111`

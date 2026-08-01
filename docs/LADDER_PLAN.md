@@ -3930,7 +3930,15 @@ Two rows, and neither is a ladder row:
   never-QH twin of `glue_qh_quiet_ix`, which does not exist yet.  4w's third
   route (the epoch obeys `lap(w) = lap(w-1) + lap(w-2) + 3` exactly, so a
   strong induction with no numerals at all) is still the cheap thing to try
-  and is re-confirmed here to `w = 24`.
+  and is re-confirmed here to `w = 24` -- **but the sub-epoch it needs is not
+  a trace window, and that is measured now rather than guessed.**  Take the
+  step trace of the run `Cf(w) -> Cf(w+1)` as `(state, head symbol, position)`
+  and search it for the trace of `Cf(k) -> Cf(k+1)` at `k = w-1` and `k = w-2`,
+  up to a position shift, a state relabelling (all 24) and a mirror: **zero
+  hits at `w = 6, 7, 8`**.  So the recurrence is arithmetic on the LAP COUNT
+  and not a containment of runs; the two smaller epochs are interleaved with
+  the carry rather than executed one after the other, and no strong induction
+  over this family will find them.  What is left is the numerals.
 * `1RB0RB_1LC0RC_1RA0LD_0LB0LC` — `LADDER_NOFAM.md`'s unary stripe counter.
   Re-measured this wave: at the anchor `(StC, ([], S0, S1 :: 0^g ++ W))` the
   left edge moves exactly −3 per bounce and the gap `g` is affine, but the
