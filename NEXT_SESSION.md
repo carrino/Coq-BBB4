@@ -5548,6 +5548,10 @@ Boarding it reads 4 core -> 3 and takes its `0RB` shadow
   mostly does not close at all.  `k`/`n` is not the knob on either.
 * **`cert_search.py` at `B,C <= 25`** on rows 2/3/4: row 2 `StC` only, row
   3 nothing at all, row 4 `StC` only.
+* **Row 4 (KCOPY3, `1RB1RC_1LA1RA_0RC1LD_1LB0LD`) is CLAIMED by another
+  session** (`claude/kcopy3-core-reduction-lv3uek`, an empty claim commit,
+  2026-08-01).  Wave 38 did nothing on it beyond the two measurements
+  above.  Do not duplicate; check that branch first.
 * **The block-run half-tape search on rows 1 and 4** — every block of length
   <= 4, junk <= 8 at both ends, gated per state.  Nothing survives.  Rows 1
   and 4 are the two with `max R = 3`: their counters are not unary and are

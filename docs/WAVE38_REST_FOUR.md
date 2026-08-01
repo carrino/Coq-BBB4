@@ -333,14 +333,20 @@ exactly what rule 5's `R+4` plus the sweep produces.  It remains a hand
 board, and the macro-system route now looks cheaper than the reset-family
 route it was budgeted as.
 
-## 5. Row 4 — nothing was lifted, as expected
+## 5. Row 4 — CLAIMED BY ANOTHER SESSION; nothing was lifted here
 
 `KCOPY3`, right wall, `+9` cells per `8x` steps
 (`docs/RESIDUE_708_DIAGNOSIS.md`).  The lever does not apply (section 1;
 `max R = 3`, the counter is on the other side and is not unary).
 `cert_search.py` at `B,C <= 25` gives `StC` only (`B=1,C=4`) and `NONE` for
-`StA`, `StB`, `StD`.  The `NGramHist` closure discharges only `StC`.  It is
-the hardest of the four and nothing here changes that.
+`StA`, `StB`, `StD`.  The `NGramHist` closure discharges only `StC`.
+
+**Ownership: `claude/kcopy3-core-reduction-lv3uek` claimed this row on
+2026-08-01** (an empty claim commit, session `01DWvVFQ`), so it is being
+worked elsewhere and nothing above should be duplicated.  Wave 38 did no
+work on it beyond the two measurements recorded here, both of which were
+already implied by the committed sweeps.  If it boards, the core list reads
+3, and the counts in this document should be read accordingly.
 
 ## 6. What was measured dead, so nobody re-runs it
 
