@@ -10,7 +10,7 @@ The closeout further splits that list: `core_rows.txt` is the distinct
 problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
 automatically with their core rows (Closeout/ShadowKit.v)._
 
-_**13 rows as of this commit — 8 distinct core machines + 5 0RB
+_**9 rows as of this commit — 6 distinct core machines + 3 0RB
 re-root shadows.**  A shadow needs no new mathematics, but it does need its
 own board: boarding a core machine moves its shadow into `core_rows.txt`
 rather than settling it, so budget the pair (2026-08-01; worked example
@@ -126,17 +126,17 @@ and its shadow.  **Read a gate label as "where the emitter stopped", never as
 
 | interior / overflow | n | what stops us (pre-wave-30 labels) |
 |---|---:|---|
-| `-`/`no-anchor` | 2 | 2 no overflow phase at K=6 |
-| `AFFINE`/`HIGHER` | 2 | 2 no inner interior chain |
+| `-`/`no-anchor` | 2 | 1 no anchor, 1 no overflow phase at K=6 |
 | `EXP3`/`EXP3` | 2 | 2 base-2 counters with a `3^c` lap (wave 4y) |
 | `HIGHER`/`HIGHER` | 1 | 1 no family at any anchor |
 | `AFFINE`/`EXP2` | 1 | 1 no inner family |
 
-**What that table now says:** three of the eight measure NON-AFFINE on both
+**What that table now says:** three of the six measure NON-AFFINE on both
 branches (`EXP3` 2, `HIGHER` 1), two never decode as a counter under any
-alphabet, and three are affine on at least one branch.  At eight rows the
-shape column is worth less than the per-row notes below — read them
-individually.  And `EXP3` is a lap shape, not a radix: wave 4y measured its
+alphabet, and exactly one is affine on either branch.  The `AFFINE`/`HIGHER`
+pair that used to sit here is what wave 37 boarded, and it did not go out
+through this table's route at all.  At six rows the shape column is worth
+less than the per-row notes below — read them individually.  And `EXP3` is a lap shape, not a radix: wave 4y measured its
 two remaining rows as **base 2** counters whose lap grows like `3^c`, where
 the `Ter3Wall*` rows carrying the same label really are base 3.  When the
 question is the radix, read the ALPHABET column.
@@ -272,7 +272,7 @@ three times — though all four rows boarded anyway, off the ladder).
 
 ## Where a newcomer should probably start
 
-At eight rows the useful unit is the row, not the bucket.  All eight, with
+At six rows the useful unit is the row, not the bucket.  All six, with
 what is known about each:
 
 **The two `1RB1LC` siblings — measured, and the measurement is the lead.**
@@ -324,7 +324,8 @@ method in `docs/WAVE36_MXDYS_FOUR.md` §§2a, 2b, 4, 8.
 3M steps and compare each state's worst recurrence gap to the final tape
 width.  Over the core list as it stood at eight rows **it split with no
 middle** — six sat between 1.00 and 2.65, and two were four orders of
-magnitude out.  That is a different axis from the gate labels above (which
+magnitude out.  Those six are exactly the six left on this page; the two
+walls are exactly what wave 37 boarded.  That is a different axis from the gate labels above (which
 are about the *counter* emitter), and on the six it says
 `docs/REACHST_TIER.md`'s route is not excluded and every "missing q" the
 sweeps report is a search gap worth attacking.  The two walls are the two
@@ -344,11 +345,12 @@ row is LOCATING ITS ONCE-PER-INCREMENT ANCHOR, which `digit_words` never
 enumerates because the row is read at a sparse one.  Every other row on this
 page needs mathematics that does not exist yet; this one needs a search.
 
-**The five shadows are not a task.**  They sit on five of the eight, they need
-no new mathematics, and they fall automatically: `Census/ShadowBoard.shadow_nqh`
-is the whole argument in one lemma and `make closeout` runs
-`gen_shadow.py --harvest`.  Board a core row and its shadow comes with it —
-first demonstrated in wave 4u, and every quadratic row's shadow came that way.
+**The three shadows are not a task.**  They sit on three of the six — the two
+`1RB1LC` siblings and the φ row, one each — they need no new mathematics, and
+they fall automatically: `Census/ShadowBoard.shadow_nqh` is the whole argument
+in one lemma and `make closeout` runs `gen_shadow.py --harvest`.  Board a core
+row and its shadow comes with it — first demonstrated in wave 4u, and both of
+wave 37's shadows came that way.
 
 **And re-run the stale-verdict query.**  Which core rows carry a `closed: true`
 certificate in a committed sweep and are still unproven?  That is how wave 4u's
@@ -366,4 +368,4 @@ python3 tools/counters/emit_lapcert.py --list tools/closeout/frozen_unproven.txt
 Both are untrusted and neither needs Coq.  The first is ~20 min over the whole
 list (shard it), the second similar.  `--emit` on the second writes and
 `coqc`-checks a board for every machine it can derive, which is how this list
-first shrank from 883 to 511 (and, wave by wave, to the current 13).
+first shrank from 883 to 511 (and, wave by wave, to the current 9).

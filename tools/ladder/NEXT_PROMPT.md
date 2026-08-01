@@ -1,3 +1,28 @@
+> # DONE — AND THE DIAGNOSIS BELOW WAS WRONG
+>
+> **The six rows boarded on 2026-08-01 (#118).**  Do not run this prompt.
+> It is kept because what it got wrong is worth more than what it got right.
+>
+> This prompt's central claim is **"what blocks them is `Class`, not
+> `Code`"**, and it specifies the fix as widening `Class.cs_t, cs_t'` and
+> `Fill.f_mid` from `nat` to `list nat`.  **That widening was never built.**
+> `cs_t : nat` is still `nat` (`LadderCheck.v` §3c) and `f_mid` still returns
+> a scalar.
+>
+> What boarded the six was a fourth **CODE** — exactly the thing this prompt
+> rules out.  The diagnosis in "What differs is the REPRESENTATIVE" below is
+> correct and is the whole answer: `fibdec`/`fibokb` pick the GREEDY
+> representative, these six stand on the LAZY one.  #118 added `FibL` to
+> `LadderFam` with the decoder `fiblaz` (`fibdec`'s two-state automaton with
+> the transitions swapped) and `lazfill`, plus `fam_lo` — because what a
+> weighted numeration actually costs the interface is a FLOOR: width `k`
+> spells exactly `[fibw k .. fibsum k]`.  The prompt had the measurement
+> right and drew the wrong structural conclusion from it.
+>
+> The rows below are all boarded (`theories/Machines/Ladder/LDR_*.v`); the
+> `1RB---` three-state population is closed entirely.  For live work read
+> `docs/RESIDUE_MAP.md` and `tools/closeout/core_rows.txt`.
+
 GIVE `LadderCheck`'s `Class` AND `Fill` A WORD-VALUED RUN UNIT, AND SIX ROWS
 BOARD.  Wave 4v measured the fibonacci six against the kernel and the gap is
 one field, not a numeration.  In `carrino/Coq-BBB4`, on branch

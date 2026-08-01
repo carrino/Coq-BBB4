@@ -138,7 +138,7 @@ carries the concrete `QHBound B_board` (= 66,349) or `QHBound B_champ`
 was the second of the two this section named — the third disjunct, not raising
 `B_board` — precisely so that
 `bbb4_decided_le_prev_champion_or_champion` still separates the champion from
-the other 5,135 boarded rows instead of coarsening all of them to 32.8M._
+the other 5,146 boarded rows instead of coarsening all of them to 32.8M._
 
 So the honest one-line summary is:
 

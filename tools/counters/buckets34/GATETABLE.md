@@ -1,4 +1,4 @@
-# Gate table over the 8 open core rows
+# Gate table over the 6 open core rows
 
 `tailcert.py --list tools/closeout/core_rows.txt --out scan.json` (scan labels,
 no --emit), split by `buckets.py`, filtered to live membership after each wave.
@@ -8,14 +8,14 @@ commands are untrusted Python and need no Coq.
 | n | furthest gate |
 |--:|---|
 | 3 | `no_interior_jS_j_chain_at_octave_parity_0` |
-| 2 | `no_inner_interior_chain` |
+| 1 | `no_inner_interior_chain` |
 | 1 | `no_gap_free_two_form_family` |
-| 1 | `no_interior_j0_chain_at_octave_parity_0` |
 | 1 | `no_inner_family_at_pow2_j` |
 
-`register_step_does_not_close` and `no_boot_chain` are both EMPTY.
+`register_step_does_not_close`, `no_boot_chain` and — since wave 37 —
+`no_interior_j0_chain_at_octave_parity_0` are all EMPTY.
 
-**At eight rows this table has stopped being useful, and that is the finding.**
+**At six rows this table has stopped being useful, and that is the finding.**
 Every bucket it ever called large has emptied without the gate being answered,
 so what follows is kept as the record of how a gate label fails rather than as
 a difficulty map.  For choosing a target, read the per-row notes in
@@ -104,6 +104,34 @@ Nine rows left this bucket in four waves and not one needed the gate answered:
 * **#115 took one** (a doubling nested bouncer).
 * **#116 took one** (a two-block bouncer, hand-boarded off
   `WTape.cycR`/`cycL`/`cycLW`) and its shadow.
+
+## Wave 37: a bucket emptied where the gate was RIGHT, and permanently
+
+Every other entry on this page is a gate that turned out not to bound the
+machine.  Wave 37 is the other case, and it is worth more than any of them.
+
+`no_interior_j0_chain_at_octave_parity_0` went 1 -> 0 and
+`no_inner_interior_chain` 2 -> 1, on `1RB1LD_1LC1RA_0RB0LC_0RA0LD` and
+`1RB1LC_0LC0RB_1LA1RD_0LA0RD`.  Both labels were correct.  Both were also
+confirmed by a second, independent instrument: `tools/mxdys4/gaps.py` measured
+`StD` on these two rows recurring on a `Theta(2^width)` schedule — gap ratios
+8,192 and 6,343 against a linear measure — which is not a search failure and
+no widening of the certificate class can fix (`WAVE36_MXDYS_FOUR.md` §3).
+They were the only two rows on the core list outside the REACHST tier's reach,
+and they still are.
+
+**They boarded anyway, by changing what the object is.**  Read one half-tape
+as a unary run and each row becomes a finite word-rewriting system — four
+macro rules for one, three for the other — at which point `NGramHist` at
+`k=3, n=2` closes three states and a hand measure on the macro rules closes
+`StD`.  `theories/Machines/Mxdys4/NGX_*.v`.
+
+So the lesson this page keeps teaching has a second half.  A gate label being
+WRONG is the common case and the rest of this file documents it.  A gate label
+being RIGHT — even corroborated by an orthogonal measurement, even provably
+permanent — still says nothing about the machine, because the next wave can
+re-read the machine as a different object and the label was only ever about
+the old one.
 
 ## A shape worth remembering
 
