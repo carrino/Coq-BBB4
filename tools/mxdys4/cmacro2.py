@@ -106,7 +106,60 @@ def read_cconf(sim):
     return (l, sim.tape[sim.pos], R)
 
 
+def T(w):
+    """THE COMPOSITE STEP, and the object the remaining invariant should be
+    stated over.  Rules 3-6 always leave R' <= 1 and R'=1 is immediately
+    consumed by rule 5 at k=0, so R is only ever large transiently and rule 2
+    composed with its consumer is a single self-map on the LEFT WORD alone,
+    taken at (s=S1, R=0).  Words are nearest-cell-first and implicitly
+    0^inf-terminated.
+
+    w = 0^j 1 a l2:
+
+        a=S0, j odd    ->  1^(j+2) l2
+        a=S0, j even   ->  0 1^(j+1) l2
+        a=S1, j odd    ->  1^(j+1) 0 l2
+        a=S1, j even   ->  0 1^j 0 l2
+
+    ALL FOUR PRESERVE LENGTH, so the row is a shift register on
+    0^inf-terminated words.  Returns None on the stuck word (no S1).
+
+    ones(T w) >= ones(w) except when w begins `11`, where it drops by
+    exactly 2 -- the counter can only drain through a leading `11`."""
+    if 1 not in w:
+        return None
+    j = w.index(1)
+    rest = w[j + 1:]
+    a = rest[0] if rest else 0
+    l2 = rest[1:]
+    if a == 0:
+        return [1] * (j + 2) + l2 if j % 2 else [0] + [1] * (j + 1) + l2
+    return [1] * (j + 1) + [0] + l2 if j % 2 else [0] + [1] * j + [0] + l2
+
+
+def run_T(n):
+    """Walk T from the real orbit's first (S1, 0) word."""
+    l, s, R = [], 0, 0
+    while not (s == 1 and R == 0):
+        _, _, l, s, R = rule(l, s, R)
+        l = trim(l)
+    w = l
+    lo = hi = w.count(1)
+    for i in range(n):
+        w = T(w)
+        if w is None:
+            print('T STUCK after %d steps' % i)
+            return 1
+        w = trim(w)
+        lo, hi = min(lo, w.count(1)), max(hi, w.count(1))
+    print('T: %d steps from the real orbit, never stuck; ones in [%d, %d]'
+          % (n, lo, hi))
+    return 0
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == '--T':
+        return run_T(int(sys.argv[2]) if len(sys.argv) > 2 else 400000)
     n = int(sys.argv[1]) if len(sys.argv) > 1 else 4000
     sim = Sim(CODE)
     # advance to the first StA configuration

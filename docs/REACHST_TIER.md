@@ -412,3 +412,36 @@ the closure discharges three states and the fourth gets a hand measure
 argument on the row's own macro rules (`theories/Machines/Mxdys4/NGX_*.v`,
 method in `docs/WAVE36_MXDYS_FOUR.md` §8).  That is the shape to reach for
 when `gaps.py` says wall — not a wider certificate class.
+
+## Wave 38: a second permanent negative, and it is about MEASURE SHAPE
+
+`gaps.py` (previous section) rules a state out of this tier when its
+recurrence gap outruns the tape width.  Wave 38 found a row that the gap
+test CLEARS and the tier still cannot reach, so the two obstructions are
+independent and both have to be checked.
+
+`1RB0RB_1LC0RC_1RA0LD_0LB0LC` — gap ratio 2.66, comfortably inside.
+`ReachStI` certifies `StA`, `StB` and `StC`.  `StD` has no certificate at
+`B,C <= 4` (the emitter default) and none at `B,C <= 60` either, and that
+is exhaustive rather than budget-limited: Bellman-Ford is complete for each
+fixed `(B,C)`, and this cycle in the `StD`-avoiding graph
+
+    (StA,1,1,0) --A1=0RB--> (StB,0,0,0) --B0=1LC--> (StC,0,0,1) --C0=1RA--> (StA,1,1,0)
+
+returns `rk` to its start while `ones l` gains 1 and `ones r` is unchanged.
+`drop_ok`'s `mu = B*ones l + C*ones r + rk(q, chd l, h, chd r)` therefore
+cannot strictly drop around it for ANY `B, C >= 0`.
+
+**The general test, and it is cheap.**  Search the goal-avoiding graph for a
+cycle with `delta ones_l >= 0` and `delta ones_r >= 0`.  One such cycle is a
+permanent negative for the whole `ReachStI` tier on that goal state — no
+wider `(B,C)` range and no longer search can help — because a cycle's
+Bellman-Ford weight is `-len - B*delta_l - C*delta_r`, which is negative for
+every non-negative `B, C` as soon as both deltas are.  Run this BEFORE
+widening `maxBC`, the same way `gaps.py` is run before anything.
+
+What it does NOT say is anything about a measure with a wider window or a
+different carrier (`certE.py` / `certM.py` / `certM3.py` generalise `ones`
+to extents).  Those have no Coq checker behind them today; `drop_ok` is
+hard-wired to the one-cell window and the `ones` carrier, so a certificate
+in a wider class has nothing to land in and would need a new checker first.

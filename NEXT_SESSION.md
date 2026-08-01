@@ -5449,3 +5449,122 @@ shape blocked it before is worth re-reading against them.
   exact, no `lift_app_blank` anywhere.
 - `exists n. eexists. split; [| reflexivity]` does not close a `fst ?c = q`
   visit goal — name the config.
+
+---
+
+# Wave 38 (2026-08-01) — the last four core rows, all four measured, none boarded
+
+Full write-up: `docs/WAVE38_REST_FOUR.md`.  The core list at session start
+was six; the parallel base-2 pair session landed mid-session and took it to
+**four, which are exactly this session's rows**.  None boarded.  What this
+wave produced is one missing piece of Coq, two permanent negatives, one
+settled documentation dispute, and two macro systems.
+
+## Start here next time: row 2, and only the invariant is left
+
+`1RB0RB_0LC1RD_1LC1LA_0LA1RB` is the cheapest row on the board by a wide
+margin.  Everything except ONE fact is done and validated:
+
+* it passes wave 36's lever (right half-tape is a bare unary run, 0
+  violations in 2,000,000 raw steps);
+* its macro system is SIX rules, exhaustive, stated in `cconf` coordinates
+  and differentially validated over 4,000 macro steps with 0 mismatches
+  (`tools/mxdys4/cmacro2.py`);
+* all FOUR liveness obligations are discharged structurally — `StA` is the
+  macro boundary, `StB` is visited by every rule, and `StC`/`StD` each
+  follow within 2 macro steps by a case split on `R` (measured max gap 2 for
+  both).
+
+**The single remaining obligation is that the macro system never gets
+stuck.**  Rule 2 needs a `S1` in `l`; on an all-blank left half-tape the
+machine sweeps left forever in `StC`, which is a genuine quasihalt, so it
+has to be excluded.  `In S1 l` is NOT closed under the rules and the
+obvious repairs regress (details and the two measured facts that constrain
+it: `docs/WAVE38_REST_FOUR.md` §3c).  It is a carry analysis in the
+Fibonacci numeration; `LadderFam`'s `Fib`, `FibL`, `fam_lo` already exist
+and are the right vocabulary.  Budget it as the wave's main job, not a
+tidy-up.
+
+Boarding it reads 4 core -> 3 and takes its `0RB` shadow with it.
+
+## What is now CLOSED, so nobody re-opens it
+
+* **Row 1 `1RB0RB_1LC0RC_1RA0LD_0LB0LC` has no route left.**  `ReachStI`
+  certifies `StA`/`StB`/`StC`; `StD` is PERMANENTLY outside the tier, not
+  merely unsearched.  Bellman-Ford is complete per `(B,C)`, and the cycle
+  `(StA,1,1,0) -A1-> (StB,0,0,0) -B0-> (StC,0,0,1) -C0-> (StA,1,1,0)` is
+  `StD`-avoiding, returns `rk` to its start, and gains 1 on `ones l`, so
+  `mu` cannot drop for any `B, C >= 0`.  Pushed to `B,C <= 60` before the
+  witness was extracted; do not push further.  The lever does not apply
+  either (§1 of the write-up).  **This row went from "priority 1, one state
+  short" to the least tractable of the four.**
+* **The general form of that test is cheap and should be run FIRST**, next
+  to `gaps.py`: search the goal-avoiding graph for a cycle with
+  `delta ones_l >= 0` and `delta ones_r >= 0`.  One such cycle kills the
+  whole `ReachStI` tier for that goal state.  `docs/REACHST_TIER.md`, last
+  section.
+* **`pin_kn.py` on rows 2 and 3**, 64 runs (8 rungs × 4 `qext`).  Neither
+  row's `NGramHist` closure opens: row 2 misses `StA` everywhere, row 3
+  mostly does not close at all.  `k`/`n` is not the knob on either.
+* **`cert_search.py` at `B,C <= 25`** on rows 2/3/4: row 2 `StC` only, row
+  3 nothing at all, row 4 `StC` only.
+* **The block-run half-tape search on rows 1 and 4** — every block of length
+  <= 4, junk <= 8 at both ends, gated per state.  Nothing survives.  Rows 1
+  and 4 are the two with `max R = 3`: their counters are not unary and are
+  not on the half-tape the lever reads.
+
+## The φ dispute is settled, in RESIDUE_MAP's favour
+
+`RESIDUE_MAP.md` read row 2 as `phi` at spread 0.00; `LADDER_PLAN.md` §4s
+said "not a fibonacci ladder row, no family at any anchor, file it with the
+no-anchor bucket".  **RESIDUE_MAP was right and §4s has been corrected in
+place.**  The evidence is exact rather than a ratio fit: the first macro
+step at which the counter reaches `n` digits is 17,709 = F(22)−2,
+28,656 = F(23)−1, 46,366 = F(24)−2, … , 2,178,307 = F(32)−2 — Fibonacci
+with an alternating −2/−1 offset, out to F(32).  §4s's sentence was true of
+the EMITTER (`digit_words` never enumerates the sparse anchor this row is
+read at) and was written as though it were a verdict about the machine.
+That is the same failure mode RESIDUE_MAP's φ-row paragraph warned about.
+
+Worth carrying: the row's tape is only **28 cells wide after 3,000,000
+steps**, growing like `log_φ t`.  A row can be a core undecided holdout and
+still have a tiny tape; "undecided" here means long laps, not a big tape.
+
+## Row 3 is further along than its file suggests
+
+`1RB0RD_1LB1LC_1RC0RA_0LB1RD` (Drozd's sixth) ALSO passes the lever — which
+the reset-family lap fit did not predict — and five of its six macro rules
+are already in closed form (`docs/WAVE38_REST_FOUR.md` §4).  The sixth,
+`s=S1, R=0`, is its leftward carry and is not yet closed.  The macro-system
+route now looks cheaper than the `NestC`-sized reset-family route it was
+budgeted as.  Second priority, after row 2.
+
+## New in the tree
+
+* `theories/Checkers/LiveAll.v` — `neverqh_of_live4`, the closer that turns
+  four per-state liveness facts into `NeverQuasiHaltsSt`.  It did not exist
+  before; every prior board reached the theorem through a checker that
+  produces it whole, which a row with no closure coverage cannot use.  Also
+  `nonhalt_of_live` (`NonHalt` from any ONE live state, no `Visited`).
+* `tools/mxdys4/cmacro2.py` — row 2's six rules, differentially validated.
+* `tools/mxdys4/cconf_rules.py` — the wave-36 lever test, mechanised.
+  `--scan N` walks the real orbit and reports impure right halves; the grid
+  mode reads the macro system off directly in `cconf` coordinates instead of
+  the frame coordinates `extract.py` prints.  Run `--scan` on any new row
+  before assuming it needs a decider; it is seconds and it split these four
+  2-2.
+
+## Traps this wave paid for
+
+* **A list/tuple comparison silently made an invariant search return
+  "nothing survives".**  The block-run checker compared `seq[i:i+k]` (a
+  list) against a tuple pattern; in Python that is always unequal, so every
+  candidate was rejected and the first run reported 0 survivors on ALL
+  rows — including M1, which is KNOWN to have the invariant.  The bug was
+  caught only because M1 was in the run as a control.  **Put a row with a
+  known-positive answer in every search you write**, and disbelieve a
+  clean negative that includes it.
+* **A failed search is not a negative until you have the witness.**
+  `cert_search.py` returning `NONE` at `B,C <= 60` looks like "search
+  harder"; the blocking cycle turns the same runs into a permanent result
+  in one extra query.  Extract the obstruction, don't widen the range.
