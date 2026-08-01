@@ -4837,7 +4837,8 @@ from opposite directions; see `docs/LADDER_PLAN.md` §4w.]_
 ## 2026-08-01 (later still) — mxdys's four: the macro systems, and the wall on `StD`
 
 _Branch `claude/busy-beaver-proofs-vjbequ`.  Full write-up in
-`docs/WAVE36_MXDYS_FOUR.md`; tools in `tools/mxdys4/`._
+`docs/WAVE36_MXDYS_FOUR.md`; continuation prompt in `docs/WAVE36_PROMPT.md`;
+tools in `tools/mxdys4/`._
 
     settled by a board       unchanged by this wave
     core undecided             unchanged by this wave

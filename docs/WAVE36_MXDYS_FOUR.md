@@ -281,7 +281,13 @@ rules of §2a as `csteps` lemmas over `rep S1 R` (the scan lemmas in
 `2^w - N(W)`, then `StD`'s liveness composed with the three existing
 `ReachStI` certificates under a `destruct q`.
 
-## 7. Tools
+## 7. Where to pick this up
+
+`docs/WAVE36_PROMPT.md` is the continuation prompt: the remaining Coq for
+rows 1 and 4 is one lemma in an otherwise machine-generated board, and it
+says which lemma, which closer takes it, and which four things not to redo.
+
+## 8. Tools
 
 `tools/mxdys4/` (UNTRUSTED, like everything under `tools/`):
 
