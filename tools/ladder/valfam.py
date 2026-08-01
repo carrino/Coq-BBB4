@@ -2720,6 +2720,21 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False,
     # generalized to a run template E(p, v).  The two-parameter variant is
     # strictly a fallback, so a row that closes today closes today's way.
     import copy
+    # The POOL, recorded before it is cut.  `n_families` is the size of the
+    # pool and `tried` is the size of the cut, and until wave 4t nothing
+    # wrote down that the two are different numbers: a row reading
+    # `n_families: 74, reason: families found but none closed` looks like 74
+    # rejections and is four.  The other seventy were never looked at.  That
+    # is a SILENT CAP in the sense docs/LADDER_PLAN warns about, and one line
+    # per family is cheap enough to pay unconditionally.
+    res['family_pool'] = [
+        {'i': i, 'chain': ch, 'first_seen': ft,
+         'anchor': '%s%d%s' % (chr(65 + f.q), f.h, f.side),
+         'base': f.b, 'digit_len': f.l, 'code': f.code, 'step': f.step,
+         'numeration': name_weights(f.weights, f.b),
+         'terminator': list(f.tail), 'two_parameter': f.otmpl is not None,
+         'in_candidates': i < 4}
+        for i, (f, ft, ch) in enumerate(fams)]
     cands = [(f, ft, ch, f.otmpl is not None) for f, ft, ch in fams[:4]]
     n_one = len(cands)
     for f, ft, ch in fams[:3]:
@@ -2734,6 +2749,8 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False,
     for fi, (fam, ft, chain, two_param) in enumerate(cands):
         if time.time() - t0 > cap:
             res['reason'] = 'time cap'
+            res['seconds'] = round(time.time() - t0, 1)
+            _rejection_summary(res)
             return res
         # Budget, not mathematics: the FALLBACK candidates (two-parameter far
         # side, and any candidate past the first few) are what a row that
@@ -2992,7 +3009,48 @@ def close(spec, steps=20000, cap=240.0, kmax=7, verbose=False,
     res['reason'] = res.get('reason', 'families found but none closed')
     res.setdefault('family_probe', probe_families(tm, snaps, rules))
     res['seconds'] = round(time.time() - t0, 1)
+    _rejection_summary(res)
     return res
+
+
+def _rejection_summary(res):
+    """Split the one opaque verdict into the numbers behind it.
+
+    `families found but none closed` covers fifteen core rows and says the
+    same thing about all of them.  Three separate facts hide inside it and
+    each points somewhere different:
+
+      * how many of the pool were TRIED at all (`fams[:4]` plus at most two
+        two-parameter fallbacks -- never more than six, whatever
+        `n_families` says);
+      * WHY each one that was tried failed, as a histogram rather than a
+        list the reader has to fold by hand;
+      * whether every failure was at the TOP of a width
+        (`fails_only_at_overflow`), which is the fingerprint 4s named on the
+        fibonacci six and is a statement about the fill arm rather than
+        about the family.
+
+    None of this is new measurement -- `tried` already carried the per-
+    candidate reason -- it is the same data counted, so it costs nothing and
+    is written unconditionally.
+    """
+    tried = res.get('tried') or []
+    pool = res.get('family_pool') or []
+    hist = Counter(t.get('reason') for t in tried)
+    ovf = [bool((t.get('coverage') or {}).get('fails_only_at_overflow'))
+           for t in tried if t.get('coverage')]
+    res['rejection'] = {
+        'n_families': res.get('n_families', len(pool)),
+        'n_tried': len(tried),
+        'n_never_tried': max(0, res.get('n_families', len(pool)) - len(tried)),
+        'candidate_cap': 'fams[:4] one-parameter + at most 2 two-parameter',
+        'skipped_for_budget': res.get('fallback_candidates_skipped', 0),
+        'reasons': dict(hist.most_common()),
+        'all_failures_at_overflow': bool(ovf) and all(ovf),
+        'longest_chain_tried': max((f['chain'] for f in pool
+                                    if f['in_candidates']), default=None),
+        'longest_chain_in_pool': max((f['chain'] for f in pool), default=None),
+    }
 
 
 def main():
