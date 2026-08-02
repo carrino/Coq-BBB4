@@ -18,7 +18,8 @@ per-row records and for the "what this was wrong about" sections, which are
 the part worth reading.  The `skipped` disjunct is discharged:
 `Closeout/BBB4_Value.v` proves `~ Deferred [] tm` / `not_skipped_nil` and,
 with the champion's kernel-checked exact score, the value theorem
-`BBB4_value : BBB4_is 32779478` — see `docs/CLAIMS.md`.  With tower #20 boarded
+`BBB4_value : BBB4_statement` (the claim of `theories/BBB4_Spec.v`) — see
+`docs/CLAIMS.md`.  With tower #20 boarded
 on 2026-07-28 the (4,2) HOLDOUT list closed too, so nothing is outstanding
 on either front.  (The wave-23 residue track boarded
 the whole 15-machine "no visit witness (`StA`)" bucket: quasihalters whose
