@@ -228,11 +228,75 @@ Definition iqh_champ (tm : TM) : Prop :=
 Theorem iqh_champion : iqh_champ tm_champion.
 Proof. exact champion_tier. Qed.
 
-(** ** The bound is exact -- recorded, not proved here
+(** ** The bound is exact: [StD]'s last visit is at index 32,779,477
 
-    [StD]'s last visit is at index 32,779,477 (measured:
-    [python3 tools/counters/champion_probe.py --last]), so no [B] below
-    32,779,478 bounds this machine and the score IS the champion's.
-    Proving that in-file costs a SECOND 32.8M-step [vm_compute], which
-    is not worth the build time for a fact the theorem above does not
-    need -- [QHBound champ_score] is what the closeout consumes. *)
+    A second [vm_compute] pins the configuration one step before the
+    landing: after 32,779,477 steps the machine is in state [StD]
+    (matching the measured last-visit table above).  Combined with
+    [not_visits_other] -- no state but [StC] appears at or after the
+    landing -- [StD]'s last visit is EXACTLY index 32,779,477, so:
+
+    - [qhbound_champion_tight]: no [B < champ_score] satisfies
+      [QHBound B tm] -- the bound the closeout consumes is not slack;
+    - [champion_attains]: some state's score is exactly [champ_score],
+      the attained-lower-bound package [Closeout/BBB4_Value.v] consumes
+      for BBB(4) >= 32,779,478.
+
+    Cost: one more ~9 s [vm_compute] over binary fuel, same shape as
+    [prefix_run_N]. *)
+
+Definition champ_prevN : N :=
+  (((((((3 * 10 + 2) * 10 + 7) * 10 + 7) * 10 + 9) * 10 + 4) * 10 + 7) * 10 + 7)%N.
+
+Definition champ_prev : nat :=
+  (((((((3 * 10 + 2) * 10 + 7) * 10 + 7) * 10 + 9) * 10 + 4) * 10 + 7) * 10 + 7)%nat.
+
+Lemma champ_prevN_nat : N.to_nat champ_prevN = champ_prev.
+Proof. unfold champ_prevN, champ_prev. lia. Qed.
+
+Lemma champ_prev_S : S champ_prev = champ_score.
+Proof. unfold champ_prev, champ_score. lia. Qed.
+
+(** The machine is in [StD] one step before the landing. *)
+Lemma prev_run_N :
+  match cstepsN tm champ_prevN c0 with
+  | Some c => st_eqb (fst c) StD
+  | None => false
+  end = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma visits_D_prev : VisitsAt tm StD champ_prev.
+Proof.
+  pose proof prev_run_N as H.
+  rewrite cstepsN_nat, champ_prevN_nat in H.
+  destruct (csteps tm champ_prev c0) as [c|] eqn:Eq; [|discriminate].
+  exists (lift c). split.
+  - rewrite <- lift_c0. exact (csteps_lift _ _ _ _ Eq).
+  - rewrite lift_state. apply st_eqb_spec. exact H.
+Qed.
+
+(** [StD] is visited at 32,779,477 and never afterwards: its last
+    transition fires at step 32,779,478, the champion's score. *)
+Theorem champion_quiet_after_D : QuietAfter tm StD champ_prev.
+Proof.
+  split; [exact visits_D_prev|].
+  intros n Hn. apply not_visits_other; [discriminate|].
+  rewrite <- champ_prev_S. exact Hn.
+Qed.
+
+(** No bound below the champion's own score bounds the champion. *)
+Theorem qhbound_champion_tight : forall B, QHBound B tm -> champ_score <= B.
+Proof.
+  intros B H.
+  rewrite <- champ_prev_S.
+  exact (H StD champ_prev champion_quiet_after_D).
+Qed.
+
+(** The attained-score package: the champion has a state whose score is
+    exactly [champ_score] -- the BBB(4) lower bound. *)
+Theorem champion_attains :
+  exists q s, QuietAfter tm q s /\ S s = champ_score.
+Proof.
+  exists StD, champ_prev.
+  split; [exact champion_quiet_after_D | exact champ_prev_S].
+Qed.
