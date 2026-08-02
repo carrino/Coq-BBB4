@@ -8,39 +8,56 @@ one, this one is right and the other is stale._
 
 **BBB(4) = 32,779,478.**
 
-Kernel-checked, `Qed`, in `theories/Closeout/BBB4_Value.v` (built and
-reported by `make proof`):
+The CLAIM is stated census-free in `theories/BBB4_Spec.v` — that file plus
+the machine model it imports (`theories/BBB4_Statement.v`) is the **entire
+trusted statement surface**; nothing in either depends on the census, the
+checkers, or the closeout:
 
 ```coq
-BBB4_is (B : nat) : Prop :=
-  (exists tm q s, QuietAfter tm q s /\ S s = B)   (* ATTAINED *)
-  /\ (forall tm, QHBound B tm)                    (* MAXIMAL  *)
+tm_champion    : TM                       (* 1RB1LD_1RC1RB_1LC1LA_0RC0RD  *)
+champion_score : nat := N.to_nat 32779478
 
-BBB4_value     : BBB4_is 32779478
+Attains (tm : TM) (B : nat) : Prop :=
+  exists q s, QuietAfter tm q s /\ S s = B
+
+BBB4_is (B : nat) : Prop :=
+  (exists tm, Attains tm B)                       (* ATTAINED *)
+  /\ (forall tm B', Attains tm B' -> B' <= B)     (* MAXIMAL  *)
+
+BBB4_statement : Prop := BBB4_is champion_score
 BBB4_is_unique : forall B B', BBB4_is B -> BBB4_is B' -> B = B'
 ```
 
-Unfolding the definitions (`BBB4_Statement.v`, `Census/TNF_QH.v`): over all
-4-state 2-symbol Turing machines on a two-way-infinite blank tape (undefined
-transition = halt, start state A),
+The PROOF is kernel-checked, `Qed`, in `theories/Closeout/BBB4_Value.v`
+(built and reported by `make proof`):
+
+```coq
+BBB4_value : BBB4_statement
+```
+
+Unfolding the definitions (`BBB4_Statement.v`): over all 4-state 2-symbol
+Turing machines on a two-way-infinite blank tape (undefined transition =
+halt, start state A),
 
 * **ATTAINED** — some machine has a state whose *last* visit is at
   configuration index 32,779,477, i.e. whose last transition fires at step
-  32,779,478.  The witness is the champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD`,
-  whose state `D` does exactly that
+  32,779,478.  The witness is the spec's own `tm_champion`
+  (`1RB1LD_1RC1RB_1LC1LA_0RC0RD`), whose state `D` does exactly that
   (`Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`,
-  `champion_attains` — two binary-fuel `vm_compute` runs, one to pin the
-  configuration at index 32,779,477 in state `D`, one to pin the landing at
-  32,779,478 on a blank tape in state `C`, plus the terminal C-loop
-  induction showing no state but `C` ever appears again).
+  `champion_attains : Attains tm_champion champion_score` — two binary-fuel
+  `vm_compute` runs, one to pin the configuration at index 32,779,477 in
+  state `D`, one to pin the landing at 32,779,478 on a blank tape in state
+  `C`, plus the terminal C-loop induction showing no state but `C` ever
+  appears again).
 * **MAXIMAL** — no state of any machine is eventually quiet with a last
   visit at index ≥ 32,779,478 (`bbb4_upper : forall tm, QHBound 32779478
-  tm`).  Machines that never quasihalt satisfy `QHBound` vacuously; the
-  two-disjunct reading is `bbb4_unconditional : forall tm, QHBound 32779478
-  tm \/ NeverQuasiHaltsSt tm`.
+  tm`, with `QHBound` from `Census/TNF_QH.v`; the spec states the same
+  bound purely in `Attains` terms).  Machines that never quasihalt satisfy
+  `QHBound` vacuously; the two-disjunct reading is `bbb4_unconditional :
+  forall tm, QHBound 32779478 tm \/ NeverQuasiHaltsSt tm`.
 
-`BBB4_is_unique` (axiom-free) confirms the spec pins one number, so
-"BBB(4) = 32,779,478" has exactly one reading.
+`BBB4_is_unique` (axiom-free, proved inside `BBB4_Spec.v` itself) confirms
+the spec pins one number, so "BBB(4) = 32,779,478" has exactly one reading.
 
 **Axiom footprint: `functional_extensionality_dep`, and nothing else.**
 There are zero `Admitted.` in `theories/`.  Verify with `Print Assumptions`
@@ -109,11 +126,12 @@ with `B_board` = 66,349 (the previous champion's score) and `B_champ` =
 `QHBound 2000` (= `B_census`) and lift by `qhbound_mono`; the four
 ex-champions enter at their exact scores through a `B <=? B_board` gate the
 kernel evaluates (`covers_iqh_le_at`); the champion enters through
-`covers_iqh_champ_at`, whose gate is the *proposition* `B <= B_champ`
-discharged by `lia` on two Horner forms — a `<=?` against 32,779,478 would
-make the kernel build a 32.8M-constructor unary numeral, and nothing here
-ever evaluates that number.  `tools/closeout/inventory.py` refuses any
-other statement shapes.
+`covers_iqh_champ_at` at the spec's own `champion_score` and `tm_champion`,
+and its gate is the *proposition* `champion_score <= B_champ` discharged by
+`lia` on constants — a `<=?` against 32,779,478 would make the kernel build
+a 32.8M-constructor unary numeral, and nothing here ever evaluates that
+number.  `tools/closeout/inventory.py` refuses any other statement
+shapes.
 
 `Deferred D tm` is not list membership: it is membership in the orbit of
 the frozen table under completion of undefined transitions, non-start state
@@ -129,8 +147,7 @@ are `vm_compute` over binary-numeral fuel (`Checkers/TCyclerN.cstepsN`,
 ```coq
 champion_quiet_after_D  : QuietAfter tm_champion StD 32779477
 qhbound_champion_tight  : forall B, QHBound B tm_champion -> 32779478 <= B
-champion_attains        : exists q s, QuietAfter tm_champion q s
-                                      /\ S s = 32779478
+champion_attains        : Attains tm_champion champion_score
 ```
 
 make the bound exact, not merely an upper estimate that happens to match a

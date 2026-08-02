@@ -1,8 +1,11 @@
-(** * BBB4_Value: BBB(4) = 32,779,478.
+(** * BBB4_Value: the proof of [BBB4_statement] -- BBB(4) = 32,779,478.
 
-    The end of the story.  Hand-written (NOT generated -- gen_stages.py
-    emits [bbb4_target] with the [skipped D_remaining] disjunct whatever
-    the residue is; this file is where the disjunct dies).
+    The CLAIM lives in BBB4_Spec.v: [BBB4_statement := BBB4_is
+    champion_score], stated census-free in terms of BBB4_Statement.v
+    alone.  THIS file is where it gets proved.  Hand-written (NOT
+    generated -- gen_stages.py emits [bbb4_target] with the [skipped
+    D_remaining] disjunct whatever the residue is; this file is where
+    the disjunct dies).
 
     Two inputs meet here:
 
@@ -11,31 +14,31 @@
       [QHBound champion_score], or never quasihalts, or is [skipped
       D_remaining].  As of 2026-08-01 the residue is EMPTY:
       [remaining_rows = []], so [skipped D_remaining] is uninhabited
-      ([not_skipped_nil], the one lemma docs/CLAIMS.md said was
-      missing) and the disjunct discharges.  A never-quasihalter
-      satisfies any [QHBound] vacuously ([neverqh_qhbound]), so the
-      whole upper bound collapses to one line:
-      [forall tm, QHBound champion_score tm].
+      ([not_skipped_nil]) and the disjunct discharges.  A
+      never-quasihalter satisfies any [QHBound] vacuously
+      ([neverqh_qhbound]), so the whole upper bound collapses to one
+      line: [forall tm, QHBound champion_score tm].
 
-    - the LOWER bound: the champion 1RB1LD_1RC1RB_1LC1LA_0RC0RD has a
-      state ([StD]) whose last visit is at configuration index
-      32,779,477 -- score EXACTLY 32,779,478 ([champion_attains],
-      kernel-checked by a second 32.8M-step [vm_compute] in the
-      champion's own file).
+    - the LOWER bound: the champion [tm_champion] (BBB4_Spec.v,
+      1RB1LD_1RC1RB_1LC1LA_0RC0RD) has a state ([StD]) whose last visit
+      is at configuration index 32,779,477 -- so it [Attains] exactly
+      [champion_score] = 32,779,478 ([champion_attains], kernel-checked
+      by a second 32.8M-step [vm_compute] in the champion's own file).
 
-    [BBB4_is] packages the two into the value specification: [B] is
-    attained by some state of some machine, and no state of any machine
-    beats it.  [BBB4_value] proves [BBB4_is champion_score], and
-    [BBB4_is_unique] confirms the spec pins a single number -- so
-    "BBB(4) = 32,779,478" has exactly one reading and this file proves
-    it.
+    [BBB4_value : BBB4_statement] packages the two.  Every constant in
+    its statement -- [BBB4_statement], [BBB4_is], [Attains],
+    [champion_score], [tm_champion] -- is BBB4_Spec's, and every
+    predicate under those is BBB4_Statement.v's: to audit the claim,
+    read those two files; to audit the proof, run [Print Assumptions]
+    below ([functional_extensionality_dep] only).  [BBB4_is_unique]
+    (BBB4_Spec.v, axiom-free) confirms the spec pins a single number,
+    so "BBB(4) = 32,779,478" has exactly one reading.
 
     Like BBB4_Theorem.v this file loads the committed census .vo
     (through CloseoutFinal): compile under the census opam switch (see
-    tools/census_cache.py, docs/VERIFYING.md).  Axiom footprint:
-    [functional_extensionality_dep] only ([Print Assumptions] below). *)
+    tools/census_cache.py, docs/VERIFYING.md). *)
 From Coq Require Import Arith List Lia.
-From BBB4 Require Import BBB4_Statement.
+From BBB4 Require Import BBB4_Statement BBB4_Spec.
 From BBB4.Census Require Import TNF_QH Deferred_Defs.
 From BBB4.Closeout Require Import CloseoutKit ShadowKit CoreRows Closeout
   CloseoutFinal BBB4_Theorem.
@@ -45,8 +48,7 @@ Import ListNotations.
 (** ** The residue disjunct is uninhabited
 
     [Deferred [] tm] has no derivation: the base constructor needs
-    [In h []], and the swap/mirror constructors only recurse.  This is
-    the lemma docs/CLAIMS.md named as the missing piece. *)
+    [In h []], and the swap/mirror constructors only recurse. *)
 
 Lemma not_deferred_nil : forall tm, ~ Deferred [] tm.
 Proof.
@@ -93,43 +95,24 @@ Proof.
     [exact H | apply neverqh_qhbound; exact H].
 Qed.
 
-(** ** The value
+(** ** The value: BBB(4) = 32,779,478
 
-    [champ_score] (the champion file's Horner constant) and
-    [champion_score] (the closeout's) are the same numeral. *)
-Lemma champ_score_champion_score : champ_score = champion_score.
-Proof. reflexivity. Qed.
+    ATTAINED by the champion ([champion_attains], the kernel-checked
+    exact score), and MAXIMAL because any attained score [S s] is
+    bounded by [bbb4_upper]'s [QHBound]. *)
 
-(** [BBB4_is B]: the state-level Beeping Busy Beaver value spec for
-    (4,2), in the harness scoring convention (a quiet state's score is
-    its last visited configuration index + 1 -- the step at which its
-    last transition fires):
-
-    - ATTAINED: some machine has a state whose score is exactly [B];
-    - MAXIMAL: no state of any machine has a score above [B]. *)
-Definition BBB4_is (B : nat) : Prop :=
-  (exists tm q s, QuietAfter tm q s /\ S s = B)
-  /\ (forall tm, QHBound B tm).
-
-Theorem BBB4_value : BBB4_is champion_score.
+Theorem BBB4_value : BBB4_statement.
 Proof.
   split.
-  - destruct champion_attains as (q & s & Hq & Hs).
-    exists tm_champion, q, s.
-    rewrite <- champ_score_champion_score.
-    exact (conj Hq Hs).
-  - exact bbb4_upper.
+  - exists tm_champion. exact champion_attains.
+  - intros tm B' (q & s & Hq & Hs).
+    rewrite <- Hs. exact (bbb4_upper tm q s Hq).
 Qed.
 
-(** The spec pins a single number: BBB(4) = 32,779,478 has exactly one
-    reading. *)
-Theorem BBB4_is_unique : forall B B', BBB4_is B -> BBB4_is B' -> B = B'.
-Proof.
-  intros B B' [(tm & q & s & Hq & Hs) Hub] [(tm' & q' & s' & Hq' & Hs') Hub'].
-  pose proof (Hub' tm q s Hq).
-  pose proof (Hub tm' q' s' Hq').
-  lia.
-Qed.
+(** The same theorem with the claim's one definition unfolded, for
+    readers grepping for the value spec by name. *)
+Corollary BBB4_value_is : BBB4_is champion_score.
+Proof. exact BBB4_value. Qed.
 
 (** The champion itself, in one breath: it quasihalts, and no smaller
     bound covers it -- its score IS the value. *)
@@ -137,11 +120,7 @@ Corollary champion_is_extremal :
   QuasiHaltsSt tm_champion
   /\ (forall B, QHBound B tm_champion -> champion_score <= B).
 Proof.
-  split; [exact quasihalts_champion|].
-  intros B H.
-  rewrite <- champ_score_champion_score.
-  exact (qhbound_champion_tight B H).
+  split; [exact quasihalts_champion | exact qhbound_champion_tight].
 Qed.
 
 Print Assumptions BBB4_value.
-Print Assumptions BBB4_is_unique.

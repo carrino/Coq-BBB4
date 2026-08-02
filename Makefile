@@ -16,7 +16,7 @@ clean:
 # ---------------------------------------------------------------------------
 # `make proof' -- build and state the top-level BBB(4) result:
 #
-#   BBB4_value : BBB4_is 32779478
+#   BBB4_value : BBB4_statement          (the claim of theories/BBB4_Spec.v)
 #
 # i.e. BBB(4) = 32,779,478: some state of some (4,2) machine (the champion
 # 1RB1LD_1RC1RB_1LC1LA_0RC0RD's StD) scores exactly 32,779,478, and no

@@ -18,7 +18,7 @@
     would be a soundness alarm, not a convenience. *)
 
 From Coq Require Import Arith Bool List NArith.
-From BBB4 Require Import BBB4_Statement CTape.
+From BBB4 Require Import BBB4_Statement BBB4_Spec CTape.
 From BBB4.Checkers Require Import TCyclerN.
 From BBB4.Machines.Counters Require Import Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.
 Import ListNotations.

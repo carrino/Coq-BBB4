@@ -82,8 +82,11 @@ check rather than a quick one.
 
 `theories/Closeout/CloseoutFinal.v` gives `census_boarded`,
 `theories/Closeout/BBB4_Theorem.v` gives `bbb4_target`, and
-`theories/Closeout/BBB4_Value.v` gives `BBB4_value : BBB4_is 32779478` —
-the end-to-end value theorem `make proof` builds and reports.  These
+`theories/Closeout/BBB4_Value.v` gives `BBB4_value : BBB4_statement` —
+the end-to-end value theorem `make proof` builds and reports.  (The
+claim itself, `BBB4_statement := BBB4_is champion_score`, is stated
+census-free in `theories/BBB4_Spec.v`; reading that file plus
+`theories/BBB4_Statement.v` gives every definition in the theorem.)  These
 three files are the only ones that load the committed walk output (they
 are deliberately not in `_CoqProject`, so the default `make` never
 touches them), and they need the toolchain that produced it:
@@ -98,9 +101,9 @@ make proof
 `make proof` checks the census cache hash, compiles the three files
 with `coqc` (watch for `Print Assumptions bbb4_target` and
 `Print Assumptions BBB4_value` in the output — expect exactly
-`functional_extensionality_dep`, and `BBB4_is_unique` closed under the
-global context), and prints the report: the value theorem and what it
-means.  (When the residue lists are non-empty the report instead lists
+`functional_extensionality_dep`; `BBB4_is_unique` prints closed under
+the global context during the default `make`, from `BBB4_Spec.v`), and
+prints the report: the value theorem and what it means.  (When the residue lists are non-empty the report instead lists
 every machine the chain skips; they have been empty since 2026-08-01.)
 
 apt's Coq has **no `native_compute`** and cannot do the walk at all, which is

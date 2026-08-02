@@ -10,7 +10,8 @@ and fails loudly on mismatch.
 
 Two shapes:
   * residue EMPTY (the 2026-08-01 state): headline the value theorem,
-    BBB4_value : BBB4_is 32779478, from BBB4_Value.v;
+    BBB4_value : BBB4_statement (the claim of BBB4_Spec.v), from
+    BBB4_Value.v;
   * residue non-empty (historical / if rows are ever re-opened): the old
     skipped-machine listing around bbb4_target.
 """
@@ -66,19 +67,23 @@ def report_value():
         score=CHAMPION_SCORE))
     print(LINE)
     print('''
-theories/Closeout/BBB4_Value.v:
+theories/Closeout/BBB4_Value.v proves the claim of theories/BBB4_Spec.v:
 
-  BBB4_value : BBB4_is {score}
+  BBB4_value : BBB4_statement          (:= BBB4_is champion_score)
 
-where [BBB4_is B] is the state-level Beeping Busy Beaver value spec --
+where BBB4_Spec.v -- census-free, importing only the machine model
+(BBB4_Statement.v) -- defines the state-level Beeping Busy Beaver spec
 
-  ATTAINED:  exists tm q s,  QuietAfter tm q s  /\\  S s = B
-  MAXIMAL:   forall tm,      QHBound B tm
+  Attains tm B :=  exists q s,  QuietAfter tm q s  /\\  S s = B
+  BBB4_is B    :=  (exists tm, Attains tm B)                   (* ATTAINED *)
+                   /\\ (forall tm B', Attains tm B' -> B' <= B)  (* MAXIMAL  *)
 
+with champion_score = {score:,} and tm_champion the champion's table
 -- some state of some (4,2) machine makes its last visit at
 configuration index B-1 (harness score exactly B), and no state of any
 (4,2) machine is ever quiet after a later index.  [BBB4_is_unique]
-confirms the spec pins a single number.  Unfolded:
+(axiom-free, in the spec file) confirms the spec pins a single number.
+Unfolded:
 
   * UPPER: every (4,2) Turing machine either quasihalts with every
     eventually-quiet state quiet before index {score:,}, or never

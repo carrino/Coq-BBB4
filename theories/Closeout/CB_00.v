@@ -104,6 +104,7 @@ Require BBB4.Machines.Counters.CASB_1RB1RD_0LC1RB_1RA1LD_1LC0RB.
 Require BBB4.Machines.Counters.Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.
 Require BBB4.Machines.Counters.Comb2_0RB1LC_1LC0RD_1RD0LC_1LA1RB.
 Require BBB4.Machines.Counters.Comb3_0RB1LC_1LC1RD_1LA0LC_0RD1RB.
+Require BBB4.BBB4_Spec.
 Import ListNotations.
 
 (* 1RB1LC_1LB1RA_0LC0LD_0RA0RD *)
@@ -792,8 +793,8 @@ Qed.
 (* 1RB1LD_1RC1RB_1LC1LA_0RC0RD *)
 Lemma cov_00_0097 : covers (row_to_tm [t1RB;t1LD;t1RC;t1RB;t1LC;t1LA;t0RC;t0RD]).
 Proof.
-  apply (covers_iqh_champ_at BBB4.Machines.Counters.Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.champ_score BBB4.Machines.Counters.Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.tm_champion);
-    [exact BBB4.Machines.Counters.Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.iqh_champion | unfold BBB4.Machines.Counters.Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.champ_score, B_champ; lia
+  apply (covers_iqh_champ_at BBB4.BBB4_Spec.champion_score BBB4.BBB4_Spec.tm_champion);
+    [exact BBB4.Machines.Counters.Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.iqh_champion | unfold BBB4.BBB4_Spec.champion_score, B_champ; lia
      | intros q s; destruct q, s; reflexivity].
 Qed.
 

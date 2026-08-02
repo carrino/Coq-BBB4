@@ -1,6 +1,7 @@
 -Q theories BBB4
 
 theories/BBB4_Statement.v
+theories/BBB4_Spec.v
 theories/CTape.v
 theories/PosEnc.v
 theories/PattCount.v

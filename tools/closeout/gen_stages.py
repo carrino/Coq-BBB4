@@ -260,6 +260,8 @@ def main():
         L.append('From BBB4.Closeout Require Import CloseoutKit.')
         for m in mods:
             L.append('Require %s.' % m)
+        if any(k == 'iqhch' for _, k, _, _, _ in chunk):
+            L.append('Require BBB4.BBB4_Spec.')
         L.append('Import ListNotations.')
         L.append('')
         covs = []
@@ -284,16 +286,18 @@ def main():
                 L.append('Qed.')
             elif kind == 'iqhch':
                 # The champion, and the only row in [boarded]'s third
-                # disjunct.  Its bound is carried by the board's own Horner
-                # [champ_score], never by a literal: the gate is [lia] on two
-                # Horner forms, because 32,779,478 is neither something [lia]
-                # can read as a numeral nor something [vm_compute] should be
-                # asked to build.
+                # disjunct.  Its table and bound are the SPEC's own
+                # ([BBB4_Spec.tm_champion], [BBB4_Spec.champion_score] =
+                # [N.to_nat] of the binary literal): the board proves facts
+                # about the very constants the final claim is stated with.
+                # The gate [champion_score <= B_champ] is [lia] on constants,
+                # because 32,779,478 is neither something [lia] can read as a
+                # bare [nat] numeral nor something [vm_compute] should be
+                # asked to build in unary.
                 L.append('Proof.')
-                L.append('  apply (covers_iqh_champ_at %s.champ_score %s.%s);'
-                         % (mod, mod, const))
-                L.append('    [exact %s.%s | unfold %s.champ_score, B_champ; lia'
-                         % (mod, thm, mod))
+                L.append('  apply (covers_iqh_champ_at BBB4.BBB4_Spec.champion_score BBB4.BBB4_Spec.tm_champion);')
+                L.append('    [exact %s.%s | unfold BBB4.BBB4_Spec.champion_score, B_champ; lia'
+                         % (mod, thm))
                 L.append('     | intros q s; destruct q, s; reflexivity].')
                 L.append('Qed.')
             else:
@@ -558,31 +562,23 @@ def main():
         L.append('    disjunct is uninhabited.  The hand-written Closeout/BBB4_Value.v')
         L.append('    discharges it ([not_skipped_nil]) and, with the champion\'s')
         L.append('    kernel-checked exact score, proves the value theorem')
-        L.append('    [BBB4_value : BBB4_is champion_score] -- BBB(4) = %s.'
+        L.append('    [BBB4_value : BBB4_statement] (BBB4_Spec.v) -- BBB(4) = %s.'
                  % '{:,}'.format(CHAMPION_SCORE))
     L.append('')
     L.append('    Like CloseoutFinal.v this file loads the committed census .vo:')
     L.append('    compile under the census opam switch (see tools/census_cache.py).')
     L.append('    It involves NO census re-walk. *)')
     L.append('From Coq Require Import Arith List Lia.')
-    L.append('From BBB4 Require Import BBB4_Statement.')
+    L.append('From BBB4 Require Import BBB4_Statement BBB4_Spec.')
     L.append('From BBB4.Census Require Import TNF_QH Deferred_Defs Deferred_Data Run.')
     L.append('From BBB4.Closeout Require Import CloseoutKit ShadowKit CoreRows Closeout CloseoutFinal.')
     L.append('Import ListNotations.')
     L.append('')
-    # Horner digit form: a bare 32779478 nat literal is abstracted to
-    # [Nat.of_num_uint] (the large-number guard), which [lia] cannot see
-    # through, so the qhbound_mono side goals below would fail.
-    horner = str(CHAMPION_SCORE)[0]
-    for d in str(CHAMPION_SCORE)[1:]:
-        horner = '(%s)*10 + %s' % (horner, d)
-    L.append('(** The champion\'s score -- the BBB(4) value (BBB4_Value.v),')
-    L.append('    %s.  Written digit by digit (Horner form)'
+    L.append('(** [champion_score] is the SPEC\'s (BBB4_Spec.v): %s as'
              % '{:,}'.format(CHAMPION_SCORE))
-    L.append('    because a bare literal this large is abstracted to')
-    L.append('    [Nat.of_num_uint], which [lia] cannot see through. *)')
-    L.append('Definition champion_score : nat :=')
-    L.append('  %s.' % horner)
+    L.append('    [N.to_nat] of the binary literal.  [lia] handles it as a')
+    L.append('    constant in the [qhbound_mono] side goals below; no local')
+    L.append('    copy of the numeral exists in this file. *)')
     L.append('')
     L.append('Theorem bbb4_target : forall tm,')
     L.append('  QHBound champion_score tm \\/ NeverQuasiHaltsSt tm')

@@ -5848,3 +5848,44 @@ budgeted as.  Second priority, after row 2.
   `cert_search.py` returning `NONE` at `B,C <= 60` looks like "search
   harder"; the blocking cycle turns the same runs into a permanent result
   in one extra query.  Extract the obstruction, don't widen the range.
+
+# 2026-08-02 — BBB4_Spec.v: the claim consolidated into one census-free file
+
+## What changed
+
+The trusted STATEMENT surface was scattered: `BBB4_is` lived in
+`Closeout/BBB4_Value.v` (a file that imports the whole closeout),
+`QHBound` in `Census/TNF_QH.v`, `champion_score` in generated
+`BBB4_Theorem.v`, the table in the champion's board file.  A skeptic had
+to read four files and check nothing shadowed anything.  Now:
+
+* **NEW `theories/BBB4_Spec.v`** — imports ONLY `BBB4_Statement` +
+  stdlib.  Defines `tm_champion`, `champion_score := N.to_nat 32779478`
+  (readable literal, no Horner), `Attains tm B`, `BBB4_is B`
+  (`(exists tm, Attains tm B) /\ (forall tm B', Attains tm B' -> B' <= B)`
+  — no `QHBound` dependency; maximality is stated in `Attains` terms),
+  `BBB4_statement := BBB4_is champion_score`, and proves
+  `BBB4_is_unique` axiom-free.  This file + BBB4_Statement.v is now the
+  ENTIRE claim; BBB4_Value.v proves `BBB4_value : BBB4_statement`.
+* Champion board file consumes the spec's `tm_champion`/`champion_score`
+  (local `champ_score` Horner numerals deleted; the N fuel twins are now
+  bare binary literals; `champion_attains : Attains tm_champion
+  champion_score`).  `gen_stages.py` iqhch branch + `BBB4_Theorem.v`
+  emission reference the spec's constants; no local `champion_score`
+  copy anywhere.  Docs (README, CLAIMS, VERIFYING, proof_report.py)
+  point at the spec file as verification rung 1.
+
+## Traps
+
+* **`BBB4_Statement.v` and everything in the census closure stay
+  FROZEN** — the committed census `.vo` record their checksums; even a
+  comment edit forces a full census re-walk.  That is exactly why the
+  spec is a NEW file on top rather than an extension of
+  BBB4_Statement.v.
+* `N.to_nat 32779478` works everywhere `lia` needs it (zify treats
+  `N.to_nat <literal>` as a constant); bare nat literals that size are
+  still `Nat.of_num_uint` blobs and still forbidden.  Tested: Horner
+  bridges, `<=` against B_census/B_board/B_champ, `S (x-1) = x`.
+* The container restart wiped ~1200 non-committed `.vo` (the previous
+  session's build died mid-Closeout); this session rebuilt from
+  `make -j4` + `make proof`.

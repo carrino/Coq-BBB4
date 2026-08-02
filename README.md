@@ -13,16 +13,31 @@ theorem **BBB(4) = 32,779,478** — built from the certificates of the
 
 **BBB(4) = 32,779,478.**
 
-`make proof` builds and reports the value theorem
+The claim is stated **census-free** in
+[`theories/BBB4_Spec.v`](theories/BBB4_Spec.v) — that file plus the
+machine model it imports (`theories/BBB4_Statement.v`) is the entire
+trusted statement surface:
+
+```coq
+tm_champion    : TM                       (* 1RB1LD_1RC1RB_1LC1LA_0RC0RD  *)
+champion_score : nat := N.to_nat 32779478
+
+Attains tm B   : Prop := exists q s, QuietAfter tm q s /\ S s = B
+
+BBB4_is B      : Prop :=
+  (exists tm, Attains tm B)                       (* ATTAINED *)
+  /\ (forall tm B', Attains tm B' -> B' <= B)     (* MAXIMAL  *)
+
+BBB4_statement : Prop := BBB4_is champion_score
+BBB4_is_unique : forall B B', BBB4_is B -> BBB4_is B' -> B = B'
+```
+
+`make proof` builds and reports the proof
 (`theories/Closeout/BBB4_Value.v`, kernel-checked, `Qed`):
 
 ```coq
-BBB4_is (B : nat) : Prop :=
-  (exists tm q s, QuietAfter tm q s /\ S s = B)   (* ATTAINED *)
-  /\ (forall tm, QHBound B tm)                    (* MAXIMAL  *)
-
-BBB4_value     : BBB4_is 32779478
-BBB4_is_unique : forall B B', BBB4_is B -> BBB4_is B' -> B = B'
+BBB4_value       : BBB4_statement
+champion_attains : Attains tm_champion champion_score
 ```
 
 Some state of some (4,2) Turing machine makes its last visit at
@@ -59,7 +74,9 @@ trust than the one before.  No rung requires deleting anything by hand:
 a fresh clone carries no binaries except the census `.vo`, and the walk
 targets back up and re-derive those automatically.
 
-1. **Read the claim.**  [`docs/CLAIMS.md`](docs/CLAIMS.md) states
+1. **Read the claim.**  [`theories/BBB4_Spec.v`](theories/BBB4_Spec.v)
+   (with `theories/BBB4_Statement.v`) is the complete formal statement,
+   census-free; [`docs/CLAIMS.md`](docs/CLAIMS.md) states in prose
    exactly what is proved — and what is not.  Trust: the authors.
 2. **`make`** (stock Coq 8.18, no opam, ~1–2 h).  Rebuilds every
    checker, every board theorem, the champion's exact score, and
@@ -119,7 +136,8 @@ verification tier, from "check one machine" to "re-walk the census".
 
 | Path | Contents |
 | --- | --- |
-| `theories/BBB4_Statement.v` | The (4,2) machine model and the quasihalting semantics: `VisitsAt`, `QuietFrom`, `QuasiHaltsSt`, `NeverQuasiHaltsSt`, `QHBound` |
+| `theories/BBB4_Statement.v` | The (4,2) machine model and the quasihalting semantics: `VisitsAt`, `QuietFrom`, `QuietAfter`, `QuasiHaltsSt`, `NeverQuasiHaltsSt` |
+| `theories/BBB4_Spec.v` | The census-free claim: `tm_champion`, `champion_score`, `Attains`, `BBB4_is`, `BBB4_statement`, `BBB4_is_unique` — with `BBB4_Statement.v`, the entire trusted statement surface |
 | `theories/Checkers/` | The verified certificate checkers: cyclers, translated cyclers, n-gram closures with ranking/pattern measures, RepWL, fuel/drift rules, inductive-rules (irules) engines, quasihalt wrappers |
 | `theories/Closure.v` | The generic covering-abstraction / liveness engine the n-gram and RepWL checkers instantiate |
 | `theories/Machines/` | Per-machine theorems: the generated boards (`Bulk/`, batch files) plus individually proved counter machines (`Machines/Counters/`) — thousands of files; `tools/closeout/audit.py` prints the live count |

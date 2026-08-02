@@ -1,7 +1,10 @@
 (** * The BBB(4) champion, boarded: 1RB1LD_1RC1RB_1LC1LA_0RC0RD
 
     [NonHalt /\ QHBound 32779478 /\ QuasiHaltsSt] -- the champion's own
-    score, exactly, and the tightest bound its trajectory admits.
+    score, exactly, and the tightest bound its trajectory admits.  The
+    machine table [tm_champion] and the score [champion_score] are the
+    SPEC's (BBB4_Spec.v): this file proves facts about the very
+    constants the final claim is stated with.
 
     THE READ, and why it is one [vm_compute] and two small inductions.
 
@@ -25,63 +28,44 @@
 
     -- the machine erases its whole 10,239-cell working region and
     returns to a BLANK TAPE in state [C] at step 32,779,478, then spins
-    left in [C] forever.  Measured last visits, from a 40M-step run
-    (tools/counters/champion_probe.py --last):
+    left in [C] forever.  Measured last visits (configuration indices),
+    from a 40M-step run (tools/counters/champion_probe.py --last):
 
       A: 32,769,237    B: 11,801,813    D: 32,779,477    C: never quiet
 
-    so [StD]'s last visit at 32,779,477 IS the champion's score
-    32,779,478, and no state's last visit exceeds it.  [QHBound
-    32779478] is therefore exact, not slack: [qhbound_champion_tight]
-    below shows [QHBound B] fails for every [B < 32779478].
+    so [StD]'s last visit at index 32,779,477 IS the champion's score
+    32,779,478 (last-fire step, index + 1), and no state's last visit
+    exceeds it.  [QHBound 32779478] is therefore exact, not slack:
+    [qhbound_champion_tight] below shows [QHBound B] fails for every
+    [B < 32779478].
 
     THE COST.  The prefix is 32,779,478 steps -- the reason
     docs/WAVE33_PROMPT.md deferred this row to "stable hardware".  It
     is affordable after all, because the fuel never has to become a
     unary [nat]: [TCyclerN.cstepsN] iterates on the BINARY numeral
     ([N.iter]), and [cstepsN_nat] is the bridge.  The whole run is
-    ~9 s and a few hundred MB under [vm_compute].  The [nat] index
-    [champ_score] is built in Horner digit form and related to its [N]
-    twin by [N2Nat] congruences alone -- no large numeral is ever
-    expanded.
+    ~9 s and a few hundred MB under [vm_compute].  On the [nat] side
+    [champion_score] is [N.to_nat] of the same binary literal, and
+    every arithmetic fact about it goes through [lia]'s constant
+    handling -- the 32.8M-element unary numeral is never built.
 
     [Print Assumptions] = [functional_extensionality_dep] only. *)
 
 From Coq Require Import Arith Lia Bool List NArith.
-From BBB4 Require Import BBB4_Statement CTape.
+From BBB4 Require Import BBB4_Statement BBB4_Spec CTape.
 From BBB4.Checkers Require Import TCyclerN.
 From BBB4.Census Require Import TNF_QH.
 Import ListNotations.
 
-Definition mk (w : Sym) (d : Dir) (n : St) : option Trans :=
-  Some (mkTrans w d n).
-
-(** 1RB1LD_1RC1RB_1LC1LA_0RC0RD *)
-Definition tm_champion : TM := fun q s => match q, s with
-  | StA, S0 => mk S1 DR StB | StA, S1 => mk S1 DL StD
-  | StB, S0 => mk S1 DR StC | StB, S1 => mk S1 DR StB
-  | StC, S0 => mk S1 DL StC | StC, S1 => mk S1 DL StA
-  | StD, S0 => mk S0 DR StC | StD, S1 => mk S0 DR StD end.
+(** The table and the score are BBB4_Spec's. *)
 Local Notation tm := tm_champion.
 
-(** ** The score, in both numeral systems
+(** ** The score's binary twin -- the [vm_compute] fuel *)
 
-    Horner digit form on the [nat] side: a bare literal this large is
-    abstracted to [Nat.of_num_uint], which [lia] cannot see through
-    (the same guard tools/closeout/gen_stages.py works around for
-    [champion_score]).  The two are related by [N2Nat] congruences, so
-    the 32.8M-element unary numeral is never built. *)
+Definition champ_scoreN : N := 32779478%N.
 
-Definition champ_scoreN : N :=
-  (((((((3 * 10 + 2) * 10 + 7) * 10 + 7) * 10 + 9) * 10 + 4) * 10 + 7) * 10 + 8)%N.
-
-Definition champ_score : nat :=
-  (((((((3 * 10 + 2) * 10 + 7) * 10 + 7) * 10 + 9) * 10 + 4) * 10 + 7) * 10 + 8)%nat.
-
-Lemma champ_scoreN_nat : N.to_nat champ_scoreN = champ_score.
-Proof.
-  unfold champ_scoreN, champ_score. lia.
-Qed.
+Lemma champ_scoreN_nat : N.to_nat champ_scoreN = champion_score.
+Proof. reflexivity. Qed.
 
 (** ** The terminal C-loop
 
@@ -132,33 +116,33 @@ Lemma prefix_run_N :
   end = true.
 Proof. vm_compute. reflexivity. Qed.
 
-Lemma prefix_reach : stepn tm champ_score InitES = Some (lift cEnd).
+Lemma prefix_reach : stepn tm champion_score InitES = Some (lift cEnd).
 Proof.
   pose proof prefix_run_N as H.
   rewrite cstepsN_nat, champ_scoreN_nat in H.
-  destruct (csteps tm champ_score c0) as [c|] eqn:Eq; [|discriminate].
+  destruct (csteps tm champion_score c0) as [c|] eqn:Eq; [|discriminate].
   rewrite <- lift_c0, (csteps_lift _ _ _ _ Eq).
   f_equal. apply ceqb_lift. exact H.
 Qed.
 
 (** ** After the landing the state is always [StC] *)
 
-Lemma after_stateC : forall n, champ_score <= n ->
+Lemma after_stateC : forall n, champion_score <= n ->
   exists c, stepn tm n InitES = Some c /\ fst c = StC.
 Proof.
   intros n Hn.
-  replace n with (champ_score + (n - champ_score)) by lia.
+  replace n with (champion_score + (n - champion_score)) by lia.
   rewrite stepn_add, prefix_reach.
-  destruct (tail_state (n - champ_score)) as (c & Hc & Hq).
+  destruct (tail_state (n - champion_score)) as (c & Hc & Hq).
   exists (lift c). split.
   - apply csteps_lift; exact Hc.
   - rewrite lift_state; exact Hq.
 Qed.
 
-Lemma visits_C : forall n, champ_score <= n -> VisitsAt tm StC n.
+Lemma visits_C : forall n, champion_score <= n -> VisitsAt tm StC n.
 Proof. intros n Hn. exact (after_stateC n Hn). Qed.
 
-Lemma not_visits_other : forall q n, q <> StC -> champ_score <= n ->
+Lemma not_visits_other : forall q n, q <> StC -> champion_score <= n ->
   ~ VisitsAt tm q n.
 Proof.
   intros q n Hq Hn (c & Hc & Hfst).
@@ -171,9 +155,9 @@ Qed.
 Theorem nonhalt_champion : NonHalt tm.
 Proof.
   intros n Hn.
-  destruct (Nat.le_gt_cases champ_score n) as [Hle | Hlt].
+  destruct (Nat.le_gt_cases champion_score n) as [Hle | Hlt].
   - destruct (after_stateC n Hle) as (c & Hc & _). rewrite Hn in Hc. discriminate.
-  - destruct (stepn_prefix tm n champ_score InitES (lift cEnd))
+  - destruct (stepn_prefix tm n champion_score InitES (lift cEnd))
       as (cm & Hcm & _); [lia | exact prefix_reach |].
     rewrite Hn in Hcm. discriminate.
 Qed.
@@ -182,29 +166,28 @@ Theorem quasihalts_champion : QuasiHaltsSt tm.
 Proof.
   exists StA. split.
   - exists 0. exists InitES. split; reflexivity.
-  - exists champ_score. intros n Hn.
+  - exists champion_score. intros n Hn.
     apply not_visits_other; [discriminate | exact Hn].
 Qed.
 
-Theorem qhbound_champion : QHBound champ_score tm.
+Theorem qhbound_champion : QHBound champion_score tm.
 Proof.
   intros q s (Hvis & Hquiet).
   destruct (st_eqb q StC) eqn:Eq.
   { apply st_eqb_spec in Eq; subst q.
     (* [StC] is never quiet: it is visited at every index past the landing. *)
-    exfalso. apply (Hquiet (S (Nat.max s champ_score))); [lia|].
+    exfalso. apply (Hquiet (S (Nat.max s champion_score))); [lia|].
     apply visits_C. lia. }
   apply st_eqb_neq in Eq.
   (* every other state's last visit is before the landing *)
-  destruct (Nat.le_gt_cases champ_score s) as [Hle | Hlt].
+  destruct (Nat.le_gt_cases champion_score s) as [Hle | Hlt].
   - exfalso. exact (not_visits_other q s Eq Hle Hvis).
   - lia.
 Qed.
 
 (** The census tier predicate for a quasihalter, at the champion's own
-    score.  [champ_score] is definitionally
-    [Closeout.BBB4_Theorem.champion_score]. *)
-Theorem champion_tier : NonHalt tm /\ QHBound champ_score tm /\ QuasiHaltsSt tm.
+    score. *)
+Theorem champion_tier : NonHalt tm /\ QHBound champion_score tm /\ QuasiHaltsSt tm.
 Proof.
   split; [exact nonhalt_champion | split;
     [exact qhbound_champion | exact quasihalts_champion]].
@@ -215,15 +198,15 @@ Qed.
     [champion_tier] restated under the name the closeout inventory scans
     for.  The other explicit-bound boards state [iqh_le B tm] with [B] a
     decimal literal; the champion cannot, because its bound is 32,779,478
-    and a literal that large is left as [Nat.of_num_uint], which no
-    [lia] sees through and no [vm_compute] should be asked to force.  So
-    the bound rides in the DEFINITION, in Horner form, where it is
-    definitionally [CloseoutKit.B_champ] -- and the generated stage
-    discharges [B <= B_champ] by [lia] on the two Horner forms rather
-    than by evaluating either.  [kind = iqhch] in
+    and a bare [nat] literal that large is left as [Nat.of_num_uint],
+    which no [lia] sees through and no [vm_compute] should be asked to
+    force.  So the bound rides in the DEFINITION -- [champion_score],
+    [N.to_nat] of the binary literal -- and the generated stage
+    discharges [champion_score <= B_champ] by [lia] on constants rather
+    than by evaluating either side.  [kind = iqhch] in
     [tools/closeout/frozen_map.tsv]. *)
 Definition iqh_champ (tm : TM) : Prop :=
-  NonHalt tm /\ QHBound champ_score tm /\ QuasiHaltsSt tm.
+  NonHalt tm /\ QHBound champion_score tm /\ QuasiHaltsSt tm.
 
 Theorem iqh_champion : iqh_champ tm_champion.
 Proof. exact champion_tier. Qed.
@@ -236,26 +219,24 @@ Proof. exact champion_tier. Qed.
     [not_visits_other] -- no state but [StC] appears at or after the
     landing -- [StD]'s last visit is EXACTLY index 32,779,477, so:
 
-    - [qhbound_champion_tight]: no [B < champ_score] satisfies
+    - [qhbound_champion_tight]: no [B < champion_score] satisfies
       [QHBound B tm] -- the bound the closeout consumes is not slack;
-    - [champion_attains]: some state's score is exactly [champ_score],
-      the attained-lower-bound package [Closeout/BBB4_Value.v] consumes
-      for BBB(4) >= 32,779,478.
+    - [champion_attains]: the champion [Attains] exactly
+      [champion_score], the lower-bound package [Closeout/BBB4_Value.v]
+      consumes for BBB(4) >= 32,779,478.
 
     Cost: one more ~9 s [vm_compute] over binary fuel, same shape as
     [prefix_run_N]. *)
 
-Definition champ_prevN : N :=
-  (((((((3 * 10 + 2) * 10 + 7) * 10 + 7) * 10 + 9) * 10 + 4) * 10 + 7) * 10 + 7)%N.
+Definition champ_prevN : N := 32779477%N.
 
-Definition champ_prev : nat :=
-  (((((((3 * 10 + 2) * 10 + 7) * 10 + 7) * 10 + 9) * 10 + 4) * 10 + 7) * 10 + 7)%nat.
+Definition champ_prev : nat := N.to_nat champ_prevN.
 
 Lemma champ_prevN_nat : N.to_nat champ_prevN = champ_prev.
-Proof. unfold champ_prevN, champ_prev. lia. Qed.
+Proof. reflexivity. Qed.
 
-Lemma champ_prev_S : S champ_prev = champ_score.
-Proof. unfold champ_prev, champ_score. lia. Qed.
+Lemma champ_prev_S : S champ_prev = champion_score.
+Proof. unfold champ_prev, champ_prevN, champion_score. lia. Qed.
 
 (** The machine is in [StD] one step before the landing. *)
 Lemma prev_run_N :
@@ -285,17 +266,17 @@ Proof.
 Qed.
 
 (** No bound below the champion's own score bounds the champion. *)
-Theorem qhbound_champion_tight : forall B, QHBound B tm -> champ_score <= B.
+Theorem qhbound_champion_tight : forall B, QHBound B tm -> champion_score <= B.
 Proof.
   intros B H.
   rewrite <- champ_prev_S.
   exact (H StD champ_prev champion_quiet_after_D).
 Qed.
 
-(** The attained-score package: the champion has a state whose score is
-    exactly [champ_score] -- the BBB(4) lower bound. *)
-Theorem champion_attains :
-  exists q s, QuietAfter tm q s /\ S s = champ_score.
+(** The attained-score package, in the spec's own vocabulary: the
+    champion [Attains] exactly [champion_score] -- the BBB(4) lower
+    bound. *)
+Theorem champion_attains : Attains tm_champion champion_score.
 Proof.
   exists StD, champ_prev.
   split; [exact champion_quiet_after_D | exact champ_prev_S].
