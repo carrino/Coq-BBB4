@@ -650,8 +650,9 @@ def main():
     L.append('  - destruct (Hres H).')
     L.append('Qed.')
     L.append('')
-    L.append('Print Assumptions bbb4_target.')
-    L.append('Print Assumptions bbb4_decided_le_prev_champion_or_champion.')
+    L.append('(* The axiom footprint is printed once, by [Print Assumptions')
+    L.append('   BBB4_value] in BBB4_Value.v -- [BBB4_value] consumes')
+    L.append('   [bbb4_target], so its footprint subsumes this file\'s. *)')
     nwrote += write_if_changed(os.path.join(OUT, 'BBB4_Theorem.v'), '\n'.join(L) + '\n')
 
     # ---- keep the _CoqProject Closeout section in sync ----

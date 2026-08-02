@@ -10,10 +10,11 @@ the census, and is where the one trust decision lives.
 ## Tier A — everything except the census walk
 
 `theories/Closeout/Closeout.v`'s dependency closure contains **zero committed
-`.vo`**.  Its only census dependencies are `TNF_QH.v`, `Deferred_Defs.v` and
-`Deferred_Data.v`, and none of those are among the 154 committed binaries —
-those are all walk output (`Census_Theorem`, `GG_*`, `GGH_*`, `G_*`,
-`Run_Split*`), which only `CloseoutFinal.v` / `BBB4_Theorem.v` load.  So this
+`.vo`**.  Its only census dependencies are
+`theories/Census/{TNF_QH,Deferred_Defs,Deferred_Data}.v`, and none of those
+are among the 154 committed binaries — those are all walk output
+(`Census_Theorem`, `GG_*`, `GGH_*`, `G_*`, `Run_Split*`), which only
+`CloseoutFinal.v`, `BBB4_Theorem.v` and `BBB4_Value.v` load.  So this
 tier is entirely from source.
 
 ```bash
@@ -24,7 +25,7 @@ make -f Makefile.coq -j2 theories/Closeout/Closeout.vo
 
 `Makefile.coq` is generated — the committed `Makefile` regenerates it, so do
 not run `coq_makefile` yourself.  Budget one to two hours on four cores; it is
-~2,000 board files (the count grows every proof wave).
+~2,800 files.
 
 Then, in a scratch `.v`:
 
@@ -45,9 +46,8 @@ Axioms: FunctionalExtensionality.functional_extensionality_dep
      = 0
 ```
 
-(`remaining_rows` has length 0 since 2026-08-01 — the residue is empty,
-which is what lets `BBB4_Value.v` discharge the `skipped` disjunct at
-tier B.)
+(`remaining_rows` is empty — that is what lets `BBB4_Value.v` discharge
+the `skipped` disjunct at tier B.)
 
 And the two checks the kernel does not do for you:
 
@@ -56,11 +56,14 @@ python3 tools/closeout/audit.py                    # expect: OK, exact partition
 grep -rn "Admitted\." theories --include='*.v'     # expect: no output
 ```
 
-`audit.py` matters.  The kernel proves `closeout_partial` whether or not
-`remaining_rows` is padded with rows that are not on the frozen list — that
-would still be a true theorem, just a weaker one.  `audit.py` is what checks
-the two tables partition the frozen list exactly, and `audit.py` is untrusted
-Python.  It is the one headline number not backed by the kernel.
+`audit.py` matters.  The kernel proves `closeout_partial` about whatever
+tables are baked into the sources; `audit.py` is what checks those tables
+against the frozen census list — that `proven_rows` covers all 5,156
+frozen deferred rows exactly, nothing missing, invented, or duplicated —
+and `audit.py` is untrusted Python.  The 5,156-of-5,156 coverage figure
+is bookkeeping, not kernel output (with the residue empty it carries no
+weight for the value theorem itself; see `docs/CLAIMS.md`, trust
+boundary).
 
 ### Deeper: re-check the compiled proofs independently
 
@@ -85,7 +88,7 @@ check rather than a quick one.
 `theories/Closeout/BBB4_Value.v` gives `BBB4_value : BBB4_statement` —
 the end-to-end value theorem `make proof` builds and reports.  (The
 claim itself, `BBB4_statement := BBB4_is champion_score`, is stated
-census-free in `theories/BBB4_Spec.v`; reading that file plus
+in `theories/BBB4_Spec.v`, with no census dependence; reading that file plus
 `theories/BBB4_Statement.v` gives every definition in the theorem.)  These
 three files are the only ones that load the committed walk output (they
 are deliberately not in `_CoqProject`, so the default `make` never
@@ -99,12 +102,14 @@ make proof
 ```
 
 `make proof` checks the census cache hash, compiles the three files
-with `coqc` (watch for `Print Assumptions bbb4_target` and
-`Print Assumptions BBB4_value` in the output — expect exactly
-`functional_extensionality_dep`; `BBB4_is_unique` prints closed under
-the global context during the default `make`, from `BBB4_Spec.v`), and
-prints the report: the value theorem and what it means.  (When the residue lists are non-empty the report instead lists
-every machine the chain skips; they have been empty since 2026-08-01.)
+with `coqc` (watch for the single `Print Assumptions BBB4_value`
+`Axioms:` block in the output — expect exactly
+`functional_extensionality_dep`; `BBB4_value` consumes `bbb4_target`,
+so one footprint covers the chain.  `BBB4_is_unique` prints closed
+under the global context during the default `make`, from
+`BBB4_Spec.v`), and prints the report: the value theorem and what it
+means.  (The report has a legacy skipped-machine mode from the burndown
+era; the empty residue never reaches it.)
 
 apt's Coq has **no `native_compute`** and cannot do the walk at all, which is
 why the census switch exists.  Note the OCaml version is load-bearing: `.vo`
@@ -114,15 +119,18 @@ versa.
 **Trusting those 154 `.vo` is a decision.**  To avoid it, re-derive them:
 
 ```bash
-make census-verify WALK_JOBS=2
+make census-verify
 ```
 
 This moves the committed walk output to a timestamped backup directory
 (`census_probes/vo-backup-*` — nothing is destroyed, and no manual `.vo`
 deletion is ever needed) and re-walks from source.  Budget
 **~24 hours** on ≥16 GB of RAM, on a native Linux filesystem — not `/mnt/c`
-under WSL2, where the drive bridge breaks `native_compute`.  `WALK_JOBS=2` is
-deliberate: `-P4` has OOM-killed a 16 GB box.
+under WSL2, where the drive bridge breaks `native_compute`.  Parallelism
+sizes itself: each walk unit peaks ~4–5 GB, and `WALK_JOBS` defaults to
+`min(cores, (available RAM − 2 GB) / 5 GB)` — override with
+`WALK_JOBS=N`, and on a big box add `WALK_MEMFREE=6G` (GNU parallel) to
+gate each unit launch on free RAM instead of trusting the estimate.
 
 The walk is **resumable and per-unit**: finished units are skipped on re-run,
 and a walk-stamp quarantines any `.vo` that was not produced by walking the

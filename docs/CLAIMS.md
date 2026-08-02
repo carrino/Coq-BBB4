@@ -8,7 +8,7 @@ one, this one is right and the other is stale._
 
 **BBB(4) = 32,779,478.**
 
-The CLAIM is stated census-free in `theories/BBB4_Spec.v` — that file plus
+The CLAIM is stated in `theories/BBB4_Spec.v` — that file plus
 the machine model it imports (`theories/BBB4_Statement.v`) is the **entire
 trusted statement surface**; nothing in either depends on the census, the
 checkers, or the closeout:
@@ -86,57 +86,30 @@ additionally reports that nothing relies on type-in-type, unsafe
 
 ## How the two halves are proved
 
-**The upper bound** is the census + closeout chain:
+**The upper bound** is the census + closeout chain.  The census walk
+(`census_decided`, the committed `.vo`: the ~7 h TNF walk of the whole
+(4,2) space) shows every machine either satisfies `QHBound 2000` or lies
+in the orbit — under completion of undefined transitions, non-start state
+swaps, and mirroring — of one of 5,156 frozen deferred rows; the closeout
+settles every one of those rows with a kernel-checked board, and the
+chain assembles to
 
 ```coq
-census_decided   (the ~7h TNF walk of the whole (4,2) space, committed .vo)
-closeout_partial : forall tm, Deferred D_census tm ->
-                              boarded tm \/ skipped D_remaining tm
-census_boarded   : forall tm, QHBound 2000 tm \/ boarded tm
-                                              \/ skipped D_remaining tm
-bbb4_target      : forall tm, QHBound 32779478 tm \/ NeverQuasiHaltsSt tm
-                                                  \/ skipped D_remaining tm
+census_boarded : forall tm, QHBound 2000 tm \/ boarded tm
+                                            \/ skipped D_remaining tm
+bbb4_upper     : forall tm, QHBound 32779478 tm
 ```
 
-and then the closing move (`BBB4_Value.v`): the residue is **empty**.
-`remaining_rows = []` and `shadow_rows.tsv` has no rows (the last core
-machine, Drozd's sixth `1RB0RD_1LB1LC_1RC0RA_0LB1RD`, was boarded
-2026-08-01), so
-
-```coq
-not_deferred_nil : forall tm, ~ Deferred [] tm    (* induction on the derivation *)
-not_skipped_nil  : forall tm, ~ skipped [] tm
-```
-
-discharge `bbb4_target`'s third disjunct, giving `bbb4_unconditional` and
-`bbb4_upper`.  Every one of the frozen census's 5,156 deferred rows is
-settled by a kernel-checked board (`python3 tools/closeout/audit.py`
-reports 5,156 of 5,156, 100.0%).
-
-`boarded tm` is
-
-```coq
-NeverQuasiHaltsSt tm
-\/ (NonHalt tm /\ QHBound B_board tm /\ QuasiHaltsSt tm)
-\/ (NonHalt tm /\ QHBound B_champ tm /\ QuasiHaltsSt tm)
-```
-
-with `B_board` = 66,349 (the previous champion's score) and `B_champ` =
-32,779,478, both concrete.  Census-tier stage boards certify literally
-`QHBound 2000` (= `B_census`) and lift by `qhbound_mono`; the four
-ex-champions enter at their exact scores through a `B <=? B_board` gate the
-kernel evaluates (`covers_iqh_le_at`); the champion enters through
-`covers_iqh_champ_at` at the spec's own `champion_score` and `tm_champion`,
-and its gate is the *proposition* `champion_score <= B_champ` discharged by
-`lia` on constants — a `<=?` against 32,779,478 would make the kernel build
-a 32.8M-constructor unary numeral, and nothing here ever evaluates that
-number.  `tools/closeout/inventory.py` refuses any other statement
-shapes.
-
-`Deferred D tm` is not list membership: it is membership in the orbit of
-the frozen table under completion of undefined transitions, non-start state
-swaps, and mirroring.  `skipped R tm` (`Closeout/ShadowKit.v`) adds the 0RB
-re-root disjunct — moot now that `R = []`.
+`boarded`'s three cases are: never quasihalts; quiet by `B_board` =
+66,349 (the previous champion's score); or quiet by `B_champ` =
+32,779,478 — the champion's own board, entered at the spec's
+`champion_score` and `tm_champion` through the *proposition*
+`champion_score <= B_champ`, discharged by `lia` (nothing in the tree
+ever evaluates the 32.8M numeral).  The `skipped` disjunct ranges over
+`D_remaining`, the list of still-unboarded rows, and that list is
+**empty** (`remaining_rows = []`), so the disjunct is uninhabited —
+`not_skipped_nil`, a three-line structural induction in `BBB4_Value.v` —
+and the chain collapses to the unconditional `bbb4_upper`.
 
 **The lower bound** is one machine.  The champion erases its whole working
 region, returns to a blank tape in `StC` at step 32,779,478 and spins left
@@ -153,13 +126,10 @@ champion_attains        : Attains tm_champion champion_score
 make the bound exact, not merely an upper estimate that happens to match a
 simulation.
 
-The previous-record reading survives as
-`bbb4_decided_le_prev_champion_or_champion` (`BBB4_Theorem.v`): every
-machine quasihalts by the *previous* champion's 66,349, or never
-quasihalts, or quasihalts by the champion's 32,779,478 — and exactly one
-census row is in the third case, the champion's own orbit (the single
-`iqhch` line of `tools/closeout/frozen_map.tsv`; that count is untrusted
-bookkeeping, like everything in `tools/`).
+(A previous-record reading — every machine quasihalts by the old
+champion's 66,349, never quasihalts, or quasihalts by the new champion's
+32,779,478 — survives as `bbb4_decided_le_prev_champion_or_champion` in
+`BBB4_Theorem.v`, for anyone who wants the record-progression view.)
 
 ## The trust boundary
 

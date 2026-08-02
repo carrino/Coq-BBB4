@@ -1,11 +1,28 @@
 # TERMINOLOGY — shared vocabulary for the (4,2) quasihalting project
 
-_Living glossary. Written 2026-07-24 to get everyone on the same page about
-what "census / D_census / holdouts / residue / hammer" mean, where the sets
-came from, and what work each one implies. Numbers are a snapshot; the
-definitions are stable._
+_The glossary for the finished result: what "census / D_census / holdouts /
+residue / hammer" mean, where the sets came from, and what work each one
+implied.  The definitions are stable and the counts are final — the burndown
+closed at 5,156 of 5,156 on 2026-08-01._
 
 ---
+
+## The result's own vocabulary
+
+The headline theorem and its terms (see `docs/CLAIMS.md` for the precise
+claim, `theories/BBB4_Spec.v` for the definitions):
+
+- **`BBB4_statement`** — the claim, `BBB4_is champion_score`: 32,779,478 is
+  attained and no machine attains more.  **`BBB4_value`**
+  (`theories/Closeout/BBB4_Value.v`) is its proof.
+- **`Attains tm B`** — machine `tm` has a state whose last visit is at
+  configuration index `B − 1`, i.e. whose last transition fires at step `B`.
+- **the champion** — `1RB1LD_1RC1RB_1LC1LA_0RC0RD` (`tm_champion`), whose
+  state `D` attains exactly 32,779,478.
+- **`skipped` / `not_skipped_nil`** — the closeout chain's escape disjunct
+  for still-unboarded rows.  It ranges over `D_remaining`, which ended
+  EMPTY, so `not_skipped_nil` proves it uninhabited — that discharge is
+  what turns the chain into the unconditional upper bound.
 
 ## The one census theorem everything hangs off
 
@@ -26,15 +43,15 @@ certified set** — see `docs/NGHIST_WAVE5.md` §5.
   that eventually goes quiet made its last visit by step `B`. (A never-QH
   machine satisfies this vacuously: it has no quiet states.)
 - The `QHBound 2000` census tier is deliberately **LIGHT** (in-walk
-  qhb-lex / RepWL at small params; PLAYBOOK Rule 4 keeps it weak on purpose,
+  qhb-lex / RepWL at small params; PLAYBOOK Rule 4 kept it weak on purpose,
   because strengthening the in-walk tier makes the native_compute walk
   ~100× slower per machine). So `D_census` is "resisted the *light* B=2000
   proof", NOT "intrinsically hard".
 
-## `D_census` = 5,156 — and how it partitions
+## `D_census` = 5,156 — and how it partitioned
 
 `D_census` is the deferred set: the machines that **resisted the B=2000
-census proof**. It splits by mxdys' holdout list (below):
+census proof**. It split by mxdys' holdout list (below):
 
 | term | definition | count |
 |---|---|---|
@@ -44,7 +61,7 @@ census proof**. It splits by mxdys' holdout list (below):
 
 Verified: `27 + 5,129 = 5,156`; `holdouts ⊆ 3,713`; `residue ∩ 3,713 = ∅`.
 
-The split is by **whose proof failed** — that is what makes it useful:
+The split was by **whose proof failed** — that is what made it useful:
 - **residue** = "our light census tier failed, but the machine is NOT on
   mxdys' can't-do list" ⇒ *presumably* mxdys decided it ⇒ a **strength gap
   between us and mxdys**, nothing more.
@@ -52,29 +69,27 @@ The split is by **whose proof failed** — that is what makes it useful:
   ⇒ both procedures failed, the second being state of the art ⇒ the genuine
   frontier.
 
-**CAVEAT (2026-07-24, wave-8): list-absence is an inference, not a record.**
-The 3,713 list is the ONLY artifact of mxdys' BBB run — the machines that
-didn't make it were never *enumerated as decided* anywhere. "Not on the
-list" = "his deciders ate it" only if his BBB enumeration actually visited
-the machine, and his tree provably differs from ours at the edges (5 of his
-3,713 are not leaves of our tree; ours has 3,995,005 nodes, no cnt-pruning).
-Positive per-machine evidence exists only for the ≤7-transition targetable
-subset (a `nonhalt` row in his *halting* CSV — a safety witness, not a QH
-one); for full-8 residue machines "easy" is a strong prior, not a guarantee.
-Checked 2026-07-24: 0 of the 5,129 residue canonicalize onto a 3,713 entry
-under TNF relabel + mirror (`tnf_canon`), so the split is not hiding
-relabeled holdouts — but a residue machine that resists the full engine
-ladder (wide-vocab NGramHist → RepWL → irules-QH) should be TRIAGED as a
-possible never-enumerated hard machine and promoted to the research track,
-not ground with params forever.
+**CAVEAT (recorded during wave-8): list-absence is an inference, not a
+record.**  The 3,713 list is the ONLY artifact of mxdys' BBB run — the
+machines that didn't make it were never *enumerated as decided* anywhere.
+"Not on the list" = "his deciders ate it" only if his BBB enumeration
+actually visited the machine, and his tree provably differs from ours at the
+edges (5 of his 3,713 are not leaves of our tree; ours has 3,995,005 nodes,
+no cnt-pruning).  Positive per-machine evidence existed only for the
+≤7-transition targetable subset; for full-8 residue machines "easy" was a
+strong prior, not a guarantee.  Checked at the time: 0 of the 5,129 residue
+canonicalize onto a 3,713 entry under TNF relabel + mirror (`tnf_canon`), so
+the split was not hiding relabeled holdouts.  **The inference is no longer
+load-bearing**: every residue machine now carries its own kernel-checked
+board, so nothing rests on guessing what mxdys decided.
 
 ## mxdys' holdout list (the 3,713) — provenance and meaning
 
 `BBB4_holdouts_3713.txt` (in the **BBB repo** `carrino/bbb`, copied into
-`Coq-BBB4/tools/`) is **mxdys' output**: ~a year ago he ran his best
-beeping-busy-beaver (quasihalting) inductive deciders over the (4,2) space,
-and the 3,713 are what those deciders **could not decide**. It is the
-starting point this whole project grew from — not an arbitrary external list.
+`Coq-BBB4/tools/`) is **mxdys' output**: he ran his best beeping-busy-beaver
+(quasihalting) inductive deciders over the (4,2) space, and the 3,713 are
+what those deciders **could not decide**. It is the starting point this
+whole project grew from — not an arbitrary external list.
 
 mxdys' two claims about how the list was made (the load-bearing principle):
 1. *"these holdouts are filtered by my inductive deciders"* — holdouts =
@@ -88,131 +103,113 @@ An over-approximate closure is enough to prove NonHalt (halting), but
 quasihalting needs the *faithful* model to read each state's recurrence, so
 "can't model exactly" = "quasihalting genuinely undecided by his method".
 
-The **27** are the live residual of that 3,713 (prior waves proved & dropped
-~3,686). NOTE: the BBB repo's own `results/open_holdouts_3221.txt` is a STALE
-snapshot from 2026-07-06 (pre-harvest) — read the residual off the Coq census
-(`census_holdouts_kept.txt`), not that file.
+The **27** were the residual of that 3,713 inside `D_census` (prior waves
+proved & dropped ~3,686), and all 27 are now boarded — the last, tower #20,
+on 2026-07-28.  NOTE: the BBB repo's own `results/open_holdouts_3221.txt`
+is a STALE snapshot from 2026-07-06 (pre-harvest) — the residual lived in
+the Coq census (`census_holdouts_kept.txt`), not that file.
 
-## Two oracles (both UNTRUSTED targeting aids; the kernel re-checks everything)
+## Two oracles (both UNTRUSTED targeting aids; the kernel re-checked everything)
 
 - **`BB4_verified_enumeration.csv`** (CoqBB5 v1.0.0 release; kept out of git
   for size, see `tools/nghist/BB4_verified_enumeration.README`) — mxdys'
   **HALTING** BB4 pipeline: per-machine `(status, decider, params)` for all
   858,909 machines. A *proxy* for "an exact model exists" (halting is easier
-  than quasihalting); use it for closure targeting, not as the last word.
+  than quasihalting); it was used for closure targeting, never as the last
+  word.
 - **BBB repo `results/certs_*`** — OUR OWN (carrino/bbb) per-machine
   quasihalting certs from the **holdout** grind (rank/irules/rwlrank/fuel/
-  drift/... — this project's engines, not mxdys'). CORRECTED 2026-07-24:
-  these cover holdouts only — measured **zero** overlap with the unboarded
-  residue — so they are NOT a residue oracle; their value for the residue is
-  the *engines* behind them (irules, RepWL), not the cert files.
+  drift/... — this project's engines, not mxdys'). These covered holdouts
+  only — measured **zero** overlap with the unboarded residue — so they were
+  never a residue oracle; their value for the residue was the *engines*
+  behind them (irules, RepWL), not the cert files.
 
-## The two fronts (and the discipline)
+## The two fronts, as they were worked
 
-_Written 2026-07-24, and **the holdout front has since closed** — tower #20,
-the last of the 27, was boarded on 2026-07-28, so everything still open is
-residue.  Kept because the discipline it states is why that happened.  See
-"Two vocabulary corrections" below._
+The burndown ran on a two-front discipline: point the porting machinery at
+the residue; keep it *away* from the holdouts.
 
-- **Residue → PORT WORK.** mxdys (presumably) already solved these — see
-  the list-absence CAVEAT above; we're catching up in
-  Coq because our in-walk tier is weaker. Bounded, mechanical, high-
-  confidence. Wave-6 `NGramHist` (his history-augmented NGramCPS ported to
-  Coq + extended to quasihalting) is the tool; it should drive residue → ~0.
-- **Holdouts (27) → RESEARCH WORK.** Beyond mxdys' method by his own year-old
-  verdict. Porting his method (NGramHist, oracle params, patterns) should NOT
-  be expected to crack them — that is re-running his failed experiment. They
-  need different ideas: individual busycoq-style proofs (counter/tower/double
-  families) and the one truly-open machine `1RB0RB_1LC1RC_0RA1LD_1RC0LD`.
+- **Residue → PORT WORK.**  mxdys had (presumably) already solved these, so
+  boarding them was catching up in Coq with a weaker in-walk tier: bounded,
+  mechanical, high-confidence.  Wave-6 `NGramHist` (his history-augmented
+  NGramCPS ported to Coq + extended to quasihalting) was the opening tool
+  and delivered the first ~964 boards; the prediction that it would drive
+  the residue to ~0 was **wrong** — the finish came from the ReachSt and
+  Ladder routes (below), which is its own lesson about the safety≠liveness
+  gap.
+- **Holdouts (27) → RESEARCH WORK.**  Beyond mxdys' method by his own
+  verdict, so porting his method was never expected to crack them.  They
+  fell to different ideas: individual busycoq-style proofs for the
+  counter/tower/double families, ending with tower #20 on 2026-07-28 —
+  including `1RB0RB_1LC1RC_0RA1LD_1RC0LD`, for a long time the last
+  genuinely open machine, boarded in `Closeout/CB_37.v`.
 
-**Discipline:** point the porting machinery at the residue; keep it *away*
-from the 27. If an oracle-driven sweep ever "targets" a holdout, that's a
-signal it is aimed wrong.
+The discipline held: no oracle-driven sweep was ever aimed at a holdout,
+and the two fronts closed by different methods, as the split predicted.
 
-## Scoreboard (regenerate it; do not trust this line)
+## Scoreboard — final
 
-`python3 tools/closeout/audit.py` is the live scoreboard, and
-[issue #61](https://github.com/carrino/Coq-BBB4/issues/61) tracks it wave
-by wave.  As of 2026-08-01: **5,156 of the frozen 5,156 settled (100.0%)**,
-leaving **0 undecided core machines + 0 0RB shadows** — the residue list is empty.
+**5,156 of the frozen 5,156 settled (100.0%); 0 undecided core machines,
+0 0RB shadows — the residue list is empty (since 2026-08-01, tracked to
+zero in [issue #61](https://github.com/carrino/Coq-BBB4/issues/61)).**
+Reproduce the figure with `python3 tools/closeout/audit.py` (untrusted
+bookkeeping; the kernel-checked form of "done" is `remaining_rows = []`
+and `not_skipped_nil` — see `docs/CLAIMS.md`).
 
 Two vocabulary corrections, because the situation changed under older
 notes in this tree:
 
 * **The HOLDOUT list is closed.**  Earlier documents call the 27 holdouts
   "the open problem, may never hit 0" and the residue "a tooling debt".
-  Tower #20, the last holdout, was boarded on 2026-07-28.  Everything
-  still open is residue.
-* **The residue's own character inverted.**  It was machines whose lap our
-  emitter could not FRAME; it is now mostly machines whose lap is not
-  affine at all (`docs/RESIDUE_MAP.md`, "The families").
+  Tower #20, the last holdout, was boarded on 2026-07-28.
+* **The residue's character inverted along the way.**  It began as machines
+  whose lap our emitter could not FRAME; what remained at the end was
+  mostly machines whose lap is not affine at all (`docs/RESIDUE_MAP.md`,
+  "The families").
 
-## `boarded`, and how the residue closes out without a re-walk
+## `boarded`, and how the residue closed out without a re-walk
 
 `boarded tm := NeverQuasiHaltsSt tm \/ iqh tm`. The closeout is a single
 theorem `Forall boarded D_census` built by `app`-chaining the staged per-file
 `Forall`s (route A, `docs/NGHIST_WAVE5.md` §5) — **no native_compute census
-walk, `D_census` never changes.** We do NOT shrink the 5,156 number inside
-`census_decided`; we prove *properties over the frozen 5,156 set* until the
-`Forall` closes.
+walk, `D_census` never changed.** The 5,156 number inside `census_decided`
+was never shrunk; the project proved *properties over the frozen 5,156 set*
+until the `Forall` closed.
 
-## Eliminating the residue — what "done" requires (the completion plan)
+## How the residue was eliminated (the plan, as executed)
 
-"Eliminate the residue" has a precise meaning: **every one of the 5,129
+"Eliminate the residue" had a precise meaning: **every one of the 5,129
 residue machines carries a kernel-checked `NeverQuasiHaltsSt` or `iqh`
-proof**, so that `Forall boarded D_census` closes with only the undecided core
-rows left undischarged (this sentence said "the 27 holdouts"; the holdout list
-closed on 2026-07-28 and the count moves every wave — see the scoreboard).  It
-does **NOT** mean shrinking the 5,156 inside
-`census_decided` (that stays frozen — see §`boarded` above), and it does
-**NOT** touch the 17 (research front, out of scope here).
+proof**.  It did **NOT** mean shrinking the 5,156 inside `census_decided`
+(that stayed frozen — see §`boarded` above), and it did **NOT** touch the
+holdout front (worked separately, above).  When the plan was written the
+score stood at 964 / 5,129; the steps below took it to 5,129 / 5,129,
+cheapest leverage first — steps 1–3 and 6 as planned, step 6 landing as
+`theories/Closeout/` (`CB_*.v` stages plus `Closeout.v`) rather than the
+originally sketched `Census/Assembly.v`:
 
-Where we were when this plan was written: **964 / 5,129 boarded** (wave-6),
-~**4,165 residue machines still unboarded**.  _(Historical.  The live figure
-is in the scoreboard section above — 5,143 of 5,156 settled, 13 rows left —
-and the six steps below are the plan that got it there, kept for its design
-record rather than as a to-do list.  Steps 1–3 and 6 are done; what is left
-of the residue is the ladder/ReachSt work in `docs/RESIDUE_MAP.md`, not a
-param sweep.)_  Getting that gap to 0 is bounded, mechanical port work —
-mxdys presumably decided every one of these (list-absence CAVEAT above:
-a strong prior, not a guarantee), so a witness is very likely to exist. The steps, cheapest-leverage first:
+1. **Full sweep, not a pilot.**  `tools/nghist/harvest_sweep.py sweep` and
+   `sweepqh` over the *entire* residue.  At `(k=2,n=2)` / `(k=4,n=2)` this
+   boarded the bulk of the counter tail with no human input.
+2. **Param escalation on the fail set.**  For machines that didn't close at
+   small params: climb history `k` (2→4→6→8), gram `n` (2→3), `MAXCTX`,
+   fuel.  Each rung cost more per machine and boarded a further slice.
+3. **Both shapes, always.**  never-QH (`NGHStage/`) *and* R_QH
+   (`NGHWStage/`).  A machine the never-QH gate rejected because it
+   genuinely goes quiet was a wrap/R_QH board, not a failure.
+4. **Pattern measures for the liveness-lag tail** — machines that close
+   (safety) but whose liveness the lex gate couldn't rank.  The wave-8
+   diagnostic put ~85% of the then-remaining gap here (NOMEAS).
+5. **Oracle-target the stubborn remainder** — use the halting CSV and the
+   BBB certs to set params and pick measures instead of searching blindly.
+6. **Wire the closeout (Route A)** — `app`-chain the per-file `Forall`s
+   into `Forall boarded D_census`.  Done; it is `theories/Closeout/`.
 
-1. **Full sweep, not a pilot.** Run `tools/nghist/harvest_sweep.py sweep`
-   and `sweepqh` over the *entire* residue (the sweep already dedups against
-   the staged manifests). At `(k=2,n=2)` / `(k=4,n=2)` this boards the bulk
-   of the counter tail with no human input.
-2. **Param escalation on the fail set.** For machines that don't close at
-   small params, climb history `k` (2→4→6→8), gram `n` (2→3), `MAXCTX`
-   (1200→higher), and fuel. Each rung costs more per machine but boards a
-   further slice. Re-emit staged files, `coqc`-validate each, commit per
-   compiling artifact.
-3. **Always try both shapes.** never-QH (`NGHStage/`, `Forall
-   NeverQuasiHaltsSt`) *and* R_QH (`NGHWStage/`, `Forall iqh`). A machine the
-   never-QH gate rejects because it genuinely goes quiet is a **wrap/R_QH
-   board, not a failure** — route it to `sweepqh`.
-4. **Pattern measures for the liveness-lag tail.** Some machines *close*
-   (safety: finite augmented set ⇒ NonHalt) but the lex gate can't rank them
-   (liveness lags closure — the safety≠liveness gap). These need `NgPattE`
-   pattern measures; this is the residual the blind sweep leaves.
-5. **Oracle-target the stubborn remainder.** Use
-   `BB4_verified_enumeration.csv` (halting proxy ⇒ an exact model exists) +
-   BBB `results/certs_*` (the actual quiet state + measure mxdys used) to
-   *set* params / *pick* the measure instead of searching blindly. Because
-   the targetable residue is mxdys-decided (halting side), the oracle names
-   a witness for each of those; full-8 machines have no oracle row.
-6. **Wire the closeout (Route A).** When every residue machine is staged,
-   `app`-chain the per-file `Forall`s into `Forall boarded D_census` in a
-   `Census/Assembly.v` — **no native_compute census walk, `D_census`
-   unchanged.** That closes the residue front.  _(Done, and it landed as
-   `theories/Closeout/` — `CB_*.v` stages plus `Closeout.v` — not as
-   `Census/Assembly.v`.)_
+In the event, steps 4–5 were not where the endgame happened: the last ~120
+rows came from the ReachSt and Ladder routes (next section), which stepped
+around the measure-vocabulary gap instead of filling it.
 
-**The shortcut was tried and is dead.** The hammer probe (next section) ran
-2026-07-24: NO machine determinizes at any bounded history — the measure/
-oracle grind (steps 4–5) is the real path. The failure-mode diagnostic says
-step 4 (measure vocabulary) is where ~85 % of the remaining gap sits.
-
-## REFUTED — "the hammer" (measured 2026-07-24, wave-8; do not rebuild)
+## REFUTED — "the hammer" (measured in wave-8; do not rebuild)
 
 **The decisive experiment was run and the hypothesis is FALSE.**
 `tools/nghist/hammer_probe.py` swept history k ∈ {2,4,6,8,12} × gram
@@ -233,15 +230,15 @@ ambiguous forever. The pilot's "out-degree ≈1" was the misleading average;
 the ~7 branching nodes per machine are block boundaries, incurable by
 history. mxdys' "models the forward behavior exactly" therefore operates at
 his deciders' RULE level (macro-step / repeated-word structure), not at the
-per-cell level of this abstraction. **Conclusion: skip the determinism
-lemma; the measure/oracle path (steps 4–5 above) stays necessary.** The
-2026-07-24 failure-mode diagnostic (`tools/nghist/fail_diag.py`, 400
-unboarded machines) shows where that effort goes: 85 % close fine but fail
-the liveness measure search (NOMEAS — the vocabulary/lex-synthesis gap),
-11 % are prefix-quiet quasihalters (wrap route), 3 % exceed the search
-caps, <1 % genuinely fail to close.
+per-cell level of this abstraction. The follow-up diagnostic
+(`tools/nghist/fail_diag.py`, 400 unboarded machines) showed where the
+remaining effort would go: 85 % closed fine but failed the liveness measure
+search (NOMEAS — the vocabulary/lex-synthesis gap), 11 % were prefix-quiet
+quasihalters (wrap route), 3 % exceeded the search caps, <1 % genuinely
+failed to close.
 
-The original hypothesis, kept for the record:
+_The original hypothesis, superseded by the measurement above and kept
+verbatim for the record:_
 
 Because the residue is mxdys-exact, don't *search* for a lex certificate —
 make the augmented closure **deterministic** (out-degree exactly 1: history
@@ -252,18 +249,6 @@ every visited state is on the cycle); states only on the tail are quiet
 (QH, bound = tail length).** This is sound for exactly mxdys' reason —
 determinism *is* "models the forward behavior exactly" — so it dissolves the
 safety≠liveness trap rather than searching around it.
-
-Status / risks: (a) it is a NEW `Closure.v` soundness lemma keyed on
-"closure is deterministic", not "find a certificate" — not yet written
-(but simpler than the lex machinery); (b) determinism is STRONGER than
-mxdys' reachable-set exactness and may need higher history than he used —
-the pilot showed out-degree ≈1 (26/33 nodes) at history=2, so it is *close*
-but unconfirmed at scale. **The decisive cheap experiment: sweep history on
-a residue sample and plot out-degree vs history.** If a bounded history
-drives ~every machine to out-degree 1, the hammer is real (and most of the
-oracle-param / pattern-measure work becomes unnecessary). If some machines
-never determinize, those are the tell — residual far-cell uncertainty,
-i.e. not as exact as the halting result implied.
 
 ## The two routes that produced the last ~120 boards
 
@@ -289,16 +274,18 @@ i.e. not as exact as the halting result implied.
   producer: ONE arm-indexing scheme shared by the interior and fill arms,
   plus `LapGlueQuiet`'s closer ported to the `nat` index, so a ladder board
   can certify QUASIHALTING and not only never-quasihalting.  Boards that
-  still stop at a single refused arm are listed in
+  stopped at a single refused arm are listed in
   `tools/coqproject_exempt.txt` rather than left to rot.
 
 ## Pointers
 - `docs/CLAIMS.md` — what is proved, exactly, including what is not.  If
   this file and that one disagree, that one is right.
-- `docs/RESIDUE_MAP.md` — the open list, by shape and by current gate.
-- `docs/REACHST_TIER.md`, `docs/LADDER_PLAN.md` — the two live routes.
-- `NEXT_SESSION.md` — the PLAYBOOK (compute discipline) and the running
-  lab notebook.
+- `docs/RESIDUE_MAP.md` — the residue map: how each family of core
+  machines fell, and what the map got wrong.
+- `docs/REACHST_TIER.md`, `docs/LADDER_PLAN.md` — the two routes that
+  closed the last rows.
+- `NEXT_SESSION.md` — the PLAYBOOK (compute discipline) and the
+  accumulated lab notebook.
 - `docs/NGHIST_WAVE5.md`, `docs/IRULESQH_WAVE3.md`,
   `docs/REROOT_LISTC_STAGE.md`, `docs/V5GAP_STAGE.md` — the early
   residue-harvest waves, kept for their design record.

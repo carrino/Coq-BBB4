@@ -1,5 +1,16 @@
 # The generic solver: build rung two once, stop paying a session per shape
 
+> **Status: historical design record — the ladder was built and shipped.**
+> The checkers are `theories/Checkers/LadderKernel.v`, `LadderFam.v` and
+> `LadderCheck.v`, and 50 machines board through them from
+> `theories/Machines/Ladder/`.  BBB(4) = 32,779,478 is kernel-checked and
+> the residue is empty, so the row counts, gates and kill criteria below
+> ("150 core rows", "still open", "stays live") are the state on the dates
+> they carry — dated measurements that motivated the build, not current
+> status.  §0–§3 are the original plan; §4c onward is the append-only build
+> log, each section ending in the boards it landed.  (§5 "What this is NOT"
+> sits mid-file, before §4x–§4ab — later sessions appended past it.)
+
 _Written 2026-07-30 (branch `claude/residue-class-analysis-6wrb8t`), after a
 cross-repo survey of Coq-BBB4, BBB, and the busycoq clone.  This is the
 operational plan for `docs/RULE_LADDER.md` §5 ("what would mxdys do with OUR
