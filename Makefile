@@ -66,13 +66,15 @@ proof: all
 # .vo FIRST, so a verify walk is always a full from-source walk -- the
 # honesty property is unchanged.
 #
-# WALK_JOBS defaults to 2: four parallel native_compute units OOM-killed a
-# 16 GB box on the GG_1LC layer (signal 9, 2026-07-22).  Each unit peaks
-# ~4-5 GB, so budget WALK_JOBS ~ (RAM - 2 GB) / 5 GB: 16 GB -> 2-3,
-# 32 GB -> 5-6, 64 GB -> 8.  Override with e.g.
-# `make census-verify WALK_JOBS=6' only if RAM headroom is confirmed.
-# (`make -j' does not parallelize the walk -- WALK_JOBS is the knob.)
-WALK_JOBS ?= 2
+# WALK_JOBS: how many walk units run at once.  Each unit peaks ~4-5 GB
+# (four of them OOM-killed a 16 GB box on the GG_1LC layer, signal 9,
+# 2026-07-22), so the default is computed from THIS machine:
+#   min(cores, (available RAM - 2 GB) / 5 GB), floor 1
+# -- 16 GB -> 2, 32 GB -> 6 (8+ cores), 64 GB -> core count.  Override
+# explicitly with `make census-verify WALK_JOBS=6'.  (`make -j' does
+# not parallelize the walk -- WALK_JOBS is the knob.)
+WALK_AUTO := $(shell m=$$(awk '/MemAvailable/{print int(($$2/1048576 - 2)/5)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+WALK_JOBS ?= $(WALK_AUTO)
 
 # WALK_MEMFREE (opt-in, needs GNU parallel): memory-aware launch gate,
 # the walk's analogue of the IRules order-only chains.  A new unit is
@@ -113,6 +115,7 @@ _census-prepare:
 .PHONY: _census-prepare
 
 _census-walk: _census-prepare
+	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) (auto = min(cores, (free RAM - 2 GB)/5 GB); override with WALK_JOBS=N)"
 	[ -f theories/Census/Run_Split.vo ] || coqc -Q theories BBB4 theories/Census/Run_Split.v
 	[ -f theories/Census/Run_Split2.vo ] || coqc -Q theories BBB4 theories/Census/Run_Split2.v
 	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
