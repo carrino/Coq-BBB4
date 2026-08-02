@@ -1,16 +1,11 @@
-(** * BBB4_Spec: the claim "BBB(4) = 32,779,478", complete and census-free.
+(** * BBB4_Spec: the claim "BBB(4) = 32,779,478".
 
-    THIS FILE, plus the machine model it imports (BBB4_Statement.v),
-    is the ENTIRE trusted statement surface of the development.
-    Reading the two files top to bottom gives every definition that
-    appears in the final theorem
-
-      [BBB4_value : BBB4_statement]        (Closeout/BBB4_Value.v)
-
-    where [BBB4_statement := BBB4_is champion_score].  Nothing here
-    depends on the census, the checkers, or the closeout: the imports
-    are [BBB4_Statement] and the standard library, and this file
-    compiles in under a second on any Coq 8.18.
+    This file STATES the claim; it does not prove it, and nothing in
+    it refers to any proof.  Together with the machine model it
+    imports (BBB4_Statement.v) it contains every definition that
+    appears in the claim: the two files import only each other and
+    the Coq standard library, and can be read top to bottom in one
+    sitting.
 
     Contents:
 
@@ -21,12 +16,14 @@
                           score is exactly [B];
     - [BBB4_is B]      -- [B] is attained, and no machine attains
                           more: "BBB(4) = B";
-    - [BBB4_statement] -- [BBB4_is champion_score].
+    - [BBB4_statement] -- the claim: [BBB4_is champion_score].
 
-    Scoring convention (the BBB harness repo, README "Definitions"):
-    steps are numbered 1, 2, ...; a state whose LAST visit is at
-    configuration index [s] ([QuietAfter tm q s], BBB4_Statement.v)
-    fires its last transition at step [s+1], so its score is [S s].
+    Scoring convention (Aaronson's Beeping Busy Beaver, at state
+    level, in the convention of the BBB harness repo -- carrino/BBB,
+    README "Definitions"): steps are numbered 1, 2, ...; a state
+    whose LAST visit is at configuration index [s]
+    ([QuietAfter tm q s], BBB4_Statement.v) fires its last transition
+    at step [s+1], so its score is [S s].
 
     Corner cases, and why they cannot move the value:
 
@@ -65,18 +62,17 @@ Definition tm_champion : TM := fun q s =>
 
     Written as [N.to_nat] of a binary literal: a bare [nat] literal
     this large parses to an opaque [Nat.of_num_uint] blob (and would
-    be a 32.8M-constructor unary term if ever evaluated), while the
-    [N] literal is an ordinary readable numeral that [lia] treats as
-    a constant. *)
+    be a 32.8M-constructor unary term if ever evaluated); [N.to_nat]
+    of the [N] literal is the same number, stated readably. *)
 
 Definition champion_score : nat := N.to_nat 32779478.
 
 (** ** Attaining a score
 
     [Attains tm B]: some state of [tm] is visited for the last time
-    at configuration index [s] with [S s = B] -- in harness terms,
-    its last transition fires at step [B], and after that the state
-    is never entered again. *)
+    at configuration index [s] with [S s = B] -- its last transition
+    fires at step [B], and after that the state is never entered
+    again. *)
 
 Definition Attains (tm : TM) (B : nat) : Prop :=
   exists q s, QuietAfter tm q s /\ S s = B.
@@ -89,19 +85,16 @@ Proof. intros tm B (q & s & Hq & _). exact (quiet_after_qh tm q s Hq). Qed.
 
     [BBB4_is B]: [B] is the maximum, over all 4-state 2-symbol
     machines [tm] and all states [q] of [tm], of the step at which
-    [q]'s last transition fires -- Aaronson's BBB, at state level,
-    with the maximum stated as "attained + no machine attains more".
-    The quantifier ranges over the FULL function type [TM]: every
-    transition table, normalized or not, halting or not. *)
+    [q]'s last transition fires -- the maximum stated as "attained +
+    no machine attains more".  The quantifier ranges over the FULL
+    function type [TM]: every transition table, normalized or not,
+    halting or not. *)
 
 Definition BBB4_is (B : nat) : Prop :=
   (exists tm, Attains tm B)
   /\ (forall tm B', Attains tm B' -> B' <= B).
 
-(** The claim.  [Closeout/BBB4_Value.v] proves it
-    ([BBB4_value : BBB4_statement]) from the census closeout and the
-    champion's kernel-checked exact score; its axiom footprint is
-    [functional_extensionality_dep] only ([Print Assumptions] there). *)
+(** The claim. *)
 
 Definition BBB4_statement : Prop := BBB4_is champion_score.
 

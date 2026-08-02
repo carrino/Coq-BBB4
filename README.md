@@ -106,7 +106,7 @@ Requires Coq 8.18 and Python 3 (the Python is reporting/generation
 tooling only — it carries no proof weight).
 
 ```sh
-make            # the full from-source build: every checker, board and
+make -j8        # the full from-source build: every checker, board and
                 # the closeout, on stock Coq -- no committed binaries
 make proof      # + the census-backed top-level theorem and its report
 ```
