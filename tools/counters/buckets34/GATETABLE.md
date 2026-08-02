@@ -37,10 +37,9 @@ the row it knew least about was the row that took longest.
 ## What this table has been wrong about, ten times
 
 A gate name says what stopped the emitter, never what stops a proof.  This
-file has asserted ten verdicts that later measurement overturned.  Nine are
-about machines; the tenth is about this repository, and it is the same
-mistake.  The shape
-of the mistake is the same every time and is worth more than any label in it:
+file has asserted ten verdicts that later measurement overturned — nine about
+machines, the tenth about this repository.  The shape is the same every time
+and is worth more than any label in it:
 
 1. **"The four QUADRATIC rows are not coming back without a new arm shape."**
    The arm measurement was right and was made three times — 4p on the arm,
