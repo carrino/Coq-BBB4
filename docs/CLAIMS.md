@@ -1,62 +1,100 @@
 # What this repository proves, exactly
 
-_The precise statement, the axiom footprint, and — explicitly — what is NOT
-yet proved.  If any other document in this tree contradicts this one, this one
-is right and the other is stale._
+_The precise statement, the axiom footprint, and — explicitly — where the
+trust boundaries are.  If any other document in this tree contradicts this
+one, this one is right and the other is stale._
 
 ## The theorem
 
-Kernel-checked, `Qed`, in `theories/Closeout/` (built and reported by
-`make proof`):
+**BBB(4) = 32,779,478.**
+
+Kernel-checked, `Qed`, in `theories/Closeout/BBB4_Value.v` (built and
+reported by `make proof`):
 
 ```coq
+BBB4_is (B : nat) : Prop :=
+  (exists tm q s, QuietAfter tm q s /\ S s = B)   (* ATTAINED *)
+  /\ (forall tm, QHBound B tm)                    (* MAXIMAL  *)
+
+BBB4_value     : BBB4_is 32779478
+BBB4_is_unique : forall B B', BBB4_is B -> BBB4_is B' -> B = B'
+```
+
+Unfolding the definitions (`BBB4_Statement.v`, `Census/TNF_QH.v`): over all
+4-state 2-symbol Turing machines on a two-way-infinite blank tape (undefined
+transition = halt, start state A),
+
+* **ATTAINED** — some machine has a state whose *last* visit is at
+  configuration index 32,779,477, i.e. whose last transition fires at step
+  32,779,478.  The witness is the champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD`,
+  whose state `D` does exactly that
+  (`Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`,
+  `champion_attains` — two binary-fuel `vm_compute` runs, one to pin the
+  configuration at index 32,779,477 in state `D`, one to pin the landing at
+  32,779,478 on a blank tape in state `C`, plus the terminal C-loop
+  induction showing no state but `C` ever appears again).
+* **MAXIMAL** — no state of any machine is eventually quiet with a last
+  visit at index ≥ 32,779,478 (`bbb4_upper : forall tm, QHBound 32779478
+  tm`).  Machines that never quasihalt satisfy `QHBound` vacuously; the
+  two-disjunct reading is `bbb4_unconditional : forall tm, QHBound 32779478
+  tm \/ NeverQuasiHaltsSt tm`.
+
+`BBB4_is_unique` (axiom-free) confirms the spec pins one number, so
+"BBB(4) = 32,779,478" has exactly one reading.
+
+**Axiom footprint: `functional_extensionality_dep`, and nothing else.**
+There are zero `Admitted.` in `theories/`.  Verify with `Print Assumptions`
+(printed during `make proof`), or independently with `coqchk -o`, which
+additionally reports that nothing relies on type-in-type, unsafe
+(co)fixpoints, or assumed positivity.
+
+## The convention
+
+"BBB" here is the **state-level Beeping Busy Beaver** of the BBB harness
+(carrino/BBB, README "Definitions"), the quasihalting formulation:
+
+* a machine **quasihalts** iff some state is visited at least once but only
+  finitely often (`QuasiHaltsSt`); a halting machine quasihalts trivially;
+* the **score** of an eventually-quiet state is its last visited
+  configuration index + 1 — the step at which its last transition fires
+  (steps are numbered 1, 2, …);
+* the machine's score is its largest quiet-state score, and BBB(4) is the
+  maximum over all machines — which is exactly what `BBB4_is` says without
+  needing a max operator: attained by one state somewhere, exceeded
+  nowhere.
+* never-visited ("silent") states do not witness quasihalting (the
+  `Visited` conjunct).  This matches the harness treatment; a silent
+  state's score-0 "quasihalt" is a convention question that cannot affect
+  any BBB value.
+
+## How the two halves are proved
+
+**The upper bound** is the census + closeout chain:
+
+```coq
+census_decided   (the ~7h TNF walk of the whole (4,2) space, committed .vo)
 closeout_partial : forall tm, Deferred D_census tm ->
                               boarded tm \/ skipped D_remaining tm
-
-census_boarded   : forall tm, QHBound 2000 tm
-                           \/ boarded tm
-                           \/ skipped D_remaining tm
-
-bbb4_target      : forall tm, QHBound 32779478 tm
-                           \/ NeverQuasiHaltsSt tm
-                           \/ skipped D_remaining tm
-
-bbb4_decided_le_prev_champion_or_champion : forall tm,
-  ~ skipped D_remaining tm -> QHBound 66349 tm
-                           \/ NeverQuasiHaltsSt tm
-                           \/ QHBound 32779478 tm
+census_boarded   : forall tm, QHBound 2000 tm \/ boarded tm
+                                              \/ skipped D_remaining tm
+bbb4_target      : forall tm, QHBound 32779478 tm \/ NeverQuasiHaltsSt tm
+                                                  \/ skipped D_remaining tm
 ```
 
-where (`Closeout/ShadowKit.v`, the bbchallenge community's 0RB observation
-made kernel-checked)
+and then the closing move (`BBB4_Value.v`): the residue is **empty**.
+`remaining_rows = []` and `shadow_rows.tsv` has no rows (the last core
+machine, Drozd's sixth `1RB0RD_1LB1LC_1RC0RA_0LB1RD`, was boarded
+2026-08-01), so
 
 ```coq
-skipped R tm :=  Deferred R tm
-             \/ exists qs t, stepn tm t InitES = Some (qs, snd InitES)
-                           /\ Deferred R (TM_swap StA qs tm)
+not_deferred_nil : forall tm, ~ Deferred [] tm    (* induction on the derivation *)
+not_skipped_nil  : forall tm, ~ skipped [] tm
 ```
 
--- a machine is skipped if it is one of the undecided CORE machines, **or**
-it runs an all-blank prefix into the orbit of one (a 0RB re-root SHADOW).
-A shadow is not a separate open problem — it needs no new mathematics — but
-it is not free either: a shadow is a shadow only of a core machine that is
-still undecided, so boarding a core machine moves its shadow INTO
-`core_rows.txt` until the same argument is transported across the re-root
-(`Machines/Counters/RRNQ_0RB0RD_1RC____1RD1LC_0LC1RA.v` is the worked
-example).  Budget a core row and its shadows together.
-
-The last corollary is the previous-record reading: every decided machine
-quasihalts by the *previous* champion's 66,349, or never quasihalts, or
-quasihalts by the champion's own 32,779,478.  The four previous champions
-themselves (scores 2,512–66,349, `Machines/Counters/BlankTail_*.v`) are among
-the decided, and **exactly one census row is in the third case** — the
-champion and its orbit, the single `iqhch` line of
-`tools/closeout/frozen_map.tsv`.  So among all known (4,2) machines only the
-champion exceeds the previous record, exactly as before it was boarded; what
-changed is that it is now *decided* rather than skipped.  (That the third
-case holds one row is untrusted bookkeeping, like the partition audit:
-`boarded`'s third disjunct carries a bound, not an identity, so the kernel
-states the disjunction and not the census of who satisfies it.)
+discharge `bbb4_target`'s third disjunct, giving `bbb4_unconditional` and
+`bbb4_upper`.  Every one of the frozen census's 5,156 deferred rows is
+settled by a kernel-checked board (`python3 tools/closeout/audit.py`
+reports 5,156 of 5,156, 100.0%).
 
 `boarded tm` is
 
@@ -67,144 +105,93 @@ NeverQuasiHaltsSt tm
 ```
 
 with `B_board` = 66,349 (the previous champion's score) and `B_champ` =
-32,779,478 (the champion's), both concrete.  Census-tier stage boards certify
-literally `QHBound 2000` (= `B_census`, the census's in-walk tier strength)
-and lift by `qhbound_mono`; the four ex-champions enter at their exact scores
-through a `B <=? B_board` gate the kernel evaluates (`covers_iqh_le_at`); the
-champion enters through `covers_iqh_champ_at`, whose gate is the *proposition*
-`B <= B_champ` discharged by `lia` on two Horner forms — a `<=?` against
-32,779,478 would make the kernel build a 32.8M-constructor unary numeral, and
-nothing here ever evaluates that number.  `tools/closeout/inventory.py`
-refuses any other statement shapes.
+32,779,478, both concrete.  Census-tier stage boards certify literally
+`QHBound 2000` (= `B_census`) and lift by `qhbound_mono`; the four
+ex-champions enter at their exact scores through a `B <=? B_board` gate the
+kernel evaluates (`covers_iqh_le_at`); the champion enters through
+`covers_iqh_champ_at`, whose gate is the *proposition* `B <= B_champ`
+discharged by `lia` on two Horner forms — a `<=?` against 32,779,478 would
+make the kernel build a 32.8M-constructor unary numeral, and nothing here
+ever evaluates that number.  `tools/closeout/inventory.py` refuses any
+other statement shapes.
 
-Unfolding the definitions (`Census/TNF_QH.v`, `Closeout/CloseoutKit.v`), for
-**every** (4,2) Turing machine at least one of the following holds:
+`Deferred D tm` is not list membership: it is membership in the orbit of
+the frozen table under completion of undefined transitions, non-start state
+swaps, and mirroring.  `skipped R tm` (`Closeout/ShadowKit.v`) adds the 0RB
+re-root disjunct — moot now that `R = []`.
 
-1. every state that eventually goes quiet did so before configuration index
-   32,779,478 — the champion's score — so its BBB score is at most the
-   champion's (`QHBound 32779478`); or
-2. it never quasihalts — no state is eventually quiet, so it has no
-   quasihalting score at all (`NeverQuasiHaltsSt`); or
-3. it is **skipped**: one of the **0** undecided core machines in
-   `D_remaining` (`tools/closeout/core_rows.txt`), or one of their **0**
-   0RB re-root shadows (`tools/closeout/shadow_rows.tsv`).  A shadow needs
-   no new mathematics — it is a blank-prefix re-root of a core machine —
-   but it does need its own board, because a shadow is a shadow only of a
-   core machine that is still undecided: boarding a core machine moves its
-   shadow into `core_rows.txt` until the same argument is transported
-   across the re-root.
+**The lower bound** is one machine.  The champion erases its whole working
+region, returns to a blank tape in `StC` at step 32,779,478 and spins left
+in `C` forever; state `D`'s last visit is at index 32,779,477.  Both facts
+are `vm_compute` over binary-numeral fuel (`Checkers/TCyclerN.cstepsN`,
+~10 s each), so the 32.8M-element unary numeral is never built, and
 
-   _The two counts move every wave; the row files are the authority and
-   `python3 tools/closeout/audit.py` prints them live.  0 + 0 is the
-   2026-08-01 reading (5,156 of the frozen 5,156 settled, 100.0%) — both
-   row files are now EMPTY._
+```coq
+champion_quiet_after_D  : QuietAfter tm_champion StD 32779477
+qhbound_champion_tight  : forall B, QHBound B tm_champion -> 32779478 <= B
+champion_attains        : exists q s, QuietAfter tm_champion q s
+                                      /\ S s = 32779478
+```
 
-`Deferred D tm` is not list membership: it is membership in the orbit of the
-frozen table under completion of undefined transitions, non-start state swaps,
-and mirroring.
+make the bound exact, not merely an upper estimate that happens to match a
+simulation.
 
-**Axiom footprint: `functional_extensionality_dep`, and nothing else.**  There
-are zero `Admitted.` in `theories/`.  Verify with `Print Assumptions`, or
-independently with `coqchk -o`, which additionally reports that nothing relies
-on type-in-type, unsafe (co)fixpoints, or assumed positivity.
-
-## What this is NOT
-
-**It is not a proof that BBB(4) = 32,779,478.**  One thing is missing before
-the record itself is a theorem here:
-
-1. **One lemma, not one machine.**  The core list is now EMPTY — Drozd's
-   sixth, `1RB0RD_1LB1LC_1RC0RA_0LB1RD`, was the last row and boarded on
-   2026-08-01 — so `D_remaining = []` and nothing is skipped in fact.  But
-   `bbb4_target` still STATES the `skipped D_remaining tm` disjunct, because
-   `gen_stages.py` emits the same shape whatever the residue is.  Turning the
-   statement unconditional needs
-
-   ```coq
-   Lemma not_deferred_nil : forall tm, ~ Deferred [] tm.
-   Lemma not_skipped_nil  : forall tm, ~ skipped [] tm.
-   ```
-
-   — the first by induction on the `Deferred` derivation (`Deferred_base`
-   needs `In h []`; the `swap` and `mirror` constructors recurse), the second
-   by unfolding `ShadowKit.skipped`.  **Neither is in the tree yet**, and
-   until they are, the honest reading of `bbb4_target` is still "modulo a
-   residue that happens to be empty" rather than "for every machine".  This
-   is the immediate next piece of work, and it belongs in a NEW file rather
-   than in the generated `BBB4_Theorem.v`.
-
-What *is* now proved, and was not before, is the **lower** bound.  The
-champion `1RB1LD_1RC1RB_1LC1LA_0RC0RD` erases its whole working region,
-returns to a blank tape in `StC` at step 32,779,478 and spins left in `C`
-forever; `theories/Machines/Counters/Champion_1RB1LD_1RC1RB_1LC1LA_0RC0RD.v`
-proves `NonHalt /\ QHBound 32779478 /\ QuasiHaltsSt` in one `vm_compute` over
-a binary-numeral fuel (`Checkers/TCyclerN.cstepsN`, ~17 s), and since
-2026-08-01 the closeout **consumes** it: `boarded` has the third disjunct this
-section used to ask for, carried through `covers_iqh_champ_at` and the
-swap/mirror lemmas, and `tools/closeout/inventory.py` boards the row as kind
-`iqhch`.  So `bbb4_target`'s bound is attained by a machine the theorem
-decides, not merely stated.  It stays a lower bound only: closing the last
-core row is what would turn it into the value.
-
-_Two gaps this section used to list are closed.  The score bound existing only
-existentially, per-board, instead of as one aggregated constant: `boarded`
-carries the concrete `QHBound B_board` (= 66,349) or `QHBound B_champ`
-(= 32,779,478), and `bbb4_target` lifts either to the champion's score by
-`qhbound_mono`.  And the champion's board being unconsumable: the fix taken
-was the second of the two this section named — the third disjunct, not raising
-`B_board` — precisely so that
-`bbb4_decided_le_prev_champion_or_champion` still separates the champion from
-the other 5,135 boarded rows instead of coarsening all of them to 32.8M._
-
-So the honest one-line summary is:
-
-> Every (4,2) machine either quasihalts with score at most the champion's
-> 32,779,478 or never quasihalts, except the machines on a residue list
-> that is now EMPTY (0 core rows, 0 shadows) —
-> kernel-checked with one standard axiom.  The bound is ATTAINED (the
-> champion is boarded, so BBB(4) >= 32,779,478), but the BBB(4) *value*
-> does not follow from what is here while that one row stands.
-
-## Scope of the 1
-
-The 1 core machine is residue — a machine no engine in this repository
-settles, mapped by
-shape and blocker in `docs/RESIDUE_MAP.md`.  The (4,2) *holdout* list is
-closed: tower #20, the last of it, was boarded on 2026-07-28
-(`NEXT_SESSION.md` §2l).
+The previous-record reading survives as
+`bbb4_decided_le_prev_champion_or_champion` (`BBB4_Theorem.v`): every
+machine quasihalts by the *previous* champion's 66,349, or never
+quasihalts, or quasihalts by the champion's 32,779,478 — and exactly one
+census row is in the third case, the champion's own orbit (the single
+`iqhch` line of `tools/closeout/frozen_map.tsv`; that count is untrusted
+bookkeeping, like everything in `tools/`).
 
 ## The trust boundary
 
 * Everything under `tools/` is **untrusted**.  It searches for certificates
-  and emits Coq; the kernel re-checks every one.  A wrong certificate makes a
-  file fail to compile, not a false theorem.  A verifier need not read any
-  Python to believe the theorem.
-* `tools/closeout/inventory.py` maps frozen rows to theorems by **parsing TM
-  bodies**, never by filename, and each generated `CB_*.v` bridges
-  `row_to_tm <literal row>` to the board's `tm` constant through an eight-way
-  case split — so a misattribution fails to compile.
-* **One number is not kernel-backed:** the kernel proves `closeout_partial`
-  regardless of whether `remaining_rows` is padded with rows that are not on
-  the frozen list — that would still be true, just weaker.
-  `tools/closeout/audit.py` is what checks the two tables partition the frozen
-  list exactly, and it is untrusted Python.  (`tools/proof_report.py`, the
-  `make proof` reporter, is likewise reporting only.)
-* The committed census `.vo` (154 files) are walk output, not source.  Loading
-  them is a trust decision; `make census-verify` re-derives them from source
-  instead.  See `docs/VERIFYING.md` for both paths.
+  and emits Coq; the kernel re-checks every one.  A wrong certificate makes
+  a file fail to compile, not a false theorem.  A verifier need not read
+  any Python to believe the theorem.
+* `tools/closeout/inventory.py` maps frozen rows to theorems by **parsing
+  TM bodies**, never by filename, and each generated `CB_*.v` bridges
+  `row_to_tm <literal row>` to the board's `tm` constant through an
+  eight-way case split — so a misattribution fails to compile.
+* The partition audit (`tools/closeout/audit.py`) used to be the one
+  headline number not backed by the kernel.  **With the residue empty it no
+  longer carries any weight for the value theorem**: `not_skipped_nil`
+  discharges the skip disjunct inside Coq, so padding or truncating the
+  (empty) remaining table cannot change `BBB4_value`.  The audit remains
+  useful bookkeeping for the frozen tables and per-row attribution.
+* The committed census `.vo` (154 files) are walk output, not source.
+  Loading them is a trust decision; `make census-verify` re-derives them
+  from source instead (~24 h).  See `docs/VERIFYING.md` for both paths.
 * **The rule for committed proof binaries:** a `.vo` is committed only when
-  reproducing it is prohibitive (the census walk: ~24 h, special toolchain),
-  and then only hash-guarded and with a from-source escape hatch.  Nothing
-  else in the tree ships as a binary — a file that rebuilds in minutes gets
-  rebuilt, not trusted — so the trust surface stays one sharply-drawn line:
-  everything up to `Closeout.vo` compiles from source, and exactly one fact
+  reproducing it is prohibitive (the census walk: ~24 h, special
+  toolchain), and then only hash-guarded and with a from-source escape
+  hatch.  Nothing else in the tree ships as a binary — a file that rebuilds
+  in minutes gets rebuilt, not trusted — so the trust surface stays one
+  sharply-drawn line: everything up to `Closeout.vo` (and the champion's
+  exact score) compiles from source, and exactly one fact
   (`census_decided`) rides on committed output.
+
+## What this does NOT claim
+
+* **Not BB(4).**  This is the Beeping Busy Beaver (quasihalting) value, in
+  the state-level convention above — not the halting Busy Beaver, whose
+  4-state value (107 steps) has been known since 1983.
+* **Not machine-count bookkeeping.**  Statements like "exactly one machine
+  exceeds the previous record" are untrusted table reads; the kernel proves
+  bounds and disjunctions, not censuses of who satisfies them.
+* **The convention matters at the margins.**  Under a different silent-state
+  or step-numbering convention the number 32,779,478 could shift by the
+  corresponding offset; `BBB4_Statement.v` states this repository's
+  convention precisely, and `BBB4_is` is stated directly in those terms so
+  there is nothing informal to translate.
 
 ## Reproducing
 
 See `docs/VERIFYING.md`.  In short: `make` builds everything through
-`Closeout.vo` from source with stock apt Coq 8.18.0 and needs **no committed
-binaries** — the closeout's only census dependencies are `TNF_QH.v`,
-`Deferred_Defs.v` and `Deferred_Data.v`, none of which are committed as `.vo`.
-Only `CloseoutFinal.v` and `BBB4_Theorem.v` (the `make proof` tier, kept out
-of the default build) load the walk output.
+`Closeout.vo` — including the champion's exact-score file — from source
+with stock apt Coq 8.18.0 and needs **no committed binaries**; `make proof`
+adds the census-backed chain (`CloseoutFinal.v`, `BBB4_Theorem.v`,
+`BBB4_Value.v`, the only three files that load the walk output, kept out of
+the default build) under the census opam switch; `make census-verify`
+removes the last trust by re-walking the census from source.
