@@ -618,6 +618,63 @@ do not trust a partially-raced `.vo` set.  `make closeout` itself builds
 `Closeout.vo`, so "run the python part again to check convergence" is not a
 cheap command — run the four scripts directly instead.
 
+## 2b9. Wave-40 (2026-08-02) — CLOSEOUT: the residue disjunct dies, the exact score lands, BBB(4) = 32,779,478 is the theorem
+
+The two pieces CLAIMS.md named as missing after Drozd's sixth boarded, both
+container-safe, both done in one session:
+
+- **The exact score.**  The champion file's "recorded, not proved here"
+  section is GONE: a second binary-fuel `vm_compute` (same `cstepsN` shape as
+  `prefix_run_N`, ~10 s) pins the configuration at index 32,779,477 in state
+  `StD`, and `not_visits_other` (already proved) closes the quiet half — so
+  `champion_quiet_after_D : QuietAfter tm StD 32779477`,
+  `qhbound_champion_tight` (no `B < 32779478` bounds the champion) and
+  `champion_attains` (the lower-bound package) are theorems.  The off-by-one
+  rigidity has negative controls: `Tests/Champion_Corruption.v` checks the
+  same state claims FAIL at the neighbouring indices (StD at the landing,
+  StC one before it).
+- **The residue discharge.**  `Closeout/BBB4_Value.v` (hand-written, NOT
+  generated — gen_stages.py keeps emitting the `skipped` disjunct verbatim):
+  `not_deferred_nil` by induction on the `Deferred` derivation (base needs
+  `In h []`; swap/mirror recurse), `not_skipped_nil` by unfolding, then
+  `bbb4_unconditional` (two disjuncts, no skip), `bbb4_upper`
+  (`forall tm, QHBound champion_score tm` — never-quasihalters satisfy
+  `QHBound` vacuously via `neverqh_qhbound`, so the upper bound is ONE
+  clause), and the value:
+
+      BBB4_is B := (exists tm q s, QuietAfter tm q s /\ S s = B)
+                   /\ (forall tm, QHBound B tm)
+      BBB4_value : BBB4_is 32779478
+      BBB4_is_unique : BBB4_is B -> BBB4_is B' -> B = B'   (axiom-free)
+
+  `champ_score` and `champion_score` are the same Horner numeral, so the
+  bridge is `reflexivity` — do NOT introduce a decimal literal anywhere in
+  the chain (the `Nat.of_num_uint` guard still applies).
+
+Wiring: `make proof` compiles BBB4_Value.v third and the report
+(`tools/proof_report.py`, rewritten) now has two shapes — value headline when
+both residue files are empty, the old SKIPPED listing otherwise, with the
+same cross-checks either way.  BBB4_Value.v joins the census-tier exemption
+list (`tools/coqproject_exempt.txt`); the reporter only NOTES a missing
+`.vo` (CI runs it without the census switch).  gen_stages.py's empty-residue
+comment now points at BBB4_Value.v instead of saying "revisit".
+
+TRAP for future edits: the reporter's cross-checks still parse the counts
+out of the GENERATED BBB4_Theorem.v header — if gen_stages.py's comment
+shape changes, proof_report.py's regexes ("the N distinct undecided",
+"N 0RB re-root shadows") must move with it, or `make proof` dies at the
+report step after a green kernel run.
+
+Claim-language discipline (docs/CLAIMS.md "The convention" / "What this does
+NOT claim"): the number is the STATE-LEVEL quasihalting convention of the
+BBB harness — say "BBB(4) = 32,779,478 in the state-level quasihalting
+convention", not just the bare equation, when writing anywhere convention
+could be contested; and the untrusted bookkeeping (frozen_map's single
+`iqhch` row, machine counts) stays labelled untrusted.  The audit.py caveat
+DOWNGRADED: with the residue empty, no table edit can change `BBB4_value` —
+the kernel discharges the skip disjunct itself — so audit.py is bookkeeping,
+not a trust hole in the headline claim.
+
 ## 2c. Wave-14 (2026-07-26) — the HOLDOUT front opened; wave family CLOSED
 
 Full write-up: `docs/HOLDOUTS_WAVE14.md`.  First session pointed at the 27
@@ -5791,3 +5848,50 @@ budgeted as.  Second priority, after row 2.
   `cert_search.py` returning `NONE` at `B,C <= 60` looks like "search
   harder"; the blocking cycle turns the same runs into a permanent result
   in one extra query.  Extract the obstruction, don't widen the range.
+
+# 2026-08-02 — BBB4_Spec.v: the claim consolidated into one census-free file
+
+## What changed
+
+The trusted STATEMENT surface was scattered: `BBB4_is` lived in
+`Closeout/BBB4_Value.v` (a file that imports the whole closeout),
+`QHBound` in `Census/TNF_QH.v`, `champion_score` in generated
+`BBB4_Theorem.v`, the table in the champion's board file.  A skeptic had
+to read four files and check nothing shadowed anything.  Now:
+
+* **NEW `theories/BBB4_Spec.v`** — imports ONLY `BBB4_Statement` +
+  stdlib.  Defines `tm_champion`, `champion_score := N.to_nat 32779478`
+  (readable literal, no Horner), `Attains tm B`, `BBB4_is B`
+  (`(exists tm, Attains tm B) /\ (forall tm B', Attains tm B' -> B' <= B)`
+  — no `QHBound` dependency; maximality is stated in `Attains` terms),
+  `BBB4_statement := BBB4_is champion_score`, and proves
+  `BBB4_is_unique` axiom-free.  This file + BBB4_Statement.v is now the
+  ENTIRE claim; BBB4_Value.v proves `BBB4_value : BBB4_statement`.
+* Champion board file consumes the spec's `tm_champion`/`champion_score`
+  (local `champ_score` Horner numerals deleted; the N fuel twins are now
+  bare binary literals; `champion_attains : Attains tm_champion
+  champion_score`).  `gen_stages.py` iqhch branch + `BBB4_Theorem.v`
+  emission reference the spec's constants; no local `champion_score`
+  copy anywhere.  Docs (README, CLAIMS, VERIFYING, proof_report.py)
+  point at the spec file as verification rung 1.
+
+## Traps
+
+* **`BBB4_Statement.v` and everything in the census closure stay
+  FROZEN** — the committed census `.vo` record their checksums; even a
+  comment edit forces a full census re-walk.  That is exactly why the
+  spec is a NEW file on top rather than an extension of
+  BBB4_Statement.v.
+* `N.to_nat 32779478` works everywhere `lia` needs it (zify treats
+  `N.to_nat <literal>` as a constant); bare nat literals that size are
+  still `Nat.of_num_uint` blobs and still forbidden.  Tested: Horner
+  bridges, `<=` against B_census/B_board/B_champ, `S (x-1) = x`.
+* The container restart wiped ~1200 non-committed `.vo` (the previous
+  session's build died mid-Closeout).  Rebuild lesson, MEASURED: each
+  `Machines/IRules_Batch_*.v` takes **~8.5 GB and ~30 min at 4 GHz** --
+  on a 15 GB box they OOM at `-j4` AND `-j2` (two batches can land
+  concurrently); schedule the IRules batches serially (`make -j1`, or
+  build them first, then `-j` the rest).  Also: a timed-out `make
+  proof` keeps its `make`/`coqc` children alive -- launching another
+  make beside it is the playbook's two-makes-race, self-inflicted;
+  `ps aux --sort=-rss` before any relaunch.

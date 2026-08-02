@@ -13,24 +13,25 @@
     0 0RB re-root shadows (shadow_rows.tsv), which resolve
     automatically as core machines are boarded.
 
-    NOTE: the champion [1RB1LD_1RC1RB_1LC1LA_0RC0RD] is no longer on the
-    residue list -- revisit docs/CLAIMS.md and this statement.
+    The residue is EMPTY: [D_remaining = []], so the [skipped]
+    disjunct is uninhabited.  The hand-written Closeout/BBB4_Value.v
+    discharges it ([not_skipped_nil]) and, with the champion's
+    kernel-checked exact score, proves the value theorem
+    [BBB4_value : BBB4_statement] (BBB4_Spec.v) -- BBB(4) = 32,779,478.
 
     Like CloseoutFinal.v this file loads the committed census .vo:
     compile under the census opam switch (see tools/census_cache.py).
     It involves NO census re-walk. *)
 From Coq Require Import Arith List Lia.
-From BBB4 Require Import BBB4_Statement.
+From BBB4 Require Import BBB4_Statement BBB4_Spec.
 From BBB4.Census Require Import TNF_QH Deferred_Defs Deferred_Data Run.
 From BBB4.Closeout Require Import CloseoutKit ShadowKit CoreRows Closeout CloseoutFinal.
 Import ListNotations.
 
-(** The conjectured BBB(4) value: the champion's score,
-    32,779,478.  Written digit by digit (Horner form)
-    because a bare literal this large is abstracted to
-    [Nat.of_num_uint], which [lia] cannot see through. *)
-Definition champion_score : nat :=
-  (((((((3)*10 + 2)*10 + 7)*10 + 7)*10 + 9)*10 + 4)*10 + 7)*10 + 8.
+(** [champion_score] is the SPEC's (BBB4_Spec.v): 32,779,478 as
+    [N.to_nat] of the binary literal.  [lia] handles it as a
+    constant in the [qhbound_mono] side goals below; no local
+    copy of the numeral exists in this file. *)
 
 Theorem bbb4_target : forall tm,
   QHBound champion_score tm \/ NeverQuasiHaltsSt tm

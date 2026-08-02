@@ -9,28 +9,29 @@ clean:
 	rm -f Makefile.coq Makefile.coq.conf
 	rm -f theories/Closeout/CloseoutFinal.vo theories/Closeout/CloseoutFinal.glob
 	rm -f theories/Closeout/BBB4_Theorem.vo theories/Closeout/BBB4_Theorem.glob
+	rm -f theories/Closeout/BBB4_Value.vo theories/Closeout/BBB4_Value.glob
 
 .PHONY: all clean
 
 # ---------------------------------------------------------------------------
 # `make proof' -- build and state the top-level BBB(4) result:
 #
-#   bbb4_target : forall tm,
-#     QHBound 32779478 tm \/ NeverQuasiHaltsSt tm \/ Deferred D_remaining tm
+#   BBB4_value : BBB4_statement          (the claim of theories/BBB4_Spec.v)
 #
-# Every (4,2) machine either quasihalts with score at most the champion's
-# 32,779,478, or never quasihalts -- EXCEPT the undecided residue machines
-# (600+; tools/closeout/frozen_unproven.txt), which the report prints as
-# SKIPPED.  The champion itself is one of them, so this is NOT yet a proof
-# of the BBB(4) value; docs/CLAIMS.md states the claim precisely.
+# i.e. BBB(4) = 32,779,478: some state of some (4,2) machine (the champion
+# 1RB1LD_1RC1RB_1LC1LA_0RC0RD's StD) scores exactly 32,779,478, and no
+# state of any (4,2) machine scores more (theories/Closeout/BBB4_Value.v;
+# the residue lists are EMPTY since 2026-08-01).  docs/CLAIMS.md states
+# the claim -- and its census trust tier -- precisely.
 #
 # The chain: census_decided (committed census .vo) -> closeout_partial
 # (Closeout.vo, from source via `make') -> census_boarded (CloseoutFinal.v)
-# -> bbb4_target (BBB4_Theorem.v).  The last two files LOAD the committed
-# census .vo, which are toolchain-specific (built with coq-native): compile
-# them under the census opam switch (docs/VERIFYING.md).  On a mismatched
-# toolchain the load fails with "inconsistent assumptions"; either use the
-# census switch or re-derive the census .vo with `make census-verify'.
+# -> bbb4_target (BBB4_Theorem.v) -> BBB4_value (BBB4_Value.v).  The last
+# three files LOAD the committed census .vo, which are toolchain-specific
+# (built with coq-native): compile them under the census opam switch
+# (docs/VERIFYING.md).  On a mismatched toolchain the load fails with
+# "inconsistent assumptions"; either use the census switch or re-derive
+# the census .vo with `make census-verify'.
 proof: all
 	@python3 tools/census_cache.py --check
 	coqc -Q theories BBB4 theories/Closeout/CloseoutFinal.v || \
@@ -38,6 +39,7 @@ proof: all
 	    echo "proof: opam switch (docs/VERIFYING.md) or run make census-verify."; \
 	    exit 1; }
 	coqc -Q theories BBB4 theories/Closeout/BBB4_Theorem.v
+	coqc -Q theories BBB4 theories/Closeout/BBB4_Value.v
 	@python3 tools/proof_report.py
 .PHONY: proof
 

@@ -8,11 +8,12 @@ repository-code: "https://github.com/carrino/Coq-BBB4"
 license: ISC
 abstract: >-
   Kernel-checked Coq proofs (Coq 8.18, axiom footprint
-  functional_extensionality_dep only) that every 4-state 2-symbol Turing
-  machine either quasihalts with score at most the champion's 32,779,478
-  or never quasihalts, modulo an explicitly listed and shrinking residue
-  of undecided machines.  Built from the certificates of the BBB harness
-  on the patterns of Coq-BB5 and busycoq.
+  functional_extensionality_dep only) that BBB(4) = 32,779,478 in the
+  state-level quasihalting convention: every 4-state 2-symbol Turing
+  machine either quasihalts with score at most 32,779,478 or never
+  quasihalts, and the champion 1RB1LD_1RC1RB_1LC1LA_0RC0RD attains the
+  bound exactly.  Built from the certificates of the BBB harness on the
+  patterns of Coq-BB5 and busycoq.
 keywords:
   - busy beaver
   - beeping busy beaver

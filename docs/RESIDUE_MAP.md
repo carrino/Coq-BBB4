@@ -15,10 +15,11 @@ zero rows as of 2026-08-01; `audit.py` reports 5,156 of the frozen 5,156
 settled.  Drozd's sixth, `1RB0RD_1LB1LC_1RC0RA_0LB1RD`, was the last one.
 This page is now a HISTORY rather than a target list, and it is kept for the
 per-row records and for the "what this was wrong about" sections, which are
-the part worth reading.  **`D_remaining` being `[]` is not yet the same as
-`bbb4_target` being unconditional** — see `docs/CLAIMS.md`, "What this is
-NOT": the statement still carries the `skipped` disjunct and discharging it
-needs `~ Deferred [] tm`, which is not in the tree.  With tower #20 boarded
+the part worth reading.  The `skipped` disjunct is discharged:
+`Closeout/BBB4_Value.v` proves `~ Deferred [] tm` / `not_skipped_nil` and,
+with the champion's kernel-checked exact score, the value theorem
+`BBB4_value : BBB4_statement` (the claim of `theories/BBB4_Spec.v`) — see
+`docs/CLAIMS.md`.  With tower #20 boarded
 on 2026-07-28 the (4,2) HOLDOUT list closed too, so nothing is outstanding
 on either front.  (The wave-23 residue track boarded
 the whole 15-machine "no visit witness (`StA`)" bucket: quasihalters whose

@@ -42,8 +42,12 @@ Expected:
 closeout_partial : forall tm, Deferred D_census tm ->
                               boarded tm \/ skipped D_remaining tm
 Axioms: FunctionalExtensionality.functional_extensionality_dep
-     = 172
+     = 0
 ```
+
+(`remaining_rows` has length 0 since 2026-08-01 — the residue is empty,
+which is what lets `BBB4_Value.v` discharge the `skipped` disjunct at
+tier B.)
 
 And the two checks the kernel does not do for you:
 
@@ -76,12 +80,16 @@ check rather than a quick one.
 
 ## Tier B — chaining to the census
 
-`theories/Closeout/CloseoutFinal.v` gives `census_boarded`, and
-`theories/Closeout/BBB4_Theorem.v` gives `bbb4_target`, the end-to-end
-statement `make proof` builds and reports.  These two files are the only
-ones that load the committed walk output (they are deliberately not in
-`_CoqProject`, so the default `make` never touches them), and they need
-the toolchain that produced it:
+`theories/Closeout/CloseoutFinal.v` gives `census_boarded`,
+`theories/Closeout/BBB4_Theorem.v` gives `bbb4_target`, and
+`theories/Closeout/BBB4_Value.v` gives `BBB4_value : BBB4_statement` —
+the end-to-end value theorem `make proof` builds and reports.  (The
+claim itself, `BBB4_statement := BBB4_is champion_score`, is stated
+census-free in `theories/BBB4_Spec.v`; reading that file plus
+`theories/BBB4_Statement.v` gives every definition in the theorem.)  These
+three files are the only ones that load the committed walk output (they
+are deliberately not in `_CoqProject`, so the default `make` never
+touches them), and they need the toolchain that produced it:
 
 ```bash
 opam switch create census 4.14.2
@@ -90,11 +98,13 @@ eval $(opam env --switch=census)
 make proof
 ```
 
-`make proof` checks the census cache hash, compiles the two files with
-`coqc` (watch for `Print Assumptions bbb4_target` in the output —
-expect exactly `functional_extensionality_dep`), and prints the report:
-the theorem, what it means, and the full list of residue machines it
-SKIPS.
+`make proof` checks the census cache hash, compiles the three files
+with `coqc` (watch for `Print Assumptions bbb4_target` and
+`Print Assumptions BBB4_value` in the output — expect exactly
+`functional_extensionality_dep`; `BBB4_is_unique` prints closed under
+the global context during the default `make`, from `BBB4_Spec.v`), and
+prints the report: the value theorem and what it means.  (When the residue lists are non-empty the report instead lists
+every machine the chain skips; they have been empty since 2026-08-01.)
 
 apt's Coq has **no `native_compute`** and cannot do the walk at all, which is
 why the census switch exists.  Note the OCaml version is load-bearing: `.vo`
@@ -145,9 +155,9 @@ committed hash, confirming your walk covered the same inputs.
   `-j2`, or edit the chains down to one column.  The build is incremental,
   so an OOM costs only the in-flight files — re-run and it resumes.
 * **`make proof` needs the census switch; plain `make` does not.**
-  `CloseoutFinal.v` and `BBB4_Theorem.v` are the only files that load the
-  committed `.vo`, and they are kept out of `_CoqProject` so the default
-  build stays all-source.  On the wrong toolchain `make proof` fails with
+  `CloseoutFinal.v`, `BBB4_Theorem.v` and `BBB4_Value.v` are the only
+  files that load the committed `.vo`, and they are kept out of
+  `_CoqProject` so the default build stays all-source.  On the wrong toolchain `make proof` fails with
   "inconsistent assumptions" while loading — that is the marshalling
   mismatch, not a proof failure.
 * **CI runs only the light tier.**  A hosted runner has ~7 GB, so neither

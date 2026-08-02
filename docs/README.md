@@ -9,7 +9,7 @@ the lab notebook that produced them, kept verbatim.
 | --- | --- |
 | [`CLAIMS.md`](CLAIMS.md) | **What is proved, exactly — including what is NOT.**  If any other document contradicts it, `CLAIMS.md` is right. |
 | [`VERIFYING.md`](VERIFYING.md) | How to check any of it yourself, tier by tier, with expected outputs and the traps. |
-| [`RESIDUE_MAP.md`](RESIDUE_MAP.md) | The undecided machines, mapped by shape and blocker — the open-problem list, published as targets. |
+| [`RESIDUE_MAP.md`](RESIDUE_MAP.md) | The residue map, now **closed out** (0 rows since 2026-08-01) — kept as the history of how each shape and blocker fell. |
 
 Three supporting references:
 
