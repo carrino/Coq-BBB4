@@ -150,7 +150,7 @@ verification tier, from "check one machine" to "re-walk the census".
 | `theories/Closeout/` | The assembly: generated stages bridging every decided frozen row to its board, `closeout_partial`, `census_boarded`, `bbb4_target`, and the hand-written `BBB4_Value.v` — the BBB(4) = 32,779,478 value theorem |
 | `theories/Tests/` | Negative controls in the BBB corruption-test tradition: mutated certificates, periods, sides and claims must all fail |
 | `tools/` | **Untrusted** certificate search, generators, and differential validators — a wrong certificate fails to compile, never proves a false theorem |
-| `docs/` | The claim statement, verification guide, residue map, and per-wave development notes — [`docs/README.md`](docs/README.md) is the index |
+| `docs/` | The prose claim, verification guide, and closing-campaign write-ups, plus the historical lab notebook — [`docs/README.md`](docs/README.md) is the index |
 
 ## The trust story
 
@@ -194,10 +194,10 @@ machines fell.
   shortest explanation: a counter's liveness is a TERMINATION question
   about the state-avoiding sub-machine, which is usually far simpler than
   the machine.  127 rows over two waves.
-* [`docs/LADDER_PLAN.md`](docs/LADDER_PLAN.md) — the other live route, and
-  the current producer: a counter segment carried as a value-indexed rule
-  family whose fill law, code and step are read OFF the machine rather
-  than assumed.
+* [`docs/LADDER_PLAN.md`](docs/LADDER_PLAN.md) — the ladder, the
+  endgame's main producer: a counter segment carried as a value-indexed
+  rule family whose fill law, code and step are read OFF the machine
+  rather than assumed.  A design record with its append-only build log.
 * [`docs/VERIFYING.md`](docs/VERIFYING.md) — how to check any of this
   yourself.
 * [`SCOPING.md`](SCOPING.md) — the original inventory and phased plan

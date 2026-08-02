@@ -1,26 +1,30 @@
 # The REACHST tier: liveness on the machine, not on an abstraction
 
-_Written 2026-07-30 after Nick Drozd pointed at 23 residue rows and said they
-were easy.  They were, and this file records why — the reason generalises well
-past those 23.  Extended the same day, after a second list of 31, by two more
-flavours (§8); §0 is the state after both waves and §§1–7 are the first wave,
-kept as written._
+_The REACHST tier as it stands in the tree: four flavours of state-deleted
+termination argument, 127 boards under `theories/Machines/ReachSt/`.  The
+technique came out of Nick Drozd pointing at 23 residue rows and saying
+they were easy — they were, and this file records why the reason
+generalises well past those 23.  §§1–7 are the first wave, kept as
+written; §8 is the second wave's two further flavours; the dated counts
+throughout are the burndown state at the time of measurement (the
+burndown has since closed at 5,156 of 5,156)._
 
 ## 0. TL;DR
 
 * **127 rows boarded** over two waves, kernel-checked,
-  `functional_extensionality_dep` only.  Core undecided **143 → 68**,
-  0RB shadows **74 → 22**, settled **4,939 → 5,066 of 5,156
-  (95.8% → 98.3%)**.
+  `functional_extensionality_dep` only — the tier's contribution to a
+  burndown that stood at 4,939 of 5,156 when it opened and has since
+  closed at 5,156 of 5,156.
 * The mechanism is one idea.  For a counter, the **state-avoiding SUB-MACHINE
   can be far simpler than the machine**, and liveness only needs that
   sub-machine to terminate — not an exact lap.
-* Across the whole open core the sparse state's avoid sub-machine takes only
-  **FOUR** shapes up to state relabelling and mirroring.  Wave 1 proved two of
-  them (§2, plain binary counters running DOWN, 78 rows); wave 2 proved the
-  other two (§8, counters in a PAIR encoding, 49 rows).
-* The tier is EXHAUSTED on the open list at both waves' end, by the same probe
-  each time: 0 of the remaining 68 rows match a flavour.
+* Across the whole then-open core the sparse state's avoid sub-machine took
+  only **FOUR** shapes up to state relabelling and mirroring.  Wave 1 proved
+  two of them (§2, plain binary counters running DOWN, 78 rows); wave 2
+  proved the other two (§8, counters in a PAIR encoding, 49 rows).
+* At each wave's end the tier was exhausted against the then-open list, by
+  the same probe each time: 0 of the remaining rows matched a flavour.
+  The four flavours never gained a fifth.
 * `docs/WHY_NO_HAMMER.md` is not refuted; it is **sharpened**.  Its measurement
   ("the q-avoiding subgraph of a finite abstraction is cyclic at every
   precision") is exactly right, and it says the abstraction has to go.  It does
@@ -102,7 +106,8 @@ any configuration pads into the form, and every branch preserves it.
 ## 3. Splicing it into the existing engine
 
 `ReachSt` covers ONE state.  The other three still come from `NGramHist`, and
-they come cheaply — measured over all 22 open rows at `k=2, n=2`:
+they come cheaply — measured over the 22 rows open at the time, at
+`k=2, n=2`:
 
 **17 of 22 discharge `A`, `B`, `D` and fail on exactly the sparse state.**
 The other 5 need one rung more (`k=3, n=2`); all of them discharge there.
@@ -123,7 +128,7 @@ So the boards are `NGramHist` for three states and a theorem for the fourth:
 Nothing is weakened.  The skipped state's obligation is not dropped, it is
 MOVED, and the caller has to prove it.
 
-## 4. The 78, the two widenings, and the 2 that are not here
+## 4. The 78, the two widenings, and the 2 the first wave could not reach
 
 The four ReachSt roles are SECTION VARIABLES (`qA qB qC qD : St`), not
 `StA..StD`, and `Mirror.mirror_visits` is an iff.  So a machine boards if ITS
@@ -171,7 +176,8 @@ boarded** (`theories/Machines/Counters/REG_...`, wave-32's two-form route).  It
 is flavour `mb`, so `ReachSt` covers it too — a free control, and a useful one:
 the two routes agree.
 
-**Still open: `1RB0LD_1LC1LB_1LD1RC_0RC1LA` and `1RB0LD_1LC1RB_1LD1RC_0RC1LA`.**
+**The two the first wave could not reach:
+`1RB0LD_1LC1LB_1LD1RC_0RC1LA` and `1RB0LD_1LC1RB_1LD1RC_0RC1LA`.**
 Their sparse state is `B`, not `C`, and they share a THIRD avoid sub-machine:
 
 ```
@@ -180,12 +186,16 @@ A0 -> HALT(B)   A1 -> 0LD   C0 -> 1LD   C1 -> 1RC   D0 -> 0RC   D1 -> 1LA
 
 It is measured terminating (§5) but it is not a down-counter: `A`/`D` alternate
 leftward turning `1^k` into `1010...` while the rightward `C` sweep appends one
-1, so the block GROWS and `mu` does not work.  It wants its own measure.  Two
-rows, one lemma — the cheapest thing left in this direction.
+1, so the block GROWS and `mu` does not work.  It wanted its own measure —
+and got it: both boarded in wave 2 as flavour C (§8b,
+`theories/Machines/ReachSt/RST_1RB0LD_1LC1LB_1LD1RC_0RC1LA.v` and its
+sibling).
 
 ## 5. What was measured, and the controls
 
-Probes are committed under `tools/` and the measurements are at this commit.
+Probes are committed under `tools/`; the recorded results are
+`tools/reachst/RESULTS.txt` (wave 1) and `tools/reachst/RESULTS_WAVE2.txt`
+(wave 2).
 
 * **Sparse-state identification** — state usage over 200k steps, all 23 rows.
   `C` (resp. `B` for the two `0RC1LA` rows) fires 16–530 times where the others
@@ -206,7 +216,7 @@ Probes are committed under `tools/` and the measurements are at this commit.
   wave-12 hammer ran; the difference is only that it is now asked for three
   states instead of four.
 
-## 6. Where this goes next
+## 6. What the tier generalises to, and how each follow-up resolved
 
 The tier is not about `1RB0LD`.  The generalisable claim is:
 
@@ -214,26 +224,25 @@ The tier is not about `1RB0LD`.  The generalisable claim is:
 > about a SMALLER machine, and the smaller machine is often several rungs
 > below the original on the counter ladder.**
 
-Three concrete follow-ups, in order of cheapness (1 and 2 are DONE — see §8
-for what they actually paid, which in both cases was far more than the
-estimate here):
+The three follow-ups the first wave named, and what became of them (in
+both built cases the payoff was far above the estimate):
 
-1. **The third flavour** (§4) — two rows, one measure.
-2. **MIRRORING — the half of the widening that is still on the table.**
-   State relabelling is now done (§4, +22 rows).  Mirroring is not: measured
-   over the open core AFTER this wave, **22 of the remaining 119 rows match a
-   flavour under mirroring** (and 0 without it — the forward catch is
-   exhausted).  They are untouched because `NGramHistExt` wants the liveness premise for the
-   ORIGINAL machine and `Mirror.v` transports `NeverQuasiHaltsSt`, not a single
-   state's `VisitsAt`.  One transport lemma — "`q` recurs in `mirror_tm tm`
-   implies `q` recurs in `tm`" — unlocks all 21.  This is the cheapest large
-   thing left in this direction and it is bigger than what is here.
-3. **A verified uniform-termination decider.**  The bounded symbolic search
-   (branch on each freshly-read cell) is NOT enough on its own — a leftward
-   sweep over an unbounded run has no uniform step bound: **0 of 62** tables are
-   bounded at depth 40 (`avoid_probe.py --bounded`).  With sweep ACCELERATION (`q1 -> 1Lq` etc. as one macro
-   step) most of the 60 become bounded, and that is a real decider rather than
-   one lemma per flavour.
+1. **The third flavour** (§4) — estimated at two rows and one measure;
+   built in wave 2 as flavour C (§8b), where the pair-encoding measure it
+   forced also produced flavour D.
+2. **MIRRORING.**  Measured over the core open after wave 1, 22 rows
+   matched a flavour only under mirroring (0 without — the forward catch
+   was exhausted).  The transport lemma — "`q` recurs in `mirror_tm tm`
+   implies `q` recurs in `tm`" — was landed with the same wave;
+   the §4 table's 24 mirror-route rows are the result.
+3. **A verified uniform-termination decider** — never built as such.  The
+   bounded symbolic search (branch on each freshly-read cell) is NOT
+   enough on its own — a leftward sweep over an unbounded run has no
+   uniform step bound: **0 of 62** tables are bounded at depth 40
+   (`avoid_probe.py --bounded`); sweep ACCELERATION would fix that.  What
+   shipped instead is `ReachStI` (`theories/Checkers/ReachStI.v`,
+   `docs/WAVE34_REACHSTI.md`): termination relativised to a proven state
+   invariant, one certificate per `(B,C)` rather than a general decider.
 
 ## 7. Do not retry
 
@@ -322,7 +331,9 @@ Both are in `theories/Checkers/ReachSt.v`, sections `MC` and `MD`.  Unlike
 has to be restored every round; that is why both state reaching `qC` on the
 LIFTED configuration, where `lift_pad_r` makes the restore free.
 
-### 8d. What it paid, and the seven that are left
+### 8d. What it paid, and the seven it could not reach
+
+The burndown during wave 2 (snapshot columns are the state at the time):
 
 | | rows | core | shadows | settled |
 |---|---|---|---|---|
@@ -332,13 +343,19 @@ LIFTED configuration, where `lift_pad_r` makes the restore free.
 
 Both were swept to a fixed point (each round of boards promotes 0RB shadows
 into the core, and those had never been swept): C caught 20 then 14, D caught
-9 then 6.  The tier is exhausted again — 0 of the remaining 68 match any of
-the four flavours.
+9 then 6.  That exhausted the tier — 0 of the then-remaining 68 matched any
+of the four flavours.
 
 Of Drozd's 31, **24 are settled**: the 20 that already were (see the note
 under §8), plus 3 by flavour C and 1 by flavour D.
 
-### 8e. The seven that are left, and why the tier cannot reach them
+### 8e. The seven the tier could not reach, and why
+
+(All seven later boarded off-tier — five through the Ladder
+(`Closeout/CB_29.v`), one through `LapDecider` (`Counters/T3D_…`, CB_17),
+one through the KCOPY3 route (`Counters/KC3_…`, CB_06) — which strengthens
+rather than weakens the point made at the end of this section: the tier's
+`T`/`N` triage says nothing about whether a row is hard.)
 
 A board needs TWO independent things for the SAME state `q`: the `q`-avoiding
 sub-machine must terminate (so `ReachSt tm q` is provable at all), and
@@ -371,16 +388,19 @@ about `ReachSt`:
   five rows with an `fN` cell).  Every
   counterexample `avoid_probe.py --tables` reports is a spin-out on an
   ALL-BLANK tape — a configuration the machine never reaches.  `ReachSt`
-  quantifies over EVERY configuration, so the predicate as it stands is
-  strictly stronger than liveness needs and these rows fall outside it.  The
-  fix is a `ReachSt` relativised to an invariant the real orbit satisfies.
-  That is the first thing in this direction that is not just another measure,
-  and it is what the tier should do next: it is worth at least these rows and
-  the same spin-outs were 10 of the 62 tables measured in wave 1 (§5).
+  quantifies over EVERY configuration, so the predicate as it stood was
+  strictly stronger than liveness needs and these rows fell outside it.  The
+  fix is a `ReachSt` relativised to an invariant the real orbit satisfies —
+  and that fix was built: `ReachStI` (`theories/Checkers/ReachStI.v`,
+  `docs/WAVE34_REACHSTI.md`), the first thing in this direction that is not
+  just another measure; the same spin-outs were 10 of the 62 tables
+  measured in wave 1 (§5).
 * **The closure discharges nothing** (`1RB1RC_1LA0LB_1LD0RD_1LB0RC` and
   `1RB1RC_1LA1RA_0RC1LD_1LB0LD`).  Nothing to lift, so a
-  better `ReachSt` would not help either; these want more precision on the
-  `NGramHist` side, or a different engine entirely.  `docs/RESIDUE_MAP.md`
+  better `ReachSt` would not have helped either; these wanted more
+  precision on the `NGramHist` side, or a different engine entirely — and
+  both got the different engine (the second in wave 38, below; the first
+  off the Ladder).  `docs/RESIDUE_MAP.md`
   files them as `EXP3`/`AFFINE` interior laps with no interior chain.
 
   **Wave 38 settled the second of those two, and it was the different
@@ -422,7 +442,10 @@ independent and both have to be checked.
 
 `1RB0RB_1LC0RC_1RA0LD_0LB0LC` — gap ratio 2.66, comfortably inside.
 `ReachStI` certifies `StA`, `StB` and `StC`.  `StD` has no certificate at
-`B,C <= 4` (the emitter default) and none at `B,C <= 60` either, and that
+`B,C <= 4` (the emitter default) and none at `B,C <= 60` either (the row
+itself boarded by another route — `theories/Machines/Rest4/R3_…`,
+`Closeout/CB_51.v` — so this is a recorded limit of the tier, not an open
+hole), and that
 is exhaustive rather than budget-limited: Bellman-Ford is complete for each
 fixed `(B,C)`, and this cycle in the `StD`-avoiding graph
 
@@ -442,6 +465,6 @@ widening `maxBC`, the same way `gaps.py` is run before anything.
 
 What it does NOT say is anything about a measure with a wider window or a
 different carrier (`certE.py` / `certM.py` / `certM3.py` generalise `ones`
-to extents).  Those have no Coq checker behind them today; `drop_ok` is
+to extents).  No Coq checker was ever written for those; `drop_ok` is
 hard-wired to the one-cell window and the `ones` carrier, so a certificate
 in a wider class has nothing to land in and would need a new checker first.

@@ -1,27 +1,27 @@
-# The residue, characterised
+# The residue, characterised — the completed record
 
-_The frontier of this project, published as a target list rather than as an
-apology.  Companion data: `tools/closeout/residue_map.tsv`, one row per
-machine, regenerated with the commands at the bottom.  The TSV is an
-ANALYSIS SNAPSHOT (a ~40 min sweep) and can lag a wave or two behind the
-list itself; the authority for membership and count is
-`tools/closeout/frozen_unproven.txt`, which every closeout regen rewrites.
-The closeout further splits that list: `core_rows.txt` is the distinct
-problems, `shadow_rows.tsv` their 0RB re-root shadows, which fall
-automatically with their core rows (Closeout/ShadowKit.v)._
+_How the last stretch of the (4,2) space was worked down to zero.  While
+the closeout was live this page was the project's frontier: a map of the
+machines no engine here had settled yet, published as a target list
+rather than as an apology.  The list reached zero on 2026-08-01 —
+Drozd's sixth, `1RB0RD_1LB1LC_1RC0RA_0LB1RD`, was the last row;
+`audit.py` reports 5,156 of the frozen 5,156 settled — the `skipped`
+disjunct is discharged (`not_skipped_nil`, `Closeout/BBB4_Value.v`), and
+the value theorem `BBB4_value : BBB4_statement` (the claim of
+`theories/BBB4_Spec.v`) is kernel-checked; see `docs/CLAIMS.md`.  The
+page is kept as the per-row record of how each family fell, and for the
+"what this map was wrong about" sections, which are the part worth
+reading._
 
-_**THE RESIDUE IS EMPTY.**  `core_rows.txt` and `shadow_rows.tsv` are both
-zero rows as of 2026-08-01; `audit.py` reports 5,156 of the frozen 5,156
-settled.  Drozd's sixth, `1RB0RD_1LB1LC_1RC0RA_0LB1RD`, was the last one.
-This page is now a HISTORY rather than a target list, and it is kept for the
-per-row records and for the "what this was wrong about" sections, which are
-the part worth reading.  The `skipped` disjunct is discharged:
-`Closeout/BBB4_Value.v` proves `~ Deferred [] tm` / `not_skipped_nil` and,
-with the champion's kernel-checked exact score, the value theorem
-`BBB4_value : BBB4_statement` (the claim of `theories/BBB4_Spec.v`) — see
-`docs/CLAIMS.md`.  With tower #20 boarded
-on 2026-07-28 the (4,2) HOLDOUT list closed too, so nothing is outstanding
-on either front.  (The wave-23 residue track boarded
+_Companion data: `tools/closeout/residue_map.tsv`, one row per machine —
+an untrusted analysis snapshot, regenerated with the commands at the
+bottom.  While the list was live, the authority for membership and count
+was `tools/closeout/frozen_unproven.txt`, which the closeout split into
+`core_rows.txt` (the distinct problems) and `shadow_rows.tsv` (their 0RB
+re-root shadows, falling automatically with their core rows,
+Closeout/ShadowKit.v).  Both lists ended empty.  With tower #20 boarded
+on 2026-07-28 the (4,2) HOLDOUT list closed too, so nothing is
+outstanding on either front.  (The wave-23 residue track boarded
 the whole 15-machine "no visit witness (`StA`)" bucket: quasihalters whose
 quiet state is a transition target, closed by the state-AVOIDANCE route --
 the kernel recomputes from the SAME lap chains that no window step is ever
@@ -37,30 +37,29 @@ the Mp-outer cluster a SPLIT inner lap (`i = 0` window + peeled `i - 1`
 chains) and a shift-by-one landing/refill bridge through `WTape.rep_rot`
 (`nestcert.derive_offset`).)_
 
-## What this list is
+## What this list was
 
-These are the (4,2) Turing machines in the frozen deferred set that **no
-engine in this repository settles**.  Every other row is discharged by a
-kernel-checked board theorem, which is what `Closeout.closeout_partial`
-says:
+These were the (4,2) Turing machines in the frozen deferred set that no
+engine in this repository had settled yet.  Every other row was
+discharged by a kernel-checked board theorem, which is what
+`Closeout.closeout_partial` says:
 
 ```
 forall tm, Deferred D_census tm -> boarded tm \/ Deferred D_remaining tm
 ```
 
-with `D_remaining` this table, and `vm_compute` on
-`List.length remaining_rows` confirms its length inside the kernel.
+with `D_remaining` this table — which ended EMPTY, making the second
+disjunct uninhabited.
 
-**They are not counterexamples.**  Nothing here is known to quasihalt late,
-or to behave badly.  They are *undecided by us*: no certificate has been
-found yet.  A machine leaves this list the moment any proof settles it.
+**They were not counterexamples.**  Nothing here was known to quasihalt
+late, or to behave badly.  They were *undecided by us*: no certificate
+had been found yet.  A machine left this list the moment any proof
+settled it — and every one of them eventually did.
 
-**They are not thought to be hard.**  mxdys' assessment of this population
-was that it is easy and not worth the attention — which is a good reason to
-publish the list.  If that is right, most of it should fall quickly to
-someone who looks; if it is wrong, the map below says where the difficulty
-actually is.  Either outcome is worth more than the list sitting in a build
-directory.
+**They were not thought to be hard.**  mxdys' assessment of this
+population was that it is easy and not worth the attention — which was a
+good reason to publish the list, and which turned out to be right: the
+whole population fell, along the routes the map below records.
 
 ## How to read the map
 
@@ -72,7 +71,7 @@ directory.
 | `interior` | measured cost of the INTERIOR lap vs the carry index `j` |
 | `overflow` | measured cost of the OVERFLOW lap vs `j` |
 | `alphabet` | the counter digit alphabet its tape decodes under, if any |
-| `blocker` | the first thing that stops our emitter |
+| `blocker` | the first thing that stopped our emitter |
 
 `interior`/`overflow` come from `tools/counters/ovfshape.py`, which measures
 the lap cost at consecutive `j` and classifies by finite differences:
@@ -81,21 +80,22 @@ the lap cost at consecutive `j` and classifies by finite differences:
 
 **Everything in these two columns is UNTRUSTED measurement, not a claim.**
 `tools/` carries no proof weight anywhere in this project; the shape column
-is a map drawn from simulation to help someone choose a target.  The only
-kernel-checked fact about these rows is that they are *absent* from the
-boarded set.
+is a map drawn from simulation to help someone choose a target.  While the
+list was live, the only kernel-checked fact about these rows was that they
+were *absent* from the boarded set; every one of them is now in it.
 
 ## The families
 
-Counts below are over the core rows as of this commit (the shape
-measurements come from the last full `ovfshape.py` sweep, filtered to the
-live list).  **The `blocker` column in the TSV predates wave-30.**  The
-CURRENT gate partition — a fresh `tailcert` scan, one committed row list
-per gate, REGENERABLE via `tailcert --out` + `buckets.py` — is
+Counts below are over the core rows as they stood when each family was
+written up — all are now zero (the shape measurements come from the last
+full `ovfshape.py` sweep, filtered to the then-live list).  **The
+`blocker` column in the TSV predates wave-30.**  The FINAL gate
+partition — a fresh `tailcert` scan, one committed row list per gate,
+regenerable via `tailcert --out` + `buckets.py` — is
 `tools/counters/buckets34/*.txt` with `GATETABLE.md` beside it (the
 lists partition `core_rows.txt` exactly):
 
-| n | furthest gate today |
+| n | furthest gate at the end |
 |--:|---|
 | 0 | *(every gate is empty)* |
 
@@ -115,8 +115,8 @@ not in its mathematics (`docs/LADDER_PLAN.md` §4u).  `no boot chain` lost
 the same day and are gone from this list; they never needed a gate, only
 the re-root transport.)
 
-**The `no gap-free two-form family` bucket has gone 10 → 1 in four waves,
-and not one of the nine needed the gate answered.**  Wave 4s took three: the
+**The `no gap-free two-form family` bucket went 10 → 0 across five waves,
+and not one of them needed the gate answered.**  Wave 4s took three: the
 CHAMPION, which had a compiling board all along and was held out by an
 arithmetic comparison in `inventory.py`, and the two gray rows
 `1RB0RD_1LC0LB_1LD0LB_1RD0RA` and `1RB0RD_1LC0LC_1LD0LB_1RD0RA`, which closed
@@ -186,27 +186,28 @@ every step of it was a measurement overturning a label:
    exactly `[fibw k .. fibsum k]`) and `fam_next` reading `lazfill` directly.
    All six `iqh`, `functional_extensionality_dep` only.
 
-**One row still carries the `HIGHER` label and is not one of them**:
-`1RB0RB_0LC1RD_1LC1LA_0LA1RB` finds no family at any anchor, so it belongs
-with `no anchor`.
+**One row carried the `HIGHER` label without being one of them**:
+`1RB0RB_0LC1RD_1LC1LA_0LA1RB` found no family at any anchor, so it
+belonged with `no anchor` (it boarded in wave 39, below).
 
-So the count of rows whose cost the certificate language genuinely cannot
-write is **3** — the `EXP3` rows.  Not the φ rows (their arithmetic is
-denotable and now denoted), and not the four `QUAD` rows, every one of which
-boarded off the ladder entirely.
+So the count of rows whose cost the certificate language genuinely could
+not write was **3** — the `EXP3` rows.  Not the φ rows (their arithmetic
+is denotable and was denoted), and not the four `QUAD` rows, every one of
+which boarded off the ladder entirely.
 
-What is left wants either a closer that never needs the cost (`LapGlue`'s lap
-obligation is an EXISTENTIAL over step counts, which is how the wave-19
-fractals boarded with a `3^k` lap) or a route that never models the lap at
-all, like ReachSt.
+What was left wanted either a closer that never needs the cost
+(`LapGlue`'s lap obligation is an EXISTENTIAL over step counts, which is
+how the wave-19 fractals boarded with a `3^k` lap) or a route that never
+models the lap at all, like ReachSt — and that is exactly how it went
+out.
 
 ### What each blocker means
 
 * **no anchor** / **no overflow phase** — the tape never decodes as a counter
-  under any of the 21 alphabets in the zoo, so there is no anchor family to
-  build a lap around.  These need `tools/counters/alphabet_infer.py` to read a
-  new `(A,B,C)` triple off the tape first; `gen_alphabet.py` then generates a
-  PROVED Coq module for it (a wrong triple fails to compile).
+  under any of the 21 alphabets in the zoo, so there was no anchor family to
+  build a lap around.  These needed `tools/counters/alphabet_infer.py` to read
+  a new `(A,B,C)` triple off the tape first; `gen_alphabet.py` then generated
+  a PROVED Coq module for it (a wrong triple fails to compile).
 * **no interior chain** — the ordinary lap is not expressible as one affine
   `srun`.  For `EXP3` that is a statement about the machine, not the search:
   the certificate language carries `a*j + b`.  **It was said of `QUAD` too,
@@ -220,12 +221,12 @@ all, like ReachSt.
   different octave or offset.
 * **no boot / exit / second exit chain** — the nested overflow's pieces.
   Wave-22 boarded the 8 "no shift chain" machines (multi-count chaining) and
-  measured the then-surviving "no second exit chain" machines (2 remain)
-  precisely: their
-  exit's return sweep enters its rightward cycle mid-unit against a
-  non-matching post, which no rotation lstep can align — they need a new
-  `SCycR`-with-entry-offset step in `LapDecider.v` (a checker extension with
-  its own soundness proof), or hand-written boards.
+  measured the then-surviving "no second exit chain" machines (2 at the
+  time) precisely: their exit's return sweep enters its rightward cycle
+  mid-unit against a non-matching post, which no rotation lstep can align —
+  the judgment was that they needed a new `SCycR`-with-entry-offset step in
+  `LapDecider.v` (a checker extension with its own soundness proof), or
+  hand-written boards; in the event both boarded.
 * **no visit witness (`StA` is targeted)** — RETIRED (wave-23 boarded all
   15).  `docs/WAVE16_FINDINGS.md` §6b was the analysis: quasihalters whose
   quiet state is `StA` (last visit at step 4-11).  The closer is the
@@ -262,10 +263,10 @@ lemmas — and not raising `B_board`, so
 from the other 5,135 boarded rows instead of coarsening all of them.  Its
 gate is the PROPOSITION `B <= B_champ` under `lia`, never a `<=?`:
 evaluating a boolean against 32,779,478 would make the kernel build a
-32.8M-constructor unary numeral.  It buys the LOWER bound — BBB(4) ≥
-32,779,478 is a theorem here now — and nothing more; the 29 that remain
-are what stands between this and the value.  See `docs/CLAIMS.md`
-"What this is NOT".
+32.8M-constructor unary numeral.  At the time it bought the LOWER bound
+— BBB(4) ≥ 32,779,478 — and nothing more; the 29 rows that then remained
+were what stood between it and the value, and all 29 boarded:
+`BBB4_value` is a theorem.  See `docs/CLAIMS.md`.
 
 Measured dead along the way (all do-not-retry): the `cycR-gap` primitive,
 the double peel, the SOLO-cascade route on the boot bucket, every FRAMING
@@ -405,10 +406,10 @@ method in `docs/WAVE36_MXDYS_FOUR.md` §§2a, 2b, 4, 8.
 width.  Over the core list as it stood at eight rows **it split with no
 middle** — six between 1.00 and 2.65, two four orders of magnitude out — and
 the two walls are exactly the two rows wave 37 then boarded by hand.  So
-**every row left on this table is inside the tier's reach** (1.00, 1.11 and
-2.65) and `docs/REACHST_TIER.md`'s route is excluded on none of them.  That is
-a different axis from the gate labels above, which are about the *counter*
-emitter; of the two, this is the one that has not yet been wrong.
+**every row then left on this table was inside the tier's reach** (1.00, 1.11
+and 2.65) and `docs/REACHST_TIER.md`'s route was excluded on none of them.
+That is a different axis from the gate labels above, which are about the
+*counter* emitter; of the two, this is the one that never turned out wrong.
 
 **But "not excluded" is not "this is the route."**  Wave 38's row sat at ratio
 1.04 and boarded OFF the tier anyway (#126).  The triage is a cheap way to
@@ -416,15 +417,15 @@ rule the tier OUT, and it has never been wrong doing that; it has never yet
 been the thing that ruled a route IN.  Full table and method:
 `docs/WAVE36_MXDYS_FOUR.md` §3a.
 
-**The φ row is the cheapest lead on the list, and this table used to hide
+**The φ row was the cheapest lead on the list, and this table used to hide
 it.**  `1RB0RB_0LC1RD_1LC1LA_0LA1RB` is filed above as "no family at any
-anchor", which is true of the EMITTER and is not a verdict about the machine.
-`tools/counters/RADIX_CORE.txt` reads it as `phi` at spread 0.00, with anchor
-values stepping by successive Fibonacci numbers — the same family as the
-eleven three-state rows that boarded on 2026-08-01 off `(Fib, 1)` and
-`(FibL, 1)` (`docs/CORE_3STATE.md` §3).  It is the twelfth of twelve and the
-only one left.  **The numeration is already built** — `LadderFam` has `Fib`,
-`FibL`, `fam_lo` and the round trips.
+anchor", which was true of the EMITTER and was never a verdict about the
+machine.  `tools/counters/RADIX_CORE.txt` reads it as `phi` at spread 0.00,
+with anchor values stepping by successive Fibonacci numbers — the same
+family as the eleven three-state rows that boarded on 2026-08-01 off
+`(Fib, 1)` and `(FibL, 1)` (`docs/CORE_3STATE.md` §3).  It was the twelfth
+of twelve and the last one out (wave 39); the numeration was already built
+— `LadderFam` has `Fib`, `FibL`, `fam_lo` and the round trips.
 
 **SETTLED, wave 38: the φ reading is exactly right, and `LADDER_PLAN.md`
 §4s's "no family at any anchor, file it with the no-anchor bucket" is a
@@ -441,12 +442,12 @@ passes wave 36's lever (its orbit keeps the RIGHT half-tape a bare unary
 run, 0 violations in 2,000,000 steps), so it is a finite word-rewriting
 system — six rules, exhaustive, differentially validated in
 `tools/mxdys4/cmacro2.py`.  Its four liveness obligations all reduce to the
-SINGLE fact that the macro system never gets stuck, and **that fact is now
+SINGLE fact that the macro system never gets stuck, and **that fact was
 proved**: the composite step preserves the parity of `ones l`, is undefined
 only at `ones l = 0` (even), and the orbit starts odd -- so it is never
-stuck.  So the remaining cost is not a search for an anchor and not new
-mathematics; it is the Coq transcription.  `docs/WAVE38_REST_FOUR.md`
-§3.
+stuck.  The remaining cost was not a search for an anchor and not new
+mathematics; it was the Coq transcription, which wave 39 supplied.
+`docs/WAVE38_REST_FOUR.md` §3.
 
 **The shadows never became a task, and that was the design working.**  The
 shadow table is empty and the last entry, `0RB1LC_1LC0LC_0RD1LA_1RD1RB`, fell
@@ -457,11 +458,12 @@ partner — wave 37's two, #123's two, wave 39's one — without anyone touching
 it.  The population that once stood at 96 rows closed without ever being
 worked on directly.
 
-**And re-run the stale-verdict query.**  Which core rows carry a `closed: true`
-certificate in a committed sweep and are still unproven?  That is how wave 4u's
-row was found — it had been carrying "families found, none closed" and closed
-at the defaults in 60 s, the old sweep differing in its *arm set* and not its
-mathematics.  Nobody has re-run it since the emitter changed.
+**The stale-verdict query earned its keep once.**  "Which core rows carry a
+`closed: true` certificate in a committed sweep and are still unproven?" is
+how wave 4u's row was found — it had been carrying "families found, none
+closed" and closed at the defaults in 60 s, the old sweep differing in its
+*arm set* and not its mathematics.  A lesson for the next census: a
+negative sweep verdict is only as fresh as the sweep's configuration.
 
 ## Reproducing the map
 
