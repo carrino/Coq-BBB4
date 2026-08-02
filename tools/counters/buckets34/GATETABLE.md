@@ -34,10 +34,12 @@ gave its six macro rules.
 That is the last word this table has on anything, and it is in character —
 the row it knew least about was the row that took longest.
 
-## What this table has been wrong about, nine times
+## What this table has been wrong about, ten times
 
 A gate name says what stopped the emitter, never what stops a proof.  This
-file has asserted nine verdicts that later measurement overturned.  The shape
+file has asserted ten verdicts that later measurement overturned.  Nine are
+about machines; the tenth is about this repository, and it is the same
+mistake.  The shape
 of the mistake is the same every time and is worth more than any label in it:
 
 1. **"The four QUADRATIC rows are not coming back without a new arm shape."**
@@ -151,7 +153,10 @@ row in #126 (`Counters/Kc3Num.v`), and behind 8 and 9 both wave-39 rows.
 the route in all nine cases.**  Nine for nine is the number worth carrying out
 of this project: a label that said a row was hard has never once survived
 somebody checking it.  The row this file said the LEAST about — a pair of
-dashes, no shape, no alphabet — was the last one standing.
+dashes, no shape, no alphabet — was the last one standing.  (Entry 10 below
+is not a row.  It is the same error committed against the repository itself,
+after the last row had already fallen, and it is here because nothing else on
+this page shows the shape so plainly.)
 
 ## `no_gap_free_two_form_family`: 10 -> 1, and the gate was never answered
 
@@ -195,6 +200,24 @@ being RIGHT — even corroborated by an orthogonal measurement, even provably
 permanent — still says nothing about the machine, because the next wave can
 re-read the machine as a different object and the label was only ever about
 the old one.
+
+10. **"The lemma discharging the residue disjunct is not in the tree."**  Not
+    a machine at all — a claim about the REPO, published in issue #61 and in
+    PR #125's description on 2026-08-01, backed by a `grep` over `theories/`
+    that returned nothing.  The grep was real and its output was accurate.
+    It was run against a checkout at `ee7543b`, and `theories/Closeout/
+    BBB4_Value.v` had landed in `f752e88` — `not_deferred_nil`,
+    `not_skipped_nil`, `bbb4_unconditional`, `bbb4_upper` and
+    `BBB4_value : BBB4_statement`, in a hand-written file exactly where the
+    claim said such a file belonged.  So "BBB(4) = 32,779,478 is not yet a
+    theorem in this repository" was published while it was one.
+
+    **The measurement was accurate and the TENSE was wrong.**  That is
+    entries 1-9 in one line: a reading taken of one object at one moment,
+    written down as a standing property of a different, larger thing.  The
+    object here was the working tree, which moves faster than any machine on
+    this list.  Re-read the object before writing the verdict — including
+    when the object is the checkout in front of you.
 
 ## A shape worth remembering
 
