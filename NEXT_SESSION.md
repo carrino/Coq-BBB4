@@ -5887,5 +5887,11 @@ to read four files and check nothing shadowed anything.  Now:
   still `Nat.of_num_uint` blobs and still forbidden.  Tested: Horner
   bridges, `<=` against B_census/B_board/B_champ, `S (x-1) = x`.
 * The container restart wiped ~1200 non-committed `.vo` (the previous
-  session's build died mid-Closeout); this session rebuilt from
-  `make -j4` + `make proof`.
+  session's build died mid-Closeout).  Rebuild lesson, MEASURED: each
+  `Machines/IRules_Batch_*.v` takes **~8.5 GB and ~30 min at 4 GHz** --
+  on a 15 GB box they OOM at `-j4` AND `-j2` (two batches can land
+  concurrently); schedule the IRules batches serially (`make -j1`, or
+  build them first, then `-j` the rest).  Also: a timed-out `make
+  proof` keeps its `make`/`coqc` children alive -- launching another
+  make beside it is the playbook's two-makes-race, self-inflicted;
+  `ps aux --sort=-rss` before any relaunch.
