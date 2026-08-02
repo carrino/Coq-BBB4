@@ -8,7 +8,7 @@ one, this one is right and the other is stale._
 
 **BBB(4) = 32,779,478.**
 
-The CLAIM is stated census-free in `theories/BBB4_Spec.v` — that file plus
+The CLAIM is stated in `theories/BBB4_Spec.v` — that file plus
 the machine model it imports (`theories/BBB4_Statement.v`) is the **entire
 trusted statement surface**; nothing in either depends on the census, the
 checkers, or the closeout:

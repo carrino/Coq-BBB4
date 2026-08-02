@@ -67,7 +67,7 @@ def report_value():
         score=CHAMPION_SCORE))
     print(LINE)
     print('''
-The claim (theories/BBB4_Spec.v, census-free; model in BBB4_Statement.v):
+The claim (theories/BBB4_Spec.v; model in BBB4_Statement.v):
 
   Attains tm B   :=  exists q s,  QuietAfter tm q s  /\\  S s = B
   BBB4_is B      :=  (exists tm, Attains tm B)                    (* ATTAINED *)

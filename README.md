@@ -13,10 +13,11 @@ theorem **BBB(4) = 32,779,478** — built from the certificates of the
 
 **BBB(4) = 32,779,478.**
 
-The claim is stated **census-free** in
-[`theories/BBB4_Spec.v`](theories/BBB4_Spec.v) — that file plus the
-machine model it imports (`theories/BBB4_Statement.v`) is the entire
-trusted statement surface:
+The claim is stated in [`theories/BBB4_Spec.v`](theories/BBB4_Spec.v) —
+that file plus the machine model it imports
+([`theories/BBB4_Statement.v`](theories/BBB4_Statement.v)) is the
+entire trusted statement surface: two short files, and nothing in
+either depends on the census, the checkers, or the closeout:
 
 ```coq
 tm_champion    : TM                       (* 1RB1LD_1RC1RB_1LC1LA_0RC0RD  *)
@@ -75,9 +76,10 @@ a fresh clone carries no binaries except the census `.vo`, and the walk
 targets back up and re-derive those automatically.
 
 1. **Read the claim.**  [`theories/BBB4_Spec.v`](theories/BBB4_Spec.v)
-   (with `theories/BBB4_Statement.v`) is the complete formal statement,
-   census-free; [`docs/CLAIMS.md`](docs/CLAIMS.md) states in prose
-   exactly what is proved — and what is not.  Trust: the authors.
+   (with [`theories/BBB4_Statement.v`](theories/BBB4_Statement.v)) is
+   the complete formal statement;
+   [`docs/CLAIMS.md`](docs/CLAIMS.md) states in prose exactly what is
+   proved — and what is not.  Trust: the authors.
 2. **`make`** (stock Coq 8.18, no opam, ~1–2 h).  Rebuilds every
    checker, every board theorem, the champion's exact score, and
    `closeout_partial` — the entire boarding argument — **from source;
@@ -137,7 +139,7 @@ verification tier, from "check one machine" to "re-walk the census".
 | Path | Contents |
 | --- | --- |
 | `theories/BBB4_Statement.v` | The (4,2) machine model and the quasihalting semantics: `VisitsAt`, `QuietFrom`, `QuietAfter`, `QuasiHaltsSt`, `NeverQuasiHaltsSt` |
-| `theories/BBB4_Spec.v` | The census-free claim: `tm_champion`, `champion_score`, `Attains`, `BBB4_is`, `BBB4_statement`, `BBB4_is_unique` — with `BBB4_Statement.v`, the entire trusted statement surface |
+| `theories/BBB4_Spec.v` | The claim: `tm_champion`, `champion_score`, `Attains`, `BBB4_is`, `BBB4_statement`, `BBB4_is_unique` — with `BBB4_Statement.v`, the entire trusted statement surface; depends on nothing census-side |
 | `theories/Checkers/` | The verified certificate checkers: cyclers, translated cyclers, n-gram closures with ranking/pattern measures, RepWL, fuel/drift rules, inductive-rules (irules) engines, quasihalt wrappers |
 | `theories/Closure.v` | The generic covering-abstraction / liveness engine the n-gram and RepWL checkers instantiate |
 | `theories/Machines/` | Per-machine theorems: the generated boards (`Bulk/`, batch files) plus individually proved counter machines (`Machines/Counters/`) — thousands of files; `tools/closeout/audit.py` prints the live count |

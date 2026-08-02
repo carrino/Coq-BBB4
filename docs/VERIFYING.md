@@ -85,7 +85,7 @@ check rather than a quick one.
 `theories/Closeout/BBB4_Value.v` gives `BBB4_value : BBB4_statement` —
 the end-to-end value theorem `make proof` builds and reports.  (The
 claim itself, `BBB4_statement := BBB4_is champion_score`, is stated
-census-free in `theories/BBB4_Spec.v`; reading that file plus
+in `theories/BBB4_Spec.v`, with no census dependence; reading that file plus
 `theories/BBB4_Statement.v` gives every definition in the theorem.)  These
 three files are the only ones that load the committed walk output (they
 are deliberately not in `_CoqProject`, so the default `make` never
