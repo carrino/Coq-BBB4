@@ -99,11 +99,13 @@ make proof
 ```
 
 `make proof` checks the census cache hash, compiles the three files
-with `coqc` (watch for `Print Assumptions bbb4_target` and
-`Print Assumptions BBB4_value` in the output — expect exactly
-`functional_extensionality_dep`; `BBB4_is_unique` prints closed under
-the global context during the default `make`, from `BBB4_Spec.v`), and
-prints the report: the value theorem and what it means.  (When the residue lists are non-empty the report instead lists
+with `coqc` (watch for the single `Print Assumptions BBB4_value`
+`Axioms:` block in the output — expect exactly
+`functional_extensionality_dep`; `BBB4_value` consumes `bbb4_target`,
+so one footprint covers the chain.  `BBB4_is_unique` prints closed
+under the global context during the default `make`, from
+`BBB4_Spec.v`), and prints the report: the value theorem and what it
+means.  (When the residue lists are non-empty the report instead lists
 every machine the chain skips; they have been empty since 2026-08-01.)
 
 apt's Coq has **no `native_compute`** and cannot do the walk at all, which is

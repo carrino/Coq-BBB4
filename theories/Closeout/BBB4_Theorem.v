@@ -102,5 +102,6 @@ Proof.
   - destruct (Hres H).
 Qed.
 
-Print Assumptions bbb4_target.
-Print Assumptions bbb4_decided_le_prev_champion_or_champion.
+(* The axiom footprint is printed once, by [Print Assumptions
+   BBB4_value] in BBB4_Value.v -- [BBB4_value] consumes
+   [bbb4_target], so its footprint subsumes this file's. *)

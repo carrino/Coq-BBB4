@@ -67,50 +67,30 @@ def report_value():
         score=CHAMPION_SCORE))
     print(LINE)
     print('''
-theories/Closeout/BBB4_Value.v proves the claim of theories/BBB4_Spec.v:
+The claim (theories/BBB4_Spec.v, census-free; model in BBB4_Statement.v):
 
-  BBB4_value : BBB4_statement          (:= BBB4_is champion_score)
+  Attains tm B   :=  exists q s,  QuietAfter tm q s  /\\  S s = B
+  BBB4_is B      :=  (exists tm, Attains tm B)                    (* ATTAINED *)
+                     /\\ (forall tm B', Attains tm B' -> B' <= B)  (* MAXIMAL  *)
+  BBB4_statement :=  BBB4_is champion_score    (champion_score = {score:,})
 
-where BBB4_Spec.v -- census-free, importing only the machine model
-(BBB4_Statement.v) -- defines the state-level Beeping Busy Beaver spec
+The proof (theories/Closeout/BBB4_Value.v):
 
-  Attains tm B :=  exists q s,  QuietAfter tm q s  /\\  S s = B
-  BBB4_is B    :=  (exists tm, Attains tm B)                   (* ATTAINED *)
-                   /\\ (forall tm B', Attains tm B' -> B' <= B)  (* MAXIMAL  *)
+  BBB4_value : BBB4_statement
 
-with champion_score = {score:,} and tm_champion the champion's table
--- some state of some (4,2) machine makes its last visit at
-configuration index B-1 (harness score exactly B), and no state of any
-(4,2) machine is ever quiet after a later index.  [BBB4_is_unique]
-(axiom-free, in the spec file) confirms the spec pins a single number.
-Unfolded:
-
-  * UPPER: every (4,2) Turing machine either quasihalts with every
-    eventually-quiet state quiet before index {score:,}, or never
-    quasihalts (bbb4_unconditional; the residue lists are EMPTY and
-    [not_skipped_nil] discharges the last disjunct of bbb4_target).
-  * LOWER: the champion {champ}
-    quasihalts with [StD]'s last visit at index {prev:,} -- score
-    exactly {score:,}, kernel-checked by a second binary-fuel
-    vm_compute (Machines/Counters/Champion_*.v, [champion_attains]).
-
-Sharper, in previous-record terms (BBB4_Theorem.v):
-
-  bbb4_decided_le_prev_champion_or_champion : forall tm,
-    ~ skipped D_remaining tm ->
-    QHBound 66349 tm \\/ NeverQuasiHaltsSt tm \\/ QHBound {score} tm
-
--- and the hypothesis is now discharged for every machine: each one
-quasihalts by the PREVIOUS champion's 66,349, or never quasihalts, or
-quasihalts by the champion's {score:,}.  Exactly one census row is in
-the third case: the champion and its orbit (the single `iqhch' line of
-tools/closeout/frozen_map.tsv; that count is untrusted bookkeeping).
+  * LOWER: the champion {champ} ([tm_champion])
+    attains exactly {score:,} -- [StD]'s last visit is at index
+    {prev:,}, pinned by two binary-fuel vm_computes
+    ([champion_attains]).
+  * UPPER: every (4,2) machine quasihalts with every quiet state quiet
+    before index {score:,}, or never quasihalts
+    ([bbb4_unconditional]; the residue lists are EMPTY).
 
 Axiom footprint: functional_extensionality_dep, and nothing else
-(printed by Print Assumptions during the build above; independently
-checkable with coqchk -o).  Trust tier: this build LOADED the committed
-census .vo -- re-derive them from source with `make census-verify` to
-remove that trust (docs/VERIFYING.md).
+([Print Assumptions BBB4_value] above; [BBB4_is_unique] is axiom-free
+and pins the number).  Trust tier: this build LOADED the committed
+census .vo -- re-derive them from source with `make census-verify`
+(docs/VERIFYING.md); coqchk -o re-verifies the compiled proof terms.
 '''.format(score=CHAMPION_SCORE, prev=CHAMPION_SCORE - 1, champ=CHAMPION))
     print(LINE)
 
