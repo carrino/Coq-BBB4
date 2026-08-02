@@ -13,8 +13,11 @@
     0 0RB re-root shadows (shadow_rows.tsv), which resolve
     automatically as core machines are boarded.
 
-    NOTE: the champion [1RB1LD_1RC1RB_1LC1LA_0RC0RD] is no longer on the
-    residue list -- revisit docs/CLAIMS.md and this statement.
+    The residue is EMPTY: [D_remaining = []], so the [skipped]
+    disjunct is uninhabited.  The hand-written Closeout/BBB4_Value.v
+    discharges it ([not_skipped_nil]) and, with the champion's
+    kernel-checked exact score, proves the value theorem
+    [BBB4_value : BBB4_is champion_score] -- BBB(4) = 32,779,478.
 
     Like CloseoutFinal.v this file loads the committed census .vo:
     compile under the census opam switch (see tools/census_cache.py).
@@ -25,7 +28,7 @@ From BBB4.Census Require Import TNF_QH Deferred_Defs Deferred_Data Run.
 From BBB4.Closeout Require Import CloseoutKit ShadowKit CoreRows Closeout CloseoutFinal.
 Import ListNotations.
 
-(** The conjectured BBB(4) value: the champion's score,
+(** The champion's score -- the BBB(4) value (BBB4_Value.v),
     32,779,478.  Written digit by digit (Horner form)
     because a bare literal this large is abstracted to
     [Nat.of_num_uint], which [lia] cannot see through. *)

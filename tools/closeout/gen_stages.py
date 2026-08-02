@@ -547,10 +547,19 @@ def main():
         L.append('    so this is NOT a proof that BBB(4) = %s --'
                  % '{:,}'.format(CHAMPION_SCORE))
         L.append('    see docs/CLAIMS.md.')
+    elif core_specs or shadows:
+        L.append('')
+        L.append('    The champion [%s] is boarded, but' % CHAMPION)
+        L.append('    the residue is not yet empty, so the BBB(4) VALUE does not')
+        L.append('    follow from this statement alone -- see docs/CLAIMS.md.')
     else:
         L.append('')
-        L.append('    NOTE: the champion [%s] is no longer on the' % CHAMPION)
-        L.append('    residue list -- revisit docs/CLAIMS.md and this statement.')
+        L.append('    The residue is EMPTY: [D_remaining = []], so the [skipped]')
+        L.append('    disjunct is uninhabited.  The hand-written Closeout/BBB4_Value.v')
+        L.append('    discharges it ([not_skipped_nil]) and, with the champion\'s')
+        L.append('    kernel-checked exact score, proves the value theorem')
+        L.append('    [BBB4_value : BBB4_is champion_score] -- BBB(4) = %s.'
+                 % '{:,}'.format(CHAMPION_SCORE))
     L.append('')
     L.append('    Like CloseoutFinal.v this file loads the committed census .vo:')
     L.append('    compile under the census opam switch (see tools/census_cache.py).')
@@ -567,7 +576,7 @@ def main():
     horner = str(CHAMPION_SCORE)[0]
     for d in str(CHAMPION_SCORE)[1:]:
         horner = '(%s)*10 + %s' % (horner, d)
-    L.append('(** The conjectured BBB(4) value: the champion\'s score,')
+    L.append('(** The champion\'s score -- the BBB(4) value (BBB4_Value.v),')
     L.append('    %s.  Written digit by digit (Horner form)'
              % '{:,}'.format(CHAMPION_SCORE))
     L.append('    because a bare literal this large is abstracted to')

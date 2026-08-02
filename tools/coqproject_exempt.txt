@@ -13,10 +13,13 @@ theories/Census/Compute/*.v
 theories/Census/Run_Split*.v
 
 # The `make proof` tier, kept out of the default build on purpose: these
-# two are the only files that LOAD the committed census .vo, so `make`
+# three are the only files that LOAD the committed census .vo, so `make`
 # stays a from-source build (README "The verification ladder", rung 2 vs 3).
+# BBB4_Value.v is the hand-written end of the chain: it discharges the
+# empty residue and states BBB4_value : BBB4_is 32779478.
 theories/Closeout/BBB4_Theorem.v
 theories/Closeout/CloseoutFinal.v
+theories/Closeout/BBB4_Value.v
 
 # Ladder boards that are PARTIAL by construction: each stops before the
 # machine-level theorem because an arm of the CLOSURE has no chain.  Every
