@@ -386,6 +386,103 @@ Fixpoint last_visit (tm : TM) (gas : nat) (c : cconf) (k : nat)
       end
   end.
 
+(** ** The one-pass loop scan (BB5's loop1_decider, adapted)
+
+    UNTRUSTED candidate generator replacing the per-step hash+map
+    [scan_cycle] and the [scan_records]/[tc_pairs] record walk: ONE
+    simulation pass consing a compact per-step entry (state, read
+    symbol, head position, edge flags -- no hashing, no maps), then
+    ONE backward scan from the last configuration proposing in-place
+    ([LpCycle]) and translated ([LpTC], both directions -- no mirror
+    re-scan) candidates, each confirmed by the EXISTING verified
+    checkers ([cycle_leaf_check] / [tcycler_leaf_check]).  Mirrors
+    Coq-BB5's [find_loop1] design: state+symbol compare first, so
+    mismatched rewinds cost ~nothing. *)
+
+Record lp_ent : Type := mkLpEnt {
+  lp_q : St; lp_s : Sym; lp_pos : Z;
+  lp_rrec : bool; lp_lrec : bool; lp_k : nat }.
+
+Inductive lp_cand : Type :=
+  | LpCycle (n1 p : nat)
+  | LpTC (d : Dir) (n1 P : nat).
+
+Fixpoint lp_run (tm : TM) (gas k : nat) (c : cconf) (pos : Z)
+    (hist : list lp_ent) : list lp_ent :=
+  match gas with
+  | 0 => hist
+  | S g =>
+      let '(q, (l, h, r)) := c in
+      let e := mkLpEnt q h pos
+                 (match r with [] => true | _ :: _ => false end)
+                 (match l with [] => true | _ :: _ => false end) k in
+      match tm q h with
+      | None => hist
+      | Some tr =>
+          match cstep tm c with
+          | None => hist
+          | Some c' =>
+              let pos' := match t_dir tr with
+                          | DR => (pos + 1)%Z
+                          | DL => (pos - 1)%Z
+                          end in
+              lp_run tm g (S k) c' pos' (e :: hist)
+          end
+      end
+  end.
+
+(** pairwise state+symbol rewind of the two history chains *)
+Fixpoint lp_rewind (l0 l1 : list lp_ent) (n : nat) : bool :=
+  match n with
+  | 0 => true
+  | S m =>
+      match l0, l1 with
+      | a :: l0', b :: l1' =>
+          st_eqb (lp_q a) (lp_q b) && sym_eqb (lp_s a) (lp_s b)
+          && lp_rewind l0' l1' m
+      | _, _ => false
+      end
+  end.
+
+(** backward scan: [h0]/[tl0] fixed at the last configuration, [l1]
+    walks deeper; [cap] bounds emitted candidates (each costs one
+    verified re-check downstream).  The rewind filter is skipped when
+    the history is too short to rewind a full period (the verified
+    check is the authority either way). *)
+Fixpoint lp_scan (h0 : lp_ent) (tl0 l1 : list lp_ent) (cap : nat)
+    (acc : list lp_cand) : list lp_cand :=
+  match l1 with
+  | [] => rev acc
+  | h1 :: l1' =>
+      match cap with
+      | 0 => rev acc
+      | S cap' =>
+          let P := lp_k h0 - lp_k h1 in
+          if st_eqb (lp_q h0) (lp_q h1) && sym_eqb (lp_s h0) (lp_s h1)
+             && (if 2 * P <=? lp_k h0 then lp_rewind tl0 l1' P else true)
+          then
+            match
+              match Z.compare (lp_pos h0) (lp_pos h1) with
+              | Eq => Some (LpCycle (lp_k h1) P)
+              | Gt => if lp_rrec h1 then Some (LpTC DR (lp_k h1) P)
+                      else None
+              | Lt => if lp_lrec h1 then Some (LpTC DL (lp_k h1) P)
+                      else None
+              end
+            with
+            | Some cd => lp_scan h0 tl0 l1' cap' (cd :: acc)
+            | None => lp_scan h0 tl0 l1' (S cap') acc
+            end
+          else lp_scan h0 tl0 l1' (S cap') acc
+      end
+  end.
+
+Definition lp_candidates (tm : TM) (gas : nat) : list lp_cand :=
+  match lp_run tm gas 0 c0 0%Z [] with
+  | [] => []
+  | h0 :: tl => lp_scan h0 tl tl 6 []
+  end.
+
 (** ** Deferred lookup *)
 
 Definition dir_eqb (a b : Dir) : bool :=
@@ -623,6 +720,21 @@ Definition scan_ct (tm : TM) (gas : nat) : bool :=
    try_tc_cands tm false (tc_pairs recR)
    || try_tc_cands (mirror_tm tm) true (tc_pairs recL)).
 
+(** verified confirmation of a one-pass candidate *)
+Definition lp_check (tm : TM) (cand : lp_cand) : bool :=
+  match cand with
+  | LpCycle n1 p => (n1 <=? B) && cycle_leaf_check tm n1 p
+  | LpTC DR n1 P =>
+      (n1 <=? B) && tcycler_leaf_check tm n1 P (tc_measure_W tm n1 P)
+  | LpTC DL n1 P =>
+      (n1 <=? B) &&
+      tcycler_leaf_check (mirror_tm tm) n1 P
+        (tc_measure_W (mirror_tm tm) n1 P)
+  end.
+
+Definition scan_loops (tm : TM) (gas : nat) : bool :=
+  existsb (lp_check tm) (lp_candidates tm gas).
+
 Definition decide_easy (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
   (* tier H: halting *)
   match find_halt tm halt_gas 0 c0 with
@@ -637,8 +749,10 @@ Definition decide_easy (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
   if deferred_lookup pm tm then R_NeverQH else
   if deferred_lookup qm tm then R_QH else
   if deferred_lookup dm tm then R_Deferred else
-  (* tiers C+T, escalating rungs *)
-  if scan_ct tm halt_gas then R_Leaf else
+  (* tiers C+T: the one-pass loop scan, escalating rungs; the old
+     scan block stays as a full-gas fallback so no catch is lost *)
+  if scan_loops tm halt_gas then R_Leaf else
+  if scan_loops tm loop_gas then R_Leaf else
   if scan_ct tm loop_gas then R_Leaf else
   (* tier N: n-gram ladder, then tier R: the ranking rules (a)/(b),
      then tier Q: wrapped QHBound, then tier W: RepWL *)
@@ -703,6 +817,32 @@ Proof.
     apply orb_prop in H; destruct H as [H | H].
     + exact (try_tc_cands_sound tm (tc_pairs recR) H).
     + exact (try_tc_cands_sound_L tm (tc_pairs recL) H).
+Qed.
+
+Lemma lp_check_sound : forall tm cand,
+  lp_check tm cand = true -> NonHalt tm /\ QHBound B tm.
+Proof.
+  intros tm cand H.
+  destruct cand as [n1 p | [|] n1 P];
+    unfold lp_check in H;
+    apply andb_prop in H as [Hb H];
+    apply Nat.leb_le in Hb.
+  - destruct (cycle_leaf_check_sound tm n1 p H) as [Hnh Hq].
+    split; [exact Hnh | exact (qhbound_mono n1 B tm Hb Hq)].
+  - destruct (tcycler_leaf_check_sound_L tm n1 P _ H) as [Hnh Hq].
+    split; [exact Hnh | exact (qhbound_mono n1 B tm Hb Hq)].
+  - destruct (tcycler_leaf_check_sound tm n1 P _ H) as [Hnh Hq].
+    split; [exact Hnh | exact (qhbound_mono n1 B tm Hb Hq)].
+Qed.
+
+Lemma scan_loops_sound : forall tm gas,
+  scan_loops tm gas = true -> NonHalt tm /\ QHBound B tm.
+Proof.
+  intros tm gas H.
+  unfold scan_loops in H.
+  apply existsb_exists in H.
+  destruct H as (cand & _ & Hc).
+  exact (lp_check_sound tm cand Hc).
 Qed.
 
 Lemma try_ngram_cases : forall rungs tm,
@@ -799,9 +939,11 @@ Proof.
   (* deferred tier *)
   destruct (deferred_lookup (dmap_of D) tm) eqn:Ed.
   { apply deferred_lookup_In; exact Ed. }
-  (* cycle/TC tiers, cheap rung then full rung *)
-  destruct (scan_ct tm halt_gas) eqn:Ec1.
-  { exact (scan_ct_sound tm halt_gas Ec1). }
+  (* cycle/TC tiers: one-pass rungs, then the old full-gas fallback *)
+  destruct (scan_loops tm halt_gas) eqn:El1.
+  { exact (scan_loops_sound tm halt_gas El1). }
+  destruct (scan_loops tm loop_gas) eqn:El2.
+  { exact (scan_loops_sound tm loop_gas El2). }
   destruct (scan_ct tm loop_gas) eqn:Ec2.
   { exact (scan_ct_sound tm loop_gas Ec2). }
   (* ngram, rank, wrapped-QHBound, RepWL tiers *)
