@@ -55,46 +55,75 @@ Definition fold_edges {B : Type} (nodes : list cconf) (g : Adj)
                                     (adj_get g a) acc)
             nodes init.
 
-(** ** Reachability and SCCs (quadratic, sizes are small) *)
+(** ** Reachability and SCCs (Kosaraju, linear in V+E)
 
-Fixpoint reach_iter (fuel : nat) (g : Adj) (todo : list cconf)
-    (seen : PositiveSet.t) : PositiveSet.t :=
-  match fuel with
-  | 0 => seen
-  | S f =>
-      match todo with
-      | [] => seen
-      | a :: rest =>
-          if PositiveSet.mem (nkey a) seen
-          then reach_iter f g rest seen
-          else reach_iter f g (adj_get g a ++ rest)
-                          (PositiveSet.add (nkey a) seen)
-      end
-  end.
-
-Definition reach (fuel : nat) (g : Adj) (a : cconf) : PositiveSet.t :=
-  reach_iter fuel g [a] PositiveSet.empty.
+    UNTRUSTED (as before): a wrong partition can only make the
+    verified lex check reject the certificate, never accept a bad
+    one.  The old per-node double-reach partition was O(V*E) per
+    round and measured as the census rank tier's dominant cost. *)
 
 Definition rev_adj (nodes : list cconf) (g : Adj) : Adj :=
   fold_edges nodes g
     (fun r a b => adj_set r b (a :: adj_get r b))
     (PositiveMap.empty _).
 
-(** SCC of [v] = forward-reachable /\ backward-reachable *)
+(** iterative DFS via an explicit enter/exit stack; [out] accumulates
+    nodes in finishing order (head = latest finish) *)
+Inductive dfs_ev : Type := DfsEnter (v : cconf) | DfsExit (v : cconf).
+
+Fixpoint dfs_order (fuel : nat) (g : Adj) (stack : list dfs_ev)
+    (seen : PositiveSet.t) (out : list cconf)
+  : PositiveSet.t * list cconf :=
+  match fuel with
+  | 0 => (seen, out)
+  | S f =>
+      match stack with
+      | [] => (seen, out)
+      | DfsExit v :: rest => dfs_order f g rest seen (v :: out)
+      | DfsEnter v :: rest =>
+          if PositiveSet.mem (nkey v) seen
+          then dfs_order f g rest seen out
+          else dfs_order f g
+                 (map DfsEnter (adj_get g v) ++ DfsExit v :: rest)
+                 (PositiveSet.add (nkey v) seen) out
+      end
+  end.
+
+Definition finish_order (fuel : nat) (nodes : list cconf) (g : Adj)
+  : list cconf :=
+  snd (fold_left
+    (fun '(seen, out) v =>
+       if PositiveSet.mem (nkey v) seen then (seen, out)
+       else dfs_order fuel g [DfsEnter v] seen out)
+    nodes (PositiveSet.empty, [])).
+
+(** one transpose-DFS collection = one component *)
+Fixpoint scc_collect (fuel : nat) (g : Adj) (todo : list cconf)
+    (seen : PositiveSet.t) (comp : list cconf)
+  : PositiveSet.t * list cconf :=
+  match fuel with
+  | 0 => (seen, comp)
+  | S f =>
+      match todo with
+      | [] => (seen, comp)
+      | v :: rest =>
+          if PositiveSet.mem (nkey v) seen
+          then scc_collect f g rest seen comp
+          else scc_collect f g (adj_get g v ++ rest)
+                           (PositiveSet.add (nkey v) seen) (v :: comp)
+      end
+  end.
+
 Definition scc_partition (fuel : nat) (nodes : list cconf) (g : Adj)
   : list (list cconf) :=
+  let order := finish_order fuel nodes g in
   let r := rev_adj nodes g in
-  snd (fold_left
-    (fun '(done, comps) v =>
-       if PositiveSet.mem (nkey v) done then (done, comps)
-       else
-         let fwd := reach fuel g v in
-         let bwd := reach fuel r v in
-         let comp := filter (fun u => PositiveSet.mem (nkey u) fwd &&
-                                      PositiveSet.mem (nkey u) bwd) nodes in
-         (fold_left (fun d u => PositiveSet.add (nkey u) d) comp done,
-          comp :: comps))
-    nodes (PositiveSet.empty, [])).
+  rev (snd (fold_left
+    (fun '(seen, comps) v =>
+       if PositiveSet.mem (nkey v) seen then (seen, comps)
+       else let '(seen', comp) := scc_collect fuel r [v] seen [] in
+            (seen', comp :: comps))
+    order (PositiveSet.empty, []))).
 
 Definition has_self_edge (g : Adj) (v : cconf) : bool :=
   existsb (fun b => Pos.eqb (nkey b) (nkey v)) (adj_get g v).
@@ -119,29 +148,31 @@ Definition cid_get (m : PositiveMap.tree nat) (a : cconf) : nat :=
   | Some i => i | None => 0
   end.
 
-Fixpoint set_nth (l : list nat) (i v : nat) : list nat :=
-  match l, i with
-  | [], _ => []
-  | _ :: t, 0 => v :: t
-  | h :: t, S j => h :: set_nth t j v
+(** condensation ranks in a map keyed by component id (the old
+    list-nat + nth/set_nth representation cost O(#comps) per edge) *)
+Definition crk_get (m : PositiveMap.tree nat) (i : nat) : nat :=
+  match PositiveMap.find (Pos.of_succ_nat i) m with
+  | Some v => v | None => 0
   end.
 
 (** one relaxation pass over all alive edges; returns (ranks, changed) *)
 Definition crank_pass (nodes : list cconf) (g : Adj)
-    (cid : PositiveMap.tree nat) (st : list nat * bool)
-  : list nat * bool :=
+    (cid : PositiveMap.tree nat) (st : PositiveMap.tree nat * bool)
+  : PositiveMap.tree nat * bool :=
   fold_edges nodes g
     (fun '(rk, ch) a b =>
        let ia := cid_get cid a in
        let ib := cid_get cid b in
        if Nat.eqb ia ib then (rk, ch)
-       else if Nat.ltb (nth ia rk 0) (S (nth ib rk 0))
-            then (set_nth rk ia (S (nth ib rk 0)), true)
+       else if Nat.ltb (crk_get rk ia) (S (crk_get rk ib))
+            then (PositiveMap.add (Pos.of_succ_nat ia)
+                    (S (crk_get rk ib)) rk, true)
             else (rk, ch))
     st.
 
 Fixpoint crank_iter (fuel : nat) (nodes : list cconf) (g : Adj)
-    (cid : PositiveMap.tree nat) (rk : list nat) : list nat :=
+    (cid : PositiveMap.tree nat) (rk : PositiveMap.tree nat)
+  : PositiveMap.tree nat :=
   match fuel with
   | 0 => rk
   | S f =>
@@ -153,8 +184,8 @@ Definition condensation_rank (nodes : list cconf) (g : Adj)
     (comps : list (list cconf)) : list (cconf * nat) :=
   let cid := cid_map comps in
   let rk := crank_iter (S (length comps)) nodes g cid
-                       (repeat 0 (length comps)) in
-  map (fun v => (v, nth (cid_get cid v) rk 0)) nodes.
+                       (PositiveMap.empty nat) in
+  map (fun v => (v, crk_get rk (cid_get cid v))) nodes.
 
 (** node-level longest-path rank for the final acyclic graph *)
 Definition nrank_pass (nodes : list cconf) (g : Adj)
@@ -307,7 +338,7 @@ Definition rank_procedure (tm : TM) (lset rset : gset)
   let nodes := filter (fun a => negb (st_eqb (fst a) q)) closure in
   let g := build_adj tm lset rset q nodes in
   let Kc := S (S (length nodes)) in
-  let rfuel := S (length nodes * 4 + 4) in
+  let rfuel := S (length nodes * 8 + 8) in
   match proc_rounds 200 tm Kc rfuel nodes g [] with
   | Some comps => comps
   | None => []
