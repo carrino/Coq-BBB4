@@ -123,25 +123,25 @@ Definition rrungs_t : list (nat * nat) := [(3, 0)].
 
 Example pipe_halt :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
-    (dmap_of []) (dmap_of [])
+    (dmap_of []) (dmap_of []) (hmap_of [])
     (fun _ _ => None) = R_Halt StA S0.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_spin :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
-    (dmap_of []) (dmap_of [])
+    (dmap_of []) (dmap_of []) (hmap_of [])
     spin0 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_runner :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
-    (dmap_of []) (dmap_of [])
+    (dmap_of []) (dmap_of []) (hmap_of [])
     run1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_qh_leaf :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
-    (dmap_of []) (dmap_of [])
+    (dmap_of []) (dmap_of []) (hmap_of [])
     qh1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
@@ -209,17 +209,17 @@ Proof. vm_compute. reflexivity. Qed.
    R_QH wiring coverage. *)
 Example pipe_qhb_tc_leaf :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) qhbm = R_Leaf.
+    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) qhbm = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_qhb :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) qlxm = R_QH.
+    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) qlxm = R_QH.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_rw :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) rwm = R_NeverQH.
+    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) rwm = R_NeverQH.
 Proof. vm_compute. reflexivity. Qed.
 
 (** ** Proven-machines tier (lever A)
@@ -292,7 +292,7 @@ Proof. vm_compute. reflexivity. Qed.
    reports R_QH -- the tier fires ahead of the deferred fallthrough *)
 Example pipe_provenqh :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0
-    (dmap_of []) (dmap_of [qhm]) (dmap_of []) qhm = R_QH.
+    (dmap_of []) (dmap_of [qhm]) (dmap_of []) (hmap_of []) qhm = R_QH.
 Proof. vm_compute. reflexivity. Qed.
 
 (* the SAME machine, ABSENT from the proven-QH map, is NOT reported R_QH by
@@ -300,7 +300,7 @@ Proof. vm_compute. reflexivity. Qed.
    R_QH verdict is carried by the committed theorem, never by the pipeline *)
 Example pipe_provenqh_absent :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0
-    (dmap_of []) (dmap_of []) (dmap_of []) qhm = R_Unknown.
+    (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) qhm = R_Unknown.
 Proof. vm_compute. reflexivity. Qed.
 
 (** ** Lever B: the extended QHBound ladder still REJECTS non-quasihalters

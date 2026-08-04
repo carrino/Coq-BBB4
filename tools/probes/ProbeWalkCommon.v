@@ -6,7 +6,7 @@ From Coq Require Import Arith Bool List.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Census Require Import TNF_QH Decide Deferred_Defs Deferred_Data.
 From BBB4.Checkers Require Import Cycle TCycler NGram.
-From BBB4 Require Import ProbeLookup.
+From BBB4 Require Import ProbeLookup PHints_00.
 Import ListNotations.
 
 Definition Bc : nat := 2000.
@@ -20,8 +20,9 @@ Definition pmap0 : DeferredMap := dmap_of probe_lookup.
 Definition emap : DeferredMap := dmap_of [].
 Definition dmap0 : DeferredMap := dmap_of D_census.
 
+Definition hmap0 : HintMap := hmap_of phints_00.
 Definition decider0 : TM -> QHResult :=
-  decide_easy Bc 130 512 200000 512 ngr rkr qhr rwr 8192 pmap0 emap dmap0.
+  decide_easy Bc 130 512 200000 512 ngr rkr qhr rwr 8192 pmap0 emap dmap0 hmap0.
 
 Definition qsuc (q : SearchQueue) : SearchQueue :=
   SearchQueue_upds q decider0 13.

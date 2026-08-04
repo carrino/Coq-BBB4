@@ -123,17 +123,25 @@ Proof.
   apply Forall_app; split; [exact provenqh_all | exact reroot_qh_all].
 Qed.
 
+(** the winning-rung hint map (Decide.v [HintMap]): ADVISORY, empty
+    by default -- tools/gen_hints.py can generate a table from a
+    tools/census_ladder.c CSV, but the measured walk win was ~10%
+    (the winning rung's own cost dominates), not worth the per-unit
+    table weight; the mechanism stays for targeted use. *)
+Definition hmap_census : HintMap := hmap_of [].
+
 Definition decider : QHDecider :=
   decide_easy B_census 130 512 200000 512 ng_rungs_census
               rank_rungs_census qhb_rungs_census rw_rungs_census
-              rw_fuel_census pmap qhmap (dmap_of D_census).
+              rw_fuel_census pmap qhmap (dmap_of D_census) hmap_census.
 
 Lemma decider_WF : QHDecider_WF B_census D_census decider.
 Proof.
   exact (decide_easy_WF B_census D_census 130 512 200000 512
            ng_rungs_census rank_rungs_census qhb_rungs_census
            rw_rungs_census rw_fuel_census proven_list proven_all
-           (provenqh_list ++ reroot_qh_list) reroot_provenqh_all).
+           (provenqh_list ++ reroot_qh_list) reroot_provenqh_all
+           hmap_census).
 Qed.
 
 (** ** The root and its symmetrized first level *)

@@ -184,13 +184,38 @@ NOTE: any decider change invalidates the committed census .vo cache
 (input-hash mismatch) -- certifying this branch requires one full
 `make census-verify` walk on the box.
 
+## Second-round measurements (same day, later)
+
+The C mirror (tools/census_ladder.c) walks the ENTIRE 3,995,005-node
+tree -- same tiers, same rungs -- in **60 s single-core at 3 MB RSS**.
+That is the ceiling: ~2,000x the current native Coq walk.
+
+Slice attribution on the heavy GG_1LC_1LB subtree (512 pops, vm):
+scans/TC-checks 12.3 s over 437 cheap pops (~28 ms each; complex
+guarded-window TCs fall through the one-pass scan to the old
+fallback), ladder 21.4 s over 75 machines (~285 ms each, dominated by
+the WINNING rung's own cost).  Consequences, measured:
+
+- One-pass loop scan (landed): neutral so far in vm -- its candidates
+  catch simple TCs but the guarded-window TCs still take the old
+  path.  Anchor reduction (phase-equivalent early anchors) landed too.
+- Winning-rung hint mechanism (landed, `HintMap` in Decide.v +
+  tools/gen_hints.py): measured only ~10% on the heavy slice because
+  hints cannot skip the winning rung itself.  Wired with an EMPTY map
+  in Run.v; generate a table only if a targeted use appears.
+- rank_tier lex-check dedup via `ngram_check_neverqh_lex_with`
+  (landed): avoids the checker's internal re-grow.
+
 ## Remaining leverage (not yet landed)
 
-- One-pass loop decider (BB5 port) for the 83% bulk: 11 ms -> ~1 ms
-  per TC pop; deletes scan_cycle's per-step hash+map.
-- Winning-rung table: skips the failed-ngram-rung prefix (~0.15 s vm)
-  of every rank/late-rung catch.
-- qhb-lex cert memoization across states (helps regen fallthroughs).
+1. **Incremental NGram closure** (BB5 `update_AES` port): the winning
+   rung's grow-restart rounds are now the single largest ladder cost
+   (~0.1-0.4 s vm per late-rung catch); a worklist fixpoint makes it
+   proportional to final closure size, once.
+2. **Window-aware one-pass candidates**: extend lp_scan so
+   guarded-window TCs are proposed too (today they burn one-pass at
+   two rungs, then the full old scan block).
+3. qhb-lex cert memoization across states (helps regen fallthroughs).
 
 ## Measurement status
 

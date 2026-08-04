@@ -356,7 +356,7 @@ Definition rank_tier (tm : TM) (n t fuel rounds : nat) : bool :=
       let a0 := ng_start n cc in
       let '(lset, rset) := ng_grow tm a0 fuel rounds lset0 rset0 in
       let closure := ng_explore tm lset rset fuel [] PositiveSet.empty [a0] in
-      ngram_check_neverqh_lex tm n t fuel rounds
+      ngram_check_neverqh_lex_with tm n t fuel lset rset
         (fun q => rank_procedure tm lset rset closure q)
   end.
 
@@ -370,5 +370,5 @@ Proof.
   | (let '(_, _) := ?G in _) = true => destruct G as [lset rset]
   end.
   cbv beta iota zeta in H.
-  exact (ngram_check_neverqh_lex_sound tm n t fuel rounds _ H).
+  exact (ngram_check_neverqh_lex_with_sound tm n t fuel lset rset _ H).
 Qed.

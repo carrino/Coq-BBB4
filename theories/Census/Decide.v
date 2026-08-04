@@ -463,14 +463,25 @@ Fixpoint lp_scan (h0 : lp_ent) (tl0 l1 : list lp_ent) (cap : nat)
           then
             match
               match Z.compare (lp_pos h0) (lp_pos h1) with
-              | Eq => Some (LpCycle (lp_k h1) P)
-              | Gt => if lp_rrec h1 then Some (LpTC DR (lp_k h1) P)
+              | Eq => Some (fun n1 => LpCycle n1 P)
+              | Gt => if lp_rrec h1 then Some (fun n1 => LpTC DR n1 P)
                       else None
-              | Lt => if lp_lrec h1 then Some (LpTC DL (lp_k h1) P)
+              | Lt => if lp_lrec h1 then Some (fun n1 => LpTC DL n1 P)
                       else None
               end
             with
-            | Some cd => lp_scan h0 tl0 l1' cap' (cd :: acc)
+            | Some mk =>
+                (* anchor reduction: the verified checks re-simulate
+                   [n1] steps, so try phase-equivalent EARLY anchors
+                   first (they fail harmlessly if they land in the
+                   transient prefix) and the found anchor last *)
+                let n1 := lp_k h1 in
+                let b := n1 mod P in
+                let cs :=
+                  if b + P <? n1 then [mk b; mk (b + P); mk n1]
+                  else if b <? n1 then [mk b; mk n1]
+                  else [mk n1] in
+                lp_scan h0 tl0 l1' cap' (rev_append cs acc)
             | None => lp_scan h0 tl0 l1' (S cap') acc
             end
           else lp_scan h0 tl0 l1' (S cap') acc
@@ -587,6 +598,25 @@ Lemma proven_lookup_In : forall P tm,
 Proof. exact deferred_lookup_In. Qed.
 
 (** ** The pipeline *)
+
+(** ** Winning-rung hints (BB5's [tm_decider_table] pattern)
+
+    ADVISORY per-machine ladder hints generated offline by the C
+    mirror (tools/census_ladder.c): [0] = the n-gram ladder is
+    measured futile, go straight to the rank tier; [S k] = start the
+    n-gram ladder at rung [S k] (1-based; rung 1 hints are omitted at
+    generation, they save nothing).  A wrong or stale hint costs one
+    extra ladder attempt and then falls back to the FULL ladder, so
+    hints carry no soundness weight (the WF lemma quantifies over the
+    map) and no completeness weight (the fallback is total). *)
+Definition HintMap : Type := PositiveMap.tree nat.
+
+Definition hmap_of (rows : list (positive * nat)) : HintMap :=
+  fold_right (fun '(k, v) m => PositiveMap.add k v m)
+             (PositiveMap.empty _) rows.
+
+Definition hint_lookup (hm : HintMap) (tm : TM) : option nat :=
+  PositiveMap.find (tm_enc tm) hm.
 
 Section Pipeline.
 
@@ -735,7 +765,21 @@ Definition lp_check (tm : TM) (cand : lp_cand) : bool :=
 Definition scan_loops (tm : TM) (gas : nat) : bool :=
   existsb (lp_check tm) (lp_candidates tm gas).
 
-Definition decide_easy (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
+Definition try_ladder (tm : TM) : QHResult :=
+  match try_ngram ng_rungs tm with
+  | R_NeverQH => R_NeverQH
+  | _ =>
+      match try_rank rank_rungs tm with
+      | R_NeverQH => R_NeverQH
+      | _ =>
+          if try_qhb tm then R_QH
+          else if try_rw tm then R_NeverQH
+          else R_Unknown
+      end
+  end.
+
+Definition decide_easy (pm qm dm : DeferredMap) (hm : HintMap)
+    (tm : TM) : QHResult :=
   (* tier H: halting *)
   match find_halt tm halt_gas 0 c0 with
   | Some (n, s, i) => if S n <=? B then R_Halt s i else R_Unknown
@@ -755,17 +799,20 @@ Definition decide_easy (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
   if scan_loops tm loop_gas then R_Leaf else
   if scan_ct tm loop_gas then R_Leaf else
   (* tier N: n-gram ladder, then tier R: the ranking rules (a)/(b),
-     then tier Q: wrapped QHBound, then tier W: RepWL *)
-  match try_ngram ng_rungs tm with
-  | R_NeverQH => R_NeverQH
-  | _ =>
+     then tier Q: wrapped QHBound, then tier W: RepWL -- with the
+     winning-rung hint consulted first (fallback = the full ladder) *)
+  match hint_lookup hm tm with
+  | Some 0 =>
       match try_rank rank_rungs tm with
       | R_NeverQH => R_NeverQH
-      | _ =>
-          if try_qhb tm then R_QH
-          else if try_rw tm then R_NeverQH
-          else R_Unknown
+      | _ => try_ladder tm
       end
+  | Some (S k) =>
+      match try_ngram (skipn k ng_rungs) tm with
+      | R_NeverQH => R_NeverQH
+      | _ => try_ladder tm
+      end
+  | None => try_ladder tm
   end
   end.
 
@@ -914,10 +961,11 @@ Proof.
   exact (rw_tier_sound tm L T t rw_fuel H).
 Qed.
 
-Theorem decide_easy_WF :
+Theorem decide_easy_WF : forall hm,
   QHDecider_WF B D
-    (decide_easy (dmap_of Prov) (dmap_of ProvQH) (dmap_of D)).
+    (decide_easy (dmap_of Prov) (dmap_of ProvQH) (dmap_of D) hm).
 Proof.
+  intro hm.
   intro tm.
   unfold decide_easy.
   destruct (find_halt tm halt_gas 0 c0) as [[[n s] i]|] eqn:Eh.
@@ -946,16 +994,39 @@ Proof.
   { exact (scan_loops_sound tm loop_gas El2). }
   destruct (scan_ct tm loop_gas) eqn:Ec2.
   { exact (scan_ct_sound tm loop_gas Ec2). }
-  (* ngram, rank, wrapped-QHBound, RepWL tiers *)
-  destruct (try_ngram_cases ng_rungs tm) as [[En Hn] | En]; rewrite En.
-  - exact Hn.
-  - destruct (try_rank_cases rank_rungs tm) as [[Er Hr] | Er]; rewrite Er.
+  (* the ladder, behind the advisory hint dispatch: every path ends
+     in a tier whose soundness lemma is hint-independent *)
+  assert (Hlad : match try_ladder tm with
+                 | R_NeverQH => NeverQuasiHaltsSt tm
+                 | R_QH => NonHalt tm /\ QHBound B tm /\ QuasiHaltsSt tm
+                 | R_Unknown => True
+                 | _ => False
+                 end).
+  { unfold try_ladder.
+    destruct (try_ngram_cases ng_rungs tm) as [[En Hn] | En]; rewrite En.
+    - exact Hn.
+    - destruct (try_rank_cases rank_rungs tm) as [[Er Hr] | Er]; rewrite Er.
+      + exact Hr.
+      + destruct (try_qhb tm) eqn:Eq.
+        * exact (try_qhb_sound tm Eq).
+        * destruct (try_rw tm) eqn:Ew.
+          -- exact (try_rw_sound tm Ew).
+          -- exact I. }
+  destruct (hint_lookup hm tm) as [[|k]|].
+  - (* hint 0: rank first *)
+    destruct (try_rank_cases rank_rungs tm) as [[Er Hr] | Er]; rewrite Er.
     + exact Hr.
-    + destruct (try_qhb tm) eqn:Eq.
-      * exact (try_qhb_sound tm Eq).
-      * destruct (try_rw tm) eqn:Ew.
-        -- exact (try_rw_sound tm Ew).
-        -- exact I.
+    + destruct (try_ladder tm); cbn in Hlad;
+        solve [exact Hlad | destruct Hlad | exact I].
+  - (* hint S k: start the ngram ladder at rung S k *)
+    destruct (try_ngram_cases (skipn k ng_rungs) tm) as [[En Hn] | En];
+      rewrite En.
+    + exact Hn.
+    + destruct (try_ladder tm); cbn in Hlad;
+        solve [exact Hlad | destruct Hlad | exact I].
+  - (* no hint *)
+    destruct (try_ladder tm); cbn in Hlad;
+      solve [exact Hlad | destruct Hlad | exact I].
 Qed.
 
 End Pipeline.
