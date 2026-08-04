@@ -200,10 +200,21 @@ Example qhb_rejects_neverqh :
   try_qhb 2000 200000 512 qhb_rungs_t rwm = false.
 Proof. vm_compute. reflexivity. Qed.
 
-(* pipeline classification with the new ladders live *)
+(* pipeline classification with the new ladders live.  Since the
+   gas-escalated cycle/TC block (scan_ct at 130 first), qhbm -- a
+   wrap-QH machine whose post-quiet behavior is a translated cycle --
+   is soundly caught R_Leaf by the cheap TC rung (its quiet state's
+   last visit precedes the anchor, so QHBound holds); qlxm still
+   reaches the wrapped-QHBound tier in-pipeline, so it carries the
+   R_QH wiring coverage. *)
+Example pipe_qhb_tc_leaf :
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
+    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) qhbm = R_Leaf.
+Proof. vm_compute. reflexivity. Qed.
+
 Example pipe_qhb :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) qhbm = R_QH.
+    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) qlxm = R_QH.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_rw :
