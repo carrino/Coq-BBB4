@@ -126,13 +126,22 @@ into wall-clock.
      half-done: `scan_records` returns both; the tcycler *checks*
      still duplicate).
 
-5. **Memory mitigations, zero proof change** (raise `WALK_JOBS` NOW):
-   - `OCAMLRUNPARAM='o=80,O=150'` on the walk: tighter GC space
-     overhead + compaction when the heap is mostly garbage; expect a
-     meaningful RSS cut for some CPU; measure, then tune o/O.
-   - split the remaining heavy units one level deeper
-     (tools/gen_gsplit_heavy.py already does this) — smaller subtrees
-     also peak lower.
+5. **Memory mitigations, zero proof change** — MEASURED AND LANDED
+   (2026-08-04, GG_1LC_1LB on a 32 GB desktop, 99% CPU throughout):
+
+   | `OCAMLRUNPARAM` | peak RSS |
+   |---|---|
+   | (untuned) | ~11-12 GB, ratcheting |
+   | `o=80,O=150` | 8.19 GB |
+   | `o=40,O=60` | 6.76 GB, flat from minute 3 |
+
+   The ratchet is real and mostly reclaimable garbage: compaction
+   (`O`) is what returns memory to the OS.  `o=40,O=60` is now the
+   Makefile default (`WALK_OCAMLRUNPARAM`), and `WALK_AUTO` assumes
+   ~7 GB/unit -- a 32 GB box goes from `WALK_JOBS=2` to `4`, i.e.
+   16-24 h -> ~8-12 h with zero proof changes.  Further still: split
+   the remaining heavy units one level deeper
+   (tools/gen_gsplit_heavy.py) — smaller subtrees also peak lower.
 
 6. **Keep the proven-tier conveyor** as-is (it's the documented
    "right way" and already emptied the residue), but note it cannot
