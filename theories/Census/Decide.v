@@ -606,36 +606,40 @@ Definition try_qhb (tm : TM) : bool :=
 Definition try_rw (tm : TM) : bool :=
   existsb (fun '(L, T, t) => rw_tier tm L T t rw_fuel) rw_rungs.
 
+(** *** Tiers C+T at one gas rung
+
+    In-place cycle scan + verified re-check, then translated cycles
+    on both sides (one record walk serves both: the mirror machine's
+    right records are the left records -- same steps and states).
+    [decide_easy] escalates this block: the cheap rung [halt_gas]
+    first (catches the short-cycle bulk at ~1/4 the scan cost), the
+    full [loop_gas] rung only for its survivors. *)
+Definition scan_ct (tm : TM) (gas : nat) : bool :=
+  (match scan_cycle tm gas with
+   | Some (n1, p) => (n1 <=? B) && cycle_leaf_check tm n1 p
+   | None => false
+   end) ||
+  (let '(recR, recL) := scan_records tm gas in
+   try_tc_cands tm false (tc_pairs recR)
+   || try_tc_cands (mirror_tm tm) true (tc_pairs recL)).
+
 Definition decide_easy (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
   (* tier H: halting *)
   match find_halt tm halt_gas 0 c0 with
   | Some (n, s, i) => if S n <=? B then R_Halt s i else R_Unknown
   | None =>
-  (* tier C: in-place cycles *)
-  let cyc :=
-    match scan_cycle tm loop_gas with
-    | Some (n1, p) => (n1 <=? B) && cycle_leaf_check tm n1 p
-    | None => false
-    end in
-  if cyc then R_Leaf else
-  (* tier T: translated cycles.  One record walk serves both sides:
-     the mirror machine's right records are the left records (same
-     steps and states), so its candidates come from [recL]. *)
-  let '(recR, recL) := scan_records tm loop_gas in
-  if try_tc_cands tm false (tc_pairs recR) then R_Leaf else
-  if try_tc_cands (mirror_tm tm) true (tc_pairs recL) then R_Leaf else
-  (* tier P: machines with a committed [NeverQuasiHaltsSt] theorem
-     (the proven list); a hit is decided directly, ahead of the
-     deferred fallthrough, so it never enters the deferred queue *)
+  (* lookup tiers FIRST: proven / proven-QH / deferred machines skip
+     the scans entirely (a gas-512 scan block costs ~15-25 ms native;
+     a lookup is microseconds).  Tier P: committed [NeverQuasiHaltsSt]
+     theorems; tier PQ: committed census-grade quasihalting theorems;
+     tier D: the deferred list -- all three ahead of the (expensive,
+     failing-on-them) scans and ladders. *)
   if deferred_lookup pm tm then R_NeverQH else
-  (* tier PQ: machines with a committed census-grade quasihalting theorem
-     (the proven-QH list); a hit is decided R_QH directly, ahead of the
-     deferred fallthrough, so it never enters the deferred queue *)
   if deferred_lookup qm tm then R_QH else
-  (* tier D first: deferred machines skip the (expensive, failing)
-     n-gram ladder -- the deferred list is measured to be exactly the
-     ladder's residue plus the holdouts *)
   if deferred_lookup dm tm then R_Deferred else
+  (* tiers C+T, escalating rungs *)
+  if scan_ct tm halt_gas then R_Leaf else
+  if scan_ct tm loop_gas then R_Leaf else
   (* tier N: n-gram ladder, then tier R: the ranking rules (a)/(b),
      then tier Q: wrapped QHBound, then tier W: RepWL *)
   match try_ngram ng_rungs tm with
@@ -681,6 +685,24 @@ Proof.
   destruct (tcycler_leaf_check_sound_L tm n1 P _ H) as [Hnh Hq].
   split; [exact Hnh|].
   exact (qhbound_mono n1 B tm Hb Hq).
+Qed.
+
+Lemma scan_ct_sound : forall tm gas,
+  scan_ct tm gas = true -> NonHalt tm /\ QHBound B tm.
+Proof.
+  intros tm gas H.
+  unfold scan_ct in H.
+  apply orb_prop in H; destruct H as [H | H].
+  - destruct (scan_cycle tm gas) as [[n1 p]|]; [|discriminate].
+    apply andb_prop in H as [Hb Hc].
+    apply Nat.leb_le in Hb.
+    destruct (cycle_leaf_check_sound tm n1 p Hc) as [Hnh Hq].
+    split; [exact Hnh|].
+    exact (qhbound_mono n1 B tm Hb Hq).
+  - destruct (scan_records tm gas) as [recR recL].
+    apply orb_prop in H; destruct H as [H | H].
+    + exact (try_tc_cands_sound tm (tc_pairs recR) H).
+    + exact (try_tc_cands_sound_L tm (tc_pairs recL) H).
 Qed.
 
 Lemma try_ngram_cases : forall rungs tm,
@@ -765,23 +787,6 @@ Proof.
     destruct (find_halt_sound tm halt_gas 0 c0 n s i (eq_refl) Eh)
       as (tp & Hst & Hhd & Hnone).
     exists n, tp. auto. }
-  (* cycle tier *)
-  destruct (match scan_cycle tm loop_gas with
-            | Some (n1, p) => (n1 <=? B) && cycle_leaf_check tm n1 p
-            | None => false
-            end) eqn:Ec.
-  { destruct (scan_cycle tm loop_gas) as [[n1 p]|]; [|discriminate].
-    apply andb_prop in Ec as [Hb Hc].
-    apply Nat.leb_le in Hb.
-    destruct (cycle_leaf_check_sound tm n1 p Hc) as [Hnh Hq].
-    split; [exact Hnh|].
-    exact (qhbound_mono n1 B tm Hb Hq). }
-  destruct (scan_records tm loop_gas) as [recR recL].
-  (* tc tier, right then mirrored left *)
-  destruct (try_tc_cands tm false (tc_pairs recR)) eqn:Et.
-  { exact (try_tc_cands_sound tm (tc_pairs recR) Et). }
-  destruct (try_tc_cands (mirror_tm tm) true (tc_pairs recL)) eqn:Em.
-  { exact (try_tc_cands_sound_L tm (tc_pairs recL) Em). }
   (* proven tier: a hit is never-quasihalting by the [Forall] cert *)
   destruct (deferred_lookup (dmap_of Prov) tm) eqn:Ep.
   { rewrite Forall_forall in HP.
@@ -794,6 +799,11 @@ Proof.
   (* deferred tier *)
   destruct (deferred_lookup (dmap_of D) tm) eqn:Ed.
   { apply deferred_lookup_In; exact Ed. }
+  (* cycle/TC tiers, cheap rung then full rung *)
+  destruct (scan_ct tm halt_gas) eqn:Ec1.
+  { exact (scan_ct_sound tm halt_gas Ec1). }
+  destruct (scan_ct tm loop_gas) eqn:Ec2.
+  { exact (scan_ct_sound tm loop_gas Ec2). }
   (* ngram, rank, wrapped-QHBound, RepWL tiers *)
   destruct (try_ngram_cases ng_rungs tm) as [[En Hn] | En]; rewrite En.
   - exact Hn.
