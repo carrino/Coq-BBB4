@@ -13,6 +13,7 @@ make Makefile.coq  # or coq_makefile -f _CoqProject -o Makefile.coq
 make -f Makefile.coq theories/Census/Decide.vo theories/Census/Deferred_Data.vo \
   theories/Census/RankSearch.vo theories/Census/RepWLSearch.vo
 # probes compile against the theories tree plus this dir on the same root
+python3 tools/probes/gen_probe_lookup.py > tools/probes/ProbeLookup.v
 coqc -Q theories BBB4 -Q tools/probes BBB4 tools/probes/ProbeLookup.v
 coqc -Q theories BBB4 -Q tools/probes BBB4 tools/probes/ProbeTiers.v
 coqc -Q theories BBB4 -Q tools/probes BBB4 tools/probes/ProbeWalkCommon.v
