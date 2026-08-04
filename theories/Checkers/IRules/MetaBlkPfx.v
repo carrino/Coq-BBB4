@@ -17,6 +17,7 @@
 From Coq Require Import Arith ZArith Lia Bool List Setoid.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Checkers Require Import Cycle.
+From BBB4.Checkers.IRules Require Import AnchorVisits.
 From BBB4.Checkers.IRules Require Import Expr RLE Engine Rules Meta RulesK
      EngineK RulesBlk MetaBlk EngineKS RulesBlkPfx.
 Import ListNotations.
@@ -73,15 +74,15 @@ Definition irulesblkpfx_check_neverqh (tm : TM) (cert : BIRCertP)
               (false, false) fuel false (btplp_cfg cert) with
       | None => false
       | Some (_, F) =>
-          match csteps tm (cp_anchor cert) c0 with
-          | Some (q, (l, h, r)) =>
+          match csteps_vis tm (cp_anchor cert) c0 vm_empty with
+          | Some (q, (l, h, r), vis) =>
               st_eqb q (cp_st cert) && sym_eqb h (cp_hs cert) &&
               lpad_eqb l (bdside tbl (fun _ => cp_k0 cert)
                             (btpl_start (cp_TL cert))) &&
               lpad_eqb r (bdside tbl (fun _ => cp_k0 cert)
                             (btpl_start (cp_TR cert))) &&
               forallb (fun q' =>
-                         implb (cvisits tm c0 (cp_anchor cert) q')
+                         implb (vm_get vis q')
                                (st_in q' F)) all_St
           | None => false
           end
@@ -108,8 +109,9 @@ Proof.
               (fun c => bend_eqb tbl [cp_kmin cert] c (bwantp_cfg cert))
               (false, false) fuel false (btplp_cfg cert)) as [[cend F]|]
     eqn:Hrep; [|discriminate].
-  destruct (csteps tm (cp_anchor cert) c0) as [[q1 [[l1 h1] r1]]|]
-    eqn:Hanch; [|discriminate].
+  destruct (csteps_vis tm (cp_anchor cert) c0 vm_empty)
+    as [[[q1 [[l1 h1] r1]] vis]|] eqn:Hanchv; [|discriminate].
+  pose proof (csteps_vis_csteps _ _ _ _ _ _ Hanchv) as Hanch.
   apply andb_prop in Hrest as [Hrest Hpre].
   apply andb_prop in Hrest as [Hrest HpadR].
   apply andb_prop in Hrest as [Hrest HpadL].
@@ -193,9 +195,11 @@ Proof.
         rewrite <- Hlift in Hqn. exact Hqn. }
       assert (Hv : cvisits tm c0 (cp_anchor cert) q = true)
         by (eapply cvisits_complete; eauto).
+      assert (Hvm : vm_get vis q = true)
+        by (eapply cvisits_csteps_vis; eauto).
       rewrite forallb_forall in Hpre.
       specialize (Hpre q (all_St_complete q)).
-      rewrite Hv in Hpre. simpl in Hpre.
+      rewrite Hvm in Hpre. simpl in Hpre.
       apply st_in_sound. destruct (st_in q F); [reflexivity|].
       discriminate.
     - destruct (Htiles (n0 + 1 - cp_anchor cert)%nat)
