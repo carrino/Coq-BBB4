@@ -28,11 +28,12 @@ Definition qsuc (q : SearchQueue) : SearchQueue :=
 
 Definition TM0 : TM := fun _ _ => None.
 
-(* the heavy grandchild A0=0RB, B0=1LC, great-grandchild fill StC S0 := 0LB *)
+(* the heavy unit GG_1LC_1LB: A0=1RB, B0=1LC, fill StC S1 := 1LB
+   (exact replica of Run_Split2.tm_gg / ggchild S1 DL StB) *)
 Definition tm_g : TM :=
-  TM_upd' (TM_upd' TM0 StA S0 (Some (mkTrans S0 DR StB)))
+  TM_upd' (TM_upd' TM0 StA S0 (Some (mkTrans S1 DR StB)))
           StB S0 (Some (mkTrans S1 DL StC)).
-Definition gg_0LB : TNF_Node :=
-  mkNode (TM_upd' tm_g StC S0 (Some (mkTrans S0 DL StB)))
+Definition gg_1LB : TNF_Node :=
+  mkNode (TM_upd' tm_g StC S1 (Some (mkTrans S1 DL StB)))
          (ptr_after (Some StD) StB).
-Definition q_probe : SearchQueue := ([gg_0LB], []).
+Definition q_probe : SearchQueue := ([gg_1LB], []).
