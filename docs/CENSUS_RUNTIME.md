@@ -151,6 +151,47 @@ With 1+2+3 the walk should approach BB5-class per-node cost times the
 intrinsic ~5-10x, i.e. **tens of minutes on a desktop instead of
 16-24 h**, and option 5 alone may double throughput this week.
 
+## Measured optimization results (2026-08-04, this branch)
+
+All numbers vm_compute in the container probe harness (native scales
+similarly); verified checkers untouched; corruption suite green.
+
+| probe | before | after | change |
+|---|---|---|---|
+| rank-tier catch (rung (3,0)) | 0.73 s | 0.25 s | 3x |
+| full pipeline, holdout-class | 1.08 s | 0.56 s | 2x |
+| full pipeline, champion fallthrough | 1153 s | 85 s | 13.6x |
+| pipeline, translated cycler | 48 ms | 11 ms | 4.4x |
+| pipeline, in-place cycler | 8 ms | ~0 ms | -- |
+| GG_1LC_1LB subtree walk, per pop | >=515 ms (never finished 8,192) | 71 ms (512 pops measured) | >=7x |
+
+What landed:
+1. `Decide.v`: lookup tiers moved ahead of the scans; cycle/TC block
+   escalates gas 130 -> 512 (`scan_ct`).  One sound leaf-kind change
+   (a wrap-QH machine TC-caught R_Leaf instead of R_QH; tree shape
+   unchanged), tracked in Tests/Census_Corruption.v.
+2. `RankSearch.v`/`RepWLSearch.v` (untrusted internals): Kosaraju SCC
+   replacing per-node double-reach (O(V*E) -> O(V+E) per proc round);
+   PositiveMap condensation ranks replacing list nth/set_nth
+   (O(#comps) -> O(log) per edge); rfuel 4V+4 -> 8V+8 for the DFS
+   event budget.
+
+Reference desktop numbers (32 GB, `o=40,O=60`): GG_1LC_1LB complete
+in 1:56:08 at 6.76 GB flat before these changes; projected ~15-20 min
+after, x4 jobs => full walk ~2-3 h (from 16-24 h).
+
+NOTE: any decider change invalidates the committed census .vo cache
+(input-hash mismatch) -- certifying this branch requires one full
+`make census-verify` walk on the box.
+
+## Remaining leverage (not yet landed)
+
+- One-pass loop decider (BB5 port) for the 83% bulk: 11 ms -> ~1 ms
+  per TC pop; deletes scan_cycle's per-step hash+map.
+- Winning-rung table: skips the failed-ngram-rung prefix (~0.15 s vm)
+  of every rank/late-rung catch.
+- qhb-lex cert memoization across states (helps regen fallthroughs).
+
 ## Measurement status
 
 tools/probes/ has the vm_compute harness (per-tier timings on four
