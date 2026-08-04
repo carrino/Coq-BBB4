@@ -217,7 +217,31 @@ the WINNING rung's own cost).  Consequences, measured:
    history, so guarded-window TCs no longer fall through to the old
    scan block.  Measured: scan-side slice 12.3 -> 7.7 s (28 -> 17.6
    ms/pop vm); full heavy slice 36.4 -> 28.3 s.
-3. qhb-lex cert memoization across states (helps regen fallthroughs).
+3. **Closure.v verified-pass restructure** (next census multiplier,
+   plan): (a) prove the worklist invariant of [close] directly
+   (everything reachable is in [seen]; successors of processed nodes
+   are in [seen ++ todo]; empty todo => closed) so [closed_b], both
+   [apool] trie rebuilds, and [mem] become redundant and deletable;
+   (b) have [close] also emit the edge list so [lex_ok]/[rank_ok]
+   stop recomputing succs per state (currently up to 4 extra
+   exploration-equivalents per catch).  Touches proved code:
+   closure_check_neverqh/_lex/_fuel and their soundness sections.
+   Estimated 2-3x on the ladder slice (the walk's dominant cost).
+4. qhb-lex cert memoization across states (helps regen fallthroughs).
+5. Machines tree beyond IRules: profile the slowest remaining batch
+   families from a clean-build log (Bulk/ListC/Counters/NGramHist);
+   the IRules experience says generated cert-replay families hide
+   one-or-two allocation patterns each.
+
+## Post-validation decision: the .vo cache
+
+Base build measured 19m51s wall after the IRules fixes.  If the
+re-walk lands <= ~2 h: drop the committed census .vo, CENSUS_VO_HASH,
+tools/census_cache.py, and the census/census-verify split -- the
+repo becomes clone -> make -> make census -> Print Assumptions, like
+Coq-BB5, and the verification ladder's paranoid rung becomes the
+default.  If it overshoots (4 h+), keep the cache until the Closure.v
+round lands.
 
 ## Measurement status
 
