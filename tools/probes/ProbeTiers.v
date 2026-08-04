@@ -43,7 +43,7 @@ Definition rwr : list (nat * nat * nat) := [(2,2,0);(3,2,0);(4,2,0);(2,3,0)].
 
 Definition em : DeferredMap := dmap_of [].
 Definition decider0 : TM -> QHResult :=
-  decide_easy Bc 130 512 200000 512 ngr rkr qhr rwr 8192 em em em.
+  decide_easy Bc 130 512 200000 512 ngr rkr qhr rwr 8192 em em em (hmap_of []).
 
 (* ---- tier-by-tier on the holdout (the residue-class cost) ---- *)
 Time Eval vm_compute in (find_halt hold1 130 0 c0).             (* tier H *)

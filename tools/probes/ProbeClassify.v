@@ -18,6 +18,6 @@ Definition rrungs_t : list (nat * nat) := [(3, 0)].
 Definition qhb_rungs_t : list (nat * nat) := [(2, 64)].
 Definition rw_rungs_t : list (nat * nat * nat) := [(2, 2, 0)].
 Eval vm_compute in (decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) qhbm).
+    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) qhbm).
 Eval vm_compute in (decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) qlxm).
+    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) qlxm).

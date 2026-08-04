@@ -212,9 +212,11 @@ the WINNING rung's own cost).  Consequences, measured:
    rung's grow-restart rounds are now the single largest ladder cost
    (~0.1-0.4 s vm per late-rung catch); a worklist fixpoint makes it
    proportional to final closure size, once.
-2. **Window-aware one-pass candidates**: extend lp_scan so
-   guarded-window TCs are proposed too (today they burn one-pass at
-   two rungs, then the full old scan block).
+2. ~~Window-aware one-pass candidates~~ LANDED: [lp_rec_cands]
+   replicates tc_pairs' record-pair rule from the same one-pass
+   history, so guarded-window TCs no longer fall through to the old
+   scan block.  Measured: scan-side slice 12.3 -> 7.7 s (28 -> 17.6
+   ms/pop vm); full heavy slice 36.4 -> 28.3 s.
 3. qhb-lex cert memoization across states (helps regen fallthroughs).
 
 ## Measurement status

@@ -488,10 +488,58 @@ Fixpoint lp_scan (h0 : lp_ent) (tl0 l1 : list lp_ent) (cap : nat)
       end
   end.
 
+(** record-pair candidates from the SAME history (tc_pairs' rule:
+    for each of the two newest records per side, its nearest earlier
+    same-state record), covering the guarded-window translated
+    cyclers the backward scan misses -- without a separate record
+    walk.  History is newest-first, so the first flagged entries ARE
+    the newest records. *)
+Fixpoint lp_first_same (q : St) (l : list lp_ent) (side : bool)
+  : option nat :=
+  match l with
+  | [] => None
+  | e :: t =>
+      if (if side then lp_rrec e else lp_lrec e)
+      then if st_eqb (lp_q e) q then Some (lp_k e)
+           else lp_first_same q t side
+      else lp_first_same q t side
+  end.
+
+Fixpoint lp_recs (l : list lp_ent) (side : bool) (n : nat)
+  : list lp_ent :=
+  match n with
+  | 0 => []
+  | S m =>
+      match l with
+      | [] => []
+      | e :: t =>
+          if (if side then lp_rrec e else lp_lrec e)
+          then e :: lp_recs t side m
+          else lp_recs t side n
+      end
+  end.
+
+Definition lp_rec_cands (hist : list lp_ent) (side : bool)
+  : list lp_cand :=
+  let d := if side then DR else DL in
+  concat (map (fun e =>
+    match
+      match hist with
+      | _ => lp_first_same (lp_q e)
+               (filter (fun e' => lp_k e' <? lp_k e) hist) side
+      end
+    with
+    | Some a => [LpTC d a (lp_k e - a)]
+    | None => []
+    end) (lp_recs hist side 2)).
+
 Definition lp_candidates (tm : TM) (gas : nat) : list lp_cand :=
   match lp_run tm gas 0 c0 0%Z [] with
   | [] => []
-  | h0 :: tl => lp_scan h0 tl tl 6 []
+  | h0 :: tl =>
+      lp_scan h0 tl tl 6 []
+      ++ lp_rec_cands (h0 :: tl) true
+      ++ lp_rec_cands (h0 :: tl) false
   end.
 
 (** ** Deferred lookup *)
