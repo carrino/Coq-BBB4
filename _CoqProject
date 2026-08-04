@@ -1,4 +1,5 @@
 -Q theories BBB4
+-arg -w -arg -abstract-large-number
 
 theories/BBB4_Statement.v
 theories/BBB4_Spec.v
