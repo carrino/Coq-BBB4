@@ -656,14 +656,53 @@ full search to exhaustion, no short-circuit -- old vs interned:
 | all four | 101.7 s | 35.9 s | **2.8x** |
 
 (Both runs under container congestion; ratios approximate, direction
-unambiguous.)  The interned failing attempts still pay the verified
-checker's re-derivations -- that remaining ~40% is the ClosureIdx-lex
-arc: extend `ClosureIdx.v` with the lex-certificate variant (rows
-carrying the node values for the measure components) and feed the
-SEARCH's pool to the checker, deleting its duplicate `close` and
-per-state `lex_ok` succs recomputation.  Then the same treatment for
-the qhb tier (`try_qhb_lex_at` re-runs `ng_grow`+`ng_explore` per
-(state, rung)).
+unambiguous.)
+
+### The winning-attempt A/B closes the loop -- and reverses the reorder
+
+`ProbeRwWin.v`, same 32 rw-catchable machines, interned code, all
+five catch counts IDENTICAL to the old code (union 32; per-rung
+30/16/30/30 -- the interned search is catch-for-catch equivalent):
+
+| rung | old | interned |
+|---|---|---|
+| (2,2,0) | 5.32 s | 4.05 s |
+| (3,2,0) | 121.9 s | **119.7 s** |
+| (4,2,0) | 28.6 s | 20.5 s |
+| (2,3,0) | 6.1 s | 4.07 s |
+
+Winning (3,2,0) attempts barely moved while its FAILING attempts
+improved 2.33x: on winning attempts over the big L=3 closures the
+VERIFIED CHECKER dominates (it re-runs `close`, rebuilds the trie
+twice, recomputes succs per state), and interning does not touch it.
+That pins the next multiplier precisely: ClosureIdx-lex -- extend
+`ClosureIdx.v` with the lex-certificate variant (rows carrying node
+values for the measure components), feed the SEARCH's pool to the
+checker, delete its duplicate `close` and per-state `lex_ok` succs
+recomputation.  Then the same treatment for the qhb tier
+(`try_qhb_lex_at` re-runs `ng_grow`+`ng_explore` per (state, rung)).
+
+Two corrections from the same probe, recorded plainly:
+
+1. **The rung reorder was wrong and is reverted.**  (2,2,0)'s only
+   misses are exactly the (3,2,0)-exclusive machines, so any machine
+   reaching the second rung either wins there or fails everything --
+   the original order was already optimal, and demoting (3,2,0) only
+   inserted failing (4,2,0)+(2,3,0) attempts in front of its wins.
+   The Run.v comment now documents why the order stands.
+2. **The probe's own "reordered pipeline" rows are eager-orb
+   artifacts** -- `a || b` evaluates both sides under CBV, so those
+   rows summed all four rungs (147.6 ≈ 4.05+119.7+20.5+4.07).  The
+   real decider's `existsb` short-circuits correctly.  Hunting that
+   same trap in the shipped pipeline found a REAL one:
+
+### LANDED: try_qhb's eager orb
+
+`try_qhb` computed `existsb (plain ladder) || existsb (lex ladder)`
+-- so every machine the plain-acyclicity qhb ladder caught still
+paid the full lex ladder (per-rung `ng_grow` + `ng_explore` per
+state) for nothing.  Now a nested `if`; value unchanged, pinned
+tests green.  Same trap, same fix shape as `lp_rewind`.
 
 ### Inside the translated-cycle tier
 

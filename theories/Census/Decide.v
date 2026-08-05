@@ -867,10 +867,16 @@ Definition try_qhb_lex_at (tm : TM) (q : St) (nt : nat * nat) : bool :=
       end
   end.
 
+(** nested [if] rather than [||]: [orb] is a function, so under
+    call-by-value BOTH ladders evaluated -- a machine caught by the
+    plain-acyclicity ladder still paid the full lex ladder (per-rung
+    [ng_grow] + [ng_explore] per state) for nothing.  Same trap as
+    the [lp_rewind] one (Tests/Loop1Scan_Regression.v), same shape of
+    fix; the boolean value is unchanged. *)
 Definition try_qhb (tm : TM) : bool :=
   existsb (fun q =>
-      existsb (try_qhb_at tm q) qhb_rungs
-      || existsb (try_qhb_lex_at tm q) qhb_rungs)
+      if existsb (try_qhb_at tm q) qhb_rungs then true
+      else existsb (try_qhb_lex_at tm q) qhb_rungs)
     (filter (qh_candidate tm) all_St).
 
 (** *** Tier W: RepWL block-list abstraction
