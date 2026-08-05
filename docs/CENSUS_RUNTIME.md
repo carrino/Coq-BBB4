@@ -604,6 +604,67 @@ The scans arc is CLOSED; the ladder arc (rw_tier closure cost, then
 qhb-lex memoization, then ClosureIdx wiring) is the whole remaining
 game.
 
+### Inside rw_tier: the slow part of the big bulk, measured
+
+`ProbeRwSplit.v`, on the rw-caught residue machines (closures 77-690
+nodes), one winning (2,2,0) rung:
+
+| stage | per machine | share |
+|---|---|---|
+| `close` (the fuel-8192 exploration) | **1 ms** | ~0.6% |
+| `rw_procedure` (SCC + BF search) | ~100 ms | ~57% |
+| verified checker (re-runs `close`, tries, per-state succs) | ~76 ms | ~43% |
+
+The suspect everyone would pick -- the fuel-8192 closure -- is
+innocent.  The cost was (a) `rconf_enc`, a positional encoding of
+the whole run-length item list, recomputed on EVERY map and set
+access inside Kosaraju, the rank relaxations and every Bellman-Ford
+pass; (b) `rw_succs` recomputed per premise state by `rbuild_adj`;
+(c) `rw_delta` recomputed per edge per BF pass; and (d) the verified
+checker re-deriving everything again.
+
+And the rung LADDER was upside down: per attempt over the 32
+rw-catchable sample machines, (2,2,0) costs 0.166 s and catches
+30/32; (3,2,0) costs 3.8 s and catches 16, with only 2/40 needing it
+exclusively -- yet it ran second, so the hard machines burned it
+before cheaper rungs got a look.  Also measured: direct-rw catches
+32/40 residue machines (the deep tiers ahead of it catch 25 of them
+more expensively), and the ngram rungs are net-negative on this
+class (the no-ngram ablation is faster at equal catches).
+
+### LANDED: interned RepWL search + rung reorder
+
+`RepWLSearch.v` gains an interned core (`iintern`/`irows`/`iproc_*`):
+nodes numbered once, `rconf_enc` paid once per node plus once per
+emitted certificate entry, successors once per node, `rw_delta` once
+per node per measure attempt, all graph work on dense positive
+indices.  Same algorithms, same round structure, same certificate
+format; untrusted as before.  `Run.v`'s `rw_rungs_census` reordered
+to [(2,2,0);(4,2,0);(2,3,0);(3,2,0)] -- order changes no verdict.
+
+Validated: rung2-exclusive count (2), all-rungs-fail count (8) and
+the catchable union (32) identical old vs interned on the 40-machine
+residue sample.  Measured on the WORST case -- failing attempts,
+full search to exhaustion, no short-circuit -- old vs interned:
+
+| rung | old | interned | speedup |
+|---|---|---|---|
+| (2,2,0) | 3.82 s | 2.65 s | 1.44x |
+| (3,2,0) | 49.3 s | 21.2 s | 2.33x |
+| (4,2,0) | 43.6 s | 9.9 s | **4.4x** |
+| (2,3,0) | 5.0 s | 2.15 s | 2.33x |
+| all four | 101.7 s | 35.9 s | **2.8x** |
+
+(Both runs under container congestion; ratios approximate, direction
+unambiguous.)  The interned failing attempts still pay the verified
+checker's re-derivations -- that remaining ~40% is the ClosureIdx-lex
+arc: extend `ClosureIdx.v` with the lex-certificate variant (rows
+carrying the node values for the measure components) and feed the
+SEARCH's pool to the checker, deleting its duplicate `close` and
+per-state `lex_ok` succs recomputation.  Then the same treatment for
+the qhb tier (`try_qhb_lex_at` re-runs `ng_grow`+`ng_explore` per
+(state, rung)).
+
 ### Inside the translated-cycle tier
 
 `ProbeScanSplit.v`, same sampled machines.  `decide_easy` runs
