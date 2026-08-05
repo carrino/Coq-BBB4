@@ -243,6 +243,24 @@ Coq-BB5, and the verification ladder's paranoid rung becomes the
 default.  If it overshoots (4 h+), keep the cache until the Closure.v
 round lands.
 
+## Full re-walk, measured end-to-end (2026-08-05)
+
+`time make census` on the 32 GB desktop, WALK_JOBS=4, this branch's
+decider (without the reverted 97c7aa5 round): **real 819m50s
+(13.7 h), user 3064m37s (51 core-hours)**.  Versus the pre-branch
+16-24 h at 2 jobs (~32-48 core-hours): wall ~1.4x better, core-hours
+WORSE.  Diagnosis: the solo-unit gains (~2.5-3.5x) are real but
+4 workers x 6.8 GB of allocation churn saturate memory bandwidth,
+inflating every unit -- the workload is allocation-bound, not
+CPU-bound, so added parallelism bought little.  Consequences:
+(a) the Uint63/PArray packed-representation arc is THE fix (less
+allocation = faster solo AND less contention -- compounding);
+(b) try WALK_JOBS=3 on the next rewalk (may match 4's wall time at
+fewer core-hours); (c) the committed-.vo cache stays -- verifiers get
+the ~20 min build, the ~14 h re-derivation is the documented paranoid
+rung.  Projection discipline: future claims get measured under
+4-way contention, not extrapolated from solo vm probes.
+
 ## Measurement status
 
 tools/probes/ has the vm_compute harness (per-tier timings on four
