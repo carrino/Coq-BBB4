@@ -155,48 +155,65 @@ Definition crk_get (m : PositiveMap.tree nat) (i : nat) : nat :=
   | Some v => v | None => 0
   end.
 
-(** [scc_partition] emits components in topological order of the
-    condensation (Kosaraju pass 2), so ONE sinks-first pass computes
-    the longest-path ranks -- the old fixed-point relaxation was up
-    to #comps passes over every edge. *)
-Definition crank_comp (g : Adj) (cid : PositiveMap.tree nat)
-    (rk : PositiveMap.tree nat) (i : nat) (c : list cconf)
+(** one relaxation pass over all alive edges; returns (ranks, changed) *)
+Definition crank_pass (nodes : list cconf) (g : Adj)
+    (cid : PositiveMap.tree nat) (st : PositiveMap.tree nat * bool)
+  : PositiveMap.tree nat * bool :=
+  fold_edges nodes g
+    (fun '(rk, ch) a b =>
+       let ia := cid_get cid a in
+       let ib := cid_get cid b in
+       if Nat.eqb ia ib then (rk, ch)
+       else if Nat.ltb (crk_get rk ia) (S (crk_get rk ib))
+            then (PositiveMap.add (Pos.of_succ_nat ia)
+                    (S (crk_get rk ib)) rk, true)
+            else (rk, ch))
+    st.
+
+Fixpoint crank_iter (fuel : nat) (nodes : list cconf) (g : Adj)
+    (cid : PositiveMap.tree nat) (rk : PositiveMap.tree nat)
   : PositiveMap.tree nat :=
-  let r := fold_left (fun r a =>
-             fold_left (fun r b =>
-                let ib := cid_get cid b in
-                if Nat.eqb i ib then r
-                else Nat.max r (S (crk_get rk ib)))
-              (adj_get g a) r)
-           c 0 in
-  PositiveMap.add (Pos.of_succ_nat i) r rk.
+  match fuel with
+  | 0 => rk
+  | S f =>
+      let '(rk', ch) := crank_pass nodes g cid (rk, false) in
+      if ch then crank_iter f nodes g cid rk' else rk'
+  end.
 
 Definition condensation_rank (nodes : list cconf) (g : Adj)
     (comps : list (list cconf)) : list (cconf * nat) :=
   let cid := cid_map comps in
-  let n := length comps in
-  (* comps are source-first; process reversed (sinks first) with the
-     matching component ids (cid_map numbers them in list order) *)
-  let rk := snd (fold_left
-      (fun '(i, rk) c => (pred i, crank_comp g cid rk i c))
-      (rev comps) (pred n, PositiveMap.empty nat)) in
+  let rk := crank_iter (S (length comps)) nodes g cid
+                       (PositiveMap.empty nat) in
   map (fun v => (v, crk_get rk (cid_get cid v))) nodes.
 
-(** node-level longest-path rank for the final acyclic graph: one
-    pass over the DFS finish order (descendants finish first, so
-    processing earliest-finished first ranks successors before their
-    predecessors) *)
+(** node-level longest-path rank for the final acyclic graph *)
+Definition nrank_pass (nodes : list cconf) (g : Adj)
+    (st : PositiveMap.tree nat * bool) : PositiveMap.tree nat * bool :=
+  fold_edges nodes g
+    (fun '(rk, ch) a b =>
+       let ra := match PositiveMap.find (nkey a) rk with
+                 | Some v => v | None => 0 end in
+       let rb := match PositiveMap.find (nkey b) rk with
+                 | Some v => v | None => 0 end in
+       if Nat.ltb ra (S rb)
+       then (PositiveMap.add (nkey a) (S rb) rk, true)
+       else (rk, ch))
+    st.
+
+Fixpoint nrank_iter (fuel : nat) (nodes : list cconf) (g : Adj)
+    (rk : PositiveMap.tree nat) : PositiveMap.tree nat :=
+  match fuel with
+  | 0 => rk
+  | S f =>
+      let '(rk', ch) := nrank_pass nodes g (rk, false) in
+      if ch then nrank_iter f nodes g rk' else rk'
+  end.
+
 Definition node_rank (nodes : list cconf) (g : Adj)
   : list (cconf * nat) :=
-  let order := finish_order (S (length nodes * 8 + 8)) nodes g in
-  let rk := fold_right
-      (fun a rk =>
-         let r := fold_left (fun r b =>
-                    Nat.max r (S (match PositiveMap.find (nkey b) rk with
-                                  | Some v => v | None => 0 end)))
-                  (adj_get g a) 0 in
-         PositiveMap.add (nkey a) r rk)
-      (PositiveMap.empty nat) order in
+  let rk := nrank_iter (S (length nodes)) nodes g
+                       (PositiveMap.empty nat) in
   map (fun v => (v, match PositiveMap.find (nkey v) rk with
                     | Some x => x | None => 0 end)) nodes.
 

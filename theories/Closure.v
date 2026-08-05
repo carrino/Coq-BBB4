@@ -166,6 +166,7 @@ Section ClosureEngine.
     | Some ct =>
         match close fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
+            closed_b Sl && mem a0 Sl &&
             forallb (fun q =>
               implb (cvisits tm c0 t q
                      || existsb (fun a => st_eqb (a_state a) q) Sl)
@@ -186,130 +187,6 @@ Section ClosureEngine.
     | Some _, None => False
     | None, _ => True
     end.
-
-  (** ** [close]'s worklist invariant, proved directly
-
-      A successful exploration IS closed and contains its root, so
-      the boolean re-verification pass ([closed_b] + [mem]) that the
-      checkers used to execute at runtime is redundant: the checkers
-      now rely on [close_root_spec] and skip recomputing every node's
-      successors a second time and rebuilding the trie. *)
-
-  Lemma pset_mem_add : forall x y s,
-    pset_mem A a_enc x (pset_add A a_enc y s) = true <->
-    x = y \/ pset_mem A a_enc x s = true.
-  Proof.
-    intros x y s. unfold pset_mem, pset_add.
-    rewrite PositiveSet.mem_spec, PositiveSet.add_spec.
-    rewrite <- PositiveSet.mem_spec.
-    split.
-    - intros [E | Hm]; [left; apply a_enc_inj; exact E | right; exact Hm].
-    - intros [-> | Hm]; [left; reflexivity | right; exact Hm].
-  Qed.
-
-  Lemma pset_of_In : forall x l,
-    In x l -> pset_mem A a_enc x (pset_of A a_enc l) = true.
-  Proof.
-    intros x l Hin. unfold pset_of.
-    revert Hin.
-    enough (H : forall s, In x l \/ PositiveSet.mem (a_enc x) s = true ->
-      PositiveSet.mem (a_enc x)
-        (fold_left (fun s a => pset_add A a_enc a s) l s) = true).
-    { intro Hin. apply H. left; exact Hin. }
-    induction l as [|h t IH]; simpl; intros s Hcase.
-    - destruct Hcase as [[] | Hs]. exact Hs.
-    - apply IH.
-      destruct Hcase as [[-> | Hin] | Hs].
-      + right. unfold pset_add.
-        apply PositiveSet.mem_spec, PositiveSet.add_spec.
-        left; reflexivity.
-      + left; exact Hin.
-      + right. unfold pset_add.
-        apply PositiveSet.mem_spec, PositiveSet.add_spec.
-        right. apply PositiveSet.mem_spec. exact Hs.
-  Qed.
-
-  Lemma close_spec_aux : forall fuel seen sp todo Sl,
-    close fuel seen sp todo = Some Sl ->
-    (forall x, pset_mem A a_enc x sp = true <-> In x seen) ->
-    (forall x, In x seen -> exists l, succs x = Some l /\
-       forall y, In y l -> pset_mem A a_enc y sp = true \/ In y todo) ->
-    incl seen Sl /\
-    (forall x, In x todo -> In x Sl) /\
-    (forall x, In x Sl -> exists l, succs x = Some l /\
-       forall y, In y l -> In y Sl).
-  Proof.
-    induction fuel as [|f IH]; intros seen sp todo Sl H I1 I2;
-      simpl in H; [discriminate|].
-    destruct todo as [|a todo'].
-    - (* drained: seen is the closure *)
-      injection H as <-.
-      split; [intro x; exact (fun h => h)|].
-      split; [intros x [] |].
-      intros x Hx.
-      destruct (I2 x Hx) as (l & Hs & Hl).
-      exists l. split; [exact Hs|].
-      intros y Hy.
-      destruct (Hl y Hy) as [Hm | []].
-      apply I1; exact Hm.
-    - destruct (pset_mem A a_enc a sp) eqn:Ea.
-      + (* already seen *)
-        destruct (IH seen sp todo' Sl H I1) as (Ha & Hb & Hc).
-        { intros x Hx.
-          destruct (I2 x Hx) as (l & Hs & Hl).
-          exists l. split; [exact Hs|].
-          intros y Hy.
-          destruct (Hl y Hy) as [Hm | [-> | Ht]];
-            [left; exact Hm | left; exact Ea | right; exact Ht]. }
-        split; [exact Ha|].
-        split; [|exact Hc].
-        intros x [-> | Hx]; [apply Ha, I1; exact Ea | exact (Hb x Hx)].
-      + (* new node *)
-        destruct (succs a) as [l|] eqn:Es; [|discriminate].
-        destruct (IH (a :: seen) (pset_add A a_enc a sp) (l ++ todo') Sl H)
-          as (Ha & Hb & Hc).
-        { intros x. rewrite pset_mem_add. rewrite I1.
-          simpl.
-          split; (intros [E | Hin]; [left; congruence | right; assumption]). }
-        { intros x [<- | Hx].
-          - exists l. split; [exact Es|].
-            intros y Hy. right. apply in_or_app. left; exact Hy.
-          - destruct (I2 x Hx) as (lx & Hsx & Hlx).
-            exists lx. split; [exact Hsx|].
-            intros y Hy.
-            destruct (Hlx y Hy) as [Hm | [-> | Ht]].
-            + left. apply pset_mem_add. right; exact Hm.
-            + left. apply pset_mem_add. left; reflexivity.
-            + right. apply in_or_app. right; exact Ht. }
-        split.
-        { intros x Hx. apply Ha. right; exact Hx. }
-        split; [|exact Hc].
-        intros x [-> | Hx].
-        * apply Ha. left; reflexivity.
-        * apply Hb. apply in_or_app. right; exact Hx.
-  Qed.
-
-  Lemma close_root_spec : forall fuel a0 Sl,
-    close fuel [] PositiveSet.empty [a0] = Some Sl ->
-    mem a0 Sl = true /\ closed_b Sl = true.
-  Proof.
-    intros fuel a0 Sl H.
-    destruct (close_spec_aux fuel [] PositiveSet.empty [a0] Sl H)
-      as (_ & Hroot & Hclosed).
-    { intros x. unfold pset_mem.
-      split; [|intros []].
-      intro Hm. apply PositiveSet.mem_spec in Hm.
-      now apply PositiveSet.empty_spec in Hm. }
-    { intros x []. }
-    split.
-    - unfold mem, apool. apply pset_of_In. apply Hroot. left; reflexivity.
-    - unfold closed_b. apply forallb_forall.
-      intros x Hx.
-      destruct (Hclosed x Hx) as (l & Hs & Hl).
-      unfold node_ok. rewrite Hs.
-      apply forallb_forall.
-      intros y Hy. unfold apool. apply pset_of_In. exact (Hl y Hy).
-  Qed.
 
   Lemma mem_In : forall a Sl, mem a Sl = true -> In a Sl.
   Proof.
@@ -487,10 +364,9 @@ Section ClosureEngine.
   Proof.
     intros t fuel a0 Hstart H. unfold closure_check_neverqh in H.
     destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
-    destruct (close fuel [] PositiveSet.empty [a0]) as [Sl|] eqn:Hcls;
-      [|discriminate].
-    rename H into Hq.
-    destruct (close_root_spec fuel a0 Sl Hcls) as [Hin Hcl].
+    destruct (close fuel [] PositiveSet.empty [a0]) as [Sl|]; [|discriminate].
+    apply andb_prop in H as [H Hq].
+    apply andb_prop in H as [Hcl Hin].
     apply mem_In in Hin.
     pose proof (Hstart ct eq_refl) as Hcov0.
     assert (Hct : stepn tm t InitES = Some (lift ct)).
@@ -615,6 +491,7 @@ Section ClosureEngine.
     | Some ct =>
         match close fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
+            closed_b Sl && mem a0 Sl &&
             forallb (fun q =>
               implb (cvisits tm c0 t q
                      || existsb (fun a => st_eqb (a_state a) q) Sl)
@@ -887,10 +764,9 @@ Section ClosureEngine.
     intros t fuel a0 cert Hstart Hcert H.
     unfold closure_check_neverqh_lex in H.
     destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
-    destruct (close fuel [] PositiveSet.empty [a0]) as [Sl|] eqn:Hcls;
-      [|discriminate].
-    rename H into Hq.
-    destruct (close_root_spec fuel a0 Sl Hcls) as [Hin Hcl].
+    destruct (close fuel [] PositiveSet.empty [a0]) as [Sl|]; [|discriminate].
+    apply andb_prop in H as [H Hq].
+    apply andb_prop in H as [Hcl Hin].
     apply mem_In in Hin.
     pose proof (Hstart ct eq_refl) as Hcov0.
     assert (Hct : stepn tm t InitES = Some (lift ct)).
@@ -1051,6 +927,7 @@ Section ClosureEngine.
     | Some ct =>
         match close fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
+            closed_b Sl && mem a0 Sl &&
             forallb (fun q =>
               implb (cvisits tm c0 t q
                      || existsb (fun a => st_eqb (a_state a) q) Sl)
@@ -1069,10 +946,9 @@ Section ClosureEngine.
     intros t fuel a0 cert Hstart Hcert H.
     unfold closure_check_neverqh_fuel in H.
     destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
-    destruct (close fuel [] PositiveSet.empty [a0]) as [Sl|] eqn:Hcls;
-      [|discriminate].
-    rename H into Hq.
-    destruct (close_root_spec fuel a0 Sl Hcls) as [Hin Hcl].
+    destruct (close fuel [] PositiveSet.empty [a0]) as [Sl|]; [|discriminate].
+    apply andb_prop in H as [H Hq].
+    apply andb_prop in H as [Hcl Hin].
     apply mem_In in Hin.
     pose proof (Hstart ct eq_refl) as Hcov0.
     assert (Hct : stepn tm t InitES = Some (lift ct)).
