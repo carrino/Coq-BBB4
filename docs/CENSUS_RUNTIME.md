@@ -217,7 +217,28 @@ the WINNING rung's own cost).  Consequences, measured:
    history, so guarded-window TCs no longer fall through to the old
    scan block.  Measured: scan-side slice 12.3 -> 7.7 s (28 -> 17.6
    ms/pop vm); full heavy slice 36.4 -> 28.3 s.
-3. **Closure.v verified-pass restructure** (next census multiplier,
+3. LANDED (measured same-instance: rank catch 0.263 -> ~0.20 vm,
+   walk slice ~3-7%): [close_root_spec] proves the exploration's
+   closure invariant directly, deleting the runtime [closed_b] +
+   [apool] x2 + [mem] re-verification from all three checkers; and
+   [condensation_rank]/[node_rank] became one topological pass
+   (Kosaraju order / DFS finish order) instead of fixed-point
+   relaxation.  The remaining ladder cost is SPREAD (certs ~4x48ms
+   vm, rules machinery, verified scan) -- no single hotspot is left,
+   which is the signature of the allocation/representation floor.
+   The next real multiplier is the primitive-representation rewrite
+   (below), not more structure tweaks.
+
+3b. **Primitive-representation rewrite (the flagship next arc)**:
+   the C mirror runs the SAME closures/tiers over the whole tree in
+   60 s; the Coq checkers are ~1000x slower per closure because
+   every hot structure is persistent (PositiveMap/Set, lists, nat).
+   Coq's Uint63/PArray primitives work under vm/native_compute;
+   rewriting the NGram closure + rank machinery + scan tiers on them
+   targets 10-50x on the ladder slice and would retire the .vo cache
+   honestly.  Old plan text follows for reference:
+
+   (superseded) **Closure.v verified-pass restructure** (next census multiplier,
    plan): (a) prove the worklist invariant of [close] directly
    (everything reachable is in [seen]; successors of processed nodes
    are in [seen ++ todo]; empty todo => closed) so [closed_b], both
