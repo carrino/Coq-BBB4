@@ -31,6 +31,14 @@ DIRS = {'L': 'DL', 'R': 'DR'}
 SIZES = {'H': 40, 'C': 40, 'T': 40, '-': 40,
          'N2': 16, 'N3': 16, 'N4': 16, 'N6': 16, 'D': 16}
 
+# TIER_SCALE scales every group (validation runs want far more machines
+# than timing runs); TIER_ONLY restricts to a comma-separated tier list.
+_scale = int(os.environ.get('TIER_SCALE', '1'))
+_only = os.environ.get('TIER_ONLY')
+if _only:
+    SIZES = {k: v for k, v in SIZES.items() if k in _only.split(',')}
+SIZES = {k: v * _scale for k, v in SIZES.items()}
+
 
 def tm_def(name, m):
     lines = [f"Definition {name} : TM := fun q s =>", "  match q, s with"]

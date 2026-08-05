@@ -215,6 +215,7 @@ theories/Machines/Sample_LexCert_N5.v
 theories/Tests/Cycle_Corruption.v
 theories/Tests/TCycler_Corruption.v
 theories/Tests/Closure_Corruption.v
+theories/Tests/Loop1Scan_Regression.v
 theories/Tests/ClosureIdx_Corruption.v
 theories/Tests/NGram_Corruption.v
 theories/Tests/ReachStI_Examples.v

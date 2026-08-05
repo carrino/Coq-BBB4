@@ -504,9 +504,53 @@ Two things fall out:
    it (uncapped or better-anchored), THEN drop `scan_ct` -- not to
    drop it first.
 
-Next step, in order of Amdahl: cap `lp_rewind` (kills the quadratic),
-then widen the one-pass so `scan_ct` can go.  Both are census-input
-changes, so they belong in the batch with the `ClosureIdx` wiring.
+### LANDED: the quadratic was an eager `andb`, not an algorithm
+
+The cause turned out to be smaller and better than "cap the rewind".
+Coq's `&&` is `andb`, a **function**, so under call-by-value BOTH
+arguments are evaluated.  In
+
+    st_eqb .. && sym_eqb .. && lp_rewind l0' l1' m          (lp_rewind)
+    st_eqb .. && sym_eqb .. && (if .. then lp_rewind .. )   (lp_scan)
+
+the rewind therefore ran to its full depth even when the head compare
+had already failed, and it ran for EVERY history entry even when the
+state or symbol already differed -- an O(n) rewind per entry over an
+O(n) history.  That is the whole quadratic.
+
+Both were rewritten with nested `if`s.  This is the SAME boolean
+function, so no candidate, no catch and no census result can change:
+`theories/Tests/Loop1Scan_Regression.v` proves
+`lp_candidates_unchanged` against reference copies of the original
+`&&` forms, closed under the global context.  No capping, no
+heuristics, no re-validation of catches needed.
+
+Measured, same sampled machines, before -> after:
+
+| tier | before | after | speedup |
+|---|---|---|---|
+| T translated cycle | 0.601 s | 0.430 s | **1.40x** |
+| C in-place cycle | 0.214 s | 0.173 s | 1.24x |
+| N2 / N3 / N4 / N6 | 0.277/0.528/0.599/0.891 | 0.223/0.474/0.509/0.802 | 1.11-1.24x |
+| H halt | 0.338 s | 0.298 s | 1.13x |
+
+Weighted by the census tier counts that is **~1.33x on the whole
+walk** (47,700 -> 35,900 s in the model's units) for a ~10-line
+change that cannot alter the result.
+
+On the isolated scan stage the same change is worth 2.6-3.9x; the
+decider dilutes it with `find_halt`, the lookups, the verified
+re-checks and (for the n-gram tier) the ladder.
+
+The `&&`-under-CBV trap is worth grepping for elsewhere in the hot
+path -- any `a && expensive` where `a` usually fails is paying for
+`expensive` every time.
+
+Next, still in order of Amdahl: widen the one-pass so `scan_ct` (42.6
+ms, ~10% of the bulk reaches it) can be dropped -- that one DOES
+change which candidates are proposed, so it needs the verdict diff
+over a large sample, not just a proof.  Both belong in the batch with
+the `ClosureIdx` wiring.
 
 ### Walk anchor for this container
 

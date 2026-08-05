@@ -431,15 +431,27 @@ Fixpoint lp_run (tm : TM) (gas k : nat) (c : cconf) (pos : Z)
       end
   end.
 
-(** pairwise state+symbol rewind of the two history chains *)
+(** pairwise state+symbol rewind of the two history chains.
+
+    Written with NESTED IFS rather than [&&]: Coq's [&&] is [andb], a
+    function, so under call-by-value BOTH arguments are evaluated --
+    the recursive call ran even when the head comparison had already
+    failed, making every rewind walk its full [n] entries regardless.
+    This is the same boolean function (see
+    Tests/Loop1Scan_Regression.v, which pins it against a reference
+    copy of the [&&] form), so no candidate, catch or census result
+    changes; only the cost does. *)
 Fixpoint lp_rewind (l0 l1 : list lp_ent) (n : nat) : bool :=
   match n with
   | 0 => true
   | S m =>
       match l0, l1 with
       | a :: l0', b :: l1' =>
-          st_eqb (lp_q a) (lp_q b) && sym_eqb (lp_s a) (lp_s b)
-          && lp_rewind l0' l1' m
+          if st_eqb (lp_q a) (lp_q b)
+          then if sym_eqb (lp_s a) (lp_s b)
+               then lp_rewind l0' l1' m
+               else false
+          else false
       | _, _ => false
       end
   end.
@@ -448,7 +460,23 @@ Fixpoint lp_rewind (l0 l1 : list lp_ent) (n : nat) : bool :=
     walks deeper; [cap] bounds emitted candidates (each costs one
     verified re-check downstream).  The rewind filter is skipped when
     the history is too short to rewind a full period (the verified
-    check is the authority either way). *)
+    check is the authority either way).
+
+    The guard nests its tests instead of using [&&] for the reason
+    given at [lp_rewind]: with [andb] the rewind was evaluated for
+    EVERY history entry, including the overwhelming majority whose
+    state or symbol already differs -- an O(n) rewind per entry over
+    an O(n) history, i.e. the quadratic that made the gas-512 rung
+    cost 13.4x the gas-130 one for 4x the gas.  Same boolean, same
+    candidates; only the cost changes. *)
+Definition lp_guard (h0 h1 : lp_ent) (tl0 l1' : list lp_ent) : bool :=
+  let P := lp_k h0 - lp_k h1 in
+  if st_eqb (lp_q h0) (lp_q h1)
+  then if sym_eqb (lp_s h0) (lp_s h1)
+       then (if 2 * P <=? lp_k h0 then lp_rewind tl0 l1' P else true)
+       else false
+  else false.
+
 Fixpoint lp_scan (h0 : lp_ent) (tl0 l1 : list lp_ent) (cap : nat)
     (acc : list lp_cand) : list lp_cand :=
   match l1 with
@@ -458,8 +486,7 @@ Fixpoint lp_scan (h0 : lp_ent) (tl0 l1 : list lp_ent) (cap : nat)
       | 0 => rev acc
       | S cap' =>
           let P := lp_k h0 - lp_k h1 in
-          if st_eqb (lp_q h0) (lp_q h1) && sym_eqb (lp_s h0) (lp_s h1)
-             && (if 2 * P <=? lp_k h0 then lp_rewind tl0 l1' P else true)
+          if lp_guard h0 h1 tl0 l1'
           then
             match
               match Z.compare (lp_pos h0) (lp_pos h1) with
