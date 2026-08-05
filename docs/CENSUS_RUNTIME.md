@@ -469,6 +469,141 @@ observed 183,600 core-seconds native: uniform sampling within a tier
 misses heavy tails, and walk overhead and 4-way contention are not in
 the model.  Use the RATIOS, not the absolute total.
 
+### CORRECTION (2026-08-05, later): the residue row was misread, and
+### it changes everything above
+
+Caveat (a) was wrong, and not subtly.  The residue row's own
+measurement in the same probe run was **62.0 s for 40 machines --
+1.55 s/machine**, not ~0: only 1 of the 40 sampled mirror-residue
+machines hits the stand-in lookup tables (verified directly with
+`deferred_lookup`); the other 39 fall through every scan and get
+decided by the DEEP ladder tiers (rank, wrapped-QHBound-lex, RepWL)
+in-walk.  The "~0 (lookup hit)" row in the table above described the
+D tier (0.001 s) and was wrongly carried over to the residue.
+
+The real walk's lookup tables hold only ~20k machines (proven +
+provenqh + reroot + deferred), so of the 228,815 mirror-residue
+machines about **209k are ladder-decided in-walk at ~1.55 s vm
+each ≈ 330,000 s vm -- roughly 85% of the whole walk**, versus ~6%
+for the T-tier scans the last two rounds optimized.
+
+This also finally reconciles the model with reality: 330k + 35k
+(scans, corrected) ≈ 365k s vm ≈ 75-120k s native single-core ≈ 21-34
+core-hours, against the observed 51 core-hours with the measured
+memory-bandwidth contention inflating it -- consistent.  The old
+47.7k-second model was 12-20x short of the observed walk, and that
+discrepancy was itself the loudest clue that the map was wrong.
+
+Corrected shares (same probe data, residue row read correctly):
+
+| slice | share of walk |
+|---|---|
+| mirror-residue, in-walk deep-ladder decided (~209k nodes) | **~85%** |
+| T translated-cycle scans | ~6% |
+| C + H + N + lookups | ~9% |
+
+Consequences, in order:
+1. The ladder arc (ClosureIdx wiring, qhb-lex gram-set memoization
+   across states and rungs, incremental `ng_grow`) is BACK as the
+   main event -- it targets the 85%, and `try_qhb_lex_at` re-running
+   `ng_grow`+`ng_explore` per (state, rung) is the single biggest
+   redundancy (up to ~36 grow/explore cycles per residue pop).
+2. The scan work stays worth finishing (it is ~6% AND it deletes the
+   per-step `PositiveMap` snapshot allocation that feeds the
+   contention multiplier), but it was never where the 14x lived.
+3. Every future probe table gets its per-row arithmetic written out
+   (time / count = per-machine) so a 62-second row cannot be recorded
+   as ~0 again.
+
+### Inside the 85%: tier ablation on the residue sample
+
+`ProbeResBurn` (scratch) re-ran the same 40 residue machines with one
+rung list emptied at a time.  Ablations get SLOWER, not faster --
+removing a tier pushes its machines into deeper, costlier tiers --
+so the informative numbers are the catch counts and the no-rw run:
+
+| pipeline | time | decided /40 |
+|---|---|---|
+| full ladder | 62.2 s | 40 |
+| without n-gram rungs | 56.3 s | 40 |
+| without rank rungs | 189.1 s | 37 |
+| without QHB rungs | 144.9 s | 38 |
+| without RepWL rungs | **8.2 s** | 33 |
+
+Everything up to and including the failing-qhb attempts costs 8.2 s
+TOTAL; the other 54 s of the full run is the RepWL tier deciding its
+7 machines -- **~7.7 s per rw-caught machine** (4 rungs at closure
+fuel 8192).  Scaled by census weight, `rw_tier` attempts on the ~18%
+of residue-class machines that reach them are **~75% of the entire
+walk**; the qhb attempts for the ~20% that reach those are most of
+the rest of the 85%.
+
+So the priority order inside the main arc is now measured, not
+guessed:
+1. make `rw_tier`'s closure cheap (ClosureIdx-style interning +
+   incremental exploration inside RepWL/RepWLSearch) -- every 2x
+   there is ~1.6x on the whole walk;
+2. qhb-lex gram-set memoization across (state, rung);
+3. only then the generic ladder polish (rungs, hints, dispatch).
+
+### LANDED: scan_ct deleted -- the one-pass now subsumes it
+
+The prediction postmortem in one line: BB5's 10-20x came from
+REPLACING the multi-pass scan block, and the one-pass had been
+shipped as an additive front-end with the old block kept as a
+fallback -- every fall-through machine paid both.  The fallback
+survived because it still caught machines (46 of 1,440 sampled) the
+one-pass missed.  Two real gaps, found and closed:
+
+1. **The record rule was approximate.**  `lp_rec_cands` fired on any
+   edge-standing entry with the PRE-move state; `scan_records0` logs
+   only steps OFF the extent, at the POST-move index and state.
+   Widening the approximate rule plateaus (5/19, 10/23 covered) --
+   replication, not widening, was needed.  `lp_records` now derives
+   the EXACT record list from the history (both configs of every
+   step are consecutive entries; direction is the sign of the
+   position delta; the one step the history lacks is recovered from
+   the head entry's transition), and `lp_tc_pairs` is `tc_pairs`
+   verbatim on it.  Validated: bit-equality with `scan_records` on
+   all 1,440 sampled machines at both gas rungs.
+2. **Drifting cconf-cyclers.**  The model is head-relative, so a
+   cycler that drifts but repeats in padded-`cconf` space (blank
+   trail) is a plain `cycle_leaf_check` cycle that the TCycler
+   window check can fail to certify; and several same-state records
+   can fall inside one period, so the NEAREST same-state pair (the
+   `tc_pairs` rule) can give a sub-period gap.  Fix: CYCLE twins on
+   the `lp_cycle_K = 4` nearest same-state record pairs -- two plain
+   re-simulations each, cheap.
+
+Final gate over 600 T + 600 C + 240 N6: records bit-equal 1,440/1,440,
+**lost catches 0, gained catches 0** -- exact subsumption.  scan_ct's
+line in `decide_easy` is deleted (the definition stays for probes and
+the soundness lemma), so every fall-through machine stops paying
+42.6 ms and, more importantly for the contention story, the per-step
+`PositiveMap` full-config snapshot allocation is out of the pipeline.
+`Loop1Scan_Regression.v` gains the corruption controls: records
+equality on a real TC pinned, the historical pre-move bug pinned as
+DETECTED, and the twin rule unit-pinned.
+
+Measured per tier (`ProbeCtGone.v`), same sampled machines, catches
+identical, session start -> now (all of today's scan work compounded:
+eager-andb fix, binary counters, exact records, scan_ct deletion):
+
+| tier | start | now | speedup |
+|---|---|---|---|
+| T translated cycle | 15.0 ms | **1.9 ms** | **7.9x** |
+| C in-place cycle | 5.35 ms | 1.35 ms | 4.0x |
+| N2 (reaches ladder) | 17.3 ms | 4.3 ms | 4.0x |
+| N6 (reaches ladder) | 50.1 ms | 36.5 ms | 1.4x |
+| residue-class | 1,555 ms | 1,458 ms | 1.07x |
+| H halt | 8.45 ms | ~12 ms | noise (map-build-laden first row) |
+
+Which is exactly the corrected map's prediction: the scan tiers are
+now nearly free, and the walk is ~97% the residue-class ladder burn.
+The scans arc is CLOSED; the ladder arc (rw_tier closure cost, then
+qhb-lex memoization, then ClosureIdx wiring) is the whole remaining
+game.
+
 ### Inside the translated-cycle tier
 
 `ProbeScanSplit.v`, same sampled machines.  `decide_easy` runs

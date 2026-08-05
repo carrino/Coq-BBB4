@@ -1,3 +1,8 @@
+(** STALE as of the exact-records/cycle-twin round: [lp_ent.lp_k]
+    moved to binary [N] and the record rule was replaced, so this
+    file no longer compiles against Decide.v.  It is kept as the
+    measurement record for the andb-rewind round it validated
+    (commit 8286251); do not re-run it against current sources. *)
 (** Is [lp_rewind] really the quadratic term, and what does capping it
     cost?  (UNTRUSTED probe, not in _CoqProject.)
 

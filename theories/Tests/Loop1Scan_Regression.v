@@ -121,20 +121,100 @@ Proof.
           end); apply IH.
 Qed.
 
-(** so the candidate lists the decider sees are unchanged *)
+(** so the scan half of the candidate list is unchanged.  (The
+    record half was REPLACED deliberately in the exact-records round
+    -- [lp_records]/[lp_tc_pairs] instead of the approximate
+    [lp_rec_cands] -- and is validated against [scan_records] by
+    bit-equality over 1,440 sampled machines rather than pinned here;
+    see docs/CENSUS_RUNTIME.md.) *)
 Theorem lp_candidates_unchanged : forall tm gas,
   lp_candidates tm gas
   = match lp_run tm gas 0%N c0 0%Z [] with
     | [] => []
-    | h0 :: tl =>
+    | (h0 :: tl) as hist =>
+        let '(rR, rL) := lp_records tm hist in
         lp_scan_ref h0 tl tl 6 []
-        ++ lp_rec_cands (h0 :: tl) true
-        ++ lp_rec_cands (h0 :: tl) false
+        ++ lp_tc_pairs DR rR
+        ++ lp_tc_pairs DL rL
     end.
 Proof.
   intros tm gas. unfold lp_candidates.
   destruct (lp_run tm gas 0%N c0 0%Z []) as [|h0 tl]; [reflexivity|].
+  destruct (lp_records tm (h0 :: tl)) as [rR rL].
   rewrite lp_scan_eq. reflexivity.
 Qed.
 
 Print Assumptions lp_candidates_unchanged.
+
+(** ** Controls for the exact-records round
+
+    [lp_records] must derive EXACTLY [scan_records]'s events from the
+    history -- post-move index, post-move state, off-the-extent steps
+    only.  The historical bug this round fixed was an approximation
+    with PRE-move states and direction-free flags, so the controls
+    are: equality with [scan_records] on a real translated cycler,
+    and a corrupted pre-move variant that must NOT agree. *)
+
+From BBB4.Machines Require Import TCycler_Examples.
+
+Fixpoint recs_eq (a : list (N * St)) (b : list (nat * St)) : bool :=
+  match a, b with
+  | [], [] => true
+  | (ka, qa) :: ta, (kb, qb) :: tb =>
+      Nat.eqb (N.to_nat ka) kb && st_eqb qa qb && recs_eq ta tb
+  | _, _ => false
+  end.
+
+Definition records_agree (tm : TM) (gas : nat) : bool :=
+  let hist := lp_run tm gas 0%N c0 0%Z [] in
+  let '(rR, rL) := lp_records tm hist in
+  let '(sR, sL) := scan_records tm gas in
+  recs_eq rR sR && recs_eq rL sL.
+
+Example records_exact_tc : records_agree tm_bbb_sample 512 = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Example records_exact_tc_mirror :
+  records_agree (Mirror.mirror_tm tm_bbb_sample) 512 = true.
+Proof. vm_compute. reflexivity. Qed.
+
+(** the corrupted derivation: PRE-move (index, state), the old bug *)
+Fixpoint lp_reclists_corrupt (hist : list lp_ent)
+  : list (N * St) * list (N * St) :=
+  match hist with
+  | e2 :: ((e1 :: _) as t) =>
+      let '(rR, rL) := lp_reclists_corrupt t in
+      if (lp_pos e1 <? lp_pos e2)%Z
+      then (if lp_rrec e1
+            then ((lp_k e1, lp_q e1) :: rR, rL) else (rR, rL))
+      else (if lp_lrec e1
+            then (rR, (lp_k e1, lp_q e1) :: rL) else (rR, rL))
+  | _ => ([(0%N, StA)], [(0%N, StA)])
+  end.
+
+Example records_corrupt_detected :
+  (let hist := lp_run tm_bbb_sample 512 0%N c0 0%Z [] in
+   let '(rR, _) := lp_reclists_corrupt hist in
+   let '(sR, _) := scan_records tm_bbb_sample 512 in
+   recs_eq rR sR) = false.
+Proof. vm_compute. reflexivity. Qed.
+
+(** the cycle twins: [lp_tc_pairs] must propose [LpCycle] on the
+    [lp_cycle_K] nearest same-state pairs -- a drifting cycler that
+    repeats in padded-[cconf] space is caught only through them.
+    Unit-pinned on a literal record list so shrinking the rule breaks
+    this test. *)
+Example twins_shape :
+  lp_tc_pairs DR [(40%N, StB); (30%N, StA); (28%N, StB);
+                  (20%N, StB); (10%N, StB)]
+  = [LpTC DR 28 12; LpCycle 28 12; LpCycle 20 20; LpCycle 10 30].
+Proof. vm_compute. reflexivity. Qed.
+
+(* both newest records carry pairs when their states match earlier
+   records *)
+Example twins_shape_two :
+  lp_tc_pairs DR [(40%N, StB); (30%N, StA); (28%N, StB);
+                  (20%N, StA); (10%N, StB)]
+  = [LpTC DR 28 12; LpCycle 28 12; LpCycle 10 30;
+     LpTC DR 20 10; LpCycle 20 10].
+Proof. vm_compute. reflexivity. Qed.

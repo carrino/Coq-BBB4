@@ -520,58 +520,127 @@ Fixpoint lp_scan (h0 : lp_ent) (tl0 l1 : list lp_ent) (cap : nat)
       end
   end.
 
-(** record-pair candidates from the SAME history (tc_pairs' rule:
-    for each of the two newest records per side, its nearest earlier
-    same-state record), covering the guarded-window translated
-    cyclers the backward scan misses -- without a separate record
-    walk.  History is newest-first, so the first flagged entries ARE
-    the newest records. *)
-Fixpoint lp_first_same (q : St) (l : list lp_ent) (side : bool)
-  : option N :=
+(** record-pair candidates from the SAME history, replicating
+    [scan_records]/[tc_pairs] EXACTLY.
+
+    The first cut of this rule approximated records by the entry
+    flags alone ([lp_rrec e] = "standing at the right edge"), pairing
+    PRE-move states at pre-move indices.  [scan_records0] is
+    stricter: a record is a step OFF the visited extent -- a DR move
+    from [r = []] (symmetrically left) -- logged at the POST-move
+    index with the POST-move state.  The mismatch left translated
+    cyclers only the old [scan_ct] block could catch (measured: 46 of
+    1,440 sampled machines), which is what kept that 42.6 ms/machine
+    block alive as a fallback.
+
+    Both configs of every step sit in the history as CONSECUTIVE
+    entries, and the move direction is the sign of the position
+    delta, so the exact record list is recoverable with no second
+    walk.  The one step the history does not contain is the last one
+    ([lp_run] conses pre-step entries only), recovered from the head
+    entry's own transition. *)
+
+Fixpoint lp_reclists (hist : list lp_ent)
+  : list (N * St) * list (N * St) :=
+  match hist with
+  | e2 :: ((e1 :: _) as t) =>
+      let '(rR, rL) := lp_reclists t in
+      if (lp_pos e1 <? lp_pos e2)%Z
+      then (if lp_rrec e1
+            then ((lp_k e2, lp_q e2) :: rR, rL) else (rR, rL))
+      else (if lp_lrec e1
+            then (rR, (lp_k e2, lp_q e2) :: rL) else (rR, rL))
+  | _ =>
+      (* the blank start is itself on virgin ground on both sides --
+         the same baseline entry [scan_records] seeds *)
+      ([(0%N, StA)], [(0%N, StA)])
+  end.
+
+Definition lp_records (tm : TM) (hist : list lp_ent)
+  : list (N * St) * list (N * St) :=
+  let '(rR, rL) := lp_reclists hist in
+  match hist with
+  | h0 :: _ =>
+      match tm (lp_q h0) (lp_s h0) with
+      | Some tr =>
+          match t_dir tr with
+          | DR => if lp_rrec h0
+                  then ((N.succ (lp_k h0), t_next tr) :: rR, rL)
+                  else (rR, rL)
+          | DL => if lp_lrec h0
+                  then (rR, (N.succ (lp_k h0), t_next tr) :: rL)
+                  else (rR, rL)
+          end
+      | None => (rR, rL)
+      end
+  | [] => (rR, rL)
+  end.
+
+Fixpoint lp_first_st (q : St) (l : list (N * St)) : option N :=
   match l with
   | [] => None
-  | e :: t =>
-      if (if side then lp_rrec e else lp_lrec e)
-      then if st_eqb (lp_q e) q then Some (lp_k e)
-           else lp_first_same q t side
-      else lp_first_same q t side
+  | (a, qa) :: t => if st_eqb qa q then Some a else lp_first_st q t
   end.
 
-Fixpoint lp_recs (l : list lp_ent) (side : bool) (n : nat)
-  : list lp_ent :=
-  match n with
+(** the first [k] same-state record indices, nearest first *)
+Fixpoint lp_first_sts (k : nat) (q : St) (l : list (N * St))
+  : list N :=
+  match k with
   | 0 => []
-  | S m =>
+  | S k' =>
       match l with
       | [] => []
-      | e :: t =>
-          if (if side then lp_rrec e else lp_lrec e)
-          then e :: lp_recs t side m
-          else lp_recs t side n
+      | (a, qa) :: t =>
+          if st_eqb qa q then a :: lp_first_sts k' q t
+          else lp_first_sts k q t
       end
   end.
 
-Definition lp_rec_cands (hist : list lp_ent) (side : bool)
+(** [tc_pairs] verbatim -- for each of the two newest records, a
+    [LpTC] on its nearest earlier same-state record -- plus CYCLE
+    twins on the [lp_cycle_K] nearest same-state records.
+
+    The twins are what let this block subsume [scan_cycle] as well as
+    the record walk: the model is head-relative, so a cycler that
+    DRIFTS but repeats in padded-[cconf] space ([lpad_eqb] ignores a
+    blank trail) is a plain [cycle_leaf_check] cycle -- which the
+    guarded-window TCycler check, a different sufficient condition,
+    can fail to certify.  A drifting cycler extends its extent every
+    period, so its period is SOME record gap -- but not necessarily
+    the nearest same-state gap: several same-state records can fall
+    inside one period (measured on the 5-in-600 machines the block
+    otherwise loses), so the twins try the [lp_cycle_K] nearest.
+    [cycle_leaf_check] is two plain re-simulations, so the extra
+    candidates stay cheap. *)
+Definition lp_cycle_K : nat := 4.
+
+Definition lp_pair_cands (d : Dir) (b : N) (q : St)
+    (earlier : list (N * St)) : list lp_cand :=
+  (match lp_first_st q earlier with
+   | Some a => [LpTC d (N.to_nat a) (N.to_nat (N.sub b a))]
+   | None => [] end) ++
+  map (fun a => LpCycle (N.to_nat a) (N.to_nat (N.sub b a)))
+      (lp_first_sts lp_cycle_K q earlier).
+
+Definition lp_tc_pairs (d : Dir) (recs : list (N * St))
   : list lp_cand :=
-  let d := if side then DR else DL in
-  concat (map (fun e =>
-    match
-      match hist with
-      | _ => lp_first_same (lp_q e)
-               (filter (fun e' => N.ltb (lp_k e') (lp_k e)) hist) side
-      end
-    with
-    | Some a => [LpTC d (N.to_nat a) (N.to_nat (N.sub (lp_k e) a))]
-    | None => []
-    end) (lp_recs hist side 2)).
+  match recs with
+  | (b1, q1) :: t1 =>
+      lp_pair_cands d b1 q1 t1 ++
+      (match t1 with
+       | (b2, q2) :: t2 => lp_pair_cands d b2 q2 t2
+       | [] => [] end)
+  | [] => []
+  end.
 
 Definition lp_candidates (tm : TM) (gas : nat) : list lp_cand :=
   match lp_run tm gas 0%N c0 0%Z [] with
   | [] => []
-  | h0 :: tl =>
+  | (h0 :: tl) as hist =>
+      let '(rR, rL) := lp_records tm hist in
       lp_scan h0 tl tl 6 []
-      ++ lp_rec_cands (h0 :: tl) true
-      ++ lp_rec_cands (h0 :: tl) false
+      ++ lp_tc_pairs DR rR
+      ++ lp_tc_pairs DL rL
   end.
 
 (** ** Deferred lookup *)
@@ -873,11 +942,15 @@ Definition decide_easy (pm qm dm : DeferredMap) (hm : HintMap)
   if deferred_lookup pm tm then R_NeverQH else
   if deferred_lookup qm tm then R_QH else
   if deferred_lookup dm tm then R_Deferred else
-  (* tiers C+T: the one-pass loop scan, escalating rungs; the old
-     scan block stays as a full-gas fallback so no catch is lost *)
+  (* tiers C+T: the one-pass loop scan, escalating rungs.  The old
+     hash+map block ([scan_ct]) is GONE: with the record list derived
+     exactly from the one-pass history ([lp_records]) and the cycle
+     twins on record pairs, its catches are subsumed -- validated at
+     records-bit-equality on 1,440 machines and zero lost verdicts --
+     so every fall-through machine stops paying its 42.6 ms and its
+     per-step PositiveMap snapshot allocation. *)
   if scan_loops tm halt_gas then R_Leaf else
   if scan_loops tm loop_gas then R_Leaf else
-  if scan_ct tm loop_gas then R_Leaf else
   (* tier N: n-gram ladder, then tier R: the ranking rules (a)/(b),
      then tier Q: wrapped QHBound, then tier W: RepWL -- with the
      winning-rung hint consulted first (fallback = the full ladder) *)
@@ -1067,13 +1140,11 @@ Proof.
   (* deferred tier *)
   destruct (deferred_lookup (dmap_of D) tm) eqn:Ed.
   { apply deferred_lookup_In; exact Ed. }
-  (* cycle/TC tiers: one-pass rungs, then the old full-gas fallback *)
+  (* cycle/TC tiers: the one-pass rungs *)
   destruct (scan_loops tm halt_gas) eqn:El1.
   { exact (scan_loops_sound tm halt_gas El1). }
   destruct (scan_loops tm loop_gas) eqn:El2.
   { exact (scan_loops_sound tm loop_gas El2). }
-  destruct (scan_ct tm loop_gas) eqn:Ec2.
-  { exact (scan_ct_sound tm loop_gas Ec2). }
   (* the ladder, behind the advisory hint dispatch: every path ends
      in a tier whose soundness lemma is hint-independent *)
   assert (Hlad : match try_ladder tm with

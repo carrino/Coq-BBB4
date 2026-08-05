@@ -1,3 +1,6 @@
+(** NOTE (exact-records round): [scan_ct] has since been DELETED from
+    [decide_easy] -- the definition survives for A/B probes like this
+    one, but the pipeline timings below predate the deletion. *)
 (** Why does the translated-cycle tier cost ~3x the in-place one?
     (UNTRUSTED probe, not in _CoqProject.)
 

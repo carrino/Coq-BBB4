@@ -1,3 +1,10 @@
+(** HISTORICAL: this file validated the unary-nat -> binary-N scan
+    conversion (commit fe1e283) by diffing candidate lists against a
+    reference copy of the ORIGINAL nat implementation.  The candidate
+    rule has since changed deliberately (exact records + cycle twins,
+    replacing the approximate lp_rec_cands), so re-running it now
+    reports divergence BY DESIGN.  Keep for the record; do not use as
+    a gate. *)
 (* The ORIGINAL unary-nat scan, self-contained, as a reference for the
    binary-N rewrite.  Diffs lp_candidates over real machines. *)
 From Coq Require Import Arith Bool List NArith ZArith.
