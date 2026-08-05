@@ -282,6 +282,138 @@ the ~20 min build, the ~14 h re-derivation is the documented paranoid
 rung.  Projection discipline: future claims get measured under
 4-way contention, not extrapolated from solo vm probes.
 
+## The packed-representation arc, gated and measured (2026-08-05)
+
+All numbers below: Coq 8.18.0 (stock apt, vm_compute), this container,
+same machine and same gram sets on both sides of every A/B, each stage
+looped 200-2000x so per-call cost clears timer noise.  New probes:
+`ProbePack.v`, `ProbeSplit.v`, `ProbeRankAdj.v`, `ProbePackRank.v`,
+`ProbeIntern.v`.
+
+### Gate 1 -- does `coqchk` re-check primitives?  YES
+
+`coqchk` 8.18 fully re-checks `Uint63` and `PArray`: a 250,000-op
+int63 chain, a 100,000-update `PArray` chain, and an exhaustive
+cross-validation of `land/lor/lxor/add/mul/sub/eqb/ltb/lsl/lsr`
+against an independent `Z` model (all agree -- so the checker does not
+merely accept the primitives opaquely, it computes them, correctly).
+"Modules were successfully checked", and the three extra reports stay
+`<none>` (type-in-type, unsafe (co)fixpoints, assumed positivity).
+Cost: ~9 s on top of a ~36 s stdlib-closure baseline.  The
+verification ladder's coqchk rung survives the arc.
+
+### Gate 2 -- the axiom footprint.  DOES NOT survive
+
+`Print Assumptions` lists the primitives THEMSELVES as axioms, for
+purely computational use that never touches a spec lemma:
+
+    int : Set          land, lor, lxor, lsl, lsr, add, sub, eqb
+    array : Type       make, get, set, default
+
+So `Print Assumptions BBB4_value` would go from
+`functional_extensionality_dep` alone to that plus ~8 (ints only) or
+~13 (ints + arrays) primitive declarations.  Separately, `coqchk -o`
+reports assumptions **environment-wide, not by dependency**: merely
+`Require`ing the modules makes it print all ~40 `Uint63`/`PArray`
+spec axioms (`lsr_spec`, `land_spec`, `eqb_correct`, `get_set_same`,
+...) -- verified by a file that requires them and proves only
+`1 + 1 = 2`.  Both published checks (README.md:66, CLAIMS.md:62,
+VERIFYING.md:74) change their output.
+
+Note this is unavoidable, not a matter of proof style: the spec
+axioms can be dodged (prove pack/unpack facts by conversion over the
+finite context domain instead of by rewriting with `land_spec`), but
+the primitive *declarations* cannot -- they have no body, so anything
+computing with them depends on them.
+
+### Where one n-gram catch actually goes
+
+`ngram_check_neverqh m6 6 800` = 4.87 ms/catch (29-node closure),
+split by stage:
+
+| stage | ms | share |
+|---|---|---|
+| ranks + `rank_ok`, 4 states | 1.81 | 37% |
+| `ng_grow` (untrusted search) | 0.66 | 14% |
+| `cvisits` prefix rescan, 4 states | ~0.72 | 15% |
+| `csteps` prefix, run twice | 0.36 | 7% |
+| `closed_b` | 0.21 | 4% |
+| `ng_explore` (one closure) | 0.19 | 4% |
+| seed checks, `mem`, misc | ~0.92 | 19% |
+
+Rows without a tilde are direct `Time Eval vm_compute` measurements of
+that stage in isolation; the two tilde rows are inferred from the
+residual (isolated stages sum to 2.79 of the 4.87 ms) and from
+`csteps` costing 0.18 ms per `t`-step prefix pass.
+
+Exploration is 4%.  The rank machinery is the hotspot, and
+`cvisits` re-simulating the whole `t`-step prefix once per state is
+free money (one pass suffices).
+
+### The three-way A/B on the verified stage
+
+Closure + `closed_b` + all four rank checks, same 29-node instance.
+Each variant is quoted against the baseline measured in ITS OWN run
+(the `cconf` baseline drifts 2.03-2.47 ms run to run, so cross-run
+ratios would be worth ~20%):
+
+| representation | baseline | variant | speedup |
+|---|---|---|---|
+| interned indices (NO primitives) | 2.03 ms | 0.82 ms | **2.5x** |
+| packed int63 (primitives) | 2.47 ms | 0.34 ms | **7.4x** |
+
+Rank stage alone: 1.81 -> 0.23 ms packed (7.9x).  So the primitives
+buy roughly **3x over the best axiom-free alternative**, not 7x --
+that ratio is the actual price of the footprint claim.  Both variants
+are first cuts and both have headroom; the gap is the load-bearing
+number, not either absolute.
+
+Interning is item 3(b) done properly: assign each context an index
+1..n once (paid per node, not per membership test), have the closure
+emit `(index, state, successor indices)`, and key ranks by the short
+index.  Two dead ends measured on the way: a prebuilt edge map still
+keyed by `cconf_enc` buys only 1.14x (encoding the key costs what
+recomputing `succs` costs), and swapping the trie for a list under
+`ceqb` is 3.2x WORSE -- the trie is the right structure for `cconf`.
+The win is short keys plus carried edges, not the container.
+
+### `PArray` is the wrong tool at this size
+
+A `PArray` visited-set indexed by the packed key measured **8.8x
+slower** than the current code: n-gram closures here are tens of
+nodes, so one `PArray.make` of 2^15 slots per machine allocates ~1000x
+the closure (3.4 s of the 3.9 s was sys time).  If arrays are used at
+all they must be allocated once and threaded through the walk with
+generation stamps, never per machine.  Ints alone carry the win; the
+`PArray` half of the arc can be dropped without losing anything, which
+also shrinks the footprint delta from ~13 declarations to ~8.
+
+### Two measurement traps (both cost real time here)
+
+1. **Unary-nat fuel literals.**  An inline `200000` is
+   `Init.Nat.of_num_uint ...`, re-expanded into a 200,000-deep unary
+   nat at every occurrence.  In a loop body that is ~96% of the
+   measurement: the first A/B read 9.3 s vs 8.8 s (a nothing-burger)
+   and became 0.40 s vs 0.17 s once the fuel was a named constant.
+   The real walk is safe -- `Run.v`'s `decider` is a global constant,
+   so its literals are built once -- but every probe must hoist them.
+2. **VM constant hoisting.**  A closed application (`pk_stage_of p06`)
+   is lifted into the VM's constant pool and evaluated ONCE: a loop
+   over it reported 0.001 s at both 200 and 20,000 iterations.  Loops
+   must take the varying input as a parameter.
+
+### What this means for the ~1 h goal
+
+The n-gram ladder is ~4.9% of nodes and (heavy-subtree attribution)
+~30% of walk time.  Even 7.4x on its verified stage is ~1.8x on a
+catch, ~2.7x with `ng_grow` packed and `cvisits` single-passed, and
+only ~1.2-1.35x on the whole walk.  13.7 h -> ~1 h needs ~14x, and
+**that factor can only come from the 83% cycle/translated-cycle
+bulk** -- i.e. option 1 (the BB5 one-pass loop decider: no per-step
+rolling hash, no `PositiveMap` snapshot insert), which is axiom-free.
+Recommended reordering of the arc: scan tiers FIRST, n-gram packing
+second.
+
 ## Measurement status
 
 tools/probes/ has the vm_compute harness (per-tier timings on four
