@@ -401,13 +401,13 @@ Fixpoint last_visit (tm : TM) (gas : nat) (c : cconf) (k : nat)
 
 Record lp_ent : Type := mkLpEnt {
   lp_q : St; lp_s : Sym; lp_pos : Z;
-  lp_rrec : bool; lp_lrec : bool; lp_k : nat }.
+  lp_rrec : bool; lp_lrec : bool; lp_k : N }.
 
 Inductive lp_cand : Type :=
   | LpCycle (n1 p : nat)
   | LpTC (d : Dir) (n1 P : nat).
 
-Fixpoint lp_run (tm : TM) (gas k : nat) (c : cconf) (pos : Z)
+Fixpoint lp_run (tm : TM) (gas : nat) (k : N) (c : cconf) (pos : Z)
     (hist : list lp_ent) : list lp_ent :=
   match gas with
   | 0 => hist
@@ -426,7 +426,7 @@ Fixpoint lp_run (tm : TM) (gas k : nat) (c : cconf) (pos : Z)
                           | DR => (pos + 1)%Z
                           | DL => (pos - 1)%Z
                           end in
-              lp_run tm g (S k) c' pos' (e :: hist)
+              lp_run tm g (N.succ k) c' pos' (e :: hist)
           end
       end
   end.
@@ -441,19 +441,16 @@ Fixpoint lp_run (tm : TM) (gas k : nat) (c : cconf) (pos : Z)
     Tests/Loop1Scan_Regression.v, which pins it against a reference
     copy of the [&&] form), so no candidate, catch or census result
     changes; only the cost does. *)
-Fixpoint lp_rewind (l0 l1 : list lp_ent) (n : nat) : bool :=
-  match n with
-  | 0 => true
-  | S m =>
-      match l0, l1 with
-      | a :: l0', b :: l1' =>
-          if st_eqb (lp_q a) (lp_q b)
-          then if sym_eqb (lp_s a) (lp_s b)
-               then lp_rewind l0' l1' m
-               else false
-          else false
-      | _, _ => false
-      end
+Fixpoint lp_rewind (l0 l1 : list lp_ent) (n : N) : bool :=
+  match l0, l1 with
+  | a :: l0', b :: l1' =>
+      if N.eqb n 0 then true
+      else if st_eqb (lp_q a) (lp_q b)
+           then if sym_eqb (lp_s a) (lp_s b)
+                then lp_rewind l0' l1' (N.pred n)
+                else false
+           else false
+  | _, _ => N.eqb n 0
   end.
 
 (** backward scan: [h0]/[tl0] fixed at the last configuration, [l1]
@@ -470,10 +467,11 @@ Fixpoint lp_rewind (l0 l1 : list lp_ent) (n : nat) : bool :=
     cost 13.4x the gas-130 one for 4x the gas.  Same boolean, same
     candidates; only the cost changes. *)
 Definition lp_guard (h0 h1 : lp_ent) (tl0 l1' : list lp_ent) : bool :=
-  let P := lp_k h0 - lp_k h1 in
+  let P := N.sub (lp_k h0) (lp_k h1) in
   if st_eqb (lp_q h0) (lp_q h1)
   then if sym_eqb (lp_s h0) (lp_s h1)
-       then (if 2 * P <=? lp_k h0 then lp_rewind tl0 l1' P else true)
+       then (if N.leb (N.mul 2 P) (lp_k h0) then lp_rewind tl0 l1' P
+             else true)
        else false
   else false.
 
@@ -485,15 +483,17 @@ Fixpoint lp_scan (h0 : lp_ent) (tl0 l1 : list lp_ent) (cap : nat)
       match cap with
       | 0 => rev acc
       | S cap' =>
-          let P := lp_k h0 - lp_k h1 in
+          let P := N.sub (lp_k h0) (lp_k h1) in
           if lp_guard h0 h1 tl0 l1'
           then
             match
               match Z.compare (lp_pos h0) (lp_pos h1) with
-              | Eq => Some (fun n1 => LpCycle n1 P)
-              | Gt => if lp_rrec h1 then Some (fun n1 => LpTC DR n1 P)
+              | Eq => Some (fun n1 => LpCycle n1 (N.to_nat P))
+              | Gt => if lp_rrec h1
+                      then Some (fun n1 => LpTC DR n1 (N.to_nat P))
                       else None
-              | Lt => if lp_lrec h1 then Some (fun n1 => LpTC DL n1 P)
+              | Lt => if lp_lrec h1
+                      then Some (fun n1 => LpTC DL n1 (N.to_nat P))
                       else None
               end
             with
@@ -501,13 +501,18 @@ Fixpoint lp_scan (h0 : lp_ent) (tl0 l1 : list lp_ent) (cap : nat)
                 (* anchor reduction: the verified checks re-simulate
                    [n1] steps, so try phase-equivalent EARLY anchors
                    first (they fail harmlessly if they land in the
-                   transient prefix) and the found anchor last *)
+                   transient prefix) and the found anchor last.
+                   [N.modulo _ 0 = 0] where [Nat.modulo _ 0 = n], so
+                   the P = 0 case is guarded to keep the binary form
+                   computing exactly what the unary one did. *)
                 let n1 := lp_k h1 in
-                let b := n1 mod P in
+                let b := if N.eqb P 0 then n1 else N.modulo n1 P in
+                let mkn := fun x : N => mk (N.to_nat x) in
                 let cs :=
-                  if b + P <? n1 then [mk b; mk (b + P); mk n1]
-                  else if b <? n1 then [mk b; mk n1]
-                  else [mk n1] in
+                  if N.ltb (N.add b P) n1
+                  then [mkn b; mkn (N.add b P); mkn n1]
+                  else if N.ltb b n1 then [mkn b; mkn n1]
+                  else [mkn n1] in
                 lp_scan h0 tl0 l1' cap' (rev_append cs acc)
             | None => lp_scan h0 tl0 l1' (S cap') acc
             end
@@ -522,7 +527,7 @@ Fixpoint lp_scan (h0 : lp_ent) (tl0 l1 : list lp_ent) (cap : nat)
     walk.  History is newest-first, so the first flagged entries ARE
     the newest records. *)
 Fixpoint lp_first_same (q : St) (l : list lp_ent) (side : bool)
-  : option nat :=
+  : option N :=
   match l with
   | [] => None
   | e :: t =>
@@ -553,15 +558,15 @@ Definition lp_rec_cands (hist : list lp_ent) (side : bool)
     match
       match hist with
       | _ => lp_first_same (lp_q e)
-               (filter (fun e' => lp_k e' <? lp_k e) hist) side
+               (filter (fun e' => N.ltb (lp_k e') (lp_k e)) hist) side
       end
     with
-    | Some a => [LpTC d a (lp_k e - a)]
+    | Some a => [LpTC d (N.to_nat a) (N.to_nat (N.sub (lp_k e) a))]
     | None => []
     end) (lp_recs hist side 2)).
 
 Definition lp_candidates (tm : TM) (gas : nat) : list lp_cand :=
-  match lp_run tm gas 0 c0 0%Z [] with
+  match lp_run tm gas 0%N c0 0%Z [] with
   | [] => []
   | h0 :: tl =>
       lp_scan h0 tl tl 6 []

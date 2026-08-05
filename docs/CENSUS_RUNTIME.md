@@ -546,6 +546,63 @@ The `&&`-under-CBV trap is worth grepping for elsewhere in the hot
 path -- any `a && expensive` where `a` usually fails is paying for
 `expensive` every time.
 
+### LANDED: unary `nat` was the SECOND quadratic
+
+Fixing the `andb` left the scan still superlinear -- measured 2.6x,
+3.1x, 3.8x per gas doubling (linear would be 2.0x, and the ratio was
+*growing*).  Cause: `lp_ent`'s step index `lp_k` was a `nat`, i.e. a
+unary linked list, so `lp_k h0 - lp_k h1`, `2 * P <=? lp_k h0` and
+`n1 mod P` were each O(gas) -- over ~gas history entries, O(gas^2) in
+arithmetic alone.
+
+`lp_k` is now binary `N` (matching `lp_pos`, already `Z`).
+`lp_cand` deliberately still carries `nat`, so `lp_check` and every
+verified checker are untouched; the `N.to_nat` conversions happen ~6
+times per machine (candidates) rather than ~gas^2 times (history
+entries).  One semantic detail: `N.modulo _ 0 = 0` where
+`Nat.modulo _ 0 = n`, so the `P = 0` case is guarded explicitly to
+compute what the unary form did.
+
+Gas scaling, before -> after: 2.6/3.1/3.8 -> 1.58/1.79/2.26 per
+doubling.  **The quadratic is gone** and candidate generation at gas
+512 is 5.5x faster (0.427 -> 0.077 s over 40 machines).
+
+| tier | original | after andb | after N | total |
+|---|---|---|---|---|
+| C in-place | 0.214 s | 0.173 s | 0.085 s | **2.52x** |
+| T translated | 0.601 s | 0.430 s | 0.378 s | **1.59x** |
+| N2 / N3 / N4 / N6 | | | | 1.13-1.51x |
+| H halt | 0.338 s | 0.298 s | 0.320 s | 1.06x |
+
+Amdahl-weighted: 47,700 -> 30,300 s in the model's units, i.e.
+**~1.57x on the whole walk** so far (1.33x from the `andb` fix, a
+further 1.18x from this).
+
+Unlike the `andb` fix this is a REPRESENTATION change, so it is not
+identical by construction.  Validated instead:
+`tools/probes/ProbeNatRef.v` reimplements the original unary scan
+standalone and diffs candidate lists against the shipped one over
+1,440 machines (600 C, 600 T, 240 N6) at BOTH gas rungs -- 2,880
+comparisons, **zero divergence**.  `Loop1Scan_Regression.v` still
+proves the nesting did not change the guard's condition, now at the
+binary types.
+
+### Where the T tier's time goes now
+
+Candidate generation is no longer the bottleneck; what is left is
+VERIFICATION.  `lp_check` re-simulates from `c0` for every candidate:
+`cycle_leaf_check n1 p` runs `csteps n1` AND `csteps (n1+p)`, and the
+anchor reduction tries up to 3 anchors per candidate with up to 6
+candidates -- so a machine can pay ~18 re-simulations of up to 512
+steps against the ONE 512-step pass that produced the history.
+
+That is the next lever, and it is the old option-4 item sharpened:
+verify `csteps p a = Some a` from the anchor the scan already walked
+past, instead of re-deriving it from `c0`.  It touches proved code
+(`cycle_leaf_check`/`tcycler_leaf_check` and their soundness), which
+is why it was deferred -- but it is now the dominant cost of the tier
+that is 71.5% of the walk.
+
 Next, still in order of Amdahl: widen the one-pass so `scan_ct` (42.6
 ms, ~10% of the bulk reaches it) can be dropped -- that one DOES
 change which candidates are proposed, so it needs the verdict diff

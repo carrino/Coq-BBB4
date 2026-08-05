@@ -17,43 +17,40 @@
     nested ifs back to [&&], these still pass (they are equal); what
     they protect against is a rewrite that changes the CONDITION. *)
 
-From Coq Require Import Arith Bool List ZArith.
+From Coq Require Import Arith Bool List NArith ZArith.
 From BBB4 Require Import BBB4_Statement CTape.
 From BBB4.Census Require Import Decide.
 Import ListNotations.
 
 (** ** Reference copies of the original [&&] forms *)
 
-Fixpoint lp_rewind_ref (l0 l1 : list lp_ent) (n : nat) : bool :=
-  match n with
-  | 0 => true
-  | S m =>
-      match l0, l1 with
-      | a :: l0', b :: l1' =>
-          st_eqb (lp_q a) (lp_q b) && sym_eqb (lp_s a) (lp_s b)
-          && lp_rewind_ref l0' l1' m
-      | _, _ => false
-      end
+Fixpoint lp_rewind_ref (l0 l1 : list lp_ent) (n : N) : bool :=
+  match l0, l1 with
+  | a :: l0', b :: l1' =>
+      if N.eqb n 0 then true
+      else st_eqb (lp_q a) (lp_q b) && sym_eqb (lp_s a) (lp_s b)
+           && lp_rewind_ref l0' l1' (N.pred n)
+  | _, _ => N.eqb n 0
   end.
 
-Lemma lp_rewind_eq : forall n l0 l1,
+Lemma lp_rewind_eq : forall l0 l1 n,
   lp_rewind l0 l1 n = lp_rewind_ref l0 l1 n.
 Proof.
-  (* the structural argument is [l0], not [n], so both sides need the
-     lists in constructor form before either reduces *)
-  induction n as [|m IH]; intros l0 l1;
-    destruct l0 as [|a l0']; destruct l1 as [|b l1']; try reflexivity.
-  simpl.
-  destruct (st_eqb (lp_q a) (lp_q b)); simpl; [|reflexivity].
-  destruct (sym_eqb (lp_s a) (lp_s b)); simpl; [|reflexivity].
+  induction l0 as [|a l0' IH]; intros l1 n;
+    destruct l1 as [|b l1']; try reflexivity.
+  cbn [lp_rewind lp_rewind_ref].
+  destruct (N.eqb n 0); [reflexivity|].
+  destruct (st_eqb (lp_q a) (lp_q b)); cbn [andb]; [|reflexivity].
+  destruct (sym_eqb (lp_s a) (lp_s b)); cbn [andb]; [|reflexivity].
   apply IH.
 Qed.
 
 (** The scan guard, in its original form. *)
 Definition lp_guard_ref (h0 h1 : lp_ent) (tl0 l1' : list lp_ent) : bool :=
-  let P := lp_k h0 - lp_k h1 in
+  let P := N.sub (lp_k h0) (lp_k h1) in
   st_eqb (lp_q h0) (lp_q h1) && sym_eqb (lp_s h0) (lp_s h1)
-  && (if 2 * P <=? lp_k h0 then lp_rewind_ref tl0 l1' P else true).
+  && (if N.leb (N.mul 2 P) (lp_k h0) then lp_rewind_ref tl0 l1' P
+      else true).
 
 (** [lp_guard] is what [lp_scan] now calls. *)
 Lemma lp_guard_eq : forall h0 h1 tl0 l1',
@@ -61,8 +58,8 @@ Lemma lp_guard_eq : forall h0 h1 tl0 l1',
 Proof.
   intros h0 h1 tl0 l1'.
   unfold lp_guard, lp_guard_ref.
-  destruct (st_eqb (lp_q h0) (lp_q h1)); simpl; [|reflexivity].
-  destruct (sym_eqb (lp_s h0) (lp_s h1)); simpl; [|reflexivity].
+  destruct (st_eqb (lp_q h0) (lp_q h1)); cbn [andb]; [|reflexivity].
+  destruct (sym_eqb (lp_s h0) (lp_s h1)); cbn [andb]; [|reflexivity].
   rewrite lp_rewind_eq. reflexivity.
 Qed.
 
@@ -76,25 +73,29 @@ Fixpoint lp_scan_ref (h0 : lp_ent) (tl0 l1 : list lp_ent) (cap : nat)
       match cap with
       | 0 => rev acc
       | S cap' =>
-          let P := lp_k h0 - lp_k h1 in
+          let P := N.sub (lp_k h0) (lp_k h1) in
           if lp_guard_ref h0 h1 tl0 l1'
           then
             match
               match Z.compare (lp_pos h0) (lp_pos h1) with
-              | Eq => Some (fun n1 => LpCycle n1 P)
-              | Gt => if lp_rrec h1 then Some (fun n1 => LpTC DR n1 P)
+              | Eq => Some (fun n1 => LpCycle n1 (N.to_nat P))
+              | Gt => if lp_rrec h1
+                      then Some (fun n1 => LpTC DR n1 (N.to_nat P))
                       else None
-              | Lt => if lp_lrec h1 then Some (fun n1 => LpTC DL n1 P)
+              | Lt => if lp_lrec h1
+                      then Some (fun n1 => LpTC DL n1 (N.to_nat P))
                       else None
               end
             with
             | Some mk =>
                 let n1 := lp_k h1 in
-                let b := n1 mod P in
+                let b := if N.eqb P 0 then n1 else N.modulo n1 P in
+                let mkn := fun x : N => mk (N.to_nat x) in
                 let cs :=
-                  if b + P <? n1 then [mk b; mk (b + P); mk n1]
-                  else if b <? n1 then [mk b; mk n1]
-                  else [mk n1] in
+                  if N.ltb (N.add b P) n1
+                  then [mkn b; mkn (N.add b P); mkn n1]
+                  else if N.ltb b n1 then [mkn b; mkn n1]
+                  else [mkn n1] in
                 lp_scan_ref h0 tl0 l1' cap' (rev_append cs acc)
             | None => lp_scan_ref h0 tl0 l1' (S cap') acc
             end
@@ -123,7 +124,7 @@ Qed.
 (** so the candidate lists the decider sees are unchanged *)
 Theorem lp_candidates_unchanged : forall tm gas,
   lp_candidates tm gas
-  = match lp_run tm gas 0 c0 0%Z [] with
+  = match lp_run tm gas 0%N c0 0%Z [] with
     | [] => []
     | h0 :: tl =>
         lp_scan_ref h0 tl tl 6 []
@@ -132,7 +133,7 @@ Theorem lp_candidates_unchanged : forall tm gas,
     end.
 Proof.
   intros tm gas. unfold lp_candidates.
-  destruct (lp_run tm gas 0 c0 0%Z []) as [|h0 tl]; [reflexivity|].
+  destruct (lp_run tm gas 0%N c0 0%Z []) as [|h0 tl]; [reflexivity|].
   rewrite lp_scan_eq. reflexivity.
 Qed.
 
