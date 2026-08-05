@@ -98,8 +98,16 @@ Definition qhb_rungs_census : list (nat * nat) :=
 (** PROVEN-ONLY: reverted to the original 19,735 four rungs (lever C's
     wider blocks (5/6/7,2,0) also load the walk; its machines stay
     deferred). *)
+(** rung order is COST order, not parameter order: measured on the
+    residue-class sample (docs/CENSUS_RUNTIME.md, ProbeRwOrder), the
+    (3,2,0) rung costs ~3.8 s per attempt against ~0.17-0.9 s for the
+    other three, catches 16/32 against (2,2,0)'s 30/32, and is
+    exclusively needed for only 2/40 machines -- so it goes LAST,
+    where only its exclusive catches and the total failures pay it.
+    Order changes no verdict: every rung's catch is R_NeverQH and
+    each is independently verified. *)
 Definition rw_rungs_census : list (nat * nat * nat) :=
-  [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0)].
+  [(2, 2, 0); (4, 2, 0); (2, 3, 0); (3, 2, 0)].
 
 Definition rw_fuel_census : nat := 8192.
 
