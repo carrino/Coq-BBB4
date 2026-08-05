@@ -16,6 +16,7 @@ theories/Checkers/ReachSt.v
 theories/Checkers/ReachStI.v
 theories/Checkers/LiveAll.v
 theories/Checkers/ClosureExt.v
+theories/Checkers/ClosureIdx.v
 theories/Checkers/FuelClass.v
 theories/Checkers/ExactClosure.v
 theories/Checkers/NGram.v
@@ -214,6 +215,7 @@ theories/Machines/Sample_LexCert_N5.v
 theories/Tests/Cycle_Corruption.v
 theories/Tests/TCycler_Corruption.v
 theories/Tests/Closure_Corruption.v
+theories/Tests/ClosureIdx_Corruption.v
 theories/Tests/NGram_Corruption.v
 theories/Tests/ReachStI_Examples.v
 theories/Tests/NGramHist_Corruption.v

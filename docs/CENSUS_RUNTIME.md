@@ -377,6 +377,41 @@ recomputing `succs` costs), and swapping the trie for a list under
 `ceqb` is 3.2x WORSE -- the trie is the right structure for `cconf`.
 The win is short keys plus carried edges, not the container.
 
+### LANDED: `theories/Checkers/ClosureIdx.v` (axiom-free, unwired)
+
+The interned engine as a real checker, not a probe: one verified
+`edges_of` pass computes `succs` once per node, resolves each
+successor to (index, state), and fails if any successor escapes the
+pool -- so its success IS closedness (`edges_closed`).  All four
+states' rank checks then run off that one edge list, and the rank
+assignment is a PARAMETER (`mkr`), so the untrusted search is
+formally outside the soundness argument.  Soundness is not re-argued:
+`edges_of` success is converted to `closed_b`/`rank_ok` and the
+existing `closure_invariant`/`rank_find` finish it.
+`Print Assumptions idx_check_neverqh_sound` = `functional_
+extensionality_dep`, zero `Admitted`.
+
+Measured on the REAL checkers (`ProbeIdxCheck.v`), same machine, same
+gram sets, same `close` search, 200 iterations:
+
+| rung | `closure_check_neverqh` | `idx_check_neverqh` | speedup |
+|---|---|---|---|
+| (6,800) on `1RB0LA_1RC1LA_1RD0LB_1LD1RC` | 3.01 ms | 1.79 ms | **1.68x** |
+| (4,400) on `1RB0LA_1RC1LA_1RD1LB_1LD1RC` | 1.99 ms | 1.19 ms | **1.68x** |
+
+Both agree on accept AND on reject (m6 at the too-weak (4,400) rung:
+false/false).  Lower than the 2.5x stage figure because the full
+check also pays `csteps` and the per-state `cvisits` rescan, neither
+of which this round touches -- those are the next ~22%.
+
+`theories/Tests/ClosureIdx_Corruption.v` carries the negative
+controls the new machinery needs: differential accept/reject against
+the engine it replaces, fuel exhaustion, and two deliberately corrupt
+`mkr` rank searches that must not make the checker accept.
+
+NOT WIRED into `Decide.v`: wiring is a census-input change, so it
+belongs in the single batch that the next re-walk pays for.
+
 ### `PArray` is the wrong tool at this size
 
 A `PArray` visited-set indexed by the packed key measured **8.8x
@@ -401,6 +436,13 @@ also shrinks the footprint delta from ~13 declarations to ~8.
    is lifted into the VM's constant pool and evaluated ONCE: a loop
    over it reported 0.001 s at both 200 and 20,000 iterations.  Loops
    must take the varying input as a parameter.
+
+### Walk anchor for this container
+
+`ProbeWalk_K1` (8,192 pop-slots of the heavy `GG_1LC_1LB` subtree,
+realistic lookup maps): **934 s wall, 114 ms/pop, 0.82 GB peak RSS**,
+vm_compute.  Native runs ~3-5x faster on this code, so treat 114 ms
+as an upper bound and use it only for ratios.
 
 ### What this means for the ~1 h goal
 
