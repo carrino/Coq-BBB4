@@ -437,6 +437,77 @@ also shrinks the footprint delta from ~13 declarations to ~8.
    over it reported 0.001 s at both 200 and 20,000 iterations.  Loops
    must take the varying input as a parameter.
 
+### Census-wide tier cost: Amdahl, measured (2026-08-05)
+
+The ~30% ladder share above is derived from the heavy `GG_1LC_1LB`
+subtree, which is residue-rich by construction.  Replaced here with a
+census-wide measurement: `tools/census_ladder.c --csv` classifies all
+3,995,005 nodes, `tools/probes/gen_tier_cost.py` samples each tier,
+and `ProbeTierCost.v` times the REAL decider (`ProbeWalkCommon`'s
+`decider0`) on those machines.
+
+| tier | census nodes | sampled | per machine | share of decided time |
+|---|---|---|---|---|
+| T translated cycle | 2,282,976 | 40 | 15.0 ms | **71.5%** |
+| C in-place cycle | 1,029,749 | 40 | 5.35 ms | 11.5% |
+| N n-gram (all 4 rungs) | 200,064 | 64 | 17-56 ms | 12.2% |
+| H halt (expand) | 249,692 | 40 | 8.45 ms | 4.4% |
+| residue + deferred | 232,523 | 56 | ~0 (lookup hit) | ~0% |
+
+**The translated-cycle tier is 71.5% of the walk's decided-tier cost
+and the n-gram ladder is 12%.**  That inverts the earlier estimate and
+redirects the program: the packed/interned ladder work is worth ~12%
+of the walk no matter how good it gets.
+
+Two caveats, stated rather than buried.  (a) The residue's true cost
+depends on it being served by the proven/provenqh/deferred lookups,
+which `decide_easy` consults BEFORE any scan -- the D sample measured
+~0 ms (lookup hit), and the alternative (fall-through) would cost
+1550 ms/machine and blow past the observed walk total, so lookups it
+is.  (b) The model sums to ~47,700 s single-core vm against an
+observed 183,600 core-seconds native: uniform sampling within a tier
+misses heavy tails, and walk overhead and 4-way contention are not in
+the model.  Use the RATIOS, not the absolute total.
+
+### Inside the translated-cycle tier
+
+`ProbeScanSplit.v`, same sampled machines.  `decide_easy` runs
+`scan_loops` at gas 130, then `scan_loops` at gas 512 (a fresh
+`lp_run` -- the first 130 steps are simulated twice), then `scan_ct`
+(the old block: `scan_cycle`'s per-step rolling hash + `PositiveMap`
+insert of a full config snapshot, plus a separate `scan_records`
+walk).
+
+| stage | per machine (T tier) |
+|---|---|
+| `lp_candidates` @130 (simulate + scan) | 1.2 ms |
+| `scan_loops` @130 (+ verified re-checks) | 1.85 ms |
+| `lp_candidates` @512 (simulate + scan) | 16.1 ms |
+| `scan_loops` @512 (+ verified re-checks) | 17.9 ms |
+| `scan_ct` @512 (old hash+map block) | **42.6 ms** |
+
+Two things fall out:
+
+1. **The 130 -> 512 rung is superlinear**: 4x the gas costs 13.4x the
+   time (~n^1.9).  `lp_scan`'s `lp_rewind` filter is O(P) per matched
+   entry over an O(n) history, so the full-gas rung is quadratic in
+   the history.  This is the single most expensive thing the bulk
+   pays, and it is untrusted search -- the verified re-check is the
+   authority either way, so capping the rewind is sound by
+   construction.
+2. **`scan_ct` is NOT redundant** -- the tempting deletion is wrong.
+   Of the C/T machines that reach it (3/40 and 4/40), it catches
+   3/3 and 4/4 respectively: the one-pass misses them because
+   `lp_scan` is capped at 6 candidates, not for any deep reason.  So
+   ~10% of the bulk pays 42.6 ms, which is ~41% of the T tier's total
+   time.  The fix is to make the one-pass complete enough to subsume
+   it (uncapped or better-anchored), THEN drop `scan_ct` -- not to
+   drop it first.
+
+Next step, in order of Amdahl: cap `lp_rewind` (kills the quadratic),
+then widen the one-pass so `scan_ct` can go.  Both are census-input
+changes, so they belong in the batch with the `ClosureIdx` wiring.
+
 ### Walk anchor for this container
 
 `ProbeWalk_K1` (8,192 pop-slots of the heavy `GG_1LC_1LB` subtree,
@@ -446,15 +517,15 @@ as an upper bound and use it only for ratios.
 
 ### What this means for the ~1 h goal
 
-The n-gram ladder is ~4.9% of nodes and (heavy-subtree attribution)
-~30% of walk time.  Even 7.4x on its verified stage is ~1.8x on a
-catch, ~2.7x with `ng_grow` packed and `cvisits` single-passed, and
-only ~1.2-1.35x on the whole walk.  13.7 h -> ~1 h needs ~14x, and
-**that factor can only come from the 83% cycle/translated-cycle
-bulk** -- i.e. option 1 (the BB5 one-pass loop decider: no per-step
-rolling hash, no `PositiveMap` snapshot insert), which is axiom-free.
-Recommended reordering of the arc: scan tiers FIRST, n-gram packing
-second.
+The n-gram ladder is ~4.9% of nodes and -- per the census-wide tier
+measurement above, which supersedes the heavy-subtree estimate
+originally written here -- **12%** of walk time, not ~30%.  Even 7.4x
+on its verified stage is ~1.8x on a catch, ~2.7x with `ng_grow`
+packed and `cvisits` single-passed, and under 1.1x on the whole walk.
+13.7 h -> ~1 h needs ~14x, and that factor can only come from the
+**translated-cycle tier, which is 71.5% of decided-tier cost** on its
+own.  Order of work: scan tiers FIRST (specifically T), n-gram
+packing second.
 
 ## Measurement status
 
