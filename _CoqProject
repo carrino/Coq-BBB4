@@ -1,4 +1,5 @@
 -Q theories BBB4
+-arg -w -arg -abstract-large-number
 
 theories/BBB4_Statement.v
 theories/BBB4_Spec.v
@@ -296,6 +297,7 @@ theories/Tests/QHB_Lex_Probe.v
 theories/Checkers/IRules/Expr.v
 theories/Checkers/IRules/RLE.v
 theories/Checkers/IRules/Engine.v
+theories/Checkers/IRules/AnchorVisits.v
 theories/Checkers/IRules/Rules.v
 theories/Checkers/IRules/Meta.v
 theories/Machines/IRules_Examples.v

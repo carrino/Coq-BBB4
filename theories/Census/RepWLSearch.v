@@ -59,46 +59,68 @@ Definition rfold_edges {B : Type} (nodes : list rconf) (g : RAdj)
                                     (radj_get g a) acc)
             nodes init.
 
-(** ** Reachability and SCCs (quadratic, sizes are small) *)
-
-Fixpoint rreach_iter (fuel : nat) (g : RAdj) (todo : list rconf)
-    (seen : PositiveSet.t) : PositiveSet.t :=
-  match fuel with
-  | 0 => seen
-  | S f =>
-      match todo with
-      | [] => seen
-      | a :: rest =>
-          if PositiveSet.mem (rkey a) seen
-          then rreach_iter f g rest seen
-          else rreach_iter f g (radj_get g a ++ rest)
-                           (PositiveSet.add (rkey a) seen)
-      end
-  end.
-
-Definition rreach (fuel : nat) (g : RAdj) (a : rconf) : PositiveSet.t :=
-  rreach_iter fuel g [a] PositiveSet.empty.
+(** ** Reachability and SCCs (Kosaraju, linear in V+E; untrusted --
+    a wrong partition only makes the verified check reject) *)
 
 Definition rrev_adj (nodes : list rconf) (g : RAdj) : RAdj :=
   rfold_edges nodes g
     (fun r a b => radj_set r b (a :: radj_get r b))
     (PositiveMap.empty _).
 
-(** SCC of [v] = forward-reachable /\ backward-reachable *)
+Inductive rdfs_ev : Type := RDfsEnter (v : rconf) | RDfsExit (v : rconf).
+
+Fixpoint rdfs_order (fuel : nat) (g : RAdj) (stack : list rdfs_ev)
+    (seen : PositiveSet.t) (out : list rconf)
+  : PositiveSet.t * list rconf :=
+  match fuel with
+  | 0 => (seen, out)
+  | S f =>
+      match stack with
+      | [] => (seen, out)
+      | RDfsExit v :: rest => rdfs_order f g rest seen (v :: out)
+      | RDfsEnter v :: rest =>
+          if PositiveSet.mem (rkey v) seen
+          then rdfs_order f g rest seen out
+          else rdfs_order f g
+                 (map RDfsEnter (radj_get g v) ++ RDfsExit v :: rest)
+                 (PositiveSet.add (rkey v) seen) out
+      end
+  end.
+
+Definition rfinish_order (fuel : nat) (nodes : list rconf) (g : RAdj)
+  : list rconf :=
+  snd (fold_left
+    (fun '(seen, out) v =>
+       if PositiveSet.mem (rkey v) seen then (seen, out)
+       else rdfs_order fuel g [RDfsEnter v] seen out)
+    nodes (PositiveSet.empty, [])).
+
+Fixpoint rscc_collect (fuel : nat) (g : RAdj) (todo : list rconf)
+    (seen : PositiveSet.t) (comp : list rconf)
+  : PositiveSet.t * list rconf :=
+  match fuel with
+  | 0 => (seen, comp)
+  | S f =>
+      match todo with
+      | [] => (seen, comp)
+      | v :: rest =>
+          if PositiveSet.mem (rkey v) seen
+          then rscc_collect f g rest seen comp
+          else rscc_collect f g (radj_get g v ++ rest)
+                            (PositiveSet.add (rkey v) seen) (v :: comp)
+      end
+  end.
+
 Definition rscc_partition (fuel : nat) (nodes : list rconf) (g : RAdj)
   : list (list rconf) :=
+  let order := rfinish_order fuel nodes g in
   let r := rrev_adj nodes g in
-  snd (fold_left
-    (fun '(done, comps) v =>
-       if PositiveSet.mem (rkey v) done then (done, comps)
-       else
-         let fwd := rreach fuel g v in
-         let bwd := rreach fuel r v in
-         let comp := filter (fun u => PositiveSet.mem (rkey u) fwd &&
-                                      PositiveSet.mem (rkey u) bwd) nodes in
-         (fold_left (fun d u => PositiveSet.add (rkey u) d) comp done,
-          comp :: comps))
-    nodes (PositiveSet.empty, [])).
+  rev (snd (fold_left
+    (fun '(seen, comps) v =>
+       if PositiveSet.mem (rkey v) seen then (seen, comps)
+       else let '(seen', comp) := rscc_collect fuel r [v] seen [] in
+            (seen', comp :: comps))
+    order (PositiveSet.empty, []))).
 
 Definition rhas_self_edge (g : RAdj) (v : rconf) : bool :=
   existsb (fun b => Pos.eqb (rkey b) (rkey v)) (radj_get g v).
@@ -123,29 +145,31 @@ Definition rcid_get (m : PositiveMap.tree nat) (a : rconf) : nat :=
   | Some i => i | None => 0
   end.
 
-Fixpoint rset_nth (l : list nat) (i v : nat) : list nat :=
-  match l, i with
-  | [], _ => []
-  | _ :: t, 0 => v :: t
-  | h :: t, S j => h :: rset_nth t j v
+(** condensation ranks in a map keyed by component id (the old
+    list-nat + nth/rset_nth representation cost O(#comps) per edge) *)
+Definition rcrk_get (m : PositiveMap.tree nat) (i : nat) : nat :=
+  match PositiveMap.find (Pos.of_succ_nat i) m with
+  | Some v => v | None => 0
   end.
 
 (** one relaxation pass over all alive edges; returns (ranks, changed) *)
 Definition rcrank_pass (nodes : list rconf) (g : RAdj)
-    (cid : PositiveMap.tree nat) (st : list nat * bool)
-  : list nat * bool :=
+    (cid : PositiveMap.tree nat) (st : PositiveMap.tree nat * bool)
+  : PositiveMap.tree nat * bool :=
   rfold_edges nodes g
     (fun '(rk, ch) a b =>
        let ia := rcid_get cid a in
        let ib := rcid_get cid b in
        if Nat.eqb ia ib then (rk, ch)
-       else if Nat.ltb (nth ia rk 0) (S (nth ib rk 0))
-            then (rset_nth rk ia (S (nth ib rk 0)), true)
+       else if Nat.ltb (rcrk_get rk ia) (S (rcrk_get rk ib))
+            then (PositiveMap.add (Pos.of_succ_nat ia)
+                    (S (rcrk_get rk ib)) rk, true)
             else (rk, ch))
     st.
 
 Fixpoint rcrank_iter (fuel : nat) (nodes : list rconf) (g : RAdj)
-    (cid : PositiveMap.tree nat) (rk : list nat) : list nat :=
+    (cid : PositiveMap.tree nat) (rk : PositiveMap.tree nat)
+  : PositiveMap.tree nat :=
   match fuel with
   | 0 => rk
   | S f =>
@@ -157,8 +181,8 @@ Definition rcondensation_rank (nodes : list rconf) (g : RAdj)
     (comps : list (list rconf)) : list (positive * nat) :=
   let cid := rcid_map comps in
   let rk := rcrank_iter (S (length comps)) nodes g cid
-                        (repeat 0 (length comps)) in
-  map (fun v => (rkey v, nth (rcid_get cid v) rk 0)) nodes.
+                        (PositiveMap.empty nat) in
+  map (fun v => (rkey v, rcrk_get rk (rcid_get cid v))) nodes.
 
 (** node-level longest-path rank for the final acyclic graph *)
 Definition rnrank_pass (nodes : list rconf) (g : RAdj)
@@ -314,7 +338,7 @@ Definition rw_procedure (tm : TM) (L T : nat)
   let nodes := filter (fun a => negb (st_eqb (rw_state a) q)) closure in
   let g := rbuild_adj tm L T q nodes in
   let Kc := S (S (length nodes)) in
-  let rfuel := S (length nodes * 4 + 4) in
+  let rfuel := S (length nodes * 8 + 8) in
   match rproc_rounds 300 tm Kc rfuel nodes g [] with
   | Some comps => comps
   | None => []

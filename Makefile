@@ -66,15 +66,28 @@ proof: all
 # .vo FIRST, so a verify walk is always a full from-source walk -- the
 # honesty property is unchanged.
 #
-# WALK_JOBS: how many walk units run at once.  Each unit peaks ~4-5 GB
+# WALK_JOBS: how many walk units run at once.  Heavy units peak ~6.8 GB
+# under the default WALK_OCAMLRUNPARAM (11-12 GB untuned; see below)
 # (four of them OOM-killed a 16 GB box on the GG_1LC layer, signal 9,
 # 2026-07-22), so the default is computed from THIS machine:
-#   min(cores, (available RAM - 2 GB) / 5 GB), floor 1
-# -- 16 GB -> 2, 32 GB -> 6 (8+ cores), 64 GB -> core count.  Override
+#   min(cores, (available RAM - 2 GB) / 7 GB), floor 1
+# -- 16 GB -> 2, 32 GB -> 4 (4+ cores), 64 GB -> core count.  Override
 # explicitly with `make census-verify WALK_JOBS=6'.  (`make -j' does
 # not parallelize the walk -- WALK_JOBS is the knob.)
-WALK_AUTO := $(shell m=$$(awk '/MemAvailable/{print int(($$2/1048576 - 2)/5)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+WALK_AUTO := $(shell m=$$(awk '/MemAvailable/{print int(($$2/1048576 - 2)/7)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_JOBS ?= $(WALK_AUTO)
+
+# WALK_OCAMLRUNPARAM: OCaml GC tuning for the walk units.  Measured
+# 2026-08-04 on GG_1LC_1LB (32 GB desktop): untuned the unit ratchets to
+# ~11-12 GB peak; 'o=80,O=150' -> 8.19 GB; 'o=40,O=60' -> 6.76 GB, FLAT
+# from minute 3 onward, still 99% CPU.  o = GC space-overhead target (%),
+# O = compaction threshold (%) -- compaction is the only thing that
+# returns major-heap memory to the OS, so without it each unit's RSS is
+# the high-water mark of its worst pop's transient garbage.  Lower peaks
+# => more WALK_JOBS on the same RAM (the /7 GB in WALK_AUTO assumes this
+# default).  Override or disable: `make ... WALK_OCAMLRUNPARAM='.
+WALK_OCAMLRUNPARAM ?= o=40,O=60
+WALK_COQC = env OCAMLRUNPARAM='$(WALK_OCAMLRUNPARAM)' coqc -Q theories BBB4
 
 # WALK_MEMFREE (opt-in, needs GNU parallel): memory-aware launch gate,
 # the walk's analogue of the IRules order-only chains.  A new unit is
@@ -84,9 +97,9 @@ WALK_JOBS ?= $(WALK_AUTO)
 # youngest unit instead of letting the OOM killer pick one.  WALK_JOBS
 # still caps the fan-out.  Unset = plain xargs, exactly as before.
 ifeq ($(WALK_MEMFREE),)
-WALK_RUN = xargs -r -P$(WALK_JOBS) -I{} coqc -Q theories BBB4 {}
+WALK_RUN = xargs -r -P$(WALK_JOBS) -I{} $(WALK_COQC) {}
 else
-WALK_RUN = parallel --will-cite -j$(WALK_JOBS) --memfree $(WALK_MEMFREE) coqc -Q theories BBB4 {}
+WALK_RUN = parallel --will-cite -j$(WALK_JOBS) --memfree $(WALK_MEMFREE) $(WALK_COQC) {}
 endif
 
 # Walk-stamp: census .vo on disk are trustworthy walk output ONLY if they
@@ -115,14 +128,14 @@ _census-prepare:
 .PHONY: _census-prepare
 
 _census-walk: _census-prepare
-	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) (auto = min(cores, (free RAM - 2 GB)/5 GB); override with WALK_JOBS=N)"
-	[ -f theories/Census/Run_Split.vo ] || coqc -Q theories BBB4 theories/Census/Run_Split.v
-	[ -f theories/Census/Run_Split2.vo ] || coqc -Q theories BBB4 theories/Census/Run_Split2.v
+	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) (auto = min(cores, (free RAM - 2 GB)/7 GB); override with WALK_JOBS=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
+	[ -f theories/Census/Run_Split.vo ] || $(WALK_COQC) theories/Census/Run_Split.v
+	[ -f theories/Census/Run_Split2.vo ] || $(WALK_COQC) theories/Census/Run_Split2.v
 	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
 	ls theories/Census/Compute/GG_1LC_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
 	ls theories/Census/Compute/GGH_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
 	ls theories/Census/Compute/G_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
-	[ -f theories/Census/Compute/Census_Theorem.vo ] || coqc -Q theories BBB4 theories/Census/Compute/Census_Theorem.v
+	[ -f theories/Census/Compute/Census_Theorem.vo ] || $(WALK_COQC) theories/Census/Compute/Census_Theorem.v
 .PHONY: _census-walk
 
 # Guarded census: skip the walk when the committed .vo already certify this

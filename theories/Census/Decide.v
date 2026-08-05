@@ -386,6 +386,162 @@ Fixpoint last_visit (tm : TM) (gas : nat) (c : cconf) (k : nat)
       end
   end.
 
+(** ** The one-pass loop scan (BB5's loop1_decider, adapted)
+
+    UNTRUSTED candidate generator replacing the per-step hash+map
+    [scan_cycle] and the [scan_records]/[tc_pairs] record walk: ONE
+    simulation pass consing a compact per-step entry (state, read
+    symbol, head position, edge flags -- no hashing, no maps), then
+    ONE backward scan from the last configuration proposing in-place
+    ([LpCycle]) and translated ([LpTC], both directions -- no mirror
+    re-scan) candidates, each confirmed by the EXISTING verified
+    checkers ([cycle_leaf_check] / [tcycler_leaf_check]).  Mirrors
+    Coq-BB5's [find_loop1] design: state+symbol compare first, so
+    mismatched rewinds cost ~nothing. *)
+
+Record lp_ent : Type := mkLpEnt {
+  lp_q : St; lp_s : Sym; lp_pos : Z;
+  lp_rrec : bool; lp_lrec : bool; lp_k : nat }.
+
+Inductive lp_cand : Type :=
+  | LpCycle (n1 p : nat)
+  | LpTC (d : Dir) (n1 P : nat).
+
+Fixpoint lp_run (tm : TM) (gas k : nat) (c : cconf) (pos : Z)
+    (hist : list lp_ent) : list lp_ent :=
+  match gas with
+  | 0 => hist
+  | S g =>
+      let '(q, (l, h, r)) := c in
+      let e := mkLpEnt q h pos
+                 (match r with [] => true | _ :: _ => false end)
+                 (match l with [] => true | _ :: _ => false end) k in
+      match tm q h with
+      | None => hist
+      | Some tr =>
+          match cstep tm c with
+          | None => hist
+          | Some c' =>
+              let pos' := match t_dir tr with
+                          | DR => (pos + 1)%Z
+                          | DL => (pos - 1)%Z
+                          end in
+              lp_run tm g (S k) c' pos' (e :: hist)
+          end
+      end
+  end.
+
+(** pairwise state+symbol rewind of the two history chains *)
+Fixpoint lp_rewind (l0 l1 : list lp_ent) (n : nat) : bool :=
+  match n with
+  | 0 => true
+  | S m =>
+      match l0, l1 with
+      | a :: l0', b :: l1' =>
+          st_eqb (lp_q a) (lp_q b) && sym_eqb (lp_s a) (lp_s b)
+          && lp_rewind l0' l1' m
+      | _, _ => false
+      end
+  end.
+
+(** backward scan: [h0]/[tl0] fixed at the last configuration, [l1]
+    walks deeper; [cap] bounds emitted candidates (each costs one
+    verified re-check downstream).  The rewind filter is skipped when
+    the history is too short to rewind a full period (the verified
+    check is the authority either way). *)
+Fixpoint lp_scan (h0 : lp_ent) (tl0 l1 : list lp_ent) (cap : nat)
+    (acc : list lp_cand) : list lp_cand :=
+  match l1 with
+  | [] => rev acc
+  | h1 :: l1' =>
+      match cap with
+      | 0 => rev acc
+      | S cap' =>
+          let P := lp_k h0 - lp_k h1 in
+          if st_eqb (lp_q h0) (lp_q h1) && sym_eqb (lp_s h0) (lp_s h1)
+             && (if 2 * P <=? lp_k h0 then lp_rewind tl0 l1' P else true)
+          then
+            match
+              match Z.compare (lp_pos h0) (lp_pos h1) with
+              | Eq => Some (fun n1 => LpCycle n1 P)
+              | Gt => if lp_rrec h1 then Some (fun n1 => LpTC DR n1 P)
+                      else None
+              | Lt => if lp_lrec h1 then Some (fun n1 => LpTC DL n1 P)
+                      else None
+              end
+            with
+            | Some mk =>
+                (* anchor reduction: the verified checks re-simulate
+                   [n1] steps, so try phase-equivalent EARLY anchors
+                   first (they fail harmlessly if they land in the
+                   transient prefix) and the found anchor last *)
+                let n1 := lp_k h1 in
+                let b := n1 mod P in
+                let cs :=
+                  if b + P <? n1 then [mk b; mk (b + P); mk n1]
+                  else if b <? n1 then [mk b; mk n1]
+                  else [mk n1] in
+                lp_scan h0 tl0 l1' cap' (rev_append cs acc)
+            | None => lp_scan h0 tl0 l1' (S cap') acc
+            end
+          else lp_scan h0 tl0 l1' (S cap') acc
+      end
+  end.
+
+(** record-pair candidates from the SAME history (tc_pairs' rule:
+    for each of the two newest records per side, its nearest earlier
+    same-state record), covering the guarded-window translated
+    cyclers the backward scan misses -- without a separate record
+    walk.  History is newest-first, so the first flagged entries ARE
+    the newest records. *)
+Fixpoint lp_first_same (q : St) (l : list lp_ent) (side : bool)
+  : option nat :=
+  match l with
+  | [] => None
+  | e :: t =>
+      if (if side then lp_rrec e else lp_lrec e)
+      then if st_eqb (lp_q e) q then Some (lp_k e)
+           else lp_first_same q t side
+      else lp_first_same q t side
+  end.
+
+Fixpoint lp_recs (l : list lp_ent) (side : bool) (n : nat)
+  : list lp_ent :=
+  match n with
+  | 0 => []
+  | S m =>
+      match l with
+      | [] => []
+      | e :: t =>
+          if (if side then lp_rrec e else lp_lrec e)
+          then e :: lp_recs t side m
+          else lp_recs t side n
+      end
+  end.
+
+Definition lp_rec_cands (hist : list lp_ent) (side : bool)
+  : list lp_cand :=
+  let d := if side then DR else DL in
+  concat (map (fun e =>
+    match
+      match hist with
+      | _ => lp_first_same (lp_q e)
+               (filter (fun e' => lp_k e' <? lp_k e) hist) side
+      end
+    with
+    | Some a => [LpTC d a (lp_k e - a)]
+    | None => []
+    end) (lp_recs hist side 2)).
+
+Definition lp_candidates (tm : TM) (gas : nat) : list lp_cand :=
+  match lp_run tm gas 0 c0 0%Z [] with
+  | [] => []
+  | h0 :: tl =>
+      lp_scan h0 tl tl 6 []
+      ++ lp_rec_cands (h0 :: tl) true
+      ++ lp_rec_cands (h0 :: tl) false
+  end.
+
 (** ** Deferred lookup *)
 
 Definition dir_eqb (a b : Dir) : bool :=
@@ -490,6 +646,25 @@ Lemma proven_lookup_In : forall P tm,
 Proof. exact deferred_lookup_In. Qed.
 
 (** ** The pipeline *)
+
+(** ** Winning-rung hints (BB5's [tm_decider_table] pattern)
+
+    ADVISORY per-machine ladder hints generated offline by the C
+    mirror (tools/census_ladder.c): [0] = the n-gram ladder is
+    measured futile, go straight to the rank tier; [S k] = start the
+    n-gram ladder at rung [S k] (1-based; rung 1 hints are omitted at
+    generation, they save nothing).  A wrong or stale hint costs one
+    extra ladder attempt and then falls back to the FULL ladder, so
+    hints carry no soundness weight (the WF lemma quantifies over the
+    map) and no completeness weight (the fallback is total). *)
+Definition HintMap : Type := PositiveMap.tree nat.
+
+Definition hmap_of (rows : list (positive * nat)) : HintMap :=
+  fold_right (fun '(k, v) m => PositiveMap.add k v m)
+             (PositiveMap.empty _) rows.
+
+Definition hint_lookup (hm : HintMap) (tm : TM) : option nat :=
+  PositiveMap.find (tm_enc tm) hm.
 
 Section Pipeline.
 
@@ -606,38 +781,39 @@ Definition try_qhb (tm : TM) : bool :=
 Definition try_rw (tm : TM) : bool :=
   existsb (fun '(L, T, t) => rw_tier tm L T t rw_fuel) rw_rungs.
 
-Definition decide_easy (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
-  (* tier H: halting *)
-  match find_halt tm halt_gas 0 c0 with
-  | Some (n, s, i) => if S n <=? B then R_Halt s i else R_Unknown
-  | None =>
-  (* tier C: in-place cycles *)
-  let cyc :=
-    match scan_cycle tm loop_gas with
-    | Some (n1, p) => (n1 <=? B) && cycle_leaf_check tm n1 p
-    | None => false
-    end in
-  if cyc then R_Leaf else
-  (* tier T: translated cycles.  One record walk serves both sides:
-     the mirror machine's right records are the left records (same
-     steps and states), so its candidates come from [recL]. *)
-  let '(recR, recL) := scan_records tm loop_gas in
-  if try_tc_cands tm false (tc_pairs recR) then R_Leaf else
-  if try_tc_cands (mirror_tm tm) true (tc_pairs recL) then R_Leaf else
-  (* tier P: machines with a committed [NeverQuasiHaltsSt] theorem
-     (the proven list); a hit is decided directly, ahead of the
-     deferred fallthrough, so it never enters the deferred queue *)
-  if deferred_lookup pm tm then R_NeverQH else
-  (* tier PQ: machines with a committed census-grade quasihalting theorem
-     (the proven-QH list); a hit is decided R_QH directly, ahead of the
-     deferred fallthrough, so it never enters the deferred queue *)
-  if deferred_lookup qm tm then R_QH else
-  (* tier D first: deferred machines skip the (expensive, failing)
-     n-gram ladder -- the deferred list is measured to be exactly the
-     ladder's residue plus the holdouts *)
-  if deferred_lookup dm tm then R_Deferred else
-  (* tier N: n-gram ladder, then tier R: the ranking rules (a)/(b),
-     then tier Q: wrapped QHBound, then tier W: RepWL *)
+(** *** Tiers C+T at one gas rung
+
+    In-place cycle scan + verified re-check, then translated cycles
+    on both sides (one record walk serves both: the mirror machine's
+    right records are the left records -- same steps and states).
+    [decide_easy] escalates this block: the cheap rung [halt_gas]
+    first (catches the short-cycle bulk at ~1/4 the scan cost), the
+    full [loop_gas] rung only for its survivors. *)
+Definition scan_ct (tm : TM) (gas : nat) : bool :=
+  (match scan_cycle tm gas with
+   | Some (n1, p) => (n1 <=? B) && cycle_leaf_check tm n1 p
+   | None => false
+   end) ||
+  (let '(recR, recL) := scan_records tm gas in
+   try_tc_cands tm false (tc_pairs recR)
+   || try_tc_cands (mirror_tm tm) true (tc_pairs recL)).
+
+(** verified confirmation of a one-pass candidate *)
+Definition lp_check (tm : TM) (cand : lp_cand) : bool :=
+  match cand with
+  | LpCycle n1 p => (n1 <=? B) && cycle_leaf_check tm n1 p
+  | LpTC DR n1 P =>
+      (n1 <=? B) && tcycler_leaf_check tm n1 P (tc_measure_W tm n1 P)
+  | LpTC DL n1 P =>
+      (n1 <=? B) &&
+      tcycler_leaf_check (mirror_tm tm) n1 P
+        (tc_measure_W (mirror_tm tm) n1 P)
+  end.
+
+Definition scan_loops (tm : TM) (gas : nat) : bool :=
+  existsb (lp_check tm) (lp_candidates tm gas).
+
+Definition try_ladder (tm : TM) : QHResult :=
   match try_ngram ng_rungs tm with
   | R_NeverQH => R_NeverQH
   | _ =>
@@ -648,6 +824,43 @@ Definition decide_easy (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
           else if try_rw tm then R_NeverQH
           else R_Unknown
       end
+  end.
+
+Definition decide_easy (pm qm dm : DeferredMap) (hm : HintMap)
+    (tm : TM) : QHResult :=
+  (* tier H: halting *)
+  match find_halt tm halt_gas 0 c0 with
+  | Some (n, s, i) => if S n <=? B then R_Halt s i else R_Unknown
+  | None =>
+  (* lookup tiers FIRST: proven / proven-QH / deferred machines skip
+     the scans entirely (a gas-512 scan block costs ~15-25 ms native;
+     a lookup is microseconds).  Tier P: committed [NeverQuasiHaltsSt]
+     theorems; tier PQ: committed census-grade quasihalting theorems;
+     tier D: the deferred list -- all three ahead of the (expensive,
+     failing-on-them) scans and ladders. *)
+  if deferred_lookup pm tm then R_NeverQH else
+  if deferred_lookup qm tm then R_QH else
+  if deferred_lookup dm tm then R_Deferred else
+  (* tiers C+T: the one-pass loop scan, escalating rungs; the old
+     scan block stays as a full-gas fallback so no catch is lost *)
+  if scan_loops tm halt_gas then R_Leaf else
+  if scan_loops tm loop_gas then R_Leaf else
+  if scan_ct tm loop_gas then R_Leaf else
+  (* tier N: n-gram ladder, then tier R: the ranking rules (a)/(b),
+     then tier Q: wrapped QHBound, then tier W: RepWL -- with the
+     winning-rung hint consulted first (fallback = the full ladder) *)
+  match hint_lookup hm tm with
+  | Some 0 =>
+      match try_rank rank_rungs tm with
+      | R_NeverQH => R_NeverQH
+      | _ => try_ladder tm
+      end
+  | Some (S k) =>
+      match try_ngram (skipn k ng_rungs) tm with
+      | R_NeverQH => R_NeverQH
+      | _ => try_ladder tm
+      end
+  | None => try_ladder tm
   end
   end.
 
@@ -681,6 +894,50 @@ Proof.
   destruct (tcycler_leaf_check_sound_L tm n1 P _ H) as [Hnh Hq].
   split; [exact Hnh|].
   exact (qhbound_mono n1 B tm Hb Hq).
+Qed.
+
+Lemma scan_ct_sound : forall tm gas,
+  scan_ct tm gas = true -> NonHalt tm /\ QHBound B tm.
+Proof.
+  intros tm gas H.
+  unfold scan_ct in H.
+  apply orb_prop in H; destruct H as [H | H].
+  - destruct (scan_cycle tm gas) as [[n1 p]|]; [|discriminate].
+    apply andb_prop in H as [Hb Hc].
+    apply Nat.leb_le in Hb.
+    destruct (cycle_leaf_check_sound tm n1 p Hc) as [Hnh Hq].
+    split; [exact Hnh|].
+    exact (qhbound_mono n1 B tm Hb Hq).
+  - destruct (scan_records tm gas) as [recR recL].
+    apply orb_prop in H; destruct H as [H | H].
+    + exact (try_tc_cands_sound tm (tc_pairs recR) H).
+    + exact (try_tc_cands_sound_L tm (tc_pairs recL) H).
+Qed.
+
+Lemma lp_check_sound : forall tm cand,
+  lp_check tm cand = true -> NonHalt tm /\ QHBound B tm.
+Proof.
+  intros tm cand H.
+  destruct cand as [n1 p | [|] n1 P];
+    unfold lp_check in H;
+    apply andb_prop in H as [Hb H];
+    apply Nat.leb_le in Hb.
+  - destruct (cycle_leaf_check_sound tm n1 p H) as [Hnh Hq].
+    split; [exact Hnh | exact (qhbound_mono n1 B tm Hb Hq)].
+  - destruct (tcycler_leaf_check_sound_L tm n1 P _ H) as [Hnh Hq].
+    split; [exact Hnh | exact (qhbound_mono n1 B tm Hb Hq)].
+  - destruct (tcycler_leaf_check_sound tm n1 P _ H) as [Hnh Hq].
+    split; [exact Hnh | exact (qhbound_mono n1 B tm Hb Hq)].
+Qed.
+
+Lemma scan_loops_sound : forall tm gas,
+  scan_loops tm gas = true -> NonHalt tm /\ QHBound B tm.
+Proof.
+  intros tm gas H.
+  unfold scan_loops in H.
+  apply existsb_exists in H.
+  destruct H as (cand & _ & Hc).
+  exact (lp_check_sound tm cand Hc).
 Qed.
 
 Lemma try_ngram_cases : forall rungs tm,
@@ -752,10 +1009,11 @@ Proof.
   exact (rw_tier_sound tm L T t rw_fuel H).
 Qed.
 
-Theorem decide_easy_WF :
+Theorem decide_easy_WF : forall hm,
   QHDecider_WF B D
-    (decide_easy (dmap_of Prov) (dmap_of ProvQH) (dmap_of D)).
+    (decide_easy (dmap_of Prov) (dmap_of ProvQH) (dmap_of D) hm).
 Proof.
+  intro hm.
   intro tm.
   unfold decide_easy.
   destruct (find_halt tm halt_gas 0 c0) as [[[n s] i]|] eqn:Eh.
@@ -765,23 +1023,6 @@ Proof.
     destruct (find_halt_sound tm halt_gas 0 c0 n s i (eq_refl) Eh)
       as (tp & Hst & Hhd & Hnone).
     exists n, tp. auto. }
-  (* cycle tier *)
-  destruct (match scan_cycle tm loop_gas with
-            | Some (n1, p) => (n1 <=? B) && cycle_leaf_check tm n1 p
-            | None => false
-            end) eqn:Ec.
-  { destruct (scan_cycle tm loop_gas) as [[n1 p]|]; [|discriminate].
-    apply andb_prop in Ec as [Hb Hc].
-    apply Nat.leb_le in Hb.
-    destruct (cycle_leaf_check_sound tm n1 p Hc) as [Hnh Hq].
-    split; [exact Hnh|].
-    exact (qhbound_mono n1 B tm Hb Hq). }
-  destruct (scan_records tm loop_gas) as [recR recL].
-  (* tc tier, right then mirrored left *)
-  destruct (try_tc_cands tm false (tc_pairs recR)) eqn:Et.
-  { exact (try_tc_cands_sound tm (tc_pairs recR) Et). }
-  destruct (try_tc_cands (mirror_tm tm) true (tc_pairs recL)) eqn:Em.
-  { exact (try_tc_cands_sound_L tm (tc_pairs recL) Em). }
   (* proven tier: a hit is never-quasihalting by the [Forall] cert *)
   destruct (deferred_lookup (dmap_of Prov) tm) eqn:Ep.
   { rewrite Forall_forall in HP.
@@ -794,16 +1035,46 @@ Proof.
   (* deferred tier *)
   destruct (deferred_lookup (dmap_of D) tm) eqn:Ed.
   { apply deferred_lookup_In; exact Ed. }
-  (* ngram, rank, wrapped-QHBound, RepWL tiers *)
-  destruct (try_ngram_cases ng_rungs tm) as [[En Hn] | En]; rewrite En.
-  - exact Hn.
-  - destruct (try_rank_cases rank_rungs tm) as [[Er Hr] | Er]; rewrite Er.
+  (* cycle/TC tiers: one-pass rungs, then the old full-gas fallback *)
+  destruct (scan_loops tm halt_gas) eqn:El1.
+  { exact (scan_loops_sound tm halt_gas El1). }
+  destruct (scan_loops tm loop_gas) eqn:El2.
+  { exact (scan_loops_sound tm loop_gas El2). }
+  destruct (scan_ct tm loop_gas) eqn:Ec2.
+  { exact (scan_ct_sound tm loop_gas Ec2). }
+  (* the ladder, behind the advisory hint dispatch: every path ends
+     in a tier whose soundness lemma is hint-independent *)
+  assert (Hlad : match try_ladder tm with
+                 | R_NeverQH => NeverQuasiHaltsSt tm
+                 | R_QH => NonHalt tm /\ QHBound B tm /\ QuasiHaltsSt tm
+                 | R_Unknown => True
+                 | _ => False
+                 end).
+  { unfold try_ladder.
+    destruct (try_ngram_cases ng_rungs tm) as [[En Hn] | En]; rewrite En.
+    - exact Hn.
+    - destruct (try_rank_cases rank_rungs tm) as [[Er Hr] | Er]; rewrite Er.
+      + exact Hr.
+      + destruct (try_qhb tm) eqn:Eq.
+        * exact (try_qhb_sound tm Eq).
+        * destruct (try_rw tm) eqn:Ew.
+          -- exact (try_rw_sound tm Ew).
+          -- exact I. }
+  destruct (hint_lookup hm tm) as [[|k]|].
+  - (* hint 0: rank first *)
+    destruct (try_rank_cases rank_rungs tm) as [[Er Hr] | Er]; rewrite Er.
     + exact Hr.
-    + destruct (try_qhb tm) eqn:Eq.
-      * exact (try_qhb_sound tm Eq).
-      * destruct (try_rw tm) eqn:Ew.
-        -- exact (try_rw_sound tm Ew).
-        -- exact I.
+    + destruct (try_ladder tm); cbn in Hlad;
+        solve [exact Hlad | destruct Hlad | exact I].
+  - (* hint S k: start the ngram ladder at rung S k *)
+    destruct (try_ngram_cases (skipn k ng_rungs) tm) as [[En Hn] | En];
+      rewrite En.
+    + exact Hn.
+    + destruct (try_ladder tm); cbn in Hlad;
+        solve [exact Hlad | destruct Hlad | exact I].
+  - (* no hint *)
+    destruct (try_ladder tm); cbn in Hlad;
+      solve [exact Hlad | destruct Hlad | exact I].
 Qed.
 
 End Pipeline.

@@ -1010,7 +1010,7 @@ Fixpoint breplayKP (tm : TM) (tbl : BTbl) (blks : list (nat * list Sym))
         | Some (c', F) =>
             match breplayKP tm tbl blks lo cfuel rules endt sent fuel'
                     stepped c' with
-            | Some (cend, F') => Some (cend, F ++ F')
+            | Some (cend, F') => Some (cend, tr_union F F')
             | None => None
             end
         | None =>
@@ -1018,7 +1018,7 @@ Fixpoint breplayKP (tm : TM) (tbl : BTbl) (blks : list (nat * list Sym))
             | Some (c', F) =>
                 match breplayKP tm tbl blks lo cfuel rules endt sent fuel'
                         true (bcanon lo tbl blks c') with
-                | Some (cend, F') => Some (cend, F ++ F')
+                | Some (cend, F') => Some (cend, tr_union F F')
                 | None => None
                 end
             | None => None
@@ -1069,7 +1069,9 @@ Proof.
       destruct (Happ r0 Fr c c' Hin Ha) as (n1 & Hn1 & HR1).
       split; [exact Hende|].
       exists (n1 + n2)%nat. split.
-      * exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+      * eapply (Reach_set _ _ (Fr ++ F'));
+          [intro t; rewrite tr_union_in, in_app_iff; tauto|].
+        exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
       * intro; lia.
     + destruct (beng_stepS tm tbl blks lo (fst sent) (snd sent) cfuel c)
         as [[c' Fe]|] eqn:Hstep; [|discriminate].
@@ -1086,7 +1088,9 @@ Proof.
       rewrite <- (bcanon_bsemX lo tbl blks c' nu XL XR Hraw Hb) in HR1.
       split; [exact Hende|].
       exists (n1 + n2)%nat. split.
-      * exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+      * eapply (Reach_set _ _ (Fe ++ F'));
+          [intro t; rewrite tr_union_in, in_app_iff; tauto|].
+        exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
       * intro; lia.
 Qed.
 

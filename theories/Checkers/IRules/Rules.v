@@ -219,6 +219,53 @@ Fixpoint try_rules (lo : list Z) (rules : list (Rule * list Tr))
       end
   end.
 
+(** deduplicating fired-set union: [Tr] has at most 8 values, so the
+    accumulated fired set stays tiny instead of growing one entry per
+    replay step (measured: ~300k-entry lists, the replay's dominant
+    allocation).  [Reach] only depends on [F] up to membership
+    ([Reach_set]), so the swap is semantics-preserving. *)
+Definition tr_eqb (a b : Tr) : bool :=
+  st_eqb (fst a) (fst b) && sym_eqb (snd a) (snd b).
+
+Lemma tr_eqb_spec : forall a b, tr_eqb a b = true <-> a = b.
+Proof.
+  intros [qa sa] [qb sb]; unfold tr_eqb; simpl.
+  split.
+  - intro H; apply andb_prop in H as [H1 H2].
+    apply st_eqb_spec in H1; apply sym_eqb_spec in H2; congruence.
+  - intro H; injection H as <- <-.
+    apply andb_true_intro; split;
+      [apply st_eqb_spec | apply sym_eqb_spec]; reflexivity.
+Qed.
+
+Definition tr_mem (t : Tr) (F : list Tr) : bool :=
+  existsb (tr_eqb t) F.
+
+Definition tr_union (F F' : list Tr) : list Tr :=
+  fold_right (fun t acc => if tr_mem t acc then acc else t :: acc) F' F.
+
+Lemma tr_mem_in : forall t F, tr_mem t F = true <-> In t F.
+Proof.
+  intros t F; unfold tr_mem; rewrite existsb_exists.
+  split.
+  - intros (x & Hx & He). apply tr_eqb_spec in He. subst; assumption.
+  - intro H. exists t. split; [assumption | apply tr_eqb_spec; reflexivity].
+Qed.
+
+Lemma tr_union_in : forall t F F',
+  In t (tr_union F F') <-> In t F \/ In t F'.
+Proof.
+  intros t F F'; unfold tr_union.
+  induction F as [|h F IH]; simpl; [tauto|].
+  destruct (tr_mem h (fold_right
+              (fun t0 acc => if tr_mem t0 acc then acc else t0 :: acc)
+              F' F)) eqn:Hm.
+  - apply tr_mem_in in Hm. rewrite IH.
+    split; [tauto|].
+    intros [[-> | HF] | HF']; rewrite <- IH in *; tauto.
+  - simpl. rewrite IH. tauto.
+Qed.
+
 Fixpoint replay (tm : TM) (lo : list Z) (rules : list (Rule * list Tr))
     (endt : SCfg -> bool) (fuel : nat) (stepped : bool) (c : SCfg)
   : option (SCfg * list Tr) :=
@@ -230,14 +277,14 @@ Fixpoint replay (tm : TM) (lo : list Z) (rules : list (Rule * list Tr))
         match try_rules lo rules c with
         | Some (c', F) =>
             match replay tm lo rules endt fuel' stepped c' with
-            | Some (cend, F') => Some (cend, F ++ F')
+            | Some (cend, F') => Some (cend, tr_union F F')
             | None => None
             end
         | None =>
             match eng_step tm lo c with
             | Some (c', F) =>
                 match replay tm lo rules endt fuel' true c' with
-                | Some (cend, F') => Some (cend, F ++ F')
+                | Some (cend, F') => Some (cend, tr_union F F')
                 | None => None
                 end
             | None => None
@@ -311,7 +358,9 @@ Proof.
       destruct (Happ r0 Fr c c' Hin Ha) as (n1 & Hn1 & HR1).
       split; [exact Hende|].
       exists (n1 + n2)%nat. split.
-      * exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+      * apply (Reach_set tm (tr_union Fr F') (Fr ++ F'));
+          [intro t; rewrite tr_union_in, in_app_iff; tauto|].
+        exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
       * intro; lia.
     + destruct (eng_step tm lo c) as [[c' Fe]|] eqn:Hstep;
         [|discriminate].
@@ -324,7 +373,9 @@ Proof.
         as (n1 & Hn1 & HR1).
       split; [exact Hende|].
       exists (n1 + n2)%nat. split.
-      * exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+      * apply (Reach_set tm (tr_union Fe F') (Fe ++ F'));
+          [intro t; rewrite tr_union_in, in_app_iff; tauto|].
+        exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
       * intro; lia.
 Qed.
 

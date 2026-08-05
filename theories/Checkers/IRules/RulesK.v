@@ -545,14 +545,14 @@ Fixpoint replayK (tm : TM) (lo : list Z) (rules : list (Rule * list Tr))
         match try_rulesK lo rules c with
         | Some (c', F) =>
             match replayK tm lo rules endt fuel' stepped c' with
-            | Some (cend, F') => Some (cend, F ++ F')
+            | Some (cend, F') => Some (cend, tr_union F F')
             | None => None
             end
         | None =>
             match eng_step tm lo c with
             | Some (c', F) =>
                 match replayK tm lo rules endt fuel' true c' with
-                | Some (cend, F') => Some (cend, F ++ F')
+                | Some (cend, F') => Some (cend, tr_union F F')
                 | None => None
                 end
             | None => None
@@ -596,7 +596,9 @@ Proof.
       destruct (Happ r0 Fr c c' Hin Ha) as (n1 & Hn1 & HR1).
       split; [exact Hende|].
       exists (n1 + n2)%nat. split.
-      * exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+      * apply (Reach_set tm (tr_union Fr F') (Fr ++ F'));
+          [intro t; rewrite tr_union_in, in_app_iff; tauto|].
+        exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
       * intro; lia.
     + destruct (eng_step tm lo c) as [[c' Fe]|] eqn:Hstep;
         [|discriminate].
@@ -609,7 +611,9 @@ Proof.
         as (n1 & Hn1 & HR1).
       split; [exact Hende|].
       exists (n1 + n2)%nat. split.
-      * exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
+      * apply (Reach_set tm (tr_union Fe F') (Fe ++ F'));
+          [intro t; rewrite tr_union_in, in_app_iff; tauto|].
+        exact (Reach_compose _ _ _ _ _ _ _ _ HR1 HR2).
       * intro; lia.
 Qed.
 
