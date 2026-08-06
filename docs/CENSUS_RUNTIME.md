@@ -974,10 +974,13 @@ printing (disagreements, catches):
 Rung (3,2,0) takes a 200-machine prefix rather than all 600: it is
 ~20x the cost of (2,2,0) per attempt.  Nothing else is capped.
 
-These are cross-checks on `rw_tier_unchanged`, not the proof --
-2,000 machine-rung comparisons, zero disagreements.  All 19
-`Machines/RerootStage` files also rebuild, i.e. 77 `rw_tier ... = true`
-kernel checks against the interned checker.
+Run twice -- once against the certificate-interning wiring, once
+against the shipped pool-passing wiring -- with **identical catch
+counts both times**, so the two wirings agree with `rw_tier_ref` and
+with each other.  These are cross-checks on `rw_tier_unchanged`, not
+the proof: 2,000 machine-rung comparisons per run, zero
+disagreements.  All 19 `Machines/RerootStage` files also rebuild, i.e.
+77 `rw_tier ... = true` kernel checks against the interned checker.
 
 #### What is left in the rw tier
 
