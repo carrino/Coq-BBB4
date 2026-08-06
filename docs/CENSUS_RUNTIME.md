@@ -851,6 +851,132 @@ realistic lookup maps): **934 s wall, 114 ms/pop, 0.82 GB peak RSS**,
 vm_compute.  Native runs ~3-5x faster on this code, so treat 114 ms
 as an upper bound and use it only for ratios.
 
+### LANDED: ClosureIdx-lex, wired into rw_tier
+
+`theories/Checkers/ClosureIdx.v` now carries the lexicographic half,
+and `rw_tier` runs on it.  What the interned checker removes, per
+attempt:
+
+- `rw_succs` recomputed for every closure node once per premise state
+  -- four sweeps become one, off the `edges_of` rows;
+- inside `lex_edge_ok`, one `rconf_enc` plus one big-key
+  `PositiveMap.find` per certificate component per EDGE ENDPOINT
+  (`2*c*e` per state) -- now one `rconf_enc` per closure NODE, shared
+  by every component (`vals_of`), materialised once per state into a
+  small-key map (`vmap_of`), after which the check touches no context
+  at all;
+- the eager `||`/`&&` in `lex_edge_ok`/`comp_strict`/`comp_noninc`
+  (nested `if`s: same boolean function, decided prefixes stop);
+- the checker's own `close`.  `rw_tier` had already built that closure
+  for the search, so `rw_check_neverqh_idx_pool` takes it as an
+  argument.  The pool stays untrusted -- `edges_of` re-derives
+  closedness (`edges_closed`) and `idx_of a0` re-derives root
+  membership -- so a wrong pool can only make the check fail.
+
+Not "sound relative to": `lex_check_idx_spec` proves the interned
+checker **equal** to `closure_check_neverqh_lex` on the denoted
+certificate, so `rw_tier_unchanged : rw_tier = rw_tier_ref` is a
+theorem (`edges_of_closed`, the converse of `edges_closed`, is what
+makes equality rather than an implication provable).  It is axiom-free;
+`rw_tier_sound` still reduces to `rw_check_neverqh_sound`, so the
+axiom footprint does not move.
+
+#### Measured (`ProbeRwIdx`, vm_compute)
+
+The 32 rw-catchable machines of `ProbeTierCost`'s residue sample --
+the SAME sample as `ProbeRwWin`, so these rows sit next to its table.
+Catch counts identical to the old code everywhere (30/16/30/30 per
+rung; 0 on the 8 machines nothing catches).
+
+| stage / rung | old | interned | |
+|---|---|---|---|
+| verified stage, (2,2,0) | 2.365 s | 1.197 s | **1.98x** |
+| whole attempt, (2,2,0) | 3.986 s | 2.814 s | 1.42x |
+| whole attempt, (4,2,0) | 22.67 s | 15.32 s | 1.48x |
+| whole attempt, (2,3,0) | 4.319 s | 3.154 s | 1.37x |
+| whole attempt, (3,2,0) | 126.0 s | 125.3 s | 1.006x |
+
+Failing attempts (the 8 machines no rung catches) barely move --
+0.99x / 1.06x / 1.02x at (2,2,0) / (4,2,0) / (2,3,0) -- which is
+consistent: a failing attempt is dominated by the untrusted search
+running to exhaustion, and that was already interned last round.
+
+#### The flat (3,2,0) row is `close`, not the checker
+
+`ProbeRwStage` splits that rung's verified stage over the same 32
+machines.  Per-row arithmetic written out, per the rule this doc
+adopted after the residue row was misread:
+
+| stage, rung (3,2,0), 32 machines | total | per machine |
+|---|---|---|
+| `close` alone | 116.9 s | 3.65 s |
+| `close` + `edges_of` | 109.0 s | 3.41 s |
+| certificate denotation (`rpm_of`/`rps_of`), all 4 states | 0.116 s | 3.6 ms |
+| the same as `epres` | 0.109 s | 3.4 ms |
+| whole old checker (`ProbeRwIdx`) | 118.9 s | 3.72 s |
+
+(`close` alone reading SLOWER than `close`+`edges_of` is a ~7%
+container-contention artefact -- those two rows ran with different
+numbers of sibling `coqc` processes.  It bounds the noise; it does not
+change the conclusion.)
+
+**~98% of that rung's verified stage is `close`**, and the certificate
+handling everything downstream of it is ~0.1% -- so there was nothing
+there for interning to remove.  `ProbeRwWin`'s reading ("on winning
+attempts over the big L=3 closures the VERIFIED CHECKER dominates --
+it re-runs `close`, rebuilds the trie twice, recomputes succs per
+state") named the right stage and the wrong cause inside it: it is the
+`close` re-run alone.  That is exactly what the pool-passing form
+deletes, and it is the only part of this round that touches that rung.
+
+The deeper fact the split exposes: at (3,2,0) roughly half the
+machines that reach the rung burn all 8,192 fuel units and get `None`
+back, and `rw_tier` then returns false without ever calling the
+checker.  A fuel-exhausting closure search is the rung's real cost,
+and no amount of verified-stage work can reach it.
+
+#### Big-sample catch-diff
+
+`gen_rwdiff.sh` over `ProbeTierBig`'s 600-machine residue sample
+(`census_ladder --csv`, `TIER_SCALE=15`), `rw_tier` vs `rw_tier_ref`,
+printing (disagreements, catches):
+
+| rung | machines | result |
+|---|---|---|
+| (2,2,0) | 600 | **(0, 418)** |
+| (3,2,0) | 200 | **(0, 107)** |
+| (4,2,0) | 600 | **(0, 443)** |
+| (2,3,0) | 600 | **(0, 424)** |
+
+Rung (3,2,0) takes a 200-machine prefix rather than all 600: it is
+~20x the cost of (2,2,0) per attempt.  Nothing else is capped.
+
+These are cross-checks on `rw_tier_unchanged`, not the proof --
+2,000 machine-rung comparisons, zero disagreements.  All 19
+`Machines/RerootStage` files also rebuild, i.e. 77 `rw_tier ... = true`
+kernel checks against the interned checker.
+
+#### What is left in the rw tier
+
+In Amdahl order, measured rather than guessed:
+
+1. **The (3,2,0) closure search.** ~30% of residue machines fall
+   through (2,2,0) into it (418/600 caught at rung 1), it costs ~3.9 s
+   an attempt against ~0.13 s for rung 1, and ~98% of that is `close`.
+   It dominates the rw slice outright.  Levers: make `rw_succs` at
+   L=3 cheaper; or detect the diverging abstractions earlier instead
+   of spending 8,192 fuel units to learn nothing.  The second changes
+   which machines are caught, so it needs the catch-diff above, not
+   just a proof.
+2. The certificate's tables are still keyed by `rconf_enc`, so
+   `vals_of` pays `#pool * #comps` big-key lookups per state.  Having
+   the search emit index-keyed tables would halve that, but it changes
+   the `rwcomp` denotation and therefore every `RerootStage` proof --
+   not worth it until row 1 stops dominating.
+3. The same ClosureIdx-lex treatment for the qhb tier
+   (`try_qhb_lex_at` re-runs `ng_grow`+`ng_explore` per (state, rung)),
+   which is the other half of the residue-class burn.
+
 ### What this means for the ~1 h goal
 
 The n-gram ladder is ~4.9% of nodes and -- per the census-wide tier
@@ -862,6 +988,13 @@ packed and `cvisits` single-passed, and under 1.1x on the whole walk.
 **translated-cycle tier, which is 71.5% of decided-tier cost** on its
 own.  Order of work: scan tiers FIRST (specifically T), n-gram
 packing second.
+
+STALE, kept for the record: the T-tier conclusion in the paragraph
+above is superseded twice over.  The residue row was misread (see
+"CORRECTION" above): the walk is ~85% residue-class ladder burn, and
+after the scan work landed the T tier is ~6%.  The scan arc IS
+finished -- it just was not where the 14x lived.  The live order of
+work is the one in "What is left in the rw tier" above.
 
 ## Measurement status
 

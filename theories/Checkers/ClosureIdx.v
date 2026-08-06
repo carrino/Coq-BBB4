@@ -356,8 +356,8 @@ Section IdxEngine.
       Measured motivation (docs/CENSUS_RUNTIME.md, [ProbeRwWin]):
       interning the untrusted RepWL search sped its FAILING attempts
       up 2.33-4.4x but left WINNING attempts flat, because on a
-      winning attempt the verified checker is ~43% of the cost and
-      interning had not touched it.
+      winning attempt the verified stage is a large share of the cost
+      and interning had not touched it.
 
       Interning the certificate closes that gap:
 
