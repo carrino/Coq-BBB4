@@ -38,6 +38,7 @@
 
 From Coq Require Import Arith Lia Bool List ZArith.
 From BBB4 Require Import BBB4_Statement CTape PosEnc Records Closure.
+From BBB4.Checkers Require Import ClosureIdx.
 Import ListNotations.
 
 (** ** Items, configurations, denotation *)
@@ -1394,6 +1395,56 @@ Definition rw_check_neverqh (tm : TM) (L T t fuel : nat)
   | None => false
   end.
 
+(** ** The interned checker
+
+    Same certificates, same verdict, one graph walk.  [rw_comp_denote]
+    already reads its rank table and its gate through [rconf_enc], and
+    its measure delta already depends only on the edge's source, so
+    every component is literally a [ClosureIdx.epres] -- [rw_epres]
+    just re-tags it, and [rw_epres_denote] is [reflexivity].
+
+    The point is what [lex_check_idx] then does with it: one
+    [rw_succs] sweep instead of four, and ONE [rconf_enc] per pool
+    node instead of one per component per edge endpoint per state.
+    Both checkers are proved equal, so no census verdict moves. *)
+
+Definition rw_epres (tm : TM) (c : rwcomp) : epres rconf :=
+  match c with
+  | RwRankE phi => ERank rconf (rpm_of phi)
+  | RwMeasE m K phi gate =>
+      EMeas rconf (rw_mval m) (fun a => rw_delta tm m a) K
+            (rpm_of phi) (rps_of gate)
+  end.
+
+Lemma rw_epres_denote : forall tm c,
+  epres_denote rconf rconf_enc (rw_epres tm c) = rw_comp_denote tm c.
+Proof. intros tm c. destruct c; reflexivity. Qed.
+
+Definition rw_check_neverqh_idx (tm : TM) (L T t fuel : nat)
+    (cert : St -> list rwcomp) : bool :=
+  (1 <=? L) && (2 <=? T) &&
+  match csteps tm t c0 with
+  | Some cc =>
+      lex_check_idx tm rconf rconf_enc rw_state (rw_succs tm L T)
+        t fuel (rw_seed L T cc) (fun q => map (rw_epres tm) (cert q))
+  | None => false
+  end.
+
+Lemma rw_check_neverqh_idx_spec : forall tm L T t fuel cert,
+  rw_check_neverqh_idx tm L T t fuel cert
+  = rw_check_neverqh tm L T t fuel cert.
+Proof.
+  intros tm L T t fuel cert.
+  unfold rw_check_neverqh_idx, rw_check_neverqh.
+  destruct ((1 <=? L) && (2 <=? T)); [|reflexivity].
+  cbn [andb].
+  destruct (csteps tm t c0) as [cc|]; [|reflexivity].
+  apply (lex_check_idx_spec tm rconf rconf_enc rw_state (rw_succs tm L T)
+           rconf_enc_inj).
+  intros q. rewrite map_map. apply map_ext. intros c.
+  symmetry. apply rw_epres_denote.
+Qed.
+
 Theorem rw_check_neverqh_sound : forall tm L T t fuel cert,
   rw_check_neverqh tm L T t fuel cert = true ->
   NeverQuasiHaltsSt tm.
@@ -1419,4 +1470,15 @@ Proof.
     + exact I.
     + intros a cc0 a' cc0' sl Hca Hca' Hstep Es HInl.
       exact (rw_meas_exact tm m a cc0 cc0' Hca Hstep).
+Qed.
+
+(** Soundness of the interned checker is the old soundness: it accepts
+    exactly what [rw_check_neverqh] accepts. *)
+Theorem rw_check_neverqh_idx_sound : forall tm L T t fuel cert,
+  rw_check_neverqh_idx tm L T t fuel cert = true ->
+  NeverQuasiHaltsSt tm.
+Proof.
+  intros tm L T t fuel cert H.
+  apply (rw_check_neverqh_sound tm L T t fuel cert).
+  rewrite <- rw_check_neverqh_idx_spec. exact H.
 Qed.

@@ -683,7 +683,17 @@ Definition rw_procedure (tm : TM) (L T : nat)
     the checker's [implb] guard so absent states don't trigger a
     doomed search), and feeds the EXISTING verified checker.  The
     checker re-derives the closure and re-checks every edge, so the
-    search carries no soundness. *)
+    search carries no soundness.
+
+    The checker is the INTERNED one ([rw_check_neverqh_idx], i.e.
+    ClosureIdx-lex).  It is proved equal to [rw_check_neverqh]
+    ([rw_check_neverqh_idx_spec]), so this is a pure speed change:
+    one [rw_succs] sweep over the closure instead of one per premise
+    state, and one [rconf_enc] per closure node instead of one per
+    certificate component per edge endpoint per state.  Measured
+    motivation: on WINNING rw attempts the verified checker is ~43%
+    of the cost and the interned search left it untouched
+    (docs/CENSUS_RUNTIME.md, [ProbeRwWin]). *)
 
 Definition rw_tier (tm : TM) (L T t fuel : nat) : bool :=
   match csteps tm t c0 with
@@ -694,7 +704,7 @@ Definition rw_tier (tm : TM) (L T t fuel : nat) : bool :=
                   [] PositiveSet.empty [a0] with
       | None => false
       | Some Sl =>
-          rw_check_neverqh tm L T t fuel
+          rw_check_neverqh_idx tm L T t fuel
             (fun q =>
                if cvisits tm c0 t q
                   || existsb (fun a => st_eqb (rw_state a) q) Sl
@@ -712,5 +722,38 @@ Proof.
   destruct (close rconf rconf_enc (rw_succs tm L T) fuel
                   [] PositiveSet.empty [rw_seed L T cc]) as [Sl|];
     [|discriminate].
-  exact (rw_check_neverqh_sound tm L T t fuel _ H).
+  exact (rw_check_neverqh_idx_sound tm L T t fuel _ H).
+Qed.
+
+(** The old (non-interned) tier, kept for the A/B probes and as the
+    reference the equality below is stated against.  Nothing in the
+    proof depends on it. *)
+Definition rw_tier_ref (tm : TM) (L T t fuel : nat) : bool :=
+  match csteps tm t c0 with
+  | None => false
+  | Some cc =>
+      let a0 := rw_seed L T cc in
+      match close rconf rconf_enc (rw_succs tm L T) fuel
+                  [] PositiveSet.empty [a0] with
+      | None => false
+      | Some Sl =>
+          rw_check_neverqh tm L T t fuel
+            (fun q =>
+               if cvisits tm c0 t q
+                  || existsb (fun a => st_eqb (rw_state a) q) Sl
+               then rw_procedure tm L T Sl q
+               else [])
+      end
+  end.
+
+(** The wiring changes no verdict, on any machine, at any rung. *)
+Theorem rw_tier_unchanged : forall tm L T t fuel,
+  rw_tier tm L T t fuel = rw_tier_ref tm L T t fuel.
+Proof.
+  intros tm L T t fuel. unfold rw_tier, rw_tier_ref.
+  destruct (csteps tm t c0) as [cc|]; [|reflexivity].
+  destruct (close rconf rconf_enc (rw_succs tm L T) fuel
+                  [] PositiveSet.empty [rw_seed L T cc]) as [Sl|];
+    [|reflexivity].
+  apply rw_check_neverqh_idx_spec.
 Qed.

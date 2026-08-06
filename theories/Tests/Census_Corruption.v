@@ -195,6 +195,29 @@ Proof. vm_compute. reflexivity. Qed.
 Example rw_gate_T : rw_tier rwm 2 1 0 2000 = false.
 Proof. vm_compute. reflexivity. Qed.
 
+(* [rw_tier] now feeds the INTERNED checker (ClosureIdx-lex).
+   [rw_tier_unchanged] proves the two agree everywhere; these pin it by
+   computation on the machines above, so a future edit that breaks the
+   agreement is caught here and not only by the proof. *)
+Example rw_idx_same_catch :
+  (rw_tier rwm 2 2 0 200000, rw_tier_ref rwm 2 2 0 200000) = (true, true).
+Proof. vm_compute. reflexivity. Qed.
+
+Example rw_idx_same_reject_qh :
+  (rw_tier qhbm 2 2 0 2000, rw_tier_ref qhbm 2 2 0 2000) = (false, false).
+Proof. vm_compute. reflexivity. Qed.
+
+Example rw_idx_same_reject_halt :
+  (rw_tier (fun _ _ => None) 2 2 0 2000,
+   rw_tier_ref (fun _ _ => None) 2 2 0 2000) = (false, false).
+Proof. vm_compute. reflexivity. Qed.
+
+Example rw_idx_same_gates :
+  (rw_tier rwm 0 2 0 2000, rw_tier_ref rwm 0 2 0 2000,
+   rw_tier rwm 2 1 0 2000, rw_tier_ref rwm 2 1 0 2000)
+  = (false, false, false, false).
+Proof. vm_compute. reflexivity. Qed.
+
 (* a never-QH machine must never pass the quasihalting QHBound tier *)
 Example qhb_rejects_neverqh :
   try_qhb 2000 200000 512 qhb_rungs_t rwm = false.

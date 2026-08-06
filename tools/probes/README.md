@@ -31,6 +31,34 @@ coqc -Q theories BBB4 -Q tools/probes BBB4 tools/probes/ProbeWalkCommon.v
   `GGH_0RB_1LC_0LB` subtree.
 - `ProbeWalk_K<K>.v` — walk `K * 8192` pop-slots of that subtree under
   `Time`/`/usr/bin/time -v` for time-per-pop and peak-RSS curves.
+- `ProbeTierCost.v` — GENERATED (committed, 240 machines): per-tier
+  cost of the real decider on machines sampled from the C mirror's
+  full-census classification.
+- `ProbeRwIdx.v` / `ProbeRwStage.v` — the ClosureIdx-lex A/B on the
+  RepWL tier: isolated verified stage (certificate replayed from data
+  into both checkers), whole attempt per rung, and the rung ladder as
+  the walk actually pays it.
+
+### The big samples (generated, NOT committed — 24k lines)
+
+`ProbeTierBig.v` is the validation-sized sample the catch-diffs run
+on; `ProbeNatRef.v`, `ProbeExactRec.v` and `ProbeCtKill.v` import its
+`grp_C` / `grp_T` / `grp_N6`, and the RepWL catch-diffs its `grp_RES`.
+Regenerate with:
+
+```sh
+gcc -O2 -o /tmp/census_ladder tools/census_ladder.c
+/tmp/census_ladder --holdouts tools/BBB4_holdouts_3713.txt --csv /tmp/T.csv
+TIER_SCALE=15 TIER_ONLY=C,T,N6,- \
+  python3 tools/probes/gen_tier_cost.py /tmp/T.csv tools/probes/ProbeTierBig.v
+```
+
+(600 C + 600 T + 240 N6 + 600 residue; the ladder walk is ~100 s
+single-core, the sample compile ~8 min.)
+
+`gen_rwdiff.sh` then emits `ProbeRwDiff_1..4.v`, one per RepWL rung, so
+the four catch-diffs go on four cores.  Each prints
+`(disagreements, catches)`; the first component must be 0.
 
 vm_compute is ~3-5x native_compute on this code; treat absolute times
 as upper bounds and ratios as transferable.
