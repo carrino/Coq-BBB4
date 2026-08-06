@@ -901,6 +901,29 @@ Failing attempts (the 8 machines no rung catches) barely move --
 consistent: a failing attempt is dominated by the untrusted search
 running to exhaustion, and that was already interned last round.
 
+#### The number that scales to the walk: 1.14x on the rw ladder
+
+Rungs in isolation are not what the walk pays: `existsb` over
+`rw_rungs_census` short-circuits, so a machine caught at (2,2,0) never
+reaches the expensive (3,2,0).  `ProbeRwLadder` runs the real ladder
+over all 40 residue machines of the sample, old checker vs interned,
+alternating and uncontended, twice each:
+
+| | run 1 | run 2 | mean | per machine |
+|---|---|---|---|---|
+| `rw_tier_ref` ladder | 182.7 s | 192.4 s | 187.6 s | 4.69 s |
+| `rw_tier` ladder | 165.0 s | 165.3 s | 165.2 s | 4.13 s |
+
+**1.14x**, catches 32/32 identical on all four rows.  (The old rows
+vary 5% run to run; the interned rows agree to 0.15%.  Read the ratio
+as 1.14x +- ~0.03.)
+
+Carried to the walk at this doc's ~75% rw-attempt share, that is
+**~1.10x overall** -- 13.7 h to ~12.5 h.  Stated plainly because the
+sketch this round came from projected ~2x on the dominant tier: the
+2x is real and landed, but it landed on a stage that is not what the
+tier is bound by.  The next section is why.
+
 #### The flat (3,2,0) row is `close`, not the checker
 
 `ProbeRwStage` splits that rung's verified stage over the same 32
@@ -962,12 +985,13 @@ In Amdahl order, measured rather than guessed:
 
 1. **The (3,2,0) closure search.** ~30% of residue machines fall
    through (2,2,0) into it (418/600 caught at rung 1), it costs ~3.9 s
-   an attempt against ~0.13 s for rung 1, and ~98% of that is `close`.
-   It dominates the rw slice outright.  Levers: make `rw_succs` at
-   L=3 cheaper; or detect the diverging abstractions earlier instead
-   of spending 8,192 fuel units to learn nothing.  The second changes
-   which machines are caught, so it needs the catch-diff above, not
-   just a proof.
+   an attempt against 0.13-0.30 s for rung 1 (catching / failing), and
+   ~98% of that is `close`.  It dominates the rw slice outright, and
+   it is the reason the ladder moved 1.14x while its verified stage
+   moved 1.98x.  Levers: make `rw_succs` at L=3 cheaper; or detect the
+   diverging abstractions earlier instead of spending 8,192 fuel units
+   to learn nothing.  The second changes which machines are caught, so
+   it needs the catch-diff above, not just a proof.
 2. The certificate's tables are still keyed by `rconf_enc`, so
    `vals_of` pays `#pool * #comps` big-key lookups per state.  Having
    the search emit index-keyed tables would halve that, but it changes
