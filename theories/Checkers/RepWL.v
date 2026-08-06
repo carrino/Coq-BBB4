@@ -1430,6 +1430,14 @@ Definition rw_check_neverqh_idx (tm : TM) (L T t fuel : nat)
   | None => false
   end.
 
+Lemma rw_epres_cert : forall tm (cert : St -> list rwcomp) (q : St),
+  map (rw_comp_denote tm) (cert q)
+  = map (epres_denote rconf rconf_enc) (map (rw_epres tm) (cert q)).
+Proof.
+  intros tm cert q. rewrite map_map. apply map_ext. intros c.
+  symmetry. apply rw_epres_denote.
+Qed.
+
 Lemma rw_check_neverqh_idx_spec : forall tm L T t fuel cert,
   rw_check_neverqh_idx tm L T t fuel cert
   = rw_check_neverqh tm L T t fuel cert.
@@ -1441,8 +1449,38 @@ Proof.
   destruct (csteps tm t c0) as [cc|]; [|reflexivity].
   apply (lex_check_idx_spec tm rconf rconf_enc rw_state (rw_succs tm L T)
            rconf_enc_inj).
-  intros q. rewrite map_map. apply map_ext. intros c.
-  symmetry. apply rw_epres_denote.
+  intros q. apply rw_epres_cert.
+Qed.
+
+(** The pool-passing form: [Census/RepWLSearch.rw_tier] already ran
+    [close] to feed its untrusted search, so this stops the verified
+    stage exploring the same closure a second time.  The pool is
+    untrusted -- [edges_of] re-derives closedness and [idx_of] the
+    root -- and the equality below is what the census leans on. *)
+Definition rw_check_neverqh_idx_pool (tm : TM) (L T t : nat)
+    (pool : list rconf) (cert : St -> list rwcomp) : bool :=
+  (1 <=? L) && (2 <=? T) &&
+  match csteps tm t c0 with
+  | Some cc =>
+      lex_check_idx_pool tm rconf rconf_enc rw_state (rw_succs tm L T)
+        t (rw_seed L T cc) pool (fun q => map (rw_epres tm) (cert q))
+  | None => false
+  end.
+
+Lemma rw_check_neverqh_idx_pool_spec : forall tm L T t fuel cc pool cert,
+  csteps tm t c0 = Some cc ->
+  close rconf rconf_enc (rw_succs tm L T) fuel
+        [] PositiveSet.empty [rw_seed L T cc] = Some pool ->
+  rw_check_neverqh_idx_pool tm L T t pool cert
+  = rw_check_neverqh tm L T t fuel cert.
+Proof.
+  intros tm L T t fuel cc pool cert Ecc Ecl.
+  unfold rw_check_neverqh_idx_pool, rw_check_neverqh.
+  destruct ((1 <=? L) && (2 <=? T)); [|reflexivity].
+  cbn [andb]. rewrite Ecc.
+  apply (lex_check_idx_pool_spec tm rconf rconf_enc rw_state
+           (rw_succs tm L T) rconf_enc_inj t fuel _ pool _ _ Ecl).
+  intros q. apply rw_epres_cert.
 Qed.
 
 Theorem rw_check_neverqh_sound : forall tm L T t fuel cert,
@@ -1481,4 +1519,17 @@ Proof.
   intros tm L T t fuel cert H.
   apply (rw_check_neverqh_sound tm L T t fuel cert).
   rewrite <- rw_check_neverqh_idx_spec. exact H.
+Qed.
+
+Theorem rw_check_neverqh_idx_pool_sound : forall tm L T t fuel cc pool cert,
+  csteps tm t c0 = Some cc ->
+  close rconf rconf_enc (rw_succs tm L T) fuel
+        [] PositiveSet.empty [rw_seed L T cc] = Some pool ->
+  rw_check_neverqh_idx_pool tm L T t pool cert = true ->
+  NeverQuasiHaltsSt tm.
+Proof.
+  intros tm L T t fuel cc pool cert Ecc Ecl H.
+  apply (rw_check_neverqh_sound tm L T t fuel cert).
+  rewrite <- (rw_check_neverqh_idx_pool_spec tm L T t fuel cc pool cert Ecc Ecl).
+  exact H.
 Qed.

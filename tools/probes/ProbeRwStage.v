@@ -98,16 +98,4 @@ Time Eval vm_compute in sumf CD s_edges 0.
 Time Eval vm_compute in sumf CD s_old 0.
 Time Eval vm_compute in sumf CD s_new 0.
 
-(* --- the ladder as the walk actually pays it ---------------------- *)
-
-(* Run.v's rw_rungs_census order, existsb short-circuit *)
-Definition ladder_new (tm : TM) : bool :=
-  existsb (fun r => let '(L, T, t) := r in rw_tier tm L T t F8k) rwr.
-Definition ladder_old (tm : TM) : bool :=
-  existsb (fun r => let '(L, T, t) := r in rw_tier_ref tm L T t F8k) rwr.
-
-Definition lad (l : list TM) (f : TM -> bool) : nat :=
-  sumf l (fun tm => if f tm then 1 else 0) 0.
-
-Time Eval vm_compute in lad grp_RES ladder_old.
-Time Eval vm_compute in lad grp_RES ladder_new.
+(* the ladder as the walk actually pays it is ProbeRwLadder.v *)

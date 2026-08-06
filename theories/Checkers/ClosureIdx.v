@@ -520,25 +520,43 @@ Section IdxEngine.
   Definition vlex_ok (rows : list erow) (q : St) (vm : vmap) : bool :=
     forallb (vrow_ok q vm) rows.
 
-  (** *** The checker *)
+  (** *** The checker
 
-  Definition lex_check_idx (t fuel : nat) (a0 : A)
+      [lex_check_idx_pool] takes the pool as an ARGUMENT so a caller
+      that already ran [close] -- as [Census/RepWLSearch.rw_tier] does,
+      to feed its untrusted search -- does not pay for the exploration
+      twice.  The pool is untrusted input like everything else: the
+      [edges_of] pass re-derives closedness ([edges_closed]) and
+      [idx_of a0] re-derives root membership ([idx_of_In]), so nothing
+      about the pool is taken on trust.
+
+      [lex_check_idx] is the self-contained form, for callers that do
+      not have a pool in hand. *)
+
+  Definition lex_check_idx_pool (t : nat) (a0 : A) (pool : list A)
       (cert : St -> list epres) : bool :=
     match csteps tm t c0 with
-    | Some ct =>
-        match close A a_enc succs fuel [] PositiveSet.empty [a0] with
-        | Some pool =>
-            match edges_of (build_imap pool) pool with
+    | Some _ =>
+        match edges_of (build_imap pool) pool with
+        | None => false
+        | Some rows =>
+            match idx_of (build_imap pool) a0 with
             | None => false
-            | Some rows =>
+            | Some _ =>
                 let ip := ipool pool in
                 forallb (fun q =>
                   implb (cvisits tm c0 t q
                          || existsb (fun row => st_eqb (row_state row) q) rows)
                         (vlex_ok rows q (vmap_of (cert q) ip))) all_St
             end
-        | None => false
         end
+    | None => false
+    end.
+
+  Definition lex_check_idx (t fuel : nat) (a0 : A)
+      (cert : St -> list epres) : bool :=
+    match close A a_enc succs fuel [] PositiveSet.empty [a0] with
+    | Some pool => lex_check_idx_pool t a0 pool cert
     | None => false
     end.
 
@@ -741,19 +759,21 @@ Section IdxEngine.
     apply vlex_edge_ok_spec.
   Qed.
 
-  Lemma lex_check_idx_spec : forall t fuel a0 cert cert',
+  Lemma lex_check_idx_pool_spec : forall t fuel a0 pool cert cert',
+    close A a_enc succs fuel [] PositiveSet.empty [a0] = Some pool ->
     (forall q, cert' q = map epres_denote (cert q)) ->
-    lex_check_idx t fuel a0 cert
+    lex_check_idx_pool t a0 pool cert
     = closure_check_neverqh_lex tm A a_enc a_state succs t fuel a0 cert'.
   Proof.
-    intros t fuel a0 cert cert' Hc.
-    unfold lex_check_idx, closure_check_neverqh_lex.
+    intros t fuel a0 pool cert cert' Ecl Hc.
+    unfold lex_check_idx_pool, closure_check_neverqh_lex.
     destruct (csteps tm t c0) as [ct|]; [|reflexivity].
-    destruct (close A a_enc succs fuel [] PositiveSet.empty [a0])
-      as [pool|] eqn:Ecl; [|reflexivity].
+    rewrite Ecl.
     destruct (close_root_spec A a_enc succs a_enc_inj fuel a0 pool Ecl)
-      as [_ Hcl].
+      as [Hmem Hcl].
     destruct (edges_of_closed pool Hcl) as (rows & Erow). rewrite Erow.
+    destruct (build_imap_hit pool a0 (mem_In A a_enc a_enc_inj a0 pool Hmem))
+      as (i0 & Ei0). rewrite Ei0.
     apply forallb_ext. intros q.
     rewrite (map_opt_existsb A erow (edge_row (build_imap pool))
                (fun row => st_eqb (row_state row) q)
@@ -765,6 +785,19 @@ Section IdxEngine.
       destruct (succs a); [|discriminate].
       destruct (map_opt (tag (build_imap pool)) l); [|discriminate].
       injection Hrow as <-. reflexivity.
+  Qed.
+
+  Lemma lex_check_idx_spec : forall t fuel a0 cert cert',
+    (forall q, cert' q = map epres_denote (cert q)) ->
+    lex_check_idx t fuel a0 cert
+    = closure_check_neverqh_lex tm A a_enc a_state succs t fuel a0 cert'.
+  Proof.
+    intros t fuel a0 cert cert' Hc. unfold lex_check_idx.
+    destruct (close A a_enc succs fuel [] PositiveSet.empty [a0])
+      as [pool|] eqn:Ecl.
+    - apply (lex_check_idx_pool_spec t fuel a0 pool cert cert' Ecl Hc).
+    - unfold closure_check_neverqh_lex. rewrite Ecl.
+      destruct (csteps tm t c0); reflexivity.
   Qed.
 
   (** ** Soundness
