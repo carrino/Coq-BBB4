@@ -924,6 +924,12 @@ sketch this round came from projected ~2x on the dominant tier: the
 2x is real and landed, but it landed on a stage that is not what the
 tier is bound by.  The next section is why.
 
+CONFIRMED 2026-08-07: the re-walk came in at **12.15 h** walk-only,
+i.e. 1.10-1.13x depending on how the baseline's base build is
+treated.  See "Full re-walk #2" below -- it is the first projection
+in this doc to survive contact with a full walk, and why it did is
+the useful part.
+
 #### The flat (3,2,0) row is `close`, not the checker
 
 `ProbeRwStage` splits that rung's verified stage over the same 32
@@ -1021,7 +1027,152 @@ above is superseded twice over.  The residue row was misread (see
 "CORRECTION" above): the walk is ~85% residue-class ladder burn, and
 after the scan work landed the T tier is ~6%.  The scan arc IS
 finished -- it just was not where the 14x lived.  The live order of
-work is the one in "What is left in the rw tier" above.
+work is "Next steps, in Amdahl order" at the end of this doc.
+
+## Full re-walk #2, measured end-to-end (2026-08-07)
+
+`make -j4 census-verify WALK_JOBS=4` on the same 32 GB desktop, with
+ClosureIdx-lex wired into `rw_tier`.  Wall clock taken from the
+walk-stamp (`_census-prepare` writes it at walk start) to
+`Census_Theorem.vo`, so this row is **walk-only** and excludes the
+base build:
+
+| | |
+|---|---|
+| walk start | 2026-08-06 10:30:10 -0700 |
+| `Census_Theorem.vo` | 2026-08-06 22:38:58 -0700 |
+| **walk-only wall** | **12 h 08 m 48 s (12.15 h)** |
+
+Against the 13.7 h of "Full re-walk, measured end-to-end
+(2026-08-05)": **1.13x** at face value, **1.10x** after subtracting
+that run's ~20 min base build (it was `time make census`, which
+includes `all`).  Projected was ~1.10x / ~12.5 h, so the walk came in
+~20 min BETTER than projected.
+
+`Print Assumptions census_decided` printed exactly
+`functional_extensionality_dep` and nothing else.  154 walk units +
+`CENSUS_VO_HASH` committed in `c93f3f1`.
+
+Precision caveat, so the number is not over-read: one run per
+configuration, twelve hours apart, on a desktop whose other load was
+not controlled, and the old ladder rows vary ~5% run to run.  Read
+1.10-1.13x as "about 1.1x", not as three significant figures.
+
+### Why this projection held when the previous two did not
+
+| round | projected from | projected | delivered |
+|---|---|---|---|
+| packed int63 | verified **stage** | 7.4x | <1.1x on the walk |
+| ClosureIdx-lex | verified **stage** | ~2x | 1.14x on the tier |
+| ClosureIdx-lex | `ProbeRwLadder`, real **ladder** | ~1.10x | **1.10-1.13x** |
+
+Same round, two projections, and only the one measured at the level
+of its claim survived.  The rule, now with a positive control rather
+than only failures behind it:
+
+> Project from a measurement taken at the level of the claim.  A
+> stage speedup is not a tier speedup, and a tier speedup is not a
+> walk speedup, until each is measured as such.
+
+This is why row 3 below is gated on a probe rather than started.
+
+## Next steps, in Amdahl order (2026-08-07)
+
+Rows 2-4 are "What is left in the rw tier" above, re-ordered by
+expected value per unit of risk and with probe prerequisites made
+explicit.  Row 1 is new.  Row 5 is the part that does not close.
+
+### 1. Sweep the pipeline for eager-orb traps
+
+Cheapest thing on this list and the only one with no proof risk at
+all.  `try_qhb` computed `existsb(plain ladder) || existsb(lex
+ladder)`; under CBV both sides evaluate, so every plain-ladder catch
+paid a full lex ladder -- per-rung `ng_grow` + `ng_explore` per state
+-- for nothing.  Fixed in `da893c8` with a nested `if`: boolean value
+unchanged, WF proof compiled untouched, `Census_Corruption`'s pinned
+qhb verdicts green.
+
+That is the third eager-evaluation finding in this doc (see also
+"LANDED: the quadratic was an eager `andb`, not an algorithm" and the
+probe's own eager-orb artefact in "The winning-attempt A/B"), and two
+of the three were real and expensive.  Nothing else in `Decide.v` /
+`Run.v` has been audited for the pattern.
+
+It is a source read, needs no compute, and any hit is a free win: the
+boolean value cannot change, so no proof moves and no catch count
+moves.  Do it before committing to anything that needs a round.
+
+### 2. The (3,2,0) closure search
+
+The actual lever.  ~30% of residue machines fall through (2,2,0) into
+it (418/600 caught at rung 1), it costs ~3.9 s an attempt against
+0.13-0.30 s for rung 1, and ~98% of that is `close`.  It dominates
+the rw slice outright and is the whole reason the ladder moved 1.14x
+while its verified stage moved 1.98x.
+
+The structural fact from `ProbeRwStage` is the one to design against:
+
+> roughly half the machines that reach the rung burn all 8,192 fuel
+> units and get `None` back, after which `rw_tier` returns false
+> without ever calling the checker.
+
+That half is not a constant factor to shave -- it is work that
+produces no verdict at all.  Two sub-levers, in risk order:
+
+1. **Make `rw_succs` at L=3 cheaper.**  Constant factor, catch set
+   provably cannot move, proof-neutral.  Safe first move.
+2. **Detect diverging abstractions early** and abort instead of
+   spending the remaining fuel.  Higher yield, but it changes WHICH
+   machines are caught.  Conservative in the safe direction -- a lost
+   catch falls through to the next rung, so no verdict can become
+   wrong -- which makes it a coverage question, not a soundness one.
+   Measure it with the `gen_rwdiff.sh` catch-diff harness, not with a
+   proof.
+
+Dead end, do not revisit: you cannot dodge the rung by reordering.
+`719a245` tried it and `da893c8` reverted it -- (2,2,0)'s only misses
+are exactly the (3,2,0)-exclusive machines, so the original order was
+already optimal and demoting (3,2,0) only inserted failing attempts
+in front of its wins.  `Run.v` documents why the order stands.
+
+### 3. The qhb tier -- probe BEFORE committing a round
+
+`try_qhb_lex_at` re-runs `ng_grow`+`ng_explore` per (state, rung),
+and it is the other half of the residue-class burn, so the
+ClosureIdx-lex treatment is the obvious next application.
+
+That is also precisely the reasoning that produced this round's
+1.14x-not-2x.  Run a `ProbeQhbStage` split first -- the `ProbeRwStage`
+recipe pointed at qhb.  If qhb turns out `ng_explore`-bound the way
+rw was `close`-bound, the treatment is worth ~nothing there either,
+and that costs a probe to learn instead of a round.
+
+### 4. Index-keyed certificate tables -- still deferred
+
+`vals_of` pays `#pool * #comps` big-key lookups per state because the
+certificate's tables are keyed by `rconf_enc`.  Having the search
+emit index-keyed tables would halve that, but it changes the `rwcomp`
+denotation and therefore every `RerootStage` proof.  Unchanged
+verdict from last round: not worth it until row 2 stops dominating.
+
+### 5. What does not close, stated plainly
+
+Rows 1-4 plausibly total 1.3-2x.  13.7 h -> ~1 h is ~14x.  The
+arithmetic does not close with rung-by-rung work, and saying so here
+is cheaper than discovering it a fourth time.
+
+The disproportion to attack is that **~85% of the walk is
+residue-class ladder burn against ~4.9% of nodes**.  The bulk is
+already fine; a few thousand hard machines eat the walk.  So the 14x
+has to come from the residue getting SMALLER, not just faster -- a
+cheap decider that catches a chunk of those machines before they
+reach the expensive rungs at all.  That is the BB5-shaped insight
+from the packed arc's write-up pointed at the tail instead of the
+bulk: BB5 decides 96.7% of 181M machines in one <=130-step pass, and
+our equivalent bulk is not what is costing us.
+
+That is a different kind of round from rows 1-4 and should be scoped
+deliberately rather than drifted into.
 
 ## Measurement status
 
