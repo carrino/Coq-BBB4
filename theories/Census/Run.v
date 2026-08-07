@@ -98,6 +98,15 @@ Definition qhb_rungs_census : list (nat * nat) :=
 (** PROVEN-ONLY: reverted to the original 19,735 four rungs (lever C's
     wider blocks (5/6/7,2,0) also load the walk; its machines stay
     deferred). *)
+(** rung order, MEASURED (docs/CENSUS_RUNTIME.md, ProbeRwWin): the
+    expensive (3,2,0) rung second looks wrong until you see the catch
+    sets -- (2,2,0) catches 30 of the 32 rw-catchable sample machines
+    and its only misses are exactly the machines ONLY (3,2,0)
+    catches, so any machine reaching the second rung either wins
+    there or fails everything.  Demoting (3,2,0) was tried and
+    reverted: it only adds failing (4,2,0)+(2,3,0) attempts in front
+    of those wins.  Order changes no verdict: every rung's catch is
+    independently verified R_NeverQH. *)
 Definition rw_rungs_census : list (nat * nat * nat) :=
   [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0)].
 
