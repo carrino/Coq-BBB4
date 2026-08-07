@@ -767,6 +767,39 @@ Definition hmap_of (rows : list (positive * nat)) : HintMap :=
 Definition hint_lookup (hm : HintMap) (tm : TM) : option nat :=
   PositiveMap.find (tm_enc tm) hm.
 
+(** ** Short-circuiting [existsb]
+
+    [List.existsb] is [fun a l => f a || existsb f l] and [orb] is a
+    FUNCTION, so under call-by-value BOTH arguments are evaluated:
+    [existsb] runs [f] on EVERY element even after one returned true.
+    Every rung ladder below is an [existsb] over rungs whose bodies are
+    whole tier attempts, so each ladder was paying its FULL cost on
+    every machine -- a machine caught by the RepWL rung (2,2,0) still
+    ran (3,2,0), (4,2,0) and (2,3,0) to exhaustion.
+
+    Measured (tools/probes/ProbeStrict.v, the ProbeTierCost residue
+    sample, vm_compute): the [existsb] rw ladder costs 157.7 s and the
+    four rungs in isolation cost 4.5 + 127.5 + 19.6 + 4.5 = 156.1 s --
+    i.e. the ladder is exactly the SUM of its rungs.  The short-circuit
+    below costs 34.7 s for the identical 32 catches.
+
+    This is the same trap as [lp_rewind]'s [andb] and [try_qhb]'s
+    [orb], and the same fix shape: [anyb] is provably the SAME boolean
+    function ([anyb_existsb]), so no candidate, no catch and no census
+    verdict can move -- only the cost. *)
+Fixpoint anyb {A : Type} (f : A -> bool) (l : list A) : bool :=
+  match l with
+  | [] => false
+  | x :: r => if f x then true else anyb f r
+  end.
+
+Lemma anyb_existsb : forall (A : Type) (f : A -> bool) (l : list A),
+  anyb f l = existsb f l.
+Proof.
+  intros A f l. induction l as [| x r IH]; simpl; [reflexivity|].
+  destruct (f x); simpl; [reflexivity | exact IH].
+Qed.
+
 Section Pipeline.
 
 Variable B : nat.              (** global score bound *)
@@ -794,7 +827,7 @@ Hypothesis HPQ :
 
 Definition try_tc_cands (tm : TM) (mirrored : bool)
     (cands : list (nat * nat)) : bool :=
-  existsb (fun '(n1, P) =>
+  anyb (fun '(n1, P) =>
     (n1 <=? B) &&
     tcycler_leaf_check tm n1 P (tc_measure_W tm n1 P)) cands.
 
@@ -873,10 +906,15 @@ Definition try_qhb_lex_at (tm : TM) (q : St) (nt : nat * nat) : bool :=
     [ng_grow] + [ng_explore] per state) for nothing.  Same trap as
     the [lp_rewind] one (Tests/Loop1Scan_Regression.v), same shape of
     fix; the boolean value is unchanged. *)
+(** [anyb], not [existsb], at all three levels: the candidate states,
+    the plain-acyclicity rungs and the lex rungs.  The nested [if] was
+    already there (that fix landed in [da893c8]); it only stopped the
+    LEX ladder running after the PLAIN one had won, while each ladder
+    still ran all nine of its own rungs to exhaustion. *)
 Definition try_qhb (tm : TM) : bool :=
-  existsb (fun q =>
-      if existsb (try_qhb_at tm q) qhb_rungs then true
-      else existsb (try_qhb_lex_at tm q) qhb_rungs)
+  anyb (fun q =>
+      if anyb (try_qhb_at tm q) qhb_rungs then true
+      else anyb (try_qhb_lex_at tm q) qhb_rungs)
     (filter (qh_candidate tm) all_St).
 
 (** *** Tier W: RepWL block-list abstraction
@@ -885,8 +923,14 @@ Definition try_qhb (tm : TM) : bool :=
     the certificates come from the in-Coq RepWLSearch, never from
     per-machine tables. *)
 
+(** [anyb], not [existsb]: this is the ladder the measurement above is
+    about.  With [existsb] every machine reaching this tier paid all
+    four rungs -- 4.5x the cost of the ladder Run.v's rung-order
+    comment describes.  The order comment still stands, and now it is
+    actually load-bearing: with the short-circuit, a machine caught at
+    (2,2,0) really does skip the 127 s (3,2,0) rung. *)
 Definition try_rw (tm : TM) : bool :=
-  existsb (fun '(L, T, t) => rw_tier tm L T t rw_fuel) rw_rungs.
+  anyb (fun '(L, T, t) => rw_tier tm L T t rw_fuel) rw_rungs.
 
 (** *** Tiers C+T at one gas rung
 
@@ -917,8 +961,13 @@ Definition lp_check (tm : TM) (cand : lp_cand) : bool :=
         (tc_measure_W (mirror_tm tm) n1 P)
   end.
 
+(** [anyb], not [existsb]: every [lp_check] is a full re-simulation of
+    [n1] and [n1 + p] steps, and [lp_candidates] emits up to ~14 of
+    them, so on a CAUGHT machine -- which is the whole C/T bulk, ~95%
+    of the walk's nodes -- every candidate after the winning one was
+    pure waste. *)
 Definition scan_loops (tm : TM) (gas : nat) : bool :=
-  existsb (lp_check tm) (lp_candidates tm gas).
+  anyb (lp_check tm) (lp_candidates tm gas).
 
 Definition try_ladder (tm : TM) : QHResult :=
   match try_ngram ng_rungs tm with
@@ -983,6 +1032,7 @@ Lemma try_tc_cands_sound : forall tm cands,
 Proof.
   intros tm cands H.
   unfold try_tc_cands in H.
+  rewrite anyb_existsb in H.
   apply existsb_exists in H.
   destruct H as ([n1 P] & _ & H).
   apply andb_prop in H as [Hb H].
@@ -998,6 +1048,7 @@ Lemma try_tc_cands_sound_L : forall tm cands,
 Proof.
   intros tm cands H.
   unfold try_tc_cands in H.
+  rewrite anyb_existsb in H.
   apply existsb_exists in H.
   destruct H as ([n1 P] & _ & H).
   apply andb_prop in H as [Hb H].
@@ -1046,6 +1097,7 @@ Lemma scan_loops_sound : forall tm gas,
 Proof.
   intros tm gas H.
   unfold scan_loops in H.
+  rewrite anyb_existsb in H.
   apply existsb_exists in H.
   destruct H as (cand & _ & Hc).
   exact (lp_check_sound tm cand Hc).
@@ -1081,9 +1133,14 @@ Lemma try_qhb_sound : forall tm,
 Proof.
   intros tm H.
   unfold try_qhb in H.
+  rewrite anyb_existsb in H.
   apply existsb_exists in H.
   destruct H as (q & _ & H).
+  (* [if b then true else c] IS [orb b c] by definition, so the nested
+     [if] still meets [orb_prop]; each branch is then an [anyb] over
+     that ladder's rungs. *)
   apply orb_prop in H; destruct H as [H | H];
+    rewrite anyb_existsb in H;
     apply existsb_exists in H;
     destruct H as ([n t] & _ & H);
     unfold try_qhb_at, try_qhb_lex_at in H;
@@ -1115,6 +1172,7 @@ Lemma try_rw_sound : forall tm,
 Proof.
   intros tm H.
   unfold try_rw in H.
+  rewrite anyb_existsb in H.
   apply existsb_exists in H.
   destruct H as ([[L T] t] & _ & H).
   exact (rw_tier_sound tm L T t rw_fuel H).

@@ -110,6 +110,21 @@ Definition qhb_rungs_census : list (nat * nat) :=
 Definition rw_rungs_census : list (nat * nat * nat) :=
   [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0)].
 
+(** MEASURED, NOT YET ACTED ON (docs/CENSUS_RUNTIME.md, row 2 of the
+    2026-08-07 next steps): the "7947 nodes / 8145 pops" that the
+    comment above uses to call this fuel TIGHT is a lever-C rung
+    (6,2,0) catch -- and lever C is DEFERRED, so the walk never runs
+    that rung.  Over all 25,511 kept catches at the four rungs the
+    walk does run (tools/repwl_residue_caught.tsv), the largest
+    closure is 3,963 nodes; not one exceeds 4,096.  So this fuel is
+    sized for rungs that are not in [rw_rungs_census], and ~half the
+    machines reaching (3,2,0) burn all 8,192 units to no verdict.
+
+    Lowering it is a one-line change with NO proof impact (fuel is a
+    Section variable; [rw_tier_sound] quantifies over it) -- but it
+    changes WHICH machines are caught, and a lost catch here is
+    [R_Unknown], i.e. the walk does not close.  Gate it on the
+    gen_rwdiff.sh catch-diff, not on the table above. *)
 Definition rw_fuel_census : nat := 8192.
 
 (** the proven-machines map, built once from [proven_list] (mirrors how
