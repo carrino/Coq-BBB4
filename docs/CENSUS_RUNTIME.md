@@ -1203,6 +1203,100 @@ also pays the `scan_loops` block and the `try_qhb` ladders, and all of
 them were eager.  **Expect the full walk to land below 7.9x.  The full
 walk is the only thing that settles the full walk.**
 
+### Round two of the same sweep: the guards, and the fuel
+
+With the walk already owed, further catch-neutral work rides along
+free, so the sweep continued into the checkers.
+
+**The guard trap.**  `Closure.v`'s per-state gates are `implb` and
+`orb` applications, i.e. functions, so BOTH sides always evaluated:
+
+    Definition live_lex_ok (Sl : list A) (cert : St -> list lexcomp) : bool :=
+      forallb (fun q' =>
+        implb (appears Sl q')
+              (rank_ok Sl q' (compute_ranks Sl q')
+               || lex_ok Sl q' (cert q'))) all_St.
+
+`cert q'` here IS `rank_procedure` -- the function the row-3 probe had
+just measured at ~99% of the qhb lex tier.  It ran for every one of the
+four states, including states absent from the closure (where the
+implication is vacuous), and it ran even when `rank_ok` had ALREADY
+discharged the state.  The same shape guards
+`closure_check_neverqh`, `_lex`, `_fuel`, `live_ok`, `state_live_ok`,
+`ClosureIdx`'s `idx_check_neverqh` and `lex_check_idx_pool`, plus
+`lex_ok`'s per-edge test and `lex_edge_ok`'s component walk.
+
+All rewritten as nested `if`s.  Note these are **definitionally
+equal** -- `implb b x` IS `if b then x else true` and `orb b x` IS
+`if b then true else x` -- so the value is unchanged and the proofs
+went through untouched, except three `assert`s that named the guard in
+its `||` form and had to be restated in the `if` form to keep a
+syntactic `rewrite` working.
+
+Measured, `ProbeQhbStage.v`, identical answers (36 = 36):
+
+| | before | after |
+|---|---|---|
+| whole `try_qhb_lex_at` attempt | 20.73 s | **0.613 s** |
+
+**33.8x on the qhb lex tier.**  Row 3b is largely answered not by making
+`rank_procedure` faster but by not calling it.
+
+**The fuel.**  `rw_fuel_census` 8192 -> 5120, per row 2 below.
+
+### Walk-level, cumulative
+
+`ProbeWalk_K1`, every run ending at the identical queue state `(33, 0)`:
+
+| | wall | vs main |
+|---|---|---|
+| main (pre-fix) | 768.9 s | -- |
+| `anyb` only | 97.5 s | 7.9x |
+| `+` guards `+` fuel 5120 | **80.5 s** | **9.55x** |
+
+Same caveat as before, and it matters more now that the number is big:
+this is ONE deliberately-heavy subtree.  The qhb tier moved 33.8x but
+the walk probe only moved 1.21x further, because this subtree is not
+qhb-heavy -- which is exactly the sort of mismatch that makes
+subtree-to-census projection unsafe.  **Expect the full walk below
+9.55x.**
+
+### A better catch-diff than sampling
+
+Row 2 changes WHICH machines are caught, and the standing rule sends
+that to `gen_rwdiff.sh` on a big sample.  A sample was not needed here,
+and the technique generalises:
+
+1. **Monotonicity.**  Lowering `close` fuel can only turn `Some` into
+   `None`, so a catch can be LOST but never GAINED.  The gate is
+   one-sided -- only currently-caught machines need re-checking.
+2. **A census-wide census.**  `tools/repwl_residue_caught.tsv` already
+   lists all 25,511 kept catches at the four walked rungs WITH their
+   closure sizes.  The at-risk machines are known by name, not sampled.
+3. **A closed bound.**  `Run.v`'s own `pops <= 2 * nodes + 1` means only
+   a catch whose closure exceeds `(F-1)/2` nodes can be lost at fuel
+   `F`.  At F = 4608 that is nodes > 2303, and the table has exactly
+   **28** such machines census-wide.
+
+`tools/probes/ProbeRwFuelDiff.v` re-checks the 60 largest closures per
+rung (240 machines, a superset of all 28) at 4608 against 8192:
+
+| rung | catches lost | still caught | max pops used |
+|---|---|---|---|
+| (2,2,0) | **0** | 60 | 3,581 |
+| (2,3,0) | **0** | 60 | 3,300 |
+| (3,2,0) | **0** | 60 | 3,664 |
+| (4,2,0) | **0** | 60 | 4,132 |
+
+Every machine that COULD lose a catch was tested and none did, so this
+diff is exhaustive rather than statistical.  5120 ships (safe a
+fortiori by monotonicity) leaving ~24% headroom over the largest
+closure the census actually walks.
+
+Where a future change is monotone in some parameter and the affected
+population is tabulated, prefer this construction over a random
+sample -- it is both cheaper and strictly stronger.
+
 ## Next steps, in Amdahl order (2026-08-07)
 
 Rows 2-4 are "What is left in the rw tier" above, re-ordered by

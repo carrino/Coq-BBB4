@@ -332,10 +332,11 @@ Section IdxEngine.
                 | None => false
                 | Some _ =>
                     forallb (fun q =>
-                      implb (cvisits tm c0 t q
-                             || existsb (fun row => st_eqb (row_state row) q)
-                                        rows)
-                            (irank_ok rows q (mkr rows q))) all_St
+                      if (if cvisits tm c0 t q then true
+                          else existsb
+                                 (fun row => st_eqb (row_state row) q) rows)
+                      then irank_ok rows q (mkr rows q)
+                      else true) all_St
                 end
             end
         | None => false
@@ -545,9 +546,11 @@ Section IdxEngine.
             | Some _ =>
                 let ip := ipool pool in
                 forallb (fun q =>
-                  implb (cvisits tm c0 t q
-                         || existsb (fun row => st_eqb (row_state row) q) rows)
-                        (vlex_ok rows q (vmap_of (cert q) ip))) all_St
+                  if (if cvisits tm c0 t q then true
+                      else existsb
+                             (fun row => st_eqb (row_state row) q) rows)
+                  then vlex_ok rows q (vmap_of (cert q) ip)
+                  else true) all_St
             end
         end
     | None => false
@@ -840,8 +843,9 @@ Section IdxEngine.
     { rewrite forallb_forall in H.
       specialize (H q (all_St_complete q)).
       destruct Hvq as (n0 & cn & Hcn & Hqn).
-      assert (Hprem : cvisits tm c0 t q
-                      || existsb (fun row => st_eqb (row_state row) q) rows
+      (* nested-[if] form, definitionally [orb] (see Closure.v) *)
+      assert (Hprem : (if cvisits tm c0 t q then true
+                       else existsb (fun row => st_eqb (row_state row) q) rows)
                       = true).
       { destruct (le_lt_dec t n0) as [Hge | Hlt].
         - apply orb_true_intro; right.
