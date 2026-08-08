@@ -34,6 +34,23 @@ coqc -Q theories BBB4 -Q tools/probes BBB4 tools/probes/ProbeWalkCommon.v
 - `ProbeTierCost.v` — GENERATED (committed, 240 machines): per-tier
   cost of the real decider on machines sampled from the C mirror's
   full-census classification.
+- `ProbeOrb.v` — the isolated fact that `existsb`/`forallb` do NOT
+  short-circuit under CBV (they are `f a || existsb l` / `f a &&
+  forallb l`, and `orb`/`andb` are functions).  Run this one first if
+  the finding ever looks doubtful; it needs no project build.
+- `ProbeStrict.v` — the shipped rw rung ladder (`existsb`) against a
+  short-circuiting one with the same boolean value, plus each rung in
+  isolation.  The isolated rungs sum to the `existsb` ladder.
+- `ProbeScanStrict.v` — the same A/B for the C/T bulk block
+  (`scan_loops`), plus candidates-emitted vs index-of-winner.
+- `ProbeRwFuel.v` — `Closure.close` instrumented to report (status,
+  pool size, fuel left) at rung (3,2), so the fuel exhaustion can be
+  split into converged/diverged and the pops a converged closure
+  actually needs can be read off.
+- `ProbeQhbStage.v` — the `ProbeRwStage` recipe pointed at
+  `try_qhb_lex_at`: `ng_grow` / `+ ng_explore` / `+ rank_procedure` /
+  whole attempt / the plain ladder, so the tier's cost can be
+  attributed before committing a round to it.
 - `ProbeRwIdx.v` / `ProbeRwStage.v` — the ClosureIdx-lex A/B on the
   RepWL tier: isolated verified stage (certificate replayed from data
   into both checkers), whole attempt per rung, and the rung ladder as

@@ -110,7 +110,32 @@ Definition qhb_rungs_census : list (nat * nat) :=
 Definition rw_rungs_census : list (nat * nat * nat) :=
   [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0)].
 
-Definition rw_fuel_census : nat := 8192.
+(** MEASURED + GATED (2026-08-07), lowered 8192 -> 5120.
+
+    The "7947 nodes / 8145 pops" the comment above uses to call this
+    fuel TIGHT is a lever-C rung (6,2,0) catch -- and lever C is
+    DEFERRED, so the walk never runs that rung.  Over all 25,511 kept
+    catches at the four rungs the walk DOES run
+    (tools/repwl_residue_caught.tsv), the largest closure is 3,963
+    nodes; not one exceeds 4,096.  The old fuel was sized for rungs
+    that are not in [rw_rungs_census], and ~half the machines reaching
+    (3,2,0) burned all 8,192 units to no verdict.
+
+    This changes WHICH machines are caught, so it is gated on a
+    catch-diff -- and the diff here is EXHAUSTIVE rather than sampled.
+    Lowering fuel is monotone: less fuel can only turn [close]'s [Some]
+    into [None], so a catch can be lost but never gained.  By the
+    [pops <= 2 * nodes + 1] bound above, only a catch whose closure
+    exceeds 2303 nodes could be lost at 4608 -- and the census-wide
+    table has exactly 28 such machines, ALL of which
+    tools/probes/ProbeRwFuelDiff.v re-checks at 4608: zero lost,
+    largest pops actually used 4,132.  5120 is then safe a fortiori
+    (more fuel never loses a catch that less fuel kept), and leaves
+    ~24% headroom over the largest closure the census actually walks.
+
+    No proof impact: fuel is a Section variable and [rw_tier_sound]
+    quantifies over it. *)
+Definition rw_fuel_census : nat := 5120.
 
 (** the proven-machines map, built once from [proven_list] (mirrors how
     [dmap_of D_census] is applied inside [decider]); a hit is decided

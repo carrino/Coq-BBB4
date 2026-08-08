@@ -167,9 +167,10 @@ Section ClosureEngine.
         match close fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
             forallb (fun q =>
-              implb (cvisits tm c0 t q
-                     || existsb (fun a => st_eqb (a_state a) q) Sl)
-                    (rank_ok Sl q (compute_ranks Sl q))) all_St
+              if (if cvisits tm c0 t q then true
+                  else existsb (fun a => st_eqb (a_state a) q) Sl)
+              then rank_ok Sl q (compute_ranks Sl q)
+              else true) all_St
         | None => false
         end
     | None => false
@@ -443,7 +444,8 @@ Section ClosureEngine.
 
   Definition live_ok (Sl : list A) : bool :=
     forallb (fun q' =>
-      implb (appears Sl q') (rank_ok Sl q' (compute_ranks Sl q'))) all_St.
+      if appears Sl q' then rank_ok Sl q' (compute_ranks Sl q')
+      else true) all_St.
 
   (** From a covered start, any visited state appears in the closure. *)
   Lemma live_visited_appears : forall Sl a0 c0',
@@ -501,8 +503,11 @@ Section ClosureEngine.
     { rewrite forallb_forall in Hq.
       specialize (Hq q (all_St_complete q)).
       destruct Hvq as (n0 & cn & Hcn & Hqn).
-      assert (Hprem : cvisits tm c0 t q
-                      || existsb (fun a => st_eqb (a_state a) q) Sl = true).
+      (* stated in the nested-[if] form the checker now uses; it is
+         definitionally [orb], so [orb_true_intro] still applies *)
+      assert (Hprem : (if cvisits tm c0 t q then true
+                       else existsb (fun a => st_eqb (a_state a) q) Sl)
+                      = true).
       { destruct (le_lt_dec t n0) as [Hge | Hlt].
         - (* visited at or after t: some closure node has state q *)
           apply orb_true_intro; right.
@@ -593,8 +598,9 @@ Section ClosureEngine.
     match comps with
     | [] => false
     | comp :: rest =>
-        comp_strict comp a a'
-        || (comp_noninc comp a a' && lex_edge_ok rest a a')
+        if comp_strict comp a a' then true
+        else if comp_noninc comp a a' then lex_edge_ok rest a a'
+             else false
     end.
 
   Definition lex_ok (Sl : list A) (q : St) (comps : list lexcomp) : bool :=
@@ -602,7 +608,8 @@ Section ClosureEngine.
       if st_eqb (a_state a) q then true
       else match succs a with
            | Some l => forallb (fun a' =>
-                         st_eqb (a_state a') q || lex_edge_ok comps a a') l
+                         if st_eqb (a_state a') q then true
+                         else lex_edge_ok comps a a') l
            | None => false
            end) Sl.
 
@@ -616,9 +623,10 @@ Section ClosureEngine.
         match close fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
             forallb (fun q =>
-              implb (cvisits tm c0 t q
-                     || existsb (fun a => st_eqb (a_state a) q) Sl)
-                    (lex_ok Sl q (cert q))) all_St
+              if (if cvisits tm c0 t q then true
+                  else existsb (fun a => st_eqb (a_state a) q) Sl)
+              then lex_ok Sl q (cert q)
+              else true) all_St
         | None => false
         end
     | None => false
@@ -822,9 +830,10 @@ Section ClosureEngine.
 
   Definition live_lex_ok (Sl : list A) (cert : St -> list lexcomp) : bool :=
     forallb (fun q' =>
-      implb (appears Sl q')
-            (rank_ok Sl q' (compute_ranks Sl q')
-             || lex_ok Sl q' (cert q'))) all_St.
+      if appears Sl q'
+      then (if rank_ok Sl q' (compute_ranks Sl q') then true
+            else lex_ok Sl q' (cert q'))
+      else true) all_St.
 
   Lemma closure_invariant_c : forall Sl,
     closed_b Sl = true ->
@@ -900,8 +909,11 @@ Section ClosureEngine.
     { rewrite forallb_forall in Hq.
       specialize (Hq q (all_St_complete q)).
       destruct Hvq as (n0 & cn & Hcn & Hqn).
-      assert (Hprem : cvisits tm c0 t q
-                      || existsb (fun a => st_eqb (a_state a) q) Sl = true).
+      (* stated in the nested-[if] form the checker now uses; it is
+         definitionally [orb], so [orb_true_intro] still applies *)
+      assert (Hprem : (if cvisits tm c0 t q then true
+                       else existsb (fun a => st_eqb (a_state a) q) Sl)
+                      = true).
       { destruct (le_lt_dec t n0) as [Hge | Hlt].
         - apply orb_true_intro; right.
           destruct (closure_invariant Sl Hcl a0 (lift ct)
@@ -1043,7 +1055,7 @@ Section ClosureEngine.
 
   Definition state_live_ok (Sl : list A) (cert : St -> list lexcomp)
       (q : St) : bool :=
-    lex_ok Sl q (cert q) || runner_ok Sl q.
+    if lex_ok Sl q (cert q) then true else runner_ok Sl q.
 
   Definition closure_check_neverqh_fuel (t fuel : nat) (a0 : A)
       (cert : St -> list lexcomp) : bool :=
@@ -1052,9 +1064,10 @@ Section ClosureEngine.
         match close fuel [] PositiveSet.empty [a0] with
         | Some Sl =>
             forallb (fun q =>
-              implb (cvisits tm c0 t q
-                     || existsb (fun a => st_eqb (a_state a) q) Sl)
-                    (state_live_ok Sl cert q)) all_St
+              if (if cvisits tm c0 t q then true
+                  else existsb (fun a => st_eqb (a_state a) q) Sl)
+              then state_live_ok Sl cert q
+              else true) all_St
         | None => false
         end
     | None => false
@@ -1082,8 +1095,11 @@ Section ClosureEngine.
     { rewrite forallb_forall in Hq.
       specialize (Hq q (all_St_complete q)).
       destruct Hvq as (n0 & cn & Hcn & Hqn).
-      assert (Hprem : cvisits tm c0 t q
-                      || existsb (fun a => st_eqb (a_state a) q) Sl = true).
+      (* stated in the nested-[if] form the checker now uses; it is
+         definitionally [orb], so [orb_true_intro] still applies *)
+      assert (Hprem : (if cvisits tm c0 t q then true
+                       else existsb (fun a => st_eqb (a_state a) q) Sl)
+                      = true).
       { destruct (le_lt_dec t n0) as [Hge | Hlt].
         - apply orb_true_intro; right.
           destruct (closure_invariant Sl Hcl a0 (lift ct)

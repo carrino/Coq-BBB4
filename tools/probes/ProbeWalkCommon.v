@@ -22,7 +22,7 @@ Definition dmap0 : DeferredMap := dmap_of D_census.
 
 Definition hmap0 : HintMap := hmap_of phints_00.
 Definition decider0 : TM -> QHResult :=
-  decide_easy Bc 130 512 200000 512 ngr rkr qhr rwr 8192 pmap0 emap dmap0 hmap0.
+  decide_easy Bc 130 512 200000 512 ngr rkr qhr rwr 5120 pmap0 emap dmap0 hmap0.
 
 Definition qsuc (q : SearchQueue) : SearchQueue :=
   SearchQueue_upds q decider0 13.
