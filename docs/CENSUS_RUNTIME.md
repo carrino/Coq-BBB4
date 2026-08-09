@@ -1825,20 +1825,52 @@ Two things the VM could not have told us:
   the census walk is per-unit startup**, paid 154 times to compile the
   same environment.
 
-Revised payoff for lever 1, now that the fixed cost is measured rather
-than estimated:
+#### And the lean control, natively: 18x
+
+Lever 1's payoff does not have to be estimated either.  `ProbeWalkCommon`
+IS the walk half -- same decider parameters, data-only lookup tables of
+the same size, no board proofs -- so running IT under `native_compute`
+at the same two iteration counts measures what lever 1 would deliver.
+Both configurations end at the identical queue state `(33, 0)`, which is
+the strongest available evidence that they are doing the same walk:
+
+| `native_compute`, one round | fixed (`--iter 0`) | peak (`--iter 1`) | eval |
+|---|---|---|---|
+| real unit (`Run.v`, board proofs resident) | 5.321 GB | 6.758 GB | 57.6 s |
+| **lean (`ProbeWalkCommon`, data-only tables)** | **0.266 GB** | **0.371 GB** | **29.9 s** |
+| | **20.0x** | **18.2x** | **1.93x** |
+
+**18x on peak RSS and 1.93x on the unit's own runtime**, for a walk that
+computes the same thing.  The CPU half is the native translate/compile
+of the boards (14.6 s -> 0.76 s, 19x) plus the GC pressure of collecting
+against a 5 GB live set instead of a 0.3 GB one.
+
+At 0.371 GB per unit the memory constraint does not merely relax, it
+**disappears**: 8 jobs on 32 GB, 8 jobs on a 16 GB box, 8 jobs inside a
+WSL2 VM that took half the host.  `WALK_JOBS` becomes `min(cores, ...)`
+= the core count, everywhere, which is what "clone it and see the proof"
+actually requires.
 
 | configuration | native peak | jobs on 32 GB | core-min | wall |
 |---|---|---|---|---|
-| today | 6.8 GB | 4 | 385 | 103 min |
-| lever 1, conservative (remove only the 2.65 GB `.vo` load) | ~4.2 GB | 7 | ~360 | ~55 min |
-| lever 1, if the translate cost scales with the environment | ~2.5-3 GB | 8 | ~330 | ~45-50 min |
+| today | 6.76 GB | 4 | 385 | 103 min |
+| **lever 1, conservative (fixed cost only)** | **~0.4 GB** | **8** | **~325** | **~50 min** |
+| lever 1, if the 1.93x held walk-wide | ~0.4 GB | 8 | ~200 | ~31 min |
 
-The conservative row already clears the hour, and it is a floor: it
-assumes the native translate/compile half of the fixed cost does not
-shrink at all, which it must, since it is compiling the very constants
-lever 1 removes.  Add the layer barriers below (~15%) and the honest
-range is **~50-63 min** -- i.e. **the goal closes on lever 1 alone.**
+The conservative row counts only the ~24 s per file of startup that goes
+away (~60 core-min of 385) and assumes the GC-pressure half buys
+nothing; the optimistic row assumes the measured 1.93x generalises from
+the heaviest unit to all 154, which it will not exactly.  Both include
+the ~15% the layer barriers cost at 8 jobs.  **The goal closes on lever
+1 alone, with margin.**
+
+One caveat on the lean row, stated rather than buried: `ProbeWalkCommon`
+carries `ProbeLookup`'s 14,606-machine stand-in for the proven /
+provenqh maps and an empty `qhmap`, not the real lists, so the catch
+pattern is not bit-identical to the unit's.  The tables are the same
+order of size and cost ~4 MB either way, and both runs land on the same
+queue state -- but the number to trust after lever 1 lands is the one
+the walk itself records.
 
 ## Next steps, re-ranked by the memory round (2026-08-09)
 
