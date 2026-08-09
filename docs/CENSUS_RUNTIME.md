@@ -692,8 +692,15 @@ Two corrections from the same probe, recorded plainly:
    The Run.v comment now documents why the order stands.
 2. **The probe's own "reordered pipeline" rows are eager-orb
    artifacts** -- `a || b` evaluates both sides under CBV, so those
-   rows summed all four rungs (147.6 ≈ 4.05+119.7+20.5+4.07).  The
-   real decider's `existsb` short-circuits correctly.  Hunting that
+   rows summed all four rungs (147.6 ≈ 4.05+119.7+20.5+4.07).  ~~The
+   real decider's `existsb` short-circuits correctly.~~
+
+   **WRONG, and it cost 4.5x on the rw ladder for three rounds.**
+   `existsb` is `f a || existsb l`, so it is exactly as eager as the
+   bare `||` -- the real decider summed all four rungs too, which is
+   why that 147.6 matched.  See "CORRECTION (2026-08-07)" below.  The
+   arithmetic was sitting in this very table and was read as a probe
+   artifact instead of as the pipeline's behaviour.  Hunting that
    same trap in the shipped pipeline found a REAL one:
 
 ### LANDED: try_qhb's eager orb
@@ -1076,76 +1083,409 @@ than only failures behind it:
 
 This is why row 3 below is gated on a probe rather than started.
 
+## CORRECTION (2026-08-07): `existsb` is not a short-circuit, and it was the ladder
+
+Every round in this document reasons about rung ladders as if a
+machine caught at rung 1 stops there.  It does not, and never did.
+Coq's
+
+    Fixpoint existsb (l : list A) : bool :=
+      match l with [] => false | a :: l => f a || existsb l end
+
+builds an `orb` application, and `orb` is a FUNCTION, so under
+call-by-value BOTH arguments are evaluated: `existsb` runs `f` on
+EVERY element, always.  `forallb` is `f a && forallb l` and is eager
+the same way -- it never stops at the first `false`.
+
+Isolated (`tools/probes/ProbeOrb.v`, vm_compute; element 0 decides,
+elements 1-3 are expensive):
+
+| expression | value | time |
+|---|---|---|
+| `existsb f [0;1;2;3]` | `true` | 1.03 s |
+| nested-`if` `anyb`, same value | `true` | 0.00 s |
+| `f 0` alone | `true` | 0.00 s |
+| `forallb g [0;1;2;3]` | `false` | 0.90 s |
+| nested-`if` `allb`, same value | `false` | 0.00 s |
+
+Every rung ladder in `Census/Decide.v` was an `existsb` whose elements
+are whole tier attempts:
+
+| ladder | one element costs |
+|---|---|
+| `try_rw` | a RepWL rung: closure + certificate search + verified stage |
+| `try_qhb` (three nested) | a candidate state; 9 plain rungs; 9 lex rungs |
+| `scan_loops` | one `lp_check`: full re-simulation of `n1` and `n1 + p` steps |
+
+### How this hid for three rounds
+
+The arithmetic was already in this document, in "The winning-attempt
+A/B closes the loop": the reordered-pipeline row was 147.6 s and the
+four rungs summed to 4.05 + 119.7 + 20.5 + 4.07 = 148.3 s.  That was
+recorded as *the probe's* eager-orb artefact and the shipped
+`existsb` was declared correct in the same sentence.  Both sides were
+the same bug.  `ProbeRwLadder.v` then inherited it -- its header says
+"Run.v's rung order with the existsb short-circuit" while its body is
+`existsb` -- so the 1.10x ClosureIdx-lex projection was measured
+against an eager ladder and *held for the right reason*: the probe
+faithfully reproduced what the walk actually did.  Nothing above this
+line is retracted; it was all measured on the eager pipeline.
+
+One consequence worth stating: under eager `existsb`, **rung order
+cannot change cost at all**.  The "do not reorder the rw rungs" rule
+(719a245 / da893c8) was settled on catch-set grounds, which still
+stand -- but any *timing* intuition about rung order collected before
+today was measuring nothing.  Order is load-bearing for the first
+time now.
+
+### LANDED: `anyb`, and what it measured
+
+`Census/Decide.v` gains
+
+    Fixpoint anyb {A} (f : A -> bool) (l : list A) : bool :=
+      match l with [] => false | x :: r => if f x then true else anyb f r end
+
+    Lemma anyb_existsb : forall A f l, anyb f l = existsb f l.
+
+and `try_rw`, `try_qhb` (all three levels), `scan_loops` and
+`try_tc_cands` use it.  `anyb` is the SAME boolean function -- proved,
+in the file -- so no candidate, no catch and no census verdict can
+move, and every soundness proof goes through with one added
+`rewrite anyb_existsb`.  **No catch-diff is needed for this change**
+(cf. the rule below): nothing about *which* machines are caught can
+differ.
+
+Measured, vm_compute, this container, one run per configuration:
+
+**The rw ladder** (`ProbeStrict.v`, the `ProbeTierCost` residue
+sample, 40 machines).  Catch counts identical, 32 = 32:
+
+| | time |
+|---|---|
+| rung (2,2,0) alone | 4.52 s (catches 30) |
+| rung (3,2,0) alone | 127.49 s (catches 16) |
+| rung (4,2,0) alone | 19.64 s (catches 30) |
+| rung (2,3,0) alone | 4.46 s (catches 30) |
+| **sum of the four** | **156.1 s** |
+| shipped `existsb` ladder | **157.7 s** |
+| `anyb` ladder | **34.7 s** |
+
+The `existsb` ladder costs the sum of its rungs, to within noise.
+That is the whole finding in one row.  **4.53x.**
+
+**The C/T bulk block** (`ProbeScanStrict.v`, gas 130 then 512, catch
+counts identical 40 = 40): C tier 0.040 s -> 0.017 s (**2.4x**), T
+tier 0.064 s -> 0.018 s (**3.6x**).  Structurally: over 40 C machines
+`lp_candidates` emits 695 candidates and the winning candidate sits at
+index 88/40 = 2.2, so ~5.4x more `lp_check` re-simulations were run
+than needed.
+
+**The walk** (`ProbeWalk_K1`: 8,192 pop-slots of the heavy
+`GG_1LC_1LB` subtree with realistic lookup maps -- the same probe as
+the "Walk anchor for this container" row).  Both runs end at the
+identical queue state `(33, 0)`:
+
+| | wall |
+|---|---|
+| pre-fix (`existsb`) | **768.9 s** |
+| `anyb` | **97.5 s** |
+| | **7.9x** |
+
+The pre-fix run reproduces the published 934 s anchor for this probe
+on a different container, so the baseline is the documented one.
+
+Read that 7.9x carefully, per the rule this document paid for.  It IS
+a walk-level measurement -- a bounded real walk, real decider, real
+lookup tables -- but of ONE subtree, and that subtree was chosen
+because it is heavy, so it is residue-rich relative to the whole
+census.  It is larger than the 4.53x rw-ladder figure because the walk
+also pays the `scan_loops` block and the `try_qhb` ladders, and all of
+them were eager.  **Expect the full walk to land below 7.9x.  The full
+walk is the only thing that settles the full walk.**
+
+### Round two of the same sweep: the guards, and the fuel
+
+With the walk already owed, further catch-neutral work rides along
+free, so the sweep continued into the checkers.
+
+**The guard trap.**  `Closure.v`'s per-state gates are `implb` and
+`orb` applications, i.e. functions, so BOTH sides always evaluated:
+
+    Definition live_lex_ok (Sl : list A) (cert : St -> list lexcomp) : bool :=
+      forallb (fun q' =>
+        implb (appears Sl q')
+              (rank_ok Sl q' (compute_ranks Sl q')
+               || lex_ok Sl q' (cert q'))) all_St.
+
+`cert q'` here IS `rank_procedure` -- the function the row-3 probe had
+just measured at ~99% of the qhb lex tier.  It ran for every one of the
+four states, including states absent from the closure (where the
+implication is vacuous), and it ran even when `rank_ok` had ALREADY
+discharged the state.  The same shape guards
+`closure_check_neverqh`, `_lex`, `_fuel`, `live_ok`, `state_live_ok`,
+`ClosureIdx`'s `idx_check_neverqh` and `lex_check_idx_pool`, plus
+`lex_ok`'s per-edge test and `lex_edge_ok`'s component walk.
+
+All rewritten as nested `if`s.  Note these are **definitionally
+equal** -- `implb b x` IS `if b then x else true` and `orb b x` IS
+`if b then true else x` -- so the value is unchanged and the proofs
+went through untouched, except three `assert`s that named the guard in
+its `||` form and had to be restated in the `if` form to keep a
+syntactic `rewrite` working.
+
+Measured, `ProbeQhbStage.v`, identical answers (36 = 36):
+
+| | before | after |
+|---|---|---|
+| whole `try_qhb_lex_at` attempt | 20.73 s | **0.613 s** |
+
+**33.8x on the qhb lex tier.**  Row 3b is largely answered not by making
+`rank_procedure` faster but by not calling it.
+
+**The fuel.**  `rw_fuel_census` 8192 -> 5120, per row 2 below.
+
+### Walk-level, cumulative
+
+`ProbeWalk_K1`, every run ending at the identical queue state `(33, 0)`:
+
+| | wall | vs main |
+|---|---|---|
+| main (pre-fix) | 768.9 s | -- |
+| `anyb` only | 97.5 s | 7.9x |
+| `+` guards `+` fuel 5120 | **80.5 s** | **9.55x** |
+
+Same caveat as before, and it matters more now that the number is big:
+this is ONE deliberately-heavy subtree.  The qhb tier moved 33.8x but
+the walk probe only moved 1.21x further, because this subtree is not
+qhb-heavy -- which is exactly the sort of mismatch that makes
+subtree-to-census projection unsafe.  **Expect the full walk below
+9.55x.**
+
+### A better catch-diff than sampling
+
+Row 2 changes WHICH machines are caught, and the standing rule sends
+that to `gen_rwdiff.sh` on a big sample.  A sample was not needed here,
+and the technique generalises:
+
+1. **Monotonicity.**  Lowering `close` fuel can only turn `Some` into
+   `None`, so a catch can be LOST but never GAINED.  The gate is
+   one-sided -- only currently-caught machines need re-checking.
+2. **A census-wide census.**  `tools/repwl_residue_caught.tsv` already
+   lists all 25,511 kept catches at the four walked rungs WITH their
+   closure sizes.  The at-risk machines are known by name, not sampled.
+3. **A closed bound.**  `Run.v`'s own `pops <= 2 * nodes + 1` means only
+   a catch whose closure exceeds `(F-1)/2` nodes can be lost at fuel
+   `F`.  At F = 4608 that is nodes > 2303, and the table has exactly
+   **28** such machines census-wide.
+
+`tools/probes/ProbeRwFuelDiff.v` re-checks the 60 largest closures per
+rung (240 machines, a superset of all 28) at 4608 against 8192:
+
+| rung | catches lost | still caught | max pops used |
+|---|---|---|---|
+| (2,2,0) | **0** | 60 | 3,581 |
+| (2,3,0) | **0** | 60 | 3,300 |
+| (3,2,0) | **0** | 60 | 3,664 |
+| (4,2,0) | **0** | 60 | 4,132 |
+
+Every machine that COULD lose a catch was tested and none did, so this
+diff is exhaustive rather than statistical.  5120 ships (safe a
+fortiori by monotonicity) leaving ~24% headroom over the largest
+closure the census actually walks.
+
+Where a future change is monotone in some parameter and the affected
+population is tabulated, prefer this construction over a random
+sample -- it is both cheaper and strictly stronger.
+
+## Full re-walk #3, measured end-to-end (2026-08-09)
+
+`time make census-verify` on the same 32 GB desktop, WALK_JOBS=4
+(auto), with `anyb`, the checker guards and `rw_fuel_census = 5120`.
+The base build was already present (`Nothing to be done for
+'real-all'`), so the whole figure is walk, directly comparable to the
+walk-only row above.  A full re-derivation, not a resume: `census-verify`
+had already moved every unit to a backup, so all 144 units + the
+theorem were walked from source.
+
+| | |
+|---|---|
+| re-walk #2 (2026-08-06), walk-only | 12 h 08 m 48 s |
+| **re-walk #3 (2026-08-09), walk-only** | **1 h 43 m 39 s** |
+| | **7.03x** |
+| core-time | 376 m user + 9 m sys = **385 core-min** |
+| parallel efficiency | **93%** across 4 jobs |
+
+`Print Assumptions census_decided` printed exactly
+`functional_extensionality_dep` and nothing else.
+
+**The fuel cut is confirmed at census scale.**  `rw_fuel_census`
+8192 -> 5120 changes WHICH machines are caught, and a lost catch is
+`R_Unknown` -- the queue would not empty and that unit's `Qed` would
+fail.  All 144 units closed.  The exhaustive gate (28 at-risk machines,
+all tested) held on the real census, not just on the sample.
+
+### What the projections did, for the record
+
+| projected from | projected | delivered |
+|---|---|---|
+| `ProbeWalk_K1`, one heavy subtree | 9.55x | -- |
+| stated expectation in this doc | "below 9.55x", 2-4 h | **7.03x, 1.73 h** |
+
+The subtree probe overshot by ~36%, exactly as its residue-rich
+composition predicted it would; the hedge attached to it was the part
+that turned out to be load-bearing.  A walk probe of ONE subtree is
+worth about "the right order of magnitude, biased high" -- better than
+a stage or tier measurement, still not a walk.
+
+### The <1 h goal is now a MEMORY problem, not a CPU problem
+
+385 core-min at 8 jobs is ~48 min ideal, ~52 min at the measured 93%
+efficiency.  So the goal needs no further core-time work at all -- it
+needs the parallelism the box already has.  On 8 cores / 32 GB:
+
+    jobs = min(8, (32 - 2 GB) / RSS_per_unit)
+
+| RSS/unit | jobs | wall (at 385 core-min, 93%) |
+|---|---|---|
+| 6.8 GB (today) | 4 | 1 h 43 m |
+| 5.0 GB | 6 | ~69 m |
+| **<= 3.75 GB** | **8** | **~52 m** |
+
+One number: **per-unit peak RSS <= 3.75 GB**.  32 GB is the target
+profile deliberately -- 64 GB is not regular hardware.  Note also that
+WSL2 defaults to HALF the host, so a cloner on a 32 GB box gets a 16 GB
+VM and only 2 jobs unless `.wslconfig` pins it; that alone is a 2x
+reporting error waiting to happen.
+
+`ng_fuel = 200000` is the prime suspect and the top item on the list
+below: it bounds the n-gram / rank / qhb closures, so it caps CPU and
+peak RSS together.  Cheapest decisive experiment: rebuild the heaviest
+unit with `ng_fuel` lowered and read peak RSS off `/usr/bin/time -v`.
+That is pure attribution, so the fact that it would move catches does
+not matter until a bound is chosen -- and the exhaustive-gate recipe
+from row 2 is now proven for choosing one.
+
 ## Next steps, in Amdahl order (2026-08-07)
 
 Rows 2-4 are "What is left in the rw tier" above, re-ordered by
 expected value per unit of risk and with probe prerequisites made
 explicit.  Row 1 is new.  Row 5 is the part that does not close.
 
-### 1. Sweep the pipeline for eager-orb traps
+### 1. DONE -- and it was not small
 
-Cheapest thing on this list and the only one with no proof risk at
-all.  `try_qhb` computed `existsb(plain ladder) || existsb(lex
-ladder)`; under CBV both sides evaluate, so every plain-ladder catch
-paid a full lex ladder -- per-rung `ng_grow` + `ng_explore` per state
--- for nothing.  Fixed in `da893c8` with a nested `if`: boolean value
-unchanged, WF proof compiled untouched, `Census_Corruption`'s pinned
-qhb verdicts green.
+The sweep of `Decide.v` / `Run.v` and their hot-path callees found one
+class of trap, everywhere, and it is the `existsb`/`forallb`
+strictness above: 4.53x on the rw ladder, 2.4-3.6x on the C/T bulk
+block, 7.9x on the walk probe, zero catch movement.  Landed.
 
-That is the third eager-evaluation finding in this doc (see also
-"LANDED: the quadratic was an eager `andb`, not an algorithm" and the
-probe's own eager-orb artefact in "The winning-attempt A/B"), and two
-of the three were real and expensive.  Nothing else in `Decide.v` /
-`Run.v` has been audited for the pattern.
+Two further sites were read and deliberately NOT changed, with
+reasons, so the next sweep does not re-derive them:
 
-It is a source read, needs no compute, and any hit is a free win: the
-boolean value cannot change, so no proof moves and no catch count
-moves.  Do it before committing to anything that needs a round.
+- **`Closure.v`'s checker internals** -- `lex_edge_ok` decides an edge
+  with `comp_strict c || (comp_noninc c && lex_edge_ok rest)`, so it
+  always walks the WHOLE component list; `lex_ok`/`rank_ok`/`closed_b`
+  are `forallb`, so a failing node never stops the sweep; and
+  `closure_check_neverqh*` guards its expensive check with
+  `implb (appears) (lex_ok ...)`, so the check runs for all four
+  states including absent ones.  All real, all the same shape.  Not
+  taken this round because `ProbeRwStage` already showed the (3,2,0)
+  attempt is ~98% `close` -- which has no eager boolean in it -- so
+  the reachable win is small where the time actually is, and these
+  edits carry real proof risk in a file every tier depends on.
+  `ClosureIdx.v`'s interned path already fixed its own copy
+  (`vlex_edge_ok` is nested-`if`), which is why the rw tier does not
+  pay the worst of it.
 
-### 2. The (3,2,0) closure search
+- **`(S t <=? B) &&` in `try_qhb_at` / `try_qhb_lex_at`, and
+  `(1 <=? L) && (2 <=? T) &&` in `rw_check_neverqh*`** -- eager, but
+  the gates are true for every rung the census ships (max `t` = 1024
+  against `B` = 2000; `L >= 2`, `T >= 2`), so the win is exactly zero.
+  Latent only.
 
-The actual lever.  ~30% of residue machines fall through (2,2,0) into
-it (418/600 caught at rung 1), it costs ~3.9 s an attempt against
-0.13-0.30 s for rung 1, and ~98% of that is `close`.  It dominates
-the rw slice outright and is the whole reason the ladder moved 1.14x
-while its verified stage moved 1.98x.
+### 2. The (3,2,0) closure search -- sized, and the sizing moved it
 
-The structural fact from `ProbeRwStage` is the one to design against:
+`ProbeRwFuel.v` instruments the fuel exhaustion the old row 2 was
+built on.  On the residue sample at (3,2):
 
-> roughly half the machines that reach the rung burn all 8,192 fuel
-> units and get `None` back, after which `rw_tier` returns false
-> without ever calling the checker.
+| | |
+|---|---|
+| closures that CLOSE | 21/40 |
+| closures that burn all 8,192 | 18/40 |
+| **max pops among closures that converge** | **1,264** |
+| **max pops among machines actually CAUGHT** | **1,264** |
+| caught machines needing > 2,048 pops | **0** |
+| machines still reaching the rung after fix #1 | 10 (6 converge, 4 diverge) |
 
-That half is not a constant factor to shave -- it is work that
-produces no verdict at all.  Two sub-levers, in risk order:
+So divergence is detectable early: a converged (3,2,0) closure never
+needs more than ~1.3k pops against a cap of 8,192.
 
-1. **Make `rw_succs` at L=3 cheaper.**  Constant factor, catch set
-   provably cannot move, proof-neutral.  Safe first move.
-2. **Detect diverging abstractions early** and abort instead of
-   spending the remaining fuel.  Higher yield, but it changes WHICH
-   machines are caught.  Conservative in the safe direction -- a lost
-   catch falls through to the next rung, so no verdict can become
-   wrong -- which makes it a coverage question, not a soundness one.
-   Measure it with the `gen_rwdiff.sh` catch-diff harness, not with a
-   proof.
+But the lever is not the one the old row 2 named.  It is not
+"detect divergence and abort", it is **`rw_fuel_census` is sized for
+rungs the walk does not run.**  `Run.v` justifies fuel 8192 with "the
+largest kept catch closes in 7947 nodes / 8145 pops".  That catch is
+at rung **(6,2,0)** -- a lever-C rung, deferred, NOT in the 19,735
+walk (`tools/repwl2_caught.tsv`).  Across all 25,511 kept catches at
+the four rungs the walk DOES run (`tools/repwl_residue_caught.tsv`),
+census-wide:
 
-Dead end, do not revisit: you cannot dodge the rung by reordering.
-`719a245` tried it and `da893c8` reverted it -- (2,2,0)'s only misses
-are exactly the (3,2,0)-exclusive machines, so the original order was
-already optimal and demoting (3,2,0) only inserted failing attempts
-in front of its wins.  `Run.v` documents why the order stands.
+| rung | catches | max closure nodes | > 4,096 nodes |
+|---|---|---|---|
+| (2,2,0) | 21,727 | 3,243 | 0 |
+| (3,2,0) | 2,221 | 3,381 | 0 |
+| (4,2,0) | 980 | 3,963 | 0 |
+| (2,3,0) | 583 | 3,036 | 0 |
 
-### 3. The qhb tier -- probe BEFORE committing a round
+Not one walked catch exceeds 3,963 nodes (~4.1k pops at the measured
+1.03-1.05 pops/node).  A lower `rw_fuel_census` is a ONE-LINE change
+in `Run.v` with no proof impact at all -- fuel is a Section variable
+and `rw_tier_sound` quantifies over it.
 
-`try_qhb_lex_at` re-runs `ng_grow`+`ng_explore` per (state, rung),
-and it is the other half of the residue-class burn, so the
-ClosureIdx-lex treatment is the obvious next application.
+**Not shipped this round, deliberately.**  It changes WHICH machines
+are caught, and in the census a lost catch is not a coverage
+regression -- it is `R_Unknown`, i.e. the walk does not close.  The
+table above is strong evidence and it is not the gate; the gate is
+`gen_rwdiff.sh` on the big sample, adapted to diff fuel-8192 against
+the candidate fuel.  Note also that fix #1 already shrank this lever:
+only 10/40 residue machines now reach the rung at all, against 40/40
+before.
 
-That is also precisely the reasoning that produced this round's
-1.14x-not-2x.  Run a `ProbeQhbStage` split first -- the `ProbeRwStage`
-recipe pointed at qhb.  If qhb turns out `ng_explore`-bound the way
-rw was `close`-bound, the treatment is worth ~nothing there either,
-and that costs a probe to learn instead of a round.
+### 3. The qhb tier -- probed, and it dies
+
+`ProbeQhbStage.v`, the `ProbeRwStage` recipe pointed at
+`try_qhb_lex_at`, over the residue sample (40 machines, 54
+(state, rung) attempts -- the `qh_candidate` filter is doing a lot of
+work):
+
+| stage | time | share |
+|---|---|---|
+| `ng_grow` | 0.117 s | 0.6% |
+| + `ng_explore` | 0.155 s | 0.7% |
+| + `rank_procedure` (untrusted certificate search) | **21.51 s** | **~99%** |
+| the whole attempt incl. the verified stage | 20.73 s | -- |
+| the whole PLAIN (non-lex) 9-rung ladder | 0.298 s | -- |
+
+The whole attempt costs no more than the certificate search alone, so
+the verified stage is within noise of zero.  **The ClosureIdx-lex
+treatment is worth ~nothing on the qhb tier** -- it removes duplicated
+verified-stage work, and there is no verified-stage cost here to
+remove.  Row 3 is closed for the cost of one probe instead of one
+round, which is what it was gated for.
+
+The hypothesis it was gated on was wrong in an interesting way: the
+tier is not `ng_grow`/`ng_explore`-bound either (0.7%).  It is
+**`rank_procedure`-bound**, and `rank_procedure` is UNTRUSTED search,
+so it can be replaced outright with no soundness argument.  That is a
+new row, below.
+
+### 3b. NEW: `rank_procedure` is 99% of the qhb lex tier
+
+Straight out of the probe above.  Untrusted, so it carries no proof
+weight, and it is the same shape of target the interned `RepWLSearch`
+core was (that one paid 2.33-4.4x on failing attempts).  Nothing has
+been measured about *why* it is slow yet -- that is the next probe,
+not the next round.  Note the lex ladder is ~70x the plain ladder
+(20.7 s vs 0.298 s), so anything that lets the plain ladder decide
+more machines is also worth real time.
 
 ### 4. Index-keyed certificate tables -- still deferred
 
@@ -1177,7 +1517,20 @@ deliberately rather than drifted into.
 ## Measurement status
 
 tools/probes/ has the vm_compute harness (per-tier timings on four
-machine classes; bounded walks of the heavy `GGH_0RB_1LC_0LB` subtree
-with realistic lookup maps, instrumented for time and peak RSS).
-Numbers pending a Coq-capable environment; per the playbook these are
-container-safe (minutes each, no native_compute, no full walk).
+machine classes; bounded walks of the heavy `GG_1LC_1LB` subtree
+with realistic lookup maps, instrumented for time and peak RSS).  Per
+the playbook these are container-safe (minutes each, no
+native_compute, no full walk).
+
+The 2026-08-07 round ran under a stock Ubuntu `apt-get install coq`
+(Coq 8.18.0), which is enough for every probe here -- no opam switch
+and no `coq-native` needed, since nothing in tools/probes/ loads a
+committed census `.vo`.  Numbers in the CORRECTION section above were
+taken that way, one run per configuration, on a 4-core container whose
+other load was controlled (probes run one at a time; the walk A/B in
+particular was run with nothing else on the box).  Treat them as
+"about", not as three significant figures.
+
+Still pending a full walk: the end-to-end effect of the `anyb` fix.
+`ProbeWalk_K1` says 7.9x on one heavy subtree; the census walk is the
+only thing that settles the census walk.
