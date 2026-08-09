@@ -127,10 +127,21 @@ This moves the committed walk output to a timestamped backup directory
 deletion is ever needed) and re-walks from source.  Budget
 **~24 hours** on ≥16 GB of RAM, on a native Linux filesystem — not `/mnt/c`
 under WSL2, where the drive bridge breaks `native_compute`.  Parallelism
-sizes itself: each walk unit peaks ~4–5 GB, and `WALK_JOBS` defaults to
-`min(cores, (available RAM − 2 GB) / 5 GB)` — override with
-`WALK_JOBS=N`, and on a big box add `WALK_MEMFREE=6G` (GNU parallel) to
-gate each unit launch on free RAM instead of trusting the estimate.
+sizes itself: each walk unit peaks **~6.8 GB** under the default
+`WALK_OCAMLRUNPARAM` (11–12 GB untuned), and `WALK_JOBS` defaults to
+`min(cores, (available RAM − 2 GB) / 7 GB)` — the Makefile is
+authoritative for both numbers.
+
+**Do not override `WALK_JOBS` upward without checking free RAM**, and
+under WSL2 check it INSIDE the VM (`free -g`): `/proc/meminfo` reports
+the VM's allocation, not the host's, and WSL2 self-caps well below the
+host unless `.wslconfig` says otherwise.  Four jobs on a VM sized for
+two is ~28 GB of demand against ~16 GB, and the OOM killer can take the
+whole distro down, not just the walk (this happened: 2026-07-22 on a
+16 GB box, and again 2026-08-08 under WSL2).  On any memory-constrained
+box prefer `WALK_MEMFREE=8G` (GNU parallel), which gates each unit
+launch on free RAM and suspends-and-requeues instead of letting the OOM
+killer choose a victim.
 
 The walk is **resumable and per-unit**: finished units are skipped on re-run,
 and a walk-stamp quarantines any `.vo` that was not produced by walking the
