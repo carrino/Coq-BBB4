@@ -57,6 +57,24 @@ coqc -Q theories BBB4 -Q tools/probes BBB4 tools/probes/ProbeWalkCommon.v
   RepWL tier: isolated verified stage (certificate replayed from data
   into both checkers), whole attempt per rung, and the rung ladder as
   the walk actually pays it.
+- `gen_rss_probe.py` — GENERATOR for the peak-RSS attribution sweep.
+  Peak RSS is a whole-process high-water mark, so each configuration
+  needs its OWN `coqc`; this emits one probe per (workload, fuel,
+  engine) so `/usr/bin/time -v` can be read off each. Workloads:
+  `load` (floor), `tab` (+ lookup maps), `bulk`, `res`, `walk`
+  (ProbeWalk_K1), and `unit` — the REAL unit's computation (Run.v's
+  decider and maps, `Run_Split2.q_ggsub`), whose `--iter 0` row is the
+  engine's fixed cost. `--native` emits `native_compute` for the census
+  opam switch; apt Coq has no native compiler and falls back to the VM
+  with a warning, so a `--native` run there measures nothing new.
+- `ProbeNgFuel.v` — the n-gram analogue of `ProbeRwFuel`: `ng_explore`
+  and the n-gram `Closure.close` instrumented to report (status, nodes
+  seen, fuel LEFT), per rung, so it can be read off whether
+  `ng_fuel = 200000` is ever approached. It is not: 17,665 pops is the
+  largest consumption measured.
+- `ProbeCVisits.v` — `Cycle.cvisits` (eager `||`, so it always walks
+  the full `len`) against the nested-`if` form with the same boolean
+  value, at the prefix lengths the census asks for. Counts must match.
 
 ### The big samples (generated, NOT committed — 24k lines)
 

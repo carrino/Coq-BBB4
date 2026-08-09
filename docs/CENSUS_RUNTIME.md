@@ -1365,6 +1365,162 @@ That is pure attribution, so the fact that it would move catches does
 not matter until a bound is chosen -- and the exhaustive-gate recipe
 from row 2 is now proven for choosing one.
 
+## The memory round: attribution, measured (2026-08-09)
+
+The suspect was wrong, and the way it is wrong is the useful part.
+
+### Where a walk unit's 6.8 GB is NOT
+
+Peak RSS is a whole-process high-water mark, so every configuration
+needs its own `coqc`.  `tools/probes/gen_rss_probe.py` emits one probe
+per (workload, fuel, engine) for exactly that.  All rows below ran
+under the walk's own GC settings (`OCAMLRUNPARAM=o=40,O=60`) on a
+4-core / 15 GB container, `vm_compute`, one at a time.
+
+First, what `coqc` costs before deciding anything -- `Require` only,
+no evaluation at all:
+
+| loaded | peak RSS |
+|---|---|
+| `Coq.List` alone | 0.084 GB |
+| `+ BBB4_Statement` | 0.144 GB |
+| `+ Census.Deferred_Data` (16,115 machines) | 0.149 GB |
+| `+ ProbeLookup` (14,606 machines) | 0.153 GB |
+| `+ ProbeWalkCommon` (the decider and all three maps) | **0.207 GB** |
+
+The lookup tables the walk carries cost about **5 MB each**.  They are
+not the memory.
+
+Then the workloads, each above that 0.205 GB floor:
+
+| workload | peak RSS | above floor | eval |
+|---|---|---|---|
+| floor, nothing evaluated | 0.205 GB | -- | -- |
+| the three lookup maps, forced | 0.225 GB | 0.020 GB | 0.48 s |
+| C + T bulk tiers, 80 machines | 0.227 GB | 0.022 GB | 0.51 s |
+| the residue tier, 40 machines | 0.281 GB | 0.076 GB | 7.70 s |
+| **`ProbeWalk_K1`: 8,192 pop-slots of the heavy `GG_1LC_1LB` subtree** | **0.298 GB** | **0.093 GB** | 96.5 s |
+| the same walk, 4x the pop-slots (2.6x the CPU) | 0.307 GB | 0.102 GB | 250 s |
+| `ProbeWalk_K1` with the GC untuned | 0.408 GB | 0.203 GB | 90.4 s |
+
+**The decider's transient garbage is 0.09 GB, and it is FLAT in walk
+length**: 2.6x the pops moved peak RSS by 3%.  That is what "high-water
+mark of the worst pop" predicts *qualitatively* -- a per-pop bound, not
+an accumulation -- and it puts the number 70x below the 6.8 GB the
+Makefile note attributes to it.  The note has been corrected in place.
+
+The honest gap: these are `vm_compute` and the walk is
+`native_compute`.  What transfers is not the byte count but the LIVE
+SET -- how many values exist at once is a property of the algorithm,
+identical in both engines; only bytes-per-value differ.  For the same
+live set to reach 6.8 GB natively, native values would have to be ~70x
+fatter than VM values, which they are not.  So the 6.8 GB is the
+engine's own footprint -- ahead-of-time compilation, linked code,
+accumulators -- and **no parameter of the decision pipeline reaches
+it.**  The experiment that would split that number further needs
+native and is written up at the end of this section.
+
+### `ng_fuel = 200000` is a cap that is never reached
+
+Row 2's premise was that `ng_fuel` bounds the n-gram / rank / qhb
+closures and therefore caps CPU and RSS together.  A cap only costs
+what it is actually charged for.  Cutting it 10x, holding everything
+else fixed:
+
+| `ng_fuel` | residue sample (40) | `ProbeWalk_K1` | answer |
+|---|---|---|---|
+| 200,000 (shipped) | 0.281 GB / 7.70 s | 0.298 GB / 96.5 s | (33, 0) |
+| 20,000 | 0.278 GB / 7.89 s | 0.296 GB / 97.6 s | (33, 0) |
+| 2,000 | 0.279 GB / 5.48 s | 0.296 GB / 94.2 s | (33, 0) |
+
+Nothing moves at 20,000 -- not time, not memory, not one catch.  At
+2,000 the time finally drops, which locates the binding point between
+the two.  `tools/probes/ProbeNgFuel.v` then measures it directly:
+`ng_explore` (inside `ng_grow`) and the n-gram `Closure.close`
+instrumented to report (status, nodes seen, fuel LEFT), over the
+residue sample plus all four n-gram tier samples, 104 machines:
+
+| rung | explores that burned all 200,000 | max explore pops | closes that burned all 200,000 | max close pops |
+|---|---|---|---|---|
+| (2, 100) | **0** | 257 | **0** | 257 |
+| (3, 200) | **0** | 693 | **0** | 693 |
+| (4, 400) | **0** | 1,985 | **0** | 1,985 |
+| (6, 800) | **0** | 17,665 | **0** | 17,665 |
+
+Not one of the 416 explores and 416 closures exhausted the fuel; the
+largest consumption census-side is **17,665 pops against a cap of
+200,000**, an 11x margin.  **Row 2 is empty and should be closed, not
+scheduled.**
+
+This is the opposite of the `rw_fuel` story and the contrast is the
+lesson.  There, half the machines reaching (3,2,0) burned the whole
+8,192 -- the cap WAS the workload, so lowering it refunded real time.
+Here nothing diverges, so `ng_fuel` is latent, like the `(S t <=? B)`
+gates: a bound that is never tested costs exactly zero, and lowering it
+buys exactly zero while risking catches.  Before sizing a parameter,
+measure what it is charged, not what it permits.  Note also that fuel
+consumption is counted in worklist pops, so this table is
+engine-independent -- it holds under `native_compute` unchanged, which
+is what lets it close the row despite everything above being VM.
+
+### What the next walk measures by itself
+
+Every walk now records, per unit, its peak RSS and its wall and user
+seconds to `census_probes/walk-rss.tsv` (`/usr/bin/time` wrapping the
+existing `coqc`; `WALK_RSS=` disables it).  This costs nothing, touches
+no census input -- `tools/census_cache.py` hashes the census `.v` only
+-- and replaces the one hand-measured unit from 2026-08-04 that the
+entire `WALK_JOBS` formula rests on with 154 measurements.
+
+`python3 tools/walk_rss_report.py` reads it back: the RSS distribution,
+per-layer CPU, the heaviest units by name, and the wall time predicted
+at each job count.  `WALK_RSS_GB=N` then feeds a measured peak straight
+back into the Makefile's sizing.
+
+It also models something the 93% figure hides.  **The walk is six
+BARRIERS, not one pool**: `Run_Split` (1 unit), `Run_Split2` (1), the
+`Run_Split_<tag>` layer (7), `GG_1LC_*` (16), `GGH_*` (104), `G_*`
+(24).  A layer costs its makespan, and no job count above a layer's
+unit count helps that layer.  93% was measured AT 4 JOBS; at 8 the two
+single-unit layers and the 7-unit layer are twice as expensive
+relatively, so 385 core-min / 8 / 0.93 = 52 min is a floor, not a
+forecast.  The report's schedule model puts the same profile nearer 60
+min at 8 jobs.  That does not change the memory target -- it says the
+tail layers become the next thing worth splitting once the memory
+target is met, and `tools/gen_gsplit_heavy.py` is the existing tool for
+it.
+
+### The native experiment this round could not run
+
+apt's Coq has no native compiler (`native_cast_no_check` silently falls
+back to VM conversion), so the split of the 6.8 GB between "engine
+fixed cost" and "the walk itself" needs the census opam switch.  It is
+four `coqc` runs and a few minutes, not a walk:
+
+```sh
+for it in 0 1 4 16; do
+  python3 tools/probes/gen_rss_probe.py unit /tmp/U_$it.v --iter $it --native
+  OCAMLRUNPARAM=o=40,O=60 /usr/bin/time -v \
+    coqc -Q theories BBB4 -Q tools/probes BBB4 /tmp/U_$it.v
+done
+```
+
+`unit` is the REAL walk unit's computation -- Run.v's own decider and
+lookup maps, rooted at `Run_Split2.q_ggsub S1 DL StB`, i.e. exactly
+what `Compute/GG_1LC_1LB.v` walks -- cut to `--iter` of its 700 `q_suc`
+rounds.  `--iter 0` walks nothing, so its peak RSS IS the engine's
+fixed cost: load, translate, `ocamlopt`, link.  The VM rows above give
+the shape to expect the walk part to have (flat in `--iter`), so:
+
+- if `--iter 0` is already most of 6.8 GB, the memory lever is the
+  engine and the unit granularity, and no pipeline parameter will ever
+  matter;
+- if it is small and the number climbs with `--iter`, then native's
+  per-pop high-water really is ~70x the VM's, and that ratio -- not any
+  fuel -- is the thing to attack.
+
+Either answer picks the next round.  Neither needs a census walk.
+
 ## Next steps, in Amdahl order (2026-08-07)
 
 Rows 2-4 are "What is left in the rw tier" above, re-ordered by

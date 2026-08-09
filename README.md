@@ -90,7 +90,8 @@ targets back up and re-derive those automatically.
    against the census sources) and yields `bbb4_target` and
    `BBB4_value`.  Trust: the kernel, plus that those `.vo` are honest
    output of the census walk.
-4. **`make census-verify`** (~24 h, ≥16 GB RAM).  Removes that last
+4. **`make census-verify`** (1 h 45 m at 4 jobs on 32 GB; ~3.5 h at
+   2 jobs on 16 GB — 385 core-min, measured 2026-08-09).  Removes that last
    trust: backs the committed `.vo` up automatically and re-walks the
    census from source.  The walk is resumable per-unit, so re-walking
    a *sample* of units and checking they reproduce the committed
@@ -119,16 +120,17 @@ the remaining slots.  On a ~16 GB box use `make -j2`, or tighten the
 chains in `Makefile.coq.local` to a single column.
 
 `make proof` additionally loads the **committed census `.vo`**
-(`theories/Census/Compute/`, the output of a ~7 h `native_compute`
-enumeration of the whole (4,2) space).  Those binaries are
+(`theories/Census/Compute/`, the output of a 385-core-minute
+`native_compute` enumeration of the whole (4,2) space).  Those binaries are
 toolchain-specific: they load under the opam switch they were built
 with (OCaml 4.14.2, Coq 8.18.0, `coq-native`) and are hash-guarded by
 `tools/census_cache.py`.  To trust nothing but source, re-derive them
 yourself:
 
 ```sh
-make census-verify   # re-runs the census walk from source (~7 h at -P4,
-                     # >=16 GB RAM; see docs/VERIFYING.md)
+make census-verify   # re-runs the census walk from source (385 core-min:
+                     # ~1h45m at 4 jobs / 32 GB, ~3.5 h at 2 / 16 GB.
+                     # WALK_JOBS is RAM-bound -- docs/VERIFYING.md)
 ```
 
 [`docs/VERIFYING.md`](docs/VERIFYING.md) walks through every
