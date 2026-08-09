@@ -1427,11 +1427,12 @@ decider's transient garbage to be 6.8 GB natively, native values would
 have to be ~22x fatter than VM values, which they are not.  So the
 memory is somewhere else -- and the next probe found it.
 
-(The container also cannot run the walk at all: apt's Coq is built
+(A hazard worth knowing on its own: apt's Coq is built
 `COQ_NATIVE_COMPILER_DEFAULT=no`, and `native_cast_no_check` then falls
-back to VM conversion *silently* -- with only a warning, not an error.
-That is a hazard on its own, but it is also what makes the next section
-possible: it lets a real walk unit's computation run here, on the VM.)
+back to VM conversion with a WARNING rather than an error -- so a "walk"
+on the wrong Coq looks like it succeeded.  It is also what makes the
+next section possible: the fallback lets a real walk unit's computation
+run in this container, on the VM.)
 
 ### Where it IS: 2.74 GB of a walk unit is `Require`, not walking
 
@@ -1450,7 +1451,7 @@ its 700 rounds.  `--iter 0` walks nothing at all:
 The bottom row is the whole unit: `GG_1LC_1LB`'s computation, run to
 `([], [])`, on Run.v's real decider and real tables.  **2.743 of its
 3.667 GB is spent before the first machine is decided**, and every one
-of the 154 units pays it.  Where:
+of the 154 files the walk compiles pays it.  Where:
 
 | `Require` | peak RSS |
 |---|---|
