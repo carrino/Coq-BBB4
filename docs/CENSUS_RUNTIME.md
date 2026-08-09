@@ -1771,36 +1771,74 @@ tail layers become the next thing worth splitting once the memory
 target is met, and `tools/gen_gsplit_heavy.py` is the existing tool for
 it.
 
-### The native experiment this round could not run
+### CONFIRMED NATIVELY (2026-08-09, later): 78% of a unit is fixed cost
 
-apt's Coq has no native compiler (`native_cast_no_check` silently falls
-back to VM conversion), so the split of the 6.8 GB between "engine
-fixed cost" and "the walk itself" needs the census opam switch.  It is
-four `coqc` runs and a few minutes, not a walk:
+The VM half of this round could only say "the decider is not it".  The
+census opam switch settles the rest, and it is four `coqc` runs, not a
+walk:
 
 ```sh
-for it in 0 1 4 16; do
+eval $(opam env --switch=census)
+for it in 0 1; do
   python3 tools/probes/gen_rss_probe.py unit /tmp/U_$it.v --iter $it --native
-  OCAMLRUNPARAM=o=40,O=60 /usr/bin/time -v \
-    coqc -Q theories BBB4 -Q tools/probes BBB4 /tmp/U_$it.v
+  OCAMLRUNPARAM=o=40,O=60 /usr/bin/time -v coqc -Q theories BBB4 /tmp/U_$it.v
 done
 ```
 
 `unit` is the REAL walk unit's computation -- Run.v's own decider and
-lookup maps, rooted at `Run_Split2.q_ggsub S1 DL StB`, i.e. exactly
-what `Compute/GG_1LC_1LB.v` walks -- cut to `--iter` of its 700 `q_suc`
-rounds.  `--iter 0` walks nothing, so its peak RSS IS the engine's
-fixed cost: load, translate, `ocamlopt`, link.  The VM rows above give
-the shape to expect the walk part to have (flat in `--iter`), so:
+lookup maps, rooted at `Run_Split2.q_ggsub S1 DL StB`, i.e. exactly what
+`Compute/GG_1LC_1LB.v` walks -- cut to `--iter` of its 700 `q_suc`
+rounds.  `--iter 0` walks nothing, so its peak RSS IS the engine's fixed
+cost: `.vo` load, native translation, `ocamlopt`, `Dynlink`.
 
-- if `--iter 0` is already most of 6.8 GB, the memory lever is the
-  engine and the unit granularity, and no pipeline parameter will ever
-  matter;
-- if it is small and the number climbs with `--iter`, then native's
-  per-pop high-water really is ~70x the VM's, and that ratio -- not any
-  fuel -- is the thing to attack.
+| `native_compute`, real unit | peak RSS | eval | queue left |
+|---|---|---|---|
+| **`--iter 0` -- walks NOTHING** | **5.321 GB** | 14.6 s | -- |
+| `--iter 1` -- one round | **6.758 GB** | 57.6 s | (33, 0) |
+| (the unit's hand-measured peak, 2026-08-04) | 6.76 GB | -- | -- |
 
-Either answer picks the next round.  Neither needs a census walk.
+**79% of a walk unit's peak RSS is spent before the first machine is
+decided**, and the third row is the check: ONE round already reaches
+the peak the whole unit was measured at in July, to three significant
+figures.  The walk contributes 1.44 GB and then plateaus -- the same
+shape the VM showed (2.743 GB floor, +0.92 GB, flat from one round to
+sixteen), scaled by 1.94x on the identical `Require`.  Every VM
+conclusion in this section survives the transfer, including the one
+that mattered: no fuel, no rung, no closure parameter is anywhere near
+this number.
+
+The CPU side transfers too, and independently confirms the tier model:
+the identical computation is 145.8 s on the VM against 57.6 s native,
+**vm/native = 2.53x**, against the 2.34x the re-measured tier split had
+to assume to reconcile with the observed walk.
+
+Two things the VM could not have told us:
+
+- **The fixed cost is bigger natively than the `.vo` load alone.**  VM
+  `Require` is 2.743 GB; native `--iter 0` is 5.32 GB.  The extra ~2.6
+  GB is native translating and `ocamlopt`-compiling the whole reachable
+  environment -- so lever 1 removes constants from BOTH halves of the
+  fixed cost, not just from the load.
+- **It costs CPU too.**  `--iter 0` takes 25.1 s wall (14.6 s of it the
+  native translate/compile) for a computation that decides nothing.
+  Across 154 files that is ~65 core-min of the walk's 385 -- **~17% of
+  the census walk is per-unit startup**, paid 154 times to compile the
+  same environment.
+
+Revised payoff for lever 1, now that the fixed cost is measured rather
+than estimated:
+
+| configuration | native peak | jobs on 32 GB | core-min | wall |
+|---|---|---|---|---|
+| today | 6.8 GB | 4 | 385 | 103 min |
+| lever 1, conservative (remove only the 2.65 GB `.vo` load) | ~4.2 GB | 7 | ~360 | ~55 min |
+| lever 1, if the translate cost scales with the environment | ~2.5-3 GB | 8 | ~330 | ~45-50 min |
+
+The conservative row already clears the hour, and it is a floor: it
+assumes the native translate/compile half of the fixed cost does not
+shrink at all, which it must, since it is compiling the very constants
+lever 1 removes.  Add the layer barriers below (~15%) and the honest
+range is **~50-63 min** -- i.e. **the goal closes on lever 1 alone.**
 
 ## Next steps, re-ranked by the memory round (2026-08-09)
 
