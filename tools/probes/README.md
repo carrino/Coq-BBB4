@@ -28,7 +28,9 @@ coqc -Q theories BBB4 -Q tools/probes BBB4 tools/probes/ProbeWalkCommon.v
   probe's lookup tiers behave cost-wise like the real walk's.
 - `ProbeWalkCommon.v` — Run.v's decider re-instantiated with that
   table + the real `D_census` map, rooted at the heavy
-  `GGH_0RB_1LC_0LB` subtree.
+  `GG_1LC_1LB` subtree (`Run_Split2.ggchild S1 DL StB`; the walk
+  unit of the same name -- NOT `GGH_0RB_1LC_0LB`, which is a different
+  and much lighter family).
 - `ProbeWalk_K<K>.v` — walk `K * 8192` pop-slots of that subtree under
   `Time`/`/usr/bin/time -v` for time-per-pop and peak-RSS curves.
 - `ProbeTierCost.v` — GENERATED (committed, 240 machines): per-tier

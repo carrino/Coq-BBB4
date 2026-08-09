@@ -1449,7 +1449,7 @@ deliberately rather than drifted into.
 ## Measurement status
 
 tools/probes/ has the vm_compute harness (per-tier timings on four
-machine classes; bounded walks of the heavy `GGH_0RB_1LC_0LB` subtree
+machine classes; bounded walks of the heavy `GG_1LC_1LB` subtree
 with realistic lookup maps, instrumented for time and peak RSS).  Per
 the playbook these are container-safe (minutes each, no
 native_compute, no full walk).
