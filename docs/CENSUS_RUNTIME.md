@@ -1297,6 +1297,74 @@ Where a future change is monotone in some parameter and the affected
 population is tabulated, prefer this construction over a random
 sample -- it is both cheaper and strictly stronger.
 
+## Full re-walk #3, measured end-to-end (2026-08-09)
+
+`time make census-verify` on the same 32 GB desktop, WALK_JOBS=4
+(auto), with `anyb`, the checker guards and `rw_fuel_census = 5120`.
+The base build was already present (`Nothing to be done for
+'real-all'`), so the whole figure is walk, directly comparable to the
+walk-only row above.  A full re-derivation, not a resume: `census-verify`
+had already moved every unit to a backup, so all 144 units + the
+theorem were walked from source.
+
+| | |
+|---|---|
+| re-walk #2 (2026-08-06), walk-only | 12 h 08 m 48 s |
+| **re-walk #3 (2026-08-09), walk-only** | **1 h 43 m 39 s** |
+| | **7.03x** |
+| core-time | 376 m user + 9 m sys = **385 core-min** |
+| parallel efficiency | **93%** across 4 jobs |
+
+`Print Assumptions census_decided` printed exactly
+`functional_extensionality_dep` and nothing else.
+
+**The fuel cut is confirmed at census scale.**  `rw_fuel_census`
+8192 -> 5120 changes WHICH machines are caught, and a lost catch is
+`R_Unknown` -- the queue would not empty and that unit's `Qed` would
+fail.  All 144 units closed.  The exhaustive gate (28 at-risk machines,
+all tested) held on the real census, not just on the sample.
+
+### What the projections did, for the record
+
+| projected from | projected | delivered |
+|---|---|---|
+| `ProbeWalk_K1`, one heavy subtree | 9.55x | -- |
+| stated expectation in this doc | "below 9.55x", 2-4 h | **7.03x, 1.73 h** |
+
+The subtree probe overshot by ~36%, exactly as its residue-rich
+composition predicted it would; the hedge attached to it was the part
+that turned out to be load-bearing.  A walk probe of ONE subtree is
+worth about "the right order of magnitude, biased high" -- better than
+a stage or tier measurement, still not a walk.
+
+### The <1 h goal is now a MEMORY problem, not a CPU problem
+
+385 core-min at 8 jobs is ~48 min ideal, ~52 min at the measured 93%
+efficiency.  So the goal needs no further core-time work at all -- it
+needs the parallelism the box already has.  On 8 cores / 32 GB:
+
+    jobs = min(8, (32 - 2 GB) / RSS_per_unit)
+
+| RSS/unit | jobs | wall (at 385 core-min, 93%) |
+|---|---|---|
+| 6.8 GB (today) | 4 | 1 h 43 m |
+| 5.0 GB | 6 | ~69 m |
+| **<= 3.75 GB** | **8** | **~52 m** |
+
+One number: **per-unit peak RSS <= 3.75 GB**.  32 GB is the target
+profile deliberately -- 64 GB is not regular hardware.  Note also that
+WSL2 defaults to HALF the host, so a cloner on a 32 GB box gets a 16 GB
+VM and only 2 jobs unless `.wslconfig` pins it; that alone is a 2x
+reporting error waiting to happen.
+
+`ng_fuel = 200000` is the prime suspect and the top item on the list
+below: it bounds the n-gram / rank / qhb closures, so it caps CPU and
+peak RSS together.  Cheapest decisive experiment: rebuild the heaviest
+unit with `ng_fuel` lowered and read peak RSS off `/usr/bin/time -v`.
+That is pure attribution, so the fact that it would move catches does
+not matter until a bound is chosen -- and the exhaustive-gate recipe
+from row 2 is now proven for choosing one.
+
 ## Next steps, in Amdahl order (2026-08-07)
 
 Rows 2-4 are "What is left in the rw tier" above, re-ordered by
