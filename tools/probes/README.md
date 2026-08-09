@@ -75,6 +75,22 @@ coqc -Q theories BBB4 -Q tools/probes BBB4 tools/probes/ProbeWalkCommon.v
 - `ProbeCVisits.v` — `Cycle.cvisits` (eager `||`, so it always walks
   the full `len`) against the nested-`if` form with the same boolean
   value, at the prefix lengths the census asks for. Counts must match.
+- `ProbeRwFuelRungs.v` — `ProbeRwFuel`'s instrumented `close` at the
+  shipped 5,120, per rung, over the machines that reach that rung under
+  the shipped ladder order. Says how much of the tier's closure work is
+  diverging closures (89%) and therefore what a lower cap can refund.
+
+`ProbeTierCost.v`'s generator now emits a WARM-UP `Time Eval` before the
+first tier row. `vm_compute` compiles the whole `decider0` closure to
+bytecode on its first use and charged it to whichever row ran first —
+which made the published "H halt: 8.45 ms/machine" ~100x too slow. Any
+new timing probe over `decider0` needs the same warm-up.
+
+The `unit` workload needs `theories/Census/Run{,_Split,_Split2}.vo`
+built by the SAME Coq: the committed `Run_Split*.vo` come from the
+census opam switch (OCaml 4.14.2) and will not load under apt's 4.14.1.
+Move them aside, `coqc` the two sources (they are structural lemmas, not
+walks — seconds each), and move them back.
 
 ### The big samples (generated, NOT committed — 24k lines)
 

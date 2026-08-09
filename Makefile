@@ -100,13 +100,28 @@ WALK_JOBS ?= $(WALK_AUTO)
 #
 # The rest of that note used to read "so without it each unit's RSS is
 # the high-water mark of its worst pop's transient garbage".  That was a
-# hypothesis, never measured, and it is now contradicted: the SAME walk
-# -- the heavy GG_1LC_1LB subtree, real deferred map, realistic lookup
-# tables, every pop back to back -- peaks at 0.298 GB under vm_compute
-# with these GC settings, 0.093 GB above the 0.205 GB a bare `coqc' pays
-# just to load the tree (tools/probes/gen_rss_probe.py, 2026-08-09).
-# The decider's transient garbage is ~0.1 GB; whatever the other 6.7 is,
-# it is not that, and no fuel parameter reaches it.
+# hypothesis, never measured, and it is wrong by ~20x
+# (tools/probes/gen_rss_probe.py, 2026-08-09).  Measured under
+# vm_compute, GG_1LC_1LB's real computation walked to an EMPTY queue:
+#
+#   Require Run + Run_Split + Run_Split2, evaluate nothing   2.743 GB
+#     -- of which Census/Proven_Data.vo (the board THEOREMS)  2.650 GB
+#   + the whole subtree walked, queue ([],[])                3.667 GB
+#   the same walk on data-only lookup tables (ProbeWalkCommon) 0.307 GB
+#
+# So the decider's transient garbage is ~0.1 GB, `o' multiplies a live
+# set that is 75% environment, and 2.65 GB of that environment is proofs
+# the walk half of a unit never looks inside.  o is a target for slack
+# RELATIVE TO LIVE DATA, so it scales with the environment, not with the
+# decider: same unit, one run each,
+#
+#   untuned 5.474 GB / 137 s   o=80,O=150 4.539 / 136   o=40,O=60 3.667 / 143
+#   o=20,O=30 3.323 GB / 157 s   o=10,O=20 2.959 / 187
+#
+# o=40,O=60 stays the default: tightening further buys 9-19% of RSS for
+# 10-30% of CPU, and WALK_JOBS is integer, so on a 32 GB box it does not
+# cross a job boundary on its own.  docs/CENSUS_RUNTIME.md has the
+# arithmetic and what it would take to cross one.
 WALK_OCAMLRUNPARAM ?= o=40,O=60
 
 # WALK_RSS: per-unit peak RSS + wall/user seconds, appended to
@@ -171,8 +186,8 @@ _census-prepare:
 _census-walk: _census-prepare
 	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) (auto = min(cores, (free RAM - 2 GB)/$(WALK_RSS_GB) GB); override with WALK_JOBS=N or WALK_RSS_GB=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
 	@if [ -n "$(WALK_MEASURE)" ]; then mkdir -p census_probes; \
-	   [ -f $(WALK_RSS) ] || \
-	     printf 'peak_rss_kb\twall_s\tuser_s\tcommand\n' > $(WALK_RSS); \
+	   [ -f "$(WALK_RSS)" ] || \
+	     printf 'peak_rss_kb\twall_s\tuser_s\tcommand\n' > "$(WALK_RSS)"; \
 	   echo ">>> per-unit peak RSS -> $(WALK_RSS) (python3 tools/walk_rss_report.py)"; \
 	 elif [ -n "$(WALK_RSS)" ]; then \
 	   echo ">>> per-unit peak RSS NOT recorded: /usr/bin/time missing (apt-get install time)"; \
