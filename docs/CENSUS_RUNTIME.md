@@ -2025,6 +2025,40 @@ state because the certificate's tables are keyed by `rconf_enc`, and
 having the search emit index-keyed tables would halve that at the cost
 of every `RerootStage` proof.  Still not worth it.
 
+**M6.  NEW -- one heavy file instead of 15, by hypothesising
+`decider_WF`.**  M1 left 15 files needing the boards, and they need them
+for one reason each.  `ggsub_decided`'s entire use of the environment is
+a single leaf:
+
+```coq
+- simpl. apply SearchQueue_upds_spec; [exact IHn | exact decider_WF].
+```
+
+Take `HWF : QHDecider_WF B_census D_census decider` as a hypothesis
+instead of naming `decider_WF`, thread it through `gsub_decided` /
+`ggsub_decided` / the `Run_Split_<tag>` lemmas, and discharge it exactly
+once at the top.  The statement lives in `Decide.v`, which is lean, so
+nothing but that last file would `Require Run.v`.  Mechanical -- the
+proofs do not change shape, only their context.
+
+Be honest about what it buys, because it is less than it looks:
+
+* **Wall time: ~2%.**  The 15 files are ~30 s each natively, ~7 core-min
+  of 385.  They do not walk.
+* **RAM floor: ~10 GB -> ~7.5 GB**, still set by whichever single file
+  discharges `HWF`.  Real, but it does not change what hardware the walk
+  needs -- 16 GB was already enough after M1.
+* **It does NOT put the census in CI.**  A hosted runner has ~7 GB, and
+  the base build's `IRules_Batch_*` peak at 6-8 GB each and already do
+  not fit; that is a separate blocker, ahead of this one.
+
+So M6 is not on the critical path for retiring the committed `.vo`.
+**The measurement is.**  If the first lean walk comes in near the
+core-time floor on 8 cores at any-16-GB-box RAM, then "clone it and run
+it yourself" is a real instruction rather than an aspiration, and the
+154 committed `.vo` -- and the trust decision they carry -- can go.
+Nothing else needs to land first.
+
 **Closed, with the evidence, so they are not re-derived:** `ng_fuel`
 (never reaches its cap: 17,665 pops against 200,000); the `scan_loops`
 double simulation (ceiling ~0.6%); `cvisits`'s eager `orb` (4.2-4.4x on
