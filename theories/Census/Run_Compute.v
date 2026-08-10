@@ -186,3 +186,42 @@ Definition q_0 : SearchQueue :=
 
 Definition q_suc (q : SearchQueue) : SearchQueue :=
   SearchQueue_upds q decider 13.
+
+(** ** The split roots
+
+    The per-subtree queues the walk units are rooted at.  They are
+    definitions, not lemmas, so they belong on the computational side:
+    a unit's [_empty] lemma names one of them and nothing else, which
+    is what lets it Require this file instead of Run_Split*.v (and so
+    Run.v, and so every board).  The WF and [_decided] lemmas that go
+    with them stay in Run_Split.v / Run_Split2.v. *)
+
+(** first level: one first-move-right child of the root *)
+Definition q_sub (w : Sym) (nx : St) : SearchQueue :=
+  ([child w DR nx], []).
+
+(** second level: the wRB child's B0 fills.  The wRB child (w in
+    {S0, S1}) halts at index 1 in state B reading the blank; its
+    expansion fills B0 with the 12 in-range transitions (targets up to
+    the pointer StC). *)
+Definition tm_child (w : Sym) : TM :=
+  TM_upd' TM0 StA S0 (Some (mkTrans w DR StB)).
+
+Definition gchild (w w2 : Sym) (d2 : Dir) (nx2 : St) : TNF_Node :=
+  mkNode (TM_upd' (tm_child w) StB S0 (Some (mkTrans w2 d2 nx2)))
+         (ptr_after (Some StC) nx2).
+
+Definition q_gsub (w w2 : Sym) (d2 : Dir) (nx2 : St) : SearchQueue :=
+  ([gchild w w2 d2 nx2], []).
+
+(** third level: the C1 fills of the census's largest grandchild,
+    [gchild S1 S1 DL StC] -- A0=1RB, B0=1LC *)
+Definition tm_gg : TM :=
+  TM_upd' (tm_child S1) StB S0 (Some (mkTrans S1 DL StC)).
+
+Definition ggchild (w3 : Sym) (d3 : Dir) (nx3 : St) : TNF_Node :=
+  mkNode (TM_upd' tm_gg StC S1 (Some (mkTrans w3 d3 nx3)))
+         (ptr_after (Some StD) nx3).
+
+Definition q_ggsub (w3 : Sym) (d3 : Dir) (nx3 : St) : SearchQueue :=
+  ([ggchild w3 d3 nx3], []).

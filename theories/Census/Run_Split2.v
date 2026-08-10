@@ -16,16 +16,9 @@ Import ListNotations.
 
 Set Default Goal Selector "!".
 
-(** the machine of [gchild S1 S1 DL StC]: A0=1RB, B0=1LC *)
-Definition tm_gg : TM :=
-  TM_upd' (tm_child S1) StB S0 (Some (mkTrans S1 DL StC)).
-
-Definition ggchild (w3 : Sym) (d3 : Dir) (nx3 : St) : TNF_Node :=
-  mkNode (TM_upd' tm_gg StC S1 (Some (mkTrans w3 d3 nx3)))
-         (ptr_after (Some StD) nx3).
-
-Definition q_ggsub (w3 : Sym) (d3 : Dir) (nx3 : St) : SearchQueue :=
-  ([ggchild w3 d3 nx3], []).
+(** the roots ([q_sub] / [q_gsub] / [q_ggsub] and the machines they
+    are built from) moved to Census/Run_Compute.v so a walk unit can
+    name one without loading the boards; only the lemmas are here. *)
 
 Lemma tm_gg_C_used : ~ UnusedState tm_gg StC.
 Proof.

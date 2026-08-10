@@ -13,8 +13,9 @@ Import ListNotations.
 
 Set Default Goal Selector "!".
 
-Definition q_sub (w : Sym) (nx : St) : SearchQueue :=
-  ([child w DR nx], []).
+(** the roots ([q_sub] / [q_gsub] / [q_ggsub] and the machines they
+    are built from) moved to Census/Run_Compute.v so a walk unit can
+    name one without loading the boards; only the lemmas are here. *)
 
 Lemma q_sub_WF : forall w nx,
   trans_ok (Some StB) (mkTrans w DR nx) = true ->
@@ -64,16 +65,6 @@ Qed.
     transitions (targets up to the pointer StC).  Splitting there
     makes the two heavy walks 12 parallel walks each, bounding the
     certification wall-time by the largest grandchild subtree. *)
-
-Definition tm_child (w : Sym) : TM :=
-  TM_upd' TM0 StA S0 (Some (mkTrans w DR StB)).
-
-Definition gchild (w w2 : Sym) (d2 : Dir) (nx2 : St) : TNF_Node :=
-  mkNode (TM_upd' (tm_child w) StB S0 (Some (mkTrans w2 d2 nx2)))
-         (ptr_after (Some StC) nx2).
-
-Definition q_gsub (w w2 : Sym) (d2 : Dir) (nx2 : St) : SearchQueue :=
-  ([gchild w w2 d2 nx2], []).
 
 Lemma tm_child_B0_used : forall w, ~ UnusedState (tm_child w) StB.
 Proof.
