@@ -33516,8 +33516,7 @@ Definition tm_reroot_qh_02791 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StA)
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
-
-Definition reroot_qh_list_data : list TM :=
+Definition reroot_qh_list_data_000 : list TM :=
   [tm_reroot_qh_00000;
    tm_reroot_qh_00001;
    tm_reroot_qh_00002;
@@ -33767,8 +33766,10 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_00246;
    tm_reroot_qh_00247;
    tm_reroot_qh_00248;
-   tm_reroot_qh_00249;
-   tm_reroot_qh_00250;
+   tm_reroot_qh_00249].
+
+Definition reroot_qh_list_data_001 : list TM :=
+  [tm_reroot_qh_00250;
    tm_reroot_qh_00251;
    tm_reroot_qh_00252;
    tm_reroot_qh_00253;
@@ -34017,8 +34018,10 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_00496;
    tm_reroot_qh_00497;
    tm_reroot_qh_00498;
-   tm_reroot_qh_00499;
-   tm_reroot_qh_00500;
+   tm_reroot_qh_00499].
+
+Definition reroot_qh_list_data_002 : list TM :=
+  [tm_reroot_qh_00500;
    tm_reroot_qh_00501;
    tm_reroot_qh_00502;
    tm_reroot_qh_00503;
@@ -34267,8 +34270,10 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_00746;
    tm_reroot_qh_00747;
    tm_reroot_qh_00748;
-   tm_reroot_qh_00749;
-   tm_reroot_qh_00750;
+   tm_reroot_qh_00749].
+
+Definition reroot_qh_list_data_003 : list TM :=
+  [tm_reroot_qh_00750;
    tm_reroot_qh_00751;
    tm_reroot_qh_00752;
    tm_reroot_qh_00753;
@@ -34517,8 +34522,10 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_00996;
    tm_reroot_qh_00997;
    tm_reroot_qh_00998;
-   tm_reroot_qh_00999;
-   tm_reroot_qh_01000;
+   tm_reroot_qh_00999].
+
+Definition reroot_qh_list_data_004 : list TM :=
+  [tm_reroot_qh_01000;
    tm_reroot_qh_01001;
    tm_reroot_qh_01002;
    tm_reroot_qh_01003;
@@ -34767,8 +34774,10 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_01246;
    tm_reroot_qh_01247;
    tm_reroot_qh_01248;
-   tm_reroot_qh_01249;
-   tm_reroot_qh_01250;
+   tm_reroot_qh_01249].
+
+Definition reroot_qh_list_data_005 : list TM :=
+  [tm_reroot_qh_01250;
    tm_reroot_qh_01251;
    tm_reroot_qh_01252;
    tm_reroot_qh_01253;
@@ -35017,8 +35026,10 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_01496;
    tm_reroot_qh_01497;
    tm_reroot_qh_01498;
-   tm_reroot_qh_01499;
-   tm_reroot_qh_01500;
+   tm_reroot_qh_01499].
+
+Definition reroot_qh_list_data_006 : list TM :=
+  [tm_reroot_qh_01500;
    tm_reroot_qh_01501;
    tm_reroot_qh_01502;
    tm_reroot_qh_01503;
@@ -35267,8 +35278,10 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_01746;
    tm_reroot_qh_01747;
    tm_reroot_qh_01748;
-   tm_reroot_qh_01749;
-   tm_reroot_qh_01750;
+   tm_reroot_qh_01749].
+
+Definition reroot_qh_list_data_007 : list TM :=
+  [tm_reroot_qh_01750;
    tm_reroot_qh_01751;
    tm_reroot_qh_01752;
    tm_reroot_qh_01753;
@@ -35517,8 +35530,10 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_01996;
    tm_reroot_qh_01997;
    tm_reroot_qh_01998;
-   tm_reroot_qh_01999;
-   tm_reroot_qh_02000;
+   tm_reroot_qh_01999].
+
+Definition reroot_qh_list_data_008 : list TM :=
+  [tm_reroot_qh_02000;
    tm_reroot_qh_02001;
    tm_reroot_qh_02002;
    tm_reroot_qh_02003;
@@ -35767,8 +35782,10 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_02246;
    tm_reroot_qh_02247;
    tm_reroot_qh_02248;
-   tm_reroot_qh_02249;
-   tm_reroot_qh_02250;
+   tm_reroot_qh_02249].
+
+Definition reroot_qh_list_data_009 : list TM :=
+  [tm_reroot_qh_02250;
    tm_reroot_qh_02251;
    tm_reroot_qh_02252;
    tm_reroot_qh_02253;
@@ -36017,8 +36034,10 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_02496;
    tm_reroot_qh_02497;
    tm_reroot_qh_02498;
-   tm_reroot_qh_02499;
-   tm_reroot_qh_02500;
+   tm_reroot_qh_02499].
+
+Definition reroot_qh_list_data_010 : list TM :=
+  [tm_reroot_qh_02500;
    tm_reroot_qh_02501;
    tm_reroot_qh_02502;
    tm_reroot_qh_02503;
@@ -36267,8 +36286,10 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_02746;
    tm_reroot_qh_02747;
    tm_reroot_qh_02748;
-   tm_reroot_qh_02749;
-   tm_reroot_qh_02750;
+   tm_reroot_qh_02749].
+
+Definition reroot_qh_list_data_011 : list TM :=
+  [tm_reroot_qh_02750;
    tm_reroot_qh_02751;
    tm_reroot_qh_02752;
    tm_reroot_qh_02753;
@@ -36310,3 +36331,17 @@ Definition reroot_qh_list_data : list TM :=
    tm_reroot_qh_02789;
    tm_reroot_qh_02790;
    tm_reroot_qh_02791].
+
+Definition reroot_qh_list_data : list TM :=
+  reroot_qh_list_data_000 ++
+  reroot_qh_list_data_001 ++
+  reroot_qh_list_data_002 ++
+  reroot_qh_list_data_003 ++
+  reroot_qh_list_data_004 ++
+  reroot_qh_list_data_005 ++
+  reroot_qh_list_data_006 ++
+  reroot_qh_list_data_007 ++
+  reroot_qh_list_data_008 ++
+  reroot_qh_list_data_009 ++
+  reroot_qh_list_data_010 ++
+  reroot_qh_list_data_011.

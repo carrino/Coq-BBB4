@@ -155,8 +155,30 @@ Import ListNotations.
         body.append(f"(* {m} *)")
         body.append(tm_def(nm, m))
         names.append(nm)
-    body.append(f"\nDefinition {list_name} : list TM :=")
-    body.append("  [" + ";\n   ".join(names) + "].")
+    # CHUNKED, not one flat literal.  A single [a; b; ...] of 5,270
+    # elements is a 5,270-deep cons chain and `coqnative' recurses over
+    # the term, so it dies with "Fatal error: exception Stack overflow"
+    # (seen 2026-08-10 on the census opam switch).  Plain `coqc' takes
+    # it happily, which is exactly why this is invisible on a build
+    # without a native compiler -- do not "simplify" it back.
+    #
+    # 250 is chosen against a demonstrated-safe depth, not a guess: the
+    # boards this list mirrors already reach [proven_list] through
+    # 500-element literals (Census/Proven_00..07, CHUNK = 500 in
+    # gen_proven.py), and those compile natively today.
+    #
+    # The list VALUE is unchanged: [++] applied to literals reduces to
+    # the same cons chain, so Run.v's convertibility gate still sees one
+    # list.  Verified, not assumed -- Run.v compiles (22.9 s, 3.16 GB).
+    CH = 250
+    chunks = [names[i:i + CH] for i in range(0, len(names), CH)]
+    for k, ch in enumerate(chunks):
+        body.append(f"Definition {list_name}_{k:03d} : list TM :=")
+        body.append("  [" + ";\n   ".join(ch) + "].")
+        body.append("")
+    body.append(f"Definition {list_name} : list TM :=")
+    body.append("  " + " ++\n  ".join(f"{list_name}_{k:03d}"
+                                      for k in range(len(chunks))) + ".")
     path = os.path.join(outdir, fname)
     with open(path, 'w') as f:
         f.write("\n".join(body) + "\n")
