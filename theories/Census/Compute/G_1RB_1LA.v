@@ -20,6 +20,95 @@ From BBB4.Census.Compute Require Import GGH_1RB_1LA_1RB.
 From BBB4.Census.Compute Require Import GGH_1RB_1LA_1RC.
 Import ListNotations.
 
+(** the per-unit [_decided] steps, moved here by
+    tools/lean_walk_units.py: each is an [exact] that takes
+    milliseconds but needs [decider_WF], and this file
+    already loads the environment that supplies it. *)
+
+Lemma ggh_1RB_1LA_0LA_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S0 DL StA)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S0 DL StA 700 eq_refl
+           ggh_1RB_1LA_0LA_empty).
+Qed.
+
+Lemma ggh_1RB_1LA_0LB_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S0 DL StB)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S0 DL StB 700 eq_refl
+           ggh_1RB_1LA_0LB_empty).
+Qed.
+
+Lemma ggh_1RB_1LA_0LC_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S0 DL StC)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S0 DL StC 700 eq_refl
+           ggh_1RB_1LA_0LC_empty).
+Qed.
+
+Lemma ggh_1RB_1LA_0RA_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S0 DR StA)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S0 DR StA 700 eq_refl
+           ggh_1RB_1LA_0RA_empty).
+Qed.
+
+Lemma ggh_1RB_1LA_0RB_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S0 DR StB)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S0 DR StB 700 eq_refl
+           ggh_1RB_1LA_0RB_empty).
+Qed.
+
+Lemma ggh_1RB_1LA_0RC_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S0 DR StC)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S0 DR StC 700 eq_refl
+           ggh_1RB_1LA_0RC_empty).
+Qed.
+
+Lemma ggh_1RB_1LA_1LA_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S1 DL StA)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S1 DL StA 700 eq_refl
+           ggh_1RB_1LA_1LA_empty).
+Qed.
+
+Lemma ggh_1RB_1LA_1LB_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S1 DL StB)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S1 DL StB 700 eq_refl
+           ggh_1RB_1LA_1LB_empty).
+Qed.
+
+Lemma ggh_1RB_1LA_1LC_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S1 DL StC)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S1 DL StC 700 eq_refl
+           ggh_1RB_1LA_1LC_empty).
+Qed.
+
+Lemma ggh_1RB_1LA_1RA_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S1 DR StA)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S1 DR StA 700 eq_refl
+           ggh_1RB_1LA_1RA_empty).
+Qed.
+
+Lemma ggh_1RB_1LA_1RB_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S1 DR StB)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S1 DR StB 700 eq_refl
+           ggh_1RB_1LA_1RB_empty).
+Qed.
+
+Lemma ggh_1RB_1LA_1RC_decided :
+  NodeDecided B_census D_census (node_tm (ggchild_1RB_1LA S1 DR StC)).
+Proof.
+  exact (ggsub_decided_1RB_1LA S1 DR StC 700 eq_refl
+           ggh_1RB_1LA_1RC_empty).
+Qed.
+
 Lemma g_1RB_1LA_decided :
   NodeDecided B_census D_census (node_tm (gchild S1 S1 DL StA)).
 Proof.

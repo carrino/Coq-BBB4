@@ -2,19 +2,12 @@
     Census subtree: A0=1RB, B0=0RC, StC0 = 0RD. *)
 From Coq Require Import Arith List.
 From BBB4 Require Import BBB4_Statement.
-From BBB4.Census Require Import TNF_QH Decide Deferred_Data Run Run_Split.
-From BBB4.Census Require Import Run_Split_1RB_0RC.
+From BBB4.Census Require Import TNF_QH Decide Run_Compute
+                                Run_Compute_Split.
 Import ListNotations.
 
 Lemma ggh_1RB_0RC_0RD_empty :
   Nat.iter 700 q_suc (q_ggsub_1RB_0RC S0 DR StD) = ([], []).
 Proof.
   native_cast_no_check (eq_refl (@nil TNF_Node, @nil TNF_Node)).
-Qed.
-
-Lemma ggh_1RB_0RC_0RD_decided :
-  NodeDecided B_census D_census (node_tm (ggchild_1RB_0RC S0 DR StD)).
-Proof.
-  exact (ggsub_decided_1RB_0RC S0 DR StD 700 eq_refl
-           ggh_1RB_0RC_0RD_empty).
 Qed.
