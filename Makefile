@@ -205,7 +205,23 @@ WALK_COQC = env OCAMLRUNPARAM='$(WALK_OCAMLRUNPARAM)' $(WALK_MEASURE) \
 # halves below the gate, GNU parallel suspends-and-requeues the
 # youngest unit instead of letting the OOM killer pick one.  WALK_JOBS
 # still caps the fan-out.  Unset = plain xargs, exactly as before.
+# GNU parallel has to be RUNNABLE, not merely named on PATH.  A
+# non-executable file called `parallel' earlier in PATH makes the shell
+# say "Permission denied" rather than "not found" -- and it says it at
+# WALK time, which is after `census-verify' has already backed up and
+# quarantined every census .vo.  You discover it having paid the setup
+# cost and with nothing walked (seen 2026-08-10 under WSL2).
+#
+# So probe it, and degrade to xargs with a notice rather than dying --
+# the same contract WALK_RSS has when /usr/bin/time is absent.  Nothing
+# is lost but the second belt: WALK_JOBS/WALK_ASM_JOBS are what keep the
+# walk inside RAM, and --memfree only re-checks while it runs.
+WALK_HAS_PARALLEL := $(shell p=$$(command -v parallel 2>/dev/null); \
+  [ -n "$$p" ] && [ -x "$$p" ] && "$$p" --version >/dev/null 2>&1 && echo yes)
 ifeq ($(WALK_MEMFREE),)
+WALK_RUN = xargs -r -P$(WALK_JOBS) -I{} $(WALK_COQC) {}
+WALK_ASM_RUN = xargs -r -P$(WALK_ASM_JOBS) -I{} $(WALK_COQC) {}
+else ifneq ($(WALK_HAS_PARALLEL),yes)
 WALK_RUN = xargs -r -P$(WALK_JOBS) -I{} $(WALK_COQC) {}
 WALK_ASM_RUN = xargs -r -P$(WALK_ASM_JOBS) -I{} $(WALK_COQC) {}
 else
@@ -241,6 +257,10 @@ _census-prepare:
 _census-walk: _census-prepare
 	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) for the 139 lean units (auto = min(cores, (free RAM - 2 GB)/$(WALK_RSS_GB) GB); override with WALK_JOBS=N or WALK_RSS_GB=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
 	@echo ">>> WALK_ASM_JOBS=$(WALK_ASM_JOBS) for the 15 that still Require Run.v (7 Run_Split_<tag> + 8 G_ assemblers, $(WALK_ASM_RSS_GB) GB each)"
+	@if [ -n "$(WALK_MEMFREE)" ] && [ "$(WALK_HAS_PARALLEL)" != "yes" ]; then \
+	   echo ">>> WALK_MEMFREE=$(WALK_MEMFREE) IGNORED: no runnable GNU parallel (apt-get install parallel)."; \
+	   echo ">>> Using xargs; the job counts above still bound RAM, but nothing re-checks free memory as it runs."; \
+	 fi
 	@if [ -n "$(WALK_MEASURE)" ]; then mkdir -p census_probes; \
 	   [ -f "$(WALK_RSS)" ] || \
 	     printf 'peak_rss_kb\twall_s\tuser_s\tcommand\n' > "$(WALK_RSS)"; \
