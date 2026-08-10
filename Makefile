@@ -68,7 +68,7 @@ proof: all
 #
 # WALK_JOBS: how many walk units run at once, computed from THIS machine:
 #   min(cores, (available RAM - 2 GB) / WALK_RSS_GB), floor 1
-# At the current 2 GB/unit that is the core count on anything from 8 GB
+# At the current 2 GB/unit that is the core count on anything from 10 GB
 # up.  (It was 7 GB/unit until the units were made lean, and then it was
 # the binding constraint: 16 GB -> 2 jobs, 32 GB -> 4.  Four 6.8 GB units
 # OOM-killed a 16 GB box on the GG_1LC layer, signal 9, 2026-07-22.)
@@ -94,9 +94,53 @@ proof: all
 # At 2 GB/unit the RAM term stops binding at any sane size: a 32 GB box
 # gets its core count, and so does a 16 GB one -- which is the point.
 # The walk was never supposed to need a big desktop.
+#
+# It is NOT what sets the walk's minimum RAM, though, and this knob will
+# happily lie to you about that.  The floor is the single largest file
+# run alone, which is Census_Theorem: 3.706 GB vm here, ~7.2 GB natively
+# on the environment's measured 1.94x.  Call the floor ~10 GB with the
+# 2 GB headroom.  Below that no WALK_JOBS setting saves you -- the last
+# file in the walk does not fit.
 WALK_RSS_GB ?= 2
 WALK_AUTO := $(shell m=$$(awk -v r=$(WALK_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_JOBS ?= $(WALK_AUTO)
+
+# ---------------------------------------------------------------------
+# WALK_ASM_JOBS: the SAME sizing, for the files the lean split did not
+# make lean.  15 of the 154 still Require Census/Run.v, because they
+# prove [NodeDecided] and that needs [decider_WF] -> [proven_all] -> the
+# boards.  A library's environment is loaded whole, so there is no way to
+# name [decider_WF] without paying for it: the 7 Census/Run_Split_<tag>.v
+# and the 8 Compute/G_* assemblers are irreducibly heavy.
+#
+# WALK_RSS_GB alone is therefore WRONG for them, and dangerously so: at
+# 2 GB/unit a 32 GB box picks 8 jobs, and 8 of these at once is ~43 GB.
+# Sizing the whole walk from the lean measurement would have OOM-killed
+# the Run_Split_<tag> layer at the START of the walk and the G_ layer at
+# the END -- after 120 finished units.  (Introduced when WALK_RSS_GB went
+# 7 -> 2 and caught before any walk ran, 2026-08-10.)
+#
+# Measured, vm, this tree: G_1RB_1LC 2.771 GB -- the same 2.743 GB as
+# `Require Run + Run_Split + Run_Split2, evaluate nothing'.  These files
+# do not walk; they are environment and a handful of [exact]s.  So the
+# native figure is the environment's measured native cost, 5.32 GB, not
+# a unit's 6.76 GB.
+#
+# 7 is kept anyway: it is what every walk before the lean split ran
+# these same files at, so this layer's parallelism is unchanged rather
+# than newly guessed.  It costs almost nothing to be conservative here --
+# 15 files of 154, none of which walk.
+WALK_ASM_RSS_GB ?= 7
+WALK_ASM_AUTO := $(shell m=$$(awk -v r=$(WALK_ASM_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-1}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+WALK_ASM_JOBS ?= $(WALK_ASM_AUTO)
+
+# A file is heavy iff it imports another Census.Compute module -- i.e. it
+# assembles rather than walks.  Tested, not assumed: that predicate picks
+# out exactly the 9 Compute files that Require Run (the 8 G_ assemblers
+# and Census_Theorem) and none of the 136 lean units.  Deriving it from
+# the file instead of a name list means a regenerated tree cannot drift
+# out of step with this Makefile.
+ASM_PRED = grep -q '^From BBB4.Census.Compute Require'
 
 # WALK_OCAMLRUNPARAM: OCaml GC tuning for the walk units.  Measured
 # 2026-08-04 on GG_1LC_1LB (32 GB desktop): untuned the unit ratchets to
@@ -163,8 +207,10 @@ WALK_COQC = env OCAMLRUNPARAM='$(WALK_OCAMLRUNPARAM)' $(WALK_MEASURE) \
 # still caps the fan-out.  Unset = plain xargs, exactly as before.
 ifeq ($(WALK_MEMFREE),)
 WALK_RUN = xargs -r -P$(WALK_JOBS) -I{} $(WALK_COQC) {}
+WALK_ASM_RUN = xargs -r -P$(WALK_ASM_JOBS) -I{} $(WALK_COQC) {}
 else
 WALK_RUN = parallel --will-cite -j$(WALK_JOBS) --memfree $(WALK_MEMFREE) $(WALK_COQC) {}
+WALK_ASM_RUN = parallel --will-cite -j$(WALK_ASM_JOBS) --memfree $(WALK_MEMFREE) $(WALK_COQC) {}
 endif
 
 # Walk-stamp: census .vo on disk are trustworthy walk output ONLY if they
@@ -193,7 +239,8 @@ _census-prepare:
 .PHONY: _census-prepare
 
 _census-walk: _census-prepare
-	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) (auto = min(cores, (free RAM - 2 GB)/$(WALK_RSS_GB) GB); override with WALK_JOBS=N or WALK_RSS_GB=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
+	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) for the 139 lean units (auto = min(cores, (free RAM - 2 GB)/$(WALK_RSS_GB) GB); override with WALK_JOBS=N or WALK_RSS_GB=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
+	@echo ">>> WALK_ASM_JOBS=$(WALK_ASM_JOBS) for the 15 that still Require Run.v (7 Run_Split_<tag> + 8 G_ assemblers, $(WALK_ASM_RSS_GB) GB each)"
 	@if [ -n "$(WALK_MEASURE)" ]; then mkdir -p census_probes; \
 	   [ -f "$(WALK_RSS)" ] || \
 	     printf 'peak_rss_kb\twall_s\tuser_s\tcommand\n' > "$(WALK_RSS)"; \
@@ -203,10 +250,19 @@ _census-walk: _census-prepare
 	 fi
 	[ -f theories/Census/Run_Split.vo ] || $(WALK_COQC) theories/Census/Run_Split.v
 	[ -f theories/Census/Run_Split2.vo ] || $(WALK_COQC) theories/Census/Run_Split2.v
-	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
+	@# HEAVY: these seven Require Run.v.  WALK_ASM_JOBS, not WALK_JOBS.
+	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_ASM_RUN)
 	ls theories/Census/Compute/GG_1LC_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
 	ls theories/Census/Compute/GGH_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
-	ls theories/Census/Compute/G_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
+	@# the G_ layer is MIXED: 16 lean walks and 8 heavy assemblers.  Run
+	@# them in two passes so the assemblers do not inherit the lean
+	@# layer's job count -- see WALK_ASM_JOBS above.
+	ls theories/Census/Compute/G_*.v | while read f; do \
+	   if [ ! -f "$${f%.v}.vo" ] && ! $(ASM_PRED) "$$f"; then echo "$$f"; fi; \
+	 done | $(WALK_RUN)
+	ls theories/Census/Compute/G_*.v | while read f; do \
+	   if [ ! -f "$${f%.v}.vo" ] && $(ASM_PRED) "$$f"; then echo "$$f"; fi; \
+	 done | $(WALK_ASM_RUN)
 	[ -f theories/Census/Compute/Census_Theorem.vo ] || $(WALK_COQC) theories/Census/Compute/Census_Theorem.v
 .PHONY: _census-walk
 
