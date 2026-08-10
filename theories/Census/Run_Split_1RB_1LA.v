@@ -6,8 +6,10 @@ From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Census Require Import TNF_QH Decide Deferred_Data Run Run_Split.
 (** its root definitions live in Run_Compute_Split.v so the
-    GGH_ units can name them without loading the boards. *)
-From BBB4.Census Require Import Run_Compute_Split.
+    GGH_ units can name them without loading the boards.  EXPORT:
+    the assembler that consumes this file's [_decided] lemmas names
+    those roots too, and Import would not reach it. *)
+From BBB4.Census Require Export Run_Compute_Split.
 Import ListNotations.
 
 Set Default Goal Selector "!".

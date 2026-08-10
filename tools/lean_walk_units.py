@@ -87,8 +87,10 @@ def lift_split_defs(dry):
             "From BBB4.Census Require Import TNF_QH Decide Deferred_Data "
             "Run Run_Split.\n"
             "(** its root definitions live in Run_Compute_Split.v so the\n"
-            "    GGH_ units can name them without loading the boards. *)\n"
-            "From BBB4.Census Require Import Run_Compute_Split.\n", 1)
+            "    GGH_ units can name them without loading the boards.\n"
+            "    EXPORT: the assembler that consumes this file's [_decided]\n"
+            "    lemmas names those roots too. *)\n"
+            "From BBB4.Census Require Export Run_Compute_Split.\n", 1)
         touched.append(p)
         if not dry:
             open(p, 'w').write(txt)

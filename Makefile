@@ -66,26 +66,35 @@ proof: all
 # .vo FIRST, so a verify walk is always a full from-source walk -- the
 # honesty property is unchanged.
 #
-# WALK_JOBS: how many walk units run at once.  Heavy units peak ~6.8 GB
-# under the default WALK_OCAMLRUNPARAM (11-12 GB untuned; see below)
-# (four of them OOM-killed a 16 GB box on the GG_1LC layer, signal 9,
-# 2026-07-22), so the default is computed from THIS machine:
+# WALK_JOBS: how many walk units run at once, computed from THIS machine:
 #   min(cores, (available RAM - 2 GB) / WALK_RSS_GB), floor 1
-# -- at the default 7 GB/unit: 16 GB -> 2, 32 GB -> 4 (4+ cores),
-# 64 GB -> core count.  Override explicitly with
-# `make census-verify WALK_JOBS=6'.  (`make -j' does not parallelize the
-# walk -- WALK_JOBS is the knob.)
+# At the current 2 GB/unit that is the core count on anything from 8 GB
+# up.  (It was 7 GB/unit until the units were made lean, and then it was
+# the binding constraint: 16 GB -> 2 jobs, 32 GB -> 4.  Four 6.8 GB units
+# OOM-killed a 16 GB box on the GG_1LC layer, signal 9, 2026-07-22.)
+# Override explicitly with `make census-verify WALK_JOBS=6'.  (`make -j'
+# does not parallelize the walk -- WALK_JOBS is the knob.)
 #
-# WALK_RSS_GB is the per-unit peak this sizing assumes.  It is the ONE
-# number the "<1 h on 8 cores / 32 GB" goal reduces to
-# (docs/CENSUS_RUNTIME.md): at 6.8 GB a 32 GB box gets 4 jobs and 1 h 43 m,
-# at <= 3.75 GB it gets 8 and ~52 m.  7 comes from a single unit measured
-# by hand on 2026-08-04 -- so measure YOUR walk and set it from data:
-# every walk now writes census_probes/walk-rss.tsv (WALK_RSS below) and
+# WALK_RSS_GB is the per-unit peak this sizing assumes.  It WAS 7, and
+# that number is what made this a memory problem: 6.8 GB/unit caps a
+# 32 GB box at 4 jobs and 1 h 43 m.  79% of it was the environment each
+# unit Required -- the boarded-machine theorems behind [proven_all] --
+# which the walk half never looks inside.  Census/Run_Compute.v and the
+# lean units removed it: a unit's environment is 0.263 GB (vm) against
+# 2.743 GB before, and the native lean measurement of the same walk was
+# 0.371 GB against 6.758 GB.
+#
+# 2 is deliberately conservative -- roughly 3x the measured lean peak --
+# and PROVISIONAL until a native walk records the real distribution.
+# Every walk writes census_probes/walk-rss.tsv (WALK_RSS below);
 # `python3 tools/walk_rss_report.py' prints the max and the jobs it
-# supports.  Raising it is always safe; lowering it below your measured
-# max is what invites the OOM killer.
-WALK_RSS_GB ?= 7
+# supports, and you should set this from that.  Raising it is always
+# safe; lowering it below your measured max invites the OOM killer.
+#
+# At 2 GB/unit the RAM term stops binding at any sane size: a 32 GB box
+# gets its core count, and so does a 16 GB one -- which is the point.
+# The walk was never supposed to need a big desktop.
+WALK_RSS_GB ?= 2
 WALK_AUTO := $(shell m=$$(awk -v r=$(WALK_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_JOBS ?= $(WALK_AUTO)
 
