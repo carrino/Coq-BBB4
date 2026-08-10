@@ -202,6 +202,10 @@ theories/Census/RerootQH_03.v
 theories/Census/RerootQH_04.v
 theories/Census/RerootQH_Data.v
 # --- end re-root QH tier ---
+theories/Census/Proven_List.v
+theories/Census/ProvenQH_List.v
+theories/Census/RerootQH_List.v
+theories/Census/Run_Compute.v
 theories/Census/Run.v
 theories/Tests/Census_Corruption.v
 theories/Tests/Reroot_Corruption.v
