@@ -162,13 +162,37 @@ def main():
     print(f"\npredicted wall by job count (layer barriers modelled, "
           f"LPT schedule of the measured per-unit CPU):")
     ideal = user
+    jobs_hi = 8
     for j in (1, 2, 4, 6, 8, 12, 16):
         w = schedule(rows, j)
         print(f"  {j:>3} jobs  {w / 60:>7.1f} min"
               f"   ({ideal / j / w:.0%} of perfect scaling)")
-    print("  -- the gap is the layered walk's own shape: Run_Split and\n"
-          "     Run_Split2 are one unit each and the Run_Split_<tag> layer is\n"
-          "     seven, so no job count above that helps those layers.")
+    # WHERE the gap is, rather than a guess about it.  This used to
+    # assert "Run_Split and Run_Split2 are one unit each and
+    # Run_Split_<tag> is seven, so no job count helps those layers" --
+    # true, and irrelevant: measured, those three layers are 1.2 core-min
+    # between them and cannot account for a 17-minute gap.  A layer's
+    # wall can never go below its LONGEST SINGLE UNIT however many cores
+    # you have, so that is what to print.
+    print(f"\nwhere the scaling goes, per layer (at {jobs_hi} jobs):")
+    per = {}
+    for u, (r, w, c) in rows.items():
+        per.setdefault(layer_of(u), []).append((c, u))
+    print(f"  {'layer':<18}{'core-min':>9}{'makespan':>10}{'longest unit':>13}"
+          f"   floor set by")
+    for L in LAYER_ORDER:
+        if L not in per:
+            continue
+        ts = [c for c, _ in per[L]]
+        mk = makespan(ts, jobs_hi)
+        cmax, umax = max(per[L])
+        why = "its longest unit" if abs(mk - cmax) < 1e-6 else "load spread"
+        print(f"  {L:<18}{sum(ts)/60:>9.1f}{mk/60:>10.1f}{cmax/60:>10.1f} min"
+              f"   {why} ({umax})")
+    print("  -- a layer whose floor is 'its longest unit' cannot be sped up\n"
+          "     by more cores at all; only splitting that unit helps\n"
+          "     (tools/gen_gsplit_heavy.py).  That is the M3 target, and it\n"
+          "     is NOT the tiny Run_Split layers.")
     return 0
 
 

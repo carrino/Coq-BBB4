@@ -202,11 +202,13 @@ per-unit CPU with the layer barriers modelled:
 | 12 | 50 min | 70% |
 | 16 | 44 min | 60% |
 
-So the RAM term no longer binds anywhere, and what is left is the walk's
-own layered shape: `Run_Split` and `Run_Split2` are one unit each and
-the `Run_Split_<tag>` layer is seven, so no job count above seven helps
-those layers at all.  That, not memory, is now the thing between 62 min
-and the ~52 min the core-time allows.
+So the RAM term no longer binds anywhere, and what is left is load
+spread *inside* the two big layers.  A layer cannot finish faster than
+its longest single unit, however many cores you have, and `GG_1LC` is
+16 units run in one wave.  (It is **not** the `Run_Split` layers, which
+look like the obvious culprit and are 1.2 core-min between them —
+`walk_rss_report.py` prints the per-layer makespan and what sets each
+layer's floor, so read that rather than guessing.)
 
 **Core-time came in at 421 min against the pre-lean walk's 385.**  The
 lean units did not get cheaper in CPU — a single-unit control had

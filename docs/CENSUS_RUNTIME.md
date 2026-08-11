@@ -2055,17 +2055,31 @@ the LPT schedule over the real per-unit CPU:
 | 12 | 50 min | 70% |
 | 16 | 44 min | 60% |
 
-Scaling is ~98% up to 4 jobs and falls off a cliff after 8, and the
-reason is structural rather than mysterious: `Run_Split` is ONE unit,
-`Run_Split2` is ONE, and `Run_Split_<tag>` is SEVEN.  Above seven jobs
-those layers cannot use the cores no matter how many there are.
+Scaling is ~98% up to 4 jobs and falls off after 8.  **The obvious
+explanation is wrong**, and `walk_rss_report.py` printed it as a
+certainty until this was checked: "Run_Split and Run_Split2 are one unit
+each and Run_Split_<tag> is seven, so no job count helps those layers."
+True, and irrelevant -- those three layers measured **1.2 core-min
+between them**, so they cannot account for a 17-minute gap at 16 jobs.
+The tool now prints the per-layer makespan and what sets each layer's
+floor instead of asserting a cause.
 
-That is the whole remaining gap to the goal.  On the target 8 cores /
-32 GB the walk is **62 min** -- just over the hour, with memory no
-longer a factor at all.  Getting under it means splitting the early
-layers so they can fill the machine; `tools/gen_gsplit_heavy.py`
-already does this kind of split for heavy subtrees.  The 15 heavy files
-also stopped being the constraint they looked like: at the corrected
+The real constraint is load spread *inside* the two big layers:
+
+  * `GGH` -- 104 units, 288.5 core-min
+  * `GG_1LC` -- 16 units, 96.0 core-min
+
+A layer cannot finish faster than its **longest single unit**, no
+matter how many cores are free, and `GG_1LC` is 16 units in one wave at
+any job count >= 16.  So M3 is not "split the early layers"; it is
+"split the longest units", which is what `tools/gen_gsplit_heavy.py`
+already does for heavy subtrees.  Which units those are is a one-line
+query against `census_probes/walk-rss.tsv` -- do that before choosing
+anything, because this row has now been mis-diagnosed once.
+
+On the target 8 cores / 32 GB the walk is **62 min**: just over the
+hour, with memory no longer a factor at all.  The 15 heavy files also
+stopped being the constraint they looked like -- at the corrected
 `WALK_ASM_RSS_GB` of 3.5 they run at the full core count on 32 GB.
 
 **M4.  Early divergence detection in the RepWL closure.**  89% of the
