@@ -116,6 +116,32 @@ why the census switch exists.  Note the OCaml version is load-bearing: `.vo`
 are OCaml-marshalled, so a 4.14.2 `.vo` will not load under 4.14.1 and vice
 versa.
 
+### The build raises its own stack limit, and needs to
+
+Under the census switch — and only there — `coqnative` compiles each
+`.vo` into an OCaml module and the OCaml compiler recurses over its
+structure.  The census lookup tiers (`Census/Proven_List.v` and friends)
+are 5,270–6,517 machine definitions apiece, and on the **default 8 MB
+stack that overflows**:
+
+```
+COQNATIVE theories/Census/Proven_List.vo
+Fatal error: exception Stack overflow
+Error: Native compiler exited with status 2
+```
+
+`make` therefore does `ulimit -s unlimited` before building, so this
+should never reach you.  It is worth knowing anyway, because the failure
+has an unusually good disguise: plain `coqc` compiles those files
+without complaint, so it is invisible on any build without a native
+compiler, and it appears only on the census switch — the path someone
+takes precisely *because* they want to check the thing themselves.
+
+If your environment forbids raising the soft limit, `make STACK_KB=...`
+takes any value your hard limit allows (`ulimit -Hs`), and Coq's own
+hint in that error is the fallback.  Measured 2026-08-11: 8192 KB fails,
+unlimited builds all three lists clean.
+
 **Trusting those 154 `.vo` is a decision.**  To avoid it, re-derive them:
 
 ```bash

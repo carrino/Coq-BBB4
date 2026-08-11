@@ -155,21 +155,31 @@ Import ListNotations.
         body.append(f"(* {m} *)")
         body.append(tm_def(nm, m))
         names.append(nm)
-    # CHUNKED, not one flat literal.  A single [a; b; ...] of 5,270
-    # elements is a 5,270-deep cons chain and `coqnative' recurses over
-    # the term, so it dies with "Fatal error: exception Stack overflow"
-    # (seen 2026-08-10 on the census opam switch).  Plain `coqc' takes
-    # it happily, which is exactly why this is invisible on a build
-    # without a native compiler -- do not "simplify" it back.
+    # Chunked rather than one flat literal.  This is tidiness, and the
+    # comment that used to be here claimed more than that, wrongly:
     #
-    # 250 is chosen against a demonstrated-safe depth, not a guess: the
-    # boards this list mirrors already reach [proven_list] through
-    # 500-element literals (Census/Proven_00..07, CHUNK = 500 in
-    # gen_proven.py), and those compile natively today.
+    #   "a 5,270-deep cons chain overflows coqnative; 250 is chosen
+    #    against a demonstrated-safe depth, since Census/Proven_00..07
+    #    reach proven_list through 500-element literals"
     #
-    # The list VALUE is unchanged: [++] applied to literals reduces to
-    # the same cons chain, so Run.v's convertibility gate still sees one
-    # list.  Verified, not assumed -- Run.v compiles (22.9 s, 3.16 GB).
+    # Both halves were wrong.  Proven_00.v holds ONE definition -- its
+    # 500 entries are references to machines defined in Machines/Bulk --
+    # so it was never a precedent for anything in this file.  And when
+    # the chunking was actually tested on a default 8 MB stack, 250
+    # overflowed too, which rules out cons depth as the cause: 250 is
+    # well under the 500 the number was picked to be safe against.
+    #
+    # What overflows is the FILE: `coqnative' emits one OCaml module per
+    # .vo and the OCaml compiler recurses over its structure, and these
+    # tiers are 5,270-6,517 top-level definitions each.  Machines/Bulk
+    # keeps 100 per file; this keeps thousands.  The Makefile answers it
+    # by raising the build's stack limit (STACK_KB, default unlimited)
+    # rather than by splitting these into ~150 generated files -- see
+    # docs/VERIFYING.md.  If that ever stops being acceptable, splitting
+    # by FILE at ~100 definitions is the fix, not a smaller CH.
+    #
+    # CH itself is value-neutral either way: [++] on literals reduces to
+    # the same cons chain, so Run.v's convertibility gate sees one list.
     CH = 250
     chunks = [names[i:i + CH] for i in range(0, len(names), CH)]
     for k, ch in enumerate(chunks):

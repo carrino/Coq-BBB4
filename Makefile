@@ -1,5 +1,31 @@
+# STACK_KB: the build raises its own stack limit before compiling.
+#
+# `coqnative' generates one OCaml module per .vo and the OCaml compiler
+# recurses over its structure.  The census data lists
+# (Census/Proven_List.v and friends) are 5,270-6,517 machine definitions
+# in a file, and on the DEFAULT 8 MB stack that is enough to kill it:
+#
+#     COQNATIVE theories/Census/Proven_List.vo
+#     Fatal error: exception Stack overflow
+#     Error: Native compiler exited with status 2 (in case of stack
+#            overflow, increasing stack size ... often helps)
+#
+# Plain `coqc' compiles the same files without complaint, so this is
+# invisible on any build without a native compiler -- which is most of
+# them, and is why it reached a fresh clone.  It bites under the census
+# (native) opam switch, on the very first build, which is exactly the
+# path someone takes to verify the proof themselves.  Coq's own hint is
+# right; there is no reason to make each person rediscover it.
+#
+# Measured 2026-08-11 on the census switch: 8192 KB overflows, unlimited
+# builds all three lists clean.  A soft-limit raise is allowed up to the
+# hard limit; where it is not permitted, this degrades to exactly the
+# old behaviour and Coq prints the hint above.  Override with
+# `make STACK_KB=262144'.
+STACK_KB ?= unlimited
 all: Makefile.coq
-	$(MAKE) -f Makefile.coq
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 $(MAKE) -f Makefile.coq
 
 Makefile.coq: _CoqProject
 	coq_makefile -f _CoqProject -o Makefile.coq
