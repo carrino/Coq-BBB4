@@ -173,32 +173,59 @@ build their tables from those, and `Census/Run.v` re-attaches the
 certificates by a kernel convertibility check.  A lean unit measures
 **0.371 GB** natively against 6.758 GB.
 
-So on 8 cores the RAM term no longer binds, and the walk is core-bound:
+### Measured: the first full lean walk (2026-08-10)
 
-| RAM | lean-unit jobs | assembler jobs |
+Run on 16 cores / 31 GB, `tools/walk_rss_report.py` over all 154 units:
+
+| | peak RSS |
+|---|---|
+| `GGH_*` (104 lean units) | max **0.60 GB** |
+| `GG_1LC_*` (16 lean units) | max **0.61 GB** |
+| `G_*` (24: 16 lean + 8 assemblers) | max **2.77 GB** |
+| `Run_Split*` (9) | max **2.76 GB** |
+| `Census_Theorem` (alone) | **6.30 GB** |
+| **all 154** | max 6.30 / p90 2.76 / **median 0.51** / min 0.40 |
+
+**The whole walk took 1 h 19 m 42 s** — every one of the 154 `.vo`
+written inside that window, at 7 jobs, under `nice -n19`.  For contrast
+the pre-lean walk measured 1 h 43 m at 4 jobs, and could not have run 7
+jobs at all: 7 × 6.8 GB is 48 GB.
+
+Predicted wall by job count, from the LPT schedule of the measured
+per-unit CPU with the layer barriers modelled:
+
+| jobs | wall | scaling |
 |---|---|---|
-| 16 GB | 8 (cores) | 2 |
-| 32 GB | 8 (cores) | 4 |
-| 64 GB | 8 (cores) | 8 |
+| 4 | 108 min | 98% |
+| 6 | 75 min | 94% |
+| **8** | **62 min** | **85%** |
+| 12 | 50 min | 70% |
+| 16 | 44 min | 60% |
 
-**The wall time of a lean walk has not been measured yet** — the first
-one to run records it.  Do not quote a number from this table that isn't
-there; 385 core-min ÷ cores ÷ 0.93 is the floor, and the lean units are
-expected to beat it, but expected is not measured.
+So the RAM term no longer binds anywhere, and what is left is the walk's
+own layered shape: `Run_Split` and `Run_Split2` are one unit each and
+the `Run_Split_<tag>` layer is seven, so no job count above seven helps
+those layers at all.  That, not memory, is now the thing between 62 min
+and the ~52 min the core-time allows.
+
+**Core-time came in at 421 min against the pre-lean walk's 385.**  The
+lean units did not get cheaper in CPU — a single-unit control had
+suggested 1.93x, and that did not transfer.  Read it as "no worse":
+the 385 was measured at 4 jobs and the 421 at 7–14, where memory
+bandwidth and SMT contention inflate per-unit CPU, so the two are not
+a clean comparison and neither is a regression.
 
 Two job counts, because 15 of the 154 files did not get lean: the 7
 `Census/Run_Split_<tag>.v` and the 8 `Compute/G_*` assemblers prove
 `NodeDecided`, which needs `decider_WF`, which needs the boards.  Coq
 loads a library's environment whole, so there is no way to name
 `decider_WF` without paying for it.  Those run at `WALK_ASM_JOBS`
-(`WALK_ASM_RSS_GB`, still 7 GB) while the other 139 run at `WALK_JOBS`
-(`WALK_RSS_GB`, 2 GB).  Sizing the whole walk off the lean number would
-OOM the assembler layers.
+(`WALK_ASM_RSS_GB`, **3.5 GB** — measured 2.77) while the other 139 run
+at `WALK_JOBS` (`WALK_RSS_GB`, **1 GB** — measured 0.61).  On 32 GB
+both tiers now get the full core count.
 
-**Minimum RAM is ~10 GB, and no job count fixes it below that**: the last
-file, `Compute/Census_Theorem.v`, runs alone and needs ~7.2 GB natively
-(3.7 GB measured under `vm_compute`, scaled by the environment's measured
-1.94x vm→native).
+**Minimum RAM is ~9 GB, and no job count fixes it below that**: the last
+file, `Compute/Census_Theorem.v`, runs alone and measured **6.30 GB**.
 
 The Makefile is authoritative for all of these, and all are settable:
 `WALK_JOBS=N` / `WALK_ASM_JOBS=N` force the fan-outs, `WALK_RSS_GB=N` /

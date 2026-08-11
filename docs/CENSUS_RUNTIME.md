@@ -1914,10 +1914,50 @@ handful of `exact`s, they do not walk.  Natively the lean measurement
 was 0.371 GB against 6.758 GB before.
 
 So `WALK_JOBS = min(cores, (RAM − 2 GB) / RSS)` stops binding: 8 cores
-get 8 jobs on 32 GB, and on 16 GB.  **The walk is core-bound now.**  Its
-wall time is unmeasured until a lean walk runs — 385 core-min ÷ cores ÷
-0.93 is the floor and the lean units should beat it, but that is a
-projection and the next walk is what settles it.
+get 8 jobs on 32 GB, and on 16 GB.  **The walk is core-bound now.**
+
+### The walk ran, and here is what it measured (2026-08-10)
+
+16 cores / 31 GB, all 154 units, `tools/walk_rss_report.py`:
+
+| | peak RSS |
+|---|---|
+| `GGH_*` (104 lean) | max **0.60 GB** |
+| `GG_1LC_*` (16 lean) | max **0.61 GB** |
+| `G_*` (24) | max **2.77 GB** |
+| `Run_Split*` (9) | max **2.76 GB** |
+| `Census_Theorem` (alone) | **6.30 GB** |
+| all 154 | max 6.30 / p90 2.76 / **median 0.51** / min 0.40 |
+
+`Print Assumptions census_decided` printed exactly
+`functional_extensionality_dep` and nothing else.
+
+**Wall: 1 h 19 m 42 s**, every `.vo` written inside that window, at 7
+jobs under `nice -n19`.  The pre-lean walk was 1 h 43 m at 4 jobs and
+could not have run 7 at all (7 × 6.8 GB = 48 GB).  The LPT model over
+the measured per-unit CPU puts 8 jobs at **62 min / 85% scaling**, 12 at
+50 min / 70%, 16 at 44 min / 60%.
+
+**Three predictions in this document were wrong, and the walk is what
+caught each one.**
+
+1. **Core-time did not fall.  421 min against 385.**  The lean control
+   measured 1.93x on CPU and that did NOT transfer to the walk.  It is
+   not a regression either: 385 was measured at 4 jobs and 421 at 7-14,
+   where memory bandwidth and SMT contention inflate per-unit CPU.  Call
+   it "no worse" and stop projecting walk CPU from one unit.
+2. **`Census_Theorem` is 6.30 GB, not the projected ~7.2.**  So the RAM
+   floor is ~9 GB, not ~10.
+3. **The assemblers are 2.77 GB natively, not the projected ~5.4** --
+   the SAME as their vm figure, no inflation.  The 1.94x vm/native
+   factor was measured on a unit that EVALUATES; these load an
+   environment and apply `exact`s.  The reasoning was already written
+   here ("they do not walk") and the factor was applied anyway.  It cost
+   parallelism, not safety: `WALK_ASM_RSS_GB` sat at 7 when 3.5 fits, so
+   a 32 GB box ran those 15 files 4-wide instead of 8-wide.
+
+Both knobs are now set from the measurement: `WALK_RSS_GB` 2 → **1**
+(measured 0.61), `WALK_ASM_RSS_GB` 7 → **3.5** (measured 2.77).
 
 ### The trap in that: 15 files did not get lean
 
@@ -2003,14 +2043,30 @@ parallel efficiency was measured AT 4 JOBS; the schedule model in
 `tools/walk_rss_report.py` puts the same profile nearer 83% at 8.
 `tools/gen_gsplit_heavy.py` already splits heavy subtrees.
 
-M1 changed this from "cheap but pointless" to the binding item, and
-made it worse in one specific way: the `Run_Split_<tag>` layer is 7 of
-the 15 files that stayed heavy, so it runs at `WALK_ASM_JOBS` (4 on
-32 GB), not at the core count.  A serial-ish barrier that used to be
-hidden behind a memory-limited walk is now a visible one.  Do not
-re-rank this from the model -- the next walk records the per-layer
-profile in `census_probes/walk-rss.tsv`, and `walk_rss_report.py`
-prints the LPT schedule from real data.  Wait for it.
+M1 changed this from "cheap but pointless" to **the only item left**,
+and the walk of 2026-08-10 measured exactly how much it costs.  From
+the LPT schedule over the real per-unit CPU:
+
+| jobs | wall | scaling |
+|---|---|---|
+| 4 | 108 min | 98% |
+| 6 | 75 min | 94% |
+| **8** | **62 min** | **85%** |
+| 12 | 50 min | 70% |
+| 16 | 44 min | 60% |
+
+Scaling is ~98% up to 4 jobs and falls off a cliff after 8, and the
+reason is structural rather than mysterious: `Run_Split` is ONE unit,
+`Run_Split2` is ONE, and `Run_Split_<tag>` is SEVEN.  Above seven jobs
+those layers cannot use the cores no matter how many there are.
+
+That is the whole remaining gap to the goal.  On the target 8 cores /
+32 GB the walk is **62 min** -- just over the hour, with memory no
+longer a factor at all.  Getting under it means splitting the early
+layers so they can fill the machine; `tools/gen_gsplit_heavy.py`
+already does this kind of split for heavy subtrees.  The 15 heavy files
+also stopped being the constraint they looked like: at the corrected
+`WALK_ASM_RSS_GB` of 3.5 they run at the full core count on 32 GB.
 
 **M4.  Early divergence detection in the RepWL closure.**  89% of the
 tier's closure pops are closures that diverge to the cap and return no

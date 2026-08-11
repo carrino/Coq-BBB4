@@ -110,24 +110,39 @@ proof: all
 # 2.743 GB before, and the native lean measurement of the same walk was
 # 0.371 GB against 6.758 GB.
 #
-# 2 is deliberately conservative -- roughly 3x the measured lean peak --
-# and PROVISIONAL until a native walk records the real distribution.
-# Every walk writes census_probes/walk-rss.tsv (WALK_RSS below);
-# `python3 tools/walk_rss_report.py' prints the max and the jobs it
-# supports, and you should set this from that.  Raising it is always
-# safe; lowering it below your measured max invites the OOM killer.
+# MEASURED, at last, by a full native walk (2026-08-10, 16 cores /
+# 31 GB, tools/walk_rss_report.py over all 154 units):
 #
-# At 2 GB/unit the RAM term stops binding at any sane size: a 32 GB box
+#   peak RSS max / p90 / median / min   6.30 / 2.76 / 0.51 / 0.40 GB
+#   GGH        104 lean units   max 0.60 GB
+#   GG_1LC      16 lean units   max 0.61 GB
+#   G_          24 units        max 2.77 GB  (the 8 assemblers)
+#   Run_Split*   9 units        max 2.76 GB
+#   Census_Theorem              max 6.30 GB, alone
+#
+# So 1 GB, not the provisional 2: the lean units top out at 0.61 GB and
+# this leaves 64% headroom.  The distribution is bimodal and the two
+# modes are sized apart (WALK_ASM_RSS_GB below); a single number would
+# have to cover 0.40 GB and 6.30 GB at once, which is what made the old
+# knob lie.  Raising it is always safe; lowering it below your measured
+# max invites the OOM killer.  Every walk rewrites
+# census_probes/walk-rss.tsv, so re-derive it on your own box rather
+# than trusting this line.
+#
+# At 1 GB/unit the RAM term stops binding at any sane size: a 32 GB box
 # gets its core count, and so does a 16 GB one -- which is the point.
 # The walk was never supposed to need a big desktop.
 #
 # It is NOT what sets the walk's minimum RAM, though, and this knob will
 # happily lie to you about that.  The floor is the single largest file
-# run alone, which is Census_Theorem: 3.706 GB vm here, ~7.2 GB natively
-# on the environment's measured 1.94x.  Call the floor ~10 GB with the
-# 2 GB headroom.  Below that no WALK_JOBS setting saves you -- the last
-# file in the walk does not fit.
-WALK_RSS_GB ?= 2
+# run alone: Census_Theorem, MEASURED at 6.30 GB.  Call the floor ~9 GB
+# with the 2 GB headroom.  Below that no WALK_JOBS setting saves you --
+# the last file in the walk does not fit.  (This was written as ~10 GB
+# from a 7.2 GB projection -- 3.706 GB under vm_compute scaled by the
+# environment's 1.94x vm/native factor.  The walk measured 6.30 GB.  The
+# factor was measured on a unit that EVALUATES; Census_Theorem loads and
+# applies [exact]s, so native does not inflate it the same way.)
+WALK_RSS_GB ?= 1
 WALK_AUTO := $(shell m=$$(awk -v r=$(WALK_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_JOBS ?= $(WALK_AUTO)
 
@@ -146,17 +161,23 @@ WALK_JOBS ?= $(WALK_AUTO)
 # the END -- after 120 finished units.  (Introduced when WALK_RSS_GB went
 # 7 -> 2 and caught before any walk ran, 2026-08-10.)
 #
-# Measured, vm, this tree: G_1RB_1LC 2.771 GB -- the same 2.743 GB as
-# `Require Run + Run_Split + Run_Split2, evaluate nothing'.  These files
-# do not walk; they are environment and a handful of [exact]s.  So the
-# native figure is the environment's measured native cost, 5.32 GB, not
-# a unit's 6.76 GB.
+# MEASURED by the full native walk (2026-08-10): the 8 G_ assemblers
+# peak at 2.77 GB and the 7 Run_Split_<tag> at 2.76 GB.  3.5 gives 26%
+# headroom over that.
 #
-# 7 is kept anyway: it is what every walk before the lean split ran
-# these same files at, so this layer's parallelism is unchanged rather
-# than newly guessed.  It costs almost nothing to be conservative here --
-# 15 files of 154, none of which walk.
-WALK_ASM_RSS_GB ?= 7
+# This was 7, from a projection that was wrong in an instructive way.
+# The vm measurement here was 2.771 GB, and I scaled it by the 1.94x
+# vm/native factor to ~5.4 GB, then rounded up to the 7 every pre-lean
+# walk had used.  Natively it is 2.77 GB -- the SAME as vm, no inflation
+# at all.  The reason was already written two paragraphs up and not
+# applied: these files do not walk, they are environment plus a handful
+# of [exact]s.  native_compute inflates EVALUATION, and there is none
+# here.  A factor measured on a unit that evaluates does not transfer to
+# a file that does not, however similar the two look.
+#
+# The cost of that error was parallelism, not safety: at 7 GB a 32 GB
+# box ran these 15 files 4-wide when 8-wide fits.
+WALK_ASM_RSS_GB ?= 3.5
 WALK_ASM_AUTO := $(shell m=$$(awk -v r=$(WALK_ASM_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-1}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_ASM_JOBS ?= $(WALK_ASM_AUTO)
 
