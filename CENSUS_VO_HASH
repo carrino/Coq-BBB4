@@ -2,5 +2,5 @@
 # Build-hygiene guard only (UNTRUSTED, no proof weight); see
 # tools/census_cache.py.  Regenerate with: census_cache.py --update
 # after a GREEN re-walk on stable hardware (make census-verify).
-# closure: 528 .v input files.
-845becde1a7792971b036dabfa9cd7d4b78a389f7a8eae5545a103045a397c51
+# closure: 532 .v input files.
+0ebccf90ed0c4836e5565d27586e090b97b701554955b1bd630ce6785059d43b
