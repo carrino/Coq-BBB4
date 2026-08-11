@@ -1365,7 +1365,572 @@ That is pure attribution, so the fact that it would move catches does
 not matter until a bound is chosen -- and the exhaustive-gate recipe
 from row 2 is now proven for choosing one.
 
-## Next steps, in Amdahl order (2026-08-07)
+## The memory round: attribution, measured (2026-08-09)
+
+The suspect was wrong, and the way it is wrong is the useful part.
+
+### Where a walk unit's 6.8 GB is NOT
+
+Peak RSS is a whole-process high-water mark, so every configuration
+needs its own `coqc`.  `tools/probes/gen_rss_probe.py` emits one probe
+per (workload, fuel, engine) for exactly that.  All rows below ran
+under the walk's own GC settings (`OCAMLRUNPARAM=o=40,O=60`) on a
+4-core / 15 GB container, `vm_compute`, one at a time.
+
+First, what `coqc` costs before deciding anything -- `Require` only,
+no evaluation at all:
+
+| loaded | peak RSS |
+|---|---|
+| `Coq.List` alone | 0.084 GB |
+| `+ BBB4_Statement` | 0.144 GB |
+| `+ Census.Deferred_Data` (16,115 machines) | 0.149 GB |
+| `+ ProbeLookup` (14,606 machines) | 0.153 GB |
+| `+ ProbeWalkCommon` (the decider and all three maps) | **0.207 GB** |
+
+The lookup tables the walk carries cost about **5 MB each**.  They are
+not the memory.
+
+Then the workloads, each above that 0.205 GB floor:
+
+| workload | peak RSS | above floor | eval | queue left |
+|---|---|---|---|---|
+| floor, nothing evaluated | 0.205 GB | -- | -- | -- |
+| the three lookup maps, forced | 0.225 GB | 0.020 GB | 0.48 s | -- |
+| C + T bulk tiers, 80 machines | 0.227 GB | 0.022 GB | 0.51 s | -- |
+| the residue tier, 40 machines | 0.281 GB | 0.076 GB | 7.70 s | -- |
+| `ProbeWalk_K1`: 8,192 pop-slots of the heavy `GG_1LC_1LB` subtree | 0.298 GB | 0.093 GB | 96.5 s | (33, 0) |
+| 4x the pop-slots | 0.307 GB | 0.102 GB | 250 s | (17, 0) |
+| **16x -- the subtree walked to EMPTY** | **0.307 GB** | **0.102 GB** | **439 s** | **(0, 0)** |
+| `ProbeWalk_K1` with the GC untuned | 0.408 GB | 0.203 GB | 90.4 s | (33, 0) |
+
+The last row that matters is the 16x one, and it is not a bounded
+probe: the queue reaches `([], [])`, so that IS the whole computation
+`Compute/GG_1LC_1LB.v` performs -- the same subtree, the same decider
+parameters, realistic lookup tables, every pop of the heaviest unit in
+the census, start to finish.  **It costs 0.307 GB, 0.10 GB above the
+load floor.**  And the peak is FLAT in walk length: 4.6x the CPU of the
+`K1` row moved it 3%.  The walk unit measured natively on the same
+subtree peaks at 6.8 GB -- **22x** -- for the identical computation.
+
+So the Makefile's note ("without compaction each unit's RSS is the
+high-water mark of its worst pop's transient garbage") had the shape
+right and the magnitude wrong by a factor of ~20: the high-water IS
+per-pop and bounded, and it is ~0.1 GB.  The note has been corrected in
+place.
+
+The honest gap: these are `vm_compute` and the walk is
+`native_compute`.  What transfers is not the byte count but the LIVE
+SET -- how many values exist at once is a property of the algorithm,
+identical in both engines; only bytes-per-value differ.  For the
+decider's transient garbage to be 6.8 GB natively, native values would
+have to be ~22x fatter than VM values, which they are not.  So the
+memory is somewhere else -- and the next probe found it.
+
+(A hazard worth knowing on its own: apt's Coq is built
+`COQ_NATIVE_COMPILER_DEFAULT=no`, and `native_cast_no_check` then falls
+back to VM conversion with a WARNING rather than an error -- so a "walk"
+on the wrong Coq looks like it succeeded.  It is also what makes the
+next section possible: the fallback lets a real walk unit's computation
+run in this container, on the VM.)
+
+### Where it IS: 2.74 GB of a walk unit is `Require`, not walking
+
+`gen_rss_probe.py`'s `unit` workload is not a stand-in.  It is Run.v's
+own `q_suc` -- the real `decider`, the real `proven` / `provenqh` /
+`deferred` maps -- rooted at `Run_Split2.q_ggsub S1 DL StB`, i.e. the
+exact computation `Compute/GG_1LC_1LB.v` performs, cut to `--iter` of
+its 700 rounds.  `--iter 0` walks nothing at all:
+
+| the real unit | peak RSS | eval | queue left |
+|---|---|---|---|
+| **`Require` Run + Run_Split + Run_Split2, evaluate NOTHING** | **2.743 GB** | 0.4 s | -- |
+| + one round (8,192 pop-slots) | 3.667 GB | 146 s | (33, 0) |
+| **+ sixteen rounds -- the unit's subtree walked to EMPTY** | **3.667 GB** | 744 s | **(0, 0)** |
+
+The bottom row is the whole unit: `GG_1LC_1LB`'s computation, run to
+`([], [])`, on Run.v's real decider and real tables.  **2.743 of its
+3.667 GB is spent before the first machine is decided**, and every one
+of the 154 files the walk compiles pays it.  Where:
+
+| `Require` | peak RSS |
+|---|---|
+| `Census.Deferred_Data` (16,115 machines) | 0.149 GB |
+| `Census.RerootQH_Data` | 0.228 GB |
+| `Census.ProvenQH_Data` | 0.314 GB |
+| **`Census.Proven_Data`** | **2.650 GB** |
+| -- of which `Proven_00..07` | 1.735 GB |
+| -- of which `Machines.ListCStage.LCStage_00..15` | 1.205 GB |
+| -- of which `Machines.ListCStage2.LCS2_00..08` | 0.163 GB |
+| `Census.Run` (all of the above) | 2.723 GB |
+
+`Proven_Data.v` is 53 lines.  What costs 2.65 GB is its `Require`
+line: the boarded-machine THEOREMS behind `proven_all`.  The walk
+needs `proven_list` -- the machine data, for `dmap_of` -- and it needs
+`decider_WF` as an opaque constant; it never looks inside
+`proven_00_nqh` or any `LCStage` board.  Coq has no way to load part of
+a library, so the whole thing comes in.
+
+That also explains the rest of the number, and the explanation is
+mechanical rather than mysterious.  OCaml's `space_overhead` (`o=40`)
+is a target for heap slack *relative to live data*, so
+
+    peak RSS  ~  live set x (1 + o/100)  +  transient
+
+and with 2.74 GB of environment permanently live, `o=40` alone budgets
+~1.1 GB of slack on top of it -- which is what the +0.92 GB from
+`--iter 0` to the full walk is, not the decider's 0.09 GB of garbage.
+Note it does not grow from there: one round and sixteen rounds have the
+identical 3.667 GB peak.  Natively the live set is larger again (the
+same `.vo` data plus linked `.cmxs` code), and 6.8 GB is what that
+multiplier gives.  **The `WALK_OCAMLRUNPARAM` tuning that took 11-12 GB
+down to 6.76 GB was never tuning the decider; it was tuning the
+multiplier on an environment nobody had measured.**
+
+The same walk in a LEAN environment is the control, and it is already
+in the table above: `ProbeWalkCommon` carries data-only lookup tables
+of the same size and no board proofs, its floor is **0.207 GB**, and
+the identical subtree walked to an empty queue on it peaks at **0.307
+GB**.  Same computation, same GC settings, 12x less memory.
+
+So the target -- per-unit peak <= 3.75 GB -- is not a decider problem
+at all.  It is:
+
+1. **the environment a walk unit loads** (2.74 GB, ~40% of the native
+   peak, and the walk half of a unit does not need most of it), and
+2. **the GC multiplier applied to it** (`o`), which is the cheapest
+   experiment anyone can run and needs no rebuild.
+
+Neither is a fuel.  Row 2 below is closed on its own evidence; this is
+why it was never going to be the answer.
+
+#### Lever 1: the environment.  The same data, as DATA, costs 4 MB
+
+`Proven_Data` costs 2.65 GB because of what is behind `proven_all`.
+The unit's expensive half -- `Lemma gg_1LB_empty : Nat.iter 700 q_suc
+... = ([], [])`, the `native_cast_no_check` that runs for minutes --
+needs `q_suc`, hence `proven_list` as DATA.  `decider_WF`, the only
+thing `proven_all` feeds, is used solely by the CHEAP half
+(`gg_1LB_decided := ggsub_decided ... gg_1LB_empty`, an `exact` that
+takes milliseconds).
+
+The size of that gap is already sitting in the floor table above.
+`ProbeLookup.v` is the same machine lists (`tools/proven_map.tsv`,
+`provenqh_map.tsv`, the holdouts -- 14,606 machines) emitted as pure
+data with no theorems, and it loads in **0.004 GB**.  Data-only: 4 MB.
+Boarded: 2.65 GB.
+
+So the shape of the fix is to split each walk unit in two, against a
+`Run_Compute`-style module that exports `q_suc` and the `q_*sub` roots
+and requires only the data:
+
+- `..._walk.v` -- the `_empty` lemma, minutes of `native_compute`, in a
+  ~0.2 GB environment instead of a 2.74 GB one;
+- `....v` -- the `_decided` lemma, `Require`s `Run`/`Run_Split2` and
+  the walk file, and is over in milliseconds.
+
+Soundness is untouched: as long as `Run.v` takes its `q_suc` FROM that
+module rather than defining a second one, both halves name the same
+constant and the existing chain goes through verbatim.  What changes is
+only which environment is resident while the expensive half runs.  The
+work is in re-emitting `proven_list` / `provenqh_list` /
+`reroot_qh_list` from `tools/*_map.tsv` as data-only files
+(`tools/gen_proven.py` already generates their current form), and it
+wants its own round with the walk that validates it.
+
+#### Lever 2: the multiplier.  Measured, and it does NOT pay alone
+
+`o` is the OCaml GC's space-overhead target, so it multiplies whatever
+the live set is.  The same real unit computation (one round, queue to
+(33,0)), one run per setting:
+
+| `OCAMLRUNPARAM` | peak RSS | eval | vs shipped |
+|---|---|---|---|
+| untuned | 5.474 GB | 137.5 s | +49% RSS, -4% CPU |
+| `o=80,O=150` | 4.539 GB | 136.3 s | +24% RSS, -5% CPU |
+| **`o=40,O=60` (shipped)** | **3.667 GB** | **143.2 s** | -- |
+| `o=20,O=30` | 3.323 GB | 157.1 s | **-9% RSS**, +10% CPU |
+| `o=10,O=20` | 2.959 GB | 186.8 s | **-19% RSS**, +30% CPU |
+
+The shipped setting is well chosen and tightening it further does not
+pay **on its own**, because `WALK_JOBS` is integer.  Applying these
+ratios to the native 6.8 GB: `o=20` gives ~6.2 GB, still 4 jobs on
+32 GB, for +10% core-time -- strictly worse.  `o=10` gives ~5.5 GB,
+which does reach 5 jobs, but +30% core-time eats it (502 core-min / 5
+vs 385 / 4).
+
+It pays only in combination, and that is the arithmetic to aim at:
+
+| configuration | native peak (est.) | jobs on 32 GB | core-min | wall |
+|---|---|---|---|---|
+| today | 6.8 GB | 4 | 385 | 103 min |
+| lever 1 alone | ~4.15 GB | 7 | 385 | **~59 min** |
+| lever 1 + `o=20` | ~3.76 GB | 7-8 | 422 | ~57-65 min |
+| lever 1 + `o=10` | ~3.35 GB | 8 | 502 | ~67 min |
+
+Read those as estimates with a mechanism, not measurements: the GC
+ratios are VM-measured and the 2.65 GB subtraction is a VM floor, while
+6.8 GB is native.  Natively the saving should be larger, not smaller
+(native also links `.cmxs` code for every library it loads).  The row
+that matters is that **lever 1 alone plausibly clears the hour**, and
+that the layer barriers below then become the thing between ~59 min and
+~52 min.
+
+### `ng_fuel = 200000` is a cap that is never reached
+
+Row 2's premise was that `ng_fuel` bounds the n-gram / rank / qhb
+closures and therefore caps CPU and RSS together.  A cap only costs
+what it is actually charged for.  Cutting it 10x, holding everything
+else fixed:
+
+| `ng_fuel` | residue sample (40) | `ProbeWalk_K1` | answer |
+|---|---|---|---|
+| 200,000 (shipped) | 0.281 GB / 7.70 s | 0.298 GB / 96.5 s | (33, 0) |
+| 20,000 | 0.278 GB / 7.89 s | 0.296 GB / 97.6 s | (33, 0) |
+| 2,000 | 0.279 GB / 5.48 s | 0.296 GB / 94.2 s | (33, 0) |
+
+Nothing moves at 20,000 -- not time, not memory, not one catch.  At
+2,000 the time finally drops, which locates the binding point between
+the two.  `tools/probes/ProbeNgFuel.v` then measures it directly:
+`ng_explore` (inside `ng_grow`) and the n-gram `Closure.close`
+instrumented to report (status, nodes seen, fuel LEFT), over the
+residue sample plus all four n-gram tier samples, 104 machines:
+
+| rung | explores that burned all 200,000 | max explore pops | closes that burned all 200,000 | max close pops |
+|---|---|---|---|---|
+| (2, 100) | **0** | 257 | **0** | 257 |
+| (3, 200) | **0** | 693 | **0** | 693 |
+| (4, 400) | **0** | 1,985 | **0** | 1,985 |
+| (6, 800) | **0** | 17,665 | **0** | 17,665 |
+
+Not one of the 416 explores and 416 closures exhausted the fuel; the
+largest consumption census-side is **17,665 pops against a cap of
+200,000**, an 11x margin.  **Row 2 is empty and should be closed, not
+scheduled.**
+
+This is the opposite of the `rw_fuel` story and the contrast is the
+lesson.  There, half the machines reaching (3,2,0) burned the whole
+8,192 -- the cap WAS the workload, so lowering it refunded real time.
+Here nothing diverges, so `ng_fuel` is latent, like the `(S t <=? B)`
+gates: a bound that is never tested costs exactly zero, and lowering it
+buys exactly zero while risking catches.  Before sizing a parameter,
+measure what it is charged, not what it permits.  Note also that fuel
+consumption is counted in worklist pops, so this table is
+engine-independent -- it holds under `native_compute` unchanged, which
+is what lets it close the row despite everything above being VM.
+
+### The tier split, re-measured -- and the old H row was a timer artefact
+
+`ProbeTierCost` re-run at 6x the sample (1,440 machines: 240 each of
+H / C / T / residue, 96 each of N2/N3/N4/D), with the same weighting by
+census node counts as the 2026-08-05 table.
+
+First, a bug in the instrument, because it changes a published number
+by 100x.  `vm_compute` compiles the whole `decider0` closure -- the
+pipeline plus all three lookup tables -- to bytecode on its FIRST use,
+and charges that one-off to whichever `Time Eval` runs first.  That is
+the H row.  The old table's "H halt: 8.45 ms/machine" was almost
+entirely bytecode compilation; measured behind a warm-up, halting
+machines cost **0.013 ms**.  `gen_tier_cost.py` now emits the warm-up
+itself, so the row cannot lie again.
+
+| tier | census nodes | per machine | modelled | share |
+|---|---|---|---|---|
+| **residue (ladder-decided)** | 228,815 | **221.7 ms** | 50,727 s | **93.7%** |
+| T translated cycle | 2,282,976 | 0.542 ms | 1,237 s | 2.3% |
+| N n-gram (all four rungs) | 200,064 | 2.8-31.0 ms | 1,703 s | 3.1% |
+| C in-place cycle | 1,029,749 | 0.454 ms | 468 s | 0.9% |
+| H halt (expand) | 249,692 | 0.013 ms | 3 s | 0.01% |
+| D deferred lookup | 3,708 | 0.073 ms | 0 s | ~0% |
+
+**The expectation going into this round was that the residue's share had
+FALLEN**, since the residue tiers gained 4.5-33.8x last round while the
+C/T bulk block gained only 2.4-3.6x.  It went the other way.  Against
+2026-08-05, per machine: T is 27.7x faster (15.0 -> 0.542 ms), C is
+11.8x (5.35 -> 0.454), the residue is 7.0x (1.55 s -> 0.222 s).  The
+2.4-3.6x figure was the `anyb` fix in isolation; the bulk had also
+already banked `scan_ct`'s deletion and the one-pass scan.  So the
+residue's share went **85% -> 93.7%**, and the whole C+T+H bulk is now
+**3.2%** of the walk.
+
+Two consequences.  First, the model finally reconciles: 902 core-min of
+modelled vm against 385 core-min of observed native is a vm/native
+ratio of **2.34x**, right where a Coq VM-vs-native gap belongs -- the
+2026-08-05 model was 12-20x short of the observed walk, which was
+itself the loudest sign it was wrong.  Second, **there is nothing left
+to win in the bulk.**  Every scan-side item -- `cvisits` in
+`cycle_check_neverqh`, the `scan_loops` double simulation, the C/T
+candidate ordering -- is competing for a 3.2% slice.  Anything that is
+not the residue, or is not memory, is now noise.
+
+### Where the rw fuel actually goes: 89% of it buys nothing
+
+The contrast above raises the obvious question about the OTHER fuel, so
+`tools/probes/ProbeRwFuelRungs.v` asks it: `ProbeRwFuel`'s instrumented
+`close` at the shipped 5,120, per rung, over the machines that reach
+that rung under the shipped ladder order.
+
+| rung | reaching | converged | **exhausted** | max pops converged | pops burned |
+|---|---|---|---|---|---|
+| (2,2,0) | 40 | 34 | **6** | 777 | 36,984 |
+| (3,2,0) | 10 | 6 | **4** | 796 | 23,318 |
+| (4,2,0) | 8 | 4 | **4** | 1,023 | 22,122 |
+| (2,3,0) | 8 | 4 | **4** | 353 | 21,105 |
+
+(The (3,2,0) row reproduces `ProbeRwFuel`'s independently-measured
+"10 machines still reach the rung, 6 converge, 4 diverge" exactly,
+which is the probe's calibration check.)
+
+18 diverging attempts burn 18 x 5,120 = 92,160 of the 103,529 closure
+pops the tier spends: **89% of all RepWL closure work is closures that
+diverge and return no verdict.**  Converged closures finish in 353-1,023
+pops here, against a census-wide worst-case of 4,132 among CAUGHT
+machines (`ProbeRwFuelDiff`).
+
+Two conclusions, and the second is the useful one:
+
+- A lower cap trims the 89% strictly linearly, and the room is small.
+  `ProbeRwFuelDiff` already gated **4,608** exhaustively (240 machines,
+  a superset of all 28 that could lose a catch, zero lost); 5,120 was
+  then shipped a fortiori for margin.  Re-tightening to the number that
+  was actually gated refunds 10% of the diverging burn and cuts the
+  headroom over the largest walked closure from 24% to 11.5%.  That is
+  a bad trade in a round where core-time is margin and memory is the
+  binding constraint -- **not taken.**  A per-rung cap
+  (`ProbeRwFuelDiff`'s 3,581 / 3,300 / 3,664 / 4,132 plus headroom)
+  reaches ~16% instead of 10%, and costs a fourth tuple component
+  through `try_rw` plus a fresh exhaustive gate per rung.  Also not
+  taken, for the same reason -- but now it is sized rather than
+  guessed.
+- The lever that is NOT linear is deciding these closures diverge
+  without walking them to the cap.  89% of the tier's pops are spent
+  proving nothing, and no choice of cap changes that ratio.  That is
+  the shape of a real round, and it wants its own scoping.
+
+### `cvisits` is paying the eager-`orb` tax, and it is small
+
+`Cycle.cvisits` -- "does state q occur in the next `len` steps" -- is
+`st_eqb (fst c) q || <recurse>`, and `orb` is a function, so it walks
+the full `len` even when q is the state of the very first
+configuration.  It is reached from every closure checker's guard
+(`Closure.closure_check_neverqh`: four states, `t` up to 1024, per
+rung, per tier), from `Cycle.cycle_check_neverqh` in the C tier, and
+from `Wrap.v`'s prefix-quiet gates in the qhb tier -- 21 files mention
+it.  `tools/probes/ProbeCVisits.v` A/Bs it against the nested-`if`
+form, at the prefix lengths the census actually asks for
+(0/64/100/200/256/400/800/1024) and all four states:
+
+| population | eager `\|\|` | nested `if` | ratio | counts |
+|---|---|---|---|---|
+| residue + n-gram, 104 machines | 0.600 s | 0.138 s | **4.35x** | 2912 = 2912 |
+| C/T bulk, 80 machines | 0.415 s | 0.099 s | **4.19x** | 2233 = 2233 |
+
+Same 4-5x as every other instance of this trap.  But the ABSOLUTE
+number is what decides: one full sweep of every census prefix length
+for all four states costs 5.8 ms/machine against the residue tier's
+221.7 ms/machine, so `cvisits` is ~2.6% of that tier and
+short-circuiting it recovers ~2% of the walk.  **Not taken this
+round**: the win is inside the margin, the change lands in the file 21
+others depend on, and the tactic sites that name the `||` shape
+(`Cycle.v`'s `apply orb_prop` / `orb_true_intro`, `TCyclerN.v`'s
+`cbn [cvisits]`) have to be restated against a full-tree rebuild.
+Sized, recorded, and available the next time a walk is owed for another
+reason.
+
+The `scan_loops` double simulation (`decide_easy` runs gas 130, then a
+fresh `lp_run` at 512 that re-simulates the first 130 steps) needs no
+probe at all now: it wastes 130 of 642 steps for machines that fall
+through the cheap rung, inside a C+T+H block that the re-measured split
+puts at **3.2% of the walk**.  Its ceiling is ~0.6%.  Closed as not
+worth a round.
+
+### What the next walk measures by itself
+
+Every walk now records, per unit, its peak RSS and its wall and user
+seconds to `census_probes/walk-rss.tsv` (`/usr/bin/time` wrapping the
+existing `coqc`; `WALK_RSS=` disables it).  This costs nothing, touches
+no census input -- `tools/census_cache.py` hashes the census `.v` only
+-- and replaces the one hand-measured unit from 2026-08-04 that the
+entire `WALK_JOBS` formula rests on with 154 measurements.
+
+`python3 tools/walk_rss_report.py` reads it back: the RSS distribution,
+per-layer CPU, the heaviest units by name, and the wall time predicted
+at each job count.  `WALK_RSS_GB=N` then feeds a measured peak straight
+back into the Makefile's sizing.
+
+It also models something the 93% figure hides.  **The walk is six
+BARRIERS, not one pool**: `Run_Split` (1 unit), `Run_Split2` (1), the
+`Run_Split_<tag>` layer (7), `GG_1LC_*` (16), `GGH_*` (104), `G_*`
+(24).  A layer costs its makespan, and no job count above a layer's
+unit count helps that layer.  93% was measured AT 4 JOBS; at 8 the two
+single-unit layers and the 7-unit layer are twice as expensive
+relatively, so 385 core-min / 8 / 0.93 = 52 min is a floor, not a
+forecast.  The report's schedule model puts the same profile nearer 60
+min at 8 jobs.  That does not change the memory target -- it says the
+tail layers become the next thing worth splitting once the memory
+target is met, and `tools/gen_gsplit_heavy.py` is the existing tool for
+it.
+
+### CONFIRMED NATIVELY (2026-08-09, later): 78% of a unit is fixed cost
+
+The VM half of this round could only say "the decider is not it".  The
+census opam switch settles the rest, and it is four `coqc` runs, not a
+walk:
+
+```sh
+eval $(opam env --switch=census)
+for it in 0 1; do
+  python3 tools/probes/gen_rss_probe.py unit /tmp/U_$it.v --iter $it --native
+  OCAMLRUNPARAM=o=40,O=60 /usr/bin/time -v coqc -Q theories BBB4 /tmp/U_$it.v
+done
+```
+
+`unit` is the REAL walk unit's computation -- Run.v's own decider and
+lookup maps, rooted at `Run_Split2.q_ggsub S1 DL StB`, i.e. exactly what
+`Compute/GG_1LC_1LB.v` walks -- cut to `--iter` of its 700 `q_suc`
+rounds.  `--iter 0` walks nothing, so its peak RSS IS the engine's fixed
+cost: `.vo` load, native translation, `ocamlopt`, `Dynlink`.
+
+| `native_compute`, real unit | peak RSS | eval | queue left |
+|---|---|---|---|
+| **`--iter 0` -- walks NOTHING** | **5.321 GB** | 14.6 s | -- |
+| `--iter 1` -- one round | **6.758 GB** | 57.6 s | (33, 0) |
+| (the unit's hand-measured peak, 2026-08-04) | 6.76 GB | -- | -- |
+
+**79% of a walk unit's peak RSS is spent before the first machine is
+decided**, and the third row is the check: ONE round already reaches
+the peak the whole unit was measured at in July, to three significant
+figures.  The walk contributes 1.44 GB and then plateaus -- the same
+shape the VM showed (2.743 GB floor, +0.92 GB, flat from one round to
+sixteen), scaled by 1.94x on the identical `Require`.  Every VM
+conclusion in this section survives the transfer, including the one
+that mattered: no fuel, no rung, no closure parameter is anywhere near
+this number.
+
+The CPU side transfers too, and independently confirms the tier model:
+the identical computation is 145.8 s on the VM against 57.6 s native,
+**vm/native = 2.53x**, against the 2.34x the re-measured tier split had
+to assume to reconcile with the observed walk.
+
+Two things the VM could not have told us:
+
+- **The fixed cost is bigger natively than the `.vo` load alone.**  VM
+  `Require` is 2.743 GB; native `--iter 0` is 5.32 GB.  The extra ~2.6
+  GB is native translating and `ocamlopt`-compiling the whole reachable
+  environment -- so lever 1 removes constants from BOTH halves of the
+  fixed cost, not just from the load.
+- **It costs CPU too.**  `--iter 0` takes 25.1 s wall (14.6 s of it the
+  native translate/compile) for a computation that decides nothing.
+  Across 154 files that is ~65 core-min of the walk's 385 -- **~17% of
+  the census walk is per-unit startup**, paid 154 times to compile the
+  same environment.
+
+#### And the lean control, natively: 18x
+
+Lever 1's payoff does not have to be estimated either.  `ProbeWalkCommon`
+IS the walk half -- same decider parameters, data-only lookup tables of
+the same size, no board proofs -- so running IT under `native_compute`
+at the same two iteration counts measures what lever 1 would deliver.
+Both configurations end at the identical queue state `(33, 0)`, which is
+the strongest available evidence that they are doing the same walk:
+
+| `native_compute`, one round | fixed (`--iter 0`) | peak (`--iter 1`) | eval |
+|---|---|---|---|
+| real unit (`Run.v`, board proofs resident) | 5.321 GB | 6.758 GB | 57.6 s |
+| **lean (`ProbeWalkCommon`, data-only tables)** | **0.266 GB** | **0.371 GB** | **29.9 s** |
+| | **20.0x** | **18.2x** | **1.93x** |
+
+**18x on peak RSS and 1.93x on the unit's own runtime**, for a walk that
+computes the same thing.  The CPU half is the native translate/compile
+of the boards (14.6 s -> 0.76 s, 19x) plus the GC pressure of collecting
+against a 5 GB live set instead of a 0.3 GB one.
+
+At 0.371 GB per unit the memory constraint does not merely relax, it
+**disappears**: 8 jobs on 32 GB, 8 jobs on a 16 GB box, 8 jobs inside a
+WSL2 VM that took half the host.  `WALK_JOBS` becomes `min(cores, ...)`
+= the core count, everywhere, which is what "clone it and see the proof"
+actually requires.
+
+| configuration | native peak | jobs on 32 GB | core-min | wall |
+|---|---|---|---|---|
+| today | 6.76 GB | 4 | 385 | 103 min |
+| **lever 1, conservative (fixed cost only)** | **~0.4 GB** | **8** | **~325** | **~50 min** |
+| lever 1, if the 1.93x held walk-wide | ~0.4 GB | 8 | ~200 | ~31 min |
+
+The conservative row counts only the ~24 s per file of startup that goes
+away (~60 core-min of 385) and assumes the GC-pressure half buys
+nothing; the optimistic row assumes the measured 1.93x generalises from
+the heaviest unit to all 154, which it will not exactly.  Both include
+the ~15% the layer barriers cost at 8 jobs.  **The goal closes on lever
+1 alone, with margin.**
+
+One caveat on the lean row, stated rather than buried: `ProbeWalkCommon`
+carries `ProbeLookup`'s 14,606-machine stand-in for the proven /
+provenqh maps and an empty `qhmap`, not the real lists, so the catch
+pattern is not bit-identical to the unit's.  The tables are the same
+order of size and cost ~4 MB either way, and both runs land on the same
+queue state -- but the number to trust after lever 1 lands is the one
+the walk itself records.
+
+## Next steps, re-ranked by the memory round (2026-08-09)
+
+This supersedes the 2026-08-07 list below, which is kept for its
+reasoning.  Of that list: row 1 landed, row 2 (`ng_fuel`) is CLOSED as
+empty and row 3 was already closed, row 4 is unchanged and repeated
+here, and row 5's premise is re-measured above.
+
+The goal is one number -- per-unit peak RSS <= 3.75 GB gets 8 jobs on
+8 cores / 32 GB -- and it is now attributed.  Core-time is margin: 385
+core-min at 8 jobs is under an hour with room to spare, and the whole
+non-residue bulk is 3.2%.
+
+**M1.  Split the walk units against a data-only compute module.**  The
+round's main result: 2.74 of a unit's 3.667 GB (VM) is `Require`, and
+2.65 GB of that is `Proven_Data`'s boarded-machine theorems, which the
+expensive half of a unit never looks inside.  The same machine lists as
+DATA cost 4 MB.  Estimated to take the native peak from 6.8 GB to
+~4.15 GB -- 7 jobs on 32 GB, ~59 min -- with no change to the proof
+chain, only to which environment is resident while `native_compute`
+runs.  Wants its own round: it re-emits three generated data files and
+re-wires `Run.v`, and it is a census-input change, so it is gated on
+the walk that also validates it.
+
+**M2.  Run the native decomposition first.  Four `coqc` runs.**  M1's
+estimate is a VM floor applied to a native peak.  The recipe at the end
+of the previous section settles it in minutes on the census switch, and
+its `--iter 0` row IS M1's payoff, measured rather than estimated.  Do
+this before committing to M1.
+
+**M3.  The layer barriers.**  The walk is six barriers, and at 8 jobs
+`Run_Split` (1 unit), `Run_Split2` (1) and `Run_Split_<tag>` (7) cannot
+use the cores.  93% parallel efficiency was measured AT 4 JOBS; the
+schedule model in `tools/walk_rss_report.py` puts the same profile
+nearer 83% at 8.  This is what stands between M1's ~59 min and the
+~52 min the core-time allows, and `tools/gen_gsplit_heavy.py` already
+splits heavy subtrees.  Cheap, but pointless before M1: today the box
+cannot run 8 jobs at all.
+
+**M4.  Early divergence detection in the RepWL closure.**  89% of the
+tier's closure pops are closures that diverge to the cap and return no
+verdict (measured above).  No choice of cap changes that ratio -- a cap
+only trims it linearly, and the room left is ~10-16%.  This is the only
+remaining CPU item with real headroom, it is in the 93.7%, and it is
+research rather than a parameter change.
+
+**M5.  Index-keyed certificate tables -- still deferred.**  Unchanged
+from the old row 4: `vals_of` pays `#pool * #comps` big-key lookups per
+state because the certificate's tables are keyed by `rconf_enc`, and
+having the search emit index-keyed tables would halve that at the cost
+of every `RerootStage` proof.  Still not worth it.
+
+**Closed, with the evidence, so they are not re-derived:** `ng_fuel`
+(never reaches its cap: 17,665 pops against 200,000); the `scan_loops`
+double simulation (ceiling ~0.6%); `cvisits`'s eager `orb` (4.2-4.4x on
+the function, ~2% of the walk, 21-file blast radius) -- the last one
+worth riding along the next time a walk is owed anyway, not worth
+owing one for.
+
+## Next steps, in Amdahl order (2026-08-07, superseded)
 
 Rows 2-4 are "What is left in the rw tier" above, re-ordered by
 expected value per unit of risk and with probe prerequisites made
@@ -1514,6 +2079,15 @@ our equivalent bulk is not what is costing us.
 That is a different kind of round from rows 1-4 and should be scoped
 deliberately rather than drifted into.
 
+**Update (2026-08-09).**  The 14x arrived without any of this: the
+`existsb`/`orb` sweep alone delivered 7.03x on the real walk, and
+385 core-min is already an under-an-hour figure at 8 jobs.  The
+disproportion this row names got WORSE, not better -- the residue is
+now 93.7% of the walk against 3.2% for the whole bulk -- but it stopped
+being the binding constraint, because the constraint moved to memory.
+The row stands as the right description of where the CPU is; it is no
+longer the thing between here and the goal.
+
 ## Measurement status
 
 tools/probes/ has the vm_compute harness (per-tier timings on four
@@ -1531,6 +2105,25 @@ other load was controlled (probes run one at a time; the walk A/B in
 particular was run with nothing else on the box).  Treat them as
 "about", not as three significant figures.
 
-Still pending a full walk: the end-to-end effect of the `anyb` fix.
-`ProbeWalk_K1` says 7.9x on one heavy subtree; the census walk is the
-only thing that settles the census walk.
+The 2026-08-09 memory round ran the same way, plus one thing that had
+never been tried: apt's Coq is built with the native compiler DISABLED,
+so `native_cast_no_check` falls back to VM conversion with a warning
+instead of failing.  That is a trap when you want a walk, and a gift
+when you want to instrument one -- it is what let a real walk unit's
+computation (`Run.v`'s decider, real tables, `Run_Split2`'s root) run
+here to an empty queue for peak RSS.  The committed `Run_Split*.vo`
+must be moved aside first: they were built under the census switch's
+OCaml 4.14.2 and will not load under apt's 4.14.1 (that failure is loud
+and immediate).
+
+Nothing in this round pends a walk.  Every census `.v` is untouched, so
+the committed `.vo` still certify the tree; the changes are the
+Makefile's walk instrumentation, `tools/`, and documentation.  The next
+walk is worth running as a MEASUREMENT rather than a validation: it now
+writes `census_probes/walk-rss.tsv` and `tools/walk_rss_report.py`
+turns that into the per-unit RSS distribution the whole `WALK_JOBS`
+question rests on.
+
+Two numbers this round would still like, in cost order: the native
+`--iter 0` row (M2 -- minutes, no walk), and that walk-rss table (free,
+whenever a walk happens for any reason).

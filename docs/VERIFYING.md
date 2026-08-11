@@ -124,30 +124,70 @@ make census-verify
 
 This moves the committed walk output to a timestamped backup directory
 (`census_probes/vo-backup-*` — nothing is destroyed, and no manual `.vo`
-deletion is ever needed) and re-walks from source.  Budget
-**~24 hours** on ≥16 GB of RAM, on a native Linux filesystem — not `/mnt/c`
-under WSL2, where the drive bridge breaks `native_compute`.  Parallelism
-sizes itself: each walk unit peaks **~6.8 GB** under the default
-`WALK_OCAMLRUNPARAM` (11–12 GB untuned), and `WALK_JOBS` defaults to
-`min(cores, (available RAM − 2 GB) / 7 GB)` — the Makefile is
-authoritative for both numbers.
+deletion is ever needed) and re-walks from source, on a native Linux
+filesystem — not `/mnt/c` under WSL2, where the drive bridge breaks
+`native_compute`.
 
-**Do not override `WALK_JOBS` upward without checking free RAM**, and
-under WSL2 check it INSIDE the VM (`free -g`): `/proc/meminfo` reports
-the VM's allocation, not the host's, and WSL2 self-caps well below the
-host unless `.wslconfig` says otherwise.  Four jobs on a VM sized for
-two is ~28 GB of demand against ~16 GB, and the OOM killer can take the
-whole distro down, not just the walk (this happened: 2026-07-22 on a
-16 GB box, and again 2026-08-08 under WSL2).  On any memory-constrained
-box prefer `WALK_MEMFREE=8G` (GNU parallel), which gates each unit
-launch on free RAM and suspends-and-requeues instead of letting the OOM
-killer choose a victim.
+**How long: it depends almost entirely on how many jobs your RAM allows.**
+The walk is 385 core-minutes (measured end to end, 2026-08-09) at 93%
+parallel efficiency, and
+
+    WALK_JOBS = min(cores, (available RAM − 2 GB) / 7 GB)
+
+because each unit peaks **~6.8 GB** under the default `WALK_OCAMLRUNPARAM`
+(11–12 GB untuned).  So on 8 cores:
+
+| RAM | jobs | wall |
+|---|---|---|
+| 16 GB | 2 | ~3 h 27 m |
+| 32 GB | 4 | **1 h 44 m** (the measured figure) |
+| 64 GB | 8 | ~52 m |
+
+The Makefile is authoritative for both numbers, and both are settable:
+`WALK_JOBS=N` forces the fan-out, `WALK_RSS_GB=N` changes the per-unit
+peak the sizing assumes.  Every walk now records its own peak RSS and CPU
+per unit to `census_probes/walk-rss.tsv`; `python3 tools/walk_rss_report.py`
+prints the distribution and the jobs it supports, so the second walk on a
+box can be sized from that box's data rather than from this table.
+
+### The WSL2 memory trap — read this before quoting a walk time
+
+**WSL2 gives the VM half the host's RAM by default** (up to 8 GB on older
+builds).  A 32 GB Windows box is a 16 GB Linux box unless `.wslconfig`
+says otherwise — so `WALK_JOBS` auto-sizes to **2, not 4**, and the walk
+takes ~3.5 h instead of ~1.75 h.  Nothing warns you; the walk just looks
+twice as slow as it is.  Check inside the VM, never from Windows:
+
+```bash
+free -g        # what the VM actually has -- this is what WALK_JOBS reads
+nproc
+```
+
+To give it the whole box, create `%UserProfile%\.wslconfig` on the Windows
+side and `wsl --shutdown` to apply:
+
+```ini
+[wsl2]
+memory=28GB      # leave a few GB for Windows; 32 GB host -> 28
+processors=8
+swap=0
+```
+
+Then re-check `free -g` inside the VM before starting.  The same trap in
+the other direction is worse: **do not override `WALK_JOBS` upward without
+checking free RAM.**  Four jobs on a VM sized for two is ~28 GB of demand
+against ~16 GB, and the OOM killer can take the whole distro down, not
+just the walk (this happened: 2026-07-22 on a 16 GB box, and again
+2026-08-08 under WSL2).  On any memory-constrained box prefer
+`WALK_MEMFREE=8G` (GNU parallel), which gates each unit launch on free RAM
+and suspends-and-requeues instead of letting the OOM killer choose a
+victim.
 
 The walk is **resumable and per-unit**: finished units are skipped on re-run,
 and a walk-stamp quarantines any `.vo` that was not produced by walking the
 current tree.  So it can be spread over days, and a *sample* is meaningful —
 re-walk a few `Run_Split_*` / `GG_*` / `G_*` units and check they reproduce
-the committed output, without paying for all 24 hours.
+the committed output, without paying for the whole walk.
 
 Afterwards, `python3 tools/census_cache.py --print-hash` should match the
 committed hash, confirming your walk covered the same inputs.

@@ -2,6 +2,7 @@ ProbeLookup.v
 # validation-sized samples + the per-rung catch-diffs cut from them
 # (24k lines): regenerate with gen_tier_cost.py / gen_rwdiff.sh, see README
 ProbeTierBig.v
+ProbeTierCost[0-9]*.v
 ProbeRwDiff_*.v
 *.vo
 *.vos

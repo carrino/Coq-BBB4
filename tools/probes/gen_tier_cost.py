@@ -104,6 +104,7 @@ Definition decided (r : QHResult) : bool :=
 
     order = [t for t in ['H', 'C', 'T', 'N2', 'N3', 'N4', 'N6', '-', 'D']
              if keep.get(t)]
+    warm = order[0]
     for tier in order:
         tag = 'RES' if tier == '-' else tier
         names = []
@@ -119,6 +120,17 @@ Definition decided (r : QHResult) : bool :=
     for tier in order:
         out.append(f"(*   tier {tier:>2}: {seen[tier]} nodes,"
                    f" {len(keep[tier])} sampled *)")
+    out.append("")
+    out.append("""(* WARM-UP, not a measurement.  [vm_compute] compiles the whole
+   [decider0] closure -- pipeline + the three lookup tables -- to
+   bytecode on its FIRST use, and charges that one-off to whichever
+   [Time Eval] runs first.  Before this line the H row (first in tier
+   order) absorbed it and read ~14x the per-machine cost of the C/T
+   rows measured right after it.  Burn it here instead. *)""")
+    warm_tag = 'RES' if warm == '-' else warm
+    out.append(f"Time Eval vm_compute in "
+               f"(List.length (filter decided (map decider0 "
+               f"(firstn 1 grp_{warm_tag})))).")
     out.append("")
     for tier in order:
         tag = 'RES' if tier == '-' else tier

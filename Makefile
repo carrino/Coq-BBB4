@@ -48,8 +48,8 @@ proof: all
 # theorem.  Needs native_compute: eval $(opam env --switch=census).
 # Layers: Run_Split (grandchild split) -> Run_Split2 + the 7
 # Run_Split_<tag> heavy-grandchild splits -> the GG_1LC / GGH_ great-
-# grandchild walks -> the 24 G_ units -> theorem.  ~7h native at -P4;
-# raise -P to your core count.
+# grandchild walks -> the 24 G_ units -> theorem.  385 core-min native
+# (measured 2026-08-09): 1 h 45 m at WALK_JOBS=4, ~52 m at 8.
 #
 # The census .vo are committed + hash-guarded (tools/census_cache.py, an
 # UNTRUSTED build-hygiene guard -- no proof weight; the Coq kernel is what
@@ -70,11 +70,23 @@ proof: all
 # under the default WALK_OCAMLRUNPARAM (11-12 GB untuned; see below)
 # (four of them OOM-killed a 16 GB box on the GG_1LC layer, signal 9,
 # 2026-07-22), so the default is computed from THIS machine:
-#   min(cores, (available RAM - 2 GB) / 7 GB), floor 1
-# -- 16 GB -> 2, 32 GB -> 4 (4+ cores), 64 GB -> core count.  Override
-# explicitly with `make census-verify WALK_JOBS=6'.  (`make -j' does
-# not parallelize the walk -- WALK_JOBS is the knob.)
-WALK_AUTO := $(shell m=$$(awk '/MemAvailable/{print int(($$2/1048576 - 2)/7)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+#   min(cores, (available RAM - 2 GB) / WALK_RSS_GB), floor 1
+# -- at the default 7 GB/unit: 16 GB -> 2, 32 GB -> 4 (4+ cores),
+# 64 GB -> core count.  Override explicitly with
+# `make census-verify WALK_JOBS=6'.  (`make -j' does not parallelize the
+# walk -- WALK_JOBS is the knob.)
+#
+# WALK_RSS_GB is the per-unit peak this sizing assumes.  It is the ONE
+# number the "<1 h on 8 cores / 32 GB" goal reduces to
+# (docs/CENSUS_RUNTIME.md): at 6.8 GB a 32 GB box gets 4 jobs and 1 h 43 m,
+# at <= 3.75 GB it gets 8 and ~52 m.  7 comes from a single unit measured
+# by hand on 2026-08-04 -- so measure YOUR walk and set it from data:
+# every walk now writes census_probes/walk-rss.tsv (WALK_RSS below) and
+# `python3 tools/walk_rss_report.py' prints the max and the jobs it
+# supports.  Raising it is always safe; lowering it below your measured
+# max is what invites the OOM killer.
+WALK_RSS_GB ?= 7
+WALK_AUTO := $(shell m=$$(awk -v r=$(WALK_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_JOBS ?= $(WALK_AUTO)
 
 # WALK_OCAMLRUNPARAM: OCaml GC tuning for the walk units.  Measured
@@ -82,12 +94,56 @@ WALK_JOBS ?= $(WALK_AUTO)
 # ~11-12 GB peak; 'o=80,O=150' -> 8.19 GB; 'o=40,O=60' -> 6.76 GB, FLAT
 # from minute 3 onward, still 99% CPU.  o = GC space-overhead target (%),
 # O = compaction threshold (%) -- compaction is the only thing that
-# returns major-heap memory to the OS, so without it each unit's RSS is
-# the high-water mark of its worst pop's transient garbage.  Lower peaks
-# => more WALK_JOBS on the same RAM (the /7 GB in WALK_AUTO assumes this
-# default).  Override or disable: `make ... WALK_OCAMLRUNPARAM='.
+# returns major-heap memory to the OS.  Lower peaks => more WALK_JOBS on
+# the same RAM (WALK_RSS_GB above assumes this default).  Override or
+# disable: `make ... WALK_OCAMLRUNPARAM='.
+#
+# The rest of that note used to read "so without it each unit's RSS is
+# the high-water mark of its worst pop's transient garbage".  That was a
+# hypothesis, never measured, and it is wrong by ~20x
+# (tools/probes/gen_rss_probe.py, 2026-08-09).  Measured under
+# vm_compute, GG_1LC_1LB's real computation walked to an EMPTY queue:
+#
+#   Require Run + Run_Split + Run_Split2, evaluate nothing   2.743 GB
+#     -- of which Census/Proven_Data.vo (the board THEOREMS)  2.650 GB
+#   + the whole subtree walked, queue ([],[])                3.667 GB
+#   the same walk on data-only lookup tables (ProbeWalkCommon) 0.307 GB
+#
+# So the decider's transient garbage is ~0.1 GB, `o' multiplies a live
+# set that is 75% environment, and 2.65 GB of that environment is proofs
+# the walk half of a unit never looks inside.  o is a target for slack
+# RELATIVE TO LIVE DATA, so it scales with the environment, not with the
+# decider: same unit, one run each,
+#
+#   untuned 5.474 GB / 137 s   o=80,O=150 4.539 / 136   o=40,O=60 3.667 / 143
+#   o=20,O=30 3.323 GB / 157 s   o=10,O=20 2.959 / 187
+#
+# o=40,O=60 stays the default: tightening further buys 9-19% of RSS for
+# 10-30% of CPU, and WALK_JOBS is integer, so on a 32 GB box it does not
+# cross a job boundary on its own.  docs/CENSUS_RUNTIME.md has the
+# arithmetic and what it would take to cross one.
 WALK_OCAMLRUNPARAM ?= o=40,O=60
-WALK_COQC = env OCAMLRUNPARAM='$(WALK_OCAMLRUNPARAM)' coqc -Q theories BBB4
+
+# WALK_RSS: per-unit peak RSS + wall/user seconds, appended to
+# census_probes/walk-rss.tsv (one line per unit, `/usr/bin/time -a').
+# The 6.8 GB above is ONE unit measured by hand in July; nothing has ever
+# recorded the DISTRIBUTION, and WALK_JOBS is derived entirely from that
+# single number.  Recording costs nothing (`/usr/bin/time' wraps the
+# existing coqc), touches no census input -- tools/census_cache.py hashes
+# the census .v only -- and makes every walk report what the next walk
+# should be sized for.  `tools/walk_rss_report.py' summarises it and says
+# what WALK_JOBS the measured peak supports on a given box.  Disable with
+# `make ... WALK_RSS='; degrades to a plain coqc where /usr/bin/time is
+# absent (it lives in the `time' package, not the shell builtin).
+WALK_RSS ?= census_probes/walk-rss.tsv
+WALK_HAS_TIME := $(shell [ -x /usr/bin/time ] && echo yes)
+ifneq ($(WALK_RSS),)
+ifeq ($(WALK_HAS_TIME),yes)
+WALK_MEASURE = /usr/bin/time -a -o $(WALK_RSS) -f '%M\t%e\t%U\t%C'
+endif
+endif
+WALK_COQC = env OCAMLRUNPARAM='$(WALK_OCAMLRUNPARAM)' $(WALK_MEASURE) \
+	    coqc -Q theories BBB4
 
 # WALK_MEMFREE (opt-in, needs GNU parallel): memory-aware launch gate,
 # the walk's analogue of the IRules order-only chains.  A new unit is
@@ -128,7 +184,14 @@ _census-prepare:
 .PHONY: _census-prepare
 
 _census-walk: _census-prepare
-	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) (auto = min(cores, (free RAM - 2 GB)/7 GB); override with WALK_JOBS=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
+	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) (auto = min(cores, (free RAM - 2 GB)/$(WALK_RSS_GB) GB); override with WALK_JOBS=N or WALK_RSS_GB=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
+	@if [ -n "$(WALK_MEASURE)" ]; then mkdir -p census_probes; \
+	   [ -f "$(WALK_RSS)" ] || \
+	     printf 'peak_rss_kb\twall_s\tuser_s\tcommand\n' > "$(WALK_RSS)"; \
+	   echo ">>> per-unit peak RSS -> $(WALK_RSS) (python3 tools/walk_rss_report.py)"; \
+	 elif [ -n "$(WALK_RSS)" ]; then \
+	   echo ">>> per-unit peak RSS NOT recorded: /usr/bin/time missing (apt-get install time)"; \
+	 fi
 	[ -f theories/Census/Run_Split.vo ] || $(WALK_COQC) theories/Census/Run_Split.v
 	[ -f theories/Census/Run_Split2.vo ] || $(WALK_COQC) theories/Census/Run_Split2.v
 	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
@@ -146,7 +209,7 @@ census: all
 	else \
 	  echo "############################################################"; \
 	  echo "# census cache INVALID or absent -- WALKING FROM SOURCE.    "; \
-	  echo "# This is heavy native_compute (~7h at -P4) and preempts on "; \
+	  echo "# This is heavy native_compute (385 core-min) and preempts on "; \
 	  echo "# this container: run ONLY on STABLE hardware (real Linux /  "; \
 	  echo "# WSL2, >=16 GB RAM, no preemption).                         "; \
 	  echo "############################################################"; \

@@ -57,6 +57,40 @@ coqc -Q theories BBB4 -Q tools/probes BBB4 tools/probes/ProbeWalkCommon.v
   RepWL tier: isolated verified stage (certificate replayed from data
   into both checkers), whole attempt per rung, and the rung ladder as
   the walk actually pays it.
+- `gen_rss_probe.py` — GENERATOR for the peak-RSS attribution sweep.
+  Peak RSS is a whole-process high-water mark, so each configuration
+  needs its OWN `coqc`; this emits one probe per (workload, fuel,
+  engine) so `/usr/bin/time -v` can be read off each. Workloads:
+  `load` (floor), `tab` (+ lookup maps), `bulk`, `res`, `walk`
+  (ProbeWalk_K1), and `unit` — the REAL unit's computation (Run.v's
+  decider and maps, `Run_Split2.q_ggsub`), whose `--iter 0` row is the
+  engine's fixed cost. `--native` emits `native_compute` for the census
+  opam switch; apt Coq has no native compiler and falls back to the VM
+  with a warning, so a `--native` run there measures nothing new.
+- `ProbeNgFuel.v` — the n-gram analogue of `ProbeRwFuel`: `ng_explore`
+  and the n-gram `Closure.close` instrumented to report (status, nodes
+  seen, fuel LEFT), per rung, so it can be read off whether
+  `ng_fuel = 200000` is ever approached. It is not: 17,665 pops is the
+  largest consumption measured.
+- `ProbeCVisits.v` — `Cycle.cvisits` (eager `||`, so it always walks
+  the full `len`) against the nested-`if` form with the same boolean
+  value, at the prefix lengths the census asks for. Counts must match.
+- `ProbeRwFuelRungs.v` — `ProbeRwFuel`'s instrumented `close` at the
+  shipped 5,120, per rung, over the machines that reach that rung under
+  the shipped ladder order. Says how much of the tier's closure work is
+  diverging closures (89%) and therefore what a lower cap can refund.
+
+`ProbeTierCost.v`'s generator now emits a WARM-UP `Time Eval` before the
+first tier row. `vm_compute` compiles the whole `decider0` closure to
+bytecode on its first use and charged it to whichever row ran first —
+which made the published "H halt: 8.45 ms/machine" ~100x too slow. Any
+new timing probe over `decider0` needs the same warm-up.
+
+The `unit` workload needs `theories/Census/Run{,_Split,_Split2}.vo`
+built by the SAME Coq: the committed `Run_Split*.vo` come from the
+census opam switch (OCaml 4.14.2) and will not load under apt's 4.14.1.
+Move them aside, `coqc` the two sources (they are structural lemmas, not
+walks — seconds each), and move them back.
 
 ### The big samples (generated, NOT committed — 24k lines)
 

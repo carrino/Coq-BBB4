@@ -87,8 +87,8 @@ additionally reports that nothing relies on type-in-type, unsafe
 ## How the two halves are proved
 
 **The upper bound** is the census + closeout chain.  The census walk
-(`census_decided`, the committed `.vo`: the ~7 h TNF walk of the whole
-(4,2) space) shows every machine either satisfies `QHBound 2000` or lies
+(`census_decided`, the committed `.vo`: the 385-core-minute TNF walk of
+the whole (4,2) space) shows every machine either satisfies `QHBound 2000` or lies
 in the orbit — under completion of undefined transitions, non-start state
 swaps, and mirroring — of one of 5,156 frozen deferred rows; the closeout
 settles every one of those rows with a kernel-checked board, and the
@@ -149,10 +149,11 @@ champion's 66,349, never quasihalts, or quasihalts by the new champion's
   useful bookkeeping for the frozen tables and per-row attribution.
 * The committed census `.vo` (154 files) are walk output, not source.
   Loading them is a trust decision; `make census-verify` re-derives them
-  from source instead (~24 h).  See `docs/VERIFYING.md` for both paths.
+  from source instead (385 core-min; 1 h 45 m at 4 jobs on 32 GB).  See
+  `docs/VERIFYING.md` for both paths.
 * **The rule for committed proof binaries:** a `.vo` is committed only when
-  reproducing it is prohibitive (the census walk: ~24 h, special
-  toolchain), and then only hash-guarded and with a from-source escape
+  reproducing it is prohibitive (the census walk: 385 core-min and a
+  special toolchain), and then only hash-guarded and with a from-source escape
   hatch.  Nothing else in the tree ships as a binary — a file that rebuilds
   in minutes gets rebuilt, not trusted — so the trust surface stays one
   sharply-drawn line: everything up to `Closeout.vo` (and the champion's
