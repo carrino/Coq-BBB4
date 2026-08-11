@@ -31,6 +31,107 @@ From BBB4.Census.Compute Require Import G_1RB_1RB.
 From BBB4.Census.Compute Require Import G_1RB_1RC.
 Import ListNotations.
 
+(** the per-unit [_decided] steps, moved here by
+    tools/lean_walk_units.py: each is an [exact] that takes
+    milliseconds but needs [decider_WF], and this file
+    already loads the environment that supplies it. *)
+
+Lemma g_0RB_0LA_decided :
+  NodeDecided B_census D_census (node_tm (gchild S0 S0 DL StA)).
+Proof.
+  exact (gsub_decided S0 S0 DL StA 700 eq_refl g_0RB_0LA_empty).
+Qed.
+
+Lemma g_0RB_0LB_decided :
+  NodeDecided B_census D_census (node_tm (gchild S0 S0 DL StB)).
+Proof.
+  exact (gsub_decided S0 S0 DL StB 700 eq_refl g_0RB_0LB_empty).
+Qed.
+
+Lemma g_0RB_0LC_decided :
+  NodeDecided B_census D_census (node_tm (gchild S0 S0 DL StC)).
+Proof.
+  exact (gsub_decided S0 S0 DL StC 700 eq_refl g_0RB_0LC_empty).
+Qed.
+
+Lemma g_0RB_0RA_decided :
+  NodeDecided B_census D_census (node_tm (gchild S0 S0 DR StA)).
+Proof.
+  exact (gsub_decided S0 S0 DR StA 700 eq_refl g_0RB_0RA_empty).
+Qed.
+
+Lemma g_0RB_0RB_decided :
+  NodeDecided B_census D_census (node_tm (gchild S0 S0 DR StB)).
+Proof.
+  exact (gsub_decided S0 S0 DR StB 700 eq_refl g_0RB_0RB_empty).
+Qed.
+
+Lemma g_0RB_0RC_decided :
+  NodeDecided B_census D_census (node_tm (gchild S0 S0 DR StC)).
+Proof.
+  exact (gsub_decided S0 S0 DR StC 700 eq_refl g_0RB_0RC_empty).
+Qed.
+
+Lemma g_0RB_1LA_decided :
+  NodeDecided B_census D_census (node_tm (gchild S0 S1 DL StA)).
+Proof.
+  exact (gsub_decided S0 S1 DL StA 700 eq_refl g_0RB_1LA_empty).
+Qed.
+
+Lemma g_0RB_1LB_decided :
+  NodeDecided B_census D_census (node_tm (gchild S0 S1 DL StB)).
+Proof.
+  exact (gsub_decided S0 S1 DL StB 700 eq_refl g_0RB_1LB_empty).
+Qed.
+
+Lemma g_0RB_1RA_decided :
+  NodeDecided B_census D_census (node_tm (gchild S0 S1 DR StA)).
+Proof.
+  exact (gsub_decided S0 S1 DR StA 700 eq_refl g_0RB_1RA_empty).
+Qed.
+
+Lemma g_0RB_1RB_decided :
+  NodeDecided B_census D_census (node_tm (gchild S0 S1 DR StB)).
+Proof.
+  exact (gsub_decided S0 S1 DR StB 700 eq_refl g_0RB_1RB_empty).
+Qed.
+
+Lemma g_1RB_0LA_decided :
+  NodeDecided B_census D_census (node_tm (gchild S1 S0 DL StA)).
+Proof.
+  exact (gsub_decided S1 S0 DL StA 700 eq_refl g_1RB_0LA_empty).
+Qed.
+
+Lemma g_1RB_0LB_decided :
+  NodeDecided B_census D_census (node_tm (gchild S1 S0 DL StB)).
+Proof.
+  exact (gsub_decided S1 S0 DL StB 700 eq_refl g_1RB_0LB_empty).
+Qed.
+
+Lemma g_1RB_0RA_decided :
+  NodeDecided B_census D_census (node_tm (gchild S1 S0 DR StA)).
+Proof.
+  exact (gsub_decided S1 S0 DR StA 700 eq_refl g_1RB_0RA_empty).
+Qed.
+
+Lemma g_1RB_0RB_decided :
+  NodeDecided B_census D_census (node_tm (gchild S1 S0 DR StB)).
+Proof.
+  exact (gsub_decided S1 S0 DR StB 700 eq_refl g_1RB_0RB_empty).
+Qed.
+
+Lemma g_1RB_1RA_decided :
+  NodeDecided B_census D_census (node_tm (gchild S1 S1 DR StA)).
+Proof.
+  exact (gsub_decided S1 S1 DR StA 700 eq_refl g_1RB_1RA_empty).
+Qed.
+
+Lemma g_1RB_1RB_decided :
+  NodeDecided B_census D_census (node_tm (gchild S1 S1 DR StB)).
+Proof.
+  exact (gsub_decided S1 S1 DR StB 700 eq_refl g_1RB_1RB_empty).
+Qed.
+
 Lemma sub_0RA_empty : Nat.iter 4 q_suc (q_sub S0 StA) = ([], []).
 Proof. native_cast_no_check (eq_refl (@nil TNF_Node, @nil TNF_Node)). Qed.
 

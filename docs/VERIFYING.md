@@ -116,6 +116,32 @@ why the census switch exists.  Note the OCaml version is load-bearing: `.vo`
 are OCaml-marshalled, so a 4.14.2 `.vo` will not load under 4.14.1 and vice
 versa.
 
+### The build raises its own stack limit, and needs to
+
+Under the census switch — and only there — `coqnative` compiles each
+`.vo` into an OCaml module and the OCaml compiler recurses over its
+structure.  The census lookup tiers (`Census/Proven_List.v` and friends)
+are 5,270–6,517 machine definitions apiece, and on the **default 8 MB
+stack that overflows**:
+
+```
+COQNATIVE theories/Census/Proven_List.vo
+Fatal error: exception Stack overflow
+Error: Native compiler exited with status 2
+```
+
+`make` therefore does `ulimit -s unlimited` before building, so this
+should never reach you.  It is worth knowing anyway, because the failure
+has an unusually good disguise: plain `coqc` compiles those files
+without complaint, so it is invisible on any build without a native
+compiler, and it appears only on the census switch — the path someone
+takes precisely *because* they want to check the thing themselves.
+
+If your environment forbids raising the soft limit, `make STACK_KB=...`
+takes any value your hard limit allows (`ulimit -Hs`), and Coq's own
+hint in that error is the fallback.  Measured 2026-08-11: 8192 KB fails,
+unlimited builds all three lists clean.
+
 **Trusting those 154 `.vo` is a decision.**  To avoid it, re-derive them:
 
 ```bash
@@ -128,35 +154,100 @@ deletion is ever needed) and re-walks from source, on a native Linux
 filesystem — not `/mnt/c` under WSL2, where the drive bridge breaks
 `native_compute`.
 
-**How long: it depends almost entirely on how many jobs your RAM allows.**
-The walk is 385 core-minutes (measured end to end, 2026-08-09) at 93%
-parallel efficiency, and
+**How long: it used to depend almost entirely on how many jobs your RAM
+allowed.**  The walk is 385 core-minutes (measured end to end,
+2026-08-09) at 93% parallel efficiency, and RAM used to be what stopped
+you spending them in parallel:
 
     WALK_JOBS = min(cores, (available RAM − 2 GB) / 7 GB)
 
-because each unit peaks **~6.8 GB** under the default `WALK_OCAMLRUNPARAM`
-(11–12 GB untuned).  So on 8 cores:
+because each unit peaked **~6.8 GB**.  On 8 cores that is 4 jobs on a
+32 GB box and **1 h 44 m** — the measured figure, and the reason a
+32 GB desktop could not reach the one-hour goal.
 
-| RAM | jobs | wall |
+**79% of that 6.8 GB was never the walk.**  It was the environment each
+unit `Require`d — the boarded-machine theorems behind `proven_all`,
+which the walking half of a unit never looks inside.  The lookup tiers
+are now emitted as data (`Census/Proven_List.v` and friends), the units
+build their tables from those, and `Census/Run.v` re-attaches the
+certificates by a kernel convertibility check.  A lean unit measures
+**0.371 GB** natively against 6.758 GB.
+
+### Measured: the first full lean walk (2026-08-10)
+
+Run on 8 physical cores (16 threads) / 31 GB, `tools/walk_rss_report.py` over all 154 units:
+
+| | peak RSS |
+|---|---|
+| `GGH_*` (104 lean units) | max **0.60 GB** |
+| `GG_1LC_*` (16 lean units) | max **0.61 GB** |
+| `G_*` (24: 16 lean + 8 assemblers) | max **2.77 GB** |
+| `Run_Split*` (9) | max **2.76 GB** |
+| `Census_Theorem` (alone) | **6.30 GB** |
+| **all 154** | max 6.30 / p90 2.76 / **median 0.51** / min 0.40 |
+
+**The whole walk took 1 h 19 m 42 s** — every one of the 154 `.vo`
+written inside that window, at 7 jobs, under `nice -n19`.  For contrast
+the pre-lean walk measured 1 h 43 m at 4 jobs, and could not have run 7
+jobs at all: 7 × 6.8 GB is 48 GB.
+
+Predicted wall by job count, from the LPT schedule of the measured
+per-unit CPU with the layer barriers modelled:
+
+| jobs | wall | scaling |
 |---|---|---|
-| 16 GB | 2 | ~3 h 27 m |
-| 32 GB | 4 | **1 h 44 m** (the measured figure) |
-| 64 GB | 8 | ~52 m |
+| 4 | 108 min | 98% |
+| 6 | 75 min | 94% |
+| **8** | **62 min** | **85%** |
+| 12 | 50 min | 70% |
+| 16 | 44 min | 60% |
 
-The Makefile is authoritative for both numbers, and both are settable:
-`WALK_JOBS=N` forces the fan-out, `WALK_RSS_GB=N` changes the per-unit
-peak the sizing assumes.  Every walk now records its own peak RSS and CPU
-per unit to `census_probes/walk-rss.tsv`; `python3 tools/walk_rss_report.py`
-prints the distribution and the jobs it supports, so the second walk on a
-box can be sized from that box's data rather than from this table.
+So the RAM term no longer binds anywhere, and what is left is load
+spread *inside* the two big layers.  A layer cannot finish faster than
+its longest single unit, however many cores you have, and `GG_1LC` is
+16 units run in one wave.  (It is **not** the `Run_Split` layers, which
+look like the obvious culprit and are 1.2 core-min between them —
+`walk_rss_report.py` prints the per-layer makespan and what sets each
+layer's floor, so read that rather than guessing.)
+
+**Core-time came in at 421 min against the pre-lean walk's 385.**  The
+lean units did not get cheaper in CPU — a single-unit control had
+suggested 1.93x, and that did not transfer.  Read it as "no worse":
+the 385 was measured at 4 jobs and the 421 at 7–14, where memory
+bandwidth and SMT contention inflate per-unit CPU, so the two are not
+a clean comparison and neither is a regression.
+
+Two job counts, because 15 of the 154 files did not get lean: the 7
+`Census/Run_Split_<tag>.v` and the 8 `Compute/G_*` assemblers prove
+`NodeDecided`, which needs `decider_WF`, which needs the boards.  Coq
+loads a library's environment whole, so there is no way to name
+`decider_WF` without paying for it.  Those run at `WALK_ASM_JOBS`
+(`WALK_ASM_RSS_GB`, **3.5 GB** — measured 2.77) while the other 139 run
+at `WALK_JOBS` (`WALK_RSS_GB`, **1 GB** — measured 0.61).  On 32 GB
+both tiers now get the full core count.
+
+**Minimum RAM is ~9 GB, and no job count fixes it below that**: the last
+file, `Compute/Census_Theorem.v`, runs alone and measured **6.30 GB**.
+
+The Makefile is authoritative for all of these, and all are settable:
+`WALK_JOBS=N` / `WALK_ASM_JOBS=N` force the fan-outs, `WALK_RSS_GB=N` /
+`WALK_ASM_RSS_GB=N` change the per-file peaks the sizing assumes.  Every
+walk records its own peak RSS and CPU per unit to
+`census_probes/walk-rss.tsv`; `python3 tools/walk_rss_report.py` prints
+the distribution and the jobs it supports, so the second walk on a box
+can be sized from that box's data rather than from this table.
 
 ### The WSL2 memory trap — read this before quoting a walk time
 
 **WSL2 gives the VM half the host's RAM by default** (up to 8 GB on older
 builds).  A 32 GB Windows box is a 16 GB Linux box unless `.wslconfig`
-says otherwise — so `WALK_JOBS` auto-sizes to **2, not 4**, and the walk
-takes ~3.5 h instead of ~1.75 h.  Nothing warns you; the walk just looks
-twice as slow as it is.  Check inside the VM, never from Windows:
+says otherwise.  Nothing warns you, and since the units were made lean
+this bites in a nastier place than it used to: the lean layers still get
+your full core count on 16 GB, so the walk looks fine for its whole
+length — and then `Census_Theorem`, the very last file, wants ~7.2 GB and
+runs alone.  A **16 GB Windows box defaults to an 8 GB VM, which is under
+the ~10 GB floor**: you find out after the other 153 files are done.
+Check inside the VM, never from Windows:
 
 ```bash
 free -g        # what the VM actually has -- this is what WALK_JOBS reads
@@ -174,11 +265,13 @@ swap=0
 ```
 
 Then re-check `free -g` inside the VM before starting.  The same trap in
-the other direction is worse: **do not override `WALK_JOBS` upward without
-checking free RAM.**  Four jobs on a VM sized for two is ~28 GB of demand
-against ~16 GB, and the OOM killer can take the whole distro down, not
-just the walk (this happened: 2026-07-22 on a 16 GB box, and again
-2026-08-08 under WSL2).  On any memory-constrained box prefer
+the other direction is worse: **do not override the job counts upward
+without checking free RAM** — and `WALK_ASM_JOBS` is now the dangerous
+one, since those files are still ~5–7 GB each.  Four of them on a VM
+sized for two is ~28 GB of demand against ~16 GB, and the OOM killer can
+take the whole distro down, not just the walk (this happened:
+2026-07-22 on a 16 GB box, and again 2026-08-08 under WSL2, when every
+file was that heavy).  On any memory-constrained box prefer
 `WALK_MEMFREE=8G` (GNU parallel), which gates each unit launch on free RAM
 and suspends-and-requeues instead of letting the OOM killer choose a
 victim.

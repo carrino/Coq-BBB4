@@ -1,5 +1,31 @@
+# STACK_KB: the build raises its own stack limit before compiling.
+#
+# `coqnative' generates one OCaml module per .vo and the OCaml compiler
+# recurses over its structure.  The census data lists
+# (Census/Proven_List.v and friends) are 5,270-6,517 machine definitions
+# in a file, and on the DEFAULT 8 MB stack that is enough to kill it:
+#
+#     COQNATIVE theories/Census/Proven_List.vo
+#     Fatal error: exception Stack overflow
+#     Error: Native compiler exited with status 2 (in case of stack
+#            overflow, increasing stack size ... often helps)
+#
+# Plain `coqc' compiles the same files without complaint, so this is
+# invisible on any build without a native compiler -- which is most of
+# them, and is why it reached a fresh clone.  It bites under the census
+# (native) opam switch, on the very first build, which is exactly the
+# path someone takes to verify the proof themselves.  Coq's own hint is
+# right; there is no reason to make each person rediscover it.
+#
+# Measured 2026-08-11 on the census switch: 8192 KB overflows, unlimited
+# builds all three lists clean.  A soft-limit raise is allowed up to the
+# hard limit; where it is not permitted, this degrades to exactly the
+# old behaviour and Coq prints the hint above.  Override with
+# `make STACK_KB=262144'.
+STACK_KB ?= unlimited
 all: Makefile.coq
-	$(MAKE) -f Makefile.coq
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 $(MAKE) -f Makefile.coq
 
 Makefile.coq: _CoqProject
 	coq_makefile -f _CoqProject -o Makefile.coq
@@ -66,28 +92,122 @@ proof: all
 # .vo FIRST, so a verify walk is always a full from-source walk -- the
 # honesty property is unchanged.
 #
-# WALK_JOBS: how many walk units run at once.  Heavy units peak ~6.8 GB
-# under the default WALK_OCAMLRUNPARAM (11-12 GB untuned; see below)
-# (four of them OOM-killed a 16 GB box on the GG_1LC layer, signal 9,
-# 2026-07-22), so the default is computed from THIS machine:
+# WALK_JOBS: how many walk units run at once, computed from THIS machine:
 #   min(cores, (available RAM - 2 GB) / WALK_RSS_GB), floor 1
-# -- at the default 7 GB/unit: 16 GB -> 2, 32 GB -> 4 (4+ cores),
-# 64 GB -> core count.  Override explicitly with
-# `make census-verify WALK_JOBS=6'.  (`make -j' does not parallelize the
-# walk -- WALK_JOBS is the knob.)
+# At the current 2 GB/unit that is the core count on anything from 10 GB
+# up.  (It was 7 GB/unit until the units were made lean, and then it was
+# the binding constraint: 16 GB -> 2 jobs, 32 GB -> 4.  Four 6.8 GB units
+# OOM-killed a 16 GB box on the GG_1LC layer, signal 9, 2026-07-22.)
+# Override explicitly with `make census-verify WALK_JOBS=6'.  (`make -j'
+# does not parallelize the walk -- WALK_JOBS is the knob.)
 #
-# WALK_RSS_GB is the per-unit peak this sizing assumes.  It is the ONE
-# number the "<1 h on 8 cores / 32 GB" goal reduces to
-# (docs/CENSUS_RUNTIME.md): at 6.8 GB a 32 GB box gets 4 jobs and 1 h 43 m,
-# at <= 3.75 GB it gets 8 and ~52 m.  7 comes from a single unit measured
-# by hand on 2026-08-04 -- so measure YOUR walk and set it from data:
-# every walk now writes census_probes/walk-rss.tsv (WALK_RSS below) and
-# `python3 tools/walk_rss_report.py' prints the max and the jobs it
-# supports.  Raising it is always safe; lowering it below your measured
-# max is what invites the OOM killer.
-WALK_RSS_GB ?= 7
-WALK_AUTO := $(shell m=$$(awk -v r=$(WALK_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+# WALK_RSS_GB is the per-unit peak this sizing assumes.  It WAS 7, and
+# that number is what made this a memory problem: 6.8 GB/unit caps a
+# 32 GB box at 4 jobs and 1 h 43 m.  79% of it was the environment each
+# unit Required -- the boarded-machine theorems behind [proven_all] --
+# which the walk half never looks inside.  Census/Run_Compute.v and the
+# lean units removed it: a unit's environment is 0.263 GB (vm) against
+# 2.743 GB before, and the native lean measurement of the same walk was
+# 0.371 GB against 6.758 GB.
+#
+# MEASURED, at last, by a full native walk (2026-08-10, 16 cores /
+# 31 GB, tools/walk_rss_report.py over all 154 units):
+#
+#   peak RSS max / p90 / median / min   6.30 / 2.76 / 0.51 / 0.40 GB
+#   GGH        104 lean units   max 0.60 GB
+#   GG_1LC      16 lean units   max 0.61 GB
+#   G_          24 units        max 2.77 GB  (the 8 assemblers)
+#   Run_Split*   9 units        max 2.76 GB
+#   Census_Theorem              max 6.30 GB, alone
+#
+# So 1 GB, not the provisional 2: the lean units top out at 0.61 GB and
+# this leaves 64% headroom.  The distribution is bimodal and the two
+# modes are sized apart (WALK_ASM_RSS_GB below); a single number would
+# have to cover 0.40 GB and 6.30 GB at once, which is what made the old
+# knob lie.  Raising it is always safe; lowering it below your measured
+# max invites the OOM killer.  Every walk rewrites
+# census_probes/walk-rss.tsv, so re-derive it on your own box rather
+# than trusting this line.
+#
+# At 1 GB/unit the RAM term stops binding at any sane size: a 32 GB box
+# gets its core count, and so does a 16 GB one -- which is the point.
+# The walk was never supposed to need a big desktop.
+#
+# It is NOT what sets the walk's minimum RAM, though, and this knob will
+# happily lie to you about that.  The floor is the single largest file
+# run alone: Census_Theorem, MEASURED at 6.30 GB.  Call the floor ~9 GB
+# with the 2 GB headroom.  Below that no WALK_JOBS setting saves you --
+# the last file in the walk does not fit.  (This was written as ~10 GB
+# from a 7.2 GB projection -- 3.706 GB under vm_compute scaled by the
+# environment's 1.94x vm/native factor.  The walk measured 6.30 GB.  The
+# factor was measured on a unit that EVALUATES; Census_Theorem loads and
+# applies [exact]s, so native does not inflate it the same way.)
+WALK_RSS_GB ?= 1
+
+# WALK_CORES: PHYSICAL cores, not `nproc'.
+#
+# nproc counts hardware threads, and the walk is CPU-bound
+# native_compute -- two units sharing a core do not go twice as fast,
+# they contend for the same execution units and cache and each takes
+# longer.  Sizing off nproc oversubscribes 2x on any SMT machine, which
+# is most of them.
+#
+# This bit on the first lean walk: an 8-core/16-thread box reported
+# nproc=16, so WALK_JOBS auto-sized to 14 (and would have been 16 once
+# WALK_RSS_GB dropped to 1).  Per-unit CPU measured under that
+# contention came out at 421 core-min against the pre-lean walk's 385 --
+# the units did not get slower, the accounting did.
+#
+# lscpu's (Core,Socket) pairs are the portable count; fall back to nproc
+# where lscpu is absent.  Override with `make ... WALK_CORES=N'.
+WALK_CORES ?= $(shell c=$$(lscpu -p=Core,Socket 2>/dev/null | grep -v '^\#' | sort -u | wc -l 2>/dev/null); \
+  if [ -z "$$c" ] || [ "$$c" -lt 1 ]; then c=$$(nproc 2>/dev/null || echo 2); fi; echo $$c)
+
+WALK_AUTO := $(shell m=$$(awk -v r=$(WALK_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$(WALK_CORES); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_JOBS ?= $(WALK_AUTO)
+
+# ---------------------------------------------------------------------
+# WALK_ASM_JOBS: the SAME sizing, for the files the lean split did not
+# make lean.  15 of the 154 still Require Census/Run.v, because they
+# prove [NodeDecided] and that needs [decider_WF] -> [proven_all] -> the
+# boards.  A library's environment is loaded whole, so there is no way to
+# name [decider_WF] without paying for it: the 7 Census/Run_Split_<tag>.v
+# and the 8 Compute/G_* assemblers are irreducibly heavy.
+#
+# WALK_RSS_GB alone is therefore WRONG for them, and dangerously so: at
+# 2 GB/unit a 32 GB box picks 8 jobs, and 8 of these at once is ~43 GB.
+# Sizing the whole walk from the lean measurement would have OOM-killed
+# the Run_Split_<tag> layer at the START of the walk and the G_ layer at
+# the END -- after 120 finished units.  (Introduced when WALK_RSS_GB went
+# 7 -> 2 and caught before any walk ran, 2026-08-10.)
+#
+# MEASURED by the full native walk (2026-08-10): the 8 G_ assemblers
+# peak at 2.77 GB and the 7 Run_Split_<tag> at 2.76 GB.  3.5 gives 26%
+# headroom over that.
+#
+# This was 7, from a projection that was wrong in an instructive way.
+# The vm measurement here was 2.771 GB, and I scaled it by the 1.94x
+# vm/native factor to ~5.4 GB, then rounded up to the 7 every pre-lean
+# walk had used.  Natively it is 2.77 GB -- the SAME as vm, no inflation
+# at all.  The reason was already written two paragraphs up and not
+# applied: these files do not walk, they are environment plus a handful
+# of [exact]s.  native_compute inflates EVALUATION, and there is none
+# here.  A factor measured on a unit that evaluates does not transfer to
+# a file that does not, however similar the two look.
+#
+# The cost of that error was parallelism, not safety: at 7 GB a 32 GB
+# box ran these 15 files 4-wide when 8-wide fits.
+WALK_ASM_RSS_GB ?= 3.5
+WALK_ASM_AUTO := $(shell m=$$(awk -v r=$(WALK_ASM_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-1}; c=$(WALK_CORES); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+WALK_ASM_JOBS ?= $(WALK_ASM_AUTO)
+
+# A file is heavy iff it imports another Census.Compute module -- i.e. it
+# assembles rather than walks.  Tested, not assumed: that predicate picks
+# out exactly the 9 Compute files that Require Run (the 8 G_ assemblers
+# and Census_Theorem) and none of the 136 lean units.  Deriving it from
+# the file instead of a name list means a regenerated tree cannot drift
+# out of step with this Makefile.
+ASM_PRED = grep -q '^From BBB4.Census.Compute Require'
 
 # WALK_OCAMLRUNPARAM: OCaml GC tuning for the walk units.  Measured
 # 2026-08-04 on GG_1LC_1LB (32 GB desktop): untuned the unit ratchets to
@@ -152,10 +272,28 @@ WALK_COQC = env OCAMLRUNPARAM='$(WALK_OCAMLRUNPARAM)' $(WALK_MEASURE) \
 # halves below the gate, GNU parallel suspends-and-requeues the
 # youngest unit instead of letting the OOM killer pick one.  WALK_JOBS
 # still caps the fan-out.  Unset = plain xargs, exactly as before.
+# GNU parallel has to be RUNNABLE, not merely named on PATH.  A
+# non-executable file called `parallel' earlier in PATH makes the shell
+# say "Permission denied" rather than "not found" -- and it says it at
+# WALK time, which is after `census-verify' has already backed up and
+# quarantined every census .vo.  You discover it having paid the setup
+# cost and with nothing walked (seen 2026-08-10 under WSL2).
+#
+# So probe it, and degrade to xargs with a notice rather than dying --
+# the same contract WALK_RSS has when /usr/bin/time is absent.  Nothing
+# is lost but the second belt: WALK_JOBS/WALK_ASM_JOBS are what keep the
+# walk inside RAM, and --memfree only re-checks while it runs.
+WALK_HAS_PARALLEL := $(shell p=$$(command -v parallel 2>/dev/null); \
+  [ -n "$$p" ] && [ -x "$$p" ] && "$$p" --version >/dev/null 2>&1 && echo yes)
 ifeq ($(WALK_MEMFREE),)
 WALK_RUN = xargs -r -P$(WALK_JOBS) -I{} $(WALK_COQC) {}
+WALK_ASM_RUN = xargs -r -P$(WALK_ASM_JOBS) -I{} $(WALK_COQC) {}
+else ifneq ($(WALK_HAS_PARALLEL),yes)
+WALK_RUN = xargs -r -P$(WALK_JOBS) -I{} $(WALK_COQC) {}
+WALK_ASM_RUN = xargs -r -P$(WALK_ASM_JOBS) -I{} $(WALK_COQC) {}
 else
 WALK_RUN = parallel --will-cite -j$(WALK_JOBS) --memfree $(WALK_MEMFREE) $(WALK_COQC) {}
+WALK_ASM_RUN = parallel --will-cite -j$(WALK_ASM_JOBS) --memfree $(WALK_MEMFREE) $(WALK_COQC) {}
 endif
 
 # Walk-stamp: census .vo on disk are trustworthy walk output ONLY if they
@@ -184,7 +322,12 @@ _census-prepare:
 .PHONY: _census-prepare
 
 _census-walk: _census-prepare
-	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) (auto = min(cores, (free RAM - 2 GB)/$(WALK_RSS_GB) GB); override with WALK_JOBS=N or WALK_RSS_GB=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
+	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) for the 139 lean units (auto = min(cores, (free RAM - 2 GB)/$(WALK_RSS_GB) GB); override with WALK_JOBS=N or WALK_RSS_GB=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
+	@echo ">>> WALK_ASM_JOBS=$(WALK_ASM_JOBS) for the 15 that still Require Run.v (7 Run_Split_<tag> + 8 G_ assemblers, $(WALK_ASM_RSS_GB) GB each)"
+	@if [ -n "$(WALK_MEMFREE)" ] && [ "$(WALK_HAS_PARALLEL)" != "yes" ]; then \
+	   echo ">>> WALK_MEMFREE=$(WALK_MEMFREE) IGNORED: no runnable GNU parallel (apt-get install parallel)."; \
+	   echo ">>> Using xargs; the job counts above still bound RAM, but nothing re-checks free memory as it runs."; \
+	 fi
 	@if [ -n "$(WALK_MEASURE)" ]; then mkdir -p census_probes; \
 	   [ -f "$(WALK_RSS)" ] || \
 	     printf 'peak_rss_kb\twall_s\tuser_s\tcommand\n' > "$(WALK_RSS)"; \
@@ -194,10 +337,19 @@ _census-walk: _census-prepare
 	 fi
 	[ -f theories/Census/Run_Split.vo ] || $(WALK_COQC) theories/Census/Run_Split.v
 	[ -f theories/Census/Run_Split2.vo ] || $(WALK_COQC) theories/Census/Run_Split2.v
-	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
+	@# HEAVY: these seven Require Run.v.  WALK_ASM_JOBS, not WALK_JOBS.
+	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_ASM_RUN)
 	ls theories/Census/Compute/GG_1LC_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
 	ls theories/Census/Compute/GGH_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
-	ls theories/Census/Compute/G_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
+	@# the G_ layer is MIXED: 16 lean walks and 8 heavy assemblers.  Run
+	@# them in two passes so the assemblers do not inherit the lean
+	@# layer's job count -- see WALK_ASM_JOBS above.
+	ls theories/Census/Compute/G_*.v | while read f; do \
+	   if [ ! -f "$${f%.v}.vo" ] && ! $(ASM_PRED) "$$f"; then echo "$$f"; fi; \
+	 done | $(WALK_RUN)
+	ls theories/Census/Compute/G_*.v | while read f; do \
+	   if [ ! -f "$${f%.v}.vo" ] && $(ASM_PRED) "$$f"; then echo "$$f"; fi; \
+	 done | $(WALK_ASM_RUN)
 	[ -f theories/Census/Compute/Census_Theorem.vo ] || $(WALK_COQC) theories/Census/Compute/Census_Theorem.v
 .PHONY: _census-walk
 

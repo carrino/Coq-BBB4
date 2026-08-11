@@ -5,19 +5,14 @@
 From Coq Require Import Arith Lia Bool List.
 From BBB4 Require Import BBB4_Statement.
 From BBB4.Census Require Import TNF_QH Decide Deferred_Data Run Run_Split.
+(** its root definitions live in Run_Compute_Split.v so the
+    GGH_ units can name them without loading the boards.  EXPORT:
+    the assembler that consumes this file's [_decided] lemmas names
+    those roots too, and Import would not reach it. *)
+From BBB4.Census Require Export Run_Compute_Split.
 Import ListNotations.
 
 Set Default Goal Selector "!".
-
-Definition tm_g_1RB_0LC : TM :=
-  TM_upd' (tm_child S1) StB S0 (Some (mkTrans S0 DL StC)).
-
-Definition ggchild_1RB_0LC (w3 : Sym) (d3 : Dir) (nx3 : St) : TNF_Node :=
-  mkNode (TM_upd' tm_g_1RB_0LC StC S1 (Some (mkTrans w3 d3 nx3)))
-         (ptr_after (Some StD) nx3).
-
-Definition q_ggsub_1RB_0LC (w3 : Sym) (d3 : Dir) (nx3 : St) : SearchQueue :=
-  ([ggchild_1RB_0LC w3 d3 nx3], []).
 
 Lemma tm_g_1RB_0LC_used : ~ UnusedState tm_g_1RB_0LC StC.
 Proof.

@@ -1872,6 +1872,139 @@ order of size and cost ~4 MB either way, and both runs land on the same
 queue state -- but the number to trust after lever 1 lands is the one
 the walk itself records.
 
+## M1 landed, and the walk is no longer memory-bound (2026-08-10)
+
+The lean split is implemented.  The three lookup tiers are emitted as
+data-only Coq (`Census/Proven_List.v`, `ProvenQH_List.v`,
+`RerootQH_List.v`), `Census/Run_Compute.v` builds the decider from those,
+and `Census/Run.v` re-attaches the certificates:
+
+```coq
+Lemma proven_list_data_all : Forall NeverQuasiHaltsSt proven_list_data.
+Proof. exact proven_all. Qed.
+```
+
+That is the whole gate, and it is the kernel's: `proven_all` is a
+certificate about `proven_list`, accepted about `proven_list_data` only
+because the two are convertible.  Drop a machine, duplicate one, reorder
+them, re-encode one — `Run.v` stops compiling.  No sampling, no diff, no
+quiet failure mode.  (`reroot_qh_list` is the exception and stays on its
+real module: its machines are `row_to_tm` applications, not literal
+tables, so they are not convertible to re-emitted literals.  The gate is
+what found that, not reading.  It costs ~0.08 GB.)
+
+136 of the 154 files are now lean.  Each unit's `_decided` lemma — an
+`exact` that takes milliseconds but needs `decider_WF` — moved up into
+the assembler that already loads the full environment, so that
+environment is paid once per layer instead of once per unit.
+
+**Measured, this tree, under `vm_compute`** (this container has no native
+compiler):
+
+| file | peak RSS | wall |
+|---|---|---|
+| `G_0RB_0LA` (lean unit) | **0.263 GB** | 1.7 s |
+| `G_1RB_1LC` (assembler) | 2.771 GB | 16.2 s |
+| `Census_Theorem` | 3.706 GB | 71.4 s |
+
+The lean unit is 10.5x smaller than the assembler, and the assembler's
+2.771 GB is the same number as `Require Run + Run_Split + Run_Split2,
+evaluate nothing` (2.743 GB) — the assemblers are environment and a
+handful of `exact`s, they do not walk.  Natively the lean measurement
+was 0.371 GB against 6.758 GB before.
+
+So `WALK_JOBS = min(cores, (RAM − 2 GB) / RSS)` stops binding: 8 cores
+get 8 jobs on 32 GB, and on 16 GB.  **The walk is core-bound now.**
+
+### The walk ran, and here is what it measured (2026-08-10)
+
+8 physical cores (16 threads) / 31 GB, all 154 units, `tools/walk_rss_report.py`:
+
+| | peak RSS |
+|---|---|
+| `GGH_*` (104 lean) | max **0.60 GB** |
+| `GG_1LC_*` (16 lean) | max **0.61 GB** |
+| `G_*` (24) | max **2.77 GB** |
+| `Run_Split*` (9) | max **2.76 GB** |
+| `Census_Theorem` (alone) | **6.30 GB** |
+| all 154 | max 6.30 / p90 2.76 / **median 0.51** / min 0.40 |
+
+`Print Assumptions census_decided` printed exactly
+`functional_extensionality_dep` and nothing else.
+
+**Wall: 1 h 19 m 42 s**, every `.vo` written inside that window, at 7
+jobs under `nice -n19`.  The pre-lean walk was 1 h 43 m at 4 jobs and
+could not have run 7 at all (7 × 6.8 GB = 48 GB).  The LPT model over
+the measured per-unit CPU puts 8 jobs at **62 min / 85% scaling**, 12 at
+50 min / 70%, 16 at 44 min / 60%.
+
+**Three predictions in this document were wrong, and the walk is what
+caught each one.**
+
+1. **Core-time did not fall.  421 min against 385.**  The lean control
+   measured 1.93x on CPU and that did NOT transfer to the walk.  It is
+   not a regression either: 385 was measured at 4 jobs and 421 at 7-14,
+   where memory bandwidth and SMT contention inflate per-unit CPU.  Call
+   it "no worse" and stop projecting walk CPU from one unit.
+2. **`Census_Theorem` is 6.30 GB, not the projected ~7.2.**  So the RAM
+   floor is ~9 GB, not ~10.
+3. **The assemblers are 2.77 GB natively, not the projected ~5.4** --
+   the SAME as their vm figure, no inflation.  The 1.94x vm/native
+   factor was measured on a unit that EVALUATES; these load an
+   environment and apply `exact`s.  The reasoning was already written
+   here ("they do not walk") and the factor was applied anyway.  It cost
+   parallelism, not safety: `WALK_ASM_RSS_GB` sat at 7 when 3.5 fits, so
+   a 32 GB box ran those 15 files 4-wide instead of 8-wide.
+
+Both knobs are now set from the measurement: `WALK_RSS_GB` 2 → **1**
+(measured 0.61), `WALK_ASM_RSS_GB` 7 → **3.5** (measured 2.77).
+
+### The trap in that: 15 files did not get lean
+
+Sizing the whole walk from the lean number is wrong, and it would have
+been expensive.  The 7 `Census/Run_Split_<tag>.v` and the 8
+`Compute/G_*` assemblers prove `NodeDecided`, which needs `decider_WF`,
+which needs `proven_all`, which needs the boards.  Coq loads a library's
+environment whole — `Require Import` versus `Export` changes what is
+*named*, not what is *loaded* — so there is no arrangement of these
+files that names `decider_WF` without paying for it.
+
+`WALK_RSS_GB` went 7 → 2 with the lean units, and the walk ran every
+layer at the single resulting job count.  On a 32 GB box that is 8 jobs,
+and 8 of these files at once is ~43 GB.  It would have OOM-killed the
+`Run_Split_<tag>` layer at the start of the walk, and the `G_` layer at
+the end — after 120 finished units.  Caught before any walk ran, but
+only by measuring the assemblers rather than assuming the lean number
+generalised.  The Makefile now sizes the two populations separately
+(`WALK_ASM_JOBS` / `WALK_ASM_RSS_GB`, still 7 GB — the number every
+pre-lean walk survived at, so that layer's parallelism is unchanged
+rather than newly guessed), and classifies a file by whether it imports
+another `Census.Compute` module rather than by a name list, so a
+regenerated tree cannot drift out of step.
+
+**The walk's RAM floor is ~10 GB and no job count fixes it**, because
+`Census_Theorem` runs alone at ~7.2 GB natively.  That is a nastier
+failure than the old one: the lean layers get full parallelism on a
+16 GB box, so the walk looks healthy for its whole length and then dies
+on the last file.
+
+### `coqnative` overflows on a flat 5,270-element list
+
+The data lists were first emitted as one literal each.  `coqc` accepts a
+5,270-deep cons chain; `coqnative` recurses over the term and dies with
+`Fatal error: exception Stack overflow`.  Chunked at 250 and
+concatenated — a depth already demonstrated safe, since the boards these
+lists mirror reach `proven_list` through 500-element literals that
+compile natively today.  The list value is unchanged (`++` on literals
+reduces to the same cons chain) and `Run.v`'s gate still passes.
+
+Worth recording as a class, not an incident: **this container cannot see
+native-only failures.**  apt Coq is built `COQ_NATIVE_COMPILER_DEFAULT=no`,
+so `native_cast_no_check` silently falls back to VM conversion and
+`coqnative` never runs at all.  Every native claim in this document was
+measured on the census opam switch for that reason, and every M1 file was
+checked here on a build that structurally could not have caught this.
+
 ## Next steps, re-ranked by the memory round (2026-08-09)
 
 This supersedes the 2026-08-07 list below, which is kept for its
@@ -1884,31 +2017,81 @@ The goal is one number -- per-unit peak RSS <= 3.75 GB gets 8 jobs on
 core-min at 8 jobs is under an hour with room to spare, and the whole
 non-residue bulk is 3.2%.
 
-**M1.  Split the walk units against a data-only compute module.**  The
-round's main result: 2.74 of a unit's 3.667 GB (VM) is `Require`, and
-2.65 GB of that is `Proven_Data`'s boarded-machine theorems, which the
-expensive half of a unit never looks inside.  The same machine lists as
-DATA cost 4 MB.  Estimated to take the native peak from 6.8 GB to
-~4.15 GB -- 7 jobs on 32 GB, ~59 min -- with no change to the proof
-chain, only to which environment is resident while `native_compute`
-runs.  Wants its own round: it re-emits three generated data files and
-re-wires `Run.v`, and it is a census-input change, so it is gated on
-the walk that also validates it.
+**M1.  DONE (2026-08-10) -- see the section above.**  Split the walk
+units against a data-only compute module.  The round's main result:
+2.74 of a unit's 3.667 GB (VM) is `Require`, and 2.65 GB of that is
+`Proven_Data`'s boarded-machine theorems, which the expensive half of a
+unit never looks inside.  The same machine lists as DATA cost 4 MB.
+Estimated here to take the native peak from 6.8 GB to ~4.15 GB;
+**the measurement beat the estimate by 11x** -- 0.371 GB, because the
+estimate assumed the lookup DATA still had to be resident in the form
+the boards store it, and it does not.  RAM stopped being the binding
+constraint entirely rather than relaxing by one job.
 
-**M2.  Run the native decomposition first.  Four `coqc` runs.**  M1's
-estimate is a VM floor applied to a native peak.  The recipe at the end
-of the previous section settles it in minutes on the census switch, and
-its `--iter 0` row IS M1's payoff, measured rather than estimated.  Do
-this before committing to M1.
+**M2.  DONE -- and it is what made M1's number real.**  M1's estimate
+was a VM floor applied to a native peak; the native decomposition
+settled it, and the `--iter 0` row was M1's payoff measured rather than
+estimated.  Kept as a rule, not a task: *project only from a measurement
+taken at the level of the claim*.  M1's own estimate is the counter-
+example that proves the rule cuts both ways -- it was wrong by 11x in
+the favourable direction.
 
-**M3.  The layer barriers.**  The walk is six barriers, and at 8 jobs
-`Run_Split` (1 unit), `Run_Split2` (1) and `Run_Split_<tag>` (7) cannot
-use the cores.  93% parallel efficiency was measured AT 4 JOBS; the
-schedule model in `tools/walk_rss_report.py` puts the same profile
-nearer 83% at 8.  This is what stands between M1's ~59 min and the
-~52 min the core-time allows, and `tools/gen_gsplit_heavy.py` already
-splits heavy subtrees.  Cheap, but pointless before M1: today the box
-cannot run 8 jobs at all.
+**M3.  The layer barriers -- now the top item, and M1 sharpened it.**
+The walk is six barriers, and at 8 jobs `Run_Split` (1 unit),
+`Run_Split2` (1) and `Run_Split_<tag>` (7) cannot use the cores.  93%
+parallel efficiency was measured AT 4 JOBS; the schedule model in
+`tools/walk_rss_report.py` puts the same profile nearer 83% at 8.
+`tools/gen_gsplit_heavy.py` already splits heavy subtrees.
+
+M1 changed this from "cheap but pointless" to **the only item left**,
+and the walk of 2026-08-10 measured exactly how much it costs.  From
+the LPT schedule over the real per-unit CPU:
+
+| jobs | wall | scaling |
+|---|---|---|
+| 4 | 108 min | 98% |
+| 6 | 75 min | 94% |
+| **8** | **62 min** | **85%** |
+| 12 | 50 min | 70% |
+| 16 | 44 min | 60% |
+
+Scaling is ~98% up to 4 jobs and falls off after 8.  **The obvious
+explanation is wrong**, and `walk_rss_report.py` printed it as a
+certainty until this was checked: "Run_Split and Run_Split2 are one unit
+each and Run_Split_<tag> is seven, so no job count helps those layers."
+True, and irrelevant -- those three layers measured **1.2 core-min
+between them**, so they cannot account for a 17-minute gap at 16 jobs.
+The tool now prints the per-layer makespan and what sets each layer's
+floor instead of asserting a cause.
+
+The real constraint is load spread *inside* the layers, and the walk
+says exactly where, at 8 jobs:
+
+| layer | core-min | perfect/8 | makespan | recoverable | floor set by |
+|---|---|---|---|---|---|
+| `GG_1LC` | 96.0 | 12.0 | 15.9 | **3.9** | `GG_1LC_0LD` (15.9 min) |
+| `GGH` | 288.5 | 36.1 | 36.1 | 0.0 | packs perfectly |
+| `G_` | 34.2 | 4.3 | 8.3 | **4.0** | `G_0RB_1LA` (8.3 min) |
+| theorem | 1.2 | 0.1 | 1.2 | 1.1 | runs alone, irreducible |
+| `Run_Split*` | 1.2 | 0.1 | 0.3 | 0.1 | irrelevant |
+| **total** | **421.0** | **52.6** | **61.8** | **9.2** | |
+
+So M3 is not "split the early layers"; it is **split two named units**.
+`GG_1LC_0LD` and `G_0RB_1LA` are each the longest in their layer and
+each single-handedly set its floor, which is what
+`tools/gen_gsplit_heavy.py` splits.  Everything else is already optimal
+or too small to matter -- `GGH`, 68% of the walk's core-time, packs at
+100%.
+
+**M3's whole ceiling is ~9 min: 62 -> 53.**  Worth taking, and worth
+knowing it is bounded before starting.  Past that the only lever left is
+making units genuinely cheaper (M4), because `GGH` cannot be scheduled
+better than it already is.
+
+On the target 8 cores / 32 GB the walk is **62 min**: just over the
+hour, with memory no longer a factor at all.  The 15 heavy files also
+stopped being the constraint they looked like -- at the corrected
+`WALK_ASM_RSS_GB` of 3.5 they run at the full core count on 32 GB.
 
 **M4.  Early divergence detection in the RepWL closure.**  89% of the
 tier's closure pops are closures that diverge to the cap and return no
@@ -1922,6 +2105,40 @@ from the old row 4: `vals_of` pays `#pool * #comps` big-key lookups per
 state because the certificate's tables are keyed by `rconf_enc`, and
 having the search emit index-keyed tables would halve that at the cost
 of every `RerootStage` proof.  Still not worth it.
+
+**M6.  NEW -- one heavy file instead of 15, by hypothesising
+`decider_WF`.**  M1 left 15 files needing the boards, and they need them
+for one reason each.  `ggsub_decided`'s entire use of the environment is
+a single leaf:
+
+```coq
+- simpl. apply SearchQueue_upds_spec; [exact IHn | exact decider_WF].
+```
+
+Take `HWF : QHDecider_WF B_census D_census decider` as a hypothesis
+instead of naming `decider_WF`, thread it through `gsub_decided` /
+`ggsub_decided` / the `Run_Split_<tag>` lemmas, and discharge it exactly
+once at the top.  The statement lives in `Decide.v`, which is lean, so
+nothing but that last file would `Require Run.v`.  Mechanical -- the
+proofs do not change shape, only their context.
+
+Be honest about what it buys, because it is less than it looks:
+
+* **Wall time: ~2%.**  The 15 files are ~30 s each natively, ~7 core-min
+  of 385.  They do not walk.
+* **RAM floor: ~10 GB -> ~7.5 GB**, still set by whichever single file
+  discharges `HWF`.  Real, but it does not change what hardware the walk
+  needs -- 16 GB was already enough after M1.
+* **It does NOT put the census in CI.**  A hosted runner has ~7 GB, and
+  the base build's `IRules_Batch_*` peak at 6-8 GB each and already do
+  not fit; that is a separate blocker, ahead of this one.
+
+So M6 is not on the critical path for retiring the committed `.vo`.
+**The measurement is.**  If the first lean walk comes in near the
+core-time floor on 8 cores at any-16-GB-box RAM, then "clone it and run
+it yourself" is a real instruction rather than an aspiration, and the
+154 committed `.vo` -- and the trust decision they carry -- can go.
+Nothing else needs to land first.
 
 **Closed, with the evidence, so they are not re-derived:** `ng_fuel`
 (never reaches its cap: 17,665 pops against 200,000); the `scan_loops`
