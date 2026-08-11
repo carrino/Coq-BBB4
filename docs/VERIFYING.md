@@ -175,7 +175,7 @@ certificates by a kernel convertibility check.  A lean unit measures
 
 ### Measured: the first full lean walk (2026-08-10)
 
-Run on 16 cores / 31 GB, `tools/walk_rss_report.py` over all 154 units:
+Run on 8 physical cores (16 threads) / 31 GB, `tools/walk_rss_report.py` over all 154 units:
 
 | | peak RSS |
 |---|---|

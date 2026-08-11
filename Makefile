@@ -143,7 +143,27 @@ proof: all
 # factor was measured on a unit that EVALUATES; Census_Theorem loads and
 # applies [exact]s, so native does not inflate it the same way.)
 WALK_RSS_GB ?= 1
-WALK_AUTO := $(shell m=$$(awk -v r=$(WALK_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+
+# WALK_CORES: PHYSICAL cores, not `nproc'.
+#
+# nproc counts hardware threads, and the walk is CPU-bound
+# native_compute -- two units sharing a core do not go twice as fast,
+# they contend for the same execution units and cache and each takes
+# longer.  Sizing off nproc oversubscribes 2x on any SMT machine, which
+# is most of them.
+#
+# This bit on the first lean walk: an 8-core/16-thread box reported
+# nproc=16, so WALK_JOBS auto-sized to 14 (and would have been 16 once
+# WALK_RSS_GB dropped to 1).  Per-unit CPU measured under that
+# contention came out at 421 core-min against the pre-lean walk's 385 --
+# the units did not get slower, the accounting did.
+#
+# lscpu's (Core,Socket) pairs are the portable count; fall back to nproc
+# where lscpu is absent.  Override with `make ... WALK_CORES=N'.
+WALK_CORES ?= $(shell c=$$(lscpu -p=Core,Socket 2>/dev/null | grep -v '^\#' | sort -u | wc -l 2>/dev/null); \
+  if [ -z "$$c" ] || [ "$$c" -lt 1 ]; then c=$$(nproc 2>/dev/null || echo 2); fi; echo $$c)
+
+WALK_AUTO := $(shell m=$$(awk -v r=$(WALK_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-2}; c=$(WALK_CORES); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_JOBS ?= $(WALK_AUTO)
 
 # ---------------------------------------------------------------------
@@ -178,7 +198,7 @@ WALK_JOBS ?= $(WALK_AUTO)
 # The cost of that error was parallelism, not safety: at 7 GB a 32 GB
 # box ran these 15 files 4-wide when 8-wide fits.
 WALK_ASM_RSS_GB ?= 3.5
-WALK_ASM_AUTO := $(shell m=$$(awk -v r=$(WALK_ASM_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-1}; c=$$(nproc 2>/dev/null || echo 2); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
+WALK_ASM_AUTO := $(shell m=$$(awk -v r=$(WALK_ASM_RSS_GB) '/MemAvailable/{print int(($$2/1048576 - 2)/r)}' /proc/meminfo 2>/dev/null); m=$${m:-1}; c=$(WALK_CORES); [ "$$m" -lt 1 ] && m=1; [ "$$m" -gt "$$c" ] && m=$$c; echo $$m)
 WALK_ASM_JOBS ?= $(WALK_ASM_AUTO)
 
 # A file is heavy iff it imports another Census.Compute module -- i.e. it

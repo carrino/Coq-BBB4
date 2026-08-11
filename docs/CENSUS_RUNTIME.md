@@ -1918,7 +1918,7 @@ get 8 jobs on 32 GB, and on 16 GB.  **The walk is core-bound now.**
 
 ### The walk ran, and here is what it measured (2026-08-10)
 
-16 cores / 31 GB, all 154 units, `tools/walk_rss_report.py`:
+8 physical cores (16 threads) / 31 GB, all 154 units, `tools/walk_rss_report.py`:
 
 | | peak RSS |
 |---|---|
@@ -2064,18 +2064,29 @@ between them**, so they cannot account for a 17-minute gap at 16 jobs.
 The tool now prints the per-layer makespan and what sets each layer's
 floor instead of asserting a cause.
 
-The real constraint is load spread *inside* the two big layers:
+The real constraint is load spread *inside* the layers, and the walk
+says exactly where, at 8 jobs:
 
-  * `GGH` -- 104 units, 288.5 core-min
-  * `GG_1LC` -- 16 units, 96.0 core-min
+| layer | core-min | perfect/8 | makespan | recoverable | floor set by |
+|---|---|---|---|---|---|
+| `GG_1LC` | 96.0 | 12.0 | 15.9 | **3.9** | `GG_1LC_0LD` (15.9 min) |
+| `GGH` | 288.5 | 36.1 | 36.1 | 0.0 | packs perfectly |
+| `G_` | 34.2 | 4.3 | 8.3 | **4.0** | `G_0RB_1LA` (8.3 min) |
+| theorem | 1.2 | 0.1 | 1.2 | 1.1 | runs alone, irreducible |
+| `Run_Split*` | 1.2 | 0.1 | 0.3 | 0.1 | irrelevant |
+| **total** | **421.0** | **52.6** | **61.8** | **9.2** | |
 
-A layer cannot finish faster than its **longest single unit**, no
-matter how many cores are free, and `GG_1LC` is 16 units in one wave at
-any job count >= 16.  So M3 is not "split the early layers"; it is
-"split the longest units", which is what `tools/gen_gsplit_heavy.py`
-already does for heavy subtrees.  Which units those are is a one-line
-query against `census_probes/walk-rss.tsv` -- do that before choosing
-anything, because this row has now been mis-diagnosed once.
+So M3 is not "split the early layers"; it is **split two named units**.
+`GG_1LC_0LD` and `G_0RB_1LA` are each the longest in their layer and
+each single-handedly set its floor, which is what
+`tools/gen_gsplit_heavy.py` splits.  Everything else is already optimal
+or too small to matter -- `GGH`, 68% of the walk's core-time, packs at
+100%.
+
+**M3's whole ceiling is ~9 min: 62 -> 53.**  Worth taking, and worth
+knowing it is bounded before starting.  Past that the only lever left is
+making units genuinely cheaper (M4), because `GGH` cannot be scheduled
+better than it already is.
 
 On the target 8 cores / 32 GB the walk is **62 min**: just over the
 hour, with memory no longer a factor at all.  The 15 heavy files also
