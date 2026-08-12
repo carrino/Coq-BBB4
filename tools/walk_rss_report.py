@@ -236,7 +236,7 @@ def main():
           f"LPT schedule of the measured per-unit CPU):")
     ideal = user
     jobs_hi = 8
-    print(f"  {'':>9}{'as walked':>12}{'lean pooled':>14}{'scaling':>10}")
+    print(f"  {'':>9}{'3 barriers':>12}{'as walked':>14}{'scaling':>10}")
     for j in (1, 2, 4, 6, 8, 12, 16):
         w = schedule(rows, j)
         p = pooled_schedule(rows, j)
@@ -272,7 +272,8 @@ def main():
           "     a layer can pack perfectly and still hold the LONGEST unit\n"
           "     in the walk -- 'longest unit' above is per layer.)")
 
-    print(f"\nif the three lean passes were ONE pool (at {jobs_hi} jobs):")
+    print(f"\nthe walk as _census-walk now runs it -- ONE lean pool "
+          f"(at {jobs_hi} jobs):")
     print(f"  {'stage':<32}{'units':>6}{'core-min':>10}{'makespan':>10}")
     tot = 0.0
     for name, ts, heavy in pooled_stages(rows):
@@ -283,7 +284,7 @@ def main():
         print(f"  {name:<32}{len(ts):>6}{sum(ts)/60:>10.1f}{mk/60:>10.1f}")
     lean = [ts for n, ts, h in pooled_stages(rows) if n == 'lean walk pool'][0]
     print(f"  {'total':<32}{len(rows):>6}{user/60:>10.1f}{tot/60:>10.1f}")
-    print(f"  {'against the layered schedule':<32}{'':>6}{'':>10}"
+    print(f"  {'against three barriers (pre-merge)':<32}{'':>6}{'':>10}"
           f"{schedule(rows, jobs_hi)/60:>10.1f}")
     print(f"\n  the pool's own floor is max(core-min/jobs, longest unit)"
           f" = max({sum(lean)/60/jobs_hi:.1f}, {max(lean)/60:.1f})"

@@ -2336,6 +2336,100 @@ of a point for triple the margin.
 - This is a census-input change, so it needs a walk. That walk is
   already owed.
 
+## MEASURED: 42.6 minutes (2026-08-12)
+
+One walk, `WALK_JOBS=8`, un-niced, idle box, 8 physical cores / 31 GB.
+It validated the M4 cut, the barrier merge and three knobs that had
+never been exercised, and it produced the number the whole arc exists
+to produce.
+
+```
+Axioms:
+FunctionalExtensionality.functional_extensionality_dep
+```
+
+**The queue closed and the axiom footprint is unchanged, so no catch was
+lost** -- the only way the node-size cut could have failed at census
+scale, and the only thing the exhaustive gate could not prove on its
+own.
+
+| | before | after |
+|---|---|---|
+| **wall, 8 jobs** | 79.7 min (7 jobs, `nice -n19`, box in use) | **42.6 min** |
+| core-time | 421.0 | **303.2** |
+| peak RSS, GGH / GG_1LC | 0.60 / 0.61 GB | **0.51 / 0.51 GB** |
+| longest unit | 18.0 min | **14.1 min** |
+| pool floor at 8 jobs | max(52.2, 18.0) | max(**37.3**, 14.1) |
+
+### The prediction was wrong by 2.4x, favourably
+
+M4 was sized at **11.5%** of the walk.  It delivered **28.0%** -- 117.8
+core-min against the 48.4 predicted.  Recording the cause rather than
+the number alone, because this is the third time this document has
+mis-projected and the second time in the favourable direction:
+
+- The sizing was `vm_compute`, single-threaded, on a 4-core container.
+  The vm/native ratio is not uniform across code, so a slice's vm share
+  is not its native share -- the same class of error as applying a
+  vm->native factor to the assemblers, which this document already
+  recorded.
+- It also cannot see contention.  Removing ~89% of the closure pops
+  removes the allocation behind them, and at 8 concurrent jobs that
+  relieves memory bandwidth for *every* unit, not just the ones that
+  skipped work.  This document measured that effect in the other
+  direction in August ("4 workers x 6.8 GB of allocation churn saturate
+  memory bandwidth, inflating every unit"); the RSS drop above is it
+  running in reverse.
+
+The saving is even across the two big layers -- GGH -29.8%, GG_1LC
+-27.7% -- which is what a residue-spread saving should look like.
+
+### The model's optimism was mostly `nice`, and now it is measured
+
+The open question this walk was run to settle: the LPT model predicted
+66.9 min at 7 jobs against an actual 79.7, i.e. **19% optimistic**, and
+nobody knew how much of that was `nice -n19` plus the machine being in
+use rather than overhead a cloner would also pay.
+
+| | model | actual | optimism |
+|---|---|---|---|
+| 7 jobs, `nice -n19`, box in use | 66.9 | 79.7 | 19% |
+| **8 jobs, un-niced, idle** | **39.1** | **42.6** | **9.0%** |
+
+So roughly half of it was the nice level and the load.  **The model is
+9% optimistic on a clean run** -- that is the figure to project with
+from here, and it is now measured at the level of the claim rather than
+assumed.
+
+### What each half bought
+
+Both changes were in one walk, so they are separated by the model over
+the measured per-unit CPU rather than by two walks:
+
+| at 8 jobs | three barriers | one pool |
+|---|---|---|
+| 421 core-min (before M4) | 61.8 | 53.8 |
+| **303 core-min (after M4)** | 45.8 | **39.1** |
+
+The merge is worth 8.0 min on the old profile and 6.7 on the new; M4 is
+worth 16.0 min layered and 14.7 pooled.  Neither subsumes the other:
+the merge removes barriers, M4 removes core-time.  Against the
+pre-round tree the same model at 8 jobs clean would be 61.8 x 1.090 =
+**67.4 min** -- a counterfactual, not a measurement, but it puts the
+round at "8 minutes over" to "17 minutes under".
+
+### The goal, stated exactly
+
+**The walk is 42.6 minutes on 8 cores / 31 GB.**  Under the hour, with
+17 minutes of margin, un-niced, on hardware a person actually has.
+
+One piece of arithmetic that is NOT the walk, and belongs next to it
+rather than in a footnote: a fresh clone pays the base build first.  At
+the ~20 min this tree has measured, clone -> proof by re-derivation is
+**~63 minutes**, i.e. just over.  The walk cleared the bar; the
+end-to-end path from `git clone` has not, and that is the frame the
+committed `.vo` decision has to be argued in.
+
 ## Next steps, in Amdahl order (2026-08-07, superseded)
 
 Rows 2-4 are "What is left in the rw tier" above, re-ordered by
