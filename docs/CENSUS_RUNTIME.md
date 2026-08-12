@@ -2147,6 +2147,158 @@ the function, ~2% of the walk, 21-file blast radius) -- the last one
 worth riding along the next time a walk is owed anyway, not worth
 owing one for.
 
+## M4 sized (2026-08-12): the premise was measured on the wrong
+## population, and the lever survives anyway
+
+M4 was carried into this round as "89% of the tier's closure pops
+diverge to the cap and return no verdict".  That number is real and it
+does not describe the walk.  `ProbeRwFuelRungs` computed it by forcing
+the rw ladder onto all 40 machines of the residue sample.  In the
+shipped pipeline, `ProbeRwDivReach` measures that **7 of those 40 reach
+`try_rw` at all** -- the other 33 are decided by cheaper tiers -- and
+all 7 are caught at the first rung with **zero** diverging closures.
+`decide_easy` with the rw rungs emptied decides 33/40, reproducing
+`ProbeResBurn` exactly.
+
+The structural reason the forced population cannot be the walk's:
+`try_rw` is the LAST tier in `try_ladder`, so a machine that reaches it
+and is caught by no rung is `R_Unknown` -- and the census closes.
+Anything the ladder cannot decide is in a lookup table, and the lookups
+run FIRST.  So in the walk every machine reaching the tier is caught by
+it, and the only failing rw attempts anyone pays are the earlier rungs
+of machines caught at a later one.
+
+`tools/repwl_residue_caught.tsv` tabulates exactly that, exhaustively:
+
+| winning rung | catches | failing attempts it pays |
+|---|---|---|
+| (2,2,0) | 21,727 | none |
+| (3,2,0) | 2,221 | (2,2,0) |
+| (4,2,0) | 980 | (2,2,0), (3,2,0) |
+| (2,3,0) | 583 | (2,2,0), (3,2,0), (4,2,0) |
+
+**3,784 of 25,511 rw catches -- 14.8% -- pay a failing attempt at all.**
+
+### What that population actually costs
+
+`tools/probes/gen_rwdiv_probe.py` samples 30 machines per winning rung
+from the tsv; `ProbeRwDivPop` / `ProbeRwDivSplit` time them.  All 120
+sampled machines are caught at the rung the sweep recorded, which is
+the probe's calibration against the tier/sweep mirror.  Census-weighted
+by the exhaustive counts above (per-row arithmetic written out: time /
+30 = per machine, x catches = the column):
+
+| winning rung | rw ladder /machine | diverging close /machine | ladder total | diverging total |
+|---|---|---|---|---|
+| (2,2,0) | 0.056 s | 0 | 1,226 s | 0 |
+| (3,2,0) | 1.002 s | 0.789 s | 2,224 s | 1,752 s |
+| (4,2,0) | 2.803 s | 2.556 s | 2,747 s | 2,505 s |
+| (2,3,0) | 3.336 s | 1.383 s | 1,945 s | 806 s |
+| **total** | | | **8,142 s** | **5,063 s** |
+
+So the disproportion is real but it is not the one the 89% named:
+**85% of rw catches cost 15% of the tier; the 14.8% that miss the first
+rung cost 85% of it**, and **62% of the whole tier is closures that
+diverge**.  Splitting the failing attempts by outcome
+(`ProbeRwDivSplit`) shows the diverging half is essentially all of it --
+23.666 s against 0.091 s, 76.683 against 0.078, 41.474 against 0.862 --
+because a converging-but-not-catching attempt is cheap and a diverging
+one burns the cap.
+
+### The denominator, measured rather than converted
+
+`ProbeRwDivWalk` times the real decider on `ProbeTierCost`'s groups and
+weights by the census tier counts, so the tier share is a ratio of vm
+seconds taken in one run -- no 2.53x vm/native conversion, which spread
+the answer by 2x:
+
+| tier | census nodes | per machine | vm-s |
+|---|---|---|---|
+| T | 2,282,976 | 0.625 ms | 1,427 |
+| C | 1,029,749 | 0.525 ms | 541 |
+| H | 249,692 | ~0 | ~0 |
+| N (flat mean of the four rungs) | 200,064 | 15.0 ms | 3,004 |
+| residue, ladder-decided | 209,000 | 181.6 ms | 37,944 |
+| deferred (lookup hit) | 23,523 | 0.06 ms | ~0 |
+| **walk** | | | **42,917** |
+
+Residue lands at 88.4% against the 93.7% this document already carries
+-- close enough to be a consistency check rather than a new claim.  The
+N row is the crudest input (a flat mean over N2/N3/N4/N6 rather than the
+census rung mix); it is the row to sharpen if M4's share ever needs to
+be defended to better than a point or two.
+
+**The rw tier is 19.0% of the walk and diverging closures are 11.8%.**
+
+### The detector: node size, and it fires early
+
+RepWL caps an item's repeat count at T, so counts cannot run away; the
+number of run-length items can.  `ProbeRwDivSig` measures the max node
+size over each closure, and `ProbeRwDivCut2` measures what a cut at M
+costs and refunds on the right population.
+
+| M | catches kept, per group (30 each) |
+|---|---|
+| 12 | 30 / 29 / **1** / 30 |
+| 16 | 30 / 30 / **29** / 30 |
+| **24** | **30 / 30 / 30 / 30** |
+
+The max node size over a WINNING closure is 10 / 14 / **18** / 12 by
+group, so 12 -- the figure the 40-machine sample suggested -- would have
+cost 29 of 30 catches at (4,2,0).  At **M = 24** no sampled catch is
+lost, with 33% headroom over the largest winning closure seen.
+
+And it fires early enough to matter.  Diverging closes, same machines,
+un-aborted against cut at 24:
+
+| group | un-aborted | cut at 24 | refund |
+|---|---|---|---|
+| (3,2,0)'s failing (2,2,0) | 23.666 s | 0.208 s | 99.1% |
+| (4,2,0)'s two failing rungs | 76.683 s | 1.187 s | 98.5% |
+| (2,3,0)'s three failing rungs | 41.474 s | 1.537 s | 96.3% |
+
+The time refund beats the pop refund (74-96%) for the reason the cut
+exists: it fires before the nodes get big, so the pops it skips are the
+expensive ones.
+
+### The number, and what it does to the goal
+
+Census-weighted, the cut at M = 24 removes 4,979 of 42,917 vm-s:
+
+**11.6% of the walk -- 421 core-min -> ~372.**
+
+| schedule at 8 jobs | today | with M4 |
+|---|---|---|
+| as walked (three lean barriers) | 61.8 min | 54.6 min |
+| lean layers pooled | 53.8 min | **47.6 min** |
+
+At 47.6 the walk can absorb **26%** of real-vs-model overhead and stay
+under the hour, against the 19% measured at 7 jobs under `nice -n19` on
+a machine in use.  That is the first configuration in this document
+where the goal closes without assuming the overhead away.
+
+### What is NOT settled, stated rather than buried
+
+- **The gate is not done.** M = 24 is fitted on 120 sampled catches.
+  The cut is monotone -- it can only turn a `Some` into a `None`, so a
+  catch can be lost and never gained -- and the catches are tabulated,
+  so the gate is the exhaustive construction, not `gen_rwdiff.sh`
+  sampling: recompute the max node size of all 25,511 kept catches and
+  check none exceeds M. At converged-closure speed that is ~80 s of
+  compute, not a round.
+- Every number here is `vm_compute` on a 4-core container. They are
+  ratios taken within single runs, which is what makes them
+  transferable; no absolute here belongs in a native claim.
+- Where the cut lands in the code is not decided. `close` is
+  `Closure.v`'s generic engine and 21 files depend on that file; a
+  RepWL-local variant may be the smaller blast radius. The soundness
+  argument looks identical to the fuel cut's -- the pool is untrusted
+  and `edges_of` re-derives closedness, so a truncated pool can only
+  make the check fail -- but that is a pattern match, not a proof, and
+  it needs checking rather than assuming.
+- This is a census-input change, so it needs a walk. That walk is
+  already owed.
+
 ## Next steps, in Amdahl order (2026-08-07, superseded)
 
 Rows 2-4 are "What is left in the rw tier" above, re-ordered by
