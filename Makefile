@@ -322,7 +322,7 @@ _census-prepare:
 .PHONY: _census-prepare
 
 _census-walk: _census-prepare
-	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) for the 139 lean units (auto = min(cores, (free RAM - 2 GB)/$(WALK_RSS_GB) GB); override with WALK_JOBS=N or WALK_RSS_GB=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
+	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) for the 136 lean units, ONE pool (auto = min(cores, (free RAM - 2 GB)/$(WALK_RSS_GB) GB); override with WALK_JOBS=N or WALK_RSS_GB=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
 	@echo ">>> WALK_ASM_JOBS=$(WALK_ASM_JOBS) for the 15 that still Require Run.v (7 Run_Split_<tag> + 8 G_ assemblers, $(WALK_ASM_RSS_GB) GB each)"
 	@if [ -n "$(WALK_MEMFREE)" ] && [ "$(WALK_HAS_PARALLEL)" != "yes" ]; then \
 	   echo ">>> WALK_MEMFREE=$(WALK_MEMFREE) IGNORED: no runnable GNU parallel (apt-get install parallel)."; \
@@ -339,14 +339,32 @@ _census-walk: _census-prepare
 	[ -f theories/Census/Run_Split2.vo ] || $(WALK_COQC) theories/Census/Run_Split2.v
 	@# HEAVY: these seven Require Run.v.  WALK_ASM_JOBS, not WALK_JOBS.
 	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_ASM_RUN)
-	ls theories/Census/Compute/GG_1LC_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
-	ls theories/Census/Compute/GGH_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
-	@# the G_ layer is MIXED: 16 lean walks and 8 heavy assemblers.  Run
-	@# them in two passes so the assemblers do not inherit the lean
-	@# layer's job count -- see WALK_ASM_JOBS above.
-	ls theories/Census/Compute/G_*.v | while read f; do \
-	   if [ ! -f "$${f%.v}.vo" ] && ! $(ASM_PRED) "$$f"; then echo "$$f"; fi; \
-	 done | $(WALK_RUN)
+	@# ONE POOL for all 136 lean walk units.  GG_1LC, GGH and the lean
+	@# half of G_ used to be three separate `ls | xargs' passes, i.e.
+	@# three BARRIERS, and a barrier makes a layer cost its LONGEST unit
+	@# rather than its share of the work: GG_1LC is 96 core-min that fits
+	@# in 12 minutes across 8 jobs, but GG_1LC_0LD alone runs 15.9.
+	@#
+	@# The barriers were never a dependency.  Every lean unit imports
+	@# exactly TNF_QH/Decide/Run_Compute/Run_Compute_Split -- base-build
+	@# modules only: not Run_Split, not Run_Split2, not Run_Split_<tag>,
+	@# and not each other.  The first files that consume a walk result
+	@# are the 8 G_ assemblers, which still run in their own pass below.
+	@#
+	@# Merged, the pool's LPT makespan is core-min/jobs to two decimals
+	@# (measured on the 2026-08-10 walk: 52.2 against a 52.19 perfect
+	@# share), so no unit sets a floor and splitting a heavy one buys
+	@# nothing.  61.8 -> 53.8 min at 8 jobs; see
+	@# `tools/walk_rss_report.py', which models both schedules.
+	@#
+	@# The two populations stay on separate passes: the assemblers need
+	@# Run.v and peak ~2.8 GB, so WALK_ASM_JOBS still bounds them.
+	{ ls theories/Census/Compute/GG_1LC_*.v \
+	     theories/Census/Compute/GGH_*.v; \
+	  ls theories/Census/Compute/G_*.v | while read f; do \
+	     $(ASM_PRED) "$$f" || echo "$$f"; done; } \
+	 | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done \
+	 | $(WALK_RUN)
 	ls theories/Census/Compute/G_*.v | while read f; do \
 	   if [ ! -f "$${f%.v}.vo" ] && $(ASM_PRED) "$$f"; then echo "$$f"; fi; \
 	 done | $(WALK_ASM_RUN)

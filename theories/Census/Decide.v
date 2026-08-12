@@ -816,6 +816,13 @@ Variable qhb_rungs : list (nat * nat).  (** (window n, prefix t) ladder for
 Variable rw_rungs : list (nat * nat * nat). (** (block L, threshold T,
                                             prefix t) ladder, RepWL tier *)
 Variable rw_fuel : nat.                 (** closure fuel for the RepWL tier *)
+(** node-size cut for the RepWL tier's closure search (M4): abandon a
+    closure as soon as it pops a node carrying more than [rw_cut]
+    run-length items.  Strictly weakening -- [rw_tier_cut_le] -- so it
+    can lose a catch and never gain one, and it is gated exhaustively
+    rather than by sampling because every kept catch is tabulated.
+    See RepWLSearch.v and docs/CENSUS_RUNTIME.md, "M4 sized". *)
+Variable rw_cut : nat.
 Variable Prov : list TM.       (** the proven never-quasihalting list *)
 Hypothesis HP : Forall NeverQuasiHaltsSt Prov. (** its in-Coq certificate *)
 Variable ProvQH : list TM.     (** the proven census-grade QUASIHALTING list *)
@@ -930,7 +937,7 @@ Definition try_qhb (tm : TM) : bool :=
     actually load-bearing: with the short-circuit, a machine caught at
     (2,2,0) really does skip the 127 s (3,2,0) rung. *)
 Definition try_rw (tm : TM) : bool :=
-  anyb (fun '(L, T, t) => rw_tier tm L T t rw_fuel) rw_rungs.
+  anyb (fun '(L, T, t) => rw_tier_cut tm L T t rw_fuel rw_cut) rw_rungs.
 
 (** *** Tiers C+T at one gas rung
 
@@ -1175,7 +1182,7 @@ Proof.
   rewrite anyb_existsb in H.
   apply existsb_exists in H.
   destruct H as ([[L T] t] & _ & H).
-  exact (rw_tier_sound tm L T t rw_fuel H).
+  exact (rw_tier_cut_sound tm L T t rw_fuel rw_cut H).
 Qed.
 
 Theorem decide_easy_WF : forall hm,

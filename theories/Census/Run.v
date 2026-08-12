@@ -70,7 +70,7 @@ Lemma decider_WF : QHDecider_WF B_census D_census decider.
 Proof.
   exact (decide_easy_WF B_census D_census 130 512 200000 512
            ng_rungs_census rank_rungs_census qhb_rungs_census
-           rw_rungs_census rw_fuel_census proven_list_data
+           rw_rungs_census rw_fuel_census rw_cut_census proven_list_data
            proven_list_data_all
            (provenqh_list_data ++ reroot_qh_list) reroot_provenqh_all
            hmap_census).

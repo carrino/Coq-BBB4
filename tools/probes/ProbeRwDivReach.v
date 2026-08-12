@@ -38,7 +38,10 @@ Fixpoint sumf {B} (l : list B) (f : B -> nat) (acc : nat) : nat :=
 
 (** the pipeline with the rw tier removed -- same parameters otherwise *)
 Definition decider_norw : TM -> QHResult :=
-  decide_easy Bc 130 512 200000 512 ngr rkr qhr [] 5120 pmap0 emap dmap0 hmap0.
+(* 999 = cut effectively OFF: this probe predates the M4 node-size
+   cut and its recorded numbers are the uncut pipeline's. *)
+  decide_easy Bc 130 512 200000 512 ngr rkr qhr [] 5120 999
+              pmap0 emap dmap0 hmap0.
 
 (** the machines that actually reach the rw tier in the real pipeline *)
 Definition reachrw : list TM := Eval vm_compute in

@@ -122,25 +122,25 @@ Definition rungs_t : list (nat * nat) := [(2, 100); (3, 200)].
 Definition rrungs_t : list (nat * nat) := [(3, 0)].
 
 Example pipe_halt :
-  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 32 (dmap_of [])
     (dmap_of []) (dmap_of []) (hmap_of [])
     (fun _ _ => None) = R_Halt StA S0.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_spin :
-  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 32 (dmap_of [])
     (dmap_of []) (dmap_of []) (hmap_of [])
     spin0 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_runner :
-  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 32 (dmap_of [])
     (dmap_of []) (dmap_of []) (hmap_of [])
     run1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_qh_leaf :
-  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 (dmap_of [])
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 32 (dmap_of [])
     (dmap_of []) (dmap_of []) (hmap_of [])
     qh1 = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
@@ -212,6 +212,41 @@ Example rw_idx_same_reject_halt :
    rw_tier_ref (fun _ _ => None) 2 2 0 2000) = (false, false).
 Proof. vm_compute. reflexivity. Qed.
 
+(* --- the M4 node-size cut ---------------------------------------
+
+   [rw_tier_cut] is [rw_tier] with the closure abandoned as soon as it
+   pops a node carrying more than M run-length items.  Three things need
+   pinning by COMPUTATION, not only by [rw_tier_cut_le]:
+
+   1. at the shipped cut it still catches what the uncut tier catches
+      -- the whole point, and the thing an over-tight cut breaks;
+   2. the cut actually BITES at a small M, so a future edit that
+      silently disables it (wrong comparison direction, cut read off
+      the wrong component) is caught here rather than by a walk that
+      merely gets slower;
+   3. it never accepts what the uncut tier rejects -- which
+      [rw_tier_cut_le] proves in general, pinned here on the halter and
+      the quasihalter because a corrupt cut is exactly the edit that
+      would make the pool something [close] never produced. *)
+Example rw_cut_keeps_catch :
+  rw_tier_cut rwm 2 2 0 200000 32 = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Example rw_cut_bites :
+  rw_tier_cut rwm 2 2 0 200000 0 = false.
+Proof. vm_compute. reflexivity. Qed.
+
+Example rw_cut_rejects_qh_and_halt :
+  (rw_tier_cut qhbm 2 2 0 2000 32,
+   rw_tier_cut (fun _ _ => None) 2 2 0 2000 32) = (false, false).
+Proof. vm_compute. reflexivity. Qed.
+
+(* the gates survive the cut too *)
+Example rw_cut_gates :
+  (rw_tier_cut rwm 0 2 0 2000 32, rw_tier_cut rwm 2 1 0 2000 32)
+  = (false, false).
+Proof. vm_compute. reflexivity. Qed.
+
 Example rw_idx_same_gates :
   (rw_tier rwm 0 2 0 2000, rw_tier_ref rwm 0 2 0 2000,
    rw_tier rwm 2 1 0 2000, rw_tier_ref rwm 2 1 0 2000)
@@ -232,17 +267,17 @@ Proof. vm_compute. reflexivity. Qed.
    R_QH wiring coverage. *)
 Example pipe_qhb_tc_leaf :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) qhbm = R_Leaf.
+    rw_rungs_t 2000 32 (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) qhbm = R_Leaf.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_qhb :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) qlxm = R_QH.
+    rw_rungs_t 2000 32 (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) qlxm = R_QH.
 Proof. vm_compute. reflexivity. Qed.
 
 Example pipe_rw :
   decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t qhb_rungs_t
-    rw_rungs_t 2000 (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) rwm = R_NeverQH.
+    rw_rungs_t 2000 32 (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) rwm = R_NeverQH.
 Proof. vm_compute. reflexivity. Qed.
 
 (** ** Proven-machines tier (lever A)
@@ -314,7 +349,7 @@ Proof. vm_compute. reflexivity. Qed.
 (* end-to-end: with qhm in the proven-QH map (the 2nd map slot), the pipeline
    reports R_QH -- the tier fires ahead of the deferred fallthrough *)
 Example pipe_provenqh :
-  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 32
     (dmap_of []) (dmap_of [qhm]) (dmap_of []) (hmap_of []) qhm = R_QH.
 Proof. vm_compute. reflexivity. Qed.
 
@@ -322,7 +357,7 @@ Proof. vm_compute. reflexivity. Qed.
    the lookup tier: with empty ladders it falls through to R_Unknown.  So the
    R_QH verdict is carried by the committed theorem, never by the pipeline *)
 Example pipe_provenqh_absent :
-  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0
+  decide_easy 2000 130 1030 200000 512 rungs_t rrungs_t [] [] 0 32
     (dmap_of []) (dmap_of []) (dmap_of []) (hmap_of []) qhm = R_Unknown.
 Proof. vm_compute. reflexivity. Qed.
 
@@ -365,7 +400,7 @@ Definition rw_rungs_ext : list (nat * nat * nat) :=
 
 (* [qhbm] (above) is a genuine wrapped-QHBound quasihalter; the extended
    never-QH ladder must reject it -- every rung, the new ones included *)
-Example rwext_rejects_qh : try_rw rw_rungs_ext 2000 qhbm = false.
+Example rwext_rejects_qh : try_rw rw_rungs_ext 2000 32 qhbm = false.
 Proof. vm_compute. reflexivity. Qed.
 
 (* survivor 0RB---_0LC0RA_0LD---_1RA1LC (tools/repwl2_survivors.txt): a
@@ -374,5 +409,5 @@ Proof. vm_compute. reflexivity. Qed.
 Definition surv_repwl : TM :=
   mk8 (T S0 DR StB) None (T S0 DL StC) (T S0 DR StA)
       (T S0 DL StD) None (T S1 DR StA) (T S1 DL StC).
-Example rwext_rejects_survivor : try_rw rw_rungs_ext 2000 surv_repwl = false.
+Example rwext_rejects_survivor : try_rw rw_rungs_ext 2000 32 surv_repwl = false.
 Proof. vm_compute. reflexivity. Qed.

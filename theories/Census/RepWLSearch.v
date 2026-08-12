@@ -747,6 +747,96 @@ Proof.
   exact (rw_check_neverqh_idx_pool_spec tm L T t fuel cc Sl _ Ecc Ecl).
 Qed.
 
+(** ** The node-size cut (M4)
+
+    Measured (docs/CENSUS_RUNTIME.md, "M4 sized"): the RepWL tier is
+    19.0% of the census walk and closures that DIVERGE -- run to the
+    fuel cap and return no verdict -- are 11.8% of it.  They are not
+    spread across the tier: 85% of rw catches land at the first rung and
+    pay nothing, while the 14.8% caught at a later rung pay a failing
+    attempt at every earlier one, and those failing attempts are almost
+    entirely divergent.
+
+    What separates them is node SIZE.  [rw_succs] caps an item's repeat
+    count at [T], so counts cannot run away; the number of run-length
+    items can, and a diverging closure grows it without bound while a
+    converging one does not.  Exhaustively gated over all 25,511 kept
+    catches of tools/repwl_residue_caught.tsv
+    (tools/probes/gen_rwcut_gate.py): the largest node in a WINNING
+    closure is 20 items.
+
+    The cut lives in the SUCCESSOR function, not in [close], so
+    Closure.v and its twenty-odd dependents are untouched -- and, more
+    usefully, when the cut does not fire the two closures are the same
+    computation step for step.  That is [close_cut_le], and it makes
+    soundness a corollary of [rw_tier_sound] rather than a re-derivation:
+    a cut attempt that succeeds is an uncut attempt that succeeds.
+
+    Note the cut is only ever consulted on a POPPED node, so a pool that
+    survives contains no node above [M] -- which is why the surviving
+    closure is a genuine [rw_succs] closure and not merely a subset. *)
+
+Definition rw_asz (a : rconf) : nat :=
+  match a with
+  | (_, (l, ls, _, rs, r)) =>
+      List.length l + List.length r + List.length ls + List.length rs
+  end.
+
+Definition rw_succs_cut (M : nat) (tm : TM) (L T : nat) (a : rconf)
+  : option (list rconf) :=
+  if M <? rw_asz a then None else rw_succs tm L T a.
+
+(** The cut can only turn a [Some] into a [None]: whenever the cut
+    closure returns a pool, the uncut one returns the SAME pool. *)
+Lemma close_cut_le : forall M tm L T fuel seen sp todo Sl,
+  close rconf rconf_enc (rw_succs_cut M tm L T) fuel seen sp todo = Some Sl ->
+  close rconf rconf_enc (rw_succs tm L T) fuel seen sp todo = Some Sl.
+Proof.
+  intros M tm L T fuel.
+  induction fuel as [|f IH]; intros seen sp todo Sl H; [discriminate|].
+  simpl in H |- *.
+  destruct todo as [|a todo']; [exact H|].
+  destruct (pset_mem rconf rconf_enc a sp) eqn:Em; [apply IH; exact H|].
+  unfold rw_succs_cut in H.
+  destruct (M <? rw_asz a); [discriminate|].
+  destruct (rw_succs tm L T a) as [l|]; [|discriminate].
+  apply IH. exact H.
+Qed.
+
+(** [rw_tier] with the cut.  [rw_tier] itself is left exactly as it was:
+    the RerootStage boards and the corruption tests pin it, and this is
+    an additional, strictly weaker tier rather than a redefinition. *)
+Definition rw_tier_cut (tm : TM) (L T t fuel M : nat) : bool :=
+  match csteps tm t c0 with
+  | None => false
+  | Some cc =>
+      let a0 := rw_seed L T cc in
+      match close rconf rconf_enc (rw_succs_cut M tm L T) fuel
+                  [] PositiveSet.empty [a0] with
+      | None => false
+      | Some Sl =>
+          rw_check_neverqh_idx_pool tm L T t Sl
+            (fun q =>
+               if cvisits tm c0 t q
+                  || existsb (fun a => st_eqb (rw_state a) q) Sl
+               then rw_procedure tm L T Sl q
+               else [])
+      end
+  end.
+
+Theorem rw_tier_cut_le : forall tm L T t fuel M,
+  rw_tier_cut tm L T t fuel M = true -> rw_tier tm L T t fuel = true.
+Proof.
+  intros tm L T t fuel M H. unfold rw_tier_cut in H. unfold rw_tier.
+  destruct (csteps tm t c0) as [cc|]; [|discriminate].
+  destruct (close rconf rconf_enc (rw_succs_cut M tm L T) fuel
+                  [] PositiveSet.empty [rw_seed L T cc]) as [Sl|] eqn:E;
+    [|discriminate].
+  rewrite (close_cut_le M tm L T fuel [] PositiveSet.empty
+                        [rw_seed L T cc] Sl E).
+  exact H.
+Qed.
+
 Theorem rw_tier_sound : forall tm L T t fuel,
   rw_tier tm L T t fuel = true -> NeverQuasiHaltsSt tm.
 Proof.
@@ -758,4 +848,11 @@ Proof.
                   [] PositiveSet.empty [rw_seed L T cc]) as [Sl|];
     [|discriminate].
   exact (rw_check_neverqh_sound tm L T t fuel _ H).
+Qed.
+
+Theorem rw_tier_cut_sound : forall tm L T t fuel M,
+  rw_tier_cut tm L T t fuel M = true -> NeverQuasiHaltsSt tm.
+Proof.
+  intros tm L T t fuel M H.
+  exact (rw_tier_sound tm L T t fuel (rw_tier_cut_le tm L T t fuel M H)).
 Qed.
