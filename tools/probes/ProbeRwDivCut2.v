@@ -156,3 +156,27 @@ Time Eval vm_compute in (sumf d42_22 (tpops 24 2 2) 0,
 Time Eval vm_compute in (sumf d23_22 (tpops 24 2 2) 0,
                          sumf d23_32 (tpops 24 3 2) 0,
                          sumf d23_42 (tpops 24 4 2) 0).
+
+(* --- 5. the price of headroom.  The exhaustive gate
+       (tools/probes/gen_rwcut_gate.py over all 25,511 kept catches)
+       puts the census-wide max node size of a WINNING closure at 20,
+       so 24 is 20% headroom and 32 is 60%.  A larger M is the SAFER
+       direction here -- it aborts less -- exactly as more fuel was
+       safe a fortiori when 5120 shipped over a gated 4608.  What it
+       costs is measured here rather than assumed. *)
+Eval vm_compute in (acnt 32 2 2 d32_22, acnt 32 2 2 d42_22,
+                    acnt 32 3 2 d42_32,
+                    acnt 32 2 2 d23_22, acnt 32 3 2 d23_32,
+                    acnt 32 4 2 d23_42).
+(* pops/64: at M = 32 two closures at (3,2,0) never cross the cut and
+   burn the whole 5120, so the raw sum builds a ~40,000-deep unary nat
+   and overflows -- the same trap as [tleft] above. *)
+Definition tp64 (M L T : nat) (tm : TM) : nat := Nat.div (tpops M L T tm) 64.
+Time Eval vm_compute in sumf d32_22 (tp64 32 2 2) 0.
+Time Eval vm_compute in (sumf d42_22 (tp64 32 2 2) 0,
+                         sumf d42_32 (tp64 32 3 2) 0).
+Time Eval vm_compute in (sumf d23_22 (tp64 32 2 2) 0,
+                         sumf d23_32 (tp64 32 3 2) 0,
+                         sumf d23_42 (tp64 32 4 2) 0).
+Eval vm_compute in (kept 32 2 2 G22, kept 32 3 2 G32,
+                    kept 32 4 2 G42, kept 32 2 3 G23).

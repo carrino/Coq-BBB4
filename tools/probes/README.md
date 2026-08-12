@@ -146,3 +146,21 @@ as upper bounds and ratios as transferable.
 Note for anyone extending these: `sumf` over a per-machine value near
 the fuel cap builds a ~90,000-deep unary `nat` and overflows the stack.
 Sum the small side (`tpops`), not the large one (`tleft`).
+
+`gen_rwcut_gate.py` is M4's exhaustive gate, and it is the reason the
+cut can be gated at all: the cut is monotone (it can only turn a `Some`
+into a `None`, so a catch can be lost and never gained) and every kept
+catch is tabulated, so the obligation is finite and enumerable rather
+than a sampled diff.
+
+```sh
+python3 tools/probes/gen_rwcut_gate.py /tmp/rwgate 2000
+cd /tmp/rwgate && ls PRwGate_*.v | xargs -P3 -I{} sh -c \
+  'coqc -Q /path/to/theories BBB4 -Q /tmp/rwgate BBB4 {} > {}.out 2>&1'
+grep -ho "= (.*)" PRwGate_*.v.out
+```
+
+Each chunk prints (rows, max node size over the winning closures, how
+many exceed 24, how many exceed 32).  The gate passes iff the third and
+fourth components are 0 everywhere.  Measured 2026-08-12: 25,511 rows,
+census-wide max 20, zero above either.

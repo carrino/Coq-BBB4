@@ -2263,9 +2263,11 @@ expensive ones.
 
 ### The number, and what it does to the goal
 
-Census-weighted, the cut at M = 24 removes 4,979 of 42,917 vm-s:
+Census-weighted, the cut removes ~4,950 of 42,917 vm-s (M = 32; see
+the gate below, which moved the threshold from the 24 the sample
+suggested):
 
-**11.6% of the walk -- 421 core-min -> ~372.**
+**11.5% of the walk -- 421 core-min -> ~372.**
 
 | schedule at 8 jobs | today | with M4 |
 |---|---|---|
@@ -2277,15 +2279,50 @@ under the hour, against the 19% measured at 7 jobs under `nice -n19` on
 a machine in use.  That is the first configuration in this document
 where the goal closes without assuming the overhead away.
 
-### What is NOT settled, stated rather than buried
+### GATED EXHAUSTIVELY, and the threshold moved
 
-- **The gate is not done.** M = 24 is fitted on 120 sampled catches.
-  The cut is monotone -- it can only turn a `Some` into a `None`, so a
-  catch can be lost and never gained -- and the catches are tabulated,
-  so the gate is the exhaustive construction, not `gen_rwdiff.sh`
-  sampling: recompute the max node size of all 25,511 kept catches and
-  check none exceeds M. At converged-closure speed that is ~80 s of
-  compute, not a round.
+`tools/probes/gen_rwcut_gate.py` does the gate the monotonicity buys:
+for each of the **25,511** rows of `tools/repwl_residue_caught.tsv`,
+recompute the max node size over THAT row's winning closure.  Nothing
+else can lose a catch -- a failing earlier rung aborting early returns
+no catch either way, and rungs are independent attempts -- so this is
+the whole obligation, exhaustively, not a `gen_rwdiff.sh` sample.
+Machines go through `row_to_tm` so each is one line; 13 chunks, ~22 s
+each:
+
+| | rows | max node size | > 24 | > 32 |
+|---|---|---|---|---|
+| 13 chunks, all of them | **25,511** | **20** | **0** | **0** |
+
+Per chunk the maxima run 15-20, and the census-wide maximum is **20**
+against the 18 the 120-machine sample showed -- close, and not close
+enough to have shipped on.  M = 12, which the FIRST sample suggested,
+would have cost 29 of 30 catches at (4,2,0); the sample sizes were the
+whole difference, which is why this gate is exhaustive.
+
+So the shipped cut is **M = 32**, not 24: larger M is the safer
+direction (it aborts less), 32 is 60% headroom over the gated maximum
+against 24's 20%, and the fuel cut set the precedent -- 4,608 gated,
+5,120 shipped a fortiori.  Measured, the extra headroom is nearly free:
+
+| | M = 24 | M = 32 | un-aborted |
+|---|---|---|---|
+| (3,2,0)'s failing (2,2,0) | 0.208 s | 0.290 s | 23.666 s |
+| (4,2,0)'s two failing rungs | 1.187 s | 1.818 s | 76.683 s |
+| (2,3,0)'s three failing rungs | 1.537 s | 1.517 s | 41.474 s |
+| catches kept, per group | 30/30/30/30 | 30/30/30/30 | -- |
+
+Census-weighted, diverging close goes **5,063 -> 110 vm-s**:
+
+**11.5% of the walk at M = 32, against 11.6% at M = 24** -- one tenth
+of a point for triple the margin.
+
+| schedule at 8 jobs | today | with M4 |
+|---|---|---|
+| as walked (three lean barriers) | 61.8 min | 54.7 min |
+| lean layers pooled | 53.8 min | **47.6 min** |
+
+### What is NOT settled, stated rather than buried
 - Every number here is `vm_compute` on a 4-core container. They are
   ratios taken within single runs, which is what makes them
   transferable; no absolute here belongs in a native claim.
