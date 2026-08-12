@@ -52,6 +52,8 @@ def layer_of(unit):
 LAYER_ORDER = ['Run_Split', 'Run_Split2', 'Run_Split_<tag>', 'GG_1LC',
                'GGH', 'G', 'theorem', 'other']
 
+ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
+
 
 def makespan(times, jobs):
     """Longest-processing-time list schedule onto `jobs` slots."""
@@ -68,6 +70,77 @@ def schedule(rows, jobs):
     for u, (r, w, c) in rows.items():
         per.setdefault(layer_of(u), []).append(c)
     return sum(makespan(per[L], jobs) for L in LAYER_ORDER if L in per)
+
+
+# --- the pooled model ------------------------------------------------------
+#
+# The three lean layers (GG_1LC, GGH, and the lean half of G_) are three
+# separate `ls | xargs -P' passes in _census-walk, so each is a barrier.
+# They are NOT a dependency: every lean unit imports only
+#
+#     TNF_QH Decide Run_Compute Run_Compute_Split
+#
+# i.e. base-build modules -- not Run_Split, not Run_Split2, not
+# Run_Split_<tag>, and not each other.  The first files that consume a
+# walk result are the 8 G_ assemblers (Compute/G_0RB_1LC.v Requires
+# Run_Split_0RB_1LC and its twelve GGH_0RB_1LC_*), and then
+# Census_Theorem over the G_ layer.  So the real DAG has three stages,
+# not six, and the three lean barriers cost makespan for nothing.
+#
+# This models the walk with those three passes merged into ONE pool.  It
+# is a scheduling model over the same measured per-unit CPU as
+# schedule(); nothing about it is a claim on a walk that has not run.
+
+def is_asm(unit):
+    """The Makefile's ASM_PRED: a Compute unit that Requires another
+    Compute module is an assembler (it needs Run.v, ~2.8 GB), not a lean
+    walk.  Read from the file so a regenerated tree cannot drift; falls
+    back to the known name shape when the source is not at hand."""
+    p = os.path.join(ROOT, unit)
+    try:
+        with open(p) as f:
+            for line in f:
+                if line.startswith('From BBB4.Census.Compute Require'):
+                    return True
+        return False
+    except OSError:
+        b = os.path.basename(unit)
+        return b.startswith('Census_Theorem') or (
+            b.startswith('G_') and not b.startswith('GG'))
+
+
+def pooled_stages(rows):
+    """(name, [core-seconds], heavy?) per stage of the merged schedule.
+
+    Run_Split2 and every Run_Split_<tag> Require Run_Split, so that one
+    file stays a stage of its own; the other eight have no edge between
+    them and pool."""
+    r0, roots, lean, asm, thm = [], [], [], [], []
+    for u, (r, w, c) in rows.items():
+        b = os.path.basename(u)
+        if b.startswith('Census_Theorem'):
+            thm.append(c)
+        elif b == 'Run_Split.v':
+            r0.append(c)
+        elif b.startswith('Run_Split'):
+            roots.append(c)
+        elif is_asm(u):
+            asm.append(c)
+        else:
+            lean.append(c)
+    return [('Run_Split (root)', r0, True),
+            ('Run_Split2 + <tag> assemblers', roots, True),
+            ('lean walk pool', lean, False),
+            ('G_ assemblers', asm, True),
+            ('theorem (alone)', thm, True)]
+
+
+def pooled_schedule(rows, jobs, asm_jobs=None):
+    """Predicted wall with the three lean barriers merged into one pool."""
+    if asm_jobs is None:
+        asm_jobs = jobs
+    return sum(makespan(ts, asm_jobs if heavy else jobs)
+               for _, ts, heavy in pooled_stages(rows) if ts)
 
 
 def pct(xs, p):
@@ -163,10 +236,12 @@ def main():
           f"LPT schedule of the measured per-unit CPU):")
     ideal = user
     jobs_hi = 8
+    print(f"  {'':>9}{'as walked':>12}{'lean pooled':>14}{'scaling':>10}")
     for j in (1, 2, 4, 6, 8, 12, 16):
         w = schedule(rows, j)
-        print(f"  {j:>3} jobs  {w / 60:>7.1f} min"
-              f"   ({ideal / j / w:.0%} of perfect scaling)")
+        p = pooled_schedule(rows, j)
+        print(f"  {j:>3} jobs  {w / 60:>9.1f} min{p / 60:>10.1f} min"
+              f"   {ideal / j / w:>6.0%}  -> {ideal / j / p:.0%}")
     # WHERE the gap is, rather than a guess about it.  This used to
     # assert "Run_Split and Run_Split2 are one unit each and
     # Run_Split_<tag> is seven, so no job count helps those layers" --
@@ -190,9 +265,33 @@ def main():
         print(f"  {L:<18}{sum(ts)/60:>9.1f}{mk/60:>10.1f}{cmax/60:>10.1f} min"
               f"   {why} ({umax})")
     print("  -- a layer whose floor is 'its longest unit' cannot be sped up\n"
-          "     by more cores at all; only splitting that unit helps\n"
-          "     (tools/gen_gsplit_heavy.py).  That is the M3 target, and it\n"
-          "     is NOT the tiny Run_Split layers.")
+          "     by more cores at all -- WHILE THE LAYER IS A BARRIER.  It is\n"
+          "     the barrier that makes a 15.9-minute unit cost 15.9 minutes,\n"
+          "     not the unit; see the pooled schedule below, which removes\n"
+          "     the barrier instead of splitting the unit.  (Note also that\n"
+          "     a layer can pack perfectly and still hold the LONGEST unit\n"
+          "     in the walk -- 'longest unit' above is per layer.)")
+
+    print(f"\nif the three lean passes were ONE pool (at {jobs_hi} jobs):")
+    print(f"  {'stage':<32}{'units':>6}{'core-min':>10}{'makespan':>10}")
+    tot = 0.0
+    for name, ts, heavy in pooled_stages(rows):
+        if not ts:
+            continue
+        mk = makespan(ts, jobs_hi)
+        tot += mk
+        print(f"  {name:<32}{len(ts):>6}{sum(ts)/60:>10.1f}{mk/60:>10.1f}")
+    lean = [ts for n, ts, h in pooled_stages(rows) if n == 'lean walk pool'][0]
+    print(f"  {'total':<32}{len(rows):>6}{user/60:>10.1f}{tot/60:>10.1f}")
+    print(f"  {'against the layered schedule':<32}{'':>6}{'':>10}"
+          f"{schedule(rows, jobs_hi)/60:>10.1f}")
+    print(f"\n  the pool's own floor is max(core-min/jobs, longest unit)"
+          f" = max({sum(lean)/60/jobs_hi:.1f}, {max(lean)/60:.1f})"
+          f" = {max(sum(lean)/jobs_hi, max(lean))/60:.1f} min.")
+    print("  Every lean unit imports only TNF_QH/Decide/Run_Compute/\n"
+          "  Run_Compute_Split, so the three passes are a Makefile artifact,\n"
+          "  not a dependency.  Splitting units cannot beat this floor --\n"
+          "  below it, only less core-time helps.")
     return 0
 
 
