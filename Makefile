@@ -371,6 +371,40 @@ _census-walk: _census-prepare
 	[ -f theories/Census/Compute/Census_Theorem.vo ] || $(WALK_COQC) theories/Census/Compute/Census_Theorem.v
 .PHONY: _census-walk
 
+# `make proof-all' -- the whole claim from source, in one command.
+#
+# `make proof' compiles the closeout chain over the COMMITTED census
+# .vo: ~20 min, and it asks you to trust 154 files someone else walked.
+# This target is the rung that does not: base build, RE-DERIVE the
+# census (census-verify backs the committed .vo out of the way and
+# walks from source), then the same closeout chain and the same
+# `Print Assumptions'.
+#
+# Measured 2026-08-12 on 8 physical cores / 31 GB, un-niced:
+#   base build ~20 min + walk 42.6 min = ~63 min end to end.
+# Needs the census opam switch (native_compute) and >= 10 GB RAM --
+# Compute/Census_Theorem.v runs alone at 6.3 GB.  docs/VERIFYING.md.
+#
+# WALK_JOBS/WALK_ASM_JOBS pass straight through, e.g.
+#   make proof-all WALK_JOBS=8
+proof-all: all
+	@echo "############################################################"
+	@echo "# proof-all: re-deriving the census from source.            "
+	@echo "# The committed .vo are NOT trusted here -- census-verify    "
+	@echo "# backs them up and walks.  ~63 min on 8 cores / 32 GB.      "
+	@echo "############################################################"
+	$(MAKE) census-verify
+	coqc -Q theories BBB4 theories/Closeout/CloseoutFinal.v
+	coqc -Q theories BBB4 theories/Closeout/BBB4_Theorem.v
+	coqc -Q theories BBB4 theories/Closeout/BBB4_Value.v
+	@python3 tools/proof_report.py
+	@echo "------------------------------------------------------------"
+	@echo "proof-all COMPLETE.  The census above was WALKED on this"
+	@echo "machine, not loaded from the committed cache.  The"
+	@echo "'Print Assumptions' block is the whole trust surface."
+	@echo "------------------------------------------------------------"
+.PHONY: proof-all
+
 # Guarded census: skip the walk when the committed .vo already certify this
 # tree (hash matches + all census .vo present); otherwise WARN and walk.
 census: all
