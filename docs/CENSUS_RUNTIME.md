@@ -2482,6 +2482,15 @@ a base-build round should ask.
 
 ## The base build, profiled for the first time (2026-08-12)
 
+**Caveat added after the fact, and it applies to this whole section:**
+the profile below was taken on a tree built by **apt Coq**
+(`/usr/bin/coqc`, OCaml 4.14.1, `COQ_NATIVE_COMPILER_DEFAULT=no`) --
+i.e. with no native compilation at all.  It is a real profile of a real
+build, and it is not the profile of the build a verifier runs: that one
+also pays ~107 core-min of `coqnative` + `ocamlopt`, which is 33% more
+CPU and is distributed differently across families.  Read the family
+shares and the `TCyc_05` finding as the VM half only.
+
 Six rounds went at the census walk.  The base build -- 2,780 files, the
 other half of a from-scratch proof -- had never been measured.
 `coq_makefile` ships the tool (`make -f Makefile.coq -j16 pretty-timed`,

@@ -319,16 +319,24 @@ _census-prepare:
 	@# Measured 2026-08-12: the same tree builds in 40m00s with native
 	@# and 26m39s without, and the fast one cannot walk.  Caught by
 	@# reading coqc's flags in top; nothing checked it before.
-	@if grep -q -e '-native-compiler no' Makefile.coq 2>/dev/null; then \
+	@# Ask the TOOLCHAIN, not Makefile.coq: coq_makefile emits all three
+	@# branches of the COQACTUALNATIVEFLAG conditional, so grepping the
+	@# generated file for `no' matches the unused arm every time.
+	@if [ "$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')" = "no" ]; then \
 	   echo "############################################################"; \
-	   echo "# REFUSING TO WALK: Makefile.coq says -native-compiler no.  "; \
+	   echo "# REFUSING TO WALK: this coqc has no native compiler        "; \
+	   echo "# (coqc -config says COQ_NATIVE_COMPILER_DEFAULT=no).       "; \
 	   echo "# native_cast_no_check would fall back to the VM with only a"; \
 	   echo "# warning, and coqnative would never run.  The .vo produced  "; \
 	   echo "# would certify nothing about a native walk.                 "; \
 	   echo "#                                                            "; \
-	   echo "# Regenerate inside the census switch:                       "; \
+	   echo "# You are probably outside the census opam switch:           "; \
+	   echo "#   which coqc     # want ~/.opam/census/bin/coqc, not /usr  "; \
 	   echo "#   eval \$$(opam env --switch=census)                        "; \
 	   echo "#   rm -f Makefile.coq && make                               "; \
+	   echo "#                                                            "; \
+	   echo "# .vo are OCaml-marshalled, so a tree built by apt Coq       "; \
+	   echo "# (4.14.1) cannot be mixed with census .vo (4.14.2) either.  "; \
 	   echo "############################################################"; \
 	   exit 1; \
 	 fi
