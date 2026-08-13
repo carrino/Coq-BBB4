@@ -2423,12 +2423,62 @@ round at "8 minutes over" to "17 minutes under".
 **The walk is 42.6 minutes on 8 cores / 31 GB.**  Under the hour, with
 17 minutes of margin, un-niced, on hardware a person actually has.
 
-One piece of arithmetic that is NOT the walk, and belongs next to it
-rather than in a footnote: a fresh clone pays the base build first.  At
-the ~20 min this tree has measured, clone -> proof by re-derivation is
-**~63 minutes**, i.e. just over.  The walk cleared the bar; the
-end-to-end path from `git clone` has not, and that is the frame the
-committed `.vo` decision has to be argued in.
+### CORRECTION, same day: the base build is 40 minutes, not 20
+
+The paragraph this replaces put clone -> proof at ~63 min by adding the
+walk to a **19m51s base build measured 2026-08-05**.  Measured instead,
+on the same box, `make -j16` from `git clean -fdx`:
+
+    real 40m00s    user 457m03s    sys 39m55s
+
+So the arithmetic is:
+
+| | wall | core-min |
+|---|---|---|
+| base build (`make -j16`) | **40.0 min** | 457 + 40 sys |
+| census walk (`WALK_JOBS=8`) | 42.6 min | 303 |
+| `make proof-all`, end to end | **~83 min** | |
+| `make proof` over the committed `.vo` | **~42 min** | |
+
+Two things follow, and the second is the useful one.
+
+**The under-an-hour goal splits in two, and the answer differs.** The
+trusted path -- base build plus the closeout chain over the committed
+`.vo` -- is ~42 min and clears the hour.  Re-deriving everything is ~83
+and does not.  Quoting one number for both was the error in the
+paragraph above.
+
+**The base build is now the bigger half, and it has never been
+profiled.** 457 core-min against the walk's 303.  Six rounds of this
+document went at the walk; nobody has looked at the 2,786-file build
+once.  That is exactly where the walk stood before `walk-rss.tsv`
+existed.
+
+### And a cost of M1 that was never measured
+
+Why 40 and not 20?  The tree grew, but there is a concrete, dated
+contributor: `Census/Proven_List.v`, `ProvenQH_List.v` and
+`RerootQH_List.v` were added **2026-08-10 -- by M1**, five days after
+the 19m51s measurement.  They are 6.1 MB of flat literals, and under
+the census switch each one is `coqnative`-translated and then
+`ocamlopt`-compiled.  Caught live in `top` during this build:
+
+    ocamlopt.opt -shared ... NBBB4_Census_Proven_List.cmxs     5:08 CPU  2.7 GB
+    ocamlopt.opt -shared ... NBBB4_Census_ProvenQH_List.cmxs   3:19 CPU  3.0 GB
+
+**8.5 core-min of `ocamlopt` in two files.**  M1 was measured on walk
+peak RSS (18x) and walk core-time, and it delivered both; what nobody
+measured is what it did to the base build, and it moved cost there.
+This is the same trap as every other one in this document -- a change
+evaluated at one level and not at the level where the goal is stated --
+and it is worth recording as M1's true cost rather than leaving the
+18x unqualified.  The `coqnative` stack overflow those lists caused
+(above) was the first symptom that big flat data is hard on the OCaml
+compiler; this is the second, and it is not an error, just a bill.
+
+Whether they need native compilation at all is open: they are data,
+never `native_compute`d as a function.  Unmeasured, and the first thing
+a base-build round should ask.
 
 ## Next steps, in Amdahl order (2026-08-07, superseded)
 

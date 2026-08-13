@@ -146,7 +146,7 @@ unlimited builds all three lists clean.
 — and since 2026-08-12 the whole claim from source is one command:
 
 ```bash
-make proof-all            # base build + re-walk + closeout chain, ~63 min
+make proof-all            # base build + re-walk + closeout chain, ~83 min
 ```
 
 `proof-all` is `make proof` with the census re-derived instead of
@@ -154,7 +154,9 @@ loaded: it runs the base build, then `census-verify`, then the same
 three closeout files and the same `Print Assumptions`.  Nothing in the
 committed cache is trusted, and the `Axioms:` block at the end is the
 entire trust surface.  Measured on 8 physical cores / 31 GB, un-niced:
-**~20 min base build + 42.6 min walk ≈ 63 min**.
+**40 min base build (`make -j16`, from `git clean -fdx`) + 42.6 min walk
+≈ 83 min**.  The base build is the larger half, and unlike the walk it
+has never been profiled.
 
 To re-walk on its own, without the closeout chain:
 

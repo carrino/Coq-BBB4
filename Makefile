@@ -374,14 +374,16 @@ _census-walk: _census-prepare
 # `make proof-all' -- the whole claim from source, in one command.
 #
 # `make proof' compiles the closeout chain over the COMMITTED census
-# .vo: ~20 min, and it asks you to trust 154 files someone else walked.
+# .vo: base build only, and it asks you to trust 154 files someone
+# else walked.
 # This target is the rung that does not: base build, RE-DERIVE the
 # census (census-verify backs the committed .vo out of the way and
 # walks from source), then the same closeout chain and the same
 # `Print Assumptions'.
 #
-# Measured 2026-08-12 on 8 physical cores / 31 GB, un-niced:
-#   base build ~20 min + walk 42.6 min = ~63 min end to end.
+# Measured 2026-08-12 on 8 physical cores (16 threads) / 31 GB:
+#   base build 40 min (`make -j16', from `git clean -fdx')
+#   + walk 42.6 min (WALK_JOBS=8, un-niced)  =  ~83 min end to end.
 # Needs the census opam switch (native_compute) and >= 10 GB RAM --
 # Compute/Census_Theorem.v runs alone at 6.3 GB.  docs/VERIFYING.md.
 #
@@ -391,7 +393,8 @@ proof-all: all
 	@echo "############################################################"
 	@echo "# proof-all: re-deriving the census from source.            "
 	@echo "# The committed .vo are NOT trusted here -- census-verify    "
-	@echo "# backs them up and walks.  ~63 min on 8 cores / 32 GB.      "
+	@echo "# backs them up and walks.  ~83 min total on 8 cores / 32 GB,  "
+	@echo "# of which the base build above is about half.               "
 	@echo "############################################################"
 	$(MAKE) census-verify
 	coqc -Q theories BBB4 theories/Closeout/CloseoutFinal.v
