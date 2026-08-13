@@ -2480,6 +2480,89 @@ Whether they need native compilation at all is open: they are data,
 never `native_compute`d as a function.  Unmeasured, and the first thing
 a base-build round should ask.
 
+## The base build, profiled for the first time (2026-08-12)
+
+Six rounds went at the census walk.  The base build -- 2,780 files, the
+other half of a from-scratch proof -- had never been measured.
+`coq_makefile` ships the tool (`make -f Makefile.coq -j16 pretty-timed`,
+then parse `real:/user:/mem:` out of the log; `print-pretty-timed`
+itself is broken under this opam switch, an empty `COQLIB` prefix).
+
+    real 26m41s   user 348m45s   sys 22m09s     -j16, from `git clean -fdx`
+
+| | files | user-min | share |
+|---|---|---|---|
+| `Machines/Counters` | **1,921** | 45.0 | **13%** |
+| `Machines/*` (RepWL_Batch, RWL8, IRules_Batch) | 82 | 70.3 | 20% |
+| `Machines/Bulk` | 68 | 59.2 | 17% |
+| `Machines/IRulesQHStage` | 22 | 41.5 | 12% |
+| `Machines/ListCStage` | 16 | 37.6 | 11% |
+| `Census` | 106 | 18.4 | 5% |
+
+**The shape is the census walk's, one level up.** 1,921 Counters files
+are 69% of the tree and 13% of the CPU; the top 15 files of 2,780 are
+26% of it.
+
+### One file is 78% of the build's wall
+
+    theories/Machines/Bulk/TCyc_05.vo    1249.2 s = 20.8 min, 2.75 GB
+
+against a 26.7 min build and a 54 s mean for its own family -- a **23x
+outlier inside a generated family** (`tools/gen_bulk_certs.py`), which
+makes rebalancing a generator parameter rather than a proof problem.
+
+**And it is not the lever**, which is the whole point of measuring
+instead of pattern-matching.  The build is **87% utilised** on 16
+threads, so its floor is
+
+    max(CPU 370/16 = 23.1 min, longest file 20.8 min) = 23.1 min
+
+-- the CPU term, not the file.  Splitting `TCyc_05` recovers the 3.5
+min of scheduling slack and no more, and the build then sits *on* its
+CPU floor with the longest file 2.3 min underneath it.  Worth doing as
+insurance before any CPU win (the moment CPU falls, that file binds
+immediately), worthless as a speed-up on its own.
+
+Two things this falsifies, both mine, both from projecting off the
+wrong measurement:
+
+- **"Batch many files per compiler invocation."** `coqc` refuses more
+  than one file, and it does not matter: measured, the process floor is
+  0.10 s and a file's own `Require` set adds ~0.01 s on top.  Batching
+  the whole Counters family would recover ~3 core-min of 370.  The
+  intuition is sound for C; Coq's startup is two orders of magnitude
+  smaller, and this tree's per-file `Require` sets are small.
+- **"8.9 minutes of idle machine."**  That came from the 40-minute run
+  (78% utilised).  This run is 87%, and the slack is 3.5 min.
+
+### The measurement itself is not stable, and that is the finding to fix
+
+Two clean `-j16` builds of the same tree:
+
+    run 1   real 40m00s   user 457m   sys 40m
+    run 2   real 26m41s   user 349m   sys 22m
+
+**33% apart on wall and 24% on CPU**, and the *faster* run is the one
+carrying timing instrumentation.  Warm page cache and thermal
+behaviour over a 40-minute all-core load are the obvious suspects and
+neither is confirmed.  Until it is, from-scratch clone -> proof is
+"69 or 83 minutes" and no tighter, which is not a number to publish.
+
+### What it means for the goal
+
+| | measured | floor |
+|---|---|---|
+| base build, 16 threads | 26.7 (or 40.0) | **23.1** |
+| census walk, 8 cores, bandwidth-bound | 42.6 | **41.3** |
+| from-scratch, both at floor | | **64.4** |
+
+`make proof` over the committed `.vo` clears the hour comfortably.
+From-scratch does not, and **no amount of scheduling gets it there**:
+at both floors it is 64.4 min.  Under an hour needs walk core-time
+down ~15%; **under 45 needs it halved, 303 -> ~156 core-min**, which is
+an M4-scale round with no candidate yet sized to that (`rank_procedure`
+in the qhb lex tier is the only nominee and it is unmeasured).
+
 ## Next steps, in Amdahl order (2026-08-07, superseded)
 
 Rows 2-4 are "What is left in the rw tier" above, re-ordered by
