@@ -24,6 +24,24 @@
 # `make STACK_KB=262144'.
 STACK_KB ?= unlimited
 all: Makefile.coq
+	@# WARN (never fail) when this coqc has no native compiler.  A plain
+	@# `make' is legitimately useful that way -- CI builds on apt Coq and
+	@# the default build is all-source -- but the resulting .vo can
+	@# neither do the census walk nor load alongside the committed census
+	@# .vo, which are OCaml-marshalled by a different compiler.
+	@#
+	@# This exists because `opam env' lives in the shell and a REBOOT
+	@# silently drops you back on /usr/bin/coqc.  Nothing announces it;
+	@# the build merely gets 33% faster (2026-08-12: 40m00s native,
+	@# 26m39s not) and quietly stops being walk-capable.  Discovered
+	@# after ~50 min of builds nobody could use.
+	@if [ "$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')" = "no" ]; then \
+	   echo ">>> NOTE: this coqc has no native compiler ($$(command -v coqc))."; \
+	   echo ">>>   Fine for a plain build.  NOT usable for 'make census-verify'"; \
+	   echo ">>>   or 'make proof' -- the .vo will not load with the committed"; \
+	   echo ">>>   census .vo.  For those: eval \$$(opam env --switch=census)"; \
+	   echo ">>>   then rm -f Makefile.coq && make clean && make."; \
+	 fi
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	 $(MAKE) -f Makefile.coq
 
