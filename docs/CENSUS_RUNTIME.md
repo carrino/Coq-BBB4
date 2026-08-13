@@ -2535,7 +2535,39 @@ wrong measurement:
 - **"8.9 minutes of idle machine."**  That came from the 40-minute run
   (78% utilised).  This run is 87%, and the slack is 3.5 min.
 
-### The measurement itself is not stable, and that is the finding to fix
+### RESOLVED: it was two different builds, not one noisy one
+
+The 33% spread below is fully explained, and not by thermals or page
+cache.  `coqc`'s own flags, read out of `top` during a third run:
+
+    -native-compiler no          (runs 2 and 3)
+    -native-compiler ondemand    (run 1, with coqnative + ocamlopt.opt
+                                  processes alongside)
+
+| | wall | user | sys | |
+|---|---|---|---|---|
+| run 1, `ondemand` | 40m00s | 457 | 40 | **walk-capable** |
+| run 2, `no` | 26m41s | 349 | 22 | |
+| run 3, `no` | **26m39s** | **351** | 20 | agrees with run 2 to 2 s |
+
+The build is **reproducible to two seconds**; the two configurations
+are 13.3 min and ~107 core-min apart.  So:
+
+- **Native compilation is 33% of the base build** -- 13.3 min of wall,
+  107 core-min, previously unmeasured and unattributed.
+- **From-scratch, walk-capable, is 40.0 + 42.6 = 82.6 min.**  The 69
+  figure came from timing a build that cannot do the walk.
+
+`_CoqProject` carries no `-native-compiler` flag, so `Makefile.coq`
+inherits it from whichever `coq_makefile` generated it.  `make`
+regenerates it itself and gets this right; regenerating by hand outside
+the census switch bakes in `no`, silently.  A tree in that state builds
+faster, looks fine, and would produce a walk that certifies nothing --
+exactly the trap this document already documents for apt Coq, arrived
+at from a different direction.  `_census-prepare` now refuses to walk
+when it sees that flag.
+
+### The old reading, kept because the correction is the point
 
 Two clean `-j16` builds of the same tree:
 

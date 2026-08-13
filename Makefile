@@ -306,6 +306,32 @@ endif
 # must not skip).  Before walking, quarantine any census .vo whose stamp
 # does not match the current input hash.
 _census-prepare:
+	@# The walk is native_compute.  On a tree built with the native
+	@# compiler disabled, `native_cast_no_check' silently falls back to
+	@# VM conversion -- a WARNING, not an error -- and `coqnative' never
+	@# runs at all, so such a walk proves nothing about a native one and
+	@# native-only failures (the coqnative stack overflow on the flat
+	@# data lists, for one) stay structurally invisible.
+	@#
+	@# _CoqProject carries no -native-compiler flag, so Makefile.coq
+	@# inherits it from whichever coq_makefile generated it -- and
+	@# regenerating it by hand outside the census switch bakes in `no'.
+	@# Measured 2026-08-12: the same tree builds in 40m00s with native
+	@# and 26m39s without, and the fast one cannot walk.  Caught by
+	@# reading coqc's flags in top; nothing checked it before.
+	@if grep -q -e '-native-compiler no' Makefile.coq 2>/dev/null; then \
+	   echo "############################################################"; \
+	   echo "# REFUSING TO WALK: Makefile.coq says -native-compiler no.  "; \
+	   echo "# native_cast_no_check would fall back to the VM with only a"; \
+	   echo "# warning, and coqnative would never run.  The .vo produced  "; \
+	   echo "# would certify nothing about a native walk.                 "; \
+	   echo "#                                                            "; \
+	   echo "# Regenerate inside the census switch:                       "; \
+	   echo "#   eval \$$(opam env --switch=census)                        "; \
+	   echo "#   rm -f Makefile.coq && make                               "; \
+	   echo "############################################################"; \
+	   exit 1; \
+	 fi
 	@H=$$(python3 tools/census_cache.py --print-hash); \
 	 S=census_probes/walk-stamp; mkdir -p census_probes; \
 	 if [ ! -f $$S ] || [ "$$(cat $$S)" != "$$H" ]; then \
