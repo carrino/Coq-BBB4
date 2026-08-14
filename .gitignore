@@ -30,3 +30,4 @@ tools/repwl_sweep_stream.tsv
 base_build.log
 __pycache__/
 .*.aux
+.toolchain-stamp

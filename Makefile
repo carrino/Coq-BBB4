@@ -479,6 +479,27 @@ _proof-all-run:
 	@# -native-compiler no to every coqc even now that the switch is
 	@# active.  Regenerating costs a second.
 	rm -f Makefile.coq
+	@# TOOLCHAIN STAMP.  Regenerating Makefile.coq fixes the FLAGS; it
+	@# does nothing about a TREE built by another toolchain.  .vo are
+	@# OCaml-marshalled, so 4.14.1 output will not load under 4.14.2 --
+	@# and .vo depend on .v files, not on the makefile, so `make' sees
+	@# valid timestamps and skips the lot.  The base build then "passes"
+	@# in seconds and the walk dies loading it, ~40 min later.
+	@#
+	@# Exactly why census_probes/walk-stamp exists for the walk: committed
+	@# .vo of an older tree satisfied a bare existence check.  Same shape,
+	@# one level down.
+	@S=.toolchain-stamp; \
+	 H="$$(coqc --version 2>/dev/null | tr -d '\n')|$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')"; \
+	 if [ -f "$$S" ] && [ "$$(cat $$S)" != "$$H" ]; then \
+	   echo ">>> this tree was built by a DIFFERENT toolchain:"; \
+	   echo ">>>   built with: $$(cat $$S)"; \
+	   echo ">>>   now using : $$H"; \
+	   echo ">>> its .vo cannot be loaded or extended -- running make clean."; \
+	   $(MAKE) clean >/dev/null; \
+	   coq_makefile -f _CoqProject -o Makefile.coq; \
+	 fi; \
+	 echo "$$H" > "$$S"
 	$(MAKE) -j$(BUILD_JOBS) all
 	$(MAKE) census-verify
 	coqc -Q theories BBB4 theories/Closeout/CloseoutFinal.v
