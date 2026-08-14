@@ -452,6 +452,23 @@ _census-walk: _census-prepare
 BUILD_JOBS ?= $(shell nproc 2>/dev/null || echo 4)
 
 proof-all:
+	@# Check the toolchain BEFORE the 40-minute build, not after it.
+	@# _census-prepare refuses a non-native walk, but by then the build
+	@# is already spent -- and a new shell is exactly where this bites,
+	@# since `opam env' does not survive one.
+	@if [ "$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')" = "no" ]; then \
+	   echo "############################################################"; \
+	   echo "# proof-all needs the census opam switch, and this shell     "; \
+	   echo "# does not have it: $$(command -v coqc)"; \
+	   echo "# (coqc -config says COQ_NATIVE_COMPILER_DEFAULT=no, so the  "; \
+	   echo "# walk would fall back to the VM and prove nothing).         "; \
+	   echo "#                                                            "; \
+	   echo "#   eval \$$(opam env --switch=census)                        "; \
+	   echo "#                                                            "; \
+	   echo "# Stopping now rather than after the base build.             "; \
+	   echo "############################################################"; \
+	   exit 1; \
+	 fi
 	@echo "############################################################"
 	@echo "# proof-all: re-deriving the census from source.            "
 	@echo "# The committed .vo are NOT trusted here -- census-verify    "
