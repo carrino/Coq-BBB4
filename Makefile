@@ -434,20 +434,31 @@ _census-walk: _census-prepare
 # `Print Assumptions'.
 #
 # Measured 2026-08-12 on 8 physical cores (16 threads) / 31 GB:
-#   base build 40 min (`make -j16', from `git clean -fdx')
+#   base build 40 min (BUILD_JOBS=16, from `git clean -fdx')
 #   + walk 42.6 min (WALK_JOBS=8, un-niced)  =  ~83 min end to end.
 # Needs the census opam switch (native_compute) and >= 10 GB RAM --
 # Compute/Census_Theorem.v runs alone at 6.3 GB.  docs/VERIFYING.md.
 #
-# WALK_JOBS/WALK_ASM_JOBS pass straight through, e.g.
-#   make proof-all WALK_JOBS=8
-proof-all: all
+# TWO parallelism knobs, which is why this target sizes itself rather
+# than leaving it to `-j':
+#   * the base build takes make's -j (BUILD_JOBS below, default nproc);
+#   * the WALK ignores -j entirely -- WALK_JOBS is its knob, and it
+#     auto-sizes to physical cores (the walk is memory-bandwidth bound,
+#     so SMT threads do not help it; measured 2026-08-12).
+# A bare `make proof-all' would otherwise build serially: ~350-450
+# core-min, i.e. most of a day, for want of a flag.
+#
+# Override either: `make proof-all BUILD_JOBS=8 WALK_JOBS=4'.
+BUILD_JOBS ?= $(shell nproc 2>/dev/null || echo 4)
+
+proof-all:
 	@echo "############################################################"
 	@echo "# proof-all: re-deriving the census from source.            "
 	@echo "# The committed .vo are NOT trusted here -- census-verify    "
 	@echo "# backs them up and walks.  ~83 min total on 8 cores / 32 GB,  "
 	@echo "# of which the base build above is about half.               "
 	@echo "############################################################"
+	$(MAKE) -j$(BUILD_JOBS) all
 	$(MAKE) census-verify
 	coqc -Q theories BBB4 theories/Closeout/CloseoutFinal.v
 	coqc -Q theories BBB4 theories/Closeout/BBB4_Theorem.v
