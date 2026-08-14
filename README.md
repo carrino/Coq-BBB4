@@ -100,10 +100,12 @@ targets back up and re-derive those automatically.
 
    Measured 2026-08-12 on 8 physical cores / 31 GB, un-niced:
    **40 min base build + 42 m 36 s census walk**.  The walk alone is
-   `make census-verify WALK_JOBS=8`.  No `-j` is needed: the base
-   build sizes itself from `nproc` (`BUILD_JOBS`) and the walk from
-   *physical* cores (`WALK_JOBS`) — it is memory-bandwidth bound, so
-   SMT threads do not help it.  The walk is resumable per-unit, so
+   `make census-verify WALK_JOBS=8`.  Nothing to set up and no `-j` to
+   pass: it activates the `census` opam switch itself if your shell
+   has not (`opam env` does not survive a new terminal), and sizes the
+   base build from `nproc` (`BUILD_JOBS`) and the walk from *physical*
+   cores (`WALK_JOBS`) — the walk is memory-bandwidth bound, so SMT
+   threads do not help it.  The walk is resumable per-unit, so
    re-walking a *sample* and checking it reproduces the committed
    output is meaningful too.  Needs ~10 GB RAM
    (`Compute/Census_Theorem.v` runs alone at 6.3 GB) and the census
@@ -130,9 +132,12 @@ make proof      # + the census-backed top-level theorem and its report
 make proof-all  # base build + re-walk the census + the closeout chain
                 # ~83 min on 8 cores / 32 GB (40 min build, 42 min walk).
                 # Needs the census opam switch and >= 10 GB RAM.
-                # No -j needed: the build sizes itself from nproc and
-                # the walk from physical cores.  Override if you want:
+                # Out of the box: it activates the census opam switch
+                # itself if your shell has not, regenerates Makefile.coq
+                # for that toolchain, and sizes both fan-outs (the build
+                # from nproc, the walk from physical cores).  Override:
                 #   make proof-all BUILD_JOBS=16 WALK_JOBS=8
+                #   make proof-all CENSUS_SWITCH=my-switch
 ```
 
 High `-j` is fine on a big machine: the nine memory-heavy

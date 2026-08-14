@@ -451,30 +451,59 @@ _census-walk: _census-prepare
 # Override either: `make proof-all BUILD_JOBS=8 WALK_JOBS=4'.
 BUILD_JOBS ?= $(shell nproc 2>/dev/null || echo 4)
 
+# CENSUS_SWITCH: the opam switch carrying coq-native.  proof-all
+# activates it ITSELF when the coqc on PATH cannot do native compilation
+# -- `opam env' lives in the shell and does not survive a new terminal
+# or a reboot, and telling a first-time verifier to remember an eval
+# before the one command we advertise is a bad trade.  Override the name
+# with `make proof-all CENSUS_SWITCH=mine', or pre-activate any switch
+# you like and this is a no-op.
+CENSUS_SWITCH ?= census
+
+_coq_native = $$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')
+
 proof-all:
-	@# Check the toolchain BEFORE the 40-minute build, not after it.
-	@# _census-prepare refuses a non-native walk, but by then the build
-	@# is already spent -- and a new shell is exactly where this bites,
-	@# since `opam env' does not survive one.
-	@if [ "$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')" = "no" ]; then \
+	@if [ "$(_coq_native)" != "no" ] && [ -n "$$(command -v coqc)" ]; then \
+	   echo ">>> coqc: $$(command -v coqc) (native compiler present)"; \
+	   $(MAKE) _proof-all-run; \
+	 elif opam env --switch=$(CENSUS_SWITCH) >/dev/null 2>&1; then \
+	   echo ">>> this shell has no native-capable coqc; activating opam"; \
+	   echo ">>> switch '$(CENSUS_SWITCH)' for this build only."; \
+	   eval $$(opam env --switch=$(CENSUS_SWITCH)) && \
+	   if [ "$(_coq_native)" = "no" ]; then \
+	     echo ">>> switch '$(CENSUS_SWITCH)' has no coq-native either -- see"; \
+	     echo ">>> docs/VERIFYING.md for building it."; exit 1; \
+	   fi && \
+	   echo ">>> coqc: $$(command -v coqc)" && \
+	   $(MAKE) _proof-all-run; \
+	 else \
 	   echo "############################################################"; \
-	   echo "# proof-all needs the census opam switch, and this shell     "; \
-	   echo "# does not have it: $$(command -v coqc)"; \
-	   echo "# (coqc -config says COQ_NATIVE_COMPILER_DEFAULT=no, so the  "; \
-	   echo "# walk would fall back to the VM and prove nothing).         "; \
+	   echo "# proof-all needs a Coq with the native compiler, and       "; \
+	   echo "# neither this shell nor an opam switch named               "; \
+	   echo "# '$(CENSUS_SWITCH)' provides one.                          "; \
+	   echo "#   coqc here: $$(command -v coqc || echo '(none)')"; \
 	   echo "#                                                            "; \
-	   echo "#   eval \$$(opam env --switch=census)                        "; \
+	   echo "# docs/VERIFYING.md has the switch recipe:                   "; \
+	   echo "#   opam switch create census 4.14.2                         "; \
+	   echo "#   opam install coq.8.18.0 coq-native                       "; \
 	   echo "#                                                            "; \
-	   echo "# Stopping now rather than after the base build.             "; \
+	   echo "# Or point at an existing one: make proof-all CENSUS_SWITCH=X"; \
 	   echo "############################################################"; \
 	   exit 1; \
 	 fi
+
+_proof-all-run:
 	@echo "############################################################"
 	@echo "# proof-all: re-deriving the census from source.            "
 	@echo "# The committed .vo are NOT trusted here -- census-verify    "
-	@echo "# backs them up and walks.  ~83 min total on 8 cores / 32 GB,  "
-	@echo "# of which the base build above is about half.               "
+	@echo "# backs them up and walks.  ~83 min total on 8 cores / 32 GB,"
+	@echo "# of which the base build below is about half.               "
 	@echo "############################################################"
+	@# Makefile.coq bakes in the generating coq_makefile's native
+	@# setting, so a stale one from another toolchain would pass
+	@# -native-compiler no to every coqc even now that the switch is
+	@# active.  Regenerating costs a second.
+	rm -f Makefile.coq
 	$(MAKE) -j$(BUILD_JOBS) all
 	$(MAKE) census-verify
 	coqc -Q theories BBB4 theories/Closeout/CloseoutFinal.v
@@ -486,6 +515,7 @@ proof-all:
 	@echo "machine, not loaded from the committed cache.  The"
 	@echo "'Print Assumptions' block is the whole trust surface."
 	@echo "------------------------------------------------------------"
+.PHONY: _proof-all-run
 .PHONY: proof-all
 
 # Guarded census: skip the walk when the committed .vo already certify this
