@@ -101,8 +101,10 @@ targets back up and re-derive those automatically.
    Measured 2026-08-12 on 8 physical cores / 31 GB, un-niced:
    **40 min base build + 42 m 36 s census walk**.  The walk alone is
    `make census-verify WALK_JOBS=8`.  Nothing to set up and no `-j` to
-   pass: it activates the `census` opam switch itself if your shell
-   has not (`opam env` does not survive a new terminal), and sizes the
+   pass: `tools/census_toolchain.sh` finds a native-capable Coq, or
+   activates the `census` opam switch (`opam env` does not survive a
+   new terminal), or creates that switch — the only step needing your
+   package manager is installing `opam` itself.  It sizes the
    base build from `nproc` (`BUILD_JOBS`) and the walk from *physical*
    cores (`WALK_JOBS`) — the walk is memory-bandwidth bound, so SMT
    threads do not help it.  The walk is resumable per-unit, so
@@ -132,10 +134,13 @@ make proof      # + the census-backed top-level theorem and its report
 make proof-all  # base build + re-walk the census + the closeout chain
                 # ~83 min on 8 cores / 32 GB (40 min build, 42 min walk).
                 # Needs the census opam switch and >= 10 GB RAM.
-                # Out of the box: it activates the census opam switch
-                # itself if your shell has not, regenerates Makefile.coq
-                # for that toolchain, and sizes both fan-outs (the build
-                # from nproc, the walk from physical cores).  Override:
+                # Out of the box.  It uses a native-capable coqc if you
+                # have one, otherwise activates the census opam switch,
+                # otherwise CREATES it (opam is user-level -- the only
+                # manual step is installing opam itself).  It also
+                # regenerates Makefile.coq for that toolchain and sizes
+                # both fan-outs (build from nproc, walk from physical
+                # cores).  Override:
                 #   make proof-all BUILD_JOBS=16 WALK_JOBS=8
                 #   make proof-all CENSUS_SWITCH=my-switch
 ```

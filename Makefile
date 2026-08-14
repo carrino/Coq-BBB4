@@ -451,46 +451,21 @@ _census-walk: _census-prepare
 # Override either: `make proof-all BUILD_JOBS=8 WALK_JOBS=4'.
 BUILD_JOBS ?= $(shell nproc 2>/dev/null || echo 4)
 
-# CENSUS_SWITCH: the opam switch carrying coq-native.  proof-all
-# activates it ITSELF when the coqc on PATH cannot do native compilation
-# -- `opam env' lives in the shell and does not survive a new terminal
-# or a reboot, and telling a first-time verifier to remember an eval
-# before the one command we advertise is a bad trade.  Override the name
-# with `make proof-all CENSUS_SWITCH=mine', or pre-activate any switch
-# you like and this is a no-op.
+# CENSUS_SWITCH / CENSUS_OCAML / CENSUS_COQ / CENSUS_BOOTSTRAP:
+# tools/census_toolchain.sh ensures a Coq that can do native_compute and
+# prints the environment that provides it.  It uses a native-capable
+# coqc already on PATH, else activates the opam switch, else CREATES the
+# switch (opam is user-level, so nothing here needs root).  The only
+# manual step left is installing opam itself, which does need a package
+# manager.  `CENSUS_BOOTSTRAP=0' declines to create anything.
 CENSUS_SWITCH ?= census
 
-_coq_native = $$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')
-
 proof-all:
-	@if [ "$(_coq_native)" != "no" ] && [ -n "$$(command -v coqc)" ]; then \
-	   echo ">>> coqc: $$(command -v coqc) (native compiler present)"; \
-	   $(MAKE) _proof-all-run; \
-	 elif opam env --switch=$(CENSUS_SWITCH) >/dev/null 2>&1; then \
-	   echo ">>> this shell has no native-capable coqc; activating opam"; \
-	   echo ">>> switch '$(CENSUS_SWITCH)' for this build only."; \
-	   eval $$(opam env --switch=$(CENSUS_SWITCH)) && \
-	   if [ "$(_coq_native)" = "no" ]; then \
-	     echo ">>> switch '$(CENSUS_SWITCH)' has no coq-native either -- see"; \
-	     echo ">>> docs/VERIFYING.md for building it."; exit 1; \
-	   fi && \
-	   echo ">>> coqc: $$(command -v coqc)" && \
-	   $(MAKE) _proof-all-run; \
-	 else \
-	   echo "############################################################"; \
-	   echo "# proof-all needs a Coq with the native compiler, and       "; \
-	   echo "# neither this shell nor an opam switch named               "; \
-	   echo "# '$(CENSUS_SWITCH)' provides one.                          "; \
-	   echo "#   coqc here: $$(command -v coqc || echo '(none)')"; \
-	   echo "#                                                            "; \
-	   echo "# docs/VERIFYING.md has the switch recipe:                   "; \
-	   echo "#   opam switch create census 4.14.2                         "; \
-	   echo "#   opam install coq.8.18.0 coq-native                       "; \
-	   echo "#                                                            "; \
-	   echo "# Or point at an existing one: make proof-all CENSUS_SWITCH=X"; \
-	   echo "############################################################"; \
-	   exit 1; \
-	 fi
+	@# `eval "$$(cmd)"' throws the script's exit status away -- eval of an
+	@# empty string succeeds, so a refusal still ran the build.  An
+	@# ASSIGNMENT propagates the substitution's status, so this stops.
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) _proof-all-run
 
 _proof-all-run:
 	@echo "############################################################"
