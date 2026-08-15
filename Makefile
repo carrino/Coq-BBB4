@@ -507,9 +507,9 @@ _proof-all-run:
 	coqc -Q theories BBB4 theories/Closeout/BBB4_Value.v
 	@python3 tools/proof_report.py
 	@echo "------------------------------------------------------------"
-	@echo "proof-all COMPLETE.  The census above was WALKED on this"
-	@echo "machine, not loaded from the committed cache.  The"
-	@echo "'Print Assumptions' block is the whole trust surface."
+	@echo "proof-all COMPLETE.  The 'Trust tier' line in the report above"
+	@echo "reads the walk-stamp, so it states which rung THIS build stood"
+	@echo "on -- believe it rather than this banner."
 	@echo "------------------------------------------------------------"
 .PHONY: _proof-all-run
 .PHONY: proof-all

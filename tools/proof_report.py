@@ -17,6 +17,7 @@ Two shapes:
 """
 
 import os
+import subprocess
 import re
 import sys
 
@@ -88,11 +89,45 @@ The proof (theories/Closeout/BBB4_Value.v):
 
 Axiom footprint: functional_extensionality_dep, and nothing else
 ([Print Assumptions BBB4_value] above; [BBB4_is_unique] is axiom-free
-and pins the number).  Trust tier: this build LOADED the committed
-census .vo -- re-derive them from source with `make census-verify`
-(docs/VERIFYING.md); coqchk -o re-verifies the compiled proof terms.
-'''.format(score=CHAMPION_SCORE, prev=CHAMPION_SCORE - 1, champ=CHAMPION))
+and pins the number).  {tier}
+'''.format(score=CHAMPION_SCORE, prev=CHAMPION_SCORE - 1, champ=CHAMPION,
+           tier=trust_tier()))
     print(LINE)
+
+
+def trust_tier():
+    """Which trust rung did THIS build stand on?
+
+    The line here used to be the static "this build LOADED the committed
+    census .vo", which is right for `make proof' and flatly wrong after
+    `make proof-all' -- and proof-all printed both claims, three lines
+    apart, with this one looking the more authoritative.
+
+    Decided from evidence rather than from a flag the caller passes:
+    census_probes/walk-stamp holds the census input hash that was WALKED
+    on this machine (Makefile, _census-prepare).  If it matches the
+    current inputs, these .vo are this machine's walk output, whoever
+    started it.  If it is absent or stale, they came from the commit.
+    """
+    try:
+        here = os.path.dirname(os.path.abspath(__file__))
+        stamp = os.path.join(here, os.pardir, 'census_probes', 'walk-stamp')
+        with open(stamp) as f:
+            walked = f.read().strip()
+        cur = subprocess.run(
+            [sys.executable, os.path.join(here, 'census_cache.py'),
+             '--print-hash'], capture_output=True, text=True, timeout=300)
+        if cur.returncode == 0 and walked and walked == cur.stdout.strip():
+            return ('Trust tier: the census .vo loaded here were WALKED on '
+                    'this\nmachine from source -- census_probes/walk-stamp '
+                    'matches these inputs.\nNothing committed was trusted; '
+                    'coqchk -o re-verifies the proof terms.')
+    except Exception:
+        pass
+    return ('Trust tier: this build LOADED the committed\ncensus .vo -- '
+            're-derive them from source with `make proof-all`\n'
+            '(docs/VERIFYING.md); coqchk -o re-verifies the compiled '
+            'proof terms.')
 
 
 def report_skipped(core, shadows):
