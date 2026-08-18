@@ -332,26 +332,110 @@ mechanism verbatim; it is convention-blind.
 
 ---
 
-## 5. The new burn-down
+## 5. Collecting the burn-down list, and burning it down
 
-Same architecture that closed the 5,156: freeze the new `D_census`,
-`Forall boarded` it by app-chained stages, keep the walk untouched
-(`boarded`/`covers` route A, `docs/NGHIST_WAVE5.md` §5).  Differences:
+The state-level burn-down was **coverage-first**: the value was already
+known, so the job was `Forall boarded` over a frozen deferred set.  Here the
+value is the unknown, so the strategy inverts to **value-first**: the list
+is collected *ranked by candidate score*, and the top of the list is
+settled before the bulk, because until the champion is pinned neither the
+spec nor any board's bound constant can be written.
 
-* **`boarded` gets a fourth flavor in practice**: instruction-flip boards —
-  machines that never state-quasihalt but instruction-quasihalt, boarded by
-  wrap/MetaQH with a score bound.  The closeout constants become
-  `B_board`/`B_champ` analogues for the *instruction* record, unknown today.
-* **The sweep order inverts.**  State burn-down led with never-QH
-  harvests; here lead with the QH side (wrap + MetaQH + cycles), because
-  it got easier and each board is score-carrying — exactly the data the
-  champion hunt needs.  The never-QH re-certification sweep (closure-family
-  re-search) runs second, and its failures feed back into the QH queue.
-* **The frontier**: rare-fire counter/tower machines whose one suspect
-  instruction fires at exponentially sparse indices.  These are the new
-  "27 holdouts" — Ladder-style value-indexed recurrence per instruction, or
-  genuinely new proofs.  Expect single-digit-to-dozens of machines to eat
-  most of the calendar, as before.
+### 5.1 The suspect-transition sweep (untrusted, harness side)
+
+The raw material for the list is a statistic the harness already computes
+on every simulation: per-transition fire count and last-fire step.  Define
+
+> **suspect transition**: fired at least once, and silent for the trailing
+> ≥ 90% of the run at the current budget.
+
+Sweep the full TNF (4,2) space (the harness's `enumerate.c`, cross-checked
+against the Coq census's 3,995,005 nodes) in escalating budget tiers
+(10⁴ → 10⁶ → 10⁹ → 10¹⁰), carrying forward only machines that still have a
+suspect or are undecided:
+
+* **Cyclers resolve themselves.**  An in-place or translated cycle
+  certificate fixes every transition's class exactly — fired-in-cycle = I,
+  transient-only = F *with its exact last fire*, unfired = N.  ~83% of the
+  space (the census's cycle tiers) therefore comes out of the sweep
+  *decided at instruction level with exact scores*, giving an immediate
+  untrusted value floor from the cycler class.  NB the transient-tightened
+  holdout certs (`results/certs_tight/`) show true transients to
+  **309,417,105 steps** — any cycler whose cycle omits one fired transition
+  scores its transient, so this class alone can move the value.
+* **The champion-horizon rule.**  A sweep can only *observe* last fires
+  below its budget, so the budget must stay ≥ ~10× the largest live
+  candidate score at all times; every time the candidate champion moves up,
+  the undecided tail re-sweeps at a deeper budget.  (The state proof never
+  needed this — its value was known before the census ran.)
+
+### 5.2 The list, and what pass1.csv already says
+
+**Burn-down list v0** = machines with a surviving suspect transition,
+ranked by suspect last-fire, partitioned by who currently vouches for them:
+
+| bucket | contents | what settles it |
+|---|---|---|
+| **flip candidates** | state-level `NeverQuasiHaltsSt` machines (Proven tier, `nqh` rows, holdout certs) with a suspect | prove the suspect I (stays never-QH) or F (new QH board, score = last fire) |
+| **busy-state suspects** | state-QH machines with a suspect on a *still-live* state beyond their state score | instruction wrap at the suspect cell |
+| **undecided** | no state-level verdict either (the old frontier + new) | full new proofs |
+
+A first cut over just the 3,713 holdouts (`results/pass1.csv`, 10⁹ budget)
+already yields **~17 machines / 22 suspect transitions with last fire
+beyond 32,779,478**, splitting into two sharply different populations by
+the ratio (trailing silence)/(mean firing gap):
+
+* **Sparse-I lookalikes** (counts 7–11, mean gap ~10⁷, silence ≈ 100×
+  mean gap): consistent with geometric gap growth; likely class I, but
+  proving it needs value-indexed recurrence (Ladder/IRules) per transition.
+  E.g. `1RB1LA_0LC0RC_1LC1LD_1RB0LA` `B0` (10 fires, last 92,981,720) and
+  its three family variants.
+* **Regime-change deaths** (counts ~9,000–25,500, mean gap 3–11k steps,
+  silence ≈ **10⁵× mean gap**): fired *regularly* for ~7×10⁷ steps, then
+  permanently silent for 9×10⁸.  No smooth gap-growth model fits; these are
+  prime class-F candidates.  Top: `1RB0RC_1LC1LA_1RA1LD_0LB0LA` `D1`
+  (9,090 fires, last **99,355,388** — 3.03× the state champion),
+  `1RB1LC_1RC1RB_1RD1LA_1LA0RD` `D1` (25,480 fires, last 97,455,496),
+  `1RB0RB_1LB0LC_1RD1LC_1LC0RA` `A0` (17,598, 95,865,237), and — notably —
+  `1RB1RD_0RC1RB_1LC1LA_0RB0RD` `A0`+`B1` (last ~71.6M), a near-relative of
+  the champion's own table.
+
+**Named first experiment (phase 1): decide these 22 transitions.**  Each
+machine already carries a state-level cert whose engine (irules/ladder/
+rank) reveals its structure, so targeting is free.  Any single F verdict
+dethrones the champion and re-anchors the whole campaign; 22 I verdicts
+are strong evidence the incumbent survives.
+
+### 5.3 Burning it down
+
+Order of attack, cheapest per row first, mirroring the state playbook's
+two-front discipline (port-work vs. research-work):
+
+1. **Cycle-transient boards** (bulk, mechanical): cycler suspects get exact
+   scores straight from the certificate; port §3.2 makes them kernel-checked.
+2. **Instruction-wrap sweeps** (the tier that got *easier*): blank the
+   suspect cell, closure-check the wrapped machine halt-free from a
+   post-silence anchor → `QuietAfterTr` + exact score.  This is the
+   QHBoard pipeline (`tools/gen_provenqh.py`) with an 8-way scan; expect it
+   to absorb the majority of flip candidates at small scores.
+3. **MetaQH instruction boards**: for IRules-certified machines, a
+   transition outside the fired set `F` is a quiet witness — *easier* to
+   find than a state outside `F`; the window scan re-runs 8-wide.
+4. **Per-instruction never-QH re-search** (closure family): re-certify
+   surviving never-candidates; failures feed back into queue 2.
+5. **Ladder/lap value-indexed recurrence** for the sparse-I population:
+   "fires at every counter overflow, overflows recur" — class I proofs that
+   no finite budget can give.
+6. **The frontier**: suspects that resist both directions — gap growth too
+   irregular for the ladder, closure too rich for the wrap.  These are the
+   new "27 holdouts"; expect single-digit-to-dozens of machines to eat most
+   of the calendar, as before.
+
+Then the endgame is structurally identical to the state proof: freeze the
+walk's `D_censusTr`, `Forall boarded` it by app-chained `CB` stages with
+`boarded := NeverQuasiHaltsTr \/ QHBoundTr B_board triple \/ champion
+board`, empty the residue, and meet the champion's two-`vm_compute` lower
+bound in `BBBT4_value`.
 
 ---
 
@@ -360,7 +444,7 @@ Same architecture that closed the 5,156: freeze the new `D_census`,
 | phase | work | where | size |
 |---|---|---|---|
 | 0 | Definitions + bridges (`Instr`, `FiresAt`, `QuietAfterTr`, `QHBoundTr`, mirror/swap/LiveAll transport), keeping all state-level results intact | container | ~300 lines, days |
-| 1 | **Measure before building**: port IRules Meta layer + cyclers; re-run the ~1,220 IRules and 3,256 `nqh` boards through instruction checkers; count survivors/flips.  Port the instruction wrap and re-verify a QHBoard sample | container | ~400 lines + sweeps, 1–2 weeks |
+| 1 | **Measure before building**: port IRules Meta layer + cyclers; re-run the ~1,220 IRules and 3,256 `nqh` boards through instruction checkers; count survivors/flips.  Port the instruction wrap and re-verify a QHBoard sample.  **Decide the 22 pass1.csv suspect transitions (§5.2)** — any F verdict re-anchors the value | container | ~400 lines + sweeps, 1–2 weeks |
 | 2 | Harness campaign (upstream, `carrino/bbb`): per-transition liveness in rank/rwlrank/ngram deciders; full-space sweep; champion hunt over F-class last-fires; freeze a candidate value | harness + box | open-ended; the gating item |
 | 3 | Closure-engine target generalization + certificate regeneration sweeps (`gen_provenqh`-style tooling, 8-branch certs) | container + box | ~600 lines + regen, 2–4 weeks |
 | 4 | New census walk: retyped `QHDecider_WF`, light tiers, walk on the box; freeze new `D_census` | box | 1 walk + iterations |
