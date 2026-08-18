@@ -588,9 +588,14 @@ _census-tr-deps: Makefile.coq
 	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr.vo
 .PHONY: _census-tr-deps
 
+# Both targets raise the stack first (STACK_KB, header comment): the walk's
+# result is a ~400K-element back-queue list, and reading such a term back
+# from the evaluator recurses over its spine -- on the default 8 MB stack
+# that is a guaranteed `Error: Stack overflow` AFTER the whole walk has run.
 census-tr-collect-vm: _census-tr-deps
 	@mkdir -p census_probes
-	coqc -Q theories BBB4 -w -abstract-large-number $(CENSUS_TR_DRIVER) \
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 coqc -Q theories BBB4 -w -abstract-large-number $(CENSUS_TR_DRIVER) \
 	  | tee census_probes/censustr_collect.out
 	@echo ">>> back queue captured in census_probes/censustr_collect.out"
 	@echo ">>> decode: python3 tools/censustr/decode_enc.py census_probes/censustr_collect.out"
@@ -600,7 +605,8 @@ census-tr-collect: _census-tr-deps
 	@mkdir -p census_probes
 	@sed 's/vm_compute/native_compute/' $(CENSUS_TR_DRIVER) \
 	  > census_probes/WalkTr_Collect_native.v
-	coqc -Q theories BBB4 -w -abstract-large-number \
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 coqc -Q theories BBB4 -w -abstract-large-number \
 	  census_probes/WalkTr_Collect_native.v \
 	  | tee census_probes/censustr_collect.out
 	@echo ">>> back queue captured in census_probes/censustr_collect.out"
