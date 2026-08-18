@@ -45,8 +45,16 @@ def decode(code: int) -> str:
 
 
 def extract_codes(text: str):
-    """Pull the N literals out of the `Compute queue_encs` block."""
-    m = re.search(r"=\s*(\[.*?\])\s*(?:%N)?\s*:\s*list N", text, re.S)
+    """Pull the N literals out of the `Compute queue_encs` block.
+
+    Coq prints short lists in bracket notation (`[1%N; 2%N]%N`) but
+    falls back to cons chains (`1%N :: 2%N :: ... :: nil`) once the
+    list is long -- which the real walk output always is -- so accept
+    both: every decimal immediately suffixed `%N` is a code."""
+    codes = [int(t) for t in re.findall(r"(\d+)%N", text)]
+    if codes:
+        return codes
+    m = re.search(r"=\s*(\[.*?\])\s*:\s*list N", text, re.S)
     if not m:
         raise SystemExit("no `: list N` Compute output found in input")
     return [int(t) for t in re.findall(r"\d+", m.group(1))]
