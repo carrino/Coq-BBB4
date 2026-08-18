@@ -507,17 +507,18 @@ make census-tr-collect-vm     # vm_compute fallback, any coqc
 python3 tools/censustr/decode_enc.py census_probes/censustr_collect.out
 ```
 
-Measured in-container (apt coqc, vm_compute): **~1.4 ms/pop**, so the full
-3,995,005-node tree projects to a few hours in ONE vm_compute process —
+Measured in-container (apt coqc, vm_compute): 8,192 pops in 11.1 s and
+131,072 pops in 147.5 s — **~1.1–1.4 ms/pop, holding at depth** — so the
+full 3,995,005-node tree projects to **~1.5 h in ONE vm_compute process**,
 and materially less under native on the box.  This walk is far lighter
 than the state census's 385 native core-minutes because the phase-0 stack
-has no n-gram/rank/RepWL tiers; the price is a large back queue.  First
-8,192 pops: 32 front / 1,108 deferred (~13.5%), consistent with the
-state tier census's prediction that the deferral mass is the old
-n-gram-ladder + lookup-tier nodes (~10.7% of the tree, ≈430K nodes
-globally).  That back queue is burn-down list v0; the phase-3 closure-tier
-ports and the wrap/MetaQH sweeps then eat it down to a freezable
-`D_censusTr`.
+has no n-gram/rank/RepWL tiers; the price is a large back queue.
+Deferral: 1,108 of the first 8,192 pops (13.5%), 12,669 of the first
+131,072 (9.7%) — converging on the state tier census's prediction that
+the deferral mass is the old n-gram-ladder + lookup-tier nodes (~10.7% of
+the tree, ≈430K nodes globally).  That back queue is burn-down list v0;
+the phase-3 closure-tier ports and the wrap/MetaQH sweeps then eat it
+down to a freezable `D_censusTr`.
 
 ## 8. What we deliberately do NOT redo
 
