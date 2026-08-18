@@ -571,6 +571,43 @@ census-resume: all
 .PHONY: census-resume
 
 # ---------------------------------------------------------------------------
+# Transition-level (instruction-level) census: the COLLECTION walk
+# (SCOPING_INSTR.md section 5; theories/CensusTr/).  Phase-0 tier stack:
+# halt + in-place/translated cycles + empty lookup tiers -- every other
+# node lands in the back queue, and the captured back queue IS the
+# transition-level deferred-candidate list.  Decode it with
+#   python3 tools/censustr/decode_enc.py census_probes/censustr_collect.out
+#
+#   make census-tr-collect      # box: native_compute (census opam switch)
+#   make census-tr-collect-vm   # anywhere: vm_compute (measured ~1.4 ms/pop
+#                               #   in-container; whole tree a few hours,
+#                               #   one process, a few GB RSS)
+CENSUS_TR_DRIVER := theories/CensusTr/WalkTr_Collect.v
+
+_census-tr-deps: Makefile.coq
+	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr.vo
+.PHONY: _census-tr-deps
+
+census-tr-collect-vm: _census-tr-deps
+	@mkdir -p census_probes
+	coqc -Q theories BBB4 -w -abstract-large-number $(CENSUS_TR_DRIVER) \
+	  | tee census_probes/censustr_collect.out
+	@echo ">>> back queue captured in census_probes/censustr_collect.out"
+	@echo ">>> decode: python3 tools/censustr/decode_enc.py census_probes/censustr_collect.out"
+.PHONY: census-tr-collect-vm
+
+census-tr-collect: _census-tr-deps
+	@mkdir -p census_probes
+	@sed 's/vm_compute/native_compute/' $(CENSUS_TR_DRIVER) \
+	  > census_probes/WalkTr_Collect_native.v
+	coqc -Q theories BBB4 -w -abstract-large-number \
+	  census_probes/WalkTr_Collect_native.v \
+	  | tee census_probes/censustr_collect.out
+	@echo ">>> back queue captured in census_probes/censustr_collect.out"
+	@echo ">>> decode: python3 tools/censustr/decode_enc.py census_probes/censustr_collect.out"
+.PHONY: census-tr-collect
+
+# ---------------------------------------------------------------------------
 # The route-A closeout (docs/CLOSEOUT_ROUTE_A.md).  Regenerates the stage
 # files from the current boards and recompiles theories/Closeout/, yielding
 #

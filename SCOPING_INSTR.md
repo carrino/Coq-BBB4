@@ -406,6 +406,26 @@ rank) reveals its structure, so targeting is free.  Any single F verdict
 dethrones the champion and re-anchors the whole campaign; 22 I verdicts
 are strong evidence the incumbent survives.
 
+**UPDATE (2026-08-18, the experiment's empirical half is done): all 22
+suspects REFIRE.**  Deep simulation to 6×10¹⁰ steps shows every suspect
+transition firing again past its pass1 "last fire", in geometric BURSTS —
+regular fires within a burst, bursts spaced by gap ratios of ~4–17× — so
+the "regime-change death" population above was an artifact of comparing
+trailing silence to the *within-burst* mean gap.  E.g.
+`1RB0RC_1LC1LA_1RA1LD_0LB0LA` `D1` (bursts ending 384K → 6.2M → 99.4M →
+1.59G → 25.5G, ratio ≈16×) and `1RB1LC_1RC1RB_1RD1LA_1LA0RD` `D1`
+(97.5M → 1.56G → 24.9G).  Consequences: (a) the pass1-derived
+champion-candidate list is EMPTY at the 6×10¹⁰ horizon — no known machine
+currently beats 32,779,478 at transition level, which materially supports
+"the champion survives the convention change"; (b) these machines are
+still not *decided* — sparse-I needs a per-burst recurrence proof
+(Ladder-style value-indexed rules), and that, not wrap-style quiet proofs,
+is what the frontier of the transition-level burn-down looks like; (c) the
+(2,2) precedent (a transition champion that state-level never-QH) still
+cautions that the unswept census bulk, not the holdout list, is where a
+dethroning F transition would hide — which is what the collection walk
+(section 7) exists to sweep.
+
 ### 5.3 Burning it down
 
 Order of attack, cheapest per row first, mirroring the state playbook's
@@ -464,7 +484,42 @@ Design decisions to make at phase 0:
 3. **Silent-instruction convention** — state it in the spec file with the
    same "cannot move the value" note as silent states.
 
-## 7. What we deliberately do NOT redo
+## 7. Built (2026-08-18): the phase-0 walk framework
+
+Phase 0 plus the walk skeleton is no longer a plan — it is in the tree and
+compiles with stock apt Coq 8.18 (`make` builds it; nothing state-level was
+touched, and `census_cache.py --check` still reports MATCH):
+
+| file | what it is |
+|---|---|
+| `theories/BBBT4_Statement.v` | `Instr`, `instr_of`, `FiresAt`, `FiredTr`, `QuietAfterTr`, `QuasiHaltsTr`, `NeverQuasiHaltsTr`, `all_Instr`, and the state-level bridges (`visits_fires`, `never_qh_tr_st`, `qh_st_tr`, `quiet_after_st_tr`) |
+| `theories/CensusTr/TNF_QHTr.v` | `QHBoundTr` + its completion/swap/mirror transport, `halt_le_qhboundtr`, the `DecidedTr`/`NodeDecidedTr` census section, `QHDeciderTr_WF`, and queue soundness (`SearchQueue_WF_Tr`, `..._upd_spec_tr`, `..._upds_spec_tr`).  The SYNTAX machinery — `TNF_Node`, `node_expand`, `QHResult`, `SearchQueue_upd(s)`, `Deferred` — is reused by import, so a transition-level walk runs the state census's own computation |
+| `theories/CensusTr/DecideTr.v` | the cycle tiers at transition level: `cycle_qhboundtr`, `cycle_leaf_check_sound_tr`, `tcycler_leaf_check_sound_tr` (+`_L`) over the REUSED computational checks, `glift_instr` (the one new fact: the guarded window pins the head cell independently of the abstract far tape), and the phase-0 decider `decide_easy_tr` (halt → lookups → cycles → defer) with `decide_easy_tr_WF` |
+| `theories/CensusTr/RunTr.v` | collection-mode wiring: `B_tr = 2000`, empty `D_tr`/`prov_tr`/`provqh_tr`, `decider_tr` (+WF), the symmetrized root (`q_0_tr`, `q_0_tr_WF` with the mirror argument), `q_iter_tr_WF`, the conditional `census_tr_from_empty`, and untrusted serialization (`queue_encs` as decimal `tm_enc` codes) |
+| `theories/CensusTr/WalkTr_Collect.v` | the on-demand collection-walk driver (not in `_CoqProject`): 4096 rounds × 8192 pops, no-op past exhaustion; prints `(front, back)` sizes and the back queue's codes |
+| `tools/censustr/decode_enc.py` | untrusted decoder: walk output → bbchallenge machine text (round-trip verified against `tm_champion`) |
+
+**How to run the collection walk** (the box, like the state census):
+
+```
+make census-tr-collect        # native_compute, census opam switch
+make census-tr-collect-vm     # vm_compute fallback, any coqc
+python3 tools/censustr/decode_enc.py census_probes/censustr_collect.out
+```
+
+Measured in-container (apt coqc, vm_compute): **~1.4 ms/pop**, so the full
+3,995,005-node tree projects to a few hours in ONE vm_compute process —
+and materially less under native on the box.  This walk is far lighter
+than the state census's 385 native core-minutes because the phase-0 stack
+has no n-gram/rank/RepWL tiers; the price is a large back queue.  First
+8,192 pops: 32 front / 1,108 deferred (~13.5%), consistent with the
+state tier census's prediction that the deferral mass is the old
+n-gram-ladder + lookup-tier nodes (~10.7% of the tree, ≈430K nodes
+globally).  That back queue is burn-down list v0; the phase-3 closure-tier
+ports and the wrap/MetaQH sweeps then eat it down to a freezable
+`D_censusTr`.
+
+## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
   the new development builds beside, not on top.

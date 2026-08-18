@@ -2967,3 +2967,8 @@ theories/Closeout/CB_49.v
 theories/Closeout/CB_50.v
 theories/Closeout/CB_51.v
 theories/Closeout/Closeout.v
+
+theories/BBBT4_Statement.v
+theories/CensusTr/TNF_QHTr.v
+theories/CensusTr/DecideTr.v
+theories/CensusTr/RunTr.v
