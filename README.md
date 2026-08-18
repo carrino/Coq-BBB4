@@ -90,12 +90,30 @@ targets back up and re-derive those automatically.
    against the census sources) and yields `bbb4_target` and
    `BBB4_value`.  Trust: the kernel, plus that those `.vo` are honest
    output of the census walk.
-4. **`make census-verify`** (1 h 45 m at 4 jobs on 32 GB; ~3.5 h at
-   2 jobs on 16 GB — 385 core-min, measured 2026-08-09).  Removes that last
-   trust: backs the committed `.vo` up automatically and re-walks the
-   census from source.  The walk is resumable per-unit, so re-walking
-   a *sample* of units and checking they reproduce the committed
-   output is also meaningful.  Trust: the kernel alone.
+4. **`make proof-all`** — **the whole claim from source, one
+   command, 1 h 20 m.**  Base build, then re-derive the census
+   (`census-verify` backs the committed `.vo` up automatically and
+   walks from source), then the same closeout chain and the same
+   `Print Assumptions`.  Nothing committed is trusted; the `Axioms:`
+   block at the end is the entire trust surface.  Trust: the kernel
+   alone.
+
+   Measured end to end 2026-08-12 on 8 physical cores / 31 GB, from
+   `git clean -fdx` with nothing pre-configured: **79 m 38 s**
+   (742 core-min) — a ~40 min base build, a **42 m 36 s** census walk,
+   and the closeout chain.  The walk alone is
+   `make census-verify WALK_JOBS=8`.  Nothing to set up and no `-j` to
+   pass: `tools/census_toolchain.sh` finds a native-capable Coq, or
+   activates the `census` opam switch (`opam env` does not survive a
+   new terminal), or creates that switch — the only step needing your
+   package manager is installing `opam` itself.  It sizes the
+   base build from `nproc` (`BUILD_JOBS`) and the walk from *physical*
+   cores (`WALK_JOBS`) — the walk is memory-bandwidth bound, so SMT
+   threads do not help it.  The walk is resumable per-unit, so
+   re-walking a *sample* and checking it reproduces the committed
+   output is meaningful too.  Needs ~10 GB RAM
+   (`Compute/Census_Theorem.v` runs alone at 6.3 GB) and the census
+   opam switch.
 
 For the extra-careful, `coqchk -o` re-verifies compiled proof terms
 with the standalone checker at any rung.  Full instructions and the
@@ -110,6 +128,24 @@ tooling only — it carries no proof weight).
 make -j8        # the full from-source build: every checker, board and
                 # the closeout, on stock Coq -- no committed binaries
 make proof      # + the census-backed top-level theorem and its report
+```
+
+**Or, to trust nothing but the kernel, one command:**
+
+```sh
+make proof-all  # base build + re-walk the census + the closeout chain
+                # 79 m 38 s measured on 8 cores / 31 GB, from a clean
+                # tree (~40 min build, 42 m 36 s walk).
+                # Needs the census opam switch and >= 10 GB RAM.
+                # Out of the box.  It uses a native-capable coqc if you
+                # have one, otherwise activates the census opam switch,
+                # otherwise CREATES it (opam is user-level -- the only
+                # manual step is installing opam itself).  It also
+                # regenerates Makefile.coq for that toolchain and sizes
+                # both fan-outs (build from nproc, walk from physical
+                # cores).  Override:
+                #   make proof-all BUILD_JOBS=16 WALK_JOBS=8
+                #   make proof-all CENSUS_SWITCH=my-switch
 ```
 
 High `-j` is fine on a big machine: the nine memory-heavy
@@ -128,9 +164,10 @@ with (OCaml 4.14.2, Coq 8.18.0, `coq-native`) and are hash-guarded by
 yourself:
 
 ```sh
-make census-verify   # re-runs the census walk from source (385 core-min:
-                     # ~1h45m at 4 jobs / 32 GB, ~3.5 h at 2 / 16 GB.
-                     # WALK_JOBS is RAM-bound -- docs/VERIFYING.md)
+make proof-all       # everything from source, 79 m 38 s (recommended)
+make census-verify   # just the walk: 42 m 36 s at WALK_JOBS=8 on 8
+                     # physical cores / 31 GB, measured 2026-08-12.
+                     # 303 core-min; RAM no longer binds above ~10 GB.
 ```
 
 [`docs/VERIFYING.md`](docs/VERIFYING.md) walks through every
@@ -164,8 +201,13 @@ verification tier, from "check one machine" to "re-walk the census".
   (`theories/Tests/*_Corruption.v`) that must reject tampered
   certificates.
 * The committed census `.vo` are genuine walk output, hash-guarded
-  against census source edits; `make census-verify` re-derives them
-  from source on demand.
+  against census source edits — and you do not have to take that on
+  faith: **`make proof-all` re-derives them and the whole value theorem
+  from source in 1 h 20 m** on 8 cores / 32 GB (measured end to end,
+  2026-08-12).  That used to be a
+  12-hour proposition and a multi-step procedure; it is now one
+  command, which is why it is rung 4 of the ladder rather than a
+  paragraph in the docs.
 * The partition audit (`tools/closeout/audit.py`) is untrusted Python —
   but with the residue empty it carries no weight for the value
   theorem: `not_skipped_nil` discharges the skip disjunct inside Coq,

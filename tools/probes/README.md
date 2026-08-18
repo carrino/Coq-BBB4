@@ -115,3 +115,52 @@ the four catch-diffs go on four cores.  Each prints
 
 vm_compute is ~3-5x native_compute on this code; treat absolute times
 as upper bounds and ratios as transferable.
+
+## M4 sizing (2026-08-12)
+
+- `ProbeRwDivTime.v` — the diverging/converging split of `close` in
+  TIME rather than pops, per rung, at the shipped fuel 5120.
+- `ProbeRwDivReach.v` — the correction the rest rests on: `rwr` is a
+  parameter of `decide_easy`, so emptying it gives the tier's real cost
+  by subtraction, and the machines it leaves undecided are exactly
+  those that reach the tier.  7 of 40, all caught at the first rung,
+  none diverging — so the residue sample cannot carry M4's premise.
+- `ProbeRwDivSig.v` — is divergence signposted?  Max node size per
+  closure, against status.  (`asz` counts run-length items; RepWL caps
+  repeat counts at T, so item count is the only component that can
+  grow.)
+- `gen_rwdiv_probe.py` / `ProbeRwDivPop.v` — GENERATOR + probe for the
+  population that actually pays a failing rw attempt in the walk:
+  machines caught at a LATER rung, sampled by winning rung from
+  tools/repwl_residue_caught.tsv, whose per-rung counts are exhaustive
+  and supply the census weights.
+- `ProbeRwDivSplit.v` — inside those failing attempts, diverging close
+  against converging-but-not-catching, since only the first is M4's.
+- `ProbeRwDivWalk.v` — the denominator: the real decider on
+  `ProbeTierCost`'s groups, weighted by census tier counts, so the tier
+  share is a ratio of vm seconds from one run rather than a conversion
+  through the native walk.
+- `ProbeRwDivCut2.v` — what a node-size cut at M costs (catches kept
+  per group) and refunds (aborted close against un-aborted).
+
+Note for anyone extending these: `sumf` over a per-machine value near
+the fuel cap builds a ~90,000-deep unary `nat` and overflows the stack.
+Sum the small side (`tpops`), not the large one (`tleft`).
+
+`gen_rwcut_gate.py` is M4's exhaustive gate, and it is the reason the
+cut can be gated at all: the cut is monotone (it can only turn a `Some`
+into a `None`, so a catch can be lost and never gained) and every kept
+catch is tabulated, so the obligation is finite and enumerable rather
+than a sampled diff.
+
+```sh
+python3 tools/probes/gen_rwcut_gate.py /tmp/rwgate 2000
+cd /tmp/rwgate && ls PRwGate_*.v | xargs -P3 -I{} sh -c \
+  'coqc -Q /path/to/theories BBB4 -Q /tmp/rwgate BBB4 {} > {}.out 2>&1'
+grep -ho "= (.*)" PRwGate_*.v.out
+```
+
+Each chunk prints (rows, max node size over the winning closures, how
+many exceed 24, how many exceed 32).  The gate passes iff the third and
+fourth components are 0 everywhere.  Measured 2026-08-12: 25,511 rows,
+census-wide max 20, zero above either.

@@ -3,4 +3,4 @@
 # tools/census_cache.py.  Regenerate with: census_cache.py --update
 # after a GREEN re-walk on stable hardware (make census-verify).
 # closure: 532 .v input files.
-0ebccf90ed0c4836e5565d27586e090b97b701554955b1bd630ce6785059d43b
+21d5501b0738f9a3813434907ffec14689119e75bffca7e9194d1c6e33a27c2a

@@ -15,6 +15,7 @@ Definition rkr : list (nat * nat) := [(3,0);(3,64);(3,256);(3,1024)].
 Definition qhr : list (nat * nat) :=
   [(2,64);(2,256);(2,1024);(3,64);(3,256);(3,1024);(4,64);(4,256);(4,1024)].
 Definition rwr : list (nat * nat * nat) := [(2,2,0);(3,2,0);(4,2,0);(2,3,0)].
+Definition rwcut : nat := 32.   (** Run_Compute.v's [rw_cut_census] *)
 
 Definition pmap0 : DeferredMap := dmap_of probe_lookup.
 Definition emap : DeferredMap := dmap_of [].
@@ -22,7 +23,8 @@ Definition dmap0 : DeferredMap := dmap_of D_census.
 
 Definition hmap0 : HintMap := hmap_of phints_00.
 Definition decider0 : TM -> QHResult :=
-  decide_easy Bc 130 512 200000 512 ngr rkr qhr rwr 5120 pmap0 emap dmap0 hmap0.
+  decide_easy Bc 130 512 200000 512 ngr rkr qhr rwr 5120 rwcut
+              pmap0 emap dmap0 hmap0.
 
 Definition qsuc (q : SearchQueue) : SearchQueue :=
   SearchQueue_upds q decider0 13.

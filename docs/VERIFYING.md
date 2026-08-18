@@ -142,7 +142,24 @@ takes any value your hard limit allows (`ulimit -Hs`), and Coq's own
 hint in that error is the fallback.  Measured 2026-08-11: 8192 KB fails,
 unlimited builds all three lists clean.
 
-**Trusting those 154 `.vo` is a decision.**  To avoid it, re-derive them:
+**Trusting those 154 `.vo` is a decision.**  To avoid it, re-derive them
+— and since 2026-08-12 the whole claim from source is one command:
+
+```bash
+make proof-all            # base build + re-walk + closeout chain, 1 h 20 m
+```
+
+`proof-all` is `make proof` with the census re-derived instead of
+loaded: it runs the base build, then `census-verify`, then the same
+three closeout files and the same `Print Assumptions`.  Nothing in the
+committed cache is trusted, and the `Axioms:` block at the end is the
+entire trust surface.  Measured on 8 physical cores / 31 GB, un-niced:
+**79 m 38 s end to end** (742 core-min), from `git clean -fdx` with
+nothing pre-configured — a ~40 min base build plus the 42 m 36 s walk.
+The base build is the larger half, and unlike the walk it has had one
+round of profiling and no optimisation.
+
+To re-walk on its own, without the closeout chain:
 
 ```bash
 make census-verify
@@ -236,6 +253,35 @@ walk records its own peak RSS and CPU per unit to
 `census_probes/walk-rss.tsv`; `python3 tools/walk_rss_report.py` prints
 the distribution and the jobs it supports, so the second walk on a box
 can be sized from that box's data rather than from this table.
+
+### Measured: 42.6 minutes (2026-08-12)
+
+The walk that settled it: `WALK_JOBS=8`, un-niced, nothing else running,
+8 physical cores / 31 GB.
+
+| | 2026-08-10 | **2026-08-12** |
+|---|---|---|
+| wall | 1 h 19 m 42 s (7 jobs, `nice -n19`, box in use) | **42 m 36 s** (8 jobs, idle) |
+| core-time | 421 min | **303 min** |
+| peak RSS max / p90 / median | 6.30 / 2.76 / 0.51 GB | 6.30 / 2.76 / **0.51** GB |
+
+`Print Assumptions census_decided` printed exactly
+`functional_extensionality_dep`, and the queue closed — which is what
+says the RepWL node-size cut this round added lost no catch.
+
+Two changes account for it, and they are independent.  **The lean walk
+units stopped being three separate `xargs` passes**: `GG_1LC`, `GGH`
+and the lean half of `G_` have no dependency on each other, so the
+three barriers were costing each layer its longest unit instead of its
+share.  Merged into one pool of 136 they pack to `core-min/jobs`
+exactly.  And **the RepWL closure gained a node-size cut** (M4), which
+abandons a closure once it pops a node carrying more than 32 run-length
+items — worth 28% of the walk's core-time.
+
+The memory picture is unchanged: the floor is still ~9 GB, still set by
+`Compute/Census_Theorem.v` running alone at 6.30 GB.  More cores help
+until about 12; past that the pool is bounded by core-time, not by any
+single unit.
 
 ### The WSL2 memory trap — read this before quoting a walk time
 

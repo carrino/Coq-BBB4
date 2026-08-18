@@ -9,7 +9,9 @@ Definition F : nat := 200000.
 Definition R : nat := 512.
 Definition dec (ng rk : list (nat*nat)) (qh : list (nat*nat))
     (rw : list (nat*nat*nat)) : TM -> QHResult :=
-  decide_easy Bc 130 512 F R ng rk qh rw 8192 pmap0 emap dmap0 hmap0.
+(* 999 = cut effectively OFF: this probe predates the M4 node-size
+   cut and its recorded numbers are the uncut pipeline's. *)
+  decide_easy Bc 130 512 F R ng rk qh rw 8192 999 pmap0 emap dmap0 hmap0.
 Definition cnt (d : TM -> QHResult) (l : list TM) : nat :=
   List.length (filter (fun tm => match d tm with R_Unknown => false
                                  | _ => true end) (map (fun x => x) l)).

@@ -24,6 +24,24 @@
 # `make STACK_KB=262144'.
 STACK_KB ?= unlimited
 all: Makefile.coq
+	@# WARN (never fail) when this coqc has no native compiler.  A plain
+	@# `make' is legitimately useful that way -- CI builds on apt Coq and
+	@# the default build is all-source -- but the resulting .vo can
+	@# neither do the census walk nor load alongside the committed census
+	@# .vo, which are OCaml-marshalled by a different compiler.
+	@#
+	@# This exists because `opam env' lives in the shell and a REBOOT
+	@# silently drops you back on /usr/bin/coqc.  Nothing announces it;
+	@# the build merely gets 33% faster (2026-08-12: 40m00s native,
+	@# 26m39s not) and quietly stops being walk-capable.  Discovered
+	@# after ~50 min of builds nobody could use.
+	@if [ "$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')" = "no" ]; then \
+	   echo ">>> NOTE: this coqc has no native compiler ($$(command -v coqc))."; \
+	   echo ">>>   Fine for a plain build.  NOT usable for 'make census-verify'"; \
+	   echo ">>>   or 'make proof' -- the .vo will not load with the committed"; \
+	   echo ">>>   census .vo.  For those: eval \$$(opam env --switch=census)"; \
+	   echo ">>>   then rm -f Makefile.coq && make clean && make."; \
+	 fi
 	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
 	 $(MAKE) -f Makefile.coq
 
@@ -306,6 +324,40 @@ endif
 # must not skip).  Before walking, quarantine any census .vo whose stamp
 # does not match the current input hash.
 _census-prepare:
+	@# The walk is native_compute.  On a tree built with the native
+	@# compiler disabled, `native_cast_no_check' silently falls back to
+	@# VM conversion -- a WARNING, not an error -- and `coqnative' never
+	@# runs at all, so such a walk proves nothing about a native one and
+	@# native-only failures (the coqnative stack overflow on the flat
+	@# data lists, for one) stay structurally invisible.
+	@#
+	@# _CoqProject carries no -native-compiler flag, so Makefile.coq
+	@# inherits it from whichever coq_makefile generated it -- and
+	@# regenerating it by hand outside the census switch bakes in `no'.
+	@# Measured 2026-08-12: the same tree builds in 40m00s with native
+	@# and 26m39s without, and the fast one cannot walk.  Caught by
+	@# reading coqc's flags in top; nothing checked it before.
+	@# Ask the TOOLCHAIN, not Makefile.coq: coq_makefile emits all three
+	@# branches of the COQACTUALNATIVEFLAG conditional, so grepping the
+	@# generated file for `no' matches the unused arm every time.
+	@if [ "$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')" = "no" ]; then \
+	   echo "############################################################"; \
+	   echo "# REFUSING TO WALK: this coqc has no native compiler        "; \
+	   echo "# (coqc -config says COQ_NATIVE_COMPILER_DEFAULT=no).       "; \
+	   echo "# native_cast_no_check would fall back to the VM with only a"; \
+	   echo "# warning, and coqnative would never run.  The .vo produced  "; \
+	   echo "# would certify nothing about a native walk.                 "; \
+	   echo "#                                                            "; \
+	   echo "# You are probably outside the census opam switch:           "; \
+	   echo "#   which coqc     # want ~/.opam/census/bin/coqc, not /usr  "; \
+	   echo "#   eval \$$(opam env --switch=census)                        "; \
+	   echo "#   rm -f Makefile.coq && make                               "; \
+	   echo "#                                                            "; \
+	   echo "# .vo are OCaml-marshalled, so a tree built by apt Coq       "; \
+	   echo "# (4.14.1) cannot be mixed with census .vo (4.14.2) either.  "; \
+	   echo "############################################################"; \
+	   exit 1; \
+	 fi
 	@H=$$(python3 tools/census_cache.py --print-hash); \
 	 S=census_probes/walk-stamp; mkdir -p census_probes; \
 	 if [ ! -f $$S ] || [ "$$(cat $$S)" != "$$H" ]; then \
@@ -322,7 +374,7 @@ _census-prepare:
 .PHONY: _census-prepare
 
 _census-walk: _census-prepare
-	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) for the 139 lean units (auto = min(cores, (free RAM - 2 GB)/$(WALK_RSS_GB) GB); override with WALK_JOBS=N or WALK_RSS_GB=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
+	@echo ">>> walk parallelism: WALK_JOBS=$(WALK_JOBS) for the 136 lean units, ONE pool (auto = min(cores, (free RAM - 2 GB)/$(WALK_RSS_GB) GB); override with WALK_JOBS=N or WALK_RSS_GB=N), GC: OCAMLRUNPARAM=$(WALK_OCAMLRUNPARAM)"
 	@echo ">>> WALK_ASM_JOBS=$(WALK_ASM_JOBS) for the 15 that still Require Run.v (7 Run_Split_<tag> + 8 G_ assemblers, $(WALK_ASM_RSS_GB) GB each)"
 	@if [ -n "$(WALK_MEMFREE)" ] && [ "$(WALK_HAS_PARALLEL)" != "yes" ]; then \
 	   echo ">>> WALK_MEMFREE=$(WALK_MEMFREE) IGNORED: no runnable GNU parallel (apt-get install parallel)."; \
@@ -339,19 +391,128 @@ _census-walk: _census-prepare
 	[ -f theories/Census/Run_Split2.vo ] || $(WALK_COQC) theories/Census/Run_Split2.v
 	@# HEAVY: these seven Require Run.v.  WALK_ASM_JOBS, not WALK_JOBS.
 	ls theories/Census/Run_Split_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_ASM_RUN)
-	ls theories/Census/Compute/GG_1LC_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
-	ls theories/Census/Compute/GGH_*.v | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done | $(WALK_RUN)
-	@# the G_ layer is MIXED: 16 lean walks and 8 heavy assemblers.  Run
-	@# them in two passes so the assemblers do not inherit the lean
-	@# layer's job count -- see WALK_ASM_JOBS above.
-	ls theories/Census/Compute/G_*.v | while read f; do \
-	   if [ ! -f "$${f%.v}.vo" ] && ! $(ASM_PRED) "$$f"; then echo "$$f"; fi; \
-	 done | $(WALK_RUN)
+	@# ONE POOL for all 136 lean walk units.  GG_1LC, GGH and the lean
+	@# half of G_ used to be three separate `ls | xargs' passes, i.e.
+	@# three BARRIERS, and a barrier makes a layer cost its LONGEST unit
+	@# rather than its share of the work: GG_1LC is 96 core-min that fits
+	@# in 12 minutes across 8 jobs, but GG_1LC_0LD alone runs 15.9.
+	@#
+	@# The barriers were never a dependency.  Every lean unit imports
+	@# exactly TNF_QH/Decide/Run_Compute/Run_Compute_Split -- base-build
+	@# modules only: not Run_Split, not Run_Split2, not Run_Split_<tag>,
+	@# and not each other.  The first files that consume a walk result
+	@# are the 8 G_ assemblers, which still run in their own pass below.
+	@#
+	@# Merged, the pool's LPT makespan is core-min/jobs to two decimals
+	@# (measured on the 2026-08-10 walk: 52.2 against a 52.19 perfect
+	@# share), so no unit sets a floor and splitting a heavy one buys
+	@# nothing.  61.8 -> 53.8 min at 8 jobs; see
+	@# `tools/walk_rss_report.py', which models both schedules.
+	@#
+	@# The two populations stay on separate passes: the assemblers need
+	@# Run.v and peak ~2.8 GB, so WALK_ASM_JOBS still bounds them.
+	{ ls theories/Census/Compute/GG_1LC_*.v \
+	     theories/Census/Compute/GGH_*.v; \
+	  ls theories/Census/Compute/G_*.v | while read f; do \
+	     $(ASM_PRED) "$$f" || echo "$$f"; done; } \
+	 | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done \
+	 | $(WALK_RUN)
 	ls theories/Census/Compute/G_*.v | while read f; do \
 	   if [ ! -f "$${f%.v}.vo" ] && $(ASM_PRED) "$$f"; then echo "$$f"; fi; \
 	 done | $(WALK_ASM_RUN)
 	[ -f theories/Census/Compute/Census_Theorem.vo ] || $(WALK_COQC) theories/Census/Compute/Census_Theorem.v
 .PHONY: _census-walk
+
+# `make proof-all' -- the whole claim from source, in one command.
+#
+# `make proof' compiles the closeout chain over the COMMITTED census
+# .vo: base build only, and it asks you to trust 154 files someone
+# else walked.
+# This target is the rung that does not: base build, RE-DERIVE the
+# census (census-verify backs the committed .vo out of the way and
+# walks from source), then the same closeout chain and the same
+# `Print Assumptions'.
+#
+# Measured 2026-08-12 on 8 physical cores (16 threads) / 31 GB:
+#   base build 40 min (BUILD_JOBS=16, from `git clean -fdx')
+#   + walk 42.6 min (WALK_JOBS=8, un-niced)  =  ~83 min end to end.
+# Needs the census opam switch (native_compute) and >= 10 GB RAM --
+# Compute/Census_Theorem.v runs alone at 6.3 GB.  docs/VERIFYING.md.
+#
+# TWO parallelism knobs, which is why this target sizes itself rather
+# than leaving it to `-j':
+#   * the base build takes make's -j (BUILD_JOBS below, default nproc);
+#   * the WALK ignores -j entirely -- WALK_JOBS is its knob, and it
+#     auto-sizes to physical cores (the walk is memory-bandwidth bound,
+#     so SMT threads do not help it; measured 2026-08-12).
+# A bare `make proof-all' would otherwise build serially: ~350-450
+# core-min, i.e. most of a day, for want of a flag.
+#
+# Override either: `make proof-all BUILD_JOBS=8 WALK_JOBS=4'.
+BUILD_JOBS ?= $(shell nproc 2>/dev/null || echo 4)
+
+# CENSUS_SWITCH / CENSUS_OCAML / CENSUS_COQ / CENSUS_BOOTSTRAP:
+# tools/census_toolchain.sh ensures a Coq that can do native_compute and
+# prints the environment that provides it.  It uses a native-capable
+# coqc already on PATH, else activates the opam switch, else CREATES the
+# switch (opam is user-level, so nothing here needs root).  The only
+# manual step left is installing opam itself, which does need a package
+# manager.  `CENSUS_BOOTSTRAP=0' declines to create anything.
+CENSUS_SWITCH ?= census
+
+proof-all:
+	@# `eval "$$(cmd)"' throws the script's exit status away -- eval of an
+	@# empty string succeeds, so a refusal still ran the build.  An
+	@# ASSIGNMENT propagates the substitution's status, so this stops.
+	@_env=$$(tools/census_toolchain.sh) && eval "$$_env" && \
+	 $(MAKE) _proof-all-run
+
+_proof-all-run:
+	@echo "############################################################"
+	@echo "# proof-all: re-deriving the census from source.            "
+	@echo "# The committed .vo are NOT trusted here -- census-verify    "
+	@echo "# backs them up and walks.  ~83 min total on 8 cores / 32 GB,"
+	@echo "# of which the base build below is about half.               "
+	@echo "############################################################"
+	@# Makefile.coq bakes in the generating coq_makefile's native
+	@# setting, so a stale one from another toolchain would pass
+	@# -native-compiler no to every coqc even now that the switch is
+	@# active.  Regenerating costs a second.
+	rm -f Makefile.coq
+	@# TOOLCHAIN STAMP.  Regenerating Makefile.coq fixes the FLAGS; it
+	@# does nothing about a TREE built by another toolchain.  .vo are
+	@# OCaml-marshalled, so 4.14.1 output will not load under 4.14.2 --
+	@# and .vo depend on .v files, not on the makefile, so `make' sees
+	@# valid timestamps and skips the lot.  The base build then "passes"
+	@# in seconds and the walk dies loading it, ~40 min later.
+	@#
+	@# Exactly why census_probes/walk-stamp exists for the walk: committed
+	@# .vo of an older tree satisfied a bare existence check.  Same shape,
+	@# one level down.
+	@S=.toolchain-stamp; \
+	 H="$$(coqc --version 2>/dev/null | tr -d '\n')|$$(coqc -config 2>/dev/null | sed -n 's/^COQ_NATIVE_COMPILER_DEFAULT=//p')"; \
+	 if [ -f "$$S" ] && [ "$$(cat $$S)" != "$$H" ]; then \
+	   echo ">>> this tree was built by a DIFFERENT toolchain:"; \
+	   echo ">>>   built with: $$(cat $$S)"; \
+	   echo ">>>   now using : $$H"; \
+	   echo ">>> its .vo cannot be loaded or extended -- running make clean."; \
+	   $(MAKE) clean >/dev/null; \
+	   coq_makefile -f _CoqProject -o Makefile.coq; \
+	 fi; \
+	 echo "$$H" > "$$S"
+	$(MAKE) -j$(BUILD_JOBS) all
+	$(MAKE) census-verify
+	coqc -Q theories BBB4 theories/Closeout/CloseoutFinal.v
+	coqc -Q theories BBB4 theories/Closeout/BBB4_Theorem.v
+	coqc -Q theories BBB4 theories/Closeout/BBB4_Value.v
+	@python3 tools/proof_report.py
+	@echo "------------------------------------------------------------"
+	@echo "proof-all COMPLETE.  The 'Trust tier' line in the report above"
+	@echo "reads the walk-stamp, so it states which rung THIS build stood"
+	@echo "on -- believe it rather than this banner."
+	@echo "------------------------------------------------------------"
+.PHONY: _proof-all-run
+.PHONY: proof-all
 
 # Guarded census: skip the walk when the committed .vo already certify this
 # tree (hash matches + all census .vo present); otherwise WARN and walk.

@@ -2147,6 +2147,463 @@ the function, ~2% of the walk, 21-file blast radius) -- the last one
 worth riding along the next time a walk is owed anyway, not worth
 owing one for.
 
+## M4 sized (2026-08-12): the premise was measured on the wrong
+## population, and the lever survives anyway
+
+M4 was carried into this round as "89% of the tier's closure pops
+diverge to the cap and return no verdict".  That number is real and it
+does not describe the walk.  `ProbeRwFuelRungs` computed it by forcing
+the rw ladder onto all 40 machines of the residue sample.  In the
+shipped pipeline, `ProbeRwDivReach` measures that **7 of those 40 reach
+`try_rw` at all** -- the other 33 are decided by cheaper tiers -- and
+all 7 are caught at the first rung with **zero** diverging closures.
+`decide_easy` with the rw rungs emptied decides 33/40, reproducing
+`ProbeResBurn` exactly.
+
+The structural reason the forced population cannot be the walk's:
+`try_rw` is the LAST tier in `try_ladder`, so a machine that reaches it
+and is caught by no rung is `R_Unknown` -- and the census closes.
+Anything the ladder cannot decide is in a lookup table, and the lookups
+run FIRST.  So in the walk every machine reaching the tier is caught by
+it, and the only failing rw attempts anyone pays are the earlier rungs
+of machines caught at a later one.
+
+`tools/repwl_residue_caught.tsv` tabulates exactly that, exhaustively:
+
+| winning rung | catches | failing attempts it pays |
+|---|---|---|
+| (2,2,0) | 21,727 | none |
+| (3,2,0) | 2,221 | (2,2,0) |
+| (4,2,0) | 980 | (2,2,0), (3,2,0) |
+| (2,3,0) | 583 | (2,2,0), (3,2,0), (4,2,0) |
+
+**3,784 of 25,511 rw catches -- 14.8% -- pay a failing attempt at all.**
+
+### What that population actually costs
+
+`tools/probes/gen_rwdiv_probe.py` samples 30 machines per winning rung
+from the tsv; `ProbeRwDivPop` / `ProbeRwDivSplit` time them.  All 120
+sampled machines are caught at the rung the sweep recorded, which is
+the probe's calibration against the tier/sweep mirror.  Census-weighted
+by the exhaustive counts above (per-row arithmetic written out: time /
+30 = per machine, x catches = the column):
+
+| winning rung | rw ladder /machine | diverging close /machine | ladder total | diverging total |
+|---|---|---|---|---|
+| (2,2,0) | 0.056 s | 0 | 1,226 s | 0 |
+| (3,2,0) | 1.002 s | 0.789 s | 2,224 s | 1,752 s |
+| (4,2,0) | 2.803 s | 2.556 s | 2,747 s | 2,505 s |
+| (2,3,0) | 3.336 s | 1.383 s | 1,945 s | 806 s |
+| **total** | | | **8,142 s** | **5,063 s** |
+
+So the disproportion is real but it is not the one the 89% named:
+**85% of rw catches cost 15% of the tier; the 14.8% that miss the first
+rung cost 85% of it**, and **62% of the whole tier is closures that
+diverge**.  Splitting the failing attempts by outcome
+(`ProbeRwDivSplit`) shows the diverging half is essentially all of it --
+23.666 s against 0.091 s, 76.683 against 0.078, 41.474 against 0.862 --
+because a converging-but-not-catching attempt is cheap and a diverging
+one burns the cap.
+
+### The denominator, measured rather than converted
+
+`ProbeRwDivWalk` times the real decider on `ProbeTierCost`'s groups and
+weights by the census tier counts, so the tier share is a ratio of vm
+seconds taken in one run -- no 2.53x vm/native conversion, which spread
+the answer by 2x:
+
+| tier | census nodes | per machine | vm-s |
+|---|---|---|---|
+| T | 2,282,976 | 0.625 ms | 1,427 |
+| C | 1,029,749 | 0.525 ms | 541 |
+| H | 249,692 | ~0 | ~0 |
+| N (flat mean of the four rungs) | 200,064 | 15.0 ms | 3,004 |
+| residue, ladder-decided | 209,000 | 181.6 ms | 37,944 |
+| deferred (lookup hit) | 23,523 | 0.06 ms | ~0 |
+| **walk** | | | **42,917** |
+
+Residue lands at 88.4% against the 93.7% this document already carries
+-- close enough to be a consistency check rather than a new claim.  The
+N row is the crudest input (a flat mean over N2/N3/N4/N6 rather than the
+census rung mix); it is the row to sharpen if M4's share ever needs to
+be defended to better than a point or two.
+
+**The rw tier is 19.0% of the walk and diverging closures are 11.8%.**
+
+### The detector: node size, and it fires early
+
+RepWL caps an item's repeat count at T, so counts cannot run away; the
+number of run-length items can.  `ProbeRwDivSig` measures the max node
+size over each closure, and `ProbeRwDivCut2` measures what a cut at M
+costs and refunds on the right population.
+
+| M | catches kept, per group (30 each) |
+|---|---|
+| 12 | 30 / 29 / **1** / 30 |
+| 16 | 30 / 30 / **29** / 30 |
+| **24** | **30 / 30 / 30 / 30** |
+
+The max node size over a WINNING closure is 10 / 14 / **18** / 12 by
+group, so 12 -- the figure the 40-machine sample suggested -- would have
+cost 29 of 30 catches at (4,2,0).  At **M = 24** no sampled catch is
+lost, with 33% headroom over the largest winning closure seen.
+
+And it fires early enough to matter.  Diverging closes, same machines,
+un-aborted against cut at 24:
+
+| group | un-aborted | cut at 24 | refund |
+|---|---|---|---|
+| (3,2,0)'s failing (2,2,0) | 23.666 s | 0.208 s | 99.1% |
+| (4,2,0)'s two failing rungs | 76.683 s | 1.187 s | 98.5% |
+| (2,3,0)'s three failing rungs | 41.474 s | 1.537 s | 96.3% |
+
+The time refund beats the pop refund (74-96%) for the reason the cut
+exists: it fires before the nodes get big, so the pops it skips are the
+expensive ones.
+
+### The number, and what it does to the goal
+
+Census-weighted, the cut removes ~4,950 of 42,917 vm-s (M = 32; see
+the gate below, which moved the threshold from the 24 the sample
+suggested):
+
+**11.5% of the walk -- 421 core-min -> ~372.**
+
+| schedule at 8 jobs | today | with M4 |
+|---|---|---|
+| as walked (three lean barriers) | 61.8 min | 54.6 min |
+| lean layers pooled | 53.8 min | **47.6 min** |
+
+At 47.6 the walk can absorb **26%** of real-vs-model overhead and stay
+under the hour, against the 19% measured at 7 jobs under `nice -n19` on
+a machine in use.  That is the first configuration in this document
+where the goal closes without assuming the overhead away.
+
+### GATED EXHAUSTIVELY, and the threshold moved
+
+`tools/probes/gen_rwcut_gate.py` does the gate the monotonicity buys:
+for each of the **25,511** rows of `tools/repwl_residue_caught.tsv`,
+recompute the max node size over THAT row's winning closure.  Nothing
+else can lose a catch -- a failing earlier rung aborting early returns
+no catch either way, and rungs are independent attempts -- so this is
+the whole obligation, exhaustively, not a `gen_rwdiff.sh` sample.
+Machines go through `row_to_tm` so each is one line; 13 chunks, ~22 s
+each:
+
+| | rows | max node size | > 24 | > 32 |
+|---|---|---|---|---|
+| 13 chunks, all of them | **25,511** | **20** | **0** | **0** |
+
+Per chunk the maxima run 15-20, and the census-wide maximum is **20**
+against the 18 the 120-machine sample showed -- close, and not close
+enough to have shipped on.  M = 12, which the FIRST sample suggested,
+would have cost 29 of 30 catches at (4,2,0); the sample sizes were the
+whole difference, which is why this gate is exhaustive.
+
+So the shipped cut is **M = 32**, not 24: larger M is the safer
+direction (it aborts less), 32 is 60% headroom over the gated maximum
+against 24's 20%, and the fuel cut set the precedent -- 4,608 gated,
+5,120 shipped a fortiori.  Measured, the extra headroom is nearly free:
+
+| | M = 24 | M = 32 | un-aborted |
+|---|---|---|---|
+| (3,2,0)'s failing (2,2,0) | 0.208 s | 0.290 s | 23.666 s |
+| (4,2,0)'s two failing rungs | 1.187 s | 1.818 s | 76.683 s |
+| (2,3,0)'s three failing rungs | 1.537 s | 1.517 s | 41.474 s |
+| catches kept, per group | 30/30/30/30 | 30/30/30/30 | -- |
+
+Census-weighted, diverging close goes **5,063 -> 110 vm-s**:
+
+**11.5% of the walk at M = 32, against 11.6% at M = 24** -- one tenth
+of a point for triple the margin.
+
+| schedule at 8 jobs | today | with M4 |
+|---|---|---|
+| as walked (three lean barriers) | 61.8 min | 54.7 min |
+| lean layers pooled | 53.8 min | **47.6 min** |
+
+### What is NOT settled, stated rather than buried
+- Every number here is `vm_compute` on a 4-core container. They are
+  ratios taken within single runs, which is what makes them
+  transferable; no absolute here belongs in a native claim.
+- Where the cut lands in the code is not decided. `close` is
+  `Closure.v`'s generic engine and 21 files depend on that file; a
+  RepWL-local variant may be the smaller blast radius. The soundness
+  argument looks identical to the fuel cut's -- the pool is untrusted
+  and `edges_of` re-derives closedness, so a truncated pool can only
+  make the check fail -- but that is a pattern match, not a proof, and
+  it needs checking rather than assuming.
+- This is a census-input change, so it needs a walk. That walk is
+  already owed.
+
+## MEASURED: 42.6 minutes (2026-08-12)
+
+One walk, `WALK_JOBS=8`, un-niced, idle box, 8 physical cores / 31 GB.
+It validated the M4 cut, the barrier merge and three knobs that had
+never been exercised, and it produced the number the whole arc exists
+to produce.
+
+```
+Axioms:
+FunctionalExtensionality.functional_extensionality_dep
+```
+
+**The queue closed and the axiom footprint is unchanged, so no catch was
+lost** -- the only way the node-size cut could have failed at census
+scale, and the only thing the exhaustive gate could not prove on its
+own.
+
+| | before | after |
+|---|---|---|
+| **wall, 8 jobs** | 79.7 min (7 jobs, `nice -n19`, box in use) | **42.6 min** |
+| core-time | 421.0 | **303.2** |
+| peak RSS, GGH / GG_1LC | 0.60 / 0.61 GB | **0.51 / 0.51 GB** |
+| longest unit | 18.0 min | **14.1 min** |
+| pool floor at 8 jobs | max(52.2, 18.0) | max(**37.3**, 14.1) |
+
+### The prediction was wrong by 2.4x, favourably
+
+M4 was sized at **11.5%** of the walk.  It delivered **28.0%** -- 117.8
+core-min against the 48.4 predicted.  Recording the cause rather than
+the number alone, because this is the third time this document has
+mis-projected and the second time in the favourable direction:
+
+- The sizing was `vm_compute`, single-threaded, on a 4-core container.
+  The vm/native ratio is not uniform across code, so a slice's vm share
+  is not its native share -- the same class of error as applying a
+  vm->native factor to the assemblers, which this document already
+  recorded.
+- It also cannot see contention.  Removing ~89% of the closure pops
+  removes the allocation behind them, and at 8 concurrent jobs that
+  relieves memory bandwidth for *every* unit, not just the ones that
+  skipped work.  This document measured that effect in the other
+  direction in August ("4 workers x 6.8 GB of allocation churn saturate
+  memory bandwidth, inflating every unit"); the RSS drop above is it
+  running in reverse.
+
+The saving is even across the two big layers -- GGH -29.8%, GG_1LC
+-27.7% -- which is what a residue-spread saving should look like.
+
+### The model's optimism was mostly `nice`, and now it is measured
+
+The open question this walk was run to settle: the LPT model predicted
+66.9 min at 7 jobs against an actual 79.7, i.e. **19% optimistic**, and
+nobody knew how much of that was `nice -n19` plus the machine being in
+use rather than overhead a cloner would also pay.
+
+| | model | actual | optimism |
+|---|---|---|---|
+| 7 jobs, `nice -n19`, box in use | 66.9 | 79.7 | 19% |
+| **8 jobs, un-niced, idle** | **39.1** | **42.6** | **9.0%** |
+
+So roughly half of it was the nice level and the load.  **The model is
+9% optimistic on a clean run** -- that is the figure to project with
+from here, and it is now measured at the level of the claim rather than
+assumed.
+
+### What each half bought
+
+Both changes were in one walk, so they are separated by the model over
+the measured per-unit CPU rather than by two walks:
+
+| at 8 jobs | three barriers | one pool |
+|---|---|---|
+| 421 core-min (before M4) | 61.8 | 53.8 |
+| **303 core-min (after M4)** | 45.8 | **39.1** |
+
+The merge is worth 8.0 min on the old profile and 6.7 on the new; M4 is
+worth 16.0 min layered and 14.7 pooled.  Neither subsumes the other:
+the merge removes barriers, M4 removes core-time.  Against the
+pre-round tree the same model at 8 jobs clean would be 61.8 x 1.090 =
+**67.4 min** -- a counterfactual, not a measurement, but it puts the
+round at "8 minutes over" to "17 minutes under".
+
+### The goal, stated exactly
+
+**The walk is 42.6 minutes on 8 cores / 31 GB.**  Under the hour, with
+17 minutes of margin, un-niced, on hardware a person actually has.
+
+### CORRECTION, same day: the base build is 40 minutes, not 20
+
+The paragraph this replaces put clone -> proof at ~63 min by adding the
+walk to a **19m51s base build measured 2026-08-05**.  Measured instead,
+on the same box, `make -j16` from `git clean -fdx`:
+
+    real 40m00s    user 457m03s    sys 39m55s
+
+So the arithmetic is:
+
+| | wall | core-min |
+|---|---|---|
+| base build (`make -j16`) | **40.0 min** | 457 + 40 sys |
+| census walk (`WALK_JOBS=8`) | 42.6 min | 303 |
+| `make proof-all`, end to end | **~83 min** | |
+| `make proof` over the committed `.vo` | **~42 min** | |
+
+Two things follow, and the second is the useful one.
+
+**The under-an-hour goal splits in two, and the answer differs.** The
+trusted path -- base build plus the closeout chain over the committed
+`.vo` -- is ~42 min and clears the hour.  Re-deriving everything is ~83
+and does not.  Quoting one number for both was the error in the
+paragraph above.
+
+**The base build is now the bigger half, and it has never been
+profiled.** 457 core-min against the walk's 303.  Six rounds of this
+document went at the walk; nobody has looked at the 2,786-file build
+once.  That is exactly where the walk stood before `walk-rss.tsv`
+existed.
+
+### And a cost of M1 that was never measured
+
+Why 40 and not 20?  The tree grew, but there is a concrete, dated
+contributor: `Census/Proven_List.v`, `ProvenQH_List.v` and
+`RerootQH_List.v` were added **2026-08-10 -- by M1**, five days after
+the 19m51s measurement.  They are 6.1 MB of flat literals, and under
+the census switch each one is `coqnative`-translated and then
+`ocamlopt`-compiled.  Caught live in `top` during this build:
+
+    ocamlopt.opt -shared ... NBBB4_Census_Proven_List.cmxs     5:08 CPU  2.7 GB
+    ocamlopt.opt -shared ... NBBB4_Census_ProvenQH_List.cmxs   3:19 CPU  3.0 GB
+
+**8.5 core-min of `ocamlopt` in two files.**  M1 was measured on walk
+peak RSS (18x) and walk core-time, and it delivered both; what nobody
+measured is what it did to the base build, and it moved cost there.
+This is the same trap as every other one in this document -- a change
+evaluated at one level and not at the level where the goal is stated --
+and it is worth recording as M1's true cost rather than leaving the
+18x unqualified.  The `coqnative` stack overflow those lists caused
+(above) was the first symptom that big flat data is hard on the OCaml
+compiler; this is the second, and it is not an error, just a bill.
+
+Whether they need native compilation at all is open: they are data,
+never `native_compute`d as a function.  Unmeasured, and the first thing
+a base-build round should ask.
+
+## The base build, profiled for the first time (2026-08-12)
+
+**Caveat added after the fact, and it applies to this whole section:**
+the profile below was taken on a tree built by **apt Coq**
+(`/usr/bin/coqc`, OCaml 4.14.1, `COQ_NATIVE_COMPILER_DEFAULT=no`) --
+i.e. with no native compilation at all.  It is a real profile of a real
+build, and it is not the profile of the build a verifier runs: that one
+also pays ~107 core-min of `coqnative` + `ocamlopt`, which is 33% more
+CPU and is distributed differently across families.  Read the family
+shares and the `TCyc_05` finding as the VM half only.
+
+Six rounds went at the census walk.  The base build -- 2,780 files, the
+other half of a from-scratch proof -- had never been measured.
+`coq_makefile` ships the tool (`make -f Makefile.coq -j16 pretty-timed`,
+then parse `real:/user:/mem:` out of the log; `print-pretty-timed`
+itself is broken under this opam switch, an empty `COQLIB` prefix).
+
+    real 26m41s   user 348m45s   sys 22m09s     -j16, from `git clean -fdx`
+
+| | files | user-min | share |
+|---|---|---|---|
+| `Machines/Counters` | **1,921** | 45.0 | **13%** |
+| `Machines/*` (RepWL_Batch, RWL8, IRules_Batch) | 82 | 70.3 | 20% |
+| `Machines/Bulk` | 68 | 59.2 | 17% |
+| `Machines/IRulesQHStage` | 22 | 41.5 | 12% |
+| `Machines/ListCStage` | 16 | 37.6 | 11% |
+| `Census` | 106 | 18.4 | 5% |
+
+**The shape is the census walk's, one level up.** 1,921 Counters files
+are 69% of the tree and 13% of the CPU; the top 15 files of 2,780 are
+26% of it.
+
+### One file is 78% of the build's wall
+
+    theories/Machines/Bulk/TCyc_05.vo    1249.2 s = 20.8 min, 2.75 GB
+
+against a 26.7 min build and a 54 s mean for its own family -- a **23x
+outlier inside a generated family** (`tools/gen_bulk_certs.py`), which
+makes rebalancing a generator parameter rather than a proof problem.
+
+**And it is not the lever**, which is the whole point of measuring
+instead of pattern-matching.  The build is **87% utilised** on 16
+threads, so its floor is
+
+    max(CPU 370/16 = 23.1 min, longest file 20.8 min) = 23.1 min
+
+-- the CPU term, not the file.  Splitting `TCyc_05` recovers the 3.5
+min of scheduling slack and no more, and the build then sits *on* its
+CPU floor with the longest file 2.3 min underneath it.  Worth doing as
+insurance before any CPU win (the moment CPU falls, that file binds
+immediately), worthless as a speed-up on its own.
+
+Two things this falsifies, both mine, both from projecting off the
+wrong measurement:
+
+- **"Batch many files per compiler invocation."** `coqc` refuses more
+  than one file, and it does not matter: measured, the process floor is
+  0.10 s and a file's own `Require` set adds ~0.01 s on top.  Batching
+  the whole Counters family would recover ~3 core-min of 370.  The
+  intuition is sound for C; Coq's startup is two orders of magnitude
+  smaller, and this tree's per-file `Require` sets are small.
+- **"8.9 minutes of idle machine."**  That came from the 40-minute run
+  (78% utilised).  This run is 87%, and the slack is 3.5 min.
+
+### RESOLVED: it was two different builds, not one noisy one
+
+The 33% spread below is fully explained, and not by thermals or page
+cache.  `coqc`'s own flags, read out of `top` during a third run:
+
+    -native-compiler no          (runs 2 and 3)
+    -native-compiler ondemand    (run 1, with coqnative + ocamlopt.opt
+                                  processes alongside)
+
+| | wall | user | sys | |
+|---|---|---|---|---|
+| run 1, `ondemand` | 40m00s | 457 | 40 | **walk-capable** |
+| run 2, `no` | 26m41s | 349 | 22 | |
+| run 3, `no` | **26m39s** | **351** | 20 | agrees with run 2 to 2 s |
+
+The build is **reproducible to two seconds**; the two configurations
+are 13.3 min and ~107 core-min apart.  So:
+
+- **Native compilation is 33% of the base build** -- 13.3 min of wall,
+  107 core-min, previously unmeasured and unattributed.
+- **From-scratch, walk-capable, is 40.0 + 42.6 = 82.6 min.**  The 69
+  figure came from timing a build that cannot do the walk.
+
+`_CoqProject` carries no `-native-compiler` flag, so `Makefile.coq`
+inherits it from whichever `coq_makefile` generated it.  `make`
+regenerates it itself and gets this right; regenerating by hand outside
+the census switch bakes in `no`, silently.  A tree in that state builds
+faster, looks fine, and would produce a walk that certifies nothing --
+exactly the trap this document already documents for apt Coq, arrived
+at from a different direction.  `_census-prepare` now refuses to walk
+when it sees that flag.
+
+### The old reading, kept because the correction is the point
+
+Two clean `-j16` builds of the same tree:
+
+    run 1   real 40m00s   user 457m   sys 40m
+    run 2   real 26m41s   user 349m   sys 22m
+
+**33% apart on wall and 24% on CPU**, and the *faster* run is the one
+carrying timing instrumentation.  Warm page cache and thermal
+behaviour over a 40-minute all-core load are the obvious suspects and
+neither is confirmed.  Until it is, from-scratch clone -> proof is
+"69 or 83 minutes" and no tighter, which is not a number to publish.
+
+### What it means for the goal
+
+| | measured | floor |
+|---|---|---|
+| base build, 16 threads | 26.7 (or 40.0) | **23.1** |
+| census walk, 8 cores, bandwidth-bound | 42.6 | **41.3** |
+| from-scratch, both at floor | | **64.4** |
+
+`make proof` over the committed `.vo` clears the hour comfortably.
+From-scratch does not, and **no amount of scheduling gets it there**:
+at both floors it is 64.4 min.  Under an hour needs walk core-time
+down ~15%; **under 45 needs it halved, 303 -> ~156 core-min**, which is
+an M4-scale round with no candidate yet sized to that (`rank_procedure`
+in the qhb lex tier is the only nominee and it is unmeasured).
+
 ## Next steps, in Amdahl order (2026-08-07, superseded)
 
 Rows 2-4 are "What is left in the rw tier" above, re-ordered by

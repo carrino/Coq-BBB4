@@ -138,6 +138,32 @@ Definition rw_rungs_census : list (nat * nat * nat) :=
     quantifies over it. *)
 Definition rw_fuel_census : nat := 5120.
 
+(** MEASURED + GATED EXHAUSTIVELY (2026-08-12): the RepWL closure's
+    node-size cut.  See RepWLSearch.rw_succs_cut for what it is and
+    docs/CENSUS_RUNTIME.md ("M4 sized") for the measurement.
+
+    Closures that diverge to the fuel cap and return no verdict are
+    11.8% of the whole census walk, and they are separated from the ones
+    that catch by node SIZE -- [rw_succs] caps repeat counts at [T], so
+    item count is the only component that can run away.
+
+    Like the fuel cut this changes WHICH machines are caught, and a lost
+    catch here is not a coverage regression but [R_Unknown], i.e. the
+    walk does not close.  It is gated the same way, and exhaustively:
+    the cut is monotone ([rw_tier_cut_le] -- it can only turn a [Some]
+    into a [None]), and every kept catch is tabulated, so
+    tools/probes/gen_rwcut_gate.py recomputes the max node size of ALL
+    25,511 rows of tools/repwl_residue_caught.tsv.  Census-wide maximum:
+    **20**.  Nothing else can lose a catch: a failing earlier rung
+    aborting early returns no catch either way, and rungs are
+    independent attempts.
+
+    32 ships rather than 24 for the same reason 5120 shipped over a
+    gated 4608 -- a larger cut aborts LESS, so it is the safe direction,
+    and 60% headroom costs one tenth of a point of the saving (11.5%
+    against 11.6%). *)
+Definition rw_cut_census : nat := 32.
+
 (** the proven-machines map, built once from the DATA copy of
     [proven_list] (mirrors how [dmap_of D_census] is applied inside
     [decider]); a hit is decided R_NeverQH by [proven_all]'s
@@ -164,7 +190,8 @@ Definition hmap_census : HintMap := hmap_of [].
 Definition decider : QHDecider :=
   decide_easy B_census 130 512 200000 512 ng_rungs_census
               rank_rungs_census qhb_rungs_census rw_rungs_census
-              rw_fuel_census pmap qhmap (dmap_of D_census) hmap_census.
+              rw_fuel_census rw_cut_census pmap qhmap (dmap_of D_census)
+              hmap_census.
 
 (** ** The root and its symmetrized first level *)
 
