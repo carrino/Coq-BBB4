@@ -1,0 +1,391 @@
+# Coq-BBB4: scoping the instruction-level (transition-level) BBB(4) proof
+
+Status: scoping document, 2026-08-18.  Nothing here is built yet; this maps
+the work of re-proving the BBB(4) value under the **instruction-level**
+("transition-level") beeping/quasihalting convention the community is moving
+to, on top of the finished state-level development (`BBB4_value`,
+`docs/CLAIMS.md`).  Written from a full survey of `theories/` plus the BBB
+harness repo (`carrino/bbb`); every load-bearing claim below carries a
+file:line.
+
+---
+
+## 0. TL;DR
+
+* **The convention.**  An *instruction* is a `(state, read symbol)` pair — 8
+  per (4,2) machine.  Instruction `(q,a)` *fires* at configuration index `n`
+  when the machine is in state `q` reading `a` after `n` steps.  A machine
+  quasihalts iff some instruction fires at least once but only finitely
+  often; its score is the last firing step.  This is the BBB harness's
+  native bookkeeping already (`carrino/bbb` README "Definitions",
+  "Transition-level bookkeeping").
+* **Direction of the delta.**  Instruction-QH is *weaker* to satisfy
+  (state-QH ⇒ instruction-QH), so never-quasihalting is a *stronger*
+  obligation (`NeverQuasiHaltsInstr ⇒ NeverQuasiHaltsSt`).  Consequently
+  **BBB_instr(4) ≥ BBB_state(4) = 32,779,478**, machines flip from the
+  "never" side to the "score" side, and the value itself is today
+  **unknown** — plausibly far larger (§2).
+* **Reuse is very good.**  The machine model needs zero changes
+  (`ExecState` already carries the head symbol; `trans_of` exists at
+  `Checkers/IRules/Engine.v:48`).  The TNF tree, queue, swap/mirror
+  transport, table/hash plumbing, and the closeout algebra are
+  convention-blind.  Cyclers — **83% of the census's 3,995,005 nodes** —
+  strengthen essentially for free.  The IRules engine is *already
+  instruction-typed internally*.  The one genuinely non-porting route is
+  `ReachSt` (127 machines).
+* **The real work**, in rough order of size: (1) an upstream harness
+  campaign to find the instruction-level champion and value — the spec
+  cannot even be written without it; (2) per-instruction liveness
+  certificates for the closure family (existing rank/lex certs must be
+  re-searched, and some machines will genuinely fail — they are new
+  quasihalters needing new exact-score proofs); (3) a fresh census walk
+  with a retyped decider contract; (4) a fresh burn-down of a new, larger
+  deferred set.
+* **Yes, this is "a new census walk and burn-down like the state one"** —
+  but starting with a mature toolchain, a decided reference answer for the
+  state projection of every machine, and ~80% of the checker layer porting
+  mechanically.
+
+---
+
+## 1. The convention delta, precisely
+
+### 1.1 New definitions (`BBB4_Statement.v` additions, ~120 lines)
+
+The model (`TM`, `Tape`, `step`, `stepn`, `InitES`) is untouched.  Add,
+alongside the state-level definitions (never replacing them — the state
+theorem stays):
+
+```coq
+Definition Instr : Set := (St * Sym)%type.            (* = IRules.Engine.Tr *)
+Definition instr_of (c : ExecState) : Instr := (fst c, t_head (snd c)).
+
+Definition FiresAt (tm : TM) (t : Instr) (n : nat) : Prop :=
+  exists c, stepn tm n InitES = Some c /\ instr_of c = t.
+Definition Fired (tm : TM) (t : Instr) : Prop := exists n, FiresAt tm t n.
+
+Definition QuasiHaltsTr tm := exists t, Fired tm t /\ exists N, forall n, N <= n -> ~ FiresAt tm t n.
+Definition NeverQuasiHaltsTr tm :=
+  forall t, Fired tm t -> forall N, exists n, N <= n /\ FiresAt tm t n.
+Definition QuietAfterTr (tm : TM) (t : Instr) (s : nat) : Prop :=
+  FiresAt tm t s /\ forall n, s < n -> ~ FiresAt tm t n.
+```
+
+Bridge lemmas, all a few lines: `VisitsAt tm q n <-> exists a, FiresAt tm
+(q,a) n`; `NeverQuasiHaltsTr -> NeverQuasiHaltsSt`; `QuasiHaltsSt ->
+QuasiHaltsTr`; `QuietAfter tm q s -> exists a s', s' <= s /\ QuietAfterTr tm
+(q,a) s'` per fired instruction of a quiet state.
+
+Conventions to pin (mirror the state-level treatment):
+
+* **Silent instructions.**  A never-fired instruction does not witness
+  quasihalting (the `Fired` conjunct) — exactly the harness's `N` class and
+  the same "cannot affect any BBB value" argument as silent states
+  (`BBB4_Spec.v:35-39`).  Note there are far more of these: every undefined
+  slot, and defined slots the run never reaches.
+* **Halting machines** quasihalt trivially with score ≤ halting step, as
+  before; BB(4) = 107 is noise at this scale.
+* **Scores**: last fire at index `s` ⇒ score `S s`, steps numbered 1,2,… —
+  identical arithmetic to `QuietAfter`/`Attains`.
+
+The bound predicate and spec retype by swapping the quantifier:
+
+```coq
+Definition QHBoundTr (B : nat) (tm : TM) : Prop :=
+  forall t s, QuietAfterTr tm t s -> S s <= B.
+Definition AttainsTr (tm : TM) (B : nat) : Prop :=
+  exists t s, QuietAfterTr tm t s /\ S s = B.
+```
+
+`BBBT4_is`, uniqueness, `qhbound_mono`-style algebra: verbatim ports.
+
+### 1.2 Which side gets harder, which easier
+
+| verdict | state level | instruction level |
+|---|---|---|
+| "never quasihalts" | every visited state recurs (4 slots) | every fired instruction recurs (8 slots) — **strictly stronger**; false for some current `nqh` machines |
+| "quasihalts, score ≤ B" | every quiet state's last visit ≤ B | every quiet instruction's last fire ≤ B — more slots to bound, but quiet witnesses are **easier to find** (more instructions than states fall quiet) |
+| exact score | last visit of one state | last fire of one instruction — same two-run shape |
+
+The deep fact driving the hard part (from the checker survey): for a target
+`q`, the **`(q,a)`-avoiding subgraph strictly contains the `q`-avoiding
+subgraph**.  So no existing rank/lex/measure liveness certificate implies
+its instruction-level counterpart: the Coq *statements* strengthen
+mechanically, the *certificate searches* do not, and for some machines no
+instruction-level certificate exists at all — because the machine genuinely
+instruction-quasihalts.  `Checkers/IRules/Meta.v:24-27` already concedes
+this in writing: "All 428 v1 irules certificates denote machines that never
+quasihalt at state level, **including the transition-level-QH ones: a state
+with one finite and one infinite transition still recurs**."
+
+---
+
+## 2. The blocker this repo does not control: the value is unknown
+
+The state-level pipeline consumed a champion and value found by the harness.
+Instruction level has no analogue yet:
+
+* The harness (`carrino/bbb`) tracks per-transition fire counts, last-fire
+  steps, and N/F/I classes natively, and its cycle certificates fix every
+  transition's class — but its non-cycler never-QH certificate families
+  (`neverqh_rank`, `neverqh_rwlrank`, n-gram: `docs/neverqh.md`) prove
+  per-STATE liveness only.  Same gap as here.
+* `results/champhunt/cull.csv` (432 machines, all **undecided at 10^10
+  steps**) shows what the new frontier looks like: transitions with fire
+  counts like 131,071 = 2^17−1 and last observed fire ≈ **5.7 × 10^9** —
+  counter machines whose rare transitions fire at exponentially sparse
+  indices.  Distinguishing "fires at ~2^k forever" (class I) from "went
+  quiet at 5.7e9" (class F, i.e. a score candidate in the billions) is
+  exactly the value-indexed recurrence problem the Ladder machinery solves,
+  now needed per transition.  **The instruction-level BBB(4) may be orders
+  of magnitude beyond 32,779,478.**
+* The current champion itself stays a floor, and a cheap one: at index
+  32,779,477 state `D` fires one of its instructions, and from 32,779,478 on
+  the tail argument pins the *full configuration* — only `(C,S0)` ever fires
+  again (`tail_run`, `not_visits_other`,
+  `Machines/Counters/Champion_…RD.v:88,145` — both generalize verbatim
+  because they pin the whole config, not just the state).  So
+  `AttainsTr tm_champion 32779478` needs one fresh `vm_compute` probe of the
+  symbol under the head at 32,779,477 plus the same closed-form tail, and
+  **BBB_instr(4) ≥ 32,779,478 is nearly free**.
+
+**Consequence for sequencing:** the Coq port of the *never/bound* machinery
+can start now (it is value-independent), but the spec file, the champion
+file, and the closeout constants (`B_board`/`B_champ` analogues) wait on a
+harness-side instruction-level campaign: upgrade rank/rwlrank/ngram liveness
+to per-transition, sweep the space, and champion-hunt the F-class last-fires.
+That campaign is real search work with genuinely-hard frontier machines
+(quasihalting is Σ₂-hard; the rare-fire counters are the new towers).
+
+---
+
+## 3. Reuse map
+
+### 3.1 Reusable verbatim (convention-blind)
+
+From the census survey (`Census/TNF_QH.v`, `Run*.v`, `Decide.v`):
+
+* the TNF tree and node expansion (`TNF_Node`, `node_expand`, `all_trans`,
+  `trans_ok`, `TNF_QH.v:804-829`), unused-state pointer machinery, `TM_le`
+  monotonicity, `TM_swap`/mirror trace isomorphisms (`TNF_QH.v:214-362`,
+  `Mirror.v:15-81` — swap/mirror act on states/directions, symbols ride
+  along untouched);
+* `SearchQueue` and the walk skeleton (`TNF_QH.v:925-1067`, `Run.v:91-166`,
+  the `Run_Split*` layering) — generic over the decider contract;
+* all table/data plumbing: `row_to_tm`, slot shorthands, `dmap_of`
+  lookups, the data/certificate convertibility split (`Run.v:39-67` — the
+  5.3 GB→0.27 GB trick), `CENSUS_VO_HASH` hygiene, walk-stamp resumability;
+* the closeout induction skeletons (`deferred_split`, `CloseoutKit.v:345`;
+  `ShadowKit`), the Reroot prefix bridge (`Reroot.v`, `RerootSwap.v`,
+  `ShadowBoard.v`) — parametric in the transported property;
+* untrusted search tooling (`RankSearch.v`, `RepWLSearch.v`,
+  `tools/gen_census_lists.py`, `tools/gen_provenqh.py`,
+  `tools/closeout/inventory.py`) — regenerate, don't rewrite;
+* `Records.v`, `FuelClass.v`, `LadderKernel.v`: zero changes.
+
+### 3.2 Mechanical ports (Coq edits, no certificate churn)
+
+* **Cyclers** (`Cycle.v` 298 L, `TCycler.v` 322 L, `TCyclerN.v` 141 L): the
+  pump reproduces the *exact configuration* at `n1 + N·p + i`, head symbol
+  included; add `cvisitsI`/`gvisitsI` testing the pair, quantify over 8
+  slots.  ~60 lines, certificates `(n1,p)` unchanged.  This covers the
+  in-place + translated cycle tiers — **3,316,283 of the census's 3,995,005
+  nodes (83%)** (`docs/CENSUS_RUNTIME.md:27-35`).
+* **IRules** (15 files, ~8,050 L): already instruction-typed —
+  `Tr := St*Sym`, `trans_of`, and `Fires tm F n a` (every transition in `F`
+  fires) at `Engine.v:32-65`; `MetaQH.v:199-208` already derives the
+  per-instruction cover + recurrence statements before *projecting down* to
+  states via `st_in q F` (`Meta.v:94`).  Delete the projection, widen the
+  4-bit visit mask to 8 (`AnchorVisits.v`), export `FiresAt` recurrence.
+  ~150 lines; certificates unchanged (the fired set `F` is computed).
+  Immediately re-verifies ~1,220 boarded rows + 2,190 IQHStage rows *and
+  mechanically exposes which ones flip verdict* (§4.2).
+* **Wrap.v quiet half** (550 L): `tm_wrap` blanks a whole state
+  (`Wrap.v:29`); the instruction wrap blanks **one table cell**
+  (`if st_eqb p q && sym_eqb x a then None`).  `wrap_agree` goes through
+  with `fst c <> q` → `instr_of c <> (q,a)`, and — the key structural point
+  — the construction is *already correct for a still-running state*: the
+  wrapped machine keeps executing `q` on the other symbol, and
+  halt-freeness of the closure says exactly "`(q,a)` never fires while `q`
+  keeps running".  The machinery for the genuinely new proof obligation
+  exists in embryo.
+* **Ladder/Lap** (`LadderCheck.v` 4,842 L, `LapDecider.v` 705 L,
+  `LapAvoid.v` 303 L, `LapGlueQuiet` etc.): visit witnesses are concrete
+  `cconf`/`sconf` values with a `c_h : Sym` field that `srun_st` discards
+  *on purpose* (`LapDecider.v:682-696`); `srun_instr` puts it back with
+  `reflexivity`-grade proofs.  Avoid checks get *weaker* (avoiding one cell
+  vs. one state), so existing avoid chains still pass.  Bulky but low-risk.
+  Caveat: `LapGlueQuiet`'s `Hvis` ("every other state visited in every
+  lap") becomes "every other *instruction* fires in every lap" — strictly
+  stronger; some lap certificates won't satisfy it and fall to the wrap
+  route instead.
+* **Closers and transport**: `LiveAll.v` → `neverqh_tr_of_live8` (must keep
+  a `Fired` hypothesis — 8 unconditional liveness facts are often false);
+  `Mirror.v:89-115` tail; `Halt.v`.  ~60 lines total.
+* **Closeout algebra** (`CloseoutKit.v` 371 L, `BBB4_Theorem.v`,
+  `BBB4_Value.v`): retype `forall q s, QuietAfter…` to
+  `forall t s, QuietAfterTr…`; `boarded`/`covers_*`/`qhbound_mono`/the
+  Horner-form constants pattern all port unchanged in structure.  The
+  generated `CB_*.v` regenerate from a new frozen map.
+
+### 3.3 Mechanical Coq + full certificate regeneration (the volume risk)
+
+The generic closure engine (`Closure.v` 1,146 L; `ClosureIdx` 894 L;
+`ClosureExt`, `FuelSCC`, `Drift`) parameterizes over `a_state : A -> St`
+with liveness gates keyed on `st_eqb (a_state a) q` over `all_St`
+(`Closure.v:50-56, 442-448`).  **Every instance abstraction already pins the
+head symbol exactly** — `ng_covers` (`NGram.v:115-123`), `hng_covers`
+(`NGramHist.v:381-391`), `rw_covers` (`RepWL.v:79-84`) all carry
+`t_head (snd c) = s` — so the refactor is: generalize the target parameter
+to `a_tgt : A -> L` with `all_L` (instantiate `L := St` to keep the old
+proofs, `L := Instr` for the port), one 3-line `covers_instr` lemma per
+instance.  ~400-600 lines touched, one-time.
+
+But the **certificates** (`cert : St -> list ngcomp` rank/lex tables) go
+from 4 branches to 8, and per the avoiding-subgraph fact they must be
+**re-searched, not translated**, with no guarantee of existence.  Exposure,
+by boarded sites: ~3,887 ngram-lex, 775 fuelwide, 693 ngramhist-lex, 183
+RepWL, 130 ngramhist-ext, 125 drift — plus the 6,806 `Wrap` QHBound sites
+whose `live_ok` gate rides the same engine.  The right first move is
+**measurement**: run the regenerated searches over the existing boarded
+lists and count survivors before building anything else (§6, phase 1).
+
+### 3.4 Real rework / genuinely new
+
+1. **The `nqh` population.**  3,256 closeout rows + the 5,270-machine
+   Proven tier + the 196,595 in-walk n-gram-ladder nodes currently conclude
+   `NeverQuasiHaltsSt`.  Each machine needs either (a) a per-instruction
+   liveness certificate (survives as never-QH), or (b) it *flips*: it
+   instruction-quasihalts, and needs a wrap/MetaQH-style board with a score
+   bound — and any flip is a potential value-raiser that must clear the new
+   champion.  The IRules re-verification (cheap, §3.2) gives the first
+   measured flip rate.
+2. **The 1,894 `iqh` rows' `QHBound 2000`.**  The bound was state-level;
+   other instructions of still-busy states can go quiet later than 2000.
+   `MetaQH`'s window scan re-runs with an 8-way enumeration — same
+   computation, different answers; some machines need a larger `B`.
+3. **`ReachSt`** (1,102 L, 127 machines): the one non-porting route.  It
+   proves "the `q`-avoiding sub-machine terminates from every
+   configuration" via four hand-proved measure tables; the
+   `(q,a)`-avoiding sub-machine is the whole machine minus one cell —
+   usually beyond any finite abstraction (the `WHY_NO_HAMMER.md` wall).
+   `ReachStI` is friendlier (its rank already takes the head symbol as an
+   argument; the avoid gate is a two-token change) but certificates must be
+   re-searched.  Plan for these 127 to need new ideas; schedule them last,
+   like the 27 holdouts were.
+4. **Exact-score proofs for flipped machines.**  Templates exist —
+   `MetaQH.v:57-113` (take an instruction outside `F`, *easier* to find
+   than a state outside `F`), the instruction wrap, `LapGlueQuiet`'s
+   `AvoidRun` on cells, `BlankTail`'s full-config tails — but the scores
+   themselves can be large (transient last-fires), and the frontier cases
+   (rare-fire counters) are research work, not porting.
+5. **The spec + champion files** — blocked on the harness value (§2).
+
+---
+
+## 4. The new census walk
+
+### 4.1 What retypes
+
+The decider contract (`QHDecider_WF`, `TNF_QH.v:900-921`) keeps its shape;
+`R_Halt`/`R_Deferred` unchanged; `R_NeverQH` payload becomes
+`NeverQuasiHaltsTr`, `R_QH`/`R_Leaf` become `QHBoundTr B_census` triples.
+`Decide.v`'s tier order survives:
+
+* `find_halt`, lookup tiers, `scan_loops` (cycle/tcycler leaf checks):
+  port per §3.2 — the cycle leaf argument ("any eventually-quiet
+  slot made its last fire before the cycle closed") strengthens because a
+  cycle repeats whole configurations.  **~89% of nodes (halt + cycles +
+  lookups) keep their cost and verdict.**
+* `try_ngram` / `try_rank` / `try_rw` (never-QH tiers, ~5% of nodes): need
+  the per-instruction engine + new in-walk certificate synthesis.  PLAYBOOK
+  Rule 4 applies with extra force: keep these LIGHT; every machine the
+  light tier loses goes to the deferred set, not into a slower walk.
+* `try_qhb`: the candidate scan (`qh_candidate`, `filter … all_St`,
+  `Decide.v:873-925`) becomes an 8-way instruction scan feeding the
+  instruction wrap.  Note this tier gets *more productive*: instruction
+  quasihalting is easier to witness, so machines that were never-QH work at
+  state level become cheap `R_QH` leaves here.
+
+### 4.2 Expected shape of the new deferred set
+
+Two opposing forces: never-QH verdicts get harder (deferrals up), QH
+verdicts get easier (deferrals down — many state-level never-QH machines
+become bounded quasihalters the light tier *can* close, since their quiet
+instructions last fire in the small transient).  Cyclers dominate the space
+and land on the easy side.  The honest answer is that the new `D_census`
+size is a **measurement, not an estimate** — but the state walk's tier
+census says the exposure is concentrated in the 196,595 n-gram-ladder nodes
+plus whatever fraction of the Proven/ProvenQH lookup tiers fails to
+re-certify.  Plan for a deferred set larger than 5,156, in the low tens of
+thousands at worst.
+
+### 4.3 Compute plan
+
+Unchanged discipline (PLAYBOOK, `NEXT_SESSION.md`): per-machine ports and
+checker development are container-safe; the walk itself is
+`native_compute` on stable hardware.  The state walk measured 385 core-min
+(1 h 45 m at 4 jobs / 32 GB; peak unit 6.3 GB).  Per-node cost rises
+modestly (8-way scans, slightly bigger closures); budget 1.5–3× — still a
+single evening on the box.  Keep the committed-`.vo` + `CENSUS_VO_HASH`
+mechanism verbatim; it is convention-blind.
+
+---
+
+## 5. The new burn-down
+
+Same architecture that closed the 5,156: freeze the new `D_census`,
+`Forall boarded` it by app-chained stages, keep the walk untouched
+(`boarded`/`covers` route A, `docs/NGHIST_WAVE5.md` §5).  Differences:
+
+* **`boarded` gets a fourth flavor in practice**: instruction-flip boards —
+  machines that never state-quasihalt but instruction-quasihalt, boarded by
+  wrap/MetaQH with a score bound.  The closeout constants become
+  `B_board`/`B_champ` analogues for the *instruction* record, unknown today.
+* **The sweep order inverts.**  State burn-down led with never-QH
+  harvests; here lead with the QH side (wrap + MetaQH + cycles), because
+  it got easier and each board is score-carrying — exactly the data the
+  champion hunt needs.  The never-QH re-certification sweep (closure-family
+  re-search) runs second, and its failures feed back into the QH queue.
+* **The frontier**: rare-fire counter/tower machines whose one suspect
+  instruction fires at exponentially sparse indices.  These are the new
+  "27 holdouts" — Ladder-style value-indexed recurrence per instruction, or
+  genuinely new proofs.  Expect single-digit-to-dozens of machines to eat
+  most of the calendar, as before.
+
+---
+
+## 6. Phasing
+
+| phase | work | where | size |
+|---|---|---|---|
+| 0 | Definitions + bridges (`Instr`, `FiresAt`, `QuietAfterTr`, `QHBoundTr`, mirror/swap/LiveAll transport), keeping all state-level results intact | container | ~300 lines, days |
+| 1 | **Measure before building**: port IRules Meta layer + cyclers; re-run the ~1,220 IRules and 3,256 `nqh` boards through instruction checkers; count survivors/flips.  Port the instruction wrap and re-verify a QHBoard sample | container | ~400 lines + sweeps, 1–2 weeks |
+| 2 | Harness campaign (upstream, `carrino/bbb`): per-transition liveness in rank/rwlrank/ngram deciders; full-space sweep; champion hunt over F-class last-fires; freeze a candidate value | harness + box | open-ended; the gating item |
+| 3 | Closure-engine target generalization + certificate regeneration sweeps (`gen_provenqh`-style tooling, 8-branch certs) | container + box | ~600 lines + regen, 2–4 weeks |
+| 4 | New census walk: retyped `QHDecider_WF`, light tiers, walk on the box; freeze new `D_census` | box | 1 walk + iterations |
+| 5 | Burn-down: QH-side sweeps first, never-QH re-search second, `ReachSt`-class and rare-fire frontier last | both | the long tail, as before |
+| 6 | Closeout + spec: new `CB_*` stages, `BBBT4_Spec.v`, champion file (two `vm_compute` runs + full-config tail — the current champion's own file shows the template generalizes) | container | days once 2–5 land |
+
+Design decisions to make at phase 0:
+
+1. **Parameterize vs. fork.**  Recommendation: parameterize the *generic
+   engines* (`Closure.v` target alphabet — one refactor serves both
+   conventions and keeps the state proof compiling), fork the *spec and
+   census* layers (`BBBT4_Spec.v`, `Census/TNF_QHT.v`, new `Compute/`
+   namespace) so `BBB4_value` never wobbles.
+2. **Naming.**  Pick one term and stick to it; the harness says
+   "transition-level", the community says "instruction-level".  Suffix `Tr`
+   on predicates, `BBBT4`/`BBBI4` on the spec — decide once.
+3. **Silent-instruction convention** — state it in the spec file with the
+   same "cannot move the value" note as silent states.
+
+## 7. What we deliberately do NOT redo
+
+* The state-level theorem and its census `.vo` stay frozen and untouched;
+  the new development builds beside, not on top.
+* No strengthening of in-walk tiers to rescue deferrals (PLAYBOOK Rule 4
+  survives verbatim: prove machines, keep the walk light).
+* No hand-porting of generated layers (`Machines/` ~2.6M lines,
+  `Closeout/CB_*`, census lists): they regenerate from tools once the
+  checker layer lands.
