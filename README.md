@@ -91,15 +91,17 @@ targets back up and re-derive those automatically.
    `BBB4_value`.  Trust: the kernel, plus that those `.vo` are honest
    output of the census walk.
 4. **`make proof-all`** — **the whole claim from source, one
-   command, ~83 minutes.**  Base build, then re-derive the census
+   command, 1 h 20 m.**  Base build, then re-derive the census
    (`census-verify` backs the committed `.vo` up automatically and
    walks from source), then the same closeout chain and the same
    `Print Assumptions`.  Nothing committed is trusted; the `Axioms:`
    block at the end is the entire trust surface.  Trust: the kernel
    alone.
 
-   Measured 2026-08-12 on 8 physical cores / 31 GB, un-niced:
-   **40 min base build + 42 m 36 s census walk**.  The walk alone is
+   Measured end to end 2026-08-12 on 8 physical cores / 31 GB, from
+   `git clean -fdx` with nothing pre-configured: **79 m 38 s**
+   (742 core-min) — a ~40 min base build, a **42 m 36 s** census walk,
+   and the closeout chain.  The walk alone is
    `make census-verify WALK_JOBS=8`.  Nothing to set up and no `-j` to
    pass: `tools/census_toolchain.sh` finds a native-capable Coq, or
    activates the `census` opam switch (`opam env` does not survive a
@@ -132,7 +134,8 @@ make proof      # + the census-backed top-level theorem and its report
 
 ```sh
 make proof-all  # base build + re-walk the census + the closeout chain
-                # ~83 min on 8 cores / 32 GB (40 min build, 42 min walk).
+                # 79 m 38 s measured on 8 cores / 31 GB, from a clean
+                # tree (~40 min build, 42 m 36 s walk).
                 # Needs the census opam switch and >= 10 GB RAM.
                 # Out of the box.  It uses a native-capable coqc if you
                 # have one, otherwise activates the census opam switch,
@@ -161,7 +164,7 @@ with (OCaml 4.14.2, Coq 8.18.0, `coq-native`) and are hash-guarded by
 yourself:
 
 ```sh
-make proof-all       # everything from source, ~83 min (recommended)
+make proof-all       # everything from source, 79 m 38 s (recommended)
 make census-verify   # just the walk: 42 m 36 s at WALK_JOBS=8 on 8
                      # physical cores / 31 GB, measured 2026-08-12.
                      # 303 core-min; RAM no longer binds above ~10 GB.
@@ -200,7 +203,8 @@ verification tier, from "check one machine" to "re-walk the census".
 * The committed census `.vo` are genuine walk output, hash-guarded
   against census source edits — and you do not have to take that on
   faith: **`make proof-all` re-derives them and the whole value theorem
-  from source in ~83 minutes** on 8 cores / 32 GB.  That used to be a
+  from source in 1 h 20 m** on 8 cores / 32 GB (measured end to end,
+  2026-08-12).  That used to be a
   12-hour proposition and a multi-step procedure; it is now one
   command, which is why it is rung 4 of the ladder rather than a
   paragraph in the docs.
