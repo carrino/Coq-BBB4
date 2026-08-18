@@ -108,3 +108,10 @@ theories/Machines/Ladder/LDR_1RB1LA_1LC0RD_0RA0LC_0LA1RD.v
 # FILL arm (line 431) -- neither row is core any more
 theories/Machines/Ladder/LDR_1RB____0LB1RC_1LB0RD_1LC0RC.v
 theories/Machines/Ladder/LDR_1RB____1LC0RD_0LC1RB_1LB0RB.v
+
+# The transition-level census collection-walk driver: an on-demand compute
+# unit (up to the full ~4M-node tree in one vm/native_compute), driven by
+# `make census-tr-collect[-vm]` (Makefile), never through Makefile.coq --
+# same reasoning as the census walk units above.  Its dependency chain
+# (CensusTr/RunTr.v and below) IS in _CoqProject and builds by default.
+theories/CensusTr/WalkTr_Collect.v
