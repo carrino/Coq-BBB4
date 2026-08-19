@@ -619,6 +619,50 @@ NOT more in-walk gates but OFFLINE boards loaded as lookups — starting
 with wrap boards for the 82K empirical suspects, whose last-fires the
 sweeps already measured.
 
+### 7.1c The multi-cell + lex wrap tier (2026-08-19): 4/50 → 36/50
+
+Diagnosing the one-cell wrap's 4/50 pilot catch rate (50 empirical QH
+suspects, ALL of which quiet every quiet instruction by step 25 — so
+the machinery, not the rung horizon, was the gap) found two stacked
+failure modes, each mirroring a state-census lesson:
+
+1. **Multi-cell wrap** (`tm_wrap_trs`): a transition-QH machine
+   typically quiets SEVERAL instructions; wrapping one leaves the
+   others as appearing-but-never-recurring closure nodes and the
+   liveness gate rightly fails.  The checker now takes the whole
+   claimed-quiet set `tgs : list (Instr * nat)`, each pair pinned by
+   simulation.  The in-walk pin selector (`qh_pins_tr`) scans a
+   4×-longer look-ahead — scanning only `t` steps would "pin" every
+   busy instruction at its last within-window fire near the window
+   edge, and the wrapped closure dies on the spurious cell.
+
+2. **The lex-certificate gate** (`live_lex_ok_tr` +
+   `ngram_check_qhboundtr_lex` + `rank_procedure_tr`): the plain rank
+   gate demands every abstract cycle avoiding an instruction be
+   rank-descending — but a sweeping machine's abstract closure
+   self-loops inside its uniform runs (a node firing only the sweep
+   instruction), so a plain rank for any OTHER appearing instruction
+   CANNOT exist; measured on a clean n=6 closure, rank_ok passed for
+   1 of 7 appearing instructions.  This is exactly why the state
+   census's Tier Q carries `ngram_check_qhbound_lex` with the in-walk
+   RankSearch certificate search.  The port reuses Closure.v's entire
+   certificate vocabulary (`lexcomp`, `comp_exact`,
+   `lex_edge_decrease`, `lexlt` well-foundedness) by instantiation —
+   only the instruction-guarded gate and the closed-set walk lemmas
+   are new (`ClosureTr.v`), and RankSearch.v's SCC/Bellman-Ford
+   machinery is reused with just the avoid-filter moved from states
+   to instructions (`rank_procedure_tr`, untrusted).
+
+Also measured: context mixing at n ≤ 4 spuriously plants the wrapped
+head cell (the (StA,S0) node vanishes at n = 6 on the diagnosed
+machine), so the walk ladder gains rungs (5,256), (5,1024), (6,1024).
+
+Pilot result: plain multi-cell 4/50 → nested plain-then-lex ladder
+**33/50** → with the wider rungs **36/50 (72%)**, at ~0.4 s/machine
+vm_compute (the `qh_candidate_tr` filter keeps the tier off
+never-quasihalting machines).  The remaining 14 need finer
+abstraction (RepWL blocks) or per-machine offline boards.
+
 ### 7.2 The kernel-level IRules re-check (first pass)
 
 `Checkers/IRules/MetaTr.v` (committed) re-runs the v1 certificates

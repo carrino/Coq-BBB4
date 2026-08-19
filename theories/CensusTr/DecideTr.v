@@ -22,11 +22,11 @@
     the burn-down list this skeleton exists to produce. *)
 
 From Coq Require Import Arith Lia Bool List NArith PArith ZArith.
-From Coq Require Import FSets.FMapPositive.
+From Coq Require Import FSets.FMapPositive MSets.MSetPositive.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape GTape Mirror.
-From BBB4.Checkers Require Import Cycle TCycler NGramTr WrapTr.
+From BBB4.Checkers Require Import Cycle TCycler NGram NGramTr WrapTr.
 From BBB4.Checkers.IRules Require Import AnchorVisitsTr.
-From BBB4.Census Require Import TNF_QH Decide.
+From BBB4.Census Require Import TNF_QH Decide RankSearch.
 From BBB4.CensusTr Require Import TNF_QHTr.
 Import ListNotations.
 Open Scope nat_scope.
@@ -163,6 +163,37 @@ Qed.
 
 (** ** The pipeline (phase-0 tier stack) *)
 
+(** ** The instruction-target rank/lex certificate search
+
+    Census/RankSearch.v's procedure with the avoid-filter moved from
+    states to instructions; everything downstream of the adjacency
+    build (Kosaraju SCCs, condensation ranks, rules (a)/(b) over the
+    count-of-1s measures) is reused by import.  UNTRUSTED: a wrong
+    certificate merely fails the verified lex checker. *)
+
+Definition qsuccs_tr (tm : TM) (lset rset : gset) (tg : Instr)
+    (a : cconf) : list cconf :=
+  match ng_succs tm lset rset a with
+  | Some l => filter (fun b => negb (instr_eqb (cinstr b) tg)) l
+  | None => []
+  end.
+
+Definition build_adj_tr (tm : TM) (lset rset : gset) (tg : Instr)
+    (nodes : list cconf) : Adj :=
+  fold_left (fun g a => adj_set g a (qsuccs_tr tm lset rset tg a))
+            nodes (PositiveMap.empty _).
+
+Definition rank_procedure_tr (tm : TM) (lset rset : gset)
+    (closure : list cconf) (tg : Instr) : list ngcomp :=
+  let nodes := filter (fun a => negb (instr_eqb (cinstr a) tg)) closure in
+  let g := build_adj_tr tm lset rset tg nodes in
+  let Kc := S (S (length nodes)) in
+  let rfuel := S (length nodes * 8 + 8) in
+  match proc_rounds 200 tm Kc rfuel nodes g [] with
+  | Some comps => comps
+  | None => []
+  end.
+
 Section PipelineTr.
 
 Variable B : nat.              (** global transition-score bound *)
@@ -246,17 +277,61 @@ Definition qh_candidate_tr (tm : TM) (tg : Instr) : bool :=
   | None => false
   end.
 
-Definition try_qhbtr_at (tm : TM) (tg : Instr) (nt : nat * nat) : bool :=
+(** the full claimed-quiet set at horizon [t]: every instruction whose
+    LAST fire over a 4x-longer look-ahead lands strictly below [t]
+    (untrusted -- the checker re-verifies each pair via
+    [wrap_pin_ok]).  The long look-ahead matters: scanning only [t]
+    steps would "pin" every busy instruction at its last within-window
+    fire near the window edge.  A transition-QH machine typically
+    quiets SEVERAL instructions, and the wrapped closure's liveness
+    gate only passes when all of them are wrapped, so the whole set
+    goes in one checker call. *)
+Definition qh_pins_tr (tm : TM) (t : nat) : list (Instr * nat) :=
+  fold_right
+    (fun tg acc =>
+       match last_fire tm (4 * t) c0 0 tg None with
+       | Some s => if s <? t then (tg, s) :: acc else acc
+       | None => acc
+       end) [] all_Instr.
+
+Definition try_qhbtr_at (tm : TM) (nt : nat * nat) : bool :=
   let '(n, t) := nt in
   (S t <=? B) &&
-  match last_fire tm t c0 0 tg None with
-  | Some s => ngram_check_qhboundtr tm tg s n t ng_fuel ng_rounds
+  ngram_check_qhboundtr tm (qh_pins_tr tm t) n t ng_fuel ng_rounds.
+
+(** the lex rung: same wrapped closure, but each appearing
+    instruction may be discharged by a RankSearch certificate --
+    the plain rank cannot exist once the abstract closure self-loops
+    inside a sweep's uniform runs, which is nearly every machine the
+    candidate filter passes *)
+Definition try_qhbtr_lex_at (tm : TM) (nt : nat * nat) : bool :=
+  let '(n, t) := nt in
+  (S t <=? B) &&
+  match csteps tm t c0 with
   | None => false
+  | Some ct =>
+      let pins := qh_pins_tr tm t in
+      let tmw := tm_wrap_trs tm (map fst pins) in
+      let '(q1, (l, h, r)) := ct in
+      let lset0 := gadds (ng_seed_side n l) gempty in
+      let rset0 := gadds (ng_seed_side n r) gempty in
+      let a0 := ng_start n ct in
+      let '(lset, rset) :=
+        ng_grow tmw a0 ng_fuel ng_rounds lset0 rset0 in
+      let closure :=
+        ng_explore tmw lset rset ng_fuel [] PositiveSet.empty [a0] in
+      ngram_check_qhboundtr_lex tm pins n t ng_fuel ng_rounds
+        (fun tg' => rank_procedure_tr tmw lset rset closure tg')
   end.
 
+(** nested [if] rather than [||], the state census's own trap
+    (Census/Decide.v [try_qhb]): [orb] is a function, so under
+    call-by-value both ladders would evaluate even when the plain one
+    wins *)
 Definition try_qhbtr (tm : TM) : bool :=
-  anyb (fun tg => anyb (try_qhbtr_at tm tg) qhb_rungs)
-       (filter (qh_candidate_tr tm) all_Instr).
+  anyb (qh_candidate_tr tm) all_Instr &&
+  (if anyb (try_qhbtr_at tm) qhb_rungs then true
+   else anyb (try_qhbtr_lex_at tm) qhb_rungs).
 
 Lemma try_qhbtr_sound : forall tm,
   try_qhbtr tm = true ->
@@ -264,22 +339,34 @@ Lemma try_qhbtr_sound : forall tm,
 Proof.
   intros tm H.
   unfold try_qhbtr in H.
-  rewrite anyb_existsb in H.
-  apply existsb_exists in H.
-  destruct H as (tg & _ & H).
-  rewrite anyb_existsb in H.
-  apply existsb_exists in H.
-  destruct H as ([n t] & _ & H).
-  unfold try_qhbtr_at in H.
-  apply andb_prop in H as [HB H].
-  apply Nat.leb_le in HB.
-  destruct (last_fire tm t c0 0 tg None) as [s|]; [|discriminate].
-  destruct (ngram_check_qhboundtr_sound tm tg s n t ng_fuel ng_rounds H)
-    as (Hnh & Hqb & Hqh).
-  split; [exact Hnh|].
-  split; [|exact Hqh].
-  intros tg' s' Hq.
-  specialize (Hqb tg' s' Hq). lia.
+  apply andb_prop in H as [_ H].
+  (* [if b then true else c] IS [orb b c] by definition *)
+  apply orb_prop in H; destruct H as [H | H];
+    rewrite anyb_existsb in H;
+    apply existsb_exists in H;
+    destruct H as ([n t] & _ & H);
+    unfold try_qhbtr_at, try_qhbtr_lex_at in H;
+    apply andb_prop in H as [HB H];
+    apply Nat.leb_le in HB.
+  - (* plain acyclicity gate *)
+    destruct (ngram_check_qhboundtr_sound tm (qh_pins_tr tm t) n t
+                ng_fuel ng_rounds H) as (Hnh & Hqb & Hqh).
+    split; [exact Hnh|].
+    split; [|exact Hqh].
+    intros tg' s' Hq.
+    specialize (Hqb tg' s' Hq). lia.
+  - (* lex gate *)
+    destruct (csteps tm t c0) as [[q1 [[l h] r]]|] eqn:Ect; [|discriminate].
+    match type of H with
+    | (let '(_, _) := ?G in _) = true => destruct G as [lset rset]
+    end.
+    cbv beta iota zeta in H.
+    destruct (ngram_check_qhboundtr_lex_sound tm (qh_pins_tr tm t) n t
+                ng_fuel ng_rounds _ H) as (Hnh & Hqb & Hqh).
+    split; [exact Hnh|].
+    split; [|exact Hqh].
+    intros tg' s' Hq.
+    specialize (Hqb tg' s' Hq). lia.
 Qed.
 
 (** the phase-1 decider: halting, lookups, cycles, the per-instruction

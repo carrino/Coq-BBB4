@@ -23,7 +23,8 @@
       QHBoundTr tier consumes. *)
 
 From Coq Require Import Arith Lia Bool List ZArith.
-From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape PosEnc Records.
+From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape PosEnc Records
+  Closure.
 From BBB4.Checkers Require Import Cycle.
 From BBB4.Checkers.IRules Require Import Engine AnchorVisits AnchorVisitsTr.
 Import ListNotations.
@@ -445,6 +446,130 @@ Section ClosureTrEngine.
       as (j & c' & Hj & Hq).
     exists (N + j), c'. split; [lia|]. split; [| exact Hq].
     rewrite stepn_add, HstN. exact Hj.
+  Qed.
+
+  (** *** Lex-gated liveness
+
+      [live_lex_ok_tr] generalizes [live_ok_tr] exactly as Closure.v's
+      [live_lex_ok] generalizes [live_ok]: each appearing instruction
+      is discharged by the plain acyclicity rank OR a lexicographic
+      certificate.  The certificate vocabulary and its well-foundedness
+      ([lexcomp], [comp_exact], [lex_edge_decrease], [lexlt]) are
+      Closure.v's own, reused by instantiation -- none of it looks at
+      the target, only the guard does. *)
+
+  Definition lex_ok_tr (Sl : list A) (tg : Instr)
+      (comps : list (lexcomp A)) : bool :=
+    forallb (fun a =>
+      if instr_eqb (a_instr a) tg then true
+      else match succs a with
+           | Some l => forallb (fun a' =>
+                         if instr_eqb (a_instr a') tg then true
+                         else lex_edge_ok A comps a a') l
+           | None => false
+           end) Sl.
+
+  Definition live_lex_ok_tr (Sl : list A)
+      (cert : Instr -> list (lexcomp A)) : bool :=
+    forallb (fun tg =>
+      if appears_tr Sl tg
+      then (if rank_ok_tr Sl tg (compute_ranks_tr Sl tg) then true
+            else lex_ok_tr Sl tg (cert tg))
+      else true) all_Instr.
+
+  (** the closed-set walk tracking COMPUTABLE configurations, so
+      [comp_exact]'s premises apply along the run *)
+  Lemma closure_invariant_c_tr : forall Sl,
+    closed_tr_b Sl = true ->
+    forall a cc, In a Sl -> covers a (lift cc) ->
+    forall k, exists cc' a',
+      csteps tm k cc = Some cc' /\ In a' Sl /\ covers a' (lift cc').
+  Proof.
+    intros Sl Hcl a cc HIn Hcov k.
+    induction k.
+    - exists cc, a. repeat split; assumption.
+    - destruct IHk as (cc' & a' & Hst & HIn' & Hcov').
+      destruct (closed_step_tr Sl a' (lift cc') Hcl HIn' Hcov')
+        as (c'' & l & a'' & Hstep & _ & _ & HIn'' & Hcov'').
+      destruct (cstep_lift_rev tm cc' c'' Hstep) as (cc'' & Hcc'' & Hlift).
+      subst c''.
+      exists cc'', a''. split; [| split; assumption].
+      replace (S k) with (k + 1) by lia.
+      rewrite csteps_add, Hst. cbn [csteps]. rewrite Hcc''. reflexivity.
+  Qed.
+
+  Lemma lex_reach_tr : forall Sl tg comps,
+    closed_tr_b Sl = true ->
+    lex_ok_tr Sl tg comps = true ->
+    Forall (comp_exact tm A succs covers) comps ->
+    forall tuple, Acc lexlt tuple ->
+    forall a cc,
+    tuple = lex_tuple A comps a cc ->
+    In a Sl -> covers a (lift cc) ->
+    exists j c', stepn tm j (lift cc) = Some c' /\ instr_of c' = tg.
+  Proof.
+    intros Sl tg comps Hcl Hok Hex tuple Hacc.
+    induction Hacc as [tuple Hacc IH].
+    intros a cc -> HIn Hcov.
+    destruct (instr_eqb (a_instr a) tg) eqn:Eq.
+    - apply instr_eqb_spec in Eq.
+      exists 0, (lift cc). split; [reflexivity|].
+      rewrite <- (covers_instr a (lift cc) Hcov). exact Eq.
+    - destruct (closed_step_tr Sl a (lift cc) Hcl HIn Hcov)
+        as (c' & l & a' & Hstep & Es & HInl & HIn' & Hcov').
+      destruct (cstep_lift_rev tm cc c' Hstep) as (cc' & Hcc' & Hlift).
+      subst c'.
+      destruct (instr_eqb (a_instr a') tg) eqn:Eq'.
+      + apply instr_eqb_spec in Eq'.
+        exists 1, (lift cc'). split.
+        * cbn [stepn]. rewrite Hstep. reflexivity.
+        * rewrite <- (covers_instr a' _ Hcov'). exact Eq'.
+      + assert (He : lex_edge_ok A comps a a' = true).
+        { unfold lex_ok_tr in Hok. rewrite forallb_forall in Hok.
+          specialize (Hok a HIn). rewrite Eq, Es in Hok.
+          rewrite forallb_forall in Hok.
+          specialize (Hok a' HInl). rewrite Eq' in Hok.
+          simpl in Hok. exact Hok. }
+        destruct (IH (lex_tuple A comps a' cc')
+                    (lex_edge_decrease tm A succs covers comps a cc a' cc' l
+                       Hex Hcov Hcov' Hcc' Es HInl He)
+                    a' cc' eq_refl HIn' Hcov')
+          as (j & c'' & Hj & Hq).
+        exists (S j), c''. split; [| exact Hq].
+        cbn [stepn]. rewrite Hstep. exact Hj.
+  Qed.
+
+  Lemma live_appears_recur_lex_tr : forall Sl cert a0 cc0 tg,
+    closed_tr_b Sl = true ->
+    Forall (comp_exact tm A succs covers) (cert tg) ->
+    live_lex_ok_tr Sl cert = true ->
+    In a0 Sl -> covers a0 (lift cc0) ->
+    appears_tr Sl tg = true ->
+    forall N, exists k c',
+      N <= k /\ stepn tm k (lift cc0) = Some c' /\ instr_of c' = tg.
+  Proof.
+    intros Sl cert a0 cc0 tg Hcl Hex Hlive HIn Hcov Happ N.
+    destruct (closure_invariant_c_tr Sl Hcl a0 cc0 HIn Hcov N)
+      as (ccN & aN & HstN & HInN & HcovN).
+    assert (HstN' : stepn tm N (lift cc0) = Some (lift ccN))
+      by (apply csteps_lift; exact HstN).
+    unfold live_lex_ok_tr in Hlive. rewrite forallb_forall in Hlive.
+    specialize (Hlive tg (all_Instr_complete tg)). rewrite Happ in Hlive.
+    simpl in Hlive. apply orb_true_iff in Hlive as [Hro | Hlex].
+    - destruct (rank_reach_tr Sl tg (compute_ranks_tr Sl tg) Hcl Hro
+                  (S (compute_ranks_tr Sl tg aN)) aN (lift ccN)
+                  (Nat.lt_succ_diag_r _) HInN HcovN)
+        as (j & c' & Hj & Hq).
+      exists (N + j), c'. split; [lia|]. split; [| exact Hq].
+      rewrite stepn_add, HstN'. exact Hj.
+    - destruct (lex_reach_tr Sl tg (cert tg) Hcl Hlex Hex
+                  (lex_tuple A (cert tg) aN ccN)
+                  (lexlt_wf_len (length (lex_tuple A (cert tg) aN ccN)) _
+                     eq_refl)
+                  aN ccN eq_refl HInN HcovN)
+        as (j & c' & Hj & Hq).
+      exists (N + j), c'. split; [lia|]. split; [| exact Hq].
+      rewrite stepn_add, HstN'. exact Hj.
   Qed.
 
   Theorem closure_check_neverqhtr_sound : forall t fuel a0,

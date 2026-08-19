@@ -50,10 +50,14 @@ Proof. constructor. Qed.
 Definition ng_rungs_tr : list (nat * nat) :=
   [(2, 100); (3, 200); (4, 400); (6, 800)].
 
+(** the state ladder plus wider windows: the instruction-level wrap
+    tier measurably needs n = 5..6 (context mixing spuriously plants
+    the wrapped head cell at n <= 4 on ~1/5 of the v0 QH suspects) *)
 Definition qhb_rungs_tr : list (nat * nat) :=
   [(2, 64); (2, 256); (2, 1024);
    (3, 64); (3, 256); (3, 1024);
-   (4, 64); (4, 256); (4, 1024)].
+   (4, 64); (4, 256); (4, 1024);
+   (5, 256); (5, 1024); (6, 1024)].
 
 Definition decider_tr : QHDecider :=
   decide_easy_tr B_tr 130 512 200000 512 ng_rungs_tr qhb_rungs_tr
