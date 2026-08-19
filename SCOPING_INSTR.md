@@ -531,6 +531,41 @@ So the per-machine frontier of the transition-level burn-down is
 list is expected to be re-absorbed by the phase-3 tier ports before any
 per-machine effort is spent.
 
+### 7.1 The empirical flip census (2026-08-19, untrusted simulation)
+
+Per-transition sweeps over the frontier buckets (fire counts + last
+fires; "suspect" = some fired transition silent for the trailing 90%
+of the budget), the same method that settled the pass1 22:
+
+* **`proven` bucket (5,129 state-never-QH machines, the champion-risk
+  population): 572 genuine flips (11.2%), every one with its dying
+  transition's last fire ≤ 110.**  At 10⁸ the bucket gave 588
+  suspects/337 tape-edge reruns; at 10⁹, 572 persist — these are real
+  transition-quasihalters (the `Meta.v:24-27` class), but all are
+  startup-transient deaths: scores ≤ 111, absorbed by `B_tr = 2000`
+  as trivial wrap boards.  **Zero champion candidates.**
+* **`dcensus` + `provenqh` buckets (10,274 state-QH-side machines):
+  8,408 suspects at 10⁸** — expected, these are genuine quasihalters
+  whose instructions die with their states — **all with dying
+  transitions ≤ 2,331.  Exactly 2 machines exceed `B_census = 2000`**
+  (`1RB1RD_1RC0LD_1LB0RA_1LC0LC` at 2,331 and
+  `1RB0LC_1RC1LD_1RD0RB_0LB1LA` at 1,459 — the second is under it;
+  so exactly ONE machine's instruction score provably exceeds the
+  state-level 2000 bound so far): the predicted "busy-state
+  instruction dies after the state bound" effect is real but
+  negligible.  The 1,836 LIVE-at-10⁸ machines (including the champion
+  itself, whose 32.8M death sits in the criterion's [budget/10,
+  budget) blind window) are being escalated to 10⁹, where the
+  champion must surface at exactly 32,779,477 as the sanity check.
+
+Combined with the pass1-22 all refiring, every population examined so
+far supports **BBBT4(4) = 32,779,478 with the unchanged champion** —
+and the burn-down consequences are concrete: the 572 flips are
+one-`vm_compute` wrap boards, the QH-side re-scans move at most a
+couple of machines past `B_tr = 2000`, and the genuine frontier
+remains the sparse-I burst counters needing Ladder-style recurrence
+proofs.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
