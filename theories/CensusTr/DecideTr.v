@@ -24,12 +24,29 @@
 From Coq Require Import Arith Lia Bool List NArith PArith ZArith.
 From Coq Require Import FSets.FMapPositive.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape GTape Mirror.
-From BBB4.Checkers Require Import Cycle TCycler.
+From BBB4.Checkers Require Import Cycle TCycler NGramTr WrapTr.
+From BBB4.Checkers.IRules Require Import AnchorVisitsTr.
 From BBB4.Census Require Import TNF_QH Decide.
 From BBB4.CensusTr Require Import TNF_QHTr.
 Import ListNotations.
+Open Scope nat_scope.
 
 Set Default Goal Selector "!".
+
+(** last fire of [tg] among the configurations at offsets
+    [k .. k + gas - 1] (untrusted: the QHBoundTr checker re-verifies
+    the returned index) *)
+Fixpoint last_fire (tm : TM) (gas : nat) (c : cconf) (k : nat)
+    (tg : Instr) (best : option nat) : option nat :=
+  match gas with
+  | 0 => best
+  | S g =>
+      let best' := if instr_eqb (cinstr c) tg then Some k else best in
+      match cstep tm c with
+      | None => best'
+      | Some c' => last_fire tm g c' (S k) tg best'
+      end
+  end.
 
 (** ** The cycle tiers at transition level
 
@@ -153,6 +170,12 @@ Variable D : list TM.          (** the deferred list (empty in the
                                    collection walk; frozen afterwards) *)
 Variable halt_gas : nat.       (** gas for the halt search + cheap scan rung *)
 Variable loop_gas : nat.       (** gas for the full loop-scan rung *)
+Variable ng_fuel : nat.        (** worklist fuel for the n-gram closures *)
+Variable ng_rounds : nat.      (** growth rounds for the n-gram sets *)
+Variable ng_rungs : list (nat * nat).   (** (window n, prefix t) ladder,
+                                            never tier *)
+Variable qhb_rungs : list (nat * nat).  (** (window n, prefix t) ladder,
+                                            wrapped-QHBoundTr tier *)
 Variable Prov : list TM.       (** proven [NeverQuasiHaltsTr] machines *)
 Hypothesis HP : Forall NeverQuasiHaltsTr Prov.
 Variable ProvQH : list TM.     (** proven census-grade transition-QH machines *)
@@ -188,7 +211,79 @@ Proof.
   exact (lp_check_sound_tr tm cand Hc).
 Qed.
 
-(** the phase-0 decider: halting, lookups, cycles, defer the rest *)
+(** *** Tier N: the per-instruction n-gram ladder *)
+
+Fixpoint try_ngram_tr (rungs : list (nat * nat)) (tm : TM) : QHResult :=
+  match rungs with
+  | [] => R_Unknown
+  | (n, t) :: rest =>
+      if ngram_check_neverqhtr tm n t ng_fuel ng_rounds
+      then R_NeverQH
+      else try_ngram_tr rest tm
+  end.
+
+Lemma try_ngram_tr_cases : forall rungs tm,
+  (try_ngram_tr rungs tm = R_NeverQH /\ NeverQuasiHaltsTr tm) \/
+  try_ngram_tr rungs tm = R_Unknown.
+Proof.
+  induction rungs as [| [n t] rest IH]; intros tm; simpl.
+  - right; reflexivity.
+  - destruct (ngram_check_neverqhtr tm n t ng_fuel ng_rounds) eqn:E.
+    + left. split; [reflexivity|].
+      exact (ngram_check_neverqhtr_sound tm n t ng_fuel ng_rounds E).
+    + exact (IH tm).
+Qed.
+
+(** *** Tier Q: the wrapped QHBoundTr ladder, behind an untrusted
+    quiet-candidate filter (the 8-way analog of [qh_candidate]) *)
+
+Definition qhb_tmax_tr : nat :=
+  fold_left Nat.max (map snd qhb_rungs) 0.
+
+Definition qh_candidate_tr (tm : TM) (tg : Instr) : bool :=
+  match last_fire tm (4 * qhb_tmax_tr) c0 0 tg None with
+  | Some s => s <? qhb_tmax_tr
+  | None => false
+  end.
+
+Definition try_qhbtr_at (tm : TM) (tg : Instr) (nt : nat * nat) : bool :=
+  let '(n, t) := nt in
+  (S t <=? B) &&
+  match last_fire tm t c0 0 tg None with
+  | Some s => ngram_check_qhboundtr tm tg s n t ng_fuel ng_rounds
+  | None => false
+  end.
+
+Definition try_qhbtr (tm : TM) : bool :=
+  anyb (fun tg => anyb (try_qhbtr_at tm tg) qhb_rungs)
+       (filter (qh_candidate_tr tm) all_Instr).
+
+Lemma try_qhbtr_sound : forall tm,
+  try_qhbtr tm = true ->
+  NonHalt tm /\ QHBoundTr B tm /\ QuasiHaltsTr tm.
+Proof.
+  intros tm H.
+  unfold try_qhbtr in H.
+  rewrite anyb_existsb in H.
+  apply existsb_exists in H.
+  destruct H as (tg & _ & H).
+  rewrite anyb_existsb in H.
+  apply existsb_exists in H.
+  destruct H as ([n t] & _ & H).
+  unfold try_qhbtr_at in H.
+  apply andb_prop in H as [HB H].
+  apply Nat.leb_le in HB.
+  destruct (last_fire tm t c0 0 tg None) as [s|]; [|discriminate].
+  destruct (ngram_check_qhboundtr_sound tm tg s n t ng_fuel ng_rounds H)
+    as (Hnh & Hqb & Hqh).
+  split; [exact Hnh|].
+  split; [|exact Hqh].
+  intros tg' s' Hq.
+  specialize (Hqb tg' s' Hq). lia.
+Qed.
+
+(** the phase-1 decider: halting, lookups, cycles, the per-instruction
+    n-gram never tier, the wrapped QHBoundTr tier, defer the rest *)
 Definition decide_easy_tr (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
   match find_halt tm halt_gas 0 c0 with
   | Some (n, s, i) => if S n <=? B then R_Halt s i else R_Unknown
@@ -198,7 +293,10 @@ Definition decide_easy_tr (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
       if deferred_lookup dm tm then R_Deferred else
       if scan_loops B tm halt_gas then R_Leaf else
       if scan_loops B tm loop_gas then R_Leaf else
-      R_Unknown
+      match try_ngram_tr ng_rungs tm with
+      | R_NeverQH => R_NeverQH
+      | _ => if try_qhbtr tm then R_QH else R_Unknown
+      end
   end.
 
 Theorem decide_easy_tr_WF :
@@ -225,6 +323,10 @@ Proof.
   { exact (scan_loops_sound_tr tm halt_gas El1). }
   destruct (scan_loops B tm loop_gas) eqn:El2.
   { exact (scan_loops_sound_tr tm loop_gas El2). }
+  destruct (try_ngram_tr_cases ng_rungs tm) as [[En Hn] | En]; rewrite En.
+  { exact Hn. }
+  destruct (try_qhbtr tm) eqn:Eq.
+  { exact (try_qhbtr_sound tm Eq). }
   exact I.
 Qed.
 
