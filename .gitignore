@@ -31,3 +31,4 @@ base_build.log
 __pycache__/
 .*.aux
 .toolchain-stamp
+inwalk_sweep_1e8.txt
