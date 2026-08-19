@@ -508,17 +508,28 @@ python3 tools/censustr/decode_enc.py census_probes/censustr_collect.out
 ```
 
 Measured in-container (apt coqc, vm_compute): 8,192 pops in 11.1 s and
-131,072 pops in 147.5 s — **~1.1–1.4 ms/pop, holding at depth** — so the
-full 3,995,005-node tree projects to **~1.5 h in ONE vm_compute process**,
-and materially less under native on the box.  This walk is far lighter
-than the state census's 385 native core-minutes because the phase-0 stack
-has no n-gram/rank/RepWL tiers; the price is a large back queue.
-Deferral: 1,108 of the first 8,192 pops (13.5%), 12,669 of the first
-131,072 (9.7%) — converging on the state tier census's prediction that
-the deferral mass is the old n-gram-ladder + lookup-tier nodes (~10.7% of
-the tree, ≈430K nodes globally).  That back queue is burn-down list v0;
-the phase-3 closure-tier ports and the wrap/MetaQH sweeps then eat it
-down to a freezable `D_censusTr`.
+131,072 pops in 147.5 s — ~1.1–1.4 ms/pop, holding at depth.  This walk
+is far lighter than the state census's 385 native core-minutes because
+the phase-0 stack has no n-gram/rank/RepWL tiers; the price is a large
+back queue.
+
+**The collection walk has RUN (2026-08-18, the box, native_compute: the
+walk itself ~8.5 min).**  Back queue: **280,087 machines**
+(`censustr_deferred_v0.txt`, committed — burn-down list v0).
+`classify_deferred.py` partitions it against the state tiers as:
+
+| bucket | count | share | meaning |
+|---|---:|---:|---|
+| `proven` | 5,129 | 1.8% | state-never-QH lookup machines: per-instruction re-certification targets, the flip/champion-risk population (141 of the tier's 5,270 were caught by the cycle tiers instead) |
+| `provenqh` | 5,163 | 1.8% | state-QH lookup machines: wrap-route 8-way re-scans |
+| `dcensus` | 5,111 | 1.8% | the frozen state D_census, back again (45 of 5,156 fell to cycles) |
+| `partial` | 20,345 | 7.3% | TNF interior nodes (undefined slots), decided per-orbit through completion |
+| `inwalk` | 244,339 | 87.2% | machines the state census decided IN-WALK (n-gram/rank/qhb/RepWL): melt at re-walk once the phase-3 per-instruction tiers land — tier work, not per-machine work |
+
+So the per-machine frontier of the transition-level burn-down is
+**~15.4K machines** (proven + provenqh + dcensus), and 94% of the v0
+list is expected to be re-absorbed by the phase-3 tier ports before any
+per-machine effort is spent.
 
 ## 8. What we deliberately do NOT redo
 
