@@ -688,6 +688,10 @@ itself ships 4-way sharded (`make census-tr-collect-shards`, one
 native_compute process per TNF subtree — deferral is per-machine, so
 the shard back queues concatenate to the single walk's).
 
+Confirmed on the p1 sample: the trimmed configuration runs in
+**1,065 s vs 12,282 s (11.5×)** with IDENTICAL deferral (32, 698) —
+on this subtree the trim lost nothing.
+
 ### 7.2 The kernel-level IRules re-check (first pass)
 
 `Checkers/IRules/MetaTr.v` (committed) re-runs the v1 certificates
