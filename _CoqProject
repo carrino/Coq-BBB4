@@ -2974,3 +2974,4 @@ theories/CensusTr/DecideTr.v
 theories/CensusTr/RunTr.v
 theories/Checkers/IRules/AnchorVisitsTr.v
 theories/Checkers/IRules/MetaTr.v
+theories/Machines/IRulesTr_Batch_01.v

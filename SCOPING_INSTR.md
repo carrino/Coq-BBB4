@@ -582,14 +582,16 @@ proofs.
 `Checkers/IRules/MetaTr.v` (committed) re-runs the v1 certificates
 through `irules_check_neverqhtr` — the same certificate and replay,
 with the prefix gate strengthened from per-state to per-instruction.
-Across the 250 v1 boards, roughly **60% fail the strengthened gate**
-(exact split pending a rerun of three interrupted batches): a far
-higher flip rate than the bucket-wide 11.2%, consistent with counter
-machines' long boot prefixes firing instructions outside the
-meta-cycle's set.  Each such failure is a machine whose quiet
-instructions all die inside the (small) anchor prefix — wrap boards,
-not champion risks.  The survivors re-certify `NeverQuasiHaltsTr`
-with zero new search and seed the instruction-level Proven lookup
+Final split over the 250 v1 boards: **97 survive as kernel-checked
+`NeverQuasiHaltsTr` (`Machines/IRulesTr_Batch_01.v`, zero new
+search), 153 flip (61.2%)** — a far higher flip rate than the
+bucket-wide 11.2%, consistent with counter machines' long boot
+prefixes firing instructions outside the meta-cycle's set.
+**Cross-validation: all 153 kernel flips are exactly empirical
+suspects (153/153 agree, 0 disagreements)** — the kernel and the
+simulation see the same machines.  Each flip's quiet instructions die
+inside the anchor prefix — wrap boards, not champion risks; the 97
+survivors are the first rows of the instruction-level Proven lookup
 tier.
 
 ## 8. What we deliberately do NOT redo
