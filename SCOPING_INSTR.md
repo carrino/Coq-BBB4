@@ -600,6 +600,25 @@ couple of machines past `B_tr = 2000`, and the genuine frontier
 remains the sparse-I burst counters needing Ladder-style recurrence
 proofs.
 
+### 7.1b Phase-1 in-walk tiers: built, measured
+
+`ClosureTr.v` (the instruction-target closure/rank engine),
+`NGramTr.v` (`ngram_check_neverqhtr`, the in-walk never tier) and
+`WrapTr.v` (`tm_wrap_tr`, the one-cell halt-redirect, +
+`ngram_check_qhboundtr`, the census-grade QHBoundTr tier) are
+committed and wired into `decide_easy_tr` with the state census's own
+rung ladders.  Sample measurement (8,192 pops, vm_compute): deferral
+1,108 → **900**, at 48 ms/pop (the ladders engage).  Classifying the
+900: 761 (84.6%) are still `inwalk`-type — the plain-rank
+per-instruction gate alone recovers only ~30% of the shallow in-walk
+population, confirming the certificate-shrinkage prediction (the
+`(q,a)`-avoiding subgraph is strictly bigger) and that the state
+census's remaining gates (rank rules, RepWL, lex) carry real weight.
+Consequence, per the state PLAYBOOK's Rule 4: the scalable lever is
+NOT more in-walk gates but OFFLINE boards loaded as lookups — starting
+with wrap boards for the 82K empirical suspects, whose last-fires the
+sweeps already measured.
+
 ### 7.2 The kernel-level IRules re-check (first pass)
 
 `Checkers/IRules/MetaTr.v` (committed) re-runs the v1 certificates
