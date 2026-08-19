@@ -580,6 +580,18 @@ of the budget), the same method that settled the pass1 22:
   being escalated to 6×10¹⁰ (burst counters could fake death there),
   along with an edge-reporting rerun of the 843.
 
+  **Escalation verdict (6×10¹⁰): all 8 refire** — 16×-gap burst
+  counters, the pass1-22 signature — and the 843 edge machines all top
+  out at ≤ 711.  **The whole (4,2) space now has an empirical
+  instruction verdict with zero machines beyond the champion.**  But
+  the deep runs mark these 8 as THE frontier: at 6×10¹⁰ each has
+  transitions in inter-burst quiet since ~3.26×10¹⁰ with the next
+  burst predicted ~5×10¹¹ — beyond any feasible budget, and if those
+  silences were deaths the scores would be ~32.6 BILLION.  Only
+  Ladder-style per-burst recurrence proofs settle them; they are the
+  transition-level analogue of the state burn-down's tower holdouts,
+  and their boards are load-bearing for the value theorem.
+
 Combined with the pass1-22 all refiring, every population examined so
 far supports **BBBT4(4) = 32,779,478 with the unchanged champion** —
 and the burn-down consequences are concrete: the 572 flips are
