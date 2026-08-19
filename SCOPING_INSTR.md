@@ -569,6 +569,17 @@ of the budget), the same method that settled the pass1 22:
   REPRODUCES the state-level record progression, with zero machines
   beyond the champion bar.**
 
+* **`inwalk` bucket (244,339 machines, swept on the box at 10⁸):
+  82,327 suspects / 161,169 live / 843 tape-edge / 0 halts — zero
+  suspects beyond the champion bar.**  82,319 of the suspects die at
+  ≤ 2,000 (the in-walk-tier machines are overwhelmingly
+  tiny-transient flips or small state-QH); the standouts are **8
+  reroot-family (`0RB…`) machines with dying transitions at 7.9–9.9M
+  steps** — below the champion but above everything else ever seen at
+  transition level; they sit at the 10⁸ budget's blind edge and are
+  being escalated to 6×10¹⁰ (burst counters could fake death there),
+  along with an edge-reporting rerun of the 843.
+
 Combined with the pass1-22 all refiring, every population examined so
 far supports **BBBT4(4) = 32,779,478 with the unchanged champion** —
 and the burn-down consequences are concrete: the 572 flips are
