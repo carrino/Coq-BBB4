@@ -613,6 +613,32 @@ census-tr-collect: _census-tr-deps
 	@echo ">>> decode: python3 tools/censustr/decode_enc.py census_probes/censustr_collect.out"
 .PHONY: census-tr-collect
 
+# 4-way sharded collection (box): one native_compute process per TNF
+# subtree (WalkTr_Collect_{A0,A1,B0,B1}.v, roots = q_0_tr's children).
+# Deferral is a per-machine decision, so the concatenated shard back
+# queues equal the single walk's back queue; decode them together:
+#   cat census_probes/censustr_collect_{A0,A1,B0,B1}.out \
+#     | python3 tools/censustr/decode_enc.py > censustr_deferred_v1.txt
+CENSUS_TR_SHARDS := A0 A1 B0 B1
+
+census-tr-collect-shards: _census-tr-deps
+	@mkdir -p census_probes
+	@for s in $(CENSUS_TR_SHARDS); do \
+	  sed 's/vm_compute/native_compute/' \
+	    theories/CensusTr/WalkTr_Collect_$$s.v \
+	    > census_probes/WalkTr_Collect_$${s}_native.v; \
+	done
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 for s in $(CENSUS_TR_SHARDS); do \
+	   ( coqc -Q theories BBB4 -w -abstract-large-number \
+	       census_probes/WalkTr_Collect_$${s}_native.v \
+	       > census_probes/censustr_collect_$$s.out 2>&1; \
+	     echo ">>> shard $$s finished" ) & \
+	 done; wait
+	@echo ">>> shard back queues in census_probes/censustr_collect_{A0,A1,B0,B1}.out"
+	@echo ">>> decode: cat census_probes/censustr_collect_{A0,A1,B0,B1}.out | python3 tools/censustr/decode_enc.py"
+.PHONY: census-tr-collect-shards
+
 # ---------------------------------------------------------------------------
 # The route-A closeout (docs/CLOSEOUT_ROUTE_A.md).  Regenerates the stage
 # files from the current boards and recompiles theories/Closeout/, yielding

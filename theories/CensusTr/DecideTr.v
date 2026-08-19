@@ -207,6 +207,13 @@ Variable ng_rungs : list (nat * nat).   (** (window n, prefix t) ladder,
                                             never tier *)
 Variable qhb_rungs : list (nat * nat).  (** (window n, prefix t) ladder,
                                             wrapped-QHBoundTr tier *)
+Variable qhb_lex_rungs : list (nat * nat).  (** the lex ladder's own
+                                            (usually shorter) rung list:
+                                            a lex rung re-grows the sets
+                                            and runs the certificate
+                                            search per instruction, so
+                                            failing machines pay it in
+                                            full *)
 Variable Prov : list TM.       (** proven [NeverQuasiHaltsTr] machines *)
 Hypothesis HP : Forall NeverQuasiHaltsTr Prov.
 Variable ProvQH : list TM.     (** proven census-grade transition-QH machines *)
@@ -271,46 +278,49 @@ Qed.
 Definition qhb_tmax_tr : nat :=
   fold_left Nat.max (map snd qhb_rungs) 0.
 
-Definition qh_candidate_tr (tm : TM) (tg : Instr) : bool :=
-  match last_fire tm (4 * qhb_tmax_tr) c0 0 tg None with
-  | Some s => s <? qhb_tmax_tr
-  | None => false
-  end.
-
-(** the full claimed-quiet set at horizon [t]: every instruction whose
-    LAST fire over a 4x-longer look-ahead lands strictly below [t]
-    (untrusted -- the checker re-verifies each pair via
-    [wrap_pin_ok]).  The long look-ahead matters: scanning only [t]
-    steps would "pin" every busy instruction at its last within-window
-    fire near the window edge.  A transition-QH machine typically
-    quiets SEVERAL instructions, and the wrapped closure's liveness
-    gate only passes when all of them are wrapped, so the whole set
-    goes in one checker call. *)
-Definition qh_pins_tr (tm : TM) (t : nat) : list (Instr * nat) :=
+(** ONE long last-fire scan per machine, shared by every rung of both
+    ladders (untrusted -- the checker re-verifies each pin via
+    [wrap_pin_ok]).  The 16x look-ahead is the payer filter: a
+    never-quasihalting drifter whose instruction recurs with period up
+    to 16 x tmax is never pinned and never pays for a closure, and a
+    genuinely quiet instruction's last fire is exact.  Scanning only
+    the rung's own [t] steps would "pin" every busy instruction at its
+    last within-window fire near the window edge. *)
+Definition qh_last_fires (tm : TM) : list (Instr * nat) :=
   fold_right
     (fun tg acc =>
-       match last_fire tm (4 * t) c0 0 tg None with
-       | Some s => if s <? t then (tg, s) :: acc else acc
+       match last_fire tm (16 * qhb_tmax_tr) c0 0 tg None with
+       | Some s => (tg, s) :: acc
        | None => acc
        end) [] all_Instr.
 
-Definition try_qhbtr_at (tm : TM) (nt : nat * nat) : bool :=
+(** the claimed-quiet set at horizon [t]: a transition-QH machine
+    typically quiets SEVERAL instructions, and the wrapped closure's
+    liveness gate only passes when all of them are wrapped, so the
+    whole set goes in one checker call *)
+Definition qh_pins_of (lf : list (Instr * nat)) (t : nat)
+  : list (Instr * nat) :=
+  filter (fun p => snd p <? t) lf.
+
+Definition try_qhbtr_at (tm : TM) (lf : list (Instr * nat))
+    (nt : nat * nat) : bool :=
   let '(n, t) := nt in
   (S t <=? B) &&
-  ngram_check_qhboundtr tm (qh_pins_tr tm t) n t ng_fuel ng_rounds.
+  ngram_check_qhboundtr tm (qh_pins_of lf t) n t ng_fuel ng_rounds.
 
 (** the lex rung: same wrapped closure, but each appearing
     instruction may be discharged by a RankSearch certificate --
     the plain rank cannot exist once the abstract closure self-loops
     inside a sweep's uniform runs, which is nearly every machine the
     candidate filter passes *)
-Definition try_qhbtr_lex_at (tm : TM) (nt : nat * nat) : bool :=
+Definition try_qhbtr_lex_at (tm : TM) (lf : list (Instr * nat))
+    (nt : nat * nat) : bool :=
   let '(n, t) := nt in
   (S t <=? B) &&
   match csteps tm t c0 with
   | None => false
   | Some ct =>
-      let pins := qh_pins_tr tm t in
+      let pins := qh_pins_of lf t in
       let tmw := tm_wrap_trs tm (map fst pins) in
       let '(q1, (l, h, r)) := ct in
       let lset0 := gadds (ng_seed_side n l) gempty in
@@ -329,9 +339,10 @@ Definition try_qhbtr_lex_at (tm : TM) (nt : nat * nat) : bool :=
     call-by-value both ladders would evaluate even when the plain one
     wins *)
 Definition try_qhbtr (tm : TM) : bool :=
-  anyb (qh_candidate_tr tm) all_Instr &&
-  (if anyb (try_qhbtr_at tm) qhb_rungs then true
-   else anyb (try_qhbtr_lex_at tm) qhb_rungs).
+  let lf := qh_last_fires tm in
+  existsb (fun p => snd p <? qhb_tmax_tr) lf &&
+  (if anyb (try_qhbtr_at tm lf) qhb_rungs then true
+   else anyb (try_qhbtr_lex_at tm lf) qhb_lex_rungs).
 
 Lemma try_qhbtr_sound : forall tm,
   try_qhbtr tm = true ->
@@ -349,7 +360,8 @@ Proof.
     apply andb_prop in H as [HB H];
     apply Nat.leb_le in HB.
   - (* plain acyclicity gate *)
-    destruct (ngram_check_qhboundtr_sound tm (qh_pins_tr tm t) n t
+    destruct (ngram_check_qhboundtr_sound tm
+                (qh_pins_of (qh_last_fires tm) t) n t
                 ng_fuel ng_rounds H) as (Hnh & Hqb & Hqh).
     split; [exact Hnh|].
     split; [|exact Hqh].
@@ -361,7 +373,8 @@ Proof.
     | (let '(_, _) := ?G in _) = true => destruct G as [lset rset]
     end.
     cbv beta iota zeta in H.
-    destruct (ngram_check_qhboundtr_lex_sound tm (qh_pins_tr tm t) n t
+    destruct (ngram_check_qhboundtr_lex_sound tm
+                (qh_pins_of (qh_last_fires tm) t) n t
                 ng_fuel ng_rounds _ H) as (Hnh & Hqb & Hqh).
     split; [exact Hnh|].
     split; [|exact Hqh].

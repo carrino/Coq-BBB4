@@ -658,10 +658,35 @@ head cell (the (StA,S0) node vanishes at n = 6 on the diagnosed
 machine), so the walk ladder gains rungs (5,256), (5,1024), (6,1024).
 
 Pilot result: plain multi-cell 4/50 → nested plain-then-lex ladder
-**33/50** → with the wider rungs **36/50 (72%)**, at ~0.4 s/machine
-vm_compute (the `qh_candidate_tr` filter keeps the tier off
-never-quasihalting machines).  The remaining 14 need finer
-abstraction (RepWL blocks) or per-machine offline boards.
+**33/50** → with wider n=5..6 rungs **36/50 (72%)**.  The remaining 14
+need finer abstraction (RepWL blocks) or per-machine offline boards.
+
+### 7.1d Walk-cost tuning (2026-08-19): the ladder must be paid for
+
+Re-measuring the p1 subtree sample (8,192 pops) with the full 12+12
+ladder: deferral **900 → 698**, but 394 s → **12,282 s** (~13 s per
+ladder-paying machine, and every deferred-bound machine passing the
+candidate filter pays in full).  Extrapolated over ~280K deferred
+candidates that is a multi-day single-process walk — so the walk keeps
+a TRIMMED configuration and the trimmings go to offline boards
+(PLAYBOOK Rule 4, again):
+
+- **One shared 16×tmax last-fire scan** (`qh_last_fires`) replaces the
+  per-rung 4×t pin scans: pins are exact over a 16,384-step horizon,
+  and a never-quasihalting drifter with recurrence period ≤ 16×tmax is
+  never pinned and never pays for a closure.
+- **The lex ladder gets its own rung list** (`qhb_lex_rungs_tr =
+  [(2,1024);(3,1024);(4,1024)]`): a lex rung re-grows the sets and
+  runs the per-instruction certificate search, so failing machines pay
+  every rung — one deepest horizon per window is the right shape.  The
+  plain ladder keeps the state census's nine rungs.
+- **No n ≥ 5 rungs in-walk** (costliest on failures, ~3/36 pilot
+  catches; the machinery stays in WrapTr.v for offline boards).
+
+Production pilot: **33/50** at ~0.25 s/machine on catchers.  The walk
+itself ships 4-way sharded (`make census-tr-collect-shards`, one
+native_compute process per TNF subtree — deferral is per-machine, so
+the shard back queues concatenate to the single walk's).
 
 ### 7.2 The kernel-level IRules re-check (first pass)
 

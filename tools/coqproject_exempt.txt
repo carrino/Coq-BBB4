@@ -115,3 +115,7 @@ theories/Machines/Ladder/LDR_1RB____1LC0RD_0LC1RB_1LB0RB.v
 # same reasoning as the census walk units above.  Its dependency chain
 # (CensusTr/RunTr.v and below) IS in _CoqProject and builds by default.
 theories/CensusTr/WalkTr_Collect.v
+theories/CensusTr/WalkTr_Collect_A0.v
+theories/CensusTr/WalkTr_Collect_A1.v
+theories/CensusTr/WalkTr_Collect_B0.v
+theories/CensusTr/WalkTr_Collect_B1.v
