@@ -558,6 +558,17 @@ of the budget), the same method that settled the pass1 22:
   budget) blind window) are being escalated to 10⁹, where the
   champion must surface at exactly 32,779,477 as the sanity check.
 
+* **The escalation of the 1,866 LIVE-at-10⁸ machines (10⁹ budget)
+  closed the bucket**: 1,807 stay all-instructions-live (the old `nqh`
+  rows, consistent with never-QH-Tr), 0 new suspects, and the 59
+  post-collapse drifters (machines that outrun any finite tape after
+  their quiet event — the champion family) were re-examined with
+  per-transition reporting at the tape edge: **the champion surfaces
+  at exactly 32,779,477, the previous champion at exactly 66,348, and
+  everything else at ≤ 2,818 — the instruction-level score ranking
+  REPRODUCES the state-level record progression, with zero machines
+  beyond the champion bar.**
+
 Combined with the pass1-22 all refiring, every population examined so
 far supports **BBBT4(4) = 32,779,478 with the unchanged champion** —
 and the burn-down consequences are concrete: the 572 flips are
@@ -565,6 +576,21 @@ one-`vm_compute` wrap boards, the QH-side re-scans move at most a
 couple of machines past `B_tr = 2000`, and the genuine frontier
 remains the sparse-I burst counters needing Ladder-style recurrence
 proofs.
+
+### 7.2 The kernel-level IRules re-check (first pass)
+
+`Checkers/IRules/MetaTr.v` (committed) re-runs the v1 certificates
+through `irules_check_neverqhtr` — the same certificate and replay,
+with the prefix gate strengthened from per-state to per-instruction.
+Across the 250 v1 boards, roughly **60% fail the strengthened gate**
+(exact split pending a rerun of three interrupted batches): a far
+higher flip rate than the bucket-wide 11.2%, consistent with counter
+machines' long boot prefixes firing instructions outside the
+meta-cycle's set.  Each such failure is a machine whose quiet
+instructions all die inside the (small) anchor prefix — wrap boards,
+not champion risks.  The survivors re-certify `NeverQuasiHaltsTr`
+with zero new search and seed the instruction-level Proven lookup
+tier.
 
 ## 8. What we deliberately do NOT redo
 
