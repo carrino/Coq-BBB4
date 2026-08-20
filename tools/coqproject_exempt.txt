@@ -119,3 +119,4 @@ theories/CensusTr/WalkTr_Collect_A0.v
 theories/CensusTr/WalkTr_Collect_A1.v
 theories/CensusTr/WalkTr_Collect_B0.v
 theories/CensusTr/WalkTr_Collect_B1.v
+theories/CensusTr/WalkTr_Frontier.v

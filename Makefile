@@ -639,6 +639,57 @@ census-tr-collect-shards: _census-tr-deps
 	@echo ">>> decode: cat census_probes/censustr_collect_{A0,A1,B0,B1}.out | python3 tools/censustr/decode_enc.py"
 .PHONY: census-tr-collect-shards
 
+# ---------------------------------------------------------------------------
+# FRONTIER-SPLIT parallel collection (preferred over the 4-way subtree
+# split, whose B1 subtree carries most of the tree alone):
+#
+#   make census-tr-frontier                 # stage 1: prefix walk, serialize queues
+#   make census-tr-genshards WALK_SHARDS=16 # stage 2: deal frontier into drivers
+#   make census-tr-collect-par WALK_JOBS=16 # stage 3: walk all shards in parallel
+#   cat census_probes/censustr_prefix_back.out census_probes/censustr_par_*.out \
+#     | python3 tools/censustr/decode_enc.py > censustr_deferred_vN.txt
+#
+# Deferral is per-machine, so prefix back + shard backs = the single
+# walk's back queue.  FRONTIER_ITERS controls the split depth: bigger
+# = more, smaller frontier nodes (better balance, longer prefix).
+FRONTIER_ITERS ?= 3
+WALK_SHARDS ?= 16
+WALK_JOBS ?= 16
+
+census-tr-frontier: _census-tr-deps
+	@mkdir -p census_probes
+	@sed -e 's/vm_compute/native_compute/' \
+	     -e 's/FRONTIER_ITERS : nat := 3/FRONTIER_ITERS : nat := $(FRONTIER_ITERS)/' \
+	  theories/CensusTr/WalkTr_Frontier.v \
+	  > census_probes/WalkTr_Frontier_native.v
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 coqc -Q theories BBB4 -w -abstract-large-number \
+	  census_probes/WalkTr_Frontier_native.v \
+	  | tee census_probes/censustr_frontier.out
+	@echo ">>> next: make census-tr-genshards"
+.PHONY: census-tr-frontier
+
+census-tr-genshards:
+	@rm -f census_probes/WalkTr_Par_*.v census_probes/WalkTr_Par_*.vo \
+	  census_probes/censustr_par_*.out
+	@python3 tools/censustr/gen_walk_shards.py \
+	  census_probes/censustr_frontier.out --shards $(WALK_SHARDS)
+	@echo ">>> next: make census-tr-collect-par"
+.PHONY: census-tr-genshards
+
+census-tr-collect-par:
+	@for f in census_probes/WalkTr_Par_*.v; do \
+	  sed -i 's/vm_compute/native_compute/' $$f; \
+	done
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 ls census_probes/WalkTr_Par_*.v | xargs -P $(WALK_JOBS) -I{} sh -c \
+	  'b=$$(basename {} .v); \
+	   coqc -Q theories BBB4 -w -abstract-large-number {} \
+	     > census_probes/censustr_par_$${b#WalkTr_Par_}.out 2>&1; \
+	   echo ">>> $$b finished"'
+	@echo ">>> decode: cat census_probes/censustr_prefix_back.out census_probes/censustr_par_*.out | python3 tools/censustr/decode_enc.py"
+.PHONY: census-tr-collect-par
+
 # List-burn: run the walk decider directly over a deferred-machine list
 # in LISTBURN_JOBS parallel native_compute units -- no TNF/queue
 # overhead, and it shards perfectly (the tree walk has only two

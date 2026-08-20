@@ -234,3 +234,21 @@ Definition queue_sizes (q : SearchQueue) : nat * nat :=
 
 Definition queue_encs (q : SearchQueue) : list N :=
   map (fun x => N.pos (tm_enc (node_tm x))) (snd q).
+
+(** front-queue serialization for the FRONTIER SPLIT (parallel
+    collection): each pending node as (machine code, TNF pointer
+    code), so tools/censustr/gen_walk_shards.py can partition the
+    frontier across independent shard processes.  Untrusted, like all
+    collection serialization: the re-walk re-derives everything. *)
+Definition ptr_enc (p : option St) : N :=
+  match p with
+  | None => 0
+  | Some StA => 1
+  | Some StB => 2
+  | Some StC => 3
+  | Some StD => 4
+  end%N.
+
+Definition queue_front_encs (q : SearchQueue) : list (N * N) :=
+  map (fun x => (N.pos (tm_enc (node_tm x)), ptr_enc (node_ptr x)))
+      (fst q).
