@@ -730,6 +730,33 @@ ladders it would otherwise pay.  The depth-1 subtree's tier-stack
 progression: 1,108 (halt+cycles) → 900 (plain tiers) → 698
 (multi-cell + lex wrap) → **344 (+ Tier R)**.
 
+### 7.1g Tier W: RepWL (built) + the list-burn conveyor
+
+The state census's biggest unique deep-tier decider
+(docs/CENSUS_RUNTIME.md residue ablation: RepWL-only catches beat
+rank-only and qhb-only combined), ported as
+`CensusTr/RepWLTr.v`: the whole block-run-length abstraction, its
+five measures, the certificate machinery and the interned
+SCC/Bellman-Ford search are REUSED — the port is `rw_instr` (the
+abstract config pins the head symbol, like an n-gram context), one
+covers congruence, a fail-closed soundness case for the M4 cut
+successor, and the assembly through `closure_check_neverqhtr_lex`.
+Wired as Tier W after the wrap tier with the state census's own
+parameters ((L,T,t) rungs, fuel 5120, cut 32).
+
+Pilot on the same 40 random v1-inwalk machines as Tier R: **25/40
+(62.5%)**, union rank ∪ RepWL = **27/40 (67.5%)** — projecting to
+~100K of the 156K inwalk bucket.
+
+**The list-burn conveyor** (tools/censustr/gen_listburn.py +
+collect_listburn.py, `make census-tr-listburn`): run the walk decider
+DIRECTLY over the deferred list in 16 parallel native units — no
+TNF/queue overhead, and it shards perfectly where the tree walk has
+only two non-trivial subtrees.  Survivors (still-UNKNOWN) are the
+next burn-down list; the full tree walk happens once, at freeze
+time.  Smoke-tested end-to-end (30 machines: 17 neverqh, 13
+survive).
+
 ### 7.2 The kernel-level IRules re-check (first pass)
 
 `Checkers/IRules/MetaTr.v` (committed) re-runs the v1 certificates

@@ -27,7 +27,7 @@ From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape GTape Mirror.
 From BBB4.Checkers Require Import Cycle TCycler NGram NGramTr WrapTr.
 From BBB4.Checkers.IRules Require Import AnchorVisitsTr.
 From BBB4.Census Require Import TNF_QH Decide RankSearch.
-From BBB4.CensusTr Require Import TNF_QHTr.
+From BBB4.CensusTr Require Import TNF_QHTr RepWLTr.
 Import ListNotations.
 Open Scope nat_scope.
 
@@ -248,6 +248,12 @@ Variable qhb_lex_rungs : list (nat * nat).  (** the lex ladder's own
                                             search per instruction, so
                                             failing machines pay it in
                                             full *)
+Variable rw_rungs : list (nat * nat * nat).  (** (L, T, t) ladder for
+                                            the RepWL tier *)
+Variable rw_fuel : nat.        (** closure fuel for the RepWL tier *)
+Variable rw_cut : nat.         (** RepWL node-size cut (M4): abandon a
+                                   closure popping a node with more
+                                   run-length items than this *)
 Variable Prov : list TM.       (** proven [NeverQuasiHaltsTr] machines *)
 Hypothesis HP : Forall NeverQuasiHaltsTr Prov.
 Variable ProvQH : list TM.     (** proven census-grade transition-QH machines *)
@@ -439,8 +445,25 @@ Proof.
     specialize (Hqb tg' s' Hq). lia.
 Qed.
 
-(** the phase-1 decider: halting, lookups, cycles, the per-instruction
-    n-gram never tier, the wrapped QHBoundTr tier, defer the rest *)
+(** *** Tier W: the RepWL ladder *)
+
+Definition try_rw_tr (tm : TM) : bool :=
+  anyb (fun '(L, T, t) => rw_tier_tr tm L T t rw_fuel rw_cut) rw_rungs.
+
+Lemma try_rw_tr_sound : forall tm,
+  try_rw_tr tm = true -> NeverQuasiHaltsTr tm.
+Proof.
+  intros tm H.
+  unfold try_rw_tr in H.
+  rewrite anyb_existsb in H.
+  apply existsb_exists in H.
+  destruct H as ([[L T] t] & _ & H).
+  exact (rw_tier_tr_sound tm L T t rw_fuel rw_cut H).
+Qed.
+
+(** the walk decider: halting, lookups, cycles, the per-instruction
+    n-gram never tier, the rank-rules never tier, the wrapped
+    QHBoundTr tier, the RepWL never tier, defer the rest *)
 Definition decide_easy_tr (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
   match find_halt tm halt_gas 0 c0 with
   | Some (n, s, i) => if S n <=? B then R_Halt s i else R_Unknown
@@ -455,7 +478,10 @@ Definition decide_easy_tr (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
       | _ =>
           match try_rank_tr rank_rungs tm with
           | R_NeverQH => R_NeverQH
-          | _ => if try_qhbtr tm then R_QH else R_Unknown
+          | _ =>
+              if try_qhbtr tm then R_QH
+              else if try_rw_tr tm then R_NeverQH
+              else R_Unknown
           end
       end
   end.
@@ -490,6 +516,8 @@ Proof.
   { exact Hr. }
   destruct (try_qhbtr tm) eqn:Eq.
   { exact (try_qhbtr_sound tm Eq). }
+  destruct (try_rw_tr tm) eqn:Ew.
+  { exact (try_rw_tr_sound tm Ew). }
   exact I.
 Qed.
 

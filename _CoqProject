@@ -2971,6 +2971,7 @@ theories/Closeout/Closeout.v
 theories/BBBT4_Statement.v
 theories/CensusTr/TNF_QHTr.v
 theories/CensusTr/DecideTr.v
+theories/CensusTr/RepWLTr.v
 theories/CensusTr/RunTr.v
 theories/Checkers/IRules/AnchorVisitsTr.v
 theories/Checkers/IRules/MetaTr.v

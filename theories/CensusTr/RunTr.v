@@ -68,15 +68,24 @@ Definition qhb_rungs_tr : list (nat * nat) :=
 Definition qhb_lex_rungs_tr : list (nat * nat) :=
   [(2, 1024); (3, 1024); (4, 1024)].
 
+(** the RepWL tier's parameters, the state census's own
+    (Run_Compute.v [rw_rungs_census] / [rw_fuel_census] /
+    [rw_cut_census]) *)
+Definition rw_rungs_tr : list (nat * nat * nat) :=
+  [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0)].
+Definition rw_fuel_tr : nat := 5120.
+Definition rw_cut_tr : nat := 32.
+
 Definition decider_tr : QHDecider :=
   decide_easy_tr B_tr 130 512 200000 512 ng_rungs_tr rank_rungs_tr
-    qhb_rungs_tr qhb_lex_rungs_tr
+    qhb_rungs_tr qhb_lex_rungs_tr rw_rungs_tr rw_fuel_tr rw_cut_tr
     (dmap_of prov_tr) (dmap_of provqh_tr) (dmap_of D_tr).
 
 Lemma decider_tr_WF : QHDeciderTr_WF B_tr D_tr decider_tr.
 Proof.
   exact (decide_easy_tr_WF B_tr D_tr 130 512 200000 512
            ng_rungs_tr rank_rungs_tr qhb_rungs_tr qhb_lex_rungs_tr
+           rw_rungs_tr rw_fuel_tr rw_cut_tr
            prov_tr prov_tr_all provqh_tr provqh_tr_all).
 Qed.
 

@@ -639,6 +639,33 @@ census-tr-collect-shards: _census-tr-deps
 	@echo ">>> decode: cat census_probes/censustr_collect_{A0,A1,B0,B1}.out | python3 tools/censustr/decode_enc.py"
 .PHONY: census-tr-collect-shards
 
+# List-burn: run the walk decider directly over a deferred-machine list
+# in LISTBURN_JOBS parallel native_compute units -- no TNF/queue
+# overhead, and it shards perfectly (the tree walk has only two
+# non-trivial subtrees).  Survivors (still-UNKNOWN machines) are the
+# next burn-down list.
+#   make census-tr-listburn [LISTBURN_SRC=censustr_deferred_v1.txt]
+#                           [LISTBURN_JOBS=16]
+LISTBURN_SRC ?= censustr_deferred_v1.txt
+LISTBURN_JOBS ?= 16
+
+census-tr-listburn: _census-tr-deps
+	@python3 tools/censustr/gen_listburn.py $(LISTBURN_SRC) \
+	  --shards $(LISTBURN_JOBS) --outdir census_probes/listburn
+	@for f in census_probes/listburn/ListBurn_*.v; do \
+	  sed -i 's/vm_compute/native_compute/' $$f; \
+	done
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 for f in census_probes/listburn/ListBurn_*.v; do \
+	   b=$${f%.v}; \
+	   ( coqc -Q theories BBB4 -w -abstract-large-number $$f \
+	       > $$b.out 2>&1; \
+	     echo ">>> $$(basename $$b) finished" ) & \
+	 done; wait
+	@python3 tools/censustr/collect_listburn.py census_probes/listburn \
+	  --survivors censustr_survivors.txt
+.PHONY: census-tr-listburn
+
 # ---------------------------------------------------------------------------
 # The route-A closeout (docs/CLOSEOUT_ROUTE_A.md).  Regenerates the stage
 # files from the current boards and recompiles theories/Closeout/, yielding
