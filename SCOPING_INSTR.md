@@ -722,8 +722,13 @@ new lex-gated never checker (`closure_check_neverqhtr_lex` +
 NGramTr.v), laddered as `try_rank_tr` between the plain n-gram tier
 and the wrap tier with the state census's own rungs
 [(3,0);(3,64);(3,256);(3,1024)].  Pilot on 40 random v1-inwalk
-machines: **8/40 (20%) caught, ~0.9 s/machine vm** — projecting to
-roughly 30K of the 156K inwalk bucket at re-walk.
+machines: **8/40 (20%) caught, ~0.9 s/machine vm**.
+
+Measured on the p1 sample: deferral **698 → 344 (−51%)** at 1,127 s
+vs 1,065 s — nearly free, because every rank catch skips the wrap
+ladders it would otherwise pay.  The depth-1 subtree's tier-stack
+progression: 1,108 (halt+cycles) → 900 (plain tiers) → 698
+(multi-cell + lex wrap) → **344 (+ Tier R)**.
 
 ### 7.2 The kernel-level IRules re-check (first pass)
 
