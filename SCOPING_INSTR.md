@@ -515,7 +515,7 @@ back queue.
 
 **The collection walk has RUN (2026-08-18, the box, native_compute: the
 walk itself ~8.5 min).**  Back queue: **280,087 machines**
-(`censustr_deferred_v0.txt`, committed — burn-down list v0).
+(burn-down list v0; superseded by `censustr_deferred_v1.txt` — the v0 snapshot lives in this branch’s git history).
 `classify_deferred.py` partitions it against the state tiers as:
 
 | bucket | count | share | meaning |
