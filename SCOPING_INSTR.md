@@ -692,6 +692,39 @@ Confirmed on the p1 sample: the trimmed configuration runs in
 **1,065 s vs 12,282 s (11.5×)** with IDENTICAL deferral (32, 698) —
 on this subtree the trim lost nothing.
 
+### 7.1e The v1 collection walk (2026-08-19, user's box, 4-way sharded)
+
+`make census-tr-collect-shards`, native_compute, ~2.3 h (B0) + ~5 h
+(B1); the A shards are single-node (a first transition into state A
+self-loops on blank tape forever).  **v1 deferred = 181,289 — a 35.3%
+in-walk cut from v0's 280,087** (committed as
+`censustr_deferred_v1.txt`).  Buckets (classify_deferred.py):
+
+| bucket    | v0      | v1      | Δ     |
+|-----------|---------|---------|-------|
+| proven    | 5,129   | 4,961   | −3%   |
+| provenqh  | 5,163   | 1,704   | −67%  |
+| dcensus   | 5,111   | 5,064   | −1%   |
+| partial   | 20,345  | 13,206  | −35%  |
+| inwalk    | 244,339 | 156,354 | −36%  |
+
+The wrap tier crushed its home bucket (provenqh −67%); the dominant
+remainder is `inwalk` — machines the STATE census decided with tiers
+not yet ported.
+
+### 7.1f Tier R: the rank-rules never tier (built)
+
+The state census's biggest inwalk decider, ported: RankSearch's
+SCC/Bellman-Ford certificate search with the avoid-filter moved to
+instructions (`rank_procedure_tr`, untrusted), verified through the
+new lex-gated never checker (`closure_check_neverqhtr_lex` +
+`lex_find_tr` in ClosureTr.v, `ngram_check_neverqhtr_lex_with` in
+NGramTr.v), laddered as `try_rank_tr` between the plain n-gram tier
+and the wrap tier with the state census's own rungs
+[(3,0);(3,64);(3,256);(3,1024)].  Pilot on 40 random v1-inwalk
+machines: **8/40 (20%) caught, ~0.9 s/machine vm** — projecting to
+roughly 30K of the 156K inwalk bucket at re-walk.
+
 ### 7.2 The kernel-level IRules re-check (first pass)
 
 `Checkers/IRules/MetaTr.v` (committed) re-runs the v1 certificates

@@ -194,6 +194,38 @@ Definition rank_procedure_tr (tm : TM) (lset rset : gset)
   | None => []
   end.
 
+(** the never-QH rank tier (RankSearch.v's [rank_tier] at instruction
+    targets): grow the sets once, enumerate the closure, search a
+    certificate per fired instruction, verify through the lex-gated
+    checker *)
+Definition rank_tier_tr (tm : TM) (n t fuel rounds : nat) : bool :=
+  match csteps tm t c0 with
+  | None => false
+  | Some cc =>
+      let '(q0, (l, h, r)) := cc in
+      let lset0 := gadds (ng_seed_side n l) gempty in
+      let rset0 := gadds (ng_seed_side n r) gempty in
+      let a0 := ng_start n cc in
+      let '(lset, rset) := ng_grow tm a0 fuel rounds lset0 rset0 in
+      let closure :=
+        ng_explore tm lset rset fuel [] PositiveSet.empty [a0] in
+      ngram_check_neverqhtr_lex_with tm n t fuel lset rset
+        (fun tg => rank_procedure_tr tm lset rset closure tg)
+  end.
+
+Theorem rank_tier_tr_sound : forall tm n t fuel rounds,
+  rank_tier_tr tm n t fuel rounds = true -> NeverQuasiHaltsTr tm.
+Proof.
+  intros tm n t fuel rounds H.
+  unfold rank_tier_tr in H.
+  destruct (csteps tm t c0) as [[q0 [[l h] r]]|]; [|discriminate].
+  match type of H with
+  | (let '(_, _) := ?G in _) = true => destruct G as [lset rset]
+  end.
+  cbv beta iota zeta in H.
+  exact (ngram_check_neverqhtr_lex_with_sound tm n t fuel lset rset _ H).
+Qed.
+
 Section PipelineTr.
 
 Variable B : nat.              (** global transition-score bound *)
@@ -204,6 +236,8 @@ Variable loop_gas : nat.       (** gas for the full loop-scan rung *)
 Variable ng_fuel : nat.        (** worklist fuel for the n-gram closures *)
 Variable ng_rounds : nat.      (** growth rounds for the n-gram sets *)
 Variable ng_rungs : list (nat * nat).   (** (window n, prefix t) ladder,
+                                            never tier *)
+Variable rank_rungs : list (nat * nat). (** ladder for the rank-rules
                                             never tier *)
 Variable qhb_rungs : list (nat * nat).  (** (window n, prefix t) ladder,
                                             wrapped-QHBoundTr tier *)
@@ -269,6 +303,29 @@ Proof.
   - destruct (ngram_check_neverqhtr tm n t ng_fuel ng_rounds) eqn:E.
     + left. split; [reflexivity|].
       exact (ngram_check_neverqhtr_sound tm n t ng_fuel ng_rounds E).
+    + exact (IH tm).
+Qed.
+
+(** *** Tier R: the rank-rules never ladder *)
+
+Fixpoint try_rank_tr (rungs : list (nat * nat)) (tm : TM) : QHResult :=
+  match rungs with
+  | [] => R_Unknown
+  | (n, t) :: rest =>
+      if rank_tier_tr tm n t ng_fuel ng_rounds
+      then R_NeverQH
+      else try_rank_tr rest tm
+  end.
+
+Lemma try_rank_tr_cases : forall rungs tm,
+  (try_rank_tr rungs tm = R_NeverQH /\ NeverQuasiHaltsTr tm) \/
+  try_rank_tr rungs tm = R_Unknown.
+Proof.
+  induction rungs as [| [n t] rest IH]; intros tm; simpl.
+  - right; reflexivity.
+  - destruct (rank_tier_tr tm n t ng_fuel ng_rounds) eqn:E.
+    + left. split; [reflexivity|].
+      exact (rank_tier_tr_sound tm n t ng_fuel ng_rounds E).
     + exact (IH tm).
 Qed.
 
@@ -395,7 +452,11 @@ Definition decide_easy_tr (pm qm dm : DeferredMap) (tm : TM) : QHResult :=
       if scan_loops B tm loop_gas then R_Leaf else
       match try_ngram_tr ng_rungs tm with
       | R_NeverQH => R_NeverQH
-      | _ => if try_qhbtr tm then R_QH else R_Unknown
+      | _ =>
+          match try_rank_tr rank_rungs tm with
+          | R_NeverQH => R_NeverQH
+          | _ => if try_qhbtr tm then R_QH else R_Unknown
+          end
       end
   end.
 
@@ -425,6 +486,8 @@ Proof.
   { exact (scan_loops_sound_tr tm loop_gas El2). }
   destruct (try_ngram_tr_cases ng_rungs tm) as [[En Hn] | En]; rewrite En.
   { exact Hn. }
+  destruct (try_rank_tr_cases rank_rungs tm) as [[Er Hr] | Er]; rewrite Er.
+  { exact Hr. }
   destruct (try_qhbtr tm) eqn:Eq.
   { exact (try_qhbtr_sound tm Eq). }
   exact I.

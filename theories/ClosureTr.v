@@ -572,6 +572,136 @@ Section ClosureTrEngine.
       rewrite stepn_add, HstN'. exact Hj.
   Qed.
 
+  (** the [rank_find_tr]-shaped variant: absolute step indices from
+      [InitES], for the never-QH checker *)
+  Lemma lex_find_tr : forall Sl tg comps,
+    closed_tr_b Sl = true ->
+    lex_ok_tr Sl tg comps = true ->
+    Forall (comp_exact tm A succs covers) comps ->
+    forall tuple, Acc lexlt tuple ->
+    forall a cc m,
+    tuple = lex_tuple A comps a cc ->
+    In a Sl -> covers a (lift cc) ->
+    stepn tm m InitES = Some (lift cc) ->
+    exists n', m <= n' /\ FiresAt tm tg n'.
+  Proof.
+    intros Sl tg comps Hcl Hok Hex tuple Hacc.
+    induction Hacc as [tuple Hacc IH].
+    intros a cc m -> HIn Hcov Hm.
+    destruct (instr_eqb (a_instr a) tg) eqn:Eq.
+    - apply instr_eqb_spec in Eq.
+      exists m. split; [lia|].
+      exists (lift cc). split; [assumption|].
+      rewrite <- (covers_instr a (lift cc) Hcov). assumption.
+    - destruct (closed_step_tr Sl a (lift cc) Hcl HIn Hcov)
+        as (c' & l & a' & Hstep & Es & HInl & HIn' & Hcov').
+      destruct (cstep_lift_rev tm cc c' Hstep) as (cc' & Hcc' & Hlift).
+      subst c'.
+      assert (Hm' : stepn tm (S m) InitES = Some (lift cc')).
+      { replace (S m) with (m + 1) by lia.
+        rewrite stepn_add, Hm. cbn [stepn]. rewrite Hstep. reflexivity. }
+      destruct (instr_eqb (a_instr a') tg) eqn:Eq'.
+      + apply instr_eqb_spec in Eq'.
+        exists (S m). split; [lia|].
+        exists (lift cc'). split; [assumption|].
+        rewrite <- (covers_instr a' _ Hcov'). assumption.
+      + assert (He : lex_edge_ok A comps a a' = true).
+        { unfold lex_ok_tr in Hok. rewrite forallb_forall in Hok.
+          specialize (Hok a HIn). rewrite Eq, Es in Hok.
+          rewrite forallb_forall in Hok.
+          specialize (Hok a' HInl). rewrite Eq' in Hok.
+          simpl in Hok. assumption. }
+        destruct (IH (lex_tuple A comps a' cc')
+                    (lex_edge_decrease tm A succs covers comps a cc a' cc' l
+                       Hex Hcov Hcov' Hcc' Es HInl He)
+                    a' cc' (S m) eq_refl HIn' Hcov' Hm')
+          as (n' & Hn' & Hv).
+        exists n'. split; [lia | assumption].
+  Qed.
+
+  (** the lex-gated never-QH closure check ([closure_check_neverqhtr]
+      with each fired instruction discharged by a certificate) *)
+  Definition closure_check_neverqhtr_lex (t fuel : nat) (a0 : A)
+      (cert : Instr -> list (lexcomp A)) : bool :=
+    match csteps tm t c0 with
+    | Some ct =>
+        match close_tr fuel [] PositiveSet.empty [a0] with
+        | Some Sl =>
+            forallb (fun tg =>
+              if (if cfires tm c0 t tg then true
+                  else existsb (fun a => instr_eqb (a_instr a) tg) Sl)
+              then lex_ok_tr Sl tg (cert tg)
+              else true) all_Instr
+        | None => false
+        end
+    | None => false
+    end.
+
+  Theorem closure_check_neverqhtr_lex_sound : forall t fuel a0 cert,
+    (forall ct, csteps tm t c0 = Some ct -> covers a0 (lift ct)) ->
+    (forall tg, Forall (comp_exact tm A succs covers) (cert tg)) ->
+    closure_check_neverqhtr_lex t fuel a0 cert = true ->
+    NeverQuasiHaltsTr tm.
+  Proof.
+    intros t fuel a0 cert Hstart Hcert H.
+    unfold closure_check_neverqhtr_lex in H.
+    destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
+    destruct (close_tr fuel [] PositiveSet.empty [a0]) as [Sl|] eqn:Hcls;
+      [|discriminate].
+    rename H into Hq.
+    destruct (close_tr_root_spec fuel a0 Sl Hcls) as [Hin Hcl].
+    apply mem_In_tr in Hin.
+    pose proof (Hstart ct eq_refl) as Hcov0.
+    assert (Hct : stepn tm t InitES = Some (lift ct)).
+    { rewrite <- lift_c0. apply csteps_lift; assumption. }
+    intros tg Hvq N.
+    assert (Hro : lex_ok_tr Sl tg (cert tg) = true).
+    { rewrite forallb_forall in Hq.
+      specialize (Hq tg (all_Instr_complete tg)).
+      destruct Hvq as (n0 & cn & Hcn & Hqn).
+      assert (Hprem : (if cfires tm c0 t tg then true
+                       else existsb (fun a => instr_eqb (a_instr a) tg) Sl)
+                      = true).
+      { destruct (le_lt_dec t n0) as [Hge | Hlt].
+        - apply orb_true_intro; right.
+          destruct (closure_invariant_tr Sl Hcl a0 (lift ct)
+                      Hin Hcov0 (n0 - t)) as (c' & a' & Hst & HIn' & Hcov').
+          assert (Hc' : stepn tm n0 InitES = Some c').
+          { replace n0 with (t + (n0 - t)) by lia.
+            rewrite stepn_add, Hct. assumption. }
+          rewrite Hc' in Hcn. injection Hcn as <-.
+          apply existsb_exists. exists a'.
+          split; [assumption|].
+          apply instr_eqb_spec. rewrite (covers_instr a' c' Hcov').
+          assumption.
+        - apply orb_true_intro; left.
+          destruct (csteps_prefix tm n0 t c0 ct) as (cn' & Hcn' & _);
+            [lia | exact Et |].
+          assert (Hl : stepn tm n0 InitES = Some (lift cn')).
+          { rewrite <- lift_c0. apply csteps_lift; assumption. }
+          rewrite Hl in Hcn. injection Hcn as <-.
+          eapply cfires_complete; [exact Hlt | exact Hcn' |].
+          rewrite <- cinstr_lift. exact Hqn. }
+      rewrite Hprem in Hq.
+      destruct (lex_ok_tr Sl tg (cert tg)); [reflexivity | discriminate]. }
+    set (M := Nat.max N t).
+    destruct (closure_invariant_tr Sl Hcl a0 (lift ct)
+                Hin Hcov0 (M - t)) as (cM & aM & HstM & HInM & HcovM).
+    assert (HM : stepn tm M InitES = Some cM).
+    { replace M with (t + (M - t)) by (unfold M; lia).
+      rewrite stepn_add, Hct. assumption. }
+    destruct (stepn_csteps tm M cM HM) as (ccM & HccM & HliftM).
+    rewrite <- HliftM in HcovM, HM.
+    destruct (lex_find_tr Sl tg (cert tg) Hcl Hro (Hcert tg)
+                (lex_tuple A (cert tg) aM ccM)
+                (lexlt_wf_len (length (lex_tuple A (cert tg) aM ccM)) _
+                   eq_refl)
+                aM ccM M eq_refl HInM HcovM HM)
+      as (n & Hn & Hv).
+    exists n. split; [| assumption].
+    assert (N <= M) by (unfold M; lia). lia.
+  Qed.
+
   Theorem closure_check_neverqhtr_sound : forall t fuel a0,
     (forall ct, csteps tm t c0 = Some ct -> covers a0 (lift ct)) ->
     closure_check_neverqhtr t fuel a0 = true -> NeverQuasiHaltsTr tm.

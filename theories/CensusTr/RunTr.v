@@ -50,6 +50,11 @@ Proof. constructor. Qed.
 Definition ng_rungs_tr : list (nat * nat) :=
   [(2, 100); (3, 200); (4, 400); (6, 800)].
 
+(** the rank-rules never tier's ladder, the state census's own
+    (Run_Compute.v [rank_rungs_census]) *)
+Definition rank_rungs_tr : list (nat * nat) :=
+  [(3, 0); (3, 64); (3, 256); (3, 1024)].
+
 Definition qhb_rungs_tr : list (nat * nat) :=
   [(2, 64); (2, 256); (2, 1024);
    (3, 64); (3, 256); (3, 1024);
@@ -64,14 +69,14 @@ Definition qhb_lex_rungs_tr : list (nat * nat) :=
   [(2, 1024); (3, 1024); (4, 1024)].
 
 Definition decider_tr : QHDecider :=
-  decide_easy_tr B_tr 130 512 200000 512 ng_rungs_tr
+  decide_easy_tr B_tr 130 512 200000 512 ng_rungs_tr rank_rungs_tr
     qhb_rungs_tr qhb_lex_rungs_tr
     (dmap_of prov_tr) (dmap_of provqh_tr) (dmap_of D_tr).
 
 Lemma decider_tr_WF : QHDeciderTr_WF B_tr D_tr decider_tr.
 Proof.
   exact (decide_easy_tr_WF B_tr D_tr 130 512 200000 512
-           ng_rungs_tr qhb_rungs_tr qhb_lex_rungs_tr
+           ng_rungs_tr rank_rungs_tr qhb_rungs_tr qhb_lex_rungs_tr
            prov_tr prov_tr_all provqh_tr provqh_tr_all).
 Qed.
 

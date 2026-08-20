@@ -69,3 +69,58 @@ Proof.
   - intros ct' Hct'. rewrite Et in Hct'. injection Hct' as <-.
     apply ng_start_covers. exact Hseed.
 Qed.
+
+(** ** The lex-gated never tier
+
+    [ngram_check_neverqh_lex_with]'s shape: the gram sets come from
+    the CALLER (the rank tier, which already grew them for its
+    certificate search) -- [ng_seed_ok] + the closure check re-derive
+    everything from the given sets, so soundness does not depend on
+    where they came from. *)
+Definition ngram_check_neverqhtr_lex_with (tm : TM) (n t fuel : nat)
+    (lset rset : gset) (cert : Instr -> list ngcomp) : bool :=
+  (1 <=? n) &&
+  match csteps tm t c0 with
+  | Some cc =>
+      let a0 := ng_start n cc in
+      ng_seed_ok n lset rset cc &&
+      closure_check_neverqhtr_lex tm cconf cconf_enc cinstr
+        (ng_succs tm lset rset) t fuel a0
+        (fun tg => map (ng_comp_denote tm n) (cert tg))
+  | None => false
+  end.
+
+Theorem ngram_check_neverqhtr_lex_with_sound :
+  forall tm n t fuel lset rset cert,
+  ngram_check_neverqhtr_lex_with tm n t fuel lset rset cert = true ->
+  NeverQuasiHaltsTr tm.
+Proof.
+  intros tm n t fuel lset rset cert H.
+  unfold ngram_check_neverqhtr_lex_with in H.
+  apply andb_prop in H as [Hn H].
+  apply Nat.leb_le in Hn.
+  destruct (csteps tm t c0) as [cc|] eqn:Et; [|discriminate].
+  apply andb_prop in H as [Hseed Hcheck].
+  apply (closure_check_neverqhtr_lex_sound tm cconf cconf_enc cinstr
+           (ng_succs tm lset rset) (ng_covers n lset rset)) in Hcheck;
+    [assumption | | | | |].
+  - exact cconf_enc_inj.
+  - intros a c Hc. eapply ng_covers_instr; eauto.
+  - intros a c Hc. apply ng_succs_sound; assumption.
+  - intros ct' Hct'. rewrite Et in Hct'. injection Hct' as <-.
+    apply ng_start_covers. exact Hseed.
+  - intros tg0. apply Forall_forall. intros comp Hin.
+    apply in_map_iff in Hin. destruct Hin as (c & <- & _).
+    destruct c as [phi | m K phi gate | phi | pp rg K phi gate]; simpl.
+    + exact I.
+    + intros a cc' a' cc'' sl Hca Hca' Hstep Es HInl.
+      eapply (ngm_exact tm n lset rset); eauto.
+    + exact I.
+    + destruct (pm_ok n pp rg) eqn:Epm; [|exact I].
+      apply andb_prop in Epm as [He Hb].
+      intros a cc' a' cc'' sl Hca Hca' Hstep Es HInl.
+      eapply (pm_exact tm n lset rset); eauto.
+      * apply existsb_exists in He as (x & Hx & Hx1).
+        apply sym_eqb_spec in Hx1. subst x. assumption.
+      * destruct rg; apply Nat.leb_le; assumption.
+Qed.
