@@ -2,7 +2,9 @@
 """Shard a deferred-machine list into standalone list-burn units.
 
 UNTRUSTED tooling: emits census_probes/listburn/ListBurn_XX.v files,
-each running the REAL walk decider (CensusTr/RunTr.v [decider_tr])
+each running a REAL census decider (CensusTr/RunTr.v [decider_tr],
+or [decider_tr_deep] with --deep: the same tiers and the same contract
+at the same bound, with the fuel/windows the walk cannot afford)
 over its slice of machines and printing one verdict tag per machine.
 Burning the list directly skips all TNF/queue overhead and shards
 perfectly (the tree walk has only two non-trivial subtrees), so a
@@ -68,7 +70,15 @@ def main():
     ap.add_argument("list")
     ap.add_argument("--shards", type=int, default=16)
     ap.add_argument("--outdir", default="census_probes/listburn")
+    ap.add_argument("--deep", action="store_true",
+                    help="burn with RunTr's ESCALATED decider_tr_deep "
+                         "(wider windows, 5x loop gas, 5x n-gram fuel, "
+                         "8x RepWL fuel) instead of the walk decider -- "
+                         "same tiers, same contract, same B_tr; the walk's "
+                         "ladders are trimmed for WALK cost, which a "
+                         "per-machine parallel burn does not pay")
     args = ap.parse_args()
+    dec = "decider_tr_deep" if args.deep else "decider_tr"
 
     machines = [
         l.strip()
@@ -97,7 +107,7 @@ def main():
         )
         parts.append(
             "Time Definition burn : list nat :=\n"
-            "  Eval vm_compute in (map (fun tm => tag (decider_tr tm)) ms).\n\n"
+            f"  Eval vm_compute in (map (fun tm => tag ({dec} tm)) ms).\n\n"
             "Compute burn.\n"
         )
         path = os.path.join(args.outdir, name + ".v")

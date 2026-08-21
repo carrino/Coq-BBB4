@@ -89,6 +89,65 @@ Proof.
            prov_tr prov_tr_all provqh_tr provqh_tr_all).
 Qed.
 
+(** ** The ESCALATED (offline) configuration
+
+    The walk's ladders are trimmed for WALK cost: every deferred-bound
+    machine pays every rung it fails, at every node, so the walk gets
+    the cheap end of each tier (SCOPING_INSTR.md section 7.1d).  The
+    LIST-BURN has no such constraint -- it is per-machine and
+    embarrassingly parallel over a fixed list -- so it runs the same
+    tiers with 10-100x the fuel and the wide windows the walk cannot
+    afford.  Same checkers, same soundness: only the parameter tuple
+    differs, and [decide_easy_tr_WF] is parametric in it, so
+    [decider_tr_deep] satisfies the SAME census contract at the SAME
+    bound.
+
+    Note the asymmetry, and why it is forced: the QH tiers conclude
+    [QHBoundTr (S t)] and the pipeline guards them with [S t <=? B],
+    so their prefix horizon cannot exceed [B_tr] -- escalating them
+    means WIDER windows (n = 5, 6, 8), not deeper prefixes.  The NEVER
+    tiers carry no bound, so they escalate in both directions.  Keeping
+    [B_tr] fixed is what makes the burn's survivor count honest: a
+    machine this decides is one a re-walk with these ladders would also
+    decide. *)
+
+Definition ng_rungs_deep : list (nat * nat) :=
+  [(2, 100); (3, 200); (4, 400); (6, 800); (8, 1600); (10, 4096)].
+
+Definition rank_rungs_deep : list (nat * nat) :=
+  [(3, 0); (3, 64); (3, 256); (3, 1024);
+   (4, 1024); (5, 1024); (6, 4096)].
+
+Definition qhb_rungs_deep : list (nat * nat) :=
+  [(2, 64); (2, 256); (2, 1024);
+   (3, 64); (3, 256); (3, 1024);
+   (4, 64); (4, 256); (4, 1024);
+   (5, 256); (5, 1024); (6, 1024); (8, 1024)].
+
+Definition qhb_lex_rungs_deep : list (nat * nat) :=
+  [(2, 1024); (3, 1024); (4, 1024); (5, 1024); (6, 1024)].
+
+Definition rw_rungs_deep : list (nat * nat * nat) :=
+  [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0);
+   (5, 2, 0); (3, 3, 0); (4, 3, 0); (2, 4, 0)].
+
+Definition rw_fuel_deep : nat := 40960.
+Definition rw_cut_deep : nat := 128.
+
+Definition decider_tr_deep : QHDecider :=
+  decide_easy_tr B_tr 130 4096 1000000 2048 ng_rungs_deep rank_rungs_deep
+    qhb_rungs_deep qhb_lex_rungs_deep rw_rungs_deep rw_fuel_deep rw_cut_deep
+    (dmap_of prov_tr) (dmap_of provqh_tr) (dmap_of D_tr).
+
+Lemma decider_tr_deep_WF : QHDeciderTr_WF B_tr D_tr decider_tr_deep.
+Proof.
+  exact (decide_easy_tr_WF B_tr D_tr 130 4096 1000000 2048
+           ng_rungs_deep rank_rungs_deep qhb_rungs_deep qhb_lex_rungs_deep
+           rw_rungs_deep rw_fuel_deep rw_cut_deep
+           prov_tr prov_tr_all provqh_tr provqh_tr_all).
+Qed.
+
+
 (** ** The root and its symmetrized first level (Run_Compute.v shapes) *)
 
 Definition TM0 : TM := fun _ _ => None.
