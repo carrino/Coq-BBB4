@@ -515,7 +515,9 @@ back queue.
 
 **The collection walk has RUN (2026-08-18, the box, native_compute: the
 walk itself ~8.5 min).**  Back queue: **280,087 machines**
-(burn-down list v0; superseded by `censustr_deferred_v1.txt` — the v0 snapshot lives in this branch’s git history).
+(burn-down list v0; superseded by `censustr_deferred_v2.txt` — each walk
+replaces the last, and superseded snapshots live in this branch’s git
+history).
 `classify_deferred.py` partitions it against the state tiers as:
 
 | bucket | count | share | meaning |
@@ -697,8 +699,8 @@ on this subtree the trim lost nothing.
 `make census-tr-collect-shards`, native_compute, ~2.3 h (B0) + ~5 h
 (B1); the A shards are single-node (a first transition into state A
 self-loops on blank tape forever).  **v1 deferred = 181,289 — a 35.3%
-in-walk cut from v0's 280,087** (committed as
-`censustr_deferred_v1.txt`).  Buckets (classify_deferred.py):
+in-walk cut from v0's 280,087** (was `censustr_deferred_v1.txt`, since
+superseded by v2).  Buckets (classify_deferred.py):
 
 | bucket    | v0      | v1      | Δ     |
 |-----------|---------|---------|-------|

@@ -618,7 +618,7 @@ census-tr-collect: _census-tr-deps
 # Deferral is a per-machine decision, so the concatenated shard back
 # queues equal the single walk's back queue; decode them together:
 #   cat census_probes/censustr_collect_{A0,A1,B0,B1}.out \
-#     | python3 tools/censustr/decode_enc.py > censustr_deferred_v1.txt
+#     | python3 tools/censustr/decode_enc.py > censustr_deferred_vN.txt
 CENSUS_TR_SHARDS := A0 A1 B0 B1
 
 census-tr-collect-shards: _census-tr-deps
@@ -695,9 +695,12 @@ census-tr-collect-par:
 # overhead, and it shards perfectly (the tree walk has only two
 # non-trivial subtrees).  Survivors (still-UNKNOWN machines) are the
 # next burn-down list.
-#   make census-tr-listburn [LISTBURN_SRC=censustr_deferred_v1.txt]
+#   make census-tr-listburn [LISTBURN_SRC=censustr_deferred_v2.txt]
 #                           [LISTBURN_JOBS=16]
-LISTBURN_SRC ?= censustr_deferred_v1.txt
+# LISTBURN_SRC tracks the CURRENT deferred list: each walk replaces the
+# last (superseded snapshots live in git history), so bump this when a
+# new one lands.
+LISTBURN_SRC ?= censustr_deferred_v2.txt
 LISTBURN_JOBS ?= 16
 
 census-tr-listburn: _census-tr-deps
