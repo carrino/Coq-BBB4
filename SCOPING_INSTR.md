@@ -730,6 +730,25 @@ ladders it would otherwise pay.  The depth-1 subtree's tier-stack
 progression: 1,108 (halt+cycles) → 900 (plain tiers) → 698
 (multi-cell + lex wrap) → **344 (+ Tier R)**.
 
+### 7.1g The v2 collection walk (2026-08-21, user's box, through Tier R)
+
+**v2 deferred = 110,910 (−38.8% from v1, −60.4% from v0)**, committed
+as `censustr_deferred_v2.txt` (replacing v1 per the one-current-list
+policy).  Buckets:
+
+| bucket    | v0      | v1      | v2      |
+|-----------|---------|---------|---------|
+| proven    | 5,129   | 4,961   | 4,471   |
+| provenqh  | 5,163   | 1,704   | 1,704   |
+| dcensus   | 5,111   | 5,064   | 5,064   |
+| partial   | 20,345  | 13,206  | 5,822   |
+| inwalk    | 244,339 | 156,354 | 93,849  |
+
+Tier R took 40% out of `inwalk` and 56% out of `partial`, and — as a
+never-tier must — left the QH buckets untouched.  This walk predates
+Tier W (RepWL); the list-burn conveyor applies it offline over v2,
+no re-walk needed.
+
 ### 7.1g Tier W: RepWL (built) + the list-burn conveyor
 
 The state census's biggest unique deep-tier decider
