@@ -25,6 +25,16 @@ From Coq Require Import FunctionalExtensionality.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement Mirror.
 From BBB4.Census Require Import TNF_QH Decide.
 From BBB4.CensusTr Require Import TNF_QHTr DecideTr.
+(* the kernel-checked transition-level Proven tier: the 97 v1
+   IRules certificates that survive the per-instruction prefix
+   gate (SCOPING_INSTR.md 7.2).  739 KB of boards, so this is
+   Required directly -- the state census's data/certificate
+   split (Proven_List.v vs Proven_Data.v) exists for its 2.65 GB
+   of boards and buys nothing at this size. *)
+From BBB4.Machines Require Import
+  IRules_Batch_00 IRules_Batch_01 IRules_Batch_02 IRules_Batch_03
+  IRules_Batch_04 IRules_Batch_05 IRules_Batch_06 IRules_Batch_07
+  IRules_Batch_08 IRulesTr_Batch_01.
 Import ListNotations.
 
 Set Default Goal Selector "!".
@@ -34,11 +44,208 @@ Set Default Goal Selector "!".
 Definition B_tr : nat := 2000.
 
 Definition D_tr : list TM := [].
-Definition prov_tr : list TM := [].
+Definition prov_tr : list TM :=
+  [tm_1RB1RA_0LC0LD_0RB1LC_1RA1LD;
+   tm_1RB1LA_1LC1LD_1RC0RA_0LC0LD;
+   tm_1RB0LA_1LCXXX_0LD0LC_1RD0RA;
+   tm_1RB1LA_1LC1LC_0LD0LC_1RD0RA;
+   tm_1RBXXX_1LC0LA_0LD0LC_1RD0RB;
+   tm_1RB0LC_1LC1LA_0LD0LC_1RD0RB;
+   tm_1RB1LA_1RC1RB_1LD0LA_0LA1LD;
+   tm_1RB1LA_1RC1RB_0LD0LA_1LB1LD;
+   tm_1RB1LA_1RC1RB_0LD0LA_0RC1LD;
+   tm_1RB0LB_1RC1RB_1LD0RC_1LD1LA;
+   tm_1RB1RC_1RC1RB_1LD0RC_1LD1LA;
+   tm_1RB1RC_1LA1RB_1LD0RC_1LD1LA;
+   tm_1RB0RD_1RC1RB_1LA1LC_1LC1RD;
+   tm_1RB1RD_1RC1RB_1LC1LA_0RC0RD;
+   tm_1RB1RD_1RC1RB_1LC1LA_1LC0RD;
+   tm_1RB1RA_1LC1LB_0RA0RD_1LB1RD;
+   tm_1RB1RD_0LC1RC_1LC1LA_1LB0RD;
+   tm_1RB1RA_1LC1LB_1RA0RD_1LB1RD;
+   tm_1RB1RA_1LC0LD_0LD1LC_1RA1LD;
+   tm_1RB1RA_0LC0LD_0LD1LC_1RA1LD;
+   tm_1RB1RD_0LC1RB_1LC1LA_0RB0RD;
+   tm_1RB1RD_0LC1RB_1LC1LA_0RC0RD;
+   tm_1RB1RD_0LC1RB_1LC1LA_1LC0RD;
+   tm_1RB1RC_0LA1RB_1LD0RC_1LD1LA;
+   tm_1RB1LA_1RC1RB_0LD0LA_0LA1LD;
+   tm_1RB1LA_1RC1RB_1LD0LA_1LB1LD;
+   tm_1RB0LA_1LB0LC_0LD0LC_1RD0RA;
+   tm_1RB1LA_1LA0LC_1RD1LC_1RB1RD;
+   tm_1RB1RA_1LC0LD_1RB1LC_1RA1LD;
+   tm_1RB1RA_0LC0LD_1LA1LC_1RA1LD;
+   tm_1RB1LA_1RC1RB_1LD0LA_1RC1LD;
+   tm_1RB1LA_1LA1LC_0LD0LC_1RD1RB;
+   tm_1RB1LA_1LA1LC_1RD0LC_1RD1RB;
+   tm_1RB1RD_1LB0LC_1LA1RC_0RB0RD;
+   tm_1RB1RA_1LC0RB_1LC1LD_0RA0LA;
+   tm_1RB1RA_1LC0RB_1LC1LD_0RA1RB;
+   tm_1RB1RD_0LC0RC_1LC1LA_0RB0RD;
+   tm_1RB1LB_0LC0LB_0LD1LC_1RD1RA;
+   tm_1RB1RA_1LB1LC_0RA1RD_0RB0RD;
+   tm_1RB1RA_1LB1LC_0RA1RD_1LB0RD;
+   tm_1RB1RA_1LC0LD_0RB1LC_1RA1LD;
+   tm_1RB1RC_0RC1RB_0RD0RC_1LD1LA;
+   tm_1RB1RD_0RC0RB_1LC0LA_0RA1LB;
+   tm_1RB1RD_0RC0RB_1LC0LA_1LA0RB;
+   tm_1RB1RD_0RC0RB_1LC0LA_0RBXXX;
+   tm_1RB1RD_0RC0RD_1LC0LA_0RB0RD;
+   tm_1RB1LA_0LA1LC_0LD0LC_1RD1RB;
+   tm_1RB1RD_0RC0RB_1LC0LA_0RD0RB;
+   tm_1RB1LA_0LA1LC_1RD0LC_1RD1RB;
+   tm_1RB1RD_0RC0RB_1LC0LA_1LD1RB;
+   tm_1RB1RD_0RC0RB_1LC0LA_1RD1LB;
+   tm_1RB1RA_1LC0RB_1LC1LD_1RA0LA;
+   tm_1RB1RA_1LC0RB_1LC1LD_1RA1RB;
+   tm_1RB1LB_0LC0LB_0RD1LC_1RD1RA;
+   tm_1RB1RD_0RC1RB_1LC1LA_0LB0RD;
+   tm_1RB1RD_0RC1RB_1LC1LA_0RB0RD;
+   tm_1RB1RD_0RC1RB_1LC1LA_0RC0RD;
+   tm_1RB1RC_1LA1RB_0RD0RC_1LD1LA;
+   tm_1RB1RD_0RC1RB_1LC1LA_1LC0RD;
+   tm_1RB1LA_1RC1RB_1LD0LA_0RC1LD;
+   tm_1RB1LA_0LC0LB_1RC1RD_1LA1LB;
+   tm_1RB1RD_1LC0RC_1LC1LA_0RB0RD;
+   tm_1RB1RD_1LC0RC_1LC1LA_1LB0RD;
+   tm_1RBXXX_0RC0RB_1LC0LD_1LA0RD;
+   tm_1RB1RB_0RC0RB_1LC0LD_1LA1RD;
+   tm_1RB1LA_0LA0LC_1RD1LC_1RB1RD;
+   tm_1RB1RC_0RC1RB_1LD0RC_1LD1LA;
+   tm_1RB1RA_1LC0LD_1LA1LC_1RA1LD;
+   tm_1RB1RA_0RC0RB_1LC1LD_0RD0LA;
+   tm_1RB0RD_0RC0RB_1LC0LA_1LAXXX;
+   tm_1RB1RA_1LB1LC_1RA1RD_0RB0RD;
+   tm_1RB1RA_1LB1LC_1RA1RD_1LB0RD;
+   tm_1RB0LA_0RC0RB_1LC1LD_0RA1RB;
+   tm_1RB1RA_0RC0RB_1LC1LD_0RA1RB;
+   tm_1RB1RA_0RC1LD_1LC0LA_0LB0RD;
+   tm_1RB0LB_1RC1RB_0RD0RC_1LD1LA;
+   tm_1RB1RA_0RC1LD_1LC0LA_0RB0RD;
+   tm_1RB1RA_0RC1LD_1LC0LA_0RC0RD;
+   tm_1RB1RC_1RC1RB_0RD0RC_1LD1LA;
+   tm_1RB1RA_0RC1LD_1LC0LA_1LC0RD;
+   tm_1RB1RC_1RC0RD_0LB0RC_1LD1LA;
+   tm_1RB0RC_0LA1RB_1LD1RC_1LA1LD;
+   tm_1RB1LA_1RC1RB_0LD0LA_1RC1LD;
+   tm_1RB1LB_0LC0LB_1RD1LC_1RD1RA;
+   tm_1RB1RD_1LC1RB_1LC1LA_0RB0RD;
+   tm_1RB1RA_0RC0RB_1LC1LD_1RA0LA;
+   tm_1RB1RD_1LC1RB_1LC1LA_1LB0RD;
+   tm_1RB1RD_1LC1RB_1LC1LA_0RC0RD;
+   tm_1RB1RA_0RC0RB_1LC1LD_1RA1RB;
+   tm_1RB1RD_1LC1RB_1LC1LA_1LC0RD;
+   tm_1RB1RC_0LA1RB_0RD0RC_1LD1LA;
+   tm_1RB1RA_0LC0LD_1RB1LC_1RA1LD;
+   tm_1RB0RC_1LA1RB_1LD1RC_1LA1LD;
+   tm_1RB1RD_0RC0RC_1LC1LA_0LB0RD;
+   tm_1RB1RD_0RC0RC_1LC1LA_0RB0RD;
+   tm_1RB0RC_0RC1RB_1LD1RC_1LA1LD;
+   tm_1RB1RD_0LC1RD_1LC1LA_1LB0RD].
 Definition provqh_tr : list TM := [].
 
 Lemma prov_tr_all : Forall NeverQuasiHaltsTr prov_tr.
-Proof. constructor. Qed.
+Proof.
+  unfold prov_tr.
+  apply Forall_cons; [exact irtr_1RB1RA_0LC0LD_0RB1LC_1RA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1LC1LD_1RC0RA_0LC0LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB0LA_1LCXXX_0LD0LC_1RD0RA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1LC1LC_0LD0LC_1RD0RA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RBXXX_1LC0LA_0LD0LC_1RD0RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB0LC_1LC1LA_0LD0LC_1RD0RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1RC1RB_1LD0LA_0LA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1RC1RB_0LD0LA_1LB1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1RC1RB_0LD0LA_0RC1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB0LB_1RC1RB_1LD0RC_1LD1LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RC_1RC1RB_1LD0RC_1LD1LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RC_1LA1RB_1LD0RC_1LD1LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB0RD_1RC1RB_1LA1LC_1LC1RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_1RC1RB_1LC1LA_0RC0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_1RC1RB_1LC1LA_1LC0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LC1LB_0RA0RD_1LB1RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0LC1RC_1LC1LA_1LB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LC1LB_1RA0RD_1LB1RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LC0LD_0LD1LC_1RA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_0LC0LD_0LD1LC_1RA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0LC1RB_1LC1LA_0RB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0LC1RB_1LC1LA_0RC0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0LC1RB_1LC1LA_1LC0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RC_0LA1RB_1LD0RC_1LD1LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1RC1RB_0LD0LA_0LA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1RC1RB_1LD0LA_1LB1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB0LA_1LB0LC_0LD0LC_1RD0RA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1LA0LC_1RD1LC_1RB1RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LC0LD_1RB1LC_1RA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_0LC0LD_1LA1LC_1RA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1RC1RB_1LD0LA_1RC1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1LA1LC_0LD0LC_1RD1RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1LA1LC_1RD0LC_1RD1RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_1LB0LC_1LA1RC_0RB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LC0RB_1LC1LD_0RA0LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LC0RB_1LC1LD_0RA1RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0LC0RC_1LC1LA_0RB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LB_0LC0LB_0LD1LC_1RD1RA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LB1LC_0RA1RD_0RB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LB1LC_0RA1RD_1LB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LC0LD_0RB1LC_1RA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RC_0RC1RB_0RD0RC_1LD1LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC0RB_1LC0LA_0RA1LB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC0RB_1LC0LA_1LA0RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC0RB_1LC0LA_0RBXXX_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC0RD_1LC0LA_0RB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_0LA1LC_0LD0LC_1RD1RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC0RB_1LC0LA_0RD0RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_0LA1LC_1RD0LC_1RD1RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC0RB_1LC0LA_1LD1RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC0RB_1LC0LA_1RD1LB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LC0RB_1LC1LD_1RA0LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LC0RB_1LC1LD_1RA1RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LB_0LC0LB_0RD1LC_1RD1RA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC1RB_1LC1LA_0LB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC1RB_1LC1LA_0RB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC1RB_1LC1LA_0RC0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RC_1LA1RB_0RD0RC_1LD1LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC1RB_1LC1LA_1LC0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1RC1RB_1LD0LA_0RC1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_0LC0LB_1RC1RD_1LA1LB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_1LC0RC_1LC1LA_0RB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_1LC0RC_1LC1LA_1LB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RBXXX_0RC0RB_1LC0LD_1LA0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RB_0RC0RB_1LC0LD_1LA1RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_0LA0LC_1RD1LC_1RB1RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RC_0RC1RB_1LD0RC_1LD1LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LC0LD_1LA1LC_1RA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_0RC0RB_1LC1LD_0RD0LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB0RD_0RC0RB_1LC0LA_1LAXXX_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LB1LC_1RA1RD_0RB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_1LB1LC_1RA1RD_1LB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB0LA_0RC0RB_1LC1LD_0RA1RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_0RC0RB_1LC1LD_0RA1RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_0RC1LD_1LC0LA_0LB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB0LB_1RC1RB_0RD0RC_1LD1LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_0RC1LD_1LC0LA_0RB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_0RC1LD_1LC0LA_0RC0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RC_1RC1RB_0RD0RC_1LD1LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_0RC1LD_1LC0LA_1LC0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RC_1RC0RD_0LB0RC_1LD1LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB0RC_0LA1RB_1LD1RC_1LA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LA_1RC1RB_0LD0LA_1RC1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1LB_0LC0LB_1RD1LC_1RD1RA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_1LC1RB_1LC1LA_0RB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_0RC0RB_1LC1LD_1RA0LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_1LC1RB_1LC1LA_1LB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_1LC1RB_1LC1LA_0RC0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_0RC0RB_1LC1LD_1RA1RB_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_1LC1RB_1LC1LA_1LC0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RC_0LA1RB_0RD0RC_1LD1LA_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RA_0LC0LD_1RB1LC_1RA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB0RC_1LA1RB_1LD1RC_1LA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC0RC_1LC1LA_0LB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0RC0RC_1LC1LA_0RB0RD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB0RC_0RC1RB_1LD1RC_1LA1LD_never_quasihalts_tr|].
+  apply Forall_cons; [exact irtr_1RB1RD_0LC1RD_1LC1LA_1LB0RD_never_quasihalts_tr|].
+  apply Forall_nil.
+Qed.
 
 Lemma provqh_tr_all :
   Forall (fun tm => NonHalt tm /\ QHBoundTr B_tr tm /\ QuasiHaltsTr tm)
