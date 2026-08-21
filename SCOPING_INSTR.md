@@ -808,6 +808,33 @@ convertibility type-check in `Run.v`): that split keeps 5,270 boards /
 board count justifies it — it is the first thing the conveyor needs at
 scale.
 
+### 7.1h The list-burn measured (2026-08-21, 400 v2-inwalk machines)
+
+The conveyor works, and it is how a new tier reaches an existing list
+without a re-walk.  The v2 walk ran at `2cd42f9`, which predates Tier
+W (RepWL, landed `edf8b26`), so burning v2 with the CURRENT walk
+decider measures Tier W's marginal catch directly:
+
+**228/400 (57%) decided `neverqh`, 172 survive** — 69 min for 400
+machines, single-threaded vm_compute (~10.4 s/machine).  Extrapolated
+over v2's 93,849 `inwalk` machines that is roughly 40K survivors, from
+Tier W alone.
+
+The ESCALATED config (`decider_tr_deep`) is the cost story: the same
+400 machines passed **242 CPU-min without finishing**, against 69 min
+for the walk config — a >3.5x multiplier and climbing.  So escalation
+is NOT a first pass.  The shape that follows is a two-stage burn, the
+same ladder logic the walk itself uses:
+
+1. cheap pass with the walk config — clears the majority (57% here) at
+   ~10 s/machine;
+2. deep pass on the SURVIVORS only, where the per-machine cost is
+   affordable because the population is a fraction of the list.
+
+Sizing for the box: stage 1 over all of v2 is ~110,910 x 10.4 s / 16
+cores ~= 20 core-hours; stage 2 over ~40K survivors at the deep rate
+is the part that needs measuring before committing.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
