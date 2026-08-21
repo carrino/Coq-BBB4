@@ -795,6 +795,19 @@ inside the anchor prefix — wrap boards, not champion risks; the 97
 survivors are the first rows of the instruction-level Proven lookup
 tier.
 
+**WIRED (2026-08-21):** `prov_tr` had stayed `[]` — the 97 theorems
+existed but nothing consumed them.  `RunTr.v` now carries them as the
+Proven lookup tier, `prov_tr_all` discharging `Forall
+NeverQuasiHaltsTr` from the boards; verified that all 97 come back
+`R_NeverQH` through `decider_tr` before any ladder runs.  They are
+Required directly, NOT through the state census's data/certificate
+split (`Proven_List.v` data vs `Proven_Data.v` theorems, joined by a
+convertibility type-check in `Run.v`): that split keeps 5,270 boards /
+2.65 GB out of every walk unit, and these 97 plus their nine
+`IRules_Batch` dependencies are 739 KB.  Add the split back when the
+board count justifies it — it is the first thing the conveyor needs at
+scale.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
