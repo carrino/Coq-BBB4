@@ -702,22 +702,39 @@ census-tr-collect-par:
 # new one lands.
 LISTBURN_SRC ?= censustr_deferred_v2.txt
 LISTBURN_JOBS ?= 16
+# Machines per .v file.  NOT a scheduling knob: the native
+# compiler recurses over a module and 5,270-6,517 definitions in
+# one file overflows its stack (header above; measured again
+# 2026-08-22 -- 10 of 16 shards at 6,932/file died).
+LISTBURN_MAX_PER_FILE ?= 2000
 
 census-tr-listburn: _census-tr-deps
+	@rm -rf census_probes/listburn
 	@python3 tools/censustr/gen_listburn.py $(LISTBURN_SRC) \
-	  --shards $(LISTBURN_JOBS) --outdir census_probes/listburn
+	  --shards $(LISTBURN_JOBS) --max-per-file $(LISTBURN_MAX_PER_FILE) \
+	  --outdir census_probes/listburn
 	@for f in census_probes/listburn/ListBurn_*.v; do \
 	  sed -i 's/vm_compute/native_compute/' $$f; \
 	done
-	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	 for f in census_probes/listburn/ListBurn_*.v; do \
-	   b=$${f%.v}; \
-	   ( coqc -Q theories BBB4 -w -abstract-large-number $$f \
+	@# WARN, do not swallow: a failed stack raise is exactly what kills
+	@# native compilation of a big machine-definition file, and the
+	@# failure surfaces 30 min later as "ocamlopt.opt got signal".
+	@ulimit -s $(STACK_KB) 2>/dev/null \
+	  || echo ">>> WARNING: could not raise stack to $(STACK_KB); \
+if shards die with 'ocamlopt.opt got signal', lower LISTBURN_MAX_PER_FILE"
+	@# xargs -P, not a bare & loop: there are now MORE files than jobs
+	@# (file size is capped independently of job count), so they must
+	@# queue rather than all start at once.
+	@ulimit -s $(STACK_KB) 2>/dev/null; \
+	 ls census_probes/listburn/ListBurn_*.v \
+	   | xargs -P $(LISTBURN_JOBS) -I{} sh -c \
+	    'b=$$(echo {} | sed "s/\.v$$//"); \
+	     coqc -Q theories BBB4 -w -abstract-large-number {} \
 	       > $$b.out 2>&1; \
-	     echo ">>> $$(basename $$b) finished" ) & \
-	 done; wait
+	     echo ">>> $$(basename $$b) finished"'
 	@python3 tools/censustr/collect_listburn.py census_probes/listburn \
-	  --survivors censustr_survivors.txt
+	  --survivors censustr_survivors.txt \
+	  --unburned censustr_unburned.txt
 .PHONY: census-tr-listburn
 
 # ---------------------------------------------------------------------------

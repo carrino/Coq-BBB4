@@ -37,11 +37,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("dir")
     ap.add_argument("--survivors")
+    ap.add_argument(
+        "--unburned",
+        help="write ONLY the machines no shard reached "
+             "(failed or unrun shards) here, so they can be "
+             "re-burned without redoing the whole list")
     args = ap.parse_args()
 
     counts = [0] * 6
     nunburned = 0
     survivors = []
+    unburned_all = []
     shards = sorted(glob.glob(os.path.join(args.dir, "ListBurn_*.machines")))
     if not shards:
         raise SystemExit(f"no ListBurn_*.machines in {args.dir}")
@@ -64,6 +70,7 @@ def main():
         # the run's coverage is visible.
         unburned = machines[len(tags):]
         survivors.extend(unburned)
+        unburned_all.extend(unburned)
         nunburned += len(unburned)
 
     total = sum(counts)
@@ -75,6 +82,12 @@ def main():
         print(f"  {'UNBURNED':9s} {nunburned:8d}  "
               f"(shards incomplete; kept as survivors)")
     print(f"survivors (next list): {len(survivors)}")
+    if args.unburned:
+        with open(args.unburned, "w") as f:
+            f.write("\n".join(unburned_all))
+            if unburned_all:
+                f.write("\n")
+        print(f"unburned -> {args.unburned}")
     if args.survivors:
         with open(args.survivors, "w") as f:
             f.write("\n".join(survivors) + ("\n" if survivors else ""))

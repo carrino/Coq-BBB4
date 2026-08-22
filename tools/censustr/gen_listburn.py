@@ -68,7 +68,16 @@ def tm_term(text):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("list")
-    ap.add_argument("--shards", type=int, default=16)
+    ap.add_argument("--shards", type=int, default=16,
+                    help="minimum number of shard FILES (>= job count)")
+    ap.add_argument("--max-per-file", type=int, default=2000,
+                    help="cap on machine definitions per .v file.  The "
+                         "NATIVE compiler recurses over a module's "
+                         "structure, and 5,270-6,517 definitions in one "
+                         "file overflows its stack (Makefile header; "
+                         "measured again 2026-08-22 at 6,932/file: "
+                         "'ocamlopt.opt got signal and exited').  More, "
+                         "smaller files also cut peak memory per process.")
     ap.add_argument("--outdir", default="census_probes/listburn")
     ap.add_argument("--deep", action="store_true",
                     help="burn with RunTr's ESCALATED decider_tr_deep "
@@ -88,12 +97,18 @@ def main():
     n = len(machines)
     os.makedirs(args.outdir, exist_ok=True)
 
-    per = (n + args.shards - 1) // args.shards
-    for s in range(args.shards):
+    # Enough files that no file exceeds the native compiler's comfort
+    # zone, and at least one per job.  Shard COUNT is a scheduling knob;
+    # file SIZE is a hard constraint -- do not let the former dictate
+    # the latter.
+    nfiles = max(args.shards,
+                 (n + args.max_per_file - 1) // args.max_per_file)
+    per = (n + nfiles - 1) // nfiles
+    for s in range(nfiles):
         chunk = machines[s * per : (s + 1) * per]
         if not chunk:
             continue
-        name = f"ListBurn_{s:02d}"
+        name = f"ListBurn_{s:03d}"
         parts = [HEADER]
         for i, m in enumerate(chunk):
             parts.append(f"Definition m_{i} : TM := {tm_term(m)}.\n")
@@ -119,7 +134,7 @@ def main():
         # the machine list, for the collector to zip verdicts against
         with open(os.path.join(args.outdir, name + ".machines"), "w") as f:
             f.write("\n".join(chunk) + "\n")
-    print(f"{n} machines -> {args.shards} shards of <= {per} in {args.outdir}")
+    print(f"{n} machines -> {nfiles} files of <= {per} in {args.outdir}")
 
 
 if __name__ == "__main__":
