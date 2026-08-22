@@ -102,14 +102,17 @@ def main():
             refs = "; ".join(f"m_{k}" for k in range(j, min(j + SUB, len(chunk))))
             parts.append(f"Definition ms_{j // SUB} : list TM := [{refs}].\n")
             subs.append(f"ms_{j // SUB}")
-        parts.append(
-            "Definition ms : list TM := " + " ++ ".join(subs) + ".\n\n"
-        )
-        parts.append(
-            "Time Definition burn : list nat :=\n"
-            f"  Eval vm_compute in (map (fun tm => tag ({dec} tm)) ms).\n\n"
-            "Compute burn.\n"
-        )
+        # One Eval + Compute PER SUBLIST, not one over the whole shard.
+        # A shard is hours of vm_compute; a single atomic Eval loses all
+        # of it to one kill (measured: a 400-machine deep burn died at
+        # 244 CPU-min with no output).  Chunked, a kill costs at most
+        # one sublist and the finished ones have already printed.
+        for j, sub in enumerate(subs):
+            parts.append(
+                f"Time Definition burn_{j} : list nat :=\n"
+                f"  Eval vm_compute in (map (fun tm => tag ({dec} tm)) {sub}).\n"
+                f"Compute burn_{j}.\n\n"
+            )
         path = os.path.join(args.outdir, name + ".v")
         with open(path, "w") as f:
             f.write("".join(parts))

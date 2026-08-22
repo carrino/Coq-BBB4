@@ -835,6 +835,17 @@ Sizing for the box: stage 1 over all of v2 is ~110,910 x 10.4 s / 16
 cores ~= 20 core-hours; stage 2 over ~40K survivors at the deep rate
 is the part that needs measuring before committing.
 
+The deep run ended up KILLED at ~244 CPU-min with no output at all,
+which exposed a real fragility rather than just a slow tier: a burn
+unit was ONE atomic `Eval vm_compute` over its whole slice, so any
+kill -- OOM, preemption, a closed laptop -- lost every finished
+machine.  At 20 core-hours per pass that is not survivable.  Fixed:
+gen_listburn now emits one Eval + Compute PER SUBLIST, and
+collect_listburn concatenates all of a shard's blocks and treats a
+missing tail as UNBURNED -- counted separately and kept on the
+burn-down list, never silently dropped.  Verified by truncating a
+3-chunk shard after 2: 8 verdicts kept, 4 unburned carried forward.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

@@ -18,15 +18,19 @@ TAGS = ["halt", "neverqh", "qh", "leaf", "deferred", "UNKNOWN"]
 
 
 def parse_tags(path):
+    """All verdicts printed by a shard, in order.
+
+    A shard prints ONE list per sublist (gen_listburn emits a
+    Time Definition + Compute per chunk), so a shard killed part way
+    through still yields every chunk it finished -- concatenate them.
+    A missing .out is an unstarted shard: no verdicts, not an error."""
+    if not os.path.exists(path):
+        return []
     text = open(path).read()
-    # the Compute output: a Coq nat list [t0; t1; ...] (possibly wrapped)
-    m = re.search(r"=\s*\[(.*?)\]\s*:\s*list nat", text, re.S)
-    if not m:
-        # empty list prints as [] too; treat missing as failure
-        if re.search(r"=\s*\[\s*\]\s*:\s*list nat", text, re.S):
-            return []
-        raise SystemExit(f"{path}: no verdict list found (shard failed?)")
-    return [int(x) for x in re.findall(r"\d+", m.group(1))]
+    tags = []
+    for m in re.finditer(r"=\s*\[(.*?)\]\s*:\s*list nat", text, re.S):
+        tags.extend(int(x) for x in re.findall(r"\d+", m.group(1)))
+    return tags
 
 
 def main():
@@ -36,6 +40,7 @@ def main():
     args = ap.parse_args()
 
     counts = [0] * 6
+    nunburned = 0
     survivors = []
     shards = sorted(glob.glob(os.path.join(args.dir, "ListBurn_*.machines")))
     if not shards:
@@ -44,7 +49,7 @@ def main():
         out = mfile[: -len(".machines")] + ".out"
         machines = [l.strip() for l in open(mfile) if l.strip()]
         tags = parse_tags(out)
-        if len(tags) != len(machines):
+        if len(tags) > len(machines):
             raise SystemExit(
                 f"{out}: {len(tags)} verdicts vs {len(machines)} machines"
             )
@@ -52,11 +57,24 @@ def main():
             counts[t] += 1
             if t == 5:
                 survivors.append(m)
+        # A shard that died or has not run yet leaves a tail with no
+        # verdict.  Those machines are UNDECIDED, not decided-unknown:
+        # they stay on the burn-down list (else a crash would silently
+        # drop machines from the census), and they are counted apart so
+        # the run's coverage is visible.
+        unburned = machines[len(tags):]
+        survivors.extend(unburned)
+        nunburned += len(unburned)
 
     total = sum(counts)
-    print(f"total: {total}")
+    print(f"burned: {total}")
     for i, name in enumerate(TAGS):
-        print(f"  {name:9s} {counts[i]:8d}  ({100.0 * counts[i] / total:5.1f}%)")
+        pct = (100.0 * counts[i] / total) if total else 0.0
+        print(f"  {name:9s} {counts[i]:8d}  ({pct:5.1f}%)")
+    if nunburned:
+        print(f"  {'UNBURNED':9s} {nunburned:8d}  "
+              f"(shards incomplete; kept as survivors)")
+    print(f"survivors (next list): {len(survivors)}")
     if args.survivors:
         with open(args.survivors, "w") as f:
             f.write("\n".join(survivors) + ("\n" if survivors else ""))
