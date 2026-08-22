@@ -38,6 +38,13 @@ def main():
     ap.add_argument("dir")
     ap.add_argument("--survivors")
     ap.add_argument(
+        "--unknown",
+        help="write ONLY the machines a shard actually DECIDED as UNKNOWN "
+             "(tag 5), excluding ones no shard reached.  These are the "
+             "genuinely-hard survivors; keep them aside when repairing a "
+             "partial run, since re-burning them pays every tier to fail "
+             "again -- the most expensive population in the list")
+    ap.add_argument(
         "--unburned",
         help="write ONLY the machines no shard reached "
              "(failed or unrun shards) here, so they can be "
@@ -48,6 +55,7 @@ def main():
     nunburned = 0
     survivors = []
     unburned_all = []
+    unknown_all = []
     shards = sorted(glob.glob(os.path.join(args.dir, "ListBurn_*.machines")))
     if not shards:
         raise SystemExit(f"no ListBurn_*.machines in {args.dir}")
@@ -63,6 +71,7 @@ def main():
             counts[t] += 1
             if t == 5:
                 survivors.append(m)
+                unknown_all.append(m)
         # A shard that died or has not run yet leaves a tail with no
         # verdict.  Those machines are UNDECIDED, not decided-unknown:
         # they stay on the burn-down list (else a crash would silently
@@ -82,6 +91,12 @@ def main():
         print(f"  {'UNBURNED':9s} {nunburned:8d}  "
               f"(shards incomplete; kept as survivors)")
     print(f"survivors (next list): {len(survivors)}")
+    if args.unknown:
+        with open(args.unknown, "w") as f:
+            f.write("\n".join(unknown_all))
+            if unknown_all:
+                f.write("\n")
+        print(f"unknown -> {args.unknown}")
     if args.unburned:
         with open(args.unburned, "w") as f:
             f.write("\n".join(unburned_all))
