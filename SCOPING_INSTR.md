@@ -881,6 +881,36 @@ census theorem quantifies over the TNF tree, not over a list.  Walk #3
 with the full stack is still owed; the burn bought the floor cheaply
 and told us where the remaining work lives.
 
+### 7.1j The frontier prefix, measured both ways (2026-08-23)
+
+The parallel walk's prefix exists only to produce pending nodes to
+shard.  The first version ran `Nat.iter 3 q_suc_tr` and two things
+about it were wrong, both caught by watching it run:
+
+* `SearchQueue_upds q f n` is **2^n pops, not n** -- so "3 iterations"
+  was 24,576 pops of the FULL ladder.
+* The front queue is a **working set, not a level of the tree**.  Swept
+  against pop count it saturates at ~48 nodes by 32 pops and stays
+  there (48 at 32 / 64 / 128 / 1024 / 2048 pops) while the back grows
+  linearly.  A deeper prefix buys no extra shards and only pushes more
+  machines into the list decided by a weaker tier.
+
+Expansion never needed the ladder either: `node_expand h s i` takes its
+hole from `R_Halt s i`, so only `find_halt` can expand a node, and a
+node `find_halt` cannot place is one no tier can expand.  Hence
+`decider_tr_fast` (halt-or-defer, WF by `find_halt_sound`) and a
+32-pop prefix.  Measured, same machine:
+
+| | old: 3 x q_suc_tr | new: 32 fast pops |
+|---|---|---|
+| time | **6,439 s (1.79 h)** | **0.011 s** |
+| front (shards) | 32 | **48** |
+| back (weakly-decided rows) | 349 | **27** |
+
+The old prefix cost an hour and three quarters to produce FEWER shards
+and MORE untested rows.  48 shards is three waves at `WALK_JOBS=16`,
+against the 4-way subtree split whose B1 carried the tree alone.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
