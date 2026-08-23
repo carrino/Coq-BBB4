@@ -846,6 +846,41 @@ missing tail as UNBURNED -- counted separately and kept on the
 burn-down list, never silently dropped.  Verified by truncating a
 3-chunk shard after 2: 8 verdicts kept, 4 unburned carried forward.
 
+### 7.1i v3: the Tier W burn completed (2026-08-23)
+
+Repaired and finished on the user's box.  **v3 = 52,505 (-52.7% from
+v2's 110,910; -81.3% from v0's 280,087)**, committed as
+`censustr_deferred_v3.txt`.  The two halves of the burn agree on Tier
+W's rate -- 54.4% on the 41,592 that survived the first attempt, 51.6%
+on the 69,318 re-burned after the sizing fix -- and the second run
+finished all 35 files with UNBURNED 0.
+
+| bucket    | v0      | v1      | v2      | v3     |
+|-----------|---------|---------|---------|--------|
+| proven    | 5,129   | 4,961   | 4,471   | 3,927  |
+| provenqh  | 5,163   | 1,704   | 1,704   | 1,704  |
+| dcensus   | 5,111   | 5,064   | 5,064   | 5,064  |
+| partial   | 20,345  | 13,206  | 5,822   | 1,840  |
+| inwalk    | 244,339 | 156,354 | 93,849  | 39,970 |
+
+Two readings.  `partial` has nearly collapsed (20,345 -> 1,840): TNF
+interior nodes were never hard, just unported.  And `dcensus` has not
+moved by a single machine across four lists -- 5,111 -> 5,064 -> 5,064
+-> 5,064 -- which is exactly what it should do.  Those are the state
+census's own holdouts, boarded by ReachSt / Ladder / counters, and no
+in-walk tier was ever going to touch them.  They are now 9.6% of the
+list against 1.8% at v0.
+
+`inwalk` is still 76%, so the tiers have not run dry -- but note what
+it now costs: these are the machines that pay every tier to fail.
+
+**v3 IS A BURN PRODUCT, NOT A WALK PRODUCT.**  It is the right
+burn-down target, but the deferred list that eventually freezes into
+[D_censusTr] must come from a WALK that empties the queue -- the
+census theorem quantifies over the TNF tree, not over a list.  Walk #3
+with the full stack is still owed; the burn bought the floor cheaply
+and told us where the remaining work lives.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
