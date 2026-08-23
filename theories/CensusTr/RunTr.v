@@ -22,7 +22,7 @@
 
 From Coq Require Import Arith Lia Bool List NArith.
 From Coq Require Import FunctionalExtensionality.
-From BBB4 Require Import BBB4_Statement BBBT4_Statement Mirror.
+From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape Mirror.
 From BBB4.Census Require Import TNF_QH Decide.
 From BBB4.CensusTr Require Import TNF_QHTr DecideTr.
 (* the kernel-checked transition-level Proven tier: the 97 v1
@@ -371,6 +371,48 @@ Definition q_0_tr : SearchQueue :=
 
 Definition q_suc_tr (q : SearchQueue) : SearchQueue :=
   SearchQueue_upds q decider_tr 13.
+
+(** ** The FRONTIER decider: expansion only, no deciding
+
+    The frontier prefix walk exists to produce a set of pending nodes
+    to shard, and nothing else.  Running the full ladder there is pure
+    waste, and it is the expensive kind: [node_expand h s i] takes the
+    hole from [R_Halt s i], so EXPANSION only ever needs [find_halt] --
+    the cheapest tier.  A node [find_halt] cannot place is a node that
+    cannot be expanded, so the seconds the deep tiers spend on it buy
+    the prefix nothing.  (Measured 2026-08-23: ~10 s per pop with the
+    full decider, i.e. minutes to produce a frontier of a few hundred.)
+
+    So the prefix uses halt-or-defer.  Nodes it cannot expand go
+    straight to the back queue -- correct, just decided by a weaker
+    tier than they would have been.  That costs at most a handful of
+    extra rows in the collected list (the prefix pops ~13 per round),
+    and it buys a frontier that is effectively free and can therefore
+    be taken DEEP: more, smaller nodes, which is what makes the shards
+    balance.
+
+    Still well-formed: [R_Halt] is justified by [find_halt_sound]
+    exactly as in [decide_easy_tr], and [R_Unknown] is trivially so. *)
+
+Definition decider_tr_fast : QHDecider := fun tm =>
+  match find_halt tm 130 0 c0 with
+  | Some (n, s, i) => if S n <=? B_tr then R_Halt s i else R_Unknown
+  | None => R_Unknown
+  end.
+
+Lemma decider_tr_fast_WF : QHDeciderTr_WF B_tr D_tr decider_tr_fast.
+Proof.
+  intro tm. unfold decider_tr_fast.
+  destruct (find_halt tm 130 0 c0) as [[[n s] i]|] eqn:Eh; [|exact I].
+  destruct (S n <=? B_tr) eqn:EB; [|exact I].
+  apply Nat.leb_le in EB.
+  destruct (find_halt_sound tm 130 0 c0 n s i (eq_refl) Eh)
+    as (tp & Hst & Hhd & Hnone).
+  exists n, tp. auto.
+Qed.
+
+Definition q_suc_tr_fast (q : SearchQueue) : SearchQueue :=
+  SearchQueue_upds q decider_tr_fast 13.
 
 (** per-subtree roots, for splitting a long walk across processes *)
 Definition q_sub_tr (w : Sym) (nx : St) : SearchQueue :=

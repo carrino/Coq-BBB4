@@ -650,21 +650,21 @@ census-tr-collect-shards: _census-tr-deps
 #     | python3 tools/censustr/decode_enc.py > censustr_deferred_vN.txt
 #
 # Deferral is per-machine, so prefix back + shard backs = the single
-# walk's back queue.  FRONTIER_ITERS controls the split depth: bigger
-# = more, smaller frontier nodes (better balance, longer prefix).
-FRONTIER_ITERS ?= 3
-WALK_SHARDS ?= 16
+# walk's back queue.  WALK_SHARDS is capped by the frontier size, and
+# the frontier SATURATES at ~48 nodes: the front queue is a working
+# set, not a tree level, so a longer prefix adds no shards and only
+# grows the back queue.  48 shards over WALK_JOBS cores is the design
+# point; xargs queues them.
+WALK_SHARDS ?= 48
 WALK_JOBS ?= 16
 
 census-tr-frontier: _census-tr-deps
 	@mkdir -p census_probes
-	@sed -e 's/vm_compute/native_compute/' \
-	     -e 's/FRONTIER_ITERS : nat := 3/FRONTIER_ITERS : nat := $(FRONTIER_ITERS)/' \
+	@# vm_compute, NOT native: the prefix is 32 pops of the halt-only
+	@# decider and runs in ~11 ms.  (It was 24,576 pops of the full
+	@# ladder; see WalkTr_Frontier.v's header.)
+	@coqc -Q theories BBB4 -w -abstract-large-number \
 	  theories/CensusTr/WalkTr_Frontier.v \
-	  > census_probes/WalkTr_Frontier_native.v
-	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
-	 coqc -Q theories BBB4 -w -abstract-large-number \
-	  census_probes/WalkTr_Frontier_native.v \
 	  | tee census_probes/censustr_frontier.out
 	@echo ">>> next: make census-tr-genshards"
 .PHONY: census-tr-frontier
