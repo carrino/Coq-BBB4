@@ -79,11 +79,19 @@ def main():
     ap.add_argument('--outdir', default='census_probes')
     args = ap.parse_args()
 
-    text = open(args.frontier_out).read()
+    try:
+        text = open(args.frontier_out).read()
+    except OSError as e:
+        sys.exit('cannot read %s: %s' % (args.frontier_out, e))
     # the three Computes are typed: nat * nat, list (N * N), list N.
     mfront = re.search(r'(=.*?):\s*list \(N \* N\)', text, re.S)
     if not mfront:
-        sys.exit('no `list (N * N)` block found -- is this a frontier .out?')
+        # the caller redirected coqc's stderr here, so the real error is
+        # in this very file -- show it instead of just saying "no block".
+        tail = ''.join(text.splitlines(True)[-20:]) or '(empty file)'
+        sys.exit('no `list (N * N)` block found in %s -- did coqc fail?\n'
+                 '--- tail of %s ---\n%s' % (args.frontier_out,
+                                             args.frontier_out, tail))
     pairs = [(int(a), int(b)) for a, b in
              re.findall(r'\((\d+)%N,\s*(\d+)%N\)', mfront.group(1))]
     if not pairs:

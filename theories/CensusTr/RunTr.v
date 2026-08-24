@@ -414,6 +414,38 @@ Qed.
 Definition q_suc_tr_fast (q : SearchQueue) : SearchQueue :=
   SearchQueue_upds q decider_tr_fast 13.
 
+(** ** Balanced frontier expansion (untrusted sharding helper)
+
+    [SearchQueue_upd] pushes a node's children at the FRONT of the
+    front queue, so iterating it is a depth-first walk and the tail of
+    the front queue is never touched.  That makes the front queue a
+    bad thing to shard on: measured 2026-08-24, after 32 halt-only
+    pops the 48-node frontier still had [child S1 DR StB] -- the
+    unexpanded [1RB---_------_------_------] root child, a full
+    quarter of the TNF tree -- sitting at index 47.  Its shard ran
+    ~17 CPU-hours while the other 47 finished in minutes.
+
+    [SearchQueue_level] instead expands EVERY node of the front queue
+    exactly once, so the frontier is a genuine tree level and the
+    shards are comparable in size.  Node order is preserved: children
+    of an earlier node come before children of a later one.
+
+    Untrusted, like all of the collection-mode serialization below:
+    the split only decides how work is divided between processes, and
+    the deferred list it feeds is re-derived by the eventual re-walk. *)
+Definition SearchQueue_level (f : QHDecider) (q : SearchQueue) : SearchQueue :=
+  fold_right
+    (fun h acc =>
+       match f (node_tm h) with
+       | R_Halt s i => (node_expand h s i ++ fst acc, snd acc)
+       | R_NeverQH | R_QH | R_Leaf | R_Deferred => acc
+       | R_Unknown => (fst acc, h :: snd acc)
+       end)
+    ([], snd q) (fst q).
+
+Definition SearchQueue_levels (f : QHDecider) (n : nat) (q : SearchQueue)
+  : SearchQueue := Nat.iter n (SearchQueue_level f) q.
+
 (** per-subtree roots, for splitting a long walk across processes *)
 Definition q_sub_tr (w : Sym) (nx : St) : SearchQueue :=
   ([child w DR nx], []).

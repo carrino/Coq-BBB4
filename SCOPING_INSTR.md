@@ -911,6 +911,58 @@ The old prefix cost an hour and three quarters to produce FEWER shards
 and MORE untested rows.  48 shards is three waves at `WALK_JOBS=16`,
 against the 4-way subtree split whose B1 carried the tree alone.
 
+### 7.1k The straggler: sharding a DFS stack (2026-08-24)
+
+The 48-way frontier split from 7.1j finished 46 shards in minutes and
+then ran two for hours.  The last one, `WalkTr_Par_47`, was still going
+at **~17 CPU-hours with 15 cores idle**.  Decoding its single node
+explained it instantly:
+
+```
+front[47] = (3282709385, 3) = 1RB---_------_------_------  ptr (Some StC)
+```
+
+That is `child S1 DR StB` -- the fourth element of `q_0_tr`, completely
+unexpanded.  A quarter of the TNF tree, handed to one process.
+
+The cause is in `SearchQueue_upd`: it pops the head and pushes the
+children back at the **front** (`node_expand h s i ++ t`).  Iterating
+it is therefore a depth-first walk, and the front queue is a DFS
+**stack** -- its tail holds the shallowest, biggest, least-touched
+nodes.  7.1j measured that the front "saturates at ~48" and read it as
+a working-set size; it is really the stack depth of a DFS that has
+never come back up to the root's siblings.  Sharding a stack hands out
+wildly unequal subtrees by construction, and no amount of extra
+popping fixes it: the tail is exactly what popping never reaches.
+
+The fix is to stop popping and expand **levels**: `SearchQueue_level`
+(RunTr.v, untrusted, next to the other serialization helpers) runs the
+decider over *every* front node once, keeping order, so the frontier is
+a genuine tree level.  Measured with `decider_tr_fast`, all under
+0.2 s:
+
+| levels | front (shards) | back (weakly-decided rows) |
+|---|---|---|
+| 1 | 24 | 2 |
+| 2 | 188 | 13 |
+| **3** | **1,700** | **92** |
+| 4 | 14,608 | 879 |
+
+Level 3 is the design point.  1,700 subtrees dealt round-robin over 48
+shards is ~35 apiece, so siblings land in different shards and the size
+variance averages out; 92 weakly-decided rows are noise against a ~50K
+list, and each one is a node whose holes are unreachable within 130
+steps, so burning it clears its whole hole-completion family at once.
+
+`make census-tr-resplit RESPLIT_NODES=<i>` survives as the escape hatch
+for ordinary variance (it now expands levels too), and
+`gen_walk_shards.py` prints the tail of the file it could not parse --
+the earlier "no `list (N * N)` block found" hid a `coqc` error that had
+been redirected into that very file.
+
+**Rule for the next split:** never shard the front queue of a
+pop-driven walk.  Shard a level.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

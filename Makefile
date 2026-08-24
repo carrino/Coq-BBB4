@@ -650,19 +650,21 @@ census-tr-collect-shards: _census-tr-deps
 #     | python3 tools/censustr/decode_enc.py > censustr_deferred_vN.txt
 #
 # Deferral is per-machine, so prefix back + shard backs = the single
-# walk's back queue.  WALK_SHARDS is capped by the frontier size, and
-# the frontier SATURATES at ~48 nodes: the front queue is a working
-# set, not a tree level, so a longer prefix adds no shards and only
-# grows the back queue.  48 shards over WALK_JOBS cores is the design
-# point; xargs queues them.
+# walk's back queue.  The prefix expands whole LEVELS (see
+# WalkTr_Frontier.v): popping is depth-first, which left the
+# unexpanded root child -- a quarter of the tree -- as one shard that
+# ran ~17 CPU-hours while 15 cores idled.  Level 3 gives 1,700
+# subtrees, dealt round-robin so siblings land in different shards.
+# 48 shards over WALK_JOBS cores is the design point; xargs queues
+# them.  If one still straggles, re-split it: see census-tr-resplit.
 WALK_SHARDS ?= 48
 WALK_JOBS ?= 16
 
 census-tr-frontier: _census-tr-deps
 	@mkdir -p census_probes
-	@# vm_compute, NOT native: the prefix is 32 pops of the halt-only
-	@# decider and runs in ~11 ms.  (It was 24,576 pops of the full
-	@# ladder; see WalkTr_Frontier.v's header.)
+	@# vm_compute, NOT native: the prefix is 3 level expansions of the
+	@# halt-only decider and runs in ~0.3 s.  (It was 24,576 pops of
+	@# the full ladder; see WalkTr_Frontier.v's header.)
 	@coqc -Q theories BBB4 -w -abstract-large-number \
 	  theories/CensusTr/WalkTr_Frontier.v \
 	  | tee census_probes/censustr_frontier.out
@@ -689,6 +691,47 @@ census-tr-collect-par:
 	   echo ">>> $$b finished"'
 	@echo ">>> decode: cat census_probes/censustr_prefix_back.out census_probes/censustr_par_*.out | python3 tools/censustr/decode_enc.py"
 .PHONY: census-tr-collect-par
+
+# Escape hatch for a straggling shard: expand THAT node's own subtree
+# a couple of levels and shard it, so the remaining cores can help.
+# The sub-shards cover exactly the subtree the original shard covers,
+# so kill the original once they are done -- do not use both.
+#   make census-tr-resplit RESPLIT_NODES=17 RESPLIT_LEVELS=2 \
+#                          RESPLIT_SHARDS=16 RESPLIT_JOBS=15
+# then decode census_probes/sub17/censustr_prefix_back.out plus
+# census_probes/sub17/censustr_par_*.out alongside the other shards.
+RESPLIT_NODES ?=
+RESPLIT_LEVELS ?= 2
+RESPLIT_SHARDS ?= 16
+RESPLIT_JOBS ?= 15
+
+census-tr-resplit: _census-tr-deps
+	@test -n "$(RESPLIT_NODES)" || \
+	  { echo "set RESPLIT_NODES=<shard index>[,<index>...]"; exit 1; }
+	@python3 tools/censustr/gen_resplit.py \
+	  census_probes/censustr_frontier.out \
+	  --nodes $(RESPLIT_NODES) --levels $(RESPLIT_LEVELS)
+	@for n in $$(echo $(RESPLIT_NODES) | tr ',' ' '); do \
+	  p=$$(printf '%02d' $$n); \
+	  coqc -Q theories BBB4 -w -abstract-large-number \
+	    census_probes/resplit/Resplit_$$p.v \
+	    > census_probes/resplit/rs_$$p.out 2>&1; \
+	  python3 tools/censustr/gen_walk_shards.py \
+	    census_probes/resplit/rs_$$p.out --shards $(RESPLIT_SHARDS) \
+	    --outdir census_probes/sub$$p || exit 1; \
+	  for f in census_probes/sub$$p/WalkTr_Par_*.v; do \
+	    sed -i 's/vm_compute/native_compute/' $$f; \
+	  done; \
+	  ulimit -s $(STACK_KB) 2>/dev/null || \
+	    echo ">>> WARNING: could not raise stack to $(STACK_KB) KB"; \
+	  ls census_probes/sub$$p/WalkTr_Par_*.v | xargs -P $(RESPLIT_JOBS) -I{} \
+	    sh -c 'b=$$(basename {} .v); \
+	      coqc -Q theories BBB4 -w -abstract-large-number {} \
+	        > census_probes/sub'$$p'/censustr_par_$${b#WalkTr_Par_}.out 2>&1; \
+	      echo ">>> sub'$$p' $$b finished"'; \
+	done
+	@echo ">>> now kill the original straggler shard(s) and decode sub*/ instead"
+.PHONY: census-tr-resplit
 
 # List-burn: run the walk decider directly over a deferred-machine list
 # in LISTBURN_JOBS parallel native_compute units -- no TNF/queue

@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 """Re-split a stuck walk shard into its own frontier.
 
-UNTRUSTED tooling.  A 48-way frontier split gives each shard ONE
-subtree, and subtree sizes vary by orders of magnitude -- measured
-2026-08-23: 46 of 48 shards finished while two ran 5+ CPU-hours with
-14 cores idle.  The fix is the same trick one level down: run the
-halt-only prefix FROM the stuck node, get its own ~48-node frontier,
-and shard that.
+UNTRUSTED tooling.  Subtree sizes vary by orders of magnitude, so a
+shard can still straggle after the frontier has been balanced by
+level expansion (see theories/CensusTr/WalkTr_Frontier.v).  The fix
+is the same trick one level down: expand the stuck node's OWN
+frontier a few levels with the halt-only decider, and shard that.
+
+(The pathological case this was written for -- one shard holding the
+completely unexpanded root child [1RB---_------_------_------], a
+quarter of the tree, for ~17 CPU-hours -- is fixed at the source now
+that the prefix expands levels instead of popping a DFS stack.  This
+stays as the escape hatch for ordinary size variance.)
 
 Emits one Coq driver per stuck node:
 
@@ -23,11 +28,17 @@ sub-shards are done.  Do not concatenate both -- that double-counts
 counts).
 
 Usage:
-  gen_resplit.py FRONTIER_OUT --nodes 43,47 [--pops 5] [--outdir DIR]
+  gen_resplit.py FRONTIER_OUT --nodes 43,47 [--levels 2] [--outdir DIR]
 
 then, per emitted driver:
-  coqc -Q theories BBB4 Resplit_43.v > resplit_43.out
-  gen_walk_shards.py resplit_43.out --shards 48 --outdir census_probes/sub43
+  coqc -Q theories BBB4 -w -abstract-large-number \
+    census_probes/resplit/Resplit_43.v > census_probes/resplit/rs_43.out 2>&1
+  gen_walk_shards.py census_probes/resplit/rs_43.out \
+    --shards 48 --outdir census_probes/sub43
+
+If the second step fails, the Coq error is INSIDE rs_43.out (stderr
+was redirected there); gen_walk_shards.py echoes its tail rather than
+just reporting a missing block.
 """
 import argparse
 import os
@@ -78,7 +89,7 @@ Definition start_q : SearchQueue := ([mkNode stuck_tm {ptr}], []).
 Time Definition frontier_out
   : (nat * nat) * (list (N * N) * list N) :=
   Eval vm_compute in
-    let q := SearchQueue_upds start_q decider_tr_fast {pops} in
+    let q := SearchQueue_levels decider_tr_fast {levels} start_q in
     (queue_sizes q, (queue_front_encs q, queue_encs q)).
 
 Compute (fst frontier_out).
@@ -94,15 +105,20 @@ def main():
     ap.add_argument('frontier_out')
     ap.add_argument('--nodes', required=True,
                     help='comma-separated shard indices to re-split')
-    ap.add_argument('--pops', type=int, default=5,
-                    help='2^pops prefix pops (front saturates ~48 at 5)')
+    ap.add_argument('--levels', type=int, default=2,
+                    help='full-level expansions of the stuck subtree; '
+                         'branching is ~8x per level, so 2 gives ~64 '
+                         'sub-shards and 3 gives ~500')
     ap.add_argument('--outdir', default='census_probes/resplit')
     args = ap.parse_args()
 
     text = open(args.frontier_out).read()
     m = re.search(r'(=.*?):\s*list \(N \* N\)', text, re.S)
     if not m:
-        sys.exit('no `list (N * N)` block -- is this a frontier .out?')
+        sys.exit('no `list (N * N)` block in %s -- is this a frontier .out?\n'
+                 '--- tail of %s ---\n%s'
+                 % (args.frontier_out, args.frontier_out,
+                    ''.join(text.splitlines(True)[-20:]) or '(empty file)'))
     pairs = [(int(a), int(b)) for a, b in
              re.findall(r'\((\d+)%N,\s*(\d+)%N\)', m.group(1))]
 
@@ -113,7 +129,7 @@ def main():
             sys.exit(f'shard {i} out of range (frontier has {len(pairs)})')
         code, ptr = pairs[i]
         body = TEMPLATE.format(
-            idx=i, pops=args.pops, ptr=PTR[ptr],
+            idx=i, levels=args.levels, ptr=PTR[ptr],
             tmdef=tm_lambda('stuck_tm', decode(code)))
         path = os.path.join(args.outdir, f'Resplit_{i:02d}.v')
         with open(path, 'w') as f:
