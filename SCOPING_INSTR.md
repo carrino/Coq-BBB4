@@ -963,6 +963,47 @@ been redirected into that very file.
 **Rule for the next split:** never shard the front queue of a
 pop-driven walk.  Shard a level.
 
+### 7.1l v4: the level-sharded walk #3 completed (2026-08-31)
+
+Walk #3 ran the level-3 frontier (1,700 nodes, 92 prefix-deferred)
+dealt round-robin into **96 shards** at 16 jobs on the user's box.  All
+96 exhausted their slices (every `censustr_par_*.out` prints `= (0,`);
+no straggler -- the 7.1k fix held.  Decode was already deduplicated:
+52,559 raw rows, 52,559 unique.
+
+`censustr_deferred_v4.txt` = **52,559** (v3 was 52,505), classified:
+
+| bucket | v3 | v4 | delta |
+|---|---|---|---|
+| proven | 3,927 | 3,889 | -38 |
+| provenqh | 1,704 | 1,704 | 0 |
+| dcensus | 5,064 | 5,064 | 0 |
+| partial | 1,840 | 1,932 | +92 |
+| inwalk | 39,970 | 39,970 | 0 |
+| total | 52,505 | 52,559 | +54 |
+
+The signature is exactly the prefix boundary moving and nothing else:
+three buckets byte-identical, `partial` up by the 92-vs-27
+prefix-deferral difference plus shard-side jitter, and `proven` down 38
+because those full machines now sit *below* a prefix-deferred ancestor
+whose subtree the walk never enters -- the ancestor row covers the
+family, so the census is sound and the burn-down list is strictly
+higher-leverage (one partial row clears many completions).
+
+`dcensus` is pinned at **exactly 5,064 for the fourth consecutive
+list** (v0 5,111 -> v1..v4 5,064): the machines that were hard at state
+level are precisely the ones no walk tuning reaches, and they wait for
+the ReachSt / Ladder / counters endgame routes.
+
+v4 is a WALK product (unlike v3, which was a burn product), so it is
+the first list eligible to freeze into `D_censusTr` for Milestone A:
+generate the `DeferredTr` tables from it, set `D_tr := D_censusTr`,
+re-walk (cheap: every listed machine hits the lookup tier first), and
+an empty queue yields
+`forall tm, QHBoundTr 2000 tm \/ Deferred D_censusTr tm` -- the first
+instruction-level census theorem.  One-current-list policy: v3 is
+retired with this entry; `LISTBURN_SRC` now points at v4.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

@@ -743,7 +743,7 @@ census-tr-resplit: _census-tr-deps
 # LISTBURN_SRC tracks the CURRENT deferred list: each walk replaces the
 # last (superseded snapshots live in git history), so bump this when a
 # new one lands.
-LISTBURN_SRC ?= censustr_deferred_v2.txt
+LISTBURN_SRC ?= censustr_deferred_v4.txt
 LISTBURN_JOBS ?= 16
 # Machines per .v file.  NOT a scheduling knob: the native
 # compiler recurses over a module and 5,270-6,517 definitions in
