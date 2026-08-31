@@ -1004,6 +1004,79 @@ an empty queue yields
 instruction-level census theorem.  One-current-list policy: v3 is
 retired with this entry; `LISTBURN_SRC` now points at v4.
 
+### 7.1m Why 39,970 machines defer: the diagnosis (2026-08-31, in-container)
+
+Two measurements over the v4 `inwalk` bucket -- the machines the STATE
+census decided in-walk that our instruction tiers miss -- explain the
+whole population.
+
+**State-tier attribution** (193-machine sample, every 208th row, each
+run through the state tiers one at a time in 13 s): rank 65.8%, RepWL
+29.0%, ngram (6,800) 3.6%, ngram (4,400) 0.5%, qhb 1.0%.  Nothing was
+leaf-decidable, nothing was undecided: pure tier-power gap, owned
+almost entirely by Tiers R and W.
+
+**Per-transition sweep** (`trcensus.c`, 1e7 steps): the sample splits
+**77% SUSPECT / 23% LIVE**.
+
+* SUSPECT (~30,600 of 39,970): genuine TRANSITION-quasihalters -- the
+  state tier proves the state recurs, but one of its two instructions
+  stops firing.  Their quiet points are TINY: 96.6% quiet by step 20,
+  100% by step 200.  `B_tr` is irrelevant to them; only the wrap route
+  can decide them, and it currently fails.
+* LIVE (~9,300, almost all rank-tagged): every instruction keeps
+  firing, but the resistant ones fire with EXPONENTIALLY growing gaps
+  (counts of ~20 in 1e7 steps, last fires at 3*2^21, 2^23) -- counter
+  machines.  No window-lex certificate sees that mechanism.  They are
+  the same species as the dcensus endgame (counters route) and are
+  PARKED there, not fought with rungs.
+
+**Why the wrap route fails today** (per-target diagnostics on the
+SUSPECT rank machines): 76% die with the wrapped n-gram closure hitting
+a dead node whose instruction IS the pin, at n=3 and still at n=6
+(64/84 -> 62/84 -- width is exhausted, matching their survival of the
+deep config).  The structural reason: a STATE pin is control flow
+("never enter q"), but an INSTRUCTION pin (q,s) is a TAPE-VALUE
+property -- q is entered constantly by the busy sibling, and the
+window abstraction's edge refill over-approximates the off-window tape,
+manufacturing an s-under-q abstract config; wrapping makes it a dead
+end and the rung dies.
+
+**The fix, measured before built**: run the SAME wrap on the RepWL
+abstraction instead.  An untrusted probe of `rw_succs_cut` over
+`tm_wrap_trs tm pins` with the generic per-instruction rank/lex gates,
+on all 148 SUSPECT sample machines at the single rung
+(L=2, T=3, t=1024, cut=128):
+
+| outcome | share |
+|---|---|
+| closure CLOSED, all liveness gates pass | **81.8%** |
+| dead node, non-pin (size cut -- bigger M/other (L,T)) | 9.5% |
+| dead node at pin (other rungs) | 5.4% |
+| closed but a gate fails | 3.4% |
+
+RepWL's run-length blocks carry exactly the tape precision the pin
+exclusion needs.  Extrapolated: **~25K of the 52.5K list from one new
+verified checker**, with engine and search already in the tree --
+`closure_check_neverqhtr_lex` is target-generic and `rw_procedure_tr`
+already searches certificates over the RepWL closure.
+
+**Tier W-wrap build plan** (next):
+1. ClosureTr.v: generic `closure_check_qhboundtr_lex` -- the wrap
+   analog of `closure_check_neverqhtr_lex` (closure of the WRAPPED
+   successor relation, pins via `wrap_pin_ok`, per-appearing-instruction
+   rank/lex gates), concluding NonHalt /\ bound /\ QuasiHaltsTr.
+   WrapTr.v's n-gram-specific soundness proof is the blueprint.
+2. RepWLTr.v: instantiate at rconf / `rw_succs_cut M tmw L T` /
+   `rw_covers'` with `rw_procedure_tr` certs.
+3. DecideTr.v / RunTr.v: `try_rw_qhbtr` rungs after the n-gram lex
+   rungs (walk: [(2,3,1024)]; deep adds (3,3,1024), (2,2,1024), bigger
+   cut), plus the burn config.
+
+After the melt, the boarding-scale populations left are dcensus 5,064
+(unchanged, ReachSt/Ladder/counters) + LIVE counters ~9,300 + the
+wrap/rung residue -- state-census scale, as intended.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
