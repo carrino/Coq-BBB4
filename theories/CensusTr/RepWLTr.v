@@ -28,7 +28,7 @@ From Coq Require Import Arith Lia Bool List ZArith PArith.
 From Coq Require Import FSets.FMapPositive MSets.MSetPositive.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape PosEnc
   Closure ClosureTr.
-From BBB4.Checkers Require Import RepWL.
+From BBB4.Checkers Require Import RepWL WrapTr.
 From BBB4.Census Require Import RepWLSearch.
 Import ListNotations.
 Open Scope nat_scope.
@@ -175,4 +175,96 @@ Proof.
                   [] PositiveSet.empty [rw_seed L T cc]) as [Sl|];
     [|discriminate].
   exact (rw_check_neverqhtr_sound tm L T t fuel M _ H).
+Qed.
+
+(** ** Tier W-wrap: transition-quasihalting via the wrapped RepWL closure
+
+    The generic wrap argument (Checkers/WrapTr [WrapGeneric])
+    instantiated at the RepWL domain: close [rw_succs_cut] over the
+    MULTI-PIN WRAPPED machine and discharge every appearing
+    instruction's recurrence through the rank/lex gates.  This is the
+    tier the 7.1m diagnosis asked for -- an instruction pin is a
+    tape-value exclusion, and the run-length blocks carry the
+    precision the n-gram window refill lacks. *)
+
+Definition rw_check_qhbtr (tm : TM) (tgs : list (Instr * nat))
+    (L T t fuel M : nat) (cert : Instr -> list rwcomp) : bool :=
+  (1 <=? L) && (2 <=? T) &&
+  match csteps tm t c0 with
+  | Some ct =>
+      let tmw := tm_wrap_trs tm (map fst tgs) in
+      wrap_check_qhboundtr_g tm tgs t rconf rconf_enc rw_instr
+        (rw_succs_cut M tmw L T) fuel (rw_seed L T ct)
+        (fun tg => map (rw_comp_denote tmw) (cert tg))
+  | None => false
+  end.
+
+Theorem rw_check_qhbtr_sound : forall tm tgs L T t fuel M cert,
+  rw_check_qhbtr tm tgs L T t fuel M cert = true ->
+  NonHalt tm
+  /\ (forall tg' s', QuietAfterTr tm tg' s' -> S s' <= S t)
+  /\ QuasiHaltsTr tm.
+Proof.
+  intros tm tgs L T t fuel M cert H.
+  unfold rw_check_qhbtr in H.
+  apply andb_prop in H as [Hg H].
+  apply andb_prop in Hg as [HL HT].
+  apply Nat.leb_le in HL. apply Nat.leb_le in HT.
+  destruct (csteps tm t c0) as [ct|] eqn:Et; [|discriminate].
+  apply (wrap_check_qhboundtr_g_sound tm tgs t rconf rconf_enc rw_instr
+           (rw_succs_cut M (tm_wrap_trs tm (map fst tgs)) L T) rw_covers')
+    in H; [assumption | | | | |].
+  - exact rconf_enc_inj.
+  - intros a c Hc. exact (rw_covers'_instr a c Hc).
+  - intros a c Hc. apply rw_succs_cut_sound'; assumption.
+  - intros ct' Hct'. rewrite Et in Hct'. injection Hct' as <-.
+    split; [apply rw_seed_covers; assumption |
+            apply rw_seed_wf; assumption].
+  - intros tg. apply Forall_forall. intros comp Hin.
+    apply in_map_iff in Hin. destruct Hin as (c & <- & _).
+    destruct c as [phi | m0 K phi gate]; simpl.
+    + exact I.
+    + intros a cc0 a' cc0' sl Hca Hca' Hstep Es HInl.
+      exact (rw_meas_exact (tm_wrap_trs tm (map fst tgs))
+               m0 a cc0 cc0' Hca Hstep).
+Qed.
+
+(** the parameter-closed tier: pin from the caller's last-fire scan,
+    wrap, close once for the SEARCH, and hand the checker the
+    certificates (it re-closes -- same double-close [rw_tier_tr]
+    accepts) *)
+Definition rw_tier_qhbtr (tm : TM) (lf : list (Instr * nat))
+    (L T t fuel M : nat) : bool :=
+  match filter (fun p => snd p <? t) lf with
+  | [] => false
+  | pins =>
+      match csteps tm t c0 with
+      | None => false
+      | Some ct =>
+          let tmw := tm_wrap_trs tm (map fst pins) in
+          let a0 := rw_seed L T ct in
+          match close rconf rconf_enc (rw_succs_cut M tmw L T) fuel
+                      [] PositiveSet.empty [a0] with
+          | None => false
+          | Some Sl =>
+              rw_check_qhbtr tm pins L T t fuel M
+                (fun tg => rw_procedure_tr tmw L T Sl tg)
+          end
+      end
+  end.
+
+Theorem rw_tier_qhbtr_sound : forall tm lf L T t fuel M,
+  rw_tier_qhbtr tm lf L T t fuel M = true ->
+  NonHalt tm
+  /\ (forall tg' s', QuietAfterTr tm tg' s' -> S s' <= S t)
+  /\ QuasiHaltsTr tm.
+Proof.
+  intros tm lf L T t fuel M H.
+  unfold rw_tier_qhbtr in H.
+  destruct (filter (fun p => snd p <? t) lf) as [|p0 rest] eqn:Ef;
+    [discriminate|].
+  destruct (csteps tm t c0) as [ct|]; [|discriminate].
+  destruct (close rconf rconf_enc _ fuel [] PositiveSet.empty _)
+    as [Sl|]; [|discriminate].
+  exact (rw_check_qhbtr_sound tm (p0 :: rest) L T t fuel M _ H).
 Qed.

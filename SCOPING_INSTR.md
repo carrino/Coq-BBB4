@@ -1077,6 +1077,41 @@ After the melt, the boarding-scale populations left are dcensus 5,064
 (unchanged, ReachSt/Ladder/counters) + LIVE counters ~9,300 + the
 wrap/rung residue -- state-census scale, as intended.
 
+### 7.1n Tier W-wrap BUILT and verified (2026-08-31)
+
+The 7.1m plan, landed:
+
+* **Checkers/WrapTr.v [WrapGeneric]**: the wrap argument factored out
+  of [ngram_check_qhboundtr_lex_sound], generic in the abstract domain
+  -- any (A, enc, instr, succs, covers) whose successor relation
+  simulates the WRAPPED machine.  [wrap_check_qhboundtr_g] +
+  [wrap_check_qhboundtr_g_sound] conclude the census R_QH trio
+  [NonHalt /\ (QuietAfterTr -> S s' <= S t) /\ QuasiHaltsTr].
+* **CensusTr/RepWLTr.v**: the RepWL instantiation --
+  [rw_check_qhbtr] (verified) and [rw_tier_qhbtr] (parameter-closed,
+  certificates from [rw_procedure_tr] over the wrapped closure).
+* **CensusTr/DecideTr.v**: [try_rw_qhbtr_at] as the third rung family
+  of [try_qhbtr] (after the plain and lex n-gram wraps), new section
+  variable [rw_qhb_rungs].
+* **CensusTr/RunTr.v**: walk ladder [(2,3,1024)]; deep ladder
+  [(2,3,1024); (3,3,1024); (2,2,1024); (4,2,1024)].
+
+Measured on the 148 SUSPECT sample machines through the REAL walk
+decider ([decider_tr], vm_compute, walk fuel 5120 / cut 32):
+
+    R_QH      121  (81.8%)     R_Unknown  27  (18.2%)
+
+-- byte-for-byte the 7.1m feasibility number, now kernel-checked end
+to end, at walk fuel (the leak was precision, not fuel).  Per-machine
+cost on caught machines replaces the old full-ladder deferral path;
+the walk config stays one rung so failing machines pay one wrapped
+closure.
+
+Extrapolated melt: ~25K of the 52.5K list.  Next run (user's box):
+`make census-tr-listburn` over v4 (LISTBURN_SRC already points there)
+with the deep config -> expect survivors ~27K = v5, then walk #4 to
+re-derive it as a walk product.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

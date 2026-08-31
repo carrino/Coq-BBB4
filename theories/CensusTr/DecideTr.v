@@ -248,6 +248,14 @@ Variable qhb_lex_rungs : list (nat * nat).  (** the lex ladder's own
                                             search per instruction, so
                                             failing machines pay it in
                                             full *)
+Variable rw_qhb_rungs : list (nat * nat * nat).  (** (L, T, t) ladder
+                                            for the WRAPPED RepWL tier
+                                            (Tier W-wrap): the 7.1m
+                                            suspects' pins are tape-value
+                                            exclusions the n-gram window
+                                            cannot hold, so their rungs
+                                            close over [rw_succs_cut] of
+                                            the wrapped machine instead *)
 Variable rw_rungs : list (nat * nat * nat).  (** (L, T, t) ladder for
                                             the RepWL tier *)
 Variable rw_fuel : nat.        (** closure fuel for the RepWL tier *)
@@ -401,11 +409,18 @@ Definition try_qhbtr_lex_at (tm : TM) (lf : list (Instr * nat))
     (Census/Decide.v [try_qhb]): [orb] is a function, so under
     call-by-value both ladders would evaluate even when the plain one
     wins *)
+(** the wrapped-RepWL rung (CensusTr/RepWLTr [rw_tier_qhbtr]) *)
+Definition try_rw_qhbtr_at (tm : TM) (lf : list (Instr * nat))
+    (r : nat * nat * nat) : bool :=
+  let '(L, T, t) := r in
+  (S t <=? B) && rw_tier_qhbtr tm lf L T t rw_fuel rw_cut.
+
 Definition try_qhbtr (tm : TM) : bool :=
   let lf := qh_last_fires tm in
   existsb (fun p => snd p <? qhb_tmax_tr) lf &&
   (if anyb (try_qhbtr_at tm lf) qhb_rungs then true
-   else anyb (try_qhbtr_lex_at tm lf) qhb_lex_rungs).
+   else if anyb (try_qhbtr_lex_at tm lf) qhb_lex_rungs then true
+   else anyb (try_rw_qhbtr_at tm lf) rw_qhb_rungs).
 
 Lemma try_qhbtr_sound : forall tm,
   try_qhbtr tm = true ->
@@ -416,13 +431,12 @@ Proof.
   apply andb_prop in H as [_ H].
   (* [if b then true else c] IS [orb b c] by definition *)
   apply orb_prop in H; destruct H as [H | H];
-    rewrite anyb_existsb in H;
-    apply existsb_exists in H;
-    destruct H as ([n t] & _ & H);
-    unfold try_qhbtr_at, try_qhbtr_lex_at in H;
-    apply andb_prop in H as [HB H];
-    apply Nat.leb_le in HB.
+    [| apply orb_prop in H; destruct H as [H | H]].
   - (* plain acyclicity gate *)
+    rewrite anyb_existsb in H; apply existsb_exists in H;
+      destruct H as ([n t] & _ & H);
+      unfold try_qhbtr_at in H;
+      apply andb_prop in H as [HB H]; apply Nat.leb_le in HB.
     destruct (ngram_check_qhboundtr_sound tm
                 (qh_pins_of (qh_last_fires tm) t) n t
                 ng_fuel ng_rounds H) as (Hnh & Hqb & Hqh).
@@ -431,6 +445,10 @@ Proof.
     intros tg' s' Hq.
     specialize (Hqb tg' s' Hq). lia.
   - (* lex gate *)
+    rewrite anyb_existsb in H; apply existsb_exists in H;
+      destruct H as ([n t] & _ & H);
+      unfold try_qhbtr_lex_at in H;
+      apply andb_prop in H as [HB H]; apply Nat.leb_le in HB.
     destruct (csteps tm t c0) as [[q1 [[l h] r]]|] eqn:Ect; [|discriminate].
     match type of H with
     | (let '(_, _) := ?G in _) = true => destruct G as [lset rset]
@@ -439,6 +457,17 @@ Proof.
     destruct (ngram_check_qhboundtr_lex_sound tm
                 (qh_pins_of (qh_last_fires tm) t) n t
                 ng_fuel ng_rounds _ H) as (Hnh & Hqb & Hqh).
+    split; [exact Hnh|].
+    split; [|exact Hqh].
+    intros tg' s' Hq.
+    specialize (Hqb tg' s' Hq). lia.
+  - (* wrapped-RepWL gate *)
+    rewrite anyb_existsb in H; apply existsb_exists in H;
+      destruct H as ([[L T] t] & _ & H);
+      unfold try_rw_qhbtr_at in H;
+      apply andb_prop in H as [HB H]; apply Nat.leb_le in HB.
+    destruct (rw_tier_qhbtr_sound tm (qh_last_fires tm) L T t
+                rw_fuel rw_cut H) as (Hnh & Hqb & Hqh).
     split; [exact Hnh|].
     split; [|exact Hqh].
     intros tg' s' Hq.

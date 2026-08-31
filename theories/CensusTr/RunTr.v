@@ -275,6 +275,13 @@ Definition qhb_rungs_tr : list (nat * nat) :=
 Definition qhb_lex_rungs_tr : list (nat * nat) :=
   [(2, 1024); (3, 1024); (4, 1024)].
 
+(** the wrapped-RepWL tier's (L, T, t) ladder (Tier W-wrap,
+    SCOPING_INSTR.md 7.1m): one rung -- it closed and passed every
+    liveness gate on 81.8% of the measured suspects, and each rung a
+    failing machine pays re-grows a full wrapped closure *)
+Definition rw_qhb_rungs_tr : list (nat * nat * nat) :=
+  [(2, 3, 1024)].
+
 (** the RepWL tier's parameters, the state census's own
     (Run_Compute.v [rw_rungs_census] / [rw_fuel_census] /
     [rw_cut_census]) *)
@@ -285,14 +292,15 @@ Definition rw_cut_tr : nat := 32.
 
 Definition decider_tr : QHDecider :=
   decide_easy_tr B_tr 130 512 200000 512 ng_rungs_tr rank_rungs_tr
-    qhb_rungs_tr qhb_lex_rungs_tr rw_rungs_tr rw_fuel_tr rw_cut_tr
+    qhb_rungs_tr qhb_lex_rungs_tr rw_qhb_rungs_tr
+    rw_rungs_tr rw_fuel_tr rw_cut_tr
     (dmap_of prov_tr) (dmap_of provqh_tr) (dmap_of D_tr).
 
 Lemma decider_tr_WF : QHDeciderTr_WF B_tr D_tr decider_tr.
 Proof.
   exact (decide_easy_tr_WF B_tr D_tr 130 512 200000 512
            ng_rungs_tr rank_rungs_tr qhb_rungs_tr qhb_lex_rungs_tr
-           rw_rungs_tr rw_fuel_tr rw_cut_tr
+           rw_qhb_rungs_tr rw_rungs_tr rw_fuel_tr rw_cut_tr
            prov_tr prov_tr_all provqh_tr provqh_tr_all).
 Qed.
 
@@ -334,6 +342,9 @@ Definition qhb_rungs_deep : list (nat * nat) :=
 Definition qhb_lex_rungs_deep : list (nat * nat) :=
   [(2, 1024); (3, 1024); (4, 1024); (5, 1024); (6, 1024)].
 
+Definition rw_qhb_rungs_deep : list (nat * nat * nat) :=
+  [(2, 3, 1024); (3, 3, 1024); (2, 2, 1024); (4, 2, 1024)].
+
 Definition rw_rungs_deep : list (nat * nat * nat) :=
   [(2, 2, 0); (3, 2, 0); (4, 2, 0); (2, 3, 0);
    (5, 2, 0); (3, 3, 0); (4, 3, 0); (2, 4, 0)].
@@ -343,14 +354,15 @@ Definition rw_cut_deep : nat := 128.
 
 Definition decider_tr_deep : QHDecider :=
   decide_easy_tr B_tr 130 4096 1000000 2048 ng_rungs_deep rank_rungs_deep
-    qhb_rungs_deep qhb_lex_rungs_deep rw_rungs_deep rw_fuel_deep rw_cut_deep
+    qhb_rungs_deep qhb_lex_rungs_deep rw_qhb_rungs_deep
+    rw_rungs_deep rw_fuel_deep rw_cut_deep
     (dmap_of prov_tr) (dmap_of provqh_tr) (dmap_of D_tr).
 
 Lemma decider_tr_deep_WF : QHDeciderTr_WF B_tr D_tr decider_tr_deep.
 Proof.
   exact (decide_easy_tr_WF B_tr D_tr 130 4096 1000000 2048
            ng_rungs_deep rank_rungs_deep qhb_rungs_deep qhb_lex_rungs_deep
-           rw_rungs_deep rw_fuel_deep rw_cut_deep
+           rw_qhb_rungs_deep rw_rungs_deep rw_fuel_deep rw_cut_deep
            prov_tr prov_tr_all provqh_tr provqh_tr_all).
 Qed.
 

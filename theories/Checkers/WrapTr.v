@@ -470,3 +470,172 @@ Proof.
     destruct (Hpinned tg s (or_introl eq_refl)) as [Hf Hq].
     eapply quiet_after_tr_qh. split; [exact Hf | exact Hq].
 Qed.
+
+(** ** The wrap argument, generic in the abstract domain
+
+    [ngram_check_qhboundtr_lex_sound]'s wrap-lifting glue touches the
+    n-gram domain only through ClosureTr's target-generic lemmas, so
+    the same argument works over ANY abstract domain whose successor
+    relation simulates the WRAPPED machine.  Built for the RepWL
+    instantiation (CensusTr/RepWLTr): an instruction pin [(q, s)] is a
+    TAPE-VALUE exclusion -- state [q] stays busy on the sibling symbol
+    -- and the n-gram window refill manufactures the pinned instruction
+    inside the wrapped closure on 76% of the measured v4 suspects,
+    while RepWL's run-length blocks close 81.8% of them at their first
+    rung (SCOPING_INSTR.md 7.1m). *)
+
+Section WrapGeneric.
+
+  Variable tm : TM.
+  Variable tgs : list (Instr * nat).
+  Variable t : nat.
+
+  Variable A : Type.
+  Variable a_enc : A -> positive.
+  Variable a_instr : A -> Instr.
+  Variable succs : A -> option (list A).
+  Variable covers : A -> ExecState -> Prop.
+
+  Hypothesis a_enc_inj : forall x y, a_enc x = a_enc y -> x = y.
+  Hypothesis covers_instr : forall a c, covers a c -> a_instr a = instr_of c.
+  (** [succs] simulates the WRAPPED machine *)
+  Hypothesis succs_sound : forall a c, covers a c ->
+    match succs a, step (tm_wrap_trs tm (map fst tgs)) c with
+    | Some l, Some c' => exists a', In a' l /\ covers a' c'
+    | Some _, None => False
+    | None, _ => True
+    end.
+
+  Definition wrap_check_qhboundtr_g (fuel : nat) (a0 : A)
+      (cert : Instr -> list (lexcomp A)) : bool :=
+    (1 <=? length tgs) &&
+    forallb (wrap_pin_ok tm t) tgs &&
+    match csteps tm t c0 with
+    | Some _ =>
+        match close_tr A a_enc succs fuel [] PositiveSet.empty [a0] with
+        | Some Sl =>
+            closed_tr_b A a_enc succs Sl &&
+            mem_tr A a_enc a0 Sl &&
+            live_lex_ok_tr A a_enc a_instr succs Sl cert
+        | None => false
+        end
+    | None => false
+    end.
+
+  Theorem wrap_check_qhboundtr_g_sound : forall fuel a0 cert,
+    (forall ct, csteps tm t c0 = Some ct -> covers a0 (lift ct)) ->
+    (forall tg0,
+       Forall (comp_exact (tm_wrap_trs tm (map fst tgs)) A succs covers)
+              (cert tg0)) ->
+    wrap_check_qhboundtr_g fuel a0 cert = true ->
+    NonHalt tm
+    /\ (forall tg' s', QuietAfterTr tm tg' s' -> S s' <= S t)
+    /\ QuasiHaltsTr tm.
+  Proof.
+    intros fuel a0 cert Hcov0A Hexd H.
+    unfold wrap_check_qhboundtr_g in H.
+    apply andb_prop in H as [H Hcl].
+    apply andb_prop in H as [Hlen Hpins].
+    apply Nat.leb_le in Hlen.
+    destruct (csteps tm t c0) as [ct|] eqn:Ect; [|discriminate].
+    destruct (close_tr A a_enc succs fuel [] PositiveSet.empty [a0])
+      as [Sl|] eqn:Ecl; [|discriminate].
+    apply andb_prop in Hcl as [Hwc Hlive].
+    apply andb_prop in Hwc as [Hclb Hmem].
+    apply mem_In_tr in Hmem; [|exact a_enc_inj].
+    pose proof (Hcov0A ct eq_refl) as Hcov0.
+    set (W := map fst tgs) in *.
+    set (tmw := tm_wrap_trs tm W) in *.
+    assert (Him : forall k, stepn tmw k (lift ct) <> None).
+    { intros k HN.
+      destruct (closure_invariant_tr tmw A a_enc succs covers
+                  a_enc_inj succs_sound Sl Hclb a0 (lift ct) Hmem Hcov0 k)
+        as (c' & a' & Hst' & _ & _).
+      congruence. }
+    assert (Hstept : stepn tm t InitES = Some (lift ct)).
+    { rewrite <- lift_c0. apply csteps_lift. exact Ect. }
+    rewrite forallb_forall in Hpins.
+    assert (Hpinned : forall tg s, In (tg, s) tgs ->
+      FiresAt tm tg s /\ (forall m, s < m -> ~ FiresAt tm tg m)).
+    { intros tg s Hin.
+      specialize (Hpins (tg, s) Hin).
+      unfold wrap_pin_ok in Hpins.
+      apply andb_prop in Hpins as [Hst Hpins].
+      apply Nat.ltb_lt in Hst.
+      destruct (csteps tm s c0) as [cs|] eqn:Ecs; [|discriminate].
+      apply andb_prop in Hpins as [Hqs Hnv].
+      apply instr_eqb_spec in Hqs.
+      destruct (cstep tm cs) as [cs1|] eqn:Ecs1; [|discriminate].
+      apply negb_true_iff in Hnv.
+      assert (Ecs1' : csteps tm (s + 1) c0 = Some cs1).
+      { rewrite csteps_add, Ecs, csteps_1. exact Ecs1. }
+      split.
+      - exists (lift cs). split.
+        + rewrite <- lift_c0. apply csteps_lift. exact Ecs.
+        + rewrite cinstr_lift. exact Hqs.
+      - intros m Hm (c & Hc & Hcq).
+        destruct (stepn_csteps tm m c) as (cc & Hcc & Hlift); [exact Hc|].
+        assert (Hccq : cinstr cc = tg).
+        { rewrite <- cinstr_lift, Hlift. exact Hcq. }
+        destruct (le_lt_dec m t) as [Hle | Hgt].
+        + replace m with ((s + 1) + (m - s - 1)) in Hcc by lia.
+          rewrite csteps_add, Ecs1' in Hcc.
+          rewrite (cfires_complete tm (t - s) cs1 tg (m - s - 1) cc)
+            in Hnv; [discriminate | lia | exact Hcc | exact Hccq].
+        + replace m with (t + (m - t)) in Hcc by lia.
+          rewrite csteps_add, Ect in Hcc.
+          apply csteps_lift in Hcc.
+          destruct (wrap_trs_agree tm W (lift ct) Him (m - t)) as [_ Hqfree].
+          apply (Hqfree (lift cc)); [exact Hcc|].
+          rewrite cinstr_lift, Hccq.
+          apply in_map_iff. exists (tg, s).
+          split; [reflexivity | exact Hin]. }
+    assert (HNonHalt : NonHalt tm).
+    { intros m HN.
+      destruct (le_lt_dec m t) as [Hle | Hgt].
+      + destruct (csteps_prefix tm m t c0 ct Hle Ect) as (cm & Hcm & _).
+        apply csteps_lift in Hcm. rewrite lift_c0 in Hcm. congruence.
+      + replace m with (t + (m - t)) in HN by lia.
+        rewrite stepn_add, Hstept in HN.
+        destruct (wrap_trs_agree tm W (lift ct) Him (m - t)) as [Heq _].
+        rewrite <- Heq in HN.
+        exact (Him (m - t) HN). }
+    split; [exact HNonHalt | split].
+    - (* QHBoundTr (S t): every quiet instruction's last fire is <= t *)
+      intros tg'' s'' [Hvis'' Hlast''].
+      apply le_n_S.
+      destruct (le_lt_dec s'' t) as [Hle | Hgt]; [exact Hle | exfalso].
+      destruct Hvis'' as (c & Hc & Hcq).
+      destruct (stepn_csteps tm s'' c) as (cc & Hcc & Hlift); [exact Hc|].
+      assert (Hccq : instr_of (lift cc) = tg'').
+      { rewrite Hlift. exact Hcq. }
+      assert (Hcw : stepn tm (s'' - t) (lift ct) = Some (lift cc)).
+      { replace s'' with (t + (s'' - t)) in Hc by lia.
+        rewrite stepn_add, Hstept in Hc. rewrite Hc, Hlift. reflexivity. }
+      assert (Hwrun : stepn tmw (s'' - t) (lift ct) = Some (lift cc)).
+      { destruct (wrap_trs_agree tm W (lift ct) Him (s'' - t)) as [Heq _].
+        transitivity (stepn tm (s'' - t) (lift ct));
+          [exact Heq | exact Hcw]. }
+      assert (Happ : appears_tr A a_instr Sl tg'' = true).
+      { rewrite <- Hccq.
+        apply (live_fired_appears_tr tmw A a_enc a_instr succs covers
+                 a_enc_inj covers_instr succs_sound
+                 Sl a0 (lift ct) Hclb Hmem Hcov0
+                 (s'' - t) (lift cc) Hwrun). }
+      destruct (live_appears_recur_lex_tr tmw A a_enc a_instr succs covers
+                  a_enc_inj covers_instr succs_sound
+                  Sl cert a0 ct tg''
+                  Hclb (Hexd tg'') Hlive Hmem Hcov0 Happ
+                  (S s'' - t)) as (k & c' & Hk & Hstepk & Hqk).
+      assert (Hstm : stepn tm k (lift ct) = Some c').
+      { destruct (wrap_trs_agree tm W (lift ct) Him k) as [Heqk _].
+        rewrite <- Heqk. exact Hstepk. }
+      apply (Hlast'' (t + k)); [lia|].
+      exists c'. split; [| exact Hqk].
+      rewrite stepn_add, Hstept. exact Hstm.
+    - destruct tgs as [| [tg s] rest]; [simpl in Hlen; lia|].
+      destruct (Hpinned tg s (or_introl eq_refl)) as [Hf Hq].
+      eapply quiet_after_tr_qh. split; [exact Hf | exact Hq].
+  Qed.
+
+End WrapGeneric.
