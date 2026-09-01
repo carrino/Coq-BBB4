@@ -1214,6 +1214,34 @@ conventional rungs instead.
 Probe artifacts: scratchpad nqh/ (NqhDiag/NqhGrid/NqhRank shards),
 live_classes.txt, live_extents.txt, maxgap.c, extent.c, extall.c.
 
+**The route exists and is mostly BUILT.**  Tier C is not a new
+checker: [MetaTr.irules_check_neverqhtr] (landed with the 7.2 IRules
+port) already concludes [NeverQuasiHaltsTr] from an IRCert -- the
+symbolic rule replay walks the carry loop ONCE with symbolic k, so
+every carry instruction lands in the recurring fired set F and the
+engine's per-instruction [Fires] induction supplies exactly the
+unbounded-gap liveness no finite closure can.  The prefix gate
+(tvis mask: every prefix-fired instruction is in F) is the strictly
+stronger transition-level condition, and never-fired instructions
+pass vacuously.  What is missing is only the CONVEYOR:
+
+  1. harness side (user's box, ../BBB): run the irules cert searcher
+     (the wave-3 list-C sweep tooling, src/verify.c's prover) over
+     the LIVE rows of inwalk_sweep_1e8.txt (~9.9K machines);
+  2. container side: transcribe hits with the gen_irules*.py family
+     into ProvTr stage batches ([Forall NeverQuasiHaltsTr] lists for
+     decide_easy_tr's [Prov] table), kernel-verify each cert with
+     [irules_check_neverqhtr] in probe batches (the state pipeline's
+     shape exactly -- gen_irulesnqh_stage.py is the template);
+  3. if the counters need v3-blk certificates (block runs,
+     multi-decrement) rather than the v1 subset (single-symbol runs,
+     one k, -1 decrements), port MetaBlk -> MetaBlkTr: the only Coq
+     work in the plan, and Meta -> MetaTr already established the
+     pattern (swap the state mask for the tvis mask).
+
+The searcher's hit rate on this population is the one open number;
+the cert-version mix (v1 vs v3-blk) decides whether step 3 is needed.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
