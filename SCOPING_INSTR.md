@@ -1151,6 +1151,69 @@ counters route's burn-down input when that machinery gets built.
 Next: walk #4 (the wrap tier is in decider_tr, so the walk re-derives
 ~v5 as a WALK product) -> the Milestone A freeze candidate.
 
+### 7.1p The LIVE population diagnosed: counters all the way down (2026-09-01, in-container)
+
+Probed while walk #4 runs, on the 1,807-machine LIVE sample
+(qhh_live_1e9.txt, per-transition fire stats at 1e9 steps).  The
+surface profile first suggested a split -- 959 "dense" machines whose
+every fired transition stays hot through the last 10% of 1e9 steps
+(0-3 transitions never fire at all), vs ~850 with visible exponential
+gaps -- and the dense half looked like easy NeverQH-by-recurrence.
+Every follow-up measurement collapsed that hope into one picture:
+
+1. **Extent sweep (all 1,807)**: 1,713 (94.8%) occupy <= 64 tape
+   cells after 1e7 steps with LOGARITHMIC growth (+3-4 cells per
+   decade; e.g. [0,28] at 1e9).  Log extent + geometric gap histogram
+   (2^k-gap count ~ 1e9/2^k) = **binary counters**.  The "dense"
+   machines are counters too: all 8 instructions fire on ordinary
+   increments, and only deep carries (rare, geometric) produce the
+   gap tail.  Residue: 87 fast-extent (sweepers), 7 poly (bouncers).
+
+2. **RepWL closure grid** (20 samples x 8 rungs up to (6,2)/(4,4),
+   fuel 40,960, cut 128): ZERO closures close, plain or wrapped --
+   fuel-out at ~41K nodes still growing, or cut-out.  Counter tapes
+   are irregular short-run bit patterns: run-length blocks compress
+   nothing and the closure tries to enumerate ~2^28 patterns.  Tier
+   W-never-at-RepWL is dead on arrival for this population.
+
+3. **n-gram per-instruction cert probe** (n in {3,4,6}): closures
+   CLOSE for the halt-free machines, and the cert-fail set is
+   IDENTICAL at every n -- the avoiding cycles are not leak but the
+   real carry loops.  A carry chain is finite but unbounded, so ANY
+   finite abstraction contains a tg-avoiding cycle for the carry
+   instructions; no rank/lex certificate can exist.  (This is also
+   why the STATE census caught these cheaply: per-STATE obligations
+   never see carry loops -- every state recurs within a few steps.
+   Per-instruction liveness through a counter is intrinsically
+   harder than anything the state census ever proved.)  Encouraging
+   detail: most instructions' certs PASS (fail sets are typically
+   the 2-3 carry instructions), so an induction has a certified base.
+   Machines with `---` halt cells additionally lose the plain closure
+   to the familiar edge-refill leak (phantom halt), and the wrapped
+   closure to phantom pin fires -- 8 of 11 sampled; 3 closed clean.
+
+4. **Leaf checks can't save them**: the walk's loop-scan gas is 512
+   and no bounded period exists anyway (gaps grow like log t), so
+   neither raising the scan gas nor a cycle=>NeverQH corollary
+   applies (measured before the counter fingerprint was recognized;
+   recorded so nobody re-walks that path).
+
+**Consequence**: the ~9.9K LIVE machines need the counter liveness
+argument -- the one genuine invention this port always owed.  Shape
+of the certificate (Tier C, to be designed): per instruction tg,
+either (a) not-fired -- wrapped closure where it survives, or (b)
+recurrence via counter induction: symbolic run-crossing rules
+(RepWL's block machinery is the natural substrate) proving
+C(k) ->+ C(k+1) for symbolic k with tg firing en route at depth-k
+recurrences -- bit k flips infinitely often because bit k-1 does,
+rooted in the lex-certified dense instructions.  bbchallenge's
+bouncers/counters certificates are the reference design.  The 94
+non-counter LIVE machines (sweepers/bouncers) go to bigger
+conventional rungs instead.
+
+Probe artifacts: scratchpad nqh/ (NqhDiag/NqhGrid/NqhRank shards),
+live_classes.txt, live_extents.txt, maxgap.c, extent.c, extall.c.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
