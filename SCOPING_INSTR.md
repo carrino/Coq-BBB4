@@ -1112,6 +1112,45 @@ Extrapolated melt: ~25K of the 52.5K list.  Next run (user's box):
 with the deep config -> expect survivors ~27K = v5, then walk #4 to
 re-derive it as a walk product.
 
+### 7.1o v5: the Tier W-wrap burn, measured (2026-09-01)
+
+The full-list burn of v4 (52,559 rows, deep config, 27 shards / 16
+jobs, ~6 h wall on the 16-core box):
+
+    qh (Tier W-wrap)  28,867  (54.9%)     leaf (deep cycles)  92
+    neverqh                0              UNKNOWN         23,600
+
+The zeros are the right zeros: [neverqh 0] because this list is
+precisely the residue every never-tier already failed on, [halt 0]
+because a deferred TNF node's hole is by construction not reached
+within the gas.  The tier caught ~96% of the 1e8 sweep's 30,056
+SUSPECT machines (sweep, full inwalk bucket: 30,056 SUSPECT /
+9,914 LIVE / 0 HALT / 0 EDGE -- the 7.1m sample split held at 10x
+the horizon).
+
+**censustr_deferred_v5.txt = 23,600** (burn product; the walk analog
+comes with walk #4).  Burn-down: 280,087 -> 181,289 -> 110,910 ->
+52,505 -> 52,559 -> 23,600 (-91.6% from v0).  Composition:
+
+| bucket | v4 | v5 | moved |
+|---|---|---|---|
+| inwalk | 39,970 | 15,350 | -24,620 |
+| provenqh | 1,704 | 227 | -1,477 (87% of the bucket) |
+| dcensus | 5,064 | 3,840 | -1,224 -- FIRST movement in five lists |
+| partial | 1,932 | 313 | -1,619 |
+| proven | 3,889 | 3,870 | -19 |
+
+The dcensus movement is notable: wrapped-RepWL decides 1,224 machines
+the STATE census could only defer -- a tier it never had.  The
+surviving inwalk 15,350 is approximately the 9,914 LIVE counter
+machines plus ~5.4K wrap-resistant suspects; the residue is now
+dominated by the two endgame populations (counters + dcensus), i.e.
+boarding scale.  The LIVE list (from inwalk_sweep_1e8.txt) is the
+counters route's burn-down input when that machinery gets built.
+
+Next: walk #4 (the wrap tier is in decider_tr, so the walk re-derives
+~v5 as a WALK product) -> the Milestone A freeze candidate.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
