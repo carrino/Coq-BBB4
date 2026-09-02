@@ -1434,6 +1434,54 @@ live_all run); the lap-certificate side needs the emitter's Tr board
 template next (per-instruction prefix witnesses over the derived
 chains, pins = never-fired instructions, [srun] on the wrapped tm).
 
+### 7.1u The lap-certificate route boards at the instruction level (2026-09-02)
+
+**Built and measured in one afternoon, because the checker did the
+work.**  `tools/counters/emit_lapcert.py --tr` renders an
+INSTRUCTION-level board from the same derivation as the state board:
+
+  - the board's local [tm] is re-pointed at the WRAPPED machine
+    [tm_wrap_trs tm pins] (pins = the instructions the machine never
+    fires, read off a 200K-step simulation -- untrusted; a wrong pin
+    makes every [srun] fail), so every lap/boot lemma is reused
+    verbatim and now doubles as the proof that no pinned instruction
+    fires;
+  - the per-state visits become per-instruction chain-prefix witnesses
+    ([lapcert.reach_instr]), searched over the same three sources as
+    the states -- overflow/boot chain from B0, interior chain from A0,
+    nested exit chain from BE0 -- and closed by [LapGlueTr]'s twins
+    [fire_via_ovf(_lift)] / [fire_via_int_lift] / [fire_via_fill];
+  - the closer is [glue_neverqhtr]; mirrored machines transfer through
+    [TNF_QHTr.neverqhtr_mirror].
+
+Routes covered: one/split interior, exact and lift-slack, flat and
+NESTED overflow.  Not yet: the offset-nested and peeled overflow
+routes and the quasihalting closers ([glue_qh]/[glue_qh_abs] have no
+Tr twin -- their machines transition-quasihalt and belong to the QH
+side), ~2% of the derive population.
+
+**Measured on the 100-machine LIVE sample**: state derive 73/100;
+Tr boards (before the nested route landed) 68/100, with the six
+nested machines boarding individually afterwards -- i.e. the Tr route
+reaches essentially the whole derive population.  The route mix of
+the 73: one+lift 28, split 22, one plain 11, split+lift 5, nested 6,
+peel 1; 60 of 73 via the mirror.  The wider 500-machine derive is
+holding at 75%.  Ten LAPT boards are committed
+(theories/Machines/CountersTr/), axioms
+[functional_extensionality_dep] only; `tools/censustr/gen_provtr_lap.py`
+collects them into [ptl_NN : list TM] + [Forall NeverQuasiHaltsTr]
+stage files for [prov_tr].
+
+What this means for the endgame: ~73% of the ~9.9K LIVE counters
+(~7.2K machines) are one emitter run away from kernel-checked
+[NeverQuasiHaltsTr] -- a run that costs ~6 s derive + ~5 s coqc per
+machine, i.e. an afternoon on the 16-core box sharded 16 ways.  The
+irules conveyor (MetaBlkPfxTr, 32% of LIVE, overlap unknown) adds to
+that.  Open question before the bulk run: board granularity -- one
+12 KB file per machine is the state census's convention (1,928
+boards) but 7K of them is 85 MB of source; a per-file chunking of the
+emitter is the obvious fix and costs nothing in the proof.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
