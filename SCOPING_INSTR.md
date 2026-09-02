@@ -1242,6 +1242,55 @@ pass vacuously.  What is missing is only the CONVEYOR:
 The searcher's hit rate on this population is the one open number;
 the cert-version mix (v1 vs v3-blk) decides whether step 3 is needed.
 
+### 7.1q v6 and the Milestone A freeze (2026-09-02)
+
+**Walk #4 = v6: 23,692 rows**, the first walk product with Tier W-wrap
+in the walk decider.  Guards held (96 shard outputs, every one ending
+in an empty queue).  v6 = v5 + exactly 92 machines, and the 92 are
+accounted for: every bucket matches v5 except partial 313 -> 405, i.e.
+the 92 R_Leaf catches of the v5 deep burn -- cycles the deep loop-scan
+(gas 4096) sees and the walk config (gas 512) cannot.  Composition:
+proven 3,870 / provenqh 227 / dcensus 3,840 / partial 405 / inwalk
+15,350.  Burn-down: 280,087 -> 181,289 -> 110,910 -> 52,505 -> 52,559
+-> 23,600 -> 23,692 (walk product).
+
+**Frozen.**  tools/censustr/gen_deferredtr.py -> DeferredTr_00..02.v
+(8,000-row shards) + DeferredTr_Data.v ([D_censusTr]); [D_tr :=
+D_censusTr] in RunTr.v.  Measured: 14 s per shard to compile, 0.4 s
+for Data; [dmap_of D_censusTr] builds in 44 s under vm_compute and
+looks its rows up correctly.  The list-burn keeps an EMPTY deferred
+map ([D_burn]) -- with the frozen map every burned row would be a
+lookup hit and the burn would burn nothing.
+
+**The kernel-checked re-walk (CensusTr/RunTr_Split.v).**  The state
+census split its walk by hand (per-grandchild roots, hand-split heavy
+subtrees, one WF lemma each: Run_Split, Run_Split2, seven
+Run_Split_<tag> files).  The transition census splits the way its
+parallel collection already does: [SearchQueue_levels] under the
+halt-only decider opens the tree to the level-3 frontier (1,700 front
++ 92 back nodes), and every frontier node's subtree is walked
+separately.  Two lemmas make that a proof:
+
+  - [SearchQueue_level_spec_tr]: a level expansion preserves
+    [SearchQueue_WF_Tr] under any [QHDeciderTr_WF] decider (the
+    [SearchQueue_upd_spec_tr] case analysis, applied to every front
+    node in one round);
+  - [frontier_decided_tr] / [census_tr_of_units]: N unit facts
+    [unit_ok N i 0 frontier_nodes_tr = true] -- unit i certifies, by
+    one native computation, that every frontier node with index = i
+    (mod N) walks to an empty queue under [decider_tr] within ITER_TR
+    = 4096 successor rounds -- give
+    [census_tr : forall tm, QHBoundTr B_tr tm \/ Deferred D_tr tm].
+
+tools/censustr/gen_walk_units.py emits the N = 96 units
+(theories/CensusTr/Compute/UnitTr_XX.v, [native_cast_no_check]) and
+the assembler Census_TheoremTr.v; `make census-tr-walk` runs them in
+one xargs pool and checks the theorem.  Round-robin by index is the
+collection walk's own dealing, so unit costs track walk #4's shard
+costs minus the deferred nodes' failing ladders -- which were the
+expensive nodes.  Its wall time is the number that says how far the
+transition census is from the state census's 45-minute walk.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

@@ -781,6 +781,49 @@ if shards die with 'ocamlopt.opt got signal', lower LISTBURN_MAX_PER_FILE"
 .PHONY: census-tr-listburn
 
 # ---------------------------------------------------------------------------
+# MILESTONE A: the kernel-checked RE-WALK with the frozen deferred list.
+#
+#   make census-tr-walk [WALK_JOBS=16] [CENSUS_TR_UNITS=96]
+#
+# CensusTr/RunTr_Split.v proves the frontier split; the 96 generated
+# units theories/CensusTr/Compute/UnitTr_XX.v each certify by ONE
+# native computation that every level-3 frontier node with index = XX
+# (mod 96) walks to an empty queue under [decider_tr] (deferred rows
+# are lookups now), and Census_TheoremTr.v assembles
+#
+#   census_tr : forall tm, QHBoundTr B_tr tm \/ Deferred D_tr tm
+#
+# the first transition-level census theorem.  Units are independent
+# (each Requires only RunTr + RunTr_Split), so one xargs pool; finished
+# units are kept across reruns (delete the .vo to redo one).  The
+# generator is idempotent -- rerun it after changing CENSUS_TR_UNITS.
+CENSUS_TR_UNITS ?= 96
+
+census-tr-units:
+	@python3 tools/censustr/gen_walk_units.py --units $(CENSUS_TR_UNITS)
+.PHONY: census-tr-units
+
+census-tr-walk: Makefile.coq
+	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr_Split.vo
+	@ulimit -s $(STACK_KB) 2>/dev/null \
+	  || echo ">>> WARNING: could not raise stack to $(STACK_KB)"
+	@ulimit -s $(STACK_KB) 2>/dev/null; \
+	 ls theories/CensusTr/Compute/UnitTr_*.v \
+	   | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done \
+	   | xargs -r -P $(WALK_JOBS) -I{} sh -c \
+	    's=$$(date +%s); \
+	     coqc -Q theories BBB4 -w -abstract-large-number {} \
+	       > {}.log 2>&1 && echo ">>> $$(basename {} .v) done in $$(( $$(date +%s) - s )) s" \
+	       || echo ">>> $$(basename {} .v) FAILED (see {}.log)"'
+	@n=$$(ls theories/CensusTr/Compute/UnitTr_*.v | wc -l); \
+	 d=$$(ls theories/CensusTr/Compute/UnitTr_*.vo 2>/dev/null | wc -l); \
+	 echo ">>> units done: $$d / $$n"; [ "$$d" = "$$n" ]
+	coqc -Q theories BBB4 -w -abstract-large-number \
+	  theories/CensusTr/Compute/Census_TheoremTr.v
+	@echo ">>> census_tr : forall tm, QHBoundTr B_tr tm \\/ Deferred D_tr tm -- CHECKED"
+.PHONY: census-tr-walk
+
+# ---------------------------------------------------------------------------
 # The route-A closeout (docs/CLOSEOUT_ROUTE_A.md).  Regenerates the stage
 # files from the current boards and recompiles theories/Closeout/, yielding
 #

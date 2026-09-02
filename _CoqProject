@@ -2977,6 +2977,7 @@ theories/CensusTr/DeferredTr_01.v
 theories/CensusTr/DeferredTr_02.v
 theories/CensusTr/DeferredTr_Data.v
 theories/CensusTr/RunTr.v
+theories/CensusTr/RunTr_Split.v
 theories/Checkers/IRules/AnchorVisitsTr.v
 theories/Checkers/IRules/MetaTr.v
 theories/Machines/IRulesTr_Batch_01.v

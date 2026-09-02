@@ -1,9 +1,10 @@
 (** * CensusTr/RunTr: the transition-level census walk wiring.
 
     The transition-level analogue of Census/Run.v + Run_Compute.v, in
-    COLLECTION MODE: the three lookup tiers (proven / proven-QH /
-    deferred) start EMPTY, so the walk decides the halt + cycle bulk
-    and pushes everything else to the back queue.  The back queue of a
+    COLLECTION MODE (walks #1-#4): the three lookup tiers (proven /
+    proven-QH / deferred) started EMPTY, so the walk decided the halt +
+    cycle bulk and pushed everything else to the back queue.  Since
+    Milestone A the deferred tier is the FROZEN v6 list ([D_tr] below).  The back queue of a
     completed collection walk IS the transition-level deferred set --
     it gets frozen into generated DeferredTr tables, this file's lists
     are regenerated, and the re-walk with the frozen list yields the
@@ -24,7 +25,7 @@ From Coq Require Import Arith Lia Bool List NArith.
 From Coq Require Import FunctionalExtensionality.
 From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape Mirror.
 From BBB4.Census Require Import TNF_QH Decide.
-From BBB4.CensusTr Require Import TNF_QHTr DecideTr.
+From BBB4.CensusTr Require Import TNF_QHTr DecideTr DeferredTr_Data.
 (* the kernel-checked transition-level Proven tier: the 97 v1
    IRules certificates that survive the per-instruction prefix
    gate (SCOPING_INSTR.md 7.2).  739 KB of boards, so this is
@@ -43,7 +44,20 @@ Set Default Goal Selector "!".
 
 Definition B_tr : nat := 2000.
 
-Definition D_tr : list TM := [].
+(** FROZEN (Milestone A): the v6 collection walk's deferred list,
+    23,692 machines (censustr_deferred_v6.txt -> DeferredTr_*.v via
+    tools/censustr/gen_deferredtr.py).  The walk decider looks them up
+    ([R_Deferred]) instead of paying the failing ladder, and the
+    kernel-checked re-walk (RunTr_Split.v + Compute/UnitTr_*.v) turns
+    [census_tr_of_units] into the census theorem over this list. *)
+Definition D_tr : list TM := D_censusTr.
+
+(** the LIST-BURN's deferred map stays EMPTY: the burn runs
+    [decider_tr_deep] over the deferred list itself, so a lookup hit
+    would turn every row into [R_Deferred] and burn nothing.  Sound at
+    contract [D_burn]: with no lookup, the decider never answers
+    [R_Deferred], and every other verdict is the checkers'. *)
+Definition D_burn : list TM := [].
 Definition prov_tr : list TM :=
   [tm_1RB1RA_0LC0LD_0RB1LC_1RA1LD;
    tm_1RB1LA_1LC1LD_1RC0RA_0LC0LD;
@@ -356,11 +370,11 @@ Definition decider_tr_deep : QHDecider :=
   decide_easy_tr B_tr 130 4096 1000000 2048 ng_rungs_deep rank_rungs_deep
     qhb_rungs_deep qhb_lex_rungs_deep rw_qhb_rungs_deep
     rw_rungs_deep rw_fuel_deep rw_cut_deep
-    (dmap_of prov_tr) (dmap_of provqh_tr) (dmap_of D_tr).
+    (dmap_of prov_tr) (dmap_of provqh_tr) (dmap_of D_burn).
 
-Lemma decider_tr_deep_WF : QHDeciderTr_WF B_tr D_tr decider_tr_deep.
+Lemma decider_tr_deep_WF : QHDeciderTr_WF B_tr D_burn decider_tr_deep.
 Proof.
-  exact (decide_easy_tr_WF B_tr D_tr 130 4096 1000000 2048
+  exact (decide_easy_tr_WF B_tr D_burn 130 4096 1000000 2048
            ng_rungs_deep rank_rungs_deep qhb_rungs_deep qhb_lex_rungs_deep
            rw_qhb_rungs_deep rw_rungs_deep rw_fuel_deep rw_cut_deep
            prov_tr prov_tr_all provqh_tr provqh_tr_all).
