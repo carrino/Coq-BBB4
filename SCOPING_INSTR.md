@@ -1482,6 +1482,76 @@ that.  Open question before the bulk run: board granularity -- one
 boards) but 7K of them is 85 MB of source; a per-file chunking of the
 emitter is the obvious fix and costs nothing in the proof.
 
+### 7.1v CORRECTION: the real LIVE population, and Tier TC lands on a quarter of it (2026-09-02)
+
+**The §7.1p/7.1s/7.1u population numbers were measured on the wrong
+list.**  The 1,807-machine "LIVE sample" (qhh_live_1e9.txt) those
+sections quote has ZERO overlap with the LIVE set actually inside the
+frozen v6 deferred list.  Reproduced locally (trcensus, 1e7 steps,
+over buckets_v6/deferred_inwalk.txt): 9,919 LIVE machines, split by
+tape-extent growth into four classes that need four different routes:
+
+| class (extent growth) | count | share | what they are | route, measured |
+|---|---|---|---|---|
+| logarithmic | 4,523 | 46% | binary counters | lap certificate (Tier C): **49/100** derive on the real class, not 73% |
+| linear | 2,483 | 25% | small-period translated cyclers (instruction gap <= 113) | **Tier TC, this section: 2,456/2,483 kernel-checked** |
+| sqrt | 1,996 | 20% | bouncers | RepWL closures at wider rungs close 3/8 sampled ((3,3),(5,2),(6,2)) |
+| polynomial | 898 | 9% | unknown | none yet |
+
+Two more corrections fall out of the re-diagnosis:
+
+- **The v5 "deep" list-burn was never deep.**  The `census-tr-listburn`
+  Makefile target never passed `--deep` to gen_listburn.py, so the
+  16-shard burn that "confirmed" the residue ran the WALK decider
+  (gas 512, walk rungs).  Fixed: `LISTBURN_DEEP ?= --deep`, deep loop
+  gas 65536, rw_rungs_deep gains (6,2,0).  A genuine deep burn has not
+  run yet.
+- **B_tr was 2,000; it is now 32,779,478** (the champion floor;
+  verdicts are monotone in B by qhboundtr_mono).  The leaf checks guard
+  on `n1 <=? B`, so at 2,000 every translated cycler whose anchor sits
+  past step 2,000 fell straight to deferred.  Even at the raised bound
+  the in-walk leaf checks catch only 10/40 sampled linear machines
+  (lp_candidates are weak), which is why the class needs certificates.
+
+**Tier TC (Checkers/TCyclerTr.v).**  `tcycler_check_neverqhtr tm n1 P W`
+is TCycler's checker with the target alphabet changed from 4 states
+to 8 instructions: the lap induction (`tcycler_laps`, `tcycler_fold`)
+is reused verbatim, the two scans become `cfires` (prefix) and
+`gfires` (guarded lap), the inclusion gate is `forallb (cfires (n1+P) t
+==> gfires P t) all_Instr`, and the pumped occurrence fires the same
+instruction because `glift` plants the head cell (`glift_cinstr`).
+Side L runs the checker on `mirror_tm` (`neverqhtr_mirror`).
+Compiled first try; no new axioms.
+
+Certificates come from `tools/censustr/tc_find.py` (UNTRUSTED: find the
+period of the (state, read) stream over 60K steps, read off n1/P/W/side
+from the head positions) and are staged by
+`tools/censustr/gen_provtr_tc.py` (probe phase: `Eval vm_compute`
+verdicts; stage phase: `ProvTr_TC_NN.v` with `ptc_NN` +
+`Forall NeverQuasiHaltsTr ptc_NN`, 250 per file).  On the 2,483 linear
+LIVE machines: tc_find 2,474 found (9 not periodic within budget), probe
+2,456 true / 18 false (all 18 are tc_find tail artefacts with
+n1 ~ 59,9xx, period 1-9 -- spurious short periodicity at the end of the
+budget, i.e. the real period is longer than 60K steps or the machine
+is a bouncer).  Ten stage files, each ~2 s to compile; `prov_tr` is now
+`prov_tr_irtr ++ ptl_00 ++ ptc_00 ++ ... ++ ptc_09`.
+
+**Bulk lap-certificate emit (user's box, 16 shards, in flight):** at
+4,489/9,919 processed, 1,137 OK (25%), 2,952 "no anchor", 308 "no
+interior chain", 92 "no overflow chain".  The 66% no-anchor share is
+the non-counter classes above going through a counter emitter; on the
+counter class alone the route is ~49%.
+
+**Burn-down after this section** (9,919 LIVE):
+- linear 2,483: 2,456 staged here; 27 left (long period or bouncer).
+- log 4,523: ~2,200 via lap certificates when the bulk emit finishes;
+  the other half needs the missing lap routes (offset-nested, peel) or
+  a different counter engine.
+- sqrt 1,996: a real `--deep` burn with the widened RepWL rungs
+  (expected ~40% from the 3/8 sample), then a bouncer certificate route
+  (the state census's RepWL-with-proof shapes) for the rest.
+- poly 898: undiagnosed.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

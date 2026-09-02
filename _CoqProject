@@ -24,6 +24,7 @@ theories/Checkers/NGramHist.v
 theories/Checkers/NGramHistExt.v
 theories/Checkers/NGramHistWrap.v
 theories/Checkers/TCycler.v
+theories/Checkers/TCyclerTr.v
 theories/Checkers/TCyclerN.v
 theories/Checkers/Wrap.v
 theories/Checkers/Fuel.v
@@ -2989,6 +2990,16 @@ theories/CensusTr/DeferredTr_01.v
 theories/CensusTr/DeferredTr_02.v
 theories/CensusTr/DeferredTr_Data.v
 theories/CensusTr/ProvTr_Lap_00.v
+theories/CensusTr/ProvTr_TC_00.v
+theories/CensusTr/ProvTr_TC_01.v
+theories/CensusTr/ProvTr_TC_02.v
+theories/CensusTr/ProvTr_TC_03.v
+theories/CensusTr/ProvTr_TC_04.v
+theories/CensusTr/ProvTr_TC_05.v
+theories/CensusTr/ProvTr_TC_06.v
+theories/CensusTr/ProvTr_TC_07.v
+theories/CensusTr/ProvTr_TC_08.v
+theories/CensusTr/ProvTr_TC_09.v
 theories/CensusTr/RunTr.v
 theories/CensusTr/RunTr_Split.v
 theories/Checkers/IRules/AnchorVisitsTr.v
