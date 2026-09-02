@@ -1555,6 +1555,76 @@ counter class alone the route is ~49%.
   (the state census's RepWL-with-proof shapes) for the rest.
 - poly 898: undiagnosed.
 
+### 7.1w The gap has a name: the RANK tier's instruction twin, and the fake macro-cycle (2026-09-02)
+
+**Attribution.**  Running the state census's tiers one at a time
+(`scan_loops`, `try_ngram`, `try_rank`, `try_qhb`, `try_rw`, census
+parameters) on samples of the three open classes -- 40 bouncers (sqrt),
+40 polynomial-extent machines, the 34 log-extent counters the lap
+emitter reports "no anchor" for -- gives one answer: **`try_rank`
+(the n-gram closure with rules (a)/(b) rank certificates, rungs (3,0),
+(3,64), (3,256), (3,1024)) decided 114 of 114 at the state level.**
+`try_ngram` decided none of them, RepWL 38/40 of the poly class only.
+Cross-checking the 9,919 LIVE machines against every state-level
+closeout record (`tools/closeout/frozen_map.tsv`, the `*_caught.tsv`
+sweeps) confirms it: 9,790 have NO record -- they never reached a
+deferred list at the state level; the rank tier took them in the walk.
+
+**The instruction twin fails on 1-3 instructions per machine, and it is
+the abstraction, not the measures.**  `rank_tier_tr` (DecideTr) is the
+same closure, the same rules, target alphabet changed from states to
+instructions.  Per-instruction probes on the real samples (rungs (3,t),
+(4,1024)): every machine's closure closes; the certificate fails for
+1-3 of the 8 instructions (sqrt 29/40 fail, poly 40/40, noanchor
+26/34).  Dumping the stuck SCC for a bouncer (target (A,1), which fires
+when the left sweep crosses an interior 0) shows one 60-node SCC holding
+the WHOLE bounce: right sweep, turn, left sweep, turn.  The abstraction
+admits a left sweep that crosses only 1s all the way to the blank end --
+a far tape of the form 1^k 0^omega is consistent with every 3-gram the
+real tape (10111)^k 0^omega has -- so an abstract macro-cycle avoids
+(A,1) forever and no count-of-1s measure decreases on it (the tape
+grows).  The state target A never has this problem: A0 fires at the
+blank end on every bounce, so every macro-cycle passes through a target
+node.  The same picture holds for the poly and non-binary-counter
+samples: one stuck SCC, containing nearly all instructions, per failing
+target.
+
+Two things fall out immediately:
+
+- **The deep rank rungs catch a slice the walk cannot.**  At (4,1024)
+  the certificate closes for 11/40 bouncers and 8/34 no-anchor counters;
+  `rank_rungs_tr` stops at n=3, `rank_rungs_deep` has (4,1024), (5,1024),
+  (6,4096).  The first genuine `--deep` list-burn (never run, §7.1v)
+  will take these.
+- **`Checkers/NGramHistTr.v` landed**: NGramHist (cells carry the last-k
+  (state, read) records; it closed 669 state-level deferred counters)
+  instantiated on `ClosureTr.closure_check_neverqhtr_lex` with the
+  instruction projection `ha_instr`; the `hcomp` certificates and their
+  exactness proofs are reused verbatim, soundness
+  `ngramhist_check_neverqhtr_lex_sound`.  Measured with a forked
+  untrusted prover (instruction-target certificate search) at the state
+  stage's rungs (k,n,t,fuel) = (2,2,40,20000), (2,3,40,20000),
+  (4,2,40,20000): it discharges some of the no-anchor counters
+  (6/34) and few bouncers/poly (0/40 and 1/40 so far, run in flight) -- the
+  history records do not exclude a long uniform run of 1s, so the fake
+  bounce survives.
+
+**What does exclude the fake bounce: block structure.**  RepWL's
+repeated-word abstraction knows every block of (10111)^k contains a 0.
+The tape-period detector (`period.py`, untrusted) over the whole sqrt
+class: period 5 for 607 machines (30%), 3/6 for ~470, 1-2 for ~370, 7
+for 88, 8 for 85, 9 for 44, longer for ~50.  The walk's and the deep
+ladder's RepWL rungs stop at L=6, so a third of the class was never
+tried at its own period -- exactly the state census's big-block finding
+(REPWL_BIGBLOCK_WAVE8: L=9..30 caught what L<=6 could not).  The
+in-container grid at L in {2,3,4,5,6,8,10,12}, T=2, fuel 400K on the
+first five bouncers: in flight (the first run overflowed the stack; rerun with an unlimited stack).
+
+Deep-burn samples (decider_tr_deep, gas 65536, the widened rungs) on the
+same three samples: in flight.
+
+Route decision for the three classes: pending those two measurements; the expected shape is RepWL at the detected period (Tier W, `gen_provtr_rw.py` stage files) for the block-periodic bouncers, the deep rank rungs for the rest, and the polynomial class still open.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
