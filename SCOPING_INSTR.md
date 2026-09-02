@@ -1618,7 +1618,15 @@ ladder's RepWL rungs stop at L=6, so a third of the class was never
 tried at its own period -- exactly the state census's big-block finding
 (REPWL_BIGBLOCK_WAVE8: L=9..30 caught what L<=6 could not).  The
 in-container grid at L in {2,3,4,5,6,8,10,12}, T=2, fuel 400K on the
-first five bouncers: in flight (the first run overflowed the stack; rerun with an unlimited stack).
+first five bouncers (three finished before the container's memory
+limit killed the run): **every one closes at its detected period and
+nowhere else** -- period 8: closes at (8,2) with 1,056 nodes, dead or
+fuel-exhausted at every other L; period 3: closes at (3,2) (263 nodes),
+(6,2) (1,160) and (12,2) (4,408); period 8: closes at (8,2) with 19,366
+nodes.  The instruction-level tier `RepWLTr.rw_tier_tr` (closure +
+per-instruction rank/lex certificate + verified check in one
+vm_compute) is now being probed at L in {p, 2p} over the 40-bouncer
+sample (`gen_provtr_rw.py probe`, fuel 100K, cut 128).
 
 Deep-burn samples (decider_tr_deep, gas 65536, the widened rungs) on the
 same three samples: in flight.
