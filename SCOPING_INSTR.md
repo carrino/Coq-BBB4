@@ -1604,10 +1604,10 @@ Two things fall out immediately:
   `ngramhist_check_neverqhtr_lex_sound`.  Measured with a forked
   untrusted prover (instruction-target certificate search) at the state
   stage's rungs (k,n,t,fuel) = (2,2,40,20000), (2,3,40,20000),
-  (4,2,40,20000): it discharges some of the no-anchor counters
-  (6/34) and few bouncers/poly (0/40 and 1/40 so far, run in flight) -- the
-  history records do not exclude a long uniform run of 1s, so the fake
-  bounce survives.
+  (4,2,40,20000): final numbers: no-anchor counters 6/34, bouncers 4/40 (6 more do
+  not even close), poly 1/40.  The history records do not exclude a
+  long uniform run of 1s, so the fake bounce survives; the tier is a
+  minor contributor and its emission conveyor is not built.
 
 **What does exclude the fake bounce: block structure.**  RepWL's
 repeated-word abstraction knows every block of (10111)^k contains a 0.
