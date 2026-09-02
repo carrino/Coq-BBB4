@@ -1398,6 +1398,42 @@ cascade class, ~2-2.7K.  That, plus dcensus (3,840, the state's own
 counter core -- the same route applies) and the re-certifications, is
 the shape of the endgame.
 
+### 7.1t Both Tier C checkers landed; irules is a 32% route, all v3-v7 (2026-09-02)
+
+**Harness sample (user's box)**: `bin/irules --max-steps 200000` over
+500 LIVE machines: **158 certificates (31.6%)** -- 39 v3, 89 v5, 24 v6,
+6 v7, **zero v1**.  So the irules conveyor's kernel target is the
+block/rule-prefix checker, not MetaTr.  Built and pushed (50ca2a2):
+
+- **Checkers/IRules/MetaBlkPfxTr.v**: [irulesblkpfx_check_neverqhtr],
+  MetaBlkPfx's checker with MetaTr's instruction-mask prefix gate
+  ([csteps_tvis] + [tr_in F]) and conclusion [NeverQuasiHaltsTr]; the
+  soundness proof is MetaBlkPfx's verbatim up to the final block, which
+  is MetaTr's.  Axioms: functional_extensionality_dep only.
+- **Counters/LapGlueTr.v**: [glue_neverqhtr] -- LapGlue's lap argument
+  run on the WRAPPED machine [tm_wrap_trs tm pins] (pins = the
+  instructions the certificate claims never fire): laps chaining
+  forever make the wrapped machine non-halting, [WrapTr.wrap_trs_agree]
+  then identifies its run with tm's and rules out every pinned
+  instruction, and the per-instruction visit premise is discharged by
+  lap-chain PREFIXES ([fire_of_run(_instr)] = [vis_of_run] plus a
+  projection) and [fire_via_ovf].  No change to LapDecider.  Same axiom
+  footprint.  A certificate's "fired set" needs no new soundness
+  machinery at all: running [srun] on the wrapped machine IS the
+  proof that only unpinned instructions fire in the lap.
+- **tools/censustr/gen_irulesnqhtr_stage.py**: the Tr stage emitter for
+  the irules certs, two-phase (probe verdicts, then stage the passing
+  certs into [pts_NN : list TM] + [Forall NeverQuasiHaltsTr pts_NN] for
+  [prov_tr]).  A cert that passes the state gate but fails the Tr gate
+  is a VERDICT FLIP -- the machine transition-quasihalts -- and is
+  reported, not staged.
+
+Conveyor status: the irules side is ready to consume the certs the
+moment they are on the branch (results/certs_live500 + the full
+live_all run); the lap-certificate side needs the emitter's Tr board
+template next (per-instruction prefix witnesses over the derived
+chains, pins = never-fired instructions, [srun] on the wrapped tm).
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
