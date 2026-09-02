@@ -1916,9 +1916,10 @@ def render_tr(D, spec, dspec, mirrored):
                  'Proof. apply never_qh_tr_nonhalt, nqhtr_%s. Qed.\n'
                  % (ID, ID, ID, ID, D['p0'], ID, ID, ID, ID, ID, ID))
     src = src[:i_close] + fire + '\n' + close
-    src = src.replace('(** * %s_%s: machine' % (PREFIX, ID),
-                      '(** * %s_%s: TRANSITION-LEVEL board for machine'
-                      % (PREFIX_TR, ID))
+    src = re.sub(r'\(\*\* \* (?:%s|%s|%s|%s)_%s: machine'
+                 % (PREFIX, NEST_PREFIX, PEEL_PREFIX, AVOID_PREFIX, re.escape(ID)),
+                 '(** * %s_%s: TRANSITION-LEVEL board for machine' % (PREFIX_TR, ID),
+                 src, count=1)
     return src
 
 

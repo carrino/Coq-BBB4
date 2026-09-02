@@ -41,22 +41,26 @@ def main():
     ap.add_argument('--outdir', default=os.path.join(REPO, 'theories', 'CensusTr'))
     a = ap.parse_args()
     os.makedirs(a.outdir, exist_ok=True)
-    boards = sorted(glob.glob(os.path.join(a.boards, 'LAPT_*.v')))
+    boards = sorted(glob.glob(os.path.join(a.boards, 'LAPT*.v')))
     rows = []
     for b in boards:
         t = open(b).read()
-        m = re.search(r'^Theorem (nqhtr_(\w+)) : NeverQuasiHaltsTr (tm_\w+)\.', t, re.M)
-        if not m:
+        ms = re.findall(r'^Theorem (nqhtr_(\w+)) : NeverQuasiHaltsTr (tm_\w+)\.', t, re.M)
+        if not ms:
             raise SystemExit('no nqhtr theorem in %s' % b)
-        rows.append((os.path.splitext(os.path.basename(b))[0], m.group(1), m.group(3)))
+        for th, _, tm in ms:
+            rows.append((os.path.splitext(os.path.basename(b))[0], th, tm))
     nfiles = 0
     for ci in range(0, len(rows), a.chunk):
         nn = '%02d' % nfiles
         chunk = rows[ci:ci + a.chunk]
         with open(os.path.join(a.outdir, 'ProvTr_Lap_%s.v' % nn), 'w') as f:
             f.write(HEADER.replace('{NN}', nn).replace('{CNT}', str(len(chunk))))
+            seen = []
             for mod, _, _ in chunk:
-                f.write('From BBB4.Machines.CountersTr Require Import %s.\n' % mod)
+                if mod not in seen:
+                    seen.append(mod)
+                    f.write('From BBB4.Machines.CountersTr Require Import %s.\n' % mod)
             f.write('Import ListNotations.\n\n')
             f.write('Definition ptl_%s : list TM :=\n  [' % nn)
             f.write(';\n   '.join(tm for _, _, tm in chunk))
