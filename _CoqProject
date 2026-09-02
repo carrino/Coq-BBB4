@@ -1456,6 +1456,7 @@ theories/Counters/KpWallScan.v
 theories/Checkers/LapAvoid.v
 theories/Counters/LapCertGlue.v
 theories/Counters/LapGlueTr.v
+theories/Machines/CountersTr/LAPT_0RB____0LC0RA_0LD____1RA1LC.v
 theories/Counters/LapCertGlueLift.v
 theories/Counters/LapCertGluePar.v
 theories/Counters/SkipGlue.v

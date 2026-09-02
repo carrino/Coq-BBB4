@@ -1662,6 +1662,180 @@ def render(D):
     return out
 
 
+
+# ------------------------------------------------ transition-level boards ---
+
+OUTDIR_TR = os.path.join(REPO, 'theories', 'Machines', 'CountersTr')
+PREFIX_TR = 'LAPT'
+
+ALL_INSTR = [(q, b) for q in range(4) for b in (0, 1)]
+
+
+def fired_set(tab, T=200000):
+    """UNTRUSTED: the (state, head) pairs the machine fires in its first [T]
+    steps, from the blank tape.  The complement is the board's PIN list --
+    instructions the certificate claims never fire.  A wrong guess cannot
+    mis-prove: the kernel replays every chain on the WRAPPED machine, which
+    halts the moment a pinned instruction fires, so the board fails to
+    typecheck instead."""
+    cfg = (0, (), 0, ())
+    seen = set()
+    for _ in range(T):
+        seen.add((cfg[0], cfg[2]))
+        try:
+            cfg = LC.wstep(tab, False, False, cfg)
+        except Halt_:
+            raise DeriveError('tr: machine halts')
+    return seen
+
+
+def cinstr_coq(t):
+    return '(%s, %s)' % (ST[t[0]], SYM[t[1]])
+
+
+def render_tr(D, spec, dspec, mirrored):
+    """The INSTRUCTION-level board: the state board with its local [tm]
+    re-pointed at the WRAPPED machine [tm_wrap_trs tm pins], per-instruction
+    lap-chain witnesses in place of the per-state visits, and
+    [LapGlueTr.glue_neverqhtr] as the closer.  Every lap / boot lemma of the
+    state board is reused verbatim -- on the wrapped table it proves, at
+    once, that the machine never halts under the wrap (so no pinned
+    instruction ever fires) and the lap structure the glue needs.
+
+    v1 scope: the plain route only (one exact interior chain, exact flat
+    overflow, no nesting / peel / avoidance / lift slack); everything else
+    raises DeriveError and stays a state-level board for now."""
+    if D.get('mode') != 'one' or D.get('islack') or D.get('oslack') \
+            or D.get('nest') or D.get('opeel') or D.get('avoid'):
+        raise DeriveError('tr: route not supported yet (mode=%s islack=%s '
+                          'oslack=%s nest=%s peel=%s avoid=%s)'
+                          % (D.get('mode'), bool(D.get('islack')),
+                             bool(D.get('oslack')), bool(D.get('nest')),
+                             bool(D.get('opeel')), bool(D.get('avoid'))))
+    tab = parse(dspec)
+    fired = fired_set(tab)
+    pins = [t for t in ALL_INSTR if t not in fired]
+    # one overflow-chain prefix per fired instruction (the state board's
+    # [viso] route: every visit is witnessed inside the overflow lap)
+    wit = {}
+    for t in sorted(fired):
+        ch = LC.reach_instr(tab, True, True, D['B0'], D['cho'], t)
+        if ch is None:
+            raise DeriveError('tr: no overflow-lap witness for instruction %s%d'
+                              % (LAB[t[0]], t[1]))
+        wit[t] = ch
+
+    src = render(D)
+    if mirrored:
+        src = mirrorize(src, spec, dspec)
+    ID = mach_id(spec)
+    tmname = ('tmm_%s' % ID) if mirrored else ('tm_%s' % ID)
+
+    # imports
+    old = 'From BBB4.Checkers Require Import LapDecider'
+    i = src.index(old); j = src.index('\n', i)
+    extra = ('\nFrom BBB4 Require Import BBBT4_Statement.\n'
+             'From BBB4.Checkers Require Import WrapTr.\n'
+             'From BBB4.Checkers.IRules Require Import AnchorVisitsTr.\n'
+             'From BBB4.Counters Require Import LapGlueTr.'
+             + ('\nFrom BBB4.CensusTr Require Import TNF_QHTr.' if mirrored
+                else ''))
+    src = src[:j] + extra + src[j:]
+
+    # the wrapped table is what every lemma below runs on
+    old = 'Local Notation tm := %s.' % tmname
+    if src.count(old) != 1:
+        raise RuntimeError('tr: tm notation not found')
+    new = ('(** the instructions the certificate claims NEVER fire; the lap\n'
+           '    argument runs on the machine WRAPPED at them\n'
+           '    ([WrapTr.tm_wrap_trs]), so a pinned instruction firing would\n'
+           '    halt it and every [srun] below would fail. *)\n'
+           'Definition pins_%s : list Instr := [%s].\n'
+           'Definition tmw_%s : TM := tm_wrap_trs %s pins_%s.\n'
+           'Local Notation tm := tmw_%s.'
+           % (ID, '; '.join(cinstr_coq(t) for t in pins), ID, tmname, ID, ID))
+    src = src.replace(old, new)
+
+    # visits -> per-instruction fires.  Keep the state board's [viso] lemma
+    # text, retargeted at instructions (same anchor glue, same chain form).
+    i_vis = src.index('Lemma viso_%s' % ID)
+    m_vis = re.search(r'Lemma vis_%s : .*?\nQed\.\n' % re.escape(ID), src[i_vis:], re.S)
+    if m_vis is None:
+        raise RuntimeError('tr: vis lemma not found')
+    viso = src[i_vis:i_vis + m_vis.start()]
+    fireo = (viso.replace('viso_%s' % ID, 'fireo_%s' % ID)
+                 .replace('(q : St)', '(t : Instr)')
+                 .replace('srun_st tm', 'srun_instr tm')
+                 .replace('= Some q ->', '= Some t ->')
+                 .replace('fst c = q.', 'cinstr c = t.')
+                 .replace('intros l q Hst', 'intros l t Hst')
+                 .replace('vis_of_run tm Cc', 'fire_of_run_instr tm Cc'))
+    m_hi = re.search(r'  assert \(Hi : .*?\)\n    by exact lapi_%s\.\n'
+                     % re.escape(ID), src, re.S)
+    if m_hi is None:
+        raise RuntimeError('tr: lapi assertion not found')
+    hi = m_hi.group(0)
+    bullets = []
+    for t in ALL_INSTR:
+        lab = '%s%d' % (LAB[t[0]], t[1])
+        if t in wit:
+            bullets.append(
+                '  - (* %s *)\n'
+                '    apply (fire_via_ovf tm Cc Hi %s), fireo_%s\n'
+                '      with (l := %s).\n'
+                '    vm_compute; reflexivity.'
+                % (lab, cinstr_coq(t), ID, cchain(wit[t])))
+        else:
+            bullets.append(
+                '  - (* %s: pinned *)\n'
+                '    exfalso. apply Hnp. apply tr_inb_spec. reflexivity.' % lab)
+    fire = ('%s\n'
+            '(** ** Fires: every UNPINNED instruction fires from every anchor\n'
+            '    (inside the overflow lap; [LapGlueTr.fire_via_ovf] runs the\n'
+            '    interior laps until the counter overflows). *)\n\n'
+            'Lemma fire_%s : forall t, ~ In t pins_%s ->\n'
+            '  forall p, exists k c, csteps tm k (Cc p) = Some c /\\ cinstr c = t.\n'
+            'Proof.\n'
+            '  intros t Hnp p.\n'
+            '%s'
+            '  destruct t as [q b]; destruct q, b.\n'
+            '%s\n'
+            'Qed.\n' % (fireo, ID, ID, hi, '\n'.join(bullets)))
+    # closing theorem(s): replace everything from the old visits on
+    i_close = i_vis
+    if mirrored:
+        close = ('Theorem nqhtrm_%s : NeverQuasiHaltsTr %s.\n'
+                 'Proof.\n'
+                 '  apply (glue_neverqhtr %s pins_%s Cc %s).\n'
+                 '  - exact boot_%s.\n'
+                 '  - intros p _. apply lap_%s.\n'
+                 '  - intros t Ht p _. apply fire_%s. exact Ht.\n'
+                 'Qed.\n\n'
+                 'Theorem nqhtr_%s : NeverQuasiHaltsTr tm_%s.\n'
+                 'Proof. apply (neverqhtr_mirror tm_%s). rewrite mirror_ok_%s. '
+                 'exact nqhtrm_%s. Qed.\n\n'
+                 'Theorem nonhalt_%s : NonHalt tm_%s.\n'
+                 'Proof. apply never_qh_tr_nonhalt, nqhtr_%s. Qed.\n'
+                 % (ID, tmname, tmname, ID, D['p0'], ID, ID, ID,
+                    ID, ID, ID, ID, ID, ID, ID, ID))
+    else:
+        close = ('Theorem nqhtr_%s : NeverQuasiHaltsTr tm_%s.\n'
+                 'Proof.\n'
+                 '  apply (glue_neverqhtr tm_%s pins_%s Cc %s).\n'
+                 '  - exact boot_%s.\n'
+                 '  - intros p _. apply lap_%s.\n'
+                 '  - intros t Ht p _. apply fire_%s. exact Ht.\n'
+                 'Qed.\n\n'
+                 'Theorem nonhalt_%s : NonHalt tm_%s.\n'
+                 'Proof. apply never_qh_tr_nonhalt, nqhtr_%s. Qed.\n'
+                 % (ID, ID, ID, ID, D['p0'], ID, ID, ID, ID, ID, ID))
+    src = src[:i_close] + fire + '\n' + close
+    src = src.replace('(** * %s_%s: machine' % (PREFIX, ID),
+                      '(** * %s_%s: TRANSITION-LEVEL board for machine'
+                      % (PREFIX_TR, ID))
+    return src
+
+
 def coqc(path):
     r = subprocess.run(['coqc', '-native-compiler', 'no', '-Q', 'theories',
                         'BBB4', path], cwd=REPO, capture_output=True, text=True)
@@ -1798,6 +1972,8 @@ def process(spec, do_emit, force=False):
                     return r
                 last = r.get('why') or last
     HD = 0
+    if TR_MODE:
+        return dict(spec=spec, ok=False, why=last or 'no anchor')
     return _cascade(spec, do_emit, force, last)
 
 
@@ -1811,9 +1987,17 @@ def _try_anchor(spec, dspec, mirrored, hd, edge, tail, p0, enc, far,
     except Exception as e:                                    # noqa: BLE001
         return dict(ok=False, why='%s: %s' % (type(e).__name__, e))
     tag = enc + ('/mirror' if mirrored else '') + ('/S1' if hd else '')
+    if TR_MODE:
+        return _try_anchor_tr(spec, dspec, mirrored, D, tag, do_emit, force)
     if not do_emit:
         return dict(spec=spec, ok=True, enc=tag,
-                    ni=_cost_str(D), no='%d*j+%d' % D['co'])
+                    ni=_cost_str(D), no='%d*j+%d' % D['co'],
+                    # route flags, so a downstream renderer (the Tr boards)
+                    # can be measured against the derive population
+                    mode=D.get('mode'), islack=bool(D.get('islack')),
+                    oslack=bool(D.get('oslack')), nest=bool(D.get('nest')),
+                    opeel=bool(D.get('opeel')), avoid=bool(D.get('avoid')),
+                    mirrored=mirrored, hd=hd, p0=D.get('p0'))
     pref = (NEST_PREFIX if D.get('nest')
             else AVOID_PREFIX if D.get('avoid')
             else PEEL_PREFIX if D.get('opeel') else PREFIX)
@@ -1835,6 +2019,33 @@ def _try_anchor(spec, dspec, mirrored, hd, edge, tail, p0, enc, far,
         return dict(ok=False, why='coqc: ' + (lg[-1] if lg else '?'))
     return dict(spec=spec, ok=True, enc=tag, file=path,
                 ni=_cost_str(D), no='%d*j+%d' % D['co'])
+
+
+def _try_anchor_tr(spec, dspec, mirrored, D, tag, do_emit, force):
+    """The transition-level board for a derived certificate (render_tr)."""
+    ID = mach_id(spec)
+    path = os.path.join(OUTDIR_TR, '%s_%s.v' % (PREFIX_TR, ID))
+    base = dict(spec=spec, enc=tag, ni=_cost_str(D), no='%d*j+%d' % D['co'],
+                mode=D.get('mode'), tr=True)
+    if os.path.exists(path) and not force and do_emit:
+        return dict(base, ok=True, file=path, skipped=True)
+    try:
+        src = render_tr(D, spec, dspec, mirrored)
+    except (DeriveError, RuntimeError) as e:
+        return dict(base, ok=False, why=str(e))
+    if not do_emit:
+        return dict(base, ok=True)
+    os.makedirs(OUTDIR_TR, exist_ok=True)
+    open(path, 'w').write(src)
+    ok, log = coqc(os.path.relpath(path, REPO))
+    if not ok:
+        os.remove(path)
+        lg = [l for l in log.strip().splitlines() if l.strip()]
+        return dict(base, ok=False, why='coqc: ' + (lg[-1] if lg else '?'))
+    return dict(base, ok=True, file=path)
+
+
+TR_MODE = False
 
 
 def _cascade(spec, do_emit, force, last):
@@ -1863,7 +2074,12 @@ def main():
     ap.add_argument('--json')
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--force', action='store_true')
+    ap.add_argument('--tr', action='store_true',
+                    help='emit TRANSITION-level boards (LapGlueTr) into '
+                         'theories/Machines/CountersTr')
     a = ap.parse_args()
+    global TR_MODE
+    TR_MODE = a.tr
 
     specs = ([a.spec] if a.spec else
              [l.strip() for l in open(a.list) if l.strip()])
