@@ -1332,6 +1332,72 @@ re-certification for proven/provenqh/partial), regenerate the tables,
 re-walk 2h23m (or load the cache), and the theorem holds over the
 smaller list.
 
+### 7.1s Tier C found: the counter route is a verified CHECKER, and it derives 73% of LIVE (2026-09-02, in-container)
+
+Reading the state census's counter machinery for the Tier C port
+overturned 7.1p's "template route = per-machine proofs" assumption:
+
+- **Checkers/LapDecider.v** is an exact lap decider: a certificate is
+  two lists of small numbers ([lstep] chains: [SWin], [SCycL/R],
+  rotations, folds), [srun] replays them symbolically for every carry
+  index j and every opaque tail at once, and [srun_sound] /
+  [lap_of_run] / [vis_of_run] discharge the lap and the per-state
+  visits ONCE.  [Counters/LapGlue.glue_neverqh] closes to
+  [NeverQuasiHaltsSt]; [LapCertGlue.vis_via_ovf] handles states that
+  fire only in the overflow lap; [NestedLap] composes exponential
+  overflow branches from affine pieces.  846 LAPC/NLAP boards exist.
+- **Encodings are inferred, not guessed**: tools/counters/
+  alphabet_infer.py reads the three-word family E xH = C, E (xO q) =
+  A ++ E q, E (xI q) = B ++ E q off the tape (17+ families, six of
+  them the hand-written Ip/Jp/Kp/Dp/Mp/Bp), and emit_lapcert.py
+  searches them at derive time.
+
+**Measured on LIVE** (local 1,807-machine sample; 100 profiled):
+
+| probe | result |
+|---|---|
+| bin/irules (harness, user's box, first 27 rows) | 3 hits, all meta (1,1) = linear run growth |
+| anchor_profile (Ip/Jp only) | 10/100 both-branch affine, 67 no anchor |
+| alphabet_infer on the 67 no-anchor | 60/67 recognized (18 NEW A=00 B=10 C=1, 15 Bp, 11 Dp, ...) |
+| **emit_lapcert derive (no emit)** | **73 / 100 certificates derived** (~6 s/machine) |
+
+Family mix of the 73: Bp 15, Alph_00_10_1 14, Dp 11, Alph_10_11_11
+9, Alph_000_010_01 9, Alph_000_100_1 5, Kp 4, Jp 2, Mp/Ip/others 4.
+The 27 misses all fall through every deriver to the cascade class
+("no cascade: N counts in the phase" x19, "main count is a..b" x7,
+"no overflow phase" x1) -- the exponential-overflow shapes wave 14
+left, plus whatever is not a counter at all.  Extrapolated: ~7.2K of
+the 9,914 LIVE machines are one Tr port away from kernel-checked
+[NeverQuasiHaltsTr]; a wider 500-machine derive is running to tighten
+the rate.
+
+**The Tr port (small, generic, one checker):**
+
+  1. [vis_of_run] certifies a state via a PREFIX of the lap chain; the
+     prefix's end config has a concrete head symbol [c_h c1], so the
+     SAME prefix certifies the instruction (c_st c1, c_h c1) for every
+     j and every tail -- [fire_of_run] is [vis_of_run] plus one
+     projection.  Carry classes come free: interior-all-p prefixes,
+     interior-odd-p prefixes (j = S j', peeled), overflow prefixes via
+     [reach_ovf] -- all three recur from every anchor.
+  2. [glue_neverqhtr] := [glue_neverqh] with the per-instruction visit
+     premise for every FIRED instruction.  The one new piece: a sound
+     OVER-APPROXIMATION of the fired set -- boot mask by
+     [AnchorVisitsTr.csteps_tvis], lap mask by a per-[lstep] fired
+     mask ([SWin]: the window run's instructions; [SCyc]: the unit's;
+     rotations/folds: none) with an intermediate-config soundness
+     lemma -- so "every fired instruction has a witness" is a finite
+     check per machine.  Same shape as [MetaTr]'s prefix gate.
+  3. emit_lapcert.py emits per-instruction prefix witnesses + masks
+     instead of per-state witnesses; NestedLap gets the same treatment
+     for the NLAP shapes.
+
+Combined with the irules conveyor for the linear-growth minority (7.1p
+addendum), the counter residue of LIVE drops from ~9.9K to the
+cascade class, ~2-2.7K.  That, plus dcensus (3,840, the state's own
+counter core -- the same route applies) and the re-certifications, is
+the shape of the endgame.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
