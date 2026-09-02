@@ -1291,6 +1291,47 @@ costs minus the deferred nodes' failing ladders -- which were the
 expensive nodes.  Its wall time is the number that says how far the
 transition census is from the state census's 45-minute walk.
 
+### 7.1r MILESTONE A REACHED: the first transition-level census theorem (2026-09-02)
+
+    census_tr : forall tm, QHBoundTr B_tr tm \/ Deferred D_tr tm   -- CHECKED
+
+`make census-tr-walk WALK_JOBS=16` on the 16-core box: 96/96 units,
+Census_TheoremTr.v assembled and checked.
+
+    real 143m30s      user 2098m31s (~35 CPU-h)      sys 3m17s
+
+Every 4-state 2-symbol machine either transition-quasihalts within
+B_tr = 2000 (or never transition-quasihalts) or is one of the 23,692
+frozen rows of D_censusTr -- the exact analog of the state census's
+`census_from_empty` theorem, over a per-instruction obligation, from
+the kernel.  B_tr is still the placeholder (the harness champion
+campaign sets the real one; every tier is parametric in it).
+
+**Cost against the state census's ~45-minute walk: 3.2x wall, and
+CPU-bound** (2098 CPU-min / 16 jobs = 131 min ideal against 143
+measured, so the round-robin dealing packs to ~91%; no straggler --
+the last unit finished in 1,079 s).  Where the ~35 CPU-hours go is
+the next measurement (census_probes/censustr_walk_times.txt now
+records per-unit seconds), but the structural difference is clear:
+the state walk pays LOOKUPS for its ~5K proven-tier and ~5K deferred
+machines, whereas this walk still COMPUTES its 28,867 Tier W-wrap
+catches (a wrapped RepWL closure each, seconds apiece) and every
+never-tier catch on every re-walk.  The state census's answer to the
+same cost was the committed, hash-guarded census .vo cache
+(tools/census_cache.py, 154 files): pay once per list change, re-walk
+by loading.  The transition census has no .vo cache yet; the 2h23m is
+the from-source price, reproducible with one command.  Policy to
+settle: adopt the cache for Compute/UnitTr_*.vo + Census_TheoremTr.vo
+(a few MB) once the list stabilizes, or first move the wrap catches
+into a proven-QH stage table so the walk itself gets cheaper.
+
+Burn-down status is unchanged by the freeze (23,692 rows).  The
+theorem now makes every further list reduction a re-freeze: shrink
+D_censusTr (Tier C for the ~9.9K counters, boards for dcensus,
+re-certification for proven/provenqh/partial), regenerate the tables,
+re-walk 2h23m (or load the cache), and the theorem holds over the
+smaller list.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

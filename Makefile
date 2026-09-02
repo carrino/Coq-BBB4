@@ -805,6 +805,7 @@ census-tr-units:
 
 census-tr-walk: Makefile.coq
 	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr_Split.vo
+	@mkdir -p census_probes
 	@ulimit -s $(STACK_KB) 2>/dev/null \
 	  || echo ">>> WARNING: could not raise stack to $(STACK_KB)"
 	@ulimit -s $(STACK_KB) 2>/dev/null; \
@@ -813,7 +814,10 @@ census-tr-walk: Makefile.coq
 	   | xargs -r -P $(WALK_JOBS) -I{} sh -c \
 	    's=$$(date +%s); \
 	     coqc -Q theories BBB4 -w -abstract-large-number {} \
-	       > {}.log 2>&1 && echo ">>> $$(basename {} .v) done in $$(( $$(date +%s) - s )) s" \
+	       > {}.log 2>&1 \
+	       && { t=$$(( $$(date +%s) - s )); \
+	            echo ">>> $$(basename {} .v) done in $$t s"; \
+	            echo "$$(basename {} .v) $$t" >> census_probes/censustr_walk_times.txt; } \
 	       || echo ">>> $$(basename {} .v) FAILED (see {}.log)"'
 	@n=$$(ls theories/CensusTr/Compute/UnitTr_*.v | wc -l); \
 	 d=$$(ls theories/CensusTr/Compute/UnitTr_*.vo 2>/dev/null | wc -l); \
