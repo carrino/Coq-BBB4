@@ -40,7 +40,7 @@ From BBB4.Machines Require Import
    Counters/LapGlueTr), collected by tools/censustr/gen_provtr_lap.py *)
 From BBB4.CensusTr Require Import ProvTr_Lap_00.
 From BBB4.CensusTr Require Import
-  ProvTr_TC_00 ProvTr_TC_01 ProvTr_TC_02 ProvTr_TC_03 ProvTr_TC_04 ProvTr_TC_05 ProvTr_TC_06 ProvTr_TC_07 ProvTr_TC_08 ProvTr_TC_09.
+  ProvTr_TC_00 ProvTr_TC_01 ProvTr_TC_02 ProvTr_TC_03 ProvTr_TC_04 ProvTr_TC_05 ProvTr_TC_06 ProvTr_TC_07 ProvTr_TC_08 ProvTr_TC_09 ProvTr_TC_10.
 Import ListNotations.
 
 Set Default Goal Selector "!".
@@ -177,7 +177,7 @@ Definition prov_tr_irtr : list TM :=
     boards (ProvTr_Lap_NN) and the translated-cycler certificates
     (ProvTr_TC_NN, Checkers/TCyclerTr) *)
 Definition prov_tr : list TM :=
-  prov_tr_irtr ++ ptl_00 ++ ptc_00 ++ ptc_01 ++ ptc_02 ++ ptc_03 ++ ptc_04 ++ ptc_05 ++ ptc_06 ++ ptc_07 ++ ptc_08 ++ ptc_09.
+  prov_tr_irtr ++ ptl_00 ++ ptc_00 ++ ptc_01 ++ ptc_02 ++ ptc_03 ++ ptc_04 ++ ptc_05 ++ ptc_06 ++ ptc_07 ++ ptc_08 ++ ptc_09 ++ ptc_10.
 Definition provqh_tr : list TM := [].
 
 Lemma prov_tr_irtr_all : Forall NeverQuasiHaltsTr prov_tr_irtr.
@@ -287,7 +287,7 @@ Lemma prov_tr_all : Forall NeverQuasiHaltsTr prov_tr.
 Proof.
   unfold prov_tr.
   repeat (apply Forall_app; split);
-    first [exact prov_tr_irtr_all | exact ptl_00_nqhtr | exact ptc_00_nqhtr | exact ptc_01_nqhtr | exact ptc_02_nqhtr | exact ptc_03_nqhtr | exact ptc_04_nqhtr | exact ptc_05_nqhtr | exact ptc_06_nqhtr | exact ptc_07_nqhtr | exact ptc_08_nqhtr | exact ptc_09_nqhtr].
+    first [exact prov_tr_irtr_all | exact ptl_00_nqhtr | exact ptc_00_nqhtr | exact ptc_01_nqhtr | exact ptc_02_nqhtr | exact ptc_03_nqhtr | exact ptc_04_nqhtr | exact ptc_05_nqhtr | exact ptc_06_nqhtr | exact ptc_07_nqhtr | exact ptc_08_nqhtr | exact ptc_09_nqhtr | exact ptc_10_nqhtr].
 Qed.
 
 Lemma provqh_tr_all :

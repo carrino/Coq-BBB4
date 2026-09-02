@@ -3000,6 +3000,7 @@ theories/CensusTr/ProvTr_TC_06.v
 theories/CensusTr/ProvTr_TC_07.v
 theories/CensusTr/ProvTr_TC_08.v
 theories/CensusTr/ProvTr_TC_09.v
+theories/CensusTr/ProvTr_TC_10.v
 theories/CensusTr/RunTr.v
 theories/CensusTr/RunTr_Split.v
 theories/Checkers/IRules/AnchorVisitsTr.v

@@ -11,7 +11,7 @@ on (checked over many periods), then read off the lap's leftward reach W
 Every certificate is re-checked by the kernel ([Checkers/TCyclerTr.v]
 tcycler_check_neverqhtr); a wrong one fails, nothing else.
 
-Usage: tc_find.py LIST [--steps N] [--maxp P] > certs.tsv
+Usage: tc_find.py LIST [--steps N] [--maxp P] [--min-tail T] > certs.tsv
 """
 import argparse
 import sys
@@ -45,7 +45,7 @@ def run(tab, steps):
     return out
 
 
-def find_tc(spec, steps=40000, maxp=4096, reps=8):
+def find_tc(spec, steps=40000, maxp=4096, reps=8, min_tail=2000):
     tab = parse(spec)
     tr = run(tab, steps)
     if tr is None:
@@ -68,6 +68,11 @@ def find_tc(spec, steps=40000, maxp=4096, reps=8):
         while n1 - P >= 0 and qr[n1 - 1] == qr[n1 - 1 + P] and \
                 tr[n1 - 1 + P][2] - tr[n1 - 1][2] == d:
             n1 -= 1
+        # a translated cycler's period holds forever; a periodic TAIL that
+        # covers fewer than min_tail steps is a sweep artefact (bouncers
+        # repeat one instruction for the length of a sweep) -- skip it
+        if n - n1 < min_tail:
+            continue
         # a lap: steps n1 .. n1+P-1; reach = max excursion against the drift
         lap = tr[n1:n1 + P]
         p0 = lap[0][2]
@@ -86,13 +91,15 @@ def main():
     ap.add_argument('list')
     ap.add_argument('--steps', type=int, default=40000)
     ap.add_argument('--maxp', type=int, default=4096)
+    ap.add_argument('--min-tail', type=int, default=2000,
+                    help='periodic tail must cover this many steps')
     a = ap.parse_args()
     found = miss = 0
     for line in open(a.list):
         spec = line.strip()
         if not spec:
             continue
-        c = find_tc(spec, a.steps, a.maxp)
+        c = find_tc(spec, a.steps, a.maxp, min_tail=a.min_tail)
         if c is None:
             miss += 1
             print('%s\t-' % spec)
