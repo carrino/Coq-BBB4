@@ -10,12 +10,15 @@ SCOPING_INSTR §7.1w), so the rows emitted are
 
     spec  L  T  t  fuel  M        (gen_provtr_rw.py's input)
 
-with L in {p, 2p} for each detected p (clipped to [2, maxL]), T=2, t=0.
+with L in {p, 2p, 4p} (--mults) for each detected p (clipped to [2, maxL]),
+T=2, t=0.  Measured on 13 sampled bouncers: 8 certify, and for 3 of
+them only the doubled block does (the block must also align with the
+sweep's write pattern, which can have period 2p).
 Every row is re-checked by the kernel ([RepWLTr.rw_tier_tr_sound]); a
 wrong period merely fails.
 
 Usage: rw_period_rows.py LIST [--steps 20000] [--maxp 40] [--maxl 24]
-                              [--fuel 100000] [--cut 128] [--double] > rows.tsv
+                              [--fuel 100000] [--cut 128] [--mults 1,2,4] > rows.tsv
 """
 import argparse
 import sys
@@ -77,8 +80,8 @@ def main():
     ap.add_argument('--maxl', type=int, default=24)
     ap.add_argument('--fuel', type=int, default=100000)
     ap.add_argument('--cut', type=int, default=128)
-    ap.add_argument('--double', action='store_true',
-                    help='also emit L = 2p (default: L = p only)')
+    ap.add_argument('--mults', default='1,2,4',
+                    help='block multiples of the period to emit (default 1,2,4)')
     a = ap.parse_args()
     nrows = nm = 0
     for line in open(a.list):
@@ -88,7 +91,7 @@ def main():
         nm += 1
         Ls = set()
         for p in periods(m, a.steps, a.maxp):
-            for L in ((p, 2 * p) if a.double else (p,)):
+            for L in (p * int(k) for k in a.mults.split(',')):
                 if 2 <= L <= a.maxl:
                     Ls.add(L)
         for L in sorted(Ls):
