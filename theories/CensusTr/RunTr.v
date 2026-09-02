@@ -45,7 +45,16 @@ Set Default Goal Selector "!".
 
 (** ** Parameters: collection mode *)
 
-Definition B_tr : nat := 2000.
+(** The transition-level score bound.  A PLACEHOLDER until the harness
+    champion campaign fixes the real value; the census verdicts are
+    monotone in it ([qhboundtr_mono]), so any B_tr below the final bound
+    is safe to prove under.  Raised 2000 -> 32,779,478 (2026-09-02): the
+    state champion's tail argument generalizes verbatim, so the
+    instruction-level value is at least this (SCOPING_INSTR section 1),
+    and the leaf checks guard their cycle start by [n1 <=? B] -- at 2000
+    they rejected every translated cycler whose lap starts later, which
+    the real LIVE population is a quarter made of (7.1v). *)
+Definition B_tr : nat := 32779478.
 
 (** FROZEN (Milestone A): the v6 collection walk's deferred list,
     23,692 machines (censustr_deferred_v6.txt -> DeferredTr_*.v via
@@ -379,14 +388,14 @@ Definition rw_fuel_deep : nat := 40960.
 Definition rw_cut_deep : nat := 128.
 
 Definition decider_tr_deep : QHDecider :=
-  decide_easy_tr B_tr 130 4096 1000000 2048 ng_rungs_deep rank_rungs_deep
+  decide_easy_tr B_tr 130 65536 1000000 2048 ng_rungs_deep rank_rungs_deep
     qhb_rungs_deep qhb_lex_rungs_deep rw_qhb_rungs_deep
     rw_rungs_deep rw_fuel_deep rw_cut_deep
     (dmap_of prov_tr) (dmap_of provqh_tr) (dmap_of D_burn).
 
 Lemma decider_tr_deep_WF : QHDeciderTr_WF B_tr D_burn decider_tr_deep.
 Proof.
-  exact (decide_easy_tr_WF B_tr D_burn 130 4096 1000000 2048
+  exact (decide_easy_tr_WF B_tr D_burn 130 65536 1000000 2048
            ng_rungs_deep rank_rungs_deep qhb_rungs_deep qhb_lex_rungs_deep
            rw_qhb_rungs_deep rw_rungs_deep rw_fuel_deep rw_cut_deep
            prov_tr prov_tr_all provqh_tr provqh_tr_all).
@@ -532,7 +541,7 @@ Proof.
   assert (Hhole : TM0 StA S0 = None) by reflexivity.
   assert (Hstep : stepn TM0 0 InitES = Some (StA, mkTape blank_side S0 blank_side))
     by reflexivity.
-  assert (HB : 1 <= B_tr) by (unfold B_tr; lia).
+  assert (HB : 1 <= B_tr) by (apply Nat.leb_le; vm_compute; reflexivity).
   pose proof (node_expand_tr_spec B_tr D_tr TM0 (Some StB) 0 StA
                 (mkTape blank_side S0 blank_side) Hstep Hhole HB
                 (root_WF)) as [_ Hexp_dec].

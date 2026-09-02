@@ -745,6 +745,11 @@ census-tr-resplit: _census-tr-deps
 # new one lands.
 LISTBURN_SRC ?= censustr_deferred_v6.txt
 LISTBURN_JOBS ?= 16
+# The ESCALATED decider (RunTr [decider_tr_deep]: loop gas 65536, the
+# wide/deep rung ladders).  Empty this to burn with the walk decider.
+# NOTE (2026-09-02): until this knob existed the target silently ran
+# the WALK decider -- the v5 burn (SCOPING_INSTR 7.1o) was NOT deep.
+LISTBURN_DEEP ?= --deep
 # Machines per .v file.  NOT a scheduling knob: the native
 # compiler recurses over a module and 5,270-6,517 definitions in
 # one file overflows its stack (header above; measured again
@@ -753,7 +758,7 @@ LISTBURN_MAX_PER_FILE ?= 2000
 
 census-tr-listburn: _census-tr-deps
 	@rm -rf census_probes/listburn
-	@python3 tools/censustr/gen_listburn.py $(LISTBURN_SRC) \
+	@python3 tools/censustr/gen_listburn.py $(LISTBURN_SRC) $(LISTBURN_DEEP) \
 	  --shards $(LISTBURN_JOBS) --max-per-file $(LISTBURN_MAX_PER_FILE) \
 	  --outdir census_probes/listburn
 	@for f in census_probes/listburn/ListBurn_*.v; do \
