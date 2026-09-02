@@ -786,6 +786,41 @@ if shards die with 'ocamlopt.opt got signal', lower LISTBURN_MAX_PER_FILE"
 .PHONY: census-tr-listburn
 
 # ---------------------------------------------------------------------------
+# Tier W at the tape period: probe RepWLTr.rw_tier_tr rows (spec L T t
+# fuel M; tools/censustr/rw_period_rows.py detects L from the tape) and
+# stage the true ones as CensusTr/ProvTr_RW_NN.v for [prov_tr].
+#   make census-tr-rwprobe [RWPROBE_ROWS=censustr_rw_rows_v6.tsv] [RWPROBE_JOBS=16]
+#   make census-tr-rwstage [RWPROBE_ROWS=...] [RWSTAGE_START=0]
+RWPROBE_ROWS ?= censustr_rw_rows_v6.tsv
+RWPROBE_JOBS ?= 16
+RWPROBE_CHUNK ?= 20
+RWSTAGE_START ?= 0
+
+census-tr-rwprobe: _census-tr-deps
+	@rm -rf census_probes/rwprobe
+	@python3 tools/censustr/gen_provtr_rw.py probe $(RWPROBE_ROWS) \
+	  census_probes/rwprobe --chunk $(RWPROBE_CHUNK)
+	@for f in census_probes/rwprobe/ProbeRW_*.v; do \
+	  sed -i 's/vm_compute/native_compute/' $$f; \
+	done
+	@ulimit -s $(STACK_KB) 2>/dev/null; \
+	 ls census_probes/rwprobe/ProbeRW_*.v \
+	   | xargs -P $(RWPROBE_JOBS) -I{} sh -c \
+	    'b=$$(echo {} | sed "s/\.v$$//"); \
+	     coqc -Q theories BBB4 -w -abstract-large-number {} \
+	       > $$b.out 2>&1; \
+	     echo ">>> $$(basename $$b): $$(grep -c "= true" $$b.out) true / $$(grep -c "= false" $$b.out) false"'
+	@echo ">>> total: $$(cat census_probes/rwprobe/ProbeRW_*.out | grep -c '= true') true / $$(cat census_probes/rwprobe/ProbeRW_*.out | grep -c '= false') false"
+.PHONY: census-tr-rwprobe
+
+census-tr-rwstage:
+	@python3 tools/censustr/gen_provtr_rw.py stage $(RWPROBE_ROWS) \
+	  census_probes/rwprobe theories/CensusTr --chunk 100 --start $(RWSTAGE_START)
+	@mv theories/CensusTr/provtr_rw_manifest.tsv census_probes/rwprobe/
+	@echo ">>> add the new theories/CensusTr/ProvTr_RW_*.v to _CoqProject and [prov_tr] (RunTr.v)"
+.PHONY: census-tr-rwstage
+
+# ---------------------------------------------------------------------------
 # MILESTONE A: the kernel-checked RE-WALK with the frozen deferred list.
 #
 #   make census-tr-walk [WALK_JOBS=16] [CENSUS_TR_UNITS=96]
