@@ -1705,13 +1705,13 @@ def render_tr(D, spec, dspec, mirrored):
     v1 scope: the plain route only (one exact interior chain, exact flat
     overflow, no nesting / peel / avoidance / lift slack); everything else
     raises DeriveError and stays a state-level board for now."""
-    if D.get('mode') != 'one' or D.get('islack') or D.get('oslack') \
-            or D.get('nest') or D.get('opeel') or D.get('avoid'):
+    if D.get('nest') or D.get('opeel') or D.get('avoid'):
         raise DeriveError('tr: route not supported yet (mode=%s islack=%s '
                           'oslack=%s nest=%s peel=%s avoid=%s)'
                           % (D.get('mode'), bool(D.get('islack')),
                              bool(D.get('oslack')), bool(D.get('nest')),
                              bool(D.get('opeel')), bool(D.get('avoid'))))
+    islack = bool(D.get('islack'))
     tab = parse(dspec)
     fired = fired_set(tab)
     pins = [t for t in ALL_INSTR if t not in fired]
@@ -1778,7 +1778,18 @@ def render_tr(D, spec, dspec, mirrored):
     bullets = []
     for t in ALL_INSTR:
         lab = '%s%d' % (LAB[t[0]], t[1])
-        if t in wit:
+        if t in wit and islack:
+            # the interior lap closes only up to [lift]: chain anchors in
+            # [stepn] space (fire_via_ovf_lift) and pull the witness back
+            bullets.append(
+                '  - (* %s *)\n'
+                '    apply (fire_csteps_of_lift tm Cc).\n'
+                '    apply (fire_via_ovf_lift tm Cc Hi %s).\n'
+                '    intros p1 j1 E1. apply (fire_lift_of_csteps tm Cc).\n'
+                '    apply (fireo_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                '                   p1 j1 E1).'
+                % (lab, cinstr_coq(t), ID, cchain(wit[t]), cinstr_coq(t)))
+        elif t in wit:
             bullets.append(
                 '  - (* %s *)\n'
                 '    apply (fire_via_ovf tm Cc Hi %s), fireo_%s\n'

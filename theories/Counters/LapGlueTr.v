@@ -141,3 +141,77 @@ Proof.
 Qed.
 
 End FireReach.
+
+(** ** The [lift] routes, per instruction
+
+    Twins of LapCertGlueLift's lemmas: when the interior lap closes only
+    up to [lift] (one trailing blank past the anchor), the anchors are
+    chained in [stepn] space and the instruction witness travels with
+    them. *)
+
+From BBB4.Counters Require Import LapCertGlueLift.
+
+Section FireReachLift.
+
+Variable tm : TM.
+Variable Cc : positive -> cconf.
+Hypothesis Hint : forall p j q0, cview p = (j, Some q0) ->
+  exists n c', 0 < n /\ csteps tm n (Cc p) = Some c'
+               /\ lift c' = lift (Cc (Pos.succ p)).
+
+Lemma fire_via_ovf_lift : forall t : Instr,
+  (forall p j, cview p = (S j, None) ->
+     exists k e, stepn tm k (lift (Cc p)) = Some e /\ instr_of e = t) ->
+  forall p, exists k e, stepn tm k (lift (Cc p)) = Some e /\ instr_of e = t.
+Proof.
+  intros t Ht p.
+  destruct (reach_ovf_lift tm Cc Hint p) as (k1 & p' & H1 & (j & Hj)).
+  destruct (Ht p' j Hj) as (k2 & e & H2 & He).
+  exists (k1 + k2), e. split; [rewrite stepn_add, H1; exact H2 | exact He].
+Qed.
+
+End FireReachLift.
+
+Section FireReachInt.
+
+Variable tm : TM.
+Variable Cc : positive -> cconf.
+Hypothesis Hlap : forall p, exists n c', csteps tm n (Cc p) = Some c'
+                  /\ lift c' = lift (Cc (Pos.succ p)) /\ 0 < n.
+
+Lemma fire_via_int_lift : forall t : Instr,
+  (forall p j q0, cview p = (j, Some q0) ->
+     exists k e, stepn tm k (lift (Cc p)) = Some e /\ instr_of e = t) ->
+  forall p, exists k e, stepn tm k (lift (Cc p)) = Some e /\ instr_of e = t.
+Proof.
+  intros t Ht p.
+  destruct (cview p) as [j oq] eqn:E; destruct oq as [q0|].
+  - exact (Ht p j q0 E).
+  - destruct (Hlap p) as (n & c' & Hrun & Hlift & _).
+    destruct (cview_none_succ p j E) as (r & Hr).
+    assert (Hcv : cview (Pos.succ p) = (0, Some r)) by (rewrite Hr; reflexivity).
+    destruct (Ht (Pos.succ p) 0 r Hcv) as (k & e & Hk & He).
+    exists (n + k), e. split; [| exact He].
+    rewrite stepn_add, (csteps_lift _ _ _ _ Hrun), Hlift. exact Hk.
+Qed.
+
+End FireReachInt.
+
+Lemma fire_lift_of_csteps : forall (tm : TM) (Cc : positive -> cconf) p t,
+  (exists k c, csteps tm k (Cc p) = Some c /\ cinstr c = t) ->
+  exists k e, stepn tm k (lift (Cc p)) = Some e /\ instr_of e = t.
+Proof.
+  intros tm Cc p t (k & c & Hk & Ht).
+  exists k, (lift c). split; [apply csteps_lift; exact Hk |].
+  rewrite cinstr_lift; exact Ht.
+Qed.
+
+Lemma fire_csteps_of_lift : forall (tm : TM) (Cc : positive -> cconf) p t,
+  (exists k e, stepn tm k (lift (Cc p)) = Some e /\ instr_of e = t) ->
+  exists k c, csteps tm k (Cc p) = Some c /\ cinstr c = t.
+Proof.
+  intros tm Cc p t (k & e & Hk & Ht).
+  destruct (stepn_csteps_at tm k (Cc p) e Hk) as (c & Hc & Hl).
+  exists k, c. split; [exact Hc |].
+  rewrite <- cinstr_lift, Hl. exact Ht.
+Qed.
