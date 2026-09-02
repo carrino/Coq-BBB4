@@ -21,6 +21,7 @@ theories/Checkers/FuelClass.v
 theories/Checkers/ExactClosure.v
 theories/Checkers/NGram.v
 theories/Checkers/NGramHist.v
+theories/Checkers/NGramHistTr.v
 theories/Checkers/NGramHistExt.v
 theories/Checkers/NGramHistWrap.v
 theories/Checkers/TCycler.v
