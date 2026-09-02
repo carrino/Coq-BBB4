@@ -552,6 +552,7 @@ theories/Tests/IRulesBlkPartial_Corruption.v
 theories/Checkers/IRules/EngineKS.v
 theories/Checkers/IRules/RulesBlkPfx.v
 theories/Checkers/IRules/MetaBlkPfx.v
+theories/Checkers/IRules/MetaBlkPfxTr.v
 theories/Checkers/IRules/StreamEq.v
 theories/Checkers/IRules/MetaBlkPfxV5.v
 theories/Checkers/IRules/Reblock.v
@@ -1454,6 +1455,7 @@ theories/Counters/KpWallQH.v
 theories/Counters/KpWallScan.v
 theories/Checkers/LapAvoid.v
 theories/Counters/LapCertGlue.v
+theories/Counters/LapGlueTr.v
 theories/Counters/LapCertGlueLift.v
 theories/Counters/LapCertGluePar.v
 theories/Counters/SkipGlue.v
