@@ -1532,9 +1532,12 @@ verdicts; stage phase: `ProvTr_TC_NN.v` with `ptc_NN` +
 LIVE machines: tc_find 2,474 found (9 not periodic within budget), probe
 2,456 true / 18 false (all 18 are tc_find tail artefacts with
 n1 ~ 59,9xx, period 1-9 -- spurious short periodicity at the end of the
-budget, i.e. the real period is longer than 60K steps or the machine
-is a bouncer).  Ten stage files, each ~2 s to compile; `prov_tr` is now
-`prov_tr_irtr ++ ptl_00 ++ ptc_00 ++ ... ++ ptc_09`.
+budget).  tc_find now rejects tails shorter than `--min-tail` 2000
+steps; a 1M-step / 100K-period re-run on the 27 left over found 27
+certificates (periods up to 88,381), all kernel-checked (ptc_10).
+Eleven stage files, each ~2-4 s to compile; `prov_tr` is now
+`prov_tr_irtr ++ ptl_00 ++ ptc_00 ++ ... ++ ptc_10`: **all 2,483
+linear-extent LIVE machines are in the proven tier.**
 
 **Bulk lap-certificate emit (user's box, 16 shards, in flight):** at
 4,489/9,919 processed, 1,137 OK (25%), 2,952 "no anchor", 308 "no
@@ -1543,7 +1546,7 @@ the non-counter classes above going through a counter emitter; on the
 counter class alone the route is ~49%.
 
 **Burn-down after this section** (9,919 LIVE):
-- linear 2,483: 2,456 staged here; 27 left (long period or bouncer).
+- linear 2,483: done (2,483 staged).
 - log 4,523: ~2,200 via lap certificates when the bulk emit finishes;
   the other half needs the missing lap routes (offset-nested, peel) or
   a different counter engine.
