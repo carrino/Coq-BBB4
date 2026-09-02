@@ -1456,10 +1456,16 @@ theories/Counters/KpWallScan.v
 theories/Checkers/LapAvoid.v
 theories/Counters/LapCertGlue.v
 theories/Counters/LapGlueTr.v
+theories/Machines/CountersTr/LAPT_0RB0LA_0RC1LD_1LB1RC_1RA0LB.v
+theories/Machines/CountersTr/LAPT_0RB0LA_1LC1RB_0RB1LD_0RA0LC.v
 theories/Machines/CountersTr/LAPT_0RB____0LC0RA_0LD____1RA1LC.v
 theories/Machines/CountersTr/LAPT_0RB____0LC0RA_1RB0LD_1LC___.v
+theories/Machines/CountersTr/LAPT_0RB____0LC1RA_1RB0LD_1LA1LC.v
 theories/Machines/CountersTr/LAPT_0RB____0LC1RB_1LA1LD_1LC0RB.v
+theories/Machines/CountersTr/LAPT_0RB____0RC0LD_1LD1RC_0LA1LB.v
+theories/Machines/CountersTr/LAPT_0RB____0RC1LD_1LB1RC_0LA0LB.v
 theories/Machines/CountersTr/LAPT_0RB____1LA1RC_1LD0RC_0LD0LA.v
+theories/Machines/CountersTr/LAPT_0RB____1LC1RB_0RB1LD_1LA0LC.v
 theories/Counters/LapCertGlueLift.v
 theories/Counters/LapCertGluePar.v
 theories/Counters/SkipGlue.v

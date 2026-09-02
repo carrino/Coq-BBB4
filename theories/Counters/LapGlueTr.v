@@ -215,3 +215,33 @@ Proof.
   exists k, c. split; [exact Hc |].
   rewrite <- cinstr_lift, Hl. exact Ht.
 Qed.
+
+(** ** The NESTED overflow, per instruction
+
+    Twin of [NestedLapLift.vis_via_fill]: an instruction that fires only
+    in the EXIT half of a nested overflow -- from the inner counter's
+    all-ones fill, after the exponentially many inner laps -- still fires
+    from the outer overflow anchor. *)
+
+From BBB4.Counters Require Import IXPGadgets NestedLap NestedLapLift.
+
+Section FireViaFill.
+
+Variable tm : TM.
+Variable Cc Cin : positive -> cconf.
+Hypothesis Hin : forall v i q0, cview v = (i, Some q0) ->
+  exists n c', 0 < n /\ csteps tm n (Cin v) = Some c'
+               /\ lift c' = lift (Cin (Pos.succ v)).
+
+Lemma fire_via_fill : forall (t : Instr) (p v0 : positive),
+  (exists n c, csteps tm n (Cc p) = Some c /\ lift c = lift (Cin v0)) ->
+  (exists k e, stepn tm k (lift (Cin (fill v0))) = Some e /\ instr_of e = t) ->
+  exists k e, stepn tm k (lift (Cc p)) = Some e /\ instr_of e = t.
+Proof.
+  intros t p v0 (n & c & Hn & Hl) (k & e & Hk & Ht).
+  destruct (inner_to_fill_lift tm Cin Hin v0) as (ni & Hi).
+  exists (n + (ni + k)), e. split; [| exact Ht].
+  rewrite stepn_add, (csteps_lift _ _ _ _ Hn), Hl, stepn_add, Hi. exact Hk.
+Qed.
+
+End FireViaFill.

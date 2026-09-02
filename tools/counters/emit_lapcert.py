@@ -1705,7 +1705,9 @@ def render_tr(D, spec, dspec, mirrored):
     v1 scope: the plain route only (one exact interior chain, exact flat
     overflow, no nesting / peel / avoidance / lift slack); everything else
     raises DeriveError and stays a state-level board for now."""
-    if D.get('nest') or D.get('opeel') or D.get('avoid'):
+    N = D.get('nest')
+    offset = bool(N and N.get('route') == 'offset')
+    if offset or D.get('opeel') or D.get('avoid'):
         raise DeriveError('tr: route not supported yet (mode=%s islack=%s '
                           'oslack=%s nest=%s peel=%s avoid=%s)'
                           % (D.get('mode'), bool(D.get('islack')),
@@ -1715,15 +1717,29 @@ def render_tr(D, spec, dspec, mirrored):
     tab = parse(dspec)
     fired = fired_set(tab)
     pins = [t for t in ALL_INSTR if t not in fired]
-    # one overflow-chain prefix per fired instruction (the state board's
-    # [viso] route: every visit is witnessed inside the overflow lap)
-    wit = {}
+    # one chain prefix per fired instruction, from the same three sources
+    # the state board uses for its states, in the same order: the overflow
+    # (or nested boot) chain from B0, the interior chain from A0 (mode one),
+    # the nested EXIT chain from BE0.
+    chov = N['chb'] if N is not None else D['cho']
+    wit, witi, witx = {}, {}, {}
     for t in sorted(fired):
-        ch = LC.reach_instr(tab, True, True, D['B0'], D['cho'], t)
-        if ch is None:
-            raise DeriveError('tr: no overflow-lap witness for instruction %s%d'
-                              % (LAB[t[0]], t[1]))
-        wit[t] = ch
+        ch = LC.reach_instr(tab, True, True, D['B0'], chov, t)
+        if ch is not None:
+            wit[t] = ch
+            continue
+        if D.get('mode') == 'one' and D.get('chi'):
+            ch = LC.reach_instr(tab, False, True, D['A0'], D['chi'], t)
+            if ch is not None:
+                witi[t] = ch
+                continue
+        if N is not None:
+            ch = LC.reach_instr(tab, True, True, N['BE0'], N['che'], t)
+            if ch is not None:
+                witx[t] = ch
+                continue
+        raise DeriveError('tr: no lap witness for instruction %s%d'
+                          % (LAB[t[0]], t[1]))
 
     src = render(D)
     if mirrored:
@@ -1775,10 +1791,69 @@ def render_tr(D, spec, dspec, mirrored):
     if m_hi is None:
         raise RuntimeError('tr: lapi assertion not found')
     hi = m_hi.group(0)
+    # the interior-only twin ([VISI_LEMMA] for instructions), built from the
+    # anchor line so it exists whether or not the state board needed one
+    firei = ''
+    if witi:
+        m_cc = re.search(r'Definition Cc_%s \(p : positive\) : cconf := '
+                         r'\(\w+, \((\S+) p \+\+ (.+?), \w+, .+?\)\)\.'
+                         % re.escape(ID), src)
+        if m_cc is None:
+            raise RuntimeError('tr: anchor definition not found')
+        firei = (VISI_LEMMA.replace('@ID@', ID).replace('@ENC@', m_cc.group(1))
+                 .replace('@TAIL@', m_cc.group(2))
+                 .replace('visi_', 'firei_').replace('(q : St)', '(t : Instr)')
+                 .replace('srun_st tm', 'srun_instr tm')
+                 .replace('= Some q ->', '= Some t ->')
+                 .replace('fst c = q.', 'cinstr c = t.')
+                 .replace('intros l q Hst', 'intros l t Hst')
+                 .replace('vis_of_run tm Cc', 'fire_of_run_instr tm Cc')
+                 .replace('A state that fires ONLY', 'An instruction that fires ONLY')
+                 .replace('vis_via_int_lift', 'fire_via_int_lift'))
+    # the nested exit-half twin ([NEST_VISX] for instructions)
+    firex = ''
+    if witx:
+        more = N.get('more') or []
+        nf = len(more) + 1
+        vt = (NC.NEST_VISX if not more else
+              NC.NEST_VISX_MULTI.replace('@BOOTSTACK@', NC._boot_stack(more, 2))
+              .replace('@NF@', str(nf)))
+        reps = NC.nest_reps(D, ENCDATA, clist, cconf, cchain, ST, ID)
+        for k, v in reps.items():
+            vt = vt.replace(k, v)
+        firex = (vt.replace('@ID@', ID)
+                 .replace('visx_', 'firex_').replace('(q : St)', '(t : Instr)')
+                 .replace('srun_st tm', 'srun_instr tm')
+                 .replace('= Some q ->', '= Some t ->')
+                 .replace('fst e = q.', 'instr_of e = t.')
+                 .replace('intros l q Hst', 'intros l t Hst')
+                 .replace('vis_via_fill tm Cc', 'fire_via_fill tm Cc')
+                 .replace(' q p (', ' t p (')
+                 .replace('vis_lift_of_csteps tm', 'fire_lift_of_csteps tm')
+                 .replace('vis_of_run tm', 'fire_of_run_instr tm')
+                 .replace('A state firing', 'An instruction firing')) + '\n\n'
     bullets = []
     for t in ALL_INSTR:
         lab = '%s%d' % (LAB[t[0]], t[1])
-        if t in wit and islack:
+        if t in witi:
+            bullets.append(
+                '  - (* %s: fires only in the interior lap *)\n'
+                '    apply (fire_csteps_of_lift tm Cc).\n'
+                '    apply (fire_via_int_lift tm Cc lap_%s %s).\n'
+                '    intros p1 j1 r1 E1. apply (fire_lift_of_csteps tm Cc).\n'
+                '    apply (firei_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                '                   p1 j1 r1 E1).'
+                % (lab, ID, cinstr_coq(t), ID, cchain(witi[t]), cinstr_coq(t)))
+        elif t in witx:
+            bullets.append(
+                '  - (* %s: fires in the exit half of the overflow *)\n'
+                '    apply (fire_csteps_of_lift tm Cc).\n'
+                '    apply (fire_via_ovf_lift tm Cc lapil_%s %s).\n'
+                '    intros p1 j1 E1.\n'
+                '    exact (firex_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                '                   p1 j1 E1).'
+                % (lab, ID, cinstr_coq(t), ID, cchain(witx[t]), cinstr_coq(t)))
+        elif t in wit and islack:
             # the interior lap closes only up to [lift]: chain anchors in
             # [stepn] space (fire_via_ovf_lift) and pull the witness back
             bullets.append(
@@ -1800,7 +1875,7 @@ def render_tr(D, spec, dspec, mirrored):
             bullets.append(
                 '  - (* %s: pinned *)\n'
                 '    exfalso. apply Hnp. apply tr_inb_spec. reflexivity.' % lab)
-    fire = ('%s\n'
+    fire = ('%s\n%s%s'
             '(** ** Fires: every UNPINNED instruction fires from every anchor\n'
             '    (inside the overflow lap; [LapGlueTr.fire_via_ovf] runs the\n'
             '    interior laps until the counter overflows). *)\n\n'
@@ -1811,7 +1886,7 @@ def render_tr(D, spec, dspec, mirrored):
             '%s'
             '  destruct t as [q b]; destruct q, b.\n'
             '%s\n'
-            'Qed.\n' % (fireo, ID, ID, hi, '\n'.join(bullets)))
+            'Qed.\n' % (fireo, firei, firex, ID, ID, hi, '\n'.join(bullets)))
     # closing theorem(s): replace everything from the old visits on
     i_close = i_vis
     if mirrored:
