@@ -809,8 +809,8 @@ census-tr-rwprobe: _census-tr-deps
 	    'b=$$(echo {} | sed "s/\.v$$//"); \
 	     coqc -Q theories BBB4 -w -abstract-large-number {} \
 	       > $$b.out 2>&1; \
-	     echo ">>> $$(basename $$b): $$(grep -c "= true" $$b.out) true / $$(grep -c "= false" $$b.out) false"'
-	@echo ">>> total: $$(cat census_probes/rwprobe/ProbeRW_*.out | grep -c '= true') true / $$(cat census_probes/rwprobe/ProbeRW_*.out | grep -c '= false') false"
+	     echo ">>> $$(basename $$b): $$(grep -c "= Some" $$b.out) certified / $$(grep -c "= None" $$b.out) not"'
+	@echo ">>> total: $$(cat census_probes/rwprobe/ProbeRW_*.out | grep -c '= Some') certified / $$(cat census_probes/rwprobe/ProbeRW_*.out | grep -c '= None') not"
 .PHONY: census-tr-rwprobe
 
 census-tr-rwstage:
