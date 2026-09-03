@@ -793,7 +793,7 @@ if shards die with 'ocamlopt.opt got signal', lower LISTBURN_MAX_PER_FILE"
 #   make census-tr-rwstage [RWPROBE_ROWS=...] [RWSTAGE_START=0]
 RWPROBE_ROWS ?= censustr_rw_rows_v6.tsv
 RWPROBE_JOBS ?= 16
-RWPROBE_CHUNK ?= 20
+RWPROBE_CHUNK ?= 10
 RWSTAGE_START ?= 0
 
 census-tr-rwprobe: _census-tr-deps

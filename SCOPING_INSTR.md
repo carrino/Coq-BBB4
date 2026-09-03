@@ -1625,13 +1625,28 @@ fuel-exhausted at every other L; period 3: closes at (3,2) (263 nodes),
 (6,2) (1,160) and (12,2) (4,408); period 8: closes at (8,2) with 19,366
 nodes.  The instruction-level tier `RepWLTr.rw_tier_tr` (closure +
 per-instruction rank/lex certificate + verified check in one
-vm_compute) is now being probed at L in {p, 2p} over the 40-bouncer
-sample (`gen_provtr_rw.py probe`, fuel 100K, cut 128).
+vm_compute) probed at L in {p, 2p} over the 40-bouncer sample (fuel 100K, cut
+128, in-container vm_compute): **27 of the 35 machines whose rows all
+finished certify** (82 of 95 rows returned before the 30-min per-file
+cap; 13 rows -- the fuel-exhausting wrong-L ones -- timed out).  For 3
+of the 27 only the doubled block certifies (the write pattern's period
+can be 2p), so the rows now carry L in {p, 2p, 4p}
+(`censustr_rw_rows_v6.tsv`: 6,582 rows over the 1,996 sqrt-class
+machines) and the probe is one lazy match chain per machine that stops
+at the first true L.  Box run: `make census-tr-rwprobe` (16-way
+native), then `make census-tr-rwstage` -> `ProvTr_RW_NN.v` for
+`prov_tr`.  Expected yield ~75% of the class, ~1,500 machines.
 
 Deep-burn samples (decider_tr_deep, gas 65536, the widened rungs) on the
 same three samples: in flight.
 
-Route decision for the three classes: pending those two measurements; the expected shape is RepWL at the detected period (Tier W, `gen_provtr_rw.py` stage files) for the block-periodic bouncers, the deep rank rungs for the rest, and the polynomial class still open.
+**Route decision.**  sqrt/bouncers: Tier W at the detected tape
+period (above), then the deep rank rungs for the remainder.  log
+counters: lap certificates (~49%) + deep rank (4,1024) on the
+non-binary ones (8/34) + NGramHistTr (6/34, conveyor not built).
+poly: still open -- rank_tier_tr fails 40/40, NGramHistTr 1/40, tape
+periods are mostly 1; a RepWL probe at L=2..4 with fuel 100K and the
+deep-burn sample are in flight.
 
 ## 8. What we deliberately do NOT redo
 

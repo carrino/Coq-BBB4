@@ -5,14 +5,17 @@ CensusTr/RepWLTr.v's [rw_tier_tr_sound] (the parameter-closed tier: the
 closure search, the per-instruction rank/lex certificate search and the
 verified check all run inside one vm_compute).
 
-  probe  ROWS.tsv OUTDIR          -> OUTDIR/ProbeRW_NN.v (Eval per row)
+  probe  ROWS.tsv OUTDIR          -> OUTDIR/ProbeRW_NN.v: ONE Eval per
+         machine, a match chain over its rows in file order that stops at
+         the first block length whose tier returns true (a failing L costs
+         the whole fuel, so try the period before its multiples); prints
+         [Some L] or [None].
   stage  ROWS.tsv PROBEDIR OUTDIR -> OUTDIR/ProvTr_RW_NN.v  (ptw_NN +
-         Forall NeverQuasiHaltsTr ptw_NN) for the rows whose probe printed
-         true; one row per (machine, L, T, t, fuel, M); a machine is staged
-         once (its first true row).
+         Forall NeverQuasiHaltsTr ptw_NN) for the machines whose probe
+         printed [Some L], at that L.
 
 ROWS.tsv: spec L T t fuel M
-Usage: gen_provtr_rw.py probe ROWS OUTDIR [--chunk 40]
+Usage: gen_provtr_rw.py probe ROWS OUTDIR [--chunk 10]
        gen_provtr_rw.py stage ROWS PROBEDIR OUTDIR [--chunk 100] [--start 0]
 """
 import argparse
@@ -54,40 +57,65 @@ def read_rows(path):
     return rows
 
 
+def group_rows(rows):
+    """machine -> its rows, in file order (first row's T/t/fuel/M rule)."""
+    order, by = [], {}
+    for r in rows:
+        if r[0] not in by:
+            order.append(r[0])
+            by[r[0]] = []
+        by[r[0]].append(r)
+    return [(m, by[m]) for m in order]
+
+
+def chain(nm, mrows):
+    """match rw_tier_tr .. L1 .. with true => Some L1 | false => match .. end"""
+    txt = 'None'
+    for (spec, L, T, t, fuel, M) in reversed(mrows):
+        txt = ('match rw_tier_tr tm_%s %d %d %d %d %d with\n'
+               '     | true => Some %d | false => %s end' % (nm, L, T, t, fuel, M, L, txt))
+    return txt
+
+
 def probe(rows, outdir, chunk):
     os.makedirs(outdir, exist_ok=True)
+    groups = group_rows(rows)
     n = 0
-    for ci in range(0, len(rows), chunk):
+    for ci in range(0, len(groups), chunk):
         nn = '%02d' % n
         with open(os.path.join(outdir, 'ProbeRW_%s.v' % nn), 'w') as f:
             f.write(PROBE_HEADER + '\n')
-            for k, (spec, L, T, t, fuel, M) in enumerate(rows[ci:ci + chunk]):
+            for k, (spec, mrows) in enumerate(groups[ci:ci + chunk]):
                 nm = 'p%02d_%04d' % (n, k)
-                f.write('(* %s L=%d T=%d *)\n' % (spec, L, T))
+                f.write('(* %s  L in %s *)\n' % (spec, [r[1] for r in mrows]))
                 f.write(tm_lambda('tm_' + nm, spec) + '\n')
-                f.write('Eval vm_compute in rw_tier_tr tm_%s %d %d %d %d %d.\n\n'
-                        % (nm, L, T, t, fuel, M))
+                f.write('Eval vm_compute in\n  (%s).\n\n' % chain(nm, mrows))
         n += 1
-    sys.stderr.write('wrote %d probe file(s) for %d rows to %s\n' % (n, len(rows), outdir))
+    sys.stderr.write('wrote %d probe file(s) for %d machines (%d rows) to %s\n'
+                     % (n, len(groups), len(rows), outdir))
 
 
 def read_verdicts(probedir):
+    """probe .out files -> list of Some-L (int) or None, in Eval order."""
     vs = []
     for o in sorted(glob.glob(os.path.join(probedir, 'ProbeRW_*.out'))):
-        vs += [x == 'true' for x in re.findall(r'^\s*= (true|false)', open(o).read(), re.M)]
+        for m in re.finditer(r'^\s*= (Some (\d+)|None)', open(o).read(), re.M):
+            vs.append(int(m.group(2)) if m.group(2) else None)
     return vs
 
 
 def stage(rows, probedir, outdir, chunk, start):
+    groups = group_rows(rows)
     vs = read_verdicts(probedir)
-    if len(vs) != len(rows):
-        sys.exit('verdict count %d != row count %d' % (len(vs), len(rows)))
+    if len(vs) != len(groups):
+        sys.exit('verdict count %d != machine count %d' % (len(vs), len(groups)))
     os.makedirs(outdir, exist_ok=True)
-    keep, seen = [], set()
-    for r, v in zip(rows, vs):
-        if v and r[0] not in seen:
-            keep.append(r)
-            seen.add(r[0])
+    keep = []
+    for (spec, mrows), L in zip(groups, vs):
+        if L is None:
+            continue
+        row = [r for r in mrows if r[1] == L]
+        keep.append(row[0] if row else (spec, L) + mrows[0][2:])
     n = start
     man = []
     for ci in range(0, len(keep), chunk):
@@ -118,19 +146,20 @@ def stage(rows, probedir, outdir, chunk, start):
     with open(os.path.join(outdir, 'provtr_rw_manifest.tsv'), 'w') as f:
         for r in man:
             f.write('\t'.join(r) + '\n')
-    sys.stderr.write('staged %d machines into %d file(s) (%d rows true of %d)\n'
-                     % (len(keep), n - start, sum(vs), len(rows)))
+    sys.stderr.write('staged %d machines into %d file(s) (of %d probed)\n'
+                     % (len(keep), n - start, len(groups)))
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('phase', choices=['probe', 'stage'])
     ap.add_argument('args', nargs='+')
-    ap.add_argument('--chunk', type=int, default=None)
+    ap.add_argument('--chunk', type=int, default=None,
+                    help='machines per probe file (default 10) / per stage file (default 100)')
     ap.add_argument('--start', type=int, default=0)
     a = ap.parse_args()
     if a.phase == 'probe':
-        probe(read_rows(a.args[0]), a.args[1], a.chunk or 40)
+        probe(read_rows(a.args[0]), a.args[1], a.chunk or 10)
     else:
         stage(read_rows(a.args[0]), a.args[1], a.args[2], a.chunk or 100, a.start)
 
