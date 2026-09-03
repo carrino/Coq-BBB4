@@ -800,9 +800,10 @@ census-tr-rwprobe: _census-tr-deps
 	@rm -rf census_probes/rwprobe
 	@python3 tools/censustr/gen_provtr_rw.py probe $(RWPROBE_ROWS) \
 	  census_probes/rwprobe --chunk $(RWPROBE_CHUNK)
-	@for f in census_probes/rwprobe/ProbeRW_*.v; do \
-	  sed -i 's/vm_compute/native_compute/' $$f; \
-	done
+	@# vm_compute on purpose: a machine costs 0.5-30 s in the VM, and
+	@# native_compute measured ~50x SLOWER here (2026-09-03: 77 CPU-min
+	@# per 10-machine file and unfinished -- it recompiles the dependency
+	@# chain per Eval when a native object is not loaded).
 	@ulimit -s $(STACK_KB) 2>/dev/null; \
 	 ls census_probes/rwprobe/ProbeRW_*.v \
 	   | xargs -P $(RWPROBE_JOBS) -I{} sh -c \
