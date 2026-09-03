@@ -793,7 +793,10 @@ if shards die with 'ocamlopt.opt got signal', lower LISTBURN_MAX_PER_FILE"
 #   make census-tr-rwstage [RWPROBE_ROWS=...] [RWSTAGE_START=0]
 RWPROBE_ROWS ?= censustr_rw_rows_v6.tsv
 RWPROBE_JOBS ?= 16
-RWPROBE_CHUNK ?= 10
+RWPROBE_CHUNK ?= 1
+# per-file wall cap: a machine still running after this is scored None
+# (its closure or certificate search is too big for this sweep)
+RWPROBE_TIMEOUT ?= 300
 RWSTAGE_START ?= 0
 
 census-tr-rwprobe: _census-tr-deps
@@ -808,7 +811,8 @@ census-tr-rwprobe: _census-tr-deps
 	 ls census_probes/rwprobe/ProbeRW_*.v \
 	   | xargs -P $(RWPROBE_JOBS) -I{} sh -c \
 	    'b=$$(echo {} | sed "s/\.v$$//"); \
-	     coqc -Q theories BBB4 -w -abstract-large-number {} \
+	     timeout $(RWPROBE_TIMEOUT) \
+	       coqc -Q theories BBB4 -w -abstract-large-number {} \
 	       > $$b.out 2>&1; \
 	     echo ">>> $$(basename $$b): $$(grep -c "= Some" $$b.out) certified / $$(grep -c "= None" $$b.out) not"'
 	@echo ">>> total: $$(cat census_probes/rwprobe/ProbeRW_*.out | grep -c '= Some') certified / $$(cat census_probes/rwprobe/ProbeRW_*.out | grep -c '= None') not"

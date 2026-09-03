@@ -15,7 +15,7 @@ verified check all run inside one vm_compute).
          printed [Some L], at that L.
 
 ROWS.tsv: spec L T t fuel M
-Usage: gen_provtr_rw.py probe ROWS OUTDIR [--chunk 10]
+Usage: gen_provtr_rw.py probe ROWS OUTDIR [--chunk 1]
        gen_provtr_rw.py stage ROWS PROBEDIR OUTDIR [--chunk 100] [--start 0]
 """
 import argparse
@@ -96,11 +96,20 @@ def probe(rows, outdir, chunk):
 
 
 def read_verdicts(probedir):
-    """probe .out files -> list of Some-L (int) or None, in Eval order."""
+    """probe outputs -> list of Some-L (int) or None, one per machine, in
+    file order.  A file whose coqc was cut short (the per-file timeout in
+    the Makefile target, a crash) has fewer results than Evals: the
+    missing tail counts as None, so a slow machine costs only itself."""
     vs = []
-    for o in sorted(glob.glob(os.path.join(probedir, 'ProbeRW_*.out'))):
-        for m in re.finditer(r'^\s*= (Some (\d+)|None)', open(o).read(), re.M):
-            vs.append(int(m.group(2)) if m.group(2) else None)
+    for vf in sorted(glob.glob(os.path.join(probedir, 'ProbeRW_*.v'))):
+        n_evals = len(re.findall(r'^(?:Time )?Eval ', open(vf).read(), re.M))
+        of = vf[:-2] + '.out'
+        got = []
+        if os.path.exists(of):
+            for m in re.finditer(r'^\s*= (Some (\d+)|None)', open(of).read(), re.M):
+                got.append(int(m.group(2)) if m.group(2) else None)
+        got = got[:n_evals] + [None] * (n_evals - len(got))
+        vs += got
     return vs
 
 
@@ -155,11 +164,11 @@ def main():
     ap.add_argument('phase', choices=['probe', 'stage'])
     ap.add_argument('args', nargs='+')
     ap.add_argument('--chunk', type=int, default=None,
-                    help='machines per probe file (default 10) / per stage file (default 100)')
+                    help='machines per probe file (default 1: one slow machine then stalls only its own file) / per stage file (default 100)')
     ap.add_argument('--start', type=int, default=0)
     a = ap.parse_args()
     if a.phase == 'probe':
-        probe(read_rows(a.args[0]), a.args[1], a.chunk or 10)
+        probe(read_rows(a.args[0]), a.args[1], a.chunk or 1)
     else:
         stage(read_rows(a.args[0]), a.args[1], a.args[2], a.chunk or 100, a.start)
 
