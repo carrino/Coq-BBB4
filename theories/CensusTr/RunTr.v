@@ -38,7 +38,8 @@ From BBB4.Machines Require Import
   IRules_Batch_08 IRulesTr_Batch_01.
 (* the transition-level lap-certificate boards (Machines/CountersTr,
    Counters/LapGlueTr), collected by tools/censustr/gen_provtr_lap.py *)
-From BBB4.CensusTr Require Import ProvTr_Lap_00.
+From BBB4.CensusTr Require Import
+  ProvTr_Lap_00 ProvTr_Lap_01 ProvTr_Lap_02 ProvTr_Lap_03 ProvTr_Lap_04 ProvTr_Lap_05 ProvTr_Lap_06 ProvTr_Lap_07 ProvTr_Lap_08 ProvTr_Lap_09 ProvTr_Lap_10 ProvTr_Lap_11.
 From BBB4.CensusTr Require Import
   ProvTr_TC_00 ProvTr_TC_01 ProvTr_TC_02 ProvTr_TC_03 ProvTr_TC_04 ProvTr_TC_05 ProvTr_TC_06 ProvTr_TC_07 ProvTr_TC_08 ProvTr_TC_09 ProvTr_TC_10.
 Import ListNotations.
@@ -177,7 +178,7 @@ Definition prov_tr_irtr : list TM :=
     boards (ProvTr_Lap_NN) and the translated-cycler certificates
     (ProvTr_TC_NN, Checkers/TCyclerTr) *)
 Definition prov_tr : list TM :=
-  prov_tr_irtr ++ ptl_00 ++ ptc_00 ++ ptc_01 ++ ptc_02 ++ ptc_03 ++ ptc_04 ++ ptc_05 ++ ptc_06 ++ ptc_07 ++ ptc_08 ++ ptc_09 ++ ptc_10.
+  prov_tr_irtr ++ ptl_00 ++ ptl_01 ++ ptl_02 ++ ptl_03 ++ ptl_04 ++ ptl_05 ++ ptl_06 ++ ptl_07 ++ ptl_08 ++ ptl_09 ++ ptl_10 ++ ptl_11 ++ ptc_00 ++ ptc_01 ++ ptc_02 ++ ptc_03 ++ ptc_04 ++ ptc_05 ++ ptc_06 ++ ptc_07 ++ ptc_08 ++ ptc_09 ++ ptc_10.
 Definition provqh_tr : list TM := [].
 
 Lemma prov_tr_irtr_all : Forall NeverQuasiHaltsTr prov_tr_irtr.
@@ -287,7 +288,7 @@ Lemma prov_tr_all : Forall NeverQuasiHaltsTr prov_tr.
 Proof.
   unfold prov_tr.
   repeat (apply Forall_app; split);
-    first [exact prov_tr_irtr_all | exact ptl_00_nqhtr | exact ptc_00_nqhtr | exact ptc_01_nqhtr | exact ptc_02_nqhtr | exact ptc_03_nqhtr | exact ptc_04_nqhtr | exact ptc_05_nqhtr | exact ptc_06_nqhtr | exact ptc_07_nqhtr | exact ptc_08_nqhtr | exact ptc_09_nqhtr | exact ptc_10_nqhtr].
+    first [exact prov_tr_irtr_all | exact ptl_00_nqhtr | exact ptl_01_nqhtr | exact ptl_02_nqhtr | exact ptl_03_nqhtr | exact ptl_04_nqhtr | exact ptl_05_nqhtr | exact ptl_06_nqhtr | exact ptl_07_nqhtr | exact ptl_08_nqhtr | exact ptl_09_nqhtr | exact ptl_10_nqhtr | exact ptl_11_nqhtr | exact ptc_00_nqhtr | exact ptc_01_nqhtr | exact ptc_02_nqhtr | exact ptc_03_nqhtr | exact ptc_04_nqhtr | exact ptc_05_nqhtr | exact ptc_06_nqhtr | exact ptc_07_nqhtr | exact ptc_08_nqhtr | exact ptc_09_nqhtr | exact ptc_10_nqhtr].
 Qed.
 
 Lemma provqh_tr_all :
