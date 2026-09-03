@@ -10,15 +10,20 @@ SCOPING_INSTR §7.1w), so the rows emitted are
 
     spec  L  T  t  fuel  M        (gen_provtr_rw.py's input)
 
-with L in {p, 2p, 4p} (--mults) for each detected p (clipped to [2, maxL]),
-T=2, t=0.  Measured on 13 sampled bouncers: 8 certify, and for 3 of
+with L in {p, 2p} (--mults) for each detected p (clipped to [2, maxL]),
+T=2, t=0, fuel 30000, node cut 32.  The cut is what makes a wrong L cheap:
+a misaligned block never compresses, its nodes grow past 32 items within
+a few sweeps and the closure is abandoned in seconds; a matched L keeps
+nodes small (measured: certifying closures of 263..19K nodes at cut 32).
+With cut 128 / fuel 100K / L up to 4p the box needed hours per machine
+(the certificate search on a 100K-node closure).  Measured on 13 sampled bouncers: 8 certify, and for 3 of
 them only the doubled block does (the block must also align with the
 sweep's write pattern, which can have period 2p).
 Every row is re-checked by the kernel ([RepWLTr.rw_tier_tr_sound]); a
 wrong period merely fails.
 
 Usage: rw_period_rows.py LIST [--steps 20000] [--maxp 40] [--maxl 24]
-                              [--fuel 100000] [--cut 128] [--mults 1,2,4] > rows.tsv
+                              [--fuel 30000] [--cut 32] [--mults 1,2] > rows.tsv
 """
 import argparse
 import sys
@@ -78,10 +83,10 @@ def main():
     ap.add_argument('--steps', type=int, default=20000)
     ap.add_argument('--maxp', type=int, default=40)
     ap.add_argument('--maxl', type=int, default=24)
-    ap.add_argument('--fuel', type=int, default=100000)
-    ap.add_argument('--cut', type=int, default=128)
-    ap.add_argument('--mults', default='1,2,4',
-                    help='block multiples of the period to emit (default 1,2,4)')
+    ap.add_argument('--fuel', type=int, default=30000)
+    ap.add_argument('--cut', type=int, default=32)
+    ap.add_argument('--mults', default='1,2',
+                    help='block multiples of the period to emit (default 1,2)')
     a = ap.parse_args()
     nrows = nm = 0
     for line in open(a.list):
