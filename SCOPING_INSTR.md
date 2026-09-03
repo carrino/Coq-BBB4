@@ -1645,8 +1645,13 @@ period (above), then the deep rank rungs for the remainder.  log
 counters: lap certificates (~49%) + deep rank (4,1024) on the
 non-binary ones (8/34) + NGramHistTr (6/34, conveyor not built).
 poly: still open -- rank_tier_tr fails 40/40, NGramHistTr 1/40, tape
-periods are mostly 1; a RepWL probe at L=2..4 with fuel 100K and the
-deep-burn sample are in flight.
+periods are mostly 1, and the instruction-level RepWL tier at L=2..4
+with fuel 100K fails on all 61 rows probed (the state-level RepWL
+(2,2,0) took 38/40 of the same machines: the same fake-cycle gap in
+block-structured form).  898 machines (9% of LIVE) stay on the
+deferred list until a new abstraction exists; the state census's
+per-machine sync-bouncer-counter glue (BOUNCER_COUNTER_READING.md) is
+the only known lead.
 
 ## 8. What we deliberately do NOT redo
 
