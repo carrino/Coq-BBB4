@@ -45,6 +45,8 @@ jobs:
         run: |
           make -f Makefile.coq -j4 theories/Machines/Cycle_Examples.vo
           make -f Makefile.coq -j4 theories/Machines/TCycler_Examples.vo
+      - name: Instruction-level (transition-level) statement + ported checkers + one certificate stage
+        run: make -f Makefile.coq -j4 theories/Checkers/NGramHistTr.vo theories/Checkers/TCyclerTr.vo theories/CensusTr/ProvTr_TC_10.vo
       - name: "Hygiene: zero Admitted in theories/"
         run: "! grep -rn 'Admitted\\.' theories --include='*.v'"
       - name: "Hygiene: every .v under theories/ is built or explicitly exempt"

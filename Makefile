@@ -826,6 +826,25 @@ census-tr-rwstage:
 .PHONY: census-tr-rwstage
 
 # ---------------------------------------------------------------------------
+# The INSTRUCTION-LEVEL (transition-level) development, SCOPING_INSTR.md.
+#   make instr        the whole chain: statement, ported checkers, the
+#                     proven tier (2,297 lap boards, 2,483 translated-
+#                     cycler and 923 RepWL certificate stages), the
+#                     frozen deferred tables, the walk decider -- ~9
+#                     CPU-h beyond the BBB(4) build (the RepWL stages
+#                     rerun their closure search inside vm_cast_no_check)
+#   make instr-core   the cheap slice CI compiles: the statement, the
+#                     ported checkers and one small certificate stage
+instr: Makefile.coq
+	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr_Split.vo
+.PHONY: instr
+
+instr-core: Makefile.coq
+	$(MAKE) -f Makefile.coq theories/Checkers/NGramHistTr.vo \
+	  theories/Checkers/TCyclerTr.vo theories/CensusTr/ProvTr_TC_10.vo
+.PHONY: instr-core
+
+# ---------------------------------------------------------------------------
 # MILESTONE A: the kernel-checked RE-WALK with the frozen deferred list.
 #
 #   make census-tr-walk [WALK_JOBS=16] [CENSUS_TR_UNITS=96]

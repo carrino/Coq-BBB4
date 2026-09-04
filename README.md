@@ -187,6 +187,7 @@ verification tier, from "check one machine" to "re-walk the census".
 | `theories/Checkers/Ladder*.v`, `theories/Machines/Ladder/` | The ladder: counter segments carried as a value-indexed rule family, its fill law read off the machine rather than assumed (`docs/LADDER_PLAN.md`) |
 | `theories/Census/` | The trusted census: TNF enumeration, the in-walk deciders, the frozen deferred tables, and (committed as `.vo`) the walk output ending in `census_decided` |
 | `theories/Closeout/` | The assembly: generated stages bridging every decided frozen row to its board, `closeout_partial`, `census_boarded`, `bbb4_target`, and the hand-written `BBB4_Value.v` — the BBB(4) = 32,779,478 value theorem |
+| `theories/BBBT4_Statement.v`, `theories/CensusTr/`, `theories/Checkers/*Tr.v`, `theories/Machines/CountersTr/` | The **instruction-level (transition-level) development**, in progress: the beeping semantics at instruction granularity, the ported checkers, the transition-level census walk and its proven tier — see the section below |
 | `theories/Tests/` | Negative controls in the BBB corruption-test tradition: mutated certificates, periods, sides and claims must all fail |
 | `tools/` | **Untrusted** certificate search, generators, and differential validators — a wrong certificate fails to compile, never proves a false theorem |
 | `docs/` | The prose claim, verification guide, and closing-campaign write-ups, plus the historical lab notebook — [`docs/README.md`](docs/README.md) is the index |
@@ -227,6 +228,46 @@ statement in [`docs/CLAIMS.md`](docs/CLAIMS.md).
 [`NEXT_SESSION.md`](NEXT_SESSION.md) the accumulated traps;
 [`docs/RESIDUE_MAP.md`](docs/RESIDUE_MAP.md) records how each family of
 machines fell.
+
+## The instruction-level development (in progress)
+
+The BBB harness's second convention scores a machine by the last time
+each *instruction* (state, read symbol) fires rather than each state.
+The obligation "every fired instruction recurs" (`NeverQuasiHaltsTr`,
+`theories/BBBT4_Statement.v`) is strictly stronger than the state one,
+so the census has to be re-decided.  This tree carries that
+re-decision alongside the finished state-level proof, without touching
+it:
+
+* `theories/BBBT4_Statement.v` — `Instr`, `FiresAt`, `QuietAfterTr`,
+  `QuasiHaltsTr`, `NeverQuasiHaltsTr`, and the bridges to the state
+  level.
+* `theories/Checkers/*Tr.v`, `theories/ClosureTr.v`,
+  `theories/CensusTr/RepWLTr.v`, `theories/Counters/LapGlueTr.v` — the
+  checkers ported to instruction targets (cyclers, translated cyclers,
+  n-gram closures with rank/lex certificates, history-augmented
+  n-grams, RepWL, the inductive-rules engine, lap certificates), each
+  with a soundness theorem concluding `NeverQuasiHaltsTr`.
+* `theories/CensusTr/` — the transition-level census: `TNF_QHTr`
+  (the census contract at the raised bound `B_tr = 32,779,478`),
+  `DecideTr`/`RunTr` (the in-walk decider), `RunTr_Split` (the
+  kernel-checked frontier split), the frozen deferred tables
+  (`DeferredTr_*`, 17,989 rows) and the proven tier `prov_tr`: 5,800
+  machines as certificate stages (`ProvTr_TC_*` translated cyclers,
+  `ProvTr_Lap_*` lap boards from `Machines/CountersTr/`, `ProvTr_RW_*`
+  RepWL at the tape period).
+* The census theorem `census_tr : forall tm, QHBoundTr B_tr tm \/
+  Deferred D_tr tm` is assembled from 96 native-compute walk units
+  (`theories/CensusTr/Compute/`, generated, 143 min on 16 cores; not
+  part of the default build).
+
+Build: `make instr` for the whole chain (~9 CPU-hours beyond the
+BBB(4) build), `make instr-core` for the slice CI compiles.  The
+value is **not** determined: `SCOPING_INSTR.md` is the running record
+of the scoping, the measured population, the routes per machine class
+and the open classes (section 7), and `tools/censustr/` holds the
+untrusted generators (`gen_walk_units.py`, `gen_listburn.py`,
+`gen_provtr_*.py`, `rw_period_rows.py`, `proven_specs.py`).
 
 ## Status and further reading
 
