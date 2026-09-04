@@ -96,35 +96,48 @@ def probe(rows, outdir, chunk):
 
 
 def read_verdicts(probedir):
-    """probe outputs -> list of Some-L (int) or None, one per machine, in
-    file order.  A file whose coqc was cut short (the per-file timeout in
-    the Makefile target, a crash) has fewer results than Evals: the
-    missing tail counts as None, so a slow machine costs only itself."""
-    vs = []
-    for vf in sorted(glob.glob(os.path.join(probedir, 'ProbeRW_*.v'))):
-        n_evals = len(re.findall(r'^(?:Time )?Eval ', open(vf).read(), re.M))
+    """probe outputs -> {spec: Some-L (int) or None}.
+
+    Each probe .v carries its machines as `(* <spec>  L in [...] *)`
+    comments, one per Eval, in order; the .out holds the results in the
+    same order.  Keying by the spec written in the file (not by file
+    order) is what makes this robust: with >100 files a lexicographic
+    listing puts ProbeRW_100 before ProbeRW_11, and the first version of
+    this function paired verdicts with the wrong machines -- caught by
+    the kernel when the staged lemma failed to check.  A file whose coqc
+    was cut short (per-file timeout, crash) has fewer results than
+    machines; the missing tail is None."""
+    vs = {}
+    for vf in glob.glob(os.path.join(probedir, 'ProbeRW_*.v')):
+        specs = re.findall(r'^\(\* ([0-9A-Z\-]{6}(?:_[0-9A-Z\-]{6}){3})  L in', open(vf).read(), re.M)
         of = vf[:-2] + '.out'
         got = []
         if os.path.exists(of):
             for m in re.finditer(r'^\s*= (Some (\d+)|None)', open(of).read(), re.M):
                 got.append(int(m.group(2)) if m.group(2) else None)
-        got = got[:n_evals] + [None] * (n_evals - len(got))
-        vs += got
+        got = got[:len(specs)] + [None] * (len(specs) - len(got))
+        for sp, v in zip(specs, got):
+            vs[sp] = v
     return vs
 
 
 def stage(rows, probedir, outdir, chunk, start):
     groups = group_rows(rows)
     vs = read_verdicts(probedir)
-    if len(vs) != len(groups):
-        sys.exit('verdict count %d != machine count %d' % (len(vs), len(groups)))
+    missing = [spec for spec, _ in groups if spec not in vs]
+    if missing:
+        sys.exit('%d machines of the rows have no probe file (first: %s)'
+                 % (len(missing), missing[0]))
     os.makedirs(outdir, exist_ok=True)
     keep = []
-    for (spec, mrows), L in zip(groups, vs):
+    for spec, mrows in groups:
+        L = vs[spec]
         if L is None:
             continue
         row = [r for r in mrows if r[1] == L]
-        keep.append(row[0] if row else (spec, L) + mrows[0][2:])
+        if not row:
+            sys.exit('probe says L=%d for %s but the rows have no such L' % (L, spec))
+        keep.append(row[0])
     n = start
     man = []
     for ci in range(0, len(keep), chunk):
