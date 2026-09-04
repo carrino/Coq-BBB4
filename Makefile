@@ -872,9 +872,15 @@ census-tr-walk: Makefile.coq
 	@mkdir -p census_probes
 	@ulimit -s $(STACK_KB) 2>/dev/null \
 	  || echo ">>> WARNING: could not raise stack to $(STACK_KB)"
+	@# a unit counts as done only if its .vo is NEWER than the decider it
+	@# was checked against (RunTr_Split.vo): units from an earlier walk
+	@# (older tables, older prov_tr) are rebuilt, not skipped -- skipping
+	@# them would fail later at the assembly with inconsistent assumptions
 	@ulimit -s $(STACK_KB) 2>/dev/null; \
 	 ls theories/CensusTr/Compute/UnitTr_*.v \
-	   | while read f; do [ -f "$${f%.v}.vo" ] || echo "$$f"; done \
+	   | while read f; do \
+	       [ -f "$${f%.v}.vo" ] && [ "$${f%.v}.vo" -nt theories/CensusTr/RunTr_Split.vo ] \
+	         || echo "$$f"; done \
 	   | xargs -r -P $(WALK_JOBS) -I{} sh -c \
 	    's=$$(date +%s); \
 	     coqc -Q theories BBB4 -w -abstract-large-number {} \
