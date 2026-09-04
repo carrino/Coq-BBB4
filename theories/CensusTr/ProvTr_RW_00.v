@@ -84,68 +84,8 @@ Definition tm_rw00_0004 : TM := fun q s =>
 Lemma nqhtr_rw00_0004 : NeverQuasiHaltsTr tm_rw00_0004.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LA_1LC1RD_1LA0LB_0RB0RC  L=7 T=2 t=0 fuel=30000 M=32 *)
+(* 0RB0LA_1LC1RD_1LA1RB_1RA0RC  L=6 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw00_0005 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StB)
-  | StD, S0 => Some (mkTrans S0 DR StB)
-  | StD, S1 => Some (mkTrans S0 DR StC)
-  end.
-Lemma nqhtr_rw00_0005 : NeverQuasiHaltsTr tm_rw00_0005.
-Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LA_1LC1RD_1LA0LB_1LA0RC  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0006 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StB)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S0 DR StC)
-  end.
-Lemma nqhtr_rw00_0006 : NeverQuasiHaltsTr tm_rw00_0006.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LA_1LC1RD_1LA0LB_1LD0RC  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0007 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StB)
-  | StD, S0 => Some (mkTrans S1 DL StD)
-  | StD, S1 => Some (mkTrans S0 DR StC)
-  end.
-Lemma nqhtr_rw00_0007 : NeverQuasiHaltsTr tm_rw00_0007.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LA_1LC1RD_1LA0LB_1RC0RC  L=7 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0008 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StA)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StB)
-  | StD, S0 => Some (mkTrans S1 DR StC)
-  | StD, S1 => Some (mkTrans S0 DR StC)
-  end.
-Lemma nqhtr_rw00_0008 : NeverQuasiHaltsTr tm_rw00_0008.
-Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LA_1LC1RD_1LA1RB_1RA0RC  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0009 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StA)
@@ -156,26 +96,26 @@ Definition tm_rw00_0009 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StA)
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
-Lemma nqhtr_rw00_0009 : NeverQuasiHaltsTr tm_rw00_0009.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0005 : NeverQuasiHaltsTr tm_rw00_0005.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LA_1RC0RD_1LA1LC_1RB1LD  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0010 : TM := fun q s =>
+(* 0RB0LA_1RC1LB_1RD0RB_1LA1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0006 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StA)
   | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S0 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DL StC)
-  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S0 DR StB)
+  | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
-Lemma nqhtr_rw00_0010 : NeverQuasiHaltsTr tm_rw00_0010.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0006 : NeverQuasiHaltsTr tm_rw00_0006.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LA_1RC1RA_0LD0RA_1LB1LC  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0011 : TM := fun q s =>
+(* 0RB0LA_1RC1RA_0LD0RA_1LB1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0007 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StA)
@@ -186,11 +126,41 @@ Definition tm_rw00_0011 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StB)
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
-Lemma nqhtr_rw00_0011 : NeverQuasiHaltsTr tm_rw00_0011.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0007 : NeverQuasiHaltsTr tm_rw00_0007.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LA_1RC1RD_1LA1LC_1RA1RB  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0012 : TM := fun q s =>
+(* 0RB0LA_1RC1RA_0LD1RA_1LB1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0008 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StA)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S1 DL StC)
+  end.
+Lemma nqhtr_rw00_0008 : NeverQuasiHaltsTr tm_rw00_0008.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LA_1RC1RB_1LD0RA_1LA0LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0009 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StA)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S0 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DL StC)
+  end.
+Lemma nqhtr_rw00_0009 : NeverQuasiHaltsTr tm_rw00_0009.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LA_1RC1RD_1LA1LC_1RA1RB  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0010 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StA)
@@ -201,11 +171,11 @@ Definition tm_rw00_0012 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StA)
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
-Lemma nqhtr_rw00_0012 : NeverQuasiHaltsTr tm_rw00_0012.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0010 : NeverQuasiHaltsTr tm_rw00_0010.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LB_0LC0RC_1LD1RA_1LA0LA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0013 : TM := fun q s =>
+Definition tm_rw00_0011 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -216,11 +186,11 @@ Definition tm_rw00_0013 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
-Lemma nqhtr_rw00_0013 : NeverQuasiHaltsTr tm_rw00_0013.
+Lemma nqhtr_rw00_0011 : NeverQuasiHaltsTr tm_rw00_0011.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LB_0LC0RC_1LD1RA_1LA0LC  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0014 : TM := fun q s =>
+Definition tm_rw00_0012 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -231,26 +201,11 @@ Definition tm_rw00_0014 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
-Lemma nqhtr_rw00_0014 : NeverQuasiHaltsTr tm_rw00_0014.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_0LC1LB_0RD1LA_1LC1RD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0015 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S0 DL StC)
-  | StB, S1 => Some (mkTrans S1 DL StB)
-  | StC, S0 => Some (mkTrans S0 DR StD)
-  | StC, S1 => Some (mkTrans S1 DL StA)
-  | StD, S0 => Some (mkTrans S1 DL StC)
-  | StD, S1 => Some (mkTrans S1 DR StD)
-  end.
-Lemma nqhtr_rw00_0015 : NeverQuasiHaltsTr tm_rw00_0015.
+Lemma nqhtr_rw00_0012 : NeverQuasiHaltsTr tm_rw00_0012.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LB_0LC1RD_1LA0RD_1RC0RB  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0016 : TM := fun q s =>
+Definition tm_rw00_0013 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -261,86 +216,11 @@ Definition tm_rw00_0016 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StC)
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
-Lemma nqhtr_rw00_0016 : NeverQuasiHaltsTr tm_rw00_0016.
+Lemma nqhtr_rw00_0013 : NeverQuasiHaltsTr tm_rw00_0013.
 Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1LC1RA_0LD1LC_1LA0RB  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0017 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StA)
-  | StC, S0 => Some (mkTrans S0 DL StD)
-  | StC, S1 => Some (mkTrans S1 DL StC)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S0 DR StB)
-  end.
-Lemma nqhtr_rw00_0017 : NeverQuasiHaltsTr tm_rw00_0017.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1LC1RA_1LD1LC_1LA0LD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0018 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StA)
-  | StC, S0 => Some (mkTrans S1 DL StD)
-  | StC, S1 => Some (mkTrans S1 DL StC)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S0 DL StD)
-  end.
-Lemma nqhtr_rw00_0018 : NeverQuasiHaltsTr tm_rw00_0018.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1LC1RA_1LD1LC_1LA1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0019 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StA)
-  | StC, S0 => Some (mkTrans S1 DL StD)
-  | StC, S1 => Some (mkTrans S1 DL StC)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S1 DL StD)
-  end.
-Lemma nqhtr_rw00_0019 : NeverQuasiHaltsTr tm_rw00_0019.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1LC1RA_1RD0LA_1LA1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0020 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StA)
-  | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S0 DL StA)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S1 DL StD)
-  end.
-Lemma nqhtr_rw00_0020 : NeverQuasiHaltsTr tm_rw00_0020.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1LC1RB_0LD1RD_1LA0RB  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0021 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DL StD)
-  | StC, S1 => Some (mkTrans S1 DR StD)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S0 DR StB)
-  end.
-Lemma nqhtr_rw00_0021 : NeverQuasiHaltsTr tm_rw00_0021.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LB_1LC1RC_1LA0RD_1RB1LA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0022 : TM := fun q s =>
+Definition tm_rw00_0014 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -351,11 +231,11 @@ Definition tm_rw00_0022 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StB)
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
-Lemma nqhtr_rw00_0022 : NeverQuasiHaltsTr tm_rw00_0022.
+Lemma nqhtr_rw00_0014 : NeverQuasiHaltsTr tm_rw00_0014.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LB_1LC1RC_1LA0RD_1RB1RC  L=7 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0023 : TM := fun q s =>
+(* 0RB0LB_1LC1RC_1LA0RD_1RB1RC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0015 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -366,26 +246,26 @@ Definition tm_rw00_0023 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StB)
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
-Lemma nqhtr_rw00_0023 : NeverQuasiHaltsTr tm_rw00_0023.
-Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0015 : NeverQuasiHaltsTr tm_rw00_0015.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LB_1LC1RC_1LA1RD_1RC0RD  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0024 : TM := fun q s =>
+(* 0RB0LB_1LC1RD_0LD0RA_1RA1LA  L=7 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0016 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
   | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StC)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DR StD)
-  | StD, S0 => Some (mkTrans S1 DR StC)
-  | StD, S1 => Some (mkTrans S0 DR StD)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S0 DR StA)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S1 DL StA)
   end.
-Lemma nqhtr_rw00_0024 : NeverQuasiHaltsTr tm_rw00_0024.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0016 : NeverQuasiHaltsTr tm_rw00_0016.
+Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LB_1LC1RD_0LD0RB_1RA0LC  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0025 : TM := fun q s =>
+(* 0RB0LB_1LC1RD_0LD0RB_1RA0LC  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0017 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -396,11 +276,11 @@ Definition tm_rw00_0025 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StA)
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
-Lemma nqhtr_rw00_0025 : NeverQuasiHaltsTr tm_rw00_0025.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0017 : NeverQuasiHaltsTr tm_rw00_0017.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LB_1LC1RD_1LA0LB_0RC1RA  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0026 : TM := fun q s =>
+(* 0RB0LB_1LC1RD_1LA0LB_0RC1RA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0018 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -411,11 +291,26 @@ Definition tm_rw00_0026 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S0 DR StC)
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
-Lemma nqhtr_rw00_0026 : NeverQuasiHaltsTr tm_rw00_0026.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0018 : NeverQuasiHaltsTr tm_rw00_0018.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LB_1LC1RD_1LA0RA_1RB0RC  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0027 : TM := fun q s =>
+(* 0RB0LB_1LC1RD_1LA0RA_1LC0RC  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0019 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StB)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S0 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S0 DR StC)
+  end.
+Lemma nqhtr_rw00_0019 : NeverQuasiHaltsTr tm_rw00_0019.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LB_1LC1RD_1LA0RA_1RB0RC  L=9 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0020 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -426,41 +321,11 @@ Definition tm_rw00_0027 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StB)
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
-Lemma nqhtr_rw00_0027 : NeverQuasiHaltsTr tm_rw00_0027.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1LC1RD_1LA0RD_1RB1RC  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0028 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S1 DR StB)
-  | StD, S1 => Some (mkTrans S1 DR StC)
-  end.
-Lemma nqhtr_rw00_0028 : NeverQuasiHaltsTr tm_rw00_0028.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1LC1RD_1RD0LA_1RB0RC  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0029 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S0 DL StA)
-  | StD, S0 => Some (mkTrans S1 DR StB)
-  | StD, S1 => Some (mkTrans S0 DR StC)
-  end.
-Lemma nqhtr_rw00_0029 : NeverQuasiHaltsTr tm_rw00_0029.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0020 : NeverQuasiHaltsTr tm_rw00_0020.
+Proof. apply (rw_tier_tr_sound _ 9 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LB_1RC0LA_1LD0RA_1LA0LC  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0030 : TM := fun q s =>
+Definition tm_rw00_0021 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -471,11 +336,26 @@ Definition tm_rw00_0030 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
-Lemma nqhtr_rw00_0030 : NeverQuasiHaltsTr tm_rw00_0030.
+Lemma nqhtr_rw00_0021 : NeverQuasiHaltsTr tm_rw00_0021.
 Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LB_1RC0LC_1LD0RC_0LA1LB  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0031 : TM := fun q s =>
+(* 0RB0LB_1RC0LC_0LD1RA_1LB1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0022 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StB)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S0 DL StC)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S1 DL StD)
+  end.
+Lemma nqhtr_rw00_0022 : NeverQuasiHaltsTr tm_rw00_0022.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LB_1RC0LC_1LD0RC_0LA1LB  L=9 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0023 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -486,26 +366,11 @@ Definition tm_rw00_0031 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S0 DL StA)
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
-Lemma nqhtr_rw00_0031 : NeverQuasiHaltsTr tm_rw00_0031.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0023 : NeverQuasiHaltsTr tm_rw00_0023.
+Proof. apply (rw_tier_tr_sound _ 9 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LB_1RC1LB_0LB0RD_1LD1LA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0032 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DL StB)
-  | StC, S0 => Some (mkTrans S0 DL StB)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S1 DL StD)
-  | StD, S1 => Some (mkTrans S1 DL StA)
-  end.
-Lemma nqhtr_rw00_0032 : NeverQuasiHaltsTr tm_rw00_0032.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1RC1LB_0LD0RA_1LA1LC  L=7 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0033 : TM := fun q s =>
+(* 0RB0LB_1RC1LB_0LD0RA_1LA1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0024 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -516,86 +381,26 @@ Definition tm_rw00_0033 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
-Lemma nqhtr_rw00_0033 : NeverQuasiHaltsTr tm_rw00_0033.
-Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1RC1LB_0RD1RC_1LD0LA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0034 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DL StB)
-  | StC, S0 => Some (mkTrans S0 DR StD)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DL StD)
-  | StD, S1 => Some (mkTrans S0 DL StA)
-  end.
-Lemma nqhtr_rw00_0034 : NeverQuasiHaltsTr tm_rw00_0034.
+Lemma nqhtr_rw00_0024 : NeverQuasiHaltsTr tm_rw00_0024.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LB_1RC1LB_1LB0RD_1LD1LA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0035 : TM := fun q s =>
+(* 0RB0LB_1RC1LD_1RD0RB_0LA0RA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0025 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
   | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DL StB)
-  | StC, S0 => Some (mkTrans S1 DL StB)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S1 DL StD)
-  | StD, S1 => Some (mkTrans S1 DL StA)
-  end.
-Lemma nqhtr_rw00_0035 : NeverQuasiHaltsTr tm_rw00_0035.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1RC1LB_1LC0RD_1LD1LA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0036 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DL StB)
-  | StC, S0 => Some (mkTrans S1 DL StC)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S1 DL StD)
-  | StD, S1 => Some (mkTrans S1 DL StA)
-  end.
-Lemma nqhtr_rw00_0036 : NeverQuasiHaltsTr tm_rw00_0036.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1RC1LB_1LD0RB_0LA1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0037 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DL StB)
-  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StB, S1 => Some (mkTrans S1 DL StD)
+  | StC, S0 => Some (mkTrans S1 DR StD)
   | StC, S1 => Some (mkTrans S0 DR StB)
   | StD, S0 => Some (mkTrans S0 DL StA)
-  | StD, S1 => Some (mkTrans S1 DL StD)
+  | StD, S1 => Some (mkTrans S0 DR StA)
   end.
-Lemma nqhtr_rw00_0037 : NeverQuasiHaltsTr tm_rw00_0037.
+Lemma nqhtr_rw00_0025 : NeverQuasiHaltsTr tm_rw00_0025.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LB_1RC1LB_1RD0RD_1LD1LA  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0038 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DL StB)
-  | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S0 DR StD)
-  | StD, S0 => Some (mkTrans S1 DL StD)
-  | StD, S1 => Some (mkTrans S1 DL StA)
-  end.
-Lemma nqhtr_rw00_0038 : NeverQuasiHaltsTr tm_rw00_0038.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
 (* 0RB0LB_1RC1LD_1RD0RD_0LA0RA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0039 : TM := fun q s =>
+Definition tm_rw00_0026 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -606,26 +411,11 @@ Definition tm_rw00_0039 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S0 DL StA)
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
-Lemma nqhtr_rw00_0039 : NeverQuasiHaltsTr tm_rw00_0039.
+Lemma nqhtr_rw00_0026 : NeverQuasiHaltsTr tm_rw00_0026.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LB_1RC1RA_1LD1RA_1LA0LD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0040 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StB)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StA)
-  | StC, S0 => Some (mkTrans S1 DL StD)
-  | StC, S1 => Some (mkTrans S1 DR StA)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S0 DL StD)
-  end.
-Lemma nqhtr_rw00_0040 : NeverQuasiHaltsTr tm_rw00_0040.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LB_1RC1RB_1LD0RD_1RB0LA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0041 : TM := fun q s =>
+(* 0RB0LB_1RC1RB_1LD0RD_1RB0LA  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0027 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -636,11 +426,11 @@ Definition tm_rw00_0041 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StB)
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
-Lemma nqhtr_rw00_0041 : NeverQuasiHaltsTr tm_rw00_0041.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0027 : NeverQuasiHaltsTr tm_rw00_0027.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LB_1RC1RC_1LD0RA_1LA0LC  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0042 : TM := fun q s =>
+(* 0RB0LB_1RC1RC_1LD0RA_1LA0LC  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0028 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StB)
@@ -651,11 +441,41 @@ Definition tm_rw00_0042 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
-Lemma nqhtr_rw00_0042 : NeverQuasiHaltsTr tm_rw00_0042.
+Lemma nqhtr_rw00_0028 : NeverQuasiHaltsTr tm_rw00_0028.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LC_0LC0RD_1LD1LC_1RB1RA  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0029 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S0 DR StD)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S1 DR StA)
+  end.
+Lemma nqhtr_rw00_0029 : NeverQuasiHaltsTr tm_rw00_0029.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LC_0LC1RC_1LD1RA_1LA1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0030 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StC)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StC)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DL StD)
+  end.
+Lemma nqhtr_rw00_0030 : NeverQuasiHaltsTr tm_rw00_0030.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_0LC1RD_1LA1LC_1RB0RA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0043 : TM := fun q s =>
+(* 0RB0LC_0LC1RD_1LA1LC_1RB0RA  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0031 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -666,26 +486,11 @@ Definition tm_rw00_0043 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StB)
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
-Lemma nqhtr_rw00_0043 : NeverQuasiHaltsTr tm_rw00_0043.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LC_0LC1RD_1LA1LC_1RB0RD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0044 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StC)
-  | StB, S0 => Some (mkTrans S0 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DL StC)
-  | StD, S0 => Some (mkTrans S1 DR StB)
-  | StD, S1 => Some (mkTrans S0 DR StD)
-  end.
-Lemma nqhtr_rw00_0044 : NeverQuasiHaltsTr tm_rw00_0044.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0031 : NeverQuasiHaltsTr tm_rw00_0031.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LC_0LC1RD_1LD0RD_1LA1RA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0045 : TM := fun q s =>
+Definition tm_rw00_0032 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -696,26 +501,11 @@ Definition tm_rw00_0045 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
-Lemma nqhtr_rw00_0045 : NeverQuasiHaltsTr tm_rw00_0045.
+Lemma nqhtr_rw00_0032 : NeverQuasiHaltsTr tm_rw00_0032.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_0RC1RB_1LD1RD_1LA1RA  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0046 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StC)
-  | StB, S0 => Some (mkTrans S0 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DL StD)
-  | StC, S1 => Some (mkTrans S1 DR StD)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S1 DR StA)
-  end.
-Lemma nqhtr_rw00_0046 : NeverQuasiHaltsTr tm_rw00_0046.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
 (* 0RB0LC_0RC1RC_0LD1RB_1LA1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0047 : TM := fun q s =>
+Definition tm_rw00_0033 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -726,56 +516,56 @@ Definition tm_rw00_0047 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
-Lemma nqhtr_rw00_0047 : NeverQuasiHaltsTr tm_rw00_0047.
+Lemma nqhtr_rw00_0033 : NeverQuasiHaltsTr tm_rw00_0033.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1LA1RB_1LD1LC_1RD0RB  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0048 : TM := fun q s =>
+(* 0RB0LC_0RC1RD_1LA1RA_1LD1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0034 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StC)
+  | StB, S0 => Some (mkTrans S0 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StD)
+  | StD, S1 => Some (mkTrans S1 DL StC)
+  end.
+Lemma nqhtr_rw00_0034 : NeverQuasiHaltsTr tm_rw00_0034.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LC_1LA1RC_1LD0RD_1LA0RA  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0035 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
   | StB, S0 => Some (mkTrans S1 DL StA)
-  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StB, S1 => Some (mkTrans S1 DR StC)
   | StC, S0 => Some (mkTrans S1 DL StD)
-  | StC, S1 => Some (mkTrans S1 DL StC)
-  | StD, S0 => Some (mkTrans S1 DR StD)
-  | StD, S1 => Some (mkTrans S0 DR StB)
-  end.
-Lemma nqhtr_rw00_0048 : NeverQuasiHaltsTr tm_rw00_0048.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LC_1LA1RB_1RC1RD_1LA0RB  L=7 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0049 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StC)
-  | StB, S0 => Some (mkTrans S1 DL StA)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DR StC)
-  | StC, S1 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S0 DR StD)
   | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S0 DR StB)
+  | StD, S1 => Some (mkTrans S0 DR StA)
   end.
-Lemma nqhtr_rw00_0049 : NeverQuasiHaltsTr tm_rw00_0049.
-Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0035 : NeverQuasiHaltsTr tm_rw00_0035.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1LC1RA_0LD0RA_1LA1LB  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0050 : TM := fun q s =>
+(* 0RB0LC_1LC1RC_0LD0RD_1RA1LB  L=7 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0036 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
   | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StB, S1 => Some (mkTrans S1 DR StC)
   | StC, S0 => Some (mkTrans S0 DL StD)
-  | StC, S1 => Some (mkTrans S0 DR StA)
-  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S0 DR StD)
+  | StD, S0 => Some (mkTrans S1 DR StA)
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
-Lemma nqhtr_rw00_0050 : NeverQuasiHaltsTr tm_rw00_0050.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0036 : NeverQuasiHaltsTr tm_rw00_0036.
+Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1LC1RC_1LD0RC_1LA1LB  L=7 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0051 : TM := fun q s =>
+(* 0RB0LC_1LC1RC_1LD0RC_1LA1LB  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0037 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -786,11 +576,11 @@ Definition tm_rw00_0051 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
-Lemma nqhtr_rw00_0051 : NeverQuasiHaltsTr tm_rw00_0051.
-Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0037 : NeverQuasiHaltsTr tm_rw00_0037.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LC_1LC1RC_1RA1LD_1LA0LC  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0052 : TM := fun q s =>
+Definition tm_rw00_0038 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -801,86 +591,56 @@ Definition tm_rw00_0052 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
-Lemma nqhtr_rw00_0052 : NeverQuasiHaltsTr tm_rw00_0052.
+Lemma nqhtr_rw00_0038 : NeverQuasiHaltsTr tm_rw00_0038.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1LC1RD_0LD1LA_1RB0RB  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0053 : TM := fun q s =>
+(* 0RB0LC_1LC1RD_1LD0RA_1LA1RA  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0039 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
   | StB, S0 => Some (mkTrans S1 DL StC)
   | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S0 DL StD)
-  | StC, S1 => Some (mkTrans S1 DL StA)
-  | StD, S0 => Some (mkTrans S1 DR StB)
-  | StD, S1 => Some (mkTrans S0 DR StB)
-  end.
-Lemma nqhtr_rw00_0053 : NeverQuasiHaltsTr tm_rw00_0053.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LC_1LC1RD_1LA0LC_0RB1RA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0054 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StC)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StC)
-  | StD, S0 => Some (mkTrans S0 DR StB)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S0 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
-Lemma nqhtr_rw00_0054 : NeverQuasiHaltsTr tm_rw00_0054.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LC_1LC1RD_1LA0LC_1RA0RC  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0055 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StC)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StC)
-  | StD, S0 => Some (mkTrans S1 DR StA)
-  | StD, S1 => Some (mkTrans S0 DR StC)
-  end.
-Lemma nqhtr_rw00_0055 : NeverQuasiHaltsTr tm_rw00_0055.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LC_1LC1RD_1LA0LC_1RA1RD  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0056 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StC)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StC)
-  | StD, S0 => Some (mkTrans S1 DR StA)
-  | StD, S1 => Some (mkTrans S1 DR StD)
-  end.
-Lemma nqhtr_rw00_0056 : NeverQuasiHaltsTr tm_rw00_0056.
+Lemma nqhtr_rw00_0039 : NeverQuasiHaltsTr tm_rw00_0039.
 Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1LC1RD_1LA1LB_1RC0RD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0057 : TM := fun q s =>
+(* 0RB0LC_1LC1RD_1LD0RD_1RA0LB  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0040 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
   | StB, S0 => Some (mkTrans S1 DL StC)
   | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DL StB)
-  | StD, S0 => Some (mkTrans S1 DR StC)
-  | StD, S1 => Some (mkTrans S0 DR StD)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S0 DR StD)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S0 DL StB)
   end.
-Lemma nqhtr_rw00_0057 : NeverQuasiHaltsTr tm_rw00_0057.
+Lemma nqhtr_rw00_0040 : NeverQuasiHaltsTr tm_rw00_0040.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1RC0RA_0LD1RB_1LB1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0058 : TM := fun q s =>
+(* 0RB0LC_1RC0RA_0LD1RB_0LA1LD  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0041 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StC)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S0 DR StA)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StB)
+  | StD, S0 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S1 DL StD)
+  end.
+Lemma nqhtr_rw00_0041 : NeverQuasiHaltsTr tm_rw00_0041.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LC_1RC0RA_0LD1RB_1LB1LC  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0042 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -891,26 +651,11 @@ Definition tm_rw00_0058 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StB)
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
-Lemma nqhtr_rw00_0058 : NeverQuasiHaltsTr tm_rw00_0058.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0042 : NeverQuasiHaltsTr tm_rw00_0042.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1RC0RB_1LD1RB_0LB0LA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0059 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StC)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S0 DR StB)
-  | StC, S0 => Some (mkTrans S1 DL StD)
-  | StC, S1 => Some (mkTrans S1 DR StB)
-  | StD, S0 => Some (mkTrans S0 DL StB)
-  | StD, S1 => Some (mkTrans S0 DL StA)
-  end.
-Lemma nqhtr_rw00_0059 : NeverQuasiHaltsTr tm_rw00_0059.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LC_1RC0RC_1LD1RB_0LA1LB  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0060 : TM := fun q s =>
+(* 0RB0LC_1RC0RC_1LD1RB_0LA1LB  L=8 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0043 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -921,26 +666,26 @@ Definition tm_rw00_0060 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S0 DL StA)
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
-Lemma nqhtr_rw00_0060 : NeverQuasiHaltsTr tm_rw00_0060.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0043 : NeverQuasiHaltsTr tm_rw00_0043.
+Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1RC0RD_1LD1RB_1LB0LA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0061 : TM := fun q s =>
+(* 0RB0LC_1RC0RD_1LA1LC_1RB1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0044 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
   | StB, S0 => Some (mkTrans S1 DR StC)
   | StB, S1 => Some (mkTrans S0 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StD)
-  | StC, S1 => Some (mkTrans S1 DR StB)
-  | StD, S0 => Some (mkTrans S1 DL StB)
-  | StD, S1 => Some (mkTrans S0 DL StA)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S1 DL StD)
   end.
-Lemma nqhtr_rw00_0061 : NeverQuasiHaltsTr tm_rw00_0061.
+Lemma nqhtr_rw00_0044 : NeverQuasiHaltsTr tm_rw00_0044.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LC_1RC1LB_0LD0RA_1LA1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0062 : TM := fun q s =>
+Definition tm_rw00_0045 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -951,11 +696,56 @@ Definition tm_rw00_0062 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
-Lemma nqhtr_rw00_0062 : NeverQuasiHaltsTr tm_rw00_0062.
+Lemma nqhtr_rw00_0045 : NeverQuasiHaltsTr tm_rw00_0045.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1RC1LD_1LD1RA_0LA1LC  L=9 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0063 : TM := fun q s =>
+(* 0RB0LC_1RC1LB_1LD0RA_0LA0LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0046 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StC)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S0 DR StA)
+  | StD, S0 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S0 DL StC)
+  end.
+Lemma nqhtr_rw00_0046 : NeverQuasiHaltsTr tm_rw00_0046.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LC_1RC1LD_1LD0RA_0LA0LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0047 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StC)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DL StD)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S0 DR StA)
+  | StD, S0 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S0 DL StC)
+  end.
+Lemma nqhtr_rw00_0047 : NeverQuasiHaltsTr tm_rw00_0047.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LC_1RC1LD_1LD1RA_0LA0LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0048 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StC)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DL StD)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S0 DL StC)
+  end.
+Lemma nqhtr_rw00_0048 : NeverQuasiHaltsTr tm_rw00_0048.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LC_1RC1LD_1LD1RA_0LA1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0049 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -966,71 +756,41 @@ Definition tm_rw00_0063 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S0 DL StA)
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
-Lemma nqhtr_rw00_0063 : NeverQuasiHaltsTr tm_rw00_0063.
-Proof. apply (rw_tier_tr_sound _ 9 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LC_1RC1RA_0LD0RA_1LA1RD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0064 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StC)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StA)
-  | StC, S0 => Some (mkTrans S0 DL StD)
-  | StC, S1 => Some (mkTrans S0 DR StA)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S1 DR StD)
-  end.
-Lemma nqhtr_rw00_0064 : NeverQuasiHaltsTr tm_rw00_0064.
+Lemma nqhtr_rw00_0049 : NeverQuasiHaltsTr tm_rw00_0049.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1RC1RA_1LD0RA_0LA0LC  L=9 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0065 : TM := fun q s =>
+(* 0RB0LC_1RC1RA_0LD0RA_1LA1RD  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0050 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
   | StB, S0 => Some (mkTrans S1 DR StC)
   | StB, S1 => Some (mkTrans S1 DR StA)
-  | StC, S0 => Some (mkTrans S1 DL StD)
-  | StC, S1 => Some (mkTrans S0 DR StA)
-  | StD, S0 => Some (mkTrans S0 DL StA)
-  | StD, S1 => Some (mkTrans S0 DL StC)
-  end.
-Lemma nqhtr_rw00_0065 : NeverQuasiHaltsTr tm_rw00_0065.
-Proof. apply (rw_tier_tr_sound _ 9 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LC_1RC1RB_0LD0RB_1LA1RD  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0066 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StC)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
   | StC, S0 => Some (mkTrans S0 DL StD)
-  | StC, S1 => Some (mkTrans S0 DR StB)
+  | StC, S1 => Some (mkTrans S0 DR StA)
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
-Lemma nqhtr_rw00_0066 : NeverQuasiHaltsTr tm_rw00_0066.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0050 : NeverQuasiHaltsTr tm_rw00_0050.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1RC1RB_1LA0LD_1RD1RA  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0067 : TM := fun q s =>
+(* 0RB0LC_1RC1RA_0LD0RD_1LA1RD  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0051 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
   | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StD)
-  | StD, S0 => Some (mkTrans S1 DR StD)
-  | StD, S1 => Some (mkTrans S1 DR StA)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S0 DR StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StD)
   end.
-Lemma nqhtr_rw00_0067 : NeverQuasiHaltsTr tm_rw00_0067.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0051 : NeverQuasiHaltsTr tm_rw00_0051.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LC_1RC1RB_1LA0RD_0LB1RA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0068 : TM := fun q s =>
+Definition tm_rw00_0052 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -1041,11 +801,26 @@ Definition tm_rw00_0068 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S0 DL StB)
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
-Lemma nqhtr_rw00_0068 : NeverQuasiHaltsTr tm_rw00_0068.
+Lemma nqhtr_rw00_0052 : NeverQuasiHaltsTr tm_rw00_0052.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1RC1RC_1LD0RD_1LA0RA  L=9 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0069 : TM := fun q s =>
+(* 0RB0LC_1RC1RB_1LA1LD_0LA0RB  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0053 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StC)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StB)
+  end.
+Lemma nqhtr_rw00_0053 : NeverQuasiHaltsTr tm_rw00_0053.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LC_1RC1RC_1LD0RD_1LA0RA  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0054 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -1056,11 +831,11 @@ Definition tm_rw00_0069 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
-Lemma nqhtr_rw00_0069 : NeverQuasiHaltsTr tm_rw00_0069.
-Proof. apply (rw_tier_tr_sound _ 9 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0054 : NeverQuasiHaltsTr tm_rw00_0054.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1RC1RD_1LA1LC_1RB0RA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0070 : TM := fun q s =>
+(* 0RB0LC_1RC1RD_1LA1LC_1RB0RA  L=7 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0055 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -1071,11 +846,11 @@ Definition tm_rw00_0070 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StB)
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
-Lemma nqhtr_rw00_0070 : NeverQuasiHaltsTr tm_rw00_0070.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0055 : NeverQuasiHaltsTr tm_rw00_0055.
+Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LC_1RC1RD_1LA1LC_1RB0RB  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0071 : TM := fun q s =>
+Definition tm_rw00_0056 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -1086,26 +861,11 @@ Definition tm_rw00_0071 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StB)
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
-Lemma nqhtr_rw00_0071 : NeverQuasiHaltsTr tm_rw00_0071.
+Lemma nqhtr_rw00_0056 : NeverQuasiHaltsTr tm_rw00_0056.
 Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LC_1RC1RD_1LA1RA_1LD1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0072 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StC)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DR StA)
-  | StD, S0 => Some (mkTrans S1 DL StD)
-  | StD, S1 => Some (mkTrans S1 DL StC)
-  end.
-Lemma nqhtr_rw00_0072 : NeverQuasiHaltsTr tm_rw00_0072.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LC_1RC1RD_1LD0RC_1LA0RB  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0073 : TM := fun q s =>
+(* 0RB0LC_1RC1RD_1LD0RC_1LA0RB  L=7 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0057 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StC)
@@ -1116,11 +876,41 @@ Definition tm_rw00_0073 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
-Lemma nqhtr_rw00_0073 : NeverQuasiHaltsTr tm_rw00_0073.
+Lemma nqhtr_rw00_0057 : NeverQuasiHaltsTr tm_rw00_0057.
+Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LC_1RC1RD_1LD1RD_1LA0RB  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0058 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StC)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StD)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DR StB)
+  end.
+Lemma nqhtr_rw00_0058 : NeverQuasiHaltsTr tm_rw00_0058.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_0LC1RA_1LA1LB_1LC0RC  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0074 : TM := fun q s =>
+(* 0RB0LD_0LC1RA_1LA1LB_1LC0RA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0059 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DL StB)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S0 DR StA)
+  end.
+Lemma nqhtr_rw00_0059 : NeverQuasiHaltsTr tm_rw00_0059.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_0LC1RA_1LA1LB_1LC0RC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0060 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1131,11 +921,26 @@ Definition tm_rw00_0074 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StC)
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
-Lemma nqhtr_rw00_0074 : NeverQuasiHaltsTr tm_rw00_0074.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0060 : NeverQuasiHaltsTr tm_rw00_0060.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_0LC1RD_1LA1LC_1LC1RA  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0075 : TM := fun q s =>
+(* 0RB0LD_0LC1RA_1RD1LD_1RB1LA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0061 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S1 DL StA)
+  end.
+Lemma nqhtr_rw00_0061 : NeverQuasiHaltsTr tm_rw00_0061.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_0LC1RD_1LA1LC_1LC1RA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0062 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1146,26 +951,11 @@ Definition tm_rw00_0075 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StC)
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
-Lemma nqhtr_rw00_0075 : NeverQuasiHaltsTr tm_rw00_0075.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LD_0LC1RD_1RD1LA_1RB0RC  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0076 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StD)
-  | StB, S0 => Some (mkTrans S0 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S1 DL StA)
-  | StD, S0 => Some (mkTrans S1 DR StB)
-  | StD, S1 => Some (mkTrans S0 DR StC)
-  end.
-Lemma nqhtr_rw00_0076 : NeverQuasiHaltsTr tm_rw00_0076.
+Lemma nqhtr_rw00_0062 : NeverQuasiHaltsTr tm_rw00_0062.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_0RC1RB_1LD1LA_1LA1LC  L=9 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0077 : TM := fun q s =>
+(* 0RB0LD_0RC1RB_1LD1LA_1LA1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0063 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1176,26 +966,11 @@ Definition tm_rw00_0077 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
-Lemma nqhtr_rw00_0077 : NeverQuasiHaltsTr tm_rw00_0077.
-Proof. apply (rw_tier_tr_sound _ 9 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LD_0RC1RB_1LD1RC_1RC1LA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0078 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StD)
-  | StB, S0 => Some (mkTrans S0 DR StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S1 DL StD)
-  | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DR StC)
-  | StD, S1 => Some (mkTrans S1 DL StA)
-  end.
-Lemma nqhtr_rw00_0078 : NeverQuasiHaltsTr tm_rw00_0078.
+Lemma nqhtr_rw00_0063 : NeverQuasiHaltsTr tm_rw00_0063.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1LA0RC_1RB0LC_1LC1RA  L=7 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0079 : TM := fun q s =>
+(* 0RB0LD_1LA0RC_1RB0LC_1LC1RA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0064 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1206,11 +981,11 @@ Definition tm_rw00_0079 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StC)
   | StD, S1 => Some (mkTrans S1 DR StA)
   end.
-Lemma nqhtr_rw00_0079 : NeverQuasiHaltsTr tm_rw00_0079.
-Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0064 : NeverQuasiHaltsTr tm_rw00_0064.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1LA1LC_1RD0RD_1LB1RC  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0080 : TM := fun q s =>
+(* 0RB0LD_1LA1LC_1RD0RD_1LB1RC  L=7 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0065 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1221,11 +996,11 @@ Definition tm_rw00_0080 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StB)
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
-Lemma nqhtr_rw00_0080 : NeverQuasiHaltsTr tm_rw00_0080.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0065 : NeverQuasiHaltsTr tm_rw00_0065.
+Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LD_1LA1RC_1LA1RA_1LC0RC  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0081 : TM := fun q s =>
+Definition tm_rw00_0066 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1236,11 +1011,11 @@ Definition tm_rw00_0081 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StC)
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
-Lemma nqhtr_rw00_0081 : NeverQuasiHaltsTr tm_rw00_0081.
+Lemma nqhtr_rw00_0066 : NeverQuasiHaltsTr tm_rw00_0066.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1LA1RC_1RB0RB_1LA1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0082 : TM := fun q s =>
+(* 0RB0LD_1LA1RC_1RB0RB_1LA1LD  L=8 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0067 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1251,11 +1026,11 @@ Definition tm_rw00_0082 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
-Lemma nqhtr_rw00_0082 : NeverQuasiHaltsTr tm_rw00_0082.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0067 : NeverQuasiHaltsTr tm_rw00_0067.
+Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LD_1LA1RC_1RD0RB_0LA1RB  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0083 : TM := fun q s =>
+Definition tm_rw00_0068 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1266,26 +1041,56 @@ Definition tm_rw00_0083 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S0 DL StA)
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
-Lemma nqhtr_rw00_0083 : NeverQuasiHaltsTr tm_rw00_0083.
+Lemma nqhtr_rw00_0068 : NeverQuasiHaltsTr tm_rw00_0068.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1LA1RC_1RD0RC_1LA1RB  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0084 : TM := fun q s =>
+(* 0RB0LD_1LA1RC_1RD0RB_1LA1RB  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0069 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
   | StB, S0 => Some (mkTrans S1 DL StA)
   | StB, S1 => Some (mkTrans S1 DR StC)
   | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S0 DR StC)
+  | StC, S1 => Some (mkTrans S0 DR StB)
   | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
-Lemma nqhtr_rw00_0084 : NeverQuasiHaltsTr tm_rw00_0084.
+Lemma nqhtr_rw00_0069 : NeverQuasiHaltsTr tm_rw00_0069.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
+(* 0RB0LD_1LA1RC_1RD0RD_0LA1RB  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0070 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DL StA)
+  | StB, S1 => Some (mkTrans S1 DR StC)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S0 DR StD)
+  | StD, S0 => Some (mkTrans S0 DL StA)
+  | StD, S1 => Some (mkTrans S1 DR StB)
+  end.
+Lemma nqhtr_rw00_0070 : NeverQuasiHaltsTr tm_rw00_0070.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1LC0RC_1RB1RA_1LC1LD  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0071 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S0 DR StC)
+  | StC, S0 => Some (mkTrans S1 DR StB)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S1 DL StD)
+  end.
+Lemma nqhtr_rw00_0071 : NeverQuasiHaltsTr tm_rw00_0071.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
 (* 0RB0LD_1LC0RD_1RA1LA_0LC1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0085 : TM := fun q s =>
+Definition tm_rw00_0072 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1296,11 +1101,11 @@ Definition tm_rw00_0085 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S0 DL StC)
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
-Lemma nqhtr_rw00_0085 : NeverQuasiHaltsTr tm_rw00_0085.
+Lemma nqhtr_rw00_0072 : NeverQuasiHaltsTr tm_rw00_0072.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1LC0RD_1RD0LA_1RB1RD  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0086 : TM := fun q s =>
+(* 0RB0LD_1LC0RD_1RD0LA_1RB1RD  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0073 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1311,71 +1116,11 @@ Definition tm_rw00_0086 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DR StB)
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
-Lemma nqhtr_rw00_0086 : NeverQuasiHaltsTr tm_rw00_0086.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LD_1LC1LB_1RD0LA_1RB0RC  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0087 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StD)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DL StB)
-  | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S0 DL StA)
-  | StD, S0 => Some (mkTrans S1 DR StB)
-  | StD, S1 => Some (mkTrans S0 DR StC)
-  end.
-Lemma nqhtr_rw00_0087 : NeverQuasiHaltsTr tm_rw00_0087.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LD_1LC1LB_1RD0RA_1LB0RC  L=6 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0088 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StD)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DL StB)
-  | StC, S0 => Some (mkTrans S1 DR StD)
-  | StC, S1 => Some (mkTrans S0 DR StA)
-  | StD, S0 => Some (mkTrans S1 DL StB)
-  | StD, S1 => Some (mkTrans S0 DR StC)
-  end.
-Lemma nqhtr_rw00_0088 : NeverQuasiHaltsTr tm_rw00_0088.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LD_1LC1RB_0RB1LA_0LC1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0089 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StD)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DR StB)
-  | StC, S1 => Some (mkTrans S1 DL StA)
-  | StD, S0 => Some (mkTrans S0 DL StC)
-  | StD, S1 => Some (mkTrans S1 DL StD)
-  end.
-Lemma nqhtr_rw00_0089 : NeverQuasiHaltsTr tm_rw00_0089.
-Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LD_1LC1RB_0RB1LA_1LC1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0090 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StD)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StB)
-  | StC, S0 => Some (mkTrans S0 DR StB)
-  | StC, S1 => Some (mkTrans S1 DL StA)
-  | StD, S0 => Some (mkTrans S1 DL StC)
-  | StD, S1 => Some (mkTrans S1 DL StD)
-  end.
-Lemma nqhtr_rw00_0090 : NeverQuasiHaltsTr tm_rw00_0090.
+Lemma nqhtr_rw00_0073 : NeverQuasiHaltsTr tm_rw00_0073.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
 (* 0RB0LD_1LC1RB_1RA1RC_0LA1LA  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0091 : TM := fun q s =>
+Definition tm_rw00_0074 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1386,41 +1131,41 @@ Definition tm_rw00_0091 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S0 DL StA)
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
-Lemma nqhtr_rw00_0091 : NeverQuasiHaltsTr tm_rw00_0091.
+Lemma nqhtr_rw00_0074 : NeverQuasiHaltsTr tm_rw00_0074.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1LC1RC_1LD0RA_1RA0LD  L=5 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0092 : TM := fun q s =>
+(* 0RB0LD_1LC1RB_1RA1RC_1LC1LA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0075 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DR StA)
+  | StC, S1 => Some (mkTrans S1 DR StC)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S1 DL StA)
+  end.
+Lemma nqhtr_rw00_0075 : NeverQuasiHaltsTr tm_rw00_0075.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1LC1RC_0RD1RD_1RB1LA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0076 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
   | StB, S1 => Some (mkTrans S1 DR StC)
-  | StC, S0 => Some (mkTrans S1 DL StD)
-  | StC, S1 => Some (mkTrans S0 DR StA)
-  | StD, S0 => Some (mkTrans S1 DR StA)
-  | StD, S1 => Some (mkTrans S0 DL StD)
+  | StC, S0 => Some (mkTrans S0 DR StD)
+  | StC, S1 => Some (mkTrans S1 DR StD)
+  | StD, S0 => Some (mkTrans S1 DR StB)
+  | StD, S1 => Some (mkTrans S1 DL StA)
   end.
-Lemma nqhtr_rw00_0092 : NeverQuasiHaltsTr tm_rw00_0092.
+Lemma nqhtr_rw00_0076 : NeverQuasiHaltsTr tm_rw00_0076.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1LC1RD_1LA0LB_0RB0RC  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0093 : TM := fun q s =>
-  match q, s with
-  | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StD)
-  | StB, S0 => Some (mkTrans S1 DL StC)
-  | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S0 DL StB)
-  | StD, S0 => Some (mkTrans S0 DR StB)
-  | StD, S1 => Some (mkTrans S0 DR StC)
-  end.
-Lemma nqhtr_rw00_0093 : NeverQuasiHaltsTr tm_rw00_0093.
-Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
-
-(* 0RB0LD_1LC1RD_1LA0RA_1LC0RC  L=7 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0094 : TM := fun q s =>
+(* 0RB0LD_1LC1RD_1LA0RA_1LC0RC  L=6 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0077 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
@@ -1431,80 +1176,335 @@ Definition tm_rw00_0094 : TM := fun q s =>
   | StD, S0 => Some (mkTrans S1 DL StC)
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
-Lemma nqhtr_rw00_0094 : NeverQuasiHaltsTr tm_rw00_0094.
-Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Lemma nqhtr_rw00_0077 : NeverQuasiHaltsTr tm_rw00_0077.
+Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1LC1RD_1LA1RC_1RA0LC  L=8 T=2 t=0 fuel=30000 M=32 *)
-Definition tm_rw00_0095 : TM := fun q s =>
+(* 0RB0LD_1LC1RD_1RA1RC_1LC1LA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0078 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
   | StB, S0 => Some (mkTrans S1 DL StC)
   | StB, S1 => Some (mkTrans S1 DR StD)
-  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S0 => Some (mkTrans S1 DR StA)
   | StC, S1 => Some (mkTrans S1 DR StC)
-  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S1 DL StA)
+  end.
+Lemma nqhtr_rw00_0078 : NeverQuasiHaltsTr tm_rw00_0078.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC0LA_1LA1RA_1LC0RB  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0079 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S0 DL StA)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S0 DR StB)
+  end.
+Lemma nqhtr_rw00_0079 : NeverQuasiHaltsTr tm_rw00_0079.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC0LC_1LA0RD_1LB1RA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0080 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S0 DL StC)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S0 DR StD)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S1 DR StA)
+  end.
+Lemma nqhtr_rw00_0080 : NeverQuasiHaltsTr tm_rw00_0080.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC0RD_0LA1LD_1LC1RA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0081 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S0 DR StD)
+  | StC, S0 => Some (mkTrans S0 DL StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S1 DR StA)
+  end.
+Lemma nqhtr_rw00_0081 : NeverQuasiHaltsTr tm_rw00_0081.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1LB_1LA1RA_1LA0LA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0082 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
+  | StD, S1 => Some (mkTrans S0 DL StA)
+  end.
+Lemma nqhtr_rw00_0082 : NeverQuasiHaltsTr tm_rw00_0082.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1LB_1LA1RA_1LB0LB  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0083 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S0 DL StB)
+  end.
+Lemma nqhtr_rw00_0083 : NeverQuasiHaltsTr tm_rw00_0083.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1LB_1LD0RA_1LA0LC  L=8 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0084 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DL StB)
+  | StC, S0 => Some (mkTrans S1 DL StD)
+  | StC, S1 => Some (mkTrans S0 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StA)
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
-Lemma nqhtr_rw00_0095 : NeverQuasiHaltsTr tm_rw00_0095.
+Lemma nqhtr_rw00_0084 : NeverQuasiHaltsTr tm_rw00_0084.
 Proof. apply (rw_tier_tr_sound _ 8 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1RC0RB_1LA1RB_1LA0LB  L=6 T=2 t=0 fuel=30000 M=32 *)
+(* 0RB0LD_1RC1RA_0LD0RA_1LB1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0085 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S0 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S1 DL StC)
+  end.
+Lemma nqhtr_rw00_0085 : NeverQuasiHaltsTr tm_rw00_0085.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1RA_0LD1RA_1LB1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0086 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S1 DL StC)
+  end.
+Lemma nqhtr_rw00_0086 : NeverQuasiHaltsTr tm_rw00_0086.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1RA_1LA1LD_0LC0RB  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0087 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S0 DL StC)
+  | StD, S1 => Some (mkTrans S0 DR StB)
+  end.
+Lemma nqhtr_rw00_0087 : NeverQuasiHaltsTr tm_rw00_0087.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1RA_1LA1LD_0LC0RD  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0088 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StA)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S0 DL StC)
+  | StD, S1 => Some (mkTrans S0 DR StD)
+  end.
+Lemma nqhtr_rw00_0088 : NeverQuasiHaltsTr tm_rw00_0088.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1RB_1LA0RA_1LC1LA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0089 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S0 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S1 DL StA)
+  end.
+Lemma nqhtr_rw00_0089 : NeverQuasiHaltsTr tm_rw00_0089.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1RB_1LA0RB_1RA0LB  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0090 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S0 DR StB)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S0 DL StB)
+  end.
+Lemma nqhtr_rw00_0090 : NeverQuasiHaltsTr tm_rw00_0090.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1RB_1LA0RC_1LB0LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0091 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StB)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S0 DR StC)
+  | StD, S0 => Some (mkTrans S1 DL StB)
+  | StD, S1 => Some (mkTrans S0 DL StC)
+  end.
+Lemma nqhtr_rw00_0091 : NeverQuasiHaltsTr tm_rw00_0091.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1RC_1LA1RA_1LC0RB  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0092 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StC)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S0 DR StB)
+  end.
+Lemma nqhtr_rw00_0092 : NeverQuasiHaltsTr tm_rw00_0092.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1RC_1LA1RA_1LC0RC  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0093 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StC)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DR StA)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S0 DR StC)
+  end.
+Lemma nqhtr_rw00_0093 : NeverQuasiHaltsTr tm_rw00_0093.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1RD_1LA1LC_0LC1RA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0094 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S0 DL StC)
+  | StD, S1 => Some (mkTrans S1 DR StA)
+  end.
+Lemma nqhtr_rw00_0094 : NeverQuasiHaltsTr tm_rw00_0094.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1RD_1LA1LC_1LC1RA  L=5 T=2 t=0 fuel=30000 M=32 *)
+Definition tm_rw00_0095 : TM := fun q s =>
+  match q, s with
+  | StA, S0 => Some (mkTrans S0 DR StB)
+  | StA, S1 => Some (mkTrans S0 DL StD)
+  | StB, S0 => Some (mkTrans S1 DR StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S1 DL StA)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S1 DR StA)
+  end.
+Lemma nqhtr_rw00_0095 : NeverQuasiHaltsTr tm_rw00_0095.
+Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+
+(* 0RB0LD_1RC1RD_1LA1LD_1LC0RB  L=7 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw00_0096 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
   | StA, S1 => Some (mkTrans S0 DL StD)
   | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S0 DR StB)
+  | StB, S1 => Some (mkTrans S1 DR StD)
   | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DR StB)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S0 DL StB)
+  | StC, S1 => Some (mkTrans S1 DL StD)
+  | StD, S0 => Some (mkTrans S1 DL StC)
+  | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma nqhtr_rw00_0096 : NeverQuasiHaltsTr tm_rw00_0096.
-Proof. apply (rw_tier_tr_sound _ 6 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
+Proof. apply (rw_tier_tr_sound _ 7 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1RC0RB_1LA1RB_1LC0LB  L=5 T=2 t=0 fuel=30000 M=32 *)
+(* 0RB0RA_0LC1RD_0LD1LC_1RA1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw00_0097 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StD)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S0 DR StB)
-  | StC, S0 => Some (mkTrans S1 DL StA)
-  | StC, S1 => Some (mkTrans S1 DR StB)
-  | StD, S0 => Some (mkTrans S1 DL StC)
-  | StD, S1 => Some (mkTrans S0 DL StB)
+  | StA, S1 => Some (mkTrans S0 DR StA)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma nqhtr_rw00_0097 : NeverQuasiHaltsTr tm_rw00_0097.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1RC1LB_0LA1RA_1LA1LC  L=5 T=2 t=0 fuel=30000 M=32 *)
+(* 0RB0RA_0LC1RD_0LD1LC_1RA1RB  L=5 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw00_0098 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StD)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DL StB)
-  | StC, S0 => Some (mkTrans S0 DL StA)
-  | StC, S1 => Some (mkTrans S1 DR StA)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S1 DL StC)
+  | StA, S1 => Some (mkTrans S0 DR StA)
+  | StB, S0 => Some (mkTrans S0 DL StC)
+  | StB, S1 => Some (mkTrans S1 DR StD)
+  | StC, S0 => Some (mkTrans S0 DL StD)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma nqhtr_rw00_0098 : NeverQuasiHaltsTr tm_rw00_0098.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
 
-(* 0RB0LD_1RC1LB_0LD0RA_1LA1LD  L=5 T=2 t=0 fuel=30000 M=32 *)
+(* 0RB0RA_1LC0LC_1RD1LC_1RA0LB  L=5 T=2 t=0 fuel=30000 M=32 *)
 Definition tm_rw00_0099 : TM := fun q s =>
   match q, s with
   | StA, S0 => Some (mkTrans S0 DR StB)
-  | StA, S1 => Some (mkTrans S0 DL StD)
-  | StB, S0 => Some (mkTrans S1 DR StC)
-  | StB, S1 => Some (mkTrans S1 DL StB)
-  | StC, S0 => Some (mkTrans S0 DL StD)
-  | StC, S1 => Some (mkTrans S0 DR StA)
-  | StD, S0 => Some (mkTrans S1 DL StA)
-  | StD, S1 => Some (mkTrans S1 DL StD)
+  | StA, S1 => Some (mkTrans S0 DR StA)
+  | StB, S0 => Some (mkTrans S1 DL StC)
+  | StB, S1 => Some (mkTrans S0 DL StC)
+  | StC, S0 => Some (mkTrans S1 DR StD)
+  | StC, S1 => Some (mkTrans S1 DL StC)
+  | StD, S0 => Some (mkTrans S1 DR StA)
+  | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma nqhtr_rw00_0099 : NeverQuasiHaltsTr tm_rw00_0099.
 Proof. apply (rw_tier_tr_sound _ 5 2 0 30000 32). vm_cast_no_check (eq_refl true). Qed.
