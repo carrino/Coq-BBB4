@@ -743,7 +743,7 @@ census-tr-resplit: _census-tr-deps
 # LISTBURN_SRC tracks the CURRENT deferred list: each walk replaces the
 # last (superseded snapshots live in git history), so bump this when a
 # new one lands.
-LISTBURN_SRC ?= censustr_deferred_v6.txt
+LISTBURN_SRC ?= censustr_deferred_v7.txt
 LISTBURN_JOBS ?= 16
 # The ESCALATED decider (RunTr [decider_tr_deep]: loop gas 65536, the
 # wide/deep rung ladders).  Empty this to burn with the walk decider.

@@ -1550,9 +1550,8 @@ counter class alone the route is ~49%.
 - log 4,523: ~2,200 via lap certificates when the bulk emit finishes;
   the other half needs the missing lap routes (offset-nested, peel) or
   a different counter engine.
-- sqrt 1,996: a real `--deep` burn with the widened RepWL rungs
-  (expected ~40% from the 3/8 sample), then a bouncer certificate route
-  (the state census's RepWL-with-proof shapes) for the rest.
+- sqrt 1,996: 923 proven by RepWL at the tape period (§7.1w); a
+  second pass at higher fuel, then the deep burn for the rest.
 - poly 898: undiagnosed.
 
 ### 7.1w The gap has a name: the RANK tier's instruction twin, and the fake macro-cycle (2026-09-02)
@@ -1635,7 +1634,15 @@ can be 2p), so the rows now carry L in {p, 2p, 4p}
 machines) and the probe is one lazy match chain per machine that stops
 at the first true L.  Box run: `make census-tr-rwprobe` (16-way
 native), then `make census-tr-rwstage` -> `ProvTr_RW_NN.v` for
-`prov_tr`.  Expected yield ~75% of the class, ~1,500 machines.
+`prov_tr`.  Sweep result (fuel 30K, cut 32, one machine per file, 300 s cap,
+vm_compute; the first attempts at fuel 100K / cut 128 / native_compute
+ran for hours per file): **923 of 1,991 certify (46%)**, block lengths
+5 (571), 6 (146), 7 (82), 8 (82), 9 (42) -- nothing at L<=4 or L>=10.
+The period-1/2 "bouncers" (~370) certify nowhere; they are the
+bouncer-counter hybrids, not block-periodic.  Staged as ProvTr_RW_00..09
+(ptw_NN).  A second pass over the 1,068 left (`censustr_rw_rows_v6_pass2.tsv`,
+fuel 100K, cut 128, 900 s cap) is prepared for the cases where the
+closure needs more room.
 
 Deep-burn samples (decider_tr_deep, gas 65536, the widened rungs) on the
 same three samples: in flight.
