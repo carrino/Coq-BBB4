@@ -867,6 +867,12 @@ census-tr-units:
 	@python3 tools/censustr/gen_walk_units.py --units $(CENSUS_TR_UNITS)
 .PHONY: census-tr-units
 
+# MEMORY (measured 2026-09-04, prov_tr = 5,800 machines): each unit process
+# peaks at 2.7-3.5 GB RSS -- it loads the native code of every certificate
+# stage -- so WALK_JOBS=16 on a 31 GB box gets a third of the first wave
+# OOM-killed (the unit's log ends in "Killed", dmesg says "Out of memory").
+# Budget WALK_JOBS <= RAM_GB / 4; on 31 GB use WALK_JOBS=7.  Killed units
+# leave no .vo and are simply re-run by the next invocation.
 census-tr-walk: Makefile.coq
 	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr_Split.vo
 	@mkdir -p census_probes
