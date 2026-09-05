@@ -7,12 +7,13 @@ verified check all run inside one vm_compute).
 
   probe  ROWS.tsv OUTDIR          -> OUTDIR/ProbeRW_NN.v: ONE Eval per
          machine, a match chain over its rows in file order that stops at
-         the first block length whose tier returns true (a failing L costs
+         the first row whose tier returns true (a failing row costs
          the whole fuel, so try the period before its multiples); prints
-         [Some L] or [None].
+         [Some (L, rounds)] or [None].  Recording both values is important
+         when progressive passes contain the same L at several round caps.
   stage  ROWS.tsv PROBEDIR OUTDIR -> OUTDIR/ProvTr_RW_NN.v  (ptw_NN +
          Forall NeverQuasiHaltsTr ptw_NN) for the machines whose probe
-         printed [Some L], at that L.
+         printed [Some (L, rounds)], using that exact row.
 
 ROWS.tsv: spec L T t fuel M [rounds]
 The optional rounds column caps the certificate search (default 300, preserving
@@ -73,12 +74,12 @@ def group_rows(rows):
 
 
 def chain(nm, mrows):
-    """match rw_tier_tr .. L1 .. with true => Some L1 | false => match .. end"""
+    """Try rows in order, returning the successful (block length, round cap)."""
     txt = 'None'
     for (spec, L, T, t, fuel, M, rounds) in reversed(mrows):
         txt = ('match rw_tier_tr_rounds %d tm_%s %d %d %d %d %d with\n'
-               '     | true => Some %d | false => %s end'
-               % (rounds, nm, L, T, t, fuel, M, L, txt))
+               '     | true => Some (%d, %d) | false => %s end'
+               % (rounds, nm, L, T, t, fuel, M, L, rounds, txt))
     return txt
 
 
@@ -101,7 +102,7 @@ def probe(rows, outdir, chunk):
 
 
 def read_verdicts(probedir):
-    """probe outputs -> {spec: Some-L (int) or None}.
+    """probe outputs -> {spec: Some-(L, rounds) or None}.
 
     Each probe .v carries its machines as `(* <spec>  L in [...] *)`
     comments, one per Eval, in order; the .out holds the results in the
@@ -118,8 +119,11 @@ def read_verdicts(probedir):
         of = vf[:-2] + '.out'
         got = []
         if os.path.exists(of):
-            for m in re.finditer(r'^\s*= (Some (\d+)|None)', open(of).read(), re.M):
-                got.append(int(m.group(2)) if m.group(2) else None)
+            for m in re.finditer(
+                    r'^\s*= (Some \((\d+), (\d+)\)|None)',
+                    open(of).read(), re.M):
+                got.append((int(m.group(2)), int(m.group(3)))
+                           if m.group(2) else None)
         got = got[:len(specs)] + [None] * (len(specs) - len(got))
         for sp, v in zip(specs, got):
             vs[sp] = v
@@ -136,12 +140,14 @@ def stage(rows, probedir, outdir, chunk, start):
     os.makedirs(outdir, exist_ok=True)
     keep = []
     for spec, mrows in groups:
-        L = vs[spec]
-        if L is None:
+        verdict = vs[spec]
+        if verdict is None:
             continue
-        row = [r for r in mrows if r[1] == L]
+        L, rounds = verdict
+        row = [r for r in mrows if r[1] == L and r[6] == rounds]
         if not row:
-            sys.exit('probe says L=%d for %s but the rows have no such L' % (L, spec))
+            sys.exit('probe says L=%d rounds=%d for %s but the rows have no such row'
+                     % (L, rounds, spec))
         keep.append(row[0])
     n = start
     man = []
