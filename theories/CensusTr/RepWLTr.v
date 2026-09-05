@@ -132,7 +132,7 @@ Definition irows_tr (tm : TM) (L T : nat) (tg : Instr)
           g))
     nodes (1%positive, PositiveMap.empty _)).
 
-Definition rw_procedure_tr (tm : TM) (L T : nat)
+Definition rw_procedure_tr_rounds (rounds : nat) (tm : TM) (L T : nat)
     (closure : list rconf) (tg : Instr) : list rwcomp :=
   let nodes := filter (fun a => negb (instr_eqb (rw_instr a) tg)) closure in
   let '(im, arr) := iintern nodes in
@@ -140,14 +140,17 @@ Definition rw_procedure_tr (tm : TM) (L T : nat)
   let idxs := iidxs nodes in
   let Kc := S (S (length nodes)) in
   let rfuel := S (length nodes * 8 + 8) in
-  match iproc_rounds 300 tm arr Kc rfuel idxs g [] with
+  match iproc_rounds rounds tm arr Kc rfuel idxs g [] with
   | Some comps => comps
   | None => []
   end.
 
+Definition rw_procedure_tr := rw_procedure_tr_rounds 300.
+
 (** ** The parameter-closed tier *)
 
-Definition rw_tier_tr (tm : TM) (L T t fuel M : nat) : bool :=
+Definition rw_tier_tr_rounds (rounds : nat) (tm : TM)
+    (L T t fuel M : nat) : bool :=
   match csteps tm t c0 with
   | None => false
   | Some cc =>
@@ -160,22 +163,31 @@ Definition rw_tier_tr (tm : TM) (L T t fuel M : nat) : bool :=
             (fun tg =>
                if cfires tm c0 t tg
                   || existsb (fun a => instr_eqb (rw_instr a) tg) Sl
-               then rw_procedure_tr tm L T Sl tg
+               then rw_procedure_tr_rounds rounds tm L T Sl tg
                else [])
       end
   end.
 
-Theorem rw_tier_tr_sound : forall tm L T t fuel M,
-  rw_tier_tr tm L T t fuel M = true -> NeverQuasiHaltsTr tm.
+Theorem rw_tier_tr_rounds_sound : forall rounds tm L T t fuel M,
+  rw_tier_tr_rounds rounds tm L T t fuel M = true -> NeverQuasiHaltsTr tm.
 Proof.
-  intros tm L T t fuel M H.
-  unfold rw_tier_tr in H.
+  intros rounds tm L T t fuel M H.
+  unfold rw_tier_tr_rounds in H.
   destruct (csteps tm t c0) as [cc|]; [|discriminate].
   destruct (close rconf rconf_enc (rw_succs_cut M tm L T) fuel
                   [] PositiveSet.empty [rw_seed L T cc]) as [Sl|];
     [|discriminate].
   exact (rw_check_neverqhtr_sound tm L T t fuel M _ H).
 Qed.
+
+(** The census walk and existing certificates retain the measured default.
+    Sweep tooling can use [rw_tier_tr_rounds] with a smaller cap: exhausting
+    the untrusted search merely returns no certificate, so every cap is sound. *)
+Definition rw_tier_tr := rw_tier_tr_rounds 300.
+
+Theorem rw_tier_tr_sound : forall tm L T t fuel M,
+  rw_tier_tr tm L T t fuel M = true -> NeverQuasiHaltsTr tm.
+Proof. exact (rw_tier_tr_rounds_sound 300). Qed.
 
 (** ** Tier W-wrap: transition-quasihalting via the wrapped RepWL closure
 

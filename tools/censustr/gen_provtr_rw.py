@@ -7,14 +7,18 @@ verified check all run inside one vm_compute).
 
   probe  ROWS.tsv OUTDIR          -> OUTDIR/ProbeRW_NN.v: ONE Eval per
          machine, a match chain over its rows in file order that stops at
-         the first block length whose tier returns true (a failing L costs
+         the first row whose tier returns true (a failing row costs
          the whole fuel, so try the period before its multiples); prints
-         [Some L] or [None].
+         [Some (L, rounds)] or [None].  Recording both values is important
+         when progressive passes contain the same L at several round caps.
   stage  ROWS.tsv PROBEDIR OUTDIR -> OUTDIR/ProvTr_RW_NN.v  (ptw_NN +
          Forall NeverQuasiHaltsTr ptw_NN) for the machines whose probe
-         printed [Some L], at that L.
+         printed [Some (L, rounds)], using that exact row.
 
-ROWS.tsv: spec L T t fuel M
+ROWS.tsv: spec L T t fuel M [rounds]
+The optional rounds column caps the certificate search (default 300, preserving
+old row files).  A smaller cap is useful for a broad first pass: exhaustion
+fails closed and lets the per-machine wall clock move on to another machine.
 Usage: gen_provtr_rw.py probe ROWS OUTDIR [--chunk 1]
        gen_provtr_rw.py stage ROWS PROBEDIR OUTDIR [--chunk 100] [--start 0]
 """
@@ -53,7 +57,8 @@ def read_rows(path):
         f = line.strip().split('\t')
         if len(f) < 6:
             continue
-        rows.append((f[0],) + tuple(int(x) for x in f[1:6]))
+        row = (f[0],) + tuple(int(x) for x in f[1:6])
+        rows.append(row + (int(f[6]) if len(f) >= 7 else 300,))
     return rows
 
 
@@ -69,11 +74,12 @@ def group_rows(rows):
 
 
 def chain(nm, mrows):
-    """match rw_tier_tr .. L1 .. with true => Some L1 | false => match .. end"""
+    """Try rows in order, returning the successful (block length, round cap)."""
     txt = 'None'
-    for (spec, L, T, t, fuel, M) in reversed(mrows):
-        txt = ('match rw_tier_tr tm_%s %d %d %d %d %d with\n'
-               '     | true => Some %d | false => %s end' % (nm, L, T, t, fuel, M, L, txt))
+    for (spec, L, T, t, fuel, M, rounds) in reversed(mrows):
+        txt = ('match rw_tier_tr_rounds %d tm_%s %d %d %d %d %d with\n'
+               '     | true => Some (%d, %d) | false => %s end'
+               % (rounds, nm, L, T, t, fuel, M, L, rounds, txt))
     return txt
 
 
@@ -96,7 +102,7 @@ def probe(rows, outdir, chunk):
 
 
 def read_verdicts(probedir):
-    """probe outputs -> {spec: Some-L (int) or None}.
+    """probe outputs -> {spec: Some-(L, rounds) or None}.
 
     Each probe .v carries its machines as `(* <spec>  L in [...] *)`
     comments, one per Eval, in order; the .out holds the results in the
@@ -113,8 +119,11 @@ def read_verdicts(probedir):
         of = vf[:-2] + '.out'
         got = []
         if os.path.exists(of):
-            for m in re.finditer(r'^\s*= (Some (\d+)|None)', open(of).read(), re.M):
-                got.append(int(m.group(2)) if m.group(2) else None)
+            for m in re.finditer(
+                    r'^\s*= (Some \((\d+), (\d+)\)|None)',
+                    open(of).read(), re.M):
+                got.append((int(m.group(2)), int(m.group(3)))
+                           if m.group(2) else None)
         got = got[:len(specs)] + [None] * (len(specs) - len(got))
         for sp, v in zip(specs, got):
             vs[sp] = v
@@ -131,12 +140,14 @@ def stage(rows, probedir, outdir, chunk, start):
     os.makedirs(outdir, exist_ok=True)
     keep = []
     for spec, mrows in groups:
-        L = vs[spec]
-        if L is None:
+        verdict = vs[spec]
+        if verdict is None:
             continue
-        row = [r for r in mrows if r[1] == L]
+        L, rounds = verdict
+        row = [r for r in mrows if r[1] == L and r[6] == rounds]
         if not row:
-            sys.exit('probe says L=%d for %s but the rows have no such L' % (L, spec))
+            sys.exit('probe says L=%d rounds=%d for %s but the rows have no such row'
+                     % (L, rounds, spec))
         keep.append(row[0])
     n = start
     man = []
@@ -146,15 +157,16 @@ def stage(rows, probedir, outdir, chunk, start):
         names = []
         with open(os.path.join(outdir, 'ProvTr_RW_%s.v' % nn), 'w') as f:
             f.write(STAGE_HEADER.replace('{NN}', nn).replace('{CNT}', str(len(cb))) + '\n')
-            for k, (spec, L, T, t, fuel, M) in enumerate(cb):
+            for k, (spec, L, T, t, fuel, M, rounds) in enumerate(cb):
                 nm = 'rw%02d_%04d' % (n, k)
                 names.append(nm)
-                f.write('(* %s  L=%d T=%d t=%d fuel=%d M=%d *)\n' % (spec, L, T, t, fuel, M))
+                f.write('(* %s  L=%d T=%d t=%d fuel=%d M=%d rounds=%d *)\n'
+                        % (spec, L, T, t, fuel, M, rounds))
                 f.write(tm_lambda('tm_' + nm, spec) + '\n')
                 f.write('Lemma nqhtr_%s : NeverQuasiHaltsTr tm_%s.\n'
-                        'Proof. apply (rw_tier_tr_sound _ %d %d %d %d %d). '
+                        'Proof. apply (rw_tier_tr_rounds_sound %d _ %d %d %d %d %d). '
                         'vm_cast_no_check (eq_refl true). Qed.\n\n'
-                        % (nm, nm, L, T, t, fuel, M))
+                        % (nm, nm, rounds, L, T, t, fuel, M))
                 man.append((spec, 'nqhtr_%s' % nm, 'ProvTr_RW_%s.v' % nn, str(L), str(T)))
             f.write('Definition ptw_%s : list TM :=\n  [' % nn)
             f.write(';\n   '.join('tm_%s' % x for x in names))

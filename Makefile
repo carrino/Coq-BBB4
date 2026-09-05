@@ -791,6 +791,10 @@ if shards die with 'ocamlopt.opt got signal', lower LISTBURN_MAX_PER_FILE"
 # stage the true ones as CensusTr/ProvTr_RW_NN.v for [prov_tr].
 #   make census-tr-rwprobe [RWPROBE_ROWS=censustr_rw_rows_v6.tsv] [RWPROBE_JOBS=16]
 #   make census-tr-rwstage [RWPROBE_ROWS=...] [RWSTAGE_START=0]
+# ROWS may have an optional seventh `rounds` column.  This caps the
+# certificate search independently of the process timeout, allowing cheap
+# broad passes over closures whose default 300 rounds otherwise monopolize a
+# worker.  Omitted means 300, preserving all existing probes/certificates.
 RWPROBE_ROWS ?= censustr_rw_rows_v6.tsv
 RWPROBE_JOBS ?= 16
 RWPROBE_CHUNK ?= 1
