@@ -1660,6 +1660,24 @@ deferred list until a new abstraction exists; the state census's
 per-machine sync-bouncer-counter glue (BOUNCER_COUNTER_READING.md) is
 the only known lead.
 
+### 7.1x RepWL certificate-search round caps (2026-09-04)
+
+The pass-2 RepWL conveyor can now cap the in-Coq certificate search as
+well as the outer `coqc` process.  `rw_tier_tr_rounds rounds` exposes
+the existing `iproc_rounds` fuel; `rw_tier_tr` remains exactly its old
+300-round specialization, so the walk and the 923 checked certificates
+do not change.  Search exhaustion fails closed (it supplies an empty
+certificate which the checker rejects), and the soundness theorem is
+quantified over every cap.
+
+`gen_provtr_rw.py` accepts an optional seventh `rounds` column in its
+row TSV (omission means 300).  This enables a cheap broad pass over the
+1,073 remaining bouncers before spending the 900-second process cap on
+the hard tail, and any successes are staged against the same
+kernel-checked tier with the selected round cap.  A practical box-side
+experiment is to append `50` to the prepared pass-2 rows, probe those
+rows, stage the catches, then retry only the misses at 100 and 300.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
