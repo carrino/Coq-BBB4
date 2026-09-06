@@ -32,3 +32,12 @@ __pycache__/
 .*.aux
 .toolchain-stamp
 inwalk_sweep_1e8.txt
+
+# instruction-level box scratch (walk unit logs, emit shards, list-burn outputs)
+theories/CensusTr/Compute/*.log
+live_shard_*
+live_sample500.txt
+censustr_buckets/
+censustr_survivors.txt
+censustr_unburned.txt
+run1_unknown.txt
