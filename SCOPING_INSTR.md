@@ -1675,6 +1675,9 @@ only if its .vo is newer than RunTr_Split.vo, so stale units from an
 earlier walk are rebuilt rather than skipped (skipping them fails the
 assembly with "inconsistent assumptions").
 
+Axiom footprint (`Print Assumptions census_tr` / `prov_tr_all`, on
+the box): `FunctionalExtensionality.functional_extensionality_dep` only.
+
 Bookkeeping lesson from the same day: the first RepWL stage files
 paired probe verdicts with machines by *file order*, and past 100 files
 that order is lexicographic; the kernel refused the first mis-paired

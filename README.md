@@ -263,7 +263,9 @@ it:
   deferred rows) with the 5,800-machine proven tier:
   `make census-tr-units && make census-tr-walk WALK_JOBS=7` (about
   4 h on 16 cores / 31 GB; the job count is a memory budget, see the
-  Makefile).
+  Makefile).  `Print Assumptions` on `census_tr` and on the proven
+  tier's `prov_tr_all` reports `functional_extensionality_dep` and
+  nothing else -- the same single axiom as the state-level proof.
 
 Build: `make instr` for the whole chain (~9 CPU-hours beyond the
 BBB(4) build), `make instr-core` for the slice CI compiles.  The
