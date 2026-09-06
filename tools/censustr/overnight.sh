@@ -10,7 +10,9 @@ set -e
 cd "$(dirname "$0")/../.."
 eval $(opam env --switch=census --set-switch)
 date; echo ">>> pull"
-git pull --no-rebase carrino claude/instruction-beeping-proof-scope-ww7zdk || true
+# The box's origin is the Windows checkout (GitHub is reached from Windows):
+# pull on Windows first, then a plain pull here brings the branch over.
+git pull --no-rebase || true
 date; echo ">>> RepWL pass 2"
 make census-tr-rwprobe RWPROBE_ROWS=censustr_rw_rows_v6_pass2.tsv RWPROBE_TIMEOUT=900 RWPROBE_JOBS=16
 make census-tr-rwstage RWPROBE_ROWS=censustr_rw_rows_v6_pass2.tsv RWSTAGE_START=10
