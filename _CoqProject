@@ -5300,6 +5300,7 @@ theories/CensusTr/ProvTr_TC_07.v
 theories/CensusTr/ProvTr_TC_08.v
 theories/CensusTr/ProvTr_TC_09.v
 theories/CensusTr/ProvTr_TC_10.v
+theories/CensusTr/ProvTr_TC_11.v
 theories/CensusTr/ProvTr_RW_00.v
 theories/CensusTr/ProvTr_RW_01.v
 theories/CensusTr/ProvTr_RW_02.v
