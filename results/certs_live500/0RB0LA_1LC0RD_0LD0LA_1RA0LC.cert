@@ -1,0 +1,115 @@
+bbbcert v5
+machine 0RB0LA_1LC0RD_0LD0LA_1RA0LC
+type irules
+blk 2 010001
+blk 3 110011
+blk 4 101000
+blk 5 111001
+blk 6 000101
+anchor_step 197191
+decided_at_step 197191
+k0 78
+kmin 5
+meta_a 1
+meta_b 1
+tpl_state D
+tpl_hsym 0
+tpl_left 0
+tpl_right 5
+tplrun R 0 2 1 0
+tplrun R 1 0 0 1
+tplrun R 2 1 0 2
+tplrun R 3 0 0 1
+tplrun R 4 1 0 1
+nrules 6
+rule 0 A 0 3 8
+rulepfx 0 1 1
+rulerun 0 L 0 1 V 1 1
+rulerun 0 L 1 0 C 2
+rulerun 0 L 2 1 C 1
+rulerun 0 R 0 1 C 1
+rulerun 0 R 1 0 C 1
+rulerun 0 R 2 1 V -1 2
+rulerun 0 R 3 2 V 0 1
+rulerun 0 R 4 0 C 1
+rulerun 0 R 5 1 C 2
+rulerun 0 R 6 0 C 1
+rulerun 0 R 7 1 C 1
+rule 1 A 0 5 8
+rulepfx 1 1 1
+rulerun 1 L 0 1 V 1 1
+rulerun 1 L 1 0 C 2
+rulerun 1 L 2 1 C 4
+rulerun 1 L 3 0 C 2
+rulerun 1 L 4 1 C 1
+rulerun 1 R 0 1 C 1
+rulerun 1 R 1 0 C 1
+rulerun 1 R 2 1 V -1 2
+rulerun 1 R 3 2 V 0 1
+rulerun 1 R 4 0 C 1
+rulerun 1 R 5 1 C 2
+rulerun 1 R 6 0 C 1
+rulerun 1 R 7 1 C 1
+rule 2 A 0 7 8
+rulepfx 2 1 1
+rulerun 2 L 0 1 V 1 1
+rulerun 2 L 1 0 C 2
+rulerun 2 L 2 1 C 4
+rulerun 2 L 3 0 C 2
+rulerun 2 L 4 1 C 4
+rulerun 2 L 5 0 C 2
+rulerun 2 L 6 1 C 1
+rulerun 2 R 0 1 C 1
+rulerun 2 R 1 0 C 1
+rulerun 2 R 2 1 V -1 2
+rulerun 2 R 3 2 V 0 1
+rulerun 2 R 4 0 C 1
+rulerun 2 R 5 1 C 2
+rulerun 2 R 6 0 C 1
+rulerun 2 R 7 1 C 1
+rule 3 A 0 1 7
+rulepfx 3 1 1
+rulerun 3 L 0 5 V 1 1
+rulerun 3 R 0 1 C 1
+rulerun 3 R 1 0 C 1
+rulerun 3 R 2 2 V -1 2
+rulerun 3 R 3 0 C 1
+rulerun 3 R 4 1 C 2
+rulerun 3 R 5 0 C 1
+rulerun 3 R 6 1 C 1
+rule 4 A 0 4 7
+rulepfx 4 1 1
+rulerun 4 L 0 1 V 1 1
+rulerun 4 L 1 0 C 2
+rulerun 4 L 2 1 C 1
+rulerun 4 L 3 5 V 0 1
+rulerun 4 R 0 1 C 1
+rulerun 4 R 1 0 C 1
+rulerun 4 R 2 1 V -1 2
+rulerun 4 R 3 0 C 1
+rulerun 4 R 4 1 C 2
+rulerun 4 R 5 0 C 1
+rulerun 4 R 6 1 C 1
+rule 5 B 0 5 4
+rulepfx 5 1 1
+rulerun 5 L 0 0 C 1
+rulerun 5 L 1 1 C 1
+rulerun 5 L 2 0 C 2
+rulerun 5 L 3 1 C 2
+rulerun 5 L 4 5 V -1 2
+rulerun 5 R 0 6 V 1 1
+rulerun 5 R 1 1 C 1
+rulerun 5 R 2 0 C 1
+rulerun 5 R 3 1 C 1
+claim_status irules
+claim_qh F
+claim_score 0
+claim_trans A0 I 43136 197189
+claim_trans A1 I 24336 197188
+claim_trans B0 I 24728 197190
+claim_trans B1 I 18408 197175
+claim_trans C0 I 30968 197191
+claim_trans C1 I 6240 197187
+claim_trans D0 I 36895 197182
+claim_trans D1 I 12480 197186
+end

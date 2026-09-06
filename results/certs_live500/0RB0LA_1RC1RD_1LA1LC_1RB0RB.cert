@@ -1,0 +1,99 @@
+bbbcert v6
+machine 0RB0LA_1RC1RD_1LA1LC_1RB0RB
+type irules
+blk 2 01
+blk 3 1101
+blk 4 1110
+blk 5 10
+blk 6 0111
+blk 7 1011
+anchor_step 197835
+decided_at_step 197835
+k0 46
+kmin 7
+meta_a 1
+meta_b 1
+tpl_state C
+tpl_hsym 0
+tpl_left 3
+tpl_right 0
+tplrun L 0 4 1 0
+tplrun L 1 5 4 -4
+tplrun L 2 1 0 1
+nrules 10
+rule 0 C 0 2 3
+rulepfx 0 1 1
+rulerun 0 L 0 5 V -1 2
+rulerun 0 L 1 1 C 1
+rulerun 0 R 0 1 V 2 1
+rulerun 0 R 1 4 V 0 1
+rulerun 0 R 2 1 C 1
+rule 1 B 1 1 3
+rulepfx 1 1 1
+rulerun 1 L 0 2 V 1 1
+rulerun 1 R 0 1 V -2 3
+rulerun 1 R 1 4 V 0 1
+rulerun 1 R 2 1 C 1
+rule 2 B 0 1 4
+rulepfx 2 1 1
+rulerun 2 L 0 2 V -1 3
+rulerun 2 R 0 1 V 2 2
+rulerun 2 R 1 6 V 0 1
+rulerun 2 R 2 0 C 3
+rulerun 2 R 3 1 C 1
+rule 3 B 1 1 4
+rulepfx 3 1 1
+rulerun 3 L 0 2 V 1 1
+rulerun 3 R 0 1 V -2 3
+rulerun 3 R 1 6 V 0 1
+rulerun 3 R 2 0 C 3
+rulerun 3 R 3 1 C 1
+rule 4 A 0 4 2
+rulepfx 4 1 1
+rulerun 4 L 0 1 C 2
+rulerun 4 L 1 7 V -1 2
+rulerun 4 L 2 1 C 1
+rulerun 4 L 3 2 V 0 1
+rulerun 4 R 0 0 C 1
+rulerun 4 R 1 7 V 1 2
+rule 5 C 0 2 2
+rulepfx 5 1 1
+rulerun 5 L 0 1 C 1
+rulerun 5 L 1 2 V -1 2
+rulerun 5 R 0 1 V 2 1
+rulerun 5 R 1 7 V 0 1
+rule 6 B 1 1 2
+rulepfx 6 1 1
+rulerun 6 L 0 2 V 1 1
+rulerun 6 R 0 1 V -2 3
+rulerun 6 R 1 7 V 0 1
+rule 7 C 0 5 1
+rulepfx 7 1 1
+rulerun 7 L 0 1 C 1
+rulerun 7 L 1 6 V -1 3
+rulerun 7 L 2 0 C 1
+rulerun 7 L 3 1 C 1
+rulerun 7 L 4 2 V 0 1
+rulerun 7 R 0 6 V 1 1
+rule 8 B 0 1 2
+rulepfx 8 1 1
+rulerun 8 L 0 2 V -1 3
+rulerun 8 R 0 1 V 2 2
+rulerun 8 R 1 6 V 0 1
+rule 9 B 1 1 2
+rulepfx 9 1 1
+rulerun 9 L 0 2 V 1 1
+rulerun 9 R 0 1 V -2 3
+rulerun 9 R 1 6 V 0 1
+claim_status irules
+claim_qh F
+claim_score 0
+claim_trans A0 I 24798 197290
+claim_trans A1 I 32986 197284
+claim_trans B0 I 24798 197835
+claim_trans B1 I 24752 197833
+claim_trans C0 I 24797 197289
+claim_trans C1 I 40952 197288
+claim_trans D0 I 4231 197834
+claim_trans D1 I 20521 197832
+end
