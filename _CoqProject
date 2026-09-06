@@ -5314,6 +5314,14 @@ theories/CensusTr/ProvTr_RW_09.v
 theories/CensusTr/ProvTr_IR_00.v
 theories/CensusTr/ProvTr_IR_01.v
 theories/CensusTr/ProvTr_IR_02.v
+theories/CensusTr/ProvTr_RK_00.v
+theories/CensusTr/ProvTr_RK_01.v
+theories/CensusTr/ProvTr_RK_02.v
+theories/CensusTr/ProvTr_RK_03.v
+theories/CensusTr/ProvTr_RK_04.v
+theories/CensusTr/ProvTr_RK_05.v
+theories/CensusTr/ProvTr_RK_06.v
+theories/CensusTr/ProvTr_RK_07.v
 theories/CensusTr/RunTr.v
 theories/CensusTr/RunTr_Split.v
 theories/Checkers/IRules/AnchorVisitsTr.v

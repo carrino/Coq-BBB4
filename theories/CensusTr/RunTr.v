@@ -43,7 +43,8 @@ From BBB4.CensusTr Require Import
 From BBB4.CensusTr Require Import
   ProvTr_TC_00 ProvTr_TC_01 ProvTr_TC_02 ProvTr_TC_03 ProvTr_TC_04 ProvTr_TC_05 ProvTr_TC_06 ProvTr_TC_07 ProvTr_TC_08 ProvTr_TC_09 ProvTr_TC_10 ProvTr_TC_11
   ProvTr_RW_00 ProvTr_RW_01 ProvTr_RW_02 ProvTr_RW_03 ProvTr_RW_04 ProvTr_RW_05 ProvTr_RW_06 ProvTr_RW_07 ProvTr_RW_08 ProvTr_RW_09
-  ProvTr_IR_00 ProvTr_IR_01 ProvTr_IR_02.
+  ProvTr_IR_00 ProvTr_IR_01 ProvTr_IR_02
+  ProvTr_RK_00 ProvTr_RK_01 ProvTr_RK_02 ProvTr_RK_03 ProvTr_RK_04 ProvTr_RK_05 ProvTr_RK_06 ProvTr_RK_07.
 Import ListNotations.
 
 Set Default Goal Selector "!".
@@ -181,9 +182,11 @@ Definition prov_tr_irtr : list TM :=
     (ProvTr_TC_NN, Checkers/TCyclerTr), the RepWL-at-tape-period
     bouncers (ProvTr_RW_NN, CensusTr/RepWLTr) and the state census's
     irules certificates re-checked at instruction level (ProvTr_IR_NN,
-    Checkers/IRules/MetaBlkPfxTr, MetaTr) *)
+    Checkers/IRules/MetaBlkPfxTr, MetaTr) and the state census's
+    rank-rung machines re-checked by [rank_tier_tr] at the same rung
+    (ProvTr_RK_NN) *)
 Definition prov_tr : list TM :=
-  prov_tr_irtr ++ ptl_00 ++ ptl_01 ++ ptl_02 ++ ptl_03 ++ ptl_04 ++ ptl_05 ++ ptl_06 ++ ptl_07 ++ ptl_08 ++ ptl_09 ++ ptl_10 ++ ptl_11 ++ ptc_00 ++ ptc_01 ++ ptc_02 ++ ptc_03 ++ ptc_04 ++ ptc_05 ++ ptc_06 ++ ptc_07 ++ ptc_08 ++ ptc_09 ++ ptc_10 ++ ptc_11 ++ ptw_00 ++ ptw_01 ++ ptw_02 ++ ptw_03 ++ ptw_04 ++ ptw_05 ++ ptw_06 ++ ptw_07 ++ ptw_08 ++ ptw_09 ++ pti_00 ++ pti_01 ++ pti_02.
+  prov_tr_irtr ++ ptl_00 ++ ptl_01 ++ ptl_02 ++ ptl_03 ++ ptl_04 ++ ptl_05 ++ ptl_06 ++ ptl_07 ++ ptl_08 ++ ptl_09 ++ ptl_10 ++ ptl_11 ++ ptc_00 ++ ptc_01 ++ ptc_02 ++ ptc_03 ++ ptc_04 ++ ptc_05 ++ ptc_06 ++ ptc_07 ++ ptc_08 ++ ptc_09 ++ ptc_10 ++ ptc_11 ++ ptw_00 ++ ptw_01 ++ ptw_02 ++ ptw_03 ++ ptw_04 ++ ptw_05 ++ ptw_06 ++ ptw_07 ++ ptw_08 ++ ptw_09 ++ pti_00 ++ pti_01 ++ pti_02 ++ prk_00 ++ prk_01 ++ prk_02 ++ prk_03 ++ prk_04 ++ prk_05 ++ prk_06 ++ prk_07.
 Definition provqh_tr : list TM := [].
 
 Lemma prov_tr_irtr_all : Forall NeverQuasiHaltsTr prov_tr_irtr.
@@ -293,7 +296,7 @@ Lemma prov_tr_all : Forall NeverQuasiHaltsTr prov_tr.
 Proof.
   unfold prov_tr.
   repeat (apply Forall_app; split);
-    first [exact prov_tr_irtr_all | exact ptl_00_nqhtr | exact ptl_01_nqhtr | exact ptl_02_nqhtr | exact ptl_03_nqhtr | exact ptl_04_nqhtr | exact ptl_05_nqhtr | exact ptl_06_nqhtr | exact ptl_07_nqhtr | exact ptl_08_nqhtr | exact ptl_09_nqhtr | exact ptl_10_nqhtr | exact ptl_11_nqhtr | exact ptc_00_nqhtr | exact ptc_01_nqhtr | exact ptc_02_nqhtr | exact ptc_03_nqhtr | exact ptc_04_nqhtr | exact ptc_05_nqhtr | exact ptc_06_nqhtr | exact ptc_07_nqhtr | exact ptc_08_nqhtr | exact ptc_09_nqhtr | exact ptc_10_nqhtr | exact ptc_11_nqhtr | exact ptw_00_nqhtr | exact ptw_01_nqhtr | exact ptw_02_nqhtr | exact ptw_03_nqhtr | exact ptw_04_nqhtr | exact ptw_05_nqhtr | exact ptw_06_nqhtr | exact ptw_07_nqhtr | exact ptw_08_nqhtr | exact ptw_09_nqhtr | exact pti_00_nqhtr | exact pti_01_nqhtr | exact pti_02_nqhtr].
+    first [exact prov_tr_irtr_all | exact ptl_00_nqhtr | exact ptl_01_nqhtr | exact ptl_02_nqhtr | exact ptl_03_nqhtr | exact ptl_04_nqhtr | exact ptl_05_nqhtr | exact ptl_06_nqhtr | exact ptl_07_nqhtr | exact ptl_08_nqhtr | exact ptl_09_nqhtr | exact ptl_10_nqhtr | exact ptl_11_nqhtr | exact ptc_00_nqhtr | exact ptc_01_nqhtr | exact ptc_02_nqhtr | exact ptc_03_nqhtr | exact ptc_04_nqhtr | exact ptc_05_nqhtr | exact ptc_06_nqhtr | exact ptc_07_nqhtr | exact ptc_08_nqhtr | exact ptc_09_nqhtr | exact ptc_10_nqhtr | exact ptc_11_nqhtr | exact ptw_00_nqhtr | exact ptw_01_nqhtr | exact ptw_02_nqhtr | exact ptw_03_nqhtr | exact ptw_04_nqhtr | exact ptw_05_nqhtr | exact ptw_06_nqhtr | exact ptw_07_nqhtr | exact ptw_08_nqhtr | exact ptw_09_nqhtr | exact pti_00_nqhtr | exact pti_01_nqhtr | exact pti_02_nqhtr | exact prk_00_nqhtr | exact prk_01_nqhtr | exact prk_02_nqhtr | exact prk_03_nqhtr | exact prk_04_nqhtr | exact prk_05_nqhtr | exact prk_06_nqhtr | exact prk_07_nqhtr].
 Qed.
 
 Lemma provqh_tr_all :

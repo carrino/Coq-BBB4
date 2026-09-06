@@ -252,10 +252,12 @@ it:
   (the census contract at the raised bound `B_tr = 32,779,478`),
   `DecideTr`/`RunTr` (the in-walk decider), `RunTr_Split` (the
   kernel-checked frontier split), the frozen deferred tables
-  (`DeferredTr_*`, 17,989 rows) and the proven tier `prov_tr`: 5,800
+  (`DeferredTr_*`, 17,989 rows) and the proven tier `prov_tr`: 6,636
   machines as certificate stages (`ProvTr_TC_*` translated cyclers,
   `ProvTr_Lap_*` lap boards from `Machines/CountersTr/`, `ProvTr_RW_*`
-  RepWL at the tape period).
+  RepWL at the tape period, `ProvTr_IR_*` and `ProvTr_RK_*` the state
+  census's irules certificates and rank rungs re-checked at
+  instruction level).
 * The census theorem `census_tr : forall tm, QHBoundTr B_tr tm \/
   Deferred D_tr tm` is assembled from 96 native-compute walk units
   (`theories/CensusTr/Compute/`, generated; not part of the default

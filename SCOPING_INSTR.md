@@ -1685,6 +1685,71 @@ lemma.  `gen_provtr_rw.py stage` now keys every verdict by the machine
 spec written in its probe file.  The counts (923 / 17,989 / 1,073) were
 unchanged; the pairing was not.
 
+### 7.1y The state-proven rows re-checked: quiet machines, and the rank gap is a window-size gap (2026-09-06)
+
+The v7 list carries 3,870 rows that the STATE census proved never-QH
+(§7.1v: the "state-proven" class).  Each has a state route on record
+(tools/proven_map.tsv, the boards): an irules certificate, a translated
+cycler, or an n-gram rank rung (n, t).  The instruction checkers take
+the same certificates and rungs, so the cheapest conveyor is "same
+route, instruction checker".  Three probes in the container:
+
+| state route | rows | instruction checker | accepted | rejected |
+|---|---:|---|---:|---:|
+| irules cert (BIRCertP / IRCert) | 898 | MetaBlkPfxTr / MetaTr, same cert | 600 (`ProvTr_IR_00..02`) | 298 |
+| translated cycler (tcyc manifest) | 33 | TCyclerTr, `tc_find` period | 30 (`ProvTr_TC_11`) | 3 |
+| rank rung (n, t) | 2,780 | `rank_tier_tr tm n t 200000 512`, same rung | 206 (`ProvTr_RK_00..07`) | 2,539 (+35 timed out) |
+
+**A third of the state-proven rows are quiet-instruction machines.**
+A 2M-step scan (last fire step of each instruction; "quiet" if some
+fired instruction does not fire again in the second half) says 1,215 of
+the 3,870 have an instruction that stops.  The heuristic over-reports
+slightly: 48 of the 600 machines the irules checker PROVES live are
+"quiet" by the scan, with last fires at 450K-700K of 2M -- instructions
+that fire once per counter overflow.  Take the quiet count as ~1,150.
+Those machines are never-QH at the state level and QH at the
+instruction level; they belong on the `QHBoundTr` side of the theorem,
+where no route exists yet (§7.1v).
+
+**The irules conveyor is exhausted on the live side.**  All 298
+rejected irules certificates are quiet machines by the scan.  Zero
+rejections on live machines: the instruction-mask gate of MetaBlkPfxTr
+accepts every state certificate whose machine is actually live.
+
+**The rank gap is a window-size gap.**  Accept rate by the state rung:
+
+| rung (n, t) | rows | accepted |
+|---|---:|---:|
+| (2, 0) | 1,682 | 0 |
+| (3, 0) / (3, 64) | 718 | 0 |
+| (4, 0) / (4, 64) | 173 | 71 (41%) |
+| (5, 0) | 50 | 20 (40%) |
+| (6, 0) / (6, 64) / (6, 256) | 69 | 45 (65%) |
+| (7, 0) / (7, 64) | 56 | 44 (79%) |
+| (8, 0) | 20 | 17 (85%) |
+| (10, 0) / (11, 0) / (12, 0) | 9 | 9 (100%) |
+
+At the state rung n = 2 or 3 the instruction target never certifies
+(the fake macro-cycle of §7.1w lives in the coarse abstraction), but
+from n = 4 up the same rung certifies at 40-100%.  So the gap is not
+"rank rules do not work at instruction targets"; it is "the
+instruction target needs a wider window than the state target did".
+The walk's rank ladder stops at n = 3 (`rank_rungs_tr`); the deep
+ladder adds (4, 1024), (5, 1024), (6, 4096).  Of the 2,539 rejections
+807 are quiet by the scan; the other 1,641 (all at (2, 0) / (3, 0),
+live) are being re-probed at (4, 0) in the container -- results go in
+§7.1z.
+
+Cost: rungs n >= 7 take minutes per machine (the closure at window 7+
+is large), n <= 6 seconds.  `gen_provtr_rk.py probe` writes the rows
+in chunks; probe n >= 7 rows one per file under a timeout, or one slow
+row stalls a 100-row file (the first layout lost 35 rows that way).
+
+Where the 3,870 stand after this: 836 proven at the instruction level
+(600 + 30 + 206), ~1,150 quiet (QHBoundTr side, no route), ~1,850 live
+and unproven, nearly all of them the (2, 0) / (3, 0) rank rows.
+`prov_tr` is now 6,636 machines.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
