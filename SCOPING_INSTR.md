@@ -1750,6 +1750,21 @@ Where the 3,870 stand after this: 836 proven at the instruction level
 and unproven, nearly all of them the (2, 0) / (3, 0) rank rows.
 `prov_tr` is now 6,636 machines.
 
+### 7.1z Rank escalation: a wider window does not rescue the (2, 0) / (3, 0) rows (2026-09-06)
+
+The 1,641 live rank rejections of §7.1y (state rung (2, 0) or (3, 0))
+re-probed at (4, 0) with the same fuel: 85 accepted (82 of the (2, 0)
+rows, 3 of the (3, 0) rows), 1,556 rejected -- 5%.  Staged as
+`ProvTr_RK_08` (prk_08).  A (6, 0) sample of 150 of the failures is
+the next measurement; if it stays in single digits the class needs
+the box's deep burn (ng rungs to (10, 4096), rank to (6, 4096),
+RepWL, lex) rather than more rank rungs -- these rows are not in
+`censustr_deferred_v7_inwalk.txt`, so the first deep burn did not see
+them.  Their list is `censustr_stproven_live_rest.txt`: the 1,782
+state-proven rows that are live by the 2M-step scan and still
+unproven at the instruction level (921 of the 3,870 are now proven,
+1,167 quiet).
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
