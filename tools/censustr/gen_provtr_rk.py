@@ -10,7 +10,9 @@ try is the SAME rung.  Measured on the 2,780 state-proven machines whose
 state route was a rank rung: roughly one in five passes (the instruction
 target removes fewer abstract nodes, see SCOPING_INSTR.md section 7.1y).
 
-  probe ROWS OUTDIR          -> OUTDIR/ProbeRK_NN.v (Eval per machine)
+  probe ROWS OUTDIR          -> OUTDIR/ProbeRK_NN.v (Eval per machine; --chunk,
+                                --start NN).  Rungs n >= 7 take minutes each:
+                                probe them one per file under a timeout.
   stage ROWS PROBEDIR OUTDIR -> OUTDIR/ProvTr_RK_NN.v (prk_NN + Forall)
 ROWS: TSV with header  spec<TAB>n<TAB>t  (censustr_rank_rows_stproven.tsv).
 """
@@ -50,10 +52,10 @@ def rows(path):
     return out
 
 
-def probe(rowsfile, outdir, chunk):
+def probe(rowsfile, outdir, chunk, start=0):
     os.makedirs(outdir, exist_ok=True)
     rs = rows(rowsfile)
-    n = 0
+    n = start
     for ci in range(0, len(rs), chunk):
         with open(os.path.join(outdir, 'ProbeRK_%02d.v' % n), 'w') as f:
             f.write(HEADER)
@@ -61,7 +63,7 @@ def probe(rowsfile, outdir, chunk):
                 f.write('(* %s  n=%d t=%d *)\n%s\nEval vm_compute in rank_tier_tr tm_%d %d %d %d %d.\n\n'
                         % (sp, nn, t, tm_lambda('tm_%d' % i, sp), i, nn, t, FUEL, ROUNDS))
         n += 1
-    sys.stderr.write('wrote %d probe file(s) to %s\n' % (n, outdir))
+    sys.stderr.write('wrote %d probe file(s) to %s\n' % (n - start, outdir))
 
 
 def read_verdicts(probedir):
@@ -123,7 +125,7 @@ def main():
     ap.add_argument('--start', type=int, default=0)
     a = ap.parse_args()
     if a.phase == 'probe':
-        probe(a.args[0], a.args[1], a.chunk or 100)
+        probe(a.args[0], a.args[1], a.chunk or 25, a.start)
     else:
         stage(a.args[0], a.args[1], a.args[2], a.chunk or 200, a.start)
 
