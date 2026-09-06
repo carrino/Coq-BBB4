@@ -1660,6 +1660,28 @@ deferred list until a new abstraction exists; the state census's
 per-machine sync-bouncer-counter glue (BOUNCER_COUNTER_READING.md) is
 the only known lead.
 
+### 7.1x The v7 re-walk: census_tr checked against the 17,989-row list (2026-09-05)
+
+`census_tr : forall tm, QHBoundTr B_tr tm \/ Deferred D_tr tm` re-checked
+on the box with D_tr = the v7 tables (v6 minus the 5,703 rows the
+proven tier covers; 17,989 rows) and prov_tr = 5,800 machines (97
+IRulesTr + 2,297 lap boards + 2,483 translated cyclers + 923 RepWL
+bouncers).  96 native units, `make census-tr-walk WALK_JOBS=7`; unit
+times 420-2,466 s.  Two operational lessons, both now in the Makefile:
+a unit process peaks at 2.7-3.8 GB (it loads the native code of every
+certificate stage), so WALK_JOBS=16 on 31 GB OOM-kills a third of the
+first wave -- budget WALK_JOBS <= RAM_GB/4; and a unit counts as done
+only if its .vo is newer than RunTr_Split.vo, so stale units from an
+earlier walk are rebuilt rather than skipped (skipping them fails the
+assembly with "inconsistent assumptions").
+
+Bookkeeping lesson from the same day: the first RepWL stage files
+paired probe verdicts with machines by *file order*, and past 100 files
+that order is lexicographic; the kernel refused the first mis-paired
+lemma.  `gen_provtr_rw.py stage` now keys every verdict by the machine
+spec written in its probe file.  The counts (923 / 17,989 / 1,073) were
+unchanged; the pairing was not.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

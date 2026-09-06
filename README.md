@@ -258,8 +258,12 @@ it:
   RepWL at the tape period).
 * The census theorem `census_tr : forall tm, QHBoundTr B_tr tm \/
   Deferred D_tr tm` is assembled from 96 native-compute walk units
-  (`theories/CensusTr/Compute/`, generated, 143 min on 16 cores; not
-  part of the default build).
+  (`theories/CensusTr/Compute/`, generated; not part of the default
+  build).  Last checked 2026-09-05 against the v7 tables (17,989
+  deferred rows) with the 5,800-machine proven tier:
+  `make census-tr-units && make census-tr-walk WALK_JOBS=7` (about
+  4 h on 16 cores / 31 GB; the job count is a memory budget, see the
+  Makefile).
 
 Build: `make instr` for the whole chain (~9 CPU-hours beyond the
 BBB(4) build), `make instr-core` for the slice CI compiles.  The
