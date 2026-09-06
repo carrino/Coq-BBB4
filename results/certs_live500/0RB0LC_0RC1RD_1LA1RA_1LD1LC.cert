@@ -1,0 +1,64 @@
+bbbcert v5
+machine 0RB0LC_0RC1RD_1LA1RA_1LD1LC
+type irules
+blk 2 11110
+blk 3 10111
+blk 4 01010
+blk 5 00101
+blk 6 01111
+blk 7 11101
+anchor_step 199800
+decided_at_step 199800
+k0 99
+kmin 7
+meta_a 1
+meta_b 1
+tpl_state A
+tpl_hsym 0
+tpl_left 0
+tpl_right 6
+tplrun R 0 2 1 0
+tplrun R 1 1 0 1
+tplrun R 2 0 0 1
+tplrun R 3 1 0 1
+tplrun R 4 0 0 1
+tplrun R 5 1 0 3
+nrules 2
+rule 0 C 0 6 2
+rulepfx 0 1 1
+rulerun 0 L 0 1 C 1
+rulerun 0 L 1 5 V -1 2
+rulerun 0 L 2 0 C 2
+rulerun 0 L 3 1 C 1
+rulerun 0 L 4 0 C 1
+rulerun 0 L 5 1 C 1
+rulerun 0 R 0 6 V 1 1
+rulerun 0 R 1 1 C 5
+rule 1 C 0 9 5
+rulepfx 1 1 1
+rulerun 1 L 0 1 C 1
+rulerun 1 L 1 0 C 1
+rulerun 1 L 2 1 C 1
+rulerun 1 L 3 0 C 1
+rulerun 1 L 4 4 V -1 2
+rulerun 1 L 5 0 C 1
+rulerun 1 L 6 1 C 1
+rulerun 1 L 7 0 C 1
+rulerun 1 L 8 1 C 1
+rulerun 1 R 0 7 V 1 1
+rulerun 1 R 1 0 C 1
+rulerun 1 R 2 1 C 1
+rulerun 1 R 3 0 C 1
+rulerun 1 R 4 1 C 3
+claim_status irules
+claim_qh F
+claim_score 0
+claim_trans A0 I 30001 199796
+claim_trans A1 I 39700 199794
+claim_trans B0 I 9704 198879
+claim_trans B1 I 20297 199797
+claim_trans C0 I 30001 199800
+claim_trans C1 I 39700 198900
+claim_trans D0 I 10100 199798
+claim_trans D1 I 20297 199799
+end

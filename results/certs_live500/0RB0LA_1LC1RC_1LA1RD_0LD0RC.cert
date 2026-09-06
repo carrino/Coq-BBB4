@@ -1,0 +1,130 @@
+bbbcert v5
+machine 0RB0LA_1LC1RC_1LA1RD_0LD0RC
+type irules
+blk 2 101
+blk 3 011
+blk 4 11011
+blk 5 110
+blk 6 11110
+blk 7 01011
+blk 8 01101
+blk 9 10110
+blk 10 01111
+blk 11 10101
+blk 12 10
+blk 13 01
+blk 14 10111
+anchor_step 196638
+decided_at_step 196638
+k0 53
+kmin 7
+meta_a 1
+meta_b 1
+tpl_state C
+tpl_hsym 0
+tpl_left 4
+tpl_right 0
+tplrun L 0 3 3 -1
+tplrun L 1 7 1 0
+tplrun L 2 0 0 2
+tplrun L 3 1 0 2
+nrules 12
+rule 0 B 0 4 2
+rulepfx 0 1 1
+rulerun 0 L 0 3 V -1 3
+rulerun 0 L 1 7 V 0 1
+rulerun 0 L 2 0 C 2
+rulerun 0 L 3 1 C 2
+rulerun 0 R 0 3 V 1 1
+rulerun 0 R 1 1 C 1
+rule 1 B 0 3 3
+rulepfx 1 1 1
+rulerun 1 L 0 7 V -1 3
+rulerun 1 L 1 0 C 2
+rulerun 1 L 2 1 C 2
+rulerun 1 R 0 10 V 1 1
+rulerun 1 R 1 3 V 0 1
+rulerun 1 R 2 1 C 1
+rule 2 C 0 1 4
+rulepfx 2 1 1
+rulerun 2 L 0 7 V 1 2
+rulerun 2 R 0 1 C 4
+rulerun 2 R 1 10 V -1 2
+rulerun 2 R 2 3 V 0 1
+rulerun 2 R 3 1 C 1
+rule 3 C 0 2 3
+rulepfx 3 1 1
+rulerun 3 L 0 3 V 1 2
+rulerun 3 L 1 7 V 0 1
+rulerun 3 R 0 1 C 2
+rulerun 3 R 1 3 V -1 2
+rulerun 3 R 2 1 C 1
+rule 4 B 0 2 2
+rulepfx 4 1 1
+rulerun 4 L 0 3 V -1 3
+rulerun 4 L 1 7 V 0 1
+rulerun 4 R 0 3 V 1 1
+rulerun 4 R 1 1 C 1
+rule 5 B 0 1 3
+rulepfx 5 1 1
+rulerun 5 L 0 7 V -1 3
+rulerun 5 R 0 10 V 1 1
+rulerun 5 R 1 3 V 0 1
+rulerun 5 R 2 1 C 1
+rule 6 C 1 1 4
+rulepfx 6 1 1
+rulerun 6 L 0 8 V 1 1
+rulerun 6 R 0 1 C 1
+rulerun 6 R 1 10 V -1 2
+rulerun 6 R 2 3 V 0 1
+rulerun 6 R 3 1 C 1
+rule 7 C 0 2 3
+rulepfx 7 1 1
+rulerun 7 L 0 3 V 1 2
+rulerun 7 L 1 8 V 0 1
+rulerun 7 R 0 1 C 2
+rulerun 7 R 1 3 V -1 2
+rulerun 7 R 2 1 C 1
+rule 8 B 0 2 2
+rulepfx 8 1 1
+rulerun 8 L 0 3 V -1 3
+rulerun 8 L 1 8 V 0 1
+rulerun 8 R 0 3 V 1 1
+rulerun 8 R 1 1 C 1
+rule 9 B 0 3 3
+rulepfx 9 1 1
+rulerun 9 L 0 0 C 1
+rulerun 9 L 1 1 C 1
+rulerun 9 L 2 8 V -1 2
+rulerun 9 R 0 10 V 1 1
+rulerun 9 R 1 3 V 0 1
+rulerun 9 R 2 1 C 1
+rule 10 D 1 3 3
+rulepfx 10 1 1
+rulerun 10 L 0 9 V 1 1
+rulerun 10 L 1 0 C 1
+rulerun 10 L 2 1 C 2
+rulerun 10 R 0 10 V -1 2
+rulerun 10 R 1 3 V 0 1
+rulerun 10 R 2 1 C 1
+rule 11 C 1 4 3
+rulepfx 11 1 1
+rulerun 11 L 0 2 V 1 1
+rulerun 11 L 1 9 V 0 1
+rulerun 11 L 2 0 C 1
+rulerun 11 L 3 1 C 2
+rulerun 11 R 0 1 C 1
+rulerun 11 R 1 3 V -1 2
+rulerun 11 R 2 1 C 1
+claim_status irules
+claim_qh F
+claim_score 0
+claim_trans A0 I 38533 196635
+claim_trans A1 I 37897 196631
+claim_trans B0 I 21255 196633
+claim_trans B1 I 17278 196636
+claim_trans C0 I 38532 196634
+claim_trans C1 I 21413 196637
+claim_trans D0 I 317 196625
+claim_trans D1 I 21413 196638
+end

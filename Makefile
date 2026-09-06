@@ -571,6 +571,339 @@ census-resume: all
 .PHONY: census-resume
 
 # ---------------------------------------------------------------------------
+# Transition-level (instruction-level) census: the COLLECTION walk
+# (SCOPING_INSTR.md section 5; theories/CensusTr/).  Phase-0 tier stack:
+# halt + in-place/translated cycles + empty lookup tiers -- every other
+# node lands in the back queue, and the captured back queue IS the
+# transition-level deferred-candidate list.  Decode it with
+#   python3 tools/censustr/decode_enc.py census_probes/censustr_collect.out
+#
+#   make census-tr-collect      # box: native_compute (census opam switch)
+#   make census-tr-collect-vm   # anywhere: vm_compute (measured ~1.4 ms/pop
+#                               #   in-container; whole tree a few hours,
+#                               #   one process, a few GB RSS)
+CENSUS_TR_DRIVER := theories/CensusTr/WalkTr_Collect.v
+
+_census-tr-deps: Makefile.coq
+	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr.vo
+.PHONY: _census-tr-deps
+
+# Both targets raise the stack first (STACK_KB, header comment): the walk's
+# result is a ~400K-element back-queue list, and reading such a term back
+# from the evaluator recurses over its spine -- on the default 8 MB stack
+# that is a guaranteed `Error: Stack overflow` AFTER the whole walk has run.
+census-tr-collect-vm: _census-tr-deps
+	@mkdir -p census_probes
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 coqc -Q theories BBB4 -w -abstract-large-number $(CENSUS_TR_DRIVER) \
+	  | tee census_probes/censustr_collect.out
+	@echo ">>> back queue captured in census_probes/censustr_collect.out"
+	@echo ">>> decode: python3 tools/censustr/decode_enc.py census_probes/censustr_collect.out"
+.PHONY: census-tr-collect-vm
+
+census-tr-collect: _census-tr-deps
+	@mkdir -p census_probes
+	@sed 's/vm_compute/native_compute/' $(CENSUS_TR_DRIVER) \
+	  > census_probes/WalkTr_Collect_native.v
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 coqc -Q theories BBB4 -w -abstract-large-number \
+	  census_probes/WalkTr_Collect_native.v \
+	  | tee census_probes/censustr_collect.out
+	@echo ">>> back queue captured in census_probes/censustr_collect.out"
+	@echo ">>> decode: python3 tools/censustr/decode_enc.py census_probes/censustr_collect.out"
+.PHONY: census-tr-collect
+
+# 4-way sharded collection (box): one native_compute process per TNF
+# subtree (WalkTr_Collect_{A0,A1,B0,B1}.v, roots = q_0_tr's children).
+# Deferral is a per-machine decision, so the concatenated shard back
+# queues equal the single walk's back queue; decode them together:
+#   cat census_probes/censustr_collect_{A0,A1,B0,B1}.out \
+#     | python3 tools/censustr/decode_enc.py > censustr_deferred_vN.txt
+CENSUS_TR_SHARDS := A0 A1 B0 B1
+
+census-tr-collect-shards: _census-tr-deps
+	@mkdir -p census_probes
+	@for s in $(CENSUS_TR_SHARDS); do \
+	  sed 's/vm_compute/native_compute/' \
+	    theories/CensusTr/WalkTr_Collect_$$s.v \
+	    > census_probes/WalkTr_Collect_$${s}_native.v; \
+	done
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 for s in $(CENSUS_TR_SHARDS); do \
+	   ( coqc -Q theories BBB4 -w -abstract-large-number \
+	       census_probes/WalkTr_Collect_$${s}_native.v \
+	       > census_probes/censustr_collect_$$s.out 2>&1; \
+	     echo ">>> shard $$s finished" ) & \
+	 done; wait
+	@echo ">>> shard back queues in census_probes/censustr_collect_{A0,A1,B0,B1}.out"
+	@echo ">>> decode: cat census_probes/censustr_collect_{A0,A1,B0,B1}.out | python3 tools/censustr/decode_enc.py"
+.PHONY: census-tr-collect-shards
+
+# ---------------------------------------------------------------------------
+# FRONTIER-SPLIT parallel collection (preferred over the 4-way subtree
+# split, whose B1 subtree carries most of the tree alone):
+#
+#   make census-tr-frontier                 # stage 1: prefix walk, serialize queues
+#   make census-tr-genshards WALK_SHARDS=16 # stage 2: deal frontier into drivers
+#   make census-tr-collect-par WALK_JOBS=16 # stage 3: walk all shards in parallel
+#   cat census_probes/censustr_prefix_back.out census_probes/censustr_par_*.out \
+#     | python3 tools/censustr/decode_enc.py > censustr_deferred_vN.txt
+#
+# Deferral is per-machine, so prefix back + shard backs = the single
+# walk's back queue.  The prefix expands whole LEVELS (see
+# WalkTr_Frontier.v): popping is depth-first, which left the
+# unexpanded root child -- a quarter of the tree -- as one shard that
+# ran ~17 CPU-hours while 15 cores idled.  Level 3 gives 1,700
+# subtrees, dealt round-robin so siblings land in different shards.
+# 48 shards over WALK_JOBS cores is the design point; xargs queues
+# them.  If one still straggles, re-split it: see census-tr-resplit.
+WALK_SHARDS ?= 48
+WALK_JOBS ?= 16
+
+census-tr-frontier: _census-tr-deps
+	@mkdir -p census_probes
+	@# vm_compute, NOT native: the prefix is 3 level expansions of the
+	@# halt-only decider and runs in ~0.3 s.  (It was 24,576 pops of
+	@# the full ladder; see WalkTr_Frontier.v's header.)
+	@coqc -Q theories BBB4 -w -abstract-large-number \
+	  theories/CensusTr/WalkTr_Frontier.v \
+	  | tee census_probes/censustr_frontier.out
+	@echo ">>> next: make census-tr-genshards"
+.PHONY: census-tr-frontier
+
+census-tr-genshards:
+	@rm -f census_probes/WalkTr_Par_*.v census_probes/WalkTr_Par_*.vo \
+	  census_probes/censustr_par_*.out
+	@python3 tools/censustr/gen_walk_shards.py \
+	  census_probes/censustr_frontier.out --shards $(WALK_SHARDS)
+	@echo ">>> next: make census-tr-collect-par"
+.PHONY: census-tr-genshards
+
+census-tr-collect-par:
+	@for f in census_probes/WalkTr_Par_*.v; do \
+	  sed -i 's/vm_compute/native_compute/' $$f; \
+	done
+	@ulimit -s $(STACK_KB) 2>/dev/null || true; \
+	 ls census_probes/WalkTr_Par_*.v | xargs -P $(WALK_JOBS) -I{} sh -c \
+	  'b=$$(basename {} .v); \
+	   coqc -Q theories BBB4 -w -abstract-large-number {} \
+	     > census_probes/censustr_par_$${b#WalkTr_Par_}.out 2>&1; \
+	   echo ">>> $$b finished"'
+	@echo ">>> decode: cat census_probes/censustr_prefix_back.out census_probes/censustr_par_*.out | python3 tools/censustr/decode_enc.py"
+.PHONY: census-tr-collect-par
+
+# Escape hatch for a straggling shard: expand THAT node's own subtree
+# a couple of levels and shard it, so the remaining cores can help.
+# The sub-shards cover exactly the subtree the original shard covers,
+# so kill the original once they are done -- do not use both.
+#   make census-tr-resplit RESPLIT_NODES=17 RESPLIT_LEVELS=2 \
+#                          RESPLIT_SHARDS=16 RESPLIT_JOBS=15
+# then decode census_probes/sub17/censustr_prefix_back.out plus
+# census_probes/sub17/censustr_par_*.out alongside the other shards.
+RESPLIT_NODES ?=
+RESPLIT_LEVELS ?= 2
+RESPLIT_SHARDS ?= 16
+RESPLIT_JOBS ?= 15
+
+census-tr-resplit: _census-tr-deps
+	@test -n "$(RESPLIT_NODES)" || \
+	  { echo "set RESPLIT_NODES=<shard index>[,<index>...]"; exit 1; }
+	@python3 tools/censustr/gen_resplit.py \
+	  census_probes/censustr_frontier.out \
+	  --nodes $(RESPLIT_NODES) --levels $(RESPLIT_LEVELS)
+	@for n in $$(echo $(RESPLIT_NODES) | tr ',' ' '); do \
+	  p=$$(printf '%02d' $$n); \
+	  coqc -Q theories BBB4 -w -abstract-large-number \
+	    census_probes/resplit/Resplit_$$p.v \
+	    > census_probes/resplit/rs_$$p.out 2>&1; \
+	  python3 tools/censustr/gen_walk_shards.py \
+	    census_probes/resplit/rs_$$p.out --shards $(RESPLIT_SHARDS) \
+	    --outdir census_probes/sub$$p || exit 1; \
+	  for f in census_probes/sub$$p/WalkTr_Par_*.v; do \
+	    sed -i 's/vm_compute/native_compute/' $$f; \
+	  done; \
+	  ulimit -s $(STACK_KB) 2>/dev/null || \
+	    echo ">>> WARNING: could not raise stack to $(STACK_KB) KB"; \
+	  ls census_probes/sub$$p/WalkTr_Par_*.v | xargs -P $(RESPLIT_JOBS) -I{} \
+	    sh -c 'b=$$(basename {} .v); \
+	      coqc -Q theories BBB4 -w -abstract-large-number {} \
+	        > census_probes/sub'$$p'/censustr_par_$${b#WalkTr_Par_}.out 2>&1; \
+	      echo ">>> sub'$$p' $$b finished"'; \
+	done
+	@echo ">>> now kill the original straggler shard(s) and decode sub*/ instead"
+.PHONY: census-tr-resplit
+
+# List-burn: run the walk decider directly over a deferred-machine list
+# in LISTBURN_JOBS parallel native_compute units -- no TNF/queue
+# overhead, and it shards perfectly (the tree walk has only two
+# non-trivial subtrees).  Survivors (still-UNKNOWN machines) are the
+# next burn-down list.
+#   make census-tr-listburn [LISTBURN_SRC=censustr_deferred_v2.txt]
+#                           [LISTBURN_JOBS=16]
+# LISTBURN_SRC tracks the CURRENT deferred list: each walk replaces the
+# last (superseded snapshots live in git history), so bump this when a
+# new one lands.
+LISTBURN_SRC ?= censustr_deferred_v7.txt
+LISTBURN_JOBS ?= 16
+# The ESCALATED decider (RunTr [decider_tr_deep]: loop gas 65536, the
+# wide/deep rung ladders).  Empty this to burn with the walk decider.
+# NOTE (2026-09-02): until this knob existed the target silently ran
+# the WALK decider -- the v5 burn (SCOPING_INSTR 7.1o) was NOT deep.
+LISTBURN_DEEP ?= --deep
+# Machines per .v file.  NOT a scheduling knob: the native
+# compiler recurses over a module and 5,270-6,517 definitions in
+# one file overflows its stack (header above; measured again
+# 2026-08-22 -- 10 of 16 shards at 6,932/file died).
+LISTBURN_MAX_PER_FILE ?= 2000
+
+census-tr-listburn: _census-tr-deps
+	@rm -rf census_probes/listburn
+	@python3 tools/censustr/gen_listburn.py $(LISTBURN_SRC) $(LISTBURN_DEEP) \
+	  --shards $(LISTBURN_JOBS) --max-per-file $(LISTBURN_MAX_PER_FILE) \
+	  --outdir census_probes/listburn
+	@for f in census_probes/listburn/ListBurn_*.v; do \
+	  sed -i 's/vm_compute/native_compute/' $$f; \
+	done
+	@# WARN, do not swallow: a failed stack raise is exactly what kills
+	@# native compilation of a big machine-definition file, and the
+	@# failure surfaces 30 min later as "ocamlopt.opt got signal".
+	@ulimit -s $(STACK_KB) 2>/dev/null \
+	  || echo ">>> WARNING: could not raise stack to $(STACK_KB); \
+if shards die with 'ocamlopt.opt got signal', lower LISTBURN_MAX_PER_FILE"
+	@# xargs -P, not a bare & loop: there are now MORE files than jobs
+	@# (file size is capped independently of job count), so they must
+	@# queue rather than all start at once.
+	@ulimit -s $(STACK_KB) 2>/dev/null; \
+	 ls census_probes/listburn/ListBurn_*.v \
+	   | xargs -P $(LISTBURN_JOBS) -I{} sh -c \
+	    'b=$$(echo {} | sed "s/\.v$$//"); \
+	     coqc -Q theories BBB4 -w -abstract-large-number {} \
+	       > $$b.out 2>&1; \
+	     echo ">>> $$(basename $$b) finished"'
+	@python3 tools/censustr/collect_listburn.py census_probes/listburn \
+	  --survivors censustr_survivors.txt \
+	  --unburned censustr_unburned.txt
+.PHONY: census-tr-listburn
+
+# ---------------------------------------------------------------------------
+# Tier W at the tape period: probe RepWLTr.rw_tier_tr rows (spec L T t
+# fuel M; tools/censustr/rw_period_rows.py detects L from the tape) and
+# stage the true ones as CensusTr/ProvTr_RW_NN.v for [prov_tr].
+#   make census-tr-rwprobe [RWPROBE_ROWS=censustr_rw_rows_v6.tsv] [RWPROBE_JOBS=16]
+#   make census-tr-rwstage [RWPROBE_ROWS=...] [RWSTAGE_START=0]
+RWPROBE_ROWS ?= censustr_rw_rows_v6.tsv
+RWPROBE_JOBS ?= 16
+RWPROBE_CHUNK ?= 1
+# per-file wall cap: a machine still running after this is scored None
+# (its closure or certificate search is too big for this sweep)
+RWPROBE_TIMEOUT ?= 300
+RWSTAGE_START ?= 0
+
+census-tr-rwprobe: _census-tr-deps
+	@rm -rf census_probes/rwprobe
+	@python3 tools/censustr/gen_provtr_rw.py probe $(RWPROBE_ROWS) \
+	  census_probes/rwprobe --chunk $(RWPROBE_CHUNK)
+	@# vm_compute on purpose: a machine costs 0.5-30 s in the VM, and
+	@# native_compute measured ~50x SLOWER here (2026-09-03: 77 CPU-min
+	@# per 10-machine file and unfinished -- it recompiles the dependency
+	@# chain per Eval when a native object is not loaded).
+	@ulimit -s $(STACK_KB) 2>/dev/null; \
+	 ls census_probes/rwprobe/ProbeRW_*.v \
+	   | xargs -P $(RWPROBE_JOBS) -I{} sh -c \
+	    'b=$$(echo {} | sed "s/\.v$$//"); \
+	     timeout $(RWPROBE_TIMEOUT) \
+	       coqc -Q theories BBB4 -w -abstract-large-number {} \
+	       > $$b.out 2>&1; \
+	     echo ">>> $$(basename $$b): $$(grep -c "= Some" $$b.out) certified / $$(grep -c "= None" $$b.out) not"'
+	@echo ">>> total: $$(cat census_probes/rwprobe/ProbeRW_*.out | grep -c '= Some') certified / $$(cat census_probes/rwprobe/ProbeRW_*.out | grep -c '= None') not"
+.PHONY: census-tr-rwprobe
+
+census-tr-rwstage:
+	@python3 tools/censustr/gen_provtr_rw.py stage $(RWPROBE_ROWS) \
+	  census_probes/rwprobe theories/CensusTr --chunk 100 --start $(RWSTAGE_START)
+	@mv theories/CensusTr/provtr_rw_manifest.tsv census_probes/rwprobe/
+	@echo ">>> add the new theories/CensusTr/ProvTr_RW_*.v to _CoqProject and [prov_tr] (RunTr.v)"
+.PHONY: census-tr-rwstage
+
+# ---------------------------------------------------------------------------
+# The INSTRUCTION-LEVEL (transition-level) development, SCOPING_INSTR.md.
+#   make instr        the whole chain: statement, ported checkers, the
+#                     proven tier (2,297 lap boards, 2,483 translated-
+#                     cycler and 923 RepWL certificate stages), the
+#                     frozen deferred tables, the walk decider -- ~9
+#                     CPU-h beyond the BBB(4) build (the RepWL stages
+#                     rerun their closure search inside vm_cast_no_check)
+#   make instr-core   the cheap slice CI compiles: the statement, the
+#                     ported checkers and one small certificate stage
+instr: Makefile.coq
+	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr_Split.vo
+.PHONY: instr
+
+instr-core: Makefile.coq
+	$(MAKE) -f Makefile.coq theories/Checkers/NGramHistTr.vo \
+	  theories/Checkers/TCyclerTr.vo theories/CensusTr/ProvTr_TC_10.vo
+.PHONY: instr-core
+
+# ---------------------------------------------------------------------------
+# MILESTONE A: the kernel-checked RE-WALK with the frozen deferred list.
+#
+#   make census-tr-walk [WALK_JOBS=16] [CENSUS_TR_UNITS=96]
+#
+# CensusTr/RunTr_Split.v proves the frontier split; the 96 generated
+# units theories/CensusTr/Compute/UnitTr_XX.v each certify by ONE
+# native computation that every level-3 frontier node with index = XX
+# (mod 96) walks to an empty queue under [decider_tr] (deferred rows
+# are lookups now), and Census_TheoremTr.v assembles
+#
+#   census_tr : forall tm, QHBoundTr B_tr tm \/ Deferred D_tr tm
+#
+# the first transition-level census theorem.  Units are independent
+# (each Requires only RunTr + RunTr_Split), so one xargs pool; finished
+# units are kept across reruns (delete the .vo to redo one).  The
+# generator is idempotent -- rerun it after changing CENSUS_TR_UNITS.
+CENSUS_TR_UNITS ?= 96
+
+census-tr-units:
+	@python3 tools/censustr/gen_walk_units.py --units $(CENSUS_TR_UNITS)
+.PHONY: census-tr-units
+
+# MEMORY (measured 2026-09-04, prov_tr = 5,800 machines): each unit process
+# peaks at 2.7-3.5 GB RSS -- it loads the native code of every certificate
+# stage -- so WALK_JOBS=16 on a 31 GB box gets a third of the first wave
+# OOM-killed (the unit's log ends in "Killed", dmesg says "Out of memory").
+# Budget WALK_JOBS <= RAM_GB / 4; on 31 GB use WALK_JOBS=7.  Killed units
+# leave no .vo and are simply re-run by the next invocation.
+census-tr-walk: Makefile.coq
+	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr_Split.vo
+	@mkdir -p census_probes
+	@ulimit -s $(STACK_KB) 2>/dev/null \
+	  || echo ">>> WARNING: could not raise stack to $(STACK_KB)"
+	@# a unit counts as done only if its .vo is NEWER than the decider it
+	@# was checked against (RunTr_Split.vo): units from an earlier walk
+	@# (older tables, older prov_tr) are rebuilt, not skipped -- skipping
+	@# them would fail later at the assembly with inconsistent assumptions
+	@ulimit -s $(STACK_KB) 2>/dev/null; \
+	 ls theories/CensusTr/Compute/UnitTr_*.v \
+	   | while read f; do \
+	       [ -f "$${f%.v}.vo" ] && [ "$${f%.v}.vo" -nt theories/CensusTr/RunTr_Split.vo ] \
+	         || echo "$$f"; done \
+	   | xargs -r -P $(WALK_JOBS) -I{} sh -c \
+	    's=$$(date +%s); \
+	     coqc -Q theories BBB4 -w -abstract-large-number {} \
+	       > {}.log 2>&1 \
+	       && { t=$$(( $$(date +%s) - s )); \
+	            echo ">>> $$(basename {} .v) done in $$t s"; \
+	            echo "$$(basename {} .v) $$t" >> census_probes/censustr_walk_times.txt; } \
+	       || echo ">>> $$(basename {} .v) FAILED (see {}.log)"'
+	@n=$$(ls theories/CensusTr/Compute/UnitTr_*.v | wc -l); \
+	 d=$$(ls theories/CensusTr/Compute/UnitTr_*.vo 2>/dev/null | wc -l); \
+	 echo ">>> units done: $$d / $$n"; [ "$$d" = "$$n" ]
+	coqc -Q theories BBB4 -w -abstract-large-number \
+	  theories/CensusTr/Compute/Census_TheoremTr.v
+	@echo ">>> census_tr : forall tm, QHBoundTr B_tr tm \\/ Deferred D_tr tm -- CHECKED"
+.PHONY: census-tr-walk
+
+# ---------------------------------------------------------------------------
 # The route-A closeout (docs/CLOSEOUT_ROUTE_A.md).  Regenerates the stage
 # files from the current boards and recompiles theories/Closeout/, yielding
 #

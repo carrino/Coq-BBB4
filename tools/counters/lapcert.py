@@ -512,3 +512,58 @@ def reach_state(tab, el, er, c0, chain, want, extra=24, nmax=64):
         c = r[0]
         out.append(step)
     return out if c[0] == want else None
+
+
+def _hit_instr_in_win(tab, c, st, want):
+    """The shortest cut of a window step that lands on INSTRUCTION [want]
+    (a (state, head-symbol) pair) -- the transition-level twin of
+    [_hit_in_win]."""
+    bl = st[0] != 'SWinL'
+    br = st[0] != 'SWinR'
+    tr = wtrace(tab, bl, br, (c[0], c[1][0], c[2], c[3][0]), st[1])
+    for k in range(1, min(st[1], len(tr) - 1) + 1):
+        if (tr[k][0], tr[k][2]) == want:
+            return (st[0], k)
+    return None
+
+
+def reach_instr(tab, el, er, c0, chain, want, extra=24, nmax=64):
+    """A chain from [c0] landing on instruction [want] = (state, head) -- the
+    per-instruction [Hfire] witness of LapGlueTr.  Same search as
+    [reach_state]: lap-chain prefixes (cutting the last window short), then a
+    bounded symbolic continuation past the lap's end."""
+    c, out = c0, []
+    for st in chain:
+        if (c[0], c[2]) == want:
+            return out
+        if st[0].startswith('SWin'):
+            cut = _hit_instr_in_win(tab, c, st, want)
+            if cut is not None:
+                return out + [cut]
+        r = sstep(tab, el, er, st, c)
+        if r is None:
+            return None
+        c = r[0]
+        out.append(st)
+    for _ in range(extra):
+        if (c[0], c[2]) == want:
+            return out
+        cands = (_win_candidates(tab, el, er, c, nmax)
+                 + _cyc_candidates(tab, el, er, c, nmax)
+                 + _rot_candidates(c))
+        step = None
+        for st in cands:
+            if st[0].startswith('SWin'):
+                cut = _hit_instr_in_win(tab, c, st, want)
+                if cut is not None:
+                    return out + [cut]
+            if step is None:
+                step = st
+        if step is None:
+            return None
+        r = sstep(tab, el, er, step, c)
+        if r is None:
+            return None
+        c = r[0]
+        out.append(step)
+    return out if (c[0], c[2]) == want else None
