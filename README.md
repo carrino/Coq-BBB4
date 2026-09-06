@@ -252,7 +252,7 @@ it:
   (the census contract at the raised bound `B_tr = 32,779,478`),
   `DecideTr`/`RunTr` (the in-walk decider), `RunTr_Split` (the
   kernel-checked frontier split), the frozen deferred tables
-  (`DeferredTr_*`, 17,989 rows) and the proven tier `prov_tr`: 6,636
+  (`DeferredTr_*`, 17,989 rows) and the proven tier `prov_tr`: 6,739
   machines as certificate stages (`ProvTr_TC_*` translated cyclers,
   `ProvTr_Lap_*` lap boards from `Machines/CountersTr/`, `ProvTr_RW_*`
   RepWL at the tape period, `ProvTr_IR_*` and `ProvTr_RK_*` the state

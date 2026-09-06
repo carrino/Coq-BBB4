@@ -1748,19 +1748,24 @@ row stalls a 100-row file (the first layout lost 35 rows that way).
 Where the 3,870 stand after this: 836 proven at the instruction level
 (600 + 30 + 206), ~1,150 quiet (QHBoundTr side, no route), ~1,850 live
 and unproven, nearly all of them the (2, 0) / (3, 0) rank rows.
-`prov_tr` is now 6,636 machines.
+`prov_tr` is 6,636 machines after this stage (6,739 with the
+escalation stages of §7.1z).
 
 ### 7.1z Rank escalation: a wider window does not rescue the (2, 0) / (3, 0) rows (2026-09-06)
 
 The 1,641 live rank rejections of §7.1y (state rung (2, 0) or (3, 0))
 re-probed at (4, 0) with the same fuel: 85 accepted (82 of the (2, 0)
 rows, 3 of the (3, 0) rows), 1,556 rejected -- 5%.  Staged as
-`ProvTr_RK_08` (prk_08).  A (6, 0) sample of 150 of the failures is
-the next measurement; if it stays in single digits the class needs
-the box's deep burn (ng rungs to (10, 4096), rank to (6, 4096),
-RepWL, lex) rather than more rank rungs -- these rows are not in
+`ProvTr_RK_08` (prk_08).  A (6, 0) sample of 150 of those failures:
+18 accepted, 116 rejected, 16 timed out (10-row files under 1800 s;
+window 6 costs 1-4 min per machine) -- 12-13%, staged as
+`ProvTr_RK_09` (prk_09).  So each wider window buys a slice, at a
+price that only the box can pay for the full 1,556: the right vehicle
+is the deep burn (ng rungs to (10, 4096), rank to (6, 4096), RepWL,
+lex), which tries all of that in one pass -- these rows are not in
 `censustr_deferred_v7_inwalk.txt`, so the first deep burn did not see
-them.  Their list is `censustr_stproven_live_rest.txt`: the 1,782
+them.  Next box job after the overnight run:
+`make census-tr-listburn LISTBURN_SRC=censustr_stproven_live_rest.txt LISTBURN_DEEP=--deep LISTBURN_JOBS=8`.  Their list is `censustr_stproven_live_rest.txt`: the 1,782
 state-proven rows that are live by the 2M-step scan and still
 unproven at the instruction level (921 of the 3,870 are now proven,
 1,167 quiet).
