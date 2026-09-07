@@ -6,7 +6,8 @@ Sources, all read from the committed stage files so the list can only
 name machines the kernel already certified:
   - CensusTr/RunTr.v      prov_tr_irtr  (tm_<ID> names, XXX = hole)
   - CensusTr/ProvTr_Lap_*.v   LAPT_<ID> board imports (____ = hole)
-  - CensusTr/ProvTr_TC_*.v, ProvTr_RW_*.v   the (* <spec> ... *) row comments
+  - CensusTr/ProvTr_TC_*.v, ProvTr_RW_*.v, ProvTr_IR_*.v, ProvTr_RK_*.v
+    the (* <spec> ... *) row comments
 
 Usage: proven_specs.py [--minus DEFERRED.txt] > out.txt
   without --minus: the sorted proven specs (bbchallenge text, --- = hole)
@@ -35,7 +36,7 @@ def proven():
             # board names write a hole as ___ (a trailing hole) or ____
             # (hole + the group separator)
             out.add(re.sub(r'___$', '---', nm.replace('____', '---_')))
-    for pat in ('ProvTr_TC_*.v', 'ProvTr_RW_*.v'):
+    for pat in ('ProvTr_TC_*.v', 'ProvTr_RW_*.v', 'ProvTr_IR_*.v', 'ProvTr_RK_*.v'):
         for f in glob.glob(os.path.join(CT, pat)):
             for sp in re.findall(r'^\(\* ([0-9A-Z\-]{6}(?:_[0-9A-Z\-]{6}){3})\b', open(f).read(), re.M):
                 out.add(sp)

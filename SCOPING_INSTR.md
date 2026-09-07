@@ -1782,6 +1782,29 @@ sweep problem: they need the certificate route of §7.1v (search the
 RepWL certificate offline with a round cap, check only the certificate
 in Coq).
 
+### 7.2b The deep list-burn is infeasible as configured; v8 tables cut (2026-09-07)
+
+`make census-tr-listburn LISTBURN_SRC=censustr_deferred_v7_inwalk.txt LISTBURN_JOBS=8`
+(the 9,657 LIVE + quiet in-walk rows, `decider_tr_deep`): after 20.6
+CPU-hours per shard not one 400-machine sublist had printed on any of
+the 8 shards, and two shards exited with nothing at all (4-6 GB
+resident each, the box at its 31 GB ceiling).  So the deep decider
+averages well over 3 min per machine on this population.  The cost is
+`rw_rungs_deep`: nine RepWL rungs at node cut 128 / fuel 40960, the
+setting §7.2a just measured at 900 s+ per machine for the bouncers --
+per rung.  Killed.  Verdict: the deep ladder is the wrong tool here.
+Every machine on the list already failed the cheap tiers, and §7.1v
+says what each class needs instead (lap routes for the counters, the
+certificate route for the bouncers, a new abstraction for the
+polynomial class, a `QHBoundTr` route for the quiet ones); a bigger
+ladder finds none of that.  Do not run `--deep` over a whole class
+again; if a deep decider is ever wanted, drop the RepWL rungs from it.
+
+v8 tables: `proven_specs.py --minus` (now reading the IR and RK
+stages too) removes 963 more rows from v7 -> `censustr_deferred_v8.txt`,
+17,026 rows; `DeferredTr_00..02` + `DeferredTr_Data` regenerated.
+Next box job: `make census-tr-walk WALK_JOBS=7` against them.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
