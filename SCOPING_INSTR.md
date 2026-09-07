@@ -1749,7 +1749,7 @@ Where the 3,870 stand after this: 836 proven at the instruction level
 (600 + 30 + 206), ~1,150 quiet (QHBoundTr side, no route), ~1,850 live
 and unproven, nearly all of them the (2, 0) / (3, 0) rank rows.
 `prov_tr` is 6,636 machines after this stage (6,739 with the
-escalation stages of §7.1z).
+escalation stages of §7.1z, 6,776 with RepWL pass 2).
 
 ### 7.1z Rank escalation: a wider window does not rescue the (2, 0) / (3, 0) rows (2026-09-06)
 
@@ -1769,6 +1769,18 @@ them.  Next box job after the overnight run:
 state-proven rows that are live by the 2M-step scan and still
 unproven at the instruction level (921 of the 3,870 are now proven,
 1,167 quiet).
+
+### 7.2a RepWL pass 2: the sweep is exhausted (2026-09-06)
+
+The second RepWL sweep over the 1,068 unproven bouncers (rows at fuel
+100000 / cut 128, L in {p, 2p}, 900 s per machine, 16 jobs, ~14 h on
+the box): 37 certified, 155 rejected, the other ~880 hit the cap with
+no verdict -- the closures at cut 128 are the ones §7.1w/§7.1v
+measured blowing up.  Staged as `ProvTr_RW_10` (ptw_10).  So the
+bouncer class stands at 960 / 1,996 and the remaining 1,036 are not a
+sweep problem: they need the certificate route of §7.1v (search the
+RepWL certificate offline with a round cap, check only the certificate
+in Coq).
 
 ## 8. What we deliberately do NOT redo
 
