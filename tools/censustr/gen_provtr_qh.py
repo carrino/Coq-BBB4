@@ -127,7 +127,10 @@ def stage(scanfile, probedir, outdir, chunk, start):
         nn = '%02d' % n
         cb = keep[ci:ci + chunk]
         names = []
-        with open(os.path.join(outdir, 'ProvTr_QH_%s.v' % nn), 'w') as f:
+        path = os.path.join(outdir, 'ProvTr_QH_%s.v' % nn)
+        if os.path.exists(path):
+            sys.exit('refusing to overwrite %s (another QH conveyor staged it): pass --start N past the existing stages' % path)
+        with open(path, 'w') as f:
             f.write(STAGE_DOC.replace('{NN}', nn).replace('{CNT}', str(len(cb))) + HEADER + '\n')
             for sp, quiet, mx in cb:
                 kind, w, t = vs[sp]
