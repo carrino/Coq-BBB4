@@ -1821,6 +1821,48 @@ with no cheap route left (see the path in the 2026-09-07 assessment:
 QH-side conveyor, NGH conveyor on the closeout boards, the nested/peel
 lap ports, the bouncer certificate route).
 
+### 7.3x QH-side conveyor: finder and first 200-row measurement (2026-09-08)
+
+The instruction-side conveyor now starts in
+`tools/censustr/gen_provtr_qh.py`.  It has four deliberately separate
+phases, following the IR/RK staging rule: `scan` records last fires,
+`find` performs untrusted wrapped-closure search, `probe` emits only
+`Eval vm_compute` queries, and `stage` consumes the probe output and closes
+each retained row with `ngram_check_qhboundtr_sound` and
+`vm_cast_no_check`.  The finder differs from the state finder in the
+load-bearing way described by `WrapTr`: it wraps the complete claimed-quiet
+set of `(state, symbol)` instructions, pins each member at its observed last
+fire, and applies the liveness test separately to every other appearing
+instruction.
+
+**Population check.**  The sorted set difference
+`censustr_deferred_v7_inwalk.txt - live_all.txt` is exactly **5,436** rows.
+The first 200 of that difference were scanned for 2,000,000 steps.  All
+200 had a quiet instruction, comprising 218 quiet instructions total.  The
+largest last-fire index was **75**, for instruction B0 of
+`0RB0LD_0LC1RC_1RB1LA_1LA1LC`; this is far below `B_tr = 32,779,478`, so
+the first measurement raises no bound alarm.  This is a probe measurement,
+not the required all-row measurement; the full 5,436 plus state-proven
+quiet scan remains a box job.
+
+The plain acyclicity finder produced certificates for **6/200** rows in
+16.9 seconds using three finder processes.  After installing the missing
+container Coq package, the six `Eval vm_compute` probes returned true and
+`ProvTr_QH_00.v` kernel-checked all six QH triples.  The package install is
+only enough for development checks (the stable box's `census` opam switch
+remains the authority for heavy/native runs).  The cloud setup diagnosis is
+still useful: `GH_TOKEN` authenticated `gh`, but the repository arrived
+without an `origin` remote and without the configured Coq/opam toolchain.
+
+**Burn-down (probe population, 200 rows):** 6 staged and kernel-checked;
+194 were not found by the plain gate and next go to the instruction-target
+lex gate.  **Burn-down (known population):** 5,436 in-walk quiet candidates
+minus future checked QH stages, plus the state-proven quiet list (about
+1,150 until regenerated exactly).  Before any stage lands: run the complete
+2M-step scan on the 16-core box, surface any last fire above `B_tr`, run the
+200-row probe under the `census` opam switch, then add the lex finder and
+only stage kernel-accepted rows.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
