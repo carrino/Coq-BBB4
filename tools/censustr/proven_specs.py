@@ -38,7 +38,9 @@ def proven():
             out.add(re.sub(r'___$', '---', nm.replace('____', '---_')))
     for pat in ('ProvTr_TC_*.v', 'ProvTr_RW_*.v', 'ProvTr_IR_*.v', 'ProvTr_RK_*.v', 'ProvTr_QH_*.v'):
         for f in glob.glob(os.path.join(CT, pat)):
-            for sp in re.findall(r'^\(\* ([0-9A-Z\-]{6}(?:_[0-9A-Z\-]{6}){3})\b', open(f).read(), re.M):
+            # (?=\s), not \b: a spec whose last transition is a hole ends in
+            # '-', a non-word character, and \b would not match after it
+            for sp in re.findall(r'^\(\* ([0-9A-Z\-]{6}(?:_[0-9A-Z\-]{6}){3})(?=\s)', open(f).read(), re.M):
                 out.add(sp)
     return out
 
