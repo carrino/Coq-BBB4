@@ -23,10 +23,7 @@ Definition tm_tq02_0000 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0000 : NonHalt tm_tq02_0000 /\ QHBoundTr 32779478 tm_tq02_0000 /\ QuasiHaltsTr tm_tq02_0000.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0000 1153 1 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0000 1153 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0000 1153 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC0LD_1LA0RA_1LB1LA  side L  n1=36 P=37 W=8 *)
 Definition tm_tq02_0001 : TM := fun q s =>
@@ -41,10 +38,7 @@ Definition tm_tq02_0001 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0001 : NonHalt tm_tq02_0001 /\ QHBoundTr 32779478 tm_tq02_0001 /\ QuasiHaltsTr tm_tq02_0001.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0001 36 37 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0001 36 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0001 36 37 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC0LD_1LA0RD_1RC1RD  side R  n1=21 P=22 W=4 *)
 Definition tm_tq02_0002 : TM := fun q s =>
@@ -59,10 +53,7 @@ Definition tm_tq02_0002 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma qhtr_tq02_0002 : NonHalt tm_tq02_0002 /\ QHBoundTr 32779478 tm_tq02_0002 /\ QuasiHaltsTr tm_tq02_0002.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0002 21 22 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0002 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0002 21 22 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC0LD_1RD0RB_0LA0RC  side R  n1=34 P=35 W=3 *)
 Definition tm_tq02_0003 : TM := fun q s =>
@@ -77,10 +68,7 @@ Definition tm_tq02_0003 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq02_0003 : NonHalt tm_tq02_0003 /\ QHBoundTr 32779478 tm_tq02_0003 /\ QuasiHaltsTr tm_tq02_0003.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0003 34 35 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0003 34 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0003 34 35 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LC_1RD0LB_1LA1RD  side L  n1=109 P=110 W=10 *)
 Definition tm_tq02_0004 : TM := fun q s =>
@@ -95,10 +83,7 @@ Definition tm_tq02_0004 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma qhtr_tq02_0004 : NonHalt tm_tq02_0004 /\ QHBoundTr 32779478 tm_tq02_0004 /\ QuasiHaltsTr tm_tq02_0004.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0004 109 110 10 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0004 109 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0004 109 110 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_0LA1RB_0RC0LA  side L  n1=96 P=97 W=5 *)
 Definition tm_tq02_0005 : TM := fun q s =>
@@ -113,10 +98,7 @@ Definition tm_tq02_0005 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0005 : NonHalt tm_tq02_0005 /\ QHBoundTr 32779478 tm_tq02_0005 /\ QuasiHaltsTr tm_tq02_0005.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0005 96 97 5 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0005 96 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0005 96 97 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_0LA1RB_0RD0LA  side L  n1=90 P=91 W=3 *)
 Definition tm_tq02_0006 : TM := fun q s =>
@@ -131,10 +113,7 @@ Definition tm_tq02_0006 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0006 : NonHalt tm_tq02_0006 /\ QHBoundTr 32779478 tm_tq02_0006 /\ QuasiHaltsTr tm_tq02_0006.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0006 90 91 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0006 90 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0006 90 91 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_0LB1RB_0RC0LA  side L  n1=96 P=97 W=10 *)
 Definition tm_tq02_0007 : TM := fun q s =>
@@ -149,10 +128,7 @@ Definition tm_tq02_0007 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0007 : NonHalt tm_tq02_0007 /\ QHBoundTr 32779478 tm_tq02_0007 /\ QuasiHaltsTr tm_tq02_0007.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0007 96 97 10 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0007 96 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0007 96 97 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_0LB1RB_0RD0LA  side L  n1=90 P=91 W=10 *)
 Definition tm_tq02_0008 : TM := fun q s =>
@@ -167,10 +143,7 @@ Definition tm_tq02_0008 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0008 : NonHalt tm_tq02_0008 /\ QHBoundTr 32779478 tm_tq02_0008 /\ QuasiHaltsTr tm_tq02_0008.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0008 90 91 10 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0008 90 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0008 90 91 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_1LA1RB_1RC0LA  side L  n1=70 P=71 W=0 *)
 Definition tm_tq02_0009 : TM := fun q s =>
@@ -185,10 +158,7 @@ Definition tm_tq02_0009 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0009 : NonHalt tm_tq02_0009 /\ QHBoundTr 32779478 tm_tq02_0009 /\ QuasiHaltsTr tm_tq02_0009.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0009 70 71 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0009 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0009 70 71 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_1LA1RB_1RD0LA  side L  n1=66 P=67 W=0 *)
 Definition tm_tq02_0010 : TM := fun q s =>
@@ -203,10 +173,7 @@ Definition tm_tq02_0010 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0010 : NonHalt tm_tq02_0010 /\ QHBoundTr 32779478 tm_tq02_0010 /\ QuasiHaltsTr tm_tq02_0010.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0010 66 67 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0010 66 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0010 66 67 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_1LA1RC_1RC0LB  side L  n1=89 P=90 W=7 *)
 Definition tm_tq02_0011 : TM := fun q s =>
@@ -221,10 +188,7 @@ Definition tm_tq02_0011 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0011 : NonHalt tm_tq02_0011 /\ QHBoundTr 32779478 tm_tq02_0011 /\ QuasiHaltsTr tm_tq02_0011.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0011 89 90 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0011 89 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0011 89 90 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_1LB1RB_0RC0LA  side L  n1=96 P=97 W=8 *)
 Definition tm_tq02_0012 : TM := fun q s =>
@@ -239,10 +203,7 @@ Definition tm_tq02_0012 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0012 : NonHalt tm_tq02_0012 /\ QHBoundTr 32779478 tm_tq02_0012 /\ QuasiHaltsTr tm_tq02_0012.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0012 96 97 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0012 96 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0012 96 97 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_1LB1RB_0RD0LA  side L  n1=90 P=91 W=8 *)
 Definition tm_tq02_0013 : TM := fun q s =>
@@ -257,10 +218,7 @@ Definition tm_tq02_0013 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0013 : NonHalt tm_tq02_0013 /\ QHBoundTr 32779478 tm_tq02_0013 /\ QuasiHaltsTr tm_tq02_0013.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0013 90 91 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0013 90 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0013 90 91 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_1LC1RB_0RA0LA  side L  n1=74 P=75 W=5 *)
 Definition tm_tq02_0014 : TM := fun q s =>
@@ -275,10 +233,7 @@ Definition tm_tq02_0014 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0014 : NonHalt tm_tq02_0014 /\ QHBoundTr 32779478 tm_tq02_0014 /\ QuasiHaltsTr tm_tq02_0014.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0014 74 75 5 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0014 74 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0014 74 75 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_1LC1RB_1RC0LA  side L  n1=70 P=71 W=3 *)
 Definition tm_tq02_0015 : TM := fun q s =>
@@ -293,10 +248,7 @@ Definition tm_tq02_0015 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0015 : NonHalt tm_tq02_0015 /\ QHBoundTr 32779478 tm_tq02_0015 /\ QuasiHaltsTr tm_tq02_0015.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0015 70 71 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0015 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0015 70 71 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_1LC1RB_1RD0LA  side L  n1=66 P=67 W=5 *)
 Definition tm_tq02_0016 : TM := fun q s =>
@@ -311,10 +263,7 @@ Definition tm_tq02_0016 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0016 : NonHalt tm_tq02_0016 /\ QHBoundTr 32779478 tm_tq02_0016 /\ QuasiHaltsTr tm_tq02_0016.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0016 66 67 5 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0016 66 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0016 66 67 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_1LD1RB_1RC0LA  side L  n1=70 P=71 W=7 *)
 Definition tm_tq02_0017 : TM := fun q s =>
@@ -329,10 +278,7 @@ Definition tm_tq02_0017 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0017 : NonHalt tm_tq02_0017 /\ QHBoundTr 32779478 tm_tq02_0017 /\ QuasiHaltsTr tm_tq02_0017.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0017 70 71 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0017 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0017 70 71 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LB_1RC1LD_1LD1RB_1RD0LA  side L  n1=66 P=67 W=7 *)
 Definition tm_tq02_0018 : TM := fun q s =>
@@ -347,10 +293,7 @@ Definition tm_tq02_0018 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0018 : NonHalt tm_tq02_0018 /\ QHBoundTr 32779478 tm_tq02_0018 /\ QuasiHaltsTr tm_tq02_0018.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0018 66 67 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0018 66 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0018 66 67 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA0RC_1LD1RC_1LA0RD  side R  n1=28 P=29 W=4 *)
 Definition tm_tq02_0019 : TM := fun q s =>
@@ -365,10 +308,7 @@ Definition tm_tq02_0019 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0019 : NonHalt tm_tq02_0019 /\ QHBoundTr 32779478 tm_tq02_0019 /\ QuasiHaltsTr tm_tq02_0019.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0019 28 29 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0019 28 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0019 28 29 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA0RD_1LA0RC_1RC1LA  side R  n1=32 P=33 W=0 *)
 Definition tm_tq02_0020 : TM := fun q s =>
@@ -383,10 +323,7 @@ Definition tm_tq02_0020 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0020 : NonHalt tm_tq02_0020 /\ QHBoundTr 32779478 tm_tq02_0020 /\ QuasiHaltsTr tm_tq02_0020.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0020 32 33 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0020 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0020 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA0RD_1LA1RB_1RC0RC  side R  n1=30 P=31 W=2 *)
 Definition tm_tq02_0021 : TM := fun q s =>
@@ -401,10 +338,7 @@ Definition tm_tq02_0021 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq02_0021 : NonHalt tm_tq02_0021 /\ QHBoundTr 32779478 tm_tq02_0021 /\ QuasiHaltsTr tm_tq02_0021.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0021 30 31 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0021 30 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0021 30 31 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA0RD_1RA1LD_0LC0RA  side L  n1=69 P=70 W=2 *)
 Definition tm_tq02_0022 : TM := fun q s =>
@@ -419,10 +353,7 @@ Definition tm_tq02_0022 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0022 : NonHalt tm_tq02_0022 /\ QHBoundTr 32779478 tm_tq02_0022 /\ QuasiHaltsTr tm_tq02_0022.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0022 69 70 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0022 69 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0022 69 70 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA1RA_0RB0LD_1LC1LA  side L  n1=106 P=107 W=6 *)
 Definition tm_tq02_0023 : TM := fun q s =>
@@ -437,10 +368,7 @@ Definition tm_tq02_0023 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0023 : NonHalt tm_tq02_0023 /\ QHBoundTr 32779478 tm_tq02_0023 /\ QuasiHaltsTr tm_tq02_0023.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0023 106 107 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0023 106 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0023 106 107 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA1RA_0RB0LD_1RA1LA  side L  n1=96 P=97 W=6 *)
 Definition tm_tq02_0024 : TM := fun q s =>
@@ -455,10 +383,7 @@ Definition tm_tq02_0024 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0024 : NonHalt tm_tq02_0024 /\ QHBoundTr 32779478 tm_tq02_0024 /\ QuasiHaltsTr tm_tq02_0024.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0024 96 97 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0024 96 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0024 96 97 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA1RA_0RC0LD_1RA1LA  side L  n1=90 P=91 W=5 *)
 Definition tm_tq02_0025 : TM := fun q s =>
@@ -473,10 +398,7 @@ Definition tm_tq02_0025 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0025 : NonHalt tm_tq02_0025 /\ QHBoundTr 32779478 tm_tq02_0025 /\ QuasiHaltsTr tm_tq02_0025.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0025 90 91 5 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0025 90 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0025 90 91 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA1RA_0RD0LD_1RA1LA  side L  n1=74 P=75 W=9 *)
 Definition tm_tq02_0026 : TM := fun q s =>
@@ -491,10 +413,7 @@ Definition tm_tq02_0026 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0026 : NonHalt tm_tq02_0026 /\ QHBoundTr 32779478 tm_tq02_0026 /\ QuasiHaltsTr tm_tq02_0026.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0026 74 75 9 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0026 74 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0026 74 75 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA1RA_0RD0LD_1RC1LA  side L  n1=78 P=79 W=9 *)
 Definition tm_tq02_0027 : TM := fun q s =>
@@ -509,10 +428,7 @@ Definition tm_tq02_0027 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0027 : NonHalt tm_tq02_0027 /\ QHBoundTr 32779478 tm_tq02_0027 /\ QuasiHaltsTr tm_tq02_0027.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0027 78 79 9 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0027 78 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0027 78 79 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA1RA_1RB0LD_1RA1LA  side L  n1=70 P=71 W=7 *)
 Definition tm_tq02_0028 : TM := fun q s =>
@@ -527,10 +443,7 @@ Definition tm_tq02_0028 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0028 : NonHalt tm_tq02_0028 /\ QHBoundTr 32779478 tm_tq02_0028 /\ QuasiHaltsTr tm_tq02_0028.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0028 70 71 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0028 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0028 70 71 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA1RA_1RB0LD_1RC1LA  side L  n1=70 P=71 W=7 *)
 Definition tm_tq02_0029 : TM := fun q s =>
@@ -545,10 +458,7 @@ Definition tm_tq02_0029 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0029 : NonHalt tm_tq02_0029 /\ QHBoundTr 32779478 tm_tq02_0029 /\ QuasiHaltsTr tm_tq02_0029.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0029 70 71 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0029 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0029 70 71 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LA1RA_1RC0LD_1RC1LA  side L  n1=62 P=63 W=6 *)
 Definition tm_tq02_0030 : TM := fun q s =>
@@ -563,10 +473,7 @@ Definition tm_tq02_0030 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0030 : NonHalt tm_tq02_0030 /\ QHBoundTr 32779478 tm_tq02_0030 /\ QuasiHaltsTr tm_tq02_0030.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0030 62 63 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0030 62 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0030 62 63 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LB0RC_1LD1RC_1LA0RD  side R  n1=28 P=29 W=0 *)
 Definition tm_tq02_0031 : TM := fun q s =>
@@ -581,10 +488,7 @@ Definition tm_tq02_0031 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0031 : NonHalt tm_tq02_0031 /\ QHBoundTr 32779478 tm_tq02_0031 /\ QuasiHaltsTr tm_tq02_0031.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0031 28 29 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0031 28 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0031 28 29 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LC0LA_1LA1RD_1RC0RD  side R  n1=27 P=28 W=1 *)
 Definition tm_tq02_0032 : TM := fun q s =>
@@ -599,10 +503,7 @@ Definition tm_tq02_0032 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0032 : NonHalt tm_tq02_0032 /\ QHBoundTr 32779478 tm_tq02_0032 /\ QuasiHaltsTr tm_tq02_0032.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0032 27 28 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0032 27 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0032 27 28 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LC0RC_1LD1RC_1LA0RD  side R  n1=28 P=29 W=2 *)
 Definition tm_tq02_0033 : TM := fun q s =>
@@ -617,10 +518,7 @@ Definition tm_tq02_0033 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0033 : NonHalt tm_tq02_0033 /\ QHBoundTr 32779478 tm_tq02_0033 /\ QuasiHaltsTr tm_tq02_0033.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0033 28 29 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0033 28 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0033 28 29 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LC0RD_1LA0LC_1RA1LD  side L  n1=21 P=22 W=4 *)
 Definition tm_tq02_0034 : TM := fun q s =>
@@ -635,10 +533,7 @@ Definition tm_tq02_0034 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0034 : NonHalt tm_tq02_0034 /\ QHBoundTr 32779478 tm_tq02_0034 /\ QuasiHaltsTr tm_tq02_0034.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0034 21 22 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0034 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0034 21 22 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LC0RD_1LA0RC_1RC1LA  side R  n1=32 P=33 W=0 *)
 Definition tm_tq02_0035 : TM := fun q s =>
@@ -653,10 +548,7 @@ Definition tm_tq02_0035 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0035 : NonHalt tm_tq02_0035 /\ QHBoundTr 32779478 tm_tq02_0035 /\ QuasiHaltsTr tm_tq02_0035.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0035 32 33 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0035 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0035 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0LC0RD_1RA1LD_0LC0RA  side L  n1=97 P=70 W=0 *)
 Definition tm_tq02_0036 : TM := fun q s =>
@@ -671,10 +563,7 @@ Definition tm_tq02_0036 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0036 : NonHalt tm_tq02_0036 /\ QHBoundTr 32779478 tm_tq02_0036 /\ QuasiHaltsTr tm_tq02_0036.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0036 97 70 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0036 97 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0036 97 70 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0RC0RD_1LA0RC_1RC1LA  side R  n1=32 P=33 W=1 *)
 Definition tm_tq02_0037 : TM := fun q s =>
@@ -689,10 +578,7 @@ Definition tm_tq02_0037 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0037 : NonHalt tm_tq02_0037 /\ QHBoundTr 32779478 tm_tq02_0037 /\ QuasiHaltsTr tm_tq02_0037.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0037 32 33 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0037 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0037 32 33 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0RC0RD_1LC1LA_1RC0RC  side R  n1=26 P=27 W=0 *)
 Definition tm_tq02_0038 : TM := fun q s =>
@@ -707,10 +593,7 @@ Definition tm_tq02_0038 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq02_0038 : NonHalt tm_tq02_0038 /\ QHBoundTr 32779478 tm_tq02_0038 /\ QuasiHaltsTr tm_tq02_0038.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0038 26 27 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0038 26 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0038 26 27 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0RC0RD_1RD0LD_1LA0LC  side L  n1=41 P=42 W=2 *)
 Definition tm_tq02_0039 : TM := fun q s =>
@@ -725,10 +608,7 @@ Definition tm_tq02_0039 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0039 : NonHalt tm_tq02_0039 /\ QHBoundTr 32779478 tm_tq02_0039 /\ QuasiHaltsTr tm_tq02_0039.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0039 41 42 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0039 41 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0039 41 42 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0RC1RB_1RD0RB_1LA0LA  side R  n1=37 P=38 W=0 *)
 Definition tm_tq02_0040 : TM := fun q s =>
@@ -743,10 +623,7 @@ Definition tm_tq02_0040 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0040 : NonHalt tm_tq02_0040 /\ QHBoundTr 32779478 tm_tq02_0040 /\ QuasiHaltsTr tm_tq02_0040.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0040 37 38 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0040 37 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0040 37 38 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_0RC1RD_1LA0LA_1LD1LA  side L  n1=24 P=23 W=0 *)
 Definition tm_tq02_0041 : TM := fun q s =>
@@ -761,10 +638,7 @@ Definition tm_tq02_0041 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0041 : NonHalt tm_tq02_0041 /\ QHBoundTr 32779478 tm_tq02_0041 /\ QuasiHaltsTr tm_tq02_0041.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0041 24 23 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0041 24 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0041 24 23 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA0RC_1LA0LD_0LC0RD  side L  n1=79 P=80 W=1 *)
 Definition tm_tq02_0042 : TM := fun q s =>
@@ -779,10 +653,7 @@ Definition tm_tq02_0042 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0042 : NonHalt tm_tq02_0042 /\ QHBoundTr 32779478 tm_tq02_0042 /\ QuasiHaltsTr tm_tq02_0042.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0042 79 80 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0042 79 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0042 79 80 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA0RD_0LB0LD_1RB1RD  side R  n1=35 P=22 W=0 *)
 Definition tm_tq02_0043 : TM := fun q s =>
@@ -797,10 +668,7 @@ Definition tm_tq02_0043 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma qhtr_tq02_0043 : NonHalt tm_tq02_0043 /\ QHBoundTr 32779478 tm_tq02_0043 /\ QuasiHaltsTr tm_tq02_0043.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0043 35 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0043 35 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0043 35 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA0RD_0LD0LC_1RC1LA  side L  n1=46 P=47 W=0 *)
 Definition tm_tq02_0044 : TM := fun q s =>
@@ -815,10 +683,7 @@ Definition tm_tq02_0044 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0044 : NonHalt tm_tq02_0044 /\ QHBoundTr 32779478 tm_tq02_0044 /\ QuasiHaltsTr tm_tq02_0044.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0044 46 47 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0044 46 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0044 46 47 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA0RD_0LD1LA_1LA0LC  side L  n1=55 P=56 W=0 *)
 Definition tm_tq02_0045 : TM := fun q s =>
@@ -833,10 +698,7 @@ Definition tm_tq02_0045 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0045 : NonHalt tm_tq02_0045 /\ QHBoundTr 32779478 tm_tq02_0045 /\ QuasiHaltsTr tm_tq02_0045.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0045 55 56 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0045 55 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0045 55 56 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA0RD_1LA0LC_1RA1LD  side L  n1=21 P=22 W=0 *)
 Definition tm_tq02_0046 : TM := fun q s =>
@@ -851,10 +713,7 @@ Definition tm_tq02_0046 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0046 : NonHalt tm_tq02_0046 /\ QHBoundTr 32779478 tm_tq02_0046 /\ QuasiHaltsTr tm_tq02_0046.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0046 21 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0046 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0046 21 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA0RD_1LA0LD_1RB1RD  side R  n1=21 P=22 W=3 *)
 Definition tm_tq02_0047 : TM := fun q s =>
@@ -869,10 +728,7 @@ Definition tm_tq02_0047 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma qhtr_tq02_0047 : NonHalt tm_tq02_0047 /\ QHBoundTr 32779478 tm_tq02_0047 /\ QuasiHaltsTr tm_tq02_0047.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0047 21 22 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0047 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0047 21 22 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA0RD_1LA0RC_1RC1LA  side R  n1=32 P=33 W=0 *)
 Definition tm_tq02_0048 : TM := fun q s =>
@@ -887,10 +743,7 @@ Definition tm_tq02_0048 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0048 : NonHalt tm_tq02_0048 /\ QHBoundTr 32779478 tm_tq02_0048 /\ QuasiHaltsTr tm_tq02_0048.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0048 32 33 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0048 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0048 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA0RD_1LA1RB_1LB1RC  side R  n1=70 P=71 W=6 *)
 Definition tm_tq02_0049 : TM := fun q s =>
@@ -905,10 +758,7 @@ Definition tm_tq02_0049 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0049 : NonHalt tm_tq02_0049 /\ QHBoundTr 32779478 tm_tq02_0049 /\ QuasiHaltsTr tm_tq02_0049.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0049 70 71 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0049 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0049 70 71 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA0RD_1LA1RB_1LC1RC  side R  n1=70 P=71 W=6 *)
 Definition tm_tq02_0050 : TM := fun q s =>
@@ -923,10 +773,7 @@ Definition tm_tq02_0050 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0050 : NonHalt tm_tq02_0050 /\ QHBoundTr 32779478 tm_tq02_0050 /\ QuasiHaltsTr tm_tq02_0050.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0050 70 71 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0050 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0050 70 71 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA0RD_1LD0LD_1RB1RD  side R  n1=21 P=22 W=3 *)
 Definition tm_tq02_0051 : TM := fun q s =>
@@ -941,10 +788,7 @@ Definition tm_tq02_0051 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma qhtr_tq02_0051 : NonHalt tm_tq02_0051 /\ QHBoundTr 32779478 tm_tq02_0051 /\ QuasiHaltsTr tm_tq02_0051.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0051 21 22 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0051 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0051 21 22 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA0RD_1RB0LD_1RB1RD  side R  n1=21 P=22 W=0 *)
 Definition tm_tq02_0052 : TM := fun q s =>
@@ -959,10 +803,7 @@ Definition tm_tq02_0052 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma qhtr_tq02_0052 : NonHalt tm_tq02_0052 /\ QHBoundTr 32779478 tm_tq02_0052 /\ QuasiHaltsTr tm_tq02_0052.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0052 21 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0052 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0052 21 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA1RA_0RB0LD_1LC1LA  side L  n1=106 P=107 W=10 *)
 Definition tm_tq02_0053 : TM := fun q s =>
@@ -977,10 +818,7 @@ Definition tm_tq02_0053 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0053 : NonHalt tm_tq02_0053 /\ QHBoundTr 32779478 tm_tq02_0053 /\ QuasiHaltsTr tm_tq02_0053.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0053 106 107 10 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0053 106 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0053 106 107 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA1RA_0RB0LD_1RA1LA  side L  n1=96 P=97 W=10 *)
 Definition tm_tq02_0054 : TM := fun q s =>
@@ -995,10 +833,7 @@ Definition tm_tq02_0054 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0054 : NonHalt tm_tq02_0054 /\ QHBoundTr 32779478 tm_tq02_0054 /\ QuasiHaltsTr tm_tq02_0054.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0054 96 97 10 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0054 96 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0054 96 97 10 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA1RA_0RC0LD_1RA1LA  side L  n1=90 P=91 W=8 *)
 Definition tm_tq02_0055 : TM := fun q s =>
@@ -1013,10 +848,7 @@ Definition tm_tq02_0055 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0055 : NonHalt tm_tq02_0055 /\ QHBoundTr 32779478 tm_tq02_0055 /\ QuasiHaltsTr tm_tq02_0055.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0055 90 91 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0055 90 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0055 90 91 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA1RA_1RB0LD_1RA1LA  side L  n1=70 P=71 W=9 *)
 Definition tm_tq02_0056 : TM := fun q s =>
@@ -1031,10 +863,7 @@ Definition tm_tq02_0056 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0056 : NonHalt tm_tq02_0056 /\ QHBoundTr 32779478 tm_tq02_0056 /\ QuasiHaltsTr tm_tq02_0056.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0056 70 71 9 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0056 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0056 70 71 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA1RA_1RB0LD_1RC1LA  side L  n1=70 P=71 W=9 *)
 Definition tm_tq02_0057 : TM := fun q s =>
@@ -1049,10 +878,7 @@ Definition tm_tq02_0057 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0057 : NonHalt tm_tq02_0057 /\ QHBoundTr 32779478 tm_tq02_0057 /\ QuasiHaltsTr tm_tq02_0057.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0057 70 71 9 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0057 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0057 70 71 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA1RA_1RC0LD_1RC1LA  side L  n1=62 P=63 W=7 *)
 Definition tm_tq02_0058 : TM := fun q s =>
@@ -1067,10 +893,7 @@ Definition tm_tq02_0058 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0058 : NonHalt tm_tq02_0058 /\ QHBoundTr 32779478 tm_tq02_0058 /\ QuasiHaltsTr tm_tq02_0058.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0058 62 63 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0058 62 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0058 62 63 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA1RB_0RC0LD_0RD1LA  side L  n1=79 P=56 W=7 *)
 Definition tm_tq02_0059 : TM := fun q s =>
@@ -1085,10 +908,7 @@ Definition tm_tq02_0059 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0059 : NonHalt tm_tq02_0059 /\ QHBoundTr 32779478 tm_tq02_0059 /\ QuasiHaltsTr tm_tq02_0059.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0059 79 56 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0059 79 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0059 79 56 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA1RB_1RB1LD_1RB0LC  side L  n1=89 P=90 W=6 *)
 Definition tm_tq02_0060 : TM := fun q s =>
@@ -1103,10 +923,7 @@ Definition tm_tq02_0060 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0060 : NonHalt tm_tq02_0060 /\ QHBoundTr 32779478 tm_tq02_0060 /\ QuasiHaltsTr tm_tq02_0060.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0060 89 90 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0060 89 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0060 89 90 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LA1RB_1RD1LD_1RB0LC  side L  n1=109 P=110 W=8 *)
 Definition tm_tq02_0061 : TM := fun q s =>
@@ -1121,10 +938,7 @@ Definition tm_tq02_0061 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0061 : NonHalt tm_tq02_0061 /\ QHBoundTr 32779478 tm_tq02_0061 /\ QuasiHaltsTr tm_tq02_0061.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0061 109 110 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0061 109 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0061 109 110 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LB0RC_1LD1RC_1LA0RD  side R  n1=28 P=29 W=3 *)
 Definition tm_tq02_0062 : TM := fun q s =>
@@ -1139,10 +953,7 @@ Definition tm_tq02_0062 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0062 : NonHalt tm_tq02_0062 /\ QHBoundTr 32779478 tm_tq02_0062 /\ QuasiHaltsTr tm_tq02_0062.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0062 28 29 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0062 28 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0062 28 29 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LB1RA_0RB0LD_1LC1LA  side L  n1=106 P=107 W=3 *)
 Definition tm_tq02_0063 : TM := fun q s =>
@@ -1157,10 +968,7 @@ Definition tm_tq02_0063 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0063 : NonHalt tm_tq02_0063 /\ QHBoundTr 32779478 tm_tq02_0063 /\ QuasiHaltsTr tm_tq02_0063.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0063 106 107 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0063 106 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0063 106 107 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LB1RA_0RB0LD_1RA1LA  side L  n1=96 P=97 W=5 *)
 Definition tm_tq02_0064 : TM := fun q s =>
@@ -1175,10 +983,7 @@ Definition tm_tq02_0064 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0064 : NonHalt tm_tq02_0064 /\ QHBoundTr 32779478 tm_tq02_0064 /\ QuasiHaltsTr tm_tq02_0064.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0064 96 97 5 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0064 96 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0064 96 97 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LB1RA_0RC0LD_1RA1LA  side L  n1=90 P=91 W=5 *)
 Definition tm_tq02_0065 : TM := fun q s =>
@@ -1193,10 +998,7 @@ Definition tm_tq02_0065 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0065 : NonHalt tm_tq02_0065 /\ QHBoundTr 32779478 tm_tq02_0065 /\ QuasiHaltsTr tm_tq02_0065.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0065 90 91 5 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0065 90 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0065 90 91 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LB1RA_1LA0LD_1LC1LA  side L  n1=34 P=35 W=4 *)
 Definition tm_tq02_0066 : TM := fun q s =>
@@ -1211,10 +1013,7 @@ Definition tm_tq02_0066 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0066 : NonHalt tm_tq02_0066 /\ QHBoundTr 32779478 tm_tq02_0066 /\ QuasiHaltsTr tm_tq02_0066.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0066 34 35 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0066 34 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0066 34 35 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LB1RA_1RC0LD_1RC1LA  side L  n1=62 P=63 W=1 *)
 Definition tm_tq02_0067 : TM := fun q s =>
@@ -1229,10 +1028,7 @@ Definition tm_tq02_0067 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0067 : NonHalt tm_tq02_0067 /\ QHBoundTr 32779478 tm_tq02_0067 /\ QuasiHaltsTr tm_tq02_0067.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0067 62 63 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0067 62 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0067 62 63 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC0LA_1RD0LB_1LB1RC  side L  n1=32 P=33 W=0 *)
 Definition tm_tq02_0068 : TM := fun q s =>
@@ -1247,10 +1043,7 @@ Definition tm_tq02_0068 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0068 : NonHalt tm_tq02_0068 /\ QHBoundTr 32779478 tm_tq02_0068 /\ QuasiHaltsTr tm_tq02_0068.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0068 32 33 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0068 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0068 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC0LD_1RC0LB_0LC1LA  side L  n1=25 P=26 W=0 *)
 Definition tm_tq02_0069 : TM := fun q s =>
@@ -1265,10 +1058,7 @@ Definition tm_tq02_0069 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0069 : NonHalt tm_tq02_0069 /\ QHBoundTr 32779478 tm_tq02_0069 /\ QuasiHaltsTr tm_tq02_0069.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0069 25 26 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0069 25 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0069 25 26 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC0RC_1LA0LD_0LC0RD  side L  n1=79 P=80 W=0 *)
 Definition tm_tq02_0070 : TM := fun q s =>
@@ -1283,10 +1073,7 @@ Definition tm_tq02_0070 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0070 : NonHalt tm_tq02_0070 /\ QHBoundTr 32779478 tm_tq02_0070 /\ QuasiHaltsTr tm_tq02_0070.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0070 79 80 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0070 79 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0070 79 80 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC0RC_1LA0LD_0LC1LA  side L  n1=69 P=70 W=0 *)
 Definition tm_tq02_0071 : TM := fun q s =>
@@ -1301,10 +1088,7 @@ Definition tm_tq02_0071 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0071 : NonHalt tm_tq02_0071 /\ QHBoundTr 32779478 tm_tq02_0071 /\ QuasiHaltsTr tm_tq02_0071.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0071 69 70 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0071 69 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0071 69 70 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC0RD_0LD0LC_1RC1LA  side L  n1=46 P=47 W=0 *)
 Definition tm_tq02_0072 : TM := fun q s =>
@@ -1319,10 +1103,7 @@ Definition tm_tq02_0072 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0072 : NonHalt tm_tq02_0072 /\ QHBoundTr 32779478 tm_tq02_0072 /\ QuasiHaltsTr tm_tq02_0072.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0072 46 47 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0072 46 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0072 46 47 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC0RD_1LA0LB_1LD0RA  side L  n1=1164 P=1 W=0 *)
 Definition tm_tq02_0073 : TM := fun q s =>
@@ -1337,10 +1118,7 @@ Definition tm_tq02_0073 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0073 : NonHalt tm_tq02_0073 /\ QHBoundTr 32779478 tm_tq02_0073 /\ QuasiHaltsTr tm_tq02_0073.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0073 1164 1 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0073 1164 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0073 1164 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC0RD_1LA0RC_1RC1LA  side R  n1=32 P=33 W=0 *)
 Definition tm_tq02_0074 : TM := fun q s =>
@@ -1355,10 +1133,7 @@ Definition tm_tq02_0074 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0074 : NonHalt tm_tq02_0074 /\ QHBoundTr 32779478 tm_tq02_0074 /\ QuasiHaltsTr tm_tq02_0074.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0074 32 33 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0074 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0074 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC0RD_1RD0LD_1LA0LC  side L  n1=41 P=42 W=4 *)
 Definition tm_tq02_0075 : TM := fun q s =>
@@ -1373,10 +1148,7 @@ Definition tm_tq02_0075 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0075 : NonHalt tm_tq02_0075 /\ QHBoundTr 32779478 tm_tq02_0075 /\ QuasiHaltsTr tm_tq02_0075.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0075 41 42 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0075 41 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0075 41 42 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC1RA_0RB0LD_1LC1LA  side L  n1=106 P=107 W=9 *)
 Definition tm_tq02_0076 : TM := fun q s =>
@@ -1391,10 +1163,7 @@ Definition tm_tq02_0076 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0076 : NonHalt tm_tq02_0076 /\ QHBoundTr 32779478 tm_tq02_0076 /\ QuasiHaltsTr tm_tq02_0076.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0076 106 107 9 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0076 106 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0076 106 107 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC1RA_0RB0LD_1RA1LA  side L  n1=96 P=97 W=7 *)
 Definition tm_tq02_0077 : TM := fun q s =>
@@ -1409,10 +1178,7 @@ Definition tm_tq02_0077 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0077 : NonHalt tm_tq02_0077 /\ QHBoundTr 32779478 tm_tq02_0077 /\ QuasiHaltsTr tm_tq02_0077.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0077 96 97 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0077 96 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0077 96 97 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC1RC_1LA1RD_1LA0RB  side R  n1=70 P=71 W=8 *)
 Definition tm_tq02_0078 : TM := fun q s =>
@@ -1427,10 +1193,7 @@ Definition tm_tq02_0078 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0078 : NonHalt tm_tq02_0078 /\ QHBoundTr 32779478 tm_tq02_0078 /\ QuasiHaltsTr tm_tq02_0078.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0078 70 71 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0078 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0078 70 71 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1LC1RC_1LA1RD_1LD0RB  side R  n1=66 P=67 W=8 *)
 Definition tm_tq02_0079 : TM := fun q s =>
@@ -1445,10 +1208,7 @@ Definition tm_tq02_0079 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0079 : NonHalt tm_tq02_0079 /\ QHBoundTr 32779478 tm_tq02_0079 /\ QuasiHaltsTr tm_tq02_0079.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0079 66 67 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0079 66 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0079 66 67 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0LA_1LA1RD_1RC0RD  side R  n1=27 P=28 W=3 *)
 Definition tm_tq02_0080 : TM := fun q s =>
@@ -1463,10 +1223,7 @@ Definition tm_tq02_0080 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0080 : NonHalt tm_tq02_0080 /\ QHBoundTr 32779478 tm_tq02_0080 /\ QuasiHaltsTr tm_tq02_0080.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0080 27 28 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0080 27 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0080 27 28 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0LC_1LB1RD_1LA0RC  side R  n1=59 P=60 W=0 *)
 Definition tm_tq02_0081 : TM := fun q s =>
@@ -1481,10 +1238,7 @@ Definition tm_tq02_0081 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq02_0081 : NonHalt tm_tq02_0081 /\ QHBoundTr 32779478 tm_tq02_0081 /\ QuasiHaltsTr tm_tq02_0081.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0081 59 60 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0081 59 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0081 59 60 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RC_1LA0LD_0LC0RD  side L  n1=79 P=80 W=0 *)
 Definition tm_tq02_0082 : TM := fun q s =>
@@ -1499,10 +1253,7 @@ Definition tm_tq02_0082 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0082 : NonHalt tm_tq02_0082 /\ QHBoundTr 32779478 tm_tq02_0082 /\ QuasiHaltsTr tm_tq02_0082.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0082 79 80 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0082 79 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0082 79 80 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RC_1LD1RC_1LA0RD  side R  n1=28 P=29 W=0 *)
 Definition tm_tq02_0083 : TM := fun q s =>
@@ -1517,10 +1268,7 @@ Definition tm_tq02_0083 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0083 : NonHalt tm_tq02_0083 /\ QHBoundTr 32779478 tm_tq02_0083 /\ QuasiHaltsTr tm_tq02_0083.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0083 28 29 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0083 28 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0083 28 29 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RD_1LA0LC_1RA1LD  side L  n1=21 P=22 W=4 *)
 Definition tm_tq02_0084 : TM := fun q s =>
@@ -1535,10 +1283,7 @@ Definition tm_tq02_0084 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0084 : NonHalt tm_tq02_0084 /\ QHBoundTr 32779478 tm_tq02_0084 /\ QuasiHaltsTr tm_tq02_0084.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0084 21 22 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0084 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0084 21 22 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RD_1LA0LC_1RD0RC  side L  n1=25 P=26 W=0 *)
 Definition tm_tq02_0085 : TM := fun q s =>
@@ -1553,10 +1298,7 @@ Definition tm_tq02_0085 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq02_0085 : NonHalt tm_tq02_0085 /\ QHBoundTr 32779478 tm_tq02_0085 /\ QuasiHaltsTr tm_tq02_0085.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0085 25 26 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0085 25 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0085 25 26 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RD_1LA0RB_0LA1RC  side R  n1=58 P=33 W=0 *)
 Definition tm_tq02_0086 : TM := fun q s =>
@@ -1571,10 +1313,7 @@ Definition tm_tq02_0086 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0086 : NonHalt tm_tq02_0086 /\ QHBoundTr 32779478 tm_tq02_0086 /\ QuasiHaltsTr tm_tq02_0086.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0086 58 33 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0086 58 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0086 58 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RD_1LA0RB_0LD1RC  side R  n1=33 P=33 W=3 *)
 Definition tm_tq02_0087 : TM := fun q s =>
@@ -1589,10 +1328,7 @@ Definition tm_tq02_0087 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0087 : NonHalt tm_tq02_0087 /\ QHBoundTr 32779478 tm_tq02_0087 /\ QuasiHaltsTr tm_tq02_0087.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0087 33 33 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0087 33 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0087 33 33 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RD_1LA0RB_0RB1RC  side R  n1=52 P=33 W=0 *)
 Definition tm_tq02_0088 : TM := fun q s =>
@@ -1607,10 +1343,7 @@ Definition tm_tq02_0088 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0088 : NonHalt tm_tq02_0088 /\ QHBoundTr 32779478 tm_tq02_0088 /\ QuasiHaltsTr tm_tq02_0088.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0088 52 33 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0088 52 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0088 52 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RD_1LA0RB_1LD1RC  side R  n1=33 P=33 W=0 *)
 Definition tm_tq02_0089 : TM := fun q s =>
@@ -1625,10 +1358,7 @@ Definition tm_tq02_0089 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0089 : NonHalt tm_tq02_0089 /\ QHBoundTr 32779478 tm_tq02_0089 /\ QuasiHaltsTr tm_tq02_0089.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0089 33 33 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0089 33 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0089 33 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RD_1LA0RB_1RA1RC  side R  n1=35 P=33 W=1 *)
 Definition tm_tq02_0090 : TM := fun q s =>
@@ -1643,10 +1373,7 @@ Definition tm_tq02_0090 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0090 : NonHalt tm_tq02_0090 /\ QHBoundTr 32779478 tm_tq02_0090 /\ QuasiHaltsTr tm_tq02_0090.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0090 35 33 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0090 35 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0090 35 33 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RD_1LA1RB_1RB1RC  side R  n1=34 P=35 W=6 *)
 Definition tm_tq02_0091 : TM := fun q s =>
@@ -1661,10 +1388,7 @@ Definition tm_tq02_0091 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0091 : NonHalt tm_tq02_0091 /\ QHBoundTr 32779478 tm_tq02_0091 /\ QuasiHaltsTr tm_tq02_0091.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0091 34 35 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0091 34 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0091 34 35 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC0RD_1LA1RB_1RC0RC  side R  n1=30 P=31 W=2 *)
 Definition tm_tq02_0092 : TM := fun q s =>
@@ -1679,10 +1403,7 @@ Definition tm_tq02_0092 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq02_0092 : NonHalt tm_tq02_0092 /\ QHBoundTr 32779478 tm_tq02_0092 /\ QuasiHaltsTr tm_tq02_0092.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0092 30 31 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0092 30 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0092 30 31 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC1RB_0LA1RD_1LA0RB  side R  n1=52 P=53 W=4 *)
 Definition tm_tq02_0093 : TM := fun q s =>
@@ -1697,10 +1418,7 @@ Definition tm_tq02_0093 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0093 : NonHalt tm_tq02_0093 /\ QHBoundTr 32779478 tm_tq02_0093 /\ QuasiHaltsTr tm_tq02_0093.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0093 52 53 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0093 52 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0093 52 53 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC1RD_0LA1LD_1RB0RB  side R  n1=36 P=25 W=0 *)
 Definition tm_tq02_0094 : TM := fun q s =>
@@ -1715,10 +1433,7 @@ Definition tm_tq02_0094 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0094 : NonHalt tm_tq02_0094 /\ QHBoundTr 32779478 tm_tq02_0094 /\ QuasiHaltsTr tm_tq02_0094.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0094 36 25 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0094 36 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0094 36 25 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC1RD_1LA0LB_0RB1RC  side R  n1=76 P=77 W=11 *)
 Definition tm_tq02_0095 : TM := fun q s =>
@@ -1733,10 +1448,7 @@ Definition tm_tq02_0095 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0095 : NonHalt tm_tq02_0095 /\ QHBoundTr 32779478 tm_tq02_0095 /\ QuasiHaltsTr tm_tq02_0095.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0095 76 77 11 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0095 76 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0095 76 77 11 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC1RD_1LA0LC_0LD0RA  side L  n1=21 P=22 W=0 *)
 Definition tm_tq02_0096 : TM := fun q s =>
@@ -1751,10 +1463,7 @@ Definition tm_tq02_0096 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0096 : NonHalt tm_tq02_0096 /\ QHBoundTr 32779478 tm_tq02_0096 /\ QuasiHaltsTr tm_tq02_0096.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0096 21 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0096 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0096 21 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC1RD_1LA0RB_0LA0LC  side R  n1=57 P=43 W=0 *)
 Definition tm_tq02_0097 : TM := fun q s =>
@@ -1769,10 +1478,7 @@ Definition tm_tq02_0097 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0097 : NonHalt tm_tq02_0097 /\ QHBoundTr 32779478 tm_tq02_0097 /\ QuasiHaltsTr tm_tq02_0097.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0097 57 43 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0097 57 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0097 57 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC1RD_1LA0RB_0LD0LC  side R  n1=42 P=43 W=2 *)
 Definition tm_tq02_0098 : TM := fun q s =>
@@ -1787,10 +1493,7 @@ Definition tm_tq02_0098 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0098 : NonHalt tm_tq02_0098 /\ QHBoundTr 32779478 tm_tq02_0098 /\ QuasiHaltsTr tm_tq02_0098.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0098 42 43 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0098 42 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0098 42 43 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC1RD_1LA0RB_0RA0LC  side R  n1=80 P=43 W=0 *)
 Definition tm_tq02_0099 : TM := fun q s =>
@@ -1805,10 +1508,7 @@ Definition tm_tq02_0099 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0099 : NonHalt tm_tq02_0099 /\ QHBoundTr 32779478 tm_tq02_0099 /\ QuasiHaltsTr tm_tq02_0099.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0099 80 43 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0099 80 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0099 80 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC1RD_1LA0RB_1LD0LC  side R  n1=66 P=43 W=0 *)
 Definition tm_tq02_0100 : TM := fun q s =>
@@ -1823,10 +1523,7 @@ Definition tm_tq02_0100 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0100 : NonHalt tm_tq02_0100 /\ QHBoundTr 32779478 tm_tq02_0100 /\ QuasiHaltsTr tm_tq02_0100.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0100 66 43 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0100 66 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0100 66 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC1RD_1LA0RB_1RA0LC  side R  n1=43 P=43 W=1 *)
 Definition tm_tq02_0101 : TM := fun q s =>
@@ -1841,10 +1538,7 @@ Definition tm_tq02_0101 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0101 : NonHalt tm_tq02_0101 /\ QHBoundTr 32779478 tm_tq02_0101 /\ QuasiHaltsTr tm_tq02_0101.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0101 43 43 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0101 43 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0101 43 43 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LC_1RC1RD_1LA0RB_1RB0LC  side R  n1=42 P=43 W=1 *)
 Definition tm_tq02_0102 : TM := fun q s =>
@@ -1859,10 +1553,7 @@ Definition tm_tq02_0102 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0102 : NonHalt tm_tq02_0102 /\ QHBoundTr 32779478 tm_tq02_0102 /\ QuasiHaltsTr tm_tq02_0102.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0102 42 43 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0102 42 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0102 42 43 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0LC0RA_1RA1LC_1LD0LC  side L  n1=29 P=30 W=4 *)
 Definition tm_tq02_0103 : TM := fun q s =>
@@ -1877,10 +1568,7 @@ Definition tm_tq02_0103 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0103 : NonHalt tm_tq02_0103 /\ QHBoundTr 32779478 tm_tq02_0103 /\ QuasiHaltsTr tm_tq02_0103.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0103 29 30 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0103 29 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0103 29 30 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0LC0RB_1LA1LC_0LD1LC  side L  n1=27 P=28 W=0 *)
 Definition tm_tq02_0104 : TM := fun q s =>
@@ -1895,10 +1583,7 @@ Definition tm_tq02_0104 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq02_0104 : NonHalt tm_tq02_0104 /\ QHBoundTr 32779478 tm_tq02_0104 /\ QuasiHaltsTr tm_tq02_0104.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0104 27 28 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0104 27 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0104 27 28 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0LC0RC_1LB1RD_1LA1RB  side R  n1=78 P=79 W=6 *)
 Definition tm_tq02_0105 : TM := fun q s =>
@@ -1913,10 +1598,7 @@ Definition tm_tq02_0105 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0105 : NonHalt tm_tq02_0105 /\ QHBoundTr 32779478 tm_tq02_0105 /\ QuasiHaltsTr tm_tq02_0105.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0105 78 79 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0105 78 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0105 78 79 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0LC0RC_1LD1RD_1LA1RB  side R  n1=74 P=75 W=6 *)
 Definition tm_tq02_0106 : TM := fun q s =>
@@ -1931,10 +1613,7 @@ Definition tm_tq02_0106 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0106 : NonHalt tm_tq02_0106 /\ QHBoundTr 32779478 tm_tq02_0106 /\ QuasiHaltsTr tm_tq02_0106.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0106 74 75 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0106 74 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0106 74 75 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0LC0RC_1RA1LC_1LA0LD  side L  n1=21 P=22 W=3 *)
 Definition tm_tq02_0107 : TM := fun q s =>
@@ -1949,10 +1628,7 @@ Definition tm_tq02_0107 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma qhtr_tq02_0107 : NonHalt tm_tq02_0107 /\ QHBoundTr 32779478 tm_tq02_0107 /\ QuasiHaltsTr tm_tq02_0107.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0107 21 22 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0107 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0107 21 22 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0LC0RC_1RD1LA_1LA0RD  side R  n1=32 P=33 W=0 *)
 Definition tm_tq02_0108 : TM := fun q s =>
@@ -1967,10 +1643,7 @@ Definition tm_tq02_0108 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0108 : NonHalt tm_tq02_0108 /\ QHBoundTr 32779478 tm_tq02_0108 /\ QuasiHaltsTr tm_tq02_0108.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0108 32 33 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0108 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0108 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0LC0RD_1LA0RC_1LC1RD  side R  n1=28 P=29 W=0 *)
 Definition tm_tq02_0109 : TM := fun q s =>
@@ -1985,10 +1658,7 @@ Definition tm_tq02_0109 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StD)
   end.
 Lemma qhtr_tq02_0109 : NonHalt tm_tq02_0109 /\ QHBoundTr 32779478 tm_tq02_0109 /\ QuasiHaltsTr tm_tq02_0109.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0109 28 29 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0109 28 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0109 28 29 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0LC1RA_1LD1LA_1LA0LC  side L  n1=34 P=35 W=2 *)
 Definition tm_tq02_0110 : TM := fun q s =>
@@ -2003,10 +1673,7 @@ Definition tm_tq02_0110 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0110 : NonHalt tm_tq02_0110 /\ QHBoundTr 32779478 tm_tq02_0110 /\ QuasiHaltsTr tm_tq02_0110.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0110 34 35 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0110 34 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0110 34 35 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0LC1RA_1RA1LA_1RD0LC  side L  n1=66 P=67 W=0 *)
 Definition tm_tq02_0111 : TM := fun q s =>
@@ -2021,10 +1688,7 @@ Definition tm_tq02_0111 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0111 : NonHalt tm_tq02_0111 /\ QHBoundTr 32779478 tm_tq02_0111 /\ QuasiHaltsTr tm_tq02_0111.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0111 66 67 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0111 66 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0111 66 67 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0LC1RD_1LA0LC_0RA1LC  side L  n1=17 P=18 W=2 *)
 Definition tm_tq02_0112 : TM := fun q s =>
@@ -2039,10 +1703,7 @@ Definition tm_tq02_0112 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq02_0112 : NonHalt tm_tq02_0112 /\ QHBoundTr 32779478 tm_tq02_0112 /\ QuasiHaltsTr tm_tq02_0112.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0112 17 18 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0112 17 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0112 17 18 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0RC0RC_1RD0RD_1LA1RB  side R  n1=30 P=31 W=1 *)
 Definition tm_tq02_0113 : TM := fun q s =>
@@ -2057,10 +1718,7 @@ Definition tm_tq02_0113 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0113 : NonHalt tm_tq02_0113 /\ QHBoundTr 32779478 tm_tq02_0113 /\ QuasiHaltsTr tm_tq02_0113.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0113 30 31 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0113 30 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0113 30 31 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0RC0RC_1RD1LA_1LA0RD  side R  n1=32 P=33 W=3 *)
 Definition tm_tq02_0114 : TM := fun q s =>
@@ -2075,10 +1733,7 @@ Definition tm_tq02_0114 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0114 : NonHalt tm_tq02_0114 /\ QHBoundTr 32779478 tm_tq02_0114 /\ QuasiHaltsTr tm_tq02_0114.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0114 32 33 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0114 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0114 32 33 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0RC1LD_1LC1RA_1LB0LA  side L  n1=39 P=40 W=1 *)
 Definition tm_tq02_0115 : TM := fun q s =>
@@ -2093,10 +1748,7 @@ Definition tm_tq02_0115 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0115 : NonHalt tm_tq02_0115 /\ QHBoundTr 32779478 tm_tq02_0115 /\ QuasiHaltsTr tm_tq02_0115.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0115 39 40 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0115 39 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0115 39 40 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_0RC1RD_1RD1RB_1LA0RC  side R  n1=24 P=25 W=4 *)
 Definition tm_tq02_0116 : TM := fun q s =>
@@ -2111,10 +1763,7 @@ Definition tm_tq02_0116 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq02_0116 : NonHalt tm_tq02_0116 /\ QHBoundTr 32779478 tm_tq02_0116 /\ QuasiHaltsTr tm_tq02_0116.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0116 24 25 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0116 24 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0116 24 25 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LB0RC_1LD1RD_1LA1RB  side R  n1=66 P=67 W=7 *)
 Definition tm_tq02_0117 : TM := fun q s =>
@@ -2129,10 +1778,7 @@ Definition tm_tq02_0117 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0117 : NonHalt tm_tq02_0117 /\ QHBoundTr 32779478 tm_tq02_0117 /\ QuasiHaltsTr tm_tq02_0117.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0117 66 67 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0117 66 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0117 66 67 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LB0RC_1RA1LC_1LA0LD  side L  n1=21 P=22 W=2 *)
 Definition tm_tq02_0118 : TM := fun q s =>
@@ -2147,10 +1793,7 @@ Definition tm_tq02_0118 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma qhtr_tq02_0118 : NonHalt tm_tq02_0118 /\ QHBoundTr 32779478 tm_tq02_0118 /\ QuasiHaltsTr tm_tq02_0118.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0118 21 22 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0118 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0118 21 22 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LB0RC_1RD0RD_1LA1RB  side R  n1=30 P=31 W=0 *)
 Definition tm_tq02_0119 : TM := fun q s =>
@@ -2165,10 +1808,7 @@ Definition tm_tq02_0119 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0119 : NonHalt tm_tq02_0119 /\ QHBoundTr 32779478 tm_tq02_0119 /\ QuasiHaltsTr tm_tq02_0119.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0119 30 31 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0119 30 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0119 30 31 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LB0RC_1RD1LA_1LA0RD  side R  n1=32 P=33 W=0 *)
 Definition tm_tq02_0120 : TM := fun q s =>
@@ -2183,10 +1823,7 @@ Definition tm_tq02_0120 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0120 : NonHalt tm_tq02_0120 /\ QHBoundTr 32779478 tm_tq02_0120 /\ QuasiHaltsTr tm_tq02_0120.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0120 32 33 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0120 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0120 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LC0RC_0LB1LA_0LA0LA  side L  n1=39 P=40 W=3 *)
 Definition tm_tq02_0121 : TM := fun q s =>
@@ -2201,10 +1838,7 @@ Definition tm_tq02_0121 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0121 : NonHalt tm_tq02_0121 /\ QHBoundTr 32779478 tm_tq02_0121 /\ QuasiHaltsTr tm_tq02_0121.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0121 39 40 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0121 39 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0121 39 40 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LC0RC_0LB1LA_0RC0LA  side L  n1=39 P=40 W=3 *)
 Definition tm_tq02_0122 : TM := fun q s =>
@@ -2219,10 +1853,7 @@ Definition tm_tq02_0122 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0122 : NonHalt tm_tq02_0122 /\ QHBoundTr 32779478 tm_tq02_0122 /\ QuasiHaltsTr tm_tq02_0122.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0122 39 40 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0122 39 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0122 39 40 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LC0RC_0LB1LA_1RA0LA  side L  n1=39 P=40 W=3 *)
 Definition tm_tq02_0123 : TM := fun q s =>
@@ -2237,10 +1868,7 @@ Definition tm_tq02_0123 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0123 : NonHalt tm_tq02_0123 /\ QHBoundTr 32779478 tm_tq02_0123 /\ QuasiHaltsTr tm_tq02_0123.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0123 39 40 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0123 39 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0123 39 40 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LC0RC_1RA1LC_1LA0LD  side L  n1=21 P=22 W=3 *)
 Definition tm_tq02_0124 : TM := fun q s =>
@@ -2255,10 +1883,7 @@ Definition tm_tq02_0124 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma qhtr_tq02_0124 : NonHalt tm_tq02_0124 /\ QHBoundTr 32779478 tm_tq02_0124 /\ QuasiHaltsTr tm_tq02_0124.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0124 21 22 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0124 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0124 21 22 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LC0RC_1RD1LA_1LA0RD  side R  n1=32 P=33 W=1 *)
 Definition tm_tq02_0125 : TM := fun q s =>
@@ -2273,10 +1898,7 @@ Definition tm_tq02_0125 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0125 : NonHalt tm_tq02_0125 /\ QHBoundTr 32779478 tm_tq02_0125 /\ QuasiHaltsTr tm_tq02_0125.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0125 32 33 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0125 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0125 32 33 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LC0RD_1LD1LA_1RD0LC  side L  n1=34 P=35 W=1 *)
 Definition tm_tq02_0126 : TM := fun q s =>
@@ -2291,10 +1913,7 @@ Definition tm_tq02_0126 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0126 : NonHalt tm_tq02_0126 /\ QHBoundTr 32779478 tm_tq02_0126 /\ QuasiHaltsTr tm_tq02_0126.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0126 34 35 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0126 34 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0126 34 35 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LC1RA_1RA1LA_0RB0LC  side L  n1=96 P=97 W=9 *)
 Definition tm_tq02_0127 : TM := fun q s =>
@@ -2309,10 +1928,7 @@ Definition tm_tq02_0127 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0127 : NonHalt tm_tq02_0127 /\ QHBoundTr 32779478 tm_tq02_0127 /\ QuasiHaltsTr tm_tq02_0127.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0127 96 97 9 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0127 96 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0127 96 97 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LC1RA_1RA1LA_0RD0LC  side L  n1=90 P=91 W=9 *)
 Definition tm_tq02_0128 : TM := fun q s =>
@@ -2327,10 +1943,7 @@ Definition tm_tq02_0128 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0128 : NonHalt tm_tq02_0128 /\ QHBoundTr 32779478 tm_tq02_0128 /\ QuasiHaltsTr tm_tq02_0128.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0128 90 91 9 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0128 90 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0128 90 91 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LC1RA_1RD1LA_0RB0LC  side L  n1=705 P=132 W=14 *)
 Definition tm_tq02_0129 : TM := fun q s =>
@@ -2345,10 +1958,7 @@ Definition tm_tq02_0129 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0129 : NonHalt tm_tq02_0129 /\ QHBoundTr 32779478 tm_tq02_0129 /\ QuasiHaltsTr tm_tq02_0129.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0129 705 132 14 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0129 705 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0129 705 132 14 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1LC1RD_0LD1LD_1RA0RB  side R  n1=67 P=37 W=0 *)
 Definition tm_tq02_0130 : TM := fun q s =>
@@ -2363,10 +1973,7 @@ Definition tm_tq02_0130 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0130 : NonHalt tm_tq02_0130 /\ QHBoundTr 32779478 tm_tq02_0130 /\ QuasiHaltsTr tm_tq02_0130.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0130 67 37 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0130 67 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0130 67 37 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0LA_1LA1RD_1RC1LB  side L  n1=70 P=71 W=0 *)
 Definition tm_tq02_0131 : TM := fun q s =>
@@ -2381,10 +1988,7 @@ Definition tm_tq02_0131 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq02_0131 : NonHalt tm_tq02_0131 /\ QHBoundTr 32779478 tm_tq02_0131 /\ QuasiHaltsTr tm_tq02_0131.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0131 70 71 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0131 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0131 70 71 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0LA_1LB1RD_1RC1LB  side L  n1=70 P=71 W=7 *)
 Definition tm_tq02_0132 : TM := fun q s =>
@@ -2399,10 +2003,7 @@ Definition tm_tq02_0132 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq02_0132 : NonHalt tm_tq02_0132 /\ QHBoundTr 32779478 tm_tq02_0132 /\ QuasiHaltsTr tm_tq02_0132.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0132 70 71 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0132 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0132 70 71 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0LA_1LC1RD_1RC1LB  side L  n1=70 P=71 W=3 *)
 Definition tm_tq02_0133 : TM := fun q s =>
@@ -2417,10 +2018,7 @@ Definition tm_tq02_0133 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq02_0133 : NonHalt tm_tq02_0133 /\ QHBoundTr 32779478 tm_tq02_0133 /\ QuasiHaltsTr tm_tq02_0133.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0133 70 71 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0133 70 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0133 70 71 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0LA_1RD0RC_1LA1RC  side R  n1=27 P=28 W=2 *)
 Definition tm_tq02_0134 : TM := fun q s =>
@@ -2435,10 +2033,7 @@ Definition tm_tq02_0134 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0134 : NonHalt tm_tq02_0134 /\ QHBoundTr 32779478 tm_tq02_0134 /\ QuasiHaltsTr tm_tq02_0134.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0134 27 28 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0134 27 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0134 27 28 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0LB_1LC1RA_0LB0LA  side L  n1=26 P=27 W=1 *)
 Definition tm_tq02_0135 : TM := fun q s =>
@@ -2453,10 +2048,7 @@ Definition tm_tq02_0135 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0135 : NonHalt tm_tq02_0135 /\ QHBoundTr 32779478 tm_tq02_0135 /\ QuasiHaltsTr tm_tq02_0135.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0135 26 27 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0135 26 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0135 26 27 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0LD_1LA1RC_1RB1LB  side L  n1=109 P=110 W=5 *)
 Definition tm_tq02_0136 : TM := fun q s =>
@@ -2471,10 +2063,7 @@ Definition tm_tq02_0136 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq02_0136 : NonHalt tm_tq02_0136 /\ QHBoundTr 32779478 tm_tq02_0136 /\ QuasiHaltsTr tm_tq02_0136.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0136 109 110 5 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0136 109 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0136 109 110 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0LD_1LA1RC_1RC1LB  side L  n1=89 P=90 W=7 *)
 Definition tm_tq02_0137 : TM := fun q s =>
@@ -2489,10 +2078,7 @@ Definition tm_tq02_0137 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq02_0137 : NonHalt tm_tq02_0137 /\ QHBoundTr 32779478 tm_tq02_0137 /\ QuasiHaltsTr tm_tq02_0137.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0137 89 90 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0137 89 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0137 89 90 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RB_1LA0RA_0LC0LB  side R  n1=31 P=32 W=2 *)
 Definition tm_tq02_0138 : TM := fun q s =>
@@ -2507,10 +2093,7 @@ Definition tm_tq02_0138 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0138 : NonHalt tm_tq02_0138 /\ QHBoundTr 32779478 tm_tq02_0138 /\ QuasiHaltsTr tm_tq02_0138.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0138 31 32 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0138 31 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0138 31 32 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RB_1LA0RA_0LC0LC  side R  n1=31 P=32 W=0 *)
 Definition tm_tq02_0139 : TM := fun q s =>
@@ -2525,10 +2108,7 @@ Definition tm_tq02_0139 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0139 : NonHalt tm_tq02_0139 /\ QHBoundTr 32779478 tm_tq02_0139 /\ QuasiHaltsTr tm_tq02_0139.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0139 31 32 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0139 31 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0139 31 32 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RB_1LA0RA_0LC0RA  side R  n1=31 P=32 W=2 *)
 Definition tm_tq02_0140 : TM := fun q s =>
@@ -2543,10 +2123,7 @@ Definition tm_tq02_0140 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0140 : NonHalt tm_tq02_0140 /\ QHBoundTr 32779478 tm_tq02_0140 /\ QuasiHaltsTr tm_tq02_0140.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0140 31 32 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0140 31 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0140 31 32 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RB_1LA0RA_0LC0RB  side R  n1=31 P=32 W=6 *)
 Definition tm_tq02_0141 : TM := fun q s =>
@@ -2561,10 +2138,7 @@ Definition tm_tq02_0141 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0141 : NonHalt tm_tq02_0141 /\ QHBoundTr 32779478 tm_tq02_0141 /\ QuasiHaltsTr tm_tq02_0141.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0141 31 32 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0141 31 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0141 31 32 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RB_1LA0RA_0LC0RD  side R  n1=31 P=32 W=2 *)
 Definition tm_tq02_0142 : TM := fun q s =>
@@ -2579,10 +2153,7 @@ Definition tm_tq02_0142 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0142 : NonHalt tm_tq02_0142 /\ QHBoundTr 32779478 tm_tq02_0142 /\ QuasiHaltsTr tm_tq02_0142.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0142 31 32 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0142 31 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0142 31 32 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RB_1LA0RA_0LC1LB  side R  n1=31 P=32 W=2 *)
 Definition tm_tq02_0143 : TM := fun q s =>
@@ -2597,10 +2168,7 @@ Definition tm_tq02_0143 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq02_0143 : NonHalt tm_tq02_0143 /\ QHBoundTr 32779478 tm_tq02_0143 /\ QuasiHaltsTr tm_tq02_0143.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0143 31 32 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0143 31 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0143 31 32 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RB_1LA0RA_0LC1LD  side R  n1=35 P=32 W=0 *)
 Definition tm_tq02_0144 : TM := fun q s =>
@@ -2615,10 +2183,7 @@ Definition tm_tq02_0144 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0144 : NonHalt tm_tq02_0144 /\ QHBoundTr 32779478 tm_tq02_0144 /\ QuasiHaltsTr tm_tq02_0144.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0144 35 32 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0144 35 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0144 35 32 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RB_1LA0RA_0LC1RC  side R  n1=31 P=32 W=2 *)
 Definition tm_tq02_0145 : TM := fun q s =>
@@ -2633,10 +2198,7 @@ Definition tm_tq02_0145 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StC)
   end.
 Lemma qhtr_tq02_0145 : NonHalt tm_tq02_0145 /\ QHBoundTr 32779478 tm_tq02_0145 /\ QuasiHaltsTr tm_tq02_0145.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0145 31 32 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0145 31 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0145 31 32 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RB_1LA1RD_0LC1RB  side R  n1=20 P=18 W=0 *)
 Definition tm_tq02_0146 : TM := fun q s =>
@@ -2651,10 +2213,7 @@ Definition tm_tq02_0146 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0146 : NonHalt tm_tq02_0146 /\ QHBoundTr 32779478 tm_tq02_0146 /\ QuasiHaltsTr tm_tq02_0146.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0146 20 18 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0146 20 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0146 20 18 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RC_1LA0LD_0LC1LA  side L  n1=55 P=56 W=0 *)
 Definition tm_tq02_0147 : TM := fun q s =>
@@ -2669,10 +2228,7 @@ Definition tm_tq02_0147 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0147 : NonHalt tm_tq02_0147 /\ QHBoundTr 32779478 tm_tq02_0147 /\ QuasiHaltsTr tm_tq02_0147.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0147 55 56 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0147 55 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0147 55 56 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC0RC_1LA0LD_1RC0LC  side L  n1=41 P=42 W=4 *)
 Definition tm_tq02_0148 : TM := fun q s =>
@@ -2687,10 +2243,7 @@ Definition tm_tq02_0148 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0148 : NonHalt tm_tq02_0148 /\ QHBoundTr 32779478 tm_tq02_0148 /\ QuasiHaltsTr tm_tq02_0148.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0148 41 42 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0148 41 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0148 41 42 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC1LA_0LA0RD_0LA0RB  side L  n1=69 P=70 W=7 *)
 Definition tm_tq02_0149 : TM := fun q s =>
@@ -2705,10 +2258,7 @@ Definition tm_tq02_0149 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0149 : NonHalt tm_tq02_0149 /\ QHBoundTr 32779478 tm_tq02_0149 /\ QuasiHaltsTr tm_tq02_0149.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0149 69 70 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0149 69 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0149 69 70 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC1LA_0LB0RD_0LA0RB  side L  n1=69 P=70 W=1 *)
 Definition tm_tq02_0150 : TM := fun q s =>
@@ -2723,10 +2273,7 @@ Definition tm_tq02_0150 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0150 : NonHalt tm_tq02_0150 /\ QHBoundTr 32779478 tm_tq02_0150 /\ QuasiHaltsTr tm_tq02_0150.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0150 69 70 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0150 69 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0150 69 70 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC1LA_1LB0RD_0LA0RB  side L  n1=69 P=70 W=3 *)
 Definition tm_tq02_0151 : TM := fun q s =>
@@ -2741,10 +2288,7 @@ Definition tm_tq02_0151 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0151 : NonHalt tm_tq02_0151 /\ QHBoundTr 32779478 tm_tq02_0151 /\ QuasiHaltsTr tm_tq02_0151.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0151 69 70 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0151 69 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0151 69 70 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC1RB_1LA0RB_1LB0LB  side R  n1=21 P=22 W=2 *)
 Definition tm_tq02_0152 : TM := fun q s =>
@@ -2759,10 +2303,7 @@ Definition tm_tq02_0152 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0152 : NonHalt tm_tq02_0152 /\ QHBoundTr 32779478 tm_tq02_0152 /\ QuasiHaltsTr tm_tq02_0152.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0152 21 22 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0152 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0152 21 22 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC1RB_1LA0RB_1RC0LB  side R  n1=21 P=22 W=4 *)
 Definition tm_tq02_0153 : TM := fun q s =>
@@ -2777,10 +2318,7 @@ Definition tm_tq02_0153 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0153 : NonHalt tm_tq02_0153 /\ QHBoundTr 32779478 tm_tq02_0153 /\ QuasiHaltsTr tm_tq02_0153.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0153 21 22 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0153 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0153 21 22 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC1RD_1LA0LC_0RA1LC  side L  n1=17 P=18 W=0 *)
 Definition tm_tq02_0154 : TM := fun q s =>
@@ -2795,10 +2333,7 @@ Definition tm_tq02_0154 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq02_0154 : NonHalt tm_tq02_0154 /\ QHBoundTr 32779478 tm_tq02_0154 /\ QuasiHaltsTr tm_tq02_0154.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0154 17 18 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0154 17 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0154 17 18 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC1RD_1LC0RA_1LA0LA  side L  n1=57 P=56 W=0 *)
 Definition tm_tq02_0155 : TM := fun q s =>
@@ -2813,10 +2348,7 @@ Definition tm_tq02_0155 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0155 : NonHalt tm_tq02_0155 /\ QHBoundTr 32779478 tm_tq02_0155 /\ QuasiHaltsTr tm_tq02_0155.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0155 57 56 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0155 57 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0155 57 56 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1LD_1RC1RD_1LD0RA_1LA0LA  side L  n1=60 P=56 W=0 *)
 Definition tm_tq02_0156 : TM := fun q s =>
@@ -2831,10 +2363,7 @@ Definition tm_tq02_0156 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0156 : NonHalt tm_tq02_0156 /\ QHBoundTr 32779478 tm_tq02_0156 /\ QuasiHaltsTr tm_tq02_0156.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0156 60 56 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0156 60 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0156 60 56 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_0LC1RD_0RA1LB_1LC0RA  side R  n1=83 P=84 W=11 *)
 Definition tm_tq02_0157 : TM := fun q s =>
@@ -2849,10 +2378,7 @@ Definition tm_tq02_0157 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0157 : NonHalt tm_tq02_0157 /\ QHBoundTr 32779478 tm_tq02_0157 /\ QuasiHaltsTr tm_tq02_0157.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0157 83 84 11 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0157 83 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0157 83 84 11 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_0LC1RD_0RD1LB_1LC0RA  side R  n1=97 P=84 W=0 *)
 Definition tm_tq02_0158 : TM := fun q s =>
@@ -2867,10 +2393,7 @@ Definition tm_tq02_0158 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0158 : NonHalt tm_tq02_0158 /\ QHBoundTr 32779478 tm_tq02_0158 /\ QuasiHaltsTr tm_tq02_0158.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0158 97 84 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0158 97 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0158 97 84 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_0LC1RD_1LA1LB_1LC0RA  side R  n1=58 P=53 W=0 *)
 Definition tm_tq02_0159 : TM := fun q s =>
@@ -2885,10 +2408,7 @@ Definition tm_tq02_0159 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0159 : NonHalt tm_tq02_0159 /\ QHBoundTr 32779478 tm_tq02_0159 /\ QuasiHaltsTr tm_tq02_0159.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0159 58 53 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0159 58 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0159 58 53 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_0LC1RD_1RA1LB_1LC0RA  side R  n1=81 P=53 W=0 *)
 Definition tm_tq02_0160 : TM := fun q s =>
@@ -2903,10 +2423,7 @@ Definition tm_tq02_0160 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0160 : NonHalt tm_tq02_0160 /\ QHBoundTr 32779478 tm_tq02_0160 /\ QuasiHaltsTr tm_tq02_0160.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0160 81 53 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0160 81 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0160 81 53 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_0LC1RD_1RA1LB_1LD0RA  side R  n1=73 P=47 W=0 *)
 Definition tm_tq02_0161 : TM := fun q s =>
@@ -2921,10 +2438,7 @@ Definition tm_tq02_0161 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0161 : NonHalt tm_tq02_0161 /\ QHBoundTr 32779478 tm_tq02_0161 /\ QuasiHaltsTr tm_tq02_0161.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0161 73 47 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0161 73 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0161 73 47 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_0LC1RD_1RC1LB_1LC0RA  side R  n1=83 P=84 W=6 *)
 Definition tm_tq02_0162 : TM := fun q s =>
@@ -2939,10 +2453,7 @@ Definition tm_tq02_0162 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0162 : NonHalt tm_tq02_0162 /\ QHBoundTr 32779478 tm_tq02_0162 /\ QuasiHaltsTr tm_tq02_0162.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0162 83 84 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0162 83 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0162 83 84 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_0LC1RD_1RC1LB_1LD0RA  side R  n1=73 P=74 W=8 *)
 Definition tm_tq02_0163 : TM := fun q s =>
@@ -2957,10 +2468,7 @@ Definition tm_tq02_0163 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0163 : NonHalt tm_tq02_0163 /\ QHBoundTr 32779478 tm_tq02_0163 /\ QuasiHaltsTr tm_tq02_0163.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0163 73 74 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0163 73 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0163 73 74 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_0LC1RD_1RD1LB_1LD0RA  side R  n1=73 P=74 W=5 *)
 Definition tm_tq02_0164 : TM := fun q s =>
@@ -2975,10 +2483,7 @@ Definition tm_tq02_0164 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0164 : NonHalt tm_tq02_0164 /\ QHBoundTr 32779478 tm_tq02_0164 /\ QuasiHaltsTr tm_tq02_0164.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0164 73 74 5 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0164 73 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0164 73 74 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_0RC0RB_0RD1RA_1LD1LB  side L  n1=2568 P=1 W=0 *)
 Definition tm_tq02_0165 : TM := fun q s =>
@@ -2993,10 +2498,7 @@ Definition tm_tq02_0165 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StB)
   end.
 Lemma qhtr_tq02_0165 : NonHalt tm_tq02_0165 /\ QHBoundTr 32779478 tm_tq02_0165 /\ QuasiHaltsTr tm_tq02_0165.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0165 2568 1 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0165 2568 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0165 2568 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_0RC1LA_1LC1LD_0RB0RD  side L  n1=2512 P=1 W=0 *)
 Definition tm_tq02_0166 : TM := fun q s =>
@@ -3011,10 +2513,7 @@ Definition tm_tq02_0166 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0166 : NonHalt tm_tq02_0166 /\ QHBoundTr 32779478 tm_tq02_0166 /\ QuasiHaltsTr tm_tq02_0166.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0166 2512 1 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0166 2512 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0166 2512 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RA_---1LD_1LA0LA  side R  n1=21 P=22 W=3 *)
 Definition tm_tq02_0167 : TM := fun q s =>
@@ -3029,10 +2528,7 @@ Definition tm_tq02_0167 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0167 : NonHalt tm_tq02_0167 /\ QHBoundTr 32779478 tm_tq02_0167 /\ QuasiHaltsTr tm_tq02_0167.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0167 21 22 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0167 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0167 21 22 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RA_---1LD_1RB0LA  side R  n1=21 P=22 W=0 *)
 Definition tm_tq02_0168 : TM := fun q s =>
@@ -3047,10 +2543,7 @@ Definition tm_tq02_0168 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0168 : NonHalt tm_tq02_0168 /\ QHBoundTr 32779478 tm_tq02_0168 /\ QuasiHaltsTr tm_tq02_0168.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0168 21 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0168 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0168 21 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RA_1LA1LD_0LC0LA  side R  n1=35 P=22 W=0 *)
 Definition tm_tq02_0169 : TM := fun q s =>
@@ -3065,10 +2558,7 @@ Definition tm_tq02_0169 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0169 : NonHalt tm_tq02_0169 /\ QHBoundTr 32779478 tm_tq02_0169 /\ QuasiHaltsTr tm_tq02_0169.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0169 35 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0169 35 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0169 35 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RA_1RB1LD_0LB0LA  side R  n1=35 P=22 W=0 *)
 Definition tm_tq02_0170 : TM := fun q s =>
@@ -3083,10 +2573,7 @@ Definition tm_tq02_0170 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0170 : NonHalt tm_tq02_0170 /\ QHBoundTr 32779478 tm_tq02_0170 /\ QuasiHaltsTr tm_tq02_0170.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0170 35 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0170 35 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0170 35 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RA_1RB1LD_1LC0LA  side R  n1=21 P=22 W=3 *)
 Definition tm_tq02_0171 : TM := fun q s =>
@@ -3101,10 +2588,7 @@ Definition tm_tq02_0171 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StA)
   end.
 Lemma qhtr_tq02_0171 : NonHalt tm_tq02_0171 /\ QHBoundTr 32779478 tm_tq02_0171 /\ QuasiHaltsTr tm_tq02_0171.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0171 21 22 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0171 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0171 21 22 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RB_0LD0LB_1LA1LD  side R  n1=135 P=65 W=0 *)
 Definition tm_tq02_0172 : TM := fun q s =>
@@ -3119,10 +2603,7 @@ Definition tm_tq02_0172 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0172 : NonHalt tm_tq02_0172 /\ QHBoundTr 32779478 tm_tq02_0172 /\ QuasiHaltsTr tm_tq02_0172.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0172 135 65 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0172 135 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0172 135 65 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RB_0LD0LC_1LA1LD  side R  n1=64 P=65 W=3 *)
 Definition tm_tq02_0173 : TM := fun q s =>
@@ -3137,10 +2618,7 @@ Definition tm_tq02_0173 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0173 : NonHalt tm_tq02_0173 /\ QHBoundTr 32779478 tm_tq02_0173 /\ QuasiHaltsTr tm_tq02_0173.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0173 64 65 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0173 64 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0173 64 65 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RB_0LD0RC_1LA1LD  side R  n1=130 P=65 W=0 *)
 Definition tm_tq02_0174 : TM := fun q s =>
@@ -3155,10 +2633,7 @@ Definition tm_tq02_0174 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0174 : NonHalt tm_tq02_0174 /\ QHBoundTr 32779478 tm_tq02_0174 /\ QuasiHaltsTr tm_tq02_0174.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0174 130 65 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0174 130 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0174 130 65 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RB_0LD0RD_1LA1LD  side R  n1=160 P=65 W=0 *)
 Definition tm_tq02_0175 : TM := fun q s =>
@@ -3173,10 +2648,7 @@ Definition tm_tq02_0175 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0175 : NonHalt tm_tq02_0175 /\ QHBoundTr 32779478 tm_tq02_0175 /\ QuasiHaltsTr tm_tq02_0175.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0175 160 65 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0175 160 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0175 160 65 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RB_0LD1LA_1LA1LD  side R  n1=158 P=65 W=0 *)
 Definition tm_tq02_0176 : TM := fun q s =>
@@ -3191,10 +2663,7 @@ Definition tm_tq02_0176 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0176 : NonHalt tm_tq02_0176 /\ QHBoundTr 32779478 tm_tq02_0176 /\ QuasiHaltsTr tm_tq02_0176.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0176 158 65 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0176 158 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0176 158 65 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RB_0LD1LC_1LA1LD  side R  n1=64 P=65 W=4 *)
 Definition tm_tq02_0177 : TM := fun q s =>
@@ -3209,10 +2678,7 @@ Definition tm_tq02_0177 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0177 : NonHalt tm_tq02_0177 /\ QHBoundTr 32779478 tm_tq02_0177 /\ QuasiHaltsTr tm_tq02_0177.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0177 64 65 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0177 64 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0177 64 65 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RA_1LC0RB_0LD1RB_1LA1LD  side R  n1=126 P=65 W=0 *)
 Definition tm_tq02_0178 : TM := fun q s =>
@@ -3227,10 +2693,7 @@ Definition tm_tq02_0178 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0178 : NonHalt tm_tq02_0178 /\ QHBoundTr 32779478 tm_tq02_0178 /\ QuasiHaltsTr tm_tq02_0178.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0178 126 65 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0178 126 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0178 126 65 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RB_1LC0RD_1RD1LB_1RB0RA  side R  n1=32 P=33 W=5 *)
 Definition tm_tq02_0179 : TM := fun q s =>
@@ -3245,10 +2708,7 @@ Definition tm_tq02_0179 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StA)
   end.
 Lemma qhtr_tq02_0179 : NonHalt tm_tq02_0179 /\ QHBoundTr 32779478 tm_tq02_0179 /\ QuasiHaltsTr tm_tq02_0179.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0179 32 33 5 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0179 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0179 32 33 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RB_1LC1RC_1LD0RB_1RA1LD  side R  n1=109 P=110 W=5 *)
 Definition tm_tq02_0180 : TM := fun q s =>
@@ -3263,10 +2723,7 @@ Definition tm_tq02_0180 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StD)
   end.
 Lemma qhtr_tq02_0180 : NonHalt tm_tq02_0180 /\ QHBoundTr 32779478 tm_tq02_0180 /\ QuasiHaltsTr tm_tq02_0180.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0180 109 110 5 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0180 109 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0180 109 110 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RB_1LC1RD_1RA1LC_1LC0RB  side R  n1=89 P=90 W=8 *)
 Definition tm_tq02_0181 : TM := fun q s =>
@@ -3281,10 +2738,7 @@ Definition tm_tq02_0181 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0181 : NonHalt tm_tq02_0181 /\ QHBoundTr 32779478 tm_tq02_0181 /\ QuasiHaltsTr tm_tq02_0181.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0181 89 90 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0181 89 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0181 89 90 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RB_1RC0RB_1LD1RA_0LD1LC  side R  n1=47 P=48 W=1 *)
 Definition tm_tq02_0182 : TM := fun q s =>
@@ -3299,10 +2753,7 @@ Definition tm_tq02_0182 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq02_0182 : NonHalt tm_tq02_0182 /\ QHBoundTr 32779478 tm_tq02_0182 /\ QuasiHaltsTr tm_tq02_0182.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0182 47 48 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0182 47 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0182 47 48 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RB_1RC0RC_0RD0RB_1LD1LA  side R  n1=22 P=23 W=0 *)
 Definition tm_tq02_0183 : TM := fun q s =>
@@ -3317,10 +2768,7 @@ Definition tm_tq02_0183 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0183 : NonHalt tm_tq02_0183 /\ QHBoundTr 32779478 tm_tq02_0183 /\ QuasiHaltsTr tm_tq02_0183.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0183 22 23 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0183 22 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0183 22 23 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RB_1RC0RC_1LD1LC_1RA0LC  side L  n1=22 P=22 W=0 *)
 Definition tm_tq02_0184 : TM := fun q s =>
@@ -3335,10 +2783,7 @@ Definition tm_tq02_0184 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0184 : NonHalt tm_tq02_0184 /\ QHBoundTr 32779478 tm_tq02_0184 /\ QuasiHaltsTr tm_tq02_0184.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0184 22 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0184 22 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0184 22 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1LA0LC_1RC1LD_1RD0LB  side L  n1=20 P=21 W=0 *)
 Definition tm_tq02_0185 : TM := fun q s =>
@@ -3353,10 +2798,7 @@ Definition tm_tq02_0185 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0185 : NonHalt tm_tq02_0185 /\ QHBoundTr 32779478 tm_tq02_0185 /\ QuasiHaltsTr tm_tq02_0185.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0185 20 21 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0185 20 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0185 20 21 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1LC0LC_1RA1LD_0RA0LB  side L  n1=28 P=29 W=3 *)
 Definition tm_tq02_0186 : TM := fun q s =>
@@ -3371,10 +2813,7 @@ Definition tm_tq02_0186 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0186 : NonHalt tm_tq02_0186 /\ QHBoundTr 32779478 tm_tq02_0186 /\ QuasiHaltsTr tm_tq02_0186.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0186 28 29 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0186 28 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0186 28 29 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1LC0LC_1RA1LD_0RB0LB  side L  n1=28 P=29 W=2 *)
 Definition tm_tq02_0187 : TM := fun q s =>
@@ -3389,10 +2828,7 @@ Definition tm_tq02_0187 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0187 : NonHalt tm_tq02_0187 /\ QHBoundTr 32779478 tm_tq02_0187 /\ QuasiHaltsTr tm_tq02_0187.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0187 28 29 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0187 28 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0187 28 29 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1LC0LC_1RA1LD_1LB0LB  side L  n1=28 P=29 W=4 *)
 Definition tm_tq02_0188 : TM := fun q s =>
@@ -3407,10 +2843,7 @@ Definition tm_tq02_0188 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0188 : NonHalt tm_tq02_0188 /\ QHBoundTr 32779478 tm_tq02_0188 /\ QuasiHaltsTr tm_tq02_0188.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0188 28 29 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0188 28 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0188 28 29 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1LC0LC_1RA1LD_1RC0LB  side L  n1=28 P=29 W=0 *)
 Definition tm_tq02_0189 : TM := fun q s =>
@@ -3425,10 +2858,7 @@ Definition tm_tq02_0189 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0189 : NonHalt tm_tq02_0189 /\ QHBoundTr 32779478 tm_tq02_0189 /\ QuasiHaltsTr tm_tq02_0189.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0189 28 29 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0189 28 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0189 28 29 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1LC0LC_1RA1LD_1RD0LB  side L  n1=28 P=29 W=0 *)
 Definition tm_tq02_0190 : TM := fun q s =>
@@ -3443,10 +2873,7 @@ Definition tm_tq02_0190 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0190 : NonHalt tm_tq02_0190 /\ QHBoundTr 32779478 tm_tq02_0190 /\ QuasiHaltsTr tm_tq02_0190.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0190 28 29 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0190 28 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0190 28 29 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1LC0LD_1RA0LB_1RB0RD  side L  n1=82 P=83 W=5 *)
 Definition tm_tq02_0191 : TM := fun q s =>
@@ -3461,10 +2888,7 @@ Definition tm_tq02_0191 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StD)
   end.
 Lemma qhtr_tq02_0191 : NonHalt tm_tq02_0191 /\ QHBoundTr 32779478 tm_tq02_0191 /\ QuasiHaltsTr tm_tq02_0191.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0191 82 83 5 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0191 82 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0191 82 83 5 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1LC1LB_0RA1LD_1RA0LB  side L  n1=52 P=53 W=7 *)
 Definition tm_tq02_0192 : TM := fun q s =>
@@ -3479,10 +2903,7 @@ Definition tm_tq02_0192 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0192 : NonHalt tm_tq02_0192 /\ QHBoundTr 32779478 tm_tq02_0192 /\ QuasiHaltsTr tm_tq02_0192.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0192 52 53 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0192 52 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0192 52 53 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1LC1LB_0RA1LD_1RD0LB  side L  n1=46 P=47 W=7 *)
 Definition tm_tq02_0193 : TM := fun q s =>
@@ -3497,10 +2918,7 @@ Definition tm_tq02_0193 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0193 : NonHalt tm_tq02_0193 /\ QHBoundTr 32779478 tm_tq02_0193 /\ QuasiHaltsTr tm_tq02_0193.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0193 46 47 7 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0193 46 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0193 46 47 7 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1LC1RD_0LD1LD_1RA0RB  side R  n1=36 P=37 W=2 *)
 Definition tm_tq02_0194 : TM := fun q s =>
@@ -3515,10 +2933,7 @@ Definition tm_tq02_0194 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0194 : NonHalt tm_tq02_0194 /\ QHBoundTr 32779478 tm_tq02_0194 /\ QuasiHaltsTr tm_tq02_0194.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0194 36 37 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0194 36 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0194 36 37 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1LC1RD_1RA1LD_0RD0LB  side R  n1=2819 P=1 W=0 *)
 Definition tm_tq02_0195 : TM := fun q s =>
@@ -3533,10 +2948,7 @@ Definition tm_tq02_0195 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0195 : NonHalt tm_tq02_0195 /\ QHBoundTr 32779478 tm_tq02_0195 /\ QuasiHaltsTr tm_tq02_0195.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0195 2819 1 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0195 2819 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0195 2819 1 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1RC0RA_0RD1RA_1LD0LC  side R  n1=21 P=22 W=0 *)
 Definition tm_tq02_0196 : TM := fun q s =>
@@ -3551,10 +2963,7 @@ Definition tm_tq02_0196 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0196 : NonHalt tm_tq02_0196 /\ QHBoundTr 32779478 tm_tq02_0196 /\ QuasiHaltsTr tm_tq02_0196.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0196 21 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0196 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0196 21 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1RC0RA_1LD1RB_0RB1LC  side R  n1=34 P=35 W=6 *)
 Definition tm_tq02_0197 : TM := fun q s =>
@@ -3569,10 +2978,7 @@ Definition tm_tq02_0197 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq02_0197 : NonHalt tm_tq02_0197 /\ QHBoundTr 32779478 tm_tq02_0197 /\ QuasiHaltsTr tm_tq02_0197.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0197 34 35 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0197 34 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0197 34 35 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1RC0RA_1LD1RB_1LB1LC  side R  n1=34 P=35 W=4 *)
 Definition tm_tq02_0198 : TM := fun q s =>
@@ -3587,10 +2993,7 @@ Definition tm_tq02_0198 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq02_0198 : NonHalt tm_tq02_0198 /\ QHBoundTr 32779478 tm_tq02_0198 /\ QuasiHaltsTr tm_tq02_0198.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0198 34 35 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0198 34 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0198 34 35 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1RC0RA_1LD1RB_1RB1LC  side R  n1=34 P=35 W=6 *)
 Definition tm_tq02_0199 : TM := fun q s =>
@@ -3605,10 +3008,7 @@ Definition tm_tq02_0199 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq02_0199 : NonHalt tm_tq02_0199 /\ QHBoundTr 32779478 tm_tq02_0199 /\ QuasiHaltsTr tm_tq02_0199.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0199 34 35 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0199 34 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0199 34 35 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1RC0RA_1LD1RB_1RD1LC  side R  n1=34 P=35 W=4 *)
 Definition tm_tq02_0200 : TM := fun q s =>
@@ -3623,10 +3023,7 @@ Definition tm_tq02_0200 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq02_0200 : NonHalt tm_tq02_0200 /\ QHBoundTr 32779478 tm_tq02_0200 /\ QuasiHaltsTr tm_tq02_0200.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0200 34 35 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0200 34 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0200 34 35 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RC_1RC0RC_0RD0RB_1LD1LA  side R  n1=22 P=23 W=4 *)
 Definition tm_tq02_0201 : TM := fun q s =>
@@ -3641,10 +3038,7 @@ Definition tm_tq02_0201 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StA)
   end.
 Lemma qhtr_tq02_0201 : NonHalt tm_tq02_0201 /\ QHBoundTr 32779478 tm_tq02_0201 /\ QuasiHaltsTr tm_tq02_0201.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0201 22 23 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0201 22 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0201 22 23 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_0LC0RA_0RA1LD_1LC1RB  side R  n1=106 P=107 W=9 *)
 Definition tm_tq02_0202 : TM := fun q s =>
@@ -3659,10 +3053,7 @@ Definition tm_tq02_0202 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0202 : NonHalt tm_tq02_0202 /\ QHBoundTr 32779478 tm_tq02_0202 /\ QuasiHaltsTr tm_tq02_0202.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0202 106 107 9 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0202 106 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0202 106 107 9 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_0LC0RA_0RD1LD_1LC1RB  side R  n1=106 P=107 W=8 *)
 Definition tm_tq02_0203 : TM := fun q s =>
@@ -3677,10 +3068,7 @@ Definition tm_tq02_0203 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0203 : NonHalt tm_tq02_0203 /\ QHBoundTr 32779478 tm_tq02_0203 /\ QuasiHaltsTr tm_tq02_0203.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0203 106 107 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0203 106 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0203 106 107 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_0RC1LD_1RD0RA_1LB0RC  side R  n1=18 P=19 W=1 *)
 Definition tm_tq02_0204 : TM := fun q s =>
@@ -3695,10 +3083,7 @@ Definition tm_tq02_0204 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq02_0204 : NonHalt tm_tq02_0204 /\ QHBoundTr 32779478 tm_tq02_0204 /\ QuasiHaltsTr tm_tq02_0204.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0204 18 19 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0204 18 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0204 18 19 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0LA_0RA1LB_0RA1RB  side R  n1=76 P=77 W=11 *)
 Definition tm_tq02_0205 : TM := fun q s =>
@@ -3713,10 +3098,7 @@ Definition tm_tq02_0205 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0205 : NonHalt tm_tq02_0205 /\ QHBoundTr 32779478 tm_tq02_0205 /\ QuasiHaltsTr tm_tq02_0205.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0205 76 77 11 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0205 76 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0205 76 77 11 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0LA_0RD1LB_0RA1RB  side R  n1=76 P=77 W=0 *)
 Definition tm_tq02_0206 : TM := fun q s =>
@@ -3731,10 +3113,7 @@ Definition tm_tq02_0206 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0206 : NonHalt tm_tq02_0206 /\ QHBoundTr 32779478 tm_tq02_0206 /\ QuasiHaltsTr tm_tq02_0206.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0206 76 77 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0206 76 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0206 76 77 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0LA_1LD1LB_0RA1RB  side R  n1=76 P=77 W=4 *)
 Definition tm_tq02_0207 : TM := fun q s =>
@@ -3749,10 +3128,7 @@ Definition tm_tq02_0207 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0207 : NonHalt tm_tq02_0207 /\ QHBoundTr 32779478 tm_tq02_0207 /\ QuasiHaltsTr tm_tq02_0207.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0207 76 77 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0207 76 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0207 76 77 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0LA_1RA1LB_0RA1RB  side R  n1=76 P=77 W=11 *)
 Definition tm_tq02_0208 : TM := fun q s =>
@@ -3767,10 +3143,7 @@ Definition tm_tq02_0208 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0208 : NonHalt tm_tq02_0208 /\ QHBoundTr 32779478 tm_tq02_0208 /\ QuasiHaltsTr tm_tq02_0208.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0208 76 77 11 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0208 76 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0208 76 77 11 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0LA_1RD1LB_0RA1RB  side R  n1=76 P=77 W=6 *)
 Definition tm_tq02_0209 : TM := fun q s =>
@@ -3785,10 +3158,7 @@ Definition tm_tq02_0209 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0209 : NonHalt tm_tq02_0209 /\ QHBoundTr 32779478 tm_tq02_0209 /\ QuasiHaltsTr tm_tq02_0209.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0209 76 77 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0209 76 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0209 76 77 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0LD_0RA0LB_1LB0RC  side L  n1=34 P=35 W=3 *)
 Definition tm_tq02_0210 : TM := fun q s =>
@@ -3803,10 +3173,7 @@ Definition tm_tq02_0210 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StC)
   end.
 Lemma qhtr_tq02_0210 : NonHalt tm_tq02_0210 /\ QHBoundTr 32779478 tm_tq02_0210 /\ QuasiHaltsTr tm_tq02_0210.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0210 34 35 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0210 34 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0210 34 35 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RA_0RA1LB_0RA1RB  side R  n1=24 P=25 W=2 *)
 Definition tm_tq02_0211 : TM := fun q s =>
@@ -3821,10 +3188,7 @@ Definition tm_tq02_0211 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0211 : NonHalt tm_tq02_0211 /\ QHBoundTr 32779478 tm_tq02_0211 /\ QuasiHaltsTr tm_tq02_0211.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0211 24 25 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0211 24 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0211 24 25 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RA_1RA1LB_0LC0LB  side R  n1=49 P=43 W=0 *)
 Definition tm_tq02_0212 : TM := fun q s =>
@@ -3839,10 +3203,7 @@ Definition tm_tq02_0212 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0212 : NonHalt tm_tq02_0212 /\ QHBoundTr 32779478 tm_tq02_0212 /\ QuasiHaltsTr tm_tq02_0212.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0212 49 43 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0212 49 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0212 49 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RA_1RA1LB_0LD0LB  side R  n1=42 P=43 W=6 *)
 Definition tm_tq02_0213 : TM := fun q s =>
@@ -3857,10 +3218,7 @@ Definition tm_tq02_0213 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0213 : NonHalt tm_tq02_0213 /\ QHBoundTr 32779478 tm_tq02_0213 /\ QuasiHaltsTr tm_tq02_0213.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0213 42 43 6 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0213 42 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0213 42 43 6 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RA_1RA1LB_0RA1RB  side R  n1=24 P=25 W=2 *)
 Definition tm_tq02_0214 : TM := fun q s =>
@@ -3875,10 +3233,7 @@ Definition tm_tq02_0214 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0214 : NonHalt tm_tq02_0214 /\ QHBoundTr 32779478 tm_tq02_0214 /\ QuasiHaltsTr tm_tq02_0214.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0214 24 25 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0214 24 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0214 24 25 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RA_1RA1LB_1LC0LB  side R  n1=42 P=43 W=3 *)
 Definition tm_tq02_0215 : TM := fun q s =>
@@ -3893,10 +3248,7 @@ Definition tm_tq02_0215 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0215 : NonHalt tm_tq02_0215 /\ QHBoundTr 32779478 tm_tq02_0215 /\ QuasiHaltsTr tm_tq02_0215.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0215 42 43 3 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0215 42 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0215 42 43 3 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RA_1RA1LB_1LD0LB  side R  n1=58 P=43 W=0 *)
 Definition tm_tq02_0216 : TM := fun q s =>
@@ -3911,10 +3263,7 @@ Definition tm_tq02_0216 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0216 : NonHalt tm_tq02_0216 /\ QHBoundTr 32779478 tm_tq02_0216 /\ QuasiHaltsTr tm_tq02_0216.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0216 58 43 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0216 58 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0216 58 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RA_1RA1LB_1RB0LB  side R  n1=62 P=43 W=0 *)
 Definition tm_tq02_0217 : TM := fun q s =>
@@ -3929,10 +3278,7 @@ Definition tm_tq02_0217 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0217 : NonHalt tm_tq02_0217 /\ QHBoundTr 32779478 tm_tq02_0217 /\ QuasiHaltsTr tm_tq02_0217.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0217 62 43 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0217 62 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0217 62 43 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RA_1RA1LB_1RC0LB  side R  n1=42 P=43 W=2 *)
 Definition tm_tq02_0218 : TM := fun q s =>
@@ -3947,10 +3293,7 @@ Definition tm_tq02_0218 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StB)
   end.
 Lemma qhtr_tq02_0218 : NonHalt tm_tq02_0218 /\ QHBoundTr 32779478 tm_tq02_0218 /\ QuasiHaltsTr tm_tq02_0218.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0218 42 43 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0218 42 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0218 42 43 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RA_1RC1LB_0LC0LD  side L  n1=55 P=56 W=1 *)
 Definition tm_tq02_0219 : TM := fun q s =>
@@ -3965,10 +3308,7 @@ Definition tm_tq02_0219 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StD)
   end.
 Lemma qhtr_tq02_0219 : NonHalt tm_tq02_0219 /\ QHBoundTr 32779478 tm_tq02_0219 /\ QuasiHaltsTr tm_tq02_0219.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0219 55 56 1 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0219 55 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0219 55 56 1 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RA_1RD1LB_0RA1RB  side R  n1=24 P=25 W=4 *)
 Definition tm_tq02_0220 : TM := fun q s =>
@@ -3983,10 +3323,7 @@ Definition tm_tq02_0220 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0220 : NonHalt tm_tq02_0220 /\ QHBoundTr 32779478 tm_tq02_0220 /\ QuasiHaltsTr tm_tq02_0220.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0220 24 25 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0220 24 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0220 24 25 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RD_1RA1LC_1LB1RB  side R  n1=109 P=110 W=4 *)
 Definition tm_tq02_0221 : TM := fun q s =>
@@ -4001,10 +3338,7 @@ Definition tm_tq02_0221 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0221 : NonHalt tm_tq02_0221 /\ QHBoundTr 32779478 tm_tq02_0221 /\ QuasiHaltsTr tm_tq02_0221.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0221 109 110 4 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0221 109 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0221 109 110 4 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC0RD_1RA1LC_1LC1RB  side R  n1=89 P=90 W=8 *)
 Definition tm_tq02_0222 : TM := fun q s =>
@@ -4019,10 +3353,7 @@ Definition tm_tq02_0222 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DR StB)
   end.
 Lemma qhtr_tq02_0222 : NonHalt tm_tq02_0222 /\ QHBoundTr 32779478 tm_tq02_0222 /\ QuasiHaltsTr tm_tq02_0222.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0222 89 90 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0222 89 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0222 89 90 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC1LB_1RA0LB_0LB0RB  side L  n1=21 P=22 W=2 *)
 Definition tm_tq02_0223 : TM := fun q s =>
@@ -4037,10 +3368,7 @@ Definition tm_tq02_0223 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0223 : NonHalt tm_tq02_0223 /\ QHBoundTr 32779478 tm_tq02_0223 /\ QuasiHaltsTr tm_tq02_0223.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0223 21 22 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0223 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0223 21 22 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC1LB_1RA0LB_0RA0RB  side L  n1=48 P=22 W=0 *)
 Definition tm_tq02_0224 : TM := fun q s =>
@@ -4055,10 +3383,7 @@ Definition tm_tq02_0224 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0224 : NonHalt tm_tq02_0224 /\ QHBoundTr 32779478 tm_tq02_0224 /\ QuasiHaltsTr tm_tq02_0224.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0224 48 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0224 48 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0224 48 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC1LB_1RA0LB_0RC0RB  side L  n1=32 P=22 W=0 *)
 Definition tm_tq02_0225 : TM := fun q s =>
@@ -4073,10 +3398,7 @@ Definition tm_tq02_0225 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0225 : NonHalt tm_tq02_0225 /\ QHBoundTr 32779478 tm_tq02_0225 /\ QuasiHaltsTr tm_tq02_0225.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0225 32 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0225 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0225 32 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC1LB_1RA0LB_1RA0RB  side L  n1=21 P=22 W=0 *)
 Definition tm_tq02_0226 : TM := fun q s =>
@@ -4091,10 +3413,7 @@ Definition tm_tq02_0226 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DR StB)
   end.
 Lemma qhtr_tq02_0226 : NonHalt tm_tq02_0226 /\ QHBoundTr 32779478 tm_tq02_0226 /\ QuasiHaltsTr tm_tq02_0226.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0226 21 22 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0226 21 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0226 21 22 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1LC1LD_0RA0LB_1RA1LC  side L  n1=106 P=107 W=8 *)
 Definition tm_tq02_0227 : TM := fun q s =>
@@ -4109,10 +3428,7 @@ Definition tm_tq02_0227 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq02_0227 : NonHalt tm_tq02_0227 /\ QHBoundTr 32779478 tm_tq02_0227 /\ QuasiHaltsTr tm_tq02_0227.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0227 106 107 8 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0227 106 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0227 106 107 8 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1RC0LD_1LB0RA_1LC0LC  side R  n1=2332 P=3 W=0 *)
 Definition tm_tq02_0228 : TM := fun q s =>
@@ -4127,10 +3443,7 @@ Definition tm_tq02_0228 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0228 : NonHalt tm_tq02_0228 /\ QHBoundTr 32779478 tm_tq02_0228 /\ QuasiHaltsTr tm_tq02_0228.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound tm_tq02_0228 2332 3 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0228 2332 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage tm_tq02_0228 2332 3 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1RC0RB_1LD0LB_1RA0LC  side L  n1=82 P=83 W=2 *)
 Definition tm_tq02_0229 : TM := fun q s =>
@@ -4145,10 +3458,7 @@ Definition tm_tq02_0229 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S0 DL StC)
   end.
 Lemma qhtr_tq02_0229 : NonHalt tm_tq02_0229 /\ QHBoundTr 32779478 tm_tq02_0229 /\ QuasiHaltsTr tm_tq02_0229.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0229 82 83 2 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0229 82 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0229 82 83 2 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 (* 1RB1RD_1RC0RC_1LA0LD_0LC1LC  side L  n1=32 P=33 W=0 *)
 Definition tm_tq02_0230 : TM := fun q s =>
@@ -4163,10 +3473,7 @@ Definition tm_tq02_0230 : TM := fun q s =>
   | StD, S1 => Some (mkTrans S1 DL StC)
   end.
 Lemma qhtr_tq02_0230 : NonHalt tm_tq02_0230 /\ QHBoundTr 32779478 tm_tq02_0230 /\ QuasiHaltsTr tm_tq02_0230.
-Proof.
-  destruct (tcycler_check_qhboundtr_sound_L tm_tq02_0230 32 33 0 ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].
-  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_tq02_0230 32 ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].
-Qed.
+Proof. apply (tcycler_qh_stage_L tm_tq02_0230 32 33 0 32779478). all: vm_cast_no_check (eq_refl true). Qed.
 
 Definition pqh_02 : list TM :=
   [tm_tq02_0000;

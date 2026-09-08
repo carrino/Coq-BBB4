@@ -122,16 +122,13 @@ def stage(certs, probedir, outdir, chunk, start):
             for k, (spec, side, n1, P, W) in enumerate(cb):
                 nm = 'tq%02d_%04d' % (n, k)
                 names.append(nm)
-                lem = ('tcycler_check_qhboundtr_sound' if side == 'R'
-                       else 'tcycler_check_qhboundtr_sound_L')
+                lem = ('tcycler_qh_stage' if side == 'R'
+                       else 'tcycler_qh_stage_L')
                 f.write('(* %s  side %s  n1=%d P=%d W=%d *)\n' % (spec, side, n1, P, W))
                 f.write(tm_lambda('tm_' + nm, spec) + '\n')
                 f.write('Lemma qhtr_%s : NonHalt tm_%s /\\ QHBoundTr 32779478 tm_%s /\\ QuasiHaltsTr tm_%s.\n'
-                        'Proof.\n'
-                        '  destruct (%s tm_%s %d %d %d ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].\n'
-                        '  split; [exact Hnh | split; [exact (qh_bound_of_le 32779478 tm_%s %d ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].\n'
-                        'Qed.\n\n'
-                        % (nm, nm, nm, nm, lem, nm, n1, P, W, nm, n1))
+                        'Proof. apply (%s tm_%s %d %d %d 32779478). all: vm_cast_no_check (eq_refl true). Qed.\n\n'
+                        % (nm, nm, nm, nm, lem, nm, n1, P, W))
                 rows.append((spec, 'qhtr_%s' % nm, 'ProvTr_QH_%s.v' % nn))
             f.write('Definition pqh_%s : list TM :=\n  [' % nn)
             f.write(';\n   '.join('tm_%s' % x for x in names))

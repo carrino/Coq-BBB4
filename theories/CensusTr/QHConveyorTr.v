@@ -15,8 +15,8 @@
 
 From Coq Require Import Arith Bool List NArith PArith.
 From Coq Require Import FSets.FMapPositive MSets.MSetPositive.
-From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape.
-From BBB4.Checkers Require Import NGram NGramTr WrapTr.
+From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape Mirror.
+From BBB4.Checkers Require Import NGram NGramTr WrapTr TCyclerQHTr.
 From BBB4.Census Require Import RankSearch.
 From BBB4.CensusTr Require Import TNF_QHTr DecideTr.
 Import ListNotations.
@@ -89,4 +89,52 @@ Proof.
   intros B tm n Hle Hb tg s Hq.
   apply Nat.leb_le in Hle.
   exact (Nat.le_trans _ _ _ (Hb tg s Hq) Hle).
+Qed.
+
+(** ** Stage lemmas: one [apply] and two [vm_cast_no_check] goals
+
+    The generated stages close each machine with
+    [apply (qh_*_stage tm ... B); all: vm_cast_no_check (eq_refl true)]:
+    the checker verdict and the bound check are kernel-evaluated by the
+    VM.  (Destructuring the soundness lemma on a [vm_cast_no_check]
+    term instead makes the elaborator re-reduce the checker with the
+    default machine, ~300x slower than the probe.) *)
+Lemma qh_plain_stage : forall tm pins n t fuel rounds B,
+  qh_plain_at tm pins n t fuel rounds = true ->
+  (S t <=? B) = true ->
+  NonHalt tm /\ QHBoundTr B tm /\ QuasiHaltsTr tm.
+Proof.
+  intros tm pins n t fuel rounds B H Hle.
+  destruct (qh_plain_at_sound tm pins n t fuel rounds H) as [Hnh [Hb Hq]].
+  split; [exact Hnh|]. split; [exact (qh_bound_of B tm t Hle Hb) | exact Hq].
+Qed.
+
+Lemma qh_lex_stage : forall tm pins n t fuel rounds B,
+  qh_lex_at tm pins n t fuel rounds = true ->
+  (S t <=? B) = true ->
+  NonHalt tm /\ QHBoundTr B tm /\ QuasiHaltsTr tm.
+Proof.
+  intros tm pins n t fuel rounds B H Hle.
+  destruct (qh_lex_at_sound tm pins n t fuel rounds H) as [Hnh [Hb Hq]].
+  split; [exact Hnh|]. split; [exact (qh_bound_of B tm t Hle Hb) | exact Hq].
+Qed.
+
+Lemma tcycler_qh_stage : forall tm n1 P W B,
+  tcycler_check_qhboundtr tm n1 P W = true ->
+  (n1 <=? B) = true ->
+  NonHalt tm /\ QHBoundTr B tm /\ QuasiHaltsTr tm.
+Proof.
+  intros tm n1 P W B H Hle.
+  destruct (tcycler_check_qhboundtr_sound tm n1 P W H) as [Hnh [Hb Hq]].
+  split; [exact Hnh|]. split; [exact (qh_bound_of_le B tm n1 Hle Hb) | exact Hq].
+Qed.
+
+Lemma tcycler_qh_stage_L : forall tm n1 P W B,
+  tcycler_check_qhboundtr (mirror_tm tm) n1 P W = true ->
+  (n1 <=? B) = true ->
+  NonHalt tm /\ QHBoundTr B tm /\ QuasiHaltsTr tm.
+Proof.
+  intros tm n1 P W B H Hle.
+  destruct (tcycler_check_qhboundtr_sound_L tm n1 P W H) as [Hnh [Hb Hq]].
+  split; [exact Hnh|]. split; [exact (qh_bound_of_le B tm n1 Hle Hb) | exact Hq].
 Qed.

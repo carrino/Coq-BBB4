@@ -138,12 +138,8 @@ def stage(scanfile, probedir, outdir, chunk, start):
                 pins = '[' + '; '.join('(%s, %d)' % (instr_term(tg), s) for tg, s in quiet) + ']'
                 f.write('(* %s  %s n=%d t=%d *)\n%s\n' % (sp, kind, w, t, tm_lambda(nm, sp)))
                 f.write('Lemma qhtr_%s : NonHalt %s /\\ QHBoundTr %d %s /\\ QuasiHaltsTr %s.\n'
-                        'Proof.\n'
-                        '  destruct (qh_%s_at_sound %s %s %d %d %d %d\n'
-                        '              ltac:(vm_cast_no_check (eq_refl true))) as [Hnh [Hb Hq]].\n'
-                        '  split; [exact Hnh | split; [exact (qh_bound_of %d %s %d ltac:(vm_cast_no_check (eq_refl true)) Hb) | exact Hq]].\n'
-                        'Qed.\n\n'
-                        % (nm[3:], nm, B_TR, nm, nm, kind, nm, pins, w, t, FUEL, ROUNDS, B_TR, nm, t))
+                        'Proof. apply (qh_%s_stage %s %s %d %d %d %d %d). all: vm_cast_no_check (eq_refl true). Qed.\n\n'
+                        % (nm[3:], nm, B_TR, nm, nm, kind, nm, pins, w, t, FUEL, ROUNDS, B_TR))
                 names.append(nm)
                 man.append((sp, 'qhtr_%s' % nm[3:], 'ProvTr_QH_%s.v' % nn, '%s,%d,%d' % (kind, w, t)))
             f.write('Definition pqh_%s : list TM :=\n  [' % nn)
