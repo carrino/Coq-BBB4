@@ -1859,7 +1859,7 @@ without an `origin` remote and without the configured Coq/opam toolchain.
 lex gate.  **Burn-down (known population):** 5,436 in-walk quiet candidates
 minus future checked QH stages, plus the state-proven quiet list (about
 1,150 until regenerated exactly).  Before any stage lands: run the complete
-2M-step scan on the 16-core box, surface any last fire above `B_tr`, run the
+2M-step scan on the 16-core box, surface any last fire at or above `B_tr`, run the
 200-row probe under the `census` opam switch, then add the lex finder and
 only stage kernel-accepted rows.
 

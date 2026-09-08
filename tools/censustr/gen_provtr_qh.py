@@ -59,7 +59,8 @@ def do_scan(src, out, steps):
         s, m, q, x = max(vals)
         print('quiet_machines=%d quiet_instructions=%d max_last_fire=%d machine=%s instr=%s%d' %
               (sum(bool(qs) for _, qs in rows), len(vals), s, m, chr(65 + q), x))
-        if s > B_TR: sys.exit('BOUND RAISE REQUIRED: %d > B_tr %d' % (s, B_TR))
+        if s >= B_TR:
+            sys.exit('BOUND RAISE REQUIRED: S %d > B_tr %d' % (s, B_TR))
 
 
 def read_scan(path):
