@@ -100,25 +100,44 @@ def probe(scanfile, outdir, chunk, start=0, ns=NS, tdeltas=TDELTAS, kinds=KINDS)
     sys.stderr.write('wrote %d probe file(s) (%d quiet rows) to %s\n' % (n - start, len(rs), outdir))
 
 
-def read_verdicts(probedir):
-    """spec -> (kind, n, t) of the first accepted rung, or None."""
+def read_verdicts(probedir, strict=False):
+    """spec -> (kind, n, t) of the first accepted rung, or None.
+
+    A probe file killed by its timeout prints verdicts only for the
+    rungs it reached; the rest are UNPROBED, not rejected.  They count
+    as "no certificate" for staging (conservative), are reported on
+    stderr with the file, and with strict=True abort the run so an
+    expensive probe is not silently under-read."""
     vs = {}
-    for vf in glob.glob(os.path.join(probedir, 'ProbeQH_*.v')):
+    unprobed = 0
+    for vf in sorted(glob.glob(os.path.join(probedir, 'ProbeQH_*.v'))):
         rungs = re.findall(r'^\(\* rung ([0-9A-Z\-]{6}(?:_[0-9A-Z\-]{6}){3}) (plain|lex) n=(\d+) t=(\d+) \*\)', open(vf).read(), re.M)
         of = vf[:-2] + '.out'
         got = []
         if os.path.exists(of):
             got = [x == 'true' for x in re.findall(r'^\s*= (true|false)', open(of).read(), re.M)]
+        if len(got) < len(rungs):
+            miss = len(rungs) - len(got)
+            unprobed += miss
+            sys.stderr.write('gen_provtr_qh: %s: %d of %d rungs have no verdict (timed out / not run)\n'
+                             % (os.path.basename(vf), miss, len(rungs)))
         for (sp, kind, nn, t), v in zip(rungs, got):
             vs.setdefault(sp, None)
             if v and vs[sp] is None:
                 vs[sp] = (kind, int(nn), int(t))
+        for sp, _, _, _ in rungs[len(got):]:
+            vs.setdefault(sp, None)
+    if unprobed:
+        msg = 'gen_provtr_qh: %d rung(s) without a verdict: treated as uncertified (re-probe them)\n' % unprobed
+        if strict:
+            sys.exit(msg.strip() + ' -- aborting (--strict)')
+        sys.stderr.write(msg)
     return vs
 
 
-def stage(scanfile, probedir, outdir, chunk, start):
+def stage(scanfile, probedir, outdir, chunk, start, strict=False):
     rs = rows(scanfile)
-    vs = read_verdicts(probedir)
+    vs = read_verdicts(probedir, strict)
     keep = [r for r in rs if vs.get(r[0])]
     os.makedirs(outdir, exist_ok=True)
     n = start
@@ -167,6 +186,7 @@ def main():
     ap.add_argument('--ns', default=None, help='window ladder, e.g. 5,6 (default 2,3,4)')
     ap.add_argument('--tdeltas', default=None, help='t = tmax + delta ladder (default 1,65,1025)')
     ap.add_argument('--kinds', default=None, help='plain,lex (default both)')
+    ap.add_argument('--strict', action='store_true', help='stage: abort if any probe rung lacks a verdict')
     a = ap.parse_args()
     if a.phase == 'probe':
         probe(a.args[0], a.args[1], a.chunk or 10, a.start,
@@ -174,7 +194,7 @@ def main():
               tuple(int(x) for x in a.tdeltas.split(',')) if a.tdeltas else TDELTAS,
               tuple(a.kinds.split(',')) if a.kinds else KINDS)
     else:
-        stage(a.args[0], a.args[1], a.args[2], a.chunk or 100, a.start)
+        stage(a.args[0], a.args[1], a.args[2], a.chunk or 100, a.start, a.strict)
 
 
 if __name__ == '__main__':

@@ -9,6 +9,8 @@ set -eu -o pipefail
 ROWS=${1:-censustr_qh_log_rows.txt}; JOBS=${2:-16}; START=${3:-3}
 cd "$(dirname "$0")/../.."
 mkdir -p census_probes/qhlap
+# a rerun with fewer JOBS must not pick up the previous run's higher shards
+rm -f census_probes/qhlap/rows_*
 split -n l/$JOBS -d -a 2 "$ROWS" census_probes/qhlap/rows_
 # a shard's emitter exits 0 when it ran (failed derives are counted in its
 # log); a nonzero status is a crash (coqc missing, a Python exception) and
