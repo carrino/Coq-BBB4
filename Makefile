@@ -841,7 +841,8 @@ instr: Makefile.coq
 
 instr-core: Makefile.coq
 	$(MAKE) -f Makefile.coq theories/Checkers/NGramHistTr.vo \
-	  theories/Checkers/TCyclerTr.vo theories/CensusTr/ProvTr_TC_10.vo
+	  theories/Checkers/TCyclerTr.vo theories/Checkers/TCyclerQHTr.vo \
+	  theories/CensusTr/ProvTr_TC_10.vo
 .PHONY: instr-core
 
 # ---------------------------------------------------------------------------

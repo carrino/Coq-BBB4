@@ -1821,6 +1821,138 @@ with no cheap route left (see the path in the 2026-09-07 assessment:
 QH-side conveyor, NGH conveyor on the closeout boards, the nested/peel
 lap ports, the bouncer certificate route).
 
+### 7.3a The QH side, measured: it is the LIVE side with one dead instruction (2026-09-08)
+
+The `QHBoundTr` side of v8 -- 5,436 quiet in-walk rows, 1,167 quiet
+state-proven rows, 592 closeout state-QH boards, 632 partial/provenqh
+rows, 7,827 in all -- had no route.  The conveyor built for it
+(`tools/censustr/gen_provtr_qh.py`, `CensusTr/QHConveyorTr.v`) takes
+each machine's exact per-instruction last fires from a 10M-step scan
+and calls the wrapped n-gram QHBound checkers of `Checkers/WrapTr`
+(plain, and lex-gated via `rank_procedure_tr`) at `t` just past the
+last quiet fire, then stages the accepted rows as `ProvTr_QH_NN` for
+`provqh_tr`.  It works end to end (probe, stage, kernel check on a
+sample) and it does not pay:
+
+| probe | rows | accepted |
+|---|---:|---:|
+| plain, n in {2,3,4}, t = tmax + {1, 65, 1025} | 226 | 27 (12%) |
+| lex-gated, same ladder, on the plain rejects | 199 | 0 |
+| n in {5, 6}, plain + lex, on 60 of those rejects | 60 | 3 (5%) |
+| late-quieting rows (last fire 3.1-3.3M), full ladder | 27 | 0 |
+
+The hypothesis behind the conveyor -- that the deferred quiet machines
+quiet later than the in-walk ladder's t <= 1024 -- is false.  Of the
+first 5,600 scanned rows, 98% quiet before step 64; the in-walk tier
+saw the right t and failed on the closure.  (The 27 late ones, quiet
+at ~3.15M, are real quasihalters with a score a tenth of B_tr, and the
+closure fails on them too.)
+
+**What the residue is.**  All 7,827 QH-side rows classified by
+tape-extent growth exactly as the LIVE population was (§7.1v):
+log-extent (counters) 3,745, sqrt-extent (bouncers) 3,288, linear
+(translated cyclers) 794.  The dead instruction is a single one in 95%
+of them, `A0` (the very first transition) in 54%, `B0`/`C0`/`D0` in
+most of the rest.  The full 10M-step scan (7,266 rows in when this
+was written): 6,811 quiet, 455 live at 10M (the 2M-step scan's false
+quiets); of the quiet ones 6,233 quiet before step 64, 49 between 64
+and 1M, and 529 late -- last fire between 1M and 4.7M.  The largest
+quiet last fire in the population is 4,734,693
+(`1RB1LB_0RC0LA_1LC0LD_1RA1RC`), a seventh of B_tr: on this
+population and this scan horizon the instruction-level value stays at
+the state champion's.  The 529 late quieters are real quasihalters
+with million-step scores and no route yet (the closure fails on them,
+table above); they are the value-relevant class to watch.  So a
+quiet-instruction machine is a LIVE-class machine whose initial
+transition is never taken again; `QHBoundTr` for it means "A0 last
+fires at s < 64, every other fired instruction recurs" -- and the
+second half is exactly the never-QH obligation the LIVE routes prove,
+for the same three classes with the same routes (lap certificates,
+RepWL/the certificate route, translated-cycler laps).
+
+**The route, then.**  Not a wider wrapped closure: QH variants of the
+LIVE-route checkers, where the instructions fired in the anchor prefix
+but absent from the recurring set are the pins (quiet after their last
+prefix fire, checked as in `WrapTr.wrap_pin_ok`) and the conclusion is
+`QHBoundTr` at the anchor instead of `NeverQuasiHaltsTr`.  In yield
+order: `TCyclerTr` (linear, ~650 rows; the lap induction is reused
+verbatim, only the "every fired instruction recurs in the lap" scan
+changes), `LapGlueTr` (log, ~2,500 rows; the emitter already pins
+never-fired instructions), and RepWL-wrap (sqrt, ~2,200 rows;
+`rw_tier_qhbtr` exists and inherits the bouncers' closure problem, so
+this class waits on the certificate route of §7.1v either way).
+Bookkeeping: `qh_scan.py` (scratch) records every instruction's last
+fire; `gen_provtr_qh.py` stays as the staging pattern for whichever
+checker certifies a row.
+
+### 7.3b The first QH-side stage: quiet-instruction translated cyclers (2026-09-08)
+
+`Checkers/TCyclerQHTr.v`: `tcycler_check_qhboundtr tm n1 P W` is
+`TCyclerTr.tcycler_check_neverqhtr` with the gate inverted.  The lap
+[g1 -> g2] of period P from the anchor n1 is reused verbatim (the
+`tcycler_fold` / `tcycler_laps` lemmas of the state checker); instead
+of "every instruction fired in the first n1 + P steps fires in the
+lap" it asks that SOME instruction fired before n1 does not fire in
+the lap.  Every configuration past n1 folds into the lap, so an
+instruction absent from the lap last fires before n1, and one present
+in it fires again after any index: hence `NonHalt`, the unfolded
+`QHBoundTr n1` (every quiet instruction's score is at most n1) and
+`QuasiHaltsTr` (the prefix-fired absentee), which is the shape
+`provqh_tr` needs.  One axiom.  Side L runs the checker on
+`mirror_tm` and transfers through `qhboundtr_mirror` / `mirror_fires`.
+
+Conveyor: `tc_find.py` (unchanged) over the 7,827 QH-side rows found
+793 periodic laps -- the linear class of §7.3a, one row in ten;
+`gen_provtr_tcqh.py` (the TC generator with the QH checker and the
+`NonHalt /\ QHBoundTr 32779478 /\ QuasiHaltsTr` stage lemma via
+`QHConveyorTr.qh_bound_of_le`) probes them at ~100 per second: 731
+accepted, 62 rejected (the same lap-detection misses as the never-QH
+conveyor).  Staged as `ProvTr_QH_00..02` (pqh_00..02), the first
+entries of `provqh_tr`.  Their scores are the anchors n1, all far
+below B_tr; the QH side's value question stays with the late
+quieters of §7.3a.
+
+Next on this side, in the order of §7.3a: the lap-certificate
+(counter) variant, then RepWL-wrap for the bouncers.
+
+### 7.3c The counter route on the QH side: LapGlueQHTr and the LAPQ boards (2026-09-08)
+
+`Counters/LapGlueQHTr.v` (`glue_qhboundtr`, one axiom): the never-QH
+counter glue with the boot moved.  `LapGlueTr.glue_neverqhtr` runs
+the whole lap argument on the machine wrapped at the pins from the
+blank tape, so a pinned instruction firing in the boot prefix -- which
+is exactly what a quiet-instruction counter does with A0 -- would
+halt the wrapped run at step 0.  The QH glue takes the boot
+`stepn tm t0 InitES = Some (lift (Cf p0))` on the ORIGINAL machine and
+runs only the laps and the per-instruction fires on the wrapped
+machine from the anchors; `WrapTr.wrap_trs_agree` from the boot
+configuration then says the original run past `t0` is the wrapped one
+and no pin fires at any index >= t0.  Conclusion: `NonHalt`, the
+unfolded `QHBoundTr t0`, `QuasiHaltsTr` (a pin that fired in the
+prefix, `existsb (cfires tm c0 t0) pins`).  Every lap and fire lemma
+of the never-QH boards is reused as is; only the boot lemma and the
+closer change (`QHConveyorTr.lap_qh_stage`, `qh_triple_unmirror` for
+the mirrored boards).
+
+`emit_lapcert.py --qh`: the emitter's `--tr` renderer with the pins
+extended -- an instruction that fired but has no lap witness is pinned
+when its last fire (200K-step scan) is before the boot, a DeriveError
+otherwise -- a boot lemma on the original machine, the witness lemma,
+and the QH closer; boards are `Machines/CountersTr/LAPQ_<ID>.v`.
+`gen_provtr_lapqh.py --start N` collects them into `ProvTr_QH_NN`
+stages for `provqh_tr` and lists the boards in `_CoqProject`.
+
+Measured on 200 rows sampled from the 2,470 in-walk log-extent QH rows
+(derive + render, no compile): **159 derived (80%)**; the rest: no
+anchor 24, no interior chain 10, nested overflow route 7 -- the same
+residue shapes as the LIVE counters (§7.1v), where the route caught
+51%.  Two boards emitted and kernel-checked here.  The bulk emit is a
+box job: `tools/censustr/qh_lap_emit.sh` over
+`censustr_qh_log_rows.txt` (3,745 rows, 16 shards, about an hour),
+then stage with `--start 3`, wire `pqh_03..` into `provqh_tr`, and
+cut v9.  Expected: ~2,500-3,000 machines, the largest single stage of
+the QH side.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

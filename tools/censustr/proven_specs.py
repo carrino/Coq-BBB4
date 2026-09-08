@@ -6,7 +6,9 @@ Sources, all read from the committed stage files so the list can only
 name machines the kernel already certified:
   - CensusTr/RunTr.v      prov_tr_irtr  (tm_<ID> names, XXX = hole)
   - CensusTr/ProvTr_Lap_*.v   LAPT_<ID> board imports (____ = hole)
-  - CensusTr/ProvTr_TC_*.v, ProvTr_RW_*.v, ProvTr_IR_*.v, ProvTr_RK_*.v
+  - CensusTr/ProvTr_QH_*.v    LAPQ_<ID> board imports (same), and the
+                              (* <spec> ... *) rows of the other QH conveyors
+  - CensusTr/ProvTr_TC_*.v, ProvTr_RW_*.v, ProvTr_IR_*.v, ProvTr_RK_*.v, ProvTr_QH_*.v
     the (* <spec> ... *) row comments
 
 Usage: proven_specs.py [--minus DEFERRED.txt] > out.txt
@@ -31,14 +33,20 @@ def proven():
     if m:
         for nm in re.findall(r'tm_([0-9A-Z_]+)', m.group(1)):
             out.add(nm.replace('XXX', '---'))
-    for f in glob.glob(os.path.join(CT, 'ProvTr_Lap_*.v')):
-        for nm in re.findall(r'Require Import LAPT_([0-9A-Z_]+)\.', open(f).read()):
-            # board names write a hole as ___ (a trailing hole) or ____
-            # (hole + the group separator)
-            out.add(re.sub(r'___$', '---', nm.replace('____', '---_')))
-    for pat in ('ProvTr_TC_*.v', 'ProvTr_RW_*.v', 'ProvTr_IR_*.v', 'ProvTr_RK_*.v'):
+    # the lap boards: ProvTr_Lap_NN import LAPT_<ID> (never-QH), ProvTr_QH_NN
+    # from gen_provtr_lapqh.py import LAPQ_<ID> (quasihalting side); neither
+    # carries (* spec *) rows, the spec is the board name
+    for pat in ('ProvTr_Lap_*.v', 'ProvTr_QH_*.v'):
         for f in glob.glob(os.path.join(CT, pat)):
-            for sp in re.findall(r'^\(\* ([0-9A-Z\-]{6}(?:_[0-9A-Z\-]{6}){3})\b', open(f).read(), re.M):
+            for nm in re.findall(r'Require Import LAP[TQ]_([0-9A-Z_]+)\.', open(f).read()):
+                # board names write a hole as ___ (a trailing hole) or ____
+                # (hole + the group separator)
+                out.add(re.sub(r'___$', '---', nm.replace('____', '---_')))
+    for pat in ('ProvTr_TC_*.v', 'ProvTr_RW_*.v', 'ProvTr_IR_*.v', 'ProvTr_RK_*.v', 'ProvTr_QH_*.v'):
+        for f in glob.glob(os.path.join(CT, pat)):
+            # (?=\s), not \b: a spec whose last transition is a hole ends in
+            # '-', a non-word character, and \b would not match after it
+            for sp in re.findall(r'^\(\* ([0-9A-Z\-]{6}(?:_[0-9A-Z\-]{6}){3})(?=\s)', open(f).read(), re.M):
                 out.add(sp)
     return out
 

@@ -26,6 +26,7 @@ theories/Checkers/NGramHistExt.v
 theories/Checkers/NGramHistWrap.v
 theories/Checkers/TCycler.v
 theories/Checkers/TCyclerTr.v
+theories/Checkers/TCyclerQHTr.v
 theories/Checkers/TCyclerN.v
 theories/Checkers/Wrap.v
 theories/Checkers/Fuel.v
@@ -1458,6 +1459,7 @@ theories/Counters/KpWallScan.v
 theories/Checkers/LapAvoid.v
 theories/Counters/LapCertGlue.v
 theories/Counters/LapGlueTr.v
+theories/Counters/LapGlueQHTr.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1LB_1LC1RB.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1LD_1LC1RB.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1RA_1LC1RB.v
@@ -5272,6 +5274,7 @@ theories/Closeout/Closeout.v
 theories/BBBT4_Statement.v
 theories/CensusTr/TNF_QHTr.v
 theories/CensusTr/DecideTr.v
+theories/CensusTr/QHConveyorTr.v
 theories/CensusTr/RepWLTr.v
 theories/CensusTr/DeferredTr_00.v
 theories/CensusTr/DeferredTr_01.v
@@ -5325,6 +5328,9 @@ theories/CensusTr/ProvTr_RK_06.v
 theories/CensusTr/ProvTr_RK_07.v
 theories/CensusTr/ProvTr_RK_08.v
 theories/CensusTr/ProvTr_RK_09.v
+theories/CensusTr/ProvTr_QH_00.v
+theories/CensusTr/ProvTr_QH_01.v
+theories/CensusTr/ProvTr_QH_02.v
 theories/CensusTr/RunTr.v
 theories/CensusTr/RunTr_Split.v
 theories/Checkers/IRules/AnchorVisitsTr.v
@@ -5333,3 +5339,5 @@ theories/Machines/IRulesTr_Batch_01.v
 theories/ClosureTr.v
 theories/Checkers/NGramTr.v
 theories/Checkers/WrapTr.v
+theories/Machines/CountersTr/LAPQ_1RB0LB_1LC1RA_0RB0LD_0RB0LC.v
+theories/Machines/CountersTr/LAPQ_1RB1LD_0LC0RB_1LD1LA_1LA1LC.v

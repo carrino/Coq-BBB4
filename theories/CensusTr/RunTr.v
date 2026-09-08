@@ -44,7 +44,8 @@ From BBB4.CensusTr Require Import
   ProvTr_TC_00 ProvTr_TC_01 ProvTr_TC_02 ProvTr_TC_03 ProvTr_TC_04 ProvTr_TC_05 ProvTr_TC_06 ProvTr_TC_07 ProvTr_TC_08 ProvTr_TC_09 ProvTr_TC_10 ProvTr_TC_11
   ProvTr_RW_00 ProvTr_RW_01 ProvTr_RW_02 ProvTr_RW_03 ProvTr_RW_04 ProvTr_RW_05 ProvTr_RW_06 ProvTr_RW_07 ProvTr_RW_08 ProvTr_RW_09 ProvTr_RW_10
   ProvTr_IR_00 ProvTr_IR_01 ProvTr_IR_02
-  ProvTr_RK_00 ProvTr_RK_01 ProvTr_RK_02 ProvTr_RK_03 ProvTr_RK_04 ProvTr_RK_05 ProvTr_RK_06 ProvTr_RK_07 ProvTr_RK_08 ProvTr_RK_09.
+  ProvTr_RK_00 ProvTr_RK_01 ProvTr_RK_02 ProvTr_RK_03 ProvTr_RK_04 ProvTr_RK_05 ProvTr_RK_06 ProvTr_RK_07 ProvTr_RK_08 ProvTr_RK_09
+  ProvTr_QH_00 ProvTr_QH_01 ProvTr_QH_02.
 Import ListNotations.
 
 Set Default Goal Selector "!".
@@ -187,7 +188,9 @@ Definition prov_tr_irtr : list TM :=
     (ProvTr_RK_NN) *)
 Definition prov_tr : list TM :=
   prov_tr_irtr ++ ptl_00 ++ ptl_01 ++ ptl_02 ++ ptl_03 ++ ptl_04 ++ ptl_05 ++ ptl_06 ++ ptl_07 ++ ptl_08 ++ ptl_09 ++ ptl_10 ++ ptl_11 ++ ptc_00 ++ ptc_01 ++ ptc_02 ++ ptc_03 ++ ptc_04 ++ ptc_05 ++ ptc_06 ++ ptc_07 ++ ptc_08 ++ ptc_09 ++ ptc_10 ++ ptc_11 ++ ptw_00 ++ ptw_01 ++ ptw_02 ++ ptw_03 ++ ptw_04 ++ ptw_05 ++ ptw_06 ++ ptw_07 ++ ptw_08 ++ ptw_09 ++ ptw_10 ++ pti_00 ++ pti_01 ++ pti_02 ++ prk_00 ++ prk_01 ++ prk_02 ++ prk_03 ++ prk_04 ++ prk_05 ++ prk_06 ++ prk_07 ++ prk_08 ++ prk_09.
-Definition provqh_tr : list TM := [].
+(** the proven-QH tier: quiet-instruction translated cyclers
+    (ProvTr_QH_NN, Checkers/TCyclerQHTr; SCOPING_INSTR.md 7.3a) *)
+Definition provqh_tr : list TM := pqh_00 ++ pqh_01 ++ pqh_02.
 
 Lemma prov_tr_irtr_all : Forall NeverQuasiHaltsTr prov_tr_irtr.
 Proof.
@@ -302,7 +305,11 @@ Qed.
 Lemma provqh_tr_all :
   Forall (fun tm => NonHalt tm /\ QHBoundTr B_tr tm /\ QuasiHaltsTr tm)
          provqh_tr.
-Proof. constructor. Qed.
+Proof.
+  unfold provqh_tr.
+  repeat (apply Forall_app; split);
+    first [exact pqh_00_qhtr | exact pqh_01_qhtr | exact pqh_02_qhtr].
+Qed.
 
 (** the same rung ladders as the state census (Run_Compute.v), and the
     same n-gram fuel/rounds *)

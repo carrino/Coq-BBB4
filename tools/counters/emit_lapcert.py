@@ -1667,6 +1667,8 @@ def render(D):
 
 OUTDIR_TR = os.path.join(REPO, 'theories', 'Machines', 'CountersTr')
 PREFIX_TR = 'LAPT'
+PREFIX_QH = 'LAPQ'   # --qh: the quasihalting-side boards (LapGlueQHTr)
+QH_MODE = False
 
 ALL_INSTR = [(q, b) for q in range(4) for b in (0, 1)]
 
@@ -1687,6 +1689,22 @@ def fired_set(tab, T=200000):
         except Halt_:
             raise DeriveError('tr: machine halts')
     return seen
+
+
+def last_fires(tab, T=200000):
+    """UNTRUSTED: the last index (< T) at which each (state, head) pair
+    fires, from the blank tape.  --qh pins the instructions whose last
+    fire is before the boot: the kernel checks it (LapGlueQHTr runs the
+    laps on the machine wrapped at the pins, from the boot)."""
+    cfg = (0, (), 0, ())
+    last = {}
+    for i in range(T):
+        last[(cfg[0], cfg[2])] = i
+        try:
+            cfg = LC.wstep(tab, False, False, cfg)
+        except Halt_:
+            raise DeriveError('tr: machine halts')
+    return last
 
 
 def cinstr_coq(t):
@@ -1715,8 +1733,10 @@ def render_tr(D, spec, dspec, mirrored):
                              bool(D.get('opeel')), bool(D.get('avoid'))))
     islack = bool(D.get('islack'))
     tab = parse(dspec)
-    fired = fired_set(tab)
+    lf = last_fires(tab)
+    fired = set(lf)
     pins = [t for t in ALL_INSTR if t not in fired]
+    qpins = []   # --qh: fired only before the boot, no lap witness
     # one chain prefix per fired instruction, from the same three sources
     # the state board uses for its states, in the same order: the overflow
     # (or nested boot) chain from B0, the interior chain from A0 (mode one),
@@ -1738,8 +1758,16 @@ def render_tr(D, spec, dspec, mirrored):
             if ch is not None:
                 witx[t] = ch
                 continue
+        if QH_MODE and lf[t] < D['boot']:
+            qpins.append(t)
+            continue
         raise DeriveError('tr: no lap witness for instruction %s%d'
                           % (LAB[t[0]], t[1]))
+    if QH_MODE:
+        if not qpins:
+            raise DeriveError('qh: every fired instruction has a lap witness '
+                              '(not a quasihalter; use --tr)')
+        pins = pins + qpins
 
     src = render(D)
     if mirrored:
@@ -1755,7 +1783,11 @@ def render_tr(D, spec, dspec, mirrored):
              'From BBB4.Checkers.IRules Require Import AnchorVisitsTr.\n'
              'From BBB4.Counters Require Import LapGlueTr.'
              + ('\nFrom BBB4.CensusTr Require Import TNF_QHTr.' if mirrored
-                else ''))
+                else '')
+             + ('\nFrom BBB4 Require Import ClosureTr.\n'
+                'From BBB4.Counters Require Import LapGlueQHTr.\n'
+                'From BBB4.CensusTr Require Import TNF_QHTr QHConveyorTr.'
+                if QH_MODE else ''))
     src = src[:j] + extra + src[j:]
 
     # the wrapped table is what every lemma below runs on
@@ -1889,7 +1921,45 @@ def render_tr(D, spec, dspec, mirrored):
             'Qed.\n' % (fireo, firei, firex, ID, ID, hi, '\n'.join(bullets)))
     # closing theorem(s): replace everything from the old visits on
     i_close = i_vis
-    if mirrored:
+    if QH_MODE:
+        # the boot on the ORIGINAL machine (the wrapped one halts at a
+        # prefix-only pin) and the quasihalt witness
+        m_boot = re.search(r'Lemma boot_%s : .*?\nQed\.\n' % re.escape(ID), src, re.S)
+        if m_boot is None:
+            raise RuntimeError('qh: boot lemma not found')
+        bootq = ('Lemma bootq_%s : stepn %s %d InitES = Some (lift (Cc %d)).\n'
+                 'Proof.\n'
+                 '  assert (H : match csteps %s %d c0 with\n'
+                 '              | Some c => ceqb c (Cc %d) | None => false end = true)\n'
+                 '    by (vm_compute; reflexivity).\n'
+                 '  destruct (csteps %s %d c0) as [c|] eqn:E; [|discriminate].\n'
+                 '  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.\n'
+                 'Qed.\n\n'
+                 '(** the quasihalt witness: a pinned instruction fired in the prefix *)\n'
+                 'Lemma wit_%s : existsb (fun tg => cfires %s c0 %d tg) pins_%s = true.\n'
+                 'Proof. vm_compute. reflexivity. Qed.\n'
+                 % (ID, tmname, D['boot'], D['p0'], tmname, D['boot'], D['p0'],
+                    tmname, D['boot'], ID, tmname, D['boot'], ID))
+        src = src[:m_boot.start()] + bootq + src[m_boot.end():]
+        i_close = src.index('Lemma viso_%s' % ID)
+        stage = ('  apply (lap_qh_stage %s pins_%s Cc %d %d 32779478).\n'
+                 '  - exact bootq_%s.\n'
+                 '  - intros p _. apply lap_%s.\n'
+                 '  - intros t Ht p _. apply fire_%s. exact Ht.\n'
+                 '  - exact wit_%s.\n'
+                 '  - vm_cast_no_check (eq_refl true).\n'
+                 % (tmname, ID, D['p0'], D['boot'], ID, ID, ID, ID))
+        if mirrored:
+            close = ('Theorem qhtrm_%s : NonHalt %s /\\ QHBoundTr 32779478 %s /\\ QuasiHaltsTr %s.\n'
+                     'Proof.\n%sQed.\n\n'
+                     'Theorem qhtr_%s : NonHalt tm_%s /\\ QHBoundTr 32779478 tm_%s /\\ QuasiHaltsTr tm_%s.\n'
+                     'Proof. apply (qh_triple_unmirror 32779478 tm_%s). rewrite mirror_ok_%s. '
+                     'exact qhtrm_%s. Qed.\n'
+                     % (ID, tmname, tmname, tmname, stage, ID, ID, ID, ID, ID, ID, ID))
+        else:
+            close = ('Theorem qhtr_%s : NonHalt tm_%s /\\ QHBoundTr 32779478 tm_%s /\\ QuasiHaltsTr tm_%s.\n'
+                     'Proof.\n%sQed.\n' % (ID, ID, ID, ID, stage))
+    elif mirrored:
         close = ('Theorem nqhtrm_%s : NeverQuasiHaltsTr %s.\n'
                  'Proof.\n'
                  '  apply (glue_neverqhtr %s pins_%s Cc %s).\n'
@@ -1918,7 +1988,9 @@ def render_tr(D, spec, dspec, mirrored):
     src = src[:i_close] + fire + '\n' + close
     src = re.sub(r'\(\*\* \* (?:%s|%s|%s|%s)_%s: machine'
                  % (PREFIX, NEST_PREFIX, PEEL_PREFIX, AVOID_PREFIX, re.escape(ID)),
-                 '(** * %s_%s: TRANSITION-LEVEL board for machine' % (PREFIX_TR, ID),
+                 '(** * %s_%s: TRANSITION-LEVEL %sboard for machine'
+                 % (PREFIX_QH if QH_MODE else PREFIX_TR, ID,
+                    'QUASIHALTING-side ' if QH_MODE else ''),
                  src, count=1)
     return src
 
@@ -2111,10 +2183,15 @@ def _try_anchor(spec, dspec, mirrored, hd, edge, tail, p0, enc, far,
 def _try_anchor_tr(spec, dspec, mirrored, D, tag, do_emit, force):
     """The transition-level board for a derived certificate (render_tr)."""
     ID = mach_id(spec)
-    path = os.path.join(OUTDIR_TR, '%s_%s.v' % (PREFIX_TR, ID))
+    path = os.path.join(OUTDIR_TR, '%s_%s.v' % (PREFIX_QH if QH_MODE else PREFIX_TR, ID))
     base = dict(spec=spec, enc=tag, ni=_cost_str(D), no='%d*j+%d' % D['co'],
-                mode=D.get('mode'), tr=True)
-    if os.path.exists(path) and not force and do_emit:
+                mode=D.get('mode'), tr=True, qh=QH_MODE)
+    # an existing board counts as done only with its .vo from a completed
+    # coqc run (a crash between the write and the compile leaves a .v
+    # behind; resuming must not skip it as verified)
+    vo = path[:-2] + '.vo'
+    if (os.path.exists(path) and not force and do_emit
+            and os.path.exists(vo) and os.path.getmtime(vo) >= os.path.getmtime(path)):
         return dict(base, ok=True, file=path, skipped=True)
     try:
         src = render_tr(D, spec, dspec, mirrored)
@@ -2124,7 +2201,15 @@ def _try_anchor_tr(spec, dspec, mirrored, D, tag, do_emit, force):
         return dict(base, ok=True)
     os.makedirs(OUTDIR_TR, exist_ok=True)
     open(path, 'w').write(src)
-    ok, log = coqc(os.path.relpath(path, REPO))
+    try:
+        ok, log = coqc(os.path.relpath(path, REPO))
+    except Exception:                                         # noqa: BLE001
+        # not a per-machine verdict: coqc could not be RUN (missing binary,
+        # OS error).  Drop the half-written board and abort the process so
+        # the shard wrapper (qh_lap_emit.sh) sees a failure, not "0 derived".
+        if os.path.exists(path):
+            os.remove(path)
+        raise
     if not ok:
         os.remove(path)
         lg = [l for l in log.strip().splitlines() if l.strip()]
@@ -2164,9 +2249,13 @@ def main():
     ap.add_argument('--tr', action='store_true',
                     help='emit TRANSITION-level boards (LapGlueTr) into '
                          'theories/Machines/CountersTr')
+    ap.add_argument('--qh', action='store_true',
+                    help='with --tr: emit QUASIHALTING-side boards (LapGlueQHTr, '
+                         'LAPQ_ prefix) for machines with a prefix-only instruction')
     a = ap.parse_args()
-    global TR_MODE
-    TR_MODE = a.tr
+    global TR_MODE, QH_MODE
+    TR_MODE = a.tr or a.qh
+    QH_MODE = a.qh
 
     specs = ([a.spec] if a.spec else
              [l.strip() for l in open(a.list) if l.strip()])
