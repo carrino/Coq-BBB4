@@ -1915,6 +1915,44 @@ quieters of §7.3a.
 Next on this side, in the order of §7.3a: the lap-certificate
 (counter) variant, then RepWL-wrap for the bouncers.
 
+### 7.3c The counter route on the QH side: LapGlueQHTr and the LAPQ boards (2026-09-08)
+
+`Counters/LapGlueQHTr.v` (`glue_qhboundtr`, one axiom): the never-QH
+counter glue with the boot moved.  `LapGlueTr.glue_neverqhtr` runs
+the whole lap argument on the machine wrapped at the pins from the
+blank tape, so a pinned instruction firing in the boot prefix -- which
+is exactly what a quiet-instruction counter does with A0 -- would
+halt the wrapped run at step 0.  The QH glue takes the boot
+`stepn tm t0 InitES = Some (lift (Cf p0))` on the ORIGINAL machine and
+runs only the laps and the per-instruction fires on the wrapped
+machine from the anchors; `WrapTr.wrap_trs_agree` from the boot
+configuration then says the original run past `t0` is the wrapped one
+and no pin fires at any index >= t0.  Conclusion: `NonHalt`, the
+unfolded `QHBoundTr t0`, `QuasiHaltsTr` (a pin that fired in the
+prefix, `existsb (cfires tm c0 t0) pins`).  Every lap and fire lemma
+of the never-QH boards is reused as is; only the boot lemma and the
+closer change (`QHConveyorTr.lap_qh_stage`, `qh_triple_unmirror` for
+the mirrored boards).
+
+`emit_lapcert.py --qh`: the emitter's `--tr` renderer with the pins
+extended -- an instruction that fired but has no lap witness is pinned
+when its last fire (200K-step scan) is before the boot, a DeriveError
+otherwise -- a boot lemma on the original machine, the witness lemma,
+and the QH closer; boards are `Machines/CountersTr/LAPQ_<ID>.v`.
+`gen_provtr_lapqh.py --start N` collects them into `ProvTr_QH_NN`
+stages for `provqh_tr` and lists the boards in `_CoqProject`.
+
+Measured on 200 rows sampled from the 2,470 in-walk log-extent QH rows
+(derive + render, no compile): **159 derived (80%)**; the rest: no
+anchor 24, no interior chain 10, nested overflow route 7 -- the same
+residue shapes as the LIVE counters (§7.1v), where the route caught
+51%.  Two boards emitted and kernel-checked here.  The bulk emit is a
+box job: `tools/censustr/qh_lap_emit.sh` over
+`censustr_qh_log_rows.txt` (3,745 rows, 16 shards, about an hour),
+then stage with `--start 3`, wire `pqh_03..` into `provqh_tr`, and
+cut v9.  Expected: ~2,500-3,000 machines, the largest single stage of
+the QH side.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
