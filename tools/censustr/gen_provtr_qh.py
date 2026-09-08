@@ -77,7 +77,7 @@ def rows(scanfile):
     return out
 
 
-def probe(scanfile, outdir, chunk, start=0):
+def probe(scanfile, outdir, chunk, start=0, ns=NS, tdeltas=TDELTAS, kinds=KINDS):
     os.makedirs(outdir, exist_ok=True)
     rs = rows(scanfile)
     n = start
@@ -87,12 +87,12 @@ def probe(scanfile, outdir, chunk, start=0):
             for i, (sp, quiet, mx) in enumerate(rs[ci:ci + chunk]):
                 pins = '[' + '; '.join('(%s, %d)' % (instr_term(tg), s) for tg, s in quiet) + ']'
                 f.write('(* %s  tmax=%d pins=%d *)\n%s\n' % (sp, mx, len(quiet), tm_lambda('tm_%d' % i, sp)))
-                for kind in KINDS:
-                    for d in TDELTAS:
+                for kind in kinds:
+                    for d in tdeltas:
                         t = mx + d
                         if t + 1 > B_TR:
                             continue
-                        for nn in NS:
+                        for nn in ns:
                             f.write('(* rung %s %s n=%d t=%d *)\nEval vm_compute in qh_%s_at tm_%d %s %d %d %d %d.\n'
                                     % (sp, kind, nn, t, kind, i, pins, nn, t, FUEL, ROUNDS))
                 f.write('\n')
@@ -165,9 +165,15 @@ def main():
     ap.add_argument('args', nargs='+')
     ap.add_argument('--chunk', type=int, default=None)
     ap.add_argument('--start', type=int, default=0)
+    ap.add_argument('--ns', default=None, help='window ladder, e.g. 5,6 (default 2,3,4)')
+    ap.add_argument('--tdeltas', default=None, help='t = tmax + delta ladder (default 1,65,1025)')
+    ap.add_argument('--kinds', default=None, help='plain,lex (default both)')
     a = ap.parse_args()
     if a.phase == 'probe':
-        probe(a.args[0], a.args[1], a.chunk or 10, a.start)
+        probe(a.args[0], a.args[1], a.chunk or 10, a.start,
+              tuple(int(x) for x in a.ns.split(',')) if a.ns else NS,
+              tuple(int(x) for x in a.tdeltas.split(',')) if a.tdeltas else TDELTAS,
+              tuple(a.kinds.split(',')) if a.kinds else KINDS)
     else:
         stage(a.args[0], a.args[1], a.args[2], a.chunk or 100, a.start)
 
