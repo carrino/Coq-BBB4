@@ -2186,7 +2186,12 @@ def _try_anchor_tr(spec, dspec, mirrored, D, tag, do_emit, force):
     path = os.path.join(OUTDIR_TR, '%s_%s.v' % (PREFIX_QH if QH_MODE else PREFIX_TR, ID))
     base = dict(spec=spec, enc=tag, ni=_cost_str(D), no='%d*j+%d' % D['co'],
                 mode=D.get('mode'), tr=True, qh=QH_MODE)
-    if os.path.exists(path) and not force and do_emit:
+    # an existing board counts as done only with its .vo from a completed
+    # coqc run (a crash between the write and the compile leaves a .v
+    # behind; resuming must not skip it as verified)
+    vo = path[:-2] + '.vo'
+    if (os.path.exists(path) and not force and do_emit
+            and os.path.exists(vo) and os.path.getmtime(vo) >= os.path.getmtime(path)):
         return dict(base, ok=True, file=path, skipped=True)
     try:
         src = render_tr(D, spec, dspec, mirrored)
@@ -2196,7 +2201,12 @@ def _try_anchor_tr(spec, dspec, mirrored, D, tag, do_emit, force):
         return dict(base, ok=True)
     os.makedirs(OUTDIR_TR, exist_ok=True)
     open(path, 'w').write(src)
-    ok, log = coqc(os.path.relpath(path, REPO))
+    try:
+        ok, log = coqc(os.path.relpath(path, REPO))
+    except Exception as e:                                    # noqa: BLE001
+        if os.path.exists(path):
+            os.remove(path)
+        return dict(base, ok=False, why='coqc: %s: %s' % (type(e).__name__, e))
     if not ok:
         os.remove(path)
         lg = [l for l in log.strip().splitlines() if l.strip()]
