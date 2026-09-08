@@ -2203,10 +2203,13 @@ def _try_anchor_tr(spec, dspec, mirrored, D, tag, do_emit, force):
     open(path, 'w').write(src)
     try:
         ok, log = coqc(os.path.relpath(path, REPO))
-    except Exception as e:                                    # noqa: BLE001
+    except Exception:                                         # noqa: BLE001
+        # not a per-machine verdict: coqc could not be RUN (missing binary,
+        # OS error).  Drop the half-written board and abort the process so
+        # the shard wrapper (qh_lap_emit.sh) sees a failure, not "0 derived".
         if os.path.exists(path):
             os.remove(path)
-        return dict(base, ok=False, why='coqc: %s: %s' % (type(e).__name__, e))
+        raise
     if not ok:
         os.remove(path)
         lg = [l for l in log.strip().splitlines() if l.strip()]

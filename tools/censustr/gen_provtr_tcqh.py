@@ -94,25 +94,39 @@ def probe(certs, outdir, chunk):
 
 
 def read_verdicts(probedir):
-    vs = []
-    # numeric order: past 99 files a lexicographic sort puts _100 before
-    # _11 and the verdicts would pair with the wrong certificates
-    def _num(path):
-        m = re.search(r'_(\d+)\.out$', path)
-        return int(m.group(1)) if m else -1
-    for o in sorted(glob.glob(os.path.join(probedir, 'ProbeTCQH_*.out')), key=_num):
-        t = open(o).read()
-        vs += [x == 'true' for x in re.findall(r'^\s*= (true|false)', t, re.M)]
+    """spec -> verdict, each probe file's verdicts paired with the specs in
+    its companion .names file (written together by probe); a file whose
+    .out is shorter than its .names (timed out, not run) leaves those
+    specs unprobed, which staging treats as no certificate and reports."""
+    vs = {}
+    unprobed = 0
+    for nf in glob.glob(os.path.join(probedir, 'ProbeTCQH_*.names')):
+        names = [l.strip() for l in open(nf) if l.strip()]
+        of = nf[:-len('.names')] + '.out'
+        got = []
+        if os.path.exists(of):
+            got = [x == 'true' for x in re.findall(r'^\s*= (true|false)', open(of).read(), re.M)]
+        if len(got) > len(names):
+            sys.exit('%s: %d verdicts for %d names' % (of, len(got), len(names)))
+        if len(got) < len(names):
+            unprobed += len(names) - len(got)
+            sys.stderr.write('%s: %d of %d certs have no verdict (timed out / not run)\n'
+                             % (os.path.basename(of), len(names) - len(got), len(names)))
+        for sp, v in zip(names, got):
+            vs[sp] = vs.get(sp, False) or v
+    if unprobed:
+        sys.stderr.write('%d cert(s) without a verdict: treated as uncertified (re-probe them)\n' % unprobed)
     return vs
 
 
 def stage(certs, probedir, outdir, chunk, start):
     vs = read_verdicts(probedir)
-    if len(vs) != len(certs):
-        sys.exit('verdict count %d != cert count %d' % (len(vs), len(certs)))
+    missing = [c for c in certs if c[0] not in vs]
+    if missing:
+        sys.stderr.write('%d cert(s) have no probe file at all (not probed): dropped\n' % len(missing))
     os.makedirs(outdir, exist_ok=True)
-    keep = [c for c, v in zip(certs, vs) if v]
-    drop = [c for c, v in zip(certs, vs) if not v]
+    keep = [c for c in certs if vs.get(c[0])]
+    drop = [c for c in certs if not vs.get(c[0])]
     rows = []
     n = start
     for ci in range(0, len(keep), chunk):

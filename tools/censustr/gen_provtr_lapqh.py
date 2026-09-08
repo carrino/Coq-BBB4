@@ -47,7 +47,17 @@ def main():
     ap.add_argument('--no-coqproject', action='store_true')
     a = ap.parse_args()
     os.makedirs(a.outdir, exist_ok=True)
-    boards = sorted(glob.glob(os.path.join(a.boards, 'LAPQ_*.v')))
+    # boards already imported by an existing ProvTr_QH stage are staged;
+    # a later collection appends only the new ones
+    staged = set()
+    for st in glob.glob(os.path.join(a.outdir, 'ProvTr_QH_*.v')):
+        staged |= set(re.findall(r'^From BBB4\.Machines\.CountersTr Require Import (LAPQ_\w+)\.', open(st).read(), re.M))
+    boards = [b for b in sorted(glob.glob(os.path.join(a.boards, 'LAPQ_*.v')))
+              if os.path.splitext(os.path.basename(b))[0] not in staged]
+    if staged:
+        sys.stderr.write('%d LAPQ board(s) already staged, skipped\n' % len(staged))
+    if not boards:
+        sys.exit('no unstaged LAPQ board in %s' % a.boards)
     rows = []
     for b in boards:
         t = open(b).read()
