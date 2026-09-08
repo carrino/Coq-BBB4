@@ -5339,3 +5339,5 @@ theories/Machines/IRulesTr_Batch_01.v
 theories/ClosureTr.v
 theories/Checkers/NGramTr.v
 theories/Checkers/WrapTr.v
+theories/Machines/CountersTr/LAPQ_1RB0LB_1LC1RA_0RB0LD_0RB0LC.v
+theories/Machines/CountersTr/LAPQ_1RB1LD_0LC0RB_1LD1LA_1LA1LC.v
