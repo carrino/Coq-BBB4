@@ -1812,7 +1812,9 @@ Next box job: `make census-tr-walk WALK_JOBS=7` against them.
 boards + 2,513 translated cyclers + 960 RepWL bouncers + 600 irules
 re-checks + 309 rank re-checks): build phase well under an hour, 96
 units in ~2.5 h (901-1,812 s each in the last wave), assembly
-`Census_TheoremTr.v` -- CHECKED.  This is the consolidation point for
+`Census_TheoremTr.v` -- CHECKED.  `Print Assumptions census_tr` on the
+box: `FunctionalExtensionality.functional_extensionality_dep` only.
+This is the consolidation point for
 branching sessions: everything proven so far is in the kernel-checked
 theorem, and the remaining 17,026 rows are the §7.1v/§7.1y classes
 with no cheap route left (see the path in the 2026-09-07 assessment:
