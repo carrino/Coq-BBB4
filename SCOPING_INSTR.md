@@ -1848,12 +1848,21 @@ saw the right t and failed on the closure.  (The 27 late ones, quiet
 at ~3.15M, are real quasihalters with a score a tenth of B_tr, and the
 closure fails on them too.)
 
-**What the residue is.**  A 600-row sample of the quiet in-walk rows,
-classified by tape-extent growth exactly as the LIVE population was
-(§7.1v): log-extent (counters) 47%, sqrt-extent (bouncers) 41%,
-linear (translated cyclers) 12%.  The dead instruction is a single one
-in 95% of them, `A0` (the very first transition) in 54%, `B0`/`C0`/`D0`
-in most of the rest, and it dies within the first 64 steps.  So a
+**What the residue is.**  All 7,827 QH-side rows classified by
+tape-extent growth exactly as the LIVE population was (§7.1v):
+log-extent (counters) 3,745, sqrt-extent (bouncers) 3,288, linear
+(translated cyclers) 794.  The dead instruction is a single one in 95%
+of them, `A0` (the very first transition) in 54%, `B0`/`C0`/`D0` in
+most of the rest.  The full 10M-step scan (7,266 rows in when this
+was written): 6,811 quiet, 455 live at 10M (the 2M-step scan's false
+quiets); of the quiet ones 6,233 quiet before step 64, 49 between 64
+and 1M, and 529 late -- last fire between 1M and 4.7M.  The largest
+quiet last fire in the population is 4,734,693
+(`1RB1LB_0RC0LA_1LC0LD_1RA1RC`), a seventh of B_tr: on this
+population and this scan horizon the instruction-level value stays at
+the state champion's.  The 529 late quieters are real quasihalters
+with million-step scores and no route yet (the closure fails on them,
+table above); they are the value-relevant class to watch.  So a
 quiet-instruction machine is a LIVE-class machine whose initial
 transition is never taken again; `QHBoundTr` for it means "A0 last
 fires at s < 64, every other fired instruction recurs" -- and the
