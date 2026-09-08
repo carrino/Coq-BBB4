@@ -14,10 +14,12 @@
     stage lemma checks [S t <= B_tr] separately). *)
 
 From Coq Require Import Arith Bool List NArith PArith.
+From Coq Require Import ZArith.
 From Coq Require Import FSets.FMapPositive MSets.MSetPositive.
-From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape Mirror.
-From BBB4.Checkers Require Import NGram NGramTr WrapTr TCyclerQHTr.
+From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape Mirror ClosureTr.
+From BBB4.Checkers Require Import NGram NGramTr WrapTr TCyclerQHTr AnchorVisitsTr.
 From BBB4.Census Require Import RankSearch.
+From BBB4.Counters Require Import LapGlueQHTr.
 From BBB4.CensusTr Require Import TNF_QHTr DecideTr.
 Import ListNotations.
 
@@ -137,4 +139,37 @@ Proof.
   intros tm n1 P W B H Hle.
   destruct (tcycler_check_qhboundtr_sound_L tm n1 P W H) as [Hnh [Hb Hq]].
   split; [exact Hnh|]. split; [exact (qh_bound_of_le B tm n1 Hle Hb) | exact Hq].
+Qed.
+
+(** the mirrored boards prove the triple on [mirror_tm tm] *)
+Lemma qh_triple_unmirror : forall (B : nat) tm,
+  NonHalt (mirror_tm tm) /\ QHBoundTr B (mirror_tm tm) /\ QuasiHaltsTr (mirror_tm tm) ->
+  NonHalt tm /\ QHBoundTr B tm /\ QuasiHaltsTr tm.
+Proof.
+  intros B tm [Hnh [Hb Hq]].
+  split; [exact (mirror_nonhalt tm Hnh)|].
+  split; [exact (qhboundtr_mirror B tm Hb)|].
+  destruct Hq as (t & (n & Hf) & (N & HN)).
+  exists t. split.
+  - exists n. apply mirror_fires; exact Hf.
+  - exists N. intros m Hm Hv. apply (HN m Hm). apply mirror_fires; exact Hv.
+Qed.
+
+(** the counter boards (Machines/CountersTr/LAPQ_*, closer
+    Counters/LapGlueQHTr [glue_qhboundtr]) *)
+Lemma lap_qh_stage : forall tm (pins : list Instr) (Cf : positive -> cconf)
+    (p0 : positive) (t0 B : nat),
+  stepn tm t0 InitES = Some (lift (Cf p0)) ->
+  (forall p, (p0 <= p)%positive ->
+     exists n c', csteps (tm_wrap_trs tm pins) n (Cf p) = Some c' /\
+                  lift c' = lift (Cf (Pos.succ p)) /\ 0 < n) ->
+  (forall t, ~ In t pins -> forall p, (p0 <= p)%positive ->
+     exists k c, csteps (tm_wrap_trs tm pins) k (Cf p) = Some c /\ cinstr c = t) ->
+  existsb (fun tg => cfires tm c0 t0 tg) pins = true ->
+  (t0 <=? B) = true ->
+  NonHalt tm /\ QHBoundTr B tm /\ QuasiHaltsTr tm.
+Proof.
+  intros tm pins Cf p0 t0 B Hboot Hlap Hfire Hwit Hle.
+  destruct (glue_qhboundtr tm pins Cf p0 t0 Hboot Hlap Hfire Hwit) as [Hnh [Hb Hq]].
+  split; [exact Hnh|]. split; [exact (qh_bound_of_le B tm t0 Hle Hb) | exact Hq].
 Qed.

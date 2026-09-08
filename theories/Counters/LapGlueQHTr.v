@@ -41,8 +41,9 @@ Variable Cf : positive -> cconf.
 Variable p0 : positive.
 Variable t0 : nat.                (** the boot index *)
 
-(** the boot, on the ORIGINAL machine *)
-Hypothesis Hboot : csteps tm t0 c0 = Some (Cf p0).
+(** the boot, on the ORIGINAL machine (the lifted form the boards'
+    boot lemmas produce) *)
+Hypothesis Hboot : stepn tm t0 InitES = Some (lift (Cf p0)).
 (** the laps and the fires, on the WRAPPED machine, from the anchors *)
 Hypothesis Hlap : forall p, (p0 <= p)%positive ->
   exists n c', csteps (tm_wrap_trs tm pins) n (Cf p) = Some c' /\
@@ -84,7 +85,7 @@ Lemma agree_from : forall k,
 Proof. exact (wrap_trs_agree tm pins cb wrapped_nonhalt_from). Qed.
 
 Lemma boot_lift : stepn tm t0 InitES = Some cb.
-Proof. rewrite <- lift_c0. apply csteps_lift; exact Hboot. Qed.
+Proof. exact Hboot. Qed.
 
 (** the original run past the boot is the wrapped run from the boot *)
 Lemma run_from : forall n, t0 <= n ->
