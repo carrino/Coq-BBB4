@@ -1876,6 +1876,36 @@ Bookkeeping: `qh_scan.py` (scratch) records every instruction's last
 fire; `gen_provtr_qh.py` stays as the staging pattern for whichever
 checker certifies a row.
 
+### 7.3b The first QH-side stage: quiet-instruction translated cyclers (2026-09-08)
+
+`Checkers/TCyclerQHTr.v`: `tcycler_check_qhboundtr tm n1 P W` is
+`TCyclerTr.tcycler_check_neverqhtr` with the gate inverted.  The lap
+[g1 -> g2] of period P from the anchor n1 is reused verbatim (the
+`tcycler_fold` / `tcycler_laps` lemmas of the state checker); instead
+of "every instruction fired in the first n1 + P steps fires in the
+lap" it asks that SOME instruction fired before n1 does not fire in
+the lap.  Every configuration past n1 folds into the lap, so an
+instruction absent from the lap last fires before n1, and one present
+in it fires again after any index: hence `NonHalt`, the unfolded
+`QHBoundTr n1` (every quiet instruction's score is at most n1) and
+`QuasiHaltsTr` (the prefix-fired absentee), which is the shape
+`provqh_tr` needs.  One axiom.  Side L runs the checker on
+`mirror_tm` and transfers through `qhboundtr_mirror` / `mirror_fires`.
+
+Conveyor: `tc_find.py` (unchanged) over the 7,827 QH-side rows found
+793 periodic laps -- the linear class of §7.3a, one row in ten;
+`gen_provtr_tcqh.py` (the TC generator with the QH checker and the
+`NonHalt /\ QHBoundTr 32779478 /\ QuasiHaltsTr` stage lemma via
+`QHConveyorTr.qh_bound_of_le`) probes them at ~100 per second: 731
+accepted, 62 rejected (the same lap-detection misses as the never-QH
+conveyor).  Staged as `ProvTr_QH_00..02` (pqh_00..02), the first
+entries of `provqh_tr`.  Their scores are the anchors n1, all far
+below B_tr; the QH side's value question stays with the late
+quieters of §7.3a.
+
+Next on this side, in the order of §7.3a: the lap-certificate
+(counter) variant, then RepWL-wrap for the bouncers.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

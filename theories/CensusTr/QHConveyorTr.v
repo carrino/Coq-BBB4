@@ -78,3 +78,15 @@ Proof.
   apply Nat.leb_le in Hle.
   exact (Nat.le_trans _ _ _ (Hb tg s Hq) Hle).
 Qed.
+
+(** the same for a checker whose bound is a plain [n] (the
+    translated-cycler anchor of Checkers/TCyclerQHTr) *)
+Lemma qh_bound_of_le : forall (B : nat) tm n,
+  (n <=? B) = true ->
+  (forall tg' s', QuietAfterTr tm tg' s' -> S s' <= n) ->
+  QHBoundTr B tm.
+Proof.
+  intros B tm n Hle Hb tg s Hq.
+  apply Nat.leb_le in Hle.
+  exact (Nat.le_trans _ _ _ (Hb tg s Hq) Hle).
+Qed.
