@@ -95,7 +95,12 @@ def probe(certs, outdir, chunk):
 
 def read_verdicts(probedir):
     vs = []
-    for o in sorted(glob.glob(os.path.join(probedir, 'ProbeTCQH_*.out'))):
+    # numeric order: past 99 files a lexicographic sort puts _100 before
+    # _11 and the verdicts would pair with the wrong certificates
+    def _num(path):
+        m = re.search(r'_(\d+)\.out$', path)
+        return int(m.group(1)) if m else -1
+    for o in sorted(glob.glob(os.path.join(probedir, 'ProbeTCQH_*.out')), key=_num):
         t = open(o).read()
         vs += [x == 'true' for x in re.findall(r'^\s*= (true|false)', t, re.M)]
     return vs
