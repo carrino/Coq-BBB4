@@ -5272,6 +5272,7 @@ theories/Closeout/Closeout.v
 theories/BBBT4_Statement.v
 theories/CensusTr/TNF_QHTr.v
 theories/CensusTr/DecideTr.v
+theories/CensusTr/QHConveyorTr.v
 theories/CensusTr/RepWLTr.v
 theories/CensusTr/DeferredTr_00.v
 theories/CensusTr/DeferredTr_01.v
