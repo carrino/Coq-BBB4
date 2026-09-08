@@ -1805,6 +1805,20 @@ stages too) removes 963 more rows from v7 -> `censustr_deferred_v8.txt`,
 17,026 rows; `DeferredTr_00..02` + `DeferredTr_Data` regenerated.
 Next box job: `make census-tr-walk WALK_JOBS=7` against them.
 
+### 7.2c The v8 re-walk: census_tr checked against the 17,026-row list (2026-09-07)
+
+`make census-tr-walk WALK_JOBS=7` on the box, D_tr = the v8 tables
+(17,026 rows), prov_tr = 6,776 machines (97 IRulesTr + 2,297 lap
+boards + 2,513 translated cyclers + 960 RepWL bouncers + 600 irules
+re-checks + 309 rank re-checks): build phase well under an hour, 96
+units in ~2.5 h (901-1,812 s each in the last wave), assembly
+`Census_TheoremTr.v` -- CHECKED.  This is the consolidation point for
+branching sessions: everything proven so far is in the kernel-checked
+theorem, and the remaining 17,026 rows are the §7.1v/§7.1y classes
+with no cheap route left (see the path in the 2026-09-07 assessment:
+QH-side conveyor, NGH conveyor on the closeout boards, the nested/peel
+lap ports, the bouncer certificate route).
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
