@@ -18,8 +18,21 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+      # apt talks to the runner's package mirror, which sometimes hangs
+      # mid-fetch (observed 2026-08-19: 43 minutes of silence after an
+      # InRelease line, eating the whole job timeout as "cancelled").
+      # Bound each attempt and retry, so a bad mirror costs minutes,
+      # not the run.
       - name: Install Coq
-        run: sudo apt-get update && sudo apt-get install -y coq
+        timeout-minutes: 15
+        run: |
+          for i in 1 2 3; do
+            sudo timeout 300 apt-get update && \
+            sudo timeout 300 apt-get install -y coq && exit 0
+            echo "apt attempt $i failed or hung; retrying"
+            sleep 10
+          done
+          exit 1
       - name: Coq version (expect 8.18.0)
         run: coqc --version
       - name: Generate Makefile.coq
@@ -32,6 +45,8 @@ jobs:
         run: |
           make -f Makefile.coq -j4 theories/Machines/Cycle_Examples.vo
           make -f Makefile.coq -j4 theories/Machines/TCycler_Examples.vo
+      - name: Instruction-level (transition-level) statement + ported checkers + one certificate stage
+        run: make -f Makefile.coq -j4 theories/Checkers/NGramHistTr.vo theories/Checkers/TCyclerTr.vo theories/CensusTr/ProvTr_TC_10.vo
       - name: "Hygiene: zero Admitted in theories/"
         run: "! grep -rn 'Admitted\\.' theories --include='*.v'"
       - name: "Hygiene: every .v under theories/ is built or explicitly exempt"

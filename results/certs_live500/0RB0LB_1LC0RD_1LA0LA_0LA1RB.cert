@@ -1,0 +1,35 @@
+bbbcert v3
+machine 0RB0LB_1LC0RD_1LA0LA_0LA1RB
+type irules
+blk 2 01
+blk 3 1110
+anchor_step 199951
+decided_at_step 199951
+k0 4794
+kmin 1
+meta_a 1
+meta_b 3
+tpl_state A
+tpl_hsym 0
+tpl_left 0
+tpl_right 7
+tplrun R 0 1 0 2
+tplrun R 1 0 0 1
+tplrun R 2 1 0 3
+tplrun R 3 0 0 1
+tplrun R 4 1 0 6
+tplrun R 5 0 0 1
+tplrun R 6 1 1 0
+nrules 0
+claim_status irules
+claim_qh F
+claim_score 0
+claim_trans A0 I 33595 199946
+claim_trans A1 I 12796 199949
+claim_trans B0 I 43189 199950
+claim_trans B1 I 33591 199936
+claim_trans C0 I 25596 199951
+claim_trans C1 I 17593 199945
+claim_trans D0 I 3202 199914
+claim_trans D1 I 30389 199937
+end

@@ -1,0 +1,73 @@
+bbbcert v5
+machine 0RB0LB_1LC1RC_1LA0RD_1RB1LA
+type irules
+blk 2 11011
+blk 3 10110
+blk 4 01101
+blk 5 10
+blk 6 10111
+anchor_step 199418
+decided_at_step 199418
+k0 91
+kmin 7
+meta_a 1
+meta_b 1
+tpl_state C
+tpl_hsym 0
+tpl_left 2
+tpl_right 0
+tplrun L 0 3 1 0
+tplrun L 1 1 0 1
+nrules 4
+rule 0 D 1 4 5
+rulepfx 0 1 1
+rulerun 0 L 0 4 V 1 2
+rulerun 0 L 1 1 C 1
+rulerun 0 L 2 0 C 1
+rulerun 0 L 3 1 C 1
+rulerun 0 R 0 1 C 1
+rulerun 0 R 1 0 C 1
+rulerun 0 R 2 1 C 2
+rulerun 0 R 3 2 V -1 2
+rulerun 0 R 4 1 C 1
+rule 1 B 0 7 2
+rulepfx 1 1 1
+rulerun 1 L 0 1 V -1 2
+rulerun 1 L 1 0 C 1
+rulerun 1 L 2 1 C 1
+rulerun 1 L 3 4 V 0 1
+rulerun 1 L 4 1 C 1
+rulerun 1 L 5 0 C 1
+rulerun 1 L 6 1 C 1
+rulerun 1 R 0 0 C 1
+rulerun 1 R 1 1 V 1 1
+rule 2 C 0 5 1
+rulepfx 2 1 1
+rulerun 2 L 0 1 C 1
+rulerun 2 L 1 4 V -1 2
+rulerun 2 L 2 1 C 1
+rulerun 2 L 3 0 C 1
+rulerun 2 L 4 1 C 1
+rulerun 2 R 0 6 V 1 1
+rule 3 B 0 5 3
+rulepfx 3 1 1
+rulerun 3 L 0 1 V -1 2
+rulerun 3 L 1 0 C 1
+rulerun 3 L 2 1 C 2
+rulerun 3 L 3 0 C 1
+rulerun 3 L 4 1 C 1
+rulerun 3 R 0 0 C 1
+rulerun 3 R 1 1 V 1 1
+rulerun 3 R 2 6 V 0 1
+claim_status irules
+claim_qh F
+claim_score 0
+claim_trans A0 I 24926 199417
+claim_trans A1 I 24927 198777
+claim_trans B0 I 24837 198778
+claim_trans B1 I 33388 199418
+claim_trans C0 I 25108 198779
+claim_trans C1 I 33116 199415
+claim_trans D0 I 8372 199413
+claim_trans D1 I 24744 199416
+end
