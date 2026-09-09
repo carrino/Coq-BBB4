@@ -1953,6 +1953,75 @@ then stage with `--start 3`, wire `pqh_03..` into `provqh_tr`, and
 cut v9.  Expected: ~2,500-3,000 machines, the largest single stage of
 the QH side.
 
+### 7.3d The counter emit on the box: 2,502 boards, v9 = 13,783 rows, re-walk CHECKED (2026-09-09)
+
+`tools/censustr/overnight_qh.sh` (PR #145) ran the chain on the box:
+`QHConveyorTr.vo` and below, `qh_lap_emit.sh` over the 3,745
+log-extent QH rows (16 shards, 55 min), `wire_qh_stages.py`,
+`cut_deferred.py v8 v9`, `make census-tr-walk WALK_JOBS=7`.
+
+**Emit: 2,502 of 3,745 rows derived and kernel-checked (67%)**, 13
+stages `ProvTr_QH_03..15`, `provqh_tr` = 731 + 2,502 = **3,233**
+machines.  The 200-row sample (§7.3c) said 80%; the population is
+67%, the same sample-vs-population gap as the LIVE counters (§7.1v).
+Per shard 128-207 of 234.  The 1,243 failures by reason:
+
+| reason | rows | route |
+|---|---:|---|
+| no anchor | 582 | peel / nested lap ports (§7.1v) |
+| no overflow chain (nested route is S0-only) | 286 | the S1 nested case |
+| no interior chain | 181 | not a lap counter shape |
+| no visit witness for state D | 111 | peel port |
+| avoid route: only flat exact boards are wired | 52 | wire the avoid route in `--qh` |
+| every fired instruction has a lap witness | 23 | **not quasihalters by the lap**: re-run `--tr`, candidates for `prov_tr` |
+| tr: route not supported (islack/oslack/nest/peel) | 7 | -- |
+| nested: no exit chain | 1 | -- |
+
+The 23 "every fired instruction has a lap witness" rows are the
+interesting ones: the emitter's lap contains every instruction the
+prefix fired, which is the never-QH shape, while the 10M-step scan
+had put them on the QH side (a quiet instruction by last fire).  One
+of the two is wrong per row; the lap is a proof and the scan is a
+heuristic, so run those 23 through `emit_lapcert.py --tr` and stage
+the boards into `prov_tr`.
+
+**The v9 cut**: `proven_specs.py` counts 10,009 proven machines
+(6,776 never-QH + 3,233 QH); v8 minus those = **3,243 removed,
+13,783 kept** (the 2,502 boards, the 731 cyclers not yet cut from
+v8, and the trailing-hole rows §7.3b's regex fix recovered).  The
+tables shrank to two shards (`DeferredTr_02` dropped).
+
+**Re-walk**: build phase (13 stages, RunTr, RunTr_Split) 20 min after
+`coqnative` on the boards; 96 units in ~2 h 15 min at WALK_JOBS=7
+(260-2,113 s each, the shorter list walks faster); assembly
+`Census_TheoremTr.v` -- CHECKED.  `Print Assumptions census_tr`:
+`FunctionalExtensionality.functional_extensionality_dep` only.
+
+One box-side lesson, now in the script: the emitter compiles boards
+with `-native-compiler no`, and a stage compiled natively links
+against its boards' native modules, so a board emitted ON the box
+(unlike the LAPT boards, emitted in the container and compiled
+natively by the box's first build) fails the stage's `coqnative` with
+"Unbound module".  `coqnative -Q theories BBB4 board.vo` adds the
+module without re-checking the proof; the script runs it over the
+boards before the walk.
+
+**Burn-down after v9 (13,783 rows)**, by the §7.1v/§7.3a classes:
+
+* never-QH side (~5,950): bouncers 1,036 (RepWL closures blow up,
+  certificate route), counters 2,226 (nested/peel ports), polynomial
+  898, state-proven live re-checks 1,782;
+* QH side (~4,590 of the 7,827): bouncers 3,288 (the sqrt-extent
+  class, same certificate route), the 1,243 counter failures above,
+  the 63 cycler laps that did not check, and the 529 late quieters
+  (inside the counters and bouncers);
+* closeout state-QH boards 592 and partial/provenqh rows 632, both
+  awaiting the NGH conveyor.
+
+The largest single class on either side is now the bouncers, 4,324
+rows in all, and the counter ports (peel, nested S1, avoid) are the
+next 1,000.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
