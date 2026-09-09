@@ -45,7 +45,7 @@ From BBB4.CensusTr Require Import
   ProvTr_RW_00 ProvTr_RW_01 ProvTr_RW_02 ProvTr_RW_03 ProvTr_RW_04 ProvTr_RW_05 ProvTr_RW_06 ProvTr_RW_07 ProvTr_RW_08 ProvTr_RW_09 ProvTr_RW_10
   ProvTr_IR_00 ProvTr_IR_01 ProvTr_IR_02
   ProvTr_RK_00 ProvTr_RK_01 ProvTr_RK_02 ProvTr_RK_03 ProvTr_RK_04 ProvTr_RK_05 ProvTr_RK_06 ProvTr_RK_07 ProvTr_RK_08 ProvTr_RK_09
-  ProvTr_QH_00 ProvTr_QH_01 ProvTr_QH_02.
+  ProvTr_QH_00 ProvTr_QH_01 ProvTr_QH_02 ProvTr_QH_03 ProvTr_QH_04 ProvTr_QH_05 ProvTr_QH_06 ProvTr_QH_07 ProvTr_QH_08 ProvTr_QH_09 ProvTr_QH_10 ProvTr_QH_11 ProvTr_QH_12 ProvTr_QH_13 ProvTr_QH_14 ProvTr_QH_15.
 Import ListNotations.
 
 Set Default Goal Selector "!".
@@ -190,7 +190,7 @@ Definition prov_tr : list TM :=
   prov_tr_irtr ++ ptl_00 ++ ptl_01 ++ ptl_02 ++ ptl_03 ++ ptl_04 ++ ptl_05 ++ ptl_06 ++ ptl_07 ++ ptl_08 ++ ptl_09 ++ ptl_10 ++ ptl_11 ++ ptc_00 ++ ptc_01 ++ ptc_02 ++ ptc_03 ++ ptc_04 ++ ptc_05 ++ ptc_06 ++ ptc_07 ++ ptc_08 ++ ptc_09 ++ ptc_10 ++ ptc_11 ++ ptw_00 ++ ptw_01 ++ ptw_02 ++ ptw_03 ++ ptw_04 ++ ptw_05 ++ ptw_06 ++ ptw_07 ++ ptw_08 ++ ptw_09 ++ ptw_10 ++ pti_00 ++ pti_01 ++ pti_02 ++ prk_00 ++ prk_01 ++ prk_02 ++ prk_03 ++ prk_04 ++ prk_05 ++ prk_06 ++ prk_07 ++ prk_08 ++ prk_09.
 (** the proven-QH tier: quiet-instruction translated cyclers
     (ProvTr_QH_NN, Checkers/TCyclerQHTr; SCOPING_INSTR.md 7.3a) *)
-Definition provqh_tr : list TM := pqh_00 ++ pqh_01 ++ pqh_02.
+Definition provqh_tr : list TM := pqh_00 ++ pqh_01 ++ pqh_02 ++ pqh_03 ++ pqh_04 ++ pqh_05 ++ pqh_06 ++ pqh_07 ++ pqh_08 ++ pqh_09 ++ pqh_10 ++ pqh_11 ++ pqh_12 ++ pqh_13 ++ pqh_14 ++ pqh_15.
 
 Lemma prov_tr_irtr_all : Forall NeverQuasiHaltsTr prov_tr_irtr.
 Proof.
@@ -308,7 +308,7 @@ Lemma provqh_tr_all :
 Proof.
   unfold provqh_tr.
   repeat (apply Forall_app; split);
-    first [exact pqh_00_qhtr | exact pqh_01_qhtr | exact pqh_02_qhtr].
+    first [exact pqh_00_qhtr | exact pqh_01_qhtr | exact pqh_02_qhtr | exact pqh_03_qhtr | exact pqh_04_qhtr | exact pqh_05_qhtr | exact pqh_06_qhtr | exact pqh_07_qhtr | exact pqh_08_qhtr | exact pqh_09_qhtr | exact pqh_10_qhtr | exact pqh_11_qhtr | exact pqh_12_qhtr | exact pqh_13_qhtr | exact pqh_14_qhtr | exact pqh_15_qhtr].
 Qed.
 
 (** the same rung ladders as the state census (Run_Compute.v), and the
