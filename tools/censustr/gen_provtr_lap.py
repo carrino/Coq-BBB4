@@ -13,12 +13,18 @@ so [prov_tr] can append [ptl_00 ++ ptl_01 ++ ...] with [Forall_app].
 UNTRUSTED bookkeeping: it only names theorems the kernel already checked;
 a wrong name fails to compile.
 
-Usage: gen_provtr_lap.py [--chunk N] [--boards DIR] [--outdir DIR]
+Boards already imported by an existing ProvTr_Lap stage are skipped, so
+a later collection appends only the new ones; --start N is the first free
+stage number and an existing stage is never overwritten.  The new boards
+are listed in _CoqProject.
+
+Usage: gen_provtr_lap.py --start N [--chunk N] [--boards DIR] [--outdir DIR]
 """
 import argparse
 import glob
 import os
 import re
+import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -36,12 +42,22 @@ From BBB4 Require Import BBB4_Statement BBBT4_Statement.
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument('--start', type=int, required=True)
     ap.add_argument('--chunk', type=int, default=200)
     ap.add_argument('--boards', default=os.path.join(REPO, 'theories', 'Machines', 'CountersTr'))
     ap.add_argument('--outdir', default=os.path.join(REPO, 'theories', 'CensusTr'))
+    ap.add_argument('--no-coqproject', action='store_true')
     a = ap.parse_args()
     os.makedirs(a.outdir, exist_ok=True)
-    boards = sorted(glob.glob(os.path.join(a.boards, 'LAPT*.v')))
+    staged = set()
+    for st in glob.glob(os.path.join(a.outdir, 'ProvTr_Lap_*.v')):
+        staged |= set(re.findall(r'^From BBB4\.Machines\.CountersTr Require Import (LAPT\w+)\.', open(st).read(), re.M))
+    boards = [b for b in sorted(glob.glob(os.path.join(a.boards, 'LAPT*.v')))
+              if os.path.splitext(os.path.basename(b))[0] not in staged]
+    if staged:
+        sys.stderr.write('%d LAPT board(s) already staged, skipped\n' % len(staged))
+    if not boards:
+        sys.exit('no unstaged LAPT board in %s' % a.boards)
     rows = []
     for b in boards:
         t = open(b).read()
@@ -50,11 +66,15 @@ def main():
             raise SystemExit('no nqhtr theorem in %s' % b)
         for th, _, tm in ms:
             rows.append((os.path.splitext(os.path.basename(b))[0], th, tm))
+    n = a.start
     nfiles = 0
     for ci in range(0, len(rows), a.chunk):
-        nn = '%02d' % nfiles
+        nn = '%02d' % n
+        path = os.path.join(a.outdir, 'ProvTr_Lap_%s.v' % nn)
+        if os.path.exists(path):
+            sys.exit('refusing to overwrite %s: pass --start past the existing stages' % path)
         chunk = rows[ci:ci + a.chunk]
-        with open(os.path.join(a.outdir, 'ProvTr_Lap_%s.v' % nn), 'w') as f:
+        with open(path, 'w') as f:
             f.write(HEADER.replace('{NN}', nn).replace('{CNT}', str(len(chunk))))
             seen = []
             for mod, _, _ in chunk:
@@ -70,8 +90,18 @@ def main():
             for _, th, _ in reversed(chunk):
                 term = '(Forall_cons _ %s %s)' % (th, term)
             f.write('Proof. exact %s. Qed.\n' % term)
+        n += 1
         nfiles += 1
-    print('%d boards -> %d stage file(s) in %s' % (len(rows), nfiles, a.outdir))
+    if not a.no_coqproject:
+        cp = os.path.join(REPO, '_CoqProject')
+        have = set(l.strip() for l in open(cp))
+        add = sorted(set('theories/Machines/CountersTr/%s.v' % mod for mod, _, _ in rows
+                         if 'theories/Machines/CountersTr/%s.v' % mod not in have))
+        if add:
+            with open(cp, 'a') as f:
+                f.write(''.join(x + '\n' for x in add))
+        print('%d board path(s) added to _CoqProject' % len(add))
+    print('%d boards -> %d stage file(s) (ProvTr_Lap_%02d..) in %s' % (len(rows), nfiles, a.start, a.outdir))
 
 
 if __name__ == '__main__':
