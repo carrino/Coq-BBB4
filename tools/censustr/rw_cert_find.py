@@ -277,7 +277,8 @@ def coq_cert(name, certs):
     for k, comps in sorted(certs.items()):
         q, s = map(int, k.split(','))
         arms.append('  | (St%s, S%d) => [%s]' % (chr(65 + q), s, ';\n      '.join(coq_comp(c) for c in comps)))
-    arms.append('  | _ => []')
+    if len(certs) < 8:
+        arms.append('  | _ => []')
     return 'Definition %s (tg : Instr) : list rwcomp :=\n  match tg with\n%s\n  end.' % (name, '\n'.join(arms))
 
 
