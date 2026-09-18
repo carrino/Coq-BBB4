@@ -2022,6 +2022,75 @@ The largest single class on either side is now the bouncers, 4,324
 rows in all, and the counter ports (peel, nested S1, avoid) are the
 next 1,000.
 
+### 7.3e The bouncers: the RepWL PARAMETER route (2026-09-18)
+
+**The counter ports are small.**  The state-level lap derive on a
+sample of the 1,243 QH counter rows the `--qh` emit did not derive:
+56 of 70 have no counter phase at any level (the emitter's cascade
+finder sees no counter), 14 derive at state level and need a port
+(nested S1 6, avoid 3, unsupported 2, and 3 are never-QH by the lap).
+So the ports unlock about a fifth of those rows, not the thousand
+§7.3d guessed; the other four fifths are in the bouncers' bucket.
+The box's `tr_lap_emit.sh` over the 1,246 rows: **75 LAPT boards**
+(never-QH by the lap; the 10M-step scan had put them on the QH side
+by a quiet instruction the lap does not contain), `ProvTr_Lap_12`,
+unwired until the next cut.
+
+**Populations by behaviour, v9** (`censustr_v9_scan_1e6.txt`, a
+1M-step scan with the tape extent at 1e5 and 1e6; extent ratio < 1.8
+log, < 5.5 sqrt, else linear): never-QH side 4,240 sqrt / 4,297 log /
+230 linear; QH side (a fired instruction quiet since step 1e5) 2,998
+sqrt / 2,017 log / 1 linear.  The never-QH sqrt class is 4,240 rows,
+not the 1,036 open bouncers of §7.2a: the state-proven live rows and
+the polynomial class grow the same way, so the route below runs over
+all of them (`censustr_live_sqrt.txt`, `censustr_qh_bouncers.txt`,
+tape-period rows from `rw_period_rows.py`).
+
+**The closure was never the problem.**  On 40 sampled open bouncers
+the Python mirror of RepWL.v builds a finite closure at one of the
+tape-period block lengths for 13 of the first 19, 350-104K nodes,
+median 4K, each in under a second.  The in-Coq tier's failure in
+§7.2a was its parameters, not the search: at the finder's parameters
+(the L, T, t that certify; fuel 8*nodes+64; M = max node size + 8)
+Coq's own `rw_tier_tr` re-finds the certificate in 7 s / 30 s / 36 s
+on 3K-7K-node closures and 709 s on a 25K one (Python 4-180 s, so
+4-10x); a 52K-node search was OOM-killed at 15 GB after 980 s, so
+closures past 30K nodes are not handed to Coq.
+
+**The certificate-literal route is dead.**  `rw_check_neverqhtr`
+takes the certificate as data, and the finder produces it -- but a
+certificate is 23K-370K `(positive, nat)` entries per machine (a rank
+component over every node per procedure round, per instruction),
+4-10 MB of literals; the kernel check of four of them ran 21 min and
+was killed for memory after two.  Storing certificates is out; the
+route is **parameters**: `rw_cert_find.py find` (UNTRUSTED, the
+Python mirror with the avoid filter moved from states to instructions
+as `rw_procedure_tr` does) certifies a machine offline and writes the
+row `spec L T t fuel M`; `gen_provtr_rw.py` probe/stage then runs
+Coq's tier at exactly that row and stages with `rw_tier_tr_sound` --
+the existing parameter-closed stage, no new Coq.  On the QH side the
+same with `rw_tier_qhbtr` (pins from the scan's last fires, the
+closure and the search on the wrapped machine; stage lemma
+`QHConveyorTr.rwqh_stage`), `probe-qh` / `stage-qh` into
+`ProvTr_QH_NN`.
+
+**Sample yields (40 rows each).**  Never-QH open bouncers: 14/40
+certified (10 "no certificate for one instruction" -- the abstraction
+has a cycle avoiding that instruction with net tape growth, the same
+instruction-vs-state gap as §7.1w; 8 no closure; 8 timeouts at 300 s);
+a wider L/T grid on the misses found nothing in 400 s each.  QH
+bouncers: 9/40 with the tape-period rows only, **25/40 with the
+FALLBACK_L ladder** (a machine whose period detector said p=2 closes
+only at L=3, 6; 14 instant "no closure" became certificates), the 15
+left all timeouts.  The kernel accepts the QH rows: `rw_tier_qhbtr`
+on the median certificate in 1 s.
+
+**Box job:** `tools/censustr/overnight_rw.sh` -- both finders over
+the full lists, Coq's tier at the found rows (12 probe jobs, 1,800 s
+cap), stages `ProvTr_RW_11..` and `ProvTr_QH_16..`, wire (QH, Lap,
+RW), cut v10, coqnative the box-emitted boards, re-walk.  Expected
+from the sample rates: ~1,500 never-QH and ~1,800 QH rows.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
