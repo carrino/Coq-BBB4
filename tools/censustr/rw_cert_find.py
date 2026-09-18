@@ -11,9 +11,15 @@ only CHECKS: [rw_check_neverqhtr tm L T t fuel M cert] re-derives the
 closure and re-checks every edge of every per-instruction certificate
 ([rw_check_neverqhtr_sound]).  A wrong certificate fails to typecheck.
 
-  find  ROWS.tsv OUT.json [--jobs N] [--timeout S] [--limit N]
+  find  ROWS.tsv OUT.json [--jobs N] [--timeout S] [--limit N] [--rows R.tsv]
         ROWS: spec L T t fuel M (gen_provtr_rw.py's rows; L candidates
-        per spec in file order; t is re-tried over 0,64,...,16384)
+        per spec in file order; t is re-tried over 0,64,...,16384).
+        --rows writes the PARAMETER rows of the certified machines
+        (spec L T t fuel M, fuel = 8*nodes+64, M = max node size + 8)
+        for gen_provtr_rw.py probe/stage: Coq's own [rw_tier_tr] then
+        re-runs the search at exactly these parameters (measured within
+        10x of this finder) and the stage needs no certificate literal.
+  rows  OUT.json R.tsv        the same rows from an existing find output
   probe OUT.json OUTDIR [--chunk 10]     -> ProbeRC_NN.v (+ .names):
         `Eval vm_compute in rw_check_neverqhtr ...` per certificate
   stage OUT.json PROBEDIR OUTDIR --start N [--chunk 50]
@@ -158,6 +164,89 @@ def lex_check_tr(tbl, adj, seen, tg, comps):
     return True
 
 
+def read_scan(path):
+    """trcensus output -> {spec: (budget_hint, {instr: (cnt, last)})}"""
+    out = {}
+    for line in open(path):
+        f = line.split()
+        if len(f) < 9 or not f[1].startswith('T'):
+            continue
+        d = {}
+        for tok in f[1:9]:
+            m = re.match(r'^T([A-D])([01]):(\d+):(\d+)$', tok)
+            if m:
+                d[(ord(m.group(1)) - 65, int(m.group(2)))] = (int(m.group(3)), int(m.group(4)))
+        out[f[0]] = d
+    return out
+
+
+def build_closure_from(tblw, L, T, a0, cap=rp.CAP_NODES):
+    """rp.build_closure with the seed given (the seed is taken on the
+    ORIGINAL machine at t; the successors on the WRAPPED one)"""
+    seen = set()
+    todo = [a0]
+    while todo:
+        a = todo.pop()
+        if a in seen:
+            continue
+        seen.add(a)
+        if len(seen) > cap:
+            return None
+        sl = rp.rw_succs(tblw, L, T, a)
+        if sl is None:
+            return None
+        todo.extend(sl)
+    return seen
+
+
+def find_one_qh(job):
+    spec, rows, timeout, scan = job
+    tbl = rp.parse(spec)
+    signal.signal(signal.SIGALRM, _alarm)
+    signal.alarm(timeout)
+    t0 = time.time()
+    lasts = [l for c, l in scan.values() if c > 0]
+    horizon = max(lasts) + 1 if lasts else 0
+    pins = {tg: l for tg, (c, l) in scan.items() if c > 0 and l < horizon // 10}
+    if not pins:
+        return dict(spec=spec, ok=False, why='no quiet instruction in the scan', secs=0.0)
+    tblw = dict(tbl)
+    for tg in pins:
+        tblw[tg] = None
+    tmin = max(pins.values()) + 1
+    why = 'no closure'
+    try:
+        for (L, T) in rows:
+            for t in [x for x in T_CANDS if x >= tmin] or [tmin]:
+                a0 = rp.seed(tbl, L, T, t)
+                if a0 is None:
+                    continue
+                seen = build_closure_from(tblw, L, T, a0)
+                if seen is None:
+                    continue
+                adj = {a: rp.rw_succs(tblw, L, T, a) for a in seen}
+                targets = sorted({instr(a) for a in seen})
+                ok = True
+                for tg in targets:
+                    comps = procedure_tr(tblw, seen, adj, tg, rp.MEAS)
+                    if comps is None or not lex_check_tr(tblw, adj, seen, tg, comps):
+                        ok = False
+                        why = 'no cert for %s%d at L=%d t=%d (%d nodes)' % (chr(65 + tg[0]), tg[1], L, t, len(seen))
+                        break
+                if not ok:
+                    continue
+                signal.alarm(0)
+                return dict(spec=spec, ok=True, qh=True, L=L, T=T, t=t, fuel=8 * len(seen) + 64,
+                            M=max(asz(a) for a in seen), nodes=len(seen), secs=round(time.time() - t0, 1),
+                            pins=sorted((q, sy, l) for (q, sy), l in pins.items()))
+    except Timeout:
+        why = 'timeout'
+    except RecursionError:
+        why = 'recursion'
+    signal.alarm(0)
+    return dict(spec=spec, ok=False, why=why, secs=round(time.time() - t0, 1))
+
+
 class Timeout(Exception):
     pass
 
@@ -232,10 +321,16 @@ def do_find(a):
     specs = read_rows(a.rows)
     if a.limit:
         specs = specs[:a.limit]
-    jobs = [(sp, rws, a.timeout) for sp, rws in specs]
+    if a.qh:
+        scan = read_scan(a.scan)
+        jobs = [(sp, rws, a.timeout, scan.get(sp, {})) for sp, rws in specs]
+        fn = find_one_qh
+    else:
+        jobs = [(sp, rws, a.timeout) for sp, rws in specs]
+        fn = find_one
     out = []
     with mp.Pool(a.jobs, maxtasksperchild=20) as pool:
-        for i, r in enumerate(pool.imap_unordered(find_one, jobs)):
+        for i, r in enumerate(pool.imap_unordered(fn, jobs)):
             out.append(r)
             print('%4d/%d %-40s %s' % (i + 1, len(jobs), r['spec'],
                                        ('OK L=%d t=%d nodes=%d %.0fs' % (r['L'], r['t'], r['nodes'], r['secs']))
@@ -243,6 +338,18 @@ def do_find(a):
     json.dump(out, open(a.out, 'w'))
     nok = sum(r['ok'] for r in out)
     print('%d / %d certificates -> %s' % (nok, len(out), a.out))
+    if a.rows:
+        write_rows(out, a.rows)
+
+
+def write_rows(out, path):
+    n = 0
+    with open(path, 'w') as f:
+        for r in out:
+            if r['ok']:
+                f.write('%s\t%d\t%d\t%d\t%d\t%d\n' % (r['spec'], r['L'], r['T'], r['t'], r['fuel'], r['M'] + 8))
+                n += 1
+    print('%d parameter row(s) -> %s' % (n, path))
 
 
 # ---- Coq rendering ----
@@ -316,10 +423,10 @@ def do_probe(a):
     print('%d certificates -> %d probe file(s) in %s' % (len(rs), (len(rs) + a.chunk - 1) // a.chunk, a.outdir))
 
 
-def read_verdicts(probedir):
+def read_verdicts(probedir, prefix='ProbeRC_'):
     vs = {}
     missing = 0
-    for nf in sorted(glob.glob(os.path.join(probedir, 'ProbeRC_*.names')),
+    for nf in sorted(glob.glob(os.path.join(probedir, prefix + '*.names')),
                      key=lambda p: int(re.search(r'_(\d+)\.names$', p).group(1))):
         specs = [l.strip() for l in open(nf) if l.strip()]
         of = nf[:-len('.names')] + '.out'
@@ -382,17 +489,100 @@ def do_stage(a):
     print('%d certified -> %d stage file(s) (ProvTr_RC_%02d..)' % (len(rs), n - a.start, a.start))
 
 
+def coq_lf(pins):
+    return '[' + '; '.join('((St%s, S%d), %s)' % (chr(65 + q), sy, fmt_nat(l)) for q, sy, l in pins) + ']'
+
+
+QH_HEADER = '''From Coq Require Import Arith List ZArith.
+From BBB4 Require Import BBB4_Statement BBBT4_Statement.
+From BBB4.CensusTr Require Import TNF_QHTr RepWLTr QHConveyorTr.
+Import ListNotations.
+'''
+
+
+def do_probe_qh(a):
+    rs = certs_of(a.src)
+    os.makedirs(a.outdir, exist_ok=True)
+    for ci in range(0, len(rs), a.chunk):
+        nn = ci // a.chunk
+        with open(os.path.join(a.outdir, 'ProbeRQ_%02d.v' % nn), 'w') as f, \
+                open(os.path.join(a.outdir, 'ProbeRQ_%02d.names' % nn), 'w') as g:
+            f.write(QH_HEADER)
+            for i, r in enumerate(rs[ci:ci + a.chunk]):
+                nm = 'q%02d_%03d' % (nn, i)
+                f.write('(* %s  L=%d T=%d t=%d fuel=%d M=%d nodes=%d *)\n' % (r['spec'], r['L'], r['T'], r['t'], r['fuel'], r['M'] + 8, r['nodes']))
+                f.write(tm_lambda('tm_' + nm, r['spec']) + '\n')
+                f.write('Eval vm_compute in rw_tier_qhbtr tm_%s %s %d %d %s %s %d.\n\n'
+                        % (nm, coq_lf(r['pins']), r['L'], r['T'], fmt_nat(r['t']), fmt_nat(r['fuel']), r['M'] + 8))
+                g.write(r['spec'] + '\n')
+    print('%d rows -> %d probe file(s) in %s' % (len(rs), (len(rs) + a.chunk - 1) // a.chunk, a.outdir))
+
+
+QH_STAGE_HEADER = '''(** GENERATED by tools/censustr/rw_cert_find.py stage-qh -- DO NOT EDIT.
+
+    Transition-level proven-QH stage {NN}: {CNT} quiet-instruction
+    bouncers closed by the wrapped RepWL tier ([RepWLTr.rw_tier_qhbtr]:
+    the quiet instructions pinned at their last fires, the closure and
+    the rank search on the wrapped machine) via [QHConveyorTr.rwqh_stage].
+    Append [pqh_{NN}] to [provqh_tr] (CensusTr/RunTr.v). *)
+''' + QH_HEADER
+PRED = '(fun tm => NonHalt tm /\\ QHBoundTr 32779478 tm /\\ QuasiHaltsTr tm)'
+
+
+def do_stage_qh(a):
+    vs = read_verdicts(a.probes, 'ProbeRQ_')
+    rs = [r for r in certs_of(a.src) if vs.get(r['spec'])]
+    os.makedirs(a.outdir, exist_ok=True)
+    n = a.start
+    for ci in range(0, len(rs), a.chunk):
+        nn = '%02d' % n
+        path = os.path.join(a.outdir, 'ProvTr_QH_%s.v' % nn)
+        if os.path.exists(path):
+            sys.exit('refusing to overwrite %s: pass --start past the existing stages' % path)
+        cb = rs[ci:ci + a.chunk]
+        names = []
+        with open(path, 'w') as f:
+            f.write(QH_STAGE_HEADER.replace('{NN}', nn).replace('{CNT}', str(len(cb))) + '\n')
+            for k, r in enumerate(cb):
+                nm = 'rq%s_%04d' % (nn, k)
+                names.append(nm)
+                f.write('(* %s  L=%d T=%d t=%d fuel=%d M=%d nodes=%d *)\n' % (r['spec'], r['L'], r['T'], r['t'], r['fuel'], r['M'] + 8, r['nodes']))
+                f.write(tm_lambda('tm_' + nm, r['spec']) + '\n')
+                f.write('Lemma qhtr_%s : NonHalt tm_%s /\\ QHBoundTr 32779478 tm_%s /\\ QuasiHaltsTr tm_%s.\n'
+                        'Proof. apply (rwqh_stage tm_%s %s %d %d %s %s %d 32779478). '
+                        'all: vm_cast_no_check (eq_refl true). Qed.\n\n'
+                        % (nm, nm, nm, nm, nm, coq_lf(r['pins']), r['L'], r['T'], fmt_nat(r['t']), fmt_nat(r['fuel']), r['M'] + 8))
+            f.write('Definition pqh_%s : list TM :=\n  [' % nn)
+            f.write(';\n   '.join('tm_%s' % x for x in names))
+            f.write('].\n\nLemma pqh_%s_qhtr : Forall %s pqh_%s.\n' % (nn, PRED, nn))
+            term = '(Forall_nil _)'
+            for x in reversed(names):
+                term = '(Forall_cons _ qhtr_%s %s)' % (x, term)
+            f.write('Proof. exact %s. Qed.\n' % term)
+        n += 1
+    print('%d certified -> %d stage file(s) (ProvTr_QH_%02d..)' % (len(rs), n - a.start, a.start))
+
+
 def main():
     ap = argparse.ArgumentParser()
     sp = ap.add_subparsers(dest='cmd', required=True)
     p = sp.add_parser('find'); p.add_argument('rows'); p.add_argument('out')
     p.add_argument('--jobs', type=int, default=3); p.add_argument('--timeout', type=int, default=300)
-    p.add_argument('--limit', type=int, default=0)
+    p.add_argument('--limit', type=int, default=0); p.add_argument('--rows')
+    p.add_argument('--qh', action='store_true'); p.add_argument('--scan')
+    p = sp.add_parser('rows'); p.add_argument('src'); p.add_argument('out')
+    p = sp.add_parser('probe-qh'); p.add_argument('src'); p.add_argument('outdir'); p.add_argument('--chunk', type=int, default=10)
+    p = sp.add_parser('stage-qh'); p.add_argument('src'); p.add_argument('probes'); p.add_argument('outdir')
+    p.add_argument('--start', type=int, required=True); p.add_argument('--chunk', type=int, default=100)
     p = sp.add_parser('probe'); p.add_argument('src'); p.add_argument('outdir'); p.add_argument('--chunk', type=int, default=10)
     p = sp.add_parser('stage'); p.add_argument('src'); p.add_argument('probes'); p.add_argument('outdir')
     p.add_argument('--start', type=int, required=True); p.add_argument('--chunk', type=int, default=50)
     a = ap.parse_args()
-    {'find': do_find, 'probe': do_probe, 'stage': do_stage}[a.cmd](a)
+    if a.cmd == 'rows':
+        write_rows(json.load(open(a.src)), a.out)
+        return
+    {'find': do_find, 'probe': do_probe, 'stage': do_stage,
+     'probe-qh': do_probe_qh, 'stage-qh': do_stage_qh}[a.cmd](a)
 
 
 if __name__ == '__main__':

@@ -20,7 +20,7 @@ From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape Mirror ClosureTr.
 From BBB4.Checkers Require Import NGram NGramTr WrapTr TCyclerQHTr AnchorVisitsTr.
 From BBB4.Census Require Import RankSearch.
 From BBB4.Counters Require Import LapGlueQHTr.
-From BBB4.CensusTr Require Import TNF_QHTr DecideTr.
+From BBB4.CensusTr Require Import TNF_QHTr DecideTr RepWLTr.
 Import ListNotations.
 
 Definition qh_plain_at (tm : TM) (pins : list (Instr * nat))
@@ -118,6 +118,19 @@ Lemma qh_lex_stage : forall tm pins n t fuel rounds B,
 Proof.
   intros tm pins n t fuel rounds B H Hle.
   destruct (qh_lex_at_sound tm pins n t fuel rounds H) as [Hnh [Hb Hq]].
+  split; [exact Hnh|]. split; [exact (qh_bound_of B tm t Hle Hb) | exact Hq].
+Qed.
+
+(** the wrapped RepWL tier ([RepWLTr.rw_tier_qhbtr]: pins from the
+    caller's last-fire list, closure and rank search on the wrapped
+    machine) as a stage lemma; the bouncers of the QH side *)
+Lemma rwqh_stage : forall tm lf L T t fuel M B,
+  rw_tier_qhbtr tm lf L T t fuel M = true ->
+  (S t <=? B) = true ->
+  NonHalt tm /\ QHBoundTr B tm /\ QuasiHaltsTr tm.
+Proof.
+  intros tm lf L T t fuel M B H Hle.
+  destruct (rw_tier_qhbtr_sound tm lf L T t fuel M H) as [Hnh [Hb Hq]].
   split; [exact Hnh|]. split; [exact (qh_bound_of B tm t Hle Hb) | exact Hq].
 Qed.
 
