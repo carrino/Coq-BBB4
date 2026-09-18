@@ -12,8 +12,11 @@ closure and re-checks every edge of every per-instruction certificate
 ([rw_check_neverqhtr_sound]).  A wrong certificate fails to typecheck.
 
   find  ROWS.tsv OUT.json [--jobs N] [--timeout S] [--limit N] [--rows R.tsv]
+        [--list MACHINES]
         ROWS: spec L T t fuel M (gen_provtr_rw.py's rows; L candidates
-        per spec in file order; t is re-tried over 0,64,...,16384).
+        per spec in file order, then the FALLBACK_L ladder at T=2; t is
+        re-tried over 0,64,...,16384).  --list runs every machine of
+        the list, the rows' candidates first where it has rows.
         --rows writes the PARAMETER rows of the certified machines
         (spec L T t fuel M, fuel = 8*nodes+64, M = max node size + 8)
         for gen_provtr_rw.py probe/stage: Coq's own [rw_tier_tr] then
@@ -48,6 +51,9 @@ T_CANDS = (0, 64, 256, 1024, 4096, 16384)
 # closures past this are not handed to Coq's tier: its search on a 52K-node
 # closure was OOM-killed at 15 GB after 980 s (a 25K one took 709 s)
 MAX_NODES = 30000
+# block lengths tried after the rows' own (the tape-period detector's p, 2p):
+# measured 2026-09-18, a bouncer whose detector said p=2 closes only at L=3, 6
+FALLBACK_L = (2, 3, 4, 5, 6, 7, 8, 9, 10, 12)
 MEAS_CTOR = {'N/A': 'RwNA', 'N/L': 'RwNL', 'N/R': 'RwNR', '0/l': 'RwZL', '0/r': 'RwZR'}
 INSTRS = [(q, s) for q in range(4) for s in range(2)]
 
@@ -218,6 +224,7 @@ def find_one_qh(job):
         tblw[tg] = None
     tmin = max(pins.values()) + 1
     why = 'no closure'
+    rows = list(rows) + [(L, 2) for L in FALLBACK_L if (L, 2) not in rows]
     try:
         for (L, T) in rows:
             for t in [x for x in T_CANDS if x >= tmin] or [tmin]:
@@ -265,6 +272,7 @@ def find_one(job):
     signal.alarm(timeout)
     t0 = time.time()
     why = 'no closure'
+    rows = list(rows) + [(L, 2) for L in FALLBACK_L if (L, 2) not in rows]
     try:
         for (L, T) in rows:
             for t in T_CANDS:
@@ -322,6 +330,9 @@ def read_rows(path):
 
 def do_find(a):
     specs = read_rows(a.rows)
+    if a.list:
+        have = dict(specs)
+        specs = [(sp, have.get(sp, [])) for sp in (l.strip() for l in open(a.list)) if sp]
     if a.limit:
         specs = specs[:a.limit]
     if a.qh:
@@ -575,6 +586,7 @@ def main():
     p.add_argument('--jobs', type=int, default=3); p.add_argument('--timeout', type=int, default=300)
     p.add_argument('--limit', type=int, default=0); p.add_argument('--rows')
     p.add_argument('--qh', action='store_true'); p.add_argument('--scan')
+    p.add_argument('--list', help='machine list: rows from ROWS where present, the fallback ladder otherwise')
     p = sp.add_parser('rows'); p.add_argument('src'); p.add_argument('out')
     p = sp.add_parser('probe-qh'); p.add_argument('src'); p.add_argument('outdir'); p.add_argument('--chunk', type=int, default=10)
     p = sp.add_parser('stage-qh'); p.add_argument('src'); p.add_argument('probes'); p.add_argument('outdir')

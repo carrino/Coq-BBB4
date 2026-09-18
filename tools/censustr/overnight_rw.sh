@@ -38,7 +38,7 @@ if [ "$FROM" -le 1 ]; then
 fi
 if [ "$FROM" -le 2 ]; then
   date; echo ">>> 2. never-QH finder ($FIND_JOBS jobs, ${FIND_TIMEOUT}s per machine)"
-  python3 tools/censustr/rw_cert_find.py find censustr_live_sqrt_rows.tsv census_probes/rw/live_certs.json \
+  python3 tools/censustr/rw_cert_find.py find --list censustr_live_sqrt.txt censustr_live_sqrt_rows.tsv census_probes/rw/live_certs.json \
     --jobs $FIND_JOBS --timeout $FIND_TIMEOUT --rows censustr_rw_param_rows.tsv | tail -3
 fi
 if [ "$FROM" -le 3 ]; then
@@ -48,7 +48,7 @@ if [ "$FROM" -le 3 ]; then
 fi
 if [ "$FROM" -le 4 ]; then
   date; echo ">>> 4. QH finder + probe + stage"
-  python3 tools/censustr/rw_cert_find.py find --qh --scan censustr_v9_scan_1e6.txt censustr_qh_bouncer_rows.tsv \
+  python3 tools/censustr/rw_cert_find.py find --qh --scan censustr_v9_scan_1e6.txt --list censustr_qh_bouncers.txt censustr_qh_bouncer_rows.tsv \
     census_probes/rwqh/qh_certs.json --jobs $FIND_JOBS --timeout $FIND_TIMEOUT | tail -3
   rm -f census_probes/rwqh/ProbeRQ_*
   python3 tools/censustr/rw_cert_find.py probe-qh census_probes/rwqh/qh_certs.json census_probes/rwqh --chunk 1
