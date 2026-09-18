@@ -10,7 +10,8 @@ For each QH stage file not yet imported by CensusTr/RunTr.v it
   * adds `exact pqh_NN_qhtr` to the [provqh_tr_all] closer,
   * lists the file in _CoqProject after the last ProvTr_QH entry;
 for a lap stage the same with the ProvTr_Lap import line, `++ ptl_NN`
-in [prov_tr] and `exact ptl_NN_nqhtr` in the [prov_tr_all] closer.
+in [prov_tr] and `exact ptl_NN_nqhtr` in the [prov_tr_all] closer; for a
+RepWL stage (ProvTr_RW_NN, ptw_NN, ptw_NN_nqhtr) likewise.
 Idempotent: a second run changes nothing.  Exits 0 and prints the stages
 it wired (possibly none).
 
@@ -34,7 +35,8 @@ def main():
     src = open(run).read()
     # (stage prefix, list name, closer lemma suffix, list definition, closer's first lemma)
     kinds = [('ProvTr_QH_', 'pqh_', '_qhtr', 'provqh_tr', r'exact pqh_\d+_qhtr'),
-             ('ProvTr_Lap_', 'ptl_', '_nqhtr', 'prov_tr', r'exact prov_tr_irtr_all')]
+             ('ProvTr_Lap_', 'ptl_', '_nqhtr', 'prov_tr', r'exact prov_tr_irtr_all'),
+             ('ProvTr_RW_', 'ptw_', '_nqhtr', 'prov_tr', r'exact prov_tr_irtr_all')]
     new_all = []
     for pre, lst, suf, defn, first in kinds:
         stages = sorted(os.path.splitext(os.path.basename(p))[0]
