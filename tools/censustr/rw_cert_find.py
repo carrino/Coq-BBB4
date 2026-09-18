@@ -11,13 +11,13 @@ only CHECKS: [rw_check_neverqhtr tm L T t fuel M cert] re-derives the
 closure and re-checks every edge of every per-instruction certificate
 ([rw_check_neverqhtr_sound]).  A wrong certificate fails to typecheck.
 
-  find  ROWS.tsv OUT.json [--jobs N] [--timeout S] [--limit N] [--rows R.tsv]
+  find  ROWS.tsv OUT.json [--jobs N] [--timeout S] [--limit N] [--rows-out R.tsv]
         [--list MACHINES]
         ROWS: spec L T t fuel M (gen_provtr_rw.py's rows; L candidates
         per spec in file order, then the FALLBACK_L ladder at T=2; t is
         re-tried over 0,64,...,16384).  --list runs every machine of
         the list, the rows' candidates first where it has rows.
-        --rows writes the PARAMETER rows of the certified machines
+        --rows-out writes the PARAMETER rows of the certified machines
         (spec L T t fuel M, fuel = 8*nodes+64, M = max node size + 8)
         for gen_provtr_rw.py probe/stage: Coq's own [rw_tier_tr] then
         re-runs the search at exactly these parameters (measured within
@@ -354,8 +354,8 @@ def do_find(a):
     json.dump(out, open(a.out, 'w'))
     nok = sum(r['ok'] for r in out)
     print('%d / %d certificates -> %s' % (nok, len(out), a.out))
-    if a.rows:
-        write_rows(out, a.rows)
+    if a.rows_out:
+        write_rows(out, a.rows_out)
 
 
 def write_rows(out, path):
@@ -584,7 +584,7 @@ def main():
     sp = ap.add_subparsers(dest='cmd', required=True)
     p = sp.add_parser('find'); p.add_argument('rows'); p.add_argument('out')
     p.add_argument('--jobs', type=int, default=3); p.add_argument('--timeout', type=int, default=300)
-    p.add_argument('--limit', type=int, default=0); p.add_argument('--rows')
+    p.add_argument('--limit', type=int, default=0); p.add_argument('--rows-out', dest='rows_out')
     p.add_argument('--qh', action='store_true'); p.add_argument('--scan')
     p.add_argument('--list', help='machine list: rows from ROWS where present, the fallback ladder otherwise')
     p = sp.add_parser('rows'); p.add_argument('src'); p.add_argument('out')

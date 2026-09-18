@@ -39,7 +39,7 @@ fi
 if [ "$FROM" -le 2 ]; then
   date; echo ">>> 2. never-QH finder ($FIND_JOBS jobs, ${FIND_TIMEOUT}s per machine)"
   python3 tools/censustr/rw_cert_find.py find --list censustr_live_sqrt.txt censustr_live_sqrt_rows.tsv census_probes/rw/live_certs.json \
-    --jobs $FIND_JOBS --timeout $FIND_TIMEOUT --rows censustr_rw_param_rows.tsv | tail -3
+    --jobs $FIND_JOBS --timeout $FIND_TIMEOUT --rows-out censustr_rw_param_rows.tsv | tail -3
 fi
 if [ "$FROM" -le 3 ]; then
   date; echo ">>> 3. RW probe (Coq search at the finder's parameters) + stage"
