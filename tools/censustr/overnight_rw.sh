@@ -11,7 +11,8 @@
 #   2. never-QH finder over the 4,240 sqrt-extent LIVE rows
 #      (censustr_live_sqrt_rows.tsv) -> censustr_rw_param_rows.tsv
 #   3. RW probe (Coq search at the parameters, 1 machine per file, cap
-#      RWPROBE_TIMEOUT) + stage ProvTr_RW_11..
+#      PROBE_TIMEOUT, PROBE_JOBS=12: a 25K-node search is minutes and
+#      GBs; closures past 30K nodes are not probed) + stage ProvTr_RW_11..
 #   4. QH finder over the 2,998 quiet-instruction bouncers
 #      (censustr_qh_bouncer_rows.tsv, pins from censustr_v9_scan_1e6.txt)
 #      -> probe-qh (rw_tier_qhbtr) -> stage-qh ProvTr_QH_16..
@@ -24,7 +25,7 @@ set -eu -o pipefail
 cd "$(dirname "$0")/../.."
 eval $(opam env --switch=census --set-switch)
 OLD=${OLD:-censustr_deferred_v9.txt}; NEW=${NEW:-censustr_deferred_v10.txt}
-JOBS=${JOBS:-16}; FIND_JOBS=${FIND_JOBS:-14}; WALK_JOBS=${WALK_JOBS:-7}; FROM=${FROM:-1}
+JOBS=${JOBS:-16}; FIND_JOBS=${FIND_JOBS:-14}; PROBE_JOBS=${PROBE_JOBS:-12}; WALK_JOBS=${WALK_JOBS:-7}; FROM=${FROM:-1}
 FIND_TIMEOUT=${FIND_TIMEOUT:-300}; PROBE_TIMEOUT=${PROBE_TIMEOUT:-1800}
 RW_START=${RW_START:-11}; QH_START=${QH_START:-16}
 mkdir -p census_probes/rw census_probes/rwqh
@@ -42,7 +43,7 @@ if [ "$FROM" -le 2 ]; then
 fi
 if [ "$FROM" -le 3 ]; then
   date; echo ">>> 3. RW probe (Coq search at the finder's parameters) + stage"
-  make census-tr-rwprobe RWPROBE_ROWS=censustr_rw_param_rows.tsv RWPROBE_TIMEOUT=$PROBE_TIMEOUT RWPROBE_JOBS=$JOBS RWPROBE_CHUNK=1 | tail -3
+  make census-tr-rwprobe RWPROBE_ROWS=censustr_rw_param_rows.tsv RWPROBE_TIMEOUT=$PROBE_TIMEOUT RWPROBE_JOBS=$PROBE_JOBS RWPROBE_CHUNK=1 | tail -3
   make census-tr-rwstage RWPROBE_ROWS=censustr_rw_param_rows.tsv RWSTAGE_START=$RW_START | tail -2
 fi
 if [ "$FROM" -le 4 ]; then
@@ -51,7 +52,7 @@ if [ "$FROM" -le 4 ]; then
     census_probes/rwqh/qh_certs.json --jobs $FIND_JOBS --timeout $FIND_TIMEOUT | tail -3
   rm -f census_probes/rwqh/ProbeRQ_*
   python3 tools/censustr/rw_cert_find.py probe-qh census_probes/rwqh/qh_certs.json census_probes/rwqh --chunk 1
-  ls census_probes/rwqh/ProbeRQ_*.v | xargs -P $JOBS -I{} sh -c \
+  ls census_probes/rwqh/ProbeRQ_*.v | xargs -P $PROBE_JOBS -I{} sh -c \
     'b=$(echo {} | sed "s/\.v$//"); timeout '"$PROBE_TIMEOUT"' coqc -Q theories BBB4 -w -abstract-large-number {} > $b.out 2>&1; true'
   echo ">>> QH probes: $(cat census_probes/rwqh/ProbeRQ_*.out | grep -c '= true') true / $(cat census_probes/rwqh/ProbeRQ_*.out | grep -c '= false') false"
   python3 tools/censustr/rw_cert_find.py stage-qh census_probes/rwqh/qh_certs.json census_probes/rwqh theories/CensusTr --start $QH_START

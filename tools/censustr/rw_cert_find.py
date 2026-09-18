@@ -45,6 +45,9 @@ import repwl_prover as rp  # noqa: E402
 from gen_walk_shards import tm_lambda  # noqa: E402
 
 T_CANDS = (0, 64, 256, 1024, 4096, 16384)
+# closures past this are not handed to Coq's tier: its search on a 52K-node
+# closure was OOM-killed at 15 GB after 980 s (a 25K one took 709 s)
+MAX_NODES = 30000
 MEAS_CTOR = {'N/A': 'RwNA', 'N/L': 'RwNL', 'N/R': 'RwNR', '0/l': 'RwZL', '0/r': 'RwZR'}
 INSTRS = [(q, s) for q in range(4) for s in range(2)]
 
@@ -331,6 +334,8 @@ def do_find(a):
     out = []
     with mp.Pool(a.jobs, maxtasksperchild=20) as pool:
         for i, r in enumerate(pool.imap_unordered(fn, jobs)):
+            if r['ok'] and r['nodes'] > MAX_NODES:
+                r = dict(spec=r['spec'], ok=False, why='closure of %d nodes past MAX_NODES=%d (found at L=%d t=%d)' % (r['nodes'], MAX_NODES, r['L'], r['t']), secs=r['secs'])
             out.append(r)
             print('%4d/%d %-40s %s' % (i + 1, len(jobs), r['spec'],
                                        ('OK L=%d t=%d nodes=%d %.0fs' % (r['L'], r['t'], r['nodes'], r['secs']))
