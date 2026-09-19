@@ -2078,7 +2078,9 @@ closure and the search on the wrapped machine; stage lemma
 certified (10 "no certificate for one instruction" -- the abstraction
 has a cycle avoiding that instruction with net tape growth, the same
 instruction-vs-state gap as §7.1w; 8 no closure; 8 timeouts at 300 s);
-a wider L/T grid on the misses found nothing in 400 s each.  QH
+a wider L/T grid on the misses found nothing in 400 s each, and the
+FALLBACK_L ladder below nothing either (0/26: 8 no closure, 18
+timeouts) -- the ladder is a QH-side gain.  QH
 bouncers: 9/40 with the tape-period rows only, **25/40 with the
 FALLBACK_L ladder** (a machine whose period detector said p=2 closes
 only at L=3, 6; 14 instant "no closure" became certificates), the 15
