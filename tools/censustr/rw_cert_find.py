@@ -355,7 +355,7 @@ def do_find(a):
         try:
             out = json.load(open(a.out))
         except ValueError:
-            out = []
+            sys.exit('%s exists but is not valid JSON: move it aside (or repair it) rather than let this run overwrite it' % a.out)
         done = {r['spec'] for r in out}
         jobs = [j for j in jobs if j[0] not in done]
         if done:
@@ -363,7 +363,8 @@ def do_find(a):
 
     def save():
         tmp = a.out + '.tmp'
-        json.dump(out, open(tmp, 'w'))
+        with open(tmp, 'w') as f:
+            json.dump(out, f)
         os.replace(tmp, a.out)
 
     with mp.Pool(a.jobs, maxtasksperchild=20) as pool:
