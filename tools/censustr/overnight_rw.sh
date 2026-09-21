@@ -18,9 +18,14 @@
 #      -> probe-qh (rw_tier_qhbtr) -> stage-qh ProvTr_QH_16..
 #   5. wire every new stage (QH, Lap, RW), cut v10, coqnative the boards
 #      emitted on the box (LAPT and LAPQ), re-walk, axioms
-# Nothing is committed.  Run as:
+# Nothing is committed.  Run it in a tmux/screen session or keep a WSL
+# terminal open: WSL shuts the distro down (and this job with it) a few
+# seconds after its last terminal closes.  Run as:
 #   nohup tools/censustr/overnight_rw.sh > overnight_rw.log 2>&1 &
 # Resume from phase N:  FROM=N tools/censustr/overnight_rw.sh
+# The finders are resumable (their OUT.json is written per machine and an
+# existing one is skipped over), the finder logs are
+# census_probes/rw/live_find.log and census_probes/rwqh/qh_find.log.
 set -eu -o pipefail
 cd "$(dirname "$0")/../.."
 eval $(opam env --switch=census --set-switch)
@@ -39,7 +44,8 @@ fi
 if [ "$FROM" -le 2 ]; then
   date; echo ">>> 2. never-QH finder ($FIND_JOBS jobs, ${FIND_TIMEOUT}s per machine)"
   python3 tools/censustr/rw_cert_find.py find --list censustr_live_sqrt.txt censustr_live_sqrt_rows.tsv census_probes/rw/live_certs.json \
-    --jobs $FIND_JOBS --timeout $FIND_TIMEOUT --rows-out censustr_rw_param_rows.tsv | tail -3
+    --jobs $FIND_JOBS --timeout $FIND_TIMEOUT --rows-out censustr_rw_param_rows.tsv > census_probes/rw/live_find.log 2>&1
+  tail -3 census_probes/rw/live_find.log
 fi
 if [ "$FROM" -le 3 ]; then
   date; echo ">>> 3. RW probe (Coq search at the finder's parameters) + stage"
@@ -49,7 +55,8 @@ fi
 if [ "$FROM" -le 4 ]; then
   date; echo ">>> 4. QH finder + probe + stage"
   python3 tools/censustr/rw_cert_find.py find --qh --scan censustr_v9_scan_1e6.txt --list censustr_qh_bouncers.txt censustr_qh_bouncer_rows.tsv \
-    census_probes/rwqh/qh_certs.json --jobs $FIND_JOBS --timeout $FIND_TIMEOUT | tail -3
+    census_probes/rwqh/qh_certs.json --jobs $FIND_JOBS --timeout $FIND_TIMEOUT > census_probes/rwqh/qh_find.log 2>&1
+  tail -3 census_probes/rwqh/qh_find.log
   rm -f census_probes/rwqh/ProbeRQ_*
   python3 tools/censustr/rw_cert_find.py probe-qh census_probes/rwqh/qh_certs.json census_probes/rwqh --chunk 1
   ls census_probes/rwqh/ProbeRQ_*.v | xargs -P $PROBE_JOBS -I{} sh -c \

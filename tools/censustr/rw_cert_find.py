@@ -17,6 +17,9 @@ closure and re-checks every edge of every per-instruction certificate
         per spec in file order, then the FALLBACK_L ladder at T=2; t is
         re-tried over 0,64,...,16384).  --list runs every machine of
         the list, the rows' candidates first where it has rows.
+        OUT.json is written after every machine and an existing OUT.json
+        is resumed (its machines are skipped), so a killed run restarts
+        where it stopped.
         --rows-out writes the PARAMETER rows of the certified machines
         (spec L T t fuel M, fuel = 8*nodes+64, M = max node size + 8)
         for gen_provtr_rw.py probe/stage: Coq's own [rw_tier_tr] then
@@ -342,7 +345,25 @@ def do_find(a):
     else:
         jobs = [(sp, rws, a.timeout) for sp, rws in specs]
         fn = find_one
+    # resumable: OUT.json is rewritten after every result (atomically), and
+    # an existing OUT.json's machines are skipped -- a killed run (the box's
+    # WSL shuts down with its last terminal, 2026-09-18) restarts where it was
     out = []
+    if os.path.exists(a.out):
+        try:
+            out = json.load(open(a.out))
+        except ValueError:
+            out = []
+        done = {r['spec'] for r in out}
+        jobs = [j for j in jobs if j[0] not in done]
+        if done:
+            print('%d machine(s) already in %s, %d to go' % (len(done), a.out, len(jobs)), flush=True)
+
+    def save():
+        tmp = a.out + '.tmp'
+        json.dump(out, open(tmp, 'w'))
+        os.replace(tmp, a.out)
+
     with mp.Pool(a.jobs, maxtasksperchild=20) as pool:
         for i, r in enumerate(pool.imap_unordered(fn, jobs)):
             if r['ok'] and r['nodes'] > MAX_NODES:
@@ -351,7 +372,8 @@ def do_find(a):
             print('%4d/%d %-40s %s' % (i + 1, len(jobs), r['spec'],
                                        ('OK L=%d t=%d nodes=%d %.0fs' % (r['L'], r['t'], r['nodes'], r['secs']))
                                        if r['ok'] else 'no: %s (%.0fs)' % (r['why'], r['secs'])), flush=True)
-    json.dump(out, open(a.out, 'w'))
+            save()
+    save()
     nok = sum(r['ok'] for r in out)
     print('%d / %d certificates -> %s' % (nok, len(out), a.out))
     if a.rows_out:
