@@ -8,8 +8,9 @@
 # measured within 4-10x of the finder -- and the stages are the existing
 # parameter-closed ones (no certificate literal is stored).
 #   1. build QHConveyorTr.vo (RepWLTr and below)
-#   2. never-QH finder over the 4,240 sqrt-extent LIVE rows
-#      (censustr_live_sqrt_rows.tsv) -> censustr_rw_param_rows.tsv
+#   2. never-QH finder over LIVE_LIST (default the 1,031 open bouncers;
+#      censustr_live_sqrt.txt for the whole sqrt class) with the
+#      tape-period rows censustr_live_sqrt_rows.tsv -> censustr_rw_param_rows.tsv
 #   3. RW probe (Coq search at the parameters, 1 machine per file, cap
 #      PROBE_TIMEOUT, PROBE_JOBS=12: a 25K-node search is minutes and
 #      GBs; closures past 30K nodes are not probed) + stage ProvTr_RW_11..
@@ -33,6 +34,10 @@ OLD=${OLD:-censustr_deferred_v9.txt}; NEW=${NEW:-censustr_deferred_v10.txt}
 JOBS=${JOBS:-16}; FIND_JOBS=${FIND_JOBS:-14}; PROBE_JOBS=${PROBE_JOBS:-12}; WALK_JOBS=${WALK_JOBS:-7}; FROM=${FROM:-1}
 FIND_TIMEOUT=${FIND_TIMEOUT:-300}; PROBE_TIMEOUT=${PROBE_TIMEOUT:-1800}
 RW_START=${RW_START:-11}; QH_START=${QH_START:-16}
+# the never-QH list: the 1,031 open bouncers by default (35% certify); the
+# full 4,240-row sqrt class (censustr_live_sqrt.txt) certifies at ~8%
+# because its other 3,200 rows are not RepWL shapes -- run it another night
+LIVE_LIST=${LIVE_LIST:-censustr_bouncers_open.txt}
 mkdir -p census_probes/rw census_probes/rwqh
 if [ "$FROM" -le 1 ]; then
   date; echo ">>> pull (origin = the Windows checkout; pull there first)"
@@ -43,7 +48,7 @@ if [ "$FROM" -le 1 ]; then
 fi
 if [ "$FROM" -le 2 ]; then
   date; echo ">>> 2. never-QH finder ($FIND_JOBS jobs, ${FIND_TIMEOUT}s per machine)"
-  python3 tools/censustr/rw_cert_find.py find --list censustr_live_sqrt.txt censustr_live_sqrt_rows.tsv census_probes/rw/live_certs.json \
+  python3 tools/censustr/rw_cert_find.py find --list $LIVE_LIST censustr_live_sqrt_rows.tsv census_probes/rw/live_certs.json \
     --jobs $FIND_JOBS --timeout $FIND_TIMEOUT --rows-out censustr_rw_param_rows.tsv > census_probes/rw/live_find.log 2>&1
   tail -3 census_probes/rw/live_find.log
 fi
