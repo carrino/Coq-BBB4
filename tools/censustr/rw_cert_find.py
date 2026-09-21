@@ -14,8 +14,8 @@ closure and re-checks every edge of every per-instruction certificate
   find  ROWS.tsv OUT.json [--jobs N] [--timeout S] [--limit N] [--rows-out R.tsv]
         [--list MACHINES]
         ROWS: spec L T t fuel M (gen_provtr_rw.py's rows; L candidates
-        per spec in file order, then the FALLBACK_L ladder at T=2; t is
-        re-tried over 0,64,...,16384).  --list runs every machine of
+        per spec in file order, then with --qh the FALLBACK_L ladder at
+        T=2; t is re-tried over 0,64,...,16384).  --list runs every machine of
         the list, the rows' candidates first where it has rows.
         OUT.json is written after every machine and an existing OUT.json
         is resumed (its machines are skipped), so a killed run restarts
@@ -54,8 +54,9 @@ T_CANDS = (0, 64, 256, 1024, 4096, 16384)
 # closures past this are not handed to Coq's tier: its search on a 52K-node
 # closure was OOM-killed at 15 GB after 980 s (a 25K one took 709 s)
 MAX_NODES = 30000
-# block lengths tried after the rows' own (the tape-period detector's p, 2p):
-# measured 2026-09-18, a bouncer whose detector said p=2 closes only at L=3, 6
+# block lengths tried after the rows' own (the tape-period detector's p, 2p)
+# on the QH side only: a bouncer whose detector said p=2 closes only at L=3, 6
+# (9/40 -> 25/40 there); on the never-QH side it recovered nothing (0/26)
 FALLBACK_L = (2, 3, 4, 5, 6, 7, 8, 9, 10, 12)
 MEAS_CTOR = {'N/A': 'RwNA', 'N/L': 'RwNL', 'N/R': 'RwNR', '0/l': 'RwZL', '0/r': 'RwZR'}
 INSTRS = [(q, s) for q in range(4) for s in range(2)]
@@ -275,7 +276,8 @@ def find_one(job):
     signal.alarm(timeout)
     t0 = time.time()
     why = 'no closure'
-    rows = list(rows) + [(L, 2) for L in FALLBACK_L if (L, 2) not in rows]
+    # no fallback ladder here: it recovered 0/26 never-QH misses and turns
+    # a quick miss into a 300 s timeout (39 of the first 46 box rows)
     try:
         for (L, T) in rows:
             for t in T_CANDS:
