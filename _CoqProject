@@ -5291,6 +5291,7 @@ theories/CensusTr/ProvTr_Lap_08.v
 theories/CensusTr/ProvTr_Lap_09.v
 theories/CensusTr/ProvTr_Lap_10.v
 theories/CensusTr/ProvTr_Lap_11.v
+theories/CensusTr/ProvTr_Lap_12.v
 theories/CensusTr/ProvTr_TC_00.v
 theories/CensusTr/ProvTr_TC_01.v
 theories/CensusTr/ProvTr_TC_02.v
