@@ -23,7 +23,8 @@
 # window is what keeps the WSL distro alive; nohup/tmux die with it):
 #   FROM=2 tools/censustr/overnight_rw.sh > overnight_rw.log 2>&1
 # Resume from phase N:  FROM=N tools/censustr/overnight_rw.sh
-# Stop after phase N:    TO=N;  re-judge the first pass's timeouts:  RETRY=1 FROM=2
+# Stop after phase N:    TO=N;  re-judge the earlier passes' timeouts and
+# no-closures (RETRY_WHY) as pass N:  RETRY=N FROM=2 TO=2
 # Box lessons of 2026-09-21 (five VM deaths/wedges in one day): the VM
 # froze with 18 GB of 32 in use and no swap, while C: ran low on the
 # WINDOWS side -- the WSL swap image and the pagefile compete for that
@@ -59,9 +60,19 @@ RW_START=${RW_START:-$(next_stage ProvTr_RW 11)}; QH_START=${QH_START:-$(next_st
 # those (the first pass's stages stay; RW_START moves past them)
 mkdir -p census_probes/rw census_probes/rwqh
 CERTS=census_probes/rw/live_certs.json; ROWS=censustr_rw_param_rows.tsv
-if [ "$RETRY" = 1 ]; then
-  python3 tools/censustr/rw_cert_find.py failed $CERTS > census_probes/rw/retry_list.txt
-  LIVE_LIST=census_probes/rw/retry_list.txt; CERTS=census_probes/rw/live_certs_retry.json; ROWS=censustr_rw_param_rows_retry.tsv
+# RETRY=N re-judges the machines whose latest verdict over the first pass
+# and retries 1..N-1 is a resource failure or a no-closure (RETRY_WHY):
+# retry 1's files are live_certs_retry.json / censustr_rw_param_rows_retry.tsv,
+# retry N's live_certs_retryN.json / censustr_rw_param_rows_retryN.tsv
+if [ "$RETRY" != 0 ]; then
+  prev=$CERTS; n=1
+  while [ "$n" -lt "$RETRY" ]; do
+    f=census_probes/rw/live_certs_retry$([ "$n" = 1 ] || echo $n).json; [ -f "$f" ] && prev="$prev $f"; n=$((n + 1))
+  done
+  sfx=$([ "$RETRY" = 1 ] || echo $RETRY)
+  python3 tools/censustr/rw_cert_find.py failed $prev --why "${RETRY_WHY:-timeout|MAX_NODES|memory cap|no closure}" > census_probes/rw/retry_list$sfx.txt
+  LIVE_LIST=census_probes/rw/retry_list$sfx.txt; CERTS=census_probes/rw/live_certs_retry$sfx.json; ROWS=censustr_rw_param_rows_retry$sfx.tsv
+  echo ">>> RETRY $RETRY over: $prev"
   echo ">>> RETRY: $(wc -l < $LIVE_LIST) machines to re-judge -> $CERTS, $ROWS, ProvTr_RW_$RW_START.."
 fi
 # memory trace every 10 s (survives a VM death on the Linux disk)

@@ -14,7 +14,7 @@ closure and re-checks every edge of every per-instruction certificate
   find  ROWS.tsv OUT.json [--jobs N] [--timeout S] [--limit N] [--rows-out R.tsv]
         [--list MACHINES]
         ROWS: spec L T t fuel M (gen_provtr_rw.py's rows; L candidates
-        per spec in file order, then with --qh the FALLBACK_L ladder at
+        per spec in file order, then the FALLBACK_L ladder at
         T=2; t is re-tried over 0,64,...,16384).  --list runs every machine of
         the list, the rows' candidates first where it has rows.
         OUT.json is written after every machine and an existing OUT.json
@@ -292,8 +292,13 @@ def find_one(job):
     signal.alarm(timeout)
     t0 = time.time()
     why = 'no closure'
-    # no fallback ladder here: it recovered 0/26 never-QH misses and turns
-    # a quick miss into a 300 s timeout (39 of the first 46 box rows)
+    # the fallback ladder after the rows: the tape-period detector gives
+    # powers of two (L=2,4) to bouncers whose blocks have period 3 or 6, and
+    # 5 of 28 dense no-closure rows of the box's 2026-09-22 sample close
+    # and certify at L=6 in seconds.  (Disabled 2026-09-19 because a miss
+    # then grew a 400K-node closure for the whole 300 s; with the closure
+    # capped at MAX_NODES a miss costs a second or two.)
+    rows = list(rows) + [(L, 2) for L in FALLBACK_L if (L, 2) not in rows]
     try:
         for (L, T) in rows:
             for t in T_CANDS:
@@ -632,8 +637,8 @@ def main():
     p.add_argument('--qh', action='store_true'); p.add_argument('--scan')
     p.add_argument('--list', help='machine list: rows from ROWS where present, the fallback ladder otherwise')
     p = sp.add_parser('rows'); p.add_argument('src'); p.add_argument('out')
-    p = sp.add_parser('failed', help='print the machines OUT.json failed for a reason matching --why (a retry list)')
-    p.add_argument('src'); p.add_argument('--why', default='timeout|MAX_NODES|memory cap')
+    p = sp.add_parser('failed', help='print the machines whose latest verdict across the OUT.json files (in order) is a failure matching --why (a retry list)')
+    p.add_argument('src', nargs='+'); p.add_argument('--why', default='timeout|MAX_NODES|memory cap|no closure')
     p = sp.add_parser('probe-qh'); p.add_argument('src'); p.add_argument('outdir'); p.add_argument('--chunk', type=int, default=10)
     p = sp.add_parser('stage-qh'); p.add_argument('src'); p.add_argument('probes'); p.add_argument('outdir')
     p.add_argument('--start', type=int, required=True); p.add_argument('--chunk', type=int, default=100)
@@ -645,9 +650,13 @@ def main():
         write_rows(json.load(open(a.src)), a.out)
         return
     if a.cmd == 'failed':
-        for r in json.load(open(a.src)):
+        latest = {}
+        for f in a.src:
+            for r in json.load(open(f)):
+                latest[r['spec']] = r
+        for spec, r in latest.items():
             if not r['ok'] and re.search(a.why, r['why']):
-                print(r['spec'])
+                print(spec)
         return
     {'find': do_find, 'probe': do_probe, 'stage': do_stage,
      'probe-qh': do_probe_qh, 'stage-qh': do_stage_qh}[a.cmd](a)
