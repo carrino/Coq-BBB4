@@ -12,18 +12,26 @@
 #      censustr_live_sqrt.txt for the whole sqrt class) with the
 #      tape-period rows censustr_live_sqrt_rows.tsv -> censustr_rw_param_rows.tsv
 #   3. RW probe (Coq search at the parameters, 1 machine per file, cap
-#      PROBE_TIMEOUT, PROBE_JOBS=12: a 25K-node search is minutes and
+#      PROBE_TIMEOUT, PROBE_JOBS=8: a 25K-node search is minutes and
 #      GBs; closures past 30K nodes are not probed) + stage ProvTr_RW_11..
 #   4. QH finder over the 2,998 quiet-instruction bouncers
 #      (censustr_qh_bouncer_rows.tsv, pins from censustr_v9_scan_1e6.txt)
 #      -> probe-qh (rw_tier_qhbtr) -> stage-qh ProvTr_QH_16..
 #   5. wire every new stage (QH, Lap, RW), cut v10, coqnative the boards
 #      emitted on the box (LAPT and LAPQ), re-walk, axioms
-# Nothing is committed.  Run it in a tmux/screen session or keep a WSL
-# terminal open: WSL shuts the distro down (and this job with it) a few
-# seconds after its last terminal closes.  Run as:
-#   nohup tools/censustr/overnight_rw.sh > overnight_rw.log 2>&1 &
+# Nothing is committed.  Run it from an Ubuntu shell you keep open (the
+# window is what keeps the WSL distro alive; nohup/tmux die with it):
+#   FROM=2 tools/censustr/overnight_rw.sh > overnight_rw.log 2>&1
 # Resume from phase N:  FROM=N tools/censustr/overnight_rw.sh
+# Box lessons of 2026-09-21 (five VM deaths/wedges in one day): the VM
+# froze with 18 GB of 32 in use and no swap, while C: ran low on the
+# WINDOWS side -- the WSL swap image and the pagefile compete for that
+# disk, and a full C: stalls the VM (clean teardown or wedge; the WSL
+# service itself hangs).  Fixes: .wslconfig [wsl2] swap=0 memory=32GB
+# vmIdleTimeout=-1, `wsl --manage Ubuntu --set-sparse true`, and 8
+# workers instead of 14 (the VM levels off at ~12 GB; 14 climbed toward
+# the cap).  census_probes/memlog.txt is a 10 s memory trace for the
+# post-mortem of the next death: its last timestamp is the freeze time.
 # The finders are resumable (their OUT.json is written per machine and an
 # existing one is skipped over), the finder logs are
 # census_probes/rw/live_find.log and census_probes/rwqh/qh_find.log (appended,
@@ -32,7 +40,7 @@ set -eu -o pipefail
 cd "$(dirname "$0")/../.."
 eval $(opam env --switch=census --set-switch)
 OLD=${OLD:-censustr_deferred_v9.txt}; NEW=${NEW:-censustr_deferred_v10.txt}
-JOBS=${JOBS:-16}; FIND_JOBS=${FIND_JOBS:-14}; PROBE_JOBS=${PROBE_JOBS:-12}; WALK_JOBS=${WALK_JOBS:-7}; FROM=${FROM:-1}
+JOBS=${JOBS:-16}; FIND_JOBS=${FIND_JOBS:-8}; PROBE_JOBS=${PROBE_JOBS:-8}; WALK_JOBS=${WALK_JOBS:-7}; FROM=${FROM:-1}
 FIND_TIMEOUT=${FIND_TIMEOUT:-300}; PROBE_TIMEOUT=${PROBE_TIMEOUT:-1800}
 RW_START=${RW_START:-11}; QH_START=${QH_START:-16}
 # the never-QH list: the 1,031 open bouncers by default (35% certify); the
@@ -40,6 +48,9 @@ RW_START=${RW_START:-11}; QH_START=${QH_START:-16}
 # because its other 3,200 rows are not RepWL shapes -- run it another night
 LIVE_LIST=${LIVE_LIST:-censustr_bouncers_open.txt}
 mkdir -p census_probes/rw census_probes/rwqh
+# memory trace every 10 s (survives a VM death on the Linux disk)
+( while true; do date +%T; free -m | sed -n 2,3p; sleep 10; done >> census_probes/memlog.txt ) &
+MEMLOG_PID=$!; trap 'kill $MEMLOG_PID 2>/dev/null' EXIT
 if [ "$FROM" -le 1 ]; then
   date; echo ">>> pull (origin = the Windows checkout; pull there first)"
   git pull --no-rebase || true
