@@ -2093,6 +2093,98 @@ cap), stages `ProvTr_RW_11..` and `ProvTr_QH_16..`, wire (QH, Lap,
 RW), cut v10, coqnative the box-emitted boards, re-walk.  Expected
 from the sample rates: ~1,500 never-QH and ~1,800 QH rows.
 
+### 7.3f The bouncer run on the box, and the residue at 1e8 steps (2026-09-22)
+
+**Five WSL deaths in a day, none of them the census.**  The box's
+first `overnight_rw.sh` run (2026-09-21) lost the VM five times:
+clean teardowns and wedges with the WSL service itself hung, no
+Hyper-V or memory event on the Windows side, C: low.  The 10 s memory
+trace inside the VM (`census_probes/memlog.txt`) and `top` settled
+it: a finder worker on a row that times out grows a closure toward
+the mirror's own 400K-node cap and sits at ~4 GB for its whole 300 s,
+and eight of them are the 32 GB VM; with the WSL swap image and the
+pagefile sharing a nearly full C:, the VM stalls.  Fixes: the finder
+stops a closure at `MAX_NODES` = 30K (nothing past it is usable by
+Coq's tier anyway) and caps each worker's address space (`--mem-gb`,
+default 2; a 29,644-node closure fits in 0.6 GB); `.wslconfig`
+`swap=0`, the VHD sparse; 12 small workers instead of 14 large ones.
+
+**First pass, 1,031 open bouncers: 348 certified.**  Failures: 270
+timeouts, 12 closures past 30K nodes, 401 no closure / no certificate.
+The cap changes the timeouts: a row that used to burn its 300 s on a
+huge L=2 or L=4 closure now moves on to L=6 and closes small -- three
+of the last pass's timeouts certify in 2-6 s.  **Retry pass over the
+282 resource failures: 154 certified**, so **502 of 1,031 (49 %)**
+have finder rows; Coq's tier confirms them in phase 3 (numbers in
+§7.3g).  Residue after both passes: 44 timeouts at 300 s under the
+cap, 251 no closure, 234 no certificate for one instruction.
+
+**The residue at 1e8 steps.**  `censustr_v9_scan_1e8.txt` is the
+1e6 scan re-run for 1e8 steps over the whole v9 list (`trcensus.c`,
+2^26-cell tape; 22 linear machines run off it and are marked EDGE).
+Per machine the earliest last fire among its fired instructions:
+*dense* if within the last 10 % of the run, *sparse* if quiet for
+10-90 % of it, *quiet* if silent for 90 %+.  A 110-row sample of the
+open bouncers, judged by the capped finder and crossed with the scan:
+
+| finder verdict | dense | sparse |
+|---|---|---|
+| certified | 47 | 0 |
+| no closure | 28 | 2 |
+| no certificate for one instruction | 2 | 21 |
+| timeout (120 s) | 0 | 10 |
+
+The two residue classes are two different machines:
+
+* **Sparse hybrids** -- every "no certificate" and every timeout.  An
+  instruction fires in bursts at geometric intervals (x4, x16, x64,
+  x256 between bursts across the machines looked at) and is quiet for
+  tens of millions of steps between them; in 16 of the 23 no-cert
+  rows the blamed instruction is the quietest one.  RepWL forgets the
+  counter that ends each quiet phase, so the tg-avoiding graph has a
+  genuine cycle at every block length: not a tuning gap, a checker
+  gap (a bouncer with a phase counter needs the lap/counter machinery
+  composed with the bouncer abstraction).  Population: 260 of the
+  1,031 open bouncers, **1,869 of the 4,240 sqrt-extent LIVE rows**
+  (the state-proven live rows are half hybrids), 109 of the 1,246 QH
+  counter rows (their pinned instruction fires again by 1e8: they are
+  on the wrong side), 4,200 of the 8,767 LIVE deferred rows (the log
+  class counts as sparse too: a carry that fires at 2^k is quiet for
+  a third of 1e8).
+* **Dense no-closure** -- tapes with two or three periods at once
+  (one machine: blocks of period 5, 8 and a growing period-3 junk
+  region) or a slowly growing counter-like cap.  A single block
+  length collapses one period; a common multiple (60, 120) does not
+  help because RepWL keeps up to 3L symbols verbatim around the head
+  and the state space explodes there first.  The FALLBACK_L ladder
+  does recover the ones whose period the detector missed: **5 of 28**
+  certify at L=3 or 6 in 3-22 s (the tape-period rows had offered
+  L=2, 4).  The ladder is back on the never-QH side (a miss costs a
+  second under the cap; it was disabled when a miss cost 300 s), and
+  `RETRY=2` re-judges the earlier passes' no-closure rows with it:
+  worth about a fifth of them, ~50 machines.
+
+**No hidden QH machines on the LIVE side; 14 hybrids on the QH
+side.**  Of the 8,767 machines the 1e6 scan called LIVE, none has an
+instruction dead at 1e8: 4,545 dense, 4,200 sparse, 21 EDGE, and 15
+in one family whose quiet instruction last fires near 7.95M steps and
+again near 127.3M (x16 phases; confirmed at 1e9 for all 15).  The
+5,001 SUSPECT rows stay quiet (last fire < 1e6) -- the QH pins hold
+-- except **14 of the 2,998 QH bouncers, whose pinned instruction
+fires again** between 12M and 37M steps (`--qh` fails them soundly,
+`wrap_pin_ok` cannot hold; they belong with the hybrids), and the 1
+SUSPECT EDGE row, the linear QH machine.  The next QH run should pin
+from the 1e8 scan (`--scan censustr_v9_scan_1e8.txt`: horizon 1e8,
+pins = last fire < 1e7), which drops those 14 for free.
+
+**Burn-down.**  The finder has taken most of what single-block RepWL
+can take from the open bouncers: 502 rows plus ~50 from the ladder
+pass.  The other half of the class is structural: ~1,900 sparse
+hybrids across the sqrt class (a new checker), ~200 multi-period
+dense rows (a multi-block abstraction, or a per-machine word list),
+44 heavy rows (a 900 s pass).  The QH side's 2,998 bouncers run in
+phase 4 of the same box job with the capped finder and the ladder.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
