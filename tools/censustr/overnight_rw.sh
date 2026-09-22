@@ -23,14 +23,16 @@
 # window is what keeps the WSL distro alive; nohup/tmux die with it):
 #   FROM=2 tools/censustr/overnight_rw.sh > overnight_rw.log 2>&1
 # Resume from phase N:  FROM=N tools/censustr/overnight_rw.sh
+# Stop after phase N:    TO=N;  re-judge the first pass's timeouts:  RETRY=1 FROM=2
 # Box lessons of 2026-09-21 (five VM deaths/wedges in one day): the VM
 # froze with 18 GB of 32 in use and no swap, while C: ran low on the
 # WINDOWS side -- the WSL swap image and the pagefile compete for that
 # disk, and a full C: stalls the VM (clean teardown or wedge; the WSL
 # service itself hangs).  Fixes: .wslconfig [wsl2] swap=0 memory=32GB
 # vmIdleTimeout=-1, `wsl --manage Ubuntu --set-sparse true`, and 8
-# workers instead of 14 (the VM levels off at ~12 GB; 14 climbed toward
-# the cap).  census_probes/memlog.txt is a 10 s memory trace for the
+# workers instead of 14, then 6 (a worker on a timeout row sits at ~4 GB,
+# eight of them filled the VM; --mem-gb 4 caps each).  census_probes/memlog.txt
+# is a 10 s memory trace for the
 # post-mortem of the next death: its last timestamp is the freeze time.
 # The finders are resumable (their OUT.json is written per machine and an
 # existing one is skipped over), the finder logs are
@@ -40,14 +42,28 @@ set -eu -o pipefail
 cd "$(dirname "$0")/../.."
 eval $(opam env --switch=census --set-switch)
 OLD=${OLD:-censustr_deferred_v9.txt}; NEW=${NEW:-censustr_deferred_v10.txt}
-JOBS=${JOBS:-16}; FIND_JOBS=${FIND_JOBS:-8}; PROBE_JOBS=${PROBE_JOBS:-8}; WALK_JOBS=${WALK_JOBS:-7}; FROM=${FROM:-1}
-FIND_TIMEOUT=${FIND_TIMEOUT:-300}; PROBE_TIMEOUT=${PROBE_TIMEOUT:-1800}
-RW_START=${RW_START:-11}; QH_START=${QH_START:-16}
 # the never-QH list: the 1,031 open bouncers by default (35% certify); the
 # full 4,240-row sqrt class (censustr_live_sqrt.txt) certifies at ~8%
 # because its other 3,200 rows are not RepWL shapes -- run it another night
 LIVE_LIST=${LIVE_LIST:-censustr_bouncers_open.txt}
+JOBS=${JOBS:-16}; FIND_JOBS=${FIND_JOBS:-12}; PROBE_JOBS=${PROBE_JOBS:-8}; WALK_JOBS=${WALK_JOBS:-7}
+FROM=${FROM:-1}; TO=${TO:-5}; RETRY=${RETRY:-0}
+FIND_TIMEOUT=${FIND_TIMEOUT:-300}; PROBE_TIMEOUT=${PROBE_TIMEOUT:-1800}
+# the next free stage numbers (the RW stages resume at 11, the QH ones at 16)
+next_stage() { local n; n=$(ls theories/CensusTr/$1_[0-9][0-9].v 2>/dev/null | sed 's/.*_\([0-9][0-9]\)\.v$/\1/' | sort -n | tail -1); n=$((10#${n:-0} + 1)); [ "$n" -lt "$2" ] && n=$2; echo $n; }
+RW_START=${RW_START:-$(next_stage ProvTr_RW 11)}; QH_START=${QH_START:-$(next_stage ProvTr_QH 16)}
+# RETRY=1: phases 2-3 re-judge the machines the first pass failed for a
+# resource reason (timeout / past MAX_NODES / memory cap) into their own
+# files -- the finder now caps closures at MAX_NODES and two of the box's
+# 300 s timeouts certify in 4 s and 7 s that way -- and probe + stage only
+# those (the first pass's stages stay; RW_START moves past them)
 mkdir -p census_probes/rw census_probes/rwqh
+CERTS=census_probes/rw/live_certs.json; ROWS=censustr_rw_param_rows.tsv
+if [ "$RETRY" = 1 ]; then
+  python3 tools/censustr/rw_cert_find.py failed $CERTS > census_probes/rw/retry_list.txt
+  LIVE_LIST=census_probes/rw/retry_list.txt; CERTS=census_probes/rw/live_certs_retry.json; ROWS=censustr_rw_param_rows_retry.tsv
+  echo ">>> RETRY: $(wc -l < $LIVE_LIST) machines to re-judge -> $CERTS, $ROWS, ProvTr_RW_$RW_START.."
+fi
 # memory trace every 10 s (survives a VM death on the Linux disk)
 ( while true; do date +%T; free -m | sed -n 2,3p; sleep 10; done >> census_probes/memlog.txt ) &
 MEMLOG_PID=$!; trap 'kill $MEMLOG_PID 2>/dev/null' EXIT
@@ -58,18 +74,18 @@ if [ "$FROM" -le 1 ]; then
   coq_makefile -f _CoqProject -o Makefile.coq
   make -f Makefile.coq theories/CensusTr/QHConveyorTr.vo
 fi
-if [ "$FROM" -le 2 ]; then
-  date; echo ">>> 2. never-QH finder ($FIND_JOBS jobs, ${FIND_TIMEOUT}s per machine)"
-  python3 tools/censustr/rw_cert_find.py find --list $LIVE_LIST censustr_live_sqrt_rows.tsv census_probes/rw/live_certs.json \
-    --jobs $FIND_JOBS --timeout $FIND_TIMEOUT --rows-out censustr_rw_param_rows.tsv >> census_probes/rw/live_find.log 2>&1
+if [ "$FROM" -le 2 ] && [ "$TO" -ge 2 ]; then
+  date; echo ">>> 2. never-QH finder ($FIND_JOBS jobs, ${FIND_TIMEOUT}s per machine) over $LIVE_LIST"
+  python3 tools/censustr/rw_cert_find.py find --list $LIVE_LIST censustr_live_sqrt_rows.tsv $CERTS \
+    --jobs $FIND_JOBS --timeout $FIND_TIMEOUT --rows-out $ROWS >> census_probes/rw/live_find.log 2>&1
   tail -3 census_probes/rw/live_find.log
 fi
-if [ "$FROM" -le 3 ]; then
-  date; echo ">>> 3. RW probe (Coq search at the finder's parameters) + stage"
-  make census-tr-rwprobe RWPROBE_ROWS=censustr_rw_param_rows.tsv RWPROBE_TIMEOUT=$PROBE_TIMEOUT RWPROBE_JOBS=$PROBE_JOBS RWPROBE_CHUNK=1 | tail -3
-  make census-tr-rwstage RWPROBE_ROWS=censustr_rw_param_rows.tsv RWSTAGE_START=$RW_START | tail -2
+if [ "$FROM" -le 3 ] && [ "$TO" -ge 3 ]; then
+  date; echo ">>> 3. RW probe (Coq search at the finder's parameters) + stage ProvTr_RW_$RW_START.."
+  make census-tr-rwprobe RWPROBE_ROWS=$ROWS RWPROBE_TIMEOUT=$PROBE_TIMEOUT RWPROBE_JOBS=$PROBE_JOBS RWPROBE_CHUNK=1 | tail -3
+  make census-tr-rwstage RWPROBE_ROWS=$ROWS RWSTAGE_START=$RW_START | tail -2
 fi
-if [ "$FROM" -le 4 ]; then
+if [ "$FROM" -le 4 ] && [ "$TO" -ge 4 ]; then
   date; echo ">>> 4. QH finder + probe + stage"
   python3 tools/censustr/rw_cert_find.py find --qh --scan censustr_v9_scan_1e6.txt --list censustr_qh_bouncers.txt censustr_qh_bouncer_rows.tsv \
     census_probes/rwqh/qh_certs.json --jobs $FIND_JOBS --timeout $FIND_TIMEOUT >> census_probes/rwqh/qh_find.log 2>&1
@@ -81,6 +97,7 @@ if [ "$FROM" -le 4 ]; then
   echo ">>> QH probes: $(cat census_probes/rwqh/ProbeRQ_*.out | grep -c '= true') true / $(cat census_probes/rwqh/ProbeRQ_*.out | grep -c '= false') false"
   python3 tools/censustr/rw_cert_find.py stage-qh census_probes/rwqh/qh_certs.json census_probes/rwqh theories/CensusTr --start $QH_START
 fi
+[ "$TO" -ge 5 ] || { date; echo ">>> stopped after phase $TO (TO=$TO)"; exit 0; }
 date; echo ">>> 5a. wire the stages, cut $NEW"
 python3 tools/censustr/wire_qh_stages.py
 python3 tools/check_coqproject.py

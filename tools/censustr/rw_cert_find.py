@@ -39,6 +39,7 @@ import json
 import multiprocessing as mp
 import os
 import re
+import resource
 import signal
 import sys
 import time
@@ -53,7 +54,10 @@ from gen_walk_shards import tm_lambda  # noqa: E402
 T_CANDS = (0, 64, 256, 1024, 4096, 16384)
 # closures past this are not handed to Coq's tier: its search on a 52K-node
 # closure was OOM-killed at 15 GB after 980 s (a 25K one took 709 s)
-MAX_NODES = 30000
+MAX_NODES = 30000  # Coq's tier OOMs past ~30K nodes (52K: 15 GB); the finder
+# stops a closure there too: the mirror's own cap is 400K, and a worker
+# growing toward it sat at ~4 GB for its whole 300 s timeout (the box's
+# eight-worker VM stall of 2026-09-22); a 29,644-node closure fits in 0.6 GB
 # block lengths tried after the rows' own (the tape-period detector's p, 2p)
 # on the QH side only: a bouncer whose detector said p=2 closes only at L=3, 6
 # (9/40 -> 25/40 there); on the never-QH side it recovered nothing (0/26)
@@ -235,7 +239,7 @@ def find_one_qh(job):
                 a0 = rp.seed(tbl, L, T, t)
                 if a0 is None:
                     continue
-                seen = build_closure_from(tblw, L, T, a0)
+                seen = build_closure_from(tblw, L, T, a0, cap=MAX_NODES)
                 if seen is None:
                     continue
                 adj = {a: rp.rw_succs(tblw, L, T, a) for a in seen}
@@ -257,12 +261,24 @@ def find_one_qh(job):
         why = 'timeout'
     except RecursionError:
         why = 'recursion'
+    except MemoryError:
+        why = 'memory cap'
     signal.alarm(0)
     return dict(spec=spec, ok=False, why=why, secs=round(time.time() - t0, 1))
 
 
 class Timeout(Exception):
     pass
+
+
+def _limit_memory(gb):
+    """Pool initializer: cap a worker's address space so a runaway
+    closure fails its own row with MemoryError instead of exhausting the
+    VM.  On the box (2026-09-22) eight workers on timeout rows sat at
+    ~4 GB each = the whole 32 GB VM, every process asleep at 0% CPU."""
+    if gb:
+        cap = int(gb * 2 ** 30)
+        resource.setrlimit(resource.RLIMIT_AS, (cap, cap))
 
 
 def _alarm(*_):
@@ -281,7 +297,7 @@ def find_one(job):
     try:
         for (L, T) in rows:
             for t in T_CANDS:
-                r = rp.build_closure(tbl, L, T, t)
+                r = rp.build_closure(tbl, L, T, t, cap=MAX_NODES)
                 if r is None:
                     continue
                 a0, seen = r
@@ -307,6 +323,8 @@ def find_one(job):
         why = 'timeout'
     except RecursionError:
         why = 'recursion'
+    except MemoryError:
+        why = 'memory cap'
     signal.alarm(0)
     return dict(spec=spec, ok=False, why=why, secs=round(time.time() - t0, 1))
 
@@ -367,7 +385,7 @@ def do_find(a):
             json.dump(out, f)
         os.replace(tmp, a.out)
 
-    with mp.Pool(a.jobs, maxtasksperchild=20) as pool:
+    with mp.Pool(a.jobs, initializer=_limit_memory, initargs=(a.mem_gb,), maxtasksperchild=20) as pool:
         for i, r in enumerate(pool.imap_unordered(fn, jobs)):
             if r['ok'] and r['nodes'] > MAX_NODES:
                 r = dict(spec=r['spec'], ok=False, why='closure of %d nodes past MAX_NODES=%d (found at L=%d t=%d)' % (r['nodes'], MAX_NODES, r['L'], r['t']), secs=r['secs'])
@@ -609,10 +627,13 @@ def main():
     sp = ap.add_subparsers(dest='cmd', required=True)
     p = sp.add_parser('find'); p.add_argument('rows'); p.add_argument('out')
     p.add_argument('--jobs', type=int, default=3); p.add_argument('--timeout', type=int, default=300)
+    p.add_argument('--mem-gb', type=float, default=2, help='per-worker address-space cap in GB (0 = none); a row past it fails as "memory cap"; a 30K-node closure fits in 0.6')
     p.add_argument('--limit', type=int, default=0); p.add_argument('--rows-out', dest='rows_out')
     p.add_argument('--qh', action='store_true'); p.add_argument('--scan')
     p.add_argument('--list', help='machine list: rows from ROWS where present, the fallback ladder otherwise')
     p = sp.add_parser('rows'); p.add_argument('src'); p.add_argument('out')
+    p = sp.add_parser('failed', help='print the machines OUT.json failed for a reason matching --why (a retry list)')
+    p.add_argument('src'); p.add_argument('--why', default='timeout|MAX_NODES|memory cap')
     p = sp.add_parser('probe-qh'); p.add_argument('src'); p.add_argument('outdir'); p.add_argument('--chunk', type=int, default=10)
     p = sp.add_parser('stage-qh'); p.add_argument('src'); p.add_argument('probes'); p.add_argument('outdir')
     p.add_argument('--start', type=int, required=True); p.add_argument('--chunk', type=int, default=100)
@@ -622,6 +643,11 @@ def main():
     a = ap.parse_args()
     if a.cmd == 'rows':
         write_rows(json.load(open(a.src)), a.out)
+        return
+    if a.cmd == 'failed':
+        for r in json.load(open(a.src)):
+            if not r['ok'] and re.search(a.why, r['why']):
+                print(r['spec'])
         return
     {'find': do_find, 'probe': do_probe, 'stage': do_stage,
      'probe-qh': do_probe_qh, 'stage-qh': do_stage_qh}[a.cmd](a)
