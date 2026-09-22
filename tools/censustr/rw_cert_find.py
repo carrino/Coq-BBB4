@@ -219,14 +219,16 @@ def build_closure_from(tblw, L, T, a0, cap=rp.CAP_NODES):
 def find_one_qh(job):
     spec, rows, timeout, scan = job
     tbl = rp.parse(spec)
-    signal.signal(signal.SIGALRM, _alarm)
-    signal.alarm(timeout)
-    t0 = time.time()
     lasts = [l for c, l in scan.values() if c > 0]
     horizon = max(lasts) + 1 if lasts else 0
     pins = {tg: l for tg, (c, l) in scan.items() if c > 0 and l < horizon // 10}
     if not pins:
+        # before the alarm is armed: an alarm left running here would fire
+        # in the pool worker between tasks and kill it mid-read of the queue
         return dict(spec=spec, ok=False, why='no quiet instruction in the scan', secs=0.0)
+    signal.signal(signal.SIGALRM, _alarm)
+    signal.alarm(timeout)
+    t0 = time.time()
     tblw = dict(tbl)
     for tg in pins:
         tblw[tg] = None
