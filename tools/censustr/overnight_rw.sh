@@ -35,6 +35,8 @@
 # eight of them filled the VM; --mem-gb 4 caps each).  census_probes/memlog.txt
 # is a 10 s memory trace for the
 # post-mortem of the next death: its last timestamp is the freeze time.
+# The v10 walk (2026-09-23): a walk unit peaks at ~5.8 GB; 7 at once with
+# swap=0 got one OOM-killed (UnitTr_12), so WALK_JOBS defaults to 5 (~29 GB).
 # The finders are resumable (their OUT.json is written per machine and an
 # existing one is skipped over), the finder logs are
 # census_probes/rw/live_find.log and census_probes/rwqh/qh_find.log (appended,
@@ -47,7 +49,7 @@ OLD=${OLD:-censustr_deferred_v9.txt}; NEW=${NEW:-censustr_deferred_v10.txt}
 # full 4,240-row sqrt class (censustr_live_sqrt.txt) certifies at ~8%
 # because its other 3,200 rows are not RepWL shapes -- run it another night
 LIVE_LIST=${LIVE_LIST:-censustr_bouncers_open.txt}
-JOBS=${JOBS:-16}; FIND_JOBS=${FIND_JOBS:-12}; PROBE_JOBS=${PROBE_JOBS:-8}; WALK_JOBS=${WALK_JOBS:-7}
+JOBS=${JOBS:-16}; FIND_JOBS=${FIND_JOBS:-12}; PROBE_JOBS=${PROBE_JOBS:-8}; WALK_JOBS=${WALK_JOBS:-5}
 FROM=${FROM:-1}; TO=${TO:-5}; RETRY=${RETRY:-0}
 FIND_TIMEOUT=${FIND_TIMEOUT:-300}; PROBE_TIMEOUT=${PROBE_TIMEOUT:-1800}
 # the next free stage numbers (the RW stages resume at 11, the QH ones at 16)
