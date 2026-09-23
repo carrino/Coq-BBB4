@@ -798,6 +798,7 @@ RWPROBE_CHUNK ?= 1
 # (its closure or certificate search is too big for this sweep)
 RWPROBE_TIMEOUT ?= 300
 RWSTAGE_START ?= 0
+RWSTAGE_CHUNK ?= 40
 
 census-tr-rwprobe: _census-tr-deps
 	@rm -rf census_probes/rwprobe
@@ -820,7 +821,7 @@ census-tr-rwprobe: _census-tr-deps
 
 census-tr-rwstage:
 	@python3 tools/censustr/gen_provtr_rw.py stage $(RWPROBE_ROWS) \
-	  census_probes/rwprobe theories/CensusTr --chunk 100 --start $(RWSTAGE_START)
+	  census_probes/rwprobe theories/CensusTr --chunk $(RWSTAGE_CHUNK) --start $(RWSTAGE_START)
 	@mv theories/CensusTr/provtr_rw_manifest.tsv census_probes/rwprobe/
 	@echo ">>> add the new theories/CensusTr/ProvTr_RW_*.v to _CoqProject and [prov_tr] (RunTr.v)"
 .PHONY: census-tr-rwstage
