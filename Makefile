@@ -836,7 +836,7 @@ census-tr-rwstage:
 #   make instr-core   the cheap slice CI compiles: the statement, the
 #                     ported checkers and one small certificate stage
 instr: Makefile.coq
-	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr_Split.vo
+	$(MAKE) -f Makefile.coq -j$(WALK_JOBS) theories/CensusTr/RunTr_Split.vo
 .PHONY: instr
 
 instr-core: Makefile.coq
@@ -875,7 +875,7 @@ census-tr-units:
 # Budget WALK_JOBS <= RAM_GB / 4; on 31 GB use WALK_JOBS=7.  Killed units
 # leave no .vo and are simply re-run by the next invocation.
 census-tr-walk: Makefile.coq
-	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr_Split.vo
+	$(MAKE) -f Makefile.coq -j$(WALK_JOBS) theories/CensusTr/RunTr_Split.vo
 	@mkdir -p census_probes
 	@ulimit -s $(STACK_KB) 2>/dev/null \
 	  || echo ">>> WARNING: could not raise stack to $(STACK_KB)"
