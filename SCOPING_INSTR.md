@@ -2363,41 +2363,57 @@ certificate literal in the row's proof (a few hundred bytes; the RepWL
 route could not, §7.3e) and closes it with
 `irulesblkpfx_check_neverqhtr_sound`; 50 rows compile in about 7 s.
 
-**The residue is counters, and the next checker is the ladder's
-transition-level twin.**  The 25 sampled counters neither route takes are
-clean binary counters (the `110`/`111` machine above is one) whose
-digit words the lap emitter does not anchor.  The repo's alphabet-free
-counter checker is the state level's value-family ladder
-(`Checkers/LadderCheck.v`, the `LDR_*` boards, `tools/ladder/valfam.py`):
-the digits, the fill law and the arms are data, so a new alphabet costs
-nothing.  It concludes `NeverQuasiHaltsSt`, and its visit premise is
-already the right shape: a prefix of the FILL arm (the overflow) ending
-on the state, at every counter top, and the tops are cofinal
-(`tops_cofinal`, a theorem, not a measurement).  The port is the one
-`LapGlueTr` made of `LapGlue`:
+**The residue is counters, and the third checker is the ladder's
+transition-level twin: `Checkers/LadderCheckTr.v` (built).**  The 25
+sampled counters neither route takes are clean binary counters (the
+`110`/`111` machine above is one) whose digit words the lap emitter does
+not anchor.  The repo's alphabet-free counter checker is the state
+level's value-family ladder (`Checkers/LadderCheck.v`, the `LDR_*`
+boards, `tools/ladder/valfam.py`): the digits, the fill law and the arms
+are data, so a new alphabet costs nothing.  It concludes
+`NeverQuasiHaltsSt`, and its visit premise already had the right shape:
+a prefix of the FILL arm (the overflow) ending on the state, at every
+counter top, and the tops are cofinal (`tops_cofinal_at`, a theorem, not
+a measurement).  The port is the one `LapGlueTr` made of `LapGlue`:
 
-1. `glue_neverqhtrN`: `glue_neverqhN` on `tm_wrap_trs tm pins` (pins = the
-   instructions the certificate says never fire), with the premise "for
-   every unpinned instruction and every N, some anchor past N reaches a
-   configuration whose instruction is t", closed by
-   `WrapTr.wrap_trs_agree` exactly as `glue_neverqhtr` is.
-2. `board_fire`: `board_visit` with `srun_instr` (LapGlueTr) in place of
-   `srun_st`, i.e. `fire_of_run_instr` in place of `vis_of_run`.  The
-   fill arm is where the rare instruction fires (it is the overflow), and
-   the carry instructions fire there too, since the fill starts from the
-   all-top digit string.
-3. `board_neverqhtr`: `boardph_neverqh` with (1) and (2), every arm
-   hypothesis stated on the wrapped machine, so every `LDR_*` board lemma
-   is reused verbatim once the emitter re-points `tm` (the `LAPT` trick).
+1. `glue_neverqhtrN`: `LadderCheck.glue_neverqhN` on `tm_wrap_trs tm pins`
+   (pins = the instructions the machine never fires), with the premise
+   "for every unpinned instruction t and every N, some anchor past N
+   reaches a configuration whose instruction is t".  Laps chaining forever
+   on the wrapped machine say it never halts, `WrapTr.wrap_trs_agree` then
+   says its run is `tm`'s and no pin fires, so every instruction that
+   fires is unpinned and recurs.
+2. `board_fire`: `LadderCheck.board_visit` with `LapGlueTr.srun_instr` /
+   `fire_of_run_instr` in place of `srun_st` / `vis_of_run`: the prefix
+   chain's end configuration has a concrete (state, head symbol) for every
+   width and every tail.  The fill arm is the overflow, so this is where
+   the rare instruction is witnessed.
+3. `boardph_neverqhtr`: `boardph_neverqh` with (1) and (2); every arm
+   hypothesis is stated on the wrapped machine, so the `LDR_*` board body
+   is reused verbatim once `tm` is re-pointed (the `LAPT` trick).
 
-`LadderCheck.v` itself is not touched (it is in the state census's
-closure); the twin re-proves `board_visit`'s few lines from the section
-lemmas `LadderCheck` exports.  The emitter change is the one
-`emit_lapcert.py --tr` made: pins from a scan, per-instruction fill-arm
-prefixes instead of per-state ones.  Before building it, the finder's
-yield on SP decides whether it pays: `valfam.py --cap 150` on the 31
-residue rows, niced behind the irules run, closed 0 of the first 5
-("families found but none closed" 4, "no value family" 1).
+`LadderCheck.v` is not touched (it is in the state census's closure); the
+twin calls only lemmas it exports (`tops_cof_pv`, `board_lap`,
+`iter_total`, `cells_top`, `cden_cls_conf`, ...).  It compiled first try,
+axioms `functional_extensionality_dep` only.  `emit_ladder.py --tr` emits
+`Machines/LadderTr/LDRT_*` boards: pins from a 10^6-step run (a wrong pin
+only halts the wrapped machine and fails the board), visit chains keyed
+by (state, head symbol), the `boardph_neverqhtr` closer; the default mode
+is byte-identical to before.  `sp_ladder_batch.py` emits, compiles and
+batches them (`coversTr_nqh_at` against the board's own `tm`).
+
+Measured on the 31 residue rows (`valfam.py --cap 150`): **15 close**
+(the finder), 16 do not ("families found but none closed" 12, "no value
+family" 4).  Of the 15, **6 board** (`CBT_SP_04`, about 1 s a board);
+the other 9 stop in the emitter's closure, 8 of them for reasons the state
+level shares ("interior arm: no chain ... the carry ripple is not affine
+in the run length" 7, a fill arm with no chain 1) plus one family whose
+fill widens by 1 but names 3 digits.  One is instruction-specific: no
+phase's fill anchors reach every instruction (D0 or B0 missing in each);
+an interior-arm witness would close it, and is the obvious next piece.
+Sample tally, all three routes: irules 10 + lap 7 (derived) + ladder 6 =
+23 of 50.  The finder costs about a minute a row, so the ladder pass over
+the class residue (after irules and lap, ~2,700 rows) is a box job.
 
 **Loop** (container; `bin/irules` from the BBB repo, `make bin/irules`):
 
@@ -2406,6 +2422,9 @@ python3 tools/closeouttr/classes.py shard SP 0 1 > sp_rows.txt
 bin/irules --max-steps 200000 --cert-dir certs sp_rows.txt > sp_irules.csv
 python3 tools/closeouttr/sp_batch.py probe certs probe.tsv --jobs 4 --timeout 30
 python3 tools/closeouttr/sp_batch.py batch probe.tsv --tag SP
+# the ladder route, on what irules and lap leave
+(cd tools/ladder && python3 valfam.py --list ../../rest.txt --cap 150 --json ../../vf.jsonl)
+python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl --tag SP
 ```
 
 ## 8. What we deliberately do NOT redo
