@@ -59,6 +59,8 @@ route: `RW0`..`RW3` for four RepWL sessions on DN, for example. Two sessions
 must never write the same `CBT_<TAG>_<NN>.v`. Tags are 1–8 characters of
 `[A-Z0-9]`, starting with a letter.
 
+Ready-to-paste session prompts for each workstream: [`CLOSEOUT_TR_WORKSTREAMS.md`](CLOSEOUT_TR_WORKSTREAMS.md).
+
 ## The loop (container, no box needed)
 
 ```
