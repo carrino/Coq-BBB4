@@ -2229,6 +2229,41 @@ do not sum exactly to 10,924.
 | Bouncer residue (529 never-QH + 697 QH finder failures) | 1,226 | `RETRY=2` with the ladder, a 900 s pass, QH re-pin from the 1e8 scan |
 | Linear and the rest | ~250 | not looked at |
 
+### 7.4 The census is frozen; the closeout takes over (2026-09-24)
+
+Each cut so far meant a re-walk: every proven batch went into `RunTr.v`,
+which rebuilt all 96 walk units (hours, the box, a memory budget) for
+every few hundred rows.  From v10 on, the census stays as it is, and
+the 10,924 deferred rows are settled outside it, the way the state-level
+proof settled its 5,156 (`theories/Closeout/`).  The workflow is in
+`docs/CLOSEOUT_TR.md`.
+
+* **The kit is simpler than the state-level one.**  At instruction
+  level, never-QH implies `QHBoundTr` at every bound, and `QHBoundTr`
+  already moves across completion, swap and mirror (`TNF_QHTr`).  So
+  the boarded predicate is just `QHBoundTr B_close`, the census's own
+  left disjunct, and no new transport lemma was needed.
+  `CloseoutKitTr.deferred_split_tr` is the state kit's `deferred_split`
+  with that one change.
+* **Membership had to get fast.**  The state kit's `row_inb` is a
+  linear scan.  10,924 x 10,924 of those took 9 minutes of `vm_compute`,
+  mostly because the map was rebuilt per row inside the `forallb`
+  lambda.  Rows now go into a `PositiveMap` keyed by a base-17 reading
+  of the row, built once under a `let`, and every hit is re-compared
+  with `row_eqb`.  The whole `CloseoutTr.v` compiles in 1.6 s.
+  Soundness needs no injectivity proof: a collision can only fail the
+  check.  (Base 16 collided, since slot codes run 0..16, and the check
+  duly failed.)
+* **The first batch.**  The RepWL finder with the block-length ladder,
+  run on the first 80 remaining rows at 20 s each (the container, 4
+  jobs), certified 17, and `CBT_RW_00` boards them (3 s to compile).
+  By class: DN 11 of 20, ED 6 of 9, QH 0 of 44, SP 0 of 7.  Most DN
+  rows were never given to the RepWL finder, which only ever saw the
+  open-bouncer list, so the dense class is the cheap half.
+* **Classes** (`closeouttr_classes.tsv`, by the quietest instruction's
+  last fire at 1e8): DN 4,033 dense, SP 4,154 sparse, QH 2,715 quiet,
+  ED 22 edge.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

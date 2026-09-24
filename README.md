@@ -276,6 +276,11 @@ it:
   `functional_extensionality_dep` and nothing else -- the same single
   axiom as the state-level proof.
 
+The census is now frozen at v10.  The deferred rows are settled
+outside it by batch files in `theories/CloseoutTr/` (`make closeout-tr`,
+checked by CI in seconds, no re-walk), in parallel workstreams:
+[`docs/CLOSEOUT_TR.md`](docs/CLOSEOUT_TR.md).
+
 Build: `make instr` for the whole chain (~9 CPU-hours beyond the
 BBB(4) build), `make instr-core` for the slice CI compiles.  The
 value is **not** determined: `SCOPING_INSTR.md` is the running record

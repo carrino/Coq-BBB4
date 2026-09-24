@@ -938,3 +938,24 @@ closeout:
 closeout-status:
 	python3 tools/closeout/audit.py
 .PHONY: closeout-status
+
+# ---------------------------------------------------------------------------
+# The TRANSITION-LEVEL CLOSEOUT (docs/CLOSEOUT_TR.md).  The census is frozen
+# at v10 (10,924 deferred rows); rows are settled by batch files
+# theories/CloseoutTr/CBT_<TAG>_<NN>.v, never by a re-walk.
+#
+#   make closeout-tr        regenerate RemainingTr.v / CloseoutTr.v from the
+#                           batches and kernel-check the split (seconds)
+#   make closeout-tr-final  chain census_tr into bbbt4_target (needs the
+#                           walk's .vo from `make census-tr-walk`)
+closeout-tr: Makefile.coq
+	python3 tools/closeouttr/gen_closeout_tr.py
+	$(MAKE) Makefile.coq
+	$(MAKE) -f Makefile.coq -j$(WALK_JOBS) theories/CloseoutTr/CloseoutTr.vo
+.PHONY: closeout-tr
+
+closeout-tr-final: closeout-tr
+	coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/CloseoutFinalTr.v
+	echo 'From BBB4.CloseoutTr Require Import CloseoutTr CloseoutFinalTr. Print Assumptions bbbt4_target.' \
+	  | coqtop -Q theories BBB4 -w none 2>&1 | grep -v '^$$' | tail -5
+.PHONY: closeout-tr-final

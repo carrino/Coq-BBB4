@@ -129,3 +129,9 @@ theories/CensusTr/WalkTr_Frontier.v
 # by `make census-tr-walk` (Makefile), never through Makefile.coq --
 # same reasoning as the state census walk units above.
 theories/CensusTr/Compute/*.v
+
+# The transition-level closeout's final chain: it loads the census theorem
+# (CensusTr/Compute/Census_TheoremTr.v, box-only walk output), so it builds
+# with `make closeout-tr-final` after `make census-tr-walk`, never in CI.
+# CloseoutTr.v and the CBT_* batches ARE in _CoqProject and CI builds them.
+theories/CloseoutTr/CloseoutFinalTr.v
