@@ -2267,6 +2267,147 @@ proof settled its 5,156 (`theories/Closeout/`).  The workflow is in
   last fire at 1e8): DN 4,033 dense, SP 4,154 sparse, QH 2,715 quiet,
   ED 22 edge.
 
+### 7.4.SP Class SP: the rare instruction is an overflow, and two landed checkers already prove it recurs (2026-09-24)
+
+**The class, measured.**  Over all 4,154 SP rows (the 1e8 scan), the
+rarest instruction fires a median of 23 times in 1e8 steps: 1,354 rows
+at most 16 times, 3,086 at most 32, 3,314 at most 1,000; the rest
+(840) fire thousands to 8.4M times, in bursts.  A 50-row sample
+(`sp_char.py sample 50 4154`, then `sp_char.py char` with
+`sp_burst.c`, every fire of the rarest instruction over 1e8 steps):
+
+| measurement | rows of 50 |
+|---|---:|
+| visited extent at 1e8 under 200 cells (log: counters) | 32 |
+| visited extent at 1e8 of 8K-25K cells (doubling bouncers) | 18 |
+| every fire of the rare instruction at the visited extent's edge | 35 |
+| some fires at the edge | 12 |
+| no fire at the edge | 3 |
+| one fire per burst (the other 10: bursts that double too) | 40 |
+| burst period ratio 2 | 25 |
+| burst period ratio 4 | 20 |
+| ratio 2.25 / 1.41 / 9 / other | 2 / 1 / 1 / 1 |
+
+Two machines, then, and in both the rare instruction is the one that
+ends a phase by growing the tape:
+
+* **binary counters** (ratio 2, log extent), the rare instruction is
+  the overflow.  `0RB1LC_1LA1RB_0LA1LD_0RB0LA`, C0, at each fire:
+  `[C0]10110110...110111`; between fires the digits read `110` = 0 and
+  `111` = 1 and count up to all-`111`, one digit more per overflow, the fires at 6, 29, 80, 187, ..., 229,289: the
+  period doubles and nothing else fires C0.
+* **doubling bouncers** (ratio 4, width doubling).
+  `1RB1LA_0LA1RC_1LA0RD_1RB1RD`, C0, at each fire: `1^w [C0]` with
+  w = 2, 6, 14, 30, 62, ... (w' = 2w + 2); between fires a single 0
+  marker walks across the block, one cell per sweep, and the phase ends
+  when it reaches the edge.  RepWL abstracts the marker's distance to
+  `1^{>=k}` and so has a genuine C0-avoiding cycle at every block length
+  (the "no certificate for one instruction" of §7.3f).
+
+**The existing inductive checkers already prove these.**  The rare
+instruction needs an argument over an unbounded parameter (the width,
+or the marker's distance), and the repo has three landed checkers that
+make one and conclude `NeverQuasiHaltsTr`:
+
+* `Checkers/IRules/MetaBlkPfxTr.v` (`irulesblkpfx_check_neverqhtr_sound`):
+  BBB's `bin/irules` certificates, rules with symbolic counts applied a
+  symbolic number of times, and an affine meta map C(k) ->* C(a k + b)
+  from an anchor C(k0) the concrete prefix reaches;
+* `Counters/LapGlueTr.v` (`glue_neverqhtr`): the lap certificates of
+  `emit_lapcert.py --tr` (digit-alphabet counters, `LAPT_*` boards);
+* `Checkers/TCyclerTr.v`: translated cyclers (none in the sample).
+
+The soundness argument that makes the rare instruction recur is the same
+in the first two, and it is the one the state level used: an anchor
+sequence C(k0), C(f(k0)), ... that the machine visits in order (one
+induction, proved once for every k), and a fired set F of the symbolic
+segment between two anchors.  Every instruction in F fires between any
+anchor and the next, so it fires after every N.  The anchor sits at the
+phase boundary -- the irules meta cycle is a whole burst period, the lap
+certificate's overflow branch is the carry into a new digit -- so the
+rare instruction is in F by construction: in `MetaBlkPfxTr` because the
+symbolic replay of the meta cycle fires it, in `LapGlueTr` through
+`fire_via_ovf` (every anchor reaches an overflow, and the overflow chain
+has a prefix ending on the instruction).  The instruction-level gate is
+what the state level did not need: `MetaBlkPfxTr` checks that every
+instruction fired in the concrete prefix is in F (the `tvis` mask), and
+`LapGlueTr` runs the laps on the machine wrapped at the never-fired
+instructions, so an instruction outside F cannot fire at all.
+
+So for these rows SP was a conveyor gap, not a checker gap.  Nobody had
+run `bin/irules` over SP (the one irules sweep of the LIVE side was a
+500-row sample, 23 SP rows among its certificates), and the lap emitter
+never saw 2,421 of the 4,154 SP rows (it ran over the v6 log-extent
+list; the other 1,733 it saw all failed, 1,325 of them "no anchor").
+
+**Yields on the 50-row sample:**
+
+| route | derived | kernel-accepted | shape |
+|---|---:|---:|---|
+| `bin/irules --max-steps 1000000` | 12 | 10 | 12 of the 18 doubling bouncers |
+| `bin/irules --max-steps 200000` | 11 | 9 (1 false, 1 timeout) | the same rows minus one |
+| `emit_lapcert.py --tr` (derive) | 7 | not yet compiled | 7 of the 32 counters, all from the 2,421 never-seen rows (7 of 26) |
+| both (disjoint) | 19 | | |
+| neither | 31 | | 25 counters ("no anchor" 18, "no overflow chain: nested route is S0-only" 7), 6 bouncers |
+
+A rejected irules certificate can run its full fuel in the kernel
+(470 s measured, against under 1 s for an accepted one), so the probe
+runs one `coqc` per certificate under a timeout, and a batch only ever
+holds accepted ones.
+
+**First batches: 173 rows, `CBT_SP_00..03`.**  `bin/irules
+--max-steps 200000` over the first 559 SP rows (the full class is
+running, four jobs, about 7 s a row): 179 certificates, 173 accepted by
+the probe (1 false, 5 timeouts at 30 s).  `sp_batch.py batch` stores the
+certificate literal in the row's proof (a few hundred bytes; the RepWL
+route could not, §7.3e) and closes it with
+`irulesblkpfx_check_neverqhtr_sound`; 50 rows compile in about 7 s.
+
+**The residue is counters, and the next checker is the ladder's
+transition-level twin.**  The 25 sampled counters neither route takes are
+clean binary counters (the `110`/`111` machine above is one) whose
+digit words the lap emitter does not anchor.  The repo's alphabet-free
+counter checker is the state level's value-family ladder
+(`Checkers/LadderCheck.v`, the `LDR_*` boards, `tools/ladder/valfam.py`):
+the digits, the fill law and the arms are data, so a new alphabet costs
+nothing.  It concludes `NeverQuasiHaltsSt`, and its visit premise is
+already the right shape: a prefix of the FILL arm (the overflow) ending
+on the state, at every counter top, and the tops are cofinal
+(`tops_cofinal`, a theorem, not a measurement).  The port is the one
+`LapGlueTr` made of `LapGlue`:
+
+1. `glue_neverqhtrN`: `glue_neverqhN` on `tm_wrap_trs tm pins` (pins = the
+   instructions the certificate says never fire), with the premise "for
+   every unpinned instruction and every N, some anchor past N reaches a
+   configuration whose instruction is t", closed by
+   `WrapTr.wrap_trs_agree` exactly as `glue_neverqhtr` is.
+2. `board_fire`: `board_visit` with `srun_instr` (LapGlueTr) in place of
+   `srun_st`, i.e. `fire_of_run_instr` in place of `vis_of_run`.  The
+   fill arm is where the rare instruction fires (it is the overflow), and
+   the carry instructions fire there too, since the fill starts from the
+   all-top digit string.
+3. `board_neverqhtr`: `boardph_neverqh` with (1) and (2), every arm
+   hypothesis stated on the wrapped machine, so every `LDR_*` board lemma
+   is reused verbatim once the emitter re-points `tm` (the `LAPT` trick).
+
+`LadderCheck.v` itself is not touched (it is in the state census's
+closure); the twin re-proves `board_visit`'s few lines from the section
+lemmas `LadderCheck` exports.  The emitter change is the one
+`emit_lapcert.py --tr` made: pins from a scan, per-instruction fill-arm
+prefixes instead of per-state ones.  Before building it, the finder's
+yield on SP decides whether it pays: `valfam.py --cap 150` on the 31
+residue rows, niced behind the irules run, closed 0 of the first 5
+("families found but none closed" 4, "no value family" 1).
+
+**Loop** (container; `bin/irules` from the BBB repo, `make bin/irules`):
+
+```
+python3 tools/closeouttr/classes.py shard SP 0 1 > sp_rows.txt
+bin/irules --max-steps 200000 --cert-dir certs sp_rows.txt > sp_irules.csv
+python3 tools/closeouttr/sp_batch.py probe certs probe.tsv --jobs 4 --timeout 30
+python3 tools/closeouttr/sp_batch.py batch probe.tsv --tag SP
+```
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
