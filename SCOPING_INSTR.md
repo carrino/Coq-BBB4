@@ -2257,7 +2257,10 @@ proof settled its 5,156 (`theories/Closeout/`).  The workflow is in
 * **The first batch.**  The RepWL finder with the block-length ladder,
   run on the first 80 remaining rows at 20 s each (the container, 4
   jobs), certified 17, and `CBT_RW_00` boards them (3 s to compile).
-  By class: DN 11 of 20, ED 6 of 9, QH 0 of 44, SP 0 of 7.  Most DN
+  By class: DN 11 of 20, ED 6 of 9, QH 0 of 44, SP 0 of 7.  A random
+  40 of the QH class through the `--qh` finder (pins from the 1e8
+  scan): 1 certifies (`CBT_QH_00`), 27 have no closure, 12 time out.
+  The QH class is counters, not bouncers.  Most DN
   rows were never given to the RepWL finder, which only ever saw the
   open-bouncer list, so the dense class is the cheap half.
 * **Classes** (`closeouttr_classes.tsv`, by the quietest instruction's
