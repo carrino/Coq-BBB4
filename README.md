@@ -252,24 +252,26 @@ it:
   (the census contract at the raised bound `B_tr = 32,779,478`),
   `DecideTr`/`RunTr` (the in-walk decider), `RunTr_Split` (the
   kernel-checked frontier split), the frozen deferred tables
-  (`DeferredTr_*`, 13,783 rows) and the two proven tiers: `prov_tr`,
-  6,776 never-quasihalting machines as certificate stages
+  (`DeferredTr_*`, 10,924 rows) and the two proven tiers: `prov_tr`,
+  7,353 never-quasihalting machines as certificate stages
   (`ProvTr_TC_*` translated cyclers, `ProvTr_Lap_*` lap boards from
   `Machines/CountersTr/`, `ProvTr_RW_*` RepWL at the tape period,
   `ProvTr_IR_*` and `ProvTr_RK_*` the state census's irules
   certificates and rank rungs re-checked at instruction level), and
-  `provqh_tr`, 3,233 quasihalting machines with every quiet
+  `provqh_tr`, 5,534 quasihalting machines with every quiet
   instruction's last fire proved at most `B_tr` (`ProvTr_QH_00..02`
   translated cyclers via `Checkers/TCyclerQHTr`, `ProvTr_QH_03..15`
-  the `LAPQ_*` counter boards via `Counters/LapGlueQHTr`).
+  the `LAPQ_*` counter boards via `Counters/LapGlueQHTr`,
+  `ProvTr_QH_16..39` quiet-instruction bouncers via the wrapped RepWL
+  tier and `CensusTr/QHConveyorTr`).
 * The census theorem `census_tr : forall tm, QHBoundTr B_tr tm \/
   Deferred D_tr tm` is assembled from 96 native-compute walk units
   (`theories/CensusTr/Compute/`, generated; not part of the default
-  build).  Last checked 2026-09-09 against the v9 tables (13,783
-  deferred rows) with the 6,776 + 3,233 proven machines:
-  `make census-tr-units && make census-tr-walk WALK_JOBS=7` (about
-  4 h on 16 cores / 31 GB; the job count is a memory budget, see the
-  Makefile).  `Print Assumptions` on `census_tr` and on the proven
+  build).  Last checked 2026-09-24 against the v10 tables (10,924
+  deferred rows) with the 7,353 + 5,534 proven machines:
+  `make census-tr-units && make census-tr-walk WALK_JOBS=5` (a unit
+  peaks near 5.8 GB, so 5 at once fit a 32 GB box with no swap; the
+  job count is a memory budget, see the Makefile).  `Print Assumptions` on `census_tr` and on the proven
   tiers' `prov_tr_all` and `provqh_tr_all` reports
   `functional_extensionality_dep` and nothing else -- the same single
   axiom as the state-level proof.

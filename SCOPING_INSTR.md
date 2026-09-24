@@ -2185,6 +2185,50 @@ dense rows (a multi-block abstraction, or a per-machine word list),
 44 heavy rows (a 900 s pass).  The QH side's 2,998 bouncers run in
 phase 4 of the same box job with the capped finder and the ladder.
 
+### 7.3g v10: the bouncer run cut and walked (2026-09-24)
+
+The box job's phases 2-5 finished: every machine the finder judged was
+re-searched and confirmed by Coq's own tier, staged, wired, cut into
+the v10 tables and walked.
+
+| | v9 | v10 | new stages |
+|---|---:|---:|---|
+| `prov_tr` (never-QH) | 6,776 | 7,353 | `ProvTr_RW_11..16` (502 RepWL bouncers), `ProvTr_Lap_12` (75 `LAPT_*` counters) |
+| `provqh_tr` (QH) | 3,233 | 5,534 | `ProvTr_QH_16..39` (2,301 wrapped-RepWL bouncers, `rwqh_stage`) |
+| deferred (`DeferredTr_*`) | 13,783 | **10,924** | 2,859 rows cut, none added |
+
+2,878 machines were staged in all; 2,859 of them were on the v9
+list, so the cut removed 2,859 rows (20.7%).  `proven_specs.py`
+counts 12,887 proven machines, which matches 7,353 + 5,534.
+
+* **Never-QH RepWL**: 502 of the 1,031 open bouncers: 348 in the
+  first pass plus 154 from `RETRY=1` over its timeouts (§7.3f).  The
+  stage files are balanced by fuel (`gen_provtr_rw.py stage`, 40
+  machines a file at most) so the prerequisite build's long pole is
+  not one file.
+* **QH wrapped RepWL**: 2,301 of the 2,998 quiet-instruction bouncers
+  (77%), pinned from the 1e6 scan.  The 14 bouncers whose pin fails
+  at 1e8 (§7.3f) are among the 697 that failed, as expected.
+* **Walk**: 96/96 units, `census_tr : forall tm, QHBoundTr B_tr tm
+  \/ Deferred D_tr tm` CHECKED.  `Print Assumptions census_tr` prints
+  `functional_extensionality_dep` and nothing else.  The first try ran
+  7 units at once and the kernel OOM-killed one (anon-rss 5.8 GB,
+  `swap=0`); the rerun at `WALK_JOBS=5` (~29 GB peak), which only
+  rebuilt the killed unit, went through.  5 is now the driver's
+  default.
+
+**What v10 leaves**, by the §7.3f classes.  These are approximate:
+the 1e8 scan ran over v9, the classes overlap at the edges, and they
+do not sum exactly to 10,924.
+
+| Class | Rows | Route |
+|---|---:|---|
+| Sparse hybrids (a rare instruction in geometric bursts) | ~4,200 | a counter-aware recurrence checker (new) |
+| Dense log counters | ~2,000 | the n-gram parameter route at window 4-6 (§7.1y) |
+| QH counter rows | ~2,000 | diagnosis first: 56 of 70 sampled show no counter phase |
+| Bouncer residue (529 never-QH + 697 QH finder failures) | 1,226 | `RETRY=2` with the ladder, a 900 s pass, QH re-pin from the 1e8 scan |
+| Linear and the rest | ~250 | not looked at |
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
