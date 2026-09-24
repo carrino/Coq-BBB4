@@ -138,11 +138,23 @@ def stage(rows, probedir, outdir, chunk, start):
         if not row:
             sys.exit('probe says L=%d for %s but the rows have no such L' % (L, spec))
         keep.append(row[0])
+    # balance the files by Coq's cost (the search re-runs at the row's
+    # fuel = 8*nodes+64, so fuel is the proxy): largest first, each to the
+    # least-loaded file.  In file order, the box's v10 stage build ran 8
+    # files in minutes and then ProvTr_RW_15 alone for 3+ hours, because its
+    # rows sat next to each other in the finder's output and were the big
+    # closures.
+    nfiles = max(1, -(-len(keep) // chunk))
+    bins = [[] for _ in range(nfiles)]
+    load = [0] * nfiles
+    for r in sorted(keep, key=lambda r: -r[4]):
+        i = min(range(nfiles), key=lambda j: (load[j], len(bins[j])))
+        bins[i].append(r)
+        load[i] += r[4]
     n = start
     man = []
-    for ci in range(0, len(keep), chunk):
+    for cb in bins:
         nn = '%02d' % n
-        cb = keep[ci:ci + chunk]
         names = []
         with open(os.path.join(outdir, 'ProvTr_RW_%s.v' % nn), 'w') as f:
             f.write(STAGE_HEADER.replace('{NN}', nn).replace('{CNT}', str(len(cb))) + '\n')
@@ -165,6 +177,7 @@ def stage(rows, probedir, outdir, chunk, start):
             f.write('Lemma ptw_%s_nqhtr : Forall NeverQuasiHaltsTr ptw_%s.\n'
                     'Proof. exact %s. Qed.\n' % (nn, nn, term))
         n += 1
+    sys.stderr.write('stage files balanced by fuel: max %d / min %d\n' % (max(load), min(load)))
     with open(os.path.join(outdir, 'provtr_rw_manifest.tsv'), 'w') as f:
         for r in man:
             f.write('\t'.join(r) + '\n')

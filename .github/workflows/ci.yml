@@ -47,6 +47,10 @@ jobs:
           make -f Makefile.coq -j4 theories/Machines/TCycler_Examples.vo
       - name: Instruction-level (transition-level) statement + ported checkers + one certificate stage
         run: make -f Makefile.coq -j4 theories/Checkers/NGramHistTr.vo theories/Checkers/TCyclerTr.vo theories/Checkers/TCyclerQHTr.vo theories/CensusTr/ProvTr_TC_10.vo
+      - name: "Instruction-level closeout: generated files current, every batch and the split kernel-checked"
+        run: |
+          python3 tools/closeouttr/gen_closeout_tr.py --check
+          make -f Makefile.coq -j4 theories/CloseoutTr/CloseoutTr.vo
       - name: "Hygiene: zero Admitted in theories/"
         run: "! grep -rn 'Admitted\\.' theories --include='*.v'"
       - name: "Hygiene: every .v under theories/ is built or explicitly exempt"

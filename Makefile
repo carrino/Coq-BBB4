@@ -743,7 +743,7 @@ census-tr-resplit: _census-tr-deps
 # LISTBURN_SRC tracks the CURRENT deferred list: each walk replaces the
 # last (superseded snapshots live in git history), so bump this when a
 # new one lands.
-LISTBURN_SRC ?= censustr_deferred_v9.txt
+LISTBURN_SRC ?= censustr_deferred_v10.txt
 LISTBURN_JOBS ?= 16
 # The ESCALATED decider (RunTr [decider_tr_deep]: loop gas 65536, the
 # wide/deep rung ladders).  Empty this to burn with the walk decider.
@@ -798,6 +798,7 @@ RWPROBE_CHUNK ?= 1
 # (its closure or certificate search is too big for this sweep)
 RWPROBE_TIMEOUT ?= 300
 RWSTAGE_START ?= 0
+RWSTAGE_CHUNK ?= 40
 
 census-tr-rwprobe: _census-tr-deps
 	@rm -rf census_probes/rwprobe
@@ -820,7 +821,7 @@ census-tr-rwprobe: _census-tr-deps
 
 census-tr-rwstage:
 	@python3 tools/censustr/gen_provtr_rw.py stage $(RWPROBE_ROWS) \
-	  census_probes/rwprobe theories/CensusTr --chunk 100 --start $(RWSTAGE_START)
+	  census_probes/rwprobe theories/CensusTr --chunk $(RWSTAGE_CHUNK) --start $(RWSTAGE_START)
 	@mv theories/CensusTr/provtr_rw_manifest.tsv census_probes/rwprobe/
 	@echo ">>> add the new theories/CensusTr/ProvTr_RW_*.v to _CoqProject and [prov_tr] (RunTr.v)"
 .PHONY: census-tr-rwstage
@@ -836,7 +837,7 @@ census-tr-rwstage:
 #   make instr-core   the cheap slice CI compiles: the statement, the
 #                     ported checkers and one small certificate stage
 instr: Makefile.coq
-	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr_Split.vo
+	$(MAKE) -f Makefile.coq -j$(WALK_JOBS) theories/CensusTr/RunTr_Split.vo
 .PHONY: instr
 
 instr-core: Makefile.coq
@@ -875,7 +876,7 @@ census-tr-units:
 # Budget WALK_JOBS <= RAM_GB / 4; on 31 GB use WALK_JOBS=7.  Killed units
 # leave no .vo and are simply re-run by the next invocation.
 census-tr-walk: Makefile.coq
-	$(MAKE) -f Makefile.coq theories/CensusTr/RunTr_Split.vo
+	$(MAKE) -f Makefile.coq -j$(WALK_JOBS) theories/CensusTr/RunTr_Split.vo
 	@mkdir -p census_probes
 	@ulimit -s $(STACK_KB) 2>/dev/null \
 	  || echo ">>> WARNING: could not raise stack to $(STACK_KB)"
@@ -937,3 +938,24 @@ closeout:
 closeout-status:
 	python3 tools/closeout/audit.py
 .PHONY: closeout-status
+
+# ---------------------------------------------------------------------------
+# The TRANSITION-LEVEL CLOSEOUT (docs/CLOSEOUT_TR.md).  The census is frozen
+# at v10 (10,924 deferred rows); rows are settled by batch files
+# theories/CloseoutTr/CBT_<TAG>_<NN>.v, never by a re-walk.
+#
+#   make closeout-tr        regenerate RemainingTr.v / CloseoutTr.v from the
+#                           batches and kernel-check the split (seconds)
+#   make closeout-tr-final  chain census_tr into bbbt4_target (needs the
+#                           walk's .vo from `make census-tr-walk`)
+closeout-tr: Makefile.coq
+	python3 tools/closeouttr/gen_closeout_tr.py
+	$(MAKE) Makefile.coq
+	$(MAKE) -f Makefile.coq -j$(WALK_JOBS) theories/CloseoutTr/CloseoutTr.vo
+.PHONY: closeout-tr
+
+closeout-tr-final: closeout-tr
+	coqc -Q theories BBB4 -w -abstract-large-number theories/CloseoutTr/CloseoutFinalTr.v
+	echo 'From BBB4.CloseoutTr Require Import CloseoutTr CloseoutFinalTr. Print Assumptions bbbt4_target.' \
+	  | coqtop -Q theories BBB4 -w none 2>&1 | grep -v '^$$' | tail -5
+.PHONY: closeout-tr-final

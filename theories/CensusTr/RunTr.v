@@ -39,13 +39,13 @@ From BBB4.Machines Require Import
 (* the transition-level lap-certificate boards (Machines/CountersTr,
    Counters/LapGlueTr), collected by tools/censustr/gen_provtr_lap.py *)
 From BBB4.CensusTr Require Import
-  ProvTr_Lap_00 ProvTr_Lap_01 ProvTr_Lap_02 ProvTr_Lap_03 ProvTr_Lap_04 ProvTr_Lap_05 ProvTr_Lap_06 ProvTr_Lap_07 ProvTr_Lap_08 ProvTr_Lap_09 ProvTr_Lap_10 ProvTr_Lap_11.
+  ProvTr_Lap_00 ProvTr_Lap_01 ProvTr_Lap_02 ProvTr_Lap_03 ProvTr_Lap_04 ProvTr_Lap_05 ProvTr_Lap_06 ProvTr_Lap_07 ProvTr_Lap_08 ProvTr_Lap_09 ProvTr_Lap_10 ProvTr_Lap_11 ProvTr_Lap_12.
 From BBB4.CensusTr Require Import
   ProvTr_TC_00 ProvTr_TC_01 ProvTr_TC_02 ProvTr_TC_03 ProvTr_TC_04 ProvTr_TC_05 ProvTr_TC_06 ProvTr_TC_07 ProvTr_TC_08 ProvTr_TC_09 ProvTr_TC_10 ProvTr_TC_11
-  ProvTr_RW_00 ProvTr_RW_01 ProvTr_RW_02 ProvTr_RW_03 ProvTr_RW_04 ProvTr_RW_05 ProvTr_RW_06 ProvTr_RW_07 ProvTr_RW_08 ProvTr_RW_09 ProvTr_RW_10
+  ProvTr_RW_00 ProvTr_RW_01 ProvTr_RW_02 ProvTr_RW_03 ProvTr_RW_04 ProvTr_RW_05 ProvTr_RW_06 ProvTr_RW_07 ProvTr_RW_08 ProvTr_RW_09 ProvTr_RW_10 ProvTr_RW_11 ProvTr_RW_12 ProvTr_RW_13 ProvTr_RW_14 ProvTr_RW_15 ProvTr_RW_16
   ProvTr_IR_00 ProvTr_IR_01 ProvTr_IR_02
   ProvTr_RK_00 ProvTr_RK_01 ProvTr_RK_02 ProvTr_RK_03 ProvTr_RK_04 ProvTr_RK_05 ProvTr_RK_06 ProvTr_RK_07 ProvTr_RK_08 ProvTr_RK_09
-  ProvTr_QH_00 ProvTr_QH_01 ProvTr_QH_02 ProvTr_QH_03 ProvTr_QH_04 ProvTr_QH_05 ProvTr_QH_06 ProvTr_QH_07 ProvTr_QH_08 ProvTr_QH_09 ProvTr_QH_10 ProvTr_QH_11 ProvTr_QH_12 ProvTr_QH_13 ProvTr_QH_14 ProvTr_QH_15.
+  ProvTr_QH_00 ProvTr_QH_01 ProvTr_QH_02 ProvTr_QH_03 ProvTr_QH_04 ProvTr_QH_05 ProvTr_QH_06 ProvTr_QH_07 ProvTr_QH_08 ProvTr_QH_09 ProvTr_QH_10 ProvTr_QH_11 ProvTr_QH_12 ProvTr_QH_13 ProvTr_QH_14 ProvTr_QH_15 ProvTr_QH_16 ProvTr_QH_17 ProvTr_QH_18 ProvTr_QH_19 ProvTr_QH_20 ProvTr_QH_21 ProvTr_QH_22 ProvTr_QH_23 ProvTr_QH_24 ProvTr_QH_25 ProvTr_QH_26 ProvTr_QH_27 ProvTr_QH_28 ProvTr_QH_29 ProvTr_QH_30 ProvTr_QH_31 ProvTr_QH_32 ProvTr_QH_33 ProvTr_QH_34 ProvTr_QH_35 ProvTr_QH_36 ProvTr_QH_37 ProvTr_QH_38 ProvTr_QH_39.
 Import ListNotations.
 
 Set Default Goal Selector "!".
@@ -187,10 +187,10 @@ Definition prov_tr_irtr : list TM :=
     rank-rung machines re-checked by [rank_tier_tr] at the same rung
     (ProvTr_RK_NN) *)
 Definition prov_tr : list TM :=
-  prov_tr_irtr ++ ptl_00 ++ ptl_01 ++ ptl_02 ++ ptl_03 ++ ptl_04 ++ ptl_05 ++ ptl_06 ++ ptl_07 ++ ptl_08 ++ ptl_09 ++ ptl_10 ++ ptl_11 ++ ptc_00 ++ ptc_01 ++ ptc_02 ++ ptc_03 ++ ptc_04 ++ ptc_05 ++ ptc_06 ++ ptc_07 ++ ptc_08 ++ ptc_09 ++ ptc_10 ++ ptc_11 ++ ptw_00 ++ ptw_01 ++ ptw_02 ++ ptw_03 ++ ptw_04 ++ ptw_05 ++ ptw_06 ++ ptw_07 ++ ptw_08 ++ ptw_09 ++ ptw_10 ++ pti_00 ++ pti_01 ++ pti_02 ++ prk_00 ++ prk_01 ++ prk_02 ++ prk_03 ++ prk_04 ++ prk_05 ++ prk_06 ++ prk_07 ++ prk_08 ++ prk_09.
+  prov_tr_irtr ++ ptl_00 ++ ptl_01 ++ ptl_02 ++ ptl_03 ++ ptl_04 ++ ptl_05 ++ ptl_06 ++ ptl_07 ++ ptl_08 ++ ptl_09 ++ ptl_10 ++ ptl_11 ++ ptl_12 ++ ptc_00 ++ ptc_01 ++ ptc_02 ++ ptc_03 ++ ptc_04 ++ ptc_05 ++ ptc_06 ++ ptc_07 ++ ptc_08 ++ ptc_09 ++ ptc_10 ++ ptc_11 ++ ptw_00 ++ ptw_01 ++ ptw_02 ++ ptw_03 ++ ptw_04 ++ ptw_05 ++ ptw_06 ++ ptw_07 ++ ptw_08 ++ ptw_09 ++ ptw_10 ++ ptw_11 ++ ptw_12 ++ ptw_13 ++ ptw_14 ++ ptw_15 ++ ptw_16 ++ pti_00 ++ pti_01 ++ pti_02 ++ prk_00 ++ prk_01 ++ prk_02 ++ prk_03 ++ prk_04 ++ prk_05 ++ prk_06 ++ prk_07 ++ prk_08 ++ prk_09.
 (** the proven-QH tier: quiet-instruction translated cyclers
     (ProvTr_QH_NN, Checkers/TCyclerQHTr; SCOPING_INSTR.md 7.3a) *)
-Definition provqh_tr : list TM := pqh_00 ++ pqh_01 ++ pqh_02 ++ pqh_03 ++ pqh_04 ++ pqh_05 ++ pqh_06 ++ pqh_07 ++ pqh_08 ++ pqh_09 ++ pqh_10 ++ pqh_11 ++ pqh_12 ++ pqh_13 ++ pqh_14 ++ pqh_15.
+Definition provqh_tr : list TM := pqh_00 ++ pqh_01 ++ pqh_02 ++ pqh_03 ++ pqh_04 ++ pqh_05 ++ pqh_06 ++ pqh_07 ++ pqh_08 ++ pqh_09 ++ pqh_10 ++ pqh_11 ++ pqh_12 ++ pqh_13 ++ pqh_14 ++ pqh_15 ++ pqh_16 ++ pqh_17 ++ pqh_18 ++ pqh_19 ++ pqh_20 ++ pqh_21 ++ pqh_22 ++ pqh_23 ++ pqh_24 ++ pqh_25 ++ pqh_26 ++ pqh_27 ++ pqh_28 ++ pqh_29 ++ pqh_30 ++ pqh_31 ++ pqh_32 ++ pqh_33 ++ pqh_34 ++ pqh_35 ++ pqh_36 ++ pqh_37 ++ pqh_38 ++ pqh_39.
 
 Lemma prov_tr_irtr_all : Forall NeverQuasiHaltsTr prov_tr_irtr.
 Proof.
@@ -299,7 +299,7 @@ Lemma prov_tr_all : Forall NeverQuasiHaltsTr prov_tr.
 Proof.
   unfold prov_tr.
   repeat (apply Forall_app; split);
-    first [exact prov_tr_irtr_all | exact ptl_00_nqhtr | exact ptl_01_nqhtr | exact ptl_02_nqhtr | exact ptl_03_nqhtr | exact ptl_04_nqhtr | exact ptl_05_nqhtr | exact ptl_06_nqhtr | exact ptl_07_nqhtr | exact ptl_08_nqhtr | exact ptl_09_nqhtr | exact ptl_10_nqhtr | exact ptl_11_nqhtr | exact ptc_00_nqhtr | exact ptc_01_nqhtr | exact ptc_02_nqhtr | exact ptc_03_nqhtr | exact ptc_04_nqhtr | exact ptc_05_nqhtr | exact ptc_06_nqhtr | exact ptc_07_nqhtr | exact ptc_08_nqhtr | exact ptc_09_nqhtr | exact ptc_10_nqhtr | exact ptc_11_nqhtr | exact ptw_00_nqhtr | exact ptw_01_nqhtr | exact ptw_02_nqhtr | exact ptw_03_nqhtr | exact ptw_04_nqhtr | exact ptw_05_nqhtr | exact ptw_06_nqhtr | exact ptw_07_nqhtr | exact ptw_08_nqhtr | exact ptw_09_nqhtr | exact ptw_10_nqhtr | exact pti_00_nqhtr | exact pti_01_nqhtr | exact pti_02_nqhtr | exact prk_00_nqhtr | exact prk_01_nqhtr | exact prk_02_nqhtr | exact prk_03_nqhtr | exact prk_04_nqhtr | exact prk_05_nqhtr | exact prk_06_nqhtr | exact prk_07_nqhtr | exact prk_08_nqhtr | exact prk_09_nqhtr].
+    first [exact prov_tr_irtr_all | exact ptl_00_nqhtr | exact ptl_01_nqhtr | exact ptl_02_nqhtr | exact ptl_03_nqhtr | exact ptl_04_nqhtr | exact ptl_05_nqhtr | exact ptl_06_nqhtr | exact ptl_07_nqhtr | exact ptl_08_nqhtr | exact ptl_09_nqhtr | exact ptl_10_nqhtr | exact ptl_11_nqhtr | exact ptl_12_nqhtr | exact ptc_00_nqhtr | exact ptc_01_nqhtr | exact ptc_02_nqhtr | exact ptc_03_nqhtr | exact ptc_04_nqhtr | exact ptc_05_nqhtr | exact ptc_06_nqhtr | exact ptc_07_nqhtr | exact ptc_08_nqhtr | exact ptc_09_nqhtr | exact ptc_10_nqhtr | exact ptc_11_nqhtr | exact ptw_00_nqhtr | exact ptw_01_nqhtr | exact ptw_02_nqhtr | exact ptw_03_nqhtr | exact ptw_04_nqhtr | exact ptw_05_nqhtr | exact ptw_06_nqhtr | exact ptw_07_nqhtr | exact ptw_08_nqhtr | exact ptw_09_nqhtr | exact ptw_10_nqhtr | exact ptw_11_nqhtr | exact ptw_12_nqhtr | exact ptw_13_nqhtr | exact ptw_14_nqhtr | exact ptw_15_nqhtr | exact ptw_16_nqhtr | exact pti_00_nqhtr | exact pti_01_nqhtr | exact pti_02_nqhtr | exact prk_00_nqhtr | exact prk_01_nqhtr | exact prk_02_nqhtr | exact prk_03_nqhtr | exact prk_04_nqhtr | exact prk_05_nqhtr | exact prk_06_nqhtr | exact prk_07_nqhtr | exact prk_08_nqhtr | exact prk_09_nqhtr].
 Qed.
 
 Lemma provqh_tr_all :
@@ -308,7 +308,7 @@ Lemma provqh_tr_all :
 Proof.
   unfold provqh_tr.
   repeat (apply Forall_app; split);
-    first [exact pqh_00_qhtr | exact pqh_01_qhtr | exact pqh_02_qhtr | exact pqh_03_qhtr | exact pqh_04_qhtr | exact pqh_05_qhtr | exact pqh_06_qhtr | exact pqh_07_qhtr | exact pqh_08_qhtr | exact pqh_09_qhtr | exact pqh_10_qhtr | exact pqh_11_qhtr | exact pqh_12_qhtr | exact pqh_13_qhtr | exact pqh_14_qhtr | exact pqh_15_qhtr].
+    first [exact pqh_00_qhtr | exact pqh_01_qhtr | exact pqh_02_qhtr | exact pqh_03_qhtr | exact pqh_04_qhtr | exact pqh_05_qhtr | exact pqh_06_qhtr | exact pqh_07_qhtr | exact pqh_08_qhtr | exact pqh_09_qhtr | exact pqh_10_qhtr | exact pqh_11_qhtr | exact pqh_12_qhtr | exact pqh_13_qhtr | exact pqh_14_qhtr | exact pqh_15_qhtr | exact pqh_16_qhtr | exact pqh_17_qhtr | exact pqh_18_qhtr | exact pqh_19_qhtr | exact pqh_20_qhtr | exact pqh_21_qhtr | exact pqh_22_qhtr | exact pqh_23_qhtr | exact pqh_24_qhtr | exact pqh_25_qhtr | exact pqh_26_qhtr | exact pqh_27_qhtr | exact pqh_28_qhtr | exact pqh_29_qhtr | exact pqh_30_qhtr | exact pqh_31_qhtr | exact pqh_32_qhtr | exact pqh_33_qhtr | exact pqh_34_qhtr | exact pqh_35_qhtr | exact pqh_36_qhtr | exact pqh_37_qhtr | exact pqh_38_qhtr | exact pqh_39_qhtr].
 Qed.
 
 (** the same rung ladders as the state census (Run_Compute.v), and the
