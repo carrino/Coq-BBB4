@@ -37,6 +37,13 @@ from cbt import REPO, next_free, write_batch  # noqa: E402
 REQ_RE = re.compile(r'^From\s+(\S+)\s+Require\s+Import\s+([^.]+)\.', re.M)
 THM_RE = re.compile(r'^Theorem (qhtr_\w+) : NonHalt (tm_\w+) /\\ QHBoundTr 32779478 \2 /\\ QuasiHaltsTr \2\.', re.M)
 SPEC_RE = re.compile(r'TRANSITION-LEVEL QUASIHALTING-side board for machine (\S+), ')
+# the closer's last goal, [(t0 <=? 32779478) = true]: the VM builds the
+# unary 32779478 once per board (1-2 s, and a 40-board file peaked at
+# 3.3 GB); [qcleb_<base>] builds it once per file and each board checks
+# [t0 <=? 1024] instead
+BOUND_RE = re.compile(r'(\n  apply \(lap_qh_stage \w+ \w+ Cc \d+ (\d+) 32779478\)\.\n'
+                      r'(?:  - .*\n){4})  - vm_cast_no_check \(eq_refl true\)\.\n')
+LEB_CAP = 1024
 
 
 def remaining():
@@ -53,6 +60,13 @@ def read_board(path):
     if not sep:
         raise SystemExit('%s: no Import ListNotations line' % path)
     reqs = [(fr, mods.split()) for fr, mods in REQ_RE.findall(head)]
+    def leb(m):
+        if int(m.group(2)) > LEB_CAP:
+            raise SystemExit('%s: boot %s past %d' % (path, m.group(2), LEB_CAP))
+        return m.group(1) + '  - apply LEB. reflexivity.\n'
+    body, nb = BOUND_RE.subn(leb, body)
+    if nb != 1:
+        raise SystemExit('%s: want exactly one lap_qh_stage bound goal, found %d' % (path, nb))
     th = THM_RE.findall(body)
     if len(th) != 1:
         raise SystemExit('%s: want exactly one qhtr theorem, found %d' % (path, len(th)))
@@ -90,12 +104,17 @@ def lap(a):
         if top_import:
             requires.append('From Coq Require Import %s.' % ' '.join(top_import))
         requires += req
-        pre, entries = [], []
+        leb = 'qcleb_%s' % base
+        pre = ['Lemma %s : forall n, (n <=? %d) = true -> (n <=? 32779478) = true.\n'
+               'Proof.\n  intros n H. apply Nat.leb_le in H. apply Nat.leb_le.\n'
+               '  apply (Nat.le_trans _ _ _ H). apply Nat.leb_le. vm_cast_no_check (eq_refl true).\nQed.\n'
+               % (leb, LEB_CAP)]
+        entries = []
         for k, (spec, reqs, body, th, tm) in enumerate(chunk):
             mod = 'B_%s_%03d' % (base, k)
             imps = ['%s.%s' % (fr, md) for fr, mods in reqs if fr != 'Coq' for md in mods]
             pre.append('(** board for %s (emit_lapcert.py --qh) *)\nModule %s.\nImport %s.\nImport ListNotations.\n\n%s\n\nEnd %s.\n'
-                       % (spec, mod, ' '.join(imps), body, mod))
+                       % (spec, mod, ' '.join(imps), body.replace('apply LEB.', 'apply %s.' % leb), mod))
             entries.append((spec, 'apply (coversTr_qh3_at %s.%s); [exact %s.%s |]. '
                                   'intros q s; destruct q, s; reflexivity.' % (mod, tm, mod, th)))
         made.append(write_batch(a.tag, nn, requires, entries,
