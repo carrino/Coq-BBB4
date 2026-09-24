@@ -27,7 +27,7 @@ the transition-level bound is unconditional.
 | `theories/CloseoutTr/CloseoutFinalTr.v` | the chain through `census_tr` (needs the walk's `.vo`, so box only: `make closeout-tr-final`) |
 | `closeouttr_remaining.txt`, `closeouttr_boarded.tsv` | **generated**: the open rows, and which batch boarded each closed one |
 | `closeouttr_classes.tsv` | the fixed class of every v10 row (from the 1e8-step scan) |
-| `tools/closeouttr/` | `cbt.py` (batch writer), `rw_batch.py`, `qh_batch.py`, `gen_closeout_tr.py`, `classes.py` |
+| `tools/closeouttr/` | `cbt.py` (batch writer), `rw_batch.py`, `qh_batch.py`, `ng_batch.py` (n-gram rank tier, probe + batch), `gen_closeout_tr.py`, `classes.py` |
 
 A batch row is proved by any means at all. The only requirement is a lemma
 `coversTr (row_to_tm r)`:
@@ -42,7 +42,7 @@ A batch row is proved by any means at all. The only requirement is a lemma
 
 | Class | Rows | What they are | Route | Batch tag |
 |---|---:|---|---|---|
-| DN | 4,033 | dense: every instruction still firing at 1e8 | the RepWL finder with the block-length ladder first (a 20-row sample: 11 certify), then the n-gram route at window 4–6 for the rest | `RW`, `NG` |
+| DN | 4,033 | dense: every instruction still firing at 1e8 | the RepWL finder with the block-length ladder first (a 20-row sample: 11 certify), then the n-gram rank tier at window 4–6 for the rest (`ng_batch.py`; 100-row sample: 25 of the 88 RepWL misses, §7.4.NG) | `RW`, `NG` |
 | SP | 4,154 | sparse: the quietest instruction fires in rare bursts | a new counter-aware recurrence checker (research); RepWL on the side | `SP`, `RW` |
 | QH | 2,715 | quiet: an instruction silent from before 1e7 | mostly counters, not bouncers: the wrapped RepWL finder (`--qh`, pinned from the 1e8 scan) certified 1 of a random 40 (27 no closure, 12 timeouts at 20 s). A diagnosis comes first, then a counter route (lap boards, `LAPQ_*`) | `QH`, `QC` |
 | ED | 22 | the scanner's edge rows | RepWL (6 of the first 9 certify) | `RW` |

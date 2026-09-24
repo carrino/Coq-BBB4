@@ -7960,6 +7960,7 @@ theories/Machines/CountersTr/LAPT_1RB____1LC1RB_0RA1LD_1RC0LC.v
 theories/Machines/CountersTr/LAPT_1RB____1RC1RA_0LC1LD_0RA0LD.v
 theories/Machines/CountersTr/LAPT_1RB____1RC1RB_1LC1LD_0RA0LD.v
 theories/CloseoutTr/CloseoutKitTr.v
+theories/CloseoutTr/CBT_NG_00.v
 theories/CloseoutTr/CBT_QH_00.v
 theories/CloseoutTr/CBT_RW_00.v
 theories/CloseoutTr/RemainingTr.v
