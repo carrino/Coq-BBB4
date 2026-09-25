@@ -2260,9 +2260,15 @@ proof settled its 5,156 (`theories/Closeout/`).  The workflow is in
   By class: DN 11 of 20, ED 6 of 9, QH 0 of 44, SP 0 of 7.  A random
   40 of the QH class through the `--qh` finder (pins from the 1e8
   scan): 1 certifies (`CBT_QH_00`), 27 have no closure, 12 time out.
-  The QH class is counters, not bouncers.  Most DN
-  rows were never given to the RepWL finder, which only ever saw the
-  open-bouncer list, so the dense class is the cheap half.
+  The QH class is counters, not bouncers.
+* **Correction: the dense class is not the cheap half.**  The DN 11 of
+  20 above came from the head of the list: small machines with
+  undefined transitions, which the census orders first.  A random 40
+  of the 4,022 remaining DN rows at 60 s: **3 certify**, 30 have no
+  closure, 7 time out (the container, 2026-09-24).  The box's full DN +
+  ED run agrees: 3 of the first 238.  RepWL takes about 7% of the class,
+  ~300 rows.  The rest of DN is for the n-gram route (window 4-6) and
+  whatever comes after it.
 * **Classes** (`closeouttr_classes.tsv`, by the quietest instruction's
   last fire at 1e8): DN 4,033 dense, SP 4,154 sparse, QH 2,715 quiet,
   ED 22 edge.

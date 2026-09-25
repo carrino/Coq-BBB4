@@ -7995,5 +7995,9 @@ theories/CloseoutTr/CBT_QC_31.v
 theories/CloseoutTr/CBT_QC_32.v
 theories/CloseoutTr/CBT_QH_00.v
 theories/CloseoutTr/CBT_RW_00.v
+theories/CloseoutTr/CBT_RW_01.v
+theories/CloseoutTr/CBT_RW_02.v
+theories/CloseoutTr/CBT_RW_03.v
+theories/CloseoutTr/CBT_RW_04.v
 theories/CloseoutTr/RemainingTr.v
 theories/CloseoutTr/CloseoutTr.v
