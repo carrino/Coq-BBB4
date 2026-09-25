@@ -2355,13 +2355,17 @@ A rejected irules certificate can run its full fuel in the kernel
 runs one `coqc` per certificate under a timeout, and a batch only ever
 holds accepted ones.
 
-**First batches: 173 rows, `CBT_SP_00..03`.**  `bin/irules
---max-steps 200000` over the first 559 SP rows (the full class is
-running, four jobs, about 7 s a row): 179 certificates, 173 accepted by
-the probe (1 false, 5 timeouts at 30 s).  `sp_batch.py batch` stores the
-certificate literal in the row's proof (a few hundred bytes; the RepWL
-route could not, §7.3e) and closes it with
-`irulesblkpfx_check_neverqhtr_sound`; 50 rows compile in about 7 s.
+**The irules route over the whole class: 1,266 rows, `CBT_SP_00..03`,
+`05..26`.**  `bin/irules --max-steps 200000` over all 4,154 SP rows
+(the container, four jobs, about 2.5 h): **1,339 certificates (32%)**,
+of which the probe accepts **1,266** (9 false, 64 timeouts at 30 s).
+`sp_batch.py batch` stores the certificate literal in the row's proof (a
+few hundred bytes; the RepWL route could not, §7.3e) and closes it with
+`irulesblkpfx_check_neverqhtr_sound`; 50 rows compile in about 7 s, the
+27 batch files in under two minutes on two cores.  The first four
+batches (173 rows) came from the first 559 rows, the other 22 (1,093)
+from the rest.  The 64 timeouts are the next cheap rows (a longer probe
+timeout; a rejected certificate can take minutes to say false).
 
 **The residue is counters, and the third checker is the ladder's
 transition-level twin: `Checkers/LadderCheckTr.v` (built).**  The 25
