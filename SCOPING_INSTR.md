@@ -2260,9 +2260,15 @@ proof settled its 5,156 (`theories/Closeout/`).  The workflow is in
   By class: DN 11 of 20, ED 6 of 9, QH 0 of 44, SP 0 of 7.  A random
   40 of the QH class through the `--qh` finder (pins from the 1e8
   scan): 1 certifies (`CBT_QH_00`), 27 have no closure, 12 time out.
-  The QH class is counters, not bouncers.  Most DN
-  rows were never given to the RepWL finder, which only ever saw the
-  open-bouncer list, so the dense class is the cheap half.
+  The QH class is counters, not bouncers.
+* **Correction: the dense class is not the cheap half.**  The DN 11 of
+  20 above came from the head of the list: small machines with
+  undefined transitions, which the census orders first.  A random 40
+  of the 4,022 remaining DN rows at 60 s: **3 certify**, 30 have no
+  closure, 7 time out (the container, 2026-09-24).  The box's full DN +
+  ED run agrees: 3 of the first 238.  RepWL takes about 7% of the class,
+  ~300 rows.  The rest of DN is for the n-gram route (window 4-6) and
+  whatever comes after it.
 * **Classes** (`closeouttr_classes.tsv`, by the quietest instruction's
   last fire at 1e8): DN 4,033 dense, SP 4,154 sparse, QH 2,715 quiet,
   ED 22 edge.
@@ -2445,6 +2451,86 @@ python3 tools/closeouttr/sp_batch.py batch probe.tsv --tag SP
 (cd tools/ladder && python3 valfam.py --list ../../rest.txt --cap 150 --json ../../vf.jsonl)
 python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl --tag SP
 ```
+
+#### 7.4.QC Class QH diagnosed: counters, sweep counters, hybrids (2026-09-24)
+
+Workstream QC (batch tag `QC`), over the 2,714 open QH rows (2,715 minus
+the one in `CBT_QH_00`).  Per-row results are in
+`closeouttr_qc_subclasses.tsv`.
+
+**Diagnosis.**  Every row was run for 1e8 steps (a scratch C simulator:
+the tape extent at 10^k steps and the step of every new leftmost and
+rightmost cell).  The growth exponent of the extent between 1e6 and 1e8
+splits the class cleanly, with nothing between the peaks:
+
+| sub-class | rows | growth | what it is |
+|---|---:|---|---|
+| exponential counters, never given to the lap emitter | 1,405 | ~0.05 (log) | binary-style counters; a new cell every 1-4 doublings of time.  The v8/v9 log list (`censustr_qh_log_rows.txt`) was classified at 1e6 over the in-walk rows, and these came from elsewhere, so the emit never saw them |
+| exponential counters the box's `--qh` emit failed | 605 | ~0.05 | in `censustr_qh_counter_fail_rows.txt` |
+| **sweep counters** (quadratic laps) | 485 | 1/3 exactly | a block `1^n` with one travelling hole; each hole step is one full sweep, and the block grows by a cell when the hole reaches the end.  Lap n costs ~n^2 steps, so the extent is ~t^(1/3).  481 of them are in the box's counter-fail list: they are most of §7.3e's "56 of 70 have no counter phase" |
+| bouncer hybrids | 198 | ~0.5 | a sqrt-extent bouncer with an instruction in geometric bursts (one looked at: A1/B0 fire near 16.2M, then 145.4M, x9); the §7.3f sparse hybrids |
+| dense bouncers | 15 | ~0.5 | never given to RepWL |
+| in-place cyclers | 6 | 0 | e.g. `0RB---_0LC---_0RB---_------`: period 2, from step 1 |
+
+A random 100 (seed 20260924): 72 counters (42 never-tried rows that
+derive, 5 never-tried that fail, 25 box-fail rows that fail), 18 sweep
+counters, 9 hybrids, 1 cycler.  In the 1e8 scan, 2,253 rows have one quiet
+instruction (almost always A0 at step 0-7), 207 have two and 254 have
+three; 909 also have a live instruction that is sparse at 1e8 (the
+hybrids, and counters whose overflow instruction fires once per
+doubling).  90% of rows are quiet by step 7; the latest quiet last fire
+in the class is 7,972,431, a quarter of `B_close`.
+
+**Routes tried, with yields.**
+
+* **Lap certificates** (`emit_lapcert.py --qh`, `LapGlueQHTr`,
+  `lap_qh_stage`) on the 1,405 never-tried counters: **1,276 derive
+  (90.8%)**; 66 have no overflow chain (the nested route is S0-only), 51
+  no interior chain, 12 no anchor.  All 1,276 kernel-check.  On the
+  box-fail rows the sample confirms the box: 0 of 25 derive.
+* **Quiet-instruction cyclers** (`TCyclerQHTr`): `tc_find.py` skips
+  in-place laps (d = 0) as "the cycle checker's business", but
+  `tcycler_check_qhboundtr` takes them unchanged (`gmatch` compares the
+  exact right half-tape).  6 of 6 check.
+* **Wrapped RepWL** with L=1 added in front of the ladder (the finder's
+  `FALLBACK_L` starts at 2), 30 s: **0 of 80** sampled rows (61 counters
+  with no closure; 10 sweep counters time out, 2 have no closure, 2 have
+  no certificate; 5 hybrids time out).  On a sweep counter L=1 closes at
+  97 nodes, but B0 (the grow step) gets no certificate.  The hole-transit
+  loop avoids B0 and has no head-relative measure that decreases: the
+  quantity that decreases is the hole's distance to the block's end.  The
+  real `--qh` finder at 120 s on the 15 dense bouncers: 0 of 15 (all
+  timeouts).
+* **Wrapped n-gram** (`qh_plain_at`, n in {2,3,4}, t = last quiet fire
+  + {1, 65, 1025}): 0 of 12 (4 sweep counters, 4 box-fail counters, 4
+  hybrids).
+
+**Boarded: 1,282 rows**, `CBT_QC_00` (the 6 cyclers) and `CBT_QC_01..32`
+(the 1,276 counters, 40 per file).  Class QH: 2,714 open to **1,432**.
+The boards go inside the batch file, one `Module` each
+(`tools/closeouttr/qc_batch.py lap`).  The board's BBB4 imports become a
+top-level `Require` and an `Import` local to its module, and the row
+lemma is `coversTr_qh3_at` at the board's machine with an 8-way case
+split.  Nothing is added under `theories/Machines`, and no `_CoqProject`
+line depends on the shared files (a regenerate on a merge conflict would
+drop one).
+
+One cost trap: the closer's last goal `(t0 <=? 32779478) = true` makes
+the VM build the unary 32779478 once per board.  That is 1-2 s per board,
+and a 40-board file peaked at 3.3 GB (OOM-killed at -j4).  Each file now
+proves `qcleb_<file> : (n <=? 1024) = true -> (n <=? 32779478) = true`
+once, and the boards close with `apply qcleb_<file>. reflexivity.` (the
+boots are at most 64).  The same file then takes 8 s and 0.9 GB, and all
+33 batches plus `CloseoutTr.v` build in 91 s at -j4.
+
+**What is left (1,432), and the route for each:**
+
+| rows | sub-class | route |
+|---:|---|---|
+| 605 + 129 | counters the lap emitter does not derive | the emitter ports §7.3e already names (nested S1 overflow, peel, avoid).  The largest new bucket is "no overflow chain (nested route is S0-only)" |
+| 485 | sweep counters | **new Coq**: a two-index lap glue.  The anchor `Cc (n, i)` is the block `1^n` with the hole at i; the inner lap `(n, i) -> (n, i+1)` is one sweep, a linear `srun` chain with `SCyc` over the rest of the block; the outer lap `(n, n) -> (n+1, 0)` is the grow step.  Both are `LapDecider` chains already, and the missing piece is the glue that runs the inner lap by induction on the hole's distance (the counter alphabets are positional, so `cview` does not express it).  One shape covers all 485 |
+| 198 | bouncer hybrids | the counter-aware recurrence checker of the SP class (same machines, one quiet instruction more) |
+| 15 | dense bouncers | a longer `--qh` RepWL pass (900 s) |
 
 ## 8. What we deliberately do NOT redo
 
