@@ -2367,6 +2367,19 @@ batches (173 rows) came from the first 559 rows, the other 22 (1,093)
 from the rest.  The 64 timeouts are the next cheap rows (a longer probe
 timeout; a rejected certificate can take minutes to say false).
 
+**The lap route over the never-seen rows: 541 rows, `CBT_SP_27..37`.**
+`emit_lapcert.py --tr` over the 1,314 SP rows it had never seen and
+irules does not take (three jobs, ~50 min derive): of the first 1,132,
+**545 derive** (48%, against 7 of 26 in the sample; failures: no anchor
+299, "no overflow chain (nested route is S0-only)" 132, nested with no
+overflow phase 10, no interior chain 9, no visit witness 8, ...).
+`--emit` then writes and compiles one `Machines/CountersTr/LAPT_*` board
+per row: **541 compile** (3 more stop at the nested-overflow route, 1 was
+a missing alphabet library).  A board compiles in about a second;
+`sp_lap_batch.py` lists them in `_CoqProject` and batches them with
+`coversTr_nqh_at` on the board's `nqhtr_*`.  The last 182 rows of the
+list are still running.
+
 **The residue is counters, and the third checker is the ladder's
 transition-level twin: `Checkers/LadderCheckTr.v` (built).**  The 25
 sampled counters neither route takes are clean binary counters (the
