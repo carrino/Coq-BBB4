@@ -27,7 +27,7 @@ the transition-level bound is unconditional.
 | `theories/CloseoutTr/CloseoutFinalTr.v` | the chain through `census_tr` (needs the walk's `.vo`, so box only: `make closeout-tr-final`) |
 | `closeouttr_remaining.txt`, `closeouttr_boarded.tsv` | **generated**: the open rows, and which batch boarded each closed one |
 | `closeouttr_classes.tsv` | the fixed class of every v10 row (from the 1e8-step scan) |
-| `tools/closeouttr/` | `cbt.py` (batch writer), `rw_batch.py`, `qh_batch.py`, `gen_closeout_tr.py`, `classes.py` |
+| `tools/closeouttr/` | `cbt.py` (batch writer), `rw_batch.py`, `qh_batch.py`, `qc_batch.py` (lap boards inline, quiet cyclers), `gen_closeout_tr.py`, `classes.py` |
 
 A batch row is proved by any means at all. The only requirement is a lemma
 `coversTr (row_to_tm r)`:
