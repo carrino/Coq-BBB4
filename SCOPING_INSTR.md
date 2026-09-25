@@ -2273,6 +2273,7 @@ proof settled its 5,156 (`theories/Closeout/`).  The workflow is in
   last fire at 1e8): DN 4,033 dense, SP 4,154 sparse, QH 2,715 quiet,
   ED 22 edge.
 
+<<<<<<< HEAD
 ### 7.4.SP Class SP: the rare instruction is an overflow, and two landed checkers already prove it recurs (2026-09-24)
 
 **The class, measured.**  Over all 4,154 SP rows (the 1e8 scan), the
@@ -2452,6 +2453,8 @@ python3 tools/closeouttr/sp_batch.py batch probe.tsv --tag SP
 python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl --tag SP
 ```
 
+=======
+>>>>>>> origin/main
 #### 7.4.QC Class QH diagnosed: counters, sweep counters, hybrids (2026-09-24)
 
 Workstream QC (batch tag `QC`), over the 2,714 open QH rows (2,715 minus
