@@ -5,6 +5,7 @@
                                                [--jobs N] [--timeout S]
     python3 tools/closeouttr/ng_batch.py batch OUT.json [...] --tag NG [--chunk 25]
     python3 tools/closeouttr/ng_batch.py table OUT.json [--rw RW.json]
+    python3 tools/closeouttr/ng_batch.py export OUT.json RESULTS.tsv
 
 The driver IS Coq: every probe is a one-line file
 
@@ -25,6 +26,10 @@ could not.  Without --all a row stops at its first accepting rung; with
 --all every rung is run (the yield table).  OUT.json is resumable: it
 holds {spec: {rung: [verdict, seconds]}} and is rewritten after every
 probe; verdict is "true", "false" or "timeout".
+
+`export` writes the probe results as a TSV (spec, rung, verdict, seconds;
+one line per probe) so they can be committed; every subcommand that reads
+OUT.json also reads such a .tsv.
 
 `batch` takes, per row still in closeouttr_remaining.txt, the cheapest
 accepting rung (least time) and writes theories/CloseoutTr/CBT_<TAG>_<NN>.v
@@ -100,9 +105,17 @@ def coq_probe(job):
 
 
 def load(path):
-    if os.path.exists(path):
-        return json.load(open(path))
-    return {}
+    if not os.path.exists(path):
+        return {}
+    if path.endswith('.tsv'):
+        res = {}
+        for l in open(path):
+            if l.startswith('#') or not l.strip():
+                continue
+            s, r, v, dt = l.rstrip('\n').split('\t')
+            res.setdefault(s, {})[r] = [v, float(dt)]
+        return res
+    return json.load(open(path))
 
 
 def save(path, res):
@@ -195,6 +208,15 @@ def table(a):
         print('any rung: %d\n' % anyok)
 
 
+def export(a):
+    res = load(a.found)
+    with open(a.out, 'w') as f:
+        f.write('# spec\trung\tverdict\tseconds  (tools/closeouttr/ng_batch.py probe)\n')
+        for s in sorted(res):
+            for r in sorted(res[s]):
+                f.write('%s\t%s\t%s\t%.1f\n' % (s, r, res[s][r][0], res[s][r][1]))
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest='cmd', required=True)
@@ -213,8 +235,11 @@ def main():
     t = sub.add_parser('table')
     t.add_argument('found', nargs=1)
     t.add_argument('--rw')
+    e = sub.add_parser('export')
+    e.add_argument('found')
+    e.add_argument('out')
     a = ap.parse_args()
-    {'probe': probe, 'batch': batch, 'table': table}[a.cmd](a)
+    {'probe': probe, 'batch': batch, 'table': table, 'export': export}[a.cmd](a)
 
 
 if __name__ == '__main__':

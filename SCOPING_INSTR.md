@@ -2292,7 +2292,7 @@ coqc wall time including ~0.8 s of library loading):
 | (6, 0) | rank | 29 | 67 | 4 | 1.7 | 3.5 | 300 (cap) |
 | (7, 0) | rank | 5 of 21 run | | | 2.1 | 4.2 | |
 | (4, 64), (4, 1024), (5, 64) | rank | 20, 20, 25 | | | | | |
-| (4, 0), (5, 0) | plain `ngram_check_neverqhtr` | 1, 1 | | | 0.6 | 1.0 | |
+| (4, 0), (5, 0), (6, 0) | plain `ngram_check_neverqhtr` | 1, 1, 1 | | | 0.6-0.9 | 1.0-1.2 | |
 
 * **The window is the knob, the prefix is not.**  t = 64 and t = 1024
   accept exactly what t = 0 accepts.  The windows nest: every row (4, 0)
@@ -2301,7 +2301,7 @@ coqc wall time including ~0.8 s of library loading):
   (7, 0) (a partial window-7 pass, 21 rows run).
 * **The plain checker is not the route.**  Without the lex certificate
   the closure's instruction-avoiding subgraphs are cyclic on counters:
-  1 row of 100 at windows 4 and 5.
+  1 row of 100 at each of windows 4, 5 and 6 (the same row).
 * **Against RepWL.**  The RepWL finder (`rw_cert_find.py find --jobs 2
   --timeout 60`) certifies 12 of the 100.  Of the 88 it fails, the rank
   tier takes 25 (18 at window 4, 21 at 5, 25 at 6); of RepWL's 12 it
@@ -2316,6 +2316,24 @@ coqc wall time including ~0.8 s of library loading):
 * **Boarded.**  `CBT_NG_00`: the 30 sample rows (29 at windows 4-6, 1
   at window 7); 4 of them RepWL also certifies, so the box's `RW` batches
   may carry duplicates of those four (harmless, §CLOSEOUT_TR).
+
+**The rest of the class, probed ahead of the box** (the other 3,922 DN
+rows, the ladder stopping at the first true, 300 s cap, 2 then 4 jobs;
+results committed as `tools/closeouttr/ng_probe_dn.tsv`, the sample's as
+`ng_probe_dn_sample.tsv`, both readable by `ng_batch.py batch`):
+
+| rung | run | true | false | timeout |
+|---|---:|---:|---:|---:|
+| (4, 0) | 3,922 | 641 (16.3%) | 3,281 | 0 |
+| (5, 0) | 3,281 | 202 | 3,057 | 22 |
+| (6, 0) | 406 of 3,079 so far | 9 | 369 | 28 |
+
+So windows 4-5 take 843 of 3,922 (21.5%), a little under the sample's
+25%, and window 6 adds far less on the full class than on the sample (9
+of the first 406 rows window 5 rejected).  Window 4 took ~1 h at 2 jobs;
+window 5 ~5 h; window 6 is the bill.  None of it is boarded yet: the
+rows wait for the box's `RW` batches, so rows RepWL takes are not
+boarded twice.
 
 Next: once the box's `RW` batches are on `main`, the ladder runs over
 every DN row still in `closeouttr_remaining.txt`
