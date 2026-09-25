@@ -2290,15 +2290,15 @@ coqc wall time including ~0.8 s of library loading):
 | (4, 0) | rank | 20 | 80 | 0 | 0.9 | 1.1 | 20 |
 | (5, 0) | rank | 25 | 75 | 0 | 1.0 | 1.6 | 129 |
 | (6, 0) | rank | 29 | 67 | 4 | 1.7 | 3.5 | 300 (cap) |
-| (7, 0) | rank | 5 of 21 run | | | 2.1 | 4.2 | |
+| (7, 0) | rank | 30 | 55 | 15 | 2.3 | 6.8 | 300 (cap) |
 | (4, 64), (4, 1024), (5, 64) | rank | 20, 20, 25 | | | | | |
 | (4, 0), (5, 0), (6, 0) | plain `ngram_check_neverqhtr` | 1, 1, 1 | | | 0.6-0.9 | 1.0-1.2 | |
 
 * **The window is the knob, the prefix is not.**  t = 64 and t = 1024
   accept exactly what t = 0 accepts.  The windows nest: every row (4, 0)
   takes, (5, 0) takes, and (6, 0) takes all 29 (first accepting window:
-  4 for 20 rows, 5 for 5, 6 for 4).  One more row certifies only at
-  (7, 0) (a partial window-7 pass, 21 rows run).
+  4 for 20 rows, 5 for 5, 6 for 4).  Window 7 takes 3 more (3 of the
+  71 window-6 rejections), 32 of 100 in all, at 15 timeouts.
 * **The plain checker is not the route.**  Without the lex certificate
   the closure's instruction-avoiding subgraphs are cyclic on counters:
   1 row of 100 at each of windows 4, 5 and 6 (the same row).
@@ -2336,6 +2336,20 @@ them in its 291 timeouts at the 300 s cap.  With the sample, class DN
 has 999 rows the rank tier certifies (969 + the 30 of `CBT_NG_00`).
 None of the 969 is boarded yet: they wait for the box's `RW` batches,
 so rows RepWL takes are not boarded twice.
+
+**Dry run of the boarding.**  `ng_batch.py batch` over the two TSVs
+writes 20 batches of 50 (971 rows: the 969, plus the 2 sample rows that
+only window 7 takes and that `CBT_NG_00` predates); every row
+kernel-checks (1,224 s wall at `-j4`, ~4 core-minutes per 50-row
+batch), and the split `CloseoutTr.vo` over them
+compiles in 10 s, leaving 3,021 DN rows.  The batches are not committed:
+they are regenerated after the `RW` merge, which drops the rows RepWL
+boards first.
+
+**Next lever: window 7.**  On the sample it takes 3 of the 71 rows
+window 6 rejects; on the full class's ~2,950 window-6 rejections that is
+of the order of 100 rows, at a window-6-like bill (tens of CPU-hours,
+mostly timeouts).
 
 A note for anyone running a long probe in the container: a detached
 (`nohup`/`setsid`) probe dies when the idle container is reclaimed; run
