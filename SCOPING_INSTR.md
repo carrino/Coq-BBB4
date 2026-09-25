@@ -2326,19 +2326,26 @@ results committed as `tools/closeouttr/ng_probe_dn.tsv`, the sample's as
 |---|---:|---:|---:|---:|
 | (4, 0) | 3,922 | 641 (16.3%) | 3,281 | 0 |
 | (5, 0) | 3,281 | 202 | 3,057 | 22 |
-| (6, 0) | 406 of 3,079 so far | 9 | 369 | 28 |
+| (6, 0) | 3,079 | 126 | 2,662 | 291 |
 
-So windows 4-5 take 843 of 3,922 (21.5%), a little under the sample's
-25%, and window 6 adds far less on the full class than on the sample (9
-of the first 406 rows window 5 rejected).  Window 4 took ~1 h at 2 jobs;
-window 5 ~5 h; window 6 is the bill.  None of it is boarded yet: the
-rows wait for the box's `RW` batches, so rows RepWL takes are not
-boarded twice.
+So the ladder takes **969 of 3,922 (24.7%)**, against the sample's 29%:
+windows 4-5 take 843 (21.5%), window 6 adds 126 (4% of what window 5
+rejected, against 4 of 75 on the sample).  Cost: window 4 ~1 h at 2
+jobs, window 5 ~5 h, window 6 43 CPU-hours (~11 h at 4 jobs), 24 of
+them in its 291 timeouts at the 300 s cap.  With the sample, class DN
+has 999 rows the rank tier certifies (969 + the 30 of `CBT_NG_00`).
+None of the 969 is boarded yet: they wait for the box's `RW` batches,
+so rows RepWL takes are not boarded twice.
+
+A note for anyone running a long probe in the container: a detached
+(`nohup`/`setsid`) probe dies when the idle container is reclaimed; run
+it as a tracked background task.  The probe resumes from its JSON.
 
 Next: once the box's `RW` batches are on `main`, the ladder runs over
 every DN row still in `closeouttr_remaining.txt`
-(`ng_batch.py probe ROWS OUT.json --jobs 4 --timeout 300`, ~11 h for
-~3,900 rows at 4 jobs; the window-6 rung is the whole bill).
+(already probed: `ng_batch.py batch tools/closeouttr/ng_probe_dn.tsv
+tools/closeouttr/ng_probe_dn_sample.tsv --tag NG` boards whatever of the
+969 is still remaining).
 
 ## 8. What we deliberately do NOT redo
 
