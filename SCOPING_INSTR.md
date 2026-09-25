@@ -2364,8 +2364,8 @@ few hundred bytes; the RepWL route could not, §7.3e) and closes it with
 `irulesblkpfx_check_neverqhtr_sound`; 50 rows compile in about 7 s, the
 27 batch files in under two minutes on two cores.  The first four
 batches (173 rows) came from the first 559 rows, the other 22 (1,093)
-from the rest.  The 64 timeouts are the next cheap rows (a longer probe
-timeout; a rejected certificate can take minutes to say false).
+from the rest.  The 64 timeouts are not cheap rows after all: re-probed at 300 s,
+28 say false and 36 time out again, none accept.
 
 **The lap route over the never-seen rows: 637 rows, `CBT_SP_27..39`.**
 `emit_lapcert.py --tr` over the 1,314 SP rows it had never seen and
