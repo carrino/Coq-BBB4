@@ -2273,6 +2273,100 @@ proof settled its 5,156 (`theories/Closeout/`).  The workflow is in
   last fire at 1e8): DN 4,033 dense, SP 4,154 sparse, QH 2,715 quiet,
   ED 22 edge.
 
+### 7.4.NG The dense rows RepWL misses: the n-gram rank tier at window 4-6 (2026-09-24)
+
+Class DN, batch tag `NG`.  The route is §7.1y's finding put to work:
+[DecideTr.rank_tier_tr tm n t 200000 512] (grow the gram sets, explore
+the closure, search a per-instruction rank/lex certificate, check it with
+the verified lex checker) at windows the census ladder never used for
+the never side (`rank_rungs_tr` stops at n = 3).  The driver is Coq
+itself: `tools/closeouttr/ng_batch.py probe` compiles one
+`Eval vm_compute in rank_tier_tr (row_to_tm ROW) n t 200000 512.` per
+(row, rung) under a timeout, so a probe verdict is exactly what the
+batch's `vm_cast_no_check` gets.  No finder, no certificate literal:
+`ng_batch.py batch` writes `apply coversTr_nqh, (rank_tier_tr_sound _ n t
+200000 512). vm_cast_no_check (eq_refl true).` per row.
+
+**Yield on the sample** (`classes.py shard DN 0 40`, 100 rows; every
+rung run on every row, 300 s cap, 2 jobs in the container; times are
+coqc wall time including ~0.8 s of library loading):
+
+| rung (n, t) | checker | true | false | timeout | median s (true) | median s (all) | max s |
+|---|---|---:|---:|---:|---:|---:|---:|
+| (4, 0) | rank | 20 | 80 | 0 | 0.9 | 1.1 | 20 |
+| (5, 0) | rank | 25 | 75 | 0 | 1.0 | 1.6 | 129 |
+| (6, 0) | rank | 29 | 67 | 4 | 1.7 | 3.5 | 300 (cap) |
+| (7, 0) | rank | 30 | 55 | 15 | 2.3 | 6.8 | 300 (cap) |
+| (4, 64), (4, 1024), (5, 64) | rank | 20, 20, 25 | | | | | |
+| (4, 0), (5, 0), (6, 0) | plain `ngram_check_neverqhtr` | 1, 1, 1 | | | 0.6-0.9 | 1.0-1.2 | |
+
+* **The window is the knob, the prefix is not.**  t = 64 and t = 1024
+  accept exactly what t = 0 accepts.  The windows nest: every row (4, 0)
+  takes, (5, 0) takes, and (6, 0) takes all 29 (first accepting window:
+  4 for 20 rows, 5 for 5, 6 for 4).  Window 7 takes 3 more (3 of the
+  71 window-6 rejections), 32 of 100 in all, at 15 timeouts.
+* **The plain checker is not the route.**  Without the lex certificate
+  the closure's instruction-avoiding subgraphs are cyclic on counters:
+  1 row of 100 at each of windows 4, 5 and 6 (the same row).
+* **Against RepWL.**  The RepWL finder (`rw_cert_find.py find --jobs 2
+  --timeout 60`) certifies 12 of the 100.  Of the 88 it fails, the rank
+  tier takes 25 (18 at window 4, 21 at 5, 25 at 6); of RepWL's 12 it
+  takes 4.  Together: 38 of 100, RepWL alone 8, rank alone 26, both 4.
+  So the two routes are nearly disjoint: RepWL takes the bouncers, the
+  rank tier the log counters.
+* **Cost.**  The ladder (4, 0) -> (5, 0) -> (6, 0) stopping at the first
+  true costs ~40 s per row on average, dominated by window-6 failures
+  (17 of 100 rows over 60 s at window 6, 4 at the 300 s cap).  The
+  slowest accepted window-6 row took 180 s.  `CBT_NG_00` (30 rows, each
+  at its cheapest accepting rung) compiles in 60 s.
+* **Boarded.**  `CBT_NG_00`: the 30 sample rows (29 at windows 4-6, 1
+  at window 7); 4 of them RepWL also certifies, so the box's `RW` batches
+  may carry duplicates of those four (harmless, §CLOSEOUT_TR).
+
+**The rest of the class, probed ahead of the box** (the other 3,922 DN
+rows, the ladder stopping at the first true, 300 s cap, 2 then 4 jobs;
+results committed as `tools/closeouttr/ng_probe_dn.tsv`, the sample's as
+`ng_probe_dn_sample.tsv`, both readable by `ng_batch.py batch`):
+
+| rung | run | true | false | timeout |
+|---|---:|---:|---:|---:|
+| (4, 0) | 3,922 | 641 (16.3%) | 3,281 | 0 |
+| (5, 0) | 3,281 | 202 | 3,057 | 22 |
+| (6, 0) | 3,079 | 126 | 2,662 | 291 |
+
+So the ladder takes **969 of 3,922 (24.7%)**, against the sample's 29%:
+windows 4-5 take 843 (21.5%), window 6 adds 126 (4% of what window 5
+rejected, against 4 of 75 on the sample).  Cost: window 4 ~1 h at 2
+jobs, window 5 ~5 h, window 6 43 CPU-hours (~11 h at 4 jobs), 24 of
+them in its 291 timeouts at the 300 s cap.  With the sample, class DN
+has 999 rows the rank tier certifies (969 + the 30 of `CBT_NG_00`).
+None of the 969 is boarded yet: they wait for the box's `RW` batches,
+so rows RepWL takes are not boarded twice.
+
+**Dry run of the boarding.**  `ng_batch.py batch` over the two TSVs
+writes 20 batches of 50 (971 rows: the 969, plus the 2 sample rows that
+only window 7 takes and that `CBT_NG_00` predates); every row
+kernel-checks (1,224 s wall at `-j4`, ~4 core-minutes per 50-row
+batch), and the split `CloseoutTr.vo` over them
+compiles in 10 s, leaving 3,021 DN rows.  The batches are not committed:
+they are regenerated after the `RW` merge, which drops the rows RepWL
+boards first.
+
+**Next lever: window 7.**  On the sample it takes 3 of the 71 rows
+window 6 rejects; on the full class's ~2,950 window-6 rejections that is
+of the order of 100 rows, at a window-6-like bill (tens of CPU-hours,
+mostly timeouts).
+
+A note for anyone running a long probe in the container: a detached
+(`nohup`/`setsid`) probe dies when the idle container is reclaimed; run
+it as a tracked background task.  The probe resumes from its JSON.
+
+Next: once the box's `RW` batches are on `main`, the ladder runs over
+every DN row still in `closeouttr_remaining.txt`
+(already probed: `ng_batch.py batch tools/closeouttr/ng_probe_dn.tsv
+tools/closeouttr/ng_probe_dn_sample.tsv --tag NG` boards whatever of the
+969 is still remaining).
+
 ### 7.4.SP Class SP: the rare instruction is an overflow, and two landed checkers already prove it recurs (2026-09-24)
 
 **The class, measured.**  Over all 4,154 SP rows (the 1e8 scan), the
