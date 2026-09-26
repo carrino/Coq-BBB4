@@ -60,9 +60,10 @@ def next_free(tag):
     return n
 
 
-def write_batch(tag, nn, requires, entries, blurb, overwrite=False):
+def write_batch(tag, nn, requires, entries, blurb, overwrite=False, preamble=''):
     """entries: [(spec, proof)] where proof is the tactic text proving
-    [coversTr (row_to_tm r)] (without Proof./Qed.)"""
+    [coversTr (row_to_tm r)] (without Proof./Qed.); preamble: Coq text
+    written before the rows (definitions the proofs use)"""
     assert TAG_RE.match(tag), 'TAG must be 1-8 of [A-Z0-9], starting with a letter: %r' % tag
     path = batch_path(tag, nn)
     if os.path.exists(path) and not overwrite:
@@ -81,6 +82,8 @@ def write_batch(tag, nn, requires, entries, blurb, overwrite=False):
         for r in requires:
             f.write(r.rstrip() + '\n')
         f.write('Import ListNotations.\n\n')
+        if preamble:
+            f.write(preamble.rstrip('\n') + '\n\n')
         names = []
         for k, (spec, proof) in enumerate(entries):
             nm = '%s_%04d' % (base, k)

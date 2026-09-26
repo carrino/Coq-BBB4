@@ -200,6 +200,24 @@ class NoClosure(Exception):
     pass
 
 
+# The INSTRUCTION-level mode (--tr): None, or the list of pinned instructions
+# (q, s) -- the ones the machine never fires.  The board then runs on
+# [tm_wrap_trs tm pins], the visit chains end on INSTRUCTIONS rather than
+# states, and the closer is [LadderCheckTr.boardph_neverqhtr]
+# ([NeverQuasiHaltsTr]).  Only the binary closure has a Tr twin.
+TR_PINS = None
+
+
+def _vkey(c):
+    """what a visit chain's end configuration witnesses: its state, or at
+    the instruction level its (state, head symbol)"""
+    return c[0] if TR_PINS is None else (c[0], c[2])
+
+
+def _vname(i):
+    return ST[i] if TR_PINS is None else ST[i[0]][-1] + str(i[1])
+
+
 def coq_chain_l(chain):
     """A chain of BASE steps only, for [srun_st] (no [rstep] wrapper)."""
     return clist(chain, coq_lstep)
@@ -451,7 +469,11 @@ def closure_data(cert, tab):
     # arms additionally shown to avoid it (4k step 2).  [board_neverqh]
     # proves the wrong theorem for the second kind by construction.
     live = (cert.get('liveness') or {}).get('states_infinitely_often')
-    if live == ''.join(s[-1] for s in ST):
+    if TR_PINS is not None:
+        # the pins carry the liveness at this level; a quiet instruction is
+        # the QH side's business, not this closer's
+        qa, sq = None, None
+    elif live == ''.join(s[-1] for s in ST):
         qa, sq = None, None
     elif live and len(live) == 3:
         qa = next(i for i in range(4) if ST[i][-1] not in live)
@@ -472,6 +494,9 @@ def closure_data(cert, tab):
     # The QUIET state has no such chain, and wanting one is the bug the
     # liveness split above exists to avoid.
     want = [i for i in range(4) if i != qa]
+    if TR_PINS is not None:
+        want = [(q, s) for q in range(4) for s in range(2)
+                if (q, s) not in TR_PINS]
 
     def visits(fl, fch):
         seen, cand = {}, []
@@ -491,7 +516,7 @@ def closure_data(cert, tab):
                 break
             got = LC.srun(tab, True, True, ch, fl)
             if got:
-                seen.setdefault(got[0][0], ch)
+                seen.setdefault(_vkey(got[0]), ch)
         if all(i in seen for i in want):
             return seen
 
@@ -527,7 +552,7 @@ def closure_data(cert, tab):
                     if k in seenk:
                         continue
                     seenk.add(k)
-                    seen.setdefault(c2[0], ch + [st])
+                    seen.setdefault(_vkey(c2), ch + [st])
                     nxt.append((ch + [st], c2))
             front = nxt
         return seen
@@ -550,7 +575,7 @@ def closure_data(cert, tab):
         for (r, p) in sorted(seen_at):
             if p != ph:
                 continue
-            gap = [ST[i] for i in want if i not in seen_at[(r, p)]]
+            gap = [_vname(i) for i in want if i not in seen_at[(r, p)]]
             if gap:
                 bad.append('r=%d misses %s' % (r, ','.join(gap)))
         if not bad:
@@ -784,6 +809,43 @@ Proof.
 Qed.
 '''
 
+CLOSURE_VIS_TR = '''(** One chain per UNPINNED INSTRUCTION per fill arm, at the VISIT PHASE
+    %(pv)d.  [fire_of_run_instr] turns each into a fire of that instruction,
+    and [tops_cofinal_at] says the tops of that phase keep coming.  The fill
+    arm is the counter's overflow, so this is where the rare instruction of
+    a sparse row is witnessed. *)
+Definition vis_%(mid)s (r : nat) (t : Instr) : list lstep :=
+  match r, t with
+  %(vb)s
+  | _, _ => []
+  end.
+
+'''
+
+CLOSURE_NQH_TR = '''Lemma vis_ok_%(mid)s : forall r t, ~ In t pins_%(mid)s -> 0 < r ->
+  r < %(n0f)d + %(stf)d ->
+  srun_instr tm true true (vis_%(mid)s r t) (lr_lhs (farm_%(mid)s r %(pv)d))
+    = Some t.
+Proof.
+  intros r t Hnp H0 Hr.
+%(fvis)s  exfalso; lia.
+Qed.
+
+(** The machine-level theorem, at the INSTRUCTION level: the board above
+    runs on the machine wrapped at the pins, and
+    [LadderCheckTr.boardph_neverqhtr] turns it into [NeverQuasiHaltsTr] of
+    the machine itself. *)
+Theorem nqhtr_%(mid)s : NeverQuasiHaltsTr tm_%(mid)s.
+Proof.
+  apply (boardph_neverqhtr tm_%(mid)s pins_%(mid)s FAM %(nph)d
+                           iarm_%(mid)s %(n0i)d %(sti)d
+                           farm_%(mid)s %(n0f)d %(stf)d
+                           fm1_%(mid)s fm2_%(mid)s %(pv)d vis_%(mid)s
+                           %(ds0)s %(ph0)d %(t0)d).
+%(args)s  - exact vis_ok_%(mid)s.
+Qed.
+'''
+
 CLOSURE_QH = '''Lemma vis_ok_%(mid)s : forall r q, q <> %(qa)s -> 0 < r ->
   r < %(n0f)d + %(stf)d ->
   srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r %(pv)d))
@@ -905,11 +967,19 @@ def emit_closure(cert, tab, mid):
                     for r, ph, _s, m1, *_ in cd['fill']),
         b2=' '.join('| %d, %d => %d' % (r, ph, m2)
                     for r, ph, _s, _m1, m2, *_ in cd['fill'])))
-    L.append(CLOSURE_VIS % dict(
-        mid=mid, pv=pv,
-        vb='\n  '.join('| %d, %s => %s' % (r, ST[i], coq_chain_l(ch))
-                       for r in sorted(cd['vis'])
-                       for i, ch in sorted(cd['vis'][r].items()))))
+    if TR_PINS is None:
+        L.append(CLOSURE_VIS % dict(
+            mid=mid, pv=pv,
+            vb='\n  '.join('| %d, %s => %s' % (r, ST[i], coq_chain_l(ch))
+                           for r in sorted(cd['vis'])
+                           for i, ch in sorted(cd['vis'][r].items()))))
+    else:
+        L.append(CLOSURE_VIS_TR % dict(
+            mid=mid, pv=pv,
+            vb='\n  '.join('| %d, (%s, %s) => %s'
+                           % (r, ST[i[0]], SYM[i[1]], coq_chain_l(ch))
+                           for r in sorted(cd['vis'])
+                           for i, ch in sorted(cd['vis'][r].items()))))
 
     def ibranches(body):
         """One brace-delimited branch per (digit, arm index); rest is dead."""
@@ -1005,7 +1075,13 @@ def emit_closure(cert, tab, mid):
         index alone -- the shape it had before the phase cycle."""
         return _rbranches(nF, lambda r: body, lo=1)
 
-    if cd['qa'] is None:
+    if TR_PINS is not None:
+        L.append(CLOSURE_NQH_TR % dict(
+            common, fvis=vbranches(
+                'destruct t as [q s]; destruct q, s; '
+                'try (exfalso; apply Hnp; simpl; tauto); '
+                'vm_compute; reflexivity.')))
+    elif cd['qa'] is None:
         L.append(CLOSURE_NQH % dict(
             common, fvis=vbranches('destruct q; vm_compute; reflexivity.')))
     else:
@@ -2266,7 +2342,28 @@ def emit(cert, out):
     if (gray or fib) and cd is not None:
         cert['family']['other_side_cells'] = list(cd['other'])
     L = []
-    L.append(HEADER % dict(mid=mid, spec=spec, table=coq_table(spec)))
+    head = HEADER % dict(mid=mid, spec=spec, table=coq_table(spec))
+    if TR_PINS is not None:
+        head = head.replace('* LDR_%s:' % mid, '* LDRT_%s:' % mid, 1)
+        head = head.replace(
+            'boarded by the STAGE-B LADDER.',
+            'boarded by the STAGE-B LADDER at the INSTRUCTION level\n'
+            '    ([NeverQuasiHaltsTr], through [LadderCheckTr]).', 1)
+        head = head.replace(
+            'From BBB4.Checkers Require Import LadderCheck.\n',
+            'From BBB4.Checkers Require Import LadderCheck.\n'
+            'From BBB4 Require Import BBBT4_Statement.\n'
+            'From BBB4.Checkers Require Import WrapTr LadderCheckTr.\n'
+            'From BBB4.Counters Require Import LapGlueTr.\n', 1)
+        head = head.replace(
+            'Local Notation tm := tm_%s.\n' % mid,
+            '(** the instructions the machine never fires; the whole board runs\n'
+            '    on the machine wrapped at them, where firing one halts *)\n'
+            'Definition pins_%s : list Instr := [%s].\n'
+            'Local Notation tm := (tm_wrap_trs tm_%s pins_%s).\n'
+            % (mid, ';'.join('(%s, %s)' % (ST[q], SYM[s]) for q, s in TR_PINS),
+               mid, mid), 1)
+    L.append(head)
 
     # -- the family, as data
     L.append('''
@@ -2347,6 +2444,9 @@ Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_%(nm)s_%(mid)s]. 
     right-hand side in exactly the certificate's step count. *)
 ''' % dict(ng=len(good), nt=len(cert['arms'])))
 
+    if TR_PINS is not None and (gray or fib):
+        closure, cd = (CLOSURE_NONE % 'the instruction-level closer '
+                       '(LadderCheckTr) is binary-only'), None
     if not (gray or fib):
         closure, cd = emit_closure(cert, tab, mid)
     L.append(closure)
@@ -2355,17 +2455,53 @@ Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_%(nm)s_%(mid)s]. 
     return good, bad, cd
 
 
+def parse_pins(txt):
+    return [('ABCD'.index(x[0]), int(x[1])) for x in txt.split(',') if x]
+
+
+def unfired(spec, steps):
+    """the instructions (q, s) a run of `steps` never fires (UNTRUSTED: a
+    wrong pin halts the wrapped machine and the board fails to compile)"""
+    parts = spec.split('_')
+    tab = {}
+    for q, p in enumerate(parts):
+        for s in range(2):
+            e = p[3 * s:3 * s + 3]
+            tab[(q, s)] = None if e[0] == '-' else (int(e[0]), e[1], 'ABCD'.index(e[2]))
+    fired, tape, pos, q = set(), {}, 0, 0
+    for _ in range(steps):
+        s = tape.get(pos, 0)
+        e = tab[(q, s)]
+        if e is None:
+            break
+        fired.add((q, s))
+        tape[pos] = e[0]
+        pos += 1 if e[1] == 'R' else -1
+        q = e[2]
+    return [(q, s) for q in range(4) for s in range(2) if (q, s) not in fired]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('cert')
     ap.add_argument('-o', '--out')
+    ap.add_argument('--tr', action='store_true',
+                    help='instruction level: LDRT board, NeverQuasiHaltsTr')
+    ap.add_argument('--pins', default=None,
+                    help='with --tr: never-fired instructions, e.g. A0,C1 '
+                         '(default: those unfired in a 10^6-step run)')
     args = ap.parse_args()
     cert = json.load(open(args.cert))
     if isinstance(cert, list):
         cert = cert[0]
+    global TR_PINS
+    if args.tr:
+        TR_PINS = (parse_pins(args.pins) if args.pins is not None
+                   else unfired(cert['spec'], 10 ** 6))
     out = args.out or os.path.join(
-        HERE, '..', '..', 'theories', 'Machines', 'Ladder',
-        'LDR_%s.v' % mach_id(cert['spec']))
+        HERE, '..', '..', 'theories', 'Machines',
+        'LadderTr' if args.tr else 'Ladder',
+        '%s_%s.v' % ('LDRT' if args.tr else 'LDR', mach_id(cert['spec'])))
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     good, bad, cd = emit(cert, out)
     print('%s: %d arms boarded, %d without a chain, closure %s'
