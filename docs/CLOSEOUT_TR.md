@@ -27,7 +27,7 @@ the transition-level bound is unconditional.
 | `theories/CloseoutTr/CloseoutFinalTr.v` | the chain through `census_tr` (needs the walk's `.vo`, so box only: `make closeout-tr-final`) |
 | `closeouttr_remaining.txt`, `closeouttr_boarded.tsv` | **generated**: the open rows, and which batch boarded each closed one |
 | `closeouttr_classes.tsv` | the fixed class of every v10 row (from the 1e8-step scan) |
-| `tools/closeouttr/` | `cbt.py` (batch writer), `rw_batch.py`, `qh_batch.py`, `qc_batch.py` (lap boards inline, quiet cyclers), `qe_probe.py` (lap-emitter failure buckets, every anchor), `ng_batch.py` (n-gram rank tier, probe + batch), `qs_batch.py` (sweep counters: certificate search + batch, `SweepGlueTr`), `gen_closeout_tr.py`, `classes.py` |
+| `tools/closeouttr/` | `cbt.py` (batch writer), `rw_batch.py`, `qh_batch.py`, `qc_batch.py` (lap boards inline, quiet cyclers), `qe_probe.py` (lap-emitter failure buckets, every anchor), `ng_batch.py` (n-gram rank tier, probe + batch), `qs_batch.py` (sweep counters: certificate search + batch, `SweepGlueTr`), `dx_char.py` (class characterisation), `dx_tc_batch.py` (translated cyclers), `dx_irqh_batch.py` (irules QH certificates, `MetaBlkPfxQHTr`), `gen_closeout_tr.py`, `classes.py` |
 
 A batch row is proved by any means at all. The only requirement is a lemma
 `coversTr (row_to_tm r)`:
@@ -42,7 +42,7 @@ A batch row is proved by any means at all. The only requirement is a lemma
 
 | Class | Rows | What they are | Route | Batch tag |
 |---|---:|---|---|---|
-| DN | 4,033 | dense: every instruction still firing at 1e8 | the RepWL finder with the block-length ladder takes only ~5% (193 of 4,038 on the box), the n-gram rank tier at window 4–6 about a quarter (`ng_batch.py`; 969 of 3,922 probed, §7.4.NG); the ~3,000 left need a new route | `RW`, `NG` |
+| DN | 4,033 | dense: every instruction still firing at 1e8 | the RepWL finder with the block-length ladder takes only ~5% (193 of 4,038 on the box), the n-gram rank tier at window 4–6 about a quarter (`ng_batch.py`; 969 of 3,922 probed, §7.4.NG); then translated cyclers, `bin/irules` (the sweep counters) and lap boards (the log counters) take 1,442 more (§7.4.DX).  The ~1,470 left are mostly bouncer + counter hybrids (a new checker) | `RW`, `NG`, `DX0`..`DX3` |
 | SP | 4,154 | sparse: the quietest instruction fires in rare bursts | a new counter-aware recurrence checker (research); RepWL on the side | `SP`, `RW` |
 | QH | 2,715 | quiet: an instruction silent from before 1e7 | mostly counters, not bouncers: the wrapped RepWL finder (`--qh`, pinned from the 1e8 scan) certified 1 of a random 40 (27 no closure, 12 timeouts at 20 s). Diagnosed in §7.4.QC: counters (lap boards, `LAPQ_*`; §7.4.QE ports the emitter), sweep counters (the two-index glue `SweepGlueTr`, §7.4.QS), hybrids | `QH`, `QC`, `QE`, `QS` |
 | ED | 22 | the scanner's edge rows | RepWL (6 of the first 9 certify) | `RW` |

@@ -9311,6 +9311,7 @@ theories/CloseoutTr/CBT_DX1_09.v
 theories/CloseoutTr/CBT_DX1_10.v
 theories/CloseoutTr/CBT_DX1_11.v
 theories/CloseoutTr/CBT_DX1_12.v
+theories/CloseoutTr/CBT_DX1_13.v
 theories/CloseoutTr/CBT_DX2_00.v
 theories/CloseoutTr/CBT_DX2_01.v
 theories/CloseoutTr/CBT_DX2_02.v
@@ -9333,14 +9334,6 @@ theories/CloseoutTr/CBT_DXQ_02.v
 theories/CloseoutTr/CBT_DXQ_03.v
 theories/CloseoutTr/CBT_DXS_00.v
 theories/CloseoutTr/CBT_DXS_01.v
-theories/CloseoutTr/CBT_DXS_02.v
-theories/CloseoutTr/CBT_DXS_03.v
-theories/CloseoutTr/CBT_DXS_04.v
-theories/CloseoutTr/CBT_DXS_05.v
-theories/CloseoutTr/CBT_DXS_06.v
-theories/CloseoutTr/CBT_DXS_07.v
-theories/CloseoutTr/CBT_DXS_08.v
-theories/CloseoutTr/CBT_DXS_09.v
 theories/CloseoutTr/CBT_NG_00.v
 theories/CloseoutTr/CBT_NG_01.v
 theories/CloseoutTr/CBT_NG_02.v
