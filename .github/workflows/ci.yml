@@ -47,10 +47,6 @@ jobs:
           make -f Makefile.coq -j4 theories/Machines/TCycler_Examples.vo
       - name: Instruction-level (transition-level) statement + ported checkers + one certificate stage
         run: make -f Makefile.coq -j4 theories/Checkers/NGramHistTr.vo theories/Checkers/TCyclerTr.vo theories/Checkers/TCyclerQHTr.vo theories/CensusTr/ProvTr_TC_10.vo
-      - name: "Instruction-level closeout: generated files current, every batch and the split kernel-checked"
-        run: |
-          python3 tools/closeouttr/gen_closeout_tr.py --check
-          make -f Makefile.coq -j4 theories/CloseoutTr/CloseoutTr.vo
       - name: "Hygiene: zero Admitted in theories/"
         run: "! grep -rn 'Admitted\\.' theories --include='*.v'"
       - name: "Hygiene: every .v under theories/ is built or explicitly exempt"
@@ -60,3 +56,32 @@ jobs:
           python3 tools/closeout/audit.py
           python3 tools/census_cache.py --check
           python3 tools/proof_report.py > /dev/null
+  # The instruction-level closeout grows with every batch (~1,500 files at
+  # 6,767 boarded rows), so it runs as its own job, beside `core`, with its
+  # own budget instead of sharing core's 45 minutes.
+  closeout-tr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      # apt talks to the runner's package mirror, which sometimes hangs
+      # mid-fetch (observed 2026-08-19: 43 minutes of silence after an
+      # InRelease line, eating the whole job timeout as "cancelled").
+      # Bound each attempt and retry, so a bad mirror costs minutes,
+      # not the run.
+      - name: Install Coq
+        timeout-minutes: 15
+        run: |
+          for i in 1 2 3; do
+            sudo timeout 300 apt-get update && \
+            sudo timeout 300 apt-get install -y coq && exit 0
+            echo "apt attempt $i failed or hung; retrying"
+            sleep 10
+          done
+          exit 1
+      - name: Generate Makefile.coq
+        run: make Makefile.coq
+      - name: "Instruction-level closeout: generated files current, every batch and the split kernel-checked"
+        run: |
+          python3 tools/closeouttr/gen_closeout_tr.py --check
+          make -f Makefile.coq -j4 theories/CloseoutTr/CloseoutTr.vo
