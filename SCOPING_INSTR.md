@@ -2716,6 +2716,83 @@ python3 tools/closeouttr/qe_probe.py rows.txt probe.jsonl --jobs 4 --timeout 400
 python3 tools/closeouttr/qc_batch.py lap theories/Machines/CountersTr/LAPQ_*.v --tag QE --chunk 40
 ```
 
+#### 7.4.QS The sweep counters: a two-index lap glue (2026-09-28)
+
+Workstream QS (batch tag `QS`), over the 485 `sweep_counter` rows of
+§7.4.QC (`closeouttr_qc_subclasses.tsv`).  All 485 are quasihalting
+(their quiet instructions stop by step 133), so the route ends in
+`coversTr_qh3`.
+
+**The glue** (`theories/Counters/SweepGlueTr.v`, axiom-free beyond
+`functional_extensionality_dep`).  The anchor is
+`swC i k = (q, (Lpre ++ uL^i ++ Lpost, h, Rpre ++ uR^k ++ Rpost))`: `i`
+units behind the hole, `k` ahead.  The inner lap `(i, k+1) -> (i+1, k)`
+never touches the units behind, so they are the chain's OPAQUE left tail
+and one `srun` with index `k` covers every `i`.  The outer lap
+`(i, 0) -> (e, i + d)` is a chain with index `i` and both tails empty.
+The glue proper is the enumeration: `swCf p` is the `p`-th anchor along
+`sw_nxt`, which turns the two laps into the single `Hlap` of
+`LapGlueQHTr.glue_qhboundtr`.  Per-instruction fires come from chain
+prefixes of either lap.  An inner-lap fire is reached from any visited
+anchor by growing the block until enough units are ahead (the block grows
+by `e + d >= 1` per round).  An outer-lap fire is reached through `k`
+inner laps.  A certificate is data (`swcert`), and `sweep_check` is one
+boolean under `vm_compute`, so a row is one line:
+`apply coversTr_qh3, (sweep_sound _ (mkSW ...))` (`sweep_sound_mirror`
+when the hole moves left).  There are no per-machine definitions or
+modules, and a 40-row batch compiles in 1.6 s.
+
+Two things the first cut (one unrolled unit, near end) missed:
+
+* **Turning on the block's last unit.**  In ~70 rows the return sweep
+  changes state on the far unit of the block ahead (D reads the last 1,
+  then A sweeps back).  `SCycL` needs the same state at every unit, and a
+  count `k` that may be 0 has no unit to peel, so the inner start unrolls
+  `na` units at the near end and `nb` at the far end.  The last
+  `na + nb - 1` inner laps become concrete `sw_base` chains.
+* **The same on the grow step.**  The outer start unrolls `ma`/`mb` units
+  of the block behind.  Instead of concrete short outer chains, an
+  invariant: every visited anchor has `i + k >= ma + mb` (`sw_good`,
+  checked at the boot and kept by both laps).
+
+**Emitter** (`tools/closeouttr/qs_batch.py find`, untrusted).  It runs
+the machine and its mirror for 60,000 steps and pins the instructions
+silent over the last two thirds, plus the undefined ones.  For each
+instruction and small prefix/unit lengths (unit 1-3, prefix 0-3), it
+splits the late configurations as `Lpre uL^i Lpost | h | Rpre uR^k Rpost`
+and keeps a split whose `(i, k)` sequence steps as a sweep with constant
+`(e, d)`.  It then derives the chains with `lapcert.derive_chain` on the
+wrapped table (trying `(na, nb)` and `(ma, mb)` up to 2).  The boot is
+the first fitting anchor after the last quiet fire; the latest is step 41.
+
+**Yield: 410 of 485 (84.5%) boarded**, `CBT_QS_00` (the 20-row sample)
+and `CBT_QS_01..10`.  All 410 kernel-check (a 40-row file: 1.6 s).
+QH open: 1,432 to **1,022**; all rows: 6,604 to **6,194**.
+
+| certificate shape | rows |
+|---|---:|
+| one unit near end (`na,nb,ma,mb = 1,0,0,0`) | 339 |
+| + one at the far end (`1,1,0,0`) | 56 |
+| + outer unrolling (`1,1,1,0` / `1,1,1,1`) | 11 / 4 |
+| units of 1 / of 2 cells (`uL = uR`) | 314 / 96 |
+| hole moves left (certified on the mirror) | 236 |
+| grow step `(e, d)`: (0,1) / (1,1) / (1,0) / (0,2) / (1,2) | 178 / 106 / 81 / 32 / 13 |
+
+The search took 37 min for the 485 at 8 jobs on 4 cores (a failing row
+tries every candidate split).
+
+**Residue (75), two shapes, both three-index:**
+
+| rows | shape | why the glue misses it |
+|---:|---|---|
+| 58 | **two converging holes**: `1^a 0 1^b 0 1^c`, `c` in `{a, a+1}`; the holes step inward alternately, the middle block shrinks by one per half-lap, and the block regrows when they meet | no single-hole split fits ("no sweep anchor").  The natural anchor has the SAME count `a` on both outer blocks, so a half-lap is a chain over the middle block with both tails opaque, and the glue would enumerate `(a, b)` with `c` tied to `a` |
+| 17 | **travelling gap**: `1^a 0^b 1^c`, a run of blanks that grows as it moves through the block | 15 have no outer chain and 2 no inner chain at any unrolling up to 2; the hole is a run whose length is itself a count |
+
+Both look like the same glue with a third, tied count.  The anchor
+would become `L ++ uL^i ++ M ++ uR^k ++ N ++ uL'^i ++ R`, and each lap
+would still be a single-index chain between two opaque tails.  That is
+the next step for these 75.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
