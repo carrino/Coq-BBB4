@@ -9310,6 +9310,7 @@ theories/CloseoutTr/CBT_DX1_09.v
 theories/CloseoutTr/CBT_DX1_10.v
 theories/CloseoutTr/CBT_DX1_11.v
 theories/CloseoutTr/CBT_DX1_12.v
+theories/CloseoutTr/CBT_DX1_13.v
 theories/CloseoutTr/CBT_DX2_00.v
 theories/CloseoutTr/CBT_DX2_01.v
 theories/CloseoutTr/CBT_DX2_02.v
