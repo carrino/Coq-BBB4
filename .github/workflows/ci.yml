@@ -15,7 +15,10 @@ on:
 jobs:
   core:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # The closeout batches alone now take ~30-40 minutes at -j4 (2026-09-28:
+    # 44 min for the QS PR, 45 min cancellations on DX and the QE/QS/DX
+    # integration), so 45 no longer fits the job.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       # apt talks to the runner's package mirror, which sometimes hangs
