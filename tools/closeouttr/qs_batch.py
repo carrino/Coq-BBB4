@@ -159,48 +159,100 @@ def candidates(occ, n):
                                 yield key, e, d
 
 
-def end_inner_ok(c1, q, h, Lpre, uL, Rpre, uR, Rpost):
-    """SweepGlueTr.sw_inner_ok's test on the chain's end"""
+def end_inner_ok(c1, q, h, Lpre, uL, Rpre, uR, Rpost, c):
+    """SweepGlueTr.sw_inner_ok's test on the chain's end ([sside_end_is])"""
+    cq, cl, ch, cr = c1
+    if not (cq == q and ch == h and cl == (tuple(Lpre + uL), (), cl[2], cl[3], ())
+            and cr[1] == uR and cr[2] == 1 and cr[3] <= c):
+        return False
+    return any(cr[0] == Rpre + uR * x and lpad_eq(cr[4], uR * (c - cr[3] - x) + Rpost)
+               for x in range(c - cr[3] + 1))
+
+
+def end_base_ok(c1, q, h, Lpre, uL, R):
+    """SweepGlueTr.sw_base1_ok's test on the chain's end"""
     cq, cl, ch, cr = c1
     return (cq == q and ch == h and cl == (tuple(Lpre + uL), (), cl[2], cl[3], ())
-            and cr[0] == Rpre and cr[1] == uR and cr[2] == 1 and cr[3] == 0
-            and lpad_eq(cr[4], Rpost))
+            and cr[1] == () and cr[4] == () and lpad_eq(cr[0], R))
 
 
-def end_outer_ok(c1, q, h, Lpre, uL, Lpost, Rpre, uR, Rpost, e, d):
-    """SweepGlueTr.sw_outer_ok's test on the chain's end"""
+NANB = ((1, 0), (0, 1), (1, 1), (2, 0), (0, 2), (2, 1), (1, 2), (2, 2))
+
+
+def end_outer_ok(c1, q, h, Lpre, uL, Lpost, Rpre, uR, Rpost, e, c):
+    """SweepGlueTr.sw_outer_ok's test on the chain's end ([c = ma + mb + d])"""
     cq, cl, ch, cr = c1
-    return (cq == q and ch == h and cl[1] == () and cl[4] == ()
+    if not (cq == q and ch == h and cl[1] == () and cl[4] == ()
             and lpad_eq(cl[0], Lpre + uL * e + Lpost)
-            and cr[0] == Rpre and cr[1] == uR and cr[2] == 1 and cr[3] == d
-            and lpad_eq(cr[4], Rpost))
+            and cr[1] == uR and cr[2] == 1 and cr[3] <= c):
+        return False
+    return any(cr[0] == Rpre + uR * x and lpad_eq(cr[4], uR * (c - cr[3] - x) + Rpost)
+               for x in range(c - cr[3] + 1))
+
+
+MAMB = ((0, 0), (1, 0), (0, 1), (1, 1), (2, 0), (0, 2))
 
 
 def try_anchor(tab, tabw, pins, lastq, q, h, occ, key, e, d):
     Lpre, uL, Lpost, Rpre, uR, Rpost = key
-    A0 = (q, sflat(Lpre), h, (Rpre + uR, uR, 1, 0, Rpost))
-    A1 = (q, sflat(Lpre + uL), h, (Rpre, uR, 1, 0, Rpost))
-    chi = LC.derive_chain(tabw, False, True, A0, A1, lift=True)
+    # the units unrolled ahead of the inner lap: [na] at the near end (to
+    # step onto the block), [nb] at the far end (to turn on it); the last
+    # na + nb - 1 inner laps are concrete [base] chains
+    chi = None
+    for na, nb in NANB:
+        c = na + nb - 1
+        A0 = (q, sflat(Lpre), h, (Rpre + uR * na, uR, 1, 0, uR * nb + Rpost))
+        for x in range(c + 1):
+            A1 = (q, sflat(Lpre + uL), h, (Rpre + uR * x, uR, 1, 0, uR * (c - x) + Rpost))
+            chi = LC.derive_chain(tabw, False, True, A0, A1, lift=True)
+            if chi is not None:
+                r = LC.srun(tabw, False, True, chi, A0)
+                if (r is not None and r[2] > 0
+                        and end_inner_ok(r[0], q, h, Lpre, uL, Rpre, uR, Rpost, c)):
+                    break
+                chi = None
+        if chi is None:
+            continue
+        base = []
+        for k in range(c):
+            S0 = (q, sflat(Lpre), h, sflat(Rpre + uR * (k + 1) + Rpost))
+            T0 = (q, sflat(Lpre + uL), h, sflat(Rpre + uR * k + Rpost))
+            ch = LC.derive_chain(tabw, False, True, S0, T0, lift=True)
+            r = ch is not None and LC.srun(tabw, False, True, ch, S0)
+            if not r or r[2] <= 0 or not end_base_ok(r[0], q, h, Lpre, uL, Rpre + uR * k + Rpost):
+                break
+            base.append(ch)
+        else:
+            break
+        chi = None
     if chi is None:
         return None, 'no inner chain'
-    r = LC.srun(tabw, False, True, chi, A0)
-    if r is None or r[2] <= 0 or not end_inner_ok(r[0], q, h, Lpre, uL, Rpre, uR, Rpost):
-        return None, 'inner chain off-shape'
-    B0 = (q, (Lpre, uL, 1, 0, Lpost), h, sflat(Rpre + Rpost))
-    B1 = (q, sflat(Lpre + uL * e + Lpost), h, (Rpre, uR, 1, d, Rpost))
-    cho = LC.derive_chain(tabw, True, True, B0, B1, lift=True)
+    # the outer lap: [ma] / [mb] units behind unrolled at the two ends
+    cho = None
+    for ma, mb in MAMB:
+        c = ma + mb + d
+        B0 = (q, (Lpre + uL * ma, uL, 1, 0, uL * mb + Lpost), h, sflat(Rpre + Rpost))
+        for x, b in [(0, c)] + [(x, 0) for x in range(c + 1)]:
+            B1 = (q, sflat(Lpre + uL * e + Lpost), h,
+                  (Rpre + uR * x, uR, 1, b, uR * (c - b - x) + Rpost))
+            cho = LC.derive_chain(tabw, True, True, B0, B1, lift=True)
+            if cho is not None:
+                r = LC.srun(tabw, True, True, cho, B0)
+                if (r is not None and r[2] > 0 and
+                        end_outer_ok(r[0], q, h, Lpre, uL, Lpost, Rpre, uR, Rpost, e, c)):
+                    break
+                cho = None
+        if cho is not None:
+            break
     if cho is None:
         return None, 'no outer chain'
-    r = LC.srun(tabw, True, True, cho, B0)
-    if r is None or r[2] <= 0 or not end_outer_ok(r[0], q, h, Lpre, uL, Lpost, Rpre, uR, Rpost, e, d):
-        return None, 'outer chain off-shape'
     boot = None
     for t, L, R in occ:
         if t <= lastq:
             continue
         x, y = split_side(L, len(Lpre), uL), split_side(R, len(Rpre), uR)
         if (x and y and x[0] == Lpre and lpad_eq(x[3], Lpost)
-                and y[0] == Rpre and lpad_eq(y[3], Rpost)):
+                and y[0] == Rpre and lpad_eq(y[3], Rpost) and x[2] + y[2] >= ma + mb):
             boot = (t, x[2], y[2])
             break
     if boot is None or boot[0] > BOOT_CAP:
@@ -221,7 +273,7 @@ def try_anchor(tab, tabw, pins, lastq, q, h, occ, key, e, d):
         if wit is None:
             return None, 'no fire witness for %s%d' % ('ABCD'[ins[0]], ins[1])
         fires.append(wit)
-    return dict(q=q, h=h, key=[list(x) for x in key], e=e, d=d, chi=chi, cho=cho,
+    return dict(q=q, h=h, key=[list(x) for x in key], e=e, d=d, na=na, nb=nb, base=base, ma=ma, mb=mb, chi=chi, cho=cho,
                 boot=boot, fires=fires), None
 
 
@@ -273,10 +325,12 @@ def render(c):
     fires = '[' + '; '.join('(%s, %s)' % ('true' if o else 'false', cchain(ch))
                             for o, ch in c['fires']) + ']'
     t0, i0, k0 = c['boot']
-    cert = ('(mkSW %s %s %s %s %s %s %s %s %s %d %d\n      %s\n      %s\n      %s\n      %d %d %d)'
+    base = '[' + '; '.join(cchain(ch) for ch in c['base']) + ']'
+    cert = ('(mkSW %s %s %s %s %s %s %s %s %s %d %d %d %d\n      %s\n      %s\n      %d %d %s\n      %s\n      %d %d %d)'
             % (pins, ST[c['q']], SYM[c['h']], clist(Lpre), clist(uL), clist(Lpost),
-               clist(Rpre), clist(uR), clist(Rpost), c['e'], c['d'],
-               cchain(c['chi']), cchain(c['cho']), fires, t0, i0, k0))
+               clist(Rpre), clist(uR), clist(Rpost), c['e'], c['d'], c['na'], c['nb'],
+               cchain(c['chi']), base, c.get('ma', 0), c.get('mb', 0), cchain(c['cho']),
+               fires, t0, i0, k0))
     lemma = 'sweep_sound_mirror' if c['mir'] else 'sweep_sound'
     return 'apply coversTr_qh3, (%s _\n      %s).\n  vm_cast_no_check (eq_refl true).' % (lemma, cert)
 

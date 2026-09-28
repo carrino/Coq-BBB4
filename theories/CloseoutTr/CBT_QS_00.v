@@ -14,9 +14,10 @@ Import ListNotations.
 Definition r_QS_00_0000 : list (option Trans) := [t0RB;tN;t0LC;t0RC;t0LD;t1RC;t1RB;t1LD].
 Lemma cv_QS_00_0000 : coversTr (row_to_tm r_QS_00_0000).
 Proof. apply coversTr_qh3, (sweep_sound _
-      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 0
+      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 0 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 6); (SCycL 1 0); (SWinL 2)]
+      []
+      0 0 [(SWinR 6); (SCycL 1 0); (SWinL 2)]
       [(true, [(SWinR 3)]); (false, []); (false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)])]
       9 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -25,9 +26,10 @@ Proof. apply coversTr_qh3, (sweep_sound _
 Definition r_QS_00_0001 : list (option Trans) := [t0RB;tN;t0LC;t0RD;t1RB;t1LC;t0LC;t1RD].
 Lemma cv_QS_00_0001 : coversTr (row_to_tm r_QS_00_0001).
 Proof. apply coversTr_qh3, (sweep_sound _
-      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 0
+      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 0 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 4); (SCycL 1 0); (SWinL 2)]
+      []
+      0 0 [(SWinR 4); (SCycL 1 0); (SWinL 2)]
       [(true, [(SWinR 3)]); (false, []); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)])]
       6 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -36,9 +38,10 @@ Proof. apply coversTr_qh3, (sweep_sound _
 Definition r_QS_00_0002 : list (option Trans) := [t0RB;tN;t0LC;t1RB;t1RD;t1LC;t0LB;t0RB].
 Lemma cv_QS_00_0002 : coversTr (row_to_tm r_QS_00_0002).
 Proof. apply coversTr_qh3, (sweep_sound _
-      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 0
+      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 0 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 6); (SCycL 1 0); (SWinL 2)]
+      []
+      0 0 [(SWinR 6); (SCycL 1 0); (SWinL 2)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, [])]
       8 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -47,9 +50,10 @@ Proof. apply coversTr_qh3, (sweep_sound _
 Definition r_QS_00_0003 : list (option Trans) := [t0RB;tN;t0LC;t1RB;t1RD;t1LC;t0LC;t0RB].
 Lemma cv_QS_00_0003 : coversTr (row_to_tm r_QS_00_0003).
 Proof. apply coversTr_qh3, (sweep_sound _
-      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 0
+      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 0 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 4); (SCycL 1 0); (SWinL 2)]
+      []
+      0 0 [(SWinR 4); (SCycL 1 0); (SWinL 2)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, [])]
       6 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -58,9 +62,10 @@ Proof. apply coversTr_qh3, (sweep_sound _
 Definition r_QS_00_0004 : list (option Trans) := [t0RB;tN;t0LC;t1RB;t1RD;t1LC;t1LB;t0RB].
 Lemma cv_QS_00_0004 : coversTr (row_to_tm r_QS_00_0004).
 Proof. apply coversTr_qh3, (sweep_sound _
-      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1
+      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 8); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
+      []
+      0 0 [(SWinR 8); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, [])]
       10 1 1)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -69,9 +74,10 @@ Proof. apply coversTr_qh3, (sweep_sound _
 Definition r_QS_00_0005 : list (option Trans) := [t0RB;tN;t0LC;t1RB;t1RD;t1LC;t1LC;t0RB].
 Lemma cv_QS_00_0005 : coversTr (row_to_tm r_QS_00_0005).
 Proof. apply coversTr_qh3, (sweep_sound _
-      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1
+      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 4); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
+      []
+      0 0 [(SWinR 4); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, [])]
       6 1 1)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -80,9 +86,10 @@ Proof. apply coversTr_qh3, (sweep_sound _
 Definition r_QS_00_0006 : list (option Trans) := [t0RB;tN;t0LC;t1RB;t1RD;t1LC;t1RB;t0RB].
 Lemma cv_QS_00_0006 : coversTr (row_to_tm r_QS_00_0006).
 Proof. apply coversTr_qh3, (sweep_sound _
-      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1
+      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 6); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
+      []
+      0 0 [(SWinR 6); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, [])]
       8 1 1)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -91,9 +98,10 @@ Proof. apply coversTr_qh3, (sweep_sound _
 Definition r_QS_00_0007 : list (option Trans) := [t0RB;tN;t0RC;t0LC;t0RD;t1LC;t1LB;t1RD].
 Lemma cv_QS_00_0007 : coversTr (row_to_tm r_QS_00_0007).
 Proof. apply coversTr_qh3, (sweep_sound_mirror _
-      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 0
+      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 0 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 6); (SCycL 1 0); (SWinL 2)]
+      []
+      0 0 [(SWinR 6); (SCycL 1 0); (SWinL 2)]
       [(true, [(SWinR 3)]); (false, []); (false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)])]
       9 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -102,9 +110,10 @@ Proof. apply coversTr_qh3, (sweep_sound_mirror _
 Definition r_QS_00_0008 : list (option Trans) := [t0RB;tN;t0RC;t0LD;t1LB;t1RC;t0RC;t1LD].
 Lemma cv_QS_00_0008 : coversTr (row_to_tm r_QS_00_0008).
 Proof. apply coversTr_qh3, (sweep_sound_mirror _
-      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 0
+      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 0 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 4); (SCycL 1 0); (SWinL 2)]
+      []
+      0 0 [(SWinR 4); (SCycL 1 0); (SWinL 2)]
       [(true, [(SWinR 3)]); (false, []); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)])]
       6 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -113,9 +122,10 @@ Proof. apply coversTr_qh3, (sweep_sound_mirror _
 Definition r_QS_00_0009 : list (option Trans) := [t0RB;tN;t1LC;t0RC;t0LD;t1RC;t1RB;t1LD].
 Lemma cv_QS_00_0009 : coversTr (row_to_tm r_QS_00_0009).
 Proof. apply coversTr_qh3, (sweep_sound _
-      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 1
+      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 1 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 8); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
+      []
+      0 0 [(SWinR 8); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
       [(true, [(SWinR 3)]); (false, []); (false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)])]
       13 1 2)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -124,9 +134,10 @@ Proof. apply coversTr_qh3, (sweep_sound _
 Definition r_QS_00_0010 : list (option Trans) := [t0RB;tN;t1LC;t0RD;t1RB;t1LC;t0LC;t1RD].
 Lemma cv_QS_00_0010 : coversTr (row_to_tm r_QS_00_0010).
 Proof. apply coversTr_qh3, (sweep_sound _
-      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 1
+      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 1 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 4); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
+      []
+      0 0 [(SWinR 4); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
       [(true, [(SWinR 3)]); (false, []); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)])]
       3 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -135,9 +146,10 @@ Proof. apply coversTr_qh3, (sweep_sound _
 Definition r_QS_00_0011 : list (option Trans) := [t0RB;tN;t0RC;t1LB;t1LD;t1RC;t0RB;t0LB].
 Lemma cv_QS_00_0011 : coversTr (row_to_tm r_QS_00_0011).
 Proof. apply coversTr_qh3, (sweep_sound_mirror _
-      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 0
+      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 0 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 6); (SCycL 1 0); (SWinL 2)]
+      []
+      0 0 [(SWinR 6); (SCycL 1 0); (SWinL 2)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, [])]
       8 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -146,9 +158,10 @@ Proof. apply coversTr_qh3, (sweep_sound_mirror _
 Definition r_QS_00_0012 : list (option Trans) := [t0RB;tN;t1LC;t0LC;t0RD;t1LC;t1LB;t1RD].
 Lemma cv_QS_00_0012 : coversTr (row_to_tm r_QS_00_0012).
 Proof. apply coversTr_qh3, (sweep_sound_mirror _
-      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 1
+      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 1 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 6); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
+      []
+      0 0 [(SWinR 6); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
       [(true, [(SWinR 3)]); (false, []); (false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)])]
       5 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -157,9 +170,10 @@ Proof. apply coversTr_qh3, (sweep_sound_mirror _
 Definition r_QS_00_0013 : list (option Trans) := [t0RB;tN;t1LC;t1RB;t0RD;t0LD;t0RB;t1LD].
 Lemma cv_QS_00_0013 : coversTr (row_to_tm r_QS_00_0013).
 Proof. apply coversTr_qh3, (sweep_sound_mirror _
-      (mkSW [(StA, S0); (StA, S1)] StC S1 [] [S1] [] [] [S1] [] 1 0
+      (mkSW [(StA, S0); (StA, S1)] StC S1 [] [S1] [] [] [S1] [] 1 0 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 6); (SCycL 1 0); (SWinL 2)]
+      []
+      0 0 [(SWinR 6); (SCycL 1 0); (SWinL 2)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, []); (false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)])]
       7 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -168,9 +182,10 @@ Proof. apply coversTr_qh3, (sweep_sound_mirror _
 Definition r_QS_00_0014 : list (option Trans) := [t0RB;tN;t1LC;t1RB;t0RB;t0LD;t0RB;t1LD].
 Lemma cv_QS_00_0014 : coversTr (row_to_tm r_QS_00_0014).
 Proof. apply coversTr_qh3, (sweep_sound_mirror _
-      (mkSW [(StA, S0); (StA, S1)] StC S1 [] [S1] [] [] [S1] [] 1 0
+      (mkSW [(StA, S0); (StA, S1)] StC S1 [] [S1] [] [] [S1] [] 1 0 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 4); (SCycL 1 0); (SWinL 2)]
+      []
+      0 0 [(SWinR 4); (SCycL 1 0); (SWinL 2)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, []); (false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)])]
       5 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -179,9 +194,10 @@ Proof. apply coversTr_qh3, (sweep_sound_mirror _
 Definition r_QS_00_0015 : list (option Trans) := [t0RB;tN;t0RC;t1LB;t1LD;t1RC;t0RC;t0LB].
 Lemma cv_QS_00_0015 : coversTr (row_to_tm r_QS_00_0015).
 Proof. apply coversTr_qh3, (sweep_sound_mirror _
-      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 0
+      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 0 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 4); (SCycL 1 0); (SWinL 2)]
+      []
+      0 0 [(SWinR 4); (SCycL 1 0); (SWinL 2)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, [])]
       6 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -190,9 +206,10 @@ Proof. apply coversTr_qh3, (sweep_sound_mirror _
 Definition r_QS_00_0016 : list (option Trans) := [t0RB;tN;t0RC;t1LB;t1LD;t1RC;t1LB;t0LB].
 Lemma cv_QS_00_0016 : coversTr (row_to_tm r_QS_00_0016).
 Proof. apply coversTr_qh3, (sweep_sound_mirror _
-      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1
+      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 6); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
+      []
+      0 0 [(SWinR 6); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, [])]
       8 1 1)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -201,9 +218,10 @@ Proof. apply coversTr_qh3, (sweep_sound_mirror _
 Definition r_QS_00_0017 : list (option Trans) := [t0RB;tN;t1RC;t0RC;t0LD;t1RC;t1RB;t1LD].
 Lemma cv_QS_00_0017 : coversTr (row_to_tm r_QS_00_0017).
 Proof. apply coversTr_qh3, (sweep_sound _
-      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 1
+      (mkSW [(StA, S0); (StA, S1)] StB S1 [] [S1] [] [] [S1] [] 1 1 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 6); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
+      []
+      0 0 [(SWinR 6); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
       [(true, [(SWinR 3)]); (false, []); (false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)])]
       5 1 0)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -212,9 +230,10 @@ Proof. apply coversTr_qh3, (sweep_sound _
 Definition r_QS_00_0018 : list (option Trans) := [t0RB;tN;t0RC;t1LB;t1LD;t1RC;t1RC;t0LB].
 Lemma cv_QS_00_0018 : coversTr (row_to_tm r_QS_00_0018).
 Proof. apply coversTr_qh3, (sweep_sound_mirror _
-      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1
+      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 4); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
+      []
+      0 0 [(SWinR 4); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, [])]
       6 1 1)).
   vm_cast_no_check (eq_refl true). Qed.
@@ -223,9 +242,10 @@ Proof. apply coversTr_qh3, (sweep_sound_mirror _
 Definition r_QS_00_0019 : list (option Trans) := [t0RB;tN;t0RC;t1LB;t1LD;t1RC;t1RB;t0LB].
 Lemma cv_QS_00_0019 : coversTr (row_to_tm r_QS_00_0019).
 Proof. apply coversTr_qh3, (sweep_sound_mirror _
-      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1
+      (mkSW [(StA, S0); (StA, S1)] StD S1 [] [S1] [] [] [S1] [] 1 1 1 0
       [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 2)]
-      [(SWinR 8); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
+      []
+      0 0 [(SWinR 8); (SCycL 1 0); (SWinL 2); (SRotR 1); (SFoldR 1)]
       [(false, [(SWin 1); (SCycR 1); (SWinR 1)]); (false, [(SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2); (SCycL 1 0); (SWin 1)]); (false, [(SWin 1); (SCycR 1); (SWinR 2)]); (true, [(SWinR 3)]); (false, [])]
       10 1 1)).
   vm_cast_no_check (eq_refl true). Qed.
