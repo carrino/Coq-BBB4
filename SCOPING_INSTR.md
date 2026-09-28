@@ -2621,10 +2621,97 @@ boots are at most 64).  The same file then takes 8 s and 0.9 GB, and all
 
 | rows | sub-class | route |
 |---:|---|---|
-| 605 + 129 | counters the lap emitter does not derive | the emitter ports §7.3e already names (nested S1 overflow, peel, avoid).  The largest new bucket is "no overflow chain (nested route is S0-only)" |
+| 605 + 129 | counters the lap emitter does not derive | the emitter ports §7.3e already names (nested S1 overflow, peel, avoid).  The largest new bucket is "no overflow chain (nested route is S0-only)" (§7.4.QE: 340 boarded by three emitter ports, 394 left) |
 | 485 | sweep counters | **new Coq**: a two-index lap glue.  The anchor `Cc (n, i)` is the block `1^n` with the hole at i; the inner lap `(n, i) -> (n, i+1)` is one sweep, a linear `srun` chain with `SCyc` over the rest of the block; the outer lap `(n, n) -> (n+1, 0)` is the grow step.  Both are `LapDecider` chains already, and the missing piece is the glue that runs the inner lap by induction on the hole's distance (the counter alphabets are positional, so `cview` does not express it).  One shape covers all 485 |
 | 198 | bouncer hybrids | the counter-aware recurrence checker of the SP class (same machines, one quiet instruction more) |
 | 15 | dense bouncers | a longer `--qh` RepWL pass (900 s) |
+
+#### 7.4.QE The QH counters the lap emitter did not derive: three emitter ports, 340 boarded (2026-09-28)
+
+Workstream QE (batch tag `QE`), over the 734 open rows of §7.4.QC's
+`counter_boxfail` (605) and `counter_new` (129) sub-classes.  The 485
+`sweep_counter` rows are workstream QS's and were not touched.  Per-row
+results: `tools/closeouttr/qe_probe.tsv`.
+
+**Bucketing.**  `emit_lapcert.py --qh` reports only the LAST anchor's
+failure, and the last anchor it tries is the mirrored S1-head one, so its
+"no overflow chain (nested route is S0-only)" line (§7.3d, §7.4.QC) says
+little about why the S0 anchors failed.  `tools/closeouttr/qe_probe.py`
+runs the same search (both orientations, both head symbols, every anchor
+family) and records every attempt: the derive's reason or, for a derived
+certificate, the `--qh` renderer's.  On the first 67 rows the blockers
+that mattered were in the TRANSITION-level path, not in the lap search:
+26 rows derived a certificate that `render_tr` then refused.  45 rows hit
+the S1 refusal, and every one of them also failed at an S0 anchor at the
+overflow stage or later.  Hence two ports in the renderer path, and the
+S1 port third:
+
+* **the per-STATE visit gate** (`no visit witness for state X`, and `avoid
+  route: only flat exact boards are wired`).  `derive` insisted that every
+  state fire inside the lap, or that the missing one be closed by
+  `glue_qh`, an absorbing set or the avoid route.  At instruction level
+  none of that is needed.  `render_tr` drops the state board from `viso_*`
+  on and proves per-INSTRUCTION fires; an instruction that fired only
+  before the boot is pinned, and the kernel re-runs every chain on the
+  machine wrapped at the pins.  A state that the lap never reaches has no
+  fired instruction after the boot, so it only adds pins.  In `TR_MODE`
+  the gate is now skipped.  State-level behaviour is unchanged.
+* **the reindexed routes in `render_tr`** (offset-nested overflow and the
+  peeled overflow), which state the overflow branch at `j = S j'` with
+  `p = 1` as one concrete lap.  The renderer refused them.  It now
+  destructs the outer index in each overflow-side fire bullet and
+  discharges `p = 1` with a concrete `firez_<instr>_<ID>` run from `Cc 1`
+  (the state board's `visz_*`, per instruction).  Offset nests with an
+  instruction that fires only in the exit half are still refused.  After
+  the ports no row in this population hits a renderer refusal.  All 18
+  reindexed boards are offset nests; the peeled path shares the code but no
+  row here exercised it.
+
+The third port is the one §7.3e/§7.4.QC named: **the nested overflow at an
+S1 anchor head**.  `nestcert` hard-coded the OUTER anchor's head as blank
+in `phase_mid`, `validate`, `derive_offset` and `validate_offset`.  The
+outer head is now `NC.OHD`, which the emitter sets to its `HD`.  The Coq
+side needed nothing, since the inner anchors keep their literal `S0` and
+the outer glue is the flat `@AHD@` template.
+
+**Yields** (probe: 734 rows, 4 jobs, 400 s cap, ~8 s a row; then
+`--qh --emit`, every board kernel-checked by the emitter's `coqc`):
+
+| port | rows boarded | from |
+|---|---:|---|
+| per-state visit gate skipped at instruction level | 320 (11 of them with lift slack) | 319 box-fail, 1 new |
+| reindexed (offset-nested) overflow in `render_tr` | 18 | all `counter_new` |
+| nested overflow at an S1 head | 1 | box-fail |
+| none (flat; a box board already exists, `ProvTr_QH_09`, but the row is still deferred) | 1 | box-fail |
+| **total** | **340** | 321 of 605 box-fail, 19 of 129 new |
+
+No derived certificate failed to compile.  Boarded as `CBT_QE_00..08`
+(40 boards a file, inline, through `qc_batch.py lap --tag QE`; no new Coq).
+Closeout: 4,320 boarded before, **4,660** after, **6,264** remaining.
+
+**The residue (394), by blocker and by growth.**  Growth is the tape
+extent's dominant side over 1e8 steps (`log2` of the time ratio per new
+cell over the last third of its new cells): 1.00 is a binary counter with
+one cell per digit, 0.50 two cells per digit, 0.694 the golden ratio.
+
+| best blocker | rows | growth | what it is |
+|---|---:|---|---|
+| no interior chain | 74 | 0.694 | **Fibonacci counters** (Zeckendorf-style: x1.618 a cell).  No binary digit alphabet fits.  They need a Fibonacci counter theory (`FIB_ELEVEN` in `tools/counters/` is the state-level precedent) |
+| no interior chain | 66 | 1.00 | **binary, parity carry.**  One looked at, `0RB0LB_0RC0LA_1LB1RD_1LA1RC` (mirrored, anchor `C` at head 1, `Kp`): the carry crosses the run of ones alternating two states (`D1 -> 1RC`, `C1 -> 1RD`), so the state that ends the carry depends on the parity of `j`.  No single `srun` chain covers both parities.  The port is a parity split of `cview` (`j = 2i`, `j = 2i+1`, two chains).  That is new Coq glue |
+| no interior chain | 28 / 57 | 0.79 / other (0.64, 0.67, 0.72, 0.86, 0.89) | other radices (x1.73 a cell and others) |
+| no overflow chain (nested: no exit chain) | 40 | 1.00, **two-sided** | one family (5 cores times the quiet A-transitions): a binary counter that grows one cell per doubling on BOTH ends.  The nested route (S0 and, now, S1) finds the boot but no exit chain |
+| no overflow chain (nested: boot / inner family / inner interior) | 55 | 0.50 (30) or 0.47 (25) | two-cell-digit binaries whose overflow phase the nested search cannot split |
+| no anchor | 74 | 1/3 (25), 0.50 (29, 5 two-sided), 0.47 two-sided (16), 0.694 (2), 0.47 (2) | no anchor family with a long run of consecutive values |
+
+The two largest pieces of residue (74 Fibonacci, 66 parity carries) are
+both new counter shapes, not search gaps.  The parity split is the smaller
+Coq change: it reuses every chain and glue lemma per parity.
+
+```
+python3 tools/closeouttr/qe_probe.py rows.txt probe.jsonl --jobs 4 --timeout 400
+(cd tools/counters && python3 emit_lapcert.py --qh --emit --list ok.txt --json emit.json)
+python3 tools/closeouttr/qc_batch.py lap theories/Machines/CountersTr/LAPQ_*.v --tag QE --chunk 40
+```
 
 ## 8. What we deliberately do NOT redo
 

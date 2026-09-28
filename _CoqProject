@@ -8637,6 +8637,15 @@ theories/CloseoutTr/CBT_QC_29.v
 theories/CloseoutTr/CBT_QC_30.v
 theories/CloseoutTr/CBT_QC_31.v
 theories/CloseoutTr/CBT_QC_32.v
+theories/CloseoutTr/CBT_QE_00.v
+theories/CloseoutTr/CBT_QE_01.v
+theories/CloseoutTr/CBT_QE_02.v
+theories/CloseoutTr/CBT_QE_03.v
+theories/CloseoutTr/CBT_QE_04.v
+theories/CloseoutTr/CBT_QE_05.v
+theories/CloseoutTr/CBT_QE_06.v
+theories/CloseoutTr/CBT_QE_07.v
+theories/CloseoutTr/CBT_QE_08.v
 theories/CloseoutTr/CBT_QH_00.v
 theories/CloseoutTr/CBT_RW_00.v
 theories/CloseoutTr/CBT_RW_01.v
