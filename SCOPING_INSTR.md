@@ -2896,6 +2896,118 @@ CI: with the QS and DX batches, the `core` job's closeout step runs
 32-40 min at `-j4`, and runs were cancelled at the old 45-minute limit.
 `timeout-minutes` is now 90.
 
+#### 7.4.HY The bouncer + counter hybrids: a counter lap whose far side is a growing block (2026-09-28)
+
+Workstream HY (batch tag `HY`), over the 496 open `sqrt+log` rows of
+§7.4.DX (`dx/char_all.tsv`, column `hybrid`): 462 DN and 34 QH.
+
+**Five by hand.**  In `1RB0RA_1LC0RA_1LD0LB_1RB1LD` the tape is a binary
+counter at the left end, one cell a digit with the low end next to the
+block, and a block beside it: `1101110010 (01)^n 1`.  Each lap the head
+comes back over the block and runs into the counter (`D` walks left over
+the carry of ones, `D0` sets the first zero, `A` walks back clearing the
+ones).  It then sweeps right over the block, writes one more unit at the
+far end and comes back.  Three of the five rows have this shape.  The
+other two are what most of the residue turned out to be: a counter that
+steps once every three sweeps with a 3-cell unit growing 2 cells a sweep
+(`0RB0RA_1LC1RA_0LD0LA_1LA1LB`), and a tape of several blocks
+(`1RB1LA_0LA0RC_1LC1LD_1RB0LA`).
+
+**The checker** (`theories/Counters/HybridGlueTr.v`, axiom-free beyond
+`functional_extensionality_dep`).  The anchor is two-index:
+`hyC p n = (q, (Lpre ++ E p, h, Rpre ++ w^n ++ Rpost))`.  `E` is the counter
+word, generic in its digit words (`E xH = C`, `E (xO r) = A ++ E r`,
+`E (xI r) = B ++ E r`, the shape of every inferred alphabet); its `cview`
+decompositions are proved once for all `A`, `B` and `C`, so a board needs
+no per-alphabet file.  One lap is two chains through a mid configuration
+`hyM p n = (q2, (Mpre ++ E p, h2, w^n ++ Rpost))`:
+
+* the **counter half** `hyC p (m + n) -> hyM (p+1) n` is a `LapDecider`
+  chain indexed by the carry length, with the block as its opaque right
+  tail (`m` units of it concrete).  It has an interior branch (high part
+  `E r` opaque) and an overflow branch (far left empty).  Each unrolls
+  `nu`/`no` carry units and takes the shorter carries as concrete
+  chains.  The overflow branch carries the carry instruction: the piece
+  §7.4.DX found the irules sweep cycle lacks;
+* the **sweep half** `hyM p (na + k + nb) -> hyC p (k + c)` is a chain
+  indexed by the block length, with the counter as its opaque left tail
+  (§7.4.QS's inner loop).  It may cross the block several times, which is
+  how a counter that steps once every 2 or 4 sweeps is expressed: the
+  partial units the sweeps add fold back (`SFold`) by the end of the lap.
+
+A certificate is a list of anchor **phases**: when the block grows by a
+number of cells its unit does not divide, the junction sees the unit at a
+different offset each lap.  Each phase's sweep lands on the next phase's
+anchor, so the lap is `(p, n, i) -> (p+1, n - nmin_i + c_i, i+1 mod L)`.
+The anchors along the run are the `(p - p0)`-th iterates from the boot,
+which is the single-index `Hlap` of `LapGlueTr.glue_neverqhtr` (DN) or
+`QHConveyorTr.lap_qh_stage` (QH).  Fires come from chain prefixes of any
+phase's three chains.  An interior or overflow fire needs a counter value
+with the right carry shape in that phase.  The certificate names a
+family for it (`ones_on j (xO (r0 + L s))`, or `ones_on (k0 + T s) xH`),
+and the checker computes the family's phase mod `L`.  The QH bound
+reads `Nat.log2 t0 < 24`, so no unary `2^24` is built per row.  A row is
+one line, `apply coversTr_nqh, (hy_sound_nqh _ (mkHY ...))` (`_mirror`
+when the counter is on the right), and a 40-row batch compiles in 1-2.3 s.
+
+**Finder** (`tools/closeouttr/hy_batch.py find`, untrusted).  It runs the
+row and its mirror for 4e5 steps.  It pins the undefined instructions
+(DN; a carry instruction may be silent for the whole run), or those
+silent since the 1e8 scan's quiet point (QH).  Two kinds of anchor
+sequence are tried:
+
+* the fires of one instruction at one cell whose six left neighbours
+  change between visits (the counter's low end);
+* the k-th visit of a cell after each sweep, sub-sampled every `S` sweeps
+  (`S` = 1..4) and split into `L` = 1..4 phases, with one counter prefix
+  for all phases or one per phase.
+
+It reads the counter family (`Lpre`, `A`, `B`, `C`, digits of 1-4 cells)
+and the block (`Rpre`, `w`, `Rpost`, units of 1-8 cells) off the anchors.
+It reads the mid off the simulation (the counter incremented, the head
+about to leave `Rpre ++ w^m`).  Then it derives the chains with
+`lapcert.derive_chain`, the earliest boot, and a fire witness per
+instruction.  4e5 steps, 240 s a row; the 496 took ~40 min at 4 jobs.
+
+**Yield: 170 of 496 (34%), all DN**, `CBT_HY_00..04`; all 170 compile.
+DN open 1,472 -> **1,302**; all rows 4,156 -> **3,986**.
+
+| certificate shape | rows |
+|---|---:|
+| one phase / two phases | 169 / 1 |
+| sweeps per lap (counter steps once every 1 / 2 / 3 / 4 sweeps) | 66 / 52 / 1 / 51 |
+| digits of 1 / 2 / 3 / 4 cells | 58 / 82 / 29 / 1 |
+| top alphabets `(A, B, C)`: `(0,1,1)` / `(00,11,11)` / `(00,10,1)` / `(00,01,01)` | 58 / 50 / 17 / 15 |
+| block unit of 1 / 2 / 3 / 4 / 7 cells | 54 / 103 / 5 / 4 / 4 |
+| carry unrolled `nu` = 0 / 1 (no = 0 in all) | 148 / 22 |
+| counter on the right (certified on the mirror) | 77 |
+| fire witnesses: sweep only / + interior / + overflow | 92 / 66 / 12 |
+
+The boots are short (the latest at step 285).
+
+**Residue (326: 292 DN + 34 QH).**  From the tape at the last far-side
+record before 4e5 steps (`hy_residue.py`, `tools/closeouttr/hy/residue.tsv`; a block is a
+run of a unit of at most 4 cells over at least 8 repetitions, a long block
+one over 40 cells):
+
+| rows | tape | what the glue misses |
+|---:|---|---|
+| 130 (115 DN + 15 QH) | one long block (unit of 3 cells: 67, 2: 42, 1: 14, 4: 7) and a short end | the short end is not a counter of the `E` shape read from one cell.  Seen by hand: a digit under the MSB written differently until the next overflow (`0RB0LB_1LC1RA_0LD0LC_1RD1LB`: `...1101 0110 01101` before 192, `...1101 01101` after); 3-cell units growing 2 cells a sweep, where the junction cells rotate with the unit and anchors that fall mid-carry defeat the per-phase family (`0RB1LC_1LC1RD_1LA0LC_0RD1RB`); a low digit that cycles through three values (`0RB0RA_1LC1RA_0LD0LA_1LA1LB`: `100 -> 010 -> 000`) |
+| 190 (171 DN + 19 QH) | several long blocks | two-block sweeps with a counter at one end (§7.4.QS's sweep counter plus a counter: three indices), doubling multi-block tapes (`0RB0LB_1LC0RD_1LA1RB_1LC1RD`: `(111)^13 0 (111)^26 00 (111)^52 ...`), block-digit counters (`(001)^159 011 0 (001)^61 ...`), and the QH rows' `(111)^a (01)^b (111)^c` |
+| 6 | no long block | |
+
+None of the 34 QH rows fits.  Their quiet instruction stops as late as step
+7.97M (the finder runs past it for QH rows), and their tapes are two- and
+three-block sweeps, not counter + block.
+
+**Next.**  Most of the 190 multi-block rows are the three-index
+shape §7.4.QS left open: a sweep counter's `(i, k)` glue with a counter
+(or a third tied block) as its far tail.  `HybridGlueTr`'s phase list and
+`SweepGlueTr`'s two-index enumeration compose: the sweep half becomes
+`SweepGlueTr`'s inner and outer laps with the counter opaque.  The
+130 single-block rows need counter alphabets beyond `E`: a top digit
+that differs from the body digits, and base-3 digits (a `cview` for base 3).
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

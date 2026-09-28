@@ -1473,6 +1473,7 @@ theories/Counters/LapCertGlue.v
 theories/Counters/LapGlueTr.v
 theories/Counters/LapGlueQHTr.v
 theories/Counters/SweepGlueTr.v
+theories/Counters/HybridGlueTr.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1LB_1LC1RB.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1LD_1LC1RB.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1RA_1LC1RB.v
@@ -9334,6 +9335,11 @@ theories/CloseoutTr/CBT_DXQ_02.v
 theories/CloseoutTr/CBT_DXQ_03.v
 theories/CloseoutTr/CBT_DXS_00.v
 theories/CloseoutTr/CBT_DXS_01.v
+theories/CloseoutTr/CBT_HY_00.v
+theories/CloseoutTr/CBT_HY_01.v
+theories/CloseoutTr/CBT_HY_02.v
+theories/CloseoutTr/CBT_HY_03.v
+theories/CloseoutTr/CBT_HY_04.v
 theories/CloseoutTr/CBT_NG_00.v
 theories/CloseoutTr/CBT_NG_01.v
 theories/CloseoutTr/CBT_NG_02.v
