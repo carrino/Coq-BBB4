@@ -2340,17 +2340,21 @@ rejected, against 4 of 75 on the sample).  Cost: window 4 ~1 h at 2
 jobs, window 5 ~5 h, window 6 43 CPU-hours (~11 h at 4 jobs), 24 of
 them in its 291 timeouts at the 300 s cap.  With the sample, class DN
 has 999 rows the rank tier certifies (969 + the 30 of `CBT_NG_00`).
-None of the 969 is boarded yet: they wait for the box's `RW` batches,
-so rows RepWL takes are not boarded twice.
+**Boarded (PR #148, merged after the box's `RW` batches):** of the 1,001
+DN rows the rank tier certifies at any window (969 + the sample's 32),
+921 are in `CBT_NG_00..18` and the other 80 were boarded first by the
+box's `RW` batches, so the RepWL / rank-tier overlap on the whole class
+is 80 rows (8% of the rank tier's take).  No certified row is left in
+`closeouttr_remaining.txt`; class DN stands at 1,114 boarded, 2,919
+remaining.
 
 **Dry run of the boarding.**  `ng_batch.py batch` over the two TSVs
 writes 20 batches of 50 (971 rows: the 969, plus the 2 sample rows that
 only window 7 takes and that `CBT_NG_00` predates); every row
 kernel-checks (1,224 s wall at `-j4`, ~4 core-minutes per 50-row
 batch), and the split `CloseoutTr.vo` over them
-compiles in 10 s, leaving 3,021 DN rows.  The batches are not committed:
-they are regenerated after the `RW` merge, which drops the rows RepWL
-boards first.
+compiles in 10 s.  The committed batches were regenerated after the
+`RW` merge, which dropped the rows RepWL boards first.
 
 **Next lever: window 7.**  On the sample it takes 3 of the 71 rows
 window 6 rejects; on the full class's ~2,950 window-6 rejections that is
@@ -2361,11 +2365,10 @@ A note for anyone running a long probe in the container: a detached
 (`nohup`/`setsid`) probe dies when the idle container is reclaimed; run
 it as a tracked background task.  The probe resumes from its JSON.
 
-Next: once the box's `RW` batches are on `main`, the ladder runs over
-every DN row still in `closeouttr_remaining.txt`
-(already probed: `ng_batch.py batch tools/closeouttr/ng_probe_dn.tsv
-tools/closeouttr/ng_probe_dn_sample.tsv --tag NG` boards whatever of the
-969 is still remaining).
+Where the route stands: every DN row has been through windows 4-6, so
+the 2,919 remaining DN rows are rank-tier failures at those windows
+(plus the RepWL finder's).  Window 7 (above) is the only untried rung
+on this route.
 
 ### 7.4.SP Class SP: the rare instruction is an overflow, and two landed checkers already prove it recurs (2026-09-24)
 
