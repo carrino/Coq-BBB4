@@ -52,6 +52,13 @@ LAB = 'ABCD'
 MAXTAIL = 3
 
 
+# The OUTER anchor's head symbol (emit_lapcert's [HD]), set by the caller
+# around [derive_nested]/[derive_offset].  Only the outer configurations the
+# search and the validators build read it; every INNER anchor keeps its own
+# literal [S0] head (Cin@S@_@ID@), which the Coq templates state.
+OHD = 0
+
+
 class NestError(Exception):
     """This machine does not take the nested route."""
 
@@ -108,8 +115,8 @@ def phase_mid(tab, st0, encf, tail, far, K=6, maxT=400000):
     """Every blank-head configuration inside ONE overflow phase of the given
     outer anchor, in order.  Raises if the phase does not close."""
     tail, far = tuple(tail), tuple(far)
-    cfg = (st0, tuple(encf(2 ** K - 1)) + tail, 0, far)
-    want = (st0, LC.rstrip0(tuple(encf(2 ** K)) + tail), 0, LC.rstrip0(far))
+    cfg = (st0, tuple(encf(2 ** K - 1)) + tail, OHD, far)
+    want = (st0, LC.rstrip0(tuple(encf(2 ** K)) + tail), OHD, LC.rstrip0(far))
     mid = []
     for _ in range(maxT):
         try:
@@ -611,7 +618,7 @@ def validate(tab, ENC, encf, enc, ENCDATA, st0, tail, far, key, d, jlo=2,
         p = 2 ** (j + 1) - 1                        # cview p = (S j, None)
         v0, vf = 2 ** (j + oct_), 2 ** (j + oct_ + 1) - 1
         # boot
-        start = (st0, tuple(encf(p)) + tail, 0, far)
+        start = (st0, tuple(encf(p)) + tail, OHD, far)
         want = (st_in, tuple(encin(v0)) + ti, 0, fi)
         got = _sim(tab, start, d['cb'][0] * j + d['cb'][1])
         if not _eqlift(got, want):
@@ -637,7 +644,7 @@ def validate(tab, ENC, encf, enc, ENCDATA, st0, tail, far, key, d, jlo=2,
             stc, encc, tc, fc, vfc = st2, enc2, ti2, fi2, vf2
         estart = (stc, tuple(encc(vfc)) + tc, 0, fc)
         # exit
-        want = (st0, tuple(encf(p + 1)) + tail, 0, far)
+        want = (st0, tuple(encf(p + 1)) + tail, OHD, far)
         got = _sim(tab, estart, d['ce'][0] * j + d['ce'][1])
         if not _eqlift(got, want):
             raise NestError('validate exit j=%d: %r want %r' % (j, got, want))
@@ -1186,10 +1193,10 @@ def derive_offset(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=6):
         if dout['obS'] >= 1:
             # peeled: one unit in the prefix, count j'+1 in total
             B0R = (st0, (dout['uS'], dout['uS'], 1, 1,
-                         dout['soS'] + tail_t), 0, F)
+                         dout['soS'] + tail_t), OHD, F)
         else:
-            B0R = (st0, ((), dout['uS'], 1, 1, dout['soS'] + tail_t), 0, F)
-        B1R = (st0, ((), dout['uD'], 1, 2, dout['soD'] + tail_t), 0, F)
+            B0R = (st0, ((), dout['uS'], 1, 1, dout['soS'] + tail_t), OHD, F)
+        B1R = (st0, ((), dout['uD'], 1, 2, dout['soD'] + tail_t), OHD, F)
         CinS = (st_in, (preb, din['uD'], 1, 0, din['soD'] + ti_t), 0, Fin)
         CinF = (st_in, ((), din['uS'], 1, 2, din['soS'] + ti_t), 0, Fin)
         try:
@@ -1231,9 +1238,9 @@ def derive_offset(tab, ENCDATA, ENCS, ENC, enc, st0, tail, far, K=6):
             efar = _slack(tuple(re[0][3][0]) + tuple(re[0][3][4]), far_t,
                           'exit far')
             # the j = 0 concrete lap: Cc 1 -> Cc 2 up to lift
-            c1 = (st0, tuple(encf(1)) + tail_t, 0, far_t)
+            c1 = (st0, tuple(encf(1)) + tail_t, OHD, far_t)
             n0 = _sim_to_lift(tab, c1,
-                              (st0, tuple(encf(2)) + tail_t, 0, far_t), 20000)
+                              (st0, tuple(encf(2)) + tail_t, OHD, far_t), 20000)
             if n0 is None:
                 raise NestError('offset: no concrete lap at p=1')
             # per-state first-visit witnesses from Cc 1, for the j=0 branch
@@ -1307,22 +1314,22 @@ def validate_offset(tab, ENC, encf, enc, st0, tail, far, key4, c, d,
         jp = j - 1
         p = 2 ** (j + 1) - 1
         v0, vf = 2 ** (j + 1) + c, 2 ** (j + 2) - 1
-        start = (st0, tuple(encf(p)) + tail, 0, far)
+        start = (st0, tuple(encf(p)) + tail, OHD, far)
         want = (st_in, tuple(encin(v0)) + ti, 0, fi)
         got = _sim(tab, start, d['cb'][0] * jp + d['cb'][1])
         if not _eqlift(got, want):
             raise NestError('validate boot j=%d: %r want %r' % (j, got, want))
         laps(v0, vf, j)
         estart = (st_in, tuple(encin(vf)) + ti, 0, fi)
-        ewant = (st0, tuple(encf(p + 1)) + tail, 0, far)
+        ewant = (st0, tuple(encf(p + 1)) + tail, OHD, far)
         got = _sim(tab, estart, d['ce'][0] * jp + d['ce'][1])
         if not _eqlift(got, ewant):
             raise NestError('validate exit j=%d: %r want %r' % (j, got, ewant))
     # the concrete j = 0 lap was found by simulation, so it holds by
     # construction; re-check it anyway
-    c1 = (st0, tuple(encf(1)) + tail, 0, far)
+    c1 = (st0, tuple(encf(1)) + tail, OHD, far)
     got = _sim(tab, c1, d['n0'])
-    if not _eqlift(got, (st0, tuple(encf(2)) + tail, 0, far)):
+    if not _eqlift(got, (st0, tuple(encf(2)) + tail, OHD, far)):
         raise NestError('validate j=0 concrete lap')
     d['nval'] = ('offset c=%d: %d overflow phases, j = %d..%d '
                  '(%d inner laps), plus the concrete j=0 lap'

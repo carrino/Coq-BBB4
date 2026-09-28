@@ -2340,17 +2340,21 @@ rejected, against 4 of 75 on the sample).  Cost: window 4 ~1 h at 2
 jobs, window 5 ~5 h, window 6 43 CPU-hours (~11 h at 4 jobs), 24 of
 them in its 291 timeouts at the 300 s cap.  With the sample, class DN
 has 999 rows the rank tier certifies (969 + the 30 of `CBT_NG_00`).
-None of the 969 is boarded yet: they wait for the box's `RW` batches,
-so rows RepWL takes are not boarded twice.
+**Boarded (PR #148, merged after the box's `RW` batches):** of the 1,001
+DN rows the rank tier certifies at any window (969 + the sample's 32),
+921 are in `CBT_NG_00..18` and the other 80 were boarded first by the
+box's `RW` batches, so the RepWL / rank-tier overlap on the whole class
+is 80 rows (8% of the rank tier's take).  No certified row is left in
+`closeouttr_remaining.txt`; class DN stands at 1,114 boarded, 2,919
+remaining.
 
 **Dry run of the boarding.**  `ng_batch.py batch` over the two TSVs
 writes 20 batches of 50 (971 rows: the 969, plus the 2 sample rows that
 only window 7 takes and that `CBT_NG_00` predates); every row
 kernel-checks (1,224 s wall at `-j4`, ~4 core-minutes per 50-row
 batch), and the split `CloseoutTr.vo` over them
-compiles in 10 s, leaving 3,021 DN rows.  The batches are not committed:
-they are regenerated after the `RW` merge, which drops the rows RepWL
-boards first.
+compiles in 10 s.  The committed batches were regenerated after the
+`RW` merge, which dropped the rows RepWL boards first.
 
 **Next lever: window 7.**  On the sample it takes 3 of the 71 rows
 window 6 rejects; on the full class's ~2,950 window-6 rejections that is
@@ -2361,11 +2365,10 @@ A note for anyone running a long probe in the container: a detached
 (`nohup`/`setsid`) probe dies when the idle container is reclaimed; run
 it as a tracked background task.  The probe resumes from its JSON.
 
-Next: once the box's `RW` batches are on `main`, the ladder runs over
-every DN row still in `closeouttr_remaining.txt`
-(already probed: `ng_batch.py batch tools/closeouttr/ng_probe_dn.tsv
-tools/closeouttr/ng_probe_dn_sample.tsv --tag NG` boards whatever of the
-969 is still remaining).
+Where the route stands: every DN row has been through windows 4-6, so
+the 2,919 remaining DN rows are rank-tier failures at those windows
+(plus the RepWL finder's).  Window 7 (above) is the only untried rung
+on this route.
 
 ### 7.4.SP Class SP: the rare instruction is an overflow, and two landed checkers already prove it recurs (2026-09-24)
 
@@ -2621,10 +2624,277 @@ boots are at most 64).  The same file then takes 8 s and 0.9 GB, and all
 
 | rows | sub-class | route |
 |---:|---|---|
-| 605 + 129 | counters the lap emitter does not derive | the emitter ports §7.3e already names (nested S1 overflow, peel, avoid).  The largest new bucket is "no overflow chain (nested route is S0-only)" |
+| 605 + 129 | counters the lap emitter does not derive | the emitter ports §7.3e already names (nested S1 overflow, peel, avoid).  The largest new bucket is "no overflow chain (nested route is S0-only)" (§7.4.QE: 340 boarded by three emitter ports, 394 left) |
 | 485 | sweep counters | **new Coq**: a two-index lap glue.  The anchor `Cc (n, i)` is the block `1^n` with the hole at i; the inner lap `(n, i) -> (n, i+1)` is one sweep, a linear `srun` chain with `SCyc` over the rest of the block; the outer lap `(n, n) -> (n+1, 0)` is the grow step.  Both are `LapDecider` chains already, and the missing piece is the glue that runs the inner lap by induction on the hole's distance (the counter alphabets are positional, so `cview` does not express it).  One shape covers all 485 |
 | 198 | bouncer hybrids | the counter-aware recurrence checker of the SP class (same machines, one quiet instruction more) |
 | 15 | dense bouncers | a longer `--qh` RepWL pass (900 s) |
+
+#### 7.4.QE The QH counters the lap emitter did not derive: three emitter ports, 340 boarded (2026-09-28)
+
+Workstream QE (batch tag `QE`), over the 734 open rows of §7.4.QC's
+`counter_boxfail` (605) and `counter_new` (129) sub-classes.  The 485
+`sweep_counter` rows are workstream QS's and were not touched.  Per-row
+results: `tools/closeouttr/qe_probe.tsv`.
+
+**Bucketing.**  `emit_lapcert.py --qh` reports only the LAST anchor's
+failure, and the last anchor it tries is the mirrored S1-head one, so its
+"no overflow chain (nested route is S0-only)" line (§7.3d, §7.4.QC) says
+little about why the S0 anchors failed.  `tools/closeouttr/qe_probe.py`
+runs the same search (both orientations, both head symbols, every anchor
+family) and records every attempt: the derive's reason or, for a derived
+certificate, the `--qh` renderer's.  On the first 67 rows the blockers
+that mattered were in the TRANSITION-level path, not in the lap search:
+26 rows derived a certificate that `render_tr` then refused.  45 rows hit
+the S1 refusal, and every one of them also failed at an S0 anchor at the
+overflow stage or later.  Hence two ports in the renderer path, and the
+S1 port third:
+
+* **the per-STATE visit gate** (`no visit witness for state X`, and `avoid
+  route: only flat exact boards are wired`).  `derive` insisted that every
+  state fire inside the lap, or that the missing one be closed by
+  `glue_qh`, an absorbing set or the avoid route.  At instruction level
+  none of that is needed.  `render_tr` drops the state board from `viso_*`
+  on and proves per-INSTRUCTION fires; an instruction that fired only
+  before the boot is pinned, and the kernel re-runs every chain on the
+  machine wrapped at the pins.  A state that the lap never reaches has no
+  fired instruction after the boot, so it only adds pins.  In `TR_MODE`
+  the gate is now skipped.  State-level behaviour is unchanged.
+* **the reindexed routes in `render_tr`** (offset-nested overflow and the
+  peeled overflow), which state the overflow branch at `j = S j'` with
+  `p = 1` as one concrete lap.  The renderer refused them.  It now
+  destructs the outer index in each overflow-side fire bullet and
+  discharges `p = 1` with a concrete `firez_<instr>_<ID>` run from `Cc 1`
+  (the state board's `visz_*`, per instruction).  Offset nests with an
+  instruction that fires only in the exit half are still refused.  After
+  the ports no row in this population hits a renderer refusal.  All 18
+  reindexed boards are offset nests; the peeled path shares the code but no
+  row here exercised it.
+
+The third port is the one §7.3e/§7.4.QC named: **the nested overflow at an
+S1 anchor head**.  `nestcert` hard-coded the OUTER anchor's head as blank
+in `phase_mid`, `validate`, `derive_offset` and `validate_offset`.  The
+outer head is now `NC.OHD`, which the emitter sets to its `HD`.  The Coq
+side needed nothing, since the inner anchors keep their literal `S0` and
+the outer glue is the flat `@AHD@` template.
+
+**Yields** (probe: 734 rows, 4 jobs, 400 s cap, ~8 s a row; then
+`--qh --emit`, every board kernel-checked by the emitter's `coqc`):
+
+| port | rows boarded | from |
+|---|---:|---|
+| per-state visit gate skipped at instruction level | 320 (11 of them with lift slack) | 319 box-fail, 1 new |
+| reindexed (offset-nested) overflow in `render_tr` | 18 | all `counter_new` |
+| nested overflow at an S1 head | 1 | box-fail |
+| none (flat; a box board already exists, `ProvTr_QH_09`, but the row is still deferred) | 1 | box-fail |
+| **total** | **340** | 321 of 605 box-fail, 19 of 129 new |
+
+No derived certificate failed to compile.  Boarded as `CBT_QE_00..08`
+(40 boards a file, inline, through `qc_batch.py lap --tag QE`; no new Coq).
+Closeout: 4,320 boarded before, **4,660** after, **6,264** remaining.
+
+**The residue (394), by blocker and by growth.**  Growth is the tape
+extent's dominant side over 1e8 steps (`log2` of the time ratio per new
+cell over the last third of its new cells): 1.00 is a binary counter with
+one cell per digit, 0.50 two cells per digit, 0.694 the golden ratio.
+
+| best blocker | rows | growth | what it is |
+|---|---:|---|---|
+| no interior chain | 74 | 0.694 | **Fibonacci counters** (Zeckendorf-style: x1.618 a cell).  No binary digit alphabet fits.  They need a Fibonacci counter theory (`FIB_ELEVEN` in `tools/counters/` is the state-level precedent) |
+| no interior chain | 66 | 1.00 | **binary, parity carry.**  One looked at, `0RB0LB_0RC0LA_1LB1RD_1LA1RC` (mirrored, anchor `C` at head 1, `Kp`): the carry crosses the run of ones alternating two states (`D1 -> 1RC`, `C1 -> 1RD`), so the state that ends the carry depends on the parity of `j`.  No single `srun` chain covers both parities.  The port is a parity split of `cview` (`j = 2i`, `j = 2i+1`, two chains).  That is new Coq glue |
+| no interior chain | 28 / 57 | 0.79 / other (0.64, 0.67, 0.72, 0.86, 0.89) | other radices (x1.73 a cell and others) |
+| no overflow chain (nested: no exit chain) | 40 | 1.00, **two-sided** | one family (5 cores times the quiet A-transitions): a binary counter that grows one cell per doubling on BOTH ends.  The nested route (S0 and, now, S1) finds the boot but no exit chain |
+| no overflow chain (nested: boot / inner family / inner interior) | 55 | 0.50 (30) or 0.47 (25) | two-cell-digit binaries whose overflow phase the nested search cannot split |
+| no anchor | 74 | 1/3 (25), 0.50 (29, 5 two-sided), 0.47 two-sided (16), 0.694 (2), 0.47 (2) | no anchor family with a long run of consecutive values |
+
+The two largest pieces of residue (74 Fibonacci, 66 parity carries) are
+both new counter shapes, not search gaps.  The parity split is the smaller
+Coq change: it reuses every chain and glue lemma per parity.
+
+```
+python3 tools/closeouttr/qe_probe.py rows.txt probe.jsonl --jobs 4 --timeout 400
+(cd tools/counters && python3 emit_lapcert.py --qh --emit --list ok.txt --json emit.json)
+python3 tools/closeouttr/qc_batch.py lap theories/Machines/CountersTr/LAPQ_*.v --tag QE --chunk 40
+```
+
+#### 7.4.QS The sweep counters: a two-index lap glue (2026-09-28)
+
+Workstream QS (batch tag `QS`), over the 485 `sweep_counter` rows of
+§7.4.QC (`closeouttr_qc_subclasses.tsv`).  All 485 are quasihalting
+(their quiet instructions stop by step 133), so the route ends in
+`coversTr_qh3`.
+
+**The glue** (`theories/Counters/SweepGlueTr.v`, axiom-free beyond
+`functional_extensionality_dep`).  The anchor is
+`swC i k = (q, (Lpre ++ uL^i ++ Lpost, h, Rpre ++ uR^k ++ Rpost))`: `i`
+units behind the hole, `k` ahead.  The inner lap `(i, k+1) -> (i+1, k)`
+never touches the units behind, so they are the chain's OPAQUE left tail
+and one `srun` with index `k` covers every `i`.  The outer lap
+`(i, 0) -> (e, i + d)` is a chain with index `i` and both tails empty.
+The glue proper is the enumeration: `swCf p` is the `p`-th anchor along
+`sw_nxt`, which turns the two laps into the single `Hlap` of
+`LapGlueQHTr.glue_qhboundtr`.  Per-instruction fires come from chain
+prefixes of either lap.  An inner-lap fire is reached from any visited
+anchor by growing the block until enough units are ahead (the block grows
+by `e + d >= 1` per round).  An outer-lap fire is reached through `k`
+inner laps.  A certificate is data (`swcert`), and `sweep_check` is one
+boolean under `vm_compute`, so a row is one line:
+`apply coversTr_qh3, (sweep_sound _ (mkSW ...))` (`sweep_sound_mirror`
+when the hole moves left).  There are no per-machine definitions or
+modules, and a 40-row batch compiles in 1.6 s.
+
+Two things the first cut (one unrolled unit, near end) missed:
+
+* **Turning on the block's last unit.**  In ~70 rows the return sweep
+  changes state on the far unit of the block ahead (D reads the last 1,
+  then A sweeps back).  `SCycL` needs the same state at every unit, and a
+  count `k` that may be 0 has no unit to peel, so the inner start unrolls
+  `na` units at the near end and `nb` at the far end.  The last
+  `na + nb - 1` inner laps become concrete `sw_base` chains.
+* **The same on the grow step.**  The outer start unrolls `ma`/`mb` units
+  of the block behind.  Instead of concrete short outer chains, an
+  invariant: every visited anchor has `i + k >= ma + mb` (`sw_good`,
+  checked at the boot and kept by both laps).
+
+**Emitter** (`tools/closeouttr/qs_batch.py find`, untrusted).  It runs
+the machine and its mirror for 60,000 steps and pins the instructions
+silent over the last two thirds, plus the undefined ones.  For each
+instruction and small prefix/unit lengths (unit 1-3, prefix 0-3), it
+splits the late configurations as `Lpre uL^i Lpost | h | Rpre uR^k Rpost`
+and keeps a split whose `(i, k)` sequence steps as a sweep with constant
+`(e, d)`.  It then derives the chains with `lapcert.derive_chain` on the
+wrapped table (trying `(na, nb)` and `(ma, mb)` up to 2).  The boot is
+the first fitting anchor after the last quiet fire; the latest is step 41.
+
+**Yield: 410 of 485 (84.5%) boarded**, `CBT_QS_00` (the 20-row sample)
+and `CBT_QS_01..10`.  All 410 kernel-check (a 40-row file: 1.6 s).
+QH open: 1,432 to **1,022**; all rows: 6,604 to **6,194**.
+
+| certificate shape | rows |
+|---|---:|
+| one unit near end (`na,nb,ma,mb = 1,0,0,0`) | 339 |
+| + one at the far end (`1,1,0,0`) | 56 |
+| + outer unrolling (`1,1,1,0` / `1,1,1,1`) | 11 / 4 |
+| units of 1 / of 2 cells (`uL = uR`) | 314 / 96 |
+| hole moves left (certified on the mirror) | 236 |
+| grow step `(e, d)`: (0,1) / (1,1) / (1,0) / (0,2) / (1,2) | 178 / 106 / 81 / 32 / 13 |
+
+The search took 37 min for the 485 at 8 jobs on 4 cores (a failing row
+tries every candidate split).
+
+**Residue (75), two shapes, both three-index:**
+
+| rows | shape | why the glue misses it |
+|---:|---|---|
+| 58 | **two converging holes**: `1^a 0 1^b 0 1^c`, `c` in `{a, a+1}`; the holes step inward alternately, the middle block shrinks by one per half-lap, and the block regrows when they meet | no single-hole split fits ("no sweep anchor").  The natural anchor has the SAME count `a` on both outer blocks, so a half-lap is a chain over the middle block with both tails opaque, and the glue would enumerate `(a, b)` with `c` tied to `a` |
+| 17 | **travelling gap**: `1^a 0^b 1^c`, a run of blanks that grows as it moves through the block | 15 have no outer chain and 2 no inner chain at any unrolling up to 2; the hole is a run whose length is itself a count |
+
+Both look like the same glue with a third, tied count.  The anchor
+would become `L ++ uL^i ++ M ++ uR^k ++ N ++ uL'^i ++ R`, and each lap
+would still be a single-index chain between two opaque tails.  That is
+the next step for these 75.
+
+#### 7.4.DX Class DN after RepWL and the rank tier: four landed routes take half, bouncer + counter hybrids are the rest (2026-09-28)
+
+Workstream DX (batch tags `DX0`..`DX3`, `DXQ`, `DXS`), over the 2,919
+open DN rows plus the 213 `bouncer_hybrid`/`bouncer_dense` QH rows of
+§7.4.QC.  The per-row data is under `tools/closeouttr/dx/`.
+
+**Diagnosis.**  `tools/closeouttr/dx_sim.c` + `dx_char.py` run every row
+for 1e8 steps.  They record the extent at each power of 10, each end's
+growth exponent between 1e6 and 1e8, the record gaps, edge-to-edge
+sweeps and the tape's periodic blocks at the end.  The table covers all
+3,132 rows (`dx/char_all.tsv`), with a random 100 (seed 20260928) in
+`dx_char_sample.tsv`.  The classes separate cleanly by exponent:
+
+| kind | exponent | rows (of 3,132) | sample of 100 | what it is |
+|---|---|---:|---:|---|
+| counter | ~0.05 (log) | 1,246 | 48 | binary-style counters, the extent under ~120 cells at 1e8 |
+| sweep counter | 1/3 | 887 | 21 | a block `1^n` with one travelling hole (§7.4.QC's sweep counters, never-QH side) |
+| bouncer + counter hybrid | 1/2 on one end, log on the other | 672 (462 DN + 210 QH) | 22 | a bouncer block, typically `(10)^n`, on one side and a binary counter on the other, with digits such as `00`/`01`.  Each sweep increments the counter once |
+| two-sided bouncer | 1/2 both ends | 164 | 5 | multi-period tapes, the RepWL no-closure rows of §7.3f |
+| one-sided bouncer | 1/2, other end fixed | 43 | 0 | |
+| linear | 1 | 110 | 4 | translated cyclers |
+| other | | 10 | 0 | |
+
+**Routes, all existing checkers except one twin:**
+
+| route | tried on | certified | kernel-accepted | boarded |
+|---|---|---:|---:|---|
+| `tc_find.py --steps 200000 --maxp 20000` -> `TCyclerTr` | all 3,132 | 123 | 109 (the 14 rejects: "periodic" only at the end of the budget, and at 2e6 steps the same) | `CBT_DX0_00..02` |
+| `bin/irules --max-steps 200000` -> `MetaBlkPfxTr` | all 3,132 | 940 (761 DN) | 682 (61 false, 18 timeouts at 30 s; none of the timeouts accepts at 300 s) | `CBT_DX1_00..12` (629; the other 53 are also translated cyclers) |
+| the same certificates, `claim_qh T` -> **`MetaBlkPfxQHTr` (new)** | the 213 QH bouncers | 179 | 176 (3 time out at 30 s and at 300 s) | `CBT_DXQ_00..03` |
+| `emit_lapcert.py --tr --emit` -> `LapGlueTr` | the 1,246 counters | 704 | 704 | `CBT_DX2_00..14` |
+| `valfam.py --cap 150` -> `LadderCheckTr` | 40 of the 542 lap failures | 19 closed | 4 boards | `CBT_DX3_00` |
+| `bin/irules --max-steps 1000000` | the 465 open sweep counters and bouncers | 75 | 1 (57 false, 17 timeouts) | `CBT_DX1_13` |
+
+* **The sweep counters were an irules conveyor gap.**  `bin/irules` takes
+  600 of the 887 (68%).  Its meta cycle `C(k) -> C(a k + b)` with a rule
+  applied a symbolic number of times is the hole's inner loop.  The
+  never-QH side needed nothing new.
+* **The counters were a lap conveyor gap.**  The lap emitter had never
+  run on the DN log counters.  It derives 704 of the 1,246 (57%), and all
+  704 boards compile (about a second each).  Failures: "no interior
+  chain" 273, "no anchor" 237, "no overflow chain (nested route is
+  S0-only)" 28, "no visit witness" 4.
+* **`MetaBlkPfxQHTr` is the transition-level twin of `MetaBlkPfxQH`.**
+  It reuses `MetaBlkPfxTr`'s engine, but where the prefix gate required
+  every fired instruction to be in F, it takes a witness instruction
+  `tz` that fires at `nz` and is not in F.  The bound is the anchor
+  (nothing outside F fires after it), lifted once to `B_close` for
+  anchors up to 2^20.  It gives `NonHalt /\ QHBoundTr 32779478 /\
+  QuasiHaltsTr`, the `coversTr_qh3` shape; the only axiom is
+  `functional_extensionality_dep`.  It takes 176 of the 213 QH bouncers.
+  It also takes all 485 of §7.4.QC's QH sweep counters (irules certifies
+  485 of 485 in under a minute, and the kernel accepts 485 of 485).  The
+  QS workstream's `SweepGlueTr` had already boarded 410 of those, so
+  `CBT_DXS_00..01` carry only the other 75, QS's "two converging holes"
+  and "travelling gap" residue.  Over the rest of the open QH rows (771)
+  irules certifies 3, all of which time out in the kernel.
+* **Why irules misses the DN hybrids.**  It takes 176 of the 210 QH
+  hybrids and none of the 462 DN ones.  On the DN side, the certificates
+  it does emit for the bouncers fail the prefix gate (57 of 75 false at
+  1e6): the meta cycle is one sweep, and the counter's carry instruction
+  is not in the sweep's fired set F.  On the QH side the carry
+  instruction is exactly the quiet one, so the same sweep cycle is a
+  valid QH certificate.
+
+Class DN, 2,919 open to **1,472**; the QH bouncers, 213 to **37**; with
+`DXS`, QH 1,432 to 1,181.  All rows: 6,604 to 4,906 (alone on `main`;
+with QS's 410 on top of it, 4,496).
+
+**What is left (1,509: 1,472 DN + 37 QH), and the route for each:**
+
+| rows | kind | route |
+|---:|---|---|
+| **496** (462 DN + 34 QH) | **bouncer + counter hybrids** | **new checker: a lap certificate whose tail is a growing bouncer block.**  The anchor is `Cc p = (E, (Enc p ++ w^(a p + b) ++ tail, hd, far))`: `LapGlueTr`'s counter anchor with the block between the counter and the far side.  One lap is one sweep: a `SCyc` chain over `w^n` (the inner loop §7.4.QS's glue already runs over an opaque tail) and one counter increment, whose overflow arm is the carry instruction.  That is `LapGlueTr`'s `fire_via_ovf`, the piece the irules sweep cycle lacks.  The QH side (34) is the same through `LapGlueQHTr`.  The same checker is the likely route for the SP class's sparse hybrids (§7.3f, ~1,900 rows there) |
+| 538 | counters the lap emitter does not derive | the ladder takes ~10% (4 of 40; 15 of 19 closed rows stop at "interior arm: no chain ... the carry ripple is not affine", SP's blocker too).  The emitter ports §7.3e names ("no interior chain" 271, "no anchor" 235) |
+| 287 | sweep counters irules does not take (261 undecided, 26 false/timeout) | **a never-QH twin of QS's `SweepGlueTr`**: the same two-index glue through `LapGlueTr.glue_neverqhtr` instead of `LapGlueQHTr`; the finder is `qs_batch.py`'s without the pins |
+| 177 | two-sided (137) and one-sided (40, 3 of them QH) bouncers: irules undecided, false, or (18) timing out in the kernel | RepWL at 900 s, or a multi-block RepWL (§7.3f) |
+| 11 | other (8 sqrt rows whose ends fit neither shape, 2 unclassified, 1 linear that is not a cycler) | |
+
+The loop, for the next session:
+
+```
+python3 tools/closeouttr/dx_char.py char ROWS dx.tsv --jobs 2          # the kinds (0.5 s a row)
+python3 tools/censustr/tc_find.py ROWS --steps 200000 --maxp 20000 > tc.tsv
+python3 tools/closeouttr/dx_tc_batch.py probe tc.tsv tcp.tsv && python3 tools/closeouttr/dx_tc_batch.py batch tcp.tsv --tag T
+bin/irules --max-steps 200000 --cert-dir certs ROWS > ir.csv         # BBB repo, make bin/irules
+python3 tools/closeouttr/sp_batch.py probe certs irp.tsv --timeout 30 && python3 tools/closeouttr/sp_batch.py batch irp.tsv --tag T
+python3 tools/closeouttr/dx_irqh_batch.py probe certs ROWS irq.tsv && python3 tools/closeouttr/dx_irqh_batch.py batch irq.tsv --tag T
+(cd tools/counters && python3 emit_lapcert.py --list COUNTERS --tr --emit --json lap.json)
+python3 tools/closeouttr/sp_lap_batch.py lap.json --tag T
+```
+
+The probe TSVs name certificates as `certs/<spec>.cert`; the
+certificates are in `dx/irules_certs.tgz`, `dx/ir1m/irules_certs.tgz` and
+`dx/qsweep/irules_certs.tgz` (untar next to the TSV).  Cost in the
+container: the 2e5 irules search took ~100 min at 2 jobs for 3,132 rows,
+the lap derive + emit ~2 h at 3 jobs for 1,246 rows, and the rest took
+minutes.
+
+CI: with the QS and DX batches, the `core` job's closeout step runs
+32-40 min at `-j4`, and runs were cancelled at the old 45-minute limit.
+`timeout-minutes` is now 90.
 
 ## 8. What we deliberately do NOT redo
 

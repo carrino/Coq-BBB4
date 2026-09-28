@@ -1142,14 +1142,12 @@ def derive(spec, edge, tail, p0, enc, far=()):
         # over the inner counter + exit ([Counters/NestedLapLift.v]); the two
         # affine halves are ordinary chains and the exponent stays inside an
         # existential.  See docs/NESTED_LAP_PLAN.md.
-        if HD:
-            # [nestcert] states its INNER anchor with a literal [S0] head of
-            # its own (Cin@S@_@ID@ and the two glue asserts).  Rather than
-            # thread [HD] into a second anchor whose head is genuinely
-            # independent of the outer one, refuse the route: a mismatch here
-            # could only make [derive] return a chain the kernel then rejects,
-            # but a loud refusal says which road is missing.
-            raise DeriveError('no overflow chain (nested route is S0-only)')
+        # [nestcert] states its INNER anchor with a literal [S0] head of its
+        # own (Cin@S@_@ID@ and the two glue asserts), independent of the
+        # outer one; the OUTER head is [HD], threaded as [NC.OHD] into the
+        # outer configurations its search and validators build (the outer
+        # Coq glue is this module's [@AHD@] template).  Was S0-only.
+        NC.OHD = HD
         try:
             nest = NC.derive_nested(tab, ENCDATA, ENCS, ENC, enc, st0, tail,
                                     far, B0, B1)
@@ -1231,6 +1229,19 @@ def derive(spec, edge, tail, p0, enc, far=()):
             else:
                 visx[q] = pre
         missing = still
+    if missing and TR_MODE:
+        # The TRANSITION-level boards need no per-STATE visit: [render_tr]
+        # cuts the state board from [viso_*] on and proves per-INSTRUCTION
+        # fires, pinning (--qh) what fired only before the boot.  A state the
+        # lap never reaches has no fired instruction after the boot, so it is
+        # the renderer's pins, not a derive failure -- and neither
+        # [glue_qh], an absorbing set nor the AVOID route is needed.  The
+        # quiet bullets rendered for it are in the part [render_tr] drops.
+        # (State-level behaviour is unchanged: this branch is TR_MODE only.)
+        qh = True
+        trmiss, missing = missing, []
+    else:
+        trmiss = []
     if missing:
         # The lap is complete but some state never fires inside it.  Two
         # closers apply, cheapest first:
@@ -1286,7 +1297,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, visi=visi, visx=visx,
                 qh=qh, boot=boot, avoid=avoid,
                 absd=absd, sset=sset, islack=islack, oslack=oslack,
-                nest=nest, opeel=peel,
+                nest=nest, opeel=peel, trmiss=trmiss,
                 ovpost=list(got), ovwant=list(want), val=why)
 
 
@@ -1720,12 +1731,19 @@ def render_tr(D, spec, dspec, mirrored):
     once, that the machine never halts under the wrap (so no pinned
     instruction ever fires) and the lap structure the glue needs.
 
-    v1 scope: the plain route only (one exact interior chain, exact flat
-    overflow, no nesting / peel / avoidance / lift slack); everything else
-    raises DeriveError and stays a state-level board for now."""
+    Scope: every route but the state-level AVOID one (which the TR derive
+    never selects: a state the lap misses only adds pins here).  The
+    reindexed routes (offset nest, peeled overflow) get a concrete
+    [firez_*] per overflow-side instruction at [p = 1]; an offset nest with
+    an exit-only instruction is still refused."""
     N = D.get('nest')
     offset = bool(N and N.get('route') == 'offset')
-    if offset or D.get('opeel') or D.get('avoid'):
+    # the REINDEXED routes (offset nest, peeled overflow): the overflow
+    # branch is stated at [j = S j'] and [p = 1] is one concrete lap, so each
+    # overflow-side fire bullet destructs the outer index and discharges
+    # [p = 1] with a concrete [firez_*] run (the state board's [visz_*])
+    reix = offset or bool(D.get('opeel'))
+    if D.get('avoid'):
         raise DeriveError('tr: route not supported yet (mode=%s islack=%s '
                           'oslack=%s nest=%s peel=%s avoid=%s)'
                           % (D.get('mode'), bool(D.get('islack')),
@@ -1768,6 +1786,30 @@ def render_tr(D, spec, dspec, mirrored):
             raise DeriveError('qh: every fired instruction has a lap witness '
                               '(not a quasihalter; use --tr)')
         pins = pins + qpins
+    firez = {}
+    if reix:
+        if offset and witx:
+            raise DeriveError('tr: offset nest with an exit-only instruction')
+        # p = 1: run the concrete lap from [Cc 1] (on the table; the kernel
+        # re-runs it on the WRAPPED one, so a pin firing first fails there)
+        # and take each overflow-side instruction's first fire
+        n0 = N['n0'] if offset else D['opeel']['n0']
+        pinset = set(pins)
+        cfg = (D['st0'], tuple(ENC[D['enc']](1)) + tuple(D['tail']),
+               D['hd'], tuple(D['far']))
+        for k in range(n0 + 1):
+            t = (cfg[0], cfg[2])
+            if t in pinset:
+                break
+            firez.setdefault(t, k)
+            try:
+                cfg = LC.wstep(tab, False, False, cfg)
+            except Halt_:
+                break
+        for t in wit:
+            if t not in firez:
+                raise DeriveError('tr: no p=1 fire for instruction %s%d'
+                                  % (LAB[t[0]], t[1]))
 
     src = render(D)
     if mirrored:
@@ -1864,10 +1906,39 @@ def render_tr(D, spec, dspec, mirrored):
                  .replace('vis_lift_of_csteps tm', 'fire_lift_of_csteps tm')
                  .replace('vis_of_run tm', 'fire_of_run_instr tm')
                  .replace('A state firing', 'An instruction firing')) + '\n\n'
+    firezl = ''.join(
+        '(** Instruction %s%d at the reindexed branch\'s p = 1 case -- concrete. *)\n'
+        'Lemma firez_%s%d_%s : exists k c, csteps tm k (Cc 1) = Some c /\\ cinstr c = %s.\n'
+        'Proof. exists %d. eexists. split; [vm_compute; reflexivity | reflexivity]. Qed.\n\n'
+        % (LAB[t[0]], t[1], LAB[t[0]], t[1], ID, cinstr_coq(t), firez[t])
+        for t in sorted(wit) if reix)
     bullets = []
     for t in ALL_INSTR:
         lab = '%s%d' % (LAB[t[0]], t[1])
-        if t in witi:
+        zb = ('    intros p1 j1 E1. destruct j1 as [|j1\'].\n'
+              '    + rewrite (cview_none_shape p1 0 E1).\n'
+              '      %sexact firez_%s_%s.\n' % ('%s', lab, ID))
+        if reix and t in wit and islack:
+            bullets.append(
+                '  - (* %s *)\n'
+                '    apply (fire_csteps_of_lift tm Cc).\n'
+                '    apply (fire_via_ovf_lift tm Cc Hi %s).\n'
+                % (lab, cinstr_coq(t))
+                + zb % 'apply (fire_lift_of_csteps tm Cc). '
+                + '    + apply (fire_lift_of_csteps tm Cc).\n'
+                  '      apply (fireo_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                  '                   p1 j1\' E1).'
+                % (ID, cchain(wit[t]), cinstr_coq(t)))
+        elif reix and t in wit:
+            bullets.append(
+                '  - (* %s *)\n'
+                '    apply (fire_via_ovf tm Cc Hi %s).\n'
+                % (lab, cinstr_coq(t))
+                + zb % ''
+                + '    + exact (fireo_%s %s %s ltac:(vm_compute; reflexivity)\n'
+                  '                   p1 j1\' E1).'
+                % (ID, cchain(wit[t]), cinstr_coq(t)))
+        elif t in witi:
             bullets.append(
                 '  - (* %s: fires only in the interior lap *)\n'
                 '    apply (fire_csteps_of_lift tm Cc).\n'
@@ -1907,7 +1978,7 @@ def render_tr(D, spec, dspec, mirrored):
             bullets.append(
                 '  - (* %s: pinned *)\n'
                 '    exfalso. apply Hnp. apply tr_inb_spec. reflexivity.' % lab)
-    fire = ('%s\n%s%s'
+    fire = ('%s\n%s%s%s'
             '(** ** Fires: every UNPINNED instruction fires from every anchor\n'
             '    (inside the overflow lap; [LapGlueTr.fire_via_ovf] runs the\n'
             '    interior laps until the counter overflows). *)\n\n'
@@ -1918,7 +1989,7 @@ def render_tr(D, spec, dspec, mirrored):
             '%s'
             '  destruct t as [q b]; destruct q, b.\n'
             '%s\n'
-            'Qed.\n' % (fireo, firei, firex, ID, ID, hi, '\n'.join(bullets)))
+            'Qed.\n' % (fireo, firei, firex, firezl, ID, ID, hi, '\n'.join(bullets)))
     # closing theorem(s): replace everything from the old visits on
     i_close = i_vis
     if QH_MODE:

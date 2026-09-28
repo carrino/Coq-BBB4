@@ -1,0 +1,735 @@
+# spec	subclass	result	route_or_growth
+0RB---_1LC0LA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB0LA_1LC1RB_0LD1LA_1RD1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 37 by 1e8
+0RB0LB_0RC0LA_1LB1RD_1LA1RC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 26 by 1e8
+0RB0LB_0RC1LA_1LB1RD_1RC0LA	counter_new	no interior chain	log2 ratio/cell 0.889, new cells L 0 R 28 by 1e8
+0RB0LB_0RC1LD_1LB1RC_1LC1LA	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 45 R 25 by 1e8
+0RB0LB_1LC1LA_1RD1RC_0LA0RC	counter_new	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.500, new cells L 44 R 3 by 1e8
+0RB0LC_0LC0RD_1LA1LC_1RC1RB	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 1 R 46 by 1e8
+0RB0LC_0RC0RD_1LA1LC_1RC1RB	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.500, new cells L 0 R 48 by 1e8
+0RB0LC_1LA1RB_0LD0LA_1RD1RA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 28 by 1e8
+0RB0LC_1LA1RB_0LD0LC_1RD1RA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 28 by 1e8
+0RB0LC_1LA1RB_0LD1LA_1RD1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 37 by 1e8
+0RB0LC_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB0LC_1LC0RD_1LA1LC_1RC1RB	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 1 R 46 by 1e8
+0RB0LC_1LC1RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB0LC_1LC1RB_0LD0LA_1RD1RA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 27 by 1e8
+0RB0LC_1LC1RB_0RB1LD_1LB1LA	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 46 R 24 by 1e8
+0RB0LC_1LC1RB_1RD1LA_1RB0LA	counter_new	boarded	MS0 A/Alph_10_11_11 nest-offset
+0RB0LC_1LC1RB_1RD1LA_1RB0LB	counter_new	boarded	MS0 A/Alph_10_11_11 nest-offset
+0RB0LC_1LC1RB_1RD1LA_1RB0LC	counter_new	boarded	MS0 A/Alph_10_11_11 nest-offset
+0RB0LC_1LC1RB_1RD1LA_1RB0LD	counter_new	boarded	MS0 A/Alph_10_11_11 nest-offset
+0RB0LC_1LC1RB_1RD1LA_1RB0RC	counter_new	boarded	MS0 A/Alph_10_11_11 nest-offset
+0RB0LC_1LC1RB_1RD1LA_1RB0RD	counter_new	boarded	MS0 A/Alph_10_11_11 nest-offset
+0RB0LC_1LC1RB_1RD1LA_1RB1LB	counter_new	boarded	MS0 A/Alph_10_11_11 nest-offset
+0RB0LC_1LC1RB_1RD1LA_1RB1LC	counter_new	boarded	MS0 A/Alph_10_11_11 nest-offset
+0RB0LC_1LC1RB_1RD1LA_1RB1RB	counter_new	boarded	MS0 A/Alph_10_11_11 nest-offset
+0RB0LC_1LC1RD_0RB0LA_1LA1RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+0RB0LC_1LC1RD_0RB1LA_1RB0LA	counter_boxfail	no interior chain	log2 ratio/cell 0.889, new cells L 0 R 27 by 1e8
+0RB0LC_1RC0LA_1LD1RB_0RC0LD	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+0RB0LC_1RC0RD_1LA1LC_1RC1RB	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 1 R 46 by 1e8
+0RB0LC_1RC1LA_1LD1RB_0RC0LD	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+0RB0LD_0LC0RC_1RD1RB_1LA1LD	counter_new	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 2 R 45 by 1e8
+0RB0LD_0RC0RC_1RD1RB_1LA1LD	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 0 R 47 by 1e8
+0RB0LD_1LA0RC_1RD1RB_1LA1LD	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 0 R 47 by 1e8
+0RB0LD_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB0LD_1LC0RC_1RD1RB_1LA1LD	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 2 R 45 by 1e8
+0RB0LD_1LC1RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB0LD_1RC0LA_1LD1RB_0RC0LD	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+0RB0LD_1RC0RC_1RD1RB_1LA1LD	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 1 R 46 by 1e8
+0RB0LD_1RC1RB_0LA0RB_1LB1LA	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 45 R 2 by 1e8
+0RB0RB_0LC0RA_1RB1LD_1RA1LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 1 by 1e8
+0RB0RB_0LC1RA_1RB1LD_1LC0RA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 26 R 1 by 1e8
+0RB0RB_0LC1RD_1RB1LC_1RC1RA	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 23 R 47 by 1e8
+0RB0RB_1RC1RA_1LD1LC_0RA0LC	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 1 R 46 by 1e8
+0RB0RC_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB0RC_1LC1RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB0RC_1LC1RD_0RD0LC_1RB1LA	counter_boxfail	boarded	MS0 C/Bp trmiss
+0RB0RC_1RC0LA_1LD1RB_0RC0LD	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+0RB0RC_1RC1LA_1LD1RB_0RC0LD	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+0RB0RC_1RC1LB_0LB1RD_1RB1RA	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 22 R 48 by 1e8
+0RB0RC_1RC1LD_0LB0RA_1RA1LB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 23 R 2 by 1e8
+0RB0RC_1RC1LD_0LB1RA_1LB0RA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 25 R 2 by 1e8
+0RB0RD_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB0RD_1LC1LB_0RA0LB_1RB1RA	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 0 R 47 by 1e8
+0RB0RD_1RC0LA_1LD1RB_0RC0LD	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+0RB0RD_1RC1LA_1LD1RB_0RC0LD	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+0RB1LB_0RC0LA_1RD0LB_1LA1RC	counter_boxfail	no interior chain	log2 ratio/cell 0.889, new cells L 0 R 27 by 1e8
+0RB1LB_0RC0LA_1RD0LB_1LC1RC	counter_boxfail	no interior chain	log2 ratio/cell 0.720, new cells L 0 R 33 by 1e8
+0RB1LB_0RC0LB_1RD1RA_1LA1RC	counter_boxfail	no interior chain	log2 ratio/cell 0.720, new cells L 0 R 33 by 1e8
+0RB1LB_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB1LB_1RC0LD_0LA1RB_0RB1LD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 24 by 1e8
+0RB1LB_1RC0LD_1LA1RB_0RB1LD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 21 R 23 by 1e8
+0RB1LB_1RC1LA_0LA1RD_0LB0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 33 R 2 by 1e8
+0RB1LC_0LC0RB_1RD1LA_0LA1RB	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 34 R 1 by 1e8
+0RB1LC_0LC1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 23 R 23 by 1e8
+0RB1LC_0LC1RD_0RD0LC_1LA1RB	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+0RB1LC_0RC1LB_1RD0LB_0LA1RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 21 R 25 by 1e8
+0RB1LC_0RC1LB_1RD0LB_1LA1RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 20 R 24 by 1e8
+0RB1LC_0RC1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 21 R 25 by 1e8
+0RB1LC_0RC1RD_0RD0LC_1LA1RB	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 37 by 1e8
+0RB1LC_1LA1RB_0LD0LC_1RD1RA	counter_new	no anchor	log2 ratio/cell 0.694, new cells L 3 R 38 by 1e8
+0RB1LC_1LA1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 24 by 1e8
+0RB1LC_1LA1RC_1RB0LD_0RC1LD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 20 R 24 by 1e8
+0RB1LC_1LC1RB_0LD0LA_1RD1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 36 by 1e8
+0RB1LC_1LC1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 23 R 23 by 1e8
+0RB1LC_1RC0LA_0RD0LD_1LD1RB	counter_boxfail	no anchor	log2 ratio/cell 0.318, new cells L 0 R 68 by 1e8
+0RB1LC_1RC1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 24 by 1e8
+0RB1LC_1RC1RD_0RD0LC_1LA1RB	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 37 by 1e8
+0RB1LD_0LC1RC_1LA1RB_0RC0LD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 34 by 1e8
+0RB1LD_0LC1RD_0LD1RC_1LA0RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 24 R 22 by 1e8
+0RB1LD_0RC1RC_1LA1RB_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 36 by 1e8
+0RB1LD_0RC1RD_0LD1RC_1LA0RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 24 by 1e8
+0RB1LD_1LA1RC_1LA1RB_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+0RB1LD_1LA1RC_1RB1RC_0RC0LD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 0 R 49 by 1e8
+0RB1LD_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB1LD_1LC1RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB1LD_1LC1RC_1LA1RB_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 34 by 1e8
+0RB1LD_1LC1RC_1RB0LD_0RC0LA	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 1 R 31 by 1e8
+0RB1LD_1LC1RD_0LD1RC_1LA0RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 24 R 22 by 1e8
+0RB1LD_1RC0LA_1LD1RB_0RC0LD	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+0RB1LD_1RC0LD_1LA1RB_0RB0LA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 26 by 1e8
+0RB1LD_1RC0LD_1LB1RB_0RB0LA	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 0 R 32 by 1e8
+0RB1LD_1RC1RA_1LA1RB_0RB0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 0 R 32 by 1e8
+0RB1LD_1RC1RC_1LA1RB_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+0RB1LD_1RC1RD_0LD1RC_1LA0RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 24 by 1e8
+0RB1RA_1RC0RC_1LD1RB_1LA0LD	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 1 R 53 by 1e8
+0RB1RB_0LC0RA_1LD0RB_1RA1LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 25 R 1 by 1e8
+0RB1RB_0LC0RA_1LD0RB_1RC1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 31 R 1 by 1e8
+0RB1RB_0LC0RB_1LD1LA_1RA1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 31 R 1 by 1e8
+0RB1RB_1LC0RD_0RA1LB_0LB1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 24 by 1e8
+0RB1RB_1LC0RD_1RA1LB_0LB1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 21 R 23 by 1e8
+0RB1RB_1LC1RA_0RA1LD_0RB0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+0RB1RB_1LC1RC_0RC1LD_1LA0LD	counter_new	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 1 by 1e8
+0RB1RB_1LC1RD_1LA0LC_0RD1LC	counter_new	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 1 by 1e8
+0RB1RB_1RC0LA_1LD1RB_0RC0LD	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+0RB1RC_0LC1RB_1LD0RB_0RA1LC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 23 R 23 by 1e8
+0RB1RC_0LC1RB_1LD0RB_1RA1LC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+0RB1RC_0RC0LB_1LD1RA_0RA1LB	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 36 by 1e8
+0RB1RC_1LC0RA_0LD0RD_1RD1LB	counter_boxfail	no anchor	log2 ratio/cell 0.318, new cells L 66 R 2 by 1e8
+0RB1RC_1LC1RD_0RD0LC_1RB1LA	counter_boxfail	boarded	MS0 C/Bp trmiss
+0RB1RC_1LC1RD_1LA0LC_0RD1LC	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 34 R 1 by 1e8
+0RB1RC_1RC0LC_1LD0RC_1LA1RC	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+0RB1RD_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+0RB1RD_1LC0RD_1RA1LB_0LB0RA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 2 by 1e8
+0RB1RD_1LC0RD_1RB1LB_0LB0RA	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 30 R 2 by 1e8
+0RB1RD_1LC1LA_1RA1LB_0LB0RD	counter_new	no interior chain	log2 ratio/cell 0.792, new cells L 30 R 2 by 1e8
+0RB1RD_1LC1RC_0RC1LD_1LA0LD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 34 R 1 by 1e8
+0RB1RD_1RC0LA_1LD1RB_0RC0LD	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+0RB1RD_1RC0LD_1LA1RD_1LC0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+0RB1RD_1RC1LA_1LD1RB_0RC0LD	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+0RB1RD_1RC1LC_1LB0RD_0LC0RA	counter_boxfail	no interior chain	log2 ratio/cell 0.704, new cells L 29 R 3 by 1e8
+1RB---_0LB1RC_0RD0RC_1LB1LD	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 0 R 32 by 1e8
+1RB---_0LB1RC_1LB0RC_------	counter_boxfail	boarded	MS0 B/Kp trmiss
+1RB---_0LB1RC_1LB0RD_1LB0RC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+1RB---_0LB1RC_1LB0RD_1LC0RC	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 0 R 31 by 1e8
+1RB---_0LB1RC_1LB0RD_1LC0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB---_0LB1RC_1LD0RC_1LB1RC	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB---_0LC0RB_1LD1LA_1RB1LC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB---_0LC1RB_0LB1RD_1LC0RD	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+1RB---_0LC1RD_0LB1RC_1LB0RD	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+1RB---_0LC1RD_0LB1RD_1LB0RD	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+1RB---_0LC1RD_0LB1RD_1LC0RD	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+1RB---_0LC1RD_1LB1RC_1LB0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB---_0LC1RD_1LB1RD_1LB0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB---_0RC0RB_1LD1LC_0LD1RB	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 0 R 32 by 1e8
+1RB---_1LC0LA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB---_1LC0RB_0LC1RB_------	counter_boxfail	boarded	MS0 B/Kp trmiss
+1RB---_1LC0RB_0LD1RB_0LC1RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+1RB---_1LC0RB_0LD1RB_0LC1RD	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+1RB---_1LC0RB_0LD1RB_1LC1RB	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB---_1LC0RB_0LD1RB_1LC1RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB---_1LC0RB_1LD1RB_0LD1RB	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB---_1LC0RD_0LC1RB_1LB0RB	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 0 R 31 by 1e8
+1RB---_1LC0RD_0LC1RB_1LB0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB---_1LC0RD_0LC1RB_1LC0RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+1RB---_1LC0RD_0LC1RD_1LC0RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+1RB---_1LC1LB_0LC1RD_0RB0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 0 R 31 by 1e8
+1RB---_1LC1RB_0LB1RD_1LC0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB---_1LC1RD_0LB1RD_1LC0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB---_1LC1RD_0LC1RD_1LB0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB---_1RC1RA_1LD1RB_0RB0LD	counter_boxfail	boarded	MS0 B/Alph_00_10_1 trmiss,islack,oslack
+1RB0LB_0RC0LA_1LB1RD_1LA1RC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 26 by 1e8
+1RB0LB_0RC1LA_1LB1RD_1RC0LA	counter_boxfail	no interior chain	log2 ratio/cell 0.889, new cells L 0 R 28 by 1e8
+1RB0LB_0RC1LD_1LB1RC_1LC1LA	counter_new	no anchor	log2 ratio/cell 0.467, new cells L 45 R 25 by 1e8
+1RB0LB_1LC0RB_1LD1RB_0RA1RB	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB0LB_1LC1LA_1RD1RC_0LA0RC	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.500, new cells L 44 R 3 by 1e8
+1RB0LB_1LC1RA_0RB0LC_------	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LB_1LC1RD_0RB0LC_1RB0LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LB_1LC1RD_0RB0LC_1RB1LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LB_1RC1LD_0LB0RC_1LB0LA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB0LB_1RC1LD_0LB0RC_1LB0RA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB0LB_1RC1LD_0LB0RC_1LB1RA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB0LC_0LA0RD_1LD1LA_1RB1RD	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 46 R 1 by 1e8
+1RB0LC_0LB1RC_1LD1RA_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 1 R 35 by 1e8
+1RB0LC_1LA1RD_0RD0LA_1LC1RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 24 by 1e8
+1RB0LC_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB0LC_1LC1LA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB0LC_1LC1RA_0RB0LC_------	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LC_1LC1RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB0LC_1LC1RB_0RB1LD_1LB1LA	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 47 R 23 by 1e8
+1RB0LC_1LC1RD_0RB0LC_1RB0LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LC_1LC1RD_0RD0LC_1LC1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 1 R 36 by 1e8
+1RB0LC_1RC1LD_0LB0RC_1LB0LA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB0LC_1RC1LD_0LB0RC_1LB0RA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB0LC_1RC1LD_0LB0RC_1LB1RA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB0LC_1RC1LD_0LD0RC_1LA1LB	counter_boxfail	no anchor	log2 ratio/cell 0.333, new cells L 73 R 2 by 1e8
+1RB0LC_1RC1LD_0LD0RC_1LB0LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB0LC_1RC1LD_0LD0RC_1LB1LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB0LD_0LB1RC_1LD1RA_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 1 R 35 by 1e8
+1RB0LD_0LC0LA_1RC1LB_0LB0RC	counter_new	no anchor	log2 ratio/cell 0.318, new cells L 68 R 1 by 1e8
+1RB0LD_0LC0LA_1RC1LD_0LB0RC	counter_new	no anchor	log2 ratio/cell 0.304, new cells L 69 R 1 by 1e8
+1RB0LD_1LC0LC_1RD1LB_1LA0RD	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 51 R 2 by 1e8
+1RB0LD_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB0LD_1LC1LA_1LD1RC_0RC1LB	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 46 R 24 by 1e8
+1RB0LD_1LC1LA_1RD1LB_0LC0RD	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 51 R 2 by 1e8
+1RB0LD_1LC1LB_1RD1LA_0LC0RD	counter_boxfail	no anchor	log2 ratio/cell 0.333, new cells L 74 R 2 by 1e8
+1RB0LD_1LC1RA_0RB0LC_---0LB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_---0LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_---0RB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_---0RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_---1LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_---1RA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_---1RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0LB0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0LB0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0LB1LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0LB1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0LC0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0LC0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0LC1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0RB0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0RB0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0RB1LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0RB1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0RC0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0RC0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0RC1LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_0RC1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_1LC0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_1LC0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_1RA0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_1RA0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_1RB1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_1RC0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_1RC0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_1RC1LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB0LC_1RC1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0LD_1LC1RA_0RB1LD_0LB0LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 3 R 24 by 1e8
+1RB0LD_1LC1RA_0RB1LD_0LC0LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 2 R 25 by 1e8
+1RB0LD_1LC1RA_0RB1LD_0RB0LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 26 by 1e8
+1RB0LD_1LC1RA_0RB1LD_0RD0LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 26 by 1e8
+1RB0LD_1LC1RA_0RB1LD_1LB0LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 3 R 24 by 1e8
+1RB0LD_1LC1RA_0RB1LD_1LC0LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 2 R 25 by 1e8
+1RB0LD_1LC1RA_0RB1LD_1RA0LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 2 R 25 by 1e8
+1RB0LD_1LC1RA_0RB1LD_1RC0LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 2 R 25 by 1e8
+1RB0LD_1LC1RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB0LD_1LC1RD_0RA1RD_1LB0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB0LD_1LC1RD_0RD0LC_1LC1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 1 R 36 by 1e8
+1RB0LD_1RC0LA_1LD1RB_0RB0LD	counter_boxfail	boarded	MS0 B/Alph_00_10_1 trmiss,islack,oslack
+1RB0LD_1RC0LA_1LD1RB_0RC1LA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 26 by 1e8
+1RB0LD_1RC0RB_1LA1RB_1LC0LD	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 6 R 50 by 1e8
+1RB0LD_1RC1LD_0LD0RC_1LB0LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB0LD_1RC1LD_0LD0RC_1LB1LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB0LD_1RC1RB_0LA0RB_1LB1LA	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 45 R 2 by 1e8
+1RB0RA_1LC1RA_1RA0LD_1LB0LC	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 6 R 47 by 1e8
+1RB0RA_1LC1RA_1RA0LD_1LB0LD	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 6 R 47 by 1e8
+1RB0RA_1RC1LD_1LD0RA_1LB0LD	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 48 R 5 by 1e8
+1RB0RB_0LC0RA_1RB1LD_1RA1LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 1 by 1e8
+1RB0RB_0LC1RA_1RB1LD_1LC0RA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 26 R 1 by 1e8
+1RB0RB_0LC1RD_1RB1LC_1RC1RA	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 23 R 47 by 1e8
+1RB0RB_0RC0LD_0RD0RA_1LD1RB	counter_new	no anchor	log2 ratio/cell 0.304, new cells L 0 R 69 by 1e8
+1RB0RB_0RC0LD_0RD0RA_1LD1RC	counter_new	no anchor	log2 ratio/cell 0.318, new cells L 0 R 68 by 1e8
+1RB0RB_0RC0RA_1LD1LC_0LD1RB	counter_new	no interior chain	log2 ratio/cell 0.792, new cells L 0 R 32 by 1e8
+1RB0RB_1LC0RA_1LD1RA_0LD1RB	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB0RB_1LC0RB_0LD1RA_1LC1RB	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB0RB_1LC0RB_0LD1RA_1LC1RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB0RB_1LC0RB_1LD1RA_0LD1RB	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB0RB_1LC1RA_0RB0LC_------	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RB_1LC1RA_1LD0LC_0RA1RD	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 2 R 52 by 1e8
+1RB0RB_1LC1RA_1LD0LC_1RA1LA	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 3 R 48 by 1e8
+1RB0RB_1LC1RD_0RB0LC_1RB0LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RB_1LC1RD_0RB0LC_1RB1LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RB_1LC1RD_0RD0LC_1LC1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 1 R 38 by 1e8
+1RB0RB_1RC0LA_1LD1RB_0RB0LD	counter_boxfail	boarded	MS0 D/Bp trmiss
+1RB0RB_1RC1LD_0LB0RC_1LB0RA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB0RB_1RC1LD_0LB0RC_1LB1RA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB0RB_1RC1RA_1LD1LC_0RA0LC	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 2 R 45 by 1e8
+1RB0RC_0LB1RC_0LD0RC_1LA1LD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 44 R 1 by 1e8
+1RB0RC_0LB1RC_0RD0RA_1LB1LD	counter_new	no interior chain	log2 ratio/cell 0.792, new cells L 0 R 32 by 1e8
+1RB0RC_0LB1RC_1LD0RA_1LB1RA	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB0RC_0LB1RC_1LD0RC_1LB1RA	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB0RC_0LB1RC_1LD1RA_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 1 R 37 by 1e8
+1RB0RC_0LC0RB_1LD1LC_1LA0LB	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 51 R 1 by 1e8
+1RB0RC_0LC0RB_1LD1LC_1LA1LB	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 51 R 1 by 1e8
+1RB0RC_1LB1RA_0RD0LB_0RB0RA	counter_new	no anchor	log2 ratio/cell 0.304, new cells L 0 R 70 by 1e8
+1RB0RC_1LB1RC_0RD0LB_0RB0RA	counter_new	no anchor	log2 ratio/cell 0.304, new cells L 0 R 69 by 1e8
+1RB0RC_1LC0RB_0LC1RD_0RB1LA	counter_boxfail	boarded	MS0 C/Kp trmiss
+1RB0RC_1LC0RD_0LC1RD_0RB1LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RC_1LC1RA_0RB0LC_------	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RC_1LC1RA_0RD0LC_0RB1LA	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 1 R 52 by 1e8
+1RB0RC_1LC1RD_0RB0LC_1RA0RD	counter_boxfail	no anchor	log2 ratio/cell 0.320, new cells L 1 R 75 by 1e8
+1RB0RC_1LC1RD_0RB0LC_1RB0LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RC_1LC1RD_0RB0LC_1RB1LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RC_1LC1RD_0RD0LC_1LC1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.692, new cells L 1 R 39 by 1e8
+1RB0RC_1RC0LA_1LD1RB_0RB0LD	counter_boxfail	boarded	MS0 B/Alph_00_10_1 trmiss,islack,oslack
+1RB0RC_1RC1LB_0LB1RD_1RB1RA	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 22 R 48 by 1e8
+1RB0RC_1RC1LD_0LB0RA_1RA1LB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 23 R 2 by 1e8
+1RB0RC_1RC1LD_0LB0RC_1LB0LA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB0RC_1RC1LD_0LB0RC_1LB0RA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB0RC_1RC1LD_0LB1RA_1LB0RA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 25 R 2 by 1e8
+1RB0RC_1RC1LD_0LD0RC_1LB0LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB0RC_1RC1LD_0LD0RC_1LB1LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB0RC_1RC1LD_1LD0RA_1LB0LD	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 48 R 5 by 1e8
+1RB0RD_0LB1RC_1LD1RA_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 1 R 38 by 1e8
+1RB0RD_0LC1RA_1LB1RC_1LB0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB0RD_0LC1RA_1LB1RD_1LB0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB0RD_0LC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 44 R 1 by 1e8
+1RB0RD_0RC0RA_1LC1RA_0RB0LC	counter_new	no anchor	log2 ratio/cell 0.304, new cells L 0 R 70 by 1e8
+1RB0RD_0RC0RA_1LC1RB_0RB0LC	counter_new	no anchor	log2 ratio/cell 0.318, new cells L 0 R 68 by 1e8
+1RB0RD_0RC1LA_1LD0RB_0LD1RC	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+1RB0RD_0RC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 42 R 3 by 1e8
+1RB0RD_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB0RD_1LC0RB_0LC1RD_0RB1LA	counter_boxfail	boarded	MS0 C/Kp trmiss
+1RB0RD_1LC1LA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB0RD_1LC1LB_0RA0LB_1RB1RA	counter_boxfail	no overflow chain (nested: no inner interior chain)	log2 ratio/cell 0.467, new cells L 2 R 45 by 1e8
+1RB0RD_1LC1RA_0LC1RD_1LB0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB0RD_1LC1RA_0RB0LC_0LA---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_0LC---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_0LD0LB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_0LD0LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_0LD0RB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_0LD0RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_0LD1LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_0LD1LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_0LD1RA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_0LD1RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_0RB---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_0RC---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LA---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LB0LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LB0LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LB0RB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LB0RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LB1LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LB1LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LB1RA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LB1RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LC---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LD0LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LD1LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LD1LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LD1RA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1LD1RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1RA---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RA_0RB0LC_1RC---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB0RD_1LC1RB_0LB1RA_1LC0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB0RD_1LC1RD_0LB1RA_1LC0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB0RD_1LC1RD_0RD0LC_1LC1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 1 R 38 by 1e8
+1RB0RD_1RC0LA_1LD1RB_0RB0LD	counter_boxfail	boarded	MS0 D/Bp trmiss
+1RB0RD_1RC0LC_1LD1RA_0RC0LD	counter_boxfail	no anchor	log2 ratio/cell 0.320, new cells L 1 R 75 by 1e8
+1RB0RD_1RC0RB_1LD1RA_0RC0LD	counter_boxfail	no anchor	log2 ratio/cell 0.320, new cells L 1 R 75 by 1e8
+1RB0RD_1RC1LA_1LD1RB_0RB0LD	counter_boxfail	boarded	MS0 D/Bp trmiss
+1RB0RD_1RC1LD_0LB0RC_1LB0LA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB0RD_1RC1LD_0LD0RC_1LB0LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB0RD_1RC1RA_1RD1LC_0LC1RB	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 23 R 47 by 1e8
+1RB0RD_1RC1RB_1LD1RA_0RC0LD	counter_boxfail	no anchor	log2 ratio/cell 0.320, new cells L 1 R 75 by 1e8
+1RB0RD_1RC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 42 R 3 by 1e8
+1RB1LA_0LA0RC_0RD0RB_1LD1LB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 27 R 2 by 1e8
+1RB1LA_0LA0RC_0RD0RC_1LD1LB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 27 R 2 by 1e8
+1RB1LA_0LA0RC_0RD1RB_1LD1LB	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 36 R 2 by 1e8
+1RB1LA_0LA1RC_0RD0RC_1LD1LB	counter_new	no anchor	log2 ratio/cell 0.694, new cells L 37 R 4 by 1e8
+1RB1LA_0RC0RD_1LC1LD_0LA0RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 26 R 2 by 1e8
+1RB1LA_0RC0RD_1LC1LD_0LA1RB	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 35 R 2 by 1e8
+1RB1LA_0RC1RD_1LC1LD_0LA0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 36 R 2 by 1e8
+1RB1LA_1LC0LC_1RD1LB_1LA0RD	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 50 R 2 by 1e8
+1RB1LA_1LC0RB_0LC1RD_0RB0LA	counter_boxfail	boarded	MS0 C/Kp trmiss
+1RB1LA_1LC0RB_0LC1RD_0RB1LA	counter_boxfail	boarded	MS0 C/Kp trmiss
+1RB1LA_1LC1RD_1LA0LB_0LA0RB	counter_new	boarded	S0 D/Alph_10_11_11 nest-offset
+1RB1LA_1LC1RD_1LA0LC_0LA0RB	counter_new	boarded	S0 D/Alph_10_11_11 nest-offset
+1RB1LA_1LC1RD_1LA0RA_0LA0RB	counter_new	boarded	S0 D/Alph_10_11_11 nest-offset
+1RB1LA_1LC1RD_1LA0RB_0LA0RB	counter_new	boarded	S0 D/Alph_10_11_11 nest-offset
+1RB1LA_1LC1RD_1LA0RC_0LA0RB	counter_new	boarded	S0 D/Alph_10_11_11 nest-offset
+1RB1LA_1LC1RD_1LA0RD_0LA0RB	counter_new	boarded	S0 D/Alph_10_11_11 nest-offset
+1RB1LA_1LC1RD_1LA1LA_0LA0RB	counter_new	boarded	S0 D/Alph_10_11_11 nest-offset
+1RB1LA_1LC1RD_1LA1RA_0LA0RB	counter_new	boarded	S0 D/Alph_10_11_11 nest-offset
+1RB1LA_1LC1RD_1LA1RB_0LA0RB	counter_new	boarded	S0 D/Alph_10_11_11 nest-offset
+1RB1LA_1RC0RB_1LC1LD_---0LA	counter_boxfail	boarded	S0 B/Kp flat
+1RB1LB_0LB1RC_0LD0RC_1LA1LD	counter_new	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 44 R 1 by 1e8
+1RB1LB_0LB1RC_1LD0RC_1LB1RA	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB1LB_0LB1RC_1LD1RA_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 1 R 35 by 1e8
+1RB1LB_0LB1RC_1RD0RC_0LA1LA	counter_new	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+1RB1LB_0LB1RC_1RD0RC_0LA1LC	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB1LB_0LC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 44 R 1 by 1e8
+1RB1LB_0RC0LA_1RD0LB_1LA1RC	counter_boxfail	no interior chain	log2 ratio/cell 0.889, new cells L 0 R 27 by 1e8
+1RB1LB_0RC0LA_1RD0LB_1LC1RC	counter_boxfail	no interior chain	log2 ratio/cell 0.720, new cells L 0 R 33 by 1e8
+1RB1LB_0RC0LB_1RD1RA_1LA1RC	counter_boxfail	no interior chain	log2 ratio/cell 0.720, new cells L 0 R 33 by 1e8
+1RB1LB_0RC0LC_1LC1RD_1RB0LA	counter_boxfail	no anchor	log2 ratio/cell 0.318, new cells L 1 R 67 by 1e8
+1RB1LB_0RC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 42 R 3 by 1e8
+1RB1LB_1LC0LC_1RD1LB_1RA0RD	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 49 R 4 by 1e8
+1RB1LB_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB1LB_1LC1LA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB1LB_1LC1RD_0LB1RA_1LC0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB1LB_1LC1RD_0RD0LC_1LC1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 1 R 36 by 1e8
+1RB1LB_1RC0LD_0LA1RB_0RB1LD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 24 by 1e8
+1RB1LB_1RC0LD_1LA1RB_0RB1LD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 21 R 23 by 1e8
+1RB1LB_1RC1LA_0LA1RD_0LB0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 33 R 2 by 1e8
+1RB1LB_1RC1LD_0LD0RC_1LB0LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB1LB_1RC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 42 R 3 by 1e8
+1RB1LC_0LA1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 23 R 21 by 1e8
+1RB1LC_0LA1RC_1RB0LD_0RC1LD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 23 R 23 by 1e8
+1RB1LC_0LA1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 48 R 1 by 1e8
+1RB1LC_0LA1RD_1RB1LA_0LC0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 34 R 1 by 1e8
+1RB1LC_0LB1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+1RB1LC_0LC0RB_1LA0LB_------	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LC_------	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_0LB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_0LC---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_0RB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_0RC---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_1LA---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_1LB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_1RA0LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_1RA0LC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_1RA0RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_1RA0RC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_1RA1LA	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_1RA1LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0LD_1RA1RC	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss,islack,oslack
+1RB1LC_0LC0RB_1LA0LD_1RC---	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss,islack,oslack
+1RB1LC_0LC0RB_1LA0RB_------	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RC_------	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_0LB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_0LC---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_0RB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_0RC---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_1LA---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_1LB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_1LC0LA	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_1LC0LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_1LC0LC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_1LC0RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_1LC1LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_1LC1LC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_1LC1RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA0RD_1RC---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LA_------	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LB_------	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_0LB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_0LC---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_0RB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_0RD0LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_0RD0LC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_0RD0RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_0RD0RC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_0RD1LA	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_0RD1LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_0RD1RC	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss,islack,oslack
+1RB1LC_0LC0RB_1LA1LD_1LB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1LC---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RC0LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RC0LC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RC0RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RC0RD	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RC1LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RC1LC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RC1RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RD0LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RD0RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RD1LA	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RD1LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1LD_1RD1RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RC_------	counter_new	boarded	S0 C/Alph_00_10_1 trmiss,islack,oslack
+1RB1LC_0LC0RB_1LA1RD_0LA0LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0LA1LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0LB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0LD0LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0LD0LC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0LD0RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0LD0RC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0LD1LA	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0LD1LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0LD1RC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0RB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0RC0LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0RC0LD	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_0RC1LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LA---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LB---	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LC0LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LC0RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LC1LA	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LC1LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LC1LD	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LD0LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LD0LC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LD0RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LD1LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LD1LC	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1LD1RB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1RC0LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LA1RD_1RC0LD	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB1LC_0LC0RB_1LA1RD_1RC1LB	counter_boxfail	boarded	S0 B/Bp trmiss
+1RB1LC_0LC0RB_1LD0LB_0RD1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 37 R 1 by 1e8
+1RB1LC_0LC0RB_1LD0LB_1RB1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 37 R 1 by 1e8
+1RB1LC_0LC0RB_1LD0LC_0RD1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 36 R 1 by 1e8
+1RB1LC_0LC0RB_1LD0LC_1RB1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 36 R 1 by 1e8
+1RB1LC_0LC0RB_1LD0RB_0RD1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LC_0LC0RB_1LD0RB_1RB1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LC_0LC0RB_1LD0RC_0RD1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 34 R 2 by 1e8
+1RB1LC_0LC0RB_1LD0RC_1RB1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 34 R 2 by 1e8
+1RB1LC_0LC0RB_1LD1LA_0RD1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LC_0LC0RB_1LD1LA_1RB1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LC_0LC0RB_1LD1LB_0RD1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 37 R 1 by 1e8
+1RB1LC_0LC0RB_1LD1LB_1RB1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 37 R 1 by 1e8
+1RB1LC_0LC0RB_1LD1LC_0RD1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LC_0LC0RB_1LD1LC_1RB1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LC_0LC0RB_1LD1LD_0RD1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LC_0LC0RB_1LD1LD_1RB1LA	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LC_0LC0RB_1LD1RC_0RD1LA	counter_new	no interior chain	log2 ratio/cell 0.636, new cells L 34 R 2 by 1e8
+1RB1LC_0LC0RB_1LD1RC_1RB1LA	counter_new	no interior chain	log2 ratio/cell 0.636, new cells L 34 R 2 by 1e8
+1RB1LC_0LC0RB_1LD1RD_1LA0LB	counter_boxfail	no anchor	log2 ratio/cell 0.333, new cells L 73 R 2 by 1e8
+1RB1LC_0LC0RB_1LD1RD_1LA1LB	counter_boxfail	no anchor	log2 ratio/cell 0.333, new cells L 73 R 2 by 1e8
+1RB1LC_0LC0RD_1RD1LA_0LC0RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 1 by 1e8
+1RB1LC_0LC1RA_1LB1RD_1LB0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB1LC_0LC1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+1RB1LC_0LC1RD_1LA0RD_0LC0RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 25 R 1 by 1e8
+1RB1LC_0LC1RD_1LA1LB_0LC0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.720, new cells L 33 R 1 by 1e8
+1RB1LC_0LC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 48 R 1 by 1e8
+1RB1LC_0RC0RD_1RD1LA_0LC0RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 22 R 3 by 1e8
+1RB1LC_0RC1LB_1RD0LB_0LA1RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 21 R 25 by 1e8
+1RB1LC_0RC1LB_1RD0LB_1LA1RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 21 R 23 by 1e8
+1RB1LC_0RC1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 21 R 23 by 1e8
+1RB1LC_0RC1RD_1LA0RD_0LC0RB	counter_boxfail	no interior chain	log2 ratio/cell 0.857, new cells L 23 R 3 by 1e8
+1RB1LC_0RC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.467, new cells L 46 R 3 by 1e8
+1RB1LC_1LA0RD_1RD1LA_0LC0RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 23 R 2 by 1e8
+1RB1LC_1LA1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+1RB1LC_1LA1RC_1RB0LD_0RC1LD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+1RB1LC_1LA1RD_0RD0LA_1RB0LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 25 by 1e8
+1RB1LC_1LA1RD_0RD0LC_1RB1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 1 R 31 by 1e8
+1RB1LC_1LA1RD_1LA0RD_0LC0RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 2 by 1e8
+1RB1LC_1LA1RD_1LA1LB_0LC0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 30 R 2 by 1e8
+1RB1LC_1LB1RA_1RD0LC_1LA0RD	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 48 R 6 by 1e8
+1RB1LC_1LB1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+1RB1LC_1LC1RA_0LC1RD_1LB0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB1LC_1LC1RA_1RD0LC_1LA0RD	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 48 R 6 by 1e8
+1RB1LC_1LC1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 21 R 23 by 1e8
+1RB1LC_1LC1RD_0RB0LC_1RB0LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LC_1LC1RD_1LA1LB_0LC0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.793, new cells L 30 R 2 by 1e8
+1RB1LC_1RC0RD_1RD1LA_0LC0RB	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 22 R 3 by 1e8
+1RB1LC_1RC1LD_0LB0RC_1LB0LA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB1LC_1RC1LD_0LB0RC_1LB0RA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB1LC_1RC1LD_0LB0RC_1LB1RA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB1LC_1RC1LD_0LD0RC_1LA1LB	counter_boxfail	no anchor	log2 ratio/cell 0.333, new cells L 73 R 2 by 1e8
+1RB1LC_1RC1LD_0LD0RC_1LB0LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB1LC_1RC1LD_0LD0RC_1LB1LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB1LC_1RC1RC_1LA0RD_0LC1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 21 R 23 by 1e8
+1RB1LC_1RC1RD_1LA0RD_0LC0RB	counter_boxfail	no interior chain	log2 ratio/cell 0.857, new cells L 23 R 3 by 1e8
+1RB1LC_1RC1RD_1LA1LB_0LC0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.704, new cells L 29 R 3 by 1e8
+1RB1LC_1RC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.467, new cells L 46 R 3 by 1e8
+1RB1LD_0LB0RC_0LD0RB_1RC1LA	counter_new	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 1 by 1e8
+1RB1LD_0LB1RC_0LD0RB_1LA0RC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 25 R 1 by 1e8
+1RB1LD_0LB1RC_0LD0RC_1LA1LD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 48 R 1 by 1e8
+1RB1LD_0LC0RB_1LA0LB_1RB1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 37 R 1 by 1e8
+1RB1LD_0LC0RB_1LA0LC_1RB1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 36 R 1 by 1e8
+1RB1LD_0LC0RB_1LA0RB_1RB1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LD_0LC0RB_1LA0RC_1RB1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 34 R 2 by 1e8
+1RB1LD_0LC0RB_1LA1LA_1RB1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LD_0LC0RB_1LA1LB_1RB1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 37 R 1 by 1e8
+1RB1LD_0LC0RB_1LA1LC_1RB1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LD_0LC0RB_1LA1LD_1RB1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 35 R 1 by 1e8
+1RB1LD_0LC0RB_1LA1RC_1RB1LC	counter_new	no interior chain	log2 ratio/cell 0.636, new cells L 34 R 2 by 1e8
+1RB1LD_0LC0RB_1LD1LC_1LA0LB	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 53 R 1 by 1e8
+1RB1LD_0LC0RB_1LD1LC_1LA1LB	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 53 R 1 by 1e8
+1RB1LD_0LC0RB_1LD1RD_1LA0LB	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 52 R 2 by 1e8
+1RB1LD_0LC0RB_1LD1RD_1LA1LB	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 52 R 2 by 1e8
+1RB1LD_0LC0RC_0LD0RB_1RC1LA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 25 R 1 by 1e8
+1RB1LD_0LC1RC_0LD0RB_1LA0RC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 26 R 1 by 1e8
+1RB1LD_0LC1RC_0LD0RC_1LA1LB	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 31 R 1 by 1e8
+1RB1LD_0LC1RD_0LD1RC_1LA0RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+1RB1LD_0RC0RC_0LD0RB_1RC1LA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 23 R 2 by 1e8
+1RB1LD_0RC1RC_0LD0RB_1LA0RC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 2 by 1e8
+1RB1LD_0RC1RC_0LD0RC_1LA1LB	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 30 R 2 by 1e8
+1RB1LD_0RC1RD_0LD1RC_1LA0RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+1RB1LD_1LB1RC_0LD0RB_1LA0RC	counter_boxfail	no interior chain	log2 ratio/cell 0.857, new cells L 23 R 3 by 1e8
+1RB1LD_1LB1RC_0LD0RC_1LA1LB	counter_new	no interior chain	log2 ratio/cell 0.792, new cells L 30 R 2 by 1e8
+1RB1LD_1LC0LC_1RD1LB_1LA0RD	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 51 R 2 by 1e8
+1RB1LD_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB1LD_1LC0RB_0LD1RA_1LC1RB	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 34 by 1e8
+1RB1LD_1LC0RB_1LD1RA_0LD1RB	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB1LD_1LC0RC_0LD0RB_1RC1LA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 23 R 2 by 1e8
+1RB1LD_1LC1LA_1RD1LB_0LC0RD	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 51 R 2 by 1e8
+1RB1LD_1LC1LB_1RD1LA_0LC0RD	counter_boxfail	no anchor	log2 ratio/cell 0.333, new cells L 74 R 2 by 1e8
+1RB1LD_1LC1RA_0RB0LC_---0LB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_---0RB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_---0RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_---1RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0LB0RA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0LB0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0LC0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0LC0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0LC1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0RB0RA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0RB0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0RB1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0RC0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0RC0RA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0RC0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_0RC1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_1LC0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_1LC0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_1LC1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_1RA0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_1RA0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_1RA1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_1RC0LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_1RC0RA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_1RC0RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_1RC1LD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_0RB0LC_1RC1RD	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1LD_1LC1RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB1LD_1LC1RC_0LD0RB_1LA0RC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 2 by 1e8
+1RB1LD_1LC1RC_0LD0RC_1LA1LB	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 30 R 2 by 1e8
+1RB1LD_1LC1RC_1RB0LD_0RC0LA	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 1 R 31 by 1e8
+1RB1LD_1LC1RD_0LD1RC_1LA0RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+1RB1LD_1RC0LA_1LD1RB_0RB0LD	counter_boxfail	boarded	MS0 B/Alph_00_10_1 trmiss,islack,oslack
+1RB1LD_1RC0RB_0LA1LA_0LD1RB	counter_new	no interior chain	log2 ratio/cell 1.000, new cells L 0 R 25 by 1e8
+1RB1LD_1RC0RB_0LA1LB_0LD1RB	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB1LD_1RC0RB_1LA0RB_0LD1LB	counter_new	no anchor	log2 ratio/cell 0.500, new cells L 3 R 50 by 1e8
+1RB1LD_1RC0RC_0LD0RB_1RC1LA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 23 R 2 by 1e8
+1RB1LD_1RC1LD_0LB0RC_1LB0LA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB1LD_1RC1LD_0LB0RC_1LB0RA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB1LD_1RC1LD_0LD0RC_1LB1LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB1LD_1RC1RA_1LA1RB_0RB0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.793, new cells L 1 R 31 by 1e8
+1RB1LD_1RC1RB_1LA0LD_0RB0LD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 1 R 44 by 1e8
+1RB1LD_1RC1RB_1LA1LA_0RB0LD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.467, new cells L 1 R 46 by 1e8
+1RB1LD_1RC1RB_1LA1LB_0RB0LD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 1 R 48 by 1e8
+1RB1LD_1RC1RB_1LA1RA_0RB0LD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 1 R 44 by 1e8
+1RB1LD_1RC1RB_1LA1RB_0RB0LD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 1 R 48 by 1e8
+1RB1LD_1RC1RC_0LD0RB_1LA0RC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 2 by 1e8
+1RB1LD_1RC1RC_0LD0RC_1LA1LB	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 30 R 2 by 1e8
+1RB1LD_1RC1RD_0LD1RC_1LA0RC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+1RB1RA_0LB1RC_1LD1RA_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 1 R 35 by 1e8
+1RB1RA_1LC1RD_0RB0LC_1RB0LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RA_1LC1RD_0RD0LC_1LC1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 1 R 36 by 1e8
+1RB1RA_1RC1LA_1LD1RB_0RB0LD	counter_boxfail	boarded	MS0 B/Alph_00_10_1 trmiss,islack,oslack
+1RB1RB_0LB1RC_0LD0RC_1LA1LD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.467, new cells L 46 R 1 by 1e8
+1RB1RB_0LB1RC_1LD0RC_1LB1LA	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 35 by 1e8
+1RB1RB_0LB1RC_1LD1RA_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 1 R 35 by 1e8
+1RB1RB_0LC0RA_1LD0RB_1RA1LC	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 25 R 1 by 1e8
+1RB1RB_0LC0RA_1LD0RB_1RC1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 31 R 1 by 1e8
+1RB1RB_0LC0RB_1LD1LA_1RA1LC	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 31 R 1 by 1e8
+1RB1RB_0LC0RB_1LD1LC_1RA0RB	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 44 R 1 by 1e8
+1RB1RB_0LC0RB_1LD1LC_1RA1LA	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 44 R 1 by 1e8
+1RB1RB_0LC0RB_1LD1LC_1RA1LC	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 48 R 1 by 1e8
+1RB1RB_0LC0RB_1LD1LC_1RA1RA	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.467, new cells L 46 R 1 by 1e8
+1RB1RB_0LC0RB_1LD1LC_1RA1RC	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 48 R 1 by 1e8
+1RB1RB_0LC1RD_0LB1LA_1LB0RD	counter_new	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 25 by 1e8
+1RB1RB_0LC1RD_0LB1LA_1LC0RD	counter_new	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 25 by 1e8
+1RB1RB_0LC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.467, new cells L 46 R 1 by 1e8
+1RB1RB_0LC1RD_1LB1LA_1LB0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 34 by 1e8
+1RB1RB_0RC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 44 R 3 by 1e8
+1RB1RB_1LB1RC_0RC1LD_1LA0LD	counter_new	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.467, new cells L 46 R 1 by 1e8
+1RB1RB_1LC0LC_1RD1LB_1RA0RD	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 49 R 4 by 1e8
+1RB1RB_1LC0RB_0LC1RD_0RB1LA	counter_boxfail	boarded	MS0 C/Kp trmiss
+1RB1RB_1LC0RB_1LD1LA_0LD1RC	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 34 by 1e8
+1RB1RB_1LC0RD_0RA1LB_0LB1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 23 R 23 by 1e8
+1RB1RB_1LC0RD_1RA1LB_0LB1RD	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+1RB1RB_1LC1RA_0RA1LD_0RB0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 34 by 1e8
+1RB1RB_1LC1RA_0RB0LC_------	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RB_1LC1RD_0LB1LA_1LC0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 34 by 1e8
+1RB1RB_1LC1RD_0LC1LA_1LB0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 35 by 1e8
+1RB1RB_1LC1RD_0RD0LC_1LC1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 1 R 36 by 1e8
+1RB1RB_1LC1RD_1LA0LC_0RD1LC	counter_new	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.467, new cells L 46 R 1 by 1e8
+1RB1RB_1RC0LA_1LD1RB_0RB0LD	counter_boxfail	boarded	MS0 B/Alph_00_10_1 trmiss,islack,oslack
+1RB1RB_1RC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 44 R 3 by 1e8
+1RB1RC_0LB1LA_1LB1RD_1LC0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 35 by 1e8
+1RB1RC_0LB1RC_1LD1RA_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.636, new cells L 1 R 35 by 1e8
+1RB1RC_0LC1LA_0LB1RD_1LB0RD	counter_new	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 25 by 1e8
+1RB1RC_0LC1LA_0LB1RD_1LC0RD	counter_new	no interior chain	log2 ratio/cell 1.000, new cells L 1 R 25 by 1e8
+1RB1RC_0LC1LA_1LB1RD_1LB0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 34 by 1e8
+1RB1RC_0LC1RB_1LD0RB_0RA1LC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 23 R 23 by 1e8
+1RB1RC_0LC1RB_1LD0RB_1RA1LC	counter_new	no overflow chain (nested: no exit chain)	log2 ratio/cell 1.000, new cells L 22 R 22 by 1e8
+1RB1RC_0LC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 48 R 1 by 1e8
+1RB1RC_0RC0LB_1LD1RA_0RA1LB	counter_boxfail	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 36 by 1e8
+1RB1RC_0RC1LA_1LD0RB_0LD1RC	counter_boxfail	boarded	MS0 D/Bp trmiss
+1RB1RC_0RC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.467, new cells L 46 R 3 by 1e8
+1RB1RC_1LC0RB_0LC1RD_0RB0LA	counter_boxfail	boarded	MS0 C/Kp trmiss
+1RB1RC_1LC0RB_0LC1RD_0RB1LA	counter_boxfail	boarded	MS0 C/Kp trmiss
+1RB1RC_1LC0RD_0LC1RD_0RB0LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RC_1LC0RD_0LC1RD_0RB1LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RC_1LC1LA_0LB1RD_1LC0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 34 by 1e8
+1RB1RC_1LC1LA_0LC1RD_1LB0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 1 R 35 by 1e8
+1RB1RC_1LC1RA_0RB0LC_------	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RC_1LC1RA_0RD0LC_0RB1LA	counter_boxfail	no anchor	log2 ratio/cell 0.471, new cells L 1 R 52 by 1e8
+1RB1RC_1LC1RD_0RB0LC_1RA0RD	counter_boxfail	no anchor	log2 ratio/cell 0.320, new cells L 1 R 75 by 1e8
+1RB1RC_1LC1RD_0RB0LC_1RB0LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RC_1LC1RD_0RB0LC_1RB1LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RC_1LC1RD_0RD0LC_1LC1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.692, new cells L 1 R 39 by 1e8
+1RB1RC_1LC1RD_1LA0LC_0RD1LC	counter_new	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 48 R 1 by 1e8
+1RB1RC_1RC1LD_0LB0RC_1LB0LA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB1RC_1RC1LD_0LB0RC_1LB0RA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB1RC_1RC1LD_0LD0RC_1LB1LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB1RC_1RC1RD_1LA1LC_0LC0RD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.467, new cells L 46 R 3 by 1e8
+1RB1RD_0LB1RC_0LD0RC_1LA1LD	counter_boxfail	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 48 R 1 by 1e8
+1RB1RD_0LB1RC_1LB1LA_1LC0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB1RD_0LB1RC_1LD1RA_0RC0LD	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 1 R 38 by 1e8
+1RB1RD_0LC1RA_1LA1LB_1LC0RA	counter_boxfail	boarded	MS1 B/Alph_10_11_11 nest-plain
+1RB1RD_0RC1LA_1LD0RB_0LD1RC	counter_boxfail	boarded	MS0 D/Alph_00_10_1 trmiss
+1RB1RD_1LB1RC_0RC1LD_1LA0LD	counter_new	no overflow chain (nested: no inner family at pow2 j)	log2 ratio/cell 0.500, new cells L 48 R 1 by 1e8
+1RB1RD_1LC0RA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB1RD_1LC0RB_0LC1RD_0RB0LA	counter_boxfail	boarded	MS0 C/Kp trmiss
+1RB1RD_1LC0RD_0LC1RD_0RB0LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC0RD_1RA1LB_0LB0RA	counter_boxfail	no interior chain	log2 ratio/cell 1.000, new cells L 24 R 2 by 1e8
+1RB1RD_1LC0RD_1RB1LB_0LB0RA	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 30 R 2 by 1e8
+1RB1RD_1LC1LA_0LC1RB_1LB0RD	counter_new	no interior chain	log2 ratio/cell 0.694, new cells L 0 R 35 by 1e8
+1RB1RD_1LC1LA_1RA1LB_0LB0RD	counter_boxfail	no interior chain	log2 ratio/cell 0.792, new cells L 30 R 2 by 1e8
+1RB1RD_1LC1LA_1RD1LB_0LC0RD	counter_boxfail	boarded	S0 D/Alph_00_10_1 trmiss
+1RB1RD_1LC1LB_1RA1LA_0LB0RD	counter_boxfail	no overflow chain (nested: no boot chain)	log2 ratio/cell 0.500, new cells L 43 R 2 by 1e8
+1RB1RD_1LC1RA_0RB0LC_0LC---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_0LD0LB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_0LD0LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_0LD0RB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_0LD0RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_0LD1RB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_0LD1RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_0RB---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_0RC---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LA0LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LA0RB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LA0RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LA1LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LA1RA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LA1RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LC---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LD0LB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LD0LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LD0RB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LD0RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LD1LC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LD1RB	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1LD1RC	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1RA---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RA_0RB0LC_1RC---	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RD_0RB0LC_1RB0LA	counter_boxfail	boarded	MS0 C/Alph_00_10_1 trmiss
+1RB1RD_1LC1RD_0RD0LC_1LC1RA	counter_boxfail	no interior chain	log2 ratio/cell 0.667, new cells L 1 R 36 by 1e8
+1RB1RD_1RC0LA_1LD1RB_0RB0LD	counter_boxfail	boarded	MS0 D/Bp trmiss
+1RB1RD_1RC0LC_1LD1RA_0RC0LD	counter_boxfail	no anchor	log2 ratio/cell 0.320, new cells L 1 R 75 by 1e8
+1RB1RD_1RC0RB_1LD1RA_0RC0LD	counter_boxfail	no anchor	log2 ratio/cell 0.320, new cells L 1 R 75 by 1e8
+1RB1RD_1RC1LA_1LD1RB_0RB0LD	counter_boxfail	boarded	MS0 B/Alph_00_10_1 trmiss,islack,oslack
+1RB1RD_1RC1LB_0LB1RA_0LB0RC	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 24 R 46 by 1e8
+1RB1RD_1RC1LB_0LB1RA_0LC0RC	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 22 R 48 by 1e8
+1RB1RD_1RC1LB_0LB1RA_0LD0RC	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 24 R 46 by 1e8
+1RB1RD_1RC1LB_0LB1RA_0RB0RC	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 22 R 48 by 1e8
+1RB1RD_1RC1LB_0LB1RA_0RC0RC	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 23 R 47 by 1e8
+1RB1RD_1RC1LB_0LB1RA_1LA0RC	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 23 R 47 by 1e8
+1RB1RD_1RC1LB_0LB1RA_1LB0RC	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 23 R 47 by 1e8
+1RB1RD_1RC1LB_0LB1RA_1LD0RC	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 23 R 47 by 1e8
+1RB1RD_1RC1LB_0LB1RA_1RA0RC	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 23 R 47 by 1e8
+1RB1RD_1RC1LB_0LB1RA_1RB0RC	counter_boxfail	no anchor	log2 ratio/cell 0.500, new cells L 22 R 48 by 1e8
+1RB1RD_1RC1LB_0LB1RA_1RC0RC	counter_boxfail	no anchor	log2 ratio/cell 0.467, new cells L 23 R 47 by 1e8
+1RB1RD_1RC1LC_1LB0RD_0LC0RA	counter_boxfail	no interior chain	log2 ratio/cell 0.704, new cells L 29 R 3 by 1e8
+1RB1RD_1RC1LD_0LB0RC_1LB0LA	counter_boxfail	boarded	S0 C/Alph_00_10_1 trmiss
+1RB1RD_1RC1LD_0LD0RC_1LB0LA	counter_boxfail	boarded	S0 C/Bp trmiss
+1RB1RD_1RC1RB_1LD1RA_0RC0LD	counter_boxfail	no anchor	log2 ratio/cell 0.320, new cells L 1 R 75 by 1e8
