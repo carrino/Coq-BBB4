@@ -1,0 +1,4641 @@
+[
+ {
+  "spec": "1RB0RB_0LC1LD_0RC1LA_1RA0LD",
+  "enc": "Kp",
+  "ni": "j=0:4,2*j'+16",
+  "no": "2*j+16",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_0LC1LD_0RC1LA_1RA0LD.v"
+ },
+ {
+  "spec": "1RB0RB_0LC1RA_1LC0LD_1RA1LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_0LC1RA_1LD1LC_0RA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_0LC1RD_0LB1LA_1LB0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_0LC1RD_0LB1LA_1LC0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_0LC1RD_0LC1LA_1LB0RD",
+  "enc": "Kp/mirror",
+  "ni": "2*j+18",
+  "no": "2*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_0LC1RD_0LC1LA_1LB0RD.v"
+ },
+ {
+  "spec": "1RB0RB_0LC1RD_1LB1LA_1LB0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_0LC1RD_1LB1LA_1LC0RD",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+12",
+  "no": "4*j+15",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_0LC1RD_1LB1LA_1LC0RD.v"
+ },
+ {
+  "spec": "1RB0RB_0LC1RD_1LC1LA_0LA0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RB_0LC1RD_1RB1LC_0LA1RA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_0RC0LA_1LD1LA_0LD1RB",
+  "enc": "Kp/mirror",
+  "ni": "6*j+4",
+  "no": "6*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_0RC0LA_1LD1LA_0LD1RB.v"
+ },
+ {
+  "spec": "1RB0RB_0RC0LA_1LD1LA_0LD1RC",
+  "enc": "Kp/mirror",
+  "ni": "6*j+10",
+  "no": "6*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_0RC0LA_1LD1LA_0LD1RC.v"
+ },
+ {
+  "spec": "1RB0RB_0RC0LD_1LD1RC_0LA1LB",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+4",
+  "no": "4*j+11",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_0RC0LD_1LD1RC_0LA1LB.v"
+ },
+ {
+  "spec": "1RB0RB_0RC1LD_1LB1RC_0LA0LB",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+8",
+  "no": "4*j+15",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_0RC1LD_1LB1RC_0LA0LB.v"
+ },
+ {
+  "spec": "1RB0RB_0RC1RB_1LD0RB_0LD1LA",
+  "enc": "Bp/mirror",
+  "ni": "4*j+16",
+  "no": "4*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_0RC1RB_1LD0RB_0LD1LA.v"
+ },
+ {
+  "spec": "1RB0RB_0RC1RB_1LD0RC_0LD1LA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_0RC1RB_1LD0RC_0LD1LA.v"
+ },
+ {
+  "spec": "1RB0RB_0RC1RC_0LD1LA_1LD0LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RB_0RC1RC_1LD0RB_0LD1LA",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_0RC1RC_1LD0RB_0LD1LA.v"
+ },
+ {
+  "spec": "1RB0RB_1LA1LC_1RD0LB_1LB0RD",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "6*j+6",
+  "no": "6*j+9",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LA1LC_1RD0LB_1LB0RD.v"
+ },
+ {
+  "spec": "1RB0RB_1LA1LC_1RD0LC_0RD0LA",
+  "enc": "Kp",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LA1LC_1RD0LC_0RD0LA.v"
+ },
+ {
+  "spec": "1RB0RB_1LA1RC_1LD0RC_0LD0LA",
+  "enc": "Kp/mirror",
+  "ni": "j=0:6,2*j'+8",
+  "no": "2*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LA1RC_1LD0RC_0LD0LA.v"
+ },
+ {
+  "spec": "1RB0RB_1LB0LC_1LA1RD_0RD0LA",
+  "enc": "Kp",
+  "ni": "4*j+10",
+  "no": "4*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LB0LC_1LA1RD_0RD0LA.v"
+ },
+ {
+  "spec": "1RB0RB_1LC0LA_0LC1RD_1LA0RD",
+  "enc": "Kp/mirror",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC0LA_0LC1RD_1LA0RD.v"
+ },
+ {
+  "spec": "1RB0RB_1LC0LA_1RD0LC_0RD1LA",
+  "enc": "Kp",
+  "ni": "j=0:6,2*j'+8",
+  "no": "2*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC0LA_1RD0LC_0RD1LA.v"
+ },
+ {
+  "spec": "1RB0RB_1LC0LC_1LA1RD_0RD0LA",
+  "enc": "Kp",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC0LC_1LA1RD_0RD0LA.v"
+ },
+ {
+  "spec": "1RB0RB_1LC0LC_1RA1LD_0RA0LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RB_1LC0RB_0LC1LD_0RD1RA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+12",
+  "no": "2*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC0RB_0LC1LD_0RD1RA.v"
+ },
+ {
+  "spec": "1RB0RB_1LC0RD_1LA0LC_1RD0LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RB_1LC1LD_0LC0LD_0RA1RA",
+  "enc": "Kp/mirror",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC1LD_0LC0LD_0RA1RA.v"
+ },
+ {
+  "spec": "1RB0RB_1LC1LD_0LC1RA_0LD0RA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_1LC1LD_1LA1RC_0RA0LD",
+  "enc": "Dp/mirror",
+  "ni": "4*j+16",
+  "no": "4*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC1LD_1LA1RC_0RA0LD.v"
+ },
+ {
+  "spec": "1RB0RB_1LC1RA_0LC0LD_0RA0RD",
+  "enc": "Alph_000_100_1/mirror",
+  "ni": "j=0:4,10*j'+14",
+  "no": "10*j+14",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC1RA_0LC0LD_0RA0RD.v"
+ },
+ {
+  "spec": "1RB0RB_1LC1RA_0LD0LC_1RD0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_1LC1RA_1LD0LC_0RA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_1LC1RC_1LD1LA_0LD0RA",
+  "enc": "Dp/mirror",
+  "ni": "8*j+16",
+  "no": "8*j+24",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC1RC_1LD1LA_0LD0RA.v"
+ },
+ {
+  "spec": "1RB0RB_1LC1RD_0LB1LA_1LB0RD",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+8",
+  "no": "4*j+19",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC1RD_0LB1LA_1LB0RD.v"
+ },
+ {
+  "spec": "1RB0RB_1LC1RD_0LB1LA_1LC0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_1LC1RD_0LC0RD_0LA1LA",
+  "enc": "Kp/mirror",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC1RD_0LC0RD_0LA1LA.v"
+ },
+ {
+  "spec": "1RB0RB_1LC1RD_0LC1LA_0RD0LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RB_1LC1RD_0LC1LA_1LB0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_1LC1RD_0RA1LB_1RA0LC",
+  "enc": "Alph_000_010_01/mirror",
+  "ni": "12*j+14",
+  "no": "12*j+26",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC1RD_0RA1LB_1RA0LC.v"
+ },
+ {
+  "spec": "1RB0RB_1LC1RD_0RD0LC_1LA0LA",
+  "enc": "Kp",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1LC1RD_0RD0LC_1LA0LA.v"
+ },
+ {
+  "spec": "1RB0RB_1RC---_1LD0RC_0LD0LA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+10",
+  "no": "2*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1RC____1LD0RC_0LD0LA.v"
+ },
+ {
+  "spec": "1RB0RB_1RC0LA_0LD0RA_1RA1LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RB_1RC0LA_1LD0RC_0LD1LA",
+  "enc": "Kp/mirror",
+  "ni": "j=0:6,2*j'+8",
+  "no": "2*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1RC0LA_1LD0RC_0LD1LA.v"
+ },
+ {
+  "spec": "1RB0RB_1RC0LD_1LA0RC_1LD0LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RB_1RC0LD_1LD0LA_0RC1LA",
+  "enc": "Kp/mirror",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1RC0LD_1LD0LA_0RC1LA.v"
+ },
+ {
+  "spec": "1RB0RB_1RC0LD_1LD0LA_1RB1LA",
+  "enc": "Kp/mirror",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1RC0LD_1LD0LA_1RB1LA.v"
+ },
+ {
+  "spec": "1RB0RB_1RC1LD_0LD0RC_0LA1LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RB_1RC1LD_1LA0LA_0LD0RC",
+  "enc": "Kp/mirror",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RB_1RC1LD_1LA0LA_0LD0RC.v"
+ },
+ {
+  "spec": "1RB0RB_1RC1RB_1LD1LC_0RA0LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_0LA0RB_0LD1RC_1LA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_0LA1LC_0RD0LB_1LB1RD",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+4",
+  "no": "4*j+13",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LA1LC_0RD0LB_1LB1RD.v"
+ },
+ {
+  "spec": "1RB0RC_0LA1RA_0LD1RB_1RC1LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RC_0LA1RC_1LA1LD_0LD0RB",
+  "enc": "Kp/mirror",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LA1RC_1LA1LD_0LD0RB.v"
+ },
+ {
+  "spec": "1RB0RC_0LA1RC_1LD0LD_1LA0RB",
+  "enc": "Kp",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LA1RC_1LD0LD_1LA0RB.v"
+ },
+ {
+  "spec": "1RB0RC_0LB1LA_---1RD_1LB0RD",
+  "enc": "Kp/mirror",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LB1LA____1RD_1LB0RD.v"
+ },
+ {
+  "spec": "1RB0RC_0LB1LA_0LB1RD_1LC0RD",
+  "enc": "Kp/mirror",
+  "ni": "j=0:10,2*j'+12",
+  "no": "2*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LB1LA_0LB1RD_1LC0RD.v"
+ },
+ {
+  "spec": "1RB0RC_0LB1LA_0RD1RC_1LB0RC",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LB1LA_0RD1RC_1LB0RC.v"
+ },
+ {
+  "spec": "1RB0RC_0LB1LA_0RD1RC_1LB0RD",
+  "enc": "Kp/mirror",
+  "ni": "j=0:8,2*j'+10",
+  "no": "2*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LB1LA_0RD1RC_1LB0RD.v"
+ },
+ {
+  "spec": "1RB0RC_0LB1LA_0RD1RD_1LB0RC",
+  "enc": "Bp/mirror",
+  "ni": "4*j+16",
+  "no": "4*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LB1LA_0RD1RD_1LB0RC.v"
+ },
+ {
+  "spec": "1RB0RC_0LB1LA_1LB1RD_1LC0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_0LC0RA_1LA0LD_1RA1LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RC_0LC0RA_1RD0LD_1RA1LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RC_0LC0RB_1LA1LD_1LC---",
+  "enc": "Bp",
+  "ni": "6*j+4",
+  "no": "6*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LC0RB_1LA1LD_1LC___.v"
+ },
+ {
+  "spec": "1RB0RC_0LC1LA_0LB1RD_1LB0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_0LC1LA_0LB1RD_1LC0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_0LC1LA_0LC1RD_1LB0RD",
+  "enc": "Kp/mirror",
+  "ni": "j=0:10,2*j'+12",
+  "no": "2*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LC1LA_0LC1RD_1LB0RD.v"
+ },
+ {
+  "spec": "1RB0RC_0LC1LA_1LB1RD_1LB0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_0LC1RD_0LB1LA_1LB0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_0LC1RD_0LB1LA_1LC0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_0LC1RD_0LC1LA_1LB0RD",
+  "enc": "Kp/mirror",
+  "ni": "j=0:10,2*j'+12",
+  "no": "2*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LC1RD_0LC1LA_1LB0RD.v"
+ },
+ {
+  "spec": "1RB0RC_0LC1RD_1LB1LA_1LB0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_0LC1RD_1LB1LA_1LC0RD",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+16",
+  "no": "4*j+15",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_0LC1RD_1LB1LA_1LC0RD.v"
+ },
+ {
+  "spec": "1RB0RC_1LA0LA_0RB1LD_1RC0LD",
+  "enc": "Kp",
+  "ni": "6*j+10",
+  "no": "6*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_1LA0LA_0RB1LD_1RC0LD.v"
+ },
+ {
+  "spec": "1RB0RC_1LC0RB_0LD1LA_0LD1RA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+12",
+  "no": "2*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_1LC0RB_0LD1LA_0LD1RA.v"
+ },
+ {
+  "spec": "1RB0RC_1LC0RB_1LD1LA_0LC1RA",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+16",
+  "no": "4*j+31",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_1LC0RB_1LD1LA_0LC1RA.v"
+ },
+ {
+  "spec": "1RB0RC_1LC0RB_1LD1LA_0LC1RC",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+8",
+  "no": "4*j+7",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_1LC0RB_1LD1LA_0LC1RC.v"
+ },
+ {
+  "spec": "1RB0RC_1LC0RB_1LD1LA_0LD1RC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_1LC0RD_1LA0LC_0RD0LA",
+  "enc": "Kp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_1LC0RD_1LA0LC_0RD0LA.v"
+ },
+ {
+  "spec": "1RB0RC_1LC1LA_0LB1RD_1LB0RD",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+16",
+  "no": "4*j+15",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_1LC1LA_0LB1RD_1LB0RD.v"
+ },
+ {
+  "spec": "1RB0RC_1LC1LA_0LB1RD_1LC0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_1LC1LA_0LC1RD_1LB0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_1LC1RA_0LC0LD_0RA1LB",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "8*j+4",
+  "no": "8*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_1LC1RA_0LC0LD_0RA1LB.v"
+ },
+ {
+  "spec": "1RB0RC_1LC1RD_0LB1LA_1LC0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_1LC1RD_0LC1LA_1LB0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RC_1RC---_0LD0RA_0LA1LD",
+  "enc": "Dp",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_1RC____0LD0RA_0LA1LD.v"
+ },
+ {
+  "spec": "1RB0RC_1RC0LB_1LD1RD_1LA0LA",
+  "enc": "Dp",
+  "ni": "8*j+16",
+  "no": "8*j+24",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_1RC0LB_1LD1RD_1LA0LA.v"
+ },
+ {
+  "spec": "1RB0RC_1RC0LD_1LD0LA_0RB1LA",
+  "enc": "Kp/mirror",
+  "ni": "10*j+6",
+  "no": "10*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_1RC0LD_1LD0LA_0RB1LA.v"
+ },
+ {
+  "spec": "1RB0RC_1RC0RB_1LA0LD_1LD0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RC_1RC1RA_1LD1LA_0RA0LD",
+  "enc": "Alph_000_010_01/mirror",
+  "ni": "10*j+6",
+  "no": "10*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RC_1RC1RA_1LD1LA_0RA0LD.v"
+ },
+ {
+  "spec": "1RB0RD_0LB0LC_1LD1LB_1RA1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RD_0LB0LC_1RA1LD_1LC0RA",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_0LB0LC_1RA1LD_1LC0RA.v"
+ },
+ {
+  "spec": "1RB0RD_0LB0LC_1RD1LC_0LC1RA",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+6",
+  "no": "4*j+9",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_0LB0LC_1RD1LC_0LC1RA.v"
+ },
+ {
+  "spec": "1RB0RD_0LB1LC_0RC1RA_1LB0RD",
+  "enc": "Kp/mirror",
+  "ni": "j=0:14,2*j'+16",
+  "no": "2*j+16",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_0LB1LC_0RC1RA_1LB0RD.v"
+ },
+ {
+  "spec": "1RB0RD_0LB1RC_1LD0RC_0LB1LA",
+  "enc": "Kp/mirror",
+  "ni": "j=0:10,2*j'+12",
+  "no": "2*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_0LB1RC_1LD0RC_0LB1LA.v"
+ },
+ {
+  "spec": "1RB0RD_0LB1RC_1LD0RC_1LB1LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RD_0LC0RA_1RA1LC_0LA0LC",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RD_0LC0RB_1LA1LC_0LA1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RD_0LC0RB_1LA1LC_0LC1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RD_0LC1RA_1RD1LC_0LA1RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RD_0RC0LD_1LD1RC_0LA1LB",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+4",
+  "no": "4*j+13",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_0RC0LD_1LD1RC_0LA1LB.v"
+ },
+ {
+  "spec": "1RB0RD_0RC1RB_1LD0RB_0LD1LA",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_0RC1RB_1LD0RB_0LD1LA.v"
+ },
+ {
+  "spec": "1RB0RD_0RC1RB_1LD0RC_0LD1LA",
+  "enc": "Kp/mirror",
+  "ni": "j=0:8,2*j'+10",
+  "no": "2*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_0RC1RB_1LD0RC_0LD1LA.v"
+ },
+ {
+  "spec": "1RB0RD_0RC1RC_1LD0RB_0LD1LA",
+  "enc": "Bp/mirror",
+  "ni": "4*j+16",
+  "no": "4*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_0RC1RC_1LD0RB_0LD1LA.v"
+ },
+ {
+  "spec": "1RB0RD_1LC0LA_1LA0LC_1RD0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RD_1LC0LB_0RA1LB_1RA1RC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RD_1LC0LB_1LD0LB_1RD0RA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RD_1LC0LC_1LD0LB_1RD0RA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RD_1LC0LC_1RA1LB_0RC0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB0RD_1LC0RB_0LC1RA_1LD1LA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+18",
+  "no": "2*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC0RB_0LC1RA_1LD1LA.v"
+ },
+ {
+  "spec": "1RB0RD_1LC0RB_0LC1RD_0LA0RB",
+  "enc": "Kp/mirror",
+  "ni": "j=0:10,2*j'+12",
+  "no": "2*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC0RB_0LC1RD_0LA0RB.v"
+ },
+ {
+  "spec": "1RB0RD_1LC0RB_0LC1RD_0LA1LA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC0RB_0LC1RD_0LA1LA.v"
+ },
+ {
+  "spec": "1RB0RD_1LC0RB_0LC1RD_1LA0LA",
+  "enc": "Kp/mirror",
+  "ni": "j=0:6,2*j'+8",
+  "no": "2*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC0RB_0LC1RD_1LA0LA.v"
+ },
+ {
+  "spec": "1RB0RD_1LC0RB_0LC1RD_1LA1LA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+8",
+  "no": "2*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC0RB_0LC1RD_1LA1LA.v"
+ },
+ {
+  "spec": "1RB0RD_1LC0RB_0LC1RD_1LC1LA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+10",
+  "no": "2*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC0RB_0LC1RD_1LC1LA.v"
+ },
+ {
+  "spec": "1RB0RD_1LC1LA_0LC1RD_0LA0RB",
+  "enc": "Kp/mirror",
+  "ni": "6*j+10",
+  "no": "6*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC1LA_0LC1RD_0LA0RB.v"
+ },
+ {
+  "spec": "1RB0RD_1LC1LA_0LC1RD_0RB0RB",
+  "enc": "Kp/mirror",
+  "ni": "j=0:4,6*j'+10",
+  "no": "6*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC1LA_0LC1RD_0RB0RB.v"
+ },
+ {
+  "spec": "1RB0RD_1LC1LA_0LC1RD_0RB0RD",
+  "enc": "Alph_00_01_1/mirror",
+  "ni": "8*j+16",
+  "no": "8*j+18",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC1LA_0LC1RD_0RB0RD.v"
+ },
+ {
+  "spec": "1RB0RD_1LC1LA_0LC1RD_1LC0RB",
+  "enc": "Kp/mirror",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC1LA_0LC1RD_1LC0RB.v"
+ },
+ {
+  "spec": "1RB0RD_1LC1LB_0RA0LC_1RA1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RD_1LC1LB_0RA0LC_1RB1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB0RD_1LC1LB_1RA0LC_0LB0RD",
+  "enc": "Alph_000_100_1",
+  "ni": "j=0:4,10*j'+14",
+  "no": "10*j+14",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC1LB_1RA0LC_0LB0RD.v"
+ },
+ {
+  "spec": "1RB0RD_1LC1RD_1LA0LC_1RA1LD",
+  "enc": "Alph_000_010_01/mirror",
+  "ni": "6*j+10",
+  "no": "6*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB0RD_1LC1RD_1LA0LC_1RA1LD.v"
+ },
+ {
+  "spec": "1RB1LA_0LA0LC_1LC1RD_0RB0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LA0RC_0LA0RD_0LA1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LA0RC_0LD0RB_1LD1LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LA0RC_0LD0RB_1LD1RA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LA0RC_0LD0RB_1LD1RC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LA0RC_0LD1RB_1RC1LD",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+8",
+  "no": "4*j+15",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA0RC_0LD1RB_1RC1LD.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1LC_0LC1RD_0RD0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LA1LC_0RD0LC_1RD0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LA1LC_1RD0LC_0RD0RB",
+  "enc": "Kp",
+  "ni": "2*j+10",
+  "no": "2*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1LC_1RD0LC_0RD0RB.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1LC_1RD0LC_0RD1RB",
+  "enc": "Kp",
+  "ni": "2*j+8",
+  "no": "2*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1LC_1RD0LC_0RD1RB.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LA1RD_0RB0LC",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD0RB_---1RB",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+6",
+  "no": "4*j+11",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LD0RB____1RB.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD0RB_0LA1RD",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+6",
+  "no": "4*j+9",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LD0RB_0LA1RD.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD0RB_0RA1LD",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+6",
+  "no": "4*j+9",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LD0RB_0RA1LD.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD0RB_1LA0RC",
+  "enc": "Alph_10_11_11",
+  "ni": "j=0:6,4*j'+10",
+  "no": "4*j+9",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LD0RB_1LA0RC.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD0RB_1RA0LD",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+8",
+  "no": "4*j+13",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LD0RB_1RA0LD.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD0RB_1RC1LD",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+8",
+  "no": "4*j+15",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0LD0RB_1RC1LD.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD0RC_1LD0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD1RD_0RB0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD1RD_1LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD1RD_1LC0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD1RD_1LD0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD1RD_1RB0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0LD1RD_1RC0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0RB1RD_0LD0LB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0RD0RB_0LB---",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+6",
+  "no": "4*j+11",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0RD0RB_0LB___.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0RD0RB_0LD1LA",
+  "enc": "Alph_10_11_11",
+  "ni": "j=0:6,4*j'+10",
+  "no": "4*j+9",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0RD0RB_0LD1LA.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0RD0RB_1LB0LB",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+16",
+  "no": "4*j+17",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_0RD0RB_1LB0LB.v"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_0RD1RD_0LB0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_1RD0LB_0LD0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LA1RC_1RD0RB_0LD0LA",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+6",
+  "no": "4*j+9",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LA1RC_1RD0RB_0LD0LA.v"
+ },
+ {
+  "spec": "1RB1LA_0LB1RC_0LA1RD_0RC0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LB1RC_0LA1RD_1LD0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LB1RC_1LA1RD_0LD0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LB1RC_1LB1RD_0LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LB1RC_1RD1RD_0LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LC0RB_1LC1RD_0LA0RD",
+  "enc": "Kp",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LC0RB_1LC1RD_0LA0RD.v"
+ },
+ {
+  "spec": "1RB1LA_0LC0RD_0LA1RC_0LA0RC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LC0RD_0LA1RC_0RB0RC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LC0RD_1LC1LA_0LA0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LC0RD_1LC1RD_0LA0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_0LC1RC_0LA1RD_1LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LC1RC_0LA1RD_1LD0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LC1RC_0RD1RD_0LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LC1RC_1LB1RD_0LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LC1RC_1RB1RD_0LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LC1RC_1RD1RD_0LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0LC1RD_0RD1LA_0LA0RB",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+4",
+  "no": "4*j+11",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LC1RD_0RD1LA_0LA0RB.v"
+ },
+ {
+  "spec": "1RB1LA_0LC1RD_0RD1RD_0LA0RB",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+4",
+  "no": "4*j+13",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LC1RD_0RD1RD_0LA0RB.v"
+ },
+ {
+  "spec": "1RB1LA_0LC1RD_1RA0LB_0LA0RB",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+4",
+  "no": "4*j+13",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LC1RD_1RA0LB_0LA0RB.v"
+ },
+ {
+  "spec": "1RB1LA_0LC1RD_1RB1RD_0LA0RB",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+4",
+  "no": "4*j+11",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0LC1RD_1RB1RD_0LA0RB.v"
+ },
+ {
+  "spec": "1RB1LA_0LC1RD_1RD0RB_0LA1RC",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0RC1RC_0LD0RB_0LA1LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0RC1RC_0LD1RD_0LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0RC1RC_1LD1RA_0RA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_0RC1RD_0LD---_0LA0RB",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+4",
+  "no": "4*j+11",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0RC1RD_0LD____0LA0RB.v"
+ },
+ {
+  "spec": "1RB1LA_0RC1RD_1LB0LD_0LA0RB",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+4",
+  "no": "4*j+13",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0RC1RD_1LB0LD_0LA0RB.v"
+ },
+ {
+  "spec": "1RB1LA_0RC1RD_1LD0LB_0LA0RB",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+4",
+  "no": "4*j+13",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0RC1RD_1LD0LB_0LA0RB.v"
+ },
+ {
+  "spec": "1RB1LA_0RC1RD_1LD0LD_0LA0RB",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+12",
+  "no": "4*j+13",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_0RC1RD_1LD0LD_0LA0RB.v"
+ },
+ {
+  "spec": "1RB1LA_1LA0LC_1RD0LC_0RD0LA",
+  "enc": "Kp",
+  "ni": "2*j+10",
+  "no": "2*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LA0LC_1RD0LC_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1LA_1LA0RC_1LD0RC_0LD0RA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+10",
+  "no": "2*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LA0RC_1LD0RC_0LD0RA.v"
+ },
+ {
+  "spec": "1RB1LA_1LA1RC_0LA1RD_0LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_0LC0RD_0LA1RD",
+  "enc": "Kp/mirror",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RB_0LC0RD_0LA1RD.v"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_0LC1RD_0RD0LA",
+  "enc": "Kp",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RB_0LC1RD_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_0LD0RA_0LD1RB",
+  "enc": "Kp/mirror",
+  "ni": "j=0:8,2*j'+10",
+  "no": "2*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RB_0LD0RA_0LD1RB.v"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_0LD0RA_1LC1RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_0LD0RA_1LC1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_0LD1RA_0LD0RA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+12",
+  "no": "2*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RB_0LD1RA_0LD0RA.v"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_0RD0LC_1RD0LA",
+  "enc": "Kp",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RB_0RD0LC_1RD0LA.v"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_1LD0RA_0LC0LA",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+20",
+  "no": "4*j+23",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RB_1LD0RA_0LC0LA.v"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_1LD0RA_0LC1RA",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+18",
+  "no": "4*j+21",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RB_1LD0RA_0LC1RA.v"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_1LD0RA_0LD1RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_1LD1RB_0LC0RA",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+6",
+  "no": "4*j+13",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RB_1LD1RB_0LC0RA.v"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_1LD1RC_0LC0RA",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+6",
+  "no": "4*j+15",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RB_1LD1RC_0LC0RA.v"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_1RD0LC_1LA1RA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1LC0RB_1RD0LC_1LD1RA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1LC0RD_0LB0RA_1LB0RB",
+  "enc": "Ip/mirror",
+  "ni": "4*j+6",
+  "no": "4*j+8",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RD_0LB0RA_1LB0RB.v"
+ },
+ {
+  "spec": "1RB1LA_1LC0RD_0RA0LC_0LA1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_1LC0RD_0RB0LC_0LA1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_1LC0RD_1LB0RA_0RB0LB",
+  "enc": "Jp/mirror",
+  "ni": "4*j+6",
+  "no": "4*j+8",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RD_1LB0RA_0RB0LB.v"
+ },
+ {
+  "spec": "1RB1LA_1LC0RD_1LC0RA_0RB0LB",
+  "enc": "Jp/mirror",
+  "ni": "4*j+16",
+  "no": "4*j+18",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC0RD_1LC0RA_0RB0LB.v"
+ },
+ {
+  "spec": "1RB1LA_1LC1RD_1LA0LC_1RA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1LC1RD_1LD0LC_1RA0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1LC1RD_1RC0LB_0LA0RB",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+4",
+  "no": "4*j+11",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1LC1RD_1RC0LB_0LA0RB.v"
+ },
+ {
+  "spec": "1RB1LA_1RC0LD_0LA0RB_1LB0RC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_1RC0LD_0LA0RB_1LB1RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LA_1RC0RB_1LD0RC_0LD0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1RC0RB_1LD1RA_1LA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1RC0RC_0LD0RB_1LD0LA",
+  "enc": "Dp",
+  "ni": "8*j+16",
+  "no": "8*j+24",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1RC0RC_0LD0RB_1LD0LA.v"
+ },
+ {
+  "spec": "1RB1LA_1RC0RC_0LD1RB_1LD0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1RC0RC_1RD0LB_0LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1RC0RD_0LA0RB_0LB0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1RC0RD_0LA0RB_0LC0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1RC0RD_0LD0RB_1LB0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1RC0RD_0LD0RB_1RA0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1RC1LB_1LD0RC_0LD0RA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+18",
+  "no": "2*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LA_1RC1LB_1LD0RC_0LD0RA.v"
+ },
+ {
+  "spec": "1RB1LA_1RC1RA_1LD0RC_0RA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1RC1RC_0LA1RD_0LA0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LA_1RC1RD_0LA0RB_0LA1RC",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LB_0LB1LC_1RD0RD_1LA0RC",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LB_0LB1RC_1LD0RC_0RA0LD",
+  "enc": "Kp/mirror",
+  "ni": "2*j+18",
+  "no": "2*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_0LB1RC_1LD0RC_0RA0LD.v"
+ },
+ {
+  "spec": "1RB1LB_0RC1RB_1LD0RB_0LD1LA",
+  "enc": "Bp/mirror",
+  "ni": "4*j+18",
+  "no": "4*j+22",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_0RC1RB_1LD0RB_0LD1LA.v"
+ },
+ {
+  "spec": "1RB1LB_0RC1RC_1LD0RB_0LD1LA",
+  "enc": "Bp/mirror",
+  "ni": "4*j+14",
+  "no": "4*j+18",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_0RC1RC_1LD0RB_0LD1LA.v"
+ },
+ {
+  "spec": "1RB1LB_1LA0RC_0LB0LD_0RD0RC",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:4,6*j'+10",
+  "no": "6*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0LB0LD_0RD0RC.v"
+ },
+ {
+  "spec": "1RB1LB_1LA0RC_0LB0RD_---0RC",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0LB0RD____0RC.v"
+ },
+ {
+  "spec": "1RB1LB_1LA0RC_0LB0RD_---1RC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LB_1LA0RC_0LD0RB_0LD1LB",
+  "enc": "Bp",
+  "ni": "4*j+10",
+  "no": "4*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0LD0RB_0LD1LB.v"
+ },
+ {
+  "spec": "1RB1LB_1LA0RC_0RD0RB_0LD1LB",
+  "enc": "Bp",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1LA0RC_0RD0RB_0LD1LB.v"
+ },
+ {
+  "spec": "1RB1LB_1LA1LC_---1RD_0LB0RD",
+  "enc": "Alph_00_10_1",
+  "ni": "4*j+6",
+  "no": "4*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1LA1LC____1RD_0LB0RD.v"
+ },
+ {
+  "spec": "1RB1LB_1LA1LC_0LC1RD_1RA0RD",
+  "ok": false,
+  "why": "no overflow chain (nested route is S0-only)"
+ },
+ {
+  "spec": "1RB1LB_1LA1LC_1RD0LC_0RD0RA",
+  "enc": "Kp",
+  "ni": "2*j+8",
+  "no": "2*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1LA1LC_1RD0LC_0RD0RA.v"
+ },
+ {
+  "spec": "1RB1LB_1LA1RC_1LD0RC_0LD1RA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+10",
+  "no": "2*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1LA1RC_1LD0RC_0LD1RA.v"
+ },
+ {
+  "spec": "1RB1LB_1LA1RC_1RD0LC_0RD0LA",
+  "enc": "Kp",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1LA1RC_1RD0LC_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1LB_1LC0RA_0RD0LB_1LB1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LB_1LC0RC_1LA0RD_0LB0RB",
+  "enc": "Alph_000_010_01",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1LC0RC_1LA0RD_0LB0RB.v"
+ },
+ {
+  "spec": "1RB1LB_1LC0RD_0RA0LC_0RB0LB",
+  "enc": "Jp/mirror",
+  "ni": "8*j+6",
+  "no": "8*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1LC0RD_0RA0LC_0RB0LB.v"
+ },
+ {
+  "spec": "1RB1LB_1LC1LA_0LB1RD_0RB0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LB_1LC1LD_0RA0LC_0RB1RD",
+  "enc": "Dp/mirror",
+  "ni": "4*j+16",
+  "no": "4*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1LC1LD_0RA0LC_0RB1RD.v"
+ },
+ {
+  "spec": "1RB1LB_1LC1RB_1RD0LC_1LA0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LB_1RC0LA_1RD0RD_0LB0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LB_1RC0LA_1RD1RC_0LB0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LB_1RC0LB_0LA1RD_0RD0LA",
+  "enc": "Dp",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1RC0LB_0LA1RD_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1LB_1RC0LB_1LA0RD_---0RC",
+  "enc": "Alph_00_10_1",
+  "ni": "6*j+10",
+  "no": "6*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1RC0LB_1LA0RD____0RC.v"
+ },
+ {
+  "spec": "1RB1LB_1RC0LB_1LC1RD_0RD0LA",
+  "enc": "Dp",
+  "ni": "4*j+16",
+  "no": "4*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1RC0LB_1LC1RD_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1LB_1RC0RB_1LD1RB_1LA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LB_1RC0RC_1LD0LA_1LA0RD",
+  "enc": "Dp/mirror",
+  "ni": "8*j+16",
+  "no": "8*j+24",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1RC0RC_1LD0LA_1LA0RD.v"
+ },
+ {
+  "spec": "1RB1LB_1RC1LA_0LB0RD_---0RC",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1RC1LA_0LB0RD____0RC.v"
+ },
+ {
+  "spec": "1RB1LB_1RC1LA_1LD0RC_0LD0RB",
+  "enc": "Kp/mirror",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1RC1LA_1LD0RC_0LD0RB.v"
+ },
+ {
+  "spec": "1RB1LB_1RC1LD_0LD0RC_0LA1LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LB_1RC1RD_1LA0LC_0RD1LA",
+  "enc": "Dp",
+  "ni": "4*j+16",
+  "no": "4*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1RC1RD_1LA0LC_0RD1LA.v"
+ },
+ {
+  "spec": "1RB1LB_1RC1RD_1LD0LC_0RD1LA",
+  "enc": "Dp",
+  "ni": "4*j+18",
+  "no": "4*j+22",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LB_1RC1RD_1LD0LC_0RD1LA.v"
+ },
+ {
+  "spec": "1RB1LC_0LA---_1RD0LC_0RD0RB",
+  "enc": "Kp",
+  "ni": "j=0:6,2*j'+8",
+  "no": "2*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA____1RD0LC_0RD0RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0LC_1LA1RD_0RD0RB",
+  "enc": "Dp",
+  "ni": "12*j+30",
+  "no": "12*j+42",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0LC_1LA1RD_0RD0RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_0LD1LA_1RA---",
+  "enc": "Dp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_0LD1LA_1RA___.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_0LD1LC_1RA---",
+  "enc": "Dp",
+  "ni": "j=0:8,4*j'+12",
+  "no": "4*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_0LD1LC_1RA___.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_0LD1LD_1RA0RA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_0LD1LD_1RA1LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_0LD1LD_1RA1LC",
+  "enc": "Dp",
+  "ni": "j=0:8,4*j'+12",
+  "no": "4*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_0LD1LD_1RA1LC.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_0RC1LD_1LA---",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_0RC1LD_1LA___.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_0RD---_1LA1LD",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_0RD____1LA1LD.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_0RD0LC_1RD1LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_0RD1LA_0LC1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1LA---_------",
+  "ok": false,
+  "why": "no visit witness for state D"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1LD---_0RD1LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1LD---_1LA---",
+  "enc": "Alph_000_100_1",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_1LD____1LA___.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1LD---_1RB1LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1LD---_1RB1LC",
+  "enc": "Bp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_1LD____1RB1LC.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1LD0LD_1RA1LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1LD1LA_1RA---",
+  "enc": "Alph_000_100_1",
+  "ni": "j=0:2,8*j'+10",
+  "no": "8*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_1LD1LA_1RA___.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1RA1LD_1LA---",
+  "enc": "Alph_000_100_1",
+  "ni": "j=0:2,8*j'+10",
+  "no": "8*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_1RA1LD_1LA___.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1RA1RD_0LC1LD",
+  "enc": "Dp",
+  "ni": "4*j+14",
+  "no": "4*j+18",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_1RA1RD_0LC1LD.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1RB1LD_1LA---",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1RB1LD_1LC---",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:6,4*j'+10",
+  "no": "4*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_1RB1LD_1LC___.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1RC1LD_---1LA",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_1RC1LD____1LA.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1RD---_1LA1LD",
+  "enc": "Alph_000_100_1",
+  "ni": "j=0:2,8*j'+10",
+  "no": "8*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RB_1RD____1LA1LD.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1RD1LA_0LA1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA0RB_1RD1LA_0LC1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA0RC_1LA0RB_------",
+  "ok": false,
+  "why": "no visit witness for state D"
+ },
+ {
+  "spec": "1RB1LC_0LA0RC_1LA0RD_0LA0RC",
+  "enc": "Bp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RC_1LA0RD_0LA0RC.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RC_1LA1LD_0RD0RB",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RC_1LA1LD_0RD0RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RC_1LD0RB_1RB1LC",
+  "enc": "Bp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RC_1LD0RB_1RB1LC.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RD_0LD1LA_1RD0RB",
+  "enc": "Dp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RD_0LD1LA_1RD0RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RD_0LD1LC_1RD0RB",
+  "enc": "Dp",
+  "ni": "j=0:8,4*j'+12",
+  "no": "4*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RD_0LD1LC_1RD0RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RD_0RC1LD_1LA0RB",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RD_0RC1LD_1LA0RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RD_1LA---_---0RB",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:2,4*j'+6",
+  "no": "4*j+6",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RD_1LA_______0RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RD_1LA---_0LA0RD",
+  "enc": "Bp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RD_1LA____0LA0RD.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RD_1LD0RB_1LA0RC",
+  "enc": "Alph_000_100_1",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RD_1LD0RB_1LA0RC.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RD_1RA1LA_---0RB",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RD_1RA1LA____0RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RD_1RD0LC_1LA0RB",
+  "enc": "Alph_00_10_1",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA0RD_1RD0LC_1LA0RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA0RD_1RD1LA_---0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA1RB_1RD1LA_0LA0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA1RB_1RD1LA_0LC0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA1RD_1LA0LC_0RD0RB",
+  "enc": "Dp",
+  "ni": "j=0:8,4*j'+12",
+  "no": "4*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA1RD_1LA0LC_0RD0RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA1RD_1LA0LC_0RD1RB",
+  "enc": "Dp",
+  "ni": "4*j+16",
+  "no": "4*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA1RD_1LA0LC_0RD1RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA1RD_1LA0RA_---0RB",
+  "enc": "Alph_10_11_11",
+  "ni": "6*j+10",
+  "no": "6*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LA1RD_1LA0RA____0RB.v"
+ },
+ {
+  "spec": "1RB1LC_0LA1RD_1LA0RB_0LA0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA1RD_1LA0RB_0LD0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LA1RD_1LA0RD_---0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LB1LA_0RD1RC_1LB0RC",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "4*j+10",
+  "no": "4*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LB1LA_0RD1RC_1LB0RC.v"
+ },
+ {
+  "spec": "1RB1LC_0LB1LA_0RD1RD_1LB0RC",
+  "enc": "Bp/mirror",
+  "ni": "4*j+20",
+  "no": "4*j+24",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LB1LA_0RD1RD_1LB0RC.v"
+ },
+ {
+  "spec": "1RB1LC_0LC0RB_0RD1LA_0LA1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LC0RB_1LA1RD_0LA0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LC0RB_1RB1LD_1LA---",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LC0RB_1RD0RD_1LA0LA",
+  "enc": "Kp/mirror",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LC0RB_1RD0RD_1LA0LA.v"
+ },
+ {
+  "spec": "1RB1LC_0LC0RB_1RD1LA_0LA1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LC0RB_1RD1LA_0LC1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LC0RD_0LA1LA_0RB1RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LC_0LC0RD_0LA1RD_0RB---",
+  "enc": "Bp",
+  "ni": "4*j+6",
+  "no": "4*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LC0RD_0LA1RD_0RB___.v"
+ },
+ {
+  "spec": "1RB1LC_0LC0RD_1RD1LA_0LA0RC",
+  "enc": "Ip",
+  "ni": "6*j+10",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0LC0RD_1RD1LA_0LA0RC.v"
+ },
+ {
+  "spec": "1RB1LC_0LC1RB_1RD1LA_0LA0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LC1RB_1RD1LA_0LC0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LC1RD_---1LA_0LA0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LC1RD_1LA0RB_0LC0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0LC1RD_1LA0RB_0LD0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_0RC0LC_1LD1RA_0RA0LD",
+  "enc": "Dp/mirror",
+  "ni": "8*j+8",
+  "no": "8*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0RC0LC_1LD1RA_0RA0LD.v"
+ },
+ {
+  "spec": "1RB1LC_0RC1RB_1LD---_0RA0LD",
+  "enc": "Dp/mirror",
+  "ni": "j=0:8,4*j'+12",
+  "no": "4*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_0RC1RB_1LD____0RA0LD.v"
+ },
+ {
+  "spec": "1RB1LC_0RC1RC_1LD1RA_0RA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LC_0RC1RD_0LC1LA_0LA0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_1LA---_1RD0LA_0LC0RD",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LA____1RD0LA_0LC0RD.v"
+ },
+ {
+  "spec": "1RB1LC_1LA0LA_1RD0LC_0RD0RB",
+  "enc": "Kp",
+  "ni": "j=0:6,2*j'+8",
+  "no": "2*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LA0LA_1RD0LC_0RD0RB.v"
+ },
+ {
+  "spec": "1RB1LC_1LA0LC_0RB1RD_0RD0LA",
+  "enc": "Kp",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LA0LC_0RB1RD_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1LC_1LA0LC_1RB1RD_0RD0LA",
+  "enc": "Kp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LA0LC_1RB1RD_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1LC_1LA0RC_0RD0RB_0LD1LB",
+  "enc": "Bp",
+  "ni": "6*j+12",
+  "no": "6*j+18",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LA0RC_0RD0RB_0LD1LB.v"
+ },
+ {
+  "spec": "1RB1LC_1LA0RD_1LA---_0LB0RB",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LA0RD_1LA____0LB0RB.v"
+ },
+ {
+  "spec": "1RB1LC_1LA0RD_1LA---_0LB0RD",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LA0RD_1LA____0LB0RD.v"
+ },
+ {
+  "spec": "1RB1LC_1LA0RD_1LB---_0LB0RD",
+  "enc": "Alph_000_100_1",
+  "ni": "j=0:4,6*j'+10",
+  "no": "6*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LA0RD_1LB____0LB0RD.v"
+ },
+ {
+  "spec": "1RB1LC_1LA0RD_1LB---_0LC0RD",
+  "enc": "Alph_000_001_00",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LA0RD_1LB____0LC0RD.v"
+ },
+ {
+  "spec": "1RB1LC_1LA0RD_1RB1RD_0RD0LA",
+  "enc": "Kp",
+  "ni": "j=0:6,4*j'+10",
+  "no": "4*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LA0RD_1RB1RD_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1LC_1LA1RB_0RB1LD_0RB0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LC_1LB0RA_0RD0LA_1LA1RD",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+4",
+  "no": "4*j+11",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LB0RA_0RD0LA_1LA1RD.v"
+ },
+ {
+  "spec": "1RB1LC_1LB1LA_1RD0LA_0LC0RD",
+  "enc": "Alph_000_100_1",
+  "ni": "j=0:2,10*j'+12",
+  "no": "10*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LB1LA_1RD0LA_0LC0RD.v"
+ },
+ {
+  "spec": "1RB1LC_1LB1RA_---0LD_0RA0LC",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "4*j+6",
+  "no": "4*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LB1RA____0LD_0RA0LC.v"
+ },
+ {
+  "spec": "1RB1LC_1LB1RA_0LC0LD_0RA0RC",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LB1RA_0LC0LD_0RA0RC.v"
+ },
+ {
+  "spec": "1RB1LC_1LB1RA_0LC0LD_0RA0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_1LB1RA_1RD0LC_0RD0LA",
+  "enc": "Kp",
+  "ni": "2*j+8",
+  "no": "2*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LC_1LB1RA_1RD0LC_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1LC_1LC1LA_0LC1RD_0RB0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_1LC1RA_0LC0LD_0RA0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LC_1RC0LA_1RD1LA_0LB0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LC_1RC0RB_1LD0LC_1LA1RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LC_1RC0RB_1LD1RB_1LA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LC_1RC0RB_1LD1RC_1LA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_0LB1RC_0LA0RC_1LA1LB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LD_0LB1RC_1LA0RC_0RB0LB",
+  "enc": "Dp/mirror",
+  "ni": "j=0:12,4*j'+16",
+  "no": "4*j+16",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_0LB1RC_1LA0RC_0RB0LB.v"
+ },
+ {
+  "spec": "1RB1LD_0LC0RB_0LA1RD_1LA---",
+  "enc": "Bp",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_0LC0RB_0LA1RD_1LA___.v"
+ },
+ {
+  "spec": "1RB1LD_0LC0RB_0RA0LD_1LA---",
+  "enc": "Bp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_0LC0RB_0RA0LD_1LA___.v"
+ },
+ {
+  "spec": "1RB1LD_0LC0RB_1RA0LD_1RC1LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_0LC0RB_1RB1LA_1LA---",
+  "enc": "Bp",
+  "ni": "j=0:6,4*j'+10",
+  "no": "4*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_0LC0RB_1RB1LA_1LA___.v"
+ },
+ {
+  "spec": "1RB1LD_0LC0RB_1RB1LA_1LC---",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LD_0LC0RB_1RB1LD_1LA---",
+  "enc": "Bp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_0LC0RB_1RB1LD_1LA___.v"
+ },
+ {
+  "spec": "1RB1LD_0LC0RC_1LD0RB_1LA---",
+  "enc": "Bp",
+  "ni": "4*j+6",
+  "no": "4*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_0LC0RC_1LD0RB_1LA___.v"
+ },
+ {
+  "spec": "1RB1LD_0LC0RD_1RB1LD_1LA0RB",
+  "enc": "Bp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_0LC0RD_1RB1LD_1LA0RB.v"
+ },
+ {
+  "spec": "1RB1LD_0RC---_0LD0RB_0LA---",
+  "enc": "Alph_00_10_1",
+  "ni": "4*j+4",
+  "no": "4*j+8",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_0RC____0LD0RB_0LA___.v"
+ },
+ {
+  "spec": "1RB1LD_0RC---_0LD1RC_0LA0RB",
+  "enc": "Alph_00_10_1",
+  "ni": "6*j+4",
+  "no": "6*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_0RC____0LD1RC_0LA0RB.v"
+ },
+ {
+  "spec": "1RB1LD_0RC0RB_0LD1LA_0LA1LC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LD_0RC0RB_1LC0LA_1LA0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_0RC1RA_1RD0RA_1LB0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1LC0RB_0LC0RA_1LA---",
+  "enc": "Kp/mirror",
+  "ni": "2*j+12",
+  "no": "2*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1LC0RB_0LC0RA_1LA___.v"
+ },
+ {
+  "spec": "1RB1LD_1LC0RB_0LC0RA_1RA1LA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1LC0RB_0LC0RA_1RA1LA.v"
+ },
+ {
+  "spec": "1RB1LD_1LC0RB_0RA0LC_0LD0LC",
+  "enc": "Kp/mirror",
+  "ni": "2*j+12",
+  "no": "2*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1LC0RB_0RA0LC_0LD0LC.v"
+ },
+ {
+  "spec": "1RB1LD_1LC0RB_0RA0LC_0LD1RB",
+  "enc": "Kp/mirror",
+  "ni": "2*j+10",
+  "no": "2*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1LC0RB_0RA0LC_0LD1RB.v"
+ },
+ {
+  "spec": "1RB1LD_1LC0RB_0RA0LC_1RD1RA",
+  "enc": "Alph_000_100_1/mirror",
+  "ni": "10*j+4",
+  "no": "10*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1LC0RB_0RA0LC_1RD1RA.v"
+ },
+ {
+  "spec": "1RB1LD_1LC0RB_0RA1LA_0LD0RA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+12",
+  "no": "2*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1LC0RB_0RA1LA_0LD0RA.v"
+ },
+ {
+  "spec": "1RB1LD_1LC0RB_0RA1RA_0LD0LC",
+  "enc": "Kp/mirror",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1LC0RB_0RA1RA_0LD0LC.v"
+ },
+ {
+  "spec": "1RB1LD_1LC0RB_0RA1RB_0LD0LC",
+  "enc": "Kp/mirror",
+  "ni": "2*j+10",
+  "no": "2*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1LC0RB_0RA1RB_0LD0LC.v"
+ },
+ {
+  "spec": "1RB1LD_1LC0RB_0RC0LD_1LA---",
+  "enc": "Bp",
+  "ni": "4*j+6",
+  "no": "4*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1LC0RB_0RC0LD_1LA___.v"
+ },
+ {
+  "spec": "1RB1LD_1LC0RB_1RA1LA_0LD0RA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1LC0RB_1RA1LA_0LD0RA.v"
+ },
+ {
+  "spec": "1RB1LD_1LC0RB_1RD0LC_1LA1RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1LC1RA_0LC0LD_0RA0RB",
+  "enc": "Dp/mirror",
+  "ni": "8*j+14",
+  "no": "8*j+22",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1LC1RA_0LC0LD_0RA0RB.v"
+ },
+ {
+  "spec": "1RB1LD_1LC1RA_0RB0LC_0RA0LD",
+  "ok": false,
+  "why": "no overflow chain (nested route is S0-only)"
+ },
+ {
+  "spec": "1RB1LD_1LC1RB_0RC1LA_0RD0LC",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1RC---_0LD0RC_0LA1LA",
+  "enc": "Dp",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1RC____0LD0RC_0LA1LA.v"
+ },
+ {
+  "spec": "1RB1LD_1RC---_1LC1RA_0RA0LD",
+  "enc": "Alph_000_010_01/mirror",
+  "ni": "6*j+8",
+  "no": "6*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1RC____1LC1RA_0RA0LD.v"
+ },
+ {
+  "spec": "1RB1LD_1RC0LA_1LA0LD_1RB0RB",
+  "enc": "Kp/mirror",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1RC0LA_1LA0LD_1RB0RB.v"
+ },
+ {
+  "spec": "1RB1LD_1RC0LB_1LA0RD_0RC1RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_0LA0RC_1LA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_0LA1LA_0LD0RC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_0LC0LA_1LA---",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1RC0RB_0LC0LA_1LA___.v"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_0LD---_1LA0LA",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1RC0RB_0LD____1LA0LA.v"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_0LD---_1LA0LD",
+  "enc": "Bp",
+  "ni": "4*j+6",
+  "no": "4*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1RC0RB_0LD____1LA0LD.v"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_1LA0LD_1LC1RD",
+  "enc": "Alph_000_001_00",
+  "ni": "6*j+10",
+  "no": "6*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1RC0RB_1LA0LD_1LC1RD.v"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_1LA1RC_1LA0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_1LA1RC_1LC0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_1LD1RD_1LA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_1RD0LD_1LA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_1RD1RA_1LA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_1RD1RC_1LA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1RC0RB_1RD1RD_1LA0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1RC0RC_1LA0LA_0RA0LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LD_1RC0RC_1LA0LA_0RB0LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1LD_1RC0RD_0LC0LA_1LA0RB",
+  "enc": "Alph_00_10_1",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1RC0RD_0LC0LA_1LA0RB.v"
+ },
+ {
+  "spec": "1RB1LD_1RC1LA_0LB0RC_1LB---",
+  "enc": "Alph_000_100_1",
+  "ni": "j=0:2,8*j'+10",
+  "no": "8*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1RC1LA_0LB0RC_1LB___.v"
+ },
+ {
+  "spec": "1RB1LD_1RC1RA_0LA---_0RA0LD",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "4*j+6",
+  "no": "4*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1RC1RA_0LA____0RA0LD.v"
+ },
+ {
+  "spec": "1RB1LD_1RC1RA_1LA0RC_1RC0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1LD_1RC1RB_1LA---_0RA0LD",
+  "enc": "Dp/mirror",
+  "ni": "j=0:6,4*j'+10",
+  "no": "4*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1LD_1RC1RB_1LA____0RA0LD.v"
+ },
+ {
+  "spec": "1RB1RA_0LB1LC_0RA1RD_1LB0RD",
+  "enc": "Kp/mirror",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_0LB1LC_0RA1RD_1LB0RD.v"
+ },
+ {
+  "spec": "1RB1RA_0LC0RA_---0LD_1LA1LC",
+  "ok": false,
+  "why": "no overflow chain (nested route is S0-only)"
+ },
+ {
+  "spec": "1RB1RA_0LC0RA_1LC0LD_1LA0RB",
+  "ok": false,
+  "why": "no overflow chain (nested route is S0-only)"
+ },
+ {
+  "spec": "1RB1RA_0LC0RB_0LA1LD_0RA1LC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_0LC0RB_0LD1LC_0RA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_0LC0RB_0LD1LC_1LA1RD",
+  "ok": false,
+  "why": "no overflow chain (nested route is S0-only)"
+ },
+ {
+  "spec": "1RB1RA_0LC0RB_0RA0LD_1LA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_0LC0RB_1LA0LD_1LA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_0LC0RB_1LA0LD_1LC1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_0LC0RB_1LC1LD_0RA0LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_0LC0RB_1LD0LD_1LA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_0LC0RB_1RA0LD_1LA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_0LC0RC_0LD0RB_1LA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_0LC0RC_1RA0LD_1RC1LC",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RA_0LC1LB_0RC1LD_0RA0LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_0LC1LB_0RD1LD_0RA0LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_0RC---_1LC1LD_0RA0LD",
+  "ok": false,
+  "why": "no overflow chain (nested route is S0-only)"
+ },
+ {
+  "spec": "1RB1RA_0RC0LA_1LC0LD_0RA0LC",
+  "enc": "Dp/mirror",
+  "ni": "8*j+6",
+  "no": "8*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_0RC0LA_1LC0LD_0RA0LC.v"
+ },
+ {
+  "spec": "1RB1RA_0RC0RA_0LC0LD_1LA1LC",
+  "ok": false,
+  "why": "no overflow chain (nested route is S0-only)"
+ },
+ {
+  "spec": "1RB1RA_0RC1LD_1RD0RA_1LB0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RA_1LB1LC_0RA0LD_---0LC",
+  "enc": "Dp/mirror",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LB1LC_0RA0LD____0LC.v"
+ },
+ {
+  "spec": "1RB1RA_1LB1LC_1RD0LC_0RD0LA",
+  "enc": "Kp",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LB1LC_1RD0LC_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RA_1LC---_---1LD_0RA0LD",
+  "enc": "Dp/mirror",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LC_______1LD_0RA0LD.v"
+ },
+ {
+  "spec": "1RB1RA_1LC---_0RA0LD_0RB0LC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC0LB_1RD0LC_0RD1LA",
+  "enc": "Kp",
+  "ni": "2*j+18",
+  "no": "2*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LC0LB_1RD0LC_0RD1LA.v"
+ },
+ {
+  "spec": "1RB1RA_1LC0LB_1RD1LB_1RA0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RA_1LC0LD_---1LD_0RA0LB",
+  "enc": "Dp/mirror",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LC0LD____1LD_0RA0LB.v"
+ },
+ {
+  "spec": "1RB1RA_1LC0LD_0RA0LC_0RA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC0LD_0RA0LC_0RB1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC0LD_0RB0LC_0RA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC0RB_0LC1LD_0RA1RB",
+  "enc": "Kp/mirror",
+  "ni": "2*j+12",
+  "no": "2*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LC0RB_0LC1LD_0RA1RB.v"
+ },
+ {
+  "spec": "1RB1RA_1LC0RB_1LA0LD_0RA0LD",
+  "enc": "Alph_000_100_1/mirror",
+  "ni": "j=0:4,10*j'+14",
+  "no": "10*j+14",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LC0RB_1LA0LD_0RA0LD.v"
+ },
+ {
+  "spec": "1RB1RA_1LC0RB_1LD1RC_0LC0LA",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+6",
+  "no": "4*j+15",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LC0RB_1LD1RC_0LC0LA.v"
+ },
+ {
+  "spec": "1RB1RA_1LC0RD_0RA0LC_1LD1LC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC1LA_---0LD_0RA0LC",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "6*j+4",
+  "no": "6*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LC1LA____0LD_0RA0LC.v"
+ },
+ {
+  "spec": "1RB1RA_1LC1LA_0LC0LD_0RA0RC",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "8*j+4",
+  "no": "8*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LC1LA_0LC0LD_0RA0RC.v"
+ },
+ {
+  "spec": "1RB1RA_1LC1LB_0RD0LC_0LB0RA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC1LB_0RD0LC_1LB0RA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC1LB_0RD0LC_1RA0RA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC1LB_0RD0LC_1RB0RA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC1LB_0RD0LD_0RA0LC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC1LD_0RA0LC_0RA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC1LD_0RB0LC_0RA1LB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC1LD_0RB0LC_0RA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1LC1LD_0RD0LC_1LB0RA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RA_1LC1RD_0RA0LC_0LA---",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "6*j+4",
+  "no": "6*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LC1RD_0RA0LC_0LA___.v"
+ },
+ {
+  "spec": "1RB1RA_1LC1RD_0RA0LC_1LA---",
+  "enc": "Alph_000_100_1/mirror",
+  "ni": "8*j+4",
+  "no": "8*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1LC1RD_0RA0LC_1LA___.v"
+ },
+ {
+  "spec": "1RB1RA_1RC---_1LD0LA_0RA0LD",
+  "enc": "Bp/mirror",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1RC____1LD0LA_0RA0LD.v"
+ },
+ {
+  "spec": "1RB1RA_1RC---_1LD1LA_0RA0LD",
+  "enc": "Alph_000_010_01/mirror",
+  "ni": "8*j+6",
+  "no": "8*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1RC____1LD1LA_0RA0LD.v"
+ },
+ {
+  "spec": "1RB1RA_1RC---_1LD1LA_0RB0LD",
+  "enc": "Alph_000_010_0/mirror",
+  "ni": "8*j+4",
+  "no": "8*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1RC____1LD1LA_0RB0LD.v"
+ },
+ {
+  "spec": "1RB1RA_1RC0LD_1LD0LA_0RA0LB",
+  "enc": "Bp/mirror",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1RC0LD_1LD0LA_0RA0LB.v"
+ },
+ {
+  "spec": "1RB1RA_1RC0RA_1LD1LC_0RB0LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RA_1RC0RB_1LC1LD_0LD0LA",
+  "enc": "Dp/mirror",
+  "ni": "j=0:6,4*j'+10",
+  "no": "4*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RA_1RC0RB_1LC1LD_0LD0LA.v"
+ },
+ {
+  "spec": "1RB1RB_0LC0RD_1RD1LC_0LA1RA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RB_0LC0RD_1RD1LC_0LD1RA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RB_0LC1RD_1RA1LC_0LC0RA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RB_0RC1RA_1LC0LD_0RA0LC",
+  "enc": "Dp/mirror",
+  "ni": "j=0:6,4*j'+10",
+  "no": "4*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RB_0RC1RA_1LC0LD_0RA0LC.v"
+ },
+ {
+  "spec": "1RB1RB_1LA1LC_1RD0LC_0RD0LA",
+  "enc": "Kp",
+  "ni": "2*j+8",
+  "no": "2*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RB_1LA1LC_1RD0LC_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RB_1LC0LA_1RD0LC_0RD1LA",
+  "enc": "Kp",
+  "ni": "2*j+8",
+  "no": "2*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RB_1LC0LA_1RD0LC_0RD1LA.v"
+ },
+ {
+  "spec": "1RB1RB_1LC0RB_0LD1LA_0LD1RA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+10",
+  "no": "2*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RB_1LC0RB_0LD1LA_0LD1RA.v"
+ },
+ {
+  "spec": "1RB1RB_1LC0RB_1LD1LA_0LC0RA",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+12",
+  "no": "4*j+15",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RB_1LC0RB_1LD1LA_0LC0RA.v"
+ },
+ {
+  "spec": "1RB1RB_1LC1RA_0LC0LD_0RA0RB",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "6*j+14",
+  "no": "6*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RB_1LC1RA_0LC0LD_0RA0RB.v"
+ },
+ {
+  "spec": "1RB1RC_0LA0RB_0LD0RC_1LD1LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RC_0LA0RB_0LD1LD_1RA1LC",
+  "enc": "Dp",
+  "ni": "4*j+10",
+  "no": "4*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0LA0RB_0LD1LD_1RA1LC.v"
+ },
+ {
+  "spec": "1RB1RC_0LA0RB_0LD1RA_1LA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RC_0LA0RB_0LD1RC_1LA1LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RC_0LA0RC_0LD0RB_1LD1LA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RC_0LA0RC_1LD0LD_0RB1LA",
+  "enc": "Kp",
+  "ni": "j=0:2,6*j'+8",
+  "no": "6*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0LA0RC_1LD0LD_0RB1LA.v"
+ },
+ {
+  "spec": "1RB1RC_0LA1LA_1LD0RC_0LD0RB",
+  "enc": "Kp/mirror",
+  "ni": "j=0:6,2*j'+8",
+  "no": "2*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0LA1LA_1LD0RC_0LD0RB.v"
+ },
+ {
+  "spec": "1RB1RC_0LA1LD_1LA0RC_0LD0RB",
+  "enc": "Kp/mirror",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0LA1LD_1LA0RC_0LD0RB.v"
+ },
+ {
+  "spec": "1RB1RC_0LA1RA_0LD0RB_1RB1LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RC_0LA1RA_1LC0LD_0RA0LC",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "4*j+6",
+  "no": "4*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0LA1RA_1LC0LD_0RA0LC.v"
+ },
+ {
+  "spec": "1RB1RC_0LA1RA_1LD---_0RA0LD",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "4*j+6",
+  "no": "4*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0LA1RA_1LD____0RA0LD.v"
+ },
+ {
+  "spec": "1RB1RC_0LA1RC_0LD0RB_1RB1LD",
+  "enc": "Alph_10_11_11",
+  "ni": "4*j+4",
+  "no": "4*j+11",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0LA1RC_0LD0RB_1RB1LD.v"
+ },
+ {
+  "spec": "1RB1RC_0LB1LA_1LD0RC_0RA1LB",
+  "enc": "Dp/mirror",
+  "ni": "4*j+26",
+  "no": "4*j+30",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0LB1LA_1LD0RC_0RA1LB.v"
+ },
+ {
+  "spec": "1RB1RC_0LC---_1RA1LD_0RA0LD",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0LC____1RA1LD_0RA0LD.v"
+ },
+ {
+  "spec": "1RB1RC_0LC0RB_1LD1LC_1LA---",
+  "enc": "Alph_000_001_00",
+  "ni": "8*j+6",
+  "no": "8*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0LC0RB_1LD1LC_1LA___.v"
+ },
+ {
+  "spec": "1RB1RC_0LC0RB_1RA0LD_1LA1LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RC_0LC1LB_1RD1LA_0LA0RD",
+  "enc": "Dp",
+  "ni": "4*j+14",
+  "no": "4*j+18",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0LC1LB_1RD1LA_0LA0RD.v"
+ },
+ {
+  "spec": "1RB1RC_0RC---_0LD0RB_0LA1LD",
+  "enc": "Alph_00_10_1",
+  "ni": "6*j+4",
+  "no": "6*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0RC____0LD0RB_0LA1LD.v"
+ },
+ {
+  "spec": "1RB1RC_0RC0LC_1LA0RD_1LC0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RC_0RC0LD_1LD0RB_1LA1LA",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "8*j+8",
+  "no": "8*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0RC0LD_1LD0RB_1LA1LA.v"
+ },
+ {
+  "spec": "1RB1RC_0RC1RA_0LD0RB_1LD0LA",
+  "enc": "Bp",
+  "ni": "10*j+24",
+  "no": "10*j+34",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0RC1RA_0LD0RB_1LD0LA.v"
+ },
+ {
+  "spec": "1RB1RC_0RC1RB_0LD0RB_1LD0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RC_0RC1RD_0LD0RB_1LD0LA",
+  "enc": "Bp",
+  "ni": "10*j+22",
+  "no": "10*j+32",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_0RC1RD_0LD0RB_1LD0LA.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0LA_0RC1LD_0RB0LD",
+  "enc": "Kp",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0LA_0RC1LD_0RB0LD.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0LA_1LD0RC_0LD0RB",
+  "enc": "Kp/mirror",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0LA_1LD0RC_0LD0RB.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0LB_0RD0LA_1LB0RC",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0LB_0RD0LA_1LB0RC.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0LB_0RD0RD_1LB0RC",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "j=0:4,6*j'+10",
+  "no": "6*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0LB_0RD0RD_1LB0RC.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0LB_1LD0RC_0RA1LB",
+  "enc": "Dp/mirror",
+  "ni": "6*j+8",
+  "no": "6*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0LB_1LD0RC_0RA1LB.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0LB_1LD0RD_1LB0RC",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RC_1LA0LB_1RD0RC_1LB0RD",
+  "enc": "Alph_000_010_01/mirror",
+  "ni": "12*j+6",
+  "no": "12*j+18",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0LB_1RD0RC_1LB0RD.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0LB_1RD0RC_1LB1LC",
+  "enc": "Bp/mirror",
+  "ni": "8*j+6",
+  "no": "8*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0LB_1RD0RC_1LB1LC.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0LB_1RD0RC_1LD1LB",
+  "enc": "Dp/mirror",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0LB_1RD0RC_1LD1LB.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0LD_1LB0RC_---1LA",
+  "enc": "Kp/mirror",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0LD_1LB0RC____1LA.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0LD_1LB0RC_0LB0RD",
+  "enc": "Kp/mirror",
+  "ni": "6*j+4",
+  "no": "6*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0LD_1LB0RC_0LB0RD.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0LD_1LB0RC_0RA0LB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RC_1LA0LD_1LB0RD_0RC1LA",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "8*j+8",
+  "no": "8*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0LD_1LB0RD_0RC1LA.v"
+ },
+ {
+  "spec": "1RB1RC_1LA0RC_1LD0LA_0RB0LD",
+  "enc": "Kp",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA0RC_1LD0LA_0RB0LD.v"
+ },
+ {
+  "spec": "1RB1RC_1LA1LA_1LD0RC_0LD0RB",
+  "enc": "Kp/mirror",
+  "ni": "2*j+8",
+  "no": "2*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA1LA_1LD0RC_0LD0RB.v"
+ },
+ {
+  "spec": "1RB1RC_1LA1LB_1LA0RD_0RC0LC",
+  "enc": "Jp/mirror",
+  "ni": "j=0:14,6*j'+20",
+  "no": "6*j+18",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA1LB_1LA0RD_0RC0LC.v"
+ },
+ {
+  "spec": "1RB1RC_1LA1LD_0RB0RC_1LB0LB",
+  "ok": false,
+  "why": "no overflow chain (nested route is S0-only)"
+ },
+ {
+  "spec": "1RB1RC_1LA1LD_0RC0RB_0LD0LA",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RC_1LA1LD_1LA0RC_0RA0LB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RC_1LA1LD_1LB0RC_0RA0LB",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "6*j+14",
+  "no": "6*j+19",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA1LD_1LB0RC_0RA0LB.v"
+ },
+ {
+  "spec": "1RB1RC_1LA1RA_---1LD_0RA0LD",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "4*j+6",
+  "no": "4*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA1RA____1LD_0RA0LD.v"
+ },
+ {
+  "spec": "1RB1RC_1LA1RA_0RC1LD_1LB0LD",
+  "ok": false,
+  "why": "no overflow chain (nested route is S0-only)"
+ },
+ {
+  "spec": "1RB1RC_1LA1RA_1LD0RC_0LD0LB",
+  "enc": "Kp/mirror",
+  "ni": "2*j+8",
+  "no": "2*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LA1RA_1LD0RC_0LD0LB.v"
+ },
+ {
+  "spec": "1RB1RC_1LB0RA_1LD0RC_0LD0LA",
+  "enc": "Kp/mirror",
+  "ni": "j=0:6,2*j'+8",
+  "no": "2*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LB0RA_1LD0RC_0LD0LA.v"
+ },
+ {
+  "spec": "1RB1RC_1LB1LA_1LD0RC_0LD0RA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+12",
+  "no": "2*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LB1LA_1LD0RC_0LD0RA.v"
+ },
+ {
+  "spec": "1RB1RC_1LB1LA_1LD0RC_0LD1RA",
+  "enc": "Kp/mirror",
+  "ni": "2*j+10",
+  "no": "2*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LB1LA_1LD0RC_0LD1RA.v"
+ },
+ {
+  "spec": "1RB1RC_1LB1LA_1RD0LC_0RD0LA",
+  "enc": "Kp",
+  "ni": "2*j+12",
+  "no": "2*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LB1LA_1RD0LC_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RC_1LC---_1LD1RA_0RA0LD",
+  "enc": "Alph_000_010_01/mirror",
+  "ni": "8*j+8",
+  "no": "8*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LC____1LD1RA_0RA0LD.v"
+ },
+ {
+  "spec": "1RB1RC_1LC0LB_0RC1LD_1RA0LD",
+  "enc": "Dp",
+  "ni": "4*j+24",
+  "no": "4*j+28",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LC0LB_0RC1LD_1RA0LD.v"
+ },
+ {
+  "spec": "1RB1RC_1LC0LB_0RC1LD_1RA1LA",
+  "enc": "Dp",
+  "ni": "4*j+18",
+  "no": "4*j+22",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LC0LB_0RC1LD_1RA1LA.v"
+ },
+ {
+  "spec": "1RB1RC_1LC0LB_1RD0LB_0RD0LA",
+  "enc": "Dp",
+  "ni": "j=0:10,4*j'+14",
+  "no": "4*j+14",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LC0LB_1RD0LB_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RC_1LC0LB_1RD1LA_0RD0LA",
+  "enc": "Dp",
+  "ni": "4*j+14",
+  "no": "4*j+18",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LC0LB_1RD1LA_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RC_1LC0LB_1RD1LB_1RA0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RC_1LC0LC_1RD0LB_0RD0LA",
+  "enc": "Dp",
+  "ni": "4*j+10",
+  "no": "4*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LC0LC_1RD0LB_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RC_1LC0RB_1RA0LD_0RA0LC",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RC_1LC0RB_1RA1LD_1RB0LD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RC_1LC0RD_1LA0LC_0RD0LA",
+  "enc": "Bp",
+  "ni": "6*j+8",
+  "no": "6*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RC_1LC0RD_1LA0LC_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RC_1LC1RA_---1LD_0RA0LD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RD_0LB1LC_0RA0LB_1LA0RD",
+  "enc": "Kp/mirror",
+  "ni": "j=0:10,2*j'+12",
+  "no": "2*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_0LB1LC_0RA0LB_1LA0RD.v"
+ },
+ {
+  "spec": "1RB1RD_0LB1LC_0RA1LB_1LA0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RD_0LC0LA_1LC1LA_0RB0RD",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RD_0LC0LD_1LA1RC_1LB0RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RD_0LC0RA_1RA1LC_0LC1RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RD_0LC0RB_1LA1LC_0LC1RD",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RD_0LC0RD_1LC1LA_0LA0RB",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RD_0RC0LC_1LA0RD_1LC0RB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RD_1LB1LC_0RA0LC_---1RA",
+  "enc": "Dp/mirror",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LB1LC_0RA0LC____1RA.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0LA_0RA0LC_1RA---",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "6*j+4",
+  "no": "6*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0LA_0RA0LC_1RA___.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0LA_0RB1LA_0RD0LC",
+  "enc": "Kp",
+  "ni": "j=0:4,4*j'+8",
+  "no": "4*j+8",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0LA_0RB1LA_0RD0LC.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0LA_0RD0LC_1LA0RB",
+  "enc": "Kp",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0LA_0RD0LC_1LA0RB.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0LA_0RD0LC_1RA---",
+  "enc": "Bp/mirror",
+  "ni": "6*j+6",
+  "no": "6*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0LA_0RD0LC_1RA___.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0LA_0RD1LA_0RB0LC",
+  "enc": "Kp",
+  "ni": "8*j+8",
+  "no": "8*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0LA_0RD1LA_0RB0LC.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0LA_1RB1LA_0RD0LC",
+  "enc": "Kp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0LA_1RB1LA_0RD0LC.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0LB_1RA0LB_0RD0LA",
+  "enc": "Dp",
+  "ni": "j=0:8,4*j'+12",
+  "no": "4*j+12",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0LB_1RA0LB_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0LB_1RA1LA_0RD0LA",
+  "enc": "Dp",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0LB_1RA1LA_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0LC_1RA0LB_0RD0LA",
+  "enc": "Dp",
+  "ni": "4*j+8",
+  "no": "4*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0LC_1RA0LB_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0RB_0LC0RA_1LA1LD",
+  "enc": "Kp/mirror",
+  "ni": "2*j+18",
+  "no": "2*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0RB_0LC0RA_1LA1LD.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0RC_0RB1LD_1LA0LD",
+  "enc": "Alph_00_10_1",
+  "ni": "8*j+4",
+  "no": "8*j+12",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0RC_0RB1LD_1LA0LD.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0RD_0RA0LC_1LD1RA",
+  "enc": "Alph_000_100_1/mirror",
+  "ni": "10*j+4",
+  "no": "10*j+14",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0RD_0RA0LC_1LD1RA.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0RD_0RB1LA_0LC0LA",
+  "enc": "Kp",
+  "ni": "10*j+6",
+  "no": "10*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0RD_0RB1LA_0LC0LA.v"
+ },
+ {
+  "spec": "1RB1RD_1LC0RD_1RB1LA_0RD0LC",
+  "enc": "Kp",
+  "ni": "j=0:6,4*j'+10",
+  "no": "4*j+10",
+  "mode": "split",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC0RD_1RB1LA_0RD0LC.v"
+ },
+ {
+  "spec": "1RB1RD_1LC1LA_0LB0RA_1LB0RD",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+14",
+  "no": "4*j+17",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC1LA_0LB0RA_1LB0RD.v"
+ },
+ {
+  "spec": "1RB1RD_1LC1LA_0LB0RB_1LB0RD",
+  "enc": "Alph_10_11_11/mirror",
+  "ni": "4*j+8",
+  "no": "4*j+9",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC1LA_0LB0RB_1LB0RD.v"
+ },
+ {
+  "spec": "1RB1RD_1LC1LA_0RA0LC_---1RA",
+  "enc": "Alph_00_10_1/mirror",
+  "ni": "6*j+4",
+  "no": "6*j+10",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC1LA_0RA0LC____1RA.v"
+ },
+ {
+  "spec": "1RB1RD_1LC1LA_0RB0LC_0RD0LA",
+  "enc": "Kp",
+  "ni": "2*j+14",
+  "no": "2*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC1LA_0RB0LC_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RD_1LC1LB_0LD0LB_0RD0RA",
+  "ok": false,
+  "why": "no overflow chain (nested route is S0-only)"
+ },
+ {
+  "spec": "1RB1RD_1LC1LB_0RA0LB_1LD0RA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RD_1LC1LB_0RD0LB_---0RA",
+  "ok": false,
+  "why": "no overflow chain (nested route is S0-only)"
+ },
+ {
+  "spec": "1RB1RD_1LC1LB_1LD0LB_0RD0RA",
+  "ok": false,
+  "why": "no interior chain"
+ },
+ {
+  "spec": "1RB1RD_1LC1LD_0RD0LC_1RA0RB",
+  "enc": "Alph_000_001_00/mirror",
+  "ni": "10*j+6",
+  "no": "10*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC1LD_0RD0LC_1RA0RB.v"
+ },
+ {
+  "spec": "1RB1RD_1LC1RC_1LA0LC_0RD0LA",
+  "enc": "Dp",
+  "ni": "4*j+12",
+  "no": "4*j+16",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1LC1RC_1LA0LC_0RD0LA.v"
+ },
+ {
+  "spec": "1RB1RD_1RC0LB_1LD0RC_1RA1LB",
+  "ok": false,
+  "why": "no anchor"
+ },
+ {
+  "spec": "1RB1RD_1RC0LC_1LC1LA_0LB0RD",
+  "enc": "Kp/mirror",
+  "ni": "4*j+16",
+  "no": "4*j+20",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1RC0LC_1LC1LA_0LB0RD.v"
+ },
+ {
+  "spec": "1RB1RD_1RC1LA_0LB0RC_0LA1LD",
+  "enc": "Dp",
+  "ni": "4*j+14",
+  "no": "4*j+18",
+  "mode": "one",
+  "tr": true,
+  "qh": false,
+  "ok": true,
+  "file": "/home/user/Coq-BBB4/theories/Machines/CountersTr/LAPT_1RB1RD_1RC1LA_0LB0RC_0LA1LD.v"
+ }
+]
