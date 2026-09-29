@@ -365,19 +365,36 @@ Qed.
 
 (** ** The certificate *)
 
-(** one carry shape: [nu] carry units unrolled in the chain [ch], and the
-    shorter carries [j < nu] as concrete chains *)
+(** an EXIT of the counter half: the mid configuration it ends on and the
+    sweep from there over the block onto the next phase's anchor, as in
+    [HybridGlueTr.hyphase].  A phase may have several (an overflow that
+    leaves the counter in another state than an interior carry). *)
+Record hcexit := mkHE {
+  he_q2   : St;
+  he_h2   : Sym;
+  he_Mpre : list Sym;
+  he_c    : nat;             (** the sweep ends on [k + c] units of the next phase *)
+  he_na   : nat;             (** sweep: units unrolled at the near end *)
+  he_nb   : nat;             (** ... and at the far end *)
+  he_chs  : list lstep
+}.
+
+Definition he_dflt : hcexit := mkHE StA S0 [] 0 0 0 [].
+
+(** one carry shape: its exit, [nu] carry units unrolled in the chain [ch],
+    and the shorter carries [j < nu] as concrete chains *)
 Record hcase := mkHK {
+  hk_ex   : nat;
   hk_nu   : nat;
   hk_ch   : list lstep;
   hk_base : list (list lstep)
 }.
 
-Definition hk_dflt : hcase := mkHK 0 [] [].
+Definition hk_dflt : hcase := mkHK 0 0 [] [].
 
-(** one phase of the lap, as in [HybridGlueTr.hyphase]; the counter half is
-    one carry case per digit below [b - 1] ([hc_int]) and one per top value
-    ([hc_top], the last one the overflow) *)
+(** one phase of the lap: the anchor shape, one carry case per digit below
+    [b - 1] ([hc_int]) and one per top value ([hc_top], the last one the
+    overflow), and the exits *)
 Record hcphase := mkHC {
   hc_q     : St;
   hc_h     : Sym;
@@ -386,20 +403,16 @@ Record hcphase := mkHC {
   hc_w     : list Sym;
   hc_Rpost : list Sym;
   hc_m     : nat;
-  hc_q2    : St;
-  hc_h2    : Sym;
-  hc_Mpre  : list Sym;
-  hc_c     : nat;
   hc_int   : list hcase;
   hc_top   : list hcase;
-  hc_na    : nat;
-  hc_nb    : nat;
-  hc_chs   : list lstep
+  hc_exits : list hcexit
 }.
 
-(** a fire witness: a chain prefix of one phase's interior case [k]
-    (kind 0; family [(b^a - 1) + b^a k + b^(a+1) (bb + L s)]), top case [k]
-    (kind 1; family [b^(a + bb s) (lo + k + 1) - 1]) or sweep (kind 2) *)
+(** a fire witness in phase [hcf_ph]: a chain prefix of interior case [k]
+    (kind 0) or top case [k] (kind 1), or of the sweep of the exit that
+    interior case [k] (kind 2) or top case [k] (kind 3) ends on.  Kinds 0
+    and 2 name the ranks [(hi - lo) G (a+1) + (b^a - 1) + b^a k +
+    b^(a+1) (bb + L s)], kinds 1 and 3 the ranks [ytop k (a + bb s) - 1]. *)
 Record hcfire := mkHCF {
   hcf_ph   : nat;
   hcf_kind : nat;
@@ -425,8 +438,14 @@ Record hccert := mkHCC {
   hcc_n0     : nat
 }.
 
-Definition hc_dflt : hcphase :=
-  mkHC StA S0 [] [] [] [] 0 StA S0 [] 0 [] [] 0 0 [].
+Definition hc_dflt : hcphase := mkHC StA S0 [] [] [] [] 0 [] [] [].
+
+(** the first digit below [b - 1]: the carry shape of the next increment *)
+Fixpoint firstlow (b : nat) (l : list nat) : option nat :=
+  match l with
+  | [] => None
+  | x :: r => if S x <? b then Some x else firstlow b r
+  end.
 
 Section Defs.
 
@@ -455,8 +474,10 @@ Variable P : hcphase.
 Definition hcC (c : list nat * nat) (n : nat) : cconf :=
   (hc_q P, (hc_Lpre P ++ hcE c, hc_h P, hc_Rpre P ++ rep (hc_w P) n ++ hc_Rpost P)).
 
-Definition hcM (c : list nat * nat) (n : nat) : cconf :=
-  (hc_q2 P, (hc_Mpre P ++ hcE c, hc_h2 P, rep (hc_w P) n ++ hc_Rpost P)).
+Definition hcX (x : nat) : hcexit := nth x (hc_exits P) he_dflt.
+
+Definition hcM (X : hcexit) (c : list nat * nat) (n : nat) : cconf :=
+  (he_q2 X, (he_Mpre X ++ hcE c, he_h2 X, rep (hc_w P) n ++ hc_Rpost P)).
 
 Definition hcRw : list Sym := hc_Rpre P ++ rep (hc_w P) (hc_m P).
 
@@ -467,34 +488,39 @@ Definition hcK0 (K : hcase) (Ps : list Sym) : sconf :=
 Definition hcKB (Ps : list Sym) (j : nat) : sconf :=
   mkC (hc_q P) (sflat (hc_Lpre P ++ rep hcDm j ++ Ps)) (hc_h P) (sflat hcRw).
 
-Definition hcS0 : sconf :=
-  mkC (hc_q2 P) (sflat (hc_Mpre P)) (hc_h2 P)
-      (mkS (rep (hc_w P) (hc_na P)) (hc_w P) 1 0 (rep (hc_w P) (hc_nb P) ++ hc_Rpost P)).
+Definition hcS0 (X : hcexit) : sconf :=
+  mkC (he_q2 X) (sflat (he_Mpre X)) (he_h2 X)
+      (mkS (rep (hc_w P) (he_na X)) (hc_w P) 1 0 (rep (hc_w P) (he_nb X) ++ hc_Rpost P)).
 
-Definition hc_nmin : nat := hc_m P + hc_na P + hc_nb P.
+Definition hc_nminX (X : hcexit) : nat := hc_m P + he_na X + he_nb X.
 
-(** a carry case ends on the mid, its left side denoting
+(** the block the anchor needs, for every exit *)
+Definition hc_nmin : nat := fold_right (fun X a => Nat.max (hc_nminX X) a) (hc_m P) (hc_exits P).
+
+(** a carry case ends on its exit's mid, its left side denoting
     [Mpre ++ D0^(c + j) ++ post] *)
-Definition hc_cend_ok (el : bool) (c : nat) (post : list Sym) (c1 : sconf) : bool :=
-  st_eqb (c_st c1) (hc_q2 P) && sym_eqb (c_h c1) (hc_h2 P) && sside_nil (c_r c1)
+Definition hc_cend_ok (X : hcexit) (el : bool) (c : nat) (post : list Sym) (c1 : sconf) : bool :=
+  st_eqb (c_st c1) (he_q2 X) && sym_eqb (c_h c1) (he_h2 X) && sside_nil (c_r c1)
   && syms_eqb (s_u (c_l c1)) hcD0 && Nat.eqb (s_a (c_l c1)) 1
   && (s_b (c_l c1) <=? c)
-  && existsb (fun x => syms_eqb (s_pre (c_l c1)) (hc_Mpre P ++ rep hcD0 x)
+  && existsb (fun x => syms_eqb (s_pre (c_l c1)) (he_Mpre X ++ rep hcD0 x)
                        && hy_eqb el (s_post (c_l c1))
                                  (rep hcD0 (c - s_b (c_l c1) - x) ++ post))
              (seq 0 (S (c - s_b (c_l c1)))).
 
-Definition hc_cbase_ok (el : bool) (want : list Sym) (c1 : sconf) : bool :=
-  st_eqb (c_st c1) (hc_q2 P) && sym_eqb (c_h c1) (hc_h2 P) && sside_nil (c_r c1)
+Definition hc_cbase_ok (X : hcexit) (el : bool) (want : list Sym) (c1 : sconf) : bool :=
+  st_eqb (c_st c1) (he_q2 X) && sym_eqb (c_h c1) (he_h2 X) && sside_nil (c_r c1)
   && syms_eqb (s_u (c_l c1)) [] && syms_eqb (s_post (c_l c1)) []
   && hy_eqb el (s_pre (c_l c1)) want.
 
-(** one carry case: [Dm^j ++ Ps -> D0^(j + off) ++ Pe] *)
+(** one carry case: [Dm^j ++ Ps -> D0^(j + off) ++ Pe], ending on its exit *)
 Definition hc_case_ok (tmw : TM) (el : bool) (off : nat) (Ps Pe : list Sym)
                       (K : hcase) : bool :=
-  hy_run_ok tmw el false (hk_ch K) (hcK0 K Ps) (hc_cend_ok el (hk_nu K + off) Pe)
+  let X := hcX (hk_ex K) in
+  (hk_ex K <? length (hc_exits P))
+  && hy_run_ok tmw el false (hk_ch K) (hcK0 K Ps) (hc_cend_ok X el (hk_nu K + off) Pe)
   && hy_list_ok (fun j ch => hy_run_ok tmw el false ch (hcKB Ps j)
-                   (hc_cbase_ok el (hc_Mpre P ++ rep hcD0 (j + off) ++ Pe)))
+                   (hc_cbase_ok X el (he_Mpre X ++ rep hcD0 (j + off) ++ Pe)))
                 0 (hk_base K)
   && (hk_nu K <=? length (hk_base K)).
 
@@ -510,22 +536,33 @@ Definition hc_counter_ok (tmw : TM) : bool :=
   forallb (hc_int_ok tmw) (seq 0 (hcb - 1))
   && forallb (hc_top_ok tmw) (seq 0 (hchi - hclo)).
 
-(** the sweep lands on the next phase's anchor, [k + c] units *)
-Definition hc_sweep_ok (tmw : TM) (P' : hcphase) : bool :=
-  match srun tmw false true (hc_chs P) hcS0 with
+(** an exit's sweep lands on the next phase's anchor, [k + c] units *)
+Definition hc_sweep_ok (tmw : TM) (X : hcexit) (P' : hcphase) : bool :=
+  match srun tmw false true (he_chs X) (hcS0 X) with
   | Some (c1, _, cb) =>
       st_eqb (c_st c1) (hc_q P') && sym_eqb (c_h c1) (hc_h P')
       && sside_flat_is (c_l c1) (hc_Lpre P')
-      && sside_end_is (c_r c1) (hc_Rpre P') (hc_w P') (hc_c P) (hc_Rpost P')
+      && sside_end_is (c_r c1) (hc_Rpre P') (hc_w P') (he_c X) (hc_Rpost P')
       && (0 <? cb)
   | None => false
   end.
 
+(** the case the counter [c] takes, and its exit *)
+Definition hc_kase (c : list nat * nat) : hcase :=
+  match firstlow hcb (fst c) with
+  | Some d => nth d (hc_int P) hk_dflt
+  | None => nth (snd c - hclo) (hc_top P) hk_dflt
+  end.
+
+Definition hc_exit_of (c : list nat * nat) : hcexit := hcX (hk_ex (hc_kase c)).
+
 End Phase.
 
 Definition hc_phase_ok (tmw : TM) (i : nat) : bool :=
-  hc_counter_ok (hcph i) tmw && hc_sweep_ok (hcph i) tmw (hcph (hcnx i))
-  && (hc_nmin (hcph (hcnx i)) <=? hc_c (hcph i)).
+  let P := hcph i in
+  let P' := hcph (hcnx i) in
+  hc_counter_ok P tmw
+  && forallb (fun X => hc_sweep_ok P tmw X P' && (hc_nmin P' <=? he_c X)) (hc_exits P).
 
 Definition hc_phases_ok (tmw : TM) : bool :=
   (1 <=? hcL) && forallb (hc_phase_ok tmw) (seq 0 hcL).
@@ -547,22 +584,28 @@ Definition hc_top_fam_ok (i e j0 T : nat) : bool :=
 
 Definition hc_fire_ok (tmw : TM) (t : Instr) (f : hcfire) : bool :=
   let P := hcph (hcf_ph f) in
+  let KI := nth (hcf_k f) (hc_int P) hk_dflt in
+  let KT := nth (hcf_k f) (hc_top P) hk_dflt in
   (hcf_ph f <? hcL) &&
   match hcf_kind f with
-  | 0 => let K := nth (hcf_k f) (hc_int P) hk_dflt in
-         match srun_instr tmw false false (hcf_ch f) (hcK0 P K (hcD (hcf_k f))) with
-         | Some t' => instr_eqb t' t && (hk_nu K <=? hcf_a f)
+  | 0 => match srun_instr tmw false false (hcf_ch f) (hcK0 P KI (hcD (hcf_k f))) with
+         | Some t' => instr_eqb t' t && (hk_nu KI <=? hcf_a f)
                       && hc_int_fam_ok (hcf_ph f) (hcf_k f) (hcf_a f) (hcf_b f)
          | None => false
          end
-  | 1 => let K := nth (hcf_k f) (hc_top P) hk_dflt in
-         match srun_instr tmw true false (hcf_ch f) (hcK0 P K (hcT (hclo + hcf_k f))) with
-         | Some t' => instr_eqb t' t && (hk_nu K <=? hcf_a f)
+  | 1 => match srun_instr tmw true false (hcf_ch f) (hcK0 P KT (hcT (hclo + hcf_k f))) with
+         | Some t' => instr_eqb t' t && (hk_nu KT <=? hcf_a f)
                       && hc_top_fam_ok (hcf_ph f) (hcf_k f) (hcf_a f) (hcf_b f)
          | None => false
          end
-  | _ => match srun_instr tmw false true (hcf_ch f) (hcS0 P) with
+  | 2 => match srun_instr tmw false true (hcf_ch f) (hcS0 P (hcX P (hk_ex KI))) with
          | Some t' => instr_eqb t' t
+                      && hc_int_fam_ok (hcf_ph f) (hcf_k f) (hcf_a f) (hcf_b f)
+         | None => false
+         end
+  | _ => match srun_instr tmw false true (hcf_ch f) (hcS0 P (hcX P (hk_ex KT))) with
+         | Some t' => instr_eqb t' t
+                      && hc_top_fam_ok (hcf_ph f) (hcf_k f) (hcf_a f) (hcf_b f)
          | None => false
          end
   end.
@@ -627,18 +670,40 @@ Proof. intros w j tv. unfold hcE; cbn [fst snd]. rewrite concat_map_repeat. refl
 Lemma hcE_zero : forall w j tv, hcE w (repeat 0 j, tv) = rep (hcD0 w) j ++ hcT w tv.
 Proof. intros w j tv. unfold hcE; cbn [fst snd]. rewrite concat_map_repeat. reflexivity. Qed.
 
+Lemma firstlow_int : forall b j d r, 1 <= b -> S d < b ->
+  firstlow b (repeat (b - 1) j ++ d :: r) = Some d.
+Proof.
+  intros b j d r Hb Hd. induction j as [|j IH]; cbn [repeat app firstlow].
+  - replace (S d <? b) with true by (symmetry; apply Nat.ltb_lt; exact Hd). reflexivity.
+  - replace (S (b - 1) <? b) with false by (symmetry; apply Nat.ltb_ge; lia). exact IH.
+Qed.
+
+Lemma firstlow_max : forall b j, 1 <= b -> firstlow b (repeat (b - 1) j) = None.
+Proof.
+  intros b j Hb. induction j as [|j IH]; [reflexivity |]. cbn [repeat firstlow].
+  replace (S (b - 1) <? b) with false by (symmetry; apply Nat.ltb_ge; lia). exact IH.
+Qed.
+
+Lemma nminX_le : forall P x, hc_nminX P (hcX P x) <= hc_nmin P.
+Proof.
+  intros P x. unfold hcX, hc_nmin.
+  generalize x. induction (hc_exits P) as [|X l IH]; intros y; cbn [fold_right].
+  - destruct y; cbn [nth]; unfold hc_nminX, he_dflt; cbn [he_na he_nb]; lia.
+  - destruct y as [|y]; cbn [nth]; [lia |]. specialize (IH y). lia.
+Qed.
+
 Section PhaseSound.
 
 Variable tmw : TM.
 Variable w : hccert.
 Variable P : hcphase.
 
-Lemma hc_cend_den : forall el c post c1 XL XR j,
-  hc_cend_ok w P el c post c1 = true -> (el = true -> XL = []) ->
+Lemma hc_cend_den : forall X el c post c1 XL XR j,
+  hc_cend_ok w X el c post c1 = true -> (el = true -> XL = []) ->
   lift (cden XL XR j c1)
-  = lift (hc_q2 P, (hc_Mpre P ++ rep (hcD0 w) (c + j) ++ post ++ XL, hc_h2 P, XR)).
+  = lift (he_q2 X, (he_Mpre X ++ rep (hcD0 w) (c + j) ++ post ++ XL, he_h2 X, XR)).
 Proof.
-  intros el c post [q1 [lp lu la lb lq] h1 r1] XL XR j H HX.
+  intros X el c post [q1 [lp lu la lb lq] h1 r1] XL XR j H HX.
   unfold hc_cend_ok in H; cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post] in H.
   apply andb_prop in H as [H Hx].
   apply andb_prop in H as [H Hb].
@@ -662,11 +727,11 @@ Proof.
   pose proof (hy_eqb_lpad el _ _ XL Hpost HX) as Hz. rewrite <- app_assoc in Hz. exact Hz.
 Qed.
 
-Lemma hc_cbase_den : forall el want c1 XL XR j,
-  hc_cbase_ok P el want c1 = true -> (el = true -> XL = []) ->
-  lift (cden XL XR j c1) = lift (hc_q2 P, (want ++ XL, hc_h2 P, XR)).
+Lemma hc_cbase_den : forall X el want c1 XL XR j,
+  hc_cbase_ok X el want c1 = true -> (el = true -> XL = []) ->
+  lift (cden XL XR j c1) = lift (he_q2 X, (want ++ XL, he_h2 X, XR)).
 Proof.
-  intros el want [q1 [lp lu la lb lq] h1 r1] XL XR j H HX.
+  intros X el want [q1 [lp lu la lb lq] h1 r1] XL XR j H HX.
   unfold hc_cbase_ok in H; cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post] in H.
   apply andb_prop in H as [H Hp].
   apply andb_prop in H as [H Hq'].
@@ -705,14 +770,20 @@ Proof.
 Qed.
 
 Lemma hc_case_sound : forall el off Ps Pe K, hc_case_ok w P tmw el off Ps Pe K = true ->
+  In (hcX P (hk_ex K)) (hc_exits P) /\
   forall j XL n, (el = true -> XL = []) ->
   exists N c', csteps tmw N (hcKc Ps XL j n) = Some c' /\
-    lift c' = lift (hc_q2 P, (hc_Mpre P ++ rep (hcD0 w) (j + off) ++ Pe ++ XL, hc_h2 P,
-                              rep (hc_w P) n ++ hc_Rpost P)).
+    lift c' = lift (he_q2 (hcX P (hk_ex K)),
+                    (he_Mpre (hcX P (hk_ex K)) ++ rep (hcD0 w) (j + off) ++ Pe ++ XL,
+                     he_h2 (hcX P (hk_ex K)), rep (hc_w P) n ++ hc_Rpost P)).
 Proof.
-  intros el off Ps Pe K H j XL n HX. unfold hc_case_ok in H.
-  apply andb_prop in H as [H Hlen]. apply andb_prop in H as [Hm Hl].
-  apply Nat.leb_le in Hlen.
+  intros el off Ps Pe K H. unfold hc_case_ok in H.
+  apply andb_prop in H as [H Hlen]. apply andb_prop in H as [H Hl].
+  apply andb_prop in H as [Hex Hm].
+  apply Nat.leb_le in Hlen. apply Nat.ltb_lt in Hex.
+  set (X := hcX P (hk_ex K)) in *.
+  split; [exact (nth_In _ _ Hex) |].
+  intros j XL n HX.
   destruct (lt_dec j (hk_nu K)) as [Hj | Hj].
   - destruct (nth_error (hk_base K) j) as [ch|] eqn:Ech.
     2: { apply nth_error_None in Ech. lia. }
@@ -721,7 +792,7 @@ Proof.
     exists (ca * 0 + cb), (cden XL (rep (hc_w P) n ++ hc_Rpost P) 0 c1). split.
     + rewrite <- hcKB_den.
       exact (srun_sound tmw el false _ _ _ ca cb Hrun _ _ 0 HX ltac:(discriminate)).
-    + rewrite (hc_cbase_den el _ c1 _ _ 0 Hok HX), <- !app_assoc. reflexivity.
+    + rewrite (hc_cbase_den X el _ c1 _ _ 0 Hok HX), <- !app_assoc. reflexivity.
   - destruct (hy_run_sound _ _ _ _ _ _ Hm) as (c1 & ca & cb & Hrun & Hok).
     exists (ca * (j - hk_nu K) + cb),
       (cden XL (rep (hc_w P) n ++ hc_Rpost P) (j - hk_nu K) c1). split.
@@ -729,7 +800,7 @@ Proof.
         by (f_equal; lia).
       rewrite <- hcK0_den.
       exact (srun_sound tmw el false _ _ _ ca cb Hrun _ _ _ HX ltac:(discriminate)).
-    + rewrite (hc_cend_den el _ _ c1 _ _ _ Hok HX).
+    + rewrite (hc_cend_den X el _ _ c1 _ _ _ Hok HX).
       replace (hk_nu K + off + (j - hk_nu K)) with (j + off) by lia. reflexivity.
 Qed.
 
@@ -737,48 +808,60 @@ Hypothesis Hctr : hc_counter_ok w P tmw = true.
 Hypothesis Hb : 2 <= hcb w.
 Hypothesis Hlh : hclo w < hchi w.
 
-Lemma hc_half : forall c n, canon (hcb w) (hclo w) (hchi w) c -> exists N c',
+Lemma hc_half : forall c n, canon (hcb w) (hclo w) (hchi w) c ->
+  In (hc_exit_of w P c) (hc_exits P) /\ exists N c',
   csteps tmw N (hcC w P c (hc_m P + n)) = Some c' /\
-  lift c' = lift (hcM w P (csucc (hcb w) (hclo w) (hchi w) c) n).
+  lift c' = lift (hcM w P (hc_exit_of w P c) (csucc (hcb w) (hclo w) (hchi w) c) n).
 Proof.
   intros [low tv] n (Hf & Hl & Hh); cbn [fst snd] in *.
-  unfold hc_counter_ok in Hctr. apply andb_prop in Hctr as [Hi Ht].
+  pose proof Hctr as Hc. unfold hc_counter_ok in Hc. apply andb_prop in Hc as [Hi Ht].
   rewrite forallb_forall in Hi, Ht.
   destruct (low_shape (hcb w) (hclo w) (hchi w) Hb Hlh low Hf) as [(j & d & r & -> & Hd) | Hm].
-  - rewrite csucc_int by (lia || exact Hd).
+  - unfold hc_exit_of, hc_kase; cbn [fst snd].
+    rewrite (firstlow_int (hcb w) j d r ltac:(lia) Hd).
+    rewrite csucc_int by (lia || exact Hd).
     specialize (Hi d ltac:(apply in_seq; lia)). unfold hc_int_ok in Hi.
-    destruct (hc_case_sound _ _ _ _ _ Hi j (hcE w (r, tv)) n ltac:(discriminate))
-      as (N & c' & H1 & H2).
+    destruct (hc_case_sound _ _ _ _ _ Hi) as (Hin & Hs). split; [exact Hin |].
+    destruct (Hs j (hcE w (r, tv)) n ltac:(discriminate)) as (N & c' & H1 & H2).
     exists N, c'. split.
     + unfold hcC. rewrite hcE_int. exact H1.
     + rewrite H2. unfold hcM. rewrite hcE_zint, Nat.add_0_r. reflexivity.
   - rewrite Hm. set (j := length low).
-    specialize (Ht (tv - hclo w) ltac:(apply in_seq; nia)). unfold hc_top_ok in Ht.
+    unfold hc_exit_of, hc_kase; cbn [fst snd].
+    rewrite (firstlow_max (hcb w) j ltac:(lia)).
+    specialize (Ht (tv - hclo w) ltac:(apply in_seq; lia)). unfold hc_top_ok in Ht.
     replace (hclo w + (tv - hclo w)) with tv in Ht by lia.
     destruct (Nat.lt_ge_cases (S tv) (hchi w)) as [Hs | Hs].
     + replace (S tv <? hchi w) with true in Ht by (symmetry; apply Nat.ltb_lt; lia).
       rewrite csucc_top by (lia || exact Hs).
-      destruct (hc_case_sound _ _ _ _ _ Ht j [] n ltac:(reflexivity))
-        as (N & c' & H1 & H2).
+      destruct (hc_case_sound _ _ _ _ _ Ht) as (Hin & Hs'). split; [exact Hin |].
+      destruct (Hs' j [] n ltac:(reflexivity)) as (N & c' & H1 & H2).
       exists N, c'. split.
       * unfold hcC. rewrite hcE_max. unfold hcKc in H1. rewrite app_nil_r in H1. exact H1.
       * rewrite H2. unfold hcM. rewrite hcE_zero, Nat.add_0_r, app_nil_r. reflexivity.
     + replace (S tv <? hchi w) with false in Ht by (symmetry; apply Nat.ltb_ge; lia).
       rewrite csucc_ovf by (lia || exact Hs).
-      destruct (hc_case_sound _ _ _ _ _ Ht j [] n ltac:(reflexivity))
-        as (N & c' & H1 & H2).
+      destruct (hc_case_sound _ _ _ _ _ Ht) as (Hin & Hs'). split; [exact Hin |].
+      destruct (Hs' j [] n ltac:(reflexivity)) as (N & c' & H1 & H2).
       exists N, c'. split.
       * unfold hcC. rewrite hcE_max. unfold hcKc in H1. rewrite app_nil_r in H1. exact H1.
       * rewrite H2. unfold hcM. rewrite hcE_zero, Nat.add_1_r, app_nil_r. reflexivity.
 Qed.
 
-Lemma hc_to_mid : forall c n, canon (hcb w) (hclo w) (hchi w) c -> hc_nmin P <= n -> exists N,
+Lemma hc_to_mid : forall c n, canon (hcb w) (hclo w) (hchi w) c -> hc_nmin P <= n ->
+  let X := hc_exit_of w P c in
+  In X (hc_exits P) /\ exists N,
   stepn tmw N (lift (hcC w P c n))
-  = Some (lift (hcM w P (csucc (hcb w) (hclo w) (hchi w) c) (hc_na P + (n - hc_nmin P) + hc_nb P))).
+  = Some (lift (hcM w P X (csucc (hcb w) (hclo w) (hchi w) c)
+                    (he_na X + (n - hc_nminX P X) + he_nb X))).
 Proof.
-  intros c n Hc Hn. unfold hc_nmin in *.
-  destruct (hc_half c (n - hc_m P) Hc) as (N & c' & H1 & Hl).
-  exists N. replace (hc_na P + (n - (hc_m P + hc_na P + hc_nb P)) + hc_nb P)
+  intros c n Hc Hn X.
+  pose proof (nminX_le P (hk_ex (hc_kase w P c))) as Hle.
+  change (hcX P (hk_ex (hc_kase w P c))) with X in Hle.
+  unfold hc_nminX in *.
+  destruct (hc_half c (n - hc_m P) Hc) as (Hin & N & c' & H1 & Hl).
+  split; [exact Hin |].
+  exists N. replace (he_na X + (n - (hc_m P + he_na X + he_nb X)) + he_nb X)
     with (n - hc_m P) by lia.
   replace n with (hc_m P + (n - hc_m P)) at 1 by lia.
   exact (lap_stepn _ _ _ _ _ H1 Hl).
@@ -786,22 +869,22 @@ Qed.
 
 End PhaseSound.
 
-Lemma hcS0_den : forall w P c k,
-  cden (hcE w c) [] k (hcS0 P) = hcM w P c (hc_na P + k + hc_nb P).
+Lemma hcS0_den : forall w P X c k,
+  cden (hcE w c) [] k (hcS0 P X) = hcM w P X c (he_na X + k + he_nb X).
 Proof.
-  intros w P c k. unfold cden, hcS0, hcM, sden, sflat;
+  intros w P X c k. unfold cden, hcS0, hcM, sden, sflat;
     cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].
   replace (1 * k + 0) with k by lia. rewrite rep_nil, !app_nil_r.
   rewrite !rep_add, <- !app_assoc. reflexivity.
 Qed.
 
-Lemma hc_sweep_main : forall tmw w P P', hc_sweep_ok P tmw P' = true ->
+Lemma hc_sweep_main : forall tmw w P X P', hc_sweep_ok P tmw X P' = true ->
   forall c k, exists N c',
-  csteps tmw N (hcM w P c (hc_na P + k + hc_nb P)) = Some c' /\
-  lift c' = lift (hcC w P' c (k + hc_c P)) /\ 0 < N.
+  csteps tmw N (hcM w P X c (he_na X + k + he_nb X)) = Some c' /\
+  lift c' = lift (hcC w P' c (k + he_c X)) /\ 0 < N.
 Proof.
-  intros tmw w P P' H c k. unfold hc_sweep_ok in H.
-  destruct (srun tmw false true (hc_chs P) (hcS0 P)) as [[[c1 ca] cb]|] eqn:E;
+  intros tmw w P X P' H c k. unfold hc_sweep_ok in H.
+  destruct (srun tmw false true (he_chs X) (hcS0 P X)) as [[[c1 ca] cb]|] eqn:E;
     [|discriminate].
   destruct c1 as [q1 [lp lu la lb lq] h1 [rp ru ra rb rq]].
   unfold sside_flat_is, sside_end_is in H;
@@ -822,14 +905,14 @@ Proof.
   apply syms_eqb_eq in Hrp, Hru, Hlp, Hlu, Hlq.
   apply Nat.eqb_eq in Hra. apply Nat.leb_le in Hrb. apply Nat.ltb_lt in Hcb.
   subst.
-  set (cc := hc_c P) in *.
+  set (cc := he_c X) in *.
   exists (ca * k + cb),
     (cden (hcE w c) [] k
           (mkC (hc_q P') (mkS (hc_Lpre P') [] la lb []) (hc_h P')
                (mkS (hc_Rpre P' ++ rep (hc_w P') x) (hc_w P') 1 rb rq))).
   split; [| split; [| lia]].
   - rewrite <- hcS0_den.
-    exact (srun_sound tmw false true (hc_chs P) (hcS0 P) _ ca cb E
+    exact (srun_sound tmw false true (he_chs X) (hcS0 P X) _ ca cb E
              (hcE w c) [] k ltac:(discriminate) ltac:(reflexivity)).
   - unfold cden, hcC, sden; cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post rep].
     rewrite rep_nil. rewrite !app_nil_r. cbn [app].
@@ -837,20 +920,6 @@ Proof.
     replace (k + cc) with (x + ((1 * k + rb) + (cc - rb - x))) by lia.
     rewrite !rep_add, <- !app_assoc.
     repeat apply lpad_eqb_app. exact Hrq.
-Qed.
-
-Lemma hc_lap : forall tmw w P P', hc_counter_ok w P tmw = true ->
-  hc_sweep_ok P tmw P' = true -> 2 <= hcb w -> hclo w < hchi w ->
-  forall c n, canon (hcb w) (hclo w) (hchi w) c -> hc_nmin P <= n -> exists N, 0 < N /\
-  stepn tmw N (lift (hcC w P c n))
-  = Some (lift (hcC w P' (csucc (hcb w) (hclo w) (hchi w) c) (n - hc_nmin P + hc_c P))).
-Proof.
-  intros tmw w P P' Hc Hs Hb Hlh c n Hcn Hn.
-  destruct (hc_to_mid tmw w P Hc Hb Hlh c n Hcn Hn) as (N1 & H1).
-  destruct (hc_sweep_main tmw w P P' Hs (csucc (hcb w) (hclo w) (hchi w) c) (n - hc_nmin P))
-    as (N2 & c2 & H2 & Hl2 & HN2).
-  exists (N1 + N2). split; [lia |].
-  rewrite stepn_add, H1, (lap_stepn _ _ _ _ _ H2 Hl2). reflexivity.
 Qed.
 
 (** *** Fires *)
@@ -867,14 +936,15 @@ Proof.
            HX ltac:(discriminate) (eq_sym (hcK0_den w P K Ps XL j n))).
 Qed.
 
-Lemma hc_fire_sweep : forall tmw w P ch t, srun_instr tmw false true ch (hcS0 P) = Some t ->
-  forall c k, FiresFrom tmw (hcM w P c (hc_na P + k + hc_nb P)) t.
+Lemma hc_fire_sweep : forall tmw w P X ch t, srun_instr tmw false true ch (hcS0 P X) = Some t ->
+  forall c k, FiresFrom tmw (hcM w P X c (he_na X + k + he_nb X)) t.
 Proof.
-  intros tmw w P ch t H c k.
-  apply fire_lift_of_csteps with (Cc := fun _ => hcM w P c (hc_na P + k + hc_nb P)) (p := xH).
-  exact (fire_of_run_instr tmw (fun _ => hcM w P c (hc_na P + k + hc_nb P)) false true
-           ch (hcS0 P) xH k (hcE w c) [] t H
-           ltac:(discriminate) ltac:(reflexivity) (eq_sym (hcS0_den w P c k))).
+  intros tmw w P X ch t H c k.
+  apply fire_lift_of_csteps
+    with (Cc := fun _ => hcM w P X c (he_na X + k + he_nb X)) (p := xH).
+  exact (fire_of_run_instr tmw (fun _ => hcM w P X c (he_na X + k + he_nb X)) false true
+           ch (hcS0 P X) xH k (hcE w c) [] t H
+           ltac:(discriminate) ltac:(reflexivity) (eq_sym (hcS0_den w P X c k))).
 Qed.
 
 (** ** Modular arithmetic for the families *)
@@ -890,17 +960,6 @@ Proof.
     replace (x + k + (L - k mod L)) with (x + (k / L + 1) * L) by nia.
     rewrite Nat.Div0.mod_add. reflexivity. }
   rewrite (E u), (E v), H. reflexivity.
-Qed.
-
-Lemma powb_mod_period : forall b L a T, 0 < L ->
-  (b ^ (a + T)) mod L = (b ^ a) mod L ->
-  forall q, (b ^ (a + T * q)) mod L = (b ^ a) mod L.
-Proof.
-  intros b L a T HL H. induction q as [|q IH].
-  - rewrite Nat.mul_0_r, Nat.add_0_r. reflexivity.
-  - replace (a + T * S q) with ((a + T * q) + T) by lia.
-    rewrite Nat.pow_add_r, Nat.Div0.mul_mod, IH, <- Nat.Div0.mul_mod.
-    rewrite <- Nat.pow_add_r. exact H.
 Qed.
 
 Section Sound.
@@ -935,15 +994,17 @@ Qed.
 
 Lemma hc_phase_at : forall i, i < hcL w ->
   hc_counter_ok w (hcph w i) tmw = true
-  /\ hc_sweep_ok (hcph w i) tmw (hcph w (hcnx w i)) = true
-  /\ hc_nmin (hcph w (hcnx w i)) <= hc_c (hcph w i).
+  /\ forall X, In X (hc_exits (hcph w i)) ->
+     hc_sweep_ok (hcph w i) tmw X (hcph w (hcnx w i)) = true
+     /\ hc_nmin (hcph w (hcnx w i)) <= he_c X.
 Proof.
   intros i Hi. destruct hc_core_parts as (_ & _ & _ & H & _). unfold hc_phases_ok in H.
   apply andb_prop in H as [_ H]. rewrite forallb_forall in H.
   specialize (H i ltac:(apply in_seq; lia)).
   unfold hc_phase_ok in H.
-  apply andb_prop in H as [H Hn]. apply andb_prop in H as [Hc Hs].
-  apply Nat.leb_le in Hn. auto.
+  apply andb_prop in H as [Hc Hx]. rewrite forallb_forall in Hx.
+  split; [exact Hc |]. intros X HX. specialize (Hx X HX).
+  apply andb_prop in Hx as [Hs Hn]. apply Nat.leb_le in Hn. auto.
 Qed.
 
 Definition hcS : Type := ((list nat * nat) * nat * nat)%type.
@@ -958,7 +1019,8 @@ Definition hc_good (s : hcS) : Prop :=
 
 Definition hc_nxt (s : hcS) : hcS :=
   let '(c, n, i) := s in
-  (csucc b lo hi c, n - hc_nmin (hcph w i) + hc_c (hcph w i), hcnx w i).
+  let X := hc_exit_of w (hcph w i) c in
+  (csucc b lo hi c, n - hc_nminX (hcph w i) X + he_c X, hcnx w i).
 
 Lemma hc_phase_lt : forall x, hc_phase_of w x < hcL w.
 Proof. intros x. unfold hc_phase_of. apply Nat.mod_upper_bound. pose proof hc_L_pos. lia. Qed.
@@ -984,16 +1046,37 @@ Proof.
   reflexivity.
 Qed.
 
+(** one lap from an anchor, onto the next phase *)
+Lemma hc_lap_at : forall i c n, i < hcL w -> canon b lo hi c -> hc_nmin (hcph w i) <= n ->
+  let X := hc_exit_of w (hcph w i) c in
+  hc_nmin (hcph w (hcnx w i)) <= n - hc_nminX (hcph w i) X + he_c X /\
+  exists N, 0 < N /\
+  stepn tmw N (lift (hcC w (hcph w i) c n))
+  = Some (lift (hcC w (hcph w (hcnx w i)) (csucc b lo hi c)
+                    (n - hc_nminX (hcph w i) X + he_c X))).
+Proof.
+  intros i c n Hi Hc Hn X.
+  destruct (hc_phase_at i Hi) as (Hk & Hx).
+  destruct (hc_to_mid tmw w (hcph w i) Hk hc_b2 hc_lh c n Hc Hn) as (Hin & N1 & H1).
+  fold X in Hin, H1.
+  destruct (Hx X Hin) as (Hs & Hm).
+  split; [lia |].
+  destruct (hc_sweep_main tmw w _ X _ Hs (csucc b lo hi c) (n - hc_nminX (hcph w i) X))
+    as (N2 & c2 & H2 & Hl2 & HN2).
+  exists (N1 + N2). split; [lia |].
+  rewrite stepn_add, H1, (lap_stepn _ _ _ _ _ H2 Hl2). reflexivity.
+Qed.
+
 Lemma hc_step : forall s, hc_good s -> hc_good (hc_nxt s) /\ exists N, 0 < N /\
   stepn tmw N (lift (hcA s)) = Some (lift (hcA (hc_nxt s))).
 Proof.
   intros [[c n] i] (Hc & Hv & Hi & Hn). cbn [hc_nxt hcA hc_good].
-  destruct (hc_phase_at i ltac:(rewrite Hi; apply hc_phase_lt)) as (Hk & Hs & Hm).
+  assert (Hil : i < hcL w) by (rewrite Hi; apply hc_phase_lt).
+  destruct (hc_lap_at i c n Hil Hc Hn) as (Hm & HL).
   destruct (canon_succ b lo hi hc_b2 hc_lh c Hc) as (Hc' & Hv').
-  split.
-  - split; [exact Hc' |]. rewrite Hv'. split; [lia |].
-    split; [rewrite Hi; symmetry; exact (hc_phase_succ _ Hv) | lia].
-  - exact (hc_lap tmw w _ _ Hk Hs hc_b2 hc_lh c n Hc Hn).
+  split; [| exact HL].
+  split; [exact Hc' |]. rewrite Hv'. split; [lia |].
+  split; [rewrite Hi; symmetry; exact (hc_phase_succ _ Hv) | exact Hm].
 Qed.
 
 Lemma hc_reach : forall D s, hc_good s ->
@@ -1012,7 +1095,7 @@ Proof.
 Qed.
 
 (** any canonical counter at or above a visited anchor's is visited, in the
-    phase its value names *)
+    phase its rank names *)
 Lemma hc_reach_at : forall s c', hc_good s -> canon b lo hi c' ->
   cval b lo hi (fst (fst s)) <= cval b lo hi c' ->
   exists T n', hc_nmin (hcph w (hc_phase_of w (cval b lo hi c'))) <= n' /\
@@ -1028,77 +1111,42 @@ Proof.
   subst c1 i1. exists T, n1. auto.
 Qed.
 
-Lemma hc_fire_sweep_any : forall i ch t, i < hcL w ->
-  srun_instr tmw false true ch (hcS0 (hcph w i)) = Some t ->
-  forall s, hc_good s -> FiresFrom tmw (hcA s) t.
+(** the interior family: a member at or above any anchor, in phase [i] *)
+Lemma hc_int_member : forall i d j H0, hc_int_fam_ok w i d j H0 = true ->
+  forall s, hc_good s -> exists r tv,
+  let c' := (repeat (b - 1) j ++ d :: r, tv) in
+  canon b lo hi c' /\ S d < b /\ cval b lo hi (fst (fst s)) <= cval b lo hi c'
+  /\ hc_phase_of w (cval b lo hi c') = i.
 Proof.
-  intros i ch t Hi H s Hg.
-  pose proof hc_L_pos as HL.
-  set (x0 := cval b lo hi (fst (fst s))).
-  remember (hcc_i0 w + (x0 - hcv0 w)) as X eqn:EX.
-  remember ((i + hcL w - X mod hcL w) mod hcL w) as d eqn:Ed.
-  destruct (canon_exists b lo hi hc_b2 hc_lh (x0 + d))
-    as (c' & Hc' & Hv').
-  destruct (hc_reach_at s c' Hg Hc' ltac:(lia)) as (T & n' & Hn' & HT).
-  assert (Hph : hc_phase_of w (cval b lo hi c') = i).
-  { destruct s as [[c n] i1]. destruct Hg as (_ & Hv & _). cbn [fst] in x0.
-    unfold hc_phase_of. rewrite Hv'.
-    replace (hcc_i0 w + (x0 + d - hcv0 w)) with (X + d) by (subst x0; lia).
-    subst d. exact (mod_shift X i (hcL w) ltac:(lia) Hi). }
-  rewrite Hph in Hn', HT.
-  apply (fires_back tmw _ _ T t HT).
-  destruct (hc_to_mid tmw w (hcph w i) (proj1 (hc_phase_at i Hi)) hc_b2 hc_lh c' n' Hc' Hn')
-    as (N & HN).
-  apply (fires_back tmw _ _ N t HN). apply (hc_fire_sweep tmw w _ ch t H).
-Qed.
-
-Lemma hc_fire_int_any : forall i d j H0 ch t, i < hcL w ->
-  srun_instr tmw false false ch (hcK0 w (hcph w i) (nth d (hc_int (hcph w i)) hk_dflt) (hcD w d))
-    = Some t ->
-  hk_nu (nth d (hc_int (hcph w i)) hk_dflt) <= j -> hc_int_fam_ok w i d j H0 = true ->
-  forall s, hc_good s -> FiresFrom tmw (hcA s) t.
-Proof.
-  intros i d j H0 ch t Hi H Hj Hf s Hg.
+  intros i d j H0 Hf s Hg.
   pose proof hc_L_pos as HL. pose proof hc_b2 as Hb2.
   unfold hc_int_fam_ok in Hf.
   apply andb_prop in Hf as [Hf Hph]. apply andb_prop in Hf as [Hd Hx].
   apply Nat.ltb_lt in Hd. apply Nat.leb_le in Hx. apply Nat.eqb_eq in Hph.
   set (x0 := cval b lo hi (fst (fst s))).
   destruct (canon_exists b lo hi hc_b2 hc_lh (H0 + hcL w * x0)) as ([r tv] & Hr & Hrv).
-  set (c' := (repeat (b - 1) j ++ d :: r, tv)).
-  assert (Hc' : canon b lo hi c').
+  exists r, tv. cbv zeta.
+  assert (Hc' : canon b lo hi (repeat (b - 1) j ++ d :: r, tv)).
   { destruct Hr as (Hrf & Hrl & Hrh). split; [| exact (conj Hrl Hrh)].
     cbn [fst]. apply Forall_app. split; [apply forall_repeat; lia | constructor; [lia | exact Hrf]]. }
-  assert (Hcv : cval b lo hi c'
+  assert (Hcv : cval b lo hi (repeat (b - 1) j ++ d :: r, tv)
                 = ((hi - lo) * G b (S j) + (b ^ j - 1) + b ^ j * d + b ^ S j * H0)
                   + (b ^ S j * x0) * hcL w).
-  { unfold c'. rewrite (cval_int _ _ _ hc_b2 hc_lh), Hrv. nia. }
+  { rewrite (cval_int _ _ _ hc_b2 hc_lh), Hrv. nia. }
   pose proof (Nat.pow_nonzero b (S j) ltac:(lia)) as Hpz.
-  assert (Hge : x0 <= cval b lo hi c') by (rewrite Hcv; nia).
-  destruct (hc_reach_at s c' Hg Hc' Hge) as (T & n' & Hn' & HT).
-  assert (Hp : hc_phase_of w (cval b lo hi c') = i).
-  { rewrite <- Hph. apply hc_phase_cong; [lia | exact Hx |].
-    rewrite Hcv. apply Nat.Div0.mod_add. }
-  rewrite Hp in Hn', HT.
-  apply (fires_back tmw _ _ T t HT).
-  unfold hc_nmin in Hn'.
-  set (K := nth d (hc_int (hcph w i)) hk_dflt) in *.
-  assert (E : hcC w (hcph w i) c' n'
-              = hcKc w (hcph w i) (hcD w d) (hcE w (r, tv)) (hk_nu K + (j - hk_nu K))
-                     (n' - hc_m (hcph w i))).
-  { unfold hcC, hcKc, c'. rewrite hcE_int.
-    replace (hk_nu K + (j - hk_nu K)) with j by lia.
-    replace (hc_m (hcph w i) + (n' - hc_m (hcph w i))) with n' by lia. reflexivity. }
-  rewrite E. exact (fire_case tmw w _ false K _ ch t H _ _ _ ltac:(discriminate)).
+  split; [exact Hc' |]. split; [exact Hd |]. split; [rewrite Hcv; nia |].
+  rewrite <- Hph. apply hc_phase_cong; [lia | exact Hx |].
+  rewrite Hcv. apply Nat.Div0.mod_add.
 Qed.
 
-Lemma hc_fire_top_any : forall i e j0 TT ch t, i < hcL w ->
-  srun_instr tmw true false ch
-    (hcK0 w (hcph w i) (nth e (hc_top (hcph w i)) hk_dflt) (hcT w (lo + e))) = Some t ->
-  hk_nu (nth e (hc_top (hcph w i)) hk_dflt) <= j0 -> hc_top_fam_ok w i e j0 TT = true ->
-  forall s, hc_good s -> FiresFrom tmw (hcA s) t.
+(** the top family: a member at or above any anchor, in phase [i] *)
+Lemma hc_top_member : forall i e j0 TT, hc_top_fam_ok w i e j0 TT = true ->
+  forall s, hc_good s -> exists j, j0 <= j /\
+  let c' := (repeat (b - 1) j, lo + e) in
+  canon b lo hi c' /\ cval b lo hi (fst (fst s)) <= cval b lo hi c'
+  /\ hc_phase_of w (cval b lo hi c') = i.
 Proof.
-  intros i e j0 TT ch t Hi H Hj Hf s Hg.
+  intros i e j0 TT Hf s Hg.
   pose proof hc_L_pos as HL. pose proof hc_b2 as Hb2. pose proof hc_lh as Hlh.
   unfold hc_top_fam_ok in Hf.
   apply andb_prop in Hf as [Hf Hph]. apply andb_prop in Hf as [Hf Hx].
@@ -1107,9 +1155,9 @@ Proof.
   rewrite !ytop_mod_spec in Hper by lia.
   set (x0 := cval b lo hi (fst (fst s))).
   set (j := j0 + TT * x0).
-  set (c' := (repeat (b - 1) j, lo + e)).
-  assert (Hc' : canon b lo hi c').
-  { unfold canon, c'; cbn [fst snd]. split; [apply forall_repeat; lia | lia]. }
+  exists j. split; [lia |]. cbv zeta.
+  assert (Hc' : canon b lo hi (repeat (b - 1) j, lo + e)).
+  { unfold canon; cbn [fst snd]. split; [apply forall_repeat; lia | lia]. }
   assert (Hcv : forall k, cval b lo hi (repeat (b - 1) k, lo + e) = ytop b lo hi e k - 1).
   { intros k. rewrite (cval_max _ _ _ hc_b2 hc_lh). unfold ytop.
     pose proof (Nat.pow_nonzero b k ltac:(lia)).
@@ -1120,39 +1168,63 @@ Proof.
   assert (Hpj : x0 < b ^ j).
   { apply (Nat.lt_le_trans _ (b ^ x0)); [apply Nat.pow_gt_lin_r; lia |].
     apply Nat.pow_le_mono_r; [lia | nia]. }
-  assert (Hge : x0 <= cval b lo hi c').
-  { unfold c'. rewrite Hcv. unfold ytop. nia. }
-  destruct (hc_reach_at s c' Hg Hc' Hge) as (T & n' & Hn' & HT').
-  assert (Hp : hc_phase_of w (cval b lo hi c') = i).
-  { rewrite <- Hph. unfold c'. rewrite Hcv.
-    pose proof (Hmono j0 (TT * x0)) as Hm0. fold j in Hm0.
-    apply hc_phase_cong; [lia | exact Hx |].
-    pose proof (ytop_period b lo hi (hcL w) e j0 TT ltac:(lia) Hper x0) as Hm.
-    fold j in Hm.
-    set (Z := ytop b lo hi e j) in *. set (Z0 := ytop b lo hi e j0) in *.
-    assert (HZ1 : 1 <= Z0) by (unfold Z0, ytop; pose proof (Nat.pow_nonzero b j0 ltac:(lia)); nia).
-    pose proof (Nat.div_mod Z (hcL w) ltac:(lia)) as HZd.
-    pose proof (Nat.div_mod Z0 (hcL w) ltac:(lia)) as HZ0d.
-    assert (Hd : Z0 / hcL w <= Z / hcL w) by (apply Nat.Div0.div_le_mono; lia).
-    replace (Z - 1) with ((Z0 - 1) + (Z / hcL w - Z0 / hcL w) * hcL w) by nia.
-    apply Nat.Div0.mod_add. }
-  rewrite Hp in Hn', HT'.
-  apply (fires_back tmw _ _ T t HT').
-  unfold hc_nmin in Hn'.
-  set (K := nth e (hc_top (hcph w i)) hk_dflt) in *.
+  split; [exact Hc' |]. split; [rewrite Hcv; unfold ytop; nia |].
+  rewrite <- Hph. rewrite Hcv.
+  pose proof (Hmono j0 (TT * x0)) as Hm0. fold j in Hm0.
+  apply hc_phase_cong; [lia | exact Hx |].
+  pose proof (ytop_period b lo hi (hcL w) e j0 TT ltac:(lia) Hper x0) as Hm.
+  fold j in Hm.
+  set (Z := ytop b lo hi e j) in *. set (Z0 := ytop b lo hi e j0) in *.
+  assert (HZ1 : 1 <= Z0) by (unfold Z0, ytop; pose proof (Nat.pow_nonzero b j0 ltac:(lia)); nia).
+  pose proof (Nat.div_mod Z (hcL w) ltac:(lia)) as HZd.
+  pose proof (Nat.div_mod Z0 (hcL w) ltac:(lia)) as HZ0d.
+  assert (Hd : Z0 / hcL w <= Z / hcL w) by (apply Nat.Div0.div_le_mono; lia).
+  replace (Z - 1) with ((Z0 - 1) + (Z / hcL w - Z0 / hcL w) * hcL w) by nia.
+  apply Nat.Div0.mod_add.
+Qed.
+
+(** from a family member, a chain prefix of its carry case fires [t] *)
+Lemma hc_fire_case_at : forall i c' Ps XL K ch t el j, i < hcL w ->
+  srun_instr tmw el false ch (hcK0 w (hcph w i) K Ps) = Some t ->
+  (el = true -> XL = []) -> hk_nu K <= j ->
+  hc_Lpre (hcph w i) ++ hcE w c' = hc_Lpre (hcph w i) ++ rep (hcDm w) j ++ Ps ++ XL ->
+  forall s, hc_good s -> canon b lo hi c' -> cval b lo hi (fst (fst s)) <= cval b lo hi c' ->
+  hc_phase_of w (cval b lo hi c') = i -> FiresFrom tmw (hcA s) t.
+Proof.
+  intros i c' Ps XL K ch t el j Hi H HX Hj HE s Hg Hc' Hge Hp.
+  destruct (hc_reach_at s c' Hg Hc' Hge) as (T & n' & Hn' & HT).
+  rewrite Hp in Hn', HT.
+  apply (fires_back tmw _ _ T t HT).
+  assert (Hm : hc_m (hcph w i) <= n').
+  { pose proof (nminX_le (hcph w i) 0). unfold hc_nminX in *. lia. }
   assert (E : hcC w (hcph w i) c' n'
-              = hcKc w (hcph w i) (hcT w (lo + e)) [] (hk_nu K + (j - hk_nu K))
-                     (n' - hc_m (hcph w i))).
-  { unfold hcC, hcKc, c'. rewrite hcE_max, app_nil_r.
+              = hcKc w (hcph w i) Ps XL (hk_nu K + (j - hk_nu K)) (n' - hc_m (hcph w i))).
+  { unfold hcC, hcKc. rewrite HE.
     replace (hk_nu K + (j - hk_nu K)) with j by lia.
     replace (hc_m (hcph w i) + (n' - hc_m (hcph w i))) with n' by lia. reflexivity. }
-  rewrite E. exact (fire_case tmw w _ true K _ ch t H _ _ _ ltac:(reflexivity)).
+  rewrite E. exact (fire_case tmw w _ el K _ ch t H _ _ _ HX).
+Qed.
+
+(** from a family member, a chain prefix of its exit's sweep fires [t] *)
+Lemma hc_fire_exit_at : forall i c' ch t, i < hcL w ->
+  srun_instr tmw false true ch (hcS0 (hcph w i) (hc_exit_of w (hcph w i) c')) = Some t ->
+  forall s, hc_good s -> canon b lo hi c' -> cval b lo hi (fst (fst s)) <= cval b lo hi c' ->
+  hc_phase_of w (cval b lo hi c') = i -> FiresFrom tmw (hcA s) t.
+Proof.
+  intros i c' ch t Hi H s Hg Hc' Hge Hp.
+  destruct (hc_reach_at s c' Hg Hc' Hge) as (T & n' & Hn' & HT).
+  rewrite Hp in Hn', HT.
+  apply (fires_back tmw _ _ T t HT).
+  destruct (hc_to_mid tmw w (hcph w i) (proj1 (hc_phase_at i Hi)) hc_b2 hc_lh c' n' Hc' Hn')
+    as (_ & N & HN).
+  apply (fires_back tmw _ _ N t HN). apply (hc_fire_sweep tmw w _ _ ch t H).
 Qed.
 
 Lemma hc_fire_any : forall t, ~ In t (hcc_pins w) ->
   forall s, hc_good s -> FiresFrom tmw (hcA s) t.
 Proof.
   intros t Hnin s Hg.
+  pose proof hc_b2 as Hb2.
   destruct hc_core_parts as (_ & _ & _ & _ & H & _). unfold hc_fires_ok in H.
   rewrite forallb_forall in H.
   specialize (H t (all_Instr_complete t)).
@@ -1161,21 +1233,42 @@ Proof.
   apply existsb_exists in H as ([i k d a bb ch] & _ & Hf).
   unfold hc_fire_ok in Hf; cbn [hcf_ph hcf_kind hcf_k hcf_a hcf_b hcf_ch] in Hf.
   apply andb_prop in Hf as [Hi Hf]. apply Nat.ltb_lt in Hi.
-  destruct k as [|[|k]].
-  - match type of Hf with context [srun_instr ?a ?b ?c ?d ?e] =>
-      destruct (srun_instr a b c d e) as [t'|] eqn:E; [|discriminate] end.
-    apply andb_prop in Hf as [Hf Hfam]. apply andb_prop in Hf as [Ht Hj].
-    apply instr_eqb_spec in Ht. apply Nat.leb_le in Hj. subst t'.
-    exact (hc_fire_int_any i d a bb ch t Hi E Hj Hfam s Hg).
-  - match type of Hf with context [srun_instr ?a ?b ?c ?d ?e] =>
-      destruct (srun_instr a b c d e) as [t'|] eqn:E; [|discriminate] end.
-    apply andb_prop in Hf as [Hf Hfam]. apply andb_prop in Hf as [Ht Hj].
-    apply instr_eqb_spec in Ht. apply Nat.leb_le in Hj. subst t'.
-    exact (hc_fire_top_any i d a bb ch t Hi E Hj Hfam s Hg).
-  - destruct (srun_instr tmw false true ch (hcS0 (hcph w i))) as [t'|] eqn:E;
+  set (KI := nth d (hc_int (hcph w i)) hk_dflt) in *.
+  set (KT := nth d (hc_top (hcph w i)) hk_dflt) in *.
+  destruct k as [|[|[|k]]].
+  - destruct (srun_instr tmw false false ch (hcK0 w (hcph w i) KI (hcD w d))) as [t'|] eqn:E;
       [|discriminate].
-    apply instr_eqb_spec in Hf. subst t'.
-    exact (hc_fire_sweep_any i ch t Hi E s Hg).
+    apply andb_prop in Hf as [Hf Hfam]. apply andb_prop in Hf as [Ht Hj].
+    apply instr_eqb_spec in Ht. apply Nat.leb_le in Hj. subst t'.
+    destruct (hc_int_member i d a bb Hfam s Hg) as (r & tv & Hc' & Hd & Hge & Hp).
+    refine (hc_fire_case_at i _ (hcD w d) (hcE w (r, tv)) KI ch t false a Hi E
+              ltac:(discriminate) Hj _ s Hg Hc' Hge Hp).
+    rewrite hcE_int. reflexivity.
+  - destruct (srun_instr tmw true false ch (hcK0 w (hcph w i) KT (hcT w (hclo w + d))))
+      as [t'|] eqn:E; [|discriminate].
+    apply andb_prop in Hf as [Hf Hfam]. apply andb_prop in Hf as [Ht Hj].
+    apply instr_eqb_spec in Ht. apply Nat.leb_le in Hj. subst t'.
+    destruct (hc_top_member i d a bb Hfam s Hg) as (j & Hjj & Hc' & Hge & Hp).
+    refine (hc_fire_case_at i _ (hcT w (hclo w + d)) [] KT ch t true j Hi E
+              ltac:(reflexivity) ltac:(lia) _ s Hg Hc' Hge Hp).
+    rewrite hcE_max, app_nil_r. reflexivity.
+  - destruct (srun_instr tmw false true ch (hcS0 (hcph w i) (hcX (hcph w i) (hk_ex KI))))
+      as [t'|] eqn:E; [|discriminate].
+    apply andb_prop in Hf as [Ht Hfam].
+    apply instr_eqb_spec in Ht. subst t'.
+    destruct (hc_int_member i d a bb Hfam s Hg) as (r & tv & Hc' & Hd & Hge & Hp).
+    refine (hc_fire_exit_at i _ ch t Hi _ s Hg Hc' Hge Hp).
+    unfold hc_exit_of, hc_kase; cbn [fst].
+    rewrite (firstlow_int (hcb w) a d r ltac:(lia) Hd). exact E.
+  - destruct (srun_instr tmw false true ch (hcS0 (hcph w i) (hcX (hcph w i) (hk_ex KT))))
+      as [t'|] eqn:E; [|discriminate].
+    apply andb_prop in Hf as [Ht Hfam].
+    apply instr_eqb_spec in Ht. subst t'.
+    destruct (hc_top_member i d a bb Hfam s Hg) as (j & _ & Hc' & Hge & Hp).
+    refine (hc_fire_exit_at i _ ch t Hi _ s Hg Hc' Hge Hp).
+    unfold hc_exit_of, hc_kase; cbn [fst snd].
+    rewrite (firstlow_max (hcb w) j ltac:(lia)).
+    replace (hclo w + d - hclo w) with d by lia. exact E.
 Qed.
 
 (** ** The enumeration: the anchors along the run *)

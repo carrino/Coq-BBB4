@@ -145,7 +145,7 @@ def family(Ls, step=1, maxd=6, bases=(2, 3, 4)):
                     continue
                 if len(set(lows[:b])) != b:
                     continue
-                for Hc in sorted(set([b - 1, 1, b * (b - 1)] + list(range(2, b * b)))):
+                for Hc in sorted(set([b - 1, 1, b * (b - 1), 2, 3])):
                     got = _fit(W, lows, b, d, Hc, step)
                     if got:
                         F, r0 = got
@@ -180,7 +180,7 @@ def _fit(W, lows, b, d, Hc, step):
                 if r0 < 0 or r0 > V0_CAP or ctr_of(r0, b, Hc)[0][:1] == []:
                     continue
                 T, ok = {}, True
-                for k in range(N):
+                for k in [N - 1, N - 2, N - 3, 0] + list(range(1, N - 3)):
                     low, top = ctr_of(r0 + step * k, b, Hc)
                     if len(low) < 2:
                         ok = False
@@ -203,10 +203,41 @@ def _fit(W, lows, b, d, Hc, step):
     return None
 
 
-def learn_cycle(tab, F, q, h, Lpre, Rpre, w, Rpost, m, q2, h2, Mpre):
+def first_exit(tab, anc, x_r):
+    """run one lap's counter half from [anc] to the first step right past
+    relative cell x_r: (state, head, left side), or None"""
+    mc = H.mid_of(tab, anc, x_r)
+    if mc is None:
+        return None
+    return mc[0], mc[2], tuple(mc[1])
+
+
+def split_exit(L2, L3, D0, pref=None):
+    """L2, L3: the left sides after the same carry at j = 2 and 3:
+    P ++ D0^(2 + o) ++ R and P ++ D0^(3 + o) ++ R.  -> (P, R), preferring
+    the exit prefix [pref]"""
+    d = len(D0)
+    cands = []
+    for plen in range(0, len(L2) + 1):
+        P = L2[:plen]
+        if L3[:plen] != P:
+            break
+        if L2[plen:plen + 2 * d] == D0 * 2 and L3[plen:plen + 3 * d] == D0 * 3 \
+                and rstrip0(L2[plen + 2 * d:]) == rstrip0(L3[plen + 3 * d:]):
+            cands.append((P, rstrip0(L2[plen + 2 * d:])))
+    if not cands:
+        return None
+    for P, R in cands:
+        if pref is not None and P == tuple(pref):
+            return P, R
+    return cands[0]
+
+
+def learn_cycle(tab, F, q, h, Lpre, Rpre, w, Rpost, m, ex0):
     """the top cycle by simulation: from an observed top word X, one lap's
     counter half from [Dm^j ++ X] leaves [D0^j ++ X'] (a top step to X') or
-    [D0^(j+1) ++ X''] with X'' a word already met (the overflow).
+    [D0^(j+1) ++ X''] with X'' a word already met (the overflow), at the
+    main exit [ex0] or another one.
     -> (H, [top words from the post-overflow word on]) or None"""
     b, D = F['b'], F['D']
     Dm, D0 = tuple(D[b - 1]), tuple(D[0])
@@ -214,26 +245,28 @@ def learn_cycle(tab, F, q, h, Lpre, Rpre, w, Rpost, m, q2, h2, Mpre):
     seq = [tuple(F['T'][min(F['T'])])]
     for _ in range(b * b + 2):
         X = seq[-1]
-        got = None
+        outs = []
         for j in (2, 3):
             anc = (q, tuple(Lpre) + Dm * j + X, h,
                    tuple(Rpre) + tuple(w) * (m + 8) + tuple(Rpost))
-            mc = H.mid_of(tab, anc, x_r)
-            if mc is None:
+            ex = first_exit(tab, anc, x_r)
+            if ex is None:
                 return None
-            mq, mL, mh, mR = mc
-            want = tuple(Mpre) + D0 * j
-            if (mq, mh) != (q2, h2) or tuple(mL[:len(want)]) != want:
-                return None
-            Y = rstrip0(mL[len(want):])
-            if len(Y) > TOP_MAX + len(D0) or (got is not None and Y != got):
-                return None
-            got = Y
+            outs.append(ex)
+        if outs[0][:2] != outs[1][:2]:
+            return None
+        pref = ex0[2] if outs[0][:2] == tuple(ex0[:2]) else None
+        sp = split_exit(outs[0][2], outs[1][2], D0, pref)
+        if sp is None:
+            return None
+        Y = sp[1]
+        if len(Y) > TOP_MAX + len(D0):
+            return None
         for c, Xc in enumerate(seq):
-            if got == rstrip0(D0 + Xc):
+            if Y == rstrip0(D0 + Xc):
                 cyc = seq[c:]
                 return len(cyc), cyc
-        seq.append(got)
+        seq.append(Y)
     return None
 
 
@@ -260,7 +293,9 @@ def phase_mid(tab, cls, Lpre, F, v0, L, i, blk, m):
     x_r = len(Rpre) + m * len(w)
     Mlen = x_r + len(Lpre)
     got = None
-    for k, (t, q, h, Ls, Rs) in enumerate(cls):
+    ks = sorted(set(list(range(min(6, len(cls)))) + list(range(0, len(cls), max(1, len(cls) // 6)))))
+    for k in ks:
+        t, q, h, Ls, Rs = cls[k]
         p = v0 + i + L * k
         n = ns[k]
         if n < m + 1:
@@ -306,25 +341,67 @@ def carry_case(tabw, q, h, Lpre, Rw, q2, h2, Mpre, Dm, D0, el, off, Ps, Pe):
     return None
 
 
-def phase_counter(tabw, q, h, Lpre, F, Rpre, w, m, q2, h2, Mpre):
+def case_exit(tab, q, h, Lpre, Rpre, w, Rpost, m, F, Ps, tail):
+    """the exit a carry case takes, by simulation: (q2, h2, Mpre) or None"""
+    b, D = F['b'], F['D']
+    Dm, D0 = tuple(D[b - 1]), tuple(D[0])
+    x_r = len(Rpre) + m * len(w)
+    outs = []
+    for j in (2, 3):
+        anc = (q, tuple(Lpre) + Dm * j + tuple(Ps) + tuple(tail), h,
+               tuple(Rpre) + tuple(w) * (m + 8) + tuple(Rpost))
+        ex = first_exit(tab, anc, x_r)
+        if ex is None:
+            return None
+        outs.append(ex)
+    if outs[0][:2] != outs[1][:2]:
+        return None
+    sp = split_exit(outs[0][2], outs[1][2], D0)
+    if sp is None:
+        return None
+    return outs[0][0], outs[0][1], sp[0]
+
+
+def phase_counter(tab, tabw, q, h, Lpre, F, Rpre, w, Rpost, m, ex0):
+    """the carry cases of one phase, each on the main exit [ex0] or on its
+    own: {'int', 'top', 'exits'}, or an error"""
     b, Hc, D, T = F['b'], F['H'], F['D'], F['T']
     Dm, D0 = tuple(D[b - 1]), tuple(D[0])
     Rw = tuple(Rpre) + tuple(w) * m
+    exits = [tuple(ex0)]
+    tail0 = tuple(D[0]) + tuple(T[0])
+
+    def case(el, off, Ps, Pe, tail):
+        for ex in list(exits):
+            k = carry_case(tabw, q, h, Lpre, Rw, ex[0], ex[1], ex[2], Dm, D0, el, off, Ps, Pe)
+            if k is not None:
+                k['ex'] = exits.index(ex)
+                return k
+        ex = case_exit(tab, q, h, Lpre, Rpre, w, Rpost, m, F, Ps, tail)
+        if ex is None or ex in exits:
+            return None
+        k = carry_case(tabw, q, h, Lpre, Rw, ex[0], ex[1], ex[2], Dm, D0, el, off, Ps, Pe)
+        if k is None:
+            return None
+        exits.append(ex)
+        k['ex'] = len(exits) - 1
+        return k
+
     ints, tops = [], []
     for d in range(b - 1):
-        k = carry_case(tabw, q, h, Lpre, Rw, q2, h2, Mpre, Dm, D0, False, 0, D[d], D[d + 1])
+        k = case(False, 0, D[d], D[d + 1], tail0)
         if k is None:
             return 'no interior chain (digit %d)' % d
         ints.append(k)
     for e in range(Hc):
         if e + 1 < Hc:
-            k = carry_case(tabw, q, h, Lpre, Rw, q2, h2, Mpre, Dm, D0, True, 0, T[e], T[e + 1])
+            k = case(True, 0, T[e], T[e + 1], ())
         else:
-            k = carry_case(tabw, q, h, Lpre, Rw, q2, h2, Mpre, Dm, D0, True, 1, T[e], T[0])
+            k = case(True, 1, T[e], T[0], ())
         if k is None:
             return 'no %s chain' % ('top' if e + 1 < Hc else 'overflow')
         tops.append(k)
-    return dict(int=ints, top=tops)
+    return dict(int=ints, top=tops, exits=exits)
 
 
 def int_family(F, v0, i0, L, i, d, nu):
@@ -422,7 +499,7 @@ def try_phases(tab, tabw, pins, snaps, fam, L):
                     continue
                 q2, h2, Mpre = mid
                 if F1 is None:
-                    cyc = learn_cycle(tab, F, q, h, Lpres[i], Rpre, w, Rpost, m, q2, h2, Mpre)
+                    cyc = learn_cycle(tab, F, q, h, Lpres[i], Rpre, w, Rpost, m, mid)
                     if cyc is None:
                         why = 'no top cycle'
                         continue
@@ -433,25 +510,36 @@ def try_phases(tab, tabw, pins, snaps, fam, L):
                         why = 'top cycle does not fit'
                         continue
                     F1, v1 = Fc, r0s[0]
-                ctr = phase_counter(tabw, q, h, Lpres[i], F1, Rpre, w, m, q2, h2, Mpre)
+                ctr = phase_counter(tab, tabw, q, h, Lpres[i], F1, Rpre, w, Rpost, m, mid)
                 if isinstance(ctr, str):
                     why = ctr
                     continue
                 j = (i + 1) % L
                 nxt = (qh_[j][0], Lpres[j], qh_[j][1], combo[j][0], combo[j][1], combo[j][2])
-                sw = H.phase_sweep(tabw, q2, h2, Mpre, w, Rpost, m, ds[i], nxt)
-                if isinstance(sw, str):
-                    why = sw
-                    continue
-                ph = dict(q=q, h=h, Lpre=Lpres[i], Rpre=Rpre, w=w, Rpost=Rpost, m=m,
-                          q2=q2, h2=h2, Mpre=Mpre, **ctr, **sw)
-                break
+                exits = []
+                for xi, ex in enumerate(ctr['exits']):
+                    sw = None
+                    dds = (ds[i],) if xi == 0 else (ds[i], ds[i] - 1, ds[i] + 1, ds[i] - 2, ds[i] + 2)
+                    for dd in dds:
+                        sw = H.phase_sweep(tabw, ex[0], ex[1], ex[2], w, Rpost, m, dd, nxt)
+                        if not isinstance(sw, str):
+                            break
+                    if isinstance(sw, str):
+                        break
+                    exits.append(dict(q2=ex[0], h2=ex[1], Mpre=list(ex[2]), **sw))
+                else:
+                    ph = dict(q=q, h=h, Lpre=Lpres[i], Rpre=Rpre, w=w, Rpost=Rpost, m=m,
+                              int=ctr['int'], top=ctr['top'], exits=exits)
+                    break
+                why = 'no sweep chain'
             if ph is None:
                 break
             phases.append(ph)
         else:
-            if all(phases[i]['c'] >= phases[(i + 1) % L]['m'] + phases[(i + 1) % L]['na']
-                   + phases[(i + 1) % L]['nb'] for i in range(L)):
+            def nmin(ph):
+                return max([ph['m']] + [ph['m'] + x['na'] + x['nb'] for x in ph['exits']])
+            if all(x['c'] >= nmin(phases[(i + 1) % L]) for i in range(L)
+                   for x in phases[i]['exits']):
                 return dict(F=F1, L=L, v0=v1, phases=phases), None
             why = 'block below a phase minimum'
     return None, why
@@ -466,9 +554,12 @@ def phase_fires(tabw, pins, c):
             continue
         wit = None
         for i, ph in enumerate(c['phases']):
-            cands = [(2, 0, ph['S0'], ph['chs'], False, True, None)]
-            cands += [(0, d, k['K0'], k['ch'], False, False, k) for d, k in enumerate(ph['int'])]
-            cands += [(1, e, k['K0'], k['ch'], True, False, k) for e, k in enumerate(ph['top'])]
+            cands = []
+            for kind, cases in ((0, ph['int']), (1, ph['top'])):
+                for idx, k in enumerate(cases):
+                    cands.append((kind, idx, k['K0'], k['ch'], kind == 1, False, k))
+                    ex = ph['exits'][k['ex']]
+                    cands.append((kind + 2, idx, ex['S0'], ex['chs'], False, True, k))
             for kind, idx, c0, ch, el, er, k in cands:
                 f = LC.reach_instr(tabw, el, er, c0, ch, ins)
                 if f is None:
@@ -476,17 +567,13 @@ def phase_fires(tabw, pins, c):
                 rr = LC.srun(tabw, el, er, f, c0)
                 if not rr or (rr[0][0], rr[0][2]) != ins:
                     continue
-                if kind == 2:
-                    wit = (i, 2, 0, 0, 0, f)
-                elif kind == 0:
-                    fam = int_family(F, v0, i0, L, i, idx, k['nu'])
-                    if fam:
-                        wit = (i, 0, idx, fam[0], fam[1], f)
+                nu = k['nu'] if kind < 2 else 0
+                if kind in (0, 2):
+                    fam = int_family(F, v0, i0, L, i, idx, nu)
                 else:
-                    fam = top_family(F, v0, i0, L, i, idx, k['nu'])
-                    if fam:
-                        wit = (i, 1, idx, fam[0], fam[1], f)
-                if wit:
+                    fam = top_family(F, v0, i0, L, i, idx, nu)
+                if fam:
+                    wit = (i, kind, idx, fam[0], fam[1], f)
                     break
             if wit:
                 break
@@ -513,7 +600,7 @@ def phase_boot(tab, c, cap):
             sp = H.split_block(Rs, len(ph['Rpre']), tuple(ph['w']))
             if sp is None or sp[0] != tuple(ph['Rpre']) or sp[2] != rstrip0(ph['Rpost']):
                 continue
-            if sp[1] >= ph['m'] + ph['na'] + ph['nb']:
+            if sp[1] >= max([ph['m']] + [ph['m'] + x['na'] + x['nb'] for x in ph['exits']]):
                 return (t, v, i, sp[1])
     return None
 
@@ -608,7 +695,8 @@ def find_dir(tab, N=N_STEPS):
             c['fires'] = fw
             c['pins'] = [list(p) for p in pins]
             for ph in c['phases']:
-                ph.pop('S0', None)
+                for x in ph['exits']:
+                    x.pop('S0', None)
                 for k in ph['int'] + ph['top']:
                     k.pop('K0', None)
             return c, None
@@ -655,17 +743,20 @@ def find_row(spec):
 # ------------------------------------------------------------------ render ---
 
 def ccase(k):
-    return '(mkHK %d %s %s)' % (k['nu'], H.cchain(k['ch']), H.cchains(k['base']))
+    return '(mkHK %d %d %s %s)' % (k['ex'], k['nu'], H.cchain(k['ch']), H.cchains(k['base']))
+
+
+def cexit(x):
+    return '(mkHE %s %s %s %d %d %d %s)' % (ST[x['q2']], SYM[x['h2']], H.clist(x['Mpre']),
+                                             x['c'], x['na'], x['nb'], H.cchain(x['chs']))
 
 
 def render_phase(ph):
-    return ('(mkHC %s %s %s %s %s %s %d\n        %s %s %s %d\n'
-            '        [%s]\n        [%s]\n        %d %d %s)'
+    return ('(mkHC %s %s %s %s %s %s %d\n        [%s]\n        [%s]\n        [%s])'
             % (ST[ph['q']], SYM[ph['h']], H.clist(ph['Lpre']), H.clist(ph['Rpre']),
-               H.clist(ph['w']), H.clist(ph['Rpost']), ph['m'], ST[ph['q2']], SYM[ph['h2']],
-               H.clist(ph['Mpre']), ph['c'],
+               H.clist(ph['w']), H.clist(ph['Rpost']), ph['m'],
                '; '.join(ccase(k) for k in ph['int']), '; '.join(ccase(k) for k in ph['top']),
-               ph['na'], ph['nb'], H.cchain(ph['chs'])))
+               ';\n         '.join(cexit(x) for x in ph['exits'])))
 
 
 def render(c):
