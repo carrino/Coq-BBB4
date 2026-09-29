@@ -10123,6 +10123,7 @@ theories/CloseoutTr/CBT_BR_06.v
 theories/CloseoutTr/CBT_BR_07.v
 theories/CloseoutTr/CBT_BR_08.v
 theories/CloseoutTr/CBT_BR_09.v
+theories/CloseoutTr/CBT_BX_00.v
 theories/CloseoutTr/CBT_CE2_00.v
 theories/CloseoutTr/CBT_CE2_01.v
 theories/CloseoutTr/CBT_CE2_02.v
