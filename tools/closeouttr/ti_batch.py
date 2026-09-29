@@ -67,6 +67,7 @@ MAXFAM = 120
 MAXLEAF = 600
 MAXSTEPS = 4000
 MAXNA = 8
+PLIST = (1, 2, 3, 4, 6)
 QH_BOOT_CAP = 4096        # SweepGlueTr.sw_boot_cap
 
 
@@ -795,7 +796,7 @@ def find_dir(tab, mir, qh=False, lastq=0, t0=T0):
     fired = [set(C.leaf_fired(tabw, dict(chain=lf['chain'], el=lf['el'], er=lf['er'],
                                          c0=lf['c0']))) for lf in cert['leaves']]
     last = None
-    for P in (1, 2, 3, 4, 6):
+    for P in PLIST:
         lv = live_search(cert, tabw, fired, P)
         if isinstance(lv, dict):
             cert.update(lv)
@@ -970,8 +971,9 @@ def _find1(args):
 
 
 def cmd_find(a):
-    global MAXFAM, MAXLEAF, MAXSTEPS, MAXNA, T0
+    global MAXFAM, MAXLEAF, MAXSTEPS, MAXNA, T0, PLIST
     MAXFAM, MAXLEAF, MAXSTEPS, MAXNA, T0 = a.maxfam, a.maxleaf, a.maxsteps, a.maxna, a.t0
+    PLIST = tuple(int(x) for x in a.plist.split(','))
     specs = [l.split()[0] for l in open(a.rows) if l.strip() and not l.startswith('#')]
     done = set()
     if os.path.exists(a.out):
@@ -1028,6 +1030,7 @@ def main():
     p.add_argument('--maxsteps', type=int, default=MAXSTEPS)
     p.add_argument('--maxna', type=int, default=MAXNA)
     p.add_argument('--t0', type=int, default=T0)
+    p.add_argument('--plist', default=','.join(map(str, PLIST)))
     p = sp.add_parser('batch')
     p.add_argument('found', nargs='+')
     p.add_argument('--tag', default='TI')

@@ -1,0 +1,32 @@
+{"spec": "0RB0LA_0LC0RD_1LA1LC_1RB1LD", "err": "too many families / too many families"}
+{"spec": "0RB0LC_1LC0RD_1LA0LA_1RB1LD", "err": "too many families / too many families"}
+{"spec": "0RB0LD_1RC1RB_0LA0RC_1LA1RD", "err": "too many families / too many families"}
+{"spec": "0RB0RD_1RC1LB_0RD0RA_1LD0LB", "err": "too many families / too many families"}
+{"spec": "1RB0LC_0LC0LA_1RC0RD_1LB1RD", "err": "norank ('norank', (0, 0)) / norank ('norank', (0, 0))"}
+{"spec": "1RB0LD_1RC0RC_0LA0RB_1LA1RD", "err": "too many families / too many families"}
+{"spec": "1RB0RB_0LC0RA_1RA0LD_1LC1RD", "err": "too many families / too many families"}
+{"spec": "1RB0RC_0RC0RA_1LC0LD_1RB1LD", "err": "too many families / too many families"}
+{"spec": "1RB0RD_1RC1LB_0RD0RA_1LD0LB", "err": "norank ('norank', (0, 0)) / norank ('norank', (0, 0))"}
+{"spec": "1RB1LA_0LC0RA_1LD1LC_0RB0LD", "err": "too many families / too many families"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_0LA0RC", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
+{"spec": "0RB0LD_1LC1RB_0LD0LA_1RD0RB", "err": "norank None / norank None"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_0RA0RC", "err": "too many families / too many families"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_0LB0RC", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_0RC0RC", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_1LB0RC", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_1LA0RC", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_1LC0RC", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_1LD0RC", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_1RB0RC", "err": "too many families / too many families"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_1RA0RC", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_1RD0RC", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
+{"spec": "1RB1LA_0RC0RD_1LD1RC_0LC0LA", "err": "leaf too long / leaf too long"}
+{"spec": "1RB1LA_0RC0RD_1LC0LA_1RC0RC", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
+{"spec": "1RB1LA_1LB0RC_1LD1RC_0LD0LA", "err": "too many families / too many families"}
+{"spec": "1RB1LA_1LB0RC_1LD1RC_0LC0LA", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
+{"spec": "1RB1LA_1LC0RA_1LD0LD_0RB0LC", "err": "too many families / too many families"}
+{"spec": "1RB1RA_0LC0RB_0RA0LD_1LC1RD", "err": "too many families / too many families"}
+{"spec": "1RB0LA_0RC0RD_1LA0RA_0LC1RA", "err": "too many families / too many families"}
+{"spec": "1RB0LA_0RC1LA_1RD0RD_1LB1RB", "err": "leaf too long / leaf too long"}
+{"spec": "1RB1RC_1LC0RA_0LB0LD_1LA1LD", "err": "too many families / too many families"}
+{"spec": "1RB1LA_1LB0RC_1LD1RC_1LD0LA", "err": "norank ('norank', (3, 0)) / norank ('norank', (3, 0))"}
