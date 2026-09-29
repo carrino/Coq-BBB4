@@ -5,8 +5,18 @@ cd "$(dirname "$0")/../../.."
 D=tools/closeouttr/spb
 CH=${CH:-200}
 ulimit -v 5000000
+# resume: a chunk whose row list exists but whose emit never finished
+# (container restart) is emitted again; boards with a fresh .vo are skipped
+for f in $D/ok_c*.txt; do
+  c=$(basename $f .txt); c=${c#ok_}
+  if [ ! -f $D/lap_$c.json ]; then
+    echo "emit chunk $c (resume): $(wc -l < $f) rows"
+    (cd tools/counters && python3 emit_lapcert.py --tr --emit --list ../closeouttr/spb/ok_$c.txt --json ../closeouttr/spb/lap_$c.json > ../closeouttr/spb/emit_$c.log 2>&1)
+    echo "emitted $c: $(tail -1 $D/emit_$c.log)"
+  fi
+done
 while true; do
-  n=$(ls $D/lap_c*.json 2>/dev/null | wc -l)
+  n=$(ls $D/ok_c*.txt 2>/dev/null | wc -l)
   python3 - "$D" > $D/pending.txt <<'P'
 import json, glob, sys
 D = sys.argv[1]
