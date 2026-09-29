@@ -12,9 +12,19 @@
 # too, sharded across runners: `closeout-shard` x 6, then `closeout-final`
 # (docs/CLOSEOUT_TR.md, "CI").
 name: CI
+# Research sessions push every chunk to their PR branches.  A PR branch is
+# checked by its pull_request run, so push runs are limited to main (a push
+# to a PR branch would otherwise start a second, identical run), and a newer
+# commit cancels the runs still going for the same PR or branch: only the
+# head's result matters.  On 2026-09-29 the unrestricted triggers left 43
+# runs (~340 jobs) queued behind the account's concurrent-job limit.
 on:
   push:
+    branches: [main]
   pull_request:
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   core:
     runs-on: ubuntu-latest
