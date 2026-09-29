@@ -1,0 +1,4 @@
+   1/3 1RB1RC_1LC0RA_0LB0LD_1LA1LD no {'no closure': 204} (24s)
+   2/3 1RB0LA_0RC0RD_1LA0RA_0LC1RA no {'no closure': 216} (41s)
+   3/3 1RB0LA_0RC1LA_1RD0RD_1LB1RB no {'no closure': 216} (245s)
+0 / 3 certified -> ../closeouttr/bx/mb_misc.json

@@ -3,6 +3,8 @@
 batch writer), for theories/Counters/TriGlueTr.v.
 
     python3 tools/closeouttr/ti_batch.py find ROWS.txt OUT.jsonl [--jobs 4] [--timeout 120]
+        [--maxfam 120] [--maxleaf 600] [--maxsteps 4000] [--maxna 8] [--t0 3000]
+        [--plist 1,2,3,4,6] [--force 0]
     python3 tools/closeouttr/ti_batch.py batch OUT.jsonl [...] --tag TI [--chunk 20]
 
 The rows of SCOPING_INSTR.md §7.4.TI keep three or more blocks and change
@@ -66,6 +68,8 @@ MAXFAM = 120
 MAXLEAF = 600
 MAXSTEPS = 4000
 MAXNA = 8
+PLIST = (1, 2, 3, 4, 6)
+FORCE = 0
 QH_BOOT_CAP = 4096        # SweepGlueTr.sw_boot_cap
 
 
@@ -473,7 +477,36 @@ class Explorer:
                     todo.append(g)
             return me
 
-        build([(1, 0)] * F.n, 0, 1)
+        def forced(R, k):
+            # FORCE small values of every variable split off first (finer
+            # dispatch trees give the liveness search more precise nodes)
+            if k == F.n:
+                return build(R, 0, 1)
+            me = len(nodes)
+            nodes.append(None)
+            kids = []
+            for v in range(FORCE):
+                R2 = list(R)
+                R2[k] = (0, v)
+                kids.append(build(R2, 0, 1))
+            R2 = list(R)
+            R2[k] = (1, FORCE)
+            kids.append(forced(R2, k + 1))
+            nodes[me] = ('split', k, FORCE, 1, kids)
+            return me
+
+        done = False
+        if FORCE:
+            try:
+                forced([(1, 0)] * F.n, 0)
+                done = True
+            except Fail as e:
+                if os.environ.get('TI_DEBUG'):
+                    print('forced fail fam', fid, e, file=sys.stderr)
+                del nodes[:]
+                del leaves[:]
+        if not done:
+            build([(1, 0)] * F.n, 0, 1)
         if F.lb != lb0:
             todo.append(fid)
             return
@@ -794,7 +827,7 @@ def find_dir(tab, mir, qh=False, lastq=0, t0=T0):
     fired = [set(C.leaf_fired(tabw, dict(chain=lf['chain'], el=lf['el'], er=lf['er'],
                                          c0=lf['c0']))) for lf in cert['leaves']]
     last = None
-    for P in (1, 2, 3, 4, 6):
+    for P in PLIST:
         lv = live_search(cert, tabw, fired, P)
         if isinstance(lv, dict):
             cert.update(lv)
@@ -828,7 +861,7 @@ def find(spec, timeout=0, cls='DN', lastq=0):
             if mir:
                 tab = mirror(tab)
             try:
-                r = find_dir(tab, mir, cls == 'QH', lastq)
+                r = find_dir(tab, mir, cls == 'QH', lastq, T0)
             except Fail as e:
                 r = dict(err=str(e))
             except RecursionError:
@@ -969,6 +1002,10 @@ def _find1(args):
 
 
 def cmd_find(a):
+    global MAXFAM, MAXLEAF, MAXSTEPS, MAXNA, T0, PLIST, FORCE
+    MAXFAM, MAXLEAF, MAXSTEPS, MAXNA, T0 = a.maxfam, a.maxleaf, a.maxsteps, a.maxna, a.t0
+    PLIST = tuple(int(x) for x in a.plist.split(','))
+    FORCE = a.force
     specs = [l.split()[0] for l in open(a.rows) if l.strip() and not l.startswith('#')]
     done = set()
     if os.path.exists(a.out):
@@ -1019,6 +1056,15 @@ def main():
     p.add_argument('out')
     p.add_argument('--jobs', type=int, default=4)
     p.add_argument('--timeout', type=int, default=120)
+    # wider exploration limits (the defaults are the §7.4.TI run's)
+    p.add_argument('--maxfam', type=int, default=MAXFAM)
+    p.add_argument('--maxleaf', type=int, default=MAXLEAF)
+    p.add_argument('--maxsteps', type=int, default=MAXSTEPS)
+    p.add_argument('--maxna', type=int, default=MAXNA)
+    p.add_argument('--t0', type=int, default=T0)
+    p.add_argument('--plist', default=','.join(map(str, PLIST)))
+    p.add_argument('--force', type=int, default=0,
+                   help='split the values 0..N-1 of every variable off in every family')
     p = sp.add_parser('batch')
     p.add_argument('found', nargs='+')
     p.add_argument('--tag', default='TI')
