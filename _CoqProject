@@ -1474,6 +1474,7 @@ theories/Counters/LapGlueTr.v
 theories/Counters/LapGlueQHTr.v
 theories/Counters/SweepGlueTr.v
 theories/Counters/HybridGlueTr.v
+theories/Counters/SweepGlueNeverTr.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1LB_1LC1RB.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1LD_1LC1RB.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1RA_1LC1RB.v
@@ -4036,6 +4037,7 @@ theories/Tests/CASC_0RB1LA_0LC1RD_1LA1LD_1RB0LA.v
 theories/Tests/QuadMGShape.v
 theories/Tests/LapAvoid_Corruption.v
 theories/Tests/Champion_Corruption.v
+theories/Tests/SweepNqh_Corruption.v
 theories/Machines/Counters/LAPC_0RB0LC_1LA1RB_0RC1LD_1RC0LD.v
 theories/Machines/Counters/LAPC_0RB0LC_1LA1RB_1RD0LC_0RD1LC.v
 theories/Machines/Counters/LAPC_0RB0RC_1LA1RB_0LC1RD_1LC0RD.v
@@ -9632,5 +9634,13 @@ theories/CloseoutTr/CBT_SP_36.v
 theories/CloseoutTr/CBT_SP_37.v
 theories/CloseoutTr/CBT_SP_38.v
 theories/CloseoutTr/CBT_SP_39.v
+theories/CloseoutTr/CBT_SW_00.v
+theories/CloseoutTr/CBT_SW_01.v
+theories/CloseoutTr/CBT_SW_02.v
+theories/CloseoutTr/CBT_SW_03.v
+theories/CloseoutTr/CBT_SW_04.v
+theories/CloseoutTr/CBT_SW_05.v
+theories/CloseoutTr/CBT_SW_06.v
+theories/CloseoutTr/CBT_SW_07.v
 theories/CloseoutTr/RemainingTr.v
 theories/CloseoutTr/CloseoutTr.v
