@@ -1699,6 +1699,9 @@ def _grams(cs, sel, l, p, tail, plens=None):
     return grams, pres
 
 
+MAX_ALPHA = 4
+
+
 def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain,
                code='binary', step=1,
                pids=None, weights=None, classes=None,
@@ -1730,7 +1733,11 @@ def _try_parse(q, h, side, other, occ, cs, sel, l, p, tail, seeds, min_chain,
     # declined the row -- measured, letting it run in the ordinary pass
     # suppressed the Fibonacci reading of `1RB0RB_0LC1RD_1LC1LA_0LA1RB` and
     # gave eleven families to the BBB(4) champion, which is not a counter.
-    if not (1 <= len(alpha) <= 3):
+    # At most MAX_ALPHA digit words.  This was 3, which read base 4 -- a
+    # binary counter whose bits alternate a two-cell and a one-cell word, so
+    # that a base-4 digit is `000/110/001/111` -- as no family at all, while
+    # `LadderCheck` states `(Binary, 1)` at any base (SCOPING_INSTR 7.4.CE2).
+    if not (1 <= len(alpha) <= MAX_ALPHA):
         return None
     if unary and (code != 'binary' or weights is not None
                   or ptmpl is not None):

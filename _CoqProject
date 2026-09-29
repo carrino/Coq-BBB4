@@ -1407,6 +1407,8 @@ theories/Checkers/LadderFam.v
 theories/Checkers/LadderKernel.v
 theories/Checkers/LadderCheck.v
 theories/Checkers/LadderCheckTr.v
+theories/Checkers/LadderCheckQHTr.v
+theories/Checkers/LadderCheckFibTr.v
 theories/Machines/LadderTr/LDRT_0RB0RB_0LC1RD_1RB1LC_0LD1RA.v
 theories/Machines/LadderTr/LDRT_0RB0RB_0LC1RD_1RB1LC_0RB1RA.v
 theories/Machines/LadderTr/LDRT_0RB0RB_0LC1RD_1RB1LC_1LD1RA.v
@@ -9463,6 +9465,9 @@ theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1LD1LD_0RB1LA.v
 theories/Machines/CountersTr/LAPT_0RB0LC_1LC1RB_1RB1LD_0RB1LA.v
 theories/Machines/CountersTr/LAPT_0RB0LD_0LC1RD_1RB1LC_0LC1RA.v
 theories/Machines/CountersTr/LAPT_0RB0LD_1RC0LA_0RD1RC_1LD1LB.v
+theories/Machines/CountersTr/LAPT_0RB0LA_1RC1RB_0RD____1LD1LA.v
+theories/Machines/CountersTr/LAPT_1RB1LB_1LA1LC_0LC1RD_1RA0RD.v
+theories/Machines/CountersTr/LAPT_1RB1RA_0RC____1LC1LD_0RA0LD.v
 theories/CloseoutTr/CloseoutKitTr.v
 theories/CloseoutTr/CBT_BR_00.v
 theories/CloseoutTr/CBT_BR_01.v
@@ -9474,6 +9479,7 @@ theories/CloseoutTr/CBT_BR_06.v
 theories/CloseoutTr/CBT_BR_07.v
 theories/CloseoutTr/CBT_BR_08.v
 theories/CloseoutTr/CBT_BR_09.v
+theories/CloseoutTr/CBT_CE2_00.v
 theories/CloseoutTr/CBT_CE_00.v
 theories/CloseoutTr/CBT_CE_01.v
 theories/CloseoutTr/CBT_CE_02.v

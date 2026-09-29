@@ -7,6 +7,13 @@
     # 2. boards + batches
     python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl --tag SP [--chunk 50]
 
+With --qh the QUASIHALTING rows (class QH in closeouttr_classes.tsv; the
+others are left alone) go through `emit_ladder.py --tr --qh` instead: the
+pins are the instructions the 1e8-step scan saw go quiet, the boot is a
+family member past their last fire on the ORIGINAL machine, and the board
+closes through [LadderCheckQHTr.boardph_qhtr] to the [coversTr_qh3] triple
+(theories/Machines/LadderTr/LDRQ_<ID>.v; SCOPING_INSTR 7.4.CE2).
+
 For every `closed` row of the valfam output that is still in
 closeouttr_remaining.txt, this runs `emit_ladder.py --tr` (the board of
 LadderCheck, re-pointed at the machine wrapped at its never-fired
@@ -39,17 +46,17 @@ def mid(spec):
     return spec.replace('-', '_')
 
 
-def board(cert, tmp):
+def board(cert, tmp, qh=False):
     """emit + compile one board; the path of a good one, or (None, why)"""
     m = mid(cert['spec'])
     j = os.path.join(tmp, m + '.json')
     json.dump(cert, open(j, 'w'))
-    v = os.path.join(tmp, 'LDRT_%s.v' % m)
-    r = subprocess.run([sys.executable, EMIT, '--tr', j, '-o', v],
-                       capture_output=True, text=True)
+    v = os.path.join(tmp, '%s_%s.v' % ('LDRQ' if qh else 'LDRT', m))
+    r = subprocess.run([sys.executable, EMIT, '--tr'] + (['--qh'] if qh else [])
+                       + [j, '-o', v], capture_output=True, text=True)
     if r.returncode != 0 or not os.path.exists(v):
         return None, 'emit failed: ' + (r.stderr.strip().splitlines() or ['?'])[-1]
-    if 'Theorem nqhtr_%s ' % m not in open(v).read():
+    if 'Theorem %s_%s ' % ('qhtr' if qh else 'nqhtr', m) not in open(v).read():
         why = [l for l in open(v) if 'NOT BUILT' in l]
         return None, (why[0].strip() if why else 'no closure')
     r = subprocess.run(['coqc', '-Q', os.path.join(REPO, 'theories'), 'BBB4', v],
@@ -79,8 +86,15 @@ def main():
     ap.add_argument('--tag', default='SP')
     ap.add_argument('--chunk', type=int, default=50)
     ap.add_argument('--skip', action='append', default=[])
+    ap.add_argument('--qh', action='store_true',
+                    help='board the class-QH rows on the quasihalting side '
+                         '(LDRQ boards, LadderCheckQHTr); others are skipped')
     a = ap.parse_args()
     remaining = set(l.strip() for l in open(os.path.join(REPO, 'closeouttr_remaining.txt')))
+    if a.qh:
+        qhc = set(l.split('\t')[0] for l in open(os.path.join(REPO, 'closeouttr_classes.tsv'))
+                  if l.split('\t')[1:2] == ['QH'])
+        remaining &= qhc
     certs, seen = [], set()
     for f in a.found:
         for line in open(f):
@@ -95,7 +109,7 @@ def main():
     kept = []
     with tempfile.TemporaryDirectory() as tmp:
         for c in sorted(certs, key=lambda c: c['spec']):
-            v, why = board(c, tmp)
+            v, why = board(c, tmp, a.qh)
             if v is None:
                 print('%-30s no board: %s' % (c['spec'], why[:120]), flush=True)
                 continue
@@ -103,19 +117,27 @@ def main():
             shutil.copy(v, dst)
             kept.append(c['spec'])
             print('%-30s board %s' % (c['spec'], os.path.relpath(dst, REPO)), flush=True)
-    add_to_coqproject(['theories/Machines/LadderTr/LDRT_%s.v' % mid(s) for s in kept])
+    P = 'LDRQ' if a.qh else 'LDRT'
+    add_to_coqproject(['theories/Machines/LadderTr/%s_%s.v' % (P, mid(s)) for s in kept])
     nn = next_free(a.tag)
     made = []
     for i in range(0, len(kept), a.chunk):
         chunk = kept[i:i + a.chunk]
         req = ['From BBB4.Machines.LadderTr Require %s.'
-               % ' '.join('LDRT_%s' % mid(s) for s in chunk)]
-        entries = [(s, 'apply (coversTr_nqh_at LDRT_%s.tm_%s); '
-                       '[exact LDRT_%s.nqhtr_%s | intros q s; destruct q, s; reflexivity].'
-                    % (mid(s), mid(s), mid(s), mid(s))) for s in chunk]
-        made.append(write_batch(a.tag, nn, req, entries,
-                                'never-QH by the value-family ladder at the instruction '
-                                'level (LadderCheckTr)'))
+               % ' '.join('%s_%s' % (P, mid(s)) for s in chunk)]
+        if a.qh:
+            entries = [(s, 'apply (coversTr_qh3_at LDRQ_%s.tm_%s); '
+                           '[exact LDRQ_%s.qhtr_%s | intros q s; destruct q, s; reflexivity].'
+                        % (mid(s), mid(s), mid(s), mid(s))) for s in chunk]
+            blurb = ('quasihalting by the value-family ladder at the instruction '
+                     'level (LadderCheckQHTr)')
+        else:
+            entries = [(s, 'apply (coversTr_nqh_at LDRT_%s.tm_%s); '
+                           '[exact LDRT_%s.nqhtr_%s | intros q s; destruct q, s; reflexivity].'
+                        % (mid(s), mid(s), mid(s), mid(s))) for s in chunk]
+            blurb = ('never-QH by the value-family ladder at the instruction '
+                     'level (LadderCheckTr)')
+        made.append(write_batch(a.tag, nn, req, entries, blurb))
         nn += 1
     print('%d of %d closed rows boarded -> %d batch file(s): %s'
           % (len(kept), len(certs), len(made),

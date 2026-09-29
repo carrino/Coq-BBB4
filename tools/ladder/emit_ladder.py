@@ -206,6 +206,11 @@ class NoClosure(Exception):
 # states, and the closer is [LadderCheckTr.boardph_neverqhtr]
 # ([NeverQuasiHaltsTr]).  Only the binary closure has a Tr twin.
 TR_PINS = None
+# --qh (with --tr): the row QUASIHALTS -- its pinned instructions fire in a
+# prefix.  The board then boots on the ORIGINAL machine at a family member
+# past their last fire and closes through [LadderCheckQHTr.boardph_qhtr]
+# (SCOPING_INSTR 7.4.CE2).  TR_QH carries the boot index.
+TR_QH = None
 
 
 def _vkey(c):
@@ -846,6 +851,50 @@ Proof.
 Qed.
 '''
 
+CLOSURE_QHTR = '''Lemma vis_ok_%(mid)s : forall r t, ~ In t pins_%(mid)s -> 0 < r ->
+  r < %(n0f)d + %(stf)d ->
+  srun_instr tm true true (vis_%(mid)s r t) (lr_lhs (farm_%(mid)s r %(pv)d))
+    = Some t.
+Proof.
+  intros r t Hnp H0 Hr.
+%(fvis)s  exfalso; lia.
+Qed.
+
+(** The boot, on the ORIGINAL machine and up to [lift]: the member at index
+    %(t0)d, past the last fire of every pinned instruction. *)
+Lemma bootq_%(mid)s :
+  stepn tm_%(mid)s %(t0)d InitES = Some (lift (fam_cfg FAM (%(ds0)s, 0, %(ph0)d))).
+Proof.
+  assert (H : match csteps tm_%(mid)s %(t0)d c0 with
+              | Some c => ceqb c (fam_cfg FAM (%(ds0)s, 0, %(ph0)d))
+              | None => false end = true) by (vm_compute; reflexivity).
+  destruct (csteps tm_%(mid)s %(t0)d c0) as [c|] eqn:E; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.
+Qed.
+
+(** a pinned instruction fired before the boot: the quasihalt witness *)
+Lemma wit_%(mid)s :
+  existsb (fun tg => cfires tm_%(mid)s c0 %(t0)d tg) pins_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma bnd_%(mid)s : (%(t0)d <=? 32779478) = true.
+Proof. vm_cast_no_check (eq_refl true). Qed.
+
+(** The machine-level theorem, on the QUASIHALTING side: the board above
+    runs on the machine wrapped at the pins from the boot member on, and
+    [LadderCheckQHTr.boardph_qhtr] closes it. *)
+Theorem qhtr_%(mid)s :
+  NonHalt tm_%(mid)s /\ QHBoundTr 32779478 tm_%(mid)s /\ QuasiHaltsTr tm_%(mid)s.
+Proof.
+  apply (boardph_qhtr tm_%(mid)s pins_%(mid)s FAM %(nph)d
+                      iarm_%(mid)s %(n0i)d %(sti)d
+                      farm_%(mid)s %(n0f)d %(stf)d
+                      fm1_%(mid)s fm2_%(mid)s %(pv)d vis_%(mid)s
+                      %(ds0)s %(ph0)d %(t0)d 32779478).
+%(args)s  - exact vis_ok_%(mid)s.
+Qed.
+'''
+
 CLOSURE_QH = '''Lemma vis_ok_%(mid)s : forall r q, q <> %(qa)s -> 0 < r ->
   r < %(n0f)d + %(stf)d ->
   srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r %(pv)d))
@@ -1030,6 +1079,13 @@ def emit_closure(cert, tab, mid):
                          '| exact ok_farm%(r)d_%(ph)d_%(mid)s]'),
         fcomp=fbranches('vm_compute; reflexivity'),
         flia=fbranches('vm_compute; lia')))
+    if TR_QH is not None:
+        # the wrapped machine halts in the prefix; [bootq_*] replaces this
+        blk_ = ('Lemma boot_%s :\n  csteps tm %d c0 = Some (fam_cfg FAM (%s, 0, %d)).\n'
+                'Proof. vm_compute. reflexivity. Qed.\n\n'
+                % (mid, cd['t0'], clist(cd['ds0'], str), ph0))
+        assert blk_ in L[-1], 'boot lemma not found'
+        L[-1] = L[-1].replace(blk_, '')
 
     # The board's arguments up to [HAfC]; both closers take exactly these.
     # The five the family's own parameters supply are quantified over the
@@ -1075,7 +1131,17 @@ def emit_closure(cert, tab, mid):
         index alone -- the shape it had before the phase cycle."""
         return _rbranches(nF, lambda r: body, lo=1)
 
-    if TR_PINS is not None:
+    if TR_QH is not None:
+        qargs = args.replace(
+            '  - exact boot_%s.\n' % mid,
+            '  - exact bootq_%s.\n  - exact wit_%s.\n  - exact bnd_%s.\n'
+            % (mid, mid, mid))
+        L.append(CLOSURE_QHTR % dict(
+            common, args=qargs, fvis=vbranches(
+                'destruct t as [q s]; destruct q, s; '
+                'try (exfalso; apply Hnp; simpl; tauto); '
+                'vm_compute; reflexivity.')))
+    elif TR_PINS is not None:
         L.append(CLOSURE_NQH_TR % dict(
             common, fvis=vbranches(
                 'destruct t as [q s]; destruct q, s; '
@@ -1194,7 +1260,7 @@ def _gray_visits(tab, fl, fch, want):
             break
         got = LC.srun(tab, True, True, ch, fl)
         if got:
-            seen.setdefault(got[0][0], ch)
+            seen.setdefault(_vkey(got[0]), ch)
     if all(i in seen for i in want):
         return seen
     front, seenk = [([], fl)], set()
@@ -1221,7 +1287,7 @@ def _gray_visits(tab, fl, fch, want):
                 if k in seenk:
                     continue
                 seenk.add(k)
-                seen.setdefault(c2[0], ch + [st])
+                seen.setdefault(_vkey(c2), ch + [st])
                 nxt.append((ch + [st], c2))
         front = nxt
     return seen
@@ -1796,6 +1862,9 @@ def closure_data_fib(cert, tab):
     # QUASIHALTS in A and [boardF_neverqh] would prove the wrong theorem.
     live = (cert.get('liveness') or {}).get('states_infinitely_often') or ''
     missing = [i for i in range(4) if ST[i][-1] not in live]
+    if TR_PINS is not None:
+        # the pins carry the liveness at this level (LadderCheckFibTr)
+        missing = []
     if len(missing) > 1:
         raise NoClosure('liveness %r leaves %d states finite; the board names '
                         'ONE quiet state' % (live, len(missing)))
@@ -1942,10 +2011,13 @@ def closure_data_fib(cert, tab):
             raise NoClosure('%s never enters %s below the boot anchor, so it '
                             'is not the quiet state' % (cert['spec'], ST[qa]))
     want = [i for i in range(4) if i != qa]
+    if TR_PINS is not None:
+        want = [(q_, s_) for q_ in range(4) for s_ in range(2)
+                if (q_, s_) not in TR_PINS]
     vis = {}
     for (r, _s, _w1, _w2, _m1, _m2, lhs, _rhs, fch, _ca, _cb) in fill:
         seen = _gray_visits(tab, lhs, fch, want)
-        gap = [ST[i] for i in want if i not in seen]
+        gap = [_vname(i) for i in want if i not in seen]
         if gap:
             raise NoClosure('the fill anchor at width index %d reaches no %s'
                             % (r, ','.join(gap)))
@@ -2125,6 +2197,69 @@ Qed.
 '''
 
 
+CLOSURE_F_VISTR = '''Lemma vis_ok_%(mid)s : forall r t, ~ In t pins_%(mid)s -> 1 <= r ->
+  r < %(n0f)d + %(stf)d ->
+  srun_instr tm true true (vis_%(mid)s r t) (lr_lhs (farm_%(mid)s r)) = Some t.
+Proof.
+  intros r t Hnp H1 Hr.
+%(fvis)s  exfalso; lia.
+Qed.
+
+'''
+
+CLOSURE_F_NQHTR = CLOSURE_F_VISTR + '''(** The machine-level theorem, at the INSTRUCTION level: the board runs on
+    the machine wrapped at the pins and [LadderCheckFibTr.boardF_neverqhtr]
+    turns it into [NeverQuasiHaltsTr] of the machine itself. *)
+Theorem nqhtr_%(mid)s : NeverQuasiHaltsTr tm_%(mid)s.
+Proof.
+  eapply (boardF_neverqhtr tm_%(mid)s pins_%(mid)s FAM
+                           iarm_%(mid)s %(n0i)d %(sti)d
+                           farm_%(mid)s %(n0f)d %(stf)d
+                           fw1_%(mid)s fw2_%(mid)s fm1_%(mid)s fm2_%(mid)s
+                           vis_%(mid)s %(ds0)s).
+%(args)s  - exact vis_ok_%(mid)s.
+  - exact boot_%(mid)s.
+Qed.
+'''
+
+CLOSURE_F_QHTR = CLOSURE_F_VISTR + '''(** The boot, on the ORIGINAL machine and up to [lift]: the member at index
+    %(t0)d, past the last fire of every pinned instruction. *)
+Lemma bootq_%(mid)s :
+  stepn tm_%(mid)s %(t0)d InitES = Some (lift (fam_cfg FAM (%(ds0)s, 0, 0))).
+Proof.
+  assert (H : match csteps tm_%(mid)s %(t0)d c0 with
+              | Some c => ceqb c (fam_cfg FAM (%(ds0)s, 0, 0))
+              | None => false end = true) by (vm_compute; reflexivity).
+  destruct (csteps tm_%(mid)s %(t0)d c0) as [c|] eqn:E; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.
+Qed.
+
+(** a pinned instruction fired before the boot: the quasihalt witness *)
+Lemma wit_%(mid)s :
+  existsb (fun tg => cfires tm_%(mid)s c0 %(t0)d tg) pins_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma bnd_%(mid)s : (%(t0)d <=? 32779478) = true.
+Proof. vm_cast_no_check (eq_refl true). Qed.
+
+(** The machine-level theorem, on the QUASIHALTING side
+    ([LadderCheckFibTr.boardF_qhtr]). *)
+Theorem qhtr_%(mid)s :
+  NonHalt tm_%(mid)s /\\ QHBoundTr 32779478 tm_%(mid)s /\\ QuasiHaltsTr tm_%(mid)s.
+Proof.
+  eapply (boardF_qhtr tm_%(mid)s pins_%(mid)s FAM
+                      iarm_%(mid)s %(n0i)d %(sti)d
+                      farm_%(mid)s %(n0f)d %(stf)d
+                      fw1_%(mid)s fw2_%(mid)s fm1_%(mid)s fm2_%(mid)s
+                      vis_%(mid)s %(ds0)s).
+%(args)s  - exact vis_ok_%(mid)s.
+  - exact bootq_%(mid)s.
+  - exact wit_%(mid)s.
+  - exact bnd_%(mid)s.
+Qed.
+'''
+
+
 CLOSURE_F_QH = '''Lemma vis_ok_%(mid)s : forall r q, q <> %(qa)s -> 1 <= r ->
   r < %(n0f)d + %(stf)d ->
   srun_st tm true true (vis_%(mid)s r q) (lr_lhs (farm_%(mid)s r)) = Some q.
@@ -2227,9 +2362,18 @@ def emit_closure_fib(cert, tab, mid):
                     for r, _s, _w1, _w2, m1, *_ in cd['fill']),
         b4=' '.join('| %d => %d' % (r, m2)
                     for r, _s, _w1, _w2, _m1, m2, *_ in cd['fill']),
-        vb='\n  '.join('| %d, %s => %s' % (r, ST[i], coq_chain_l(ch))
+        vb='\n  '.join('| %d, %s => %s'
+                       % (r, ('(%s, %s)' % (ST[i[0]], SYM[i[1]])
+                              if TR_PINS is not None else ST[i]),
+                          coq_chain_l(ch))
                        for r in sorted(cd['vis'])
                        for i, ch in sorted(cd['vis'][r].items()))))
+    if TR_PINS is not None:
+        L[-1] = L[-1].replace(
+            'Definition vis_%s (r : nat) (q : St) : list lstep :=\n  match r, q with'
+            % mid,
+            'Definition vis_%s (r : nat) (t : Instr) : list lstep :=\n  match r, t with'
+            % mid)
 
     def ibranches(body):
         """One brace-delimited branch per (class index, arm index)."""
@@ -2292,7 +2436,21 @@ def emit_closure_fib(cert, tab, mid):
 
     common = dict(mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str),
                   n0i=n0i, sti=sti, n0f=n0f, stf=stf, args=args)
-    if cd['qa'] is None:
+    if TR_PINS is not None:
+        targs = args.replace('  - exact boot_%s.\n' % mid, '')
+        fvis = fbranches('destruct t as [q s]; destruct q, s; '
+                         'try (exfalso; apply Hnp; simpl; tauto); '
+                         'vm_compute; reflexivity')
+        if TR_QH is not None:
+            blk_ = ('Lemma boot_%s :\n  csteps tm %d c0 = Some (fam_cfg FAM (%s, 0, 0)).\n'
+                    'Proof. vm_compute. reflexivity. Qed.\n\n'
+                    % (mid, cd['t0'], clist(cd['ds0'], str)))
+            assert blk_ in L[-1], 'boot lemma not found'
+            L[-1] = L[-1].replace(blk_, '')
+            L.append(CLOSURE_F_QHTR % dict(common, args=targs, fvis=fvis))
+        else:
+            L.append(CLOSURE_F_NQHTR % dict(common, args=targs, fvis=fvis))
+    elif cd['qa'] is None:
         L.append(CLOSURE_F_NQH % dict(
             common, fvis=fbranches('destruct q; vm_compute; reflexivity')))
     else:
@@ -2344,17 +2502,26 @@ def emit(cert, out):
     L = []
     head = HEADER % dict(mid=mid, spec=spec, table=coq_table(spec))
     if TR_PINS is not None:
-        head = head.replace('* LDR_%s:' % mid, '* LDRT_%s:' % mid, 1)
+        head = head.replace('* LDR_%s:' % mid, '* %s_%s:'
+                            % ('LDRQ' if TR_QH is not None else 'LDRT', mid), 1)
         head = head.replace(
             'boarded by the STAGE-B LADDER.',
             'boarded by the STAGE-B LADDER at the INSTRUCTION level\n'
-            '    ([NeverQuasiHaltsTr], through [LadderCheckTr]).', 1)
+            + ('    (quasihalting: [NonHalt], [QHBoundTr], [QuasiHaltsTr], through\n'
+               '    [LadderCheckQHTr]).' if TR_QH is not None else
+               '    ([NeverQuasiHaltsTr], through [LadderCheckTr]).'), 1)
         head = head.replace(
             'From BBB4.Checkers Require Import LadderCheck.\n',
             'From BBB4.Checkers Require Import LadderCheck.\n'
             'From BBB4 Require Import BBBT4_Statement.\n'
             'From BBB4.Checkers Require Import WrapTr LadderCheckTr.\n'
-            'From BBB4.Counters Require Import LapGlueTr.\n', 1)
+            'From BBB4.Counters Require Import LapGlueTr.\n'
+            + ('From BBB4 Require Import ClosureTr.\n'
+               'From BBB4.CensusTr Require Import TNF_QHTr.\n'
+               'From BBB4.Checkers Require Import LadderCheckQHTr.\n'
+               if TR_QH is not None else '')
+            + ('From BBB4.Checkers Require Import LadderCheckFibTr.\n'
+               if fib else ''), 1)
         head = head.replace(
             'Local Notation tm := tm_%s.\n' % mid,
             '(** the instructions the machine never fires; the whole board runs\n'
@@ -2444,9 +2611,10 @@ Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_%(nm)s_%(mid)s]. 
     right-hand side in exactly the certificate's step count. *)
 ''' % dict(ng=len(good), nt=len(cert['arms'])))
 
-    if TR_PINS is not None and (gray or fib):
-        closure, cd = (CLOSURE_NONE % 'the instruction-level closer '
-                       '(LadderCheckTr) is binary-only'), None
+    if TR_PINS is not None and gray:
+        closure, cd = (CLOSURE_NONE % 'the instruction-level closers '
+                       '(LadderCheckTr, LadderCheckFibTr) are binary and '
+                       'fibonacci only'), None
     if not (gray or fib):
         closure, cd = emit_closure(cert, tab, mid)
     L.append(closure)
@@ -2481,6 +2649,112 @@ def unfired(spec, steps):
     return [(q, s) for q in range(4) for s in range(2) if (q, s) not in fired]
 
 
+def parse_pins_tab(spec):
+    tab = {}
+    for q, p in enumerate(spec.split('_')):
+        for s_ in range(2):
+            e = p[3 * s_:3 * s_ + 3]
+            tab[(q, s_)] = (None if e[0] == '-'
+                            else (int(e[0]), e[1], 'ABCD'.index(e[2])))
+    return tab
+
+
+def _fires(spec, steps):
+    """the last index at which each instruction fires in a `steps`-step run"""
+    tab = parse_pins_tab(spec)
+    last, tape, pos, q = {}, {}, 0, 0
+    for t in range(steps):
+        sy = tape.get(pos, 0)
+        e = tab[(q, sy)]
+        if e is None:
+            break
+        last[(q, sy)] = t
+        tape[pos] = e[0]
+        pos += 1 if e[1] == 'R' else -1
+        q = e[2]
+    return last
+
+
+def quiet_pins(spec, scan=None, cut=10 ** 7):
+    """(pins, last pinned fire) for a QUASIHALTING row (UNTRUSTED: a wrong
+    pin halts the wrapped machine and the board fails to compile).  The pins
+    are the instructions the 1e8-step scan row [scan] saw never fire or go
+    quiet before [cut]; without a scan row, those unfired over the last 9/10
+    of a 2e6-step run."""
+    last = _fires(spec, 2 * 10 ** 6)
+    if scan is not None:
+        pins = []
+        for f in scan:
+            if f.startswith('T') and f.count(':') == 2:
+                nm, c, lf = f[1:].split(':')
+                if int(c) == 0 or int(lf) < cut:
+                    pins.append(('ABCD'.index(nm[0]), int(nm[1])))
+    else:
+        pins = [(q, s_) for q in range(4) for s_ in range(2)
+                if last.get((q, s_), -1) < 2 * 10 ** 5]
+    fired = [last[k] for k in pins if k in last]
+    if not fired:
+        raise NoClosure('no pinned instruction ever fires: not a quasihalter')
+    return sorted(pins), max(fired)
+
+
+def _rstrip0(xs):
+    xs = list(xs)
+    while xs and xs[-1] == 0:
+        xs.pop()
+    return xs
+
+
+def qh_boot(cert, after, steps=200000):
+    """The first family member (up to trailing blanks, i.e. [lift]) the run
+    reaches at an index > [after]: (index, digits, phase, cells).  Any member
+    will do -- [board_lap] laps from every [Inv] state and the kernel replays
+    the boot -- so the decoding takes the fewest digits that spell the tape."""
+    fam = cert['family']
+    tab = parse_pins_tab(cert['spec'])
+    digs = [tuple(w) for w in fam['digits']]
+    w = len(digs[0])
+    if any(len(d) != w for d in digs):
+        raise NoClosure('digits of unequal length: no QH boot decoder')
+    pre = list(fam['near_head_prefix'])
+    tails = [list(t) for t in
+             (fam.get('terminators_by_phase') or [fam['terminator']])]
+    q0, hs, right = 'ABCD'.index(fam['state']), fam['head'], fam['side'] == 'R'
+    other = _rstrip0(fam['other_side_cells'])
+    L_, R_, h, q = [], [], 0, 0
+    for t in range(steps):
+        if t > after and q == q0 and h == hs:
+            side, oth = (R_, L_) if right else (L_, R_)
+            if _rstrip0(oth) == other:
+                cells = _rstrip0(side)
+                for ph, tl in enumerate(tails):
+                    for n in range(1, max(0, len(cells) - len(pre)) // w + 2):
+                        body = (cells[len(pre):] + [0] * (n * w))[:n * w]
+                        ds = []
+                        for i in range(n):
+                            ch = tuple(body[i * w:(i + 1) * w])
+                            if ch not in digs:
+                                break
+                            ds.append(digs.index(ch))
+                        else:
+                            full = pre + list(body) + tl
+                            if _rstrip0(full) == cells:
+                                return t, ds, ph, full
+        e = tab[(q, h)]
+        if e is None:
+            raise NoClosure('halts at %d before a boot member' % t)
+        wv, d, nq = e
+        if d == 'R':
+            L_.insert(0, wv)
+            h = R_.pop(0) if R_ else 0
+        else:
+            R_.insert(0, wv)
+            h = L_.pop(0) if L_ else 0
+        q = nq
+    raise NoClosure('no family member within %d steps past index %d'
+                    % (steps, after))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('cert')
@@ -2490,18 +2764,38 @@ def main():
     ap.add_argument('--pins', default=None,
                     help='with --tr: never-fired instructions, e.g. A0,C1 '
                          '(default: those unfired in a 10^6-step run)')
+    ap.add_argument('--qh', action='store_true',
+                    help='with --tr: the row QUASIHALTS -- quiet pins, a boot '
+                         'past their last fire, [LadderCheckQHTr.boardph_qhtr] '
+                         '(LDRQ board)')
+    ap.add_argument('--scan', default=os.path.join(HERE, '..', '..',
+                                                   'censustr_v9_scan_1e8.txt'),
+                    help='with --qh: the 1e8-step scan the pins are read from')
     args = ap.parse_args()
     cert = json.load(open(args.cert))
     if isinstance(cert, list):
         cert = cert[0]
-    global TR_PINS
-    if args.tr:
+    global TR_PINS, TR_QH
+    if args.tr and args.qh:
+        row = None
+        if args.scan and os.path.exists(args.scan):
+            for l in open(args.scan):
+                if l.startswith(cert['spec'] + ' '):
+                    row = l.split()[1:]
+                    break
+        TR_PINS, lastf = quiet_pins(cert['spec'], row)
+        t0, ds, ph, cells = qh_boot(cert, lastf)
+        cert['boot'] = dict(cert['boot'], steps_from_blank=t0,
+                            digits_lsb_first=ds, phase=ph, cells=cells)
+        TR_QH = t0
+    elif args.tr:
         TR_PINS = (parse_pins(args.pins) if args.pins is not None
                    else unfired(cert['spec'], 10 ** 6))
     out = args.out or os.path.join(
         HERE, '..', '..', 'theories', 'Machines',
         'LadderTr' if args.tr else 'Ladder',
-        '%s_%s.v' % ('LDRT' if args.tr else 'LDR', mach_id(cert['spec'])))
+        '%s_%s.v' % (('LDRQ' if args.qh else 'LDRT') if args.tr else 'LDR',
+                     mach_id(cert['spec'])))
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
     good, bad, cd = emit(cert, out)
     print('%s: %d arms boarded, %d without a chain, closure %s'
