@@ -9,7 +9,7 @@
 # untrusted consistency audits (closeout partition, census cache hash,
 # proof-report cross-checks) all pass.  The instruction-level closeout
 # (every CloseoutTr batch plus the reflective split) is kernel-checked
-# too, sharded across runners: `closeout-shard` x 8, then `closeout-final`
+# too, sharded across runners: `closeout-shard` x 6, then `closeout-final`
 # (docs/CLOSEOUT_TR.md, "CI").
 name: CI
 on:
@@ -92,12 +92,18 @@ jobs:
     # (run 36527279101), and a batch is never split across cores, so that
     # sets the floor.  The shard budget is ~2.5x the worst shard measured.
     timeout-minutes: 120
+    # Six, not more: a PR push starts both a push and a pull_request run,
+    # so each push costs 2 x (SHARDS + 2) jobs against the account's
+    # concurrent-job limit, and with 8 shards jobs queued up to 37 min
+    # (2026-09-29).  `ci_shard.py --plan 6` keeps every shard under the
+    # CBT_BR_00 floor; raise it only when a shard other than BR_00's is
+    # the long pole.
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+        shard: [0, 1, 2, 3, 4, 5]
     env:
-      SHARDS: 8
+      SHARDS: 6
     steps:
       - uses: actions/checkout@v4
       # apt talks to the runner's package mirror, which sometimes hangs

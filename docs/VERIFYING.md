@@ -362,6 +362,6 @@ committed hash, confirming your walk covered the same inputs.
   the full build (the IRules batches peak at ~6–8 GB) nor the walk can live
   there.  `.github/workflows/ci.yml` builds the core library, the closeout
   kit and two end-to-end machine-proof families from source, kernel-checks
-  the instruction-level closeout batches (sharded over eight runners,
+  the instruction-level closeout batches (sharded over six runners,
   [`CLOSEOUT_TR.md`](CLOSEOUT_TR.md) "CI"), enforces zero `Admitted`, and
   runs the untrusted audits; tiers A and B above are local.
