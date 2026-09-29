@@ -3295,6 +3295,100 @@ python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl --tag CE2 --chunk 40       
 python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl --tag CE2 --chunk 40 --qh  # QH: LDRQ boards
 ```
 
+#### 7.4.CE3 CE2's residue: nested arms for the quadratic carry, and closing from the family alone, 153 boarded (2026-09-29)
+
+Workstream CE3 (batch tag `CE3`), over the log counters §7.4.CE2 left: 335 DN
+(`dx/char_all.tsv` shape `log`, kind `counter`) and 171 QH
+(`counter_boxfail` / `counter_new`), 506 rows.  Hybrids (HY2), bouncers and
+edge rows (BX) and class SP (SPB) were not touched.
+
+**The quadratic carry is a loop of rounds, and needs no count.**  On
+`0RB0LA_0LC0RD_1LA1LC_1RC1RD` the interior lap costs `2(j+2)^2`.  The carry
+is `j` ROUNDS of `A[0] 1^(2i+1) 01 X -> A[0] 1^(2i+3) X`, each an ordinary
+kernel rule whose cost is affine in its OWN index `i` (the run it sweeps).
+The number of rounds is affine in the arm's index.  Every row traced has one
+of two shapes: UP, where the swept run grows and each round consumes a word
+from a tail, or DOWN (`0RB0LA_1LA0RC_0LD1RC_1RB1LD`), where the swept run
+shrinks and each round pushes a word onto the other side.  The closers only
+need SOME positive number of steps per lap, so the sum never has to be
+stated.
+
+**Ports (generic; axioms `functional_extensionality_dep` only):**
+
+* `Checkers/LadderNest.v`.  An arm is a SEGMENT program: kernel chains
+  (`NCh`) and iterations `NUp`/`NDn` of an inner rule over `al*j+be` rounds.
+  The proof is by induction on the round count (`iter_up`, `iter_down`), and
+  each round is linked to the next by a syntactic check (`link_up`,
+  `link_down`).  Segments meet at configurations built by `sidx` (a side at
+  an affine index), `srep` (a repeated word) and `sapp` (concatenation, with
+  at most one side depending on `j`).  Sides are compared on a normal form
+  (`snf`: fold the constant into the prefix and the multiplier into the
+  unit, then unrotate), because chains land on different spellings of the
+  same side (`0 ++ 0^(2j+2)` against `0000 ++ (00)^j`).  The end of an arm
+  is compared up to trailing blanks beside an empty tail (`ceqL`).  The
+  result is `ReachL`: a positive run to a configuration that lifts to the
+  right-hand side's.  `narm_reach` is the one theorem.
+* `Checkers/LadderCheckNestTr.v`.  The `LadderCheckTr`/`QHTr` board over such
+  arms (`boardN_neverqhtr`, `boardN_qhtr`).  `LadderCheck`'s `board_arm` and
+  `LadderCheckTr`'s `board_fire` carry the interior arms' `RuleSound` as a
+  section hypothesis, so they are restated here without it.  A fire may be
+  witnessed after the rounds: `nfire` runs a program prefix, then a base
+  chain.  The file also has a lookahead split (`boardK_*`: interior arms per
+  NEXT digit, plus end arms per phase for the last digit), for carries that
+  turn back on the next digit's first cell.  It is built and checked but has
+  boarded nothing: on the rows tried, the carry runs across the whole next
+  run, which is a misread family rather than a lookahead.
+* `tools/ladder/nest.py`.  It simulates the arm at several `j` with a marker
+  in every opaque tail, takes the state/symbol whose visit count is affine
+  in `j`, fits UP/DOWN rules to consecutive visits, proves them with
+  `lapcert.derive_chain`, fits the round count, and glues the pieces with
+  chains.  The chain engine can fold copies into a count but never unfold
+  one, so an inner rule carries its constant copies in `s_pre`.
+  `emit_ladder.py` tries it only when an arm has no kernel chain (plus arm
+  thresholds 4..6 last, since a round count `j - 1` needs `r >= 2`), and
+  emits the nested closure only for such rows.  Every other board is
+  byte-identical.
+* `tools/ladder/famclose.py`.  It closes from valfam's FAMILY alone.
+  `emit_ladder.closure_data` builds its class arms from the family and never
+  uses the arms valfam mines, and valfam's own miner is affine too.  So for
+  a row filed as "families found but none closed", each family (with its
+  fill laws and boot) is handed straight to the emitter.
+
+**Yields** (valfam at 150 s a row over all 506; famclose on the unclosed
+rows, 2 jobs; every board compiled by `sp_ladder_batch.py`):
+
+| bucket (valfam, this run) | DN | QH | boarded DN | boarded QH | by |
+|---|---:|---:|---:|---:|---|
+| valfam closes | 138 | 24 | 96 | 16 | nested arms on 90 of the 94 in `CBT_CE3_00/01`; the others are plain arms the old emitter refused only because they land a blank off the rhs (`ceqL`) |
+| families found, none closed | 76 | 96 | 12 | 29 | famclose (of 85 DN and 57 QH run so far) |
+| no value family | 94 | 18 | 0 | 0 | |
+| time cap | 27 | 33 | 0 | 0 | |
+| **total** | **335** | **171** | **108** | **45** | 96 boards nested |
+
+Batches `CBT_CE3_00..05`.  Closeout: 8,152 boarded before, **8,305** after,
+**2,619** remaining.  famclose was still running on the rest of both
+unclosed lists when this was written (container restarts cut it twice).
+
+**The residue, by where it stops.**  Among the 42 DN rows valfam closes and
+the emitter still cannot: the interior arm fails on 10, and 7 of those have
+AFFINE laps.  Those carries read past the incremented digit into the next
+run (a family misread, not a cost problem).  Most of the rest fail on the
+fill arm or the visit phase.  Over the first 60 unclosed rows, the
+interior-lap growth of the first family is: no one-parameter family with a
+boot 30, affine 16, family step lands off the next member 9, quadratic 3,
+exponential 2.  An exponential lap (`0RB0LA_1LC1RD_0RD0LC_1RB1LA`: 16, 36,
+72, 140, 272, 532) runs a whole inner binary counter inside the carry.  It
+would need an arm that invokes itself at a smaller index; it is too rare
+here to pay for.  famclose closes 5 of the 16 affine rows; 8 fail on the
+fill arm.  The QH rows were blocked by valfam's arm miner, not by cost:
+only 1 of the 45 QH boards needs a nested arm.
+
+```
+(cd tools/ladder && python3 valfam.py --list ROWS --cap 150 --json vf.jsonl)
+(cd tools/ladder && python3 famclose.py --list UNCLOSED --json fc.jsonl --jobs 2 [--qh])
+python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl fc.jsonl --tag CE3 --chunk 50 [--qh]
+```
+
 #### 7.4.SW The DN sweep counters: a multi-family two-index glue, 239 of 287 boarded (2026-09-29)
 
 Workstream SW (batch tag `SW`), over the 287 `sweepctr` rows of
