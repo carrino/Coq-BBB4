@@ -9295,6 +9295,16 @@ theories/Machines/CountersTr/LAPT_1RB1RD_1LC1RC_1LA0LC_0RD0LA.v
 theories/Machines/CountersTr/LAPT_1RB1RD_1RC0LC_1LC1LA_0LB0RD.v
 theories/Machines/CountersTr/LAPT_1RB1RD_1RC1LA_0LB0RC_0LA1LD.v
 theories/CloseoutTr/CloseoutKitTr.v
+theories/CloseoutTr/CBT_BR_00.v
+theories/CloseoutTr/CBT_BR_01.v
+theories/CloseoutTr/CBT_BR_02.v
+theories/CloseoutTr/CBT_BR_03.v
+theories/CloseoutTr/CBT_BR_04.v
+theories/CloseoutTr/CBT_BR_05.v
+theories/CloseoutTr/CBT_BR_06.v
+theories/CloseoutTr/CBT_BR_07.v
+theories/CloseoutTr/CBT_BR_08.v
+theories/CloseoutTr/CBT_BR_09.v
 theories/CloseoutTr/CBT_DX0_00.v
 theories/CloseoutTr/CBT_DX0_01.v
 theories/CloseoutTr/CBT_DX0_02.v

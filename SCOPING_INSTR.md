@@ -2896,6 +2896,65 @@ CI: with the QS and DX batches, the `core` job's closeout step runs
 32-40 min at `-j4`, and runs were cancelled at the old 45-minute limit.
 `timeout-minutes` is now 90.
 
+#### 7.4.BR The plain bouncers: RepWL at 900 s takes a sixth, the rest is not a budget problem (2026-09-29)
+
+Workstream BR (batch tag `BR`), over the §7.4.DX rows RepWL was named
+for: the 137 two-sided and 40 one-sided bouncers (3 of them QH) and the
+11 "other" rows of `dx/char_all.tsv`, plus the 15 `bouncer_dense` QH rows
+of `closeouttr_qc_subclasses.tsv`.  All 203 were still open: 185
+never-QH, 18 QH.  Per-row data in `tools/closeouttr/br/`.
+
+| route | tried on | certified | kernel-accepted | boarded |
+|---|---:|---:|---:|---|
+| `rw_cert_find.py find --timeout 900` (the FALLBACK_L ladder L=2..10,12; MAX_NODES 30K) | 185 never-QH | 33 (L=6..10) | 33 | `CBT_BR_00..06` |
+| the same with `--qh --scan censustr_v9_scan_1e8.txt` | 18 QH | 0 (14 no closure at 770-810 s, 4 timeouts) | | |
+| RepWL at the rows' own block periods and pairwise LCMs outside the ladder (L=11, 13..40, from `dx/char_all.tsv`), 600 s | the 135 misses with such an L | 4 (L=11, 14, 15, 15) | 4 | `CBT_BR_07..08` |
+| `ng_batch.py probe --rungs rk:7:0`, 300 s | all 149 never-QH misses (a random 30 first: 1 of 30) | 4 (73+19 false, 53 timeouts) | 4 | `CBT_BR_09` |
+
+**41 of 203 boarded** (all 185+18 judged); all rows: 4,156 to 4,115 open.
+
+* **The budget was never the limit.**  Of the 152 never-QH misses at
+  900 s, 148 are "no closure": every rung of the ladder passes the 30K
+  node cap, in 6-30 s for the whole ladder.  Only 4 time out.  The
+  certified rows take 10-148 s.  A longer budget buys nothing; raising
+  MAX_NODES is not an option either (Coq's tier OOMs past ~30K, §7.3e),
+  and the three rows that hit the 2 GB worker cap do not close at 4 GB.
+* **Kernel cost.**  Coq re-runs the search at the finder's parameters,
+  and the closures here are big (up to 29.7K nodes).  Batch compile times
+  in the container, sharing 4 cores with the probes: BR_00 47 min, BR_02
+  43, BR_03 38, BR_04 25, BR_08 22, BR_07 12, BR_05 7.5, BR_01 6, BR_09 1.
+  The batches are cut at 5 rows (2 for the L=14/15 rows) so the heavy
+  rows spread across `-j4`.
+* **The rank tier at window 7** takes 4 of 149 (2.7%), a tenth of its
+  window 4-6 yield on DN (§7.4.NG).  Window 4-6 had already rejected or
+  timed out on 180 of these rows.
+
+**The residue: 162 rows (144 never-QH + 18 QH)**, in
+`tools/closeouttr/br/residue.txt`, by the 1e8-step tape shape of
+`dx/char_all.tsv`:
+
+| rows | shape at 1e8 | what it says |
+|---:|---|---|
+| 47 | more than 100 aperiodic ("junk") cells | not a bouncer in RepWL's sense: the tape grows material no block describes.  All 33 finder-certified rows have <= 100 junk cells (31 of them <= 20).  Route: re-characterise (the growth exponent put them with the bouncers, but the junk is counter- or Fibonacci-like); likely the hybrid checker of §7.4.DX, or a per-machine word list |
+| 45 | several block periods whose LCM is past 12 (e.g. 5 and 8, 10/12/14/16) | the multi-period tapes of §7.3f.  A single block length at the LCM does not close (4 of 135 above): RepWL keeps up to 3L symbols verbatim around the head and the state space explodes there |
+| 25 | several periods, LCM <= 12 | the ladder tried the LCM and failed; the periods are there but the blocks sit in separate growing regions |
+| 27 | one period | three or more growing runs of one word (e.g. `0^a 0^b 1^c`, `(01)^a ... (01)^b`); fails like the row above |
+| 18 | QH (15 `bouncer_dense` + 3 one-sided) | the wrapped closure grows to the cap slowly (770-810 s per row); irules also missed them (§7.4.DX) |
+
+**Is a multi-block RepWL (§7.3f) worth building?**  Its target is the
+97 low-junk never-QH rows (45 + 25 + 27), plus perhaps some of the 18
+QH rows: blocks of different lengths per tape region, so that a node
+stores the word and its count per region instead of 3L verbatim cells at
+L = LCM.  That is a new abstraction in `RepWL.v`'s soundness proof (the
+block split is no longer uniform) and a new finder, for at most ~100 rows,
+with an unknown hit rate: the single-block evidence says little, since
+the LCM rungs that would be its degenerate case fail by node count, not
+by a cycle.  Recommendation: **not before** the bouncer + counter hybrid
+checker (496 rows, §7.4.DX) and the never-QH sweep glue (287 rows).  If it
+is built, a cheaper first step is to measure the node count a two-length
+abstraction would reach on the 45 LCM>12 rows with the Python mirror
+before touching Coq.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
