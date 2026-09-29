@@ -298,6 +298,9 @@ def phase_mid(tab, cls, Lpre, F, v0, L, i, blk, m):
         t, q, h, Ls, Rs = cls[k]
         p = v0 + i + L * k
         n = ns[k]
+        # a top step or an overflow may leave through its own exit
+        if all(x == F['b'] - 1 for x in ctr_of(p, F['b'], F['H'])[0]):
+            continue
         if n < m + 1:
             return None
         mc = H.mid_of(tab, (q, Ls, h, Rs), x_r)
