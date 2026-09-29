@@ -1,6 +1,6 @@
-(** * HybridCtrTr: bouncer + counter hybrids whose counter is any positional
-    numeration: base [b], one word per digit, and a TOP WINDOW read through
-    a word table.
+(** * HybridCtrTr: bouncer + counter hybrids whose counter is any
+    positional-style numeration: base [b], one word per digit, and a TOP
+    that steps through a table of words before the counter widens.
 
     [HybridGlueTr] (SCOPING_INSTR.md 7.4.HY) glues a binary counter
     [E p] ([E xH = C], [E (xO r) = A ++ E r], [E (xI r) = B ++ E r]) to a
@@ -10,37 +10,43 @@
     - base 3 and base 4 counters (a 3- or 4-cell word per digit; the
       base-4 ones are CE2's two-bits-per-digit counters);
     - a top that is not one digit word: the digit under the MSB written
-      differently until the next overflow, or a long terminator;
+      differently until the next overflow, a long terminator, a counter
+      with a terminator and no top digit at all, or a top that steps
+      through a few words before an overflow;
     - the lift-tolerant fills of CE2 (the overflow stops a blank short),
       which the chains here state up to trailing blanks.
 
     The counter is a pair [(low, tv)]: [low] its low digits, LSB first,
-    each [< b], and [tv] the value of the top window, [lo <= tv < b * lo]
-    ([lo = b ^ (t - 1)] for a window of [t] digits, but any [lo >= 1]
-    works).  Its value is [vl low + b ^ |low| * tv] and its word
+    each [< b], and [tv] the top value, [lo <= tv < hi].  Its word is
 
       [hcE (low, tv) = concat (map D low) ++ T tv]
 
-    with [D] ([b] words) and [T] ([(b - 1) * lo] words) certificate data.
-    The increment has three shapes, each ONE generic carry chain indexed
-    by the carry length [j]:
+    with [D] ([b] words) and [T] ([hi - lo] words) certificate data, and
+    the increment has three shapes, each ONE generic carry chain indexed by
+    the carry length [j]:
 
     - interior, per digit [d < b - 1]:
         [D(b-1)^j ++ D d ++ X  ->  D 0^j ++ D (d+1) ++ X]   ([X] opaque);
-    - top step, per [tv] with [tv + 1 < b * lo]:
+    - top step, per [tv] with [tv + 1 < hi]:
         [D(b-1)^j ++ T tv  ->  D 0^j ++ T (tv + 1)]         (far end known);
-    - overflow, [tv = b * lo - 1]:
+    - overflow, [tv = hi - 1]:
         [D(b-1)^j ++ T tv  ->  D 0^(j+1) ++ T lo]           (far end known).
 
-    With [b = 2], [lo = 1], [D = [A; B]] and [T = [C]] this is exactly
-    [HybridGlueTr]'s interior and overflow.  Everything else -- the
-    two-index anchor [hcC c n], the mid, the sweep half over the block with
-    the counter opaque, the phase list for a block whose unit rotates at
-    the junction, and the fire families -- is [HybridGlueTr]'s, restated
-    over [(low, tv)].  Fire families are named by value: an interior fire
-    at digit [d] after [j] carries is reached at the values
-    [(b^j - 1) + b^j d + b^(j+1) (H0 + L s)], a top/overflow fire at
-    [b^(j0 + T s) (tv + 1) - 1]; the checker computes their phase.
+    [hi = b * lo] is a positional counter ([lo = b^(t-1)]: a top window of
+    [t] digits); [lo = 0, hi = 1] a counter with a terminator and no top
+    digit; other ranges are counters whose top steps through [hi - lo]
+    words before it widens.  With [b = 2], [lo = 1], [hi = 2], [D = [A; B]]
+    and [T = [C]] this is exactly [HybridGlueTr]'s interior and overflow.
+
+    Everything else -- the two-index anchor [hcC c n], the mid, the sweep
+    half over the block with the counter opaque, the phase list for a
+    block whose unit rotates at the junction, and the fire families -- is
+    [HybridGlueTr]'s, restated over [(low, tv)].  Fire families are named
+    by RANK (the number of increments from [([], lo)]): an interior fire
+    at digit [d] after [j] carries is reached at the ranks
+    [(hi - lo) G (j+1) + (b^j - 1) + b^j d + b^(j+1) (H0 + L s)], a
+    top/overflow fire at [ytop e (j0 + T s) - 1]; the checker computes
+    their phase.
 
     Axiom footprint: [functional_extensionality_dep] (via [CTape.lift]). *)
 
