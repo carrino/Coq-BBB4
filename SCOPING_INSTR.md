@@ -3749,14 +3749,13 @@ residue is 502 rows in three pieces:
    123, so they are not all binary counters: the ratio-4 rows look like
    base-4 or two-digit-per-overflow counters, and the unclean ones like
    §7.4.CE's Fibonacci and other-radix counters (not checked row by row).
-3. **59 time caps**, re-run at 400 s below.
+3. **59 time caps.**  Re-run at `--cap 400` (4 jobs, ~2 h): none closes; 37
+   time out again and 22 find families but close none.
 
 The lap route's own residue is dominated by the nested overflow (492)
 and "no interior chain" (291), which is where the ladder took its 343;
 its "no anchor" rows still open (640) are the 605 wide rows and 35
 counters.
-
-TIME-CAP RE-RUN: IN PROGRESS.
 
 ```
 python3 tools/closeouttr/classes.py shard SP 0 1 > sp_rows.txt
