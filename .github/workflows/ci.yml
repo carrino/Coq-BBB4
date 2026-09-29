@@ -96,7 +96,14 @@ jobs:
   # runs `if: always()`) fails too, so a required check on it cannot be
   # satisfied by a skipped job.  fail-fast is off so one run names every
   # rejected batch.
+  # The full sharded check runs on main, on the integration PR (the branch
+  # that merges the research sessions' heads) and on any PR labelled
+  # `full-ci`.  Research-session PRs run `closeout-changed` instead: their
+  # batches are kernel-checked there, and all of them again, with the split,
+  # in the integration PR before anything reaches main.  A PR that edits a
+  # shared checker (not just adds files) should carry `full-ci`.
   closeout-shard:
+    if: github.event_name == 'push' || github.head_ref == 'claude/instruction-beeping-proof-scope-ww7zdk' || contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
     # The floor is the slowest single batch, which no split can shorten:
     # the deep-RepWL CBT_BR_02 / CBT_BR_00 take 35-46 min alone, depending
@@ -160,7 +167,7 @@ jobs:
   closeout-final:
     runs-on: ubuntu-latest
     needs: closeout-shard
-    if: always()
+    if: always() && (github.event_name == 'push' || github.head_ref == 'claude/instruction-beeping-proof-scope-ww7zdk' || contains(github.event.pull_request.labels.*.name, 'full-ci'))
     timeout-minutes: 60
     steps:
       - name: Every shard passed
@@ -208,3 +215,40 @@ jobs:
           echo "all $(echo $targets | wc -w) batches up to date"
       - name: "Instruction-level closeout: the split kernel-checked over every batch"
         run: make -f Makefile.coq -j4 theories/CloseoutTr/CloseoutTr.vo
+  # Research-session PRs: the generated files must be current, and every
+  # .v the PR adds or changes (its batches, boards, checkers) must compile,
+  # with whatever it imports.  Minutes on one runner instead of the full
+  # sharded closeout on every chunk pushed.
+  closeout-changed:
+    if: github.event_name == 'pull_request' && !(github.event_name == 'push' || github.head_ref == 'claude/instruction-beeping-proof-scope-ww7zdk' || contains(github.event.pull_request.labels.*.name, 'full-ci'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install Coq
+        timeout-minutes: 15
+        run: |
+          for i in 1 2 3; do
+            sudo timeout 300 apt-get update && \
+            sudo timeout 300 apt-get install -y coq && exit 0
+            echo "apt attempt $i failed or hung; retrying"
+            sleep 10
+          done
+          exit 1
+      - name: Generate Makefile.coq
+        run: make Makefile.coq
+      - name: "Instruction-level closeout: generated files current"
+        run: |
+          python3 tools/closeouttr/gen_closeout_tr.py --check
+          python3 tools/closeouttr/ci_shard.py --check 6
+      - name: "Kernel-check every .v this PR adds or changes (the split itself runs in the integration PR)"
+        run: |
+          base=${{ github.event.pull_request.base.sha }}
+          targets=$(git diff --name-only --diff-filter=AM "$base"...HEAD -- 'theories/*.v' \
+                    | grep -v -e '^theories/CloseoutTr/CloseoutTr\.v$' -e '^theories/CloseoutTr/RemainingTr\.v$' \
+                    | sed 's/\.v$/.vo/' || true)
+          if [ -z "$targets" ]; then echo "no .v added or changed"; exit 0; fi
+          echo "$targets" | wc -l
+          make -f Makefile.coq -j4 $targets
