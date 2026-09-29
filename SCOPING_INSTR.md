@@ -3300,6 +3300,143 @@ opaque tails, so the glue here would carry over with a third, tied
 count.  On the QH side, irules took all 75 of these shapes (§7.4.DX), but
 on the DN side it leaves them undecided.
 
+#### 7.4.MB BR's residue: a multi-block RepWL, 17 of 162 boarded (2026-09-29)
+
+Workstream MB (batch tag `MB`), over the 162 rows of
+`tools/closeouttr/br/residue.txt` (§7.4.BR).  All 162 were still open:
+97 low-junk never-QH bouncers, 47 never-QH rows with more than 100 junk
+cells, 18 QH.  Per-row data in `tools/closeouttr/mb/`.
+
+**The design.**  The multi-block node is RepWL's own `rconf`.  RepWL never
+needed its item words to share a length: `items_den`, `push_side_den`,
+`pop_den` and the five measures of `rw_meas_exact` hold for any non-empty
+words.  The only thing tied to one length L is the fold, which cuts the
+departed buffer into L-blocks once it reaches 3L cells.  So the new
+checker changes the fold and nothing else.  Each side has a word list
+(`mb_DL`, `mb_DR`, nearest-first).  When the head walks off the arrival
+end, `mb_fold` cuts the far end of the departed buffer at a listed word.
+It prefers, in order:
+
+1. the nearest item's word, if it is listed (a run keeps its phase);
+2. a listed word the far end holds twice (so a rotation of a long word
+   does not cut into a short-period run);
+3. any listed word.
+
+A word fold starts once the buffer holds `Y` cells and leaves at least
+`K` cells.  With no word matching, past `X` cells the farthest single
+cell is folded as an exact, unmerged item (`push_raw`).  Popping from an
+empty side gives `B` blank cells, and counts saturate at `T`.  The seed
+puts each concrete side into the buffer and folds it.
+
+Soundness does not depend on the policy at all.  The pushed block is
+literally `skipn c buf`, so `mb_fold_den` holds for any cut, and the
+parameters (`mbpar`) are plain data.  The checker is
+`theories/CensusTr/RepWLMBTr.v` (a new file; `RepWLTr.v` is untouched):
+
+* `mb_tier_tr` (never-QH) and `mb_tier_qhbtr` / `mbqh_stage` (wrapped,
+  QH) are parameter-closed like `rw_tier_tr`: the kernel re-runs the
+  closure and the certificate search at the finder's parameters;
+* the certificate syntax, the engine, the measures and the search are
+  RepWL's;
+* `Print Assumptions` shows `functional_extensionality_dep` only.
+
+A row is one line:
+`apply coversTr_nqh, (mb_tier_tr_sound _ (MbPar DL DR K Y X B T) t fuel M)`.
+
+**Two rules came from the design rows.**  A forced single-cell fold
+first merged like any other push.  A bounded run of `1`s folded cell by
+cell then became an unbounded `1^2+` item, and the abstraction walked
+off it forever (row 4 below).  Hence `push_raw`.  Longest-first matching
+also let a rotation of a period-5 word (`01101`) cut into a transient
+period-3 run (`011011...`), leaving `1` junk between the 5-words.  Hence
+the double match.  On 25 failing rows the double match gains nothing at
+40 s, but all 13 first hits re-certify under it with smaller closures
+(for example 11,426 → 4,449 nodes).
+
+The five design rows:
+
+| row | tape | multi-block |
+|---|---|---|
+| `0RB0RC_0LC1RA_1LD1RC_1LA0LB` | `(001)^a (0110)^b [h] (01)^c`, periods 3/4/2 (LCM 12) | 452 nodes; RepWL: no closure at any L |
+| `0RB1LB_1LC1RC_1RD0LA_0RC1RB` | `(01111)^a (01)^b 0^c` (LCM 10) | 1,102 nodes |
+| `1RB0RD_1LC0RA_1LA1LC_1LD0LC` | two period-14 regions | 3,660 nodes |
+| `0RB0RC_1LC1RC_1LD1RA_1RA0LD` | `(10110)^a .. (11110)^b` and a right-end run of `1`s of varying length | no closure: the run is bounded but not a word, and the abstraction over-grows it |
+| `0RB0LA_1LC1LD_1RD0RD_1LA0RC` | `1^k 01 0^a [h] 1^b`, k growing slowly | no closure: a unary counter at the edge, a hybrid |
+
+**The finder** is `tools/censustr/mb_cert_find.py` (untrusted, the Python
+mirror of `RepWLMBTr.v`).
+
+* Word lists: the periodic runs (period at most `--pmax`, default 16) of
+  82 tape snapshots from one run of 2^12..2^22 steps, heaviest first.
+  The finder tries the top 2..8 period classes, every rotation of each,
+  longest first, with the left side mirrored.
+* Candidates: `K` in {1, 2, longest word}, `Y` = `K` + longest (+2),
+  `X` = `Y` + max(4, longest), `T` in {2, 3}, `t` in {0, 1024, 4096}.
+  Closures are capped at 30K nodes.
+* After the first hit it spends `--polish` seconds (default 60) looking
+  for a smaller closure, with the cap set just under the best so far.
+  The kernel's cost grows steeply with the closure.
+* `--qh` is the wrapped mode (pins from the 1e8 scan, as in
+  `rw_cert_find.py`).
+
+`probe` writes `Time Eval vm_compute` files.  `tools/closeouttr/mb_batch.py`
+writes the batches and spreads the heavy rows across them.
+
+**Yields.**
+
+| rows | tried | certified | boarded |
+|---|---:|---:|---:|
+| never-QH, the 97 low-junk and the 47 junk rows, 240 s | 144 | 13 (all low-junk) | 13, `CBT_MB_00..03` |
+| the 20 long-period junk rows (below), `--pmax 64`, 300 s | 20 | 8 | 4, `CBT_MB_04..05` |
+| QH, `--qh`, 240 s | 18 | 0 (15 time out growing wrapped closures, 3 no closure) | |
+
+**17 of 162 boarded.**  All rows: 3,480 → **3,463**.  The 13 low-junk hits
+are mostly two long-period regions (periods 14 and 14, 11 and 6, 15 and
+15, 5 and 2), which is what a single L at the LCM could not hold.
+
+**Kernel cost.**  Per row (probe, container, CPU shared with the finders):
+452 nodes 0.8 s, 1,102 nodes 3-4 s, 3.2K-3.7K nodes 8-10 s, 4,449 nodes
+23 s, 5,551 nodes 56-60 s, 16,578 nodes 62 s.  The long-period rows run
+about 20 s at 5.1K-5.5K nodes and **about 7.7 min at 15.8K** (20-cell
+words, 41-cell buffers).  The four 15.8K rows (`1RB0LA_1LC0RD_1LA0LC_1RB0RD`
+and its three twins) certify, but 31 kernel-minutes for 4 rows is BR's
+cost again, so they are left out.  They are one `mb_batch.py` call away
+if the CI budget allows.
+
+Per batch, at 4 or 2 rows a batch: MB_00 131 s, MB_01 89 s, MB_02 81 s,
+MB_03 78 s, MB_04 83 s, MB_05 53 s.  That is **about 8.6 CPU-minutes in
+all, 2-3 minutes of wall time on CI's `-j4`**, against BR's ~48.
+
+**The 47 junk rows, re-characterised** (`dx_char.py junk`: junk at 1e6, 1e7
+and 1e8, its growth exponent, where it sits, and the long periods 17..64
+over the whole tape; `tools/closeouttr/mb/junk47.tsv`):
+
+| rows | class | what it is | workstream |
+|---:|---|---|---|
+| 20 | `longper` | ≥ 60% of the tape is periodic with one period of 17-54, fixed from 1e7 to 1e8.  Mostly level-2 words `A (011)^k` with k fixed.  BR's detector stops at 16, so no RepWL L ever matched | MB with long words: 8 certify (4 boarded, 4 heavy), 12 no closure |
+| 26 | `spread` | junk grows with the extent (exponent 0.41-0.79), in 1-750 segments, and no long period covers it.  Irregular tapes (e.g. `0RB0RA_0LC1RA_1RB1LD_1LC0LD`) | none landed; the n-gram / CPS family at wider windows is the nearest route.  Not a bouncer or counter workstream |
+| 1 | `inner_log` | bounded junk inside the tape (`1RB0RA_1RC0RD_1LD1LC_1RA0LC`) | HY |
+
+None of the 47 is a counter at the tape's edge (no `edge_log`), so the
+counter workstreams (CE, SW) do not own them.
+
+**Residue: 145 rows** (`tools/closeouttr/mb/residue.tsv`):
+
+| rows | what | route |
+|---:|---|---|
+| 84 | low-junk never-QH with no closure.  The sampled failures are hybrids: a slowly growing edge run (`1^k 01 ...`), a `{01, 001}` token counter at one end, or a bounded non-word run the abstraction over-grows | the bouncer + counter hybrid checker (HY), not a larger word list |
+| 26 | `spread` junk | none |
+| 16 | `longper`: 12 no closure, 4 certified but 7.7 kernel-minutes each | MB if the CI budget allows the 4 |
+| 18 | QH | none landed; the wrapped closures grow for the whole budget |
+| 1 | `inner_log` | HY |
+
+**Verdict.**  The multi-block RepWL works where BR said it would: bouncers
+whose regions have different periods.  On this residue that is a
+seventh, because most of the 97 "low-junk bouncers" are hybrids at the
+edge.  It stays as a landed tier for other classes: it is cheap to try
+(the finder costs about 30 s a row on a miss), and a single-region row
+is its L = period special case.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

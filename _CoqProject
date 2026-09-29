@@ -9531,6 +9531,8 @@ theories/CloseoutTr/CBT_MB_00.v
 theories/CloseoutTr/CBT_MB_01.v
 theories/CloseoutTr/CBT_MB_02.v
 theories/CloseoutTr/CBT_MB_03.v
+theories/CloseoutTr/CBT_MB_04.v
+theories/CloseoutTr/CBT_MB_05.v
 theories/CloseoutTr/CBT_NG_00.v
 theories/CloseoutTr/CBT_NG_01.v
 theories/CloseoutTr/CBT_NG_02.v
