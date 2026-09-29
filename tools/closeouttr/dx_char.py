@@ -6,6 +6,8 @@
     python3 tools/closeouttr/dx_char.py char sample.txt OUT.tsv [--sim /tmp/dx_sim]
             [--steps 100000000] [--jobs 4]
 
+    python3 tools/closeouttr/dx_char.py junk ROWS OUT.tsv [--sim /tmp/dx_sim]
+
 `sample` draws N rows of the open class-DN rows (classes.py order, fixed
 seed), or of ROWS.  `char` runs each for STEPS steps with dx_sim and writes
 one TSV line per row (resumable: rows already in OUT are skipped):
@@ -177,6 +179,129 @@ def char_row(sim, spec, steps):
     return r
 
 
+JCOLS = ['spec', 'w6', 'w8', 'j6', 'j7', 'j8', 'jexp', 'segs', 'longest', 'ends', 'lp6', 'lp7', 'lp8',
+         'lcov', 'jclass']
+
+
+def junk_segments(s, pmax=16, minlen=16):
+    """the maximal runs of cells no periodic block covers, as (start, len)"""
+    segs, i, n = [], 0, len(s)
+    cur = None
+    while i < n:
+        best = (0, 1)
+        for p in range(1, pmax + 1):
+            j = i + p
+            while j < n and s[j] == s[j - p]:
+                j += 1
+            if j - i > best[0] and j - i >= 2 * p:
+                best = (j - i, p)
+        ln, p = best
+        if ln >= minlen:
+            if cur:
+                segs.append(tuple(cur))
+                cur = None
+            i += ln
+        else:
+            if cur is None:
+                cur = [i, 0]
+            cur[1] += 1
+            i += 1
+    if cur:
+        segs.append(tuple(cur))
+    return segs
+
+
+def long_periods(s, segs, pmax=64):
+    """cover the segments [segs] of [s] by periodic runs of period
+    17..pmax (at least two periods long): (the heaviest such period, the
+    fraction of the segments' cells such runs cover)"""
+    wt, cov, tot = {}, 0, 0
+    for (a, ln) in segs:
+        tot += ln
+        i, end = a, a + ln
+        while i < end:
+            best = (0, 0)
+            for p in range(17, pmax + 1):
+                j = i + p
+                while j < end and s[j] == s[j - p]:
+                    j += 1
+                if j - i >= 2 * p and j - i > best[0]:
+                    best = (j - i, p)
+            if best[0]:
+                wt[best[1]] = wt.get(best[1], 0) + best[0]
+                cov += best[0]
+                i += best[0]
+            else:
+                i += 1
+    top = max(wt, key=wt.get) if wt else 0
+    return top, (cov / tot if tot else 0.0)
+
+
+def junk_row(sim, spec):
+    """the junk (cells in no periodic block) at 1e6, 1e7, 1e8 steps: how
+    fast it grows and where it sits.  jclass:
+      edge_log   the junk grows like a counter (exponent < 0.2) and sits in
+                 at most two segments at the tape's ends: a bouncer with a
+                 counter at its edge (the hybrids of 7.4.DX / HY)
+      inner_log  counter-like growth, but inside the tape (a counter
+                 between two growing blocks: HY's two-sided glue)
+      longper    the junk is not a counter, and the tape is mostly
+                 (>= 60%) periodic with a period 17..64 that is the same at
+                 1e7 and 1e8: a bouncer whose block is longer than the
+                 block detector's 16 cells (often a level-2 word
+                 A (011)^k with k fixed)
+      nested     the same, but the long period changes between 1e7 and
+                 1e8: blocks of the form (A B^k)^n with k growing, a bouncer
+                 inside a bouncer
+      spread     the junk grows with the extent (exponent >= 0.35) and is
+                 not long-periodic: irregular (Fibonacci-like); no landed
+                 route
+      other      in between"""
+    r = dict(spec=spec)
+    J = {}
+    for k in (6, 7, 8):
+        out = subprocess.run([sim, spec, str(10 ** k)], capture_output=True, text=True).stdout.split('\n')
+        T = [l[2:] for l in out if l.startswith('T ')]
+        if not T:
+            return None
+        tape = ''.join(c for c in T[0] if c in '01')
+        J[k] = (len(tape), junk_segments(tape), tape)
+    w6, w8 = J[6][0], J[8][0]
+    js = {k: sum(ln for _, ln in J[k][1]) for k in J}
+    r['w6'], r['w8'] = w6, w8
+    r['j6'], r['j7'], r['j8'] = js[6], js[7], js[8]
+    e = math.log(max(js[8], 1) / max(js[6], 1)) / math.log(100)
+    r['jexp'] = '%.2f' % e
+    segs = [sg for sg in J[8][1] if sg[1] >= 4]
+    r['segs'] = len(segs)
+    r['longest'] = max((ln for _, ln in segs), default=0)
+    edge = w8 // 20
+    ends = [sg for sg in segs if sg[0] <= edge or sg[0] + sg[1] >= w8 - edge]
+    r['ends'] = len(ends)
+    lp = {k: long_periods(J[k][2], [(0, J[k][0])]) for k in J}
+    r['lp6'], r['lp7'], r['lp8'] = lp[6][0], lp[7][0], lp[8][0]
+    r['lcov'] = '%.2f' % lp[8][1]
+    if e < 0.2:
+        r['jclass'] = 'edge_log' if len(segs) <= 2 and len(ends) == len(segs) else 'inner_log'
+    elif lp[8][1] >= 0.6:
+        r['jclass'] = 'longper' if lp[7][0] == lp[8][0] else 'nested'
+    elif e >= 0.35:
+        r['jclass'] = 'spread'
+    else:
+        r['jclass'] = 'other'
+    return r
+
+
+def cmd_junk(a):
+    rows = [l.split()[0] for l in open(a.rows) if l.strip() and not l.startswith('#')]
+    with open(a.out, 'w') as o, ThreadPoolExecutor(a.jobs) as ex:
+        o.write('# ' + '\t'.join(JCOLS) + '\n')
+        for r in ex.map(lambda s: junk_row(a.sim, s), rows):
+            if r:
+                o.write('\t'.join(str(r[c]) for c in JCOLS) + '\n')
+                o.flush()
+
+
 def cmd_char(a):
     done = set()
     if os.path.exists(a.out):
@@ -204,8 +329,13 @@ def main():
     c.add_argument('--sim', default='/tmp/dx_sim')
     c.add_argument('--steps', type=int, default=10 ** 8)
     c.add_argument('--jobs', type=int, default=2)
+    j = sub.add_parser('junk', help='where the junk of ROWS sits and how fast it grows (7.4.MB)')
+    j.add_argument('rows')
+    j.add_argument('out')
+    j.add_argument('--sim', default='/tmp/dx_sim')
+    j.add_argument('--jobs', type=int, default=2)
     a = ap.parse_args()
-    cmd_sample(a) if a.cmd == 'sample' else cmd_char(a)
+    {'sample': cmd_sample, 'char': cmd_char, 'junk': cmd_junk}[a.cmd](a)
 
 
 if __name__ == '__main__':

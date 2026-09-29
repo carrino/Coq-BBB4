@@ -1,0 +1,179 @@
+[
+{
+"spec": "0RB0RC_1RC1RB_1LD1RA_1LA1LC",
+"ok": false,
+"why": {
+"no closure": 2,
+"timeout": 1
+},
+"tried": 3,
+"secs": 240.0
+},
+{
+"spec": "0RB0RC_1RC1RB_1LD1RA_1RB1LC",
+"ok": false,
+"why": {
+"no closure": 2,
+"timeout": 1
+},
+"tried": 3,
+"secs": 240.0
+},
+{
+"spec": "0RB1LC_1LC1RA_0LD0LB_1LA1RD",
+"ok": false,
+"why": {
+"no closure": 2,
+"timeout": 1
+},
+"tried": 3,
+"secs": 240.0
+},
+{
+"spec": "0RB1LC_1LC1RA_1LD0LB_1RB0LA",
+"ok": false,
+"why": {
+"no closure": 3,
+"timeout": 1
+},
+"tried": 4,
+"secs": 240.0
+},
+{
+"spec": "0RB1LC_1LC1RA_1LD0LB_1RB1LC",
+"ok": false,
+"why": {
+"no closure": 3,
+"timeout": 1
+},
+"tried": 4,
+"secs": 240.0
+},
+{
+"spec": "0RB1LC_1LC1RA_1LD0LB_1RC0LA",
+"ok": false,
+"why": {
+"no closure": 3,
+"timeout": 1
+},
+"tried": 4,
+"secs": 240.0
+},
+{
+"spec": "0RB1LC_1LC1RA_1LD0LB_1RC1LC",
+"ok": false,
+"why": {
+"no closure": 2,
+"timeout": 1
+},
+"tried": 3,
+"secs": 240.0
+},
+{
+"spec": "1RB1LD_0RC0RA_1RD1LC_0LA1RB",
+"ok": false,
+"why": {
+"no closure": 3,
+"timeout": 1
+},
+"tried": 4,
+"secs": 240.0
+},
+{
+"spec": "1RB1LD_1RC0RA_1LA0RD_0LA1RB",
+"ok": false,
+"why": {
+"no closure": 3,
+"timeout": 1
+},
+"tried": 4,
+"secs": 240.0
+},
+{
+"spec": "1RB1LD_1RC0RA_1LA1LD_0LC0LB",
+"ok": false,
+"why": {
+"no closure": 2,
+"timeout": 1
+},
+"tried": 3,
+"secs": 240.0
+},
+{
+"spec": "1RB1LD_1RC0RA_1LA1RB_0LA1RB",
+"ok": false,
+"why": {
+"no closure": 2,
+"timeout": 1
+},
+"tried": 3,
+"secs": 240.0
+},
+{
+"spec": "1RB1LD_1RC0RA_1LB0RD_0LA1RB",
+"ok": false,
+"why": {
+"no closure": 2,
+"timeout": 1
+},
+"tried": 3,
+"secs": 240.0
+},
+{
+"spec": "1RB1LD_1RC0RA_1LB1RB_0LA1RB",
+"ok": false,
+"why": {
+"no closure": 2,
+"timeout": 1
+},
+"tried": 3,
+"secs": 240.0
+},
+{
+"spec": "1RB1RA_1LC1RD_1LD1LB_0RA0RB",
+"ok": false,
+"why": {
+"no closure": 2,
+"timeout": 1
+},
+"tried": 3,
+"secs": 240.0
+},
+{
+"spec": "1RB1RA_1LC1RD_1RA1LB_0RA0RB",
+"ok": false,
+"why": {
+"no closure": 2,
+"timeout": 1
+},
+"tried": 3,
+"secs": 240.0
+},
+{
+"spec": "1RB0LC_1LA1RD_1LA1LC_0RC0LD",
+"ok": false,
+"why": {
+"no closure": 32
+},
+"tried": 32,
+"secs": 28.1
+},
+{
+"spec": "1RB0LC_1RC1RD_1LA1LC_0RC0LD",
+"ok": false,
+"why": {
+"no closure": 32
+},
+"tried": 32,
+"secs": 26.4
+},
+{
+"spec": "1RB1RD_1LC1LB_1RA0LB_0RB0LD",
+"ok": false,
+"why": {
+"no closure": 32
+},
+"tried": 32,
+"secs": 26.3
+}
+]
