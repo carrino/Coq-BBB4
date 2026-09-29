@@ -39,6 +39,7 @@ Nothing here carries proof weight.
 """
 
 import itertools
+import os
 import json
 import time
 from collections import Counter, defaultdict
@@ -3077,11 +3078,24 @@ def main():
     a = ap.parse_args()
     specs = [a.spec] if a.spec else \
         [l.split()[0] for l in open(a.list) if l.strip()]
-    out = []
+    # --json is written ONE LINE PER ROW as each finishes and a rerun skips
+    # the rows already in it: a batch of hundreds of rows at minutes each
+    # must survive a container restart (SCOPING_INSTR 7.4.CE2)
+    done = set()
+    if a.json and os.path.exists(a.json):
+        for l in open(a.json):
+            try:
+                done.add(json.loads(l)['spec'])
+            except (ValueError, KeyError):
+                pass
+    specs = [s for s in specs if s not in done]
+    jf = open(a.json, 'a') if a.json else None
     for spec in specs:
         r = close(spec, a.steps, a.cap, a.kmax, a.verbose,
                   numeration=a.numeration)
-        out.append(r)
+        if jf:
+            jf.write(json.dumps(r) + '\n')
+            jf.flush()
         print('%-30s %s' % (spec, {
             'closed': r['closed'], 'rules': r.get('n_rules'),
             'arms': len(r.get('arms', [])),
@@ -3094,10 +3108,8 @@ def main():
         sys.stdout.flush()
         if a.verbose and r['closed']:
             print(json.dumps(r, indent=1)[:6000])
-    if a.json:
-        with open(a.json, 'w') as f:
-            for r in out:
-                f.write(json.dumps(r) + '\n')
+    if jf:
+        jf.close()
 
 
 if __name__ == '__main__':

@@ -1446,6 +1446,8 @@ def closure_data_gray(cert, tab):
         raise NoClosure('the boot is read in phase %d of 1'
                         % cert['boot'].get('phase', 0))
     live = (cert.get('liveness') or {}).get('states_infinitely_often')
+    if TR_PINS is not None:
+        live = ''.join(s[-1] for s in ST)   # the pins carry it (LadderCheckGrayTr)
     if live != ''.join(s[-1] for s in ST):
         raise NoClosure('liveness %r: the gray board is board_neverqh only '
                         '(no gray core row quasihalts)' % live)
@@ -1589,10 +1591,13 @@ def closure_data_gray(cert, tab):
                         '1..4 or copy split')
 
     want = list(range(4))
+    if TR_PINS is not None:
+        want = [(q_, s_) for q_ in range(4) for s_ in range(2)
+                if (q_, s_) not in TR_PINS]
     vis = {}
     for (r, _s, _w1, _w2, _m1, _m2, lhs, _rhs, fch, _ca, _cb) in fill:
         seen = _gray_visits(tab, lhs, fch, want)
-        gap = [ST[i] for i in want if i not in seen]
+        gap = [_vname(i) for i in want if i not in seen]
         if gap:
             raise NoClosure('the fill anchor at width index %d reaches no %s'
                             % (r, ','.join(gap)))
@@ -1852,9 +1857,18 @@ def emit_closure_gray(cert, tab, mid):
                     for r, _s, _w1, _w2, m1, *_ in cd['fill']),
         b4=' '.join('| %d => %d' % (r, m2)
                     for r, _s, _w1, _w2, _m1, m2, *_ in cd['fill']),
-        vb='\n  '.join('| %d, %s => %s' % (r, ST[i], coq_chain_l(ch))
+        vb='\n  '.join('| %d, %s => %s'
+                       % (r, ('(%s, %s)' % (ST[i[0]], SYM[i[1]])
+                              if TR_PINS is not None else ST[i]),
+                          coq_chain_l(ch))
                        for r in sorted(cd['vis'])
                        for i, ch in sorted(cd['vis'][r].items()))))
+    if TR_PINS is not None:
+        L[-1] = L[-1].replace(
+            'Definition vis_%s (r : nat) (q : St) : list lstep :=\n  match r, q with'
+            % mid,
+            'Definition vis_%s (r : nat) (t : Instr) : list lstep :=\n  match r, t with'
+            % mid)
 
     def ibranches(body):
         """One brace-delimited branch per (class index, arm index)."""
@@ -1885,6 +1899,55 @@ def emit_closure_gray(cert, tab, mid):
         fcomp=fbranches('vm_compute; reflexivity'),
         flia=fbranches('vm_compute; lia'),
         fvis=fbranches('destruct q; vm_compute; reflexivity')))
+    if TR_PINS is not None:
+        # LadderCheckGrayTr: per-instruction visits, the Tr closers
+        t = L[-1]
+        a = t.index('Lemma vis_ok_%s' % mid)
+        args = t[t.index('                        vis_%s %s %d).\n'
+                         % (mid, clist(cd['ds0'], str), cd['t0'])):]
+        args = args[args.index('\n') + 1:args.index('  - exact vis_ok_%s.' % mid)]
+        args = args.replace('  - exact boot_%s.\n' % mid, '')
+        fvis = fbranches('destruct t as [q s]; destruct q, s; '
+                         'try (exfalso; apply Hnp; simpl; tauto); '
+                         'vm_compute; reflexivity')
+        vis_ok = ('Lemma vis_ok_%s : forall r t, ~ In t pins_%s -> 2 <= r ->\n'
+                  '  r < %d + %d ->\n'
+                  '  srun_instr tm true true (vis_%s r t) (lr_lhs (farm_%s r)) = Some t.\n'
+                  'Proof.\n  intros r t Hnp H2 Hr.\n%s  exfalso; lia.\nQed.\n\n'
+                  % (mid, mid, n0f, stf, mid, mid, fvis))
+        head_ = ('  eapply (%s tm_%s pins_%s FAM %d\n'
+                 '    iarm_%s %d %d farm_%s %d %d fw1_%s fw2_%s fm1_%s fm2_%s\n'
+                 '    vis_%s %s).\n'
+                 % ('boardG_qhtr' if TR_QH is not None else 'boardG_neverqhtr',
+                    mid, mid, p, mid, n0i, sti, mid, n0f, stf, mid, mid, mid,
+                    mid, mid, clist(cd['ds0'], str)))
+        if TR_QH is not None:
+            blk_ = ('Lemma boot_%s :\n  csteps tm %d c0 = Some (fam_cfg FAM (%s, 0, 0)).\n'
+                    'Proof. vm_compute. reflexivity. Qed.\n\n'
+                    % (mid, cd['t0'], clist(cd['ds0'], str)))
+            pre_ = t[:a].replace(blk_, '')
+            thm = (CLOSURE_F_QHTR.split('(** The boot, on the ORIGINAL', 1)[1]
+                   .split('(** The machine-level theorem', 1)[0])
+            thm = '(** The boot, on the ORIGINAL' + thm % dict(
+                mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str))
+            L[-1] = (pre_ + vis_ok + thm
+                     + '(** The machine-level theorem, on the QUASIHALTING side\n'
+                       '    ([LadderCheckGrayTr.boardG_qhtr]). *)\n'
+                     + 'Theorem qhtr_%s :\n  NonHalt tm_%s /\\ QHBoundTr 32779478 tm_%s'
+                       ' /\\ QuasiHaltsTr tm_%s.\nProof.\n' % (mid, mid, mid, mid)
+                     + head_ + args
+                     + '  - exact vis_ok_%s.\n  - exact bootq_%s.\n'
+                       '  - exact wit_%s.\n  - exact bnd_%s.\nQed.\n'
+                       % (mid, mid, mid, mid))
+        else:
+            L[-1] = (t[:a] + vis_ok
+                     + '(** The machine-level theorem, at the INSTRUCTION level\n'
+                       '    ([LadderCheckGrayTr.boardG_neverqhtr]). *)\n'
+                     + 'Theorem nqhtr_%s : NeverQuasiHaltsTr tm_%s.\nProof.\n'
+                       % (mid, mid)
+                     + head_ + args
+                     + '  - exact vis_ok_%s.\n  - exact boot_%s.\nQed.\n'
+                       % (mid, mid))
     return ''.join(L), cd
 
 
@@ -2634,7 +2697,9 @@ def emit(cert, out):
                if TR_QH is not None else '')
             + ('From BBB4.Checkers Require Import LadderCheckFibTr.\n'
                if fib else '')
-            + 'From BBB4.Checkers Require Import LadderCheckLiftTr.\n', 1)
+            + 'From BBB4.Checkers Require Import LadderCheckLiftTr.\n'
+            + ('From BBB4.Checkers Require Import LadderCheckGrayTr.\n'
+               if gray else ''), 1)
         head = head.replace(
             'Local Notation tm := tm_%s.\n' % mid,
             '(** the instructions the machine never fires; the whole board runs\n'
@@ -2724,10 +2789,6 @@ Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_%(nm)s_%(mid)s]. 
     right-hand side in exactly the certificate's step count. *)
 ''' % dict(ng=len(good), nt=len(cert['arms'])))
 
-    if TR_PINS is not None and gray:
-        closure, cd = (CLOSURE_NONE % 'the instruction-level closers '
-                       '(LadderCheckTr, LadderCheckFibTr) are binary and '
-                       'fibonacci only'), None
     if not (gray or fib):
         closure, cd = emit_closure(cert, tab, mid)
     L.append(closure)
