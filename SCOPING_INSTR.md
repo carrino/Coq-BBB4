@@ -2896,6 +2896,123 @@ CI: with the QS and DX batches, the `core` job's closeout step runs
 32-40 min at `-j4`, and runs were cancelled at the old 45-minute limit.
 `timeout-minutes` is now 90.
 
+#### 7.4.CE The counters the lap emitter did not derive: a parity split and 18 inferred alphabets, 214 boarded (2026-09-29)
+
+Workstream CE (batch tag `CE`) covers two groups.  The first is the 538 DN
+log counters of §7.4.DX that `emit_lapcert.py --tr` did not derive.  The
+second is QE's QH residue, the 394 rows of §7.4.QE still open.  The bouncer +
+counter hybrids, the sweep counters and the plain bouncers belong to other
+workstreams and were not touched.
+
+**Bucketing.**  `tools/closeouttr/qe_probe.py --tr` is QE's probe for the
+never-QH side: every anchor, both orientations, both head symbols.  On the
+DN side the buckets are §7.4.DX's: "no interior chain" 271, "no anchor"
+235, "no overflow chain (nested route is S0-only)" 28, and "no visit
+witness" 4.  On the QH side they are QE's best blockers over the 394 open
+rows: no interior chain 225, no anchor 74, and the nested-overflow failures
+95.  The two ports below address the two largest buckets, which are the
+same on both sides.
+
+**Port 1: "no anchor" is mostly missing digit alphabets.**
+`alphabet_infer.py` over the 309 no-anchor rows (235 DN + 74 QH) reads a
+consistent `E xO = A ++ E`, `E xI = B ++ E`, `E xH = C` family on 205 of
+them.  181 of those are 20 families that no existing alphabet covers.  The
+biggest is `A=110 B=111 C=111` on 77 rows: a binary counter with 3-cell
+digits whose overflow rewrites the whole run.  The 24 others read as
+alphabets the table already has (`Bp` 22, `Dp` 2), so their failure is
+elsewhere.  `gen_alphabet.py` wrote the 18 new modules
+(`theories/Counters/Alph_*.v`, 3-5 cells a digit, each proved by the
+standard induction with no axioms).  They were appended to
+`alphabets_gen.FAMILIES`.  Two of the 20 inferred triples are already in
+the table and were left untouched.  Nothing else changed: the existing
+routes derive these rows once the alphabet exists, mostly through the
+nested overflow (`NestedLapLift`).  Census cache: MATCH.
+
+**Port 2: the parity split (`emit_lapcert.py`, TR boards only).**  QE's
+example `0RB0LB_0RC0LA_1LB1RD_1LA1RC` shows the problem.  The carry crosses
+the run of ones in two states that alternate per digit, so the carry ends in
+a state that depends on the parity of `j`.  The lap LENGTH is still affine
+(`2j+2`), so only the state path differs.  The fix is to split `j` by its
+residue mod M (M = 2, then 3):
+
+* A class case covers `j = M*i + c`.  It carries `c1` copies of `uS` in the
+  chain's prefix and `c2` in its postfix, over the unit `uS^M`.  One period
+  is peeled (`c = r + M`) when the unpeeled form does not derive.  Each
+  `j < c` is one concrete lap.
+* The same split applies on the overflow side (`cview p = (S j, None)`).
+  There a case may close up to `lift`: the `p = 1` lap writes over the
+  tail's blank.  The prefix is kept maximally concrete, so the fire-witness
+  search can run past the lap into the next small laps.  An instruction
+  that fires only for one parity of the carry is then still witnessed in
+  every case.
+* A lap-length pre-filter keeps failing anchors cheap.  Measured interior
+  and overflow laps for `j <= 3M+1` must not depend on the high part, and
+  must be affine along each residue class.
+
+The Coq side is per-board: `repeq_*`, `repmul_*` and `repm_*` (`rep u (m*i +
+(c1+c2)) = rep u c1 ++ rep (rep u m) i ++ rep u c2`), one glue lemma per
+case, and `lapi_*`/`lapo_*`/`fireo_*` by a `Nat.div_mod_eq` /
+`Nat.mod_upper_bound` split on `j`.  These feed the unchanged
+`LapGlueTr.glue_neverqhtr` / `QHConveyorTr.lap_qh_stage` (via
+`fire_via_ovf`).  There is no new theory file.  `Print Assumptions` on a
+parity board shows only `functional_extensionality_dep`.  A board compiles
+in ~3 s.
+
+**Yields** (probe at 3 jobs, 300 s cap; then `--tr`/`--qh --emit`, where
+every board is kernel-checked by the emitter's `coqc`):
+
+| bucket (before) | rows | boarded | by |
+|---|---:|---:|---|
+| DN no anchor | 235 | 128 | new alphabets (108 through the nested overflow, 20 flat) |
+| DN no interior chain | 271 | 14 | parity split 12, flat 2 (an anchor the DX run did not reach) |
+| DN no visit witness | 4 | 4 | QE's instruction-level gate (no port needed) |
+| DN nested route is S0-only | 28 | 2 | QE's S1 nest / gate |
+| QH no interior chain (QE: parity 66, Fibonacci 74, other radices) | 225 | 34 | parity split (M = 2 on all 34) |
+| QH no anchor | 74 | 32 | new alphabets (flat) |
+| QH nested-overflow failures | 95 | 0 | |
+| **total** | **932** | **214** | 148 DN + 66 QH |
+
+Three DN rows derive in the probe but not in `emit_lapcert.py`'s own
+anchor walk, which tries anchors in a different order.  They are still
+open.  All boards that derived compiled.  Batches: `CBT_CE_00..04` (148 DN,
+LAPT boards through `sp_lap_batch.py`) and `CBT_CE_05..06` (66 QH, inline
+through `qc_batch.py lap`), 43 s for the last three at `-j3`.  Closeout:
+6,768 boarded before, **6,982** after, **3,942** remaining.
+
+**The residue (718: 390 DN + 328 QH), by blocker.**  DN growth is §7.4.DX's
+record-gap ratio; QH growth is QE's `log2` ratio per cell.
+
+| blocker | DN | QH | what it is |
+|---|---:|---:|---|
+| no interior chain | 255 | 199 | Measured interior lap lengths on the DN rows: over j = 0..5 at the first six anchors of the 271 open DN rows with this blocker, 82 grow exponentially in j (a nested interior); 121 are neither affine nor exponential (the Fibonacci counters and the other radices); 35 never return to the next anchor within 5,000 steps; 21 are affine, which is a chain-search gap; and 12 depend on the high part.  Fibonacci counters: DN gap ratio 1.62 on 41 rows, QH growth 0.694 on 69.  QH also has other radices: 0.79 (26), 0.64 (24), 0.67 (20).  30 QH parity-looking rows (growth 1.00) survive M = 2 and 3 |
+| no anchor | 102 | 32 | Rows with no inferable family (104 of the 309 had none), or with a family whose anchor still does not fit.  The largest DN group is two-sided with gap ratio 1.0 (23 rows) |
+| nested overflow: no exit / boot / inner interior / inner family | 28 | 95 | QE's two-sided binaries (40 QH, growth 1.00) and two-cell-digit binaries (55 QH) are unchanged.  On DN, the no-exit rows (8) are all two-sided |
+| other | 5 | 2 | 3 emit-order misses, 2 "no overflow phase at K=6"; 2 QH offset nests with no `p = 1` fire |
+
+The next routes, by size:
+
+1. **Nested interior laps.**  The exponential class (82 DN rows) has an
+   interior lap that is itself a counter run, for example
+   `0RB0RB_0LC1RA_1RB1LD_1LC0RA`, where the lap at `j` costs 4, 12, 44, 172
+   steps.  `NestedLapLift` already composes such a run on the overflow side.
+   The interior would need the same boot + inner + exit composition, per
+   `j`.
+2. **A Fibonacci counter theory.**  About 110 rows (41 DN + 69 QH) are
+   Zeckendorf counters.  `FIB_ELEVEN.txt` is the state-level reading; there
+   is no Coq module.
+3. **Two-sided counters.**  These are the no-anchor rows with gap ratio
+   1.0 or 1.4, and QE's 40 no-exit rows.  They need an anchor with a
+   counter on each side.
+
+```
+python3 tools/closeouttr/qe_probe.py ROWS probe.jsonl --jobs 3 --timeout 300 [--tr]     # per-row results: tools/closeouttr/ce_probe.tsv
+python3 tools/counters/alphabet_infer.py --list NOANCHOR_ROWS          # then gen_alphabet.py --abc A,B,C
+(cd tools/counters && python3 emit_lapcert.py --tr --emit --list ok.txt --json lap.json)   # --qh for QH
+python3 tools/closeouttr/sp_lap_batch.py lap.json --tag CE --chunk 40
+python3 tools/closeouttr/qc_batch.py lap theories/Machines/CountersTr/LAPQ_*.v --tag CE --chunk 40
+```
+
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
