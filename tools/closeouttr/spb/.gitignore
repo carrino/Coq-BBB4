@@ -8,3 +8,5 @@ lad_s*.txt
 vf_s*.jsonl
 vf_m*.jsonl
 lad_miss.txt
+lad_tc*.txt
+vf_tc*.jsonl
