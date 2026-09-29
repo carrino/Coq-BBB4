@@ -91,10 +91,11 @@ def main():
                          '(LDRQ boards, LadderCheckQHTr); others are skipped')
     a = ap.parse_args()
     remaining = set(l.strip() for l in open(os.path.join(REPO, 'closeouttr_remaining.txt')))
-    if a.qh:
-        qhc = set(l.split('\t')[0] for l in open(os.path.join(REPO, 'closeouttr_classes.tsv'))
-                  if l.split('\t')[1:2] == ['QH'])
-        remaining &= qhc
+    qhc = set(l.split('\t')[0] for l in open(os.path.join(REPO, 'closeouttr_classes.tsv'))
+              if l.split('\t')[1:2] == ['QH'])
+    # each side goes to its own closer: a class-QH row fires its quiet
+    # instructions in a prefix, where the never-QH board's wrapped boot halts
+    remaining = remaining & qhc if a.qh else remaining - qhc
     certs, seen = [], set()
     for f in a.found:
         for line in open(f):
