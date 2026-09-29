@@ -3725,7 +3725,12 @@ concrete-configuration `reflexivity`; none was investigated further.
 
 **Totals.**  SPB boards **1,126** of the 2,233 open SP rows (50%): 775
 lap + 351 ladder, `CBT_SPB_00..31`.  SP open 2,233 -> **1,107**; all
-rows (with `main`'s CE2 integration) -> **2,077** of 10,924.
+rows (with `main`'s CE2 integration) -> **2,077** of 10,924.  The box's
+SP2 ladder run (integrated in #171) boarded many of the same rows.
+`closeouttr_boarded.tsv` credits a row to its alphabetically first batch
+(`CBT_SP2_*` sorts before `CBT_SPB_*`), so it credits only 643 rows to
+SPB.  SP2 also took 14 of the 502 log-width residue rows below.  After
+the merge, SP has **1,093** open rows and all classes 1,957.
 
 **The residue (1,107), characterised.**  `sp_char.py char` at 1e8 steps
 on every residue row (`tools/closeouttr/spb/residue_char.{txt,json}`)
