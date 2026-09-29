@@ -1,0 +1,7 @@
+0RB---_0RC---_1RA---_------	R	2	3	0	true	0.7
+0RB---_1RC---_0RA---_------	R	2	3	0	true	0.8
+0RB---_1RC---_1RA---_------	R	2	3	0	true	0.9
+1RB---_0RC---_0RA---_------	R	2	3	0	true	0.8
+1RB---_0RC---_1RA---_------	R	2	3	0	true	0.7
+1RB---_1RC---_0RA---_------	R	2	3	0	true	0.7
+1RB0LD_1LC0LA_1LA0LC_1RD1RC	R	66349	1	0	false	1.2
