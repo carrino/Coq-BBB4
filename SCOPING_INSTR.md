@@ -3000,6 +3000,17 @@ None of the 34 QH rows fits.  Their quiet instruction stops as late as step
 7.97M (the finder runs past it for QH rows), and their tapes are two- and
 three-block sweeps, not counter + block.
 
+**The SP class (stretch).**  The same finder over all 2,245 open SP rows
+(90 s a row, 3 jobs, ~2 h) certifies **12**, boarded in `CBT_HY_05`
+(`hy/sp_find.jsonl`): all one-phase, and all found from single-instruction
+anchors.  The rest fail before any chain is derived: 1,213 find no
+growing block beside the counter from either end (the log counters of
+§7.4.SP), 1,018 find no anchor cell or no counter family, and 2 time out.
+So §7.4.DX's guess that this checker is the route for SP's sparse hybrids
+holds only for these 12; the other sqrt-width SP rows (not characterised
+further here) are not a counter beside one block.  SP open 2,245 -> **2,233**; all rows
+-> **3,974**.
+
 **Next.**  Most of the 190 multi-block rows are the three-index
 shape §7.4.QS left open: a sweep counter's `(i, k)` glue with a counter
 (or a third tied block) as its far tail.  `HybridGlueTr`'s phase list and
