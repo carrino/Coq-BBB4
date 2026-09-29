@@ -3691,7 +3691,83 @@ By HY's split: **755 of the 1,213 log counters** board, and 20 of the
 | renderer: no lap witness for one instruction | 4 | 8 | 12 |
 | timeout (120 s) | 0 | 1 | 1 |
 
-LADDER ROUTE AND FINAL RESIDUE: IN PROGRESS (valfam.py over the 1,442).
+**The ladder route: 351 rows, `CBT_SPB_16..17, 22..31`.**  CE2's
+value-family finder, `valfam.py --cap 150` (1 job, then 3, then 4
+shards; ~48 s a row, ~6 h wall), over every lap-probe failure and the 16
+emit misses: **578 of 1,458 close** (40%).  `sp_ladder_batch.py` emits
+an `LDRT_*` board for each (`emit_ladder.py --tr`, pins from a 10^6-step
+run) and keeps it only if its closure builds and it compiles: **351
+board** (343 lap-probe failures + 8 emit misses), ~1 s a board, a
+40-row batch in 30-50 s on CI's cores.  The ladder takes rows the lap
+route cannot: of the 343, the lap probe's best blocker was a nested
+overflow for 200, "no interior chain" for 137 and "no anchor" for 6.
+By HY's split, 193 are log counters and 158 no-anchor/no-family rows.
+
+| ladder outcome (1,458 rows) | rows |
+|---|---:|
+| closed and boarded | 351 |
+| closed, closure not built: interior arm, no chain at any threshold | 103 |
+| closed, closure not built: fill arm, no chain at any threshold | 54 |
+| closed, closure not built: no phase whose fill anchors reach every instruction | 29 |
+| closed, closure not built: phase-0 fill names 3-5 digits but widens by 1 | 17 |
+| closed, board fails `coqc` | 24 |
+| not closed: families found but none closed | 468 |
+| not closed: no value family (no anchor whose counter side decomposes) | 349 |
+| not closed: no local rules | 4 |
+| not closed: time cap (150 s) | 59 |
+
+The not-built reasons are the ones §7.4.SP met on its six-row sample:
+the state level shares the interior- and fill-arm gaps, and the
+instruction-specific one (no phase reaching every instruction) is still
+the smallest.  Of the 24 `coqc` failures, 4 are a `nat`-typed term the
+emitter writes where an expression is expected, and the others fail a
+concrete-configuration `reflexivity`; none was investigated further.
+
+**Totals.**  SPB boards **1,126** of the 2,233 open SP rows (50%): 775
+lap + 351 ladder, `CBT_SPB_00..31`.  SP open 2,233 -> **1,107**; all
+rows (with `main`'s CE2 integration) -> **2,077** of 10,924.
+
+**The residue (1,107), characterised.**  `sp_char.py char` at 1e8 steps
+on every residue row (`tools/closeouttr/spb/residue_char.{txt,json}`)
+splits it cleanly by the visited extent:
+
+| rows | extent at 1e8 | burst period ratio | what it is | where it stops |
+|---:|---|---|---|---|
+| 605 | >= 1,000 cells (HY: all no anchor / no family) | 4: 258, 2.25: 183, 9: 38, other 114, 2: 12 | §7.4.SP's doubling bouncers (width w' = 2w + c), not counters | no value family 333, families none closed 272.  `bin/irules` (§7.4.SP) is their route; these are the ones its 200K-step certificates missed |
+| 502 | < 200 cells (HY: 257 log counter, 245 no anchor / no family) | 2: 233, other: 123, 4: 123, 1.41: 14, 2.25 / 9: 9 | counters the lap emitter does not derive | ladder closed but not built or rejected 227; families none closed 196; time cap 59; no value family 16; no local rules 4 |
+
+So every SP counter the ports reach is boarded, and the counter
+residue is 502 rows in three pieces:
+
+1. **227 ladder closures the emitter cannot close** (interior arm 103,
+   fill arm 54, no phase reaching every instruction 29, wide fill 17,
+   `coqc` 24).  These are emitter work, not finder work: an
+   interior-arm witness (§7.4.SP's "obvious next piece") and a fill arm
+   whose chain is not affine in the run length would take most of them.
+2. **196 + 16 + 4 rows the finder does not close.**  Over all 502 log
+   rows the burst ratio is 2 for 233, 4 for 123 and no clean ratio for
+   123, so they are not all binary counters: the ratio-4 rows look like
+   base-4 or two-digit-per-overflow counters, and the unclean ones like
+   §7.4.CE's Fibonacci and other-radix counters (not checked row by row).
+3. **59 time caps**, re-run at 400 s below.
+
+The lap route's own residue is dominated by the nested overflow (492)
+and "no interior chain" (291), which is where the ladder took its 343;
+its "no anchor" rows still open (640) are the 605 wide rows and 35
+counters.
+
+TIME-CAP RE-RUN: IN PROGRESS.
+
+```
+python3 tools/closeouttr/classes.py shard SP 0 1 > sp_rows.txt
+python3 tools/closeouttr/qe_probe.py sp_rows.txt probe.jsonl --jobs 3 --timeout 120 --tr
+tools/closeouttr/spb/drive_emit.sh          # emit_lapcert.py --tr --emit per ~200 derived rows (resumes after a restart)
+tools/closeouttr/spb/board_chunk.sh cN      # sp_lap_batch.py --tag SPB, gen, build, checks, stage
+tools/closeouttr/spb/verify_head.sh         # the invariant checks on a clean worktree of HEAD
+(cd tools/ladder && python3 valfam.py --list lad_sK.txt --cap 150 --json vf_sK.jsonl)   # per shard
+python3 tools/closeouttr/sp_ladder_batch.py vf_s*.jsonl --tag SPB --chunk 40
+python3 tools/closeouttr/spb/tally.py       # the counts above
+```
 
 #### 7.4.BX The small classes: class ED closed, the cube counters need a non-linear liveness (2026-09-29)
 
