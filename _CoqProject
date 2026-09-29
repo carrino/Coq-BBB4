@@ -10191,6 +10191,7 @@ theories/CloseoutTr/CBT_DXQ_03.v
 theories/CloseoutTr/CBT_DXS_00.v
 theories/CloseoutTr/CBT_DXS_01.v
 theories/CloseoutTr/CBT_HY2_00.v
+theories/CloseoutTr/CBT_HY2_01.v
 theories/CloseoutTr/CBT_HY_00.v
 theories/CloseoutTr/CBT_HY_01.v
 theories/CloseoutTr/CBT_HY_02.v

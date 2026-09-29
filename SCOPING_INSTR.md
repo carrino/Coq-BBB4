@@ -3641,6 +3641,120 @@ edge.  It stays as a landed tier for other classes: it is cheap to try
 (the finder costs about 30 s a row on a miss), and a single-region row
 is its L = period special case.
 
+#### 7.4.HY2 HY's residue: a hybrid glue over any positional counter with a top table, 54 boarded (2026-09-29)
+
+Workstream HY2 (batch tag `HY2`), over the DN rows still open whose
+`dx/char_all.tsv` kind is `bouncer_part` with hybrid `sqrt+log` (282),
+`sqrt+fix` (26) or `other` (8): 316 rows (`tools/closeouttr/hy2/rows.txt`).
+The 18 QH rows of these hybrid kinds and the `sqrt+sqrt` rows were not
+touched.
+
+**The sample (20 rows, by eye).**  Only about 5 are a counter beside ONE
+growing block (base 4 with 3-cell digits and a 3-cycle at the junction; a
+binary counter whose top is a 10-cell word; a counter end that shifts into
+a `(10)^k` buffer at each overflow).  About 11 are tapes whose block COUNT
+grows (doubling `010110 1^4 0 1^8 0 1^16 ... 0`, x4 runs
+`(001)^12 00010 (001)^52 00010 (001)^213`), and the rest two-block transfer
+bouncers (`1^216 0 1^403`, one block +2 and the other -1 a round).  A
+block census at 2.5e5 / 1e6 / 4e6 steps over all 316
+(`hy2/blocks.jsonl`): one long block and a short end 125, block count
+growing 75, several blocks with a fixed count 116.  So only the first
+group has a counter end at all, and it is the target.
+
+**What the counter ends are.**  Reading the short end at consecutive
+anchors against every (digit width 1-6, base 2-4) and fitting the values:
+of the 54 rows boarded below, 26 are base 3 and 23 base 4 (3- or 4-cell
+digits, e.g. `001/101/000/100`), 5 binary.  None of these is `E`'s shape,
+and not because of the digits alone: in 43 of the 54 the counter has NO
+top digit, only a terminator (all digits at `b - 1` widen to one more
+digit of `0`, the bijective numeration), and in 11 the top steps through
+two words before the counter widens.  That is what HY's residue note
+called "a digit under the MSB written differently until the next
+overflow": the top is a small cycle of words, not a digit.  The ladder's
+value families do not fit either: their numeration is on the whole tape,
+with no opaque block tail.
+
+**The checker** (`theories/Counters/HybridCtrTr.v`, a sibling of
+`HybridGlueTr`; `Print Assumptions`: `functional_extensionality_dep`
+only).  The counter is a pair `(low, tv)`: low digits in base `b`, one
+word each (`D`), and a top value `lo <= tv < hi` read through a word table
+(`T`).  Its word is `concat (map D low) ++ T tv`, its value the RANK
+`(hi - lo) G |low| + vl low + b^|low| (tv - lo)` with
+`G k = 1 + b + ... + b^(k-1)` (successor, injectivity and existence are
+proved once, `canon_succ`, `canon_inj`, `canon_exists`).  The increment
+is one generic carry chain per shape: per digit `d < b - 1`
+(`Dm^j D d X -> D0^j D(d+1) X`, `X` opaque), per top step
+(`Dm^j T tv -> D0^j T (tv+1)`), and the overflow
+(`Dm^j T(hi-1) -> D0^(j+1) T lo`).  `hi = b lo` is a positional counter
+with a top window, `lo = 0, hi = 1` a terminator-only counter, and
+`b = 2, lo = 1, hi = 2` is exactly HY's `(A, B, C)`.  Each carry case
+names an EXIT (its own mid and sweep), so an overflow that leaves the
+counter in another state is expressible; the lap's block count follows
+the exit taken.  Sweep fires are reached through a carry family (the
+rank families of interior and top shapes, whose phase mod `L` the checker
+computes; the top family's phase by the recurrence `y (j+1) = (hi - lo) +
+b y j`, so no large power is built).  The phase list, the two-index
+anchor and the sweep half are HY's.  A row is one line,
+`apply coversTr_nqh, (hc_sound_nqh _ (mkHCC ...))` (`_mirror` when the
+counter is on the right); a corrupted boot index fails to compile.
+
+**The finder** (`tools/closeouttr/hy2_batch.py`, on `hy_batch.py`'s runs,
+anchors, blocks and chain search).  It reads `(Lpre, b, D)` and a first
+rank off the anchors (rejecting fits whose first rank is below `b^2`:
+a first prototype without that floor read overfitted "families" with first
+values of 4-9), then
+LEARNS the top cycle by simulation: from an observed top word it runs one
+counter half from a constructed anchor and reads what top word the carry
+leaves; when that is `D0` followed by a word already met, the cycle is
+closed and its length is `hi`.  It refits the rank against the anchors,
+reads the mid off interior laps only (an overflow lap may leave by another
+exit), derives one carry chain per case (and the case's own exit by
+simulation when the main mid does not fit), the sweeps, the boot and the
+fire witnesses.  240 s a row, then 600 s for the timeouts; ~1.3 h for the
+316 at 4 jobs.
+
+**Yield: 54 of 316**, `CBT_HY2_00` (38) and `CBT_HY2_01` (16), all 54
+compile (~30 s a batch).  All rows: 2,772 -> **2,718**.
+
+| certificate shape | rows |
+|---|---:|
+| base 3 / 4 / 2 | 26 / 23 / 5 |
+| top cycle length `hi - lo` = 1 (terminator only) / 2 | 43 / 11 |
+| digit width 3 / 4 / 2 cells | 41 / 8 / 5 |
+| one phase / four phases (block unit rotating at the junction) | 46 / 8 |
+| block unit 3 / 2 / 4 cells | 45 / 8 / 1 |
+| counter on the right (certified on the mirror) | 28 |
+| exits per phase | 1 on all 54 |
+
+The boots are short (the latest at step 218).  No boarded row needed a
+second exit; the exit mechanism is there for the two-state overflows seen
+by hand (below), which fail earlier.
+
+**Residue (262)**, per row in `tools/closeouttr/hy2/residue.tsv`:
+
+| rows | tape | where it stops | what it is |
+|---:|---|---|---|
+| 75 | block count grows | no anchor 48, no family 27 | doubling / x4 multi-block tapes: TI's "too many families" rows.  The part that is not blocks is a list of blocks of exponential length, not a counter end: it needs a block-list numeration (a counter whose digits are blocks), not a wider alphabet |
+| 116 | several blocks, count fixed | no anchor 56, no family 57, other 3 | two-block transfer bouncers and three-block sweeps (TI's and BX's shapes); no counter end |
+| 36 | one long block | no counter family | read by hand: two blocks of one unit, one growing linearly and one slowly (a UNARY counter, e.g. `1RB0LC_1LC0RA_1RA1LD_1LA1LA`: `(011)^n ... (011)^k`), or a counter that shifts its low end into a `(10)^k` buffer at each overflow so no fixed anchor cell exists (`0RB0LB_1LC1RA_0LD0LC_1RD1LB`) |
+| 19 | one long block | later: no top cycle 7, no mid 6, no block 4, other 2 | the two-lap overflow: `0RB0LC_1LC1RD_1LA1LB_1RC0RB` (binary, 2-cell digits `01/11`) at an all-ones counter first writes a marker past the MSB and sweeps the block WITHOUT carrying (exit state 2 instead of 0), and carries on the next lap.  A lap that does not increment is outside the one-rank-per-lap anchor; it needs a non-incrementing top step (a top word that keeps the low digits) in the numeration |
+| 14 | one long block | timeout at 600 s | families read; the chain searches do not finish |
+| 2 | one long block | no anchor | |
+
+**Next.**  (1) The two-lap overflow: a top step that keeps the low digits
+(rank arithmetic changes: the widths get extra states); 19 rows plus some
+of the 14 timeouts.  (2) The 75 growing-count rows are one family by eye
+(a counter whose digits are blocks, `1^(2^k)`); a checker for them is the
+TI residue's "counter segment in the family language", in its block-list
+form.  (3) The unary-counter rows are a two-block sweep with a slow block,
+closer to SW's two-index glue than to a counter.
+
+```
+python3 tools/closeouttr/hy2_batch.py find tools/closeouttr/hy2/rows.txt hy2/find1.jsonl --jobs 4
+HY2_BUDGET=600 python3 tools/closeouttr/hy2_batch.py find hy2/timeouts1.txt hy2/find2.jsonl --jobs 4
+python3 tools/closeouttr/hy2_batch.py batch hy2/find1.jsonl hy2/find2.jsonl --tag HY2 --chunk 50
+```
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
