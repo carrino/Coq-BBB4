@@ -1,0 +1,4 @@
+# live outputs of the running probe/driver; per-row results are committed as probe.tsv
+probe.jsonl
+*.log
+pending.txt
