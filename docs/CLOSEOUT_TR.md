@@ -27,7 +27,7 @@ the transition-level bound is unconditional.
 | `theories/CloseoutTr/CloseoutFinalTr.v` | the chain through `census_tr` (needs the walk's `.vo`, so box only: `make closeout-tr-final`) |
 | `closeouttr_remaining.txt`, `closeouttr_boarded.tsv` | **generated**: the open rows, and which batch boarded each closed one |
 | `closeouttr_classes.tsv` | the fixed class of every v10 row (from the 1e8-step scan) |
-| `tools/closeouttr/` | `cbt.py` (batch writer), `rw_batch.py`, `qh_batch.py`, `qc_batch.py` (lap boards inline, quiet cyclers), `qe_probe.py` (lap-emitter failure buckets, every anchor), `ng_batch.py` (n-gram rank tier, probe + batch), `qs_batch.py` (sweep counters: certificate search + batch, `SweepGlueTr`), `dx_char.py` (class characterisation), `dx_tc_batch.py` (translated cyclers), `dx_irqh_batch.py` (irules QH certificates, `MetaBlkPfxQHTr`), `hy_batch.py` (bouncer + counter hybrids: certificate search + batch, `HybridGlueTr`), `gen_closeout_tr.py`, `classes.py` |
+| `tools/closeouttr/` | `cbt.py` (batch writer), `rw_batch.py`, `qh_batch.py`, `qc_batch.py` (lap boards inline, quiet cyclers), `qe_probe.py` (lap-emitter failure buckets, every anchor; `--tr` for the never-QH side), `ng_batch.py` (n-gram rank tier, probe + batch), `qs_batch.py` (sweep counters: certificate search + batch, `SweepGlueTr`), `dx_char.py` (class characterisation), `dx_tc_batch.py` (translated cyclers), `dx_irqh_batch.py` (irules QH certificates, `MetaBlkPfxQHTr`), `hy_batch.py` (bouncer + counter hybrids: certificate search + batch, `HybridGlueTr`), `gen_closeout_tr.py`, `classes.py` |
 
 A batch row is proved by any means at all. The only requirement is a lemma
 `coversTr (row_to_tm r)`:
@@ -42,9 +42,9 @@ A batch row is proved by any means at all. The only requirement is a lemma
 
 | Class | Rows | What they are | Route | Batch tag |
 |---|---:|---|---|---|
-| DN | 4,033 | dense: every instruction still firing at 1e8 | the RepWL finder with the block-length ladder takes only ~5% (193 of 4,038 on the box), the n-gram rank tier at window 4–6 about a quarter (`ng_batch.py`; 969 of 3,922 probed, §7.4.NG); then translated cyclers, `bin/irules` (the sweep counters) and lap boards (the log counters) take 1,442 more (§7.4.DX).  Of the ~1,470 left, the bouncer + counter hybrids go to the counter-and-block lap glue `HybridGlueTr` (`hy_batch.py`, §7.4.HY) | `RW`, `NG`, `DX0`..`DX3`, `HY` |
+| DN | 4,033 | dense: every instruction still firing at 1e8 | the RepWL finder with the block-length ladder takes only ~5% (193 of 4,038 on the box), the n-gram rank tier at window 4–6 about a quarter (`ng_batch.py`; 969 of 3,922 probed, §7.4.NG); then translated cyclers, `bin/irules` (the sweep counters) and lap boards (the log counters) take 1,442 more (§7.4.DX).  Of the ~1,470 left, the bouncer + counter hybrids go to the counter-and-block lap glue `HybridGlueTr` (`hy_batch.py`, §7.4.HY), and the counters' emitter ports (parity split, inferred alphabets) take 148 of the 538 log counters (§7.4.CE) | `RW`, `NG`, `DX0`..`DX3`, `HY`, `CE` |
 | SP | 4,154 | sparse: the quietest instruction fires in rare bursts | a new counter-aware recurrence checker (research); RepWL on the side | `SP`, `RW` |
-| QH | 2,715 | quiet: an instruction silent from before 1e7 | mostly counters, not bouncers: the wrapped RepWL finder (`--qh`, pinned from the 1e8 scan) certified 1 of a random 40 (27 no closure, 12 timeouts at 20 s). Diagnosed in §7.4.QC: counters (lap boards, `LAPQ_*`; §7.4.QE ports the emitter), sweep counters (the two-index glue `SweepGlueTr`, §7.4.QS), hybrids | `QH`, `QC`, `QE`, `QS` |
+| QH | 2,715 | quiet: an instruction silent from before 1e7 | mostly counters, not bouncers: the wrapped RepWL finder (`--qh`, pinned from the 1e8 scan) certified 1 of a random 40 (27 no closure, 12 timeouts at 20 s). Diagnosed in §7.4.QC: counters (lap boards, `LAPQ_*`; §7.4.QE ports the emitter), sweep counters (the two-index glue `SweepGlueTr`, §7.4.QS), hybrids; §7.4.CE takes 66 more of QE's residue | `QH`, `QC`, `QE`, `QS`, `CE` |
 | ED | 22 | the scanner's edge rows | RepWL (6 of the first 9 certify) | `RW` |
 
 Get your rows with a fixed, non-overlapping slice:
