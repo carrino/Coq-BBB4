@@ -232,7 +232,8 @@ def eqlift(a, b):
             and LC.rstrip0(a[3]) == LC.rstrip0(b[3]))
 
 
-def validate(tab, st0, encf, tail, far, cost, co, hi=200, peel=None):
+def validate(tab, st0, encf, tail, far, cost, co, hi=200, peel=None,
+             ocost=None):
     """Differentially check both branches against the raw simulator: exact
     step counts AND exact configurations, on every p in range.
 
@@ -243,7 +244,9 @@ def validate(tab, st0, encf, tail, far, cost, co, hi=200, peel=None):
     n = 0
     for p in range(1 if peel is not None else 2, hi):
         j, ov = carry(p)
-        if ov and peel is not None:
+        if ov and ocost is not None:
+            steps = ocost(j - 1)
+        elif ov and peel is not None:
             steps = peel if j == 1 else co[0] * (j - 2) + co[1]
         elif ov:
             steps = co[0] * (j - 1) + co[1]
@@ -1030,6 +1033,464 @@ def boot_probe(tab, st0, encf, tail, far, p0, maxT=200000):
     return None
 
 
+# ---------------------------------------------------------------------------
+# The PARITY interior (SCOPING_INSTR 7.4.CE).  Some binary counters carry
+# across their run of ones in two states that alternate per digit, so the
+# state that ends the carry depends on the parity of [j] and no single [srun]
+# chain over [rep uS j] closes.  Over the unit [uS^M] it does, once per
+# residue of [j] mod M: a CLASS case covers [j = M*i + c] with [c1] copies of
+# [uS] in the prefix and [c2] in the postfix ([c = c1 + c2]), and each [j]
+# below the class's first value is one CONCRETE lap.  The board states each
+# case as an ordinary exact chain; [repm_*] (rep u (m*i + (c1+c2)) = rep u c1
+# ++ rep (rep u m) i ++ rep u c2) is the only new glue, proved in the board.
+# ---------------------------------------------------------------------------
+PAR_MODE = True
+PAR_MS = (2, 3)
+
+
+def _lap_len(tab, st0, encf, tail, far, p, cap=20000):
+    """Raw-simulator steps from the anchor at [p] to the one at [p+1] (up
+    to [lift]), or None."""
+    cfg = (st0, tuple(encf(p)) + tuple(tail), HD, tuple(far))
+    want = (st0, tuple(encf(p + 1)) + tuple(tail), HD, tuple(far))
+    for n in range(1, cap):
+        try:
+            cfg = LC.wstep(tab, False, False, cfg)
+        except Halt_:
+            return None
+        if eqlift(cfg, want):
+            return n
+    return None
+
+
+def _par_plausible(tab, st0, encf, tail, far, M, ovf):
+    """Cheap pre-filter for the residue split: measured lap lengths at
+    j = 0..3M+1 (interior: two high parts each; overflow: p = 2^(j+1)-1) must
+    be affine in j along every residue class mod M from one period on.  (The
+    lengths may well be affine overall: what the parity changes can be the
+    STATE path of the carry, not its length.)"""
+    n = {}
+    for j in range(3 * M + 2):
+        ps = ([(1 << (j + 1)) - 1] if ovf else
+              [(1 << j) - 1 + (1 << (j + 1)) * k for k in (1, 2)])
+        ls = set(_lap_len(tab, st0, encf, tail, far, q) for q in ps)
+        if len(ls) != 1 or None in ls:
+            return False
+        n[j] = ls.pop()
+    for r in range(M):
+        seq = [n[j] for j in range(r + M, 3 * M + 2, M)]
+        if len(seq) >= 3 and len(set(b - a for a, b in zip(seq, seq[1:]))) != 1:
+            return False
+    return True
+
+
+def _par_int(tab, st0, d, far, encf=None, tail=()):
+    F = (tuple(far), (), 0, 0, ())
+    uS, uD, sS, sD = (tuple(d[k]) for k in ('uS', 'uD', 'sS', 'sD'))
+    for M in PAR_MS:
+        if encf is not None and not _par_plausible(tab, st0, encf, tail, far,
+                                                   M, False):
+            continue
+        cases = []
+        for r in range(M):
+            got = None
+            for c in (r, r + M):
+                for c1 in sorted(range(c + 1), key=lambda x: (x != 0, x != c, x)):
+                    c2 = c - c1
+                    X0 = (st0, (uS * c1, uS * M, 1, 0, uS * c2 + sS), HD, F)
+                    X1 = (st0, (uD * c1, uD * M, 1, 0, uD * c2 + sD), HD, F)
+                    ch = LC.derive_chain(tab, False, True, X0, X1)
+                    if ch is None:
+                        continue
+                    rr = LC.srun(tab, False, True, ch, X0)
+                    if rr is None or rr[2] == 0 or rr[0] != X1:
+                        continue
+                    got = dict(kind='cls', M=M, r=r, c=c, c1=c1, c2=c2,
+                               X0=X0, X1=X1, ch=ch, cost=(rr[1], rr[2]))
+                    break
+                if got is not None:
+                    break
+            if got is None:
+                break
+            cases.append(got)
+            for jc in range(r, got['c'], M):
+                K0 = (st0, (uS * jc + sS, (), 0, 0, ()), HD, F)
+                K1 = (st0, (uD * jc + sD, (), 0, 0, ()), HD, F)
+                ch = LC.derive_chain(tab, False, True, K0, K1)
+                rr = LC.srun(tab, False, True, ch, K0) if ch else None
+                if rr is None or rr[2] == 0 or rr[0] != K1:
+                    got = None
+                    break
+                cases.append(dict(kind='con', j=jc, X0=K0, X1=K1, ch=ch,
+                                  cost=(rr[1], rr[2])))
+            if got is None:
+                break
+        else:
+            def cost(j, cases=cases, M=M):
+                for k in cases:
+                    if k['kind'] == 'con' and k['j'] == j:
+                        return k['cost'][1]
+                for k in cases:
+                    if k['kind'] == 'cls' and j >= k['c'] and (j - k['c']) % M == 0:
+                        return k['cost'][0] * ((j - k['c']) // M) + k['cost'][1]
+                raise AssertionError(j)
+            return dict(M=M, cases=cases, cost=cost)
+    return None
+
+
+def _flat(side):
+    """A side's denotation as (concrete-left, unit, concrete-right) with the
+    count folded, for comparing a reached side against a wanted one."""
+    pre, u, a, b, post = side
+    if not u or not a:
+        return (tuple(pre) + tuple(u) * b + tuple(post), (), ())
+    return (tuple(pre) + tuple(u) * b, (tuple(u), a), tuple(post))
+
+
+def _ovf_case(tab, X0, X1):
+    """An overflow-case chain X0 -> X1, exact, or else up to trailing blanks
+    at the two open ends ([lift]).  Returns (chain, reached, cost, pads) with
+    [pads] = (dl, cl, dr, cr): the trailing blanks the REACHED (d) or the
+    WANTED (c) configuration carries past the other on the left/right end."""
+    ch = LC.derive_chain(tab, True, True, X0, X1)
+    if ch is None:
+        ch = LC.derive_chain(tab, True, True, X0, X1, lift=True)
+    if ch is None:
+        return None
+    rr = LC.srun(tab, True, True, ch, X0)
+    if rr is None or rr[2] == 0:
+        return None
+    R = rr[0]
+    if R == X1:
+        return ch, X1, (rr[1], rr[2]), (0, 0, 0, 0)
+    pads = []
+    for sr, sw in ((R[1], X1[1]), (R[3], X1[3])):
+        fr, fw = _flat(sr), _flat(sw)
+        if fr[:2] != fw[:2] and not (not fr[1] and not fw[1]):
+            return None
+        tr_, tw = (fr[2], fw[2]) if fr[1] else (fr[0], fw[0])
+        if fr[1] and fr[0] != fw[0]:
+            return None
+        n = len(tw) - len(tr_)
+        if n >= 0 and tw == tr_ + (0,) * n:
+            pads += [0, n]
+        elif n < 0 and tr_ == tw + (0,) * -n:
+            pads += [-n, 0]
+        else:
+            return None
+    if R[0] != X1[0] or R[2] != X1[2]:
+        return None
+    return ch, R, (rr[1], rr[2]), tuple(pads)
+
+
+def _par_ovf(tab, st0, d, tail, far, M, peel=True):
+    """The overflow branch per residue of [j] mod M ([cview p = (S j, None)]):
+    [E p = rep uS (j + obS) ++ soS], [E (succ p) = rep uD (S j) ++ soD].  A
+    CLASS case covers [j = M*i + c] with the concrete copies split [a1]/[a2]
+    around [rep uS^M i] on the source side and [b1]/[b2] on the target side;
+    each [j] below its class's first value is one CONCRETE lap.  Exact only."""
+    F = (tuple(far), (), 0, 0, ())
+    uS, uD = tuple(d['uS']), tuple(d['uD'])
+    soS, soD, obS = tuple(d['soS']) + tuple(tail), tuple(d['soD']) + tuple(tail), d['obS']
+    cases = []
+    for r in range(M):
+        got = None
+        # one period PEELED first, and every concrete copy in the prefix:
+        # the fire witnesses run past the lap's end into the next small laps
+        # (the other parity's carry), which needs concrete cells behind the
+        # head rather than the repeated block
+        for c in ((r + M, r) if peel else (r, r + M)):
+            na, nb = c + obS, c + 1
+            for a1 in sorted(range(na + 1), key=lambda x: (x != na, -x)):
+                for b1 in sorted(range(nb + 1), key=lambda x: (x != nb, -x)):
+                    X0 = (st0, (uS * a1, uS * M, 1, 0, uS * (na - a1) + soS), HD, F)
+                    X1 = (st0, (uD * b1, uD * M, 1, 0, uD * (nb - b1) + soD), HD, F)
+                    oc = _ovf_case(tab, X0, X1)
+                    if oc is None:
+                        continue
+                    got = dict(kind='cls', M=M, r=r, c=c, a1=a1, b1=b1,
+                               X0=X0, X1=oc[1], W1=X1, ch=oc[0], cost=oc[2],
+                               pads=oc[3])
+                    break
+                if got is not None:
+                    break
+            if got is not None:
+                break
+        if got is None:
+            return None
+        cases.append(got)
+        for jc in range(r, got['c'], M):
+            K0 = (st0, (uS * (jc + obS) + soS, (), 0, 0, ()), HD, F)
+            K1 = (st0, (uD * (jc + 1) + soD, (), 0, 0, ()), HD, F)
+            oc = _ovf_case(tab, K0, K1)
+            if oc is None:
+                return None
+            cases.append(dict(kind='con', j=jc, X0=K0, X1=oc[1], W1=K1,
+                              ch=oc[0], cost=oc[2], pads=oc[3]))
+
+    def cost(j, cases=cases, M=M):
+        for k in cases:
+            if k['kind'] == 'con' and k['j'] == j:
+                return k['cost'][1]
+        for k in cases:
+            if k['kind'] == 'cls' and j >= k['c'] and (j - k['c']) % M == 0:
+                return k['cost'][0] * ((j - k['c']) // M) + k['cost'][1]
+        raise AssertionError(j)
+    return dict(M=M, cases=cases, cost=cost)
+
+
+# The PARITY board pieces.  Every case is an ordinary exact [srun] chain; the
+# glue rewrites [rep uS j] at [j = M*i + c] with [repeq_*]/[repm_*] below and
+# otherwise reads like [GLUE_SPLIT].  The case split of [j] is by
+# [Nat.div_mod_eq]/[Nat.mod_upper_bound], so one proof shape serves every M.
+PAR_REP = r"""(** [rep] at [j = m*i + (c1 + c2)]: the residue cases' only algebra. *)
+Lemma repeq_@ID@ : forall (u : list Sym) n m, n = m -> rep u n = rep u m.
+Proof. intros u n m ->. reflexivity. Qed.
+
+Lemma repmul_@ID@ : forall (u : list Sym) m i, rep u (m * i) = rep (rep u m) i.
+Proof.
+  intros u m i. induction i as [|i IH]; [rewrite Nat.mul_0_r; reflexivity|].
+  replace (m * S i) with (m + m * i) by lia. rewrite rep_add, IH. reflexivity.
+Qed.
+
+Lemma repm_@ID@ : forall (u : list Sym) m i c1 c2,
+  rep u (m * i + (c1 + c2)) = rep u c1 ++ rep (rep u m) i ++ rep u c2.
+Proof.
+  intros u m i c1 c2.
+  replace (m * i + (c1 + c2)) with (c1 + (m * i + c2)) by lia.
+  rewrite !rep_add, repmul_@ID@. reflexivity.
+Qed."""
+
+PAR_NORM = ("cbn [rep app Nat.mul Nat.add]; rewrite <- ?app_assoc; cbn [app]; "
+            "rewrite ?app_nil_r; reflexivity")
+
+
+def _par_lx(side, ix):
+    """A reached side's denotation as a Coq list expression at index [ix]."""
+    pre, u, a, b, post = side
+    if not u or not a:
+        return clist(tuple(pre) + tuple(u) * b + tuple(post))
+    if (a, b) != (1, 0):
+        raise DeriveError('par: reached side not at count i')
+    return '%s ++ rep %s %s ++ %s' % (clist(pre), clist(u), ix, clist(post))
+
+
+def _pad(e, n):
+    return '(' * n + e + ''.join(') ++ [S0]' for _ in range(n))
+
+
+def _par_defs(cases, tag, el, ID):
+    out = []
+    for n, k in enumerate(cases):
+        nm = '%s%d_%s' % (tag, n, ID)
+        what = ('j = %d (concrete)' % k['j'] if k['kind'] == 'con' else
+                'j = %d*i + %d' % (k['M'], k['c']))
+        X = '%s%d_%s' % (tag.upper(), n, ID)
+        out.append('(** %s *)\n'
+                   'Definition %s0 : sconf := %s.\n'
+                   'Definition %s1 : sconf := %s.\n'
+                   'Definition ch%s_%s : list lstep := %s.\n\n'
+                   'Lemma run_%s_%s : srun tm %s true ch%s_%s %s0 = '
+                   'Some (%s1, %d, %d).\n'
+                   'Proof. vm_compute. reflexivity. Qed.'
+                   % (what, X, cconf(k['X0']), X, cconf(k['X1']),
+                      tag + str(n), ID, cchain(k['ch']),
+                      tag + str(n), ID, el, tag + str(n), ID, X, X,
+                      k['cost'][0], k['cost'][1]))
+    return '\n\n'.join(out)
+
+
+def _par_split(M, cases, leaf):
+    """The [j] case split: [leaf(case, index_expr)] per residue; a class
+    that starts one period up gets its concrete case at [i = 0]."""
+    lines = ['  pose proof (Nat.div_mod_eq j %d) as Hd.' % M,
+             '  pose proof (Nat.mod_upper_bound j %d ltac:(discriminate)) as Hm.' % M,
+             '  set (i := j / %d) in *. set (r := j mod %d) in *. clearbody i r.'
+             % (M, M),
+             '  destruct r as %s; [%s| exfalso; lia].'
+             % ('[' + '|['.join([''] * M) + '|r' + ']' * (M - 1) + ']'
+                if M > 1 else '[|r]',
+                ' | '.join(['idtac'] * M) + ' ')]
+    for r in range(M):
+        cls = [k for k in cases if k['kind'] == 'cls' and k['r'] == r][0]
+        if cls['c'] == r:
+            lines.append('  - ' + leaf(cls, 'i').replace('\n', '\n    '))
+        else:
+            con = [k for k in cases if k['kind'] == 'con' and k['j'] == r][0]
+            lines.append('  - destruct i as [|i].')
+            lines.append('    + assert (Ej : j = %d) by lia. subst j.' % r)
+            lines.append('      ' + leaf(con, '0').replace('\n', '\n      '))
+            lines.append('    + ' + leaf(cls, 'i').replace('\n', '\n      '))
+    return '\n'.join(lines)
+
+
+def par_interior(D, ID, d, enc, tail):
+    P = D['par']
+    cases = P['cases']
+    xl = '(%s q0 ++ %s)' % (enc, tail)
+    glue = []
+    for n, k in enumerate(cases):
+        X = 'P%d_%s' % (n, ID)
+        if k['kind'] == 'con':
+            glue.append(
+                'Lemma gpar%d_%s : forall p q0, cview p = (%d, Some q0) ->\n'
+                '  Cc p = cden %s [] 0 %s0 /\\ cden %s [] 0 %s1 = Cc (Pos.succ p).\n'
+                'Proof.\n'
+                '  intros p q0 E. destruct (%s.%s p %d q0 E) as (H1 & H2).\n'
+                '  unfold Cc_%s, cden, %s0, %s1; cbn [c_st c_l c_h c_r].\n'
+                '  unfold sden; cbn [s_pre s_u s_a s_b s_post].\n'
+                '  split; [rewrite H1 | rewrite H2]; %s.\n'
+                'Qed.'
+                % (n, ID, k['j'], xl, X, xl, X, d['mod'], d['some'], k['j'],
+                   ID, X, X, PAR_NORM))
+        else:
+            cc = '(%d + %d)' % (k['c1'], k['c2'])
+            glue.append(
+                'Lemma gpar%d_%s : forall p j q0 i, cview p = (j, Some q0) ->\n'
+                '  j = %d * i + %d ->\n'
+                '  Cc p = cden %s [] i %s0 /\\ cden %s [] i %s1 = Cc (Pos.succ p).\n'
+                'Proof.\n'
+                '  intros p j q0 i E Hj. destruct (%s.%s p j q0 E) as (H1 & H2).\n'
+                '  rewrite (repeq_%s %s _ (%d * i + %s)) in H1 by lia.\n'
+                '  rewrite (repeq_%s %s _ (%d * i + %s)) in H2 by lia.\n'
+                '  rewrite repm_%s in H1, H2.\n'
+                '  unfold Cc_%s, cden, %s0, %s1; cbn [c_st c_l c_h c_r].\n'
+                '  unfold sden; cbn [s_pre s_u s_a s_b s_post].\n'
+                '  replace (1 * i + 0) with i by lia.\n'
+                '  split; [rewrite H1 | rewrite H2]; %s.\n'
+                'Qed.'
+                % (n, ID, k['M'], k['c'], xl, X, xl, X, d['mod'], d['some'],
+                   ID, clist(d['uS']), k['M'], cc,
+                   ID, clist(d['uD']), k['M'], cc, ID,
+                   ID, X, X, PAR_NORM))
+
+    def leaf(k, ix):
+        n = cases.index(k)
+        X = 'P%d_%s' % (n, ID)
+        g = ('gpar%d_%s p q0 E' % (n, ID) if k['kind'] == 'con' else
+             'gpar%d_%s p j q0 i E ltac:(lia)' % (n, ID))
+        return ('destruct (%s) as (HA & HB).\n'
+                'exists (%d * %s + %d). split; [lia|]. rewrite HA.\n'
+                'rewrite (srun_sound tm false true chp%d_%s %s0 %s1 %d %d\n'
+                '           run_p%d_%s %s [] %s ltac:(discriminate) ltac:(reflexivity)).\n'
+                'f_equal. exact HB.'
+                % (g, k['cost'][0], ix, k['cost'][1], n, ID, X, X,
+                   k['cost'][0], k['cost'][1], n, ID, xl, ix))
+    lapi = ('Lemma lapi_%s : forall p j q0, cview p = (j, Some q0) ->\n'
+            '  exists n, 0 < n /\\ csteps tm n (Cc p) = Some (Cc (Pos.succ p)).\n'
+            'Proof.\n'
+            '  intros p j q0 E.\n%s\nQed.' % (ID, _par_split(P['M'], cases, leaf)))
+    return (_par_defs(cases, 'p', 'false', ID),
+            PAR_REP.replace('@ID@', ID) + '\n\n' + '\n\n'.join(glue) + '\n\n' + lapi)
+
+
+def par_overflow(D, ID, d):
+    """The overflow per residue: definitions, the [gsopar*] glue (the anchor
+    side, which the fire witnesses need too), [lapo_*] and [fireo_*]."""
+    P = D['opar']
+    cases = P['cases']
+    glue = []
+    for n, k in enumerate(cases):
+        X = 'O%d_%s' % (n, ID)
+        ix = '0' if k['kind'] == 'con' else 'i'
+        dl, cl, dr, cr = k['pads']
+        if k['kind'] == 'con':
+            head = ('Lemma gopar%d_%s : forall p, cview p = (S %d, None) ->\n'
+                    % (n, ID, k['j']))
+            intro = ('  intros p E. destruct (%s.%s p %d E) as (H1 & H2).\n'
+                     % (d['mod'], d['none'], k['j']))
+            rw = ''
+            rpl = ''
+        else:
+            na, nb = k['c'] + d['obS'], k['c'] + 1
+            ca = '(%d + %d)' % (k['a1'], na - k['a1'])
+            cb = '(%d + %d)' % (k['b1'], nb - k['b1'])
+            head = ('Lemma gopar%d_%s : forall p j i, cview p = (S j, None) ->\n'
+                    '  j = %d * i + %d ->\n' % (n, ID, k['M'], k['c']))
+            intro = ('  intros p j i E Hj. destruct (%s.%s p j E) as (H1 & H2).\n'
+                     % (d['mod'], d['none']))
+            rw = ('  rewrite (repeq_%s %s _ (%d * i + %s)) in H1 by lia.\n'
+                  '  rewrite (repeq_%s %s _ (%d * i + %s)) in H2 by lia.\n'
+                  '  rewrite repm_%s in H1, H2.\n'
+                  % (ID, clist(d['uS']), k['M'], ca,
+                     ID, clist(d['uD']), k['M'], cb, ID))
+            rpl = 'replace (1 * i + 0) with i by lia.'
+        if not any(k['pads']):
+            glue.append(
+                head +
+                '  Cc p = cden [] [] %s %s0 /\\ cden [] [] %s %s1 = Cc (Pos.succ p).\n'
+                'Proof.\n' % (ix, X, ix, X) + intro + rw +
+                '  unfold Cc_%s, cden, %s0, %s1; cbn [c_st c_l c_h c_r].\n'
+                '  unfold sden; cbn [s_pre s_u s_a s_b s_post].\n' % (ID, X, X)
+                + ('  %s\n' % rpl if rpl else '') +
+                '  split; [rewrite H1 | rewrite H2]; %s.\n'
+                'Qed.' % PAR_NORM)
+            continue
+        R = k['X1']
+        lx, fx = _par_lx(R[1], ix), _par_lx(R[3], ix)
+        glue.append(
+            head +
+            '  Cc p = cden [] [] %s %s0 /\\\n'
+            '  lift (cden [] [] %s %s1) = lift (Cc (Pos.succ p)).\n'
+            'Proof.\n' % (ix, X, ix, X) + intro + rw +
+            '  split.\n'
+            '  - unfold Cc_%s, cden, %s0; cbn [c_st c_l c_h c_r].\n'
+            '    unfold sden; cbn [s_pre s_u s_a s_b s_post].\n' % (ID, X)
+            + ('    %s\n' % rpl if rpl else '') +
+            '    rewrite H1; %s.\n'
+            '  - assert (HD : cden [] [] %s %s1 = (%s, (%s, %s, %s))).\n'
+            '    { unfold cden, %s1, sden; cbn [c_st c_l c_h c_r s_pre s_u s_a s_b s_post].\n'
+            '      %s%s. }\n'
+            '    assert (HC : Cc (Pos.succ p) = (%s, (%s, %s, %s))).\n'
+            '    { unfold Cc_%s. rewrite H2. %s. }\n'
+            '    rewrite HD, HC. rewrite ?lift_app_blank_l, ?lift_app_blank. reflexivity.\n'
+            'Qed.'
+            % (PAR_NORM, ix, X, ST[R[0]], _pad(lx, dl), SYM[R[2]], _pad(fx, dr),
+               X, (rpl + ' ') if rpl else '', PAR_NORM,
+               ST[R[0]], _pad(lx, cl), SYM[R[2]], _pad(fx, cr), ID, PAR_NORM))
+
+    def gcall(k, n):
+        return ('gopar%d_%s p E' % (n, ID) if k['kind'] == 'con' else
+                'gopar%d_%s p j i E ltac:(lia)' % (n, ID))
+
+    def leaf(k, ix):
+        n = cases.index(k)
+        X = 'O%d_%s' % (n, ID)
+        return ('destruct (%s) as (HA & HB).\n'
+                'exists (%d * %s + %d), (cden [] [] %s %s1).\n'
+                'split; [| split; [%s | lia]].\n'
+                'rewrite HA. exact (srun_sound tm true true cho%d_%s %s0 %s1 %d %d\n'
+                '           run_o%d_%s [] [] %s ltac:(reflexivity) ltac:(reflexivity)).'
+                % (gcall(k, n), k['cost'][0], ix, k['cost'][1], ix, X,
+                   'exact HB' if any(k['pads']) else 'rewrite HB; reflexivity',
+                   n, ID, X, X, k['cost'][0], k['cost'][1], n, ID, ix))
+    lapo = ('Lemma lapo_%s : forall p j, cview p = (S j, None) ->\n'
+            '  exists n c\', csteps tm n (Cc p) = Some c\'\n'
+            '          /\\ lift c\' = lift (Cc (Pos.succ p)) /\\ 0 < n.\n'
+            'Proof.\n'
+            '  intros p j E.\n%s\nQed.' % (ID, _par_split(P['M'], cases, leaf)))
+
+    def fleaf(k, ix):
+        n = cases.index(k)
+        return ('destruct (%s) as (HA & _).\n'
+                'exact (fire_of_run_instr tm Cc true true l%d O%d_%s0 p %s [] [] t\n'
+                '         H%d ltac:(reflexivity) ltac:(reflexivity) HA).'
+                % (gcall(k, n), n, n, ID, ix, n))
+    ls = ' '.join('l%d' % n for n in range(len(cases)))
+    hyps = ''.join('  srun_instr tm true true l%d O%d_%s0 = Some t ->\n' % (n, n, ID)
+                   for n in range(len(cases)))
+    hs = ' '.join('H%d' % n for n in range(len(cases)))
+    fireo = ('Lemma fireo_%s : forall (%s : list lstep) (t : Instr),\n%s'
+             '  forall p j, cview p = (S j, None) ->\n'
+             '  exists k c, csteps tm k (Cc p) = Some c /\\ cinstr c = t.\n'
+             'Proof.\n'
+             '  intros %s t %s p j E.\n%s\nQed.\n'
+             % (ID, ls, hyps, ls, hs, _par_split(P['M'], cases, fleaf)))
+    return (_par_defs(cases, 'o', 'true', ID),
+            ('' if D.get('par') else PAR_REP.replace('@ID@', ID) + '\n\n')
+            + '\n\n'.join(glue) + '\n\n' + lapo, fireo)
+
+
 def derive(spec, edge, tail, p0, enc, far=()):
     tab = parse(spec)
     st0 = LAB.index(edge)
@@ -1045,6 +1506,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
 
     chi = LC.derive_chain(tab, False, True, A0, A1)
     islack = False
+    par = None
     if chi is None:
         chz = LC.derive_chain(tab, False, True, Z0, Z1)
         chp = LC.derive_chain(tab, False, True, P0, P1)
@@ -1076,23 +1538,34 @@ def derive(spec, edge, tail, p0, enc, far=()):
             chz = chz or LC.derive_chain(tab, False, True, Z0, Z1, lift=True)
             chp = chp or LC.derive_chain(tab, False, True, P0, P1, lift=True)
             if chz is None or chp is None:
-                raise DeriveError('no interior chain')
-            if (LC.chain_is_exact(tab, False, True, chz, Z0, Z1)
-                    and LC.chain_is_exact(tab, False, True, chp, P0, P1)):
-                raise DeriveError(
-                    'internal: exact split found only under lift')
-            islack = True
-            mode = 'split'
-            rz = LC.srun(tab, False, True, chz, Z0)
-            rp = LC.srun(tab, False, True, chp, P0)
-            if rz[2] == 0 or rp[2] == 0:
-                raise DeriveError('lap of zero length at j=0')
-            # as on the one-chain lift route, the board must name the REACHED
-            # configurations -- they are what [run_z_*]/[run_p_*] state
-            Z1, P1 = rz[0], rp[0]
-            ri = None
-            cost = (lambda j, z=(rz[1], rz[2]), q=(rp[1], rp[2]):
-                    z[0] * 0 + z[1] if j == 0 else q[0] * (j - 1) + q[1])
+                # the PARITY split (SCOPING_INSTR 7.4.CE): the carry crosses
+                # the run of ones in states that alternate per digit, so no
+                # one chain over [rep uS j] closes; chains over [rep uS^M i]
+                # per residue of [j] mod M do.  Exact only.
+                par = (_par_int(tab, st0, d, far, encf, tail)
+                       if PAR_MODE and TR_MODE else None)
+                if par is None:
+                    raise DeriveError('no interior chain')
+                mode = 'par'
+                chi = ri = rz = rp = chz = chp = None
+                cost = par['cost']
+            else:
+                if (LC.chain_is_exact(tab, False, True, chz, Z0, Z1)
+                        and LC.chain_is_exact(tab, False, True, chp, P0, P1)):
+                    raise DeriveError(
+                        'internal: exact split found only under lift')
+                islack = True
+                mode = 'split'
+                rz = LC.srun(tab, False, True, chz, Z0)
+                rp = LC.srun(tab, False, True, chp, P0)
+                if rz[2] == 0 or rp[2] == 0:
+                    raise DeriveError('lap of zero length at j=0')
+                # as on the one-chain lift route, the board must name the REACHED
+                # configurations -- they are what [run_z_*]/[run_p_*] state
+                Z1, P1 = rz[0], rp[0]
+                ri = None
+                cost = (lambda j, z=(rz[1], rz[2]), q=(rp[1], rp[2]):
+                        z[0] * 0 + z[1] if j == 0 else q[0] * (j - 1) + q[1])
         else:
             if LC.chain_is_exact(tab, False, True, chi, A0, A1):
                 raise DeriveError(
@@ -1121,6 +1594,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
     oslack = False
     nest = None
     peel = None
+    opar = None
     if cho is None:
         # The same trailing blank, on the overflow branch.  This one costs NO
         # new Coq: [geo_*] already closes the overflow up to [lift] (that is
@@ -1158,18 +1632,44 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 nest = NC.derive_offset(tab, ENCDATA, ENCS, ENC, enc, st0,
                                         tail, far)
             except NC.NestError:
-                raise DeriveError('no overflow chain (nested: %s)' % e)
-        if nest.get('route') == 'offset':
-            # every overflow-side piece lives at the reindexed sides
-            B0, B1 = nest['B0R'], nest['B1R']
-        cho = nest['che']
-        ro = LC.srun(tab, True, True, cho, nest['BE0'])
+                # LAST: the overflow per residue of j (the PARITY split,
+                # SCOPING_INSTR 7.4.CE), at the interior's modulus when the
+                # interior is split too
+                if PAR_MODE and TR_MODE:
+                    for M in ((par['M'],) if par else PAR_MS):
+                        if not _par_plausible(tab, st0, encf, tail, far, M,
+                                              True):
+                            continue
+                        opar = (_par_ovf(tab, st0, d, tail, far, M)
+                                or _par_ovf(tab, st0, d, tail, far, M, False))
+                        if opar is not None:
+                            break
+                if opar is None:
+                    raise DeriveError('no overflow chain (nested: %s)' % e)
+        if opar is not None:
+            # the board's overflow pieces are the per-residue cases; the
+            # flat fields name the first class case (for the prose only)
+            k0 = [k for k in opar['cases'] if k['kind'] == 'cls'][0]
+            B0, B1, cho = k0['X0'], k0['X1'], k0['ch']
+            ro = LC.srun(tab, True, True, cho, B0)
+        else:
+            if nest.get('route') == 'offset':
+                # every overflow-side piece lives at the reindexed sides
+                B0, B1 = nest['B0R'], nest['B1R']
+            cho = nest['che']
+            ro = LC.srun(tab, True, True, cho, nest['BE0'])
     else:
         ro = LC.srun(tab, True, True, cho, B0)
     if ro[2] == 0:
         raise DeriveError('lap of zero length at j=0')
 
-    if nest is None:
+    if opar is not None:
+        ok, why = validate(tab, st0, encf, tail, far, cost, None,
+                           ocost=opar['cost'])
+        if not ok:
+            raise DeriveError('validation: ' + why)
+        why += ' (overflow split mod %d)' % opar['M']
+    elif nest is None:
         ok, why = validate(tab, st0, encf, tail, far, cost, (ro[1], ro[2]),
                            peel=peel['n0'] if peel else None)
         if not ok:
@@ -1284,6 +1784,8 @@ def derive(spec, edge, tail, p0, enc, far=()):
     # the overflow close: reached post vs wanted post, up to trailing blanks
     got = ro[0][1][4]
     want = tuple(d['soD']) + tuple(tail)
+    if opar is not None:
+        got = want            # every case chain closes EXACTLY on its target
     if LC.rstrip0(got) != LC.rstrip0(want):
         raise DeriveError('overflow close mismatch %r vs %r' % (got, want))
 
@@ -1297,7 +1799,7 @@ def derive(spec, edge, tail, p0, enc, far=()):
                 A0=A0, A1=A1, B0=B0, B1=ro[0], vis=vis, visi=visi, visx=visx,
                 qh=qh, boot=boot, avoid=avoid,
                 absd=absd, sset=sset, islack=islack, oslack=oslack,
-                nest=nest, opeel=peel, trmiss=trmiss,
+                nest=nest, opeel=peel, trmiss=trmiss, par=par, opar=opar,
                 ovpost=list(got), ovwant=list(want), val=why)
 
 
@@ -1634,6 +2136,7 @@ def render(D):
                     .replace('@QUIETC@', slistc(quiet_of(D['sset'])))
                     .replace('@ABSD@', str(D['absd'])),
         '@NI@': ('%d*j+%d' % D['ci'] if D['mode'] == 'one'
+                 else '' if D['mode'] == 'par'
                  else 'j=0: %d ; j=S j\': %d*j\'+%d'
                       % (D['cz'][1], D['cp'][0], D['cp'][1])),
         '@NO@': ('boot %d*j+%d, then the inner counter\'s own laps to the\n'
@@ -1666,10 +2169,35 @@ def render(D):
     if N:
         reps.update((NC.nest_reps_offset if offset else NC.nest_reps)
                     (D, ENCDATA, clist, cconf, cchain, ST, ID))
+    if D.get('par') or D.get('opar'):
+        # the residue-split routes (SCOPING_INSTR 7.4.CE); TR boards only
+        # ([render_tr] cuts the state-level visits these would break)
+        encn = d.get('fn', D['enc'])
+        if D.get('par'):
+            idefs, iglue = par_interior(D, ID, d, encn, clist(D['tail']))
+            reps['@INTERIOR@'] = idefs
+            reps['@GLUEI@'] = iglue
+            P_ = D['par']
+            reps['@NI@'] = 'split mod %d, %d cases' % (P_['M'], len(P_['cases']))
+        if D.get('opar'):
+            odefs, oglue, _ = par_overflow(D, ID, d)
+            reps['@OVFDEFS@'] = odefs
+            reps['@NESTGLUE@'] = oglue + '\n\n'
+            reps['@OVFCASE@'] = (
+                "  - destruct (cview_pos p j E) as (j' & ->).\n"
+                "    exact (lapo_%s p j' E)." % ID)
+            reps['@NO@'] = 'split mod %d, %d cases' % (
+                D['opar']['M'], len(D['opar']['cases']))
     out = HEADER
     for _ in range(3):          # the INTERIOR/GLUEI blocks themselves hold holes
         for k, v in reps.items():
             out = out.replace(k, v)
+    if D.get('opar'):
+        # the flat overflow glue does not hold at a split overflow: drop it
+        for lem in ('gso', 'geo'):
+            m = re.search(r'Lemma %s_%s : .*?\nQed\.\n\n' % (lem, re.escape(ID)),
+                          out, re.S)
+            out = out[:m.start()] + out[m.end():]
     return out
 
 
@@ -1761,8 +2289,16 @@ def render_tr(D, spec, dspec, mirrored):
     # the nested EXIT chain from BE0.
     chov = N['chb'] if N is not None else D['cho']
     wit, witi, witx = {}, {}, {}
+    OP = D.get('opar')
     for t in sorted(fired):
-        ch = LC.reach_instr(tab, True, True, D['B0'], chov, t)
+        if OP:
+            # one prefix per overflow case, or none
+            chs = [LC.reach_instr(tab, True, True, k['X0'], k['ch'], t,
+                                   extra=60, nmax=400)
+                   for k in OP['cases']]
+            ch = None if any(c is None for c in chs) else chs
+        else:
+            ch = LC.reach_instr(tab, True, True, D['B0'], chov, t)
         if ch is not None:
             wit[t] = ch
             continue
@@ -1853,7 +2389,7 @@ def render_tr(D, spec, dspec, mirrored):
     if m_vis is None:
         raise RuntimeError('tr: vis lemma not found')
     viso = src[i_vis:i_vis + m_vis.start()]
-    fireo = (viso.replace('viso_%s' % ID, 'fireo_%s' % ID)
+    fireo = par_overflow(D, ID, ENCDATA[D['enc']])[2] if OP else (viso.replace('viso_%s' % ID, 'fireo_%s' % ID)
                  .replace('(q : St)', '(t : Instr)')
                  .replace('srun_st tm', 'srun_instr tm')
                  .replace('= Some q ->', '= Some t ->')
@@ -1967,6 +2503,13 @@ def render_tr(D, spec, dspec, mirrored):
                 '    apply (fireo_%s %s %s ltac:(vm_compute; reflexivity)\n'
                 '                   p1 j1 E1).'
                 % (lab, cinstr_coq(t), ID, cchain(wit[t]), cinstr_coq(t)))
+        elif t in wit and OP:
+            bullets.append(
+                '  - (* %s *)\n'
+                '    apply (fire_via_ovf tm Cc Hi %s), (fireo_%s\n'
+                '      %s); vm_compute; reflexivity.'
+                % (lab, cinstr_coq(t), ID,
+                   '\n      '.join('(%s)' % cchain(c) for c in wit[t])))
         elif t in wit:
             bullets.append(
                 '  - (* %s *)\n'
@@ -2177,6 +2720,11 @@ def _cost_str(D):
     list containing one boarded nothing after it."""
     if D['mode'] == 'one':
         return '%d*j+%d' % D['ci']
+    if D['mode'] == 'par':
+        return 'mod%d:%s' % (D['par']['M'], ','.join(
+            ('j=%d:%d' % (k['j'], k['cost'][1])) if k['kind'] == 'con' else
+            ('j=%d*i+%d:%d*i+%d' % ((k['M'], k['c']) + k['cost']))
+            for k in D['par']['cases']))
     return "j=0:%d,%d*j'+%d" % (D['cz'][1], D['cp'][0], D['cp'][1])
 
 
@@ -2255,7 +2803,9 @@ def _try_anchor_tr(spec, dspec, mirrored, D, tag, do_emit, force):
     """The transition-level board for a derived certificate (render_tr)."""
     ID = mach_id(spec)
     path = os.path.join(OUTDIR_TR, '%s_%s.v' % (PREFIX_QH if QH_MODE else PREFIX_TR, ID))
-    base = dict(spec=spec, enc=tag, ni=_cost_str(D), no='%d*j+%d' % D['co'],
+    base = dict(spec=spec, enc=tag, ni=_cost_str(D),
+                no=(('mod%d' % D['opar']['M']) if D.get('opar')
+                    else '%d*j+%d' % D['co']),
                 mode=D.get('mode'), tr=True, qh=QH_MODE)
     # an existing board counts as done only with its .vo from a completed
     # coqc run (a crash between the write and the compile leaves a .v

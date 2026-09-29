@@ -1,0 +1,327 @@
+# spec	class	width	long_blocks	longest	units	finder
+0RB0LB_1LC0RC_1RD0LA_1RB1RC	DN	1342	5	666	011,101,110	no anchor / no anchor
+0RB0LB_1LC0RD_1LA1RB_1LC1RD	DN	901	4	445	1	no anchor / no anchor
+0RB0LB_1LC1RA_0LD0LC_1RD1LB	DN	927	1	882	0	no anchor / no counter family
+0RB0LB_1LC1RD_0LD0LC_1RA1LC	DN	1006	3	744	001	no anchor / no anchor
+0RB0LB_1RC1RD_0LD0LC_1RA1LC	DN	910	1	888	001	no counter family / no counter family
+0RB0LC_1LA1RB_1RC1RD_1LA0RB	DN	666	2	553	1	no anchor / no anchor
+0RB0LC_1LC1RD_1LA0LC_1RA0RB	DN	645	1	630	010	no anchor / no counter family
+0RB0LC_1LC1RD_1LA0LC_1RA0RC	DN	647	1	630	010	no anchor / no counter family
+0RB0LC_1LC1RD_1LA0LC_1RA0RD	DN	647	1	630	010	no anchor / no counter family
+0RB0LC_1LC1RD_1LA1LB_1RC0RB	DN	909	1	887	1	no anchor / no overflow chain
+0RB0LD_1LA1LC_0LD0LC_1RD1RB	QH	1241	2	767	0,1	no anchor / no anchor
+0RB0LD_1LC0RD_1LA0LC_1RB1LD	DN	619	0	0	-	no counter family / no counter family
+0RB0LD_1LC1RC_1LD0RA_1RA0LD	DN	649	3	310	0	no counter family / no counter family
+0RB0LD_1RC1LB_1LA1RA_1LA0LD	DN	1016	3	744	010	no anchor / no anchor
+0RB0LD_1RC1LB_1LD1RA_1LA0LD	DN	1016	3	744	010	no anchor / no anchor
+0RB0RA_0LC1RA_0RD1LC_1RB1LB	DN	898	4	446	01,10	no anchor / no anchor
+0RB0RA_1LC1RA_0LD0LA_1LA1LB	DN	911	1	891	010	no counter family / no counter family
+0RB0RA_1LC1RA_0LD0LC_1LA1LB	DN	909	1	888	001	no counter family / no counter family
+0RB0RA_1LC1RA_0LD0RD_1LA1LB	DN	911	1	891	010	no counter family / no counter family
+0RB0RA_1LC1RA_0LD0RD_1RA1LB	DN	1007	3	744	001,010	no anchor / no anchor
+0RB0RA_1LC1RA_0LD1LB_1LA1LB	DN	1018	3	744	001,010	no anchor / no anchor
+0RB0RA_1LC1RA_0LD1LB_1RA1LB	DN	1019	3	744	001,010,100	no anchor / no anchor
+0RB0RA_1LC1RA_0LD1LC_1LA1LB	DN	911	1	891	010	no counter family / no counter family
+0RB0RA_1LC1RA_0LD1LC_1RA1LB	DN	1009	3	747	001,010	no anchor / no anchor
+0RB0RA_1RC1RA_0LD1LC_1RA1LB	DN	875	2	648	001,010	no counter family / no counter family
+0RB0RA_1RC1RA_1LD1RC_1RB0LC	DN	1253	4	826	01,10	no anchor / no anchor
+0RB0RA_1RC1RD_0LD0LC_1RA1LC	DN	910	1	888	001	no counter family / no counter family
+0RB0RB_1LA1LC_0LD0LC_1RD1RB	QH	1237	2	761	0,1	no anchor / no anchor
+0RB0RB_1LC1RA_0LD0LC_1RD1LB	DN	929	1	884	0	no anchor / no counter family
+0RB0RC_1LC1RA_1LD0LB_1RB1LA	DN	1078	2	692	01,1	no anchor / no anchor
+0RB0RC_1LC1RA_1LD0LC_1RD0LB	DN	1249	1	1208	10	no anchor / no anchor
+0RB0RC_1RC1RB_1LD1RA_1LA1LC	QH	1252	1	1212	01	no anchor / no anchor
+0RB0RC_1RC1RB_1LD1RA_1RB1LC	QH	1251	1	1212	01	no anchor / no anchor
+0RB0RC_1RC1RD_0LD0LC_1RA1LC	DN	910	1	888	001	no counter family / no counter family
+0RB0RD_1LC1RC_1RA0LC_0LB1RC	DN	673	2	483	001	no counter family / no counter family
+0RB0RD_1RC0LD_1RD1LC_1LB1RA	DN	662	1	624	0010	no counter family / no counter family
+0RB1LA_1RC1LC_0LA1RD_0RC0RD	DN	898	4	446	01,10	no anchor / no anchor
+0RB1LB_0LC1RD_1LA0LD_1LB0RD	DN	893	3	420	010,10,110	no counter family / no counter family
+0RB1LB_1LC1RC_1RD0LA_1LA0RC	DN	781	2	576	011,110	no counter family / no counter family
+0RB1LC_1LC1RA_0LD0LB_1LA1RD	QH	1250	1	1212	01	no anchor / no anchor
+0RB1LC_1LC1RA_1LD0LB_1RB0LA	QH	1249	1	1208	10	no anchor / no anchor
+0RB1LC_1LC1RA_1LD0LB_1RB1LC	QH	1249	1	1208	10	no anchor / no anchor
+0RB1LC_1LC1RA_1LD0LB_1RC0LA	QH	1249	1	1208	10	no anchor / no anchor
+0RB1LC_1LC1RA_1LD0LB_1RC1LC	QH	1249	1	1208	10	no anchor / no anchor
+0RB1LC_1LC1RD_1LA0LC_0RD1RB	DN	647	1	627	011	no mid / no anchor
+0RB1LC_1RC1LC_1LD0RC_0LB0LA	DN	673	2	483	001,010	no counter family / no counter family
+0RB1LD_0LC1RB_1LA1RA_0LA0LD	DN	898	4	446	01,10	no anchor / no anchor
+0RB1LD_0RC1RB_1LD0RA_1LA0LD	DN	787	2	576	110	no counter family / no counter family
+0RB1LD_0RC1RB_1LD0RD_1LA0LD	DN	670	1	623	1	no counter family / no counter family
+0RB1LD_0RC1RB_1LD1LA_1LA0LD	DN	875	2	642	110	no counter family / no counter family
+0RB1LD_0RC1RB_1LD1RB_1LA0LD	DN	1005	3	741	011,110	no anchor / no anchor
+0RB1LD_1LA0RC_1RB1RC_0LB1LA	DN	1101	4	545	1	no anchor / no anchor
+0RB1LD_1RC0LA_1LA1RA_1RA0LD	DN	631	2	450	011	no counter family / no counter family
+0RB1LD_1RC0RD_0LA1RA_1RA0LD	DN	893	3	420	10,100,110	no counter family / no counter family
+0RB1LD_1RC1RC_1LA1RA_1RA0LD	DN	671	2	480	011	no counter family / no counter family
+0RB1RA_1LC0RA_1LD0LA_1RB0LB	DN	907	1	891	010	no counter family / no anchor
+0RB1RA_1LC0RA_1LD0LB_1RB0LB	DN	1019	3	744	001,010,100	no anchor / no anchor
+0RB1RA_1LC0RA_1LD0LB_1RB1LC	DN	1037	3	684	0011,1001	no anchor / no anchor
+0RB1RA_1LC0RA_1LD1LB_1RB0LB	DN	905	1	891	010	no counter family / no anchor
+0RB1RA_1LC0RA_1LD1LC_1RB0LB	DN	907	1	891	010	no counter family / no anchor
+0RB1RA_1LC0RC_1LD0LC_0RA1LC	DN	670	1	623	1	no counter family / no counter family
+0RB1RA_1LC0RD_1LD0LC_0RA1LC	DN	787	2	576	110	no counter family / no counter family
+0RB1RA_1LC1LD_1LD0LC_0RA1LC	DN	875	2	642	110	no counter family / no counter family
+0RB1RA_1LC1RA_1LD0LC_0RA1LC	DN	1005	3	741	011,110	no anchor / no anchor
+0RB1RA_1LC1RD_0LD0LC_1LA1LC	DN	876	2	648	001,010	no counter family / no counter family
+0RB1RA_1LC1RD_0LD0LC_1RA1LC	DN	1008	3	747	001	no anchor / no anchor
+0RB1RA_1RC1RD_0LD0LC_1RA1LC	DN	910	1	888	001	no counter family / no counter family
+0RB1RB_1LC1RA_1RA0LD_1LC1LD	DN	1105	4	544	1	no anchor / no anchor
+0RB1RC_1RC0LD_0LB1RA_1LB1LD	DN	1101	4	545	1	no anchor / no anchor
+0RB1RD_1LC0RA_1LD1LC_1RB0LC	DN	603	1	579	101	no block / no anchor
+0RB1RD_1LC0RD_1LD0LC_1RA0LB	DN	995	0	11	-	no counter family / no counter family
+0RB1RD_1LC1RA_1LA0LC_1RA1LC	DN	533	1	514	01	no counter family / no mid
+0RB1RD_1LC1RA_1LA0LC_1RB1LC	DN	532	1	514	01	no anchor / no counter family
+0RB1RD_1LC1RD_0LD0LC_1RA1LC	DN	1018	3	744	001,010	no anchor / no anchor
+0RB1RD_1LC1RD_1LA0LC_1RA1LC	DN	562	1	546	010	no counter family / no counter family
+0RB1RD_1RC1RD_0LD0LC_1RA1LC	DN	1019	3	744	001,010	no anchor / no anchor
+1RB0LA_0RC0LA_1LD1RD_1LA0RB	DN	648	3	311	0	no counter family / no counter family
+1RB0LA_0RC0LD_1LD1RD_1LA1RB	DN	651	3	311	0	no counter family / no counter family
+1RB0LA_0RC0RC_1LD1RD_1LA1RB	DN	651	3	311	0	no counter family / no counter family
+1RB0LA_0RC0RD_0LD1RA_1RC1LA	DN	654	3	310	0	no anchor / no anchor
+1RB0LA_0RC0RD_1LA0RC_0LC1RA	DN	523	3	238	0	no counter family / no counter family
+1RB0LA_0RC0RD_1LA1LC_0LC0RB	DN	549	1	508	0	no counter family / no counter family
+1RB0LA_0RC0RD_1LA1RA_0LC1RA	DN	672	2	483	001,100	no counter family / no counter family
+1RB0LA_0RC1LA_1RD0LB_1LB1RB	DN	630	2	453	011,110	no counter family / no counter family
+1RB0LA_0RC1LA_1RD0RA_0LB1RB	DN	891	3	420	10,100,110	no counter family / no counter family
+1RB0LA_0RC1LA_1RD1RC_0LB1RB	DN	573	3	269	0	no counter family / no counter family
+1RB0LA_0RC1LA_1RD1RD_1LB1RB	DN	670	2	483	011,110	no counter family / no counter family
+1RB0LA_1LC0RD_1LA0LB_1RB0RD	DN	924	1	886	01	no counter family / no anchor
+1RB0LA_1LC0RD_1LA1RB_1LC1RC	DN	567	3	269	0	no counter family / no counter family
+1RB0LA_1RC1RA_0RD0RB_1LD0LA	DN	702	1	660	0011	no counter family / no counter family
+1RB0LB_0LB0RC_1LD1RC_1LA1RB	DN	899	4	444	1	no anchor / no anchor
+1RB0LB_0RC1LA_1RD1RC_1LB1LD	DN	895	2	501	01,1	no anchor / no anchor
+1RB0LB_1LC0RD_1LA0LB_0RB1RD	DN	1020	3	744	001,010	no anchor / no anchor
+1RB0LB_1LC0RD_1LA0LD_0RB1RD	DN	906	1	891	100	no counter family / no anchor
+1RB0LB_1LC0RD_1LA1LB_0LA0RA	DN	1342	5	666	011,101,110	no anchor / no anchor
+1RB0LB_1LC0RD_1LA1LB_0RB1RD	DN	906	1	891	001	no counter family / no anchor
+1RB0LB_1LC0RD_1LA1LC_0RB1RD	DN	908	1	891	001	no counter family / no anchor
+1RB0LB_1LC1RD_1LA0LC_0RB0RC	DN	848	2	674	01	no anchor / no anchor
+1RB0LB_1RC0RB_0LD1RB_0LA1LD	DN	670	1	623	1	no counter family / no counter family
+1RB0LB_1RC0RB_1LD0RB_1LA0LC	DN	915	1	888	01	no counter family / no counter family
+1RB0LB_1RC0RB_1LD0RB_1LA0LD	DN	791	1	768	010	no counter family / no counter family
+1RB0LB_1RC1LA_0RD0RC_1LD1RB	DN	931	1	882	0	no counter family / no anchor
+1RB0LB_1RC1LC_0RD0LB_1LD0LA	DN	731	1	726	01	no anchor / no anchor
+1RB0LC_0LA1RD_1LA1LC_0RA1RB	DN	1101	4	545	1	no anchor / no anchor
+1RB0LC_0LC0LB_1RC1RD_1LA1LB	QH	1241	2	767	0,1	no anchor / no anchor
+1RB0LC_0LC0RD_1RB1LC_1LD1LA	DN	666	2	553	1	no anchor / no anchor
+1RB0LC_0RC1RA_1LD0RA_1LA0LD	DN	995	0	11	-	no counter family / no counter family
+1RB0LC_1LA1RD_1LA1LC_0RD1RB	DN	1101	4	545	1	no anchor / no anchor
+1RB0LC_1LC0RA_0RD1LD_1LA1RA	DN	786	2	576	011	no counter family / no counter family
+1RB0LC_1LC0RA_1LD1LD_1LA0LD	DN	1251	2	758	01,10	no anchor / no counter family
+1RB0LC_1LC0RA_1RA1LD_1LA1LA	DN	1052	2	558	110	no counter family / no counter family
+1RB0LC_1LC0RA_1RA1LD_1RC1LA	DN	1052	2	558	110	no counter family / no counter family
+1RB0LC_1LC0RB_0LD0RB_1RA1LA	DN	648	3	311	0	no counter family / no counter family
+1RB0LC_1LC0RD_1LA1LC_0RB1RA	DN	603	1	579	011	no block / no anchor
+1RB0LC_1LC1RC_0RA1LD_1RC0LD	DN	631	2	450	011	no counter family / no counter family
+1RB0LC_1LC1RD_1LA0LB_0RB0RC	DN	811	2	744	01,10	no anchor / no anchor
+1RB0LC_1LC1RD_1LA0RB_1LB1RC	DN	1052	2	558	110	no counter family / no counter family
+1RB0LC_1LC1RD_1LA0RB_1RC1RC	DN	1052	2	558	110	no counter family / no counter family
+1RB0LC_1RC0RA_1LA1LD_1LA1LB	DN	1109	4	542	01,10	no anchor / no anchor
+1RB0LC_1RC0RB_0LD1RB_0LA1LD	DN	787	2	576	110	no counter family / no counter family
+1RB0LC_1RC0RD_1LA0LC_1RD0RA	DN	915	1	888	01	no counter family / no counter family
+1RB0LC_1RC1LB_1LA1RD_0RA0RC	DN	662	1	624	0010	no counter family / no counter family
+1RB0LC_1RC1RA_1LA0LD_0RB1RD	DN	1023	2	682	01,1	no anchor / no anchor
+1RB0LC_1RC1RB_1LA0RD_1LC0RB	DN	906	4	447	1	no anchor / no anchor
+1RB0LC_1RC1RD_1LA1RC_0RB0RD	DN	1252	4	822	01,10	no anchor / no anchor
+1RB0LD_0LC0RB_1RA1LD_1RB1LC	DN	505	1	486	011	no counter family / no counter family
+1RB0LD_0LC0RC_1LC1LA_1RB1LD	DN	666	2	553	1	no anchor / no anchor
+1RB0LD_0LC1RC_1RD1LD_1LA0RB	DN	787	2	576	011	no counter family / no counter family
+1RB0LD_0RC0RB_1LC1LD_1RA1RB	QH	1237	2	761	0,1	no anchor / no anchor
+1RB0LD_0RC1RA_1RD0RD_1LA0LB	DN	754	1	558	110	no counter family / no counter family
+1RB0LD_0RC1RC_1LA1RB_1LA1LD	DN	1106	4	545	1	no anchor / no anchor
+1RB0LD_1LC0RA_1LA1LC_1RA0LC	DN	908	4	447	1	no anchor / no anchor
+1RB0LD_1LC0RD_1LA0LB_1RB0RD	DN	915	1	888	01	no counter family / no counter family
+1RB0LD_1LC0RD_1LA0LB_1RB1RA	DN	1113	4	542	01,10	no anchor / no anchor
+1RB0LD_1LC0RD_1LA0LC_1RB0RD	DN	790	1	765	001	no counter family / no counter family
+1RB0LD_1LC1RA_0RB1LC_1RC1LA	DN	718	2	558	01,1	no counter family / no anchor
+1RB0LD_1RC0LA_1LD0RB_1LB1LD	DN	906	4	446	1	no anchor / no anchor
+1RB0LD_1RC0RA_1LA0LC_1LC1RC	DN	1126	2	934	01	no anchor / no anchor
+1RB0LD_1RC0RA_1LA0RA_0LA1LD	DN	1019	3	744	001,100	no anchor / no anchor
+1RB0LD_1RC0RA_1LA0RC_1LA0LD	DN	924	1	886	01	no anchor / no counter family
+1RB0LD_1RC0RA_1LA0RD_1LA0LD	DN	915	1	888	01	no counter family / no counter family
+1RB0LD_1RC0RA_1LA0RD_1LA1LC	DN	1115	4	542	01	no anchor / no anchor
+1RB0LD_1RC0RA_1LA1RB_0LA1LD	DN	1037	3	684	0011,0110	no anchor / no anchor
+1RB0LD_1RC0RA_1LD0RD_1LA0LD	DN	915	1	888	01	no counter family / no counter family
+1RB0LD_1RC0RB_0LA0RD_1LA1RD	DN	619	0	0	-	no counter family / no counter family
+1RB0LD_1RC0RB_1LA0RD_1LA0LD	DN	791	1	768	010	no counter family / no counter family
+1RB0LD_1RC0RB_1LD0RD_1LA0LD	DN	791	1	768	010	no counter family / no counter family
+1RB0LD_1RC0RD_1LA0RA_0LA1LD	DN	907	1	891	001	no anchor / no counter family
+1RB0LD_1RC1LA_0LA0RA_1RB1LD	DN	901	4	445	1	no anchor / no anchor
+1RB0LD_1RC1RA_1LA0RA_0LA1LD	DN	905	1	891	001	no anchor / no counter family
+1RB0LD_1RC1RA_1LA0RA_0RC0LC	DN	1339	5	666	011,101,110	no anchor / no anchor
+1RB0LD_1RC1RB_1LA0RA_0LA1LD	DN	907	1	891	001	no anchor / no counter family
+1RB0LD_1RC1RB_1LA0RB_0LA1LC	DN	603	1	579	110	no anchor / no block
+1RB0LD_1RC1RC_1RD0RC_1LA0RB	DN	1251	2	758	10	no counter family / no anchor
+1RB0RA_0LC0RA_1LD1RC_1RA1LB	DN	1017	3	744	001,010	no anchor / no anchor
+1RB0RA_0LC0RA_1LD1RC_1RB1LB	DN	1017	3	744	001,010	no anchor / no anchor
+1RB0RA_0LC0RA_1RA1LD_1LB0LA	DN	647	1	630	010	no counter family / no anchor
+1RB0RA_0LC0RA_1RA1LD_1LB0LC	DN	645	1	630	001	no counter family / no anchor
+1RB0RA_0LC0RA_1RA1LD_1LB0LD	DN	647	1	630	001	no counter family / no anchor
+1RB0RA_0LC0RD_1RA0LD_1LC1RD	DN	619	0	0	-	no counter family / no counter family
+1RB0RA_0LC1LD_1RA1LB_1LB1RA	DN	533	1	514	10	no mid / no counter family
+1RB0RA_0LC1LD_1RA1LB_1LC1RA	DN	532	1	514	10	no counter family / no anchor
+1RB0RA_0LC1LD_1RA1LD_1LB1RA	DN	562	1	546	010	no counter family / no counter family
+1RB0RA_0LC1LD_1RC1LD_1LB1RA	DN	562	1	546	010	no counter family / no counter family
+1RB0RA_0LC1RA_0LD1LC_1LA0LB	DN	795	2	573	110	no counter family / no counter family
+1RB0RA_0LC1RA_0LD1LC_1LA1LC	DN	1013	3	738	011	no anchor / no anchor
+1RB0RA_0LC1RA_0LD1LC_1LA1RB	DN	883	3	639	011,110	no counter family / no counter family
+1RB0RA_0LC1RA_0LD1LC_1RA0LA	DN	670	1	623	1	no counter family / no counter family
+1RB0RA_0LC1RA_1LD1LC_0RB0LD	DN	463	1	440	1100	no counter family / no counter family
+1RB0RA_0RC0LD_1LD1RA_1LB0LD	DN	648	1	630	010	no anchor / no counter family
+1RB0RA_1LC0RA_1LD0LB_1RA0LA	DN	915	1	888	01	no counter family / no counter family
+1RB0RA_1LC0RA_1LD0LB_1RB0LA	DN	915	1	888	01	no counter family / no counter family
+1RB0RA_1LC0RA_1LD0LB_1RB0LD	DN	924	1	886	01	no counter family / no anchor
+1RB0RA_1LC0RA_1LD0LC_1RA0LA	DN	790	1	765	001	no counter family / no counter family
+1RB0RA_1LC0RA_1LD0LC_1RB0LA	DN	790	1	765	001	no counter family / no counter family
+1RB0RA_1LC0RC_1LD0LC_1RA0LC	DN	791	1	768	010	no counter family / no counter family
+1RB0RA_1LC0RD_1LA0LB_1RA1LA	DN	1216	2	842	01,10	no anchor / no anchor
+1RB0RA_1LC0RD_1RA0LD_1LC0LD	DN	791	1	768	010	no counter family / no counter family
+1RB0RA_1LC0RD_1RD0LB_1RA1RA	DN	1127	2	934	10	no anchor / no anchor
+1RB0RB_1LB0LC_1RD1LC_1LC0RA	DN	475	2	401	1	no counter family / no counter family
+1RB0RB_1LB0LC_1RD1LC_1RA0RA	DN	348	1	323	1	no anchor / no counter family
+1RB0RB_1LB1LC_1RA0LD_1RA1LD	DN	666	2	553	1	no anchor / no anchor
+1RB0RB_1LC0LD_1RD0LB_0RA1RC	DN	702	1	645	110	no counter family / no counter family
+1RB0RB_1RC0RC_1LC0LD_1RA1LD	DN	344	2	289	1	no anchor / no counter family
+1RB0RC_0LC1LB_0LD1LC_1RD0RA	DN	1097	4	544	1	no counter family / no anchor
+1RB0RC_0RC0LD_1LD1RA_1LB0LD	DN	645	1	630	010	no anchor / no counter family
+1RB0RC_0RC0RB_1LC1LD_1RA1RB	QH	1241	2	767	0,1	no anchor / no anchor
+1RB0RC_1LC0LB_1RA0LD_1LB1RB	DN	1036	2	986	01,10	no anchor / no anchor
+1RB0RC_1LC0RA_0LD1LB_1LA0LA	DN	782	1	420	101	no counter family / no counter family
+1RB0RC_1LC0RA_1RA1LD_0LC0LA	DN	893	2	470	10	no anchor / no anchor
+1RB0RC_1LC0RB_1RA0LD_1LC0LD	DN	924	1	886	01	no anchor / no counter family
+1RB0RC_1LC0RC_1RA0LD_0LC1LD	DN	1018	3	744	001,010	no anchor / no anchor
+1RB0RC_1LC0RD_1RA0LD_1LC0LD	DN	915	1	888	01	no counter family / no counter family
+1RB0RC_1LC0RD_1RA0LD_1LC1LB	DN	1113	4	542	01	no anchor / no anchor
+1RB0RC_1LC1LA_1RA1LD_0LB0LA	DN	984	2	808	01,1	no counter family / no counter family
+1RB0RC_1LC1LD_1RA0LB_1LC1LA	DN	1107	4	544	01,10	no anchor / no anchor
+1RB0RC_1LC1RA_1RA0LD_0LC1LD	DN	1041	3	684	0011,0110,1001	no anchor / no anchor
+1RB0RC_1LC1RD_1RA1LD_0LC0LA	DN	1211	2	684	1,10	no anchor / no anchor
+1RB0RC_1RC1RB_0LD1RA_1LB1LD	DN	895	2	501	1,10	no anchor / no anchor
+1RB0RD_0LB1LC_1RA1LB_1RA1RD	DN	1100	4	545	1	no anchor / no anchor
+1RB0RD_0LC0LB_1RC1RD_1LA1LB	QH	1237	2	761	0,1	no anchor / no anchor
+1RB0RD_0LC1RC_0RA1LD_1RC0LD	DN	893	3	420	10,100,110	no counter family / no counter family
+1RB0RD_0RC0LD_1LD1RA_1LB0LD	DN	647	1	630	010	no anchor / no counter family
+1RB0RD_1LB0LC_1LD1LB_1RA1RD	DN	1107	1	1089	101	no mid / no anchor
+1RB0RD_1LC0LB_1RA0LB_1RD0RC	DN	915	1	888	01	no counter family / no counter family
+1RB0RD_1LC0RC_1LD0LC_1RA0LC	DN	915	1	888	01	no counter family / no counter family
+1RB0RD_1LC0RC_1RA0LD_0LC1LD	DN	906	1	891	001	no anchor / no counter family
+1RB0RD_1LC1LB_1RA0LB_0RB1RA	DN	1104	3	813	110	no counter family / no counter family
+1RB0RD_1LC1LB_1RA0LB_1LC1RA	DN	1234	3	909	110	no counter family / no counter family
+1RB0RD_1LC1LB_1RD0LB_1RD1RA	DN	1008	3	744	011,101	no anchor / no anchor
+1RB1LA_0LA0RC_0RD1RC_1LD0LA	DN	540	2	453	1	no anchor / no counter family
+1RB1LA_0LA0RC_1LC1LD_1RB0LA	DN	666	2	553	1	no anchor / no anchor
+1RB1LA_0LC0RC_1LC1LD_1RB0LA	DN	666	2	553	1	no anchor / no anchor
+1RB1LA_1LC0RA_1LA1LD_0LC0LD	DN	1251	4	824	01,10	no anchor / no anchor
+1RB1LA_1LC0RA_1LD0LC_0RB0LA	DN	619	0	0	-	no counter family / no counter family
+1RB1LA_1LC1RC_0RA0LD_1LC0LD	DN	1016	3	744	010	no anchor / no anchor
+1RB1LA_1LC1RD_1LD0LC_0RA0LC	DN	1016	3	744	010	no anchor / no anchor
+1RB1LA_1LC1RD_1RA0LB_0RC0RB	DN	662	1	624	0010	no counter family / no counter family
+1RB1LA_1RC0RC_1RD0RD_1LD0LA	DN	344	2	289	1	no anchor / no counter family
+1RB1LA_1RC1LD_0LD0RD_1RB0LA	DN	901	4	445	1	no anchor / no anchor
+1RB1LA_1RC1LD_1LD0RD_0RD0LA	DN	899	4	444	1	no anchor / no anchor
+1RB1LB_0LC0RD_1LA1RC_1RB0RD	DN	1017	3	744	001,010	no anchor / no anchor
+1RB1LB_0LC1RD_0RA1LC_0RB0RD	DN	898	4	446	01,10	no anchor / no anchor
+1RB1LB_0LC1RD_1LA0RB_1LB0RD	DN	631	2	450	011,110	no counter family / no counter family
+1RB1LB_0LC1RD_1LA1LA_1LB0RD	DN	671	2	480	011	no counter family / no counter family
+1RB1LB_1LC0RB_0LA0LD_0RA1LB	DN	673	2	483	001,010	no counter family / no counter family
+1RB1LB_1LC0RD_1RD0LB_0LA1RA	DN	781	2	576	011,110	no counter family / no counter family
+1RB1LB_1RC0LD_1LD0RC_0LA0RC	DN	649	3	310	0	no counter family / no counter family
+1RB1LB_1RC0RB_1LD0RA_1LB0LC	DN	1250	2	758	01,10	no anchor / no anchor
+1RB1LC_0LC0RB_1RD1LA_1RB0LA	DN	505	1	486	011	no counter family / no counter family
+1RB1LC_0LC0RC_1RA0LD_1RA1LD	DN	901	4	445	1	no anchor / no anchor
+1RB1LC_0RC0RB_1LD1RB_0LA0RA	DN	1006	3	744	001,010	no anchor / no anchor
+1RB1LC_0RC0RB_1LD1RB_0LA1LC	DN	1018	3	744	001,010	no anchor / no anchor
+1RB1LC_0RC0RB_1LD1RB_0LA1LD	DN	1008	3	747	001,010	no anchor / no anchor
+1RB1LC_0RC0RB_1RD1RB_0LA1LD	DN	876	2	648	010	no counter family / no counter family
+1RB1LC_1LC0RB_0LD0LD_1RA1LA	DN	651	3	311	0	no counter family / no counter family
+1RB1LC_1LC0RB_0LD0RA_1RA1LA	DN	651	3	311	0	no counter family / no counter family
+1RB1LC_1LC0RB_1RA0LD_1RA1LA	DN	567	3	269	0	no counter family / no counter family
+1RB1LC_1LC0RD_0LA1LA_1RB1RD	DN	1105	4	544	1	no anchor / no anchor
+1RB1LC_1LC0RD_0LC1LA_1RB1RD	DN	1100	4	545	1	no anchor / no anchor
+1RB1LC_1LC0RD_1LA0LB_0RB1RD	DN	1039	3	684	1001	no anchor / no anchor
+1RB1LC_1LC1RD_1LD0LC_0RB1RA	DN	532	1	514	01	no anchor / no counter family
+1RB1LC_1RC0RB_0LA1LD_1LA1RB	DN	532	1	514	01	no counter family / no anchor
+1RB1LC_1RC0RB_0LA1LD_1LC1RB	DN	533	1	514	01	no mid / no counter family
+1RB1LC_1RC0RB_0LD0RB_1LA1RD	DN	1017	3	744	001,010	no anchor / no anchor
+1RB1LC_1RC1LA_1RD0LB_1LB0RC	DN	1052	2	558	110	no counter family / no counter family
+1RB1LD_0LC0RB_1RA1LA_0LD0LA	DN	898	4	446	01,10	no anchor / no anchor
+1RB1LD_0RC0LB_1LC1RA_0RD0LA	DN	588	2	426	100	no counter family / no counter family
+1RB1LD_0RC0LC_1LD1RA_0LA0LD	DN	1007	3	744	001,010	no anchor / no anchor
+1RB1LD_0RC0LC_1RD1RA_0LA0LD	DN	911	1	891	001	no counter family / no counter family
+1RB1LD_0RC0RA_1RD1LC_0LA1RB	QH	1250	1	1210	01	no anchor / no anchor
+1RB1LD_0RC0RB_1LC1RA_0LA0LA	DN	929	1	884	0	no counter family / no anchor
+1RB1LD_0RC0RB_1LC1RA_0LA0RA	DN	927	1	882	0	no counter family / no anchor
+1RB1LD_0RC0RB_1LC1RA_1RA0LA	DN	927	1	882	0	no counter family / no anchor
+1RB1LD_0RC0RB_1RD1RA_0LA0LD	DN	909	1	888	001	no counter family / no counter family
+1RB1LD_0RC0RD_1RD1RA_0LA0LD	DN	911	1	891	001	no counter family / no counter family
+1RB1LD_0RC1LB_1LA1RC_0RD0LA	DN	491	2	421	1,10	no counter family / no counter family
+1RB1LD_0RC1LC_1LA1RC_0RD0LA	DN	520	1	500	10	no counter family / no counter family
+1RB1LD_0RC1RA_1LD1RA_0LA0LD	DN	1019	3	744	001,100	no anchor / no anchor
+1RB1LD_0RC1RA_1LD1RB_1LB0LD	DN	533	1	514	01	no counter family / no mid
+1RB1LD_0RC1RA_1RD1RA_0LA0LD	DN	1018	3	744	001,010	no anchor / no anchor
+1RB1LD_0RC1RB_1LD1RA_0LA0LD	DN	1009	3	747	001,010	no anchor / no anchor
+1RB1LD_0RC1RB_1RD1RA_0LA0LD	DN	911	1	891	001	no counter family / no counter family
+1RB1LD_0RC1RC_1LA1RC_0RD0LA	DN	520	1	500	10	no counter family / no counter family
+1RB1LD_1LC0RA_1LA1RC_0LB0LA	DN	662	1	624	0001	no counter family / no counter family
+1RB1LD_1RC0LA_1LA0RB_1LB1LB	DN	1052	2	558	110	no counter family / no counter family
+1RB1LD_1RC0RA_1LA0RD_0LA1RB	QH	1249	1	1208	01	no anchor / no anchor
+1RB1LD_1RC0RA_1LA1LD_0LC0LB	QH	1249	1	1212	01	no anchor / no anchor
+1RB1LD_1RC0RA_1LA1RB_0LA1RB	QH	1249	1	1208	01	no anchor / no anchor
+1RB1LD_1RC0RA_1LA1RD_0LA0LB	DN	1078	2	694	01,1	no anchor / no anchor
+1RB1LD_1RC0RA_1LB0RD_0LA1RB	QH	1249	1	1208	01	no anchor / no anchor
+1RB1LD_1RC0RA_1LB1RB_0LA1RB	QH	1249	1	1208	01	no anchor / no anchor
+1RB1LD_1RC0RB_0LA0RB_1LC0LA	DN	645	1	630	001	no counter family / no anchor
+1RB1LD_1RC0RB_0LA0RB_1LC0LB	DN	647	1	630	010	no counter family / no anchor
+1RB1LD_1RC0RB_0LA0RB_1LC0LD	DN	647	1	630	001	no counter family / no anchor
+1RB1LD_1RC0RB_0LA1LD_1LC1RB	DN	562	1	546	010	no counter family / no counter family
+1RB1LD_1RC0RB_0LA1RB_0LD1LA	DN	647	1	627	101	no anchor / no mid
+1RB1LD_1RC0RB_0LD1RB_0LA1LD	DN	1005	3	741	011,110	no anchor / no anchor
+1RB1LD_1RC0RB_1LC0RA_0LA0LB	DN	1249	1	1208	01	no anchor / no anchor
+1RB1LD_1RC1RA_0LA0RB_1LB0LA	DN	909	1	887	1	no overflow chain / no anchor
+1RB1RA_0LC0RA_1LC1LD_1LA0LC	DN	1005	3	738	101,110	no anchor / no anchor
+1RB1RA_0RC0RA_1LC0LD_1LA1LC	DN	1108	1	1089	101	no mid / no anchor
+1RB1RA_1LC0LD_1RA0LB_1LC0RC	DN	601	2	354	1,10	no anchor / no anchor
+1RB1RA_1LC0RA_0LC1LD_1RB1LC	DN	1100	4	545	1	no anchor / no anchor
+1RB1RA_1LC0RA_0LD1LD_1RB1LC	DN	1105	4	544	1	no anchor / no anchor
+1RB1RA_1LC0RA_0RB1LD_0LB1LC	DN	1101	4	545	1	no anchor / no anchor
+1RB1RA_1LC0RA_1RA0LD_0LC1LB	DN	606	1	582	110	no anchor / no block
+1RB1RA_1LC0RC_1RA0LD_0LC1LD	DN	908	1	891	001	no anchor / no counter family
+1RB1RA_1LC0RD_1RA0LB_1LB0RA	DN	908	4	445	1	no anchor / no anchor
+1RB1RA_1LC1LD_1LA0LB_0RC0RA	DN	599	2	349	1,10	no counter family / no anchor
+1RB1RA_1LC1LD_1RA0LB_0RC0RA	DN	598	2	349	1,10	no anchor / no anchor
+1RB1RA_1LC1RD_1LD1LB_0RA0RB	QH	1252	1	1212	01	no anchor / no anchor
+1RB1RA_1LC1RD_1RA1LB_0RA0RB	QH	1251	1	1212	01	no anchor / no anchor
+1RB1RB_1LC0RD_1RD0LB_1LB1RA	DN	1052	2	558	110	no counter family / no counter family
+1RB1RB_1LC1RC_0RA1LD_1RC0LD	DN	671	2	480	011	no counter family / no counter family
+1RB1RB_1RC0RB_1LD0RA_1RA0LC	DN	1215	2	842	10	no anchor / no anchor
+1RB1RC_0LA0LA_0RD0RC_1LD1LA	QH	1237	2	761	0,1	no anchor / no anchor
+1RB1RC_0LA0RD_0RD0RC_1LD1LA	QH	1241	2	767	0,1	no anchor / no anchor
+1RB1RC_0LC0LB_1RD1LB_0RA0LA	DN	910	1	888	001	no counter family / no counter family
+1RB1RC_0LC0LB_1RD1LB_0RA0RB	DN	910	1	888	001	no counter family / no counter family
+1RB1RC_0LC0LB_1RD1LB_0RA0RD	DN	910	1	888	001	no counter family / no counter family
+1RB1RC_0LC0LB_1RD1LB_0RA1RC	DN	1019	3	744	001,010	no anchor / no anchor
+1RB1RC_0LC0LB_1RD1LB_0RA1RD	DN	910	1	888	001	no counter family / no counter family
+1RB1RC_0RC0LA_0RD0RC_1LD1LA	QH	1194	2	862	0,1	no anchor / no anchor
+1RB1RC_0RC0RD_0RD0RC_1LD1LA	QH	1204	2	857	0,1	no anchor / no anchor
+1RB1RC_1LA0LA_0RD0RC_1LD1LA	QH	1194	2	862	0,1	no anchor / no anchor
+1RB1RC_1LA0RD_0RD0RC_1LD1LA	QH	1204	2	857	0,1	no anchor / no anchor
+1RB1RC_1LC0RC_1RA0LD_0LC1LD	DN	905	1	891	001	no anchor / no counter family
+1RB1RC_1LC0RC_1RA0LD_0RB0LB	DN	1339	5	666	011,101,110	no anchor / no anchor
+1RB1RC_1LC0RD_1LD0LB_1RB1RA	DN	1107	4	542	01,10	no anchor / no anchor
+1RB1RC_1LC1RA_1LD0RA_1RA0LB	DN	490	2	268	1,1110	no counter family / no counter family
+1RB1RC_1RC0LA_0RD0RC_1LD1LA	QH	1126	2	959	0,1	no anchor / no anchor
+1RB1RC_1RC0RB_0LD1RB_0LA1LD	DN	875	2	642	011,110	no counter family / no counter family
+1RB1RC_1RC0RD_0RD0RC_1LD1LA	QH	1126	2	959	0,1	no anchor / no anchor
+1RB1RD_0LC1LB_1RD1LA_0RA0RD	DN	875	2	648	001,010	no counter family / no counter family
+1RB1RD_0RC0LA_1LC1LA_0RC0RD	QH	1237	2	761	0,1	no anchor / no anchor
+1RB1RD_0RC0RA_1LC0LD_1RA0LD	DN	702	1	660	0011	no counter family / no counter family
+1RB1RD_0RC0RC_1LC1LA_0RC0RD	QH	1241	2	767	0,1	no anchor / no anchor
+1RB1RD_1LB0RC_1LC1LA_0RC0RD	QH	1241	2	767	0,1	no anchor / no anchor
+1RB1RD_1LC0RA_1LA0LB_1RB1RC	DN	1107	4	542	01,10	no anchor / no anchor
+1RB1RD_1LC0RA_1LD0LB_1RB0LA	DN	1113	4	542	01,10	no anchor / no anchor
+1RB1RD_1LC1LB_0LD0LB_1RD0RA	DN	1108	1	1092	011	no anchor / no mid
+1RB1RD_1LC1LB_1LD0LB_1RD0RA	DN	1107	1	1092	011	no anchor / no mid
+1RB1RD_1LC1RB_1RA0LB_0RA0RD	DN	1253	4	826	01,10	no anchor / no anchor
+1RB1RD_1RC0LA_1LC1LA_0RC0RD	QH	1073	2	1001	0,1	no anchor / no anchor
+1RB1RD_1RC0RC_1LC1LA_0RC0RD	QH	1073	2	1001	0,1	no anchor / no anchor

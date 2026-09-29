@@ -2,7 +2,10 @@
 """Bucket quasihalting counter rows by the lap emitter's failure reason
 (UNTRUSTED diagnostic, no Coq).
 
-    python3 tools/closeouttr/qe_probe.py ROWS.txt OUT.jsonl [--jobs 4] [--timeout 300]
+    python3 tools/closeouttr/qe_probe.py ROWS.txt OUT.jsonl [--jobs 4] [--timeout 300] [--tr]
+
+--tr probes the never-quasihalting side instead (emit_lapcert.py --tr, the
+LapGlueTr boards: the DN log counters of SCOPING_INSTR 7.4.DX/7.4.CE).
 
 emit_lapcert.py --qh reports only the LAST anchor's failure, and the last
 anchor tried is the mirrored S1-head one, so its "no overflow chain (nested
@@ -36,11 +39,11 @@ def _alarm(*_):
 
 
 def probe(args):
-    spec, tmo = args
+    spec, tmo, qh = args
     import emit_lapcert as E
     from mirror_common import mirror_spec
     E.TR_MODE = True
-    E.QH_MODE = True
+    E.QH_MODE = qh
     t0 = time.time()
     tries, ok = [], False
     signal.signal(signal.SIGALRM, _alarm)
@@ -69,6 +72,8 @@ def probe(args):
                     N = D.get('nest') or {}
                     route = ','.join(f for f, on in (
                         ('trmiss', D.get('trmiss')),
+                        ('par%d' % (D.get('par') or {}).get('M', 0), D.get('par')),
+                        ('opar%d' % (D.get('opar') or {}).get('M', 0), D.get('opar')),
                         ('nest-' + str(N.get('route', 'plain')), N),
                         ('peel', D.get('opeel')), ('islack', D.get('islack')),
                         ('oslack', D.get('oslack'))) if on) or 'flat'
@@ -91,13 +96,15 @@ def main():
     ap.add_argument('out')
     ap.add_argument('--jobs', type=int, default=4)
     ap.add_argument('--timeout', type=int, default=300)
+    ap.add_argument('--tr', action='store_true',
+                    help='never-QH side (LapGlueTr) instead of --qh')
     a = ap.parse_args()
     done = set()
     if os.path.exists(a.out):
         done = set(json.loads(l)['spec'] for l in open(a.out) if l.strip())
     specs = [l.split()[0] for l in open(a.rows) if l.strip() and l.split()[0] not in done]
     with mp.Pool(a.jobs, maxtasksperchild=20) as pool, open(a.out, 'a') as out:
-        for i, r in enumerate(pool.imap_unordered(probe, [(s, a.timeout) for s in specs])):
+        for i, r in enumerate(pool.imap_unordered(probe, [(s, a.timeout, not a.tr) for s in specs])):
             out.write(json.dumps(r) + '\n')
             out.flush()
             print('%5d/%d %s %s %.0fs' % (i + 1, len(specs), r['spec'],

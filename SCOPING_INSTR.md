@@ -2868,7 +2868,7 @@ with QS's 410 on top of it, 4,496).
 |---:|---|---|
 | **496** (462 DN + 34 QH) | **bouncer + counter hybrids** | **new checker: a lap certificate whose tail is a growing bouncer block.**  The anchor is `Cc p = (E, (Enc p ++ w^(a p + b) ++ tail, hd, far))`: `LapGlueTr`'s counter anchor with the block between the counter and the far side.  One lap is one sweep: a `SCyc` chain over `w^n` (the inner loop §7.4.QS's glue already runs over an opaque tail) and one counter increment, whose overflow arm is the carry instruction.  That is `LapGlueTr`'s `fire_via_ovf`, the piece the irules sweep cycle lacks.  The QH side (34) is the same through `LapGlueQHTr`.  The same checker is the likely route for the SP class's sparse hybrids (§7.3f, ~1,900 rows there) |
 | 538 | counters the lap emitter does not derive | the ladder takes ~10% (4 of 40; 15 of 19 closed rows stop at "interior arm: no chain ... the carry ripple is not affine", SP's blocker too).  The emitter ports §7.3e names ("no interior chain" 271, "no anchor" 235) |
-| 287 | sweep counters irules does not take (261 undecided, 26 false/timeout) | **a never-QH twin of QS's `SweepGlueTr`**: the same two-index glue through `LapGlueTr.glue_neverqhtr` instead of `LapGlueQHTr`; the finder is `qs_batch.py`'s without the pins |
+| 287 | sweep counters irules does not take (261 undecided, 26 false/timeout) | **a never-QH twin of QS's `SweepGlueTr`**: the same two-index glue through `LapGlueTr.glue_neverqhtr` instead of `LapGlueQHTr`; the finder is `qs_batch.py`'s without the pins.  Done in §7.4.SW: the plain twin takes none, a multi-family glue with behind sweeps takes 239 |
 | 177 | two-sided (137) and one-sided (40, 3 of them QH) bouncers: irules undecided, false, or (18) timing out in the kernel | RepWL at 900 s, or a multi-block RepWL (§7.3f) |
 | 11 | other (8 sqrt rows whose ends fit neither shape, 2 unclassified, 1 linear that is not a cycler) | |
 
@@ -2895,6 +2895,351 @@ minutes.
 CI: with the QS and DX batches, the `core` job's closeout step runs
 32-40 min at `-j4`, and runs were cancelled at the old 45-minute limit.
 `timeout-minutes` is now 90.
+
+#### 7.4.HY The bouncer + counter hybrids: a counter lap whose far side is a growing block (2026-09-28)
+
+Workstream HY (batch tag `HY`), over the 496 open `sqrt+log` rows of
+§7.4.DX (`dx/char_all.tsv`, column `hybrid`): 462 DN and 34 QH.
+
+**Five by hand.**  In `1RB0RA_1LC0RA_1LD0LB_1RB1LD` the tape is a binary
+counter at the left end, one cell a digit with the low end next to the
+block, and a block beside it: `1101110010 (01)^n 1`.  Each lap the head
+comes back over the block and runs into the counter (`D` walks left over
+the carry of ones, `D0` sets the first zero, `A` walks back clearing the
+ones).  It then sweeps right over the block, writes one more unit at the
+far end and comes back.  Three of the five rows have this shape.  The
+other two are what most of the residue turned out to be: a counter that
+steps once every three sweeps with a 3-cell unit growing 2 cells a sweep
+(`0RB0RA_1LC1RA_0LD0LA_1LA1LB`), and a tape of several blocks
+(`1RB1LA_0LA0RC_1LC1LD_1RB0LA`).
+
+**The checker** (`theories/Counters/HybridGlueTr.v`, axiom-free beyond
+`functional_extensionality_dep`).  The anchor is two-index:
+`hyC p n = (q, (Lpre ++ E p, h, Rpre ++ w^n ++ Rpost))`.  `E` is the counter
+word, generic in its digit words (`E xH = C`, `E (xO r) = A ++ E r`,
+`E (xI r) = B ++ E r`, the shape of every inferred alphabet); its `cview`
+decompositions are proved once for all `A`, `B` and `C`, so a board needs
+no per-alphabet file.  One lap is two chains through a mid configuration
+`hyM p n = (q2, (Mpre ++ E p, h2, w^n ++ Rpost))`:
+
+* the **counter half** `hyC p (m + n) -> hyM (p+1) n` is a `LapDecider`
+  chain indexed by the carry length, with the block as its opaque right
+  tail (`m` units of it concrete).  It has an interior branch (high part
+  `E r` opaque) and an overflow branch (far left empty).  Each unrolls
+  `nu`/`no` carry units and takes the shorter carries as concrete
+  chains.  The overflow branch carries the carry instruction: the piece
+  §7.4.DX found the irules sweep cycle lacks;
+* the **sweep half** `hyM p (na + k + nb) -> hyC p (k + c)` is a chain
+  indexed by the block length, with the counter as its opaque left tail
+  (§7.4.QS's inner loop).  It may cross the block several times, which is
+  how a counter that steps once every 2 or 4 sweeps is expressed: the
+  partial units the sweeps add fold back (`SFold`) by the end of the lap.
+
+A certificate is a list of anchor **phases**: when the block grows by a
+number of cells its unit does not divide, the junction sees the unit at a
+different offset each lap.  Each phase's sweep lands on the next phase's
+anchor, so the lap is `(p, n, i) -> (p+1, n - nmin_i + c_i, i+1 mod L)`.
+The anchors along the run are the `(p - p0)`-th iterates from the boot,
+which is the single-index `Hlap` of `LapGlueTr.glue_neverqhtr` (DN) or
+`QHConveyorTr.lap_qh_stage` (QH).  Fires come from chain prefixes of any
+phase's three chains.  An interior or overflow fire needs a counter value
+with the right carry shape in that phase.  The certificate names a
+family for it (`ones_on j (xO (r0 + L s))`, or `ones_on (k0 + T s) xH`),
+and the checker computes the family's phase mod `L`.  The QH bound
+reads `Nat.log2 t0 < 24`, so no unary `2^24` is built per row.  A row is
+one line, `apply coversTr_nqh, (hy_sound_nqh _ (mkHY ...))` (`_mirror`
+when the counter is on the right), and a 40-row batch compiles in 1-2.3 s.
+
+**Finder** (`tools/closeouttr/hy_batch.py find`, untrusted).  It runs the
+row and its mirror for 4e5 steps.  It pins the undefined instructions
+(DN; a carry instruction may be silent for the whole run), or those
+silent since the 1e8 scan's quiet point (QH).  Two kinds of anchor
+sequence are tried:
+
+* the fires of one instruction at one cell whose six left neighbours
+  change between visits (the counter's low end);
+* the k-th visit of a cell after each sweep, sub-sampled every `S` sweeps
+  (`S` = 1..4) and split into `L` = 1..4 phases, with one counter prefix
+  for all phases or one per phase.
+
+It reads the counter family (`Lpre`, `A`, `B`, `C`, digits of 1-4 cells)
+and the block (`Rpre`, `w`, `Rpost`, units of 1-8 cells) off the anchors.
+It reads the mid off the simulation (the counter incremented, the head
+about to leave `Rpre ++ w^m`).  Then it derives the chains with
+`lapcert.derive_chain`, the earliest boot, and a fire witness per
+instruction.  4e5 steps, 240 s a row; the 496 took ~40 min at 4 jobs.
+
+**Yield: 170 of 496 (34%), all DN**, `CBT_HY_00..04`; all 170 compile.
+DN open 1,472 -> **1,302**; all rows 4,156 -> **3,986**.
+
+| certificate shape | rows |
+|---|---:|
+| one phase / two phases | 169 / 1 |
+| sweeps per lap (counter steps once every 1 / 2 / 3 / 4 sweeps) | 66 / 52 / 1 / 51 |
+| digits of 1 / 2 / 3 / 4 cells | 58 / 82 / 29 / 1 |
+| top alphabets `(A, B, C)`: `(0,1,1)` / `(00,11,11)` / `(00,10,1)` / `(00,01,01)` | 58 / 50 / 17 / 15 |
+| block unit of 1 / 2 / 3 / 4 / 7 cells | 54 / 103 / 5 / 4 / 4 |
+| carry unrolled `nu` = 0 / 1 (no = 0 in all) | 148 / 22 |
+| counter on the right (certified on the mirror) | 77 |
+| fire witnesses: sweep only / + interior / + overflow | 92 / 66 / 12 |
+
+The boots are short (the latest at step 285).
+
+**Residue (326: 292 DN + 34 QH).**  From the tape at the last far-side
+record before 4e5 steps (`hy_residue.py`, `tools/closeouttr/hy/residue.tsv`; a block is a
+run of a unit of at most 4 cells over at least 8 repetitions, a long block
+one over 40 cells):
+
+| rows | tape | what the glue misses |
+|---:|---|---|
+| 130 (115 DN + 15 QH) | one long block (unit of 3 cells: 67, 2: 42, 1: 14, 4: 7) and a short end | the short end is not a counter of the `E` shape read from one cell.  Seen by hand: a digit under the MSB written differently until the next overflow (`0RB0LB_1LC1RA_0LD0LC_1RD1LB`: `...1101 0110 01101` before 192, `...1101 01101` after); 3-cell units growing 2 cells a sweep, where the junction cells rotate with the unit and anchors that fall mid-carry defeat the per-phase family (`0RB1LC_1LC1RD_1LA0LC_0RD1RB`); a low digit that cycles through three values (`0RB0RA_1LC1RA_0LD0LA_1LA1LB`: `100 -> 010 -> 000`) |
+| 190 (171 DN + 19 QH) | several long blocks | two-block sweeps with a counter at one end (§7.4.QS's sweep counter plus a counter: three indices), doubling multi-block tapes (`0RB0LB_1LC0RD_1LA1RB_1LC1RD`: `(111)^13 0 (111)^26 00 (111)^52 ...`), block-digit counters (`(001)^159 011 0 (001)^61 ...`), and the QH rows' `(111)^a (01)^b (111)^c` |
+| 6 | no long block | |
+
+None of the 34 QH rows fits.  Their quiet instruction stops as late as step
+7.97M (the finder runs past it for QH rows), and their tapes are two- and
+three-block sweeps, not counter + block.
+
+**The SP class (stretch).**  The same finder over all 2,245 open SP rows
+(90 s a row, 3 jobs, ~2 h) certifies **12**, boarded in `CBT_HY_05`
+(`hy/sp_find.jsonl`): all one-phase, and all found from single-instruction
+anchors.  The rest fail before any chain is derived: 1,213 find no
+growing block beside the counter from either end (the log counters of
+§7.4.SP), 1,018 find no anchor cell or no counter family, and 2 time out.
+So §7.4.DX's guess that this checker is the route for SP's sparse hybrids
+holds only for these 12; the other sqrt-width SP rows (not characterised
+further here) are not a counter beside one block.  SP open 2,245 -> **2,233**; all rows
+-> **3,974**.
+
+**Next.**  Most of the 190 multi-block rows are the three-index
+shape §7.4.QS left open: a sweep counter's `(i, k)` glue with a counter
+(or a third tied block) as its far tail.  `HybridGlueTr`'s phase list and
+`SweepGlueTr`'s two-index enumeration compose: the sweep half becomes
+`SweepGlueTr`'s inner and outer laps with the counter opaque.  The
+130 single-block rows need counter alphabets beyond `E`: a top digit
+that differs from the body digits, and base-3 digits (a `cview` for base 3).
+
+#### 7.4.CE The counters the lap emitter did not derive: a parity split and 18 inferred alphabets, 214 boarded (2026-09-29)
+
+Workstream CE (batch tag `CE`) covers two groups.  The first is the 538 DN
+log counters of §7.4.DX that `emit_lapcert.py --tr` did not derive.  The
+second is QE's QH residue, the 394 rows of §7.4.QE still open.  The bouncer +
+counter hybrids, the sweep counters and the plain bouncers belong to other
+workstreams and were not touched.
+
+**Bucketing.**  `tools/closeouttr/qe_probe.py --tr` is QE's probe for the
+never-QH side: every anchor, both orientations, both head symbols.  On the
+DN side the buckets are §7.4.DX's: "no interior chain" 271, "no anchor"
+235, "no overflow chain (nested route is S0-only)" 28, and "no visit
+witness" 4.  On the QH side they are QE's best blockers over the 394 open
+rows: no interior chain 225, no anchor 74, and the nested-overflow failures
+95.  The two ports below address the two largest buckets, which are the
+same on both sides.
+
+**Port 1: "no anchor" is mostly missing digit alphabets.**
+`alphabet_infer.py` over the 309 no-anchor rows (235 DN + 74 QH) reads a
+consistent `E xO = A ++ E`, `E xI = B ++ E`, `E xH = C` family on 205 of
+them.  181 of those are 20 families that no existing alphabet covers.  The
+biggest is `A=110 B=111 C=111` on 77 rows: a binary counter with 3-cell
+digits whose overflow rewrites the whole run.  The 24 others read as
+alphabets the table already has (`Bp` 22, `Dp` 2), so their failure is
+elsewhere.  `gen_alphabet.py` wrote the 18 new modules
+(`theories/Counters/Alph_*.v`, 3-5 cells a digit, each proved by the
+standard induction with no axioms).  They were appended to
+`alphabets_gen.FAMILIES`.  Two of the 20 inferred triples are already in
+the table and were left untouched.  Nothing else changed: the existing
+routes derive these rows once the alphabet exists, mostly through the
+nested overflow (`NestedLapLift`).  Census cache: MATCH.
+
+**Port 2: the parity split (`emit_lapcert.py`, TR boards only).**  QE's
+example `0RB0LB_0RC0LA_1LB1RD_1LA1RC` shows the problem.  The carry crosses
+the run of ones in two states that alternate per digit, so the carry ends in
+a state that depends on the parity of `j`.  The lap LENGTH is still affine
+(`2j+2`), so only the state path differs.  The fix is to split `j` by its
+residue mod M (M = 2, then 3):
+
+* A class case covers `j = M*i + c`.  It carries `c1` copies of `uS` in the
+  chain's prefix and `c2` in its postfix, over the unit `uS^M`.  One period
+  is peeled (`c = r + M`) when the unpeeled form does not derive.  Each
+  `j < c` is one concrete lap.
+* The same split applies on the overflow side (`cview p = (S j, None)`).
+  There a case may close up to `lift`: the `p = 1` lap writes over the
+  tail's blank.  The prefix is kept maximally concrete, so the fire-witness
+  search can run past the lap into the next small laps.  An instruction
+  that fires only for one parity of the carry is then still witnessed in
+  every case.
+* A lap-length pre-filter keeps failing anchors cheap.  Measured interior
+  and overflow laps for `j <= 3M+1` must not depend on the high part, and
+  must be affine along each residue class.
+
+The Coq side is per-board: `repeq_*`, `repmul_*` and `repm_*` (`rep u (m*i +
+(c1+c2)) = rep u c1 ++ rep (rep u m) i ++ rep u c2`), one glue lemma per
+case, and `lapi_*`/`lapo_*`/`fireo_*` by a `Nat.div_mod_eq` /
+`Nat.mod_upper_bound` split on `j`.  These feed the unchanged
+`LapGlueTr.glue_neverqhtr` / `QHConveyorTr.lap_qh_stage` (via
+`fire_via_ovf`).  There is no new theory file.  `Print Assumptions` on a
+parity board shows only `functional_extensionality_dep`.  A board compiles
+in ~3 s.
+
+**Yields** (probe at 3 jobs, 300 s cap; then `--tr`/`--qh --emit`, where
+every board is kernel-checked by the emitter's `coqc`):
+
+| bucket (before) | rows | boarded | by |
+|---|---:|---:|---|
+| DN no anchor | 235 | 128 | new alphabets (108 through the nested overflow, 20 flat) |
+| DN no interior chain | 271 | 14 | parity split 12, flat 2 (an anchor the DX run did not reach) |
+| DN no visit witness | 4 | 4 | QE's instruction-level gate (no port needed) |
+| DN nested route is S0-only | 28 | 2 | QE's S1 nest / gate |
+| QH no interior chain (QE: parity 66, Fibonacci 74, other radices) | 225 | 34 | parity split (M = 2 on all 34) |
+| QH no anchor | 74 | 32 | new alphabets (flat) |
+| QH nested-overflow failures | 95 | 0 | |
+| **total** | **932** | **214** | 148 DN + 66 QH |
+
+Three DN rows derive in the probe but not in `emit_lapcert.py`'s own
+anchor walk, which tries anchors in a different order.  They are still
+open.  All boards that derived compiled.  Batches: `CBT_CE_00..04` (148 DN,
+LAPT boards through `sp_lap_batch.py`) and `CBT_CE_05..06` (66 QH, inline
+through `qc_batch.py lap`), 43 s for the last three at `-j3`.  Closeout:
+6,768 boarded before, **6,982** after, **3,942** remaining.
+
+**The residue (718: 390 DN + 328 QH), by blocker.**  DN growth is §7.4.DX's
+record-gap ratio; QH growth is QE's `log2` ratio per cell.
+
+| blocker | DN | QH | what it is |
+|---|---:|---:|---|
+| no interior chain | 255 | 199 | Measured interior lap lengths on the DN rows: over j = 0..5 at the first six anchors of the 271 open DN rows with this blocker, 82 grow exponentially in j (a nested interior); 121 are neither affine nor exponential (the Fibonacci counters and the other radices); 35 never return to the next anchor within 5,000 steps; 21 are affine, which is a chain-search gap; and 12 depend on the high part.  Fibonacci counters: DN gap ratio 1.62 on 41 rows, QH growth 0.694 on 69.  QH also has other radices: 0.79 (26), 0.64 (24), 0.67 (20).  30 QH parity-looking rows (growth 1.00) survive M = 2 and 3 |
+| no anchor | 102 | 32 | Rows with no inferable family (104 of the 309 had none), or with a family whose anchor still does not fit.  The largest DN group is two-sided with gap ratio 1.0 (23 rows) |
+| nested overflow: no exit / boot / inner interior / inner family | 28 | 95 | QE's two-sided binaries (40 QH, growth 1.00) and two-cell-digit binaries (55 QH) are unchanged.  On DN, the no-exit rows (8) are all two-sided |
+| other | 5 | 2 | 3 emit-order misses, 2 "no overflow phase at K=6"; 2 QH offset nests with no `p = 1` fire |
+
+The next routes, by size:
+
+1. **Nested interior laps.**  The exponential class (82 DN rows) has an
+   interior lap that is itself a counter run, for example
+   `0RB0RB_0LC1RA_1RB1LD_1LC0RA`, where the lap at `j` costs 4, 12, 44, 172
+   steps.  `NestedLapLift` already composes such a run on the overflow side.
+   The interior would need the same boot + inner + exit composition, per
+   `j`.
+2. **A Fibonacci counter theory.**  About 110 rows (41 DN + 69 QH) are
+   Zeckendorf counters.  `FIB_ELEVEN.txt` is the state-level reading; there
+   is no Coq module.
+3. **Two-sided counters.**  These are the no-anchor rows with gap ratio
+   1.0 or 1.4, and QE's 40 no-exit rows.  They need an anchor with a
+   counter on each side.
+
+```
+python3 tools/closeouttr/qe_probe.py ROWS probe.jsonl --jobs 3 --timeout 300 [--tr]     # per-row results: tools/closeouttr/ce_probe.tsv
+python3 tools/counters/alphabet_infer.py --list NOANCHOR_ROWS          # then gen_alphabet.py --abc A,B,C
+(cd tools/counters && python3 emit_lapcert.py --tr --emit --list ok.txt --json lap.json)   # --qh for QH
+python3 tools/closeouttr/sp_lap_batch.py lap.json --tag CE --chunk 40
+python3 tools/closeouttr/qc_batch.py lap theories/Machines/CountersTr/LAPQ_*.v --tag CE --chunk 40
+```
+
+
+#### 7.4.SW The DN sweep counters: a multi-family two-index glue, 239 of 287 boarded (2026-09-29)
+
+Workstream SW (batch tag `SW`), over the 287 `sweepctr` rows of
+§7.4.DX (`dx/char_all.tsv`) that irules does not take.  All 287 are
+class DN, so every row needs `NeverQuasiHaltsTr`.
+
+**QS's residue (part b of the brief) was already done.**  The 75 rows
+§7.4.QS left ("two converging holes" 58, "travelling gap" 17) are all
+boarded by `CBT_DXS_00..01` (irules → `MetaBlkPfxQHTr`, §7.4.DX).  No
+three-index glue is needed for the QH side.
+
+**The plain never-QH twin takes none.**  `SweepGlueTr`'s anchor, laps
+and enumeration, with the boot on the wrapped machine and
+`glue_neverqhtr` at the end: 0 of a 20-row sample (seed 20260928).  The
+DN sweep counters are not QS's shapes:
+
+* **Behind sweeps** (the `1 01 1` rows, `1^a (01)^b 1^c`).  The machine
+  turns at the hole and sweeps the units BEHIND it, out to the tape's end
+  and back, toggling `11 <-> 01` as it goes.  The units ahead are never
+  touched.  QS's inner lap sweeps the side that shrinks, and this one
+  sweeps the side that grows.  It is not the mirror of the other either:
+  mirroring swaps the sides, but not which side is swept.
+* **Parity** (most `1 1` rows).  The block grows by one cell a round, but
+  the sweep alternates two states per cell, so the units are two cells.
+  Consecutive rounds then split differently (`Rpost = [1]`, then `[]`),
+  and no single anchor split covers both.
+
+**The glue** (`theories/Counters/SweepGlueNeverTr.v`, only axiom
+`functional_extensionality_dep`).  A certificate (`swncert`) is a cycle
+of anchor families `fC f i k = (q, (Lpre ++ uL^i ++ Lpost, h, Rpre ++
+uR^k ++ Rpost))`.  Each family has:
+
+* an inner lap `(i, k+1) -> (i+1, k)` that stays in the family.  An
+  AHEAD lap is `SweepGlueTr.sw_inner_lap`, reused as it stands through
+  `fam_sw`.  A BEHIND lap (`sb_inner_ok`) is a chain from `swAb` with
+  index `i`, the first unit ahead concrete and the rest of the right side
+  the opaque tail.  The anchors with fewer than `na + nb` units behind
+  take the concrete `f_base` chains;
+* an outer lap `(i, 0) -> (e, i + d)` onto family `j+1 mod P`
+  (`sn_outer_ok`, both tails empty, index `i`).
+
+The anchors `(j, i, k)` are enumerated along `sn_nxt` into
+`glue_neverqhtr`'s single `Hlap`.  The block size `i + k` never shrinks,
+and `sweep_nqh_check` requires family 0 to grow it (`1 <= e_0 + d_0`).
+So from any visited anchor, cycling the families reaches any family with
+as many units ahead as a fire witness needs (`reach_big`, `reach_fam`,
+`reach_ahead`).  That turns every chain-prefix fire, of any family's
+inner or outer lap, into a fire from every anchor.  A row is one line,
+`apply coversTr_nqh, (sweep_nqh_sound _ (mkSWN ...))`
+(`sweep_nqh_sound_mirror` when the hole moves left).  A 40-row batch
+compiles in about 1.2 s.  `Tests/SweepNqh_Corruption.v` holds a real
+two-family certificate and 7 controls that must fail: the families
+swapped (the growth gate), a wrong cross-family `d`, the lap-side flag
+flipped, a live pin, no fire witnesses, the unmirrored machine, and a
+one-transition mutant.
+
+**Finder** (`tools/closeouttr/sw_batch.py find`, untrusted).  It runs 6e4
+steps of the machine and its mirror, and pins the instructions that
+never fire (the undefined ones).  For each instruction and each small
+prefix/unit length (units 1-4), it groups the late configurations by
+split key, one key per family.  It follows the outer transitions
+(`k = 0` -> the next key at `(e, i + d)`) around a cycle whose total
+growth is positive.  Then it derives each family's inner chain (ahead
+first, then behind) and outer chain with `lapcert.derive_chain`.  Three
+passes, each run only on what the one before left:
+
+| pass | what changes | rows |
+|---|---|---:|
+| all late fires of the instruction | | 190 |
+| only the steps where the head reverses | the anchor instruction also fires inside the sweeps; those fires hid the anchor's units (they are cut from the longest configuration) | 21 |
+| keys read one at a time | the hole moves one cell a sweep with two-cell units, so the key alternates every lap; a family's inner lap is then two sweeps, and its outer transition goes to the next round's start | 28 |
+
+**Yield: 239 of 287 (83%) boarded**, in `CBT_SW_00` (the sample, 13)
+and `CBT_SW_01..07`.  All 239 kernel-check; each batch takes about 1 s.
+All rows, 4,156 -> **3,917**.
+
+| certificate shape | rows |
+|---|---:|
+| one family, behind lap | 122 |
+| one family, ahead lap | 15 |
+| two families (parity), ahead laps | 96 |
+| three / four families, behind laps | 2 / 4 |
+| units of two cells / four cells | 233 / 6 |
+| hole moves left (certified on the mirror) | 112 |
+
+Cost in the container (4 cores, shared with a full `make closeout-tr`):
+the first pass took about 2 h at 4 jobs (~12 s a row, and a failing row
+tries every candidate).  The two later passes took about 25 and 40 min
+on the rows left before them.
+
+**Residue (48):**
+
+| rows | shape | failure |
+|---:|---|---|
+| 31 | two or three holes in a block of 1s (`1 1 1`, `1 1 1 1`): the converging-holes shape of §7.4.QS's residue, never-QH side | 22 no outer chain (a one-hole split fits the anchors inside a round, but no chain closes the round); 8 no sweep anchor; 1 no inner chain |
+| 8 | long `(01)^n` trains with a `0010101` head (`01 01 ... 01 0010101`) | no sweep anchor |
+| 9 | one-hole shapes (`1 1`, `1 01 1`, `1 01`) | 5 no sweep anchor, 4 no outer chain |
+
+The 31 multi-hole rows are the next step.  They need the three-index
+anchor §7.4.QS sketched, `L ++ uL^i ++ M ++ uR^k ++ N ++ uL'^i ++ R` with
+the two outer blocks tied.  Each lap is still a one-index chain between
+opaque tails, so the glue here would carry over with a third, tied
+count.  On the QH side, irules took all 75 of these shapes (§7.4.DX), but
+on the DN side it leaves them undecided.
 
 ## 8. What we deliberately do NOT redo
 
