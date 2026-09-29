@@ -2,3 +2,5 @@
 probe.jsonl
 *.log
 pending.txt
+vf.jsonl
+lad_todo.txt
