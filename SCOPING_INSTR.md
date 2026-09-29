@@ -3755,6 +3755,163 @@ HY2_BUDGET=600 python3 tools/closeouttr/hy2_batch.py find hy2/timeouts1.txt hy2/
 python3 tools/closeouttr/hy2_batch.py batch hy2/find1.jsonl hy2/find2.jsonl --tag HY2 --chunk 50
 ```
 
+#### 7.4.SPB The SP log counters: CE's lap ports take 775, the ladder the next slice (2026-09-29)
+
+Workstream SPB (batch tag `SPB`), over all 2,233 open SP rows (class SP,
+`classes.py shard SP 0 1`).  HY's stretch run (§7.4.HY) had split them
+into 1,213 log counters with no block beside them and 1,020 with no
+anchor cell or no counter family.  Nobody had run the emitter ports of
+§7.4.QE/§7.4.CE (the per-instruction visit gate, the reindexed and S1
+nested overflows, the parity split, the 18 inferred alphabets) or CE2's
+ladder ports on class SP.  No new Coq: every board is a landed
+`LapGlueTr` (`LAPT_*`) or `LadderCheckTr` (`LDRT_*`) board.  Per-row
+results: `tools/closeouttr/spb/` (`probe.tsv`, `lap_c*.json`,
+`ok_c*.txt`); `tally.py` recomputes every count below.
+
+**The lap route: 791 derive, 775 boarded, `CBT_SPB_00..15, 18..21`.**
+`qe_probe.py --tr` over the 2,233 rows (3 jobs, 120 s cap, ~4 h
+including a container restart; 1 timeout) derives **791** (35%).
+`emit_lapcert.py --tr --emit` on them in chunks of ~200 derives and
+compiles **775** (16 misses: the emitter's own anchor walk stops at a
+nested-overflow failure for 11, "no interior chain" for 4, and one board
+fails `coqc`).  A board compiles in about a second; a 40-row batch in
+about 7 s.
+
+| port the board needed | rows |
+|---|---:|
+| a CE-inferred alphabet, flat | 459 |
+| a CE-inferred alphabet, nested overflow (`NestedLapLift`) | 241 |
+| a pre-CE alphabet (QE's per-instruction gate 39, reindexed offset nest 36, S1-head nest 22; overlapping) | 75 |
+| the parity split | 0 |
+
+`Alph_110_111_111` alone (the `110` = 0 / `111` = 1 counter of §7.4.SP)
+carries 436 boards; then `Alph_111_101_1` 84, `Alph_101_111_11` 80,
+`Alph_011_111_1` 68, `Alph_10_11_11` 39.  412 boards are certified on
+the mirror, 305 at an S1 head.  So the SP log counters were almost all
+an alphabet gap: §7.4.SP's "no anchor" (1,325 of the 1,733 SP rows the
+emitter saw before) was CE's port 1 on a larger scale, and none of them
+needs the parity split.
+
+By HY's split: **755 of the 1,213 log counters** board, and 20 of the
+1,020 no-anchor/no-family rows.
+
+**The lap route's residue: 1,442 probe failures + 16 emit misses.**
+
+| best blocker (over every anchor) | HY log counter | HY no anchor/family | all |
+|---|---:|---:|---:|
+| no anchor | 37 | 609 | 646 |
+| nested overflow: no overflow phase at K=6 / no inner family at pow2 j / no boot / no exit / other | 322 | 170 | 492 |
+| no interior chain | 79 | 212 | 291 |
+| renderer: no lap witness for one instruction | 4 | 8 | 12 |
+| timeout (120 s) | 0 | 1 | 1 |
+
+LADDER ROUTE AND FINAL RESIDUE: IN PROGRESS (valfam.py over the 1,442).
+
+#### 7.4.BX The small classes: class ED closed, the cube counters need a non-linear liveness (2026-09-29)
+
+Workstream BX (batch tag `BX`), over the small classes of
+`dx/char_all.tsv` still open: 89 DN multi-block bouncers (`bouncer` /
+`bouncer_part`, hybrid `sqrt+sqrt`: the residue of BR, MB and TI), 29 DN
+cube sweep counters (`sweepctr`, shape `cube`: SW's residue), the 8 class-ED
+edge rows, and the 3 DN `linear` / `other` rows.  Row lists and per-row
+data are in `tools/closeouttr/bx/`.
+
+**Class ED: 8 of 8 boarded, the class is closed (22 of 22).**
+
+| rows | what they are | route | batch |
+|---:|---|---|---|
+| 6 | `xRB---_xRC---_xRA---_------`: three right-moving instructions on blank tape, the other five undefined | translated cyclers (`tc_find.py`, `dx_tc_batch.py`; period 3, 0.7-0.9 s a probe) | `CBT_BX_00` |
+| 1 | `1RB1LD_1RC1RB_1LC1LA_0RC0RD`, **the BBB(4) champion** | blank tail: at step 32,779,478 = `B_close` the tape is blank, the head is in C, and `C0 = 1LC` marches left forever | `CBT_BX_01` |
+| 1 | `1RB0LD_1LC0LA_1LA0LC_1RD1RC`, the previous champion | blank tail at step 66,349, `D0 = 1RD` | `CBT_BX_01` |
+
+RepWL at 900 s did not certify the champion ("no cert for A0 at L=5",
+11,232 nodes): it quasihalts, and the never-QH tier is the wrong route.
+The scanner calls it EDGE because its terminal march runs off the 2^26-cell
+tape.  `theories/Counters/BlankTailTr.v` (new, generic, 180 lines) is the
+instruction-level twin of `Counters/BlankTail.v`.  After the prefix the
+march keeps a blank under the head, so only `(q, S0)` fires from `N0` on.
+That gives `NonHalt /\ QHBoundTr B /\ QuasiHaltsTr` for every `B >= N0`
+(`q <> StA`).  The prefix runs on `TCyclerN.cstepsN`'s binary fuel.  The
+bound `N.to_nat N0 <= 32779478` is discharged by `N_le_dec`, which compares
+the binary numerals.  The literal `32779478` stays `Nat.of_num_uint` and is
+never forced to 32.8M constructors.  Finder and writer:
+`tools/closeouttr/bx_bt_batch.py`.  Compile times (container, 4 cores):
+`BlankTailTr.v` ~3 s, `CBT_BX_00` ~5 s, `CBT_BX_01` ~20 s (the champion's
+prefix is one `vm_compute`).  `Print Assumptions` shows
+`functional_extensionality_dep` only.
+
+**The 29 cube sweep counters: none boarded.**  TI had failed all 29 on "too
+many families" at the cap of 120.  `ti_batch.py find` now takes the
+exploration limits as flags (`--maxfam --maxleaf --maxsteps --maxna --t0
+--plist --force`).  At `--maxfam 600 --maxleaf 3000`, 600 s a row:
+
+| rows | TI verdict | what it is |
+|---:|---|---|
+| 13 | too many families (at 600) | doubling tapes: `(01)^5 1 (10)^10 0 (01)^20 1 (10)^39 0 (01)^77 ...`, a block count that grows without bound.  They need TI's counter segment (§7.4.TI, the 271) |
+| 15 | exploration closes (13-24 families, 20 leaves), no ranking | see below |
+| 1 | leaf too long (also at `--maxsteps 40000`) | |
+
+The 15 rows that close are TI's "no ranking" failure, and a wider `P` does
+not fix it.  `P` = 5, 8, 9, 12, 18 and 27 all fail, and the node set grows
+about 7x per doubling of `P` (82, 434, 2,722, 19,010, 141,442 nodes for
+`P` = 2..32).  10 of the 15 are one machine up to `D0`:
+`1RB1LA_0RC0RD_1LC0LA_??0RC`, with `D0` the rare instruction.  In
+`1RB1LA_0RC0RD_1LC0LA_0LB0RC`, the inner lap `F4 (a, b, c) -> (a+1, b-2,
+c+2)` ends on the parity of `b`.  Only the even end fires `D0`, and the next
+round's start is affine in `a` and `c`, where `a` has counted the `b/2`
+laps.  So the parity at the end of the next round depends on `b mod 4`, the
+one after that on `b mod 8`, and so on.  A node that keeps values mod a
+fixed `P` cannot tell whether the next round fires, and the abstract graph
+has a `D0`-free cycle at every `P`.  The concrete dynamics has no such
+cycle.  On the certificate's own leaf maps, from 3,000 random starts in
+every family, `D0` fires before the round-end family is visited 7 times
+(starts below 2,000) or 4 times (starts below 10^6).  The argument this
+needs is 2-adic, like a Collatz-type map: a `D0`-free run is bounded by a
+2-adic valuation of the start values, which is finite for each start but
+not bounded over all of them.  A certificate for it would be a
+lexicographic ranking `(level, nu_2(e), V)` per node.  Here `e` is affine,
+every non-firing edge inside a level satisfies `2^j e' = a e`
+coefficient-wise with `a` odd, `nu` drops when `j >= 1`, and `V` must drop
+when `j = 0`.  That is checkable coefficient-wise like the present
+rankings, and sound by Gauss's lemma.  A prototype MILP finder (big-M over
+15 ratio options per edge) found no such certificate in 300 s.  The
+non-firing node graph at `P = 1` is one strongly connected component (16
+nodes, 20 edges) that includes the paths after the fire.  On those paths
+the exact ratio fails (the edge `F12 (0, y) -> F11 (2, y)`), and splitting
+small values off every variable (`--force 2`: 53 nodes, still one
+component) does not separate them.  So the 2-adic argument needs a
+per-path invariant, not just a per-node one.  This
+is research, and it likely also covers the 24 "no ranking" rows of §7.4.TI.
+
+**The 89 multi-block bouncers: none boarded.**
+
+| route | result |
+|---|---|
+| TI, `--maxfam 400 --maxleaf 3000 --maxsteps 20000`, 300 s | 86 too many families, 3 leaf too long |
+| (earlier) RepWL 900 s with the ladder and wide L (BR), rank tier at window 7 (BR), multi-block RepWL at 240 s (MB) | all missed |
+| n-gram rank tier `rk:8:0` and `ng:7:0`, 600 s, a 12-row sample plus the 3 misc rows | NGRESULT |
+
+Read by hand, the clean-looking ones (e.g. `(0111)^a 0^4 (1100)^b (110)^c`,
+`(01001)^a 0 1^4 (01011)^b`) have a middle region whose phase changes
+between snapshots (`1100` at 1M and 4M steps, `1001` at 8M), and junk
+cells at the edge that grow slowly.  They are §7.4.MB's "hybrids at the
+edge": a word list does not describe them, and a block-family glue needs
+the counter segment.
+
+**The 3 `linear` / `other` rows: none boarded.**  Translated cyclers (2M
+steps), TI (2 too many families, 1 leaf too long), multi-block RepWL at
+900 s with `--pmax 32` (no closure, 204-216 candidates each) and the
+n-gram sample above all miss.  `1RB1RC_1LC0RA_0LB0LD_1LA1LD` is a
+multi-block tape of growing `1^n` and `(01)^n` runs (extent 34,312 at 1e8),
+and the other two have tens of thousands of junk cells.
+
+**Yield: 8 of 129 boarded** (`CBT_BX_00..01`).  All rows: 2,772 ->
+**2,764**.  Residue: 121 rows (`bx/bnc.txt`, `bx/cube.txt`, `bx/misc.txt`).
+Two routes would take most of it, and both are research: TI's counter
+segment (13 cube rows and most of the 89 bouncers, which TI reports as
+"too many families") and the 2-adic lexicographic liveness above (15 cube
+rows, and probably TI's 24).
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
