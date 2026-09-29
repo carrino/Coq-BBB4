@@ -88,16 +88,17 @@ jobs:
   # rejected batch.
   closeout-shard:
     runs-on: ubuntu-latest
-    # The long pole is one deep-RepWL batch: CBT_BR_00 took 2,655 s alone
-    # (run 36527279101), and a batch is never split across cores, so that
-    # sets the floor.  The shard budget is ~2.5x the worst shard measured.
+    # The floor is the slowest single batch, which no split can shorten:
+    # the deep-RepWL CBT_BR_02 / CBT_BR_00 take 35-46 min alone, depending
+    # on the runner (the same batch varies up to ~2x between runners).
+    # The budget is ~2.5x that.
     timeout-minutes: 120
     # Six, not more: a PR push starts both a push and a pull_request run,
     # so each push costs 2 x (SHARDS + 2) jobs against the account's
-    # concurrent-job limit, and with 8 shards jobs queued up to 37 min
-    # (2026-09-29).  `ci_shard.py --plan 6` keeps every shard under the
-    # CBT_BR_00 floor; raise it only when a shard other than BR_00's is
-    # the long pole.
+    # concurrent-job limit (with 8 shards, jobs queued up to 37 min on
+    # 2026-09-29).  `ci_shard.py --plan 6` keeps every shard but the two
+    # floor batches' well under the floor; add shards only when another
+    # shard's estimate nears it.
     strategy:
       fail-fast: false
       matrix:
