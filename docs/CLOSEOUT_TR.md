@@ -102,6 +102,21 @@ If a row ends up in two batches, the split still holds; the first batch
 alphabetically is recorded in `closeouttr_boarded.tsv`. The duplicate is
 harmless, but it is wasted work, so stick to your slice.
 
+## CI
+
+CI kernel-checks every batch and the split on each push, sharded
+(`.github/workflows/ci.yml`): `closeout-shard` runs on 8 runners, each
+building the slice of `CBT_*.vo` that `tools/closeouttr/ci_shard.py K 8`
+names, and ships its `.vo`; `closeout-final` merges them (a file two shards
+both built must be byte-identical), checks with `make -q` that make will
+rebuild no batch, then compiles `CloseoutTr.vo` and runs
+`gen_closeout_tr.py --check`.  The slices are balanced on the per-batch
+costs in `tools/closeouttr/ci_costs.tsv`; an unlisted batch counts as 20 s.
+**If your batch takes more than about a minute to compile, add it there**
+(`ci_shard.py --costs` reads the `make TIMED=1` logs every shard uploads),
+or it may share a shard with another slow batch.  `ci_shard.py --plan 8`
+shows the split.
+
 ## Rules
 
 - Never edit `CensusTr/DeferredTr_*`, `RunTr.v` or the walk. The census is
