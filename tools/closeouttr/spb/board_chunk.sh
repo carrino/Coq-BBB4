@@ -13,7 +13,8 @@ make Makefile.coq > /dev/null 2>&1
 make -f Makefile.coq -j3 $(echo $new | sed 's/\.v/.vo/g') theories/CloseoutTr/RemainingTr.vo 2>&1 | grep -v '^COQC\|^COQDEP' || true
 for v in $new; do [ -f ${v%.v}.vo ] || { echo "NOT BUILT: $v"; exit 1; }; done
 python3 tools/closeouttr/gen_closeout_tr.py --check
-python3 tools/check_coqproject.py
+# check_coqproject.py runs on a clean worktree of the commit (a later
+# chunk's boards may be on disk, unwired, mid-emit): see verify_head.sh
 python3 tools/census_cache.py --check > /dev/null && echo "CENSUS CACHE: MATCH"
 python3 tools/closeouttr/ci_shard.py --check 6
 python3 - <<'P'
