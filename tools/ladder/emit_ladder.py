@@ -435,10 +435,51 @@ def closure_data(cert, tab):
         if got is not None:
             inter, n0i, sti = got, n0, stride
             break
+    # A DIGIT OF LOOKAHEAD ([LadderCheckNestTr.boardK_*]): the carry that
+    # turns back on the next digit's first cell has no arm with [rest]
+    # opaque, but one per next digit [e], plus one per phase for the last
+    # digit (which sees the terminator), does.
+    def lookahead_at(n0, stride):
+        got = []
+        for d in range(b - 1):
+            for r in range(n0 + stride):
+                s = 0 if r < n0 else stride
+                for e in range(b):
+                    c0 = conf(blk(pre + digs[b - 1] * r, digs[b - 1], s,
+                                  digs[d] + digs[e]))
+                    c1 = conf(blk(pre + digs[0] * r, digs[0], s,
+                                  digs[d + 1] + digs[e]))
+                    try:
+                        ch, _ca, _cb = derive(el, er, c0, c1,
+                                              'lookahead arm d=%d e=%d r=%d'
+                                              % (d, e, r))
+                    except NoClosure:
+                        return None
+                    got.append(('K', (d, e, r), c0, c1, ch))
+                for ph in range(nph):
+                    c0 = conf(blk(pre + digs[b - 1] * r, digs[b - 1], s,
+                                  digs[d] + tails[ph]))
+                    c1 = conf(blk(pre + digs[0] * r, digs[0], s,
+                                  digs[d + 1] + tails[ph]))
+                    try:
+                        ch, _ca, _cb = derive(True, True, c0, c1,
+                                              'end arm d=%d r=%d ph=%d'
+                                              % (d, r, ph))
+                    except NoClosure:
+                        return None
+                    got.append(('E', (d, r, ph), c0, c1, ch))
+        return got
+
+    look = None
+    if inter is None and NEST and TR_PINS is not None:
+        for n0, stride in ARM_GRID:
+            got = lookahead_at(n0, stride)
+            if got is not None:
+                look, inter, n0i, sti = got, [], n0, stride
+                break
     if inter is None:
         raise NoClosure('interior arm: no chain at any threshold 0..6 and '
-                        'stride 1..4 -- the carry ripple is not affine in the '
-                        'run length')
+                        'stride 1..4, with or without a digit of lookahead')
 
     # The fill arms: t^k -> the fill law's target at width k + s, both tails
     # known empty, with the same two knobs.  The arm at index [r] carries [r]
@@ -730,7 +771,7 @@ def closure_data(cert, tab):
     nvis = {r: {i: seen_at[(r, pv)][i] for i in want}
             for (r, p) in seen_at if p == pv}
     vis = {r: {i: v[1] for i, v in d.items()} for r, d in nvis.items()}
-    if any(v[0] for d in nvis.values() for v in d.values()) and not any(
+    if any(v[0] for d in nvis.values() for v in d.values()) and look is None and not any(
             isinstance(x[5], tuple) and x[5][:1] == ('NEST',) for x in inter) \
             and not any(isinstance(x[7], tuple) and x[7][:1] == ('NEST',)
                         for x in fill):
@@ -750,10 +791,11 @@ def closure_data(cert, tab):
         raise NoClosure('the phase cycle does not reach phase %d from every '
                         'phase' % pv)
 
-    isnest = any(isinstance(x[5], tuple) and x[5][:1] == ('NEST',)
-                 for x in inter) or any(
+    isnest = look is not None or any(
+        isinstance(x[5], tuple) and x[5][:1] == ('NEST',)
+        for x in inter) or any(
         isinstance(x[7], tuple) and x[7][:1] == ('NEST',) for x in fill)
-    return dict(nest=isnest, nvis=nvis, b=b, el=el, er=er, nph=nph, ph0=ph0, pv=pv, kcyc=kcyc,
+    return dict(nest=isnest, look=look, nvis=nvis, b=b, el=el, er=er, nph=nph, ph0=ph0, pv=pv, kcyc=kcyc,
                 inter=inter, n0i=n0i, sti=sti,
                 fill=fill, n0f=n0f, stf=stf,
                 ds0=ds0, t0=boot['steps_from_blank'], vis=vis,
@@ -1500,6 +1542,63 @@ Qed.
 
 '''
 
+NCLOSURE_KTHM = '''Lemma karm_reach_%(mid)s : forall d e r,
+  d < fm_b FAM - 1 -> e < fm_b FAM -> r < %(n0i)d + %(sti)d ->
+  ReachL tm (negb (fm_left FAM)) (fm_left FAM)
+    (lr_lhs (karm_%(mid)s d e r)) (lr_rhs (karm_%(mid)s d e r)).
+Proof.
+  intros d e r Hd He Hr. vm_compute in Hd, He.
+%(ksound)s  exfalso; lia.
+Qed.
+
+Lemma karm_lhs_%(mid)s : forall d e r,
+  d < fm_b FAM - 1 -> e < fm_b FAM -> r < %(n0i)d + %(sti)d ->
+  lr_lhs (karm_%(mid)s d e r)
+    = cls_conf FAM (cls_side FAM [] (fm_b FAM - 1) r
+                      (astride %(n0i)d %(sti)d r) [d; e]).
+Proof.
+  intros d e r Hd He Hr. vm_compute in Hd, He.
+%(kcomp)s  exfalso; lia.
+Qed.
+
+Lemma karm_rhs_%(mid)s : forall d e r,
+  d < fm_b FAM - 1 -> e < fm_b FAM -> r < %(n0i)d + %(sti)d ->
+  lr_rhs (karm_%(mid)s d e r)
+    = cls_conf FAM (cls_side FAM [] 0 r (astride %(n0i)d %(sti)d r) [S d; e]).
+Proof.
+  intros d e r Hd He Hr. vm_compute in Hd, He.
+%(kcomp)s  exfalso; lia.
+Qed.
+
+Lemma earm_reach_%(mid)s : forall d r ph,
+  d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d -> ph < %(nph)d ->
+  ReachL tm true true (lr_lhs (earm_%(mid)s d r ph)) (lr_rhs (earm_%(mid)s d r ph)).
+Proof.
+  intros d r ph Hd Hr Hph. vm_compute in Hd.
+%(esound)s  exfalso; lia.
+Qed.
+
+Lemma earm_lhs_%(mid)s : forall d r ph,
+  d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d -> ph < %(nph)d ->
+  lr_lhs (earm_%(mid)s d r ph)
+    = cls_conf FAM (run_side FAM (fm_b FAM - 1) r (astride %(n0i)d %(sti)d r)
+                      0 ph [] [d]).
+Proof.
+  intros d r ph Hd Hr Hph. vm_compute in Hd.
+%(ecomp)s  exfalso; lia.
+Qed.
+
+Lemma earm_rhs_%(mid)s : forall d r ph,
+  d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d -> ph < %(nph)d ->
+  lr_rhs (earm_%(mid)s d r ph)
+    = cls_conf FAM (run_side FAM 0 r (astride %(n0i)d %(sti)d r) 0 ph [] [S d]).
+Proof.
+  intros d r ph Hd Hr Hph. vm_compute in Hd.
+%(ecomp)s  exfalso; lia.
+Qed.
+
+'''
+
 NCLOSURE_BOOTL = '''Lemma bootl_%(mid)s :
   stepn %(tmb)s %(t0)d InitES = Some (lift (fam_cfg FAM (%(ds0)s, 0, %(ph0)d))).
 Proof.
@@ -1574,6 +1673,12 @@ def emit_closure_nest(cert, tab, mid, cd):
 
     for d, r, _s, c0, c1, ch, _ca, _cb in cd['inter']:
         arms.append(('iarm%d_%d' % (d, r), c0, c1, prog(ch), el, er))
+    look = cd.get('look')
+    for kind, ix, c0, c1, ch in (look or []):
+        if kind == 'K':
+            arms.append(('karm%d_%d_%d' % ix, c0, c1, prog(ch), el, er))
+        else:
+            arms.append(('earm%d_%d_%d' % ix, c0, c1, prog(ch), True, True))
     offs = {}
     for r, ph, _s, _m1, _m2, fl, fr, fch, _ca, _cb in cd['fill']:
         fr = cd['targets'].get((r, ph), fr)
@@ -1603,10 +1708,32 @@ Proof. apply rule_sound_nil. exact nladder_ok_%(mid)s. Qed.
             nm=nm, mid=mid, lhs=coq_conf(c0), rhs=coq_conf(c1),
             segs=';\n   '.join(segs), el=str(el_).lower(),
             er=str(er_).lower()))
-    L.append(CLOSURE_IDISP % dict(
-        mid=mid,
-        br='\n  '.join('| %d, %d => iarm%d_%d_%s' % (d, r, d, r, mid)
-                       for d, r, _s, _0, _1, _c, _a, _b in cd['inter'])))
+    if look:
+        ks = [ix for k, ix, *_ in look if k == 'K']
+        es = [ix for k, ix, *_ in look if k == 'E']
+        L.append('''Definition karm_%(mid)s (d e r : nat) : LRule :=
+  match d, e, r with
+  %(kb)s
+  | _, _, _ => karm%(k0)s_%(mid)s
+  end.
+
+Definition earm_%(mid)s (d r ph : nat) : LRule :=
+  match d, r, ph with
+  %(eb)s
+  | _, _, _ => earm%(e0)s_%(mid)s
+  end.
+
+''' % dict(mid=mid,
+              kb='\n  '.join('| %d, %d, %d => karm%d_%d_%d_%s' % (ix + ix + (mid,))
+                             for ix in ks),
+              eb='\n  '.join('| %d, %d, %d => earm%d_%d_%d_%s' % (ix + ix + (mid,))
+                             for ix in es),
+              k0='%d_%d_%d' % ks[0], e0='%d_%d_%d' % es[0]))
+    else:
+        L.append(CLOSURE_IDISP % dict(
+            mid=mid,
+            br='\n  '.join('| %d, %d => iarm%d_%d_%s' % (d, r, d, r, mid)
+                           for d, r, _s, _0, _1, _c, _a, _b in cd['inter'])))
     r0, p0 = cd['fill'][0][0], cd['fill'][0][1]
     L.append(CLOSURE_FDISP % dict(
         mid=mid, r0=r0, ph0=p0,
@@ -1669,7 +1796,37 @@ Definition vsegs_%(mid)s (r : nat) (t : Instr) : list nseg :=
         out.append('    exfalso; lia.\n')
         return ''.join(out)
 
-    L.append(NCLOSURE_THM % dict(
+    def kbranches(body):
+        out = []
+        for d in range(b - 1):
+            eb = []
+            for e in range(b):
+                rb = []
+                for r in range(nA):
+                    rb.append('      destruct r as [|r].\n      { %s. }\n'
+                              % (body % dict(d=d, e=e, r=r, mid=mid)))
+                eb.append('    destruct e as [|e].\n    {\n%s      exfalso; lia.\n    }\n'
+                          % ''.join(rb))
+            out.append('  destruct d as [|d].\n  {\n%s    exfalso; lia.\n  }\n'
+                       % ''.join(eb))
+        return ''.join(out)
+
+    def ebranches(body):
+        out = []
+        for d in range(b - 1):
+            rb = []
+            for r in range(nA):
+                pb = []
+                for ph in range(nph):
+                    pb.append('      destruct ph as [|ph].\n      { %s. }\n'
+                              % (body % dict(d=d, r=r, ph=ph, mid=mid)))
+                rb.append('    destruct r as [|r].\n    {\n%s      exfalso; lia.\n    }\n'
+                          % ''.join(pb))
+            out.append('  destruct d as [|d].\n  {\n%s    exfalso; lia.\n  }\n'
+                       % ''.join(rb))
+        return ''.join(out)
+
+    thm = NCLOSURE_THM % dict(
         mid=mid, nph=nph, n0i=n0i, sti=sti, n0f=n0f, stf=stf, pv=pv,
         bsound=ibranches('eapply narm_reach; [exact nrules_sound_%(mid)s '
                          '| exact ok_iarm%(d)d_%(r)d_%(mid)s]'),
@@ -1680,7 +1837,19 @@ Definition vsegs_%(mid)s (r : nat) (t : Instr) : list nseg :=
         flia=fbranches('vm_compute; lia'),
         fvis=_rbranches(nF, lambda r: 'destruct t as [q s]; destruct q, s; '
                         'try (exfalso; apply Hnp; simpl; tauto); '
-                        'vm_compute; reflexivity.', lo=1)))
+                        'vm_compute; reflexivity.', lo=1))
+    if look:
+        # the interior lemmas are the lookahead and end arms'
+        thm = thm[thm.index('Lemma farm_reach_'):]
+        thm = (NCLOSURE_KTHM % dict(
+            mid=mid, nph=nph, n0i=n0i, sti=sti,
+            ksound=kbranches('eapply narm_reach; [exact nrules_sound_%(mid)s '
+                             '| exact ok_karm%(d)d_%(e)d_%(r)d_%(mid)s]'),
+            kcomp=kbranches('vm_compute; reflexivity'),
+            esound=ebranches('eapply narm_reach; [exact nrules_sound_%(mid)s '
+                             '| exact ok_earm%(d)d_%(r)d_%(ph)d_%(mid)s]'),
+            ecomp=ebranches('vm_compute; reflexivity')) + thm)
+    L.append(thm)
     L.append(NCLOSURE_BOOTL % dict(
         mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str), ph0=ph0,
         tmb=('tm_%s' % mid) if TR_QH is not None else 'tm'))
@@ -1704,9 +1873,15 @@ Definition vsegs_%(mid)s (r : nat) (t : Instr) : list nseg :=
         '  - vm_compute; lia.\n',
         '  - lia.\n',
         '  - lia.\n',
-        '  - exact iarm_reach_%s.\n' % mid,
-        '  - exact iarm_lhs_%s.\n' % mid,
-        '  - exact iarm_rhs_%s.\n' % mid,
+        *(['  - exact karm_reach_%s.\n' % mid,
+           '  - exact karm_lhs_%s.\n' % mid,
+           '  - exact karm_rhs_%s.\n' % mid,
+           '  - exact earm_reach_%s.\n' % mid,
+           '  - exact earm_lhs_%s.\n' % mid,
+           '  - exact earm_rhs_%s.\n' % mid] if look else
+          ['  - exact iarm_reach_%s.\n' % mid,
+           '  - exact iarm_lhs_%s.\n' % mid,
+           '  - exact iarm_rhs_%s.\n' % mid]),
         '  - lia.\n',
         '  - lia.\n',
         '  - exact farm_reach_%s.\n' % mid,
@@ -1718,7 +1893,13 @@ Definition vsegs_%(mid)s (r : nat) (t : Instr) : list nseg :=
     common = dict(mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str), ph0=ph0,
                   nph=nph, pv=pv, n0i=n0i, sti=sti, n0f=n0f, stf=stf,
                   args=args)
-    L.append((NCLOSURE_QH if TR_QH is not None else NCLOSURE_NQH) % common)
+    txt = (NCLOSURE_QH if TR_QH is not None else NCLOSURE_NQH) % common
+    if look:
+        txt = (txt.replace('boardN_neverqhtr', 'boardK_neverqhtr')
+                  .replace('boardN_qhtr', 'boardK_qhtr')
+                  .replace('iarm_%s %d %d' % (mid, n0i, sti),
+                           'karm_%s earm_%s %d %d' % (mid, mid, n0i, sti)))
+    L.append(txt)
     return ''.join(L)
 
 
