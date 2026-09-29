@@ -240,6 +240,78 @@ def fam_candidates(occ, n, minhits=12, maxfam=4):
                                 yield cyc
 
 
+def fam_candidates_skip(occ, n, minhits=12, maxfam=4, emax=3):
+    """[fam_candidates] for anchors whose split key ALTERNATES inside a
+    round: the hole moves one cell a sweep but the units are two cells, so
+    a family's anchors are every other sweep and its inner lap is two
+    sweeps.  Inner laps are read off each key's own subsequence; an outer
+    transition goes from a key's [k = 0] anchor to the next anchor (of any
+    key) that starts a round ([i <= emax])."""
+    late = [o for o in occ if o[0] > n // 3]
+    if len(late) < minhits:
+        return
+    Lm = max((o[1] for o in late), key=len)
+    Rm = max((o[2] for o in late), key=len)
+    seen = set()
+    for p in range(4):
+        for a in (1, 2, 3, 4):
+            uL = Lm[p:p + a]
+            if len(uL) < a:
+                continue
+            for s in range(4):
+                for b in (1, 2, 3, 4):
+                    uR = Rm[s:s + b]
+                    if len(uR) < b:
+                        continue
+                    seq = []
+                    cnt = collections.Counter()
+                    for t, L, R in late:
+                        x, y = QS.split_side(L, p, uL), QS.split_side(R, s, uR)
+                        if x is None or y is None:
+                            continue
+                        key = (x[0], x[1], x[3], y[0], y[1], y[3])
+                        seq.append((key, x[2], y[2]))
+                        cnt[key] += 1
+                    good = {k for k, v in cnt.items() if v >= minhits}
+                    seq = [z for z in seq if z[0] in good]
+                    inner = collections.Counter()
+                    last = {}
+                    for key, i2, j2 in seq:
+                        if key in last:
+                            i1, j1 = last[key]
+                            if j1 > 0 and (i2, j2) == (i1 + 1, j1 - 1):
+                                inner[key] += 1
+                        last[key] = (i2, j2)
+                    outs = collections.defaultdict(collections.Counter)
+                    for x, (k1, i1, j1) in enumerate(seq):
+                        if j1 != 0:
+                            continue
+                        for k2, i2, j2 in seq[x + 1:]:
+                            if i2 <= emax and j2 >= i1:
+                                outs[k1][(k2, i2, j2 - i1)] += 1
+                                break
+                    for k0 in sorted(good, key=lambda k: -inner[k]):
+                        if inner[k0] < 3:
+                            continue
+                        cyc, k, ok = [], k0, False
+                        for _ in range(maxfam):
+                            if not outs[k]:
+                                break
+                            (k2, e, d), m = outs[k].most_common(1)[0]
+                            if m < 2:
+                                break
+                            cyc.append((k, e, d))
+                            k = k2
+                            if k == k0:
+                                ok = True
+                                break
+                        if ok and sum(e + d for _, e, d in cyc) >= 1:
+                            sig = tuple(cyc)
+                            if sig not in seen:
+                                seen.add(sig)
+                                yield cyc
+
+
 def try_cycle(tab, tabw, pins, q, h, occ, cyc):
     """the whole certificate for one cycle of families, or (None, why)"""
     # [sweep_nqh_check] wants family 0 to grow the block ([1 <= e_0 + d_0])
@@ -340,7 +412,9 @@ def find(spec, timeout=0):
         signal.signal(signal.SIGALRM, _alarm)
         signal.alarm(timeout)
     try:
-        for rev, mir in ((False, False), (False, True), (True, False), (True, True)):
+        for skip, rev, mir in ((False, False, False), (False, False, True),
+                               (False, True, False), (False, True, True),
+                               (True, True, False), (True, True, True)):
             tab = QS.mirror(base) if mir else base
             occ, fires = (run_occ_rev if rev else QS.run_occ)(tab, N)
             if occ is None:
@@ -348,7 +422,7 @@ def find(spec, timeout=0):
             pins = sorted(k for k in tab if tab[k] is None or not fires.get(k))
             tabw = {k: (None if k in pins else v) for k, v in tab.items()}
             for (q, h), o in sorted(occ.items()):
-                for cyc in fam_candidates(o, N):
+                for cyc in (fam_candidates_skip if skip else fam_candidates)(o, N):
                     try:
                         c, err = try_cycle(tab, tabw, pins, q, h, o, cyc)
                     except LC.Halt:
