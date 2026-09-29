@@ -6,3 +6,5 @@ vf.jsonl
 lad_todo.txt
 lad_s*.txt
 vf_s*.jsonl
+vf_m*.jsonl
+lad_miss.txt
