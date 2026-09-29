@@ -241,6 +241,11 @@ def coq_chain_l(chain):
 # is at least the stride and so cannot be a residue at all.
 ARM_GRID = sorted(((n0, st) for n0 in range(0, 4) for st in range(1, 5)),
                   key=lambda p: (p[0] + p[1], p[0], p[1]))
+# Higher thresholds, tried only after every pair above: a nested arm's
+# round count is [j + r - c], which a small arm index [r] can make negative
+# at [j = 0] (SCOPING_INSTR 7.4.CE3).  A row that closes today closes on the
+# pairs above, unchanged.
+ARM_GRID += [(n0, st) for n0 in range(4, 7) for st in range(1, 3)]
 
 
 def blk(P, u, s, W):
@@ -431,7 +436,7 @@ def closure_data(cert, tab):
             inter, n0i, sti = got, n0, stride
             break
     if inter is None:
-        raise NoClosure('interior arm: no chain at any threshold 0..3 and '
+        raise NoClosure('interior arm: no chain at any threshold 0..6 and '
                         'stride 1..4 -- the carry ripple is not affine in the '
                         'run length')
 
@@ -535,7 +540,7 @@ def closure_data(cert, tab):
             fill, n0f, stf = got, n0, stride
             break
     if fill is None:
-        raise NoClosure('fill arm: no chain at any threshold 1..3, stride '
+        raise NoClosure('fill arm: no chain at any threshold 1..6, stride '
                         '1..4 or copy split')
 
     # the boot, and a chain to every state from each fill arm's anchor
@@ -2609,7 +2614,7 @@ def closure_data_fib(cert, tab):
         raise NoClosure('interior class arm: no chain at any threshold 0..3 '
                         'and stride 1..4')
     if fill is None:
-        raise NoClosure('fill arm: no chain at any threshold 1..3, stride '
+        raise NoClosure('fill arm: no chain at any threshold 1..6, stride '
                         '1..4 or copy split')
 
     qa, sq = None, None
