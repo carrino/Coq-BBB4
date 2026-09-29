@@ -31,6 +31,7 @@ from ladderarm import (ArmShape, normalize, parse_cfg, parse_tm,     # noqa: E40
                        _common_suffix, _split_marker, to_sside)
 from ladderchain import _conf, derive_arm                            # noqa: E402
 import lapcert as LC                                                 # noqa: E402
+import nest                                                          # noqa: E402
 
 ST = ['StA', 'StB', 'StC', 'StD']
 SYM = ['S0', 'S1']
@@ -211,6 +212,11 @@ TR_PINS = None
 # past their last fire and closes through [LadderCheckQHTr.boardph_qhtr]
 # (SCOPING_INSTR 7.4.CE2).  TR_QH carries the boot index.
 TR_QH = None
+# Nested arms ([LadderNest], [LadderCheckNestTr]; SCOPING_INSTR 7.4.CE3): at
+# the instruction level, an arm with no kernel chain is tried as a SEGMENT
+# program -- chains around an iterated inner rule -- before the closure is
+# refused.  A row that closes without one is emitted exactly as before.
+NEST = True
 
 
 def _vkey(c):
@@ -357,14 +363,37 @@ def closure_data(cert, tab):
     def conf(sd):
         return (q, sd, hs, OTHER) if left else (q, OTHER, hs, sd)
 
-    def derive(el, er, c0, c1, what):
+    nested_cache = {}
+
+    def nested(el, er, c0, c1, what, why):
+        """the arm as a [LadderNest] segment program: (('NEST', segs,
+        inner rules), 0, 1), or NoClosure"""
+        if not NEST or TR_PINS is None:
+            raise NoClosure('%s: %s' % (what, why))
+        key = (el, er, c0, c1)
+        if key not in nested_cache:
+            nested_cache[key] = nest.derive_nested(tab, el, er, c0, c1)
+        r = nested_cache[key]
+        if r is None:
+            raise NoClosure('%s: %s, and no nested program' % (what, why))
+        return ('NEST', r[0], r[1]), 0, 1
+
+    def derive(el, er, c0, c1, what, nest_ok=True):
         ch = LC.derive_chain(tab, el, er, c0, c1, maxdepth=32, nmax=120,
                              lift=True)
         if ch is None:
-            raise NoClosure('%s: no chain' % what)
+            if not nest_ok:
+                raise NoClosure('%s: no chain' % what)
+            return nested(el, er, c0, c1, what, 'no chain')
         got = LC.srun(tab, el, er, ch, c0)
         if got is None or got[0] != c1:
-            raise NoClosure('%s: chain lands off the rhs' % what)
+            if not nest_ok:
+                raise NoClosure('%s: chain lands off the rhs' % what)
+            if (got is not None and got[2] > 0 and NEST and TR_PINS is not None
+                    and nest.ceqL(el, er, got[0], c1)):
+                # off only by blanks beside an empty tail: [ceqL] reads it
+                return ('NEST', [('NCh', ch)], []), 0, 1
+            return nested(el, er, c0, c1, what, 'chain lands off the rhs')
         if got[2] == 0:
             raise NoClosure('%s: zero-step rule' % what)
         return ch, got[1], got[2]
@@ -433,7 +462,8 @@ def closure_data(cert, tab):
                                     + tails[to]))
                     try:
                         ch, ca, cb = derive(True, True, fl, cand,
-                                            'fill arm r=%d ph=%d' % (r, ph))
+                                            'fill arm r=%d ph=%d' % (r, ph),
+                                            nest_ok=False)
                     except NoClosure:
                         # the run may stop short of the target by blanks the
                         # machine never writes (LadderCheckLiftTr): state the
@@ -444,10 +474,25 @@ def closure_data(cert, tab):
                             continue
                         ch, ca, cb, reach, kl, kr = sf
                         pads[(r, ph)] = (kl, kr)
+                        targets[(r, ph)] = cand
                         hit = (r, ph, s, m1, total - m1, fl, reach, ch, ca, cb)
                         break
                     hit = (r, ph, s, m1, total - m1, fl, cand, ch, ca, cb)
                     break
+                if hit is None and NEST and TR_PINS is not None:
+                    # no chain to any split, short or not: a nested program
+                    for m1 in _splits(total):
+                        cand = conf(blk(pre + fpre + digs[mid] * m1, digs[mid],
+                                        s, digs[mid] * (total - m1) + fsuf
+                                        + tails[to]))
+                        try:
+                            ch, ca, cb = nested(True, True, fl, cand,
+                                                'fill arm r=%d ph=%d' % (r, ph),
+                                                'no chain')
+                        except NoClosure:
+                            continue
+                        hit = (r, ph, s, m1, total - m1, fl, cand, ch, ca, cb)
+                        break
                 if hit is None:
                     return None
                 got.append(hit)
@@ -478,11 +523,13 @@ def closure_data(cert, tab):
         return ch, got[1], got[2], c1, ks[0], ks[1]
 
     pads = {}
+    targets = {}
     fill, n0f, stf = None, None, None
     for n0, stride in ARM_GRID:
         if n0 < 1 or n0 + stride < 2:
             continue          # no width is 0, and there must be an arm
         pads.clear()
+        targets.clear()
         got = fill_at(n0, stride)
         if got is not None:
             fill, n0f, stf = got, n0, stride
@@ -565,6 +612,18 @@ def closure_data(cert, tab):
                 seen.setdefault(_vkey(got[0]), ch)
         if all(i in seen for i in want):
             return seen
+        if NEST and TR_PINS is not None:
+            # a nested arm's first fire of an instruction can sit past the
+            # first 30 steps of a window: longer windows, from each prefix
+            for i in range(len(fch) + 1):
+                for kind in ('SWin', 'SWinL', 'SWinR'):
+                    for k in range(31, 600):
+                        if all(i2 in seen for i2 in want):
+                            return seen
+                        got = LC.srun(tab, True, True, fch[:i] + [(kind, k)], fl)
+                        if got is None:
+                            break
+                        seen.setdefault(_vkey(got[0]), fch[:i] + [(kind, k)])
 
         # A state the arm's own lap does not pass through.  [vis_of_run] wants
         # a chain from the anchor and NOTHING about where it ends, so it may
@@ -612,9 +671,41 @@ def closure_data(cert, tab):
     # phase's anchor reaches all four.  So: pick a phase that reaches
     # everything at every arm index, and report what each phase missed if
     # none does.
+    def nvisits(fl, prog_):
+        """visits of a NESTED fill arm: (segment prefix, chain) per
+        instruction, from every prefix of its program"""
+        _t, segs, rules = prog_
+        rr = [(a, b_) for a, b_, _c in rules]
+        seen = {}
+        for k in range(len(segs) + 1):
+            got = nest.nrun(tab, True, True, rr, segs[:k], fl)
+            if got is None:
+                break
+            ck = got[0]
+            chs = ([segs[k][1][:i] for i in range(len(segs[k][1]) + 1)]
+                   if k < len(segs) and segs[k][0] == 'NCh' else [[]])
+            for base in chs:
+                for kind in ('SWin', 'SWinL', 'SWinR'):
+                    for n in range(0, 600):
+                        g = LC.srun(tab, True, True, base + [(kind, n)], ck)
+                        if g is None:
+                            break
+                        seen.setdefault(_vkey(g[0]),
+                                        (list(segs[:k]), base + [(kind, n)]))
+                if all(i in seen for i in want):
+                    return seen
+        return seen
+
     seen_at = {}
     for (r, ph, _s, _m1, _m2, fl, _fr, fch, _ca, _cb) in fill:
-        seen_at[(r, ph)] = visits(fl, fch)
+        if isinstance(fch, tuple) and fch and fch[0] == 'NEST':
+            seen_at[(r, ph)] = nvisits(fl, fch)
+            if not all(i in seen_at[(r, ph)] for i in want):
+                p1 = (fch[1][0][1] if fch[1] and fch[1][0][0] == 'NCh' else [])
+                for i, ch in visits(fl, p1).items():
+                    seen_at[(r, ph)].setdefault(i, ([], ch))
+            continue
+        seen_at[(r, ph)] = {i: ([], ch) for i, ch in visits(fl, fch).items()}
     pv, miss = None, []
     for ph in range(nph):
         bad = []
@@ -631,8 +722,14 @@ def closure_data(cert, tab):
     if pv is None:
         raise NoClosure('no phase whose fill anchors reach every recurring '
                         'state: %s' % ' | '.join(miss))
-    vis = {r: {i: seen_at[(r, pv)][i] for i in want}
-           for (r, p) in seen_at if p == pv}
+    nvis = {r: {i: seen_at[(r, pv)][i] for i in want}
+            for (r, p) in seen_at if p == pv}
+    vis = {r: {i: v[1] for i, v in d.items()} for r, d in nvis.items()}
+    if any(v[0] for d in nvis.values() for v in d.values()) and not any(
+            isinstance(x[5], tuple) and x[5][:1] == ('NEST',) for x in inter) \
+            and not any(isinstance(x[7], tuple) and x[7][:1] == ('NEST',)
+                        for x in fill):
+        raise NoClosure('a visit needs a segment program on a flat board')
 
     # ...and that the phase cycle returns to it from every phase, with the
     # number of fills it takes -- the kernel's [Hcyc], discharged per phase.
@@ -648,12 +745,16 @@ def closure_data(cert, tab):
         raise NoClosure('the phase cycle does not reach phase %d from every '
                         'phase' % pv)
 
-    return dict(b=b, el=el, er=er, nph=nph, ph0=ph0, pv=pv, kcyc=kcyc,
+    isnest = any(isinstance(x[5], tuple) and x[5][:1] == ('NEST',)
+                 for x in inter) or any(
+        isinstance(x[7], tuple) and x[7][:1] == ('NEST',) for x in fill)
+    return dict(nest=isnest, nvis=nvis, b=b, el=el, er=er, nph=nph, ph0=ph0, pv=pv, kcyc=kcyc,
                 inter=inter, n0i=n0i, sti=sti,
                 fill=fill, n0f=n0f, stf=stf,
                 ds0=ds0, t0=boot['steps_from_blank'], vis=vis,
                 want=want, qa=qa, sq=sq,
                 pads={k: v for k, v in pads.items() if v != (0, 0)},
+                targets=dict(targets),
                 boot_lift=boot_lift)
 
 
@@ -1042,6 +1143,8 @@ def emit_closure(cert, tab, mid):
         cd = closure_data(cert, tab)
     except NoClosure as e:
         return CLOSURE_NONE % e, None
+    if cd.get('nest'):
+        return emit_closure_nest(cert, tab, mid, cd), cd
 
     b = cd['b']
     n0i, sti, n0f, stf = cd['n0i'], cd['sti'], cd['n0f'], cd['stf']
@@ -1281,6 +1384,337 @@ def emit_closure(cert, tab, mid):
                            'try (exfalso; apply Hq; reflexivity); '
                            'vm_compute; reflexivity.')))
     return ''.join(L), cd
+
+
+# ===========================================================================
+# The NESTED closure ([LadderCheckNestTr]; SCOPING_INSTR 7.4.CE3).  Every arm
+# is a [LadderNest] segment program checked by [check_narm] to [ReachL]; a
+# plain kernel arm is the one-segment program [NCh chain], and a fill run
+# that stops short of its target by blanks is stated to the target itself
+# ([ceqL] reads trailing blanks beside an empty tail as nothing).  The inner
+# rules the programs iterate are a second ladder, [nlad], validated by the
+# unchanged [check_ladder] at both tails opaque.
+# ===========================================================================
+
+def coq_seg(sg, off):
+    if sg[0] == 'NCh':
+        return 'NCh %s' % coq_chain(sg[1])
+    kind, k, WL, WR, i0, al, be, rl, rr, fin = sg
+    return '%s %d %s %s %d %d %d (%s) (%s) %s' % (
+        kind, k + off, syms(WL), syms(WR), i0, al, be, coq_side(rl),
+        coq_side(rr), 'true' if fin else 'false')
+
+
+NCLOSURE_ARM = '''Definition %(nm)s_%(mid)s : LRule :=
+  mkLRule (%(lhs)s)
+          (%(rhs)s) 0 1.
+Definition ch_%(nm)s_%(mid)s : list nseg :=
+  [%(segs)s].
+Lemma ok_%(nm)s_%(mid)s :
+  check_narm tm %(el)s %(er)s nrules %(nm)s_%(mid)s ch_%(nm)s_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+'''
+
+NCLOSURE_THM = '''Lemma iarm_reach_%(mid)s : forall d r,
+  d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d ->
+  ReachL tm (negb (fm_left FAM)) (fm_left FAM)
+    (lr_lhs (iarm_%(mid)s d r)) (lr_rhs (iarm_%(mid)s d r)).
+Proof.
+  intros d r Hd Hr. vm_compute in Hd.
+%(bsound)s  exfalso; lia.
+Qed.
+
+Lemma iarm_lhs_%(mid)s : forall d r,
+  d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d ->
+  lr_lhs (iarm_%(mid)s d r)
+    = cls_conf FAM (cls_side FAM [] (fm_b FAM - 1) r
+                      (astride %(n0i)d %(sti)d r) [d]).
+Proof.
+  intros d r Hd Hr. vm_compute in Hd.
+%(bcomp)s  exfalso; lia.
+Qed.
+
+Lemma iarm_rhs_%(mid)s : forall d r,
+  d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d ->
+  lr_rhs (iarm_%(mid)s d r)
+    = cls_conf FAM (cls_side FAM [] 0 r (astride %(n0i)d %(sti)d r) [S d]).
+Proof.
+  intros d r Hd Hr. vm_compute in Hd.
+%(bcomp)s  exfalso; lia.
+Qed.
+
+Lemma farm_reach_%(mid)s : forall r ph, 0 < r -> r < %(n0f)d + %(stf)d ->
+  ph < %(nph)d ->
+  ReachL tm true true (lr_lhs (farm_%(mid)s r ph)) (lr_rhs (farm_%(mid)s r ph)).
+Proof.
+  intros r ph H0 Hr Hph.
+%(fsound)s  exfalso; lia.
+Qed.
+
+Lemma farm_lhs_%(mid)s : forall r ph, 0 < r -> r < %(n0f)d + %(stf)d ->
+  ph < %(nph)d ->
+  lr_lhs (farm_%(mid)s r ph)
+    = cls_conf FAM (run_side FAM (fm_b FAM - 1) r (astride %(n0f)d %(stf)d r)
+                      0 ph [] []).
+Proof.
+  intros r ph H0 Hr Hph.
+%(fcomp)s  exfalso; lia.
+Qed.
+
+Lemma farm_rhs_%(mid)s : forall r ph, 0 < r -> r < %(n0f)d + %(stf)d ->
+  ph < %(nph)d ->
+  lr_rhs (farm_%(mid)s r ph)
+    = cls_conf FAM (run_side FAM (f_mid (fam_fill FAM ph)) (fm1_%(mid)s r ph)
+                      (astride %(n0f)d %(stf)d r) (fm2_%(mid)s r ph)
+                      (f_to (fam_fill FAM ph))
+                      (f_pre (fam_fill FAM ph)) (f_suf (fam_fill FAM ph))).
+Proof.
+  intros r ph H0 Hr Hph.
+%(fcomp)s  exfalso; lia.
+Qed.
+
+Lemma fm12_%(mid)s : forall r ph, 0 < r -> r < %(n0f)d + %(stf)d ->
+  ph < %(nph)d ->
+  fm1_%(mid)s r ph + fm2_%(mid)s r ph
+  + (length (f_pre (fam_fill FAM ph)) + length (f_suf (fam_fill FAM ph)))
+  = r + f_s (fam_fill FAM ph).
+Proof.
+  intros r ph H0 Hr Hph.
+%(flia)s  exfalso; lia.
+Qed.
+
+Lemma vis_ok_%(mid)s : forall r t, ~ In t pins_%(mid)s -> 0 < r ->
+  r < %(n0f)d + %(stf)d ->
+  nfire tm true true nrules (vsegs_%(mid)s r t) (vis_%(mid)s r t)
+    (lr_lhs (farm_%(mid)s r %(pv)d)) = Some t.
+Proof.
+  intros r t Hnp H0 Hr.
+%(fvis)s  exfalso; lia.
+Qed.
+
+'''
+
+NCLOSURE_BOOTL = '''Lemma bootl_%(mid)s :
+  stepn %(tmb)s %(t0)d InitES = Some (lift (fam_cfg FAM (%(ds0)s, 0, %(ph0)d))).
+Proof.
+  assert (H : match csteps %(tmb)s %(t0)d c0 with
+              | Some c => ceqb c (fam_cfg FAM (%(ds0)s, 0, %(ph0)d))
+              | None => false end = true) by (vm_compute; reflexivity).
+  destruct (csteps %(tmb)s %(t0)d c0) as [c|] eqn:E; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.
+Qed.
+
+'''
+
+NCLOSURE_NQH = '''(** The machine-level theorem, at the INSTRUCTION level, through the nested
+    board [LadderCheckNestTr.boardN_neverqhtr]. *)
+Theorem nqhtr_%(mid)s : NeverQuasiHaltsTr tm_%(mid)s.
+Proof.
+  eapply (boardN_neverqhtr tm_%(mid)s pins_%(mid)s FAM %(nph)d
+                           iarm_%(mid)s %(n0i)d %(sti)d
+                           farm_%(mid)s %(n0f)d %(stf)d
+                           fm1_%(mid)s fm2_%(mid)s %(pv)d
+                           nrules vsegs_%(mid)s vis_%(mid)s
+                           %(ds0)s %(ph0)d).
+%(args)s  - exact bootl_%(mid)s.
+Qed.
+'''
+
+NCLOSURE_QH = '''(** a pinned instruction fired before the boot: the quasihalt witness *)
+Lemma wit_%(mid)s :
+  existsb (fun tg => cfires tm_%(mid)s c0 %(t0)d tg) pins_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma bnd_%(mid)s : (%(t0)d <=? 32779478) = true.
+Proof. vm_cast_no_check (eq_refl true). Qed.
+
+(** The machine-level theorem, on the QUASIHALTING side, through the nested
+    board [LadderCheckNestTr.boardN_qhtr]. *)
+Theorem qhtr_%(mid)s :
+  NonHalt tm_%(mid)s /\\ QHBoundTr 32779478 tm_%(mid)s /\\ QuasiHaltsTr tm_%(mid)s.
+Proof.
+  eapply (boardN_qhtr tm_%(mid)s pins_%(mid)s FAM %(nph)d
+                      iarm_%(mid)s %(n0i)d %(sti)d
+                      farm_%(mid)s %(n0f)d %(stf)d
+                      fm1_%(mid)s fm2_%(mid)s %(pv)d
+                      nrules vsegs_%(mid)s vis_%(mid)s
+                      %(ds0)s %(ph0)d).
+%(args)s  - exact bootl_%(mid)s.
+  - exact wit_%(mid)s.
+  - exact bnd_%(mid)s.
+Qed.
+'''
+
+
+def emit_closure_nest(cert, tab, mid, cd):
+    b = cd['b']
+    n0i, sti, n0f, stf = cd['n0i'], cd['sti'], cd['n0f'], cd['stf']
+    nph, ph0, pv = cd['nph'], cd['ph0'], cd['pv']
+    nA, nF = n0i + sti, n0f + stf
+    el, er = cd['el'], cd['er']
+    L = [CLOSURE_HEAD % dict(nc=len(cert['arms']),
+                             na=len(cd['inter']) + len(cd['fill']),
+                             n0i=n0i, sti=sti, n0f=n0f, stf=stf, nph=nph)]
+    inner, arms = [], []
+
+    def prog(ch):
+        if isinstance(ch, tuple) and ch[:1] == ('NEST',):
+            off = len(inner)
+            for lhs, rhs, ich in ch[2]:
+                got = LC.srun(tab, False, False, ich, lhs)
+                inner.append((lhs, rhs, ich, got[1], got[2]))
+            return [coq_seg(sg, off) for sg in ch[1]]
+        return [coq_seg(('NCh', ch), 0)]
+
+    for d, r, _s, c0, c1, ch, _ca, _cb in cd['inter']:
+        arms.append(('iarm%d_%d' % (d, r), c0, c1, prog(ch), el, er))
+    offs = {}
+    for r, ph, _s, _m1, _m2, fl, fr, fch, _ca, _cb in cd['fill']:
+        fr = cd['targets'].get((r, ph), fr)
+        offs[(r, ph)] = len(inner)
+        arms.append(('farm%d_%d' % (r, ph), fl, fr, prog(fch), True, True))
+    L.append('''
+(** *** The inner rules: what the nested arms iterate
+
+    %(n)d rule(s), validated like the ladder at both tails opaque. *)
+Definition nlad_%(mid)s : list (LRule * list rstep) :=
+  [%(items)s].
+Definition nrules_%(mid)s : list LRule := map fst nlad_%(mid)s.
+Local Notation nrules := nrules_%(mid)s.
+
+Lemma nladder_ok_%(mid)s : check_ladder tm [] nlad_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma nrules_sound_%(mid)s : Forall (RuleSound tm false false) nrules.
+Proof. apply rule_sound_nil. exact nladder_ok_%(mid)s. Qed.
+
+''' % dict(mid=mid, n=len(inner), items=';\n   '.join(
+        '(mkLRule (%s) (%s) %d %d, %s)' % (coq_conf(l), coq_conf(r), ca, cb,
+                                          coq_chain(ch))
+        for l, r, ch, ca, cb in inner)))
+    for nm, c0, c1, segs, el_, er_ in arms:
+        L.append(NCLOSURE_ARM % dict(
+            nm=nm, mid=mid, lhs=coq_conf(c0), rhs=coq_conf(c1),
+            segs=';\n   '.join(segs), el=str(el_).lower(),
+            er=str(er_).lower()))
+    L.append(CLOSURE_IDISP % dict(
+        mid=mid,
+        br='\n  '.join('| %d, %d => iarm%d_%d_%s' % (d, r, d, r, mid)
+                       for d, r, _s, _0, _1, _c, _a, _b in cd['inter'])))
+    r0, p0 = cd['fill'][0][0], cd['fill'][0][1]
+    L.append(CLOSURE_FDISP % dict(
+        mid=mid, r0=r0, ph0=p0,
+        br='\n  '.join('| %d, %d => farm%d_%d_%s' % (r, ph, r, ph, mid)
+                       for r, ph, *_ in cd['fill']),
+        b1=' '.join('| %d, %d => %d' % (r, ph, m1)
+                    for r, ph, _s, m1, *_ in cd['fill']),
+        b2=' '.join('| %d, %d => %d' % (r, ph, m2)
+                    for r, ph, _s, _m1, m2, *_ in cd['fill'])))
+    L.append(CLOSURE_VIS_TR % dict(
+        mid=mid, pv=pv,
+        vb='\n  '.join('| %d, (%s, %s) => %s'
+                       % (r, ST[i[0]], SYM[i[1]], coq_chain_l(v[1]))
+                       for r in sorted(cd['nvis'])
+                       for i, v in sorted(cd['nvis'][r].items()))))
+    L.append('''(** ...each after its segment program: a visit that fires past the rounds
+    of a nested fill arm first runs that arm's program up to them. *)
+Definition vsegs_%(mid)s (r : nat) (t : Instr) : list nseg :=
+  match r, t with
+  %(vb)s
+  | _, _ => []
+  end.
+
+''' % dict(mid=mid, vb='\n  '.join(
+        '| %d, (%s, %s) => [%s]'
+        % (r, ST[i[0]], SYM[i[1]],
+           '; '.join(coq_seg(sg, offs[(r, pv)]) for sg in v[0]))
+        for r in sorted(cd['nvis'])
+        for i, v in sorted(cd['nvis'][r].items()))))
+
+    def ibranches(body):
+        out = []
+        for d in range(b - 1):
+            rb = []
+            for r in range(nA):
+                rb.append('    destruct r as [|r].\n    { %s. }\n'
+                          % (body % dict(d=d, r=r, mid=mid)))
+            out.append('  destruct d as [|d].\n  {\n%s    exfalso; lia.\n  }\n'
+                       % ''.join(rb))
+        return ''.join(out)
+
+    def fbranches(body):
+        out = []
+        for r in range(nF):
+            if r < 1:
+                out.append('  destruct r as [|r].\n  { exfalso; lia. }\n')
+                continue
+            pb = []
+            for ph in range(nph):
+                pb.append('    destruct ph as [|ph].\n    { %s. }\n'
+                          % (body % dict(r=r, ph=ph, mid=mid)))
+            out.append('  destruct r as [|r].\n  {\n%s    exfalso; lia.\n  }\n'
+                       % ''.join(pb))
+        return ''.join(out)
+
+    def pharg(body):
+        out = ['  - intros ph Hph.\n']
+        for _ in range(nph):
+            out.append('    destruct ph as [|ph].\n    { %s. }\n' % body)
+        out.append('    exfalso; lia.\n')
+        return ''.join(out)
+
+    L.append(NCLOSURE_THM % dict(
+        mid=mid, nph=nph, n0i=n0i, sti=sti, n0f=n0f, stf=stf, pv=pv,
+        bsound=ibranches('eapply narm_reach; [exact nrules_sound_%(mid)s '
+                         '| exact ok_iarm%(d)d_%(r)d_%(mid)s]'),
+        bcomp=ibranches('vm_compute; reflexivity'),
+        fsound=fbranches('eapply narm_reach; [exact nrules_sound_%(mid)s '
+                         '| exact ok_farm%(r)d_%(ph)d_%(mid)s]'),
+        fcomp=fbranches('vm_compute; reflexivity'),
+        flia=fbranches('vm_compute; lia'),
+        fvis=_rbranches(nF, lambda r: 'destruct t as [q s]; destruct q, s; '
+                        'try (exfalso; apply Hnp; simpl; tauto); '
+                        'vm_compute; reflexivity.', lo=1)))
+    L.append(NCLOSURE_BOOTL % dict(
+        mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str), ph0=ph0,
+        tmb=('tm_%s' % mid) if TR_QH is not None else 'tm'))
+    args = ''.join([
+        '  - vm_compute; lia.\n',
+        '  - vm_compute; reflexivity.\n',
+        '  - vm_compute; reflexivity.\n',
+        pharg('vm_compute; repeat constructor'),
+        pharg('vm_compute; repeat constructor'),
+        pharg('vm_compute; lia'),
+        pharg('vm_compute; lia'),
+        pharg('vm_compute; lia'),
+        '  - lia.\n',
+        ''.join(['  - intros ph Hph.\n']
+                + ['    destruct ph as [|ph].\n'
+                   '    { exists %d; vm_compute; reflexivity. }\n' % k
+                   for k in cd['kcyc']]
+                + ['    exfalso; lia.\n']),
+        '  - exact fm12_%s.\n' % mid,
+        '  - repeat constructor.\n',
+        '  - vm_compute; lia.\n',
+        '  - lia.\n',
+        '  - lia.\n',
+        '  - exact iarm_reach_%s.\n' % mid,
+        '  - exact iarm_lhs_%s.\n' % mid,
+        '  - exact iarm_rhs_%s.\n' % mid,
+        '  - lia.\n',
+        '  - lia.\n',
+        '  - exact farm_reach_%s.\n' % mid,
+        '  - exact farm_lhs_%s.\n' % mid,
+        '  - exact farm_rhs_%s.\n' % mid,
+        '  - exact nrules_sound_%s.\n' % mid,
+        '  - exact vis_ok_%s.\n' % mid,
+    ])
+    common = dict(mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str), ph0=ph0,
+                  nph=nph, pv=pv, n0i=n0i, sti=sti, n0f=n0f, stf=stf,
+                  args=args)
+    L.append((NCLOSURE_QH if TR_QH is not None else NCLOSURE_NQH) % common)
+    return ''.join(L)
 
 
 # ===========================================================================
@@ -2791,6 +3225,12 @@ Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_%(nm)s_%(mid)s]. 
 
     if not (gray or fib):
         closure, cd = emit_closure(cert, tab, mid)
+        if cd is not None and cd.get('nest'):
+            L[0] = L[0].replace(
+                'From BBB4.Checkers Require Import LadderCheckLiftTr.\n',
+                'From BBB4.Checkers Require Import LadderCheckLiftTr.\n'
+                'From BBB4.Checkers Require Import LadderNest LadderCheckNestTr.\n',
+                1)
     L.append(closure)
 
     open(out, 'w').write(''.join(L))

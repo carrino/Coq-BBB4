@@ -1619,6 +1619,8 @@ theories/Machines/LadderTr/LDRQ_0RB0LA_1LC1RB_0LD1LA_1RD1RA.v
 theories/Checkers/LadderCheckQHTr.v
 theories/Checkers/LadderCheckFibTr.v
 theories/Checkers/LadderCheckLiftTr.v
+theories/Checkers/LadderNest.v
+theories/Checkers/LadderCheckNestTr.v
 theories/Checkers/LadderCheckGrayTr.v
 theories/Machines/LadderTr/LDRT_0RB0RB_0LC1RD_1RB1LC_0LD1RA.v
 theories/Machines/LadderTr/LDRT_0RB0RB_0LC1RD_1RB1LC_0RB1RA.v
