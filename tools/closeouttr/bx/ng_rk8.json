@@ -1,0 +1,26 @@
+{
+"0RB0RA_0LC1RA_1RB1LD_1LC0LD": {
+"rk:8:0": [
+"false",
+23.3
+]
+},
+"0RB0RD_0LC1RB_1LD1RD_1RA0LD": {
+"rk:8:0": [
+"true",
+50.8
+]
+},
+"0RB1LB_0LC1RD_1LA1LB_1LB0RD": {
+"rk:8:0": [
+"false",
+163.9
+]
+},
+"0RB1LC_1LA1RC_1LD0RC_0LA0LC": {
+"rk:8:0": [
+"true",
+118.5
+]
+}
+}
