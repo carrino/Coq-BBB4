@@ -9454,5 +9454,6 @@ theories/CloseoutTr/CBT_SP_36.v
 theories/CloseoutTr/CBT_SP_37.v
 theories/CloseoutTr/CBT_SP_38.v
 theories/CloseoutTr/CBT_SP_39.v
+theories/CloseoutTr/CBT_SW_00.v
 theories/CloseoutTr/RemainingTr.v
 theories/CloseoutTr/CloseoutTr.v
