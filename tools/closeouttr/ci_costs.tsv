@@ -1,0 +1,12 @@
+# Per-batch CI cost for tools/closeouttr/ci_shard.py (seconds, one core):
+# the batch's own compile plus the boards only it imports.  Batches not
+# listed cost ci_shard.DEFAULT_COST.  Seeded from SCOPING_INSTR.md §7.4.BR
+# (container, shared cores); refresh with `ci_shard.py --costs LOG...`.
+CBT_BR_00	2820
+CBT_BR_01	360
+CBT_BR_02	2580
+CBT_BR_03	2280
+CBT_BR_04	1500
+CBT_BR_05	450
+CBT_BR_07	720
+CBT_BR_08	1320
