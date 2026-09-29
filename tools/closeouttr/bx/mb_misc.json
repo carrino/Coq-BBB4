@@ -1,0 +1,29 @@
+[
+{
+"spec": "1RB1RC_1LC0RA_0LB0LD_1LA1LD",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 24.1
+},
+{
+"spec": "1RB0LA_0RC0RD_1LA0RA_0LC1RA",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 41.2
+},
+{
+"spec": "1RB0LA_0RC1LA_1RD0RD_1LB1RB",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 244.7
+}
+]
