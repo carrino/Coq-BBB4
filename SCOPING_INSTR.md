@@ -3195,6 +3195,106 @@ python3 tools/closeouttr/qc_batch.py lap theories/Machines/CountersTr/LAPQ_*.v -
 ```
 
 
+#### 7.4.CE2 CE's residue: the value-family ladder on the QH side, in base 3/4, Fibonacci and Gray, 212 boarded (2026-09-29)
+
+Workstream CE2 (batch tag `CE2`), over the 718 rows §7.4.CE left (390 DN +
+328 QH), all still in `closeouttr_remaining.txt` at the start.  Class SP was
+not touched (session SPC).
+
+**Re-bucketing: measure the radix first.**  `tools/counters/radix_clock.py`
+(per-cell toggle ratio, no anchor needed; 2e6 steps) over the 718 rows:
+base 2 341, Fibonacci (phi) 126, base 4 82, base 3 46, flat 23, unreadable
+100.  On a sample of 94 base-2 "no interior chain" rows, the interior lap at
+the emitter's anchors is QUADRATIC in the carry length on 48 (for example
+`2(j+2)^2`: the carry walks back to the anchor once per digit), affine on 11
+(a chain-search gap), exponential or non-returning on 8, and 18 have no
+anchor.  So the §7.4.CE buckets were mostly not emitter gaps but other
+numerations, and the tool that reads numerations as data is the ladder's
+`valfam.py`.  It had been run at instruction level only on a 40-row DN
+sample (§7.4.DX), and never on the QH side, because there was no QH closer.
+
+**The three DN "derived, emit missed" rows** derive in `emit_lapcert.py`'s
+own anchor walk.  The miss was an uncompiled `Alph_000_111_111.vo`, not the
+anchor order.  They are `CBT_CE2_00` (LAPT boards).
+
+**Ports (all generic, per numeration, not per board; axioms:
+`functional_extensionality_dep` only):**
+
+* `Checkers/LadderCheckQHTr.v`, **the ladder on the QH side.**
+  `LadderCheck`'s `(Binary, 1)` board with the boot on the ORIGINAL machine
+  (up to `lift`) and the laps and fires on the machine wrapped at the quiet
+  pins, closed by `QHConveyorTr.lap_qh_stage`.  The anchors are re-indexed by
+  `positive`; a fire from every anchor comes from `board_fire`'s cofinal
+  fires plus the exact laps.  `emit_ladder.py --tr --qh` pins the
+  instructions the 1e8 scan saw go quiet (every QH row here has its last
+  quiet fire below step 100) and boots at the first family member past it.
+  Boards `LDRQ_*`.
+* `Checkers/LadderCheckLiftTr.v`, **fill arms up to `lift`.**  The base-4
+  counters (a binary counter whose bits alternate a two-cell and a one-cell
+  word, so a base-4 digit is `000/110/001/111`) run the fill `111^k ->
+  000^k 110` and stop one blank short: the machine never writes the last
+  `0`.  The fill arm is stated to what the machine writes, plus a per-arm
+  count of trailing blanks (`cpad`, `lift_cpad`), and `LadderCheck.board_arm`
+  (generic over the arms' property) runs unchanged over a virtual arm stated
+  to the target.  Both closers (`boardphL_neverqhtr`, `boardphL_qhtr`).
+  `valfam.py`'s digit alphabet cap went from 3 to 4 words (`MAX_ALPHA`),
+  without which base 4 read as "no value family".
+* `Checkers/LadderCheckFibTr.v`, **the Fibonacci question.**  A
+  Zeckendorf-style family does not fit `MonoCounter.cview`: `cview` splits a
+  `positive` at its low run of set bits, which IS the binary carry.  A
+  Fibonacci counter has no `positive` to index by, and its increment folds
+  `F(k) + F(k+1) -> F(k+2)`, so a per-board `cview` glue would re-prove the
+  numeration on every board.  It also needs no new lemma:
+  `LadderFam`/`LadderCheck` §11 already state `(Fib, 1)` once (`fib_split`,
+  `fib_class`, `topsF_cofinal`), so the port is `LadderCheckTr`'s shape for
+  that section, both closers.  `valfam.py --numeration` finds the families.
+* `Checkers/LadderCheckGrayTr.v`: `LadderCheck` §10 (`(Gray, 2)`), both
+  closers, for the DN families valfam reads in reflected binary.
+* `valfam.py --json` now writes one row at a time and resumes past done
+  rows.  The container is reclaimed when the session idles, which cost two
+  multi-hour runs before this.
+
+**Yields** (valfam at 120-150 s a row, 4 jobs; boards emitted and compiled by
+`sp_ladder_batch.py [--qh]`, ~2-5 s a board):
+
+| radix (radix_clock) | DN rows | DN boarded | QH rows | QH boarded |
+|---|---:|---:|---:|---:|
+| base 2 | 208 | 21 | 133 | 75 |
+| base 3 | 10 | 7 | 36 | 26 |
+| base 4 | 36 | 19 | 46 | 37 |
+| phi (Fibonacci) | 55 | 7 | 71 | 17 |
+| flat | 21 | 0 | 2 | 2 |
+| unreadable | 60 | 1 | 40 | 0 |
+| **total** | **390** | **55** | **328** | **157** |
+
+By closer: `(Binary, 1)` exact 112 (101 QH), lift-tolerant fills 54 (39 QH),
+Fibonacci 25 (17 QH), Gray 18 (all DN), LAPT 3.  So **212** rows, in
+`CBT_CE2_00..19`.  Closeout: 3,480 remaining before, **3,268** after.  The
+QH side gains most: when valfam closes a QH row, the new closer boards it
+(157 of 171).
+
+**The residue (506: 339 DN + 167 QH), by where it stops:**
+
+| stops at | DN | QH | radix | what it is |
+|---|---:|---:|---|---|
+| valfam: families found, none closed | 95 | 123 | base 2 89, phi 42, base 4 11, base 3 9, ? 62 | an anchor family decodes, but its arms do not close (the rule ladder cannot state the carry) |
+| valfam closes; the interior arm has no chain | 133 | 8 | base 2 102, base 4 13, flat 8, ? 14 | **the carry costs time quadratic in its length.**  `LadderKernel.LRule` states a step count affine in the run (`lr_ca * j + lr_cb`), so no arm index scheme expresses it.  This is RULE_LADDER §5's count language: a kernel extension (a rule whose cost is a sum over the run), not an emitter gap |
+| valfam: no value family | 94 | 18 | base 2 51, phi 30, flat 8, ? 23 | no anchor decodes over ladder-named digits (§7.4.CE's "no anchor", unchanged) |
+| valfam: time cap | 10 | 15 | phi 21 | Fibonacci rows whose numeration pass does not finish at 120 s |
+| valfam closes; shifted Fibonacci numeration | 2 | 4 | phi | weights `1, 2, 3, 5` (Zeckendorf), which `LadderFam` does not state (§11 is `1, 1, 2, 3`) |
+| other | 1 | 3 | | a fill anchor that reaches no A1; 2 Fibonacci boards whose `vis_ok` fails in the kernel; 1 row not run |
+
+The largest piece of residue with a named fix is the 141 quadratic-carry
+rows (133 DN).  The QH nested-overflow rows of §7.4.QE/§7.4.CE (95) mostly
+went to the QH ladder: 75 of the 133 QH base-2 rows boarded.
+
+```
+python3 tools/counters/radix_clock.py ROWS --steps 2000000                  # the re-bucketing
+(cd tools/ladder && python3 valfam.py --list ROWS --cap 120 --json vf.jsonl)  # add --numeration for phi rows
+python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl --tag CE2 --chunk 40       # DN: LDRT boards
+python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl --tag CE2 --chunk 40 --qh  # QH: LDRQ boards
+```
+
 #### 7.4.SW The DN sweep counters: a multi-family two-index glue, 239 of 287 boarded (2026-09-29)
 
 Workstream SW (batch tag `SW`), over the 287 `sweepctr` rows of
