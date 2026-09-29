@@ -1656,3 +1656,209 @@ spec	ok	secs	best
 1RB1LC_0LC1RB_1LD0RB_1LA0RB	0	28.8	derive: no interior chain
 1RB1LC_0LC1RB_1LD0RB_1LA0RC	0	29.3	derive: no interior chain
 1RB1LC_0LC1RB_1LD0RB_1LA1LA	1	21.1	OK islack,oslack
+1RB1LC_0LC1RB_1LD0RB_1LA1RA	0	26.7	derive: no interior chain
+1RB1LC_0LC1RB_1LD1LD_1LA0RB	1	4.6	OK nest-plain
+1RB1LC_0LC1RB_1LD0RB_1RB1LA	0	32.8	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LC_0LC1RB_1LD0RB_1RC1LA	0	32.1	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LC_0LC1RB_1RA1LD_1LA0RB	1	4.4	OK nest-plain
+1RB1LC_0LC1RB_1RB1LD_1LA0RB	1	4.8	OK nest-plain
+1RB1LC_0LC1RD_0LB1LA_1RB0RB	1	6.4	OK nest-offset
+1RB1LC_0LC1RB_1RD1LD_1LA0RB	0	35.1	derive: no overflow chain (nested: no second exit chain)
+1RB1LC_0LC1RD_1LA0RB_1RA1RB	0	42.2	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_0LC1RD_1LA0RB_1RC1RB	0	39.8	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_0RC1LA_1RD0LB_1LB1RD	1	12.6	OK islack
+1RB1LC_0RC0RD_1LA0LA_0LC0RD	0	45.2	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_0RC0RD_1LA1LC_0LC0RB	0	45.3	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_0RC1LD_1LB1RC_0LA0LB	0	38.6	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_0RC1RB_1LD1RD_1LA0LB	0	20.8	no anchor
+1RB1LC_1LA0LA_0RD1LB_1LA1RD	1	12.2	OK flat
+1RB1LC_0RC1RD_1LA0RB_0LA1RB	0	38.7	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA0RC_1LA0RD_0LA1RD	0	30.1	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA0RA_1RA1LD_0LB0LC	0	41.3	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA0RC_1LB0RD_0LA1RD	0	16.2	derive: no interior chain
+1RB1LC_1LA0RC_1LB0RD_0LC1RD	0	17.4	derive: no interior chain
+1RB1LC_1LA0RD_0LB0LC_1RB1RD	0	17.1	no anchor
+1RB1LC_1LA0RD_0LB0LA_1LA1RD	0	39.3	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA0RD_0RC1LB_0LA1RD	0	19.6	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA0RD_0LB1LB_0LA1RD	0	28.2	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA0RD_0RC1LB_0LB1RD	0	19.2	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA0RD_0RC1LB_0LC1RD	0	26.8	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA0RD_1LA1LB_0LA1RD	0	24.7	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA0RD_1LB0RA_0LA1RD	1	7.8	OK islack,oslack
+1RB1LC_1LA0RD_1LA1LB_0LB1RD	0	19.1	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA0RD_1LB0RA_0LB1RD	1	7.7	OK islack,oslack
+1RB1LC_1LA0RD_1LA1LB_0LC1RD	0	26.5	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA0RD_1LB0RD_0LA1RD	0	17.1	derive: no interior chain
+1RB1LC_1LA0RD_1LB0RD_0LB1RD	0	17.5	derive: no interior chain
+1RB1LC_1LA0RD_1LB1LB_0LA1RD	1	8.5	OK islack,oslack
+1RB1LC_1LA0RD_1LB1LB_0LC1RD	1	4.0	OK flat
+1RB1LC_1LA0RD_1LB1LB_0LB1RD	1	7.3	OK islack,oslack
+1RB1LC_1LA0RD_1LB0RD_0LC1RD	0	16.7	derive: no interior chain
+1RB1LC_1LA0RD_1RA1LB_0LC1RD	1	4.2	OK flat
+1RB1LC_1LA0RD_1RA1LB_0LA1RD	1	8.3	OK islack,oslack
+1RB1LC_1LA0RD_1RA1LB_0LB1RD	1	8.3	OK islack,oslack
+1RB1LC_1LA0RD_1RB1LB_0LC1RD	1	3.9	OK nest-plain
+1RB1LC_1LA0RD_1RB1LB_0LA1RD	0	20.2	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LC_1LA0RD_1RB1LB_0LB1RD	0	23.0	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LC_1LA0RD_1RD1LB_0LA1RD	0	19.4	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LC_1LA0RD_1RD1LB_0LC1RD	1	4.2	OK nest-plain
+1RB1LC_1LA1LA_0RD0LB_1LB1RD	1	12.5	OK flat
+1RB1LC_1LA0RD_1RD1LB_0LB1RD	0	21.8	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LC_1LA1RA_0RB0LD_0RA1LD	0	18.9	derive: no interior chain
+1RB1LC_1LA1RA_1LB0RD_0LA1RD	0	17.6	derive: no interior chain
+1RB1LC_1LA1RA_1LB0RD_0LC1RD	0	20.6	derive: no interior chain
+1RB1LC_1LA1RB_0RB0LA_------	1	14.2	OK trmiss,islack
+1RB1LC_1LA1RA_1LD0RA_0LB0LC	0	40.3	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA1RB_0LB0LD_0RA1LC	0	40.6	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA1RB_0RB0LD_1RA1LC	1	15.6	OK nest-offset
+1RB1LC_1LA1RB_0RB1LD_0LA0LA	1	13.5	OK islack
+1RB1LC_1LA1RB_0RB0LD_1LB1LC	0	38.7	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA1RB_0RB1LD_0LA0RC	1	14.8	OK islack
+1RB1LC_1LA1RB_0RB1LD_0LC0LA	1	15.8	OK islack
+1RB1LC_1LA1RB_0RB1LD_0RA0LA	1	13.1	OK nest-plain
+1RB1LC_1LA1RB_0RB1LD_1LA0LA	1	18.4	OK islack
+1RB1LC_1LA1RB_0RB1LD_0RD0LA	1	27.6	OK islack,oslack
+1RB1LC_1LA1RB_0RB1LD_1LC0LA	1	29.5	OK islack,oslack
+1RB1LC_1LA1RB_0RB1LD_1RC0LA	1	17.9	OK islack
+1RB1LC_1LA1RB_0RB1LD_1RB0LA	1	29.0	OK islack,oslack
+1RB1LC_1LA1RB_0RC1LD_0RB0LA	1	12.5	OK nest-plain
+1RB1LC_1LA1RB_0RB1LD_1RD0LA	1	29.9	OK islack,oslack
+1RB1LC_1LA1RB_0RD0LA_1RB1RD	1	16.0	OK nest-offset,islack,oslack
+1RB1LC_1LA1RB_1LA0RD_1LB1RC	0	20.8	no anchor
+1RB1LC_1LA1RB_1LA0RD_1LC1RC	0	20.7	no anchor
+1RB1LC_1LA1RB_1LA1RD_0RA0RC	0	23.2	no anchor
+1RB1LC_1LA1RB_1LD0RA_0RB0LA	1	26.0	OK islack,oslack
+1RB1LC_1LA1RB_1LB0LD_0RA1LC	0	39.4	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA1RB_1LD1LD_0RB0LA	1	25.4	OK islack,oslack
+1RB1LC_1LA1RD_0RC1LD_1LA0RB	0	21.3	no anchor
+1RB1LC_1LA1RB_1RA1LD_0RB0LA	1	25.7	OK islack,oslack
+1RB1LC_1LA1RB_1RB1LD_0RB0LA	1	25.7	OK islack
+1RB1LC_1LA1RD_1LA1LD_1LA0RB	0	20.2	no anchor
+1RB1LC_1LA1RD_0RD0LA_1RA1RB	0	38.7	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA1RD_1LB1LA_0LC0RB	0	38.9	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1LA1RD_1RB0LA_0LD1RC	0	19.1	no anchor
+1RB1LC_1LB1RA_0RB0LD_0RA1LD	0	17.8	derive: no interior chain
+1RB1LC_1LC0LD_1RD0LB_0RA1RD	0	21.3	no anchor
+1RB1LC_1LA1RD_1RB0LA_1RB1RC	0	24.0	no anchor
+1RB1LC_1LC0RA_0LD1LB_1LA1LC	0	22.5	no anchor
+1RB1LC_1LC1RA_0RB0LD_0RA1LD	0	19.0	derive: no interior chain
+1RB1LC_1LC1LA_0RD0LB_1LB1RD	1	25.5	OK islack,oslack
+1RB1LC_1LC1RB_1LA0RD_1LC1RC	0	20.5	no anchor
+1RB1LC_1LC1RB_0LD1RD_1LA0RB	0	22.6	no anchor
+1RB1LC_1LC1RD_1LA0LB_0RB1LC	0	22.8	no anchor
+1RB1LC_1LC1RD_1LA1LC_0LB0RD	0	34.2	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LC_1LC1RC_1LA0RD_0LA1RD	0	51.3	derive: no overflow chain (nested: no second exit chain)
+1RB1LC_1RC0LA_1RD1LB_0LB0RD	1	4.5	OK islack,oslack
+1RB1LC_1RC---_0LD0RD_0LA1LD	0	20.6	no anchor
+1RB1LC_1RC0LA_0RD1LB_1LA1RD	1	13.7	OK flat
+1RB1LC_1RC0LD_1LA0RB_1LB1RB	0	20.1	no anchor
+1RB1LC_1RC0LD_1LB0RD_0LA1LD	0	20.1	no anchor
+1RB1LC_1RC1LA_1LB0RD_0LA1RD	1	5.0	OK flat
+1RB1LC_1RC1LA_1LB0RD_0LB1RD	1	8.7	OK islack,oslack
+1RB1LC_1RC1LA_1LB0RD_0LC1RD	1	8.7	OK islack,oslack
+1RB1LC_1RC0RD_1LA1LC_0LC0RB	0	46.1	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1RC1LB_1LA0RD_0LA1RD	0	40.2	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1RC1LD_0LB0RD_0LA1LD	0	20.9	no anchor
+1RB1LC_1RC1LB_1LA0RD_0LC1RD	0	41.5	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1RC1RA_0LA0LD_0RB1LD	0	20.5	derive: no interior chain
+1RB1LC_1RC1RA_0LD0LD_0RB1LD	0	20.4	derive: no interior chain
+1RB1LC_1RC1RA_0LD0LA_1LA1LD	0	23.9	no anchor
+1RB1LC_1RC1RA_1LA0LD_0RB1LD	0	19.1	derive: no interior chain
+1RB1LC_1RC1RA_1LC0LD_0RB1LD	0	17.3	derive: no interior chain
+1RB1LC_1RC1RA_1LB0LD_0RB1LD	0	22.4	derive: no interior chain
+1RB1LC_1RC1RA_1LD0LD_0RB1LD	0	19.0	derive: no interior chain
+1RB1LC_1RC1RB_1LA0RD_1LC1RC	0	20.7	no anchor
+1RB1LC_1RC1RB_1LA1RD_0RB0RC	0	23.3	no anchor
+1RB1LC_1RC1RB_1LA0RD_0LC1RD	0	42.1	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LC_1RC1RD_1LA1LB_0LC0RB	0	21.8	no anchor
+1RB1LC_1RC1RD_1LA1LB_0RA0RB	0	21.3	no anchor
+1RB1LC_1RC1RD_1LA1LB_1RA0RB	0	20.5	no anchor
+1RB1LC_1RC1RD_1LA1LB_1RC0RB	0	22.7	no anchor
+1RB1LD_0LB1LC_1LA1RC_0RC0LA	0	36.9	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_0LB1RC_1LD0RB_0LA1LA	0	39.3	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_0LC0RB_1LA1LC_1RC0LD	0	46.6	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_0LC0RD_0LA1RC_1LA0RC	0	24.3	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_0LC1RA_0RA1LC_0RB0LC	0	18.1	derive: no interior chain
+1RB1LD_0LC0RC_1LA1RC_0LB0LA	0	40.8	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_0LC1RB_0LA1RD_1LC0RB	0	15.5	no anchor
+1RB1LD_0LC1RA_1LA1LC_0LC0LA	0	23.2	no anchor
+1RB1LD_0LC1RB_0RC1LA_1LC0RB	0	20.2	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_0LC1RB_1LA0RB_0RD1LC	0	24.6	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_0LC1RB_1LA0RB_1LA1LC	0	28.1	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_0LC1RB_1LA0RB_1LC0RA	0	24.0	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_0LC1RB_1LA0RB_1LC0RB	0	17.9	derive: no interior chain
+1RB1LD_0LC1RB_1LA0RB_1LC1LC	0	22.2	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_0LC1RB_1LA0RB_1RA1LC	0	23.6	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_0LC1RB_1LA1LA_1LC0RB	1	8.3	OK islack,oslack
+1RB1LD_0LC1RB_1LA0RB_1RB1LC	0	23.0	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_0LC1RB_1LA0RB_1RC1LC	0	23.5	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_0LC1RB_1LB1RD_1LA0RC	0	20.1	no anchor
+1RB1LD_0LC1RB_1LD1RD_1LA0RC	0	19.5	no anchor
+1RB1LD_0LC1RB_1RB1LA_1LC0RB	0	20.2	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_0LC1RB_1RD1LA_1LC0RB	0	23.8	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_0LC1RD_0LA1RC_1LA0RC	0	29.5	derive: no overflow chain (nested: no boot chain)
+1RB1LD_0RC0RA_1RD0LA_0LA1RB	0	22.6	no anchor
+1RB1LD_0RC0RA_1RD1RC_0LA1RB	0	23.3	no anchor
+1RB1LD_0RC0RB_1LC0LA_0RB1RD	0	22.9	no anchor
+1RB1LD_0RC1LA_1LB1RC_0LB0LB	1	12.2	OK islack,oslack
+1RB1LD_0RC1LA_1LB1RC_0LB0RA	1	13.5	OK islack
+1RB1LD_0RC1LA_1LB1RC_0RC0LB	1	13.8	OK nest-plain
+1RB1LD_0RC1LA_1LB1RC_0LA0LB	0	42.5	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_0RC1LA_1LB1RC_0RD0LB	1	13.5	OK nest-plain
+1RB1LD_0RC1LA_1LB1RC_1LB0LB	1	15.9	OK islack,oslack
+1RB1LD_0RC1LA_1LB1RC_1RA0LB	1	12.9	OK flat
+1RB1LD_0RC1LA_1LB1RC_1RC0LB	1	14.7	OK islack
+1RB1LD_0RC1LB_1LB1RD_1RC0LA	0	20.3	no anchor
+1RB1LD_0RC1RB_0LD1RC_1LA0LB	0	17.3	derive: no interior chain
+1RB1LD_0RC1RB_1LD1RD_1LA0LB	0	19.5	no anchor
+1RB1LD_0RC1RB_1LD0LC_0LA1LA	0	23.3	no anchor
+1RB1LD_0RC1RC_0LD1RB_1LA0LC	0	17.2	derive: no interior chain
+1RB1LD_0RC1RB_1LD1RD_1LA0RC	0	21.1	no anchor
+1RB1LD_0RC1LB_1LA1RD_1RC0LB	0	75.0	derive: no overflow chain (nested: no second exit chain)
+1RB1LD_1LB0RC_1LA1RC_0LC0LA	0	37.0	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_1LB0RC_1LA1RC_1LC0LA	0	38.8	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_1LB1LC_1LA1RC_0RC0LA	0	39.1	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_1LC0RB_1RA1LA_0LA0LC	0	25.5	no anchor
+1RB1LD_1LC0RB_1RA1LA_0LC0LC	0	20.5	no anchor
+1RB1LD_1LB1RC_0LD0RB_0LA1LA	0	36.2	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_1LC0RB_1RA1LA_1LA0LC	0	21.1	no anchor
+1RB1LD_1LC0RB_1RA1LA_1LC0LC	0	20.4	no anchor
+1RB1LD_1LC0RB_1RA1LA_1LB0LC	0	21.4	no anchor
+1RB1LD_1LC0RB_1RA1LA_1RA0LC	0	22.1	no anchor
+1RB1LD_1LC0RD_1LA1LB_1RB0RA	0	21.1	no anchor
+1RB1LD_1LC0RD_1RD0LB_1LA0RC	0	19.8	no anchor
+1RB1LD_1LC1LA_0LA1RC_1LB0RC	1	14.6	OK nest-plain,islack,oslack
+1RB1LD_1LC0RC_1LA1RC_0LB0LA	0	38.6	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_1LC1RA_0RA1LC_0RB0LC	0	18.3	derive: no interior chain
+1RB1LD_1LC1LB_0LA1RC_1LA0RC	0	37.1	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_1LC1LD_0LA1RC_1LB0RC	0	38.5	derive: no overflow chain (nested: no overflow phase at K=6)
+1RB1LD_1LC1RA_1LA1LC_0LC0LA	0	22.3	no anchor
+1RB1LD_1LC1RB_0RA1LA_0RB0LC	1	12.9	OK nest-plain,islack,oslack
+1RB1LD_1LC1RA_1RB1LC_0LB0LA	0	21.9	no anchor
+1RB1LD_1LC1RB_0RA1LA_0LC0LC	1	25.9	OK islack,oslack
+1RB1LD_1LC1RB_0RA1LA_0RD0LC	1	12.3	OK nest-plain,islack
+1RB1LD_1LC1RB_0RA1LA_0RC0LC	1	26.9	OK islack
+1RB1LD_1LC1RB_0RA1LA_1RA0LC	1	26.2	OK islack,oslack
+1RB1LD_1LC1RB_0RA1LA_1RB0LC	1	25.8	OK islack
+1RB1LD_1LC1RB_0RB1LA_0LC0LC	1	24.1	OK islack,oslack
+1RB1LD_1LC1RB_0RB1LA_0RB0LC	1	12.1	OK nest-plain,islack,oslack
+1RB1LD_1LC1RB_0RB1LA_0LC0RA	1	26.6	OK islack,oslack
+1RB1LD_1LC1RB_0RB1LA_0RD0LC	1	12.2	OK nest-plain,islack,oslack
+1RB1LD_1LC1RB_0RB1LA_0RC0LC	1	24.7	OK islack
+1RB1LD_1LC1RB_0RB1LA_1LC0LC	1	24.6	OK islack,oslack
+1RB1LD_1LC1RB_0RB1LA_1RA0LC	1	24.0	OK islack,oslack
+1RB1LD_1LC1RB_0RC1LA_0RB0LC	1	14.2	OK nest-plain,islack,oslack
+1RB1LD_1LC1RB_0RB1LA_1RB0LC	1	27.7	OK islack
+1RB1LD_1LC1RB_0RC1LA_0LC0LC	1	24.2	OK islack,oslack
+1RB1LD_1LC1RB_0RC1LA_0RC0LC	1	24.9	OK islack
+1RB1LD_1LC1RB_0RC1LA_1RA0LC	1	25.1	OK islack,oslack
+1RB1LD_1LC1RB_0RC1LA_1RB0LC	1	25.3	OK islack
+1RB1LD_1LC1RB_1LA1LA_0RB0LC	1	13.2	OK islack
+1RB1LD_1LC1RB_0RD1LA_1RB0LC	1	24.9	OK islack
+1RB1LD_1LC1RB_1LD1LA_0RB0LC	1	24.1	OK islack
+1RB1LD_1LC1RB_1LD1RD_1LA0RC	0	18.5	no anchor
+1RB1LD_1LC1RC_1RD0LB_1LA0RC	0	18.9	no anchor
+1RB1LD_1LC1RB_1RA1LA_0RB0LC	0	28.9	derive: no overflow chain (nested: no inner family at pow2 j)
+1RB1LD_1LC1RB_1RB1LA_0RB0LC	1	23.9	OK islack
+1RB1LD_1LC1RD_1LA0LB_0RB0RC	0	22.8	no anchor
+1RB1LD_1RC---_1LA1RC_0RC0LA	1	22.1	OK nest-offset
