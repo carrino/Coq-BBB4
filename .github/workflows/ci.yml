@@ -88,8 +88,9 @@ jobs:
   # rejected batch.
   closeout-shard:
     runs-on: ubuntu-latest
-    # The long pole is one deep-RepWL batch (CBT_BR_00, ~30 min alone);
-    # the whole shard is budgeted at twice the worst one measured.
+    # The long pole is one deep-RepWL batch: CBT_BR_00 took 2,655 s alone
+    # (run 36527279101), and a batch is never split across cores, so that
+    # sets the floor.  The shard budget is ~2.5x the worst shard measured.
     timeout-minutes: 120
     strategy:
       fail-fast: false

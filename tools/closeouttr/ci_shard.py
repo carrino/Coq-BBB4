@@ -5,9 +5,9 @@ The `closeout-shard` matrix job of .github/workflows/ci.yml builds one
 slice of the batches theories/CloseoutTr/CBT_*.vo per runner; the
 `closeout-final` job then builds CloseoutTr.vo on top of all the slices.
 This script decides the slices.  It is pure scheduling: nothing it says is
-trusted, because the final job's `make` rebuilds any batch no shard
-delivered and the kernel re-checks CloseoutTr.vo itself.  A bad split can
-only cost time, never soundness.
+trusted.  The final job's `make -q` fails if any batch did not arrive, and
+coqc compiles CloseoutTr.vo, which Requires every batch, there.  A bad
+split can only cost time or fail the run, never pass a wrong one.
 
     python3 tools/closeouttr/ci_shard.py K N      targets of shard K of N (0-based), one per line
     python3 tools/closeouttr/ci_shard.py --check N   self-check: the N slices partition CBT_*.v
@@ -17,8 +17,8 @@ only cost time, never soundness.
 
 The split is longest-processing-time-first over a recorded per-batch cost,
 where a shard's load is max(total / JOBS, its longest batch): make -j4
-runs four batches at once, so the slow deep-RepWL batches share a shard
-instead of each idling three cores.  The cost is read from
+runs four batches at once, so slow batches may share a shard as long as
+that does not make it the long pole.  The cost is read from
 tools/closeouttr/ci_costs.tsv (`batch<TAB>seconds`: the batch's own compile
 plus the boards only it imports, one core of a hosted runner).  Batches
 not in the table cost DEFAULT_COST.  It depends only on the committed tree,
@@ -136,12 +136,13 @@ def closure(deps, t):
 def costs_from_logs(paths):
     """Per-batch cost from `make TIMED=1` logs: the batch's own real time
     plus that of every dependency no other batch needs (its boards)."""
-    time_re = re.compile(r'^(theories/\S+\.vo) \(real: ([0-9.]+),')
+    # search, not match: a GitHub job log prefixes every line with a stamp
+    time_re = re.compile(r'(theories/\S+\.vo) \(real: ([0-9.]+),')
     secs = {}
     for p in paths:
         with open(p, errors='replace') as f:
             for line in f:
-                m = time_re.match(line.strip())
+                m = time_re.search(line)
                 if m:
                     secs[m.group(1)] = float(m.group(2))
     deps = read_deps()
