@@ -3541,6 +3541,58 @@ edge.  It stays as a landed tier for other classes: it is cheap to try
 (the finder costs about 30 s a row on a miss), and a single-region row
 is its L = period special case.
 
+#### 7.4.SPB The SP log counters: CE's lap ports take 775, the ladder the next slice (2026-09-29)
+
+Workstream SPB (batch tag `SPB`), over all 2,233 open SP rows (class SP,
+`classes.py shard SP 0 1`).  HY's stretch run (§7.4.HY) had split them
+into 1,213 log counters with no block beside them and 1,020 with no
+anchor cell or no counter family.  Nobody had run the emitter ports of
+§7.4.QE/§7.4.CE (the per-instruction visit gate, the reindexed and S1
+nested overflows, the parity split, the 18 inferred alphabets) or CE2's
+ladder ports on class SP.  No new Coq: every board is a landed
+`LapGlueTr` (`LAPT_*`) or `LadderCheckTr` (`LDRT_*`) board.  Per-row
+results: `tools/closeouttr/spb/` (`probe.tsv`, `lap_c*.json`,
+`ok_c*.txt`); `tally.py` recomputes every count below.
+
+**The lap route: 791 derive, 775 boarded, `CBT_SPB_00..15, 18..21`.**
+`qe_probe.py --tr` over the 2,233 rows (3 jobs, 120 s cap, ~4 h
+including a container restart; 1 timeout) derives **791** (35%).
+`emit_lapcert.py --tr --emit` on them in chunks of ~200 derives and
+compiles **775** (16 misses: the emitter's own anchor walk stops at a
+nested-overflow failure for 11, "no interior chain" for 4, and one board
+fails `coqc`).  A board compiles in about a second; a 40-row batch in
+about 7 s.
+
+| port the board needed | rows |
+|---|---:|
+| a CE-inferred alphabet, flat | 459 |
+| a CE-inferred alphabet, nested overflow (`NestedLapLift`) | 241 |
+| a pre-CE alphabet (QE's per-instruction gate 39, reindexed offset nest 36, S1-head nest 22; overlapping) | 75 |
+| the parity split | 0 |
+
+`Alph_110_111_111` alone (the `110` = 0 / `111` = 1 counter of §7.4.SP)
+carries 436 boards; then `Alph_111_101_1` 84, `Alph_101_111_11` 80,
+`Alph_011_111_1` 68, `Alph_10_11_11` 39.  412 boards are certified on
+the mirror, 305 at an S1 head.  So the SP log counters were almost all
+an alphabet gap: §7.4.SP's "no anchor" (1,325 of the 1,733 SP rows the
+emitter saw before) was CE's port 1 on a larger scale, and none of them
+needs the parity split.
+
+By HY's split: **755 of the 1,213 log counters** board, and 20 of the
+1,020 no-anchor/no-family rows.
+
+**The lap route's residue: 1,442 probe failures + 16 emit misses.**
+
+| best blocker (over every anchor) | HY log counter | HY no anchor/family | all |
+|---|---:|---:|---:|
+| no anchor | 37 | 609 | 646 |
+| nested overflow: no overflow phase at K=6 / no inner family at pow2 j / no boot / no exit / other | 322 | 170 | 492 |
+| no interior chain | 79 | 212 | 291 |
+| renderer: no lap witness for one instruction | 4 | 8 | 12 |
+| timeout (120 s) | 0 | 1 | 1 |
+
+LADDER ROUTE AND FINAL RESIDUE: IN PROGRESS (valfam.py over the 1,442).
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
