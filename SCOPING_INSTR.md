@@ -3300,6 +3300,110 @@ opaque tails, so the glue here would carry over with a third, tied
 count.  On the QH side, irules took all 75 of these shapes (§7.4.DX), but
 on the DN side it leaves them undecided.
 
+#### 7.4.TI The multi-block sweeps: a block-family glue with rankings, 48 boarded (2026-09-29)
+
+Workstream TI (batch tag `TI`), over §7.4.SW's residue (48 rows, 31 of
+them the multi-hole shape) and §7.4.HY's residue (326 rows: 171 DN + 19 QH
+multi-block, 121 DN + 15 QH single-block).
+
+**The three-index anchor is not enough.**  Read by hand, the multi-hole
+rows are not converging holes with tied outer blocks.  In
+`1RB1LA_0RC0RD_1LC0LA_1LB0RC` the anchor `1^i 0 [D1] 1^m 0 1^k` laps as
+`(i, m+3, k) -> (i+1, m, k+2)`, and what happens when the middle block
+runs out depends on `m mod 3`.  Remainder 1 or 2 merges everything into a
+new round `(1, i+k(+1), 2)`.  Remainder 0 starts a sub-round
+`(1, i-3, k+3)` on a block a third the size, and that recursion has no
+bounded depth.  The anchors of one round are three-index, but the ties
+between rounds are not fixed (at sub-round depth `d` the right block is
+about `4^d` times the middle one), so no fixed `L uL^i M uR^k N uL'^i R`
+closes.  What does close is a finite set of anchor FAMILIES, each a
+symbolic tape, with the remainder cases as separate leaves.
+
+**The glue** (`theories/Counters/TriGlueTr.v`, 1,790 lines, only axiom
+`functional_extensionality_dep`).  A family is a whole tape `q, h, L, R`,
+each side a list of literal words and blocks `u^e`, with `e` affine in the
+family's variables.  Three variables is the common case, but the glue
+takes any number.  A family carries a dispatch tree.  A split on variable
+`k` takes the values `0..n-1` one by one and the rest by residue mod `p`,
+so its leaves are regions `x_k = M_k z_k + c_k`.  Each leaf has ONE
+`LapDecider` chain whose index is one `z_j`.  The other blocks are
+concrete in the region or inside the opaque tails.  The chain lands (up to
+`lift`) on a family at values affine in `z`.  Both ends are compared with
+the families by a verified one-pass normalizer on segment lists (merges,
+absorption of unit copies into blocks, primitive roots, trailing blanks).
+The anchors are the iterates of `tnxt` (walk the tree, jump to the
+target): the single `Hlap` of `glue_neverqhtr` (DN) or `lap_qh_stage`
+(QH).  The FIRES need a liveness argument, because an instruction may fire
+in some leaves only (D0 above fires only when a round ends on remainder
+0).  So a certificate also carries:
+
+* a residue modulus `P`;
+* a node set `S` of pairs (leaf, values mod `P`), which contains the boot
+  and is closed under every step into a leaf whose region is compatible
+  with the target values;
+* per instruction, an affine ranking on the nodes that drops by 1 at every
+  step out of a leaf that does not fire it into another leaf that does
+  not.
+
+Every chain prefix of a leaf fires its end instruction (`leaf_fired`, no
+witness data), and every check is coefficient-wise.  A row is one line,
+`apply coversTr_nqh, (tri_sound _ (mkTC ...))`, or `coversTr_qh3` of
+`tri_sound_qh` for QH rows (boot on the machine, `t0 <= 4096`).  The
+`_mirror` variants exist but no boarded row needs them.  Corrupting a
+chain step, a target constant or a ranking entry makes the row fail to
+compile (checked by hand on the first row).
+
+**Finder** (`tools/closeouttr/ti_batch.py`, with `ti_coq.py`, an exact
+Python transcription of every decidable function of the checker).  The
+boot is the tape at step 3000, with every run of at least two copies of a
+primitive unit of 1 to 4 cells read as a block.  Each family is explored
+from its generic instance:
+
+1. run concretely until the head is about to enter a block;
+2. cross the start block with `SCycR`/`SCycL` (with carried cells) when
+   its traversal cycles, at unit powers up to 4 (a residue split);
+3. otherwise peel it (a split on its variable, small values one by one);
+4. cut when the head is about to enter any other block, or comes back to
+   the start block after an excursion.
+
+The end configuration, normalized exactly as the checker does, is an
+instance of a new or known family, and lower bounds drop until they are
+stable.  The rankings come from an integer LP (scipy's `milp`, finder
+side only) over the reachable nodes, for `P = 1, 2, 3, 4, 6`.  Every check
+of `tri_check` is replayed in Python before a certificate is written.  QH
+rows pin the instructions silent after the 1e8 scan's quiet point.  Cost:
+~7 s a row for the SW rows (8 min for the 48 at one job), well under a
+second for most HY rows.
+
+**Yield: 48 boarded**, in `CBT_TI_00..03`.  All 48 kernel-check.  Compile
+times: 16, 11, 19 and 2 rows in 6.3, 8.9, 5.1 and 2.7 s (measured under
+load), `TriGlueTr.v` itself ~5 s, so the CI `closeout-tr` job grows by
+well under a minute.  All rows: 3,480 -> **3,432**.
+
+| source | rows | boarded | certificate shape |
+|---|---:|---:|---|
+| SW residue, multi-hole | 31 | 11 | 9-41 families, 13-56 leaves; `P = 1` for 15 of the 19 SW rows, `P = 2` for 4 |
+| SW residue, other (`(01)^n` trains, one hole) | 17 | 8 | |
+| HY multi-block, DN | 171 | 8 | `P = 1, 2, 3`: 4, 3, 1 |
+| HY multi-block, QH | 19 | 19 | quiet by step 2; 7-8 families, `P = 1` |
+| HY single-block, DN | 121 | 2 | |
+| HY single-block, QH | 15 | 0 | |
+
+**Residue (in my scope, 326 of 374):**
+
+| rows | failure | what it is |
+|---:|---|---|
+| 271 (144 HY multi + 114 HY single + 13 SW) | too many families (cap 120) | the block count grows without bound: doubling tapes (`1^6 0 1^12 0 1^24 0 1^48 ...`), block-digit counters, `(10)^n` trains with doubling blocks.  They need a counter segment in the family language (HybridGlueTr's `E p`) for the part that is not blocks; the rest of the glue carries over |
+| 24 (15 SW + 9 HY) | no ranking at any `P <= 6` | the instruction fires in one remainder case only, and a (leaf, residue) node cannot see why that case recurs.  In the `-3/+2` rows the argument is relational: `3i + m >= C` holds through the rounds, so a round never ends small enough to take the other branch.  Next step: per-node linear invariants with Farkas multipliers in the certificate, checked coefficient-wise like the rankings |
+| 16 (1 SW + 10 HY multi + 5 HY single) | leaf too long | a leaf runs 4,000 steps without meeting a block (a bouncer whose sweep region is all literal at the boot) |
+| 15 | HY QH, quiet point past the boot cap | the quiet instruction stops at ~7.95M steps.  In the generic instance the pinned instruction fires inside a leaf, so the regions need the same relational invariants |
+
+The composition §7.4.HY proposed ("the sweep half becomes `SweepGlueTr`'s
+inner and outer laps with the counter opaque") is, in this glue, a family
+whose far side is a counter segment.  The DN hybrids that close here are
+the ones without a counter.  Adding a counter segment type and its
+`cview`-style leaves is the next step for the 271.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
