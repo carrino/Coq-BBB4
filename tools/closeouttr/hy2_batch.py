@@ -62,22 +62,34 @@ rstrip0, lpad_eq, sflat = H.rstrip0, H.lpad_eq, H.sflat
 
 
 # ----------------------------------------------------------- the numeration --
+#
+# HybridCtrTr's counter (low digits in base b, top value tv in [lo, hi)) is
+# written here with lo = 0 and hi = H, the length of the TOP CYCLE: the top
+# words the counter steps through before an overflow widens it.  Positional
+# counters have H = b - 1 (a top digit) or b (b - 1) (two top digits); a
+# counter with only a terminator has H = 1.  Values are RANKS, the checker's
+# [cval]: H G(k) + vl low + b^k tv, G(k) = 1 + b + ... + b^(k-1).
 
-def ctr_of(v, b, lo):
-    """value -> (low digits LSB first, top value): HybridCtrTr's canonical pair"""
+def G(b, k):
+    return (b ** k - 1) // (b - 1)
+
+
+def ctr_of(r, b, H):
+    """rank -> (low digits LSB first, top index)"""
     k = 0
-    while b ** (k + 1) * lo <= v:
+    while H * G(b, k + 1) <= r:
         k += 1
-    x, low = v % b ** k, []
+    rem = r - H * G(b, k)
+    x, low = rem % b ** k, []
     for _ in range(k):
         low.append(x % b)
         x //= b
-    return low, v // b ** k
+    return low, rem // b ** k
 
 
-def fword(F, v):
-    """F's word of value v, or None when a top word is unknown"""
-    low, tv = ctr_of(v, F['b'], F['lo'])
+def fword(F, r):
+    """F's word of rank r, or None when its top word is unknown"""
+    low, tv = ctr_of(r, F['b'], F['H'])
     if tv not in F['T']:
         return None
     out = []
@@ -87,68 +99,65 @@ def fword(F, v):
 
 
 def fdecode(F, word):
-    """a word -> the value whose F-word it is (up to trailing blanks), or None"""
+    """a word -> its rank (up to trailing blanks), or None"""
     word = rstrip0(word)
-    D, b, lo = F['D'], F['b'], F['lo']
+    D, b, H = F['D'], F['b'], F['H']
     idx = {tuple(D[i]): i for i in range(b)}
     wd = len(D[0])
-    k, i, low = 0, 0, []
+    i, low = 0, []
     while True:
         rest = word[i:]
         for tv, t in F['T'].items():
             if rest == rstrip0(t):
-                v = tv
+                k = len(low)
+                v = 0
                 for dgt in reversed(low):
                     v = v * b + dgt
-                return v
+                return H * G(b, k) + v + b ** k * tv
         ch = word[i:i + wd]
         if len(ch) < wd or ch not in idx:
             return None
         low.append(idx[ch])
         i += wd
-        k += 1
 
 
-def family(Ls, step=1, maxd=6, bases=(2, 3, 4), ts=(1, 2)):
-    """Ls: left sides at consecutive anchors whose value grows by [step].
-    -> (Lpre, F, v0) with Ls[k] = Lpre ++ hcE (v0 + step k) up to trailing
-    blanks, F = dict(b, lo, D, T (partial)), or None"""
+def family(Ls, step=1, maxd=6, bases=(2, 3, 4)):
+    """Ls: left sides at consecutive anchors whose rank grows by [step].
+    -> (Lpre, F, r0) with Ls[k] = Lpre ++ hcE (r0 + step k) up to trailing
+    blanks, F = dict(b, H, D, T (partial)), or None"""
     if min(len(rstrip0(x)) for x in Ls[-3:]) > MAX_WORD:
         return None
     N = len(Ls)
     first = min(len(x) for x in Ls)
-    for t in ts:
-        for lp in range(0, 5):
-            if lp > first:
-                break
-            pre = tuple(Ls[0][:lp])
-            if any(tuple(x[:lp]) != pre for x in Ls):
-                break
-            W = [tuple(x[lp:]) for x in Ls]
-            for d in range(1, maxd + 1):
-                lows = [w[:d] + (0,) * (d - len(w[:d])) for w in W]
-                for b in bases:
-                    if step % b == 0:
-                        continue
-                    per = b // __import__('math').gcd(b, step)
-                    if per != b:
-                        continue
-                    if any(lows[k] != lows[k + b] for k in range(N - b)):
-                        continue
-                    if len(set(lows[:b])) != b:
-                        continue
-                    got = _fit(W, lows, b, d, t, step)
+    for lp in range(0, 5):
+        if lp > first:
+            break
+        pre = tuple(Ls[0][:lp])
+        if any(tuple(x[:lp]) != pre for x in Ls):
+            break
+        W = [tuple(x[lp:]) for x in Ls]
+        for d in range(1, maxd + 1):
+            lows = [w[:d] + (0,) * (d - len(w[:d])) for w in W]
+            for b in bases:
+                if __import__('math').gcd(b, step) != 1:
+                    continue
+                if any(lows[k] != lows[k + b] for k in range(N - b)):
+                    continue
+                if len(set(lows[:b])) != b:
+                    continue
+                for Hc in sorted(set([b - 1, 1, b * (b - 1)] + list(range(2, b * b)))):
+                    got = _fit(W, lows, b, d, Hc, step)
                     if got:
-                        F, v0 = got
-                        return pre, F, v0
+                        F, r0 = got
+                        return pre, F, r0
     return None
 
 
-def _fit(W, lows, b, d, t, step):
+def _fit(W, lows, b, d, Hc, step):
     N = len(W)
-    lo = b ** (t - 1)
     for r in range(b):
-        # anchor k has value v0 + step k with v0 = r (mod b): its low digit
+        # the anchor at rank r0 + step k shows low digit (r + step k) mod b
+        # (the low digit of a rank is (rank - H G(k)) mod b; fitted below)
         D = [None] * b
         for k in range(b):
             D[(r + step * k) % b] = lows[k]
@@ -162,15 +171,20 @@ def _fit(W, lows, b, d, t, step):
             mul *= b
             i += d
             parses.append((i, lowv, mul))
-        for (i, lowv, mul) in reversed(parses):
-            for tv in range(lo, b * lo):
-                vlast = lowv + mul * tv
-                v0 = vlast - step * (N - 1)
-                if v0 < b * b * lo or v0 > V0_CAP or v0 % b != r:
+        for kk, (i, lowv, mul) in reversed(list(enumerate(parses))):
+            if kk < 2:
+                continue
+            for tv in range(Hc):
+                rlast = Hc * G(b, kk) + lowv + mul * tv
+                r0 = rlast - step * (N - 1)
+                if r0 < 0 or r0 > V0_CAP or ctr_of(r0, b, Hc)[0][:1] == []:
                     continue
                 T, ok = {}, True
                 for k in range(N):
-                    low, top = ctr_of(v0 + step * k, b, lo)
+                    low, top = ctr_of(r0 + step * k, b, Hc)
+                    if len(low) < 2:
+                        ok = False
+                        break
                     lw = ()
                     for x in low:
                         lw += D[x]
@@ -185,8 +199,57 @@ def _fit(W, lows, b, d, t, step):
                     T[top] = rest
                 # distinct top values must read as distinct words
                 if ok and len(set(T.values())) == len(T):
-                    return dict(b=b, lo=lo, D=[tuple(x) for x in D], T=T), v0
+                    return dict(b=b, H=Hc, D=[tuple(x) for x in D], T=T), r0
     return None
+
+
+def learn_cycle(tab, F, q, h, Lpre, Rpre, w, Rpost, m, q2, h2, Mpre):
+    """the top cycle by simulation: from an observed top word X, one lap's
+    counter half from [Dm^j ++ X] leaves [D0^j ++ X'] (a top step to X') or
+    [D0^(j+1) ++ X''] with X'' a word already met (the overflow).
+    -> (H, [top words from the post-overflow word on]) or None"""
+    b, D = F['b'], F['D']
+    Dm, D0 = tuple(D[b - 1]), tuple(D[0])
+    x_r = len(Rpre) + m * len(w)
+    seq = [tuple(F['T'][min(F['T'])])]
+    for _ in range(b * b + 2):
+        X = seq[-1]
+        got = None
+        for j in (2, 3):
+            anc = (q, tuple(Lpre) + Dm * j + X, h,
+                   tuple(Rpre) + tuple(w) * (m + 8) + tuple(Rpost))
+            mc = H.mid_of(tab, anc, x_r)
+            if mc is None:
+                return None
+            mq, mL, mh, mR = mc
+            want = tuple(Mpre) + D0 * j
+            if (mq, mh) != (q2, h2) or tuple(mL[:len(want)]) != want:
+                return None
+            Y = rstrip0(mL[len(want):])
+            if len(Y) > TOP_MAX + len(D0) or (got is not None and Y != got):
+                return None
+            got = Y
+        for c, Xc in enumerate(seq):
+            if got == rstrip0(D0 + Xc):
+                cyc = seq[c:]
+                return len(cyc), cyc
+        seq.append(got)
+    return None
+
+
+def refit(F, W, step):
+    """the rank of the first of the words W (Lpre stripped) under F, or None"""
+    r = fdecode(F, W[-1])
+    if r is None:
+        return None
+    r0 = r - step * (len(W) - 1)
+    if r0 < 0:
+        return None
+    for k, x in enumerate(W):
+        wk = fword(F, r0 + step * k)
+        if wk is None or not lpad_eq(wk, x):
+            return None
+    return r0
 
 
 # --------------------------------------------------------------- the laps ---
@@ -217,38 +280,6 @@ def phase_mid(tab, cls, Lpre, F, v0, L, i, blk, m):
     return got
 
 
-def learn_tops(tab, F, q, h, Lpre, Rpre, w, Rpost, m, q2, h2, Mpre):
-    """complete F's top table: from a known top word, run one lap's counter
-    half from a constructed anchor and read the top word it leaves"""
-    b, lo, D = F['b'], F['lo'], F['D']
-    Dm, D0 = tuple(D[b - 1]), tuple(D[0])
-    x_r = len(Rpre) + m * len(w)
-    for _ in range((b - 1) * lo + 1):
-        todo = [tv for tv in sorted(F['T'])
-                if (tv + 1 if tv + 1 < b * lo else lo) not in F['T']]
-        if not todo:
-            return True
-        tv = todo[0]
-        nxt, off = (tv + 1, 0) if tv + 1 < b * lo else (lo, 1)
-        got = None
-        for j in (2, 3):
-            anc = (q, tuple(Lpre) + Dm * j + tuple(F['T'][tv]), h,
-                   tuple(Rpre) + tuple(w) * (m + 8) + tuple(Rpost))
-            mc = H.mid_of(tab, anc, x_r)
-            if mc is None:
-                return False
-            mq, mL, mh, mR = mc
-            want = tuple(Mpre) + D0 * (j + off)
-            if (mq, mh) != (q2, h2) or tuple(mL[:len(want)]) != want:
-                return False
-            top = rstrip0(mL[len(want):])
-            if len(top) > TOP_MAX or (got is not None and top != got):
-                return False
-            got = top
-        F['T'][nxt] = got
-    return False
-
-
 def carry_case(tabw, q, h, Lpre, Rw, q2, h2, Mpre, Dm, D0, el, off, Ps, Pe):
     """one HybridCtrTr carry case: Dm^j ++ Ps -> D0^(j + off) ++ Pe"""
     Ps, Pe = tuple(Ps), tuple(Pe)
@@ -276,7 +307,7 @@ def carry_case(tabw, q, h, Lpre, Rw, q2, h2, Mpre, Dm, D0, el, off, Ps, Pe):
 
 
 def phase_counter(tabw, q, h, Lpre, F, Rpre, w, m, q2, h2, Mpre):
-    b, lo, D, T = F['b'], F['lo'], F['D'], F['T']
+    b, Hc, D, T = F['b'], F['H'], F['D'], F['T']
     Dm, D0 = tuple(D[b - 1]), tuple(D[0])
     Rw = tuple(Rpre) + tuple(w) * m
     ints, tops = [], []
@@ -285,40 +316,41 @@ def phase_counter(tabw, q, h, Lpre, F, Rpre, w, m, q2, h2, Mpre):
         if k is None:
             return 'no interior chain (digit %d)' % d
         ints.append(k)
-    for e in range((b - 1) * lo):
-        tv = lo + e
-        if tv + 1 < b * lo:
-            k = carry_case(tabw, q, h, Lpre, Rw, q2, h2, Mpre, Dm, D0, True, 0, T[tv], T[tv + 1])
+    for e in range(Hc):
+        if e + 1 < Hc:
+            k = carry_case(tabw, q, h, Lpre, Rw, q2, h2, Mpre, Dm, D0, True, 0, T[e], T[e + 1])
         else:
-            k = carry_case(tabw, q, h, Lpre, Rw, q2, h2, Mpre, Dm, D0, True, 1, T[tv], T[lo])
+            k = carry_case(tabw, q, h, Lpre, Rw, q2, h2, Mpre, Dm, D0, True, 1, T[e], T[0])
         if k is None:
-            return 'no %s chain' % ('top' if tv + 1 < b * lo else 'overflow')
+            return 'no %s chain' % ('top' if e + 1 < Hc else 'overflow')
         tops.append(k)
     return dict(int=ints, top=tops)
 
 
 def int_family(F, v0, i0, L, i, d, nu):
-    """(j, H0): (b^j - 1) + b^j d + b^(j+1) (H0 + L s) lies in phase i"""
-    b, lo = F['b'], F['lo']
+    """(j, H0): H G(j+1) + (b^j - 1) + b^j d + b^(j+1) (H0 + L s) lies in phase i"""
+    b, Hc = F['b'], F['H']
     for j in range(nu, nu + 2 * L + 3):
-        h0 = max(lo, v0 // b ** (j + 1))
-        for H0 in range(h0, h0 + 2 * L + 2):
-            x = (b ** j - 1) + b ** j * d + b ** (j + 1) * H0
+        h0 = max(0, v0 // b ** (j + 1) - 1)
+        for H0 in range(h0, h0 + 2 * L + 4):
+            x = Hc * G(b, j + 1) + (b ** j - 1) + b ** j * d + b ** (j + 1) * H0
             if x >= v0 and (i0 + x - v0) % L == i:
                 return j, H0
     return None
 
 
 def top_family(F, v0, i0, L, i, e, nu):
-    """(j0, T): b^(j0 + T s) (lo + e + 1) - 1 lies in phase i"""
-    b, lo = F['b'], F['lo']
-    tv = lo + e
+    """(j0, T): the ranks ytop e (j0 + T s) - 1 lie in phase i"""
+    b, Hc = F['b'], F['H']
+    y = lambda j: Hc * G(b, j) + b ** j * (e + 1)  # noqa: E731
     for j0 in range(nu, nu + 64):
-        x = b ** j0 * (tv + 1) - 1
+        x = y(j0) - 1
+        if x > 64 * V0_CAP:
+            break
         if x < v0 or (i0 + x - v0) % L != i:
             continue
         for T in range(1, 4 * L + 1):
-            if (b ** (j0 + T)) % L == (b ** j0) % L:
+            if y(j0 + T) % L == y(j0) % L:
                 return j0, T
     return None
 
@@ -376,21 +408,31 @@ def try_phases(tab, tabw, pins, snaps, fam, L):
         if sum(ds) <= 0:
             why = 'block does not grow'
             continue
-        F1 = dict(F, T=dict(F['T']))
+        F1 = None
+        v1 = None
         phases = []
         for i in range(L):
             q, h = qh_[i]
             Rpre, w, Rpost, ns = combo[i]
             ph = None
             for m in (0, 1, 2):
-                mid = phase_mid(tab, cls[i], Lpres[i], F1, v0, L, i, combo[i], m)
+                mid = phase_mid(tab, cls[i], Lpres[i], F, v0, L, i, combo[i], m)
                 if mid is None:
                     why = 'no mid'
                     continue
                 q2, h2, Mpre = mid
-                if not learn_tops(tab, F1, q, h, Lpres[i], Rpre, w, Rpost, m, q2, h2, Mpre):
-                    why = 'top table not closed'
-                    continue
+                if F1 is None:
+                    cyc = learn_cycle(tab, F, q, h, Lpres[i], Rpre, w, Rpost, m, q2, h2, Mpre)
+                    if cyc is None:
+                        why = 'no top cycle'
+                        continue
+                    Fc = dict(b=F['b'], D=F['D'], H=cyc[0], T=dict(enumerate(cyc[1])))
+                    r0s = [refit(Fc, [tuple(sn[3][len(Lpres[k]):]) for sn in cls[k]], L)
+                           for k in range(L)]
+                    if None in r0s or any(r0s[k] != r0s[0] + k for k in range(L)):
+                        why = 'top cycle does not fit'
+                        continue
+                    F1, v1 = Fc, r0s[0]
                 ctr = phase_counter(tabw, q, h, Lpres[i], F1, Rpre, w, m, q2, h2, Mpre)
                 if isinstance(ctr, str):
                     why = ctr
@@ -410,7 +452,7 @@ def try_phases(tab, tabw, pins, snaps, fam, L):
         else:
             if all(phases[i]['c'] >= phases[(i + 1) % L]['m'] + phases[(i + 1) % L]['na']
                    + phases[(i + 1) % L]['nb'] for i in range(L)):
-                return dict(F=F1, L=L, v0=v0, phases=phases), None
+                return dict(F=F1, L=L, v0=v1, phases=phases), None
             why = 'block below a phase minimum'
     return None, why
 
@@ -463,7 +505,7 @@ def phase_boot(tab, c, cap):
             if (q, h) != (ph['q'], ph['h']) or tuple(Ls[:len(Lpre)]) != tuple(Lpre):
                 continue
             v = fdecode(F, tuple(Ls[len(Lpre):]))
-            if v is None or v < F['lo'] or (v - v0) % L != i:
+            if v is None or (v - v0) % L != i:
                 continue
             wv = fword(F, v)
             if wv is None or not lpad_eq(Ls, tuple(Lpre) + wv):
@@ -528,7 +570,7 @@ def find_dir(tab, N=N_STEPS):
                     fams = [family([s[3] for s in sub[i::L]], L) for i in range(L)]
                     if None in fams or any(f[1]['b'] != fams[0][1]['b']
                                            or f[1]['D'] != fams[0][1]['D']
-                                           or f[1]['lo'] != fams[0][1]['lo']
+                                           or f[1]['H'] != fams[0][1]['H']
                                            or f[2] != fams[0][2] + i
                                            for i, f in enumerate(fams)) \
                             or len(set(f[0] for f in fams)) == 1:
@@ -584,8 +626,8 @@ def find(spec):
             c, err = None, 'halt in chain search'
         if c:
             F = c.pop('F')
-            c.update(spec=spec, mir=mir, b=F['b'], lo=F['lo'], D=[list(x) for x in F['D']],
-                     T=[list(F['T'][tv]) for tv in range(F['lo'], F['b'] * F['lo'])])
+            c.update(spec=spec, mir=mir, b=F['b'], H=F['H'], D=[list(x) for x in F['D']],
+                     T=[list(F['T'][e]) for e in range(F['H'])])
             return c
         errs.append(err)
     return dict(spec=spec, err=' / '.join(errs))
@@ -632,10 +674,10 @@ def render(c):
     fires = '[' + ';\n       '.join('(mkHCF %d %d %d %d %d %s)' % (i, k, x, a, bb, H.cchain(ch))
                                     for i, k, x, a, bb, ch in c['fires']) + ']'
     t0, v, i0, n0 = c['boot']
-    low, tv = ctr_of(v, c['b'], c['lo'])
+    low, tv = ctr_of(v, c['b'], c['H'])
     words = lambda ws: '[' + '; '.join(H.clist(x) for x in ws) + ']'  # noqa: E731
-    cert = ('(mkHCC %s %d %d\n      %s\n      %s\n      %s\n      %s\n      %d [%s] %d %d %d)'
-            % (pins, c['b'], c['lo'], words(c['D']), words(c['T']), phases, fires, t0,
+    cert = ('(mkHCC %s %d 0 %d\n      %s\n      %s\n      %s\n      %s\n      %d [%s] %d %d %d)'
+            % (pins, c['b'], c['H'], words(c['D']), words(c['T']), phases, fires, t0,
                '; '.join(str(x) for x in low), tv, i0, n0))
     lemma = 'hc_sound_nqh_mirror' if c['mir'] else 'hc_sound_nqh'
     return 'apply coversTr_nqh, (%s _\n      %s).\n  vm_cast_no_check (eq_refl true).' % (lemma, cert)
