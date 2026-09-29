@@ -51,7 +51,11 @@ Local Notation tm := (tm_wrap_trs tm_1RB0LC_1LA0RD_1LB1RD_0LB1RC pins_1RB0LC_1LA
     The successor is a PARAMETER here, not a law: [fam_succ] reads the fill
     of the phase it is in, the code the digits are written in, and the step
     the counter advances by, all off this record. *)
+<<<<<<< HEAD
 Definition fam_1RB0LC_1LA0RD_1LB1RD_0LB1RC : Fam := mkFam 2 [[S1;S1;S0];[S0;S1;S0]] [] [[S0;S1]] Binary 1 [mkFill 1 [] 0 [] 0] StD S0 true [].
+=======
+Definition fam_1RB0LC_1LA0RD_1LB1RD_0LB1RC : Fam := mkFam 2 [[S1;S1;S0];[S0;S1;S0]] [] [[]] Binary 1 [mkFill 1 [] 0 [1] 0] StD S0 true [].
+>>>>>>> origin/closeout-sp2
 Local Notation FAM := fam_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
 
 (** ** The ladder, as DATA
@@ -81,6 +85,7 @@ Proof. apply rule_sound_nil. exact ladder_ok_1RB0LC_1LA0RD_1LB1RD_0LB1RC. Qed.
     Each is a rule the kernel re-derives from the machine.  [el]/[er] record
     whether that side's tail is known empty: the fill arm must see the end
     of the counter, the interior arms hold against an arbitrary tail. *)
+<<<<<<< HEAD
 (* D[0] L<110^1+y0 0^1 1^1> R<>  ==>  D[0] L<0^1 101^y0 1^1 0^2 1^1> R<>   [2 steps] *)
 Definition arm11_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
   mkLRule (mkC StD (mkS [S1;S1;S0] [S1;S1;S0] 1 0 [S0;S1]) S0 (mkS [] [] 0 0 []))
@@ -392,6 +397,319 @@ Lemma sound_arm94_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm94_1R
 Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm94_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
 
 (* arm15: NO KERNEL CHAIN -- constant step count but several block variables *)
+=======
+(* D[0] L<110^1+y0> R<>  ==>  D[0] L<0^1 101^y0 1^1> R<>   [2 steps] *)
+Definition arm15_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S1;S1;S0] [S1;S1;S0] 1 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S0] [S1;S0;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 0 2.
+Definition ch_arm15_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 2);RB (SUnrotL 2)].
+Lemma ok_arm15_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm true true rules arm15_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm15_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm15_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm true true arm15_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm15_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^7> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 1^1> R<>   [60 steps] *)
+Definition arm111_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 60.
+Definition ch_arm111_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 21);RB (SWinL 39)].
+Lemma ok_arm111_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm true true rules arm111_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm111_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm111_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm true true arm111_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm111_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^8> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 1^1> R<>   [68 steps] *)
+Definition arm135_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 68.
+Definition ch_arm135_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 24);RB (SWinL 44)].
+Lemma ok_arm135_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm true true rules arm135_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm135_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm135_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm true true arm135_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm135_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^9> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 1^1> R<>   [76 steps] *)
+Definition arm163_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 76.
+Definition ch_arm163_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 27);RB (SWinL 49)].
+Lemma ok_arm163_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm true true rules arm163_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm163_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm163_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm true true arm163_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm163_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^1> R<>  ==>  D[0] L<1^2 0^2 1^1> R<>   [12 steps] *)
+Definition arm22_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S0;S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 12.
+Definition ch_arm22_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 3);RB (SWinL 9)].
+Lemma ok_arm22_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm true true rules arm22_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm22_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm22_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm true true arm22_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm22_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^2> R<>  ==>  D[0] L<1^2 0^1 1^2 0^2 1^1> R<>   [20 steps] *)
+Definition arm29_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S0;S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 20.
+Definition ch_arm29_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 6);RB (SWinL 14)].
+Lemma ok_arm29_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm true true rules arm29_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm29_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm29_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm true true arm29_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm29_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^3> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^2 1^1> R<>   [28 steps] *)
+Definition arm39_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 28.
+Definition ch_arm39_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 9);RB (SWinL 19)].
+Lemma ok_arm39_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm true true rules arm39_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm39_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm39_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm true true arm39_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm39_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^4> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 1^1> R<>   [36 steps] *)
+Definition arm52_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 36.
+Definition ch_arm52_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 12);RB (SWinL 24)].
+Lemma ok_arm52_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm true true rules arm52_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm52_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm52_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm true true arm52_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm52_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^5> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 1^1> R<>   [44 steps] *)
+Definition arm69_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 44.
+Definition ch_arm69_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 15);RB (SWinL 29)].
+Lemma ok_arm69_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm true true rules arm69_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm69_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm69_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm true true arm69_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm69_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^6> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 1^1> R<>   [52 steps] *)
+Definition arm88_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 52.
+Definition ch_arm88_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 18);RB (SWinL 34)].
+Lemma ok_arm88_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm true true rules arm88_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm88_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm88_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm true true arm88_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm88_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* arm6: NO KERNEL CHAIN -- constant step count but several block variables *)
+(* arm11: NO KERNEL CHAIN -- constant step count but several block variables *)
+(* D[0] L<010^1 110^1+y0 #^1> R<>  ==>  D[0] L<1^2 0^2 101^y0 1^1 0^1 #^1> R<>   [10 steps] *)
+Definition arm30_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S1;S1;S0] [S1;S1;S0] 1 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S0] [S1;S0;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 0 10.
+Definition ch_arm30_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 10);RB (SUnrotL 2)].
+Lemma ok_arm30_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm30_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm30_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm30_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm30_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm30_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^2 110^1+y0 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^2 101^y0 1^1 0^1 #^1> R<>   [18 steps] *)
+Definition arm54_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S1;S1;S0] [S1;S1;S0] 1 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S0] [S1;S0;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 0 18.
+Definition ch_arm54_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 18);RB (SUnrotL 2)].
+Lemma ok_arm54_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm54_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm54_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm54_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm54_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm54_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^3 110^1+y0 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^2 101^y0 1^1 0^1 #^1> R<>   [26 steps] *)
+Definition arm91_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0] [S1;S1;S0] 1 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S0] [S1;S0;S1] 1 0 [S1;S0]) S0 (mkS [] [] 0 0 [])) 0 26.
+Definition ch_arm91_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 26);RB (SUnrotL 2)].
+Lemma ok_arm91_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm91_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm91_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm91_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm91_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm91_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^6 110^1 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 1^1 0^1 #^1> R<>   [50 steps] *)
+Definition arm103_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 50.
+Definition ch_arm103_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 50)].
+Lemma ok_arm103_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm103_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm103_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm103_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm103_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm103_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^4 110^4 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 101^3 1^1 0^1 #^1> R<>   [34 steps] *)
+Definition arm115_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 34.
+Definition ch_arm115_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 34)].
+Lemma ok_arm115_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm115_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm115_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm115_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm115_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm115_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^5 110^3 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 101^2 1^1 0^1 #^1> R<>   [42 steps] *)
+Definition arm119_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 42.
+Definition ch_arm119_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 42)].
+Lemma ok_arm119_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm119_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm119_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm119_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm119_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm119_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^6 110^2 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 101^1 1^1 0^1 #^1> R<>   [50 steps] *)
+Definition arm123_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 50.
+Definition ch_arm123_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 50)].
+Lemma ok_arm123_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm123_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm123_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm123_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm123_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm123_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^7 110^1 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 1^1 0^1 #^1> R<>   [58 steps] *)
+Definition arm127_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 58.
+Definition ch_arm127_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 58)].
+Lemma ok_arm127_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm127_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm127_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm127_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm127_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm127_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^4 110^5 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 101^4 1^1 0^1 #^1> R<>   [34 steps] *)
+Definition arm139_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 34.
+Definition ch_arm139_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 34)].
+Lemma ok_arm139_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm139_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm139_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm139_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm139_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm139_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^5 110^4 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 101^3 1^1 0^1 #^1> R<>   [42 steps] *)
+Definition arm143_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 42.
+Definition ch_arm143_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 42)].
+Lemma ok_arm143_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm143_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm143_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm143_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm143_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm143_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^6 110^3 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 101^2 1^1 0^1 #^1> R<>   [50 steps] *)
+Definition arm147_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 50.
+Definition ch_arm147_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 50)].
+Lemma ok_arm147_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm147_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm147_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm147_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm147_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm147_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^7 110^2 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 101^1 1^1 0^1 #^1> R<>   [58 steps] *)
+Definition arm151_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 58.
+Definition ch_arm151_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 58)].
+Lemma ok_arm151_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm151_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm151_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm151_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm151_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm151_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^8 110^1 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 1^1 0^1 #^1> R<>   [66 steps] *)
+Definition arm155_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 66.
+Definition ch_arm155_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 66)].
+Lemma ok_arm155_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm155_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm155_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm155_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm155_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm155_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^4 110^1 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 1^1 0^1 #^1> R<>   [34 steps] *)
+Definition arm61_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 34.
+Definition ch_arm61_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 34)].
+Lemma ok_arm61_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm61_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm61_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm61_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm61_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm61_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^4 110^2 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 101^1 1^1 0^1 #^1> R<>   [34 steps] *)
+Definition arm76_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 34.
+Definition ch_arm76_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 34)].
+Lemma ok_arm76_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm76_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm76_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm76_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm76_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm76_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^5 110^1 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 1^1 0^1 #^1> R<>   [42 steps] *)
+Definition arm80_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 42.
+Definition ch_arm80_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 42)].
+Lemma ok_arm80_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm80_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm80_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm80_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm80_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm80_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^4 110^3 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 101^2 1^1 0^1 #^1> R<>   [34 steps] *)
+Definition arm95_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 34.
+Definition ch_arm95_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 34)].
+Lemma ok_arm95_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm95_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm95_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm95_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm95_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm95_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* D[0] L<010^5 110^2 #^1> R<>  ==>  D[0] L<1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^1 1^2 0^2 101^1 1^1 0^1 #^1> R<>   [42 steps] *)
+Definition arm99_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+  mkLRule (mkC StD (mkS [S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S0;S1;S0;S1;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S1;S1;S0;S0;S1;S0;S1;S1;S0] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 42.
+Definition ch_arm99_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 42)].
+Lemma ok_arm99_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  check_arm tm false true rules arm99_1RB0LC_1LA0RD_1LB1RD_0LB1RC ch_arm99_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm99_1RB0LC_1LA0RD_1LB1RD_0LB1RC : RuleSound tm false true arm99_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+Proof. eapply arm_sound; [exact rules_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC | exact ok_arm99_1RB0LC_1LA0RD_1LB1RD_0LB1RC]. Qed.
+
+(* arm9: NO KERNEL CHAIN -- constant step count but several block variables *)
+>>>>>>> origin/closeout-sp2
 (** ** What this board establishes
 
     28 of 31 arms of the certificate are re-derived by the kernel and
@@ -440,9 +758,15 @@ Definition iarm_1RB0LC_1LA0RD_1LB1RD_0LB1RC (d r : nat) : LRule :=
   end.
 
 Definition farm1_0_1RB0LC_1LA0RD_1LB1RD_0LB1RC : LRule :=
+<<<<<<< HEAD
   mkLRule (mkC StD (mkS [S0;S1;S0] [S0;S1;S0] 1 0 [S0;S1]) S0 (mkS [] [] 0 0 []))
           (mkC StD (mkS [S1;S1;S0] [S1;S1;S0] 1 0 [S1;S1;S0;S0;S1]) S0 (mkS [] [] 0 0 [])) 8 20.
 Definition ch_farm1_0_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 3);RB (SCycL 3 0);RB (SWin 2);RB (SWinL 10);RB (SCycR 5);RB (SWin 5)].
+=======
+  mkLRule (mkC StD (mkS [S0;S1;S0] [S0;S1;S0] 1 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0] [S1;S1;S0] 1 0 [S0;S1]) S0 (mkS [] [] 0 0 [])) 8 12.
+Definition ch_farm1_0_1RB0LC_1LA0RD_1LB1RD_0LB1RC : list rstep := [RB (SWin 3);RB (SCycL 3 0);RB (SWinL 4);RB (SCycR 5);RB (SWin 5)].
+>>>>>>> origin/closeout-sp2
 Lemma ok_farm1_0_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
   check_arm tm true true rules farm1_0_1RB0LC_1LA0RD_1LB1RD_0LB1RC
             ch_farm1_0_1RB0LC_1LA0RD_1LB1RD_0LB1RC = true.
@@ -467,7 +791,11 @@ Definition farm_1RB0LC_1LA0RD_1LB1RD_0LB1RC (r ph : nat) : LRule :=
 Definition fm1_1RB0LC_1LA0RD_1LB1RD_0LB1RC (r ph : nat) : nat :=
   match r, ph with | 1, 0 => 1 | _, _ => 0 end.
 Definition fm2_1RB0LC_1LA0RD_1LB1RD_0LB1RC (r ph : nat) : nat :=
+<<<<<<< HEAD
   match r, ph with | 1, 0 => 1 | _, _ => 0 end.
+=======
+  match r, ph with | 1, 0 => 0 | _, _ => 0 end.
+>>>>>>> origin/closeout-sp2
 
 (** One chain per UNPINNED INSTRUCTION per fill arm, at the VISIT PHASE
     0.  [fire_of_run_instr] turns each into a fire of that instruction,
@@ -476,6 +804,7 @@ Definition fm2_1RB0LC_1LA0RD_1LB1RD_0LB1RC (r ph : nat) : nat :=
     a sparse row is witnessed. *)
 Definition vis_1RB0LC_1LA0RD_1LB1RD_0LB1RC (r : nat) (t : Instr) : list lstep :=
   match r, t with
+<<<<<<< HEAD
   | 1, (StA, S0) => [SWin 3;SCycL 3 0;SWinL 5]
   | 1, (StA, S1) => [SWin 2]
   | 1, (StB, S0) => [SWin 1]
@@ -487,6 +816,25 @@ Definition vis_1RB0LC_1LA0RD_1LB1RD_0LB1RC (r : nat) (t : Instr) : list lstep :=
   | _, _ => []
   end.
 
+=======
+  | 1, (StA, S0) => [SWin 3;SCycL 3 0;SWinL 2]
+  | 1, (StA, S1) => [SWin 2]
+  | 1, (StB, S0) => [SWin 1]
+  | 1, (StB, S1) => [SWin 3;SCycL 3 0;SWinL 3]
+  | 1, (StC, S0) => [SWin 3]
+  | 1, (StC, S1) => [SWin 3;SCycL 3 0;SWinL 4;SCycR 5;SWin 4]
+  | 1, (StD, S0) => []
+  | 1, (StD, S1) => [SWin 3;SCycL 3 0;SWinL 4]
+  | _, _ => []
+  end.
+
+(** The fill runs stop short of the family's target by blanks
+    the machine never writes; these count them per arm
+    ([LadderCheckLiftTr.cpad]). *)
+Definition padl_1RB0LC_1LA0RD_1LB1RD_0LB1RC (r ph : nat) : nat := match r, ph with | 1, 0 => 1 | _, _ => 0 end.
+Definition padr_1RB0LC_1LA0RD_1LB1RD_0LB1RC (r ph : nat) : nat := match r, ph with | 1, 0 => 0 | _, _ => 0 end.
+
+>>>>>>> origin/closeout-sp2
 Lemma iarm_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC : forall d r,
   d < fm_b FAM - 1 -> r < 1 + 1 ->
   RuleSound tm (negb (fm_left FAM)) (fm_left FAM) (iarm_1RB0LC_1LA0RD_1LB1RD_0LB1RC d r).
@@ -588,11 +936,19 @@ Qed.
 
 Lemma farm_rhs_1RB0LC_1LA0RD_1LB1RD_0LB1RC : forall r ph, 0 < r -> r < 1 + 1 ->
   ph < 1 ->
+<<<<<<< HEAD
   lr_rhs (farm_1RB0LC_1LA0RD_1LB1RD_0LB1RC r ph)
     = cls_conf FAM (run_side FAM (f_mid (fam_fill FAM ph)) (fm1_1RB0LC_1LA0RD_1LB1RD_0LB1RC r ph)
                       (astride 1 1 r) (fm2_1RB0LC_1LA0RD_1LB1RD_0LB1RC r ph)
                       (f_to (fam_fill FAM ph))
                       (f_pre (fam_fill FAM ph)) (f_suf (fam_fill FAM ph))).
+=======
+  cls_conf FAM (run_side FAM (f_mid (fam_fill FAM ph)) (fm1_1RB0LC_1LA0RD_1LB1RD_0LB1RC r ph)
+                  (astride 1 1 r) (fm2_1RB0LC_1LA0RD_1LB1RD_0LB1RC r ph)
+                  (f_to (fam_fill FAM ph))
+                  (f_pre (fam_fill FAM ph)) (f_suf (fam_fill FAM ph)))
+    = cpad (padl_1RB0LC_1LA0RD_1LB1RD_0LB1RC r ph) (padr_1RB0LC_1LA0RD_1LB1RD_0LB1RC r ph) (lr_rhs (farm_1RB0LC_1LA0RD_1LB1RD_0LB1RC r ph)).
+>>>>>>> origin/closeout-sp2
 Proof.
   intros r ph H0 Hr Hph.
   destruct r as [|r].
@@ -639,9 +995,21 @@ Proof.
   exfalso; lia.
 Qed.
 
+<<<<<<< HEAD
 Lemma boot_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
   csteps tm 12 c0 = Some (fam_cfg FAM ([0], 0, 0)).
 Proof. vm_compute. reflexivity. Qed.
+=======
+Lemma bootl_1RB0LC_1LA0RD_1LB1RD_0LB1RC :
+  stepn tm 12 InitES = Some (lift (fam_cfg FAM ([0;1], 0, 0))).
+Proof.
+  assert (H : match csteps tm 12 c0 with
+              | Some c => ceqb c (fam_cfg FAM ([0;1], 0, 0))
+              | None => false end = true) by (vm_compute; reflexivity).
+  destruct (csteps tm 12 c0) as [c|] eqn:E; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.
+Qed.
+>>>>>>> origin/closeout-sp2
 
 Lemma vis_ok_1RB0LC_1LA0RD_1LB1RD_0LB1RC : forall r t, ~ In t pins_1RB0LC_1LA0RD_1LB1RD_0LB1RC -> 0 < r ->
   r < 1 + 1 ->
@@ -662,11 +1030,17 @@ Qed.
     the machine itself. *)
 Theorem nqhtr_1RB0LC_1LA0RD_1LB1RD_0LB1RC : NeverQuasiHaltsTr tm_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
 Proof.
+<<<<<<< HEAD
   apply (boardph_neverqhtr tm_1RB0LC_1LA0RD_1LB1RD_0LB1RC pins_1RB0LC_1LA0RD_1LB1RD_0LB1RC FAM 1
                            iarm_1RB0LC_1LA0RD_1LB1RD_0LB1RC 1 1
                            farm_1RB0LC_1LA0RD_1LB1RD_0LB1RC 1 1
                            fm1_1RB0LC_1LA0RD_1LB1RD_0LB1RC fm2_1RB0LC_1LA0RD_1LB1RD_0LB1RC 0 vis_1RB0LC_1LA0RD_1LB1RD_0LB1RC
                            [0] 0 12).
+=======
+  eapply (boardphL_neverqhtr tm_1RB0LC_1LA0RD_1LB1RD_0LB1RC pins_1RB0LC_1LA0RD_1LB1RD_0LB1RC FAM 1
+    iarm_1RB0LC_1LA0RD_1LB1RD_0LB1RC 1 1 farm_1RB0LC_1LA0RD_1LB1RD_0LB1RC 1 1 fm1_1RB0LC_1LA0RD_1LB1RD_0LB1RC fm2_1RB0LC_1LA0RD_1LB1RD_0LB1RC padl_1RB0LC_1LA0RD_1LB1RD_0LB1RC padr_1RB0LC_1LA0RD_1LB1RD_0LB1RC
+    0 vis_1RB0LC_1LA0RD_1LB1RD_0LB1RC [0;1] 0).
+>>>>>>> origin/closeout-sp2
   - vm_compute; lia.
   - vm_compute; reflexivity.
   - vm_compute; reflexivity.
@@ -699,7 +1073,10 @@ Proof.
   - repeat constructor.
   - vm_compute; lia.
   - lia.
+<<<<<<< HEAD
   - exact boot_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+=======
+>>>>>>> origin/closeout-sp2
   - lia.
   - exact iarm_sound_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
   - exact iarm_lhs_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
@@ -712,4 +1089,8 @@ Proof.
   - exact farm_rhs_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
   - exact farm_cb_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
   - exact vis_ok_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+<<<<<<< HEAD
+=======
+  - exact bootl_1RB0LC_1LA0RD_1LB1RD_0LB1RC.
+>>>>>>> origin/closeout-sp2
 Qed.

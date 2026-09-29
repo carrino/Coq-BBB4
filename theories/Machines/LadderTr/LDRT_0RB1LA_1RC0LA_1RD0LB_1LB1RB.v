@@ -146,6 +146,21 @@ Proof. vm_compute. reflexivity. Qed.
 Lemma sound_arm36_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true false arm36_0RB1LA_1RC0LA_1RD0LB_1LB1RB.
 Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm36_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
 
+<<<<<<< HEAD
+=======
+(* arm86: NO KERNEL CHAIN -- negative constant on the repeated block *)
+(* A[0] L<> R<001^1+y0 1^3+y1>  ==>  A[0] L<> R<1^3+3*y0 0^1 1^2+y1>   [8+6*y0 steps] *)
+Definition arm87_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
+  mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S0;S0;S1;S0;S0;S1;S0;S0;S1] [S0;S0;S1] 1 0 [S1]))
+          (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1;S1;S1;S1;S1;S1;S1;S1;S1] [S1;S1;S1] 1 0 [S0])) 6 20.
+Definition ch_arm87_0RB1LA_1RC0LA_1RD0LB_1LB1RB : list rstep := [RB (SWin 9);RB (SCycR 3);RB (SWin 2);RB (SCycL 3 0);RB (SWin 9)].
+Lemma ok_arm87_0RB1LA_1RC0LA_1RD0LB_1LB1RB :
+  check_arm tm true false rules arm87_0RB1LA_1RC0LA_1RD0LB_1LB1RB ch_arm87_0RB1LA_1RC0LA_1RD0LB_1LB1RB = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm87_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true false arm87_0RB1LA_1RC0LA_1RD0LB_1LB1RB.
+Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm87_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
+
+>>>>>>> origin/closeout-sp2
 (* A[0] L<> R<1^3+y0 011^1+y1>  ==>  A[0] L<> R<0^1 1^2+y0 011^1+y1>   [2 steps] *)
 Definition arm88_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
   mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1] [] 0 0 []))
@@ -158,6 +173,20 @@ Lemma sound_arm88_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true false arm88_0R
 Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm88_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
 
 (* arm90: NO KERNEL CHAIN -- constant step count but several block variables *)
+<<<<<<< HEAD
+=======
+(* A[0] L<> R<001^1+y0 1^3+y1 001^1+y2>  ==>  A[0] L<> R<1^3+3*y0 0^1 1^2+y1 001^1+y2>   [8+6*y0 steps] *)
+Definition arm100_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
+  mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S0;S0;S1;S0;S0;S1;S0;S0;S1] [S0;S0;S1] 1 0 [S1]))
+          (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1;S1;S1;S1;S1;S1;S1;S1;S1] [S1;S1;S1] 1 0 [S0])) 6 20.
+Definition ch_arm100_0RB1LA_1RC0LA_1RD0LB_1LB1RB : list rstep := [RB (SWin 9);RB (SCycR 3);RB (SWin 2);RB (SCycL 3 0);RB (SWin 9)].
+Lemma ok_arm100_0RB1LA_1RC0LA_1RD0LB_1LB1RB :
+  check_arm tm true false rules arm100_0RB1LA_1RC0LA_1RD0LB_1LB1RB ch_arm100_0RB1LA_1RC0LA_1RD0LB_1LB1RB = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm100_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true false arm100_0RB1LA_1RC0LA_1RD0LB_1LB1RB.
+Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm100_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
+
+>>>>>>> origin/closeout-sp2
 (* A[0] L<> R<1^3+y0 011^1+y1 001^1+y2>  ==>  A[0] L<> R<0^1 1^2+y0 011^1+y1 001^1+y2>   [2 steps] *)
 Definition arm101_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
   mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1] [] 0 0 []))
@@ -192,6 +221,21 @@ Lemma sound_arm93_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true false arm93_0R
 Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm93_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
 
 (* arm94: NO KERNEL CHAIN -- constant step count but several block variables *)
+<<<<<<< HEAD
+=======
+(* arm95: NO KERNEL CHAIN -- negative constant on the repeated block *)
+(* A[0] L<> R<001^1+y0 1^3+y1 011^1+y2>  ==>  A[0] L<> R<1^3+3*y0 0^1 1^2+y1 011^1+y2>   [8+6*y0 steps] *)
+Definition arm96_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
+  mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S0;S0;S1;S0;S0;S1;S0;S0;S1] [S0;S0;S1] 1 0 [S1]))
+          (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1;S1;S1;S1;S1;S1;S1;S1;S1] [S1;S1;S1] 1 0 [S0])) 6 20.
+Definition ch_arm96_0RB1LA_1RC0LA_1RD0LB_1LB1RB : list rstep := [RB (SWin 9);RB (SCycR 3);RB (SWin 2);RB (SCycL 3 0);RB (SWin 9)].
+Lemma ok_arm96_0RB1LA_1RC0LA_1RD0LB_1LB1RB :
+  check_arm tm true false rules arm96_0RB1LA_1RC0LA_1RD0LB_1LB1RB ch_arm96_0RB1LA_1RC0LA_1RD0LB_1LB1RB = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm96_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true false arm96_0RB1LA_1RC0LA_1RD0LB_1LB1RB.
+Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm96_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
+
+>>>>>>> origin/closeout-sp2
 (* A[0] L<> R<1^3+y0 001^1+y1 011^1+y2>  ==>  A[0] L<> R<0^1 1^2+y0 001^1+y1 011^1+y2>   [2 steps] *)
 Definition arm97_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
   mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1] [] 0 0 []))
@@ -204,6 +248,10 @@ Lemma sound_arm97_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true false arm97_0R
 Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm97_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
 
 (* arm98: NO KERNEL CHAIN -- constant step count but several block variables *)
+<<<<<<< HEAD
+=======
+(* arm99: NO KERNEL CHAIN -- negative constant on the repeated block *)
+>>>>>>> origin/closeout-sp2
 (* A[0] L<> R<1^4+y0 0^1 1^1>  ==>  A[0] L<> R<0^1 1^3+y0 0^1 1^1>   [2 steps] *)
 Definition arm64_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
   mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1;S1;S1;S1] [S1] 1 0 [S0;S1]))
@@ -215,9 +263,31 @@ Proof. vm_compute. reflexivity. Qed.
 Lemma sound_arm64_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true true arm64_0RB1LA_1RC0LA_1RD0LB_1LB1RB.
 Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm64_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
 
+<<<<<<< HEAD
 (* arm140: NO KERNEL CHAIN -- constant step count but several block variables *)
 (* arm148: NO KERNEL CHAIN -- constant step count but several block variables *)
 (* arm156: NO KERNEL CHAIN -- constant step count but several block variables *)
+=======
+(* arm137: NO KERNEL CHAIN -- negative constant on the repeated block *)
+(* arm140: NO KERNEL CHAIN -- constant step count but several block variables *)
+(* arm141: NO KERNEL CHAIN -- negative constant on the repeated block *)
+(* arm148: NO KERNEL CHAIN -- constant step count but several block variables *)
+(* arm149: NO KERNEL CHAIN -- negative constant on the repeated block *)
+(* arm156: NO KERNEL CHAIN -- constant step count but several block variables *)
+(* arm157: NO KERNEL CHAIN -- negative constant on the repeated block *)
+(* A[0] L<> R<001^1+y0 1^1+y1 0^1 1^1>  ==>  A[0] L<> R<1^3+3*y0 0^1 1^y1 0^1 1^1>   [8+6*y0 steps] *)
+Definition arm33_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
+  mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S0;S0;S1;S0;S0;S1;S0;S0;S1] [S0;S0;S1] 1 0 [S1]))
+          (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1;S1;S1;S1;S1;S1;S1;S1;S1] [S1;S1;S1] 1 0 [S0])) 6 20.
+Definition ch_arm33_0RB1LA_1RC0LA_1RD0LB_1LB1RB : list rstep := [RB (SWin 9);RB (SCycR 3);RB (SWin 2);RB (SCycL 3 0);RB (SWin 9)].
+Lemma ok_arm33_0RB1LA_1RC0LA_1RD0LB_1LB1RB :
+  check_arm tm true false rules arm33_0RB1LA_1RC0LA_1RD0LB_1LB1RB ch_arm33_0RB1LA_1RC0LA_1RD0LB_1LB1RB = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm33_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true false arm33_0RB1LA_1RC0LA_1RD0LB_1LB1RB.
+Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm33_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
+
+(* arm67: NO KERNEL CHAIN -- negative constant on the repeated block *)
+>>>>>>> origin/closeout-sp2
 (* A[0] L<> R<1^3+y0 011^1+y1 1^1+y2 0^1 1^1>  ==>  A[0] L<> R<0^1 1^2+y0 011^1+y1 1^1+y2 0^1 1^1>   [2 steps] *)
 Definition arm39_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
   mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1] [] 0 0 []))
@@ -229,6 +299,10 @@ Proof. vm_compute. reflexivity. Qed.
 Lemma sound_arm39_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true false arm39_0RB1LA_1RC0LA_1RD0LB_1LB1RB.
 Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm39_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
 
+<<<<<<< HEAD
+=======
+(* arm42: NO KERNEL CHAIN -- two variable runs outside the tail *)
+>>>>>>> origin/closeout-sp2
 (* A[0] L<> R<1^3+y0 001^1+y1 1^1+y2 0^1 1^1>  ==>  A[0] L<> R<0^1 1^2+y0 001^1+y1 1^1+y2 0^1 1^1>   [2 steps] *)
 Definition arm45_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
   mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1] [] 0 0 []))
@@ -242,10 +316,41 @@ Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact 
 
 (* arm48: NO KERNEL CHAIN -- constant step count but several block variables *)
 (* arm69: NO KERNEL CHAIN -- negative constant on the repeated block *)
+<<<<<<< HEAD
 (* arm75: NO KERNEL CHAIN -- constant step count but several block variables *)
 (* arm77: NO KERNEL CHAIN -- negative constant on the repeated block *)
 (* arm122: NO KERNEL CHAIN -- constant step count but several block variables *)
 (* arm130: NO KERNEL CHAIN -- constant step count but several block variables *)
+=======
+(* A[0] L<> R<001^1+y0 1^3+y1 011^1+y2 1^1+y3 0^1 1^1>  ==>  A[0] L<> R<1^3+3*y0 0^1 1^2+y1 011^1+y2 1^1+y3 0^1 1^1>   [8+6*y0 steps] *)
+Definition arm71_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
+  mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S0;S0;S1;S0;S0;S1;S0;S0;S1] [S0;S0;S1] 1 0 [S1]))
+          (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1;S1;S1;S1;S1;S1;S1;S1;S1] [S1;S1;S1] 1 0 [S0])) 6 20.
+Definition ch_arm71_0RB1LA_1RC0LA_1RD0LB_1LB1RB : list rstep := [RB (SWin 9);RB (SCycR 3);RB (SWin 2);RB (SCycL 3 0);RB (SWin 9)].
+Lemma ok_arm71_0RB1LA_1RC0LA_1RD0LB_1LB1RB :
+  check_arm tm true false rules arm71_0RB1LA_1RC0LA_1RD0LB_1LB1RB ch_arm71_0RB1LA_1RC0LA_1RD0LB_1LB1RB = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm71_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true false arm71_0RB1LA_1RC0LA_1RD0LB_1LB1RB.
+Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm71_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
+
+(* arm75: NO KERNEL CHAIN -- constant step count but several block variables *)
+(* arm77: NO KERNEL CHAIN -- negative constant on the repeated block *)
+(* A[0] L<> R<001^1+y0 1^3+y1 001^1+y2 1^1+y3 0^1 1^1>  ==>  A[0] L<> R<1^3+3*y0 0^1 1^2+y1 001^1+y2 1^1+y3 0^1 1^1>   [8+6*y0 steps] *)
+Definition arm79_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
+  mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S0;S0;S1;S0;S0;S1;S0;S0;S1] [S0;S0;S1] 1 0 [S1]))
+          (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S1;S1;S1;S1;S1;S1;S1;S1;S1] [S1;S1;S1] 1 0 [S0])) 6 20.
+Definition ch_arm79_0RB1LA_1RC0LA_1RD0LB_1LB1RB : list rstep := [RB (SWin 9);RB (SCycR 3);RB (SWin 2);RB (SCycL 3 0);RB (SWin 9)].
+Lemma ok_arm79_0RB1LA_1RC0LA_1RD0LB_1LB1RB :
+  check_arm tm true false rules arm79_0RB1LA_1RC0LA_1RD0LB_1LB1RB ch_arm79_0RB1LA_1RC0LA_1RD0LB_1LB1RB = true.
+Proof. vm_compute. reflexivity. Qed.
+Lemma sound_arm79_0RB1LA_1RC0LA_1RD0LB_1LB1RB : RuleSound tm true false arm79_0RB1LA_1RC0LA_1RD0LB_1LB1RB.
+Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact ok_arm79_0RB1LA_1RC0LA_1RD0LB_1LB1RB]. Qed.
+
+(* arm122: NO KERNEL CHAIN -- constant step count but several block variables *)
+(* arm123: NO KERNEL CHAIN -- negative constant on the repeated block *)
+(* arm130: NO KERNEL CHAIN -- constant step count but several block variables *)
+(* arm131: NO KERNEL CHAIN -- negative constant on the repeated block *)
+>>>>>>> origin/closeout-sp2
 (* A[0] L<> R<011^1 #^1>  ==>  A[0] L<> R<0^2 1^1 #^1>   [4 steps] *)
 Definition arm161_0RB1LA_1RC0LA_1RD0LB_1LB1RB : LRule :=
   mkLRule (mkC StA (mkS [] [] 0 0 []) S0 (mkS [S0;S1;S1] [] 0 0 []))
@@ -449,7 +554,11 @@ Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact 
 (* arm62: NO KERNEL CHAIN -- constant step count but several block variables *)
 (** ** What this board establishes
 
+<<<<<<< HEAD
     32 of 47 arms of the certificate are re-derived by the kernel and
+=======
+    38 of 64 arms of the certificate are re-derived by the kernel and
+>>>>>>> origin/closeout-sp2
     sound: each [sound_*] is a theorem that the machine, from that arm's
     left-hand side and against any tail the flags permit, reaches the arm's
     right-hand side in exactly the certificate's step count. *)
@@ -459,7 +568,11 @@ Proof. eapply arm_sound; [exact rules_sound_0RB1LA_1RC0LA_1RD0LB_1LB1RB | exact 
     The arms below are the case split of [LadderCheck.digs_decomp], built
     from the FAMILY rather than mined: interior arms for the digits below the
     top, and fill arms.  Every certificate arm above is one of these with its
+<<<<<<< HEAD
     run lengths pinned to their lower bounds, which is why 47 of them
+=======
+    run lengths pinned to their lower bounds, which is why 64 of them
+>>>>>>> origin/closeout-sp2
     collapse to 6 here.
 
     Both classes are indexed by [LadderCheck]'s ONE arm scheme -- flat below
