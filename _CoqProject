@@ -9460,5 +9460,6 @@ theories/CloseoutTr/CBT_SW_02.v
 theories/CloseoutTr/CBT_SW_03.v
 theories/CloseoutTr/CBT_SW_04.v
 theories/CloseoutTr/CBT_SW_05.v
+theories/CloseoutTr/CBT_SW_06.v
 theories/CloseoutTr/RemainingTr.v
 theories/CloseoutTr/CloseoutTr.v
