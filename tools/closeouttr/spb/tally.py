@@ -33,8 +33,9 @@ for f in sorted(glob.glob('lap_c*.json')):
 boarded = set()
 for l in open(os.path.join(REPO, 'closeouttr_boarded.tsv')):
     p = l.rstrip('\n').split('\t')
-    if len(p) >= 3 and p[2].startswith('CBT_SPB_'):
-        boarded.add(p[1])
+    # spec<TAB>batch (older rows carry a leading index column)
+    if len(p) >= 2 and p[-1].startswith('CBT_SPB_'):
+        boarded.add(p[-2])
 
 
 def route(s):
