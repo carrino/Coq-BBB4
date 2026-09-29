@@ -4,3 +4,5 @@ probe.jsonl
 pending.txt
 vf.jsonl
 lad_todo.txt
+lad_s*.txt
+vf_s*.jsonl
