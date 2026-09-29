@@ -9,7 +9,7 @@ trusted.  The final job's `make -q` fails if any batch did not arrive, and
 coqc compiles CloseoutTr.vo, which Requires every batch, there.  A bad
 split can only cost time or fail the run, never pass a wrong one.
 
-    python3 tools/closeouttr/ci_shard.py K N      targets of shard K of N (0-based), one per line
+    python3 tools/closeouttr/ci_shard.py K N      targets of shard K of N (0-based), longest first
     python3 tools/closeouttr/ci_shard.py --check N   self-check: the N slices partition CBT_*.v
     python3 tools/closeouttr/ci_shard.py --plan N    per-shard load table
     python3 tools/closeouttr/ci_shard.py --merge TAR...  unpack shard output (final job)
@@ -224,7 +224,13 @@ def main(argv):
         k, n = int(argv[0]), int(argv[1])
         if not 0 <= k < n:
             sys.exit('ci_shard: shard %d out of range 0..%d' % (k, n - 1))
-        for b in plan(n)[k][1]:
+        # Longest first: make starts goals in command-line order, so the
+        # slow batches get a core at once instead of queueing behind many
+        # small ones (2026-09-29: a shard listed alphabetically ran at 1.8x
+        # parallelism, one of only heavy batches at 3.6x).
+        costs = read_costs()
+        for b in sorted(plan(n)[k][1],
+                        key=lambda b: (-costs.get(b, DEFAULT_COST), b)):
             print(target(b))
     else:
         sys.exit(__doc__)
