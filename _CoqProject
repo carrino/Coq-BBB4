@@ -5310,6 +5310,7 @@ theories/CensusTr/TNF_QHTr.v
 theories/CensusTr/DecideTr.v
 theories/CensusTr/QHConveyorTr.v
 theories/CensusTr/RepWLTr.v
+theories/CensusTr/RepWLMBTr.v
 theories/CensusTr/DeferredTr_00.v
 theories/CensusTr/DeferredTr_01.v
 theories/CensusTr/DeferredTr_Data.v
