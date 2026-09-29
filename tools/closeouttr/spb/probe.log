@@ -179,3 +179,11 @@
   179/2233 0RB0RD_1LC0RD_1LA1LB_1RB1RA no anchor 14s
   180/2233 0RB0RD_1LA1RC_1RD1LC_0LC1RA derive: no overflow chain (nested: no overflow phase at K=6) 26s
   181/2233 0RB0RD_1LC1RA_1RD0LC_1LB1RB no anchor 14s
+  182/2233 0RB0RD_1RC---_1RD1LC_0LC1RA derive: no overflow chain (nested: no overflow phase at K=6) 29s
+  183/2233 0RB0RD_1RC0LC_1LB1RD_1LC1RA derive: no overflow chain (nested: no overflow phase at K=6) 26s
+  184/2233 0RB0RD_1RC0LC_1RD1LC_1LB1RA derive: no overflow chain (nested: no overflow phase at K=6) 26s
+  185/2233 0RB0RD_1RC0LD_0LD1RA_1RA1LC no anchor 15s
+  186/2233 0RB0RD_1RC1LB_0LD1RA_1RA1LC no anchor 15s
+  187/2233 0RB0RD_1RC1LB_1LB0RA_1LD0LB no anchor 13s
+  188/2233 0RB0RD_1RC1LD_1LB1RC_1LB1RA no anchor 14s
+  189/2233 0RB0RD_1RC1LB_1LB1RA_0LC1RA derive: no overflow chain (nested: no overflow phase at K=6) 26s
