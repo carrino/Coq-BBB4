@@ -7,7 +7,10 @@
 # kit compile from source, two families of end-to-end machine proofs
 # kernel-check, there are zero Admitted anywhere in theories/, and the
 # untrusted consistency audits (closeout partition, census cache hash,
-# proof-report cross-checks) all pass.
+# proof-report cross-checks) all pass.  The instruction-level closeout
+# (every CloseoutTr batch plus the reflective split) is kernel-checked
+# too, sharded across runners: `closeout-shard` x 6, then `closeout-final`
+# (docs/CLOSEOUT_TR.md, "CI").
 name: CI
 on:
   push:
@@ -59,13 +62,102 @@ jobs:
           python3 tools/closeout/audit.py
           python3 tools/census_cache.py --check
           python3 tools/proof_report.py > /dev/null
-  # The instruction-level closeout grows with every batch (~1,500 files at
-  # 6,767 boarded rows), so it runs as its own job, beside `core`, with its
-  # own budget instead of sharing core's 45 minutes.
-  closeout-tr:
+  # The instruction-level closeout grows with every batch (188 batch files
+  # and ~1,800 .vo at 7,403 boarded rows): one runner took ~92 of 180
+  # minutes, so it is split.  `closeout-shard` kernel-checks a slice of the
+  # batches CBT_*.vo on each of SHARDS runners; `closeout-final` loads all
+  # of them and kernel-checks the reflective split CloseoutTr.vo.  The
+  # guarantee is the one the single job gave: every batch and the split are
+  # checked by coqc from this commit's sources.
+  #
+  # Why reusing the shard .vo is sound.  The shards and the final job all
+  # check out this same commit and install the same apt coqc, so a .vo is
+  # exactly what the final job would have produced itself (coqc is
+  # deterministic; `ci_shard.py --merge` also insists that a file two shards
+  # both built is byte-identical).  Nothing is trusted from a shard beyond
+  # "coqc accepted this file": a .vo exists only if coqc accepted the file,
+  # and Coq refuses to Require a .vo whose dependencies were compiled with
+  # different digests ("makes inconsistent assumptions"), so a stale or
+  # mismatched file fails the final build, never passes it.  The final
+  # job re-checks no batch, but CloseoutTr.vo itself is compiled there, and
+  # `make -q` first proves every batch arrived (a missing one fails).
+  #
+  # Failure: a red shard makes the run red, and `closeout-final` (which
+  # runs `if: always()`) fails too, so a required check on it cannot be
+  # satisfied by a skipped job.  fail-fast is off so one run names every
+  # rejected batch.
+  closeout-shard:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    # The floor is the slowest single batch, which no split can shorten:
+    # the deep-RepWL CBT_BR_02 / CBT_BR_00 take 35-46 min alone, depending
+    # on the runner (the same batch varies up to ~2x between runners).
+    # The budget is ~2.5x that.
+    timeout-minutes: 120
+    # Six, not more: a PR push starts both a push and a pull_request run,
+    # so each push costs 2 x (SHARDS + 2) jobs against the account's
+    # concurrent-job limit (with 8 shards, jobs queued up to 37 min on
+    # 2026-09-29).  `ci_shard.py --plan 6` keeps every shard but the two
+    # floor batches' well under the floor; add shards only when another
+    # shard's estimate nears it.
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5]
+    env:
+      SHARDS: 6
     steps:
+      - uses: actions/checkout@v4
+      # apt talks to the runner's package mirror, which sometimes hangs
+      # mid-fetch (observed 2026-08-19: 43 minutes of silence after an
+      # InRelease line, eating the whole job timeout as "cancelled").
+      # Bound each attempt and retry, so a bad mirror costs minutes,
+      # not the run.  `time` is for `make TIMED=1`.
+      - name: Install Coq
+        timeout-minutes: 15
+        run: |
+          for i in 1 2 3; do
+            sudo timeout 300 apt-get update && \
+            sudo timeout 300 apt-get install -y coq time && exit 0
+            echo "apt attempt $i failed or hung; retrying"
+            sleep 10
+          done
+          exit 1
+      - name: Generate Makefile.coq
+        run: make Makefile.coq
+      - name: "This shard's batches (the split covers every CBT_*.v exactly once)"
+        run: |
+          python3 tools/closeouttr/ci_shard.py --check $SHARDS
+          python3 tools/closeouttr/ci_shard.py --plan $SHARDS
+          python3 tools/closeouttr/ci_shard.py ${{ matrix.shard }} $SHARDS > shard-targets.txt
+          cat shard-targets.txt
+      - name: "Kernel-check this shard's batches"
+        run: make -f Makefile.coq -j4 TIMED=1 $(cat shard-targets.txt) 2>&1 | tee shard-${{ matrix.shard }}.log
+      # Everything this shard compiled: untracked .vo/.glob (the committed
+      # census .vo are tracked, so they are never shipped).
+      - name: Pack the shard's .vo
+        run: |
+          git ls-files -o -- '*.vo' '*.glob' > shard-files.txt
+          echo "$(grep -c '\.vo$' shard-files.txt) .vo built on this shard"
+          tar cf closeout-shard-${{ matrix.shard }}.tar -T shard-files.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: closeout-shard-${{ matrix.shard }}
+          path: |
+            closeout-shard-${{ matrix.shard }}.tar
+            shard-${{ matrix.shard }}.log
+          if-no-files-found: error
+          retention-days: 7
+  closeout-final:
+    runs-on: ubuntu-latest
+    needs: closeout-shard
+    if: always()
+    timeout-minutes: 60
+    steps:
+      - name: Every shard passed
+        if: needs.closeout-shard.result != 'success'
+        run: |
+          echo "closeout-shard: ${{ needs.closeout-shard.result }}; see the red shard for the rejected batch"
+          exit 1
       - uses: actions/checkout@v4
       # apt talks to the runner's package mirror, which sometimes hangs
       # mid-fetch (observed 2026-08-19: 43 minutes of silence after an
@@ -84,7 +176,25 @@ jobs:
           exit 1
       - name: Generate Makefile.coq
         run: make Makefile.coq
-      - name: "Instruction-level closeout: generated files current, every batch and the split kernel-checked"
+      - name: "Instruction-level closeout: generated files current"
+        run: python3 tools/closeouttr/gen_closeout_tr.py --check
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: closeout-shard-*
+          path: shards
+      # --merge gives every merged file one mtime, later than the checkout,
+      # so no .vo is newer than another and none is older than its .v.
+      # `make -q` then proves make will rebuild none of the batches (and
+      # that every batch arrived): it exits non-zero if any target is
+      # missing or out of date.
+      - name: Merge the shards' .vo; make must see every batch up to date
         run: |
-          python3 tools/closeouttr/gen_closeout_tr.py --check
-          make -f Makefile.coq -j4 theories/CloseoutTr/CloseoutTr.vo
+          python3 tools/closeouttr/ci_shard.py --merge shards/*/closeout-shard-*.tar
+          targets=$(ls theories/CloseoutTr/CBT_*.v | sed 's/\.v$/.vo/')
+          if ! make -f Makefile.coq -q $targets; then
+            echo "make would rebuild:"; make -f Makefile.coq -n $targets | grep COQC
+            exit 1
+          fi
+          echo "all $(echo $targets | wc -w) batches up to date"
+      - name: "Instruction-level closeout: the split kernel-checked over every batch"
+        run: make -f Makefile.coq -j4 theories/CloseoutTr/CloseoutTr.vo
