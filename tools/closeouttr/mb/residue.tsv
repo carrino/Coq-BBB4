@@ -1,0 +1,146 @@
+# spec	group	mb	junk_class	route
+0RB0LA_1LC1LD_1RD0RD_1LA0RC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB0LB_1LC1RD_1LA0RD_1RB1RC	junk	no	spread	none (irregular growth); NG at wider windows
+0RB0LD_0RC1RB_1LD1RC_1RC1LA	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+0RB0RC_1LC0LB_0LD1LD_1RA1LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB0RA_0LC1RA_1RB1LD_1LC0LD	junk	no	spread	none (irregular growth); NG at wider windows
+0RB0RC_1RC0LB_0LD1LD_1RA1LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB0RC_1LC1RC_1LD1RA_1RA0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB0RD_0LC1RB_1LD1RD_1RA0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB0RD_0LC1RD_1LD---_1RA0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB0RD_0LC1RD_1RB1LD_1RA0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB0RD_1LC0RC_1RA0LC_0LB1RC	junk	no	spread	none (irregular growth); NG at wider windows
+0RB1LB_0LC1RD_1LA1LB_1LB0RD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1LA_1RC1LC_1LD0RC_0LA0LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1LC_1LA1RC_1LD0RC_0LA0LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1LC_1RC---_1LD0RC_0LA0LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1LC_1RC0LC_1LD0RC_0LA1LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1LC_1RC0LC_1LD0RC_0LB0LA	junk	no	spread	none (irregular growth); NG at wider windows
+0RB1LD_1LA1RC_1RB0RC_0LA0LD	junk	no	spread	none (irregular growth); NG at wider windows
+0RB1LD_1RC0RD_1LA0RD_1RA0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1LD_1RC0RC_1LA1RA_1RA0LD	junk	no	spread	none (irregular growth); NG at wider windows
+0RB1LD_1RC1RA_0LA1RA_1RA0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1LD_1RC1RA_1LA0RD_1RA0LD	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+0RB1LD_1RC1RB_1LA1RA_1LA0LA	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+0RB1LD_1RC1RB_1LA1RA_1LC0LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1RA_1LC1RB_1RB1LD_0RA0LC	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+0RB1RB_1LC1RA_0LD0LA_1RA0RD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1RB_1LC1RA_0LD0LA_1LA0RD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1RB_0LC1RD_1LD0RD_1RA0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1RD_1LC0LC_1RA1LB_1RB0RA	junk	no	spread	none (irregular growth); NG at wider windows
+0RB1RD_1LC1RA_1LD0LC_1RB0LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB---_0RC0RB_1LC0LD_1RA0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB---_1LC0RB_0LD0LB_0RA1LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_0LC1LC_1RD1LB_0RA0RB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_0LC1RD_1LC1LA_0RB0RD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_0LC1RD_1LC1LA_0RC0RD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_0RC0RB_0LD1LA_1LD0LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_0RC0RB_0LD1LA_1LD1RC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_0RC0RD_1LA0RA_0LC1RA	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0LA_0RC0RD_1LA1RB_1LC1RC	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB0LA_0RC0RD_1LD1RD_1LA1RB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_0RC1LA_1RD0RA_1LB0RA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_0RC1LA_1RD0RD_1LB1RB	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0LA_0RC1RB_0RD1RC_1LD1LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_1LC0RB_1RD0LD_1LA1RB	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0LA_1LC0RC_1RD1LA_1LA0RD	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0LA_1LC0RD_1LA0LC_1RB0RB	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0LA_1LC0RD_0LC1LA_0RB1RD	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0LA_1LC1RD_0LC1LA_0RD0RB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_1LC0RD_1LA0LC_1RB0RD	junk	heavy_ok	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB0LA_1RC---_0RD0RC_1LD0LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_1RC1LA_0RD0RC_1LD0RB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_1LC0RD_0LB1LA_0RB1LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_1RC1LD_0LD0RB_0RC1LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_1RC1LA_0RD0RC_1LD1RB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LA_1RC1LD_0LD0RC_0RB1LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LB_1LC0RB_0LA0LD_0RA1LB	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0LB_1LC0RB_0LD1LD_0RA1LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LB_1LC1RD_1RD0LC_1LA0RD	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0LC_0RC0RA_1LD1LA_1RA1LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LC_1LB1RC_1RD1LA_0RB0RD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LC_1RC0RA_1LD0RB_1LA0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LD_0LC0RC_1RA1LD_1LC1LA	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0LD_0LC1RD_1LA0LD_1LB0RD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LD_0RC0RA_1LC0LA_1LA1RC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0LD_1RC0RB_1LA0RC_1LA0LD	junk	heavy_ok	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB0LD_1RC0RB_1LD0RA_1LA0LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RA_0LC0RD_1LD1LB_1RA0LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RA_0RC1RC_1LD1RB_0LA0LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RA_1LC0RA_1LD0LC_1RB0LD	junk	heavy_ok	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB0RA_1LC0RB_1RA0LD_1LC0LC	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0RA_1LC0RB_1RA0LD_1LC0LD	junk	heavy_ok	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB0RA_1LC0RC_1RA1LD_0LC1LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RA_1LC0RD_1LD0LB_1RA0LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RA_1RC0RD_1LD1LC_1RA0LC	junk	no	inner_log	HY
+1RB0RB_0LC1RA_1LD1LC_1RB1LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RB_1LC0RA_1LD0LC_1RB0LD	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0RB_1LC1RA_0LA1LD_1LA0LC	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0RB_1LC1RC_0RA1LD_1RC0LD	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0RC_1LB1RA_0RB0LD_1LC1LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RC_1LC0LD_1RA1RD_1RC1LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RC_1LC1LD_1RD1LB_1RA0LB	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0RC_1RC1LB_1LD1RA_0LD0LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RC_1RC1LC_0LD1RA_1LB1LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RD_0LC0RA_1RC1LD_1LB1RA	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB0RD_0RC0LB_1LD1RD_1LB1RA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RD_1LC0LC_1LD1LC_1RA0RB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RD_1LC0LC_1RD1LB_0RB1RA	junk	no	spread	none (irregular growth); NG at wider windows
+1RB0RD_1LC0RA_1LD0LC_1RA0LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RD_1LC0RD_0RA1LD_1RC0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RD_1LC1LD_0RD0LB_1LB1RA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RD_1LC1RA_0LD1LA_1RA0LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB0RD_1LC1LD_1LA0LB_1LB1RA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LA_1LA1RC_0LD0RB_0LA1LD	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB1LA_1RC0LD_0RD0RB_1LA1LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LB_0LC1RD_1LA1LC_1RA0RB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LB_0LC1RD_1LA1LC_1RB0RB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LB_1LC0RB_0LD0LB_0RA1LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LB_1RC1LD_1LD0RC_0LA0LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LB_1RC1LD_1LD0RC_0LB0LA	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB1LC_0LA1RC_1RD0LC_0RB0RC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LC_0LA1RD_1LA0LC_0RB0RD	junk	no	spread	none (irregular growth); NG at wider windows
+1RB1LC_0RC1RD_1LA0LA_1RC0RB	junk	no	spread	none (irregular growth); NG at wider windows
+1RB1LC_1LA1RB_0RD0LA_0RB1RD	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB1LD_0LC0RB_1RA1LA_1LB0LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LD_0RC0LD_1LC1RA_1LB0LA	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB1LD_0RC0RB_1LC0RA_1RA0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LD_0RC0RB_1LC1RA_1RA0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LD_0RC0RB_1LC1RA_1RC0LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LD_0RC0RC_1LC1RA_0RD0LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LD_0RC0RD_1LD0LC_0LA1LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LD_0RC0RD_1RD0LC_0LA1LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LD_1LC0RA_0LD0LB_1RD0RB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LD_1RC0LD_0LA0RA_1LA1LB	junk	no	spread	none (irregular growth); NG at wider windows
+1RB1LD_1RC0RB_1LA0RA_0LA1LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1LD_1RC1RA_1RD0RB_1LB0LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1RA_0LC0RA_1RC1LD_1LC0LB	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1RA_1LC0LD_1LD0LB_1RA0RA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1RA_1LC1RC_0RA1LD_1LB0LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1RA_1LC1RC_0RA1LD_1LC0LC	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB1RC_0RC0RB_0LD1LA_1LD0LA	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1RC_0LC1RC_0RA1LD_1RC0LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1RC_0LC0RA_1RA1LD_1LA0LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1RC_1LC0RA_0LB0LD_1LA1LD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1RC_1LC0LC_1RD0LB_0LA0RD	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+1RB1RC_1LC0RD_0RA1LD_1RC0LD	junk	no	longper	MB with long words (kernel 7.7 min/row if heavy_ok)
+1RB1RC_1LC1RA_1LD0RA_0RB0LB	junk	no	spread	none (irregular growth); NG at wider windows
+1RB1RD_1RC0RA_1LA0LD_1RA1LC	low	no	-	HY / hybrid checker (edge counters, bounded non-word runs)
+0RB1LC_1LC1RA_0LD0LB_1LA1RD	qh	no	-	wrapped: none landed
+0RB1LC_1LC1RA_1LD0LB_1RB0LA	qh	no	-	wrapped: none landed
+0RB0RC_1RC1RB_1LD1RA_1RB1LC	qh	no	-	wrapped: none landed
+0RB0RC_1RC1RB_1LD1RA_1LA1LC	qh	no	-	wrapped: none landed
+0RB1LC_1LC1RA_1LD0LB_1RB1LC	qh	no	-	wrapped: none landed
+0RB1LC_1LC1RA_1LD0LB_1RC0LA	qh	no	-	wrapped: none landed
+0RB1LC_1LC1RA_1LD0LB_1RC1LC	qh	no	-	wrapped: none landed
+1RB1LD_0RC0RA_1RD1LC_0LA1RB	qh	no	-	wrapped: none landed
+1RB1LD_1RC0RA_1LA0RD_0LA1RB	qh	no	-	wrapped: none landed
+1RB1LD_1RC0RA_1LA1LD_0LC0LB	qh	no	-	wrapped: none landed
+1RB1LD_1RC0RA_1LA1RB_0LA1RB	qh	no	-	wrapped: none landed
+1RB1LD_1RC0RA_1LB0RD_0LA1RB	qh	no	-	wrapped: none landed
+1RB0LC_1LA1RD_1LA1LC_0RC0LD	qh	no	-	wrapped: none landed
+1RB0LC_1RC1RD_1LA1LC_0RC0LD	qh	no	-	wrapped: none landed
+1RB1RD_1LC1LB_1RA0LB_0RB0LD	qh	no	-	wrapped: none landed
+1RB1LD_1RC0RA_1LB1RB_0LA1RB	qh	no	-	wrapped: none landed
+1RB1RA_1LC1RD_1LD1LB_0RA0RB	qh	no	-	wrapped: none landed
+1RB1RA_1LC1RD_1RA1LB_0RA0RB	qh	no	-	wrapped: none landed

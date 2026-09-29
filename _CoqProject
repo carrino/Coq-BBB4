@@ -5404,6 +5404,7 @@ theories/CensusTr/TNF_QHTr.v
 theories/CensusTr/DecideTr.v
 theories/CensusTr/QHConveyorTr.v
 theories/CensusTr/RepWLTr.v
+theories/CensusTr/RepWLMBTr.v
 theories/CensusTr/DeferredTr_00.v
 theories/CensusTr/DeferredTr_01.v
 theories/CensusTr/DeferredTr_Data.v
@@ -9631,6 +9632,12 @@ theories/CloseoutTr/CBT_HY_02.v
 theories/CloseoutTr/CBT_HY_03.v
 theories/CloseoutTr/CBT_HY_04.v
 theories/CloseoutTr/CBT_HY_05.v
+theories/CloseoutTr/CBT_MB_00.v
+theories/CloseoutTr/CBT_MB_01.v
+theories/CloseoutTr/CBT_MB_02.v
+theories/CloseoutTr/CBT_MB_03.v
+theories/CloseoutTr/CBT_MB_04.v
+theories/CloseoutTr/CBT_MB_05.v
 theories/CloseoutTr/CBT_NG_00.v
 theories/CloseoutTr/CBT_NG_01.v
 theories/CloseoutTr/CBT_NG_02.v
