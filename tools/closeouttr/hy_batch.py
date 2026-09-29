@@ -56,7 +56,7 @@ N_STEPS = 400000
 BOOT_CAP = 200000        # never-QH boots: the first anchors come early
 QH_CAP = 2 ** 24         # HybridGlueTr.hy_check_qh: Nat.log2 t0 < 24
 MAX_WORD = 160           # counter words longer than this are not counters
-TIME_BUDGET = 240        # seconds a row
+TIME_BUDGET = int(os.environ.get('HY_BUDGET', 240))   # seconds a row
 ST = ['StA', 'StB', 'StC', 'StD']
 SYM = ['S0', 'S1']
 
