@@ -435,7 +435,17 @@ def closure_data(cert, tab):
                         ch, ca, cb = derive(True, True, fl, cand,
                                             'fill arm r=%d ph=%d' % (r, ph))
                     except NoClosure:
-                        continue
+                        # the run may stop short of the target by blanks the
+                        # machine never writes (LadderCheckLiftTr): state the
+                        # arm to what it reaches, and the gap as a [cpad]
+                        sf = (_short_fill(fl, cand) if TR_PINS is not None
+                              else None)
+                        if sf is None:
+                            continue
+                        ch, ca, cb, reach, kl, kr = sf
+                        pads[(r, ph)] = (kl, kr)
+                        hit = (r, ph, s, m1, total - m1, fl, reach, ch, ca, cb)
+                        break
                     hit = (r, ph, s, m1, total - m1, fl, cand, ch, ca, cb)
                     break
                 if hit is None:
@@ -443,10 +453,36 @@ def closure_data(cert, tab):
                 got.append(hit)
         return got
 
+    def _short_fill(fl, cand):
+        """(chain, ca, cb, reached, kl, kr) when a chain from [fl] reaches
+        [cand] with only its two s_post's short by [kl]/[kr] blanks"""
+        ch = LC.derive_chain(tab, True, True, fl, cand, maxdepth=32, nmax=120,
+                             lift=True)
+        if ch is None:
+            return None
+        got = LC.srun(tab, True, True, ch, fl)
+        if got is None or got[2] == 0:
+            return None
+        c1 = got[0]
+        if c1[0] != cand[0] or c1[2] != cand[2]:
+            return None
+        ks = []
+        for a, w in ((c1[1], cand[1]), (c1[3], cand[3])):
+            if a[:4] != w[:4]:
+                return None
+            pa, pw = tuple(a[4]), tuple(w[4])
+            k = len(pw) - len(pa)
+            if k < 0 or pw[:len(pa)] != pa or any(x != 0 for x in pw[len(pa):]):
+                return None
+            ks.append(k)
+        return ch, got[1], got[2], c1, ks[0], ks[1]
+
+    pads = {}
     fill, n0f, stf = None, None, None
     for n0, stride in ARM_GRID:
         if n0 < 1 or n0 + stride < 2:
             continue          # no width is 0, and there must be an arm
+        pads.clear()
         got = fill_at(n0, stride)
         if got is not None:
             fill, n0f, stf = got, n0, stride
@@ -462,9 +498,14 @@ def closure_data(cert, tab):
     for d in ds0:
         cells.extend(digs[d])
     cells.extend(tails[ph0])
+    boot_lift = False
     if cells != list(boot['cells']):
-        raise NoClosure('boot cells %r are not the family at %r'
-                        % (boot['cells'], ds0))
+        # up to trailing blanks, a lift boot ([LadderCheckLiftTr]) takes it
+        if TR_PINS is not None and _rstrip0(cells) == _rstrip0(boot['cells']):
+            boot_lift = True
+        else:
+            raise NoClosure('boot cells %r are not the family at %r'
+                            % (boot['cells'], ds0))
     if not ds0:
         raise NoClosure('boot digit string is empty')
 
@@ -611,7 +652,9 @@ def closure_data(cert, tab):
                 inter=inter, n0i=n0i, sti=sti,
                 fill=fill, n0f=n0f, stf=stf,
                 ds0=ds0, t0=boot['steps_from_blank'], vis=vis,
-                want=want, qa=qa, sq=sq)
+                want=want, qa=qa, sq=sq,
+                pads={k: v for k, v in pads.items() if v != (0, 0)},
+                boot_lift=boot_lift)
 
 
 CLOSURE_NONE = '''
@@ -851,6 +894,19 @@ Proof.
 Qed.
 '''
 
+CLOSURE_LIFT_RHS = '''Lemma farm_rhs_%(mid)s : forall r ph, 0 < r -> r < %(n0f)d + %(stf)d ->
+  ph < %(nph)d ->
+  cls_conf FAM (run_side FAM (f_mid (fam_fill FAM ph)) (fm1_%(mid)s r ph)
+                  (astride %(n0f)d %(stf)d r) (fm2_%(mid)s r ph)
+                  (f_to (fam_fill FAM ph))
+                  (f_pre (fam_fill FAM ph)) (f_suf (fam_fill FAM ph)))
+    = cpad (padl_%(mid)s r ph) (padr_%(mid)s r ph) (lr_rhs (farm_%(mid)s r ph)).
+Proof.
+  intros r ph H0 Hr Hph.
+%(fcomp)s  exfalso; lia.
+Qed.
+'''
+
 CLOSURE_QHTR = '''Lemma vis_ok_%(mid)s : forall r t, ~ In t pins_%(mid)s -> 0 < r ->
   r < %(n0f)d + %(stf)d ->
   srun_instr tm true true (vis_%(mid)s r t) (lr_lhs (farm_%(mid)s r %(pv)d))
@@ -1079,6 +1135,25 @@ def emit_closure(cert, tab, mid):
                          '| exact ok_farm%(r)d_%(ph)d_%(mid)s]'),
         fcomp=fbranches('vm_compute; reflexivity'),
         flia=fbranches('vm_compute; lia')))
+    lift_fill = TR_PINS is not None and (bool(cd.get('pads'))
+                                         or cd.get('boot_lift'))
+    if lift_fill:
+        i = L[-1].index('Lemma farm_rhs_%s' % mid)
+        j = L[-1].index('Qed.\n', i) + len('Qed.\n')
+        L[-1] = (L[-1][:i] + CLOSURE_LIFT_RHS % dict(
+            mid=mid, n0f=n0f, stf=stf, nph=nph,
+            fcomp=fbranches('vm_compute; reflexivity')) + L[-1][j:])
+        pl = ' '.join('| %d, %d => %d' % (r, ph, kl)
+                      for (r, ph), (kl, _kr) in sorted(cd['pads'].items()))
+        pr = ' '.join('| %d, %d => %d' % (r, ph, kr)
+                      for (r, ph), (_kl, kr) in sorted(cd['pads'].items()))
+        L.insert(len(L) - 1,
+                 '(** The fill runs stop short of the family\'s target by blanks\n'
+                 '    the machine never writes; these count them per arm\n'
+                 '    ([LadderCheckLiftTr.cpad]). *)\n'
+                 'Definition padl_%s (r ph : nat) : nat := match r, ph with %s | _, _ => 0 end.\n'
+                 'Definition padr_%s (r ph : nat) : nat := match r, ph with %s | _, _ => 0 end.\n\n'
+                 % (mid, pl, mid, pr))
     if TR_QH is not None:
         # the wrapped machine halts in the prefix; [bootq_*] replaces this
         blk_ = ('Lemma boot_%s :\n  csteps tm %d c0 = Some (fam_cfg FAM (%s, 0, %d)).\n'
@@ -1131,7 +1206,44 @@ def emit_closure(cert, tab, mid):
         index alone -- the shape it had before the phase cycle."""
         return _rbranches(nF, lambda r: body, lo=1)
 
-    if TR_QH is not None:
+    if lift_fill:
+        largs = args.replace('  - exact boot_%s.\n' % mid, '')
+        fvis = vbranches('destruct t as [q s]; destruct q, s; '
+                         'try (exfalso; apply Hnp; simpl; tauto); '
+                         'vm_compute; reflexivity.')
+        head_ = ('  eapply (%s tm_%s pins_%s FAM %d\n'
+                 '    iarm_%s %d %d farm_%s %d %d fm1_%s fm2_%s padl_%s padr_%s\n'
+                 '    %d vis_%s %s %d).\n'
+                 % ('boardphL_qhtr' if TR_QH is not None else 'boardphL_neverqhtr',
+                    mid, mid, nph, mid, n0i, sti, mid, n0f, stf, mid, mid, mid,
+                    mid, pv, mid, clist(cd['ds0'], str), ph0))
+        tail_ = ('  - exact vis_ok_%s.\n' % mid
+                 + ('  - exact bootq_%s.\n  - exact wit_%s.\n  - exact bnd_%s.\n'
+                    % (mid, mid, mid) if TR_QH is not None
+                    else '  - exact bootl_%s.\n' % mid))
+        if TR_QH is None:
+            blk_ = ('Lemma boot_%s :\n  csteps tm %d c0 = Some (fam_cfg FAM (%s, 0, %d)).\n'
+                    'Proof. vm_compute. reflexivity. Qed.\n\n'
+                    % (mid, cd['t0'], clist(cd['ds0'], str), ph0))
+            L[-1] = L[-1].replace(blk_, (
+                'Lemma bootl_%(m)s :\n'
+                '  stepn tm %(t)d InitES = Some (lift (fam_cfg FAM (%(d)s, 0, %(p)d))).\n'
+                'Proof.\n'
+                '  assert (H : match csteps tm %(t)d c0 with\n'
+                '              | Some c => ceqb c (fam_cfg FAM (%(d)s, 0, %(p)d))\n'
+                '              | None => false end = true) by (vm_compute; reflexivity).\n'
+                '  destruct (csteps tm %(t)d c0) as [c|] eqn:E; [|discriminate].\n'
+                '  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.\n'
+                'Qed.\n\n') % dict(m=mid, t=cd['t0'], d=clist(cd['ds0'], str), p=ph0))
+        txt = (CLOSURE_QHTR if TR_QH is not None else CLOSURE_NQH_TR) % dict(
+            common, args='@@ARGS@@', fvis=fvis)
+        a0 = txt.index('  apply (boardph_')
+        a1 = txt.index('@@ARGS@@')
+        txt = txt[:a0] + head_ + largs + tail_ + txt[a1 + len('@@ARGS@@'):]
+        txt = txt.replace('  - exact vis_ok_%s.\nQed.' % mid, 'Qed.', 1) \
+            if txt.count('  - exact vis_ok_%s.\n' % mid) > 1 else txt
+        L.append(txt)
+    elif TR_QH is not None:
         qargs = args.replace(
             '  - exact boot_%s.\n' % mid,
             '  - exact bootq_%s.\n  - exact wit_%s.\n  - exact bnd_%s.\n'
@@ -2521,7 +2633,8 @@ def emit(cert, out):
                'From BBB4.Checkers Require Import LadderCheckQHTr.\n'
                if TR_QH is not None else '')
             + ('From BBB4.Checkers Require Import LadderCheckFibTr.\n'
-               if fib else ''), 1)
+               if fib else '')
+            + 'From BBB4.Checkers Require Import LadderCheckLiftTr.\n', 1)
         head = head.replace(
             'Local Notation tm := tm_%s.\n' % mid,
             '(** the instructions the machine never fires; the whole board runs\n'
