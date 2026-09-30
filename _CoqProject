@@ -11918,6 +11918,12 @@ theories/CloseoutTr/CBT_TA_02.v
 theories/CloseoutTr/CBT_TA_03.v
 theories/CloseoutTr/CBT_TA_04.v
 theories/CloseoutTr/CBT_TA_05.v
+theories/CloseoutTr/CBT_TA_06.v
+theories/CloseoutTr/CBT_TA_07.v
+theories/CloseoutTr/CBT_TA_08.v
+theories/CloseoutTr/CBT_TA_09.v
+theories/CloseoutTr/CBT_TA_10.v
+theories/CloseoutTr/CBT_TA_11.v
 theories/CloseoutTr/CBT_TI_00.v
 theories/CloseoutTr/CBT_TI_01.v
 theories/CloseoutTr/CBT_TI_02.v

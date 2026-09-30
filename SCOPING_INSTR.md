@@ -4714,6 +4714,143 @@ python3 tools/closeouttr/hy3/hold_probe.py ROWS.txt > hold_probe.txt
 
 The whole `hy3_ti.py` sweep is ~2 min here, so it needs no box run.
 
+#### 7.4.TA The Collatz-like rows: a 2-adic lexicographic liveness on TriGlue's families, 143 boarded (2026-09-30)
+
+Workstream TA (batch tag `TA`), over the still-open rows where every route
+stopped because the rare instruction fires on some residue classes of a
+growing parameter only.  There are 203 rows (`tools/closeouttr/ta/rows.txt`,
+sources in `ta/sources.tsv`):
+
+* 160 rows of §7.4.BL's "SPW, irregular fires" class (`bl/classify.tsv`,
+  `irr`), 152 SP and 8 DN;
+* the 12 parity-reset transfers of §7.4.HY3 (`hy3/residue.tsv`, "no
+  ranking"), 8 of them also in BL's `irr` class;
+* BX's 29 cube sweep counters (`bx/cube.txt`);
+* 10 more open SP rows that an earlier TriGlue run (`spw/ti_all.jsonl`,
+  `bl/find1.jsonl`) had left at "no ranking".
+
+The block-list counters with a neighbour recurrence (BLC) were not touched.
+
+**What they are.**  `ta/dump.py` runs the three TriGlue finders in turn
+(`ti_batch.py` at its defaults, the lattice finder `bl_ti.py`, the
+anchor-seeded `hy3_ti.py`) and keeps the first family set that closes,
+i.e. whose only failure is the ranking.  It closes on 170 of the 203 rows.
+The family graph is then an exact piecewise-affine round map
+(`ta/show.py` prints it).  Read by hand:
+
+| row | lap | round end (the rare instruction's branch) | non-firing branch, shifted |
+|---|---|---|---|
+| `0RB0LB_1RC1LB_0LD0RD_1LD1LA` (C0) | `F1(a,b) -> F1(a+3, b-2)` | from `F1(0,b)`: odd `b -> (3b+7)/2` fires C0; even `b -> 3b/2 + 2` | `c = b+4`: `c -> 3c/2` |
+| `0RB0LD_1RC1RB_1LA1LC_1LA1LA` (D0) | `F2(a,b) -> F2(a-1, b+3)` | from `F2(a,0)`: even `a -> 3a/2 + 2` fires D0; odd `a -> (3a+3)/2` | `c = a+3`: `c -> 3c/2` |
+| `0RB0LD_1LC1RB_1RB0LA_1RD0RB` (A0) | two nested laps: `F1` shifts `b` into `a`, `F4(a,b) -> F4(a-2, b+3)` | even `a` fires A0; odd `a -> (3a+7)/2` | `E = 3a + 2b + 21` on `F4`: `x 3/2` per round, constant along both laps |
+| `0RB0LC_1LC1LB_0RD1LA_1RB1RD` (A0) | `F14(a,b,c) -> F14(a-1, b, c+3)` | from `F12(0,b)`: even `b` fires A0; odd `b = 2y+1` is halved at one leaf, and the lap turns `y` into `3y` | `b -> (3b+11)/2`, `c = b+11`: `c -> 3c/2` |
+| `0RB0LC_1LA1RB_1RC1RD_1LA0RB` (A0, HY3's example) | two-block transfer `(a, b) -> (a + da, b - 1)` | fires only when `b` is odd at the reset; the next round's `b` is `2 + 3a` | `x 3/2` (certificate at `P = 2`) |
+| `1RB0RD_1LC0RA_1RB1LC_1LD0LC` (B0) | `F1(a,B) -> F1(a+3, B-2)` | `B` even fires B0; `B = 1 -> F0(a,0,0) -> F1(3, a)` | `E = 2a + 3B + 3`: `x 3/2`.  **Not certified**: see the residue |
+
+Over all 143 rows certified below, `ta/summary.py` (`ta/summary.tsv`) reads
+off the ratio `E'/E` on the non-firing edges.  It is ALWAYS the 3/2 map:
+directly on one edge (95 rows, `P = 1` or `2`), or split as `x 1/2` at a
+halving leaf and `x 3` at a lap (48 rows, `P = 3`).  So these rows are one
+family: a two-block transfer whose round ends on a parity, the firing
+parity is one branch, and the other branch is `c -> 3c/2` up to a shift.
+None of them is Collatz-hard.  Because `3c/2` must stay an integer, `nu_2(c)`
+drops by one on every non-firing round, so a run of non-firing rounds is
+bounded by `nu_2(c)` at its start.  The orbit is never periodic mod any `P`,
+which is why no mod-`P` node set with affine rankings sees this.  Two-
+parameter maps occur (the nested-lap row), but the forms that scale are
+still one-dimensional: `E` is an affine form in all the family's variables,
+constant along every lap.
+
+**The checker: `theories/Counters/TriNuTr.v`** (new, ~620 lines, only axiom
+`functional_extensionality_dep`, compiles in ~2 s).  It keeps TriGlueTr's
+families, dispatch trees, leaves, chains, node set `S` and boot, all checked
+by TriGlueTr's own `fams_ok` / `boot_ok` and enumerated by its `tnxt`.  Only
+the liveness is new.  Per instruction `t` the certificate carries a modulus
+`l >= 2` and a count `K`.  Per node it carries a LEVEL, an affine form
+`E >= 1` (constant at least 1, coefficients in N) and rankings `V_1..V_K`.
+On every step between two nodes whose leaves do not fire `t`:
+
+* the level drops; or
+* the level stays, `B * E(src) = A * E'(tgt)` coefficient-wise (checked as
+  two `ale`), `gcd(B, l) = 1`, `A = l^j * b` with `gcd(b, l) = 1` (`A` and
+  `B` are computed from the contents of the two forms; soundness only uses
+  the checked equation), so `nu_l(E') = nu_l(E) - j` (`nu_coprime`,
+  `nu_pow`, by Gauss's lemma); and if `j = 0`, `(V_1..V_K)` drops
+  lexicographically (each `V_i` non-increasing coefficient-wise up to a
+  strict drop).
+
+Then `(level, nu_l E, V_1, .., V_K)` decreases in the lexicographic order
+on `N^(K+2)` (`lex_ind`), so `t` fires from every anchor (`nfires_lex`).
+With `E = 1`, one level and `K = 1` this is TriGlueTr's liveness.  The
+vector of rankings is not decoration: the nested-lap rows need `K = 2`,
+because an inner lap of length `~a` inside an outer lap run `a/2` times
+admits no single affine ranking.  A row is one line,
+`apply coversTr_nqh, (tri_nu_sound(_mirror) _ (mkNC TC LIVE))`, where `TC`
+is TriGlueTr's `tcert` with an empty rank list.  `tri_nu_sound_qh(_mirror)`
+exist for QH rows; none is boarded.  Three corrupted certificates (an `E`
+coefficient, a `V` constant, a `V` entry of the first row) fail to compile.
+`Print Assumptions tri_nu_sound` shows `functional_extensionality_dep`
+only.
+
+**The finder: `tools/closeouttr/ta/nu_find.py`** (untrusted; numpy, scipy).
+On TriGlue's closed node set, for `P = 1, 2, 3, 4, 6` and each instruction:
+
+1. the levels are the SCCs of the non-firing graph, topologically;
+2. in each SCC, a plain lexicographic ranking (`E = 1`) is tried first;
+3. otherwise `E` is a common "eigen-form" of the SCC.  Every positive `E`
+   can be rescaled per node so that the ratio is 1 on a spanning tree.  The
+   tree constraints give a subspace, and each other edge's ratio `r` is
+   taken where the edge's pencil `(M0 - r M1) w = 0` gains kernel
+   (numeric generalized eigenvalues of a random square projection, plus
+   `2^a 3^b`, each verified exactly).  A positive point comes from an LP;
+4. the `l`-power of each ratio goes into node potentials (an MILP makes as
+   many edges strict in `nu` as it can), then `V_1, V_2, ..` come from
+   staged MILPs, each non-increasing on the edges left and strict on as
+   many as possible;
+5. the checker is replayed exactly in Python (`nu_check`) before a
+   certificate is written.
+
+`ta/nu_batch.py` writes the batches.  The finder takes seconds on the small
+graphs and up to 20 minutes on the largest (26 families, P = 3).
+
+**Yield: 143 rows** (134 SP, 9 DN) in `CBT_TA_00..11`, all kernel-checked.
+Each batch of 12 compiles in 11-16 s here, so none needs a `ci_costs.tsv`
+line.
+
+| source | rows | closed families | certified | no certificate | timeout (1,200 s) | families do not close |
+|---|---:|---:|---:|---:|---:|---:|
+| BL `irr` only | 152 | 133 | 128 | 5 | 0 | 19 |
+| HY3 parity resets (8 also `irr`) | 12 | 12 | 9 | 0 | 3 | 0 |
+| BX cube counters | 29 | 15 | 0 | 0 | 15 | 14 |
+| other TriGlue "no ranking" | 10 | 10 | 6 | 2 | 2 | 0 |
+| all | 203 | 170 | **143** | 7 | 20 | 33 |
+
+All rows: 1,212 -> **1,069**.
+
+**Residue (60 rows), and which look hard:**
+
+* **33 rows whose families do not close** (14 cube, 19 `irr`): TriGlue
+  "too many families" (31) or "leaf too long" (2).  These are the doubling
+  tapes of §7.4.BX and §7.4.SPW, where the block count grows by one per
+  burst.  They need a list-of-blocks family (BLC's piece), not a better
+  liveness.  They are not 2-adic-hard as far as they were read.
+* **20 timeouts** (15 cube, 3 HY3, 2 other), on the largest graphs.  A
+  retry at 3,600 s a row is running; its result will be recorded here.
+* **7 rows with no certificate at any `P <= 6`.**  In the one read by hand,
+  `1RB0RD_1LC0RA_1RB1LC_1LD0LC`, the round map is the clean 3/2 map above,
+  but the abstract graph at `P = 1` also has the non-firing cycle
+  `F0(0,0,c) -> F0(0,0,c+1)`.  The machine never reaches it (the lap always
+  ends with `a >= 3`), but a node (leaf, values mod `P`) cannot state
+  `a >= 3`.  So this is TI's "relational invariant" gap (per-node lower
+  bounds, or region refinement by small values), not a Collatz obstacle.
+  The other six were not read.
+
+No row in this workstream turned out to be genuinely Collatz-hard.  Every
+closed family graph read so far has a non-firing branch conjugate to
+`c -> 3c/2` on a single forward orbit.  In particular there is no
+coupling between the parity of the round and a second, independent
+parameter, which is where a real Collatz obstruction would sit.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
