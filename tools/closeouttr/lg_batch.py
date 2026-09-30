@@ -62,6 +62,7 @@ T0S = (20000, 100000)
 PLIST = (1, 2)
 KEEP = 1            # blocks kept in the window on a tail side
 MAXD = 16           # largest offset of a relation guessed from two constants
+MAXSHIFT = 4        # largest offset of a shifted automaton state
 BOOT_AMAX = 4
 
 # ------------------------------------------------------------- aexps ----
@@ -800,6 +801,8 @@ class Explorer:
                 if s_old[1] != u or dict(acoefs(f)) != dict(acoefs(r_old)):
                     break
                 dl = s_old[2] + r_old[0] - f[0]
+                if abs(dl) > MAXSHIFT:
+                    break
                 dst = nfa.ensure_shift(sd, u, dl)
             src = state_of_unit(pred[1])
             rel = None
@@ -1051,24 +1054,29 @@ class Explorer:
                         me = len(unodes)
                         unodes.append(None)
                         kids = []
+                        endk = None
                         if (sd, s) in nfa.acc:
                             p2 = dict(paths)
                             p2[sd] = paths[sd] + ['end']
-                            kids.append(run_unf(R, p2, na, p))
+                            endk = run_unf(R, p2, na, p)
                         for ti in nfa.out(sd, s):
                             u = rel_apply(nfa.trans[ti][4], r)
                             if u != 'void' and not (isinstance(u[0], str)) and not acoefs(u) \
                                     and u[0] < self.mins.get((sd, nfa.trans[ti][3]), 0):
-                                u = 'void'
+                                # the item is below its state's least ref: a void node
+                                vi = len(unodes)
+                                unodes.append(('void', sd))
+                                kids.append((ti, u, vi))
+                                continue
                             if u == 'void':
-                                kids.append(None)
+                                kids.append((ti, None, None))
                                 continue
                             if isinstance(u, tuple) and u and isinstance(u[0], str):
                                 raise Up(Req('u' + u[0], u[1], u[2]))
                             p2 = dict(paths)
                             p2[sd] = paths[sd] + [(ti, u)]
-                            kids.append(run_unf(R, p2, na, p))
-                        unodes[me] = ('unf', sd, (sd, s) in nfa.acc, kids)
+                            kids.append((ti, u, run_unf(R, p2, na, p)))
+                        unodes[me] = ('unf', sd, endk, kids)
                         return me
                     raise Up(rq)
             Ln = fnorm(lf['endL'])
@@ -1137,6 +1145,707 @@ class Explorer:
         self.fleaves[fid] = leaves
 
 
+# ------------------------------------------------------------ assembly ----
+
+def dsplit(d):
+    return (d, 0) if d >= 0 else (0, -d)
+
+
+def assemble(X, boot_t0, pins):
+    """the certificate (liveness still missing): lcert fields, the families
+    the boot reaches only, renumbered"""
+    nfa = X.nfa
+    reach = sorted(X.reach)
+    fmap = {f: i for i, f in enumerate(reach)}
+    # states
+    sid = {}
+
+    def st_id(sd, st):
+        key = (sd, st)
+        if key not in sid:
+            sid[key] = len(sid)
+        return sid[key]
+    kinds = [(pre, u) for (_, pre, u) in nfa.kinds]
+    trans = []
+    for (sd, src, k, dst, rel) in nfa.trans:
+        up, a, d = rel
+        dp, dn = dsplit(d)
+        trans.append(dict(left=(sd == 'L'), src=st_id(sd, src), kind=k, dst=st_id(sd, dst),
+                          up=up, a=a, dp=dp, dn=dn))
+    acc = sorted(set((sd == 'L', st_id(sd, st)) for (sd, st) in nfa.acc))
+    m = nfa.mins()
+    mins = {}
+    for (sd, st), v in m.items():
+        if v != float('inf') and v > 0:
+            mins[(sd == 'L', st_id(sd, st))] = int(v)
+    # lower until the Coq check holds (unlisted states count as 0)
+    for _ in range(10000):
+        ch = False
+        for tr in trans:
+            b = c_rbound(tr, mins.get((tr['left'], tr['dst']), 0))
+            k = (tr['left'], tr['src'])
+            if b is not None and mins.get(k, 0) > b:
+                mins[k] = b
+                ch = True
+        if not ch:
+            break
+    for (l_, st), v in list(mins.items()):
+        if (l_, st) in acc:
+            mins[(l_, st)] = 0
+    mins = sorted((k[0], k[1], v) for k, v in mins.items() if v > 0)
+    # families, leaves
+    fams, leaves = [], []
+    for f in reach:
+        F = X.fams[f]
+        base = len(leaves)
+        lmap = {}
+        for li, lf in enumerate(X.fleaves[f]):
+            G = X.fams[lf['g']]
+            tgt = G.match(lf['ex'])
+            if tgt is None:
+                raise Fail('assemble: a target is not an instance')
+            lmap[li] = len(leaves)
+            paths = lf['unf']
+            leaves.append(dict(f=fmap[f], reg=[tuple(x) for x in lf['reg']], g=fmap[lf['g']],
+                               tgt=tgt, c0=lf['c0'], j=lf['j'], el=lf['el'], er=lf['er'],
+                               nL=lf['nL'], nR=lf['nR'], chain=lf['chain'],
+                               fL=list(lf['folds']['L']), fR=list(lf['folds']['R']),
+                               uL=[x for x in paths['L'] if x != 'end'],
+                               uR=[x for x in paths['R'] if x != 'end']))
+        un = []
+        for nd in X.utrees[f]:
+            if nd[0] == 'uleaf':
+                un.append(('uleaf', lmap[nd[1]]))
+            elif nd[0] == 'void':
+                un.append(nd)
+            else:
+                _, sd, endk, kids = nd
+                un.append(('unf', sd, endk, kids))
+        pat = F.pattern()
+        tl = None if F.tL is None else (st_id('L', F.tL), F.ref('L'))
+        tr = None if F.tR is None else (st_id('R', F.tR), F.ref('R'))
+        fams.append(dict(q=F.q, h=F.h, L=pat[0], R=pat[1], n=F.n, tree=X.trees[f], utree=un,
+                         tL=tl, tR=tr))
+    f0, ex0, folds0, conc = X.boot
+    F0 = X.fams[f0]
+    v0 = F0.match(ex0)
+    if v0 is None or any(e[1] for e in v0):
+        raise Fail('assemble: boot not an instance')
+    v0 = [e[0] for e in v0]
+    a0 = dict(f=fmap[f0], v=v0, L=[tuple(x) for x in conc['L']], R=[tuple(x) for x in conc['R']])
+    return dict(pins=sorted(pins), kinds=kinds, trans=trans, acc=acc, mins=mins, fams=fams,
+                leaves=leaves, t0=boot_t0, a0=a0)
+
+
+def c_rbound(tr, md):
+    """ListGlueTr.rbound (nat subtraction truncates)"""
+    a, dp, dn = tr['a'], tr['dp'], tr['dn']
+    if tr['up']:
+        if a == 0:
+            return 0 if md + dn <= dp else None
+        return max(0, md + dn - dp + a - 1) // a
+    if a == 0:
+        return max(0, dp - dn) if md == 0 else None
+    return max(0, a * md + dp - dn)
+
+
+# -------------------------------------------------------- replica ----
+
+def c_relchk(tr, p, e):
+    a, dp, dn = tr['a'], tr['dp'], tr['dn']
+    if tr['up']:
+        return aeq(C.aaddc(e, dn), C.aaddc(C.ascale(a, p), dp))
+    if a == 0:
+        return aeq(C.aaddc(p, dn), (dp, ())) and aeq(e, (0, ()))
+    return aeq(C.aaddc(p, dn), C.aaddc(C.ascale(a, e), dp))
+
+
+def c_relsem(tr, p, e):
+    a, dp, dn = tr['a'], tr['dp'], tr['dn']
+    if tr['up']:
+        return e + dn == a * p + dp
+    if a == 0:
+        return p + dn == dp and e == 0
+    return p + dn == a * e + dp
+
+
+def anocoef(e):
+    return all(a == 0 for _, a in e[1])
+
+
+def c_tvoid(tr, r):
+    a, dp, dn = tr['a'], tr['dp'], tr['dn']
+    c = r[0]
+    if tr['up']:
+        return anocoef(r) and a * c + dp < dn
+    if a == 0:
+        return anocoef(r) and c + dn != dp
+    return (C.pdiv(a, r) and (c + dn) % a != dp % a) or (anocoef(r) and c + dn < dp)
+
+
+def c_accb(cert, left, s):
+    return (left, s) in set(tuple(x) for x in cert['acc'])
+
+
+def c_mget(cert, left, s):
+    for l_, st, v in cert['mins']:
+        if l_ == left and st == s:
+            return v
+    return 0
+
+
+def c_mins_ok(cert):
+    for tr in cert['trans']:
+        b = c_rbound(tr, c_mget(cert, tr['left'], tr['dst']))
+        if b is not None and c_mget(cert, tr['left'], tr['src']) > b:
+            return False
+    for l_, st, v in cert['mins']:
+        if c_accb(cert, l_, st) and v != 0:
+            return False
+    return True
+
+
+def c_item_segs(cert, k, e):
+    if k >= len(cert['kinds']):
+        return []
+    pre, u = cert['kinds'][k]
+    return [('L', tuple(pre)), ('B', tuple(u), e)]
+
+
+def c_isegs(cert, I):
+    out = []
+    for t, e in I:
+        k = cert['trans'][t]['kind'] if t < len(cert['trans']) else 0
+        out += c_item_segs(cert, k, e)
+    return out
+
+
+def c_cover(cert, left, s, kids):
+    ts = set(t for t, _, _ in kids)
+    for i, tr in enumerate(cert['trans']):
+        if tr['left'] == left and tr['src'] == s and i not in ts:
+            return False
+    return True
+
+
+def c_uleaves(cert, ut, fuel, u, pL, pR, iL, iR):
+    if fuel == 0 or u is None or u >= len(ut):
+        return None
+    nd = ut[u]
+    if nd[0] == 'uleaf':
+        return [(nd[1], pL, pR, iL, iR)]
+    if nd[0] == 'void':
+        left = nd[1] == 'L'
+        p = pL if left else pR
+        if p is None:
+            return None
+        s, r = p
+        return [] if anocoef(r) and r[0] < c_mget(cert, left, s) else None
+    _, sd, endk, kids = nd
+    left = sd == 'L'
+    p = pL if left else pR
+    if p is None:
+        return None
+    s, r = p
+    if not c_cover(cert, left, s, kids):
+        return None
+    out = []
+    if c_accb(cert, left, s):
+        if endk is None:
+            return None
+        sub = c_uleaves(cert, ut, fuel - 1, endk, None if left else pL, pR if left else None, iL, iR)
+        if sub is None:
+            return None
+        out += sub
+    for t, e, u2 in kids:
+        if t >= len(cert['trans']):
+            return None
+        tr = cert['trans'][t]
+        if tr['left'] != left or tr['src'] != s:
+            return None
+        if e is None:
+            if not c_tvoid(tr, r):
+                return None
+            continue
+        if not c_relchk(tr, r, e):
+            return None
+        if left:
+            sub = c_uleaves(cert, ut, fuel - 1, u2, (tr['dst'], e), pR, iL + [(t, e)], iR)
+        else:
+            sub = c_uleaves(cert, ut, fuel - 1, u2, pL, (tr['dst'], e), iL, iR + [(t, e)])
+        if sub is None:
+            return None
+        out += sub
+    return out
+
+
+def c_fchain(cert, left, s, r, F):
+    for t, e in F:
+        if t >= len(cert['trans']):
+            return None
+        tr = cert['trans'][t]
+        if not (tr['left'] == left and tr['src'] == s and c_relchk(tr, r, e)):
+            return None
+        s, r = tr['dst'], e
+    return s, r
+
+
+def c_tail_end_ok(cert, left, sg, F, p):
+    if sg is None:
+        return not F and p is None
+    s0, r0 = sg
+    fc = c_fchain(cert, left, s0, r0, F)
+    if fc is None:
+        return False
+    s1, r1 = fc
+    if p is None:
+        return c_accb(cert, left, s1)
+    return s1 == p[0] and aeq(r1, p[1])
+
+
+def sp_subst(tgt, sp):
+    return None if sp is None else (sp[0], C.asubst(tgt, sp[1]))
+
+
+def c_leaf_ok(cert, tabw, F, lf, pL, pR, iL, iR):
+    fams = cert['fams']
+    if lf['g'] >= len(fams):
+        return 'g'
+    G = fams[lf['g']]
+    sub = C.rsub(lf['reg'])
+    Lz = [C.seg_subst(sub, x) for x in F['L']] + c_isegs(cert, iL)
+    Rz = [C.seg_subst(sub, x) for x in F['R']] + c_isegs(cert, iR)
+    c0 = lf['c0']
+    try:
+        r = LC.srun(tabw, lf['el'], lf['er'], lf['chain'], c0)
+    except LC.Halt:
+        r = None
+    if r is None:
+        return 'srun'
+    c1, ca, cb = r
+    j = lf['j']
+    tgt = lf['tgt']
+    if not (c0[0] == F['q'] and c0[2] == F['h']):
+        return 'start state'
+    if not C.same_segs(C.ss_segs(c0[1], j) + Lz[lf['nL']:], Lz):
+        return 'start L'
+    if not C.same_segs(C.ss_segs(c0[3], j) + Rz[lf['nR']:], Rz):
+        return 'start R'
+    if lf['el'] and not (len(Lz) <= lf['nL'] and pL is None):
+        return 'el'
+    if lf['er'] and not (len(Rz) <= lf['nR'] and pR is None):
+        return 'er'
+    if not (c1[0] == G['q'] and c1[2] == G['h']):
+        return 'end state'
+    for side, p, cs, nS, Sz, gS, fS in (('L', pL, c1[1], lf['nL'], Lz, G['L'], lf['fL']),
+                                        ('R', pR, c1[3], lf['nR'], Rz, G['R'], lf['fR'])):
+        post = C.ss_segs(cs, j) + Sz[nS:]
+        rhs = [C.seg_subst(tgt, x) for x in gS] + c_isegs(cert, fS)
+        ok = C.lsame_segs(post, rhs) if p is None else C.same_segs(post, rhs)
+        if not ok:
+            return 'end ' + side
+    if not c_tail_end_ok(cert, True, sp_subst(tgt, G['tL']), lf['fL'], pL):
+        return 'tail L'
+    if not c_tail_end_ok(cert, False, sp_subst(tgt, G['tR']), lf['fR'], pR):
+        return 'tail R'
+    if not (cb > 0 and len(tgt) == G['n'] and len(lf['reg']) == F['n']):
+        return 'sizes'
+    return None
+
+
+def c_fams_ok(cert, tabw):
+    for fi, F in enumerate(cert['fams']):
+        L = C.tleaves(F['tree'], len(F['tree']), 0, [(1, 0)] * F['n'])
+        if L is None:
+            return 'bad tree %d' % fi
+        for u, R in L:
+            sp = lambda x: None if x is None else (x[0], C.asubst(C.rsub(R), x[1]))
+            Ls = c_uleaves(cert, F['utree'], len(F['utree']), u, sp(F['tL']), sp(F['tR']), [], [])
+            if Ls is None:
+                return 'uleaves fam %d node %d' % (fi, u)
+            for l, pL, pR, iL, iR in Ls:
+                if l >= len(cert['leaves']):
+                    return 'leaf index'
+                lf = cert['leaves'][l]
+                if lf['f'] != fi or [tuple(x) for x in lf['reg']] != [tuple(x) for x in R]:
+                    return 'leaf %d misfiled' % l
+                if [tuple(x) for x in lf['uL']] != [tuple(x) for x in iL] or \
+                        [tuple(x) for x in lf['uR']] != [tuple(x) for x in iR]:
+                    return 'leaf %d path' % l
+                err = c_leaf_ok(cert, tabw, F, lf, pL, pR, iL, iR)
+                if err:
+                    return 'leaf %d: %s' % (l, err)
+    return None
+
+
+def c_trend(cert, T):
+    out = ()
+    for t, e in T:
+        k = cert['trans'][t]['kind']
+        pre, u = cert['kinds'][k]
+        out += tuple(pre) + C.rep(u, e)
+    return out
+
+
+def c_tvalidb(cert, left, s, r, T):
+    for t, e in T:
+        if t >= len(cert['trans']):
+            return False
+        tr = cert['trans'][t]
+        if not (tr['left'] == left and tr['src'] == s and c_relsem(tr, r, e)):
+            return False
+        s, r = tr['dst'], e
+    return c_accb(cert, left, s)
+
+
+def c_tanc(cert, a):
+    F = cert['fams'][a['f']]
+    return (F['q'], C.sided(a['v'], F['L']) + c_trend(cert, a['L']), F['h'],
+            C.sided(a['v'], F['R']) + c_trend(cert, a['R']))
+
+
+def c_uwalk(ut, fuel, u, TL, TR):
+    for _ in range(fuel):
+        if u is None or u >= len(ut):
+            return None
+        nd = ut[u]
+        if nd[0] == 'uleaf':
+            return nd[1], TL, TR
+        if nd[0] == 'void':
+            return None
+        _, sd, endk, kids = nd
+        T = TL if sd == 'L' else TR
+        if not T:
+            u = endk
+            continue
+        t = T[0][0]
+        k = next((x for x in kids if x[0] == t), None)
+        if k is None or k[1] is None:
+            return None
+        u = k[2]
+        if sd == 'L':
+            TL = TL[1:]
+        else:
+            TR = TR[1:]
+    return None
+
+
+def c_lwalk(cert, a):
+    F = cert['fams'][a['f']]
+    r = C.twalk(F['tree'], len(F['tree']), 0, [(1, 0)] * F['n'], a['v'])
+    if r is None:
+        return None
+    u, R, z = r
+    w = c_uwalk(F['utree'], len(F['utree']), u, list(a['L']), list(a['R']))
+    if w is None:
+        return None
+    l, TL, TR = w
+    return l, R, z, TL, TR
+
+
+def c_boot_ok(cert, tab, tabw):
+    a0 = cert['a0']
+    F = cert['fams'][a0['f']]
+    r = T.run_conc(tabw, cert['t0'])
+    if r is None:
+        return 'boot run'
+    q, L, h, R, _ = r
+    q2, L2, h2, R2 = c_tanc(cert, a0)
+    strip = C.rstrip0
+    if not ((q, h) == (q2, h2) and strip(L) == strip(L2) and strip(R) == strip(R2)):
+        return 'boot config'
+    if len(a0['v']) != F['n']:
+        return 'boot n'
+    for sd, key in (('L', 'tL'), ('R', 'tR')):
+        sp = F[key]
+        T_ = a0[sd]
+        if sp is None:
+            if T_:
+                return 'boot tail'
+        elif not c_tvalidb(cert, sd == 'L', sp[0], C.aeval(a0['v'], sp[1]), T_):
+            return 'boot tail valid'
+    return None
+# ----------------------------------------------------------- liveness ----
+
+def leaf_fired(tabw, lf):
+    return set(C.leaf_fired(tabw, dict(chain=lf['chain'], el=lf['el'], er=lf['er'], c0=lf['c0'])))
+
+
+def isub(sub, I):
+    return [(t, C.asubst(sub, e)) for t, e in I]
+
+
+def l_edges(cert, P, node):
+    """[(src, tgt, uL, uR, fL, fR, rho', [candidate leaves])] of a node, or None"""
+    l, rho = node
+    lvs = cert['leaves']
+    lf = lvs[l]
+    out = []
+    for s_ in C.sassign(P, lf['reg'], list(rho)):
+        sub = C.zsub(P, s_)
+        src = [C.asubst(sub, e) for e in C.rsub(lf['reg'])]
+        tgt = [C.asubst(sub, e) for e in lf['tgt']]
+        if not all(C.pdiv(P, e) for e in tgt):
+            return None
+        rho2 = tuple(e[0] % P for e in tgt)
+        cands = [l2 for l2, lf2 in enumerate(lvs)
+                 if lf2['f'] == lf['g'] and C.compat(P, lf2['reg'], tgt)]
+        out.append((src, tgt, isub(sub, lf['uL']), isub(sub, lf['uR']),
+                    isub(sub, lf['fL']), isub(sub, lf['fR']), rho2, cands))
+    return out
+
+
+def l_boot_node(cert, P):
+    w = c_lwalk(cert, cert['a0'])
+    if w is None:
+        return None
+    return (w[0], tuple(v % P for v in cert['a0']['v']))
+
+
+def l_live_search(cert, tabw, fired, P):
+    """closed node set from the boot, then per instruction a ranking: the
+    window affine, per node and side one weight per tail item"""
+    import numpy as np
+    from scipy.optimize import milp, LinearConstraint, Bounds
+    b = l_boot_node(cert, P)
+    if b is None:
+        return 'boot walk'
+    S = [b]
+    seen = {b}
+    E = {}
+    k = 0
+    while k < len(S):
+        nd = S[k]
+        k += 1
+        es = l_edges(cert, P, nd)
+        if es is None:
+            return 'pdiv'
+        E[nd] = es
+        for e in es:
+            for l2 in e[7]:
+                n2 = (l2, e[6])
+                if n2 not in seen:
+                    seen.add(n2)
+                    S.append(n2)
+        if len(S) > 6000:
+            return 'too many nodes'
+    nv = {nd: cert['fams'][cert['leaves'][nd[0]]['f']]['n'] for nd in S}
+    off = {}
+    n = 0
+    for nd in S:
+        off[nd] = n
+        n += 3 + nv[nd]      # c, coefs, bL, bR
+    ranks = []
+    for q in range(4):
+        for h in range(2):
+            t = (q, h)
+            if t in cert['pins']:
+                continue
+            A, lo = [], []
+            for nd in S:
+                if t in fired[nd[0]]:
+                    continue
+                for (src, tgt, uL, uR, fL, fR, rho2, cands) in E[nd]:
+                    for l2 in cands:
+                        if t in fired[l2]:
+                            continue
+                        n2 = (l2, rho2)
+                        o, o2 = off[nd], off[n2]
+                        m1, m2 = nv[nd], nv[n2]
+                        params = sorted(set(p for e in src + tgt for p, _ in e[1]))
+                        row = np.zeros(n)
+                        row[o] += 1
+                        row[o2] -= 1
+                        for kk, e in enumerate(src[:m1]):
+                            row[o + 1 + kk] += e[0]
+                        for kk, e in enumerate(tgt[:m2]):
+                            row[o2 + 1 + kk] -= e[0]
+                        row[o + 1 + m1] += len(uL)
+                        row[o + 2 + m1] += len(uR)
+                        row[o2 + 1 + m2] -= len(fL)
+                        row[o2 + 2 + m2] -= len(fR)
+                        A.append(row)
+                        lo.append(1)
+                        for p_ in params:
+                            row = np.zeros(n)
+                            for kk, e in enumerate(src[:m1]):
+                                row[o + 1 + kk] += C.tcoef(p_, e[1])
+                            for kk, e in enumerate(tgt[:m2]):
+                                row[o2 + 1 + kk] -= C.tcoef(p_, e[1])
+                            A.append(row)
+                            lo.append(0)
+                        for dd in (1, 2):
+                            row = np.zeros(n)
+                            row[o + dd + m1] += 1
+                            row[o2 + dd + m2] -= 1
+                            A.append(row)
+                            lo.append(0)
+            if not A:
+                continue
+            A = np.array(A)
+            res = milp(c=np.ones(n), constraints=LinearConstraint(A, np.array(lo), np.inf),
+                       integrality=np.ones(n), bounds=Bounds(0, 10 ** 6))
+            if not res.success:
+                return ('norank', t)
+            x = np.round(res.x).astype(int)
+            if (A @ x < np.array(lo)).any():
+                return ('norank', t)
+            V = [dict(V=(int(x[off[nd]]), [int(y) for y in x[off[nd] + 1:off[nd] + 1 + nv[nd]]]),
+                      bL=int(x[off[nd] + 1 + nv[nd]]), bR=int(x[off[nd] + 2 + nv[nd]]))
+                 for nd in S]
+            ranks.append((t, V))
+    return dict(P=P, S=[(l, list(rho)) for l, rho in S], ranks=ranks)
+
+
+def c_twa(b, I):
+    """twa with an empty weight list: every item (0, b)"""
+    acc = (0, ())
+    for _ in I:
+        acc = C.aadd(acc, (b, ()))
+    return acc
+
+
+def c_live_ok(cert, tabw, fired):
+    """ListGlueTr.llive_ok (the weight lists are empty: every item weighs (0, b))"""
+    P = cert['P']
+    if P <= 0:
+        return 'P'
+    S = [(l, tuple(r)) for l, r in cert['S']]
+    rk = dict((tuple(t), V) for t, V in cert['ranks'])
+    for i, nd in enumerate(S):
+        if nd[0] >= len(cert['leaves']):
+            return 'node leaf'
+        es = l_edges(cert, P, nd)
+        if es is None:
+            return 'pdiv'
+        for (src, tgt, uL, uR, fL, fR, rho2, cands) in es:
+            for l2 in cands:
+                try:
+                    i2 = S.index((l2, rho2))
+                except ValueError:
+                    return 'not closed'
+                for q in range(4):
+                    for h in range(2):
+                        t = (q, h)
+                        if t in cert['pins'] or t in fired[nd[0]] or t in fired[l2]:
+                            continue
+                        Vs = rk.get(t, [])
+                        z = dict(V=(0, []), bL=0, bR=0)
+                        r = Vs[i] if i < len(Vs) else z
+                        r2 = Vs[i2] if i2 < len(Vs) else z
+                        lhs = C.aaddc(C.aadd(C.veval(r2['V'], tgt),
+                                             C.aadd(c_twa(r2['bL'], fL), c_twa(r2['bR'], fR))), 1)
+                        rhs = C.aadd(C.veval(r['V'], src),
+                                     C.aadd(c_twa(r['bL'], uL), c_twa(r['bR'], uR)))
+                        if not C.ale(lhs, rhs) or r2['bL'] > r['bL'] or r2['bR'] > r['bR']:
+                            return 'rank %s at node %d' % (t, i)
+    return None
+
+
+def c_check(cert, tab):
+    """every part of lg_check, replayed"""
+    tabw = {k: (None if k in cert['pins'] else v) for k, v in tab.items()}
+    if not c_mins_ok(cert):
+        return 'mins'
+    err = c_fams_ok(cert, tabw)
+    if err:
+        return 'fams: ' + err
+    fired = [leaf_fired(tabw, lf) for lf in cert['leaves']]
+    err = c_live_ok(cert, tabw, fired)
+    if err:
+        return 'live: ' + err
+    err = c_boot_ok(cert, tab, tabw)
+    if err:
+        return err
+    b = l_boot_node(cert, cert['P'])
+    if b is None or (b[0], list(b[1])) not in [(l, list(r)) for l, r in cert['S']]:
+        return 'boot node'
+    return None
+
+
+# -------------------------------------------------------------- render ----
+
+ST = ['StA', 'StB', 'StC', 'StD']
+SYM = ['S0', 'S1']
+
+
+def r_list(xs):
+    return '[' + ';'.join(SYM[x] for x in xs) + ']'
+
+
+def r_aexp(e):
+    return '(mkA %d [%s])' % (e[0], ';'.join('(%d,%d)' % (k, a) for k, a in e[1] if a))
+
+
+def r_seg(x):
+    return '(SL %s)' % r_list(x[1]) if x[0] == 'L' else '(SB %s %s)' % (r_list(x[1]), r_aexp(x[2]))
+
+
+def r_segs(l):
+    return '[' + ';'.join(r_seg(x) for x in l) + ']'
+
+
+def r_bool(b):
+    return 'true' if b else 'false'
+
+
+def r_opt(x, f):
+    return 'None' if x is None else '(Some %s)' % f(x)
+
+
+def r_items(I):
+    return '[' + ';'.join('(%d,%s)' % (t, r_aexp(e)) for t, e in I) + ']'
+
+
+def r_cert(c):
+    pins = '[' + ';'.join('(%s,%s)' % (ST[q], SYM[h]) for q, h in c['pins']) + ']'
+    kinds = '[' + ';'.join('(%s,%s)' % (r_list(pre), r_list(u)) for pre, u in c['kinds']) + ']'
+    trans = '[' + ';'.join('(mkLT %s %d %d %d %s %d %d %d)' % (
+        r_bool(t['left']), t['src'], t['kind'], t['dst'], r_bool(t['up']), t['a'], t['dp'], t['dn'])
+        for t in c['trans']) + ']'
+    acc = '[' + ';'.join('(%s,%d)' % (r_bool(l), s) for l, s in c['acc']) + ']'
+    mins = '[' + ';'.join('(%s,%d,%d)' % (r_bool(l), s, v) for l, s, v in c['mins']) + ']'
+
+    def r_unode(nd):
+        if nd[0] == 'uleaf':
+            return '(ULeaf %d)' % nd[1]
+        if nd[0] == 'void':
+            return '(UVoid %s)' % r_bool(nd[1] == 'L')
+        _, sd, endk, kids = nd
+        ks = ';'.join('(%d,%s)' % (t, 'None' if e is None else '(Some (%s,%d))' % (r_aexp(e), u))
+                      for t, e, u in kids)
+        return '(UUnf %s %s [%s])' % (r_bool(sd == 'L'), r_opt(endk, str), ks)
+
+    fams = '[' + ';\n      '.join('(mkLF %s %s %s %s %d [%s] [%s] %s %s)' % (
+        ST[F['q']], SYM[F['h']], r_segs(F['L']), r_segs(F['R']), F['n'],
+        ';'.join(T.cnode(nd) for nd in F['tree']), ';'.join(r_unode(nd) for nd in F['utree']),
+        r_opt(F['tL'], lambda x: '(%d,%s)' % (x[0], r_aexp(x[1]))),
+        r_opt(F['tR'], lambda x: '(%d,%s)' % (x[0], r_aexp(x[1]))))
+        for F in c['fams']) + ']'
+    leaves = '[' + ';\n      '.join('(mkLL %d [%s] %d [%s] (mkC %s %s %s %s) %d %s %s %d %d %s %s %s %s %s)' % (
+        lf['f'], ';'.join('(%d,%d)' % tuple(x) for x in lf['reg']), lf['g'],
+        ';'.join(r_aexp(e) for e in lf['tgt']),
+        ST[lf['c0'][0]], T.cside(lf['c0'][1]), SYM[lf['c0'][2]], T.cside(lf['c0'][3]),
+        lf['j'], r_bool(lf['el']), r_bool(lf['er']), lf['nL'], lf['nR'], T.cchain(lf['chain']),
+        r_items(lf['fL']), r_items(lf['fR']), r_items(lf['uL']), r_items(lf['uR']))
+        for lf in c['leaves']) + ']'
+    S = '[' + ';'.join('(%d,[%s])' % (l, ';'.join(str(x) for x in r)) for l, r in c['S']) + ']'
+    ranks = '[' + ';\n      '.join('((%s,%s), [%s])' % (
+        ST[t[0]], SYM[t[1]], ';'.join('(mkRk (%d,[%s]) [] %d [] %d)' % (
+            v['V'][0], ';'.join(str(x) for x in v['V'][1]), v['bL'], v['bR']) for v in V))
+        for t, V in c['ranks']) + ']'
+    a0 = c['a0']
+    a0s = '(mkAn %d [%s] [%s] [%s])' % (a0['f'], ';'.join(str(x) for x in a0['v']),
+                                        ';'.join('(%d,%d)' % tuple(x) for x in a0['L']),
+                                        ';'.join('(%d,%d)' % tuple(x) for x in a0['R']))
+    return '(mkLC %s\n      %s\n      %s\n      %s\n      %s\n      %s\n      %s\n      %d %s\n      %s\n      %d %s)' % (
+        pins, kinds, trans, acc, mins, fams, leaves, c['P'], S, ranks, c['t0'], a0s)
+
+
+def render(c):
+    lemma = 'lg_sound_mirror' if c.get('mir') else 'lg_sound'
+    return 'apply coversTr_nqh, (%s _\n      %s).\n  vm_cast_no_check (eq_refl true).' % (
+        lemma, r_cert(c))
 # ---------------------------------------------------------------- boot ----
 
 def run_rec(tab, n):
@@ -1208,3 +1917,181 @@ def explore_row(spec, t0, mir=False):
     X.data_pass(boot, NDATA)
     X.explore(boot)
     return X, pins, boot
+
+
+# --------------------------------------------------------------- driver ----
+
+def find_dir(spec, mir, t0):
+    X, pins, boot = explore_row(spec, t0, mir)
+    tab = T.parse(spec)
+    if mir:
+        tab = T.mirror(tab)
+    cert = assemble(X, X.t0, pins)
+    cert['mir'] = mir
+    tabw = X.tabw
+    err = c_fams_ok(cert, tabw)
+    if err:
+        return dict(err='fams: ' + err, nfam=len(cert['fams']))
+    err = c_boot_ok(cert, tab, tabw)
+    if err:
+        return dict(err=err)
+    fired = [leaf_fired(tabw, lf) for lf in cert['leaves']]
+    last = None
+    for P in PLIST:
+        lv = l_live_search(cert, tabw, fired, P)
+        if isinstance(lv, dict):
+            cert.update(lv)
+            err = c_check(cert, tab)
+            if err:
+                return dict(err='check: ' + err)
+            return cert
+        last = lv
+    return dict(err='norank %s' % (last,), nfam=len(cert['fams']))
+
+
+class Timeout(Exception):
+    pass
+
+
+def _alarm(signum, frame):
+    raise Timeout()
+
+
+def find(spec, timeout=0, t0s=T0S):
+    if timeout:
+        signal.signal(signal.SIGALRM, _alarm)
+        signal.alarm(timeout)
+    errs = []
+    try:
+        for mir in (False, True):
+            for t0 in t0s:
+                try:
+                    r = find_dir(spec, mir, t0)
+                except Fail as e:
+                    r = dict(err=str(e))
+                except RecursionError:
+                    r = dict(err='recursion')
+                if 'err' not in r:
+                    r['spec'] = spec
+                    return r
+                errs.append('%s t%d %s' % ('m' if mir else 'd', t0, r['err']))
+    except Timeout:
+        errs.append('timeout')
+    finally:
+        if timeout:
+            signal.alarm(0)
+    return dict(spec=spec, err=' / '.join(errs))
+
+
+def jsonable(c):
+    def conv(x):
+        if isinstance(x, (list, tuple)):
+            return [conv(y) for y in x]
+        if isinstance(x, dict):
+            return {str(k): conv(v) for k, v in x.items()}
+        if isinstance(x, set):
+            return sorted(conv(y) for y in x)
+        return x
+    return conv(c)
+
+
+def detuple(c):
+    def TT(x):
+        return tuple(TT(y) for y in x) if isinstance(x, list) else x
+    c['pins'] = [tuple(p) for p in c['pins']]
+    c['kinds'] = [(tuple(a), tuple(b)) for a, b in c['kinds']]
+    c['acc'] = [tuple(x) for x in c['acc']]
+    c['mins'] = [tuple(x) for x in c['mins']]
+
+    def seg(x):
+        return ('L', tuple(x[1])) if x[0] == 'L' else ('B', tuple(x[1]), TT(x[2]))
+    for F in c['fams']:
+        F['L'] = [seg(x) for x in F['L']]
+        F['R'] = [seg(x) for x in F['R']]
+        F['tree'] = [tuple(TT(x) if i < 4 else list(x) for i, x in enumerate(nd))
+                     if nd[0] == 'split' else tuple(nd) for nd in F['tree']]
+        ut = []
+        for nd in F['utree']:
+            if nd[0] == 'unf':
+                ut.append(('unf', nd[1], nd[2], [(k[0], None if k[1] is None else TT(k[1]), k[2])
+                                                 for k in nd[3]]))
+            else:
+                ut.append(tuple(nd))
+        F['utree'] = ut
+        F['tL'] = None if F['tL'] is None else (F['tL'][0], TT(F['tL'][1]))
+        F['tR'] = None if F['tR'] is None else (F['tR'][0], TT(F['tR'][1]))
+    for lf in c['leaves']:
+        lf['c0'] = TT(lf['c0'])
+        lf['tgt'] = [TT(e) for e in lf['tgt']]
+        lf['chain'] = [tuple(x) for x in lf['chain']]
+        lf['reg'] = [tuple(x) for x in lf['reg']]
+        for k in ('fL', 'fR', 'uL', 'uR'):
+            lf[k] = [(t, TT(e)) for t, e in lf[k]]
+    c['ranks'] = [(tuple(t), V) for t, V in c['ranks']]
+    return c
+
+
+def _find1(args):
+    return find(*args)
+
+
+def cmd_find(a):
+    specs = [l.split()[0] for l in open(a.rows) if l.strip() and not l.startswith('#')]
+    done = set()
+    if os.path.exists(a.out):
+        done = set(json.loads(l)['spec'] for l in open(a.out))
+    todo = [(s, a.timeout) for s in specs if s not in done]
+    stats = collections.Counter()
+    with open(a.out, 'a') as f, Pool(a.jobs) as pool:
+        for r in pool.imap_unordered(_find1, todo):
+            f.write(json.dumps(jsonable(r)) + '\n')
+            f.flush()
+            stats['ok' if 'err' not in r else 'fail'] += 1
+            print(r['spec'], r.get('err', 'OK')[:200], flush=True)
+    print(dict(stats))
+
+
+def cmd_batch(a):
+    from cbt import next_free, write_batch
+    rem = T.remaining()
+    certs, seen = [], set()
+    for p in a.found:
+        for line in open(p):
+            c = json.loads(line)
+            s = c['spec']
+            if 'err' in c or s not in rem or s in seen or s in a.skip:
+                continue
+            seen.add(s)
+            certs.append(detuple(c))
+    nn = next_free(a.tag)
+    made = []
+    for i in range(0, len(certs), a.chunk):
+        chunk = certs[i:i + a.chunk]
+        entries = [(c['spec'], render(c)) for c in chunk]
+        made.append(write_batch(a.tag, nn, ['From BBB4.Checkers Require Import LapDecider.',
+                                            'From BBB4.Counters Require Import TriGlueTr ListGlueTr.'],
+                                entries, 'block-list rows by the list glue (ListGlueTr, lg_check)'))
+        nn += 1
+    print('%d rows -> %d batch file(s): %s' % (len(certs), len(made),
+          ' '.join(os.path.relpath(p, T.REPO) for p in made)))
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    sp = ap.add_subparsers(dest='cmd', required=True)
+    p = sp.add_parser('find')
+    p.add_argument('rows')
+    p.add_argument('out')
+    p.add_argument('--jobs', type=int, default=4)
+    p.add_argument('--timeout', type=int, default=300)
+    p = sp.add_parser('batch')
+    p.add_argument('found', nargs='+')
+    p.add_argument('--tag', default='BLC')
+    p.add_argument('--chunk', type=int, default=10)
+    p.add_argument('--skip', action='append', default=[])
+    a = ap.parse_args()
+    {'find': cmd_find, 'batch': cmd_batch}[a.cmd](a)
+
+
+if __name__ == '__main__':
+    main()

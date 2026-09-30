@@ -1011,41 +1011,54 @@ Qed.
 
 (** ** Liveness: (leaf, residue) nodes and rankings with tail weights *)
 
-Record lrk := mkRk { rk_V : nat * list nat; rk_wL : list (nat * nat); rk_wR : list (nat * nat) }.
+(** a ranking entry: the window part, and per side the weights
+    [(alpha, beta)] of the items read by each transition (the ones past the
+    list: [(0, b)]) *)
+Record lrk := mkRk {
+  rk_V  : nat * list nat;
+  rk_wL : list (nat * nat);
+  rk_bL : nat;
+  rk_wR : list (nat * nat);
+  rk_bR : nat
+}.
 
-Definition rk0 : lrk := mkRk (0, []) [] [].
+Definition rk0 : lrk := mkRk (0, []) [] 0 [] 0.
 
-Definition wget (w : list (nat * nat)) (t : nat) : nat * nat := nth t w (0, 0).
+Definition wget (w : list (nat * nat)) (b t : nat) : nat * nat := nth t w (0, b).
 
-Fixpoint twv (w : list (nat * nat)) (T : list (nat * nat)) : nat :=
+Fixpoint twv (w : list (nat * nat)) (b : nat) (T : list (nat * nat)) : nat :=
   match T with
   | [] => 0
-  | (t, e) :: T' => fst (wget w t) * e + snd (wget w t) + twv w T'
+  | (t, e) :: T' => fst (wget w b t) * e + snd (wget w b t) + twv w b T'
   end.
 
-Fixpoint twa (w : list (nat * nat)) (I : list (nat * aexp)) : aexp :=
+Fixpoint twa (w : list (nat * nat)) (b : nat) (I : list (nat * aexp)) : aexp :=
   match I with
   | [] => aconst 0
-  | (t, e) :: I' => aadd (aaddc (ascale (fst (wget w t)) e) (snd (wget w t))) (twa w I')
+  | (t, e) :: I' => aadd (aaddc (ascale (fst (wget w b t)) e) (snd (wget w b t))) (twa w b I')
   end.
 
-Lemma twa_ok : forall w z I, aeval z (twa w I) = twv w (conc z I).
+Lemma twa_ok : forall w b z I, aeval z (twa w b I) = twv w b (conc z I).
 Proof.
-  intros w z I. induction I as [|[t e] I IH]; cbn [twa twv conc map fst snd]; [reflexivity|].
+  intros w b z I. induction I as [|[t e] I IH]; cbn [twa twv conc map fst snd]; [reflexivity|].
   rewrite aeval_aadd, aeval_aaddc, aeval_ascale, IH. reflexivity.
 Qed.
 
-Lemma twv_app : forall w T1 T2, twv w (T1 ++ T2) = twv w T1 + twv w T2.
-Proof. intros w T1 T2. induction T1 as [|[t e] T1 IH]; cbn; [reflexivity|]. rewrite IH. lia. Qed.
+Lemma twv_app : forall w b T1 T2, twv w b (T1 ++ T2) = twv w b T1 + twv w b T2.
+Proof. intros w b T1 T2. induction T1 as [|[t e] T1 IH]; cbn; [reflexivity|]. rewrite IH. lia. Qed.
 
-Definition wle (w1 w2 : list (nat * nat)) : bool :=
-  forallb (fun k => (fst (wget w1 k) <=? fst (wget w2 k)) && (snd (wget w1 k) <=? snd (wget w2 k)))
-          (seq 0 (Nat.max (length w1) (length w2))).
+Definition wle (w1 : list (nat * nat)) (b1 : nat) (w2 : list (nat * nat)) (b2 : nat) : bool :=
+  (b1 <=? b2)
+  && forallb (fun k => (fst (wget w1 b1 k) <=? fst (wget w2 b2 k))
+                       && (snd (wget w1 b1 k) <=? snd (wget w2 b2 k)))
+             (seq 0 (Nat.max (length w1) (length w2))).
 
-Lemma wle_ok : forall w1 w2 T, wle w1 w2 = true -> twv w1 T <= twv w2 T.
+Lemma wle_ok : forall w1 b1 w2 b2 T, wle w1 b1 w2 b2 = true -> twv w1 b1 T <= twv w2 b2 T.
 Proof.
-  intros w1 w2 T H. unfold wle in H. rewrite forallb_forall in H.
-  assert (Hk : forall k, fst (wget w1 k) <= fst (wget w2 k) /\ snd (wget w1 k) <= snd (wget w2 k)).
+  intros w1 b1 w2 b2 T H. unfold wle in H. apply andb_prop in H as [Hb H].
+  apply Nat.leb_le in Hb. rewrite forallb_forall in H.
+  assert (Hk : forall k, fst (wget w1 b1 k) <= fst (wget w2 b2 k)
+                         /\ snd (wget w1 b1 k) <= snd (wget w2 b2 k)).
   { intros k. destruct (lt_dec k (Nat.max (length w1) (length w2))) as [Hl|Hl].
     - specialize (H k (proj2 (in_seq _ _ _) (conj (Nat.le_0_l k) Hl))).
       apply andb_prop in H as [H1 H2]. apply Nat.leb_le in H1, H2. lia.
@@ -1094,10 +1107,13 @@ Definition lnode_ok (fired : list (list Instr)) (i : nat) (lr : nat * list nat) 
                          || (let r := nth i (lrank_of t) rk0 in
                              let r' := nth i' (lrank_of t) rk0 in
                              ale (aaddc (aadd (veval (rk_V r') tgt)
-                                              (aadd (twa (rk_wL r') fL) (twa (rk_wR r') fR))) 1)
+                                              (aadd (twa (rk_wL r') (rk_bL r') fL)
+                                                    (twa (rk_wR r') (rk_bR r') fR))) 1)
                                  (aadd (veval (rk_V r) src)
-                                       (aadd (twa (rk_wL r) uL) (twa (rk_wR r) uR)))
-                             && wle (rk_wL r') (rk_wL r) && wle (rk_wR r') (rk_wR r)))
+                                       (aadd (twa (rk_wL r) (rk_bL r) uL)
+                                             (twa (rk_wR r) (rk_bR r) uR)))
+                             && wle (rk_wL r') (rk_bL r') (rk_wL r) (rk_bL r)
+                             && wle (rk_wR r') (rk_bR r') (rk_wR r) (rk_bR r)))
                          all_Instr
                    end
                  else true
@@ -1146,7 +1162,8 @@ Definition lfires_at (a : lanc) (t : Instr) : bool :=
 Definition lrval (t : Instr) (a : lanc) : nat :=
   match lnodeidx a with
   | Some i => let r := nth i (lrank_of t) rk0 in
-              vval (rk_V r) (an_v a) + twv (rk_wL r) (an_L a) + twv (rk_wR r) (an_R a)
+              vval (rk_V r) (an_v a) + twv (rk_wL r) (rk_bL r) (an_L a)
+              + twv (rk_wR r) (rk_bR r) (an_R a)
   | None => 0
   end.
 
@@ -1246,7 +1263,7 @@ Proof.
     unfold lrval. rewrite Hn'. unfold lnodeidx. rewrite Hw, Ei.
     rewrite Hnx. cbn [an_v an_L an_R].
     rewrite HaL, HaR, !twv_app. rewrite HuL, HuR in Hle.
-    pose proof (wle_ok _ _ TL HwL). pose proof (wle_ok _ _ TR HwR). lia.
+    pose proof (wle_ok _ _ _ _ TL HwL). pose proof (wle_ok _ _ _ _ TR HwR). lia.
 Qed.
 
 Lemma lfires_rank : forall t, ~ In t pins -> forall n a, GoodS a -> lrval t a <= n ->
