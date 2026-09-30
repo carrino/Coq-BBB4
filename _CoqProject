@@ -11625,6 +11625,7 @@ theories/CloseoutTr/CBT_SP2_07.v
 theories/CloseoutTr/CBT_SP2_08.v
 theories/CloseoutTr/CBT_SP2_09.v
 theories/CloseoutTr/CBT_SP3_00.v
+theories/CloseoutTr/CBT_SP4_00.v
 theories/CloseoutTr/CBT_SPB_00.v
 theories/CloseoutTr/CBT_SPB_01.v
 theories/CloseoutTr/CBT_SPB_02.v
