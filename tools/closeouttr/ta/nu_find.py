@@ -269,6 +269,7 @@ def find_E(comp, cedges, nv):
         return sorted(r for r in out if r > 0)
 
     calls = [0]
+    import numpy as np
 
     def dfs(Wc, todo, depth):
         calls[0] += 1
@@ -286,7 +287,14 @@ def find_E(comp, cedges, nv):
                 best = (-1, ei, [(None, Wc)])       # always satisfied
                 break
             opts = []
+            A0f = np.array([[float(x) for x in row] for row in M0]).reshape(len(M0), d)
+            A1f = np.array([[float(x) for x in row] for row in M1]).reshape(len(M1), d)
             for r in sorted(set(ratios(M0, M1, d)) | SMALL, key=lambda r: (r == 1, abs(math.log(r)))):
+                # float screen: the exact rank test only where the kernel may jump
+                sv = np.linalg.svd(A0f - float(r) * A1f, compute_uv=False)
+                scale = max(1.0, float(sv[0]) if len(sv) else 1.0)
+                if d - int((sv > 1e-9 * scale).sum()) <= g:
+                    continue
                 if kdim(M0, M1, r, d) > g:
                     opts.append((r, 'lazy'))
             if g > 0:
