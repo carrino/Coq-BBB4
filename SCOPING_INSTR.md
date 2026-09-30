@@ -4443,6 +4443,272 @@ python3 tools/closeouttr/ng_batch.py probe tools/closeouttr/bx/bnc_rk8_timeout.t
 python3 tools/closeouttr/ng_batch.py batch rk8.json --tag BL --chunk 2
 ```
 
+#### 7.4.BLC BL's closeout: the 15 QH hybrids are never-quasihalting and are boarded; a list-glue checker lands, but its finder does not converge (2026-09-30)
+
+Workstream BLC (batch tag `BLC`).  There were two parts: piece (a) of
+§7.4.BL, the block-list counters, and BL's 15 "QH hybrids", the rows
+past the boot cap.  The open count went from 1,324 to 1,309 (DN 546,
+SP 640, QH 123).  The Collatz-like SPW rows, HY2's pieces (b) and (c)
+(owned by HY3) and the pure counters (LE) were not touched.
+
+**Part 2: the 15 QH hybrids, all boarded.**  BL listed them as TriGlue
+"quiet point past the boot cap": the instruction the 1e8 scan calls
+quiet stops firing late, as late as ~7.97M steps.  Run further, every
+one of the 15 (`blc/qh15.txt`) fires that instruction AGAIN, at about
+127.2M steps (`bl_sim.c` with a 2^27-cell tape).  So these rows are not
+quasihalting at all.  They are never-quasihalting bouncer + counter
+hybrids that the scan misclassified, and the right route is
+`coversTr_nqh` with no pins, not a raised QH boot cap.  So neither
+`tri_sound_qh` nor any landed checker was changed:
+
+* 14 rows: `bl_ti.py`'s lattice finder in never-QH mode
+  (`T.find(spec, 600, 'DN', 0)`, the default boots 3,000 / 12,000 /
+  50,000), `blc/qh15_dn.jsonl`, batch `CBT_BLC_00`.
+* The 15th row (`1RB1RA_1LC1RD_1LD1LB_0RA0RB`) certifies only from a
+  late boot, at 200,000 steps (`blc/late_boot.py`: boots 200,000 /
+  1,000,000, 3,000-step leaves), `blc/qh15_dn_late.jsonl`, batch
+  `CBT_BLC_01`.
+
+| batch | rows | route | compile (container, 4 cores) |
+|---|---:|---|---:|
+| `CBT_BLC_00` | 14 | `TriGlueTr`, `coversTr_nqh`, lattice finder | 38 s |
+| `CBT_BLC_01` | 1 | `TriGlueTr`, `coversTr_nqh`, boot at 200,000 | 38 s |
+
+Both are in `ci_costs.tsv` at 80 s, and `ci_shard.py --check 6`
+passes.  `Print Assumptions` on `cv_BLC_00_0000` and `cv_BLC_01_0000`
+shows `functional_extensionality_dep` only.
+
+**The late boot on the other flat SPW rows: 0 of 49.**  The same late
+boot (`blc/late_boot.py`, 300 s a row) was run on the 49 open SP rows
+that `bl/classify.tsv` calls flat (`blc/spw_flat.txt`).  None
+certified (`blc/late_spw_flat.jsonl`).  With the starting lattice
+`G0 = 0` a leaf is always too long; with `G0 = 1` the result is "no
+ranking" (mostly on the family pair `(2, 1)`) or "too many families".
+
+**Part 1: piece (a).**
+
+*The checker, `theories/Counters/ListGlueTr.v`* (1,390 lines, 3.5 s,
+`lg_sound` / `lg_sound_mirror`, `functional_extensionality_dep` only).
+It is TriGlue's families plus a TAIL on each side: a list of items
+`(t, e)`, each rendered as `pre_t ++ rep u_t e`.  The items are read by
+an automaton (`lc_kinds`, `lc_trans`, `lc_acc`).  Each transition
+carries the item's relation to the item before it: either up,
+`e + dn = a*p + dp`, or down, `p + dn = a*e + dp`, and with `a = 0`
+also `e = 0`.  So one transition is `b_(i+1) = a b_i + d_i` for one
+digit `d_i`, and a digit set is a set of parallel transitions.  The
+three parts §7.4.BL asked for are these:
+
+1. **The carry, by induction along the list.**  An unfold node (`UUnf`)
+   takes the nearest item out of the tail into the window.  Its
+   children are indexed by the transition read, and void children are
+   proved empty by `tvoid`.  A `UVoid` node is closed by a certified
+   per-state lower bound on the references (`lc_mins`, `mins_ok` /
+   `mins_sound`, an induction over the accepted lists).  A fold pushes
+   window blocks back into the tail and is checked coefficient-wise
+   (`fchain`, `tail_end_ok`).
+2. **The leftward sweep, item by item.**  That is the same machinery:
+   a leaf's chain that crosses one item lands in the family whose tail
+   is one item shorter.
+3. **Liveness.**  A ranking `lrk` adds per-transition tail weights,
+   with a default per side, to TriGlue's per-node value.  It is checked
+   relationally (`lreach`, `lfires_rank`), and `llive_ok` makes every
+   cycle of the family graph fire the rare instruction.
+
+The whole check is `lg_check tm w = mins_ok && fams_ok ... && llive_ok
+... && lboot_ok`.  A batch line is `apply coversTr_nqh, (lg_sound _
+(mkLC ...)). vm_cast_no_check (eq_refl true).`
+
+*The finder, `tools/closeouttr/lg_batch.py`* (untrusted, 2,100
+lines).  First comes a concrete data pass that follows the real run.
+Then, per shape, Karr affine-hull families, parametrised over a
+nonnegative coordinate basis.  The automaton is learned from the run:
+states `('S', unit, offset)` with shifted copies of transitions, and
+the neighbour relation of each pair of adjacent window blocks in the
+family key.  Region voids come from the certified minimum references.
+It also contains an exact replica of `lg_check` (`c_check`), a MILP
+liveness search, and the renderer.  **Validation:** TriGlue
+certificates converted to the list format (`blc/ti2lg.py`, empty
+tails) pass the replica and the kernel.  That is the renderer, the
+replica and `lg_sound` agreeing end to end.  It is not a block-list
+row.
+
+*The finder does not converge on any block-list row, so nothing was
+boarded by `ListGlueTr`.*  On a random 20 of the 248 open "grow" rows
+(`blc/grow.txt`: DN 192, SP 56, the latter 42 regular and 14 of BL's
+irregular grow rows), all 20 fail at boots 20,000 and 100,000 and
+periods 1 and 2.  Nineteen fail on "too many families" (cap 200), and
+one fails on "unfold depth" at boot 20,000.  Why, measured on
+`0RB1RB_1LC1RA_1RA0LD_1LC1LD` at a 5,000-family cap and 400,000
+rounds: the list is `0 (1)^(b_i)` with `b_(i+1) = 2 b_i + d_i`, and
+the automaton learns digits `d_i` from -5 to +5, which is finite.  But
+a carry leaves the items it has passed in a SHIFTED form, `b_i - k`
+for the depth `k` of the carry so far.  So the learned states carry
+offsets 0, -1, -2, -3, ... (`('S', (1,), -k)`).  The transitions
+between offset states multiply until the automaton hits its
+400-transition cap ("automaton too large", 1,442 of the failed
+explorations).  The family key also splits by digit, window position
+and tail offset (5,000 families, "too many families", 3,049 failures).
+A larger cap does not help: from 200 to 5,000 families, the families
+are still new at the cap.
+
+**Residue: all 248 grow rows are open, and the next step is a finder
+change, not compute.**
+
+| rows | what | where it stops | next |
+|---:|---|---|---|
+| 234 | block-list counters (DN 192, SP regular 42) | `lg_batch.py` "too many families" / "automaton too large" | fold only CANONICAL items: keep the item a carry is modifying in the window (unfold both neighbours of the carry point), so that tail items never carry an offset and the automaton is `{unit} x {digit}`.  The checker already allows this (an unfold node per side, a fold that checks the relation), so the change is in `Explorer.fold` / `fam_of`, not in Coq |
+| 42 of the 234 | the regular-fire SPW grow rows (`0RB1LB_1RC0LD_1LA0RD_1RA1LD`) | even with a converging finder, liveness | the list read as a binary number increases each round.  An item-additive ranking (`lrk`, a weight per transition) cannot express that: a carry turns many `1` digits into `0` digits and one `0` into a `1`.  They need a lexicographic or numeral-valued rank, which is a checker change |
+| 14 | SPW irregular, grow | not tried | Collatz-like (BX's 2-adic problem); left alone as instructed |
+
+**Commands** (resumable: `find` and `late_boot.py` skip rows already in
+their output).  On the 14-core box, at `--jobs 12` and 300 s a row, the
+`lg_batch.py` sweep of the 248 rows is at most 248 x 300 / 12 s, about
+1.75 h.  Expect it to reproduce the failures above until the fold
+change lands.  `late_boot.py` on the 49 flat rows takes about 20 min.
+
+```
+python3 tools/closeouttr/lg_batch.py find tools/closeouttr/blc/grow.txt lg_find.jsonl --jobs 12 --timeout 300
+python3 tools/closeouttr/lg_batch.py batch lg_find.jsonl --tag BLC --chunk 10
+python3 tools/closeouttr/blc/late_boot.py tools/closeouttr/blc/spw_flat.txt late.jsonl --jobs 12 --timeout 300
+python3 tools/closeouttr/bl_ti.py batch late.jsonl --tag BLC --chunk 20
+LG_VERBOSE=1 python3 -c "import sys; sys.path.insert(0,'tools/closeouttr'); import lg_batch as G; print(G.find('0RB1RB_1LC1RA_1RA0LD_1LC1LD', 600).get('err','OK'))"
+```
+
+#### 7.4.BLC2 The canonical fold lands, the offset states are gone, but the tail LANGUAGE is not free: 0 boarded (2026-09-30)
+
+Workstream BLC2 (batch tag `BLC2`), over §7.4.BLC's 234 block-list rows
+(`blc/grow.txt` less the 14 irregular ones).  Only the finder changed
+(`tools/closeouttr/lg_batch.py`).  `ListGlueTr.v` and every landed batch
+are untouched, no batch was written, and the open count is still 1,212.
+
+**1. The canonical fold (done, as BLC diagnosed).**  `Explorer.fold` no
+longer folds a SHIFTED item (`b_i - k`) into a state `('S', unit, -k)`.
+When the block a tail's ref names was modified by the leaf, or is gone,
+`fam_of` raises `NonCanon(side)`.  The explorer then turns that leaf into an
+unfold node on that side (the same unfold node a leaf's end-of-window
+request builds), so the modified block stays in the window and its
+neighbour is folded against it.  A tail's ref is therefore always the
+exponent of its pred in TAPE order: the side's outermost window block, or,
+when that side has none (the head has just crossed the block), the other
+side's nearest block.  On `0RB1RB_1LC1RA_1RA0LD_1LC1LD` no offset state is
+ever created (`LG_CANON=0` restores BLC's shifted states).  The concrete
+data pass cannot mirror this: its leaves walk constant blocks cell by cell
+and end inside a block.  So under `CANON` it re-segments the whole
+concrete tape (window plus the rest of the tail) at every leaf end, the way
+the boot does, which folds canonically by construction.  Two bugs that a
+non-trivial boot fold exposes are fixed on the way.  The data pass dropped
+the tail that the boot family's own fold made (`folds0`), and `assemble`
+built the anchor's concrete tails without it.
+
+**2. Why canonical folding is not enough: the list's digits are a counter.**
+With the offsets gone, BLC's automaton (one state per unit) accepts ANY
+sequence of the learned digits.  On the worked example that is false.  The
+list is a halving list `b_i = 2 b_(i+1) + d_i` whose rounds (a rightward
+sweep crossing odd blocks unchanged, a turn at the first even one, a return
+that shifts every separator one cell) increment `b_0` and one other block
+(a ruler sequence).  Measured on every C0 fire to 3M steps (`blc2/sim.py`):
+
+* counted from the head, even positions have `d_i` in {-4,-3,-2} and odd
+  ones in {0,1,2};
+* centred (`d+3` at even positions, `d-1` at odd ones), the digits are in
+  {-1,0,1}, and **the nonzero ones alternate in sign, starting with -1**:
+  all 511 observed digit strings match `0* (- 0* + 0*)* (- 0*)?`;
+* so the partial sums of the centred digits stay in a window of width 1.
+  That is a 4-state automaton (position class x last sign), but no k-gram
+  language is closed: `blc2/closure2.py` builds tapes whose digit k-grams
+  all occur in the run, runs one round, and about half leave the language
+  for every k in 2..6 (95/200 closed at k=2, 103/200 at k=4, 100/200 at
+  k=6).
+
+The free automaton lets the exploration carry at positions the machine never
+carries at, and the digits then drift without bound (-61 to +39 on the
+example, "automaton too large" / "too many families").
+
+**3. Learned tail automata (in the finder, not closing yet).**  The
+automaton can be any DFA read from the tail's FAR end: a fold prepends one
+item (next state `delta(state, item)`, deterministic), an unfold enumerates
+predecessors, and each DFA edge becomes one `ltrans`.  `ListGlueTr`
+accepts that unchanged.  `find` now tries, per boot and direction, the free
+automaton and then `'bps'`.  That is a first data pass that collects every
+concrete tail as a string of `(kind, relation)` symbols, a learned
+automaton, and a second data pass that seeds the hulls under it.  Learners:
+
+* `learn_dfa` (k-tails plus a determinising refinement): 70 states on the
+  example for every k in 2..8, since a tail's futures are truncated where
+  the sample string ends, so equivalent prefixes never merge;
+* `alergia` (Carrasco-Oncina merging with Hoeffding tests): over 500 states,
+  since 3,000 leaves are about 30 rounds and the far (high) digits barely
+  vary;
+* `fit_bps` / `build_bps` (**bounded partial sums**, used by `find`): the
+  frequent digits (at least 3% of their type), 2-coloured into m = 1 or 2
+  alternating classes by the least weight of same-class neighbours, a centre
+  per class, and a bound on the SPREAD of the partial sums (`LG_BPS_ABS=1`:
+  an absolute range instead).  States: the far end's non-digit prefixes,
+  then (class, sum - min, spread).  On the example it recovers the right
+  side's language exactly (classes {-4,-3,-2} / {0,1,2}, centres -3 / 1,
+  spread 1).  The left tail is short (carries are usually shallow), so
+  `transfer_bps` can fit both sides from the richer one (the same list read
+  the other way: up and down swap), `LG_BPS_TRANSFER=0` turns that off.
+
+With BPS the families become symbolic (lattice-coupled exponents `x`, `2x`,
+`4x`), but the exploration still does not settle on the example: over 3,000
+families in all four transfer / absolute settings.  Traced to the source,
+the spurious families come from a region split.  A symbolic family's
+small-value kids are concrete short lists (`65 32 18 8 6 3 0110 ...`) whose
+far end is irregular, and the machine's round on them leaves the language
+(spread 2).  The remaining gap is correlation: the left tail's state, the
+window's digits and the right tail's state are parts of ONE counter, which
+the family key checks only separately.  The far end, where new items are
+born, is never seen changing in the data pass, since `b_0` only goes from
+119 to about 150 over 3,000 leaves and no overflow happens.
+
+**4. Yields.**
+
+| run | rows | certify | failures |
+|---|---:|---:|---|
+| canonical fold, free automaton, the 20-row sample (`blc2/sample20.txt`) | 20 | 0 | "too many families" at every boot and direction, under 4 s a row |
+| canonical + BPS, the 47 clean ratio-2 `1`-block lists (`blc2/clean47.txt`, from `blc2/survey.tsv`) | 47 | 0 | 347 of 354 attempts "too many families", 4 time-outs (300 s), 2 "leaf too long", 1 "unfold depth"; 14.4 min at 4 jobs |
+| the same, all of `blc/grow.txt` (`blc2/find_all.jsonl`) | 248 | 0 | of 1,958 attempts (up to 8 a row), 1,840 "too many families", 45 "unfold depth", 45 BPS finds no automaton for a side (33 left, 12 right), 18 "exploration does not settle", 8 time-outs, 2 "leaf too long"; about 75 min at 4 jobs |
+
+Liveness (step 3 of the brief) was not reached, since no row gets as far as
+a ranking.  No new Coq file was needed or written.
+
+**5. What the 234 rows are** (`blc2/survey.py`, the tape at 8e6 steps):
+about 55 are clean halving lists of `1`-blocks with one-cell separators
+(the example's cousins: `0RB1LB_1RC0LD_*_1RA1LD` and relatives, the 42
+regular-fire SPW grow rows among them).  Most of the other 168 are also
+lists, but with separators longer than 4 cells: halving lists of `0`-blocks
+whose separator word carries a digit (`1^6` / `11011`, `10001` / `100101`),
+ratio-4 lists of `(011)` / `(110)`, and a few bouncers with a list only at
+the far end (`1RB1RD_0RC0RA_1LC0LD_1RA0LD`: `(0111)^n (0011)^m` plus a
+slow `1^a 0^b 1^c` end).  On a separator-digit list the block recurrence
+can be functional (`0^609 0^303 0^150 ...`: `d = 2 + (b mod 2)`, which the
+free automaton states exactly), and those rows stop earlier.  The data
+pass folds transient head-region blocks as list items with junk relations
+(|d| up to `MAXD`), and `wrel` keys split on "relations" between constant
+blocks.
+
+**Residue: all 234 open, and the next step is again the finder.**
+
+| rows | what | where it stops | next |
+|---:|---|---|---|
+| ~55 | clean `1`-block halving lists (the example) | BPS explores, "too many families" | a JOINT tail state: fit one BPS for the list and give the family the pair of positions (left sum from `b_0`, right sum from the far end) that one reading of the whole list allows, instead of two independent states; and a data pass long enough to see an overflow (a later boot, or a C data pass: the Python one does 3,000 leaves in about 13 s) |
+| ~170 | separator-digit and ratio-4 lists | "too many families" in the free and the BPS automaton | stop the data pass folding transient blocks: fold only items whose relation is frequent in the run, and drop `wrel` for constant pairs |
+| 42 of the 234 | the regular-fire SPW grow rows | as above | the numeral-valued rank, once any row explores |
+| 14 | SPW irregular, grow | not tried | Collatz-like (TA's) |
+
+**Commands** (resumable: `find` skips rows already in its output).  The
+full sweep is ~75 min at 4 jobs and 300 s a row in the container, so about
+25 min at `--jobs 12` on the box:
+
+```
+python3 tools/closeouttr/lg_batch.py find tools/closeouttr/blc/grow.txt lg_find.jsonl --jobs 12 --timeout 300
+python3 tools/closeouttr/lg_batch.py batch lg_find.jsonl --tag BLC2 --chunk 10     # when anything certifies
+LG_VERBOSE=1 python3 -c "import sys; sys.path.insert(0,'tools/closeouttr'); import lg_batch as G; print(G.find_dir('0RB1RB_1LC1RA_1RA0LD_1LC1LD', False, 20000, 'bps'))"
+cc -O2 -o /tmp/bl_sim tools/closeouttr/bl/bl_sim.c && python3 tools/closeouttr/blc2/survey.py tools/closeouttr/blc/grow.txt > survey.tsv
+(cd tools/closeouttr/blc2 && python3 closure2.py 0RB1RB_1LC1RA_1RA0LD_1LC1LD 4 200)
+```
+
 #### 7.4.LE The counters the ladder emitter could not close: five closure gaps, a visit phase per instruction, 181 boarded (2026-09-30)
 
 Workstream LE (batch tag `LE`), over the counters still open at the start:
