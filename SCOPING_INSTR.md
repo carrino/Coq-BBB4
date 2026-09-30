@@ -3867,6 +3867,187 @@ python3 tools/closeouttr/sp_ladder_batch.py vf_s*.jsonl --tag SPB --chunk 40
 python3 tools/closeouttr/spb/tally.py       # the counts above
 ```
 
+#### 7.4.SPW The wide SP rows: the missing v5c port, then the block-family glue (2026-09-30)
+
+Workstream SPW (batch tag `SPW`), over the 605 wide rows of §7.4.SPB's
+residue.  These are the class-SP rows whose visited extent at 1e8 steps
+is at least 1,000 cells.  Their burst-period ratios are 4 (254 rows),
+2.25 (183), 9 (33), 2 (8) and other (127), as grouped by
+`tools/closeouttr/spw/tally.py`.  The prompt's 258/183/38/12/114 used a
+slightly different binning.  Per-row data is in `tools/closeouttr/spw/`.
+
+**Why the 200K-step irules sweep missed them.**  It is mostly not the
+budget.  The row list is `spw_rows.txt`.  On a 40-row sample
+(`sample40.txt`, spread over the ratio groups; `sample_table.tsv`),
+`bin/irules --why` was run at 2M, 10M and 50M steps, one process per row
+under a timeout (`run_irules.sh`).  Each certificate was then probed with
+one `coqc` under a timeout.
+
+| budget | certificates | kernel-accepted | failures (`--why` stage) | timeouts | CPU |
+|---|---:|---:|---|---:|---:|
+| 2M | 16 | 16 (6 need v5c) | `nofit` 23, `noproof` 1 | 0 | 0.5 h |
+| 10M | 16 | 16 | `nofit` 20, `noproof` 1 | 2 (30 min) | 2.2 h |
+| 50M | 16 of 37 finished | 16 | `nofit` 20, `noproof` 1 | 3 unfinished (container reclaimed) | 1.0 h for the 37 |
+
+By ratio, every ratio-9 and ratio-2 row certifies at 2M, and so do half
+of the ratio-4 rows.  No ratio-2.25 row certifies at any budget, and
+only a few "other" rows do.  10M adds one row over 2M, and 50M none so
+far.  The failures are structural (`nofit`: the anchor sequence is not
+one affine map), so the budget is not what limits these rows.  Two gaps
+on the Coq side were:
+
+1. **The engine.**  §7.4.SP probed every certificate with
+   `MetaBlkPfxTr`, the plain replay.  On the SPW sample, 6 of the 16
+   certificates at 2M are ones that BBB's `bin/verify` passes but whose
+   plain replay stalls at a block boundary: 5 probe "false" after
+   ~40 s, 1 times out.  §7.4.SP's 9 "false" and 64 "timeout" rows are
+   probably the same gap, but they were not re-probed.  The state-level
+   `MetaBlkPfxV5c` gets past those stalls: it closes the block table,
+   re-blocks after every step and uses the multi-run cell-stream
+   end-match.  But it had no transition-level port.  On the 2M sample
+   it accepts all 16 certificates (1-3 s each), including the 6 that the
+   plain engine rejects after burning its fuel.
+2. **The v4 matrix meta map.**  `bin/irules` also emits certificates
+   with 2-3 meta variables and a map x -> M x + c (`nvar`, `mmrow`,
+   `xmin`, `x0`, `tplrunmv`).  `sp_batch.py`'s parser skipped those
+   lines, so such a certificate read as a v1 certificate with empty
+   templates and failed.
+
+**New Coq** (axioms: `functional_extensionality_dep` only):
+
+* `Checkers/IRules/MetaTileTr.v`: `meta_tile_neverqhtr`, the
+  transition-level recurrence argument of the irules meta checkers.  It
+  needs an anchor, a cycle from every admissible parameter to the next
+  one firing exactly the set F, and the prefix gate.  It is stated once
+  over an arbitrary parameter type.
+* `Checkers/IRules/MetaBlkPfxV5cTr.v`: `MetaBlkPfxV5c` at transition
+  level (`irulesblkpfx_check_neverqhtr_v5c_sound`).  It proves only the
+  anchor and the cycle.
+* `Checkers/IRules/MetaBlkPfxMVTr.v`: the matrix meta map, for both
+  engines (`irulesblkmv_check_neverqhtr{,_v5c}_sound`).  The rule
+  engine, `breplayKP`/`breplayRB` and the end-matches are all generic in
+  the bounds vector and the valuation, so only the scalar layer is new.
+  A valuation replaces `fun _ => K`, `mstep` gives the next valuation,
+  and `mvwant_shift` says the want template is the start template with
+  each run's variable replaced by its row.  `mstep_bge` shows the bounds
+  are invariant, given M >= 0 and xmin <= M xmin + c.
+
+`sp_batch.py` now parses v4 certificates.  Its `probe` tries the v5c
+engine first and then the plain one (`--engines`), recording the engine
+per row, and `batch` writes the matching Requires.  A plain-engine batch
+still gets the old Require line byte for byte.  Every certificate in the
+SPW sweeps was accepted under v5c.
+
+**The routes over all 605 rows:**
+
+| outcome | ratio 4 | 2.25 | 9 | 2 | other | all |
+|---|---:|---:|---:|---:|---:|---:|
+| boarded, `TriGlueTr` (`CBT_SPW_01..14`) | 45 | 143 | 22 | 1 | 49 | 260 |
+| boarded, irules at 2M (`CBT_SPW_00, 15..18`) | 77 | 0 | 10 | 7 | 6 | 100 |
+| open, TriGlue "no ranking" | 61 | 36 | 1 | 0 | 56 | 154 |
+| open, TriGlue "too many families" | 66 | 4 | 0 | 0 | 14 | 84 |
+| open, TriGlue "leaf too long" | 5 | 0 | 0 | 0 | 2 | 7 |
+
+* **irules at 2M** went over the first 118 rows (23 certificates,
+  `CBT_SPW_00`), then over the 322 rows TriGlue leaves (77 certificates,
+  `CBT_SPW_15..18`).  Every certificate was accepted.  A row costs under
+  a second when it fails at the fit, and up to minutes when the prover
+  runs.  The 600 s timeouts (27 of 402 rows) are three quarters of the
+  5.6 CPU-hours.
+* **The block-family glue** (`ti_batch.py find`, §7.4.TI) was the big
+  surprise.  It was run over the 572 rows open after the first two
+  batches, at about 20 s a row on one core.  It returned 250
+  certificates: no ranking 164, too many families 149, leaf too long 9.
+  Every certificate compiled.  TriGlue's dispatch trees split a family
+  variable by residue, which is exactly what irules' single affine map
+  cannot do.  So it takes 143 of the 183 ratio-2.25 rows, which are
+  Collatz-like 3/2 maps.  One example is `1RB1LB_0RC0LA_1LC0LD_1RA1LD`,
+  whose tape at every C0 fire is `1^a 0 [C0] 1^(2j)`.  For a odd it
+  maps to ((3a-1)/2, j+1), and for a even to (3(a+2j)/2 + 3, 0).  Both
+  branches fire every instruction.
+* **Tried, nothing taken.**  The n-gram rank tier at windows 6, 7 and 8
+  (`ng_batch.py probe --rungs rk:6:0,rk:7:0,rk:8:0 --all`, 120 s per
+  probe) went over the 24 sample rows irules leaves at 2M.  None
+  certified: 21 false, 7 timeouts over 28 probes.  TriGlue at larger
+  residue moduli (`--plist 1,2,3,4,6,8,12`) on 12 no-ranking rows
+  certified none.  `RepWLMBTr` and the hybrid glues were not run.  The
+  open rows have no counter beside the bouncer (HY's split already
+  marks all 605 "no anchor / no family"), and `RepWLMBTr` is the RepWL
+  abstraction, which §7.4.SP showed has a genuine rare-instruction-free
+  cycle on these rows.
+
+**Totals.**  SPW boards **360** of the 605 rows (`CBT_SPW_00..18`),
+which is 260 TriGlue and 100 irules.  All classes: 1,830 -> **1,470**
+open.  Compile times on the container (4 cores, loaded): irules batches
+of 25 take 20-60 s, TriGlue batches of 20 take 11-48 s.  On CI's
+`closeout-changed` job each batch takes 1-3 s.  `ci_costs.tsv` carries
+the slowest of each kind at 80-110 s.
+
+**The residue (245), characterised.**
+
+1. **Multi-block doubling tapes (84, TriGlue "too many families").**
+   The number of blocks grows by one per burst, so no finite family set
+   exists.  Examples: `1RB1RA_1LC0RA_1LD1LC_1RD0LB` at D0 has
+   `1^(2|3) (0 1^2)^n 0 1^m`, where the last block runs 4, 6, 10, 14,
+   22, 30, 46, 62 and one `0 1^2` is added every other burst.
+   `1RB1LD_1LC0RB_1RA1LA_1LC0LC` has the nested
+   `1^2 0 1^2 0 1^4 0 1^2 0 1^8 0 ... 1^(2^n-1) 0 1`, and
+   `1RB0LA_1LC1RC_1LA1RD_0RB0RB` has
+   `1 0 1^(2^n-1) 0 1^2 0 1^(2^(n-1)-1) ...`, where a new doubled block
+   is prepended every burst and the rest is untouched.  A checker for
+   these needs an inductive family over a list of blocks: a regular
+   invariant on the block sequence plus a meta rule for the new head
+   block.  Nothing landed does that.
+2. **No ranking (154).**  The families close, but some instruction
+   (usually the rare one) has no affine ranking at moduli up to 12.  On
+   the rows looked at, the extent follows an irregular 3/2-type map
+   (`0RB1LD_1RC1RB_1LA1LC_0RD0LA`: 14, 114, 278, 652, 990, 1,498, ...;
+   `1RB1LA_1LC0RC_1LC1LD_0RA0LA`: block 36, 57, 135, then extents
+   457, 693, 1,579, ...), and the
+   rare instruction fires only in some parity branches.  Its recurrence
+   is then a statement about the orbit's parity sequence, the
+   Collatz-type obstacle of the cryptids.  This is a characterisation of
+   a few rows, not a proof that all 154 are like this.
+3. **Leaf too long (7):** a TriGlue leaf chain over its step cap.
+4. **Not run to the end here: irules at 10M over the 245.**  The
+   container is reclaimed when the session idles, and background runs
+   die with it (twice on 2026-09-30).  26 of the 245 rows finished, all
+   `undecided`.  On the sample, 10M added one row over 2M.  To finish it
+   on the box, see the commands below; they resume from
+   `tools/closeouttr/spw/all10M/res` if that directory is copied over.
+
+**Loop** (container; `bin/irules` from carrino/bbb, `make bin/irules`):
+
+```
+cd tools/closeouttr/spw
+./run_irules.sh 2000000 600 open.txt all2M 3          # one irules per row, resumable
+cd ../../..
+python3 tools/closeouttr/sp_batch.py probe tools/closeouttr/spw/all2M/certs probe.tsv --jobs 3 --timeout 90
+python3 tools/closeouttr/sp_batch.py batch probe.tsv --tag SPW --chunk 25
+python3 tools/closeouttr/ti_batch.py find open.txt ti.jsonl --jobs 1 --timeout 180   # needs numpy + scipy
+python3 tools/closeouttr/ti_batch.py batch ti.jsonl --tag SPW --chunk 20
+python3 tools/closeouttr/spw/tally.py                 # the route table above
+python3 tools/closeouttr/spw/sample_table.py          # the budget sample
+```
+
+**For the 14-core box** (the passes this container could not finish):
+
+```
+cd tools/closeouttr/spw
+comm -12 <(sort spw_rows.txt) <(sort ../../../closeouttr_remaining.txt) > open.txt
+./run_irules.sh 10000000 1200 open.txt all10M 12      # ~245 rows; ~1-2 h wall (~10% hit the 20 min timeout)
+./run_irules.sh 50000000 3600 open.txt all50M 12      # optional; ~2-3 h wall, expected yield ~0 on the sample
+cd ../../..
+python3 tools/closeouttr/sp_batch.py probe tools/closeouttr/spw/all10M/certs p10.tsv --jobs 12 --timeout 90
+python3 tools/closeouttr/sp_batch.py batch p10.tsv --tag SPW --chunk 25
+```
+
+Wall times: TriGlue took about 2 h on one core for 572 rows.  irules at
+2M took about 1 h on three cores for 322 rows.  A 50M pass over the
+residue is bounded by its timeouts: at 3,600 s a row, about 245 x 0.1 x
+1 h / 14 cores, so 2 h on the 14-core box, since roughly 10% of rows
+time out.  It is not worth it on this evidence.
+
 #### 7.4.BX The small classes: class ED closed, the rank tier at window 8 takes 12 bouncers, the cube counters need a non-linear liveness (2026-09-29)
 
 Workstream BX (batch tag `BX`), over the small classes of
