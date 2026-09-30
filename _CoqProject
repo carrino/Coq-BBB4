@@ -11218,6 +11218,12 @@ theories/Machines/CountersTr/LAPT_1RB1RD_1LC1RA_0RA1LC_0LB0LC.v
 theories/Machines/CountersTr/LAPT_1RB1RD_1LC1RA_0RA1LC_1RB0LC.v
 theories/Machines/CountersTr/LAPT_1RB1RD_1RC1LB_0LB1RA_0RC0LA.v
 theories/Machines/CountersTr/LAPT_1RB1RD_1RC1LB_0LD1RA_1LB0RC.v
+theories/Machines/LadderTr/LDRT_1RB1RC_1LA0RA_0RB1LD_1LC0LD.v
+theories/Machines/LadderTr/LDRT_1RB1RC_1LB1LC_0RD0LB_1RA1RC.v
+theories/Machines/LadderTr/LDRT_1RB1RC_1LC0RA_0RB1LD_1LC0LD.v
+theories/Machines/LadderTr/LDRT_1RB1RD_0LB1LC_0RA1LB_1RA0RC.v
+theories/Machines/LadderTr/LDRT_1RB1RD_0LC0RA_1LA0LD_1RA1LC.v
+theories/Machines/LadderTr/LDRT_1RB1RD_1LC0RA_1LD0LC_0RB1LC.v
 theories/CloseoutTr/CloseoutKitTr.v
 theories/CloseoutTr/CBT_BR_00.v
 theories/CloseoutTr/CBT_BR_01.v
@@ -11237,6 +11243,7 @@ theories/CloseoutTr/CBT_BX_04.v
 theories/CloseoutTr/CBT_BX_05.v
 theories/CloseoutTr/CBT_BX_06.v
 theories/CloseoutTr/CBT_BX_07.v
+theories/CloseoutTr/CBT_BX_08.v
 theories/CloseoutTr/CBT_CE2_00.v
 theories/CloseoutTr/CBT_CE2_01.v
 theories/CloseoutTr/CBT_CE2_02.v
@@ -11411,6 +11418,7 @@ theories/CloseoutTr/CBT_SP2_06.v
 theories/CloseoutTr/CBT_SP2_07.v
 theories/CloseoutTr/CBT_SP2_08.v
 theories/CloseoutTr/CBT_SP2_09.v
+theories/CloseoutTr/CBT_SP3_00.v
 theories/CloseoutTr/CBT_SPB_00.v
 theories/CloseoutTr/CBT_SPB_01.v
 theories/CloseoutTr/CBT_SPB_02.v
