@@ -5,7 +5,7 @@
 
 Rows: tools/closeouttr/le/rows_{dn,sp,qh}.txt (the LE rows at the start).
 Boarded: closeouttr_boarded.tsv rows whose batch is CBT_LE_*.  Finder
-verdicts: vf_ce3.jsonl (CE3's valfam run) and vf_*.jsonl (this run), plus
+verdicts: vf_ce3.jsonl (CE3's valfam run) and vf_le.jsonl (this run), plus
 famclose's fc_*.jsonl.  A measure.py output, if given, adds the emitter's
 reason for every row the finder closed and LE did not board.
 """
@@ -32,7 +32,8 @@ def main():
             boarded[f[0]] = f[1]
     rem = set(l.strip() for l in open(os.path.join(REPO, 'closeouttr_remaining.txt')))
     vf = {}
-    for p in [os.path.join(HERE, 'vf_ce3.jsonl')] + sorted(glob.glob(os.path.join(HERE, 'vf_[0-9].jsonl'))) \
+    for p in [os.path.join(HERE, 'vf_ce3.jsonl'), os.path.join(HERE, 'vf_le.jsonl')] \
+            + sorted(glob.glob(os.path.join(HERE, 'vf_[0-9].jsonl'))) \
             + sorted(glob.glob(os.path.join(HERE, 'fc_*.jsonl'))):
         for l in open(p):
             if not l.strip():
