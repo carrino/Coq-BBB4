@@ -4351,7 +4351,7 @@ liveness, and it is research: nothing landed here.
 | the same, `--maxfam 300 --plist 1,2,3,4,6,8,12`, 400 s | the 63 open REGULAR rows | 0 |
 | `RepWLMBTr` (`mb_cert_find.py --pmax 64`, 300 s) | the 18 hybrids whose tape is at least 50% one period of 7-64 cells; MB never tried them | **3 certify** (15.8K-20.6K nodes), `CBT_BL_01..03` |
 | rank tier `rk:4:0`, `rk:5:0` (`ng_batch.py probe`, 120 s) | the 322 SPW rows; SP was never put through the rank tier (§7.4.NG probed DN only) | 0 of 322 at window 4, and 0 of 63 at window 5 (57 false, 6 time-outs) before it was stopped |
-| `HybridCtrTr` (`hy2_batch.py`, `HY2_BUDGET=1800`) | the 15 HY2 rows that timed out at 600 s and are still open | **2 certify** (`1RB1RC_0LC0LB_1RD1LB_0RA0L?`, `CBT_BL_05`); 10 no counter family, 1 no top cycle, 2 time out again |
+| `HybridCtrTr` (`hy2_batch.py`, `HY2_BUDGET=1800`) | the 15 HY2 rows that timed out at 600 s and are still open | **2 certify** (`1RB1RC_0LC0LB_1RD1LB_0RA0LA` and `..._0RA0RB`, `CBT_BL_05`); 10 no counter family, 1 no top cycle, 2 time out again |
 
 **The finder** (`tools/closeouttr/bl_ti.py`; untrusted, on top of
 `ti_batch.py`, no new Coq).  TI gives each family variable the domain
