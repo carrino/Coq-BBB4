@@ -20,6 +20,8 @@ wrong theorem.
 Usage:  emit_ladder.py CERT.json [-o OUT.v]
 """
 import argparse
+import copy
+import itertools
 import json
 import os
 import sys
@@ -3721,6 +3723,115 @@ def quiet_pins(spec, scan=None, cut=10 ** 7):
     return sorted(pins), max(fired)
 
 
+def respell_narrow(cert):
+    """A family whose phase cycle has a NARROWING fill, respelt so that every
+    fill widens by a [nat] (SCOPING_INSTR 7.4.LE2), or [cert] unchanged.
+
+    [LadderFam.f_s] is a [nat], and SPB's multi-phase counters run a cycle
+    such as +1, -1, +1.  On every such row the phase a narrowing fill lands
+    in has a terminator that STARTS with the top digit word (the counter's
+    largest digit): `110^(k-1) . 1101` is `110^k . 1`.  That digit never
+    changes inside the phase, because the phase ends at the top of its
+    width, which is all top digits.  So the phase is read with [o] more
+    digits and [o] fewer terminator words: the same tapes, the same tops,
+    and every fill out of the phase widens by [o] less and every fill into
+    it by [o] more, with [o] copies of the top digit on its target's
+    suffix.  Read the other way, a phase that every fill (and the boot)
+    enters with top digits at the top of its target keeps them until its
+    own top, so it may be read with fewer digits and those words on its
+    terminator (SPB's two-cell rows: `(10)^k` narrows onto `(11)^(k-1) 0111`,
+    and the phase it narrows from is entered at `... 10 11 10`).  The
+    offsets are the smallest that make every [f_s] non-negative.  Nothing in the kernel changes: the respelt family is an
+    ordinary [Fam] with fill targets whose value is not zero, which
+    [fam_next] already reads by value."""
+    fam = cert['family']
+    fills = cert.get('fill_by_phase') or [cert['fill']]
+    if (all(f['widens_by'] >= 0 for f in fills) or fam.get('code') != 'binary'
+            or fam.get('weights') is not None
+            or fam.get('value_step_per_anchor_visit', 1) != 1):
+        return cert
+    b = fam['base']
+    top = list(fam['digits'][b - 1])
+    tails = [list(t) for t in
+             (fam.get('terminators_by_phase') or [fam['terminator']])]
+    nph = len(fills)
+    if len(tails) < nph or not top:
+        return cert
+
+    def lead(t):
+        n = 0
+        while t[n * len(top):(n + 1) * len(top)] == top:
+            n += 1
+        return n
+
+    def trail(xs):
+        n = 0
+        while n < len(xs) and xs[len(xs) - 1 - n] == b - 1:
+            n += 1
+        return n
+    # a phase may also be read with FEWER digits, the top ones moved onto
+    # its terminator, when every way into it (each fill landing there, and
+    # the boot) puts top digits there: they cannot change before its top
+    boot = cert.get('boot') or {}
+    neg = []
+    for ph in range(nph):
+        into = [trail(f['target_suffix']) for f in fills
+                if f['lands_in_phase'] == ph]
+        if boot.get('phase', 0) == ph:
+            into.append(trail(boot.get('digits_lsb_first', [])))
+        neg.append(min(into) if into else 0)
+    caps = [lead(tails[ph]) for ph in range(nph)]
+    best = None
+    for off in itertools.product(*[range(-neg[ph], caps[ph] + 1)
+                                   for ph in range(nph)]):
+        ok = True
+        for ph, f in enumerate(fills):
+            to = f['lands_in_phase']
+            if not 0 <= to < nph:
+                continue
+            s = f['widens_by'] + off[to] - off[ph]
+            m = len(f['target_prefix']) + len(f['target_suffix']) + off[to]
+            if s < 0 or m > 1 + s:
+                ok = False
+        key = (sum(map(abs, off)), sum(1 for o in off if o < 0))
+        if ok and (best is None or key < best[0]):
+            best = (key, off)
+    best = best and best[1]
+    if best is None:
+        return cert
+    cert = copy.deepcopy(cert)
+    fam = cert['family']
+    nf = []
+    for ph, f in enumerate(fills):
+        f = dict(f)
+        to = f['lands_in_phase']
+        o_to = best[to] if 0 <= to < nph else 0
+        f['widens_by'] = f['widens_by'] + o_to - best[ph]
+        sf = list(f['target_suffix'])
+        f['target_suffix'] = (sf + [b - 1] * o_to if o_to >= 0
+                              else sf[:len(sf) + o_to])
+        f['respelt'] = True
+        nf.append(f)
+
+    def retail(ph, t):
+        o = best[ph] if ph < nph else 0
+        return t[o * len(top):] if o >= 0 else top * (-o) + t
+    nt = [retail(ph, t) for ph, t in enumerate(tails)]
+    cert['fill_by_phase'] = nf
+    cert['fill'] = nf[0]
+    fam['terminators_by_phase'] = nt
+    fam['terminator'] = nt[0]
+    fam['respelt_offsets'] = list(best)
+    boot = cert.get('boot')
+    if boot is not None:
+        ph0 = boot.get('phase', 0)
+        o = best[ph0] if 0 <= ph0 < nph else 0
+        ds = list(boot['digits_lsb_first'])
+        boot['digits_lsb_first'] = (ds + [b - 1] * o if o >= 0
+                                    else ds[:len(ds) + o])
+    return cert
+
+
 def _rstrip0(xs):
     xs = list(xs)
     while xs and xs[-1] == 0:
@@ -3798,6 +3909,8 @@ def main():
     cert = json.load(open(args.cert))
     if isinstance(cert, list):
         cert = cert[0]
+    # a phase cycle with a narrowing fill, respelt with nat widenings (7.4.LE2)
+    cert = respell_narrow(cert)
     global TR_PINS, TR_QH
     if args.tr and args.qh:
         row = None
