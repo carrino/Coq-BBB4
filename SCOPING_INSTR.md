@@ -3887,7 +3887,7 @@ one `coqc` under a timeout.
 |---|---:|---:|---|---:|---:|
 | 2M | 16 | 16 (6 need v5c) | `nofit` 23, `noproof` 1 | 0 | 0.5 h |
 | 10M | 16 | 16 | `nofit` 20, `noproof` 1 | 2 (30 min) | 2.2 h |
-| 50M | 16 of 37 done | 16 | `nofit` 20, `noproof` 1 | 3 still running at 1 h | - |
+| 50M | 16 of 37 finished | 16 | `nofit` 20, `noproof` 1 | 3 unfinished (container reclaimed) | 1.0 h for the 37 |
 
 By ratio, every ratio-9 and ratio-2 row certifies at 2M, and so do half
 of the ratio-4 rows.  No ratio-2.25 row certifies at any budget, and
@@ -4009,7 +4009,12 @@ the slowest of each kind at 80-110 s.
    Collatz-type obstacle of the cryptids.  This is a characterisation of
    a few rows, not a proof that all 154 are like this.
 3. **Leaf too long (7):** a TriGlue leaf chain over its step cap.
-4. The 10M irules pass over the 245 is running (see below).
+4. **Not run to the end here: irules at 10M over the 245.**  The
+   container is reclaimed when the session idles, and background runs
+   die with it (twice on 2026-09-30).  26 of the 245 rows finished, all
+   `undecided`.  On the sample, 10M added one row over 2M.  To finish it
+   on the box, see the commands below; they resume from
+   `tools/closeouttr/spw/all10M/res` if that directory is copied over.
 
 **Loop** (container; `bin/irules` from carrino/bbb, `make bin/irules`):
 
@@ -4023,6 +4028,18 @@ python3 tools/closeouttr/ti_batch.py find open.txt ti.jsonl --jobs 1 --timeout 1
 python3 tools/closeouttr/ti_batch.py batch ti.jsonl --tag SPW --chunk 20
 python3 tools/closeouttr/spw/tally.py                 # the route table above
 python3 tools/closeouttr/spw/sample_table.py          # the budget sample
+```
+
+**For the 14-core box** (the passes this container could not finish):
+
+```
+cd tools/closeouttr/spw
+comm -12 <(sort spw_rows.txt) <(sort ../../../closeouttr_remaining.txt) > open.txt
+./run_irules.sh 10000000 1200 open.txt all10M 12      # ~245 rows; ~1-2 h wall (~10% hit the 20 min timeout)
+./run_irules.sh 50000000 3600 open.txt all50M 12      # optional; ~2-3 h wall, expected yield ~0 on the sample
+cd ../../..
+python3 tools/closeouttr/sp_batch.py probe tools/closeouttr/spw/all10M/certs p10.tsv --jobs 12 --timeout 90
+python3 tools/closeouttr/sp_batch.py batch p10.tsv --tag SPW --chunk 25
 ```
 
 Wall times: TriGlue took about 2 h on one core for 572 rows.  irules at
