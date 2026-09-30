@@ -4280,7 +4280,7 @@ HY2_BUDGET=600 python3 tools/closeouttr/hy2_batch.py find hy2/timeouts1.txt hy2/
 python3 tools/closeouttr/hy2_batch.py batch hy2/find1.jsonl hy2/find2.jsonl --tag HY2 --chunk 50
 ```
 
-#### 7.4.BL The block-list rows: what they are, a lattice TriGlue finder, 17 boarded (2026-09-30)
+#### 7.4.BL The block-list rows: what they are, a lattice TriGlue finder, 19 boarded (2026-09-30)
 
 Workstream BL (batch tag `BL`), over the still-open rows whose tape is
 blocks plus something that grows.  There are 680 rows
@@ -4351,7 +4351,7 @@ liveness, and it is research: nothing landed here.
 | the same, `--maxfam 300 --plist 1,2,3,4,6,8,12`, 400 s | the 63 open REGULAR rows | 0 |
 | `RepWLMBTr` (`mb_cert_find.py --pmax 64`, 300 s) | the 18 hybrids whose tape is at least 50% one period of 7-64 cells; MB never tried them | **3 certify** (15.8K-20.6K nodes), `CBT_BL_01..03` |
 | rank tier `rk:4:0`, `rk:5:0` (`ng_batch.py probe`, 120 s) | the 322 SPW rows; SP was never put through the rank tier (§7.4.NG probed DN only) | 0 of 322 at window 4, and 0 of 63 at window 5 (57 false, 6 time-outs) before it was stopped |
-| `HybridCtrTr` (`hy2_batch.py`, `HY2_BUDGET=1800`) | the 15 HY2 rows that timed out at 600 s and are still open | running when this was written; see the commit that records it |
+| `HybridCtrTr` (`hy2_batch.py`, `HY2_BUDGET=1800`) | the 15 HY2 rows that timed out at 600 s and are still open | **2 certify** (`1RB1RC_0LC0LB_1RD1LB_0RA0L?`, `CBT_BL_05`); 10 no counter family, 1 no top cycle, 2 time out again |
 
 **The finder** (`tools/closeouttr/bl_ti.py`; untrusted, on top of
 `ti_batch.py`, no new Coq).  TI gives each family variable the domain
@@ -4384,7 +4384,7 @@ blocks stay concrete.  The second is `G0 = 1` "too many families": the
 block count really grows.  A mixed start (constant only for families
 the pass met) gained nothing on a 24-row sample of those failures.
 
-**Yield: 17 rows** in `CBT_BL_00..04`, all kernel-checked (container, 4
+**Yield: 19 rows** in `CBT_BL_00..05`, all kernel-checked (container, 4
 cores, under load):
 
 | batch | rows | route | compile |
@@ -4394,20 +4394,21 @@ cores, under load):
 | `CBT_BL_02` | 1 | `RepWLMBTr` (`1RB0RA_1LC0RA_1LD0LC_1RB0LD`) | 378 s |
 | `CBT_BL_03` | 1 | `RepWLMBTr` (`1RB0RA_1LC0RB_1RA0LD_1LC0LD`) | 373 s |
 | `CBT_BL_04` | 8 | `TriGlueTr`, lattice finder | 45 s |
+| `CBT_BL_05` | 2 | `HybridCtrTr` (`hy2_batch.py` at `HY2_BUDGET=1800`) | 35 s |
 
 `CBT_BL_00..03` are in `ci_costs.tsv` at about twice the container time.
 With them, `ci_shard.py --plan 6` keeps the slowest shard at `CBT_BR_02`
 alone (2,764 s).  `Print Assumptions` on `cv_BL_00_0000` and
 `cv_BL_04_0000` shows `functional_extensionality_dep` only.
 
-**Residue: 588 of the 680 rows are still open** (75 were boarded by SPW,
-17 here).  Per-row verdicts are in `bl/find1.jsonl`, classes in
+**Residue: 586 of the 680 rows are still open** (75 were boarded by SPW,
+19 here).  Per-row verdicts are in `bl/find1.jsonl`, classes in
 `bl/classify.tsv`:
 
 | rows | class | where every route stops | why |
 |---:|---|---|---|
 | 152 | SPW, irregular fires (138 flat, 14 grow) | TriGlue "no ranking" / "too many families", rank tier false | Collatz-like rounds: the 2-adic liveness of §7.4.BX |
-| 236 | block count grows (SPW regular 42; hybrids and bouncers 194) | TriGlue "too many families" (`G0 = 1`) or "leaf too long" (`G0 = 0`) | block-list counters with a neighbour recurrence: piece (a) above |
+| 234 | block count grows (SPW regular 42; hybrids and bouncers 192) | TriGlue "too many families" (`G0 = 1`) or "leaf too long" (`G0 = 0`) | block-list counters with a neighbour recurrence: piece (a) above |
 | 136 | hybrids and bouncers, flat block count | the same | HY2's pieces (b) two-lap overflow and (c) unary / shifting-anchor counters, long-period blocks MB does not close (15 of 18), irregular "spread" tapes |
 | 49 | SPW, flat (18 regular, 31 sweep-rate) | TriGlue "no ranking" / "too many families" | bounded-block rows the lattice does not rescue; not read further |
 | 15 | QH hybrids | TriGlue "quiet point past the boot cap" | the quiet instruction stops after step 4,096 (as late as ~7.97M), past `tri_sound_qh`'s boot cap |
