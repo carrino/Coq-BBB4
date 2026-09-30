@@ -644,7 +644,7 @@ class Fam:
 
     def __init__(self, key):
         self.key = key
-        self.q, self.h, self.sL, self.sR, self.tL, self.tR = key
+        self.q, self.h, self.sL, self.sR, self.tL, self.tR, self.wrel = key
         self.nb = sum(1 for x in self.sL + self.sR if x[0] == 'B')
         self.nc = self.nb + (self.tL is not None) + (self.tR is not None)
         self.hull = Hull(self.nc)
@@ -798,12 +798,12 @@ class Explorer:
             dst = None
             if cur is not None:
                 s_old, r_old = cur
-                if s_old[1] != u or dict(acoefs(f)) != dict(acoefs(r_old)):
+                if dict(acoefs(f)) != dict(acoefs(r_old)):
                     break
                 dl = s_old[2] + r_old[0] - f[0]
                 if abs(dl) > MAXSHIFT:
                     break
-                dst = nfa.ensure_shift(sd, u, dl)
+                dst = nfa.ensure_shift(sd, s_old[1], dl)
             src = state_of_unit(pred[1])
             rel = None
             for t in nfa.trans:
@@ -843,9 +843,20 @@ class Explorer:
         for sd in ('L', 'R'):
             if specs[sd] is not None:
                 exps.append(specs[sd][1])
+        # the relation between adjacent window blocks of a side's list unit
+        # (a digit) is part of the family: joining two digits would lose it
+        # (in tape order, across the head)
+        wrel = []
+        units = set(k[2] for k in self.nfa.kinds if k[2])
+        bl = [x for x in reversed(W['L']) if x[0] == 'B'] + [x for x in W['R'] if x[0] == 'B']
+        for x, y in zip(bl, bl[1:]):
+            if tuple(x[1]) in units and tuple(y[1]) in units:
+                wrel.append(infer_rel(x[2], y[2]))
+            else:
+                wrel.append(None)
         key = (q, h, T.shape(W['L']), T.shape(W['R']),
                None if specs['L'] is None else specs['L'][0],
-               None if specs['R'] is None else specs['R'][0])
+               None if specs['R'] is None else specs['R'][0], tuple(wrel))
         if key not in self.fidx:
             if len(self.fams) >= MAXFAM:
                 raise Fail('too many families')
