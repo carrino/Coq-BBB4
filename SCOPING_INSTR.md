@@ -3819,7 +3819,12 @@ concrete-configuration `reflexivity`; none was investigated further.
 
 **Totals.**  SPB boards **1,126** of the 2,233 open SP rows (50%): 775
 lap + 351 ladder, `CBT_SPB_00..31`.  SP open 2,233 -> **1,107**; all
-rows (with `main`'s CE2 integration) -> **2,077** of 10,924.
+rows (with `main`'s CE2 integration) -> **2,077** of 10,924.  The box's
+SP2 ladder run (integrated in #171) boarded many of the same rows.
+`closeouttr_boarded.tsv` credits a row to its alphabetically first batch
+(`CBT_SP2_*` sorts before `CBT_SPB_*`), so it credits only 643 rows to
+SPB.  SP2 also took 14 of the 502 log-width residue rows below.  After
+the merge, SP has **1,093** open rows and all classes 1,957.
 
 **The residue (1,107), characterised.**  `sp_char.py char` at 1e8 steps
 on every residue row (`tools/closeouttr/spb/residue_char.{txt,json}`)
@@ -3843,14 +3848,13 @@ residue is 502 rows in three pieces:
    123, so they are not all binary counters: the ratio-4 rows look like
    base-4 or two-digit-per-overflow counters, and the unclean ones like
    §7.4.CE's Fibonacci and other-radix counters (not checked row by row).
-3. **59 time caps**, re-run at 400 s below.
+3. **59 time caps.**  Re-run at `--cap 400` (4 jobs, ~2 h): none closes; 37
+   time out again and 22 find families but close none.
 
 The lap route's own residue is dominated by the nested overflow (492)
 and "no interior chain" (291), which is where the ladder took its 343;
 its "no anchor" rows still open (640) are the 605 wide rows and 35
 counters.
-
-TIME-CAP RE-RUN: IN PROGRESS.
 
 ```
 python3 tools/closeouttr/classes.py shard SP 0 1 > sp_rows.txt
