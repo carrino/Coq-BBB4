@@ -1,0 +1,673 @@
+0RB0LA_0RC1RB_0LD1RC_1LA1LD	DN	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB0LA_0RC1RD_1LA1LC_0LC1RB	DN	finder	families found but none closed
+0RB0LA_1LC0RD_1LA1LB_1RC1RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LA_1LC0RD_1LA1LD_1RB0LC	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LA_1LC0RD_1LA1RD_1LB1RC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LA_1LC1RD_0LD1LA_0RD1RB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LA_1LC1RD_0RD0LC_1RB1LA	DN	finder	families found but none closed
+0RB0LA_1LC1RD_0RD1LA_---1RB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LA_1LC1RD_1LA0LC_1RB0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LA_1RC0LC_1LD0RC_1LA0LA	DN	finder	time cap
+0RB0LA_1RC0LC_1LD0RC_1LA1RC	DN	finder	time cap
+0RB0LA_1RC0LD_1LA1RD_1LC0RD	DN	finder	time cap
+0RB0LA_1RC0RC_0LD1RB_1LA1LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LA_1RC0RC_1LD1RB_1LA0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LA_1RC1LA_1LD1RB_0RC0LD	DN	finder	families found but none closed
+0RB0LA_1RC1RB_0LD0RC_1LD1LA	DN	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB0LA_1RC1RB_0LD1LC_0RA1LA	DN	finder	time cap
+0RB0LA_1RC1RB_0LD1LC_0RD1LA	DN	finder	time cap
+0RB0LB_1LC0RD_1LA0LA_1LB1RB	DN	finder	families found but none closed
+0RB0LC_0LC1LC_0RD1LA_1RB1RD	SP	finder	time cap
+0RB0LC_0LC1RD_0RD1LC_1RB1LA	SP	finder	time cap
+0RB0LC_1LA1LC_0RD1LA_1RB1RD	SP	finder	time cap
+0RB0LC_1LA1RB_0LD1LA_1RD1RA	QH	finder	time cap
+0RB0LC_1LA1RB_0RB0LD_0RB1LD	DN	finder	families found but none closed
+0RB0LC_1LA1RC_1RB0LD_0RB1LD	SP	finder	families found but none closed
+0RB0LC_1LC---_0RD0LA_1RB1RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LC_1LC0RD_1LA1LD_0LA1RB	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LC_1LC1LC_0RD1LA_1RB1RD	SP	finder	time cap
+0RB0LC_1LC1RB_1LD1LA_1RD0RC	SP	finder	families found but none closed
+0RB0LC_1LC1RD_0RD1LC_1RB1LA	SP	finder	time cap
+0RB0LC_1RC0RD_1LA1LD_1LC1RB	SP	finder	families found but none closed
+0RB0LC_1RC1RD_1LB1LA_1LB0RD	DN	finder	time cap
+0RB0LD_0LC1RC_1RB1LA_0RC1LD	SP	finder	time cap
+0RB0LD_0RC1LB_1LA1RC_0LA0LB	DN	finder	families found but none closed
+0RB0LD_0RC1LB_1LA1RC_0RC0LB	DN	finder	families found but none closed
+0RB0LD_0RC1LB_1LA1RD_1RC0LB	SP	finder	families found but none closed
+0RB0LD_0RC1RB_1LD1LC_1LA1LA	SP	finder	families found but none closed
+0RB0LD_0RC1RB_1LD1LC_1RD1LA	SP	finder	families found but none closed
+0RB0LD_0RC1RB_1LD1RC_0LA1LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LD_0RC1RC_1LA1RB_0LA1LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LD_1LA1RC_1RB1LA_0RC1LD	SP	finder	time cap
+0RB0LD_1LC1RB_0RB0LA_0RB1LD	DN	finder	families found but none closed
+0RB0LD_1LC1RB_0RD0LA_0RB1LD	DN	finder	families found but none closed
+0RB0LD_1LC1RC_1LD1RA_0RA1LC	SP	finder	no local rules
+0RB0LD_1LC1RC_1RB1LA_0RC1LD	SP	finder	time cap
+0RB0LD_1RC0RC_1LD1RB_1LA1RD	SP	finder	families found but none closed
+0RB0LD_1RC1RB_0LC1LD_0RB1LA	SP	finder	time cap
+0RB0LD_1RC1RB_0LD1LD_0RB1LA	SP	finder	time cap
+0RB0LD_1RC1RB_1LA---_0RC0LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0LD_1RC1RB_1LA1LD_0RB1LA	SP	finder	time cap
+0RB0LD_1RC1RB_1LC1LD_0RB1LA	SP	finder	time cap
+0RB0LD_1RC1RB_1LD1LD_0RB1LA	SP	finder	time cap
+0RB0RA_1RC0LD_1LB1RA_1LB1LD	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0RA_1RC1LD_1LC1RB_0LD0LA	DN	finder	families found but none closed
+0RB0RA_1RC1LD_1LD1RB_0LD0LA	DN	finder	families found but none closed
+0RB0RB_1LC1RA_1LD0LC_0RA1LB	SP	finder	families found but none closed
+0RB0RC_0LC0RA_0LD1RC_1RB1LD	DN	finder	families found but none closed
+0RB0RC_1RC1LB_0LD1RA_1LB1RD	SP	finder	families found but none closed
+0RB0RC_1RC1LB_1LD1RD_0LB1RA	SP	finder	families found but none closed
+0RB0RC_1RC1RB_1LD1RA_1LA1LC	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0RC_1RC1RB_1LD1RA_1RB1LC	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB0RD_1RC0LC_1LB1RD_1LC1RA	SP	finder	families found but none closed
+0RB0RD_1RC1LB_1LB1RA_0LC1RA	SP	finder	families found but none closed
+0RB1LA_0LC1RD_0LD1LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_0LC1RD_0RD1LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_0LC1RD_1LA1LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_0LC1RD_1LD0RB_1RB0LA	SP	finder	families found but none closed
+0RB1LA_0LC1RD_1LD1LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_0LC1RD_1RB1LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_0LC1RD_1RD1LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_0RC1LD_1LA1RD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_0RC1LD_1LD1RD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_1LA1RC_1LA1RD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_1LA1RC_1RB0RD_0LA1LD	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB1LA_1LA1RC_1RB1RD_1LD0LA	SP	finder	time cap
+0RB1LA_1LC1RB_0RA0LD_0LC0LA	DN	finder	families found but none closed
+0RB1LA_1LC1RB_0RA0LD_0RB0LA	DN	finder	families found but none closed
+0RB1LA_1LC1RB_0RB0LD_0RB0LA	DN	finder	families found but none closed
+0RB1LA_1LC1RC_1RB0RD_0LA1LD	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB1LA_1LC1RC_1RB1RD_1LD0LA	SP	finder	families found but none closed
+0RB1LA_1LC1RC_1RD0LA_1LA1RB	SP	finder	families found but none closed
+0RB1LA_1LC1RC_1RD0LA_1RA1RB	SP	finder	families found but none closed
+0RB1LA_1LC1RC_1RD0LA_1RB1LB	SP	finder	families found but none closed
+0RB1LA_1LC1RD_0RA0LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_1LC1RD_0RA1LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_1LC1RD_0RB0LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_1LC1RD_0RB1LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_1LC1RD_1LA1LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_1LC1RD_1RA1LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_1LC1RD_1RB0LA_0LD1RC	SP	closure	phase 3 fill narrows by 1: LadderFam states f_s : nat
+0RB1LA_1LC1RD_1RB0LA_0RC1RC	SP	closure	phase 3 fill narrows by 1: LadderFam states f_s : nat
+0RB1LA_1LC1RD_1RB0LA_1LC1RC	SP	closure	phase 2 fill narrows by 1: LadderFam states f_s : nat
+0RB1LA_1LC1RD_1RB0LA_1RB1RC	SP	closure	phase 3 fill narrows by 1: LadderFam states f_s : nat
+0RB1LA_1LC1RD_1RB0LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_1LC1RD_1RD1LD_1RB0LA	SP	finder	families found but none closed
+0RB1LA_1RC0LA_0LC1RD_1LA1RB	SP	finder	families found but none closed
+0RB1LA_1RC0LA_0LD1RB_---1LB	DN	finder	families found but none closed
+0RB1LA_1RC0LA_0LD1RB_1LB0RC	DN	finder	families found but none closed
+0RB1LA_1RC0LA_0RD1RB_1LD0LB	DN	finder	families found but none closed
+0RB1LA_1RC0LA_0RD1RB_1LD1LB	SP	closure	phase 2 fill narrows by 1: LadderFam states f_s : nat
+0RB1LA_1RC0LA_1LA1RD_1LA1RB	SP	finder	time cap
+0RB1LA_1RC0LA_1LB1RD_1RC1RB	SP	closure	phase 0 fill narrows by 1: LadderFam states f_s : nat
+0RB1LA_1RC0LA_1LD1RB_---1LB	DN	finder	families found but none closed
+0RB1LA_1RC1LD_0LA1RB_0RC0LA	SP	finder	time cap
+0RB1LA_1RC1LD_0LB1RB_0RC0LA	SP	finder	time cap
+0RB1LA_1RC1LD_1LA1RB_0RC0LA	SP	finder	time cap
+0RB1LA_1RC1LD_1LB1RB_0RC0LA	SP	finder	time cap
+0RB1LA_1RC1LD_1LC1RB_0RC0LA	SP	finder	time cap
+0RB1LA_1RC1LD_1LD1RB_0RC0LA	SP	finder	time cap
+0RB1LA_1RC1RB_0LD0RC_0LA1LD	DN	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB1LA_1RC1RD_0LA1LC_1RB0RC	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB1LA_1RC1RD_1LD1RB_1RC0LA	SP	finder	families found but none closed
+0RB1LB_0RC0LB_1RD1RC_0LA1LD	DN	finder	time cap
+0RB1LB_1LA1RC_0LA0RD_0LB1RD	SP	finder	time cap
+0RB1LB_1RC0LD_0LA1RB_0RB1LD	QH	finder	families found but none closed
+0RB1LB_1RC0LD_0LA1RB_0RC1LD	SP	finder	families found but none closed
+0RB1LB_1RC0LD_1LA1RB_0RB1LD	QH	finder	families found but none closed
+0RB1LB_1RC1LA_0LA1RD_0LB0RD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LC_0LC0RB_1RD1LA_0LA1RB	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LC_0LC0RD_1RD0LA_1RB1RA	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LC_0LC1RB_1LA1RD_0LA0RB	SP	finder	time cap
+0RB1LC_0LC1RC_1LA0RD_0LA1RD	SP	finder	families found but none closed
+0RB1LC_0LC1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+0RB1LC_0LC1RD_0RD0LC_1LA1RB	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LC_0RC0RC_1LD1RB_1LA0LD	SP	finder	families found but none closed
+0RB1LC_0RC1LB_1RD0LB_0LA1RC	QH	finder	families found but none closed
+0RB1LC_0RC1LB_1RD0LB_1LA1RC	QH	finder	families found but none closed
+0RB1LC_0RC1RC_1LA0RD_0LA1RD	SP	finder	families found but none closed
+0RB1LC_0RC1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+0RB1LC_0RC1RD_0RD0LC_1LA1RB	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LC_1LA0RC_1LD1RB_1LA0LD	SP	finder	families found but none closed
+0RB1LC_1LA1RB_0LD0LA_1LB---	SP	finder	families found but none closed
+0RB1LC_1LA1RB_0LD0LA_1RA0LB	SP	finder	families found but none closed
+0RB1LC_1LA1RB_0LD0LA_1RA1LB	SP	finder	families found but none closed
+0RB1LC_1LA1RB_0LD0LA_1RA1LD	SP	finder	families found but none closed
+0RB1LC_1LA1RB_0LD0LA_1RC1LB	SP	finder	families found but none closed
+0RB1LC_1LA1RB_0LD0LA_1RD0RB	SP	finder	families found but none closed
+0RB1LC_1LA1RB_1LD0LA_1LB---	SP	finder	families found but none closed
+0RB1LC_1LA1RB_1RD0LA_1LB1LD	SP	finder	families found but none closed
+0RB1LC_1LA1RB_1RD0LA_1RB1RD	SP	finder	families found but none closed
+0RB1LC_1LA1RC_1LA0RD_0LA1RD	SP	finder	families found but none closed
+0RB1LC_1LA1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+0RB1LC_1LA1RC_1RB0LD_0RB1LD	SP	finder	families found but none closed
+0RB1LC_1LA1RC_1RB0LD_0RC1LD	QH	finder	families found but none closed
+0RB1LC_1LC0LC_0RD1LA_1RD1RB	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LC_1LC0RC_1LD1RB_1LA0LD	SP	finder	families found but none closed
+0RB1LC_1LC0RD_1LA0LC_1RB1RA	SP	finder	families found but none closed
+0RB1LC_1LC1RA_0LD0LB_1LA1RD	QH	finder	families found but none closed
+0RB1LC_1LC1RA_1LD0LB_1RB0LA	QH	finder	families found but none closed
+0RB1LC_1LC1RA_1LD0LB_1RB1LC	QH	finder	families found but none closed
+0RB1LC_1LC1RA_1LD0LB_1RC0LA	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LC_1LC1RA_1LD0LB_1RC1LC	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LC_1LC1RB_0LD0LA_1RD1RA	QH	finder	time cap
+0RB1LC_1LC1RC_1LA0RD_0LA1RD	SP	finder	families found but none closed
+0RB1LC_1LC1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+0RB1LC_1LC1RC_1RA0LD_0RA1LD	SP	finder	families found but none closed
+0RB1LC_1LC1RD_0RD0LC_1LA1RB	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LC_1RC0LA_1LA0RD_0LA1RD	SP	finder	families found but none closed
+0RB1LC_1RC0LA_1LA0RD_0LC1RD	DN	finder	families found but none closed
+0RB1LC_1RC0RD_1LA1RB_1RA0LC	SP	finder	families found but none closed
+0RB1LC_1RC1RC_1LA0RD_0LA1RD	SP	finder	families found but none closed
+0RB1LC_1RC1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+0RB1LC_1RC1RD_0LC1LA_1RB0RA	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB1LC_1RC1RD_0RD0LC_1LA1RB	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LD_0LC1RC_1LA1RB_0RC0LD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LD_0LC1RD_0LD1RC_1LA0RC	QH	finder	families found but none closed
+0RB1LD_0RC0LA_1LD1RD_1LA1RB	SP	finder	no local rules
+0RB1LD_0RC1LB_1LA1RD_1RC0LB	SP	finder	families found but none closed
+0RB1LD_0RC1RB_0LD1LD_1LA0LA	SP	finder	families found but none closed
+0RB1LD_0RC1RB_1RD1LD_1LA0LA	SP	finder	families found but none closed
+0RB1LD_0RC1RC_1LA1RB_0RC0LD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LD_0RC1RD_0LD1RC_1LA0RC	QH	finder	families found but none closed
+0RB1LD_1LA0RC_1RB1RA_1LA0LD	SP	finder	families found but none closed
+0RB1LD_1LA1RC_1LA1RB_0RC0LD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LD_1LA1RC_1RB0RA_0LD1LA	SP	finder	families found but none closed
+0RB1LD_1LA1RC_1RD1RB_1LB0LA	SP	finder	families found but none closed
+0RB1LD_1LC0RC_1RB1RA_1LA0LD	SP	finder	families found but none closed
+0RB1LD_1LC1RB_1RA1LA_0LB0LC	SP	finder	families found but none closed
+0RB1LD_1LC1RB_1RA1LA_1LB0LC	SP	finder	families found but none closed
+0RB1LD_1LC1RB_1RA1LA_1RB0LC	SP	closure	phase 0 fill target names 3 digits but widens by 1
+0RB1LD_1LC1RC_1LA1RB_0RC0LD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LD_1LC1RC_1RB0LD_0RC0LA	QH	finder	families found but none closed
+0RB1LD_1LC1RD_0LD1RC_1LA0RC	QH	finder	families found but none closed
+0RB1LD_1LC1RD_0RA1LC_1RA0LC	SP	finder	families found but none closed
+0RB1LD_1RC0LD_1LB1RB_0RB0LA	QH	finder	families found but none closed
+0RB1LD_1RC1LB_1LA1RC_0LC0LA	SP	finder	families found but none closed
+0RB1LD_1RC1LB_1LA1RC_1LC0LA	SP	finder	families found but none closed
+0RB1LD_1RC1LD_1LB1RC_0LC0LA	SP	finder	families found but none closed
+0RB1LD_1RC1LD_1LB1RC_1LC0LA	SP	finder	families found but none closed
+0RB1LD_1RC1RB_0LA1LA_0RB0LA	SP	finder	time cap
+0RB1LD_1RC1RB_0LA1LA_0RC0LA	SP	finder	time cap
+0RB1LD_1RC1RB_0LC1LA_0RB0LA	SP	finder	time cap
+0RB1LD_1RC1RB_0LC1LA_0RC0LA	SP	finder	time cap
+0RB1LD_1RC1RB_0LD0RC_0LB1LA	DN	finder	families found but none closed
+0RB1LD_1RC1RB_1LA1LA_0RB0LA	SP	finder	time cap
+0RB1LD_1RC1RB_1LA1LA_0RC0LA	SP	finder	time cap
+0RB1LD_1RC1RB_1LC1LA_0RB0LA	SP	finder	time cap
+0RB1LD_1RC1RB_1LC1LA_0RC0LA	SP	finder	time cap
+0RB1LD_1RC1RB_1LD1LA_0RB0LA	SP	finder	time cap
+0RB1LD_1RC1RB_1LD1LA_0RC0LA	SP	finder	time cap
+0RB1LD_1RC1RC_1LA1RB_0RC0LD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1LD_1RC1RD_0LA1RC_1LA0RC	SP	finder	families found but none closed
+0RB1LD_1RC1RD_0LD1RC_1LA0RC	QH	finder	families found but none closed
+0RB1RA_0LC0RA_0LD1LD_1RB1LC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1RA_0LC1LC_1LD0LD_0RA1LC	SP	finder	families found but none closed
+0RB1RA_0LC1RB_1LA1LD_1LC0LA	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB1RA_0LC1RB_1LD1LC_0RA0LD	DN	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB1RA_0LC1RB_1RB1LD_1LC0LA	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB1RA_0LC1RB_1RD1LD_1LC0LA	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB1RA_0LC1RC_0LD0RC_1LA1LD	DN	finder	time cap
+0RB1RA_1LC1LB_1LD1LD_0RA0LC	SP	finder	families found but none closed
+0RB1RA_1LC1LB_1RC1LD_0RA0LC	SP	finder	families found but none closed
+0RB1RA_1LC1RB_0LD1LD_0RA0LC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1RA_1RC1LC_1LD0LD_0RA1LC	SP	finder	families found but none closed
+0RB1RB_0LC0RA_0LD1LC_1RA1LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1RB_0LC0RA_1LD0RB_1RC1LC	QH	finder	families found but none closed
+0RB1RB_0LC1RD_1LA1LC_0LA0RB	SP	finder	time cap
+0RB1RB_0LC1RD_1LA1LC_0LC0RB	SP	finder	time cap
+0RB1RB_1LC0RD_0RA1LB_0LB1RD	QH	finder	families found but none closed
+0RB1RB_1LC0RD_0RA1LB_0LC1RD	SP	finder	families found but none closed
+0RB1RB_1LC0RD_1RA1LB_0LB1RD	QH	finder	families found but none closed
+0RB1RB_1LC1RA_0RA0LD_0LC1LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1RB_1LC1RA_0RA1LD_0RB0LD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1RB_1RC0LD_1LB1RA_0RC1LD	SP	closure	phase 1 fill narrows by 1: LadderFam states f_s : nat
+0RB1RB_1RC0RC_0LD1RB_0LA1LD	SP	finder	families found but none closed
+0RB1RC_0LC1RB_1LD0RB_0RA1LC	QH	finder	families found but none closed
+0RB1RC_0LC1RB_1LD0RB_1RA1LC	QH	finder	families found but none closed
+0RB1RC_0RC0LB_1LD1RA_0RA1LB	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+0RB1RC_1LA1RB_0LD0RC_1LD0LA	DN	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+0RB1RC_1LC1RD_1LA0LC_0RD1LC	QH	finder	time cap
+0RB1RC_1RC0LC_1LD0RC_1LA0LA	DN	finder	time cap
+0RB1RC_1RC0LC_1LD0RC_1LA1RC	QH	finder	time cap
+0RB1RD_1LC0RA_1RA1LA_1RB0LD	SP	finder	families found but none closed
+0RB1RD_1LC0RD_1RB1LB_0LB0RA	QH	finder	families found but none closed
+0RB1RD_1LC1LB_0RA0LC_0LB1RA	DN	finder	families found but none closed
+0RB1RD_1LC1RC_0RC1LD_1LA0LD	QH	finder	time cap
+0RB1RD_1RC0LD_1LA1RD_1LC0RD	QH	finder	time cap
+1RB---_0LC0RD_1LA1LC_0LA0RB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB---_0LC1RD_1LB1RC_1LB0RD	QH	finder	time cap
+1RB---_0LC1RD_1LB1RD_1LB0RD	QH	finder	time cap
+1RB---_1LC0RB_0LD1RB_1LC1RB	QH	finder	time cap
+1RB---_1LC0RB_0LD1RB_1LC1RD	QH	finder	time cap
+1RB---_1LC1RB_0LB1RD_1LC0RD	QH	finder	time cap
+1RB---_1LC1RD_0LB1RD_1LC0RD	QH	finder	time cap
+1RB---_1RC1LB_0LB1RD_1RA0RC	SP	finder	families found but none closed
+1RB0LA_0RC1RB_0LD0RB_1LD0LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LA_1LB1RC_1RD1LC_1LA0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LA_1LC0RB_1RC1LD_1LA1RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LA_1LC0RB_1RD1LA_1LA1RC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LA_1LC0RB_1RD1LA_1LD1RC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LA_1LC0RB_1RD1LA_1RA1RC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LA_1LC0RB_1RD1LA_1RB1RC	DN	finder	families found but none closed
+1RB0LA_1LC0RB_1RD1LD_1LA1RC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LA_1LC0RB_1RD1LD_1LA1RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LA_1LC0RD_1RD1LD_0RB1RA	SP	finder	families found but none closed
+1RB0LA_1LC1RC_1RD1LB_1LA0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LA_1LC1RC_1RD1LC_1LA0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LA_1LC1RD_1LA1LB_1LA0RD	DN	finder	families found but none closed
+1RB0LA_1LC1RD_1LD1LB_1LA0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LA_1LC1RD_1RC1LB_1LA0RD	DN	finder	families found but none closed
+1RB0LA_1LC1RD_1RD1LB_1LA0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LB_0RC1LA_1LB1RD_1RC0LA	QH	finder	families found but none closed
+1RB0LB_1LA0RC_1LD1RC_1LB0RA	SP	finder	families found but none closed
+1RB0LB_1LA1LC_0LA1RD_1RC0RD	SP	finder	families found but none closed
+1RB0LB_1LA1RC_1LB1RD_0RA0RC	SP	finder	families found but none closed
+1RB0LB_1LB0RC_1RA0LD_1LC1LD	SP	finder	families found but none closed
+1RB0LB_1LC0LB_1RD1LB_1RA0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LB_1LC0RB_1LD0LD_0RA0LD	DN	finder	time cap
+1RB0LB_1LC0RB_1LD0LD_0RA1RB	DN	finder	time cap
+1RB0LB_1LC0RB_1LD1RB_0RA0LD	DN	finder	time cap
+1RB0LB_1LC0RB_1LD1RB_0RA1RB	QH	finder	time cap
+1RB0LB_1LC0RC_1RA0LD_1LC1LD	SP	finder	families found but none closed
+1RB0LB_1LC0RD_1LA0RA_1RB1RD	SP	finder	families found but none closed
+1RB0LB_1RC1LA_1RD0RC_0LA1RB	SP	finder	families found but none closed
+1RB0LC_0LA0RD_1LD1LA_1RB1RD	QH	finder	families found but none closed
+1RB0LC_0LA1RC_1RD1LA_1RB0RD	SP	finder	families found but none closed
+1RB0LC_0LA1RD_1LA1LB_1RB0RD	SP	finder	families found but none closed
+1RB0LC_0RC1LD_1LB1RC_0LA0LB	SP	finder	families found but none closed
+1RB0LC_1LA0RA_1RD1LC_1RA0LB	SP	finder	families found but none closed
+1RB0LC_1LA1RD_0RA1LC_1RB1RA	SP	closure	phase 0 fill narrows by 1: LadderFam states f_s : nat
+1RB0LC_1LA1RD_0RB1LC_0LD1RA	SP	closure	phase 1 fill narrows by 1: LadderFam states f_s : nat
+1RB0LC_1LA1RD_0RB1LC_0RA1RA	SP	closure	phase 1 fill narrows by 1: LadderFam states f_s : nat
+1RB0LC_1LA1RD_0RB1LC_1LA1RA	SP	closure	phase 0 fill narrows by 1: LadderFam states f_s : nat
+1RB0LC_1LA1RD_0RB1LC_1LC1RA	SP	finder	families found but none closed
+1RB0LC_1LA1RD_0RB1LC_1RB1RA	SP	closure	phase 1 fill narrows by 1: LadderFam states f_s : nat
+1RB0LC_1LA1RD_0RD1LC_1RB1RA	SP	finder	families found but none closed
+1RB0LC_1LA1RD_1LA1LC_0RA0RD	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LC_1LA1RD_1LA1LC_0RC0LD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LC_1LC0RA_1LD1LA_0RB0LD	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LC_1LC0RD_0RA1LB_0LB1RD	DN	finder	families found but none closed
+1RB0LC_1LC0RD_0RA1LB_0LC1RD	SP	finder	families found but none closed
+1RB0LC_1LC1RB_1RD1LD_0RB1LA	SP	finder	families found but none closed
+1RB0LC_1LC1RC_0LA1LD_1LA0RD	SP	finder	families found but none closed
+1RB0LC_1LC1RD_0RA1LC_1LC1RA	SP	finder	families found but none closed
+1RB0LC_1LC1RD_0RB1LC_1LA1RA	SP	finder	families found but none closed
+1RB0LC_1LC1RD_0RB1LC_1LC1RA	SP	finder	families found but none closed
+1RB0LC_1LC1RD_0RD0LC_1LC1RA	QH	finder	families found but none closed
+1RB0LC_1LC1RD_0RD1LC_1LA1RA	SP	finder	families found but none closed
+1RB0LC_1RC0LD_1LB0RB_1RA1LD	SP	finder	families found but none closed
+1RB0LC_1RC1RD_0RD1LC_1LA1RA	SP	finder	families found but none closed
+1RB0LC_1RC1RD_1LA1LC_0RC0LD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LD_0LB1RC_1LD1RA_0RA1LD	SP	finder	families found but none closed
+1RB0LD_0LB1RC_1LD1RA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_0LC1RA_---1LA_0RA1LD	DN	finder	families found but none closed
+1RB0LD_0LC1RA_0LA1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_0LC1RA_0RA1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_0LC1RA_0RC1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_0LC1RA_1LA0RB_0RA1LD	DN	finder	families found but none closed
+1RB0LD_0LC1RA_1LA0RB_0RB1LD	SP	finder	families found but none closed
+1RB0LD_0LC1RA_1LA1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_0LC1RA_1LD1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_0LC1RA_1RA1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_0LC1RA_1RB1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_0LC1RA_1RC1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_0RC1RA_1LC0LA_0RA1LD	DN	finder	families found but none closed
+1RB0LD_0RC1RA_1LC1LA_0RA1LD	SP	closure	phase 2 fill narrows by 1: LadderFam states f_s : nat
+1RB0LD_0RC1RA_1LC1LA_0RB1LD	SP	closure	phase 0 fill narrows by 1: LadderFam states f_s : nat
+1RB0LD_1LC1RA_---1LA_0RA1LD	DN	finder	families found but none closed
+1RB0LD_1LC1RA_0RB1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_1LC1RA_0RB1LD_0LB0LC	QH	finder	families found but none closed
+1RB0LD_1LC1RA_0RB1LD_0RB0LC	QH	finder	families found but none closed
+1RB0LD_1LC1RA_0RB1LD_0RD0LC	QH	finder	families found but none closed
+1RB0LD_1LC1RA_0RB1LD_1LB0LC	QH	finder	families found but none closed
+1RB0LD_1LC1RA_0RB1LD_1RA0LC	QH	finder	families found but none closed
+1RB0LD_1LC1RA_0RB1LD_1RC0LC	QH	finder	families found but none closed
+1RB0LD_1LC1RA_0RD1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_1LC1RA_1LD1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_1LC1RA_1RA1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_1LC1RA_1RD1LA_0RB1LD	SP	finder	families found but none closed
+1RB0LD_1LC1RC_1RA0LD_0RB1LD	SP	finder	families found but none closed
+1RB0LD_1LC1RD_0RA0LC_1LB0RD	DN	finder	time cap
+1RB0LD_1LC1RD_0RA1RD_1LB0RD	QH	finder	time cap
+1RB0LD_1RC0LA_1LA1RA_0RC1LD	SP	finder	families found but none closed
+1RB0LD_1RC0LC_1LA0RA_1LA1LD	SP	finder	families found but none closed
+1RB0LD_1RC0LC_1LC0RA_1LA1LD	SP	finder	families found but none closed
+1RB0LD_1RC0RB_0LA1RB_1LA1LC	SP	finder	families found but none closed
+1RB0LD_1RC0RB_1LA0LA_1LD0RC	DN	finder	families found but none closed
+1RB0LD_1RC0RC_0LA0RA_1RA1LA	DN	finder	families found but none closed
+1RB0LD_1RC1LD_0LA0RC_1RA1LB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LD_1RC1RA_0LA0RC_1LB1LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LD_1RC1RB_0LA0RA_1RA1LA	DN	finder	families found but none closed
+1RB0LD_1RC1RB_0LA0RB_1LB1LA	QH	finder	families found but none closed
+1RB0LD_1RC1RB_1LD1RC_0RC1LA	SP	finder	families found but none closed
+1RB0LD_1RC1RD_0LA0RB_0RC1LA	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0LD_1RC1RD_0LA0RC_1LA0RB	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_0LC1RA_1LA0LD_1LC1LB	SP	finder	families found but none closed
+1RB0RA_0LC1RA_1RA0LD_1LC1LB	SP	finder	families found but none closed
+1RB0RA_0LC1RA_1RB0LD_1LC1LB	SP	finder	families found but none closed
+1RB0RA_0LC1RA_1RD0LD_1LC1LB	SP	finder	families found but none closed
+1RB0RA_0LC1RD_0LD0LD_1RA1LC	SP	finder	families found but none closed
+1RB0RA_0LC1RD_1RB0LD_1RA1LC	SP	finder	families found but none closed
+1RB0RA_0LC1RD_1RD0LD_1RA1LC	SP	finder	families found but none closed
+1RB0RA_1LB1RC_1RA1LD_1LC0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC0LB_1LD1RC_1RA1LB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC0RB_0LC0LD_1RA1LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC1RA_1LD0LC_1LA0RA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC1RA_1LD0LC_1LA1LB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC1RA_1LD0LC_1LA1LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC1RA_1LD0LC_1RA1LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC1RA_1LD0LC_1RA1LB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC1RA_1LD0LC_1RD1LB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC1RB_1LD0LC_1RA1LB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC1RC_1LD0LC_1RA1LC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC1RD_1LD0LC_1RA1LB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC1RD_1LD0LC_1RA1LC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1LC1RD_1LD0LC_1RA1LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1RC0LC_1LD0LC_1RA1LC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1RC1LB_1LD1RA_1LA0LD	DN	finder	families found but none closed
+1RB0RA_1RC1RB_1LD0LC_1RA1LC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RA_1RC1RD_1LD0LC_1RA1LC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_0LB1RC_1LD0RC_1LB1LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_0LC0RC_1RA0LD_1RC1LC	DN	finder	families found but none closed
+1RB0RB_0LC1RA_0LD1LB_1RA1LC	SP	finder	families found but none closed
+1RB0RB_0LC1RA_0LD1LC_0RA1RA	SP	finder	families found but none closed
+1RB0RB_0LC1RA_1LC0LD_1RA1LD	DN	finder	families found but none closed
+1RB0RB_0LC1RA_1LD1LC_0RA0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_0LC1RA_1RB1LD_1LC0RA	QH	finder	families found but none closed
+1RB0RB_0LC1RD_0LB1LA_1LB0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_0LC1RD_0LB1LA_1LC0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_0LC1RD_0LD1LC_1LA1RA	SP	finder	families found but none closed
+1RB0RB_0LC1RD_1LB1LA_1LB0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_0LC1RD_1LC1LA_0LA1RB	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_0RC1RC_0LD1LA_1LD0LA	DN	closure	the fill anchor at width index 2 reaches no A1
+1RB0RB_1LC0RA_1LD1RA_0LD1RB	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_1LC0RB_0LD1RA_1LC1RB	QH	finder	time cap
+1RB0RB_1LC0RB_0LD1RA_1LC1RD	QH	finder	time cap
+1RB0RB_1LC0RB_1LD1RA_0LD1RB	QH	finder	time cap
+1RB0RB_1LC0RD_1LA0LC_1RD0LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_1LC1LD_0LC1RA_0LD0RA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_1LC1RA_0LD0LC_1RD0RB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_1LC1RA_1LD0LC_0RA0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_1LC1RA_1LD1RC_0RA0LC	SP	finder	families found but none closed
+1RB0RB_1LC1RD_0LB1LA_1LC0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_1LC1RD_0LC1LA_1LB0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RB_1RC1RA_1LD1LC_0RA0LC	QH	finder	families found but none closed
+1RB0RC_0LB1RC_1LD0RA_1LB1RA	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RC_0LB1RC_1LD0RC_1LB1RA	QH	finder	time cap
+1RB0RC_0LC0RA_1LA0LD_1RA1LC	SP	finder	families found but none closed
+1RB0RC_0LC0RB_1LD1LC_1LA0LB	QH	finder	families found but none closed
+1RB0RC_0LC0RB_1LD1LC_1LA1LB	QH	finder	families found but none closed
+1RB0RC_0LC1LA_1LB1RD_1LB0RD	DN	finder	time cap
+1RB0RC_0LC1RD_1LB1LA_1LB0RD	DN	finder	time cap
+1RB0RC_1LA1RA_0LD1LC_0RB1LD	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+1RB0RC_1LB1RA_0LD1LC_0RB1LD	SP	finder	families found but none closed
+1RB0RC_1LB1RA_0RB1LD_0LD1LC	SP	finder	families found but none closed
+1RB0RC_1LC1LA_0LB1RD_1LC0RD	DN	finder	time cap
+1RB0RC_1LC1LA_0LC1RD_1LB0RD	DN	closure	interior class arm: no chain at any threshold 0..3 and stride 1..4
+1RB0RC_1LC1RD_0LB1LA_1LC0RD	DN	finder	time cap
+1RB0RC_1RC0RB_1LA0LD_1LD0LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RC_1RC1LB_0LD1RA_1LB1RD	SP	finder	families found but none closed
+1RB0RC_1RC1LB_1LD1RA_1RD0LB	SP	finder	families found but none closed
+1RB0RC_1RC1LB_1LD1RD_0LB1RA	SP	finder	families found but none closed
+1RB0RC_1RC1LD_0LB1RA_1LA1LB	SP	finder	families found but none closed
+1RB0RC_1RC1RA_0LD1LC_0RB1LD	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+1RB0RD_0LC1RA_0RB1LC_1LB1LB	SP	finder	families found but none closed
+1RB0RD_0LC1RA_1LB1RC_1LB0RD	QH	finder	time cap
+1RB0RD_0LC1RA_1LB1RD_1LB0RD	QH	finder	time cap
+1RB0RD_1LB1LC_1RC0RA_0LB1RD	SP	finder	families found but none closed
+1RB0RD_1LC0LA_0RA0LB_1LB1RA	SP	finder	families found but none closed
+1RB0RD_1LC0LA_1LA0LC_1RD0RB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB0RD_1LC1LB_0RA0LB_1RB1RA	QH	finder	families found but none closed
+1RB0RD_1LC1RA_0RB0LC_1LD0LA	SP	finder	families found but none closed
+1RB0RD_1LC1RA_0RB1LC_0LC1LD	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+1RB0RD_1LC1RB_0LB1RA_1LC0RD	QH	finder	time cap
+1RB0RD_1LC1RD_0LB1RA_1LC0RD	QH	finder	time cap
+1RB0RD_1RC---_1RD1LC_0LC1RA	SP	finder	families found but none closed
+1RB0RD_1RC1LB_1LB1RA_0LC1RA	SP	finder	families found but none closed
+1RB1LA_0LA0RC_0LA0RD_0LA1RD	DN	finder	families found but none closed
+1RB1LA_0LA0RC_0RD1RB_1LD1LB	QH	finder	time cap
+1RB1LA_0LA1LC_0RD0LC_1RD0RB	DN	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+1RB1LA_0LA1RC_0RD0RB_1LB0RA	SP	finder	families found but none closed
+1RB1LA_0LA1RC_0RD0RB_1LB1RD	SP	finder	families found but none closed
+1RB1LA_0LA1RC_0RD0RB_1LD0LA	SP	finder	families found but none closed
+1RB1LA_0LA1RC_0RD0RB_1RA---	SP	finder	families found but none closed
+1RB1LA_0LA1RC_1LD0RB_1LA1LD	SP	finder	families found but none closed
+1RB1LA_0LA1RC_1LD0RB_1RA1RD	SP	finder	families found but none closed
+1RB1LA_0LA1RC_1RD0RB_1RA---	SP	finder	families found but none closed
+1RB1LA_0LC0RA_1LD0LD_1RA1LC	SP	finder	families found but none closed
+1RB1LA_0LC0RD_0LA1RC_0LA0RC	DN	finder	time cap
+1RB1LA_0LC0RD_0LA1RC_0RB0RC	DN	finder	time cap
+1RB1LA_0LC1RD_1LA1RC_0RA0RB	SP	finder	families found but none closed
+1RB1LA_0LC1RD_1LA1RC_1RA0RB	SP	finder	families found but none closed
+1RB1LA_0RC0RD_1LC1LD_0LA1RB	QH	finder	time cap
+1RB1LA_0RC1LD_1LB1RC_0LA0LB	SP	finder	families found but none closed
+1RB1LA_0RC1RC_0LD0RB_0LA1LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LA_1LA1RC_0RA0RD_0LB1RC	SP	finder	families found but none closed
+1RB1LA_1LA1RC_1RA0RD_0LB1RC	SP	finder	families found but none closed
+1RB1LA_1LC0RB_0LD0RA_1LC1RB	DN	finder	time cap
+1RB1LA_1LC0RB_0LD0RA_1LC1RD	DN	finder	time cap
+1RB1LA_1LC0RB_1RD0LC_1LA1RA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LA_1LC0RB_1RD0LC_1LD1RA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LA_1LC1RB_0RA1LD_0LB0LC	SP	finder	families found but none closed
+1RB1LA_1LC1RB_0RA1LD_1LB0LC	SP	finder	families found but none closed
+1RB1LA_1LC1RC_0LA1RD_0RA0RB	SP	finder	families found but none closed
+1RB1LA_1LC1RC_0LA1RD_1LA0RB	SP	closure	phase 0 fill target names 3 digits but widens by 1
+1RB1LA_1LC1RC_0LA1RD_1RA0RB	SP	finder	families found but none closed
+1RB1LA_1LC1RD_1LA0LC_1RA0RB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LA_1LC1RD_1LD0LC_1RA0RD	DN	finder	families found but none closed
+1RB1LA_1LC1RD_1RC1RA_0LA0RB	SP	finder	families found but none closed
+1RB1LA_1RC0LD_1RD0LA_1LC0RC	SP	finder	families found but none closed
+1RB1LA_1RC0RB_1LD0RC_0LD0LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LA_1RC0RB_1LD1RA_1LA0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LA_1RC0RC_0LD1RB_1LD0LA	DN	finder	families found but none closed
+1RB1LA_1RC1RD_1LC0LB_0LA0RB	SP	finder	families found but none closed
+1RB1LB_0LB1RC_1RD0RC_0LA1LC	QH	finder	time cap
+1RB1LB_0LC0RD_1LA1LB_1RD1RB	SP	finder	families found but none closed
+1RB1LB_0LC0RD_1LA1LC_1RD1RB	SP	finder	families found but none closed
+1RB1LB_1LA0LC_0RD1RC_0LA1RD	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+1RB1LB_1LA1RC_0LA0RD_0LB1RD	SP	finder	time cap
+1RB1LB_1LA1RC_1RA0LD_0RC1LD	SP	finder	families found but none closed
+1RB1LB_1LC0LC_0RD1LB_0RA1RD	SP	finder	families found but none closed
+1RB1LB_1LC0RD_0LA1RB_0LC1RD	SP	finder	families found but none closed
+1RB1LB_1LC0RD_1LD1LA_0LA1RD	SP	finder	families found but none closed
+1RB1LB_1LC0RD_1RB1LA_0LC1RD	SP	closure	phase 2 fill narrows by 1: LadderFam states f_s : nat
+1RB1LB_1LC0RD_1RD1LA_0LA1RD	SP	finder	families found but none closed
+1RB1LB_1LC0RD_1RD1LA_0LB1RD	SP	finder	time cap
+1RB1LB_1LC1RB_1RD0LC_1LA0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LB_1LC1RD_0LB1RA_1LC0RD	QH	finder	time cap
+1RB1LB_1RC0LA_1RD0RD_0LB0RB	DN	finder	families found but none closed
+1RB1LB_1RC0LA_1RD1RC_0LB0RB	DN	finder	families found but none closed
+1RB1LB_1RC0LD_0LA1RB_0RB1LD	QH	finder	families found but none closed
+1RB1LB_1RC0LD_0LA1RB_0RC1LD	SP	finder	families found but none closed
+1RB1LB_1RC0LD_1LA1RB_0RB1LD	QH	finder	families found but none closed
+1RB1LB_1RC0LD_1LA1RB_0RC1LD	SP	finder	families found but none closed
+1RB1LB_1RC0RB_1LD1RB_1LA0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LB_1RC1LA_0LA1RD_0LB0RD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LB_1RC1LD_0LD1RB_0LA0RC	SP	finder	no local rules
+1RB1LC_0LA0RC_1LA0RD_0LA1RD	SP	finder	families found but none closed
+1RB1LC_0LA0RD_1LA1RB_0LC1RD	SP	finder	time cap
+1RB1LC_0LA1RA_0RB0LD_0RA1LD	SP	finder	time cap
+1RB1LC_0LA1RB_1LA0LD_0RB1RD	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+1RB1LC_0LA1RB_1LA1LD_1RD0RB	SP	finder	time cap
+1RB1LC_0LA1RB_1RB1LD_1LA0RB	SP	finder	families found but none closed
+1RB1LC_0LA1RB_1RD1LD_1LA0RB	SP	finder	families found but none closed
+1RB1LC_0LA1RC_1LA0RD_0LA1RD	SP	finder	families found but none closed
+1RB1LC_0LA1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+1RB1LC_0LA1RC_1RB0LD_0RB1LD	SP	finder	families found but none closed
+1RB1LC_0LA1RC_1RB0LD_0RC1LD	QH	finder	families found but none closed
+1RB1LC_0LA1RD_1LA0LB_0RD1RB	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+1RB1LC_0LA1RD_1LD1LA_1RA0RB	SP	finder	families found but none closed
+1RB1LC_0LA1RD_1RB1LA_0LC0RD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LC_0LB1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+1RB1LC_0LC0RB_1LA1RD_0LA0RD	DN	finder	families found but none closed
+1RB1LC_0LC0RB_1LD1LA_1RA1RD	SP	closure	fill arm: no chain at any threshold 1..6, stride 1..4 or copy split
+1RB1LC_0LC0RB_1RD1LA_0LA1RB	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LC_0LC0RD_0LA1LA_0RB1RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LC_0LC1RA_0LD0RB_1RA1LA	SP	finder	no local rules
+1RB1LC_0LC1RA_1LB1RD_1LB0RD	QH	finder	time cap
+1RB1LC_0LC1RB_1LA1RD_0LA0RB	SP	finder	time cap
+1RB1LC_0LC1RB_1LD0RB_0RD1LA	SP	finder	families found but none closed
+1RB1LC_0LC1RB_1LD0RB_1RB1LA	SP	finder	families found but none closed
+1RB1LC_0LC1RB_1RD1LD_1LA0RB	SP	finder	families found but none closed
+1RB1LC_0LC1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+1RB1LC_0LC1RD_---1LA_0LA0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LC_0LC1RD_1LA0RD_0LC0RB	QH	finder	families found but none closed
+1RB1LC_0RC1LB_1RD0LB_0LA1RC	QH	finder	families found but none closed
+1RB1LC_0RC1LB_1RD0LB_1LA1RC	QH	finder	families found but none closed
+1RB1LC_0RC1LD_1LB1RC_0LA0LB	SP	finder	families found but none closed
+1RB1LC_0RC1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+1RB1LC_0RC1RD_0LC1LA_0LA0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LC_0RC1RD_1LA0RD_0LC0RB	QH	finder	families found but none closed
+1RB1LC_1LA0RA_1RA1LD_0LB0LC	SP	finder	families found but none closed
+1RB1LC_1LA0RC_1LA0RD_0LA1RD	SP	finder	families found but none closed
+1RB1LC_1LA0RD_0LB0LC_1RB1RD	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LC_1LA0RD_0LB1LB_0LA1RD	SP	closure	phase 1 fill narrows by 1: LadderFam states f_s : nat
+1RB1LC_1LA0RD_0RC1LB_0LA1RD	SP	closure	phase 0 fill narrows by 1: LadderFam states f_s : nat
+1RB1LC_1LA0RD_0RC1LB_0LB1RD	SP	closure	phase 0 fill narrows by 1: LadderFam states f_s : nat
+1RB1LC_1LA0RD_0RC1LB_0LC1RD	SP	finder	families found but none closed
+1RB1LC_1LA0RD_1LA1LB_0LA1RD	SP	closure	phase 0 fill narrows by 1: LadderFam states f_s : nat
+1RB1LC_1LA0RD_1LA1LB_0LB1RD	SP	closure	phase 0 fill narrows by 1: LadderFam states f_s : nat
+1RB1LC_1LA0RD_1LA1LB_0LC1RD	SP	finder	families found but none closed
+1RB1LC_1LA0RD_1RB1LB_0LA1RD	SP	closure	phase 2 fill narrows by 1: LadderFam states f_s : nat
+1RB1LC_1LA1RA_0RB0LD_0RA1LD	SP	finder	time cap
+1RB1LC_1LA1RB_0LB0LD_0RA1LC	SP	finder	families found but none closed
+1RB1LC_1LA1RB_1LB0LD_0RA1LC	SP	finder	families found but none closed
+1RB1LC_1LA1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+1RB1LC_1LA1RC_1RB0LD_0RC1LD	QH	finder	families found but none closed
+1RB1LC_1LA1RD_0RD0LA_1RB0LC	QH	finder	families found but none closed
+1RB1LC_1LA1RD_1LA0RD_0LC0RB	QH	finder	families found but none closed
+1RB1LC_1LB1RA_0LC0LD_0RA0RD	DN	finder	families found but none closed
+1RB1LC_1LB1RA_0RB0LD_0RA1LD	SP	finder	time cap
+1RB1LC_1LB1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+1RB1LC_1LC1RA_0LC0LD_0RA0RD	DN	finder	families found but none closed
+1RB1LC_1LC1RA_0RB0LD_0RA1LD	SP	finder	time cap
+1RB1LC_1LC1RC_1LA0RD_0LA1RD	SP	finder	families found but none closed
+1RB1LC_1LC1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+1RB1LC_1RC0LA_1RD1LA_0LB0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LC_1RC0RB_1LD0LC_1LA1RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LC_1RC0RB_1LD1RC_1LA0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LC_1RC1RC_1LA0RD_0LC1RD	QH	finder	families found but none closed
+1RB1LC_1RC1RD_1LA0RD_0LC0RB	QH	finder	families found but none closed
+1RB1LD_0LB1RC_0LD0RB_1LA0RC	QH	finder	families found but none closed
+1RB1LD_0LC0RB_1RA0LD_1RC1LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LD_0LC0RD_0LA1RC_1LA0RC	SP	finder	families found but none closed
+1RB1LD_0LC1RA_0RA1LC_0RB0LC	SP	finder	time cap
+1RB1LD_0LC1RB_0LA1RD_1LC0RB	SP	finder	families found but none closed
+1RB1LD_0LC1RB_0RC1LA_1LC0RB	SP	finder	families found but none closed
+1RB1LD_0LC1RB_1LA0RB_1RB1LC	SP	finder	families found but none closed
+1RB1LD_0LC1RB_1RB1LA_1LC0RB	SP	finder	families found but none closed
+1RB1LD_0LC1RB_1RD1LA_1LC0RB	SP	finder	families found but none closed
+1RB1LD_0LC1RD_0LA1RC_1LA0RC	SP	finder	families found but none closed
+1RB1LD_0LC1RD_0LD1RC_1LA0RC	QH	finder	families found but none closed
+1RB1LD_0RC0RA_1RD1LC_0LA1RB	QH	finder	families found but none closed
+1RB1LD_0RC0RB_1LC0LA_1LA0LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LD_0RC1LB_1LA1RD_1RC0LB	SP	finder	families found but none closed
+1RB1LD_0RC1RC_0LD0RB_1LA0RC	QH	finder	families found but none closed
+1RB1LD_0RC1RD_0LD1RC_1LA0RC	QH	finder	families found but none closed
+1RB1LD_1LB0RC_1LA1RC_0LC0LA	SP	finder	families found but none closed
+1RB1LD_1LB0RC_1LA1RC_1LC0LA	SP	finder	families found but none closed
+1RB1LD_1LC0RB_0LD1RA_1LC1RB	QH	finder	time cap
+1RB1LD_1LC0RB_1RD0LC_1LA1RB	DN	finder	time cap
+1RB1LD_1LC1RA_0RA1LC_0RB0LC	SP	finder	time cap
+1RB1LD_1LC1RA_0RB0LC_0RA0LD	DN	finder	families found but none closed
+1RB1LD_1LC1RD_0LA1RC_1LA0RC	SP	finder	families found but none closed
+1RB1LD_1LC1RD_0LD1RC_1LA0RC	QH	finder	families found but none closed
+1RB1LD_1RC0RA_1LA0RD_0LA1RB	QH	finder	families found but none closed
+1RB1LD_1RC0RA_1LA1LD_0LC0LB	QH	finder	families found but none closed
+1RB1LD_1RC0RA_1LA1RB_0LA1RB	QH	finder	families found but none closed
+1RB1LD_1RC0RA_1LB0RD_0LA1RB	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LD_1RC0RA_1LB1RB_0LA1RB	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LD_1RC0RB_0LA0RC_1LA0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LD_1RC0RB_0LA1LB_0LD1RB	QH	finder	families found but none closed
+1RB1LD_1RC0RB_0LD1RA_0LA0LA	SP	finder	families found but none closed
+1RB1LD_1RC0RB_0LD1RA_1RA0LA	SP	finder	families found but none closed
+1RB1LD_1RC0RB_0LD1RA_1RC0LA	SP	finder	families found but none closed
+1RB1LD_1RC0RB_1LA1RC_1LA0LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LD_1RC0RB_1LA1RC_1LC0LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LD_1RC0RB_1LD1RD_1LA0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LD_1RC0RB_1RD0LD_1LA0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LD_1RC0RB_1RD1RA_1LA0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LD_1RC0RB_1RD1RC_1LA0LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1LD_1RC0RD_0LD0RB_1LB0LA	SP	finder	families found but none closed
+1RB1LD_1RC1LA_1LB0RB_0LC0LA	SP	finder	families found but none closed
+1RB1LD_1RC1LB_0LD0RB_1LA0LA	SP	finder	families found but none closed
+1RB1LD_1RC1RA_0LD0RB_1LB0LA	SP	finder	families found but none closed
+1RB1LD_1RC1RA_1LA0RC_1RC0LD	DN	finder	families found but none closed
+1RB1LD_1RC1RC_0LD0RB_1LA0RC	QH	finder	families found but none closed
+1RB1LD_1RC1RD_0LA1RC_1LA0RC	SP	finder	families found but none closed
+1RB1LD_1RC1RD_0LD1RC_1LA0RC	QH	finder	families found but none closed
+1RB1RA_0LB1LC_0RA1LD_0RA0LC	SP	finder	time cap
+1RB1RA_0LB1LC_0RA1LD_0RB0LC	SP	finder	time cap
+1RB1RA_0LC0RB_0LA1LD_0RA1LC	DN	finder	families found but none closed
+1RB1RA_0LC0RB_0LD1LC_0RA1LD	DN	finder	families found but none closed
+1RB1RA_0LC0RB_1LC1LD_0RA0LD	DN	finder	families found but none closed
+1RB1RA_0LC0RC_1RA0LD_1RC1LC	DN	finder	families found but none closed
+1RB1RA_0LC1LB_0RC1LD_0RA0LD	DN	finder	time cap
+1RB1RA_0LC1LB_0RD1LD_0RA0LD	DN	finder	time cap
+1RB1RA_0LC1LC_0RA1LD_0RA0LC	SP	finder	time cap
+1RB1RA_0LC1LC_0RA1LD_0RB0LC	SP	finder	time cap
+1RB1RA_1LB1LC_0RA1LD_0RA0LC	SP	finder	time cap
+1RB1RA_1LB1LC_0RA1LD_0RB0LC	SP	finder	time cap
+1RB1RA_1LB1RC_0LD0RB_0LA1LD	SP	finder	families found but none closed
+1RB1RA_1LC---_0RA0LD_0RB0LC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RA_1LC0LB_1RD1LB_1RA0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RA_1LC0RA_1LD0RD_1RB0LB	SP	finder	families found but none closed
+1RB1RA_1LC0RA_1LD0RD_1RD0LB	SP	finder	families found but none closed
+1RB1RA_1LC0RA_1RB1LD_0LB0LD	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RA_1LC1LC_0RA1LD_0RA0LC	SP	finder	time cap
+1RB1RA_1LC1LC_0RA1LD_0RB0LC	SP	finder	time cap
+1RB1RA_1LC1LD_0RA0LD_0RA1LC	SP	finder	time cap
+1RB1RA_1LC1LD_0RB0LD_0RA1LC	SP	finder	time cap
+1RB1RA_1LC1LD_0RD0LC_1LB0RA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RA_1LC1RB_0RB1LD_1RA0LC	SP	finder	families found but none closed
+1RB1RA_1LC1RD_1LD1LB_0RA0RB	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RA_1LC1RD_1RA1LB_0RA0RB	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RA_1RC1LD_0LB0RC_1LA1LB	SP	closure	fill arm: no chain at any threshold 1..6, stride 1..4 or copy split
+1RB1RA_1RC1LD_0LD0RC_1LA1LB	SP	closure	fill arm: no chain at any threshold 1..6, stride 1..4 or copy split
+1RB1RA_1RC1RC_0LD0RB_0LA1LD	SP	finder	families found but none closed
+1RB1RB_0LC0RA_0LD1LC_1RA1RD	SP	finder	families found but none closed
+1RB1RB_0LC1RD_1LA1LC_0LA0RB	SP	finder	time cap
+1RB1RB_0LC1RD_1LA1LC_0LC0RB	SP	finder	time cap
+1RB1RB_0LC1RD_1LB1LA_1LB0RD	QH	finder	time cap
+1RB1RB_1LC0RD_0RA1LB_0LB1RD	QH	finder	families found but none closed
+1RB1RB_1LC0RD_0RA1LB_0LC1RD	SP	finder	families found but none closed
+1RB1RB_1LC0RD_1RA1LB_0LB1RD	QH	finder	families found but none closed
+1RB1RB_1LC1RA_0RA1LD_0RB0LD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RB_1LC1RD_0LB1LA_1LC0RD	QH	finder	time cap
+1RB1RC_0LA0RC_0LD1RB_1LA1LD	SP	finder	time cap
+1RB1RC_0LC0RB_1RA0LD_1LA1LD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RC_0LC1LA_1LB1RD_1LB0RD	QH	finder	time cap
+1RB1RC_0LC1RB_1LD0RB_0RA1LC	QH	finder	families found but none closed
+1RB1RC_0LC1RB_1LD0RB_1RA1LC	QH	finder	families found but none closed
+1RB1RC_0RC0LB_1LD1RA_0RA1LB	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RC_0RC1LB_1LD1RD_1RA0LB	SP	finder	families found but none closed
+1RB1RC_0RC1RB_0LD0RB_1LD0LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RC_1LA0LB_1LD0RD_1LB0RC	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RC_1LA1LD_0RC0RB_0LD0LA	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RC_1LA1LD_1LA0RC_0RA0LB	DN	finder	time cap
+1RB1RC_1LA1RA_0RC1LD_1LB0LD	DN	finder	time cap
+1RB1RC_1LC0LB_1RD1LB_1RA0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RC_1LC0LD_1LD1RA_0RC1LB	SP	finder	families found but none closed
+1RB1RC_1LC0RB_1RA1LD_1RB0LD	DN	finder	families found but none closed
+1RB1RC_1LC1LA_0LB1RD_1LC0RD	QH	finder	time cap
+1RB1RC_1LC1LB_1LD1RA_0RC0LD	SP	closure	fill arm: no chain at any threshold 1..6, stride 1..4 or copy split
+1RB1RC_1LC1RA_1LD0LC_0RD0RB	SP	finder	time cap
+1RB1RC_1LC1RA_1RB0LD_0RA1LD	SP	finder	families found but none closed
+1RB1RC_1LC1RA_1RB0LD_0RB1LD	SP	closure	phase 1 fill narrows by 1: LadderFam states f_s : nat
+1RB1RC_1LC1RA_1RB0LD_0RC1LD	SP	closure	phase 0 fill narrows by 1: LadderFam states f_s : nat
+1RB1RD_0LC0LA_1LC1LA_0RB0RD	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RD_0LC0LD_1LA1RC_1LB0RD	DN	finder	time cap
+1RB1RD_0LC0RA_1RA0LD_0RB1LC	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RD_0LC0RB_1RA0LD_1LC0RA	SP	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RD_0LC0RD_1LA1LC_0LC1RB	SP	finder	time cap
+1RB1RD_0LC1LB_0RA1LC_1RA0RB	SP	closure	interior arm: no chain at any threshold 0..6 and stride 1..4, with or without a digit of lookahead
+1RB1RD_0LC1RB_0RA1LD_1LC0RB	SP	finder	families found but none closed
+1RB1RD_0LC1RB_1RA1LD_1LC0RB	SP	finder	families found but none closed
+1RB1RD_1LC0RD_1RB1LB_0LB0RA	QH	finder	families found but none closed
+1RB1RD_1LC1LB_0RA0LB_1LD0RA	DN	finder	families found but none closed
+1RB1RD_1LC1LB_1RA0LB_0RB0LD	QH	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RD_1LC1RA_0RB1LC_1LD0LC	SP	finder	families found but none closed
+1RB1RD_1RC0LB_1LD0RC_1RA1LB	DN	finder	no value family: no anchor whose counter side decodes over ladder-named digits with +1 steps
+1RB1RD_1RC0RA_1LD0LC_0RB1LC	SP	finder	families found but none closed
+1RB1RD_1RC1LC_1LB0RD_0LC0RA	QH	finder	families found but none closed
