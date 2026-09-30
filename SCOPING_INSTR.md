@@ -3867,7 +3867,7 @@ python3 tools/closeouttr/sp_ladder_batch.py vf_s*.jsonl --tag SPB --chunk 40
 python3 tools/closeouttr/spb/tally.py       # the counts above
 ```
 
-#### 7.4.BX The small classes: class ED closed, the cube counters need a non-linear liveness (2026-09-29)
+#### 7.4.BX The small classes: class ED closed, the rank tier at window 8 takes 12 bouncers, the cube counters need a non-linear liveness (2026-09-29)
 
 Workstream BX (batch tag `BX`), over the small classes of
 `dx/char_all.tsv` still open: 89 DN multi-block bouncers (`bouncer` /
@@ -3943,13 +3943,23 @@ component) does not separate them.  So the 2-adic argument needs a
 per-path invariant, not just a per-node one.  This
 is research, and it likely also covers the 24 "no ranking" rows of §7.4.TI.
 
-**The 89 multi-block bouncers: none boarded.**
+**The 89 multi-block bouncers: 12 boarded, by the rank tier at window 8.**
 
 | route | result |
 |---|---|
 | TI, `--maxfam 400 --maxleaf 3000 --maxsteps 20000`, 300 s | 86 too many families, 3 leaf too long |
 | (earlier) RepWL 900 s with the ladder and wide L (BR), rank tier at window 7 (BR), multi-block RepWL at 240 s (MB) | all missed |
-| n-gram rank tier `rk:8:0` and `ng:7:0`, 600 s, a 12-row sample plus the 3 misc rows | NGRESULT |
+| n-gram tier `ng:7:0`, 600 s, a 12-row sample | 0 of 12 (all false in 3-30 s) |
+| **rank tier `rk:8:0`** (`DecideTr.rank_tier_tr tm 8 0 200000 512`), 600 s, all 89 | **12 certified** (4 of the 12-row sample, 8 of the other 77); 40 false, 37 timeouts |
+| the same rung on the 29 cube counters | 0 (all false) |
+
+The 12 are boarded in `CBT_BX_02..08` (2 rows a batch, 1 in `BX_08`).  The
+kernel re-runs the search: 33-119 s a row in the probe, and 1.7-3.4 min a
+batch in the container with 3 probes running.  All seven batches are in
+`ci_costs.tsv`.  Window 7 had taken none of these 89 rows (§7.4.BR's 4 hits
+were other rows), so window 8 is the rung that pays here.  37 rows time out
+at 600 s, so a longer budget or window 9 is the next cheap thing to try on
+this class.
 
 Read by hand, the clean-looking ones (e.g. `(0111)^a 0^4 (1100)^b (110)^c`,
 `(01001)^a 0 1^4 (01011)^b`) have a middle region whose phase changes
@@ -3960,17 +3970,20 @@ the counter segment.
 
 **The 3 `linear` / `other` rows: none boarded.**  Translated cyclers (2M
 steps), TI (2 too many families, 1 leaf too long), multi-block RepWL at
-900 s with `--pmax 32` (no closure, 204-216 candidates each) and the
-n-gram sample above all miss.  `1RB1RC_1LC0RA_0LB0LD_1LA1LD` is a
+900 s with `--pmax 32` (no closure, 204-216 candidates each), `ng:7:0`
+(false) and `rk:8:0` (all three time out at 600 s) all miss.  `1RB1RC_1LC0RA_0LB0LD_1LA1LD` is a
 multi-block tape of growing `1^n` and `(01)^n` runs (extent 34,312 at 1e8),
 and the other two have tens of thousands of junk cells.
 
-**Yield: 8 of 129 boarded** (`CBT_BX_00..01`).  All rows: 2,772 ->
-**2,764**.  Residue: 121 rows (`bx/bnc.txt`, `bx/cube.txt`, `bx/misc.txt`).
-Two routes would take most of it, and both are research: TI's counter
-segment (13 cube rows and most of the 89 bouncers, which TI reports as
-"too many families") and the 2-adic lexicographic liveness above (15 cube
-rows, and probably TI's 24).
+**Yield: 20 of 129 boarded** (`CBT_BX_00..08`: 8 ED, 12 bouncers).  All
+rows: 2,772 -> **2,752**.  Residue: 109 rows (77 bouncers, 29 cube
+counters, 3 misc; the lists are `bx/bnc.txt`, `bx/cube.txt`, `bx/misc.txt`
+less the boarded rows, per-row verdicts in `bx/ng_rk8.json`).  The cheap
+next step is `rk:8:0` or `rk:9:0` at a longer budget on the 37 bouncers
+that timed out.  Beyond that, two routes would take most of the residue,
+and both are research: TI's counter segment (13 cube rows and most of the
+bouncers, which TI reports as "too many families") and the 2-adic
+lexicographic liveness above (15 cube rows, and probably TI's 24).
 
 #### 7.4.HY2 HY's residue: a hybrid glue over any positional counter with a top table, 54 boarded (2026-09-29)
 
