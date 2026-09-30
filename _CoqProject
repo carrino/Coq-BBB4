@@ -556,6 +556,7 @@ theories/Checkers/IRules/EngineKS.v
 theories/Checkers/IRules/RulesBlkPfx.v
 theories/Checkers/IRules/MetaBlkPfx.v
 theories/Checkers/IRules/MetaBlkPfxTr.v
+theories/Checkers/IRules/MetaBlkPfxMVTr.v
 theories/Checkers/IRules/MetaBlkPfxQHTr.v
 theories/Checkers/IRules/StreamEq.v
 theories/Checkers/IRules/MetaBlkPfxV5.v
