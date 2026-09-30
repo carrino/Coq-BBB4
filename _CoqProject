@@ -2557,6 +2557,7 @@ theories/Machines/LadderTr/LDRT_1RB1RC_1LC1RC_1RA0LD_0RB1LD.v
 theories/Machines/LadderTr/LDRT_1RB1RD_0LC1LB_0RD1LC_1RA0RB.v
 theories/Machines/LadderTr/LDRT_1RB1RD_1LC0RD_1LA1LB_0LB1RA.v
 theories/Machines/LadderTr/LDRT_1RB1RD_1LC1LB_0LD0LB_0RD0RA.v
+theories/Machines/LadderTr/LDRT_1RB1RD_1LC1LB_0RA0LB_1LD0RA.v
 theories/Checkers/LadderCheckQHTr.v
 theories/Checkers/LadderCheckFibTr.v
 theories/Checkers/LadderCheckLiftTr.v
@@ -11522,6 +11523,7 @@ theories/CloseoutTr/CBT_LE_05.v
 theories/CloseoutTr/CBT_LE_06.v
 theories/CloseoutTr/CBT_LE_07.v
 theories/CloseoutTr/CBT_LE_08.v
+theories/CloseoutTr/CBT_LE_09.v
 theories/CloseoutTr/CBT_MB_00.v
 theories/CloseoutTr/CBT_MB_01.v
 theories/CloseoutTr/CBT_MB_02.v
