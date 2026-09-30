@@ -1,0 +1,41 @@
+spec	ratio	irules_2M	why_2M	wall_2M	probe_2M	irules_10M	why_10M	wall_10M	probe_10M	irules_50M	why_50M	wall_50M	probe_50M	triglue
+1RB0RC_1LC0LD_1RA0LB_1LB1LC	4	irules		0	true/plain	irules		0	true/v5c	irules		1	true/v5c	ok
+1RB0LD_1RC0RA_1LD0RB_1LB0LC	4	undecided	noproof	146		undecided	noproof	1014		running				too many families
+1RB1LB_1RC0RD_1LD1RA_0LA1LD	4	undecided	nofit	0		timeout		1800		running				ok
+1RB1LD_1LC1RC_1RD0LB_1LA0RC	4	irules		0	true/plain	irules		1	true/v5c	irules		1	true/v5c	norank
+1RB0LA_1LC1RC_1LA1RD_0RB0RB	4	undecided	nofit	0		undecided	nofit	0		undecided	nofit	0		too many families
+1RB1LC_1RC---_0LD0RD_0LA1LD	4	irules		725	true/plain	timeout		1800		running				norank
+1RB0LC_1LC1RD_1RB1LA_0LD1RA	4	irules		176	true/v5c	irules		1297	true/v5c	irules		1660	true/v5c	too many families
+1RB1LB_1RC1LD_1LA0RC_1LB0LA	4	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		too many families
+1RB0RD_1LC0LB_1LD1LB_1RA0LC	4	undecided	nofit	0		undecided	nofit	1		undecided	nofit	1		too many families
+1RB1LD_1LC0RB_1RA1LA_1LB0LC	4	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		too many families
+1RB1RD_1LC1LA_0RA1LB_0LB0RA	4	irules		0	true/v5c	irules		0	true/v5c	irules		1	true/v5c	too many families
+1RB1LD_1LC0RB_1RA1LA_1RA0LC	4	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		too many families
+1RB1RA_1LC1LB_0RA1LD_0LB0LC	2.25	undecided	nofit	0		undecided	nofit	0		undecided	nofit	0		norank
+1RB1LB_0RC0LA_1LC0LD_1RA1LD	2.25	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		ok
+0RB0LD_1RC1RB_1LA1LC_1LC1LA	2.25	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		norank
+0RB1LA_1RC0LD_0LA1RB_1RB1LB	2.25	undecided	nofit	0		undecided	nofit	0		undecided	nofit	0		ok
+1RB1LD_1RC1RB_1LD1RD_1LA0RC	2.25	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		ok
+1RB1RD_1LC1LD_0RA1LC_1RA0LB	2.25	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		ok
+1RB0LD_0LC1RA_1RD1LC_1RA1LA	2.25	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		ok
+1RB1LB_1RC0LA_1LD1RB_0LA1LD	2.25	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		ok
+1RB1RA_0LC1LB_0RC1LD_1RA0RB	2.25	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		ok
+1RB1LB_1RC0LA_0LD1RB_0LA1LD	2.25	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		ok
+0RB1LA_1LA1LC_0LD0LC_1RD1RB	9	irules		0	true/plain	irules		1	true/v5c	irules		1	true/v5c	
+0RB1LC_1RC0LD_1LA0RD_1RA0LA	9	irules		12	true/plain	irules		65	true/v5c	irules		60	true/v5c	
+1RB0LD_0LC1RA_1RD1LC_1LB1LA	9	irules		601	true/plain	irules		1424	true/v5c	irules		1109	true/v5c	ok
+1RB1RA_1LC0RD_0RA1LB_1RC1RB	9	irules		39	true/plain	irules		341	true/v5c	irules		266	true/v5c	ok
+1RB1RD_0RC1LD_1RD1RC_1LB0RA	9	irules		20	true/plain	irules		57	true/v5c	irules		30	true/v5c	ok
+0RB1LC_1RC1RB_1LA0RD_1RA1RC	9	irules		40	true/plain	irules		265	true/v5c	irules		266	true/v5c	
+1RB1LB_1LC0RA_1RD0LB_1LB1RC	2	irules		0	true/v5c	irules		0	true/v5c	irules		0	true/v5c	norank
+0RB1LD_1LC1RC_1RD0LB_1LA0RC	2	irules		0	true/v5c	irules		0	true/v5c	irules		1	true/v5c	
+1RB1LB_1LC0RA_1RD0LB_0LA1RC	2	irules		0	true/v5c	irules		0	true/v5c	irules		0	true/v5c	norank
+1RB0LD_0LC1RA_1RD1LD_1LA0RC	2	irules		0	true/v5c	irules		1	true/v5c	irules		1	true/v5c	norank
+1RB1RA_0LC0RD_1LA1LC_0RA1RB	other	undecided	nofit	0		undecided	nofit	0		undecided	nofit	0		norank
+1RB1RA_0LC1RD_1LA1LC_1LC0RB	other	undecided	nofit	0		undecided	nofit	0		undecided	nofit	0		norank
+0RB0RC_1RC1RB_0LD1RA_1LB1LD	other	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		norank
+1RB1RA_0LC0RD_1LA1LC_0LC1RB	other	undecided	nofit	0		undecided	nofit	0		undecided	nofit	0		norank
+1RB1RA_1LB0RC_1RA0LD_1LC1LD	other	undecided	nofit	0		undecided	nofit	0		undecided	noproof	1		too many families
+1RB1RD_0LC0LD_1LD1LC_1RA1LB	other	irules		0	true/plain	irules		1	true/v5c	irules		1	true/v5c	leaf too long
+1RB0RB_1LC1RB_0LD1LC_1RD0RA	other	undecided	nofit	0		irules		0	true/v5c	irules		0	true/v5c	ok
+1RB1RA_1LC0RA_1RA1LD_1LC0LB	other	undecided	nofit	0		undecided	nofit	0		undecided	nofit	1		too many families
