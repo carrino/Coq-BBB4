@@ -26,10 +26,13 @@
     - the inward check [xmin <= M xmin + cc] with [M >= 0] makes the
       bounds an invariant of [mstep] ([mstep_bge]).
 
-    The anchor gate and the transition-level recurrence argument are
-    [MetaBlkPfxTr]'s, with [nu] in place of [K].
+    The anchor gate is [MetaBlkPfxTr]'s, with [nu] in place of [K]; the
+    recurrence argument is [MetaTileTr.meta_tile_neverqhtr].  There are
+    two checkers, one per replay engine: the plain [MetaBlkPfx] one and
+    the v5c one of [MetaBlkPfxV5c] (see [MetaBlkPfxV5cTr]).
 
-    [Print Assumptions irulesblkmv_check_neverqhtr_sound] must be
+    [Print Assumptions irulesblkmv_check_neverqhtr_sound] and
+    [irulesblkmv_check_neverqhtr_v5c_sound] must be
     [functional_extensionality_dep] only. *)
 
 From Coq Require Import Arith ZArith Lia Bool List Setoid.
@@ -37,7 +40,9 @@ From BBB4 Require Import BBB4_Statement BBBT4_Statement CTape.
 From BBB4.Checkers Require Import Cycle.
 From BBB4.Checkers.IRules Require Import AnchorVisits AnchorVisitsTr MetaTr.
 From BBB4.Checkers.IRules Require Import Expr RLE Engine Rules Meta RulesK
-     EngineK RulesBlk MetaBlk EngineKS RulesBlkPfx.
+     EngineK RulesBlk MetaBlk EngineKS RulesBlkPfx MetaBlkPfx StreamEq
+     MetaBlkPfxV5 Reblock MetaBlkPfxV5b BlkClosure StreamEq2 MetaBlkPfxV5c
+     MetaTileTr.
 Import ListNotations.
 Open Scope Z_scope.
 
@@ -185,16 +190,76 @@ Proof.
   rewrite !mvwant_shift. reflexivity.
 Qed.
 
-(** ** The checker *)
+(** ** The checkers
+
+    Two engines: the plain [MetaBlkPfx] replay, and the v5c one
+    ([MetaBlkPfxV5c]: closed block table, re-blocking replay, multi-run
+    cell-stream end-match), whose pieces are all generic in the bounds
+    vector and the valuation.  The meta layer is the same for both;
+    [mv_meta_sound] proves it once, from the engine's cycle. *)
+
+Definition mv_gate (tm : TM) (tbl : BTbl) (cert : BIRCertMV) (F : list Tr)
+    : bool :=
+  match csteps_tvis tm (cmv_anchor cert) c0 tvm_empty with
+  | Some (q, (l, h, r), tvis) =>
+      st_eqb q (cmv_st cert) && sym_eqb h (cmv_hs cert) &&
+      lpad_eqb l (bdside tbl (xnu (cmv_x0 cert))
+                    (map mv_start (cmv_TL cert))) &&
+      lpad_eqb r (bdside tbl (xnu (cmv_x0 cert))
+                    (map mv_start (cmv_TR cert))) &&
+      forallb (fun t => implb (tvm_get tvis t) (tr_in t F)) all_Instr
+  | None => false
+  end.
+
+Definition mv_scalars (cert : BIRCertMV) : bool :=
+  mv_le (cmv_xmin cert) (cmv_x0 cert) &&
+  forallb cf_nonneg (cmv_M cert) &&
+  mv_inward (cmv_M cert) (cmv_cc cert) (cmv_xmin cert).
+
+Lemma mv_meta_sound : forall tm tbl cert F,
+  mv_scalars cert = true ->
+  mv_gate tm tbl cert F = true ->
+  (forall nu, bge (cmv_xmin cert) nu ->
+     exists n, (1 <= n)%nat /\
+       Reach tm F n (bsem tbl nu (bmv_start cert))
+                    (bsem tbl (mstepc cert nu) (bmv_start cert))) ->
+  NeverQuasiHaltsTr tm.
+Proof.
+  intros tm tbl cert F Hs Hg Hcycle.
+  unfold mv_scalars in Hs.
+  apply andb_prop in Hs as [Hs Hinward].
+  apply andb_prop in Hs as [Hx0 HM].
+  unfold mv_gate in Hg.
+  destruct (csteps_tvis tm (cmv_anchor cert) c0 tvm_empty)
+    as [[[q1 [[l1 h1] r1]] tvis]|] eqn:Hanchv; [|discriminate].
+  pose proof (csteps_tvis_csteps _ _ _ _ _ _ Hanchv) as Hanch.
+  apply andb_prop in Hg as [Hg Hpre].
+  apply andb_prop in Hg as [Hg HpadR].
+  apply andb_prop in Hg as [Hg HpadL].
+  apply andb_prop in Hg as [Hq1 Hh1].
+  apply st_eqb_spec in Hq1. apply sym_eqb_spec in Hh1.
+  apply (meta_tile_neverqhtr tm (nat -> Z) (bge (cmv_xmin cert))
+           (fun nu => bsem tbl nu (bmv_start cert)) (mstepc cert) F
+           (cmv_anchor cert) (xnu (cmv_x0 cert)) (q1, (l1, h1, r1)) tvis);
+    [| exact (mv_le_bge _ _ Hx0) | | exact Hcycle | exact Hanchv | exact Hpre].
+  - rewrite <- lift_c0.
+    rewrite (csteps_lift _ _ _ _ Hanch).
+    f_equal.
+    unfold bsem, bdcfg, bmv_start. cbn [b_st b_hs b_L b_R].
+    rewrite !lift_cc, Hq1, Hh1.
+    rewrite (lpad_eqb_lift _ _ HpadL), (lpad_eqb_lift _ _ HpadR).
+    reflexivity.
+  - intros nu Hb. exact (mstep_bge _ _ _ nu HM Hinward Hb).
+Qed.
+
+(** *** The plain engine *)
 
 Definition irulesblkmv_check_neverqhtr (tm : TM) (cert : BIRCertMV)
     (cfuel fuel : nat) : bool :=
   let blks := cmv_blks cert in
   let tbl := mk_tbl blks in
   let lo := cmv_xmin cert in
-  mv_le lo (cmv_x0 cert) &&
-  forallb cf_nonneg (cmv_M cert) &&
-  mv_inward (cmv_M cert) (cmv_cc cert) lo &&
+  mv_scalars cert &&
   match check_rulesBlkP tm tbl blks cfuel fuel (cmv_rules cert) with
   | None => false
   | Some rules =>
@@ -202,19 +267,7 @@ Definition irulesblkmv_check_neverqhtr (tm : TM) (cert : BIRCertMV)
               (fun c => bend_eqb tbl lo c (bmv_want cert))
               (false, false) fuel false (bmv_start cert) with
       | None => false
-      | Some (_, F) =>
-          match csteps_tvis tm (cmv_anchor cert) c0 tvm_empty with
-          | Some (q, (l, h, r), tvis) =>
-              st_eqb q (cmv_st cert) && sym_eqb h (cmv_hs cert) &&
-              lpad_eqb l (bdside tbl (xnu (cmv_x0 cert))
-                            (map mv_start (cmv_TL cert))) &&
-              lpad_eqb r (bdside tbl (xnu (cmv_x0 cert))
-                            (map mv_start (cmv_TR cert))) &&
-              forallb (fun t =>
-                         implb (tvm_get tvis t)
-                               (tr_in t F)) all_Instr
-          | None => false
-          end
+      | Some (_, F) => mv_gate tm tbl cert F
       end
   end.
 
@@ -228,118 +281,87 @@ Proof.
   set (tbl := mk_tbl blks) in *.
   set (lo := cmv_xmin cert) in *.
   pose proof (mk_tbl_raw blks) as Hraw.
-  apply andb_prop in H as [H Hrest].
-  apply andb_prop in H as [H Hinward].
-  apply andb_prop in H as [Hx0 HM].
+  apply andb_prop in H as [Hs H].
   destruct (check_rulesBlkP tm tbl blks cfuel fuel (cmv_rules cert))
     as [rules|] eqn:Hcr; [|discriminate].
   destruct (breplayKP tm tbl blks lo cfuel rules
               (fun c => bend_eqb tbl lo c (bmv_want cert))
               (false, false) fuel false (bmv_start cert)) as [[cend F]|]
     eqn:Hrep; [|discriminate].
-  destruct (csteps_tvis tm (cmv_anchor cert) c0 tvm_empty)
-    as [[[q1 [[l1 h1] r1]] tvis]|] eqn:Hanchv; [|discriminate].
-  pose proof (csteps_tvis_csteps _ _ _ _ _ _ Hanchv) as Hanch.
-  apply andb_prop in Hrest as [Hrest Hpre].
-  apply andb_prop in Hrest as [Hrest HpadR].
-  apply andb_prop in Hrest as [Hrest HpadL].
-  apply andb_prop in Hrest as [Hq1 Hh1].
-  apply st_eqb_spec in Hq1. apply sym_eqb_spec in Hh1.
-  assert (Hanchor : stepn tm (cmv_anchor cert) InitES =
-                    Some (bsem tbl (xnu (cmv_x0 cert)) (bmv_start cert))).
-  { rewrite <- lift_c0.
-    rewrite (csteps_lift _ _ _ _ Hanch).
-    f_equal.
-    unfold bsem, bdcfg, bmv_start. cbn [b_st b_hs b_L b_R].
-    rewrite !lift_cc, Hq1, Hh1.
-    rewrite (lpad_eqb_lift _ _ HpadL), (lpad_eqb_lift _ _ HpadR).
-    reflexivity. }
-  assert (Hcycle : forall nu, bge lo nu ->
-    exists n, (1 <= n)%nat /\
-      Reach tm F n (bsem tbl nu (bmv_start cert))
-                   (bsem tbl (mstepc cert nu) (bmv_start cert))).
-  { intros nu Hb.
-    destruct (breplayKP_sound tm tbl blks lo cfuel rules _
-                (false, false) fuel false
-                (bmv_start cert) cend F Hraw Hrep nu [] [] Hb
-                (fun _ => eq_refl) (fun _ => eq_refl))
-      as (Hend & n & HR & Hpos).
-    { intros r Fr c1 c2 Hin Happ.
-      exact (ruleBlkPfx_apply_sound tm tbl lo r Fr c1 c2
-               (false, false) Hraw Happ
-               (check_rulesBlkP_sound tm tbl blks cfuel fuel _ _ Hraw Hcr
-                  r Fr Hin)
-               nu Hb [] [] (fun _ => eq_refl) (fun _ => eq_refl)). }
-    exists n. split; [apply Hpos; reflexivity|].
-    rewrite !bsemX_nil in HR.
-    setoid_rewrite (bend_eqb_bsem tbl lo cend (bmv_want cert)
-                      nu Hraw Hb Hend) in HR.
-    setoid_rewrite (bmv_want_shift tbl cert nu) in HR.
-    exact HR. }
-  assert (Hinw : forall nu, bge lo nu -> bge lo (mstepc cert nu)).
-  { intros nu Hb. unfold mstepc.
-    exact (mstep_bge _ _ _ nu HM Hinward Hb). }
-  assert (Htiles : forall i, exists N nu,
-    (cmv_anchor cert + i <= N)%nat /\ bge lo nu /\
-    stepn tm N InitES = Some (bsem tbl nu (bmv_start cert)) /\
-    forall m, (cmv_anchor cert <= m)%nat -> (m < N)%nat ->
-      exists cm, stepn tm m InitES = Some cm /\ In (trans_of cm) F).
-  { induction i as [|i IH].
-    - exists (cmv_anchor cert), (xnu (cmv_x0 cert)).
-      split; [lia|]. split; [exact (mv_le_bge _ _ Hx0)|].
-      split; [exact Hanchor|].
-      intros m Hm1 Hm2. lia.
-    - destruct IH as (N & nu & HN & Hb & Hstep & Hcov).
-      destruct (Hcycle nu Hb) as (n & Hn1 & HS & HC & _).
-      exists (N + n)%nat, (mstepc cert nu).
-      split; [lia|]. split; [apply Hinw; exact Hb|]. split.
-      + rewrite stepn_add, Hstep. exact HS.
-      + intros m Hm1 Hm2.
-        destruct (Nat.lt_ge_cases m N) as [Hlt | Hge].
-        * exact (Hcov m Hm1 Hlt).
-        * destruct (HC (m - N)%nat ltac:(lia)) as (cm & Hcm & Hin).
-          exists cm. split; [|exact Hin].
-          replace m with (N + (m - N))%nat by lia.
-          rewrite stepn_add, Hstep. exact Hcm. }
-  assert (Hrec : forall t, In t F -> forall B,
-    exists m cm, (B <= m)%nat /\ stepn tm m InitES = Some cm /\
-                 trans_of cm = t).
-  { intros t Hin B.
-    destruct (Htiles B) as (N & nu & HN & Hb & Hstep & _).
-    destruct (Hcycle nu Hb) as (n & Hn1 & _ & _ & HX).
-    destruct (HX t Hin) as (m' & cm & Hm' & Hcm & Htr).
-    exists (N + m')%nat, cm.
-    split; [lia|]. split; [|exact Htr].
-    rewrite stepn_add, Hstep. exact Hcm. }
-  (* the transition-level never-quasihalting argument *)
-  intros t0 Hf B.
-  assert (Ht0 : In t0 F).
-  { destruct Hf as (n0 & cn & Hcn & Htc).
-    destruct (Nat.lt_ge_cases n0 (cmv_anchor cert)) as [Hlt | Hge].
-    - (* prefix: the instruction-mask gate *)
-      destruct (stepn_csteps tm n0 cn Hcn) as (ccn & Hccn & Hlift).
-      assert (Hm : tvm_get tvis (cinstr ccn) = true)
-        by (eapply csteps_tvis_complete; eauto).
-      rewrite <- cinstr_lift, Hlift, Htc in Hm.
-      rewrite forallb_forall in Hpre.
-      specialize (Hpre t0 (all_Instr_complete t0)).
-      rewrite Hm in Hpre. simpl in Hpre.
-      apply tr_in_sound. destruct (tr_in t0 F); [reflexivity|].
-      discriminate.
-    - (* from the anchor on: covered by the cycles *)
-      destruct (Htiles (n0 + 1 - cmv_anchor cert)%nat)
-        as (N & nu & HN & Hb & Hstep & Hcov).
-      destruct (Hcov n0 Hge ltac:(lia)) as (cm & Hcm & Hin).
-      rewrite Hcn in Hcm. injection Hcm as <-.
-      rewrite trans_of_instr_of, Htc in Hin. exact Hin. }
-  destruct (Hrec t0 Ht0 B) as (m & cm & Hm & Hcm & Htr).
-  exists m. split; [exact Hm|].
-  exists cm. split; [exact Hcm|].
-  rewrite <- trans_of_instr_of. exact Htr.
+  apply (mv_meta_sound tm tbl cert F Hs H).
+  intros nu Hb.
+  destruct (breplayKP_sound tm tbl blks lo cfuel rules _
+              (false, false) fuel false
+              (bmv_start cert) cend F Hraw Hrep nu [] [] Hb
+              (fun _ => eq_refl) (fun _ => eq_refl))
+    as (Hend & n & HR & Hpos).
+  { intros r Fr c1 c2 Hin Happ.
+    exact (ruleBlkPfx_apply_sound tm tbl lo r Fr c1 c2
+             (false, false) Hraw Happ
+             (check_rulesBlkP_sound tm tbl blks cfuel fuel _ _ Hraw Hcr
+                r Fr Hin)
+             nu Hb [] [] (fun _ => eq_refl) (fun _ => eq_refl)). }
+  exists n. split; [apply Hpos; reflexivity|].
+  rewrite !bsemX_nil in HR.
+  setoid_rewrite (bend_eqb_bsem tbl lo cend (bmv_want cert)
+                    nu Hraw Hb Hend) in HR.
+  setoid_rewrite (bmv_want_shift tbl cert nu) in HR.
+  exact HR.
 Qed.
 
-Corollary irulesblkmv_check_neverqhtr_nonhalt : forall tm cert cfuel fuel,
-  irulesblkmv_check_neverqhtr tm cert cfuel fuel = true -> NonHalt tm.
+(** *** The v5c engine *)
+
+Definition irulesblkmv_check_neverqhtr_v5c (tm : TM) (cert : BIRCertMV)
+    (cfuel fuel : nat) : bool :=
+  let blks := blk_closure tm (cmv_blks cert) v5c_closure_fuel in
+  let tbl := mk_tbl blks in
+  let lo := cmv_xmin cert in
+  mv_scalars cert &&
+  match check_rulesRB tm tbl blks cfuel fuel (cmv_rules cert) with
+  | None => false
+  | Some rules =>
+      match breplayRB tm tbl blks lo cfuel rules
+              (fun c => bend_eqb3 tbl lo c (bmv_want cert))
+              (false, false) fuel false (bmv_start cert) with
+      | None => false
+      | Some (_, F) => mv_gate tm tbl cert F
+      end
+  end.
+
+Theorem irulesblkmv_check_neverqhtr_v5c_sound : forall tm cert cfuel fuel,
+  irulesblkmv_check_neverqhtr_v5c tm cert cfuel fuel = true ->
+  NeverQuasiHaltsTr tm.
 Proof.
-  intros. eapply never_qh_tr_nonhalt, irulesblkmv_check_neverqhtr_sound; eauto.
+  intros tm cert cfuel fuel H.
+  unfold irulesblkmv_check_neverqhtr_v5c in H. cbv zeta in H.
+  set (blks := blk_closure tm (cmv_blks cert) v5c_closure_fuel) in *.
+  set (tbl := mk_tbl blks) in *.
+  set (lo := cmv_xmin cert) in *.
+  pose proof (mk_tbl_raw blks) as Hraw.
+  apply andb_prop in H as [Hs H].
+  destruct (check_rulesRB tm tbl blks cfuel fuel (cmv_rules cert))
+    as [rules|] eqn:Hcr; [|discriminate].
+  destruct (breplayRB tm tbl blks lo cfuel rules
+              (fun c => bend_eqb3 tbl lo c (bmv_want cert))
+              (false, false) fuel false (bmv_start cert)) as [[cend F]|]
+    eqn:Hrep; [|discriminate].
+  apply (mv_meta_sound tm tbl cert F Hs H).
+  intros nu Hb.
+  destruct (breplayRB_sound tm tbl blks lo cfuel rules _
+              (false, false) fuel false
+              (bmv_start cert) cend F Hraw Hrep nu [] [] Hb
+              (fun _ => eq_refl) (fun _ => eq_refl))
+    as (Hend & n & HR & Hpos).
+  { intros r Fr c1 c2 Hin Happ.
+    exact (ruleBlkPfx_apply_sound tm tbl lo r Fr c1 c2
+             (false, false) Hraw Happ
+             (check_rulesRB_sound tm tbl blks cfuel fuel _ _ Hraw Hcr
+                r Fr Hin)
+             nu Hb [] [] (fun _ => eq_refl) (fun _ => eq_refl)). }
+  exists n. split; [apply Hpos; reflexivity|].
+  rewrite !bsemX_nil in HR.
+  setoid_rewrite (bend_eqb3_bsem tbl lo cend (bmv_want cert)
+                    nu Hraw Hb Hend) in HR.
+  setoid_rewrite (bmv_want_shift tbl cert nu) in HR.
+  exact HR.
 Qed.
