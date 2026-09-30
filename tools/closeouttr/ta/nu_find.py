@@ -43,6 +43,7 @@ import ti_coq as C                              # noqa: E402
 
 RCANDS = sorted(set(Fr(p, q) for p in range(1, 28) for q in range(1, 28)))
 DEBUG = False
+EMAX = 400           # unknowns in one SCC's eigen-form search
 SMALL = set(Fr(2) ** a * Fr(3) ** b for a in range(-4, 5) for b in range(-3, 4))
 
 
@@ -220,6 +221,8 @@ def find_E(comp, cedges, nv):
             rows.append(row)
         return rows
 
+    if n > EMAX:
+        return None                # too big for exact elimination here
     base = []
     for ei in tree:
         base += rows_for(ei, Fr(1))
