@@ -245,6 +245,10 @@ def find_E(comp, cedges, nv):
             return None
         return [[sum(Wc[d][i] * kv[d] for d in range(len(Wc))) for i in range(n)] for kv in K]
 
+    def kdim(M0, M1, r, d):
+        Mr = [[x - r * y for x, y in zip(r0, r1)] for r0, r1 in zip(M0, M1)]
+        return len(rank_null(Mr, d))
+
     def ratios(M0, M1, d):
         """candidate r (positive rationals) with (M0 - r M1) singular"""
         import numpy as np
@@ -277,16 +281,14 @@ def find_E(comp, cedges, nv):
         best = None
         for ei in todo:
             M0, M1 = pencil(Wc, ei)
-            kg = kernel(Wc, M0, M1, Fr(7, 5))
-            g = len(kg) if kg else 0
+            g = kdim(M0, M1, Fr(7, 5), d)
             if g == d:
                 best = (-1, ei, [(None, Wc)])       # always satisfied
                 break
             opts = []
             for r in sorted(set(ratios(M0, M1, d)) | SMALL, key=lambda r: (r == 1, abs(math.log(r)))):
-                K = kernel(Wc, M0, M1, r)
-                if K is not None and len(K) > g:
-                    opts.append((r, K))
+                if kdim(M0, M1, r, d) > g:
+                    opts.append((r, 'lazy'))
             if g > 0:
                 opts.append((None, None))            # defer: r stays free
             key = (0 if g == 0 else 1, 0 if any(r is not None for r, _ in opts) else 1, len(opts))
@@ -304,10 +306,13 @@ def find_E(comp, cedges, nv):
             sols.append(Wc)                          # only free edges left
             return
         todo2 = [x for x in todo if x != ei]
+        M0, M1 = pencil(Wc, ei)
         for r, K in opts:
+            if K == 'lazy':
+                K = kernel(Wc, M0, M1, r)
             if r is None:
                 # the ratio stays free: decide the other edges first
-                dfs(Wc, todo2 + [ei] if False else todo2, depth + 1)
+                dfs(Wc, todo2, depth + 1)
             else:
                 dfs(K, todo2, depth + 1)
 
