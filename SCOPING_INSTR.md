@@ -4817,26 +4817,45 @@ graphs and up to 20 minutes on the largest (26 families, P = 3).
 Each batch of 12 compiles in 11-16 s here, so none needs a `ci_costs.tsv`
 line.
 
-| source | rows | closed families | certified | no certificate | timeout (1,200 s) | families do not close |
-|---|---:|---:|---:|---:|---:|---:|
-| BL `irr` only | 152 | 133 | 128 | 5 | 0 | 19 |
-| HY3 parity resets (8 also `irr`) | 12 | 12 | 9 | 0 | 3 | 0 |
-| BX cube counters | 29 | 15 | 0 | 0 | 15 | 14 |
-| other TriGlue "no ranking" | 10 | 10 | 6 | 2 | 2 | 0 |
-| all | 203 | 170 | **143** | 7 | 20 | 33 |
+| source | rows | closed families | certified | no certificate at `P <= 6` | families do not close |
+|---|---:|---:|---:|---:|---:|
+| BL `irr` only | 152 | 133 | 128 | 5 | 19 |
+| HY3 parity resets (8 also `irr`) | 12 | 12 | 9 | 3 | 0 |
+| BX cube counters | 29 | 15 | 0 | 15 | 14 |
+| other TriGlue "no ranking" | 10 | 10 | 6 | 4 | 0 |
+| all | 203 | 170 | **143** | 27 | 33 |
 
 All rows: 1,212 -> **1,069**.
 
-**Residue (60 rows), and which look hard:**
+**Residue (60 rows: 33 whose families do not close, 27 with no certificate), and which look hard:**
 
 * **33 rows whose families do not close** (14 cube, 19 `irr`): TriGlue
   "too many families" (31) or "leaf too long" (2).  These are the doubling
   tapes of §7.4.BX and §7.4.SPW, where the block count grows by one per
   burst.  They need a list-of-blocks family (BLC's piece), not a better
   liveness.  They are not 2-adic-hard as far as they were read.
-* **20 timeouts** (15 cube, 3 HY3, 2 other), on the largest graphs.  A
-  retry at 3,600 s a row is running; its result will be recorded here.
-* **7 rows with no certificate at any `P <= 6`.**  In the one read by hand,
+* **The 15 closed cube counters: no certificate** (they timed out at 1,200 s;
+  after the finder screened candidate ratios by kernel dimension and in floating
+  point, all finish, and none certifies at `P <= 6`).  Read by hand,
+  `1RB1LA_0RC0RD_1LC0LA_0LB0RC` is genuinely two-parameter.  The lap is
+  `F4(a,b,c) -> F4(a-3, b+2, c+1)` and the round ends on `a mod 3`: residue
+  0 fires D0, residue 1 maps `(a, b) -> ((a-1)/3 - 3, b + 2(a-1)/3 + 5)` (a
+  3-adic contraction of `a + 5`), residue 2 resets to `(a + b + 2, 0)`.  No
+  affine `E` is proportional across the reset (it forces `E` constant), so
+  the reset and the chain cannot share a level, yet they lie on one cycle.
+  The run continues only while the lowest nonzero ternary digit of `a + 5`
+  is 1 at every reset.  On TriGlue's own map (`ta/runlen.py --anchor 9`) the
+  longest non-firing run is 4, 5 and 6 resets for starts below 10, 100 and
+  1,000: it grows, roughly like a logarithm of the start.  So a proof needs
+  a valuation that also drops across the reset, a per-path invariant as BX
+  suspected, or a cylinder automaton on residues mod `3^k`.  `P = 9, 27` was
+  started on this row but lost to a container restart before it finished.
+  The dynamics has no multiplication across the reset (it is an odometer on
+  the ternary digits of `S + 7`, `S = a + b`), so it does not look
+  Collatz-hard, but it is beyond TriNuTr as built.
+* **The 5 other former timeouts** (3 HY3, 2 other): no certificate at
+  `P <= 6` either; not read by hand.
+* **7 more rows with no certificate at any `P <= 6`** (5 `irr`, 2 other).  In the one read by hand,
   `1RB0RD_1LC0RA_1RB1LC_1LD0LC`, the round map is the clean 3/2 map above,
   but the abstract graph at `P = 1` also has the non-firing cycle
   `F0(0,0,c) -> F0(0,0,c+1)`.  The machine never reaches it (the lap always
@@ -4846,8 +4865,35 @@ All rows: 1,212 -> **1,069**.
   The other six were not read.
 
 No row in this workstream turned out to be genuinely Collatz-hard.  Every
-closed family graph read so far has a non-firing branch conjugate to
-`c -> 3c/2` on a single forward orbit.  In particular there is no
+certified family graph has a non-firing branch conjugate to `c -> 3c/2` on a
+single forward orbit; the hardest rows found, the cube counters, are an
+odometer across resets, not a multiplicative map.
+
+**Next.**  (1) The cube counters: a valuation that also drops across the
+reset.  One candidate is `nu_3` of a form defined per PATH (chain, then
+reset) rather than per node.  Another is TriGlue's node set on residues
+mod 9 and 27 with levels; the finder takes `--plist 9,27 --ells 3`, but that
+run did not finish here.  (2) Lower-bound invariants on regions for rows
+like `1RB0RD_1LC0RA_1RB1LC_1LD0LC`, TI's relational-invariant idea, which
+TriNuTr would take unchanged once the node set can exclude the unreachable
+cycle.  (3) The 33 rows whose families do not close go with BLC's list
+segment.
+
+Commands (resumable; the finder output is `ta/nu2.jsonl`, the per-row
+summary `ta/summary.tsv`):
+
+```
+python3 tools/closeouttr/ta/dump.py tools/closeouttr/ta/rows.txt dump.jsonl --jobs 4 --timeout 180
+python3 tools/closeouttr/ta/nu_find.py dump.jsonl nu.jsonl --jobs 4 --timeout 1200
+python3 tools/closeouttr/ta/nu_batch.py nu.jsonl --tag TA --chunk 12
+python3 tools/closeouttr/ta/summary.py dump.jsonl nu.jsonl > summary.tsv
+python3 tools/closeouttr/ta/show.py dump.jsonl SPEC                 # a round map
+python3 tools/closeouttr/ta/runlen.py dump.jsonl SPEC 3,0 --anchor 9  # non-firing runs
+```
+
+The dump takes ~40 min for the 203 rows at 4 jobs.  The finder takes
+seconds per row on most rows and up to ~20 min on the largest; ~3 h in all
+here.  In particular there is no
 coupling between the parity of the round and a second, independent
 parameter, which is where a real Collatz obstruction would sit.
 
