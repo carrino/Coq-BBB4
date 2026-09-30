@@ -4443,6 +4443,125 @@ python3 tools/closeouttr/ng_batch.py probe tools/closeouttr/bx/bnc_rk8_timeout.t
 python3 tools/closeouttr/ng_batch.py batch rk8.json --tag BL --chunk 2
 ```
 
+#### 7.4.LE The counters the ladder emitter could not close: five closure gaps, a visit phase per instruction, 181 boarded (2026-09-30)
+
+Workstream LE (batch tag `LE`), over the counters still open at the start:
+the DN log counters (`dx/char_all.tsv` shape `log`, kind `counter`; 227),
+the SP rows with a visited extent under 1,000 cells at 1e8 steps
+(`spb/residue_char.json`; 482), and the open QH rows (144).  853 rows,
+`tools/closeouttr/le/rows_{dn,sp,qh}.txt`.  The hybrids and block-list
+tapes (BL) and the wide SP rows (SPW) were not touched.
+
+**Where the rows stop, measured first.**  CE3's valfam run
+(`le/vf_ce3.jsonl`) already covered 347 of the DN/QH rows, and 48 of them
+close.  Emitting those 48 (`le/measure.py`, which runs
+`emit_ladder.py --tr [--qh]` and optionally `coqc` and records the NOT BUILT
+reason) gave: fill arm with no chain 33, interior arm 11, no visit phase 1,
+a fill anchor that reaches no A1 1, and 2 QH boards that fail `coqc`
+("true with false").  The first 27 SP rows valfam closed stopped as
+follows: board 16, no visit phase 7, interior arm 3, `coqc` 1.  Every fix
+below is in the emitter or in a new generic closer.  Each one runs only
+where the old path had already failed, so every landed board is
+byte-identical.
+
+**The gaps, and what closes them.**
+
+| gap | what it was | fix | boarded |
+|---|---|---|---:|
+| fill arm, no chain | the chain exists, but it ends one blank the machine WROTE beside a known-empty tail off the fill target.  The interior arm already accepted this through `ceqL` as a one-segment `LadderNest` program; the fill arm did not | the same acceptance for fill arms (`emit_ladder.fill_at`) | 26 DN (`CBT_LE_00`) + most later rows |
+| no visit phase, one phase | an instruction that fires only in wider fills is missed at the smallest arm index, where the fill arm is symbolic | retry the fill grid at larger thresholds, so the small indices become concrete; walk a concrete anchor forward in one-sided windows (`_flat_walk`) until it fires | 4 DN + 4 QH |
+| no visit phase, several phases | SP's multi-phase counters: the rare instruction fires only in ANOTHER phase's fill, so every phase's anchors miss a different instruction | **`Checkers/LadderCheckNestPvTr.v`** (new, generic): the nested board with the visit phase a function `pvf : Instr -> nat`.  The liveness premise (`glue_neverqhtrN`, `lap_qh_stage`) is per instruction already, and `tops_cof_pv` gives cofinal tops at any phase the cycle returns to.  It reuses `LadderCheckNestTr.lapN` and restates only the fires and both closers.  The emitter falls back to it after every single-phase attempt fails | 23 SP |
+| interior arm, quadratic carry | `nest.py` fitted inner rules on the visits minus one at each end, but a carry followed by a sweep back passes the same state/symbol several more times; and after the rounds the count carries constant copies (`(11)^(j+2)`) that the chain engine can fold but never unfold | fit on windows trimmed by up to 3/5 visits; then a **respell**: ZERO rounds of the identity rule `(q,[],h,[]) -> itself` (empty chain, which `check_rule` accepts).  `LadderNest.nrun` compares a segment's start by normal form (`cexact`), so this re-spells the configuration with the copies materialised.  No new Coq | 4 DN (`CBT_LE_03`) |
+| `coqc`: `mkFill -1` | a fill that NARROWS the counter (`widens_by = -1`, in a multi-phase cycle with a net gain) was emitted as `mkFill -1 ...`, which Coq reads as a subtraction.  This is SPB's "nat-typed term" | refused with its reason: `LadderFam.f_s` is a `nat` | 0 (23 SP rows, residue) |
+| `coqc`: `true` with `false` (QH) | the certificate's mined ladder was derived on the unwrapped machine; one rule fires a pinned (quiet) instruction and fails `check_ladder` on the wrapped one | derive the mined ladder on the machine wrapped at the pins (the closure never uses those rules) | 2 QH |
+| `coqc`: boot | the machine leaves a written blank on the OTHER side at the boot, which the exact boot lemma cannot see past | simulate the boot, and go through the lift boot when the sides differ only by trailing blanks | 1 SP |
+
+The fill fix is the one most boards use: 160 of the 181 boards go through
+the nested closure, since a fill arm stated through `ceqL` is a nested arm.
+
+**The finder pass.**  valfam at `--cap 150` over the 506 LE rows CE3's run
+did not cover (482 SP + 24 DN/QH), in 3 shards (`le/drive_vf.sh K`,
+resumable).  It took about 1.9 min a row per job with the container's
+other work, 3-4 h of compute, and about 6 h of wall time across two
+container restarts.  `famclose.py` over the 64 DN rows CE3 filed as
+"families found but none closed" closes 13 with the new emitter (CE3's
+run, with the old emitter, closed none of them).
+
+**Yields** (`le/tally.py le/measure_final.tsv` recomputes them):
+
+| | DN | SP | QH | all |
+|---|---:|---:|---:|---:|
+| rows | 227 | 482 | 144 | 853 |
+| **boarded** (`CBT_LE_00..09`) | **47** | **128** | **6** | **181** |
+| valfam closes, emitter refuses: fill narrows | | 23 | | 23 |
+| ... interior arm (a misread family: the carry reads a whole run past the digit, or the anchor drifts) | 7 | 14 | | 21 |
+| ... fill arm / wide fill (3 digits, widens by 1) / other | 1 | 6 | | 7 |
+| finder: families found, none closed | 51 | 230 | 77 | 358 |
+| finder: no value family / no local rules | 94 | 20 | 29 | 143 |
+| finder: time cap (150 s) | 27 | 61 | 32 | 120 |
+
+By closer: nested (`LadderCheckNestTr`) 137, per-instruction visit phase
+(`LadderCheckNestPvTr`) 23, lift-tolerant fill 13, plain `LadderCheckTr` or
+`LadderCheckQHTr` 8.  Axioms: `functional_extensionality_dep` only (checked
+on a board of each kind).  Times, measured at one core: `LadderCheckNestPvTr.v`
+1.6 s once its dependencies are built; a board 1.5-2 s, including the
+nested and respell boards; a 40-row batch 1.6 s beyond its boards.
+`ci_costs.tsv` lists the five batches that take over a minute (60-90 s).
+Closeout: 1,547 open when LE started, **1,274** now.  That count includes
+BL and SPW, merged from `main`; LE's own share is the 181.
+
+**The residue, by where it stops.**
+
+1. **The emitter (51 rows).**  23 SP rows have a phase cycle with a
+   NARROWING fill.  For example, `0RB1LA_1LC1RD_1RB0LA_1LC1RC` runs phases
+   0 -> 2 -> 1 -> 0 with widths +1, -1, +1.  `LadderFam.Fill` states
+   `f_s : nat`, and a per-phase width offset does not help, because the
+   extra digit it would move into a terminator is the counter's top digit,
+   which changes.  They want a family theory with an integer widening and a
+   positive cycle sum; that is the largest emitter-side piece left.  21
+   interior-arm rows are misread families, not cost problems.  On the ones
+   traced, the carry either sweeps a whole run of `rest` past the digit it
+   increments (no digit of lookahead states that), or the anchor drifts
+   one digit per carry into the terminator.  Two rows are wide fills (a
+   3-digit target at +1 width, which holds only from width 2).  They need
+   `Inv` with a minimum width.
+2. **The finder (621 rows).**  Most of them: 358 have families that
+   valfam's arms do not close, 143 have no value family, and 120 hit the
+   time cap.  famclose has NOT been run on the 230 SP or the 77 QH
+   "families found" rows with the new emitter.  On DN it took 13 of 64.
+   It costs 5-20 min a row, because every candidate family goes through
+   the emitter's full grid.  That is a box job:
+
+```
+# on the 14-core box (resumable: famclose skips rows already in its --json)
+python3 tools/closeouttr/le/tally.py > /dev/null     # sanity
+python3 - <<'P' > le_fc_sp.txt
+import json
+rem = set(open('closeouttr_remaining.txt').read().split())
+for l in open('tools/closeouttr/le/vf_le.jsonl'):
+    r = json.loads(l)
+    if r['spec'] in rem and not r['closed'] and 'families found' in str(r.get('reason')):
+        print(r['spec'])
+P
+(cd tools/ladder && python3 famclose.py --list ../../le_fc_sp.txt --json ../../fc_sp.jsonl --jobs 12)          # ~230 rows, ~3-4 h
+(cd tools/ladder && python3 famclose.py --list ../closeouttr/le/fc_todo_qh.txt --json ../../fc_qh.jsonl --jobs 12 --qh)  # 77 rows, ~1.5 h
+python3 tools/closeouttr/sp_ladder_batch.py fc_sp.jsonl --tag LE --chunk 40
+python3 tools/closeouttr/sp_ladder_batch.py fc_qh.jsonl --tag LE --chunk 40 --qh
+tools/closeouttr/le/board_chunk.sh CBT_LE_NN ...     # gen, build, the four checks
+```
+
+At DN's rate (13 of 64), that would board roughly 40-60 SP rows and 10-15
+QH rows.
+
+```
+# the container loop (what this section ran)
+python3 tools/closeouttr/le/measure.py OUT.tsv VF.jsonl... --rows ROWS [--coqc] --jobs 3   # where each row stops
+tools/closeouttr/le/drive_vf.sh K                                                          # valfam, shard K (resumable)
+python3 tools/closeouttr/sp_ladder_batch.py VF.jsonl --tag LE --chunk 40 [--qh]
+tools/closeouttr/le/board_chunk.sh CBT_LE_NN ...
+python3 tools/closeouttr/le/tally.py tools/closeouttr/le/measure_final.tsv
+```
+
 #### 7.4.HY3 The flat-block hybrids and bouncers: the "unary counters" are two-block transfers, TriGlue seeded at the anchors takes 47 (2026-09-30)
 
 Workstream HY3 (batch tag `HY3`), over the still-open hybrids and bouncers
@@ -4594,125 +4713,6 @@ python3 tools/closeouttr/hy3/hold_probe.py ROWS.txt > hold_probe.txt
 ```
 
 The whole `hy3_ti.py` sweep is ~2 min here, so it needs no box run.
-
-#### 7.4.LE The counters the ladder emitter could not close: five closure gaps, a visit phase per instruction, 181 boarded (2026-09-30)
-
-Workstream LE (batch tag `LE`), over the counters still open at the start:
-the DN log counters (`dx/char_all.tsv` shape `log`, kind `counter`; 227),
-the SP rows with a visited extent under 1,000 cells at 1e8 steps
-(`spb/residue_char.json`; 482), and the open QH rows (144).  853 rows,
-`tools/closeouttr/le/rows_{dn,sp,qh}.txt`.  The hybrids and block-list
-tapes (BL) and the wide SP rows (SPW) were not touched.
-
-**Where the rows stop, measured first.**  CE3's valfam run
-(`le/vf_ce3.jsonl`) already covered 347 of the DN/QH rows, and 48 of them
-close.  Emitting those 48 (`le/measure.py`, which runs
-`emit_ladder.py --tr [--qh]` and optionally `coqc` and records the NOT BUILT
-reason) gave: fill arm with no chain 33, interior arm 11, no visit phase 1,
-a fill anchor that reaches no A1 1, and 2 QH boards that fail `coqc`
-("true with false").  The first 27 SP rows valfam closed stopped as
-follows: board 16, no visit phase 7, interior arm 3, `coqc` 1.  Every fix
-below is in the emitter or in a new generic closer.  Each one runs only
-where the old path had already failed, so every landed board is
-byte-identical.
-
-**The gaps, and what closes them.**
-
-| gap | what it was | fix | boarded |
-|---|---|---|---:|
-| fill arm, no chain | the chain exists, but it ends one blank the machine WROTE beside a known-empty tail off the fill target.  The interior arm already accepted this through `ceqL` as a one-segment `LadderNest` program; the fill arm did not | the same acceptance for fill arms (`emit_ladder.fill_at`) | 26 DN (`CBT_LE_00`) + most later rows |
-| no visit phase, one phase | an instruction that fires only in wider fills is missed at the smallest arm index, where the fill arm is symbolic | retry the fill grid at larger thresholds, so the small indices become concrete; walk a concrete anchor forward in one-sided windows (`_flat_walk`) until it fires | 4 DN + 4 QH |
-| no visit phase, several phases | SP's multi-phase counters: the rare instruction fires only in ANOTHER phase's fill, so every phase's anchors miss a different instruction | **`Checkers/LadderCheckNestPvTr.v`** (new, generic): the nested board with the visit phase a function `pvf : Instr -> nat`.  The liveness premise (`glue_neverqhtrN`, `lap_qh_stage`) is per instruction already, and `tops_cof_pv` gives cofinal tops at any phase the cycle returns to.  It reuses `LadderCheckNestTr.lapN` and restates only the fires and both closers.  The emitter falls back to it after every single-phase attempt fails | 23 SP |
-| interior arm, quadratic carry | `nest.py` fitted inner rules on the visits minus one at each end, but a carry followed by a sweep back passes the same state/symbol several more times; and after the rounds the count carries constant copies (`(11)^(j+2)`) that the chain engine can fold but never unfold | fit on windows trimmed by up to 3/5 visits; then a **respell**: ZERO rounds of the identity rule `(q,[],h,[]) -> itself` (empty chain, which `check_rule` accepts).  `LadderNest.nrun` compares a segment's start by normal form (`cexact`), so this re-spells the configuration with the copies materialised.  No new Coq | 4 DN (`CBT_LE_03`) |
-| `coqc`: `mkFill -1` | a fill that NARROWS the counter (`widens_by = -1`, in a multi-phase cycle with a net gain) was emitted as `mkFill -1 ...`, which Coq reads as a subtraction.  This is SPB's "nat-typed term" | refused with its reason: `LadderFam.f_s` is a `nat` | 0 (23 SP rows, residue) |
-| `coqc`: `true` with `false` (QH) | the certificate's mined ladder was derived on the unwrapped machine; one rule fires a pinned (quiet) instruction and fails `check_ladder` on the wrapped one | derive the mined ladder on the machine wrapped at the pins (the closure never uses those rules) | 2 QH |
-| `coqc`: boot | the machine leaves a written blank on the OTHER side at the boot, which the exact boot lemma cannot see past | simulate the boot, and go through the lift boot when the sides differ only by trailing blanks | 1 SP |
-
-The fill fix is the one most boards use: 160 of the 181 boards go through
-the nested closure, since a fill arm stated through `ceqL` is a nested arm.
-
-**The finder pass.**  valfam at `--cap 150` over the 506 LE rows CE3's run
-did not cover (482 SP + 24 DN/QH), in 3 shards (`le/drive_vf.sh K`,
-resumable).  It took about 1.9 min a row per job with the container's
-other work, 3-4 h of compute, and about 6 h of wall time across two
-container restarts.  `famclose.py` over the 64 DN rows CE3 filed as
-"families found but none closed" closes 13 with the new emitter (CE3's
-run, with the old emitter, closed none of them).
-
-**Yields** (`le/tally.py le/measure_final.tsv` recomputes them):
-
-| | DN | SP | QH | all |
-|---|---:|---:|---:|---:|
-| rows | 227 | 482 | 144 | 853 |
-| **boarded** (`CBT_LE_00..09`) | **47** | **128** | **6** | **181** |
-| valfam closes, emitter refuses: fill narrows | | 23 | | 23 |
-| ... interior arm (a misread family: the carry reads a whole run past the digit, or the anchor drifts) | 7 | 14 | | 21 |
-| ... fill arm / wide fill (3 digits, widens by 1) / other | 1 | 6 | | 7 |
-| finder: families found, none closed | 51 | 230 | 77 | 358 |
-| finder: no value family / no local rules | 94 | 20 | 29 | 143 |
-| finder: time cap (150 s) | 27 | 61 | 32 | 120 |
-
-By closer: nested (`LadderCheckNestTr`) 137, per-instruction visit phase
-(`LadderCheckNestPvTr`) 23, lift-tolerant fill 13, plain `LadderCheckTr` or
-`LadderCheckQHTr` 8.  Axioms: `functional_extensionality_dep` only (checked
-on a board of each kind).  Times, measured at one core: `LadderCheckNestPvTr.v`
-1.6 s once its dependencies are built; a board 1.5-2 s, including the
-nested and respell boards; a 40-row batch 1.6 s beyond its boards.
-`ci_costs.tsv` lists the five batches that take over a minute (60-90 s).
-Closeout: 1,547 open when LE started, **1,274** now.  That count includes
-BL and SPW, merged from `main`; LE's own share is the 181.
-
-**The residue, by where it stops.**
-
-1. **The emitter (51 rows).**  23 SP rows have a phase cycle with a
-   NARROWING fill.  For example, `0RB1LA_1LC1RD_1RB0LA_1LC1RC` runs phases
-   0 -> 2 -> 1 -> 0 with widths +1, -1, +1.  `LadderFam.Fill` states
-   `f_s : nat`, and a per-phase width offset does not help, because the
-   extra digit it would move into a terminator is the counter's top digit,
-   which changes.  They want a family theory with an integer widening and a
-   positive cycle sum; that is the largest emitter-side piece left.  21
-   interior-arm rows are misread families, not cost problems.  On the ones
-   traced, the carry either sweeps a whole run of `rest` past the digit it
-   increments (no digit of lookahead states that), or the anchor drifts
-   one digit per carry into the terminator.  Two rows are wide fills (a
-   3-digit target at +1 width, which holds only from width 2).  They need
-   `Inv` with a minimum width.
-2. **The finder (621 rows).**  Most of them: 358 have families that
-   valfam's arms do not close, 143 have no value family, and 120 hit the
-   time cap.  famclose has NOT been run on the 230 SP or the 77 QH
-   "families found" rows with the new emitter.  On DN it took 13 of 64.
-   It costs 5-20 min a row, because every candidate family goes through
-   the emitter's full grid.  That is a box job:
-
-```
-# on the 14-core box (resumable: famclose skips rows already in its --json)
-python3 tools/closeouttr/le/tally.py > /dev/null     # sanity
-python3 - <<'P' > le_fc_sp.txt
-import json
-rem = set(open('closeouttr_remaining.txt').read().split())
-for l in open('tools/closeouttr/le/vf_le.jsonl'):
-    r = json.loads(l)
-    if r['spec'] in rem and not r['closed'] and 'families found' in str(r.get('reason')):
-        print(r['spec'])
-P
-(cd tools/ladder && python3 famclose.py --list ../../le_fc_sp.txt --json ../../fc_sp.jsonl --jobs 12)          # ~230 rows, ~3-4 h
-(cd tools/ladder && python3 famclose.py --list ../closeouttr/le/fc_todo_qh.txt --json ../../fc_qh.jsonl --jobs 12 --qh)  # 77 rows, ~1.5 h
-python3 tools/closeouttr/sp_ladder_batch.py fc_sp.jsonl --tag LE --chunk 40
-python3 tools/closeouttr/sp_ladder_batch.py fc_qh.jsonl --tag LE --chunk 40 --qh
-tools/closeouttr/le/board_chunk.sh CBT_LE_NN ...     # gen, build, the four checks
-```
-
-At DN's rate (13 of 64), that would board roughly 40-60 SP rows and 10-15
-QH rows.
-
-```
-# the container loop (what this section ran)
-python3 tools/closeouttr/le/measure.py OUT.tsv VF.jsonl... --rows ROWS [--coqc] --jobs 3   # where each row stops
-tools/closeouttr/le/drive_vf.sh K                                                          # valfam, shard K (resumable)
-python3 tools/closeouttr/sp_ladder_batch.py VF.jsonl --tag LE --chunk 40 [--qh]
-tools/closeouttr/le/board_chunk.sh CBT_LE_NN ...
-python3 tools/closeouttr/le/tally.py tools/closeouttr/le/measure_final.tsv
-```
 
 ## 8. What we deliberately do NOT redo
 
