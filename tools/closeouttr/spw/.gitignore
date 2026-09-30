@@ -1,0 +1,8 @@
+# raw per-row run output of run_irules.sh (res/, certs/) and in-progress
+# finder output; the committed summaries are the *.tsv / *.jsonl snapshots
+all*/
+s2M/
+s10M/
+s50M/
+ng_sample.json
+
