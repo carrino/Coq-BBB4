@@ -64,6 +64,21 @@ KEEP = 1            # blocks kept in the window on a tail side
 MAXD = 16           # largest offset of a relation guessed from two constants
 MAXSHIFT = 4        # largest offset of a shifted automaton state
 BOOT_AMAX = 4
+# fold only canonical items (§7.4.BLC2): a tail's ref is always the exponent
+# of the outermost window block of its side, so tail items never carry an
+# offset and the automaton is {unit} x {digit}.  LG_CANON=0 restores BLC's
+# shifted states.
+CANON = os.environ.get('LG_CANON', '1') != '0'
+
+
+class NonCanon(Exception):
+    """a leaf's end leaves the tail of side [sd] shifted against the window
+    (the block its ref names was modified, or is gone): unfold that side's
+    next item at the leaf's start"""
+
+    def __init__(self, sd):
+        super().__init__('noncanonical tail ' + sd)
+        self.sd = sd
 
 # ------------------------------------------------------------- aexps ----
 
@@ -289,6 +304,357 @@ class NFA:
 
 def state_of_unit(u):
     return ('S', tuple(u), 0)
+
+
+# ---------------------------------------------------- learned tail DFA ----
+#
+# BLC's automaton has one state per unit, so it accepts ANY sequence of the
+# learned digits.  The lists are counters, and their digit strings are not
+# free: on 0RB1RB_1LC1RA_1RA0LD_1LC1LD the (centred) digits of the halving
+# list are {-1, 0, 1} whose nonzero ones ALTERNATE in sign, read from the
+# head.  An automaton that forgets that lets the exploration apply a carry to
+# a list the machine never builds, and the digits drift without bound.  So
+# the tail language is learned as a DFA from the data pass's concrete tails:
+# a tail is read from its FAR end, a fold prepends one item (the next state
+# is delta(state, item), deterministic), and an unfold enumerates the
+# predecessors.  States: the prefixes of the sample, merged by their futures
+# up to depth K (k-tails), then refined until the quotient is deterministic.
+
+DFA_K = ('bps',)
+DFA_MAXST = 60
+DFA_ALPHA = (0.05, 0.3, 0.01)
+
+
+BPS_MINFREQ = 0.03      # a digit rarer than this (of its type) is transient
+BPS_MAXRANGE = 6
+BPS_ABS = os.environ.get('LG_BPS_ABS', '0') == '1'
+BPS_TRANSFER = os.environ.get('LG_BPS_TRANSFER', '1') == '1'
+
+
+def _bps_isdig(x):
+    return x[1][1] >= 1
+
+
+def _bps_strs(samples, freq):
+    """the strings as (non-digit prefix, digit part cut at the first
+    transient symbol) with their counts"""
+    out = []
+    for w, c in samples.items():
+        pre, rest = [], list(w)
+        while rest and not _bps_isdig(rest[0]):
+            pre.append(rest.pop(0))
+        cut = []
+        for x in rest:
+            if not _bps_isdig(x) or (freq is not None and x not in freq):
+                break
+            cut.append(x)
+        out.append((tuple(pre), cut, c))
+    return out
+
+
+def fit_bps(samples):
+    """the BOUNDED-PARTIAL-SUM model of a side's tails, or None.  The digit
+    symbols (a relation with a >= 1) fall into m = 1 or 2 classes that
+    alternate along the list (the 2-colouring of the digits met adjacently
+    with the least weight of same-class neighbours); each class has a
+    centre c, and the partial sum of d - c, read from the far end, stays in
+    the range the sample shows"""
+    tot = collections.Counter()
+    for w, c in samples.items():
+        for x in w:
+            if _bps_isdig(x):
+                tot[x] += c
+    if not tot:
+        return None
+    bytype = collections.defaultdict(int)
+    for x, c in tot.items():
+        bytype[(x[0], x[1][0], x[1][1])] += c
+    freq = set(x for x, c in tot.items() if c >= BPS_MINFREQ * bytype[(x[0], x[1][0], x[1][1])])
+    strs = _bps_strs(samples, freq)
+    adj = collections.Counter()
+    for pre, cut, c in strs:
+        for a, b in zip(cut, cut[1:]):
+            adj[(a, b)] += c
+    fl = sorted(freq)
+    col, bip = {}, False
+    if len(fl) <= 14:
+        wall = sum(adj.values())
+        bestc = None
+        for bits in range(1 << (len(fl) - 1)):
+            cc = {x: (bits >> i) & 1 for i, x in enumerate(fl[1:])}
+            cc[fl[0]] = 0
+            bad = sum(c for (a, b), c in adj.items() if cc[a] == cc[b])
+            if bestc is None or bad < bestc[0]:
+                bestc = (bad, cc)
+        if bestc and bestc[0] <= BPS_MINFREQ * wall:
+            col, bip = bestc[1], True
+    best = None
+    for m in ((2, 1) if bip else (1,)):
+        cls = {x: (col[x] if m == 2 else 0) for x in freq}
+        ds = [sorted(set(x[1][2] for x in freq if cls[x] == k)) for k in range(m)]
+        if any(not d for d in ds):
+            continue
+        for cs in itertools.product(*[range(d[0], d[-1] + 1) for d in ds]):
+            # the spread (max - min) of each string's partial sums
+            wd = collections.Counter()
+            ab = collections.Counter()
+            for _, cut, c in strs:
+                S = lo = hi = 0
+                for j, x in enumerate(cut):
+                    if j and m == 2 and cls[x] == cls[cut[j - 1]]:
+                        break
+                    S += x[1][2] - cs[cls[x]]
+                    lo, hi = min(lo, S), max(hi, S)
+                    ab[S] += c
+                wd[hi - lo] += c
+            # the absolute range: the sums held by all but a few percent
+            n2 = sum(ab.values())
+            keep = [v for v in ab if ab[v] >= BPS_MINFREQ * n2] or [0]
+            alo, ahi = min(min(keep), 0), max(max(keep), 0)
+            n, acc, W = sum(wd.values()), 0, 0
+            for w in sorted(wd):
+                acc += wd[w]
+                W = w
+                if acc >= (1 - BPS_MINFREQ) * n:
+                    break
+            if W <= BPS_MAXRANGE and (best is None or (W, ahi - alo) < best[0]):
+                best = ((W, ahi - alo), m, cls, cs, alo, ahi)
+    if best is None:
+        return None
+    (W, _), m, cls, cs, alo, ahi = best
+    if VERBOSE:
+        print('  bps: m=%d centres %s spread %d range [%d,%d] weight %d classes %s' % (
+            m, cs, W, alo, ahi, sum(tot.values()), sorted((x[1][2], k) for x, k in cls.items())),
+            file=sys.stderr)
+    return dict(m=m, cls=cls, cs=cs, W=W, lo=alo, hi=ahi, weight=sum(tot[x] for x in freq))
+
+
+def transfer_bps(fit, kinds, kidx, sd):
+    """the model of the OTHER side's tails from this one: the same list read
+    the other way (item and pred swap, so up and down swap); a partial sum
+    from the other end is the total minus one from this end"""
+    cls = {}
+    for (k, (up, a, d)), c in fit['cls'].items():
+        _, pre, u = kinds[k]
+        k2 = kidx.get((sd, pre, u))
+        if k2 is not None:
+            cls[(k2, (not up, a, d))] = c
+    if not cls:
+        return None
+    return dict(m=fit['m'], cls=cls, cs=fit['cs'], W=fit['W'], lo=-fit['W'], hi=fit['W'],
+                weight=0)
+
+
+def build_bps(fit, samples):
+    """(delta, q0): state 0 the far end, one state per non-digit prefix the
+    sample starts with, then (class expected, sum - min, max - min) of the
+    partial sums so far, the spread at most W"""
+    m, cls, cs, W = fit['m'], fit['cls'], fit['cs'], fit['W']
+    sid = {('start',): 0}
+
+    def st(key):
+        return sid.setdefault(key, len(sid))
+
+    def step(k, a, b, x):
+        """the state after digit x from (class k, sum - min a, spread b);
+        with BPS_ABS the state is (class k, the sum a) in [lo, hi]"""
+        if k >= 0 and cls[x] != k:
+            return None
+        v = x[1][2] - cs[cls[x]]
+        S = a + v
+        if BPS_ABS:
+            if not fit['lo'] <= S <= fit['hi']:
+                return None
+            return ('sum', (cls[x] + 1) % m, S, 0)
+        lo, hi = min(0, S), max(b, S)
+        if hi - lo > W:
+            return None
+        return ('sum', (cls[x] + 1) % m, S - lo, hi - lo)
+    delta = {}
+    heads = {0}
+    for pre, _, _ in _bps_strs(samples, None):
+        q = 0
+        for i, x in enumerate(pre):
+            q2 = st(('pre',) + pre[:i + 1])
+            delta[(q, x)] = q2
+            q = q2
+        heads.add(q)
+    digs = sorted(cls)
+    for q in sorted(heads):
+        for x in digs:
+            key = step(-1, 0, 0, x)
+            if key is not None:
+                delta[(q, x)] = st(key)
+    done = set()
+    while True:
+        new = [key for key in sid if key[0] == 'sum' and key not in done]
+        if not new:
+            break
+        for key in new:
+            done.add(key)
+            _, k, a, b = key
+            for x in digs:
+                k2 = step(k, a, b, x)
+                if k2 is not None:
+                    delta[(sid[key], x)] = st(k2)
+        if len(sid) > DFA_MAXST:
+            return None
+    return delta, 0
+
+
+def learn_bps(samples):
+    fit = fit_bps(samples)
+    return None if fit is None else build_bps(fit, samples)
+
+
+def alergia(samples, alpha):
+    """(delta, q0) by ALERGIA (Carrasco-Oncina): the prefix tree of the
+    sample with its counts, red/blue state merging, two states compatible
+    when every frequency (ending, and each symbol, recursively) agrees
+    within the Hoeffding bound at [alpha].  None past DFA_MAXST states"""
+    child, cnt, fin = [{}], [0], [0]
+    for w, c in samples.items():
+        nd = 0
+        cnt[0] += c
+        for x in w:
+            nxt = child[nd].get(x)
+            if nxt is None:
+                nxt = len(child)
+                child.append({})
+                cnt.append(0)
+                fin.append(0)
+                child[nd][x] = nxt
+            nd = nxt
+            cnt[nd] += c
+        fin[nd] += c
+    lg = math.sqrt(0.5 * math.log(2 / alpha))
+
+    def differ(f1, n1, f2, n2):
+        if n1 == 0 or n2 == 0:
+            return False
+        return abs(f1 / n1 - f2 / n2) > lg * (1 / math.sqrt(n1) + 1 / math.sqrt(n2))
+
+    def compat(a, b, depth=0):
+        if depth > 64:
+            return True
+        if differ(fin[a], cnt[a], fin[b], cnt[b]):
+            return False
+        for x in set(child[a]) | set(child[b]):
+            ca, cb = child[a].get(x), child[b].get(x)
+            fa = cnt[ca] if ca is not None else 0
+            fb = cnt[cb] if cb is not None else 0
+            if differ(fa, cnt[a], fb, cnt[b]):
+                return False
+            if ca is not None and cb is not None and not compat(ca, cb, depth + 1):
+                return False
+        return True
+
+    def fold(a, b):
+        """merge the subtree at b into a's"""
+        cnt[a] += cnt[b]
+        fin[a] += fin[b]
+        for x, cb in list(child[b].items()):
+            ca = child[a].get(x)
+            if ca is None:
+                child[a][x] = cb
+            else:
+                fold(ca, cb)
+
+    red = [0]
+    reds = {0}
+    while True:
+        # the blue fringe: children of red states that are not red; the
+        # oldest (smallest prefix-tree id, so shortest prefix) first
+        blue = [(c, r, x) for r in red for x, c in child[r].items() if c not in reds]
+        if not blue:
+            break
+        b, p, sym = min(blue)
+        for r in red:
+            if compat(r, b):
+                child[p][sym] = r
+                fold(r, b)
+                break
+        else:
+            red.append(b)
+            reds.add(b)
+            if len(red) > DFA_MAXST:
+                return None
+    rid = {r: i for i, r in enumerate(red)}
+    delta = {}
+    for r in red:
+        for x, c in child[r].items():
+            if c not in rid:
+                return None
+            delta[(rid[r], x)] = rid[c]
+    return delta, 0
+
+
+def learn_dfa(strings, k):
+    """(delta, q0) of a DFA over symbols accepting every string of the
+    (prefix-closed) sample, or None when it has more than DFA_MAXST states"""
+    children = [{}]
+    for w in strings:
+        nd = 0
+        for x in w:
+            nxt = children[nd].get(x)
+            if nxt is None:
+                nxt = len(children)
+                children.append({})
+                children[nd][x] = nxt
+            nd = nxt
+    n = len(children)
+    # futures up to depth k, bottom-up by depth
+    order, depth = [0], [0] * n
+    for nd in order:
+        for x, c in children[nd].items():
+            depth[c] = depth[nd] + 1
+            order.append(c)
+    fut = [None] * n
+    for nd in reversed(order):
+        acc = {()}
+        for x, c in children[nd].items():
+            for p in fut[c]:
+                if len(p) < k:
+                    acc.add((x,) + p)
+        fut[nd] = frozenset(acc)
+    ids = {}
+    cls = [ids.setdefault(fut[nd], len(ids)) for nd in range(n)]
+    # refine until every class maps each symbol into one class
+    while True:
+        # split a class into groups whose children agree where both exist
+        byc = collections.defaultdict(list)
+        for nd in range(n):
+            byc[cls[nd]].append(nd)
+        final = [None] * n
+        nid = 0
+        for c, mem in byc.items():
+            groups = []             # (symbol -> class) maps
+            for nd in mem:
+                m = {x: cls[ch] for x, ch in children[nd].items()}
+                for g in groups:
+                    if all(g[0].get(x, y) == y for x, y in m.items()):
+                        g[0].update(m)
+                        g[1].append(nd)
+                        break
+                else:
+                    groups.append((dict(m), [nd]))
+            for g in groups:
+                for nd in g[1]:
+                    final[nd] = nid
+                nid += 1
+        if nid == len(set(cls)):
+            break
+        cls = final
+    delta = {}
+    for nd in range(n):
+        for x, c in children[nd].items():
+            key = (cls[nd], x)
+            if delta.get(key, cls[c]) != cls[c]:
+                return None
+            delta[key] = cls[c]
+    if len(set(cls)) > DFA_MAXST:
+        return None
+    return delta, cls[0]
 
 
 def item_segs(nfa, k, e):
@@ -644,7 +1010,7 @@ class Fam:
 
     def __init__(self, key):
         self.key = key
-        self.q, self.h, self.sL, self.sR, self.tL, self.tR = key
+        self.q, self.h, self.sL, self.sR, self.tL, self.tR, self.wrel = key
         self.nb = sum(1 for x in self.sL + self.sR if x[0] == 'B')
         self.nc = self.nb + (self.tL is not None) + (self.tR is not None)
         self.hull = Hull(self.nc)
@@ -746,12 +1112,89 @@ class Explorer:
         self.failed = {}
         self.uses = collections.defaultdict(set)
         self.booting = False
+        self.dfa = None
+        self.dfa_in = {}
+        self.samples = {'L': collections.Counter(), 'R': collections.Counter()}
 
     # -- folding --------------------------------------------------------
+    def fold_dfa(self, sd, W, tail):
+        """fold with the learned DFA: an item folds only when the DFA has a
+        transition for it from the tail's state (and canonically: the tail's
+        ref is the item's exponent); nothing is learned"""
+        nfa = self.nfa
+        delta, q0 = self.dfa[sd]
+        W = list(W)
+        folds = []
+        cur = tail
+        while len(blocks_of(W)) > KEEP:
+            last = W[-1]
+            if last[0] == 'L':
+                if cur is not None:
+                    break
+                pred = W[blocks_of(W)[-1]]
+                k = nfa.kidx.get((sd, tuple(last[1]), ()))
+                f, nrm, q = (0, ()), 1, q0
+            else:
+                u, f = tuple(last[1]), last[2]
+                if len(W) >= 2 and W[-2][0] == 'L':
+                    pre, nrm = tuple(W[-2][1]), 2
+                else:
+                    pre, nrm = (), 1
+                if len(W) - nrm - 1 < 0 or W[len(W) - nrm - 1][0] != 'B':
+                    break
+                pred = W[len(W) - nrm - 1]
+                k = nfa.kidx.get((sd, pre, u))
+                if cur is None:
+                    q = q0
+                else:
+                    s_old, r_old = cur
+                    if not aeq(f, r_old):
+                        break
+                    q = s_old[3]
+            if k is None:
+                break
+            ti = None
+            for t in self.dfa_in.get((sd, q), ()):
+                tr = nfa.trans[t]
+                if tr[2] == k and rel_ok(tr[4], pred[2], f):
+                    ti = t
+                    break
+            if ti is None:
+                break
+            folds.insert(0, (ti, f))
+            cur = (nfa.trans[ti][1], pred[2])
+            W = W[:len(W) - nrm]
+        return W, cur, folds
+
+    def use_dfa(self, dfas):
+        """replace the automaton by the learned DFAs (side -> (delta, q0))"""
+        old = self.nfa
+        n = NFA()
+        n.kinds, n.kidx = old.kinds, old.kidx
+        self.dfa_in = collections.defaultdict(list)
+        for sd, (delta, q0) in sorted(dfas.items()):
+            # a pinned end (a = 0 down) before a free one: the more precise
+            for (q, sym), q2 in sorted(delta.items(), key=lambda kv: (kv[0][0], kv[0][1][0],
+                                                                   kv[0][1][1][0], kv[0][1][1])):
+                k, rel = sym
+                key = (sd, ('D', None, 0, q2), k, ('D', None, 0, q), rel)
+                n.tidx[key] = len(n.trans)
+                self.dfa_in[(sd, q)].append(len(n.trans))
+                n.trans.append(key)
+            n.acc.add((sd, ('D', None, 0, q0)))
+        self.nfa = n
+        self.dfa = dfas
+        self.fams, self.fidx = [], {}
+        self.trees, self.utrees, self.fleaves = {}, {}, {}
+        self.failed = {}
+        self.uses = collections.defaultdict(set)
+
     def fold(self, sd, W, tail):
         """fold the outermost window items into the tail; learns the
         automaton.  Returns (window, tail spec (state, ref aexp) or None, folds)
         where folds are the (transition, exponent) pairs, nearest-first"""
+        if self.dfa is not None:
+            return self.fold_dfa(sd, W, tail)
         nfa = self.nfa
         W = list(W)
         folds = []
@@ -798,12 +1241,20 @@ class Explorer:
             dst = None
             if cur is not None:
                 s_old, r_old = cur
-                if s_old[1] != u or dict(acoefs(f)) != dict(acoefs(r_old)):
-                    break
-                dl = s_old[2] + r_old[0] - f[0]
-                if abs(dl) > MAXSHIFT:
-                    break
-                dst = nfa.ensure_shift(sd, u, dl)
+                if CANON:
+                    # fold only a CANONICAL item: the tail after it is valid
+                    # from its own exponent (the leaf left it unchanged); a
+                    # modified one stays in the window, and the leaf unfolds
+                    # its neighbour instead (NonCanon)
+                    if s_old[2] != 0 or not aeq(f, r_old):
+                        break
+                else:
+                    if dict(acoefs(f)) != dict(acoefs(r_old)):
+                        break
+                    dl = s_old[2] + r_old[0] - f[0]
+                    if abs(dl) > MAXSHIFT:
+                        break
+                    dst = nfa.ensure_shift(sd, s_old[1], dl)
             src = state_of_unit(pred[1])
             rel = None
             for t in nfa.trans:
@@ -839,13 +1290,37 @@ class Explorer:
                                ('L', C.rep(x[1], x[2][0])) for x in side])
             side = gen_segs(side, tails[sd] is None, units)
             W[sd], specs[sd], folds[sd] = self.fold(sd, side, tails[sd])
+        if CANON and not boot:
+            for sd, od in (('L', 'R'), ('R', 'L')):
+                if specs[sd] is None:
+                    continue
+                # the pred of the tail's first item, in tape order: the
+                # side's outermost window block, else the other side's
+                # nearest one
+                s_, r_ = specs[sd]
+                bs, bo = blocks_of(W[sd]), blocks_of(W[od])
+                pb = W[sd][bs[-1]] if bs else (W[od][bo[0]] if bo else None)
+                if pb is None or s_[2] != 0 or (s_[0] == 'S' and tuple(pb[1]) != tuple(s_[1])) \
+                        or not aeq(pb[2], r_):
+                    raise NonCanon(sd)
         exps = T.exps(W['L']) + T.exps(W['R'])
         for sd in ('L', 'R'):
             if specs[sd] is not None:
                 exps.append(specs[sd][1])
+        # the relation between adjacent window blocks of a side's list unit
+        # (a digit) is part of the family: joining two digits would lose it
+        # (in tape order, across the head)
+        wrel = []
+        units = set(k[2] for k in self.nfa.kinds if k[2])
+        bl = [x for x in reversed(W['L']) if x[0] == 'B'] + [x for x in W['R'] if x[0] == 'B']
+        for x, y in zip(bl, bl[1:]):
+            if tuple(x[1]) in units and tuple(y[1]) in units:
+                wrel.append(infer_rel(x[2], y[2]))
+            else:
+                wrel.append(None)
         key = (q, h, T.shape(W['L']), T.shape(W['R']),
                None if specs['L'] is None else specs['L'][0],
-               None if specs['R'] is None else specs['R'][0])
+               None if specs['R'] is None else specs['R'][0], tuple(wrel))
         if key not in self.fidx:
             if len(self.fams) >= MAXFAM:
                 raise Fail('too many families')
@@ -871,7 +1346,11 @@ class Explorer:
         self.booting = False
         nfa = self.nfa
         fid, vals = f0, [e[0] for e in ex0]
-        ctail = {sd: list(conc[sd]) for sd in ('L', 'R')}
+        # the boot's family may fold more than the boot did (a DFA fold)
+        ctail = {sd: [(ti, e[0]) for ti, e in folds0[sd]] + list(conc[sd]) for sd in ('L', 'R')}
+        for sd in ('L', 'R'):
+            self.samples[sd][tuple((nfa.trans[ti][2], nfa.trans[ti][4])
+                                   for ti, _ in reversed(ctail[sd]))] += 1
         self.booting = True
         try:
             for _ in range(nleaves):
@@ -906,18 +1385,38 @@ class Explorer:
                         if rq.kind != 'unf':
                             raise Fail('data pass: %s' % rq.kind)
                         sd = rq.k
-                        if not ctail[sd]:
-                            end[sd] = True
-                            continue
-                        ti, e = ctail[sd].pop(0)
-                        ext[sd] = ext[sd] + item_segs(nfa, nfa.trans[ti][2], (e, ()))
-                        st[sd], ref[sd] = nfa.trans[ti][3], e
+                    if not ctail[sd]:
+                        end[sd] = True
+                        continue
+                    ti, e = ctail[sd].pop(0)
+                    ext[sd] = ext[sd] + item_segs(nfa, nfa.trans[ti][2], (e, ()))
+                    st[sd], ref[sd] = nfa.trans[ti][3], e
                 Ln = fnorm(lf['endL'])
                 Rn = fnorm(lf['endR'])
                 if end['L']:
                     Ln = C.nstrip(Ln)
                 if end['R']:
                     Rn = C.nstrip(Rn)
+                if CANON:
+                    # the concrete leaves walk constant blocks cell by cell,
+                    # so they are not the exploration's leaves: re-segment
+                    # the whole concrete tape (window and the rest of the
+                    # tail) as the boot does, which folds canonically
+                    full = {}
+                    for sd, sn in (('L', Ln), ('R', Rn)):
+                        segs = list(sn)
+                        for ti, e in ctail[sd]:
+                            segs += item_segs(nfa, nfa.trans[ti][2], (e, ()))
+                        full[sd] = C.nstrip(fnorm(segs))
+                    fid, exps, _, folds = self.fam_of(lf['q1'], lf['h1'], full['L'], full['R'],
+                                                      {'L': None, 'R': None})
+                    vals = [e[0] for e in exps]
+                    for sd in ('L', 'R'):
+                        ctail[sd] = [(ti, e[0]) for ti, e in folds[sd]]
+                        # the tail as a string read from its far end
+                        self.samples[sd][tuple((nfa.trans[ti][2], nfa.trans[ti][4])
+                                               for ti, _ in reversed(folds[sd]))] += 1
+                    continue
                 tails = {sd: (None if end[sd] else (st[sd], (ref[sd], ()))) for sd in ('L', 'R')}
                 if any(end[sd] and ctail[sd] for sd in ('L', 'R')):
                     raise Fail('data pass: ended with a tail')
@@ -1036,6 +1535,39 @@ class Explorer:
                     if len(cs) == 1:
                         k, m_ = cs[0]
                         raise Up(Req('uge', k, -(-(mm - r_[0]) // m_)))
+            def unfold(sd):
+                if len(paths[sd]) >= MAXUNF:
+                    raise Fail('unfold depth')
+                s, r = st[sd]
+                used.add((sd, s))
+                me = len(unodes)
+                unodes.append(None)
+                kids = []
+                endk = None
+                if (sd, s) in nfa.acc:
+                    p2 = dict(paths)
+                    p2[sd] = paths[sd] + ['end']
+                    endk = run_unf(R, p2, na, p)
+                for ti in nfa.out(sd, s):
+                    u = rel_apply(nfa.trans[ti][4], r)
+                    if u != 'void' and not (isinstance(u[0], str)) and not acoefs(u) \
+                            and u[0] < self.mins.get((sd, nfa.trans[ti][3]), 0):
+                        # the item is below its state's least ref: a void node
+                        vi = len(unodes)
+                        unodes.append(('void', sd))
+                        kids.append((ti, u, vi))
+                        continue
+                    if u == 'void':
+                        kids.append((ti, None, None))
+                        continue
+                    if isinstance(u, tuple) and u and isinstance(u[0], str):
+                        raise Up(Req('u' + u[0], u[1], u[2]))
+                    p2 = dict(paths)
+                    p2[sd] = paths[sd] + [(ti, u)]
+                    kids.append((ti, u, run_unf(R, p2, na, p)))
+                unodes[me] = ('unf', sd, endk, kids)
+                return me
+
             while True:
                 try:
                     lf = leaf_run(self.tabw, F.q, F.h, ext['L'], ext['R'], end['L'], end['R'],
@@ -1046,38 +1578,7 @@ class Explorer:
                         na = rq.n
                         continue
                     if rq.kind == 'unf':
-                        sd = rq.k
-                        if len(paths[sd]) >= MAXUNF:
-                            raise Fail('unfold depth')
-                        s, r = st[sd]
-                        used.add((sd, s))
-                        me = len(unodes)
-                        unodes.append(None)
-                        kids = []
-                        endk = None
-                        if (sd, s) in nfa.acc:
-                            p2 = dict(paths)
-                            p2[sd] = paths[sd] + ['end']
-                            endk = run_unf(R, p2, na, p)
-                        for ti in nfa.out(sd, s):
-                            u = rel_apply(nfa.trans[ti][4], r)
-                            if u != 'void' and not (isinstance(u[0], str)) and not acoefs(u) \
-                                    and u[0] < self.mins.get((sd, nfa.trans[ti][3]), 0):
-                                # the item is below its state's least ref: a void node
-                                vi = len(unodes)
-                                unodes.append(('void', sd))
-                                kids.append((ti, u, vi))
-                                continue
-                            if u == 'void':
-                                kids.append((ti, None, None))
-                                continue
-                            if isinstance(u, tuple) and u and isinstance(u[0], str):
-                                raise Up(Req('u' + u[0], u[1], u[2]))
-                            p2 = dict(paths)
-                            p2[sd] = paths[sd] + [(ti, u)]
-                            kids.append((ti, u, run_unf(R, p2, na, p)))
-                        unodes[me] = ('unf', sd, endk, kids)
-                        return me
+                        return unfold(rq.k)
                     raise Up(rq)
             Ln = fnorm(lf['endL'])
             Rn = fnorm(lf['endR'])
@@ -1086,7 +1587,10 @@ class Explorer:
             if end['R']:
                 Rn = C.nstrip(Rn)
             tails = {sd: (None if end[sd] else st[sd]) for sd in ('L', 'R')}
-            g, ex, low, folds = self.fam_of(lf['q1'], lf['h1'], Ln, Rn, tails)
+            try:
+                g, ex, low, folds = self.fam_of(lf['q1'], lf['h1'], Ln, Rn, tails)
+            except NonCanon as nc:
+                return unfold(nc.sd)
             lf.update(reg=list(R), g=g, ex=ex, unf=paths, folds=folds, end=dict(end))
             me = len(unodes)
             unodes.append(('uleaf', len(leaves)))
@@ -1232,7 +1736,9 @@ def assemble(X, boot_t0, pins):
     if v0 is None or any(e[1] for e in v0):
         raise Fail('assemble: boot not an instance')
     v0 = [e[0] for e in v0]
-    a0 = dict(f=fmap[f0], v=v0, L=[tuple(x) for x in conc['L']], R=[tuple(x) for x in conc['R']])
+    # the anchor's tails: what the boot's family folded, then the boot's own
+    ct = {sd: [(ti, e[0]) for ti, e in folds0[sd]] + list(conc[sd]) for sd in ('L', 'R')}
+    a0 = dict(f=fmap[f0], v=v0, L=[tuple(x) for x in ct['L']], R=[tuple(x) for x in ct['R']])
     return dict(pins=sorted(pins), kinds=kinds, trans=trans, acc=acc, mins=mins, fams=fams,
                 leaves=leaves, t0=boot_t0, a0=a0)
 
@@ -1902,7 +2408,7 @@ def boot_of(X, tab, t0):
 NDATA = 3000
 
 
-def explore_row(spec, t0, mir=False):
+def explore_row(spec, t0, mir=False, dfa_k=None):
     tab = T.parse(spec)
     if mir:
         tab = T.mirror(tab)
@@ -1915,14 +2421,43 @@ def explore_row(spec, t0, mir=False):
     _lastX = X
     boot = boot_of(X, tab, t0)
     X.data_pass(boot, NDATA)
+    if dfa_k is not None:
+        # the tail language, learned from the pass's tails; then a second
+        # pass (under the DFA) seeds the hulls of the families it keys
+        dfas = {}
+        fits = {}
+        if dfa_k == 'bps':
+            fits = {sd: fit_bps(X.samples[sd]) for sd in ('L', 'R')}
+            # both tails are one list: the side with more digits fits both
+            ws = {sd: (f['weight'] if f else 0) for sd, f in fits.items()}
+            src = max(ws, key=lambda sd: ws[sd])
+            oth = 'L' if src == 'R' else 'R'
+            if fits[src] is not None:
+                tr = transfer_bps(fits[src], X.nfa.kinds, X.nfa.kidx, oth)
+                if tr is not None and ws[oth] < 4 * ws[src] and BPS_TRANSFER:
+                    fits[oth] = tr
+        for sd in ('L', 'R'):
+            if dfa_k == 'bps':
+                d = None if fits[sd] is None else build_bps(fits[sd], X.samples[sd])
+            else:
+                d = learn_dfa(list(X.samples[sd]), dfa_k)
+            if d is None:
+                if not X.samples[sd]:
+                    d = ({}, 0)
+                else:
+                    raise Fail('dfa %s: no automaton for side %s' % (dfa_k, sd))
+            dfas[sd] = d
+        X.use_dfa(dfas)
+        boot = boot_of(X, tab, t0)
+        X.data_pass(boot, NDATA)
     X.explore(boot)
     return X, pins, boot
 
 
 # --------------------------------------------------------------- driver ----
 
-def find_dir(spec, mir, t0):
-    X, pins, boot = explore_row(spec, t0, mir)
+def find_dir(spec, mir, t0, dfa_k=None):
+    X, pins, boot = explore_row(spec, t0, mir, dfa_k)
     tab = T.parse(spec)
     if mir:
         tab = T.mirror(tab)
@@ -1964,9 +2499,9 @@ def find(spec, timeout=0, t0s=T0S):
     errs = []
     try:
         for mir in (False, True):
-            for t0 in t0s:
+            for t0, k in [(t0, k) for t0 in t0s for k in ((None,) + DFA_K if CANON else (None,))]:
                 try:
-                    r = find_dir(spec, mir, t0)
+                    r = find_dir(spec, mir, t0, k)
                 except Fail as e:
                     r = dict(err=str(e))
                 except RecursionError:
@@ -1974,7 +2509,8 @@ def find(spec, timeout=0, t0s=T0S):
                 if 'err' not in r:
                     r['spec'] = spec
                     return r
-                errs.append('%s t%d %s' % ('m' if mir else 'd', t0, r['err']))
+                errs.append('%s t%d%s %s' % ('m' if mir else 'd', t0,
+                                              '' if k is None else ' %s' % (k,), r['err']))
     except Timeout:
         errs.append('timeout')
     finally:
