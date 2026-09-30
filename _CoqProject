@@ -11415,6 +11415,7 @@ theories/CloseoutTr/CBT_BL_01.v
 theories/CloseoutTr/CBT_BL_02.v
 theories/CloseoutTr/CBT_BL_03.v
 theories/CloseoutTr/CBT_BL_04.v
+theories/CloseoutTr/CBT_BL_05.v
 theories/CloseoutTr/CBT_BR_00.v
 theories/CloseoutTr/CBT_BR_01.v
 theories/CloseoutTr/CBT_BR_02.v
