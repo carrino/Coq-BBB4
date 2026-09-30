@@ -3295,6 +3295,100 @@ python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl --tag CE2 --chunk 40       
 python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl --tag CE2 --chunk 40 --qh  # QH: LDRQ boards
 ```
 
+#### 7.4.CE3 CE2's residue: nested arms for the quadratic carry, and closing from the family alone, 153 boarded (2026-09-29)
+
+Workstream CE3 (batch tag `CE3`), over the log counters §7.4.CE2 left: 335 DN
+(`dx/char_all.tsv` shape `log`, kind `counter`) and 171 QH
+(`counter_boxfail` / `counter_new`), 506 rows.  Hybrids (HY2), bouncers and
+edge rows (BX) and class SP (SPB) were not touched.
+
+**The quadratic carry is a loop of rounds, and needs no count.**  On
+`0RB0LA_0LC0RD_1LA1LC_1RC1RD` the interior lap costs `2(j+2)^2`.  The carry
+is `j` ROUNDS of `A[0] 1^(2i+1) 01 X -> A[0] 1^(2i+3) X`, each an ordinary
+kernel rule whose cost is affine in its OWN index `i` (the run it sweeps).
+The number of rounds is affine in the arm's index.  Every row traced has one
+of two shapes: UP, where the swept run grows and each round consumes a word
+from a tail, or DOWN (`0RB0LA_1LA0RC_0LD1RC_1RB1LD`), where the swept run
+shrinks and each round pushes a word onto the other side.  The closers only
+need SOME positive number of steps per lap, so the sum never has to be
+stated.
+
+**Ports (generic; axioms `functional_extensionality_dep` only):**
+
+* `Checkers/LadderNest.v`.  An arm is a SEGMENT program: kernel chains
+  (`NCh`) and iterations `NUp`/`NDn` of an inner rule over `al*j+be` rounds.
+  The proof is by induction on the round count (`iter_up`, `iter_down`), and
+  each round is linked to the next by a syntactic check (`link_up`,
+  `link_down`).  Segments meet at configurations built by `sidx` (a side at
+  an affine index), `srep` (a repeated word) and `sapp` (concatenation, with
+  at most one side depending on `j`).  Sides are compared on a normal form
+  (`snf`: fold the constant into the prefix and the multiplier into the
+  unit, then unrotate), because chains land on different spellings of the
+  same side (`0 ++ 0^(2j+2)` against `0000 ++ (00)^j`).  The end of an arm
+  is compared up to trailing blanks beside an empty tail (`ceqL`).  The
+  result is `ReachL`: a positive run to a configuration that lifts to the
+  right-hand side's.  `narm_reach` is the one theorem.
+* `Checkers/LadderCheckNestTr.v`.  The `LadderCheckTr`/`QHTr` board over such
+  arms (`boardN_neverqhtr`, `boardN_qhtr`).  `LadderCheck`'s `board_arm` and
+  `LadderCheckTr`'s `board_fire` carry the interior arms' `RuleSound` as a
+  section hypothesis, so they are restated here without it.  A fire may be
+  witnessed after the rounds: `nfire` runs a program prefix, then a base
+  chain.  The file also has a lookahead split (`boardK_*`: interior arms per
+  NEXT digit, plus end arms per phase for the last digit), for carries that
+  turn back on the next digit's first cell.  It is built and checked but has
+  boarded nothing: on the rows tried, the carry runs across the whole next
+  run, which is a misread family rather than a lookahead.
+* `tools/ladder/nest.py`.  It simulates the arm at several `j` with a marker
+  in every opaque tail, takes the state/symbol whose visit count is affine
+  in `j`, fits UP/DOWN rules to consecutive visits, proves them with
+  `lapcert.derive_chain`, fits the round count, and glues the pieces with
+  chains.  The chain engine can fold copies into a count but never unfold
+  one, so an inner rule carries its constant copies in `s_pre`.
+  `emit_ladder.py` tries it only when an arm has no kernel chain (plus arm
+  thresholds 4..6 last, since a round count `j - 1` needs `r >= 2`), and
+  emits the nested closure only for such rows.  Every other board is
+  byte-identical.
+* `tools/ladder/famclose.py`.  It closes from valfam's FAMILY alone.
+  `emit_ladder.closure_data` builds its class arms from the family and never
+  uses the arms valfam mines, and valfam's own miner is affine too.  So for
+  a row filed as "families found but none closed", each family (with its
+  fill laws and boot) is handed straight to the emitter.
+
+**Yields** (valfam at 150 s a row over all 506; famclose on the unclosed
+rows, 2 jobs; every board compiled by `sp_ladder_batch.py`):
+
+| bucket (valfam, this run) | DN | QH | boarded DN | boarded QH | by |
+|---|---:|---:|---:|---:|---|
+| valfam closes | 138 | 24 | 96 | 16 | nested arms on 90 of the 94 in `CBT_CE3_00/01`; the others are plain arms the old emitter refused only because they land a blank off the rhs (`ceqL`) |
+| families found, none closed | 76 | 96 | 12 | 29 | famclose (of 85 DN and 57 QH run so far) |
+| no value family | 94 | 18 | 0 | 0 | |
+| time cap | 27 | 33 | 0 | 0 | |
+| **total** | **335** | **171** | **108** | **45** | 96 boards nested |
+
+Batches `CBT_CE3_00..05`.  Closeout: 8,152 boarded before, **8,305** after,
+**2,619** remaining.  famclose was still running on the rest of both
+unclosed lists when this was written (container restarts cut it twice).
+
+**The residue, by where it stops.**  Among the 42 DN rows valfam closes and
+the emitter still cannot: the interior arm fails on 10, and 7 of those have
+AFFINE laps.  Those carries read past the incremented digit into the next
+run (a family misread, not a cost problem).  Most of the rest fail on the
+fill arm or the visit phase.  Over the first 60 unclosed rows, the
+interior-lap growth of the first family is: no one-parameter family with a
+boot 30, affine 16, family step lands off the next member 9, quadratic 3,
+exponential 2.  An exponential lap (`0RB0LA_1LC1RD_0RD0LC_1RB1LA`: 16, 36,
+72, 140, 272, 532) runs a whole inner binary counter inside the carry.  It
+would need an arm that invokes itself at a smaller index; it is too rare
+here to pay for.  famclose closes 5 of the 16 affine rows; 8 fail on the
+fill arm.  The QH rows were blocked by valfam's arm miner, not by cost:
+only 1 of the 45 QH boards needs a nested arm.
+
+```
+(cd tools/ladder && python3 valfam.py --list ROWS --cap 150 --json vf.jsonl)
+(cd tools/ladder && python3 famclose.py --list UNCLOSED --json fc.jsonl --jobs 2 [--qh])
+python3 tools/closeouttr/sp_ladder_batch.py vf.jsonl fc.jsonl --tag CE3 --chunk 50 [--qh]
+```
+
 #### 7.4.SW The DN sweep counters: a multi-family two-index glue, 239 of 287 boarded (2026-09-29)
 
 Workstream SW (batch tag `SW`), over the 287 `sweepctr` rows of
@@ -3691,7 +3785,83 @@ By HY's split: **755 of the 1,213 log counters** board, and 20 of the
 | renderer: no lap witness for one instruction | 4 | 8 | 12 |
 | timeout (120 s) | 0 | 1 | 1 |
 
-LADDER ROUTE AND FINAL RESIDUE: IN PROGRESS (valfam.py over the 1,442).
+**The ladder route: 351 rows, `CBT_SPB_16..17, 22..31`.**  CE2's
+value-family finder, `valfam.py --cap 150` (1 job, then 3, then 4
+shards; ~48 s a row, ~6 h wall), over every lap-probe failure and the 16
+emit misses: **578 of 1,458 close** (40%).  `sp_ladder_batch.py` emits
+an `LDRT_*` board for each (`emit_ladder.py --tr`, pins from a 10^6-step
+run) and keeps it only if its closure builds and it compiles: **351
+board** (343 lap-probe failures + 8 emit misses), ~1 s a board, a
+40-row batch in 30-50 s on CI's cores.  The ladder takes rows the lap
+route cannot: of the 343, the lap probe's best blocker was a nested
+overflow for 200, "no interior chain" for 137 and "no anchor" for 6.
+By HY's split, 193 are log counters and 158 no-anchor/no-family rows.
+
+| ladder outcome (1,458 rows) | rows |
+|---|---:|
+| closed and boarded | 351 |
+| closed, closure not built: interior arm, no chain at any threshold | 103 |
+| closed, closure not built: fill arm, no chain at any threshold | 54 |
+| closed, closure not built: no phase whose fill anchors reach every instruction | 29 |
+| closed, closure not built: phase-0 fill names 3-5 digits but widens by 1 | 17 |
+| closed, board fails `coqc` | 24 |
+| not closed: families found but none closed | 468 |
+| not closed: no value family (no anchor whose counter side decomposes) | 349 |
+| not closed: no local rules | 4 |
+| not closed: time cap (150 s) | 59 |
+
+The not-built reasons are the ones §7.4.SP met on its six-row sample:
+the state level shares the interior- and fill-arm gaps, and the
+instruction-specific one (no phase reaching every instruction) is still
+the smallest.  Of the 24 `coqc` failures, 4 are a `nat`-typed term the
+emitter writes where an expression is expected, and the others fail a
+concrete-configuration `reflexivity`; none was investigated further.
+
+**Totals.**  SPB boards **1,126** of the 2,233 open SP rows (50%): 775
+lap + 351 ladder, `CBT_SPB_00..31`.  SP open 2,233 -> **1,107**; all
+rows (with `main`'s CE2 integration) -> **2,077** of 10,924.
+
+**The residue (1,107), characterised.**  `sp_char.py char` at 1e8 steps
+on every residue row (`tools/closeouttr/spb/residue_char.{txt,json}`)
+splits it cleanly by the visited extent:
+
+| rows | extent at 1e8 | burst period ratio | what it is | where it stops |
+|---:|---|---|---|---|
+| 605 | >= 1,000 cells (HY: all no anchor / no family) | 4: 258, 2.25: 183, 9: 38, other 114, 2: 12 | §7.4.SP's doubling bouncers (width w' = 2w + c), not counters | no value family 333, families none closed 272.  `bin/irules` (§7.4.SP) is their route; these are the ones its 200K-step certificates missed |
+| 502 | < 200 cells (HY: 257 log counter, 245 no anchor / no family) | 2: 233, other: 123, 4: 123, 1.41: 14, 2.25 / 9: 9 | counters the lap emitter does not derive | ladder closed but not built or rejected 227; families none closed 196; time cap 59; no value family 16; no local rules 4 |
+
+So every SP counter the ports reach is boarded, and the counter
+residue is 502 rows in three pieces:
+
+1. **227 ladder closures the emitter cannot close** (interior arm 103,
+   fill arm 54, no phase reaching every instruction 29, wide fill 17,
+   `coqc` 24).  These are emitter work, not finder work: an
+   interior-arm witness (§7.4.SP's "obvious next piece") and a fill arm
+   whose chain is not affine in the run length would take most of them.
+2. **196 + 16 + 4 rows the finder does not close.**  Over all 502 log
+   rows the burst ratio is 2 for 233, 4 for 123 and no clean ratio for
+   123, so they are not all binary counters: the ratio-4 rows look like
+   base-4 or two-digit-per-overflow counters, and the unclean ones like
+   §7.4.CE's Fibonacci and other-radix counters (not checked row by row).
+3. **59 time caps**, re-run at 400 s below.
+
+The lap route's own residue is dominated by the nested overflow (492)
+and "no interior chain" (291), which is where the ladder took its 343;
+its "no anchor" rows still open (640) are the 605 wide rows and 35
+counters.
+
+TIME-CAP RE-RUN: IN PROGRESS.
+
+```
+python3 tools/closeouttr/classes.py shard SP 0 1 > sp_rows.txt
+python3 tools/closeouttr/qe_probe.py sp_rows.txt probe.jsonl --jobs 3 --timeout 120 --tr
+tools/closeouttr/spb/drive_emit.sh          # emit_lapcert.py --tr --emit per ~200 derived rows (resumes after a restart)
+tools/closeouttr/spb/board_chunk.sh cN      # sp_lap_batch.py --tag SPB, gen, build, checks, stage
+tools/closeouttr/spb/verify_head.sh         # the invariant checks on a clean worktree of HEAD
+(cd tools/ladder && python3 valfam.py --list lad_sK.txt --cap 150 --json vf_sK.jsonl)   # per shard
+python3 tools/closeouttr/sp_ladder_batch.py vf_s*.jsonl --tag SPB --chunk 40
+python3 tools/closeouttr/spb/tally.py       # the counts above
+```
 
 #### 7.4.BX The small classes: class ED closed, the cube counters need a non-linear liveness (2026-09-29)
 
@@ -3797,6 +3967,120 @@ Two routes would take most of it, and both are research: TI's counter
 segment (13 cube rows and most of the 89 bouncers, which TI reports as
 "too many families") and the 2-adic lexicographic liveness above (15 cube
 rows, and probably TI's 24).
+
+#### 7.4.HY2 HY's residue: a hybrid glue over any positional counter with a top table, 54 boarded (2026-09-29)
+
+Workstream HY2 (batch tag `HY2`), over the DN rows still open whose
+`dx/char_all.tsv` kind is `bouncer_part` with hybrid `sqrt+log` (282),
+`sqrt+fix` (26) or `other` (8): 316 rows (`tools/closeouttr/hy2/rows.txt`).
+The 18 QH rows of these hybrid kinds and the `sqrt+sqrt` rows were not
+touched.
+
+**The sample (20 rows, by eye).**  Only about 5 are a counter beside ONE
+growing block (base 4 with 3-cell digits and a 3-cycle at the junction; a
+binary counter whose top is a 10-cell word; a counter end that shifts into
+a `(10)^k` buffer at each overflow).  About 11 are tapes whose block COUNT
+grows (doubling `010110 1^4 0 1^8 0 1^16 ... 0`, x4 runs
+`(001)^12 00010 (001)^52 00010 (001)^213`), and the rest two-block transfer
+bouncers (`1^216 0 1^403`, one block +2 and the other -1 a round).  A
+block census at 2.5e5 / 1e6 / 4e6 steps over all 316
+(`hy2/blocks.jsonl`): one long block and a short end 125, block count
+growing 75, several blocks with a fixed count 116.  So only the first
+group has a counter end at all, and it is the target.
+
+**What the counter ends are.**  Reading the short end at consecutive
+anchors against every (digit width 1-6, base 2-4) and fitting the values:
+of the 54 rows boarded below, 26 are base 3 and 23 base 4 (3- or 4-cell
+digits, e.g. `001/101/000/100`), 5 binary.  None of these is `E`'s shape,
+and not because of the digits alone: in 43 of the 54 the counter has NO
+top digit, only a terminator (all digits at `b - 1` widen to one more
+digit of `0`, the bijective numeration), and in 11 the top steps through
+two words before the counter widens.  That is what HY's residue note
+called "a digit under the MSB written differently until the next
+overflow": the top is a small cycle of words, not a digit.  The ladder's
+value families do not fit either: their numeration is on the whole tape,
+with no opaque block tail.
+
+**The checker** (`theories/Counters/HybridCtrTr.v`, a sibling of
+`HybridGlueTr`; `Print Assumptions`: `functional_extensionality_dep`
+only).  The counter is a pair `(low, tv)`: low digits in base `b`, one
+word each (`D`), and a top value `lo <= tv < hi` read through a word table
+(`T`).  Its word is `concat (map D low) ++ T tv`, its value the RANK
+`(hi - lo) G |low| + vl low + b^|low| (tv - lo)` with
+`G k = 1 + b + ... + b^(k-1)` (successor, injectivity and existence are
+proved once, `canon_succ`, `canon_inj`, `canon_exists`).  The increment
+is one generic carry chain per shape: per digit `d < b - 1`
+(`Dm^j D d X -> D0^j D(d+1) X`, `X` opaque), per top step
+(`Dm^j T tv -> D0^j T (tv+1)`), and the overflow
+(`Dm^j T(hi-1) -> D0^(j+1) T lo`).  `hi = b lo` is a positional counter
+with a top window, `lo = 0, hi = 1` a terminator-only counter, and
+`b = 2, lo = 1, hi = 2` is exactly HY's `(A, B, C)`.  Each carry case
+names an EXIT (its own mid and sweep), so an overflow that leaves the
+counter in another state is expressible; the lap's block count follows
+the exit taken.  Sweep fires are reached through a carry family (the
+rank families of interior and top shapes, whose phase mod `L` the checker
+computes; the top family's phase by the recurrence `y (j+1) = (hi - lo) +
+b y j`, so no large power is built).  The phase list, the two-index
+anchor and the sweep half are HY's.  A row is one line,
+`apply coversTr_nqh, (hc_sound_nqh _ (mkHCC ...))` (`_mirror` when the
+counter is on the right); a corrupted boot index fails to compile.
+
+**The finder** (`tools/closeouttr/hy2_batch.py`, on `hy_batch.py`'s runs,
+anchors, blocks and chain search).  It reads `(Lpre, b, D)` and a first
+rank off the anchors (rejecting fits whose first rank is below `b^2`:
+a first prototype without that floor read overfitted "families" with first
+values of 4-9), then
+LEARNS the top cycle by simulation: from an observed top word it runs one
+counter half from a constructed anchor and reads what top word the carry
+leaves; when that is `D0` followed by a word already met, the cycle is
+closed and its length is `hi`.  It refits the rank against the anchors,
+reads the mid off interior laps only (an overflow lap may leave by another
+exit), derives one carry chain per case (and the case's own exit by
+simulation when the main mid does not fit), the sweeps, the boot and the
+fire witnesses.  240 s a row, then 600 s for the timeouts; ~1.3 h for the
+316 at 4 jobs.
+
+**Yield: 54 of 316**, `CBT_HY2_00` (38) and `CBT_HY2_01` (16), all 54
+compile (~30 s a batch).  All rows: 2,772 -> **2,718**.
+
+| certificate shape | rows |
+|---|---:|
+| base 3 / 4 / 2 | 26 / 23 / 5 |
+| top cycle length `hi - lo` = 1 (terminator only) / 2 | 43 / 11 |
+| digit width 3 / 4 / 2 cells | 41 / 8 / 5 |
+| one phase / four phases (block unit rotating at the junction) | 46 / 8 |
+| block unit 3 / 2 / 4 cells | 45 / 8 / 1 |
+| counter on the right (certified on the mirror) | 28 |
+| exits per phase | 1 on all 54 |
+
+The boots are short (the latest at step 218).  No boarded row needed a
+second exit; the exit mechanism is there for the two-state overflows seen
+by hand (below), which fail earlier.
+
+**Residue (262)**, per row in `tools/closeouttr/hy2/residue.tsv`:
+
+| rows | tape | where it stops | what it is |
+|---:|---|---|---|
+| 75 | block count grows | no anchor 48, no family 27 | doubling / x4 multi-block tapes: TI's "too many families" rows.  The part that is not blocks is a list of blocks of exponential length, not a counter end: it needs a block-list numeration (a counter whose digits are blocks), not a wider alphabet |
+| 116 | several blocks, count fixed | no anchor 56, no family 57, other 3 | two-block transfer bouncers and three-block sweeps (TI's and BX's shapes); no counter end |
+| 36 | one long block | no counter family | read by hand: two blocks of one unit, one growing linearly and one slowly (a UNARY counter, e.g. `1RB0LC_1LC0RA_1RA1LD_1LA1LA`: `(011)^n ... (011)^k`), or a counter that shifts its low end into a `(10)^k` buffer at each overflow so no fixed anchor cell exists (`0RB0LB_1LC1RA_0LD0LC_1RD1LB`) |
+| 19 | one long block | later: no top cycle 7, no mid 6, no block 4, other 2 | the two-lap overflow: `0RB0LC_1LC1RD_1LA1LB_1RC0RB` (binary, 2-cell digits `01/11`) at an all-ones counter first writes a marker past the MSB and sweeps the block WITHOUT carrying (exit state 2 instead of 0), and carries on the next lap.  A lap that does not increment is outside the one-rank-per-lap anchor; it needs a non-incrementing top step (a top word that keeps the low digits) in the numeration |
+| 14 | one long block | timeout at 600 s | families read; the chain searches do not finish |
+| 2 | one long block | no anchor | |
+
+**Next.**  (1) The two-lap overflow: a top step that keeps the low digits
+(rank arithmetic changes: the widths get extra states); 19 rows plus some
+of the 14 timeouts.  (2) The 75 growing-count rows are one family by eye
+(a counter whose digits are blocks, `1^(2^k)`); a checker for them is the
+TI residue's "counter segment in the family language", in its block-list
+form.  (3) The unary-counter rows are a two-block sweep with a slow block,
+closer to SW's two-index glue than to a counter.
+
+```
+python3 tools/closeouttr/hy2_batch.py find tools/closeouttr/hy2/rows.txt hy2/find1.jsonl --jobs 4
+HY2_BUDGET=600 python3 tools/closeouttr/hy2_batch.py find hy2/timeouts1.txt hy2/find2.jsonl --jobs 4
+python3 tools/closeouttr/hy2_batch.py batch hy2/find1.jsonl hy2/find2.jsonl --tag HY2 --chunk 50
+```
 
 ## 8. What we deliberately do NOT redo
 
