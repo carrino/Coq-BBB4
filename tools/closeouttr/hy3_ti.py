@@ -54,6 +54,23 @@ N_RUN = int(os.environ.get('HY3_NRUN', 2000000))
 MIN_SAMPLES = 6
 MAX_BOOTS = 6
 BOOT_MAX = int(os.environ.get('HY3_BOOTMAX', 3000000))
+BIGC = 0            # a block of at least BIGC units starts as a variable
+
+
+class HFam(B.LFam):
+    """bl_ti's lattice family; with BIGC, a block of at least BIGC units that
+    the run never saw change (lattice step 0) starts as [c, oo) instead of
+    the one value, so a leaf crosses it by a cycle instead of cell by cell"""
+
+    def __init__(self, key, vals):
+        super().__init__(key, vals)
+        if BIGC:
+            for k, c in enumerate(self.c):
+                if self.g[k] == 0 and c >= BIGC:
+                    self.g[k] = 1
+
+
+B.LFam = HFam
 
 
 def turns(tab, n):
@@ -116,8 +133,11 @@ def anchor_seeds(tab):
         if not any(g):
             continue
         seeds[key] = (c, g)
-        boots.append((len(vs), key, [v[0] for v in vs]))
-    boots.sort(key=lambda b: -b[0])
+        late = sum(1 for v in vs if v[0] > N_RUN // 2)
+        boots.append(((late, len(vs)), key, [v[0] for v in vs]))
+    # the keys the run keeps coming back to late first (the steady state),
+    # not the early transients
+    boots.sort(key=lambda b: (-b[0][0], -b[0][1]))
     return seeds, [(ts, key) for _, key, ts in boots[:MAX_BOOTS]]
 
 
@@ -158,20 +178,24 @@ def find_boot(tab, pins, t0, seeds):
 
 
 UNIT_SETS = (('u4', T.GEN_UNITS), ('z6', [(0,)] + T._prim_units(6)))
+CONFIGS = [(u, 0) for u in UNIT_SETS] + [(u, 16) for u in UNIT_SETS]
 
 
 def find_dir(tab):
     """find_dir1 under each block alphabet in UNIT_SETS (the units a literal
     run may be read as a block of): ti_batch's primitive units of up to 4
-    cells, then blanks and units of up to 6 cells, the first success"""
+    cells, then blanks and units of up to 6 cells; then both again with
+    big constant blocks generic (BIGC); the first success"""
+    global BIGC
     errs = []
-    for name, units in UNIT_SETS:
+    for (name, units), big in CONFIGS:
         T.GEN_UNITS = units
+        BIGC = big
         r = find_dir1(tab)
         if 'err' not in r:
-            r['units'] = name
+            r['units'] = '%s/%d' % (name, big)
             return r
-        errs.append('%s: %s' % (name, r['err']))
+        errs.append('%s/%d: %s' % (name, big, r['err']))
     return dict(err=' | '.join(errs))
 
 
