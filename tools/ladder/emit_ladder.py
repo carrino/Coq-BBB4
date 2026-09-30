@@ -342,6 +342,12 @@ def closure_data(cert, tab):
         if not 0 <= f['lands_in_phase'] < nph:
             raise NoClosure('phase %d fills into phase %d, which this family '
                             'does not have' % (ph, f['lands_in_phase']))
+        if f['widens_by'] < 0:
+            # [LadderFam.f_s] is a nat: a fill that NARROWS the counter is
+            # not stated (it was emitted as [mkFill -1 ...], which coqc reads
+            # as a subtraction; SCOPING_INSTR 7.4.LE)
+            raise NoClosure('phase %d fill narrows by %d: LadderFam states '
+                            'f_s : nat' % (ph, -f['widens_by']))
         m = len(f['target_prefix']) + len(f['target_suffix'])
         if m > 1 + f['widens_by']:
             raise NoClosure('phase %d fill target names %d digits but widens '
@@ -526,6 +532,23 @@ def closure_data(cert, tab):
                     hit = (r, ph, s, m1, total - m1, fl, cand, ch, ca, cb)
                     break
                 if hit is None and NEST and TR_PINS is not None:
+                    # a chain that lands off the target only by blanks the
+                    # machine WROTE beside a known-empty tail: [ceqL] reads it
+                    # as a one-segment program (SCOPING_INSTR 7.4.LE)
+                    for m1 in _splits(total):
+                        cand = conf(blk(pre + fpre + digs[mid] * m1, digs[mid],
+                                        s, digs[mid] * (total - m1) + fsuf
+                                        + tails[to]))
+                        ch = LC.derive_chain(tab, True, True, fl, cand,
+                                             maxdepth=32, nmax=120, lift=True)
+                        lnd = (LC.srun(tab, True, True, ch, fl)
+                               if ch is not None else None)
+                        if (lnd is not None and lnd[2] > 0
+                                and nest.ceqL(True, True, lnd[0], cand)):
+                            hit = (r, ph, s, m1, total - m1, fl, cand,
+                                   ('NEST', [('NCh', ch)], []), 0, 1)
+                            break
+                if hit is None and NEST and TR_PINS is not None:
                     # no chain to any split, short or not: a nested program
                     for m1 in _splits(total):
                         cand = conf(blk(pre + fpre + digs[mid] * m1, digs[mid],
@@ -601,6 +624,18 @@ def closure_data(cert, tab):
                             % (boot['cells'], ds0))
     if not ds0:
         raise NoClosure('boot digit string is empty')
+    if TR_PINS is not None and not boot_lift:
+        # the machine may also have written a blank on the OTHER side, which
+        # an exact boot lemma cannot see past (SCOPING_INSTR 7.4.LE)
+        bc = _boot_conf(cert['spec'], boot['steps_from_blank'])
+        if bc is not None:
+            bq, bl, bh, br = bc
+            want_l, want_r = ((cells, list(other)) if left
+                              else (list(other), cells))
+            if (bq == q and bh == hs and (bl, br) != (want_l, want_r)
+                    and _rstrip0(bl) == _rstrip0(want_l)
+                    and _rstrip0(br) == _rstrip0(want_r)):
+                boot_lift = True
 
     # Which closer this row wants.  A row whose liveness is ABCD never
     # quasihalts and [board_neverqh] takes it; a row missing exactly one
@@ -706,7 +741,40 @@ def closure_data(cert, tab):
                     seen.setdefault(_vkey(c2), ch + [st])
                     nxt.append((ch + [st], c2))
             front = nxt
+        if TR_PINS is not None and not all(i in seen for i in want):
+            _flat_walk(fl, seen)
         return seen
+
+    def _flat_walk(fl, seen, cap=20000):
+        """A CONCRETE anchor (an arm index below the threshold: both sides
+        flat, both tails known empty) whose run fires an instruction only
+        after the windows above give up: walk it forward in one-sided
+        windows, the longer of [SWinL]/[SWinR] each time, and keep the first
+        chain that fires each instruction still wanted (SCOPING_INSTR 7.4.LE).
+        Both window kinds keep both sides flat."""
+        if fl[1][1] or fl[1][4] or fl[3][1] or fl[3][4]:
+            return
+        ch, c, total = [], fl, 0
+        while total < cap and not all(i in seen for i in want):
+            best = None
+            for kind, bl, br in (('SWinL', False, True), ('SWinR', True, False)):
+                w = (c[0], c[1][0], c[2], c[3][0])
+                tr = LC.wtrace(tab, bl, br, w, cap - total)
+                for n in range(1, len(tr)):
+                    key = _vkey((tr[n][0], None, tr[n][2], None))
+                    if key in want and key not in seen:
+                        got = LC.srun(tab, True, True, ch + [(kind, n)], fl)
+                        if got is not None and _vkey(got[0]) == key:
+                            seen[key] = ch + [(kind, n)]
+                if best is None or len(tr) > best[1]:
+                    best = (kind, len(tr))
+            n = best[1] - 1
+            if n < 1:
+                return
+            got = LC.srun(tab, True, True, ch + [(best[0], n)], fl)
+            if got is None:
+                return
+            ch, c, total = ch + [(best[0], n)], got[0], total + n
 
     # The VISIT PHASE.  A fill anchor does not have to reach every recurring
     # state; what the liveness needs is that the anchors which DO reach it
@@ -742,60 +810,138 @@ def closure_data(cert, tab):
                     return seen
         return seen
 
-    seen_at = {}
-    for (r, ph, _s, _m1, _m2, fl, _fr, fch, _ca, _cb) in fill:
-        if isinstance(fch, tuple) and fch and fch[0] == 'NEST':
-            seen_at[(r, ph)] = nvisits(fl, fch)
-            if not all(i in seen_at[(r, ph)] for i in want):
-                p1 = (fch[1][0][1] if fch[1] and fch[1][0][0] == 'NCh' else [])
-                for i, ch in visits(fl, p1).items():
-                    seen_at[(r, ph)].setdefault(i, ([], ch))
-            continue
-        seen_at[(r, ph)] = {i: ([], ch) for i, ch in visits(fl, fch).items()}
-    pv, miss = None, []
-    for ph in range(nph):
-        bad = []
-        for (r, p) in sorted(seen_at):
-            if p != ph:
+    def visit_phase(fill, multi=False):
+        seen_at = {}
+        for (r, ph, _s, _m1, _m2, fl, _fr, fch, _ca, _cb) in fill:
+            if isinstance(fch, tuple) and fch and fch[0] == 'NEST':
+                seen_at[(r, ph)] = nvisits(fl, fch)
+                if not all(i in seen_at[(r, ph)] for i in want):
+                    p1 = (fch[1][0][1] if fch[1] and fch[1][0][0] == 'NCh' else [])
+                    for i, ch in visits(fl, p1).items():
+                        seen_at[(r, ph)].setdefault(i, ([], ch))
                 continue
-            gap = [_vname(i) for i in want if i not in seen_at[(r, p)]]
-            if gap:
-                bad.append('r=%d misses %s' % (r, ','.join(gap)))
-        if not bad:
-            pv = ph
+            seen_at[(r, ph)] = {i: ([], ch) for i, ch in visits(fl, fch).items()}
+        pv, miss = None, []
+        for ph in range(nph):
+            bad = []
+            for (r, p) in sorted(seen_at):
+                if p != ph:
+                    continue
+                gap = [_vname(i) for i in want if i not in seen_at[(r, p)]]
+                if gap:
+                    bad.append('r=%d misses %s' % (r, ','.join(gap)))
+            if not bad:
+                pv = ph
+                break
+            miss.append('phase %d (%s)' % (ph, '; '.join(bad)))
+        if pv is None and multi:
+            # A VISIT PHASE PER INSTRUCTION ([LadderCheckNestPvTr]): each
+            # instruction at the first phase whose anchors all reach it
+            pvf = {}
+            for i in want:
+                for ph in range(nph):
+                    ks = [k for k in seen_at if k[1] == ph]
+                    if ks and all(i in seen_at[k] for k in ks):
+                        pvf[i] = ph
+                        break
+            if len(pvf) == len(want):
+                rs_ = sorted({k[0] for k in seen_at})
+                nvis = {r: {i: seen_at[(r, pvf[i])][i] for i in want}
+                        for r in rs_}
+                vis = {r: {i: v[1] for i, v in d.items()}
+                       for r, d in nvis.items()}
+                return pvf, nvis, vis
+        if pv is None:
+            raise NoClosure('no phase whose fill anchors reach every recurring '
+                            'state: %s' % ' | '.join(miss))
+        nvis = {r: {i: seen_at[(r, pv)][i] for i in want}
+                for (r, p) in seen_at if p == pv}
+        vis = {r: {i: v[1] for i, v in d.items()} for r, d in nvis.items()}
+        if any(v[0] for d in nvis.values() for v in d.values()) and look is None and not any(
+                isinstance(x[5], tuple) and x[5][:1] == ('NEST',) for x in inter) \
+                and not any(isinstance(x[7], tuple) and x[7][:1] == ('NEST',)
+                            for x in fill):
+            raise NoClosure('a visit needs a segment program on a flat board')
+        return pv, nvis, vis
+
+    try:
+        pv, nvis, vis = visit_phase(fill)
+    except NoClosure as e0:
+        # A LARGER FILL THRESHOLD (SCOPING_INSTR 7.4.LE).  The first grid
+        # entry whose fill arms derive can leave an instruction that only a
+        # wider fill fires unwitnessed at the smallest index, where the arm
+        # is symbolic; a larger threshold makes that index concrete, and a
+        # concrete anchor's run is walked until it fires.
+        got_v = None
+        for n0, stride in (ARM_GRID[ARM_GRID.index((n0f, stf)) + 1:]
+                           if TR_PINS is not None else []):
+            if n0 < 1 or n0 + stride < 2:
+                continue
+            pads.clear()
+            targets.clear()
+            f2 = fill_at(n0, stride)
+            if f2 is None:
+                continue
+            try:
+                got_v = visit_phase(f2)
+            except NoClosure:
+                continue
+            fill, n0f, stf = f2, n0, stride
             break
-        miss.append('phase %d (%s)' % (ph, '; '.join(bad)))
-    if pv is None:
-        raise NoClosure('no phase whose fill anchors reach every recurring '
-                        'state: %s' % ' | '.join(miss))
-    nvis = {r: {i: seen_at[(r, pv)][i] for i in want}
-            for (r, p) in seen_at if p == pv}
-    vis = {r: {i: v[1] for i, v in d.items()} for r, d in nvis.items()}
-    if any(v[0] for d in nvis.values() for v in d.values()) and look is None and not any(
-            isinstance(x[5], tuple) and x[5][:1] == ('NEST',) for x in inter) \
-            and not any(isinstance(x[7], tuple) and x[7][:1] == ('NEST',)
-                        for x in fill):
-        raise NoClosure('a visit needs a segment program on a flat board')
+        # ...and then a visit phase per instruction, at every threshold
+        if got_v is None and TR_PINS is not None and NEST:
+            for n0, stride in ARM_GRID[ARM_GRID.index((n0f, stf)):]:
+                if n0 < 1 or n0 + stride < 2:
+                    continue
+                pads.clear()
+                targets.clear()
+                f2 = fill_at(n0, stride)
+                if f2 is None:
+                    continue
+                try:
+                    got_v = visit_phase(f2, multi=True)
+                except NoClosure:
+                    continue
+                fill, n0f, stf = f2, n0, stride
+                break
+        if got_v is None:
+            raise e0
+        pv, nvis, vis = got_v
 
     # ...and that the phase cycle returns to it from every phase, with the
     # number of fills it takes -- the kernel's [Hcyc], discharged per phase.
-    def kto(ph):
+    def kto(ph, tgt):
         cur = ph
         for k in range(nph + 1):
-            if cur == pv:
+            if cur == tgt:
                 return k
             cur = fills[cur]['lands_in_phase']
         return None
-    kcyc = [kto(ph) for ph in range(nph)]
+    pvf = None
+    if isinstance(pv, dict) and look is not None:
+        raise NoClosure('a visit phase per instruction with a digit of '
+                        'lookahead: no closer states both')
+    if isinstance(pv, dict):
+        # every instruction, pinned or not, needs a phase the cycle returns
+        # to: a pinned one takes the first unpinned one's
+        pvf = {i: pv.get(i, pv[want[0]]) for q_ in range(4) for i in [(q_, 0), (q_, 1)]}
+        pv = pv[want[0]]
+        kcycf = {tg: [kto(ph, tg) for ph in range(nph)]
+                 for tg in sorted(set(pvf.values()))}
+        if any(k is None for ks in kcycf.values() for k in ks):
+            raise NoClosure('the phase cycle does not reach every visit phase '
+                            'from every phase')
+    kcyc = [kto(ph, pv) for ph in range(nph)]
     if any(k is None for k in kcyc):
         raise NoClosure('the phase cycle does not reach phase %d from every '
                         'phase' % pv)
 
-    isnest = look is not None or any(
+    isnest = pvf is not None or look is not None or any(
         isinstance(x[5], tuple) and x[5][:1] == ('NEST',)
         for x in inter) or any(
         isinstance(x[7], tuple) and x[7][:1] == ('NEST',) for x in fill)
     return dict(nest=isnest, look=look, nvis=nvis, b=b, el=el, er=er, nph=nph, ph0=ph0, pv=pv, kcyc=kcyc,
+                pvf=pvf, kcycf=kcycf if pvf is not None else None,
                 inter=inter, n0i=n0i, sti=sti,
                 fill=fill, n0f=n0f, stf=stf,
                 ds0=ds0, t0=boot['steps_from_blank'], vis=vis,
@@ -1625,6 +1771,32 @@ Proof.
 Qed.
 '''
 
+PVF_DEFS = '''(** The visit phase of each instruction ([LadderCheckNestPvTr]), and the
+    fills it takes the phase cycle to reach it from each phase. *)
+Definition pvf_%(mid)s (t : Instr) : nat :=
+  match t with
+  %(pb)s
+  end.
+
+Definition kcyc_%(mid)s (tg ph : nat) : nat :=
+  match tg, ph with
+  %(kb)s
+  | _, _ => 0
+  end.
+
+Lemma pvlt_%(mid)s : forall t, pvf_%(mid)s t < %(nph)d.
+Proof. intros [q s]; destruct q, s; vm_compute; lia. Qed.
+
+Lemma cyc_%(mid)s : forall t ph, ph < %(nph)d ->
+  exists k, phto FAM k ph = pvf_%(mid)s t.
+Proof.
+  intros t ph Hph. exists (kcyc_%(mid)s (pvf_%(mid)s t) ph).
+  destruct t as [q s]; destruct q, s;
+    (do %(nph)d (destruct ph as [|ph]; [vm_compute; reflexivity|])); lia.
+Qed.
+
+'''
+
 NCLOSURE_QH = '''(** a pinned instruction fired before the boot: the quasihalt witness *)
 Lemma wit_%(mid)s :
   existsb (fun tg => cfires tm_%(mid)s c0 %(t0)d tg) pins_%(mid)s = true.
@@ -1655,6 +1827,7 @@ def emit_closure_nest(cert, tab, mid, cd):
     b = cd['b']
     n0i, sti, n0f, stf = cd['n0i'], cd['sti'], cd['n0f'], cd['stf']
     nph, ph0, pv = cd['nph'], cd['ph0'], cd['pv']
+    pvf = cd.get('pvf')
     nA, nF = n0i + sti, n0f + stf
     el, er = cd['el'], cd['er']
     L = [CLOSURE_HEAD % dict(nc=len(cert['arms']),
@@ -1760,7 +1933,8 @@ Definition vsegs_%(mid)s (r : nat) (t : Instr) : list nseg :=
 ''' % dict(mid=mid, vb='\n  '.join(
         '| %d, (%s, %s) => [%s]'
         % (r, ST[i[0]], SYM[i[1]],
-           '; '.join(coq_seg(sg, offs[(r, pv)]) for sg in v[0]))
+           '; '.join(coq_seg(sg, offs[(r, pvf[i] if pvf else pv)])
+                     for sg in v[0]))
         for r in sorted(cd['nvis'])
         for i, v in sorted(cd['nvis'][r].items()))))
 
@@ -1853,6 +2027,14 @@ Definition vsegs_%(mid)s (r : nat) (t : Instr) : list nseg :=
     L.append(NCLOSURE_BOOTL % dict(
         mid=mid, t0=cd['t0'], ds0=clist(cd['ds0'], str), ph0=ph0,
         tmb=('tm_%s' % mid) if TR_QH is not None else 'tm'))
+    if pvf:
+        hpvcyc = '  - exact pvlt_%s.\n  - exact cyc_%s.\n' % (mid, mid)
+    else:
+        hpvcyc = ''.join(['  - lia.\n', '  - intros ph Hph.\n']
+                         + ['    destruct ph as [|ph].\n'
+                            '    { exists %d; vm_compute; reflexivity. }\n' % k
+                            for k in cd['kcyc']]
+                         + ['    exfalso; lia.\n'])
     args = ''.join([
         '  - vm_compute; lia.\n',
         '  - vm_compute; reflexivity.\n',
@@ -1862,12 +2044,7 @@ Definition vsegs_%(mid)s (r : nat) (t : Instr) : list nseg :=
         pharg('vm_compute; lia'),
         pharg('vm_compute; lia'),
         pharg('vm_compute; lia'),
-        '  - lia.\n',
-        ''.join(['  - intros ph Hph.\n']
-                + ['    destruct ph as [|ph].\n'
-                   '    { exists %d; vm_compute; reflexivity. }\n' % k
-                   for k in cd['kcyc']]
-                + ['    exfalso; lia.\n']),
+        hpvcyc,
         '  - exact fm12_%s.\n' % mid,
         '  - repeat constructor.\n',
         '  - vm_compute; lia.\n',
@@ -1894,6 +2071,24 @@ Definition vsegs_%(mid)s (r : nat) (t : Instr) : list nseg :=
                   nph=nph, pv=pv, n0i=n0i, sti=sti, n0f=n0f, stf=stf,
                   args=args)
     txt = (NCLOSURE_QH if TR_QH is not None else NCLOSURE_NQH) % common
+    if pvf:
+        # a visit phase per instruction ([LadderCheckNestPvTr])
+        txt = (txt.replace('LadderCheckNestTr.boardN_', 'LadderCheckNestPvTr.boardPv_')
+                  .replace('(boardN_neverqhtr ', '(boardPv_neverqhtr ')
+                  .replace('(boardN_qhtr ', '(boardPv_qhtr ')
+                  .replace('fm1_%s fm2_%s %d\n' % (mid, mid, pv),
+                           'fm1_%s fm2_%s pvf_%s\n' % (mid, mid, mid)))
+        old_vis = '(lr_lhs (farm_%s r %d)) = Some t.' % (mid, pv)
+        L = [x.replace(old_vis, '(lr_lhs (farm_%s r (pvf_%s t))) = Some t.'
+                       % (mid, mid)) for x in L]
+        at = next(k for k, x in enumerate(L) if 'Lemma farm_reach_%s' % mid in x)
+        L.insert(at, PVF_DEFS % dict(
+            mid=mid, nph=nph,
+            pb='\n  '.join('| (%s, %s) => %d' % (ST[q_], SYM[s_], pvf[(q_, s_)])
+                           for q_ in range(4) for s_ in range(2)),
+            kb='\n  '.join('| %d, %d => %d' % (tg, ph, k)
+                           for tg, ks in sorted(cd['kcycf'].items())
+                           for ph, k in enumerate(ks))))
     if look:
         txt = (txt.replace('boardN_neverqhtr', 'boardK_neverqhtr')
                   .replace('boardN_qhtr', 'boardK_qhtr')
@@ -3341,8 +3536,13 @@ Definition fam_%(mid)s : Fam := %(fam)s.
 Local Notation FAM := fam_%(mid)s.
 ''' % dict(mid=mid, fam=coq_fam(cert)))
 
-    # -- the ladder
-    lad = derive_ladder(tab, cert)
+    # -- the ladder.  At the instruction level [check_ladder] runs on the
+    # machine wrapped at the pins, so a mined rule is derived on that
+    # machine: one that fires a pin has no chain there and is left out
+    # (the closure never uses the mined rules; SCOPING_INSTR 7.4.LE)
+    lad = derive_ladder(tab if TR_PINS is None else
+                        {k: (None if k in TR_PINS else v)
+                         for k, v in tab.items()}, cert)
     items = []
     for name, c0, c1, chain, cb in lad:
         items.append('(mkLRule (%s) (%s) 0 %d, %s)'
@@ -3415,7 +3615,9 @@ Proof. eapply arm_sound; [exact rules_sound_%(mid)s | exact ok_%(nm)s_%(mid)s]. 
             L[0] = L[0].replace(
                 'From BBB4.Checkers Require Import LadderCheckLiftTr.\n',
                 'From BBB4.Checkers Require Import LadderCheckLiftTr.\n'
-                'From BBB4.Checkers Require Import LadderNest LadderCheckNestTr.\n',
+                'From BBB4.Checkers Require Import LadderNest LadderCheckNestTr.\n'
+                + ('From BBB4.Checkers Require Import LadderCheckNestPvTr.\n'
+                   if cd.get('pvf') else ''),
                 1)
     L.append(closure)
 
@@ -3447,6 +3649,27 @@ def unfired(spec, steps):
         pos += 1 if e[1] == 'R' else -1
         q = e[2]
     return [(q, s) for q in range(4) for s in range(2) if (q, s) not in fired]
+
+
+def _boot_conf(spec, steps):
+    """(state, left cells nearest first, head, right cells nearest first)
+    after [steps] steps from the blank tape, every cell the head passed
+    included; None if it halts first"""
+    tab = parse_pins_tab(spec)
+    L_, R_, h, q = [], [], 0, 0
+    for _ in range(steps):
+        e = tab[(q, h)]
+        if e is None:
+            return None
+        wv, d, nq = e
+        if d == 'R':
+            L_.insert(0, wv)
+            h = R_.pop(0) if R_ else 0
+        else:
+            R_.insert(0, wv)
+            h = L_.pop(0) if L_ else 0
+        q = nq
+    return q, L_, h, R_
 
 
 def parse_pins_tab(spec):

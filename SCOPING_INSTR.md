@@ -4280,6 +4280,168 @@ HY2_BUDGET=600 python3 tools/closeouttr/hy2_batch.py find hy2/timeouts1.txt hy2/
 python3 tools/closeouttr/hy2_batch.py batch hy2/find1.jsonl hy2/find2.jsonl --tag HY2 --chunk 50
 ```
 
+#### 7.4.BL The block-list rows: what they are, a lattice TriGlue finder, 17 boarded (2026-09-30)
+
+Workstream BL (batch tag `BL`), over the still-open rows whose tape is
+blocks plus something that grows.  There are 680 rows
+(`tools/closeouttr/bl/rows.txt`):
+
+* 281 DN/QH bouncer + counter hybrids (`dx/char_all.tsv`: `bouncer_part`,
+  hybrid `sqrt+log` / `sqrt+fix` / `other`; HY2's residue);
+* 77 DN multi-block bouncers (`sqrt+sqrt`; the residue of BR, MB, TI and
+  BX);
+* 322 wide SP rows that TriGlue left as "too many families" (149), "no
+  ranking" (164) or "leaf too long" (9) (SPW's residue).
+
+While this ran, SPW boarded 75 of these by irules at 2M steps
+(`CBT_SPW_15..18`, §7.4.SPW).  The pure counters (LE) and the 29 cube
+sweep counters were not touched.
+
+**The sample, and the whole set classified.**  About 40 rows were read
+by hand: tape snapshots at 1e5 to 8e6 steps, the last-visit age of every
+cell, the tape at every fire of the rare instruction, and the tape at
+every head turn through one round.  Then
+`tools/closeouttr/bl/classify.py` (with `bl_sim.c`) measured two things
+on all 680 rows (`bl/classify.tsv`):
+
+* whether the rarest instruction fires at a REGULAR ratio (the last five
+  fire-interval ratios agree within a factor 1.3), IRREGULARLY, or at
+  sweep rate (every instruction fires 64+ times in 1e8 steps);
+* whether the number of blocks grows between the rare fires nearest 1e6
+  and 6.4e7 steps.
+
+| rows | group | fires | block count | what they are (by hand) |
+|---:|---|---|---|---|
+| 157 | SPW | irregular | 143 flat, 14 grow | **Collatz-like rounds.** A two-block transfer ends on a residue, and only one residue case fires the rare instruction (`0RB0LB_1RC1LB_0RD0RD_1LD1LA`: C0 at rounds of 9, 15, 24, 90, 207, 312, 1062).  Many rows share one non-periodic ratio sequence (1.38, 7.33, 5.07, 12.96, 1.37, ...).  This is BX's 2-adic liveness problem; no per-node ranking or relational invariant sees why the firing case recurs |
+| 81 | SPW | regular | flat | doubling / x4 bouncers with a bounded block count.  This group is where TriGlue, or irules at 2M, closes.  Of the 81, SPW's irules batches and `CBT_BL_*` boarded 38; the rest are TriGlue "too many families" (below) |
+| 42 | SPW | regular | grow | **block-list counters** (below) |
+| 42 | SPW | sweep rate | flat | wide one- and two-block rows whose rare instruction fires every sweep |
+| 151 + 46 | hybrids + bouncers | sweep rate | grow | block-list counters, and x4 lists such as `(100)^197 001 (010)^50 (0)^3 1 (010)^13 ...` |
+| 130 + 31 | hybrids + bouncers | sweep rate | flat | HY2's single-long-block shapes (the two-lap overflow, unary counters, a low end that shifts into a `(10)^k` buffer), long-period blocks, and irregular "spread" tapes |
+
+**The block-list counters are relational.**  `0RB1LB_1RC0LD_1LA0RD_1RA1LD`
+at every C0 fire is exactly
+
+    (1)^(2^k+1) 0 (1)^(2^(k-1)+3) 0 ... 0 (1)^11 0 (1)^7 0 (1)^5 0 (1)^4 (01)^3 [C0]
+
+so `b_(i+1) = 2 b_i - 3`.  Within a round the list is a binary counter.
+The digits are the separators (`0` / `010`), and each carry is a
+two-block transfer between NEIGHBOURING blocks, whose length it
+compares: `(1)^21 0 (1)^41 -> (1)^41 0 (1)^21`, in steps of the top
+block's width.  The first phase of the round, a leftward sweep, does
+cross every item the same way (`(1)^n 0 -> (1)^n 0` shifted one cell).
+But the carries do not, so a list segment of FREE items (a Kleene star
+of `u^(c + x_i) w`, crossed item by item) does not close.  The same
+holds for the separator-digit lists `00100 (1)^3 00 (1)^7 00 (1)^15 0
+(1)^31 ...` (`0RB0LB_1LC0RD_1LA1RB_1LC1RD`: `L_(i+1) = 2 L_i + d_i`) and
+the halving lists `(1)^932 0 (1)^612 010 (1)^306 0 (1)^155 ...`.  None
+of the sampled lists has a frozen history (a tail never revisited):
+`lastvis` shows every block revisited at a rate halving along the list.
+So piece (a), a block-list numeration, is a checker whose segments carry
+a list of blocks WITH an affine recurrence between neighbours
+(`b_(i+1) = a b_i + d_i`, `d_i` a finite digit), and whose carries are
+proved by induction along the list.  That is a new glue with its own
+liveness, and it is research: nothing landed here.
+
+**What the existing checkers take, with wider parameters.**
+
+| checker | run | result |
+|---|---|---|
+| `TriGlueTr` via the new finder `bl_ti.py` (below) | all 680; t0 3000 / 12000 / 50000 x start lattice 0 / 1, 240 s a row, 4 jobs, ~3.5 h | **50 certify**: 10 hybrids, 40 SPW.  38 of the SPW ones were boarded meanwhile by SPW's irules, so 14 are new (`CBT_BL_00`, `CBT_BL_04`) |
+| the same, `--maxfam 300 --plist 1,2,3,4,6,8,12`, 400 s | the 63 open REGULAR rows | 0 |
+| `RepWLMBTr` (`mb_cert_find.py --pmax 64`, 300 s) | the 18 hybrids whose tape is at least 50% one period of 7-64 cells; MB never tried them | **3 certify** (15.8K-20.6K nodes), `CBT_BL_01..03` |
+| rank tier `rk:4:0`, `rk:5:0` (`ng_batch.py probe`, 120 s) | the 322 SPW rows; SP was never put through the rank tier (§7.4.NG probed DN only) | 0 of 322 at window 4, and 0 of 63 at window 5 (57 false, 6 time-outs) before it was stopped |
+| `HybridCtrTr` (`hy2_batch.py`, `HY2_BUDGET=1800`) | the 15 HY2 rows that timed out at 600 s and are still open | running when this was written; see the commit that records it |
+
+**The finder** (`tools/closeouttr/bl_ti.py`; untrusted, on top of
+`ti_batch.py`, no new Coq).  TI gives each family variable the domain
+`[lb, oo)`.  On a doubling bouncer that is what makes the exploration
+diverge.  A block that is always `2 mod 4` long at a family's anchor is
+explored at every length.  The odd lengths, which the machine never
+produces, open new block shapes (`(1)^a 0 (10)^b (1)^c (01)^d ...`), and
+those open more, until the cap (`1RB1RC_0LC1RA_1LA1LD_1LA0LC`: TI "too
+many families" at any cap, `bl_ti` 6 families).  Here a family variable
+is a LATTICE `c + g*x`, and TriGlue's exponents are affine, so the
+checker takes it unchanged:
+
+1. **A concrete pass.**  From the boot, follow the real run leaf by
+   leaf through TI's own leaves (3,000 leaf steps).  Explore generically
+   only the families the run reaches, and record the exponents met in
+   each.  The seed of a variable is `c` = the least value met and `g` =
+   the gcd of the differences.
+2. **The exploration**, TI's, with the seeds.  A leaf landing at `e(z) =
+   e0 + sum m_i z_i` widens the target to `c' = min(c, e0)`, `g' =
+   gcd(g, m_i, e0 - c)` and re-explores it.  The target value is
+   `(e(z) - c') / g'`.  Lattices only coarsen.
+3. Rankings and every replayed check are TI's.  A row is one
+   `tri_sound` line, exactly as in `CBT_TI_*`.
+
+A variable seen once starts as the one value (`G0 = 0`) or as `[c, oo)`
+(`G0 = 1`), and the finder tries both at each boot time.  Where it
+fails, the failure is one of two kinds.  The first is `G0 = 0` "leaf
+too long": the families of a growing tape are each met once, so their
+blocks stay concrete.  The second is `G0 = 1` "too many families": the
+block count really grows.  A mixed start (constant only for families
+the pass met) gained nothing on a 24-row sample of those failures.
+
+**Yield: 17 rows** in `CBT_BL_00..04`, all kernel-checked (container, 4
+cores, under load):
+
+| batch | rows | route | compile |
+|---|---:|---|---:|
+| `CBT_BL_00` | 6 | `TriGlueTr`, lattice finder (4-96 families; boots at 3000, 12000, 50000) | 45 s |
+| `CBT_BL_01` | 1 | `RepWLMBTr`, 20-cell words (`1RB0LA_1LC0RD_1LA0LC_1RB0RD`) | 656 s |
+| `CBT_BL_02` | 1 | `RepWLMBTr` (`1RB0RA_1LC0RA_1LD0LC_1RB0LD`) | 378 s |
+| `CBT_BL_03` | 1 | `RepWLMBTr` (`1RB0RA_1LC0RB_1RA0LD_1LC0LD`) | 373 s |
+| `CBT_BL_04` | 8 | `TriGlueTr`, lattice finder | 45 s |
+
+`CBT_BL_00..03` are in `ci_costs.tsv` at about twice the container time.
+With them, `ci_shard.py --plan 6` keeps the slowest shard at `CBT_BR_02`
+alone (2,764 s).  `Print Assumptions` on `cv_BL_00_0000` and
+`cv_BL_04_0000` shows `functional_extensionality_dep` only.
+
+**Residue: 588 of the 680 rows are still open** (75 were boarded by SPW,
+17 here).  Per-row verdicts are in `bl/find1.jsonl`, classes in
+`bl/classify.tsv`:
+
+| rows | class | where every route stops | why |
+|---:|---|---|---|
+| 152 | SPW, irregular fires (138 flat, 14 grow) | TriGlue "no ranking" / "too many families", rank tier false | Collatz-like rounds: the 2-adic liveness of §7.4.BX |
+| 236 | block count grows (SPW regular 42; hybrids and bouncers 194) | TriGlue "too many families" (`G0 = 1`) or "leaf too long" (`G0 = 0`) | block-list counters with a neighbour recurrence: piece (a) above |
+| 136 | hybrids and bouncers, flat block count | the same | HY2's pieces (b) two-lap overflow and (c) unary / shifting-anchor counters, long-period blocks MB does not close (15 of 18), irregular "spread" tapes |
+| 49 | SPW, flat (18 regular, 31 sweep-rate) | TriGlue "no ranking" / "too many families" | bounded-block rows the lattice does not rescue; not read further |
+| 15 | QH hybrids | TriGlue "quiet point past the boot cap" | the quiet instruction stops after step 4,096 (as late as ~7.97M), past `tri_sound_qh`'s boot cap |
+
+**Next.**  (1) Piece (a) is the lever and it is research: a list segment
+whose items carry an affine recurrence to their neighbour, a carry proved
+by induction along the list, and a liveness argument for the overflow
+(the list read as a number increases).  (2) The Collatz-like SPW rows
+need BX's 2-adic ranking and are probably out of reach.  (3) HY2's (b)
+and (c) remain as HY2 described them.  They need a `HybridCtrTr`
+extension (a top step that keeps the low digits), which BL did not
+build.
+
+Commands (resumable: `find` skips rows already in its output):
+
+```
+python3 tools/closeouttr/bl_ti.py find tools/closeouttr/bl/rows.txt bl_find1.jsonl --jobs 4 --timeout 240
+python3 tools/closeouttr/bl_ti.py batch bl_find1.jsonl --tag BL --chunk 20
+cd tools/censustr && python3 mb_cert_find.py find ../closeouttr/bl/mb_long.json --list LONGPER_ROWS --jobs 2 --timeout 300 --pmax 64
+python3 tools/closeouttr/mb_batch.py tools/closeouttr/bl/mb_long.json --tag BL --chunk 1
+cc -O2 -o /tmp/bl_sim tools/closeouttr/bl/bl_sim.c
+python3 tools/closeouttr/bl/classify.py tools/closeouttr/bl/rows.txt > classify.tsv
+```
+
+On the 14-core box, the `bl_ti.py` sweep is ~1 h at `--jobs 12`.  The
+rank-tier rung BX recommends, `rk:8:0` at a 1,800 s cap on the 37
+bouncers that timed out at 600 s (`bx/bnc_rk8_timeout.txt`), is at most
+~18.5 CPU-hours, so ~1.5 h at 12 jobs:
+
+```
+python3 tools/closeouttr/ng_batch.py probe tools/closeouttr/bx/bnc_rk8_timeout.txt rk8.json --rungs rk:8:0 --jobs 12 --timeout 1800
+python3 tools/closeouttr/ng_batch.py batch rk8.json --tag BL --chunk 2
+```
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
