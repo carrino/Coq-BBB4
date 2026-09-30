@@ -7,7 +7,8 @@ A row is one line, `apply coversTr_nqh, (tri_nu_sound _ (mkNC TC LIVE))`
 (`_mirror` when the families were found on the mirrored machine; the
 `coversTr_qh3` / `tri_nu_sound_qh` forms for quasihalting rows).  TC is
 TriGlueTr's certificate with an empty rank list; LIVE is, per instruction,
-the modulus l and per node (level, E, V).  Only rows still in
+the modulus l, the number K of rankings, and per node (level, E,
+[V_0 .. V_(K-1)]).  Only rows still in
 closeouttr_remaining.txt are written.  Compile each batch before
 committing; drop a row Coq rejects with --skip SPEC.  Then run
 tools/closeouttr/gen_closeout_tr.py.
@@ -42,10 +43,11 @@ def render(c):
                 end = i + 1
                 break
     live = '[' + ';\n      '.join(
-        '((%s,%s), (%d, [%s]))' % (T.ST[t[0]], T.SYM[t[1]], ell,
-                                  ';'.join('(%d,%s,%s)' % (lv, cvec(E), cvec(V))
-                                           for lv, E, V in rows))
-        for t, (ell, rows) in c['live']) + ']'
+        '((%s,%s), (%d, %d, [%s]))' % (T.ST[t[0]], T.SYM[t[1]], ell, K,
+                                      ';'.join('(%d,%s,[%s])' % (lv, cvec(E),
+                                                                 ';'.join(cvec(V) for V in Vs))
+                                               for lv, E, Vs in rows))
+        for t, (ell, K, rows) in c['live']) + ']'
     nc = '(mkNC %s\n      %s)' % (text[start:end], live)
     if c.get('qh'):
         lemma = 'tri_nu_sound_qh_mirror' if c['mir'] else 'tri_nu_sound_qh'

@@ -42,6 +42,8 @@ import ti_batch as T                            # noqa: E402
 import ti_coq as C                              # noqa: E402
 
 RCANDS = sorted(set(Fr(p, q) for p in range(1, 28) for q in range(1, 28)))
+DEBUG = False
+SMALL = set(Fr(2) ** a * Fr(3) ** b for a in range(-4, 5) for b in range(-3, 4))
 
 
 class Fail(Exception):
@@ -221,57 +223,93 @@ def find_E(comp, cedges, nv):
     base = []
     for ei in tree:
         base += rows_for(ei, Fr(1))
-    W = rank_null(base, n)         # columns of X = W w
+    W = rank_null(base, n)         # X = sum_d w_d W[d]
     if not W:
         return None
     rest = [ei for ei in range(len(cedges)) if ei not in tree]
     sols = []
 
-    def kernel(Wc, ei, r):
-        rows = rows_for(ei, r)
-        Mw = matmul(rows, [list(col) for col in zip(*Wc)])     # rows x d
-        K = rank_null(Mw, len(Wc))
+    def pencil(Wc, ei):
+        """M0, M1 with the edge's constraint (M0 - r M1) w = 0"""
+        a, b, Ls, Lt, m = mats[ei]
+        M0 = [[sum(Lt[i][k] * Wv[off[b] + k] for k in range(nv[b] + 1)) for Wv in Wc]
+              for i in range(m + 1)]
+        M1 = [[sum(Ls[i][k] * Wv[off[a] + k] for k in range(nv[a] + 1)) for Wv in Wc]
+              for i in range(m + 1)]
+        return M0, M1
+
+    def kernel(Wc, M0, M1, r):
+        Mr = [[x - r * y for x, y in zip(r0, r1)] for r0, r1 in zip(M0, M1)]
+        K = rank_null(Mr, len(Wc))
         if not K:
             return None
-        # new basis: Wc^T K
         return [[sum(Wc[d][i] * kv[d] for d in range(len(Wc))) for i in range(n)] for kv in K]
 
+    def ratios(M0, M1, d):
+        """candidate r (positive rationals) with (M0 - r M1) singular"""
+        import numpy as np
+        from scipy.linalg import eigvals
+        A0 = np.array([[float(x) for x in r] for r in M0])
+        A1 = np.array([[float(x) for x in r] for r in M1])
+        out = set()
+        rng = np.random.default_rng(1)
+        for _ in range(2):
+            R = rng.standard_normal((d, len(M0)))
+            try:
+                ev = eigvals(R @ A0, R @ A1)
+            except Exception:           # noqa: BLE001
+                continue
+            for e in ev:
+                if np.isfinite(e) and abs(e.imag) < 1e-7 and e.real > 1e-9:
+                    out.add(Fr(float(e.real)).limit_denominator(256))
+        return sorted(r for r in out if r > 0)
+
+    calls = [0]
+
     def dfs(Wc, todo, depth):
-        if len(sols) >= 4 or depth > 60:
+        calls[0] += 1
+        if len(sols) >= 6 or depth > 60 or calls[0] > 400:
             return
         if not todo:
             sols.append(Wc)
             return
-        # pick the most constrained edge: fewest candidate ratios
+        d = len(Wc)
         best = None
         for ei in todo:
-            probe = [kernel(Wc, ei, r) for r in (Fr(1), Fr(7, 5), Fr(13, 11))]
-            if all(p is not None and len(p) == len(Wc) for p in probe):
-                # always satisfied: drop it
-                best = (0, ei, [(None, Wc)])
+            M0, M1 = pencil(Wc, ei)
+            kg = kernel(Wc, M0, M1, Fr(7, 5))
+            g = len(kg) if kg else 0
+            if g == d:
+                best = (-1, ei, [(None, Wc)])       # always satisfied
                 break
-            if all(p is not None for p in probe):
-                continue           # free: decide later
             opts = []
-            for r in RCANDS:
-                K = kernel(Wc, ei, r)
-                if K is not None:
+            for r in sorted(set(ratios(M0, M1, d)) | SMALL, key=lambda r: (r == 1, abs(math.log(r)))):
+                K = kernel(Wc, M0, M1, r)
+                if K is not None and len(K) > g:
                     opts.append((r, K))
-            if best is None or len(opts) < best[0]:
-                best = (len(opts), ei, opts)
-            if not opts:
+            if g > 0:
+                opts.append((None, None))            # defer: r stays free
+            key = (0 if g == 0 else 1, 0 if any(r is not None for r, _ in opts) else 1, len(opts))
+            if best is None or key < best[0]:
+                best = (key, ei, opts)
+            if g == 0 and not opts:
                 return
-        if best is None:
-            # all left are free: take the smallest ratio near 1 first
-            ei = todo[0]
-            best = (0, ei, [(r, kernel(Wc, ei, r)) for r in
-                            sorted(RCANDS, key=lambda r: abs(math.log(r)))[:40]])
-        _, ei, opts = best
+        key, ei, opts = best
+        if DEBUG:
+            print("dfs depth", depth, "d", d, "edge", cedges[ei][:2], "key", key, "opts", [str(r) for r, _ in opts])
+        if key == -1:
+            dfs(Wc, [x for x in todo if x != ei], depth + 1)
+            return
+        if key[1] == 1:
+            sols.append(Wc)                          # only free edges left
+            return
         todo2 = [x for x in todo if x != ei]
         for r, K in opts:
-            if K is None:
-                continue
-            dfs(K, todo2, depth + 1)
+            if r is None:
+                # the ratio stays free: decide the other edges first
+                dfs(Wc, todo2 + [ei] if False else todo2, depth + 1)
+            else:
+                dfs(K, todo2, depth + 1)
 
     dfs(W, rest, 0)
     out = []
@@ -376,47 +414,70 @@ def solve_instr(S, E, fired_of, nv, t, ells):
     for nd in quiet:
         level.setdefault(nd, 0)
     Eall = {nd: [Fr(1)] + [Fr(0)] * nv[nd] for nd in quiet}
-    Vall = {nd: (0, [0] * nv[nd]) for nd in quiet}
-    jall = {}
+    Vall = {nd: [] for nd in quiet}
+    K = 0
     ell_used = None
     for i, cmp_ in enumerate(comps):
         cedges = [e for e in edges if cid[e[0]] == i and cid[e[1]] == i]
         if not cedges:
             continue
-        # 1. plain ranking (E = 1)
+        # 1. plain lexicographic ranking (E = 1)
         trivial = {nd: [Fr(1)] + [Fr(0)] * nv[nd] for nd in cmp_}
         got = None
         r = fit_V(cmp_, cedges, nv, trivial, None, milp, LinearConstraint, Bounds, np)
         if r is not None:
-            got = (trivial, r[0], r[1], None)
+            got = (r, None)
         else:
             cands = find_E(cmp_, cedges, nv) or []
             for Ec in cands:
                 for l in ells:
                     r = fit_V(cmp_, cedges, nv, Ec, l, milp, LinearConstraint, Bounds, np)
                     if r is not None:
-                        got = (r[2], r[0], r[1], l)
+                        got = (r, l)
                         break
                 if got:
                     break
         if got is None:
             return None
-        Ec, V, jj, l = got
+        (Vs, k, Ec), l = got
         if l is not None:
             if ell_used not in (None, l):
                 return None
             ell_used = l
+        K = max(K, k)
         for nd in cmp_:
             Eall[nd] = Ec[nd]
-            Vall[nd] = V[nd]
-        jall.update(jj)
-    return dict(level=level, E=Eall, V=Vall, ell=ell_used or 2)
+            Vall[nd] = Vs[nd]
+    return dict(level=level, E=Eall, V=Vall, K=K, ell=ell_used or 2)
+
+
+KMAX = 4
+
+
+def edge_rows(src, tgt, nva, nvb, oa, ob, ntot, np):
+    """rows of V_a(src) - V_b(tgt) over z: constant first, then each z_p"""
+    m = max([C.tbound(e[1]) for e in src + tgt] + [0])
+    rows = []
+    for p in range(-1, m):
+        row = np.zeros(ntot)
+        if p < 0:
+            row[oa] += 1
+            row[ob] -= 1
+        for k in range(nva):
+            e = src[k]
+            row[oa + 1 + k] += e[0] if p < 0 else C.tcoef(p, e[1])
+        for k in range(nvb):
+            e = tgt[k]
+            row[ob + 1 + k] -= e[0] if p < 0 else C.tcoef(p, e[1])
+        rows.append(row)
+    return rows
 
 
 def fit_V(comp, cedges, nv, Ec, l, milp, LinearConstraint, Bounds, np):
-    """potentials pi (E_i scaled by l^pi_i), binaries y_e (j_e >= 1), V;
-    None if infeasible"""
-    # ratios
+    """node potentials pi (E_i scaled by l^pi_i) making as many edges as
+    possible strict in nu, then lexicographic rankings V_1..V_K, each
+    non-increasing on the edges left and strict on as many as possible.
+    (Vs per node, K, E per node) or None"""
     rs = []
     for a, b, src, tgt in cedges:
         r = ratio(eval_lin(Ec[a], src), eval_lin(Ec[b], tgt))
@@ -429,76 +490,72 @@ def fit_V(comp, cedges, nv, Ec, l, milp, LinearConstraint, Bounds, np):
         ve = [0] * len(rs)
     else:
         ve = [nu(l, r) for r in rs]
-        # the unit part must be an l-unit: automatic for prime l
+    pi = {nd: 0 for nd in comp}
+    if l is not None:
+        # stage 0: potentials; maximize the edges with j >= 1
+        k = {nd: i for i, nd in enumerate(comp)}
+        n0 = len(comp) + len(cedges)
+        A, lo, hi = [], [], []
+        for ei, (a, b, src, tgt) in enumerate(cedges):
+            row = np.zeros(n0)
+            row[k[b]] += 1
+            row[k[a]] -= 1
+            row[len(comp) + ei] += 1
+            A.append(row)
+            lo.append(-np.inf)
+            hi.append(-ve[ei])
+        c = np.concatenate([np.full(len(comp), 1e-4), -np.ones(len(cedges))])
+        ub = np.concatenate([np.full(len(comp), 60.0), np.ones(len(cedges))])
+        res = milp(c=c, constraints=LinearConstraint(np.array(A), np.array(lo), np.array(hi)),
+                   integrality=np.ones(n0), bounds=Bounds(np.zeros(n0), ub))
+        if not res.success:
+            return None
+        x = np.round(res.x).astype(int)
+        pi = {nd: int(x[k[nd]]) for nd in comp}
+    jj = [-(ve[ei] + pi[b] - pi[a]) for ei, (a, b, _, _) in enumerate(cedges)]
+    if any(j < 0 for j in jj):
+        return None
+    R = [ei for ei in range(len(cedges)) if jj[ei] == 0]
     idx, n = {}, 0
     for nd in comp:
         idx[nd] = n
         n += 1 + nv[nd]
-    npi = len(comp) if l is not None else 0
-    pio = {nd: n + k for k, nd in enumerate(comp)} if l is not None else {}
-    n2 = n + npi
-    ny = len(cedges) if l is not None else 0
-    yo = n2
-    ntot = n2 + ny
-    BIG = 10 ** 5
-    A, lo, hi = [], [], []
-    for ei, (a, b, src, tgt) in enumerate(cedges):
-        m = max([C.tbound(e[1]) for e in src + tgt] + [0])
-        if l is not None:
-            # delta = ve + pi_b - pi_a <= -y
-            row = np.zeros(ntot)
-            row[pio[b]] += 1
-            row[pio[a]] -= 1
-            row[yo + ei] += 1
-            A.append(row)
-            lo.append(-np.inf)
-            hi.append(-ve[ei])
-        # V_a(src) - V_b(tgt) >= 1 - BIG y  (constant), >= -BIG y (coefs)
-        for p in range(-1, m):
-            row = np.zeros(ntot)
-            if p < 0:
-                row[idx[a]] += 1
-                row[idx[b]] -= 1
-            for k in range(nv[a]):
-                e = src[k]
-                row[idx[a] + 1 + k] += e[0] if p < 0 else C.tcoef(p, e[1])
-            for k in range(nv[b]):
-                e = tgt[k]
-                row[idx[b] + 1 + k] -= e[0] if p < 0 else C.tcoef(p, e[1])
-            if l is not None:
-                row[yo + ei] += BIG
-            A.append(row)
-            lo.append(1 if p < 0 else 0)
-            hi.append(np.inf)
-    ub = np.full(ntot, 10 ** 6, dtype=float)
-    lb = np.zeros(ntot)
-    for k in range(n2, ntot):
-        ub[k] = 1
-    for nd in comp:
-        if l is not None:
-            ub[pio[nd]] = 60
-    c = np.ones(ntot)
-    for k in range(n2, ntot):
-        c[k] = 0
-    res = milp(c=c, constraints=LinearConstraint(np.array(A), np.array(lo), np.array(hi)),
-               integrality=np.ones(ntot), bounds=Bounds(lb, ub))
-    if not res.success:
+    Vs = {nd: [] for nd in comp}
+    for stage in range(KMAX):
+        if not R:
+            break
+        ntot = n + len(R)
+        A, lo = [], []
+        for si, ei in enumerate(R):
+            a, b, src, tgt = cedges[ei]
+            for pi_, row in enumerate(edge_rows(src, tgt, nv[a], nv[b], idx[a], idx[b], ntot, np)):
+                if pi_ == 0:
+                    row[n + si] -= 1          # const diff >= s_e
+                A.append(row)
+                lo.append(0)
+        c = np.concatenate([np.full(n, 1e-6), -np.ones(len(R))])
+        ub = np.concatenate([np.full(n, 10 ** 6), np.ones(len(R))])
+        res = milp(c=c, constraints=LinearConstraint(np.array(A), np.array(lo), np.inf),
+                   integrality=np.ones(ntot), bounds=Bounds(np.zeros(ntot), ub))
+        if not res.success:
+            return None
+        x = np.round(res.x).astype(int)
+        strict = [ei for si, ei in enumerate(R) if x[n + si] == 1]
+        if not strict:
+            return None
+        for nd in comp:
+            Vs[nd].append((int(x[idx[nd]]), [int(v) for v in x[idx[nd] + 1:idx[nd] + 1 + nv[nd]]]))
+        R = [ei for ei in R if ei not in strict]
+    if R:
         return None
-    x = np.round(res.x).astype(int)
-    V = {nd: (int(x[idx[nd]]), [int(v) for v in x[idx[nd] + 1:idx[nd] + 1 + nv[nd]]])
-         for nd in comp}
-    Eo = {}
-    for nd in comp:
-        sc = (l ** int(x[pio[nd]])) if l is not None else 1
-        Eo[nd] = [v * sc for v in Ec[nd]]
-    # integerize E jointly (a common factor coprime to nothing matters: it
-    # scales every E by the same number, ratios unchanged)
+    Eo = {nd: [v * (l ** pi[nd] if l is not None else 1) for v in Ec[nd]] for nd in comp}
     den = 1
     for nd in comp:
         for v in Eo[nd]:
-            den = den * Fr(v).denominator // math.gcd(den, Fr(v).denominator)
+            dd = Fr(v).denominator
+            den = den * dd // math.gcd(den, dd)
     Eo = {nd: [int(v * den) for v in Eo[nd]] for nd in comp}
-    return V, {}, Eo
+    return Vs, len(Vs[comp[0]]), Eo
 
 
 # ------------------------------------------------------------ checker ----
@@ -521,31 +578,38 @@ def strip(l, A):
     return j, A
 
 
-def nu_edge_ok(l, Esrc, Etgt, Vsrc, Vtgt):
-    """TriNuTr.nu_edge: B e1 = A e2, gcd(B,l)=1, A = b l^j, gcd(b,l)=1,
-    and (j >= 1 or V drops)"""
-    e1 = Esrc
-    e2 = Etgt
+def vlexd(K, Vs, Vs2, src, tgt):
+    """TriNuTr.vlexd over seq 0 K"""
+    for k in range(K):
+        V = Vs[k] if k < len(Vs) else (0, [])
+        V2 = Vs2[k] if k < len(Vs2) else (0, [])
+        v, v2 = C.veval(V, src), C.veval(V2, tgt)
+        if C.ale(C.aaddc(v2, 1), v):
+            return True
+        if not C.ale(v2, v):
+            return False
+    return False
+
+
+def nu_edge_ok(l, e1, e2, vd):
+    """TriNuTr.nu_edge: B e1 = A e2, gcd(B,l)=1, A = l^j b, gcd(b,l)=1, j >= 1 or vd"""
     N = max(C.tbound(e1[1]), C.tbound(e2[1]))
     g1, g2 = content(N, e1), content(N, e2)
     d = math.gcd(g1, g2)
-    if d == 0:
-        return False
-    B, A = g2 // d, g1 // d
+    B, A = (g2 // d, g1 // d) if d else (0, 0)
     j, b = strip(l, A)
     return (C.ale(C.ascale(B, e1), C.ascale(A, e2)) and C.ale(C.ascale(A, e2), C.ascale(B, e1))
-            and math.gcd(B, l) == 1 and math.gcd(b, l) == 1
-            and (j >= 1 or C.ale(C.aaddc(Vtgt, 1), Vsrc)))
+            and math.gcd(B, l) == 1 and math.gcd(b, l) == 1 and (j >= 1 or vd))
 
 
 def nu_check(cert, tabw, fired, nc):
     """TriNuTr.nlive_ok, transcribed"""
     P = nc['P']
     S = [(l, tuple(r)) for l, r in nc['S']]
-    lvs = cert['leaves']
     if P <= 0:
         return 'P'
     rk = {tuple(t): d for t, d in nc['live']}
+    dflt = (0, (1, []), [])
     for i, nd in enumerate(S):
         es = T.edges(cert, P, tabw, nd)
         if es is None:
@@ -561,20 +625,17 @@ def nu_check(cert, tabw, fired, nc):
                         t = (q, h)
                         if t in cert['pins'] or t in fired[nd[0]] or t in fired[l2]:
                             continue
-                        if t not in rk:
-                            return 'no rank %s' % (t,)
-                        l, rows = rk[t]
-                        lv, Ev, Vv = rows[i] if i < len(rows) else (0, (1, []), (0, []))
-                        lv2, Ev2, Vv2 = rows[i2] if i2 < len(rows) else (0, (1, []), (0, []))
-                        if Ev[0] < 1 or Ev2[0] < 1 or l < 2:
+                        l, K, rows = rk.get(t, (2, 0, []))
+                        lv, Ev, Vs = rows[i] if i < len(rows) else dflt
+                        lv2, Ev2, Vs2 = rows[i2] if i2 < len(rows) else dflt
+                        if l < 2 or Ev[0] < 1 or Ev2[0] < 1:
                             return 'E const'
                         if lv2 < lv:
                             continue
                         if lv2 != lv:
                             return 'level up %s node %d' % (t, i)
-                        e1 = C.veval(Ev, src)
-                        e2 = C.veval(Ev2, tgt)
-                        if not nu_edge_ok(l, e1, e2, C.veval(Vv, src), C.veval(Vv2, tgt)):
+                        if not nu_edge_ok(l, C.veval(Ev, src), C.veval(Ev2, tgt),
+                                          vlexd(K, Vs, Vs2, src, tgt)):
                             return 'edge %s node %d -> %d' % (t, i, i2)
     return None
 
@@ -615,9 +676,9 @@ def find_row(d, plist, ells):
                     lvl = r['level'].get(nd, 0)
                     Ev = r['E'].get(nd, [1] + [0] * nv[nd])
                     Ev = (int(Ev[0]), [int(x) for x in Ev[1:]])
-                    Vv = r['V'].get(nd, (0, [0] * nv[nd]))
-                    rows.append((lvl, Ev, (int(Vv[0]), [int(x) for x in Vv[1]])))
-                live.append((t, (r['ell'], rows)))
+                    Vs = [(int(c), [int(x) for x in vs]) for c, vs in r['V'].get(nd, [])]
+                    rows.append((lvl, Ev, Vs))
+                live.append((t, (r['ell'], r['K'], rows)))
             if not ok:
                 break
         if not ok:
@@ -634,13 +695,32 @@ def find_row(d, plist, ells):
     return dict(spec=d['spec'], err='; '.join(errs))
 
 
+def _one(args):
+    d, plist, ells, timeout = args
+    import signal
+
+    def _alarm(signum, frame):
+        raise Fail('timeout')
+    signal.signal(signal.SIGALRM, _alarm)
+    signal.alarm(timeout)
+    try:
+        return find_row(d, plist, ells)
+    except Exception as e:           # noqa: BLE001  (finder side only)
+        return dict(spec=d['spec'], err='exception %r' % (e,))
+    finally:
+        signal.alarm(0)
+
+
 def main():
+    from multiprocessing import Pool
     ap = argparse.ArgumentParser()
     ap.add_argument('dump')
     ap.add_argument('out')
     ap.add_argument('--plist', default='1,2,3,4,6')
     ap.add_argument('--ells', default='2,3')
     ap.add_argument('--only', default=None)
+    ap.add_argument('--jobs', type=int, default=1)
+    ap.add_argument('--timeout', type=int, default=900)
     a = ap.parse_args()
     plist = [int(x) for x in a.plist.split(',')]
     ells = [int(x) for x in a.ells.split(',')]
@@ -652,17 +732,13 @@ def main():
     done = set()
     if os.path.exists(a.out):
         done = set(json.loads(l)['spec'] for l in open(a.out))
+    todo = [(d, plist, ells, a.timeout) for spec, d in recs.items()
+            if spec not in done and (not a.only or spec == a.only)]
     n_ok = 0
-    with open(a.out, 'a') as f:
-        for spec, d in recs.items():
-            if spec in done or (a.only and spec != a.only):
-                continue
-            try:
-                r = find_row(d, plist, ells)
-            except Exception as e:           # noqa: BLE001  (finder side only)
-                r = dict(spec=spec, err='exception %r' % (e,))
+    with open(a.out, 'a') as f, Pool(a.jobs, maxtasksperchild=1) as pool:
+        for r in pool.imap_unordered(_one, todo):
             n_ok += 'err' not in r
-            print(spec, 'OK P=%d' % r['P'] if 'err' not in r else r['err'][:150], flush=True)
+            print(r['spec'], 'OK P=%d' % r['P'] if 'err' not in r else r['err'][:150], flush=True)
             f.write(json.dumps(T.jsonable(r)) + '\n')
             f.flush()
     print('certified', n_ok)

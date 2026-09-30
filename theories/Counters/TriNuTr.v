@@ -140,7 +140,7 @@ Qed.
 Definition acont (N : nat) (e : aexp) : nat :=
   fold_left Nat.gcd (map (fun k => tcoef k (a_t e)) (seq 0 N)) (a_c e).
 
-Definition nu_edge (l : nat) (e1 e2 v1 v2 : aexp) : bool :=
+Definition nu_edge (l : nat) (e1 e2 : aexp) (vd : bool) : bool :=
   let N := Nat.max (tbound (a_t e1)) (tbound (a_t e2)) in
   let g1 := acont N e1 in
   let g2 := acont N e2 in
@@ -150,14 +150,13 @@ Definition nu_edge (l : nat) (e1 e2 v1 v2 : aexp) : bool :=
   let jb := lstrip l A A in
   ale (ascale B e1) (ascale A e2) && ale (ascale A e2) (ascale B e1)
   && (Nat.gcd B l =? 1) && (Nat.gcd (snd jb) l =? 1)
-  && ((1 <=? fst jb) || ale (aaddc v2 1) v1).
+  && ((1 <=? fst jb) || vd).
 
-Lemma nu_edge_sound : forall l e1 e2 v1 v2 z, 2 <= l -> nu_edge l e1 e2 v1 v2 = true ->
+Lemma nu_edge_sound : forall l e1 e2 vd z, 2 <= l -> nu_edge l e1 e2 vd = true ->
   0 < aeval z e1 -> 0 < aeval z e2 ->
-  nu l (aeval z e2) < nu l (aeval z e1)
-  \/ (nu l (aeval z e2) = nu l (aeval z e1) /\ aeval z v2 + 1 <= aeval z v1).
+  nu l (aeval z e2) < nu l (aeval z e1) \/ (nu l (aeval z e2) = nu l (aeval z e1) /\ vd = true).
 Proof.
-  intros l e1 e2 v1 v2 z Hl H H1 H2. unfold nu_edge in H.
+  intros l e1 e2 vd z Hl H H1 H2. unfold nu_edge in H.
   set (N := Nat.max (tbound (a_t e1)) (tbound (a_t e2))) in H.
   set (B := acont N e2 / Nat.gcd (acont N e1) (acont N e2)) in H.
   set (A := acont N e1 / Nat.gcd (acont N e1) (acont N e2)) in H.
@@ -178,50 +177,107 @@ Proof.
     rewrite nu_coprime by (exact Hl || exact Hb || exact H2). reflexivity. }
   destruct (Nat.eq_dec j 0) as [Hj0 | Hj0]; [|left; lia].
   right. split; [lia|].
-  apply orb_prop in Hj as [Hj | Hj]; [apply Nat.leb_le in Hj; lia|].
-  pose proof (ale_sound z _ _ Hj) as Hv. rewrite aeval_aaddc in Hv. exact Hv.
+  apply orb_prop in Hj as [Hj | Hj]; [apply Nat.leb_le in Hj; lia | exact Hj].
+Qed.
+
+(** ** Lexicographic order on lists of naturals of one length *)
+
+Fixpoint lexlt (a b : list nat) : Prop :=
+  match a, b with
+  | x :: a', y :: b' => x < y \/ (x = y /\ lexlt a' b')
+  | _, _ => False
+  end.
+
+Lemma lex_ind : forall K (Q : list nat -> Prop),
+  (forall b, length b = K -> (forall a, length a = K -> lexlt a b -> Q a) -> Q b) ->
+  forall b, length b = K -> Q b.
+Proof.
+  induction K as [|K IH]; intros Q Hstep b Hb.
+  - apply Hstep; [exact Hb|]. intros a Ha Hab. destruct b; [|discriminate].
+    destruct a; cbn in Hab; contradiction.
+  - destruct b as [|y b']; [discriminate|]. cbn in Hb. injection Hb as Hb.
+    revert b' Hb. induction y as [y IHy] using lt_wf_ind. intros b' Hb.
+    apply (IH (fun c => Q (y :: c))); [|exact Hb].
+    intros c Hc Hinner. cbv beta in Hinner. apply Hstep; [cbn; rewrite Hc; reflexivity|].
+    intros a Ha Hab. destruct a as [|x a']; [discriminate|]. cbn in Ha. injection Ha as Ha.
+    cbn in Hab. destruct Hab as [Hlt | [-> Hab]].
+    + exact (IHy x Hlt a' Ha).
+    + exact (Hinner a' Ha Hab).
 Qed.
 
 (** ** The certificate *)
 
-Definition nrow := (nat * (nat * list nat) * (nat * list nat))%type.
+(** per node: a level, the form [E], and the rankings [V_0 .. V_(K-1)] *)
+Definition nrow := (nat * (nat * list nat) * list (nat * list nat))%type.
 
 Record ncert := mkNC {
-  nc_tc   : tcert;                               (** TriGlueTr's, its ranks unused *)
-  nc_live : list (Instr * (nat * list nrow))     (** per instruction: l, per node *)
+  nc_tc   : tcert;                                   (** TriGlueTr's, its ranks unused *)
+  nc_live : list (Instr * (nat * nat * list nrow))   (** per instruction: l, K, per node *)
 }.
 
-Definition nrank_of (lv : list (Instr * (nat * list nrow))) (t : Instr) : nat * list nrow :=
-  match find (fun p => instr_eqb (fst p) t) lv with Some p => snd p | None => (2, []) end.
+Definition nrank_of (lv : list (Instr * (nat * nat * list nrow))) (t : Instr)
+  : nat * nat * list nrow :=
+  match find (fun p => instr_eqb (fst p) t) lv with Some p => snd p | None => (2, 0, []) end.
 
-Definition nrow_at (rows : list nrow) (i : nat) : nrow := nth i rows (0, (1, []), (0, [])).
+Definition nrow_at (rows : list nrow) (i : nat) : nrow := nth i rows (0, (1, []), []).
 
-Definition nstep_ok (l : nat) (r r' : nrow) (src tgt : list aexp) : bool :=
+(** the rankings drop lexicographically along an edge *)
+Fixpoint vlexd (ks : list nat) (Vs Vs' : list (nat * list nat)) (src tgt : list aexp) : bool :=
+  match ks with
+  | [] => false
+  | k :: ks' =>
+      let v := veval (nth k Vs (0, [])) src in
+      let v' := veval (nth k Vs' (0, [])) tgt in
+      ale (aaddc v' 1) v || (ale v' v && vlexd ks' Vs Vs' src tgt)
+  end.
+
+Definition vvec (ks : list nat) (Vs : list (nat * list nat)) (vals : list nat) : list nat :=
+  map (fun k => vval (nth k Vs (0, [])) vals) ks.
+
+Lemma vlexd_sound : forall ks Vs Vs' src tgt z, vlexd ks Vs Vs' src tgt = true ->
+  lexlt (vvec ks Vs' (map (aeval z) tgt)) (vvec ks Vs (map (aeval z) src)).
+Proof.
+  induction ks as [|k ks IH]; intros Vs Vs' src tgt z H; cbn [vlexd] in H; [discriminate|].
+  unfold vvec. cbn [map lexlt]. fold (vvec ks Vs' (map (aeval z) tgt)).
+  fold (vvec ks Vs (map (aeval z) src)).
+  apply orb_prop in H as [H | H].
+  - left. pose proof (ale_sound z _ _ H) as Hle. rewrite aeval_aaddc, !veval_ok in Hle. lia.
+  - apply andb_prop in H as [H1 H2]. pose proof (ale_sound z _ _ H1) as Hle.
+    rewrite !veval_ok in Hle.
+    destruct (Nat.eq_dec (vval (nth k Vs' (0, [])) (map (aeval z) tgt))
+                         (vval (nth k Vs (0, [])) (map (aeval z) src))) as [He | He].
+    + right. split; [exact He | exact (IH _ _ _ _ z H2)].
+    + left. lia.
+Qed.
+
+Definition nstep_ok (l K : nat) (r r' : nrow) (src tgt : list aexp) : bool :=
   match r, r' with
-  | (lv, E, V), (lv', E', V') =>
+  | (lv, E, Vs), (lv', E', Vs') =>
       (2 <=? l) && (1 <=? fst E) && (1 <=? fst E')
       && ((lv' <? lv)
-          || ((lv' =? lv) && nu_edge l (veval E src) (veval E' tgt) (veval V src) (veval V' tgt)))
+          || ((lv' =? lv) && nu_edge l (veval E src) (veval E' tgt)
+                                     (vlexd (seq 0 K) Vs Vs' src tgt)))
   end.
 
-Definition nmeas_row (l : nat) (r : nrow) (vals : list nat) : nat * nat * nat :=
-  match r with (lv, E, V) => (lv, nu l (vval E vals), vval V vals) end.
+Definition nmeas_row (l K : nat) (r : nrow) (vals : list nat) : list nat :=
+  match r with (lv, E, Vs) => lv :: nu l (vval E vals) :: vvec (seq 0 K) Vs vals end.
 
-Definition lex3 (x y : nat * nat * nat) : Prop :=
-  match x, y with
-  | (a1, b1, c1), (a2, b2, c2) => a1 < a2 \/ (a1 = a2 /\ (b1 < b2 \/ (b1 = b2 /\ c1 < c2)))
-  end.
+Lemma nmeas_row_length : forall l K r vals, length (nmeas_row l K r vals) = S (S K).
+Proof.
+  intros l K [[lv E] Vs] vals. cbn [nmeas_row length]. unfold vvec.
+  rewrite map_length, seq_length. reflexivity.
+Qed.
 
 Lemma vval_ge_c : forall V vals, fst V <= vval V vals.
 Proof. intros [c vs] vals. unfold vval. cbn [fst snd]. lia. Qed.
 
-Lemma nstep_sound : forall l r r' src tgt z, nstep_ok l r r' src tgt = true ->
-  lex3 (nmeas_row l r' (map (aeval z) tgt)) (nmeas_row l r (map (aeval z) src)).
+Lemma nstep_sound : forall l K r r' src tgt z, nstep_ok l K r r' src tgt = true ->
+  lexlt (nmeas_row l K r' (map (aeval z) tgt)) (nmeas_row l K r (map (aeval z) src)).
 Proof.
-  intros l [[lv E] V] [[lv' E'] V'] src tgt z H. unfold nstep_ok in H.
+  intros l K [[lv E] Vs] [[lv' E'] Vs'] src tgt z H. unfold nstep_ok in H.
   apply andb_prop in H as [H Hm]. apply andb_prop in H as [H HE'].
   apply andb_prop in H as [Hl HE]. apply Nat.leb_le in Hl, HE, HE'.
-  cbn [nmeas_row lex3].
+  cbn [nmeas_row lexlt].
   apply orb_prop in Hm as [Hm | Hm].
   - left. apply Nat.ltb_lt in Hm. exact Hm.
   - apply andb_prop in Hm as [Hlv Hm]. apply Nat.eqb_eq in Hlv. right. split; [exact Hlv|].
@@ -229,9 +285,9 @@ Proof.
       by (rewrite veval_ok; pose proof (vval_ge_c E (map (aeval z) src)); lia).
     assert (P2 : 0 < aeval z (veval E' tgt))
       by (rewrite veval_ok; pose proof (vval_ge_c E' (map (aeval z) tgt)); lia).
-    destruct (nu_edge_sound l _ _ _ _ z Hl Hm P1 P2) as [Hd | [Hd Hv]];
+    destruct (nu_edge_sound l _ _ _ z Hl Hm P1 P2) as [Hd | [Hd Hv]];
       rewrite !veval_ok in Hd; [left; exact Hd|].
-    right. rewrite !veval_ok in Hv. split; [exact Hd | lia].
+    right. split; [exact Hd|]. exact (vlexd_sound _ _ _ _ _ z Hv).
 Qed.
 
 Definition nlive_node_ok (tmw : TM) (nw : ncert) (fired : list (list Instr))
@@ -261,8 +317,8 @@ Definition nlive_node_ok (tmw : TM) (nw : ncert) (fired : list (list Instr))
                        forallb (fun t =>
                          tr_inb t (tc_pins w) || tr_inb t fl || tr_inb t fl'
                          || let lr := nrank_of (nc_live nw) t in
-                            nstep_ok (fst lr) (nrow_at (snd lr) i) (nrow_at (snd lr) i')
-                                     src tgt) all_Instr
+                            nstep_ok (fst (fst lr)) (snd (fst lr)) (nrow_at (snd lr) i)
+                                     (nrow_at (snd lr) i') src tgt) all_Instr
                    end
                  else true
              end) (seq 0 (length lvs)))
@@ -331,11 +387,11 @@ Definition nleafof (a : nat * list nat) : option tleaf :=
 Definition nfires_at (a : nat * list nat) (t : Instr) : bool :=
   match nleafof a with Some lf => tr_inb t (leaf_fired tmw lf) | None => false end.
 
-Definition nmeas (t : Instr) (a : nat * list nat) : nat * nat * nat :=
+Definition nmeas (t : Instr) (a : nat * list nat) : list nat :=
   let lr := nrank_of (nc_live nw) t in
   match nodeidx w a with
-  | Some i => nmeas_row (fst lr) (nrow_at (snd lr) i) (snd a)
-  | None => (0, 0, 0)
+  | Some i => nmeas_row (fst (fst lr)) (snd (fst lr)) (nrow_at (snd lr) i) (snd a)
+  | None => repeat 0 (S (S (snd (fst lr))))
   end.
 
 Lemma nmodl_rsub : forall R z, length z = length R ->
@@ -355,7 +411,7 @@ Lemma nnext_ok : forall a, nGoodS a ->
   nGoodS (tnxt fams lvs a)
   /\ forall t, ~ In t (tc_pins w) -> nfires_at a t = false ->
        nfires_at (tnxt fams lvs a) t = false ->
-       lex3 (nmeas t (tnxt fams lvs a)) (nmeas t a).
+       lexlt (nmeas t (tnxt fams lvs a)) (nmeas t a).
 Proof.
   intros a [Ha Hn].
   destruct (walk_leaf tmw fams lvs Hfams a Ha)
@@ -426,7 +482,7 @@ Proof.
     assert (Hfl2 : nth l' (map (leaf_fired tmw) lvs) [] = leaf_fired tmw lf').
     { apply nth_error_nth. apply map_nth_error. exact Hlf'. }
     rewrite Hpin', Hfl, Hfl2, Hf, Hf' in Hln. cbn [orb] in Hln.
-    pose proof (nstep_sound _ _ _ _ _ z' Hln) as Hlex.
+    pose proof (nstep_sound _ _ _ _ _ _ z' Hln) as Hlex.
     rewrite Htgt, Hsrc in Hlex.
     unfold nmeas. rewrite Hn'. unfold nodeidx. fold fams. rewrite HF, Hw, Ei.
     rewrite Hnx. cbn [snd]. exact Hlex.
@@ -435,35 +491,18 @@ Qed.
 Definition nFiresFrom (c : cconf) (t : Instr) : Prop :=
   exists k e, stepn tmw k (lift c) = Some e /\ instr_of e = t.
 
-Lemma lex3_ind : forall (Q : nat * list nat -> Prop) (m : nat * list nat -> nat * nat * nat),
-  (forall a, (forall b, lex3 (m b) (m a) -> Q b) -> Q a) -> forall a, Q a.
-Proof.
-  intros Q m Hstep.
-  assert (H : forall n1 a, fst (fst (m a)) = n1 -> Q a).
-  { intros n1. induction n1 as [n1 IH1] using lt_wf_ind.
-    assert (H2 : forall n2 a, fst (fst (m a)) = n1 -> snd (fst (m a)) = n2 -> Q a).
-    { intros n2. induction n2 as [n2 IH2] using lt_wf_ind.
-      assert (H3 : forall n3 a, fst (fst (m a)) = n1 -> snd (fst (m a)) = n2
-                                -> snd (m a) = n3 -> Q a).
-      { intros n3. induction n3 as [n3 IH3] using lt_wf_ind.
-        intros a E1 E2 E3. apply Hstep. intros b Hb.
-        destruct (m a) as [[x1 x2] x3] eqn:Ea. destruct (m b) as [[y1 y2] y3] eqn:Eb.
-        cbn [fst snd] in E1, E2, E3. subst x1 x2 x3. cbn [lex3] in Hb.
-        destruct Hb as [Hb | [Hb [Hb' | [Hb' Hb'']]]].
-        - apply (IH1 y1 Hb). rewrite Eb. reflexivity.
-        - apply (IH2 y2 Hb'); rewrite Eb; cbn; lia.
-        - apply (IH3 y3 Hb''); rewrite Eb; cbn; lia. }
-      intros a E1 E2. exact (H3 _ a E1 E2 eq_refl). }
-    intros a E1. exact (H2 _ a E1 eq_refl). }
-  intros a. exact (H _ a eq_refl).
-Qed.
-
 Lemma nfires_lex : forall t, ~ In t (tc_pins w) ->
   forall a, nGoodS a -> nFiresFrom (tanc fams a) t.
 Proof.
-  intros t Hpin.
-  apply (lex3_ind (fun a => nGoodS a -> nFiresFrom (tanc fams a) t) (nmeas t)).
-  intros a IH Ha.
+  intros t Hpin a0.
+  set (K := snd (fst (nrank_of (nc_live nw) t))).
+  assert (Hlen : forall a, length (nmeas t a) = S (S K)).
+  { intros a. unfold nmeas. destruct (nodeidx w a); [apply nmeas_row_length|].
+    apply repeat_length. }
+  refine (lex_ind (S (S K)) (fun b => forall a, nmeas t a = b -> nGoodS a ->
+                                     nFiresFrom (tanc fams a) t) _ (nmeas t a0) (Hlen a0)
+                  a0 eq_refl).
+  intros b _ IH a <- Ha.
   assert (Hfire : forall b, nGoodS b -> nfires_at b t = true -> nFiresFrom (tanc fams b) t).
   { intros b [Hb _] Ef.
     destruct (walk_leaf tmw fams lvs Hfams b Hb)
@@ -483,7 +522,7 @@ Proof.
         split; [rewrite stepn_add, (csteps_lift _ _ _ _ Hm), Hl; exact Hk | exact He]).
   apply Hback.
   destruct (nfires_at (tnxt fams lvs a) t) eqn:Ef'; [exact (Hfire _ Ha' Ef')|].
-  exact (IH _ (Hrk t Hpin Ef Ef') Ha').
+  exact (IH _ (Hlen _) (Hrk t Hpin Ef Ef') _ eq_refl Ha').
 Qed.
 
 Definition ntriCf (a0 : nat * list nat) (p : positive) : cconf :=

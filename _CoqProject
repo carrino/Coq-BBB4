@@ -11730,6 +11730,11 @@ theories/CloseoutTr/CBT_SW_05.v
 theories/CloseoutTr/CBT_SW_06.v
 theories/CloseoutTr/CBT_SW_07.v
 theories/CloseoutTr/CBT_TA_00.v
+theories/CloseoutTr/CBT_TA_01.v
+theories/CloseoutTr/CBT_TA_02.v
+theories/CloseoutTr/CBT_TA_03.v
+theories/CloseoutTr/CBT_TA_04.v
+theories/CloseoutTr/CBT_TA_05.v
 theories/CloseoutTr/CBT_TI_00.v
 theories/CloseoutTr/CBT_TI_01.v
 theories/CloseoutTr/CBT_TI_02.v
