@@ -11463,6 +11463,12 @@ theories/CloseoutTr/CBT_SPW_05.v
 theories/CloseoutTr/CBT_SPW_06.v
 theories/CloseoutTr/CBT_SPW_07.v
 theories/CloseoutTr/CBT_SPW_08.v
+theories/CloseoutTr/CBT_SPW_09.v
+theories/CloseoutTr/CBT_SPW_10.v
+theories/CloseoutTr/CBT_SPW_11.v
+theories/CloseoutTr/CBT_SPW_12.v
+theories/CloseoutTr/CBT_SPW_13.v
+theories/CloseoutTr/CBT_SPW_14.v
 theories/CloseoutTr/CBT_SP_00.v
 theories/CloseoutTr/CBT_SP_01.v
 theories/CloseoutTr/CBT_SP_02.v
