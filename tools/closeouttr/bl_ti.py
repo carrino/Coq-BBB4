@@ -50,11 +50,14 @@ class LFam(T.Fam):
 
     def __init__(self, key, vals):
         super().__init__(key, vals)
+        # G0 = 0: a variable seen once (or a family the concrete pass never
+        # met) starts as the one value; G0 = 1: as [lb, oo); G0 = 2 (mixed):
+        # the one value if the pass met the family, [lb, oo) if it did not
         self.c = list(vals)
-        self.g = [G0] * len(vals)
+        self.g = [0 if G0 == 0 else 1] * len(vals)
         if key in SEEDS and len(SEEDS[key][0]) == len(vals):
             self.c = list(SEEDS[key][0])
-            self.g = [g or G0 for g in SEEDS[key][1]]
+            self.g = [g or (1 if G0 == 1 else 0) for g in SEEDS[key][1]]
             self.lb = list(self.c)
 
     def pattern(self):
