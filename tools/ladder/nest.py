@@ -568,7 +568,13 @@ def _search(tab, el, er, c0, c1, laps, js, depth, maxdepth, nmax):
         if len(occ) < 4:
             continue
         mid_ = occ[1:-1]
-        for win in (mid_, occ):
+        # the rounds can be a stretch of the visits with several on either
+        # side (a sweep back after the carry passes the same state/symbol):
+        # after the two windows above, trim more off each end
+        # (SCOPING_INSTR 7.4.LE)
+        wins = [mid_, occ] + [occ[s:len(occ) - e] for s in range(4)
+                              for e in range(6) if (s, e) not in ((0, 0), (1, 1))]
+        for win in wins:
             if len(win) < 3:
                 continue
             for kind, sig, lhs, rhs, WL, WR in rule_candidates(win):
@@ -675,6 +681,21 @@ def _try_rule(tab, el, er, c0, c1, laps, js, kind, lhs, rhs, WL, WR, key,
             got = LC.srun(tab, el, er, post, m1)
             if got is not None and ceqL(el, er, got[0], c1):
                 segs = body + [('NCh', post)]
+        if segs is None:
+            # the rounds leave a count with constant copies in it, and the
+            # chain engine folds copies but never unfolds one: RESPELL the
+            # configuration with them materialised and chain from there
+            # (SCOPING_INSTR 7.4.LE)
+            rs = respell_seg(m1, len(rules))
+            if rs is not None:
+                seg_r, idr, m1r = rs
+                post = LC.derive_chain(tab, el, er, m1r, c1, maxdepth=maxdepth,
+                                       nmax=nmax, lift=True)
+                if post is not None:
+                    got = LC.srun(tab, el, er, post, m1r)
+                    if got is not None and ceqL(el, er, got[0], c1):
+                        segs = body + [seg_r, ('NCh', post)]
+                        rules = rules + [idr]
         if segs is None and depth > 1:
             sub = derive_nested(tab, el, er, m1, c1, depth=depth - 1,
                                 js=tuple(js), maxdepth=maxdepth, nmax=nmax)
@@ -687,6 +708,34 @@ def _try_rule(tab, el, er, c0, c1, laps, js, kind, lhs, rhs, WL, WR, key,
         if check_narm(tab, el, er, [(r[0], r[1]) for r in rules], c0, c1, segs):
             return segs, rules
     return None
+
+
+def materialise(s):
+    """[s] with the constant copies of its count moved into its prefix:
+    the same side under [snf]"""
+    pre, u, a, b, post = s
+    if not u or not a or not b:
+        return s
+    return (tuple(pre) + tuple(u) * b, tuple(u), a, 0, tuple(post))
+
+
+def respell_seg(c, k):
+    """(segment, identity rule, c') re-spelling [c] as [c'] with every count
+    constant materialised, or None if nothing changes.  The segment is ZERO
+    rounds of the identity rule [k] = (q, [], h, []) -> itself (empty chain,
+    [check_rule] accepts it): [LadderNest.nrun] checks [cexact c m0] -- equal
+    normal forms -- and continues from [m0], which is spelled by the rests
+    alone."""
+    L, R = materialise(c[1]), materialise(c[3])
+    if L == c[1] and R == c[3]:
+        return None
+    E = ((), (), 0, 0, ())
+    idc = (c[0], E, c[2], E)
+    I = (idc, idc)
+    m0 = at_push(idc, 0, (), (), 0, 0, L, R)
+    if m0 is None or not cexact(c, m0) or not link_up(I, (), ()):
+        return None
+    return ('NUp', k, (), (), 0, 0, 0, L, R, False), (idc, idc, []), m0
 
 
 def _shift(sg, k):
