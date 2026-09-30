@@ -526,6 +526,23 @@ def closure_data(cert, tab):
                     hit = (r, ph, s, m1, total - m1, fl, cand, ch, ca, cb)
                     break
                 if hit is None and NEST and TR_PINS is not None:
+                    # a chain that lands off the target only by blanks the
+                    # machine WROTE beside a known-empty tail: [ceqL] reads it
+                    # as a one-segment program (SCOPING_INSTR 7.4.LE)
+                    for m1 in _splits(total):
+                        cand = conf(blk(pre + fpre + digs[mid] * m1, digs[mid],
+                                        s, digs[mid] * (total - m1) + fsuf
+                                        + tails[to]))
+                        ch = LC.derive_chain(tab, True, True, fl, cand,
+                                             maxdepth=32, nmax=120, lift=True)
+                        lnd = (LC.srun(tab, True, True, ch, fl)
+                               if ch is not None else None)
+                        if (lnd is not None and lnd[2] > 0
+                                and nest.ceqL(True, True, lnd[0], cand)):
+                            hit = (r, ph, s, m1, total - m1, fl, cand,
+                                   ('NEST', [('NCh', ch)], []), 0, 1)
+                            break
+                if hit is None and NEST and TR_PINS is not None:
                     # no chain to any split, short or not: a nested program
                     for m1 in _splits(total):
                         cand = conf(blk(pre + fpre + digs[mid] * m1, digs[mid],
