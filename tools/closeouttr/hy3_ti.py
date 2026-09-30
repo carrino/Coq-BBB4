@@ -157,7 +157,25 @@ def find_boot(tab, pins, t0, seeds):
     return dict(err='norank %s' % (last,), nfam=len(cert['fams']))
 
 
+UNIT_SETS = (('u4', T.GEN_UNITS), ('z6', [(0,)] + T._prim_units(6)))
+
+
 def find_dir(tab):
+    """find_dir1 under each block alphabet in UNIT_SETS (the units a literal
+    run may be read as a block of): ti_batch's primitive units of up to 4
+    cells, then blanks and units of up to 6 cells, the first success"""
+    errs = []
+    for name, units in UNIT_SETS:
+        T.GEN_UNITS = units
+        r = find_dir1(tab)
+        if 'err' not in r:
+            r['units'] = name
+            return r
+        errs.append('%s: %s' % (name, r['err']))
+    return dict(err=' | '.join(errs))
+
+
+def find_dir1(tab):
     r2 = T.run_conc(tab, 60000)
     if r2 is None:
         return dict(err='halts')

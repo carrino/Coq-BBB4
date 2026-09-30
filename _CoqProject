@@ -11460,6 +11460,7 @@ theories/CloseoutTr/CBT_HY2_01.v
 theories/CloseoutTr/CBT_HY3_00.v
 theories/CloseoutTr/CBT_HY3_01.v
 theories/CloseoutTr/CBT_HY3_02.v
+theories/CloseoutTr/CBT_HY3_03.v
 theories/CloseoutTr/CBT_HY_00.v
 theories/CloseoutTr/CBT_HY_01.v
 theories/CloseoutTr/CBT_HY_02.v
