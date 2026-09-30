@@ -2634,6 +2634,7 @@ theories/Counters/SweepGlueTr.v
 theories/Counters/HybridGlueTr.v
 theories/Counters/SweepGlueNeverTr.v
 theories/Counters/TriGlueTr.v
+theories/Counters/TriNuTr.v
 theories/Counters/BlankTailTr.v
 theories/Counters/HybridCtrTr.v
 theories/Counters/ListGlueTr.v
@@ -11728,6 +11729,7 @@ theories/CloseoutTr/CBT_SW_04.v
 theories/CloseoutTr/CBT_SW_05.v
 theories/CloseoutTr/CBT_SW_06.v
 theories/CloseoutTr/CBT_SW_07.v
+theories/CloseoutTr/CBT_TA_00.v
 theories/CloseoutTr/CBT_TI_00.v
 theories/CloseoutTr/CBT_TI_01.v
 theories/CloseoutTr/CBT_TI_02.v
