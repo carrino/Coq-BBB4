@@ -1,1 +1,5 @@
 *.log
+# in-progress finder output; the final copies are committed as vf_le.jsonl / fc_le.jsonl
+vf_[0-9].jsonl
+fc_dn.jsonl
+fc_qh.jsonl
