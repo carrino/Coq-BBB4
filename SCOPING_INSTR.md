@@ -4691,6 +4691,158 @@ tools/closeouttr/le/board_chunk.sh CBT_LE_NN ...
 python3 tools/closeouttr/le/tally.py tools/closeouttr/le/measure_final.tsv
 ```
 
+#### 7.4.HY3 The flat-block hybrids and bouncers: the "unary counters" are two-block transfers, TriGlue seeded at the anchors takes 47 (2026-09-30)
+
+Workstream HY3 (batch tag `HY3`), over the still-open hybrids and bouncers
+with a flat block count: the DN/QH rows of §7.4.BL's `bl/classify.tsv`
+whose block list does not grow (151), plus the open rows of HY2's "one long
+block" residue (`hy2/residue.tsv`), 175 rows in
+`tools/closeouttr/hy3/rows.txt`.  The Collatz-like SPW rows, the pure
+counters (LE) and the block-list counters with a growing block count (BLC)
+were not touched.
+
+**The sample.**  About 30 rows were read by hand (`hy3/diag_sim.py`: the
+last sweep turns at each tape end, run-length compressed), then all 175
+were split by `hy3/shape.py` (the tape at the last sweep turns, cut into
+long periodic blocks of >= 16 cells) into `hy3/shape.tsv`.  The biggest
+group is not a counter at all:
+
+| rows | tape at the sweep turns | what it is |
+|---:|---|---|
+| 66 | two long blocks | **two-block transfers with a reset**: `Lpre u^a Mid v^b Rpost`, `(a, b) -> (a + da, b - 1)` per lap; when `b` runs out the machine rewrites the tape into a new pair `(a0, alpha a + beta)`.  `1RB0LC_1LC0RA_1RA1LD_1LA1LA` is `1 (110)^a 11111 (011)^b 1111`, `a += 2`, `b -= 1`, and at `b = 0` the whole tape becomes `1^(3a + c)` and restarts with `b' ~ a`.  These are HY2's "unary counters" (`(011)^n ... (011)^k`, one block growing linearly and one slowly).  Ten rows are one machine family (`(1)^576 (01)^1579`, `(10)^1579 (1)^576`) |
+| 34 | one long block | counter + block hybrids (HY2's shape) whose counter HY2 cannot read: a counter whose low end moves one cell a lap because the block grows one cell a lap on a two-cell unit (the digit words then depend on the position's parity, e.g. `1RB1LD_0RC1RA_1LD1RB_1LB0LD`), counters that step once per several laps, and the two-lap overflow |
+| 47 | 1-4 long blocks, shape varies | transfers whose rounds pass through a counter-like phase, and counters beside a block |
+| 28 | 4+ long blocks | block lists (`1^(2^k)` doubling, `(1)^k 0^k` ladders): BLC's shape although the count is flat over the sampled window |
+
+**The route for the transfers: TriGlue, seeded at the anchors**
+(`tools/closeouttr/hy3_ti.py`, no new Coq).  TriGlueTr's families
+(symbolic tapes with affine exponents, one LapDecider chain per leaf,
+affine rankings for the fires) state the transfers exactly.  What failed
+was the search:
+
+* `ti_batch.py` turns every literal run of two or more copies into a fresh
+  variable.  The constant junctions (`11111`, `(1)^4`) become variables,
+  and a variable explored at every length opens shapes the machine never
+  produces (a 1-block that is always `3a + 4` long, explored mod 3):
+  "too many families" at any cap;
+* `bl_ti.py` gives each variable a lattice `c + g*x`, but seeds it with a
+  generic concrete pass.  Starting constant (`G0 = 0`), the boot's blocks
+  stay concrete and a leaf walks the whole lap cell by cell ("leaf too
+  long"); starting generic (`G0 = 1`), it explodes as TI does.
+
+`hy3_ti.py` reads the seed off the run.  The configurations at the sweep
+turns are normalized as the explorer normalizes a leaf's end and grouped
+by family key.  Over one key's turns, a block exponent that never changes
+is a constant (lattice step 0), and one that does gets `c` = the least
+value seen and `g` = the gcd of the differences.  The boot is the first
+turn of the key the run keeps returning to late, and every family met
+later starts constant and is widened only by the affine exponents leaves
+land on it with (bl_ti's `LExplorer`, `G0 = 0`).  It tries the block
+alphabets in order: ti_batch's primitive units of up to 4 cells; then
+blanks and units of up to 6 cells (`(0)^a 1 (0)^b` and `(11011)^a` rows
+need these); then both again with blocks of >= 16 units generic.
+Rankings, replayed checks and rendering are ti_batch's.  A row is one
+`tri_sound` line, as in `CBT_TI_*`.  Boots are at steps <= 376 and the
+largest certificate has 67 families.
+
+**Yield: 47 rows** in `CBT_HY3_00..03`, all kernel-checked (container, 4
+cores):
+
+| batch | rows | compile |
+|---|---:|---:|
+| `CBT_HY3_00` | 12 | 11 s |
+| `CBT_HY3_01` | 12 | 16 s |
+| `CBT_HY3_02` | 12 | 11 s |
+| `CBT_HY3_03` | 11 | 67 s |
+
+All four are in `ci_costs.tsv` at about twice the container time.  With
+them, `ci_shard.py --plan 6` keeps the slowest shard at `CBT_BR_02` alone
+(2,764 s).  All rows: 1,324 -> **1,277**.  The whole search is ~2 min
+for the 175 rows at 4 jobs (300 s cap a row, most finish in seconds).
+
+**The two-lap overflow: `HybridCtr2Tr` (built, no row boarded).**
+`theories/Counters/HybridCtr2Tr.v` extends `HybridCtrTr` in a new file
+(the landed file is untouched).  `Print Assumptions h2_sound_nqh_mirror`
+shows `functional_extensionality_dep` only; the file compiles in 11 s.
+A phase may carry a HOLD.  Its overflow is then a two-lap composite:
+
+1. a KEEP chain `Dm^j ++ T (hi-1) -> Dm^j ++ Th`, a carry case whose
+   digits come back as `Dm` instead of `D0`, onto its exit X1;
+2. X1's sweep lands on a hold anchor `Ph`, an anchor shape of its own;
+3. `Ph`'s overflow chain `Dm^j ++ Th -> D0^(j+1) ++ T lo` runs onto exit
+   X2, and X2's sweep lands on the next phase.
+
+The held word `Th` is the top table's entry `hcT hi`.  The numeration,
+the ranks, the phase of a rank and the fire families are `HybridCtrTr`'s
+unchanged: the composite is one step of the enumeration.  Fire kinds 4
+and 5 witness the second lap (chain prefixes of the overflow chain and of
+X2's sweep) from the members of the overflow's top family.  The certificate
+is `mkH2C (hccert) [(phase, Ph)]`, and a row would be
+`apply coversTr_nqh, (h2_sound_nqh(_mirror) _ ...)`.
+
+No row is boarded with it yet, for two reasons found on the way:
+
+* `hy3/hold_probe.py` runs one counter half from `Dm^j ++ X` at every top
+  word HY2's finder learns, and reports a hold when the low digits come
+  back as `Dm^j` (`hy3/hold_probe.txt`).  It finds a hold in 7 of the 58
+  open one-long-block rows, plus HY2's own example.  So the two-lap
+  overflow is real, but the group is about 8 rows, not 19.
+* In most of those rows the block grows one cell a lap on a two-cell unit,
+  so the anchor alternates between two phases.  A two-lap overflow shifts
+  the lap parity against the rank parity: after it, the phase of rank `x`
+  is `(i0 + x - v0 + #holds) mod L`, not `(i0 + x - v0) mod L`, and the
+  number of holds is the counter's digit count.  `HybridCtr2Tr` lands the
+  composite on the phase of the NEXT RANK, so on those rows the second
+  sweep's check fails, by design.  The fix is to read the phase as
+  `(i0 + x - v0 + |low| - |low0|) mod L`.  The top family's phase is then
+  a function of `j` alone, but the interior families need a member of a
+  given length as well as a given residue, so `hc_int_member` needs a
+  length-aware `canon_exists`.
+
+  HY2's example `0RB0LC_1LC1RD_1LA1LB_1RC0RB` does not reproduce from a
+  constructed anchor either.  With a small block, its early overflows
+  rewrite the block into counter digits (`1^13 0 1^6 -> (10)^9 111` at
+  step 204), so the counter half there is not independent of the block.
+
+Finder work left for it: a hold-aware `learn_cycle` (read `Th` and the
+hold anchor's shape from the lap after X1), the keep chain (hy2's
+`carry_case` with `Dm` as the output digit), and snapshots at the hold
+anchor dropped from the family fit.
+
+**Residue: 128 of the 175 rows are still open** (per row in
+`hy3/residue.tsv`: shape, `hy3_ti.py` verdict, hold seen):
+
+| rows | shape | where `hy3_ti.py` stops | why |
+|---:|---|---|---|
+| 12 | two blocks, one shape | no ranking (at every `P` up to 24) | the reset fires the rare instruction only on one parity of the round (`0RB0LC_1LA1RB_1RC1RD_1LA0RB`: only when `b` is odd at the reset, and the next round's `b` is `2 + 3a`).  This is BX's 2-adic liveness, which no mod-P node set sees |
+| 10 | two blocks | too many families (6), leaf too long (2), no anchor key (2) | transfers whose reset passes through a transient that is not a block shape |
+| 34 | one long block | no anchor key (24), too many families (8), leaf too long (2) | the counter hybrids above.  TriGlue cannot write a counter; HY2's reader cannot write a position-dependent digit alphabet or a hold |
+| 44 | 1-4 blocks, shape varies | no anchor key (20), too many families (17), leaf too long (7) | transfers with a counter phase in each round, counters beside a block |
+| 28 | 4+ blocks | no anchor key | block lists (BLC's shape) |
+
+**Next.**
+
+1. A phase-parity-aware `HybridCtr2Tr` (phase of rank read with the digit
+   count), and the hold-aware finder above: ~8 rows.
+2. The one-long-block counters whose low end moves with a two-cell unit
+   (the largest part of the 34): a counter whose digit words alternate by
+   position parity.  That is a base-`b^2` counter on digit pairs only when
+   the block grows by a whole unit per lap, so it needs `HybridCtrTr`'s
+   numeration with two alphabets, `D_even` and `D_odd`, and the anchor
+   read in the junction's frame.
+3. The 12 parity-reset transfers need the 2-adic liveness BX describes.
+
+Commands (resumable: `find` skips rows already in its output):
+
+```
+python3 tools/closeouttr/hy3_ti.py find tools/closeouttr/hy3/rows.txt hy3_find.jsonl --jobs 4 --timeout 600 --maxfam 200
+python3 tools/closeouttr/hy3_ti.py batch hy3_find.jsonl --tag HY3 --chunk 12
+python3 tools/closeouttr/hy3/shape.py tools/closeouttr/hy3/rows.txt > shape.tsv
+python3 tools/closeouttr/hy3/hold_probe.py ROWS.txt > hold_probe.txt
+```
+
+The whole `hy3_ti.py` sweep is ~2 min here, so it needs no box run.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
