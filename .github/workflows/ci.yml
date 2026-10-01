@@ -39,16 +39,29 @@ jobs:
       # InRelease line, eating the whole job timeout as "cancelled").
       # Bound each attempt and retry, so a bad mirror costs minutes,
       # not the run.
+      # The mirror can also be slow rather than hung: ~200 KB/s on
+      # 2026-09-30, when the 15-minute step timed out mid-download on two
+      # shards.  Keep the downloaded .deb files between runs (apt reuses a
+      # cached .deb whose version matches, and fetches only what changed),
+      # and give a slow download room: 600 s an attempt, 25 minutes a step.
+      - uses: actions/cache@v4
+        with:
+          path: ~/apt-debs
+          key: apt-debs-${{ runner.os }}-coq-v1
       - name: Install Coq
-        timeout-minutes: 15
+        timeout-minutes: 25
         run: |
+          mkdir -p ~/apt-debs/partial
           for i in 1 2 3; do
             sudo timeout 300 apt-get update && \
-            sudo timeout 300 apt-get install -y coq && exit 0
+            sudo timeout 600 apt-get install -y -o Dir::Cache::archives=$HOME/apt-debs coq time && break
             echo "apt attempt $i failed or hung; retrying"
+            [ "$i" = 3 ] && exit 1
             sleep 10
           done
-          exit 1
+          sudo rm -rf ~/apt-debs/partial ~/apt-debs/lock
+          sudo chown -R "$(id -u):$(id -g)" ~/apt-debs
+          echo "$(ls ~/apt-debs | wc -l) .deb files in the apt cache"
       - name: Coq version (expect 8.18.0)
         run: coqc --version
       - name: Generate Makefile.coq
@@ -129,16 +142,29 @@ jobs:
       # InRelease line, eating the whole job timeout as "cancelled").
       # Bound each attempt and retry, so a bad mirror costs minutes,
       # not the run.  `time` is for `make TIMED=1`.
+      # The mirror can also be slow rather than hung: ~200 KB/s on
+      # 2026-09-30, when the 15-minute step timed out mid-download on two
+      # shards.  Keep the downloaded .deb files between runs (apt reuses a
+      # cached .deb whose version matches, and fetches only what changed),
+      # and give a slow download room: 600 s an attempt, 25 minutes a step.
+      - uses: actions/cache@v4
+        with:
+          path: ~/apt-debs
+          key: apt-debs-${{ runner.os }}-coq-v1
       - name: Install Coq
-        timeout-minutes: 15
+        timeout-minutes: 25
         run: |
+          mkdir -p ~/apt-debs/partial
           for i in 1 2 3; do
             sudo timeout 300 apt-get update && \
-            sudo timeout 300 apt-get install -y coq time && exit 0
+            sudo timeout 600 apt-get install -y -o Dir::Cache::archives=$HOME/apt-debs coq time && break
             echo "apt attempt $i failed or hung; retrying"
+            [ "$i" = 3 ] && exit 1
             sleep 10
           done
-          exit 1
+          sudo rm -rf ~/apt-debs/partial ~/apt-debs/lock
+          sudo chown -R "$(id -u):$(id -g)" ~/apt-debs
+          echo "$(ls ~/apt-debs | wc -l) .deb files in the apt cache"
       - name: Generate Makefile.coq
         run: make Makefile.coq
       - name: "This shard's batches (the split covers every CBT_*.v exactly once)"
@@ -181,16 +207,29 @@ jobs:
       # InRelease line, eating the whole job timeout as "cancelled").
       # Bound each attempt and retry, so a bad mirror costs minutes,
       # not the run.
+      # The mirror can also be slow rather than hung: ~200 KB/s on
+      # 2026-09-30, when the 15-minute step timed out mid-download on two
+      # shards.  Keep the downloaded .deb files between runs (apt reuses a
+      # cached .deb whose version matches, and fetches only what changed),
+      # and give a slow download room: 600 s an attempt, 25 minutes a step.
+      - uses: actions/cache@v4
+        with:
+          path: ~/apt-debs
+          key: apt-debs-${{ runner.os }}-coq-v1
       - name: Install Coq
-        timeout-minutes: 15
+        timeout-minutes: 25
         run: |
+          mkdir -p ~/apt-debs/partial
           for i in 1 2 3; do
             sudo timeout 300 apt-get update && \
-            sudo timeout 300 apt-get install -y coq && exit 0
+            sudo timeout 600 apt-get install -y -o Dir::Cache::archives=$HOME/apt-debs coq time && break
             echo "apt attempt $i failed or hung; retrying"
+            [ "$i" = 3 ] && exit 1
             sleep 10
           done
-          exit 1
+          sudo rm -rf ~/apt-debs/partial ~/apt-debs/lock
+          sudo chown -R "$(id -u):$(id -g)" ~/apt-debs
+          echo "$(ls ~/apt-debs | wc -l) .deb files in the apt cache"
       - name: Generate Makefile.coq
         run: make Makefile.coq
       - name: "Instruction-level closeout: generated files current"
@@ -227,16 +266,29 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      # The mirror can also be slow rather than hung: ~200 KB/s on
+      # 2026-09-30, when the 15-minute step timed out mid-download on two
+      # shards.  Keep the downloaded .deb files between runs (apt reuses a
+      # cached .deb whose version matches, and fetches only what changed),
+      # and give a slow download room: 600 s an attempt, 25 minutes a step.
+      - uses: actions/cache@v4
+        with:
+          path: ~/apt-debs
+          key: apt-debs-${{ runner.os }}-coq-v1
       - name: Install Coq
-        timeout-minutes: 15
+        timeout-minutes: 25
         run: |
+          mkdir -p ~/apt-debs/partial
           for i in 1 2 3; do
             sudo timeout 300 apt-get update && \
-            sudo timeout 300 apt-get install -y coq && exit 0
+            sudo timeout 600 apt-get install -y -o Dir::Cache::archives=$HOME/apt-debs coq time && break
             echo "apt attempt $i failed or hung; retrying"
+            [ "$i" = 3 ] && exit 1
             sleep 10
           done
-          exit 1
+          sudo rm -rf ~/apt-debs/partial ~/apt-debs/lock
+          sudo chown -R "$(id -u):$(id -g)" ~/apt-debs
+          echo "$(ls ~/apt-debs | wc -l) .deb files in the apt cache"
       - name: Generate Makefile.coq
         run: make Makefile.coq
       - name: "Instruction-level closeout: generated files current"
