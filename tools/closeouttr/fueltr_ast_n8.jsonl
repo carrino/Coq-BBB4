@@ -1,0 +1,10 @@
+{"first_fail": {"contexts": 5310, "mirrored": true, "n": 8, "t": 0, "target": [0, 0]}, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 20, "probe_warmups": [0], "seconds": 1.477, "spec": "0RB0RC_1LC1RC_1LD1RA_1RA0LD", "status": "no certificate"}
+{"first_fail": {"contexts": 5287, "mirrored": true, "n": 8, "t": 0, "target": [0, 1]}, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 20, "probe_warmups": [0], "seconds": 2.473, "spec": "1RB0LA_0RC0RD_1LD1RD_1LA1RB", "status": "no certificate"}
+{"first_fail": {"contexts": 4508, "mirrored": true, "n": 8, "t": 0, "target": [0, 0]}, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 20, "probe_warmups": [0], "seconds": 1.355, "spec": "1RB0LB_0RC0RD_1LC1LA_1RA1RD", "status": "no certificate"}
+{"first_fail": {"contexts": 42187, "mirrored": true, "n": 8, "t": 0, "target": [0, 0]}, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 20, "probe_warmups": [0], "seconds": 10.116, "spec": "1RB0LA_0RC1LA_1RD0RD_1LB1RB", "status": "no certificate"}
+{"probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 20, "probe_warmups": [0], "seconds": 20.003, "spec": "1RB0LC_1LA1LC_0RD1RC_1LB1RA", "status": "timeout"}
+{"probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 20, "probe_warmups": [0], "seconds": 20.005, "spec": "1RB0LC_1LA1RC_0RD1RC_1LB1RA", "status": "timeout"}
+{"first_fail": {"contexts": 5309, "mirrored": true, "n": 8, "t": 0, "target": [0, 0]}, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 20, "probe_warmups": [0], "seconds": 1.372, "spec": "1RB1LB_1RC1LD_1LD0RC_0LA0LB", "status": "no certificate"}
+{"first_fail": {"contexts": 713, "mirrored": true, "n": 8, "t": 0, "target": [0, 0]}, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 20, "probe_warmups": [0], "seconds": 6.049, "spec": "1RB1LD_0RC0RB_1LC0LA_0RB1RD", "status": "no certificate"}
+{"probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 20, "probe_warmups": [0], "seconds": 20.006, "spec": "1RB0RD_1LC0LC_1LD1LC_1RA0RB", "status": "timeout"}
+{"probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 20, "probe_warmups": [0], "seconds": 20.006, "spec": "1RB1RA_1LC0LD_1LD0LB_1RA0RA", "status": "timeout"}

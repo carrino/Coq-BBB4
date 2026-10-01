@@ -1,0 +1,20 @@
+{"first_fail": {"contexts": 585, "mirrored": true, "n": 5, "t": 0, "target": [2, 1]}, "seconds": 3.044, "spec": "0RB0RA_1LC1RA_0LD1LC_1RA1LB", "status": "no certificate"}
+{"first_fail": {"contexts": 662, "mirrored": true, "n": 5, "t": 0, "target": [2, 1]}, "seconds": 3.177, "spec": "0RB0RA_1LC1RA_0LD0RD_1RA1LB", "status": "no certificate"}
+{"first_fail": {"contexts": 513, "mirrored": true, "n": 5, "t": 0, "target": [3, 1]}, "seconds": 3.272, "spec": "0RB0LC_1LC0RD_1LA0LA_1RB1LD", "status": "no certificate"}
+{"first_fail": {"contexts": 1260, "mirrored": true, "n": 5, "t": 0, "target": [0, 0]}, "seconds": 0.4, "spec": "0RB0RC_1LC1RC_1LD1RA_1RA0LD", "status": "no certificate"}
+{"first_fail": {"contexts": 574, "mirrored": true, "n": 5, "t": 0, "target": [0, 1]}, "seconds": 0.419, "spec": "0RB1RA_1LC1RD_0LD0LC_1RA1LC", "status": "no certificate"}
+{"first_fail": {"contexts": 1253, "mirrored": true, "n": 5, "t": 0, "target": [0, 1]}, "seconds": 0.479, "spec": "1RB0LA_0RC0RD_1LD1RD_1LA1RB", "status": "no certificate"}
+{"first_fail": {"contexts": 2308, "mirrored": true, "n": 5, "t": 0, "target": [0, 0]}, "seconds": 0.489, "spec": "1RB0LA_0RC1LA_1RD0RD_1LB1RB", "status": "no certificate"}
+{"first_fail": {"contexts": 785, "mirrored": true, "n": 5, "t": 0, "target": [0, 1]}, "seconds": 4.566, "spec": "0RB0RA_1RC1RD_0LD0LC_1RA1LC", "status": "no certificate"}
+{"first_fail": {"contexts": 627, "mirrored": true, "n": 5, "t": 0, "target": [0, 0]}, "seconds": 0.258, "spec": "1RB0LB_0RC0RD_1LC1LA_1RA1RD", "status": "no certificate"}
+{"first_fail": {"contexts": 5953, "mirrored": true, "n": 5, "t": 0, "target": [0, 0]}, "seconds": 1.878, "spec": "0RB1LC_1LC1RD_1LA0LC_0RD1RB", "status": "no certificate"}
+{"first_fail": {"contexts": 8261, "mirrored": true, "n": 5, "t": 0, "target": [0, 0]}, "seconds": 2.007, "spec": "1RB0LA_1LC1RD_0LC1LA_0RD0RB", "status": "no certificate"}
+{"first_fail": {"contexts": 4851, "mirrored": true, "n": 5, "t": 0, "target": [0, 0]}, "seconds": 2.869, "spec": "1RB0LA_1LC0RD_0LB1LA_0RB1LA", "status": "no certificate"}
+{"first_fail": {"contexts": 512, "mirrored": true, "n": 5, "t": 0, "target": [3, 1]}, "seconds": 0.758, "spec": "1RB0LD_1RC0RC_0LA0RB_1LA1RD", "status": "no certificate"}
+{"first_fail": {"contexts": 559, "mirrored": true, "n": 5, "t": 0, "target": [0, 1]}, "seconds": 0.49, "spec": "1RB1LA_1LC0RA_1LD0LD_0RB0LC", "status": "no certificate"}
+{"first_fail": {"contexts": 1258, "mirrored": true, "n": 5, "t": 0, "target": [0, 0]}, "seconds": 0.369, "spec": "1RB1LB_1RC1LD_1LD0RC_0LA0LB", "status": "no certificate"}
+{"first_fail": {"contexts": 258, "mirrored": true, "n": 5, "t": 0, "target": [0, 0]}, "seconds": 3.041, "spec": "1RB0LC_1LA1LC_0RD1RC_1LB1RA", "status": "no certificate"}
+{"first_fail": {"contexts": 253, "mirrored": true, "n": 5, "t": 0, "target": [0, 0]}, "seconds": 2.985, "spec": "1RB0LC_1LA1RC_0RD1RC_1LB1RA", "status": "no certificate"}
+{"first_fail": {"contexts": 661, "mirrored": true, "n": 5, "t": 0, "target": [1, 1]}, "seconds": 0.559, "spec": "1RB1LD_0RC0LC_1LD1RA_0LA0LD", "status": "no certificate"}
+{"first_fail": {"contexts": 316, "mirrored": true, "n": 5, "t": 0, "target": [0, 0]}, "seconds": 1.327, "spec": "1RB1LD_0RC0RB_1LC0LA_0RB1RD", "status": "no certificate"}
+{"seconds": 10.008, "spec": "1RB1LA_0RC0RD_1LD1RC_0LC0LA", "status": "timeout"}

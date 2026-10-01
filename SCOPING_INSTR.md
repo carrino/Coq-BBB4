@@ -6311,3 +6311,94 @@ parameter-only win:
   instruction-target `FuelSCCTr`/`FuelWideTr` port and regenerated
   certificates.  `NeverQuasiHaltsSt` cannot be lifted directly to
   `NeverQuasiHaltsTr`.
+
+#### 7.4.AST2 Token transducers and instruction-target fuel, 51 boarded (2026-10-01)
+
+This continues the AST session on the requested 164 rows. Six were already
+boarded in `CBT_AST_00..03`; this follow-up adds **51**: four word
+transducers, eight state-renamed/mirrored token variants, and 39
+instruction-target Fuel certificates. All new batches
+kernel-check under Coq 8.18.0. Their `Print Assumptions` reports contain only
+`functional_extensionality_dep`; the transducer and sweep lemmas themselves
+are closed under the global context. No census, existing checker, closeout
+kit, workflow or Makefile was changed.
+
+**The primary target, `0RB0RA_1LC1RA_0LD0LC_1LA1LB`, is boarded in
+`CBT_AST_04`.** Its C1 anchor is reached at step 13 and has the supplied
+shape `encode(w) [C1] (110)^(2*n+1) 1`. The new generic
+`Counters/MutualTokenTr.v` proves its counter phase by induction on the
+token word. On arbitrary words the two carry ports admit one uniform
+transducer `T`: `[] -> [1]`, `0::w -> 2::w`, `1::w -> 0::w`, and
+`2::w -> 1::T(w)`. The successor is `[] -> [1]`, `1::w -> 2::w`,
+`2::w -> 0::T(w)`, `0::w -> 1::T(w)`. This agrees with the supplied
+F/G description on the observed orbit while also closing on every token
+word, so no reachable-language invariant is needed. An explicit final
+blank in the nonempty terminator makes the finite-list step equations
+exact; bootstrap equality uses `ceqb_lift`.
+
+`Counters/TokenSweepTr.v` proves both periodic sweeps, preserving an
+arbitrary counter tail, and witnesses all seven instructions other than
+C1. C1 fires at offset zero of every anchor. The exact positive lap is
+`36*n + 62 + 6*mt_depth(w)` steps. The new `Counters/ValueLapTr.v`
+closes positive laps indexed by a natural sweep parameter and an
+arbitrary value with a total successor; it also supplies a wrapped version
+for pinned instructions. No numerical interpretation of the word is needed.
+
+**Two adjacent rows share a moving binary-word transducer**
+(`Counters/MovingTokenTr.v`, `MovingSweepTr.v`, `CBT_AST_30`):
+
+* `0RB0RA_1LC1RA_0LD0RD_1RA1LB`;
+* `0RB0RA_1LC1RA_0LD1LC_1RA1LB`.
+
+Both boot at step 11. A mutual structural induction proves the two carry
+ports on every finite binary word. A C1 macro parameter accounts for the
+one-step versus three-step implementations, and the bouncer sweep takes
+`12*k+12` steps. All eight instructions are live from every anchor.
+
+**The B0-right sibling**, `0RB0RA_1RC1RA_0LD1LC_1RA1LB`, is boarded in
+`CBT_AST_31`. Its frontier recurrence is
+`C1(1::0::w,1,[0]) -> C1(1::0::mv_g(w),1,[0])`, booting at step 17.
+`Counters/FrontierTokenTr.v` proves this lap and its instruction witnesses.
+D0 need not fire in every lap: a lap without it strictly decreases the
+lexicographic pair (number of ones, number of adjacent pairs of ones).
+Well-founded induction gives a future D0 fire from every word. The other
+seven instructions have direct witnesses. The three manual batches each
+compile in under 0.4 seconds locally.
+
+**The missing instruction-target Fuel port boards 39 more rows**
+(`CBT_AST_05..17`). `Checkers/FuelSCCTr.v` reuses FuelSCC's existing
+lexicographic components, runner descent and fuel bounds. It checks the
+graph avoiding one `(state,symbol)` instruction, including any instruction
+which fired in the boot. `Checkers/FuelWideTr.v` instantiates it with
+FuelWide's unchanged refined contexts, fuel classes, successor soundness
+and measures. It does not infer transition recurrence from state recurrence.
+
+The new `tools/closeouttr/fueltr_batch.py` reuses the landed abstraction,
+rank search and certificate serialization, but constructs and replays
+per-instruction certificates. Six of the twelve requested rows in the
+state-level Fuel manifest certify. A broader pass finds eight at window 3;
+two window-4 passes find twelve and ten more, with one overlapping the
+manual frontier proof and removed from the Fuel batches. Window-6 passes
+add four checked rows. All 39 retained certificates use the mirror and
+boot at zero. Window-5 passes over actual window-4 failures add none. Bounded timeouts remain, and every search result is saved in
+`fueltr_ast*.jsonl`. The newly proved rows include
+`1RB1LB_0RC0LA_1LC0LD_1RA1RC`, which exhausted the earlier valuation search.
+A corruption check empties a fired A0 certificate in AST05 and confirms
+that the checker returns false.
+
+**Eight conjugate token machines** are boarded in `CBT_AST_50`.
+`Counters/CConjugateTr.v` transports finite-tape steps and instruction
+witnesses through a state permutation and optional tape reflection, with a
+separate checked bootstrap for the destination machine. `TokenLapTr.v`
+generalizes the original token and moving-word laps to arbitrary initial
+block counts. This allows the proofs to apply even when the renamed
+machine's blank run enters a different anchor. AST50 compiles in 0.48 seconds.
+
+The thirteen Fuel batches compile in 1.8--13.9 seconds locally; all new
+batches have explicit conservative `ci_costs.tsv` entries. This checkpoint
+was updated by fast-forwarding to merged main (653 open rows), then restoring
+the new proofs. None of these 51 rows overlaps the intervening main changes.
+The full closeout has **602** rows remaining, and **107 of the requested
+164** remain open. Saved search failures and timeouts are not proofs of the
+remaining rows. The unfinished cube-family integration is excluded from
+this checkpoint.
