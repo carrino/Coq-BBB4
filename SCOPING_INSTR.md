@@ -6352,10 +6352,12 @@ arm, composed through `lift` as in `LadderCheckSweepTr` (carry to the pivot,
 across `T^m` to `V`, back).  This is the one missing piece for the
 growing-tail rows and the "run but rewrites V" refusals.  (b) A reader
 that pins a marker inside a run of zero digits (the 0RA1LD family).
-(c) `alt_detect.py` with single-anchor readings is in the tree (a counter
-whose top widens `x`).  Its re-run over the 322 open rows
-(`le5/alt_res2.jsonl`) found no new board-ready reading at the time of
-writing.
+(c) `alt_detect.py` also takes single-anchor readings (a counter whose
+top widens `x`).  Its re-run over the 322 open rows (`le5/alt_res2.jsonl`,
+~1.5 h at 3 jobs) reads 6.  Four are new single-anchor positional
+counters (`0RB0RA_1RC1LD_1LC1RB_0LD0LA`, ...), and their interior arm has
+no program.  The other two are the old alternating pairs whose carry has
+none.  0 board (`le5/alt_batch2.log`).
 
 ```
 # the container loop (what this section ran; all resumable)

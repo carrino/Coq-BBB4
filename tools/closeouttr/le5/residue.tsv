@@ -40,8 +40,8 @@
 0RB0LD_1RC1RB_1LC1LD_0RB1LA	none	no reading	-	no reading
 0RB0LD_1RC1RB_1LD1LD_0RB1LA	none	no reading	-	no reading
 0RB0RA_1RC0LD_1LB1RA_1LB1LD	none	no reading	-	no reading
-0RB0RA_1RC1LD_1LC1RB_0LD0LA	run2	interior arm: carry cost doubles (nested)	phrun	interior: no program
-0RB0RA_1RC1LD_1LD1RB_0LD0LA	run2	interior arm: carry cost doubles (nested)	phrun	interior: no program
+0RB0RA_1RC1LD_1LC1RB_0LD0LA	run2	interior arm: carry cost doubles (nested)	phrun,alt	interior: no program
+0RB0RA_1RC1LD_1LD1RB_0LD0LA	run2	interior arm: carry cost doubles (nested)	phrun,alt	interior: no program
 0RB0RC_0LC0RA_0LD1RC_1RB1LD	none	no reading	-	no reading
 0RB0RC_1RC1LB_1LD1RD_0LB1RA	run2	refill (cost doubles with the run: a third counting level)	run3,phrun,alt	boarded LE5_02
 0RB1LA_0LC1RD_0RD1LD_1RB0LA	run2	refill (cost doubles with the run: a third counting level)	run3	narrowing: no program
@@ -270,10 +270,10 @@
 1RB1LC_1LA1RA_0RB0LD_0RA1LD	none	no reading	-	no reading
 1RB1LC_1LA1RC_1LA0RD_0LC1RD	pos	fill (cost doubles with the width: the fill counts)	-	no reading
 1RB1LC_1LA1RC_1RB0LD_0RC1LD	pos	fill (cost doubles with the width: the fill counts)	-	no reading
-1RB1LC_1LB1RA_0LC0LD_0RA0RD	run2	interior arm: carry cost doubles (nested)	phrun	interior: no program
+1RB1LC_1LB1RA_0LC0LD_0RA0RD	run2	interior arm: carry cost doubles (nested)	phrun,alt	interior: no program
 1RB1LC_1LB1RA_0RB0LD_0RA1LD	none	no reading	-	no reading
 1RB1LC_1LB1RC_1LA0RD_0LC1RD	pos	fill (cost doubles with the width: the fill counts)	-	no reading
-1RB1LC_1LC1RA_0LC0LD_0RA0RD	run2	interior arm: carry cost doubles (nested)	phrun	interior: no program
+1RB1LC_1LC1RA_0LC0LD_0RA0RD	run2	interior arm: carry cost doubles (nested)	phrun,alt	interior: no program
 1RB1LC_1LC1RA_0RB0LD_0RA1LD	none	no reading	-	no reading
 1RB1LC_1LC1RC_1LA0RD_0LA1RD	pos	fill (cost doubles with the width: the fill counts)	-	no reading
 1RB1LC_1LC1RC_1LA0RD_0LC1RD	pos	fill (cost doubles with the width: the fill counts)	-	no reading
