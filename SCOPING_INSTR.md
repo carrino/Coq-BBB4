@@ -5241,8 +5241,12 @@ read (`0RB0RA_1RC1LD_1LC1RB_0LD0LA`, `0RB1LA_1RC0LA_0LD1RB_1LB0RC`) the
 terminator the narrowing fill lands on (`101`, `0101`) does not start on a
 digit-word boundary: the digit framing shifts by a cell between phases,
 which is the moving-offset shape again.  On
-SP, where the narrowing families were, it costs 10-40 min a row here, so
-the run is the box job below.  The 4 SP time-cap rows tried close 0 of 4
+SP, 0 of the first 9 close (`le2/fc_sp.jsonl`; a container restart stopped
+the run).  Of their 64 family attempts, 42 are narrowing families the
+respell cannot state and 22 fail the fill arm.  So the SP "families" rows
+are narrowing cycles of the misaligned-terminator kind above, not the
+aligned kind `CBT_LE2_00` boarded.  At 10-40 min a row here, the rest is
+the box job below.  The 4 SP time-cap rows tried close 0 of 4
 (famclose skips valfam's arm miner, so a time cap is not the reason).
 
 **Yields:** 37 rows (`CBT_LE2_00..01`), all SP.  Closeout: 891 open
