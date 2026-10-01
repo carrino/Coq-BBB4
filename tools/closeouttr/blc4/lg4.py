@@ -48,7 +48,7 @@ class Lang4(lg3.Lang):
       empty when b_0 borders the blank tape."""
 
     def __init__(self, a, unit, fwd, end, q0, lfwd, lstart, seps, lends=(), unitL=None,
-                 sepsL=None):
+                 sepsL=None, psepsR=(), psepsL=()):
         self.a, self.unit = a, tuple(unit)
         self.unitL = tuple(unit if unitL is None else unitL)
         self.fwd, self.q0, self.shift = dict(fwd), q0, 0
@@ -61,6 +61,11 @@ class Lang4(lg3.Lang):
         wl = set(x[0] for (_, x) in self.lfwd) | set(x[0] for x, _ in self.lstart)
         self.sepsL = sorted(set(sepsL or ()) | wl, key=lambda w: (-len(w), w))
         self.lends = sorted(set(tuple(w) for w in lends), key=lambda w: (-len(w), w))
+        # one-cell units: the cell words lg3.parse merges into separators
+        self.psepsR = sorted(set(tuple(w) for w in psepsR) | set(w[1] for w in self.seps),
+                             key=lambda w: (-len(w), w))
+        self.psepsL = sorted(set(tuple(w) for w in psepsL) | set(w[1] for w in self.sepsL),
+                             key=lambda w: (-len(w), w))
         self.endws = sorted(set(w for lst in self.end4.values() for _, _, w in lst),
                             key=lambda w: (-len(w), w))
         ds = [abs(x[1]) for (_, x) in self.fwd] + [abs(x[1]) for (_, x) in self.lfwd] + \
@@ -70,8 +75,11 @@ class Lang4(lg3.Lang):
     def automaton(self):
         nfa = G.NFA()
         u, uL = self.unit, self.unitL
-        kL = {w: nfa.kind('L', tuple(reversed(w)), tuple(reversed(uL))) for w in self.sepsL}
-        kR = {w: nfa.kind('R', tuple(w), u) for w in self.seps}
+        # a separator symbol is (unit before, gap cells, unit after) in tape
+        # order: a RIGHT item is the gap and the element after it, a LEFT
+        # item (nearest-first) the gap and the element before it
+        kL = {w: nfa.kind('L', tuple(reversed(w[1])), tuple(reversed(w[0]))) for w in self.sepsL}
+        kR = {w: nfa.kind('R', tuple(w[1]), tuple(w[2])) for w in self.seps}
         kE = {w: nfa.kind('R', tuple(w) if w else (0,), u) for w in self.endws}
         kT = {w: nfa.kind('L', tuple(reversed(w)), tuple(reversed(uL))) for w in self.lends}
         fold = {}
@@ -371,8 +379,8 @@ class X4(lg3.X3):
         lang = self.lang
         toks = lg3.tape_tokens(L, h, R)
         hidx = next(i for i, t in enumerate(toks) if t[-1] == 'H')
-        elL = lg3.parse(toks, lang.unitL, lang.sepsL)
-        elR = lg3.parse(toks, lang.unit, lang.seps)
+        elL = parse4(toks, lang.unitL, lang.psepsL, 'L')
+        elR = parse4(toks, lang.unit, lang.psepsR, 'R')
 
         def mkdist(el):
             Es = [k for k, x in enumerate(el) if x[0] == 'E']
@@ -396,7 +404,12 @@ class X4(lg3.X3):
                 raise NonCanon(sd)
         a = lang.a
         # LEFT
-        el, dist, sepw = elL, mkdist(elL), lang.sepsL
+        el, dist = elL, mkdist(elL)
+        sepw = set(lang.sepsL)
+
+        def word(g):
+            w = word_at(el, toks, g, lang.unitL, lang.psepsL)
+            return w if w in sepw else None
         cur = tails['L'][0] if tails['L'] is not None else None
         fl = []
         k = 0
@@ -419,13 +432,13 @@ class X4(lg3.X3):
             elif el[0][0] != 'G':
                 cur = 'L0'
         while cur is not None and k + 2 < len(el) and el[k][0] == 'E' and \
-                el[k + 1][0] == 'G' and lg3.gap_word(el[k + 1], sepw) is not None and \
+                el[k + 1][0] == 'G' and word(k + 1) is not None and \
                 el[k + 2][0] == 'E' and dist(k) > KEEP and \
                 all(toks[i][-1] == 'L' for i in range(el[k][1], el[k + 1][2])):
             d = lg3.rel_of(True, a, el[k + 2][3], el[k][3])
             if d is None:
                 break
-            w = lg3.gap_word(el[k + 1], sepw)
+            w = word(k + 1)
             ti = self.foldmap.get(('L', cur, lang.kL[w], (True, a, d)))
             if ti is None:
                 break
@@ -443,7 +456,12 @@ class X4(lg3.X3):
             specs['L'] = None
             starttok = 0
         # RIGHT
-        el, dist, sepw = elR, mkdist(elR), lang.seps
+        el, dist = elR, mkdist(elR)
+        sepw = set(lang.seps)
+
+        def word(g):
+            w = word_at(el, toks, g, lang.unit, lang.psepsR)
+            return w if w in sepw else None
         lo = 0
         while lo < len(el) and el[lo][2] <= starttok:
             lo += 1
@@ -476,13 +494,13 @@ class X4(lg3.X3):
                 k = kk
                 break
         while cur is not None and k - 2 >= lo and el[k][0] == 'E' and \
-                el[k - 1][0] == 'G' and lg3.gap_word(el[k - 1], sepw) is not None and \
+                el[k - 1][0] == 'G' and word(k - 1) is not None and \
                 el[k - 2][0] == 'E' and dist(k) > KEEP and \
                 all(toks[i][-1] == 'R' for i in range(el[k - 1][1], el[k][2])):
             d = lg3.rel_of(False, a, el[k - 2][3], el[k][3])
             if d is None:
                 break
-            w = lg3.gap_word(el[k - 1], sepw)
+            w = word(k - 1)
             ti = self.foldmap.get(('R', cur, lang.kR[w], (False, a, d)))
             if ti is None:
                 break
@@ -579,6 +597,7 @@ def explore_row(spec, lang, t0, mir=False):
     if r2 is None:
         raise Fail('halts')
     pins = set(k for k in tab if k not in r2[4])
+    CANON['on'] = len(lang.unit) > 1 or len(lang.unitL) > 1
     X = X4(tab, pins, lang)
     boot = lg3.boot_of(X, tab, t0)
     X.explore(boot)
@@ -656,7 +675,8 @@ def _blockify_units(self, side):
     """lg3.X3._blockify for every unit of the language (both sides'):
     a literal run of a one-cell unit longer than SMALL is a constant block"""
     us = []
-    for u in (self.lang.unit, getattr(self.lang, 'unitL', self.lang.unit)):
+    for u in (self.lang.unit, getattr(self.lang, 'unitL', self.lang.unit),
+              tuple(reversed(self.lang.unit)), tuple(reversed(getattr(self.lang, 'unitL', self.lang.unit)))):
         if u not in us:
             us.append(u)
     out = []
@@ -667,9 +687,32 @@ def _blockify_units(self, side):
         w = tuple(x[1])
         i = 0
         lit = []
+        if any(len(u) > 1 for u in us):
+            # multi-cell units: the far-aligned stretches (see parse4)
+            spans = []
+            for u in us:
+                if len(u) == 1:
+                    continue
+                for s0, e0, uu in stretch_elems(list(w), len(u), rotations(u), 'R'):
+                    if e0 - s0 > lg3.SMALL:
+                        spans.append((s0, e0, uu))
+            spans.sort()
+            pos = 0
+            for s0, e0, uu in spans:
+                if s0 < pos:
+                    continue
+                if s0 > pos:
+                    out.extend(self._blockify1(w[pos:s0], us))
+                out.append(('B', uu, ((e0 - s0) // len(uu), ())))
+                pos = e0
+            if pos < len(w):
+                out.extend(self._blockify1(w[pos:], us))
+            continue
         while i < len(w):
             best = None
             for u in us:
+                if len(u) > 1:
+                    continue
                 n = 0
                 while w[i + n * len(u):i + (n + 1) * len(u)] == u:
                     n += 1
@@ -689,5 +732,195 @@ def _blockify_units(self, side):
     return out
 
 
+def _blockify1(self, w, us):
+    """the one-cell units' blocks of a literal word"""
+    us1 = [u for u in us if len(u) == 1]
+    out, lit, i = [], [], 0
+    w = tuple(w)
+    while i < len(w):
+        best = None
+        for u in us1:
+            n = 0
+            while w[i + n:i + n + 1] == u:
+                n += 1
+            if n > lg3.SMALL and (best is None or n > best[1]):
+                best = (u, n)
+        if best is not None:
+            if lit:
+                out.append(('L', tuple(lit)))
+                lit = []
+            out.append(('B', best[0], (best[1], ())))
+            i += best[1]
+        else:
+            lit.append(w[i])
+            i += 1
+    if lit:
+        out.append(('L', tuple(lit)))
+    return out
+
+
 X4._blockify = _blockify_units
+X4._blockify1 = _blockify1
 X4._split_res = _split_res
+
+
+# ------------------------------------------------- multi-cell units ----
+#
+# A list of a multi-cell unit (`(110)^611 000 (011)^153 ...`) can be written
+# as blocks in several rotations (`11 (011)^e` is `(110)^e 11`), and the
+# checker compares segments syntactically.  So the finder fixes ONE form:
+# in a side's nearest-first order, every block of a multi-cell unit is
+# pushed as far from the head as it goes (no more `SRot 1` applies).  That
+# depends only on cells beyond the block, which a leaf that does not cross
+# it never touches; a leaf that crosses a block ends with the `SRot 1`
+# steps that restore it (leaf_run4).  On a concrete tape the same form is
+# the periodic STRETCH aligned to its far end: whole units ending where the
+# periodicity breaks, the partial unit at the near end in the gap.
+
+MINCOPY = int(os.environ.get('LG4_MINCOPY', '2'))
+
+
+def rotations(W):
+    W = tuple(W)
+    return set(W[i:] + W[:i] for i in range(len(W)))
+
+
+def stretch_elems(cells, p, rots, align, mincopy=MINCOPY):
+    """(s, e, unit) of the elements in a cell word: maximal periodic
+    stretches of period p whose unit is in rots, as whole units aligned to
+    the END of the word (align 'R') or to its start ('L'); overlapping
+    neighbours are clipped"""
+    n = len(cells)
+    st = []
+    j = p
+    while j < n:
+        if cells[j] != cells[j - p]:
+            j += 1
+            continue
+        a = j
+        while j < n and cells[j] == cells[j - p]:
+            j += 1
+        st.append((a - p, j))
+    out = []
+    if align == 'R':
+        prev = 0
+        for s, e in st:
+            s = max(s, prev)
+            k = (e - s) // p
+            if k < mincopy:
+                continue
+            u = tuple(cells[e - p * k:e - p * k + p])
+            if u not in rots:
+                continue
+            out.append((e - p * k, e, u))
+            prev = e
+    else:
+        nxt = n
+        for s, e in reversed(st):
+            e = min(e, nxt)
+            k = (e - s) // p
+            if k < mincopy:
+                continue
+            u = tuple(cells[s:s + p])
+            if u not in rots:
+                continue
+            out.insert(0, (s, s + p * k, u))
+            nxt = s
+    return out
+
+
+def parse4(toks, W, pseps, align):
+    """the tokens as elements ('E', i0, i1, exp, unit) and gaps ('G', i0,
+    i1, toks) in tape order.  A one-cell unit is lg3.parse's (separator
+    words pseps merged); a multi-cell unit: a block of a rotation of W, or
+    a periodic stretch in a run of literal cells"""
+    W = tuple(W)
+    if len(W) == 1:
+        el = lg3.parse(toks, W, pseps)
+        return [x + (W,) if x[0] == 'E' else x for x in el]
+    p = len(W)
+    rots = rotations(W)
+    es = []
+    i, n = 0, len(toks)
+    while i < n:
+        t = toks[i]
+        if t[0] == 'b':
+            if tuple(t[1]) in rots:
+                es.append((i, i + 1, t[2], tuple(t[1])))
+            i += 1
+            continue
+        j = i
+        while j < n and toks[j][0] == 'c':
+            j += 1
+        cells = [toks[k][1] for k in range(i, j)]
+        for s, e, u in stretch_elems(cells, p, rots, align):
+            es.append((i + s, i + e, ((e - s) // p, ()), u))
+        i = j
+    out = []
+    pos = 0
+    for i0, i1, e, u in es:
+        if i0 > pos or (out and out[-1][0] == 'E'):
+            # (an empty gap between two elements of different rotations)
+            out.append(('G', pos, i0, tuple(toks[pos:i0])))
+        out.append(('E', i0, i1, e, u))
+        pos = i1
+    if pos < n:
+        out.append(('G', pos, n, tuple(toks[pos:n])))
+    return out
+
+
+def word_at(el, toks, g, W, pseps):
+    """the separator symbol (u_before, gap cells, u_after) of gap el[g]
+    between two elements, or None"""
+    if g <= 0 or g + 1 >= len(el) or el[g][0] != 'G' or el[g - 1][0] != 'E' or \
+            el[g + 1][0] != 'E':
+        return None
+    if len(W) == 1:
+        c = lg3.gap_word(el[g], pseps)
+    else:
+        c = tok_cells(toks[el[g][1]:el[g][2]])
+    if c is None:
+        return None
+    return (el[g - 1][4], c, el[g + 1][4])
+
+
+# leaves end canonical: a crossed block of a multi-cell unit is rotated away
+# from the head as far as its post allows
+CANON = {'on': False}
+_leaf_prev = G.leaf_run
+
+
+def leaf_run4(tabw, q, h, Lz, Rz, endL, endR, na, p):
+    lf = _leaf_prev(tabw, q, h, Lz, Rz, endL, endR, na, p)
+    if not CANON['on']:
+        return lf
+    q1, L1, h1, R1 = lf['c1']
+    extra = []
+    sides = {'L': L1, 'R': R1}
+    for sd in ('L', 'R'):
+        S = sides[sd]
+        if len(S[1]) <= 1:
+            continue
+        while True:
+            s2 = C.LC.srot(1, S)
+            if s2 is None:
+                break
+            S = s2
+            extra.append(('SRot' + sd, 1))
+        sides[sd] = S
+    if not extra:
+        return lf
+    chain = list(lf['chain']) + extra
+    r = C.LC.srun(tabw, lf['el'], lf['er'], chain, lf['c0'])
+    if r is None:
+        raise Fail('canonical rotation does not replay')
+    c1 = r[0]
+    j = lf['j']
+    lf = dict(lf)
+    lf.update(chain=chain, c1=c1, q1=c1[0], h1=c1[2],
+              endL=C.ss_segs(c1[1], j) + Lz[lf['nL']:],
+              endR=C.ss_segs(c1[3], j) + Rz[lf['nR']:])
+    return lf
+
+
+G.leaf_run = leaf_run4
