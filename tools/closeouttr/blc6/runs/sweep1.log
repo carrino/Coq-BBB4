@@ -50,3 +50,33 @@
 1RB1LD_0RC1RA_1LD1RA_0LA0LD OK
 1RB1LD_0RC1RA_1RD1RA_0LA0LD OK
 1RB1RA_1LC0RA_1LA1LD_1LC0LB t50094 norank ('norank', (2, 0)) / t20000 norank ('norank', (2, 0))
+1RB1RC_0LC0LB_1RD1LB_0RA1RC OK
+1RB1LD_0RC0LB_1LC1RA_0RD0LA timeout
+1RB1RC_1LC0RD_1LD0LB_1RB1RA OK
+1RB1LB_0LC1RD_1LA0RB_1LB0RD timeout
+1RB1RC_1RC0RB_0LD1RB_0LA1LD OK
+1RB1RD_1LC0RA_1LA0LB_1RB1RC OK
+1RB1RD_1LC1LB_1RA0LB_1RD0RC t50385 too many families (family 774) / t20000 too many families (family 793)
+0RB0RA_1RC1RA_1LD1RC_1RB0LC t50520 exploration does not settle / t20000 too many families (family 686)
+0RB1LD_0RC1RB_1LD1RB_1LA0LD OK
+1RB1RC_1LC0RC_1RA0LD_0RB0LB timeout
+1RB0LA_0RC0RD_1LA0RC_0LC1RA learn: left samples disagree on F states (287 of 842)
+1RB0LC_1RC1RD_1LA1RC_0RB0RD t50677 exploration does not settle / t20000 too many families (family 682)
+1RB1RD_1LC1LB_1RA0LB_1RA0RC timeout
+1RB0LD_1RC0RA_1LA0RD_1LA1LC t50253 too many families (family 371) / t20000 too many families (family 717)
+1RB0RA_0LC1RA_0LD1LC_1LA1LC OK
+1RB0RA_0LC1RA_0LD1LC_1LA1RB OK
+1RB0RC_0LC1LB_0LD1LC_1RD0RA learn: left samples disagree on F states (1097 of 1132)
+1RB0LD_1LC0RD_1LA0LB_1RB1RA t50308 exploration does not settle / t20000 too many families (family 727)
+0RB1LD_1RC1RC_1LA1RA_1RA0LD timeout
+1RB0RD_1LC1LB_1RD0LB_1RD1RA OK
+1RB0RC_1LC0RD_1RA0LD_1LC1LB t50091 too many families (family 9) / t20000 too many families (family 793)
+1RB1LA_1LC0RA_1LA1LD_0LC0LD t50523 exploration does not settle / t20000 too many families (family 685)
+1RB0RC_1LC1RA_1RA0LD_0LC1LD t50353 too many families (family 684) / t20000 too many families (family 666)
+1RB1RA_1LC0RD_1RA0LB_1LB0RA OK
+1RB1RA_0LC0RA_1LC1LD_1LA0LC t50188 too many families (family 2) / t20000 too many families (family 636)
+1RB1RD_1LC0RA_1LD0LB_1RB0LA t50308 exploration does not settle / t20000 too many families (family 727)
+1RB1RD_1LC1RB_1RA0LB_0RA0RD t50519 exploration does not settle / t20000 too many families (family 686)
+1RB1LB_0LC1RD_1LA1LA_1LB0RD timeout
+1RB1RB_1LC1RC_0RA1LD_1RC0LD timeout
+{'ok': 24, 'fail': 34}
