@@ -2921,6 +2921,7 @@ theories/Counters/BlankTailTr.v
 theories/Counters/HybridCtrTr.v
 theories/Counters/ListGlueTr.v
 theories/Counters/ListGlue2Tr.v
+theories/Counters/ListGlueLexTr.v
 theories/Counters/HybridCtr2Tr.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1LB_1LC1RB.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1LD_1LC1RB.v
@@ -11705,6 +11706,9 @@ theories/CloseoutTr/CBT_BLC3_05.v
 theories/CloseoutTr/CBT_BLC4_00.v
 theories/CloseoutTr/CBT_BLC4_01.v
 theories/CloseoutTr/CBT_BLC4_02.v
+theories/CloseoutTr/CBT_BLC5_00.v
+theories/CloseoutTr/CBT_BLC5_01.v
+theories/CloseoutTr/CBT_BLC5_02.v
 theories/CloseoutTr/CBT_BLC_00.v
 theories/CloseoutTr/CBT_BLC_01.v
 theories/CloseoutTr/CBT_BL_00.v

@@ -74,6 +74,10 @@ class Lang4(lg3.Lang):
         ds = [abs(x[1]) for (_, x) in self.fwd] + [abs(x[1]) for (_, x) in self.lfwd] + \
             [abs(x[1]) for x, _ in self.lstart] + [0]
         self.dmax = max(ds) + DSLACK
+        # F's interior digits (not b_0's), and the left form's (SPLITF)
+        self.idigits = set(x[1] for (q, x) in self.fwd
+                           if not (isinstance(q, tuple) and q and q[0] == 'b0')) | \
+            set(x[1] for (_, x) in self.lfwd)
 
     def automaton(self):
         nfa = G.NFA()
@@ -247,6 +251,10 @@ SPLITGAP = int(os.environ.get('LG4_SPLITGAP', '3'))
 WIDEN = os.environ.get('LG4_WIDEN', '1') == '1'
 RNOQ0 = os.environ.get('LG4_RNOQ0', '1') == '1'
 SPLITSAME = os.environ.get('LG4_SPLITSAME', '1') == '1'
+# BLC5: a same-unit pair around the head is a split element unless its
+# relation is one of F's INTERIOR digits (b_0's own digits, which the marker
+# leaves behind, do not count).  0 keeps BLC4's test (|d| <= dmax)
+SPLITF = os.environ.get('LG4_SPLITF', '0') == '1'
 SPLITMOD = os.environ.get('LG4_SPLITMOD', '1') == '1'
 
 
@@ -734,6 +742,8 @@ def _split_res(self, Lw, Rw):
                 # the right one)
                 d1 = lg3.rel_of(False, a, blks[last][1], x[2])
                 other = d1 is None or abs(d1) > dmax
+                if SPLITF and not other:
+                    other = d1 not in self.lang.idigits
             if other:
                 blks[last][2] = True
                 blks[cur][2] = True
