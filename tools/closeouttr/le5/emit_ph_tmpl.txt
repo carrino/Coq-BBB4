@@ -1,0 +1,397 @@
+(* ---- HEAD ---- *)
+
+(** ** The closure: a counter with %(NP)d PHASES, a run and an anchor per
+    phase ([LadderCheckPhRunTr])
+
+    The counter side is [pre ++ x ++ W p ++ T^m ++ V p], [x] binary over the
+    two digit words, [T = %(T)s]; per phase its anchor (state, head symbol /
+    far side), W | V, the move of a nonempty and of an empty [x], its flags:
+%(ptab)s
+    Rank [%(A)d |x| + %(B)d m + g p].  Interior arms at threshold %(n0i)d
+    stride %(sti)d, carries at %(n0c)d / %(stc)d, narrowings at
+    %(n0n)d / %(stn)d, refills at %(n0r)d / %(str)d.  Every arm is a
+    [LadderNest] segment program. *)
+From BBB4.Checkers Require Import LadderCheckPhRunTr.
+
+Definition phW_%(mid)s (p : nat) : list Sym :=
+  match p with %(Wb)s | _ => [] end.
+Definition phV_%(mid)s (p : nat) : list Sym :=
+  match p with %(Vb)s | _ => [] end.
+Definition phT_%(mid)s : list Sym := %(Tc)s.
+Definition phmvT_%(mid)s (p : nat) : TMove :=
+  match p with %(MTb)s | _ => TNone end.
+Definition phmvE_%(mid)s (p : nat) : EMove :=
+  match p with %(MEb)s | _ => ECarry 0 0 0 end.
+Definition phast_%(mid)s (p : nat) : St :=
+  match p with %(Sb)s | _ => %(S0)s end.
+Definition phahs_%(mid)s (p : nat) : Sym :=
+  match p with %(Hb)s | _ => %(H0)s end.
+Definition photh_%(mid)s (p : nat) : list Sym :=
+  match p with %(Ob)s | _ => [] end.
+Definition phnr_%(mid)s (p : nat) : bool :=
+  match p with %(Nb)s | _ => false end.
+Definition phxe_%(mid)s (p : nat) : bool :=
+  match p with %(Xb)s | _ => false end.
+Definition phxn_%(mid)s (p : nat) : bool :=
+  match p with %(XNb)s | _ => false end.
+Definition phfT_%(mid)s (p : nat) : bool :=
+  match p with %(FTb)s | _ => false end.
+Definition phg_%(mid)s (p : nat) : nat :=
+  match p with %(Gb)s | _ => 0 end.
+
+Ltac phok := vm_compute; repeat match goal with |- _ /\ _ => split | |- _ -> _ => intro end;
+  first [reflexivity | discriminate | lia].
+
+(* ---- DEFS ---- *)
+Definition iarm_%(mid)s (p d e r : nat) : LRule :=
+  match p, e, r with %(ib)s | _, _, _ => %(dflt)s_%(mid)s end.
+Definition carm_%(mid)s (p r : nat) : LRule :=
+  match p, r with %(cb)s | _, _ => %(dflt)s_%(mid)s end.
+Definition narm_%(mid)s (p r : nat) : LRule :=
+  match p, r with %(nb)s | _, _ => %(dflt)s_%(mid)s end.
+Definition earm_%(mid)s (p : nat) : LRule :=
+  match p with %(eb)s | _ => %(dflt)s_%(mid)s end.
+Definition rarm_%(mid)s (p r : nat) : LRule :=
+  match p, r with %(rb)s | _, _ => %(dflt)s_%(mid)s end.
+Definition fm1_%(mid)s (p r : nat) : nat := match p, r with %(b1)s | _, _ => 0 end.
+Definition fm2_%(mid)s (p r : nat) : nat := match p, r with %(b2)s | _, _ => 0 end.
+
+Definition vis_%(mid)s (p r : nat) (t : Instr) : list lstep :=
+  match p, r, t with
+  %(vb)s
+  | _, _, _ => []
+  end.
+
+Definition vsegs_%(mid)s (p r : nat) (t : Instr) : list nseg :=
+  match p, r, t with
+  %(sb)s
+  | _, _, _ => []
+  end.
+
+Definition visc_%(mid)s (p r : nat) (t : Instr) : list lstep :=
+  match p, r, t with
+  %(cvb)s
+  | _, _, _ => []
+  end.
+
+Definition vsegsc_%(mid)s (p r : nat) (t : Instr) : list nseg :=
+  match p, r, t with
+  %(csb)s
+  | _, _, _ => []
+  end.
+
+(* ---- PHL ---- *)
+Lemma htc_%(mid)s : forall p q dw dm, p < %(NP)d -> phmvT_%(mid)s p = TCarry q dw dm ->
+  q < %(NP)d /\ (phnr_%(mid)s q = true -> phnr_%(mid)s p = true /\ dm = 0) /\ phxe_%(mid)s q = false
+  /\ (phfT_%(mid)s p = false -> %(A)d * dw + %(B)d * dm + phg_%(mid)s q < phg_%(mid)s p).
+Proof.
+  intros p q dw dm Hp Hmv.
+%(ptc)sQed.
+
+Lemma htn_%(mid)s : forall p q dm, p < %(NP)d -> phmvT_%(mid)s p = TNarrow q dm ->
+  q < %(NP)d /\ (phnr_%(mid)s q = true -> phnr_%(mid)s p = true /\ dm = 0) /\ phxe_%(mid)s q = false
+  /\ phxn_%(mid)s q = false /\ %(B)d * dm + phg_%(mid)s q < %(A)d + phg_%(mid)s p.
+Proof.
+  intros p q dm Hp Hmv.
+%(ptn)sQed.
+
+Lemma htx_%(mid)s : forall p, p < %(NP)d -> phmvT_%(mid)s p = TNone -> phxe_%(mid)s p = true.
+Proof.
+  intros p Hp Hmv.
+%(ptx)sQed.
+
+Lemma hec_%(mid)s : forall p q dw dm, p < %(NP)d -> phxn_%(mid)s p = false ->
+  phmvE_%(mid)s p = ECarry q dw dm ->
+  q < %(NP)d /\ (phnr_%(mid)s q = true -> phnr_%(mid)s p = true /\ dm = 0)
+  /\ (phxe_%(mid)s q = true -> dw = 0) /\ (phxn_%(mid)s q = true -> 0 < dw)
+  /\ %(A)d * dw + %(B)d * dm + phg_%(mid)s q < phg_%(mid)s p.
+Proof.
+  intros p q dw dm Hp Hxn Hmv.
+%(pec)sQed.
+
+Lemma her_%(mid)s : forall p a q c, p < %(NP)d -> phxn_%(mid)s p = false ->
+  phmvE_%(mid)s p = ERefill a q c ->
+  q < %(NP)d /\ (phnr_%(mid)s q = true -> c = 0) /\ phxe_%(mid)s q = false
+  /\ (phxn_%(mid)s q = true -> 0 < a).
+Proof.
+  intros p a q c Hp Hxn Hmv.
+%(per)sQed.
+
+Lemma hvtc_%(mid)s : forall p q dw dm, p < %(NP)d -> phmvT_%(mid)s p = TCarry q dw dm ->
+  phnr_%(mid)s p = false -> phV_%(mid)s q = phV_%(mid)s p.
+Proof.
+  intros p q dw dm Hp Hmv.
+%(pvtc)sQed.
+
+Lemma hvtn_%(mid)s : forall p q dm, p < %(NP)d -> phmvT_%(mid)s p = TNarrow q dm ->
+  phnr_%(mid)s p = false -> phV_%(mid)s q = phV_%(mid)s p.
+Proof.
+  intros p q dm Hp Hmv.
+%(pvtn)sQed.
+
+Lemma hvec_%(mid)s : forall p q dw dm, p < %(NP)d -> phxn_%(mid)s p = false ->
+  phmvE_%(mid)s p = ECarry q dw dm ->
+  phnr_%(mid)s p = false -> phV_%(mid)s q = phV_%(mid)s p.
+Proof.
+  intros p q dw dm Hp Hxn Hmv.
+%(pvec)sQed.
+
+Lemma iarm_reach_%(mid)s : forall p d e r, p < %(NP)d -> phxe_%(mid)s p = false ->
+  d < fm_b FAM - 1 -> e <= fm_b FAM -> r < %(n0i)d + %(sti)d ->
+  ReachL tm (if e <? fm_b FAM then negb (fm_left FAM)
+             else if phnr_%(mid)s p then true else negb (fm_left FAM))
+            (if e <? fm_b FAM then fm_left FAM
+             else if phnr_%(mid)s p then true else fm_left FAM)
+    (lr_lhs (iarm_%(mid)s p d e r)) (lr_rhs (iarm_%(mid)s p d e r)).
+Proof.
+  intros p d e r Hp Hx Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
+%(isound)sQed.
+
+Lemma iarm_lhs_%(mid)s : forall p d e r, p < %(NP)d -> phxe_%(mid)s p = false ->
+  d < fm_b FAM - 1 -> e <= fm_b FAM -> r < %(n0i)d + %(sti)d ->
+  lr_lhs (iarm_%(mid)s p d e r)
+    = cls_conf (fam_at FAM (phast_%(mid)s p) (phahs_%(mid)s p) (photh_%(mid)s p))
+        (blk (fm_pre FAM ++ rep (dig FAM (fm_b FAM - 1)) r) (dig FAM (fm_b FAM - 1))
+           (astride %(n0i)d %(sti)d r) (dig FAM d ++ ilookP FAM phW_%(mid)s phV_%(mid)s phnr_%(mid)s p e)).
+Proof.
+  intros p d e r Hp Hx Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
+%(icomp)sQed.
+
+Lemma iarm_rhs_%(mid)s : forall p d e r, p < %(NP)d -> phxe_%(mid)s p = false ->
+  d < fm_b FAM - 1 -> e <= fm_b FAM -> r < %(n0i)d + %(sti)d ->
+  lr_rhs (iarm_%(mid)s p d e r)
+    = cls_conf (fam_at FAM (phast_%(mid)s p) (phahs_%(mid)s p) (photh_%(mid)s p))
+        (blk (fm_pre FAM ++ rep (dig FAM 0) r) (dig FAM 0)
+           (astride %(n0i)d %(sti)d r) (dig FAM (S d) ++ ilookP FAM phW_%(mid)s phV_%(mid)s phnr_%(mid)s p e)).
+Proof.
+  intros p d e r Hp Hx Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
+%(icomp)sQed.
+
+Lemma carm_reach_%(mid)s : forall p q dw dm r, p < %(NP)d -> phmvT_%(mid)s p = TCarry q dw dm ->
+  r < %(n0c)d + %(stc)d ->
+  ReachL tm (if phnr_%(mid)s p then true else negb (fm_left FAM))
+            (if phnr_%(mid)s p then true else fm_left FAM)
+    (lr_lhs (carm_%(mid)s p r)) (lr_rhs (carm_%(mid)s p r)).
+Proof.
+  intros p q dw dm r Hp Hmv Hr.
+%(csound)sQed.
+
+Lemma carm_lhs_%(mid)s : forall p q dw dm r, p < %(NP)d -> phmvT_%(mid)s p = TCarry q dw dm ->
+  r < %(n0c)d + %(stc)d ->
+  lr_lhs (carm_%(mid)s p r)
+    = cls_conf (fam_at FAM (phast_%(mid)s p) (phahs_%(mid)s p) (photh_%(mid)s p))
+        (blk (fm_pre FAM ++ rep (dig FAM (fm_b FAM - 1)) r)
+           (dig FAM (fm_b FAM - 1)) (astride %(n0c)d %(stc)d r)
+           (lwP phW_%(mid)s phV_%(mid)s phnr_%(mid)s p)).
+Proof.
+  intros p q dw dm r Hp Hmv Hr.
+%(ccomp)sQed.
+
+Lemma carm_rhs_%(mid)s : forall p q dw dm r, p < %(NP)d -> phmvT_%(mid)s p = TCarry q dw dm ->
+  r < %(n0c)d + %(stc)d ->
+  lr_rhs (carm_%(mid)s p r)
+    = cls_conf (fam_at FAM (phast_%(mid)s q) (phahs_%(mid)s q) (photh_%(mid)s q))
+        (blk (fm_pre FAM ++ rep (dig FAM 0) (r + dw))
+           (dig FAM 0) (astride %(n0c)d %(stc)d r)
+           (rwP phW_%(mid)s phV_%(mid)s phT_%(mid)s phnr_%(mid)s p q dm)).
+Proof.
+  intros p q dw dm r Hp Hmv Hr.
+%(ccomp)sQed.
+
+Lemma narm_reach_%(mid)s : forall p q dm r, p < %(NP)d -> phmvT_%(mid)s p = TNarrow q dm ->
+  0 < r -> r < %(n0n)d + %(stn)d ->
+  ReachL tm (if phnr_%(mid)s p then true else negb (fm_left FAM))
+            (if phnr_%(mid)s p then true else fm_left FAM)
+    (lr_lhs (narm_%(mid)s p r)) (lr_rhs (narm_%(mid)s p r)).
+Proof.
+  intros p q dm r Hp Hmv H0 Hr.
+%(nsound)sQed.
+
+Lemma narm_lhs_%(mid)s : forall p q dm r, p < %(NP)d -> phmvT_%(mid)s p = TNarrow q dm ->
+  0 < r -> r < %(n0n)d + %(stn)d ->
+  lr_lhs (narm_%(mid)s p r)
+    = cls_conf (fam_at FAM (phast_%(mid)s p) (phahs_%(mid)s p) (photh_%(mid)s p))
+        (blk (fm_pre FAM ++ rep (dig FAM (fm_b FAM - 1)) r)
+           (dig FAM (fm_b FAM - 1)) (astride %(n0n)d %(stn)d r)
+           (lwP phW_%(mid)s phV_%(mid)s phnr_%(mid)s p)).
+Proof.
+  intros p q dm r Hp Hmv H0 Hr.
+%(ncomp)sQed.
+
+Lemma narm_rhs_%(mid)s : forall p q dm r, p < %(NP)d -> phmvT_%(mid)s p = TNarrow q dm ->
+  0 < r -> r < %(n0n)d + %(stn)d ->
+  lr_rhs (narm_%(mid)s p r)
+    = cls_conf (fam_at FAM (phast_%(mid)s q) (phahs_%(mid)s q) (photh_%(mid)s q))
+        (blk (fm_pre FAM ++ rep (dig FAM 0) (r - 1))
+           (dig FAM 0) (astride %(n0n)d %(stn)d r)
+           (rwP phW_%(mid)s phV_%(mid)s phT_%(mid)s phnr_%(mid)s p q dm)).
+Proof.
+  intros p q dm r Hp Hmv H0 Hr.
+%(ncomp)sQed.
+
+Lemma earm_reach_%(mid)s : forall p q dw dm, p < %(NP)d -> phxn_%(mid)s p = false ->
+  phmvE_%(mid)s p = ECarry q dw dm ->
+  ReachL tm (if phnr_%(mid)s p then true else negb (fm_left FAM))
+            (if phnr_%(mid)s p then true else fm_left FAM)
+    (lr_lhs (earm_%(mid)s p)) (lr_rhs (earm_%(mid)s p)).
+Proof.
+  intros p q dw dm Hp Hxn Hmv.
+%(esound)sQed.
+
+Lemma earm_lhs_%(mid)s : forall p q dw dm, p < %(NP)d -> phxn_%(mid)s p = false ->
+  phmvE_%(mid)s p = ECarry q dw dm ->
+  lr_lhs (earm_%(mid)s p)
+    = cls_conf (fam_at FAM (phast_%(mid)s p) (phahs_%(mid)s p) (photh_%(mid)s p))
+        (sflat (fm_pre FAM ++ lwP phW_%(mid)s phV_%(mid)s phnr_%(mid)s p)).
+Proof.
+  intros p q dw dm Hp Hxn Hmv.
+%(ecomp)sQed.
+
+Lemma earm_rhs_%(mid)s : forall p q dw dm, p < %(NP)d -> phxn_%(mid)s p = false ->
+  phmvE_%(mid)s p = ECarry q dw dm ->
+  lr_rhs (earm_%(mid)s p)
+    = cls_conf (fam_at FAM (phast_%(mid)s q) (phahs_%(mid)s q) (photh_%(mid)s q))
+        (sflat (fm_pre FAM ++ rep (dig FAM 0) dw
+                ++ rwP phW_%(mid)s phV_%(mid)s phT_%(mid)s phnr_%(mid)s p q dm)).
+Proof.
+  intros p q dw dm Hp Hxn Hmv.
+%(ecomp)sQed.
+
+Lemma rarm_reach_%(mid)s : forall p a q c r, p < %(NP)d -> phxn_%(mid)s p = false ->
+  phmvE_%(mid)s p = ERefill a q c -> r < %(n0r)d + %(str)d ->
+  ReachL tm true true (lr_lhs (rarm_%(mid)s p r)) (lr_rhs (rarm_%(mid)s p r)).
+Proof.
+  intros p a q c r Hp Hxn Hmv Hr.
+%(rsound)sQed.
+
+Lemma rarm_lhs_%(mid)s : forall p a q c r, p < %(NP)d -> phxn_%(mid)s p = false ->
+  phmvE_%(mid)s p = ERefill a q c -> r < %(n0r)d + %(str)d ->
+  lr_lhs (rarm_%(mid)s p r)
+    = cls_conf (fam_at FAM (phast_%(mid)s p) (phahs_%(mid)s p) (photh_%(mid)s p))
+        (blk (fm_pre FAM ++ phW_%(mid)s p ++ rep phT_%(mid)s r)
+           phT_%(mid)s (astride %(n0r)d %(str)d r) (phV_%(mid)s p)).
+Proof.
+  intros p a q c r Hp Hxn Hmv Hr.
+%(rcomp)sQed.
+
+Lemma rarm_rhs_%(mid)s : forall p a q c r, p < %(NP)d -> phxn_%(mid)s p = false ->
+  phmvE_%(mid)s p = ERefill a q c -> r < %(n0r)d + %(str)d ->
+  lr_rhs (rarm_%(mid)s p r)
+    = cls_conf (fam_at FAM (phast_%(mid)s q) (phahs_%(mid)s q) (photh_%(mid)s q))
+        (blk (fm_pre FAM ++ rep (dig FAM 0) (fm1_%(mid)s p r)) (dig FAM 0)
+           (astride %(n0r)d %(str)d r)
+           (rep (dig FAM 0) (fm2_%(mid)s p r) ++ phW_%(mid)s q
+              ++ rep phT_%(mid)s c ++ phV_%(mid)s q)).
+Proof.
+  intros p a q c r Hp Hxn Hmv Hr.
+%(rcomp)sQed.
+
+Lemma fm_%(mid)s : forall p a q c r, p < %(NP)d -> phxn_%(mid)s p = false ->
+  phmvE_%(mid)s p = ERefill a q c -> r < %(n0r)d + %(str)d ->
+  fm1_%(mid)s p r + fm2_%(mid)s p r = r + a.
+Proof.
+  intros p a q c r Hp Hxn Hmv Hr.
+%(rlia)sQed.
+
+Lemma vis_ok_%(mid)s : forall p a q c r t, p < %(NP)d -> phxn_%(mid)s p = false ->
+  phmvE_%(mid)s p = ERefill a q c -> ~ In t pins_%(mid)s -> r < %(n0r)d + %(str)d ->
+  nfire tm true true nrules (vsegs_%(mid)s p r t) (vis_%(mid)s p r t)
+    (lr_lhs (rarm_%(mid)s p r)) = Some t.
+Proof.
+  intros p a q c r t Hp Hxn Hmv Hnp Hr.
+%(fvis)sQed.
+
+Lemma visc_ok_%(mid)s : forall p q dw dm r t, p < %(NP)d -> phmvT_%(mid)s p = TCarry q dw dm ->
+  phfT_%(mid)s p = true -> ~ In t pins_%(mid)s -> r < %(n0c)d + %(stc)d ->
+  nfire tm (if phnr_%(mid)s p then true else negb (fm_left FAM))
+           (if phnr_%(mid)s p then true else fm_left FAM)
+    nrules (vsegsc_%(mid)s p r t) (visc_%(mid)s p r t) (lr_lhs (carm_%(mid)s p r)) = Some t.
+Proof.
+  intros p q dw dm r t Hp Hmv Hf Hnp Hr.
+%(cfire)sQed.
+
+Lemma bootl_%(mid)s :
+  stepn %(tmb)s %(t0)d InitES
+  = Some (lift (pcfg FAM phW_%(mid)s phV_%(mid)s phT_%(mid)s phast_%(mid)s phahs_%(mid)s photh_%(mid)s
+                  (%(x0)s, %(p0)d, %(m0)d))).
+Proof.
+  assert (H : match csteps %(tmb)s %(t0)d c0 with
+              | Some c => ceqb c (pcfg FAM phW_%(mid)s phV_%(mid)s phT_%(mid)s phast_%(mid)s
+                                   phahs_%(mid)s photh_%(mid)s (%(x0)s, %(p0)d, %(m0)d))
+              | None => false end = true) by (vm_compute; reflexivity).
+  destruct (csteps %(tmb)s %(t0)d c0) as [c|] eqn:E; [|discriminate].
+  rewrite <- lift_c0, (csteps_lift _ _ _ _ E). f_equal. apply ceqb_lift. exact H.
+Qed.
+
+(* ---- ARGS ---- *)
+  - vm_compute; lia.
+  - exact htc_%(mid)s.
+  - exact htn_%(mid)s.
+  - exact htx_%(mid)s.
+  - exact hec_%(mid)s.
+  - exact her_%(mid)s.
+  - exact hvtc_%(mid)s.
+  - exact hvtn_%(mid)s.
+  - exact hvec_%(mid)s.
+  - repeat constructor.
+  - vm_compute; lia.
+  - vm_compute; %(hm0)s
+  - vm_compute; %(hx0)s
+  - vm_compute; %(hn0)s
+  - lia.
+  - exact iarm_reach_%(mid)s.
+  - exact iarm_lhs_%(mid)s.
+  - exact iarm_rhs_%(mid)s.
+  - lia.
+  - exact carm_reach_%(mid)s.
+  - exact carm_lhs_%(mid)s.
+  - exact carm_rhs_%(mid)s.
+  - lia.
+  - lia.
+  - exact narm_reach_%(mid)s.
+  - exact narm_lhs_%(mid)s.
+  - exact narm_rhs_%(mid)s.
+  - exact earm_reach_%(mid)s.
+  - exact earm_lhs_%(mid)s.
+  - exact earm_rhs_%(mid)s.
+  - lia.
+  - exact rarm_reach_%(mid)s.
+  - exact rarm_lhs_%(mid)s.
+  - exact rarm_rhs_%(mid)s.
+  - exact fm_%(mid)s.
+  - exact nrules_sound_%(mid)s.
+  - exact vis_ok_%(mid)s.
+  - exact visc_ok_%(mid)s.
+  - exact bootl_%(mid)s.
+(* ---- CALL ---- *)
+(%(board)s tm_%(mid)s pins_%(mid)s FAM %(NP)d phW_%(mid)s phV_%(mid)s phT_%(mid)s
+                 phmvT_%(mid)s phmvE_%(mid)s phast_%(mid)s phahs_%(mid)s photh_%(mid)s
+                 phnr_%(mid)s phxe_%(mid)s phxn_%(mid)s phfT_%(mid)s %(A)d %(B)d phg_%(mid)s
+                 iarm_%(mid)s %(n0i)d %(sti)d carm_%(mid)s %(n0c)d %(stc)d
+                 narm_%(mid)s %(n0n)d %(stn)d earm_%(mid)s rarm_%(mid)s %(n0r)d %(str)d
+                 fm1_%(mid)s fm2_%(mid)s nrules vsegs_%(mid)s vis_%(mid)s
+                 vsegsc_%(mid)s visc_%(mid)s %(x0)s %(p0)d %(m0)d)
+(* ---- QHT ---- *)
+Lemma wit_%(mid)s :
+  existsb (fun tg => cfires tm_%(mid)s c0 %(t0)d tg) pins_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma bnd_%(mid)s : (%(t0)d <=? 32779478) = true.
+Proof. vm_cast_no_check (eq_refl true). Qed.
+
+(** The machine-level theorem, on the QUASIHALTING side, through
+    [LadderCheckPhRunTr.boardP_qhtr]. *)
+Theorem qhtr_%(mid)s :
+  NonHalt tm_%(mid)s /\ QHBoundTr 32779478 tm_%(mid)s /\ QuasiHaltsTr tm_%(mid)s.
+Proof.
+  eapply %(call)s.
+%(args)s  - exact wit_%(mid)s.
+  - exact bnd_%(mid)s.
+Qed.
+(* ---- NQHT ---- *)
+(** The machine-level theorem, at the INSTRUCTION level, through
+    [LadderCheckPhRunTr.boardP_neverqhtr]. *)
+Theorem nqhtr_%(mid)s : NeverQuasiHaltsTr tm_%(mid)s.
+Proof.
+  eapply %(call)s.
+%(args)sQed.
