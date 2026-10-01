@@ -1,0 +1,373 @@
+# spec	LE2 bucket	LE4 reading	where it stops
+0RB0LA_0RC1RB_0LD1RC_1LA1LD	dn_closure	run2	interior arm: sweeps the run of top digits
+0RB0LA_0RC1RD_1LA1LC_0LC1RB	dn_fam	run2	interior arm: sweeps the run of top digits
+0RB0LA_1LC0RD_1LA1LB_1RC1RD	dn_nofam	none	no reading
+0RB0LA_1LC0RD_1LA1RD_1LB1RC	dn_nofam	none	no reading
+0RB0LA_1LC1RD_0LD1LA_0RD1RB	dn_nofam	none	no reading
+0RB0LA_1LC1RD_0RD0LC_1RB1LA	dn_fam	run2	interior arm: carry cost doubles (nested)
+0RB0LA_1LC1RD_0RD1LA_---1RB	dn_nofam	none	no reading
+0RB0LA_1LC1RD_1LA0LC_1RB0RD	dn_nofam	none	no reading
+0RB0LA_1RC0LC_1LD0RC_1LA0LA	dn_cap	none	no reading
+0RB0LA_1RC0LC_1LD0RC_1LA1RC	dn_cap	none	no reading
+0RB0LA_1RC0LD_1LA1RD_1LC0RD	dn_cap	none	no reading
+0RB0LA_1RC0RC_0LD1RB_1LA1LD	dn_nofam	none	no reading
+0RB0LA_1RC0RC_1LD1RB_1LA0LD	dn_nofam	none	no reading
+0RB0LA_1RC1LA_1LD1RB_0RC0LD	dn_fam	run2	interior arm: carry cost doubles (nested)
+0RB0LA_1RC1RB_0LD0RC_1LD1LA	dn_closure	run2	interior arm: sweeps the run of top digits
+0RB0LA_1RC1RB_0LD1LC_0RA1LA	dn_cap	none	no reading
+0RB0LA_1RC1RB_0LD1LC_0RD1LA	dn_cap	none	no reading
+0RB0LB_1LC0RD_1LA0LA_1LB1RB	dn_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB0LC_0LC1LC_0RD1LA_1RB1RD	sp_cap	none	no reading
+0RB0LC_1LA1LC_0RD1LA_1RB1RD	sp_cap	none	no reading
+0RB0LC_1LA1RB_0LD1LA_1RD1RA	qh_cap	none	no reading
+0RB0LC_1LA1RB_0RB0LD_0RB1LD	dn_fam	none	no reading
+0RB0LC_1LA1RC_1RB0LD_0RB1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB0LC_1LC---_0RD0LA_1RB1RD	dn_nofam	none	no reading
+0RB0LC_1LC0RD_1LA1LD_0LA1RB	sp_nofam	run2	boarded LE4_04
+0RB0LC_1LC1LC_0RD1LA_1RB1RD	sp_cap	none	no reading
+0RB0LC_1LC1RB_1LD1LA_1RD0RC	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+0RB0LC_1LC1RD_0RD1LC_1RB1LA	sp_cap	none	no reading
+0RB0LC_1RC1RD_1LB1LA_1LB0RD	dn_cap	none	no reading
+0RB0LD_0RC1LB_1LA1RC_0LA0LB	dn_fam	none	no reading
+0RB0LD_0RC1LB_1LA1RC_0RC0LB	dn_fam	none	no reading
+0RB0LD_0RC1LB_1LA1RD_1RC0LB	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB0LD_0RC1RB_1LD1RC_0LA1LA	dn_nofam	none	no reading
+0RB0LD_0RC1RC_1LA1RB_0LA1LD	dn_nofam	none	no reading
+0RB0LD_1LA1RC_1RB1LA_0RC1LD	sp_cap	none	no reading
+0RB0LD_1LC1RB_0RB0LA_0RB1LD	dn_fam	none	no reading
+0RB0LD_1LC1RB_0RD0LA_0RB1LD	dn_fam	none	no reading
+0RB0LD_1LC1RC_1LD1RA_0RA1LC	sp_nofam	pos	boarded LE4_01
+0RB0LD_1LC1RC_1RB1LA_0RC1LD	sp_cap	none	no reading
+0RB0LD_1RC1RB_0LC1LD_0RB1LA	sp_cap	none	no reading
+0RB0LD_1RC1RB_0LD1LD_0RB1LA	sp_cap	none	no reading
+0RB0LD_1RC1RB_1LA---_0RC0LA	dn_nofam	none	no reading
+0RB0LD_1RC1RB_1LA1LD_0RB1LA	sp_cap	none	no reading
+0RB0LD_1RC1RB_1LC1LD_0RB1LA	sp_cap	none	no reading
+0RB0LD_1RC1RB_1LD1LD_0RB1LA	sp_cap	none	no reading
+0RB0RA_1RC0LD_1LB1RA_1LB1LD	sp_nofam	none	no reading
+0RB0RA_1RC1LD_1LC1RB_0LD0LA	dn_fam	run2	interior arm: carry cost doubles (nested)
+0RB0RA_1RC1LD_1LD1RB_0LD0LA	dn_fam	run2	interior arm: carry cost doubles (nested)
+0RB0RC_0LC0RA_0LD1RC_1RB1LD	dn_fam	none	no reading
+0RB0RC_1RC1LB_1LD1RD_0LB1RA	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+0RB1LA_0LC1RD_0RD1LD_1RB0LA	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+0RB1LA_0LC1RD_1LD0RB_1RB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_0LC1RD_1LD1LD_1RB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_0LC1RD_1RB1LD_1RB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_1LA1RC_1RB1RD_1LD0LA	sp_cap	pos	boarded LE4_03
+0RB1LA_1LC1RB_0RA0LD_0LC0LA	dn_fam	none	no reading
+0RB1LA_1LC1RB_0RA0LD_0RB0LA	dn_fam	none	no reading
+0RB1LA_1LC1RB_0RB0LD_0RB0LA	dn_fam	none	no reading
+0RB1LA_1LC1RD_0RA0LD_1RB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_1LC1RD_0RA1LD_1RB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_1LC1RD_0RB0LD_1RB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_1LC1RD_0RB1LD_1RB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_1LC1RD_1LA1LD_1RB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_1LC1RD_1RA1LD_1RB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_1LC1RD_1RB0LD_1RB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_1LC1RD_1RD1LD_1RB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_1RC0LA_0RD1RB_1LD0LB	dn_fam	run2	refill (cost doubles with the run: a third counting level)
+0RB1LA_1RC0LA_1LA1RD_1LA1RB	sp_cap	run2	refill (cost doubles with the run: a third counting level)
+0RB1LA_1RC0LA_1LD1RB_---1LB	dn_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LA_1RC1LD_1LA1RB_0RC0LA	sp_cap	none	no reading
+0RB1LA_1RC1LD_1LB1RB_0RC0LA	sp_cap	none	no reading
+0RB1LA_1RC1LD_1LC1RB_0RC0LA	sp_cap	none	no reading
+0RB1LA_1RC1LD_1LD1RB_0RC0LA	sp_cap	none	no reading
+0RB1LA_1RC1RB_0LD0RC_0LA1LD	dn_closure	run2	interior arm: sweeps the run of top digits
+0RB1LB_0RC0LB_1RD1RC_0LA1LD	dn_cap	none	no reading
+0RB1LB_1RC0LD_0LA1RB_0RC1LD	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+0RB1LB_1RC0LD_1LA1RB_0RB1LD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LB_1RC1LA_0LA1RD_0LB0RD	qh_nofam	none	no reading
+0RB1LC_0LC0RB_1RD1LA_0LA1RB	qh_nofam	none	no reading
+0RB1LC_0LC0RD_1RD0LA_1RB1RA	sp_nofam	run2	boarded LE4_04
+0RB1LC_0LC1RC_1LA0RD_0LA1RD	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+0RB1LC_0LC1RD_0RD0LC_1LA1RB	qh_nofam	none	no reading
+0RB1LC_0RC1LB_1RD0LB_1LA1RC	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LC_0RC1RD_0RD0LC_1LA1RB	qh_nofam	zeck2	boarded LE4_00
+0RB1LC_1LA0RC_1LD1RB_1LA0LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LC_1LA1RB_0LD0LA_1RD0RB	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+0RB1LC_1LA1RC_1LA0RD_0LA1RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LC_1LA1RC_1RB0LD_0RB1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LC_1LA1RC_1RB0LD_0RC1LD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LC_1LC0LC_0RD1LA_1RD1RB	sp_nofam	zeck2-down	counts DOWN in the two-cell code
+0RB1LC_1LC1RB_0LD0LA_1RD1RA	qh_cap	none	no reading
+0RB1LC_1LC1RD_0RD0LC_1LA1RB	sp_nofam	none	no reading
+0RB1LC_1RC0LA_1LA0RD_0LA1RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LC_1RC1RC_1LA0RD_0LA1RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LC_1RC1RD_0RD0LC_1LA1RB	qh_nofam	none	no reading
+0RB1LD_0LC1RC_1LA1RB_0RC0LD	qh_nofam	none	no reading
+0RB1LD_0RC0LA_1LD1RD_1LA1RB	sp_nofam	pos	boarded LE4_01
+0RB1LD_0RC1LB_1LA1RD_1RC0LB	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LD_0RC1RC_1LA1RB_0RC0LD	qh_nofam	none	no reading
+0RB1LD_1LA1RC_1LA1RB_0RC0LD	qh_nofam	zeck2	boarded LE4_00
+0RB1LD_1LA1RC_1RD1RB_1LB0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1LD_1LC1RB_1RA1LA_0LB0LC	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+0RB1LD_1LC1RB_1RA1LA_1LB0LC	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+0RB1LD_1LC1RB_1RA1LA_1RB0LC	sp_closure	run2	refill law not D0^(m+a)
+0RB1LD_1LC1RC_1LA1RB_0RC0LD	qh_nofam	none	no reading
+0RB1LD_1RC1RB_0LA1LA_0RB0LA	sp_cap	none	no reading
+0RB1LD_1RC1RB_0LA1LA_0RC0LA	sp_cap	none	no reading
+0RB1LD_1RC1RB_0LC1LA_0RB0LA	sp_cap	none	no reading
+0RB1LD_1RC1RB_0LC1LA_0RC0LA	sp_cap	none	no reading
+0RB1LD_1RC1RB_0LD0RC_0LB1LA	dn_fam	run2	interior arm: sweeps the run of top digits
+0RB1LD_1RC1RB_1LA1LA_0RB0LA	sp_cap	none	no reading
+0RB1LD_1RC1RB_1LA1LA_0RC0LA	sp_cap	none	no reading
+0RB1LD_1RC1RB_1LC1LA_0RB0LA	sp_cap	none	no reading
+0RB1LD_1RC1RB_1LC1LA_0RC0LA	sp_cap	none	no reading
+0RB1LD_1RC1RB_1LD1LA_0RB0LA	sp_cap	none	no reading
+0RB1LD_1RC1RB_1LD1LA_0RC0LA	sp_cap	none	no reading
+0RB1LD_1RC1RC_1LA1RB_0RC0LD	qh_nofam	zeck2	boarded LE4_00
+0RB1RA_0LC0RA_0LD1LD_1RB1LC	dn_nofam	none	no reading
+0RB1RA_0LC1RB_1LD1LC_0RA0LD	dn_closure	run2	interior arm: sweeps the run of top digits
+0RB1RA_0LC1RC_0LD0RC_1LA1LD	dn_cap	none	no reading
+0RB1RA_1LC1RB_0LD1LD_0RA0LC	dn_nofam	none	no reading
+0RB1RB_0LC0RA_0LD1LC_1RA1LD	dn_nofam	none	no reading
+0RB1RB_0LC1RD_1LA1LC_0LA0RB	sp_cap	none	no reading
+0RB1RB_0LC1RD_1LA1LC_0LC0RB	sp_cap	none	no reading
+0RB1RB_1LC0RD_1RA1LB_0LB1RD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1RB_1LC1RA_0RA0LD_0LC1LD	dn_nofam	none	no reading
+0RB1RB_1LC1RA_0RA1LD_0RB0LD	qh_nofam	none	no reading
+0RB1RC_0LC1RB_1LD0RB_1RA1LC	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+0RB1RC_0RC0LB_1LD1RA_0RA1LB	qh_nofam	none	no reading
+0RB1RC_1LA1RB_0LD0RC_1LD0LA	dn_closure	run2	interior arm: sweeps the run of top digits
+0RB1RC_1RC0LC_1LD0RC_1LA0LA	dn_cap	none	no reading
+0RB1RC_1RC0LC_1LD0RC_1LA1RC	qh_cap	none	no reading
+0RB1RD_1LC1LB_0RA0LC_0LB1RA	dn_fam	run2	interior arm: sweeps the run of top digits
+0RB1RD_1RC0LD_1LA1RD_1LC0RD	qh_cap	none	no reading
+1RB---_0LC0RD_1LA1LC_0LA0RB	dn_nofam	none	no reading
+1RB---_0LC1RD_1LB1RC_1LB0RD	qh_cap	none	no reading
+1RB---_0LC1RD_1LB1RD_1LB0RD	qh_cap	none	no reading
+1RB---_1LC0RB_0LD1RB_1LC1RB	qh_cap	none	no reading
+1RB---_1LC0RB_0LD1RB_1LC1RD	qh_cap	none	no reading
+1RB---_1LC1RB_0LB1RD_1LC0RD	qh_cap	none	no reading
+1RB---_1LC1RD_0LB1RD_1LC0RD	qh_cap	none	no reading
+1RB0LA_0RC1RB_0LD0RB_1LD0LA	dn_nofam	none	no reading
+1RB0LA_1LB1RC_1RD1LC_1LA0RD	dn_nofam	none	no reading
+1RB0LA_1LC0RB_1RC1LD_1LA1RD	dn_nofam	none	no reading
+1RB0LA_1LC0RB_1RD1LA_1LA1RC	dn_nofam	none	no reading
+1RB0LA_1LC0RB_1RD1LA_1LD1RC	dn_nofam	none	no reading
+1RB0LA_1LC0RB_1RD1LA_1RA1RC	dn_nofam	none	no reading
+1RB0LA_1LC0RB_1RD1LA_1RB1RC	dn_fam	none	no reading
+1RB0LA_1LC0RB_1RD1LD_1LA1RC	dn_nofam	none	no reading
+1RB0LA_1LC0RB_1RD1LD_1LA1RD	dn_nofam	none	no reading
+1RB0LA_1LC1RC_1RD1LB_1LA0RD	dn_nofam	none	no reading
+1RB0LA_1LC1RC_1RD1LC_1LA0RD	dn_nofam	none	no reading
+1RB0LA_1LC1RD_1LA1LB_1LA0RD	dn_fam	none	no reading
+1RB0LA_1LC1RD_1LD1LB_1LA0RD	dn_nofam	none	no reading
+1RB0LA_1LC1RD_1RC1LB_1LA0RD	dn_fam	none	no reading
+1RB0LA_1LC1RD_1RD1LB_1LA0RD	dn_nofam	none	no reading
+1RB0LB_1LC0RB_1LD0LD_0RA0LD	dn_cap	none	no reading
+1RB0LB_1LC0RB_1LD0LD_0RA1RB	dn_cap	none	no reading
+1RB0LB_1LC0RB_1LD1RB_0RA0LD	dn_cap	none	no reading
+1RB0LB_1LC0RB_1LD1RB_0RA1RB	qh_cap	none	no reading
+1RB0LC_0LA1RC_1RD1LA_1RB0RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LC_1LA1RD_1LA1LC_0RA0RD	sp_nofam	none	no reading
+1RB0LC_1LC0RD_0RA1LB_0LC1RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_0LC1RA_0RA1LA_0RB1LD	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+1RB0LD_0LC1RA_0RC1LA_0RB1LD	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+1RB0LD_0LC1RA_1LA0RB_0RB1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_0LC1RA_1LA1LA_0RB1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_0LC1RA_1RB1LA_0RB1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_0RC1RA_1LC0LA_0RA1LD	dn_fam	run2	refill (cost doubles with the run: a third counting level)
+1RB0LD_1LC1RA_---1LA_0RA1LD	dn_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_1LC1RA_0RB1LA_0RB1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_1LC1RA_0RD1LA_0RB1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_1LC1RA_1LD1LA_0RB1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_1LC1RA_1RA1LA_0RB1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_1LC1RA_1RD1LA_0RB1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_1LC1RD_0RA0LC_1LB0RD	dn_cap	none	no reading
+1RB0LD_1LC1RD_0RA1RD_1LB0RD	qh_cap	none	no reading
+1RB0LD_1RC0RB_1LA0LA_1LD0RC	dn_fam	none	no reading
+1RB0LD_1RC0RC_0LA0RA_1RA1LA	dn_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_1RC1LD_0LA0RC_1RA1LB	dn_nofam	none	no reading
+1RB0LD_1RC1RA_0LA0RC_1LB1LD	dn_nofam	none	no reading
+1RB0LD_1RC1RB_0LA0RA_1RA1LA	dn_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0LD_1RC1RD_0LA0RB_0RC1LA	sp_nofam	run2	boarded LE4_04
+1RB0RA_0LC1RD_1RB0LD_1RA1LC	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0RA_1LB1RC_1RA1LD_1LC0LD	dn_nofam	none	no reading
+1RB0RA_1LC0LB_1LD1RC_1RA1LB	dn_nofam	none	no reading
+1RB0RA_1LC0RB_0LC0LD_1RA1LD	dn_nofam	none	no reading
+1RB0RA_1LC1RA_1LD0LC_1LA1LD	dn_nofam	none	no reading
+1RB0RA_1LC1RA_1LD0LC_1RA1LB	dn_nofam	none	no reading
+1RB0RA_1LC1RA_1LD0LC_1RD1LB	dn_nofam	none	no reading
+1RB0RA_1LC1RB_1LD0LC_1RA1LB	dn_nofam	none	no reading
+1RB0RA_1LC1RD_1LD0LC_1RA1LB	dn_nofam	none	no reading
+1RB0RA_1LC1RD_1LD0LC_1RA1LC	dn_nofam	none	no reading
+1RB0RA_1LC1RD_1LD0LC_1RA1LD	dn_nofam	none	no reading
+1RB0RA_1RC1LB_1LD1RA_1LA0LD	dn_fam	none	no reading
+1RB0RA_1RC1RB_1LD0LC_1RA1LC	dn_nofam	none	no reading
+1RB0RB_0LB1RC_1LD0RC_1LB1LA	dn_nofam	none	no reading
+1RB0RB_0LC0RC_1RA0LD_1RC1LC	dn_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0RB_0LC1RA_1LC0LD_1RA1LD	dn_fam	none	no reading
+1RB0RB_0LC1RA_1LD1LC_0RA0LD	dn_nofam	none	no reading
+1RB0RB_0LC1RD_0LB1LA_1LB0RD	dn_nofam	none	no reading
+1RB0RB_0LC1RD_0LB1LA_1LC0RD	dn_nofam	none	no reading
+1RB0RB_0LC1RD_1LB1LA_1LB0RD	dn_nofam	none	no reading
+1RB0RB_0LC1RD_1LC1LA_0LA1RB	sp_nofam	none	no reading
+1RB0RB_0RC1RC_0LD1LA_1LD0LA	dn_closure	none	no reading
+1RB0RB_1LC0RA_1LD1RA_0LD1RB	qh_nofam	none	no reading
+1RB0RB_1LC0RB_0LD1RA_1LC1RB	qh_cap	none	no reading
+1RB0RB_1LC0RB_0LD1RA_1LC1RD	qh_cap	none	no reading
+1RB0RB_1LC0RB_1LD1RA_0LD1RB	qh_cap	none	no reading
+1RB0RB_1LC0RD_1LA0LC_1RD0LA	dn_nofam	none	no reading
+1RB0RB_1LC1LD_0LC1RA_0LD0RA	dn_nofam	none	no reading
+1RB0RB_1LC1RA_0LD0LC_1RD0RB	dn_nofam	none	no reading
+1RB0RB_1LC1RA_1LD0LC_0RA0LD	dn_nofam	none	no reading
+1RB0RB_1LC1RD_0LB1LA_1LC0RD	dn_nofam	none	no reading
+1RB0RB_1LC1RD_0LC1LA_1LB0RD	dn_nofam	none	no reading
+1RB0RC_0LB1RC_1LD0RA_1LB1RA	qh_nofam	zeck2	boarded LE4_00
+1RB0RC_0LB1RC_1LD0RC_1LB1RA	qh_cap	none	no reading
+1RB0RC_0LC1LA_1LB1RD_1LB0RD	dn_cap	none	no reading
+1RB0RC_0LC1RD_1LB1LA_1LB0RD	dn_cap	none	no reading
+1RB0RC_1LC1LA_0LB1RD_1LC0RD	dn_cap	none	no reading
+1RB0RC_1LC1LA_0LC1RD_1LB0RD	dn_closure	none	no reading
+1RB0RC_1LC1RD_0LB1LA_1LC0RD	dn_cap	none	no reading
+1RB0RC_1RC0RB_1LA0LD_1LD0LA	dn_nofam	none	no reading
+1RB0RC_1RC1LB_1LD1RD_0LB1RA	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+1RB0RC_1RC1LD_0LB1RA_1LA1LB	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0RD_0LC1RA_1LB1RC_1LB0RD	qh_cap	none	no reading
+1RB0RD_0LC1RA_1LB1RD_1LB0RD	qh_cap	none	no reading
+1RB0RD_1LB1LC_1RC0RA_0LB1RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0RD_1LC0LA_1LA0LC_1RD0RB	dn_nofam	none	no reading
+1RB0RD_1LC1RA_0RB0LC_1LD0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB0RD_1LC1RB_0LB1RA_1LC0RD	qh_cap	none	no reading
+1RB0RD_1LC1RD_0LB1RA_1LC0RD	qh_cap	none	no reading
+1RB1LA_0LA0RC_0LA0RD_0LA1RD	dn_fam	none	no reading
+1RB1LA_0LA0RC_0RD1RB_1LD1LB	qh_cap	none	no reading
+1RB1LA_0LA1LC_0RD0LC_1RD0RB	dn_closure	run2	interior arm: carry cost doubles (nested)
+1RB1LA_0LA1RC_0RD0RB_1LD0LA	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+1RB1LA_0LC0RD_0LA1RC_0LA0RC	dn_cap	none	no reading
+1RB1LA_0LC0RD_0LA1RC_0RB0RC	dn_cap	none	no reading
+1RB1LA_0RC0RD_1LC1LD_0LA1RB	qh_cap	none	no reading
+1RB1LA_0RC1RC_0LD0RB_0LA1LD	dn_nofam	none	no reading
+1RB1LA_1LC0RB_0LD0RA_1LC1RB	dn_cap	none	no reading
+1RB1LA_1LC0RB_0LD0RA_1LC1RD	dn_cap	none	no reading
+1RB1LA_1LC0RB_1RD0LC_1LA1RA	dn_nofam	none	no reading
+1RB1LA_1LC0RB_1RD0LC_1LD1RA	dn_nofam	none	no reading
+1RB1LA_1LC1RC_0LA1RD_0RA0RB	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+1RB1LA_1LC1RC_0LA1RD_1LA0RB	sp_closure	run2	refill law not D0^(m+a)
+1RB1LA_1LC1RC_0LA1RD_1RA0RB	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+1RB1LA_1LC1RD_1LA0LC_1RA0RB	dn_nofam	none	no reading
+1RB1LA_1LC1RD_1LD0LC_1RA0RD	dn_fam	none	no reading
+1RB1LA_1RC0RB_1LD0RC_0LD0LA	dn_nofam	none	no reading
+1RB1LA_1RC0RB_1LD1RA_1LA0LD	dn_nofam	none	no reading
+1RB1LA_1RC0RC_0LD1RB_1LD0LA	dn_fam	none	no reading
+1RB1LA_1RC1RD_1LC0LB_0LA0RB	sp_fam	run2	refill (cost doubles with the run: a third counting level)
+1RB1LB_1LA1RC_0LA0RD_0LB1RD	sp_cap	none	no reading
+1RB1LB_1LC0RD_1RD1LA_0LB1RD	sp_cap	pos	fill (cost doubles with the width: the fill counts)
+1RB1LB_1LC1RB_1RD0LC_1LA0RD	dn_nofam	none	no reading
+1RB1LB_1LC1RD_0LB1RA_1LC0RD	qh_cap	none	no reading
+1RB1LB_1RC0LA_1RD0RD_0LB0RB	dn_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LB_1RC0LA_1RD1RC_0LB0RB	dn_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LB_1RC0LD_1LA1RB_0RB1LD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LB_1RC0LD_1LA1RB_0RC1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LB_1RC1LA_0LA1RD_0LB0RD	qh_nofam	none	no reading
+1RB1LB_1RC1LD_0LD1RB_0LA0RC	sp_nofam	pos	boarded LE4_01
+1RB1LC_0LA0RC_1LA0RD_0LA1RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_0LA0RD_1LA1RB_0LC1RD	sp_cap	none	no reading
+1RB1LC_0LA1RB_1LA1LD_1RD0RB	sp_cap	pos	boarded LE4_03
+1RB1LC_0LA1RC_1LA0RD_0LA1RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_0LA1RC_1LA0RD_0LC1RD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_0LA1RC_1RB0LD_0RB1LD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_0LA1RD_1LD1LA_1RA0RB	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_0LA1RD_1RB1LA_0LC0RD	qh_nofam	none	no reading
+1RB1LC_0LB1RC_1LA0RD_0LC1RD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_0LC0RB_1LA1RD_0LA0RD	dn_fam	run2	interior arm: carry cost doubles (nested)
+1RB1LC_0LC0RB_1LD1LA_1RA1RD	sp_closure	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_0LC0RB_1RD1LA_0LA1RB	sp_nofam	none	no reading
+1RB1LC_0LC0RD_0LA1LA_0RB1RD	dn_nofam	none	no reading
+1RB1LC_0LC1RA_0LD0RB_1RA1LA	sp_nofam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_0LC1RA_1LB1RD_1LB0RD	qh_cap	none	no reading
+1RB1LC_0LC1RB_1LA1RD_0LA0RB	sp_cap	none	no reading
+1RB1LC_0LC1RC_1LA0RD_0LC1RD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_0LC1RD_---1LA_0LA0RD	dn_nofam	none	no reading
+1RB1LC_0RC1LB_1RD0LB_1LA1RC	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_0RC1RC_1LA0RD_0LC1RD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_0RC1RD_0LC1LA_0LA0RD	dn_nofam	none	no reading
+1RB1LC_1LA0RC_1LA0RD_0LA1RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_1LA0RD_0LB0LC_1RB1RD	sp_nofam	none	no reading
+1RB1LC_1LA0RD_0RC1LB_0LC1RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_1LA1RA_0RB0LD_0RA1LD	sp_cap	none	no reading
+1RB1LC_1LA1RC_1LA0RD_0LC1RD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_1LA1RC_1RB0LD_0RC1LD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_1LB1RA_0LC0LD_0RA0RD	dn_fam	run2	interior arm: carry cost doubles (nested)
+1RB1LC_1LB1RA_0RB0LD_0RA1LD	sp_cap	none	no reading
+1RB1LC_1LB1RC_1LA0RD_0LC1RD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_1LC1RA_0LC0LD_0RA0RD	dn_fam	run2	interior arm: carry cost doubles (nested)
+1RB1LC_1LC1RA_0RB0LD_0RA1LD	sp_cap	none	no reading
+1RB1LC_1LC1RC_1LA0RD_0LA1RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_1LC1RC_1LA0RD_0LC1RD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LC_1RC0LA_1RD1LA_0LB0RD	dn_nofam	none	no reading
+1RB1LC_1RC0RB_1LD0LC_1LA1RD	dn_nofam	none	no reading
+1RB1LC_1RC0RB_1LD1RC_1LA0LD	dn_nofam	none	no reading
+1RB1LC_1RC1RC_1LA0RD_0LC1RD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LD_0LC0RB_1RA0LD_1RC1LA	dn_nofam	none	no reading
+1RB1LD_0LC0RD_0LA1RC_1LA0RC	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LD_0LC1RD_0LA1RC_1LA0RC	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LD_0LC1RD_0LD1RC_1LA0RC	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LD_0RC0RB_1LC0LA_1LA0LA	dn_nofam	none	no reading
+1RB1LD_0RC1LB_1LA1RD_1RC0LB	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LD_0RC1RD_0LD1RC_1LA0RC	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LD_1LC0RB_0LD1RA_1LC1RB	qh_cap	none	no reading
+1RB1LD_1LC0RB_1RD0LC_1LA1RB	dn_cap	pos	boarded LE4_01
+1RB1LD_1LC1RA_0RA1LC_0RB0LC	sp_cap	none	no reading
+1RB1LD_1LC1RA_0RB0LC_0RA0LD	dn_fam	run2	interior arm: carry cost doubles (nested)
+1RB1LD_1LC1RD_0LA1RC_1LA0RC	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LD_1LC1RD_0LD1RC_1LA0RC	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LD_1RC0RB_0LA0RC_1LA0LD	dn_nofam	none	no reading
+1RB1LD_1RC0RB_0LD1RA_1RC0LA	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LD_1RC0RB_1LA1RC_1LA0LA	dn_nofam	none	no reading
+1RB1LD_1RC0RB_1LA1RC_1LC0LA	dn_nofam	none	no reading
+1RB1LD_1RC0RB_1RD1RC_1LA0LD	dn_nofam	none	no reading
+1RB1LD_1RC1RA_1LA0RC_1RC0LD	dn_fam	none	no reading
+1RB1LD_1RC1RD_0LA1RC_1LA0RC	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1LD_1RC1RD_0LD1RC_1LA0RC	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1RA_0LB1LC_0RA1LD_0RA0LC	sp_cap	none	no reading
+1RB1RA_0LB1LC_0RA1LD_0RB0LC	sp_cap	none	no reading
+1RB1RA_0LC0RB_0LA1LD_0RA1LC	dn_fam	run2	interior arm: sweeps the run of top digits
+1RB1RA_0LC0RB_0LD1LC_0RA1LD	dn_fam	run2	interior arm: sweeps the run of top digits
+1RB1RA_0LC0RB_1LC1LD_0RA0LD	dn_fam	run2	interior arm: sweeps the run of top digits
+1RB1RA_0LC0RC_1RA0LD_1RC1LC	dn_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1RA_0LC1LC_0RA1LD_0RA0LC	sp_cap	none	no reading
+1RB1RA_0LC1LC_0RA1LD_0RB0LC	sp_cap	none	no reading
+1RB1RA_1LB1LC_0RA1LD_0RA0LC	sp_cap	none	no reading
+1RB1RA_1LB1LC_0RA1LD_0RB0LC	sp_cap	none	no reading
+1RB1RA_1LC---_0RA0LD_0RB0LC	dn_nofam	none	no reading
+1RB1RA_1LC0LB_1RD1LB_1RA0RD	dn_nofam	none	no reading
+1RB1RA_1LC0RA_1RB1LD_0LB0LD	sp_nofam	none	no reading
+1RB1RA_1LC1LC_0RA1LD_0RA0LC	sp_cap	none	no reading
+1RB1RA_1LC1LC_0RA1LD_0RB0LC	sp_cap	none	no reading
+1RB1RA_1LC1LD_0RA0LD_0RA1LC	sp_cap	none	no reading
+1RB1RA_1LC1LD_0RB0LD_0RA1LC	sp_cap	none	no reading
+1RB1RA_1LC1LD_0RD0LC_1LB0RA	dn_nofam	none	no reading
+1RB1RA_1RC1LD_0LB0RC_1LA1LB	sp_closure	pos	fill (cost doubles with the width: the fill counts)
+1RB1RA_1RC1LD_0LD0RC_1LA1LB	sp_closure	pos	fill (cost doubles with the width: the fill counts)
+1RB1RB_0LC1RD_1LA1LC_0LA0RB	sp_cap	none	no reading
+1RB1RB_0LC1RD_1LA1LC_0LC0RB	sp_cap	none	no reading
+1RB1RB_0LC1RD_1LB1LA_1LB0RD	qh_cap	none	no reading
+1RB1RB_1LC0RD_0RA1LB_0LC1RD	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1RB_1LC0RD_1RA1LB_0LB1RD	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1RB_1LC1RA_0RA1LD_0RB0LD	qh_nofam	none	no reading
+1RB1RB_1LC1RD_0LB1LA_1LC0RD	qh_cap	none	no reading
+1RB1RC_0LA0RC_0LD1RB_1LA1LD	sp_cap	none	no reading
+1RB1RC_0LC0RB_1RA0LD_1LA1LD	dn_nofam	none	no reading
+1RB1RC_0LC1LA_1LB1RD_1LB0RD	qh_cap	none	no reading
+1RB1RC_0LC1RB_1LD0RB_1RA1LC	qh_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1RC_0RC0LB_1LD1RA_0RA1LB	qh_nofam	none	no reading
+1RB1RC_0RC1RB_0LD0RB_1LD0LA	dn_nofam	none	no reading
+1RB1RC_1LA0LB_1LD0RD_1LB0RC	dn_nofam	pos	boarded LE4_01
+1RB1RC_1LA1LD_0RC0RB_0LD0LA	dn_nofam	none	no reading
+1RB1RC_1LA1LD_1LA0RC_0RA0LB	dn_cap	none	no reading
+1RB1RC_1LA1RA_0RC1LD_1LB0LD	dn_cap	pos	fill (cost doubles with the width: the fill counts)
+1RB1RC_1LC0LD_1LD1RA_0RC1LB	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1RC_1LC0RB_1RA1LD_1RB0LD	dn_fam	none	no reading
+1RB1RC_1LC1LA_0LB1RD_1LC0RD	qh_cap	none	no reading
+1RB1RC_1LC1LB_1LD1RA_0RC0LD	sp_closure	pos	fill (cost doubles with the width: the fill counts)
+1RB1RC_1LC1RA_1LD0LC_0RD0RB	sp_cap	pos	fill (cost doubles with the width: the fill counts)
+1RB1RD_0LC0LA_1LC1LA_0RB0RD	dn_nofam	none	no reading
+1RB1RD_0LC0LD_1LA1RC_1LB0RD	dn_cap	none	no reading
+1RB1RD_0LC0RA_1RA0LD_0RB1LC	sp_nofam	run2	boarded LE4_04
+1RB1RD_0LC0RD_1LA1LC_0LC1RB	sp_cap	none	no reading
+1RB1RD_0LC1RB_1RA1LD_1LC0RB	sp_fam	pos	fill (cost doubles with the width: the fill counts)
+1RB1RD_1LC0RD_1RB1LB_0LB0RA	qh_fam	pos	boarded LE4_02
+1RB1RD_1RC0LB_1LD0RC_1RA1LB	dn_nofam	none	no reading
+1RB1RD_1RC1LC_1LB0RD_0LC0RA	qh_fam	pos	boarded LE4_02
