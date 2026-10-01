@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Phase-run boards -> closeout batches (UNTRUSTED; SCOPING_INSTR
-7.4.LE5).  LE3's `run_batch.py` for `phrun2.py` / `emit_phrun.py`:
+7.4.LE5).  LE3's `run_batch.py` for `phrun2.py` / `alt_detect.py` readings and `emit_ph.py`:
 
-    python3 tools/closeouttr/le5/phrun_batch.py phrun.jsonl --tag LE5 [--chunk 40]
+    python3 tools/closeouttr/le5/phrun_batch.py phrun_res.jsonl --tag LE5 [--chunk 40]
+    python3 tools/closeouttr/le5/phrun_batch.py alt_res.jsonl --alt --tag LE5
 
 Boards go to LDRP_<ID>.v ([nqhtr_<ID>]) or LDRPQ_<ID>.v ([qhtr_<ID>]), into
 _CoqProject after LadderCheckPhRunTr.v.  Then run gen_closeout_tr.py.
@@ -23,7 +24,8 @@ sys.path.insert(0, os.path.join(HERE, '..', 'le3'))
 from cbt import REPO, next_free, write_batch  # noqa: E402
 import step_batch as SB  # noqa: E402
 
-EMIT = os.path.join(HERE, 'emit_phrun.py')
+EMIT = os.path.join(HERE, 'emit_ph.py')
+ALT = [False]
 EMIT_TIMEOUT = 900
 
 
@@ -32,7 +34,8 @@ def board(spec, det, tmp, qh):
     v = os.path.join(tmp, '%s_%s.v' % ('LDRPQ' if qh else 'LDRP', m))
     try:
         r = subprocess.run([sys.executable, EMIT, spec, det, '-o', v]
-                           + (['--qh'] if qh else []), capture_output=True, text=True,
+                           + (['--qh'] if qh else []) + (['--alt'] if ALT[0] else []),
+                           capture_output=True, text=True,
                            timeout=EMIT_TIMEOUT)
     except subprocess.TimeoutExpired:
         return None, 'emit timeout %d s' % EMIT_TIMEOUT
@@ -62,7 +65,9 @@ def main():
     ap.add_argument('--chunk', type=int, default=40)
     ap.add_argument('--skip', action='append', default=[])
     ap.add_argument('--jobs', type=int, default=1)
+    ap.add_argument('--alt', action='store_true', help='alt_detect.py readings')
     a = ap.parse_args()
+    ALT[0] = a.alt
     det = os.path.abspath(a.detect)
     remaining = set(l.strip() for l in open(os.path.join(REPO, 'closeouttr_remaining.txt')))
     qhc = set(l.split('\t')[0] for l in open(os.path.join(REPO, 'closeouttr_classes.tsv'))
@@ -70,7 +75,7 @@ def main():
     rows = []
     for l in open(det):
         r = json.loads(l)
-        if r.get('anchor') and r['spec'] in remaining and r['spec'] not in a.skip:
+        if (r.get('anchor') or r.get('keys')) and r['spec'] in remaining and r['spec'] not in a.skip:
             rows.append(r['spec'])
     kept = []
     with tempfile.TemporaryDirectory() as tmp, Pool(a.jobs) as pool:
@@ -112,10 +117,10 @@ def main():
                                    '[exact LDRP_%s.nqhtr_%s | intros q s; destruct q, s; '
                                    'reflexivity].' % (m, m, m, m)))
         made.append(write_batch(a.tag, nn, req, entries,
-                                'counters with phases and a run (x, W_p, T^m, V_p), '
+                                'counters with phases, a run and an anchor per phase (x, W_p, T^m, V_p), '
                                 'by LadderCheckPhRunTr'))
         nn += 1
-    print('%d of %d terminator-run rows boarded -> %d batch file(s): %s'
+    print('%d of %d phase-run rows boarded -> %d batch file(s): %s'
           % (len(kept), len(set(rows)), len(made),
              ' '.join(os.path.relpath(p, REPO) for p in made)))
 

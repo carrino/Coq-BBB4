@@ -1,0 +1,6 @@
+0RB0LC_1LC1RB_1LD1LA_1RD0RC    no board: (** ** The closure: NOT BUILT for this row -- carry: no program, or no rank over the carries that do not fire
+0RB0RC_1RC1LB_1LD1RD_0LB1RA    board theories/Machines/LadderTr/LDRP_0RB0RC_1RC1LB_1LD1RD_0LB1RA.v
+0RB1LD_1LC1RB_1RA1LA_0LB0LC    board theories/Machines/LadderTr/LDRP_0RB1LD_1LC1RB_1RA1LA_0LB0LC.v
+1RB1LA_1LC1RC_0LA1RD_0RA0RB    board theories/Machines/LadderTr/LDRP_1RB1LA_1LC1RC_0LA1RD_0RA0RB.v
+1RB1LA_1RC1RD_1LC0LB_0LA0RB    no board: (** ** The closure: NOT BUILT for this row -- carry: no program, or no rank over the carries that do not fire
+3 of 5 phase-run rows boarded -> 1 batch file(s): theories/CloseoutTr/CBT_LE5_02.v
