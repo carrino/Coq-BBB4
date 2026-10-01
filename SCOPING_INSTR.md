@@ -5293,6 +5293,171 @@ it will certify a row.  The survey's box commands (LIST4 at 1,800 s, rank
 tier window 8 on its 18 time-outs, hy2w on its 7 time-outs; about 2 h in
 all) are in `mp/survey_unlearned.md`.
 
+#### 7.4.BLC6 The multi-cell lists through range voids, local splits and a left language from the turn tapes: 38 boarded (2026-10-01)
+
+Workstream BLC6 (batch tag `BLC6`), over MP's 61 multi-cell / carry-like
+block lists and the survey's LIST4 / LIST2 groups (20 rows):
+`tools/closeouttr/blc6/rows_scope.txt`, 81 rows, all open at the start.
+The counter rows (LE2/LE3/LE4), the Collatz-like rows (TA) and the
+hybrid / cube rows were not touched.  **38 rows boarded**: 37 in the first
+sweep (`CBT_BLC6_00..09`, PR #207) and 1 in the second (`CBT_BLC6_10`).
+Open rows in scope: 81 -> **43**.
+
+**1. The checker: `theories/Counters/ListGlueRngTr.v`** (new; ListGlue2Tr
+and ListGlueLexTr untouched).  ListGlue2Tr with two more nodes in the
+unfold tree, both LOCAL to one unfold path:
+
+* `URng lsd k n u`: on side `lsd` the tail is in state `s` with ref `r`.
+  The node voids every point of the region with `z_k < n` (`rlow`: `r`
+  depends on `z_k` alone and `r < mins s` there).  The rest of the region
+  continues at `u` reparametrised by `z_k := n + z_k` (`shR` on the region,
+  `shs` on the refs and the unfolded items).  This is MP's lever.
+* `USpl k n p kids`: TriGlue's `TSplit` inside the unfold tree (`skid`,
+  `sreg`, `sps`).
+
+The soundness is ListGlue2Tr's `uwalk_ok` with the region and the
+parameters carried along the path.  A concrete anchor with `z_k < n` would
+have a valid tail below its state's bound (`mins_sound` against
+`rlow_ok`); otherwise `z_k - n` is its new parameter (`shs_back`,
+`rv_shR`); at a split, `snew` is (`sps_back`, `skid_ok`, `rv_sreg`, as in
+`twalk_total`).  The statement of `lwalk_leaf` is unchanged, so
+`theories/Counters/ListGlueRngLexTr.v` is ListGlueLexTr verbatim on these
+families.  Both files compile in about 5 s; `Print Assumptions lgr_sound` /
+`lgrx_sound_mirror`: `functional_extensionality_dep` only.
+
+`USpl` was not in the brief; it was needed for the same reason as `URng`.
+lg4 answers every case-split request a path raises (`ge`, `mod`, `umod`:
+a chain needs `x >= n`, a relation needs `x mod a`) by splitting the
+variable in the family's TriGlue tree.  Every OTHER unfold path is then
+re-explored inside each kid, and on the depth-counted states those splits
+nested five deep.
+
+**2. Range voids alone are not enough** (the worked row
+`0RB0LD_1RC1LB_1LA1RA_1LA0LD`, `(001)` ratio 4).  Measured in this order:
+
+| change | families | |
+|---|---:|---|
+| MP's finder (`MP_F=local MP_DEPTH=2`) | 119 at round 50, still growing | baseline |
+| + range voids, depth 2 | 116 at round 50, 646 at round 350 | the same growth |
+| + range voids, depth 4 / 5 | 81 (10 queued) / 79 (2 queued) at round 100 | depth is now cheap, but per-family cost explodes |
+| + local splits | depth 4 grows again (290+); depth 5 stalls in one family | |
+| upper bounds without the eager split (`BLC6_MAXSPLIT=0`) | 800 (cap) in 2 s | the eager split was what kept it bounded |
+
+On a depth-counted state the certified UPPER bound (`lc_maxs`, ~`a^c b_k`)
+made lg4 split a symbolic exponent into one singleton per value below it:
+hundreds of concrete kids, each a long concrete leaf run (one family took
+56 s for 44 leaves).
+
+The decisive measurement was on the REAL run (lg_batch's data pass, with
+the exploration's folds on concrete tapes): **558 left-fold misses in 6,000
+leaves, 2 right ones**, and the family count still growing (224 at 6,000
+leaves).  The passed elements carry left digits `-2` / `-3` at `111111`.
+The learned left automaton knew only `-1` (start) and `0`: learn4 learns it
+from ~85 periodic snapshots deep enough to align, and they never show a
+long carry's digits.  The exploration's off-by-one right misses were the
+echo of this.
+
+**3. The left language from every round's turn tape**
+(`blc6/turns.c`, `blc6/learn6.py`).  `turns.c` runs the machine twice.
+The first pass finds, per round (between two left-anchor entries), the
+last step at which the head is at the round's rightmost cell.  The second
+pass prints each round's anchor and that TURN tape in lsnap's format.  The
+turn tape holds every element the round's carry passed, in its left form.
+learn6 feeds those to learn4's `fit_left2` as the deep samples, with
+`LDROP=0`: the element nearest the head is the one with the `-2` digit, and
+learn4's default drop discarded it.
+
+On the worked row (30M steps, 81 s): 1,038 aligned samples, `lstart`
+`-1, -3`, interior `0, -2`.  The real run then misses **2** folds and has
+155 families at 6,000 leaves.  The exploration with range voids and local
+splits **closes**: 165 families at depth 3, 224 at depth 4, 278 at depth
+5, each in about a second.  The certificate has 153 families and 162
+`URng` nodes; the replica passes and `CBT_BLC6_00` kernel-checks in ~17 s.
+
+One fix in `learn6`: a turn snapshot ends at the head, so learn3's
+`strip_cells` dropped a 0 head cell and with it the head token (0 samples).
+The tape is cut at the head and a `1` cell put right of it.
+
+**4. Yields.**  `find6.py find` (learn6's language, `MP_DEPTH=3`,
+`BLC6_MAXSPLIT=0`, 1,200 s a row, 3 jobs; about 3 h here across a
+container restart; `blc6/runs/sweep1.jsonl`):
+
+| shape (learned unit, ratio) | rows | certify | left |
+|---|---:|---:|---|
+| `(001)`, 4 (MP) | 23 | **16** | 7 too many families |
+| `(011)`, 4 (MP 15 + LIST4 5) | 20 | **12** | 7 too many families, 1 no ranking (`(2,0)`) |
+| `(01)`, 2 (MP) | 9 | **8** | 1 too many families |
+| `1`, 2 (LIST2) | 1 | **1** | |
+| `(01)`, 2 (LIST2) | 8 | 0 | 6 exploration does not settle, 2 too many families |
+| `(0011)`, 3 (MP 2 + LIST4 1) | 3 | 0 | too many families |
+| `(011)`, 2 (MP) | 2 | 0 | too many families |
+| not learned | 15 | 0 | 10 time-out (1,200 s, no learn record), 5 left samples disagree on F states |
+
+The 37 certificates have 119-626 families; the find takes 5-352 s a row
+(learning included).  4 rows need the lexicographic liveness
+(`lgrx_sound`); the rest are additive (`lgr_sound`).  17 are mirrored.
+
+The second pass (`MP_DEPTH=4`, 1,800 s a row, 4 jobs, about 3 h here;
+`blc6/runs/sweep2_d4.jsonl`) over the 44 rows the first left
+(`blc6/rows_fail1.txt`) certifies **1** more, the `(01)` ratio-2 row
+`1RB1LD_0LC0RB_1RA1LA_0LD0LA` (148 families).  Of the other 43: 22 too many
+families, 11 time-outs, 5 left samples that disagree, 4 explorations that
+do not settle, 1 no ranking.  Three of its rows never wrote a record (a
+multiprocessing worker stuck in its `SIGALRM` time-out, as in §7.4.BLC3);
+rerun one process each under a hard kill, all three time out.
+
+| batch | rows | compile (container) |
+|---|---:|---:|
+| `CBT_BLC6_00` | 1 | 17 s |
+| `CBT_BLC6_01` | 4 | 129 s |
+| `CBT_BLC6_02` | 4 | 167 s |
+| `CBT_BLC6_03` | 4 | 149 s |
+| `CBT_BLC6_04` | 4 (2 lex) | 164 s |
+| `CBT_BLC6_05` | 4 | 56 s |
+| `CBT_BLC6_06` | 4 (1 lex) | 99 s |
+| `CBT_BLC6_07` | 3 (1 lex) | 87 s |
+| `CBT_BLC6_08` | 5 | 198 s |
+| `CBT_BLC6_09` | 4 | 78 s |
+| `CBT_BLC6_10` | 1 | 54 s |
+
+01-04 and 06-08 were compiled beside a 3-job sweep.  `ci_costs.tsv` lists
+every batch at about twice the container time; `ci_shard.py --check 6`
+passes and the slowest shard is unchanged (`CBT_BR_02`, 2,764 s).
+`Print Assumptions` on every batch's `cbt_*_covers`:
+`functional_extensionality_dep` only.  CI (`core`, `closeout-changed`) was green on #207's merge commit, which
+carried 00-07, and on #212's head with 10.
+
+**5. Residue (43 rows), and where each group stops.**  The first error of
+sweep 1; pass 2 moved none of them to another group except the row it
+certified.
+
+| rows | what | where it stops | next |
+|---:|---|---|---|
+| 21 | `(001)` / `(011)` ratio 4 (14), `(0011)` (3), `(011)` ratio 2 (2), `(01)` ratio 2 (2) | too many families (800) at depth 3 and at depth 4 | not traced row by row.  8 of MP's 13 late-far-end rows (`mp/farend61.tsv`, last new far end after 5.4M-70M steps) are here; the 3 that settle at 4.5M certify.  The far end itself is read to 300M by asnap, so it is not the obvious cause; the left language (learn6 reads 30M steps of turn tapes) and the right tails' mid-sweep forms are the next suspects.  `blc6/foldmiss_real.py` on one of them first |
+| 6 | LIST2 `(01)` ratio 2 | exploration does not settle (MAXROUNDS) | the survey's "b_0 caught mid-transfer, phase-flipping units" rows: the anchor itself is mid-rewrite |
+| 5 | (not learned) | learn4: left samples disagree on F states (33/1414 to 1097/1132; 2 of them are the 880-950M far-end rows) | with `LDROP=0` the nearest element's digit varies with how far the head has rewritten it; a per-phase left state, or LDROP=0 only on the turn samples whose head is past a separator |
+| 10 | (no learn record) | time-out at 1,200 s, in the learner or the first exploration | learn4's 4M-step snapshot learner and asnap's 300M far-end run on wide tapes; a longer budget on the box |
+| 1 | `1RB1RA_1LC0RA_1LA1LD_1LC0LB`, `(011)` ratio 4 | the exploration closes; no ranking for `(2, 0)` (additive or lexicographic) | the first liveness failure on these rows; not looked at |
+
+**Commands** (resumable: `find` skips rows already in its output, caches
+the learned languages in `$MP_CACHE`, and re-executes itself under
+`PYTHONHASHSEED=0`).
+
+```
+cd tools/closeouttr
+python3 blc6/find6.py find blc6/rows_scope.txt sweep1.jsonl --jobs 12 --timeout 1200        # ~1 h 20 min on the box
+MP_DEPTH=4 python3 blc6/find6.py find blc6/rows_fail1.txt sweep2.jsonl --jobs 12 --timeout 1800
+BLC6_T1=300000000 python3 blc6/find6.py find blc6/rows_fail1.txt sweep3.jsonl --jobs 12 --timeout 3600   # longer turn tapes (untried)
+python3 blc6/find6.py one 0RB0LD_1RC1LB_1LA1RA_1LA0LD                                       # the worked row, ~80 s
+python3 blc6/find6.py batch sweep1.jsonl --tag BLC6 --chunk 4
+BLC6_LANG=l4 MP_DEPTH=0 python3 blc6/find6.py one 1RB0LA_1LC0RD_1LA1RB_1LC1RC              # regression: a BLC4 row through ListGlueRngTr
+python3 blc6/foldmiss_real.py SPEC 100000 6000      # the real run's fold misses (MP_DEPTH, BLC6_LANG as for find6)
+```
+
+Knobs: `BLC6_LANG=l6|mp|l4` (the language), `BLC6_T1` (turn-tape run,
+default 30M), `MP_DEPTH`, `BLC6_RNG`, `BLC6_LOCAL`, `BLC6_MAXSPLIT`
+(each 0/1), `LG4_LDROP`.
+
 #### 7.4.LE The counters the ladder emitter could not close: five closure gaps, a visit phase per instruction, 181 boarded (2026-09-30)
 
 Workstream LE (batch tag `LE`), over the counters still open at the start:
