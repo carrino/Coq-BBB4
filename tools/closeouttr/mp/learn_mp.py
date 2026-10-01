@@ -68,6 +68,31 @@ def fit_local(data, M):
     return dict(m=0, cen={}, lo=0, hi=0, fwd=fwd, end=end, q0=q0, M=M)
 
 
+def fit_free(data, M):
+    """learn4.fit_F's replacement: the FREE language over the anchor lists'
+    symbols (b_0's symbols first, then any interior symbol, any end after
+    any symbol): one state, no ordering constraint at all"""
+    q0, S = ('b0', 0), ('g', 0)
+    fwd, end = {}, {}
+    for syms, bk, endw in data:
+        core = syms[:len(syms) - M]
+        for i, x in enumerate(core):
+            fwd[(q0 if i == 0 else S, x)] = S
+    ends = set((tuple(syms[len(syms) - M:]), bk, endw) for syms, bk, endw in data)
+    for q in (q0, S):
+        end[q] = set(ends)
+    return dict(m=0, cen={}, lo=0, hi=0, fwd=fwd, end=end, q0=q0, M=M)
+
+
+def learn_free(spec):
+    old = L4.fit_F
+    L4.fit_F = fit_free
+    try:
+        return L4.learn(spec)
+    finally:
+        L4.fit_F = old
+
+
 def learn_local(spec):
     """learn4.learn with F the local language (fit_local)"""
     old = L4.fit_F

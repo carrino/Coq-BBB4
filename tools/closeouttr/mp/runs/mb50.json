@@ -1,0 +1,453 @@
+[
+{
+"spec": "0RB0LB_1LC1RA_0LD0LC_1RD1LB",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 144.0
+},
+{
+"spec": "0RB0LC_1LC1RD_1LA1LB_1RC0RB",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 42.6
+},
+{
+"spec": "0RB0LD_1LC0RD_1LA0LC_1RB1LD",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 28.2
+},
+{
+"spec": "0RB0RA_1RC1RA_1LD1RC_1RB0LC",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 35.2
+},
+{
+"spec": "0RB0RB_1LC1RA_0LD0LC_1RD1LB",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 130.5
+},
+{
+"spec": "0RB0RD_1RC0LD_1RD1LC_1LB1RA",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 40.9
+},
+{
+"spec": "0RB1LD_0RC1RB_1LD0RD_1LA0LD",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 29.5
+},
+{
+"spec": "0RB1LD_0RC1RB_1LD1RB_1LA0LD",
+"ok": false,
+"why": {
+"no closure": 144
+},
+"tried": 144,
+"secs": 25.4
+},
+{
+"spec": "0RB1LD_1RC1RC_1LA1RA_1RA0LD",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 23.5
+},
+{
+"spec": "0RB1RA_1LC0RC_1LD0LC_0RA1LC",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 29.6
+},
+{
+"spec": "0RB1RD_1LC0RD_1LD0LC_1RA0LB",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 47.3
+},
+{
+"spec": "1RB0LA_0RC0RD_1LA0RC_0LC1RA",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 33.4
+},
+{
+"spec": "1RB0LA_0RC0RD_1LA1LC_0LC0RB",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 22.4
+},
+{
+"spec": "1RB0LA_1RC1RA_0RD0RB_1LD0LA",
+"ok": false,
+"why": {
+"no closure": 180
+},
+"tried": 180,
+"secs": 27.6
+},
+{
+"spec": "1RB0LB_1RC0RB_0LD1RB_0LA1LD",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 29.5
+},
+{
+"spec": "1RB0LB_1RC1LA_0RD0RC_1LD1RB",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 111.0
+},
+{
+"spec": "1RB0LC_0RC1RA_1LD0RA_1LA0LD",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 45.1
+},
+{
+"spec": "1RB0LC_1RC0RD_1LA0LC_1RD0RA",
+"ok": false,
+"why": {
+"memory": 1
+},
+"tried": 1,
+"secs": 29.5
+},
+{
+"spec": "1RB0LC_1RC1LB_1LA1RD_0RA0RC",
+"ok": false,
+"why": {
+"no closure": 180
+},
+"tried": 180,
+"secs": 33.6
+},
+{
+"spec": "1RB0LC_1RC1RD_1LA1RC_0RB0RD",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 32.6
+},
+{
+"spec": "1RB0LD_0LC0RB_1RA1LD_1RB1LC",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 23.2
+},
+{
+"spec": "1RB0LD_1LC0RD_1LA0LB_1RB1RA",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 30.8
+},
+{
+"spec": "1RB0LD_1RC0RA_1LA0RD_1LA1LC",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 32.5
+},
+{
+"spec": "1RB0LD_1RC0RB_0LA0RD_1LA1RD",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 29.4
+},
+{
+"spec": "1RB0RA_0LC0RD_1RA0LD_1LC1RD",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 28.4
+},
+{
+"spec": "1RB0RA_0LC1RA_0LD1LC_1LA1LC",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 33.4
+},
+{
+"spec": "1RB0RA_0LC1RA_0LD1LC_1LA1RB",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 25.7
+},
+{
+"spec": "1RB0RA_0LC1RA_0LD1LC_1RA0LA",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 30.7
+},
+{
+"spec": "1RB0RC_0LC1LB_0LD1LC_1RD0RA",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 34.2
+},
+{
+"spec": "1RB0RC_1LC0RD_1RA0LD_1LC1LB",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 34.8
+},
+{
+"spec": "1RB0RC_1LC1RA_1RA0LD_0LC1LD",
+"ok": false,
+"why": {
+"no closure": 108
+},
+"tried": 108,
+"secs": 16.5
+},
+{
+"spec": "1RB0RD_1LC0LB_1RA0LB_1RD0RC",
+"ok": false,
+"why": {
+"memory": 1
+},
+"tried": 1,
+"secs": 28.5
+},
+{
+"spec": "1RB0RD_1LC1LB_1RD0LB_1RD1RA",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 28.1
+},
+{
+"spec": "1RB1LA_1LC0RA_1LA1LD_0LC0LD",
+"ok": false,
+"why": {
+"no closure": 144
+},
+"tried": 144,
+"secs": 21.4
+},
+{
+"spec": "1RB1LA_1LC0RA_1LD0LC_0RB0LA",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 30.7
+},
+{
+"spec": "1RB1LB_0LC1RD_1LA1LA_1LB0RD",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 23.3
+},
+{
+"spec": "1RB1LC_0LC0RB_1RD1LA_1RB0LA",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 24.9
+},
+{
+"spec": "1RB1LC_1RC0RB_0LA1LD_1LC1RB",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 23.7
+},
+{
+"spec": "1RB1LD_0RC0RB_1LC1RA_0LA0LA",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 198.1
+},
+{
+"spec": "1RB1LD_0RC0RB_1LC1RA_0LA0RA",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 138.1
+},
+{
+"spec": "1RB1LD_0RC0RB_1LC1RA_1RA0LA",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 155.4
+},
+{
+"spec": "1RB1LD_1RC0RB_0LA1LD_1LC1RB",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 22.5
+},
+{
+"spec": "1RB1LD_1RC0RB_0LA1RB_0LD1LA",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 27.4
+},
+{
+"spec": "1RB1LD_1RC1RA_0LA0RB_1LB0LA",
+"ok": false,
+"why": {
+"no closure": 204
+},
+"tried": 204,
+"secs": 40.8
+},
+{
+"spec": "1RB1RA_0LC0RA_1LC1LD_1LA0LC",
+"ok": false,
+"why": {
+"no closure": 72,
+"memory": 1
+},
+"tried": 73,
+"secs": 41.5
+},
+{
+"spec": "1RB1RA_1LC0RD_1RA0LB_1LB0RA",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 27.4
+},
+{
+"spec": "1RB1RB_1LC1RC_0RA1LD_1RC0LD",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 23.7
+},
+{
+"spec": "1RB1RD_0RC0RA_1LC0LD_1RA0LD",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 32.2
+},
+{
+"spec": "1RB1RD_1LC0RA_1LD0LB_1RB0LA",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 33.7
+},
+{
+"spec": "1RB1RD_1LC1RB_1RA0LB_0RA0RD",
+"ok": false,
+"why": {
+"no closure": 216
+},
+"tried": 216,
+"secs": 32.1
+}
+]

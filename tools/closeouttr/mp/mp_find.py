@@ -35,19 +35,25 @@ import ti_batch as T                                # noqa: E402
 
 CACHE = os.environ.get('MP_CACHE', '/tmp/mp_cache')
 EXTEND = os.environ.get('MP_EXTEND', '1') == '1'
-FKIND = os.environ.get('MP_F', 'local')         # 'local' (learn_mp.fit_local) or 'bps' (learn4's)
+FKIND = os.environ.get('MP_F', 'local')
+if os.environ.get('MP_SMALL'):
+    import lg3
+    lg3.SMALL = int(os.environ['MP_SMALL'])         # 'local' (learn_mp.fit_local) or 'bps' (learn4's)
 
 
 def get_lang(spec):
     os.makedirs(CACHE, exist_ok=True)
     p = os.path.join(CACHE, 'lang_%s%s%s.pkl' % (spec, '_x' if EXTEND else '',
-                                                 '_loc' if FKIND == 'local' else ''))
+                                                 {'local': '_loc', 'free': '_free'}.get(FKIND, '')))
     if os.path.exists(p):
         lang, mir, info = pickle.load(open(p, 'rb'))
     else:
         if FKIND == 'local':
             lang, mir, info = learn_mp.learn_local(spec)
             info = dict(info, F='local')
+        elif FKIND == 'free':
+            lang, mir, info = learn_mp.learn_free(spec)
+            info = dict(info, F='free')
         else:
             lang, mir, info = L4.learn(spec)
         if EXTEND:
