@@ -41,7 +41,11 @@ LWIDEN = int(os.environ.get('LG4_LWIDEN', '0'))
 FOBS = os.environ.get('LG4_FOBS', '1') == '1'
 RSAMPLES = 4000    # right samples at most
 RALT = os.environ.get('LG4_RALT', '1') == '1'   # learn the right tails' other forms
-LDROP = int(os.environ.get('LG4_LDROP', '1'))   # elements nearest the head a left sample drops
+LDROP = int(os.environ.get('LG4_LDROP', '1'))
+# BLC5: b_0's centre may sit this far outside its observed digits, so that
+# b_0's symbol can START the partial sum away from 0 (a list whose digits are
+# overlapping bit pairs: b_0's symbol fixes the first bit).  0 keeps BLC4's fit
+B0WIDEN = int(os.environ.get('LG4_B0WIDEN', '0'))   # elements nearest the head a left sample drops
 # (BLC3's choice: the nearest is the window's and may be mid-rewrite;
 # LG4_LDROP=0 keeps it)
 
@@ -160,7 +164,8 @@ def fit_F(data, M):
             lo, hi = min(ds), max(ds)
             if hi - lo > 8:
                 break
-            cand.append(range(lo, hi + 1))
+            wd = B0WIDEN if k[0] == 'b0' else 0
+            cand.append(range(lo - wd, hi + 1 + wd))
         else:
             ncomb = 1
             for c in cand:
