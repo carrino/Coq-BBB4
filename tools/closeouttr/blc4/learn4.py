@@ -36,25 +36,26 @@ import ti_coq as C                                  # noqa: E402
 G.MAXFAM = int(os.environ.get("LG4_MAXFAM", "800"))
 L3.MAXW = 8
 MAXEND = 40         # longest end word
+RSAMPLES = 4000    # right samples at most
+RALT = os.environ.get('LG4_RALT', '1') == '1'   # learn the right tails' other forms
 LDROP = int(os.environ.get('LG4_LDROP', '1'))   # elements nearest the head a left sample drops
 # (BLC3's choice: the nearest is the window's and may be mid-rewrite;
 # LG4_LDROP=0 keeps it)
 
 
 class Row(tuple):
-    """a learn3.snaps row whose cells (item 6) are parsed on first use"""
+    """a learn3.snaps row kept as its text: the cells (item 6) are parsed on
+    each use (40,000 snapshots of a (10) list do not fit in memory split)"""
 
-    def __new__(cls, f):
+    def __new__(cls, line):
+        f = line.split(None, 8)
         r = super().__new__(cls, (f[0], f[1], int(f[2]), int(f[3]), int(f[4]), int(f[5]), None))
-        r.raw = f[7:]
-        r._cells = None
+        r.raw = f[8] if len(f) > 8 else ''
         return r
 
     def __getitem__(self, i):
         if i == 6 or i == -1:
-            if self._cells is None:
-                self._cells = [tuple(map(int, x.split('*'))) for x in self.raw]
-            return self._cells
+            return [tuple(map(int, x.split('*'))) for x in self.raw.split()]
         return super().__getitem__(i)
 
     def __iter__(self):
@@ -63,14 +64,17 @@ class Row(tuple):
 
     def lead(self):
         """the blank cells before the first mark"""
-        s_, ln = self.raw[0].split('*') if self.raw else ('1', '0')
+        x = self.raw[:self.raw.find(' ')] if ' ' in self.raw else self.raw
+        if not x:
+            return 0
+        s_, ln = x.split('*')
         return int(ln) if s_ == '0' else 0
 
 
 def snaps(spec, t0, t1, every, k=0):
     out = subprocess.run([L3.lsnap_bin(), spec, str(t0), str(t1), str(every), str(k)],
                          capture_output=True, text=True, timeout=600).stdout
-    return [Row(line.split()) for line in out.splitlines()]
+    return [Row(line) for line in out.splitlines()]
 
 
 def mirror_row(r):
@@ -308,6 +312,94 @@ def fit_left2(deep, fwd, q0, W, pseps, seps, a, WL, psepsL, sepsL, drop=0):
     return sorted(lstart, key=str), lfwd, lends, n, nconf
 
 
+def fit_right_alt(deep, fwd, end, q0, W, pseps, seps, a, drop=1, minvote=3):
+    """the right tails' OTHER written forms (the elements the return sweep has
+    rewritten, say): each right sample (the elements wholly right of the
+    head, but the [drop] nearest) aligned with the anchor list it came from,
+    from the far end (which must be the anchor's).  Returns the extra F
+    edges {(q, x): q2}, extra END entries {q: [(x, bk, endw)]} and the new
+    separator symbols"""
+    votes = collections.defaultdict(collections.Counter)
+    evotes = collections.Counter()
+    states = None
+    ns = sum(1 for r in deep if r[0] == 'S')
+    every = max(1, ns // RSAMPLES)
+    si = 0
+    for r in deep:
+        kind, side, t, q, h, pos = r[0], r[1], r[2], r[3], r[4], r[5]
+        if kind == 'S':
+            si += 1
+            if si % every:
+                continue
+        if kind == 'A' and side == 'L':
+            rl = read_list(L3.strip_cells(r[6]), W, pseps, a, seps)
+            states = None
+            if rl is None:
+                continue
+            syms, bk, endw, bs = rl[:4]
+            st = [q0]
+            for x in syms[:-1]:
+                q2 = fwd.get((st[-1], x))
+                if q2 is None:
+                    break
+                st.append(q2)
+            if len(st) == len(syms):
+                states = (st, syms, bk, endw, len(bs))
+            continue
+        if kind != 'S' or states is None:
+            continue
+        st, syms, bk, endw, N = states
+        cells = r[6]
+        lead = 0
+        while cells and cells[0][0] == 0:
+            lead += cells[0][1]
+            cells = cells[1:]
+        cells = L3.strip_cells(cells)
+        p = pos - lead
+        if p < 0:
+            continue
+        toks = tokens(cells, W, p)
+        if not any(t_[-1] == 'H' for t_ in toks):
+            continue
+        hidx = next(i for i, t_ in enumerate(toks) if t_[-1] == 'H')
+        el = lg4.parse4(toks, W, pseps, 'R')
+        Es = [k for k, x in enumerate(el) if x[0] == 'E' and x[1] > hidx]
+        if len(Es) < 2 + drop:
+            continue
+        kl = Es[-1]
+        if el[kl][3] != (bk, ()) or lg4.tok_cells(toks[el[kl][2]:]) != endw:
+            continue
+        m = len(Es)
+        for j in range(m - 2, drop - 1, -1):
+            k1, k2 = Es[j], Es[j + 1]
+            if k2 != k1 + 2:
+                break
+            w = lg4.word_at(el, toks, k1 + 1, W, pseps)
+            if w is None or len(w[1]) > L3.MAXW or el[k1][3][1]:
+                break
+            i = N - 2 - (m - 2 - j)
+            if i < 0:
+                break
+            x = (w, el[k1][3][0] - a * el[k2][3][0])
+            if i == N - 2:
+                evotes[(st[i], x, bk, endw)] += 1
+            elif i + 1 < len(st):
+                votes[(st[i], x)][st[i + 1]] += 1
+    xf, xe, xs = {}, collections.defaultdict(list), set()
+    for (qq, x), c in votes.items():
+        q2, n = c.most_common(1)[0]
+        if n < minvote or (qq, x) in fwd:
+            continue
+        xf[(qq, x)] = q2
+        xs.add(x[0])
+    for (qq, x, b, w), n in evotes.items():
+        if n < minvote or (x, b, w) in end.get(qq, []):
+            continue
+        xe[qq].append((x, b, w))
+        xs.add(x[0])
+    return xf, dict(xe), xs
+
+
 def learn(spec, t1=4000000, every=97):
     rows = snaps(spec, 50000, t1, 0)
     anc = {'L': [r for r in rows if r[0] == 'A' and r[1] == 'L'],
@@ -387,6 +479,7 @@ def learn(spec, t1=4000000, every=97):
     if fit is None:
         raise T.Fail('learn: no bounded-partial-sum automaton')
     fwd, end = L3.expand_end(fit)
+    nalt = 0
     # the boot: the first anchor from which on ten anchors in a row are lists
     # F accepts (before it the far end may not be settled yet)
 
@@ -407,6 +500,15 @@ def learn(spec, t1=4000000, every=97):
             tboot = atimes[i]
             break
     snapl = [r for r in deep if r[0] == 'S']
+    if RALT:
+        xf, xe, xs = fit_right_alt(deep, fwd, end, fit['q0'], W, pseps, seps, a)
+        fwd = dict(fwd)
+        fwd.update(xf)
+        end = {q: list(l) for q, l in end.items()}
+        for qq, l in xe.items():
+            end.setdefault(qq, []).extend(l)
+        seps = set(seps) | xs
+        nalt = len(xf) + sum(len(l) for l in xe.values())
     lefts = []
     for kind, side, t, q, h, pos, cells in sorted(snapl[-6000:], key=lambda r: r[5] - r.lead())[-300:]:
         i = 0
@@ -443,7 +545,7 @@ def learn(spec, t1=4000000, every=97):
     info = dict(unit=list(W), a=a, seps=sorted(seps, key=str), m=fit['m'], M=fit['M'],
                 range=(fit['lo'], fit['hi']), nanchor=len(data), nleft=nl,
                 lends=sorted(lendsL), nendw=len(lang.endws), unitL=list(WL), sepsL=sepsL,
-                nconf=nconf, tboot=tboot)
+                nconf=nconf, tboot=tboot, nalt=nalt)
     return lang, mir, info
 
 
