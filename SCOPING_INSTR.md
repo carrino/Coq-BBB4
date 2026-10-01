@@ -6011,6 +6011,222 @@ python3 tools/closeouttr/le3/run_batch.py tools/closeouttr/le3/termrun.jsonl --t
 tools/closeouttr/le/board_chunk.sh CBT_LE3_NN
 ```
 
+#### 7.4.LE4 LE3's counter residue: no bouncer hybrids; the Zeckendorf transducer, ladder-free positional readings, a marked terminator run and the sweep; 27 boarded (2026-10-01)
+
+Workstream LE4 (batch tag `LE4`), over LE3's residue: LE2's row lists
+`le2/rows_{dn,sp,qh}_*.txt` still in `closeouttr_remaining.txt`, less the 3
+TA rows: **372 rows** (`le4/rows.txt`; by LE2 bucket 160 DN, 141 SP, 71 QH).  Branched from
+`main` at 744 open with `claude/closeout-le3` (`CBT_LE3_05`) merged.  The
+block-list rows (`blc4/rows216.txt`, no overlap) and the Collatz-like rows
+were not touched.  The owner's `closeout-le2box` branch had not appeared
+when this ran, so no row was skipped for it.
+
+**1. There are no counter-plus-bouncer hybrids here.**  The tape extent of
+every row at 1e5 · 4^i steps (`le4/ext.c`, `le4/extent.tsv`) grows by a
+constant per factor of 4 in 364 rows and by at most 1.2x in the other 8:
+all 372 are LOG-growth.  A hybrid in HY's sense has a block swept every lap,
+so its extent grows like a square root, and `HybridGlueTr` / `HybridCtrTr` /
+`HybridCtr2Tr` state exactly that (a lap per counter increment that crosses
+the block).  None of them applies, with any counter part.  LE3's example
+`1RB1LA_1RC0RB_1LD1RA_1LA0LD` (`1^k 0^7 1001 (001)^m`) grows 52, 60, 68, ...
+cells: the `1^k` block gains one cell per OVERFLOW (it is a unary tally of
+the widths), not per lap, and the right part is a counter whose low bits
+drive the `(001)^j` region.  It is a nested counter, not a bouncer.  The
+anchor-seeded TriGlue (`hy3_ti.py`, §7.4.HY3) on the first 32 rows: 0
+certificates ("too many families" / "leaf too long" on every one;
+`le4/hy3ti_32.jsonl`), as expected of counters.  At the overflows
+(`le4/ovf.c`, `le4/ovf.tsv`) one tape end grows in 236 rows and both ends in
+136 (the "two-sided" / nested shapes).
+
+**2. Zeckendorf over two-cell tokens: `LadderCheckZeck2Tr`, 4 of 5.**  The
+tape `c_i = x_i OR x_(i-1)` is the token string of `x` (read from the head,
+every `1` of a Zeckendorf string is followed by a `0`) under `0 -> 0`,
+`10 -> 11`: `zc`, a two-state transducer.  `theories/Checkers/LadderCheckZeck2Tr.v`
+imports `LadderCheckZeckTr`'s `zinc`, bound and class split unchanged, and
+changes only the cells: the configuration at `x` is
+`fm_pre F ++ zc (x ++ [0]) ++ T` (`T`, the terminator, in cells).  Each
+Zeckendorf class `u (01)^k s` becomes one side over the two-cell words `11`
+/ `00` (`U 0 = 0`, `U 1 = 11`): interior `U i (11)^k 0 X -> U0 i (00)^k 11 X`,
+end `... 0 T -> ... 11 T`, top `U i (11)^k T -> U0 i (00)^k 00 T`.  Finder
+`le4/zeck2_detect.py` (anchor, prefix and `T` by generating
+`zc (zinc^n x0 ++ [0]) ++ T` against 150 visits), emitter
+`le4/emit_zeck2.py` (LE3's `emit_zeck.py`, cells changed).  4 of LE2's 5
+rows board (`CBT_LE4_00`, all QH; `T = 11`, boot `x0 = [0]` at step 20-24).
+The fifth, `0RB1LC_1LC0LC_0RD1LA_1RD1RB`, counts DOWN in the same code
+(per width `0, 4, 3, 2, 1`, then wider): a decrementing `zinc` is a
+different checker, for one row.
+
+**3. Positional counters read straight off the anchors: `le4/pos_detect.py`,
+9 boarded.**  valfam names its digit words from its mined ladder
+(`digit_words`), so a row whose ladder names none is "no value family"
+even when its anchor visits read as an ordinary odometer.  `pos_detect.py`
+skips the ladder: for every end anchor with a constant far side it tries
+prefixes up to 3 cells, terminators up to 8, digit widths 1-4 and every
+assignment of the observed words to `0..b-1`; it drops visits that do not
+decode or repeat (the fill passing the anchor again) and keeps a chain of
+at least 80 `+1` / fill steps with at least 2 fills and one fill law.  It
+writes a valfam-shaped certificate (one phase, binary code, step 1, no
+arms) for `emit_ladder.py --tr`, which builds its own closure arms.  It
+reads **143** of the 372 rows (1.4 s a row; ~7 min for all at 4 jobs).
+`le4/try_emit.py` runs the emitter in parallel, first without the nested
+search (`le4/emit_ladder_nonest.py`: `nest.derive_nested` stubbed, the
+`ceqL` one-segment wrap kept, which many of these need: the carry leaves a
+blank on the far side).  **9 board**: `CBT_LE4_01` (5), `_02` (2 QH),
+`_03` (2), through `LadderCheckTr` / `LadderCheckQHTr` unchanged.  Where
+the other 134 stop:
+
+* **fill arm (116; 60 of 60 probed)**: the concrete fill
+  `t^k T -> fill(k) T` reaches its target, but its cost roughly DOUBLES
+  per width (`le4/fill_probe.py`: 52, 102, 200, 394, ...; 99, 199, 399,
+  ...).  The fill counts: the visits the finder dropped as transients are a
+  second phase.  Read by hand (`0RB0LC_1LC0RD_1LA1LD_0LA1RB`, digits
+  `10`/`11`), that phase is a terminator run with a marker (item 4);
+* **interior arm (16)**: of which 10 are SWEEPS (`le4/sweep_probe.py`: the
+  `r = 0` arm has no chain against an opaque tail and one against
+  `t^m z Y` for every m = 0..4), all 10 boarded by item 6; the rest are
+  carries whose cost doubles;
+* **a 3-digit fill target at +1 width (2)**: §7.4.LE2's two SP rows,
+  refused by `emit_ladder` (`Inv` would need a minimum width).
+
+**4. A terminator run with a marker: `LadderCheckRun2Tr`, 4 boarded.**  The
+fill-that-counts rows are LE3's terminator-run shape with one difference: a
+MARKER word `M` sits between `x` and the run, and the run may be empty:
+
+    pre ++ x ++ M ++ T^m ++ suf      (0RB0LC_1LC0RD_1LA1LD_0LA1RB: A1 (10|11)^j 0 (11)^m)
+    (x, m) -> (x+1, m);  (top^j, m) -> (0^(j-1), m+1);  ([], m) -> (0^(m+a), c)
+
+LE3's `LadderCheckRunTr` is the case `M = T`, `m >= 1` (its narrowing
+`t^j T X -> 0^(j-1) T T X` needs the word after `x` to BE the run word).
+`theories/Checkers/LadderCheckRun2Tr.v` is that file with `M` added (every
+name suffixed `M`) and three changes: the invariant drops `1 <= m` (refill
+arms indexed from 0), the narrowing is `t^j M X -> 0^(j-1) M T X`, and the
+interior class carries ONE WORD OF LOOKAHEAD (`t^n d w X`, `w` the next
+digit or `M` when `x` ends; `ilookM`).  Finder `le4/termrun2_detect.py`
+(LE3's reading with a marker; a reading is kept only if consecutive visits
+follow the three laws: at least 40 steps, 2 narrowings and a refill, the
+transient visits skipped), emitter `le4/emit_run2.py`, batches
+`le4/run2_batch.py --jobs 4`.  It reads **44** rows (`le4/termrun2.jsonl`;
+markers `0`, runs `1`, `01`, `10`, `11`, `111`; 10 s a row).  **4 board**
+(`CBT_LE4_04`, SP).  The other 40 (`le4/run2_batch.log`):
+
+* **refill (18)**: the concrete refill `M T^m suf -> 0^(m+a) M T^c suf`
+  reaches its target at every m tried, every instruction fires from it, but
+  its cost doubles with m (20, 32, 52, 88, 156, 288, ...; 43, 71, 123,
+  223, ...): the run is itself counted down at the refill, a THIRD level;
+* **interior, sweep (11)**: with a concrete tail the carry's cost does not
+  depend on how long the tail is, but with next digit `1` it has no chain
+  even at `r = 0`: the carry walks the following run of ones (in 8 of the 11
+  `M = 0`, `T = 1`, so the whole tape is `x 0 1^m`).  Lookahead does not
+  help (re-run with it: the same 4 board).  10 of the 11 board through
+  their positional reading and the sweep checker (item 6);
+* **interior, nested (9)**: the carry's own cost doubles with n (4, 16, 36,
+  72, 140, ...): the digits are themselves counters;
+* **refill law (2)**: an empty `x` refills to something other than
+  `D0^(m+a)`.
+
+**6. The sweep: `LadderCheckSweepTr`, 10 boarded.**  The rows whose carry
+walks across the run of top digits after the digit it increments (LE2's
+"DN carries that sweep the run past the digit"; `le4/sweep_probe.py` finds
+10 among the positional readings, all with affine fills).  The class
+`t^n d t^m e Y` has two run lengths, which no arm states, but its increment
+is three ordinary one-index `ReachL` programs in a row:
+
+* the carry `A d ra`: anchor -> the PIVOT, the head on the incremented
+  digit's last cell, about to step into `X = t^m e Y` (opaque);
+* the excursion `P d k ph rm`: pivot -> across `t^m` to `e` (kind `k = e`)
+  or to the terminator (`k = b - 1`) and back to the pivot, the tape
+  unchanged, both tails opaque (the counter-side one known empty at the end);
+* the return `C d k ra`: pivot -> anchor, `X` opaque again.
+
+Up to `lift` the configuration `A` lands on IS the one `P` starts from (the
+counter side of `A`'s right-hand side and the far side of `P`'s are empty,
+so the opaque tails carry the rest), so composing needs only `csteps_lift`
+and `stepn_csteps_at`: no new chain engine.
+`theories/Checkers/LadderCheckSweepTr.v` states that over `LadderCheck`'s
+positional family (class split, `fill_top`, `iter_total`, `tops_cof_pv`
+reused; fill arms and fires as in `LadderCheckTr`); `Print Assumptions`:
+`functional_extensionality_dep` only.  The emitter `le4/emit_sweep.py`
+reads the pivot and the return off a simulation of small increments and
+requires them to be the same for every `n, m`.  What it found: in 6 rows
+the machine sweeps FIRST and carries on the way back (the pivot's far side
+is the uncarried `t^n`); in 4 (2-cell digits) the pivot is half-way through
+writing the digit (`01` between `00` and `11`), and the machine writes a
+cell beyond the anchor too.  **10 of 10 board** (`CBT_LE4_05`, `_06`, all
+DN).  Tried on all 120 other open positional readings: 0 more (in every one
+the excursion changes the tape: nested counters).
+
+**5. The `fam` / `closure` remainder, measured.**  Of LE2's `fam` rows
+still open (66 SP, 45 DN, 24 QH), every SP and QH row and 25 of the 45 DN
+have an LE4 reading (item 3 or 4); 2 QH board, and every other one stops at
+one of the shapes above.  Of the 14 `closure` rows (8 DN, 6 SP), 12 read
+(8 as marker runs, 4 positional) and none boards: they stop at the sweep,
+the nested carry and the doubling fill.  The cheap fixes found were the
+ladder-free reading (item 3) and the marker (item 4); the two 3-digit fill
+targets were left (two rows, a checker change).  LE2's "8-state digit
+pairs" are the nested-carry rows of items 3 and 4 seen at a positional
+anchor, and its "DN carries that sweep the run past the digit" are the 11
+sweeps.
+
+**Yields** (27 rows; closeout 744 -> **717**; per row `le4/residue.tsv`,
+`le4/residue.py`):
+
+| batch | rows | class | how | compile (container, `-j4`, incl. boards) |
+|---|---:|---|---|---:|
+| `CBT_LE4_00` | 4 | QH | `LadderCheckZeck2Tr` (two-cell Zeckendorf) | 52 s (the checker 40 s) |
+| `CBT_LE4_01` | 5 | 2 DN, 3 SP | `pos_detect` + `LadderCheckTr` | 44 s |
+| `CBT_LE4_02` | 2 | QH | `pos_detect` + `LadderCheckQHTr` | 11 s |
+| `CBT_LE4_03` | 2 | SP | `pos_detect` + `LadderCheckTr` | 48 s |
+| `CBT_LE4_04` | 4 | SP | `LadderCheckRun2Tr` (marker run) | 43 s (the checker 42 s) |
+| `CBT_LE4_05` | 6 | DN | `LadderCheckSweepTr` (the sweep) | 57 s (the checker ~40 s) |
+| `CBT_LE4_06` | 4 | DN | `LadderCheckSweepTr` | 42 s |
+
+All in `ci_costs.tsv` at 90 s (the runner is about twice as slow); the
+slowest shard is still `CBT_BR_02`'s.  `Print Assumptions` on both closers of
+each of the four new checkers and on a row of `_00`, `_01`, `_04`, `_05`:
+`functional_extensionality_dep` only.
+
+**Where the rest stop** (345 of the 372):
+
+| LE4 reading | rows | where it stops | what it is |
+|---|---:|---|---|
+| none | 224 | no finder reads them (177 grow at one end, 47 at both; 126 DN, 55 SP, 43 QH) | LE2's `nofam`/`cap` bulk.  Read by hand: nested counters (`1RB1LA_1RC0RB_1LD1RA_1LA0LD`, a unary width tally beside a counter that drives a `(001)^j` region), counters whose anchor visits are interleaved with a second phase no single terminator reads |
+| positional | 90 | fill arm: the fill's cost doubles per width | a second counting phase at the overflow; for the rows read by hand it is a marked terminator run, but these do not parse as one at any anchor `termrun2_detect` tries (other marker/run lengths, or a deeper phase) |
+| marker run | 18 | refill: cost doubles with the run | a third counting level: the run is counted down at the refill |
+| marker run | 1 | interior arm: no chain past `n = 0`, and its excursion changes the tape | `0RB1RC_1LA1RB_0LD0RC_1LD0LA` |
+| marker run | 9 | interior arm: the carry's cost doubles | nested digits |
+| marker run | 2 | refill to something other than `D0^(m+a)` | |
+| zeck2 | 1 | counts down | a decrementing `zinc` |
+
+**Next.**  The doubling fills and refills (90 + 18) and the nested carries
+(9) are counters nested two and three deep: a RECURSIVE family (a counter
+whose fill or refill is itself one of these families, the inner family's top
+being the outer arm's end) would state them, with `LadderCheckSweepTr`'s
+composition (one-index programs chained through `lift`) as the way to glue
+an inner run into an outer arm.  That is the next real checker.  The 224
+rows no finder reads need reading by hand first; LE3's nested example is
+one of them.
+
+```
+# the container loop (what this section ran; all resumable)
+python3 tools/closeouttr/le4/zeck2_detect.py ROWS le4/zeck2.jsonl --jobs 4
+python3 tools/closeouttr/le4/batch.py tools/closeouttr/le4/zeck2.jsonl --kind zeck2 --tag LE4
+python3 tools/closeouttr/le4/pos_detect.py ROWS le4/pos.jsonl --jobs 4                    # ~7 min
+python3 tools/closeouttr/le4/try_emit.py le4/pos.jsonl OUTDIR RES.tsv --jobs 4 --nonest   # ~6 min
+python3 tools/closeouttr/sp_ladder_batch.py BUILT.jsonl --tag LE4 [--qh]
+python3 tools/closeouttr/le4/termrun2_detect.py ROWS le4/termrun2.jsonl --jobs 4          # ~15 min
+python3 tools/closeouttr/le4/run2_batch.py le4/termrun2.jsonl --tag LE4 --jobs 4          # ~25 min
+python3 tools/closeouttr/le4/sweep_probe.py le4/pos.jsonl le4/sweep_probe.jsonl            # seconds
+python3 tools/closeouttr/le4/batch.py le4/sweep_certs.jsonl --kind sweep --tag LE4         # ~20 s
+tools/closeouttr/le/board_chunk.sh CBT_LE4_NN
+python3 tools/closeouttr/le4/residue.py
+```
+
+No sweep here needed the owner's box: the slowest step, the marker-run
+batch with nested programs on, is ~25 min at 4 jobs.  With the nested
+search on for the 134 positional failures (`try_emit.py` without
+`--nonest`, 900 s a row) it would be ~2-3 h at 12 jobs; the fill and refill
+failures above are cost shapes no program changes, so it was not run.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
@@ -6020,3 +6236,52 @@ tools/closeouttr/le/board_chunk.sh CBT_LE3_NN
 * No hand-porting of generated layers (`Machines/` ~2.6M lines,
   `Closeout/CB_*`, census lists): they regenerate from tools once the
   checker layer lands.
+
+#### 7.4.TA follow-up: cube counters at moduli 9 and 27 (2026-10-01)
+
+The suggested larger-residue search was run on the 15 cube rows for which
+`ta/dump.jsonl` contains a closed TriGlue family graph.  With node moduli 9
+and 27 and three lexicographic levels, `TriNuTr` certifies **1 of 15** rows:
+`1RB1LA_0RC0RD_1LC0LA_1RC0RC`, at modulus 9.  The certificate is boarded
+in `CBT_AST_00`.  The resumable results are recorded in
+`tools/closeouttr/ta/cube_nu27.jsonl`.  Of the other 14 graphs, eight exceed the node cap at both moduli and six
+have no nu-ranking at modulus 9 before exceeding the node cap at 27.  Thus
+the larger residue split supplies one missing valuation across the cube
+reset, but does not by itself close the family.
+
+Command:
+
+```
+# First select the 15 cube records containing a saved `cert` into cube_dump.jsonl.
+python3 tools/closeouttr/ta/nu_find.py cube_dump.jsonl \
+  tools/closeouttr/ta/cube_nu27.jsonl --plist 9,27 --ells 3 \
+  --jobs 4 --timeout 900
+```
+
+#### 7.4.TA follow-up: AST requested rows at moduli 5, 9 and 27 (2026-10-01)
+
+The larger-residue search was extended to the requested rows for which
+`ta/dump.jsonl` retained a closed TriGlue family graph.  It certifies three
+more rows with the existing `TriNuTr` checker:
+
+* `1RB1LA_1LA0RC_0RC0RD_1LD0LA` at modulus 9;
+* `1RB1LA_1LA0RC_0RA0RD_1LD0LA` at modulus 5;
+* `1RB1LA_1LA0RC_1RB0RD_1LD0LA` at modulus 5.
+
+They are boarded in `CBT_AST_01..02`.  The complete modulus-9/27 probe is
+recorded in `tools/closeouttr/ta/astra_nu9.jsonl`; the two targeted
+modulus-5 certificates are in `astra_nu5.jsonl`.  The other saved family
+graphs either lack a nu-ranking at these moduli or exceed the 3,000-node
+cap.  Requested rows without a saved family graph still stop in the
+TriGlue family finder and were not presented to the liveness search.
+
+#### 7.4.TA follow-up: modulus-5 sweep of the remaining saved graphs (2026-10-01)
+
+A modulus-5 sweep over all 23 still-open rows with a saved closed TriGlue
+family graph certifies two further requested rows with `TriNuTr`:
+`0RB0RD_1RC1LB_1LB0RA_1LD0LB` and
+`1RB0RD_1LC0RA_1RB1LC_1LD0LC`.  They are boarded in `CBT_AST_03` and the
+complete probe is retained as `tools/closeouttr/ta/astra_nu5_remaining.jsonl`.
+The other 21 saved graphs have no modulus-5 nu-ranking.  The newer requested
+set is dominated by rows that stop before this stage (hybrid/list family
+closure), so changing the liveness modulus alone does not reach them.
