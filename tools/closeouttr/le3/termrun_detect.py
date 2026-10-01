@@ -72,7 +72,7 @@ def read(st, l, pre, suf, T):
     return ws, m
 
 
-def detect(spec):
+def detect(spec, nwords=(2,)):
     best = None
     for key, strs in anchor_strings(spec).items():
         strs = strs[len(strs) // 4::max(1, len(strs) // 500)]
@@ -95,7 +95,7 @@ def detect(spec):
                             continue
                         words = Counter(w for ws, _m in ok for w in ws)
                         ms = Counter(m for _ws, m in ok)
-                        if len(words) != 2 or len(ms) < 3:
+                        if len(words) not in nwords or len(ms) < 3:
                             continue
                         cand = dict(spec=spec, anchor=list(key), l=l, pre=pre,
                                     suf=suf, T=T, words=sorted(words),
