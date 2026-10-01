@@ -1,0 +1,204 @@
+0RB0RB_1LC1RC_1LD1RA_1RB0LD	0	2	t51140 norank ('norank', (0, 0)) / t20000 norank ('norank', (0, 0))
+1RB0LA_0RC0RD_1LA0RC_0LC1RA	-	-	learn: no bounded-partial-sum automaton
+1RB0LA_1LC1RC_1LA1RD_0RB0RB	0	2	t51154 norank ('norank', (3, 0)) / t20000 norank ('norank', (3, 0))
+1RB0LA_1LC1RC_1LA1RD_1LC0RB	0	2	t51166 norank ('norank', (3, 0)) / t20000 norank ('norank', (3, 0))
+1RB0LA_1LC1RC_1LA1RD_1RA0RB	0	2	t50436 norank ('norank', (3, 0)) / t20000 norank ('norank', (3, 0))
+1RB0LA_1LC1RC_1LA1RD_1RB0RB	0	2	t50238 norank ('norank', (3, 0)) / t20000 norank ('norank', (3, 0))
+1RB0LA_1RC1RA_0RD0RB_1LD0LA	-	-	learn: no separators
+1RB0LD_1RC1LA_1LD0RC_1RB1LB	0	2	t51155 norank ('norank', (0, 0)) / t20000 norank ('norank', (0, 0))
+1RB0RB_1LC1RC_1LD1RA_1RB0LD	0	2	t50238 norank ('norank', (0, 0)) / t20000 norank ('norank', (0, 0))
+1RB1LB_1RC1LD_1LA0RC_0LA0LA	0	2	t51139 norank ('norank', (3, 0)) / t20000 norank ('norank', (3, 0))
+1RB1LB_1RC1LD_1LA0RC_1RB0LA	0	2	t51155 norank ('norank', (3, 0)) / t20000 norank ('norank', (3, 0))
+1RB1LD_1LC0RB_1RA1LA_0LC0LC	0	2	t51160 norank ('norank', (3, 0)) / t20000 norank ('norank', (3, 0))
+1RB1LD_1LC0RB_1RA1LA_1LB0LC	0	2	t50138 norank ('norank', (3, 0)) / t20000 norank ('norank', (3, 0))
+1RB1LD_1LC0RB_1RA1LA_1LC0LC	0	2	t50278 norank ('norank', (3, 0)) / t20000 norank ('norank', (3, 0))
+1RB1LD_1LC0RB_1RA1LA_1RA0LC	0	2	t51170 norank ('norank', (3, 0)) / t20000 norank ('norank', (3, 0))
+0RB0LB_1LC1RA_0LD0LC_1RD1LB	-	-	learn: no ratio
+0RB0LB_1LC1RD_1LA0RD_1RB1RC	-	-	learn: ratio 1
+0RB0LB_1LC1RB_0LD1RD_1LA0RB	1	2	t50690 too many families (family 740) / t20000 too many families (family 449)
+0RB0LC_1LC1RD_1LA1LB_1RC0RB	-	-	learn: no ratio
+0RB0LD_1LC0RD_1LA0LC_1RB1LD	-	-	learn: no long runs
+0RB0LD_0RC1RB_1LD1RC_1RC1LA	-	-	learn: no ratio
+0RB0LB_1LC0RC_1RD0LA_1RB1RC	011	2	t50040 too many families (family 771) / t20000 too many families (family 482)
+0RB0LB_1LC1RD_0LD0LC_1RA1LC	001	4	t50176 too many families (family 700) / t20000 too many families (family 616)
+0RB0RA_0LC1RA_1RB1LD_1LC0LD	-	-	learn: no long runs
+0RB0LD_1RC1LB_1LD1RA_1LA0LD	001	4	t50194 too many families (family 704) / t20000 too many families (family 249)
+0RB0LD_1RC1LB_1LA1RA_1LA0LD	001	4	t50194 too many families (family 704) / t20000 too many families (family 249)
+0RB0RA_1RC1RA_1LD1RC_1RB0LC	-	-	learn: no bounded-partial-sum automaton
+0RB0RB_1LC1RA_0LD0LC_1RD1LB	-	-	learn: no ratio
+0RB0RD_1LC0RC_1RA0LC_0LB1RC	-	-	learn: no ratio
+0RB0RD_1RC0LD_1RD1LC_1LB1RA	-	-	learn: no separators
+0RB0RA_1LC1RA_0LD1LB_1LA1LB	001	4	t50096 too many families (family 706) / t20000 too many families (family 145)
+0RB0RA_1LC1RA_0LD1LB_1RA1LB	001	4	t50282 too many families (family 678) / t20000 too many families (family 574)
+0RB1LB_1RC0LD_0LD0RD_1RA1LD	1	2	t50260 too many families (family 9) / t20000 too many families (family 727)
+0RB1LB_1RC0LD_0LD1RA_1RA1LD	1	2	t50668 too many families (family 6) / t20000 too many families (family 681)
+0RB1LB_1RC0LD_1LA0RD_1RA1LD	1	2	t50271 too many families (family 470) / t20000 too many families (family 585)
+0RB1LB_1RC0LD_1LA1RA_1RA1LD	1	2	t50635 too many families (family 743) / t20000 too many families (family 776)
+0RB1LB_1LC1RC_1RD0LA_1LA0RC	011	4	t50366 too many families (family 271) / t20000 too many families (family 368)
+0RB1LB_1RC0LD_1LD1RA_1RA1LD	1	2	t50596 too many families (family 680) / t20000 too many families (family 7)
+0RB1LB_1RC0LD_1LD0RD_1RA1LD	1	2	t50516 too many families (family 407) / t20000 too many families (family 577)
+0RB1LC_1LC1RB_0LD1RD_1LA0RB	1	2	t50126 too many families (family 535) / t20000 too many families (family 525)
+0RB1LC_1RC0LC_1LD0RC_0LB0LA	-	-	learn: no ratio
+0RB0RA_0LC1RA_0RD1LC_1RB1LB	01	2	t50776 too many families (family 713) / t20000 too many families (family 720)
+0RB1LD_0RC1RB_1LD0RD_1LA0LD	-	-	learn: no ratio
+0RB1LA_1RC1LC_0LA1RD_0RC0RD	01	2	t50774 too many families (family 713) / t20000 too many families (family 720)
+0RB1LD_0RC1RB_1LD0RA_1LA0LD	011	4	t50208 too many families (family 255) / t20000 too many families (family 327)
+0RB1LD_1LA1RC_1RB0RC_0LA0LD	-	-	learn: no long runs
+0RB1LD_1RC0RC_1LA1RA_1RA0LD	-	-	learn: no ratio
+0RB1LD_1RC1RA_1LA0RD_1RA0LD	-	-	learn: no long runs
+0RB1LD_1RC1RB_1LA1RA_1LA0LA	-	-	learn: no ratio
+0RB1LD_0RC1RB_1LD1LA_1LA0LD	011	4	t50164 too many families (family 748) / t20000 too many families (family 347)
+0RB1LD_0LC1RB_1LA1RA_0LA0LD	01	2	t50775 too many families (family 760) / t20000 too many families (family 737)
+0RB1RA_1LC0RA_1LD0LB_1RB0LB	001	4	t50282 too many families (family 675) / t20000 too many families (family 583)
+0RB1RA_1LC0RC_1LD0LC_0RA1LC	-	-	learn: no ratio
+0RB1RA_1LC0RD_1LD0LC_0RA1LC	011	4	t50207 too many families (family 255) / t20000 too many families (family 327)
+0RB1RA_1LC0RA_1LD0LB_1RB1LC	0011	3	t50002 too many families (family 652) / t20000 too many families (family 770)
+0RB1RA_1LC1LD_1LD0LC_0RA1LC	011	4	t50163 too many families (family 748) / t20000 too many families (family 347)
+0RB1RA_1LC1RB_1RB1LD_0RA0LC	-	-	learn: no ratio
+0RB1RA_1LC1RA_1LD0LC_0RA1LC	011	4	t50139 too many families (family 269) / t20000 too many families (family 423)
+0RB1LD_0RC1RB_1LD1RB_1LA0LD	-	-	timeout
+0RB1RD_1LC0RD_1LD0LC_1RA0LB	-	-	learn: no long runs
+0RB1RD_1LC0LC_1RA1LB_1RB0RA	-	-	learn: ratio 1
+0RB1LD_1RC1RC_1LA1RA_1RA0LD	-	-	timeout
+1RB0LA_0RC0RD_1LA1LC_0LC0RB	-	-	learn: no ratio
+1RB0LA_0RC0RD_1LA1RB_1LC1RC	-	-	learn: no separators
+0RB1RD_1LC1RD_0LD0LC_1RA1LC	001	4	t50262 too many families (family 1) / t20000 too many families (family 282)
+1RB0LA_0RC1LA_1RD0LB_1LB1RB	011	4	t50416 too many families (family 624) / t20000 no nonnegative parametrization (family 19)
+1RB0LA_1LC0RB_1RD0LD_1LA1RB	-	-	learn: no long runs
+1RB0LA_1LC0RC_1RD1LA_1LA0RD	-	-	learn: no long runs
+1RB0LA_1LC0RD_0LC1LA_0RB1RD	-	-	learn: no long runs
+0RB1RD_1RC1RD_0LD0LC_1RA1LC	001	4	t50608 too many families (family 1) / t20000 too many families (family 282)
+1RB0LA_1RC---_0RD0RC_1LD0LA	-	-	learn: ratio 0
+1RB0LA_1RC1LD_0LD0RB_0RC1LA	-	-	learn: ratio 0
+1RB0LA_1RC1LD_0LD0RC_0RB1LA	-	-	learn: ratio 0
+1RB0LA_1LC0RD_1LA0LC_1RB0RB	-	-	learn: no ratio
+1RB0LB_1LC0RB_0LA0LD_0RA1LB	-	-	learn: no ratio
+1RB0LA_0RC1LA_1RD1RD_1LB1RB	011	4	t50026 too many families (family 348) / t20000 no nonnegative parametrization (family 5)
+1RB0LB_1LC1RB_0LD1RD_1LA0RB	1	2	t50809 too many families (family 339) / t20000 too many families (family 298)
+1RB0LB_1LC1RD_1RD0LC_1LA0RD	-	-	learn: no long runs
+1RB0LB_1LC0RD_1LA1LB_0LA0RA	011	2	t50039 too many families (family 771) / t20000 too many families (family 482)
+1RB0LB_1RC1LA_0RD0RC_1LD1RB	-	-	learn: no ratio
+1RB0LB_1RC0RB_0LD1RB_0LA1LD	-	-	learn: no ratio
+1RB0LC_0LC1RD_1RD1LC_0RA1LA	1	2	t50667 too many families (family 6) / t20000 too many families (family 681)
+0RB1RA_1LC1RD_0LD0LC_1LA1LC	001	4	t50124 too many families (family 615) / t20000 leaf too long (family 127)
+1RB0LC_0RC1RA_1LD0RA_1LA0LD	-	-	learn: no long runs
+1RB0LC_0LC0RC_1RD1LC_0RA1LA	1	2	t50259 too many families (family 9) / t20000 too many families (family 727)
+1RB0LC_0RC0RA_1LD1LA_1RA1LD	-	-	learn: no ratio
+1RB0LC_1LC1RD_1RD1LC_0RA1LA	1	2	t50595 too many families (family 680) / t20000 too many families (family 7)
+1RB0LC_1LC0RC_1RD1LC_0RA1LA	1	2	t50515 too many families (family 407) / t20000 too many families (family 577)
+1RB0LC_1RC0RA_1LD0RB_1LA0LD	-	-	learn: no ratio
+1RB0LB_1LC0RD_1LA0LB_0RB1RD	001	4	t50474 too many families (family 353) / t20000 too many families (family 292)
+1RB0LC_1LC0RA_0RD1LD_1LA1RA	011	4	t50051 too many families (family 728) / t20000 too many families (family 181)
+1RB0LC_1RC1LB_1LA1RD_0RA0RC	-	-	learn: no separators
+1RB0LC_1RC0RD_1LA0LC_1RD0RA	-	-	learn: no ratio
+1RB0LC_1RC0RA_1LA1LD_1LA1LB	01	2	t50279 exploration does not settle / t20000 too many families (family 632)
+1RB0LC_1RC1RD_1LA1RC_0RB0RD	-	-	learn: no bounded-partial-sum automaton
+1RB0LD_0LC0RB_1RA1LD_1RB1LC	-	-	learn: no ratio
+1RB0LC_1RC1RD_1LA1LC_1RB0RA	011	4	t50079 too many families (family 1) / t20000 too many families (family 529)
+1RB0LD_0LC0RC_1RA1LD_1LC1LA	-	-	learn: ratio 1
+1RB0LD_0LC1RC_1LA0RD_1LB1RD	1	2	t50256 too many families (family 742) / t20000 too many families (family 666)
+1RB0LD_1LC0RA_1LA1LC_1RA0LC	1	2	t50303 unfold depth (family 14) / t20000 too many families (family 505)
+1RB0LC_1RC0RB_0LD1RB_0LA1LD	011	4	t50206 too many families (family 255) / t20000 too many families (family 327)
+1RB0LD_1LC0RD_0RA1LA_1RC1LD	1	2	t50270 too many families (family 470) / t20000 too many families (family 585)
+1RB0LD_1LC1RC_0RA1LA_1RC1LD	1	2	t50634 too many families (family 743) / t20000 too many families (family 776)
+1RB0LD_1LC0RD_1LA0LB_1RB1RA	-	-	learn: no bounded-partial-sum automaton
+1RB0LD_1RC0RA_1LA0RA_0LA1LD	001	4	t50281 too many families (family 675) / t20000 too many families (family 583)
+1RB0LD_1RC0RA_1LA0RD_1LA1LC	-	-	learn: no bounded-partial-sum automaton
+1RB0LC_1RC1RB_1LA0RD_1LC0RB	1	2	t50769 unfold depth (family 16) / t20000 too many families (family 686)
+1RB0LD_1RC0RB_0LA0RD_1LA1RD	-	-	learn: no long runs
+1RB0LD_1RC0RB_1LA0RC_1LA0LD	-	-	learn: no long runs
+1RB0LD_1RC0RB_1LD0RA_1LA0LC	-	-	learn: no ratio
+1RB0LD_1RC1RA_1LA0RA_0RC0LC	011	2	t50244 too many families (family 582) / t20000 too many families (family 326)
+1RB0RA_0LC0RA_1LD1RC_1RA1LB	001	4	t50034 too many families (family 604) / t20000 too many families (family 512)
+1RB0LD_0LC1RC_1RD1LD_1LA0RB	011	4	t50265 too many families (family 436) / t20000 too many families (family 709)
+1RB0LD_1RC0RA_1LA1RB_0LA1LD	0011	3	t50001 too many families (family 652) / t20000 too many families (family 770)
+1RB0RA_0LC0RD_1RA0LD_1LC1RD	-	-	learn: no long runs
+1RB0RA_0LC0RD_1LD1LB_1RA0LB	-	-	learn: no ratio
+1RB0RA_0LC0RA_1LD1RC_1RB1LB	001	4	t50034 too many families (family 604) / t20000 too many families (family 512)
+1RB0RA_0LC1RA_0LD1LC_1RA0LA	-	-	learn: no ratio
+1RB0RA_1LC0RB_1RA0LD_1LC0LC	-	-	learn: no ratio
+1RB0RA_1LC0RD_1LD0LB_1RA0LC	-	-	learn: no ratio
+1RB0RA_1RC0RD_1LD1LC_1RA0LC	-	-	learn: ratio 0
+1RB0RB_0LC1RA_1LD1LC_1RB1LB	-	-	learn: no ratio
+1RB0RB_1LC0RA_1LD0LC_1RB0LD	-	-	learn: no ratio
+1RB0RB_1LC1RA_0LA1LD_1LA0LC	-	-	learn: ratio 1
+1RB0LD_1RC0LA_1LD0RB_1LB1LD	1	2	t50391 too many families (family 14) / t20000 too many families (family 607)
+1RB0RC_0LC1LB_0LD1LC_1RD0RA	-	-	learn: left samples disagree on F states (250 of 1262)
+1RB0RB_1LC1RC_0RA1LD_1RC0LD	-	-	learn: no ratio
+1RB0RC_1LB1RA_0RB0LD_1LC1LD	-	-	learn: no ratio
+1RB0RC_1LC0RD_1RA0LD_1LC1LB	-	-	learn: no bounded-partial-sum automaton
+1RB0RC_1LC0RC_1RA0LD_0LC1LD	001	4	t50281 too many families (family 1) / t20000 too many families (family 281)
+1RB0RC_1LC1LD_1RD1LB_1RA0LB	-	-	learn: ratio 1
+1RB0RC_1LC1LD_1RA0LB_1LC1LA	01	2	t50325 exploration does not settle / t20000 too many families (family 52)
+1RB0RD_0LC0RA_1RC1LD_1LB1RA	-	-	learn: no separators
+1RB0RD_1LC0LB_1RA0LB_1RD0RC	-	-	learn: no ratio
+1RB0RD_1LC0LC_1RD1LB_0RB1RA	-	-	learn: no ratio
+1RB0RD_1LC0RA_1LD0LC_1RA0LB	-	-	learn: no ratio
+1RB0RD_1LC1LB_1RA0LB_0RB1RA	011	4	t50699 too many families (family 594) / t20000 too many families (family 799)
+1RB0RA_0LC1RA_0LD1LC_1LA1LC	-	-	timeout
+1RB0RA_0LC1RA_0LD1LC_1LA1RB	-	-	timeout
+1RB0RD_1RC1RA_1LD1LC_1RB0LC	011	4	t50079 too many families (family 1) / t20000 too many families (family 529)
+1RB0RD_1LC1LB_1RA0LB_1LC1RA	011	4	t50829 too many families (family 799) / t20000 too many families (family 798)
+1RB1LA_0RC1LC_1RD0LA_0LA0RA	1	2	t50689 too many families (family 740) / t20000 too many families (family 449)
+1RB1LA_0RC1LC_1RD0LA_0LA1RB	1	2	t50125 too many families (family 535) / t20000 too many families (family 525)
+1RB1LA_0RC1LC_1RD0LA_1LA0RA	1	2	t50273 too many families (family 230) / t20000 too many families (family 726)
+1RB1LA_0RC1LC_1RD0LA_1LA1RB	1	2	t50071 too many families (family 607) / t20000 too many families (family 7)
+1RB1LA_0RC1LC_1RD0LA_1LB0RA	1	2	t50253 too many families (family 742) / t20000 too many families (family 666)
+1RB1LA_1LA1RC_0LD0RB_0LA1LD	-	-	learn: no ratio
+1RB1LA_1LC0RA_1LA1LD_0LC0LD	-	-	learn: no bounded-partial-sum automaton
+1RB1LA_1LC0RA_1LD0LC_0RB0LA	-	-	learn: no long runs
+1RB1LA_0RC1LC_1RD0LA_1LB1RB	1	2	t50343 too many families (family 577) / t20000 too many families (family 783)
+1RB1LA_1LC1RC_0RA0LD_1LC0LD	001	4	t50193 too many families (family 704) / t20000 too many families (family 249)
+1RB1LA_1LC1RD_1LD0LC_0RA0LC	001	4	t50193 too many families (family 704) / t20000 too many families (family 249)
+1RB1LA_1RC0LD_0RD0RB_1LA1LB	-	-	learn: no ratio
+1RB0RC_1LC1RA_1RA0LD_0LC1LD	-	-	timeout
+1RB1LB_0LC0RD_1LA1RC_1RB0RD	001	4	t50034 too many families (family 604) / t20000 too many families (family 512)
+1RB1LB_0LC1RC_1LA0RD_1LB1RD	1	2	t50346 too many families (family 577) / t20000 too many families (family 783)
+1RB1LB_0LC1RD_1LA0RB_1LB0RD	011	4	t50201 too many families (family 433) / t20000 too many families (family 671)
+1RB1LB_0LC1RD_1LA1LC_1RB0RB	-	-	learn: no ratio
+1RB1LB_1LC0RD_1RD0LB_0LA1RA	011	4	t50365 too many families (family 271) / t20000 too many families (family 368)
+1RB1LB_1RC1LD_1LD0RC_0LB0LA	-	-	learn: no ratio
+1RB1LC_0LA1RD_1LA0LC_0RB0RD	-	-	learn: no long runs
+1RB0RD_1LC1LB_1RD0LB_1RD1RA	-	-	timeout
+1RB1LC_0LC0RB_1RD1LA_1RB0LA	-	-	learn: no ratio
+1RB1LB_0LC1RD_0RA1LC_0RB0RD	01	2	t50773 too many families (family 760) / t20000 too many families (family 737)
+1RB1LC_0RC1RD_1LA0LA_1RC0RB	-	-	learn: ratio 1
+1RB1LC_1LA1RB_0RD0LA_0RB1RD	-	-	learn: no ratio
+1RB1LC_0RC0RB_1LD1RB_0LA1LC	001	4	t50261 too many families (family 1) / t20000 too many families (family 282)
+1RB1LC_1LC1RB_0LD1RD_1LA0RB	1	2	t50061 too many families (family 509) / t20000 too many families (family 726)
+1RB1LC_1RC0RB_0LA1LD_1LC1RB	-	-	learn: no long runs
+1RB1LC_1RC0RB_0LD0RB_1LA1RD	001	4	t50043 too many families (family 604) / t20000 too many families (family 512)
+1RB1LC_1LC0RD_1LA0LB_0RB1RD	0011	3	t50064 too many families (family 737) / t20000 too many families (family 720)
+1RB1LD_0RC0LB_1LC1RA_0RD0LA	001	4	t50708 too many families (family 712) / t20000 too many families (family 80)
+1RB1LD_0RC0LD_1LC1RA_1LB0LA	-	-	learn: ratio 1
+1RB1LD_0RC0RB_1LC1RA_0LA0LA	-	-	learn: no ratio
+1RB1LD_0RC0RB_1LC1RA_0LA0RA	-	-	learn: no ratio
+1RB1LD_0RC0RB_1LC1RA_1RA0LA	-	-	learn: no ratio
+1RB1LD_0RC0RB_1LC1RA_1RA0LD	-	-	learn: ratio 0
+1RB1LC_0RC0RB_1RD1RB_0LA1LD	001	4	t50123 too many families (family 615) / t20000 leaf too long (family 127)
+1RB1LD_0RC1RA_1LD1RA_0LA0LD	001	4	t50281 too many families (family 678) / t20000 too many families (family 574)
+1RB1LD_1RC0LD_0LA0RA_1LA1LB	-	-	learn: ratio 1
+1RB1LD_1RC0RB_0LA1LD_1LC1RB	-	-	learn: no long runs
+1RB1LD_1RC0RB_0LA1RB_0LD1LA	-	-	learn: no long runs
+1RB1LD_0RC1RA_1RD1RA_0LA0LD	001	4	t50095 too many families (family 706) / t20000 too many families (family 145)
+1RB1LB_0LC1RD_1LA1LA_1LB0RD	-	-	timeout
+1RB1LD_1RC1RA_0LA0RB_1LB0LA	-	-	learn: no ratio
+1RB1RA_0LC0RA_1RC1LD_1LC0LB	-	-	learn: no ratio
+1RB1RA_1LC0RD_1RA0LB_1LB0RA	-	-	learn: no bounded-partial-sum automaton
+1RB1RA_1LC1RC_0RA1LD_1LC0LC	-	-	learn: no ratio
+1RB1LD_0LC0RB_1RA1LA_0LD0LA	01	2	t50776 too many families (family 212) / t20000 too many families (family 37)
+1RB1RA_1LC0RA_1LA1LD_1LC0LB	011	4	t50094 too many families (family 382) / t20000 too many families (family 505)
+1RB1RC_0LC0LB_1RD1LB_0RA1RC	001	4	t50607 too many families (family 1) / t20000 too many families (family 282)
+1RB1RC_1LC0RD_0RA1LD_1RC0LD	-	-	learn: no long runs
+1RB1RC_1LC0RC_1RA0LD_0RB0LB	011	2	t50254 too many families (family 582) / t20000 too many families (family 326)
+1RB1RC_1LC1RA_1LD0RA_0RB0LB	-	-	learn: ratio 1
+1RB1RC_1LC0RD_1LD0LB_1RB1RA	01	2	t50650 exploration does not settle / t20000 too many families (family 3)
+1RB1RD_0RC0RA_1LC0LD_1RA0LD	-	-	learn: no ratio
+1RB1RC_1RC0RB_0LD1RB_0LA1LD	011	4	t50162 too many families (family 748) / t20000 too many families (family 347)
+1RB1RD_1LC0RA_1LA0LB_1RB1RC	01	2	t50650 exploration does not settle / t20000 too many families (family 3)
+1RB1RD_1LC0RA_1LD0LB_1RB0LA	-	-	learn: no bounded-partial-sum automaton
+1RB1RD_1LC1LB_1RA0LB_1RA0RC	011	4	t50467 too many families (family 2) / t20000 too many families (family 1)
+1RB1RD_1LC1LB_1RA0LB_1RD0RC	011	4	t50385 too many families (family 1) / t20000 too many families (family 2)
+1RB1RD_1LC1RB_1RA0LB_0RA0RD	-	-	learn: no bounded-partial-sum automaton
+1RB1RA_0LC0RA_1LC1LD_1LA0LC	-	-	timeout
+1RB1RB_1LC1RC_0RA1LD_1RC0LD	-	-	timeout

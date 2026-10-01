@@ -4866,6 +4866,133 @@ LG3_MAXFAM=2000 python3 tools/closeouttr/blc3/learn3.py find ROWS.txt out.jsonl 
 (cd tools/closeouttr/blc3 && LANG_NAME=lang3 python3 run1.py 20000 0)                                     # the worked example, hand language
 ```
 
+#### 7.4.BLC4 Block lists beyond the one-cell `1` unit: per-side units, end words, split elements; the `0`-block lists get through ListGlue2Tr (2026-10-01)
+
+Workstream BLC4 (batch tag `BLC4`), over BLC3's residue: the 216 rows of
+`blc3/rows234.txt` still open (`blc4/rows216.txt`).  The counters (LE/LE2),
+the Collatz-like rows (TA) and the flat-block hybrids / cube sweep counters
+were not touched.  **No new Coq**: `ListGlue2Tr`'s item kinds are
+`(pre, u)` with `u` any word, chosen per transition, so multi-cell and
+alternating units, end words and per-side forms are all plain items.
+Everything below is finder work (`tools/closeouttr/blc4/`, untrusted).
+
+**1. One row through the kernel first.**  The first row taken end to end
+was a `0`-block halving list, `1RB0LA_1LC0RD_1LA1RB_1LC1RC`
+(`1111 0^994 11011 0^497 111111 0^246 ...`).  Three things were missing
+from BLC3's finder, found in this order:
+
+1. *The unit is per side.*  The sweep rewrites the elements it passes:
+   left of the head the list is `10 1^749 0110 1^375 0110 ...`, `1`-blocks
+   with separator `0110`, while the right of the head (and the anchor) is
+   the `0`-block list.  So each side has its own unit, separators and item
+   kinds.  The left automaton is learned on F's own states: each left
+   sample (the elements wholly left of the head, less the nearest) is
+   aligned with the anchor list it was swept from.
+2. *End words, as ordinary items.*  A constant word beyond `b_0` (`10`)
+   ends a LEFT tail in a terminator item: kind `(word, unit)`, exponent 0,
+   relation `up, a = 0, d = 0` (so `e = 0` and the pred `b_0` is free),
+   into an accepting state.  A constant word after the last block is the
+   RIGHT tail's END item, one kind per word, pinning `b_k` as BLC3's did.
+   The list is read from `b_0` while the gaps are separators; the cells
+   after the last such element are the end word.
+3. *Split elements.*  While the head rewrites an element, its two halves
+   sit in the window as two blocks: `1^x 0 [1] 0^y` (two units), or
+   `1^x 0 [1] 1^z` (one unit, a marker).  The list relation is on their
+   SUM, `x + y = a z + d`, and that set has no nonnegative affine
+   parametrisation (Karr's hull gives `y = c - x`).  The finder marks a
+   split (two window blocks within 3 cells of each other around the head,
+   of different units or with no list relation), puts both halves'
+   residues mod `a` in the family key (`NeedMod` refines the region when a
+   leaf lands with a residue not fixed), and, when the data only has
+   constant `z`, widens the hull along the two "element grows" directions
+   `a e_x + e_z`, `a e_y + e_z`.  `z` then becomes a two-variable block,
+   which is harmless while the split lasts: TriGlue only refuses to START
+   a leaf on a multi-variable block, and the head reaches `z` only once a
+   half is gone.
+
+The row's certificate has 123 families; `CBT_BLC4_00` compiles in 6.6 s,
+`Print Assumptions` shows `functional_extensionality_dep` only.
+
+**2. Multi-cell units** (`(110)^611 000 (011)^153`, `(10)^434 (01)^217`,
+`(100)^788 0000 (001)^197`).  One tape has several block spellings
+(`11 (011)^e` is `(110)^e 11`) and the checker compares segments
+syntactically.  So the finder fixes one: in each side's nearest-first
+order a multi-cell block is pushed as far from the head as it goes (no
+more `SRot 1` applies).  That depends only on cells beyond the block,
+which a leaf that does not cross it never touches; a leaf that crosses a
+block ends with the `SRotL 1` / `SRotR 1` steps that restore the form
+(LapDecider steps, so no Coq change).  On a concrete tape the same form
+is the periodic stretch aligned to its far end, which is how the learner
+parses anchors (`lg4.parse4`).  A separator symbol is then
+`(unit before, gap, unit after)`, so alternating rotations need no special
+case.  The centre fit (F) gets a coordinate-descent fallback when the
+brute force is too large (8 separator words x 3 position classes on the
+`(100)` lists).
+
+**3. What else the learner needed** (each found on a row):
+
+* the boot at the first anchor from which ten in a row are F-lists (the
+  `(110)` lists' far end carries a slowly growing `1^k` before ~100,000
+  steps, outside the learned END table);
+* right tails' other forms: the return sweep leaves the right part in a
+  different spelling (`B10 1 B01` on a `(10)` list); right samples aligned
+  from the far end add their symbols to F as alternative edges between the
+  same F-states;
+* a left end that is blank in some rounds and a word in others (both
+  accepted);
+* `learn3.snaps` keeps ~40,000 split snapshots of a `(10)` list (100M
+  strings, OOM); the rows are kept as text and parsed on use.
+
+**4. Yields.**
+
+| batch | rows | compile (container) |
+|---|---:|---:|
+| `CBT_BLC4_00` | 1 | 6.6 s |
+| `CBT_BLC4_01` | 6 | 102 s (with `make`'s dependency scan, under a 3-job sweep) |
+| `CBT_BLC4_02` | 5 | 42 s (the same) |
+
+**12 rows boarded**, all of them ratio-2 `0`-block halving lists with
+`11011` / `111111` separators.  They come from the first sweep
+(`blc4/sweep1.tsv`; 12 of the 27 `0`-block lists, 4 jobs, 300 s a row).
+`ci_costs.tsv` lists the three batches at 15 s, 200 s and 90 s, and
+`ci_shard.py --check 6` passes.  `Print Assumptions` on `cv_BLC4_00_0000`,
+`cv_BLC4_01_0000` and `cv_BLC4_02_0004` shows
+`functional_extensionality_dep` only.  CI (the PR's diff job) is green on
+every push.
+
+The last sweep (`blc4/sweep5.tsv`) ran the finished finder over the other
+204 rows: 189 at 4 jobs and 400 s a row (about 2 h 40 min), plus the 15
+`0`-block lists left over from the first sweep.  It certified no further row.
+
+**5. Residue, and where each group stops.**
+
+| rows | what (learned unit, ratio) | where it stops | next |
+|---:|---|---|---|
+| 13 | `0`-block halving lists (`0`, 2) | **the exploration closes**, but the liveness search finds no ranking for the rare instruction (`D0` on 11 rows, `A0` on 2).  It fires only at the list's OVERFLOW, at intervals growing x4 (`1RB0LA_1LC1RC_1LA1RD_1RB0RB`: 17,496, 67,800, 266,712, 1,057,752, 4,212,696 steps) | a numeral-valued ranking, which is a checker change (a new file beside `ListGlue2Tr`).  BLC2 and BLC3 predicted it; these are the first rows that need it.  `lrk`'s rank is window-affine plus a weight per tail item, and the distance to the overflow is about `a^k`.  The rank would have to read the tail as a numeral, `r(item :: T) = c_t + a * r(T)`, and the window's shift then rescales the unknown rest, so the edge inequality needs the folded and unfolded item counts matched.  That is research, not finder work |
+| 27 | `1`-block lists (`1`, 2): BLC3's 26 and their cousins | too many families (cap 800; 3,000 tried on one row) | the head carries a `0` MARKER through an element (`1^x 0 [1] 1^z`, now a split element).  The right windows then keep a far-end pair whose digit is outside F (`-3` against F's `-1`/`-2`), so no right fold applies and the window grows.  `blc4/diag4.py` shows the first explored families differ from the real run's only in the right tail's class: unfolding from the boot enumerates every suffix class F allows, and the machine uses few of them |
+| 45 | multi-cell lists, ratio 4: `(001)`/`(100)` 24, `(011)`/`(110)` 21 | too many families | `b_0` is rewritten in SEVERAL passes per round (`(110)^326 0 [1] (011)^202`, then `(110)^502 1 [1] (101)^26`, ...).  The left samples are rare (85 on the `(100)` row: the head reaches `b_2` once in 16 rounds), and the left folds miss the digits of elements the sweep has half rewritten.  Widening the left edges by one digit (`LG4_LWIDEN`) did not help |
+| 16 | `(01)`/`(10)` lists (2, 9 rows), `(011)` ratio 2 (4), `(0011)` ratio 3 (3) | too many families | the head re-enters passed elements (carry-like), so the left windows hold elements mid-rewrite and no left tail forms |
+| 94 | not learned (`blc4/sweep5.tsv`) | learner: no ratio 45, no long runs 19, ratio 0/1 14, no BPS 9, no separators 4, left samples disagree 1 | mostly NOT lists at the anchor: bouncers (`(10)^5 1 (10)^5 1 ...`), one long block (`1^1991`), spread tapes, a list only at the far end.  A few are lists of a kind the learner does not yet read: two unit CLASSES alternating (`1^9 0^15 1^17 0^31 ...`, ratio 0), separators of 7 to 8 cells on a `0`-list (`1000001` / `10101001`) |
+| 9 | (no learn record) | time-out at 400 s | a longer budget on the box |
+
+Kept from BLC3: no row reached a liveness failure EXCEPT the 13 above, and
+the boarded rows' item-additive rankings needed nothing new.
+
+**Commands** (resumable; `find` skips rows already in its output, and
+re-executes itself under `PYTHONHASHSEED=0` so a run is reproducible):
+
+On the 14-core box the whole sweep is about 216 x 400 / 12 s, so 2 h at
+`--jobs 12`, at most.  Expect it to reproduce the table above.  The
+numeral rank is the lever for the 13 closing rows, and the right-tail
+class problem for the rest.
+
+```
+python3 tools/closeouttr/blc4/learn4.py find tools/closeouttr/blc4/rows216.txt blc4.jsonl --jobs 12 --timeout 400
+python3 tools/closeouttr/blc4/learn4.py batch blc4.jsonl --tag BLC4 --chunk 6
+python3 tools/closeouttr/blc4/diag4.py SPEC 3000 400      # explored families the real run never visits
+LG4_MAXFAM=3000 python3 tools/closeouttr/blc4/learn4.py find ROWS.txt out.jsonl --jobs 12 --timeout 1800   # the time-outs
+```
+
 #### 7.4.LE The counters the ladder emitter could not close: five closure gaps, a visit phase per instruction, 181 boarded (2026-09-30)
 
 Workstream LE (batch tag `LE`), over the counters still open at the start:
