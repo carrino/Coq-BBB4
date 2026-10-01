@@ -50,6 +50,67 @@ def minimum_widths(fills, nph):
     return None
 
 
+def fam_cells(fam, ds, ph):
+    tails = fam.get('terminators_by_phase') or [fam['terminator']]
+    out = list(fam['near_head_prefix'])
+    for d in ds:
+        out.extend(fam['digits'][d])
+    return out + list(tails[ph])
+
+
+def advance_boot(cert, minw, members=64, steps=400000):
+    """walk the family's own successor (fills narrowing as they do) from the
+    boot to the first member at or above its phase's floor, and find the
+    index at which the machine stands on it (up to trailing blanks)"""
+    fam = cert['family']
+    fills = cert.get('fill_by_phase') or [cert['fill']]
+    b = fam['base']
+    ds, ph = list(cert['boot']['digits_lsb_first']), cert['boot'].get('phase', 0)
+    for _ in range(members):
+        if len(ds) >= minw[ph]:
+            break
+        if all(d == b - 1 for d in ds):
+            f = fills[ph]
+            w = len(ds) + f['widens_by']
+            mid = w - len(f['target_prefix']) - len(f['target_suffix'])
+            if mid < 0:
+                return None
+            ds = (list(f['target_prefix']) + [f['target_fill_digit']] * mid
+                  + list(f['target_suffix']))
+            ph = f['lands_in_phase']
+        else:
+            i = 0
+            while ds[i] == b - 1:
+                ds[i] = 0
+                i += 1
+            ds[i] += 1
+    else:
+        return None
+    want = _rstrip0(fam_cells(fam, ds, ph))
+    other = _rstrip0(fam['other_side_cells'])
+    q0, hs, right = 'ABCD'.index(fam['state']), fam['head'], fam['side'] == 'R'
+    tab = E.parse_pins_tab(cert['spec'])
+    L_, R_, h, q = [], [], 0, 0
+    for t in range(steps):
+        if q == q0 and h == hs:
+            side, oth = (R_, L_) if right else (L_, R_)
+            if _rstrip0(side) == want and _rstrip0(oth) == other:
+                return dict(steps_from_blank=t, digits_lsb_first=ds, phase=ph,
+                            cells=fam_cells(fam, ds, ph))
+        e = tab[(q, h)]
+        if e is None:
+            return None
+        wv, d, nq = e
+        if d == 'R':
+            L_.insert(0, wv)
+            h = R_.pop(0) if R_ else 0
+        else:
+            R_.insert(0, wv)
+            h = L_.pop(0) if L_ else 0
+        q = nq
+    return None
+
+
 def closure_data_narrow(cert, tab):
     fam = cert['family']
     fills = cert.get('fill_by_phase') or [cert['fill']]
@@ -332,10 +393,9 @@ From BBB4.Checkers Require Import LadderCheckNarrowTr.
 
 
 def emit_closure_narrow(cert, tab, mid):
-    try:
-        cd = closure_data_narrow(ORIG, tab)
-    except NoClosure as e:
-        return E.CLOSURE_NONE % e, None
+    cd = S.two_pass(closure_data_narrow, ORIG, tab)
+    if isinstance(cd, NoClosure):
+        return E.CLOSURE_NONE % cd, None
     b = cd['b']
     n0i, sti, n0f, stf = cd['n0i'], cd['sti'], cd['n0f'], cd['stf']
     nph, ph0, pv, minw = cd['nph'], cd['ph0'], cd['pv'], cd['minw']
@@ -539,20 +599,13 @@ def main():
     # a boot below its phase's floor moves to the next member at or above it
     fills = cert.get('fill_by_phase') or [cert['fill']]
     minw = minimum_widths(fills, len(fills))
-    if minw is not None:
-        t = cert['boot']['steps_from_blank']
-        for _ in range(64):
-            b0 = cert['boot']
-            if len(b0['digits_lsb_first']) >= minw[b0.get('phase', 0)]:
-                break
-            try:
-                t, ds, ph, cells = E.qh_boot(cert, t)
-            except NoClosure:
-                break
-            cert['boot'] = dict(b0, steps_from_blank=t, digits_lsb_first=ds,
-                                phase=ph, cells=cells)
+    b0 = cert['boot']
+    if minw is not None and len(b0['digits_lsb_first']) < minw[b0.get('phase', 0)]:
+        nb = advance_boot(cert, minw)
+        if nb is not None:
+            cert['boot'] = dict(b0, **nb)
             if args.qh:
-                E.TR_QH = t
+                E.TR_QH = nb['steps_from_blank']
     ORIG = copy.deepcopy(cert)
     # the Fam record states f_s : nat; the narrowing rides beside it
     for f in (cert.get('fill_by_phase') or []) + ([cert['fill']] if cert.get('fill') else []):

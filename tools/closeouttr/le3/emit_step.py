@@ -45,6 +45,11 @@ LC = E.LC
 nest = E.nest
 
 
+# nested programs are costly (seconds an arm): the emitters try every arm
+# without them first, and again with them only if that fails
+NEST_OK = [True]
+
+
 class Arms:
     """the arm search shared by the LE3 emitters: a chain, a chain that lands
     off its target only by blanks beside a known-empty tail ([ceqL]), or a
@@ -74,6 +79,8 @@ class Arms:
                 return ch
             if got is not None and got[2] > 0 and nest.ceqL(el, er, got[0], c1):
                 return ('NEST', [('NCh', ch)], [])
+        if not NEST_OK[0]:
+            raise NoClosure('%s: no chain (nested programs off)' % what)
         return self.nested(el, er, c0, c1, what, 'no chain')
 
 
@@ -136,6 +143,22 @@ def inner_coq(mid, inner):
         '(mkLRule (%s) (%s) %d %d, %s)' % (coq_conf(l), coq_conf(r), ca, cb,
                                           coq_chain(ch))
         for l, r, ch, ca, cb in inner))
+
+
+def two_pass(fn, cert, tab):
+    """fn(cert, tab) with nested programs off, then on; the closure data or
+    the last NoClosure"""
+    try:
+        NEST_OK[0] = False
+        return fn(cert, tab)
+    except NoClosure:
+        pass
+    finally:
+        NEST_OK[0] = True
+    try:
+        return fn(cert, tab)
+    except NoClosure as e:
+        return e
 
 
 def _resolve_cres(b, s, fills, nph, ds0, ph0):
@@ -498,10 +521,9 @@ From BBB4.Checkers Require Import LadderCheckStepTr.
 
 
 def emit_closure_step(cert, tab, mid):
-    try:
-        cd = closure_data_step(cert, tab)
-    except NoClosure as e:
-        return E.CLOSURE_NONE % e, None
+    cd = two_pass(closure_data_step, cert, tab)
+    if isinstance(cd, NoClosure):
+        return E.CLOSURE_NONE % cd, None
     b, s = cd['b'], cd['s']
     n0i, sti, n0f, stf = cd['n0i'], cd['sti'], cd['n0f'], cd['stf']
     nph, ph0, pv = cd['nph'], cd['ph0'], cd['pv']
