@@ -5754,7 +5754,7 @@ tools/closeouttr/le/board_chunk.sh CBT_LE2_NN
 python3 tools/closeouttr/le2/sweep_detect.py tools/closeouttr/le2/rows_dn_fam.txt tools/closeouttr/le2/sweep_dn.jsonl
 ```
 
-#### 7.4.LE3 LE2's counter residue: the "two-sided" rows are one counter read wrongly; three new generic checkers, 66 boarded (2026-10-01)
+#### 7.4.LE3 LE2's counter residue: the "two-sided" rows are one counter read wrongly; three new generic checkers, 67 boarded (2026-10-01)
 
 Workstream LE3 (batch tag `LE3`), over LE2's residue: the 442 rows of
 `tools/closeouttr/le2/rows_{dn,sp,qh}_{cap,closure,fam,nofam}.txt`, all
@@ -5773,7 +5773,7 @@ file (nothing landed is modified; `Print Assumptions` on every closer shows
 |---|---|---|---|---:|
 | **step counter** | `1RB1LD_1RC0RB_1RD0LD_1LA0LD` (LE2's "mod-3 clock") | a base-4 counter that adds **3** per anchor visit, so its low digit cycles through the residues mod 3 while the high digits count.  valfam tries `STEPS = (1, 2)` only | `Checkers/LadderCheckStepTr.v`: a positional base-`b` `Fam` with step `s` dividing `b - 1`.  The value mod `s` is the digit sum mod `s`, an invariant per phase (`cres`); the successor splits three ways on the LOW digit (`u + s < b`: no carry; a carry through `t^n d`; the top `u t^n`), and the residue pins the top's low digit to one value per phase (`utop`), so the fill law applies as at step 1 | 12 (`CBT_LE3_00`, `_02`) |
 | **terminator run** | `0RB1LA_1RC0LA_0LD1RB_1LB0RC` (LE2's "misaligned narrowing" and its nested-counter class) | `[B1] x (01)^m`: `x` binary over the words `11`/`10`, then a RUN of the terminator word.  Inside a width `x` counts; the top of `x` narrows it by a digit and lengthens the run (`(10)^j (01)^m -> (11)^(j-1) (01)^(m+1)`); an empty `x` refills (`(01)^m -> (11)^(m+1) 01`).  valfam reads it at small widths as a multi-phase family whose fills run `+2, -1` with terminators `01`, `0101`, which no respell states | `Checkers/LadderCheckRunTr.v`: a `Fam` for the digits plus the run word `T`, an end word and the refill law `(a, c)`; a total digit-wise successor; three arm classes (interior `t^n d X`, narrowing `t^j T X`, refill `T^m suf`); liveness by the length of `x` then its value, so refills recur and the fires are read from the refill arms | 41 (`CBT_LE3_01`; 23 never-QH, 18 QH) |
-| **Zeckendorf** | `1RB1RA_0LC1LB_0RC1LD_0RA0LD` (LE2's "fibonacci weights") | a one-cell string with weights 1, 2, 3, 5, ... and no two adjacent ones, then the terminator `01`; valfam's `fibonacci(shifted)`, which `LadderCheck`'s `Fib`/`FibL` (weights 1, 1, 2, ...) do not state | `Checkers/LadderCheckZeckTr.v`: the digit-wise Zeckendorf increment `zinc`; every canonical string is `u (01)^k s` (`u` = `[]` or `[1]`, `s` = `00r`, `0` or empty), giving interior, end and top classes in two kinds; the width bound `fibvl 1 x < fibw (|x|+1)` makes tops recur | 13 (`CBT_LE3_03`, `_04`; 3 QH) |
+| **Zeckendorf** | `1RB1RA_0LC1LB_0RC1LD_0RA0LD` (LE2's "fibonacci weights") | a one-cell string with weights 1, 2, 3, 5, ... and no two adjacent ones, then the terminator `01`; valfam's `fibonacci(shifted)`, which `LadderCheck`'s `Fib`/`FibL` (weights 1, 1, 2, ...) do not state | `Checkers/LadderCheckZeckTr.v`: the digit-wise Zeckendorf increment `zinc`; every canonical string is `u (01)^k s` (`u` = `[]` or `[1]`, `s` = `00r`, `0` or empty), giving interior, end and top classes in two kinds; the width bound `fibvl 1 x < fibw (|x|+1)` makes tops recur | 14 (`CBT_LE3_03`, `_04`, `_05`; 4 QH) |
 
 How each was found:
 
@@ -5791,7 +5791,7 @@ How each was found:
   (`1RB0RD_1LC1RA_0RB0LC_1LD0LA`, words `00`/`10`, run `11`) refills to
   something other than `D0^(m+a)`.  37 of the 41 are LE2 `fam` rows (the
   box's famclose run cannot state them, so it will not double-board them).
-* **Zeckendorf.**  From the step sweep (above): 13 rows, all board.
+* **Zeckendorf.**  From the step sweeps: 14 rows, all board.
 
 The three emitters (`le3/emit_step.py`, `emit_run.py`, `emit_zeck.py`) share
 `emit_ladder`'s header and arm search (`emit_step.Arms`: a chain, a chain off
@@ -5815,7 +5815,7 @@ machine's `(10)^2 0101` never occurs, and the row is a terminator-run
 counter (above).  It is kept (generic, compiled, `le3/emit_narrow.py`) but
 no row is boarded with it.
 
-**Yields** (66 rows; closeout 824 -> **758**):
+**Yields** (67 rows; closeout 824 -> **757**):
 
 | LE2 bucket | rows | step | run | Zeckendorf | open |
 |---|---:|---:|---:|---:|---:|
@@ -5825,10 +5825,10 @@ no row is boarded with it.
 | SP nofam | 20 | | 4 | | 16 |
 | SP fam | 79 | | 13 | | 66 |
 | SP cap / closure | 61 / 6 | | | 8 | 53 / 6 |
-| QH fam | 43 | | 18 | | 25 |
+| QH fam | 43 | | 18 | 1 | 24 |
 | QH nofam / cap | 21 / 32 | | | 3 | 21 / 29 |
 
-**Where the rest stop** (376 of the 442):
+**Where the rest stop** (375 of the 442):
 
 1. **Nested and two-sided counters that are really two counters.**  The
    cited nested example `0RB1RA_0LC0RA_0LD1LD_1RB1LC` is not a clean product:
@@ -5849,7 +5849,11 @@ no row is boarded with it.
    CE3's one `fibonacci` (greedy) row whose interior arm has no chain.
 4. **The rest of the `fam` / `closure` buckets** are LE2's shapes (DN
    carries that sweep the run past the digit, 8-state digit pairs,
-   three-digit fill targets).  The fam/closure step sweep is below.
+   three-digit fill targets).  The step sweep over the 150 fam/closure rows
+   still open (`le3/stpf.jsonl`, steps 3..8, cap 300 s) closes 2: one more
+   Zeckendorf row (boarded, `CBT_LE3_05`) and CE3's greedy `fibonacci` row
+   again (interior arm, no chain).  Of the other 148: no value family 84,
+   families but none closed 54, time cap 10.
 
 ```
 # the container loop (what this section ran)
