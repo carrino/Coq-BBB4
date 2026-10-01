@@ -28,6 +28,7 @@ from lg4 import NeedMod, NonCanon, Req, acoefs, Fail, nfa_maxs  # noqa: E402,F40
 
 RNG = os.environ.get('BLC6_RNG', '1') == '1'
 LOCAL = os.environ.get('BLC6_LOCAL', '1') == '1'
+MAXSPLIT = os.environ.get('BLC6_MAXSPLIT', '0') == '1'
 STATS = collections.Counter()
 
 
@@ -187,9 +188,13 @@ class X6(lg4.X4):
                     cs = acoefs(r_)
                     if len(cs) == 1:
                         k, m_ = cs[0]
-                        STATS['ugemax'] += 1
-                        raise Up(Req('uge', k, (mx - r_[0]) // m_ + 1))
-                    if cs:
+                        if MAXSPLIT:
+                            STATS['ugemax'] += 1
+                            raise Up(Req('uge', k, (mx - r_[0]) // m_ + 1))
+                        # BLC6: no eager split below the upper bound (on a
+                        # depth-counted state it is ~a^c values); the END
+                        # kid asks for the split it needs, locally
+                    elif cs and MAXSPLIT:
                         raise Fail('max on a multi-variable ref')
             def unfold(sd):
                 if len(paths[sd]) >= G.MAXUNF:

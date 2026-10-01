@@ -5,11 +5,13 @@
     python3 tools/closeouttr/blc6/find6.py one SPEC [--out OUT.jsonl]
     python3 tools/closeouttr/blc6/find6.py batch OUT.jsonl --tag BLC6 [--chunk 4]
 
-MP's language (mp_find.get_lang: learn4 with F the anchors' local language
-and the far end from a long run; cached in $MP_CACHE) with a far-end depth
-count in the right states (lang_mp.Lang4D, MP_DEPTH, default 4 here), and
-BLC4's exploration whose mins voids are RANGE voids local to the unfold
-path (rng6.X6, ListGlueRngTr's URng).  The liveness is lx5's (additive,
+MP's language (learn4 with F the anchors' local language and the far end
+from a long run) whose LEFT automaton is learned from every round's turn
+tape over BLC6_T1 steps (learn6, BLC6_LANG=l6, the default; cached in
+$MP_CACHE), with a far-end depth count in the right states
+(lang_mp.Lang4D, MP_DEPTH, default 3 here), and BLC4's exploration whose
+mins voids are RANGE voids and whose case splits are local to the unfold
+path (rng6.X6, ListGlueRngTr's URng / USpl).  The liveness is lx5's (additive,
 else lexicographic); the batch uses lgr_sound or lgrx_sound.
 """
 import argparse
@@ -21,7 +23,8 @@ import sys
 import time
 from multiprocessing import Pool
 
-os.environ.setdefault('MP_DEPTH', '4')
+os.environ.setdefault('MP_DEPTH', '3')
+os.environ.setdefault('BLC6_T1', '30000000')
 HERE = os.path.dirname(os.path.abspath(__file__))
 for d in ('.', '..', '../blc3', '../blc4', '../blc5', '../mp'):
     sys.path.insert(0, os.path.join(HERE, d))
@@ -63,7 +66,7 @@ def find_dir(spec, lang, t0, mir=False, plist=G.PLIST):
     return dict(err='norank %s' % (last,), nfam=len(cert['fams']))
 
 
-LANG = os.environ.get('BLC6_LANG', 'mp')
+LANG = os.environ.get('BLC6_LANG', 'l6')
 
 
 def get_lang(spec):
@@ -76,7 +79,34 @@ def get_lang(spec):
         if lang_mp.DEPTH > 0:
             lang = lang_mp.with_depth(lang)
         return lang, mir, info
+    if LANG == 'l6':
+        return get_lang6(spec)
     return mp_find.get_lang(spec)
+
+
+def get_lang6(spec):
+    """learn6 (MP's language, the left automaton from the turn tapes,
+    LG4_LDROP=0 by default here), cached in $MP_CACHE"""
+    import pickle
+    import lang_mp
+    import learn4
+    import learn6
+    os.makedirs(mp_find.CACHE, exist_ok=True)
+    p = os.path.join(mp_find.CACHE, 'lang6_%s_t%d.pkl' % (spec, learn6.T1))
+    if os.path.exists(p):
+        lang, mir, info = pickle.load(open(p, 'rb'))
+    else:
+        old = learn4.LDROP
+        learn4.LDROP = int(os.environ.get('LG4_LDROP', '0'))
+        try:
+            lang, mir, info = learn6.learn(spec)
+        finally:
+            learn4.LDROP = old
+        pickle.dump((lang, mir, info), open(p, 'wb'))
+    if lang_mp.DEPTH > 0:
+        lang = lang_mp.with_depth(lang)
+        info = dict(info, depth=lang_mp.DEPTH)
+    return lang, mir, info
 
 
 def find_row(spec, t0s=(20000, 100000)):
