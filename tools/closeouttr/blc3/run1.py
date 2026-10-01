@@ -2,6 +2,7 @@ import sys, os, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import lg3, ex1
 import lg_batch as G
+G.MAXFAM = int(os.environ.get("MAXFAM", "200"))
 t0 = int(sys.argv[1]) if len(sys.argv) > 1 else 20000
 nd = int(sys.argv[2]) if len(sys.argv) > 2 else 3000
 t = time.time()

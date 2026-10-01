@@ -50,30 +50,37 @@ VERBOSE = bool(os.environ.get('LG_VERBOSE'))
 
 
 class Lang:
-    """a forward automaton over a list's digits (see the module doc).
+    """a forward automaton over a list's SYMBOLS (see the module doc).  The
+    list b_0, ..., b_k reads as symbols x_i = (w_i, d_i): w_i the separator
+    word between b_i and b_(i+1) (tape order), d_i = b_i - a b_(i+1).
 
-    fwd[(q, d)] = q2   digit transitions (d = b_i - a b_(i+1));
-    end[q] = [(d, bk)] the list may end from q with a last digit d and a
-                        last block of bk cells;
-    q0 the state before d_0; shift: b_0 in a LEFT tail is b_0 + shift of the
-    list F describes (its first digit is read shifted)."""
+    fwd[(q, x)] = q2   transitions;
+    end[q] = [(x, bk)] the list may end from q with a last symbol x and a
+                       last block of bk cells (pinned by an END item);
+    q0 the state before x_0; shift: b_0 in a LEFT tail is b_0 + shift of the
+    list F describes; lstart / lfwd: the LEFT tails' own sub-automaton
+    (b_0's symbols, unshifted, with the state after it; the rest)."""
 
-    def __init__(self, a, unit, sep, fwd, end, q0, shift=0, lfwd=None, lstart=None):
-        self.a, self.unit, self.sep = a, tuple(unit), tuple(sep)
+    def __init__(self, a, unit, fwd, end, q0, shift=0, lfwd=None, lstart=None, seps=None):
+        self.a, self.unit = a, tuple(unit)
         self.fwd, self.end, self.q0, self.shift = dict(fwd), dict(end), q0, shift
-        # the LEFT tails' own forward automaton (default: F): lstart the
-        # digits of b_0 (unshifted) with the state after it, lfwd the rest
         self.lfwd = dict(fwd) if lfwd is None else dict(lfwd)
-        self.lstart = [(d, q2) for (q, d), q2 in self.fwd.items() if q == q0] \
+        self.lstart = [(x, q2) for (q, x), q2 in self.fwd.items() if q == q0] \
             if lstart is None else list(lstart)
+        ws = set(x[0] for (_, x) in self.fwd) | set(x[0] for lst in self.end.values()
+                                                   for x, _ in lst)
+        ws |= set(x[0] for (_, x) in self.lfwd) | set(x[0] for x, _ in self.lstart)
+        self.seps = sorted(set(seps or ()) | ws, key=lambda w: (-len(w), w))
 
     def automaton(self):
         """the lg_batch.NFA of both sides: transitions (side, src = the
-        state nearer the window, kind, dst, rel), and the fold maps
-        fold[(side, q_far, rel)] = transition index"""
+        state nearer the window, kind, dst, rel), and the fold map
+        fold[(side, q_far, kind, rel)] = transition index"""
         nfa = G.NFA()
-        kL = nfa.kind('L', self.sep, self.unit)
-        kR = nfa.kind('R', self.sep, self.unit)
+        u = self.unit
+        kL = {w: nfa.kind('L', tuple(reversed(w)), u) for w in self.seps}
+        kR = {w: nfa.kind('R', tuple(w), u) for w in self.seps}
+        kE = nfa.kind('R', (0,), u)
         fold = {}
 
         def add(sd, q_near, k, q_far, rel):
@@ -82,71 +89,69 @@ class Lang:
                 nfa.tidx[key] = len(nfa.trans)
                 nfa.trans.append(key)
             ti = nfa.tidx[key]
-            old = fold.get((sd, q_far, rel))
+            old = fold.get((sd, q_far, k, rel))
             if old is not None and old != ti:
                 raise Fail('lang: fold not deterministic on side %s' % sd)
-            fold[(sd, q_far, rel)] = ti
+            fold[(sd, q_far, k, rel)] = ti
         a = self.a
         # LEFT: F forward from b_0; 'L0' is the far end (b_0 not read yet)
         byq = collections.defaultdict(list)
-        for (q, d), q2 in self.lfwd.items():
-            byq[q].append((d, q2))
+        for (q, x), q2 in self.lfwd.items():
+            byq[q].append((x, q2))
         seen, todo = set(), []
-        for d, q2 in self.lstart:
-            add('L', ('F', q2), kL, 'L0', (True, a, d + self.shift))
+        for (w, d), q2 in self.lstart:
+            add('L', ('F', q2), kL[w], 'L0', (True, a, d + self.shift))
             todo.append(q2)
         while todo:
             q = todo.pop()
             if q in seen:
                 continue
             seen.add(q)
-            for d, q2 in byq[q]:
-                add('L', ('F', q2), kL, ('F', q), (True, a, d))
+            for (w, d), q2 in byq[q]:
+                add('L', ('F', q2), kL[w], ('F', q), (True, a, d))
                 todo.append(q2)
         nfa.acc.add(('L', 'L0'))
         # RIGHT: the determinised reverse of F from the far end
-        ends = []                      # (q, d, bk)
+        ends = []                      # (q, x, bk)
         for q, lst in self.end.items():
-            for d, bk in lst:
-                ends.append((q, d, bk))
+            for x, bk in lst:
+                ends.append((q, x, bk))
         # the far end: an END item (exponent 0) pins b_k; state = frozenset
-        # of ('Z', q, d, bk): "the last digit d from q, b_k = bk"
+        # of ('Z', q, x, bk): "the last symbol x from q, b_k = bk"
         start = frozenset([('FIN',)])
         rstates = {}
         todo = []
         bybk = collections.defaultdict(set)
-        for q, d, bk in ends:
-            bybk[bk].add(('Z', q, d, bk))
+        for q, x, bk in ends:
+            bybk[bk].add(('Z', q, x, bk))
         for bk, zs in bybk.items():
             s = frozenset(zs)
-            add('R', ('R', s), kR, ('R', start), (False, 0, bk))
+            add('R', ('R', s), kE, ('R', start), (False, 0, bk))
             todo.append(s)
-        # predecessor map of F over the Z states and the digits
-        pred = collections.defaultdict(set)      # (q2, d) -> {q}
-        for (q, d), q2 in self.fwd.items():
-            pred[(q2, d)].add(q)
-        digits = sorted(set(d for (_, d) in self.fwd) | set(d for _, d, _ in ends))
+        pred = collections.defaultdict(set)      # (q2, x) -> {q}
+        for (q, x), q2 in self.fwd.items():
+            pred[(q2, x)].add(q)
+        syms = sorted(set(x for (_, x) in self.fwd) | set(x for _, x, _ in ends))
         while todo:
             s = todo.pop()
             if s in rstates:
                 continue
             rstates[s] = True
-            for d in digits:
+            for x in syms:
                 prev = set()
-                for x in s:
-                    if x[0] == 'Z':
-                        _, q, dz, bk = x
-                        if dz == d:
-                            prev.add(q)
+                for z in s:
+                    if z[0] == 'Z':
+                        if z[2] == x:
+                            prev.add(z[1])
                     else:
-                        prev |= pred.get((x, d), set())
+                        prev |= pred.get((z, x), set())
                 if not prev:
                     continue
                 p = frozenset(prev)
-                add('R', ('R', p), kR, ('R', s), (False, a, d))
+                add('R', ('R', p), kR[x[0]], ('R', s), (False, a, x[1]))
                 todo.append(p)
         nfa.acc.add(('R', ('R', start)))
-        self.nfa, self.foldmap, self.kL, self.kR = nfa, fold, kL, kR
+        self.nfa, self.foldmap, self.kL, self.kR, self.kE = nfa, fold, kL, kR, kE
         return nfa
 
 
@@ -206,12 +211,50 @@ def elements(toks, unit):
     return out
 
 
-def gap_is_sep(g, sep):
-    """a gap that is exactly the separator word (cells only)"""
+def gap_word(g, seps):
+    """the separator word a gap is (cells only), or None"""
     cells = g[3]
     if any(t[0] != 'c' for t in cells):
-        return False
-    return tuple(t[1] for t in cells) == tuple(sep)
+        return None
+    w = tuple(t[1] for t in cells)
+    return w if w in seps else None
+
+
+def parse(toks, unit, seps):
+    """elements() with the separators merged: a gap, a literal run of the
+    unit and a gap that together spell a separator word are one gap (the
+    word 010 between two runs of 1, say).  The finder's data and its
+    exploration parse by this one function."""
+    el = elements(toks, unit)
+    sepset = set(seps)
+    maxw = max([len(w) for w in seps] + [0])
+    out = []
+    i = 0
+    while i < len(el):
+        x = el[i]
+        if x[0] == 'G' and out and out[-1][0] == 'E' and i + 2 < len(el):
+            # try the longest merge G E G (E literal) ... that spells a word
+            best = None
+            j = i
+            cells = list(x[3])
+            while j + 2 < len(el) and el[j + 1][0] == 'E' and el[j + 2][0] == 'G':
+                mid = toks[el[j + 1][1]:el[j + 1][2]]
+                if any(t[0] != 'c' for t in mid):
+                    break
+                cells = cells + list(mid) + list(el[j + 2][3])
+                if len(cells) > maxw:
+                    break
+                if tuple(t[1] for t in cells) in sepset and j + 3 < len(el) and el[j + 3][0] == 'E':
+                    best = (j + 2, tuple(cells))
+                j += 2
+            if best is not None:
+                j2, cells = best
+                out.append(('G', x[1], el[j2][2], cells))
+                i = j2 + 1
+                continue
+        out.append(x)
+        i += 1
+    return out
 
 
 def rel_of(up, a, p, e):
@@ -418,9 +461,9 @@ def nfa_maxs(nfa):
                     ok = False
                     break
                 elif up:
-                    b = (m[dst] - d) // a
+                    b = (m[dst] + max(-d, 0)) // a      # ListGlue2Tr.rubound
                 else:
-                    b = a * m[dst] + d
+                    b = a * m[dst] + max(d, 0)
                 best = max(best, b)
             if ok and trs[st]:
                 m[st] = max(best, 0)
@@ -630,7 +673,7 @@ class X3(G.Explorer):
     def fam_of(self, q, h, L, R, tails, boot=False):
         lang = self.lang
         toks = tape_tokens(L, h, R)
-        el = elements(toks, lang.unit)
+        el = parse(toks, lang.unit, lang.seps)
         hidx = next(i for i, t in enumerate(toks) if t[-1] == 'H')
         # element distance from the head
         Es = [k for k, x in enumerate(el) if x[0] == 'E']
@@ -665,13 +708,14 @@ class X3(G.Explorer):
                 cur = 'L0'
         k = 0
         while cur is not None and k + 2 < len(el) and el[k][0] == 'E' and \
-                el[k + 1][0] == 'G' and gap_is_sep(el[k + 1], lang.sep) and \
+                el[k + 1][0] == 'G' and gap_word(el[k + 1], lang.seps) is not None and \
                 el[k + 2][0] == 'E' and dist(k) > KEEP and \
                 all(toks[i][-1] == 'L' for i in range(el[k][1], el[k + 1][2])):
             d = rel_of(True, a, el[k + 2][3], el[k][3])
             if d is None:
                 break
-            ti = self.foldmap.get(('L', cur, (True, a, d)))
+            w = gap_word(el[k + 1], lang.seps)
+            ti = self.foldmap.get(('L', cur, lang.kL[w], (True, a, d)))
             if ti is None:
                 break
             fl.insert(0, (ti, el[k][3]))
@@ -691,18 +735,19 @@ class X3(G.Explorer):
         if cur is None:
             if el and el[-1][0] == 'E' and not acoefs(el[-1][3]) and dist(k) > KEEP \
                     and all(toks[i][-1] == 'R' for i in range(el[k][1], el[k][2])):
-                ti = self.foldmap.get(('R', start, (False, 0, el[-1][3][0])))
+                ti = self.foldmap.get(('R', start, lang.kE, (False, 0, el[-1][3][0])))
                 if ti is not None:
                     fr.insert(0, (ti, (0, ())))
                     cur = self.nfa.trans[ti][1]
         while cur is not None and k - 2 >= lo and el[k][0] == 'E' and \
-                el[k - 1][0] == 'G' and gap_is_sep(el[k - 1], lang.sep) and \
+                el[k - 1][0] == 'G' and gap_word(el[k - 1], lang.seps) is not None and \
                 el[k - 2][0] == 'E' and dist(k) > KEEP and \
                 all(toks[i][-1] == 'R' for i in range(el[k - 1][1], el[k][2])):
             d = rel_of(False, a, el[k - 2][3], el[k][3])
             if d is None:
                 break
-            ti = self.foldmap.get(('R', cur, (False, a, d)))
+            w = gap_word(el[k - 1], lang.seps)
+            ti = self.foldmap.get(('R', cur, lang.kR[w], (False, a, d)))
             if ti is None:
                 break
             fr.insert(0, (ti, el[k][3]))
@@ -893,7 +938,7 @@ def find_dir(spec, lang, t0, mir=False, ndata=G.NDATA, plist=G.PLIST):
         lv = G.l_live_search(cert, tabw, fired, P)
         if isinstance(lv, dict):
             cert.update(lv)
-            err = G.c_check(cert, tab)
+            err = G.c_check(cert, tab) or (None if c_maxs_ok(cert) else 'maxs')
             if err:
                 return dict(err='check: ' + err)
             return cert
@@ -910,35 +955,31 @@ def c_maxget(cert, left, s):
     return None
 
 
+def c_rubound(tr, md):
+    """ListGlue2Tr.rubound"""
+    a, dp, dn = tr['a'], tr['dp'], tr['dn']
+    if tr['up']:
+        if a == 0 or md is None:
+            return None
+        return (md + dn) // a
+    if a == 0:
+        return dp
+    if md is None:
+        return None
+    return a * md + dp
+
+
 def c_maxs_ok(cert):
-    """ListGlue2Tr.maxs_ok: a listed state is not accepting, and each of its
-    transitions bounds the ref by its own"""
+    """ListGlue2Tr.maxs_ok"""
     for l_, st, v in cert.get('maxs', []):
         if G.c_accb(cert, l_, st):
             return False
         for tr in cert['trans']:
             if tr['left'] != l_ or tr['src'] != st:
                 continue
-            a, dp, dn = tr['a'], tr['dp'], tr['dn']
-            if not tr['up'] and a == 0:
-                if dp - dn > v or dp < dn:
-                    if dp < dn:
-                        continue        # no solution at all
-                    return False
-                continue
-            md = c_maxget(cert, l_, tr['dst'])
-            if md is None or a == 0:
+            b = c_rubound(tr, c_maxget(cert, tr['left'], tr['dst']))
+            if b is None or b > v:
                 return False
-            if tr['up']:
-                # e + dn = a r + dp, e <= md  ->  a r <= md + dn - dp
-                if a * v + dp < md + dn and not (a * (v + 1) + dp > md + dn):
-                    return False
-                if (md + dn - dp) // a > v if md + dn >= dp else False:
-                    return False
-            else:
-                # r + dn = a e + dp, e <= md  ->  r <= a md + dp - dn
-                if a * md + dp > v + dn:
-                    return False
     return True
 
 
