@@ -2945,6 +2945,8 @@ theories/Counters/HybridCtrTr.v
 theories/Counters/ListGlueTr.v
 theories/Counters/ListGlue2Tr.v
 theories/Counters/ListGlueLexTr.v
+theories/Counters/ListGlueRngTr.v
+theories/Counters/ListGlueRngLexTr.v
 theories/Counters/HybridCtr2Tr.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1LB_1LC1RB.v
 theories/Machines/CountersTr/LAPT_0RB0LA_0LC0RD_1LA1LD_1LC1RB.v
