@@ -78,9 +78,11 @@ def sim_inc(tab, fam, n, d, m, k, ph, steps=200000):
             # the pivot: about to step into X
             far = []
             p = piv - sg
-            while (p - 0) * sg >= 0:
+            lim = min(tape) if sg > 0 else max(tape)   # everything written on the far side
+            while (p - lim) * sg >= 0:
                 far.append(tape.get(p, 0))
                 p -= sg
+            far = _rstrip0(far)
             rec.update(q1=q, h1=sym, far=far)
             stage = 1
         elif stage == 0 and inx(h):
@@ -148,7 +150,12 @@ def closure_data_sweep(cert, tab):
                 # the anchor cell and the far side; W is the digit's word (old or
                 # new) and U the run's (carried or not yet)
                 wu = None
-                for W, U in ((digs[d + 1], z), (digs[d], t), (digs[d + 1], t), (digs[d], z)):
+                # W may be a transient word the carry is half-way through writing
+                r0 = sim_inc(stab, fam, 0, d, 0, k, ph)
+                lw = len(digs[d])
+                Wsim = list(reversed(r0['far'][:lw - 1])) + [r0['h1']]
+                for W, U in ((digs[d + 1], z), (digs[d], t), (digs[d + 1], t), (digs[d], z),
+                             (Wsim, t), (Wsim, z)):
                     ok = True
                     for n in (0, 1, 2, 3):
                         r = sim_inc(stab, fam, n, d, 0, k, ph)
@@ -175,14 +182,17 @@ def closure_data_sweep(cert, tab):
         if (q1, h1) != pv_[(d, 0, 0)][0]:
             raise NoClosure('sweep: the pivot depends on the kind')
 
-    def far_at(d, ra, s_):
-        """the pivot's far side for a carry of index ra, stride s_"""
+    def far_at(d, ra, s_, alt=0):
+        """the pivot's far side for a carry of index ra, stride s_: the ra
+        concrete copies after the block (alt 0) or before it (alt 1)"""
         W, U = wus[d]
         near = tuple(reversed(W[:-1]))
         ru = tuple(reversed(U))
         rest = tuple(reversed(pre)) + farrest[d]
         if s_ == 0:
             return (near + ru * ra + rest, (), 0, 0, ())
+        if alt:
+            return (near + ru * ra, ru * s_, 1, 0, rest)
         return (near, ru * s_, 1, 0, ru * ra + rest)
 
     def carry_at(n0, st):
@@ -191,23 +201,32 @@ def closure_data_sweep(cert, tab):
             (q1, h1), _ = pv_[(d, 0, 0)]
             for ra in range(n0 + st):
                 s_ = 0 if ra < n0 else st
-                c0 = conf(blk(pre + t * ra, t, s_, digs[d]))
-                c1 = piv(q1, far_at(d, ra, s_), h1, EMPTY)
-                try:
-                    got.append((d, ra, c0, c1, derive(el, er, c0, c1, 'carry d=%d r=%d' % (d, ra))))
-                except NoClosure:
-                    return None
-            for k in range(b):
-                (_q1, _h1), (q2, h2) = pv_[(d, k, 0)]
-                for ra in range(n0 + st):
-                    s_ = 0 if ra < n0 else st
-                    c0 = piv(q2, far_at(d, ra, s_), h2, EMPTY)
-                    c1 = conf(blk(pre + z * ra, z, s_, digs[d + 1]))
+                hit = None
+                for alt in ((0,) if s_ == 0 else (0, 1)):
+                    c0 = conf(blk(pre + t * ra, t, s_, digs[d]))
+                    c1 = piv(q1, far_at(d, ra, s_, alt), h1, EMPTY)
                     try:
-                        got.append((('C', d, k), ra, c0, c1,
-                                    derive(el, er, c0, c1, 'return d=%d k=%d r=%d' % (d, k, ra))))
+                        arm = (d, ra, c0, c1, derive(el, er, c0, c1, 'carry d=%d r=%d' % (d, ra)))
                     except NoClosure:
-                        return None
+                        continue
+                    rets = []
+                    for k in range(b):
+                        (_q1, _h1), (q2, h2) = pv_[(d, k, 0)]
+                        c0r = piv(q2, far_at(d, ra, s_, alt), h2, EMPTY)
+                        c1r = conf(blk(pre + z * ra, z, s_, digs[d + 1]))
+                        try:
+                            rets.append((('C', d, k), ra, c0r, c1r,
+                                         derive(el, er, c0r, c1r,
+                                                'return d=%d k=%d r=%d' % (d, k, ra))))
+                        except NoClosure:
+                            rets = None
+                            break
+                    if rets is not None:
+                        hit = [arm] + rets
+                        break
+                if hit is None:
+                    return None
+                got.extend(hit)
         return got
 
     def exc_at(n0, st):
