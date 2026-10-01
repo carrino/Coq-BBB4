@@ -154,6 +154,18 @@ def detect(spec):
                             terms[k] = t
                     if k0 not in terms:
                         continue
+                    # one anchor: a positional counter whose top widens x
+                    sub0 = [(k0, s) for s in byk[k0]]
+                    g = follow(sub0, {k0}, l, Ds, terms)
+                    if g is not None and g[1] >= 2 and g[0] >= 0.8 * len(sub0) \
+                            and all(v[0] >= 1 for v in g[2].values()):
+                        cand = dict(spec=spec, keys=[list(k0)], l=l, D=list(Ds),
+                                    terms={json.dumps(list(k0)): terms[k0]},
+                                    table={json.dumps(list(k)): [v[0], list(v[1])]
+                                           for k, v in g[2].items()},
+                                    steps=g[0], fills=g[1], total=len(sub0))
+                        if best is None or (g[0], g[1]) > (best['steps'], best['fills']):
+                            best = cand
                     for k1 in others:
                         if k1 not in terms:
                             continue

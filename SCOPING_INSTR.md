@@ -6227,6 +6227,151 @@ search on for the 134 positional failures (`try_emit.py` without
 `--nonest`, 900 s a row) it would be ~2-3 h at 12 jobs; the fill and refill
 failures above are cost shapes no program changes, so it was not run.
 
+#### 7.4.LE5 LE4's "nested" counters: mostly one counter read at the wrong place; a top digit with its own words, a phase-run family with an anchor per phase, 23 boarded (2026-10-01)
+
+Workstream LE5 (batch tag `LE5`), over LE4's residue: the 345 rows of
+`le4/residue.tsv` not boarded by LE4.  Branched from `main` at `3e69a628`
+(710 open); `main` merged in once (BLC6, 13 rows).  The block-list rows
+(`blc4/rows216.txt`), the Collatz-like / cube rows and the 22 leading-`0RB`
+hybrids were not touched.  The target was LE4's 108 "nested counters" (90
+positional readings whose fill costs about twice as much each width, 18
+marker runs whose refill does).
+
+**1. The main finding: most of the "nests" that read at all are ONE counter
+read at the wrong place, not a counter inside a counter.**  LE4 proposed a
+recursive family (the inner counter's full run as one segment of the outer
+increment, through `LadderCheckSweepTr`'s composition).  Read by hand and
+then by three new readers, the rows that read show no recursion.  Instead,
+the word LE4 took as the terminator is itself part of the counter's state,
+so LE4's single "fill" step contained a whole count.  Three ways:
+
+| shape | example | what it is | rows read (of the 108) |
+|---|---|---|---:|
+| **top digit with its own words** | `0RB1LA_1LC1RD_0RB0LD_1RB0LA`: `[A1] x e (01)^m`, x over 11 (= 0) / 01 (= 1), e over 10 / 00 | LE3's terminator run with the counter's top digit spelled over its own two words: `(x, e)` counts, its top narrows `x` and lengthens the run, an empty `x` refills.  LE4's positional reading took `E0 T` as the terminator, so its "fill" was every narrowing and inner count between two refills | 26 (`termrun3_detect.py`) |
+| **phases with a run** | `0RB1LA_0LC1RD_1LD0RB_1RB0LA`: `x 01 (01)^m`, then `x 10 1` whose top widens `x` | several words around the run in turn: a finite set of phases, each with a word before and after the run and a move at `x`'s top (carry with a widening, narrowing, refill) | 18 (`phrun2.py`; 30 over all 345) |
+| **alternating anchor** | `0RB0RC_1RC1LB_1LD1RD_0LB1RA`: 011 (= 0) / 111 (= 1), terminator 1 | a plain binary counter counted from the counter's end at even widths and from one word in, with `01` left on the far side, at odd ones; LE4 saw only the even widths | 5 (`alt_detect.py`) |
+
+**2. Two new generic checkers**, both in new files; nothing already landed is
+modified.  `Print Assumptions` on both closers of each, and on a board of
+each batch: `functional_extensionality_dep` only.
+
+* `theories/Checkers/LadderCheckRun3Tr.v`: `pre ++ x ++ EW_e ++ T^m ++ suf`
+  with the top digit `e` of base `be` over its own words.  It has four
+  arm classes (interior with one word of lookahead, the top carry
+  `t^j E_e X -> 0^j E_(e+1) X`, the narrowing, the refill).  Liveness is
+  the mixed-radix value of `(x, e)` within a length, then the length.
+  LE4's `LadderCheckRun2Tr` is the case `be = 1`.
+* `theories/Checkers/LadderCheckPhRunTr.v`: phases `p < NP`, each with its
+  own ANCHOR (state, head symbol, far side: `fam_at`) and words `W p` /
+  `V p`, cells `pre ++ x ++ W p ++ T^m ++ V p`.  Each phase has one move for
+  a nonempty `x` (`TCarry q dw dm`, `TNarrow q dm`, or `TNone`) and one for
+  an empty `x` (`ECarry q dw dm` or `ERefill a q c`).  Each phase also has
+  three flags the table keeps as invariants: runless (the run is empty, so
+  its moves may rewrite `V` with both tails known empty), empty-only, and
+  never-empty.  Liveness: the refills and the FIRE carries (carries whose
+  arms fire every instruction) recur, because a linear rank
+  `A |x| + B m + g p` falls at every other move and `x` counts up inside a
+  phase.  It states LE3's Run, LE4's Run2 and Run3 as special cases, and
+  the alternating-anchor counters as two phases whose fills are fire
+  carries.  An arm from phase `p` to `q` starts at `p`'s anchor and ends at
+  `q`'s, and every arm is a one-index `ReachL` program.  The doubling cost
+  LE4 measured is the iteration of these arms, which `lapP` composes as it
+  does any lap, so no recursive arm is needed for these rows.
+
+The emitters (`le5/emit_run3.py`; `le5/emit_ph.py` over a phase MODEL from
+either `phrun2.py` or `alt_detect.py`, Coq template `emit_ph_tmpl.txt`)
+share `emit_ladder`'s header and `emit_step.Arms`.  `emit_ph.py` chooses the
+flags, the fire carries (exactly the carries whose arms fire everything)
+and the rank, and normalises the run on its far side (T's at the start of
+`V`, never at the end of `W`: the arms read them).
+
+**3. The readers.**  `termrun3_detect.py` (24 s a row): `x ++ e ++ T^m`, the
+laws followed over 30,000 visits, at least 2 narrowings and a refill.
+`phrun2.py` (~40 s a row): a BEAM over every parse of each visit (x over
+the D words, a phase word of up to 10 cells, the run, a word of up to 3
+cells after it).  An interior step must be `x + 1`, and each phase's move
+must be the same every time.  The beam is what reads rows whose phase words
+begin with a digit word.  `alt_detect.py` (~10 s a row): anchors keyed by
+(state, symbol, side, far-side word up to 3 cells), a main anchor with a
+blank far side and a second one; terminators per anchor; the fill table
+along the merged visits.
+
+**Yields** (23 rows; closeout open 710 -> 702 -> 690 -> 677 with BLC6 -> **674**):
+
+| batch | rows | class | how | compile (container, incl. boards) |
+|---|---:|---|---|---:|
+| `CBT_LE5_00` | 8 | 2 DN, 6 SP | `LadderCheckRun3Tr` (top digit with its own words) | 55 s (the checker 53 s) |
+| `CBT_LE5_01` | 12 | SP | `LadderCheckPhRunTr` from `phrun2.py` readings | 66-72 s (the checker 55 s) |
+| `CBT_LE5_02` | 3 | SP | `LadderCheckPhRunTr`, alternating anchors (`alt_detect.py`) | 56 s |
+
+The boards compile in 1-2 s each.  `ci_costs.tsv`: `_00` and `_01` at 120 s,
+`_02` at 90 s.  `ci_shard.py --plan 6` keeps the slowest shard at
+`CBT_BR_02`'s.  All 23 are LE4 "nested" rows: 18 from the 90 doubling
+fills, 5 from the 18 doubling refills.
+
+**4. Where the rest stop** (322 of the 345; per row `le5/residue.tsv`,
+`le5/residue.py`):
+
+| LE5 reading | rows | where it stops |
+|---|---:|---|
+| none | 296 | no LE5 reader reads them: 69 of the 108 "nests", 227 of the others (LE4's 224 unread, its nested carries, ...) |
+| run3 / phrun | 9 | interior: no program (5 of them are positional counters whose terminator grows at larger widths, `1` -> `10001`: a real second level) |
+| run3 | 5 | narrowing: no program |
+| run3 / phrun / alt | 5 | refill: no program, or a refill that does not fire every instruction (the "refill" is a whole count at another anchor) |
+| run3 | 5 | refill law not `D0^(m+a) E0` |
+| phrun | 2 | an empty-carry arm with no chain; a phase move of another kind |
+
+What the 69 unread nests are, by hand:
+
+* **two phase-run shapes that share the run word with the zero digit**
+  (`0RB1LA_1LC1RD_0RA1LD_1RB0LA`: a marker `0` moving left by a word per
+  narrowing with the run `11`, then a second phase moving it right; the
+  run word IS the digit `0`).  The beam's parse is ambiguous here, because
+  `x`'s high zeros and the run are the same cells.  A reading that pins the
+  marker would state it in `LadderCheckPhRunTr` as it is.
+* **tails that grow** (`0RB0LA_1LC1RD_0RD0LC_1RB1LA`: a binary counter over
+  `00` / `01` whose terminator is `1` at small widths and `10001` later;
+  `0RB1LA_1LC1RD_1RB0LD_1RB0LA`: `x` with a 6-7 cell tail that steps
+  through ~16 values per refill).  These are the real second levels.  The
+  outer counter lives in the tail, at the far end, and grows, so its
+  increments cross the inner counter.  That is `LadderCheckSweepTr`'s
+  excursion (pivot, across the run, back) used as a phase move with a run
+  that the move REWRITES.  `LadderCheckPhRunTr` refuses such moves today
+  (a phase with a run must keep `V`).
+* **anchors that wander** (`0RB0LB_1LC0RD_1LA0LA_1LB1RB`,
+  `0RB1LA_1LC1RD_1LA1LD_1RB0LA`: the widths at the busiest anchor go up and
+  down every few visits): no anchor key fits.
+
+The 9 nested carries, the 2 refill-law rows, the excursion row and the
+two-cell Zeckendorf countdown are outside the 108, so `termrun3_detect.py`
+did not run on them.  They went through `phrun2.py` and `alt_detect.py`,
+and neither reads any of them.
+
+**Next.**  (a) A phase move that rewrites `V` across a run: an excursion
+arm, composed through `lift` as in `LadderCheckSweepTr` (carry to the pivot,
+across `T^m` to `V`, back).  This is the one missing piece for the
+growing-tail rows and the "run but rewrites V" refusals.  (b) A reader
+that pins a marker inside a run of zero digits (the 0RA1LD family).
+(c) `alt_detect.py` with single-anchor readings is in the tree (a counter
+whose top widens `x`).  Its re-run over the 322 open rows
+(`le5/alt_res2.jsonl`) found no new board-ready reading at the time of
+writing.
+
+```
+# the container loop (what this section ran; all resumable)
+python3 tools/closeouttr/le5/termrun3_detect.py le5/rows_nested108.txt le5/tr3_108.jsonl --jobs 3   # ~25 min
+python3 tools/closeouttr/le5/run3_batch.py le5/tr3_108.jsonl --tag LE5 --jobs 4                     # ~4 min
+python3 tools/closeouttr/le5/phrun2.py le5/rows_le4res.txt le5/phrun_res.jsonl --jobs 4             # ~1.5 h
+python3 tools/closeouttr/le5/phrun_batch.py le5/phrun_res.jsonl --tag LE5 --jobs 2                  # ~11 min
+python3 tools/closeouttr/le5/alt_detect.py le5/rows_le5open.txt le5/alt_res.jsonl --jobs 3          # ~20 min
+python3 tools/closeouttr/le5/phrun_batch.py le5/alt_res.jsonl --alt --tag LE5 --jobs 4              # seconds
+tools/closeouttr/le/board_chunk.sh CBT_LE5_NN
+python3 tools/closeouttr/le5/residue.py
+```
+
+Nothing here needed the owner's box.  The slowest step is `phrun2.py` over
+all 337 rows (~1.5 h at 4 jobs; ~30 min at 12).
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
