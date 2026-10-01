@@ -1,0 +1,108 @@
+0RB0LC_1LC1RB_1LD1LA_1RD0RC [2, 1, 'R'] ['01', '11'] ['010', '110'] 11 [(1, 1)] (15071, 19, 2) 15072/15076
+0RB0LB_1LC0RD_1LA0LA_1LB1RB None None None None None None None/None
+0RB0LC_1LA1RC_1RB0LD_0RB1LD [3, 1, 'R'] ['11', '01'] ['10', '00'] 01 [(0, 1)] (29999, 32, 3) 30000/30000
+0RB0RC_1RC1LB_1LD1RD_0LB1RA [1, 1, 'L'] ['011', '111'] ['0110', '1110'] 111 [(1, 1)] (15885, 18, 2) 15886/15890
+0RB0LD_0RC1LB_1LA1RD_1RC0LB [1, 1, 'R'] ['11', '01'] ['10', '00'] 01 [(0, 1)] (29996, 32, 3) 29997/30000
+0RB1LA_0LC1RD_0RD1LD_1RB0LA [0, 1, 'R'] ['11', '01'] ['1', '0'] 01 [(0, 1)] (23855, 22, 2) 23856/30000
+0RB1LA_0LC1RD_1LD0RB_1RB0LA None None None None None None None/None
+0RB1LA_0LC1RD_1LD1LD_1RB0LA None None None None None None None/None
+0RB1LA_0LC1RD_1RB1LD_1RB0LA None None None None None None None/None
+0RB1LA_1LC1RD_0RA1LD_1RB0LA None None None None None None None/None
+0RB1LA_1LC1RD_0RA0LD_1RB0LA [0, 1, 'R'] ['11', '01'] ['10', '00'] 01 [(0, 1)] (29996, 32, 3) 29997/30000
+0RB1LA_1LC1RD_0RB0LD_1RB0LA [0, 1, 'R'] ['11', '01'] ['10', '00'] 01 [(0, 1)] (29999, 32, 3) 30000/30000
+0RB1LA_1LC1RD_0RB1LD_1RB0LA None None None None None None None/None
+0RB1LA_1LC1RD_1LA1LD_1RB0LA None None None None None None None/None
+0RB1LA_1LC1RD_1RA1LD_1RB0LA None None None None None None None/None
+0RB1LA_1LC1RD_1RB0LD_1RB0LA None None None None None None None/None
+0RB1LA_1LC1RD_1RD1LD_1RB0LA None None None None None None None/None
+0RB1LA_1RC0LA_0RD1RB_1LD0LB [0, 1, 'R'] ['11', '10'] ['1100', '1000'] 11 [(0, 1)] (29119, 33, 3) 29120/29123
+0RB1LA_1RC0LA_1LA1RD_1LA1RB [0, 1, 'R'] ['111', '011'] ['1111', '0111'] 110 [(1, 0)] (14329, 30, 2) 14330/21887
+0RB1LA_1RC0LA_1LD1RB_---1LB None None None None None None None/None
+0RB1LB_1RC0LD_0LA1RB_0RC1LD [3, 1, 'R'] ['11', '01'] ['1', '0'] 01 [(0, 1)] (23855, 22, 2) 23856/30000
+0RB1LB_1RC0LD_1LA1RB_0RB1LD None None None None None None None/None
+0RB1LC_0LC1RC_1LA0RD_0LA1RD [3, 1, 'L'] ['11', '01'] ['1', '0'] 01 [(0, 1)] (23855, 22, 2) 23856/30000
+0RB1LC_0RC1LB_1RD0LB_1LA1RC None None None None None None None/None
+0RB1LC_1LA1RB_0LD0LA_1RD0RB [0, 0, 'R'] ['01', '11'] ['010', '110'] 11 [(0, 2)] (10913, 21, 1) 19105/19109
+0RB1LC_1LA0RC_1LD1RB_1LA0LD None None None None None None None/None
+0RB1LC_1LA1RC_1LA0RD_0LA1RD None None None None None None None/None
+0RB1LC_1LA1RC_1RB0LD_0RB1LD None None None None None None None/None
+0RB1LC_1LA1RC_1RB0LD_0RC1LD None None None None None None None/None
+0RB1LC_1RC0LA_1LA0RD_0LA1RD None None None None None None None/None
+0RB1LC_1RC1RC_1LA0RD_0LA1RD None None None None None None None/None
+0RB1LD_1LC1RB_1RA1LA_0LB0LC [1, 1, 'R'] ['011', '111'] ['0110', '1110'] 111 [(1, 1)] (15885, 18, 2) 15886/15890
+0RB1LD_0RC1LB_1LA1RD_1RC0LB None None None None None None None/None
+0RB1LD_1LC1RB_1RA1LA_1LB0LC [1, 1, 'R'] ['011', '111'] ['0110', '1110'] 111 [(0, 2)] (4546, 17, 1) 15885/15889
+0RB1LD_1LA1RC_1RD1RB_1LB0LA None None None None None None None/None
+0RB1RB_1LC0RD_1RA1LB_0LB1RD None None None None None None None/None
+0RB1RC_0LC1RB_1LD0RB_1RA1LC None None None None None None None/None
+1RB0LC_0LA1RC_1RD1LA_1RB0RD None None None None None None None/None
+1RB0LC_1LC0RD_0RA1LB_0LC1RD None None None None None None None/None
+1RB0LD_0LC1RA_0RA1LA_0RB1LD [3, 1, 'R'] ['11', '01'] ['1', '0'] 01 [(0, 1)] (23855, 22, 2) 23856/30000
+1RB0LD_0LC1RA_0RC1LA_0RB1LD [3, 1, 'R'] ['11', '01'] ['1', '0'] 01 [(0, 1)] (23855, 22, 2) 23856/30000
+1RB0LD_0LC1RA_1LA0RB_0RB1LD None None None None None None None/None
+1RB0LD_0LC1RA_1LA1LA_0RB1LD None None None None None None None/None
+1RB0LD_0LC1RA_1RB1LA_0RB1LD None None None None None None None/None
+1RB0LD_0RC1RA_1LC0LA_0RA1LD [3, 1, 'R'] ['11', '10'] ['1100', '1000'] 11 [(0, 1)] (29120, 33, 3) 29121/29124
+1RB0LD_1LC1RA_0RB1LA_0RB1LD None None None None None None None/None
+1RB0LD_1LC1RA_---1LA_0RA1LD None None None None None None None/None
+1RB0LD_1LC1RA_0RD1LA_0RB1LD None None None None None None None/None
+1RB0LD_1LC1RA_1LD1LA_0RB1LD None None None None None None None/None
+1RB0LD_1LC1RA_1RA1LA_0RB1LD None None None None None None None/None
+1RB0LD_1LC1RA_1RD1LA_0RB1LD None None None None None None None/None
+1RB0LD_1RC0RC_0LA0RA_1RA1LA None None None None None None None/None
+1RB0LD_1RC1RB_0LA0RA_1RA1LA None None None None None None None/None
+1RB0RC_1RC1LB_1LD1RD_0LB1RA [1, 1, 'L'] ['011', '111'] ['0110', '1110'] 111 [(0, 2)] (4546, 17, 1) 15885/15889
+1RB0RA_0LC1RD_1RB0LD_1RA1LC None None None None None None None/None
+1RB0RB_0LC0RC_1RA0LD_1RC1LC None None None None None None None/None
+1RB0RC_1RC1LD_0LB1RA_1LA1LB None None None None None None None/None
+1RB0RD_1LB1LC_1RC0RA_0LB1RD None None None None None None None/None
+1RB0RD_1LC1RA_0RB0LC_1LD0LA None None None None None None None/None
+1RB1LA_0LA1RC_0RD0RB_1LD0LA [1, 0, 'L'] ['01', '11'] ['010', '110'] 11 [(0, 2)] (10913, 21, 1) 19105/19109
+1RB1LA_1LC1RC_0LA1RD_0RA0RB [0, 1, 'L'] ['011', '111'] ['0110', '1110'] 111 [(1, 1)] (15885, 18, 2) 15886/15890
+1RB1LA_1LC1RC_0LA1RD_1RA0RB [0, 1, 'L'] ['011', '111'] ['0110', '1110'] 111 [(0, 2)] (4546, 17, 1) 15885/15889
+1RB1LA_1RC1RD_1LC0LB_0LA0RB [1, 1, 'L'] ['01', '11'] ['010', '110'] 11 [(1, 1)] (15071, 19, 2) 15072/15076
+1RB1LB_1LC0RD_1RD1LA_0LB1RD None None None None None None None/None
+1RB1LB_1RC0LA_1RD0RD_0LB0RB None None None None None None None/None
+1RB1LB_1RC0LA_1RD1RC_0LB0RB None None None None None None None/None
+1RB1LB_1RC0LD_1LA1RB_0RB1LD None None None None None None None/None
+1RB1LB_1RC0LD_1LA1RB_0RC1LD None None None None None None None/None
+1RB1LC_0LA0RC_1LA0RD_0LA1RD [3, 1, 'L'] ['11', '01'] ['10', '00'] 01 [(0, 1)] (29999, 32, 3) 30000/30000
+1RB1LC_0LA1RC_1LA0RD_0LA1RD None None None None None None None/None
+1RB1LC_0LA1RC_1LA0RD_0LC1RD None None None None None None None/None
+1RB1LC_0LA1RC_1RB0LD_0RB1LD None None None None None None None/None
+1RB1LC_0LA1RD_1LD1LA_1RA0RB None None None None None None None/None
+1RB1LC_0LB1RC_1LA0RD_0LC1RD None None None None None None None/None
+1RB1LC_0LC0RB_1LD1LA_1RA1RD [1, 0, 'L'] ['000', '100'] ['0000', '1000'] 001 [(2, 0)] (17775, 12, 1) 17776/21875
+1RB1LC_0LC1RA_0LD0RB_1RA1LA None None None None None None None/None
+1RB1LC_0RC1LB_1RD0LB_1LA1RC None None None None None None None/None
+1RB1LC_0LC1RC_1LA0RD_0LC1RD None None None None None None None/None
+1RB1LC_1LA0RD_0RC1LB_0LC1RD None None None None None None None/None
+1RB1LC_1LA0RC_1LA0RD_0LA1RD None None None None None None None/None
+1RB1LC_0RC1RC_1LA0RD_0LC1RD None None None None None None None/None
+1RB1LC_1LA1RC_1RB0LD_0RC1LD None None None None None None None/None
+1RB1LC_1LA1RC_1LA0RD_0LC1RD None None None None None None None/None
+1RB1LC_1LB1RC_1LA0RD_0LC1RD None None None None None None None/None
+1RB1LC_1LC1RC_1LA0RD_0LA1RD None None None None None None None/None
+1RB1LC_1LC1RC_1LA0RD_0LC1RD None None None None None None None/None
+1RB1LC_1RC1RC_1LA0RD_0LC1RD None None None None None None None/None
+1RB1LD_0LC1RD_0LA1RC_1LA0RC None None None None None None None/None
+1RB1LD_0LC0RD_0LA1RC_1LA0RC [2, 1, 'L'] ['11', '01'] ['10', '00'] 01 [(0, 1)] (29996, 32, 3) 29997/30000
+1RB1LD_0LC1RD_0LD1RC_1LA0RC None None None None None None None/None
+1RB1LD_0RC1LB_1LA1RD_1RC0LB None None None None None None None/None
+1RB1LD_0RC1RD_0LD1RC_1LA0RC None None None None None None None/None
+1RB1LD_1LC1RD_0LA1RC_1LA0RC None None None None None None None/None
+1RB1LD_1LC1RD_0LD1RC_1LA0RC None None None None None None None/None
+1RB1LD_1RC0RB_0LD1RA_1RC0LA None None None None None None None/None
+1RB1LD_1RC1RD_0LA1RC_1LA0RC None None None None None None None/None
+1RB1LD_1RC1RD_0LD1RC_1LA0RC None None None None None None None/None
+1RB1RA_0LC0RC_1RA0LD_1RC1LC None None None None None None None/None
+1RB1RA_1RC1LD_0LB0RC_1LA1LB None None None None None None None/None
+1RB1RA_1RC1LD_0LD0RC_1LA1LB [2, 0, 'L'] ['000', '100'] ['0000', '1000'] 001 [(2, 0)] (17774, 12, 1) 17775/21874
+1RB1RB_1LC0RD_0RA1LB_0LC1RD None None None None None None None/None
+1RB1RC_1LA1RA_0RC1LD_1LB0LD None None None None None None None/None
+1RB1RB_1LC0RD_1RA1LB_0LB1RD None None None None None None None/None
+1RB1RC_0LC1RB_1LD0RB_1RA1LC None None None None None None None/None
+1RB1RC_1LC0LD_1LD1RA_0RC1LB None None None None None None None/None
+1RB1RC_1LC1LB_1LD1RA_0RC0LD None None None None None None None/None
+1RB1RD_0LC1RB_1RA1LD_1LC0RB None None None None None None None/None
+1RB1RC_1LC1RA_1LD0LC_0RD0RB None None None None None None None/None
