@@ -15,6 +15,7 @@ What changes against learn3:
 """
 import argparse
 import collections
+import itertools
 import json
 import os
 import signal
@@ -36,6 +37,7 @@ import ti_coq as C                                  # noqa: E402
 G.MAXFAM = int(os.environ.get("LG4_MAXFAM", "800"))
 L3.MAXW = 8
 MAXEND = 40         # longest end word
+LWIDEN = int(os.environ.get('LG4_LWIDEN', '0'))
 RSAMPLES = 4000    # right samples at most
 RALT = os.environ.get('LG4_RALT', '1') == '1'   # learn the right tails' other forms
 LDROP = int(os.environ.get('LG4_LDROP', '1'))   # elements nearest the head a left sample drops
@@ -91,6 +93,136 @@ def set_unit(u):
 
 def canon_rot(u):
     return min(lg4.rotations(u))
+
+
+def _spread(udata, cen, m, M, cls, cap):
+    lo = hi = 0
+    for syms, bk, endw in udata:
+        s = 0
+        for i, (w, d) in enumerate(syms[:len(syms) - M]):
+            s += d - cen[(cls(i, m), w)]
+            if s < lo:
+                lo = s
+            elif s > hi:
+                hi = s
+        if hi - lo > cap:
+            break
+    return lo, hi
+
+
+def _descend(udata, keys, cand, m, M, cls, rounds=8):
+    """learn3.fit_F's centre search when the product of the ranges is too
+    large: coordinate descent on the spread of the partial sums, from the
+    centre at each group's lowest digit and from its highest"""
+    best = None
+    for start in (0, -1):
+        cen = {k: c[start] for k, c in zip(keys, cand)}
+        lo, hi = _spread(udata, cen, m, M, cls, 10 ** 9)
+        for _ in range(rounds):
+            ch = False
+            for k, c in zip(keys, cand):
+                for v in c:
+                    if v == cen[k]:
+                        continue
+                    old = cen[k]
+                    cen[k] = v
+                    lo2, hi2 = _spread(udata, cen, m, M, cls, hi - lo)
+                    if hi2 - lo2 < hi - lo:
+                        lo, hi, ch = lo2, hi2, True
+                    else:
+                        cen[k] = old
+            if not ch:
+                break
+        if hi - lo <= 6 and (best is None or hi - lo < best[2] - best[1]):
+            best = (dict(cen), lo, hi)
+    return best
+
+
+def fit_F(data, M):
+    """data: [(syms, bk, endw)].  The bounded-partial-sum automaton: classes
+    by position mod m (position 0, b_0's digit, a class of its own), a
+    centre per (class, word); states (class, sum).  Returns the fit or None"""
+    def cls(i, m):
+        return 'b0' if i == 0 else i % m
+    best = None
+    udata = sorted(set((tuple(s), b, e) for s, b, e in data), key=str)
+    for m in (1, 2):
+        groups = collections.defaultdict(collections.Counter)
+        for syms, bk, endw in data:
+            core = syms[:len(syms) - M]
+            for i, (w, d) in enumerate(core):
+                groups[(cls(i, m), w)][d] += 1
+        keys = sorted(groups, key=str)
+        cand = []
+        for k in keys:
+            ds = groups[k]
+            lo, hi = min(ds), max(ds)
+            if hi - lo > 8:
+                break
+            cand.append(range(lo, hi + 1))
+        else:
+            ncomb = 1
+            for c in cand:
+                ncomb *= len(c)
+            if ncomb > 20000:
+                r = _descend(udata, keys, cand, m, M, cls)
+                if r is not None:
+                    cen, lo, hi = r
+                    key = (hi - lo, m)
+                    if best is None or key < best[0]:
+                        best = (key, m, cen, lo, hi)
+                continue
+            for cs in itertools.product(*cand):
+                cen = dict(zip(keys, cs))
+                lo = hi = 0
+                for syms, bk, endw in data:
+                    s = 0
+                    for i, (w, d) in enumerate(syms[:len(syms) - M]):
+                        s += d - cen[(cls(i, m), w)]
+                        lo, hi = min(lo, s), max(hi, s)
+                    if hi - lo > 6:
+                        break
+                if hi - lo > 6:
+                    continue
+                key = (hi - lo, m)
+                if best is None or key < best[0]:
+                    best = (key, m, cen, lo, hi)
+    if best is None:
+        return None
+    _, m, cen, lo, hi = best
+    syms_of = collections.defaultdict(set)      # class -> symbols seen
+    for syms, bk, endw in data:
+        for i, x in enumerate(syms[:len(syms) - M]):
+            syms_of[cls(i, m)].add(x)
+    fwd = {}
+    q0 = ('b0', 0)
+    todo, seen = [q0], set()
+    while todo:
+        q = todo.pop()
+        if q in seen:
+            continue
+        seen.add(q)
+        c, s = q
+        for x in syms_of[c]:
+            s2 = s + x[1] - cen[(c, x[0])]
+            if lo <= s2 <= hi:
+                q2 = ((1 if c == 'b0' else c + 1) % m, s2)
+                fwd[(q, x)] = q2
+                todo.append(q2)
+    # the end: the state after the core, then the last M symbols and b_k
+    end = collections.defaultdict(set)
+    for syms, bk, endw in data:
+        q = q0
+        ok = True
+        for x in syms[:len(syms) - M]:
+            q = fwd.get((q, x))
+            if q is None:
+                ok = False
+                break
+        if not ok:
+            return None
+        end[q].add((tuple(syms[len(syms) - M:]), bk, endw))
+    return dict(m=m, cen=cen, lo=lo, hi=hi, fwd=fwd, end=dict(end), q0=q0, M=M)
 
 
 def tokens(cells, W, pos=None):
@@ -479,7 +611,7 @@ def learn(spec, t1=4000000, every=97):
         raise T.Fail('learn: %d anchor lists parse (%d do not)' % (len(data), bad))
     fit = None
     for M in (1, 2, 3):
-        fit = L3.fit_F(data, M)
+        fit = fit_F(data, M)
         if fit is not None:
             break
     if fit is None:
@@ -543,6 +675,18 @@ def learn(spec, t1=4000000, every=97):
         raise T.Fail('learn: %d left samples' % nl)
     if nconf > 0.01 * nl:
         raise T.Fail('learn: left samples disagree on F states (%d of %d)' % (nconf, nl))
+    if LWIDEN:
+        # the window's nearest element may be mid-rewrite: accept its
+        # neighbour digits too (an over-approximation the exploration checks)
+        for (qq, (w, d)), q2 in list(lfwd.items()):
+            for dd in range(-LWIDEN, LWIDEN + 1):
+                lfwd.setdefault((qq, (w, d + dd)), q2)
+        ls2 = set(lstart)
+        for (w, d), q2 in list(lstart):
+            for dd in range(-LWIDEN, LWIDEN + 1):
+                if not any(x == (w, d + dd) for x, _ in ls2):
+                    ls2.add(((w, d + dd), q2))
+        lstart = sorted(ls2, key=str)
     lends_blank = () in lendsL
     lendsL.discard(())
     lang = lg4.Lang4(a, W, fwd, end, fit['q0'], lfwd, lstart, sorted(seps, key=str), lends=lendsL,
