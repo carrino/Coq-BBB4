@@ -3980,7 +3980,7 @@ def main():
         # string and the terminators (7.4.LE2): a counter whose top digit
         # never changes inside its width has no reachable interior arm at
         # the last digit, and an end arm that is not a chain
-        for off in respell_offsets(orig)[:6]:
+        for off in respell_offsets(orig)[:4]:
             if not any(off):
                 continue
             try:
