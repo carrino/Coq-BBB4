@@ -18,6 +18,7 @@ import collections
 import json
 import os
 import signal
+import subprocess
 import sys
 from multiprocessing import Pool
 
@@ -35,6 +36,48 @@ import ti_coq as C                                  # noqa: E402
 G.MAXFAM = int(os.environ.get("LG4_MAXFAM", "800"))
 L3.MAXW = 8
 MAXEND = 40         # longest end word
+LDROP = int(os.environ.get('LG4_LDROP', '1'))   # elements nearest the head a left sample drops
+# (BLC3's choice: the nearest is the window's and may be mid-rewrite;
+# LG4_LDROP=0 keeps it)
+
+
+class Row(tuple):
+    """a learn3.snaps row whose cells (item 6) are parsed on first use"""
+
+    def __new__(cls, f):
+        r = super().__new__(cls, (f[0], f[1], int(f[2]), int(f[3]), int(f[4]), int(f[5]), None))
+        r.raw = f[7:]
+        r._cells = None
+        return r
+
+    def __getitem__(self, i):
+        if i == 6 or i == -1:
+            if self._cells is None:
+                self._cells = [tuple(map(int, x.split('*'))) for x in self.raw]
+            return self._cells
+        return super().__getitem__(i)
+
+    def __iter__(self):
+        for i in range(7):
+            yield self[i]
+
+    def lead(self):
+        """the blank cells before the first mark"""
+        s_, ln = self.raw[0].split('*') if self.raw else ('1', '0')
+        return int(ln) if s_ == '0' else 0
+
+
+def snaps(spec, t0, t1, every, k=0):
+    out = subprocess.run([L3.lsnap_bin(), spec, str(t0), str(t1), str(every), str(k)],
+                         capture_output=True, text=True, timeout=600).stdout
+    return [Row(line.split()) for line in out.splitlines()]
+
+
+def mirror_row(r):
+    kind, side, t, q, h, pos, cells = r
+    n = sum(ln for _, ln in cells)
+    side = {'L': 'R', 'R': 'L'}.get(side, side)
+    return (kind, side, t, q, h, n - 1 - pos, list(reversed(cells)))
 
 
 def set_unit(u):
@@ -182,12 +225,7 @@ def left_seps(snaps_s, WL, pseps):
     cnt = collections.Counter()
 
     def depth(r):
-        lead = 0
-        for s_, ln in r[6]:
-            if s_ != 0:
-                break
-            lead += ln
-        return r[5] - lead
+        return r[5] - r.lead()
     deepest = sorted(snaps_s[-6000:], key=depth)[-500:]
     for kind, side, t, q, h, pos, cells in deepest:
         cut, i = [], 0
@@ -208,7 +246,7 @@ def left_seps(snaps_s, WL, pseps):
     return sorted([w for w, c in cnt.items() if c >= L3.SEPMIN * tot], key=str)
 
 
-def fit_left2(deep, fwd, q0, W, pseps, seps, a, WL, psepsL, sepsL, drop=2):
+def fit_left2(deep, fwd, q0, W, pseps, seps, a, WL, psepsL, sepsL, drop=0):
     """the left automaton on F's states: each left sample aligned with the
     anchor list it was swept from (the [drop] elements nearest the head are
     the window's).  Returns (lstart, lfwd, lends, nsamples, nconflicts)"""
@@ -218,9 +256,9 @@ def fit_left2(deep, fwd, q0, W, pseps, seps, a, WL, psepsL, sepsL, drop=2):
     n = 0
     need = 0
     for r in deep:
-        kind, side, t, q, h, pos, cells = r
+        kind, side, t, q, h, pos = r[0], r[1], r[2], r[3], r[4], r[5]
         if kind == 'A' and side == 'L':
-            cc = L3.strip_cells(cells)
+            cc = L3.strip_cells(r[6])
             rl = read_list(cc, W, pseps, a, seps)
             if rl is None:
                 states = None
@@ -231,19 +269,15 @@ def fit_left2(deep, fwd, q0, W, pseps, seps, a, WL, psepsL, sepsL, drop=2):
                 if q2 is None:
                     break
                 states.append(q2)
-            # cheap filter: the head must be past b_0 .. b_(drop-1)
+            # cheap filter: the head must be past b_0 .. b_(drop+1)
             bl = rl[3]
-            need = len(W) * sum(bl[:drop]) * 9 // 10
+            need = len(W) * sum(bl[:drop + 2]) * 9 // 10
             continue
         if kind != 'S' or states is None:
             continue
-        lead = 0
-        for s_, ln in cells:
-            if s_ != 0:
-                break
-            lead += ln
-        if pos - lead < need:
+        if pos - r.lead() < need:
             continue
+        cells = r[6]
         # only the cells up to the head matter
         cut, i = [], 0
         for s_, ln in cells:
@@ -255,7 +289,7 @@ def fit_left2(deep, fwd, q0, W, pseps, seps, a, WL, psepsL, sepsL, drop=2):
         if lp is None:
             continue
         lend, bs, ws, _ = lp
-        bs = bs[:len(bs) - (drop - 1)] if drop > 1 else bs
+        bs = bs[:len(bs) - drop]
         if len(bs) < 2 or len(bs) > len(states):
             continue
         n += 1
@@ -275,7 +309,7 @@ def fit_left2(deep, fwd, q0, W, pseps, seps, a, WL, psepsL, sepsL, drop=2):
 
 
 def learn(spec, t1=4000000, every=97):
-    rows = L3.snaps(spec, 50000, t1, 0)
+    rows = snaps(spec, 50000, t1, 0)
     anc = {'L': [r for r in rows if r[0] == 'A' and r[1] == 'L'],
            'R': [r for r in rows if r[0] == 'A' and r[1] == 'R']}
     alls = {sd: [L3.strip_cells(r[6]) for r in anc[sd][-50:]] for sd in anc}
@@ -300,9 +334,9 @@ def learn(spec, t1=4000000, every=97):
     sd = max(sizes, key=lambda s_: (len(anc[s_]), sizes[s_]))
     mir = sd == 'R'
     if mir:
-        rows = [L3.mirror_row(r) for r in rows]
+        rows = [mirror_row(r) for r in rows]
         W = canon_rot(tuple(reversed(W)))
-    deep = L3.snaps(L3.mirror_spec(spec) if mir else spec, 50000, t1, every, 4)
+    deep = snaps(L3.mirror_spec(spec) if mir else spec, 50000, t1, every, 4)
     alists = [L3.strip_cells(r[6]) for r in rows if r[0] == 'A' and r[1] == 'L']
     if len(alists) < 20:
         raise T.Fail('learn: %d anchors' % len(alists))
@@ -334,8 +368,11 @@ def learn(spec, t1=4000000, every=97):
         raise T.Fail('learn: ratio %d' % a)
     data = []
     bad = 0
+    atimes = [r[2] for r in rows if r[0] == 'A' and r[1] == 'L']
+    okat = []
     for cells in alists:
         r = read_list(cells, W, pseps, a, seps)
+        okat.append(r)
         if r is None:
             bad += 1
             continue
@@ -350,9 +387,28 @@ def learn(spec, t1=4000000, every=97):
     if fit is None:
         raise T.Fail('learn: no bounded-partial-sum automaton')
     fwd, end = L3.expand_end(fit)
+    # the boot: the first anchor from which on ten anchors in a row are lists
+    # F accepts (before it the far end may not be settled yet)
+
+    def accepted(r):
+        if r is None:
+            return False
+        q = fit['q0']
+        syms, bk, endw = r[:3]
+        for x in syms[:-1]:
+            q = fwd.get((q, x))
+            if q is None:
+                return False
+        return any(x == syms[-1] and b == bk and w == endw for x, b, w in end.get(q, []))
+    acc = [accepted(r) for r in okat]
+    tboot = None
+    for i in range(len(acc) - 10):
+        if all(acc[i:i + 10]):
+            tboot = atimes[i]
+            break
     snapl = [r for r in deep if r[0] == 'S']
     lefts = []
-    for kind, side, t, q, h, pos, cells in snapl[-400:]:
+    for kind, side, t, q, h, pos, cells in sorted(snapl[-6000:], key=lambda r: r[5] - r.lead())[-300:]:
         i = 0
         lc = []
         for s_, ln in cells:
@@ -371,10 +427,10 @@ def learn(spec, t1=4000000, every=97):
             L3.UNIT = old
     sepsL = left_seps(snapl, WL, psepsL)
     lstart, lfwd, lendsL, nl, nconf = fit_left2(deep, fwd, fit['q0'], W, pseps, seps, a, WL,
-                                                psepsL, sepsL)
-    if nl < 20:
+                                                psepsL, sepsL, drop=LDROP)
+    if nl < 20 and LDROP > 0:
         lstart, lfwd, lendsL, nl, nconf = fit_left2(deep, fwd, fit['q0'], W, pseps, seps, a, WL,
-                                                    psepsL, sepsL, drop=1)
+                                                    psepsL, sepsL, drop=0)
     if nl < 20 or not lstart:
         raise T.Fail('learn: %d left samples' % nl)
     if nconf > 0.01 * nl:
@@ -387,13 +443,15 @@ def learn(spec, t1=4000000, every=97):
     info = dict(unit=list(W), a=a, seps=sorted(seps, key=str), m=fit['m'], M=fit['M'],
                 range=(fit['lo'], fit['hi']), nanchor=len(data), nleft=nl,
                 lends=sorted(lendsL), nendw=len(lang.endws), unitL=list(WL), sepsL=sepsL,
-                nconf=nconf)
+                nconf=nconf, tboot=tboot)
     return lang, mir, info
 
 
 def find_row(spec, t0s=(20000, 100000)):
     lang, mir, info = learn(spec)
     errs = []
+    if info.get('tboot') and info['tboot'] > 20000:
+        t0s = (info['tboot'],) + tuple(t for t in t0s if t < info['tboot'])
     for t0 in t0s:
         try:
             r = lg4.find_dir(spec, lang, t0, mir=mir)

@@ -33,6 +33,7 @@ Fail, NonCanon = T.Fail, G.NonCanon
 aeq, acoefs = G.aeq, G.acoefs
 KEEP = lg3.KEEP
 VERBOSE = lg3.VERBOSE
+DEBUG = bool(os.environ.get('LG4_DEBUG'))
 DSLACK = int(os.environ.get('LG4_DSLACK', '4'))
 
 
@@ -441,6 +442,8 @@ class X4(lg3.X3):
             w = word(k + 1)
             ti = self.foldmap.get(('L', cur, lang.kL[w], (True, a, d)))
             if ti is None:
+                if DEBUG:
+                    print('   L-fold miss', cur, w, d, file=sys.stderr)
                 break
             fl.insert(0, (ti, el[k][3]))
             cur = self.nfa.trans[ti][1]
