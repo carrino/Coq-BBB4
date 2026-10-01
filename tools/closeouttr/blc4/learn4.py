@@ -1,0 +1,829 @@
+#!/usr/bin/env python3
+"""BLC4: blc3/learn3.py generalised (UNTRUSTED; SCOPING_INSTR.md §7.4.BLC4).
+
+    python3 tools/closeouttr/blc4/learn4.py find ROWS.txt OUT.jsonl [--jobs 4] [--timeout 300]
+    python3 tools/closeouttr/blc4/learn4.py batch OUT.jsonl --tag BLC4 [--chunk 6]
+
+What changes against learn3:
+  * the unit is learned (the cell whose long runs make the list: `1` or `0`);
+  * separators up to MAXW = 8 cells (`111111`, `11011`);
+  * a constant word BEYOND b_0 (`1111` / `11` before `0^994`) is a left end
+    word: the left tails end in a terminator item (lg4.Lang4.lends);
+  * the far end: the list is read from b_0 while its gaps are separators;
+    the last element before the first other gap is b_k, and every cell
+    after it is the END word (lg4: one END kind per word).
+"""
+import argparse
+import collections
+import itertools
+import json
+import os
+import signal
+import subprocess
+import sys
+from multiprocessing import Pool
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(HERE, '..'))
+sys.path.insert(0, os.path.join(HERE, '..', 'blc3'))
+import learn3 as L3                                 # noqa: E402
+import lg3                                          # noqa: E402
+import lg4                                          # noqa: E402
+import lg_batch as G                                # noqa: E402
+import ti_batch as T                                # noqa: E402
+import ti_coq as C                                  # noqa: E402
+
+G.MAXFAM = int(os.environ.get("LG4_MAXFAM", "800"))
+L3.MAXW = 8
+MAXEND = 40         # longest end word
+LWIDEN = int(os.environ.get('LG4_LWIDEN', '0'))
+FOBS = os.environ.get('LG4_FOBS', '1') == '1'
+RSAMPLES = 4000    # right samples at most
+RALT = os.environ.get('LG4_RALT', '1') == '1'   # learn the right tails' other forms
+LDROP = int(os.environ.get('LG4_LDROP', '1'))   # elements nearest the head a left sample drops
+# (BLC3's choice: the nearest is the window's and may be mid-rewrite;
+# LG4_LDROP=0 keeps it)
+
+
+class Row(tuple):
+    """a learn3.snaps row kept as its text: the cells (item 6) are parsed on
+    each use (40,000 snapshots of a (10) list do not fit in memory split)"""
+
+    def __new__(cls, line):
+        # kind side t q h pos n RLE...
+        f = line.split(None, 7)
+        r = super().__new__(cls, (f[0], f[1], int(f[2]), int(f[3]), int(f[4]), int(f[5]), None))
+        r.raw = f[7] if len(f) > 7 else ''
+        return r
+
+    def __getitem__(self, i):
+        if i == 6 or i == -1:
+            return [tuple(map(int, x.split('*'))) for x in self.raw.split()]
+        return super().__getitem__(i)
+
+    def __iter__(self):
+        for i in range(7):
+            yield self[i]
+
+    def lead(self):
+        """the blank cells before the first mark"""
+        x = self.raw[:self.raw.find(' ')] if ' ' in self.raw else self.raw
+        if not x:
+            return 0
+        s_, ln = x.split('*')
+        return int(ln) if s_ == '0' else 0
+
+
+def snaps(spec, t0, t1, every, k=0):
+    out = subprocess.run([L3.lsnap_bin(), spec, str(t0), str(t1), str(every), str(k)],
+                         capture_output=True, text=True, timeout=600).stdout
+    return [Row(line) for line in out.splitlines()]
+
+
+def mirror_row(r):
+    kind, side, t, q, h, pos, cells = r
+    n = sum(ln for _, ln in cells)
+    side = {'L': 'R', 'R': 'L'}.get(side, side)
+    return (kind, side, t, q, h, n - 1 - pos, list(reversed(cells)))
+
+
+def set_unit(u):
+    L3.UNIT = tuple(u)
+
+
+def canon_rot(u):
+    return min(lg4.rotations(u))
+
+
+def _spread(udata, cen, m, M, cls, cap):
+    lo = hi = 0
+    for syms, bk, endw in udata:
+        s = 0
+        for i, (w, d) in enumerate(syms[:len(syms) - M]):
+            s += d - cen[(cls(i, m), w)]
+            if s < lo:
+                lo = s
+            elif s > hi:
+                hi = s
+        if hi - lo > cap:
+            break
+    return lo, hi
+
+
+def _descend(udata, keys, cand, m, M, cls, rounds=8):
+    """learn3.fit_F's centre search when the product of the ranges is too
+    large: coordinate descent on the spread of the partial sums, from the
+    centre at each group's lowest digit and from its highest"""
+    best = None
+    for start in (0, -1):
+        cen = {k: c[start] for k, c in zip(keys, cand)}
+        lo, hi = _spread(udata, cen, m, M, cls, 10 ** 9)
+        for _ in range(rounds):
+            ch = False
+            for k, c in zip(keys, cand):
+                for v in c:
+                    if v == cen[k]:
+                        continue
+                    old = cen[k]
+                    cen[k] = v
+                    lo2, hi2 = _spread(udata, cen, m, M, cls, hi - lo)
+                    if hi2 - lo2 < hi - lo:
+                        lo, hi, ch = lo2, hi2, True
+                    else:
+                        cen[k] = old
+            if not ch:
+                break
+        if hi - lo <= 6 and (best is None or hi - lo < best[2] - best[1]):
+            best = (dict(cen), lo, hi)
+    return best
+
+
+def fit_F(data, M):
+    """data: [(syms, bk, endw)].  The bounded-partial-sum automaton: classes
+    by position mod m (position 0, b_0's digit, a class of its own), a
+    centre per (class, word); states (class, sum).  Returns the fit or None"""
+    def cls(i, m):
+        return 'b0' if i == 0 else i % m
+    best = None
+    udata = sorted(set((tuple(s), b, e) for s, b, e in data), key=str)
+    for m in (1, 2):
+        groups = collections.defaultdict(collections.Counter)
+        for syms, bk, endw in data:
+            core = syms[:len(syms) - M]
+            for i, (w, d) in enumerate(core):
+                groups[(cls(i, m), w)][d] += 1
+        keys = sorted(groups, key=str)
+        cand = []
+        for k in keys:
+            ds = groups[k]
+            lo, hi = min(ds), max(ds)
+            if hi - lo > 8:
+                break
+            cand.append(range(lo, hi + 1))
+        else:
+            ncomb = 1
+            for c in cand:
+                ncomb *= len(c)
+            if ncomb > 20000:
+                r = _descend(udata, keys, cand, m, M, cls)
+                if r is not None:
+                    cen, lo, hi = r
+                    key = (hi - lo, m)
+                    if best is None or key < best[0]:
+                        best = (key, m, cen, lo, hi)
+                continue
+            for cs in itertools.product(*cand):
+                cen = dict(zip(keys, cs))
+                lo = hi = 0
+                for syms, bk, endw in data:
+                    s = 0
+                    for i, (w, d) in enumerate(syms[:len(syms) - M]):
+                        s += d - cen[(cls(i, m), w)]
+                        lo, hi = min(lo, s), max(hi, s)
+                    if hi - lo > 6:
+                        break
+                if hi - lo > 6:
+                    continue
+                key = (hi - lo, m)
+                if best is None or key < best[0]:
+                    best = (key, m, cen, lo, hi)
+    if best is None:
+        return None
+    _, m, cen, lo, hi = best
+    syms_of = collections.defaultdict(set)      # class -> symbols seen
+    for syms, bk, endw in data:
+        for i, x in enumerate(syms[:len(syms) - M]):
+            syms_of[cls(i, m)].add(x)
+    fwd = {}
+    q0 = ('b0', 0)
+    todo, seen = [q0], set()
+    while todo:
+        q = todo.pop()
+        if q in seen:
+            continue
+        seen.add(q)
+        c, s = q
+        for x in syms_of[c]:
+            s2 = s + x[1] - cen[(c, x[0])]
+            if lo <= s2 <= hi:
+                q2 = ((1 if c == 'b0' else c + 1) % m, s2)
+                fwd[(q, x)] = q2
+                todo.append(q2)
+    # the end: the state after the core, then the last M symbols and b_k
+    end = collections.defaultdict(set)
+    for syms, bk, endw in data:
+        q = q0
+        ok = True
+        for x in syms[:len(syms) - M]:
+            q = fwd.get((q, x))
+            if q is None:
+                ok = False
+                break
+        if not ok:
+            return None
+        end[q].add((tuple(syms[len(syms) - M:]), bk, endw))
+    return dict(m=m, cen=cen, lo=lo, hi=hi, fwd=fwd, end=dict(end), q0=q0, M=M)
+
+
+def tokens(cells, W, pos=None):
+    """tape-order tokens of a run list (lg3.tape_tokens' format): a one-cell
+    unit's long runs are blocks (learn3.runs_tokens), a multi-cell unit's
+    tape is all cells (parse4 finds the stretches)"""
+    if len(W) == 1:
+        old = L3.UNIT
+        L3.UNIT = tuple(W)
+        try:
+            return L3.runs_tokens(cells, pos)
+        finally:
+            L3.UNIT = old
+    toks = []
+    i = 0
+    for s_, ln in cells:
+        for j in range(ln):
+            c = i + j
+            sd = 'R' if pos is None else ('H' if c == pos else ('L' if c < pos else 'R'))
+            toks.append(('c', s_, sd))
+        i += ln
+    return toks
+
+
+def find_class(lists, minlen=20):
+    """the primitive word (canonical rotation) whose periodic stretches of at
+    least minlen cells cover the most of the tapes"""
+    cov = collections.Counter()
+    for cells in lists:
+        w = []
+        for s_, ln in cells:
+            w.extend([s_] * ln)
+        for p in (1, 2, 3, 4):
+            j = p
+            n = len(w)
+            while j < n:
+                if w[j] != w[j - p]:
+                    j += 1
+                    continue
+                a0 = j
+                while j < n and w[j] == w[j - p]:
+                    j += 1
+                s0 = a0 - p
+                if j - s0 >= minlen and s0 > 0 and j < n:
+                    u = tuple(w[s0:s0 + p])
+                    if len(C.primroot(u)[0]) == p:
+                        cov[canon_rot(u)] += j - s0
+    if not cov:
+        return None
+    best = max(cov.values())
+    return min((u for u, c in cov.items() if c >= 0.8 * best), key=len)
+
+
+def gap_triples(el, toks, W, pseps, mincopy):
+    out = []
+    for g in range(1, len(el) - 1):
+        w = lg4.word_at(el, toks, g, W, pseps)
+        if w is None or len(w[1]) > L3.MAXW:
+            continue
+        if el[g - 1][3][0] >= mincopy and el[g + 1][3][0] >= mincopy:
+            out.append(w)
+    return out
+
+
+def read_list(cells, W, pseps, a, seps):
+    """an anchor tape as (symbols, bk, end word, blocks, left end word), or
+    None.  b_0 is the largest element; the list runs from it while the gaps
+    are separators"""
+    toks = tokens(cells, W)
+    el = lg4.parse4(toks, W, pseps, 'R')
+    big = [k for k, x in enumerate(el) if x[0] == 'E' and not x[3][1]]
+    if not big:
+        return None
+    k0 = max(big, key=lambda k: el[k][3][0])
+    lend = lg4.tok_cells(toks[0:el[k0][1]])
+    if lend is None or len(lend) > MAXEND:
+        return None
+    bs, ws = [el[k0][3][0]], []
+    k = k0 + 1
+    endw = ()
+    while k < len(el):
+        w = lg4.word_at(el, toks, k, W, pseps)
+        if w is not None and w in seps:
+            ws.append(w)
+            bs.append(el[k + 1][3][0])
+            k += 2
+            continue
+        endw = lg4.tok_cells(toks[el[k - 1][2]:])
+        if endw is None or len(endw) > MAXEND:
+            return None
+        break
+    if len(bs) < 3:
+        return None
+    syms = [(ws[i], bs[i] - a * bs[i + 1]) for i in range(len(bs) - 1)]
+    return syms, bs[-1], endw, bs, lend
+
+
+def left_part(cells, pos, WL, pseps, seps):
+    """the left form of a snapshot: (left end word, [bL_0..], [wL_0..]) of
+    the elements wholly left of the head, read from the head outward while
+    the gaps are separators, or None"""
+    lead = 0
+    while cells and cells[0][0] == 0:
+        lead += cells[0][1]
+        cells = cells[1:]
+    cells = L3.strip_cells(cells)
+    p = pos - lead
+    if p < 0:
+        return None
+    toks = tokens(cells, WL, p)
+    if not any(t_[-1] == 'H' for t_ in toks):
+        return None
+    el = lg4.parse4(toks, WL, pseps, 'L')
+    hidx = next(i for i, t_ in enumerate(toks) if t_[-1] == 'H')
+    left = [x for x in el if x[2] <= hidx]
+    if left and left[-1][0] == 'G':
+        left = left[:-1]
+    bs, ws = [], []
+    k = len(left) - 1
+    while k >= 0 and left[k][0] == 'E':
+        bs.insert(0, left[k][3])
+        w = lg4.word_at(left, toks, k - 1, WL, pseps) if k >= 2 else None
+        if w is not None and (seps is None or w in seps):
+            ws.insert(0, w)
+            k -= 2
+            continue
+        break
+    if k < 0 or not bs or any(b[1] for b in bs):
+        return None
+    lend = lg4.tok_cells(toks[0:left[k][1]])
+    if lend is None or len(lend) > MAXEND:
+        return None
+    return lend, [b[0] for b in bs], ws, (el, toks, hidx)
+
+
+def left_seps(snaps_s, WL, pseps):
+    cnt = collections.Counter()
+
+    def depth(r):
+        return r[5] - r.lead()
+    deepest = sorted(snaps_s[-6000:], key=depth)[-500:]
+    for kind, side, t, q, h, pos, cells in deepest:
+        cut, i = [], 0
+        for s_, ln in cells:
+            if i > pos:
+                break
+            cut.append((s_, ln))
+            i += ln
+        cells = cut
+        lp = left_part(cells, pos, WL, pseps, None)
+        if lp is None:
+            continue
+        el, toks, hidx = lp[3]
+        left = [x for x in el if x[2] <= hidx]
+        for w in gap_triples(left, toks, WL, pseps, 2 if len(WL) > 1 else L3.LONG):
+            cnt[w] += 1
+    tot = sum(cnt.values())
+    return sorted([w for w, c in cnt.items() if c >= L3.SEPMIN * tot], key=str)
+
+
+def fit_left2(deep, fwd, q0, W, pseps, seps, a, WL, psepsL, sepsL, drop=0):
+    """the left automaton on F's states: each left sample aligned with the
+    anchor list it was swept from (the [drop] elements nearest the head are
+    the window's).  Returns (lstart, lfwd, lends, nsamples, nconflicts)"""
+    states = None
+    lstart, lfwd, lends = set(), {}, set()
+    votes = collections.defaultdict(collections.Counter)
+    n = 0
+    need = 0
+    for r in deep:
+        kind, side, t, q, h, pos = r[0], r[1], r[2], r[3], r[4], r[5]
+        if kind == 'A' and side == 'L':
+            cc = L3.strip_cells(r[6])
+            rl = read_list(cc, W, pseps, a, seps)
+            if rl is None:
+                states = None
+                continue
+            states = [q0]
+            for x in rl[0]:
+                q2 = fwd.get((states[-1], x))
+                if q2 is None:
+                    break
+                states.append(q2)
+            # cheap filter: the head must be past b_0 .. b_(drop+1)
+            bl = rl[3]
+            need = len(W) * sum(bl[:drop + 2]) * 9 // 10
+            continue
+        if kind != 'S' or states is None:
+            continue
+        if pos - r.lead() < need:
+            # too shallow for a sample; its left end word still counts
+            if pos - r.lead() > need // 3 and len(lends) < 8 and t % 7 == 0:
+                lp = left_part(r[6], pos, WL, psepsL, set(sepsL))
+                if lp is not None and lp[1]:
+                    lends.add(lp[0])
+            continue
+        cells = r[6]
+        # only the cells up to the head matter
+        cut, i = [], 0
+        for s_, ln in cells:
+            if i > pos:
+                break
+            cut.append((s_, ln))
+            i += ln
+        lp = left_part(cut, pos, WL, psepsL, set(sepsL))
+        if lp is None:
+            continue
+        lend, bs, ws, _ = lp
+        lends.add(lend)
+        bs = bs[:len(bs) - drop]
+        if len(bs) < 2 or len(bs) > len(states):
+            continue
+        n += 1
+        for i in range(len(bs) - 1):
+            x = (ws[i], bs[i] - a * bs[i + 1])
+            votes[(states[i], x)][states[i + 1]] += 1
+    nconf = 0
+    for (qq, x), c in votes.items():
+        q2, _ = c.most_common(1)[0]
+        nconf += sum(c.values()) - c[q2]
+        if qq == q0:
+            lstart.add((x, q2))
+        else:
+            lfwd[(qq, x)] = q2
+    return sorted(lstart, key=str), lfwd, lends, n, nconf
+
+
+def fit_right_alt(deep, fwd, end, q0, W, pseps, seps, a, drop=1, minvote=3):
+    """the right tails' OTHER written forms (the elements the return sweep has
+    rewritten, say): each right sample (the elements wholly right of the
+    head, but the [drop] nearest) aligned with the anchor list it came from,
+    from the far end (which must be the anchor's).  Returns the extra F
+    edges {(q, x): q2}, extra END entries {q: [(x, bk, endw)]} and the new
+    separator symbols"""
+    votes = collections.defaultdict(collections.Counter)
+    evotes = collections.Counter()
+    states = None
+    ns = sum(1 for r in deep if r[0] == 'S')
+    every = max(1, ns // RSAMPLES)
+    si = 0
+    for r in deep:
+        kind, side, t, q, h, pos = r[0], r[1], r[2], r[3], r[4], r[5]
+        if kind == 'S':
+            si += 1
+            if si % every:
+                continue
+        if kind == 'A' and side == 'L':
+            rl = read_list(L3.strip_cells(r[6]), W, pseps, a, seps)
+            states = None
+            if rl is None:
+                continue
+            syms, bk, endw, bs = rl[:4]
+            st = [q0]
+            for x in syms[:-1]:
+                q2 = fwd.get((st[-1], x))
+                if q2 is None:
+                    break
+                st.append(q2)
+            if len(st) == len(syms):
+                states = (st, syms, bk, endw, len(bs))
+            continue
+        if kind != 'S' or states is None:
+            continue
+        st, syms, bk, endw, N = states
+        cells = r[6]
+        lead = 0
+        while cells and cells[0][0] == 0:
+            lead += cells[0][1]
+            cells = cells[1:]
+        cells = L3.strip_cells(cells)
+        p = pos - lead
+        if p < 0:
+            continue
+        toks = tokens(cells, W, p)
+        if not any(t_[-1] == 'H' for t_ in toks):
+            continue
+        hidx = next(i for i, t_ in enumerate(toks) if t_[-1] == 'H')
+        el = lg4.parse4(toks, W, pseps, 'R')
+        Es = [k for k, x in enumerate(el) if x[0] == 'E' and x[1] > hidx]
+        if len(Es) < 2 + drop:
+            continue
+        kl = Es[-1]
+        if el[kl][3] != (bk, ()) or lg4.tok_cells(toks[el[kl][2]:]) != endw:
+            continue
+        m = len(Es)
+        for j in range(m - 2, drop - 1, -1):
+            k1, k2 = Es[j], Es[j + 1]
+            if k2 != k1 + 2:
+                break
+            w = lg4.word_at(el, toks, k1 + 1, W, pseps)
+            if w is None or len(w[1]) > L3.MAXW or el[k1][3][1]:
+                break
+            i = N - 2 - (m - 2 - j)
+            if i < 0:
+                break
+            x = (w, el[k1][3][0] - a * el[k2][3][0])
+            if i == N - 2:
+                evotes[(st[i], x, bk, endw)] += 1
+            elif i + 1 < len(st):
+                votes[(st[i], x)][st[i + 1]] += 1
+    xf, xe, xs = {}, collections.defaultdict(list), set()
+    for (qq, x), c in votes.items():
+        q2, n = c.most_common(1)[0]
+        if n < minvote or (qq, x) in fwd:
+            continue
+        xf[(qq, x)] = q2
+        xs.add(x[0])
+    for (qq, x, b, w), n in evotes.items():
+        if n < minvote or (x, b, w) in end.get(qq, []):
+            continue
+        xe[qq].append((x, b, w))
+        xs.add(x[0])
+    return xf, dict(xe), xs
+
+
+def learn(spec, t1=4000000, every=97):
+    rows = snaps(spec, 50000, t1, 0)
+    anc = {'L': [r for r in rows if r[0] == 'A' and r[1] == 'L'],
+           'R': [r for r in rows if r[0] == 'A' and r[1] == 'R']}
+    alls = {sd: [L3.strip_cells(r[6]) for r in anc[sd][-50:]] for sd in anc}
+    W = find_class(alls['L'][-20:] + alls['R'][-20:])
+    if W is None:
+        raise T.Fail('learn: no long runs')
+    # b_0's end: the anchor side whose tape starts with the largest element
+    sizes = {}
+    for sd in ('L', 'R'):
+        if not alls[sd]:
+            continue
+        ends = []
+        for c in alls[sd][-20:]:
+            cc = c if sd == 'L' else [(s_, ln) for s_, ln in reversed(c)]
+            Wd = W if sd == 'L' else tuple(reversed(W))
+            el = lg4.parse4(tokens(cc, Wd), Wd, [], 'R')
+            es = [x[3][0] for x in el if x[0] == 'E' and not x[3][1]]
+            ends.append(es[0] if es else 0)
+        sizes[sd] = sorted(ends)[len(ends) // 2]
+    if not sizes:
+        raise T.Fail('learn: no anchors')
+    sd = max(sizes, key=lambda s_: (len(anc[s_]), sizes[s_]))
+    mir = sd == 'R'
+    if mir:
+        rows = [mirror_row(r) for r in rows]
+        W = canon_rot(tuple(reversed(W)))
+    deep = snaps(L3.mirror_spec(spec) if mir else spec, 50000, t1, every, 4)
+    alists = [L3.strip_cells(r[6]) for r in rows if r[0] == 'A' and r[1] == 'L']
+    if len(alists) < 20:
+        raise T.Fail('learn: %d anchors' % len(alists))
+    pseps = []
+    if len(W) == 1:
+        set_unit(W)
+        pseps = L3.learn_seps(alists)
+    cnt = collections.Counter()
+    for cells in alists[-300:]:
+        toks = tokens(cells, W)
+        el = lg4.parse4(toks, W, pseps, 'R')
+        for w in gap_triples(el, toks, W, pseps, 2 if len(W) > 1 else L3.LONG):
+            cnt[w] += 1
+    tot = sum(cnt.values())
+    seps = set(w for w, c in cnt.items() if c >= L3.SEPMIN * tot)
+    if not seps:
+        raise T.Fail('learn: no separators')
+    rs = collections.Counter()
+    for cells in alists[-20:]:
+        el = lg4.parse4(tokens(cells, W), W, pseps, 'R')
+        big = [x[3][0] for x in el if x[0] == 'E' and not x[3][1] and x[3][0] * len(W) >= 20]
+        for x, y in zip(big, big[1:]):
+            if y:
+                rs[round(x / y)] += 1
+    if not rs:
+        raise T.Fail('learn: no ratio')
+    a = rs.most_common(1)[0][0]
+    if a < 2:
+        raise T.Fail('learn: ratio %d' % a)
+    data = []
+    bad = 0
+    atimes = [r[2] for r in rows if r[0] == 'A' and r[1] == 'L']
+    okat = []
+    for cells in alists:
+        r = read_list(cells, W, pseps, a, seps)
+        okat.append(r)
+        if r is None:
+            bad += 1
+            continue
+        data.append(r[:3])
+    if len(data) < 20 or bad > 0.05 * len(alists):
+        raise T.Fail('learn: %d anchor lists parse (%d do not)' % (len(data), bad))
+    fit = None
+    for M in (1, 2, 3):
+        fit = fit_F(data, M)
+        if fit is not None:
+            break
+    if fit is None:
+        raise T.Fail('learn: no bounded-partial-sum automaton')
+    if FOBS:
+        # keep only the transitions the anchor lists take (the partial-sum
+        # bound alone admits lists the machine never builds)
+        used = set()
+        for syms, bk, endw in data:
+            q = fit['q0']
+            for x in syms[:len(syms) - fit['M']]:
+                used.add((q, x))
+                q = fit['fwd'].get((q, x))
+                if q is None:
+                    break
+        fit = dict(fit)
+        fit['fwd'] = {k: v for k, v in fit['fwd'].items() if k in used}
+    fwd, end = L3.expand_end(fit)
+    nalt = 0
+    # the boot: the first anchor from which on ten anchors in a row are lists
+    # F accepts (before it the far end may not be settled yet)
+
+    def accepted(r):
+        if r is None:
+            return False
+        q = fit['q0']
+        syms, bk, endw = r[:3]
+        for x in syms[:-1]:
+            q = fwd.get((q, x))
+            if q is None:
+                return False
+        return any(x == syms[-1] and b == bk and w == endw for x, b, w in end.get(q, []))
+    acc = [accepted(r) for r in okat]
+    tboot = None
+    for i in range(len(acc) - 10):
+        if all(acc[i:i + 10]):
+            tboot = atimes[i]
+            break
+    snapl = [r for r in deep if r[0] == 'S']
+    if RALT:
+        xf, xe, xs = fit_right_alt(deep, fwd, end, fit['q0'], W, pseps, seps, a)
+        fwd = dict(fwd)
+        fwd.update(xf)
+        end = {q: list(l) for q, l in end.items()}
+        for qq, l in xe.items():
+            end.setdefault(qq, []).extend(l)
+        seps = set(seps) | xs
+        nalt = len(xf) + sum(len(l) for l in xe.values())
+    lefts = []
+    for kind, side, t, q, h, pos, cells in sorted(snapl[-6000:], key=lambda r: r[5] - r.lead())[-300:]:
+        i = 0
+        lc = []
+        for s_, ln in cells:
+            if i + ln <= pos:
+                lc.append((s_, ln))
+            i += ln
+        lefts.append(L3.strip_cells(lc))
+    WL = find_class(lefts) or W
+    psepsL = []
+    if len(WL) == 1:
+        old = L3.UNIT
+        L3.UNIT = WL
+        try:
+            psepsL = L3.learn_seps([c for c in lefts if c])
+        finally:
+            L3.UNIT = old
+    sepsL = left_seps(snapl, WL, psepsL)
+    lstart, lfwd, lendsL, nl, nconf = fit_left2(deep, fwd, fit['q0'], W, pseps, seps, a, WL,
+                                                psepsL, sepsL, drop=LDROP)
+    if nl < 20 and LDROP > 0:
+        lstart, lfwd, lendsL, nl, nconf = fit_left2(deep, fwd, fit['q0'], W, pseps, seps, a, WL,
+                                                    psepsL, sepsL, drop=0)
+    if nl < 20 or not lstart:
+        raise T.Fail('learn: %d left samples' % nl)
+    if nconf > 0.01 * nl:
+        raise T.Fail('learn: left samples disagree on F states (%d of %d)' % (nconf, nl))
+    if LWIDEN:
+        # the window's nearest element may be mid-rewrite: accept its
+        # neighbour digits too (an over-approximation the exploration checks)
+        for (qq, (w, d)), q2 in list(lfwd.items()):
+            for dd in range(-LWIDEN, LWIDEN + 1):
+                lfwd.setdefault((qq, (w, d + dd)), q2)
+        ls2 = set(lstart)
+        for (w, d), q2 in list(lstart):
+            for dd in range(-LWIDEN, LWIDEN + 1):
+                if not any(x == (w, d + dd) for x, _ in ls2):
+                    ls2.add(((w, d + dd), q2))
+        lstart = sorted(ls2, key=str)
+    lends_blank = () in lendsL
+    lendsL.discard(())
+    lang = lg4.Lang4(a, W, fwd, end, fit['q0'], lfwd, lstart, sorted(seps, key=str), lends=lendsL,
+                     unitL=WL, sepsL=sepsL, psepsR=pseps, psepsL=psepsL,
+                     lend_blank=lends_blank)
+    info = dict(unit=list(W), a=a, seps=sorted(seps, key=str), m=fit['m'], M=fit['M'],
+                range=(fit['lo'], fit['hi']), nanchor=len(data), nleft=nl,
+                lends=sorted(lendsL), lend_blank=lends_blank, nendw=len(lang.endws), unitL=list(WL), sepsL=sepsL,
+                nconf=nconf, tboot=tboot, nalt=nalt)
+    return lang, mir, info
+
+
+def find_row(spec, t0s=(20000, 100000)):
+    lang, mir, info = learn(spec)
+    errs = []
+    if info.get('tboot') and info['tboot'] > 20000:
+        t0s = (info['tboot'],) + tuple(t for t in t0s if t < info['tboot'])
+    for t0 in t0s:
+        try:
+            r = lg4.find_dir(spec, lang, t0, mir=mir)
+        except T.Fail as e:
+            r = dict(err=str(e))
+        if 'err' not in r:
+            r['spec'] = spec
+            r['learn'] = info
+            return r
+        errs.append('t%d %s' % (t0, r['err']))
+    return dict(spec=spec, err=' / '.join(errs), learn=info)
+
+
+class Timeout(Exception):
+    pass
+
+
+def _alarm(signum, frame):
+    raise Timeout()
+
+
+def find(spec, timeout=0):
+    if timeout:
+        signal.signal(signal.SIGALRM, _alarm)
+        signal.alarm(timeout)
+    try:
+        return find_row(spec)
+    except T.Fail as e:
+        return dict(spec=spec, err=str(e))
+    except Timeout:
+        return dict(spec=spec, err='timeout')
+    except RecursionError:
+        return dict(spec=spec, err='recursion')
+    finally:
+        if timeout:
+            signal.alarm(0)
+
+
+def _find1(args):
+    return find(*args)
+
+
+def cmd_find(a):
+    specs = [l.split()[0] for l in open(a.rows) if l.strip() and not l.startswith('#')]
+    done = set()
+    if os.path.exists(a.out):
+        done = set(json.loads(l)['spec'] for l in open(a.out))
+    todo = [(s, a.timeout) for s in specs if s not in done]
+    L3.lsnap_bin()
+    stats = collections.Counter()
+    with open(a.out, 'a') as f, Pool(a.jobs, maxtasksperchild=1) as pool:
+        for r in pool.imap_unordered(_find1, todo):
+            f.write(json.dumps(G.jsonable(r)) + '\n')
+            f.flush()
+            stats['ok' if 'err' not in r else 'fail'] += 1
+            print(r['spec'], r.get('err', 'OK')[:200], flush=True)
+    print(dict(stats))
+
+
+def cmd_batch(a):
+    from cbt import next_free, write_batch
+    rem = T.remaining()
+    certs, seen = [], set()
+    for p in a.found:
+        for line in open(p):
+            c = json.loads(line)
+            s = c['spec']
+            if 'err' in c or s not in rem or s in seen or s in a.skip:
+                continue
+            seen.add(s)
+            certs.append(G.detuple(c))
+    nn = next_free(a.tag)
+    made = []
+    for i in range(0, len(certs), a.chunk):
+        chunk = certs[i:i + a.chunk]
+        entries = [(c['spec'], lg3.render2(c)) for c in chunk]
+        made.append(write_batch(a.tag, nn, ['From BBB4.Checkers Require Import LapDecider.',
+                                            'From BBB4.Counters Require Import TriGlueTr ListGlue2Tr.'],
+                                entries, 'block-list rows by the joint-language list glue '
+                                         'with end words (ListGlue2Tr, lg2_check)'))
+        nn += 1
+    print('%d rows -> %d batch file(s): %s' % (len(certs), len(made),
+          ' '.join(os.path.relpath(p, T.REPO) for p in made)))
+
+
+def main():
+    # set iteration order (string hashes) decides the exploration order:
+    # fix it so that a run is reproducible
+    if os.environ.get('PYTHONHASHSEED') != '0':
+        os.environ['PYTHONHASHSEED'] = '0'
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+    ap = argparse.ArgumentParser()
+    sp = ap.add_subparsers(dest='cmd', required=True)
+    p = sp.add_parser('find')
+    p.add_argument('rows')
+    p.add_argument('out')
+    p.add_argument('--jobs', type=int, default=4)
+    p.add_argument('--timeout', type=int, default=300)
+    p = sp.add_parser('batch')
+    p.add_argument('found', nargs='+')
+    p.add_argument('--tag', default='BLC4')
+    p.add_argument('--chunk', type=int, default=6)
+    p.add_argument('--skip', action='append', default=[])
+    a = ap.parse_args()
+    {'find': cmd_find, 'batch': cmd_batch}[a.cmd](a)
+
+
+if __name__ == '__main__':
+    main()
