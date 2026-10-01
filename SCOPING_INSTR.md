@@ -6020,3 +6020,24 @@ tools/closeouttr/le/board_chunk.sh CBT_LE3_NN
 * No hand-porting of generated layers (`Machines/` ~2.6M lines,
   `Closeout/CB_*`, census lists): they regenerate from tools once the
   checker layer lands.
+
+#### 7.4.TA follow-up: cube counters at moduli 9 and 27 (2026-10-01)
+
+The suggested larger-residue search was run on the 15 cube rows for which
+`ta/dump.jsonl` contains a closed TriGlue family graph.  With node moduli 9
+and 27 and three lexicographic levels, `TriNuTr` certifies **1 of 15** rows:
+`1RB1LA_0RC0RD_1LC0LA_1RC0RC`, at modulus 9.  The certificate is boarded
+in `CBT_AST_00`.  The resumable results are recorded in
+`tools/closeouttr/ta/cube_nu27.jsonl`.  Of the other 14 graphs, eight exceed the node cap at both moduli and six
+have no nu-ranking at modulus 9 before exceeding the node cap at 27.  Thus
+the larger residue split supplies one missing valuation across the cube
+reset, but does not by itself close the family.
+
+Command:
+
+```
+# First select the 15 cube records containing a saved `cert` into cube_dump.jsonl.
+python3 tools/closeouttr/ta/nu_find.py cube_dump.jsonl \
+  tools/closeouttr/ta/cube_nu27.jsonl --plist 9,27 --ells 3 \
+  --jobs 4 --timeout 900
+```
