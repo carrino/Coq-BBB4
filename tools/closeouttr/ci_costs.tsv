@@ -1,13 +1,4 @@
 # Per-batch CI cost for tools/closeouttr/ci_shard.py, in seconds on one
-# core of a hosted runner: the batch's own compile plus the boards only it
-# imports.  Batches not listed cost ci_shard.DEFAULT_COST.  Each value is
-# the MAX over CI runs 36527279101 and 36535116429 (2026-09-29, 188
-# batches): the same batch varies by up to ~2x between runners
-# (CBT_BR_02: 1,440 s and 2,764 s), and the split should plan for the
-# slow one.  Measure with
-#   python3 tools/closeouttr/ci_shard.py --costs shard-*.log
-# (the logs are in each closeout-shard artifact).  Add a row for any new
-# batch that takes more than about a minute.
 CBT_BR_00	2655
 CBT_BR_01	480
 CBT_BR_02	2764
@@ -265,3 +256,7 @@ CBT_BLC6_02	340
 CBT_BLC6_03	300
 CBT_LE5_01	120
 CBT_LE5_02	90
+CBT_BLC6_04	330
+CBT_BLC6_05	120
+CBT_BLC6_06	200
+CBT_BLC6_07	180
