@@ -5865,7 +5865,7 @@ python3 tools/closeouttr/le3/run_batch.py tools/closeouttr/le3/termrun.jsonl --t
 tools/closeouttr/le/board_chunk.sh CBT_LE3_NN
 ```
 
-#### 7.4.LE4 LE3's counter residue: no bouncer hybrids, the Zeckendorf transducer, ladder-free positional readings and a marked terminator run; 17 boarded (2026-10-01)
+#### 7.4.LE4 LE3's counter residue: no bouncer hybrids; the Zeckendorf transducer, ladder-free positional readings, a marked terminator run and the sweep; 27 boarded (2026-10-01)
 
 Workstream LE4 (batch tag `LE4`), over LE3's residue: LE2's row lists
 `le2/rows_{dn,sp,qh}_*.txt` still in `closeouttr_remaining.txt`, less the 3
@@ -5937,7 +5937,8 @@ the other 134 stop:
   `10`/`11`), that phase is a terminator run with a marker (item 4);
 * **interior arm (16)**: of which 10 are SWEEPS (`le4/sweep_probe.py`: the
   `r = 0` arm has no chain against an opaque tail and one against
-  `t^m z Y` for every m = 0..4), the rest carries whose cost doubles;
+  `t^m z Y` for every m = 0..4), all 10 boarded by item 6; the rest are
+  carries whose cost doubles;
 * **a 3-digit fill target at +1 width (2)**: §7.4.LE2's two SP rows,
   refused by `emit_ladder` (`Inv` would need a minimum width).
 
@@ -5970,11 +5971,43 @@ markers `0`, runs `1`, `01`, `10`, `11`, `111`; 10 s a row).  **4 board**
   depend on how long the tail is, but with next digit `1` it has no chain
   even at `r = 0`: the carry walks the following run of ones (in 8 of the 11
   `M = 0`, `T = 1`, so the whole tape is `x 0 1^m`).  Lookahead does not
-  help (re-run with it: the same 4 board);
+  help (re-run with it: the same 4 board).  10 of the 11 board through
+  their positional reading and the sweep checker (item 6);
 * **interior, nested (9)**: the carry's own cost doubles with n (4, 16, 36,
   72, 140, ...): the digits are themselves counters;
 * **refill law (2)**: an empty `x` refills to something other than
   `D0^(m+a)`.
+
+**6. The sweep: `LadderCheckSweepTr`, 10 boarded.**  The rows whose carry
+walks across the run of top digits after the digit it increments (LE2's
+"DN carries that sweep the run past the digit"; `le4/sweep_probe.py` finds
+10 among the positional readings, all with affine fills).  The class
+`t^n d t^m e Y` has two run lengths, which no arm states, but its increment
+is three ordinary one-index `ReachL` programs in a row:
+
+* the carry `A d ra`: anchor -> the PIVOT, the head on the incremented
+  digit's last cell, about to step into `X = t^m e Y` (opaque);
+* the excursion `P d k ph rm`: pivot -> across `t^m` to `e` (kind `k = e`)
+  or to the terminator (`k = b - 1`) and back to the pivot, the tape
+  unchanged, both tails opaque (the counter-side one known empty at the end);
+* the return `C d k ra`: pivot -> anchor, `X` opaque again.
+
+Up to `lift` the configuration `A` lands on IS the one `P` starts from (the
+counter side of `A`'s right-hand side and the far side of `P`'s are empty,
+so the opaque tails carry the rest), so composing needs only `csteps_lift`
+and `stepn_csteps_at`: no new chain engine.
+`theories/Checkers/LadderCheckSweepTr.v` states that over `LadderCheck`'s
+positional family (class split, `fill_top`, `iter_total`, `tops_cof_pv`
+reused; fill arms and fires as in `LadderCheckTr`); `Print Assumptions`:
+`functional_extensionality_dep` only.  The emitter `le4/emit_sweep.py`
+reads the pivot and the return off a simulation of small increments and
+requires them to be the same for every `n, m`.  What it found: in 6 rows
+the machine sweeps FIRST and carries on the way back (the pivot's far side
+is the uncarried `t^n`); in 4 (2-cell digits) the pivot is half-way through
+writing the digit (`01` between `00` and `11`), and the machine writes a
+cell beyond the anchor too.  **10 of 10 board** (`CBT_LE4_05`, `_06`, all
+DN).  Tried on all 120 other open positional readings: 0 more (in every one
+the excursion changes the tape: nested counters).
 
 **5. The `fam` / `closure` remainder, measured.**  Of LE2's `fam` rows
 still open (66 SP, 45 DN, 24 QH), every SP and QH row and 25 of the 45 DN
@@ -5988,7 +6021,7 @@ pairs" are the nested-carry rows of items 3 and 4 seen at a positional
 anchor, and its "DN carries that sweep the run past the digit" are the 11
 sweeps.
 
-**Yields** (17 rows; closeout 744 -> **727**; per row `le4/residue.tsv`,
+**Yields** (27 rows; closeout 744 -> **717**; per row `le4/residue.tsv`,
 `le4/residue.py`):
 
 | batch | rows | class | how | compile (container, `-j4`, incl. boards) |
@@ -5998,35 +6031,34 @@ sweeps.
 | `CBT_LE4_02` | 2 | QH | `pos_detect` + `LadderCheckQHTr` | 11 s |
 | `CBT_LE4_03` | 2 | SP | `pos_detect` + `LadderCheckTr` | 48 s |
 | `CBT_LE4_04` | 4 | SP | `LadderCheckRun2Tr` (marker run) | 43 s (the checker 42 s) |
+| `CBT_LE4_05` | 6 | DN | `LadderCheckSweepTr` (the sweep) | 57 s (the checker ~40 s) |
+| `CBT_LE4_06` | 4 | DN | `LadderCheckSweepTr` | 42 s |
 
 All in `ci_costs.tsv` at 90 s (the runner is about twice as slow); the
 slowest shard is still `CBT_BR_02`'s.  `Print Assumptions` on both closers of
-each new checker and on a row of `_00`, `_01`, `_04`:
+each of the four new checkers and on a row of `_00`, `_01`, `_04`, `_05`:
 `functional_extensionality_dep` only.
 
-**Where the rest stop** (355 of the 372):
+**Where the rest stop** (345 of the 372):
 
 | LE4 reading | rows | where it stops | what it is |
 |---|---:|---|---|
 | none | 224 | no finder reads them (177 grow at one end, 47 at both; 126 DN, 55 SP, 43 QH) | LE2's `nofam`/`cap` bulk.  Read by hand: nested counters (`1RB1LA_1RC0RB_1LD1RA_1LA0LD`, a unary width tally beside a counter that drives a `(001)^j` region), counters whose anchor visits are interleaved with a second phase no single terminator reads |
 | positional | 90 | fill arm: the fill's cost doubles per width | a second counting phase at the overflow; for the rows read by hand it is a marked terminator run, but these do not parse as one at any anchor `termrun2_detect` tries (other marker/run lengths, or a deeper phase) |
 | marker run | 18 | refill: cost doubles with the run | a third counting level: the run is counted down at the refill |
-| marker run / positional | 11 | interior arm: the carry sweeps the following run of ones | two run lengths in one arm (`t^n d t^m e Y`); see Next |
+| marker run | 1 | interior arm: no chain past `n = 0`, and its excursion changes the tape | `0RB1RC_1LA1RB_0LD0RC_1LD0LA` |
 | marker run | 9 | interior arm: the carry's cost doubles | nested digits |
 | marker run | 2 | refill to something other than `D0^(m+a)` | |
 | zeck2 | 1 | counts down | a decrementing `zinc` |
 
-**Next.**  (1) The sweep (11 rows): the increment of `t^n d t^m e Y` is three
-ordinary one-index rules composed, the carry `A(n)` up to the incremented
-digit's last cell, the excursion `P(m)` across `t^m` to `e` and back
-(both tails opaque, the tape unchanged) and the return `C(n)`; composing
-them needs only `csteps_lift` / `stepn_csteps_at`, no new chain engine.  A
-`LadderCheckSweepTr` with that interior class over `LadderCheck`'s
-single-phase family, and an emitter that finds the split points by
-simulation.  (2) The doubling fills and refills (116 + 18) are counters
-nested two and three deep: a recursive family (a counter whose fill or
-refill is itself one of these families, with the inner family's top as
-the outer arm's end) would state them; it is the next real checker.
+**Next.**  The doubling fills and refills (90 + 18) and the nested carries
+(9) are counters nested two and three deep: a RECURSIVE family (a counter
+whose fill or refill is itself one of these families, the inner family's top
+being the outer arm's end) would state them, with `LadderCheckSweepTr`'s
+composition (one-index programs chained through `lift`) as the way to glue
+an inner run into an outer arm.  That is the next real checker.  The 224
+rows no finder reads need reading by hand first; LE3's nested example is
+one of them.
 
 ```
 # the container loop (what this section ran; all resumable)
@@ -6037,6 +6069,8 @@ python3 tools/closeouttr/le4/try_emit.py le4/pos.jsonl OUTDIR RES.tsv --jobs 4 -
 python3 tools/closeouttr/sp_ladder_batch.py BUILT.jsonl --tag LE4 [--qh]
 python3 tools/closeouttr/le4/termrun2_detect.py ROWS le4/termrun2.jsonl --jobs 4          # ~15 min
 python3 tools/closeouttr/le4/run2_batch.py le4/termrun2.jsonl --tag LE4 --jobs 4          # ~25 min
+python3 tools/closeouttr/le4/sweep_probe.py le4/pos.jsonl le4/sweep_probe.jsonl            # seconds
+python3 tools/closeouttr/le4/batch.py le4/sweep_certs.jsonl --kind sweep --tag LE4         # ~20 s
 tools/closeouttr/le/board_chunk.sh CBT_LE4_NN
 python3 tools/closeouttr/le4/residue.py
 ```
