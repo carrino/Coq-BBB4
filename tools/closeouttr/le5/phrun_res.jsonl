@@ -1,0 +1,117 @@
+{"spec": "0RB1LA_0LC1RD_0RD1LD_1RB0LA", "anchor": null}
+{"spec": "0RB0RC_1RC1LB_1LD1RD_0LB1RA", "anchor": [1, 1, "L"], "l": 3, "D": ["011", "111"], "pre": "", "suf": "", "T": "111", "words": ["0111|", "1111|111"], "table": {"T|0111|": [["M", -1, "0111|", 1]], "E|0111|": [["M", 0, "1111|111", -1]], "E|1111|111": [["R", 3, "0111|", 0]]}, "steps": 15889, "tops": 24, "total": 15890, "score": [15889, -2]}
+{"spec": "0RB1LA_0LC1RD_1LD0RB_1RB0LA", "anchor": [0, 0, "R"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "0RB0LC_1LC1RB_1LD1LA_1RD0RC", "anchor": [2, 1, "R"], "l": 2, "D": ["01", "11"], "pre": "", "suf": "", "T": "11", "words": ["011|", "01|111", "111|11"], "table": {"T|011|": [["M", -1, "01|111", 0]], "T|01|111": [["M", -1, "01|111", 1]], "E|01|111": [["M", 0, "111|11", 0]], "E|111|11": [["R", 3, "011|", 0]]}, "steps": 15075, "tops": 25, "total": 15076, "score": [15075, -3]}
+{"spec": "0RB1LA_0LC1RD_1LD1LD_1RB0LA", "anchor": [0, 0, "R"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "0RB1LA_0LC1RD_1RB1LD_1RB0LA", "anchor": [0, 0, "R"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "0RB0LB_1LC0RD_1LA0LA_1LB1RB", "anchor": null}
+{"spec": "0RB1LA_1LC1RD_0RA1LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LA_1LC1RD_0RB1LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LA_1LC1RD_1RB0LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LA_1LC1RD_1LA1LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LA_1LC1RD_1RA1LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LB_1RC0LD_0LA1RB_0RC1LD", "anchor": null}
+{"spec": "0RB1LA_1RC0LA_1LD1RB_---1LB", "anchor": null}
+{"spec": "0RB1LA_1LC1RD_1RD1LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LA_1RC0LA_1LA1RD_1LA1RB", "anchor": null}
+{"spec": "0RB1LC_0LC1RC_1LA0RD_0LA1RD", "anchor": null}
+{"spec": "0RB1LB_1RC0LD_1LA1RB_0RB1LD", "anchor": null}
+{"spec": "0RB1LC_0RC1LB_1RD0LB_1LA1RC", "anchor": null}
+{"spec": "0RB1LC_1LA1RC_1LA0RD_0LA1RD", "anchor": [3, 0, "L"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "0RB1LC_1LA1RC_1RB0LD_0RB1LD", "anchor": null}
+{"spec": "0RB1LC_1LA1RB_0LD0LA_1RD0RB", "anchor": [1, 1, "R"], "l": 2, "D": ["10", "11"], "pre": "", "suf": "", "T": "1", "words": ["101|", "|"], "table": {"T|101|": [["M", -1, "101|", 2]], "E|101|": [["M", 0, "|", 3]], "E||": [["M", 12, "101|", -23], ["R", -12, "101|", 1]]}, "steps": 9557, "tops": 25, "total": 9558, "score": [9557, -2]}
+{"spec": "0RB1LC_1LA1RC_1RB0LD_0RC1LD", "anchor": null}
+{"spec": "0RB1LC_1LA0RC_1LD1RB_1LA0LD", "anchor": null}
+{"spec": "0RB1LC_1RC0LA_1LA0RD_0LA1RD", "anchor": [3, 0, "L"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "0RB1LC_1RC1RC_1LA0RD_0LA1RD", "anchor": [3, 0, "L"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "0RB1LD_0RC1LB_1LA1RD_1RC0LB", "anchor": null}
+{"spec": "0RB1LD_1LC1RB_1RA1LA_1LB0LC", "anchor": null}
+{"spec": "0RB1LD_1LA1RC_1RD1RB_1LB0LA", "anchor": null}
+{"spec": "0RB1LD_1LC1RB_1RA1LA_0LB0LC", "anchor": [1, 1, "R"], "l": 3, "D": ["011", "111"], "pre": "", "suf": "", "T": "111", "words": ["0111|", "1111|111"], "table": {"T|0111|": [["M", -1, "0111|", 1]], "E|0111|": [["M", 0, "1111|111", -1]], "E|1111|111": [["R", 3, "0111|", 0]]}, "steps": 15889, "tops": 24, "total": 15890, "score": [15889, -2]}
+{"spec": "0RB1RB_1LC0RD_1RA1LB_0LB1RD", "anchor": null}
+{"spec": "0RB1RC_0LC1RB_1LD0RB_1RA1LC", "anchor": null}
+{"spec": "1RB0LD_0LC1RA_0RA1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LC_1LC0RD_0RA1LB_0LC1RD", "anchor": [3, 0, "L"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "1RB0LD_0LC1RA_0RC1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_0LC1RA_1LA0RB_0RB1LD", "anchor": [3, 0, "R"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "1RB0LD_0LC1RA_1LA1LA_0RB1LD", "anchor": [3, 0, "R"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "1RB0LD_0LC1RA_1RB1LA_0RB1LD", "anchor": [3, 0, "R"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "1RB0LC_0LA1RC_1RD1LA_1RB0RD", "anchor": null}
+{"spec": "1RB0LD_1LC1RA_---1LA_0RA1LD", "anchor": null}
+{"spec": "1RB0LD_1LC1RA_0RB1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_1LC1RA_0RD1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_1LC1RA_1LD1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_1LC1RA_1RA1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_1LC1RA_1RD1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_1RC1RB_0LA0RA_1RA1LA", "anchor": null}
+{"spec": "1RB0LD_1RC0RC_0LA0RA_1RA1LA", "anchor": null}
+{"spec": "1RB0RA_0LC1RD_1RB0LD_1RA1LC", "anchor": null}
+{"spec": "1RB0RC_1RC1LB_1LD1RD_0LB1RA", "anchor": null}
+{"spec": "1RB0RB_0LC0RC_1RA0LD_1RC1LC", "anchor": null}
+{"spec": "1RB0RC_1RC1LD_0LB1RA_1LA1LB", "anchor": null}
+{"spec": "1RB0RD_1LB1LC_1RC0RA_0LB1RD", "anchor": null}
+{"spec": "1RB1LA_1LC1RC_0LA1RD_0RA0RB", "anchor": [0, 1, "L"], "l": 3, "D": ["011", "111"], "pre": "", "suf": "", "T": "111", "words": ["0111|", "1111|111"], "table": {"T|0111|": [["M", -1, "0111|", 1]], "E|0111|": [["M", 0, "1111|111", -1]], "E|1111|111": [["R", 3, "0111|", 0]]}, "steps": 15889, "tops": 24, "total": 15890, "score": [15889, -2]}
+{"spec": "1RB1LA_1LC1RC_0LA1RD_1RA0RB", "anchor": null}
+{"spec": "1RB1LA_0LA1RC_0RD0RB_1LD0LA", "anchor": [0, 0, "L"], "l": 2, "D": ["10", "11"], "pre": "", "suf": "", "T": "1", "words": ["101|", "|"], "table": {"T|101|": [["M", -1, "101|", 2]], "E|101|": [["M", 0, "|", 3]], "E||": [["M", 12, "101|", -23], ["R", -12, "101|", 1]]}, "steps": 9556, "tops": 25, "total": 9557, "score": [9556, -2]}
+{"spec": "1RB0RD_1LC1RA_0RB0LC_1LD0LA", "anchor": [2, 0, "R"], "l": 2, "D": ["00", "10"], "pre": "", "suf": "", "T": "11", "words": ["0111|11", "111|1", "111|111", "11|", "11|11", "1|1", "|", "|11"], "table": {"T|11|": [["M", 1, "1|1", -1]], "T|1|1": [["M", 1, "111|1", -2]], "T|111|1": [["M", 1, "111|111", -2]], "T|111|111": [["M", 1, "11|11", 0]], "T|11|11": [["M", 1, "|", 1]], "T||": [["M", -12, "0111|11", 10]], "E|0111|11": [["M", 0, "1|1", 2], ["R", -11, "1|1", 13]], "E|1|1": [["M", 1, "|11", -1], ["R", -12, "|11", 12]], "T||11": [["M", 1, "|11", -1]]}, "steps": 19999, "tops": 20, "total": 20000, "score": [19999, -8]}
+{"spec": "1RB1LA_1RC1RD_1LC0LB_0LA0RB", "anchor": [1, 1, "L"], "l": 2, "D": ["01", "11"], "pre": "", "suf": "", "T": "11", "words": ["011|", "01|111", "111|11"], "table": {"T|011|": [["M", -1, "01|111", 0]], "T|01|111": [["M", -1, "01|111", 1]], "E|01|111": [["M", 0, "111|11", 0]], "E|111|11": [["R", 3, "011|", 0]]}, "steps": 15075, "tops": 25, "total": 15076, "score": [15075, -3]}
+{"spec": "1RB1LB_1LC0RD_1RD1LA_0LB1RD", "anchor": null}
+{"spec": "1RB1LB_1RC0LA_1RD0RD_0LB0RB", "anchor": null}
+{"spec": "1RB1LB_1RC0LD_1LA1RB_0RB1LD", "anchor": null}
+{"spec": "1RB1LB_1RC0LA_1RD1RC_0LB0RB", "anchor": null}
+{"spec": "1RB1LB_1RC0LD_1LA1RB_0RC1LD", "anchor": null}
+{"spec": "1RB1LC_0LA1RC_1LA0RD_0LA1RD", "anchor": null}
+{"spec": "1RB1LC_0LA1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_0LA1RC_1RB0LD_0RB1LD", "anchor": [3, 0, "R"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "1RB1LC_0LB1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_0LC0RB_1LD1LA_1RA1RD", "anchor": null}
+{"spec": "1RB1LC_0LA1RD_1LD1LA_1RA0RB", "anchor": null}
+{"spec": "1RB1LC_0LC1RA_0LD0RB_1RA1LA", "anchor": null}
+{"spec": "1RB1LC_0LC1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_0RC1LB_1RD0LB_1LA1RC", "anchor": null}
+{"spec": "1RB1LC_0RC1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_1LA0RC_1LA0RD_0LA1RD", "anchor": null}
+{"spec": "1RB1LC_1LA0RD_0RC1LB_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_1LA1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_1LA1RC_1RB0LD_0RC1LD", "anchor": null}
+{"spec": "1RB1LC_1LB1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_1LC1RC_1LA0RD_0LA1RD", "anchor": null}
+{"spec": "1RB1LC_1LC1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_1RC1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LD_0LC1RD_0LA1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1LD_0LC1RD_0LD1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1LD_0RC1RD_0LD1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1LD_0RC1LB_1LA1RD_1RC0LB", "anchor": null}
+{"spec": "1RB1LD_1LC1RD_0LA1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1LD_1LC1RD_0LD1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1LD_1RC1RD_0LA1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1LD_1RC1RD_0LD1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1RA_1RC1LD_0LB0RC_1LA1LB", "anchor": null}
+{"spec": "1RB1LD_1RC0RB_0LD1RA_1RC0LA", "anchor": null}
+{"spec": "1RB1RA_1RC1LD_0LD0RC_1LA1LB", "anchor": null}
+{"spec": "1RB1RA_0LC0RC_1RA0LD_1RC1LC", "anchor": null}
+{"spec": "1RB1RC_1LA1RA_0RC1LD_1LB0LD", "anchor": null}
+{"spec": "1RB1RB_1LC0RD_0RA1LB_0LC1RD", "anchor": [3, 0, "L"], "l": 2, "D": ["11", "10"], "pre": "", "suf": "", "T": "01", "words": ["01|", "10|1"], "table": {"T|01|": [["M", -1, "01|", 1]], "E|01|": [["M", 12, "10|1", -11], ["R", 1, "10|1", 0]], "T|10|1": [["M", 1, "01|", 0]]}, "steps": 19999, "tops": 14, "total": 20000, "score": [19999, -2]}
+{"spec": "1RB1RB_1LC0RD_1RA1LB_0LB1RD", "anchor": null}
+{"spec": "1RB1RC_0LC1RB_1LD0RB_1RA1LC", "anchor": null}
+{"spec": "1RB1RC_1LC0LD_1LD1RA_0RC1LB", "anchor": null}
+{"spec": "1RB1RC_1LC1LB_1LD1RA_0RC0LD", "anchor": null}
+{"spec": "1RB1RD_0LC1RB_1RA1LD_1LC0RB", "anchor": null}
+{"spec": "0RB0LA_1LC0RD_1LA1LB_1RC1RD", "anchor": null}
+{"spec": "1RB1RC_1LC1RA_1LD0LC_0RD0RB", "anchor": null}
+{"spec": "0RB0LA_1LC0RD_1LA1RD_1LB1RC", "anchor": null}
+{"spec": "0RB0LA_1LC1RD_1LA0LC_1RB0RD", "anchor": null}
+{"spec": "0RB0LA_1LC1RD_0LD1LA_0RD1RB", "anchor": null}
+{"spec": "0RB0LA_1LC1RD_0RD1LA_---1RB", "anchor": null}
+{"spec": "0RB0LA_1LC1RD_0RD0LC_1RB1LA", "anchor": [0, 0, "R"], "l": 2, "D": ["00", "10"], "pre": "", "suf": "", "T": "01", "words": ["|1"], "table": {"T||1": [["M", 1, "|1", 0]]}, "steps": 6614, "tops": 3, "total": 6615, "score": [6614, -1]}
+{"spec": "0RB0LA_1RC0LC_1LD0RC_1LA0LA", "anchor": null}
+{"spec": "0RB0LA_1RC0LC_1LD0RC_1LA1RC", "anchor": null}
+{"spec": "0RB0LA_1RC0LD_1LA1RD_1LC0RD", "anchor": null}
+{"spec": "0RB0LA_1RC1LA_1LD1RB_0RC0LD", "anchor": [0, 1, "R"], "l": 2, "D": ["00", "10"], "pre": "", "suf": "", "T": "01", "words": ["|1"], "table": {"T||1": [["M", 1, "|1", 0]]}, "steps": 4255, "tops": 3, "total": 4256, "score": [4255, -1]}
+{"spec": "0RB0LA_1RC1RB_0LD1LC_0RA1LA", "anchor": null}
+{"spec": "0RB0LA_1RC0RC_0LD1RB_1LA1LD", "anchor": null}
+{"spec": "0RB0LA_1RC0RC_1LD1RB_1LA0LD", "anchor": null}
+{"spec": "0RB0LC_1LA1RB_0LD1LA_1RD1RA", "anchor": null}
+{"spec": "0RB0LA_1RC1RB_0LD1LC_0RD1LA", "anchor": null}
+{"spec": "0RB0LC_0LC1LC_0RD1LA_1RB1RD", "anchor": null}
+{"spec": "0RB0LC_1LA1LC_0RD1LA_1RB1RD", "anchor": null}
