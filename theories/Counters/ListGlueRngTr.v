@@ -12,18 +12,25 @@
     (SCOPING_INSTR.md §7.4.MP, "short lists"; with a depth-counted right
     automaton the bound is [a^c b_k], so ~130 singletons a variable).
 
-    Here an unfold tree has one more node, [URng lsd k n u]: on the side
+    Here an unfold tree has two more nodes.  [URng lsd k n u]: on the side
     [lsd], whose tail is in state [s] with ref [r] (affine in the region's
     parameters [z]), every point with [z_k < n] is void, because [r] depends
     on [z_k] alone and [r < mins s] there ([rlow]); the rest of the region
     is reparametrised by [z_k := n + z_k] ([shR] on the region, [shs] on
     the refs and the unfolded items) and continues at node [u].  The node
     is LOCAL to its unfold path, so the other paths keep the variable
-    symbolic.  Soundness is the same induction as [ListGlue2Tr]'s
+    symbolic.  [USpl k n p kids] is [TriGlueTr]'s [TSplit] inside the
+    unfold tree: [z_k < n] goes to kid [z_k] ([z_k := j], [skid]), the rest
+    to kid [n + s] with [z_k := n + s + p z_k]; the region ([sreg]), the
+    refs and the unfolded items ([sps]) follow.  A leaf's chain that needs
+    a case split ([x >= n], [x mod p]) on one unfold path then splits that
+    path only, not the whole family.  Soundness is the same induction as [ListGlue2Tr]'s
     [uwalk_ok], with the region and the parameters carried along the
     unfold path: a concrete anchor with [z_k < n] would give a valid tail
     below its state's bound ([mins_sound] against [rlow_ok]), and otherwise
-    [z_k - n] is the new parameter ([shs_back], [rv_shR]).
+    [z_k - n] is the new parameter ([shs_back], [rv_shR]); at a split,
+    [snew] is ([sps_back], [skid_ok], [rv_sreg]), as in [TriGlueTr]'s
+    [twalk_total].
 
     Everything else (tails, bounds, folds, leaves, the boot and the
     additive liveness) is [ListGlue2Tr]'s verbatim; the record and the
@@ -396,12 +403,14 @@ Definition mxlt (maxs : list (bool * nat * nat)) (lsd : bool) (s c : nat) : bool
     dispatch tree.  [UUnf lsd endk kids]: the side's first tail item; a kid
     [(t, Some (e, u'))] takes the items read by transition [t], with the
     exponent [e] (affine in the region's parameters), [(t, None)] is void;
-    [endk] takes the empty tail.  [URng lsd k n u]: see the header. *)
+    [endk] takes the empty tail.  [URng lsd k n u] and [USpl k n p kids]:
+    see the header. *)
 Inductive unode :=
 | ULeaf (l : nat)
 | UVoid (lsd : bool)
 | UUnf (lsd : bool) (endk : option nat) (kids : list (nat * option (aexp * nat)))
-| URng (lsd : bool) (k n : nat) (u : nat).   (** [z_k < n] void on side [lsd]; then [z_k := n + z_k] *)
+| URng (lsd : bool) (k n : nat) (u : nat)    (** [z_k < n] void on side [lsd]; then [z_k := n + z_k] *)
+| USpl (k n p : nat) (kids : list nat).       (** [TSplit k n p kids], local to the path *)
 
 Record lfam := mkLF {
   lf_q     : St;
@@ -551,6 +560,73 @@ Qed.
 Lemma shR_length : forall k n R, length (shR k n R) = length R.
 Proof. intros. unfold shR. apply replace_length. Qed.
 
+(** a split of a region parameter on an unfold path, as [TriGlueTr]'s
+    [TSplit]: [z_k < n] goes to kid [z_k] ([z_k := j]), the rest to kid
+    [n + s] with [z_k := n + s + p z_k] *)
+Definition skid (k n p j : nat) : aexp := if j <? n then mkA j [] else mkA j [(k, p)].
+
+Definition sreg (k n p j : nat) (R : list (nat * nat)) : list (nat * nat) :=
+  replace k (if j <? n then (0, snd (nth k R (0, 0)) + fst (nth k R (0, 0)) * j)
+             else (fst (nth k R (0, 0)) * p, snd (nth k R (0, 0)) + fst (nth k R (0, 0)) * j)) R.
+
+Definition sps (k : nat) (e : aexp) (len : nat) : list aexp :=
+  map (fun i => if i =? k then e else mkA 0 [(i, 1)]) (seq 0 len).
+
+Definition sidx (n p zk : nat) : nat := if zk <? n then zk else n + (zk - n) mod p.
+Definition snew (n p zk : nat) : nat := if zk <? n then 0 else (zk - n) / p.
+
+Lemma sidx_lt : forall n p zk, p <> 0 -> sidx n p zk < n + p.
+Proof.
+  intros n p zk Hp. unfold sidx. destruct (zk <? n) eqn:E; [apply Nat.ltb_lt in E; lia|].
+  pose proof (Nat.mod_upper_bound (zk - n) p Hp). lia.
+Qed.
+
+Lemma sps_back : forall k e z x, k < length z -> aeval (replace k x z) e = nth k z 0 ->
+  map (aeval (replace k x z)) (sps k e (length z)) = z.
+Proof.
+  intros k e z x Hk He. unfold sps. rewrite map_map.
+  apply nth_ext with (d := 0) (d' := 0).
+  - rewrite map_length, seq_length. reflexivity.
+  - intros i Hi. rewrite map_length, seq_length in Hi.
+    rewrite (nth_map_lt _ _ _ 0 0) by (rewrite seq_length; exact Hi).
+    rewrite seq_nth by exact Hi. cbn [Nat.add].
+    destruct (Nat.eq_dec i k) as [-> | Hne].
+    + rewrite Nat.eqb_refl. exact He.
+    + apply Nat.eqb_neq in Hne as Hne'. rewrite Hne'.
+      unfold aeval; cbn [a_c a_t teval]. rewrite nth_replace_ne by exact Hne. lia.
+Qed.
+
+Lemma skid_ok : forall k n p z, p <> 0 -> k < length z ->
+  aeval (replace k (snew n p (nth k z 0)) z) (skid k n p (sidx n p (nth k z 0))) = nth k z 0.
+Proof.
+  intros k n p z Hp Hk. unfold skid, sidx, snew.
+  destruct (nth k z 0 <? n) eqn:E.
+  - rewrite E. unfold aeval; cbn. lia.
+  - apply Nat.ltb_ge in E.
+    pose proof (Nat.mod_upper_bound (nth k z 0 - n) p Hp).
+    destruct (n + (nth k z 0 - n) mod p <? n) eqn:E2; [apply Nat.ltb_lt in E2; lia|].
+    unfold aeval; cbn [a_c a_t teval]. rewrite nth_replace_eq by exact Hk.
+    pose proof (Nat.div_mod (nth k z 0 - n) p Hp). nia.
+Qed.
+
+Lemma rv_sreg : forall k n p R z, p <> 0 -> k < length R -> length z = length R ->
+  forall j, rv R z j = rv (sreg k n p (sidx n p (nth k z 0)) R) (replace k (snew n p (nth k z 0)) z) j.
+Proof.
+  intros k n p R z Hp Hk Hz j. unfold rv, sreg.
+  destruct (Nat.eq_dec j k) as [-> | Hne].
+  - rewrite nth_replace_eq by exact Hk. rewrite nth_replace_eq by lia.
+    unfold sidx, snew. destruct (nth k z 0 <? n) eqn:E.
+    + rewrite E. cbn [fst snd]. lia.
+    + apply Nat.ltb_ge in E.
+      pose proof (Nat.mod_upper_bound (nth k z 0 - n) p Hp).
+      destruct (n + (nth k z 0 - n) mod p <? n) eqn:E2; [apply Nat.ltb_lt in E2; lia|].
+      cbn [fst snd]. pose proof (Nat.div_mod (nth k z 0 - n) p Hp). nia.
+  - rewrite !nth_replace_ne by exact Hne. reflexivity.
+Qed.
+
+Lemma sreg_length : forall k n p j R, length (sreg k n p j R) = length R.
+Proof. intros. unfold sreg. apply replace_length. Qed.
+
 Definition isub (sub : list aexp) (I : list (nat * aexp)) : list (nat * aexp) :=
   map (fun te => (fst te, asubst sub (snd te))) I.
 
@@ -643,6 +719,13 @@ Fixpoint uleaves (ut : list unode) (fuel u : nat) (R : list (nat * nat)) (pL pR 
                            then Some [] else None
           | None => None
           end
+      | Some (USpl k n p kids) =>
+          if (p =? 0) || negb (length kids =? n + p) || negb (k <? length R) then None else
+          ocat (map (fun jc =>
+                  let sg := sps k (skid k n p (fst jc)) (length R) in
+                  uleaves ut fu (snd jc) (sreg k n p (fst jc) R)
+                          (sp_subst sg pL) (sp_subst sg pR) (isub sg iL) (isub sg iR))
+                (combine (seq 0 (n + p)) kids))
       | Some (UUnf lsd endk kids) =>
           match pside lsd pL pR with
           | None => None
@@ -689,6 +772,12 @@ Fixpoint uwalk (ut : list unode) (fuel u : nat) (R : list (nat * nat)) (z : list
       | Some (URng _ k n u') =>
           if nth k z 0 <? n then None
           else uwalk ut fu u' (shR k n R) (replace k (nth k z 0 - n) z) TL TR
+      | Some (USpl k n p kids) =>
+          let zk := nth k z 0 in
+          match nth_error kids (sidx n p zk) with
+          | Some u' => uwalk ut fu u' (sreg k n p (sidx n p zk) R) (replace k (snew n p zk) z) TL TR
+          | None => None
+          end
       | Some (UUnf lsd endk kids) =>
           match (if lsd then TL else TR) with
           | [] => match endk with Some u' => uwalk ut fu u' R z TL TR | None => None end
@@ -759,7 +848,7 @@ Proof.
   intros ut fuel. induction fuel as [|fu IH]; intros u R pL pR iL iR Ls z TL TR H Hz HL HR;
     cbn [uleaves] in H; [discriminate|].
   cbn [uwalk].
-  destruct (nth_error ut u) as [[l|lsd|lsd endk kids|lsd k n u']|]; [| | | |discriminate].
+  destruct (nth_error ut u) as [[l|lsd|lsd endk kids|lsd k n u'|k n p kids]|]; [| | | | |discriminate].
   - injection H as <-. exists l, R, z, pL, pR, iL, iR, TL, TR.
     repeat split; auto. left. reflexivity.
   - exfalso. destruct (pside lsd pL pR) as [[s r]|] eqn:Ep; [|discriminate].
@@ -868,6 +957,49 @@ Proof.
       split.
       * rewrite <- H5. rewrite (isub_conc _ _ z iL Hsub). reflexivity.
       * rewrite <- H6. rewrite (isub_conc _ _ z iR Hsub). reflexivity.
+  - (* a local split *)
+    destruct ((p =? 0) || negb (length kids =? n + p) || negb (k <? length R)) eqn:Ebad;
+      [discriminate|].
+    apply orb_false_iff in Ebad as [Ebad HkR]. apply orb_false_iff in Ebad as [Hp Hlen].
+    apply Nat.eqb_neq in Hp. apply negb_false_iff, Nat.eqb_eq in Hlen.
+    apply negb_false_iff, Nat.ltb_lt in HkR.
+    assert (Hkz : k < length z) by lia.
+    set (j := sidx n p (nth k z 0)).
+    assert (Hj : j < length kids) by (unfold j; rewrite Hlen; apply sidx_lt; exact Hp).
+    destruct (nth_error kids j) as [u'|] eqn:Ei.
+    2: { apply nth_error_None in Ei. lia. }
+    assert (Hin : In (j, u') (combine (seq 0 (n + p)) kids)).
+    { rewrite <- Hlen. exact (in_combine_seq kids j u' Ei 0). }
+    set (z2 := replace k (snew n p (nth k z 0)) z).
+    set (sg := sps k (skid k n p j) (length R)).
+    pose proof (in_map (fun jc =>
+                  let sg := sps k (skid k n p (fst jc)) (length R) in
+                  uleaves ut fu (snd jc) (sreg k n p (fst jc) R)
+                          (sp_subst sg pL) (sp_subst sg pR) (isub sg iL) (isub sg iR)) _ _ Hin) as Hin2.
+    cbv beta zeta in Hin2. cbn [fst snd] in Hin2. fold sg in Hin2.
+    destruct (ocat_some _ _ _ H Hin2) as (ys & Hys).
+    rewrite Hys in Hin2.
+    assert (Hback : map (aeval z2) sg = z).
+    { unfold sg, z2, j. rewrite <- Hz. apply sps_back; [exact Hkz|]. apply skid_ok; assumption. }
+    assert (Hsub : forall e, aeval z2 (asubst sg e) = aeval z e).
+    { intros e. rewrite aeval_asubst, Hback. reflexivity. }
+    assert (Hsd : forall lsd p0 T, sidec lsd z p0 T -> sidec lsd z2 (sp_subst sg p0) T).
+    { intros lsd p0 T Hs. unfold sidec, sp_subst in *. destruct p0 as [[s r]|]; [|exact Hs].
+      rewrite Hsub. exact Hs. }
+    assert (Hz2 : length z2 = length (sreg k n p j R))
+      by (unfold z2; rewrite replace_length, sreg_length; exact Hz).
+    destruct (IH _ _ _ _ _ _ _ z2 TL TR Hys Hz2 (Hsd true pL TL HL) (Hsd false pR TR HR))
+      as (l & R' & z' & pL' & pR' & iL' & iR' & TL' & TR' & Hw & Hi & H0 & H1 & H2 & H3 & H4 & H5 & H6).
+    exists l, R', z', pL', pR', iL', iR', TL', TR'. split.
+    { exact Hw. }
+    split; [exact (ocat_in _ _ _ _ H Hin2 Hi)|].
+    split; [rewrite H0, sreg_length; reflexivity|].
+    split; [exact H1|].
+    split; [intros j'; rewrite (rv_sreg k n p R z Hp HkR Hz j'); exact (H2 j')|].
+    split; [exact H3|]. split; [exact H4|].
+    split.
+    + rewrite <- H5. rewrite (isub_conc _ _ z iL Hsub). reflexivity.
+    + rewrite <- H6. rewrite (isub_conc _ _ z iR Hsub). reflexivity.
 Qed.
 
 
