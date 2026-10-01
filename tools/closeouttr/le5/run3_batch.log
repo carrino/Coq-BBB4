@@ -1,0 +1,27 @@
+0RB0LC_1LA1RC_1RB0LD_0RB1LD    board theories/Machines/LadderTr/LDR3_0RB0LC_1LA1RC_1RB0LD_0RB1LD.v
+0RB0LC_1LC1RB_1LD1LA_1RD0RC    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB0LD_0RC1LB_1LA1RD_1RC0LB    board theories/Machines/LadderTr/LDR3_0RB0LD_0RC1LB_1LA1RD_1RC0LB.v
+0RB0RC_1RC1LB_1LD1RD_0LB1RA    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LA_0LC1RD_0RD1LD_1RB0LA    no board: (** ** The closure: NOT BUILT for this row -- nar_at: no program at any threshold and stride
+0RB1LA_1LC1RD_0RA0LD_1RB0LA    board theories/Machines/LadderTr/LDR3_0RB1LA_1LC1RD_0RA0LD_1RB0LA.v
+0RB1LA_1LC1RD_0RB0LD_1RB0LA    board theories/Machines/LadderTr/LDR3_0RB1LA_1LC1RD_0RB0LD_1RB0LA.v
+0RB1LA_1RC0LA_0RD1RB_1LD0LB    board theories/Machines/LadderTr/LDR3_0RB1LA_1RC0LA_0RD1RB_1LD0LB.v
+0RB1LA_1RC0LA_1LA1RD_1LA1RB    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LB_1RC0LD_0LA1RB_0RC1LD    no board: (** ** The closure: NOT BUILT for this row -- nar_at: no program at any threshold and stride
+0RB1LC_0LC1RC_1LA0RD_0LA1RD    no board: (** ** The closure: NOT BUILT for this row -- nar_at: no program at any threshold and stride
+0RB1LC_1LA1RB_0LD0LA_1RD0RB    no board: emit failed: emit_ladder.NoClosure: a refill that is not D0^(m+a) E0
+0RB1LD_1LC1RB_1RA1LA_0LB0LC    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LD_1LC1RB_1RA1LA_1LB0LC    no board: emit failed: emit_ladder.NoClosure: a refill that is not D0^(m+a) E0
+1RB0LD_0LC1RA_0RA1LA_0RB1LD    no board: (** ** The closure: NOT BUILT for this row -- nar_at: no program at any threshold and stride
+1RB0LD_0LC1RA_0RC1LA_0RB1LD    no board: (** ** The closure: NOT BUILT for this row -- nar_at: no program at any threshold and stride
+1RB0LD_0RC1RA_1LC0LA_0RA1LD    board theories/Machines/LadderTr/LDR3_1RB0LD_0RC1RA_1LC0LA_0RA1LD.v
+1RB0RC_1RC1LB_1LD1RD_0LB1RA    no board: emit failed: emit_ladder.NoClosure: a refill that is not D0^(m+a) E0
+1RB1LA_0LA1RC_0RD0RB_1LD0LA    no board: emit failed: emit_ladder.NoClosure: a refill that is not D0^(m+a) E0
+1RB1LA_1LC1RC_0LA1RD_0RA0RB    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+1RB1LA_1LC1RC_0LA1RD_1RA0RB    no board: emit failed: emit_ladder.NoClosure: a refill that is not D0^(m+a) E0
+1RB1LA_1RC1RD_1LC0LB_0LA0RB    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+1RB1LC_0LA0RC_1LA0RD_0LA1RD    board theories/Machines/LadderTr/LDR3_1RB1LC_0LA0RC_1LA0RD_0LA1RD.v
+1RB1LC_0LC0RB_1LD1LA_1RA1RD    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+1RB1LD_0LC0RD_0LA1RC_1LA0RC    board theories/Machines/LadderTr/LDR3_1RB1LD_0LC0RD_0LA1RC_1LA0RC.v
+1RB1RA_1RC1LD_0LD0RC_1LA1LB    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+8 of 26 terminator-run rows boarded -> 1 batch file(s): theories/CloseoutTr/CBT_LE5_00.v
