@@ -111,13 +111,31 @@ Proof. vm_compute. reflexivity. Qed.
 Lemma nrules_sound_0RB0LC_1LC0RD_1LA1LD_0LA1RB : Forall (RuleSound tm false false) nrules.
 Proof. apply rule_sound_nil. exact nladder_ok_0RB0LC_1LC0RD_1LA1LD_0LA1RB. Qed.
 
-Definition iarm0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB : LRule :=
-  mkLRule (mkC StA (mkS [] [] 0 0 []) S1 (mkS [] [S1;S1] 1 0 [S1;S0]))
-          (mkC StA (mkS [] [] 0 0 []) S1 (mkS [] [S1;S0] 1 0 [S1;S1])) 0 1.
-Definition ch_iarm0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB : list nseg :=
+Definition iarm0_0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB : LRule :=
+  mkLRule (mkC StA (mkS [] [] 0 0 []) S1 (mkS [] [S1;S1] 1 0 [S1;S0;S1;S0]))
+          (mkC StA (mkS [] [] 0 0 []) S1 (mkS [] [S1;S0] 1 0 [S1;S1;S1;S0])) 0 1.
+Definition ch_iarm0_0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB : list nseg :=
   [NCh [RB (SWinL 10);RB (SCycR 2);RB (SWin 6);RB (SCycL 2 0)]].
-Lemma ok_iarm0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB :
-  check_narm tm true false nrules iarm0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB ch_iarm0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB = true.
+Lemma ok_iarm0_0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB :
+  check_narm tm true false nrules iarm0_0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB ch_iarm0_0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Definition iarm0_1_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB : LRule :=
+  mkLRule (mkC StA (mkS [] [] 0 0 []) S1 (mkS [] [S1;S1] 1 0 [S1;S0;S1;S1]))
+          (mkC StA (mkS [] [] 0 0 []) S1 (mkS [] [S1;S0] 1 0 [S1;S1;S1;S1])) 0 1.
+Definition ch_iarm0_1_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB : list nseg :=
+  [NCh [RB (SWinL 10);RB (SCycR 2);RB (SWin 6);RB (SCycL 2 0)]].
+Lemma ok_iarm0_1_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB :
+  check_narm tm true false nrules iarm0_1_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB ch_iarm0_1_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Definition iarm0_2_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB : LRule :=
+  mkLRule (mkC StA (mkS [] [] 0 0 []) S1 (mkS [] [S1;S1] 1 0 [S1;S0;S0]))
+          (mkC StA (mkS [] [] 0 0 []) S1 (mkS [] [S1;S0] 1 0 [S1;S1;S0])) 0 1.
+Definition ch_iarm0_2_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB : list nseg :=
+  [NCh [RB (SWinL 10);RB (SCycR 2);RB (SWin 6);RB (SCycL 2 0)]].
+Lemma ok_iarm0_2_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB :
+  check_narm tm true false nrules iarm0_2_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB ch_iarm0_2_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB = true.
 Proof. vm_compute. reflexivity. Qed.
 
 Definition narm1_0RB0LC_1LC0RD_1LA1LD_0LA1RB : LRule :=
@@ -138,8 +156,8 @@ Lemma ok_rarm0_0RB0LC_1LC0RD_1LA1LD_0LA1RB :
   check_narm tm true true nrules rarm0_0RB0LC_1LC0RD_1LA1LD_0LA1RB ch_rarm0_0RB0LC_1LC0RD_1LA1LD_0LA1RB = true.
 Proof. vm_compute. reflexivity. Qed.
 
-Definition iarm_0RB0LC_1LC0RD_1LA1LD_0LA1RB (d r : nat) : LRule :=
-  match r with | 0 => iarm0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB | _ => iarm0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB end.
+Definition iarm_0RB0LC_1LC0RD_1LA1LD_0LA1RB (d e r : nat) : LRule :=
+  match e, r with | 0, 0 => iarm0_0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB | 1, 0 => iarm0_1_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB | 2, 0 => iarm0_2_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB | _, _ => iarm0_0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB end.
 Definition narm_0RB0LC_1LC0RD_1LA1LD_0LA1RB (r : nat) : LRule :=
   match r with | 1 => narm1_0RB0LC_1LC0RD_1LA1LD_0LA1RB | _ => narm1_0RB0LC_1LC0RD_1LA1LD_0LA1RB end.
 Definition rarm_0RB0LC_1LC0RD_1LA1LD_0LA1RB (r : nat) : LRule :=
@@ -173,32 +191,82 @@ Definition vsegs_0RB0LC_1LC0RD_1LA1LD_0LA1RB (r : nat) (t : Instr) : list nseg :
   | _, _ => []
   end.
 
-Lemma iarm_reach_0RB0LC_1LC0RD_1LA1LD_0LA1RB : forall d r, d < fm_b FAM - 1 -> r < 0 + 1 ->
-  ReachL tm (negb (fm_left FAM)) (fm_left FAM) (lr_lhs (iarm_0RB0LC_1LC0RD_1LA1LD_0LA1RB d r)) (lr_rhs (iarm_0RB0LC_1LC0RD_1LA1LD_0LA1RB d r)).
+Lemma iarm_reach_0RB0LC_1LC0RD_1LA1LD_0LA1RB : forall d e r, d < fm_b FAM - 1 -> e <= fm_b FAM -> r < 0 + 1 ->
+  ReachL tm (negb (fm_left FAM)) (fm_left FAM) (lr_lhs (iarm_0RB0LC_1LC0RD_1LA1LD_0LA1RB d e r)) (lr_rhs (iarm_0RB0LC_1LC0RD_1LA1LD_0LA1RB d e r)).
 Proof.
-  intros d r Hd Hr. vm_compute in Hd. destruct d as [|d]; [|exfalso; lia].
+  intros d e r Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
+  destruct e as [|e].
+  {
   destruct r as [|r].
-  { eapply narm_reach; [exact nrules_sound_0RB0LC_1LC0RD_1LA1LD_0LA1RB | exact ok_iarm0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB]. }
+  { eapply narm_reach; [exact nrules_sound_0RB0LC_1LC0RD_1LA1LD_0LA1RB | exact ok_iarm0_0_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB]. }
+  exfalso; lia.
+  }
+  destruct e as [|e].
+  {
+  destruct r as [|r].
+  { eapply narm_reach; [exact nrules_sound_0RB0LC_1LC0RD_1LA1LD_0LA1RB | exact ok_iarm0_1_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB]. }
+  exfalso; lia.
+  }
+  destruct e as [|e].
+  {
+  destruct r as [|r].
+  { eapply narm_reach; [exact nrules_sound_0RB0LC_1LC0RD_1LA1LD_0LA1RB | exact ok_iarm0_2_0_0RB0LC_1LC0RD_1LA1LD_0LA1RB]. }
+  exfalso; lia.
+  }
   exfalso; lia.
 Qed.
 
-Lemma iarm_lhs_0RB0LC_1LC0RD_1LA1LD_0LA1RB : forall d r, d < fm_b FAM - 1 -> r < 0 + 1 ->
-  lr_lhs (iarm_0RB0LC_1LC0RD_1LA1LD_0LA1RB d r)
-    = cls_conf FAM (cls_side FAM [] (fm_b FAM - 1) r (astride 0 1 r) [d]).
+Lemma iarm_lhs_0RB0LC_1LC0RD_1LA1LD_0LA1RB : forall d e r, d < fm_b FAM - 1 -> e <= fm_b FAM -> r < 0 + 1 ->
+  lr_lhs (iarm_0RB0LC_1LC0RD_1LA1LD_0LA1RB d e r)
+    = cls_conf FAM (blk (fm_pre FAM ++ rep (dig FAM (fm_b FAM - 1)) r) (dig FAM (fm_b FAM - 1))
+                     (astride 0 1 r) (dig FAM d ++ ilookM FAM runM_0RB0LC_1LC0RD_1LA1LD_0LA1RB e)).
 Proof.
-  intros d r Hd Hr. vm_compute in Hd. destruct d as [|d]; [|exfalso; lia].
+  intros d e r Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
+  destruct e as [|e].
+  {
   destruct r as [|r].
   { vm_compute; reflexivity. }
   exfalso; lia.
-Qed.
-
-Lemma iarm_rhs_0RB0LC_1LC0RD_1LA1LD_0LA1RB : forall d r, d < fm_b FAM - 1 -> r < 0 + 1 ->
-  lr_rhs (iarm_0RB0LC_1LC0RD_1LA1LD_0LA1RB d r)
-    = cls_conf FAM (cls_side FAM [] 0 r (astride 0 1 r) [S d]).
-Proof.
-  intros d r Hd Hr. vm_compute in Hd. destruct d as [|d]; [|exfalso; lia].
+  }
+  destruct e as [|e].
+  {
   destruct r as [|r].
   { vm_compute; reflexivity. }
+  exfalso; lia.
+  }
+  destruct e as [|e].
+  {
+  destruct r as [|r].
+  { vm_compute; reflexivity. }
+  exfalso; lia.
+  }
+  exfalso; lia.
+Qed.
+
+Lemma iarm_rhs_0RB0LC_1LC0RD_1LA1LD_0LA1RB : forall d e r, d < fm_b FAM - 1 -> e <= fm_b FAM -> r < 0 + 1 ->
+  lr_rhs (iarm_0RB0LC_1LC0RD_1LA1LD_0LA1RB d e r)
+    = cls_conf FAM (blk (fm_pre FAM ++ rep (dig FAM 0) r) (dig FAM 0)
+                     (astride 0 1 r) (dig FAM (S d) ++ ilookM FAM runM_0RB0LC_1LC0RD_1LA1LD_0LA1RB e)).
+Proof.
+  intros d e r Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
+  destruct e as [|e].
+  {
+  destruct r as [|r].
+  { vm_compute; reflexivity. }
+  exfalso; lia.
+  }
+  destruct e as [|e].
+  {
+  destruct r as [|r].
+  { vm_compute; reflexivity. }
+  exfalso; lia.
+  }
+  destruct e as [|e].
+  {
+  destruct r as [|r].
+  { vm_compute; reflexivity. }
+  exfalso; lia.
+  }
   exfalso; lia.
 Qed.
 
