@@ -1,0 +1,22 @@
+[
+{
+"spec": "1RB0LC_1RC0RD_1LA0LC_1RD0RA",
+"ok": false,
+"why": {
+"no closure": 22,
+"timeout": 1
+},
+"tried": 23,
+"secs": 600.2
+},
+{
+"spec": "1RB0RD_1LC0LB_1RA0LB_1RD0RC",
+"ok": false,
+"why": {
+"no closure": 38,
+"timeout": 1
+},
+"tried": 39,
+"secs": 601.3
+}
+]

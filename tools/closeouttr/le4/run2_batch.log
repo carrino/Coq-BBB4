@@ -1,0 +1,45 @@
+0RB0LA_0RC1RB_0LD1RC_1LA1LD    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+0RB0LA_0RC1RD_1LA1LC_0LC1RB    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+0RB0LA_1LC1RD_0RD0LC_1RB1LA    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+0RB0LA_1RC1LA_1LD1RB_0RC0LD    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+0RB0LA_1RC1RB_0LD0RC_1LD1LA    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+0RB0LC_1LC0RD_1LA1LD_0LA1RB    board theories/Machines/LadderTr/LDRM_0RB0LC_1LC0RD_1LA1LD_0LA1RB.v
+0RB0LC_1LC1RB_1LD1LA_1RD0RC    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB0RA_1RC1LD_1LC1RB_0LD0LA    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+0RB0RA_1RC1LD_1LD1RB_0LD0LA    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+0RB0RC_1RC1LB_1LD1RD_0LB1RA    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LA_0LC1RD_0RD1LD_1RB0LA    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LA_1RC0LA_0RD1RB_1LD0LB    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LA_1RC0LA_1LA1RD_1LA1RB    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LA_1RC1RB_0LD0RC_0LA1LD    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+0RB1LB_1RC0LD_0LA1RB_0RC1LD    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LC_0LC0RD_1RD0LA_1RB1RA    board theories/Machines/LadderTr/LDRM_0RB1LC_0LC0RD_1RD0LA_1RB1RA.v
+0RB1LC_0LC1RC_1LA0RD_0LA1RD    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LC_1LA1RB_0LD0LA_1RD0RB    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LD_1LC1RB_1RA1LA_0LB0LC    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LD_1LC1RB_1RA1LA_1LB0LC    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+0RB1LD_1LC1RB_1RA1LA_1RB0LC    no board: emit failed: emit_ladder.NoClosure: a refill that is not D0^(m+a)
+0RB1LD_1RC1RB_0LD0RC_0LB1LA    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+0RB1RA_0LC1RB_1LD1LC_0RA0LD    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+0RB1RC_1LA1RB_0LD0RC_1LD0LA    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+0RB1RD_1LC1LB_0RA0LC_0LB1RA    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+1RB0LD_0LC1RA_0RA1LA_0RB1LD    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+1RB0LD_0LC1RA_0RC1LA_0RB1LD    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+1RB0LD_0RC1RA_1LC0LA_0RA1LD    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+1RB0LD_1RC1RD_0LA0RB_0RC1LA    board theories/Machines/LadderTr/LDRM_1RB0LD_1RC1RD_0LA0RB_0RC1LA.v
+1RB0RC_1RC1LB_1LD1RD_0LB1RA    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+1RB1LA_0LA1LC_0RD0LC_1RD0RB    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+1RB1LA_0LA1RC_0RD0RB_1LD0LA    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+1RB1LA_1LC1RC_0LA1RD_0RA0RB    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+1RB1LA_1LC1RC_0LA1RD_1LA0RB    no board: emit failed: emit_ladder.NoClosure: a refill that is not D0^(m+a)
+1RB1LA_1LC1RC_0LA1RD_1RA0RB    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+1RB1LA_1RC1RD_1LC0LB_0LA0RB    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction no refill anchor fires
+1RB1LC_0LC0RB_1LA1RD_0LA0RD    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+1RB1LC_1LB1RA_0LC0LD_0RA0RD    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+1RB1LC_1LC1RA_0LC0LD_0RA0RD    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+1RB1LD_1LC1RA_0RB0LC_0RA0LD    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+1RB1RA_0LC0RB_0LA1LD_0RA1LC    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+1RB1RA_0LC0RB_0LD1LC_0RA1LD    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+1RB1RA_0LC0RB_1LC1LD_0RA0LD    no board: (** ** The closure: NOT BUILT for this row -- inter_at: no program at any threshold and stride
+1RB1RD_0LC0RA_1RA0LD_0RB1LC    board theories/Machines/LadderTr/LDRM_1RB1RD_0LC0RA_1RA0LD_0RB1LC.v
+4 of 44 terminator-run rows boarded -> 1 batch file(s): theories/CloseoutTr/CBT_LE4_04.v

@@ -5147,6 +5147,152 @@ python3 tools/closeouttr/blc5/lx5.py find tools/closeouttr/blc5/rows191.txt swee
 LG4_B0WIDEN=2 python3 tools/closeouttr/blc5/lx5.py find tools/closeouttr/blc5/rows_g2.txt g2.jsonl --jobs 12 --timeout 300
 ```
 
+#### 7.4.MP BLC5's residue: the multi-cell lists' far end, language and scale; the unlearned rows surveyed, 1 boarded (2026-10-01)
+
+Workstream MP (batch tags `MP`, `MPU`), over BLC5's 191-row residue
+(`blc5/rows191.txt`, all still open at the start): the 61 multi-cell /
+carry-like lists, the 27 `1`-block marker lists and the 103 rows the
+learner did not learn or timed out on (`tools/closeouttr/mp/rows_*.txt`).
+The counter rows (LE2/LE3) and the Collatz-like rows (TA) were not touched.
+**1 row boarded** (`CBT_MPU_00`).  Open rows: 745 -> **744**.  The 61
+multi-cell lists still stop at "too many families".  Below is why, measured
+on two rows, and what does not fix it.  No new Coq: everything here is
+finder-side (`tools/closeouttr/mp/`).
+
+**1. The far end is learned from too short a run** (`mp/asnap.c`,
+`mp/farend.c`, `learn_mp.extend`).  learn4 reads F and the END table
+(b_k pinned, then the end word) from the anchors of the first 4M steps.  The
+far end changes only when a carry reaches it.  `mp/farend61.tsv` counts the
+distinct 40-cell far ends of each of the 61 rows over 1e9 steps, with the
+step of the last new one:
+
+* 48 rows: the far end settles before 4M steps (12 to 69 forms);
+* 13 rows: it settles later.  `0RB0LB_1LC1RD_0LD0LC_1RA1LC` and two
+  others at 53-70M (142 forms), 8 rows at 4.4-5.6M (91 forms), and
+  `1RB0RD_1LC1LB_1RA0LB_*` at 880-950M (82/84 forms).
+
+On `0RB0LB_1LC1RD_0LD0LC_1RA1LC` the real run itself (lg_batch's data pass,
+the exploration's cuts and folds on the concrete run) passes the learner's
+horizon after ~9,000 leaves.  From then on its right windows hold the whole
+list (no END fold applies), and the family count runs away: 214 families at
+3,000 leaves, 800 (the cap) before 10,000.  `asnap` prints one anchor per
+far-end change, to 300M steps by default (237 lines on that row).
+`learn_mp.extend` adds their END entries, 96 on that row (26 -> 47 end
+words), and the real run then has 313 families at 8,000 leaves.  But the
+EXPLORATION still does not close (3,000 families at the cap).  With only
+the END table extended, `lx5.py` on the 13 late rows certifies none of the 5
+it finished (all too many families at 1,500; the sweep was stopped there).
+
+**2. Why the exploration over-approximates.**  The second row,
+`0RB0LD_1RC1LB_1LA1RA_1LA0LD` (`(001)` ratio 4, far end settled at 185k
+steps), compares the real run (data pass, 6,000 leaves: 272 families, 103
+window shapes) with the exploration (1,500 families, 404 window shapes, 371
+of them never real).  Three sources, each found by following an unreal
+family back to its first real ancestor (`mp/diag_mp.py`):
+
+* *Short lists.*  An unfold far from the far end still has the kid "the
+  next item is the END".  The exploration then runs two-element lists with
+  tiny blocks, which the machine never builds after the boot.
+  `lang_mp.Lang4D` counts the items to the far end in the right state,
+  capped at `MP_DEPTH`, so `lc_mins` voids every constant ref below
+  a^c b_k.  This is sound, a plain ListGlueTr automaton.  But
+  lg4's `uge` request then splits a variable into that many singleton
+  kids (~130 at depth 3, nested over several variables).  At depth 3 one
+  family did not finish building in 15 minutes; at depth 2 the count still
+  grows linearly (1,900 families, 594 queued).
+* *Scale mixing.*  One window shape occurs at every list position.  The
+  hull of a family met both at b_0 (hundreds of units) and next to the far
+  end (2-10 units) has a base of a few units, and its leaves split into
+  small constants.  Those form windows of several blocks whose exponents
+  lost the list relation (`w=(None, ...)`), so no fold applies
+  (`R=['B100','L000000','B100','L000000','B100', ...]`).  Keeping constant
+  blocks up to 30 cells literal (`MP_SMALL=30`) made it worse (1,905
+  families, 861 queued).
+* *The tails are independent.*  The left tail's prefix state, the window's
+  separators and the right tail's suffix set are keyed separately.
+  Nothing makes an unfold kid agree with the window's last symbol or the
+  left tail, and an unfold must cover every transition.  So the
+  exploration builds lists whose consecutive symbols the machine never
+  writes together.  On this row the anchor lists are a LOCAL language:
+  each element cycles through ~6 phases (separator word plus spelling), and
+  the 128 pairs of consecutive symbols are all present by 1M steps (none
+  new to 16M; triples keep growing).  So `learn_mp.fit_local` (F = that
+  local language, `MP_F=local`) is exact on the anchors, unlike BPS's
+  partial-sum range `[0, 3]`.  With it the exploration is 3-4x slower per
+  family (each unfold has ~10 kids) and still grows (585 families, 361
+  queued).  The opposite, F free over the observed symbols (`MP_F=free`),
+  blows up faster (1,557 families, 1,414 queued).  Tracking the element's
+  spelling in the right state (`MP_ROT=1`) changes little.
+
+The same local F on 2 of the 27 marker lists (`LG4_B0WIDEN=2`): too many
+families (1,500 cap).  On the `(01)` ratio-2 row `0RB0RA_0LC1RA_0RD1LC_1RB1LB`
+it is the LEFT window that grows (`L=['B01','L1','B01','L1', ...]`).  These
+are passed elements whose left transitions the ~100 left samples never
+showed.
+
+**What would fix it** (not attempted): a finder whose families come from the
+real run and whose unfolds are pruned by a JOINT state.  The checker cannot
+prune an unfold kid that is consistent with the tail's own automaton.  So
+the joint context has to be in the automaton: left and right as one
+two-sided language read from the head, or a right state that remembers the
+symbol across the head.  Alternatively, a ListGlue variant whose dispatch
+tree can void a whole RANGE of a variable (`x < n`) in one node.  That is a
+checker change (a new file beside ListGlue2Tr), and it would make the depth
+bound of `Lang4D` cheap.  Of the three levers, it is the most mechanical.
+
+**3. The 103 unlearned / timed-out rows** (survey: `mp/survey_unlearned.md`,
+per row `mp/survey_unlearned.tsv`).  All are class DN.  Grouped by tape
+shape:
+
+| group | rows | shape | result |
+|---|---:|---|---|
+| SPREAD | 19 | irregular tape, no long periodic stretch | open: rank tier false / time-out at window 8, MB no closure |
+| HYB2 | 14 | two blocks trading length plus a counter end (one row: low digit base 4 under base-2 digits, junction rotating every 2 laps) | open: hy2 at digit width <= 10, bases 2-6: "no counter family" (needs HY3's per-phase alphabets) |
+| BLKSPR | 11 | long block(s) beside a growing irregular region | open |
+| LIST2 | 11 | ratio-2 lists the learner rejects at its anchor (b_0 caught mid-transfer, phase-flipping `(10)/(01)` units) | open: BLC learner work |
+| LONGPER | 11 | one 22-54-cell period over most of the tape | **1 boarded**: MB at `--pmax 64 --polish 900` (9,617 nodes; MB's earlier 15,758-node closure was left out for a 7.7 min kernel time); 10 no closure |
+| LIST4 | 9 | `(011)/(110)` ratio-4 lists: BLC5's 9 time-outs | open (§2) |
+| TRIO | 5 | `1^a 0^b` trading, then a binary counter with ~950 zero digits written at once | open |
+| MULTI14 | 5 | three blocks, one of period 14 or 10 | open: MB no closure |
+| LIST32 | 4 | x~1.45 lists, Collatz-like | left alone (TA's shape) |
+| POW2 | 4 | power-of-two blocks, a counter whose digits are blocks | left alone |
+| HYB1 | 3 | one block plus a counter end | open |
+| UNARY 2, OVF2 2, MULTI4 2, LISTIRR 1 | 7 | | open (OVF2: needs HybridCtr2Tr's finder) |
+
+The finder runs: `hy3_ti.py` on the 83 rows it had not seen (0: 72 "no
+anchor key"), MB `--pmax 32` on the 50 rows MB had not tried (0: no
+closure), `mp/hy2w.py` (hy2 with digit width up to 10, bases 2-6) on 23
+hybrids (0), and the rank tier at window 8 on 37 rows (0: 19 false, 18
+time-outs).
+
+| batch | rows | compile (container) |
+|---|---:|---:|
+| `CBT_MPU_00` | 1 | 177 s (beside a 1-job finder) |
+
+`ci_costs.tsv` lists it at 360 s, and `ci_shard.py --check 6` passes (the
+slowest shard is still `CBT_BR_02`, 2,764 s).  `Print Assumptions
+cv_MPU_00_0000`: `functional_extensionality_dep` only.
+
+**Commands** (resumable; `mp_find.py find` skips rows already in its
+output, caches learned languages in `$MP_CACHE`, and re-executes itself
+under `PYTHONHASHSEED=0`).  Knobs: `MP_F=local|bps|free`, `MP_EXTEND`
+(the long-run END table, default on), `MP_DEPTH` (default 3; 0 = Lang4's
+right automaton), `MP_ROT`, `MP_TLONG`, `MP_SMALL`.
+
+```
+cc -O2 -o /tmp/farend tools/closeouttr/mp/farend.c
+/tmp/farend SPEC 1000000000 40 L                         # far-end words at each anchor (L or R: b_0's side)
+MP_F=bps MP_DEPTH=0 python3 tools/closeouttr/mp/mp_find.py find tools/closeouttr/mp/rows_multicell.txt mc.jsonl --jobs 12 --timeout 1200
+MP_F=local MP_DEPTH=2 LG_VERBOSE=1 python3 tools/closeouttr/mp/mp_find.py one 0RB0LD_1RC1LB_1LA1RA_1LA0LD
+python3 tools/closeouttr/mp/mp_find.py batch mc.jsonl --tag MP --chunk 4
+```
+
+The full 61-row sweep at the box's 12 jobs and 1,200 s a row is about
+1 h 45 min per knob setting.  None of the single-row runs above suggests
+it will certify a row.  The survey's box commands (LIST4 at 1,800 s, rank
+tier window 8 on its 18 time-outs, hy2w on its 7 time-outs; about 2 h in
+all) are in `mp/survey_unlearned.md`.
+
 #### 7.4.LE The counters the ladder emitter could not close: five closure gaps, a visit phase per instruction, 181 boarded (2026-09-30)
 
 Workstream LE (batch tag `LE`), over the counters still open at the start:
@@ -5754,7 +5900,7 @@ tools/closeouttr/le/board_chunk.sh CBT_LE2_NN
 python3 tools/closeouttr/le2/sweep_detect.py tools/closeouttr/le2/rows_dn_fam.txt tools/closeouttr/le2/sweep_dn.jsonl
 ```
 
-#### 7.4.LE3 LE2's counter residue: the "two-sided" rows are one counter read wrongly; three new generic checkers, 66 boarded (2026-10-01)
+#### 7.4.LE3 LE2's counter residue: the "two-sided" rows are one counter read wrongly; three new generic checkers, 67 boarded (2026-10-01)
 
 Workstream LE3 (batch tag `LE3`), over LE2's residue: the 442 rows of
 `tools/closeouttr/le2/rows_{dn,sp,qh}_{cap,closure,fam,nofam}.txt`, all
@@ -5773,7 +5919,7 @@ file (nothing landed is modified; `Print Assumptions` on every closer shows
 |---|---|---|---|---:|
 | **step counter** | `1RB1LD_1RC0RB_1RD0LD_1LA0LD` (LE2's "mod-3 clock") | a base-4 counter that adds **3** per anchor visit, so its low digit cycles through the residues mod 3 while the high digits count.  valfam tries `STEPS = (1, 2)` only | `Checkers/LadderCheckStepTr.v`: a positional base-`b` `Fam` with step `s` dividing `b - 1`.  The value mod `s` is the digit sum mod `s`, an invariant per phase (`cres`); the successor splits three ways on the LOW digit (`u + s < b`: no carry; a carry through `t^n d`; the top `u t^n`), and the residue pins the top's low digit to one value per phase (`utop`), so the fill law applies as at step 1 | 12 (`CBT_LE3_00`, `_02`) |
 | **terminator run** | `0RB1LA_1RC0LA_0LD1RB_1LB0RC` (LE2's "misaligned narrowing" and its nested-counter class) | `[B1] x (01)^m`: `x` binary over the words `11`/`10`, then a RUN of the terminator word.  Inside a width `x` counts; the top of `x` narrows it by a digit and lengthens the run (`(10)^j (01)^m -> (11)^(j-1) (01)^(m+1)`); an empty `x` refills (`(01)^m -> (11)^(m+1) 01`).  valfam reads it at small widths as a multi-phase family whose fills run `+2, -1` with terminators `01`, `0101`, which no respell states | `Checkers/LadderCheckRunTr.v`: a `Fam` for the digits plus the run word `T`, an end word and the refill law `(a, c)`; a total digit-wise successor; three arm classes (interior `t^n d X`, narrowing `t^j T X`, refill `T^m suf`); liveness by the length of `x` then its value, so refills recur and the fires are read from the refill arms | 41 (`CBT_LE3_01`; 23 never-QH, 18 QH) |
-| **Zeckendorf** | `1RB1RA_0LC1LB_0RC1LD_0RA0LD` (LE2's "fibonacci weights") | a one-cell string with weights 1, 2, 3, 5, ... and no two adjacent ones, then the terminator `01`; valfam's `fibonacci(shifted)`, which `LadderCheck`'s `Fib`/`FibL` (weights 1, 1, 2, ...) do not state | `Checkers/LadderCheckZeckTr.v`: the digit-wise Zeckendorf increment `zinc`; every canonical string is `u (01)^k s` (`u` = `[]` or `[1]`, `s` = `00r`, `0` or empty), giving interior, end and top classes in two kinds; the width bound `fibvl 1 x < fibw (|x|+1)` makes tops recur | 13 (`CBT_LE3_03`, `_04`; 3 QH) |
+| **Zeckendorf** | `1RB1RA_0LC1LB_0RC1LD_0RA0LD` (LE2's "fibonacci weights") | a one-cell string with weights 1, 2, 3, 5, ... and no two adjacent ones, then the terminator `01`; valfam's `fibonacci(shifted)`, which `LadderCheck`'s `Fib`/`FibL` (weights 1, 1, 2, ...) do not state | `Checkers/LadderCheckZeckTr.v`: the digit-wise Zeckendorf increment `zinc`; every canonical string is `u (01)^k s` (`u` = `[]` or `[1]`, `s` = `00r`, `0` or empty), giving interior, end and top classes in two kinds; the width bound `fibvl 1 x < fibw (|x|+1)` makes tops recur | 14 (`CBT_LE3_03`, `_04`, `_05`; 4 QH) |
 
 How each was found:
 
@@ -5791,7 +5937,7 @@ How each was found:
   (`1RB0RD_1LC1RA_0RB0LC_1LD0LA`, words `00`/`10`, run `11`) refills to
   something other than `D0^(m+a)`.  37 of the 41 are LE2 `fam` rows (the
   box's famclose run cannot state them, so it will not double-board them).
-* **Zeckendorf.**  From the step sweep (above): 13 rows, all board.
+* **Zeckendorf.**  From the step sweeps: 14 rows, all board.
 
 The three emitters (`le3/emit_step.py`, `emit_run.py`, `emit_zeck.py`) share
 `emit_ladder`'s header and arm search (`emit_step.Arms`: a chain, a chain off
@@ -5815,7 +5961,7 @@ machine's `(10)^2 0101` never occurs, and the row is a terminator-run
 counter (above).  It is kept (generic, compiled, `le3/emit_narrow.py`) but
 no row is boarded with it.
 
-**Yields** (66 rows; closeout 824 -> **758**):
+**Yields** (67 rows; closeout 824 -> **757**):
 
 | LE2 bucket | rows | step | run | Zeckendorf | open |
 |---|---:|---:|---:|---:|---:|
@@ -5825,10 +5971,10 @@ no row is boarded with it.
 | SP nofam | 20 | | 4 | | 16 |
 | SP fam | 79 | | 13 | | 66 |
 | SP cap / closure | 61 / 6 | | | 8 | 53 / 6 |
-| QH fam | 43 | | 18 | | 25 |
+| QH fam | 43 | | 18 | 1 | 24 |
 | QH nofam / cap | 21 / 32 | | | 3 | 21 / 29 |
 
-**Where the rest stop** (376 of the 442):
+**Where the rest stop** (375 of the 442):
 
 1. **Nested and two-sided counters that are really two counters.**  The
    cited nested example `0RB1RA_0LC0RA_0LD1LD_1RB1LC` is not a clean product:
@@ -5849,7 +5995,11 @@ no row is boarded with it.
    CE3's one `fibonacci` (greedy) row whose interior arm has no chain.
 4. **The rest of the `fam` / `closure` buckets** are LE2's shapes (DN
    carries that sweep the run past the digit, 8-state digit pairs,
-   three-digit fill targets).  The fam/closure step sweep is below.
+   three-digit fill targets).  The step sweep over the 150 fam/closure rows
+   still open (`le3/stpf.jsonl`, steps 3..8, cap 300 s) closes 2: one more
+   Zeckendorf row (boarded, `CBT_LE3_05`) and CE3's greedy `fibonacci` row
+   again (interior arm, no chain).  Of the other 148: no value family 84,
+   families but none closed 54, time cap 10.
 
 ```
 # the container loop (what this section ran)
@@ -5870,3 +6020,24 @@ tools/closeouttr/le/board_chunk.sh CBT_LE3_NN
 * No hand-porting of generated layers (`Machines/` ~2.6M lines,
   `Closeout/CB_*`, census lists): they regenerate from tools once the
   checker layer lands.
+
+#### 7.4.TA follow-up: cube counters at moduli 9 and 27 (2026-10-01)
+
+The suggested larger-residue search was run on the 15 cube rows for which
+`ta/dump.jsonl` contains a closed TriGlue family graph.  With node moduli 9
+and 27 and three lexicographic levels, `TriNuTr` certifies **1 of 15** rows:
+`1RB1LA_0RC0RD_1LC0LA_1RC0RC`, at modulus 9.  The certificate is boarded
+in `CBT_AST_00`.  The resumable results are recorded in
+`tools/closeouttr/ta/cube_nu27.jsonl`.  Of the other 14 graphs, eight exceed the node cap at both moduli and six
+have no nu-ranking at modulus 9 before exceeding the node cap at 27.  Thus
+the larger residue split supplies one missing valuation across the cube
+reset, but does not by itself close the family.
+
+Command:
+
+```
+# First select the 15 cube records containing a saved `cert` into cube_dump.jsonl.
+python3 tools/closeouttr/ta/nu_find.py cube_dump.jsonl \
+  tools/closeouttr/ta/cube_nu27.jsonl --plist 9,27 --ells 3 \
+  --jobs 4 --timeout 900
+```
