@@ -38,6 +38,7 @@ G.MAXFAM = int(os.environ.get("LG4_MAXFAM", "800"))
 L3.MAXW = 8
 MAXEND = 40         # longest end word
 LWIDEN = int(os.environ.get('LG4_LWIDEN', '0'))
+FOBS = os.environ.get('LG4_FOBS', '1') == '1'
 RSAMPLES = 4000    # right samples at most
 RALT = os.environ.get('LG4_RALT', '1') == '1'   # learn the right tails' other forms
 LDROP = int(os.environ.get('LG4_LDROP', '1'))   # elements nearest the head a left sample drops
@@ -616,6 +617,19 @@ def learn(spec, t1=4000000, every=97):
             break
     if fit is None:
         raise T.Fail('learn: no bounded-partial-sum automaton')
+    if FOBS:
+        # keep only the transitions the anchor lists take (the partial-sum
+        # bound alone admits lists the machine never builds)
+        used = set()
+        for syms, bk, endw in data:
+            q = fit['q0']
+            for x in syms[:len(syms) - fit['M']]:
+                used.add((q, x))
+                q = fit['fwd'].get((q, x))
+                if q is None:
+                    break
+        fit = dict(fit)
+        fit['fwd'] = {k: v for k, v in fit['fwd'].items() if k in used}
     fwd, end = L3.expand_end(fit)
     nalt = 0
     # the boot: the first anchor from which on ten anchors in a row are lists

@@ -149,6 +149,11 @@ class Lang4(lg3.Lang):
                             prev.add(z[1])
                     else:
                         prev |= pred.get((z, x), set())
+                if RNOQ0:
+                    # b_0's own start state matters only at position 0: a
+                    # right tail never starts there, so drop it (fewer
+                    # classes; the language read is the same suffixes)
+                    prev.discard(self.q0)
                 if not prev:
                     continue
                 p = frozenset(prev)
@@ -222,6 +227,9 @@ class LFam4(lg3.LFam):
             except Fail:
                 pass
         self.hull = H0
+        if DEBUG:
+            print('   no param: %s base=%s rows=%s g=%s' % (lg3.fmt_key(self.key), H0.base,
+                  [[str(x) for x in r] for _, r in H0.rows], H0.g), file=sys.stderr)
         raise Fail('no nonnegative parametrization')
 
 
@@ -237,6 +245,8 @@ Req = T.Req
 nfa_maxs = lg3.nfa_maxs
 SPLITGAP = int(os.environ.get('LG4_SPLITGAP', '3'))
 WIDEN = os.environ.get('LG4_WIDEN', '1') == '1'
+RNOQ0 = os.environ.get('LG4_RNOQ0', '1') == '1'
+SPLITSAME = os.environ.get('LG4_SPLITSAME', '1') == '1'
 SPLITMOD = os.environ.get('LG4_SPLITMOD', '1') == '1'
 
 
@@ -700,24 +710,36 @@ def _split_res(self, Lw, Rw):
     tape = []
     for x in reversed(Lw):
         tape.append(('B', tuple(reversed(x[1])), x[2]) if x[0] == 'B' else ('L', len(x[1])))
-    tape.append(('L', 1))
+    tape.append(('H', 1))
     for x in Rw:
         tape.append(('B', tuple(x[1]), x[2]) if x[0] == 'B' else ('L', len(x[1])))
     blks = []
     gap = 0
+    head = False
     last = None
+    dmax = self.lang.dmax
     for x in tape:
-        if x[0] == 'L':
+        if x[0] != 'B':
             gap += x[1]
+            head = head or x[0] == 'H'
             continue
         cur = len(blks)
         blks.append([x[1], x[2], False])
-        if last is not None and gap <= SPLITGAP and C.primroot(blks[last][0])[0] != \
-                C.primroot(x[1])[0]:
-            blks[last][2] = True
-            blks[cur][2] = True
+        if last is not None and gap <= SPLITGAP:
+            other = C.primroot(blks[last][0])[0] != C.primroot(x[1])[0]
+            # the same unit on both sides of the head, with no list relation:
+            # an element the head has split with a marker (`1^x 0 [1] 1^y`)
+            if not other and head and SPLITSAME:
+                # (b_0 is at the left: a list's left neighbour is a times
+                # the right one)
+                d1 = lg3.rel_of(False, a, blks[last][1], x[2])
+                other = d1 is None or abs(d1) > dmax
+            if other:
+                blks[last][2] = True
+                blks[cur][2] = True
         last = cur
         gap = 0
+        head = False
     res = []
     for u, e, mark in blks:
         if not mark:
