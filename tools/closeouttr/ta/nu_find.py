@@ -43,6 +43,7 @@ import ti_coq as C                              # noqa: E402
 
 RCANDS = sorted(set(Fr(p, q) for p in range(1, 28) for q in range(1, 28)))
 DEBUG = False
+EMAX = 400           # unknowns in one SCC's eigen-form search
 SMALL = set(Fr(2) ** a * Fr(3) ** b for a in range(-4, 5) for b in range(-3, 4))
 
 
@@ -220,6 +221,8 @@ def find_E(comp, cedges, nv):
             rows.append(row)
         return rows
 
+    if n > EMAX:
+        return None                # too big for exact elimination here
     base = []
     for ei in tree:
         base += rows_for(ei, Fr(1))
@@ -245,6 +248,10 @@ def find_E(comp, cedges, nv):
             return None
         return [[sum(Wc[d][i] * kv[d] for d in range(len(Wc))) for i in range(n)] for kv in K]
 
+    def kdim(M0, M1, r, d):
+        Mr = [[x - r * y for x, y in zip(r0, r1)] for r0, r1 in zip(M0, M1)]
+        return len(rank_null(Mr, d))
+
     def ratios(M0, M1, d):
         """candidate r (positive rationals) with (M0 - r M1) singular"""
         import numpy as np
@@ -265,6 +272,7 @@ def find_E(comp, cedges, nv):
         return sorted(r for r in out if r > 0)
 
     calls = [0]
+    import numpy as np
 
     def dfs(Wc, todo, depth):
         calls[0] += 1
@@ -277,16 +285,21 @@ def find_E(comp, cedges, nv):
         best = None
         for ei in todo:
             M0, M1 = pencil(Wc, ei)
-            kg = kernel(Wc, M0, M1, Fr(7, 5))
-            g = len(kg) if kg else 0
+            g = kdim(M0, M1, Fr(7, 5), d)
             if g == d:
                 best = (-1, ei, [(None, Wc)])       # always satisfied
                 break
             opts = []
+            A0f = np.array([[float(x) for x in row] for row in M0]).reshape(len(M0), d)
+            A1f = np.array([[float(x) for x in row] for row in M1]).reshape(len(M1), d)
             for r in sorted(set(ratios(M0, M1, d)) | SMALL, key=lambda r: (r == 1, abs(math.log(r)))):
-                K = kernel(Wc, M0, M1, r)
-                if K is not None and len(K) > g:
-                    opts.append((r, K))
+                # float screen: the exact rank test only where the kernel may jump
+                sv = np.linalg.svd(A0f - float(r) * A1f, compute_uv=False)
+                scale = max(1.0, float(sv[0]) if len(sv) else 1.0)
+                if d - int((sv > 1e-9 * scale).sum()) <= g:
+                    continue
+                if kdim(M0, M1, r, d) > g:
+                    opts.append((r, 'lazy'))
             if g > 0:
                 opts.append((None, None))            # defer: r stays free
             key = (0 if g == 0 else 1, 0 if any(r is not None for r, _ in opts) else 1, len(opts))
@@ -304,10 +317,13 @@ def find_E(comp, cedges, nv):
             sols.append(Wc)                          # only free edges left
             return
         todo2 = [x for x in todo if x != ei]
+        M0, M1 = pencil(Wc, ei)
         for r, K in opts:
+            if K == 'lazy':
+                K = kernel(Wc, M0, M1, r)
             if r is None:
                 # the ratio stays free: decide the other edges first
-                dfs(Wc, todo2 + [ei] if False else todo2, depth + 1)
+                dfs(Wc, todo2, depth + 1)
             else:
                 dfs(K, todo2, depth + 1)
 
