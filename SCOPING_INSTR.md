@@ -5117,6 +5117,159 @@ closed family graph read so far has a non-firing branch conjugate to
 coupling between the parity of the round and a second, independent
 parameter, which is where a real Collatz obstruction would sit.
 
+#### 7.4.LE2 LE's residue: the respell (the top digit moves between the digit string and the terminator), 37 boarded; the finder residue is two-sided counters, not finder bugs (2026-10-01)
+
+Workstream LE2 (batch tag `LE2`), over the counters still open after LE and
+LEF: the LE rows (`le/rows_{dn,sp,qh}.txt`) still in
+`closeouttr_remaining.txt`, **442 rows** (180 DN, 166 SP, 96 QH), bucketed
+by where LE's `measure_final.tsv` left them in `le2/rows_<class>_<bucket>.txt`.
+Block-list rows (BLC3), the Collatz-like rows (TA) and the hybrids were not
+touched.
+
+| bucket (LE's measure) | DN | SP | QH |
+|---|---:|---:|---:|
+| valfam closes, the emitter refuses (`closure`) | 8 | 6 + 23 narrowing | |
+| families found, none closed (`fam`) | 51 | 79 | 43 |
+| no value family / no local rules (`nofam`) | 94 | 20 | 21 |
+| time cap (`cap`) | 27 | 61 | 32 |
+
+**The narrowing fill needs no new Coq: it is a respelling.**  On all 23
+narrowing rows the phase a narrowing fill lands in has a terminator that
+STARTS with the top digit word.  For example `0RB1LA_1LC1RD_1RB0LA_1LC1RC`
+fills phase 2 (empty terminator) into phase 1 (terminator `1101`), so the
+width goes k -> k-1.  But `110^(k-1) . 1101` is `110^k . 1`, and that top
+digit cannot change inside phase 1, because the phase runs until its own
+top, which is all top digits.  So phase 1 is read with one more digit and
+terminator `1`: the same tapes, the same tops, the widths go +1, 0, 0 instead
+of +1, -1, +1, and the fill INTO the phase gets one top digit on its target
+suffix (`mkFill 0 [] 0 [1] 1`).  On the three two-cell rows (digits `11`/`10`)
+the move goes the other way.  `(10)^k` narrows onto `(11)^(k-1) 0111`, but the
+phase it narrows FROM is entered at `... 10 11 10` (the fill target suffix
+`[1,0,1]` ends in a top digit), so that phase is read with one digit fewer
+and `10` on its terminator.  `emit_ladder.respell(cert, off)` takes one offset
+per phase:
+
+* `off[ph] > 0`: move up to `lead(tail[ph])` top-digit words off the front of
+  the phase's terminator into the digit string;
+* `off[ph] < 0`: move top digits onto the terminator, allowed only if every
+  fill landing in the phase has that many top digits at the end of its
+  target suffix.  A boot that is then too narrow moves to the next member
+  the respelt family spells (`qh_boot`).
+
+Every fill's widening becomes `s + off[to] - off[ph]`, which must be a `nat`.
+`respell_narrow` takes the smallest such offsets and runs only when some
+fill narrows.  The result is an ordinary `Fam` whose fill targets need not
+have value zero.  `fam_next` already reads targets by value, so the kernel
+(`LadderFam`, `LadderCheck*`) is untouched, and every arm is re-checked as
+before.  **23 of 23 board** (`CBT_LE2_00`).
+
+**The same move fixes 14 of the interior-arm rows.**  The 14 SP interior-arm
+rows are counters whose fill is
+`1^k -> 0^k 1`.  valfam reads the top digit as part of the counter, so the
+value at width k runs from `2^(k-1)` up and the top digit never changes.
+`LadderCheck`'s class split still needs the END arm `t^r d . terminator`
+for `d < t` at the last digit, a tape the machine never builds.  Its carry
+turns back on the next digit's first cell, which past the last digit is a
+blank, so the end arm has no chain.  Respelt with `off = -1` (the top digit
+on the terminator, fill target `0^k` at width k+1), the end arm is the
+reachable one.  The emitter now retries a family whose closure is not built
+with up to four respellings (`respell_offsets`, fewest moved digits first).
+The first attempt is the old one, so every board that built before is
+byte-identical; the 23 narrowing boards were re-emitted and compared.
+**14 of 28 closure-stage rows board** (`CBT_LE2_01`: all 14 SP
+interior-arm rows; none of the DN ones, below).
+
+Times (one core): a board compiles in 1.0-1.1 s, and each batch builds in
+51 s at `-j4` including its boards.  Axioms: `functional_extensionality_dep`
+only (`Print Assumptions` on a board of each batch).
+
+**Where the other 14 closure-stage rows stop:**
+
+* **6 DN interior arms.  4 of them SWEEP the run past the digit**
+  (`le2/sweep_detect.py`'s test on valfam's own family: the arm has a
+  chain against `top^m 0` for every m = 1..4 and none against an opaque
+  tail after `top`).  On
+  `0RB0LA_0RC1RB_0LD1RC_1LA1LD` the increment of `1^n 0 . 1^m 0 rest`
+  writes the `1` and then walks right across the `1^m` to the next `0` and
+  back (the cost 6, 10, 14, ... tracks m).  No digit of lookahead states
+  that, and `LRule` has one index, so the arm needs a second index for `m`:
+  a class split `t^n d t^m e rest`.  That is new kernel, not an emitter fix.
+  The other 2 have an r=0 arm and fail at longer carries (the "other"
+  shape below).
+* **2 SP rows: a fill target of 3 digits at +1 width**
+  (`mkFill 1 [0;1;1] 0 [] 1`, LSB side), which holds only from width 2.
+  `Inv` with a minimum width; the respell cannot move LSB-side digits.
+* **4 multi-phase fill arms with no chain** (cycles 0, 0, 2, 0 over 4
+  phases), **1 interior class arm** (DN `1RB0RC_1LC1LA_0LC1RD_1LB0RD`,
+  one-cell digits, terminator `11`), and **1 fill anchor that reaches no
+  A1** (DN).
+
+**The finder residue (step 2), characterised on a sample.**
+`ladder/nofam.py` on 30 "no value family" rows (18 DN, 6 QH, 6 SP;
+`le2/nofam30.jsonl`):
+
+| far side at the best anchor | rows | what it is |
+|---|---:|---|
+| a second counter | 18 | the side away from the counter has its own successor: a two-sided machine.  In `1RB1LD_1RC0RB_1RD0LD_1LA0LD` it is a mod-3 clock (`10111 -> 10001 -> 10011`) that advances on every anchor visit while a binary counter on the near side counts; in `0RB1RA_0LC0RA_0LD1LD_1RB1LC` it is a nested counter (a low counter in a fixed-width window whose overflow increments the high one).  The far sides count 2-20 distinct values on 6 of them and 200-1,500 on the rest |
+| constant, fibonacci weights | 5 | `0RB1LD_1LA1RC_1LA1RB_0RC0LD`: two-cell `11` tokens at a MOVING cell offset (`0000 11`, `11 00 11`, `0 11 0 11`, `00 11 11`).  No fixed digit grid reads it, and `valfam --numeration --cap 400` still finds no family |
+| unbounded | 4 | far sides that keep changing, with no successor function |
+| bounded oscillation | 2 | |
+| unary | 1 | |
+
+And on the DN "families found" rows (`le2/sweep_detect.py`, famclose's
+first four families, 17 rows; `le2/sweep_dn.jsonl`): **1 sweep, 16 "other"**.
+In the "other" rows the r=0 interior arm has a chain, and the carry fails at
+r >= 1.  The one read by hand, `0RB0LC_1LA1RB_0RB0LD_0RB1LD`, is read as base
+3 (digits `10`, `01`, `11`) but is not positional: the low two digits run
+`00, 10, 20, 11, 21, 02, 12, 22` (8 states), so the d=0 arm at r >= 1 is
+stated on tapes the machine never builds.
+
+So the largest piece of the finder residue is **two-sided machines** (a
+second counter or clock on the far side), then **non-positional
+numerations** (moving offsets, 8-state digit pairs).  Neither is a
+`valfam.py`/`famclose.py` bug: each needs a family theory `LadderFam` does
+not have.  For the clocks, that is a far side with a phase that advances on
+every successor, not only on fills; for the rest, a two-sided family.  No
+finder fix was made.
+
+**famclose with the respell, measured here.**  On the DN "families" rows
+(LE's emitter had closed none of these 51), 0 of 17 close.  Of 136 family attempts, 100
+fail the interior arm (the "other" shape above), 16 the fill arm, and 20
+are narrowing families the respell cannot state: no offsets within the
+leading and trailing top digits make every widening a `nat`.  In the two
+read (`0RB0RA_1RC1LD_1LC1RB_0LD0LA`, `0RB1LA_1RC0LA_0LD1RB_1LB0RC`) the
+terminator the narrowing fill lands on (`101`, `0101`) does not start on a
+digit-word boundary: the digit framing shifts by a cell between phases,
+which is the moving-offset shape again.  On
+SP, 0 of the first 9 close (`le2/fc_sp.jsonl`; a container restart stopped
+the run).  Of their 64 family attempts, 42 are narrowing families the
+respell cannot state and 22 fail the fill arm.  So the SP "families" rows
+are narrowing cycles of the misaligned-terminator kind above, not the
+aligned kind `CBT_LE2_00` boarded.  At 10-40 min a row here, the rest is
+the box job below.  The 4 SP time-cap rows tried close 0 of 4
+(famclose skips valfam's arm miner, so a time cap is not the reason).
+
+**Yields:** 37 rows (`CBT_LE2_00..01`), all SP.  Closeout: 891 open
+when LE2 started, **854** now.
+
+**Box run** (resumable; famclose skips the rows already in its `--json`):
+
+```
+tools/closeouttr/le2/box.sh 12        # famclose over le2/rows_{sp,qh,dn}_fam.txt still open
+# SP 79 rows ~3 h, QH 43 ~1.5 h, DN 51 ~2 h at 12 jobs (10-40 min a row a job)
+python3 tools/closeouttr/sp_ladder_batch.py tools/closeouttr/le2/fc_sp.jsonl tools/closeouttr/le2/fc_dn.jsonl --tag LE2 --chunk 40
+python3 tools/closeouttr/sp_ladder_batch.py tools/closeouttr/le2/fc_qh.jsonl --tag LE2 --chunk 40 --qh
+tools/closeouttr/le/board_chunk.sh CBT_LE2_NN ...
+```
+
+```
+# the container loop (what this section ran)
+python3 tools/closeouttr/sp_ladder_batch.py VF.jsonl --tag LE2 --chunk 40   # the emitter retries respellings itself
+tools/closeouttr/le/board_chunk.sh CBT_LE2_NN
+(cd tools/ladder && python3 nofam.py ../closeouttr/le2/nofam30_rows.txt --json ../closeouttr/le2/nofam30.jsonl)
+python3 tools/closeouttr/le2/sweep_detect.py tools/closeouttr/le2/rows_dn_fam.txt tools/closeouttr/le2/sweep_dn.jsonl
+```
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

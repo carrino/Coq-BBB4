@@ -1,0 +1,30 @@
+1RB0RB_0LC1RA_1LD1LC_0RA0LD    base-3/binary        B0L stp=1 tl=*   ex=1  big=4    mem=4    gap=0 unbounded  succ=0.98 ctx=1.00 rec=1.00 43.9s
+0RB1RA_0LC0RA_0LD1LD_1RB1LC    base-2/binary        A0L stp=1 tl=01  ex=1  big=5    mem=3    gap=7 second counter succ=1.00 ctx=1.00 rec=0.00 57.0s
+1RB0RB_0LC1RD_0LB1LA_1LC0RD    mixed/weights        C1R stp=1 tl=*   ex=28 big=171  mem=14   gap=4 second counter succ=1.00 ctx=1.00 rec=0.00 37.6s
+0RB1RB_0LC0RA_0LD1LC_1RA1LD    base-2/binary        D0L stp=1 tl=*   ex=1  big=4    mem=4    gap=6 bounded oscillation succ=1.00 ctx=1.00 rec=0.00 50.7s
+1RB0RB_1LC0RD_1LA0LC_1RD0LA    base-2/gray          C0L stp=2 tl=*   ex=12 big=128  mem=11   gap=3 second counter succ=1.00 ctx=1.00 rec=0.00 37.4s
+0RB0LA_1RC0RC_0LD1RB_1LA1LD    base-3/binary        C0L stp=1 tl=*   ex=1  big=4    mem=4    gap=0 unbounded  succ=0.98 ctx=1.00 rec=1.00 44.2s
+1RB0LA_0RC1RB_0LD0RB_1LD0LA    mixed/weights        A0L stp=1 tl=01  ex=12 big=128  mem=63   gap=7 second counter succ=1.00 ctx=1.00 rec=0.96 74.5s
+1RB0RB_1LC1RA_1LD0LC_0RA0LD    base-2/binary        B0R stp=1 tl=*   ex=1  big=4    mem=4    gap=6 second counter succ=1.00 ctx=1.00 rec=0.00 49.7s
+1RB0LA_1LC0RB_1RC1LD_1LA1RD    base-2/binary        D1R stp=1 tl=*   ex=20 big=64   mem=10   gap=5 second counter succ=1.00 ctx=1.00 rec=0.97 63.5s
+1RB0RB_1LC1RD_0LC1LA_1LB0RD    fibonacci/weights    B1R stp=1 tl=11  ex=11 big=514  mem=1499 gap=0 second counter succ=1.00 ctx=1.00 rec=0.00 42.4s
+1RB0LA_1LC0RB_1RD1LA_1LD1RC    base-2/binary        D0R stp=1 tl=*   ex=18 big=128  mem=749  gap=1 second counter succ=1.00 ctx=1.00 rec=0.96 91.1s
+0RB0LA_1LC0RD_1LA1RD_1LB1RC    base-2/gray          C1L stp=1 tl=1   ex=1  big=4    mem=3    gap=6 unbounded  succ=1.00 ctx=1.00 rec=0.00 60.5s
+1RB1LA_0RC1RC_0LD0RB_0LA1LD    base-2/binary        A0L stp=1 tl=*   ex=1  big=4    mem=4    gap=6 bounded oscillation succ=1.00 ctx=1.00 rec=0.00 50.4s
+1RB0LA_1LC0RB_1RD1LD_1LA1RD    mixed/weights        B1L stp=1 tl=*   ex=18 big=16   mem=13   gap=6 second counter succ=1.00 ctx=1.00 rec=0.97 63.4s
+1RB1LA_1LC0RB_1RD0LC_1LD1RA    base-2/binary        A1L stp=1 tl=*   ex=20 big=64   mem=9    gap=5 second counter succ=1.00 ctx=1.00 rec=0.97 65.2s
+1RB0LA_1LC1RC_1RD1LC_1LA0RD    mixed/weights        A1R stp=1 tl=*   ex=18 big=16   mem=13   gap=6 second counter succ=1.00 ctx=1.00 rec=0.97 65.8s
+0RB0LA_1RC0RC_1LD1RB_1LA0LD    base-2/binary        C0R stp=1 tl=*   ex=1  big=4    mem=4    gap=6 second counter succ=1.00 ctx=1.00 rec=0.00 50.6s
+1RB1LA_1RC0RB_1LD1RA_1LA0LD    base-2/binary        A0L stp=1 tl=*   ex=16 big=16   mem=4    gap=2 second counter succ=1.00 ctx=1.00 rec=0.97 60.6s
+0RB1LD_1LA1RC_1LA1RB_0RC0LD    fibonacci/weights    D0R stp=1 tl=11  ex=11 big=514  mem=1499 gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 41.8s
+0RB1LC_0RC1RD_0RD0LC_1LA1RB    fibonacci/weights    C0R stp=1 tl=11  ex=11 big=513  mem=1498 gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 41.2s
+0RB1LD_1RC1RC_1LA1RB_0RC0LD    fibonacci/weights    D0R stp=1 tl=11  ex=11 big=514  mem=1499 gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 40.6s
+1RB1RD_1LC1LB_1RA0LB_0RB0LD    unary/1                     stp=1 tl=0111111 p=1..254 phases=1   unary         succ=1.00 ctx=1.00 rec=1.00 29.4s
+0RB1LC_0LC0RB_1RD1LA_0LA1RB    fibonacci/weights    B0L stp=1 tl=11  ex=11 big=513  mem=1498 gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 41.0s
+1RB0RC_0LB1RC_1LD0RA_1LB1RA    fibonacci/weights    B1R stp=1 tl=11  ex=11 big=513  mem=1498 gap=0 constant   succ=1.00 ctx=1.00 rec=0.00 38.4s
+1RB0LC_1LC0RA_1LD1LA_0RB0LD    mixed/weights        A1R stp=1 tl=*   ex=19 big=64   mem=19   gap=5 second counter succ=0.95 ctx=1.00 rec=0.00 39.8s
+1RB0LD_1RC1RD_0LA0RB_0RC1LA    mixed/weights        A0L stp=1 tl=*   ex=16 big=128  mem=9    gap=3 second counter succ=0.95 ctx=1.00 rec=0.00 35.1s
+1RB0LD_1RC1RD_0LA0RC_1LA0RB    mixed/weights        D1L stp=1 tl=*   ex=19 big=64   mem=19   gap=5 second counter succ=0.95 ctx=1.00 rec=0.00 39.2s
+1RB1RD_0LC0RB_1RA0LD_1LC0RA    mixed/weights        D1L stp=1 tl=*   ex=19 big=64   mem=19   gap=5 second counter succ=0.95 ctx=1.00 rec=0.00 40.4s
+0RB1LC_1LC0LC_0RD1LA_1RD1RB    fibonacci/weights    B1R stp=1 tl=*   ex=24 big=58   mem=10   gap=7 second counter succ=1.00 ctx=1.00 rec=0.00 41.6s
+1RB1LC_1LA0RD_0LB0LC_1RB1RD    base-2/gray          C0R stp=3 tl=*   ex=0  big=0    mem=9    gap=5 unbounded  succ=1.00 ctx=1.00 rec=0.98 65.2s

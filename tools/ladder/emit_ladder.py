@@ -20,6 +20,8 @@ wrong theorem.
 Usage:  emit_ladder.py CERT.json [-o OUT.v]
 """
 import argparse
+import copy
+import itertools
 import json
 import os
 import sys
@@ -3721,6 +3723,149 @@ def quiet_pins(spec, scan=None, cut=10 ** 7):
     return sorted(pins), max(fired)
 
 
+def _respell_room(cert):
+    """(fills, offsets allowed per phase) for [respell], or None.  Phase ph
+    may be read with up to [caps[ph]] more digits (top-digit words leading
+    its terminator) or up to [neg[ph]] fewer (top digits every way into it,
+    each fill landing there, puts at the top of its target; a boot that
+    does not is moved to a later member)."""
+    fam = cert['family']
+    fills = cert.get('fill_by_phase') or [cert['fill']]
+    if (fam.get('code') != 'binary' or fam.get('weights') is not None
+            or fam.get('value_step_per_anchor_visit', 1) != 1):
+        return None
+    b = fam['base']
+    top = list(fam['digits'][b - 1])
+    tails = [list(t) for t in
+             (fam.get('terminators_by_phase') or [fam['terminator']])]
+    nph = len(fills)
+    if len(tails) < nph or not top or b < 2:
+        return None
+
+    def lead(t):
+        n = 0
+        while t[n * len(top):(n + 1) * len(top)] == top:
+            n += 1
+        return n
+
+    def trail(xs):
+        n = 0
+        while n < len(xs) and xs[len(xs) - 1 - n] == b - 1:
+            n += 1
+        return n
+    neg = []
+    for ph in range(nph):
+        into = [trail(f['target_suffix']) for f in fills
+                if f['lands_in_phase'] == ph]
+        neg.append(min(into) if into else 0)
+    caps = [lead(tails[ph]) for ph in range(nph)]
+    return fills, [range(-neg[ph], caps[ph] + 1) for ph in range(nph)]
+
+
+def respell_offsets(cert):
+    """Every offset vector [respell] can take, the fill widenings it leaves
+    all [nat] and within the emitter's target-length bound, smallest first
+    (fewest digits moved, then fewest phases read NARROWER)."""
+    room = _respell_room(cert)
+    if room is None:
+        return []
+    fills, ranges = room
+    nph = len(fills)
+    out = []
+    for off in itertools.product(*ranges):
+        ok = True
+        for ph, f in enumerate(fills):
+            to = f['lands_in_phase']
+            if not 0 <= to < nph:
+                continue
+            s = f['widens_by'] + off[to] - off[ph]
+            m = len(f['target_prefix']) + len(f['target_suffix']) + off[to]
+            if s < 0 or m > 1 + s:
+                ok = False
+        if ok:
+            out.append(((sum(map(abs, off)), sum(1 for o in off if o < 0)),
+                        off))
+    return [off for _k, off in sorted(out)]
+
+
+def respell(cert, off):
+    """[cert]'s family read with [off[ph]] more digits in phase ph
+    (SCOPING_INSTR 7.4.LE2).
+
+    A phase's terminator that STARTS with the top digit word (the counter's
+    largest digit) holds a digit that cannot change inside the phase, which
+    ends at the top of its width, all top digits: `110^(k-1) . 1101` is
+    `110^k . 1`.  So the phase may be read with that word as one more digit:
+    the same tapes, the same tops; every fill out of the phase widens by one
+    less and every fill into it by one more, with one more top digit on its
+    target's suffix.  Read the other way, a phase that every fill (and the
+    boot) enters with top digits at the top of its target keeps them until
+    its own top, so it may be read with fewer digits and those words on its
+    terminator.  Nothing in the kernel changes: the result is an ordinary
+    [Fam] whose fill targets need not have value zero, which [fam_next]
+    already reads by value, and the kernel re-checks every arm."""
+    fam = cert['family']
+    fills = cert.get('fill_by_phase') or [cert['fill']]
+    nph = len(fills)
+    b = fam['base']
+    top = list(fam['digits'][b - 1])
+    tails = [list(t) for t in
+             (fam.get('terminators_by_phase') or [fam['terminator']])]
+    cert = copy.deepcopy(cert)
+    fam = cert['family']
+    nf = []
+    for ph, f in enumerate(fills):
+        f = dict(f)
+        to = f['lands_in_phase']
+        o_to = off[to] if 0 <= to < nph else 0
+        f['widens_by'] = f['widens_by'] + o_to - off[ph]
+        sf = list(f['target_suffix'])
+        f['target_suffix'] = (sf + [b - 1] * o_to if o_to >= 0
+                              else sf[:len(sf) + o_to])
+        nf.append(f)
+
+    def retail(ph, t):
+        o = off[ph] if ph < nph else 0
+        return t[o * len(top):] if o >= 0 else top * (-o) + t
+    nt = [retail(ph, t) for ph, t in enumerate(tails)]
+    cert['fill_by_phase'] = nf
+    cert['fill'] = nf[0]
+    fam['terminators_by_phase'] = nt
+    fam['terminator'] = nt[0]
+    fam['respelt_offsets'] = list(off)
+    boot = cert.get('boot')
+    if boot is not None:
+        ph0 = boot.get('phase', 0)
+        o = off[ph0] if 0 <= ph0 < nph else 0
+        ds = list(boot['digits_lsb_first'])
+        if o >= 0:
+            boot['digits_lsb_first'] = ds + [b - 1] * o
+        elif len(ds) > -o and all(d == b - 1 for d in ds[len(ds) + o:]):
+            boot['digits_lsb_first'] = ds[:len(ds) + o]
+        else:
+            # the boot member is too narrow for the new reading: boot at the
+            # first member past it that the respelt family spells
+            t0, ds, ph, cells = qh_boot(cert, boot['steps_from_blank'])
+            boot.update(steps_from_blank=t0, digits_lsb_first=ds, phase=ph,
+                        cells=cells)
+    return cert
+
+
+def respell_narrow(cert):
+    """A family whose phase cycle has a NARROWING fill, respelt so that every
+    fill widens by a [nat], or [cert] unchanged.  [LadderFam.f_s] is a
+    [nat], and SPB's multi-phase counters run cycles such as +1, -1, +1; on
+    every such row the phase the narrowing fill lands in has a terminator
+    that starts with the top digit word (or, on the two-cell rows, the phase
+    it narrows FROM is entered with its top digit set), so [respell] with
+    the smallest offsets states it."""
+    fills = cert.get('fill_by_phase') or [cert['fill']]
+    if all(f['widens_by'] >= 0 for f in fills):
+        return cert
+    offs = respell_offsets(cert)
+    return respell(cert, offs[0]) if offs else cert
+
+
 def _rstrip0(xs):
     xs = list(xs)
     while xs and xs[-1] == 0:
@@ -3798,7 +3943,10 @@ def main():
     cert = json.load(open(args.cert))
     if isinstance(cert, list):
         cert = cert[0]
+    # a phase cycle with a narrowing fill, respelt with nat widenings (7.4.LE2)
+    cert = respell_narrow(cert)
     global TR_PINS, TR_QH
+    lastf = None
     if args.tr and args.qh:
         row = None
         if args.scan and os.path.exists(args.scan):
@@ -3807,20 +3955,45 @@ def main():
                     row = l.split()[1:]
                     break
         TR_PINS, lastf = quiet_pins(cert['spec'], row)
-        t0, ds, ph, cells = qh_boot(cert, lastf)
-        cert['boot'] = dict(cert['boot'], steps_from_blank=t0,
-                            digits_lsb_first=ds, phase=ph, cells=cells)
-        TR_QH = t0
     elif args.tr:
         TR_PINS = (parse_pins(args.pins) if args.pins is not None
                    else unfired(cert['spec'], 10 ** 6))
+
+    def qhb(c):
+        if args.tr and args.qh:
+            t0, ds, ph, cells = qh_boot(c, lastf)
+            c['boot'] = dict(c['boot'], steps_from_blank=t0,
+                             digits_lsb_first=ds, phase=ph, cells=cells)
+            global TR_QH
+            TR_QH = t0
+        return c
     out = args.out or os.path.join(
         HERE, '..', '..', 'theories', 'Machines',
         'LadderTr' if args.tr else 'Ladder',
         '%s_%s.v' % (('LDRQ' if args.qh else 'LDRT') if args.tr else 'LDR',
                      mach_id(cert['spec'])))
     os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
-    good, bad, cd = emit(cert, out)
+    orig = copy.deepcopy(cert)
+    good, bad, cd = emit(qhb(cert), out)
+    if cd is None and args.tr and not orig['family'].get('respelt_offsets'):
+        # the same family read with the top digits moved between the digit
+        # string and the terminators (7.4.LE2): a counter whose top digit
+        # never changes inside its width has no reachable interior arm at
+        # the last digit, and an end arm that is not a chain
+        for off in respell_offsets(orig)[:4]:
+            if not any(off):
+                continue
+            try:
+                c2 = qhb(respell(orig, off))
+            except NoClosure:
+                continue
+            g2, b2, cd2 = emit(c2, out + '.alt')
+            if cd2 is not None:
+                os.replace(out + '.alt', out)
+                good, bad, cd = g2, b2, cd2
+                break
+        if os.path.exists(out + '.alt'):
+            os.remove(out + '.alt')
     print('%s: %d arms boarded, %d without a chain, closure %s'
           % (out, len(good), len(bad),
              'BUILT (%d interior at N0=%d st=%d + %d fill at N0=%d st=%d)'
