@@ -28,6 +28,18 @@ from cbt import REPO, next_free, write_batch  # noqa: E402
 BOARDS = os.path.join(REPO, 'theories', 'Machines', 'LadderTr')
 EMIT = os.path.join(HERE, 'emit_step.py')
 ANCHOR = 'theories/Checkers/LadderCheckStepTr.v'
+PFX = 'LDRS'
+# --kind zeck: the Zeckendorf rows (valfam's "fibonacci(shifted)"), emit_zeck.py,
+# LadderCheckZeckTr, LDRZ_/LDRZQ_ boards
+KINDS = {
+    'step': ('emit_step.py', 'theories/Checkers/LadderCheckStepTr.v', 'LDRS',
+             lambda f: f.get('value_step_per_anchor_visit', 1) > 1,
+             'counters that add a step s > 1 per anchor visit, by the value-family '
+             'ladder (LadderCheckStepTr)'),
+    'zeck': ('emit_zeck.py', 'theories/Checkers/LadderCheckZeckTr.v', 'LDRZ',
+             lambda f: f.get('numeration') == 'fibonacci(shifted)',
+             'Zeckendorf counters (weights 1, 2, 3, 5, ...), by LadderCheckZeckTr'),
+}
 
 
 def mid(spec):
@@ -38,7 +50,7 @@ def board(cert, tmp, qh):
     m = mid(cert['spec'])
     j = os.path.join(tmp, m + '.json')
     json.dump(cert, open(j, 'w'))
-    v = os.path.join(tmp, '%s_%s.v' % ('LDRSQ' if qh else 'LDRS', m))
+    v = os.path.join(tmp, '%s_%s.v' % (PFX + 'Q' if qh else PFX, m))
     r = subprocess.run([sys.executable, EMIT] + (['--qh'] if qh else [])
                        + [j, '-o', v], capture_output=True, text=True)
     if not os.path.exists(v):
@@ -63,7 +75,7 @@ def add_to_coqproject(paths):
     if not new:
         return
     i = lines.index(ANCHOR) + 1
-    while i < len(lines) and lines[i].startswith('theories/Machines/LadderTr/LDRS'):
+    while i < len(lines) and lines[i].startswith('theories/Machines/LadderTr/' + PFX):
         i += 1
     lines[i:i] = new
     open(p, 'w').write('\n'.join(lines) + '\n')
@@ -75,7 +87,11 @@ def main():
     ap.add_argument('--tag', default='LE3')
     ap.add_argument('--chunk', type=int, default=40)
     ap.add_argument('--skip', action='append', default=[])
+    ap.add_argument('--kind', default='step', choices=sorted(KINDS))
     a = ap.parse_args()
+    global EMIT, ANCHOR, PFX
+    emit, ANCHOR, PFX, want, blurb = KINDS[a.kind]
+    EMIT = os.path.join(HERE, emit)
     remaining = set(l.strip() for l in open(os.path.join(REPO, 'closeouttr_remaining.txt')))
     qhc = set(l.split('\t')[0] for l in open(os.path.join(REPO, 'closeouttr_classes.tsv'))
               if l.split('\t')[1:2] == ['QH'])
@@ -88,7 +104,7 @@ def main():
             s = c.get('spec')
             if (c.get('closed') and s in remaining and s not in seen
                     and s not in a.skip
-                    and c['family'].get('value_step_per_anchor_visit', 1) > 1):
+                    and want(c['family'])):
                 seen.add(s)
                 certs.append(c)
     os.makedirs(BOARDS, exist_ok=True)
@@ -105,30 +121,28 @@ def main():
             kept.append((c['spec'], qh))
             print('%-30s board %s' % (c['spec'], os.path.relpath(dst, REPO)), flush=True)
     add_to_coqproject(['theories/Machines/LadderTr/%s_%s.v'
-                       % ('LDRSQ' if qh else 'LDRS', mid(s)) for s, qh in kept])
+                       % (PFX + 'Q' if qh else PFX, mid(s)) for s, qh in kept])
     nn = next_free(a.tag)
     made = []
     for i in range(0, len(kept), a.chunk):
         chunk = kept[i:i + a.chunk]
         req = ['From BBB4.Machines.LadderTr Require %s.'
-               % ' '.join('%s_%s' % ('LDRSQ' if qh else 'LDRS', mid(s))
+               % ' '.join('%s_%s' % (PFX + 'Q' if qh else PFX, mid(s))
                           for s, qh in chunk)]
         entries = []
         for s, qh in chunk:
             m = mid(s)
             if qh:
-                entries.append((s, 'apply (coversTr_qh3_at LDRSQ_%s.tm_%s); '
-                                   '[exact LDRSQ_%s.qhtr_%s | intros q s; destruct q, s; '
-                                   'reflexivity].' % (m, m, m, m)))
+                entries.append((s, 'apply (coversTr_qh3_at %sQ_%s.tm_%s); '
+                                   '[exact %sQ_%s.qhtr_%s | intros q s; destruct q, s; '
+                                   'reflexivity].' % (PFX, m, m, PFX, m, m)))
             else:
-                entries.append((s, 'apply (coversTr_nqh_at LDRS_%s.tm_%s); '
-                                   '[exact LDRS_%s.nqhtr_%s | intros q s; destruct q, s; '
-                                   'reflexivity].' % (m, m, m, m)))
-        made.append(write_batch(a.tag, nn, req, entries,
-                                'counters that add a step s > 1 per anchor visit, '
-                                'by the value-family ladder (LadderCheckStepTr)'))
+                entries.append((s, 'apply (coversTr_nqh_at %s_%s.tm_%s); '
+                                   '[exact %s_%s.nqhtr_%s | intros q s; destruct q, s; '
+                                   'reflexivity].' % (PFX, m, m, PFX, m, m)))
+        made.append(write_batch(a.tag, nn, req, entries, blurb))
         nn += 1
-    print('%d of %d closed step rows boarded -> %d batch file(s): %s'
+    print('%d of %d closed rows boarded -> %d batch file(s): %s'
           % (len(kept), len(certs), len(made),
              ' '.join(os.path.relpath(p, REPO) for p in made)))
 

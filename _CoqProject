@@ -2784,6 +2784,7 @@ theories/Checkers/LadderCheckStepTr.v
 theories/Machines/LadderTr/LDRS_1RB1RC_1LC0LB_1RD1LB_1RA0RD.v
 theories/Checkers/LadderCheckNarrowTr.v
 theories/Checkers/LadderCheckRunTr.v
+theories/Checkers/LadderCheckZeckTr.v
 theories/Machines/LadderTr/LDRR_0RB0LA_1LC0RD_1LA1LD_1RB0LC.v
 theories/Machines/LadderTr/LDRR_0RB1LA_0LC1RD_0LD1LD_1RB0LA.v
 theories/Machines/LadderTr/LDRR_0RB1LA_0LC1RD_1LA1LD_1RB0LA.v
