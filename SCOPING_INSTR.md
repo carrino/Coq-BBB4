@@ -5908,3 +5908,14 @@ modulus-5 certificates are in `astra_nu5.jsonl`.  The other saved family
 graphs either lack a nu-ranking at these moduli or exceed the 3,000-node
 cap.  Requested rows without a saved family graph still stop in the
 TriGlue family finder and were not presented to the liveness search.
+
+#### 7.4.TA follow-up: modulus-5 sweep of the remaining saved graphs (2026-10-01)
+
+A modulus-5 sweep over all 23 still-open rows with a saved closed TriGlue
+family graph certifies two further requested rows with `TriNuTr`:
+`0RB0RD_1RC1LB_1LB0RA_1LD0LB` and
+`1RB0RD_1LC0RA_1RB1LC_1LD0LC`.  They are boarded in `CBT_AST_03` and the
+complete probe is retained as `tools/closeouttr/ta/astra_nu5_remaining.jsonl`.
+The other 21 saved graphs have no modulus-5 nu-ranking.  The newer requested
+set is dominated by rows that stop before this stage (hybrid/list family
+closure), so changing the liveness modulus alone does not reach them.

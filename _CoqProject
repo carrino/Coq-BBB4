@@ -11703,6 +11703,7 @@ theories/CloseoutTr/CloseoutKitTr.v
 theories/CloseoutTr/CBT_AST_00.v
 theories/CloseoutTr/CBT_AST_01.v
 theories/CloseoutTr/CBT_AST_02.v
+theories/CloseoutTr/CBT_AST_03.v
 theories/CloseoutTr/CBT_BLC3_00.v
 theories/CloseoutTr/CBT_BLC3_01.v
 theories/CloseoutTr/CBT_BLC3_02.v
