@@ -11700,6 +11700,7 @@ theories/Machines/LadderTr/LDRT_1RB1RD_0LB1LC_0RA1LB_1RA0RC.v
 theories/Machines/LadderTr/LDRT_1RB1RD_0LC0RA_1LA0LD_1RA1LC.v
 theories/Machines/LadderTr/LDRT_1RB1RD_1LC0RA_1LD0LC_0RB1LC.v
 theories/CloseoutTr/CloseoutKitTr.v
+theories/CloseoutTr/CBT_AST_00.v
 theories/CloseoutTr/CBT_BLC3_00.v
 theories/CloseoutTr/CBT_BLC3_01.v
 theories/CloseoutTr/CBT_BLC3_02.v
