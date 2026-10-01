@@ -11738,6 +11738,10 @@ theories/CloseoutTr/CBT_BLC6_00.v
 theories/CloseoutTr/CBT_BLC6_01.v
 theories/CloseoutTr/CBT_BLC6_02.v
 theories/CloseoutTr/CBT_BLC6_03.v
+theories/CloseoutTr/CBT_BLC6_04.v
+theories/CloseoutTr/CBT_BLC6_05.v
+theories/CloseoutTr/CBT_BLC6_06.v
+theories/CloseoutTr/CBT_BLC6_07.v
 theories/CloseoutTr/CBT_BLC_00.v
 theories/CloseoutTr/CBT_BLC_01.v
 theories/CloseoutTr/CBT_BL_00.v
