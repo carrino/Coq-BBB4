@@ -6257,3 +6257,31 @@ python3 tools/closeouttr/ta/nu_find.py cube_dump.jsonl \
   tools/closeouttr/ta/cube_nu27.jsonl --plist 9,27 --ells 3 \
   --jobs 4 --timeout 900
 ```
+
+#### 7.4.TA follow-up: AST requested rows at moduli 5, 9 and 27 (2026-10-01)
+
+The larger-residue search was extended to the requested rows for which
+`ta/dump.jsonl` retained a closed TriGlue family graph.  It certifies three
+more rows with the existing `TriNuTr` checker:
+
+* `1RB1LA_1LA0RC_0RC0RD_1LD0LA` at modulus 9;
+* `1RB1LA_1LA0RC_0RA0RD_1LD0LA` at modulus 5;
+* `1RB1LA_1LA0RC_1RB0RD_1LD0LA` at modulus 5.
+
+They are boarded in `CBT_AST_01..02`.  The complete modulus-9/27 probe is
+recorded in `tools/closeouttr/ta/astra_nu9.jsonl`; the two targeted
+modulus-5 certificates are in `astra_nu5.jsonl`.  The other saved family
+graphs either lack a nu-ranking at these moduli or exceed the 3,000-node
+cap.  Requested rows without a saved family graph still stop in the
+TriGlue family finder and were not presented to the liveness search.
+
+#### 7.4.TA follow-up: modulus-5 sweep of the remaining saved graphs (2026-10-01)
+
+A modulus-5 sweep over all 23 still-open rows with a saved closed TriGlue
+family graph certifies two further requested rows with `TriNuTr`:
+`0RB0RD_1RC1LB_1LB0RA_1LD0LB` and
+`1RB0RD_1LC0RA_1RB1LC_1LD0LC`.  They are boarded in `CBT_AST_03` and the
+complete probe is retained as `tools/closeouttr/ta/astra_nu5_remaining.jsonl`.
+The other 21 saved graphs have no modulus-5 nu-ranking.  The newer requested
+set is dominated by rows that stop before this stage (hybrid/list family
+closure), so changing the liveness modulus alone does not reach them.
