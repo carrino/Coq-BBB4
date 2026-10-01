@@ -6285,3 +6285,29 @@ complete probe is retained as `tools/closeouttr/ta/astra_nu5_remaining.jsonl`.
 The other 21 saved graphs have no modulus-5 nu-ranking.  The newer requested
 set is dominated by rows that stop before this stage (hybrid/list family
 closure), so changing the liveness modulus alone does not reach them.
+
+#### 7.4.AST follow-up: deeper search over the later requested list (2026-10-01)
+
+Three independent follow-ups found no further board in the later requested
+list.  This narrows the missing checker work rather than exposing another
+parameter-only win:
+
+* A deeper anchor-seeded TriGlue run on its 22 leading-`0RB` hybrids
+  (`hy3_ti.py`, 300 seconds, 1,000-family cap) still ends at no stable
+  anchor, no positional-counter reading, leaf-length overflow, or genuine
+  family explosion.  The two apparent HY2 timeouts
+  `0RB0RA_1LC1RA_0LD0LC_1LA1LB` and
+  `0RB0RA_1RC1RD_0LD0LC_1RA1LC` had already reached `no counter family`
+  at the 1,800-second budget; they are not timeout-only misses.
+* For `1RB1LB_0RC0LA_1LC0LD_1RA1RC`, the saved TriGlue graph admits no
+  `TriNuTr` ranking at moduli 1--7, 11, 13, 17, or 19 with l-adic bases
+  2, 3, 5, and 7; modulus 23 exceeds 3,000 nodes.  Thus the valuation
+  search used by `CBT_AST_00..03` is exhausted for this row.
+* A transition-target NGramHist probe was tried on the Fuel rows, including
+  `1RB---_0RC0RB_1LC0LD_1RA0LD` and
+  `1RB0LA_0LC1RD_1LC1LA_0RB0RD`.  The plain history abstraction does not
+  close.  Their landed `FuelWide` certificates establish state recurrence,
+  not instruction recurrence; a sound reuse needs a generic
+  instruction-target `FuelSCCTr`/`FuelWideTr` port and regenerated
+  certificates.  `NeverQuasiHaltsSt` cannot be lifted directly to
+  `NeverQuasiHaltsTr`.
