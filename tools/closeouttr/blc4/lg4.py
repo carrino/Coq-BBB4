@@ -49,7 +49,7 @@ class Lang4(lg3.Lang):
       empty when b_0 borders the blank tape."""
 
     def __init__(self, a, unit, fwd, end, q0, lfwd, lstart, seps, lends=(), unitL=None,
-                 sepsL=None, psepsR=(), psepsL=()):
+                 sepsL=None, psepsR=(), psepsL=(), lend_blank=False):
         self.a, self.unit = a, tuple(unit)
         self.unitL = tuple(unit if unitL is None else unitL)
         self.fwd, self.q0, self.shift = dict(fwd), q0, 0
@@ -61,7 +61,9 @@ class Lang4(lg3.Lang):
         self.seps = sorted(set(seps or ()) | ws, key=lambda w: (-len(w), w))
         wl = set(x[0] for (_, x) in self.lfwd) | set(x[0] for x, _ in self.lstart)
         self.sepsL = sorted(set(sepsL or ()) | wl, key=lambda w: (-len(w), w))
-        self.lends = sorted(set(tuple(w) for w in lends), key=lambda w: (-len(w), w))
+        self.lends = sorted(set(tuple(w) for w in lends if w), key=lambda w: (-len(w), w))
+        # b_0 may also border the blank tape (L0 accepting)
+        self.lend_blank = bool(lend_blank) or not self.lends
         # one-cell units: the cell words lg3.parse merges into separators
         self.psepsR = sorted(set(tuple(w) for w in psepsR) | set(w[1] for w in self.seps),
                              key=lambda w: (-len(w), w))
@@ -115,7 +117,7 @@ class Lang4(lg3.Lang):
             for w in self.lends:
                 add('L', 'L0', kT[w], 'LT', (True, 0, 0))
             nfa.acc.add(('L', 'LT'))
-        else:
+        if self.lend_blank:
             nfa.acc.add(('L', 'L0'))
         start = frozenset([('FIN',)])
         rstates = {}
@@ -171,6 +173,58 @@ def tok_cells(toks):
     return tuple(out)
 
 
+class LFam4(lg3.LFam):
+    """lg3.LFam whose hull, when it has no nonnegative parametrisation, is
+    widened along an "element grows" direction a e_i + e_k (a block grows
+    by a units, a neighbour by one): the two halves of a split element have
+    a constant SUM until the neighbour's value varies, and that negative
+    slope parametrises only once the growth direction is in the hull"""
+
+    def __init__(self, key, a):
+        self.a = a
+        super().__init__(key)
+
+    def fix(self):
+        try:
+            return super().fix()
+        except Fail:
+            if not WIDEN:
+                raise
+        import copy
+        H0 = self.hull
+        n = self.nc
+        rows = [r for _, r in H0.rows]
+
+        def same(j, k):
+            return H0.base[j] == H0.base[k] and all(r[j] == r[k] for r in rows)
+        # a neighbour k moves with every coordinate the hull ties to it (a
+        # tail's ref is a copy of the outermost window block)
+        link = {k: [j for j in range(n) if same(j, k)] for k in range(n)}
+        cands = []
+        for i in range(self.nb):
+            for j in range(i + 1, self.nb):
+                for k in range(n):
+                    if k in (i, j) or i in link[k] or j in link[k]:
+                        continue
+                    v1 = [0] * n
+                    v2 = [0] * n
+                    for k2 in link[k]:
+                        v1[k2] = v2[k2] = 1
+                    v1[i] += self.a
+                    v2[j] += self.a
+                    cands.append([v1, v2])
+        for dirs in cands[:400]:
+            H = copy.deepcopy(H0)
+            H.add(list(H.base), dirs)
+            self.hull = H
+            try:
+                return super().fix()
+            except Fail:
+                pass
+        self.hull = H0
+        raise Fail('no nonnegative parametrization')
+
+
 class NeedMod(Exception):
     """a leaf lands where a split element's residue is not fixed: refine the
     region of variable k mod m"""
@@ -182,6 +236,7 @@ class NeedMod(Exception):
 Req = T.Req
 nfa_maxs = lg3.nfa_maxs
 SPLITGAP = int(os.environ.get('LG4_SPLITGAP', '3'))
+WIDEN = os.environ.get('LG4_WIDEN', '1') == '1'
 SPLITMOD = os.environ.get('LG4_SPLITMOD', '1') == '1'
 
 
@@ -430,7 +485,7 @@ class X4(lg3.X3):
                             cur = self.nfa.trans[ti][1]
                             k = j
                             break
-            elif el[0][0] != 'G':
+            if cur is None and lang.lend_blank and el[0][0] != 'G':
                 cur = 'L0'
         while cur is not None and k + 2 < len(el) and el[k][0] == 'E' and \
                 el[k + 1][0] == 'G' and word(k + 1) is not None and \
@@ -578,7 +633,7 @@ class X4(lg3.X3):
             if len(self.fams) >= G.MAXFAM:
                 raise Fail('too many families')
             self.fidx[key] = len(self.fams)
-            self.fams.append(lg3.LFam(key))
+            self.fams.append(LFam4(key, self.lang.a))
             if VERBOSE:
                 print('  new family %d: %s' % (len(self.fams) - 1, lg3.fmt_key(key)),
                       file=sys.stderr)

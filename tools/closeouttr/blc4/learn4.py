@@ -48,9 +48,10 @@ class Row(tuple):
     each use (40,000 snapshots of a (10) list do not fit in memory split)"""
 
     def __new__(cls, line):
-        f = line.split(None, 8)
+        # kind side t q h pos n RLE...
+        f = line.split(None, 7)
         r = super().__new__(cls, (f[0], f[1], int(f[2]), int(f[3]), int(f[4]), int(f[5]), None))
-        r.raw = f[8] if len(f) > 8 else ''
+        r.raw = f[7] if len(f) > 7 else ''
         return r
 
     def __getitem__(self, i):
@@ -280,6 +281,11 @@ def fit_left2(deep, fwd, q0, W, pseps, seps, a, WL, psepsL, sepsL, drop=0):
         if kind != 'S' or states is None:
             continue
         if pos - r.lead() < need:
+            # too shallow for a sample; its left end word still counts
+            if pos - r.lead() > need // 3 and len(lends) < 8 and t % 7 == 0:
+                lp = left_part(r[6], pos, WL, psepsL, set(sepsL))
+                if lp is not None and lp[1]:
+                    lends.add(lp[0])
             continue
         cells = r[6]
         # only the cells up to the head matter
@@ -293,11 +299,11 @@ def fit_left2(deep, fwd, q0, W, pseps, seps, a, WL, psepsL, sepsL, drop=0):
         if lp is None:
             continue
         lend, bs, ws, _ = lp
+        lends.add(lend)
         bs = bs[:len(bs) - drop]
         if len(bs) < 2 or len(bs) > len(states):
             continue
         n += 1
-        lends.add(lend)
         for i in range(len(bs) - 1):
             x = (ws[i], bs[i] - a * bs[i + 1])
             votes[(states[i], x)][states[i + 1]] += 1
@@ -537,14 +543,14 @@ def learn(spec, t1=4000000, every=97):
         raise T.Fail('learn: %d left samples' % nl)
     if nconf > 0.01 * nl:
         raise T.Fail('learn: left samples disagree on F states (%d of %d)' % (nconf, nl))
-    if () in lendsL and len(lendsL) > 1:
-        raise T.Fail('learn: left end words %s' % sorted(lendsL))
+    lends_blank = () in lendsL
     lendsL.discard(())
     lang = lg4.Lang4(a, W, fwd, end, fit['q0'], lfwd, lstart, sorted(seps, key=str), lends=lendsL,
-                     unitL=WL, sepsL=sepsL, psepsR=pseps, psepsL=psepsL)
+                     unitL=WL, sepsL=sepsL, psepsR=pseps, psepsL=psepsL,
+                     lend_blank=lends_blank)
     info = dict(unit=list(W), a=a, seps=sorted(seps, key=str), m=fit['m'], M=fit['M'],
                 range=(fit['lo'], fit['hi']), nanchor=len(data), nleft=nl,
-                lends=sorted(lendsL), nendw=len(lang.endws), unitL=list(WL), sepsL=sepsL,
+                lends=sorted(lendsL), lend_blank=lends_blank, nendw=len(lang.endws), unitL=list(WL), sepsL=sepsL,
                 nconf=nconf, tboot=tboot, nalt=nalt)
     return lang, mir, info
 
@@ -640,6 +646,11 @@ def cmd_batch(a):
 
 
 def main():
+    # set iteration order (string hashes) decides the exploration order:
+    # fix it so that a run is reproducible
+    if os.environ.get('PYTHONHASHSEED') != '0':
+        os.environ['PYTHONHASHSEED'] = '0'
+        os.execv(sys.executable, [sys.executable] + sys.argv)
     ap = argparse.ArgumentParser()
     sp = ap.add_subparsers(dest='cmd', required=True)
     p = sp.add_parser('find')
