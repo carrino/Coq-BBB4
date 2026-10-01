@@ -5236,7 +5236,11 @@ finder fix was made.
 (LE's emitter had closed none of these 51), 0 of 17 close.  Of 136 family attempts, 100
 fail the interior arm (the "other" shape above), 16 the fill arm, and 20
 are narrowing families the respell cannot state: no offsets within the
-leading and trailing top digits make every widening a `nat`.  On
+leading and trailing top digits make every widening a `nat`.  In the two
+read (`0RB0RA_1RC1LD_1LC1RB_0LD0LA`, `0RB1LA_1RC0LA_0LD1RB_1LB0RC`) the
+terminator the narrowing fill lands on (`101`, `0101`) does not start on a
+digit-word boundary: the digit framing shifts by a cell between phases,
+which is the moving-offset shape again.  On
 SP, where the narrowing families were, it costs 10-40 min a row here, so
 the run is the box job below.  The 4 SP time-cap rows tried close 0 of 4
 (famclose skips valfam's arm miner, so a time cap is not the reason).
