@@ -1,3 +1,26 @@
 0RB0LD_1RC1LB_1LA1RA_1LA0LD OK
 0RB0LB_1LC1RD_0LD0LC_1RA1LC t50176 too many families (family 787) / t20000 too many families (family 787)
 0RB0LB_1LC0RC_1RD0LA_1RB1RC t50040 too many families (family 745) / t20000 too many families (family 782)
+0RB0LD_1RC1LB_1LD1RA_1LA0LD OK
+0RB0RA_0LC1RA_0RD1LC_1RB1LB OK
+0RB0RA_1LC1RA_0LD1LB_1LA1LB OK
+0RB0RA_1LC1RA_0LD1LB_1RA1LB OK
+0RB1LB_1LC1RC_1RD0LA_1LA0RC t50366 too many families (family 751) / t20000 too many families (family 740)
+0RB1LA_1RC1LC_0LA1RD_0RC0RD OK
+0RB1LD_0LC1RB_1LA1RA_0LA0LD OK
+0RB1LD_0RC1RB_1LD0RA_1LA0LD t50208 too many families (family 785) / t20000 too many families (family 791)
+0RB1RA_1LC0RA_1LD0LB_1RB0LB t50282 too many families (family 588) / t20000 too many families (family 665)
+0RB1LD_0RC1RB_1LD1LA_1LA0LD OK
+0RB1RA_1LC0RD_1LD0LC_0RA1LC t50207 too many families (family 785) / t20000 too many families (family 791)
+0RB1RA_1LC0RA_1LD0LB_1RB1LC t50002 too many families (family 1) / t20000 too many families (family 547)
+0RB1RA_1LC1LD_1LD0LC_0RA1LC OK
+0RB1RA_1LC1RD_0LD0LC_1LA1LC t50124 too many families (family 787) / t20000 too many families (family 772)
+0RB1RA_1LC1RA_1LD0LC_0RA1LC OK
+0RB1RD_1LC1RD_0LD0LC_1RA1LC OK
+0RB1RD_1RC1RD_0LD0LC_1RA1LC OK
+1RB0LB_1LC0RD_1LA0LB_0RB1RD t50474 too many families (family 604) / t20000 too many families (family 647)
+1RB0LB_1LC0RD_1LA1LB_0LA0RA t50039 too many families (family 745) / t20000 too many families (family 782)
+1RB0LC_1LC0RA_0RD1LD_1LA1RA OK
+1RB0LC_1RC0RA_1LA1LD_1LA1LB OK
+1RB0LC_1RC0RB_0LD1RB_0LA1LD t50206 too many families (family 785) / t20000 too many families (family 791)
+1RB0LC_1RC1RD_1LA1LC_1RB0RA OK
