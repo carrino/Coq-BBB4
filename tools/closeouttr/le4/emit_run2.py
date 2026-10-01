@@ -91,16 +91,20 @@ def closure_data_run(det, tab, d0, d1, a, c, boot):
     derive = Arms(tab).derive
     el, er = (not left), left
 
+    look = [D0, D1, M]   # [ilookM e]: the next digit, or the marker (e = b = 2)
+
     def inter_at(n0, st):
         got = []
-        for r in range(n0 + st):
-            s_ = 0 if r < n0 else st
-            c0 = conf(blk(pre + D1 * r, D1, s_, D0))
-            c1 = conf(blk(pre + D0 * r, D0, s_, D1))
-            try:
-                got.append((r, c0, c1, derive(el, er, c0, c1, 'interior r=%d' % r)))
-            except NoClosure:
-                return None
+        for e in range(3):
+            for r in range(n0 + st):
+                s_ = 0 if r < n0 else st
+                c0 = conf(blk(pre + D1 * r, D1, s_, D0 + look[e]))
+                c1 = conf(blk(pre + D0 * r, D0, s_, D1 + look[e]))
+                try:
+                    got.append((e, r, c0, c1,
+                                derive(el, er, c0, c1, 'interior e=%d r=%d' % (e, r))))
+                except NoClosure:
+                    return None
         return got
 
     def nar_at(n0, st):
@@ -182,26 +186,28 @@ Definition runsuf_%(mid)s : list Sym := %(sufc)s.
 
 '''
 
-THM = '''Lemma iarm_reach_%(mid)s : forall d r, d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d ->
-  ReachL tm (negb (fm_left FAM)) (fm_left FAM) (lr_lhs (iarm_%(mid)s d r)) (lr_rhs (iarm_%(mid)s d r)).
+THM = '''Lemma iarm_reach_%(mid)s : forall d e r, d < fm_b FAM - 1 -> e <= fm_b FAM -> r < %(n0i)d + %(sti)d ->
+  ReachL tm (negb (fm_left FAM)) (fm_left FAM) (lr_lhs (iarm_%(mid)s d e r)) (lr_rhs (iarm_%(mid)s d e r)).
 Proof.
-  intros d r Hd Hr. vm_compute in Hd. destruct d as [|d]; [|exfalso; lia].
+  intros d e r Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
 %(isound)s  exfalso; lia.
 Qed.
 
-Lemma iarm_lhs_%(mid)s : forall d r, d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d ->
-  lr_lhs (iarm_%(mid)s d r)
-    = cls_conf FAM (cls_side FAM [] (fm_b FAM - 1) r (astride %(n0i)d %(sti)d r) [d]).
+Lemma iarm_lhs_%(mid)s : forall d e r, d < fm_b FAM - 1 -> e <= fm_b FAM -> r < %(n0i)d + %(sti)d ->
+  lr_lhs (iarm_%(mid)s d e r)
+    = cls_conf FAM (blk (fm_pre FAM ++ rep (dig FAM (fm_b FAM - 1)) r) (dig FAM (fm_b FAM - 1))
+                     (astride %(n0i)d %(sti)d r) (dig FAM d ++ ilookM FAM runM_%(mid)s e)).
 Proof.
-  intros d r Hd Hr. vm_compute in Hd. destruct d as [|d]; [|exfalso; lia].
+  intros d e r Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
 %(icomp)s  exfalso; lia.
 Qed.
 
-Lemma iarm_rhs_%(mid)s : forall d r, d < fm_b FAM - 1 -> r < %(n0i)d + %(sti)d ->
-  lr_rhs (iarm_%(mid)s d r)
-    = cls_conf FAM (cls_side FAM [] 0 r (astride %(n0i)d %(sti)d r) [S d]).
+Lemma iarm_rhs_%(mid)s : forall d e r, d < fm_b FAM - 1 -> e <= fm_b FAM -> r < %(n0i)d + %(sti)d ->
+  lr_rhs (iarm_%(mid)s d e r)
+    = cls_conf FAM (blk (fm_pre FAM ++ rep (dig FAM 0) r) (dig FAM 0)
+                     (astride %(n0i)d %(sti)d r) (dig FAM (S d) ++ ilookM FAM runM_%(mid)s e)).
 Proof.
-  intros d r Hd Hr. vm_compute in Hd. destruct d as [|d]; [|exfalso; lia].
+  intros d e r Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
 %(icomp)s  exfalso; lia.
 Qed.
 
@@ -353,8 +359,8 @@ def emit_closure_run(cert, tab, mid):
                      n0i=n0i, sti=sti, n0n=n0n, stn=stn, n0r=n0r, str=str_,
                      Tc=syms(cd['T']), sufc=syms(cd['suf']))]
     inner, arms = [], []
-    for r, c0, c1, ch in cd['inter']:
-        arms.append(('iarm0_%d' % r, c0, c1, prog_coq(tab, inner, ch), el, er))
+    for e, r, c0, c1, ch in cd['inter']:
+        arms.append(('iarm0_%d_%d' % (e, r), c0, c1, prog_coq(tab, inner, ch), el, er))
     for r, c0, c1, ch in cd['narr']:
         arms.append(('narm%d' % r, c0, c1, prog_coq(tab, inner, ch), el, er))
     offs = {}
@@ -366,8 +372,8 @@ def emit_closure_run(cert, tab, mid):
         L.append(ARM % dict(nm=nm, mid=mid, lhs=coq_conf(c0), rhs=coq_conf(c1),
                             segs=';\n   '.join(segs), el=str(el_).lower(),
                             er=str(er_).lower()))
-    L.append('''Definition iarm_%(mid)s (d r : nat) : LRule :=
-  match r with %(ib)s | _ => iarm0_0_%(mid)s end.
+    L.append('''Definition iarm_%(mid)s (d e r : nat) : LRule :=
+  match e, r with %(ib)s | _, _ => iarm0_0_0_%(mid)s end.
 Definition narm_%(mid)s (r : nat) : LRule :=
   match r with %(nb)s | _ => narm1_%(mid)s end.
 Definition rarm_%(mid)s (r : nat) : LRule :=
@@ -389,7 +395,7 @@ Definition vsegs_%(mid)s (r : nat) (t : Instr) : list nseg :=
 
 ''' % dict(
         mid=mid,
-        ib=' '.join('| %d => iarm0_%d_%s' % (r, r, mid) for r, *_ in cd['inter']),
+        ib=' '.join('| %d, %d => iarm0_%d_%d_%s' % (e, r, e, r, mid) for e, r, *_ in cd['inter']),
         nb=' '.join('| %d => narm%d_%s' % (r, r, mid) for r, *_ in cd['narr']),
         rb=' '.join('| %d => rarm%d_%s' % (r, r, mid) for r, *_ in cd['refill']),
         b1=' '.join('| %d => %d' % (r, f1) for r, f1, *_ in cd['refill']),
@@ -409,11 +415,19 @@ Definition vsegs_%(mid)s (r : nat) (t : Instr) : list nseg :=
         return ''.join('  destruct r as [|r].\n  { %s. }\n'
                        % ('exfalso; lia' if r < lo else body(r)) for r in range(n))
 
+    def eb(n, body):
+        out = []
+        for e in range(3):
+            out.append('  destruct e as [|e].\n  {\n%s  exfalso; lia.\n  }\n'
+                       % ''.join('  destruct r as [|r].\n  { %s. }\n' % body(e, r)
+                                 for r in range(n)))
+        return ''.join(out)
+
     t0 = cd['boot']['t']
     L.append(THM % dict(
         mid=mid, n0i=n0i, sti=sti, n0n=n0n, stn=stn, n0r=n0r, str=str_, a=a, c=c,
-        isound=rb(n0i + sti, lambda r: reach('iarm0_%d' % r)),
-        icomp=rb(n0i + sti, lambda r: 'vm_compute; reflexivity'),
+        isound=eb(n0i + sti, lambda e, r: reach('iarm0_%d_%d' % (e, r))),
+        icomp=eb(n0i + sti, lambda e, r: 'vm_compute; reflexivity'),
         nsound=rb(n0n + stn, lambda r: reach('narm%d' % r), lo=1),
         ncomp=rb(n0n + stn, lambda r: 'vm_compute; reflexivity', lo=1),
         rsound=rb(n0r + str_, lambda r: reach('rarm%d' % r)),

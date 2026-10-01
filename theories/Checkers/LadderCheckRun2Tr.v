@@ -20,7 +20,9 @@
     much at each width: the narrowings and the refill are that fill.
 
     Three arm classes, all [LadderNest.ReachL] programs:
-    - interior: [t^n d X -> 0^n (d+1) X], [X] opaque;
+    - interior: [t^n d w X -> 0^n (d+1) w X], [X] opaque, with ONE WORD OF
+      LOOKAHEAD [w]: the next digit, or the marker [M] when [x] ends (LE4's
+      carries read it: opaque past the digit they have no chain);
     - narrowing: [t^j M X -> 0^(j-1) M T X], [X] opaque, [j >= 1];
     - refill: [M T^m suf -> 0^(m+a) M T^c suf], both tails known empty.
 
@@ -209,6 +211,33 @@ Qed.
 
 (** *** The cells of each class *)
 
+(** The word after the digit an interior arm increments: the next digit
+    [e < b], or the marker when [x] ends there ([e = b]).  LE4's rows read
+    it (one word of lookahead): with the rest of the counter opaque their
+    carry has no chain, with the next word concrete its cost is affine. *)
+Definition ilookM (e : nat) : list Sym := if e <? b then dig F e else M.
+
+Lemma rcells_intlM : forall t r st n d e rest m, e < b ->
+  rcellsM (repeat t (r + st * n) ++ d :: e :: rest) m
+    = sden (flat_map (dig F) rest ++ M ++ rep T m ++ suf) n
+        (blk (fm_pre F ++ rep (dig F t) r) (dig F t) st (dig F d ++ ilookM e)).
+Proof.
+  intros t r st n d e rest m He. unfold rcellsM, ilookM.
+  destruct (Nat.ltb_spec e b) as [_|]; [|lia].
+  rewrite blk_den, flat_map_app, flat_map_repeat_nil.
+  cbn [flat_map app]. rewrite rep_add, !app_assoc. reflexivity.
+Qed.
+
+Lemma rcells_intmM : forall t r st n d m,
+  rcellsM (repeat t (r + st * n) ++ [d]) m
+    = sden (rep T m ++ suf) n
+        (blk (fm_pre F ++ rep (dig F t) r) (dig F t) st (dig F d ++ ilookM b)).
+Proof.
+  intros t r st n d m. unfold rcellsM, ilookM. rewrite Nat.ltb_irrefl.
+  rewrite blk_den, flat_map_app, flat_map_repeat_nil.
+  cbn [flat_map app]. rewrite app_nil_r, rep_add, !app_assoc. reflexivity.
+Qed.
+
 Lemma rcells_intM : forall t r st n d rest m,
   rcellsM (repeat t (r + st * n) ++ d :: rest) m
     = sden (flat_map (dig F) rest ++ M ++ rep T m ++ suf) n
@@ -275,7 +304,7 @@ Local Notation tm := (tm_wrap_trs tm0 pins).
 Variable F     : Fam.
 Variable M T suf : list Sym.
 Variable a c   : nat.
-Variable AI    : nat -> nat -> LRule.   (** interior: digit, index *)
+Variable AI    : nat -> nat -> nat -> LRule.   (** interior: digit, next word, index *)
 Variable N0i sti : nat.
 Variable AN    : nat -> LRule.          (** narrowing: index *)
 Variable N0n stn : nat.
@@ -294,12 +323,14 @@ Hypothesis Hb    : 1 < b.
 Hypothesis Hbnd0 : Forall (fun d => d < b) x0.
 
 Hypothesis Hsti : 0 < sti.
-Hypothesis HAIS : forall d r, d < b - 1 -> r < N0i + sti ->
-  ReachL tm (negb (fm_left F)) (fm_left F) (lr_lhs (AI d r)) (lr_rhs (AI d r)).
-Hypothesis HAIL : forall d r, d < b - 1 -> r < N0i + sti ->
-  lr_lhs (AI d r) = cls_conf F (cls_side F [] (b - 1) r (astride N0i sti r) [d]).
-Hypothesis HAIR : forall d r, d < b - 1 -> r < N0i + sti ->
-  lr_rhs (AI d r) = cls_conf F (cls_side F [] 0 r (astride N0i sti r) [S d]).
+Hypothesis HAIS : forall d e r, d < b - 1 -> e <= b -> r < N0i + sti ->
+  ReachL tm (negb (fm_left F)) (fm_left F) (lr_lhs (AI d e r)) (lr_rhs (AI d e r)).
+Hypothesis HAIL : forall d e r, d < b - 1 -> e <= b -> r < N0i + sti ->
+  lr_lhs (AI d e r) = cls_conf F (blk (fm_pre F ++ rep (dig F (b - 1)) r) (dig F (b - 1))
+                                   (astride N0i sti r) (dig F d ++ ilookM F M e)).
+Hypothesis HAIR : forall d e r, d < b - 1 -> e <= b -> r < N0i + sti ->
+  lr_rhs (AI d e r) = cls_conf F (blk (fm_pre F ++ rep (dig F 0) r) (dig F 0)
+                                   (astride N0i sti r) (dig F (S d) ++ ilookM F M e)).
 
 Hypothesis Hstn : 0 < stn.
 Hypothesis HN0n : 0 < N0n.
@@ -391,18 +422,33 @@ Proof.
       assert (Hrlt : r < N0i + sti) by (subst r; apply arm_index_lt; assumption).
       assert (Hn : r + astride N0i sti r * acnt N0i sti n = n)
         by (subst r; apply arm_index; assumption).
-      exists (AI d r), (negb (fm_left F)), (fm_left F),
+      destruct rest as [|e rest].
+      { (* x ends after the digit: the marker follows *)
+        exists (AI d b r), (negb (fm_left F)), (fm_left F),
+               (rep T m ++ suf), (acnt N0i sti n).
+        split; [|split; [|split; [|split]]].
+        * exact (HAIS d b r Hdlt (le_n b) Hrlt).
+        * intros He. unfold tailL. destruct (fm_left F); [discriminate|reflexivity].
+        * intros He. unfold tailR. rewrite He. reflexivity.
+        * rewrite (HAIL d b r Hdlt (le_n b) Hrlt). symmetry. apply rcfg_clsM.
+          rewrite Hxe, <- Hn at 1. apply rcells_intmM.
+        * rewrite (HAIR d b r Hdlt (le_n b) Hrlt). symmetry.
+          rewrite (rsucc_consM F a c x m Hne), Hxe.
+          rewrite (alltop_classM F n d [] Hd), (inc_classM F n d [] Hdlt).
+          apply rcfg_clsM. rewrite <- Hn at 1. apply rcells_intmM. }
+      inversion Hrest as [|? ? Heb _].
+      exists (AI d e r), (negb (fm_left F)), (fm_left F),
              (flat_map (dig F) rest ++ M ++ rep T m ++ suf), (acnt N0i sti n).
       split; [|split; [|split; [|split]]].
-      * exact (HAIS d r Hdlt Hrlt).
+      * exact (HAIS d e r Hdlt ltac:(lia) Hrlt).
       * intros He. unfold tailL. destruct (fm_left F); [discriminate|reflexivity].
       * intros He. unfold tailR. rewrite He. reflexivity.
-      * rewrite (HAIL d r Hdlt Hrlt). symmetry. apply rcfg_clsM.
-        rewrite Hxe, <- Hn at 1. apply rcells_intM.
-      * rewrite (HAIR d r Hdlt Hrlt). symmetry.
+      * rewrite (HAIL d e r Hdlt ltac:(lia) Hrlt). symmetry. apply rcfg_clsM.
+        rewrite Hxe, <- Hn at 1. apply rcells_intlM; assumption.
+      * rewrite (HAIR d e r Hdlt ltac:(lia) Hrlt). symmetry.
         rewrite (rsucc_consM F a c x m Hne), Hxe.
-        rewrite (alltop_classM F n d rest Hd), (inc_classM F n d rest Hdlt).
-        apply rcfg_clsM. rewrite <- Hn at 1. apply rcells_intM.
+        rewrite (alltop_classM F n d (e :: rest) Hd), (inc_classM F n d (e :: rest) Hdlt).
+        apply rcfg_clsM. rewrite <- Hn at 1. apply rcells_intlM; assumption.
 Qed.
 
 Lemma lapRM : forall n, exists m c',
