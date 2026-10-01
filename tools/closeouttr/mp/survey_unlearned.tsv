@@ -1,0 +1,104 @@
+# spec	class	group	routes tried (verdict)	result
+0RB0LB_1LC1RA_0LD0LC_1RD1LB	DN	TRIO	lx5: learn: no ratio; bl_ti: fail; hy2: no anchor / no top cycle; rk4-6: false,false,false; rk8: false; mb pmax32: no closure; hy3_ti(HY3): no anchor key; hy3_ti: fail; hy2w: no anchor / no top cycle	open
+0RB0LB_1LC1RD_1LA0RD_1RB1RC	DN	SPREAD	lx5: learn: ratio 1; bl_ti: fail; rk4-6: false,false,false; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+0RB0LC_1LC1RD_1LA1LB_1RC0RB	DN	OVF2	lx5: learn: no ratio; bl_ti: fail; hy2: no anchor / no mid; rk4-6: false,false,false; rk8: false; mb pmax32: no closure; hy3_ti: fail; hy2w: no anchor / no mid	open
+0RB0LD_0RC1RB_1LD1RC_1RC1LA	DN	BLKSPR	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+0RB0LD_1LC0RD_1LA0LC_1RB1LD	DN	LIST32	lx5: learn: no long runs; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+0RB0RA_0LC1RA_1RB1LD_1LC0LD	DN	SPREAD	lx5: learn: no long runs; bl_ti: fail; rk4-6: false,timeout,timeout; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+0RB0RA_1RC1RA_1LD1RC_1RB0LC	DN	LIST2	lx5: learn: no bounded-partial-sum automaton; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+0RB0RB_1LC1RA_0LD0LC_1RD1LB	DN	TRIO	lx5: learn: no ratio; bl_ti: fail; hy2: no anchor / no top cycle; rk4-6: false,false,false; rk8: false; mb pmax32: no closure; hy3_ti(HY3): no anchor key; hy3_ti: fail; hy2w: no anchor / no top cycle	open
+0RB0RD_1LC0RC_1RA0LC_0LB1RC	DN	SPREAD	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; rk8: timeout; mb(MB/BL): no; hy3_ti: fail	open
+0RB0RD_1RC0LD_1RD1LC_1LB1RA	DN	UNARY	lx5: learn: no separators; bl_ti: fail; hy2: timeout; rk4-6: false,false,false; rk8: timeout; mb pmax32: no closure; hy3_ti(HY3): leaf too long; hy3_ti: fail	open
+0RB1LC_1RC0LC_1LD0RC_0LB0LA	DN	SPREAD	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; rk8: timeout; mb(MB/BL): no; hy3_ti: fail	open
+0RB1LD_0RC1RB_1LD0RD_1LA0LD	DN	HYB2	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; rk8: timeout; mb pmax32: no closure; hy3_ti(HY3): no anchor key; hy3_ti: fail; hy2w: no counter family / no counter family	open
+0RB1LD_0RC1RB_1LD1RB_1LA0LD	DN	LIST4	lx5: timeout; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+0RB1LD_1LA1RC_1RB0RC_0LA0LD	DN	SPREAD	lx5: learn: no long runs; bl_ti: fail; rk4-6: false,timeout,timeout; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+0RB1LD_1RC0RC_1LA1RA_1RA0LD	DN	SPREAD	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,timeout; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+0RB1LD_1RC1RA_1LA0RD_1RA0LD	DN	SPREAD	lx5: learn: no long runs; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+0RB1LD_1RC1RB_1LA1RA_1LA0LA	DN	LONGPER	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+0RB1LD_1RC1RC_1LA1RA_1RA0LD	DN	LIST4	lx5: timeout; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+0RB1RA_1LC0RC_1LD0LC_0RA1LC	DN	HYB2	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; rk8: timeout; mb pmax32: no closure; hy3_ti(HY3): no anchor key; hy2w: no counter family / no counter family	open
+0RB1RA_1LC1RB_1RB1LD_0RA0LC	DN	BLKSPR	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+0RB1RD_1LC0LC_1RA1LB_1RB0RA	DN	BLKSPR	lx5: learn: ratio 1; bl_ti: fail; rk4-6: false,false,timeout; rk8: timeout; mb(MB/BL): no; hy3_ti: fail	open
+0RB1RD_1LC0RD_1LD0LC_1RA0LB	DN	MULTI4	lx5: learn: no long runs; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,timeout; rk8: false; mb pmax32: no closure; hy3_ti(HY3): no anchor key; hy2w: no counter family / no counter family	open
+1RB0LA_0RC0RD_1LA0RC_0LC1RA	DN	LIST2	lx5: learn: no bounded-partial-sum automaton; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB0LA_0RC0RD_1LA1LC_0LC0RB	DN	HYB2	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; rk8: false; mb pmax32: no closure; hy3_ti(HY3): no anchor key; hy2w: no counter family / no counter family	open
+1RB0LA_0RC0RD_1LA1RB_1LC1RC	DN	LONGPER	lx5: learn: no separators; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LA_1LC0RB_1RD0LD_1LA1RB	DN	BLKSPR	lx5: learn: no long runs; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,timeout; rk8: timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LA_1LC0RC_1RD1LA_1LA0RD	DN	BLKSPR	lx5: learn: no long runs; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,timeout; rk8: timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LA_1LC0RD_0LC1LA_0RB1RD	DN	SPREAD	lx5: learn: no long runs; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,timeout; rk8: false; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LA_1LC0RD_1LA0LC_1RB0RB	DN	SPREAD	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,timeout,timeout; rk8: false; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LA_1RC---_0RD0RC_1LD0LA	DN	POW2	lx5: learn: ratio 0; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LA_1RC1LD_0LD0RB_0RC1LA	DN	POW2	lx5: learn: ratio 0; bl_ti: fail; rk4-6: false,false,timeout; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LA_1RC1LD_0LD0RC_0RB1LA	DN	POW2	lx5: learn: ratio 0; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LA_1RC1RA_0RD0RB_1LD0LA	DN	HYB2	lx5: learn: no separators; bl_ti: fail; hy2: timeout; rk4-6: false,false,false; rk8: timeout; mb pmax32: no closure; hy3_ti(HY3): too many families	open
+1RB0LB_1LC0RB_0LA0LD_0RA1LB	DN	SPREAD	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; rk8: timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LB_1LC1RD_1RD0LC_1LA0RD	DN	BLKSPR	lx5: learn: no long runs; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,timeout; rk8: timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LB_1RC0RB_0LD1RB_0LA1LD	DN	HYB2	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; rk8: false; mb pmax32: no closure; hy3_ti(HY3): no anchor key; hy2w: no counter family / no counter family	open
+1RB0LB_1RC1LA_0RD0RC_1LD1RB	DN	HYB2	lx5: learn: no ratio; bl_ti: fail; hy2: no top cycle / no anchor; rk4-6: false,false,false; rk8: false; mb pmax32: no closure; hy3_ti(HY3): no anchor key	open
+1RB0LC_0RC0RA_1LD1LA_1RA1LD	DN	LONGPER	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LC_0RC1RA_1LD0RA_1LA0LD	DN	MULTI4	lx5: learn: no long runs; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,timeout; rk8: false; mb pmax32: no closure; hy3_ti(HY3): no anchor key; hy2w: no counter family / no counter family	open
+1RB0LC_1RC0RA_1LD0RB_1LA0LD	DN	MULTI14	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,timeout; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail; hy2w: no counter family / no counter family	open
+1RB0LC_1RC0RD_1LA0LC_1RD0RA	DN	HYB1	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,timeout; rk8: timeout; mb pmax32: memory; mb pmax32 5GB 600s: no; hy3_ti(HY3): leaf too long; hy2w: no counter family / no counter family	open
+1RB0LC_1RC1LB_1LA1RD_0RA0RC	DN	UNARY	lx5: learn: no separators; bl_ti: fail; hy2: timeout; rk4-6: false,false,false; rk8: timeout; mb pmax32: no closure; hy3_ti(HY3): leaf too long	open
+1RB0LC_1RC1RD_1LA1RC_0RB0RD	DN	LIST2	lx5: learn: no bounded-partial-sum automaton; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB0LD_0LC0RB_1RA1LD_1RB1LC	DN	HYB2	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,timeout; rk8: false; mb pmax32: no closure; hy3_ti(HY3): too many families; hy2w: timeout	open
+1RB0LD_0LC0RC_1RA1LD_1LC1LA	DN	SPREAD	lx5: learn: ratio 1; bl_ti: fail; rk4-6: false,false,false; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+1RB0LD_1LC0RD_1LA0LB_1RB1RA	DN	LIST2	lx5: learn: no bounded-partial-sum automaton; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB0LD_1RC0RA_1LA0RD_1LA1LC	DN	LIST2	lx5: learn: no bounded-partial-sum automaton; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB0LD_1RC0RB_0LA0RD_1LA1RD	DN	LIST32	lx5: learn: no long runs; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB0LD_1RC0RB_1LA0RC_1LA0LD	DN	LONGPER	lx5: learn: no long runs; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): ok 15758 nodes; mb pmax64 polish900: ok 9617 nodes; hy3_ti: fail	boarded CBT_MPU_00
+1RB0LD_1RC0RB_1LD0RA_1LA0LC	DN	MULTI14	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,timeout; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail; hy2w: no counter family / no counter family	open
+1RB0RA_0LC0RD_1LD1LB_1RA0LB	DN	MULTI14	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8: false; mb(MB/BL): no; hy3_ti: fail; hy2w: no counter family / no counter family	open
+1RB0RA_0LC0RD_1RA0LD_1LC1RD	DN	LIST32	lx5: learn: no long runs; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB0RA_0LC1RA_0LD1LC_1LA1LC	DN	LIST4	lx5: timeout; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB0RA_0LC1RA_0LD1LC_1LA1RB	DN	LIST4	lx5: timeout; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB0RA_0LC1RA_0LD1LC_1RA0LA	DN	HYB2	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; rk8: false; mb pmax32: no closure; hy3_ti(HY3): no anchor key; hy2w: no counter family / no counter family	open
+1RB0RA_1LC0RB_1RA0LD_1LC0LC	DN	SPREAD	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,timeout,timeout; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+1RB0RA_1LC0RD_1LD0LB_1RA0LC	DN	MULTI14	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,timeout; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail; hy2w: no counter family / no counter family	open
+1RB0RA_1RC0RD_1LD1LC_1RA0LC	DN	LISTIRR	lx5: learn: ratio 0; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,timeout,timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0RB_0LC1RA_1LD1LC_1RB1LB	DN	LONGPER	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0RB_1LC0RA_1LD0LC_1RB0LD	DN	SPREAD	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,timeout,timeout; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+1RB0RB_1LC1RA_0LA1LD_1LA0LC	DN	BLKSPR	lx5: learn: ratio 1; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0RB_1LC1RC_0RA1LD_1RC0LD	DN	SPREAD	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,timeout; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0RC_0LC1LB_0LD1LC_1RD0RA	DN	LIST2	lx5: learn: left samples disagree on F states (250 of 1262); bl_ti: fail; hy2: no counter family / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB0RC_1LB1RA_0RB0LD_1LC1LD	DN	HYB2	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,timeout; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail; hy2w: no counter family / no counter family	open
+1RB0RC_1LC0RD_1RA0LD_1LC1LB	DN	LIST2	lx5: learn: no bounded-partial-sum automaton; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB0RC_1LC1LD_1RD1LB_1RA0LB	DN	SPREAD	lx5: learn: ratio 1; bl_ti: fail; rk4-6: false,false,false; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+1RB0RC_1LC1RA_1RA0LD_0LC1LD	DN	LIST4	lx5: timeout; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB0RD_0LC0RA_1RC1LD_1LB1RA	DN	LONGPER	lx5: learn: no separators; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0RD_1LC0LB_1RA0LB_1RD0RC	DN	HYB1	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,timeout; rk8: timeout; mb pmax32: memory; mb pmax32 5GB 600s: no; hy3_ti(HY3): leaf too long; hy2w: no counter family / no counter family	open
+1RB0RD_1LC0LC_1RD1LB_0RB1RA	DN	BLKSPR	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,timeout; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB0RD_1LC0RA_1LD0LC_1RA0LB	DN	MULTI14	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,timeout; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail; hy2w: no counter family / no counter family	open
+1RB0RD_1LC1LB_1RD0LB_1RD1RA	DN	LIST4	lx5: timeout; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB1LA_1LA1RC_0LD0RB_0LA1LD	DN	BLKSPR	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+1RB1LA_1LC0RA_1LA1LD_0LC0LD	DN	LIST2	lx5: learn: no bounded-partial-sum automaton; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB1LA_1LC0RA_1LD0LC_0RB0LA	DN	LIST32	lx5: learn: no long runs; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB1LA_1RC0LD_0RD0RB_1LA1LB	DN	LONGPER	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB1LB_0LC1RD_1LA1LA_1LB0RD	DN	LIST4	lx5: timeout; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB1LB_0LC1RD_1LA1LC_1RB0RB	DN	LONGPER	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB1LB_1RC1LD_1LD0RC_0LB0LA	DN	LONGPER	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB1LC_0LA1RD_1LA0LC_0RB0RD	DN	SPREAD	lx5: learn: no long runs; bl_ti: fail; rk4-6: false,timeout,timeout; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+1RB1LC_0LC0RB_1RD1LA_1RB0LA	DN	HYB2	lx5: learn: no ratio; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,timeout; rk8: false; mb pmax32: no closure; hy3_ti(HY3): too many families; hy2w: timeout	open
+1RB1LC_0RC1RD_1LA0LA_1RC0RB	DN	BLKSPR	lx5: learn: ratio 1; bl_ti: fail; rk4-6: false,false,timeout; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB1LC_1LA1RB_0RD0LA_0RB1RD	DN	BLKSPR	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+1RB1LC_1RC0RB_0LA1LD_1LC1RB	DN	HYB2	lx5: learn: no long runs; bl_ti: fail; hy2: no mid / no counter family; rk4-6: false,false,timeout; rk8: timeout; mb pmax32: no closure; hy3_ti(HY3): too many families; hy2w: no mid / no counter family	open
+1RB1LD_0RC0LD_1LC1RA_1LB0LA	DN	LONGPER	lx5: learn: ratio 1; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB1LD_0RC0RB_1LC1RA_0LA0LA	DN	TRIO	lx5: learn: no ratio; bl_ti: fail; hy2: no top cycle / no anchor; rk4-6: false,false,false; rk8: false; mb pmax32: no closure; hy3_ti(HY3): no anchor key	open
+1RB1LD_0RC0RB_1LC1RA_0LA0RA	DN	TRIO	lx5: learn: no ratio; bl_ti: fail; hy2: no top cycle / no anchor; rk4-6: false,false,false; rk8: false; mb pmax32: no closure; hy3_ti(HY3): no anchor key	open
+1RB1LD_0RC0RB_1LC1RA_1RA0LA	DN	TRIO	lx5: learn: no ratio; bl_ti: fail; hy2: no top cycle / no anchor; rk4-6: false,false,false; rk8: false; mb pmax32: no closure; hy3_ti(HY3): no anchor key	open
+1RB1LD_0RC0RB_1LC1RA_1RA0LD	DN	POW2	lx5: learn: ratio 0; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB1LD_1RC0LD_0LA0RA_1LA1LB	DN	SPREAD	lx5: learn: ratio 1; bl_ti: fail; rk4-6: false,false,false; rk8: timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB1LD_1RC0RB_0LA1LD_1LC1RB	DN	HYB2	lx5: learn: no long runs; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; rk8: timeout; mb pmax32: no closure; hy3_ti(HY3): no anchor key; hy2w: timeout	open
+1RB1LD_1RC0RB_0LA1RB_0LD1LA	DN	HYB1	lx5: learn: no long runs; bl_ti: fail; hy2: no anchor / no mid; rk4-6: false,false,timeout; rk8: false; mb pmax32: no closure; hy3_ti(HY3): too many families	open
+1RB1LD_1RC1RA_0LA0RB_1LB0LA	DN	OVF2	lx5: learn: no ratio; bl_ti: fail; hy2: no mid / no anchor; rk4-6: false,false,false; rk8: false; mb pmax32: no closure; hy3_ti: fail	open
+1RB1RA_0LC0RA_1LC1LD_1LA0LC	DN	LIST4	lx5: timeout; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure,memory; hy3_ti: fail	open
+1RB1RA_0LC0RA_1RC1LD_1LC0LB	DN	HYB2	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,timeout; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail; hy2w: no counter family / no counter family	open
+1RB1RA_1LC0RD_1RA0LB_1LB0RA	DN	LIST2	lx5: learn: no bounded-partial-sum automaton; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB1RA_1LC1RC_0RA1LD_1LC0LC	DN	LONGPER	lx5: learn: no ratio; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB1RB_1LC1RC_0RA1LD_1RC0LD	DN	LIST4	lx5: timeout; bl_ti: fail; hy2: no counter family / no counter family; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB1RC_1LC0RD_0RA1LD_1RC0LD	DN	SPREAD	lx5: learn: no long runs; bl_ti: fail; rk4-6: false,false,false; rk8(BX): timeout; mb(MB/BL): no; hy3_ti: fail	open
+1RB1RC_1LC1RA_1LD0RA_0RB0LB	DN	SPREAD	lx5: learn: ratio 1; bl_ti: fail; rk4-6: false,false,false; rk8(BX): false; mb(MB/BL): no; hy3_ti: fail	open
+1RB1RD_0RC0RA_1LC0LD_1RA0LD	DN	HYB2	lx5: learn: no ratio; bl_ti: fail; hy2: timeout; rk4-6: false,false,false; rk8: timeout; mb pmax32: no closure; hy3_ti(HY3): too many families	open
+1RB1RD_1LC0RA_1LD0LB_1RB0LA	DN	LIST2	lx5: learn: no bounded-partial-sum automaton; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
+1RB1RD_1LC1RB_1RA0LB_0RA0RD	DN	LIST2	lx5: learn: no bounded-partial-sum automaton; bl_ti: fail; hy2: no anchor / no anchor; rk4-6: false,false,false; mb pmax32: no closure; hy3_ti: fail	open
