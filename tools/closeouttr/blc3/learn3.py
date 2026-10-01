@@ -37,6 +37,8 @@ import lg3                                          # noqa: E402
 import lg_batch as G                                # noqa: E402
 import ti_batch as T                                # noqa: E402
 
+G.MAXFAM = int(os.environ.get("LG3_MAXFAM", "800"))
+
 LSNAP = os.environ.get('LSNAP', '/tmp/blc3_lsnap')
 UNIT = (1,)
 LONG = 4            # a run this long is a list element when learning separators
