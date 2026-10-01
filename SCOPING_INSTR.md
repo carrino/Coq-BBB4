@@ -4709,6 +4709,163 @@ cc -O2 -o /tmp/bl_sim tools/closeouttr/bl/bl_sim.c && python3 tools/closeouttr/b
 (cd tools/closeouttr/blc2 && python3 closure2.py 0RB1RB_1LC1RA_1RA0LD_1LC1LD 4 200)
 ```
 
+#### 7.4.BLC3 A joint tail language and per-state upper bounds: block lists get through ListGlue, 18 boarded (2026-10-01)
+
+Workstream BLC3 (batch tag `BLC3`), over BLC2's 234 block-list rows
+(`blc/grow.txt` less BL's 14 irregular ones, `blc3/rows234.txt`).  The
+counters (LE2), the Collatz-like rows (TA) and the hybrids were not
+touched.  **18 rows are boarded** (`CBT_BLC3_00..05`).  The first is BLC's
+worked example `0RB1RB_1LC1RA_1RA0LD_1LC1LD`.  All of them are
+kernel-checked, and `Print Assumptions` shows `functional_extensionality_dep`
+only.
+
+**1. The worked example through the kernel.**  BLC2's residue table named
+the next step: a JOINT tail state.  Done exactly, it is not quite what that
+table guessed.  Five things were needed, found in this order on the example:
+
+1. *One forward automaton F over the whole list.*  The list
+   `b_0, ..., b_k` reads as digits `d_i = b_i - 2 b_(i+1)`.  For the
+   example, F is the bounded-partial-sum language of BLC2 §2: centred digits
+   whose prefix sums from `b_0` stay in `{-1, 0}`.  It has 4 states
+   (sum x position parity) plus an END table, the state before the last
+   digit and the last block (`b_k` is 1 or 2).  Brute force over every list
+   of up to 8 digits (681 lists) confirms that F is closed under one sweep.
+   The RIGHT tail is read by the DETERMINISED REVERSE of F from the far end:
+   its state is the set of F-states from which the rest of the list is
+   accepted.  Both tail states are therefore measured from one reading of
+   the list.  A family `Pre(q_L) x window x Suf(R)` is exact when the
+   window's digits lead from `q_L` into `R`, so no per-side relative range
+   is involved (BLC2's BPS learned one for each side independently).
+2. *The left tails are a sub-language.*  Every element the sweep has
+   already passed has "pass parity", so in a left tail all digits after
+   `b_0`'s are centred 0, and `b_0` is shifted (+1, written by the anchor
+   instruction).  With F itself on the left (any digit), the exploration
+   builds lists whose prefix sums leave the window: 3,000+ families.  A
+   left automaton that keeps only parity (forgetting the sum) also blows up
+   (1,886+).  The left state must be F's absolute state restricted to the
+   transitions left tails take.
+3. *Lattice hulls.*  Karr's affine hull forgets congruences.  An element
+   that is always even at a phase (A on its last cell, say) was generalised
+   to every integer, and the odd instances turn at the wrong separator,
+   which leaves the language.  The finder's hulls now keep a per-coordinate
+   gcd (`LHull`: `lb + g x`), BL's lattice idea transplanted.
+4. *Tape-order parsing and constant stops.*  The window is parsed in tape
+   order (left side, head cell, right side) into elements and separators,
+   so an element split by the head keeps its full exponent.  The neighbour
+   relations of the window's blocks are keyed.  Leaves stop at constant
+   blocks too (`leaf_run3`).  Otherwise a concrete region walks along a row
+   of constant elements, and the canonical unfold chases it until "unfold
+   depth".
+5. *A checker extension, and it is the precise blocker.*  The far end of a
+   block list is pinned: the END item's relation is `a = 0`, down, so the
+   pred equals the constant `b_k`.  In the RIGHT automaton, the states just
+   before the END bound their ref ABOVE (`b_k = 1`, so the ref is at most
+   1).  An unfold from a state far from the end always has a kid "this
+   item is the last block", with a SYMBOLIC exponent such as `2 + x`.  That
+   region is empty, but `ListGlueTr` can only say so with `tvoid`, which
+   for `a = 0` needs a constant ref, or with `lc_mins`, a lower bound.  No
+   certificate exists without an upper bound.  **New file
+   `theories/Counters/ListGlue2Tr.v`** (`ListGlueTr.v` untouched) adds
+   `lc_maxs`, a certified upper bound per state.  `maxs_ok` requires that a
+   listed state is not accepting and that each of its transitions bounds
+   the ref by its target's bound (`rubound`) or pins it.  `maxs_sound` is
+   an induction over the accepted lists.  A `UVoid` node closes a region
+   by either bound; an upper bound needs no constant ref, since every
+   coefficient is nonnegative (`aeval z r >= a_c r`).  The record and
+   checker are renamed (`mkLC2`, `lg2_check`, `lg2_sound`,
+   `lg2_sound_mirror`); everything else is `ListGlueTr` verbatim.  The
+   file compiles in about 2 s and its axioms are
+   `functional_extensionality_dep` only.
+
+The example's certificate has 75 families and 105 leaves.  The search
+takes 1.5 s and the batch compiles in 4.4 s (`CBT_BLC3_00`).  The liveness
+search found item-additive rankings: on this row every instruction fires
+once per sweep, so the numeral-valued rank is not needed (see 4. below).
+
+**2. The language, learned per row** (`blc3/learn3.py`, on top of
+`blc3/lg3.py`, which reuses `lg_batch.py`'s exploration, replica and
+liveness search).  `blc3/lsnap.c` records the tape at every ANCHOR (the
+head steps past the end of the list holding `b_0`) and at sampled steps
+with the head deep in the list.  The learner then works out, in order:
+
+* the orientation (mirror when `b_0` sits at the right);
+* the separator words between long runs (`0`, `00`, `010`; `010` is
+  parsed as one word, longest match);
+* the ratio;
+* F: a centre per (position class, separator word), with `b_0`'s digit a
+  class of its own, because the anchor's `b_0` is off by one from mid-sweep;
+  states are (class, absolute sum) in the range the anchors show, and the
+  last M symbols plus `b_k` form the END table;
+* the left tails: `b_0`'s shift (the one under which the left samples
+  parse), and the F-transitions they take.
+
+On the example, the learned F, shift and left automaton match the hand
+derivation (`blc3/ex1.py`), and the row certifies in 2.7 s with nothing
+hand-written.  The lists whose separator carries the digit (`1^7 00 1^15
+00 1^31 0 1^62`: `d = 1` iff the separator is `00`) need no special case:
+their F is the free language over the separator-digit symbols.
+
+**3. Yields** (`blc3/learn3.py find`, 300 s a row, cap 800 families, 4
+jobs).  The first pass, on BLC2's 47 clean halving lists at a 200-family
+cap, certified 18; 16 of those pass the full replica.  The replica did not
+check `maxs_ok` at first.  Two certificates had bounds computed by a
+tighter formula than Coq's `rubound` and were redone; at the 800 cap both
+pass.  The full sweep over the 234 rows:
+
+| result | rows |
+|---|---:|
+| certify | 14 |
+| time-out (300 s) | 5 (4 of them certified in the 47-row pass at the 200 cap, and are boarded) |
+| learner: no ratio (multi-cell units such as `011^125 01 011^138`, `0`-block lists, a list only at the far end) | 95 |
+| learner: no separators (`0`-block lists with `1^6` / `11011` separators, `(01)`, `(100)` / `(001)` alternating units, bouncers) | 87 |
+| learner: ratio 0 or 1, no bounded-partial-sum automaton | 7 |
+| exploration: too many families (800) | 26 |
+
+18 rows are boarded (`CBT_BLC3_00..05`): the sweep's 14 and those 4.
+
+All the boarded rows are 1-block halving lists with separators `0`, `00`
+or `010`, at ratio 2, in either orientation.
+
+| batch | rows | compile (container, 1 core) |
+|---|---:|---:|
+| `CBT_BLC3_00` | 1 | 4.4 s |
+| `CBT_BLC3_01` | 6 | 8.8 s |
+| `CBT_BLC3_02` | 6 | 10.7 s |
+| `CBT_BLC3_03` | 1 | 2.4 s |
+| `CBT_BLC3_04` | 2 | 5.2 s |
+| `CBT_BLC3_05` | 2 | 6.8 s |
+
+All six batches are in `ci_costs.tsv` at about twice the container time.
+`ci_shard.py --check 6` passes, and the slowest shard is unchanged
+(`CBT_BR_02`, 2,764 s).
+
+**4. Residue: 216 rows, and where each group stops.**
+
+| rows | what | where it stops | next |
+|---:|---|---|---|
+| 189 (with the next row) | lists whose unit is not a single `1` cell: `0`-block halving lists with `1^6` / `11011` separators (often with a second counter on `b_0`'s side, `1^1057 01 0^353 ...`), ratio-2/4 lists of `(011)` / `(110)` whose unit ALTERNATES along the list, `(01)` and `(100)` / `(001)` lists | `learn3.py` (one-cell `1` unit only) | generalise the parse to multi-cell and alternating units (`lg3.parse`, the item kinds); the checker needs nothing new |
+| | not lists at the anchor: bouncers with a list only at the far end, long-period blocks, "spread" tapes | learner | not list counters; other routes |
+| 26 | 1-block lists that learn but whose exploration does not close at 800 families | `lg3` | on the one traced (`0RB1LB_1RC0LD_0LD1RA_1RA1LD`), mid-sweep separator shapes the anchors never show (`010` with the digits shifted) pile up in the right window instead of folding.  The right tail language must also accept the transient separators (learn it from right tails mid-sweep, not only from anchors) |
+| 1 | time-out | `lg3` | a longer budget on the box |
+| 42 of the 234 | the regular-fire SPW grow rows | (in the groups above) | the numeral-valued rank BLC2 expected was never reached.  The boarded rows needed none: every instruction fires once per sweep, so the rare instruction is not the overflow.  Rows whose rare instruction fires only at the overflow still need it |
+
+No row reached a liveness failure: every exploration that closed also
+found item-additive rankings.  Step 3 of the brief (a new generic
+numeral-rank file) was therefore not needed for any row reached so far.
+
+**Commands** (resumable; the sweep is about 2 h at 4 jobs in the container,
+about 40 min at `--jobs 12` on the box).  Multiprocessing workers can
+deadlock on the `SIGALRM` timeout (two runs stalled), so `blc3/one_by_one.sh`
+reruns the stragglers one process each, under a hard kill.
+
+```
+python3 tools/closeouttr/blc3/learn3.py find tools/closeouttr/blc3/rows234.txt blc3.jsonl --jobs 12 --timeout 300
+tools/closeouttr/blc3/one_by_one.sh tools/closeouttr/blc3/rows234.txt blc3.jsonl     # rows the pool left out
+python3 tools/closeouttr/blc3/learn3.py batch blc3.jsonl --tag BLC3 --chunk 6
+LG3_MAXFAM=2000 python3 tools/closeouttr/blc3/learn3.py find ROWS.txt out.jsonl --jobs 12 --timeout 900   # the 26 + 5
+(cd tools/closeouttr/blc3 && LANG_NAME=lang3 python3 run1.py 20000 0)                                     # the worked example, hand language
+```
+
 #### 7.4.LE The counters the ladder emitter could not close: five closure gaps, a visit phase per instruction, 181 boarded (2026-09-30)
 
 Workstream LE (batch tag `LE`), over the counters still open at the start:
