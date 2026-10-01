@@ -88,10 +88,10 @@ Proof. apply rule_sound_nil. exact ladder_ok_1RB0LC_1LC0RD_0RA1LB_0LC1RD. Qed.
 (** ** The closure: a counter with 2 PHASES and a run ([LadderCheckPhRunTr])
 
     The counter side is [pre ++ x ++ W p ++ T^m ++ V p], [x] binary over the
-    two digit words, [T = 01]; the phases (W | V), their moves and
-    whether they are runless:
-    - 0: 01 | -, PNarrow 0 1 1 1 0
-    - 1: 10 | 1, PCarry 0 1 0 (runless)
+    two digit words, [T = 01]; per phase (W | V) the move of a nonempty
+    and of an empty [x], and its flags:
+    - 0: 01 | -: TNarrow 0 1, ERefill 1 1 0
+    - 1: 10 | 1: TCarry 0 1 0, ECarry 0 1 0 (runless)
 
     Rank [1 |x| + 0 m + g p].  Interior arms at threshold 0
     stride 1, carries at 0 / 1, narrowings at
@@ -104,10 +104,14 @@ Definition phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p : nat) : list Sym :=
 Definition phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p : nat) : list Sym :=
   match p with | 0 => [] | 1 => [S1] | _ => [] end.
 Definition phT_1RB0LC_1LC0RD_0RA1LB_0LC1RD : list Sym := [S0;S1].
-Definition phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p : nat) : PMove :=
-  match p with | 0 => PNarrow 0 1 1 1 0 | 1 => PCarry 0 1 0 | _ => PCarry 0 0 0 end.
+Definition phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p : nat) : TMove :=
+  match p with | 0 => TNarrow 0 1 | 1 => TCarry 0 1 0 | _ => TNone end.
+Definition phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p : nat) : EMove :=
+  match p with | 0 => ERefill 1 1 0 | 1 => ECarry 0 1 0 | _ => ECarry 0 0 0 end.
 Definition phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p : nat) : bool :=
   match p with | 0 => false | 1 => true | _ => false end.
+Definition phxe_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p : nat) : bool :=
+  match p with | 0 => false | 1 => false | _ => false end.
 Definition phg_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p : nat) : nat :=
   match p with | 0 => 0 | 1 => 2 | _ => 0 end.
 
@@ -189,6 +193,15 @@ Lemma ok_narm_0_2_1RB0LC_1LC0RD_0RA1LB_0LC1RD :
   check_narm tm false true nrules narm_0_2_1RB0LC_1LC0RD_0RA1LB_0LC1RD ch_narm_0_2_1RB0LC_1LC0RD_0RA1LB_0LC1RD = true.
 Proof. vm_compute. reflexivity. Qed.
 
+Definition earm_1_1RB0LC_1LC0RD_0RA1LB_0LC1RD : LRule :=
+  mkLRule (mkC StD (mkS [S1;S0;S1] [] 0 0 []) S0 (mkS [] [] 0 0 []))
+          (mkC StD (mkS [S1;S1;S0;S1] [] 0 0 []) S0 (mkS [] [] 0 0 [])) 0 1.
+Definition ch_earm_1_1RB0LC_1LC0RD_0RA1LB_0LC1RD : list nseg :=
+  [NCh [RB (SWin 3);RB (SWinL 9)]].
+Lemma ok_earm_1_1RB0LC_1LC0RD_0RA1LB_0LC1RD :
+  check_narm tm true true nrules earm_1_1RB0LC_1LC0RD_0RA1LB_0LC1RD ch_earm_1_1RB0LC_1LC0RD_0RA1LB_0LC1RD = true.
+Proof. vm_compute. reflexivity. Qed.
+
 Definition rarm_0_0_1RB0LC_1LC0RD_0RA1LB_0LC1RD : LRule :=
   mkLRule (mkC StD (mkS [S0;S1] [S0;S1] 1 0 []) S0 (mkS [] [] 0 0 []))
           (mkC StD (mkS [S1;S1] [S1;S1] 1 0 [S1;S0;S1]) S0 (mkS [] [] 0 0 [])) 0 1.
@@ -204,6 +217,8 @@ Definition carm_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p r : nat) : LRule :=
   match p, r with | 1, 0 => carm_1_0_1RB0LC_1LC0RD_0RA1LB_0LC1RD | _, _ => iarm_0_0_1RB0LC_1LC0RD_0RA1LB_0LC1RD end.
 Definition narm_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p r : nat) : LRule :=
   match p, r with | 0, 1 => narm_0_1_1RB0LC_1LC0RD_0RA1LB_0LC1RD | 0, 2 => narm_0_2_1RB0LC_1LC0RD_0RA1LB_0LC1RD | _, _ => iarm_0_0_1RB0LC_1LC0RD_0RA1LB_0LC1RD end.
+Definition earm_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p : nat) : LRule :=
+  match p with | 1 => earm_1_1RB0LC_1LC0RD_0RA1LB_0LC1RD | _ => iarm_0_0_1RB0LC_1LC0RD_0RA1LB_0LC1RD end.
 Definition rarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p r : nat) : LRule :=
   match p, r with | 0, 0 => rarm_0_0_1RB0LC_1LC0RD_0RA1LB_0LC1RD | _, _ => iarm_0_0_1RB0LC_1LC0RD_0RA1LB_0LC1RD end.
 Definition fm1_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p r : nat) : nat := match p, r with | 0, 0 => 1 | _, _ => 0 end.
@@ -235,10 +250,8 @@ Definition vsegs_1RB0LC_1LC0RD_0RA1LB_0LC1RD (p r : nat) (t : Instr) : list nseg
   | _, _, _ => []
   end.
 
-Local Notation PHF := (phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD) (only parsing).
-
-Lemma mvc_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PCarry q dw dm ->
-  q < 2 /\ (phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = true -> phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = true /\ dm = 0)
+Lemma htc_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm, p < 2 -> phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = TCarry q dw dm ->
+  q < 2 /\ (phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = true -> phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = true /\ dm = 0) /\ phxe_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = false
   /\ 1 * dw + 0 * dm + phg_1RB0LC_1LC0RD_0RA1LB_0LC1RD q < phg_1RB0LC_1LC0RD_0RA1LB_0LC1RD p.
 Proof.
   intros p q dw dm Hp Hmv.
@@ -254,14 +267,14 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma mvn_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm a q' c, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PNarrow q dm a q' c ->
-  q < 2 /\ q' < 2 /\ (phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = true -> phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = true /\ dm = 0)
-  /\ (phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD q' = true -> c = 0) /\ 0 * dm + phg_1RB0LC_1LC0RD_0RA1LB_0LC1RD q < 1 + phg_1RB0LC_1LC0RD_0RA1LB_0LC1RD p.
+Lemma htn_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm, p < 2 -> phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = TNarrow q dm ->
+  q < 2 /\ (phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = true -> phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = true /\ dm = 0) /\ phxe_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = false
+  /\ 0 * dm + phg_1RB0LC_1LC0RD_0RA1LB_0LC1RD q < 1 + phg_1RB0LC_1LC0RD_0RA1LB_0LC1RD p.
 Proof.
-  intros p q dm a q' c Hp Hmv.
+  intros p q dm Hp Hmv.
   destruct p as [|p].
   {
-    vm_compute in Hmv; injection Hmv as <- <- <- <- <-.
+    vm_compute in Hmv; injection Hmv as <- <-.
     phok.
   }
   destruct p as [|p].
@@ -271,7 +284,55 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma hvc_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PCarry q dw dm ->
+Lemma htx_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p, p < 2 -> phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = TNone -> phxe_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = true.
+Proof.
+  intros p Hp Hmv.
+  destruct p as [|p].
+  {
+    exfalso; vm_compute in Hmv; discriminate Hmv.
+  }
+  destruct p as [|p].
+  {
+    exfalso; vm_compute in Hmv; discriminate Hmv.
+  }
+  exfalso; lia.
+Qed.
+
+Lemma hec_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm, p < 2 -> phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = ECarry q dw dm ->
+  q < 2 /\ (phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = true -> phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = true /\ dm = 0)
+  /\ (phxe_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = true -> dw = 0)
+  /\ 1 * dw + 0 * dm + phg_1RB0LC_1LC0RD_0RA1LB_0LC1RD q < phg_1RB0LC_1LC0RD_0RA1LB_0LC1RD p.
+Proof.
+  intros p q dw dm Hp Hmv.
+  destruct p as [|p].
+  {
+    exfalso; vm_compute in Hmv; discriminate Hmv.
+  }
+  destruct p as [|p].
+  {
+    vm_compute in Hmv; injection Hmv as <- <- <-.
+    phok.
+  }
+  exfalso; lia.
+Qed.
+
+Lemma her_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p a q c, p < 2 -> phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = ERefill a q c ->
+  q < 2 /\ (phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = true -> c = 0) /\ phxe_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = false.
+Proof.
+  intros p a q c Hp Hmv.
+  destruct p as [|p].
+  {
+    vm_compute in Hmv; injection Hmv as <- <- <-.
+    phok.
+  }
+  destruct p as [|p].
+  {
+    exfalso; vm_compute in Hmv; discriminate Hmv.
+  }
+  exfalso; lia.
+Qed.
+
+Lemma hvtc_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm, p < 2 -> phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = TCarry q dw dm ->
   phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = false -> phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD p.
 Proof.
   intros p q dw dm Hp Hmv.
@@ -287,13 +348,13 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma hvn_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm a q' c, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PNarrow q dm a q' c ->
+Lemma hvtn_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm, p < 2 -> phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = TNarrow q dm ->
   phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = false -> phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD p.
 Proof.
-  intros p q dm a q' c Hp Hmv.
+  intros p q dm Hp Hmv.
   destruct p as [|p].
   {
-    vm_compute in Hmv; injection Hmv as <- <- <- <- <-.
+    vm_compute in Hmv; injection Hmv as <- <-.
     vm_compute; first [reflexivity | discriminate].
   }
   destruct p as [|p].
@@ -303,10 +364,27 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma iarm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall d e r, d < fm_b FAM - 1 -> e < fm_b FAM + 2 -> r < 0 + 1 ->
+Lemma hvec_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm, p < 2 -> phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = ECarry q dw dm ->
+  phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = false -> phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD q = phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD p.
+Proof.
+  intros p q dw dm Hp Hmv.
+  destruct p as [|p].
+  {
+    exfalso; vm_compute in Hmv; discriminate Hmv.
+  }
+  destruct p as [|p].
+  {
+    vm_compute in Hmv; injection Hmv as <- <- <-.
+    vm_compute; first [reflexivity | discriminate].
+  }
+  exfalso; lia.
+Qed.
+
+Lemma iarm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall d e r, d < fm_b FAM - 1 -> e < fm_b FAM + 2 ->
+  (fm_b FAM <= e -> phxe_1RB0LC_1LC0RD_0RA1LB_0LC1RD (e - fm_b FAM) = false) -> r < 0 + 1 ->
   ReachL tm (negb (fm_left FAM)) (fm_left FAM) (lr_lhs (iarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD d e r)) (lr_rhs (iarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD d e r)).
 Proof.
-  intros d e r Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
+  intros d e r Hd He Hx Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
   destruct e as [|e].
   {
     destruct r as [|r].
@@ -334,12 +412,13 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma iarm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall d e r, d < fm_b FAM - 1 -> e < fm_b FAM + 2 -> r < 0 + 1 ->
+Lemma iarm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall d e r, d < fm_b FAM - 1 -> e < fm_b FAM + 2 ->
+  (fm_b FAM <= e -> phxe_1RB0LC_1LC0RD_0RA1LB_0LC1RD (e - fm_b FAM) = false) -> r < 0 + 1 ->
   lr_lhs (iarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD d e r)
     = cls_conf FAM (blk (fm_pre FAM ++ rep (dig FAM (fm_b FAM - 1)) r) (dig FAM (fm_b FAM - 1))
                      (astride 0 1 r) (dig FAM d ++ ilookP FAM phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD e)).
 Proof.
-  intros d e r Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
+  intros d e r Hd He Hx Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
   destruct e as [|e].
   {
     destruct r as [|r].
@@ -367,12 +446,13 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma iarm_rhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall d e r, d < fm_b FAM - 1 -> e < fm_b FAM + 2 -> r < 0 + 1 ->
+Lemma iarm_rhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall d e r, d < fm_b FAM - 1 -> e < fm_b FAM + 2 ->
+  (fm_b FAM <= e -> phxe_1RB0LC_1LC0RD_0RA1LB_0LC1RD (e - fm_b FAM) = false) -> r < 0 + 1 ->
   lr_rhs (iarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD d e r)
     = cls_conf FAM (blk (fm_pre FAM ++ rep (dig FAM 0) r) (dig FAM 0)
                      (astride 0 1 r) (dig FAM (S d) ++ ilookP FAM phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD e)).
 Proof.
-  intros d e r Hd He Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
+  intros d e r Hd He Hx Hr. vm_compute in Hd, He. destruct d as [|d]; [|exfalso; lia].
   destruct e as [|e].
   {
     destruct r as [|r].
@@ -400,7 +480,7 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma carm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm r, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PCarry q dw dm ->
+Lemma carm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm r, p < 2 -> phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = TCarry q dw dm ->
   r < 0 + 1 ->
   ReachL tm (if phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p then true else negb (fm_left FAM))
             (if phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p then true else fm_left FAM)
@@ -421,7 +501,7 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma carm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm r, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PCarry q dw dm ->
+Lemma carm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm r, p < 2 -> phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = TCarry q dw dm ->
   r < 0 + 1 ->
   lr_lhs (carm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r) = cls_conf FAM (blk (fm_pre FAM ++ rep (dig FAM (fm_b FAM - 1)) r)
                                   (dig FAM (fm_b FAM - 1)) (astride 0 1 r)
@@ -442,7 +522,7 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma carm_rhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm r, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PCarry q dw dm ->
+Lemma carm_rhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm r, p < 2 -> phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = TCarry q dw dm ->
   r < 0 + 1 ->
   lr_rhs (carm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r) = cls_conf FAM (blk (fm_pre FAM ++ rep (dig FAM 0) (r + dw))
                                   (dig FAM 0) (astride 0 1 r)
@@ -463,16 +543,16 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma narm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm a q' c r, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PNarrow q dm a q' c ->
+Lemma narm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm r, p < 2 -> phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = TNarrow q dm ->
   0 < r -> r < 2 + 1 ->
   ReachL tm (if phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p then true else negb (fm_left FAM))
             (if phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p then true else fm_left FAM)
     (lr_lhs (narm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r)) (lr_rhs (narm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r)).
 Proof.
-  intros p q dm a q' c r Hp Hmv H0 Hr.
+  intros p q dm r Hp Hmv H0 Hr.
   destruct p as [|p].
   {
-    vm_compute in Hmv; injection Hmv as <- <- <- <- <-.
+    vm_compute in Hmv; injection Hmv as <- <-.
     destruct r as [|r].
     { exfalso; lia. }
     destruct r as [|r].
@@ -488,16 +568,16 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma narm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm a q' c r, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PNarrow q dm a q' c ->
+Lemma narm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm r, p < 2 -> phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = TNarrow q dm ->
   0 < r -> r < 2 + 1 ->
   lr_lhs (narm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r) = cls_conf FAM (blk (fm_pre FAM ++ rep (dig FAM (fm_b FAM - 1)) r)
                                   (dig FAM (fm_b FAM - 1)) (astride 2 1 r)
                                   (lwP phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p)).
 Proof.
-  intros p q dm a q' c r Hp Hmv H0 Hr.
+  intros p q dm r Hp Hmv H0 Hr.
   destruct p as [|p].
   {
-    vm_compute in Hmv; injection Hmv as <- <- <- <- <-.
+    vm_compute in Hmv; injection Hmv as <- <-.
     destruct r as [|r].
     { exfalso; lia. }
     destruct r as [|r].
@@ -513,16 +593,16 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma narm_rhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm a q' c r, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PNarrow q dm a q' c ->
+Lemma narm_rhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm r, p < 2 -> phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = TNarrow q dm ->
   0 < r -> r < 2 + 1 ->
   lr_rhs (narm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r) = cls_conf FAM (blk (fm_pre FAM ++ rep (dig FAM 0) (r - 1))
                                   (dig FAM 0) (astride 2 1 r)
                                   (rwP phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD phT_1RB0LC_1LC0RD_0RA1LB_0LC1RD phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p q dm)).
 Proof.
-  intros p q dm a q' c r Hp Hmv H0 Hr.
+  intros p q dm r Hp Hmv H0 Hr.
   destruct p as [|p].
   {
-    vm_compute in Hmv; injection Hmv as <- <- <- <- <-.
+    vm_compute in Hmv; injection Hmv as <- <-.
     destruct r as [|r].
     { exfalso; lia. }
     destruct r as [|r].
@@ -538,14 +618,66 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma rarm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm a q' c r, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PNarrow q dm a q' c ->
+Lemma earm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm, p < 2 -> phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = ECarry q dw dm ->
+  ReachL tm (if phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p then true else negb (fm_left FAM))
+            (if phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p then true else fm_left FAM)
+    (lr_lhs (earm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p)) (lr_rhs (earm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p)).
+Proof.
+  intros p q dw dm Hp Hmv.
+  destruct p as [|p].
+  {
+    exfalso; vm_compute in Hmv; discriminate Hmv.
+  }
+  destruct p as [|p].
+  {
+    vm_compute in Hmv; injection Hmv as <- <- <-.
+    eapply narm_reach; [exact nrules_sound_1RB0LC_1LC0RD_0RA1LB_0LC1RD | exact ok_earm_1_1RB0LC_1LC0RD_0RA1LB_0LC1RD].
+  }
+  exfalso; lia.
+Qed.
+
+Lemma earm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm, p < 2 -> phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = ECarry q dw dm ->
+  lr_lhs (earm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p) = cls_conf FAM (sflat (fm_pre FAM ++ lwP phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p)).
+Proof.
+  intros p q dw dm Hp Hmv.
+  destruct p as [|p].
+  {
+    exfalso; vm_compute in Hmv; discriminate Hmv.
+  }
+  destruct p as [|p].
+  {
+    vm_compute in Hmv; injection Hmv as <- <- <-.
+    vm_compute; reflexivity.
+  }
+  exfalso; lia.
+Qed.
+
+Lemma earm_rhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dw dm, p < 2 -> phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = ECarry q dw dm ->
+  lr_rhs (earm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p)
+  = cls_conf FAM (sflat (fm_pre FAM ++ rep (dig FAM 0) dw
+                         ++ rwP phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD phT_1RB0LC_1LC0RD_0RA1LB_0LC1RD phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD p q dm)).
+Proof.
+  intros p q dw dm Hp Hmv.
+  destruct p as [|p].
+  {
+    exfalso; vm_compute in Hmv; discriminate Hmv.
+  }
+  destruct p as [|p].
+  {
+    vm_compute in Hmv; injection Hmv as <- <- <-.
+    vm_compute; reflexivity.
+  }
+  exfalso; lia.
+Qed.
+
+Lemma rarm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p a q c r, p < 2 -> phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = ERefill a q c ->
   r < 0 + 1 ->
   ReachL tm true true (lr_lhs (rarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r)) (lr_rhs (rarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r)).
 Proof.
-  intros p q dm a q' c r Hp Hmv Hr.
+  intros p a q c r Hp Hmv Hr.
   destruct p as [|p].
   {
-    vm_compute in Hmv; injection Hmv as <- <- <- <- <-.
+    vm_compute in Hmv; injection Hmv as <- <- <-.
     destruct r as [|r].
     { eapply narm_reach; [exact nrules_sound_1RB0LC_1LC0RD_0RA1LB_0LC1RD | exact ok_rarm_0_0_1RB0LC_1LC0RD_0RA1LB_0LC1RD]. }
     exfalso; lia.
@@ -557,15 +689,15 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma rarm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm a q' c r, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PNarrow q dm a q' c ->
+Lemma rarm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p a q c r, p < 2 -> phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = ERefill a q c ->
   r < 0 + 1 ->
   lr_lhs (rarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r) = cls_conf FAM (blk (fm_pre FAM ++ phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD p ++ rep phT_1RB0LC_1LC0RD_0RA1LB_0LC1RD r)
                                   phT_1RB0LC_1LC0RD_0RA1LB_0LC1RD (astride 0 1 r) (phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD p)).
 Proof.
-  intros p q dm a q' c r Hp Hmv Hr.
+  intros p a q c r Hp Hmv Hr.
   destruct p as [|p].
   {
-    vm_compute in Hmv; injection Hmv as <- <- <- <- <-.
+    vm_compute in Hmv; injection Hmv as <- <- <-.
     destruct r as [|r].
     { vm_compute; reflexivity. }
     exfalso; lia.
@@ -577,17 +709,17 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma rarm_rhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm a q' c r, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PNarrow q dm a q' c ->
+Lemma rarm_rhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p a q c r, p < 2 -> phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = ERefill a q c ->
   r < 0 + 1 ->
   lr_rhs (rarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r) = cls_conf FAM (blk (fm_pre FAM ++ rep (dig FAM 0) (fm1_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r)) (dig FAM 0)
                                   (astride 0 1 r)
-                                  (rep (dig FAM 0) (fm2_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r) ++ phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD q'
-                                     ++ rep phT_1RB0LC_1LC0RD_0RA1LB_0LC1RD c ++ phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD q')).
+                                  (rep (dig FAM 0) (fm2_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r) ++ phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD q
+                                     ++ rep phT_1RB0LC_1LC0RD_0RA1LB_0LC1RD c ++ phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD q)).
 Proof.
-  intros p q dm a q' c r Hp Hmv Hr.
+  intros p a q c r Hp Hmv Hr.
   destruct p as [|p].
   {
-    vm_compute in Hmv; injection Hmv as <- <- <- <- <-.
+    vm_compute in Hmv; injection Hmv as <- <- <-.
     destruct r as [|r].
     { vm_compute; reflexivity. }
     exfalso; lia.
@@ -599,13 +731,13 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma fm_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm a q' c r, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PNarrow q dm a q' c ->
+Lemma fm_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p a q c r, p < 2 -> phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = ERefill a q c ->
   r < 0 + 1 -> fm1_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r + fm2_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r = r + a.
 Proof.
-  intros p q dm a q' c r Hp Hmv Hr.
+  intros p a q c r Hp Hmv Hr.
   destruct p as [|p].
   {
-    vm_compute in Hmv; injection Hmv as <- <- <- <- <-.
+    vm_compute in Hmv; injection Hmv as <- <- <-.
     destruct r as [|r].
     { vm_compute; lia. }
     exfalso; lia.
@@ -617,15 +749,15 @@ Proof.
   exfalso; lia.
 Qed.
 
-Lemma vis_ok_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p q dm a q' c r t, p < 2 -> phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = PNarrow q dm a q' c ->
+Lemma vis_ok_1RB0LC_1LC0RD_0RA1LB_0LC1RD : forall p a q c r t, p < 2 -> phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD p = ERefill a q c ->
   ~ In t pins_1RB0LC_1LC0RD_0RA1LB_0LC1RD -> r < 0 + 1 ->
   nfire tm true true nrules (vsegs_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r t) (vis_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r t)
     (lr_lhs (rarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD p r)) = Some t.
 Proof.
-  intros p q dm a q' c r t Hp Hmv Hnp Hr.
+  intros p a q c r t Hp Hmv Hnp Hr.
   destruct p as [|p].
   {
-    vm_compute in Hmv; injection Hmv as <- <- <- <- <-.
+    vm_compute in Hmv; injection Hmv as <- <- <-.
     destruct r as [|r].
     { destruct t as [q s]; destruct q, s; try (exfalso; apply Hnp; simpl; tauto); vm_compute; reflexivity. }
     exfalso; lia.
@@ -653,18 +785,23 @@ Qed.
 Theorem nqhtr_1RB0LC_1LC0RD_0RA1LB_0LC1RD : NeverQuasiHaltsTr tm_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
 Proof.
   eapply (boardP_neverqhtr tm_1RB0LC_1LC0RD_0RA1LB_0LC1RD pins_1RB0LC_1LC0RD_0RA1LB_0LC1RD FAM 2 phW_1RB0LC_1LC0RD_0RA1LB_0LC1RD phV_1RB0LC_1LC0RD_0RA1LB_0LC1RD phT_1RB0LC_1LC0RD_0RA1LB_0LC1RD
-                 phmv_1RB0LC_1LC0RD_0RA1LB_0LC1RD phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD 1 0 phg_1RB0LC_1LC0RD_0RA1LB_0LC1RD
+                 phmvT_1RB0LC_1LC0RD_0RA1LB_0LC1RD phmvE_1RB0LC_1LC0RD_0RA1LB_0LC1RD phnr_1RB0LC_1LC0RD_0RA1LB_0LC1RD phxe_1RB0LC_1LC0RD_0RA1LB_0LC1RD 1 0 phg_1RB0LC_1LC0RD_0RA1LB_0LC1RD
                  iarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD 0 1 carm_1RB0LC_1LC0RD_0RA1LB_0LC1RD 0 1
-                 narm_1RB0LC_1LC0RD_0RA1LB_0LC1RD 2 1 rarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD 0 1
+                 narm_1RB0LC_1LC0RD_0RA1LB_0LC1RD 2 1 earm_1RB0LC_1LC0RD_0RA1LB_0LC1RD rarm_1RB0LC_1LC0RD_0RA1LB_0LC1RD 0 1
                  fm1_1RB0LC_1LC0RD_0RA1LB_0LC1RD fm2_1RB0LC_1LC0RD_0RA1LB_0LC1RD nrules vsegs_1RB0LC_1LC0RD_0RA1LB_0LC1RD vis_1RB0LC_1LC0RD_0RA1LB_0LC1RD [] 1 0).
   - vm_compute; lia.
-  - exact mvc_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
-  - exact mvn_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
-  - exact hvc_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
-  - exact hvn_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
+  - exact htc_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
+  - exact htn_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
+  - exact htx_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
+  - exact hec_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
+  - exact her_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
+  - exact hvtc_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
+  - exact hvtn_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
+  - exact hvec_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
   - repeat constructor.
-  - lia.
-  - reflexivity.
+  - vm_compute; lia.
+  - vm_compute; intros _; reflexivity.
+  - vm_compute; intros _; reflexivity.
   - lia.
   - exact iarm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
   - exact iarm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
@@ -678,6 +815,9 @@ Proof.
   - exact narm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
   - exact narm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
   - exact narm_rhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
+  - exact earm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
+  - exact earm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
+  - exact earm_rhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
   - lia.
   - exact rarm_reach_1RB0LC_1LC0RD_0RA1LB_0LC1RD.
   - exact rarm_lhs_1RB0LC_1LC0RD_0RA1LB_0LC1RD.

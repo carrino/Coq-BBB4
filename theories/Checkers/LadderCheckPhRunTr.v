@@ -12,26 +12,29 @@
 
       cells (x, p, m) = pre ++ x ++ W p ++ T^m ++ V p,
 
-    and a move per phase, taken when [x] is all top:
+    and two moves per phase, taken when [x] is all top: one for a nonempty
+    [x] ([mvT]) and one for an empty [x] ([mvE]):
 
-    - [PCarry q dw dm]:       (top^j, p, m) -> (0^(j+dw), q, m + dm)   j >= 0;
-    - [PNarrow q dm a q' c]:  (top^j, p, m) -> (0^(j-1), q, m + dm)    j >= 1,
-                              ([], p, m)    -> (0^(m+a), q', c)        (a refill).
+    - [TCarry q dw dm]:  (top^j, p, m) -> (0^(j+dw), q, m + dm)    j >= 1;
+    - [TNarrow q dm]:    (top^j, p, m) -> (0^(j-1), q, m + dm)     j >= 1;
+    - [TNone]:           the phase never holds a nonempty [x] ([xe p]);
+    - [ECarry q dw dm]:  ([], p, m)    -> (0^dw, q, m + dm);
+    - [ERefill a q c]:   ([], p, m)    -> (0^(m+a), q, c)          (a refill).
 
     A phase may be RUNLESS ([nr p = true]): its run is always empty (every
     move into it sets [m = 0]), so its moves may rewrite [V] (their arms
     have both tails known empty); a phase with a run keeps [V] ([V q = V p]
     on its moves) and its arms leave the run opaque.  [Run3] is two phases
-    ([e = 0]: carry, [e = 1]: narrow); [Run2] one.
+    ([e = 0]: carry, [e = 1]: narrow and refill); [Run2] one.
 
-    Liveness: a linear rank [A |x| + B m + g p] falls at every carry and
-    every narrowing (the table's hypotheses [Hrk_c], [Hrk_n]), and inside a
-    phase [x] counts up, so refills recur; every instruction fires from
-    every refill arm.
+    Liveness: a linear rank [A |x| + B m + g p] falls at every move but a
+    refill, and inside a phase [x] counts up, so refills recur; every
+    instruction fires from every refill arm.
 
     Arms, all [LadderNest.ReachL] programs: interior
     [t^n d w X -> 0^n (d+1) w X] ([w] the next digit, or [W p] when [x]
-    ends), the carry and narrowing per phase, the refill per refill phase.
+    ends), per phase the carry or narrowing of a nonempty [x] (one index),
+    the carry of an empty [x] (no index) or its refill (one index, the run).
 
     Nothing landed is modified.  Axiom footprint: [functional_extensionality_dep],
     via [CTape.lift]. *)
@@ -45,9 +48,15 @@ From BBB4.Counters Require Import LapGlueTr.
 From BBB4.CensusTr Require Import TNF_QHTr QHConveyorTr.
 Import ListNotations.
 
-Inductive PMove : Type :=
-| PCarry  (q dw dm : nat)
-| PNarrow (q dm a q' c : nat).
+
+Inductive TMove : Type :=
+| TCarry  (q dw dm : nat)
+| TNarrow (q dm : nat)
+| TNone.
+
+Inductive EMove : Type :=
+| ECarry  (q dw dm : nat)
+| ERefill (a q c : nat).
 
 (** ** 1. The counter *)
 
@@ -56,7 +65,8 @@ Section PhRun.
 Variable F : Fam.
 Variable W V : nat -> list Sym.
 Variable T : list Sym.
-Variable mv : nat -> PMove.
+Variable mvT : nat -> TMove.
+Variable mvE : nat -> EMove.
 
 Local Notation b := (fm_b F).
 
@@ -73,12 +83,17 @@ Definition PSt : Type := (list nat * nat * nat)%type.
 Definition psucc (s : PSt) : PSt :=
   let '(x, p, m) := s in
   if alltopP x then
-    match mv p with
-    | PCarry q dw dm => (repeat 0 (length x + dw), q, m + dm)
-    | PNarrow q dm a q' c =>
-        match x with
-        | [] => (repeat 0 (m + a), q', c)
-        | _ :: _ => (repeat 0 (length x - 1), q, m + dm)
+    match x with
+    | [] =>
+        match mvE p with
+        | ECarry q dw dm => (repeat 0 dw, q, m + dm)
+        | ERefill a q c => (repeat 0 (m + a), q, c)
+        end
+    | _ :: _ =>
+        match mvT p with
+        | TCarry q dw dm => (repeat 0 (length x + dw), q, m + dm)
+        | TNarrow q dm => (repeat 0 (length x - 1), q, m + dm)
+        | TNone => s
         end
     end
   else (incP x, p, m).
@@ -139,7 +154,6 @@ Proof.
   induction x as [|d t IH]; [reflexivity|]. cbn [incP].
   destruct (d =? b - 1); cbn [length]; [rewrite IH|]; reflexivity.
 Qed.
-
 
 (** *** The cells of each class *)
 
@@ -202,6 +216,27 @@ Proof.
   - rewrite (HV eq_refl), Nat.add_comm, rep_add, !app_assoc. reflexivity.
 Qed.
 
+Lemma pcells_empty : forall p m n, (nr p = true -> m = 0) ->
+  pcells [] p m = sden (txP p m) n (sflat (fm_pre F ++ lwP p)).
+Proof.
+  intros p m n Hm. rewrite sden_flat. unfold pcells, txP, lwP. cbn [flat_map].
+  destruct (nr p); [rewrite (Hm eq_refl)|]; cbn [rep];
+    rewrite ?app_nil_l, !app_assoc, ?app_nil_r; reflexivity.
+Qed.
+
+Lemma pcells_emoved : forall p q m dw dm n, (nr p = true -> m = 0) ->
+  (nr p = false -> V q = V p) ->
+  pcells (repeat 0 dw) q (m + dm)
+    = sden (txP p m) n (sflat (fm_pre F ++ rep (dig F 0) dw ++ rwP p q dm)).
+Proof.
+  intros p q m dw dm n Hm HV. rewrite sden_flat. unfold pcells, txP, rwP.
+  rewrite flat_map_repeat_nil.
+  destruct (nr p).
+  - rewrite (Hm eq_refl). cbn [Nat.add rep].
+    rewrite ?app_nil_l, !app_assoc, ?app_nil_r. reflexivity.
+  - rewrite (HV eq_refl), Nat.add_comm, rep_add, !app_assoc. reflexivity.
+Qed.
+
 Lemma pcells_refill : forall p r st n,
   pcells [] p (r + st * n)
     = sden [] n (blk (fm_pre F ++ W p ++ rep T r) T st (V p)).
@@ -253,39 +288,60 @@ Proof.
   intros n. apply Forall_forall. intros y Hy. apply repeat_spec in Hy. lia.
 Qed.
 
+Variable xe : nat -> bool.
 Variable NP : nat.
 Variable A B : nat.
 Variable g : nat -> nat.
 
 (** the table: moves stay inside the phases, a runless phase is entered
-    with an empty run, and the rank falls *)
-Hypothesis Hmv_c : forall p q dw dm, p < NP -> mv p = PCarry q dw dm ->
-  q < NP /\ (nr q = true -> nr p = true /\ dm = 0) /\ A * dw + B * dm + g q < g p.
-Hypothesis Hmv_n : forall p q dm a q' c, p < NP -> mv p = PNarrow q dm a q' c ->
-  q < NP /\ q' < NP /\ (nr q = true -> nr p = true /\ dm = 0)
-  /\ (nr q' = true -> c = 0) /\ B * dm + g q < A + g p.
+    with an empty run, an empty-only phase with an empty [x], and the rank
+    falls at every move but a refill *)
+Hypothesis HtC : forall p q dw dm, p < NP -> mvT p = TCarry q dw dm ->
+  q < NP /\ (nr q = true -> nr p = true /\ dm = 0) /\ xe q = false
+  /\ A * dw + B * dm + g q < g p.
+Hypothesis HtN : forall p q dm, p < NP -> mvT p = TNarrow q dm ->
+  q < NP /\ (nr q = true -> nr p = true /\ dm = 0) /\ xe q = false
+  /\ B * dm + g q < A + g p.
+Hypothesis HtX : forall p, p < NP -> mvT p = TNone -> xe p = true.
+Hypothesis HeC : forall p q dw dm, p < NP -> mvE p = ECarry q dw dm ->
+  q < NP /\ (nr q = true -> nr p = true /\ dm = 0) /\ (xe q = true -> dw = 0)
+  /\ A * dw + B * dm + g q < g p.
+Hypothesis HeR : forall p a q c, p < NP -> mvE p = ERefill a q c ->
+  q < NP /\ (nr q = true -> c = 0) /\ xe q = false.
 
 Definition PInv (s : PSt) : Prop :=
-  let '(x, p, m) := s in Forall (fun d => d < b) x /\ p < NP /\ (nr p = true -> m = 0).
+  let '(x, p, m) := s in
+  Forall (fun d => d < b) x /\ p < NP /\ (nr p = true -> m = 0) /\ (xe p = true -> x = []).
 
 Definition isrefP (s : PSt) : bool :=
   let '(x, p, m) := s in
-  match x, mv p with [], PNarrow _ _ _ _ _ => true | _, _ => false end.
+  match x, mvE p with [], ERefill _ _ _ => true | _, _ => false end.
 
 Lemma psucc_inv : forall s, PInv s -> PInv (psucc s).
 Proof.
-  intros [[x p] m] (Hx & Hp & Hm). cbn [psucc].
+  intros [[x p] m] (Hx & Hp & Hm & Hxe). cbn [psucc].
   destruct (alltopP x) eqn:Et.
-  - destruct (mv p) as [q dw dm | q dm a q' c] eqn:Emv.
-    + destruct (Hmv_c p q dw dm Hp Emv) as (Hq & Hnr & _).
-      split; [apply repeat0_bndP | split; [exact Hq|]].
-      intros Hq'. destruct (Hnr Hq') as (Hp' & ->). rewrite (Hm Hp'). reflexivity.
-    + destruct (Hmv_n p q dm a q' c Hp Emv) as (Hq & Hq' & Hnr & Hnr' & _).
-      destruct x as [|d t].
-      * split; [apply repeat0_bndP | split; [exact Hq' | exact Hnr']].
-      * split; [apply repeat0_bndP | split; [exact Hq|]].
-        intros Hq2. destruct (Hnr Hq2) as (Hp' & ->). rewrite (Hm Hp'). reflexivity.
-  - split; [apply inc_bndP; assumption | split; assumption].
+  - destruct x as [|d t].
+    + destruct (mvE p) as [q dw dm | a q c] eqn:Emv.
+      * destruct (HeC p q dw dm Hp Emv) as (Hq & Hnr & Hxq & _).
+        split; [apply repeat0_bndP | split; [exact Hq | split]].
+        -- intros Hq'. destruct (Hnr Hq') as (Hp' & ->). rewrite (Hm Hp'). reflexivity.
+        -- intros Hq'. rewrite (Hxq Hq'). reflexivity.
+      * destruct (HeR p a q c Hp Emv) as (Hq & Hnr & Hxq).
+        split; [apply repeat0_bndP | split; [exact Hq | split; [exact Hnr|]]].
+        intros Hq'. congruence.
+    + destruct (mvT p) as [q dw dm | q dm |] eqn:Emv.
+      * destruct (HtC p q dw dm Hp Emv) as (Hq & Hnr & Hxq & _).
+        split; [apply repeat0_bndP | split; [exact Hq | split]].
+        -- intros Hq'. destruct (Hnr Hq') as (Hp' & ->). rewrite (Hm Hp'). reflexivity.
+        -- intros Hq'. congruence.
+      * destruct (HtN p q dm Hp Emv) as (Hq & Hnr & Hxq & _).
+        split; [apply repeat0_bndP | split; [exact Hq | split]].
+        -- intros Hq'. destruct (Hnr Hq') as (Hp' & ->). rewrite (Hm Hp'). reflexivity.
+        -- intros Hq'. congruence.
+      * split; [exact Hx | split; [exact Hp | split; assumption]].
+  - split; [apply inc_bndP; assumption | split; [exact Hp | split; [exact Hm|]]].
+    intros Hp'. rewrite (Hxe Hp') in Et. discriminate.
 Qed.
 
 Lemma piter_inv : forall n s, PInv s -> PInv (piter s n).
@@ -303,31 +359,41 @@ Lemma refill_stepP : forall k,
   exists n, isrefP (piter s n) = true.
 Proof.
   intros k IHk v. induction v as [|v IHv]; intros [[x p] m] Hs Hk Hv;
-    cbn [fst snd] in *; pose proof Hs as (Hx & Hp & Hm);
+    cbn [fst snd] in *; pose proof Hs as (Hx & Hp & Hm & Hxe);
     pose proof (val_pos_lt b x Hb Hx) as Hlt.
   - exfalso. lia.
   - destruct (isrefP (x, p, m)) eqn:Er; [exists 0; exact Er|].
     destruct (alltopP x) eqn:Et.
-    + destruct (mv p) as [q dw dm | q dm a q' c] eqn:Emv.
-      * (* the carry: the rank falls *)
-        destruct (Hmv_c p q dw dm Hp Emv) as (_ & _ & Hr).
-        destruct (IHk (repeat 0 (length x + dw), q, m + dm)) as (n & Hn).
-        -- apply (psucc_inv (x, p, m)) in Hs. cbn [psucc] in Hs. rewrite Et, Emv in Hs.
-           exact Hs.
-        -- cbn [rankP] in *. rewrite repeat_length. nia.
-        -- exists (S n). cbn [piter psucc]. rewrite Et, Emv. exact Hn.
-      * destruct x as [|d t].
+    + destruct x as [|d t].
+      * destruct (mvE p) as [q dw dm | a q c] eqn:Emv.
+        -- (* the carry of an empty x: the rank falls *)
+           destruct (HeC p q dw dm Hp Emv) as (_ & _ & _ & Hr).
+           destruct (IHk (repeat 0 dw, q, m + dm)) as (n & Hn).
+           ++ apply (psucc_inv ([], p, m)) in Hs. cbn [psucc alltopP forallb] in Hs.
+              rewrite Emv in Hs. exact Hs.
+           ++ cbn [rankP length] in *. rewrite repeat_length. nia.
+           ++ exists (S n). cbn [piter psucc alltopP forallb]. rewrite Emv. exact Hn.
         -- cbn [isrefP] in Er. rewrite Emv in Er. discriminate.
+      * destruct (mvT p) as [q dw dm | q dm |] eqn:Emv.
+        -- (* the carry: the rank falls *)
+           destruct (HtC p q dw dm Hp Emv) as (_ & _ & _ & Hr).
+           destruct (IHk (repeat 0 (length (d :: t) + dw), q, m + dm)) as (n & Hn).
+           ++ apply (psucc_inv (d :: t, p, m)) in Hs. cbn [psucc] in Hs.
+              rewrite Et, Emv in Hs. exact Hs.
+           ++ cbn [rankP length] in *. rewrite repeat_length. nia.
+           ++ exists (S n). cbn [piter]. cbn [psucc]. rewrite Et, Emv. exact Hn.
         -- (* the narrowing: the rank falls *)
-           destruct (Hmv_n p q dm a q' c Hp Emv) as (_ & _ & _ & _ & Hr).
+           destruct (HtN p q dm Hp Emv) as (_ & _ & _ & Hr).
            destruct (IHk (repeat 0 (length (d :: t) - 1), q, m + dm)) as (n & Hn).
            ++ apply (psucc_inv (d :: t, p, m)) in Hs. cbn [psucc] in Hs.
               rewrite Et, Emv in Hs. exact Hs.
            ++ cbn [rankP length] in *. rewrite repeat_length. nia.
            ++ exists (S n). cbn [piter]. cbn [psucc]. rewrite Et, Emv. exact Hn.
+        -- exfalso. pose proof (Hxe (HtX p Hp Emv)). discriminate.
     + (* inside the phase: the value rises by one *)
       destruct (IHv (incP x, p, m)) as (n & Hn).
-      * split; [apply inc_bndP; assumption | split; assumption].
+      * split; [apply inc_bndP; assumption | split; [exact Hp | split; [exact Hm|]]].
+        intros Hp'. rewrite (Hxe Hp') in Et. discriminate.
       * cbn [rankP] in *. rewrite inc_lenP. exact Hk.
       * cbn [fst]. rewrite inc_lenP, inc_valP by assumption. lia.
       * exists (S n). cbn [piter psucc]. rewrite Et. exact Hn.
@@ -365,16 +431,18 @@ Variable F     : Fam.
 Variable NP    : nat.
 Variable W V   : nat -> list Sym.
 Variable T     : list Sym.
-Variable mv    : nat -> PMove.
-Variable nr    : nat -> bool.
+Variable mvT   : nat -> TMove.
+Variable mvE   : nat -> EMove.
+Variable nr xe : nat -> bool.
 Variable A B   : nat.
 Variable g     : nat -> nat.
 Variable AI    : nat -> nat -> nat -> LRule.   (** interior: digit, next word, index *)
 Variable N0i sti : nat.
-Variable AC    : nat -> nat -> LRule.          (** carry: phase, index *)
+Variable AC    : nat -> nat -> LRule.          (** carry of a nonempty x: phase, index *)
 Variable N0c stc : nat.
 Variable AN    : nat -> nat -> LRule.          (** narrowing: phase, index *)
 Variable N0n stn : nat.
+Variable AE    : nat -> LRule.                 (** carry of an empty x: phase *)
 Variable AR    : nat -> nat -> LRule.          (** refill: phase, index *)
 Variable N0r str : nat.
 Variable fm1 fm2 : nat -> nat -> nat.
@@ -388,88 +456,105 @@ Local Notation b := (fm_b F).
 Local Notation elP p := (if nr p then true else negb (fm_left F)).
 Local Notation erP p := (if nr p then true else fm_left F).
 
-Hypothesis Hb    : 1 < b.
-Hypothesis Hmv_c : forall p q dw dm, p < NP -> mv p = PCarry q dw dm ->
-  q < NP /\ (nr q = true -> nr p = true /\ dm = 0) /\ A * dw + B * dm + g q < g p.
-Hypothesis Hmv_n : forall p q dm a q' c, p < NP -> mv p = PNarrow q dm a q' c ->
-  q < NP /\ q' < NP /\ (nr q = true -> nr p = true /\ dm = 0)
-  /\ (nr q' = true -> c = 0) /\ B * dm + g q < A + g p.
+Hypothesis Hb  : 1 < b.
+Hypothesis HtC : forall p q dw dm, p < NP -> mvT p = TCarry q dw dm ->
+  q < NP /\ (nr q = true -> nr p = true /\ dm = 0) /\ xe q = false
+  /\ A * dw + B * dm + g q < g p.
+Hypothesis HtN : forall p q dm, p < NP -> mvT p = TNarrow q dm ->
+  q < NP /\ (nr q = true -> nr p = true /\ dm = 0) /\ xe q = false
+  /\ B * dm + g q < A + g p.
+Hypothesis HtX : forall p, p < NP -> mvT p = TNone -> xe p = true.
+Hypothesis HeC : forall p q dw dm, p < NP -> mvE p = ECarry q dw dm ->
+  q < NP /\ (nr q = true -> nr p = true /\ dm = 0) /\ (xe q = true -> dw = 0)
+  /\ A * dw + B * dm + g q < g p.
+Hypothesis HeR : forall p a q c, p < NP -> mvE p = ERefill a q c ->
+  q < NP /\ (nr q = true -> c = 0) /\ xe q = false.
 (** a phase with a run keeps the word after it *)
-Hypothesis HVc : forall p q dw dm, p < NP -> mv p = PCarry q dw dm -> nr p = false -> V q = V p.
-Hypothesis HVn : forall p q dm a q' c, p < NP -> mv p = PNarrow q dm a q' c ->
+Hypothesis HVtc : forall p q dw dm, p < NP -> mvT p = TCarry q dw dm ->
+  nr p = false -> V q = V p.
+Hypothesis HVtn : forall p q dm, p < NP -> mvT p = TNarrow q dm -> nr p = false -> V q = V p.
+Hypothesis HVec : forall p q dw dm, p < NP -> mvE p = ECarry q dw dm ->
   nr p = false -> V q = V p.
 Hypothesis Hbnd0 : Forall (fun d => d < b) x0.
 Hypothesis Hp0   : p0 < NP.
 Hypothesis Hm0   : nr p0 = true -> m0 = 0.
+Hypothesis Hx0   : xe p0 = true -> x0 = [].
 
 Hypothesis Hsti : 0 < sti.
-Hypothesis HAIS : forall d e r, d < b - 1 -> e < b + NP -> r < N0i + sti ->
+Hypothesis HAIS : forall d e r, d < b - 1 -> e < b + NP ->
+  (b <= e -> xe (e - b) = false) -> r < N0i + sti ->
   ReachL tm (negb (fm_left F)) (fm_left F) (lr_lhs (AI d e r)) (lr_rhs (AI d e r)).
-Hypothesis HAIL : forall d e r, d < b - 1 -> e < b + NP -> r < N0i + sti ->
+Hypothesis HAIL : forall d e r, d < b - 1 -> e < b + NP ->
+  (b <= e -> xe (e - b) = false) -> r < N0i + sti ->
   lr_lhs (AI d e r) = cls_conf F (blk (fm_pre F ++ rep (dig F (b - 1)) r) (dig F (b - 1))
                                    (astride N0i sti r) (dig F d ++ ilookP F W e)).
-Hypothesis HAIR : forall d e r, d < b - 1 -> e < b + NP -> r < N0i + sti ->
+Hypothesis HAIR : forall d e r, d < b - 1 -> e < b + NP ->
+  (b <= e -> xe (e - b) = false) -> r < N0i + sti ->
   lr_rhs (AI d e r) = cls_conf F (blk (fm_pre F ++ rep (dig F 0) r) (dig F 0)
                                    (astride N0i sti r) (dig F (S d) ++ ilookP F W e)).
 
 Hypothesis Hstc : 0 < stc.
-Hypothesis HACS : forall p q dw dm r, p < NP -> mv p = PCarry q dw dm -> r < N0c + stc ->
+Hypothesis HACS : forall p q dw dm r, p < NP -> mvT p = TCarry q dw dm -> r < N0c + stc ->
   ReachL tm (elP p) (erP p) (lr_lhs (AC p r)) (lr_rhs (AC p r)).
-Hypothesis HACL : forall p q dw dm r, p < NP -> mv p = PCarry q dw dm -> r < N0c + stc ->
+Hypothesis HACL : forall p q dw dm r, p < NP -> mvT p = TCarry q dw dm -> r < N0c + stc ->
   lr_lhs (AC p r) = cls_conf F (blk (fm_pre F ++ rep (dig F (b - 1)) r)
                                   (dig F (b - 1)) (astride N0c stc r) (lwP W V nr p)).
-Hypothesis HACR : forall p q dw dm r, p < NP -> mv p = PCarry q dw dm -> r < N0c + stc ->
+Hypothesis HACR : forall p q dw dm r, p < NP -> mvT p = TCarry q dw dm -> r < N0c + stc ->
   lr_rhs (AC p r) = cls_conf F (blk (fm_pre F ++ rep (dig F 0) (r + dw))
                                   (dig F 0) (astride N0c stc r) (rwP W V T nr p q dm)).
 
 Hypothesis Hstn : 0 < stn.
 Hypothesis HN0n : 0 < N0n.
-Hypothesis HANS : forall p q dm a q' c r, p < NP -> mv p = PNarrow q dm a q' c ->
+Hypothesis HANS : forall p q dm r, p < NP -> mvT p = TNarrow q dm ->
   0 < r -> r < N0n + stn ->
   ReachL tm (elP p) (erP p) (lr_lhs (AN p r)) (lr_rhs (AN p r)).
-Hypothesis HANL : forall p q dm a q' c r, p < NP -> mv p = PNarrow q dm a q' c ->
+Hypothesis HANL : forall p q dm r, p < NP -> mvT p = TNarrow q dm ->
   0 < r -> r < N0n + stn ->
   lr_lhs (AN p r) = cls_conf F (blk (fm_pre F ++ rep (dig F (b - 1)) r)
                                   (dig F (b - 1)) (astride N0n stn r) (lwP W V nr p)).
-Hypothesis HANR : forall p q dm a q' c r, p < NP -> mv p = PNarrow q dm a q' c ->
+Hypothesis HANR : forall p q dm r, p < NP -> mvT p = TNarrow q dm ->
   0 < r -> r < N0n + stn ->
   lr_rhs (AN p r) = cls_conf F (blk (fm_pre F ++ rep (dig F 0) (r - 1))
                                   (dig F 0) (astride N0n stn r) (rwP W V T nr p q dm)).
 
+Hypothesis HAES : forall p q dw dm, p < NP -> mvE p = ECarry q dw dm ->
+  ReachL tm (elP p) (erP p) (lr_lhs (AE p)) (lr_rhs (AE p)).
+Hypothesis HAEL : forall p q dw dm, p < NP -> mvE p = ECarry q dw dm ->
+  lr_lhs (AE p) = cls_conf F (sflat (fm_pre F ++ lwP W V nr p)).
+Hypothesis HAER : forall p q dw dm, p < NP -> mvE p = ECarry q dw dm ->
+  lr_rhs (AE p) = cls_conf F (sflat (fm_pre F ++ rep (dig F 0) dw ++ rwP W V T nr p q dm)).
+
 Hypothesis Hstr : 0 < str.
-Hypothesis HARS : forall p q dm a q' c r, p < NP -> mv p = PNarrow q dm a q' c ->
-  r < N0r + str ->
+Hypothesis HARS : forall p a q c r, p < NP -> mvE p = ERefill a q c -> r < N0r + str ->
   ReachL tm true true (lr_lhs (AR p r)) (lr_rhs (AR p r)).
-Hypothesis HARL : forall p q dm a q' c r, p < NP -> mv p = PNarrow q dm a q' c ->
-  r < N0r + str ->
+Hypothesis HARL : forall p a q c r, p < NP -> mvE p = ERefill a q c -> r < N0r + str ->
   lr_lhs (AR p r) = cls_conf F (blk (fm_pre F ++ W p ++ rep T r) T
                                   (astride N0r str r) (V p)).
-Hypothesis HARR : forall p q dm a q' c r, p < NP -> mv p = PNarrow q dm a q' c ->
-  r < N0r + str ->
+Hypothesis HARR : forall p a q c r, p < NP -> mvE p = ERefill a q c -> r < N0r + str ->
   lr_rhs (AR p r) = cls_conf F (blk (fm_pre F ++ rep (dig F 0) (fm1 p r)) (dig F 0)
                                   (astride N0r str r)
-                                  (rep (dig F 0) (fm2 p r) ++ W q' ++ rep T c ++ V q')).
-Hypothesis Hfm : forall p q dm a q' c r, p < NP -> mv p = PNarrow q dm a q' c ->
-  r < N0r + str -> fm1 p r + fm2 p r = r + a.
+                                  (rep (dig F 0) (fm2 p r) ++ W q ++ rep T c ++ V q)).
+Hypothesis Hfm : forall p a q c r, p < NP -> mvE p = ERefill a q c -> r < N0r + str ->
+  fm1 p r + fm2 p r = r + a.
 
 Hypothesis Hrsv : Forall (RuleSound tm false false) rsv.
-Hypothesis Hfire : forall p q dm a q' c r t, p < NP -> mv p = PNarrow q dm a q' c ->
+Hypothesis Hfire : forall p a q c r t, p < NP -> mvE p = ERefill a q c ->
   ~ In t pins -> r < N0r + str ->
   nfire tm true true rsv (vsegs p r t) (visI p r t) (lr_lhs (AR p r)) = Some t.
 
-Local Notation Cf := (fun n => pcfg F W V T (piter F mv (x0, p0, m0) n)).
+Local Notation Cf := (fun n => pcfg F W V T (piter F mvT mvE (x0, p0, m0) n)).
 
-Lemma pinv0 : PInv F nr NP (x0, p0, m0).
-Proof. split; [exact Hbnd0 | split; [exact Hp0 | exact Hm0]]. Qed.
+Lemma pinv0 : PInv F nr xe NP (x0, p0, m0).
+Proof. split; [exact Hbnd0 | split; [exact Hp0 | split; [exact Hm0 | exact Hx0]]]. Qed.
 
-Lemma board_armP : forall s, PInv F nr NP s ->
-  exists A el er X n,
-    ReachL tm el er (lr_lhs A) (lr_rhs A)
+Lemma board_armP : forall s, PInv F nr xe NP s ->
+  exists Ar el er X n,
+    ReachL tm el er (lr_lhs Ar) (lr_rhs Ar)
     /\ (el = true -> tailL F X = []) /\ (er = true -> tailR F X = [])
-    /\ pcfg F W V T s = cden (tailL F X) (tailR F X) n (lr_lhs A)
-    /\ pcfg F W V T (psucc F mv s) = cden (tailL F X) (tailR F X) n (lr_rhs A).
+    /\ pcfg F W V T s = cden (tailL F X) (tailR F X) n (lr_lhs Ar)
+    /\ pcfg F W V T (psucc F mvT mvE s) = cden (tailL F X) (tailR F X) n (lr_rhs Ar).
 Proof.
-  intros [[x p] m] (Hx & Hp & Hm).
+  intros [[x p] m] (Hx & Hp & Hm & Hxe).
   assert (HtL : negb (fm_left F) = true -> forall X, tailL F X = []).
   { intros Hz X. unfold tailL. destruct (fm_left F); [discriminate|reflexivity]. }
   assert (HtR : fm_left F = true -> forall X, tailR F X = []).
@@ -478,28 +563,22 @@ Proof.
   { unfold txP. destruct (nr p); [intros _; apply tailL_nil | exact (fun Hz => HtL Hz _)]. }
   assert (HtRp : erP p = true -> tailR F (txP V T nr p m) = []).
   { unfold txP. destruct (nr p); [intros _; apply tailR_nil | exact (fun Hz => HtR Hz _)]. }
-  destruct (digs_decomp (b - 1) x) as [Htop | (n & d & rest & Hxe & Hd)].
+  destruct (digs_decomp (b - 1) x) as [Htop | (n & d & rest & Hxe' & Hd)].
   - assert (Et : alltopP F x = true) by (rewrite Htop; apply alltop_repeatP).
     set (j := length x) in Htop.
-    destruct (mv p) as [q dw dm | q dm a q' c] eqn:Emv.
-    + (* the carry *)
-      remember (aoff N0c stc j) as r eqn:Er.
-      assert (Hrlt : r < N0c + stc) by (subst r; apply arm_index_lt; assumption).
-      assert (Hk : r + astride N0c stc r * acnt N0c stc j = j)
-        by (subst r; apply arm_index; assumption).
-      exists (AC p r), (elP p), (erP p), (txP V T nr p m), (acnt N0c stc j).
-      split; [|split; [|split; [|split]]].
-      * exact (HACS p q dw dm r Hp Emv Hrlt).
-      * exact HtLp.
-      * exact HtRp.
-      * rewrite (HACL p q dw dm r Hp Emv Hrlt). symmetry. apply pcfg_cls.
-        rewrite Htop, <- Hk at 1. apply pcells_top. exact Hm.
-      * rewrite (HACR p q dw dm r Hp Emv Hrlt). symmetry. cbn [psucc]. rewrite Et, Emv.
-        apply pcfg_cls. fold j.
-        replace (j + dw) with ((r + dw) + astride N0c stc r * acnt N0c stc j) by lia.
-        apply pcells_moved; [exact Hm|].
-        exact (HVc p q dw dm Hp Emv).
-    + destruct x as [|d0 t0] eqn:Ex.
+    destruct x as [|x1 xs] eqn:Ex.
+    + destruct (mvE p) as [q dw dm | a q c] eqn:Emv.
+      * (* the carry of an empty x *)
+        exists (AE p), (elP p), (erP p), (txP V T nr p m), 0.
+        split; [|split; [|split; [|split]]].
+        -- exact (HAES p q dw dm Hp Emv).
+        -- exact HtLp.
+        -- exact HtRp.
+        -- rewrite (HAEL p q dw dm Hp Emv). symmetry. apply pcfg_cls.
+           apply pcells_empty. exact Hm.
+        -- rewrite (HAER p q dw dm Hp Emv). symmetry.
+           cbn [psucc alltopP forallb]. rewrite Emv. apply pcfg_cls.
+           apply pcells_emoved; [exact Hm|]. exact (HVec p q dw dm Hp Emv).
       * (* the refill *)
         remember (aoff N0r str m) as r eqn:Er.
         assert (Hrlt : r < N0r + str) by (subst r; apply arm_index_lt; assumption).
@@ -507,20 +586,39 @@ Proof.
           by (subst r; apply arm_index; assumption).
         exists (AR p r), true, true, [], (acnt N0r str m).
         split; [|split; [|split; [|split]]].
-        -- exact (HARS p q dm a q' c r Hp Emv Hrlt).
+        -- exact (HARS p a q c r Hp Emv Hrlt).
         -- intros _; apply tailL_nil.
         -- intros _; apply tailR_nil.
-        -- rewrite (HARL p q dm a q' c r Hp Emv Hrlt). symmetry. apply pcfg_cls.
+        -- rewrite (HARL p a q c r Hp Emv Hrlt). symmetry. apply pcfg_cls.
            rewrite <- Hk at 1. apply pcells_refill.
-        -- rewrite (HARR p q dm a q' c r Hp Emv Hrlt). symmetry.
+        -- rewrite (HARR p a q c r Hp Emv Hrlt). symmetry.
            cbn [psucc alltopP forallb]. rewrite Emv.
-           apply pcfg_cls. pose proof (Hfm p q dm a q' c r Hp Emv Hrlt).
+           apply pcfg_cls. pose proof (Hfm p a q c r Hp Emv Hrlt).
            rewrite <- (pcells_refilled F W V T (fm1 p r) (astride N0r str r)
-                         (acnt N0r str m) (fm2 p r) q' c).
+                         (acnt N0r str m) (fm2 p r) q c).
            f_equal. f_equal. lia.
+    + rewrite <- Ex in *.
+      assert (Hj : 0 < j) by (unfold j; subst x; cbn; lia).
+      destruct (mvT p) as [q dw dm | q dm |] eqn:Emv.
+      * (* the carry of a nonempty x *)
+        remember (aoff N0c stc j) as r eqn:Er.
+        assert (Hrlt : r < N0c + stc) by (subst r; apply arm_index_lt; assumption).
+        assert (Hk : r + astride N0c stc r * acnt N0c stc j = j)
+          by (subst r; apply arm_index; assumption).
+        exists (AC p r), (elP p), (erP p), (txP V T nr p m), (acnt N0c stc j).
+        split; [|split; [|split; [|split]]].
+        -- exact (HACS p q dw dm r Hp Emv Hrlt).
+        -- exact HtLp.
+        -- exact HtRp.
+        -- rewrite (HACL p q dw dm r Hp Emv Hrlt). symmetry. apply pcfg_cls.
+           rewrite Htop, <- Hk at 1. apply pcells_top. exact Hm.
+        -- rewrite (HACR p q dw dm r Hp Emv Hrlt). symmetry.
+           assert (Hs : psucc F mvT mvE (x, p, m) = (repeat 0 (j + dw), q, m + dm)).
+           { cbn [psucc]. rewrite Et, Emv. subst x. reflexivity. }
+           rewrite Hs. apply pcfg_cls.
+           replace (j + dw) with ((r + dw) + astride N0c stc r * acnt N0c stc j) by lia.
+           apply pcells_moved; [exact Hm|]. exact (HVtc p q dw dm Hp Emv).
       * (* the narrowing *)
-        rewrite <- Ex in *.
-        assert (Hj : 0 < j) by (unfold j; subst x; cbn; lia).
         remember (aoff N0n stn j) as r eqn:Er.
         assert (Hr0 : 0 < r) by (subst r; apply arm_index_pos; assumption).
         assert (Hrlt : r < N0n + stn) by (subst r; apply arm_index_lt; assumption).
@@ -528,51 +626,56 @@ Proof.
           by (subst r; apply arm_index; assumption).
         exists (AN p r), (elP p), (erP p), (txP V T nr p m), (acnt N0n stn j).
         split; [|split; [|split; [|split]]].
-        -- exact (HANS p q dm a q' c r Hp Emv Hr0 Hrlt).
+        -- exact (HANS p q dm r Hp Emv Hr0 Hrlt).
         -- exact HtLp.
         -- exact HtRp.
-        -- rewrite (HANL p q dm a q' c r Hp Emv Hr0 Hrlt). symmetry. apply pcfg_cls.
+        -- rewrite (HANL p q dm r Hp Emv Hr0 Hrlt). symmetry. apply pcfg_cls.
            rewrite Htop, <- Hk at 1. apply pcells_top. exact Hm.
-        -- rewrite (HANR p q dm a q' c r Hp Emv Hr0 Hrlt). symmetry.
-           assert (Hs : psucc F mv (x, p, m) = (repeat 0 (j - 1), q, m + dm)).
+        -- rewrite (HANR p q dm r Hp Emv Hr0 Hrlt). symmetry.
+           assert (Hs : psucc F mvT mvE (x, p, m) = (repeat 0 (j - 1), q, m + dm)).
            { cbn [psucc]. rewrite Et, Emv. subst x. reflexivity. }
            rewrite Hs. apply pcfg_cls.
            replace (j - 1) with ((r - 1) + astride N0n stn r * acnt N0n stn j) by lia.
-           apply pcells_moved; [exact Hm|]. exact (HVn p q dm a q' c Hp Emv).
+           apply pcells_moved; [exact Hm|]. exact (HVtn p q dm Hp Emv).
+      * exfalso. pose proof (Hxe (HtX p Hp Emv)). subst x. discriminate.
   - (* the interior *)
-    assert (Hne : alltopP F x = false) by (rewrite Hxe; apply alltop_classP, Hd).
-    rewrite Hxe in Hx.
+    assert (Hne : alltopP F x = false) by (rewrite Hxe'; apply alltop_classP, Hd).
+    rewrite Hxe' in Hx.
     apply Forall_app in Hx as [_ Hrest'].
     inversion Hrest' as [|? ? Hdb Hrest].
     assert (Hdlt : d < b - 1) by lia.
-    assert (Hs : psucc F mv (x, p, m) = (repeat 0 n ++ S d :: rest, p, m)).
-    { cbn [psucc]. rewrite Hne, Hxe, (inc_classP F n d rest Hdlt). reflexivity. }
+    assert (Hs : psucc F mvT mvE (x, p, m) = (repeat 0 n ++ S d :: rest, p, m)).
+    { cbn [psucc]. rewrite Hne, Hxe', (inc_classP F n d rest Hdlt). reflexivity. }
     remember (aoff N0i sti n) as r eqn:Er.
     assert (Hrlt : r < N0i + sti) by (subst r; apply arm_index_lt; assumption).
     assert (Hn : r + astride N0i sti r * acnt N0i sti n = n)
       by (subst r; apply arm_index; assumption).
+    assert (Hxp : b <= b + p -> xe (b + p - b) = false).
+    { intros _. replace (b + p - b) with p by lia.
+      destruct (xe p) eqn:Ex; [|reflexivity].
+      pose proof (Hxe eq_refl) as Hx0'. rewrite Hxe' in Hx0'. destruct n; discriminate. }
     destruct rest as [|e' rest].
     { (* x ends after the digit: the phase word follows *)
       exists (AI d (b + p) r), (negb (fm_left F)), (fm_left F),
              (rep T m ++ V p), (acnt N0i sti n).
       split; [|split; [|split; [|split]]].
-      * exact (HAIS d (b + p) r Hdlt ltac:(lia) Hrlt).
+      * exact (HAIS d (b + p) r Hdlt ltac:(lia) Hxp Hrlt).
       * intros Hz; apply HtL, Hz.
       * intros Hz; apply HtR, Hz.
-      * rewrite (HAIL d (b + p) r Hdlt ltac:(lia) Hrlt). symmetry. apply pcfg_cls.
-        rewrite Hxe, <- Hn at 1. apply pcells_intm.
-      * rewrite (HAIR d (b + p) r Hdlt ltac:(lia) Hrlt). symmetry. rewrite Hs.
+      * rewrite (HAIL d (b + p) r Hdlt ltac:(lia) Hxp Hrlt). symmetry. apply pcfg_cls.
+        rewrite Hxe', <- Hn at 1. apply pcells_intm.
+      * rewrite (HAIR d (b + p) r Hdlt ltac:(lia) Hxp Hrlt). symmetry. rewrite Hs.
         apply pcfg_cls. rewrite <- Hn at 1. apply pcells_intm. }
     inversion Hrest as [|? ? Heb _].
     exists (AI d e' r), (negb (fm_left F)), (fm_left F),
            (flat_map (dig F) rest ++ W p ++ rep T m ++ V p), (acnt N0i sti n).
     split; [|split; [|split; [|split]]].
-    + exact (HAIS d e' r Hdlt ltac:(lia) Hrlt).
+    + exact (HAIS d e' r Hdlt ltac:(lia) (fun Hz => ltac:(lia)) Hrlt).
     + intros Hz; apply HtL, Hz.
     + intros Hz; apply HtR, Hz.
-    + rewrite (HAIL d e' r Hdlt ltac:(lia) Hrlt). symmetry. apply pcfg_cls.
-      rewrite Hxe, <- Hn at 1. apply pcells_intl; assumption.
-    + rewrite (HAIR d e' r Hdlt ltac:(lia) Hrlt). symmetry. rewrite Hs.
+    + rewrite (HAIL d e' r Hdlt ltac:(lia) (fun Hz => ltac:(lia)) Hrlt). symmetry. apply pcfg_cls.
+      rewrite Hxe', <- Hn at 1. apply pcells_intl; assumption.
+    + rewrite (HAIR d e' r Hdlt ltac:(lia) (fun Hz => ltac:(lia)) Hrlt). symmetry. rewrite Hs.
       apply pcfg_cls. rewrite <- Hn at 1. apply pcells_intl; assumption.
 Qed.
 
@@ -580,7 +683,7 @@ Lemma lapP : forall n, exists m c',
   0 < m /\ csteps tm m (Cf n) = Some c' /\ lift c' = lift (Cf (S n)).
 Proof.
   intros n.
-  assert (Hi : PInv F nr NP (piter F mv (x0, p0, m0) n))
+  assert (Hi : PInv F nr xe NP (piter F mvT mvE (x0, p0, m0) n))
     by (apply piter_inv with (A := A) (B := B) (g := g); first [exact pinv0 | assumption]).
   destruct (board_armP _ Hi) as (Ar & el & er & X & k & HA & HL & HR & Hl & Hr).
   destruct (HA _ _ k HL HR) as (m & c' & Hm & Hc' & Hlc).
@@ -594,28 +697,28 @@ Lemma fireP : forall t N, ~ In t pins ->
   exists n k c', N <= n /\ csteps tm k (Cf n) = Some c' /\ cinstr c' = t.
 Proof.
   intros t N Hnp.
-  assert (Hcof : exists n, N <= n /\ isrefP mv (piter F mv (x0, p0, m0) n) = true
-                          /\ PInv F nr NP (piter F mv (x0, p0, m0) n))
+  assert (Hcof : exists n, N <= n /\ isrefP mvE (piter F mvT mvE (x0, p0, m0) n) = true
+                          /\ PInv F nr xe NP (piter F mvT mvE (x0, p0, m0) n))
     by (apply refill_cofinalP with (A := A) (B := B) (g := g); first [exact pinv0 | assumption]).
   destruct Hcof as (n & HN & Hx & Hi).
   exists n.
-  destruct (piter F mv (x0, p0, m0) n) as [[x p] m] eqn:Eit.
+  destruct (piter F mvT mvE (x0, p0, m0) n) as [[x p] m] eqn:Eit.
   destruct Hi as (_ & Hp & _). destruct x as [|? ?]; [|discriminate].
-  cbn [isrefP] in Hx. destruct (mv p) as [q dw dm | q dm a q' c] eqn:Emv; [discriminate|].
+  cbn [isrefP] in Hx. destruct (mvE p) as [q dw dm | a q c] eqn:Emv; [discriminate|].
   remember (aoff N0r str m) as r eqn:Er.
   assert (Hrlt : r < N0r + str) by (subst r; apply arm_index_lt; assumption).
   assert (Hk : r + astride N0r str r * acnt N0r str m = m)
     by (subst r; apply arm_index; assumption).
   assert (Hden : pcfg F W V T ([], p, m)
                  = cden [] [] (acnt N0r str m) (lr_lhs (AR p r))).
-  { rewrite (HARL p q dm a q' c r Hp Emv Hrlt).
+  { rewrite (HARL p a q c r Hp Emv Hrlt).
     rewrite <- (pcfg_cls F W V T
                   (blk (fm_pre F ++ W p ++ rep T r) T (astride N0r str r) (V p))
                   [] (acnt N0r str m) [] p m).
     - unfold tailL, tailR; destruct (fm_left F); reflexivity.
     - rewrite <- Hk at 1. apply pcells_refill. }
   destruct (nfire_sound tm true true rsv (vsegs p r t) (visI p r t)
-              (lr_lhs (AR p r)) t Hrsv (Hfire p q dm a q' c r t Hp Emv Hnp Hrlt)
+              (lr_lhs (AR p r)) t Hrsv (Hfire p a q c r t Hp Emv Hnp Hrlt)
               [] [] (acnt N0r str m)
               (fun _ => eq_refl) (fun _ => eq_refl)) as (k & c' & Hc' & Ht).
   exists k, c'. cbn beta. rewrite ?Eit, Hden.

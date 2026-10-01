@@ -1,22 +1,26 @@
 0RB0LA_1LC1RD_0RD0LC_1RB1LA    no board: emit failed: emit_ladder.NoClosure: no linear rank
-0RB0LC_1LC1RB_1LD1LA_1RD0RC    no board: emit failed: emit_ladder.NoClosure: phase '011|' narrows but no refill seen
-0RB0RC_1RC1LB_1LD1RD_0LB1RA    no board: emit failed: emit_ladder.NoClosure: phase '0111|' narrows but no refill seen
+0RB0LA_1RC1LA_1LD1RB_0RC0LD    no board: emit failed: emit_ladder.NoClosure: no linear rank
+0RB0LC_1LC1RB_1LD1LA_1RD0RC    no board: emit failed: emit_ladder.NoClosure: phase '011|' narrows but no empty-x move seen
+0RB0RA_1RC1LD_1LC1RB_0LD0LA    no board: emit failed: emit_ladder.NoClosure: no linear rank
+0RB0RA_1RC1LD_1LD1RB_0LD0LA    no board: emit failed: emit_ladder.NoClosure: no linear rank
+0RB0RC_1RC1LB_1LD1RD_0LB1RA    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction some refill arm does not fire
 0RB1LA_0LC1RD_1LD0RB_1RB0LA    board theories/Machines/LadderTr/LDRP_0RB1LA_0LC1RD_1LD0RB_1RB0LA.v
 0RB1LA_0LC1RD_1LD1LD_1RB0LA    board theories/Machines/LadderTr/LDRP_0RB1LA_0LC1RD_1LD1LD_1RB0LA.v
 0RB1LA_0LC1RD_1RB1LD_1RB0LA    board theories/Machines/LadderTr/LDRP_0RB1LA_0LC1RD_1RB1LD_1RB0LA.v
-0RB1LC_1LA1RB_0LD0LA_1RD0RB    no board: emit failed: emit_ladder.NoClosure: phase '101|' narrows but no refill seen
+0RB1LC_1LA1RB_0LD0LA_1RD0RB    no board: emit failed: emit_ladder.NoClosure: phase '|': no move of the kinds stated ([['M', 12, '101|', -23], ['R', -12, '101|', 1]])
 0RB1LC_1LA1RC_1LA0RD_0LA1RD    board theories/Machines/LadderTr/LDRP_0RB1LC_1LA1RC_1LA0RD_0LA1RD.v
 0RB1LC_1RC0LA_1LA0RD_0LA1RD    board theories/Machines/LadderTr/LDRP_0RB1LC_1RC0LA_1LA0RD_0LA1RD.v
 0RB1LC_1RC1RC_1LA0RD_0LA1RD    board theories/Machines/LadderTr/LDRP_0RB1LC_1RC1RC_1LA0RD_0LA1RD.v
-0RB1LD_1LC1RB_1RA1LA_0LB0LC    no board: emit failed: emit_ladder.NoClosure: phase '0111|' narrows but no refill seen
+0RB1LD_1LC1RB_1RA1LA_0LB0LC    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction some refill arm does not fire
+0RB1RC_1LA1RB_0LD0RC_1LD0LA    no board: (** ** The closure: NOT BUILT for this row -- empty carry p=0: no chain, and no nested program
 1RB0LC_1LC0RD_0RA1LB_0LC1RD    board theories/Machines/LadderTr/LDRP_1RB0LC_1LC0RD_0RA1LB_0LC1RD.v
 1RB0LD_0LC1RA_1LA0RB_0RB1LD    board theories/Machines/LadderTr/LDRP_1RB0LD_0LC1RA_1LA0RB_0RB1LD.v
 1RB0LD_0LC1RA_1LA1LA_0RB1LD    board theories/Machines/LadderTr/LDRP_1RB0LD_0LC1RA_1LA1LA_0RB1LD.v
 1RB0LD_0LC1RA_1RB1LA_0RB1LD    board theories/Machines/LadderTr/LDRP_1RB0LD_0LC1RA_1RB1LA_0RB1LD.v
-1RB0RD_1LC1RA_0RB0LC_1LD0LA    no board: emit failed: emit_ladder.NoClosure: phase '111|1': the run shrinks at its top
-1RB1LA_0LA1RC_0RD0RB_1LD0LA    no board: emit failed: emit_ladder.NoClosure: phase '101|' narrows but no refill seen
-1RB1LA_1LC1RC_0LA1RD_0RA0RB    no board: emit failed: emit_ladder.NoClosure: phase '0111|' narrows but no refill seen
-1RB1LA_1RC1RD_1LC0LB_0LA0RB    no board: emit failed: emit_ladder.NoClosure: phase '011|' narrows but no refill seen
+1RB0RD_1LC1RA_0RB0LC_1LD0LA    no board: emit failed: emit_ladder.NoClosure: phase '11|': no move of the kinds stated ([['M', 1, '1|1', -1]])
+1RB1LA_0LA1RC_0RD0RB_1LD0LA    no board: emit failed: emit_ladder.NoClosure: phase '|': no move of the kinds stated ([['M', 12, '101|', -23], ['R', -12, '101|', 1]])
+1RB1LA_1LC1RC_0LA1RD_0RA0RB    no board: (** ** The closure: NOT BUILT for this row -- refill: no program, or an instruction some refill arm does not fire
+1RB1LA_1RC1RD_1LC0LB_0LA0RB    no board: emit failed: emit_ladder.NoClosure: phase '011|' narrows but no empty-x move seen
 1RB1LC_0LA1RC_1RB0LD_0RB1LD    board theories/Machines/LadderTr/LDRP_1RB1LC_0LA1RC_1RB0LD_0RB1LD.v
 1RB1RB_1LC0RD_0RA1LB_0LC1RD    board theories/Machines/LadderTr/LDRP_1RB1RB_1LC0RD_0RA1LB_0LC1RD.v
-12 of 21 terminator-run rows boarded -> 1 batch file(s): theories/CloseoutTr/CBT_LE5_01.v
+12 of 25 terminator-run rows boarded -> 1 batch file(s): theories/CloseoutTr/CBT_LE5_01.v
