@@ -5600,6 +5600,113 @@ tools/closeouttr/le/board_chunk.sh CBT_LE2_NN
 python3 tools/closeouttr/le2/sweep_detect.py tools/closeouttr/le2/rows_dn_fam.txt tools/closeouttr/le2/sweep_dn.jsonl
 ```
 
+#### 7.4.LE3 LE2's counter residue: the "two-sided" rows are one counter read wrongly; three new generic checkers, 66 boarded (2026-10-01)
+
+Workstream LE3 (batch tag `LE3`), over LE2's residue: the 442 rows of
+`tools/closeouttr/le2/rows_{dn,sp,qh}_{cap,closure,fam,nofam}.txt`, all
+open at the start (closeout 824).  The block-list rows (`blc4/rows216.txt`),
+the Collatz-like rows (TA), the flat-block hybrids and the cube sweep
+counters were not touched.
+
+**The main finding: LE2's "two-sided machines" are not two counters.**
+Both of LE2's worked examples, and most of what it filed as "a second
+counter on the far side", are ONE counter that LE2's readings could not
+state.  There are three shapes, and each now has a generic checker in a new
+file (nothing landed is modified; `Print Assumptions` on every closer shows
+`functional_extensionality_dep` only).
+
+| shape | example | what it is | checker | boarded |
+|---|---|---|---|---:|
+| **step counter** | `1RB1LD_1RC0RB_1RD0LD_1LA0LD` (LE2's "mod-3 clock") | a base-4 counter that adds **3** per anchor visit, so its low digit cycles through the residues mod 3 while the high digits count.  valfam tries `STEPS = (1, 2)` only | `Checkers/LadderCheckStepTr.v`: a positional base-`b` `Fam` with step `s` dividing `b - 1`.  The value mod `s` is the digit sum mod `s`, an invariant per phase (`cres`); the successor splits three ways on the LOW digit (`u + s < b`: no carry; a carry through `t^n d`; the top `u t^n`), and the residue pins the top's low digit to one value per phase (`utop`), so the fill law applies as at step 1 | 12 (`CBT_LE3_00`, `_02`) |
+| **terminator run** | `0RB1LA_1RC0LA_0LD1RB_1LB0RC` (LE2's "misaligned narrowing" and its nested-counter class) | `[B1] x (01)^m`: `x` binary over the words `11`/`10`, then a RUN of the terminator word.  Inside a width `x` counts; the top of `x` narrows it by a digit and lengthens the run (`(10)^j (01)^m -> (11)^(j-1) (01)^(m+1)`); an empty `x` refills (`(01)^m -> (11)^(m+1) 01`).  valfam reads it at small widths as a multi-phase family whose fills run `+2, -1` with terminators `01`, `0101`, which no respell states | `Checkers/LadderCheckRunTr.v`: a `Fam` for the digits plus the run word `T`, an end word and the refill law `(a, c)`; a total digit-wise successor; three arm classes (interior `t^n d X`, narrowing `t^j T X`, refill `T^m suf`); liveness by the length of `x` then its value, so refills recur and the fires are read from the refill arms | 41 (`CBT_LE3_01`; 23 never-QH, 18 QH) |
+| **Zeckendorf** | `1RB1RA_0LC1LB_0RC1LD_0RA0LD` (LE2's "fibonacci weights") | a one-cell string with weights 1, 2, 3, 5, ... and no two adjacent ones, then the terminator `01`; valfam's `fibonacci(shifted)`, which `LadderCheck`'s `Fib`/`FibL` (weights 1, 1, 2, ...) do not state | `Checkers/LadderCheckZeckTr.v`: the digit-wise Zeckendorf increment `zinc`; every canonical string is `u (01)^k s` (`u` = `[]` or `[1]`, `s` = `00r`, `0` or empty), giving interior, end and top classes in two kinds; the width bound `fibvl 1 x < fibw (|x|+1)` makes tops recur | 13 (`CBT_LE3_03`, `_04`; 3 QH) |
+
+How each was found:
+
+* **Steps.**  `le3/vf_step.py` runs valfam unchanged with `STEPS = 3..8`.
+  Over the 255 nofam and cap rows (4 shards, cap 300 s; `le3/stp_*.jsonl`) it
+  closes 26 rows: 12 base-4 step-3 families (all board; the first is the
+  clock row), 1 base-2 step-4 family (step 4 does not divide `b - 1 = 1`: refused),
+  and 13 step-1 Zeckendorf families that valfam reaches only because the
+  restricted steps let its fallback passes run.
+* **Runs.**  `le3/termrun_detect.py` reads the anchor visits (other side
+  blank) as `pre x T^m suf`, with `x` over exactly two words and `m` taking at
+  least 3 values; 42 of the 431 rows read this way (40 with words `11`/`10`
+  and run `01`), and `le3/emit_run.py` reads the digit order and the refill
+  law off consecutive visits.  41 of the 42 board; the 42nd
+  (`1RB0RD_1LC1RA_0RB0LC_1LD0LA`, words `00`/`10`, run `11`) refills to
+  something other than `D0^(m+a)`.  37 of the 41 are LE2 `fam` rows (the
+  box's famclose run cannot state them, so it will not double-board them).
+* **Zeckendorf.**  From the step sweep (above): 13 rows, all board.
+
+The three emitters (`le3/emit_step.py`, `emit_run.py`, `emit_zeck.py`) share
+`emit_ladder`'s header and arm search (`emit_step.Arms`: a chain, a chain off
+its target only by blanks beside a known-empty tail, or a `LadderNest`
+program; nested programs only after every arm has failed without them, since
+each costs seconds).  Every arm is stated as a `ReachL` segment program and
+every fire as an `nfire`, so each checker has both closers
+(`board*_neverqhtr` on the wrapped machine, `board*_qhtr` past the quiet
+instructions' last fire).
+
+**Times.**  Each checker compiles in 1-2 s.  A board compiles in 1-2.5 s at
+one core (the 41 run boards about 1 s each), a batch in about 1 s beyond its
+boards.  `ci_costs.tsv`: `CBT_LE3_00` 60, `_01` 120, `_03` 60 (the others
+are small).  `ci_shard.py --plan 6` keeps the slowest shard at `CBT_BR_02`.
+
+**A fourth checker that boards nothing: `LadderCheckNarrowTr.v`.**  Built
+first for the "misaligned narrowing" families (a `Fam` plus a narrowing per
+phase and a floor per phase, `minw`; liveness needs only that tops recur).
+On the row it was built for, the narrowing family is a misreading: the
+machine's `(10)^2 0101` never occurs, and the row is a terminator-run
+counter (above).  It is kept (generic, compiled, `le3/emit_narrow.py`) but
+no row is boarded with it.
+
+**Yields** (66 rows; closeout 824 -> **758**):
+
+| LE2 bucket | rows | step | run | Zeckendorf | open |
+|---|---:|---:|---:|---:|---:|
+| DN nofam | 94 | 12 | | | 82 |
+| DN fam | 51 | | 6 | | 45 |
+| DN cap / closure | 27 / 8 | | | 2 | 25 / 8 |
+| SP nofam | 20 | | 4 | | 16 |
+| SP fam | 79 | | 13 | | 66 |
+| SP cap / closure | 61 / 6 | | | 8 | 53 / 6 |
+| QH fam | 43 | | 18 | | 25 |
+| QH nofam / cap | 21 / 32 | | | 3 | 21 / 29 |
+
+**Where the rest stop** (376 of the 442):
+
+1. **Nested and two-sided counters that are really two counters.**  The
+   cited nested example `0RB1RA_0LC0RA_0LD1LD_1RB1LC` is not a clean product:
+   the anchor tapes shift structure every few laps
+   (`111111011000001001111011011100000101010`), no reading fits.  Rows like
+   `1RB1LA_1RC0RB_1LD1RA_1LA0LD` are bouncers with a counter at one end
+   (`1^k 0^7 1001 (001)^m`), the hybrids' shape.  Neither is in this file.
+2. **Zeckendorf over two-cell tokens at a moving offset**
+   (`0RB1LD_1LA1RC_1LA1RB_0RC0LD`, LE2's five "constant, fibonacci weights"
+   rows): the tape is `c_i = x_i OR x_(i-1)` of a Zeckendorf `x`, i.e. each
+   one written as `11` across two cells.  That is a bijection but not a
+   digit-word code: it wants a `Fam` whose cells are a two-state transducer
+   of the digits, not `flat_map dig`.  The increment and the bound of
+   `LadderCheckZeckTr` carry over unchanged.
+3. **valfam closes, no checker**: 1 base-2 step-4 family
+   (`1RB1LD_1LC0RB_1RD0LC_1LA1RB`; step and base are coprime, so the
+   residue is not a digit sum and the top is not one string per phase), and
+   CE3's one `fibonacci` (greedy) row whose interior arm has no chain.
+4. **The rest of the `fam` / `closure` buckets** are LE2's shapes (DN
+   carries that sweep the run past the digit, 8-state digit pairs,
+   three-digit fill targets).  The fam/closure step sweep is below.
+
+```
+# the container loop (what this section ran)
+tools/closeouttr/le3/drive_step.sh tools/closeouttr/le3/stp_todo_K.txt tools/closeouttr/le3/stp_K.jsonl   # K = 0..3, resumable
+python3 tools/closeouttr/le3/step_batch.py STEP.jsonl --tag LE3            # step > 1 (LadderCheckStepTr)
+python3 tools/closeouttr/le3/step_batch.py STEP.jsonl --tag LE3 --kind zeck   # Zeckendorf (LadderCheckZeckTr)
+python3 tools/closeouttr/le3/termrun_detect.py ROWS termrun.jsonl
+python3 tools/closeouttr/le3/run_batch.py tools/closeouttr/le3/termrun.jsonl --tag LE3   # LadderCheckRunTr
+tools/closeouttr/le/board_chunk.sh CBT_LE3_NN
+```
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
