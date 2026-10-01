@@ -4993,6 +4993,160 @@ python3 tools/closeouttr/blc4/diag4.py SPEC 3000 400      # explored families th
 LG4_MAXFAM=3000 python3 tools/closeouttr/blc4/learn4.py find ROWS.txt out.jsonl --jobs 12 --timeout 1800   # the time-outs
 ```
 
+#### 7.4.BLC5 The overflow rows: a far-end lexicographic liveness, 13 boarded (2026-10-01)
+
+Workstream BLC5 (batch tag `BLC5`), over BLC4's residue (`blc4/rows216.txt`,
+204 open at the start).  The counters (LE/LE2), the Collatz-like rows (TA)
+and the flat-block hybrids / cube sweep counters were not touched.  **13
+rows are boarded** (`CBT_BLC5_00..02`): all of BLC4's `0`-block halving
+lists whose exploration closes but whose rare instruction fires only at the
+list's overflow.  Open rows: 824 -> **811**.
+
+**1. Why an additive rank cannot work, and what replaces it.**  On the worked
+example `1RB0LA_1LC1RC_1LA1RD_1RB0RB` the list is a bijective binary
+numeral: `0^b_0 s_0 0^b_1 s_1 ...`, the separator `11011` meaning digit 1
+and `111111` digit 2, `b_i = 2 b_(i+1) + d_i`, and the far end `1111` / `11`
+pins `b_k` (2 / 1).  A round converts `b_0` (a zig-zag of ~`b_0` leaves),
+then every following element while its digit is 2, and turns at the first
+digit 1, which becomes 2; the return converts the passed elements back
+(each with digit 1).  So a round adds one to the numeral, and `D0` fires only
+when the list grows: at intervals `x4` (13, 109, 469, 1741, 6373, ...).  The
+number of rounds to the next fire is about `2^k` minus the numeral, which no
+sum of per-item weights expresses.
+
+*The checker, `theories/Counters/ListGlueLexTr.v`* (new, ~640 lines,
+2.5 s, `lgx_sound` / `lgx_sound_mirror`, `functional_extensionality_dep`
+only).  It reuses ListGlue2Tr's families, leaves, tails, bounds and boot,
+checked by ListGlue2Tr's own `fams_ok` / `mins_ok` / `maxs_ok` / `lboot_ok`;
+`ListGlue2Tr.v` is untouched.  Only the liveness is new.  Per instruction
+the certificate may give a lexicographic rank read from the list's FAR end
+(the most significant one): per node a list of window forms `W` (affine in
+the family's variables) and, per side and tail transition, a list of
+weights `(alpha, beta)` (one sequence entry `alpha e + beta` each).  An
+anchor's measure is
+
+    rev(hi tail's entries) ++ W(vars) ++ (lo tail's entries) ++ [V]
+
+with `V` ListGlue2Tr's additive rank.  On every step between nodes whose
+leaves do not fire the instruction (`xedge`): the hi side's weights do not
+grow (entrywise, same entry counts) and the lo side's entry counts do not
+change, so the untouched tails line up; the MIDDLE (the hi items the leaf
+unfolds, reversed, the window entries, the lo items it unfolds) and its
+image at the target (folded items, the target's window entries) have the
+same length; and the middle drops lexicographically, checked symbolically
+(`lexchk`: the first entry that is not `<=` coefficient-wise fails, the
+first that is `+1 <=` decides), or it may stay equal, and then the lo
+side's weights do not grow and `V` drops as in ListGlue2Tr.  The length is
+constant along a non-firing run and the lexicographic order on `N^n` is well
+founded (`lex_wf`), so the instruction fires from every anchor (`xfires`).
+An instruction with no lexicographic entry keeps ListGlue2Tr's check.
+
+Two things were needed beyond the plain "numeral" picture BLC4 sketched:
+
+* *The near side's weights are per NODE.*  A passed element is a pending
+  carry before the turn (digit 2) and a resolved digit 1 after it.  The
+  certificate revalues the whole near tail at the turn, which is exactly
+  the step where the turning element's entry drops, so the less significant
+  tail behind it is free.  (A per-transition weight fixed for all nodes
+  fails: the return step `left form -> digit 1` is then an increase with
+  nothing more significant decreasing.)
+* *A transition may stand for no entry.*  On 8 of the 13 rows the far end
+  has several spellings (an END item pinning `b_k = 1`, or `b_k` as a list
+  item before an END pinning 2), and the item count changes on non-firing
+  steps (no per-node window count makes the length constant: 30 conflicting
+  steps on `1RB0LA_1LC1RC_1LA1RD_0RB0RB`).  Giving the `b_k = 1` END
+  transition no entry restores a constant length.
+
+The windows' entry counts and the reason the item-additive rank cannot
+work are what BLC4 called "the window's shift rescales the unknown rest":
+reading from the far end, the unknown rest is the most significant part and
+is never rescaled, only compared entrywise.
+
+*The finder, `tools/closeouttr/blc5/lx5.py`* (untrusted; scipy).  BLC4's
+learner and exploration as they are (`learn4.learn`, `lg4.explore_row`).
+Per instruction: ListGlue2Tr's additive MILP first; if it has no solution,
+the lexicographic search: (1) per transition 0 or 1 entries and per node the
+window entry count, a MILP over the steps' length equations (most
+transitions 1); (2) constant entries only (window entries and weights in
+`0..3`, the far side's weights global, the near side's per node), with one
+0/1 "equal so far" variable per middle position and step, maximising the
+strict steps; (3) the additive MILP on the steps left equal.  `c_xlive_ok`
+replays `xlive_ok` exactly before a certificate is written.  On the 13 rows
+the whole find takes 4-15 s a row (31 s for the 13 at 4 jobs); the
+lexicographic search itself is under a second.  On the example: 127 nodes,
+162 non-firing steps, 75 strict, one window entry at most per node; the far
+side's weights are the complement digits (digit 1 above digit 2).
+
+| batch | rows | compile (container, 1 core) |
+|---|---:|---:|
+| `CBT_BLC5_00` | 1 (the worked example) | 16.5 s |
+| `CBT_BLC5_01` | 6 | 41.6 s |
+| `CBT_BLC5_02` | 6 | 43.6 s |
+
+`ci_costs.tsv` lists them at 35 / 90 / 90 s; `ci_shard.py --check 6` passes.
+`Print Assumptions` on `cv_BLC5_00_0000` and `cv_BLC5_02_0005`:
+`functional_extensionality_dep` only.
+
+**2. The `1`-block lists with a marker (27 rows, 0 boarded).**  On
+`0RB1LB_1RC0LD_1LA0RD_1RA1LD` (`1^1050 010 1^526 0 1^265 0 1^134 010 ...`)
+the anchor lists are a binary counter in an OVERLAPPING-PAIR code: symbol
+`i` (separator, digit) is the bit pair `(x_i, x_(i+1))`: `('0',-3)` = 00,
+`('0',-4)` = 10, `('010',0)` = 01, `('010',-1)` = 11, and `b_0`'s symbol
+(`('0',-5)` / `('010',-2)`) fixes the first bit.  The language is the
+2-state DFA "the next symbol's first bit is this symbol's second bit".
+BLC4's fit could not express it: a class's centre was searched only among
+its observed digits, so `b_0`'s two symbols both started the partial sum at
+0 and the sum range came out `{-1,0,1}` (width 2), which admits
+`00`-after-`11`.  `learn4.py` now takes `LG4_B0WIDEN` (default 0, BLC4's
+fit; `lx5.py` sweeps with 2 for these rows): `b_0`'s centre may sit two
+outside its observed digits.  With it the learned F is exactly the pair-bit
+DFA (range `{0,1}`, the observed-transition filter does the rest), but the
+exploration still does not close (`too many families` at 800 and at 4,000):
+the chain of new families runs through windows that hold the element the
+head's `0` marker is crossing (`1^x 0 [1] 1^z`) with relations that are
+`b_0`-like (`('010',-2)`, `('0',-5)` at interior positions) and never fold
+into the right tail, so the right window keeps unfolding to the far end,
+into concrete short lists.  The next step is the split-element rule of
+BLC4 §1.3 for SAME-unit halves whose relation happens to be a (`b_0`-class)
+list relation: key them as a split element, not as two list elements.
+
+**3. Multi-cell / carry-like lists (61 rows) and the unlearned rows (94)
+and time-outs (9).**  No finder change was made for these; the sweep below
+records where each stops, now with the lexicographic liveness available.
+
+**4. Yields and residue.**
+
+The full finder (`lx5.py`, BLC4's exploration plus the lexicographic
+liveness) over the 191 rows still open (`blc5/rows191.txt`, 400 s a row, 3
+jobs, about 3 h 20 min here; `blc5/sweep191.jsonl`) certifies **none**.
+Every one of them stops before the liveness, so no row is lost to a missing
+ranking any more; the residue is all finder (learner and exploration):
+
+| rows | learned unit, ratio | where it stops | next |
+|---:|---|---|---|
+| 27 | `1`, 2 (the marker lists) | too many families (25), unfold depth (2) | with `LG4_B0WIDEN=2` 25 of them learn the exact pair-bit language (`blc5/g2_b0widen.jsonl`) and still do not close (24 too many families, 2 unfold depth, 1 time-out).  The exploration's concrete small-value chains run through right windows holding mid-rewrite relations (`('010',-2)`, a `b_0`-class symbol, at the far side of the marker) that no right fold accepts; `LG4_SPLITF=1` (a same-unit pair around the head is split unless its relation is an INTERIOR F digit) does not change that.  The right tail's mid-sweep forms must enter the language (BLC4's `RALT` learns 4 of them here), or the fold must take the marker pair as one element |
+| 24 | `001`, 4 | too many families (2 also leaf too long) | BLC4 §5: `b_0` rewritten in several passes; not attempted here |
+| 21 | `011`, 4 | too many families (2 also no nonnegative parametrization) | the same |
+| 9 | `01`, 2 | too many families (4 also exploration does not settle) | the head re-enters passed elements (carry-like) |
+| 4 | `011`, 2 | too many families | the same |
+| 3 | `0011`, 3 | too many families | the same |
+| 94 | not learned | no ratio 45, no long runs 19, no BPS automaton 10, ratio 1: 9, no separators 5, ratio 0: 5, left samples disagree 1 | BLC4's survey: mostly not lists at the anchor (bouncers, one long block, spread tapes, a list only at the far end) |
+| 9 | (time-out at 400 s) | | a longer budget on the box |
+
+So the 13 overflow rows were the whole of BLC4's liveness residue, and the
+lexicographic rank is now there for any later list row whose exploration
+closes: `lx5.py` tries it automatically whenever the additive MILP fails.
+
+**Commands** (resumable; `find` skips rows already in its output and
+re-executes itself under `PYTHONHASHSEED=0`).
+
+```
+python3 tools/closeouttr/blc5/lx5.py find tools/closeouttr/blc5/rows13.txt find13.jsonl --jobs 4 --timeout 600   # the 13: ~31 s
+python3 tools/closeouttr/blc5/lx5.py batch find13.jsonl --tag BLC5 --chunk 6
+python3 tools/closeouttr/blc5/lx5.py find tools/closeouttr/blc5/rows191.txt sweep191.jsonl --jobs 12 --timeout 400   # the rest: ~2 h at 3 jobs here
+LG4_B0WIDEN=2 python3 tools/closeouttr/blc5/lx5.py find tools/closeouttr/blc5/rows_g2.txt g2.jsonl --jobs 12 --timeout 300
+```
+
 #### 7.4.LE The counters the ladder emitter could not close: five closure gaps, a visit phase per instruction, 181 boarded (2026-09-30)
 
 Workstream LE (batch tag `LE`), over the counters still open at the start:
@@ -5598,6 +5752,113 @@ python3 tools/closeouttr/sp_ladder_batch.py VF.jsonl --tag LE2 --chunk 40   # th
 tools/closeouttr/le/board_chunk.sh CBT_LE2_NN
 (cd tools/ladder && python3 nofam.py ../closeouttr/le2/nofam30_rows.txt --json ../closeouttr/le2/nofam30.jsonl)
 python3 tools/closeouttr/le2/sweep_detect.py tools/closeouttr/le2/rows_dn_fam.txt tools/closeouttr/le2/sweep_dn.jsonl
+```
+
+#### 7.4.LE3 LE2's counter residue: the "two-sided" rows are one counter read wrongly; three new generic checkers, 66 boarded (2026-10-01)
+
+Workstream LE3 (batch tag `LE3`), over LE2's residue: the 442 rows of
+`tools/closeouttr/le2/rows_{dn,sp,qh}_{cap,closure,fam,nofam}.txt`, all
+open at the start (closeout 824).  The block-list rows (`blc4/rows216.txt`),
+the Collatz-like rows (TA), the flat-block hybrids and the cube sweep
+counters were not touched.
+
+**The main finding: LE2's "two-sided machines" are not two counters.**
+Both of LE2's worked examples, and most of what it filed as "a second
+counter on the far side", are ONE counter that LE2's readings could not
+state.  There are three shapes, and each now has a generic checker in a new
+file (nothing landed is modified; `Print Assumptions` on every closer shows
+`functional_extensionality_dep` only).
+
+| shape | example | what it is | checker | boarded |
+|---|---|---|---|---:|
+| **step counter** | `1RB1LD_1RC0RB_1RD0LD_1LA0LD` (LE2's "mod-3 clock") | a base-4 counter that adds **3** per anchor visit, so its low digit cycles through the residues mod 3 while the high digits count.  valfam tries `STEPS = (1, 2)` only | `Checkers/LadderCheckStepTr.v`: a positional base-`b` `Fam` with step `s` dividing `b - 1`.  The value mod `s` is the digit sum mod `s`, an invariant per phase (`cres`); the successor splits three ways on the LOW digit (`u + s < b`: no carry; a carry through `t^n d`; the top `u t^n`), and the residue pins the top's low digit to one value per phase (`utop`), so the fill law applies as at step 1 | 12 (`CBT_LE3_00`, `_02`) |
+| **terminator run** | `0RB1LA_1RC0LA_0LD1RB_1LB0RC` (LE2's "misaligned narrowing" and its nested-counter class) | `[B1] x (01)^m`: `x` binary over the words `11`/`10`, then a RUN of the terminator word.  Inside a width `x` counts; the top of `x` narrows it by a digit and lengthens the run (`(10)^j (01)^m -> (11)^(j-1) (01)^(m+1)`); an empty `x` refills (`(01)^m -> (11)^(m+1) 01`).  valfam reads it at small widths as a multi-phase family whose fills run `+2, -1` with terminators `01`, `0101`, which no respell states | `Checkers/LadderCheckRunTr.v`: a `Fam` for the digits plus the run word `T`, an end word and the refill law `(a, c)`; a total digit-wise successor; three arm classes (interior `t^n d X`, narrowing `t^j T X`, refill `T^m suf`); liveness by the length of `x` then its value, so refills recur and the fires are read from the refill arms | 41 (`CBT_LE3_01`; 23 never-QH, 18 QH) |
+| **Zeckendorf** | `1RB1RA_0LC1LB_0RC1LD_0RA0LD` (LE2's "fibonacci weights") | a one-cell string with weights 1, 2, 3, 5, ... and no two adjacent ones, then the terminator `01`; valfam's `fibonacci(shifted)`, which `LadderCheck`'s `Fib`/`FibL` (weights 1, 1, 2, ...) do not state | `Checkers/LadderCheckZeckTr.v`: the digit-wise Zeckendorf increment `zinc`; every canonical string is `u (01)^k s` (`u` = `[]` or `[1]`, `s` = `00r`, `0` or empty), giving interior, end and top classes in two kinds; the width bound `fibvl 1 x < fibw (|x|+1)` makes tops recur | 13 (`CBT_LE3_03`, `_04`; 3 QH) |
+
+How each was found:
+
+* **Steps.**  `le3/vf_step.py` runs valfam unchanged with `STEPS = 3..8`.
+  Over the 255 nofam and cap rows (4 shards, cap 300 s; `le3/stp_*.jsonl`) it
+  closes 26 rows: 12 base-4 step-3 families (all board; the first is the
+  clock row), 1 base-2 step-4 family (step 4 does not divide `b - 1 = 1`: refused),
+  and 13 step-1 Zeckendorf families that valfam reaches only because the
+  restricted steps let its fallback passes run.
+* **Runs.**  `le3/termrun_detect.py` reads the anchor visits (other side
+  blank) as `pre x T^m suf`, with `x` over exactly two words and `m` taking at
+  least 3 values; 42 of the 431 rows read this way (40 with words `11`/`10`
+  and run `01`), and `le3/emit_run.py` reads the digit order and the refill
+  law off consecutive visits.  41 of the 42 board; the 42nd
+  (`1RB0RD_1LC1RA_0RB0LC_1LD0LA`, words `00`/`10`, run `11`) refills to
+  something other than `D0^(m+a)`.  37 of the 41 are LE2 `fam` rows (the
+  box's famclose run cannot state them, so it will not double-board them).
+* **Zeckendorf.**  From the step sweep (above): 13 rows, all board.
+
+The three emitters (`le3/emit_step.py`, `emit_run.py`, `emit_zeck.py`) share
+`emit_ladder`'s header and arm search (`emit_step.Arms`: a chain, a chain off
+its target only by blanks beside a known-empty tail, or a `LadderNest`
+program; nested programs only after every arm has failed without them, since
+each costs seconds).  Every arm is stated as a `ReachL` segment program and
+every fire as an `nfire`, so each checker has both closers
+(`board*_neverqhtr` on the wrapped machine, `board*_qhtr` past the quiet
+instructions' last fire).
+
+**Times.**  Each checker compiles in 1-2 s.  A board compiles in 1-2.5 s at
+one core (the 41 run boards about 1 s each), a batch in about 1 s beyond its
+boards.  `ci_costs.tsv`: `CBT_LE3_00` 60, `_01` 120, `_03` 60 (the others
+are small).  `ci_shard.py --plan 6` keeps the slowest shard at `CBT_BR_02`.
+
+**A fourth checker that boards nothing: `LadderCheckNarrowTr.v`.**  Built
+first for the "misaligned narrowing" families (a `Fam` plus a narrowing per
+phase and a floor per phase, `minw`; liveness needs only that tops recur).
+On the row it was built for, the narrowing family is a misreading: the
+machine's `(10)^2 0101` never occurs, and the row is a terminator-run
+counter (above).  It is kept (generic, compiled, `le3/emit_narrow.py`) but
+no row is boarded with it.
+
+**Yields** (66 rows; closeout 824 -> **758**):
+
+| LE2 bucket | rows | step | run | Zeckendorf | open |
+|---|---:|---:|---:|---:|---:|
+| DN nofam | 94 | 12 | | | 82 |
+| DN fam | 51 | | 6 | | 45 |
+| DN cap / closure | 27 / 8 | | | 2 | 25 / 8 |
+| SP nofam | 20 | | 4 | | 16 |
+| SP fam | 79 | | 13 | | 66 |
+| SP cap / closure | 61 / 6 | | | 8 | 53 / 6 |
+| QH fam | 43 | | 18 | | 25 |
+| QH nofam / cap | 21 / 32 | | | 3 | 21 / 29 |
+
+**Where the rest stop** (376 of the 442):
+
+1. **Nested and two-sided counters that are really two counters.**  The
+   cited nested example `0RB1RA_0LC0RA_0LD1LD_1RB1LC` is not a clean product:
+   the anchor tapes shift structure every few laps
+   (`111111011000001001111011011100000101010`), no reading fits.  Rows like
+   `1RB1LA_1RC0RB_1LD1RA_1LA0LD` are bouncers with a counter at one end
+   (`1^k 0^7 1001 (001)^m`), the hybrids' shape.  Neither is in this file.
+2. **Zeckendorf over two-cell tokens at a moving offset**
+   (`0RB1LD_1LA1RC_1LA1RB_0RC0LD`, LE2's five "constant, fibonacci weights"
+   rows): the tape is `c_i = x_i OR x_(i-1)` of a Zeckendorf `x`, i.e. each
+   one written as `11` across two cells.  That is a bijection but not a
+   digit-word code: it wants a `Fam` whose cells are a two-state transducer
+   of the digits, not `flat_map dig`.  The increment and the bound of
+   `LadderCheckZeckTr` carry over unchanged.
+3. **valfam closes, no checker**: 1 base-2 step-4 family
+   (`1RB1LD_1LC0RB_1RD0LC_1LA1RB`; step and base are coprime, so the
+   residue is not a digit sum and the top is not one string per phase), and
+   CE3's one `fibonacci` (greedy) row whose interior arm has no chain.
+4. **The rest of the `fam` / `closure` buckets** are LE2's shapes (DN
+   carries that sweep the run past the digit, 8-state digit pairs,
+   three-digit fill targets).  The fam/closure step sweep is below.
+
+```
+# the container loop (what this section ran)
+tools/closeouttr/le3/drive_step.sh tools/closeouttr/le3/stp_todo_K.txt tools/closeouttr/le3/stp_K.jsonl   # K = 0..3, resumable
+python3 tools/closeouttr/le3/step_batch.py STEP.jsonl --tag LE3            # step > 1 (LadderCheckStepTr)
+python3 tools/closeouttr/le3/step_batch.py STEP.jsonl --tag LE3 --kind zeck   # Zeckendorf (LadderCheckZeckTr)
+python3 tools/closeouttr/le3/termrun_detect.py ROWS termrun.jsonl
+python3 tools/closeouttr/le3/run_batch.py tools/closeouttr/le3/termrun.jsonl --tag LE3   # LadderCheckRunTr
+tools/closeouttr/le/board_chunk.sh CBT_LE3_NN
 ```
 
 ## 8. What we deliberately do NOT redo
