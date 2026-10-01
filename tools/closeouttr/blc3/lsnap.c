@@ -28,14 +28,12 @@ int main(int argc, char **argv) {
         p += 3; } if (*p == '_') p++; }
     size_t N = 1 << 26; t = calloc(N, 1); long pos = N / 2; lo = hi = pos; int q = 0;
     int inL = 0, inR = 0;
+    long first1 = -1, last1 = -1;
     for (uint64_t s = 0; s < T1; s++) {
         if (s >= T0) {
-            int aL = 1; for (long j = pos; j >= lo && j <= hi; j++) { if (j == pos) continue; if (t[j]) break; if (j == hi) { aL = 0; break; } }
-            /* aL: every cell from lo to pos is 0 and some 1 lies right of pos */
-            aL = 1; for (long j = lo; j <= pos; j++) if (t[j]) { aL = 0; break; }
-            if (aL) { int any = 0; for (long j = pos + 1; j <= hi; j++) if (t[j]) { any = 1; break; } aL = any; }
-            int aR = 1; for (long j = hi; j >= pos; j--) if (t[j]) { aR = 0; break; }
-            if (aR) { int any = 0; for (long j = pos - 1; j >= lo; j--) if (t[j]) { any = 1; break; } aR = any; }
+            /* first1 / last1: the outermost cells holding a 1 */
+            int aL = first1 >= 0 && pos < first1;
+            int aR = first1 >= 0 && pos > last1;
             if (aL && !inL) dump('A', 'L', s, q, pos);
             if (aR && !inR) dump('A', 'R', s, q, pos);
             inL = aL; inR = aR;
@@ -50,6 +48,14 @@ int main(int argc, char **argv) {
         }
         int a = t[pos];
         if (nx[q][a] < 0) break;
+        if (wr[q][a] && !a) {
+            if (first1 < 0 || pos < first1) first1 = pos;
+            if (last1 < 0 || pos > last1) last1 = pos;
+        } else if (!wr[q][a] && a) {
+            t[pos] = 0;
+            if (pos == first1) { while (first1 <= last1 && !t[first1]) first1++; if (first1 > last1) first1 = last1 = -1; }
+            if (pos == last1 && last1 >= 0) { while (last1 >= first1 && !t[last1]) last1--; }
+        }
         t[pos] = wr[q][a]; pos += mv[q][a]; q = nx[q][a];
         if (pos < lo) lo = pos; if (pos > hi) hi = pos;
         if (pos <= 1 || pos >= (long)N - 2) break;
