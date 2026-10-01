@@ -45,6 +45,99 @@ LC = E.LC
 nest = E.nest
 
 
+class Arms:
+    """the arm search shared by the LE3 emitters: a chain, a chain that lands
+    off its target only by blanks beside a known-empty tail ([ceqL]), or a
+    [LadderNest] program"""
+
+    def __init__(self, tab):
+        self.tab = tab
+        self.cache = {}
+
+    def nested(self, el, er, c0, c1, what, why):
+        key = (el, er, c0, c1)
+        if key not in self.cache:
+            self.cache[key] = nest.derive_nested(self.tab, el, er, c0, c1)
+        r = self.cache[key]
+        if r is None:
+            raise NoClosure('%s: %s, and no nested program' % (what, why))
+        return ('NEST', r[0], r[1])
+
+    def derive(self, el, er, c0, c1, what):
+        """a segment program from c0 to c1 (up to lift), or NoClosure"""
+        tab = self.tab
+        ch = LC.derive_chain(tab, el, er, c0, c1, maxdepth=32, nmax=120,
+                             lift=True)
+        if ch is not None:
+            got = LC.srun(tab, el, er, ch, c0)
+            if got is not None and got[0] == c1 and got[2] > 0:
+                return ch
+            if got is not None and got[2] > 0 and nest.ceqL(el, er, got[0], c1):
+                return ('NEST', [('NCh', ch)], [])
+        return self.nested(el, er, c0, c1, what, 'no chain')
+
+
+def nvisits(tab, want, fl, prog):
+    """(segment prefix, chain) per instruction, from every prefix of a fill
+    arm's program"""
+    if not (isinstance(prog, tuple) and prog[:1] == ('NEST',)):
+        prog = ('NEST', [('NCh', prog)], [])
+    _t, segs, rules = prog
+    rr = [(a, b_) for a, b_, _c in rules]
+    seen = {}
+    for k in range(len(segs) + 1):
+        got = nest.nrun(tab, True, True, rr, segs[:k], fl)
+        if got is None:
+            break
+        ck = got[0]
+        chs = ([segs[k][1][:i] for i in range(len(segs[k][1]) + 1)]
+               if k < len(segs) and segs[k][0] == 'NCh' else [[]])
+        for base in chs:
+            for kind in ('SWin', 'SWinL', 'SWinR'):
+                for n in range(0, 600):
+                    g = LC.srun(tab, True, True, base + [(kind, n)], ck)
+                    if g is None:
+                        break
+                    seen.setdefault((g[0][0], g[0][2]),
+                                    (list(segs[:k]), base + [(kind, n)]))
+            if all(i in seen for i in want):
+                return seen
+    return seen
+
+
+def prog_coq(tab, inner, ch):
+    """the Coq segments of a program, its inner rules appended to [inner]"""
+    if isinstance(ch, tuple) and ch[:1] == ('NEST',):
+        off = len(inner)
+        for lhs, rhs, ich in ch[2]:
+            got = LC.srun(tab, False, False, ich, lhs)
+            inner.append((lhs, rhs, ich, got[1], got[2]))
+        return [coq_seg(sg, off) for sg in ch[1]]
+    return [coq_seg(('NCh', ch), 0)]
+
+
+INNER = '''(** *** The inner rules: what the nested arms iterate *)
+Definition nlad_%(mid)s : list (LRule * list rstep) :=
+  [%(items)s].
+Definition nrules_%(mid)s : list LRule := map fst nlad_%(mid)s.
+Local Notation nrules := nrules_%(mid)s.
+
+Lemma nladder_ok_%(mid)s : check_ladder tm [] nlad_%(mid)s = true.
+Proof. vm_compute. reflexivity. Qed.
+
+Lemma nrules_sound_%(mid)s : Forall (RuleSound tm false false) nrules.
+Proof. apply rule_sound_nil. exact nladder_ok_%(mid)s. Qed.
+
+'''
+
+
+def inner_coq(mid, inner):
+    return INNER % dict(mid=mid, items=';\n   '.join(
+        '(mkLRule (%s) (%s) %d %d, %s)' % (coq_conf(l), coq_conf(r), ca, cb,
+                                          coq_chain(ch))
+        for l, r, ch, ca, cb in inner))
+
+
 def _resolve_cres(b, s, fills, nph, ds0, ph0):
     """the value's residue mod s in each phase, or NoClosure"""
     v0 = 0
@@ -106,28 +199,7 @@ def closure_data_step(cert, tab):
     def conf(sd):
         return (q, sd, hs, OTHER) if left else (q, OTHER, hs, sd)
 
-    nested_cache = {}
-
-    def nested(el, er, c0, c1, what, why):
-        key = (el, er, c0, c1)
-        if key not in nested_cache:
-            nested_cache[key] = nest.derive_nested(tab, el, er, c0, c1)
-        r = nested_cache[key]
-        if r is None:
-            raise NoClosure('%s: %s, and no nested program' % (what, why))
-        return ('NEST', r[0], r[1])
-
-    def derive(el, er, c0, c1, what):
-        """a segment program from c0 to c1 (up to lift), or NoClosure"""
-        ch = LC.derive_chain(tab, el, er, c0, c1, maxdepth=32, nmax=120,
-                             lift=True)
-        if ch is not None:
-            got = LC.srun(tab, el, er, ch, c0)
-            if got is not None and got[0] == c1 and got[2] > 0:
-                return ch
-            if got is not None and got[2] > 0 and nest.ceqL(el, er, got[0], c1):
-                return ('NEST', [('NCh', ch)], [])
-        return nested(el, er, c0, c1, what, 'no chain')
+    derive = Arms(tab).derive
 
     el, er = (not left), left
     # no carry: one flat arm per low digit
@@ -198,35 +270,8 @@ def closure_data_step(cert, tab):
     want = [(q_, s_) for q_ in range(4) for s_ in range(2)
             if (q_, s_) not in E.TR_PINS]
 
-    def nvisits(fl, prog):
-        """(segment prefix, chain) per instruction, from every prefix of the
-        fill arm's program"""
-        if not (isinstance(prog, tuple) and prog[:1] == ('NEST',)):
-            prog = ('NEST', [('NCh', prog)], [])
-        _t, segs, rules = prog
-        rr = [(a, b_) for a, b_, _c in rules]
-        seen = {}
-        for k in range(len(segs) + 1):
-            got = nest.nrun(tab, True, True, rr, segs[:k], fl)
-            if got is None:
-                break
-            ck = got[0]
-            chs = ([segs[k][1][:i] for i in range(len(segs[k][1]) + 1)]
-                   if k < len(segs) and segs[k][0] == 'NCh' else [[]])
-            for base in chs:
-                for kind in ('SWin', 'SWinL', 'SWinR'):
-                    for n in range(0, 600):
-                        g = LC.srun(tab, True, True, base + [(kind, n)], ck)
-                        if g is None:
-                            break
-                        seen.setdefault((g[0][0], g[0][2]),
-                                        (list(segs[:k]), base + [(kind, n)]))
-                if all(i in seen for i in want):
-                    return seen
-        return seen
-
     def visit_phase(fill):
-        seen_at = {(r, ph): nvisits(fl, ch) for r, ph, _1, _2, fl, _c, ch in fill}
+        seen_at = {(r, ph): nvisits(tab, want, fl, ch) for r, ph, _1, _2, fl, _c, ch in fill}
         for pv in range(nph):
             if all(i in seen_at[k] for k in seen_at if k[1] == pv for i in want):
                 return pv, {r: {i: seen_at[(r, p)][i] for i in want}
@@ -467,13 +512,7 @@ def emit_closure_step(cert, tab, mid):
     inner, arms = [], []
 
     def prog(ch):
-        if isinstance(ch, tuple) and ch[:1] == ('NEST',):
-            off = len(inner)
-            for lhs, rhs, ich in ch[2]:
-                got = LC.srun(tab, False, False, ich, lhs)
-                inner.append((lhs, rhs, ich, got[1], got[2]))
-            return [coq_seg(sg, off) for sg in ch[1]]
-        return [coq_seg(('NCh', ch), 0)]
+        return prog_coq(tab, inner, ch)
 
     for u, c0, c1, ch in cd['aarms']:
         arms.append(('aarm%d' % u, c0, c1, prog(ch), el, er))
@@ -483,22 +522,7 @@ def emit_closure_step(cert, tab, mid):
     for r, ph, _m1, _m2, fl, fr, fch in cd['fill']:
         offs[(r, ph)] = len(inner)
         arms.append(('farm%d_%d' % (r, ph), fl, fr, prog(fch), True, True))
-    L.append('''(** *** The inner rules: what the nested arms iterate *)
-Definition nlad_%(mid)s : list (LRule * list rstep) :=
-  [%(items)s].
-Definition nrules_%(mid)s : list LRule := map fst nlad_%(mid)s.
-Local Notation nrules := nrules_%(mid)s.
-
-Lemma nladder_ok_%(mid)s : check_ladder tm [] nlad_%(mid)s = true.
-Proof. vm_compute. reflexivity. Qed.
-
-Lemma nrules_sound_%(mid)s : Forall (RuleSound tm false false) nrules.
-Proof. apply rule_sound_nil. exact nladder_ok_%(mid)s. Qed.
-
-''' % dict(mid=mid, items=';\n   '.join(
-        '(mkLRule (%s) (%s) %d %d, %s)' % (coq_conf(l), coq_conf(r), ca, cb,
-                                          coq_chain(ch))
-        for l, r, ch, ca, cb in inner)))
+    L.append(inner_coq(mid, inner))
     for nm, c0, c1, segs, el_, er_ in arms:
         L.append(ARM % dict(nm=nm, mid=mid, lhs=coq_conf(c0), rhs=coq_conf(c1),
                             segs=';\n   '.join(segs), el=str(el_).lower(),
