@@ -1,0 +1,3 @@
+{"spec": "1RB1LC_1RC0RB_0LA1LD_1LC1RB", "src": "0RB1RD_1LC1RA_1LA0LC_1RA1LC", "batch": "CBT_AST_53", "p": [2, 0, 1, 3], "flip": 1, "m": 1, "n0": 0}
+{"spec": "1RB1LD_1RC0RB_0LA1LD_1LC1RB", "src": "0RB1RD_1LC1RD_1LA0LC_1RA1LC", "batch": "CBT_AST_55", "p": [2, 0, 1, 3], "flip": 1, "m": 1, "n0": 0}
+{"spec": "1RB1LD_1RC0RB_0LA1RB_0LD1LA", "src": "0RB1LC_1LC1RD_1LA0LC_0RD1RB", "batch": "CBT_AST_79", "p": [2, 0, 1, 3], "flip": 1, "m": 1, "n0": 0}
