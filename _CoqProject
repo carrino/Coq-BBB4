@@ -2979,6 +2979,7 @@ theories/Counters/MovingTokenTr.v
 theories/Counters/MovingSweepTr.v
 theories/Counters/FrontierTokenTr.v
 theories/Counters/CConjugateTr.v
+theories/Counters/CConjCoverTr.v
 theories/Counters/TokenLapTr.v
 theories/Counters/LapGlueQHTr.v
 theories/Counters/SweepGlueTr.v
@@ -11940,6 +11941,8 @@ theories/CloseoutTr/CBT_LE4_06.v
 theories/CloseoutTr/CBT_LE5_00.v
 theories/CloseoutTr/CBT_LE5_01.v
 theories/CloseoutTr/CBT_LE5_02.v
+theories/CloseoutTr/CBT_LE6_00.v
+theories/CloseoutTr/CBT_LE6_01.v
 theories/CloseoutTr/CBT_LEFQ_00.v
 theories/CloseoutTr/CBT_LEF_00.v
 theories/CloseoutTr/CBT_LEF_01.v
