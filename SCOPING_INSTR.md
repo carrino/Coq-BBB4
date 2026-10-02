@@ -6463,3 +6463,68 @@ added for these unsuccessful probes. The remaining HY3-conjugate pair
 needs correlated block parameters: pooling them into independent lattices
 produces unreachable branches. That exploration remains separate from the
 checked batches in this checkpoint.
+
+#### 7.4.AST4 Parity words, correlated families, and invariant cube graphs (2026-10-01)
+
+This checkpoint adds **32 requested rows**: twelve Fuel rows, ten parity
+transducers, two correlated-family certificates, and eight further cube
+rows. The AST follow-up now totals **107 new rows**; together with the six
+previous AST rows, **113 of the requested 164** are proved. The full
+closeout has **546** rows left, including **51 from the requested list**.
+All new batch coverage theorems are kernel-checked and use only
+`functional_extensionality_dep`.
+
+**Parity transducers (`CBT_AST_53..55`, ten rows).** The generic
+`ParityTokenTr` and `ParityCTokenTr` anchors have empty left tape, state B0,
+and right word `(10)^k 00w`. Two phases return to that family with `k+1`
+and a total mutual-transducer successor of `w`, in
+`12*k+8+uCost(0w)` steps. `ParityGateTokenTr` handles the related three-phase
+word `(100)^k 00w`: the prefixes evolve through `00w`, `110w`, and `1010w`
+before returning, in `24*k+15+uCost(0w)` steps. Structural recursion proves
+each transducer on arbitrary finite words. For `k>=1`, finite witnesses
+cover all eight instructions in these macro phases. `ValueLapTr` supplies
+recurrence and `CConjugateTr` transports the state-renamed/reflected
+variants. All bootstrap steps are checked exactly; the three generic
+files are axiom-free and compile in under a second each, as do the batches.
+
+**Correlated block families (`CBT_AST_52`, two rows).** The stubborn
+`0RB1LD_1RC1RB_1LA1RA_1LC0LA` and
+`1RB1RA_1LC1RC_0RA1LD_1LB0LC` share 148 families and 159 checked leaves.
+The finder retains the relation between the middle block and both outer
+blocks during a transfer; treating the three lengths as independent
+creates unreachable branches and prevented the earlier closure. The
+result is an ordinary `TriGlueTr` certificate, with period-one affine
+liveness ranks. The two boots are steps 446 and 445. No new trusted checker
+is needed. `tools/closeouttr/ast_cone.py` and `ast_cone.jsonl` preserve the
+finder and certificate data. AST52 compiles in about three seconds.
+
+**Eight further cube rows (`CBT_AST_66..69`, `71..74`).** AST66/67 add the
+`1RA0RC` and `1RD0RC` variants; AST69/71 identify the same cube recurrence
+in two other state graphs. AST68 (`0RC0RC`) needs a reachable-state
+invariant: the unrestricted family graph contains a zero-parameter path
+that avoids D1, although the actual boot never reaches it. The new generic
+`TriReachInvTr` checks preservation of the stated family predicate and
+uses it in the recurrence argument. Each leaf's preservation obligation
+is proved by linear arithmetic.
+
+AST72/73 transfer `(a,b,c)` to `(a-2,b+1,c+1)`. For D0, even exits fire;
+odd exits reset `b=0` and reduce `a+2*b`. For B0, odd exits fire; even exits
+reset `c=0`, after which `a` decreases by `a -> a/2-2` until a firing exit.
+AST74 has a transient `(0111)^d` prefix before the already-proved cube
+component. At fixed `d`, the core parameter contracts to `(a-4)/3` until
+a scan consumes a prefix block; nested induction on `d` and the core
+parameter closes it. These batches compile in roughly 1.8--5.2 seconds.
+All fifteen previously saved closed cube graphs are now covered: the
+fourteen rows in AST60..69 and AST71..74, plus the older AST00 row. The
+remaining `0RA0RC` and `1RB0RC` siblings need a block-list invariant and
+are not included in this count.
+
+**Longer Fuel measures (`CBT_AST_26..29`, `32..35`, twelve rows).** Full
+window-seven/length-eight pattern pools continue to certify rows which
+the original length-four cap missed. The finder now computes the sparse
+set of global pattern-count changes around the head once per context and
+pattern length, then answers each measure query by lookup. It was compared
+against the original delta function on 27,200 legal context/pattern pairs;
+independent replay reproduces existing certificates. The generic Coq
+checker is unchanged. Compile costs, including the slower AST32 and AST33
+batches, are recorded conservatively in `ci_costs.tsv`.

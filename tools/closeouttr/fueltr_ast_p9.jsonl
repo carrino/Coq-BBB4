@@ -1,0 +1,15 @@
+{"first_fail": {"contexts": 5310, "mirrored": true, "n": 8, "t": 0, "target": [0, 0]}, "probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 24.08, "spec": "0RB0RC_1LC1RC_1LD1RA_1RA0LD", "status": "no certificate"}
+{"probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 30.041, "spec": "0RB0LD_1LC1RB_0LD0LA_1RD0RB", "status": "timeout"}
+{"probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 30.007, "spec": "0RB1LD_1RC1RB_1LA1RA_1LC0LA", "status": "timeout"}
+{"first_fail": {"contexts": 42187, "mirrored": true, "n": 8, "t": 0, "target": [0, 0]}, "probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 5.435, "spec": "1RB0LA_0RC1LA_1RD0RD_1LB1RB", "status": "no certificate"}
+{"probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 30.005, "spec": "1RB0LA_0RC0RD_1LD1RD_1LA1RB", "status": "timeout"}
+{"first_fail": null, "probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 2.395, "spec": "1RB0LA_1LC1RD_0LC1LA_0RD0RB", "status": "no certificate"}
+{"first_fail": {"contexts": 4508, "mirrored": true, "n": 8, "t": 0, "target": [0, 0]}, "probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 0.768, "spec": "1RB0LB_0RC0RD_1LC1LA_1RA1RD", "status": "no certificate"}
+{"probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 30.006, "spec": "1RB0LA_0RC1RB_0RD1RC_1LD1LA", "status": "timeout"}
+{"probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 30.019, "spec": "1RB0LC_0LC0LA_1RC0RD_1LB1RD", "status": "timeout"}
+{"probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 30.006, "spec": "1RB0LD_0RC0RA_1LC1LA_1LA1LD", "status": "timeout"}
+{"probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 30.007, "spec": "1RB0RC_1LC0LD_1RA1RD_1RC1LB", "status": "timeout"}
+{"probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 30.006, "spec": "1RB0RD_1LC1LD_0RD0LB_1LB1RA", "status": "timeout"}
+{"probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 30.005, "spec": "1RB0RD_1LC1LD_1LA0LB_1LB1RA", "status": "timeout"}
+{"probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 30.004, "spec": "1RB0RD_1RC1LB_0RD0RA_1LD0LB", "status": "timeout"}
+{"probe_max_pattern": 9, "probe_n0": 8, "probe_n_extra": 0, "probe_timeout": 30, "probe_warmups": [0], "seconds": 30.005, "spec": "1RB1LA_0RC0RD_1LC0LA_0RC0RC", "status": "timeout"}
