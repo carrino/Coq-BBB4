@@ -299,7 +299,10 @@ def entry_counts(c, S, edges):
         d = {k: v for k, v in d.items() if v}
         if d:
             mp.add(d, 0, 0)
-    cost = {v: -100 for v in ell}
+    # Retain as many tail entries as possible before minimizing window slots.
+    # A fixed weight of 100 can sacrifice a necessary entry on larger graphs.
+    priority = 30 * len(S) + 1
+    cost = {v: -priority for v in ell}
     for v in m.values():
         cost[v] = 1
     x = mp.solve(cost)

@@ -40,7 +40,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 COSTS = os.path.join(HERE, 'ci_costs.tsv')
 # Same pattern as gen_closeout_tr.py: exactly the files CloseoutTr.v imports.
-BATCH_RE = re.compile(r'^CBT_([A-Z][A-Z0-9]{0,7})_(\d\d)\.v$')
+BATCH_RE = re.compile(r'^CBT_([A-Z][A-Z0-9]{0,7})_(\d{2,})\.v$')
 DEFAULT_COST = 20.0   # seconds; most batches (boards included) take 5-40 s
 JOBS = 4              # the shard's make -j (ci.yml)
 
