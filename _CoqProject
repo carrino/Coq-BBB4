@@ -469,6 +469,7 @@ theories/Checkers/FuelSCC.v
 theories/Checkers/FuelWide.v
 theories/Checkers/FuelSCCTr.v
 theories/Checkers/FuelWideTr.v
+theories/Checkers/FuelMixTr.v
 theories/Machines/Fuel_Batch_01.v
 theories/Machines/Fuel_Batch_02.v
 theories/Machines/Fuel_Batch_03.v
@@ -3095,11 +3096,18 @@ theories/Counters/MovingTokenTr.v
 theories/Counters/MovingSweepTr.v
 theories/Counters/FrontierTokenTr.v
 theories/Counters/CConjugateTr.v
+<<<<<<< HEAD
 theories/Counters/CConjCoverTr.v
+=======
+theories/Counters/CConjugateReachTr.v
+>>>>>>> origin/codex/prove-machines-in-closeouttr
 theories/Counters/TokenLapTr.v
 theories/Counters/ParityTokenTr.v
 theories/Counters/ParityCTokenTr.v
 theories/Counters/ParityGateTokenTr.v
+theories/Counters/SeparatorTokenTr.v
+theories/Counters/BinaryGateTokenTr.v
+theories/Counters/DyadicRankTr.v
 theories/Counters/LapGlueQHTr.v
 theories/Counters/SweepGlueTr.v
 theories/Counters/HybridGlueTr.v
@@ -3109,6 +3117,8 @@ theories/Counters/TriNuTr.v
 theories/Counters/CubeRoundTr.v
 theories/Counters/TriReachTr.v
 theories/Counters/TriReachInvTr.v
+theories/Counters/StackCubeTr.v
+theories/Counters/PairStackTr.v
 theories/Counters/BlankTailTr.v
 theories/Counters/HybridCtrTr.v
 theories/Counters/ListGlueTr.v
@@ -11927,12 +11937,14 @@ theories/CloseoutTr/CBT_AST_32.v
 theories/CloseoutTr/CBT_AST_33.v
 theories/CloseoutTr/CBT_AST_34.v
 theories/CloseoutTr/CBT_AST_35.v
+theories/CloseoutTr/CBT_AST_36.v
 theories/CloseoutTr/CBT_AST_50.v
 theories/CloseoutTr/CBT_AST_51.v
 theories/CloseoutTr/CBT_AST_52.v
 theories/CloseoutTr/CBT_AST_53.v
 theories/CloseoutTr/CBT_AST_54.v
 theories/CloseoutTr/CBT_AST_55.v
+theories/CloseoutTr/CBT_AST_56.v
 theories/CloseoutTr/CBT_AST_60.v
 theories/CloseoutTr/CBT_AST_61.v
 theories/CloseoutTr/CBT_AST_62.v
@@ -11948,6 +11960,11 @@ theories/CloseoutTr/CBT_AST_71.v
 theories/CloseoutTr/CBT_AST_72.v
 theories/CloseoutTr/CBT_AST_73.v
 theories/CloseoutTr/CBT_AST_74.v
+theories/CloseoutTr/CBT_AST_75.v
+theories/CloseoutTr/CBT_AST_76.v
+theories/CloseoutTr/CBT_AST_77.v
+theories/CloseoutTr/CBT_AST_78.v
+theories/CloseoutTr/CBT_AST_79.v
 theories/CloseoutTr/CBT_BLC3_00.v
 theories/CloseoutTr/CBT_BLC3_01.v
 theories/CloseoutTr/CBT_BLC3_02.v

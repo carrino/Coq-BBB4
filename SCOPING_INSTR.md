@@ -7004,3 +7004,64 @@ against the original delta function on 27,200 legal context/pattern pairs;
 independent replay reproduces existing certificates. The generic Coq
 checker is unchanged. Compile costs, including the slower AST32 and AST33
 batches, are recorded conservatively in `ci_costs.tsv`.
+
+#### 7.4.AST5 Block stacks, separated carries, and weighted pattern counts (2026-10-01)
+
+This checkpoint adds **eight requested rows**, bringing the follow-up to
+**115 new rows** and the requested list to **121 of 164 proved**. The full
+closeout has **538** rows left, including **43 requested rows**. All seven
+new batches compile and their assumption audits contain only
+`functional_extensionality_dep`.
+
+**Stack cube variants (`CBT_AST_75..78`, five rows).** `StackCubeTr` extends
+the cube argument to a finite list of right blocks. The framed transfer
+`(a+3,b,r) -> (a,b+2,r+1)` has cost `4*a+13`. Non-firing exits consume a
+block; induction on stack length reduces the empty-stack case to the
+landed `CubeRoundTr`. D0 either pushes a block or merges the first blocks,
+and each return preserves the language and supplies all eight instruction
+witnesses. AST75/76 use one-step and three-step implementations of D0,
+both with bootstrap 19. All twelve requested
+`1RB1LA_0RC0RD_1LC0LA_??0RC` siblings are now proved.
+
+`PairStackTr` closes `1RB1LA_1LB0RC_1LD1RC_0LD0LA` in AST77. Its transfer
+moves two cells from the active left block into one cell on each side.
+The invariant requires at least two ones in the farthest left block;
+this excludes an actual non-firing fixed point outside the reachable
+language. Induction on the block list and the odd reset
+`a -> (a+3)/2` proves a return to D0. The bootstrap is step 17.
+
+AST78 contains two state-renamed stack variants, with separately checked
+boots at steps 20 and 19. The new `CConjugateReachTr` transports arbitrary
+families with existential positive returns and eventual instruction
+witnesses. It compares endpoints after `lift` and needs neither a chosen
+successor function nor a choice axiom. The stack helpers compile in about
+0.6--1.0 seconds and each batch in under a second.
+
+**Separated carries (`CBT_AST_56` and `79`, two rows).**
+`SeparatorTokenTr` proves `1RB0RA_0RC0LD_1LD1RA_1LB0LD` with an outer
+base-four digit, a fixed one-cell separator, and an arbitrary finite inner
+digit word. The digits are `010/000/011/001`; an empty inner carry creates
+`011`. The carry crosses the separator only when the outer digit wraps.
+Structural induction proves the carry, and a checked LapDecider chain
+proves the `18*n+38` sweep. The exact bootstrap is step 81.
+
+`BinaryGateTokenTr` proves `0RB1LC_1LC1RD_1LA0LC_0RD1RB`. Its anchor is
+`D1` with left word `01 ++ encode(w)` and right block `(101)^n`. The
+digits `00/01` have terminator `010`. One carry pass creates a prefix of
+ones and a second pass converts it to the successor word, with three
+uniform sweeps between and around them. Each carry is proved for every
+finite digit word; the exact lap cost is `18*n+26+c1(w)+c2(w)`. The
+bootstrap is step 21, and finite sweep prefixes witness every instruction.
+Both helpers and both batches compile in under a second.
+
+**Weighted pattern counts (`CBT_AST_36`, one row).** `FuelMixTr` permits
+nonnegative sums of legal pattern counts as natural-valued measures.
+Their exact integer deltas follow by induction from the landed pattern
+delta lemma; the existing `FuelSCCTr` engine checks lexicographic descent
+and fueled runners. A sum of three pattern counts certifies
+`1RB1LD_0RC0RB_1LC0LA_0RB1RD` at window six. The untrusted LP finder rounds
+and rechecks every inequality with integers, then independently replays
+the whole certificate before emission. The checker compiles in about
+0.4 seconds and AST36 in 2.0 seconds. Replacing its A0 certificate with
+an empty certificate computes false. The finder and saved certificate are
+`tools/closeouttr/fuelmixtr_batch.py` and `fuelmixtr_ast.jsonl`.
