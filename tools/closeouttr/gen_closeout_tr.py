@@ -32,7 +32,7 @@ from cbt import CT, spec_row  # noqa: E402
 
 DEFERRED = os.path.join(REPO, 'censustr_deferred_v10.txt')
 SPEC_RE = re.compile(r'^\(\* spec (\S+) \*\)$', re.M)
-BATCH_RE = re.compile(r'^CBT_([A-Z][A-Z0-9]{0,7})_(\d\d)\.v$')
+BATCH_RE = re.compile(r'^CBT_([A-Z][A-Z0-9]{0,7})_(\d{2,})\.v$')
 SUB = 500   # rows per Definition in RemainingTr.v: big literals choke the parser
 
 
