@@ -26,7 +26,7 @@ import step_batch as SB  # noqa: E402
 import run2z_batch as RZ  # noqa: E402
 
 RZ.EMIT = os.path.join(HERE, 'emit_run2z0.py')
-RZ.EMIT_TIMEOUT = 300
+RZ.EMIT_TIMEOUT = 150
 
 
 def _board(t):
