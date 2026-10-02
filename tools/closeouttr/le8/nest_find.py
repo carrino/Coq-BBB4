@@ -123,7 +123,7 @@ def counts(vs, Z, O):
             while lead < len(x) and x[lead] == 0:
                 lead += 1
             best = None
-            for w in range(lead, 0, -1):
+            for w in range(lead, 1, -1):
                 upper = strip0(cells[w * wz:])
                 cur, j, ok = 0, i, True
                 while cur < 2 ** w - 1:
@@ -131,11 +131,13 @@ def counts(vs, Z, O):
                     for j2 in range(j + 1, len(lst)):
                         c2 = lst[j2][3] + [0] * (4 * wz)
                         x2, _ = decode(c2[:w * wz], Z, O)
-                        if len(x2) == w and strip0(c2[w * wz:]) == upper:
-                            v2 = val(x2)
-                            if v2 == cur + 1:
-                                nxt = j2
-                                break
+                        same = len(x2) == w and strip0(c2[w * wz:]) == upper
+                        if same and val(x2) == cur + 1:
+                            nxt = j2
+                            break
+                        if same and val(x2) == cur:
+                            continue        # the head passing again
+                        break               # anything else ends the run
                     if nxt is None:
                         ok = False
                         break

@@ -6795,7 +6795,7 @@ increment mode is LE4's `zinc`, which drops a carry that leaves the top
   `le8/emit_zecku.py` (LE6's `emit_zeckd.py`, classes changed), driver
   `le8/batch.py --kind zecku`.
 
-**14 of 14 boarded** (`CBT_LE8_00`, `_01`; all SP, never-QH).
+**14 of 14 boarded** (`CBT_LE8_00`, `_01`; all SP, never-QH).  (All 62 rows are class DN or SP: no quasihalting row.)
 
 | batch | rows | route | compile (container, `-j1`, incl. boards) |
 |---|---:|---|---:|
@@ -6848,6 +6848,33 @@ python3 tools/closeouttr/le8/batch.py tools/closeouttr/le8/plans/SPEC.json --kin
 python3 tools/closeouttr/le6/conj_find.py CONJ_ROWS.txt le8/conj_nest.jsonl --steps 20000
 python3 tools/closeouttr/le6/conj_batch.py le8/conj_nest.jsonl --tag LE8
 ```
+
+**3. Plans found automatically.**  `le8/nest_find.py` starts from LE4's
+positional reading of a row (`le4/pos.jsonl`: anchor, digit words, head
+prefix).  It runs the machine 2M steps from blank and finds the anchor's ZERO
+configurations `Z^L R`: a fixed rest `R` with `L` in arithmetic progression.
+That gives the lap and the widening `d`, which is often not LE4's fill law:
+the anchor drifts, or the zero form carries a marker.  For three widths it
+then runs the overflow `O^L R -> Z^(L+d) R` and decodes every visit to the
+anchor shape at any offset.  Runs of visits that count `0 .. 2^w - 1` with a
+fixed far context and rest are inner counts.  If they line up across the
+widths (`w = L + c`, same far context, same rest), it writes a plan whose
+overflow is setup, count, middle, count, exit.  Carries were tested first:
+18 of the 22 positionally read rows have a LINEAR carry, a single arm family
+(`emit_nest` proves it once for all `k`), so only their overflow nests.
+**5 rows boarded** (`CBT_LE8_04`: two conjugate pairs with overflow
+`O^L 1 -> Z^(L+2) 1` / `O^L 11 -> Z^(L+2) 11` through two inner counts, and
+`1RB1RC_1LA1RA_0RC1LD_1LB0LD`, a left-side counter with one).
+
+**4. Where the rest stop** (41 open of the 62):
+
+| group | rows | shape (read by hand / by `nest_find.py`) | why not boarded |
+|---|---:|---|---|
+| overflow = a loop of inner counts, positional reading | 13 | the number of inner counts grows with the width: pairs of counts sliding two cells per pair (`0RB1LC_0LC1RC_1LA0RD_0LA1RD`, `1RB1RC_1LC1RA_1LD0LC_0RD0RB`, `0RB0LB_1LC0RD_1LA0LA_1LB1RB`); pairs of counts of growing width over a mixed encoding (`0RB1LD_1LA1RC_1RD1RB_1LB0LA` and its 3 conjugates, `0RB1LC_1LA0RC_1LD1RB_1LA0LD`); a moving flag digit (`1RB1LC_0LA1RC_1LA0RD_0LA1RD`); a ruler sequence of counts, i.e. a third counting level (`0RB0LA_1RC1LA_1LD1RB_0RC0LD` + conjugate); counts at width-dependent offsets (`1RB1LC_1LA0RD_0RC1LB_0LC1RD`, `1RB1RC_1LC1LB_1LD1RA_0RC0LD`) | needs an iteration lemma over the loop (counts whose far context grows by a word per iteration, so count lemmas generic in an opaque far tail) and a finder that recognises the loop; `NestCountTr` has neither yet |
+| ratio-3 carries | 4 | `0RB0RA_1RC1LD_1LC1RB_0LD0LA` (+ 3 conjugates): binary over `00` / `01` whose carry over `k` runs a descending cascade of counts at offsets `2k+1, ..., 3`, each one's carries nesting again (cost `3^k`) | a cascade by strong induction on the level; not built |
+| no positional reading | 24 | about 8 dynamics: two-sided growth (both ends binary, or one end ratio 3 per 4-5 cells), unary runs converted to `(100)` blocks (`1RB0RA_1LC1RD_1LD0LC_1RA1LB`), a structured left region beside a growing run of 1s (`1RB1LA_1LC1RD_1LA0LC_1RA0RB`), irregular ratios `1.01/1.08` | no reader yet; not analysed |
+
+Boarded so far by LE8: **21** (14 ZeckU, 7 nested counters).
 
 ## 8. What we deliberately do NOT redo
 
