@@ -12121,6 +12121,13 @@ theories/CloseoutTr/CBT_BLC6_07.v
 theories/CloseoutTr/CBT_BLC6_08.v
 theories/CloseoutTr/CBT_BLC6_09.v
 theories/CloseoutTr/CBT_BLC6_10.v
+theories/CloseoutTr/CBT_BLC6_11.v
+theories/CloseoutTr/CBT_BLC6_12.v
+theories/CloseoutTr/CBT_BLC6_13.v
+theories/CloseoutTr/CBT_BLC6_14.v
+theories/CloseoutTr/CBT_BLC6_15.v
+theories/CloseoutTr/CBT_BLC6_16.v
+theories/CloseoutTr/CBT_BLC6_17.v
 theories/CloseoutTr/CBT_BLC_00.v
 theories/CloseoutTr/CBT_BLC_01.v
 theories/CloseoutTr/CBT_BL_00.v
