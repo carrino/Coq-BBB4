@@ -223,6 +223,52 @@ def pattern_candidates(n, max_pattern):
                for r in ("L", "R")])
 
 
+def make_pattern_delta(tbl, n):
+    """Share the sparse changes to global pattern counts at the head.
+
+    For length k, only the k windows containing the head can change.
+    Count their old/new bit patterns once per context; all global
+    candidate deltas then become dictionary lookups. The independent
+    certificate replay still uses bulk_prover.pdelta directly.
+    """
+    @lru_cache(maxsize=None)
+    def pattern_code(patt):
+        code = 0
+        for bit in patt:
+            code = (code << 1) | bit
+        return code
+
+    @lru_cache(maxsize=65536)
+    def global_deltas(plen, a):
+        q, sym, left, right = a
+        written = tbl[q, sym][0]
+        if written == sym:
+            return {}
+        before = 0
+        for bit in (*reversed(left[:plen - 1]), sym, *right[:plen - 1]):
+            before = (before << 1) | bit
+        after = before ^ (1 << (plen - 1))
+        mask = (1 << plen) - 1
+        deltas = {}
+        for _ in range(plen):
+            old, new = before & mask, after & mask
+            deltas[old] = deltas.get(old, 0) - 1
+            deltas[new] = deltas.get(new, 0) + 1
+            before >>= 1
+            after >>= 1
+        return deltas
+
+    @lru_cache(maxsize=262144)
+    def sided_delta(patt, reg, a):
+        return bp.pdelta(tbl, n, patt, reg, a)
+
+    def delta(patt, reg, a):
+        if reg == "A":
+            return global_deltas(len(patt), a).get(pattern_code(patt), 0)
+        return sided_delta(patt, reg, a)
+    return delta
+
+
 def find_one(spec, n0, n_extra, warmups, max_pattern=4):
     first_fail = None
     for mirrored in (True, False):
@@ -242,11 +288,7 @@ def find_one(spec, n0, n_extra, warmups, max_pattern=4):
                 adj = gf.fw_adj(tbl, lset, rset, refined)
                 targets = sorted({a[0][:2] for a in refined} | warmup_fires(tbl, t))
                 cands = pattern_candidates(n, max_pattern)
-                # The same local delta occurs in several SCCs and for all
-                # eight targets; bound the cache while sharing those values.
-                @lru_cache(maxsize=262144)
-                def delta(patt, reg, a):
-                    return bp.pdelta(tbl, n, patt, reg, a)
+                delta = make_pattern_delta(tbl, n)
                 per_target = {}
                 for target in targets:
                     found = instruction_procedure(tbl, n, adj, refined, target, cands, delta)
