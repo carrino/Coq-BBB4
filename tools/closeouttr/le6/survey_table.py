@@ -39,7 +39,9 @@ def group(d):
 ROUTE = {'CBT_LE6_00': 'conjugate', 'CBT_LE6_01': 'conjugate', 'CBT_LE6_08': 'conjugate',
          'CBT_LE6_02': 'Zeck2 (increment)', 'CBT_LE6_03': 'ZeckD (countdown)',
          'CBT_LE6_04': 'ZeckD (countdown)', 'CBT_LE6_07': 'ZeckD (countdown)',
-         'CBT_LE6_05': 'ZeckDw (wider bottom)', 'CBT_LE6_06': 'ZeckDw (wider bottom)'}
+         'CBT_LE6_05': 'ZeckDw (wider bottom)', 'CBT_LE6_06': 'ZeckDw (wider bottom)',
+         'CBT_LE6_09': 'Run2z (countdown run)', 'CBT_LE6_10': 'Run2z (countdown run)',
+         'CBT_LE6_11': 'Run2z (countdown run)'}
 
 
 def main():
