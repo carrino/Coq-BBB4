@@ -7550,3 +7550,71 @@ axiom-free. Each batch has a conservative five-second CI cost entry.
 After merging main and regenerating: **513 batches, 10,663 boarded,
 261 remaining**. No frozen census, RunTr, CloseoutKit, workflow, or Makefile
 source was changed by this proof work.
+
+#### 7.4.AST13 First block-list tranche: twenty-seven rows (2026-10-02)
+
+The new 114-row scope is retained in `tools/closeouttr/blocklists114.txt`.
+All 114 were open at the start. Twenty-seven are now kernel-checked in
+`CBT_AST_110..125`:
+
+| batches | rows | argument |
+|---|---:|---|
+| AST110 | 4 | FuelMixTr, window 2 |
+| AST111 | 1 | FuelPhaseTr, window 4 |
+| AST112 | 3 | exact short run joins to AST53/55/79 via CConjCoverTr |
+| AST113 | 2 | MovingToken conjugate with a different boot; AST32 FuelWide certificate and a checked boot |
+| AST114 | 1 | FuelMixTr, window 7 |
+| AST115/116 | 2 | period-three core with B0=1RC, finite-tape B0/D0 reachability |
+| AST117/118 | 2 | binary-frontier positive returns from different initial configurations |
+| AST119/120/124 | 5 | FuelMixTr, window 7 |
+| AST121/122/123/125 | 7 | FuelPhaseTr, windows 5--6 |
+
+`Period3RightResetTr.v` adds the third B0 reset to AST12's period-three
+argument. The reset transforms a P-prefix into a U-prefix followed by
+`11a1`; strong induction on the finite frontier suffix proves D0
+reachability. Left-tape scanning extends it to every finite configuration.
+Together with the existing B0 theorem and `FiniteInstrTr`, this handles
+both new conjugates without requiring their blank runs to meet a previous
+blank run.
+
+`FiniteReturnTr.v` abstracts positive finite-tape returns from any checked
+bootstrap, transported through state renaming/reflection. AST117/118
+instantiate `FuelB0ReturnTr` and combine the recurring instruction with
+seven partial FuelMix certificates. These two rows share AST83's table
+but need different boots.
+
+Certificates and reproducible emitters: `fuelmixtr_blocklists114.jsonl`,
+`fuelphasetr_blocklists114.jsonl`, `fuelmixtr_blocklists114_n7.jsonl`,
+`blocklists_conj114.jsonl`, `blocklists_boot_batch.py`,
+`period3_right_reset_ast.json` / `period3_right_reset_batch.py --check`, and
+`blocklists_return_ast.json` / `blocklists_return_batch.py --check`.
+The initial weighted sweep used windows 2--5, maximum pattern length 4,
+boot 0, 30 seconds per row: four certificates. The phase sweep used
+windows 2--4 with the same bound: five certificates, four duplicated by
+the weighted pass. Ordinary FuelWide windows 2--5 were deliberately not
+repeated. A targeted window-7 weighted pass on four AST32/33 conjugates
+found AST114; the other three did not certify.
+A further weighted sweep over the 99 still-open rows at windows 6--7
+(maximum pattern length 4, boot 0, 20 seconds per row) produced five
+certificates, 58 failures and 36 timeouts. A phase sweep over the same
+99 rows at windows 5--6 produced seven certificates, 64 failures and
+28 timeouts. These two passes found disjoint rows. Their full results are
+`fuelmixtr_blocklists114_n6.jsonl` and
+`fuelphasetr_blocklists114_n5.jsonl`.
+
+An exact conjugacy lookup found twenty table matches but only five short
+run joins (through 2,000 steps). Reusing seven BLC6 certificates after
+renaming their states and checking target turn configurations through
+400,000 steps found no compatible bootstrap. Two conjugates of AST96
+also failed a guarded right-frontier cycle search through one billion
+steps, using a 4,096-cell signature every sixteen new cells. These are
+negative search results, not evidence against transition recurrence.
+
+All sixteen batches and both new generic lemmas compile. `Print Assumptions`
+reports only `functional_extensionality_dep`. The generated split is
+**529 batches, 10,690 boarded, 234 remaining**; 87 of this scope remain.
+No frozen census, RunTr, CloseoutKit, workflow, or Makefile source changed.
+
+The regenerated `RemainingTr.v` also compiles. A full local `CloseoutTr.v`
+build is unavailable without rebuilding older batches (the first missing
+object is `CBT_AST_00.vo`); CI checks the combined split after its shards.
