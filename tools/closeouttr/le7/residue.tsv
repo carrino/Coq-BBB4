@@ -1,0 +1,81 @@
+# LE7: the 79 rows by real shape; boarded rows carry their batch (closeouttr_boarded.tsv), open rows the reason
+# spec	group	status	note
+1RB0LA_1LC1RD_1LA1LB_1LA0RD	base3-side	open	one side grows ratio 3 per 4-5 cells, the other ratio 2: not read
+1RB0LA_1LC1RD_1LD1LB_1LA0RD	base3-side	open	one side grows ratio 3 per 4-5 cells, the other ratio 2: not read
+1RB1LC_0LC0RB_1LD1LA_1RA1RD	irregular	open	left ratios 2.5/1.6 alternating, right ratio 4 per 2 cells: not read
+1RB1LC_1LA0RD_0LB0LC_1RB1RD	irregular	open	left ratios 1.6/1.25 alternating (2/3 cells): not read
+1RB1RA_1LC0RA_1RB1LD_0LB0LD	irregular	open	left ratios 1.6/1.25 alternating (2/3 cells): not read
+1RB1RA_1RC1LD_0LB0RC_1LA1LB	irregular	open	left ratios 2.5/1.6 alternating, right ratio 4 per 2 cells: not read
+1RB1RA_1RC1LD_0LD0RC_1LA1LB	irregular	open	left ratios 2.5/1.6 alternating, right ratio 4 per 2 cells: not read
+0RB1LA_1LC1RD_0RB1LD_1RB0LA	marker-run	boarded CBT_LE7_02	
+0RB1LA_1LC1RD_1LA1LD_1RB0LA	marker-run	boarded CBT_LE7_02	
+0RB1LA_1LC1RD_1RA1LD_1RB0LA	marker-run	boarded CBT_LE7_02	
+0RB1LA_1LC1RD_1RD1LD_1RB0LA	marker-run	boarded CBT_LE7_02	
+0RB1LA_1RC0LA_1LD1RB_---1LB	marker-run	boarded CBT_LE7_02	
+0RB1LC_1LA1RC_1RB0LD_0RC1LD	marker-run	boarded CBT_LE7_02	
+0RB1LC_1LA1RC_1RB0LD_0RB1LD	marker-run	boarded CBT_LE7_04	conjugate (CConjCoverTr)
+1RB0LD_1LC1RA_0RB1LA_0RB1LD	marker-run	boarded CBT_LE7_04	conjugate (CConjCoverTr)
+1RB0LD_1LC1RA_1RA1LA_0RB1LD	marker-run	boarded CBT_LE7_04	conjugate (CConjCoverTr)
+1RB1LB_1RC0LD_1LA1RB_0RC1LD	marker-run	boarded CBT_LE7_04	conjugate (CConjCoverTr)
+1RB1LC_1LC1RC_1LA0RD_0LA1RD	marker-run	boarded CBT_LE7_04	conjugate (CConjCoverTr)
+1RB1LD_0RC1LB_1LA1RD_1RC0LB	marker-run	boarded CBT_LE7_04	conjugate (CConjCoverTr)
+1RB1LD_1LC1RD_0LA1RC_1LA0RC	marker-run	boarded CBT_LE7_04	conjugate (CConjCoverTr)
+1RB1LD_1RC1RD_0LA1RC_1LA0RC	marker-run	boarded CBT_LE7_04	conjugate (CConjCoverTr)
+1RB1RD_0LC1RB_1RA1LD_1LC0RB	marker-run	boarded CBT_LE7_04	conjugate (CConjCoverTr)
+0RB1LB_1RC0LD_1LA1RB_0RB1LD	marker-run	boarded CBT_LE7_05	
+0RB1LC_0RC1LB_1RD0LB_1LA1RC	marker-run	boarded CBT_LE7_05	
+0RB1RB_1LC0RD_1RA1LB_0LB1RD	marker-run	boarded CBT_LE7_05	
+0RB1RC_0LC1RB_1LD0RB_1RA1LC	marker-run	boarded CBT_LE7_05	
+1RB0LD_1LC1RA_---1LA_0RA1LD	marker-run	boarded CBT_LE7_05	
+1RB0LD_1LC1RA_1LD1LA_0RB1LD	marker-run	boarded CBT_LE7_05	
+1RB0LD_1LC1RA_1RD1LA_0RB1LD	marker-run	boarded CBT_LE7_05	
+1RB1LB_1RC0LD_1LA1RB_0RB1LD	marker-run	boarded CBT_LE7_05	
+1RB1LC_0LA1RC_1LA0RD_0LC1RD	marker-run	boarded CBT_LE7_05	
+1RB1LC_0LB1RC_1LA0RD_0LC1RD	marker-run	boarded CBT_LE7_05	
+1RB1LC_0LC1RC_1LA0RD_0LC1RD	marker-run	boarded CBT_LE7_06	
+1RB1LC_0RC1LB_1RD0LB_1LA1RC	marker-run	boarded CBT_LE7_06	
+1RB1LC_1LA1RC_1LA0RD_0LC1RD	marker-run	boarded CBT_LE7_06	
+1RB1LC_1LA1RC_1RB0LD_0RC1LD	marker-run	boarded CBT_LE7_06	
+1RB1LC_1LB1RC_1LA0RD_0LC1RD	marker-run	boarded CBT_LE7_06	
+1RB1LC_1LC1RC_1LA0RD_0LC1RD	marker-run	boarded CBT_LE7_06	
+1RB1LC_1RC1RC_1LA0RD_0LC1RD	marker-run	boarded CBT_LE7_06	
+1RB1LD_0LC1RD_0LD1RC_1LA0RC	marker-run	boarded CBT_LE7_06	
+1RB1LD_0RC1RD_0LD1RC_1LA0RC	marker-run	boarded CBT_LE7_06	
+1RB1LD_1LC1RD_0LD1RC_1LA0RC	marker-run	boarded CBT_LE7_07	
+1RB1LD_1RC1RD_0LD1RC_1LA0RC	marker-run	boarded CBT_LE7_07	
+1RB1RB_1LC0RD_1RA1LB_0LB1RD	marker-run	boarded CBT_LE7_07	
+1RB1RC_0LC1RB_1LD0RB_1RA1LC	marker-run	boarded CBT_LE7_07	
+1RB1LC_0RC1RC_1LA0RD_0LC1RD	marker-run	boarded CBT_LE7_09	conjugate (CConjCoverTr)
+1RB0LA_1LC0RB_1RD1LA_1LD1RC	mirror	boarded CBT_LE7_00	
+1RB0RA_1LC1RA_1LD0LC_1LA1LD	mirror	boarded CBT_LE7_00	
+1RB0RA_1LC1RA_1LD0LC_1RA1LB	mirror	boarded CBT_LE7_00	
+1RB0RA_1LC1RA_1LD0LC_1RD1LB	mirror	boarded CBT_LE7_00	
+1RB0RA_1RC1RB_1LD0LC_1RA1LC	mirror	boarded CBT_LE7_00	
+1RB0LA_1LC0RB_1RD1LD_1LA1RC	mirror	boarded CBT_LE7_01	
+1RB0LA_1LC1RD_1RC1LB_1LA0RD	mirror	boarded CBT_LE7_01	
+1RB0LA_1LC1RD_1RD1LB_1LA0RD	mirror	boarded CBT_LE7_01	
+1RB0LA_0RC1RB_0LD0RB_1LD0LA	mirror	open	zig-zag carry: the two copies are carried digit by digit, alternately, so no split into one-sided halves (a half would need two blocks on one side)
+1RB0LA_1LC0RB_1RD1LA_1LA1RC	mirror	open	zig-zag carry: the two copies are carried digit by digit, alternately, so no split into one-sided halves (a half would need two blocks on one side)
+1RB1LD_1RC0RB_1RD1RC_1LA0LD	mirror	open	two copies out of step at every anchor (a wide pivot); conjugates of CBT_LE7_00 rows on another orbit (no sync in 400k steps)
+1RB1RA_1LC0LB_1RD1LB_1RA0RD	mirror	open	two copies out of step at every anchor (a wide pivot); conjugates of CBT_LE7_00 rows on another orbit (no sync in 400k steps)
+1RB1RC_0RC1RB_0LD0RB_1LD0LA	mirror	open	zig-zag carry: the two copies are carried digit by digit, alternately, so no split into one-sided halves (a half would need two blocks on one side)
+0RB1LD_1LC1RB_1RA1LA_1LB0LC	mixed-digit	open	positional counter with a 1-cell low digit and 3-cell digits above, widening by two digits; no family with a different low-digit spelling
+1RB0RC_1RC1LB_1LD1RD_0LB1RA	mixed-digit	open	positional counter with a 1-cell low digit and 3-cell digits above, widening by two digits; no family with a different low-digit spelling
+1RB1LA_1LC1RC_0LA1RD_1RA0RB	mixed-digit	open	positional counter with a 1-cell low digit and 3-cell digits above, widening by two digits; no family with a different low-digit spelling
+1RB0RB_1LC1LD_0LC1RA_0LD0RA	moving-one	open	1 0^a 1 0^b: a single 1 walking right, each step costing half the last; the steps between are a counter spelled in moving pairs; not read
+1RB1RC_1LA1LD_0RC0RB_0LD0LA	moving-one	open	1 0^a 1 0^b: a single 1 walking right, each step costing half the last; the steps between are a counter spelled in moving pairs; not read
+1RB0RB_1LC1RA_0LD0LC_1RD0RB	other	open	not read by any LE7 reader (run2_all, run3_all, mirror, tank)
+1RB0RD_1LB1LC_1RC0RA_0LB1RD	other	open	not read by any LE7 reader (run2_all, run3_all, mirror, tank)
+1RB0RD_1LC1RA_0RB0LC_1LD0LA	other	open	not read by any LE7 reader (run2_all, run3_all, mirror, tank)
+0RB1LA_1LC1RD_1RB0LD_1RB0LA	tail-grows	open	LE5's growing tail (ratio 4 one side, 2.2/1.8 the other): an outer counter in the tail whose increments cross the inner one
+1RB1LC_1LA0RC_1LA0RD_0LA1RD	tail-grows	open	LE5's growing tail (ratio 4 one side, 2.2/1.8 the other): an outer counter in the tail whose increments cross the inner one
+1RB0LC_0LA1RC_1RD1LA_1RB0RD	tank	open	counter widening into a tank (LadderCheckTankTr): law read, but the refill (rewriting the whole tank) is a multi-pass sweep, cost ~quadratic in the width; no arm program
+1RB0LD_1RC0RC_0LA0RA_1RA1LA	tank	open	counter widening into a tank (LadderCheckTankTr): law read, but the refill (rewriting the whole tank) is a multi-pass sweep, cost ~quadratic in the width; no arm program
+1RB0RA_0LC1RD_1RB0LD_1RA1LC	tank	open	counter widening into a tank (LadderCheckTankTr): law read, but the refill (rewriting the whole tank) is a multi-pass sweep, cost ~quadratic in the width; no arm program
+1RB0RB_0LC0RC_1RA0LD_1RC1LC	tank	open	counter widening into a tank (LadderCheckTankTr): law read, but the refill (rewriting the whole tank) is a multi-pass sweep, cost ~quadratic in the width; no arm program
+1RB1LB_1RC0LA_1RD0RD_0LB0RB	tank	open	counter widening into a tank (LadderCheckTankTr): law read, but the refill (rewriting the whole tank) is a multi-pass sweep, cost ~quadratic in the width; no arm program
+1RB1LD_1RC0RB_0LD1RA_1RC0LA	tank	open	counter widening into a tank (LadderCheckTankTr): law read, but the refill (rewriting the whole tank) is a multi-pass sweep, cost ~quadratic in the width; no arm program
+0RB1LA_0LC1RD_0RD1LD_1RB0LA	top-word-joins-run	boarded CBT_LE7_03	
+0RB1LB_1RC0LD_0LA1RB_0RC1LD	top-word-joins-run	boarded CBT_LE7_04	conjugate (CConjCoverTr)
+1RB0LD_0LC1RA_0RA1LA_0RB1LD	top-word-joins-run	boarded CBT_LE7_04	conjugate (CConjCoverTr)
+1RB0LD_0LC1RA_0RC1LA_0RB1LD	top-word-joins-run	boarded CBT_LE7_08	
