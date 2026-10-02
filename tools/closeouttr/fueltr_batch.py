@@ -6,6 +6,9 @@ By default the finder selects rows also in tools/fuel_manifest.tsv;
 The landed fuel generator supplies the abstraction, measures and serialization.
 Only the target deletion in the SCC graph changes to a (state, symbol) pair.
 Every candidate is independently replayed by instruction_check, then by Coq.
+--max-pattern raises the default length-four measure cap within the window's
+coverage limits. Cached local deltas and positive-cycle rejection accelerate
+the search without changing the certificates accepted by the checker.
 
   python3 tools/closeouttr/fueltr_batch.py find ROWS OUTPUT --timeout 60
   python3 tools/closeouttr/fueltr_batch.py batch OUTPUT --start 5 --chunk 4
@@ -13,6 +16,7 @@ Every candidate is independently replayed by instruction_check, then by Coq.
 import argparse
 import csv
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import lru_cache
 import json
 import multiprocessing as mp
 import queue
@@ -29,7 +33,66 @@ import gen_fuel_certs as gf
 from cbt import write_batch
 
 
-def instruction_procedure(tbl, n, adj, fseen, qq, cands):
+def nonnegative_cycle(nodes, edges, deltas):
+    """Reject impossible potentials before Bellman-Ford.
+
+    A cycle with nonnegative measure deltas has strictly positive
+    K*delta+1 sum.  Removing every negative-delta source leaves exactly
+    the graph whose cycles provide this inexpensive obstruction.
+    """
+    kept = {v for v in nodes if deltas[v] >= 0}
+    if not kept:
+        return False
+    incoming = dict.fromkeys(kept, 0)
+    outgoing = {v: [] for v in kept}
+    for u, v in edges:
+        if u in kept and v in kept:
+            outgoing[u].append(v)
+            incoming[v] += 1
+    ready = [v for v in kept if incoming[v] == 0]
+    removed = 0
+    while ready:
+        u = ready.pop()
+        removed += 1
+        for v in outgoing[u]:
+            incoming[v] -= 1
+            if incoming[v] == 0:
+                ready.append(v)
+    return removed != len(kept)
+
+
+def component_rank(nodes, edges):
+    """Longest-path ranks on the SCC DAG, computed in one reverse pass."""
+    adjacent = {}
+    for u, v in edges:
+        adjacent.setdefault(u, []).append(v)
+    components = bp.sccs(nodes, lambda v: adjacent.get(v, []))
+    component = {v: i for i, vertices in enumerate(components) for v in vertices}
+    outgoing = [set() for _ in components]
+    incoming = [set() for _ in components]
+    for u, v in edges:
+        a, b = component[u], component[v]
+        if a != b:
+            outgoing[a].add(b)
+            incoming[b].add(a)
+    degree = list(map(len, outgoing))
+    ready = [i for i, count in enumerate(degree) if count == 0]
+    ranks = [0] * len(components)
+    processed = 0
+    while ready:
+        b = ready.pop()
+        processed += 1
+        for a in incoming[b]:
+            ranks[a] = max(ranks[a], ranks[b] + 1)
+            degree[a] -= 1
+            if degree[a] == 0:
+                ready.append(a)
+    if processed != len(components):
+        raise ValueError("SCC condensation unexpectedly contains a cycle")
+    return {v: ranks[component[v]] for v in nodes}
+
+
+def instruction_procedure(tbl, n, adj, fseen, qq, cands, delta=None):
     """Rules (a)/(b) + the per-SCC runner kill (c2) over the refined
     q-avoiding graph.  Returns (comps, gate) or None.  Mirrors
     bulk_prover.procedure with two changes:
@@ -43,6 +106,8 @@ def instruction_procedure(tbl, n, adj, fseen, qq, cands):
       [fw_edge_ok] requires of every component.  Gate SCCs cannot
       merge outside nodes into their component: any such cycle would
       have made those nodes part of the SCC at kill time."""
+    if delta is None:
+        delta = lambda patt, reg, a: bp.pdelta(tbl, n, patt, reg, a)
     nodes = [fa for fa in fseen if fa[0][:2] != qq]
     Kc = len(nodes) + 2
     alive = {}
@@ -66,16 +131,16 @@ def instruction_procedure(tbl, n, adj, fseen, qq, cands):
                   if len(c) > 1 or c[0] in adjmap.get(c[0], [])]
         if not cyclic:
             comps.append(("rank",
-                          gf.scc_rank(nodes, list(alive) + gate_edges)))
+                          component_rank(nodes, list(alive) + gate_edges)))
             return comps, gate
-        comps.append(("rank", gf.scc_rank(nodes, list(alive) + gate_edges)))
+        comps.append(("rank", component_rank(nodes, list(alive) + gate_edges)))
         progress = False
         for c in cyclic:
             cs = set(c)
             intra = [(u, v) for (u, v) in alive if u in cs and v in cs]
             done = False
             for (patt, reg) in cands:
-                ds = {e: bp.pdelta(tbl, n, patt, reg, e[0][0]) for e in intra}
+                ds = {e: delta(patt, reg, e[0][0]) for e in intra}
                 if (all(d <= 0 for d in ds.values())
                         and any(d < 0 for d in ds.values())):
                     comps.append(("meas", patt, reg, 1,
@@ -89,7 +154,10 @@ def instruction_procedure(tbl, n, adj, fseen, qq, cands):
             if done:
                 continue
             for (patt, reg) in cands:
-                W = [(u, v, Kc * bp.pdelta(tbl, n, patt, reg, u[0]) + 1)
+                ds = {u: delta(patt, reg, u[0]) for u in cs}
+                if nonnegative_cycle(cs, intra, ds):
+                    continue
+                W = [(u, v, Kc * ds[u] + 1)
                      for (u, v) in intra]
                 phi = bp.bellman_potentials(list(cs), W)
                 if phi is not None:
@@ -148,7 +216,60 @@ def emit_cert(per_target):
     return "fun target : Instr => match target with\n" + "\n".join(arms) + "\n  end"
 
 
-def find_one(spec, n0, n_extra, warmups):
+def pattern_candidates(n, max_pattern):
+    """Enumerate precisely the window-legal patterns up to the chosen cap."""
+    return ([(p, "A") for p in gf.all_patts(min(n + 1, max_pattern))]
+            + [(p, r) for p in gf.all_patts(min(n, max_pattern))
+               for r in ("L", "R")])
+
+
+def make_pattern_delta(tbl, n):
+    """Share the sparse changes to global pattern counts at the head.
+
+    For length k, only the k windows containing the head can change.
+    Count their old/new bit patterns once per context; all global
+    candidate deltas then become dictionary lookups. The independent
+    certificate replay still uses bulk_prover.pdelta directly.
+    """
+    @lru_cache(maxsize=None)
+    def pattern_code(patt):
+        code = 0
+        for bit in patt:
+            code = (code << 1) | bit
+        return code
+
+    @lru_cache(maxsize=65536)
+    def global_deltas(plen, a):
+        q, sym, left, right = a
+        written = tbl[q, sym][0]
+        if written == sym:
+            return {}
+        before = 0
+        for bit in (*reversed(left[:plen - 1]), sym, *right[:plen - 1]):
+            before = (before << 1) | bit
+        after = before ^ (1 << (plen - 1))
+        mask = (1 << plen) - 1
+        deltas = {}
+        for _ in range(plen):
+            old, new = before & mask, after & mask
+            deltas[old] = deltas.get(old, 0) - 1
+            deltas[new] = deltas.get(new, 0) + 1
+            before >>= 1
+            after >>= 1
+        return deltas
+
+    @lru_cache(maxsize=262144)
+    def sided_delta(patt, reg, a):
+        return bp.pdelta(tbl, n, patt, reg, a)
+
+    def delta(patt, reg, a):
+        if reg == "A":
+            return global_deltas(len(patt), a).get(pattern_code(patt), 0)
+        return sided_delta(patt, reg, a)
+    return delta
+
+
+def find_one(spec, n0, n_extra, warmups, max_pattern=4):
     first_fail = None
     for mirrored in (True, False):
         for n in range(n0, n0 + n_extra + 1):
@@ -166,10 +287,11 @@ def find_one(spec, n0, n_extra, warmups):
                     continue
                 adj = gf.fw_adj(tbl, lset, rset, refined)
                 targets = sorted({a[0][:2] for a in refined} | warmup_fires(tbl, t))
-                cands = gf.exhaustive_cands(n)
+                cands = pattern_candidates(n, max_pattern)
+                delta = make_pattern_delta(tbl, n)
                 per_target = {}
                 for target in targets:
-                    found = instruction_procedure(tbl, n, adj, refined, target, cands)
+                    found = instruction_procedure(tbl, n, adj, refined, target, cands, delta)
                     if found is None or not instruction_check(
                             tbl, n, adj, refined, target, *found):
                         first_fail = first_fail or dict(n=n, t=t, mirrored=mirrored,
@@ -185,9 +307,9 @@ def find_one(spec, n0, n_extra, warmups):
     return dict(spec=spec, status="no certificate", first_fail=first_fail)
 
 
-def work(queue, spec, n0, n_extra, warmups):
+def work(queue, spec, n0, n_extra, warmups, max_pattern=4):
     try:
-        queue.put(find_one(spec, n0, n_extra, warmups))
+        queue.put(find_one(spec, n0, n_extra, warmups, max_pattern))
     except Exception as e:
         queue.put(dict(spec=spec, status="error", error=repr(e)))
 
@@ -200,11 +322,11 @@ def existing_rows():
     return result
 
 
-def run_timed(spec, n0, n_extra, warmups, timeout):
+def run_timed(spec, n0, n_extra, warmups, timeout, max_pattern=4):
     start = time.monotonic()
     ctx = mp.get_context("spawn")
     results = ctx.Queue()
-    proc = ctx.Process(target=work, args=(results, spec, n0, n_extra, warmups))
+    proc = ctx.Process(target=work, args=(results, spec, n0, n_extra, warmups, max_pattern))
     proc.start()
     try:
         result = results.get(timeout=timeout)
@@ -215,7 +337,7 @@ def run_timed(spec, n0, n_extra, warmups, timeout):
     results.close()
     result["seconds"] = round(time.monotonic() - start, 3)
     result.update(probe_n0=n0, probe_n_extra=n_extra, probe_warmups=warmups,
-                  probe_timeout=timeout)
+                  probe_timeout=timeout, probe_max_pattern=max_pattern)
     return result
 
 
@@ -258,6 +380,7 @@ def main():
     find.add_argument("--all", action="store_true")
     find.add_argument("--n0", type=int, default=2)
     find.add_argument("--jobs", type=int, default=1)
+    find.add_argument("--max-pattern", type=int, default=4)
     batch = sub.add_parser("batch")
     batch.add_argument("input")
     batch.add_argument("--start", type=int, default=5)
@@ -285,7 +408,7 @@ def main():
         warmups = list(map(int, args.warmups.split(",")))
         with ThreadPoolExecutor(max_workers=args.jobs) as pool:
             futures = [pool.submit(run_timed, spec, n0, args.n_extra, warmups,
-                                   args.timeout) for spec, n0 in candidates]
+                                   args.timeout, args.max_pattern) for spec, n0 in candidates]
             for future in as_completed(futures):
                 result = future.result()
                 with output.open("a") as f:

@@ -6549,3 +6549,129 @@ The full closeout has **602** rows remaining, and **107 of the requested
 164** remain open. Saved search failures and timeouts are not proofs of the
 remaining rows. The unfinished cube-family integration is excluded from
 this checkpoint.
+
+#### 7.4.AST3 Cube resets, certificate transport, and longer Fuel measures (2026-10-01)
+
+The next checkpoint adds **24 requested rows**, bringing the AST follow-up
+to 75 new rows beyond `CBT_AST_00..03`. There are **578** rows left in the
+full closeout and **83 of the requested 164** still open. Each new batch
+proves `coversTr (row_to_tm r)` and kernel-checks under Coq 8.18; its
+assumption report contains only `functional_extensionality_dep`.
+
+**Six cube-family variants** are boarded in `CBT_AST_60..65`. They have
+prefix `1RB1LA_0RC0RD_1LC0LA_` and final pairs `0LB0RC`, `1LC0RC`,
+`0LA0RC`, `1LB0RC`, `1LD0RC`, and `1LA0RC`. These reuse the saved TriGlue
+family graphs for all machine steps. The new `Counters/TriReachTr.v`
+transfers eventual instruction fires backward through checked leaves and
+closes the resulting family invariant using `ValueLapTr`.
+
+The missing D0 argument is proved in `Counters/CubeRoundTr.v`. In the
+13-family graph for AST60, shift the F10 parameters to `x = a + 2`.
+A nonfiring division sends `(x,b)` to `(x/3,b+2*x/3+1)`. After
+`r = nu_3(x)` divisions, a reset sends `x` to `x+b+r+2` and clears `b`.
+With `b=0` and `r>=2`, group a second reset when `r mod 3 = 2`.
+The total increment is then `r+2` or `r+4`, positive and below `3^r`;
+hence the ternary valuation strictly decreases. The residue-zero case
+fires D0, and valuation one fires after the next division. The generic
+`cube_round_total` theorem proves all natural parameter pairs from six
+abstract predecessor rules. Its proof is closed under the global context.
+The batches combine it with direct witnesses for the other seven
+instructions and backward reachability from every checked family.
+
+**Seven rows reuse landed certificates at new starting configurations.**
+`CBT_AST_51` retains four HY3 graphs and ranking certificates, renames their
+states, and checks new boots at steps 26, 294, 20, and 25. `CBT_AST_70`
+retains three `MetaBlkPfxTr` block-rule certificates with renamed states
+and reflected tapes. Their new boots are steps 794, 788, and 139, with
+counter parameters 19, 19, and 5. No source coverage theorem is assumed to
+apply to a new blank run: the destination machine and its bootstrap are
+rechecked by the original checker. The latter search and emission are
+reproducible with `tools/closeouttr/ast_sp_retarget.py` and the adjacent
+saved mappings and results. The two batches compile in roughly 4.1 and
+0.9 seconds respectively.
+
+**Eleven further Fuel rows** are boarded in `CBT_AST_18..25`. The original
+finder capped pattern-count measures at length four even when the n-gram
+window justified longer patterns. `fueltr_batch.py --max-pattern` now
+exposes that cap. Window five with length-six measures and window six with
+length-seven measures produce new certificates accepted by the unchanged
+`FuelWideTr` checker. Cached local deltas, rejection of a cycle whose
+measure deltas are all nonnegative, and a topological computation of SCC
+ranks reduce search cost. The optimized default finder reproduces AST17's
+certificate exactly. Saved `fueltr_ast*.jsonl` records distinguish actual
+failures from bounded timeouts; neither is a proof of an open row.
+
+Other bounded probes gave no new certificates: allowing both left and
+right fueled runner SCCs at windows three and four; exact capped fuel
+classes at caps two and four; reuse of the two RepWL-conjugate rows; and a
+120-second HY2 probe with top cycles up to length 16 for
+`1RB0RA_0RC0LD_1LD1RA_1LB0LD`. The latter timed out. No generic checker was
+added for these unsuccessful probes. The remaining HY3-conjugate pair
+needs correlated block parameters: pooling them into independent lattices
+produces unreachable branches. That exploration remains separate from the
+checked batches in this checkpoint.
+
+#### 7.4.AST4 Parity words, correlated families, and invariant cube graphs (2026-10-01)
+
+This checkpoint adds **32 requested rows**: twelve Fuel rows, ten parity
+transducers, two correlated-family certificates, and eight further cube
+rows. The AST follow-up now totals **107 new rows**; together with the six
+previous AST rows, **113 of the requested 164** are proved. The full
+closeout has **546** rows left, including **51 from the requested list**.
+All new batch coverage theorems are kernel-checked and use only
+`functional_extensionality_dep`.
+
+**Parity transducers (`CBT_AST_53..55`, ten rows).** The generic
+`ParityTokenTr` and `ParityCTokenTr` anchors have empty left tape, state B0,
+and right word `(10)^k 00w`. Two phases return to that family with `k+1`
+and a total mutual-transducer successor of `w`, in
+`12*k+8+uCost(0w)` steps. `ParityGateTokenTr` handles the related three-phase
+word `(100)^k 00w`: the prefixes evolve through `00w`, `110w`, and `1010w`
+before returning, in `24*k+15+uCost(0w)` steps. Structural recursion proves
+each transducer on arbitrary finite words. For `k>=1`, finite witnesses
+cover all eight instructions in these macro phases. `ValueLapTr` supplies
+recurrence and `CConjugateTr` transports the state-renamed/reflected
+variants. All bootstrap steps are checked exactly; the three generic
+files are axiom-free and compile in under a second each, as do the batches.
+
+**Correlated block families (`CBT_AST_52`, two rows).** The stubborn
+`0RB1LD_1RC1RB_1LA1RA_1LC0LA` and
+`1RB1RA_1LC1RC_0RA1LD_1LB0LC` share 148 families and 159 checked leaves.
+The finder retains the relation between the middle block and both outer
+blocks during a transfer; treating the three lengths as independent
+creates unreachable branches and prevented the earlier closure. The
+result is an ordinary `TriGlueTr` certificate, with period-one affine
+liveness ranks. The two boots are steps 446 and 445. No new trusted checker
+is needed. `tools/closeouttr/ast_cone.py` and `ast_cone.jsonl` preserve the
+finder and certificate data. AST52 compiles in about three seconds.
+
+**Eight further cube rows (`CBT_AST_66..69`, `71..74`).** AST66/67 add the
+`1RA0RC` and `1RD0RC` variants; AST69/71 identify the same cube recurrence
+in two other state graphs. AST68 (`0RC0RC`) needs a reachable-state
+invariant: the unrestricted family graph contains a zero-parameter path
+that avoids D1, although the actual boot never reaches it. The new generic
+`TriReachInvTr` checks preservation of the stated family predicate and
+uses it in the recurrence argument. Each leaf's preservation obligation
+is proved by linear arithmetic.
+
+AST72/73 transfer `(a,b,c)` to `(a-2,b+1,c+1)`. For D0, even exits fire;
+odd exits reset `b=0` and reduce `a+2*b`. For B0, odd exits fire; even exits
+reset `c=0`, after which `a` decreases by `a -> a/2-2` until a firing exit.
+AST74 has a transient `(0111)^d` prefix before the already-proved cube
+component. At fixed `d`, the core parameter contracts to `(a-4)/3` until
+a scan consumes a prefix block; nested induction on `d` and the core
+parameter closes it. These batches compile in roughly 1.8--5.2 seconds.
+All fifteen previously saved closed cube graphs are now covered: the
+fourteen rows in AST60..69 and AST71..74, plus the older AST00 row. The
+remaining `0RA0RC` and `1RB0RC` siblings need a block-list invariant and
+are not included in this count.
+
+**Longer Fuel measures (`CBT_AST_26..29`, `32..35`, twelve rows).** Full
+window-seven/length-eight pattern pools continue to certify rows which
+the original length-four cap missed. The finder now computes the sparse
+set of global pattern-count changes around the head once per context and
+pattern length, then answers each measure query by lookup. It was compared
+against the original delta function on 27,200 legal context/pattern pairs;
+independent replay reproduces existing certificates. The generic Coq
+checker is unchanged. Compile costs, including the slower AST32 and AST33
+batches, are recorded conservatively in `ci_costs.tsv`.
