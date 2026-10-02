@@ -7397,3 +7397,39 @@ and all eight firing witnesses. Soundness reduces to the existing
 `TCyclerTr` theorem; the early-exit firing scan is proved equal to the
 landed scan. The final batch compiles in about nine seconds on an idle
 host, or 27 seconds under concurrent load (35-second CI allowance).
+
+
+#### 7.4.AST10 The fourteen irregular block-list rows (2026-10-01)
+
+A new request covers the fourteen irregular block-list rows excluded from
+BLC3's 234-row input. The first **four** are boarded in `CBT_AST_100`
+(one row), `CBT_AST_105` (two rows), and `CBT_AST_106` (one row), reducing
+the global remainder from 495 to **491**. All four reuse `ListGlueLexTr` unchanged: the BLC5 finder
+learns affine neighbour relations between zero blocks, checks the finite
+family graph, and supplies far-end lexicographic liveness for the rare
+instruction. The certificates have 90, 167, 168, and 178 families. Their
+saved JSON records and replay/emission scripts are in
+`tools/closeouttr/blc5/`. Kernel compilation and `Print Assumptions`
+confirm only `functional_extensionality_dep`; there are no admissions.
+AST100 compiled in about 10 seconds, AST105 in about 26 seconds, and
+AST106 in about 22 seconds under concurrent load (CI allowances 20, 30,
+and 30 seconds).
+
+AST106 fixes an untrusted search objective: `entry_counts` previously
+traded one retained tail entry against 100 window slots, so a graph with
+230 nodes could lose essential entries. The priority now exceeds the
+maximum total window cost (`30 * len(S) + 1`). The resulting constant-slot
+lexicographic D0 ranking passes the unchanged `lgx_check`; no new trusted
+proof rule is needed.
+
+The ten other requested rows remain open at this checkpoint. The
+six period-three rows need a tighter list language than the stock BLC5
+learner, whose exploration exceeds 800 families. Four zero-block rows
+first reach an untrusted finder limitation on upper bounds of
+multivariable tail references; splitting or deferring that bound removes
+the immediate error but still exceeds the family cap. These search results are not coverage proofs.
+
+The batch emitter already formats indices with a minimum of two digits.
+The collector and shard matcher now accept indices of two or more digits
+as well, allowing the AST sequence to continue past 99. The six-shard
+partition check includes the new three-digit batches.
