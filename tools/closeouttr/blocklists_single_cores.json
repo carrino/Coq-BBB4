@@ -1,0 +1,512 @@
+[
+  {
+    "core": "---0LB_1LC1RD_1LA0RD_1RB1RC",
+    "rows": [
+      {
+        "spec": "0RB0LB_1LC1RD_1LA0RD_1RB1RC",
+        "target": "A0",
+        "to_core": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flip": false
+      },
+      {
+        "spec": "1RB0LD_0LC0RC_1RA1LD_1LC1LA",
+        "target": "B0",
+        "to_core": [
+          2,
+          0,
+          1,
+          3
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB0RC_1LC1LD_1RD1LB_1RA0LB",
+        "target": "A0",
+        "to_core": [
+          0,
+          3,
+          1,
+          2
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB1LD_1RC0LD_0LA0RA_1LA1LB",
+        "target": "C0",
+        "to_core": [
+          1,
+          2,
+          0,
+          3
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB1RC_1LC1RA_1LD0RA_0RB0LB",
+        "target": "D0",
+        "to_core": [
+          3,
+          1,
+          2,
+          0
+        ],
+        "flip": false
+      }
+    ]
+  },
+  {
+    "core": "---0LB_1LC1RB_0LD1RD_1LA0RB",
+    "rows": [
+      {
+        "spec": "0RB1LB_1RC0LD_1LA0RD_1RA1LD",
+        "target": "C0",
+        "to_core": [
+          2,
+          3,
+          0,
+          1
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB0LD_0LC1RC_1LA0RD_1LB1RD",
+        "target": "A0",
+        "to_core": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "flip": false
+      },
+      {
+        "spec": "1RB0LD_1LC0RD_0RA1LA_1RC1LD",
+        "target": "B0",
+        "to_core": [
+          3,
+          0,
+          2,
+          1
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB1LA_0RC1LC_1RD0LA_1LB0RA",
+        "target": "D0",
+        "to_core": [
+          1,
+          2,
+          3,
+          0
+        ],
+        "flip": true
+      }
+    ]
+  },
+  {
+    "core": "---1LB_0LC1RC_1LA0RD_1LB1RD",
+    "rows": [
+      {
+        "spec": "0RB1LB_1RC0LD_1LA1RA_1RA1LD",
+        "target": "C0",
+        "to_core": [
+          1,
+          2,
+          0,
+          3
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB0LD_1LC1RC_0RA1LA_1RC1LD",
+        "target": "B0",
+        "to_core": [
+          2,
+          0,
+          1,
+          3
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB1LA_0RC1LC_1RD0LA_1LB1RB",
+        "target": "D0",
+        "to_core": [
+          3,
+          1,
+          2,
+          0
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB1LB_0LC1RC_1LA0RD_1LB1RD",
+        "target": "A0",
+        "to_core": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flip": false
+      }
+    ]
+  },
+  {
+    "core": "0LB1LA_1RC0LA_1RD---_1LB0RB",
+    "rows": [
+      {
+        "spec": "0RB1RA_1LC0RA_1LD0LB_1RB0LB",
+        "target": "C1",
+        "to_core": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB0LB_1LC0RD_1LA0LB_0RB1RD",
+        "target": "C1",
+        "to_core": [
+          3,
+          1,
+          2,
+          0
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB0LD_1RC0RA_1LA0RA_0LA1LD",
+        "target": "B1",
+        "to_core": [
+          1,
+          2,
+          3,
+          0
+        ],
+        "flip": false
+      },
+      {
+        "spec": "1RB0RC_1LC0RC_1RA0LD_0LC1LD",
+        "target": "A1",
+        "to_core": [
+          2,
+          3,
+          1,
+          0
+        ],
+        "flip": false
+      }
+    ]
+  },
+  {
+    "core": "1LB---_1LC0LB_1RD0LA_1RA0RC",
+    "rows": [
+      {
+        "spec": "1RB0LC_1RC0RA_1LD0RB_1LA0LD",
+        "target": "C1",
+        "to_core": [
+          2,
+          3,
+          0,
+          1
+        ],
+        "flip": false
+      },
+      {
+        "spec": "1RB0LD_1RC0RB_1LD0RA_1LA0LC",
+        "target": "A1",
+        "to_core": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB0RA_1LC0RD_1LD0LB_1RA0LC",
+        "target": "D1",
+        "to_core": [
+          1,
+          2,
+          3,
+          0
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB0RD_1LC0RA_1LD0LC_1RA0LB",
+        "target": "B1",
+        "to_core": [
+          3,
+          0,
+          1,
+          2
+        ],
+        "flip": false
+      }
+    ]
+  },
+  {
+    "core": "0LB---_0RC1LA_1LB1RD_1RC0RD",
+    "rows": [
+      {
+        "spec": "0RB0RA_0LC1RA_1RB1LD_1LC0LD",
+        "target": "A1",
+        "to_core": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flip": true
+      },
+      {
+        "spec": "0RB1LD_1LA1RC_1RB0RC_0LA0LD",
+        "target": "D1",
+        "to_core": [
+          1,
+          2,
+          3,
+          0
+        ],
+        "flip": false
+      },
+      {
+        "spec": "1RB1LC_0LA1RD_1LA0LC_0RB0RD",
+        "target": "D1",
+        "to_core": [
+          2,
+          1,
+          3,
+          0
+        ],
+        "flip": true
+      }
+    ]
+  },
+  {
+    "core": "0LB0LC_1RD---_0RB1LD_1LA0RD",
+    "rows": [
+      {
+        "spec": "0RB0RD_1LC0RC_1RA0LC_0LB1RC",
+        "target": "B1",
+        "to_core": [
+          0,
+          1,
+          3,
+          2
+        ],
+        "flip": true
+      },
+      {
+        "spec": "0RB1LC_1RC0LC_1LD0RC_0LB0LA",
+        "target": "B1",
+        "to_core": [
+          2,
+          1,
+          3,
+          0
+        ],
+        "flip": false
+      },
+      {
+        "spec": "1RB0LB_1LC0RB_0LA0LD_0RA1LB",
+        "target": "A1",
+        "to_core": [
+          1,
+          3,
+          0,
+          2
+        ],
+        "flip": false
+      }
+    ]
+  },
+  {
+    "core": "0LB1RC_1LD---_1LA0RC_1RA1LA",
+    "rows": [
+      {
+        "spec": "0RB1LD_1RC1RC_1LA1RA_1RA0LD",
+        "target": "B1",
+        "to_core": [
+          0,
+          1,
+          3,
+          2
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB1LB_0LC1RD_1LA1LA_1LB0RD",
+        "target": "C1",
+        "to_core": [
+          3,
+          0,
+          1,
+          2
+        ],
+        "flip": false
+      },
+      {
+        "spec": "1RB1RB_1LC1RC_0RA1LD_1RC0LD",
+        "target": "A1",
+        "to_core": [
+          1,
+          3,
+          0,
+          2
+        ],
+        "flip": true
+      }
+    ]
+  },
+  {
+    "core": "---1LB_1LA0LC_0LA0RD_1RC1RD",
+    "rows": [
+      {
+        "spec": "1RB0RC_1LB1RA_0RB0LD_1LC1LD",
+        "target": "B0",
+        "to_core": [
+          1,
+          0,
+          2,
+          3
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB1RA_0LC0RA_1RC1LD_1LC0LB",
+        "target": "C0",
+        "to_core": [
+          3,
+          2,
+          0,
+          1
+        ],
+        "flip": false
+      }
+    ]
+  },
+  {
+    "core": "---1LB_1LC1RD_0LA0RD_1RC0RB",
+    "rows": [
+      {
+        "spec": "1RB0RD_0LC0RA_1RC1LD_1LB1RA",
+        "target": "C0",
+        "to_core": [
+          3,
+          2,
+          0,
+          1
+        ],
+        "flip": false
+      },
+      {
+        "spec": "1RB1LD_0RC0LD_1LC1RA_1LB0LA",
+        "target": "C0",
+        "to_core": [
+          1,
+          2,
+          0,
+          3
+        ],
+        "flip": true
+      }
+    ]
+  },
+  {
+    "core": "0LB0LC_1RD1LA_1RB---_1LA0RD",
+    "rows": [
+      {
+        "spec": "1RB0LA_0RC0RD_1LA1RB_1LC1RC",
+        "target": "D1",
+        "to_core": [
+          3,
+          0,
+          1,
+          2
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB1LB_1RC1LD_1LD0RC_0LB0LA",
+        "target": "A1",
+        "to_core": [
+          2,
+          1,
+          3,
+          0
+        ],
+        "flip": false
+      }
+    ]
+  },
+  {
+    "core": "0LB1RB_1RC---_1LD0RA_1RA0LC",
+    "rows": [
+      {
+        "spec": "0RB1LB_1LC1RC_1RD0LA_1LA0RC",
+        "target": "B1",
+        "to_core": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "flip": true
+      },
+      {
+        "spec": "1RB1LB_1LC0RD_1RD0LB_0LA1RA",
+        "target": "A1",
+        "to_core": [
+          1,
+          2,
+          3,
+          0
+        ],
+        "flip": false
+      }
+    ]
+  },
+  {
+    "core": "---0LB_1LC0RD_1LA0LC_1RB1RD",
+    "rows": [
+      {
+        "spec": "1RB0RA_1RC0RD_1LD1LC_1RA0LC",
+        "target": "B0",
+        "to_core": [
+          2,
+          0,
+          3,
+          1
+        ],
+        "flip": true
+      }
+    ]
+  },
+  {
+    "core": "0LB0RC_1LC1LA_1RD---_1RA0RD",
+    "rows": [
+      {
+        "spec": "1RB0RA_0LC0RD_1LD1LB_1RA0LB",
+        "target": "D1",
+        "to_core": [
+          3,
+          0,
+          1,
+          2
+        ],
+        "flip": false
+      }
+    ]
+  }
+]

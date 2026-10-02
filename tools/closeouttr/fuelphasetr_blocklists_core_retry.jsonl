@@ -1,0 +1,4 @@
+{"first_fail": null, "probe_max_pattern": 8, "probe_n0": 7, "probe_n_extra": 0, "probe_timeout": 180, "probe_warmups": [0], "seconds": 3.608, "spec": "1RB0RA_1RC0RD_1LD1LC_1RA0LC", "status": "no certificate"}
+{"probe_max_pattern": 8, "probe_n0": 7, "probe_n_extra": 0, "probe_timeout": 180, "probe_warmups": [0], "seconds": 180.036, "spec": "0RB0LB_1LC1RD_1LA0RD_1RB1RC", "status": "timeout"}
+{"probe_max_pattern": 8, "probe_n0": 7, "probe_n_extra": 0, "probe_timeout": 180, "probe_warmups": [0], "seconds": 180.015, "spec": "1RB0RC_1LB1RA_0RB0LD_1LC1LD", "status": "timeout"}
+{"first_fail": {"contexts": 16731, "mirrored": true, "modulus": 2, "n": 7, "t": 0, "target": [2, 0]}, "probe_max_pattern": 8, "probe_n0": 7, "probe_n_extra": 0, "probe_timeout": 180, "probe_warmups": [0], "seconds": 90.237, "spec": "1RB0RD_0LC0RA_1RC1LD_1LB1RA", "status": "no certificate"}
