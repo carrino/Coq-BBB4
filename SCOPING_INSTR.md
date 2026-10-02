@@ -5293,6 +5293,171 @@ it will certify a row.  The survey's box commands (LIST4 at 1,800 s, rank
 tier window 8 on its 18 time-outs, hy2w on its 7 time-outs; about 2 h in
 all) are in `mp/survey_unlearned.md`.
 
+#### 7.4.BLC6 The multi-cell lists through range voids, local splits and a left language from the turn tapes: 38 boarded (2026-10-01)
+
+Workstream BLC6 (batch tag `BLC6`), over MP's 61 multi-cell / carry-like
+block lists and the survey's LIST4 / LIST2 groups (20 rows):
+`tools/closeouttr/blc6/rows_scope.txt`, 81 rows, all open at the start.
+The counter rows (LE2/LE3/LE4), the Collatz-like rows (TA) and the
+hybrid / cube rows were not touched.  **38 rows boarded**: 37 in the first
+sweep (`CBT_BLC6_00..09`, PR #207) and 1 in the second (`CBT_BLC6_10`).
+Open rows in scope: 81 -> **43**.
+
+**1. The checker: `theories/Counters/ListGlueRngTr.v`** (new; ListGlue2Tr
+and ListGlueLexTr untouched).  ListGlue2Tr with two more nodes in the
+unfold tree, both LOCAL to one unfold path:
+
+* `URng lsd k n u`: on side `lsd` the tail is in state `s` with ref `r`.
+  The node voids every point of the region with `z_k < n` (`rlow`: `r`
+  depends on `z_k` alone and `r < mins s` there).  The rest of the region
+  continues at `u` reparametrised by `z_k := n + z_k` (`shR` on the region,
+  `shs` on the refs and the unfolded items).  This is MP's lever.
+* `USpl k n p kids`: TriGlue's `TSplit` inside the unfold tree (`skid`,
+  `sreg`, `sps`).
+
+The soundness is ListGlue2Tr's `uwalk_ok` with the region and the
+parameters carried along the path.  A concrete anchor with `z_k < n` would
+have a valid tail below its state's bound (`mins_sound` against
+`rlow_ok`); otherwise `z_k - n` is its new parameter (`shs_back`,
+`rv_shR`); at a split, `snew` is (`sps_back`, `skid_ok`, `rv_sreg`, as in
+`twalk_total`).  The statement of `lwalk_leaf` is unchanged, so
+`theories/Counters/ListGlueRngLexTr.v` is ListGlueLexTr verbatim on these
+families.  Both files compile in about 5 s; `Print Assumptions lgr_sound` /
+`lgrx_sound_mirror`: `functional_extensionality_dep` only.
+
+`USpl` was not in the brief; it was needed for the same reason as `URng`.
+lg4 answers every case-split request a path raises (`ge`, `mod`, `umod`:
+a chain needs `x >= n`, a relation needs `x mod a`) by splitting the
+variable in the family's TriGlue tree.  Every OTHER unfold path is then
+re-explored inside each kid, and on the depth-counted states those splits
+nested five deep.
+
+**2. Range voids alone are not enough** (the worked row
+`0RB0LD_1RC1LB_1LA1RA_1LA0LD`, `(001)` ratio 4).  Measured in this order:
+
+| change | families | |
+|---|---:|---|
+| MP's finder (`MP_F=local MP_DEPTH=2`) | 119 at round 50, still growing | baseline |
+| + range voids, depth 2 | 116 at round 50, 646 at round 350 | the same growth |
+| + range voids, depth 4 / 5 | 81 (10 queued) / 79 (2 queued) at round 100 | depth is now cheap, but per-family cost explodes |
+| + local splits | depth 4 grows again (290+); depth 5 stalls in one family | |
+| upper bounds without the eager split (`BLC6_MAXSPLIT=0`) | 800 (cap) in 2 s | the eager split was what kept it bounded |
+
+On a depth-counted state the certified UPPER bound (`lc_maxs`, ~`a^c b_k`)
+made lg4 split a symbolic exponent into one singleton per value below it:
+hundreds of concrete kids, each a long concrete leaf run (one family took
+56 s for 44 leaves).
+
+The decisive measurement was on the REAL run (lg_batch's data pass, with
+the exploration's folds on concrete tapes): **558 left-fold misses in 6,000
+leaves, 2 right ones**, and the family count still growing (224 at 6,000
+leaves).  The passed elements carry left digits `-2` / `-3` at `111111`.
+The learned left automaton knew only `-1` (start) and `0`: learn4 learns it
+from ~85 periodic snapshots deep enough to align, and they never show a
+long carry's digits.  The exploration's off-by-one right misses were the
+echo of this.
+
+**3. The left language from every round's turn tape**
+(`blc6/turns.c`, `blc6/learn6.py`).  `turns.c` runs the machine twice.
+The first pass finds, per round (between two left-anchor entries), the
+last step at which the head is at the round's rightmost cell.  The second
+pass prints each round's anchor and that TURN tape in lsnap's format.  The
+turn tape holds every element the round's carry passed, in its left form.
+learn6 feeds those to learn4's `fit_left2` as the deep samples, with
+`LDROP=0`: the element nearest the head is the one with the `-2` digit, and
+learn4's default drop discarded it.
+
+On the worked row (30M steps, 81 s): 1,038 aligned samples, `lstart`
+`-1, -3`, interior `0, -2`.  The real run then misses **2** folds and has
+155 families at 6,000 leaves.  The exploration with range voids and local
+splits **closes**: 165 families at depth 3, 224 at depth 4, 278 at depth
+5, each in about a second.  The certificate has 153 families and 162
+`URng` nodes; the replica passes and `CBT_BLC6_00` kernel-checks in ~17 s.
+
+One fix in `learn6`: a turn snapshot ends at the head, so learn3's
+`strip_cells` dropped a 0 head cell and with it the head token (0 samples).
+The tape is cut at the head and a `1` cell put right of it.
+
+**4. Yields.**  `find6.py find` (learn6's language, `MP_DEPTH=3`,
+`BLC6_MAXSPLIT=0`, 1,200 s a row, 3 jobs; about 3 h here across a
+container restart; `blc6/runs/sweep1.jsonl`):
+
+| shape (learned unit, ratio) | rows | certify | left |
+|---|---:|---:|---|
+| `(001)`, 4 (MP) | 23 | **16** | 7 too many families |
+| `(011)`, 4 (MP 15 + LIST4 5) | 20 | **12** | 7 too many families, 1 no ranking (`(2,0)`) |
+| `(01)`, 2 (MP) | 9 | **8** | 1 too many families |
+| `1`, 2 (LIST2) | 1 | **1** | |
+| `(01)`, 2 (LIST2) | 8 | 0 | 6 exploration does not settle, 2 too many families |
+| `(0011)`, 3 (MP 2 + LIST4 1) | 3 | 0 | too many families |
+| `(011)`, 2 (MP) | 2 | 0 | too many families |
+| not learned | 15 | 0 | 10 time-out (1,200 s, no learn record), 5 left samples disagree on F states |
+
+The 37 certificates have 119-626 families; the find takes 5-352 s a row
+(learning included).  4 rows need the lexicographic liveness
+(`lgrx_sound`); the rest are additive (`lgr_sound`).  17 are mirrored.
+
+The second pass (`MP_DEPTH=4`, 1,800 s a row, 4 jobs, about 3 h here;
+`blc6/runs/sweep2_d4.jsonl`) over the 44 rows the first left
+(`blc6/rows_fail1.txt`) certifies **1** more, the `(01)` ratio-2 row
+`1RB1LD_0LC0RB_1RA1LA_0LD0LA` (148 families).  Of the other 43: 22 too many
+families, 11 time-outs, 5 left samples that disagree, 4 explorations that
+do not settle, 1 no ranking.  Three of its rows never wrote a record (a
+multiprocessing worker stuck in its `SIGALRM` time-out, as in §7.4.BLC3);
+rerun one process each under a hard kill, all three time out.
+
+| batch | rows | compile (container) |
+|---|---:|---:|
+| `CBT_BLC6_00` | 1 | 17 s |
+| `CBT_BLC6_01` | 4 | 129 s |
+| `CBT_BLC6_02` | 4 | 167 s |
+| `CBT_BLC6_03` | 4 | 149 s |
+| `CBT_BLC6_04` | 4 (2 lex) | 164 s |
+| `CBT_BLC6_05` | 4 | 56 s |
+| `CBT_BLC6_06` | 4 (1 lex) | 99 s |
+| `CBT_BLC6_07` | 3 (1 lex) | 87 s |
+| `CBT_BLC6_08` | 5 | 198 s |
+| `CBT_BLC6_09` | 4 | 78 s |
+| `CBT_BLC6_10` | 1 | 54 s |
+
+01-04 and 06-08 were compiled beside a 3-job sweep.  `ci_costs.tsv` lists
+every batch at about twice the container time; `ci_shard.py --check 6`
+passes and the slowest shard is unchanged (`CBT_BR_02`, 2,764 s).
+`Print Assumptions` on every batch's `cbt_*_covers`:
+`functional_extensionality_dep` only.  CI (`core`, `closeout-changed`) was green on #207's merge commit, which
+carried 00-07, and on #212's head with 10.
+
+**5. Residue (43 rows), and where each group stops.**  The first error of
+sweep 1; pass 2 moved none of them to another group except the row it
+certified.
+
+| rows | what | where it stops | next |
+|---:|---|---|---|
+| 21 | `(001)` / `(011)` ratio 4 (14), `(0011)` (3), `(011)` ratio 2 (2), `(01)` ratio 2 (2) | too many families (800) at depth 3 and at depth 4 | not traced row by row.  8 of MP's 13 late-far-end rows (`mp/farend61.tsv`, last new far end after 5.4M-70M steps) are here; the 3 that settle at 4.5M certify.  The far end itself is read to 300M by asnap, so it is not the obvious cause; the left language (learn6 reads 30M steps of turn tapes) and the right tails' mid-sweep forms are the next suspects.  `blc6/foldmiss_real.py` on one of them first |
+| 6 | LIST2 `(01)` ratio 2 | exploration does not settle (MAXROUNDS) | the survey's "b_0 caught mid-transfer, phase-flipping units" rows: the anchor itself is mid-rewrite |
+| 5 | (not learned) | learn4: left samples disagree on F states (33/1414 to 1097/1132; 2 of them are the 880-950M far-end rows) | with `LDROP=0` the nearest element's digit varies with how far the head has rewritten it; a per-phase left state, or LDROP=0 only on the turn samples whose head is past a separator |
+| 10 | (no learn record) | time-out at 1,200 s, in the learner or the first exploration | learn4's 4M-step snapshot learner and asnap's 300M far-end run on wide tapes; a longer budget on the box |
+| 1 | `1RB1RA_1LC0RA_1LA1LD_1LC0LB`, `(011)` ratio 4 | the exploration closes; no ranking for `(2, 0)` (additive or lexicographic) | the first liveness failure on these rows; not looked at |
+
+**Commands** (resumable: `find` skips rows already in its output, caches
+the learned languages in `$MP_CACHE`, and re-executes itself under
+`PYTHONHASHSEED=0`).
+
+```
+cd tools/closeouttr
+python3 blc6/find6.py find blc6/rows_scope.txt sweep1.jsonl --jobs 12 --timeout 1200        # ~1 h 20 min on the box
+MP_DEPTH=4 python3 blc6/find6.py find blc6/rows_fail1.txt sweep2.jsonl --jobs 12 --timeout 1800
+BLC6_T1=300000000 python3 blc6/find6.py find blc6/rows_fail1.txt sweep3.jsonl --jobs 12 --timeout 3600   # longer turn tapes (untried)
+python3 blc6/find6.py one 0RB0LD_1RC1LB_1LA1RA_1LA0LD                                       # the worked row, ~80 s
+python3 blc6/find6.py batch sweep1.jsonl --tag BLC6 --chunk 4
+BLC6_LANG=l4 MP_DEPTH=0 python3 blc6/find6.py one 1RB0LA_1LC0RD_1LA1RB_1LC1RC              # regression: a BLC4 row through ListGlueRngTr
+python3 blc6/foldmiss_real.py SPEC 100000 6000      # the real run's fold misses (MP_DEPTH, BLC6_LANG as for find6)
+```
+
+Knobs: `BLC6_LANG=l6|mp|l4` (the language), `BLC6_T1` (turn-tape run,
+default 30M), `MP_DEPTH`, `BLC6_RNG`, `BLC6_LOCAL`, `BLC6_MAXSPLIT`
+(each 0/1), `LG4_LDROP`.
+
 #### 7.4.LE The counters the ladder emitter could not close: five closure gaps, a visit phase per instruction, 181 boarded (2026-09-30)
 
 Workstream LE (batch tag `LE`), over the counters still open at the start:
@@ -6373,6 +6538,170 @@ python3 tools/closeouttr/le5/residue.py
 
 Nothing here needed the owner's box.  The slowest step is `phrun2.py` over
 all 337 rows (~1.5 h at 4 jobs; ~30 min at 12).
+
+#### 7.4.LE6 LE5's residue: a survey by growth rate; most of the Fibonacci rows count DOWN; conjugate transport; 130 boarded (2026-10-02)
+
+Workstream LE6 (batch tag `LE6`), over LE5's residue: the rows of
+`le5/residue.tsv` still in `closeouttr_remaining.txt`, **322 rows**
+(`le6/rows.txt`: 296 with no LE reading, 26 read with an arm missing).
+Branched from `main` with `claude/instruction-beeping-proof-scope-ww7zdk`
+(`818a73a8`, LE5 and the AST checkers) merged.  None of the 322 is on the
+AST list (`ta/rows.txt`), the block lists (`blc4/rows216.txt`) or BLC6's
+scope.  The instruction-target Fuel finder (`fueltr_batch.py find --all`)
+was left to the orchestrator.
+
+**1. Conjugates first: 22 of the 322 are renamed / mirrored copies of
+boarded rows, 15 transport.**  `le6/conj_check.py` puts every row in a
+canonical form over the 24 state permutations and the mirror.  The 322
+targets fall into ~155 classes (96 of them with 2-4 members), and 22 rows
+are conjugates of rows already boarded.  A conjugate starts in another
+state, so its run from blank differs at first; `le6/conj_find.py` runs both
+machines and finds boots `m` (source) and `n0` (target) where the target's
+configuration is the conjugate of the source's.  From there the runs are
+in lockstep.  The new `theories/Counters/CConjCoverTr.v` (Astra's
+`CConjugateTr` transports one value-lap family; this transports a whole
+proof):
+
+* `cconj_cover_run`: with `n0 <= m`, `coversTr src -> coversTr dst`,
+  however the source was proved (never-QH or a bounded quasihalt).  A
+  completion of `dst` is the conjugate of a completion of `src`, and a quiet
+  instruction of it last fires either in its boot (`< n0 <= 2^20 <=
+  B_close`) or `m - n0` steps before its preimage's last fire;
+* `cconj_nqh_run`: any offset, `NeverQuasiHaltsTr src ->
+  NeverQuasiHaltsTr dst`, given a finite check (`boot_ok`) that every
+  instruction `dst` fires in its boot fires again after it.
+
+10 rows by the first (`CBT_LE6_00`), 5 by the second from the source
+machines' `nqhtr_` lemmas (`CBT_LE6_01`; the boots are 1-4 steps late), 1
+later conjugate of an LE6 board (`CBT_LE6_08`).  The other 7 conjugates
+(of CE2 rows) never come into lockstep in 20,000 steps: different orbits.
+
+**2. The survey.**  For each row `le6/rec.c` (100M steps) logs every
+extent record and the tape at the last ones; `le6/events.py` groups the
+records into growth events (records within 1% of each other's time) and
+takes the time ratio between consecutive events and the cells per event;
+`le6/survey_table.py` groups the rows (`le6/survey2.jsonl`):
+
+| group | rows | boarded, by route | open |
+|---|---:|---|---:|
+| F: Fibonacci growth (phi per cell / phi^2 per 2 cells) | 138 | Zeck2 (increment) 20, ZeckD (countdown) 70, ZeckDw (wider bottom) 24, conjugate 1 | 23 |
+| B2: binary growth, both ends | 70 | - | 70 |
+| I: irregular event ratios (a second level: the ratio cycles with an outer count) | 49 | - | 49 |
+| B2: binary growth, one end | 25 | - | 25 |
+| C: conjugate of a boarded row (boarded before the survey) | 15 | conjugate 15 | 0 |
+| B3: base 3 / 4 growth (or 2 and 4 at the two ends) | 13 | - | 13 |
+| R: other constant ratio (1.50) | 8 | - | 8 |
+| R: other constant ratio (2.12) | 2 | - | 2 |
+| R: other constant ratio (2.13) | 2 | - | 2 |
+
+(Group C: the conjugates boarded before the survey ran.)  Every group is a
+counter (no extent grows faster than ~t^0.1).  The Fibonacci group is the
+whole yield of this section; the others are read below.
+
+**3. The Fibonacci group is Zeckendorf counters, three quarters of them
+counting DOWN.**
+
+* 20 are LE4's two-cell Zeckendorf increment (`zc`: `10 -> 11`): LE4 had
+  run `zeck2_detect.py` on LE2's five rows only.  All 20 board
+  (`CBT_LE6_02`, `LadderCheckZeck2Tr` unchanged).
+* The rest, read by hand: after the anchor the tape is a string with NO
+  TWO ADJACENT ZEROS, e.g. `0RB0LA_1RC0LC_1LD0RC_1LA1RC` at width 6 runs
+  through the 13 strings `010101, 110101, 101101, ..., 111111` and widens.
+  Its complement is a Zeckendorf string (LSB at the head) counting DOWN,
+  12 to 0, then the largest string one digit wider.  LE4's lone
+  "decrementing zinc" row is one of 75 such rows.  `le6/zeckw_detect.py`
+  reads Zeckendorf strings over two token WORDS (`0 -> A`, `10 -> B`, A and
+  B of 1-4 cells: LE3's code is `0`/`10`, LE4's `0`/`11`, these mostly
+  `1`/`01`), up or down, following the predicted value and skipping up to 8
+  other visits at the anchor key (the key also catches the head passing).
+
+New generic checkers (new files; `Print Assumptions` on both closers of
+each and on every batch: `functional_extensionality_dep` only):
+
+* `theories/Checkers/LadderCheckZeckDTr.v`: the countdown over TOKEN LISTS
+  (`false` = `0`, `true` = `10`; every token list is a Zeckendorf string),
+  cells `pre ++ flat_map (A|B) tau ++ T`.  One step is
+  `false^i true rho -> alt i ++ false rho` (`alt (2k) = false true^k`,
+  `alt (2k+1) = true^(k+1)`) and at zero `false^m -> alt m`.  With
+  `i = u + 2k` every class is one side over the words `AA` / `B`
+  (interior `PL u (AA)^k B X -> PR u B^k A X` with `X` opaque, end, bottom
+  `PL u (AA)^k T -> PR u B^k T`).  Liveness needs no Fibonacci arithmetic:
+  the BINARY value of the digit string falls at every non-bottom step (the
+  lowest one becomes a zero and the digits below it are worth less), so
+  bottoms recur; the fires are read from the bottom arms.
+* `theories/Checkers/LadderCheckZeckDwTr.v`: the same with a bottom that
+  widens by `dw + 1` digits, `false^m -> alt (m + dw)` (the rows whose tape
+  grows two cells per factor phi^2); it imports everything else.
+
+Emitter `le6/emit_zeckd.py` (LE4's `emit_zeck2.py` with the classes
+changed; emit_step's arm search), driver `le6/batch.py` (LE3's
+`step_batch.py`, boards emitted and compiled in parallel).
+
+| batch | rows | how |
+|---|---:|---|
+| `CBT_LE6_03`, `_04` | 40 + 25 | `LadderCheckZeckDTr`, countdown over `1`/`01` (most), `1`/`00` |
+| `CBT_LE6_05`, `_06` | 21 + 3 | `LadderCheckZeckDwTr`, the bottom widens by two digits |
+| `CBT_LE6_07` | 5 | `LadderCheckZeckDTr`: rows whose top digit is always 0, read with that digit in the terminator |
+
+**Yields** (130 rows; closeout 599 -> **469**):
+
+| batch | rows | route | compile (container, `-j4`, incl. boards) |
+|---|---:|---|---:|
+| `CBT_LE6_00` | 10 | conjugates, `cconj_cover_run` | 10 s (the checker 47 s) |
+| `CBT_LE6_01` | 5 | conjugates, `cconj_nqh_run` | 47 s |
+| `CBT_LE6_02` | 20 | `LadderCheckZeck2Tr` (`zeck2_detect.py` over the survey) | 67 s |
+| `CBT_LE6_03` | 40 | `LadderCheckZeckDTr` | 61 s (the checker 44 s) |
+| `CBT_LE6_04` | 25 | `LadderCheckZeckDTr` | 22 s |
+| `CBT_LE6_05` | 21 | `LadderCheckZeckDwTr` | 45 s (the checker 39 s) |
+| `CBT_LE6_06` | 3 | `LadderCheckZeckDwTr` | 41 s |
+| `CBT_LE6_07` | 5 | `LadderCheckZeckDTr` | 46 s |
+| `CBT_LE6_08` | 1 | conjugate of a `CBT_LE6_06` row | 38 s |
+
+A board compiles in 1-2 s.  `ci_costs.tsv` carries every batch (30-300 s,
+the runner being about twice as slow); `ci_shard.py --plan 6` keeps the
+slowest shard at `CBT_BR_02`'s.
+
+**4. Where the rest stop** (192 of the 322; by survey group and LE4/LE5's
+last reading, `le5/residue.tsv`):
+
+| group | open | LE4 / LE5 reading | what it is (read by hand) |
+|---|---:|---|---|
+| B2: binary, both ends / one end | 70 / 25 | 46 LE4 positional ("the fill counts"), 43 none, 6 marker runs | mostly LE4's MARKER RUN COUNTED DOWN: `0RB1LA_1LC1RD_0RA1LD_1RB0LA` is `[A0] x 0 (11)^m`, `x` over `11` / `10` counting down; at `x = 0` it narrows by a word and the run grows (`x` empty after `m` narrowings); the refill is `([], m) -> x = 1^m 0` with the top digit's `0` in the blank beyond the tape.  With the words swapped that is LE4's increment, and LE5's `phrun2.py` tries both orders, but its beam misparses the marker; `le6/run2_relax.py` (LE4's reader with a 10% parse floor and a 1.5M-step window) reads it, and LE4's refill law `0^(m+a)` is off by that top digit.  Others (`0RB0LA_1LC1RD_0RD0LC_1RB1LA`) are LE5's "tails that grow" |
+| I: irregular event ratios | 49 | 20 none, 20 positional, 9 marker runs | the per-event time ratio cycles (`1.01, 1.08, 1.01, 1.08`): a second level whose period is an outer count; not read |
+| F: Fibonacci, still open | 23 | none | two-level Zeckendorf: `0RB0LC_1LC1RD_0RD1LC_1RB1LA` is a Zeckendorf INCREMENT over `1` / `01` beside a run of `1`s that shortens at each top (LE3's terminator run, in Zeckendorf); three rows grow phi at one end and 2 (three cells) at the other |
+| B3: base 3 | 13 | 9 none, 4 marker runs | ratio 3 per two cells, records `0 1^k C0`: base-3 counters not read |
+| R: ratio 3/2, 2.12 | 12 | 8 none, 4 marker runs | 3/2 per two cells (`0RB0LA_1LC0RD_1LA1LB_1RC1RD`); 2.12 is LE5's growing-tail row |
+
+The common thread of what is left: COUNTDOWNS (every LE2-LE5 reader follows
+`x + 1` only, and a countdown is read as an increment only when the
+complemented words also make the narrowing and the refill laws come out
+right), and second levels (a run or tail that counts the widths).  The
+next steps: (a) a refill law `([], m) -> (0^m 1, 0)` for `LadderCheckRun2Tr`
+(or the Run3 reading with the top digit over `10` / `11`), which with
+`le6/run2_relax.py` reads the B2 countdowns; (b) LadderCheckZeckDTr /
+Zeck2's classes beside LE3's terminator run (the F residue); (c) the conjugate
+pass again after every new board (`conj_find.py` is seconds).
+
+```
+# what is still running / left to run (resumable; the owner's 14-core box)
+python3 tools/closeouttr/le6/run2_relax.py le6/rows_open.txt le6/run2r.jsonl --jobs 12 --steps 600000   # ~25 s a row
+python3 tools/closeouttr/le4/run2_batch.py le6/run2r.jsonl --tag LE6 --jobs 12
+python3 tools/closeouttr/le6/conj_find.py le6/rows_open.txt le6/conj.jsonl && python3 tools/closeouttr/le6/conj_batch.py le6/conj.jsonl --tag LE6
+```
+
+```
+# the container loop (what this section ran; all resumable)
+python3 tools/closeouttr/le6/conj_find.py ROWS le6/conj.jsonl --steps 20000          # seconds
+python3 tools/closeouttr/le6/conj_batch.py le6/conj.jsonl --tag LE6
+python3 tools/closeouttr/le6/survey.py ROWS le6/survey.jsonl --jobs 4                # ~1 min
+python3 tools/closeouttr/le6/events.py le6/survey.jsonl le6/survey2.jsonl            # ~1 min
+python3 tools/closeouttr/le6/survey_table.py --md
+python3 tools/closeouttr/le4/zeck2_detect.py ROWS le6/zeck2.jsonl --jobs 4           # ~1 min
+python3 tools/closeouttr/le4/batch.py le6/zeck2_ok.jsonl --kind zeck2 --tag LE6
+python3 tools/closeouttr/le6/zeckw_detect.py ROWS le6/zeckw2.jsonl --jobs 4          # ~3 min / 200 rows
+python3 tools/closeouttr/le6/batch.py CERTS.jsonl --kind zeckd --tag LE6 --jobs 4    # ~10 min / 70 rows
+tools/closeouttr/le/board_chunk.sh CBT_LE6_NN
+```
 
 ## 8. What we deliberately do NOT redo
 
