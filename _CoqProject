@@ -2863,6 +2863,11 @@ theories/Machines/LadderTr/LDRZD_1RB1RD_0LC0RD_1LA1LC_0LC1RB.v
 theories/Machines/LadderTr/LDRZD_0RB0LC_1LC____0RD0LA_1RB1RD.v
 theories/Machines/LadderTr/LDRZD_0RB0LD_1RC1RB_1LA____0RC0LA.v
 theories/Machines/LadderTr/LDRZD_1RB____0LC0RD_1LA1LC_0LA0RB.v
+theories/Machines/LadderTr/LDRZD_0RB0LD_1RC1RB_0LC1LD_0RB1LA.v
+theories/Machines/LadderTr/LDRZD_0RB1LD_1RC1RB_0LC1LA_0RB0LA.v
+theories/Machines/LadderTr/LDRZD_0RB1LD_1RC1RB_0LC1LA_0RC0LA.v
+theories/Machines/LadderTr/LDRZD_1RB1RA_0LB1LC_0RA1LD_0RA0LC.v
+theories/Machines/LadderTr/LDRZD_1RB1RA_0LB1LC_0RA1LD_0RB0LC.v
 theories/Checkers/LadderCheckZeckDwTr.v
 theories/Machines/LadderTr/LDRZD_0RB0LA_1RC0LC_1LD0RC_1LA0LA.v
 theories/Machines/LadderTr/LDRZD_0RB0LA_1RC0LC_1LD0RC_1LA1RC.v
@@ -12059,6 +12064,7 @@ theories/CloseoutTr/CBT_LE6_03.v
 theories/CloseoutTr/CBT_LE6_04.v
 theories/CloseoutTr/CBT_LE6_05.v
 theories/CloseoutTr/CBT_LE6_06.v
+theories/CloseoutTr/CBT_LE6_07.v
 theories/CloseoutTr/CBT_LEFQ_00.v
 theories/CloseoutTr/CBT_LEF_00.v
 theories/CloseoutTr/CBT_LEF_01.v
