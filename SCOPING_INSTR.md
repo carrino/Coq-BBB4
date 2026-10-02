@@ -7035,6 +7035,43 @@ overflow is setup, count, middle, count, exit.  Carries were tested first:
 
 Boarded so far by LE8: **21** (14 ZeckU, 7 nested counters).
 
+#### 7.4.LE9 LE7's residue and three unsurveyed rows: the tanks are phased (2026-10-02)
+
+Workstream LE9 (batch tag `LE9`), over 32 rows: LE7's 27 open rows
+(`le7/residue.tsv`), three counters no survey had looked at
+(`1RB0LC_1LA1RD_1LA1LC_0RC0LD`, `1RB0LC_1RC1RD_1LA1LC_0RC0LD`,
+`1RB1RD_1LC1LB_1RA0LB_0RB0LD`) and two more of the four rows whose
+FuelWideTr certificate needs ~11 GB.  Branched from
+`claude/instruction-beeping-proof-scope-ww7zdk` at 124 open; the sibling
+session LE10 has the other counter rows, Astra (`AST`) the block lists.
+
+**1. LE7's six tanks are one counter with PHASES.**  LE7 read
+`1RB0LC_0LA1RC_1RD1LA_1RB0RD` as `(1011|1111)^k (0111)^m` with one refill,
+and the refill law it fitted (`z = 0^9 1`, `m = k - 9`) was a one-sample
+fit: no refill arm exists because no such refill happens.  Read at `B0`
+with the counter on the left, the tape between two refills passes through
+three far-end suffixes: with the tank empty and `x` at its top the machine
+does not refill, it rewrites `x` to zeros and appends a cell (`[] -> [1] ->
+[1;1]`), and only the third top refills the tank (`x = [1]`, `m = k`).  The
+other three tanks are a second shape, `(1110|1111)^k (1101)^m` with suffixes
+`[1;1]` (tank), `[1;1;1]` (fill to `0^k 1`, one digit wider) and `[]` (fill
+to an EMPTY counter and a full tank: the next widening starts from `x = []`):
+
+    (x, m, p)          -> (x + 1, m, p)               x not all-top
+    (top^k, m + 1, p)  -> (0^k 1, m, p)               the widening eats a tank word
+    (top^k, 0, p)      -> fill_p(k), phase p + 1      kz: (0^k ++ z_p, a_p), else (z_p, k + a_p)
+
+Every arm of all six is a plain chain at stride 1 (the two-pass refill LE7
+could not find is `SCycL; SWinL; SCycR`, once the target is right).  The
+checker is `LadderCheckTankPhTr` (`LadderCheckTankTr` with a phase index:
+per-phase suffix and fill, the widening from every width including the
+empty counter, the fires read off the fill arms of one phase per
+instruction, the phases cycling; `Print Assumptions`:
+`functional_extensionality_dep`); models `le9/tankph_models.jsonl`, arm
+check `le9/tankph_arms.py`, emitter `le9/emit_tankph.py`, batch
+`le9/le9_batch.py --kind tankph`.  **6 boarded** (`CBT_LE9_00`), each board
+~1.1 s and ~460 MB alone.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
