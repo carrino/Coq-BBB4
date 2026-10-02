@@ -1,0 +1,79 @@
+{"spec": "0RB1LA_0LC1RD_0RD1LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LA_1LC1RD_0RB1LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LA_1LC1RD_1LA1LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LA_1LC1RD_1RA1LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LA_1LC1RD_1RD1LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LA_1LC1RD_1RB0LD_1RB0LA", "anchor": null}
+{"spec": "0RB1LA_1RC0LA_1LD1RB_---1LB", "anchor": null}
+{"spec": "0RB1LB_1RC0LD_0LA1RB_0RC1LD", "anchor": null}
+{"spec": "0RB1LB_1RC0LD_1LA1RB_0RB1LD", "anchor": null}
+{"spec": "0RB1LC_0RC1LB_1RD0LB_1LA1RC", "anchor": null}
+{"spec": "0RB1LC_1LA1RC_1RB0LD_0RB1LD", "anchor": null}
+{"spec": "0RB1LC_1LA1RC_1RB0LD_0RC1LD", "anchor": null}
+{"spec": "0RB1LD_1LC1RB_1RA1LA_1LB0LC", "anchor": null}
+{"spec": "0RB1RB_1LC0RD_1RA1LB_0LB1RD", "anchor": null}
+{"spec": "0RB1RC_0LC1RB_1LD0RB_1RA1LC", "anchor": null}
+{"spec": "1RB0LA_0RC1RB_0LD0RB_1LD0LA", "anchor": [0, 0], "L": {"pre": "", "l": 2, "words": ["00", "01"], "suf": ""}, "R": {"pre": "0", "l": 2, "words": ["00", "01"], "suf": ""}, "parsed": 3751, "total": 15000, "lawful": [3750, 2], "wmax": 13}
+{"spec": "1RB0LA_1LC0RB_1RD1LA_1LA1RC", "anchor": [3, 1], "L": {"pre": "101", "l": 2, "words": ["00", "01"], "suf": ""}, "R": {"pre": "00", "l": 2, "words": ["00", "01"], "suf": ""}, "parsed": 3125, "total": 12496, "lawful": [3124, 2], "wmax": 13}
+{"spec": "1RB0LA_1LC0RB_1RD1LA_1LD1RC", "anchor": [0, 1], "L": {"pre": "11", "l": 2, "words": ["00", "01"], "suf": ""}, "R": {"pre": "", "l": 2, "words": ["00", "10"], "suf": ""}, "parsed": 3333, "total": 20000, "lawful": [3332, 2], "wmax": 13}
+{"spec": "1RB0LA_1LC0RB_1RD1LD_1LA1RC", "anchor": [0, 0], "L": {"pre": "", "l": 3, "words": ["000", "010"], "suf": ""}, "R": {"pre": "00", "l": 2, "words": ["00", "01"], "suf": ""}, "parsed": 5359, "total": 16070, "lawful": [5358, 2], "wmax": 13}
+{"spec": "1RB0LA_1LC1RD_1LA1LB_1LA0RD", "anchor": null}
+{"spec": "1RB0LA_1LC1RD_1LD1LB_1LA0RD", "anchor": null}
+{"spec": "1RB0LA_1LC1RD_1RC1LB_1LA0RD", "anchor": [0, 0], "L": {"pre": "0", "l": 2, "words": ["00", "10"], "suf": ""}, "R": {"pre": "0", "l": 2, "words": ["00", "01"], "suf": ""}, "parsed": 5771, "total": 17309, "lawful": [5770, 2], "wmax": 13}
+{"spec": "1RB0LA_1LC1RD_1RD1LB_1LA0RD", "anchor": [0, 0], "L": {"pre": "0", "l": 2, "words": ["00", "10"], "suf": ""}, "R": {"pre": "0", "l": 2, "words": ["00", "01"], "suf": ""}, "parsed": 6251, "total": 18750, "lawful": [6250, 2], "wmax": 14}
+{"spec": "1RB0LC_0LA1RC_1RD1LA_1RB0RD", "anchor": null}
+{"spec": "1RB0LD_0LC1RA_0RA1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_0LC1RA_0RC1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_1LC1RA_---1LA_0RA1LD", "anchor": null}
+{"spec": "1RB0LD_1LC1RA_0RB1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_1LC1RA_1LD1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_1LC1RA_1RA1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_1LC1RA_1RD1LA_0RB1LD", "anchor": null}
+{"spec": "1RB0LD_1RC0RC_0LA0RA_1RA1LA", "anchor": null}
+{"spec": "1RB0RA_0LC1RD_1RB0LD_1RA1LC", "anchor": null}
+{"spec": "1RB0RA_1LC1RA_1LD0LC_1LA1LD", "anchor": [0, 0], "L": {"pre": "0", "l": 2, "words": ["00", "11"], "suf": ""}, "R": {"pre": "", "l": 2, "words": ["00", "10"], "suf": ""}, "parsed": 6668, "total": 20000, "lawful": [6667, 2], "wmax": 14}
+{"spec": "1RB0RA_1LC1RA_1LD0LC_1RA1LB", "anchor": [0, 0], "L": {"pre": "", "l": 3, "words": ["000", "010"], "suf": ""}, "R": {"pre": "", "l": 2, "words": ["00", "10"], "suf": ""}, "parsed": 9376, "total": 18750, "lawful": [9375, 2], "wmax": 14}
+{"spec": "1RB0RA_1LC1RA_1LD0LC_1RD1LB", "anchor": [0, 0], "L": {"pre": "", "l": 3, "words": ["000", "010"], "suf": ""}, "R": {"pre": "", "l": 2, "words": ["00", "10"], "suf": ""}, "parsed": 8334, "total": 16666, "lawful": [8333, 2], "wmax": 14}
+{"spec": "1RB0RA_1RC1RB_1LD0LC_1RA1LC", "anchor": [0, 0], "L": {"pre": "", "l": 2, "words": ["00", "01"], "suf": ""}, "R": {"pre": "", "l": 2, "words": ["00", "11"], "suf": ""}, "parsed": 9378, "total": 9378, "lawful": [9377, 2], "wmax": 14}
+{"spec": "1RB0RB_0LC0RC_1RA0LD_1RC1LC", "anchor": null}
+{"spec": "1RB0RB_1LC1RA_0LD0LC_1RD0RB", "anchor": null}
+{"spec": "1RB0RB_1LC1LD_0LC1RA_0LD0RA", "anchor": null}
+{"spec": "1RB0RC_1RC1LB_1LD1RD_0LB1RA", "anchor": null}
+{"spec": "1RB0RD_1LB1LC_1RC0RA_0LB1RD", "anchor": null}
+{"spec": "1RB0RD_1LC1RA_0RB0LC_1LD0LA", "anchor": null}
+{"spec": "1RB1LA_1LC1RC_0LA1RD_1RA0RB", "anchor": null}
+{"spec": "1RB1LB_1RC0LA_1RD0RD_0LB0RB", "anchor": null}
+{"spec": "1RB1LB_1RC0LD_1LA1RB_0RB1LD", "anchor": null}
+{"spec": "1RB1LB_1RC0LD_1LA1RB_0RC1LD", "anchor": null}
+{"spec": "1RB1LC_0LA1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_0LB1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_0LC0RB_1LD1LA_1RA1RD", "anchor": null}
+{"spec": "1RB1LC_0LC1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_0RC1LB_1RD0LB_1LA1RC", "anchor": null}
+{"spec": "1RB1LC_0RC1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_1LA0RC_1LA0RD_0LA1RD", "anchor": null}
+{"spec": "1RB1LC_1LA0RD_0LB0LC_1RB1RD", "anchor": null}
+{"spec": "1RB1LC_1LA1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_1LA1RC_1RB0LD_0RC1LD", "anchor": null}
+{"spec": "1RB1LC_1LB1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_1LC1RC_1LA0RD_0LA1RD", "anchor": null}
+{"spec": "1RB1LC_1LC1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LC_1RC1RC_1LA0RD_0LC1RD", "anchor": null}
+{"spec": "1RB1LD_0LC1RD_0LD1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1LD_0RC1LB_1LA1RD_1RC0LB", "anchor": null}
+{"spec": "1RB1LD_0RC1RD_0LD1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1LD_1LC1RD_0LA1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1LD_1LC1RD_0LD1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1LD_1RC0RB_0LD1RA_1RC0LA", "anchor": null}
+{"spec": "1RB1LD_1RC0RB_1RD1RC_1LA0LD", "anchor": null}
+{"spec": "1RB1LD_1RC1RD_0LA1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1LD_1RC1RD_0LD1RC_1LA0RC", "anchor": null}
+{"spec": "1RB1RA_1LC0LB_1RD1LB_1RA0RD", "anchor": null}
+{"spec": "1RB1RA_1LC0RA_1RB1LD_0LB0LD", "anchor": null}
+{"spec": "1RB1RA_1RC1LD_0LB0RC_1LA1LB", "anchor": null}
+{"spec": "1RB1RA_1RC1LD_0LD0RC_1LA1LB", "anchor": null}
+{"spec": "1RB1RB_1LC0RD_1RA1LB_0LB1RD", "anchor": null}
+{"spec": "1RB1RC_0LC1RB_1LD0RB_1RA1LC", "anchor": null}
+{"spec": "1RB1RC_0RC1RB_0LD0RB_1LD0LA", "anchor": [0, 0], "L": {"pre": "", "l": 2, "words": ["00", "01"], "suf": ""}, "R": {"pre": "00", "l": 2, "words": ["00", "10"], "suf": ""}, "parsed": 3126, "total": 12499, "lawful": [3125, 2], "wmax": 13}
+{"spec": "1RB1RC_1LA1LD_0RC0RB_0LD0LA", "anchor": null}
+{"spec": "1RB1RD_0LC1RB_1RA1LD_1LC0RB", "anchor": null}

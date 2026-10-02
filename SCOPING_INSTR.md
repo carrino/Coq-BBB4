@@ -6746,6 +6746,157 @@ python3 tools/closeouttr/le6/batch.py CERTS.jsonl --kind zeckd --tag LE6 --jobs 
 tools/closeouttr/le/board_chunk.sh CBT_LE6_NN
 ```
 
+#### 7.4.LE7 LE6's binary-rate counters: mostly ONE counter read at the wrong anchor; a mirrored counter, a phase run whose last top word is the run word, a tank; 52 boarded (2026-10-02)
+
+Workstream LE7 (batch tag `LE7`), over 79 of LE6's residue rows whose
+per-round growth ratio is 2 or sqrt 2 (`le7/rows.txt`): mostly LE6's
+"binary countdowns whose refill is itself a count" plus some "irregular
+second levels".  Branched from `claude/instruction-beeping-proof-scope-ww7zdk`
+(267 open); the sibling session LE8 had the other half of the counter
+residue.  Per row `le7/residue.tsv`.
+
+**1. The working hypothesis was mostly wrong.**  The guess was a countdown
+whose refill writes the next value of a second binary counter (two levels;
+the sqrt 2 rows the same seen on alternate rounds).  Read on the survey and
+by hand, the 79 split as:
+
+| real shape | rows | boarded | route |
+|---|---:|---:|---|
+| a marker run (LE4's `Run2` law, plain refill) read at the WRONG anchor | 39 | 39 | `LadderCheckRun2zTr` (no new Coq), 33 direct + 6 conjugates |
+| mirrored binary counter: one counter held on BOTH sides of the head (the sqrt 2 rows) | 13 | 8 | new `LadderCheckMirrorTr` |
+| a top word that steps through a few values, the last of them the run word (the real "refill is a whole count") | 4 | 4 | new `LadderCheckPhRun1Tr`, 2 direct + 2 conjugates |
+| a counter that widens INTO a tank (the run shrinks; an empty tank refills) | 7 | 1 | new `LadderCheckTankTr`; 6 have no strided refill arm |
+| positional, a 1-cell low digit under 3-cell digits, widening by two digits | 3 | 0 | not stated |
+| one side base 3 / irregular alternating ratios (a real second count on the far side) / a single 1 walking right / LE5's growing tail / unread | 13 | 0 | not read |
+
+So the refill really is a whole second count in only 5 of the 79 (the
+phase-run rows and `0RB1LD_1LC1RB_1RA1LA_1LB0LC`; measured: the steps from an
+empty `x` to the next anchor visit double with `m`).  In 41 the "refill" is
+3-6 steps; LE4's and LE6's readers rank anchors by lawful steps and took a
+busier anchor whose visits mix two phases.
+
+**2. The marker runs: every anchor, and a plain refill restated.**
+`le7/run2_all.py` is LE6's relaxed reader keeping EVERY lawful candidate
+(anchor, words, marker, run; a blank marker beyond the tape is added as a
+candidate), and `le7/fastsim.py` cuts its simulation 4-8x.  The batch
+(`le7/cand_batch.py --kind run2z0`, the first of up to 4 candidates that
+boards) emits through `le7/emit_run2z0.py`: LE6's `emit_run2z.py` with a
+plain refill `0^(m+a)` restated as `0^(m+a-1) ++ [0]`.  The cells are the
+same, but `z = [0]` is nonempty, so `LadderCheckRun2zTr`'s `nar_cofinalZ`
+applies and an instruction may be fired from the NARROWING anchors.  On
+`0RB1LA_1LC1RD_1LA1LD_1RB0LA` (`[A0] x 0 (11)^m`, x over `11`/`10`, refill
+`A0 0 (11)^m -> A0 11 (11)^m`, 3 steps) the refill fires only `A0 B0 C0`, and
+LE4's emitter reads fires from the refill only.  33 board directly
+(`CBT_LE7_02`, `_05..07`; one with `z = [1]`).
+
+**3. The mirrored counter: `LadderCheckMirrorTr`.**  `1RB0RA_1LC1RA_1LD0LC_1LA1LD`
+at `A1` reads left `(00|11)^n`, right `(00|01)^n` (both outward from the
+head), the SAME digit string on both sides, least significant digit at the
+head (checked: `L[i+1] = R[i]` at every snapshot).  The machine adds one on
+one side, comes back to the anchor cell, then adds one on the other.  The
+checker is `LadderCheckTr`'s positional counter with the far side replaced
+by a second copy: cells `(q, preL ++ x_L ++ sufL, h, preR ++ x_R ++ sufR)`,
+law `x -> x + 1` (all-top widens both sides).  A class with a run on both
+sides cannot be ONE arm: a carry that crosses the head would need two
+blocks on one side, and an `sconf` side has one.  So each increment is TWO
+one-sided `ReachL` arms that meet on the anchor cell at a fixed (state,
+symbol); each half has one block and the other side as an opaque tail, and
+`halves_reach` composes them through `lift` (left or right first is a
+parameter).  Liveness: every width reaches its top; the fires come from
+either half of the top arms.  Reader `le7/mirror_detect.py` (both sides per
+anchor, own words and prefix per side, every lawful reading kept),
+`le7/mirror_split.py` (where the increments split), emitter
+`le7/emit_mirror.py`, batch `le7/mirror_batch.py`.  8 board (`CBT_LE7_00`,
+`_01`), among them **two of the four rows whose Fuel certificate needs
+~11 GB** (`1RB0RA_1LC1RA_1LD0LC_1LA1LD`, `1RB0RA_1RC1RB_1LD0LC_1RA1LC`):
+here a board compiles in ~1.5 s at ~470 MB.  The other two
+(`1RB1LD_1RC0RB_1RD1RC_1LA0LD`, `1RB1RA_1LC0LB_1RD1LB_1RA0RD`) are
+conjugates of `CBT_LE7_00` rows, but on another orbit (no sync in 400k
+steps), and their two copies are out of step at every anchor (a wide pivot).
+3 more mirrored rows (`1RB0LA_1LC0RB_1RD1LA_1LA1RC`, ...) carry the two
+copies digit by digit, alternately, so no split into halves exists.
+
+**4. The top word that becomes the run word: `LadderCheckPhRun1Tr`.**
+`0RB1LA_0LC1RD_0RD1LD_1RB0LA` at `A0` is `x ++ W ++ (01)^m`, x over `11`/`10`.
+The top word `W` steps `1 -> 11 -> 10 -> 01` through top carries, and `01`
+IS the run word.  After that the top narrows `x` and lengthens the run, and
+an empty `x` refills.  LE5's beam reader cannot parse it (the last phase
+word and the run are the same cells), and `LadderCheckRun3Tr` cannot state
+it (its narrowing resets the top word to `E_0`).  As LE5's phase run it is
+four phases `W_p = 101, 1101, 1001, 0101` (one run word folded into each, so
+the refill is `a = 1`): carries `p -> p+1`, a narrowing in phase 3, a refill
+to phase 0 (hand model, `le7/ph1_models*.jsonl`; `le7/emit_ph_model.py`
+feeds a given model to LE5's `emit_ph.py`).  One thing blocked it:
+`LadderCheckPhRunTr` asks for a carry arm at index `r = 0` too, i.e. for an
+EMPTY `x`, although a carry only ever runs from a nonempty `x`.  The machine
+does something else from that configuration.  `LadderCheckPhRun1Tr` is
+`LadderCheckPhRunTr` with the carry arms asked for `0 < r` only
+(`0 < N0c`, `arm_index_pos`); everything else, names included, is
+unchanged.  2 board (`CBT_LE7_03`, `_08`).
+
+**5. Conjugates.**  `le6/conj_find.py` after each board: 12 rows transport
+from LE7 boards (`CBT_LE7_04`, `_09`; `CConjCoverTr`), 2 of them
+phase-run rows.  4 of `CBT_LE7_04`'s rows were boarded again by the
+`_05..07` sweep running at the same time: duplicates, harmless.
+
+**6. The tank: `LadderCheckTankTr`, 1 board.**  `1RB0LC_0LA1RC_1RD1LA_1RB0RD`,
+read from its right end, is `(1011|1111)^k (0111)^m`.  In increment
+orientation `x -> x + 1`; at the top `x` widens to `0^k 1` and eats one tank
+word, so `m` drops; an empty tank refills to `x = [1]`, `m = k`
+(`le7/tank_detect.py`).  Checker `LadderCheckTankTr` (`Print Assumptions`:
+`functional_extensionality_dep`), emitter `le7/emit_tank.py`,
+`le7/cand_batch.py --kind tank`.  `1RB0RD_1LC1RA_0RB0LC_1LD0LA` (`(00|01)^k (11)^m 1`)
+boards (`CBT_LE7_10`).  On the other 6 the interior and widening arms are
+found and the flat refill arms too, but the refill rewrites the tank in two
+passes (left over `x` writing `1010...`, back writing `0111` words), the
+second with the 2-cell pattern of the first against 4-cell words: no chain
+at a stride, and LE3's nested search finds none.
+
+**Yields** (52 rows; closeout 267 -> 206 open with the integration branch's
+merges):
+
+| batch | rows | route | compile (container, incl. boards) |
+|---|---:|---|---:|
+| `CBT_LE7_00` | 5 | `LadderCheckMirrorTr` | 77 s |
+| `CBT_LE7_01` | 3 | `LadderCheckMirrorTr` (re-chosen anchors) | 71 s |
+| `CBT_LE7_02` | 6 | `LadderCheckRun2zTr` via `emit_run2z0.py` | 75 s |
+| `CBT_LE7_03` | 1 | `LadderCheckPhRun1Tr` | ~10 s |
+| `CBT_LE7_04` | 11 | conjugates, `CConjCoverTr` | 87 s (with the checker) |
+| `CBT_LE7_05` | 10 | `LadderCheckRun2zTr` | 80 s |
+| `CBT_LE7_06` | 9 | `LadderCheckRun2zTr` | 25 s |
+| `CBT_LE7_07` | 4 | `LadderCheckRun2zTr` | 19 s |
+| `CBT_LE7_08` | 1 | `LadderCheckPhRun1Tr` | ~10 s |
+| `CBT_LE7_09` | 1 | conjugate | 13 s |
+| `CBT_LE7_10` | 1 | `LadderCheckTankTr` | 69 s |
+
+Peak RSS ~1 GB a batch.  `ci_costs.tsv` carries every batch (60-150 s).
+`Print Assumptions` on every batch's `cbt_LE7_NN_covers` and on both
+closers of each new checker: `functional_extensionality_dep` only.
+
+**Where the 27 open rows stop** (`le7/residue.tsv`): mirrored counters with
+a zig-zag carry (3) or out-of-step copies (2, the two remaining ~11 GB Fuel
+rows); tanks (6, strided refill arm); the mixed-width positional counter
+`0RB1LD_1LC1RB_1RA1LA_1LB0LC` and its two conjugate-class rows (3; its refill
+doubles too); one side base 3 (2); irregular alternating ratios (5; in 3 the steps from an empty `x` quadruple per 2 run words: a real second count, on the far side); a
+single 1 walking right whose steps are a counter in moving pairs (2); LE5's
+growing tails (2); unread (2).  None is shown out of reach of a
+finite-description checker.  The zig-zag mirrors and the tanks are counters
+whose arms need TWO runs on one side; the next step for them is a
+two-block side in `LapDecider.sside`, or a nested arm whose inner rule is
+one digit of the zig-zag / one pass of the tank refill.
+
+```
+# the container loop (what this section ran; all resumable)
+python3 tools/closeouttr/le7/run2_all.py ROWS le7/run2_all.jsonl --jobs 3            # ~1.5 min a row
+python3 tools/closeouttr/le7/cand_batch.py le7/run2_all.jsonl --kind run2z0 --tag LE7 --jobs 3 --max-cands 4
+python3 tools/closeouttr/le7/mirror_detect.py ROWS le7/mirror.jsonl --steps 200000   # ~15 s a row
+python3 tools/closeouttr/le7/mirror_batch.py le7/mirror.jsonl --tag LE7
+python3 tools/closeouttr/le7/cand_batch.py le7/ph1_models.jsonl --kind ph1 --tag LE7
+python3 tools/closeouttr/le7/run3_all.py ROWS le7/run3_all.jsonl                     # LE5's Run3, every candidate
+python3 tools/closeouttr/le7/tank_detect.py ROWS le7/tank.jsonl
+python3 tools/closeouttr/le6/conj_find.py ROWS le7/conjN.jsonl --steps 20000 && python3 tools/closeouttr/le6/conj_batch.py ... --tag LE7
+```
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
