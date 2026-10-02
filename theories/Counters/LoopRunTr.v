@@ -171,3 +171,47 @@ Proof.
 Qed.
 End BoardSeqTr.
 
+
+Lemma rep_snoc : forall (w : list Sym) n l, rep w n ++ w ++ l = w ++ rep w n ++ l.
+Proof. intros. rewrite app_assoc, rep_comm, <- app_assoc. reflexivity. Qed.
+
+Lemma rep1_snoc : forall (a : Sym) n l, rep [a] n ++ a :: l = a :: rep [a] n ++ l.
+Proof. intros. exact (rep_snoc [a] n l). Qed.
+
+(** a fire witness by stepping until the instruction is the one asked for
+    (at most [n] steps, each computed on the concrete part) *)
+Ltac fire_find_n n :=
+  match n with
+  | O => fail
+  | S ?m => first [ apply fires_here; reflexivity
+                  | eapply fire_back; [rr 1; apply reach0_refl | ]; fire_find_n m ]
+  end.
+Ltac fire_find := fire_find_n 64.
+
+Lemma rep_pair : forall (a : Sym) n, rep [a; a] n = rep [a] (n + n).
+Proof.
+  intros a n. induction n as [|n IH]; [reflexivity|].
+  replace (S n + S n) with (S (S (n + n))) by lia. cbn [rep app]. rewrite IH. reflexivity.
+Qed.
+
+(** an inner count from its carries, the carries needed only below the width *)
+Lemma count_from_carry_lt : forall tm (mk : list Sym -> cconf) (Z O : list Sym) w,
+  (forall k Y, k < w -> Reach1 tm (mk (rep O k ++ Z ++ Y)) (mk (rep Z k ++ O ++ Y))) ->
+  forall Y, Reach0 tm (mk (rep Z w ++ Y)) (mk (rep O w ++ Y)).
+Proof.
+  intros tm mk Z O w. induction w as [|w IH]; intros Hc Y; [apply reach0_refl|].
+  rewrite !rep_S_r, <- !app_assoc.
+  assert (Hc' : forall k Y, k < w -> Reach1 tm (mk (rep O k ++ Z ++ Y)) (mk (rep Z k ++ O ++ Y)))
+    by (intros k Y' Hk; apply Hc; lia).
+  apply (reach0_trans tm _ (mk (rep O w ++ Z ++ Y))); [exact (IH Hc' (Z ++ Y))|].
+  apply (reach0_trans tm _ (mk (rep Z w ++ O ++ Y))); [apply reach1_0, Hc; lia|].
+  exact (IH Hc' (O ++ Y)).
+Qed.
+
+(** step until the configuration is the target (at most [n] steps) *)
+Ltac rgo_n n :=
+  match n with
+  | O => fail
+  | S ?m => first [ apply reach0_refl | rr 1; rgo_n m ]
+  end.
+Ltac rgo := rgo_n 80.
