@@ -6818,3 +6818,63 @@ The core scan lemma is axiom-free; only the final lifted recurrence uses
 functional extensionality. The helper and batch each compile in about
 2.6 seconds under concurrent load. An n11 partial-potential probe did not
 close this family; the finite-word argument avoids a large certificate.
+
+
+#### 7.4.AST9 Completing the 164 requested rows (2026-10-01)
+
+The final **three requested rows** are boarded in `CBT_AST_44`, `95`,
+and `96`. This completes **all 164 machines on the requested list**:
+six were already proved by the earlier AST work and **158 new proofs**
+were added in this follow-up. The full transition closeout now has
+**495** rows remaining; none belongs to this requested list. All final
+coverage theorems are kernel-checked with no assumptions beyond
+`functional_extensionality_dep` and no `Admitted`.
+
+**Dyadic expanded digits (`CBT_AST_44`).** `DyadicFrontierTr` proves
+`1RB0LA_1LC1RD_0LC1LA_0RD0RB`. Bit i occupies `2^i` cells, so a carry
+through e low one bits erases `2^e-1` cells and fills the next `2^e`.
+Strong induction on e proves this fill; an auxiliary fixed-width Boolean
+counter decreases its complement rank at each increment and invokes
+only smaller carries. At the B0 right frontier the left word is
+`0^(r-1) 1^r`, with r a power of two. An overflow and a finite counter
+drain double r. The checked step-six boot has r=2, and explicit witnesses
+in the overflow scan/fill cover all eight instructions. Blank padding is
+justified after `lift`. The prefix theorem is axiom-free; the final
+lifted recurrence uses functional extensionality. The helper and batch
+compiled privately in 3.3 and 1.7 seconds. `dyadic_frontier_batch.py`
+reproduces the batch.
+
+**Independent instruction certificates (`CBT_AST_95`).**
+`1RB0LA_0RC1RB_0RD1RC_1LD1LA` uses window six for seven targets and
+window ten only for C1. The C1-avoiding graph has 19,182 contexts. Its
+96-component natural-valued lexicographic certificate consists of 48
+finite graph ranks, 46 single-pattern measures, and two weighted pattern
+sums with node potentials. Every avoiding edge strictly descends; its
+runner gate is empty. The untrusted LP search allows nonincrease on all
+edges with strict decrease on some edges, then replays the rounded
+integer certificate exactly before peeling another component.
+`FuelMixTargetTr` extracts each target's recurrence from the landed
+partial checker, allowing different windows. `FuelMixTargetFastTr`
+short-circuits strict lexicographic edges and avoids pattern arithmetic
+outside the component's gate; its Boolean evaluator is proved equal to
+the landed one. These changes add no stronger proof rule. Rank maps use
+binary literals and shared finite patches to reduce source elaboration.
+The final batch compiles in about 361 seconds (800-second CI allowance),
+including about 41 seconds for the large Boolean check. The finder
+`fuelpotentialtr_batch.py`, per-target emitter `fuelpotentialtr_targets.py`,
+and `fuelpotentialtr_c1.jsonl` reproduce both records exactly; a fresh
+reproduction was checked before installation. The evaluator equality
+lemmas are axiom-free, and final recurrence has only the permitted axiom.
+
+**A long translated cycle (`CBT_AST_96`).**
+`1RB0LA_0RC1LA_1RD0RD_1LB1RB` reaches its checked anchor at step
+24,378,294. Thereafter a 2,575,984-step lap translates the active tape
+right by 1,440 cells and fires all eight instructions. Its guarded left
+window is zero: the lap never needs to read left of the anchor boundary.
+The old translated-cycle probes capped the period at 20,000 and the
+prefix at 200,000, missing this eventual cycle. `TCyclerAllNTr` uses the
+landed binary-fuel `cstepsN` bootstrap once, then checks the guarded lap
+and all eight firing witnesses. Soundness reduces to the existing
+`TCyclerTr` theorem; the early-exit firing scan is proved equal to the
+landed scan. The final batch compiles in about nine seconds on an idle
+host, or 27 seconds under concurrent load (35-second CI allowance).
