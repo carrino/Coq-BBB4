@@ -6496,7 +6496,33 @@ A board compiles in 1-2 s.  `ci_costs.tsv` carries every batch (30-300 s,
 the runner being about twice as slow); `ci_shard.py --plan 6` keeps the
 slowest shard at `CBT_BR_02`'s.
 
-**4. Where the rest stop**: (being written; see the next commits).
+**4. Where the rest stop** (192 of the 322; by survey group and LE4/LE5's
+last reading, `le5/residue.tsv`):
+
+| group | open | LE4 / LE5 reading | what it is (read by hand) |
+|---|---:|---|---|
+| B2: binary, both ends / one end | 70 / 25 | 46 LE4 positional ("the fill counts"), 43 none, 6 marker runs | mostly LE4's MARKER RUN COUNTED DOWN: `0RB1LA_1LC1RD_0RA1LD_1RB0LA` is `[A0] x 0 (11)^m`, `x` over `11` / `10` counting down; at `x = 0` it narrows by a word and the run grows (`x` empty after `m` narrowings); the refill is `([], m) -> x = 1^m 0` with the top digit's `0` in the blank beyond the tape.  With the words swapped that is LE4's increment, and LE5's `phrun2.py` tries both orders, but its beam misparses the marker; `le6/run2_relax.py` (LE4's reader with a 10% parse floor and a 1.5M-step window) reads it, and LE4's refill law `0^(m+a)` is off by that top digit.  Others (`0RB0LA_1LC1RD_0RD0LC_1RB1LA`) are LE5's "tails that grow" |
+| I: irregular event ratios | 49 | 20 none, 20 positional, 9 marker runs | the per-event time ratio cycles (`1.01, 1.08, 1.01, 1.08`): a second level whose period is an outer count; not read |
+| F: Fibonacci, still open | 23 | none | two-level Zeckendorf: `0RB0LC_1LC1RD_0RD1LC_1RB1LA` is a Zeckendorf INCREMENT over `1` / `01` beside a run of `1`s that shortens at each top (LE3's terminator run, in Zeckendorf); three rows grow phi at one end and 2 (three cells) at the other |
+| B3: base 3 | 13 | 9 none, 4 marker runs | ratio 3 per two cells, records `0 1^k C0`: base-3 counters not read |
+| R: ratio 3/2, 2.12 | 12 | 8 none, 4 marker runs | 3/2 per two cells (`0RB0LA_1LC0RD_1LA1LB_1RC1RD`); 2.12 is LE5's growing-tail row |
+
+The common thread of what is left: COUNTDOWNS (every LE2-LE5 reader follows
+`x + 1` only, and a countdown is read as an increment only when the
+complemented words also make the narrowing and the refill laws come out
+right), and second levels (a run or tail that counts the widths).  The
+next steps: (a) a refill law `([], m) -> (0^m 1, 0)` for `LadderCheckRun2Tr`
+(or the Run3 reading with the top digit over `10` / `11`), which with
+`le6/run2_relax.py` reads the B2 countdowns; (b) LadderCheckZeckDTr /
+Zeck2's classes beside LE3's terminator run (the F residue); (c) the conjugate
+pass again after every new board (`conj_find.py` is seconds).
+
+```
+# what is still running / left to run (resumable; the owner's 14-core box)
+python3 tools/closeouttr/le6/run2_relax.py le6/rows_open.txt le6/run2r.jsonl --jobs 12 --steps 600000   # ~25 s a row
+python3 tools/closeouttr/le4/run2_batch.py le6/run2r.jsonl --tag LE6 --jobs 12
+python3 tools/closeouttr/le6/conj_find.py le6/rows_open.txt le6/conj.jsonl && python3 tools/closeouttr/le6/conj_batch.py le6/conj.jsonl --tag LE6
+```
 
 ```
 # the container loop (what this section ran; all resumable)
