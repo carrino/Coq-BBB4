@@ -12107,6 +12107,7 @@ theories/CloseoutTr/CBT_FTA_16.v
 theories/CloseoutTr/CBT_FTA_17.v
 theories/CloseoutTr/CBT_FTA_18.v
 theories/CloseoutTr/CBT_FTA_19.v
+theories/CloseoutTr/CBT_FTA_20.v
 theories/CloseoutTr/CBT_HY2_00.v
 theories/CloseoutTr/CBT_HY2_01.v
 theories/CloseoutTr/CBT_HY3_00.v
