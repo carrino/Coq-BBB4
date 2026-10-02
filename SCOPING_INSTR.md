@@ -6589,3 +6589,74 @@ the whole certificate before emission. The checker compiles in about
 0.4 seconds and AST36 in 2.0 seconds. Replacing its A0 certificate with
 an empty certificate computes false. The finder and saved certificate are
 `tools/closeouttr/fuelmixtr_batch.py` and `fuelmixtr_ast.jsonl`.
+
+#### 7.4.AST6 Dyadic ranks, seven-phase hybrids, and moving counter boundaries (2026-10-01)
+
+This checkpoint adds **twelve requested rows** in six batches. The
+follow-up now totals **127 new rows**; including the six earlier AST rows,
+**133 of the requested 164** are proved. The full closeout has **526**
+rows left, of which **31** are on the requested list. Every new coverage
+theorem is kernel-checked with only `functional_extensionality_dep`.
+
+**Dyadic pair (`CBT_AST_57`, two rows).** The machines
+`1RB0LA_0RC0RB_0LD1LA_1LD0LA` and
+`1RB1RC_0RC0RB_0LD1LA_1LD0LA` have a complicated scaled-word increment,
+but only A1 recurrence needs a manual argument: window-two Fuel
+certificates cover the other seven instructions. `DyadicRankTr` ranks a
+finite window by its binary complement value and then head index.
+`DyadicWindowTr` proves that an A0 macro either increases the first
+changed bit or moves left in an unchanged word, so the rank decreases
+until A1 fires. This holds for any finite A0 tape. `DyadicRecurTr`
+combines it with a positive return from A1 and the checked step-15 boot.
+The new `FuelMixPartialTr` checker requires an explicit recurrence proof
+for every skipped target and checks all remaining targets with the landed
+Fuel engine; skipping a target alone proves nothing. The arithmetic rank
+and core window lemma are axiom-free. AST57 compiles in about 1.5 seconds;
+`dyadic_batch.py` and `fuelmixtr_dyadic.jsonl` reproduce its certificates.
+
+**Seven-phase hybrids (`CBT_AST_58`, four rows).** The four related
+`(011)^n` bouncers have a binary end and a seven-phase sweep cycle, with
+net block growth two. The earlier finder tried at most four phases, or
+only one when anchored at a fixed instruction. `HybridGlueTr` already
+supports arbitrary finite phase counts. The new `hy_longphase.py` supplies
+seven and immediately obtains full certificates, including all
+instruction witnesses, with boots at 70, 8, 8 and 27. The saved data are
+in `hy_longphase.jsonl`. All four compile together in about 0.4 seconds;
+no new trusted checker is used.
+
+**The final requested cube (`CBT_AST_80`).** `TernaryStackTr` proves
+`1RB1LA_0RC0RD_1LD1RC_0LC0LA` from a step-three D0 anchor. Its transfer
+subtracts three from the active block, adds one to the next block and two
+to the right block. Residues zero and one reach D0; residue two consumes a
+stack entry before a division-by-three contraction. All stack entries
+remain positive. Explicit short cases handle the right block lengths
+one, two and three, and the longer case reaches a phase firing the other
+seven instructions. The helper and batch compile in about 0.9 and 0.3
+seconds respectively.
+
+**A moving binary boundary (`CBT_AST_81..82`, four rows).**
+`BinaryResetTr` proves `1RB0RC_1LC0LD_1RA1RD_1RC1LB` over arbitrary digit
+words `10/11`, with an optional one-cell top marker and right block
+`(10)^n 1`. An ordinary carry is followed by a checked sweep of cost
+`4*n+14`. At overflow, `k` carried digits expose an empty left tape and
+right word `(01)^k (10)^n 1`. Two uniform sweeps, of combined cost
+`6*k+2*n+19`, turn this into left word `(10)^(k+n) 111` and right word
+`101`. Thus overflow can move the word boundary without requiring a
+fixed top-word cycle. Every anchor reaches an ordinary sweep whose finite
+prefixes fire all eight instructions. Positive returns give recurrence.
+The source bootstrap is step 17; three state-renamed/reflected variants
+use independently checked boots 12, 23 and 27 through `CConjugateReachTr`.
+The carry and overflow lemmas are axiom-free, and all three files compile
+in under a second each.
+
+**Parity-indexed tail grammars (`CBT_AST_37`).** `FuelPhaseTr` adds a
+Boolean head parity to FuelWide nodes and separates the possible distant
+windows by parity. Both move directions toggle the parity. Checked
+successors preserve these tail grammars and the original FuelWide cover
+over their union, so existing pattern and fuel soundness applies.
+`1RB0LA_1LC0RD_0LB1LA_0RB1LA` closes at window three with 144 contexts.
+The finder `fuelphasetr_batch.py` independently replays the supplied
+integer certificate; `fuelphasetr_ast.jsonl` preserves it. The checker
+compiles in about 0.4 seconds and AST37 in 1.0 second. Its successor lemma
+is axiom-free; replacing the A0 certificate with an empty certificate
+computes false.
