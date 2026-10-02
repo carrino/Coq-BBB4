@@ -6746,7 +6746,7 @@ python3 tools/closeouttr/le6/batch.py CERTS.jsonl --kind zeckd --tag LE6 --jobs 
 tools/closeouttr/le/board_chunk.sh CBT_LE6_NN
 ```
 
-#### 7.4.LE7 LE6's binary-rate counters: mostly ONE counter read at the wrong anchor; a mirrored counter, a phase run whose last top word is the run word; 51 boarded (2026-10-02)
+#### 7.4.LE7 LE6's binary-rate counters: mostly ONE counter read at the wrong anchor; a mirrored counter, a phase run whose last top word is the run word, a tank; 52 boarded (2026-10-02)
 
 Workstream LE7 (batch tag `LE7`), over 79 of LE6's residue rows whose
 per-round growth ratio is 2 or sqrt 2 (`le7/rows.txt`): mostly LE6's
@@ -6765,9 +6765,9 @@ by hand, the 79 split as:
 | a marker run (LE4's `Run2` law, plain refill) read at the WRONG anchor | 39 | 39 | `LadderCheckRun2zTr` (no new Coq), 33 direct + 6 conjugates |
 | mirrored binary counter: one counter held on BOTH sides of the head (the sqrt 2 rows) | 13 | 8 | new `LadderCheckMirrorTr` |
 | a top word that steps through a few values, the last of them the run word (the real "refill is a whole count") | 4 | 4 | new `LadderCheckPhRun1Tr`, 2 direct + 2 conjugates |
-| a counter that widens INTO a tank (the run shrinks; an empty tank refills) | 6 | 0 | new `LadderCheckTankTr`, refill arm not found |
+| a counter that widens INTO a tank (the run shrinks; an empty tank refills) | 7 | 1 | new `LadderCheckTankTr`; 6 have no strided refill arm |
 | positional, a 1-cell low digit under 3-cell digits, widening by two digits | 3 | 0 | not stated |
-| one side base 3 / irregular alternating ratios / a single 1 walking right / LE5's growing tail / unread | 14 | 0 | not read |
+| one side base 3 / irregular alternating ratios (a real second count on the far side) / a single 1 walking right / LE5's growing tail / unread | 13 | 0 | not read |
 
 So the refill really is a whole second count in only 5 of the 79 (the
 phase-run rows and `0RB1LD_1LC1RB_1RA1LA_1LB0LC`; measured: the steps from an
@@ -6839,19 +6839,20 @@ from LE7 boards (`CBT_LE7_04`, `_09`; `CConjCoverTr`), 2 of them
 phase-run rows.  4 of `CBT_LE7_04`'s rows were boarded again by the
 `_05..07` sweep running at the same time: duplicates, harmless.
 
-**6. The tank: `LadderCheckTankTr`, no board yet.**  `1RB0LC_0LA1RC_1RD1LA_1RB0RD`,
+**6. The tank: `LadderCheckTankTr`, 1 board.**  `1RB0LC_0LA1RC_1RD1LA_1RB0RD`,
 read from its right end, is `(1011|1111)^k (0111)^m`.  In increment
 orientation `x -> x + 1`; at the top `x` widens to `0^k 1` and eats one tank
 word, so `m` drops; an empty tank refills to `x = [1]`, `m = k`
-(`le7/tank_detect.py` reads all 6 such rows' law).  The checker is in
-(`Print Assumptions`: `functional_extensionality_dep`), and so is the emitter
-`le7/emit_tank.py`.  The interior and widening arms are found, but the
-refill (rewriting the whole tape as a fresh tank) is a multi-pass sweep
-whose cost grows about quadratically in the width (45, 101, 205 steps at
-widths 1-3): no arm program at a stride, and LE3's nested search does not
-find one.
+(`le7/tank_detect.py`).  Checker `LadderCheckTankTr` (`Print Assumptions`:
+`functional_extensionality_dep`), emitter `le7/emit_tank.py`,
+`le7/cand_batch.py --kind tank`.  `1RB0RD_1LC1RA_0RB0LC_1LD0LA` (`(00|01)^k (11)^m 1`)
+boards (`CBT_LE7_10`).  On the other 6 the interior and widening arms are
+found and the flat refill arms too, but the refill rewrites the tank in two
+passes (left over `x` writing `1010...`, back writing `0111` words), the
+second with the 2-cell pattern of the first against 4-cell words: no chain
+at a stride, and LE3's nested search finds none.
 
-**Yields** (51 rows; closeout 267 -> 207 open with the integration branch's
+**Yields** (52 rows; closeout 267 -> 206 open with the integration branch's
 merges):
 
 | batch | rows | route | compile (container, incl. boards) |
@@ -6866,18 +6867,19 @@ merges):
 | `CBT_LE7_07` | 4 | `LadderCheckRun2zTr` | 19 s |
 | `CBT_LE7_08` | 1 | `LadderCheckPhRun1Tr` | ~10 s |
 | `CBT_LE7_09` | 1 | conjugate | 13 s |
+| `CBT_LE7_10` | 1 | `LadderCheckTankTr` | 69 s |
 
 Peak RSS ~1 GB a batch.  `ci_costs.tsv` carries every batch (60-150 s).
 `Print Assumptions` on every batch's `cbt_LE7_NN_covers` and on both
 closers of each new checker: `functional_extensionality_dep` only.
 
-**Where the 28 open rows stop** (`le7/residue.tsv`): mirrored counters with
+**Where the 27 open rows stop** (`le7/residue.tsv`): mirrored counters with
 a zig-zag carry (3) or out-of-step copies (2, the two remaining ~11 GB Fuel
-rows); tanks (6, refill arm); the mixed-width positional counter
+rows); tanks (6, strided refill arm); the mixed-width positional counter
 `0RB1LD_1LC1RB_1RA1LA_1LB0LC` and its two conjugate-class rows (3; its refill
-doubles too); one side base 3 (2); irregular alternating ratios (5); a
+doubles too); one side base 3 (2); irregular alternating ratios (5; in 3 the steps from an empty `x` quadruple per 2 run words: a real second count, on the far side); a
 single 1 walking right whose steps are a counter in moving pairs (2); LE5's
-growing tails (2); unread (3).  None is shown out of reach of a
+growing tails (2); unread (2).  None is shown out of reach of a
 finite-description checker.  The zig-zag mirrors and the tanks are counters
 whose arms need TWO runs on one side; the next step for them is a
 two-block side in `LapDecider.sside`, or a nested arm whose inner rule is
