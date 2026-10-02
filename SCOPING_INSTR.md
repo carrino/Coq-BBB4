@@ -6807,6 +6807,48 @@ python3 tools/closeouttr/le8/zecku_detect.py tools/closeouttr/le8/rows62.txt le8
 python3 tools/closeouttr/le8/batch.py le8/zecku.jsonl --kind zecku --tag LE8 --chunk 7
 ```
 
+**2. Counters whose carry or overflow runs a whole inner count.**  Most of
+the other 48 rows are binary counters with a second level: LE4-LE6's
+"carry cost doubles (nested)" and "the fill counts".  Read by hand,
+`0RB0LA_1LC1RD_0RD0LC_1RB1LA` (survey ratio 2.12) is a binary counter over
+`00`/`10`, LSB at its `[B]` anchor on the left end.  A carry over `k` ones
+writes a `1` marker, shifts the frame one cell right, and counts a second
+binary counter of `k - 1` digits (the same words) from zero to all ones
+twice, with its top digit `01` then `11`.  Then it shifts back.  So a carry
+over `k` costs about `2^k`, and a width costs about `n 2^n`.
+
+No arm program states such a carry, but no lap obligation asks for a cost.
+The new `theories/Counters/NestCountTr.v` composes reachability facts on
+concrete configurations:
+
+* `Reach0` / `Reach1` (zero / one or more steps, up to `lift`) and their
+  composition;
+* `armfam_r` / `armfam_l`: a `LadderNest` arm family (threshold, stride) as a
+  `Reach1` fact for every count and opaque tail, and `fire_of_nfire_r` /
+  `_l` for fire witnesses;
+* `count_from_carry`: from a carry `P O^k Z Y ->+ P Z^k O Y` (any `k`, `Y`),
+  the count `P Z^k Y ->* P O^k Y`, by induction on `k`;
+* `BoardCountTr`: `Cf i = mk (Z^(L0 + i d) W T)`.  One lap is a whole count
+  of the width plus one overflow, so the fires are read from the overflow
+  configurations alone and no liveness argument is needed.  The plain binary
+  successor is `W = O`, `d = 1` (`ovf_of_carry`).
+
+`le8/emit_nest.py` reads a PLAN per row (`le8/plans/<spec>.json`, written by
+hand from the traces).  A plan gives the outer counter, the inner levels,
+and the carry for `k >= K0` as a chain of symbolic forms (`word^(b + n)`,
+opaque tail `X`) joined by arm pieces or inner counts.  The emitter checks
+every piece by running the machine (`n = 0..5`, three tails), derives each
+arm family with LE3's arm search, splits `n = 0 / n + 1` where a form has no
+head cell, and writes the Coq.  **1 row** (`CBT_LE8_02`) and its conjugate
+by LE6's `CConjCoverTr` transport (`CBT_LE8_03`).  `Print Assumptions`:
+`functional_extensionality_dep` only.
+
+```
+python3 tools/closeouttr/le8/batch.py tools/closeouttr/le8/plans/SPEC.json --kind nest --tag LE8
+python3 tools/closeouttr/le6/conj_find.py CONJ_ROWS.txt le8/conj_nest.jsonl --steps 20000
+python3 tools/closeouttr/le6/conj_batch.py le8/conj_nest.jsonl --tag LE8
+```
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
@@ -7557,3 +7599,57 @@ unproved. Short-tape experiments and a decreasing real-valued tape
 potential are insufficient: an all-ones input can grow far to the left,
 so neither a fixed left boundary nor a natural-valued rank follows from
 that potential. No conjectural lemma or incomplete batch is installed.
+
+#### 7.4.AST12 Finite-word termination closes the last six of the fourteen (2026-10-02)
+
+The six remaining AST10/AST11 rows are now boarded in `CBT_AST_98`,
+`99`, `101`, `107`, `108`, and `109`. Together with AST100/102/105/106,
+this completes all fourteen requested rows. The six reduce by exact state
+permutations and reflection to two cores differing only at B0:
+
+```
+1RB0LC_1LA1RD_1LA1LC_1RB0RA
+1RB0LC_1LC1RD_1LA1LC_1RB0RA
+```
+
+The failed unbounded block-list closures were replaced with a finite-word
+termination proof. At A0 with a blank left half-tape, define
+`P(n)=(10)^n110`, `Q(n)=(10)^n111`, and `U(n)=1^(2n+2)0`.
+A complete sweep transforms `P(ms) Q(n) R` into `U(ms) U(n) 10 R`;
+a scan ending at `P(ms) (10)^n 0 R` reaches B0. Both statements are
+kernel-checked for arbitrary lists, counts, and suffixes.
+
+The decisive normalization uses inert P0/P3 prefixes. A unary U-block
+with index congruent to 0 modulo 3 preserves eventual B0 reachability;
+index 1 leaves a two-zig carry; index 2 forces B0. A nonfinal two-zig
+carry either forces B0 immediately or creates a P2 prefix, which is also
+mortal. Strong induction on the untouched suffix proves every finite
+frontier word reaches B0, including the formerly difficult mixed and
+three-phase lists. A separate reset argument proves D0 reachability for
+both B0 choices. Finite-left sweeps extend both results to *every finite
+configuration*, so the conjugate variants need no orbit-joining or
+special unary-seed invariant.
+
+The generic proof chain is in `theories/Counters/`:
+
+- `Period3MacroTr.v`: exact token scans and returns, without a B0 hypothesis.
+- `ValueFrontierTransducer.v`: P/Q/U sweeps and the terminal B0 branch.
+- `ValueWordNormalization.v`: inductive word rewriting and unary normalization.
+- `Period3WordTermination.v`: termination for every finite frontier word.
+- `ValueFrontierD0.v`: frontier D0 reachability for both B0 variants.
+- `Period3FiniteTr.v`: arbitrary finite-tape B0/D0 reachability.
+- `FiniteInstrTr.v`: recurrence from universal finite-tape reachability and
+  its transport through state permutations/reflection.
+
+Each batch combines the two manual recurrence results with the landed
+`FuelMixPartialTr` checker for the other six instructions (window 3,
+167--187 contexts). `tools/closeouttr/period3_ast.json` retains the six
+certificates and conjugacies; `period3_batch.py --check` verifies the
+mapping tables, skipped instructions, and byte-exact batch reproduction.
+All six `coversTr` proofs compile. Their assumption audits contain only
+`functional_extensionality_dep`; the pure word-termination theorem is
+axiom-free. Each batch has a conservative five-second CI cost entry.
+
+After merging main and regenerating: **513 batches, 10,663 boarded,
+261 remaining**. No frozen census, RunTr, CloseoutKit, workflow, or Makefile
+source was changed by this proof work.
