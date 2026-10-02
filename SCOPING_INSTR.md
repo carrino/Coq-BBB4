@@ -7551,11 +7551,11 @@ After merging main and regenerating: **513 batches, 10,663 boarded,
 261 remaining**. No frozen census, RunTr, CloseoutKit, workflow, or Makefile
 source was changed by this proof work.
 
-#### 7.4.AST13 First block-list tranche: twenty-seven rows (2026-10-02)
+#### 7.4.AST13 First block-list tranche: twenty-eight rows (2026-10-02)
 
 The new 114-row scope is retained in `tools/closeouttr/blocklists114.txt`.
-All 114 were open at the start. Twenty-seven are now kernel-checked in
-`CBT_AST_110..125`:
+All 114 were open at the start. Twenty-eight are now kernel-checked in
+`CBT_AST_110..126`:
 
 | batches | rows | argument |
 |---|---:|---|
@@ -7568,6 +7568,7 @@ All 114 were open at the start. Twenty-seven are now kernel-checked in
 | AST117/118 | 2 | binary-frontier positive returns from different initial configurations |
 | AST119/120/124 | 5 | FuelMixTr, window 7 |
 | AST121/122/123/125 | 7 | FuelPhaseTr, windows 5--6 |
+| AST126 | 1 | FuelPhaseTr, window 7 |
 
 `Period3RightResetTr.v` adds the third B0 reset to AST12's period-three
 argument. The reset transforms a P-prefix into a U-prefix followed by
@@ -7610,11 +7611,25 @@ also failed a guarded right-frontier cycle search through one billion
 steps, using a 4,096-cell signature every sixteen new cells. These are
 negative search results, not evidence against transition recurrence.
 
-All sixteen batches and both new generic lemmas compile. `Print Assumptions`
+All seventeen batches and both new generic lemmas compile. `Print Assumptions`
 reports only `functional_extensionality_dep`. The generated split is
-**529 batches, 10,690 boarded, 234 remaining**; 87 of this scope remain.
+**530 batches, 10,691 boarded, 233 remaining**; 86 of this scope remain.
 No frozen census, RunTr, CloseoutKit, workflow, or Makefile source changed.
 
 The regenerated `RemainingTr.v` also compiles. A full local `CloseoutTr.v`
 build is unavailable without rebuilding older batches (the first missing
 object is `CBT_AST_00.vo`); CI checks the combined split after its shards.
+
+A final phase-aware window-7 pass tested 90 rows (20 seconds each): four
+certificates, 66 failures and 20 timeouts. Three certificates duplicated
+rows found by the concurrent earlier sweeps; the fourth proves
+`1RB0LD_1RC0LA_1LD0RB_1LB1LD` in AST126. A nonincreasing weighted-potential
+pass at windows 3--5 on 89 rows found no certificates. Full records are
+`fuelphasetr_blocklists114_n7.jsonl` and
+`fuelpotentialtr_blocklists114.jsonl`.
+
+`blocklists114_partial.jsonl` records per-instruction FuelMix failures at
+window 3 on the first 99-row residue. `blocklists114_residue.tsv` filters
+that diagnostic to the 86 rows still open after this tranche. Its missing
+instructions are targets for manual recurrence proofs; an unsuccessful
+ranking search does not imply those instructions fail to recur.
