@@ -92,7 +92,7 @@ def component_rank(nodes, edges):
     return {v: ranks[component[v]] for v in nodes}
 
 
-def instruction_procedure(tbl, n, adj, fseen, qq, cands, delta=None):
+def instruction_procedure(tbl, n, adj, fseen, qq, cands, delta=None, mix_finder=None):
     """Rules (a)/(b) + the per-SCC runner kill (c2) over the refined
     q-avoiding graph.  Returns (comps, gate) or None.  Mirrors
     bulk_prover.procedure with two changes:
@@ -139,7 +139,9 @@ def instruction_procedure(tbl, n, adj, fseen, qq, cands, delta=None):
             cs = set(c)
             intra = [(u, v) for (u, v) in alive if u in cs and v in cs]
             done = False
-            for (patt, reg) in cands:
+            local_cands = (delta.negative_candidates(cands, {u[0] for u in cs})
+                           if hasattr(delta, "negative_candidates") else cands)
+            for (patt, reg) in local_cands:
                 ds = {e: delta(patt, reg, e[0][0]) for e in intra}
                 if (all(d <= 0 for d in ds.values())
                         and any(d < 0 for d in ds.values())):
@@ -153,7 +155,7 @@ def instruction_procedure(tbl, n, adj, fseen, qq, cands, delta=None):
                     break
             if done:
                 continue
-            for (patt, reg) in cands:
+            for (patt, reg) in local_cands:
                 ds = {u: delta(patt, reg, u[0]) for u in cs}
                 if nonnegative_cycle(cs, intra, ds):
                     continue
@@ -176,6 +178,16 @@ def instruction_procedure(tbl, n, adj, fseen, qq, cands, delta=None):
                 for e in intra:
                     del alive[e]
                     gate_edges.append(e)
+                progress = True
+            if cs <= gate or mix_finder is None:
+                continue
+            mix = mix_finder(tbl, n, cs, intra, local_cands, delta)
+            if mix is not None:
+                terms, values, phi = mix
+                comps.append(("mix", terms, "", 1, phi, cs))
+                for e in intra:
+                    if values[e[0]] + phi[e[1]] - phi[e[0]] < 0:
+                        del alive[e]
                 progress = True
         if not progress:
             return None
@@ -266,6 +278,30 @@ def make_pattern_delta(tbl, n):
         if reg == "A":
             return global_deltas(len(patt), a).get(pattern_code(patt), 0)
         return sided_delta(patt, reg, a)
+
+    def negative_candidates(candidates, contexts):
+        # A measure with no negative edge in this cyclic component cannot
+        # discharge it: every cycle has positive K*delta+1 total weight.
+        lengths = {reg: sorted({len(p) for p, r in candidates if r == reg})
+                   for reg in ("A", "L", "R")}
+        negative = {reg: set() for reg in lengths}
+        for a in contexts:
+            q, sym, left, right = a
+            written, direction, _ = tbl[q, sym]
+            if written != sym:
+                for size in lengths["A"]:
+                    negative["A"].update((size, code) for code, change in
+                        global_deltas(size, a).items() if change < 0)
+            if direction == "L":
+                for size in lengths["L"]:
+                    negative["L"].add((size, pattern_code(tuple(reversed(left[:size])))))
+            else:
+                for size in lengths["R"]:
+                    negative["R"].add((size, pattern_code(right[:size])))
+        return [(p, r) for p, r in candidates
+                if (len(p), pattern_code(p)) in negative[r]]
+
+    delta.negative_candidates = negative_candidates
     return delta
 
 
