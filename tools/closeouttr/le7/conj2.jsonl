@@ -1,0 +1,4 @@
+{"spec": "1RB0LA_1LC0RB_1RD1LA_1LA1RC", "src": "1RB0LA_1LC1RD_1RD1LB_1LA0RD", "batch": "CBT_LE7_01", "p": [1, 2, 3, 0], "flip": 1, "fail": "no sync"}
+{"spec": "1RB1LC_0RC1RC_1LA0RD_0LC1RD", "src": "0RB1RB_1LC0RD_1RA1LB_0LB1RD", "batch": "CBT_LE7_05", "p": [1, 2, 0, 3], "flip": 0, "m": 45, "n0": 5}
+{"spec": "1RB1LD_1RC0RB_1RD1RC_1LA0LD", "src": "1RB0RA_1LC1RA_1LD0LC_1LA1LD", "batch": "CBT_LE7_00", "p": [3, 0, 1, 2], "flip": 1, "fail": "no sync"}
+{"spec": "1RB1RA_1LC0LB_1RD1LB_1RA0RD", "src": "1RB0RA_1LC1RA_1LD0LC_1LA1LD", "batch": "CBT_LE7_00", "p": [1, 2, 3, 0], "flip": 1, "fail": "no sync"}
