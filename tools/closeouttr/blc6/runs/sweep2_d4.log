@@ -9,3 +9,33 @@
 1RB0LB_1LC0RD_1LA0LB_0RB1RD t50474 too many families (family 436) / t20000 too many families (family 571)
 1RB0LC_1RC0RB_0LD1RB_0LA1LD t50206 too many families (family 770) / t20000 too many families (family 784)
 1RB0LD_1RC0RA_1LA0RA_0LA1LD t50281 too many families (family 423) / t20000 too many families (family 705)
+0RB1RA_1LC0RA_1LD0LB_1RB1LC t50002 too many families (family 789) / t20000 too many families (family 71)
+1RB0RC_1LC0RC_1RA0LD_0LC1LD t50281 too many families (family 665) / t20000 too many families (family 679)
+1RB0LD_1RC0RA_1LA1RB_0LA1LD t50001 too many families (family 789) / t20000 too many families (family 71)
+1RB0RD_1LC1LB_1RA0LB_0RB1RA learn: left samples disagree on F states (317 of 549)
+1RB1LB_1LC0RD_1RD0LB_0LA1RA t50365 too many families (family 45) / t20000 too many families (family 721)
+1RB0RD_1LC1LB_1RA0LB_1LC1RA learn: left samples disagree on F states (400 of 629)
+1RB1LC_0RC0RB_1RD1RB_0LA1LD t50123 too many families (family 778) / t20000 too many families (family 782)
+1RB1LC_1LC0RD_1LA0LB_0RB1RD learn: left samples disagree on F states (33 of 1414)
+1RB1LD_0LC0RB_1RA1LA_0LD0LA OK
+1RB1RA_1LC0RA_1LA1LD_1LC0LB t50094 norank ('norank', (2, 0)) / t20000 norank ('norank', (2, 0))
+1RB0LA_0RC1LA_1RD1RD_1LB1RB timeout
+1RB0LA_0RC1LA_1RD0LB_1LB1RB timeout
+1RB1RD_1LC1LB_1RA0LB_1RD0RC t50385 too many families (family 777) / t20000 too many families (family 790)
+0RB0RA_1RC1RA_1LD1RC_1RB0LC t50520 exploration does not settle / t20000 too many families (family 700)
+1RB0LD_1RC1RA_1LA0RA_0RC0LC timeout
+1RB0LA_0RC0RD_1LA0RC_0LC1RA learn: left samples disagree on F states (287 of 842)
+1RB0LC_1RC1RD_1LA1RC_0RB0RD t50677 exploration does not settle / t20000 too many families (family 696)
+1RB1LD_0RC0LB_1LC1RA_0RD0LA timeout
+1RB0LD_1RC0RA_1LA0RD_1LA1LC t50253 too many families (family 374) / t20000 too many families (family 705)
+1RB0RC_0LC1LB_0LD1LC_1RD0RA learn: left samples disagree on F states (1097 of 1132)
+1RB0LD_1LC0RD_1LA0LB_1RB1RA t50308 too many families (family 14) / t20000 too many families (family 727)
+1RB1LB_0LC1RD_1LA0RB_1LB0RD timeout
+1RB1RC_1LC0RC_1RA0LD_0RB0LB timeout
+1RB1LA_1LC0RA_1LA1LD_0LC0LD t50523 exploration does not settle / t20000 too many families (family 699)
+1RB1RD_1LC1LB_1RA0LB_1RA0RC timeout
+1RB1RA_0LC0RA_1LC1LD_1LA0LC t50188 too many families (family 27) / t20000 too many families (family 792)
+1RB1RD_1LC0RA_1LD0LB_1RB0LA t50308 too many families (family 14) / t20000 too many families (family 727)
+1RB0RC_1LC0RD_1RA0LD_1LC1LB t50091 too many families (family 9) / t20000 too many families (family 793)
+1RB1RD_1LC1RB_1RA0LB_0RA0RD t50519 exploration does not settle / t20000 too many families (family 700)
+0RB1LD_1RC1RC_1LA1RA_1RA0LD timeout

@@ -1,13 +1,4 @@
 # Per-batch CI cost for tools/closeouttr/ci_shard.py, in seconds on one
-# core of a hosted runner: the batch's own compile plus the boards only it
-# imports.  Batches not listed cost ci_shard.DEFAULT_COST.  Each value is
-# the MAX over CI runs 36527279101 and 36535116429 (2026-09-29, 188
-# batches): the same batch varies by up to ~2x between runners
-# (CBT_BR_02: 1,440 s and 2,764 s), and the split should plan for the
-# slow one.  Measure with
-#   python3 tools/closeouttr/ci_shard.py --costs shard-*.log
-# (the logs are in each closeout-shard artifact).  Add a row for any new
-# batch that takes more than about a minute.
 CBT_BR_00	2655
 CBT_BR_01	480
 CBT_BR_02	2764
@@ -264,6 +255,7 @@ CBT_BLC6_00	40
 CBT_BLC6_01	260
 CBT_BLC6_02	340
 CBT_BLC6_03	300
+CBT_LE5_02	90
 CBT_BLC6_04	330
 CBT_BLC6_05	120
 CBT_BLC6_06	200
@@ -303,6 +295,17 @@ CBT_AST_62	10
 CBT_AST_63	10
 CBT_AST_64	10
 CBT_AST_65	10
+CBT_FTA_00	60
+CBT_FTA_01	60
+CBT_FTA_02	60
+CBT_FTA_03	60
+CBT_FTA_04	60
+CBT_FTA_05	60
+CBT_FTA_06	60
+CBT_FTA_07	60
+CBT_FTA_08	60
+CBT_FTA_09	60
+CBT_FTA_10	60
 CBT_AST_26	100
 CBT_AST_27	100
 CBT_AST_28	90
@@ -323,6 +326,28 @@ CBT_AST_73	10
 CBT_AST_74	15
 CBT_AST_33	300
 CBT_AST_35	40
+CBT_LE6_00	60
+CBT_LE6_01	90
+CBT_LE6_02	150
+CBT_LE6_03	300
+CBT_LE6_04	150
+CBT_LE6_05	150
+CBT_LE6_06	60
+CBT_LE6_07	60
+CBT_LE6_08	30
+CBT_LE6_09	90
+CBT_LE6_10	60
+CBT_LE6_11	60
+CBT_BLC6_10	110
+CBT_FTA_11	60
+CBT_FTA_12	60
+CBT_FTA_13	60
+CBT_FTA_14	60
+CBT_FTA_15	60
+CBT_FTA_16	60
+CBT_FTA_17	60
+CBT_FTA_18	60
+CBT_FTA_19	60
 CBT_AST_36	10
 CBT_AST_56	5
 CBT_AST_75	5
@@ -330,6 +355,7 @@ CBT_AST_76	5
 CBT_AST_77	5
 CBT_AST_78	5
 CBT_AST_79	5
+CBT_FTA_20	60
 CBT_AST_37	5
 CBT_AST_57	5
 CBT_AST_58	5
@@ -354,7 +380,16 @@ CBT_AST_97	5
 CBT_AST_44	10
 CBT_AST_95	800
 CBT_AST_96	35
+CBT_FTA_21	300
+CBT_FTA_22	300
+CBT_FTA_23	300
 CBT_AST_100	20
 CBT_AST_105	30
 CBT_AST_106	30
 CBT_AST_102	100
+CBT_AST_98	5
+CBT_AST_99	5
+CBT_AST_101	5
+CBT_AST_107	5
+CBT_AST_108	5
+CBT_AST_109	5

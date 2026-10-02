@@ -1,0 +1,22 @@
+{"spec": "0RB0LA_1RC1RB_0LD1LC_0RA1LA", "src": "1RB1RA_0LC1LB_0RD1LD_0RA0LD", "batch": "CBT_LE3_03", "p": [1, 2, 3, 0], "flip": 0, "m": 0, "n0": 1}
+{"spec": "0RB0LA_1RC1RB_0LD1LC_0RD1LA", "src": "1RB1RA_0LC1LB_0RC1LD_0RA0LD", "batch": "CBT_LE3_03", "p": [1, 2, 3, 0], "flip": 0, "m": 0, "n0": 1}
+{"spec": "0RB1LA_1RC0LA_1LA1RD_1LA1RB", "src": "1RB1LC_0LC1RB_1LD0RB_1RB1LA", "batch": "CBT_LEF_03", "p": [3, 0, 1, 2], "flip": 1, "m": 3, "n0": 0}
+{"spec": "0RB1LB_0RC0LB_1RD1RC_0LA1LD", "src": "1RB1RA_0LC1LB_0RD1LD_0RA0LD", "batch": "CBT_LE3_03", "p": [2, 3, 0, 1], "flip": 0, "m": 0, "n0": 2}
+{"spec": "0RB1LD_1LC1RB_1RA1LA_1RB0LC", "src": "1RB0LC_1LC1RB_1RD1LD_0RB1LA", "batch": "CBT_LEF_01", "p": [3, 1, 2, 0], "flip": 0, "m": 25, "n0": 17}
+{"spec": "0RB1RA_0LC1RC_0LD0RC_1LA1LD", "src": "1RB1RA_0LC1LB_0RD1LD_0RA0LD", "batch": "CBT_LE3_03", "p": [3, 0, 1, 2], "flip": 1, "m": 0, "n0": 3}
+{"spec": "0RB1RC_0RC0LB_1LD1RA_0RA1LB", "src": "0RB1LC_0RC1RD_0RD0LC_1LA1RB", "batch": "CBT_LE4_00", "p": [3, 0, 1, 2], "flip": 0, "m": 1, "n0": 0}
+{"spec": "1RB0LA_1LC0RB_1RD1LA_1LA1RC", "src": "1RB1LC_1LC1RA_1RD0LC_1LA0RD", "batch": "CBT_CE2_13", "p": [2, 3, 0, 1], "flip": 0, "fail": "no sync"}
+{"spec": "1RB0LA_1LC0RB_1RD1LA_1LD1RC", "src": "1RB1LC_1LB1RA_1RD0LC_1LA0RD", "batch": "CBT_CE2_13", "p": [2, 3, 0, 1], "flip": 0, "fail": "no sync"}
+{"spec": "1RB0LA_1LC1RD_1RC1LB_1LA0RD", "src": "1RB1LC_1LB1RA_1RD0LC_1LA0RD", "batch": "CBT_CE2_13", "p": [1, 2, 3, 0], "flip": 1, "fail": "no sync"}
+{"spec": "1RB0LA_1LC1RD_1RD1LB_1LA0RD", "src": "1RB1LC_1LC1RA_1RD0LC_1LA0RD", "batch": "CBT_CE2_13", "p": [1, 2, 3, 0], "flip": 1, "fail": "no sync"}
+{"spec": "1RB0LD_1RC1RB_0LA0RA_1RA1LA", "src": "0RB0LB_1LC0RD_1LA1LC_1LB1RB", "batch": "CBT_NG_00", "p": [2, 0, 1, 3], "flip": 1, "m": 1, "n0": 0}
+{"spec": "1RB0RA_1LC1RA_1LD0LC_1RA1LB", "src": "1RB1LC_1RC0RB_1LD1RB_1LA0LD", "batch": "CBT_CE2_14", "p": [3, 0, 1, 2], "flip": 0, "fail": "no sync"}
+{"spec": "1RB0RA_1LC1RD_1LD0LC_1RA1LC", "src": "1RB1LC_1RC0RB_1LD1RB_1LA0LD", "batch": "CBT_CE2_14", "p": [1, 2, 3, 0], "flip": 1, "fail": "no sync"}
+{"spec": "1RB1LA_1LC1RC_0LA1RD_1LA0RB", "src": "0RB1LD_1LC1RB_1RA1LA_1RB0LC", "batch": "CBT_LE6_00", "p": [2, 0, 1, 3], "flip": 1, "m": 1, "n0": 0}
+{"spec": "1RB1LB_1LC0RD_1RD1LA_0LB1RD", "src": "0RB1LA_1RC0LA_1LA1RD_1LB1RB", "batch": "CBT_LE_04", "p": [3, 1, 2, 0], "flip": 1, "m": 7, "n0": 1}
+{"spec": "1RB1LB_1RC0LA_1RD1RC_0LB0RB", "src": "0RB0LB_1LC0RD_1LA1LC_1LB1RB", "batch": "CBT_NG_00", "p": [3, 1, 2, 0], "flip": 1, "m": 8, "n0": 2}
+{"spec": "1RB1LC_0LA1RD_1RB1LA_0LC0RD", "src": "0RB1LD_1LA1RC_1LA1RB_0RC0LD", "batch": "CBT_LE4_00", "p": [1, 0, 2, 3], "flip": 1, "m": 1, "n0": 0}
+{"spec": "1RB1LC_0LC1RA_0LD0RB_1RA1LA", "src": "0RB0LD_1LC1RC_1LD1RA_0RA1LC", "batch": "CBT_LE4_01", "p": [2, 3, 0, 1], "flip": 1, "m": 0, "n0": 4}
+{"spec": "1RB1RA_0LC0RC_1RA0LD_1RC1LC", "src": "0RB0LB_1LC0RD_1LA1LC_1LB1RB", "batch": "CBT_NG_00", "p": [1, 2, 0, 3], "flip": 1, "m": 8, "n0": 5}
+{"spec": "1RB1RB_1LC1RA_0RA1LD_0RB0LD", "src": "0RB1LD_1RC1RC_1LA1RB_0RC0LD", "batch": "CBT_LE4_00", "p": [2, 0, 1, 3], "flip": 0, "m": 1, "n0": 0}
+{"spec": "1RB1RC_1LA1RA_0RC1LD_1LB0LD", "src": "1RB1LB_1LA1LC_0LC1RD_1RA0RD", "batch": "CBT_CE2_00", "p": [1, 0, 2, 3], "flip": 1, "fail": "no sync"}

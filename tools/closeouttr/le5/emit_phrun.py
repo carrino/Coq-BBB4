@@ -46,7 +46,7 @@ def norm_names(det):
     return out
 
 
-def table_moves(det):
+def table_moves(det, fill_missing=True):
     """phases, their moves for a nonempty x (mvT) and an empty x (mvE), or
     NoClosure.  Moves: ('TC', q, dw, dm), ('TN', q, dm), ('EC', q, dw, dm),
     ('ER', a, q, c)."""
@@ -97,7 +97,7 @@ def table_moves(det):
             raise NoClosure('phase %r: no move of the kinds stated (%s)' % (w, cands))
         put(mvT if kind == 'T' else mvE, p, got)
     for p in range(len(names)):
-        if p not in mvE:
+        if p not in mvE and fill_missing:
             t = mvT.get(p)
             if t is None:
                 raise NoClosure('phase %r: no move seen' % names[p])
@@ -107,6 +107,8 @@ def table_moves(det):
                 raise NoClosure('phase %r narrows but no empty-x move seen' % names[p])
     xe = {p: p not in mvT for p in range(len(names))}
     for p in range(len(names)):
+        if p not in mvE:
+            continue
         for t in (mvT.get(p), mvE[p]):
             if t is None:
                 continue
@@ -213,7 +215,9 @@ def succ_state(st, mvT, mvE):
     if nx is not None:
         return (nx, p, m)
     if not x:
-        t = mvE[p]
+        t = mvE.get(p)
+        if t is None:
+            return None
         if t[0] == 'EC':
             return ((0,) * t[2], t[1], m + t[3])
         return ((0,) * (m + t[1]), t[2], t[3])
