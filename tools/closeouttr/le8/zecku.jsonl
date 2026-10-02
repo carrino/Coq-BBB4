@@ -1,0 +1,62 @@
+{"spec": "0RB0LA_1LC1RD_1LA0LC_1RB0RD", "closed": false}
+{"spec": "0RB0LA_1RC0RC_1LD1RB_1LA0LD", "closed": false}
+{"spec": "0RB0LA_1RC1LA_1LD1RB_0RC0LD", "closed": false}
+{"spec": "0RB0LA_1LC1RD_0RD0LC_1RB1LA", "closed": false}
+{"spec": "0RB0LC_1LC1RD_0RD1LC_1RB1LA", "closed": true, "kind": "zecku", "state": "D", "head": 1, "side": "R", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [], "x0": [0], "t0": 11, "cells": [1, 1], "ovf": ["reset", 2]}
+{"spec": "0RB0LD_1LA1RC_1RB1LA_0RC1LD", "closed": true, "kind": "zecku", "state": "D", "head": 1, "side": "R", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [0, 1], "x0": [0], "t0": 19, "cells": [1, 1, 0, 1], "ovf": ["reset", 2]}
+{"spec": "0RB0LD_1LC1RC_1RB1LA_0RC1LD", "closed": true, "kind": "zecku", "state": "B", "head": 1, "side": "R", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [], "x0": [1, 0], "t0": 12, "cells": [0, 1, 1], "ovf": ["pad", 1]}
+{"spec": "0RB0RA_1RC0LD_1LB1RA_1LB1LD", "closed": false}
+{"spec": "0RB0LC_1LC1RB_1LD1LA_1RD0RC", "closed": false}
+{"spec": "0RB0LD_0RC1RB_1LD1RC_0LA1LA", "closed": false}
+{"spec": "0RB0LB_1LC0RD_1LA0LA_1LB1RB", "closed": false}
+{"spec": "0RB1LA_1RC1LD_1LA1RB_0RC0LA", "closed": true, "kind": "zecku", "state": "B", "head": 1, "side": "R", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [], "x0": [0, 0], "t0": 19, "cells": [1, 1, 1], "ovf": ["reset", 2]}
+{"spec": "0RB1LA_1RC1LD_1LB1RB_0RC0LA", "closed": true, "kind": "zecku", "state": "B", "head": 1, "side": "R", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [], "x0": [1, 0], "t0": 17, "cells": [0, 1, 1], "ovf": ["pad", 1]}
+{"spec": "0RB1LA_1RC1LD_1LC1RB_0RC0LA", "closed": true, "kind": "zecku", "state": "C", "head": 1, "side": "R", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [0, 1], "x0": [0, 0], "t0": 39, "cells": [1, 1, 1, 0, 1], "ovf": ["reset", 2]}
+{"spec": "0RB1LA_1RC1LD_1LD1RB_0RC0LA", "closed": true, "kind": "zecku", "state": "A", "head": 1, "side": "R", "far": [1], "pre": [], "A": [1], "B": [0, 1], "T": [0, 1], "x0": [0], "t0": 28, "cells": [1, 1, 0, 1], "ovf": ["reset", 2]}
+{"spec": "0RB0RA_1RC1LD_1LC1RB_0LD0LA", "closed": false}
+{"spec": "0RB1LC_0LC1RC_1LA0RD_0LA1RD", "closed": false}
+{"spec": "0RB0RA_1RC1LD_1LD1RB_0LD0LA", "closed": false}
+{"spec": "0RB1LC_1LA0RC_1LD1RB_1LA0LD", "closed": false}
+{"spec": "0RB1LC_1LA1RB_0LD0LA_1RD0RB", "closed": false}
+{"spec": "1RB0LA_1LC0RB_1RD1LA_1RA1RC", "closed": false}
+{"spec": "0RB1LD_1LA1RC_1RD1RB_1LB0LA", "closed": false}
+{"spec": "1RB0LA_1LC1RC_1RD1LB_1LA0RD", "closed": false}
+{"spec": "1RB0LA_1LC0RB_1RD1LA_1RB1RC", "closed": false}
+{"spec": "0RB1RA_1LC1RB_0LD1LD_0RA0LC", "closed": false}
+{"spec": "1RB0RA_1LC1RD_1LD0LC_1RA1LB", "closed": false}
+{"spec": "1RB0LC_1LA1RD_1LA1LC_0RA0RD", "closed": false}
+{"spec": "1RB0RA_1LB1RC_1RA1LD_1LC0LD", "closed": false}
+{"spec": "1RB0RA_1LC1RD_1LD0LC_1RA1LC", "closed": false}
+{"spec": "0RB1RB_0LC0RA_0LD1LC_1RA1LD", "closed": false}
+{"spec": "1RB0RC_1RC1LD_0LB1RA_1LA1LB", "closed": false}
+{"spec": "1RB0RB_1LC1RA_1LD0LC_0RA0LD", "closed": false}
+{"spec": "1RB1LA_0LA1RC_0RD0RB_1LD0LA", "closed": false}
+{"spec": "1RB0RB_0RC1RC_0LD1LA_1LD0LA", "closed": false}
+{"spec": "1RB1LA_1LC1RD_1LA0LC_1RA0RB", "closed": false}
+{"spec": "1RB1LB_1LA1RC_0LA0RD_0LB1RD", "closed": true, "kind": "zecku", "state": "A", "head": 1, "side": "L", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [], "x0": [1, 0], "t0": 11, "cells": [0, 1, 1], "ovf": ["pad", 1]}
+{"spec": "1RB1LC_0LA0RD_1LA1RB_0LC1RD", "closed": true, "kind": "zecku", "state": "D", "head": 1, "side": "L", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [0, 1], "x0": [0], "t0": 18, "cells": [1, 1, 0, 1], "ovf": ["reset", 2]}
+{"spec": "1RB1LA_1RC1RD_1LC0LB_0LA0RB", "closed": false}
+{"spec": "1RB1LC_0LA1RC_1LA0RD_0LA1RD", "closed": false}
+{"spec": "1RB1LA_0RC1RC_0LD0RB_0LA1LD", "closed": false}
+{"spec": "1RB1LC_0LC1RB_1LA1RD_0LA0RB", "closed": true, "kind": "zecku", "state": "C", "head": 1, "side": "L", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [], "x0": [0], "t0": 10, "cells": [1, 1], "ovf": ["reset", 2]}
+{"spec": "1RB1LC_0LA1RD_1LD1LA_1RA0RB", "closed": false}
+{"spec": "1RB1LC_1LA1RA_0RB0LD_0RA1LD", "closed": true, "kind": "zecku", "state": "A", "head": 1, "side": "R", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [], "x0": [1, 0], "t0": 16, "cells": [0, 1, 1], "ovf": ["pad", 1]}
+{"spec": "1RB1LC_1LB1RA_0RB0LD_0RA1LD", "closed": true, "kind": "zecku", "state": "B", "head": 1, "side": "R", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [0, 1], "x0": [0, 0], "t0": 38, "cells": [1, 1, 1, 0, 1], "ovf": ["reset", 2]}
+{"spec": "1RB1LC_0LC0RB_1LA1RD_0LA0RD", "closed": false}
+{"spec": "1RB1LC_1LA0RD_0RC1LB_0LC1RD", "closed": false}
+{"spec": "1RB1LC_1LC1RA_0RB0LD_0RA1LD", "closed": true, "kind": "zecku", "state": "D", "head": 1, "side": "R", "far": [1], "pre": [], "A": [1], "B": [0, 1], "T": [0, 1], "x0": [0], "t0": 27, "cells": [1, 1, 0, 1], "ovf": ["reset", 2]}
+{"spec": "1RB1LD_1LC1RA_0RA1LC_0RB0LC", "closed": true, "kind": "zecku", "state": "A", "head": 1, "side": "R", "far": [], "pre": [], "A": [1], "B": [0, 1], "T": [], "x0": [0, 0], "t0": 18, "cells": [1, 1, 1], "ovf": ["reset", 2]}
+{"spec": "1RB1LC_1LB1RA_0LC0LD_0RA0RD", "closed": false}
+{"spec": "1RB1LD_0RC0RB_1LC0LA_1LA0LA", "closed": false}
+{"spec": "1RB1LC_1LC1RA_0LC0LD_0RA0RD", "closed": false}
+{"spec": "1RB1LD_1RC0RB_1LA1RC_1LC0LA", "closed": false}
+{"spec": "1RB1LD_1RC0RB_1LA1RC_1LA0LA", "closed": false}
+{"spec": "1RB1LD_1RC1RA_1LA0RC_1RC0LD", "closed": false}
+{"spec": "1RB1LD_1LC1RA_0RB0LC_0RA0LD", "closed": false}
+{"spec": "1RB1LD_1RC0RB_0LA0RC_1LA0LD", "closed": false}
+{"spec": "1RB1RC_1LC0RB_1RA1LD_1RB0LD", "closed": false}
+{"spec": "1RB1RC_1LC0LD_1LD1RA_0RC1LB", "closed": false}
+{"spec": "1RB1RD_1RC0LB_1LD0RC_1RA1LB", "closed": false}
+{"spec": "1RB1RC_1LA1RA_0RC1LD_1LB0LD", "closed": false}
+{"spec": "1RB1RC_1LC1LB_1LD1RA_0RC0LD", "closed": false}
+{"spec": "1RB1RC_1LC1RA_1LD0LC_0RD0RB", "closed": false}

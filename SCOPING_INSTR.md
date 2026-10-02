@@ -6746,6 +6746,67 @@ python3 tools/closeouttr/le6/batch.py CERTS.jsonl --kind zeckd --tag LE6 --jobs 
 tools/closeouttr/le/board_chunk.sh CBT_LE6_NN
 ```
 
+#### 7.4.LE8 LE6's non-binary counter residue: the phi rows count UP in a fixed width (2026-10-02)
+
+Workstream LE8 (batch tag `LE8`), over the 63 rows of LE6's residue that do
+not grow at a binary rate (`le8/rows.txt`; the binary-rate half is LE7's):
+LE6's "Zeckendorf beside a run" (phi per cell), base 3/4, ratio 3/2, the
+irregular second levels and the left-growing rows with no ratio.  One of the
+63 (`1RB1RD_0RC0LB_1LC0LA_1LA0LA`) was boarded elsewhere before this started;
+62 were open (`le8/rows62.txt`).  Branched from
+`claude/instruction-beeping-proof-scope-ww7zdk` (`6f17669b`).
+
+**Conjugates.**  `le6/conj_check.py` puts the 62 in 33 classes (18 with 2-4
+members).  Two rows are conjugates of boarded rows (`1RB0RA_1LC1RD_1LD0LC_1RA1LC`
+of `CBT_CE2_14`'s, `1RB1RC_1LA1RA_0RC1LD_1LB0LD` of `CBT_CE2_00`'s), but
+`le6/conj_find.py` finds no lockstep in 200,000 steps: different orbits.
+
+**1. The phi group (14 rows, 4 classes) is a Zeckendorf count UP inside a
+FIXED width.**  Read by hand, `0RB0LC_1LC1RD_0RD1LC_1RB1LA` at its `[B]`
+anchor on the left end of the tape runs `1 111111111111`, `1 011111111111`,
+`1 101111111111`, `1 110111111111`, `1 010111111111`, ...,
+`1 0101010101`: a cell `0` is the digit 1 and a cell `1` the digit 0, LSB
+next to the head, every Zeckendorf string of the width in order, the high
+ZERO digits on the tape.  From the largest string of the width the carry
+runs off the end and the machine writes the zero string two digits wider.
+LE6's "run that shortens at each top" is those high zero digits.  In LE6's
+token words (`0 -> A = 1`, `10 -> B = 01`) this is LE6's ZeckD countdown run
+BACKWARDS, with a new overflow.  Four rows overflow differently: to the
+successor `0^L 1` padded with one zero digit (`0RB0LD_1LC1RC_1RB1LA_0RC1LD`:
+`1 101010101` -> `1 11111111011`).  LE6's reader did not see them: its
+increment mode is LE4's `zinc`, which drops a carry that leaves the top
+(`zinc [0, 1] = [0, 0, 0]`), and no mode resets.
+
+* `theories/Checkers/LadderCheckZeckUTr.v` (new; imports
+  `LadderCheckZeckDTr`'s token lists, cells and lemmas): the step
+  `alt i ++ false :: rho -> false^i ++ true :: rho` and the overflow
+  `alt i -> false^(i + a) ++ w` for a fixed `a` and token list `w` that add
+  an even number of digits (the zero reset: `a = 3`, `w = []`; the padded
+  successor: `a = 0`, `w = [true; false]`).  The digit count is fixed inside
+  a width, so its parity is invariant and only one kind of overflow arm and
+  one kind of end arm are asked for.  Liveness is ZeckD's measure read
+  backwards: the binary value of the digit string RISES at every interior
+  and end step (`dstep_dec` on the inverse step) and stays below 2^(digit
+  count), so overflows recur; the fires are read from the overflow arms.
+  `Print Assumptions` on `boardZU_neverqhtr` / `boardZU_qhtr` and on every
+  batch: `functional_extensionality_dep` only.
+* Reader `le8/zecku_detect.py` (LE6's `zeckw_detect.py` with a correct
+  Zeckendorf successor and the two overflow modes), emitter
+  `le8/emit_zecku.py` (LE6's `emit_zeckd.py`, classes changed), driver
+  `le8/batch.py --kind zecku`.
+
+**14 of 14 boarded** (`CBT_LE8_00`, `_01`; all SP, never-QH).
+
+| batch | rows | route | compile (container, `-j1`, incl. boards) |
+|---|---:|---|---:|
+| `CBT_LE8_00` | 7 | `LadderCheckZeckUTr` | 16 s (incl. the checker) |
+| `CBT_LE8_01` | 7 | `LadderCheckZeckUTr` | 13 s |
+
+```
+python3 tools/closeouttr/le8/zecku_detect.py tools/closeouttr/le8/rows62.txt le8/zecku.jsonl --jobs 4   # ~2 min
+python3 tools/closeouttr/le8/batch.py le8/zecku.jsonl --kind zecku --tag LE8 --chunk 7
+```
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

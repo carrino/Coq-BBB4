@@ -1,0 +1,2 @@
+{"spec": "1RB0RA_1LC1RD_1LD0LC_1RA1LC", "src": "1RB1LC_1RC0RB_1LD1RB_1LA0LD", "batch": "CBT_CE2_14", "p": [1, 2, 3, 0], "flip": 1, "fail": "no sync"}
+{"spec": "1RB1RC_1LA1RA_0RC1LD_1LB0LD", "src": "1RB1LB_1LA1LC_0LC1RD_1RA0RD", "batch": "CBT_CE2_00", "p": [1, 0, 2, 3], "flip": 1, "fail": "no sync"}
