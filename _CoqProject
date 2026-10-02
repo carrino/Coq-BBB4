@@ -3106,11 +3106,8 @@ theories/Counters/MovingTokenTr.v
 theories/Counters/MovingSweepTr.v
 theories/Counters/FrontierTokenTr.v
 theories/Counters/CConjugateTr.v
-<<<<<<< HEAD
 theories/Counters/CConjCoverTr.v
-=======
 theories/Counters/CConjugateReachTr.v
->>>>>>> origin/codex/prove-machines-in-closeouttr
 theories/Counters/TokenLapTr.v
 theories/Counters/ParityTokenTr.v
 theories/Counters/ParityCTokenTr.v
@@ -11926,6 +11923,13 @@ theories/Machines/LadderTr/LDRT_1RB1RC_1LC0RA_0RB1LD_1LC0LD.v
 theories/Machines/LadderTr/LDRT_1RB1RD_0LB1LC_0RA1LB_1RA0RC.v
 theories/Machines/LadderTr/LDRT_1RB1RD_0LC0RA_1LA0LD_1RA1LC.v
 theories/Machines/LadderTr/LDRT_1RB1RD_1LC0RA_1LD0LC_0RB1LC.v
+theories/Counters/FiniteInstrTr.v
+theories/Counters/Period3MacroTr.v
+theories/Counters/ValueFrontierTransducer.v
+theories/Counters/ValueWordNormalization.v
+theories/Counters/Period3WordTermination.v
+theories/Counters/ValueFrontierD0.v
+theories/Counters/Period3FiniteTr.v
 theories/CloseoutTr/CloseoutKitTr.v
 theories/CloseoutTr/CBT_AST_00.v
 theories/CloseoutTr/CBT_AST_01.v
@@ -11939,9 +11943,13 @@ theories/CloseoutTr/CBT_AST_08.v
 theories/CloseoutTr/CBT_AST_09.v
 theories/CloseoutTr/CBT_AST_10.v
 theories/CloseoutTr/CBT_AST_100.v
+theories/CloseoutTr/CBT_AST_101.v
 theories/CloseoutTr/CBT_AST_102.v
 theories/CloseoutTr/CBT_AST_105.v
 theories/CloseoutTr/CBT_AST_106.v
+theories/CloseoutTr/CBT_AST_107.v
+theories/CloseoutTr/CBT_AST_108.v
+theories/CloseoutTr/CBT_AST_109.v
 theories/CloseoutTr/CBT_AST_11.v
 theories/CloseoutTr/CBT_AST_12.v
 theories/CloseoutTr/CBT_AST_13.v
@@ -12019,6 +12027,8 @@ theories/CloseoutTr/CBT_AST_94.v
 theories/CloseoutTr/CBT_AST_95.v
 theories/CloseoutTr/CBT_AST_96.v
 theories/CloseoutTr/CBT_AST_97.v
+theories/CloseoutTr/CBT_AST_98.v
+theories/CloseoutTr/CBT_AST_99.v
 theories/CloseoutTr/CBT_BLC3_00.v
 theories/CloseoutTr/CBT_BLC3_01.v
 theories/CloseoutTr/CBT_BLC3_02.v
@@ -12165,6 +12175,7 @@ theories/CloseoutTr/CBT_FTA_20.v
 theories/CloseoutTr/CBT_FTA_21.v
 theories/CloseoutTr/CBT_FTA_22.v
 theories/CloseoutTr/CBT_FTA_23.v
+theories/CloseoutTr/CBT_FTA_24.v
 theories/CloseoutTr/CBT_HY2_00.v
 theories/CloseoutTr/CBT_HY2_01.v
 theories/CloseoutTr/CBT_HY3_00.v
