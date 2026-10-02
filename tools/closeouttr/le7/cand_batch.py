@@ -7,6 +7,8 @@ the kind's emitter and compiled, and the first that boards is kept.
                     boards LDRZM_ / LDRZMQ_ after LadderCheckRun2zTr.v
     --kind run3     run3_all.py records, le5/emit_run3.py, [LadderCheckRun3Tr],
                     boards LDR3_ / LDR3Q_ after LadderCheckRun3Tr.v
+    --kind tank     tank_detect.py records, le7/emit_tank.py, [LadderCheckTankTr],
+                    boards LDTNK_ / LDTNKQ_ after LadderCheckTankTr.v
     --kind ph1      phase models ({spec, anchor, model}), le7/emit_ph_model.py,
                     [LadderCheckPhRun1Tr], boards LDPH1_ / LDPH1Q_ after LadderCheckPhRun1Tr.v
 
@@ -39,6 +41,10 @@ KINDS = {
                  anchor='theories/Checkers/LadderCheckRun3Tr.v',
                  blurb='terminator-run counters whose top digit has its own words, '
                        're-anchored (LE6 B2 rows), by LadderCheckRun3Tr'),
+    'tank': dict(emit=os.path.join(HERE, 'emit_tank.py'), pfx='LDTNK',
+                 anchor='theories/Checkers/LadderCheckTankTr.v',
+                 blurb='binary counters that widen into a tank, an empty tank refilling, '
+                       'by LadderCheckTankTr'),
     'ph1': dict(emit=os.path.join(HERE, 'emit_ph_model.py'), pfx='LDPH1',
                 anchor='theories/Checkers/LadderCheckPhRun1Tr.v',
                 blurb='phase-run counters whose last top word is the run word, from a '
