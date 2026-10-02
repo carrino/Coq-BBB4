@@ -6,6 +6,8 @@
 Kinds:
     tankph   le9/emit_tankph.py + le9/tankph_models.jsonl, [LadderCheckTankPhTr],
              boards LDTPH_ / LDTPHQ_ after LadderCheckTankPhTr.v
+    dbounce  le9/emit_dbounce.py, [DoubleBounceTr], boards LDDB_ / LDDBQ_ after
+             DoubleBounceTr.v
 
 Each row is emitted, compiled alone (wall time and peak RSS are printed), and
 the boards that compile are copied to theories/Machines/LadderTr/, listed in
@@ -33,6 +35,9 @@ KINDS = {
                    pfx='LDTPH', anchor='theories/Checkers/LadderCheckTankPhTr.v',
                    blurb='binary counters that widen into a tank, with a cycle of suffix '
                          'phases between refills, by LadderCheckTankPhTr'),
+    'dbounce': dict(emit=[os.path.join(HERE, 'emit_dbounce.py'), '{spec}'],
+                    pfx='LDDB', anchor='theories/Counters/DoubleBounceTr.v',
+                    blurb='bouncers that double their block each round, by DoubleBounceTr'),
 }
 
 

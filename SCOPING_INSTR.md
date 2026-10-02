@@ -7072,6 +7072,22 @@ check `le9/tankph_arms.py`, emitter `le9/emit_tankph.py`, batch
 `le9/le9_batch.py --kind tankph`.  **6 boarded** (`CBT_LE9_00`), each board
 ~1.1 s and ~460 MB alone.
 
+**2. The three unsurveyed rows are doubling BOUNCERS, not counters.**
+`1RB0LC_1LA1RD_1LA1LC_0RC0LD`, `1RB0LC_1RC1RD_1LA1LC_0RC0LD` and
+`1RB1RD_1LC1LB_1RA0LB_0RB0LD` (all QH: one instruction fires only in the
+first steps; on the machine wrapped at it the three are one machine up to
+state names) run, at the left end with the head on a blank,
+`R(n, m) = q | 0 1^n 0 1^m ->+ R(2n, m+1)`: the round eats `1^n` one cell at
+a time writing `00` per cell at the left (`S(j,k+1,m) -> S(j+1,k,m)`, one
+arm family in `j`), then turns (`S(j,0,m+1) -> R(2j+2, m+2)`, `(00)^j ->
+(11)^j`, the separator one cell left; the arm reads the first cell of
+`1^m`).  TriGlue's finder does not close them (its blocks decouple the
+parity of the zero run from the eaten count, and the odd residue explodes).
+New checker `DoubleBounceTr` (`Counters/`): the two families as `Reach1`
+hypotheses, the round by induction on the eaten count, never-QH and QH
+closers.  Emitter `le9/emit_dbounce.py` (LE8's arm search, `emit_nest.Gen`);
+**3 boarded** (`CBT_LE9_01`), ~2 s and ~800 MB a board.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;
