@@ -11928,6 +11928,17 @@ theories/CloseoutTr/CBT_DXQ_02.v
 theories/CloseoutTr/CBT_DXQ_03.v
 theories/CloseoutTr/CBT_DXS_00.v
 theories/CloseoutTr/CBT_DXS_01.v
+theories/CloseoutTr/CBT_FTA_00.v
+theories/CloseoutTr/CBT_FTA_01.v
+theories/CloseoutTr/CBT_FTA_02.v
+theories/CloseoutTr/CBT_FTA_03.v
+theories/CloseoutTr/CBT_FTA_04.v
+theories/CloseoutTr/CBT_FTA_05.v
+theories/CloseoutTr/CBT_FTA_06.v
+theories/CloseoutTr/CBT_FTA_07.v
+theories/CloseoutTr/CBT_FTA_08.v
+theories/CloseoutTr/CBT_FTA_09.v
+theories/CloseoutTr/CBT_FTA_10.v
 theories/CloseoutTr/CBT_HY2_00.v
 theories/CloseoutTr/CBT_HY2_01.v
 theories/CloseoutTr/CBT_HY3_00.v
