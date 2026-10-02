@@ -12290,6 +12290,7 @@ theories/CloseoutTr/CBT_HY_02.v
 theories/CloseoutTr/CBT_HY_03.v
 theories/CloseoutTr/CBT_HY_04.v
 theories/CloseoutTr/CBT_HY_05.v
+theories/CloseoutTr/CBT_LE10_00.v
 theories/CloseoutTr/CBT_LE2_00.v
 theories/CloseoutTr/CBT_LE2_01.v
 theories/CloseoutTr/CBT_LE3_00.v
