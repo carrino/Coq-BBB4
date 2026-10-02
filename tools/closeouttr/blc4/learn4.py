@@ -48,6 +48,10 @@ LDROP = int(os.environ.get('LG4_LDROP', '1'))
 B0WIDEN = int(os.environ.get('LG4_B0WIDEN', '0'))   # elements nearest the head a left sample drops
 # (BLC3's choice: the nearest is the window's and may be mid-rewrite;
 # LG4_LDROP=0 keeps it)
+# Position periods considered by the bounded-partial-sum learner.
+PERIODS = tuple(int(m) for m in os.environ.get('LG4_PERIODS', '1,2').split(','))
+if not PERIODS or any(m < 1 for m in PERIODS):
+    raise ValueError('LG4_PERIODS must list positive integers')
 
 
 class Row(tuple):
@@ -151,7 +155,7 @@ def fit_F(data, M):
         return 'b0' if i == 0 else i % m
     best = None
     udata = sorted(set((tuple(s), b, e) for s, b, e in data), key=str)
-    for m in (1, 2):
+    for m in PERIODS:
         groups = collections.defaultdict(collections.Counter)
         for syms, bk, endw in data:
             core = syms[:len(syms) - M]
