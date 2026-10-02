@@ -28,6 +28,7 @@ theories/Checkers/TCycler.v
 theories/Checkers/TCyclerTr.v
 theories/Checkers/TCyclerQHTr.v
 theories/Checkers/TCyclerN.v
+theories/Checkers/TCyclerAllNTr.v
 theories/Checkers/Wrap.v
 theories/Checkers/Fuel.v
 theories/Census/TNF_QH.v
@@ -471,6 +472,8 @@ theories/Checkers/FuelSCCTr.v
 theories/Checkers/FuelWideTr.v
 theories/Checkers/FuelMixTr.v
 theories/Checkers/FuelMixPartialTr.v
+theories/Checkers/FuelMixTargetTr.v
+theories/Checkers/FuelMixTargetFastTr.v
 theories/Checkers/FuelPhaseTr.v
 theories/Machines/Fuel_Batch_01.v
 theories/Machines/Fuel_Batch_02.v
@@ -3126,6 +3129,10 @@ theories/Counters/GeometricCounterTr.v
 theories/Counters/ReflectedLapTr.v
 theories/Counters/SweepResetTr.v
 theories/Counters/RightScanReturnTr.v
+theories/Counters/UnaryFrontierTr.v
+theories/Counters/PairTransferTr.v
+theories/Counters/OnesBudgetTr.v
+theories/Counters/DyadicFrontierTr.v
 theories/Counters/LapGlueQHTr.v
 theories/Counters/SweepGlueTr.v
 theories/Counters/HybridGlueTr.v
@@ -11961,6 +11968,10 @@ theories/CloseoutTr/CBT_AST_37.v
 theories/CloseoutTr/CBT_AST_38.v
 theories/CloseoutTr/CBT_AST_39.v
 theories/CloseoutTr/CBT_AST_40.v
+theories/CloseoutTr/CBT_AST_41.v
+theories/CloseoutTr/CBT_AST_42.v
+theories/CloseoutTr/CBT_AST_43.v
+theories/CloseoutTr/CBT_AST_44.v
 theories/CloseoutTr/CBT_AST_50.v
 theories/CloseoutTr/CBT_AST_51.v
 theories/CloseoutTr/CBT_AST_52.v
@@ -12000,6 +12011,10 @@ theories/CloseoutTr/CBT_AST_90.v
 theories/CloseoutTr/CBT_AST_91.v
 theories/CloseoutTr/CBT_AST_92.v
 theories/CloseoutTr/CBT_AST_93.v
+theories/CloseoutTr/CBT_AST_94.v
+theories/CloseoutTr/CBT_AST_95.v
+theories/CloseoutTr/CBT_AST_96.v
+theories/CloseoutTr/CBT_AST_97.v
 theories/CloseoutTr/CBT_BLC3_00.v
 theories/CloseoutTr/CBT_BLC3_01.v
 theories/CloseoutTr/CBT_BLC3_02.v
@@ -12143,6 +12158,9 @@ theories/CloseoutTr/CBT_FTA_17.v
 theories/CloseoutTr/CBT_FTA_18.v
 theories/CloseoutTr/CBT_FTA_19.v
 theories/CloseoutTr/CBT_FTA_20.v
+theories/CloseoutTr/CBT_FTA_21.v
+theories/CloseoutTr/CBT_FTA_22.v
+theories/CloseoutTr/CBT_FTA_23.v
 theories/CloseoutTr/CBT_HY2_00.v
 theories/CloseoutTr/CBT_HY2_01.v
 theories/CloseoutTr/CBT_HY3_00.v
