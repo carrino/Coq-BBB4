@@ -215,3 +215,10 @@ Ltac rgo_n n :=
   | S ?m => first [ apply reach0_refl | rr 1; rgo_n m ]
   end.
 Ltac rgo := rgo_n 80.
+
+(** [rr i; tac] for the least [i <= n] where [tac] then succeeds *)
+Ltac rr_upto n tac :=
+  match n with
+  | O => fail
+  | S ?m => first [ rr_upto m tac | rr n; tac ]
+  end.
