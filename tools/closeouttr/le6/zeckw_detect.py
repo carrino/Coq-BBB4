@@ -109,7 +109,7 @@ def try_anchor(vs):
                     for nt in range(0, min(8, len(body)) + 1):
                         T = body[len(body) - nt:] if nt else []
                         mid = body[:len(body) - nt]
-                        for pad in range(0, 5):
+                        for pad in range(0, 5 if not T else 1):
                             y = unzw(mid + [0] * pad, A, B)
                             if y is None or not y or y[-1] != 0:
                                 continue
@@ -200,7 +200,7 @@ def find_after(cert, steps, after):
         if T and body[len(body) - len(T):] != T:
             continue
         mid = body[:len(body) - len(T)] if T else body
-        for pad in range(0, 5):
+        for pad in range(0, 5 if not T else 1):
             y = unzw(mid + [0] * pad, A, B)
             if y is None or not y or y[-1] != 0:
                 continue
