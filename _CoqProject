@@ -12081,6 +12081,15 @@ theories/CloseoutTr/CBT_FTA_07.v
 theories/CloseoutTr/CBT_FTA_08.v
 theories/CloseoutTr/CBT_FTA_09.v
 theories/CloseoutTr/CBT_FTA_10.v
+theories/CloseoutTr/CBT_FTA_11.v
+theories/CloseoutTr/CBT_FTA_12.v
+theories/CloseoutTr/CBT_FTA_13.v
+theories/CloseoutTr/CBT_FTA_14.v
+theories/CloseoutTr/CBT_FTA_15.v
+theories/CloseoutTr/CBT_FTA_16.v
+theories/CloseoutTr/CBT_FTA_17.v
+theories/CloseoutTr/CBT_FTA_18.v
+theories/CloseoutTr/CBT_FTA_19.v
 theories/CloseoutTr/CBT_HY2_00.v
 theories/CloseoutTr/CBT_HY2_01.v
 theories/CloseoutTr/CBT_HY3_00.v
