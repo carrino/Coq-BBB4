@@ -112,18 +112,24 @@ def read_law(seq):
     if d0 is None:
         raise NoClosure('no low-digit step seen')
     law = None
-    for (_t, x, m), (_t2, x2, m2) in zip(seq, seq[1:]):
-        if not x:
+    for i, (_t, x, m) in enumerate(seq[:-1]):
+        if x:
+            continue
+        # the refilled x: the first of the next visits (up to 4) whose x is
+        # D0^k ++ z with k >= m; an x refilled to all-top (or one below it)
+        # narrows at once, and the refill arm runs through those visits (LE6)
+        for j in range(i + 1, min(i + 5, len(seq))):
+            _t2, x2, m2 = seq[j]
             k = 0
             while k < len(x2) and x2[k] == d0:
                 k += 1
-            if k < m:
-                raise NoClosure('a refill shorter than D0^m')
             z = [0 if w == d0 else 1 for w in x2[k:]]
-            if z and z[0] == 0:
-                raise NoClosure('refill tail %r' % z)
-            law = (k - m, m2, z)
-            break
+            if k >= m and not (z and z[0] == 0):
+                law = (k - m, m2, z)
+                break
+        if law is None:
+            raise NoClosure('a refill that is not D0^(m+a) ++ z within 4 visits')
+        break
     if law is None:
         raise NoClosure('no refill seen')
     return d0, d1, law[0], law[1], law[2]
