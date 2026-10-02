@@ -5406,6 +5406,14 @@ do not settle, 1 no ranking.  Three of its rows never wrote a record (a
 multiprocessing worker stuck in its `SIGALRM` time-out, as in §7.4.BLC3);
 rerun one process each under a hard kill, all three time out.
 
+A third pass on the owner's box (2026-10-02; `LG4_MAXFAM=4000 MP_DEPTH=4`,
+7,200 s a row, 12 jobs; `blc6/runs/sweep3_box.jsonl`) over the 114 block-list
+rows then open (`blc6/rows_box2.txt`, mostly rows BLC6 had never been run on)
+certifies **27** (57-148 families; `CBT_BLC6_11..17`, about 20 s a batch here)
+in its first 92 records.  The same finder over the other 147 open rows (the
+counter residue, `sweep3_box_rest.jsonl`) certifies none: they stop in learning
+(no long runs, too few anchors, no ratio).
+
 | batch | rows | compile (container) |
 |---|---:|---:|
 | `CBT_BLC6_00` | 1 | 17 s |
