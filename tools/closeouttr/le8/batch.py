@@ -30,6 +30,11 @@ SB.KINDS['zecku'] = (
     lambda f: f.get('numeration') == 'zecku',
     'fixed-width Zeckendorf counts up that overflow wider, by LadderCheckZeckUTr')
 
+SB.KINDS['nest'] = (
+    os.path.join(HERE, 'emit_nest.py'), 'theories/Counters/NestCountTr.v', 'LDRNC',
+    lambda f: f.get('numeration') == 'nest',
+    'binary counters whose carry runs whole inner counts, by NestCountTr')
+
 TMP = None
 
 
@@ -58,11 +63,15 @@ def main():
               if l.split('\t')[1:2] == ['QH'])
     certs, seen = [], set()
     for f in a.found:
-        for line in open(f):
+        lines = ([json.dumps(json.load(open(f)))] if f.endswith('.json')
+                 else open(f).read().splitlines())
+        for line in lines:
             if not line.strip():
                 continue
             c = json.loads(line)
-            if c.get('closed') and 'family' not in c:
+            if 'outer' in c and 'ovf' in c:      # a nest plan
+                c = dict(spec=c['spec'], closed=True, family=dict(numeration='nest'), plan=c)
+            elif c.get('closed') and 'family' not in c:
                 c = to_cert(c)
             s = c.get('spec')
             if (c.get('closed') and s in remaining and s not in seen
