@@ -6539,7 +6539,7 @@ python3 tools/closeouttr/le5/residue.py
 Nothing here needed the owner's box.  The slowest step is `phrun2.py` over
 all 337 rows (~1.5 h at 4 jobs; ~30 min at 12).
 
-#### 7.4.LE6 LE5's residue: a survey by growth rate; most of the Fibonacci rows count DOWN; conjugate transport; 130 boarded (2026-10-02)
+#### 7.4.LE6 LE5's residue: a survey by growth rate; most of the Fibonacci rows count DOWN; conjugate transport; binary countdown runs; 134 boarded (2026-10-02)
 
 Workstream LE6 (batch tag `LE6`), over LE5's residue: the rows of
 `le5/residue.tsv` still in `closeouttr_remaining.txt`, **322 rows**
@@ -6587,7 +6587,7 @@ takes the time ratio between consecutive events and the cells per event;
 | F: Fibonacci growth (phi per cell / phi^2 per 2 cells) | 138 | Zeck2 (increment) 20, ZeckD (countdown) 70, ZeckDw (wider bottom) 24, conjugate 1 | 23 |
 | B2: binary growth, both ends | 70 | - | 70 |
 | I: irregular event ratios (a second level: the ratio cycles with an outer count) | 49 | - | 49 |
-| B2: binary growth, one end | 25 | - | 25 |
+| B2: binary growth, one end | 25 | Run2z (countdown run) 4 | 21 |
 | C: conjugate of a boarded row (boarded before the survey) | 15 | conjugate 15 | 0 |
 | B3: base 3 / 4 growth (or 2 and 4 at the two ends) | 13 | - | 13 |
 | R: other constant ratio (1.50) | 8 | - | 8 |
@@ -6595,8 +6595,8 @@ takes the time ratio between consecutive events and the cells per event;
 | R: other constant ratio (2.13) | 2 | - | 2 |
 
 (Group C: the conjugates boarded before the survey ran.)  Every group is a
-counter (no extent grows faster than ~t^0.1).  The Fibonacci group is the
-whole yield of this section; the others are read below.
+counter (no extent grows faster than ~t^0.1).  The Fibonacci group is most
+of this section's yield; the binary groups are read in item 4.
 
 **3. The Fibonacci group is Zeckendorf counters, three quarters of them
 counting DOWN.**
@@ -6643,7 +6643,45 @@ changed; emit_step's arm search), driver `le6/batch.py` (LE3's
 | `CBT_LE6_05`, `_06` | 21 + 3 | `LadderCheckZeckDwTr`, the bottom widens by two digits |
 | `CBT_LE6_07` | 5 | `LadderCheckZeckDTr`: rows whose top digit is always 0, read with that digit in the terminator |
 
-**Yields** (130 rows; closeout 599 -> **469**):
+**4. The binary groups: LE4's marker run COUNTED DOWN.**  Read by hand,
+`0RB1LA_1LC1RD_0RA1LD_1RB0LA` is `[A0] x 0 (11)^m`, `x` over `11` / `10`
+counting DOWN: at `x = 0` it narrows by a word and the run grows, and an
+empty `x` refills to `1^m 0`, whose top word's last cell and the marker are
+blanks beyond the tape.  With the words swapped that is LE4's
+`LadderCheckRun2Tr` increment, except for the refill.  Three things kept it
+unread: LE4's `termrun2_detect.py` asks that half the visits at the anchor
+key parse (here 10-20%: the key also catches the head passing mid-sweep)
+and looks at 3,000 visits (no refill among them); the visit strings end at
+the last nonzero cell, so the refilled `x` never parses and the reader
+took refill + count + narrowing for one "refill"; and `(C, 1)` fires only at
+the narrowing, never within reach of a refill anchor.
+
+* `le6/run2_relax.py`: LE4's reader with a 10% parse floor, a 1.5M-step
+  run (600k in the sweep) and every visit from the first quarter on, the
+  visit string padded with up to `|M| + l` blanks.  Over the 194 open rows:
+  **68 read** (`le6/run2r.jsonl`; ~25 s a row at 600k steps).
+* `theories/Checkers/LadderCheckRun2zTr.v`: `LadderCheckRun2Tr` (every name
+  suffixed `Z`) with the refill law `([], m) -> (0^(m+a) ++ z, c)` for a
+  fixed digit string `z`, and the fires read from the refill OR the
+  narrowing anchors, per instruction (`nar_cofinalZ`: with `z <> []` every
+  refill leaves `x` nonempty, so narrowings recur too).
+* `le6/emit_run2z.py` (LE4's `emit_run2.py`: `z` read off the visits, a
+  refill target taken from the first of the next 4 visits that is
+  `D0^k ++ z`, `k >= m`, so rows that refill to all-top narrow inside the
+  refill arm; fire witnesses with the narrowing arms' tail flags), driver
+  `le6/run2z_batch.py`.
+
+**4 board** (`CBT_LE6_09..11`).  The other 64 readings: refill, no program
+or no fire witness (49; read by hand, `0RB1LA_1LC1RD_1LA1LD_1RB0LA`: the
+reader sees one refill, at the boot, and then the run grows to 11 with no
+refill -- from an empty `x` the machine runs a whole second count, which
+the relaxed reader skips as transients), interior (10) or narrowing (4)
+with no program, and one emitter error.
+
+**Yields** (134 rows; closeout 599 -> **465** before merging `main`).  After
+merging `main` (BLC6, FTA) 10 of the 134 are also boarded by the orchestrator's
+instruction-target Fuel batches (`CBT_FTA_*`, which sort first in
+`closeouttr_boarded.tsv`): duplicates, harmless; 124 rows are LE6's alone.
 
 | batch | rows | route | compile (container, `-j4`, incl. boards) |
 |---|---:|---|---:|
@@ -6656,36 +6694,41 @@ changed; emit_step's arm search), driver `le6/batch.py` (LE3's
 | `CBT_LE6_06` | 3 | `LadderCheckZeckDwTr` | 41 s |
 | `CBT_LE6_07` | 5 | `LadderCheckZeckDTr` | 46 s |
 | `CBT_LE6_08` | 1 | conjugate of a `CBT_LE6_06` row | 38 s |
+| `CBT_LE6_09` | 2 | `LadderCheckRun2zTr` (binary countdown runs) | 43 s (the checker 41 s) |
+| `CBT_LE6_10` | 1 | `LadderCheckRun2zTr` | 46 s |
+| `CBT_LE6_11` | 1 | `LadderCheckRun2zTr` | 47 s |
 
 A board compiles in 1-2 s.  `ci_costs.tsv` carries every batch (30-300 s,
 the runner being about twice as slow); `ci_shard.py --plan 6` keeps the
 slowest shard at `CBT_BR_02`'s.
 
-**4. Where the rest stop** (192 of the 322; by survey group and LE4/LE5's
+**5. Where the rest stop** (188 of the 322; by survey group and LE4/LE5's
 last reading, `le5/residue.tsv`):
 
 | group | open | LE4 / LE5 reading | what it is (read by hand) |
 |---|---:|---|---|
-| B2: binary, both ends / one end | 70 / 25 | 46 LE4 positional ("the fill counts"), 43 none, 6 marker runs | mostly LE4's MARKER RUN COUNTED DOWN: `0RB1LA_1LC1RD_0RA1LD_1RB0LA` is `[A0] x 0 (11)^m`, `x` over `11` / `10` counting down; at `x = 0` it narrows by a word and the run grows (`x` empty after `m` narrowings); the refill is `([], m) -> x = 1^m 0` with the top digit's `0` in the blank beyond the tape.  With the words swapped that is LE4's increment, and LE5's `phrun2.py` tries both orders, but its beam misparses the marker; `le6/run2_relax.py` (LE4's reader with a 10% parse floor and a 1.5M-step window) reads it, and LE4's refill law `0^(m+a)` is off by that top digit.  Others (`0RB0LA_1LC1RD_0RD0LC_1RB1LA`) are LE5's "tails that grow" |
+| B2: binary, both ends / one end | 70 / 21 | 46 LE4 positional ("the fill counts"), 39 none, 6 marker runs | binary countdowns: item 4 reads 68 rows as marker runs counted down and boards 4; from an empty `x` most run a whole second count (a run counted by an outer counter: three levels), and LE5's "tails that grow" (`0RB0LA_1LC1RD_0RD0LC_1RB1LA`) are here too |
 | I: irregular event ratios | 49 | 20 none, 20 positional, 9 marker runs | the per-event time ratio cycles (`1.01, 1.08, 1.01, 1.08`): a second level whose period is an outer count; not read |
 | F: Fibonacci, still open | 23 | none | two-level Zeckendorf: `0RB0LC_1LC1RD_0RD1LC_1RB1LA` is a Zeckendorf INCREMENT over `1` / `01` beside a run of `1`s that shortens at each top (LE3's terminator run, in Zeckendorf); three rows grow phi at one end and 2 (three cells) at the other |
 | B3: base 3 | 13 | 9 none, 4 marker runs | ratio 3 per two cells, records `0 1^k C0`: base-3 counters not read |
 | R: ratio 3/2, 2.12 | 12 | 8 none, 4 marker runs | 3/2 per two cells (`0RB0LA_1LC0RD_1LA1LB_1RC1RD`); 2.12 is LE5's growing-tail row |
 
 The common thread of what is left: COUNTDOWNS (every LE2-LE5 reader follows
-`x + 1` only, and a countdown is read as an increment only when the
-complemented words also make the narrowing and the refill laws come out
-right), and second levels (a run or tail that counts the widths).  The
-next steps: (a) a refill law `([], m) -> (0^m 1, 0)` for `LadderCheckRun2Tr`
-(or the Run3 reading with the top digit over `10` / `11`), which with
-`le6/run2_relax.py` reads the B2 countdowns; (b) LadderCheckZeckDTr /
-Zeck2's classes beside LE3's terminator run (the F residue); (c) the conjugate
-pass again after every new board (`conj_find.py` is seconds).
+`x + 1` only; a countdown is an increment in the swapped words only if the
+narrowing and refill laws also come out right, which is what item 4 had to
+fix) and SECOND LEVELS: the step from an empty `x` is itself a count (the
+B2 refills), or a run / tail counts the widths (the F residue, LE5's growing
+tails).  The next steps: (a) a refill that is a whole inner count, stated as
+one phase move composed through `lift` (LE5's proposed excursion arm; the
+49 B2 refill failures are the test set, `le6/run2r.jsonl`); (b)
+`LadderCheckZeckDTr` / Zeck2's classes beside LE3's terminator run (the F
+residue, `le6/rows_F_open.txt`); (c) the conjugate pass after every new
+board (`conj_find.py` is seconds).
 
 ```
 # what is still running / left to run (resumable; the owner's 14-core box)
-python3 tools/closeouttr/le6/run2_relax.py le6/rows_open.txt le6/run2r.jsonl --jobs 12 --steps 600000   # ~25 s a row
-python3 tools/closeouttr/le4/run2_batch.py le6/run2r.jsonl --tag LE6 --jobs 12
+python3 tools/closeouttr/le6/run2_relax.py le6/rows_open.txt le6/run2r.jsonl --jobs 12 --steps 600000   # ~25 s a row (done: 194 rows)
+python3 tools/closeouttr/le6/run2z_batch.py le6/run2r.jsonl --tag LE6 --jobs 12                         # ~15 min at 4 jobs
 python3 tools/closeouttr/le6/conj_find.py le6/rows_open.txt le6/conj.jsonl && python3 tools/closeouttr/le6/conj_batch.py le6/conj.jsonl --tag LE6
 ```
 
@@ -7004,3 +7047,223 @@ against the original delta function on 27,200 legal context/pattern pairs;
 independent replay reproduces existing certificates. The generic Coq
 checker is unchanged. Compile costs, including the slower AST32 and AST33
 batches, are recorded conservatively in `ci_costs.tsv`.
+
+#### 7.4.AST5 Block stacks, separated carries, and weighted pattern counts (2026-10-01)
+
+This checkpoint adds **eight requested rows**, bringing the follow-up to
+**115 new rows** and the requested list to **121 of 164 proved**. The full
+closeout has **538** rows left, including **43 requested rows**. All seven
+new batches compile and their assumption audits contain only
+`functional_extensionality_dep`.
+
+**Stack cube variants (`CBT_AST_75..78`, five rows).** `StackCubeTr` extends
+the cube argument to a finite list of right blocks. The framed transfer
+`(a+3,b,r) -> (a,b+2,r+1)` has cost `4*a+13`. Non-firing exits consume a
+block; induction on stack length reduces the empty-stack case to the
+landed `CubeRoundTr`. D0 either pushes a block or merges the first blocks,
+and each return preserves the language and supplies all eight instruction
+witnesses. AST75/76 use one-step and three-step implementations of D0,
+both with bootstrap 19. All twelve requested
+`1RB1LA_0RC0RD_1LC0LA_??0RC` siblings are now proved.
+
+`PairStackTr` closes `1RB1LA_1LB0RC_1LD1RC_0LD0LA` in AST77. Its transfer
+moves two cells from the active left block into one cell on each side.
+The invariant requires at least two ones in the farthest left block;
+this excludes an actual non-firing fixed point outside the reachable
+language. Induction on the block list and the odd reset
+`a -> (a+3)/2` proves a return to D0. The bootstrap is step 17.
+
+AST78 contains two state-renamed stack variants, with separately checked
+boots at steps 20 and 19. The new `CConjugateReachTr` transports arbitrary
+families with existential positive returns and eventual instruction
+witnesses. It compares endpoints after `lift` and needs neither a chosen
+successor function nor a choice axiom. The stack helpers compile in about
+0.6--1.0 seconds and each batch in under a second.
+
+**Separated carries (`CBT_AST_56` and `79`, two rows).**
+`SeparatorTokenTr` proves `1RB0RA_0RC0LD_1LD1RA_1LB0LD` with an outer
+base-four digit, a fixed one-cell separator, and an arbitrary finite inner
+digit word. The digits are `010/000/011/001`; an empty inner carry creates
+`011`. The carry crosses the separator only when the outer digit wraps.
+Structural induction proves the carry, and a checked LapDecider chain
+proves the `18*n+38` sweep. The exact bootstrap is step 81.
+
+`BinaryGateTokenTr` proves `0RB1LC_1LC1RD_1LA0LC_0RD1RB`. Its anchor is
+`D1` with left word `01 ++ encode(w)` and right block `(101)^n`. The
+digits `00/01` have terminator `010`. One carry pass creates a prefix of
+ones and a second pass converts it to the successor word, with three
+uniform sweeps between and around them. Each carry is proved for every
+finite digit word; the exact lap cost is `18*n+26+c1(w)+c2(w)`. The
+bootstrap is step 21, and finite sweep prefixes witness every instruction.
+Both helpers and both batches compile in under a second.
+
+**Weighted pattern counts (`CBT_AST_36`, one row).** `FuelMixTr` permits
+nonnegative sums of legal pattern counts as natural-valued measures.
+Their exact integer deltas follow by induction from the landed pattern
+delta lemma; the existing `FuelSCCTr` engine checks lexicographic descent
+and fueled runners. A sum of three pattern counts certifies
+`1RB1LD_0RC0RB_1LC0LA_0RB1RD` at window six. The untrusted LP finder rounds
+and rechecks every inequality with integers, then independently replays
+the whole certificate before emission. The checker compiles in about
+0.4 seconds and AST36 in 2.0 seconds. Replacing its A0 certificate with
+an empty certificate computes false. The finder and saved certificate are
+`tools/closeouttr/fuelmixtr_batch.py` and `fuelmixtr_ast.jsonl`.
+
+#### 7.4.AST6 Dyadic ranks, seven-phase hybrids, and moving counter boundaries (2026-10-01)
+
+This checkpoint adds **twelve requested rows** in six batches. The
+follow-up now totals **127 new rows**; including the six earlier AST rows,
+**133 of the requested 164** are proved. The full closeout has **526**
+rows left, of which **31** are on the requested list. Every new coverage
+theorem is kernel-checked with only `functional_extensionality_dep`.
+
+**Dyadic pair (`CBT_AST_57`, two rows).** The machines
+`1RB0LA_0RC0RB_0LD1LA_1LD0LA` and
+`1RB1RC_0RC0RB_0LD1LA_1LD0LA` have a complicated scaled-word increment,
+but only A1 recurrence needs a manual argument: window-two Fuel
+certificates cover the other seven instructions. `DyadicRankTr` ranks a
+finite window by its binary complement value and then head index.
+`DyadicWindowTr` proves that an A0 macro either increases the first
+changed bit or moves left in an unchanged word, so the rank decreases
+until A1 fires. This holds for any finite A0 tape. `DyadicRecurTr`
+combines it with a positive return from A1 and the checked step-15 boot.
+The new `FuelMixPartialTr` checker requires an explicit recurrence proof
+for every skipped target and checks all remaining targets with the landed
+Fuel engine; skipping a target alone proves nothing. The arithmetic rank
+and core window lemma are axiom-free. AST57 compiles in about 1.5 seconds;
+`dyadic_batch.py` and `fuelmixtr_dyadic.jsonl` reproduce its certificates.
+
+**Seven-phase hybrids (`CBT_AST_58`, four rows).** The four related
+`(011)^n` bouncers have a binary end and a seven-phase sweep cycle, with
+net block growth two. The earlier finder tried at most four phases, or
+only one when anchored at a fixed instruction. `HybridGlueTr` already
+supports arbitrary finite phase counts. The new `hy_longphase.py` supplies
+seven and immediately obtains full certificates, including all
+instruction witnesses, with boots at 70, 8, 8 and 27. The saved data are
+in `hy_longphase.jsonl`. All four compile together in about 0.4 seconds;
+no new trusted checker is used.
+
+**The final requested cube (`CBT_AST_80`).** `TernaryStackTr` proves
+`1RB1LA_0RC0RD_1LD1RC_0LC0LA` from a step-three D0 anchor. Its transfer
+subtracts three from the active block, adds one to the next block and two
+to the right block. Residues zero and one reach D0; residue two consumes a
+stack entry before a division-by-three contraction. All stack entries
+remain positive. Explicit short cases handle the right block lengths
+one, two and three, and the longer case reaches a phase firing the other
+seven instructions. The helper and batch compile in about 0.9 and 0.3
+seconds respectively.
+
+**A moving binary boundary (`CBT_AST_81..82`, four rows).**
+`BinaryResetTr` proves `1RB0RC_1LC0LD_1RA1RD_1RC1LB` over arbitrary digit
+words `10/11`, with an optional one-cell top marker and right block
+`(10)^n 1`. An ordinary carry is followed by a checked sweep of cost
+`4*n+14`. At overflow, `k` carried digits expose an empty left tape and
+right word `(01)^k (10)^n 1`. Two uniform sweeps, of combined cost
+`6*k+2*n+19`, turn this into left word `(10)^(k+n) 111` and right word
+`101`. Thus overflow can move the word boundary without requiring a
+fixed top-word cycle. Every anchor reaches an ordinary sweep whose finite
+prefixes fire all eight instructions. Positive returns give recurrence.
+The source bootstrap is step 17; three state-renamed/reflected variants
+use independently checked boots 12, 23 and 27 through `CConjugateReachTr`.
+The carry and overflow lemmas are axiom-free, and all three files compile
+in under a second each.
+
+**Parity-indexed tail grammars (`CBT_AST_37`).** `FuelPhaseTr` adds a
+Boolean head parity to FuelWide nodes and separates the possible distant
+windows by parity. Both move directions toggle the parity. Checked
+successors preserve these tail grammars and the original FuelWide cover
+over their union, so existing pattern and fuel soundness applies.
+`1RB0LA_1LC0RD_0LB1LA_0RB1LA` closes at window three with 144 contexts.
+The finder `fuelphasetr_batch.py` independently replays the supplied
+integer certificate; `fuelphasetr_ast.jsonl` preserves it. The checker
+compiles in about 0.4 seconds and AST37 in 1.0 second. Its successor lemma
+is axiom-free; replacing the A0 certificate with an empty certificate
+computes false.
+
+
+#### 7.4.AST7 Finite returns, sweep resets, and wider counter readings (2026-10-01)
+
+This checkpoint adds **sixteen requested rows** in ten batches. The
+follow-up now totals **143 new rows**; including the six earlier AST rows,
+**149 of the requested 164** are proved. The full closeout has **510**
+rows left, including **15** requested rows. All ten batch coverage
+lemmas are kernel-checked with only `functional_extensionality_dep`.
+
+**Universal B0 returns (`CBT_AST_38`, `83`).** `FuelB0ReturnTr` proves a
+positive B0 return from every finite B0 tape. Its C routine consumes
+left prefixes `11` or `101` while preserving a right-hand zero. A marker
+bound on A1 carries then gives A0-to-B0 reachability by induction on the
+right tape length. AST38 uses this for
+`1RB1RC_0LC0RA_1RA1LD_1LA0LC`; AST83 transports the return through
+`CConjugateReachTr` to the C0 target of
+`1RB0RD_1LC1LD_0RD0LB_1LB1RA`, with a checked step-four boot.
+Window-three partial Fuel certificates prove the other seven targets.
+The helper compiles in 0.2 seconds and each batch in about 0.9 seconds.
+`b0_return_batch.py` and `fuelmixtr_b0_return.jsonl` reproduce AST38.
+
+**Two-top and five-phase hybrids (`CBT_AST_39`, `90`, three rows).**
+AST39 reads a reflected A0 anchor at cell zero as binary digits `110/100`,
+top words `1/101`, and a unary far block. It uses `HybridCtrTr` unchanged,
+with boot 18; `hy2_two_top.py` preserves the focused seed and certificate.
+AST90 uses `HybridGlueTr` unchanged for two five-phase binary hybrids,
+with boots 34 and 52. `hy_longphase.py --phases 5` and
+`hy_fivephase.jsonl` reproduce them. Both batches compile in under a
+second. These successes concern family discovery, not stronger axioms
+or new trusted checker rules.
+
+**Two expanding sweeps (`CBT_AST_40`, four rows).** `DoubleSweepReturnTr`
+returns an A0 anchor with left word `00 L` and right word `(10)^(2k+1) 1`
+to left word `001 L` and right word `(10)^(4k+5) 1`. An inner sweep
+consumes two left `10` blocks and adds four right blocks; two uniform
+sweeps and a finite drain finish the lap. Every instruction fires in a
+lap, so `ValueLapTr` gives the full result without Fuel. Three state
+renamings have independently checked boots. The helper compiles in
+about 0.7 seconds and the four-row batch in 0.4 seconds;
+`double_sweep_batch.py` reproduces the batch.
+
+**Paired carries (`CBT_AST_59`, two rows).** `PairedCarryTr` works over
+arbitrary finite digit words encoded by `10/11` with terminator `11`,
+and a right word `1^m (01)^n`. Short returns consume two ones or one
+`01`; boundary sweeps lead to a finite carry that stops at zero or blank.
+Positive returns establish the manual target's recurrence. Checked
+window-three Fuel certificates cover the other seven instructions.
+`paired_carry_batch.py` and `fuelmixtr_paired_carry.jsonl` reproduce both
+rows. The helper and batch compile in about 0.5 and 3.2 seconds.
+
+**A preserved five-one suffix (`CBT_AST_91`).** `FiveOnesTr` proves that
+any A configuration with right word `X 111110` reaches D1 while preserving
+that suffix. Strong induction on the prefix length handles the scan;
+explicit boundary cases take 23, 49, or 50 steps. A finite C scan and a
+positive D1 return complete recurrence, with the other seven targets
+certified by window-three Fuel. The helper compiles in 0.7 seconds and
+the batch in 3.4 seconds. Reproduction uses `five_ones_batch.py` and
+`fuelmixtr_five_ones.jsonl`.
+
+**Geometric resets (`CBT_AST_92`, two rows).** `GeometricCounterTr` has
+binary digits `110/100` and phase-dependent terminators `1010/10`.
+An interior carry resets passed digits and adds two ones. The natural
+binary-complement rank decreases until overflow, which flips the phase
+and grows the counter width. An outer sweep fires all eight instructions.
+This supplies a full recurrence proof without an exponential lap-length
+formula or Fuel certificate. Boots are 18 and 14 for the two orientations.
+The helper compiles in 0.7 seconds and the batch in 0.4 seconds;
+`geometric_counter_batch.py` preserves the instantiations.
+
+**Reflected symbolic laps (`CBT_AST_85`).** `ReflectedLapTr` composes
+individual landed `LapDecider` steps in either orientation. Reflecting
+`SCycL` supplies the needed contextual right cycle, with an axiom-free
+soundness theorem. `SweepResetTr` uses seven symbolic branches and four
+small cases over six finite-word families to prove recurrent D0 for
+`1RB1RC_1LC1RA_1LD0RA_1RA0LB`, starting at step eight. Window-four Fuel
+covers the other targets. Helpers compile in 0.4 and 0.5 seconds, and
+the batch in 2.5 seconds.
+
+**An unrestricted A1 return (`CBT_AST_93`).** `RightScanReturnTr` proves
+`1RB0LA_0LC1RD_1LC1LA_0RB0RD` by normalizing only trailing blank padding.
+A D scan either returns to the saved A head or reaches A0 with a strictly
+shorter normalized right word. Strong induction proves A0-to-A1
+reachability for every finite tape. Erasing the finite left run then
+gives a positive A1 return, and window-three Fuel handles the other
+seven targets. The helper and batch compile in 0.4 and 2.9 seconds.
+`right_scan_batch.py` and `fuelmixtr_right_scan.jsonl` reproduce the
+checked certificate.
