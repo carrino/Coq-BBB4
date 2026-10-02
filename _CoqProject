@@ -12065,6 +12065,7 @@ theories/CloseoutTr/CBT_LE6_04.v
 theories/CloseoutTr/CBT_LE6_05.v
 theories/CloseoutTr/CBT_LE6_06.v
 theories/CloseoutTr/CBT_LE6_07.v
+theories/CloseoutTr/CBT_LE6_08.v
 theories/CloseoutTr/CBT_LEFQ_00.v
 theories/CloseoutTr/CBT_LEF_00.v
 theories/CloseoutTr/CBT_LEF_01.v
