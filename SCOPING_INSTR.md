@@ -7496,3 +7496,57 @@ unproved. Short-tape experiments and a decreasing real-valued tape
 potential are insufficient: an all-ones input can grow far to the left,
 so neither a fixed left boundary nor a natural-valued rank follows from
 that potential. No conjectural lemma or incomplete batch is installed.
+
+#### 7.4.AST12 Finite-word termination closes the last six of the fourteen (2026-10-02)
+
+The six remaining AST10/AST11 rows are now boarded in `CBT_AST_98`,
+`99`, `101`, `107`, `108`, and `109`. Together with AST100/102/105/106,
+this completes all fourteen requested rows. The six reduce by exact state
+permutations and reflection to two cores differing only at B0:
+
+```
+1RB0LC_1LA1RD_1LA1LC_1RB0RA
+1RB0LC_1LC1RD_1LA1LC_1RB0RA
+```
+
+The failed unbounded block-list closures were replaced with a finite-word
+termination proof. At A0 with a blank left half-tape, define
+`P(n)=(10)^n110`, `Q(n)=(10)^n111`, and `U(n)=1^(2n+2)0`.
+A complete sweep transforms `P(ms) Q(n) R` into `U(ms) U(n) 10 R`;
+a scan ending at `P(ms) (10)^n 0 R` reaches B0. Both statements are
+kernel-checked for arbitrary lists, counts, and suffixes.
+
+The decisive normalization uses inert P0/P3 prefixes. A unary U-block
+with index congruent to 0 modulo 3 preserves eventual B0 reachability;
+index 1 leaves a two-zig carry; index 2 forces B0. A nonfinal two-zig
+carry either forces B0 immediately or creates a P2 prefix, which is also
+mortal. Strong induction on the untouched suffix proves every finite
+frontier word reaches B0, including the formerly difficult mixed and
+three-phase lists. A separate reset argument proves D0 reachability for
+both B0 choices. Finite-left sweeps extend both results to *every finite
+configuration*, so the conjugate variants need no orbit-joining or
+special unary-seed invariant.
+
+The generic proof chain is in `theories/Counters/`:
+
+- `Period3MacroTr.v`: exact token scans and returns, without a B0 hypothesis.
+- `ValueFrontierTransducer.v`: P/Q/U sweeps and the terminal B0 branch.
+- `ValueWordNormalization.v`: inductive word rewriting and unary normalization.
+- `Period3WordTermination.v`: termination for every finite frontier word.
+- `ValueFrontierD0.v`: frontier D0 reachability for both B0 variants.
+- `Period3FiniteTr.v`: arbitrary finite-tape B0/D0 reachability.
+- `FiniteInstrTr.v`: recurrence from universal finite-tape reachability and
+  its transport through state permutations/reflection.
+
+Each batch combines the two manual recurrence results with the landed
+`FuelMixPartialTr` checker for the other six instructions (window 3,
+167--187 contexts). `tools/closeouttr/period3_ast.json` retains the six
+certificates and conjugacies; `period3_batch.py --check` verifies the
+mapping tables, skipped instructions, and byte-exact batch reproduction.
+All six `coversTr` proofs compile. Their assumption audits contain only
+`functional_extensionality_dep`; the pure word-termination theorem is
+axiom-free. Each batch has a conservative five-second CI cost entry.
+
+After merging main and regenerating: **513 batches, 10,663 boarded,
+261 remaining**. No frozen census, RunTr, CloseoutKit, workflow, or Makefile
+source was changed by this proof work.
