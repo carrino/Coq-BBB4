@@ -25,7 +25,29 @@ from multiprocessing import Pool
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'le4'))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'le3'))
 import termrun_detect as TD  # noqa: E402
-from termrun2_detect import read, lawful  # noqa: E402
+import termrun2_detect as TD2  # noqa: E402
+from termrun2_detect import lawful  # noqa: E402
+
+
+_read0 = TD2.read
+
+
+def read_padded(st, l, pre, suf, T, M):
+    """LE6: TD2.read, also with the visit string padded by up to len(M) + l
+    blanks (a refilled x whose top word and the marker end in blanks beyond
+    the tape's last nonzero cell)"""
+    r = _read0(st, l, pre, suf, T, M)
+    if r is not None or suf:
+        return r
+    for k in range(1, len(M) + l + 1):
+        r = _read0(st + '0' * k, l, pre, suf, T, M)
+        if r is not None:
+            return r
+    return None
+
+
+TD2.read = read_padded
+read = read_padded
 
 STEPS = [1500000]
 FRAC = 0.1
