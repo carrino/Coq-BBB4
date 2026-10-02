@@ -7088,6 +7088,21 @@ hypotheses, the round by induction on the eaten count, never-QH and QH
 closers.  Emitter `le9/emit_dbounce.py` (LE8's arm search, `emit_nest.Gen`);
 **3 boarded** (`CBT_LE9_01`), ~2 s and ~800 MB a board.
 
+**3. The "mixed-digit" rows are a plain binary counter at two anchors.**
+`0RB1LD_1LC1RB_1RA1LA_1LB0LC` (and its conjugate-class rows
+`1RB0RC_1RC1LB_1LD1RD_0LB1RA`, `1RB1LA_1LC1RC_0LA1RD_1RA0RB`, mirrored) read
+from the head as 3-cell words `101`/`111` (LSB first) and a terminator `11`
+is an ordinary binary counter; LE7's "1-cell low digit under 3-cell
+digits" is the same tape cut one cell off.  What no landed counter states is
+that it lives at TWO anchors one cell apart: phase A counts `x` (k digits)
+to its top and fills to phase B, the far side one cell longer (`[1]`), at
+`x = 1 0^k`; B counts and fills back to A at `x = 0 1 0^k` (the "refill that
+doubles" LE7 measured is B's whole count).  New generic board
+`PhBinCountTr` (`Counters/`): phases with their own `mk p`, carry and fill
+`Reach1` facts per phase, fires off one phase's fills; emitter
+`le9/emit_phbin.py`, models `le9/phbin_models.jsonl`.  **3 boarded**
+(`CBT_LE9_02`), ~1 s and ~460 MB a board.
+
 ## 8. What we deliberately do NOT redo
 
 * The state-level theorem and its census `.vo` stay frozen and untouched;

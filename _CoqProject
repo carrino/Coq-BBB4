@@ -2856,6 +2856,10 @@ theories/Counters/DoubleBounceTr.v
 theories/Machines/LadderTr/LDDBQ_1RB0LC_1LA1RD_1LA1LC_0RC0LD.v
 theories/Machines/LadderTr/LDDBQ_1RB0LC_1RC1RD_1LA1LC_0RC0LD.v
 theories/Machines/LadderTr/LDDBQ_1RB1RD_1LC1LB_1RA0LB_0RB0LD.v
+theories/Counters/PhBinCountTr.v
+theories/Machines/LadderTr/LDPB_0RB1LD_1LC1RB_1RA1LA_1LB0LC.v
+theories/Machines/LadderTr/LDPB_1RB0RC_1RC1LB_1LD1RD_0LB1RA.v
+theories/Machines/LadderTr/LDPB_1RB1LA_1LC1RC_0LA1RD_1RA0RB.v
 theories/Machines/LadderTr/LDTPH_1RB0LC_0LA1RC_1RD1LA_1RB0RD.v
 theories/Machines/LadderTr/LDTPH_1RB0RA_0LC1RD_1RB0LD_1RA1LC.v
 theories/Machines/LadderTr/LDTPH_1RB1LD_1RC0RB_0LD1RA_1RC0LA.v
@@ -12347,6 +12351,7 @@ theories/CloseoutTr/CBT_LE8_03.v
 theories/CloseoutTr/CBT_LE8_04.v
 theories/CloseoutTr/CBT_LE9_00.v
 theories/CloseoutTr/CBT_LE9_01.v
+theories/CloseoutTr/CBT_LE9_02.v
 theories/CloseoutTr/CBT_LEFQ_00.v
 theories/CloseoutTr/CBT_LEF_00.v
 theories/CloseoutTr/CBT_LEF_01.v

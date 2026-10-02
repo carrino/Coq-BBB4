@@ -8,6 +8,8 @@ Kinds:
              boards LDTPH_ / LDTPHQ_ after LadderCheckTankPhTr.v
     dbounce  le9/emit_dbounce.py, [DoubleBounceTr], boards LDDB_ / LDDBQ_ after
              DoubleBounceTr.v
+    phbin    le9/emit_phbin.py + le9/phbin_models.jsonl, [PhBinCountTr], boards
+             LDPB_ / LDPBQ_ after PhBinCountTr.v
 
 Each row is emitted, compiled alone (wall time and peak RSS are printed), and
 the boards that compile are copied to theories/Machines/LadderTr/, listed in
@@ -38,6 +40,10 @@ KINDS = {
     'dbounce': dict(emit=[os.path.join(HERE, 'emit_dbounce.py'), '{spec}'],
                     pfx='LDDB', anchor='theories/Counters/DoubleBounceTr.v',
                     blurb='bouncers that double their block each round, by DoubleBounceTr'),
+    'phbin': dict(emit=[os.path.join(HERE, 'emit_phbin.py'), '{spec}',
+                        os.path.join(HERE, 'phbin_models.jsonl')],
+                  pfx='LDPB', anchor='theories/Counters/PhBinCountTr.v',
+                  blurb='binary counters with phases, each its own anchor, by PhBinCountTr'),
 }
 
 
