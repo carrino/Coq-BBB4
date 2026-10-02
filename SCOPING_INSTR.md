@@ -7433,3 +7433,66 @@ The batch emitter already formats indices with a minimum of two digits.
 The collector and shard matcher now accept indices of two or more digits
 as well, allowing the AST sequence to continue past 99. The six-shard
 partition check includes the new three-digit batches.
+
+
+#### 7.4.AST11 Three-phase zero-block lists: four more of the new fourteen (2026-10-01)
+
+`CBT_AST_102` boards four more rows from the new request. Together with
+AST100, AST105, and AST106, **eight of the fourteen are proved**, leaving
+**six requested rows** and **487 rows globally**. The four AST102 proofs
+reuse `ListGlueLexTr` with 192, 185, 187, and 185 families. The installed
+batch compiled in 16.18 seconds; a private run under concurrent load took
+56.83 seconds. All row and aggregate assumption audits show only
+`functional_extensionality_dep`. The conservative CI allowance is 100s.
+
+The successful invariant tracks position modulo **three**. Across left
+one-block separators `0110`, neighbour offsets repeat `2, 2, -3`, with
+multiplier two. Right zero-block separators `11011` have offsets
+`3, 3, -2`; separators `111111` have `4, 4, -1`. After subtracting the
+centre for each position class, the partial sum is identically zero.
+The old learner considered only periods one and two, producing a wider
+language whose exploration retained arbitrarily many explicit blocks.
+`LG4_PERIODS` now allows the period list to be selected; its default
+remains `1,2`. `LG4_PERIODS=3` with the ordinary BLC5 finder reproduces
+AST102 without changing exploration or any Coq checker. The saved
+certificates, row list, and `ast102_batch.py --check` reproduce and replay
+the installed source.
+
+The six unproved rows are:
+
+```
+1RB0LC_1LA1RD_1LA1LC_1RB0RA
+1RB0LC_1LC1RD_1LA1LC_1RB0RA
+1RB0RC_1LC1RA_1RB0LD_1LC1LD
+1RB0RD_1LC1RA_1LD1LC_1RB0LC
+1RB1LD_1RC1RB_1LA0RB_1LA0LC
+1RB1RA_1LC0RA_1RA1LD_1LC0LB
+```
+
+These have three-cell periodic units and neighbour multiplier four.
+For the first core, periods 3, 4, and 6 retain a residual-sum range of
+width two and do not close. BLC6's local language, depth-counted right
+tails, and local range splits also do not close. Actual-run diagnostics
+identify missing left offsets `1,8,9` for the first core and a missing
+start offset `7` for the second; adding their aligned-snapshot edges
+moves the failure to growing symbolic right windows. Right-DFA
+minimisation, periodic return samples, and a refit using far-end data
+through 300 million steps do not yet give an invariant.
+
+For the second core, the bounded-sum fit has a misleading tie: one
+optimal centre assignment makes the learned left graph acyclic, while
+an equally narrow assignment preserves its carry cycle. Forcing the
+cyclic centres and taking a product with the last block spelling still
+admits right-return suffixes that prevent closure. Enlarging these
+refined graphs to 6,000 families did not stabilise them. Wider samples
+also include unfinished near-head blocks, so their large offsets must
+not simply be added to the finished-block language.
+
+Two exact finite-prefix reductions are available: the third row joins
+the first row's state-renamed orbit after step one; the fourth similarly
+joins the second. The first two cores differ only at B0. A universal
+finite-tape B0-hitting lemma would therefore cover both, but remains
+unproved. Short-tape experiments and a decreasing real-valued tape
+potential are insufficient: an all-ones input can grow far to the left,
+so neither a fixed left boundary nor a natural-valued rank follows from
+that potential. No conjectural lemma or incomplete batch is installed.
